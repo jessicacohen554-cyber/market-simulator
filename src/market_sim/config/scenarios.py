@@ -26,6 +26,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "end_year",
     "hindcast",
     "hindcast_fuel_variant",
+    # T1-X crossover boundary + forward AEO gas path (FF-0E, plan §2.2): dropped
+    # from the hash at their defaults (None / "mid") so every pre-existing
+    # cached run keeps its key; a crossover run sets a non-None boundary and so
+    # gets a distinct key (a crossover IS a distinct scenario from a plain
+    # hindcast).
+    "crossover_forward_year",
+    "crossover_forward_gas_path",
     # G-30 first-wave probes (default-off): dropped from the hash at default so
     # every pre-existing cached run keeps its key; a non-default value enters
     # the key (a distinct scenario). (staged_oversupply_thinning /
@@ -115,6 +122,31 @@ class ScenarioConfig:
     # docs/handoffs/forecast-validation-program-2026-07.md §1.
     hindcast: bool = False
     hindcast_fuel_variant: str = "realized"  # "realized" | "asknown"
+    # T1-X crossover boundary (FF-0E, plan §2.2): the first FORECAST year in a
+    # vintage-seeded crossover run. ``None`` => plain capacity-hindcast (every
+    # year uses the realized/measured hindcast inputs). When set (crossover
+    # mode, e.g. 2026), years < this use the realized hindcast inputs (measured
+    # demand profile + realized fuel + the F923 plant-monthly overlay — the
+    # rule-13-admissible physical inputs) and years >= this switch to PURE
+    # FORWARD DRIVERS: growth-scaled demand (from the last realized weather
+    # year), the AEO gas path (``crossover_forward_gas_path``), the forecast
+    # coal/oil trajectories, statistical outages, and NO measured overlays (the
+    # F923 plant-monthly overlay and the realized per-year demand loader are
+    # both skipped for these years). It also UN-BRIDGES the forward year — 2026
+    # is a plain-hindcast quarantine bridge year, but a crossover SOLVES it as a
+    # forecast-mode year (rule-22-legal: forecast solves consume no measured
+    # H1-2026 actuals by construction). Forecast-mode + hindcast only; default
+    # ``None`` is cache-neutral (see ``_CACHE_KEY_OPTIONAL_FIELDS``). See
+    # scripts/run_capacity_hindcast.py --crossover.
+    crossover_forward_year: int | None = None
+    # AEO Henry Hub trajectory the crossover uses for its FORWARD years (>=
+    # ``crossover_forward_year``): "mid" is the AEO2025 Reference path, "low"/
+    # "high" the side cases. Ignored (never read) when ``crossover_forward_year``
+    # is None. A forward year must NOT inherit the realized-fuel
+    # "hindcast_realized" path (which only holds 2025 flat past 2025) — it uses
+    # this AEO path, the forecast fuel methodology (plan §2.2). Cache-neutral at
+    # its "mid" default.
+    crossover_forward_gas_path: str = "mid"
 
     # Tier 1 (scenario levers)
     gas_price_path: str = "mid"  # "low", "mid", "high" or path to CSV
@@ -6509,6 +6541,25 @@ class ScenarioConfig:
         if self.mode == "backcast" or self.hindcast:
             self.datacenter_load_path = "off"
 
+        # T1-X crossover boundary (FF-0E, plan §2.2): only meaningful on the
+        # vintage-seeded capacity-hindcast harness (forecast machinery). A
+        # crossover is always hindcast=True / mode="forecast"; guard against a
+        # stray boundary landing on a plain backcast or forecast run, where the
+        # year-gated overlay skips would silently change behaviour.
+        if self.crossover_forward_year is not None:
+            if not self.hindcast or self.mode != "forecast":
+                raise ValueError(
+                    "crossover_forward_year requires hindcast=True and "
+                    "mode='forecast' (the T1-X crossover runs on the hindcast "
+                    "harness; plan §2.2)"
+                )
+            if self.crossover_forward_gas_path not in ("low", "mid", "high"):
+                raise ValueError(
+                    "crossover_forward_gas_path must be an AEO path "
+                    "('low', 'mid', 'high'), got "
+                    f"{self.crossover_forward_gas_path!r}"
+                )
+
         # The two on-line-capacity envelope variants resolve the SAME LP row
         # from different derived tables (base decile vs extreme-peak-resolved);
         # setting both would be ambiguous about which table governs, so it is a
@@ -6748,6 +6799,22 @@ class ScenarioConfig:
     def with_overrides(self, **kwargs) -> "ScenarioConfig":
         """Return a copy of this config with the given fields replaced."""
         return replace(self, **kwargs)
+
+    def is_crossover_forward_year(self, year: int) -> bool:
+        """True when ``year`` is a T1-X crossover FORWARD (pure-forecast) year.
+
+        In a crossover run (``crossover_forward_year`` set, FF-0E / plan §2.2)
+        the years at/after the boundary drop every realized/measured hindcast
+        input and run on forward drivers only (growth-scaled demand, AEO fuel,
+        statistical outages, no measured overlays), and the boundary year is
+        solved rather than bridged. Returns ``False`` for a plain hindcast
+        (boundary ``None``) or an in-sample year, so those paths stay
+        byte-identical.
+        """
+        return (
+            self.crossover_forward_year is not None
+            and year >= self.crossover_forward_year
+        )
 
     def _non_default_values(self) -> dict:
         """Return a dict of fields whose values differ from the defaults."""
