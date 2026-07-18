@@ -89,7 +89,7 @@ ATTESTED_MAIN = (
     "annual-flat Manitoba (MHEB) firm block (726/531/224 MW) is REPLACED by a "
     "fourth MEASURED two-way priced seam — the MISO_MANITOBA_SEAM_SPEC bands "
     "priced by the frozen Q-Q ladder MISO_SEAM_LADDER_BY_YEAR['Manitoba'] "
-    "(scripts/derive_miso_seam_ladders.py, the same construction as "
+    "(scripts/data/derive_miso_seam_ladders.py, the same construction as "
     "PJM/SPP/South) and capped by the measured (month x hod) two-way MHEB "
     "deliverability envelope (MISO_SEAM_DIBA['Manitoba']) — reusing the "
     "existing seam machinery end-to-end and composing with "

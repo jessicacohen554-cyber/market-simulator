@@ -17519,7 +17519,7 @@ import / winter export to winter-peaking Manitoba, net EXPORT in the 2025
 drought (extremes +2,827/−1,417 MW, price-decorrelated r≈0.1–0.3). The block
 over-imports +0.97/+1.64/+2.96 TWh and has no export path. The frozen Q-Q
 duration-coupling construction (the PJM/SPP/South audit-C-6 pattern,
-`scripts/derive_miso_seam_ladders.py`) extended to MHEB reproduces the measured
+`scripts/data/derive_miso_seam_ladders.py`) extended to MHEB reproduces the measured
 net flow ±0.02 TWh/yr offline, incl. the 2025 export.
 
 **Mechanism (`ScenarioConfig.miso_manitoba_seam`, default off, byte-identical
