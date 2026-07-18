@@ -26,6 +26,10 @@ from market_sim.config.constants import (
     START_YEAR,
     resolve_capacity_market_clearing,
 )
+from market_sim.config.entry_config import (
+    ENTRY_GROWTH_LIMIT_MULTIPLE,
+    ENTRY_THROUGHPUT_WINDOW_YEARS,
+)
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import (
     ScenarioConfig,
@@ -49,6 +53,7 @@ from market_sim.data.fleet import (
     load_planned_additions,
     load_retired_within_window,
 )
+from market_sim.data.build_throughput import max_annual_build_gw_by_tech
 from market_sim.data.confirmed_retirements import (
     ConfirmedExit,
     load_announced_reversal_plants,
@@ -673,6 +678,33 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             required=_confirmed_exits_active(config),
         )
 
+    # FF-2A entry-stack state (both gates default-off ⇒ both None/absent,
+    # byte-identical). The growth ladder (entry_rate_limits) tracks each
+    # tech's PRIOR MAXIMUM annual build: seeded from the measured EIA-860
+    # record at the run's vintage (trailing ENTRY_THROUGHPUT_WINDOW_YEARS
+    # window — data.build_throughput.max_annual_build_gw_by_tech reads the active
+    # vintage directory, so a 2020-vintage hindcast sees only what was
+    # knowable at the cutoff) and raised as the model's own decisions land.
+    # The pending-entry pipeline (entry_commissioning_lag) carries decided-
+    # but-not-yet-commissioned builds across years (mutated in place by
+    # evolve_fleet, the same seam pattern as the evolution-ledger events).
+    entry_prior_max_gw: dict[str, float] | None = None
+    if getattr(config, "entry_rate_limits", False):
+        _seed_through = config.eia860_vintage_year or (config.start_year - 1)
+        entry_prior_max_gw = max_annual_build_gw_by_tech(
+            iso, _seed_through, ENTRY_THROUGHPUT_WINDOW_YEARS
+        )
+        logger.info(
+            "entry growth-ladder seed (%s, through %d, %d-yr window): %s",
+            iso,
+            _seed_through,
+            ENTRY_THROUGHPUT_WINDOW_YEARS,
+            {t: round(v, 3) for t, v in sorted(entry_prior_max_gw.items())},
+        )
+    entry_pipeline: list[dict] | None = (
+        [] if getattr(config, "entry_commissioning_lag", False) else None
+    )
+
     # Global cumulative deployment drives the Wright's-Law learning curves.
     # It starts from the reference-year installed base and advances one year
     # of worldwide deployment (plus this ISO's local builds) every year.
@@ -802,7 +834,27 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 peak_demand_next=peak_demand,
                 announced_reversal_plants=announced_reversal_plants,
                 reserve_position=curve_reserve_position,
+                entry_rate_caps_mw=(
+                    {
+                        t: ENTRY_GROWTH_LIMIT_MULTIPLE * gw * 1000.0
+                        for t, gw in entry_prior_max_gw.items()
+                    }
+                    if entry_prior_max_gw is not None
+                    else None
+                ),
+                entry_pipeline=entry_pipeline,
             )
+            # Growth-ladder update (entry_rate_limits): this year's decision-
+            # grain builds raise the prior max, so a tech building at its
+            # ladder cap doubles its deliverable throughput next year — the
+            # ReEDS relative-growth dynamic on the measured seed.
+            if entry_prior_max_gw is not None:
+                for t, mw in (evo_events.get("entry_decided_mw_by_tech") or {}).items():
+                    # Only techs with a measured seed carry a ladder; an
+                    # unseeded tech stays uncapped (rule 25 neutral fallback)
+                    # rather than acquiring a cap from its own first build.
+                    if t in entry_prior_max_gw and mw / 1000.0 > entry_prior_max_gw[t]:
+                        entry_prior_max_gw[t] = mw / 1000.0
             # Persist the reliability floor's attribution log next to the
             # per-year results parquet (rule 20 analogue: floor-retained MW
             # must be measurable per run, not argued). Written every evolved
