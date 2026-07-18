@@ -17500,3 +17500,87 @@ committed. NO dashboard registration: the A-leg repro and B-leg are same-machine
 (FINDING-caiso92b protocol) and the B-leg is byte-identical to the keeper — a
 duplicate entry would be pure noise (CAISO 13/15). `keepers.json` UNCHANGED.
 Next number: caiso-99.
+## 2026-07-18 — miso-74: Manitoba two-way seam BUILT, PROBED, and PROMOTED to MISO keeper (owner-authorized) — a STRICT improvement over miso-72: fails 3 → 2 (C1 fuelmix FAIL → PASS, all 16/16 classes in band), C3b veto held & IMPROVED (0.181-2025), C3a toward actual every year, plus the two-way seam physics the import-only firm block cannot represent (2025 net export, per-seam duration RMSE better every year, hourly corr restored); ZERO fitted scalars; the total net-interchange DIAGNOSTIC worsens as the pre-registered rule-14 exposure of the priced-seam under-import (the merit-cap composition lane)
+
+**Lane (owner-selected B over recommended A).** Phase A's derive-first
+diagnosis REFUTED lane A (coal trough offer level): the C3a-2025 miss (−13.7%)
+is ~78% out-of-representation scarcity tail — the broad load-weighted price
+level is correct (−$0.19), the maxgen/engagement scarcity is already at its
+legitimate extent, and the 2025 MISO SOM (the rule-23 trigger) reports a system
+price-cost markup of −1.07% with NO offer-distribution table, so there is no
+measured basis to raise coal offers. Owner chose lane B (the Manitoba two-way
+seam). Frozen charter: `docs/handoffs/miso-manitoba-seam-design-2026-07.md`.
+
+**Diagnosis (derive-first, no LP).** The miso-72 keeper served Manitoba (MHEB)
+with an import-only annual-flat firm block (`MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR`
+726/531/224 MW = 6.36/4.65/1.96 TWh). Measured MHEB (EIA-930 BA-to-BA) is a
+two-way seasonal hydro seam netting +5.39/+3.00/−0.99 TWh — summer-freshet
+import / winter export to winter-peaking Manitoba, net EXPORT in the 2025
+drought (extremes +2,827/−1,417 MW, price-decorrelated r≈0.1–0.3). The block
+over-imports +0.97/+1.64/+2.96 TWh and has no export path. The frozen Q-Q
+duration-coupling construction (the PJM/SPP/South audit-C-6 pattern,
+`scripts/derive_miso_seam_ladders.py`) extended to MHEB reproduces the measured
+net flow ±0.02 TWh/yr offline, incl. the 2025 export.
+
+**Mechanism (`ScenarioConfig.miso_manitoba_seam`, default off, byte-identical
+when off).** One atomic swap: the firm block is dropped and MHEB becomes a
+fourth MEASURED two-way priced seam — `MISO_MANITOBA_SEAM_SPEC` bands (interface
+2,900 MW pinned to the measured +2,827 MW import extreme; import_emission_factor
+0.0 hydro) priced by the frozen ladder `MISO_SEAM_LADDER_BY_YEAR["Manitoba"]` and
+capped by the measured (month × hod) two-way MHEB deliverability envelope
+(`MISO_SEAM_DIBA["Manitoba"]`), reusing the existing seam machinery end-to-end and
+composing with `miso_seam_envelope_merit_cap` through the shared
+`inject_miso_seam_flow_limit` path (no fork). Zero fitted scalars (retires the 3
+firm-block MW values); the ladder/envelope Manitoba entries are inert (row-driven)
+when the flag is off. New tests: flag-off byte-identity, two-way band build +
+firm drop, ladder pricing, envelope auto-cover, merit-cap composition.
+
+**Runs.** `2026-07-18-miso-74-manitoba-seam` (main, PROMOTED keeper) +
+`2026-07-18-miso-74-manitoba-base` (same-box unchanged-recipe drift control;
+reproduces the miso-72 keeper EXACTLY — zero box drift). Full span 2023+2024+2025,
+per-year + `--reuse-solved` (rules 12/16). Rubric v2.7.
+
+**A/B (main − same-box base) — a strict improvement, fails 3 → 2:**
+- **C1 fuelmix FAIL → PASS** (all 16/16 in band; free 11/12 → 12/12):
+  CC_REGULAR-2023 −8.33 → **−7.23 TWh** into band. The flat firm block was
+  over-importing and displacing domestic gas-CC (a compensating error); removing
+  the wrong over-import lets CC recover (rule 11).
+- **C3b PASS, IMPROVED:** 0.080/0.128/0.183 → 0.080/0.124/**0.181** (the ≤0.20
+  veto held — the pre-registered supply-removal un-flattening).
+- **C3a toward actual every year:** −1.4/−7.3/−13.7 → −0.8/−6.7/**−13.3 %**
+  (2025 still FAIL — the irreducible tail).
+- **Manitoba seam (`scripts/miso73_perseam_validate.py` vs measured EIA-930):**
+  net +6.36/+4.65/+1.96 (err +0.97/+1.64/+2.96; corr nan, flat) →
+  +2.60/+1.37/**−0.38** (err −2.79/−1.64/+0.61); **2025 realizes the measured net
+  export** (−0.99) the block cannot; duration RMSE 827/853/737 → **631/636/563 MW**
+  (better every year); hourly corr **nan → +0.67/+0.63/+0.52**.
+- **Net interchange DIAGNOSTIC worsens** (pre-registered rule-14, B3): total err
+  −2.31/−4.54/−5.11 → −5.46/−7.38/−7.27 TWh — the block's over-import was masking
+  the priced-seam (PJM/South) under-import, which re-attributes to the merit-cap
+  lane (miso-73). Not a gated criterion.
+- **R-criteria held:** R1 not-inert (2025 Manitoba moved 2.34 TWh); R2 two-way
+  (2025 export); R3 no import overshoot; R4 the C3b veto did NOT trip; R5 no
+  fabricated scarcity (max LMP $214.42 < base $247.99). B1's annual-net |err|
+  in 2023/2024 (Manitoba +2.60/+1.37 vs measured +5.39/+3.01) is the one band
+  miss — the seam under-clears the deep import rungs at the model's OWN internal
+  price (below the measured DA the ladder is derived against, i.e. the C3a-2025
+  tail residual), a symptom of the price level, not a seam defect (2025, where
+  the price is closest and the flow reverses, lands B1 at +0.61).
+- **C2/C4/C5a/C6/C7/C8 hold** (no new floors — the export envelope only reduces
+  export). DOF measured-for-measured: main 27/2, base 26/2 (+1 measured-physical
+  entry, zero scalars).
+
+**Adjudication (rules 1/11/14) & disposition.** PROMOTED to keeper
+(owner-authorized) — the most structurally faithful AND best-scoring MISO surface
+to date: real two-way seam physics replacing a known-wrong import-only stopgap,
+fixing a load-bearing C1 fail, clearing the veto, zero fitted scalars, with the
+two remaining fails {C3a-2025, C3c} the irreducible scarcity tail (Phase-A §0).
+The worse net-interchange diagnostic is the rule-14/11 honest exposure of the
+priced-seam residual the block was masking — the block's over-import was
+simultaneously the C1-fuelmix cause and a false net-interchange prop. keepers.json
+MISO → `2026-07-18-miso-74-manitoba-seam` (supersedes `2026-07-18-miso-72-winter`).
+**NEXT lane:** the `{Manitoba + merit-cap}` composition — it closes the
+net-interchange volume on top of this keeper (restores the priced-seam imports the
+merit-cap was R1-vetoed for, while Manitoba's supply removal offsets the
+flattening within the C3b headroom Manitoba opens). Registry pruned to top-15
+(miso-66 pair dropped).
