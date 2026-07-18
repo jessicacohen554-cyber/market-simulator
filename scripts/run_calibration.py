@@ -3441,6 +3441,48 @@ def run_year(
             float(storage_soc_min.sum(axis=0).mean()),
         )
 
+    # Measured battery dispatch-shape envelope (caiso_storage_shape_anchor,
+    # caiso-99 Mechanism B, GATED default off): cap the battery units' hourly
+    # charge/discharge at the measured p95 hour-of-day rate per MW of fleet
+    # (EIA-930 NG:OTH ÷ EIA-860 monthly fleet, committed rule-23 derivation) —
+    # the AS-holdback/bid-conservatism capability the nameplate power cap
+    # overstates. Composes with the COD vintage ramp already inside
+    # storage_power_cap; pumped storage passes through. None (flag off /
+    # other ISOs) leaves both keys unset — identical LP.
+    storage_charge_cap = None
+    storage_discharge_cap = None
+    if getattr(config, "caiso_storage_shape_anchor", False) and iso == "CAISO":
+        from market_sim.model.storage import caiso_storage_shape_caps
+
+        storage_charge_cap, storage_discharge_cap = caiso_storage_shape_caps(
+            storage_power_cap, storage_units, config.weather_year, config.hours
+        )
+        _pc2 = np.asarray(storage_power_cap, dtype=float)
+        _pc2 = (
+            np.repeat(_pc2[:, None], config.hours, axis=1) if _pc2.ndim == 1 else _pc2
+        )
+        logger.info(
+            "CAISO storage shape envelope (%d): belly(10-14) charge cap mean "
+            "%.0f MW vs fleet power %.0f MW; evening(17-21) discharge cap "
+            "mean %.0f MW",
+            config.weather_year,
+            float(
+                storage_charge_cap.sum(axis=0)[
+                    np.isin(np.arange(config.hours) % 24, range(10, 15))
+                ].mean()
+            ),
+            float(
+                _pc2.sum(axis=0)[
+                    np.isin(np.arange(config.hours) % 24, range(10, 15))
+                ].mean()
+            ),
+            float(
+                storage_discharge_cap.sum(axis=0)[
+                    np.isin(np.arange(config.hours) % 24, range(17, 22))
+                ].mean()
+            ),
+        )
+
     if fleet_only:
         # Availability-reconstruction exit (no LP): everything a post-solve
         # consumer needs to recompute pmax x availability per unit-hour,
@@ -3601,6 +3643,14 @@ def run_year(
     # ISOs / no award file) leaves the key unset — identical LP.
     if storage_discharge_min is not None:
         dispatch_kwargs.update(storage_discharge_min=storage_discharge_min)
+    # Measured battery dispatch-shape envelope (caiso_storage_shape_anchor):
+    # the (n_storage, T) charge/discharge upper bounds. None (flag off / other
+    # ISOs) leaves the keys unset — identical LP.
+    if storage_charge_cap is not None:
+        dispatch_kwargs.update(
+            storage_charge_cap=storage_charge_cap,
+            storage_discharge_cap=storage_discharge_cap,
+        )
     # Declared-window ELMP emergency-tier pricing (maxgen_emergency_tier_
     # pricing, GATED default off — the MISO F5 scarcity-depth lane): inside a
     # maxgen-events registry window declared at Max Gen Warning or higher,
