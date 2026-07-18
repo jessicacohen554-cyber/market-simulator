@@ -406,8 +406,19 @@ data/raw/*-weather/_ghcn_cache/
 /results/regression-goldens/*/*/
 scratch_hindcast/
 
-# Capacity-hindcast raw dispatch parquets are reproducible; commit ledgers+score only.
+# Capacity-hindcast bundle internals are reproducible from the recorded config
+# (meta.json carries the harness flags + cache key; build_config is pure), so
+# the committed deliverable is the slim set: meta.json + score.json + the
+# frontend sidecar + the report (FF-1A-C convention — per-plant PJM/MISO
+# evolution ledgers run 10k+ lines each, past what the API push transport can
+# carry byte-safely; ff-retirement-rule-implementation-2026-07.md §9).
+# Ledgers/configs committed under the earlier "ledgers+score" convention stay
+# tracked (gitignore never untracks).
 results/hindcast/*/*/*/year_*.parquet
+results/hindcast/*/*/*/evolution_*.json
+results/hindcast/*/*/*/year_*_floor_retentions.json
+results/hindcast/*/*/*/config.yaml
+results/hindcast/*/run_config.yaml
 # Capacity-hindcast harness stdout logs are scratch (bundles carry the record).
 results/hindcast/*.log
 results/hindcast/*/run.log
