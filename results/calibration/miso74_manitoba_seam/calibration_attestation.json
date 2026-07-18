@@ -141,7 +141,7 @@
     "where": "interchange_config.py MISO seam band-price ladders",
     "identification": "measured-physical",
     "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
-    "source": "per-seam Q-Q duration coupling of the measured MISO DA hub LMP with measured EIA-930 per-seam flows on the fixed 8-band grid, frozen scripts/derive_miso_seam_ladders.py (audit C-6 CLOSED for MISO 2026-07-07; G-23-residual import-starvation fix)",
+    "source": "per-seam Q-Q duration coupling of the measured MISO DA hub LMP with measured EIA-930 per-seam flows on the fixed 8-band grid, frozen scripts/data/derive_miso_seam_ladders.py (audit C-6 CLOSED for MISO 2026-07-07; G-23-residual import-starvation fix)",
     "note": "re-derive trigger is a source-data change only (rule 23), never a residual; representation bound: hourly placement of the scheduled seam base is duration-curve-level only (docs/multi-iso/miso-import-starvation-rootcause-2026-07.md \u00a73)"
    },
    {
@@ -149,7 +149,7 @@
     "where": "data/raw/_processed-legacy/campd_ct_run_lengths_MISO.csv via fleet.campd_ct_run_lengths",
     "identification": "measured-physical",
     "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
-    "source": "EPA CAMPD unit-level hourly grossLoad start-to-stop run blocks (simple-cycle CT units, pooled 2023-2025), frozen scripts/derive_campd_ct_run_lengths.py; start cost is the published NREL/SR-5500-55433 CT_STARTUP_PARAMS (constants.py)",
+    "source": "EPA CAMPD unit-level hourly grossLoad start-to-stop run blocks (simple-cycle CT units, pooled 2023-2025), frozen scripts/data/derive_campd_ct_run_lengths.py; start cost is the published NREL/SR-5500-55433 CT_STARTUP_PARAMS (constants.py)",
     "note": "re-derive trigger is a source-data change only (rule 23), never a residual; representation bound: monthly-granularity amortization (compute_monthly_markup), no within-day run-length variation"
    },
    {
@@ -157,7 +157,7 @@
     "where": "data/raw/_processed-legacy/campd_ct_run_bands_MISO.csv via fleet.campd_ct_run_band_ratios",
     "identification": "measured-physical",
     "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
-    "source": "EPA CAMPD start-to-stop runs keyed by start-hour within-year net-load percentile (EIA-930 D-WND-SUN), class-pooled band medians / pooled median (shape), plant median (level); frozen scripts/derive_campd_ct_run_lengths.py --condition-bands",
+    "source": "EPA CAMPD start-to-stop runs keyed by start-hour within-year net-load percentile (EIA-930 D-WND-SUN), class-pooled band medians / pooled median (shape), plant median (level); frozen scripts/data/derive_campd_ct_run_lengths.py --condition-bands",
     "note": "re-derive trigger is a CAMPD/EIA-930 source-data change only (rule 23); band edges recorded in the artifact and checked against the consumer"
    },
    {
@@ -210,7 +210,7 @@
     "identification": "measured-physical",
     "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
     "n_scalars": 0,
-    "source": "EIA Natural Gas Weekly Update spot-price table ('Chicago' row = NGI Daily GPI), 680 weekday prints 2023-2025 (scripts/fetch_miso_citygate_daily.py); Chicago-hub zone set {Illinois, Indiana, East} READ from miso_zonal_gas_hub.csv (hub == 'Chicago Citygate (IL)' \u2014 the same file apply_miso_zonal_gas_basis reads); winter months {12, 1, 2} (meteorological-winter pipeline-scarcity season); flow-date placement trade+1, weekend/holiday forward-fill (NG gas-day market structure; the caiso-90 _flow_date_staircase precedent)",
+    "source": "EIA Natural Gas Weekly Update spot-price table ('Chicago' row = NGI Daily GPI), 680 weekday prints 2023-2025 (scripts/data/fetch_miso_citygate_daily.py); Chicago-hub zone set {Illinois, Indiana, East} READ from miso_zonal_gas_hub.csv (hub == 'Chicago Citygate (IL)' \u2014 the same file apply_miso_zonal_gas_basis reads); winter months {12, 1, 2} (meteorological-winter pipeline-scarcity season); flow-date placement trade+1, weekend/holiday forward-fill (NG gas-day market structure; the caiso-90 _flow_date_staircase precedent)",
     "note": "shape-only and mean-preserving WITHIN month by construction (rule 11: the keeper's monthly MISO gas level is measured EIA-923 and already correct \u2014 only the within-month daily placement changes); Chicago-only coverage: West/Plains/South keep the national-HH shape (HH is a conservative under-proxy for MidCon/Gulf, rule 14; Lower-Michigan/MichCon daily stays a paywalled-ICE open item, miso-data-audit Item 4); forecast years take the forward curve's regional Chicago basis and its own daily shape (rule 13 forward-native); refresh rides the EIA NGWU fetch only (rule 23)"
    },
    {
@@ -219,7 +219,7 @@
     "identification": "measured-physical",
     "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
     "n_scalars": 0,
-    "source": "Q-Q duration coupling of the measured MISO DA hub LMP with the measured EIA-930 MHEB flow on the fixed 8-band grid, frozen scripts/derive_miso_seam_ladders.py; the two-way deliverability envelope is the per-(month x hod) percentile of the measured MHEB flow, both directions. Replaces the import-only firm block (retires its 3 per-year MW values). Frozen charter: docs/handoffs/miso-manitoba-seam-design-2026-07.md (offline P9 reproduces measured MHEB net flow +/-0.02 TWh/yr incl. the 2025 net export).",
+    "source": "Q-Q duration coupling of the measured MISO DA hub LMP with the measured EIA-930 MHEB flow on the fixed 8-band grid, frozen scripts/data/derive_miso_seam_ladders.py; the two-way deliverability envelope is the per-(month x hod) percentile of the measured MHEB flow, both directions. Replaces the import-only firm block (retires its 3 per-year MW values). Frozen charter: docs/handoffs/miso-manitoba-seam-design-2026-07.md (offline P9 reproduces measured MHEB net flow +/-0.02 TWh/yr incl. the 2025 net export).",
     "note": "re-derive trigger is a source-data change only (rule 23), never a residual; representation bound: hourly placement is duration-curve-level (price-decorrelated seam)"
    },
    {
@@ -228,7 +228,7 @@
     "identification": "measured-physical",
     "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
     "n_scalars": 0,
-    "source": "per-unit EPA CAMPD hourly gross generation (scripts/derive_campd_unit_outages.py --short-windows); identification guards: coal-only detector + unit annual CF >= 0.55 (the partial-outage detector's baseload constant) + the revealed-availability in-merit filter (outage_detect.filter_revealed_outages; the full-stop override cannot engage below the 5-day cap)",
+    "source": "per-unit EPA CAMPD hourly gross generation (scripts/data/derive_campd_unit_outages.py --short-windows); identification guards: coal-only detector + unit annual CF >= 0.55 (the partial-outage detector's baseload constant) + the revealed-availability in-merit filter (outage_detect.filter_revealed_outages; the full-stop override cannot engage below the 5-day cap)",
     "note": "the >= 5-day duration floor makes event-coincident short forced outages invisible (MISO Jul 28-29 2025: ~2.8 GW coal offline at the peak block beyond the overlay; docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md); CT/CC event unavailability stays unmodeled pending a max-gen-event registry intake (no identification without it)"
    },
    {
@@ -287,7 +287,7 @@
    },
    {
     "name": "maxgen-events registry (declared capacity-emergency windows)",
-    "where": "data/raw/maxgen-events/{iso}/ via scripts/curate_maxgen_events (clean_io seam; schema maxgen-events.schema.yaml)",
+    "where": "data/raw/maxgen-events/{iso}/ via scripts/data/curate_maxgen_events (clean_io seam; schema maxgen-events.schema.yaml)",
     "identification": "measured-physical",
     "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
     "n_scalars": 0,
@@ -300,7 +300,7 @@
     "identification": "measured-physical",
     "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
     "n_scalars": 0,
-    "source": "per-unit EPA CAMPD hourly gross generation inside the registry windows only (scripts/derive_campd_maxgen_outages.py); frozen guards: declared-window scope clipped to the declared start/end, $150 DA in-merit certificate (region-scoped hubs, >= 2 window hours; sensitivity across [$120,$200] recomputed at derivation), capability = max gross in a \u00b145-day window centered on the event with best-event-hour credit (F3 dual-basis stability check), no control-day screen",
+    "source": "per-unit EPA CAMPD hourly gross generation inside the registry windows only (scripts/data/derive_campd_maxgen_outages.py); frozen guards: declared-window scope clipped to the declared start/end, $150 DA in-merit certificate (region-scoped hubs, >= 2 window hours; sensitivity across [$120,$200] recomputed at derivation), capability = max gross in a \u00b145-day window centered on the event with best-event-hour credit (F3 dual-basis stability check), no control-day screen",
     "note": "inside a declared, in-merit-certified window an available unit runs, so absence/reduction below the unit's own demonstrated capability is revealed unavailability \u2014 dispatch above the derate stays free (no outcome pinning, rules 1/11/13); re-derives only on a new CAMPD/declaration vintage (rule 23)"
    },
    {
@@ -348,7 +348,7 @@
   "no_fit_to_price_residuals": true,
   "no_pinning_to_actuals": true,
   "outage_filter_exogenous_net_load": true,
-  "attested_by": "miso-74 Manitoba two-way seam 2026-07-18 (PROMOTED keeper, owner-authorized \u2014 a strict improvement over miso-72): the prior miso-72 keeper recipe (scripts/run_miso74_manitoba_probe.py \u2014 the miso72_winter_citygate meta.json strict replay via replay_keeper.build_kwargs) plus ONE change through the generic prb_overrides channel: miso_manitoba_seam = True. The import-only annual-flat Manitoba (MHEB) firm block (726/531/224 MW) is REPLACED by a fourth MEASURED two-way priced seam \u2014 the MISO_MANITOBA_SEAM_SPEC bands priced by the frozen Q-Q ladder MISO_SEAM_LADDER_BY_YEAR['Manitoba'] (scripts/derive_miso_seam_ladders.py, the same construction as PJM/SPP/South) and capped by the measured (month x hod) two-way MHEB deliverability envelope (MISO_SEAM_DIBA['Manitoba']) \u2014 reusing the existing seam machinery end-to-end and composing with miso_seam_envelope_merit_cap through the shared inject_miso_seam_flow_limit path (no fork). ZERO new fitted parameters: the interface limit is physically pinned (measured +2,827 MW import extreme), the emission factor 0.0 (hydro); it retires the 3 firm-block MW values. Offline P9 reproduces measured MHEB net flow +/-0.02 TWh/yr incl. the 2025 net export. Design FROZEN before the build (docs/handoffs/miso-manitoba-seam-design-2026-07.md \u00a73-\u00a75: bands B1-B7, refutations R1-R6 all pre-registered).",
+  "attested_by": "miso-74 Manitoba two-way seam 2026-07-18 (PROMOTED keeper, owner-authorized \u2014 a strict improvement over miso-72): the prior miso-72 keeper recipe (scripts/run_miso74_manitoba_probe.py \u2014 the miso72_winter_citygate meta.json strict replay via replay_keeper.build_kwargs) plus ONE change through the generic prb_overrides channel: miso_manitoba_seam = True. The import-only annual-flat Manitoba (MHEB) firm block (726/531/224 MW) is REPLACED by a fourth MEASURED two-way priced seam \u2014 the MISO_MANITOBA_SEAM_SPEC bands priced by the frozen Q-Q ladder MISO_SEAM_LADDER_BY_YEAR['Manitoba'] (scripts/data/derive_miso_seam_ladders.py, the same construction as PJM/SPP/South) and capped by the measured (month x hod) two-way MHEB deliverability envelope (MISO_SEAM_DIBA['Manitoba']) \u2014 reusing the existing seam machinery end-to-end and composing with miso_seam_envelope_merit_cap through the shared inject_miso_seam_flow_limit path (no fork). ZERO new fitted parameters: the interface limit is physically pinned (measured +2,827 MW import extreme), the emission factor 0.0 (hydro); it retires the 3 firm-block MW values. Offline P9 reproduces measured MHEB net flow +/-0.02 TWh/yr incl. the 2025 net export. Design FROZEN before the build (docs/handoffs/miso-manitoba-seam-design-2026-07.md \u00a73-\u00a75: bands B1-B7, refutations R1-R6 all pre-registered).",
   "note": "Manitoba two-way seam \u2014 PROMOTED keeper, a STRICT improvement over miso-72 (mechanism-only read = main minus a same-box unchanged-keeper-recipe base replica; the base reproduces the registered miso-72 keeper EXACTLY on every gated criterion, zero box drift). SCORES BETTER: fails 3 \u2192 2. C1 fuelmix FAIL \u2192 PASS (all 16/16 in band, free 11/12 \u2192 12/12) \u2014 CC_REGULAR-2023 recovers \u22128.33 \u2192 \u22127.23 TWh into band: the firm block was over-importing (+0.97/+1.64/+2.96 vs measured) and displacing domestic CC, a compensating error the measured two-way seam removes (rule 11). C3b \u22640.20 veto (R4) HELD and IMPROVED \u2014 0.080/0.124/0.181 all PASS (base 0.080/0.128/0.183; 2025 0.183 \u2192 0.181, the pre-registered supply-removal un-flattening). C3a moved toward actual every year (\u22121.4/\u22127.3/\u221213.7 \u2192 \u22120.8/\u22126.7/\u221213.3 %). MORE STRUCTURALLY FAITHFUL: the two-way physics the flat import block cannot represent is reproduced \u2014 2025 realizes a net EXPORT (Manitoba \u22120.38 vs block +1.96; measured \u22120.99), R2 passed; per-seam duration RMSE improves EVERY year (Manitoba 827/853/737 \u2192 631/636/563 MW) and hourly correlation is restored (flat block nan \u2192 +0.67/+0.63/+0.52; scripts/miso73_perseam_validate.py vs measured EIA-930). R1 held (2025 Manitoba net moved 2.34 TWh, not inert); R3 held (no import overshoot); R5 held (max LMP $214.42 < base $247.99, no fabricated scarcity). The 2 remaining fails {C3a-2025 \u221213.3%, C3c 0/6/1 vs RT 30/37/88 (base 1/7/1)} are BOTH the irreducible scarcity tail (Phase-A \u00a70: C3a-2025 ~78% out-of-representation; maxgen/engagement scarcity already at its legitimate extent). Per the pre-registered rule-14 signature (B3) the TOTAL net interchange DIAGNOSTIC worsened (err \u22122.31/\u22124.54/\u22125.11 \u2192 \u22125.46/\u22127.38/\u22127.27 TWh): the firm block's over-import was masking the priced-seam (PJM/South) under-import \u2014 a diagnostic (not a gated criterion) that re-attributes to the merit-cap lane. The one band miss is B1's annual-net |err| in 2023/2024 (Manitoba +2.60/+1.37 vs measured +5.39/+3.01, >1.5): the seam clears economically at the model's OWN internal price, which sits below the measured DA the ladder is derived against (the C3a-2025 tail residual), so it under-clears the deep import rungs \u2014 a symptom of the price residual, not a seam defect (2025, where the price is closest and the flow reverses, lands B1 at +0.61). C2/C4/C5a/C6/C7/C8 hold (NO new floors \u2014 the export envelope only reduces export). DOF measured-for-measured: the miso_manitoba_seam entry is measured-physical n_scalars 0 and retires the 3 firm-block MW values (main 27/2, base 26/2). DISPOSITION: PROMOTED to keeper (owner-authorized 2026-07-18) per rules 1/11 \u2014 most structurally faithful AND best-scoring. NEXT lane: the {Manitoba + merit-cap} composition closes the net-interchange volume on top of this keeper (restores the priced-seam imports the merit-cap was R1-vetoed for while Manitoba's supply removal offsets the flattening within the C3b headroom Manitoba opens)."
  },
  "disclosures": {
