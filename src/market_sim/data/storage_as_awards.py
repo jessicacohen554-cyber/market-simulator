@@ -90,7 +90,7 @@ def load_storage_as_awards(
         FileNotFoundError: the clean partition is absent — the mechanism flag
             hard-errors rather than silently solving without the reservation
             it claims to apply (regenerate with
-            ``python scripts/curate_storage_as_awards.py``).
+            ``python scripts/data/curate_storage_as_awards.py``).
         ValueError: a series has an interior coverage hole, or non-finite /
             negative award MW.
     """

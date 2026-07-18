@@ -1,4 +1,4 @@
-"""Tests for scripts/curate_transfer_interface_limits.py (PJM spec).
+"""Tests for scripts/data/curate_transfer_interface_limits.py (PJM spec).
 
 Builds a tiny synthetic Data Miner 2 ``transfer_limits_and_flows`` CSV, runs
 ``curate`` against a tmp raw root with CLEAN_DIR redirected (as in
@@ -16,7 +16,7 @@ from tempfile import TemporaryDirectory
 import numpy as np
 import pandas as pd
 
-from scripts import curate_transfer_interface_limits as cur
+from scripts.data import curate_transfer_interface_limits as cur
 from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
 

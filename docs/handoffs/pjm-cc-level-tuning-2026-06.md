@@ -18,7 +18,7 @@
 > **Update (2026-06-25): the `1.21×` NYISO reach above is BORROWED from ERCOT,
 > and the `nyiso 28 native-hr` probe tested removing that borrow.** It re-grounded
 > the NYISO CC/ST curve in NYISO's OWN CAMPD incremental HR (new tool
-> `scripts/derive_campd_marginal_hr.py`, the CEMS analogue of
+> `scripts/data/derive_campd_marginal_hr.py`, the CEMS analogue of
 > `derive_dam_offer_hrmults.py`) and found NYISO's native CC reach is **0.925×**
 > (not 1.21) — re-grounding to it **craters `C3a`** to −24/−26.5/−23.5 %. The
 > lesson, which **applies directly to PJM**: CEMS gives the marginal **cost**, not

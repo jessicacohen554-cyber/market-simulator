@@ -14,7 +14,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_capacity_market_avoidable_cost_rate as curate_acr
+from scripts.data import curate_capacity_market_avoidable_cost_rate as curate_acr
 from scripts.lib import capacity_market_avoidable_cost_rate as acr
 from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean

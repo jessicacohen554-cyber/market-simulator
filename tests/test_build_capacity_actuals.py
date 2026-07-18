@@ -13,7 +13,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import build_capacity_actuals as bca
+from scripts.data import build_capacity_actuals as bca
 
 
 def _write_plant_and_retired(eia_dir: Path) -> None:

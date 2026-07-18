@@ -6,7 +6,7 @@ prerequisites): what measured inputs landed for a seasonal (Nov–Mar) oil-burn
 budget, what is missing, and the exact derivation formula. **No model/LP
 changes** — this is a data task only. New datatype: `winter-fuel-inventory`
 (schema `data/dictionary/schema/winter-fuel-inventory.schema.yaml`, curation
-`scripts/curate_winter_fuel_inventory.py`, raw
+`scripts/data/curate_winter_fuel_inventory.py`, raw
 `data/raw/winter-fuel-inventory/`).
 
 ## Admissibility posture (CLAUDE.md #11 / #13)
@@ -142,7 +142,7 @@ without importing any F923-style deliveries/burn as a budget driver.
 
 - Schema: `data/dictionary/schema/winter-fuel-inventory.schema.yaml`
 - Registry lib: `scripts/lib/winter_fuel_inventory/{__init__.py, isone.py}`
-- Curation: `scripts/curate_winter_fuel_inventory.py` (+ `regenerate_clean.py` DATATYPES)
+- Curation: `scripts/data/curate_winter_fuel_inventory.py` (+ `regenerate_clean.py` DATATYPES)
 - Raw: `data/raw/winter-fuel-inventory/README.md`, `isone/isone.csv`
 - Constants: `MMBTU_PER_BBL_DISTILLATE/RESIDUAL` (constants.py, EIA MER cited)
 - Test: `tests/test_curate_winter_fuel_inventory.py` (8 tests)

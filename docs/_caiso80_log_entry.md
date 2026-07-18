@@ -36,7 +36,7 @@ with the supply-consistent honest series `demand(t) = 930 NetGen(t) −
 NG_cell(t) + CEMS bench-gas grid(t) + cogen grid flat + geo/biomass fold-in
 flat − TI(t)` = **207.40/212.19/205.59 TWh** (−4.8/−5.2/−8.3 % vs the corrupt
 cell). Derived measured artifact
-(`scripts/derive_caiso_supply_consistent_demand.py` →
+(`scripts/data/derive_caiso_supply_consistent_demand.py` →
 `data/raw/reference/caiso-supply-consistent-demand/`, guard-railed to the
 committed CEMS anchors and pre-registered windows), gated
 `ScenarioConfig.caiso_supply_consistent_demand` (default off, CAISO backcast

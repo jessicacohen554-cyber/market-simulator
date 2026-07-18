@@ -34,6 +34,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "scripts"))
 
+sys.path.insert(0, str(REPO / "scripts" / "data"))
 from derive_pjm_ordc_overlay import _run_year_kwargs  # noqa: E402
 
 from market_sim.config.plant_taxonomy import fuel930_of  # noqa: E402

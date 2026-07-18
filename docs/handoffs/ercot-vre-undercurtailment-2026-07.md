@@ -98,7 +98,7 @@ and the `ercot38` probe) carries this line:
 
 ```
 INFO: gtc-limits: no clean partition for ERCOT <year> (supply the NP6-86
-      archives and run scripts/curate_gtc_limits.py)
+      archives and run scripts/data/curate_gtc_limits.py)
 WARNING: ercot_gtc_limits_measured: no gtc-limits clean partition for
       <year> — static TTC kept
 ```
@@ -115,7 +115,7 @@ containers those solves ran in.
 **The raw source data has been sitting in the repo the whole time.**
 `data/raw/iso-specific-transmission/SCEDBTCNP686_SCEDBTCNP686_<year>.parquet`
 already covers 2020-2025 (committed, not gitignored). Running
-`python scripts/curate_gtc_limits.py` (no new intake, no network access, just
+`python scripts/data/curate_gtc_limits.py` (no new intake, no network access, just
 re-curates the already-present archives) populated the clean partition for
 every year in ~seconds this session:
 
@@ -155,7 +155,7 @@ right lever to pull, not a validated result.
 
 **Next session: re-run exactly that probe first.**
 `data/clean/gtc-limits` is gitignored — confirm
-`python scripts/curate_gtc_limits.py` has been (re-)run in the fresh
+`python scripts/data/curate_gtc_limits.py` has been (re-)run in the fresh
 container before solving (it populated instantly from the already-committed
 raw archives last time, ~seconds, no network access). Then:
 
@@ -238,8 +238,8 @@ already improved). Register it on the dashboard as a probe either way (rule
 - `docs/calibration-log.md`, 2026-07-06 entry — `ercot38` C-score comparison.
 - `src/market_sim/data/renewables.py` — `hsl_potential_mw`,
   `_HSL_COVERAGE_RECONCILE_TOL`.
-- `src/market_sim/data/gtc.py`, `scripts/curate_gtc_limits.py`,
-  `scripts/derive_ttc_limits.py` — the measured-GTC seam, already built,
+- `src/market_sim/data/gtc.py`, `scripts/data/curate_gtc_limits.py`,
+  `scripts/data/derive_ttc_limits.py` — the measured-GTC seam, already built,
   never activated for a committed ERCOT run.
 - `src/market_sim/config/constants.py:ERCOT_GTC_LINK_MAP`,
   `src/market_sim/config/iso_configs.py` (`_ercot_config` `TransferLink`

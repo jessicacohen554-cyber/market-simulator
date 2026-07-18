@@ -267,7 +267,7 @@ PRICE_SHAPE_NRMSE_MAX = 0.20  # PASS: monthly NRMSE (v2.3 owner amendment)
 PRICE_SHAPE_NRMSE_COMMERCIAL = 0.20  # coincident outer band (memo §2)
 # C3c scarcity tail — scores the hourly tail (rubric §1 C3c, §5) from the
 # committed actual-tail part (frontend/data/backcast/tail/actual_tail.json,
-# scripts/derive_actual_tail.py). The gated basis is the ACTUAL RT scarcity
+# scripts/data/derive_actual_tail.py). The gated basis is the ACTUAL RT scarcity
 # tail for EVERY ISO (rubric v2.7 owner amendment 2026-07-16): the RT hourly
 # hub tail is the scarcity the market actually realized — the judged
 # quantity. The DA count is always emitted as the report-only diagnostic
@@ -618,7 +618,7 @@ def _band_result(err_abs: float, target: float, commercial: float):
 
 
 # ---------------------------------------------------------------------------
-# Actual scarcity-tail part (committed, scripts/derive_actual_tail.py)
+# Actual scarcity-tail part (committed, scripts/data/derive_actual_tail.py)
 # ---------------------------------------------------------------------------
 TAIL_DIR = DATA_DIR / "tail"
 _TAIL_CACHE: dict | None = None
@@ -1311,7 +1311,7 @@ def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
     The model tail (count of hours the LP's max zonal dual exceeds the per-ISO
     threshold, from the payload's ``ordc.hoursGt200.model``) is gated against
     the committed **RT hourly** actual tail count (``tail/actual_tail.json``,
-    ``scripts/derive_actual_tail.py``) for EVERY ISO (rubric §5, v2.7 owner
+    ``scripts/data/derive_actual_tail.py``) for EVERY ISO (rubric §5, v2.7 owner
     amendment 2026-07-16): the RT hourly hub tail is the scarcity the market
     actually realized — the judged quantity. The DA count is the report-only
     diagnostic row: it prices scarcity *expectations*, and its wedge over RT
@@ -1359,7 +1359,7 @@ def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
                 year,
                 f"no committed {gate_lbl} actual tail for this ISO-year "
                 "(frontend/data/backcast/tail/actual_tail.json — run "
-                "scripts/derive_actual_tail.py)",
+                "scripts/data/derive_actual_tail.py)",
             )
         )
     else:

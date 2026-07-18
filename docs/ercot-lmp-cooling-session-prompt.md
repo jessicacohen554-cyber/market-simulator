@@ -93,7 +93,7 @@ stays unchanged beneath it. Deltas ADD to the resolved curve.
 - Floor/scarcity hypotheses: co-opt knobs are ScenarioConfig fields
   (`ordc_mcl_mw`, `ordc_lolp_shift_sigma`, `ordc_multistep_floor`,
   `ordc_lolp_params_path`); `--energy-reserve-coopt` is already on. See
-  `docs/ordc-overlay.md` and `scripts/derive_ordc_overlay.py`.
+  `docs/ordc-overlay.md` and `scripts/data/derive_ordc_overlay.py`.
 
 ## Run + compare — NAME THE BUNDLE
 

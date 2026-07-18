@@ -21,7 +21,7 @@ peaker-budget FAIL (>10%) in every year.
 
 ## 1. The drag's rule-17 credentials (driver, window, forward story) — intact
 
-Per its derivation (`scripts/derive_caiso_ct_reliability_floor.py`):
+Per its derivation (`scripts/data/derive_caiso_ct_reliability_floor.py`):
 
 - **External driver:** CAISO local-RA commitment of fast-start simple-cycle peakers (LA
   Basin / Big-Creek-Ventura / Bay Area local capacity areas) during the duck-curve neck —
@@ -99,7 +99,7 @@ criterion, with the D-8 acceptance made explicit here:
   rule 1), G-15 stays open, and the failure evidence goes to the ramp-locational thread —
   never won back by re-tuning the drag.
 - **D-8 acceptance on any surviving floor:** whatever floor remains after the A/B (LCR
-  min-gen or a residual drag) must re-run `scripts/d8_coefficient_stability.py` and sit
+  min-gen or a residual drag) must re-run `scripts/archive/d8_coefficient_stability.py` and sit
   within the ±15% LOYO gate, or the calibration-complete checklist item 4 stays red for
   CAISO.
 

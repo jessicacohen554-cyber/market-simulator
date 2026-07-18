@@ -27,7 +27,7 @@ handing ERCOT 477 MW of phantom 2026 fleet (V H Braunig backlog) on a fresh
 checkout. A curated root with no partition for the requested ISO still
 degrades quietly — that is a legitimately zero-row registry (NYISO), not a
 setup failure. Remediation:
-``PYTHONPATH=. python scripts/curate_confirmed_retirements.py``.
+``PYTHONPATH=. python scripts/data/curate_confirmed_retirements.py``.
 Forecast-forward only: a backcast's historical exits are already carried by the
 EIA-860 vintage snapshot + within-window retiree build (plan §5.4).
 """
@@ -49,7 +49,7 @@ DATATYPE = "confirmed-retirements"
 # no registry until it is regenerated; and cache_key hashes config only,
 # never data-file state, so caches solved before the regeneration must go.
 _REMEDIATION = (
-    "run `PYTHONPATH=. python scripts/curate_confirmed_retirements.py` from "
+    "run `PYTHONPATH=. python scripts/data/curate_confirmed_retirements.py` from "
     "the repo root to regenerate data/clean/confirmed-retirements, then "
     "delete any results/<ISO>/<key>/ caches solved before it existed "
     "(cache_key hashes config only, never data-file state)"
@@ -175,7 +175,7 @@ def load_confirmed_exits(
             ) from exc
         logger.warning(
             "confirmed-retirements: HINDCAST INFORMATION-GATE WARNING — clean "
-            "partition for %s absent; run scripts/curate_confirmed_retirements.py "
+            "partition for %s absent; run scripts/data/curate_confirmed_retirements.py "
             "(and scripts/regenerate_clean.py) before trusting any hindcast A/B "
             "leg that expects this ISO's confirmed-exit/reversal channel — a "
             "missing partition silently degrades to the economic screen and "
@@ -310,7 +310,7 @@ def load_announced_reversal_plants(
             "confirmed-retirements: HINDCAST INFORMATION-GATE WARNING — clean "
             "partition for %s absent; no reversal suppression applied. A "
             "missing partition must never be mistaken for information "
-            "discipline (RC-1B D4) — run scripts/curate_confirmed_retirements.py "
+            "discipline (RC-1B D4) — run scripts/data/curate_confirmed_retirements.py "
             "+ scripts/regenerate_clean.py first.",
             iso,
         )

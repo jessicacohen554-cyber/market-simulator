@@ -4,7 +4,7 @@
 Consumes a bundle produced by ``scripts/run_capacity_hindcast.py`` (evolution
 ledgers + dispatch parquets under ``results/hindcast/<run>/<iso>/<key>/``) and
 the scoring target ``data/raw/_validation-source/capacity_actuals_<iso>.csv``
-(built by ``scripts/build_capacity_actuals.py``). Emits:
+(built by ``scripts/data/build_capacity_actuals.py``). Emits:
 
 * ``<bundle>/score.json`` — every metric, its band, and pass/fail;
 * ``docs/hindcast-reports/<iso>-<start>-<end>-<variant>-<date>.md`` — the report,
@@ -110,7 +110,7 @@ def load_actuals(iso: str) -> pd.DataFrame:
     path = Path("data/raw/_validation-source") / f"capacity_actuals_{iso.lower()}.csv"
     if not path.exists():
         raise SystemExit(
-            f"actuals not found: {path} — run scripts/build_capacity_actuals.py --iso {iso}"
+            f"actuals not found: {path} — run scripts/data/build_capacity_actuals.py --iso {iso}"
         )
     return pd.read_csv(path, comment="#")
 

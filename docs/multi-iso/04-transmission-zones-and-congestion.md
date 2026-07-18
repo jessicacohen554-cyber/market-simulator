@@ -25,7 +25,7 @@ with a single `ttc_mw`, *not* full nodal/PTDF. ERCOT collapses real GTCs into
 that bound the ISO's real recurring congestion, then set each link's TTC from
 the binding interface's observed limit.
 
-**TTC sourcing method (the ERCOT gold standard, `scripts/derive_ttc_limits.py`):**
+**TTC sourcing method (the ERCOT gold standard, `scripts/data/derive_ttc_limits.py`):**
 take the ISO's binding-constraint / shadow-price archive, find the interface's
 mean observed limit and how often it binds, and use the mean limit as `ttc_mw`.
 An aggregate interface that the model splits across two links is apportioned by

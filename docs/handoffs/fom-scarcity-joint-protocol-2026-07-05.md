@@ -58,7 +58,7 @@ a fleet-average across old units sits below it. The screen's going-forward bar i
 
 ## 2. Probe matrix (plan §5 step 3)
 
-`scripts/run_fom_scarcity_grid.py`, ERCOT 2026-2031 mid-growth, legacy equal-width fleet
+`scripts/archive/run_fom_scarcity_grid.py`, ERCOT 2026-2031 mid-growth, legacy equal-width fleet
 (`use_campd_bins=False`, runtime; leverage ranking robust to granularity), sequential years,
 2 concurrent solves (rule 12), 42 min wall-clock. `reserve_margin_build_enabled=True` in every
 cell so the adequacy backstop is *observable* (it is default-off in a normal forecast; enabling
@@ -194,7 +194,7 @@ The current 8 / 12 / 40 defaults are **mis-cited** in `frontend/data/parameters.
 
 - Pure-diagnostic per-fuel screen revenue stack log in `apply_economic_retirements` (rule-24 safe;
   no decision effect) — the revenue-side audit instrument.
-- `scripts/run_fom_scarcity_grid.py` — the 2×3 ERCOT + 2-cell PJM probe matrix.
+- `scripts/archive/run_fom_scarcity_grid.py` — the 2×3 ERCOT + 2-cell PJM probe matrix.
 - Behavioural test `TestFomThresholdFlip` — retirement flips at the ATB FOM bar on a single unit
   whose revenue sits between the legacy (8) and ATB (21) $/kW-yr bars.
 - This report + `fom-scarcity-grid-2026-07-05.json`; corrected FOM citations.

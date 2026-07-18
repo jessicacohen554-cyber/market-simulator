@@ -16,7 +16,7 @@ their energy onto the cheaper combined-cycle stack:
 Unlike CAISO/NYISO, where the peaker miss is a summer-only cooling phenomenon,
 ISO-NE is a **dual-limb** weather system. Regressing the measured CAMPD capacity
 factor (pooled 2023-2025) on the NEISO load-weighted daily temperature
-(`scripts/derive_neiso_temp_reliability_floor.py`, NOAA GHCN-Daily TMAX/TMIN over
+(`scripts/data/derive_neiso_temp_reliability_floor.py`, NOAA GHCN-Daily TMAX/TMIN over
 Boston Logan, Providence, Hartford-Bradley, Portland-ME, Concord-NH,
 Burlington-VT) separates the fleets cleanly:
 

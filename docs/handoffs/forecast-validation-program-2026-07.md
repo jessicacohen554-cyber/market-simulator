@@ -30,7 +30,7 @@ silently left to contradict §6.
 
 | Item | State |
 |---|---|
-| Capacity hindcast | ~~**Never built.**~~ **Built and run** (§6): `scripts/run_capacity_hindcast.py`, `scripts/score_capacity_hindcast.py`, `scripts/build_capacity_actuals.py`, `scripts/register_hindcast.py` all exist; `docs/hindcast-reports/` holds ERCOT + PJM realized/asknown runs (plus later `-s2`/`-s3` re-runs from the Stage-2/3 revenue-side fix, `docs/handoffs/fom-scarcity-joint-protocol-2026-07-05-stage2.md`), registered under `results/hindcast/` and `frontend/data/hindcast/`. |
+| Capacity hindcast | ~~**Never built.**~~ **Built and run** (§6): `scripts/run_capacity_hindcast.py`, `scripts/score_capacity_hindcast.py`, `scripts/data/build_capacity_actuals.py`, `scripts/register_hindcast.py` all exist; `docs/hindcast-reports/` holds ERCOT + PJM realized/asknown runs (plus later `-s2`/`-s3` re-runs from the Stage-2/3 revenue-side fix, `docs/handoffs/fom-scarcity-joint-protocol-2026-07-05-stage2.md`), registered under `results/hindcast/` and `frontend/data/hindcast/`. |
 | Forecast invariant checker | ~~**Absent.**~~ **Landed** (§6): `scripts/check_forecast_invariants.py` (29KB, I1-I14 + P1-P3) exists on disk and is wired into `.github/workflows/forecast-invariants.yml`. |
 | Forecast e2e coverage | ~~**Zero.**~~ **Closed** (§6): `tests/test_forecast_invariants.py` (not a separate `test_forecast_e2e.py` as originally named in §2.4 — folded into the same file) has 34 fast invariant-logic cases plus `test_real_forecast_invariants_pass` (`@pytest.mark.slow`, `RUN_SLOW_FORECAST=1`, a real 3-year ERCOT HiGHS solve) — the first real-LP exercise of the evolution loop, closing TC-3. `test_runner.py`'s mocked tests are unchanged. |
 | Statistical-mode (D-7) backcast | REFRESHED 2026-07-05 (W3-P1), table in §5. **Stale as of 2026-07-06:** `frontend/data/backcast/keepers.json` now shows every ISO except CAISO re-gated again since this refresh (ERCOT/NEISO/MISO/NYISO 2026-07-06, PJM 2026-07-05) — the run ids this row and §5 cite (`nyiso41_hubprices`, `neiso_ctscrub`, etc.) are no longer the current keeper bundles. Per the doc's own standing rule (§3.2, "D-7 is keeper-relative"), a fresh D-7 refresh is now owed and has not been done in this doc. |
@@ -39,7 +39,7 @@ silently left to contradict §6.
 | CI | **W1-P1 landed** (`.github/workflows/ci.yml`): a pytest job (`not slow and not integration`) plus a `quarantine-gates` job running `audit_keepers.py --check` and `legitimacy_diagnostics.py --keepers` on every PR, alongside `lint.yml` (ruff) and the weekly D-13 `bench-repro.yml` cron. Still current; a further `.github/workflows/forecast-invariants.yml` has since been added (scheduled tier for the slow invariant/golden/paired-run tests this doc's §2.4 designed). |
 | W2-P1 emissions fixes | **Landed** (PR #1371: d3077a4 forward estimator, fff2c34 R2 basis, 968cead quarantine-row strip, R7 NOx unit fix). Validation artifacts built from HEAD now score the right quantity. `src/market_sim/data/emission_rates.py` exists and is in active use; the referenced commit hashes are no longer resolvable in `git log` (history has since moved/squashed) but the module and its behavior are confirmed on disk. |
 | EIA-860 vintages on disk | ~~`data/raw/eia-860/vintage_2023/`, `vintage_2024/` **only**. No 2018/2019/2020 vintage snapshots exist~~ — **`vintage_2020/` now exists on disk** (§6: the W2-P5 stage-2 EIA-860 2020-vintage intake landed). 2018/2019 vintages still do not exist. |
-| Demand model profiles | `eia_demand_profiles` covers **2021–2025** (full-8760 contract; no builder script in repo — F3, still true: no `scripts/build_demand_profiles.py` exists). Earliest solvable dispatch year is therefore **2021**. Separately, `scripts/curate_demand_profile.py` (a *repair*, not a from-scratch *builder*) now exists and fixes physically-impossible hours in the raw extract — see the §6 update below. |
+| Demand model profiles | `eia_demand_profiles` covers **2021–2025** (full-8760 contract; no builder script in repo — F3, still true: no `scripts/build_demand_profiles.py` exists). Earliest solvable dispatch year is therefore **2021**. Separately, `scripts/data/curate_demand_profile.py` (a *repair*, not a from-scratch *builder*) now exists and fixes physically-impossible hours in the raw extract — see the §6 update below. |
 | Henry Hub | 1997–2026 on disk. ~~AEO as-known-then paths: not yet intaken for a 2021 vintage.~~ **Landed** (§6): `HENRY_HUB_TRAJECTORIES` in `constants.py` now carries both `hindcast_realized` and `hindcast_asknown_aeo2021` entries. |
 | Evolution ledger | ~~**Does not exist.**~~ **Landed** (§6): `src/market_sim/results/evolution_ledger.py` exists and is imported/used by `runner.py`, which writes `evolution_<year>.json` beside each cached year parquet. |
 
@@ -435,7 +435,7 @@ STAGE 2 — capacity hindcast (ERCOT first):
 
 Read docs/handoffs/forecast-validation-program-2026-07.md §3.2 FIRST, then CLAUDE.md
 (rules 12, 15, 16, 22), docs/handoffs/co2-keeper-regate-2026-07-05.md, and
-scripts/run_statmode_probe.py (the D-7 protocol: byte-faithful keeper replay with
+scripts/archive/run_statmode_probe.py (the D-7 protocol: byte-faithful keeper replay with
 outage_source=statistical, deployment/reliability floors off, WEFOR relief off, per-plant
 monthly coal pricing off; every structural lever and realized gas unchanged). Context: all
 six D-7 probes ran 2026-07-03, BEFORE the R2 CO2-basis merge (fff2c34) — R2 moves the
@@ -563,7 +563,7 @@ run**, the forecast invariant checker **exists**, and the EIA-860 2020 vintage i
 
 **Stage 2 — capacity hindcast (ERCOT run complete):**
 - `scripts/run_capacity_hindcast.py` + `scripts/score_capacity_hindcast.py` +
-  `scripts/build_capacity_actuals.py` + `scripts/register_hindcast.py`.
+  `scripts/data/build_capacity_actuals.py` + `scripts/register_hindcast.py`.
 - Intake: EIA-860 2020 vintage → `data/raw/eia-860/vintage_2020/`;
   `capacity_actuals_ercot.csv`; two hindcast gas paths in `HENRY_HUB_TRAJECTORIES`
   (`hindcast_realized`, `hindcast_asknown_aeo2021`).
@@ -618,7 +618,7 @@ run**, the forecast invariant checker **exists**, and the EIA-860 2020 vintage i
   price/margin signal (2021's `prior_results` feeds it directly). I9
   storage-integrity also FAILs on 2023/2024 independent of this defect. Full
   attribution in the realized report's Diagnostic notes.
-  **Update — fixed:** `scripts/curate_demand_profile.py` now repairs this at
+  **Update — fixed:** `scripts/data/curate_demand_profile.py` now repairs this at
   the curation seam (raw/ stays untouched; a physical-bounds screen +
   interpolation writes a repaired clean partition), and
   `docs/forecast-invariant-findings.md` F4 records the re-run confirming the

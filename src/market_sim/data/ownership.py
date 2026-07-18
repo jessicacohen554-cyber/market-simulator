@@ -149,7 +149,7 @@ def _read_eia860_sheet(
 
     Args:
         path: Either the EIA-860 annual zip, or a directory holding the
-            per-sheet parquet files written by ``scripts/process_eia860.py``.
+            per-sheet parquet files written by ``scripts/data/process_eia860.py``.
         workbook_marker: Substring identifying the workbook inside a zip
             (e.g. ``"Owner_Y"``).
         sheet: Sheet name to read inside the zipped workbook.
@@ -192,7 +192,7 @@ def load_eia860_ownership(eia860_path: Path, year: int) -> pd.DataFrame:
 
     Args:
         eia860_path: The EIA-860 annual zip, or a directory of the per-sheet
-            parquet files produced by ``scripts/process_eia860.py``.
+            parquet files produced by ``scripts/data/process_eia860.py``.
         year: Reporting year of the EIA-860 vintage; recorded for traceability.
 
     Returns:

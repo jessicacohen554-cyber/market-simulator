@@ -1,4 +1,4 @@
-"""Tests for scripts/curate_emissions_unit_annual.py.
+"""Tests for scripts/data/curate_emissions_unit_annual.py.
 
 A tiny synthetic unit-level CAMPD fixture (1 unit, 48 h, one off->on start) is
 rolled up end to end and checked for: schema validity through the frozen
@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 
 from scripts.lib import clean_io
-from scripts.curate_emissions_unit_annual import (
+from scripts.data.curate_emissions_unit_annual import (
     QUARANTINED_YEARS,
     SHORT_TON_TO_KG,
     curate_year,

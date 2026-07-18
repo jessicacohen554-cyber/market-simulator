@@ -120,7 +120,7 @@ def load_nyiso_reserve_requirements(
     df = df.copy()
     ts = pd.to_datetime(df["Time Stamp"])
     # Hour-beginning aggregation: sub-hourly postings mean to their hour, the
-    # same convention scripts/process_nyiso_as.py uses for the price CSVs.
+    # same convention scripts/data/process_nyiso_as.py uses for the price CSVs.
     df["_hour"] = ts.dt.floor("h")
 
     out: dict[str, np.ndarray] = {}

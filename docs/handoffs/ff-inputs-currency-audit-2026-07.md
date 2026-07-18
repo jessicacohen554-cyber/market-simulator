@@ -186,9 +186,9 @@ consistent (`low`→High-OGS, `mid`→Reference, `high`→Low-OGS). The stalenes
 purely vintage:
 
 - **AEO2026 exists.** The `HENRY_HUB_TRAJECTORIES` header itself notes *"AEO2026
-  was released April 8, 2026 … re-run `scripts/fetch_eia_aeo.py --aeo-year 2026`
+  was released April 8, 2026 … re-run `scripts/data/fetch_eia_aeo.py --aeo-year 2026`
   when that vintage is wanted"* (constants.py:921-922). The fetch script defaults
-  to 2025 and accepts `--aeo-year 2026` (scripts/fetch_eia_aeo.py:294) against the
+  to 2025 and accepts `--aeo-year 2026` (scripts/data/fetch_eia_aeo.py:294) against the
   EIA API v2 — **auto-fetchable in-session** (unlike ATB, §3).
 - **Near-term reference gas already reads low.** Model AEO2025 `mid` = **2.74
   (2026) / 2.62 (2027)** $/MMBtu vs **STEO July-2026 ≈ $3.60–3.70 (2026) / <$3.50

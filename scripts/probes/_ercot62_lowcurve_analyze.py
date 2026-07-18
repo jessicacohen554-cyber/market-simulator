@@ -30,6 +30,7 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts"))
+sys.path.insert(0, str(REPO / "scripts" / "data"))
 sys.path.insert(0, str(REPO / "src"))
 
 from derive_ercot_rtolcap_forward import _net_load  # noqa: E402

@@ -2,7 +2,7 @@
 
 **Status: SHIPPED DISABLED — no admissible CAISO ST_GAS overnight driver; keeper
 stays `caiso65`.** Ports the PJM extreme-day steam-gas overnight pre-positioning
-drag (`scripts/derive_pjm_st_gas_overnight_drag.py`, branch
+drag (`scripts/data/derive_pjm_st_gas_overnight_drag.py`, branch
 `claude/steam-gas-min-duration-0ngvto`) to CAISO for both ST_GAS and CT_PEAKER.
 The derivation runs on CAISO's own fleet/weather/net-load (rule 24), applies the
 identical honesty gate, and finds the overnight signal inadmissible on a
@@ -11,7 +11,7 @@ reconciled onto the active `ct_netload_drag`; no second mechanism is added.
 
 ## 1. What shipped
 
-- `scripts/derive_caiso_st_gas_overnight_drag.py` — reproducible derivation,
+- `scripts/data/derive_caiso_st_gas_overnight_drag.py` — reproducible derivation,
   mirroring the PJM script (overnight window h0-6, `min_stable_pct` 0.12, steam
   `min_event_hours` 48, honesty gate ρ≥0.3 / n≥30 / commit_frac>baseline_commit).
 - `data/raw/reference/reliability_floor_coeffs_CAISO.csv` — the old all-day SP15

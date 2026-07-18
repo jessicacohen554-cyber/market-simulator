@@ -12,7 +12,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_nyiso_som_hub_fuel_annual as curate_som
+from scripts.data import curate_nyiso_som_hub_fuel_annual as curate_som
 from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
 

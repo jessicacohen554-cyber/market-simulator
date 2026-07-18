@@ -82,7 +82,7 @@ touch-points:
    uses this column, not the heuristic.
 4. **Load shape** — `data/eia_loader.py:_ERCOT_LOAD_ZONE_GROUPS`: map `FWEST`
    (and any CREZ split) to the new zone; re-run
-   `scripts/derive_load_shares.py ercot` so all shares re-derive from NP6-345 and
+   `scripts/data/derive_load_shares.py ercot` so all shares re-derive from NP6-345 and
    sum to 1.0. **Fix the two open bugs in that script first** (Far_West doc §
    disposition): its `REF` path predates the W1 `data/reference` →
    `data/raw/reference` move, and its weather-zone map still sends `EAST → North`

@@ -126,7 +126,7 @@ byte-identical (`n_storage_reserve = 0` when the flag is off).
 
 ## Run / dashboard
 
-`scripts/run_166.py` = the run164 recipe (run157 keeper, DAM-AS overlay off, endogenous
+`scripts/archive/run_166.py` = the run164 recipe (run157 keeper, DAM-AS overlay off, endogenous
 multi-product co-opt + forward requirement + RTOLCAP cap, P1-only) **+
 `ercot_storage_as_duration_gate`** as the one consistent delta (measured
 `storage_as_commitment` / `ercot_storage_as_reserve` / `ercot_storage_as_product_credit`

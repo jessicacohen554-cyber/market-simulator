@@ -1,4 +1,4 @@
-"""Tests for the ``demand-profile`` curation pipeline (scripts/curate_demand_profile.py).
+"""Tests for the ``demand-profile`` curation pipeline (scripts/data/curate_demand_profile.py).
 
 Covers the physical-bounds screen + interpolation repair on a tiny synthetic
 fixture (one spike hour, one zero-gap run), the schema-valid clean output, and
@@ -14,7 +14,7 @@ from tempfile import TemporaryDirectory
 import numpy as np
 import pandas as pd
 
-from scripts import curate_demand_profile as cdp
+from scripts.data import curate_demand_profile as cdp
 from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
 

@@ -2,7 +2,7 @@
 
 > **STATUS (2026-07-15, ERCOT-66):** §2 items 2-3 EXECUTED. The disclosure
 > intake extends through Dec-2025 deliveries (incl. the new post-RTC+B
-> `ESR_Data` family), `scripts/derive_ercot_storage_capability.py` +
+> `ESR_Data` family), `scripts/data/derive_ercot_storage_capability.py` +
 > `ercot_storage_capability_measured` land the measured basis, and the
 > full-span candidates (`2026-07-15-ercot66-storage-rebasis[-endog]`) confirm
 > this diagnosis: the phantom-evening amplitude collapses onto the measured

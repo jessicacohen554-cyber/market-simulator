@@ -5,9 +5,9 @@ formerly defined in ``scripts/derive_campd_outages.py`` (the facility-summed
 detector, deleted 2026-07-17 — it summed a plant's units and so hid single-unit
 outages and folded daily-cycling combined-cycle operation into phantom summer
 outages) and, for the partial-plateau detector, in
-``scripts/derive_partial_outages.py``. The per-unit detector
-(:mod:`scripts.derive_campd_unit_outages`) is now the sole CAMPD outage source
-for every ISO; it and :mod:`scripts.derive_partial_outages` both import their
+``scripts/data/derive_partial_outages.py``. The per-unit detector
+(:mod:`scripts.data.derive_campd_unit_outages`) is now the sole CAMPD outage source
+for every ISO; it and :mod:`scripts.data.derive_partial_outages` both import their
 detection primitives from here.
 
 All parameters carry the ERCOT-79 availability-envelope audit tightening
@@ -341,7 +341,7 @@ def detect_outages_eventbased(
     return [(s, e) for s, e in _runs(below) if e - s >= min_outage_hours]
 
 
-# Partial-plateau detector (formerly scripts/derive_partial_outages._detect) --
+# Partial-plateau detector (formerly scripts/data/derive_partial_outages._detect) --
 # Frozen against residuals (CLAUDE.md #23): these constants re-derive only on a
 # source-data change. A partial outage shows up as a sustained *ceiling plateau*
 # — the plant keeps running but its daily-max CF drops well below its normal

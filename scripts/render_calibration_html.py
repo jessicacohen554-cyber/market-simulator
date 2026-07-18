@@ -60,7 +60,7 @@ _spec.loader.exec_module(rcf)
 # overlay series reuses them verbatim so its numbers match the deriver's
 # stdout report (docs/ordc-overlay.md, "Reliability-deployment overlay").
 _spec_ordc = importlib.util.spec_from_file_location(
-    "ordc_overlay", str(REPO / "scripts" / "derive_ordc_overlay.py")
+    "ordc_overlay", str(REPO / "scripts" / "data" / "derive_ordc_overlay.py")
 )
 ordc = importlib.util.module_from_spec(_spec_ordc)
 _spec_ordc.loader.exec_module(ordc)
@@ -600,7 +600,7 @@ def _gt_count(series: np.ndarray | None, cut: float) -> int | None:
 
 @lru_cache(maxsize=1)
 def _actual_lmp_table() -> dict:
-    """Load the derived actual-LMP reference (``scripts/derive_actual_lmp.py``).
+    """Load the derived actual-LMP reference (``scripts/data/derive_actual_lmp.py``).
 
     Returns an empty dict when the reference is absent, so the dashboard renders
     a model-only price card rather than failing.
@@ -630,7 +630,7 @@ def _actual_avg_lmp(iso: str, year: int) -> dict | None:
     rec = _actual_lmp_table().get(str(iso), {}).get(str(int(year))) or {}
     # Key order is the bench-part serialization order — the v2.4 lw fields
     # append after the legacy equal-hour fields (matching the committed-part
-    # retrofit in scripts/retrofit_lw_price_bench.py, so re-renders are
+    # retrofit in scripts/archive/retrofit_lw_price_bench.py, so re-renders are
     # byte-stable).
     out = {
         k: rec[k]

@@ -1,4 +1,4 @@
-"""Round-trip tests for weather curation (scripts/curate_weather.py).
+"""Round-trip tests for weather curation (scripts/data/curate_weather.py).
 
 Builds minimal synthetic raw CSV fixtures, runs ``curate_iso_year``, and
 validates:
@@ -24,7 +24,7 @@ from tempfile import TemporaryDirectory
 import numpy as np
 import pandas as pd
 
-from scripts import curate_weather
+from scripts.data import curate_weather
 from scripts.lib.clean_io import validate_clean
 
 # Import after clean_io so paths is available as an attribute.

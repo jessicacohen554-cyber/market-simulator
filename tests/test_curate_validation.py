@@ -1,4 +1,4 @@
-"""Tests for scripts/curate_validation.py.
+"""Tests for scripts/data/curate_validation.py.
 
 A tiny synthetic ``_validation-source`` fixture is curated into a temp clean
 tree and the result is asserted to be schema-valid and correctly reconciled into
@@ -14,7 +14,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_validation
+from scripts.data import curate_validation
 from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
 

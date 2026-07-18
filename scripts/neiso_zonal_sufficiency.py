@@ -10,7 +10,7 @@ carries real information — for ISO-NE the Boston / SE-Mass import pockets and
 the export-constrained Maine corner under summer peak. (Winter system-wide gas
 spikes lift *all* zones together — a level effect, not a spread.)
 
-The model zones come from ``scripts/derive_actual_lmp.py`` (the simple mean of
+The model zones come from ``scripts/data/derive_actual_lmp.py`` (the simple mean of
 each model zone's constituent SMD load-zone sheets) and the hub is the
 .H.INTERNAL_HUB ("ISO NE CA" sheet). The three reported spreads are the
 prompt's Boston−Hub / CT−Hub / ME−Hub:
@@ -32,6 +32,13 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import sys
+from pathlib import Path
+
+# derive_actual_lmp lives in scripts/data/ since the 2026-07-18 reorg; this
+# script is run directly (python scripts/<iso>_zonal_sufficiency.py), so only
+# its own directory is on sys.path by default.
+sys.path.insert(0, str(Path(__file__).resolve().parent / "data"))
 
 from lib.zonal_sufficiency import analyze, render_concentration, render_table
 from derive_actual_lmp import neiso_zone_hourly

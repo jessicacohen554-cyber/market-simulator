@@ -24,7 +24,7 @@ from market_sim.data.eia_loader import (
     measured_interchange_envelope,
     pjm_zonal_interchange_envelope,
 )
-from scripts.curate_zonal_shares import (
+from scripts.data.curate_zonal_shares import (
     parse_caiso_shares as caiso_zonal_load_shares,
     parse_ercot_shares as ercot_zonal_load_shares,
     parse_miso_shares as miso_zonal_load_shares,
@@ -618,7 +618,7 @@ class TestWeatherPoolWidening(unittest.TestCase):
     2021-12-31/2022-12-31, since building further history needed
     ``api.eia.gov``, blocked in this sandbox); 2026-07-06 folded the six-month
     BALANCE bulk archive (a different, unblocked host) into their extracts
-    back to 2019 (``scripts/extend_eia930_hourly_from_balance.py``). CAISO and
+    back to 2019 (``scripts/data/extend_eia930_hourly_from_balance.py``). CAISO and
     MISO now resolve 2019-2021 end-to-end (demand + renewables both route
     through the hourly extract); PJM's demand never uses the hourly extract at
     all (always falls back to ``eia_demand_profiles.parquet``, whose own
@@ -710,7 +710,7 @@ class TestDemandProfileCleanSeam(unittest.TestCase):
     PJM has no dedicated per-BA hourly loader, so ``load_demand`` always falls
     back to ``eia_demand_profiles.parquet`` (or, once regenerated, the repaired
     ``demand-profile`` clean partition -- see
-    ``scripts/curate_demand_profile.py``). This exercises that fallback with a
+    ``scripts/data/curate_demand_profile.py``). This exercises that fallback with a
     synthetic clean partition instead of the real (multi-MB) data tree.
     """
 

@@ -109,7 +109,7 @@ Risk: none — every fix is caching or access-pattern only, gated by byte-identi
   crossover basis to P1. Options block is `dispatch.py:3636–3652`; today only presolve/threads/
   scaling are set — solver choice, crossover, and parallelism knobs are unexplored. Dual simplex
   + basis reuse is well-tuned, so this may lose; bench with the existing
-  `scripts/bench_warmstart.py` harness before touching defaults. **Never touch feasibility
+  `scripts/archive/bench_warmstart.py` harness before touching defaults. **Never touch feasibility
   tolerances** (accuracy).
 - **T3.2** numpy-array `setBasis` in `apply_cross_year_basis` — the two Python list-comps over
   ~1.8 M columns (`dispatch.py:4184–4185`) exist only because of the highspy list API; newer
@@ -248,7 +248,7 @@ In market-simulator, add an OPT-IN way to skip re-solving unchanged years when r
 ### P-4 — HiGHS solver experiments (bench-only; adopt on measured win) — **model: Opus 4.8**
 
 ```
-In market-simulator, run three bounded HiGHS experiments for the cold first solve. These are BENCH-FIRST: no default changes unless the bench shows a clear win with unchanged results. Options block: src/market_sim/model/dispatch.py:3636-3652 (currently: output_flag off, presolve off, optional threads/scale via env). Harnesses: scripts/bench_warmstart.py and scripts/bench_warmstart_xyear.py (capture real ERCOT year LPs and time cold/warm solves).
+In market-simulator, run three bounded HiGHS experiments for the cold first solve. These are BENCH-FIRST: no default changes unless the bench shows a clear win with unchanged results. Options block: src/market_sim/model/dispatch.py:3636-3652 (currently: output_flag off, presolve off, optional threads/scale via env). Harnesses: scripts/archive/bench_warmstart.py and scripts/bench_warmstart_xyear.py (capture real ERCOT year LPs and time cold/warm solves).
 
 1. IPM for the cold P0: solver=ipm + run_crossover=on for the FIRST solve of a year only, then hand the crossover basis to the existing P1 warm-start (changeColsCost path at dispatch.py:3925). Bench cold-P0 wall and P1 iterations vs the dual-simplex baseline on ERCOT and one big co-opt ISO capture. NEVER touch primal/dual feasibility tolerances.
 2. numpy setBasis: apply_cross_year_basis materializes two Python lists over ~1.8M columns (dispatch.py:4184-4185). If the installed highspy accepts array input for setBasis, use it with a list-comp fallback; bench the xyear apply overhead before/after.

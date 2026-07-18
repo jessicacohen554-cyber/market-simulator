@@ -49,7 +49,7 @@ _PJM_ZONAL_LOAD_DIR: Path = _ZONAL_LOAD_DIR
 # load it would hold sits inside the WEST weather zone and lands in the West
 # model zone. The EAST weather zone is its own Northeast model zone (behind the
 # NE_LOB export limit). The ERCOT system-total column is dropped. Mirrors the
-# aggregation in scripts/derive_load_shares.py that seeded the load_share values.
+# aggregation in scripts/data/derive_load_shares.py that seeded the load_share values.
 _ERCOT_LOAD_ZONE_GROUPS: dict[str, str] = {
     "COAST": "Houston",
     "EAST": "Northeast",
@@ -187,7 +187,7 @@ _GENERATION_PROFILES_FILE = "eia_generation_profiles.parquet"
 
 # Per-BA wide EIA-930 hourly extracts live here, one ``<BA> hourly.parquet``
 # per balancing authority (built from the long uploads by
-# scripts/convert_eia930.py). Unlike the per-ISO demand-profiles parquet,
+# scripts/data/convert_eia930.py). Unlike the per-ISO demand-profiles parquet,
 # they carry the Total Interchange series (DC-tie imports/exports), used to
 # net out interchange in load_demand. Re-exported from the central registry.
 
@@ -376,7 +376,7 @@ class DemandProfileNotRepairedError(RuntimeError):
     Raised by :func:`load_demand` / :func:`load_demand_meta` when
     ``strict_demand_profile=True`` and the requested ``(iso, year)`` is
     covered by the raw ``eia_demand_profiles.parquet`` repair manifest (i.e.
-    ``scripts/curate_demand_profile.py`` would produce a clean partition for
+    ``scripts/data/curate_demand_profile.py`` would produce a clean partition for
     it) but that partition has not actually been regenerated on disk. Without
     strict mode the caller falls back to the corrupted legacy series instead
     (PR #1426) — this is the fail-closed alternative for solve entry points
@@ -388,7 +388,7 @@ class DemandProfileNotRepairedError(RuntimeError):
 def _demand_profile_raw_pairs(data_dir: Path) -> frozenset[tuple[str, int]] | None:
     """Return every ``(iso, year)`` pair covered by the demand-profile repair.
 
-    This is the exact set of pairs ``scripts/curate_demand_profile.py``
+    This is the exact set of pairs ``scripts/data/curate_demand_profile.py``
     repairs into a clean ``demand-profile`` partition — every ``(iso, year)``
     group present in the raw ``eia_demand_profiles.parquet`` extract (the
     script further restricts writes to the six modeled ISOs, which is every
@@ -418,7 +418,7 @@ def _demand_profile_clean(
     Unlike :func:`_clean_system_demand` (an opt-in, parity-gated alternate
     source), this is a bug fix on the exact series :func:`load_demand` already
     falls back to, so it is consumed unconditionally — not gated behind
-    ``MARKET_SIM_USE_CLEAN``. ``scripts/curate_demand_profile.py`` repairs the
+    ``MARKET_SIM_USE_CLEAN``. ``scripts/data/curate_demand_profile.py`` repairs the
     physically-impossible hours found in ``eia_demand_profiles.parquet`` (see
     that script's docstring); this reads the repaired clean partition it
     writes.
@@ -970,7 +970,7 @@ def _load_weather_from_raw(
     # Standard per-zone file: {iso}_zone_temp_daily.csv, plus any
     # year-partitioned supplements alongside it (<stem>_<year|yearQn>.csv,
     # e.g. ercot_zone_temp_daily_2021q1.csv) — the same supplement convention
-    # scripts/curate_weather.py folds into the clean Parquet, so the raw
+    # scripts/data/curate_weather.py folds into the clean Parquet, so the raw
     # fallback covers the same calendar range as the curated tree (before
     # this, a year present only in a supplement silently returned None when
     # the clean tree was absent — e.g. ERCOT 2021, the Uri weather year the
@@ -1004,7 +1004,7 @@ def load_weather(iso: str, year: int, zone: str | None = None) -> pd.DataFrame |
     """Load daily weather for *iso*/*year*, preferring clean Parquet over raw CSV.
 
     Primary path reads ``data/clean/weather/<ISO>/weather_<year>.parquet``
-    (produced by ``scripts/curate_weather.py``), filtered to *zone* when given.
+    (produced by ``scripts/data/curate_weather.py``), filtered to *zone* when given.
     Falls back to the raw CSV files under ``data/raw/{iso}-weather/`` when the
     clean file is absent — byte-identical to the previous per-function behaviour.
 
@@ -1267,7 +1267,7 @@ def measured_miso_pjm_border_prices(
     Reads ``pjm_border_lmp_hourly_MISO.parquet`` (columns ``year``, ``hour``
     [0..8759, MISO Central-time calendar], ``hub`` [``PJM_WEST``], ``price``
     [$/MWh, DA total LMP = energy + congestion + loss]) built by
-    ``scripts/build_pjm_border_lmp_miso.py`` from PJM Data Miner hub exports.
+    ``scripts/data/build_pjm_border_lmp_miso.py`` from PJM Data Miner hub exports.
     ``PJM_WEST`` is the equal-weight mean of the three MISO-facing PJM gen hubs
     (CHICAGO GEN / AEP GEN / ATSI GEN), the same border decomposition the
     ``MISO_PJM_BORDER_HR_BY_YEAR`` derivation uses.
@@ -1306,7 +1306,7 @@ def measured_miso_pjm_border_prices(
 # solar astronomy and the 2024-04-08 eclipse dip (both land the extract row
 # clock on the true wall hour). Consistent with prevailing-local hour-ENDING
 # stamps whose DST offset was applied twice at fetch time (the file predates
-# scripts/fetch_eia930_interchange.py; see the eia-930-interchange README).
+# scripts/data/fetch_eia930_interchange.py; see the eia-930-interchange README).
 # Frozen against residuals (rule 23): these constants re-derive only from the
 # lag scan in scripts/validate_caiso_seam_hod_frame.py, which fails loudly if
 # the parquet is ever re-fetched with honest stamps (best lag moves to 0) so
@@ -1742,7 +1742,7 @@ def measured_seam_import_envelope(
 
 
 # EIA-930 long-format (API) region ``type`` code -> wide extract column, for
-# the measured NaN-window fill below (same map as scripts/convert_eia930.py).
+# the measured NaN-window fill below (same map as scripts/data/convert_eia930.py).
 _EIA930_LONG_REGION_COLUMNS: dict[str, str] = {
     "D": "Demand",
     "DF": "Demand forecast",
@@ -1761,7 +1761,7 @@ def _fill_hourly_frame_from_long(frame: pd.DataFrame, ba_code: str) -> pd.DataFr
     valley, fabricating two days of demand and benchmark generation. The
     EIA-930 API long-format uploads of the SAME series
     (``<BA>_region.parquet`` / ``<BA>_fueltype.parquet``,
-    ``scripts/fetch_eia930_long.py``) were fetched after EIA backfilled the
+    ``scripts/data/fetch_eia930_long.py``) were fetched after EIA backfilled the
     window, so the measured hours exist on disk. Fill NaN hours from those
     measured series BEFORE the per-loader interpolation touches them — a
     measured-input repair that regenerates for any future gap (no per-window
@@ -1864,7 +1864,7 @@ def _load_caiso_supply_consistent_demand(year: int) -> np.ndarray:
     """Return the supply-consistent CAISO hourly demand series (MW).
 
     Reads the derived measured artifact written by
-    ``scripts/derive_caiso_supply_consistent_demand.py`` (caiso-80,
+    ``scripts/data/derive_caiso_supply_consistent_demand.py`` (caiso-80,
     owner-signed Option A —
     ``results/calibration/FINDING-caiso80-demand-basis-wedge-2026-07-13.md``):
     ``demand(t) = 930 NetGen(t) − NG_cell(t) + CEMS bench-gas grid(t) +
@@ -1888,7 +1888,7 @@ def _load_caiso_supply_consistent_demand(year: int) -> np.ndarray:
     if not path.exists():
         raise FileNotFoundError(
             f"caiso_supply_consistent_demand: no artifact for {year} at "
-            f"{path} — run scripts/derive_caiso_supply_consistent_demand.py"
+            f"{path} — run scripts/data/derive_caiso_supply_consistent_demand.py"
         )
     demand = pd.read_csv(path)["demand_mw"].to_numpy(dtype=float)
     assert demand.shape[0] == HOURS_PER_YEAR, (
@@ -2479,7 +2479,7 @@ def _validate_zonal_shares(
         raise ValueError(
             f"zonal-shares ({origin}) for {iso} {year} has all-zero shares for "
             f"load-carrying zone(s) {dead} — stale parquet under old zone names "
-            "or a broken raw mapping? Re-run scripts/curate_zonal_shares.py."
+            "or a broken raw mapping? Re-run scripts/data/curate_zonal_shares.py."
         )
     return shares
 
@@ -2489,7 +2489,7 @@ def _zonal_shares_from_raw(
 ) -> np.ndarray | None:
     """Build measured hourly zonal shares straight from the raw demand file.
 
-    Falls back to the per-ISO parsers in ``scripts.curate_zonal_shares`` (the
+    Falls back to the per-ISO parsers in ``scripts.data.curate_zonal_shares`` (the
     single source of the raw-file parsing the clean curation also uses, so the
     raw and clean paths are byte-identical) when the clean Parquet has not been
     materialised. ``data/clean`` is derived and gitignored, so in a fresh clone
@@ -2500,9 +2500,9 @@ def _zonal_shares_from_raw(
     share) or the scripts package is off ``sys.path``.
     """
     try:
-        from scripts.curate_zonal_shares import _PARSE_FUNCS
+        from scripts.data.curate_zonal_shares import _PARSE_FUNCS
     except Exception:  # pragma: no cover - only when scripts/ is off sys.path
-        logger.debug("scripts.curate_zonal_shares unavailable; static shares")
+        logger.debug("scripts.data.curate_zonal_shares unavailable; static shares")
         return None
     parse_fn = _PARSE_FUNCS.get(iso)
     if parse_fn is None:
@@ -2524,7 +2524,7 @@ def load_zonal_shares(iso: str, year: int, zone_names: list[str]) -> np.ndarray 
     shares (each column sums to 1.0 across zones), so each model zone gets its
     own measured diurnal/seasonal shape instead of a single static fraction
     broadcast flat across the year. Prefers the curated ``zonal-shares`` clean
-    Parquet (``scripts/curate_zonal_shares.py``); when that has not been
+    Parquet (``scripts/data/curate_zonal_shares.py``); when that has not been
     materialised — ``data/clean`` is derived and gitignored, so it is absent in
     a fresh clone — it falls back to parsing the raw
     ``data/raw/zone-specific-demand`` file directly (:func:`_zonal_shares_from_raw`).

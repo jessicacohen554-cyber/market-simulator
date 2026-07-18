@@ -13,7 +13,7 @@ dispatch exactly: model wind 110.84 / 116.28 / 120.38 TWh for 2023/24/25, matchi
 the registered bundle). No config delta, so **no new dashboard run** — the
 [3e] table and C-scores below are `ercot38`'s already-registered result
 (`2026-07-06-ercot38-measured-hsl-2425`: C2 FAIL, C3a PASS, C5c PASS). Analysis
-driver: `scripts/_diag_vre_curtailment.py`. A `dump` column was added to
+driver: `scripts/archive/_diag_vre_curtailment.py`. A `dump` column was added to
 `system.parquet` (`scripts/run_calibration_full.py`) so the LP's per-zone
 overgeneration `Dump[z,t]` is persisted for this and future oversupply work.
 

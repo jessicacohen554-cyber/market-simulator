@@ -133,7 +133,7 @@ when much of the burn is avoidable spot and the unit is often above gas in merit
 
 ## Thread C — model representation audit
 
-Source: `scripts/derive_thermal_tranches.py`, `thermal_tranches_PJM.csv`,
+Source: `scripts/data/derive_thermal_tranches.py`, `thermal_tranches_PJM.csv`,
 `fleet.apply_coal_tranches`, `COAL_SIGMOID_DEFAULTS[("PJM","bituminous")]`.
 
 **Must-run floor** (`derive_thermal_tranches.py:449`): coal `mustrun_pct` = P5 of
@@ -177,7 +177,7 @@ behaviour emerges instead of being forced:
 1. **Take-or-pay sunk floor (small) — BUILT (default off).** Size from EIA-923
    Schedule-5 `Purchase Type` = the contract (must-burn) share of each plant's
    delivered tonnage; only that fraction bids fuel-free. Implemented this session:
-   `scripts/derive_coal_takeorpay.py` writes `coal_takeorpay_<ISO>.csv`,
+   `scripts/data/derive_coal_takeorpay.py` writes `coal_takeorpay_<ISO>.csv`,
    `fleet.coal_takeorpay_share` loads it, and `ScenarioConfig.coal_takeorpay_from_data`
    makes the coal must-run tranche pass `1 - contract_share` of its fuel instead
    of the hardcoded 0.0 (`campd_tranche_fuel_frac`). This is the *measured* version

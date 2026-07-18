@@ -167,7 +167,7 @@ separate calibration-complete marker is declared for NYISO.
 > open root cause.** (1) **Fast-start amortization v3**
 > (`--tranche-startup-measured-runs`): the simple-cycle CT tranches amortize
 > the NREL start cost over the CAMPD-measured median start-to-stop run
-> length (`scripts/derive_campd_ct_run_lengths.py` →
+> length (`scripts/data/derive_campd_ct_run_lengths.py` →
 > `campd_ct_run_lengths_NYISO.csv`, pooled 2023–25, per-plant medians 2–9 h,
 > class fallback 4 h) as the horizon CEILING — P0 runs may only shorten it —
 > removing the v2 circularity (too-cheap offers → long P0 blocks → ≈0
@@ -230,7 +230,7 @@ separate calibration-complete marker is declared for NYISO.
 > Transco Z6 NY daily quotes (`_transco_z6_daily_dated`; the Jan-2024 $23.90
 > print now lands on the 16th, not the 12th) and NYISO monthly hub levels
 > recomputed from the completed daily print series (Dec-2024 basis +0.16 →
-> +1.00 $/MMBtu; `scripts/fetch_nyiso_gas_narrative.py` + the
+> +1.00 $/MMBtu; `scripts/data/fetch_nyiso_gas_narrative.py` + the
 > fetch-nyiso-gas-narrative workflow).
 >
 > **Effect — every price criterion moves toward actual with no tuned constant:**
@@ -279,7 +279,7 @@ separate calibration-complete marker is declared for NYISO.
 > (Islip / Central Park / Albany, NOAA GHCN). Coefficients
 > (`transmission.NYISO_ST_FLOOR_COEFFS`) regressed **a priori** from the measured
 > per-zone CAMPD ST_GAS CF vs zone TMAX, pooled 2023-2025
-> (`scripts/derive_nyiso_st_reliability_floor.py`).
+> (`scripts/data/derive_nyiso_st_reliability_floor.py`).
 >
 > **Two structural corrections** (both fix real methodology errors that were
 > suppressing the costly in-city units — not residual tunes):
@@ -343,7 +343,7 @@ separate calibration-complete marker is declared for NYISO.
 > over HB14-21, with **slope 0.053/°C, cap 0.68, base 0.13** — all regressed *a
 > priori* from the measured downstate CAMPD CT_PEAKER evening CF vs NYC daily max
 > temperature (NOAA GHCN: Central Park/LaGuardia/JFK), pooled 2023-2025
-> (`scripts/derive_nyiso_ct_reliability_floor.py`; archived
+> (`scripts/data/derive_nyiso_ct_reliability_floor.py`; archived
 > `data/raw/nyiso-weather/`). The downstate peaker CF is flat ~0.10-0.18 below
 > 25 °C (77 °F) and rises ~2-3× to ~0.6-0.7 above it; ~40-50 % of annual
 > downstate peaker energy lands on the ~107 days with TMAX ≥ 25 °C. A **physical
@@ -434,7 +434,7 @@ separate calibration-complete marker is declared for NYISO.
 > `committed`/`econ_low`/`econ_high` to NYISO's **OWN** CAMPD incremental-HR
 > medians — removing the cross-ISO borrow (the `econ_high` 1.21/1.24 was ERCOT's
 > CAMPD-CC reach; `ST_GAS` 1.10/1.45 was ERCOT-shaped). The NYISO-native table
-> (new tool `scripts/derive_campd_marginal_hr.py`, NY+NJ CEMS pooled 2023-25,
+> (new tool `scripts/data/derive_campd_marginal_hr.py`, NY+NJ CEMS pooled 2023-25,
 > output `data/raw/reference/nyiso_campd_marginal_hr_summary.csv`):
 > `CC_REGULAR 0.632/0.784/0.925`, `CC_CHP 0.809/0.989/1.103`,
 > `ST_GAS 0.818/0.825/0.830`. Merit order preserved (CC `econ_high` eff HR
@@ -792,7 +792,7 @@ P12 probes, all rejected (logged in `docs/calibration-log.md`, "NYISO P12"):
 
 `nyiso 28 native-hr` (2026-06-25, **rejected probe**): re-grounded the CC/ST
 offer curve to NYISO's own CAMPD incremental-HR medians (new tool
-`scripts/derive_campd_marginal_hr.py`), removing the ERCOT-borrowed reach. It
+`scripts/data/derive_campd_marginal_hr.py`), removing the ERCOT-borrowed reach. It
 craters `C3a` to −24/−26.5/−23.5 % because the bare CEMS marginal HR omits the
 competitive offer markup CEMS cannot measure (the borrowed 1.21 reach was
 proxying that markup). The steam-side re-level was directionally right (halved

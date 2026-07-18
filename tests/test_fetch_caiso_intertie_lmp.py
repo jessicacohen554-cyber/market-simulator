@@ -18,7 +18,7 @@ import pandas as pd
 
 _SPEC = importlib.util.spec_from_file_location(
     "fetch_caiso_intertie_lmp",
-    Path(__file__).resolve().parent.parent / "scripts" / "fetch_caiso_intertie_lmp.py",
+    Path(__file__).resolve().parent.parent / "scripts" / "data" / "fetch_caiso_intertie_lmp.py",
 )
 fil = importlib.util.module_from_spec(_SPEC)
 _SPEC.loader.exec_module(fil)

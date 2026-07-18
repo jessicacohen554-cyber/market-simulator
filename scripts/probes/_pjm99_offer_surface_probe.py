@@ -6,7 +6,7 @@ keeper's ``meta.json`` recipe byte-faithfully (``replay_keeper.build_kwargs``
 — the only sanctioned recipe reconstruction) with exactly ONE change,
 ``pjm_offer_surface_conditional=True`` (the measured condition-binned
 top-of-curve offer surface posted onto the CC_REGULAR + CT_PEAKER peak-band
-rungs, P1-only; ``scripts/derive_pjm_offer_surface.py``).
+rungs, P1-only; ``scripts/data/derive_pjm_offer_surface.py``).
 
 The flag is threaded through ``solve_and_persist`` (not the generic
 ``prb_overrides`` ScenarioConfig channel) because ``backcast_config`` must
@@ -74,7 +74,7 @@ def main() -> int:
         "top-of-curve distribution, condition-binned by within-year net-load "
         "percentile) posted onto the CC_REGULAR + CT_PEAKER peak-band rungs, "
         "P1-only. Zero fitted scalars in the delta "
-        "(scripts/derive_pjm_offer_surface.py; rules 13/20/21)."
+        "(scripts/data/derive_pjm_offer_surface.py; rules 13/20/21)."
     )
     if args.zero_forcing_ablation:
         kwargs["zero_forcing_ablation"] = True

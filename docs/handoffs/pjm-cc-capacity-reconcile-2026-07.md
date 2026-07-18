@@ -13,7 +13,7 @@ Grounding: `docs/DIAGNOSIS-pjm-july-cc-overrun-2026-07.md` (§3b, §6, §7);
 `docs/calibration-log.md` 2026-07-14 PJM-110 entry; the guard
 (`fleet._reconcile_cc_pmax_to_nameplate` + `fleet.cc_summer_capacity`), the
 demonstrated-peak reconcile (`fleet._reconcile_cc_capacity` /
-`scripts/derive_cc_capacity_reconcile.py`), and the Leg-B CT-only flag
+`scripts/data/derive_cc_capacity_reconcile.py`), and the Leg-B CT-only flag
 (`render_calibration_html._flag_ct_only_reporters`).
 
 ---

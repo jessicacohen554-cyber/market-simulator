@@ -1,4 +1,4 @@
-"""Tests for scripts/curate_renewables.py.
+"""Tests for scripts/data/curate_renewables.py.
 
 Drives the curation on tiny synthetic raw fixtures (never the real data tree):
 a wide HSL frame is unpivoted to the long ``renewables`` schema, written through
@@ -19,7 +19,7 @@ import pandas as pd
 
 from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
-from scripts.curate_renewables import (
+from scripts.data.curate_renewables import (
     FUELS,
     IsoSource,
     curate_iso_year,

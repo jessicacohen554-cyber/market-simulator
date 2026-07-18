@@ -9,7 +9,7 @@ Per-ISO parsing lives in sibling modules (``neiso.py``, ...), each of which
 registers an :class:`IsoSpec` via :func:`register`; shared code never branches
 on the ISO name (``docs/adding-new-data-types.md``). A spec's ``parse`` hook
 returns ONE calendar year's tidy schema-shaped frame from the ISO's raw drop
-zone; the dispatcher (``scripts/curate_reserve_requirements.py``) writes each
+zone; the dispatcher (``scripts/data/curate_reserve_requirements.py``) writes each
 (ISO, year) partition through the frozen ``clean_io`` seam.
 
 Canonical product vocabulary (every ISO's native names normalize to these):

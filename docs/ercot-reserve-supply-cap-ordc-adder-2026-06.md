@@ -68,7 +68,7 @@ price fit (CLAUDE.md #11/#12).
 ## Greenlight gate — NOT met (broad May is energy-base, not adder)
 
 2024, overlay OFF, single-product published-ORDC co-opt + RTOLCAP cap + additive
-adder (`scripts/run_161.py`, `KEEPER_YEARS=2024`; `_eval_may_gate.py`):
+adder (`scripts/archive/run_161.py`, `KEEPER_YEARS=2024`; `_eval_may_gate.py`):
 
 | metric | run161 (cap+adder) | run159 (no cap) | target / actual |
 |---|---|---|---|
@@ -149,6 +149,6 @@ energy-base miss (CLAUDE.md #1), and the handoff already classes that miss as a
   co-opt branches).
 - `scripts/run_calibration_full.py` — `solve_and_persist` flag + CLI; the
   `_system_frame` ORDC-regime additive adder (`ordc_adder` column).
-- `scripts/run_161.py` — the overlay-off cap+ORDC-adder run driver.
+- `scripts/archive/run_161.py` — the overlay-off cap+ORDC-adder run driver.
 - tests: `tests/test_ercot_multiproduct_coopt.py`
   (`TestReserveSupplyCap`, `TestReserveSupplyCapLoader`).

@@ -29,7 +29,7 @@ retires those copies.
 movement (+ cited heat/transport/heat-rate constants + the observed gas
 trough), never to any MISO price/volume residual (rules 10/11).
 
-## Derivation (`scripts/derive_coal_sigmoid.py`)
+## Derivation (`scripts/data/derive_coal_sigmoid.py`)
 
 The gas-keyed passthrough MECHANISM is kept (G-26 disposition R6
 DOCUMENT-AND-KEEP; a take-or-pay / mine-mouth / rail coal contract makes
@@ -180,7 +180,7 @@ miso-50 as a fit improvement — it is not one.** The keeper stays
 
 ## Deliverables
 
-- Derive script: `scripts/derive_coal_sigmoid.py`
+- Derive script: `scripts/data/derive_coal_sigmoid.py`
 - Derivation inputs: `src/market_sim/config/constants.py` (coal heat content,
   delivery commodity share, representative HRs, gas trough, slope baseline)
 - Registry-resident params: `COAL_SIGMOID_DEFAULTS[("MISO", …)]` in
