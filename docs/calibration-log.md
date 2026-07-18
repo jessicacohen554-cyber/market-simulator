@@ -16659,3 +16659,88 @@ merge — the ERCOT-80 sibling flip already on main is preserved (the two unit-o
 re-solves land side by side). Committed: the bundle slims + sidecar + `runs/<id>.js`
 + `keepers.json` + `status.js` + this entry (git-push transport, owner-authorized;
 the ~2 MB source pack cleared the proxy).
+
+## 2026-07-18 — caiso-94: the DAYTIME trigger-OFF clean import depth SOLVED (owner-authorized DIAGNOSTIC) and REGISTERED — the measured daytime depth HELPS the C3a-2025 target (+13.2→+11.0 % same-machine, −2.2 pp toward the ≤10 % band, still FAIL) with C1 12/12, the caiso-93 overnight λ and the C3c winter tail all HOLDING and C7/C8 PASS; but it DEEPENS the CO2 under-emission (C5a CAVEAT→FAIL all three years, EF-0 imports displace CC gas) and the evening λ (−0.6/−0.9/−1.2 pp) — surfaced NOT tuned (rule 11); keeper CANDIDATE, owner-only swap
+
+**Runs:** `2026-07-18-caiso-94-daytime-clean` (registered, DIAGNOSTIC / keeper
+candidate, bundle `results/calibration/caiso94_daytime_clean`) vs the
+same-machine caiso-93 keeper repro (`caiso94_repro_A`, un-registered A-leg per
+the FINDING-caiso92b protocol). Both CAISO 2023+2024+2025, one invocation each
+(rule 16). Owner authorization (2026-07-17): an unconditional daytime
+trigger-OFF DIAGNOSTIC solve — settles the two questions the derive-first gate
+(FINDING-caiso94, same day) could not: inertness and overshoot.
+
+**Mechanism (`caiso_dsw_daytime_clean`, default off — zero fitted scalars,
+built @66e19e2).** The caiso-93 keeper recipe + ONE delta: a `DSW_daytime_clean`
+tranche carrying the measured DAYTIME trigger-OFF (hod 6-21) WEIM clean-transfer
+depth on the south corridor — p95 measured WECC_DSW net import over the daytime
+trigger-OFF window (**5,441/5,762/5,998 MW** 2023/24/25; estimation gates
+CV 0.040 / LOYO ≤ 8.1 %, frozen, `derive_caiso_daytime_clean_depth.py`) — net of
+the shaped firm block AND the caiso-87 surplus tranche AND the caiso-93 overnight
+tranche (per-hour netting, no double-carry), armed only on measured-hub
+trigger-OFF hours (the 2023 Jan-Feb OASIS gap never arms; caiso-87 trigger-ON
+hours never arm — **DISJOINT from caiso-87** by the trigger-OFF complement
+scoping, LOAD-BEARING because daytime caiso-87 is coverage-rich in the belly,
+unlike the unconditional caiso-93 overnight), EF 0, priced at the RAW measured
+Palo Verde hub with NO wheel. A capability, not a floor (pmin 0, no D-2 row, D-4
+off-window share 0.0). Tests: `tests/test_caiso_daytime_clean.py` (11) + the
+per-hub + overnight suites green, 0 regressions.
+
+**A/B (same machine, scorer frame, mechanism-only). The same-machine A-leg
+reproduces the committed keeper to ≤ 0.1 pp (C3a 58.0/37.86/38.92 vs the keeper's
+58.16/37.90/38.98) — the machine effect is negligible, the delta is pure
+mechanism:**
+
+- **C3a mean-LMP (RT, the target):** 2023 +7.1→**+6.2 %**, 2024 +9.4→**+7.3 %**,
+  2025 +13.2→**+11.0 %** — HELPS every year (−0.9/−2.1/−2.2 pp), 2025 moves
+  toward the ≤10 % band but stays FAIL.
+- **hod λ ladder:** belly (target) 11.7/10.2/8.9 → **11.1/9.3/8.3** FALLS every
+  year; overnight +1.4/+0.3/+1.7 → **+1.3/+0.2/+1.6** HOLDS (the caiso-93 leg,
+  disjoint by construction); evening −6.0/−4.1/−1.2 → **−6.6/−5.0/−2.4** DEEPENS
+  — the pre-registered overshoot watch materialises (the daytime band spans
+  hod 17-21).
+- **overnight demand-weighted λ:** $59.11/39.29/42.06 → **$59.06/39.19/41.93** —
+  HOLDS (the protected caiso-93 result intact).
+- **C1 grid:** CC_REGULAR displaced further under (−0.81/+1.97/−1.17 →
+  **−2.96/−1.41/−4.40** TWh, 2–3.4 TWh/yr) but stays 12/12 in-band; CT/CHP/ST
+  byte-class flat.
+- **C3c:** IDENTICAL (2023 20 h all on Jan-13, 2024/25 0 h) — no new tail.
+- **autumn-2025 WATCH:** Sep-Dec +7.5/+10.6/+7.0/+7.5 → **+6.3/+9.9/+4.4/+6.2** —
+  the target autumn-daytime months IMPROVE.
+
+**Verdict (rubric v2.7, registered artifacts):** determination NOT-YET.
+Protective + load-bearing HOLD: **C1 PASS 12/12 (D-10 free 8/8)**, C2 PASS, C3b
+PASS, C6/C7/C8 PASS (D-2 CC_REGULAR forced share **6-7 % ≪ 30 %** cap — the
+daytime capability adds no forced energy; D-4 off-window 0.0; C7 CC_REGULAR
+shape r 0.983→0.984 / 0.961→0.970, unmoved). C3a improves but 2025 still FAIL
+(+11.0 %). **NEW COST — C5a CO2 flips CAVEAT→FAIL all three years** (A
+−10.1/−5.2/−10.4 % → B **−13.3/−11.2/−16.5 %**): the EF-0 clean import displaces
+CC gas, deepening the model's pre-existing CO2 under-emission. Recorded as an
+honest MODEL-MISS, **NOT** attested to a CAVEAT and **NOT** tuned away — it is a
+SURFACED root-cause (the CC under-production, CC_REGULAR −4.40 TWh 2025 within
+the C1 band; rule 11), naming the CC-underproduction / import-emission-accounting
+lane as next. C3c/C4 FAIL unchanged from the keeper. Attestation: caiso-93 DOF
+ledger verbatim (13 entries, unchanged) + the zero-DOF daytime delta appended to
+the governance note; legitimacy diagnostics committed; parity check PASS
+(57 runs).
+
+**Disposition (rules 1/11/15): KEEPER CANDIDATE, swap owner-only.** The measured
+daytime depth is a structurally-faithful mechanism (real WEIM/EDAM
+GHG-attribution market design + measured year-stable depth + frozen estimation
+gates + zero fitted scalars) that HELPS the chartered C3a-2025 target with every
+protected caiso-93 result holding. This is the pre-registered "HELPS but not
+cleanly" branch: it does not fully clear C3a-2025 (11.0 % > 10 %), it deepens the
+evening under-price, and it deepens the CO2 under-emission to a FAIL — the last a
+rule-11 signal that the model's CC under-production is the next root-cause lane,
+never a reason to revert a measured structure. Keeper promotion is the owner's
+call; keepers.json NOT flipped.
+
+**Ops.** Solves in-session, SEQUENTIAL (A-leg then B-leg — the box OOMs on two
+concurrent CAISO 3-year solves, the caiso-93 lesson; each 3-year leg ~27 min).
+Registered per rule 15 (legitimacy diagnostics before dashboard_add_run,
+attestation clone + delta, `calibration_verdict.py --write-metrics`, parity
+check). NO ablation twin (rule 21, 2026-07-14 amendment). The same-machine A-leg
+was scored transiently to isolate the mechanism from the machine (its registry
+sidecar + payload removed before push; the `caiso94_repro_A` bundle is gitignored
+via a new `*_repro_A/` rule). Transport: API create_branch + git push onto the
+existing ref, blob-verified (rule 27).
