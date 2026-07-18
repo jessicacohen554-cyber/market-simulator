@@ -397,7 +397,9 @@ def test_tr10_trivial_pass():
             }
         ]
     )
-    actuals = _actuals([{"kind": "retirement", "fuel": "coal", "mw": 600, "year": 2023}])
+    actuals = _actuals(
+        [{"kind": "retirement", "fuel": "coal", "mw": 600, "year": 2023}]
+    )
     tr = S.score_tr10(model, actuals)
     assert tr["tr10a"] == "PASS"
     assert tr["tr10b"] == "PASS"
@@ -418,7 +420,9 @@ def test_tr10_vacuous_pass_no_econ_exits():
             }
         ]
     )
-    actuals = _actuals([{"kind": "retirement", "fuel": "coal", "mw": 600, "year": 2023}])
+    actuals = _actuals(
+        [{"kind": "retirement", "fuel": "coal", "mw": 600, "year": 2023}]
+    )
     tr = S.score_tr10(model, actuals)
     assert tr["tr10a"] == "PASS" and tr["tr10b"] == "PASS"
     assert tr["first_mover_fuels"] == []

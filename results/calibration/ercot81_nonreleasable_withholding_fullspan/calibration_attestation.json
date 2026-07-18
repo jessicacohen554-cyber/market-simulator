@@ -1,0 +1,216 @@
+{
+ "schema": "calibration-attestation/v1",
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "OWNER-PROMOTED to ERCOT keeper 2026-07-18 (owner directive: 'Rebase and promote'). ercot81 nonreleasable-as, session 2026-07-18 (the ERCOT-79/80 successor lane, first delta). The ercot80 keeper recipe + ONE mechanism: ercot_nonreleasable_as_withholding \u2014 the published pre-RTC+B RRS/Reg-Up HASL carve-out (Nodal Protocols 6.5.7.6.2.3/3.17: no price-based SCED release in any pre-RTC+B year; the 2024-08-01 release reform was ECRS-only; RTC+B go-live 2025-12-05 ends the regime) represented as rigid at-cap reserve demand steps, exactly as ercot_ecrs_conservative_deployment already represents pre-reform ECRS. Zero fitted scalars: requirements are the measured AS plan net of the standing LR/storage-award credits; the only new inputs are published design dates. The mechanism removes an RTC+B-era price-responsive shed ramp the 2023-2025 market did not have; tight-hour energy duals now climb the offer surface as SCED did under the withheld-capacity design (IMM 2023 SOM artificial-shortage mechanism, applied at its published product scope).",
+  "note": "Single-delta A/B against the ercot80 keeper (rule-16 single-year 2023 probe, same machine): Aug-2023 monthly residual -99.1 -> -64.9 $/MWh (model 92.6 -> 126.8 vs RT 191.7 on the probe's dw basis), Jun -21.1 -> -12.1 and Sep -31.5 -> -22.1 (the ERCOT-78/79 shoulder over-shoot does NOT re-inflate), 2023 >$1000 tail 32 -> 38 h vs actual 61, false-positive >$200 count unchanged at 8 h. 2024/2025 near-inert outside already-formed tight hours (monthly moves <= ~$2). The remaining Aug-2023 mid-band ($200-1000 at measured RTOLCAP ~7.9 GW, model $59-104) is the ledgered offer-formation family (ERCOT-75/77 whole-stack mid-rung level), not a reserve-design gap."
+ },
+ "exceptions": [
+  {
+   "criterion": "price_tail",
+   "year": 2023,
+   "magnitude": "57h vs RT actual 181h (0.31x, FAIL \u2014 rubric v2.7 RT basis); 2024 22h vs 53 (0.42x FAIL); 2025 0h vs 31 (0.00x FAIL)",
+   "reason": "SCARCITY-TAIL COLLAPSE ON THE UNIT-ONLY AVAILABILITY ENVELOPE (ERCOT-80). Same structural finding as ERCOT-79: the deposed ercot76 keeper caught the real scarcity tail (2023 179h vs 181) on PHANTOM fleet tightness manufactured by the CAMPD facility-outage detector (daily-cycling CC folded into summer-long false outages). The outage-detection consolidation (PR #2415) deletes the facility layer entirely and makes the per-unit event-based detector the sole outage layer (measured CEMS + EIA-930, no residual), removing the phantom more completely; the tail stays collapsed (57h vs 181; on the real August/summer scarcity hours the model settlement price falls far short). One availability mechanism owned BOTH the Jun/Sep shoulder over-shoot (fixed at ercot79) and the caught tail (un-caught). This is out-of-admissible-representation for the CURRENT offer/scarcity calibration, which was fitted against the phantom-tightened fleet; it is NOT a single-lane mechanism gap. Successor lane: re-calibrate the ERCOT offer curves + ORDC/co-opt against the corrected availability envelope so the real scarcity re-forms on real fleet tightness. Until then ERCOT is NOT-YET."
+  }
+ ],
+ "free_parameters": {
+  "schema": "dof-ledger/v1",
+  "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+  "n_entries": 9,
+  "n_residual": 8,
+  "entries": [
+   {
+    "name": "offer_curve_by_group",
+    "where": "run_config.scenario_config.offer_curve_by_group",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": {
+     "CC_REGULAR": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "peak_ladder"
+     ],
+     "CC_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "peak_ladder"
+     ],
+     "CT_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "CT_PEAKER": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "peak_ladder"
+     ],
+     "CT_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "peak_ladder"
+     ],
+     "ST_GAS_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "COAL_LIGNITE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_PRB": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_BIT": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_WC": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ]
+    },
+    "n_scalars": 112,
+    "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "offer_curve_smoothing",
+    "where": "run_config.scenario_config.offer_curve_smoothing_*",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": {
+     "offer_curve_smoothing_n": 6,
+     "offer_curve_smoothing_mid": 0.35,
+     "offer_curve_smoothing_exp": 1.0
+    },
+    "n_scalars": 3,
+    "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "COAL_SIGMOID_DEFAULTS[ERCOT]",
+    "where": "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via coal_prb_passthrough_sigmoid, coal_lignite_passthrough_sigmoid)",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "n_scalars": 8,
+    "source": "gas-keyed coal passthrough sigmoids \u2014 the largest fitted surface (audit C-1); owner-sanctioned under rule #1",
+    "root_cause": "weakly identified: each asymptote is pinned by a single gas regime (floor by 2024, gas_mid/ceil by 2025 \u2014 docs/out-of-sample-results-2026-07.md \u00a72C); open: literature/physical anchoring of floor/ceil, plus identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "wefor_multiplier",
+    "where": "run_config.scenario_config.wefor_multiplier",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": 0.7,
+    "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+    "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "wefor_residual",
+    "where": "run_config.scenario_config.wefor_residual (groups ['ST_CHP', 'ST_GAS'])",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": 0.06,
+    "source": "wind-EFOR residual relief term (audit C-15) \u2014 residual-identified by name",
+    "root_cause": "audit C-15 open item; statistical mode turns this off and the fit degrades (docs/statistical-mode-results-2026-07.md); identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "battery_dispatch_adder",
+    "where": "run_config.scenario_config.battery_dispatch_adder",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": 10.0,
+    "source": "grid-battery throughput/cycling adder $/MWh \u2014 inside the literature range (NREL ATB 2024 cycle-life ~$15-25/MWh; Xu et al. 2018 $25-50/MWh) but the specific value is calibrated",
+    "root_cause": "reduced-form stand-in for cycling degradation + AS opportunity cost; forward-valid replacement is the measured AS power reservation (storage_as_commitment) + an ATB-derived degradation cost \u2014 open item to re-derive from those"
+   },
+   {
+    "name": "coal_take_or_pay_tranches",
+    "where": "scenarios.py ScenarioConfig.coal_tranche_{1,2,3}_{frac,fuel_passthrough} (0.30/0.25/0.45 capacity fracs, 0.00/0.35/1.00 fuel passthrough); the constants.py COAL_TRANCHES mirror of these values was dead code (never read) and was deleted 2026-07",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "n_scalars": 4,
+    "source": "core coal offer-curve step sizes (audit C-8) \u2014 'Tier 3 (calibration)'; sanctioned mechanism, undisciplined values",
+    "root_cause": "audit C-8: ground on contract-structure data (EIA-923 fuel-cost dispersion) or freeze via rule 23; open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1336"
+   },
+   {
+    "name": "CHP_BTM_PCT_BY_SECTOR['merchant']",
+    "where": "constants.py CHP_BTM_PCT_BY_SECTOR",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": 35.0,
+    "source": "merchant CHP behind-the-meter share \u2014 industrial/commercial re-derived from EIA-923 Schedule-8 (S3), merchant retained at its prior fitted value (audit C-4; W1d marker)",
+    "root_cause": "no independent merchant-CHP host-load source found yet \u2014 replace when one exists (constants.py comment); survey of candidate sources + recommended EIA-923 Schedule-8 intake path: docs/handoffs/merchant-chp-host-load-memo-2026-07.md; open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1335"
+   },
+   {
+    "name": "reliability_floor coefficients",
+    "where": "data/raw/reference/reliability_floor_coeffs_ERCOT.csv",
+    "identification": "measured-physical",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+    "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+   }
+  ]
+ }
+}
