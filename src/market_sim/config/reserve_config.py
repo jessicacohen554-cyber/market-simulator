@@ -972,6 +972,7 @@ def _ercot_multiproduct_design(
 ) -> ReserveDesign:
     """ERCOT multi-product AS co-optimization (RegUp/RRS/ECRS/NonSpin)."""
     from market_sim.results.scarcity import (
+        RTCB_GOLIVE_HOUR,
         ercot_as_forward_drivers,
         ercot_as_forward_requirement_mw,
         ercot_as_plan_requirement_mw,
@@ -1035,60 +1036,75 @@ def _ercot_multiproduct_design(
             pens, wids = nyiso_rcpf_product_shortfall_steps(
                 req_peak, crit, voll, n_ramp=n_ramp
             )
-        # ECRS conservative-deployment design (pre-2024-08-01, published): no
-        # price-based release to SCED, so the ECRS demand is a single step AT
-        # THE OFFER CAP for the full requirement — the withheld ~2 GW raises
-        # the energy dual endogenously in tight hours (the IMM-documented 2023
-        # "artificial shortage pricing"). From the 2024-08-01 operating-
-        # procedure reform the family reverts to the standing VOLL-anchored
-        # ramp (a releasable reserve). A year straddling the reform is split
-        # into two disjoint-window families sharing the ECRS reserve class
-        # (requirement zeroed outside each window) — penalty steps are static
-        # per family, so the date gate lives in the requirement mask. See the
+        # Non-releasable AS withholding (published pre-RTC+B design): a product
+        # SCED cannot release at any price is a reserve demand step AT THE
+        # OFFER CAP for the full requirement — the withheld MW raises the
+        # energy dual endogenously in tight hours instead of shedding down a
+        # price-responsive ramp the pre-RTC+B market did not have. Two date
+        # gates, both published market design:
+        # * ECRS (ercot_ecrs_conservative_deployment): rigid from go-live
+        #   (2023-06-10, onset carried by the data) through 2024-07-31; the
+        #   2024-08-01 operating-procedure reform makes it releasable at
+        #   resources' own offers, so it reverts to the standing VOLL-anchored
+        #   ramp. The IMM-documented 2023 "artificial shortage pricing".
+        # * RRS + Reg-Up (ercot_nonreleasable_as_withholding): rigid through
+        #   RTC+B go-live (2025-12-05, scarcity.RTCB_GOLIVE_HOUR) — the HASL
+        #   carve-out (Nodal Protocols §6.5.7.6.2.3 / §3.17) had no
+        #   price-based SCED release in ANY pre-RTC+B year (RRS deploys on
+        #   under-frequency / EEA events, Reg-Up through LFC only); the
+        #   2024-08-01 reform applied to ECRS alone.
+        # A year straddling its gate date is split into two disjoint-window
+        # families sharing the product's reserve class (requirement zeroed
+        # outside each window) — penalty steps are static per family, so the
+        # date gate lives in the requirement mask. See the
         # ERCOT_ECRS_RELEASE_REFORM_* citation block above.
-        if (
-            getattr(config, "ercot_ecrs_conservative_deployment", False)
-            and code == "ECRS"
-            and req_peak > 0.0
-        ):
-            if year < ERCOT_ECRS_RELEASE_REFORM_YEAR:
-                rigid_end = T  # whole year (ECRS onset carried by the data)
-            elif year == ERCOT_ECRS_RELEASE_REFORM_YEAR:
-                rigid_end = min(ERCOT_ECRS_RELEASE_REFORM_HOUR, T)
-            else:
-                rigid_end = 0  # post-reform years: standing curve only
-            if rigid_end > 0:
-                req_rigid = req_t.copy()
-                req_rigid[rigid_end:] = 0.0
-                families.append(
+        rigid_end = 0
+        if req_peak > 0.0:
+            if (
+                getattr(config, "ercot_ecrs_conservative_deployment", False)
+                and code == "ECRS"
+            ):
+                if year < ERCOT_ECRS_RELEASE_REFORM_YEAR:
+                    rigid_end = T  # whole year (ECRS onset carried by the data)
+                elif year == ERCOT_ECRS_RELEASE_REFORM_YEAR:
+                    rigid_end = min(ERCOT_ECRS_RELEASE_REFORM_HOUR, T)
+            elif getattr(
+                config, "ercot_nonreleasable_as_withholding", False
+            ) and code in ("REGUP", "RRS"):
+                if year < 2025:
+                    rigid_end = T  # whole ORDC-regime year
+                elif year == 2025:
+                    rigid_end = min(RTCB_GOLIVE_HOUR, T)
+        if rigid_end > 0:
+            req_rigid = req_t.copy()
+            req_rigid[rigid_end:] = 0.0
+            families.append(
+                ReserveFamily(
+                    name=f"{_name}_withheld",
+                    requirement=req_rigid,
+                    zone_mask=zone_mask_all.copy(),
+                    ordc_penalties=np.array([voll], dtype=float),
+                    ordc_step_widths=np.array([float(req_rigid.max())], dtype=float),
+                    reserve_class=p,
+                )
+            )
+            if rigid_end < T and float(req_t[rigid_end:].max()) > 0.0:
+                req_rel = req_t.copy()
+                req_rel[:rigid_end] = 0.0
+                # Appended AFTER the four product families so the first
+                # n_prod family columns keep their product identity for
+                # every downstream consumer (as-aware value, MCPC audit).
+                released_ecrs_families.append(
                     ReserveFamily(
-                        name=f"{_name}_withheld",
-                        requirement=req_rigid,
+                        name=f"{_name}_released",
+                        requirement=req_rel,
                         zone_mask=zone_mask_all.copy(),
-                        ordc_penalties=np.array([voll], dtype=float),
-                        ordc_step_widths=np.array(
-                            [float(req_rigid.max())], dtype=float
-                        ),
+                        ordc_penalties=pens,
+                        ordc_step_widths=wids,
                         reserve_class=p,
                     )
                 )
-                if rigid_end < T and float(req_t[rigid_end:].max()) > 0.0:
-                    req_rel = req_t.copy()
-                    req_rel[:rigid_end] = 0.0
-                    # Appended AFTER the four product families so the first
-                    # n_prod family columns keep their product identity for
-                    # every downstream consumer (as-aware value, MCPC audit).
-                    released_ecrs_families.append(
-                        ReserveFamily(
-                            name=f"{_name}_released",
-                            requirement=req_rel,
-                            zone_mask=zone_mask_all.copy(),
-                            ordc_penalties=pens,
-                            ordc_step_widths=wids,
-                            reserve_class=p,
-                        )
-                    )
-                continue
+            continue
         families.append(
             ReserveFamily(
                 name=_name,
@@ -1110,14 +1126,27 @@ def _ercot_multiproduct_design(
         if rrs_idx is not None and requirement[rrs_idx].max() > 0.0:
             lr_mw = ercot_load_resource_reserve_credit_mw(config, T, year=sim_year)
             requirement[rrs_idx, :] = np.maximum(requirement[rrs_idx, :] - lr_mw, 0.0)
-            families[rrs_idx] = ReserveFamily(
-                name=families[rrs_idx].name,
-                requirement=requirement[rrs_idx],
-                zone_mask=families[rrs_idx].zone_mask,
-                ordc_penalties=families[rrs_idx].ordc_penalties,
-                ordc_step_widths=families[rrs_idx].ordc_step_widths,
-                reserve_class=families[rrs_idx].reserve_class,
-            )
+            # Re-apply the credited requirement inside each RRS family's own
+            # active window (zero outside it) — the RRS_withheld /
+            # RRS_released split under ercot_nonreleasable_as_withholding
+            # carries its RTC+B date gate in the requirement mask, exactly
+            # like the windowed ECRS families in the storage credit below.
+            # For the unsplit (single full-window) family this is
+            # byte-identical to the previous direct assignment.
+            for fam_list in (families, released_ecrs_families):
+                for f, fam in enumerate(fam_list):
+                    if int(fam.reserve_class) != rrs_idx:
+                        continue
+                    fam_list[f] = ReserveFamily(
+                        name=fam.name,
+                        requirement=np.where(
+                            fam.requirement > 0.0, requirement[rrs_idx, :], 0.0
+                        ),
+                        zone_mask=fam.zone_mask,
+                        ordc_penalties=fam.ordc_penalties,
+                        ordc_step_widths=fam.ordc_step_widths,
+                        reserve_class=fam.reserve_class,
+                    )
 
     # Measured battery AS-award supply credit on the PRODUCT requirements
     # (config.ercot_storage_as_product_credit; the multi-product analogue of

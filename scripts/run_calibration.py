@@ -521,6 +521,7 @@ def run_year(
     miso_rdt_tcdc: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_ecrs_conservative_deployment: bool = False,
+    ercot_nonreleasable_as_withholding: bool = False,
     ercot_ordc_total_reserve: bool = False,
     ercot_as_aware_commitment: bool = False,
     ercot_reserve_supply_cap: bool = False,
@@ -1334,6 +1335,11 @@ def run_year(
     # reserve_config.ERCOT_ECRS_RELEASE_REFORM_* citations.
     if ercot_ecrs_conservative_deployment:
         config = config.with_overrides(ercot_ecrs_conservative_deployment=True)
+    # Published pre-RTC+B RRS/Reg-Up carve-out (no price-based SCED release
+    # through RTC+B go-live 2025-12-05 -> at-cap demand steps; standing ramp
+    # after): see ScenarioConfig.ercot_nonreleasable_as_withholding.
+    if ercot_nonreleasable_as_withholding:
+        config = config.with_overrides(ercot_nonreleasable_as_withholding=True)
     # Lumped ORDC total-reserve family (RTORPA) layered on the product stack:
     # see ScenarioConfig.ercot_ordc_total_reserve / reserve_config.
     if ercot_ordc_total_reserve:
