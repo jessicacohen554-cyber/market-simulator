@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-17-ercot80-unit-only-outages",
+  "label": "ercot80 unit only outages",
+  "date": "2026-07-17",
+  "shorthand": "ercot80-unit-only-outages",
+  "definition": "ERCOT-80: the deposed 2026-07-17-ercot76-ne-import keeper recipe (zero ScenarioConfig deltas) re-solved on the UNIT-ONLY CAMPD outage layer \u2014 the facility-summed outage layer was deleted entirely (outage-detection consolidation PR #2415), leaving the per-unit event-based detector as the sole CAMPD outage layer, and the ERCOT extract was re-derived (2,702->4,910 rows; measured CEMS + EIA-930, no residual). Supersedes 2026-07-17-ercot79-corrected-outages as the ERCOT keeper on the most-accurate availability envelope (CLAUDE.md rule 11). Removing the facility-summing phantom MORE completely does NOT re-form the real scarcity: 2023 C3c tail 53h->57h vs RT 181h (0.31x; the unit-only extract keeps a few more genuine shoulder-season dead-stops, so the tail nudges UP not down), 2024 16h->22h vs 53, 2025 0h vs 31; C3a 2023 -36.0%->-33.4% (model $42.69 vs RT $64.12, still FAIL; 2024/2025 pass); C3b 2024 flips 0.193 PASS->0.263 FAIL. DETERMINATION: NOT-YET (C3a mean LMP, C3b price shape, C3c scarcity tail all fail on the accurate fleet \u2014 the ERCOT offer/scarcity calibration was tuned against the phantom-tightened fleet and rests on that room exhaustion). OPEN LANE (successor): a full ERCOT offer-curve + ORDC/co-opt re-calibration against the corrected availability envelope so the real scarcity re-forms on real fleet tightness.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-17-ercot80-unit-only-outages.js",
+  "bundle": "results/calibration/ercot80_unit_only_outages_fullspan"
+}
