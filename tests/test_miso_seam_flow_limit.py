@@ -170,5 +170,118 @@ class TestSeamExportInjection(unittest.TestCase):
         )
 
 
+class TestSeamMeritCap(unittest.TestCase):
+    """``merit_cap=True`` applies the envelope as a merit-order waterfall.
+
+    The miso-73 composition fix (docs/handoffs/miso-g23-seam-envelope-
+    composition-design-2026-07.md): band k keeps clip(cap − (k−1)·step, 0,
+    step) so cheap base rungs stay full-width and the seam total is capped at
+    min(cap, limit) exactly — vs the uniform derate, which shrinks every band
+    by cap/limit and can only reach the cap with the dearest rung in the money.
+    """
+
+    def _fleet(self):
+        node = build_reference_price_node("MISO")
+        zone_names = sorted({g.zone for g in node})
+        return node, generators_to_fleet_arrays(node, zone_names, hours=T)
+
+    @staticmethod
+    def _seam_rows(fleet, mark, name):
+        rows = [
+            r
+            for r, uid in enumerate(fleet.unit_ids)
+            if mark in uid and uid.rsplit(mark, 1)[1].partition("#")[0] == name
+        ]
+        return sorted(rows, key=lambda r: int(fleet.unit_ids[r].rsplit("#", 1)[1]))
+
+    def test_import_waterfall_bounds_per_band(self):
+        node, fleet = self._fleet()
+        env = measured_seam_import_envelope("MISO", 2024, T)
+        self.assertTrue(
+            inject_miso_seam_flow_limit(fleet, "MISO", 2024, merit_cap=True)
+        )
+        for neighbor in INTERFACE_NEIGHBORS["MISO"]:
+            rows = self._seam_rows(fleet, _REF_IMPORT_MARK, neighbor.name)
+            self.assertTrue(rows)
+            cap = np.clip(env[neighbor.name], 0.0, None)
+            depth = 0.0
+            for r in rows:
+                width = float(fleet.pmax[r])
+                expected = np.clip(cap - depth, 0.0, width)
+                np.testing.assert_allclose(
+                    fleet.availability[r, :] * width, expected, atol=1.0
+                )
+                depth += width
+            # Seam total is the exact ceiling min(cap, limit).
+            total_mw = (fleet.availability[rows, :] * fleet.pmax[rows, None]).sum(
+                axis=0
+            )
+            np.testing.assert_allclose(total_mw, np.clip(cap, 0.0, depth), atol=1.0)
+
+    def test_base_band_keeps_full_width(self):
+        # The fix's signature: wherever cap ≥ one band width, band 1 is NOT
+        # derated (the uniform derate shrinks it in every cap < limit hour).
+        node, fleet = self._fleet()
+        env = measured_seam_import_envelope("MISO", 2024, T)
+        inject_miso_seam_flow_limit(fleet, "MISO", 2024, merit_cap=True)
+        rows = self._seam_rows(fleet, _REF_IMPORT_MARK, "PJM")
+        base = rows[0]
+        width = float(fleet.pmax[base])
+        full = env["PJM"] >= width
+        self.assertTrue(full.any())
+        np.testing.assert_allclose(fleet.availability[base, full], 1.0, atol=1e-9)
+
+    def test_merit_and_uniform_seam_totals_agree(self):
+        # Both semantics cap the seam TOTAL at min(cap, limit); only the
+        # per-band split differs — so the pre-fix envelope tests still pass.
+        node, fleet_u = self._fleet()
+        node, fleet_m = self._fleet()
+        inject_miso_seam_flow_limit(fleet_u, "MISO", 2024)
+        inject_miso_seam_flow_limit(fleet_m, "MISO", 2024, merit_cap=True)
+        for neighbor in INTERFACE_NEIGHBORS["MISO"]:
+            rows = self._seam_rows(fleet_u, _REF_IMPORT_MARK, neighbor.name)
+            tot_u = (fleet_u.availability[rows, :] * fleet_u.pmax[rows, None]).sum(
+                axis=0
+            )
+            tot_m = (fleet_m.availability[rows, :] * fleet_m.pmax[rows, None]).sum(
+                axis=0
+            )
+            np.testing.assert_allclose(tot_u, tot_m, atol=1.0)
+
+    def test_export_waterfall_mirror(self):
+        node, fleet = self._fleet()
+        exp = measured_seam_import_envelope("MISO", 2024, T, direction="export")
+        self.assertTrue(
+            inject_miso_seam_flow_limit(
+                fleet, "MISO", 2024, direction="export", merit_cap=True
+            )
+        )
+        for neighbor in INTERFACE_NEIGHBORS["MISO"]:
+            rows = self._seam_rows(fleet, _REF_EXPORT_MARK, neighbor.name)
+            self.assertTrue(rows)
+            cap = np.clip(exp[neighbor.name], 0.0, None)
+            depth = 0.0
+            for r in rows:
+                width = -float(fleet.pmin[r])
+                expected = -np.clip(cap - depth, 0.0, width)
+                np.testing.assert_allclose(fleet.min_gen[r, :], expected, atol=1.0)
+                depth += width
+
+    def test_flag_off_keeps_uniform_derate(self):
+        # Default (merit_cap omitted) stays byte-identical to the historical
+        # uniform derate — replay fidelity for pre-miso-73 bundles.
+        node, fleet_a = self._fleet()
+        node, fleet_b = self._fleet()
+        env = measured_seam_import_envelope("MISO", 2024, T)
+        inject_miso_seam_flow_limit(fleet_a, "MISO", 2024)
+        inject_miso_seam_flow_limit(fleet_b, "MISO", 2024, merit_cap=False)
+        np.testing.assert_array_equal(fleet_a.availability, fleet_b.availability)
+        rows = self._seam_rows(fleet_a, _REF_IMPORT_MARK, "PJM")
+        limit = float(fleet_a.pmax[rows].sum())
+        frac = np.clip(np.clip(env["PJM"], 0.0, None) / limit, 0.0, 1.0)
+        for r in rows:
+            np.testing.assert_allclose(fleet_a.availability[r, :], frac, atol=1e-9)
+
+
 if __name__ == "__main__":
     unittest.main()
