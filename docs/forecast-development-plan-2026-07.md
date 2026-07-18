@@ -70,11 +70,15 @@ config freezes, never inside this program's iterations (§2.3).
    hindcast demand is shed-suppressed served load (a demand-input gap, not availability).
    Residual to SOM: ≈ 56 $/kW-yr event-year / ≈ 66 event-free (co-opt off) → still
    G-20/G-22's. See `docs/handoffs/ff-1b-correlated-availability-2026-07-17.md`.
-3. **Entry stack.** BLK-8 solar (PJM price channel alone insufficient; owner's state-RPS
-   attribute fix unmeasured at bands), BLK-7 VRE capacity revenue = 0, queue chunking /
-   entry sizing (I13 cobweb), BLK-10 backstop over-fire (re-measure post-redesign), and an
-   unmarked gap: **economic entry commissions in-year** — no interconnection/construction
-   lag at all. → FF-2A ⛔.
+3. **Entry stack — FF-2A LANDED (gated, 2026-07-18); ERCOT solar residual open.** Was: BLK-8
+   solar (PJM price channel alone insufficient; owner's state-RPS attribute fix unmeasured at
+   bands), BLK-7 VRE capacity revenue = 0, queue chunking / entry sizing (I13 cobweb), BLK-10
+   backstop over-fire, and no interconnection/construction lag at all. Entry stack — FF-2A
+   landed (gated): VRE capacity revenue measured near-pivotal (MISO 2025 −1.3k), BLK-10
+   backstop 2.5 → 1.103 GW at the measured ladder, PJM solar +84 % → +48 %; ERCOT solar zero
+   measured as a pure term-(a) price-signal residual (−9.7k best-year margin) — G-20/G-22
+   lane. Integrated as real source + reproduced (`*-ff2a-r2` legs, score-identical) —
+   `docs/handoffs/ff-entry-stack-completion-2026-07.md` §8.
 4. **Non-equilibrium two-phase trajectory** (full-horizon P-3A): de-firm to ~2035 then
    cap-market over-build (RM→30–67%) / ERCOT chronic shortage + #2064 non-monotone
    scarcity. Cure = responsive capacity price (flips) + entry dynamics; re-measured at T2.
