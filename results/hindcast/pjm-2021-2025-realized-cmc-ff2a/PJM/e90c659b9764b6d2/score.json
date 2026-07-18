@@ -1,0 +1,268 @@
+{
+  "iso": "PJM",
+  "variant": "realized",
+  "scored_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "retirements": {
+    "total_gw": {
+      "actual": 11.121,
+      "model": 15.643,
+      "err_frac": 0.407,
+      "band": "FAIL"
+    },
+    "per_fuel": {
+      "biomass": {
+        "actual_gw": 0.189,
+        "model_gw": 0.009,
+        "err_frac": -0.95
+      },
+      "coal": {
+        "actual_gw": 6.885,
+        "model_gw": 11.537,
+        "err_frac": 0.676
+      },
+      "gas_ct": {
+        "actual_gw": 3.491,
+        "model_gw": 0.0,
+        "err_frac": -1.0
+      },
+      "nuclear": {
+        "actual_gw": 0.0,
+        "model_gw": 4.097,
+        "err_frac": null
+      },
+      "oil": {
+        "actual_gw": 0.555,
+        "model_gw": 0.0,
+        "err_frac": -1.0
+      }
+    },
+    "unit_recall_gt300": {
+      "n_big_actual": 17,
+      "matched": 13,
+      "recall": 0.765,
+      "grain": "fuel-mw-coverage",
+      "plant_recall_frac": 0.353,
+      "plant_matched": 6,
+      "band": "PASS"
+    },
+    "false_retire": {
+      "false_gw": 8.749,
+      "frac_of_model": 0.559,
+      "grain": "per-fuel-excess",
+      "band": "FAIL"
+    }
+  },
+  "additions": {
+    "by_tech": {
+      "wind": {
+        "actual_gw": 1.619,
+        "model_gw": 6.0,
+        "err_frac": 2.706,
+        "band": "FAIL"
+      },
+      "solar": {
+        "actual_gw": 13.066,
+        "model_gw": 19.322,
+        "err_frac": 0.479,
+        "band": "FAIL"
+      },
+      "gas_cc": {
+        "actual_gw": 8.525,
+        "model_gw": 6.119,
+        "err_frac": -0.282,
+        "band": "FAIL"
+      },
+      "gas_ct": {
+        "actual_gw": 0.447,
+        "model_gw": 1.103,
+        "err_frac": 1.465,
+        "band": "FAIL"
+      },
+      "storage": {
+        "actual_gw": 0.283,
+        "model_gw": 0.0,
+        "err_frac": -1.0,
+        "band": "FAIL"
+      }
+    },
+    "shares": {
+      "wind": {
+        "actual_share": 0.067,
+        "model_share": 0.184,
+        "delta_pp": 0.117,
+        "band": "FAIL"
+      },
+      "solar": {
+        "actual_share": 0.542,
+        "model_share": 0.594,
+        "delta_pp": 0.051,
+        "band": "FAIL"
+      },
+      "gas_cc": {
+        "actual_share": 0.354,
+        "model_share": 0.188,
+        "delta_pp": -0.166,
+        "band": "FAIL"
+      },
+      "gas_ct": {
+        "actual_share": 0.019,
+        "model_share": 0.034,
+        "delta_pp": 0.015,
+        "band": "PASS"
+      },
+      "storage": {
+        "actual_share": 0.012,
+        "model_share": 0.0,
+        "delta_pp": -0.012,
+        "band": "PASS"
+      }
+    },
+    "actual_total_gw": 24.092,
+    "model_total_gw": 32.543
+  },
+  "co2": {
+    "model": {
+      "2023": 281062052.82678825,
+      "2024": 271011743.41044086,
+      "2025": 304677702.811952
+    },
+    "actual": {
+      "2023": 407135714.37786365,
+      "2024": 420607523.9953725,
+      "2025": 448666172.50825304
+    }
+  },
+  "baselines": {
+    "announced": {
+      "retire_gw": 65.381,
+      "add_gw": 147.445,
+      "note": "2020-vintage planned schedule"
+    }
+  },
+  "bands": {
+    "thermal_gw_retired_total_frac": 0.1,
+    "thermal_gw_retired_perfuel_frac": 0.2,
+    "retire_recall_min": 0.7,
+    "false_retire_frac_max": 0.15,
+    "retire_timing_years_max": 1.5,
+    "add_gw_frac_default": 0.15,
+    "add_gw_frac_storage": 0.25,
+    "techmix_share_pp_max": 0.05,
+    "co2_2025_frac": 0.1
+  },
+  "generated_utc": "2026-07-18T08:40:48Z",
+  "tr10": {
+    "first_mover_fuels": [
+      "coal"
+    ],
+    "first_mover_year": 2024,
+    "econ_exit_gw_by_fuel": {
+      "coal": 11.537
+    },
+    "actual_gw_by_fuel": {
+      "biomass": 0.189,
+      "coal": 6.885,
+      "gas_ct": 3.491,
+      "oil": 0.555
+    },
+    "zero_real_fuels_over_1gw": [],
+    "tr10a": "PASS",
+    "tr10b": "PASS"
+  },
+  "tr10_is2020": {
+    "first_mover_fuels": [
+      "coal"
+    ],
+    "first_mover_year": 2024,
+    "econ_exit_gw_by_fuel": {
+      "coal": 11.537
+    },
+    "actual_gw_by_fuel": {
+      "biomass": 0.189,
+      "coal": 6.885,
+      "gas_ct": 3.491,
+      "oil": 0.555
+    },
+    "zero_real_fuels_over_1gw": [],
+    "tr10a": "PASS",
+    "tr10b": "PASS"
+  },
+  "loyo": {
+    "folds": {
+      "2023": {
+        "held_out_year": 2023,
+        "recall": 1.0,
+        "recall_band": "PASS",
+        "matched": 9,
+        "n_big_actual": 9,
+        "false_retire_gw_raw": 11.153,
+        "false_retire_band_raw": "FAIL",
+        "false_retire_gw_is2020": 7.056,
+        "tr10a": "PASS",
+        "tr10b": "PASS",
+        "tr10_first_mover_fuels": [
+          "coal"
+        ]
+      },
+      "2024": {
+        "held_out_year": 2024,
+        "recall": 0.0,
+        "recall_band": "FAIL",
+        "matched": 0,
+        "n_big_actual": 16,
+        "false_retire_gw_raw": 4.097,
+        "false_retire_band_raw": "FAIL",
+        "false_retire_gw_is2020": 0.0,
+        "tr10a": "PASS",
+        "tr10b": "PASS",
+        "tr10_first_mover_fuels": []
+      },
+      "2025": {
+        "held_out_year": 2025,
+        "recall": 0.75,
+        "recall_band": "PASS",
+        "matched": 12,
+        "n_big_actual": 16,
+        "false_retire_gw_raw": 9.194,
+        "false_retire_band_raw": "FAIL",
+        "false_retire_gw_is2020": 5.097,
+        "tr10a": "PASS",
+        "tr10b": "PASS",
+        "tr10_first_mover_fuels": [
+          "coal"
+        ]
+      }
+    },
+    "holds_2of3": {
+      "recall_pass": true,
+      "tr10a_pass": true,
+      "tr10b_pass": true
+    },
+    "note": "Scorer-side LOYO: fold y drops year-y events from model AND actuals; no re-solve. >=2/3 folds is the rule-22 promotion bar."
+  },
+  "blk10_backstop": {
+    "fired_rows": [
+      {
+        "year": 2025,
+        "unit_id": "gas_ct_adequacy_2025",
+        "fuel": "gas_ct",
+        "mw": 1102.8
+      }
+    ],
+    "fired_mw_total": 1102.8,
+    "fired_gw_total": 1.103,
+    "thermal_additions_mw_by_source": {
+      "economic": 6118.8,
+      "reserve_backstop": 1102.8
+    }
+  },
+  "flip_gate_extras": {
+    "task": "FF-1A",
+    "note": "T-R10 no-inversion guard + LOYO folds (2023-2025) + BLK-10 backstop-fired MW — scorer-side, no re-solve.",
+    "utc": "2026-07-18T08:42:09Z"
+  }
+}
