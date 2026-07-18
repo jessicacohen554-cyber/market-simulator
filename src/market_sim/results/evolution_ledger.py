@@ -21,6 +21,9 @@ The schema (one object per scenario-year)::
       "retirements":        [{"unit_id","fuel","mw","reason"}],   # confirmed|announced|economic
       "confirmed_derates":  [{"unit_id","fuel","mw_before","mw_after","derate_mw"}],
       "floor_retained":     [{"unit_id","fuel","mw"}],            # econ wanted out
+      "pipeline_events":    [{"event","unit_id","fuel","mw","year",...}],  # R-NEW
+                            # decided|re_confirmed|reversed|entry_capped|executed
+                            # (retirement_rule="pipeline" only; empty under legacy)
       "thermal_additions":  [{"unit_id","fuel","mw","zone","source","eia860_id"}],
       "ccs_retrofits":      [{"unit_id","mw","from_fuel","to_fuel"}],
       "renewable_additions":[{"zone","tech","mw"}],
@@ -87,6 +90,7 @@ def new_events() -> dict:
     return {
         "retirements": [],
         "floor_retained": [],
+        "pipeline_events": [],
         "thermal_additions": [],
         "ccs_retrofits": [],
         "renewable_additions": [],
