@@ -7,7 +7,7 @@ the end of every manager turn.
 
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
-- **Last reviewed `origin/main` HEAD:** `fa6959e` (2026-07-17, turn 3).
+- **Last reviewed `origin/main` HEAD:** `2144e12` (2026-07-17, turn 4).
 - **Plan base SHA:** `c95176e`.
 
 Status vocabulary: `not-sent` · `sent` · `landed` (merged, unverified) ·
@@ -19,22 +19,22 @@ Status vocabulary: `not-sent` · `sent` · `landed` (merged, unverified) ·
 
 | FF id | Model | Wave | Lane | Gate | Status | Evidence |
 |---|---|---|---|---|---|---|
-| FF-0A | FABLE | 0 | L-VAL | ⛔ rubric | **verified-pass** | rubric #2414 + scorer #2419 (FF-0A-fix). Complete pair. |
-| FF-0A-fix | OPUS | 0 | L-VAL | — | **verified-pass** | PR #2419 (b744383+0075537): `forecast_verdict.py` (1767L, no-LP, `--tier {t1f,t1x,t1h,t2,t3}`, full §0 artifact contract) + `test_forecast_verdict.py` (73 tests **pass** 0.22s). |
-| FF-0B | OPUS | 0 | L-VAL | — | verified-issues → superseded by FF-0B-redo | PR #2412 non-delivery (only .gitignore) |
+| FF-0A | FABLE | 0 | L-VAL | ⛔ rubric | **verified-pass** | rubric #2414 + scorer #2419. Complete pair. |
+| FF-0A-fix | OPUS | 0 | L-VAL | — | **verified-pass** | #2419: forecast_verdict.py + 73 passing tests |
+| FF-0B | OPUS | 0 | L-VAL | — | verified-issues → superseded by FF-0B-redo | #2412 non-delivery |
 | FF-0B-redo | OPUS | 0 | L-VAL | — | **correction-sent** (turn 2) | in flight — no PR yet |
-| FF-0C | FABLE | 0 | L-CAP | — (gates FF-1A) | **verified-pass** | PR #2418 (d860041): `ff-retirement-rule-redesign-2026-07.md` (531L, memo-only). All parts (a-d): diagnosis, field survey, 4 candidates graded + R-NEW composite, T-R10 no-inversion guard + LOYO, identification plan, **owner-decision box §6** (D1/D2/D3). No code/solve. |
-| FF-0D | OPUS | 0 | L-INP | — | **verified-pass** | PR #2413: audit doc, no source changes |
+| FF-0C | FABLE | 0 | L-CAP | — (gates FF-1A) | **verified-pass** | #2418: retirement redesign memo; owner box D1/D2/D3 |
+| FF-0D | OPUS | 0 | L-INP | — | **verified-pass** | #2413: audit doc, no source changes |
 | FF-0E | OPUS | 0 | L-VAL | — | sent | in flight — no PR yet |
-| FF-1A | FABLE | 1 | L-CAP | ⛔ **owner-gated** | **unblocked, HELD on owner** | FF-0C satisfied; awaiting owner sign-off on FF-0C §6 **D1** (rule choice), D2, D3 |
+| FF-1A | FABLE | 1 | L-CAP | ⛔ **owner-gated** | **HELD on owner (prompt staged turn 4)** | FF-0C satisfied; awaiting D1 sign-off. Prompt keyed to Option B ready to fire. |
 | FF-1B | FABLE | 1 | L-SCAR | — | **sent** (turn 2) | in flight — no PR yet |
-| FF-1C | OPUS | 1 | L-INP | — | **sent** (turn 2) | in flight — no PR yet |
+| FF-1C | OPUS | 1 | L-INP | — | **verified-pass** | PR #2422 (87c803b+83518a8): demand refresh (5 ISOs re-vintaged + MISO wired), DC double-count fix (energy-invariant relocation, runner.py+datacenter.py, default-off byte-identical), hydro verified already-fixed (66c55fd), ZONE_SHARE/NEISO `{}` documented per charter, citations updated. Scope clean (no FF-1E constants/policy), rule-27 clean (constants.py 7097→7179), DC default still `off`. CAVEAT: numpy-tests not executable in mgr env (files updated + hydro tests/commit confirmed statically). |
 | FF-1D | OPUS | 1 | L-VAL | — | not-sent | blocked: FF-0E not landed |
-| FF-1E | OPUS | 1 | L-INP | — | not-sent | FF-0D ✅, but starts **after FF-1C merges** (shared constants.py) |
+| FF-1E | OPUS | 1 | L-INP | — | **sent** (turn 4) | FF-0D ✅ + FF-1C merged ✅ — released |
 | FF-2A | FABLE | 2 | L-CAP | ⛔ | not-sent | blocked: FF-1A merge |
 | FF-2B | OPUS | 2 | L-CAP | — | not-sent | blocked: FF-2A merge |
 | FF-2C | OPUS | 2 | L-CAP | owner-gated (per-ISO flip) | not-sent | blocked: FF-2B + owner |
-| FF-2D | OPUS | 2 | L-VAL | ⛔ T1 gate | not-sent | blocked: W1/W2 merges (FF-0A rubric+scorer ✅ ready) |
+| FF-2D | OPUS | 2 | L-VAL | ⛔ T1 gate | not-sent | blocked: W1/W2 merges (FF-0A ✅) |
 | FF-3A | OPUS | 3 | L-VAL | ⛔ T2 | not-sent | blocked: FF-2D + owner |
 | FF-3B | OPUS | 3 | L-CES | — | not-sent | blocked: W2 |
 | FF-3C | FABLE | 3 | L-PERF | conditional (T2 breach) | not-sent | trigger-gated |
@@ -44,9 +44,8 @@ Status vocabulary: `not-sent` · `sent` · `landed` (merged, unverified) ·
 | FF-4C | OPUS | 4 | L-VAL | owner-gated (PB-5 go) | not-sent | blocked: FF-4A + owner |
 | FF-5A | OPUS | 5 | L-DASH | — (run LAST) | not-sent | blocked: Wave 4 |
 
-Out-of-program merges tracked earlier: #2416 caiso-94, #2415/#2416 CAMPD outage
-consolidation, #2411 ercot-79, #2410 caiso-93. (None since 6d6867b — turn 3's three
-merges are all FF/mgr.)
+Out-of-program merges this window: #2427 ercot-80 unit-only outages, #2426/#2425 miso-72
+winter fuel security, #2420 caiso-94 daytime-clean.
 
 ---
 
@@ -54,51 +53,43 @@ merges are all FF/mgr.)
 
 **Received (verbatim, dated):** none yet.
 
-**AWAITING NOW — FF-0C §6 decision box (gates FF-1A):**
+**AWAITING — two live calls:**
 
-- **D1 (the rule):** A status-quo (blocks all flips) · **B = R-NEW (memo's
-  recommendation)** · B2 = B + pre-window seeding (separate A/B; needed for any PJM
-  in-window coal recall but changes hindcast information set) · C minimal (not rec) ·
-  D hysteresis (rejected). *Surfaced to owner turn 3 via AskUserQuestion.*
-- **D2 (if B/B2):** delete `staged_oversupply_thinning` at flip (rec) vs keep gated-off.
-- **D3:** adopt measured gas_cc execution lag = 1 (rec, rule 14) vs hold at 2.
+1. **FF-0C §6 D1 (gates FF-1A).** A status-quo (blocks flips) · **B = R-NEW (rec)** ·
+   B2 = B + pre-window seeding (separate A/B) · C minimal (not rec) · D rejected. Plus
+   D2 delete staged-thinning at flip (rec), D3 gas_cc lag=1 (rec). FF-1A prompt staged,
+   keyed to B — launching it is the sign-off.
+2. **BAU DC posture — NOW ACTIONABLE (FF-1C evidence in).** `datacenter_load_path`
+   default `off` vs `mid` for T1+/golden. Energy-equal at mid; the choice is DC hourly
+   SHAPE. `mid` models DC flat → lower peak (ERCOT 2030 ~120 vs ~139 GW), less
+   peaker over-build / phantom scarcity — structurally more faithful, now admissible
+   (double-count fixed). FF-1C recommends the structural argument favors `mid` but it is
+   a material golden-peak change → owner's call. Gates FF-4A; informs FF-1E/FF-2D runs.
 
-**Other pending (unchanged):**
-
-| Decision | Gates | Answerable now? |
-|---|---|---|
-| DC BAU posture: `datacenter_load_path` `off` vs `mid` | FF-1C, FF-4A | Owner may lean; FF-1C brings corridor evidence. |
-| Entry-lookahead default | FF-2A | After FF-2A probe. |
-| Forecast-availability derate default | FF-1B | After FF-1B probe. |
-| Per-ISO capacity-market flip sign-offs | FF-2C | After FF-1A/FF-2A scorecards. |
-| NYISO R5a: Option A vs B (B needs NYSRC App-D manual download) | FF-3D | Partially — can pre-authorize the download. |
-| Golden config freeze | FF-4A | After T2. |
-| PB-5 go | FF-4C | After golden. |
+**Other pending:** entry-lookahead (FF-2A), availability derate (FF-1B), per-ISO flips
+(FF-2C), NYISO R5a (FF-3D), golden freeze (FF-4A), PB-5 (FF-4C).
 
 ---
 
 ## Corrections issued
 
-1. **FF-0A-fix [OPUS]** (turn 2) — **RESOLVED turn 3, verified-pass.** Built
-   `forecast_verdict.py` + 73 passing tests to the merged rubric (PR #2419).
-2. **FF-0B-redo [OPUS]** (turn 2) — **open**, in flight. Re-run T1-F + commit findings
-   doc + register BEFORE legs; explicit "gitignore-only PR is not delivery" contract.
+1. **FF-0A-fix [OPUS]** (turn 2) — **RESOLVED turn 3, verified-pass** (#2419).
+2. **FF-0B-redo [OPUS]** (turn 2) — **open**, in flight (no PR).
 
 ---
 
 ## Turn log
 
-- **2026-07-17 (turn 1, program start).** HEAD `f0da036`; no FF work landed since plan
-  base `c95176e`. Dispatched Wave 0 (FF-0A..0E). Created + pushed ledger.
-- **2026-07-17 (turn 2, refresh).** Main `f0da036 → 6d6867b`. Landed FF-0A/0B/0D.
-  FF-0D verified-pass; FF-0A verified-issues (scorer missing); FF-0B verified-issues
-  (non-delivery). Corrections FF-0A-fix + FF-0B-redo (OPUS). Released FF-1C (FF-0D
-  satisfied) + FF-1B (independent lane, drift-patched onto consolidated outages.py).
-- **2026-07-17 (turn 3, refresh).** Main `6d6867b → fa6959e` (3 merges). Landed:
-  **FF-0A-fix** (#2419 — scorer+tests, 73 pass, no-LP; completes FF-0A → verified-pass)
-  and **FF-0C** (#2418 — retirement redesign memo, verified-pass, all parts + owner
-  box). Both governance-clean. FF-0B-redo/FF-0E/FF-1B/FF-1C still in flight (no PRs).
-  FF-0C's landing unblocks FF-1A but it is owner-gated on §6 D1 — surfaced the D1/D2/D3
-  decision to the owner (recommendation B / delete-at-flip / adopt-measured); FF-1A
-  HELD until the call lands in chat. No new worker prompt dispatched (Wave-1 remainder
-  blocked on FF-0E / FF-1C-merge / the D1 call). Frontier §1.2 unchanged.
+- **turn 1 (program start).** HEAD `f0da036`. Dispatched Wave 0 (FF-0A..0E). Ledger created.
+- **turn 2 (refresh).** `f0da036 → 6d6867b`. FF-0D verified-pass; FF-0A/FF-0B
+  verified-issues → corrections FF-0A-fix + FF-0B-redo. Released FF-1B + FF-1C.
+- **turn 3 (refresh).** `6d6867b → fa6959e`. FF-0A-fix + FF-0C landed verified-pass.
+  FF-1A unblocked but owner-gated on D1; surfaced the box. (Owner asked for the prompt →
+  turn 4 staged the FF-1A block keyed to Option B.)
+- **turn 4 (refresh).** `fa6959e → 2144e12` (6 merges; only FF-1C in-program). **FF-1C
+  verified-pass** (demand/DC currency + double-count fix + hydro-verify; scope/rule-27/
+  DC-default all clean; tests not runnable in mgr env, statically confirmed). FF-1C
+  merging unblocked **FF-1E → released** (drift-patched onto NEW_ENTRY_COSTS:4201 +
+  resolve_new_entry_costs + on-disk ATB-2024 datatype). Surfaced the now-actionable BAU
+  DC posture decision (rec: mid). FF-1A still held on D1. FF-0B-redo/FF-0E/FF-1B in
+  flight. Frontier §1.2 unchanged.
