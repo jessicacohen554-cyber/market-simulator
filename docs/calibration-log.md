@@ -16531,3 +16531,69 @@ EF 0, 2023+2024+2025 one invocation, sequential per the 15 GB memory limit) —
 authorize the solve as a DIAGNOSTIC, not the mechanism as a keeper. Ops: no LP,
 no registration, dashboard untouched. Committed: the two derive scripts + the
 FINDING + this entry.
+
+## 2026-07-17 — ERCOT-80: the deposed keeper recipe re-solved on the UNIT-ONLY CAMPD outage layer (facility outage layer deleted, PR #2415); the phantom is removed more completely but the real scarcity does NOT re-form — ERCOT stays NOT-YET, ercot80 adopted as the keeper on the most-accurate availability envelope (rule 11)
+
+**Task (rule-27 lane; Opus/Fable).** After ERCOT-79 confirmed and fixed the CAMPD
+facility-outage detector's phantom (the run-based `detect_outages` folded a
+daily-cycling combined-cycle unit's whole operating season into one hard
+`availability=0` window), the outage-detection consolidation (PR #2415) went
+further: it **deleted the facility-summed outage layer entirely**
+(`scripts/derive_campd_outages.py` + `campd-outages.csv`/`-PJM.csv`) and made the
+per-unit event-based detector (`scripts/lib/outage_detect.py`, imported by
+`derive_campd_unit_outages.py`) the **sole CAMPD outage layer for every ISO**
+(`fleet.py` drops the facility-overlay block so `unit_outage_derate_factors` is
+the only layer; `ScenarioConfig.historic_outage_overlay` is now inert). The ERCOT
+unit extract was re-derived on the consolidated detector (**2,702 → 4,910 rows**:
+the corrected revealed-availability filter + 5-day full-stop override keep the
+shoulder-season dead-stops the old overlap filter dropped, while genuine daily
+cyclers produce no false window). This session re-solves the keeper recipe on
+that unit-only envelope.
+
+**Re-solve (zero ScenarioConfig deltas; `ercot80_unit_only_outages_fullspan`,
+full-span 2023-2025).** `replay_keeper.py` on `ercot76_ne_import_fullspan` → the
+byte-faithful keeper recipe on the current unit-only outage data. Determination
+**NOT-YET** — C3a mean LMP, C3b price shape, and C3c scarcity tail all FAIL on the
+accurate fleet (C1 fuel-mix, C2 system volume, C4 dispatch corr, C5a CO2, C6
+governance, C7 diurnal shape, C8 forced-share all PASS).
+
+**Movement vs the ercot79 facility-detector fix (honest — the accurate data is
+NOT a better fit).** Removing the facility-summing phantom MORE completely does
+**not** re-form the real scarcity; the tail stays collapsed and in fact nudges
+slightly UP because the unit-only extract preserves more genuine shoulder-season
+dead-stops:
+- C3c tail (>$200/MWh, RT hourly, settlement=LMP+overlay): 2023 **53h → 57h** vs
+  RT 181 (0.31×); 2024 16h → 22h vs 53; 2025 0h vs 31.
+- C3a mean LMP 2023: **-36.0% → -33.4%** (model $41.05 → $42.69 vs RT $64.12),
+  still FAIL; 2024 -9.8% → -1.8%, 2025 -5.1% → -3.4% (both pass).
+- C3b shape NRMSE: 2023 0.685 → 0.675; **2024 0.193 (PASS) → 0.263 (FAIL)**; 2025
+  0.094 → 0.086.
+The ORDC overlay barely fires on the corrected fleet (2023 adder max $344, 4h
+>$100; 2024 max $57; 2025 max $20) — the multi-product co-opt has ample event-time
+room and does not price the real August/summer scarcity. SAME structural finding
+as ERCOT-79: one availability mechanism owned BOTH the Jun/Sep shoulder over-shoot
+(fixed at ercot79, 58h lw $1,068 → $242) and the caught August tail (un-caught);
+the ERCOT offer/scarcity calibration (offer curves, ORDC/co-opt) was tuned against
+the phantom-tightened fleet and rests on that room exhaustion.
+
+**Disposition: adopt the accurate unit-only data; ercot80 is the ERCOT keeper;
+ERCOT stays NOT-YET.** Per CLAUDE.md rule 11 the more-accurate input is kept and
+the compensating miscalibration is exposed, not buried. `keepers.json` ERCOT +
+array flipped `2026-07-17-ercot79-corrected-outages` →
+**`2026-07-17-ercot80-unit-only-outages`**; `build_status.py` → status.js ERCOT
+NOT-YET; `audit_keepers.py --iso ERCOT` PASS 0/0. `frontier.ERCOT` **left
+WITHDRAWN** (owner-only — not re-declared this session). **Open lane (successor,
+unchanged):** a full ERCOT offer-curve + ORDC/co-opt re-calibration against the
+corrected availability envelope so the real scarcity re-forms on real fleet
+tightness. See `results/calibration/FINDING-ercot79-phantom-outage-2026-07.md`.
+
+**Ops.** Full-span 2023-2025 in ONE `replay_keeper` invocation, years sequential
+(rules 12/16). derive_ordc_overlay + legitimacy_diagnostics --json-out +
+build_dof_ledger --iso ERCOT + dashboard_add_run + governance/exceptions
+attestation + keepers flip + status.js + manifest committed this session; throwaway
+partial bundle deleted. NOTE (env): the per-plant ERCOT P1 peaks ~11.5 GB on a
+16 GB host with NO cgroup limit; a first attempt was host-OOM-killed when
+concurrent model-loading python collided with the 2024 P1 peak (cgroup oom_kill=0,
+so the GLOBAL killer fired). Keep the session quiet during a per-plant solve — the
+clean quiet re-run cleared at 11.5 GB. Transport: API `push_files` onto a fresh
+branch rebased on origin/main. Next number: ercot-81.
