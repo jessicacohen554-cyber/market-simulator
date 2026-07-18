@@ -16597,3 +16597,63 @@ concurrent model-loading python collided with the 2024 P1 peak (cgroup oom_kill=
 so the GLOBAL killer fired). Keep the session quiet during a per-plant solve — the
 clean quiet re-run cleared at 11.5 GB. Transport: API `push_files` onto a fresh
 branch rebased on origin/main. Next number: ercot-81.
+
+## 2026-07-18 — PJM-115: the pjm-114 east-interface keeper re-solved on UNIT-ONLY CAMPD outages (facility phantom deleted) — DISPATCH-INERT; PJM HOLDS CALIBRATED and does NOT rest on the phantom (contrast ERCOT-79)
+
+**Task (owner charter, rule-27 lane).** The cross-ISO follow-through of ERCOT-79.
+The 2026-07-17 consolidation deleted the facility-summed CAMPD outage overlay
+(`campd-outages*.csv` — a hard `availability=0` per plant that folded
+daily-cycling CC into summer-long phantom outages; PJM's committed facility csv
+carried the strongest signature, 164 windows >1,500 h incl. an 8,784 h full-year
+window) and made the per-unit derate (event-based cycling detection +
+revealed-availability in-merit filter, ERCOT-79 detector lineage) the sole CAMPD
+outage source. Re-solve PJM's keeper (`2026-07-16-pjm-114-east-interface`,
+CALIBRATED-WITH-CAVEATS, bundle `pjmcong1_east_cut`) on the corrected unit-only
+availability envelope; report movement honestly.
+
+**Ops.** `replay_keeper.py pjmcong1_east_cut --out-dir pjm115_unit_only_outages`,
+full-span 2023-2025, one PJM solve at a time (P0 cold + P1 warm per year, ~25 min
+total; a swap file absorbed the ~15 GB HiGHS factorize peak). Fresh-checkout input
+restoration required and done: the `transfer-interface-limits` clean partition
+rebuilt (`curate_transfer_interface_limits.py --isos PJM` — the EAST cut's data
+dependency; without it the cut SILENTLY SKIPS, a bogus double-delta) and the
+`pjm-da-virtuals` DataMiner2 feed re-fetched (36 months, gitignored). Single delta
+vs the keeper = the availability envelope; zero ScenarioConfig / fitted-scalar
+changes; PJM unit extracts re-derived by the consolidated detector (rule 24).
+Registered `2026-07-18-pjm-115-unit-only`.
+
+**Result — the outage swap is DISPATCH- and PRICE-INERT for PJM.** Every scored
+criterion reproduces the keeper to within noise:
+* C3a mean LMP: 2023 $30.98→$30.97, 2024 $29.94→$29.93, 2025 $41.68→$41.64
+  (|Δ|<0.05 $/MWh).
+* **C3c DA-expressible >$200 tail: 7 / 9 / 40 h → 7 / 9 / 40 h (ZERO change).**
+* C5a CO2 −1.8 / −3.2 / +2.9 % (|Δ|<0.2 %); C2 gas 361.3→361.1 / coal 108.6→108.9
+  TWh (2023), all within-band.
+* Determination **CALIBRATED** (C1 16/16, C2, C3a, C3b, C3c, C4, C5a, C6, C7, C8
+  PASS). The keeper's stored `CALIBRATED-WITH-CAVEATS` differed ONLY by the current
+  scorer dropping the always-unscored storage benchmark (C5b/C5c)
+  `unscored-criteria` caveat — a scorer-version effect, NOT the outages (keeper
+  reason = `unscored criteria: storage, storage_shape`; the current scorer no
+  longer emits those criteria). C8 D-2 forced-share unchanged (nuclear must-run
+  exempt; ST_GAS drag 0.39 / 0.40 / 0.29 immaterial <2 % of load, non-gating —
+  identical to the keeper).
+
+**Why PJM ≠ ERCOT.** ERCOT-79's tail COLLAPSED on the corrected fleet because its
+scarcity was formed by the reserve-room exhaustion the phantom manufactured. PJM's
+tail is CONGESTION-formed by the measured EAST reactive-interface cut (the EMAAC
+import limit); it is availability-robust, so restoring the phantom-zeroed
+capability leaves the marginal congestion-bound clearing untouched. **PJM's
+calibration does NOT rest on the facility phantom.**
+
+**Disposition.** PJM HOLDS calibrated-grade on the accurate unit-only availability
+envelope — no re-calibration lane needed (contrast the ERCOT-79 successor lane).
+Registered as a KEEPER CANDIDATE; **keeper flip to `2026-07-18-pjm-115-unit-only`
+RECOMMENDED** on the ERCOT-79 principle (a keeper should rest on accurate data,
+and this is a metric-identical, no-downside accuracy upgrade). **FLAGGED, NOT
+ACTED — the keepers.json promotion is owner-reserved** (pjm-114 precedent: "keeper
+promotion RECOMMENDED — keepers.json untouched (owner-only)"). Also owner-reserved
+and not acted: frontier (PJM has none), the calibration-complete marker (PJM has
+none — holdouts stay quarantined; solved 2023-2025 only, rule 22).
+`build_status --check` in sync; `audit_keepers --iso PJM` PASS on the unchanged
+pjm-114 keeper. Committed: the bundle slims + sidecar + `runs/<id>.js` + this entry
+(API transport, branch freshly based on origin/main).
