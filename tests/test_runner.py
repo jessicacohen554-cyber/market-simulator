@@ -530,19 +530,31 @@ class TestStrictDemandProfileWiring(unittest.TestCase):
 class TestDemandGrowth(unittest.TestCase):
     """Piecewise demand growth: near-term vs long-term rates by era."""
 
+    # Rates read from the constant so these era-selection mechanic tests survive
+    # a currency refresh (FF-1C: ERCOT mid near 0.05 -> 0.085, long 0.025 held).
     def test_near_term_year_uses_near_rate(self):
+        from market_sim.config.constants import DEMAND_GROWTH_RATES
+
         config = ScenarioConfig(iso="ERCOT", demand_growth_path="mid")
-        self.assertAlmostEqual(runner._get_growth_rate(config, 2028), 0.05)
+        near = DEMAND_GROWTH_RATES["ERCOT"]["mid"]["near"]
+        self.assertAlmostEqual(runner._get_growth_rate(config, 2028), near)
 
     def test_long_term_year_uses_long_rate(self):
+        from market_sim.config.constants import DEMAND_GROWTH_RATES
+
         config = ScenarioConfig(iso="ERCOT", demand_growth_path="mid")
-        self.assertAlmostEqual(runner._get_growth_rate(config, 2035), 0.025)
+        long = DEMAND_GROWTH_RATES["ERCOT"]["mid"]["long"]
+        self.assertAlmostEqual(runner._get_growth_rate(config, 2035), long)
 
     def test_transition_boundary(self):
         # 2030 is the last near-term year; 2031 is the first long-term year.
+        from market_sim.config.constants import DEMAND_GROWTH_RATES
+
         config = ScenarioConfig(iso="ERCOT", demand_growth_path="mid")
-        self.assertAlmostEqual(runner._get_growth_rate(config, 2030), 0.05)
-        self.assertAlmostEqual(runner._get_growth_rate(config, 2031), 0.025)
+        near = DEMAND_GROWTH_RATES["ERCOT"]["mid"]["near"]
+        long = DEMAND_GROWTH_RATES["ERCOT"]["mid"]["long"]
+        self.assertAlmostEqual(runner._get_growth_rate(config, 2030), near)
+        self.assertAlmostEqual(runner._get_growth_rate(config, 2031), long)
 
     def test_flat_override_when_no_structured_path(self):
         # An ISO/path with no structured rates falls back to the scalar.
@@ -559,18 +571,24 @@ class TestDemandGrowth(unittest.TestCase):
         # so the first simulated year already carries two years of growth.
         # Compounding from START_YEAR instead silently presented 2024
         # actuals as 2026 demand (peer review C1).
+        from market_sim.config.constants import DEMAND_GROWTH_RATES
+
         config = ScenarioConfig(iso="ERCOT", demand_growth_path="mid")
+        # Read the rates from the constant so this mechanic test survives a
+        # currency refresh (FF-1C moved ERCOT mid near 0.05 -> 0.085).
+        near = 1.0 + DEMAND_GROWTH_RATES["ERCOT"]["mid"]["near"]
+        long = 1.0 + DEMAND_GROWTH_RATES["ERCOT"]["mid"]["long"]
         base = np.full((1, 8), 100.0)
         # 2026: two near-rate years of growth (2024, 2025).
         np.testing.assert_allclose(
-            runner._scale_demand(base, config, 2026), base * 1.05**2
+            runner._scale_demand(base, config, 2026), base * near**2
         )
         # 2028: four years of the near rate (2024-2027).
         np.testing.assert_allclose(
-            runner._scale_demand(base, config, 2028), base * 1.05**4
+            runner._scale_demand(base, config, 2028), base * near**4
         )
         # 2032: seven near years (2024-2030) then one long year (2031).
-        expected = base * 1.05**7 * 1.025**1
+        expected = base * near**7 * long**1
         np.testing.assert_allclose(runner._scale_demand(base, config, 2032), expected)
 
     def test_scale_demand_backcast_year_is_unscaled(self):
@@ -786,11 +804,12 @@ class TestDatacenterBlockWiring(RunnerTestBase):
         self.assertEqual(len(demands), 1)  # one DispatchModel per year (2026)
         self.assertIs(demands[0], scale_out[2026])
 
-    def test_forecast_path_lands_datacenter_mw_in_demand(self):
-        # A forecast run with a non-off DC path adds the published per-ISO DC MW
-        # trajectory (flat block) to every hour, so the peak rises by exactly
-        # resolve_datacenter_mw * datacenter_load_factor and the demand reaching
-        # the LP is a NEW array (not the _scale_demand object).
+    def test_forecast_path_relocates_datacenter_mw_in_demand(self):
+        # A forecast run with a non-off DC path RELOCATES the published per-ISO
+        # DC MW block (FF-1C double-count fix): because the near-era growth rate
+        # is DC-inclusive, the block scales the grown peaky demand down by its
+        # energy fraction and adds it back flat -- total energy INVARIANT, peak
+        # flattened -- and the demand reaching the LP is a NEW array.
         from market_sim.data.datacenter import resolve_datacenter_mw
 
         config = ScenarioConfig(iso="ERCOT", datacenter_load_path="mid")
@@ -802,22 +821,25 @@ class TestDatacenterBlockWiring(RunnerTestBase):
         # New array, not the byte-identical off-path object.
         self.assertIsNot(lp_demand, base)
 
-        expected_block_mw = (
+        block_mw = (
             resolve_datacenter_mw(config, "ERCOT", 2026) * config.datacenter_load_factor
         )
-        self.assertGreater(expected_block_mw, 0.0)  # ERCOT mid is nonzero in 2026
-        # Flat block => peak rises by exactly the total block MW.
+        self.assertGreater(block_mw, 0.0)  # ERCOT mid is nonzero in 2026
+        base_energy = float(base.sum())
+        dc_energy = block_mw * base.shape[1]
+        self.assertLess(dc_energy, base_energy)  # relocate regime
+        scale = 1.0 - dc_energy / base_energy
+
+        # Total energy is invariant (the double-count is removed, not stacked).
+        self.assertAlmostEqual(float(lp_demand.sum()), base_energy, places=1)
+        # Peak flattens to base_peak*scale + block_mw, strictly below base+block.
+        base_peak = float(base.sum(axis=0).max())
         self.assertAlmostEqual(
             float(lp_demand.sum(axis=0).max()),
-            float(base.sum(axis=0).max()) + expected_block_mw,
+            base_peak * scale + block_mw,
             places=3,
         )
-        # Total energy rises by block_mw * 8760 (flat, no shape).
-        self.assertAlmostEqual(
-            float(lp_demand.sum()),
-            float(base.sum()) + expected_block_mw * config.hours,
-            places=1,
-        )
+        self.assertLess(float(lp_demand.sum(axis=0).max()), base_peak + block_mw)
 
 
 class TestCapacityMarketClearingWiring(RunnerTestBase):

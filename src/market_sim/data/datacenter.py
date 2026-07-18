@@ -5,14 +5,18 @@ Implements the forecast-mode-only data-center (DC) demand block designed in
 implicitly buried in the near-term ``DEMAND_GROWTH_RATES`` scalar, which grows a
 *flat* load type with the system's *peaky* weather-year shape — overstating peak
 growth and understating energy growth per MW of DC (memo §1). This module lifts
-DC out into an explicit **flat load block** added to demand:
+DC out into an explicit **flat load block**:
 
     block_mw = resolve_datacenter_mw(config, iso, year) * config.datacenter_load_factor
 
-distributed across zones by :func:`datacenter_zone_shares` and added to every
-hour of the year_demand array (a pure additive load block — NOT netted from
-renewables; it respects the CLAUDE.md energy-balance convention that load is on
-the RHS of the balance and renewables are LHS decision variables).
+distributed across zones by :func:`datacenter_zone_shares`. Because the near-era
+``DEMAND_GROWTH_RATES`` are TOTAL (DC-inclusive), :func:`add_datacenter_block`
+**relocates** the block (scales the grown peaky demand down by the block's energy
+fraction and adds it back flat, energy invariant) rather than naively adding it —
+the growth x DC double-count fix (CX-4 §3.5 / FF-0D audit §1.6; full derivation in
+that function's docstring). The block is a pure load quantity on the RHS of the
+energy balance — NOT netted from renewables (it respects the CLAUDE.md convention
+that load is on the RHS and renewables are LHS decision variables).
 
 Rule-13 admissibility (CLAUDE.md rule 13): the block's MW trajectory comes from
 published ISO large-load forecasts / interconnection queues
@@ -205,12 +209,42 @@ def add_datacenter_block(
     year: int,
     zone_names: list[str],
 ) -> np.ndarray:
-    """Add the flat data-center load block to a ``(n_zones, T)`` demand array.
+    """Fold the flat data-center load block into a ``(n_zones, T)`` demand array.
 
     The demand-assembly consumer (memo §3.4): call it immediately after
     ``_scale_demand`` and before ``peak_demand`` is taken, so peak, energy, and
     every capacity screen downstream pick the block up for free. Vectorized —
     broadcasts the per-zone flat MW over all ``T`` hours, no hour loop (rule 2).
+
+    **Relocation, not naive addition — the growth x DC double-count fix**
+    (CX-4 §3.5 / FF-0D audit §1.6). The near-era ``DEMAND_GROWTH_RATES`` are
+    TOTAL (data-center-inclusive: the scaled ``year_demand`` already carries the
+    DC boom, spread across the system's *peaky* weather-year shape). Naively
+    adding the block on top would count DC twice. Instead this **relocates** the
+    block's energy: it scales the grown (peaky) demand down by exactly the block's
+    energy fraction and adds the block back **flat**, so total energy is
+    invariant and only the hourly *shape* changes (DC's defining flatness is
+    restored, lowering peak). This is algebraically identical to the memo's
+    "re-derive the rate as organic-ex-DC, then add the block" co-change, but is
+    computed from the block MW itself — so it is robust to the demand-growth and
+    DC levers being moved independently (no reliance on a separately-keyed organic
+    rate). Concretely, with ``E = year_demand.sum()`` and ``dc_E = block_mw x T``:
+
+        year_demand := year_demand * (1 - dc_E / E) + block_mw      (relocate)
+
+    which conserves energy exactly (``E * (1 - dc_E/E) + dc_E == E``). The scale
+    factor decomposes the grown total into its organic and DC-embedded parts
+    (both grew at the same total rate, so they are proportional): scaling by
+    ``1 - dc_E/E`` extracts the organic-peaky component, and the flat block
+    replaces the DC-peaky component it removed.
+
+    **Tail regime (full-queue / high paths).** When the block's energy meets or
+    exceeds the grown demand's energy (``dc_E >= E`` — e.g. an ERCOT "high"
+    full-credible-queue path whose DC alone tops the total forecast), there is no
+    containable DC to relocate: the block is genuinely *incremental* load beyond
+    the ISO's total forecast, so it is **added** (``year_demand + block``). The
+    MID path of every ISO sits in the relocate regime (the DC block is inside the
+    published total), so the decision-relevant BAU case is always energy-invariant.
 
     Default-off byte-identity: when ``datacenter_load_path == "off"`` (or the ISO
     ships no DC block) the input ``year_demand`` is returned **unchanged (same
@@ -224,12 +258,24 @@ def add_datacenter_block(
         zone_names: Zone names in ``year_demand`` row order.
 
     Returns:
-        ``year_demand`` with the flat DC block added (a new array), or the input
-        array unchanged when the block is off/unsourced.
+        ``year_demand`` with the flat DC block **relocated** in (energy-invariant,
+        a new array), the block **added** (tail regime), or the input array
+        unchanged (same object) when the block is off/unsourced.
     """
     per_zone = datacenter_block_mw_by_zone(config, iso, year, zone_names)
     if not per_zone.any():
         return year_demand
+    n_hours = year_demand.shape[1]
+    dc_energy = float(per_zone.sum()) * n_hours
+    total_energy = float(year_demand.sum())
+    # Relocate regime: the DC block is contained within the (DC-inclusive) grown
+    # demand -> scale the peaky total down by the block's energy fraction and add
+    # the block back flat, holding total energy invariant (no double-count).
+    if total_energy > 0.0 and dc_energy < total_energy:
+        scale = 1.0 - dc_energy / total_energy
+        return year_demand * scale + per_zone[:, None]
+    # Tail regime: the block equals/exceeds the total forecast -> genuinely
+    # incremental load, added on top (documented above).
     return year_demand + per_zone[:, None]
 
 
