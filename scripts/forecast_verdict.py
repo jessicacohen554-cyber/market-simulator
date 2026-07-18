@@ -336,6 +336,7 @@ def load_artifacts(args: argparse.Namespace) -> dict:
         "crossover": _load_json(args.crossover_score),
         "driver_battery": _load_json(args.driver_battery),
         "corridor": _load_json(args.corridor),
+        "benchmark_corridor": _load_json(getattr(args, "benchmark_corridor", None)),
         "run_config": _load_config(args.run_config),
         "dof_ledger": _load_json(args.dof_ledger),
         "attestation": _load_json(args.attestation),
@@ -1082,38 +1083,90 @@ def score_fc4(art: dict, tier: str, iso: str) -> list[dict]:
     return rows
 
 
+def _benchmark_context(art: dict, iso: str) -> dict | None:
+    """Summarize the committed FC-5 benchmark ANCHORS as context (never gates).
+
+    Reads the ``--benchmark-corridor`` intake table (the FF-0F external anchors),
+    falling back to any anchor rows carried on the ``--corridor`` table. Anchor
+    rows carry NO ``verdict`` — they are external context, never a proximity
+    target (rule 13). Returns coverage counts + the intake's missing-source
+    list, or ``None`` when no benchmark table was supplied.
+    """
+    bench = art.get("benchmark_corridor")
+    if not isinstance(bench, dict):
+        cand = art.get("corridor")
+        bench = cand if isinstance(cand, dict) else None
+    if not isinstance(bench, dict):
+        return None
+    rows = bench.get("rows", []) or []
+    anchors = [
+        r for r in rows if isinstance(r, dict) and not str(r.get("verdict", "")).strip()
+    ]
+    if iso:
+        anchors = [
+            r
+            for r in anchors
+            if str(r.get("iso", "")).upper() in (iso.upper(), "NATIONAL", "")
+        ]
+    srcs = sorted({r.get("source") for r in anchors if r.get("source")})
+    return {
+        "n_anchor_rows": len(anchors),
+        "sources": srcs or list(bench.get("sources", []) or []),
+        "missing_sources": list(bench.get("missing_sources", []) or []),
+        "target_years": sorted(
+            {r.get("target_year") for r in anchors if r.get("target_year") is not None}
+        ),
+        "quantities": sorted({r.get("quantity") for r in anchors if r.get("quantity")}),
+    }
+
+
 def score_fc5(art: dict, tier: str, iso: str) -> list[dict]:
     """FC-5 external corridor — explanation discipline, not proximity.
 
-    Reads the committed benchmark-corridor table (FF-0D intake; absent ⇒ SKIPPED
-    with the missing-source list). Per-row verdict IN CORRIDOR / EXPLAINED
-    DIVERGENCE / UNEXPLAINED: any UNEXPLAINED ⇒ FC-5 FAIL (routes to root cause);
-    all in-corridor ⇒ PASS; explained divergences only ⇒ CAVEAT (rubric §2 FC-5).
+    The committed benchmark-corridor anchors (FF-0F intake) are read as CONTEXT
+    ONLY: a model-vs-benchmark divergence is reported *with an explanation* and
+    is NEVER scored as a miss and never a fit target (rule 13). What FC-5 gates
+    is the per-row *disposition* authored by the scoring session — the rows that
+    carry a ``verdict`` (IN CORRIDOR / EXPLAINED DIVERGENCE / UNEXPLAINED): any
+    UNEXPLAINED ⇒ FAIL (routes to root cause); all in-corridor ⇒ PASS; explained
+    only ⇒ CAVEAT (rubric §2 FC-5). Anchors present but no disposition authored
+    yet ⇒ SKIPPED-with-context (holds a T2 promotion per §3 — never a silent
+    pass, and never a FAIL from the context itself).
     """
+    ctx = _benchmark_context(art, iso)
+    ctx_vals = {"benchmark_context": ctx} if ctx else None
     co = art.get("corridor")
-    if co is None:
-        return [
-            _row(
-                "FC-5",
-                "corridor",
-                SKIPPED,
-                "no committed benchmark-corridor table (FF-0D intake; rubric §6 list pending)",
-            )
-        ]
     crows = co.get("rows", []) if isinstance(co, dict) else []
-    if not crows:
-        miss = co.get("missing_sources") if isinstance(co, dict) else None
-        return [
-            _row(
-                "FC-5",
-                "corridor",
-                SKIPPED,
-                "corridor table present but carries no scored rows"
-                + (f"; missing sources: {miss}" if miss else ""),
+    # Only rows carrying an authored verdict gate; verdict-less anchor rows are
+    # context, never a miss (rule 13).
+    disp = [
+        r for r in crows if isinstance(r, dict) and str(r.get("verdict", "")).strip()
+    ]
+
+    if not disp:
+        miss = (ctx or {}).get("missing_sources") or (
+            co.get("missing_sources") if isinstance(co, dict) else None
+        )
+        if ctx and ctx["n_anchor_rows"]:
+            detail = (
+                f"{ctx['n_anchor_rows']} external anchors present as CONTEXT "
+                f"(sources {ctx['sources']}, years {ctx['target_years']}); no authored "
+                "disposition table yet — FC-5 gates the divergence explanation, not "
+                "proximity (rule 13)"
             )
-        ]
+        elif co is not None:
+            detail = "corridor table present but carries no authored disposition rows"
+        else:
+            detail = (
+                "no committed benchmark-corridor table "
+                "(FF-0D/FF-0F intake; rubric §6 list pending)"
+            )
+        if miss:
+            detail += f"; missing sources: {miss}"
+        return [_row("FC-5", "corridor", SKIPPED, detail, values=ctx_vals)]
+
     unexplained, explained, incorr = [], [], []
-    for r in crows:
+    for r in disp:
         v = str(r.get("verdict", "")).upper().replace("-", " ").strip()
         label = f"{r.get('quantity', '?')}@{r.get('target_year', '?')}"
         if "UNEXPLAINED" in v:
@@ -1125,6 +1178,8 @@ def score_fc5(art: dict, tier: str, iso: str) -> list[dict]:
         else:
             unexplained.append(label + f"(unrecognized verdict {v!r})")
     values = {"unexplained": unexplained, "explained": explained, "in_corridor": incorr}
+    if ctx:
+        values["benchmark_context"] = ctx
     if unexplained:
         return [
             _row(
@@ -1731,7 +1786,18 @@ def _build_parser() -> argparse.ArgumentParser:
     ap.add_argument(
         "--driver-battery", dest="driver_battery", help="driver-battery JSON (FC-6)"
     )
-    ap.add_argument("--corridor", help="external-corridor table JSON (FC-5)")
+    ap.add_argument(
+        "--corridor",
+        help="external-corridor DISPOSITION table JSON (FC-5): authored per-row "
+        "verdicts (IN CORRIDOR / EXPLAINED DIVERGENCE / UNEXPLAINED)",
+    )
+    ap.add_argument(
+        "--benchmark-corridor",
+        dest="benchmark_corridor",
+        help="FC-5 benchmark ANCHOR table JSON (FF-0F intake; "
+        "curate_benchmark_corridor.py --emit-corridor-json) — read as CONTEXT "
+        "ONLY, never scored as a miss (rule 13)",
+    )
     ap.add_argument("--position", help="curve-ON position-validation artifact (FC-2.5)")
     ap.add_argument("--run-config", dest="run_config", help="run_config.json (FC-7)")
     ap.add_argument("--dof-ledger", dest="dof_ledger", help="dof_ledger.json (FC-7)")
