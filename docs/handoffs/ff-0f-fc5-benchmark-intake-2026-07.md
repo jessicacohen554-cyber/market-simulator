@@ -30,7 +30,7 @@ a real primary-source number (rule 5); a source not yet retrievable is a
 | Fetched data (gitignored, regenerates via the fetcher) | `data/raw/benchmark-corridor/aeo2025/aeo2025_electricity_corridor.csv` (1,008 rows → 1,008 clean) |
 | FC-5 scorer wiring | `scripts/forecast_verdict.py` (`--benchmark-corridor`, `score_fc5`) |
 | Tests | `tests/test_curate_benchmark_corridor.py` (13, trivial-first, tmp CLEAN_DIR) |
-| Registration | `scripts/regenerate_clean.py` `DATATYPES`; `scripts/render_data_dictionary.py` + data-dictionary |
+| Registration | `scripts/regenerate_clean.py` `DATATYPES`; `scripts/render_data_dictionary.py` (`DATATYPE_ORDER` + narrative — the dictionary's source of truth; the committed `data-dictionary.md` snapshot is deferred to a clean render, see §5 note 2) |
 
 The datatype is one tidy (long) frame, key `(source, iso, region, scenario,
 target_year, quantity, tech)`, written as ONE combined clean partition (rubric §6
@@ -160,21 +160,29 @@ committed-artifacts contract (rubric §0) holds.
    every row — plus the schema header, the raw README, and §3 above, which
    collectively satisfy rule 5 more rigorously than a hand-edit the generator would
    overwrite.
-2. **Pre-existing unrelated test red.** `tests/test_data_dictionary_sync.py::
-   test_every_schema_has_a_section` fails on `origin/main` today because
-   `dam-public-bids` has a schema but was never added to
-   `render_data_dictionary.DATATYPE_ORDER` (another lane's un-rendered schema, same
-   class as the `outages`/`capacity-market` per-column drift the render also
-   carries). This session's `benchmark-corridor` addition is correctly **balanced**
-   (present in both the schema dir and `DATATYPE_ORDER`), so it is not the cause;
-   the failure is left to the owning lane per the "ignore pre-existing failures"
-   instruction. The data-dictionary edit here is scoped to `benchmark-corridor`
-   only (no re-sync of the unrelated drift).
+2. **`data-dictionary.md` snapshot deferred to a clean render (rule 27 + scope).**
+   `benchmark-corridor` is registered in `scripts/render_data_dictionary.py`
+   (`DATATYPE_ORDER` + narrative) — the dictionary's **source of truth** — so it
+   renders into the doc on the next `python scripts/render_data_dictionary.py`. The
+   committed `data-dictionary.md` was deliberately **not** regenerated here: a full
+   render in this checkout reverts two other in-flight lanes' committed narrative
+   (the 2026-07-17 unit-grain `outages` text and the NYISO
+   `capacity-market-demand-curve` `icap_ucap_translation_factor`/`fraction` rows,
+   whose schema/narrative updates are not in this checkout — out of scope to touch),
+   and hand-transcribing the 1,630-line **generated** file is the large-file
+   full-content rewrite CLAUDE.md rule 27 exists to prevent. Consequence: with the
+   renderer now listing `benchmark-corridor`,
+   `test_data_dictionary_sync.py::test_coverage_matrix_lists_every_datatype` reports
+   it *pending* until that regeneration — the **same class** as the pre-existing
+   `dam-public-bids` gap (`test_every_schema_has_a_section`, already red on
+   `origin/main`) and the `outages`/`capacity-market` per-column drift. All clear
+   together in **one** cross-lane `render_data_dictionary.py` reconciliation (a
+   dictionary pass, not a `benchmark-corridor` data-prep change).
 
 ## 6. What this session did / did not do
 
 - **Did:** created the `benchmark-corridor` datatype end-to-end (schema → registry
-  → fetch → curate → loader → FC-5 wiring → tests → dictionary); fetched AEO2025
+  → fetch → curate → loader → FC-5 wiring → tests → dictionary registration); fetched AEO2025
   Tables 54+56 (1,008 rows); wired FC-5 as context-only; filed the 7 manual-download
   gaps (M9–M15) and rewrote FF-0D §6.
 - **Did not:** solve any LP; register anything on any dashboard; touch any
