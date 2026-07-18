@@ -95,7 +95,7 @@ PJM_STATES = (
     "DC",
 )
 # Frozen constants inherited from the existing derivers (never re-tuned here):
-# scripts/derive_partial_outages.py and scripts/derive_campd_unit_outages.py.
+# scripts/data/derive_partial_outages.py and scripts/data/derive_campd_unit_outages.py.
 BASELOAD_CF = 0.55
 PLATEAU_MIN_DAYS = 5
 PLATEAU_SMOOTH_DAYS = 7

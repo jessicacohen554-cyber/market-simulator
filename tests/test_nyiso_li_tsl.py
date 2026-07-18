@@ -30,7 +30,7 @@ def _clean_capdel(tmp_path_factory):
     """Curate the real committed NYISO capacity-deliverability raw CSV into a
     tmp CLEAN_DIR so the published import-limit read works without touching
     the repo's (disposable, gitignored) clean tree."""
-    from scripts import curate_capacity_deliverability as curate_cd
+    from scripts.data import curate_capacity_deliverability as curate_cd
     from scripts.lib import clean_io
 
     tmp = tmp_path_factory.mktemp("capdel_clean")

@@ -74,7 +74,7 @@ charter: (1) the aggregate CC_REGULAR over-run + low mean LMP, (2) the open
 eastern CT under-run, (3) the failing C7 2023 CT_PEAKER cell, (4) the C3c
 scarcity tail. One single-year 2024 throwaway replay of the keeper config
 (rule 16 — solved into `results/calibration/pjm_g21_keeper2024_diag`, never
-registered; driver `scripts/diag_g21_keeper2024_solve.py`) regenerated the
+registered; driver `scripts/archive/diag_g21_keeper2024_solve.py`) regenerated the
 dispatch/flows/floors parquets the slim committed bundles lack; everything else
 is computed from committed payloads, bench files, and the measured
 CAMPD/EIA-923 sources. **No keeper change, no fitted value, no measured input
@@ -285,7 +285,7 @@ keeper file touched this session.
 
 ## Appendix — reproduction
 
-- Throwaway 2024 keeper replay: `scripts/diag_g21_keeper2024_solve.py` (rule-16
+- Throwaway 2024 keeper replay: `scripts/archive/diag_g21_keeper2024_solve.py` (rule-16
   probe, `results/calibration/pjm_g21_keeper2024_diag`, not registered).
 - Three-basis class table: CAMPD via `rcf._campd_hourly_frame` + parasitic
   factors, allocated to classes by per-plant EIA-923 prime-mover shares;

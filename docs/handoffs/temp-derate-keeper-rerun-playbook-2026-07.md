@@ -183,7 +183,7 @@ reviewing your report across all six ISOs together.
 
 Never `git push` for anything beyond a trivial diff on this remote — large
 result payloads (parquet-adjacent JSON, bench files) reliably hit HTTP 413.
-Use `scripts/ci_api_upload.py` (reads files from disk, commits via the
+Use `scripts/archive/ci_api_upload.py` (reads files from disk, commits via the
 GitHub Data API, exactly matches this exact use case — dashboard registration
 files + bundle sidecars) or `mcp__github__push_files` for small file sets.
 Small source-only diffs (the probe script itself) may use `git push`, but if

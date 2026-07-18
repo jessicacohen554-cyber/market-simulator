@@ -76,7 +76,7 @@ all (the early release omits pre-survey retirees).
 The fix mirrors how the **forecast** runner injects EIA-860 planned additions:
 a **backcast-only** loader injects the within-window exits.
 
-* `scripts/process_eia860.py --retired-window-from <final-vintage.zip ...>`
+* `scripts/data/process_eia860.py --retired-window-from <final-vintage.zip ...>`
   reads the "Retired and Canceled" sheet of each **final** EIA-860 vintage
   (2023, 2024 — which *do* carry Mystic with its real June-2024 retirement),
   keeps whole-plant exits that retired in or after `RETIREMENT_WINDOW_START`
@@ -142,7 +142,7 @@ loaders (`fleet._chp_by_plant`, `fleet.dual_fuel_plant_groups`,
 serve a stale-vintage map. `vintage_<year>/` holds only the loader-consumed
 parquets (generators, generator/storage operable + proposed, wind/solar
 operable, multifuel, plant, owner), regenerated from the committed annual zip by
-`scripts/process_eia860.py --zip eia860<year>.zip --out-dir
+`scripts/data/process_eia860.py --zip eia860<year>.zip --out-dir
 data/raw/eia-860/vintage_<year>`.
 
 **Measured effect is small — this is a correctness/provenance refinement, not a

@@ -14,7 +14,7 @@ miso-62 keeper payload/bundle — nothing is fit to a residual.
 
 Model (miso-62 keeper, demand-weighted zonal) vs actual monthly LMP, 2025.
 The C3a benchmark series is Indiana Hub (verified hour-identical in
-`scripts/build_miso_lmp_reference.py`), so the scored gap carries the full
+`scripts/data/build_miso_lmp_reference.py`), so the scored gap carries the full
 North premium:
 
 | month | model | DA actual | Δ |
@@ -115,7 +115,7 @@ Measured from per-unit CAMPD (July 2025, MISO fleet =
   decisive at events.
 
 **Mechanism built (gated, default off):** `ScenarioConfig.
-unit_outage_short_windows` + `scripts/derive_campd_unit_outages.py
+unit_outage_short_windows` + `scripts/data/derive_campd_unit_outages.py
 --short-windows` → `campd-unit-outages-short-{ISO}.csv` →
 `outages.unit_outage_short_derate_factors` (applied in
 `fleet.generators_to_fleet_arrays` next to the parent overlay). Identification

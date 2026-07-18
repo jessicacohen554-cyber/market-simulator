@@ -170,7 +170,7 @@ adder once model starts are persisted.
 Follows the `data-intake` skill recipe; raw is immutable; schema-first.
 
 1. **Fetch 2018–2021 hourly unit-level extracts** with the existing
-   `scripts/fetch_campd_unit_level.py` (completed-year per-state bulk files, no code change
+   `scripts/data/fetch_campd_unit_level.py` (completed-year per-state bulk files, no code change
    needed to fetch): all 34 states already present for 2023–2025, years `2018 2019 2020 2021`.
    ≈136 new state-year parquets, est. +0.4–1.0 GB. Push via `mcp__github__push_files` in
    per-year batches (413 discipline, CLAUDE.md Git section). `EPA_API_KEY` recommended over
@@ -186,7 +186,7 @@ Follows the `data-intake` skill recipe; raw is immutable; schema-first.
      year]`; columns: state, plant_id, unit_id, year, primary_fuel, unit_type, gross_mwh,
      steam_load_klbh_sum, co2_kg, nox_kg, so2_kg, heat_mmbtu, op_hours, **starts**,
      co2_source (measured/partial_backfill/heat_backfilled), mw_source (measured/heat_proxy).
-   - `scripts/curate_emissions_unit_annual.py` — reads only `data/raw/campd-unit-level`
+   - `scripts/data/curate_emissions_unit_annual.py` — reads only `data/raw/campd-unit-level`
      (facility-level states get facility-grain rows with `unit_id="ALL"`), reuses
      `campd._normalize_campd` / `_startup_factors` / CO2 backfill logic, writes through
      `clean_io.write_clean(..., year=Y)`, **hard-skips 2022/2026 files** even though they sit
@@ -208,7 +208,7 @@ Follows the `data-intake` skill recipe; raw is immutable; schema-first.
 
 | # | Item | Files | Test | Expected CO2 impact |
 |---|---|---|---|---|
-| **R1** | Rate model + intake (§2–§4): 2018–2021 intake, `emissions-unit-annual` datatype, per-unit history → plant forward rate (gen-weighted base + envelope-gated NN conditioning + unit-composition mask), mode-aware source, all-ISO artifact, LOYO harness committed as `scripts/loyo_co2_rates.py` | `scripts/fetch_campd_unit_level.py`, new schema+curate, `scripts/derive_plant_emissions.py`, `src/market_sim/data/campd.py`, `fleet.py:4547-4623`, new `src/market_sim/data/emission_rates.py`, bundle writer | curate fixture test; LOYO harness re-run gates the estimator; unit test: retired-unit mask shifts Parish rate | Fixes provenance (EM-3); Parish +5–6% GWh coverage in ERCOT; five ISOs go from 0%→measured coverage; forecast rates respond to operation |
+| **R1** | Rate model + intake (§2–§4): 2018–2021 intake, `emissions-unit-annual` datatype, per-unit history → plant forward rate (gen-weighted base + envelope-gated NN conditioning + unit-composition mask), mode-aware source, all-ISO artifact, LOYO harness committed as `scripts/loyo_co2_rates.py` | `scripts/data/fetch_campd_unit_level.py`, new schema+curate, `scripts/data/derive_plant_emissions.py`, `src/market_sim/data/campd.py`, `fleet.py:4547-4623`, new `src/market_sim/data/emission_rates.py`, bundle writer | curate fixture test; LOYO harness re-run gates the estimator; unit test: retired-unit mask shifts Parish rate | Fixes provenance (EM-3); Parish +5–6% GWh coverage in ERCOT; five ISOs go from 0%→measured coverage; forecast rates respond to operation |
 | **R2** | **EM-4** tranche price-wall contamination: book `emission_rate_co2` at the plant's *physical* HR (or measured plant rate), never the bid-tranche HR; entrant/uncovered class defaults from CAMPD class distributions (R1 artifact) | `fleet.py:6298` (`get_emission_rate(fuel, tr_hr)` → physical basis), `offer_curves.py` legacy bands, entrant construction in `capacity.py` | assert no generator's CO2 rate embeds a >1.0 pricing multiplier; entrant rate == class median fixture | Removes ×1.10–1.55 peak-tranche CO2 inflation for every CEMS-uncovered plant, all legacy-bin ISOs, **all forecast new entrants** (grows toward 2050) |
 | **R3** | **EM-8** gross/net basis check: measured rates are per-net (parasitic-scaled) and model MWh are net — verified consistent *when* R2 books at measured rates; add a regression assertion + document the one residual gross-basis path (bin HR derivation is a cost input, not an emissions input, post-R2) | `campd.py`, `fleet.py`, `docs/binning-methodology.md:18` | unit assertion: rate applied × model net MWh reproduces CAMPD co2_kg on a fixture plant within backfill tolerance | Guards the 2–4% (gas) / 7–10% (coal) bias class from ever re-entering; no level change expected today |
 | **R4** | **EM-6** carbon-price seam: forecast years for CAISO/NYISO/NEISO default to $0 while backcast uses measured CARB/RGGI — decide + wire a default forward allowance trajectory (config-registered, cited; e.g. last measured real price held flat as the floor case) so forecast merit order isn't calibrated-with/forecast-without | `policy/carbon.py:23,66-84`, `constants.py` (trajectory), `scenarios.py` | forecast-year resolve_carbon_price > 0 for program ISOs unless explicitly zeroed | Removes a structural backcast/forecast dispatch seam in 3 ISOs; CO2 impact via coal/gas ordering in RGGI-adjacent imports |
@@ -258,8 +258,8 @@ backcast, estimator-generated analogue in forecast.
 ## 9. Implementation results (2026-07-04)
 
 The plan is implemented on branch `claude/co2-emissions-plan-2026`. Deliverables:
-`scripts/fetch_campd_unit_level.py` quarantine guard; `emissions-unit-annual`
-datatype (schema + `scripts/curate_emissions_unit_annual.py` + register + test);
+`scripts/data/fetch_campd_unit_level.py` quarantine guard; `emissions-unit-annual`
+datatype (schema + `scripts/data/curate_emissions_unit_annual.py` + register + test);
 `src/market_sim/data/emission_rates.py` estimator (`forward_plant_co2_rate` a/b/c/d
 + `class_median_rates`) with `CO2_RATE_*` constants; `scripts/loyo_co2_rates.py`
 harness; fixes R2/R3/R7; governance.
@@ -296,7 +296,7 @@ demonstrably beats `a_gw`, the gate stays closed. Constants
 backcast residuals and re-derive only on a CAMPD data update (rule 23).
 
 **Intake status.** The 2018–2021 34-state hourly unit-level fetch runs via the
-committed `scripts/fetch_campd_unit_level.py` (DEMO_KEY rate-limits to ~25/hr, so
+committed `scripts/data/fetch_campd_unit_level.py` (DEMO_KEY rate-limits to ~25/hr, so
 it is paced in the background). The `emissions-unit-annual` datatype and the
 committed `plant_emission_rates_v2` artifact are re-derived over whatever history
 has landed; the 7-year held-in LOYO re-run and the gate re-evaluation happen once
@@ -367,7 +367,7 @@ re-derive only on a CAMPD data update (rule 23), never on a keeper's CO2 fit.
 left the forecast BTM-share fallback sizing `mr_mw` off the sector-keyed
 default (`data.chp.chp_btm_pct`, baked into each bin's `pct_mr` at fleet-build
 time) rather than a per-plant measurement. This wave adds the `chp-btm-share`
-clean datatype (`scripts/curate_chp_btm_share.py`,
+clean datatype (`scripts/data/curate_chp_btm_share.py`,
 `data/dictionary/schema/chp-btm-share.schema.yaml`): per (iso, plant, CHP
 class), `btm_share = (eia923_net_mwh − campd_net_mwh) / eia923_net_mwh`, pooled
 across every available non-quarantined year, from the already-committed
@@ -387,7 +387,7 @@ consumed `btm_share_by_plant` at all. The backcast path
 (`run_calibration_full.py::_btm_frame`) is untouched — it keeps sizing its own
 `share_by_plant` from `chp_btm_pct` directly, per the acceptance scope. No
 default CO2/dispatch change where the artifact is absent (the clean partition
-must be curated per ISO via `scripts/curate_chp_btm_share.py` /
+must be curated per ISO via `scripts/data/curate_chp_btm_share.py` /
 `scripts/regenerate_clean.py`).
 
 ## 9.3 Wave-3 results (2026-07-05, branch `claude/nox-so2-wiring-2026-wave3`)
@@ -398,7 +398,7 @@ rename). This wave lands the full NOx/SO2 wiring §5 R7 / §7 deferred, with CO2
 unchanged (byte-identical v2 CO2 columns after re-derive) and no dispatch/merit
 change — NOx/SO2 are secondary.
 
-- **Artifact.** `scripts/derive_plant_emissions_v2.py` now carries `nox_kg`,
+- **Artifact.** `scripts/data/derive_plant_emissions_v2.py` now carries `nox_kg`,
   `so2_kg` and their net-basis intensities (`nox_kg_per_mwh_net`,
   `so2_kg_per_mwh_net`) alongside CO2; NOx/SO2 masses come straight from the
   `emissions-unit-annual` datatype (which already had them), `fillna(0)` so gas
@@ -700,7 +700,7 @@ fetches, no rows in any derived artifact.
 Deliverables, in order:
 
 1. INTAKE (plan §4). Fetch CAMPD hourly unit-level extracts for 2018-2021 for all 34 states
-   already covered 2023-2025, using scripts/fetch_campd_unit_level.py unchanged (completed-year
+   already covered 2023-2025, using scripts/data/fetch_campd_unit_level.py unchanged (completed-year
    per-state bulk files; set EPA_API_KEY). Land data/raw/campd-unit-level/<ST>_<YEAR>.parquet;
    push via mcp__github__push_files in per-year batches (never retry a 413 git push). Add a
    quarantine guard to the fetcher: refuse --year 2022/2026 unless --holdout-intake <ISO> is
@@ -709,7 +709,7 @@ Deliverables, in order:
    schema data/dictionary/schema/emissions-unit-annual.schema.yaml, key [plant_id, unit_id,
    year], columns per plan §4.3 including op_hours and starts (gross_mw > 1 MW off->on
    transitions, campd._startup_factors convention) and co2_source backfill provenance.
-   scripts/curate_emissions_unit_annual.py reads only data/raw/campd-unit-level (facility-grain
+   scripts/data/curate_emissions_unit_annual.py reads only data/raw/campd-unit-level (facility-grain
    states -> unit_id="ALL"), hard-skips 2022/2026 files, writes via clean_io.write_clean,
    registers in regenerate_clean.py, tmp-CLEAN_DIR test with a tiny fixture.
 3. RATE ARTIFACT + ESTIMATOR (plan §2). Re-derive per-plant rates for ALL SIX ISOs from the

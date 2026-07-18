@@ -17,7 +17,7 @@
 # other carries the literal "ALL" sentinel (never null, so both are always
 # queryable without a null-check).
 #
-# Curated by scripts/curate_coal_basin_price.py from
+# Curated by scripts/data/curate_coal_basin_price.py from
 #   data/raw/coal-prices/eia_coal_market_sales_price.csv
 #   data/raw/coal-prices/eia_coal_price_by_rank.csv
 datatype: coal-basin-price

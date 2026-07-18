@@ -94,7 +94,7 @@ the §1.2 table lists every producer command):
    understates spiky winters most, and 2022's Jan/Feb blowouts are the
    costliest place to be sparse. Densification leads (owner ordered this
    collection): (a) the 2022-era Weekly Update pages carry MORE prints than
-   `scripts/fetch_algonquin_daily_spot.py` extracts — 42/99 pages yielded
+   `scripts/data/fetch_algonquin_daily_spot.py` extracts — 42/99 pages yielded
    nothing yet `archivenew_ngwu/2022/01_20/` contains e.g. "rose to a weekly
    high of $26.94/MMBtu in advance of the holiday weekend" (2022 phrasing
    differs from 2023+; widen the narrative regexes, keep the `source`

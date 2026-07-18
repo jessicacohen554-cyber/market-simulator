@@ -43,7 +43,7 @@ indexed by a **net-load percentile** driver (`net-load = Σ awarded over
 non-renewable dispatchable`, ranked within year — the same demand driver the West/Waha
 gas-shape and the ST_GAS/CT reliability drags already key off).
 
-Finding (scratchpad `char*.py`, to be committed as `scripts/derive_ct_offer_surface.py`):
+Finding (scratchpad `char*.py`, to be committed as `scripts/data/derive_ct_offer_surface.py`):
 
 | class | offer @90% HSL vs net-load percentile (2023) | 2024 / 2025 |
 |---|---|---|
@@ -138,7 +138,7 @@ Committed **before** any A/B solve, so no result can retro-justify a parameter:
 
 1. **Parameters are the measured DAM-disclosure p50 top-of-curve offers per
    net-load-percentile regime**, pooled 2023–2025, produced by
-   `scripts/derive_ct_offer_surface.py` → `data/raw/_processed-legacy/
+   `scripts/data/derive_ct_offer_surface.py` → `data/raw/_processed-legacy/
    ercot_ct_offer_surface.csv` + a JSON the mechanism reads. Every number traces
    to the offer data. **None is fitted to a price or volume residual** (rule 13).
 2. **Frozen against residuals (rule 20).** The table re-derives *only* when the

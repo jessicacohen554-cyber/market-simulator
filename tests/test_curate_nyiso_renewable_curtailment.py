@@ -13,7 +13,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_nyiso_renewable_curtailment as curate_nrc
+from scripts.data import curate_nyiso_renewable_curtailment as curate_nrc
 from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
 

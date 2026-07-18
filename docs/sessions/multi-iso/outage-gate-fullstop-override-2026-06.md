@@ -3,7 +3,7 @@
 **Date:** 2026-06-22
 **Branch:** `claude/outage-gate-iso-diagnosis-7koi50`
 **Touches:** `scripts/derive_campd_outages.py` (`filter_revealed_outages`,
-`FULL_STOP_OVERRIDE_DAYS/CF`), `scripts/derive_campd_unit_outages.py` (shares the
+`FULL_STOP_OVERRIDE_DAYS/CF`), `scripts/data/derive_campd_unit_outages.py` (shares the
 filter), `scripts/probes/_outage_gate_audit.py` (the STEP-1 audit), and the
 regenerated `data/raw/campd-{,unit-}outages*.csv` for all six ISOs.
 
@@ -149,7 +149,7 @@ python scripts/probes/_outage_gate_audit.py --all --years 2023 2024 2025
 python scripts/derive_campd_outages.py      --iso ERCOT --years 2023 2024 2025
 python scripts/derive_campd_outages.py      --iso PJM   --years 2023 2024 2025
 for iso in ERCOT PJM CAISO NEISO NYISO MISO; do
-  python scripts/derive_campd_unit_outages.py --iso $iso --years 2023 2024 2025
+  python scripts/data/derive_campd_unit_outages.py --iso $iso --years 2023 2024 2025
 done
 # A/B without the override: add  --no-fullstop-override
 ```
@@ -163,7 +163,7 @@ appended here. What actually landed:
   (`FULL_STOP_OVERRIDE_DAYS` / `FULL_STOP_OVERRIDE_CF`, shared by the facility- and
   unit-level detectors); the 14-day knee described in STEP 2 was subsequently
   re-tuned to **5 days** (`FULL_STOP_OVERRIDE_DAYS = 5`; see
-  `scripts/gen_pjm90_attestation.py`: "FULL_STOP_OVERRIDE_DAYS 14->5, measured
+  `scripts/archive/gen_pjm90_attestation.py`: "FULL_STOP_OVERRIDE_DAYS 14->5, measured
   CAMPD"). The outage CSVs for all six ISOs were regenerated
   (`data/raw/campd-outages*.csv`, `data/raw/campd-unit-outages-*.csv`).
 - The decisive PJM re-solve `pjm_41` was produced (`results/calibration/pjm_41`);

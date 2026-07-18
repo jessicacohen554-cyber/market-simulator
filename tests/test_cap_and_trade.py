@@ -438,7 +438,7 @@ class TestPublishedBudgetConstantsMatchRawCsv:
             CARB_FLOOR_PRICE,
         )
         from market_sim.config.paths import RAW_DIR
-        from scripts import curate_carb_cap_schedule as carb
+        from scripts.data import curate_carb_cap_schedule as carb
 
         df = carb.parse(RAW_DIR)
         budget = df[df["metric"] == "allowance_budget"]
@@ -453,7 +453,7 @@ class TestPublishedBudgetConstantsMatchRawCsv:
     def test_rggi_regional_budget_matches_csv(self):
         from market_sim.config.constants import RGGI_STATE_CO2_BUDGET
         from market_sim.config.paths import RAW_DIR
-        from scripts import curate_rggi_co2_budgets as rggi
+        from scripts.data import curate_rggi_co2_budgets as rggi
 
         df = rggi.parse(RAW_DIR)
         regional = df[(df["state"] == "RGGI") & (df["metric"] == "allowance_budget")]

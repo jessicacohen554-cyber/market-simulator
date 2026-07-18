@@ -6,10 +6,10 @@ on the 58h Jun/Sep-2023 event-afternoon set, compare
   * MODEL available capability   — Σ pmax × availability[g,t] per model plant_group,
     reconstructed byte-faithfully from the keeper meta.json config via
     run_calibration.run_year(fleet_only=True) (the same reconstruction
-    scripts/derive_ordc_overlay.build_availability uses — no LP re-solve);
+    scripts/data/derive_ordc_overlay.build_availability uses — no LP re-solve);
   * MODEL dispatch               — the keeper P1 dispatch, grouped by the SAME
     plant_group (mapped unit_id → fleet_arrays.plant_group);
-  * MEASURED online envelope     — scripts/derive_ercot_rtolcap_forward._class_hourly:
+  * MEASURED online envelope     — scripts/data/derive_ercot_rtolcap_forward._class_hourly:
     per class online_cap (summer-derated HSL of running CAMPD units), online_gross
     (their gross output), online_reserve (= online_cap − gross, the measured RTOLCAP
     headroom identity), offline_cap (class total − online).
@@ -43,6 +43,7 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts"))
+sys.path.insert(0, str(REPO / "scripts" / "data"))
 sys.path.insert(0, str(REPO / "src"))
 
 ROOT = REPO / "results" / "calibration"

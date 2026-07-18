@@ -23,7 +23,7 @@ active — `drop_drag_owned_reliability_specs`, pjm-77's promotion fix). It is a
 ramp-windowed [15,22) min-gen floor whose coefficients are **regressed from
 measurement, not fitted to any residual**: CAMPD pure-play CT fleet CF vs
 EIA-930 PJM net-load, pooled 2023–2025, hinge fit
-(`scripts/derive_pjm_ct_netload_drag.py`; slope 0.01108/GW, intercept −0.9987,
+(`scripts/data/derive_pjm_ct_netload_drag.py`; slope 0.01108/GW, intercept −0.9987,
 cap 0.46). Its identification is year-stable (ramp-window Spearman ρ = 0.50 /
 0.51 / 0.60; hinge SSE 0.133 vs 0.176 for the unclipped line — burndown §4)
 and its window is clean (D-4: 0 % off-window binding, all years). It stands in
@@ -211,7 +211,7 @@ The C8 decision remains the owner's.
 - `docs/FINDING-pjm-burndown-2026-07.md` §4–§7 + 2026-07-06 addendum.
 - `frontend/data/backcast/bench/PJM/{2023,2024,2025}.json.gz` `classFull`
   (EIA-923 actuals used in §3).
-- `scripts/derive_pjm_ct_netload_drag.py` (derivation + its frozen-parameter
+- `scripts/data/derive_pjm_ct_netload_drag.py` (derivation + its frozen-parameter
   contract), `scripts/legitimacy_diagnostics.py` (D2_EXEMPT_MECHS,
   D2_PEAKER_MAX_SHARE = 0.10).
 - `docs/gap-register-2026-07.md` G-05/G-11/G-15/G-20/G-21, §4 PJM row.

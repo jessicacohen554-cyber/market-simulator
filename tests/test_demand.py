@@ -15,7 +15,7 @@ from market_sim.data.eia_loader import (
     pjm_net_interchange,
     pjm_zonal_interchange,
 )
-from scripts.curate_zonal_shares import parse_pjm_shares as pjm_zonal_load_shares
+from scripts.data.curate_zonal_shares import parse_pjm_shares as pjm_zonal_load_shares
 
 _TEST_YEAR = 2023
 

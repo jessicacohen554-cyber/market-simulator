@@ -109,7 +109,7 @@ legacy and NYISO/PJM/MISO paths are byte-identical.
 
 ## Run / dashboard
 
-`scripts/run_165.py` = the run164 recipe + `ercot_load_resource_reserve=True`.
+`scripts/archive/run_165.py` = the run164 recipe + `ercot_load_resource_reserve=True`.
 Solved 2023/2024/2025; the acute/tail incidence vs run164 and the
 measured-vs-modeled load-resource RRS table are recorded on the backcast dashboard
 (bundle `165`).

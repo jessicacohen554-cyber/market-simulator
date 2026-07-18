@@ -170,7 +170,7 @@ depends** on it: both ERCOT confirmed exits (V H Braunig 1/2, plant 3612,
 build; without the partition the 2026 fleet silently gains 477 MW. PJM's 8
 live exits are all 2028–2030 (zero 2026 effect, but multi-year runs need
 them). Regenerate before any forecast run on a fresh checkout:
-`PYTHONPATH=. .venv/bin/python scripts/curate_confirmed_retirements.py`.
+`PYTHONPATH=. .venv/bin/python scripts/data/curate_confirmed_retirements.py`.
 Corollary: `cache_key()` hashes only the config, never data-file state
 (cache.py:31-48), so a year cached before a data fix is silently reused —
 delete `results/<ISO>/<key>/` after regenerating inputs (done this session).

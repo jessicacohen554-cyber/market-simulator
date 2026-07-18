@@ -39,7 +39,7 @@ import pandas as pd
 
 from market_sim.config.paths import RAW_DATA_DIR
 
-#: Immutable raw drop (scripts/fetch_caiso_oasis.py --datasets asreq).
+#: Immutable raw drop (scripts/data/fetch_caiso_oasis.py --datasets asreq).
 CAISO_AS_REQ_DIR: Path = RAW_DATA_DIR / "CAISO-AS"
 
 #: AS region -> the model zones that must serve its regional minimum. Path 26
@@ -111,7 +111,7 @@ def load_caiso_as_requirements(
     if not files:
         raise FileNotFoundError(
             f"caiso_locational_as_families=True but no OASIS AS_REQ CSVs found "
-            f"in {src}. Fetch with scripts/fetch_caiso_oasis.py --datasets asreq."
+            f"in {src}. Fetch with scripts/data/fetch_caiso_oasis.py --datasets asreq."
         )
 
     items = {_ITEM[(t, bound)] for t in PRODUCT}

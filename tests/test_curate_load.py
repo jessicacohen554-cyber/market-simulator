@@ -1,4 +1,4 @@
-"""Tests for the ``load`` curation pipeline (scripts/curate_load.py).
+"""Tests for the ``load`` curation pipeline (scripts/data/curate_load.py).
 
 Builds a tiny synthetic raw fixture (one CAISO TAC area + a DAM forecast row,
 one NYISO zone, one EIA-930 BA with wind/solar), runs the real curation, and
@@ -19,7 +19,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_load
+from scripts.data import curate_load
 from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
 

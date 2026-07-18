@@ -26,7 +26,7 @@ Delta vs the pjm-98 keeper recipe (all measured/cited, zero fitted scalars):
     (campd_ct_run_lengths_PJM.csv), with the v4 condition-keyed horizon
     (campd_ct_run_bands_PJM.csv — tight-hour engagements are shorter
     commitment blocks, so their start recovery amortizes over fewer hours;
-    scripts/derive_campd_ct_run_lengths.py --iso PJM [--condition-bands]).
+    scripts/data/derive_campd_ct_run_lengths.py --iso PJM [--condition-bands]).
 
 The 2023 rebuild diagnosis this design answers: the net layer's DEC
 over-clearing vs the actual-DA equilibrium (+3.6 TWh) is an EVENING-PEAK

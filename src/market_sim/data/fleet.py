@@ -159,13 +159,13 @@ def _clean_fleet_year(data_dir: Path) -> int:
 # path registry (other data modules import EIA_860_DIR from fleet).
 
 # Committed parquet of real EIA-860 generators for the seven wholesale
-# markets, produced by ``scripts/process_eia860.py`` from the raw release.
+# markets, produced by ``scripts/data/process_eia860.py`` from the raw release.
 EIA_860_PARQUET_NAME: str = "eia860_generators.parquet"
 
 # Committed parquet of within-window plant exits (whole plants that retired
 # mid-backcast and so are absent from the single recent operable vintage —
 # e.g. Mystic, plant 1588, a ~1.4 GW CC retired mid-2024). Built by
-# ``scripts/process_eia860.py --retired-window-from`` in the canonical fleet
+# ``scripts/data/process_eia860.py --retired-window-from`` in the canonical fleet
 # schema (plus month-precise online/retirement columns), with ``status`` = OP
 # and the actual retirement carried in ``planned_retirement_*``. Injected into
 # the BACKCAST fleet so the COD ramp can dispatch each through its real
@@ -175,7 +175,7 @@ EIA_860_RETIRED_WINDOW_PARQUET_NAME: str = (
 )
 
 # Committed parquet of the EIA-860 Multifuel schedule (operable units),
-# produced by ``scripts/process_eia860.py``. Carries the multiple-energy-
+# produced by ``scripts/data/process_eia860.py``. Carries the multiple-energy-
 # source fields ("Energy Source 2", "Multiple Fuels?", "Switch Between Oil
 # and Natural Gas?", oil/gas capacity splits) that flag dual-fuel units.
 EIA_860_MULTIFUEL_PARQUET_NAME: str = "eia860_multifuel_operable.parquet"
@@ -203,7 +203,7 @@ BINNED_FLEET_COLUMNS: list[str] = [
 ]
 
 # Canonical column order of the EIA-860 generator extract consumed by the
-# fleet loader, produced by ``scripts/process_eia860.py``.
+# fleet loader, produced by ``scripts/data/process_eia860.py``.
 EIA_860_CSV_COLUMNS: list[str] = [
     "plant_id",
     "generator_id",
@@ -580,7 +580,7 @@ _POF_DROP_GROUPS: frozenset[str] = frozenset(
 # Per-plant coal sustained-output ceilings now live in
 # constants.COAL_MAX_CF_BY_PLANT (re-derived from CAMPD outage-adjusted
 # availability physics, not observed output — see
-# scripts/derive_coal_max_cf.py). The year-specific (6179, 2025) override that
+# scripts/data/derive_coal_max_cf.py). The year-specific (6179, 2025) override that
 # used to sit here was deleted outright: a single confirmed-unit-outage year
 # has no forward analogue, and the historic-outage overlay already zeros the
 # actual outage hours for backcast runs.
@@ -691,7 +691,7 @@ _CLEAN_AS_UP_MW_COLS: tuple[str, ...] = (
 )
 
 # The fixed non-leap 8760-hour model calendar (representative year 2023), shared
-# with :mod:`scripts.build_ercot_as_withholding`. Clean AS rows (UTC, with a
+# with :mod:`scripts.data.build_ercot_as_withholding`. Clean AS rows (UTC, with a
 # wall-clock ``interval_start_local``) are folded onto this (month, day, hour)
 # grid so the reconstructed series lands on the same clock as the fleet.
 _AS_MODEL_CALENDAR = pd.date_range("2023-01-01", periods=8760, freq="h")
@@ -715,7 +715,7 @@ def _clean_as_reserve_withholding_mw(
     sums the system-wide (``zone == "SYSTEM"``) upward cleared-MW products
     (:data:`_CLEAN_AS_UP_MW_COLS`) and folds them onto the fleet's non-leap
     8760-hour clock by the local wall-clock ``(month, day, hour)`` — the same
-    reduction :mod:`scripts.build_ercot_as_withholding` applies to the raw
+    reduction :mod:`scripts.data.build_ercot_as_withholding` applies to the raw
     cleared-DAM-AS reports, so for ERCOT this reproduces the raw ``as_up_mw``
     series exactly (see ``tests/test_consume_fleet.py``). Returns ``None`` when
     the clean partition is absent or carries no cleared MW (the feature then
@@ -780,8 +780,8 @@ def load_as_reserve_withholding_mw(
     """Load ``iso``'s hourly system-wide reserve-withholding MW for ``year``.
 
     Returns the ``(hours,)`` reserve-held-out-of-energy MW series written by
-    :mod:`scripts.build_ercot_as_withholding` (ERCOT: cleared DAM up-AS) or
-    :mod:`scripts.build_pjm_as_withholding` (PJM: the RT Primary Reserve
+    :mod:`scripts.data.build_ercot_as_withholding` (ERCOT: cleared DAM up-AS) or
+    :mod:`scripts.data.build_pjm_as_withholding` (PJM: the RT Primary Reserve
     requirement), or ``None`` when the parquet is absent (the feature then
     silently no-ops, like a backcast year with no outage windows). The file
     sits on the same non-leap 8760-hour clock as the fleet, so it is returned
@@ -1605,7 +1605,7 @@ def generators_to_fleet_arrays(
         # hides — e.g. the W A Parish coal units, masked by the gas units that
         # keep running — and fully zeros a genuinely single-unit plant (the
         # unit's capacity == its plant-bin capacity, so the derate share is 1.0).
-        # Built per ISO by scripts/derive_campd_unit_outages.py --iso <ISO>;
+        # Built per ISO by scripts/data/derive_campd_unit_outages.py --iso <ISO>;
         # ISOs with no unit-outage file get an empty derate (no effect).
         # Multiplies the statistical availability already set above.
         ufac = unit_outage_derate_factors(
@@ -1737,7 +1737,7 @@ def generators_to_fleet_arrays(
         # class-agnostic. Identification lives in the deriver's frozen guards
         # (declared-window scope, $150 DA in-merit certificate, ±45-day
         # capability basis with best-event-hour credit, disjointness vs the
-        # std/short extracts — scripts/derive_campd_maxgen_outages.py);
+        # std/short extracts — scripts/data/derive_campd_maxgen_outages.py);
         # windows are hour-granular and clipped to the declared start/end.
         # Reads the per-ISO campd-unit-outages-maxgen-<ISO>.csv; ISOs without
         # it get an empty derate (no effect). Multiplies availability.
@@ -2900,7 +2900,7 @@ def _load_ct_offer_surface() -> tuple[tuple[float, float, float], ...]:
     """Load the frozen measured CT/peaker offer-surface regimes.
 
     Reads ``data/raw/_validation-source/ercot_ct_offer_surface.json`` (produced by
-    ``scripts/derive_ct_offer_surface.py`` from the 60-Day DAM disclosure) and
+    ``scripts/data/derive_ct_offer_surface.py`` from the 60-Day DAM disclosure) and
     returns its regimes as ``(q_lo, q_hi, offer_level)`` triples. Cached — the
     surface is frozen against residuals (rule 20); a re-derive is a data-update
     commit, not a solve-time knob.
@@ -2931,7 +2931,7 @@ def apply_ercot_ct_offer_surface(
     market cleared. The real fleet's peakers had already offered themselves to
     the ERCOT cap band (~$1,500/MWh) by those hours: the 60-Day DAM disclosure
     shows the CT/peaker offer at 90% of HSL is cap-band, not heat-rate x gas
-    (``scripts/derive_ct_offer_surface.py``).
+    (``scripts/data/derive_ct_offer_surface.py``).
 
     This posts the **measured** self-withholding offer level on the CT/peaker
     ``econ*``/``peak*`` tranches (the phantom-spare bands; the ``mustrun``/
@@ -3018,7 +3018,7 @@ def _load_condbinned_surface(path: str) -> dict:
     """Load and cache the measured condition-binned offer surface JSON.
 
     Frozen against residuals (rule 20); a re-derive is a data-update commit
-    (scripts/derive_dam_offer_hrmults.py --condition-binned), not a solve-time knob.
+    (scripts/data/derive_dam_offer_hrmults.py --condition-binned), not a solve-time knob.
     """
     return json.loads(Path(path).read_text())
 
@@ -3132,7 +3132,7 @@ def build_neiso_offer_surface_conditional_markup(
     (``ScenarioConfig.neiso_offer_surface_conditional`` — winter scarcity
     charter Limb B): the measured fast-start offer distribution from ISO-NE's
     public DA Energy Market historical offer data
-    (``scripts/derive_neiso_offer_surface.py``), condition-binned by
+    (``scripts/data/derive_neiso_offer_surface.py``), condition-binned by
     within-year net-load percentile, posted onto the CT_PEAKER peak-band rungs
     in the P1 clearing objective only. Same mechanics, clamps and rule-13/20/21
     discipline as the ERCOT surface (the shared
@@ -3161,7 +3161,7 @@ def build_neiso_offer_surface_conditional_markup(
         raise ValueError(
             "neiso_offer_surface: config netload_pcts "
             f"{edges} disagree with the derived surface's edges {json_edges} "
-            "(re-derive scripts/derive_neiso_offer_surface.py with matching "
+            "(re-derive scripts/data/derive_neiso_offer_surface.py with matching "
             "--edges, or fix the config)."
         )
     return _conditional_surface_markup(
@@ -3192,7 +3192,7 @@ def build_pjm_offer_surface_conditional_markup(
     The PJM analogue of :func:`build_ercot_offer_surface_conditional_markup`
     (``ScenarioConfig.pjm_offer_surface_conditional`` — G-22 lever A): the
     measured top-of-curve offer distribution from PJM's public DataMiner2
-    ``energy_market_offers`` feed (``scripts/derive_pjm_offer_surface.py``),
+    ``energy_market_offers`` feed (``scripts/data/derive_pjm_offer_surface.py``),
     condition-binned by within-year net-load percentile, posted onto the
     CC_REGULAR + CT_PEAKER peak-band rungs in the P1 clearing objective only
     — the two classes whose idle supply is offered above the model price but
@@ -3224,7 +3224,7 @@ def build_pjm_offer_surface_conditional_markup(
         raise ValueError(
             "pjm_offer_surface: config netload_pcts "
             f"{edges} disagree with the derived surface's edges {json_edges} "
-            "(re-derive scripts/derive_pjm_offer_surface.py with matching "
+            "(re-derive scripts/data/derive_pjm_offer_surface.py with matching "
             "--edges, or fix the config)."
         )
     return _conditional_surface_markup(
@@ -3256,7 +3256,7 @@ def build_caiso_offer_surface_conditional_markup(
     (``ScenarioConfig.caiso_offer_surface_conditional`` — the C1
     CC-over/CT-under lane's measured route, WP-A 2026-07-16): the measured
     top-of-curve bid distribution from CAISO's OASIS Public Bid Data
-    (``scripts/derive_caiso_offer_surface.py``), condition-binned by
+    (``scripts/data/derive_caiso_offer_surface.py``), condition-binned by
     within-year net-load percentile, posted onto the CC_REGULAR + CT_PEAKER
     peak-band rungs in the P1 clearing objective only. The derive nets the
     CARB allowance cost out of the measured tops at the resolved-peak heat
@@ -3288,7 +3288,7 @@ def build_caiso_offer_surface_conditional_markup(
         raise ValueError(
             "caiso_offer_surface: config netload_pcts "
             f"{edges} disagree with the derived surface's edges {json_edges} "
-            "(re-derive scripts/derive_caiso_offer_surface.py with matching "
+            "(re-derive scripts/data/derive_caiso_offer_surface.py with matching "
             "--edges, or fix the config)."
         )
     return _conditional_surface_markup(
@@ -3409,7 +3409,7 @@ def _conditional_surface_markup(
 
 
 #: Model class -> measured physics segment of the PJM mid-curve surface
-#: (scripts/derive_pjm_offer_midcurve.py). CHP classes are deliberately
+#: (scripts/data/derive_pjm_offer_midcurve.py). CHP classes are deliberately
 #: absent (steam-host economics, small idle footprint).
 _PJM_MIDCURVE_SEGMENT_OF = {
     "CC_REGULAR": "CC_LIKE",
@@ -3439,7 +3439,7 @@ def build_pjm_offer_midcurve_conditional_markup(
     of procurement depth buys only +$2-4/MWh on that too-cheap body. This
     mechanism floors each targeted econ-tranche row's P1 bid at the
     MEASURED capacity-share-matched offer level of its physics segment
-    (``scripts/derive_pjm_offer_midcurve.py``):
+    (``scripts/data/derive_pjm_offer_midcurve.py``):
 
         target[g, t] = mult(segment, year, bin(t), share_g) x gas_day(t)
         markup[g, t] = max(0, min(target, 0.95 x VOLL) - mc_base[g, t])
@@ -3482,7 +3482,7 @@ def build_pjm_offer_midcurve_conditional_markup(
     if not edges or shares.size == 0:
         raise ValueError(
             "pjm_offer_midcurve: surface JSON carries no edges/shares — "
-            "re-derive scripts/derive_pjm_offer_midcurve.py"
+            "re-derive scripts/data/derive_pjm_offer_midcurve.py"
         )
     n_bins = len(edges) + 1
 
@@ -3599,7 +3599,7 @@ def build_pjm_offer_midcurve_conditional_markup(
 
 
 #: Model plant_group -> measured class key of the ERCOT mid-curve surface
-#: (scripts/derive_ercot_offer_midcurve.py). CC_CHP shares the CC measured
+#: (scripts/data/derive_ercot_offer_midcurve.py). CC_CHP shares the CC measured
 #: offers (CHP is a plant attribute, not a DAM Resource Type). ST_GAS is
 #: absent — the drag-floor structure owns it (rule 19).
 _ERCOT_MIDCURVE_CLASS_OF = {
@@ -3624,7 +3624,7 @@ def build_ercot_offer_midcurve_conditional_markup(
     existing ``ercot_offer_surface_conditional`` reprices only the gas PEAK rungs
     (top ~263 h/yr); this floors each targeted gas ``econ*`` tranche's P1 bid at
     the MEASURED capacity-share-matched day-ahead offer level of its class
-    (``scripts/derive_ercot_offer_midcurve.py`` — the 60-Day DAM disclosure
+    (``scripts/data/derive_ercot_offer_midcurve.py`` — the 60-Day DAM disclosure
     body, 18-22x at within-unit shares 0.95-0.99):
 
         target[g, t] = mult(class, year, bin(t), share_g) x gas_day(t)
@@ -3662,7 +3662,7 @@ def build_ercot_offer_midcurve_conditional_markup(
     if not edges or shares.size == 0:
         raise ValueError(
             "ercot_offer_midcurve: surface JSON carries no edges/shares — "
-            "re-derive scripts/derive_ercot_offer_midcurve.py"
+            "re-derive scripts/data/derive_ercot_offer_midcurve.py"
         )
     n_bins = len(edges) + 1
 
@@ -3771,7 +3771,7 @@ def build_ercot_offer_midcurve_conditional_markup(
 
 
 #: Model plant_group -> measured class key of the ERCOT DAM cleared-share
-#: boundary artifact (scripts/derive_ercot_dam_cleared_share.py). Deliberately
+#: boundary artifact (scripts/data/derive_ercot_dam_cleared_share.py). Deliberately
 #: NARROWER than the mid-curve map: CC_CHP is excluded (steam-host cogens
 #: self-schedule — the ERCOT-70/71 decomposition measures the model's CC_CHP
 #: within +12 MW of actual on the target windows, so there is no composition
@@ -3830,7 +3830,7 @@ def build_ercot_offer_surface_cleared_share_markup(
       multiplies each walled row-hour's markup by the MEASURED
       commitment-loading state weight ``w_c(t)`` (the unloaded fraction of
       the class's above-DA-position online capability —
-      ``scripts/derive_ercot_commitment_loading_state.py``, frozen rule 23):
+      ``scripts/data/derive_ercot_commitment_loading_state.py``, frozen rule 23):
       the floored bid becomes ``base + w x (wall - base)``. Moderate regimes
       (w ~ 1) keep the full wall; regimes where reality RUC/self-commits the
       un-offered capacity online near cost stand it down (w -> 0). Backcast
@@ -3880,7 +3880,7 @@ def build_ercot_offer_surface_cleared_share_markup(
     if not edges or ladder_q.size == 0:
         raise ValueError(
             "ercot_offer_surface_cleared_share: surface JSON carries no "
-            "edges/quantiles — re-derive scripts/derive_ercot_dam_cleared_share.py"
+            "edges/quantiles — re-derive scripts/data/derive_ercot_dam_cleared_share.py"
         )
     n_bins = len(edges) + 1
 
@@ -3906,7 +3906,7 @@ def build_ercot_offer_surface_cleared_share_markup(
             raise ValueError(
                 "ercot_offer_surface_cleared_share_state: state artifact bin "
                 f"edges {sedges} != wall edges {edges} — re-derive "
-                "scripts/derive_ercot_commitment_loading_state.py"
+                "scripts/data/derive_ercot_commitment_loading_state.py"
             )
         block_h = int(sprov.get("hour_block_hours", 4))
         hod_block = (np.arange(hours) % 24) // block_h  # (T,)
@@ -4108,7 +4108,7 @@ def build_ercot_offer_surface_lowcurve_markdown(
     tail — the committed fleet's cheap segments the all-hours p50 band collapse
     deleted (clamped never to RAISE one). Measured bands from the same 60-Day
     DAM disclosure corpus, committed/online resources only
-    (``scripts/derive_dam_offer_hrmults.py --low-curve-binned``):
+    (``scripts/data/derive_dam_offer_hrmults.py --low-curve-binned``):
 
     * ``binned_committed_p50`` — the Min-Gen-Cost (LSL block) multiplier per
       net-load bin. Committed units bid their LSL far below SRMC
@@ -5497,7 +5497,7 @@ def _cc_demonstrated_peaks(iso: str) -> dict[int, float]:
     """Per-plant CAMPD demonstrated p999 peak (MW) from the ISO reconcile table.
 
     Reads ``campd_p999_mw`` out of ``cc_capacity_reconcile_<ISO>.csv`` (the
-    measured artifact ``scripts/derive_cc_capacity_reconcile.py`` writes; rule
+    measured artifact ``scripts/data/derive_cc_capacity_reconcile.py`` writes; rule
     13 — re-derives only on CAMPD vintage change, rule 23). Keyed by plant code.
     A missing table returns ``{}``. Every ISO reads only its own table (rule
     24). CT-only / incomplete-CEMS plants are excluded from the table by the
@@ -5621,7 +5621,7 @@ def _rows_to_generators(
     ``apply_cc_summer_guard`` gates the always-on merchant-CC summer-capacity
     guard (:func:`_reconcile_cc_pmax_to_nameplate`). It is True everywhere in
     the model; the CC demonstrated-peak derive
-    (:func:`scripts.derive_cc_capacity_reconcile._model_cc_capacity`) passes
+    (:func:`scripts.data.derive_cc_capacity_reconcile._model_cc_capacity`) passes
     False so it measures the *raw* fleet capacity the guard clips — the guard
     reads the derive's own table, so guarding the derive's input would make the
     demonstrated-peak table self-referential (a plant restored to its peak would
@@ -6947,7 +6947,7 @@ PETRA_NOVA_MIN_CF: float = 0.92
 # output over Jan-July (the window data/raw/reference/tx-jan-aug23-unit-outages.csv covers,
 # so available capacity is known): the P5 of each plant's net capacity factor
 # over its committed (online) hours, normalized by the unit-outage-adjusted
-# available capacity. See scripts/derive_cc_committed_pct.py and
+# available capacity. See scripts/data/derive_cc_committed_pct.py and
 # data/raw/_processed-legacy/cc_committed_pct.csv for the full percentile distribution.
 # Replaces the coarse assumed CSV Pct_Committed (clustered at 20/25/45/55) when
 # config.cc_committed_per_plant is set; the economic tranche absorbs the
@@ -7335,7 +7335,7 @@ def campd_ct_run_band_ratios(
     """Return the measured (band_edges, run-length ratios) for an ISO, or None.
 
     Reads the committed condition-banded CT run-length artifact
-    (``scripts/derive_campd_ct_run_lengths.py --condition-bands`` →
+    (``scripts/data/derive_campd_ct_run_lengths.py --condition-bands`` →
     ``data/raw/_processed-legacy/campd_ct_run_bands_<ISO>.csv``): per
     net-load-percentile band, the class-pooled median start-to-stop run
     length as a RATIO to the all-runs pooled median — the v4
@@ -7360,7 +7360,7 @@ def campd_ct_run_lengths(iso: str) -> dict[int, float]:
     """Return ``{plant_code: median CT run hours}`` for an ISO, ``0`` = fallback.
 
     Reads the committed CAMPD-measured simple-cycle CT run-length artifact
-    (``scripts/derive_campd_ct_run_lengths.py`` →
+    (``scripts/data/derive_campd_ct_run_lengths.py`` →
     ``data/raw/_processed-legacy/campd_ct_run_lengths_<ISO>.csv``): per-plant
     median start-to-stop run lengths pooled 2023-2025, with the ISO-class
     pooled median under key ``0`` for CT plants without CEMS coverage. Empty
@@ -7379,7 +7379,7 @@ def campd_ct_run_lengths(iso: str) -> dict[int, float]:
 
 
 # Model plant_group -> CAMPD ramp-envelope family bucket. Mirrors the derive
-# script's unitType bucketing (scripts/derive_campd_ramp_envelopes.py) so a
+# script's unitType bucketing (scripts/data/derive_campd_ramp_envelopes.py) so a
 # mixed facility (CC block + standalone peakers) is enveloped per family.
 _RAMP_BUCKET_BY_GROUP: dict[str, str] = {
     "CC_REGULAR": "CC",
@@ -7397,7 +7397,7 @@ def load_campd_ramp_envelopes(iso: str) -> "pd.DataFrame | None":
     """Return the ISO's CAMPD plant-level hourly ramp-envelope table, or None.
 
     Reads the committed measured artifact
-    (``scripts/derive_campd_ramp_envelopes.py`` →
+    (``scripts/data/derive_campd_ramp_envelopes.py`` →
     ``data/raw/_processed-legacy/campd_ramp_envelopes_<ISO>.csv``): per
     (plant, CC/CT/ST bucket) max observed 1-h up/down gross-load deltas
     pooled 2023-2025 (``basis == "plant"``), sparse-coverage rows
@@ -7509,7 +7509,7 @@ def build_ramp_groups(
 
 
 # Default location of the CAMPD-derived per-plant emission-rate artifact
-# (scripts/derive_plant_emissions.py), resolved relative to the repo root.
+# (scripts/data/derive_plant_emissions.py), resolved relative to the repo root.
 PLANT_EMISSION_RATES_PATH: Path = PROCESSED_DIR / "plant_emission_rates.parquet"
 
 # kg -> metric tonnes, the model's internal emission-rate mass unit.
@@ -7800,7 +7800,7 @@ def _reconcile_cc_capacity(
     """Reconcile listed CC plants' ``capacity_mw`` to their demonstrated value.
 
     Reads the per-plant reconciliation table
-    (``scripts/derive_cc_capacity_reconcile.py``) and applies each row per its
+    (``scripts/data/derive_cc_capacity_reconcile.py``) and applies each row per its
     ``mode`` column:
 
     * ``raise`` (or no ``mode`` column — the original ERCOT table, unchanged
@@ -8080,7 +8080,7 @@ def thermal_tranche_overrides(
 
     Loads the per-plant CAMPD-derived committed and must-run tranche shares
     from ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`` (written by
-    ``scripts/derive_thermal_tranches.py``). Empty when the ISO has no
+    ``scripts/data/derive_thermal_tranches.py``). Empty when the ISO has no
     artifact, so the caller falls back to the group default. This is the
     general, ISO-agnostic replacement for the hardcoded ERCOT
     ``CC_REGULAR_COMMITTED_PCT_BY_PLANT`` / ``COAL_MUSTRUN_BY_PLANT`` maps.
@@ -8120,7 +8120,7 @@ def thermal_tranche_peaking(iso: str) -> dict[tuple[int, str], float]:
 
     The CAMPD-derived duct-firing / scarcity share from
     ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`` (``peaking_pct``, written
-    by ``scripts/derive_thermal_tranches.py`` for CC_REGULAR / CC_CHP): the
+    by ``scripts/data/derive_thermal_tranches.py`` for CC_REGULAR / CC_CHP): the
     share of the plant's demonstrated sustained maximum it clears in fewer
     than 5% of its online hours. Empty when the ISO has no artifact or it
     predates the column (ERCOT has none — its own per-plant binning path
@@ -8155,7 +8155,7 @@ def thermal_tranche_online_frac(iso: str) -> dict[tuple[int, str], float]:
 
     The CEMS-measured synchronization fraction from
     ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`` (``online_frac``,
-    written by ``scripts/derive_thermal_tranches.py`` for the
+    written by ``scripts/data/derive_thermal_tranches.py`` for the
     ``_ONLINE_FRAC_GROUPS``: COAL plus the merchant gas committed groups
     CC_REGULAR / CT_PEAKER): the share of the pooled window the plant has any
     unit synchronized (net MW > 1% of nameplate). Consumed by the per-plant
@@ -8191,7 +8191,7 @@ def thermal_tranche_p25_level(iso: str) -> dict[tuple[int, str], float]:
 
     The measured 25th-percentile-of-online available-CF from
     ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`` (``p25_cf``, a
-    percent, written by the SAME frozen ``scripts/derive_thermal_tranches.py``
+    percent, written by the SAME frozen ``scripts/data/derive_thermal_tranches.py``
     estimator that produces ``committed_pct`` = P5-of-online and ``online_frac``
     — rule 23, no deriver touch) times the plant's ``nameplate_mw``, i.e. the
     plant's 25th-percentile dispatch level when synchronized. Because ``p25_cf``
@@ -8236,7 +8236,7 @@ def thermal_tranche_chp_p25_allhr(iso: str) -> dict[tuple[int, str], float]:
     The measured multi-year ALL-HOURS 25th-percentile available-CF (percent of
     nameplate) from ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv``
     (``p25_allhr_cf``, written by the SAME frozen
-    ``scripts/derive_thermal_tranches.py`` estimator that produces the p2
+    ``scripts/data/derive_thermal_tranches.py`` estimator that produces the p2
     ``chp_pmin_cf`` — identical sample and masks, only the percentile differs;
     rule 23, no deriver touch). This is the steam-host OPERATING level: outage
     hours drop out of the sample (available capacity 0), economic/host-driven
@@ -8610,7 +8610,7 @@ def fleet_to_bins(
     # for the synthesized-bins ISOs — the same hook the ERCOT curated-CSV path
     # gets via load_campd_bins. Applied after the summer-derate nameplate
     # rescale above, so a demonstrated-peak CAP row (mode="cap",
-    # scripts/derive_cc_capacity_reconcile.py --mode cap) bounds the final LP
+    # scripts/data/derive_cc_capacity_reconcile.py --mode cap) bounds the final LP
     # capacity at the plant's measured CAMPD sustained maximum.
     if not bins.empty and getattr(config, "cc_capacity_reconcile", False):
         bins = _reconcile_cc_capacity(

@@ -234,7 +234,7 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
         if iso.upper() == "MISO":
             # MISO's COAL_SIGMOID_DEFAULTS were re-derived 2026-07-09 from the
             # #1803 EIA Annual Coal Report region f.o.b.-mine price + BLS PPI
-            # coal-mining series by scripts/derive_coal_sigmoid.py — each of the
+            # coal-mining series by scripts/data/derive_coal_sigmoid.py — each of the
             # four parameters is grounded in measured coal-commodity data (merit
             # crossover from region delivered cost; cost-tracking ceil; gas-trough
             # floor; cross-region dispersion slope), not fitted to a MISO residual
@@ -253,7 +253,7 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
                     iso,
                     n_scalars=4 * len(sigmoids),
                     source="re-derived from #1803 region f.o.b./PPI by "
-                    "scripts/derive_coal_sigmoid.py (frozen; provenance "
+                    "scripts/data/derive_coal_sigmoid.py (frozen; provenance "
                     "data/raw/_processed-legacy/coal_sigmoid_params.csv; freeze "
                     "test tests/test_derive_coal_sigmoid.py) — retires the ERCOT "
                     "byte-copy (issue #1347/G-26); fit to measured coal commodity "
@@ -449,7 +449,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
         )
         # C-14 (audit): the aggregate WECC export cap. Re-derived in B-CAI-1
         # from the SAME measured EIA-930 CISO net-interchange series the per-hub
-        # export envelopes use (scripts/derive_caiso_export_cap.py): 3,500 (fitted
+        # export envelopes use (scripts/data/derive_caiso_export_cap.py): 3,500 (fitted
         # "typical peak", ~p99) -> 4,361 MW (peak-bucket p95, measured capability).
         # Used ONLY by the superseded caiso_bidir_intertie; the keeper's
         # caiso_per_hub_intertie bounds exports by physical TTC + measured
@@ -465,7 +465,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "re-derived from EIA-930 CISO net-interchange (the realized ATC "
                 "proxy; OASIS unreachable) at the corridor mechanism's own p95 "
                 "peak-bucket convention, 2023-2025 (2026 holdout excluded, "
-                "rule 22); frozen scripts/derive_caiso_export_cap.py. rule-23 "
+                "rule 22); frozen scripts/data/derive_caiso_export_cap.py. rule-23 "
                 "source-data change: the caiso-51 keeper measured export "
                 "envelopes.",
                 root_cause="fallback-only (superseded by caiso_per_hub_intertie); "
@@ -536,7 +536,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
     if iso == "NEISO":
         # C-6 CLOSED for NEISO 2026-07-06 (docs/calibration-log.md same date):
         # IMPORT_TRANCHES/EXPORT_TRANCHES[NEISO] re-derived by the frozen
-        # scripts/derive_neiso_import_tranches.py from measured EIA-930
+        # scripts/data/derive_neiso_import_tranches.py from measured EIA-930
         # per-seam flows + NYISO proxy-bus DA LBMPs (rule 23) — no longer a
         # residual fit. Listing it under the generic residual bucket below
         # would be a false positive (the CC-peaking-pct pattern this same
@@ -549,7 +549,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 iso,
                 source="per-seam Q-Q duration coupling of measured ISO-NE DA "
                 "hub LMP with measured EIA-930 per-seam flows, frozen "
-                "scripts/derive_neiso_import_tranches.py (audit C-6 CLOSED "
+                "scripts/data/derive_neiso_import_tranches.py (audit C-6 CLOSED "
                 "2026-07-06)",
                 root_cause="re-derive trigger is a source-data change only "
                 "(rule 23), never a residual; shape gap: flat annual rungs "
@@ -560,7 +560,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
     if iso == "MISO" and sc.get("miso_seam_measured_ladder"):
         # C-6 CLOSED for MISO 2026-07-07 (the NEISO pattern): every seam band
         # price comes from MISO_SEAM_LADDER_BY_YEAR — the frozen
-        # scripts/derive_miso_seam_ladders.py Q-Q coupling of measured EIA-930
+        # scripts/data/derive_miso_seam_ladders.py Q-Q coupling of measured EIA-930
         # per-seam flows with the measured MISO DA hub LMP (rule 23). The
         # generic residual bucket below would be a false positive for this
         # config, so it gets its own measured-physical row instead.
@@ -572,7 +572,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 iso,
                 source="per-seam Q-Q duration coupling of the measured MISO "
                 "DA hub LMP with measured EIA-930 per-seam flows on the "
-                "fixed 8-band grid, frozen scripts/derive_miso_seam_ladders"
+                "fixed 8-band grid, frozen scripts/data/derive_miso_seam_ladders"
                 ".py (audit C-6 CLOSED for MISO 2026-07-07; G-23-residual "
                 "import-starvation fix)",
                 root_cause="re-derive trigger is a source-data change only "
@@ -585,7 +585,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
     if iso == "PJM" and sc.get("pjm_seam_measured_ladder"):
         # C-6 CLOSED for PJM 2026-07-10 (the MISO/NEISO pattern): every seam
         # band price comes from PJM_SEAM_LADDER_BY_YEAR — the frozen
-        # scripts/derive_pjm_seam_ladders.py Q-Q coupling of PJM's measured
+        # scripts/data/derive_pjm_seam_ladders.py Q-Q coupling of PJM's measured
         # settlement-grade tie-line flows with the measured PJM DA system
         # LMP (rule 23). The generic residual bucket below would be a false
         # positive for this config, so it gets its own measured-physical row.
@@ -599,7 +599,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "DA system LMP with PJM's measured settlement-grade "
                 "tie-line flows (act_sch_interchange, pooled by "
                 "PJM_SEAM_TIE) on the fixed 8-band grid, frozen "
-                "scripts/derive_pjm_seam_ladders.py (audit C-6 CLOSED for "
+                "scripts/data/derive_pjm_seam_ladders.py (audit C-6 CLOSED for "
                 "PJM 2026-07-10; pjm-95 C1 2023-interchange-duration fix); "
                 "displaces the firm scheduled-export floor on ladder years "
                 "(rule 19, alternatives never stacked)",
@@ -631,7 +631,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 source="published hourly interface transfer limits (PJM Data "
                 "Miner 2 transfer_limits_and_flows, 2023-2025 raw drops; "
                 "min(pre,post) where both publish), curated by frozen "
-                "scripts/curate_transfer_interface_limits.py onto the model "
+                "scripts/data/curate_transfer_interface_limits.py onto the model "
                 "clock; supersedes PJM_MEASURED_INTERNAL_TTC's pooled "
                 "medians on mapped links (same feed, hourly — rule 19). "
                 "Unmapped links (AEP_Ohio->ATSI, SWMAAC->EMAAC, "
@@ -666,7 +666,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 source="published hourly 'Average Eastern' interface "
                 "transfer limit (PJM Data Miner 2 transfer_limits_and_flows, "
                 "2023-2025 raw drops), curated by frozen "
-                "scripts/curate_transfer_interface_limits.py onto the model "
+                "scripts/data/curate_transfer_interface_limits.py onto the model "
                 "clock; interface identity verified against PJM Manual 03 "
                 "§3.8 Rev 71 (diagnosis §10.3). One-sided (import "
                 "direction); reverse flow and per-link statics unchanged.",
@@ -696,7 +696,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 iso,
                 source="EPA CAMPD unit-level hourly grossLoad start-to-stop "
                 "run blocks (simple-cycle CT units, pooled 2023-2025), "
-                "frozen scripts/derive_campd_ct_run_lengths.py; start cost "
+                "frozen scripts/data/derive_campd_ct_run_lengths.py; start cost "
                 "is the published NREL/SR-5500-55433 CT_STARTUP_PARAMS "
                 "(constants.py)",
                 root_cause="re-derive trigger is a source-data change only "
@@ -722,7 +722,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 source="EPA CAMPD start-to-stop runs keyed by start-hour "
                 "within-year net-load percentile (EIA-930 D-WND-SUN), "
                 "class-pooled band medians / pooled median (shape), plant "
-                "median (level); frozen scripts/derive_campd_ct_run_lengths"
+                "median (level); frozen scripts/data/derive_campd_ct_run_lengths"
                 ".py --condition-bands",
                 root_cause="re-derive trigger is a CAMPD/EIA-930 source-data "
                 "change only (rule 23); band edges recorded in the artifact "
@@ -888,7 +888,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 n_scalars=0,
                 source="EIA Natural Gas Weekly Update spot-price table "
                 "('Chicago' row = NGI Daily GPI), 680 weekday prints "
-                "2023-2025 (scripts/fetch_miso_citygate_daily.py); Chicago-hub "
+                "2023-2025 (scripts/data/fetch_miso_citygate_daily.py); Chicago-hub "
                 "zone set {Illinois, Indiana, East} READ from "
                 "miso_zonal_gas_hub.csv (hub == 'Chicago Citygate (IL)' — the "
                 "same file apply_miso_zonal_gas_basis reads); winter months "
@@ -950,7 +950,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 iso,
                 n_scalars=0,
                 source="per-unit EPA CAMPD hourly gross generation "
-                "(scripts/derive_campd_unit_outages.py --short-windows); "
+                "(scripts/data/derive_campd_unit_outages.py --short-windows); "
                 "identification guards: coal-only detector + unit annual "
                 "CF >= 0.55 (the partial-outage detector's baseload "
                 "constant) + the revealed-availability in-merit filter "
@@ -1169,7 +1169,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
         out.append(
             _entry(
                 "maxgen-events registry (declared capacity-emergency windows)",
-                "data/raw/maxgen-events/{iso}/ via scripts/curate_maxgen_events "
+                "data/raw/maxgen-events/{iso}/ via scripts/data/curate_maxgen_events "
                 "(clean_io seam; schema maxgen-events.schema.yaml)",
                 "measured-physical",
                 iso,
@@ -1201,7 +1201,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 iso,
                 n_scalars=0,
                 source="per-unit EPA CAMPD hourly gross generation inside the "
-                "registry windows only (scripts/derive_campd_maxgen_outages."
+                "registry windows only (scripts/data/derive_campd_maxgen_outages."
                 "py); frozen guards: declared-window scope clipped to the "
                 "declared start/end, $150 DA in-merit certificate "
                 "(region-scoped hubs, >= 2 window hours; sensitivity across "
@@ -1275,7 +1275,8 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 root_cause="audit C-6/#1350 open item: replace year-keyed "
                 "rungs with measured hub prices / published wheeling costs "
                 "per seam, following the NEISO precedent "
-                "(scripts/derive_neiso_import_tranches.py); " + _HOLDOUT_ROOT_CAUSE,
+                "(scripts/data/derive_neiso_import_tranches.py); "
+                + _HOLDOUT_ROOT_CAUSE,
             )
         )
     return out

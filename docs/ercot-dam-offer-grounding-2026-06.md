@@ -4,8 +4,8 @@
 **Closes:** the open **Task-2** gap from `docs/lmp-decomposition-2026-06.md` — *"the
 CT/CC/ST band SHAPE is defensible but the HEIGHTS are fitted, not validated against
 the real offer distribution."*
-**Deliverables:** `scripts/parse_ercot_dam_offers.py` (wide→tidy parser),
-`scripts/analyze_dam_offer_multipliers.py` (offer→multiplier overlay),
+**Deliverables:** `scripts/data/parse_ercot_dam_offers.py` (wide→tidy parser),
+`scripts/archive/analyze_dam_offer_multipliers.py` (offer→multiplier overlay),
 `data/raw/_processed-legacy/ercot_dam_offers.parquet` (canonical tidy offers, regenerable),
 `data/raw/_processed-legacy/ercot_resource_settlement_crosswalk.csv`,
 `data/raw/_processed-legacy/ercot_offer_multiplier_summary.csv`.
@@ -17,7 +17,7 @@ ramp), which — per the guardrails — is a SEPARATE, gated change.
 
 ## 1. What was built
 
-`scripts/parse_ercot_dam_offers.py` reshapes the wide 60-Day DAM Disclosure
+`scripts/data/parse_ercot_dam_offers.py` reshapes the wide 60-Day DAM Disclosure
 "Gen Resource Data" (one row per resource × delivery-hour, the 10-point energy
 offer curve spread across 20 columns) into a **tidy long** table — one row per
 `(resource, hour, curve point)` carrying the melted `point / mw / price` plus the
@@ -31,7 +31,7 @@ QSE-submitted curve **is** the offer — a peaker bids its full curve on the
 hundreds of hours it clears OFF, and that bid distribution is exactly what grounds
 the offer curve.
 
-`scripts/analyze_dam_offer_multipliers.py` inverts each offer into the model's
+`scripts/archive/analyze_dam_offer_multipliers.py` inverts each offer into the model's
 heat-rate-multiplier space, `mult = (offer_price − vom) / (base_hr × gas)`, and
 overlays the measured distribution on the run124 bands.
 
@@ -137,7 +137,7 @@ The single defensible target it surfaces — **flatten the CT econ ramp toward t
 observed flat-at-fuel-cost shape and move the markup into committed (startup) +
 the scarcity wall** — is a SEPARATE, gated change that must:
 
-1. Re-run the **offer-curve Jacobian** (`scripts/derive_offer_curve_jacobian.py`)
+1. Re-run the **offer-curve Jacobian** (`scripts/data/derive_offer_curve_jacobian.py`)
    and the universal volume gate — the `lmp-decomposition` Task-2 result is that a
    "heat-rate-pure" flat CT econ **over-runs CT and craters ST_GAS** through the
    −0.25 coupling, so any re-derivation must be defensible AND non-regressing.
@@ -170,11 +170,11 @@ grounding and is scoped, not done.
 
 ```bash
 # 1. Parse the wide disclosure → tidy offers + resource/settlement crosswalk
-python scripts/parse_ercot_dam_offers.py
+python scripts/data/parse_ercot_dam_offers.py
 
 # 2. Overlay the measured multiplier distribution on the run124 bands
-python scripts/analyze_dam_offer_multipliers.py
-python scripts/analyze_dam_offer_multipliers.py --committed-only   # online-only check
+python scripts/archive/analyze_dam_offer_multipliers.py
+python scripts/archive/analyze_dam_offer_multipliers.py --committed-only   # online-only check
 ```
 
 The canonical `ercot_dam_offers.parquet` (160 MB) is regenerable and therefore

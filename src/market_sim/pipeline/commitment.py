@@ -76,7 +76,7 @@ def load_cc_start_trajectory(iso: str):
     """Return the ISO's measured CC start-to-load duration table, or ``None``.
 
     Reads the committed measured artifact
-    (``scripts/derive_campd_cc_start_trajectory.py`` →
+    (``scripts/data/derive_campd_cc_start_trajectory.py`` →
     ``data/raw/_processed-legacy/campd_cc_start_trajectory_<ISO>.csv``): per
     CC plant the CAMPD p50 off→on-to-full-load ramp duration in hours
     (``basis == "plant"``, gate-accepted rows only), sparse-coverage rows
@@ -116,7 +116,7 @@ def cc_startup_lead_hours(fleet: list, fleet_arrays, iso: str) -> np.ndarray | N
     if table is None:
         logger.warning(
             "caiso_ra_startup_trajectory: no derived start-trajectory artifact "
-            "for %s (scripts/derive_campd_cc_start_trajectory.py) — the "
+            "for %s (scripts/data/derive_campd_cc_start_trajectory.py) — the "
             "extension is inert (a measured lead or nothing, rule 23).",
             iso,
         )

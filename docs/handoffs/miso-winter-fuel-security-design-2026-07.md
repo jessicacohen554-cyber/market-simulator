@@ -64,7 +64,7 @@ regional citygate — landed in Phase 0 (below).
 `data/raw/gas-prices/miso_citygate_daily.csv` — **680 daily Chicago Citygate
 delivered-gas prints, 2023-01-05 … 2025-12-17** (per-year 232 / 224 / 224 weekday
 trading days), columns `date, chicago_citygate_usd_mmbtu, henry_hub_usd_mmbtu,
-source`. Scraped by `scripts/fetch_miso_citygate_daily.py` from the **"Chicago"**
+source`. Scraped by `scripts/data/fetch_miso_citygate_daily.py` from the **"Chicago"**
 row of the EIA Natural Gas Weekly Update compact "Spot Prices ($/MMBtu)" table
 (`archivenew_ngwu/YYYY/MM_DD/`) — the same free EIA-displayed NGI Daily GPI table
 the CAISO ("Cal. Comp. Avg") and NYISO ("New York") daily scripts already read.

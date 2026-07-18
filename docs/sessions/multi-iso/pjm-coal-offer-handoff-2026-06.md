@@ -151,7 +151,7 @@ KEY FILES: scenarios.py (`offer_curve_overrides`/`offer_curve_by_group`,
 `coal_*_passthrough_*`, `coal_bit_passthrough_floor`, `coal_supply_repricing`,
 `coal_plant_monthly_pricing`, `reference_price_interface`, `priced_interchange`);
 scripts/probes/_pjm_{retiree_run,aswh_merge,score,interchange_ab}.py;
-scripts/analyze_lmp_residual.py; scripts/derive_dam_offer_hrmults.py.
+scripts/archive/analyze_lmp_residual.py; scripts/data/derive_dam_offer_hrmults.py.
 DOCS (READ FIRST): pjm-outage-regate-2026-06.md, pjm-coal-mustrun-floor.md,
 pjm-lmp-residual.md, ercot-dam-offer-hrmults-2026-06.md. Price-formation /
 reserve co-opt work (pjm-reserve-ordc.md) is PARKED behind this coal fix.

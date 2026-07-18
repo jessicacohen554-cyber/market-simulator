@@ -3,7 +3,7 @@
 **Date:** 2026-07-07 (G-20b path-B lane). **Status:** investigation finding +
 derived candidate mechanism, NOT applied to any run. Keeper unaffected.
 **Issue:** #1483 (G-21 re-grounding relocated the C1 miss onto an unmodeled
-ST_GAS volume driver). **Scripts:** `scripts/derive_pjm_st_gas_netload_drag.py`
+ST_GAS volume driver). **Scripts:** `scripts/data/derive_pjm_st_gas_netload_drag.py`
 (new, this finding's evidence generator).
 
 ## 1. The question
@@ -86,7 +86,7 @@ responds to it.
 
 ## 4. Derived PJM curve (rule 25 — the ERCOT hinge cannot cross ISOs)
 
-`scripts/derive_pjm_st_gas_netload_drag.py` (CAMPD 2023–2025 pooled overnight
+`scripts/data/derive_pjm_st_gas_netload_drag.py` (CAMPD 2023–2025 pooled overnight
 CF vs EIA-930 PJM net-load, hinge fit, 9 pure-play plants, 7.71 GW nameplate):
 
 ```

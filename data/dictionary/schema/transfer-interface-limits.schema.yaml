@@ -12,7 +12,7 @@
 # Pre- and post-contingency limits are DISTINCT series and stay distinct rows
 # here — consumers choose which security posture to enforce.
 #
-# Curation (scripts/curate_transfer_interface_limits.py, per-ISO specs in
+# Curation (scripts/data/curate_transfer_interface_limits.py, per-ISO specs in
 # scripts/lib/transfer_interface_limits/) maps the UTC-keyed source rows onto
 # the fixed non-leap 8760-hour ISO-local clock (Feb 29 dropped, the DST
 # fall-back repeat merged by the clock-hour group-by — the convention shared

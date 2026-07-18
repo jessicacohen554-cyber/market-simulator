@@ -2,7 +2,7 @@
 # Pays S3 bucket) on a GitHub runner, keep only the three trading hubs, fold them
 # into the hourly aggregates, and commit — no manual upload, no per-hour clicking.
 #
-# The live OASIS API (scripts/fetch_caiso_oasis.py) only retains ~39 months, so
+# The live OASIS API (scripts/data/fetch_caiso_oasis.py) only retains ~39 months, so
 # early-2023 is gone from it; this reads the bulk archive instead. Requester-Pays
 # means download costs hit YOUR AWS account (pennies for the 3 hubs).
 #
@@ -99,7 +99,7 @@ jobs:
             n="$(find "$TMP" -name '*.zip' | wc -l)"
             echo "$DAY: $n zip(s)"
             if [ "$n" -gt 0 ]; then
-              python scripts/extract_caiso_hubs.py --zip-dir "$TMP" --out-dir "$STAGE"
+              python scripts/data/extract_caiso_hubs.py --zip-dir "$TMP" --out-dir "$STAGE"
             fi
             d="$(date -d "$d + 1 day" +%Y-%m-%d)"
           done
@@ -144,7 +144,7 @@ jobs:
             # Folds the window CSVs into the fresh aggregates and moves the
             # window files out of the working tree (into a throwaway stage dir),
             # so only the two aggregates are ever staged.
-            python scripts/postprocess_oasis_downloads.py --stage-dir "$(mktemp -d)"
+            python scripts/data/postprocess_oasis_downloads.py --stage-dir "$(mktemp -d)"
             git add data/raw/lmp-data/CAISO/CAISO_dam_hourly_*.csv \
                     data/raw/lmp-data/CAISO/CAISO_rtm_hourly_*.csv
             if git diff --cached --quiet; then

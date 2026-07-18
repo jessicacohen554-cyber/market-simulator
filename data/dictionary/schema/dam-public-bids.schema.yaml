@@ -5,7 +5,7 @@
 #       ?groupid=PUB_DAM_GRP&startdatetime=<YYYYMMDD>T08:00-0000
 #       &version=3&resultformat=6
 #   One zip per DAM trade date, 90-day publication lag, indefinite retention.
-#   Fetched by scripts/fetch_caiso_public_bids.py into
+#   Fetched by scripts/data/fetch_caiso_public_bids.py into
 #   data/raw/caiso-public-bids/zips/ (gitignored; README committed).
 #
 # CAISO context
@@ -45,8 +45,8 @@ description: >-
   As-submitted day-ahead market bids per masked resource, operating hour,
   and market product, in long (normalized) format: one row per bid-curve
   breakpoint or self-schedule quantity. Source (CAISO): OASIS PUB_DAM_GRP
-  GroupZip API, fetched by scripts/fetch_caiso_public_bids.py and curated by
-  scripts/curate_dam_public_bids.py. Published with a 90-day lag; masked
+  GroupZip API, fetched by scripts/data/fetch_caiso_public_bids.py and curated by
+  scripts/data/curate_dam_public_bids.py. Published with a 90-day lag; masked
   resource ids are persistent across days and years.
 
 key_columns: [iso, trade_date, resource_seq, product, interval_start_utc, row_kind, step_idx]

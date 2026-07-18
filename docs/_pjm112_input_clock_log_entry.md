@@ -17,7 +17,7 @@ only (rule 22); zero fitted values; DOF ledger byte-identical to pjm-110; no
 ScenarioConfig change.
 
 **The two source defects, corrected by a value-preserving UTC-time re-placement**
-(`scripts/extend_eia930_hourly_from_balance.py --rebuild-pjm-input-clock`; each
+(`scripts/data/extend_eia930_hourly_from_balance.py --rebuild-pjm-input-clock`; each
 cell keeps its measured value and only moves to the UTC hour it belongs to — no
 re-pull, no interpolation): (a) the **2023 region family**
 (`Demand`/`Demand forecast`/`Net generation`/`Total interchange`) was built one
@@ -32,7 +32,7 @@ shift). Every cell outside the two shifted (family, year) blocks is
 byte-identical to the pre-fix file. The three DataMiner loaders that indexed the
 prevailing `datetime_beginning_ept` stamp (`pjm_net_interchange`,
 `pjm_zonal_interchange` in `eia_loader.py`; `parse_pjm_shares` in
-`scripts/curate_zonal_shares.py`) now index `datetime_beginning_utc` on the
+`scripts/data/curate_zonal_shares.py`) now index `datetime_beginning_utc` on the
 model's fixed-EST clock — byte-identical outside DST, exactly one hour earlier
 inside. Per-family convention documented in `data/raw/eia-930-hourly/README.md`.
 

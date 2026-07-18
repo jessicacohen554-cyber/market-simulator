@@ -247,11 +247,11 @@ fallbacks.** The gitignored `data/clean/` layer must be regenerated
 before any MISO zonal solve, or the run silently degrades:
 
 - `zonal-shares` absent → static annual load shares (no hourly zonal
-  shape). Regenerate: `scripts/curate_zonal_shares.py --iso MISO --year
+  shape). Regenerate: `scripts/data/curate_zonal_shares.py --iso MISO --year
   2023 2024 2025`.
 - `capacity-deliverability` absent → static PY2025-26 summer CIL/CEL
   fallback instead of the per-season measured vectors (WARNING in log).
-  Regenerate: `scripts/curate_capacity_deliverability.py --iso MISO`.
+  Regenerate: `scripts/data/curate_capacity_deliverability.py --iso MISO`.
 
 A first repro attempt ran with the static-cap fallback; after curation
 the correct seasonal run produced zone means identical to $0.02 — at

@@ -70,7 +70,7 @@ def cc_capacity_reconcile_path(iso: str) -> Path:
     """Canonical on-disk path of an ISO's CC demonstrated-peak reconcile table.
 
     ``PROCESSED_DIR/cc_capacity_reconcile_<ISO>.csv`` — the per-plant measured
-    CAMPD demonstrated-peak table (:func:`scripts.derive_cc_capacity_reconcile`)
+    CAMPD demonstrated-peak table (:func:`scripts.data.derive_cc_capacity_reconcile`)
     consumed by the ``cc_capacity_reconcile`` hook and the ISO-agnostic CC
     summer-capacity guard (:func:`market_sim.data.fleet._reconcile_cc_pmax_to_nameplate`).
     Every table stays inside its own ISO (CLAUDE.md rule 24), so this is the
@@ -133,18 +133,18 @@ EIA_930_DIR: Path = RAW_DATA_DIR / "eia-930"
 ZONE_DEMAND_DIR: Path = RAW_DATA_DIR / "zone-specific-demand"
 # PJM Day-Ahead energy market offers from DataMiner2 (energy_market_offers feed).
 # Monthly raw parquets: pjm_energy_offers_YYYY_MM.parquet.  Files are gitignored
-# because the 3-year corpus is ~4 GB; re-fetch with scripts/fetch_pjm_energy_offers.py.
+# because the 3-year corpus is ~4 GB; re-fetch with scripts/data/fetch_pjm_energy_offers.py.
 PJM_ENERGY_OFFERS_DIR: Path = RAW_DATA_DIR / "pjm-energy-offers"
 # CAISO OASIS DAM Public Bid Data (PUB_DAM_GRP GroupZip, 90-day-lag masked
 # bid curves).  Daily zips under zips/: <YYYYMMDD>_PUB_BID_DAM_v3_csv.zip.
 # Gitignored (pjm-energy-offers precedent); re-fetch with
-# scripts/fetch_caiso_public_bids.py.
+# scripts/data/fetch_caiso_public_bids.py.
 CAISO_PUBLIC_BIDS_DIR: Path = RAW_DATA_DIR / "caiso-public-bids"
 PJM_DA_VIRTUALS_DIR: Path = RAW_DATA_DIR / "pjm-da-virtuals"
 # PJM ancillary-services / reserve-market DataMiner2 exports (reserve_market_
 # results, da_reserve_market_results, ancillary_services, da_ancillary_services,
 # and the derived pjm_<year>_as_up_mw withholding series). See
-# data/raw/PJM-AS/README.md; fetched by scripts/fetch_pjm_as.py.
+# data/raw/PJM-AS/README.md; fetched by scripts/data/fetch_pjm_as.py.
 PJM_AS_DIR: Path = RAW_DATA_DIR / "PJM-AS"
 ISO_TRANSMISSION_DIR: Path = RAW_DATA_DIR / "iso-specific-transmission"
 GAS_PRICES_DIR: Path = RAW_DATA_DIR / "gas-prices"
@@ -153,12 +153,12 @@ ERCOT_HSL_DIR: Path = RAW_DATA_DIR / "ercot-hsl"
 CAISO_HSL_DIR: Path = RAW_DATA_DIR / "caiso-hsl"
 # CAISO Production-and-Curtailments workbooks (5-minute), the source for the
 # CAISO HSL build (delivered + reported curtailment). Built by
-# scripts/build_caiso_hsl.py.
+# scripts/data/build_caiso_hsl.py.
 CAISO_CURTAILMENT_DIR: Path = RAW_DATA_DIR / "caiso-curtailment"
 NYISO_HSL_DIR: Path = RAW_DATA_DIR / "nyiso-hsl"
 MISO_HSL_DIR: Path = RAW_DATA_DIR / "miso-hsl"
 # Per-zone wind SHAPE (NASA POWER MERRA-2 reanalysis → power curve), one parquet
-# per backcast year. Built by scripts/build_miso_wind_shape.py; read by
+# per backcast year. Built by scripts/data/build_miso_wind_shape.py; read by
 # market_sim.data.renewables to give MISO's three regions distinct wind diurnal/
 # seasonal shapes (the upper-plains nocturnal-jet north vs the lower-Midwest
 # central/south) while preserving the EIA-930 MISO-wide aggregate.
@@ -182,7 +182,7 @@ TX_UNIT_OUTAGES_CSV: Path = REFERENCE_DIR / "tx-jan-aug23-unit-outages.csv"
 
 # Supply-consistent CAISO backcast demand series (caiso-80, owner-signed
 # Option A; FINDING-caiso80-demand-basis-wedge-2026-07-13). Derived measured
-# artifact written by scripts/derive_caiso_supply_consistent_demand.py, read
+# artifact written by scripts/data/derive_caiso_supply_consistent_demand.py, read
 # by eia_loader._load_caiso_hourly_demand under
 # ScenarioConfig.caiso_supply_consistent_demand.
 CAISO_SUPPLY_CONSISTENT_DEMAND_DIR: Path = (

@@ -7,10 +7,10 @@ state-conditional composition mechanism:
 
 * ``ercot_offer_surface_cleared_share`` — the ERCOT-72 measured DAM
   cleared-share boundary + above-boundary offer wall (frozen artifact,
-  scripts/derive_ercot_dam_cleared_share.py).
+  scripts/data/derive_ercot_dam_cleared_share.py).
 * ``ercot_offer_surface_cleared_share_state`` — the ERCOT-73 measured
   commitment-loading state weight (frozen artifact,
-  scripts/derive_ercot_commitment_loading_state.py): each walled row-hour's
+  scripts/data/derive_ercot_commitment_loading_state.py): each walled row-hour's
   markup scales by w = clip((online_cap - gross)/(online_cap - cleared), 0, 1)
   — the unloaded fraction of the class's above-DA-position online capability.
   Moderate regimes keep the proven composition wall; regimes where reality
@@ -66,7 +66,7 @@ def main() -> None:
         "DAM cleared-share offer boundary; LEG STATE = the ERCOT-73 measured "
         "commitment-loading state weight w = clip((online_cap - gross)/"
         "(online_cap - cleared), 0, 1) per class-hour (CAMPD CEMS envelope/"
-        "gross x DAM awards; scripts/derive_ercot_commitment_loading_state.py"
+        "gross x DAM awards; scripts/data/derive_ercot_commitment_loading_state.py"
         ", frozen rule 23, zero fitted scalars) — the wall prices the DA "
         "participation cliff only in proportion to the measured unloaded "
         "share of the above-DA online capability; RUC/self-commitment "

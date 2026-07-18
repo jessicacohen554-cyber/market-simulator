@@ -12,7 +12,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_capacity_market_auction_price as curate_ap
+from scripts.data import curate_capacity_market_auction_price as curate_ap
 from scripts.lib import capacity_market_auction_price as ap
 from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean

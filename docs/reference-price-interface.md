@@ -119,7 +119,7 @@ each neighbor's realized annual-mean LMP is affine in delivered gas,
 so the effective implied heat rate is `hr_phys + hr_adder/gas`, easing toward
 the gas-proportional `hr_phys` as gas rises. The two coefficients are an OLS fit
 of the neighbor's OWN measured `(gas, LMP)` points
-(`scripts/derive_neighbor_hr_elasticity.py`) — **blind to the ISO's
+(`scripts/data/derive_neighbor_hr_elasticity.py`) — **blind to the ISO's
 interchange** (rule #11) — so the seam reprices forward as the Henry Hub
 trajectory moves WITHOUT reading the neighbor's realized LMP for a future year.
 `neighbor_price.neighbor_heat_rate` resolves measured backcast → gas-elastic
@@ -177,7 +177,7 @@ mapped to its seam, the per-tie hourly actual flow is summed to the
 pooled over 2023-25 (the duration curve's upper envelope minus the top ~0.5%
 transient/loop-flow hours). Reproducible, regenerable for a forward year, and
 computed from the flow series *before any LP runs* — not tuned to the net-MWh
-target. See `scripts/derive_interface_limits.py` (`--check` guards the constants):
+target. See `scripts/data/derive_interface_limits.py` (`--check` guards the constants):
 
 | seam | old | new (p99.5) | why |
 |---|---|---|---|
@@ -257,7 +257,7 @@ price formation.
 ### Sources
 
 * PJM Data Miner — `import_export_act_sch_interchange` per-tie actual flows
-  (2023-25), the source for `scripts/derive_interface_limits.py`.
+  (2023-25), the source for `scripts/data/derive_interface_limits.py`.
 * NERC Interregional Transfer Capability Study (ITCS) Part 1, Aug 2024; PJM/MISO
   ITCS — corroborating seam transfer-capability context (PDFs network-blocked in
   the build env; used for cross-checks, not the limit values).
@@ -275,8 +275,8 @@ price formation.
 - `src/market_sim/config/constants.py` — `NeighborInterface`, `INTERFACE_NEIGHBORS`
   (incl. the per-year measured `hr_by_year` backcast anchors).
 - `scripts/validate_neighbor_price.py` — the validation report.
-- `scripts/derive_neighbor_hr_elasticity.py` — fits the forward gas-elastic HR
+- `scripts/data/derive_neighbor_hr_elasticity.py` — fits the forward gas-elastic HR
   coefficients (OLS, blind to ISO interchange) + a flat/elastic/measured table.
-- `scripts/derive_interface_limits.py` — derives the seam limits from PJM's
+- `scripts/data/derive_interface_limits.py` — derives the seam limits from PJM's
   published per-tie flows (`--check` asserts the constants still match).
 - `tests/test_neighbor_price.py` — unit + integration tests.

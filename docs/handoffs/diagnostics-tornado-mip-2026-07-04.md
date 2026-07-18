@@ -10,7 +10,7 @@ keeper, or production code path was changed.*
 | Diagnostic | Script | Tests | Report(s) |
 |---|---|---|---|
 | Sensitivity tornado (PP-3.1) | `scripts/run_sensitivity_tornado.py` | `tests/test_sensitivity_tornado.py` | `sensitivity-tornado-ercot-2026-07-04.md` (+`.json`) |
-| MIP UC cross-benchmark (PP-3.4) | `scripts/diag_uc_mip_crossbench.py` | — (one-time diagnostic) | `mip-uc-crossbench-ercot-2026-gas_cc-mlf{100,050}-2026-07-04.md` (+`.json`) |
+| MIP UC cross-benchmark (PP-3.4) | `scripts/archive/diag_uc_mip_crossbench.py` | — (one-time diagnostic) | `mip-uc-crossbench-ercot-2026-gas_cc-mlf{100,050}-2026-07-04.md` (+`.json`) |
 
 Both scripts reuse the production builders read-only. The tornado only perturbs
 `ScenarioConfig` fields (no off-registry channel, rule 24) and solves years
@@ -118,7 +118,7 @@ load).
 
 **Reproduce.**
 ```
-python scripts/diag_uc_mip_crossbench.py --iso ERCOT --year 2026 \
+python scripts/archive/diag_uc_mip_crossbench.py --iso ERCOT --year 2026 \
     --hours 744 --fuel gas_cc --min-load-frac 1.0 --time-limit 300 --out docs/handoffs
 ```
 

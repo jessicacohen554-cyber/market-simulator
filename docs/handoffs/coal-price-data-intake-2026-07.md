@@ -23,9 +23,9 @@ Three raw sources, all free/public-domain, none S&P Global/Argus/McCloskey:
 
 | Source | Route/series | Rows | Years | Cadence | Script |
 |---|---|---|---|---|---|
-| EIA Annual Coal Report | `coal/market-sales-price` (region x market-type CAP/OM/TOT, all ranks) | 2,781 | 2001–2024 | annual | `scripts/fetch_eia_coal_prices.py` |
-| EIA Annual Coal Report | `coal/price-by-rank` (region x rank BIT/SUB/LIG/ANT/TOT) | 2,843 | 2001–2024 | annual | `scripts/fetch_eia_coal_prices.py` |
-| BLS PPI | `WPU051` (commodity, national) + `PCU2121--2121--` (industry, national) | 394 | 2010–2026 | monthly | `scripts/fetch_bls_coal_ppi.py` |
+| EIA Annual Coal Report | `coal/market-sales-price` (region x market-type CAP/OM/TOT, all ranks) | 2,781 | 2001–2024 | annual | `scripts/data/fetch_eia_coal_prices.py` |
+| EIA Annual Coal Report | `coal/price-by-rank` (region x rank BIT/SUB/LIG/ANT/TOT) | 2,843 | 2001–2024 | annual | `scripts/data/fetch_eia_coal_prices.py` |
+| BLS PPI | `WPU051` (commodity, national) + `PCU2121--2121--` (industry, national) | 394 | 2010–2026 | monthly | `scripts/data/fetch_bls_coal_ppi.py` |
 
 Both EIA routes cover **every** EIA-published producing region: Appalachia
 Central/Northern/Southern, Illinois Basin, Powder River Basin, Uinta Basin,
@@ -41,7 +41,7 @@ needs no key at all).
 
 Curated into two new schema-validated datatypes (`data/dictionary/schema/
 coal-basin-price.schema.yaml`, `coal-mining-ppi.schema.yaml`) via
-`scripts/curate_coal_basin_price.py` / `scripts/curate_coal_mining_ppi.py`,
+`scripts/data/curate_coal_basin_price.py` / `scripts/data/curate_coal_mining_ppi.py`,
 both through the `write_clean` seam. Both registered in
 `scripts/regenerate_clean.py`'s `DATATYPES` tuple and the rendered data
 dictionary.
@@ -63,14 +63,14 @@ not intake new data) and made no change to it.
 
 ## (b) Region -> coal-plant crosswalk, per ISO
 
-`scripts/derive_coal_region_crosswalk.py` resolves every coal plant across
+`scripts/data/derive_coal_region_crosswalk.py` resolves every coal plant across
 all six ISOs (via each plant's already-resolved `coal_supply_class` —
 `market_sim.data.coal.coal_supply_class`, the same tag the passthrough
 sigmoids key off) onto its EIA producing region, and writes
 `data/raw/reference/coal_region_crosswalk.csv` (110 plants). Curated into the
 existing `reference` datatype (`market=coal-region-crosswalk`) alongside
 `plant-registry` / `bin-assignments`, via a new builder in
-`scripts/curate_reference.py` — no new schema needed (the `reference`
+`scripts/data/curate_reference.py` — no new schema needed (the `reference`
 datatype's `allow_additional_columns=true` design absorbs it).
 
 Resolution logic (documented in the script's docstring, no fitting — every
@@ -157,9 +157,9 @@ chase.
 
 - Raw: `data/raw/coal-prices/{eia_coal_market_sales_price,eia_coal_price_by_rank,bls_coal_ppi}.csv` + `README.md` + `SOURCES.md`
 - Raw: `data/raw/reference/coal_region_crosswalk.csv`
-- Fetch scripts: `scripts/fetch_eia_coal_prices.py`, `scripts/fetch_bls_coal_ppi.py`
-- Derive script: `scripts/derive_coal_region_crosswalk.py`
-- Curate scripts: `scripts/curate_coal_basin_price.py`, `scripts/curate_coal_mining_ppi.py`; new builder in `scripts/curate_reference.py`
+- Fetch scripts: `scripts/data/fetch_eia_coal_prices.py`, `scripts/data/fetch_bls_coal_ppi.py`
+- Derive script: `scripts/data/derive_coal_region_crosswalk.py`
+- Curate scripts: `scripts/data/curate_coal_basin_price.py`, `scripts/data/curate_coal_mining_ppi.py`; new builder in `scripts/data/curate_reference.py`
 - Schemas: `data/dictionary/schema/coal-basin-price.schema.yaml`, `coal-mining-ppi.schema.yaml`
 - Registered: `scripts/regenerate_clean.py` `DATATYPES`; `scripts/render_data_dictionary.py` `DATATYPE_ORDER`/`NARRATIVE`/`NATIONAL_SCOPE`; rendered `data/dictionary/data-dictionary.md`
 - Tests: `tests/test_curate_coal_basin_price.py`, `tests/test_curate_coal_mining_ppi.py`, extended `tests/test_curate_reference.py` (new table fixture), `tests/test_clean_io.py` (DATATYPES sync — also fixed a pre-existing unrelated gap, `nyiso-renewable-curtailment` missing from the sync list)

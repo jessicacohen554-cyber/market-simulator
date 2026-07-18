@@ -2,7 +2,7 @@
 
 The model's consumption seam for PJM's measured internal interface transfer
 limits (PJM Data Miner 2 ``transfer_limits_and_flows`` →
-``scripts/curate_transfer_interface_limits.py`` →
+``scripts/data/curate_transfer_interface_limits.py`` →
 ``data/clean/transfer-interface-limits``) — the PJM analogue of
 :mod:`market_sim.data.gtc`. The one public builder,
 :func:`pjm_interface_ttc_hourly`, expands the static per-link TTC array to a
@@ -65,7 +65,7 @@ def load_interface_hourly(iso: str, year: int) -> pd.DataFrame | None:
     except FileNotFoundError:
         logger.info(
             "transfer-interface-limits: no clean partition for %s %d (run "
-            "scripts/curate_transfer_interface_limits.py)",
+            "scripts/data/curate_transfer_interface_limits.py)",
             iso,
             year,
         )

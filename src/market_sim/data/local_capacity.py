@@ -46,7 +46,7 @@ even during deep in-area outages. Storage is excluded from the guarantee (its
 discharge is SOC-limited) but still enters the row's LHS. Pure physics.
 
 Membership comes from ``data/raw/reference/lcr_area_membership_<ISO>.csv``
-(``scripts/derive_lcr_membership.py``): county rule + NQC-list overrides.
+(``scripts/data/derive_lcr_membership.py``): county rule + NQC-list overrides.
 The area rules live here so the derive script and the storage-share
 computation use one implementation.
 """
@@ -69,7 +69,7 @@ SD_IV = "San Diego/Imperial Valley"
 GREATER_BAY = "Greater Bay"
 
 # ---------------------------------------------------------------------------
-# Area assignment rules (shared by scripts/derive_lcr_membership.py and the
+# Area assignment rules (shared by scripts/data/derive_lcr_membership.py and the
 # storage-share computation below).
 # ---------------------------------------------------------------------------
 
@@ -80,7 +80,7 @@ GREATER_BAY = "Greater Bay"
 # Coast/North Bay area (Lakeville/Ignacio are OUT) and are NOT covered here;
 # the Monterey (Moss Landing bus IS in) and Solano (Lambie SW Sta IS in,
 # Vaca Dixon out) boundary plants are pinned by the substation-override table
-# in scripts/derive_lcr_membership.py. NOTE: Greater Bay has NO
+# in scripts/data/derive_lcr_membership.py. NOTE: Greater Bay has NO
 # LocalCapacityAreaSpec registration (caiso-79 STEP-0 measured the LCT import
 # cap as non-binding — FINDING-caiso79-step0-greaterbay-bind-2026-07-12.md);
 # the membership rows exist to ground the local-commitment driver's unit
@@ -109,7 +109,7 @@ def caiso_area_of(county: str, lat: float, lon: float) -> str | None:
 
     County rule first, then the Riverside/San Bernardino geographic rule.
     Large boundary plants are pinned by the NQC-list override table in
-    ``scripts/derive_lcr_membership.py``; this function is the rule the
+    ``scripts/data/derive_lcr_membership.py``; this function is the rule the
     override table corrects, and the storage-share approximation.
     """
     if county in COUNTY_AREA_CAISO:

@@ -36,7 +36,7 @@ RTOFFCAP_fwd(t) = deliv_off × Σ_{c∈quick} offline_share_c(nl_bin(t), season(
   headroom-realization fraction** `Σ_online(eff_cap − gross) / installed_cap`
   (off-line startable fraction for RTOFFCAP), conditioned on the **net-load
   percentile decile × season**. Derived by
-  `scripts/derive_ercot_rtolcap_forward.py` (the
+  `scripts/data/derive_ercot_rtolcap_forward.py` (the
   `MAINTENANCE_MONTHLY_SHAPE`/ST_GAS-drag family). Baked into
   `constants.ERCOT_RTOLCAP_FWD_ONLINE_SHARE` / `_OFFLINE_SHARE`. **Rule #23:**
   re-derives only on a source-data update (CAMPD extracts or the measured ORDC
@@ -154,7 +154,7 @@ quantity (for the coefficient fit) and CAMPD gross output (for the shares).
 
 ## 5. The one-delta probe
 
-`scripts/run_ercot40_rtolcap_fwd.py` = **ercot32 recipe EXACTLY +
+`scripts/archive/run_ercot40_rtolcap_fwd.py` = **ercot32 recipe EXACTLY +
 `ercot_reserve_supply_forward=True`** (the run163 pattern). The single delta:
 the RTOLCAP/RTOFFCAP cap is sourced from the formula instead of the measured
 parquet. `--year 2023 2024 2025`, one bundle. Registered on the dashboard as
@@ -202,7 +202,7 @@ forward-native supply — the WS-A gate the plan set. (Recorded in
 
 ## 6. Files
 
-* `scripts/derive_ercot_rtolcap_forward.py` — the derive script (shares +
+* `scripts/data/derive_ercot_rtolcap_forward.py` — the derive script (shares +
   deliverability coefficients; `--emit constant`).
 * `src/market_sim/config/constants.py` — `ERCOT_RTOLCAP_FWD_*` (shares, coeffs,
   season map, class lists, storage frac).
@@ -216,7 +216,7 @@ forward-native supply — the WS-A gate the plan set. (Recorded in
 * `scripts/run_calibration_full.py` — `ercot_reserve_supply_forward` wired
   through `solve_and_persist` + `run_config.json` + `recorded_cfg`.
 * `scripts/validate_ercot_rtolcap_forward.py` — the identification gate.
-* `scripts/run_ercot40_rtolcap_fwd.py` — the one-delta probe driver.
+* `scripts/archive/run_ercot40_rtolcap_fwd.py` — the one-delta probe driver.
 * `tests/test_ercot_rtolcap_forward.py` — trivial case, driver response,
   backcast byte-identical, coverage-ratio gate.
 

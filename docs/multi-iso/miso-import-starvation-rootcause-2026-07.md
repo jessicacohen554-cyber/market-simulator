@@ -76,7 +76,7 @@ the starvation; the price rule on the PJM seam is.
 
 ## 3. The fix: measured per-seam Q-Q band ladders (`miso_seam_measured_ladder`)
 
-`scripts/derive_miso_seam_ladders.py` — the NEISO audit-C-6 closure pattern
+`scripts/data/derive_miso_seam_ladders.py` — the NEISO audit-C-6 closure pattern
 (`derive_neiso_import_tranches.py`) applied to MISO's three priced seams on
 their existing 8-band structure. For each seam and direction, band *k*'s
 price is the measured MISO **DA** hub LMP quantile whose exceedance duration

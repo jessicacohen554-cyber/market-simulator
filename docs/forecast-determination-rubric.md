@@ -502,7 +502,7 @@ memo was built from web fetches, which is not reproducible scoring input.
    generation by fuel, power-sector CO2, for the model's ISO regions
    (electricity-market-module regions), 2030/2035/2040. API route exists
    (same `aeo` route as the fuel-price fetch) — extend
-   `scripts/fetch_eia_aeo.py`.
+   `scripts/data/fetch_eia_aeo.py`.
 2. **NREL Standard Scenarios 2024 Mid-case** — regional capacity/generation
    2030/2035 (the corridor memo notes the viewer-only retrieval problem; the
    Scenario Viewer's underlying CSV download is the intake target; if only

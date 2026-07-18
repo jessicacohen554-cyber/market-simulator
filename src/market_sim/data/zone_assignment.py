@@ -456,7 +456,7 @@ def _plnt23() -> pd.DataFrame:
 
     When ``MARKET_SIM_USE_CLEAN`` is set (default OFF) and the curated
     ``data/clean/egrid`` partition for vintage 2023 exists (written by
-    ``scripts/curate_egrid.py``), the sheet is read from there instead of the
+    ``scripts/data/curate_egrid.py``), the sheet is read from there instead of the
     21 MB workbook, with columns renamed back to the legacy eGRID short codes
     this module's lookups key on; otherwise it falls back to the raw parse.
     """

@@ -44,6 +44,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "retirement_execution_lag_gas_cc_ccs",
     "retirement_execution_lag_oil",
     "retirement_execution_lag_nuclear",
+    # FF-2A entry-stack gates (default-off): dropped from the hash at defaults
+    # so every pre-existing cache key is byte-stable; any armed gate enters the
+    # key (a distinct scenario). See the field docstrings (BLK-7/BLK-10/term e
+    # and the clearance→COD lag).
+    "entry_vre_capacity_revenue",
+    "entry_rate_limits",
+    "entry_commissioning_lag",
     # National CES federal EAC premium (W1-A, national-ces-eac-premium-plan
     # §5.1): default-off block, dropped from the hash at defaults so
     # cache_key(ScenarioConfig()) is byte-identical before/after the fields
@@ -1125,7 +1132,7 @@ class ScenarioConfig:
     # two-sided row per ramp-constrained plant group per hour transition,
     # bounding the group's hourly dispatch delta by its CAMPD-measured max
     # observed 1-h up/down gross-load move (data.fleet.build_ramp_groups /
-    # scripts/derive_campd_ramp_envelopes.py; design
+    # scripts/data/derive_campd_ramp_envelopes.py; design
     # docs/ramp-locational-design-2026-07.md §1). A measured physical-
     # capability input with zero fitted degrees of freedom (rule #13): the
     # envelope regenerates from the CAMPD pipeline for any vintage, responds
@@ -1199,6 +1206,51 @@ class ScenarioConfig:
     # retire/build decision (nothing reads it back), so a run with it on is
     # byte-identical in fleet outcome to one with it off. Used to attribute the
     # solar-entry zero (which term starves the screen) without changing defaults.
+    entry_vre_capacity_revenue: bool = False  # GATED, default-OFF (FF-2A item 1
+    # / BLK-7 term c). When on, wind/solar candidates in the economic new-entry
+    # screen earn an ELCC-accredited resource-adequacy capacity payment:
+    # the SAME per-firm-MW capacity price seam thermal entry uses
+    # (MarketDesign.capacity_price_per_firm_mw_yr — fixed net-CONE, or the CR-1
+    # sloped curve when the clearing gate is armed) times the class's credit
+    # from the ONE adequacy resolver (resolve_renewable_capacity_credit,
+    # penetration-indexed published ELCC curve under renewable_elcc_curves —
+    # rule 19: the ledger and the payment can never diverge). Energy-only ISOs
+    # (ERCOT) price capacity at zero, so this is a no-op there by construction.
+    # Default off is byte-identical (VRE capacity revenue stays the measured $0
+    # the BLK-8 decomposition attributed — blk8-solar-entry-decomposition
+    # 2026-07-15 §4: ~$8-11k/MW-yr would-be payment, pivotal in PJM 2023).
+    entry_rate_limits: bool = False  # GATED, default-OFF (FF-2A item 2 / BLK-10
+    # + term e). When on, annual economic-entry builds and the reserve-margin
+    # backstop are rate-limited by a measured interconnection-throughput
+    # ladder: each tech's annual build is capped at
+    # ENTRY_GROWTH_LIMIT_MULTIPLE (2.0 — the ReEDS growth-constraint hard
+    # bound: annual installs may not exceed 200% of the prior maximum annual
+    # install; NREL ReEDS documentation) times the tech's PRIOR MAXIMUM annual
+    # build in the ISO — seeded from the measured EIA-860 record at the run's
+    # vintage over a trailing ENTRY_THROUGHPUT_WINDOW_YEARS window
+    # (data.build_throughput.max_annual_build_gw_by_tech) and rising endogenously as the
+    # model itself builds (the prior max includes model-year builds). Replaces
+    # the full-cap / full-deficit-in-one-step patterns with an externally
+    # identified throughput constraint; the static per-tech queue caps and the
+    # ISO budget still bind on top (both real, independent ceilings). A tech
+    # with no measured build history carries NO ladder cap (neutral fallback,
+    # rule 25 — a missing measurement must not invent a zero that forbids
+    # entry). Default off is byte-identical.
+    entry_commissioning_lag: bool = False  # GATED, default-OFF (FF-2A item 3).
+    # When on, economic-entry builds DECIDE in year Y but commission (enter the
+    # fleet / renewable pools) at Y + ENTRY_COD_LAG_YEARS[tech] — the measured
+    # clearance→COD lag (LBNL "Queued Up" 2024: median IA→COD ≈ 25 months for
+    # projects built 2016-2023). Pending (decided, not yet online) MW are
+    # netted against the per-tech queue caps in later decision years — the
+    # real developer's view of the queue, which is what prevents
+    # pipeline-stuffing cobwebs once decisions and CODs are separated. The
+    # evolution ledger records decision_year and cod_year per entry
+    # (entry_pipeline events). Forecast-machinery only (the backcast has no
+    # capacity evolution). NOTE: a vintage-start run (hindcast) has no seed of
+    # the real in-flight queue at the vintage cutoff — planned VRE rows are
+    # deliberately not wired (load_planned_additions skips them) — so arming
+    # the lag there shifts the whole entry path late by construction; see
+    # ff-entry-stack-completion-2026-07.md before arming in a hindcast leg.
     interchange_shaping: bool = False  # Priced-interchange node: shape the
     # import-tranche availability and export-sink floor by the measured EIA-930
     # month x hour-of-day net-interchange envelope (transmission.
@@ -1460,7 +1512,7 @@ class ScenarioConfig:
     # trajectory toward minimum stable load (model.commitment.
     # caiso_ra_mustoffer_min_gen startup_lead_hours; floor level capped at
     # min-load — above it is dispatch's choice). L = the plant's CAMPD p50
-    # off→on-to-full-load duration (scripts/derive_campd_cc_start_trajectory
+    # off→on-to-full-load duration (scripts/data/derive_campd_cc_start_trajectory
     # .py: 8,986 CA CC start events 2023-25, per-plant p50 1-6 h under frozen
     # CV/LOYO gates, pooled class p50 3 h LOYO-stable to 0.0 h; no artifact →
     # the extension is inert, a measured lead or nothing — rule 23) — a
@@ -1516,7 +1568,7 @@ class ScenarioConfig:
     # class, a measured temperature-keyed excess forced-outage fraction
     #   excess(T) = clip(slope * (t0 - TMIN_sys), 0, cap)
     # from availability on deep-cold days (constants.CORRELATED_OUTAGE_CURVE,
-    # derived by scripts/derive_correlated_outage_curve.py from CAMPD unit-level
+    # derived by scripts/data/derive_correlated_outage_curve.py from CAMPD unit-level
     # gross load on net-load-certified scarcity days: Uri / Elliott / Heather;
     # NERC-GADS EFORd baseline; FERC/NERC Feb-2021 report as external anchor),
     # CORRELATED across the fleet because every unit reads the same system
@@ -2014,7 +2066,7 @@ class ScenarioConfig:
     miso_seam_measured_ladder: bool = False  # MISO reference-price seams: price
     # every seam band (PJM/SPP/South, import + export) at the MEASURED per-year
     # Q-Q band ladder (interchange_config.MISO_SEAM_LADDER_BY_YEAR, derived by
-    # scripts/derive_miso_seam_ladders.py: EIA-930 per-seam flow duration curves
+    # scripts/data/derive_miso_seam_ladders.py: EIA-930 per-seam flow duration curves
     # coupled quantile-by-quantile with the measured MISO DA hub LMP — the NEISO
     # audit-C-6 measured-ladder pattern), replacing the gas x HR x load-shape
     # band prices + hurdle for backcast years. Fixes the 2025 import starvation
@@ -2117,7 +2169,7 @@ class ScenarioConfig:
     # freezing today's belly depth in MW. 30% marks the outer edge of that
     # band, where the ramp begins tapering back to the flat gas-coupled offer.
     # Derived quantitatively from the EIA-930 CISO net-load distribution by
-    # scripts/derive_caiso_solar_shape_band.py (frozen, rule 23 — re-run only
+    # scripts/data/derive_caiso_solar_shape_band.py (frozen, rule 23 — re-run only
     # on a new 930 vintage): the "pure belly" edge — the largest percentile P
     # such that >=99% of hours with net load <= p(P) are solar-driven
     # inversion hours (net load below the local day's overnight 00-05h
@@ -2132,7 +2184,7 @@ class ScenarioConfig:
     # -renewable_keep_running_value): the deepest ~tenth of net-load hours,
     # the trough of the duck-curve belly where the regional WECC solar/hydro
     # glut is most acute. Same net-load-percentile grounding as the HI
-    # threshold above; per scripts/derive_caiso_solar_shape_band.py the
+    # threshold above; per scripts/data/derive_caiso_solar_shape_band.py the
     # canonical deep-belly population (spring Mar-May midday 11-16h local,
     # the belly of CAISO's published duck chart) has its median annual
     # net-load rank at 10.0/5.6/6.0 (2023/2024/2025, p75 <= 16.6) — the deep
@@ -2281,7 +2333,7 @@ class ScenarioConfig:
     # replacement makes the model's demand basis identical to the honest
     # CEMS-anchored basis it is scored against (the demand-side completion of
     # the owner-signed bench rework). Series is a derived measured artifact
-    # (scripts/derive_caiso_supply_consistent_demand.py →
+    # (scripts/data/derive_caiso_supply_consistent_demand.py →
     # data/raw/reference/caiso-supply-consistent-demand/), rule-14 admissible
     # (every term measured, regenerates per year, responds to conditions;
     # never an output pinned back); re-derives only on source-data updates
@@ -2457,7 +2509,7 @@ class ScenarioConfig:
     # peaking 1.2-1.5 GW midday-to-afternoon (2024/25) — that cannot
     # simultaneously offer energy. Two legs, both from the measured award
     # series (data/clean storage-as-awards, CAISO Daily Energy Storage Report
-    # quarterly data; scripts/curate_storage_as_awards.py):
+    # quarterly data; scripts/data/curate_storage_as_awards.py):
     #   (a) POWER: subtract the hourly upward-award MW (reg_up + spin +
     #       nonspin) from the battery power cap pro-rata by available power —
     #       the exact ERCOT storage_as_commitment / reserve_storage_as_power
@@ -2527,7 +2579,7 @@ class ScenarioConfig:
     # (byte-identical); CAISO-only.
     as_reserve_withholding: bool = False  # ERCOT backcast probe: remove the
     # hourly cleared DAM upward-AS MW (RegUp/RRS/ECRS/Non-Spin, built by
-    # scripts/build_ercot_as_withholding.py from the NP3-911 reports) from
+    # scripts/data/build_ercot_as_withholding.py from the NP3-911 reports) from
     # thermal headroom before the energy supply curve clears, so capacity sold
     # as AS cannot also offer energy. Default off (byte-identical baseline);
     # ERCOT-only. This is an UPPER BOUND — it books all AS to thermal, with no
@@ -2881,8 +2933,8 @@ class ScenarioConfig:
     # the reserve balance by lowering its RHS, so the co-opt LP stops pricing a
     # scarcity adder in non-scarce hours from omitting load-side reserve supply
     # (it already counts thermal headroom + storage). Built by
-    # scripts/build_ercot_as_withholding.py (rrsufr_mw) for 2024/2025 and
-    # scripts/build_ercot_as_2023.py for 2023. GATED — alters dispatch volumes,
+    # scripts/data/build_ercot_as_withholding.py (rrsufr_mw) for 2024/2025 and
+    # scripts/data/build_ercot_as_2023.py for 2023. GATED — alters dispatch volumes,
     # re-run the volume calibration. Default off; ERCOT co-opt only.
     ercot_load_resource_reserve_from_year: int = 2023  # First weather year the
     # load-resource RRS-UFR credit applies to. Default 2023 = credit every
@@ -3160,7 +3212,7 @@ class ScenarioConfig:
     # reproduces the measured on-line capability IN THE EXTREME TAIL, not just
     # the binding-regime mean (ERCOT_ONLINE_CAP_SHARE_EXTREME /
     # ERCOT_ONLINE_CAP_DELIV_PROFILE_EXTREME, derived by
-    # scripts/derive_ercot_rtolcap_forward.py --emit online-cap-extreme-constant).
+    # scripts/data/derive_ercot_rtolcap_forward.py --emit online-cap-extreme-constant).
     # Every input is a measured MW quantity (rules #13/#14/#23, never a price);
     # identification gated by scripts/validate_ercot_online_capacity.py
     # --extreme (binding AND extreme-tail reproduction). Implies the envelope
@@ -3190,7 +3242,7 @@ class ScenarioConfig:
     # changed outage conditions, rule 13). Uncovered classes keep the extreme
     # variant's installed × summer-derate basis and shares unchanged.
     # ERCOT_ONLINE_CAP_SHARE_MEASURED / ERCOT_ONLINE_CAP_DELIV_PROFILE_MEASURED,
-    # derived by scripts/derive_ercot_rtolcap_forward.py --emit
+    # derived by scripts/data/derive_ercot_rtolcap_forward.py --emit
     # online-cap-measured-constant; identification gated by
     # scripts/validate_ercot_online_capacity.py --measured. Every input is a
     # measured MW quantity (rules #13/#14/#23, never a price); re-derives only
@@ -3388,7 +3440,7 @@ class ScenarioConfig:
     measured_ramp_capability: bool = False  # Reconcile FleetArrays.ramp10's
     # class 10-minute fractions (RAMP10_FRAC_BY_GROUP/_BY_FUEL, the NREL/EIA
     # class-rate ESTIMATE) against the MEASURED per-plant ramp-capability
-    # datatype (data/clean/ramp-capability, scripts/curate_ramp_capability.py):
+    # datatype (data/clean/ramp-capability, scripts/data/curate_ramp_capability.py):
     # EIA-860 Schedule 3.1 "Time from Cold Shutdown to Full Load" = "10M"
     # fast-start thermal capacity as a FLOOR, and the CAMPD CEMS maximum
     # observed 1-hour plant gross-load up-ramp (pooled 2023-2025, holdouts
@@ -3824,7 +3876,7 @@ class ScenarioConfig:
     # spot S). When set, a coal must-run tranche passes 1 - contract_share of
     # its fuel into the bid (only the contracted tonnage is sunk; the spot
     # remainder bids full delivered cost), per
-    # scripts/derive_coal_takeorpay.py → fleet.coal_takeorpay_share. This is
+    # scripts/data/derive_coal_takeorpay.py → fleet.coal_takeorpay_share. This is
     # the physically-honest, forward-reproducible version of the calibrated
     # gas-keyed passthrough discount (CLAUDE.md #11): a plant with no
     # classifiable Purchase Type keeps the default 100%-sunk treatment. Default
@@ -3941,7 +3993,7 @@ class ScenarioConfig:
     # self-disables (the nyiso-44 probe finding: CT_PEAKER moved only
     # 4.90 -> 4.75 TWh vs 2.13 actual). When set, the simple-cycle CT tranches
     # (CT_PEAKER / CT_CHP) instead amortize over the unit's CAMPD-MEASURED
-    # median start-to-stop run length (scripts/derive_campd_ct_run_lengths.py:
+    # median start-to-stop run length (scripts/data/derive_campd_ct_run_lengths.py:
     # consecutive grossLoad-online hours from the unit-level CAMPD extracts,
     # pooled 2023-2025, ISO-class median fallback for plants without CEMS).
     # Basis choice (documented per the derivation): the measured median is the
@@ -3969,7 +4021,7 @@ class ScenarioConfig:
     # commitment block, so its start recovery is amortized over fewer hours
     # than the unconditional median — CAMPD measures MISO CT runs STARTED in
     # p97.5+ net-load hours at a 6 h median vs 9-11 h below p90 (stable each
-    # of 2023/2024/2025; scripts/derive_campd_ct_run_lengths.py
+    # of 2023/2024/2025; scripts/data/derive_campd_ct_run_lengths.py
     # --condition-bands → campd_ct_run_bands_<ISO>.csv). When set, the v3
     # measured-run ceiling is scaled per hour by the CLASS-level band ratio
     # (band median / pooled median — shape from the pooled class, level from
@@ -4190,7 +4242,7 @@ class ScenarioConfig:
     # ONLY in the out-of-merit hours where the RT price was below the unit's
     # marginal cost (the IMM-documented ancillary-service / reliability-unit-
     # commitment deployment + reserve-adequacy wedge the energy-only merit order
-    # cannot dispatch — ~1.4-2.3 TWh/yr, scripts/derive_ct_deployment.py +
+    # cannot dispatch — ~1.4-2.3 TWh/yr, scripts/data/derive_ct_deployment.py +
     # outages.ct_deployment_floor_for_year). The in-merit hours stay economic, so
     # CT is not floored to its full CEMS output. A sparse per-hour min-gen bound
     # (no MIP — prices stay LP duals); the units keep the statistical
@@ -4346,7 +4398,7 @@ class ScenarioConfig:
     # derived from source data only (rule 21) and frozen against residuals (rule 20).
     # The measured surface SUPERSEDES the static p50 peak on these classes where it
     # applies (rule 19: one mechanism per phenomenon — it does not stack on top).
-    # See scripts/derive_dam_offer_hrmults.py --condition-binned and
+    # See scripts/data/derive_dam_offer_hrmults.py --condition-binned and
     # data.fleet.apply_ercot_offer_surface_conditional.
     ercot_offer_surface_conditional: bool = False
     # ERCOT MID-CURVE offer surface (G-22 lever A', the ERCOT analogue of the PJM
@@ -4357,7 +4409,7 @@ class ScenarioConfig:
     # Disjoint rows (econ vs peak) → the two markups SUM without overlap when both
     # flags are armed (one mechanism per row, rule 19). P1-only; ST_GAS excluded
     # (drag owns it, rule 19). Zero fitted parameters — the surface is a frozen
-    # measured derive (scripts/derive_ercot_offer_midcurve.py, rule 23). See
+    # measured derive (scripts/data/derive_ercot_offer_midcurve.py, rule 23). See
     # data.fleet.build_ercot_offer_midcurve_conditional_markup.
     ercot_offer_surface_midcurve_conditional: bool = False
     # Path to the frozen mid-curve surface JSON (default:
@@ -4396,7 +4448,7 @@ class ScenarioConfig:
     # (rule 19); mutually exclusive with ercot_offer_surface_midcurve_conditional
     # (same econ rows — the builder hard-errors if both are armed). The floor
     # only ever RAISES a bid (max(0, .)), so troughs and already-expensive rows
-    # are byte-identical. Artifact: scripts/derive_ercot_dam_cleared_share.py
+    # are byte-identical. Artifact: scripts/data/derive_ercot_dam_cleared_share.py
     # (frozen, rule 23). See data.fleet.build_ercot_offer_surface_cleared_share_markup.
     ercot_offer_surface_cleared_share: bool = False
     # Path to the frozen cleared-share boundary JSON (default:
@@ -4412,7 +4464,7 @@ class ScenarioConfig:
     #
     # — the unloaded fraction of the class's above-DA-position online
     # capability (CAMPD CEMS envelope/gross x DAM awards;
-    # scripts/derive_ercot_commitment_loading_state.py, frozen rule 23). The
+    # scripts/data/derive_ercot_commitment_loading_state.py, frozen rule 23). The
     # floored bid becomes base + w x (wall - base): in moderate regimes
     # (w ~ 1) the DA participation cliff prices the un-offered capacity at the
     # measured wall (the proven ERCOT-72 composition lever); in tight regimes
@@ -4493,7 +4545,7 @@ class ScenarioConfig:
     # can only lower an offer; loose-vs-tight conditionality comes from the ladder),
     # never below $1/MWh on the energy part, gas classes only (coal untouched —
     # take-or-pay/passthrough already governs its low bids, rule 19). Zero fitted
-    # scalars (rules 13/20/21). See scripts/derive_dam_offer_hrmults.py
+    # scalars (rules 13/20/21). See scripts/data/derive_dam_offer_hrmults.py
     # --low-curve-binned and data.fleet.build_ercot_offer_surface_lowcurve_markdown.
     ercot_offer_surface_lowcurve: bool = False
     # Path to the measured low-curve condition-binned JSON (default: the frozen
@@ -4664,7 +4716,7 @@ class ScenarioConfig:
     # smear for the four ERCOT reactors with the measured per-reactor DAILY
     # availability from the 60-Day DAM disclosure Gen_Resource NUC status
     # (data/raw/ercot-nuclear-availability.csv,
-    # scripts/derive_ercot_nuclear_availability.py), monthly energy reconciled
+    # scripts/data/derive_ercot_nuclear_availability.py), monthly energy reconciled
     # to the same EIA-923 anchor the smear used. The smear carries the right
     # monthly ENERGY but mis-times refuel windows within the month by up to
     # ±1.4 GW (2024 type case: STP-2 out 3/23–5/19 spans the Apr-16/Apr-28/
@@ -4686,7 +4738,7 @@ class ScenarioConfig:
     # replaces the NUCLEAR_MONTHLY_CF_BY_YEAR fleet-month smear with the
     # measured per-reactor DAILY availability from the NRC Power Reactor
     # Status reports (data/raw/nuclear-availability-<ISO>.csv,
-    # scripts/derive_nuclear_availability.py — PJM derived first,
+    # scripts/data/derive_nuclear_availability.py — PJM derived first,
     # pjm-nuc-1b owner order 2026-07-16), monthly energy reconciled to the
     # same EIA-923 anchor the smear uses; uprate-season months where the
     # NRC thermal-% basis cannot express the measured net energy are absent
@@ -4719,7 +4771,7 @@ class ScenarioConfig:
     # Gen_Resource HSL over site ratings (an OUT resource counts zero; an OFF
     # resource counts its reported HSL: commitment state is not an
     # availability event). data/raw/ercot-thermal-dam-availability.csv,
-    # scripts/derive_ercot_thermal_dam_availability.py. A RESCALE, not a
+    # scripts/data/derive_ercot_thermal_dam_availability.py. A RESCALE, not a
     # stacked multiplier: the measured fraction and the statistical WEFOR/EFOR
     # + outage-window stack estimate the SAME quantity, so the class total is
     # set to the measured value while the model's own windows remain the
@@ -4745,7 +4797,7 @@ class ScenarioConfig:
     # Rosenberg 7512, EG178 56233 — the ERCOT-70 phantom-CC blind spot, all
     # has_campd_data=False), which the CAMPD-derived unit-outage overlay cannot
     # see (no CEMS rows -> no windows -> flat statistical availability). Two
-    # composed measured identifications (scripts/derive_ercot_noncampd_availability
+    # composed measured identifications (scripts/data/derive_ercot_noncampd_availability
     # .py, frozen — rule 23): (a) 60-Day DAM disclosure per-plant live HSL /
     # Resource Status -> daily availability (measures Kiamichi's switchable
     # ERCOT-share directly — OUT when serving SPP), (b) EIA-923 zero-generation
@@ -4761,7 +4813,7 @@ class ScenarioConfig:
     # battery power basis with the 60-Day DAM disclosure's registered non-OUT
     # storage HSL (PWRSTR rows; ESR rows from the RTC+B go-live delivery
     # 2025-12-06), data/raw/ercot-storage-capability.csv, derived by
-    # scripts/derive_ercot_storage_capability.py (basis decision + frozen
+    # scripts/data/derive_ercot_storage_capability.py (basis decision + frozen
     # contract in its docstring). Motivation (summer-availability audit,
     # docs/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md §1c-1d): the
     # EIA-860 ramp runs ~2 GW below ERCOT's registered capability in BOTH
@@ -4793,7 +4845,7 @@ class ScenarioConfig:
     # wall. Trigger (net-load percentile, forward-native) and level (measured
     # offer quantiles over the model's own Algonquin daily gas series) are
     # rule-13 admissible; parameters are derived from source data only
-    # (scripts/derive_neiso_offer_surface.py, rule 21) and frozen against
+    # (scripts/data/derive_neiso_offer_surface.py, rule 21) and frozen against
     # residuals (rule 20). NEISO-only (rule 25: the surface carries no generic
     # fallback and never crosses ISO boundaries).
     neiso_offer_surface_conditional: bool = False
@@ -4816,7 +4868,7 @@ class ScenarioConfig:
     # ERCOT/NEISO conditional surfaces above (G-22 lever A, default off,
     # PJM-gated). Posts the MEASURED top-of-curve offer DISTRIBUTION from
     # PJM's public DataMiner2 energy_market_offers feed
-    # (data/raw/pjm-energy-offers/, scripts/fetch_pjm_energy_offers.py) onto
+    # (data/raw/pjm-energy-offers/, scripts/data/fetch_pjm_energy_offers.py) onto
     # the CC_REGULAR + CT_PEAKER peak-band rungs in the P1 clearing solve
     # ONLY and ONLY in anticipated-tight hours — P0 run lengths and loose
     # hours stay byte-identical (the ladder is clamped never to lower an
@@ -4831,7 +4883,7 @@ class ScenarioConfig:
     # forward-native) and level (measured OFFER prices over the model's own
     # HH-daily + PJM-basis delivered-gas day series) are rule-13 admissible —
     # clearing prices stay validation-only; parameters are derived from
-    # source data only (scripts/derive_pjm_offer_surface.py, rule 21) and
+    # source data only (scripts/data/derive_pjm_offer_surface.py, rule 21) and
     # frozen against residuals (rule 20). PJM-only (rule 25: the surface
     # carries no generic fallback and never crosses ISO boundaries).
     pjm_offer_surface_conditional: bool = False
@@ -4857,7 +4909,7 @@ class ScenarioConfig:
     # multipliers (CC_REGULAR / CT_PEAKER econ_low, econ_high, peak) with
     # the MEASURED cap-weighted medians of the fleet's own DAM energy bids
     # (CAISO OASIS Public Bid Data, 90-day-lag masked curves —
-    # scripts/derive_caiso_offer_surface.py; the
+    # scripts/data/derive_caiso_offer_surface.py; the
     # FINDING-caiso91b Panoche bid wedge's admissible owner). Multipliers
     # are extracted net of VOM and the CARB cap-and-trade allowance cost at
     # the band heat rate, so the model's tranche mc (mult x base_HR x gas +
@@ -4892,7 +4944,7 @@ class ScenarioConfig:
     # default off, PJM-gated). Posts the MEASURED hourly INC (virtual supply)
     # / DEC (virtual demand) bid curves from PJM's public DataMiner2
     # hrl_da_incs_decs feed (data/raw/pjm-da-virtuals/,
-    # scripts/fetch_pjm_da_virtuals.py) into the LP as pseudo-units
+    # scripts/data/fetch_pjm_da_virtuals.py) into the LP as pseudo-units
     # (data.virtual_bids): DEC steps are export-sink-form withdrawal
     # capacity that clears whenever the zonal dual is below the bid, INC
     # steps ordinary zero-emission supply clearing above the offer — so the
@@ -4907,7 +4959,7 @@ class ScenarioConfig:
     # forward-native axes that regenerate from a forecast year's own
     # load/VRE/gas drivers); cleared volumes and clearing prices are
     # outcomes and are never read. Parameters derive from source data only
-    # (scripts/derive_pjm_da_virtual_surface.py, rule 21) and are frozen
+    # (scripts/data/derive_pjm_da_virtual_surface.py, rule 21) and are frozen
     # against residuals (rule 20). PJM-only (rule 25).
     pjm_da_virtual_bids: bool = False
     # Path to the measured condition-binned virtual-bid surface JSON
@@ -4924,7 +4976,7 @@ class ScenarioConfig:
     # MEASURED offer level of its physics segment at the row's own
     # within-plant capacity share (scale-free mapping), keyed by within-year
     # net-load percentile and reconstructed over the model's delivered-gas
-    # day series (scripts/derive_pjm_offer_midcurve.py;
+    # day series (scripts/data/derive_pjm_offer_midcurve.py;
     # fleet.build_pjm_offer_midcurve_conditional_markup). P1-only at the
     # mc_bid_adjust seam so P0 run lengths are unperturbed (the pjm-99
     # finding's econ-band caution); committed/must-run tranches never touched
@@ -5057,7 +5109,7 @@ class ScenarioConfig:
     # (the cold-weather over-rating an F-class CC delivers that nameplate omits
     # — e.g. Freestone nameplate 1036 MW, observed peak 1119 MW) and capped
     # where the model bound exceeds anything the plant ever sustained. Measured
-    # capability (rule 13); table from scripts/derive_cc_capacity_reconcile.py.
+    # capability (rule 13); table from scripts/data/derive_cc_capacity_reconcile.py.
     # Off by default.
     cc_capacity_reconcile: bool = False
     # None resolves per-ISO in __post_init__ to cc_capacity_reconcile_<ISO>.csv
@@ -5489,7 +5541,7 @@ class ScenarioConfig:
     # structural constant (~0.10 wind across 2023-2025); depth=0.0 is the
     # zero-forcing ablation (driver inert). Applied per year only when the derived
     # reference table and the year's measured HSL potential both exist. Off by
-    # default. See scripts/derive_ercot_wtx_curtailment_share.py.
+    # default. See scripts/data/derive_ercot_wtx_curtailment_share.py.
     ercot_wtx_curtailment_driver: bool = False
     ercot_wtx_curtail_depth_wind: float = 0.1004
     ercot_wtx_curtail_depth_solar: float = 0.1637
@@ -5865,7 +5917,7 @@ class ScenarioConfig:
     # every seam band (MISO/NYISO/Carolinas/TVA/LGEE, import + export) at the
     # MEASURED per-year Q-Q band ladder
     # (interchange_config.PJM_SEAM_LADDER_BY_YEAR, derived by
-    # scripts/derive_pjm_seam_ladders.py: PJM settlement-grade tie-line flow
+    # scripts/data/derive_pjm_seam_ladders.py: PJM settlement-grade tie-line flow
     # duration curves coupled quantile-by-quantile with the measured PJM DA
     # system LMP — the MISO miso_seam_measured_ladder / NEISO audit-C-6
     # pattern), replacing the gas x HR x load-shape band prices + hurdle for
@@ -5957,7 +6009,7 @@ class ScenarioConfig:
     # fraction of a zone's gas sees the Waha hub collapse — the firm-contracted
     # fraction is priced off a term index and is insulated. When set, each zone's
     # hub basis is scaled by its EIA-923 Schedule-5 measured gas spot share
-    # (scripts/derive_gas_takeorpay.py -> data/raw/_processed-legacy/
+    # (scripts/data/derive_gas_takeorpay.py -> data/raw/_processed-legacy/
     # gas_takeorpay_ERCOT.csv, aggregated to zones by
     # market_sim.data.fuel.ercot_gas_spot_share_by_zone), so the West delivered
     # discount becomes spot_share x hub_basis — a measured fraction, not a chosen
@@ -6155,7 +6207,7 @@ class ScenarioConfig:
     # WEFOR/POF draw; backcast-mode calibration input, never a forecast
     # methodology. Applies only when ``outage_source == "historic"`` and the
     # ISO's ``campd-unit-outages-short-<ISO>.csv`` exists (built by
-    # ``scripts/derive_campd_unit_outages.py --short-windows --iso <ISO>``).
+    # ``scripts/data/derive_campd_unit_outages.py --short-windows --iso <ISO>``).
     # Windows are < 5 days by construction, so the two overlays are disjoint
     # and never double-count. Default off; GATED CHANGE (alters availability).
     unit_outage_short_windows: bool = False
@@ -6176,7 +6228,7 @@ class ScenarioConfig:
     # a physical availability event (WEFOR/derate-rate forward analogue),
     # backcast-mode calibration input, never a forecast methodology. Reads the
     # per-ISO unit-grain campd-partial-outages-<ISO>.csv (built by
-    # scripts/derive_campd_unit_outages.py --partial-windows --iso <ISO>);
+    # scripts/data/derive_campd_unit_outages.py --partial-windows --iso <ISO>);
     # aggregated to the plant exactly like the >= 5-day unit-outage overlay
     # (unit-capacity share, concurrent units summed, clipped at full derate).
     # DISTINCT from the ERCOT-only PLANT-grain partial-outage path, which the
@@ -6211,7 +6263,7 @@ class ScenarioConfig:
     # outage-rate machinery instead (no forward window is fabricated).
     # Applies only when ``outage_source == "historic"`` and the ISO's
     # ``campd-unit-outages-maxgen-<ISO>.csv`` exists (built by
-    # ``scripts/derive_campd_maxgen_outages.py --iso <ISO>``). Default off;
+    # ``scripts/data/derive_campd_maxgen_outages.py --iso <ISO>``). Default off;
     # GATED CHANGE (alters availability).
     unit_outage_maxgen_events: bool = False
 
@@ -6959,7 +7011,7 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # 2024 +4.6% -> +3.9%. Gas-keyed, so it self-targets the cheap-gas years
     # and leaves the dear-gas ceiling untouched. (scripts/probes/_pjm_bit_floor_probe.)
     # MISO coal sigmoids — RE-DERIVED 2026-07-09 from measured coal-commodity
-    # price by `scripts/derive_coal_sigmoid.py`, retiring the ERCOT byte-copies
+    # price by `scripts/data/derive_coal_sigmoid.py`, retiring the ERCOT byte-copies
     # (the old MISO entries reused ERCOT's gas_mid 2.85 / gas_slope 2.5 with
     # hand-tuned floor/ceil — the rule-24 wart flagged as #1347 / gap G-26).
     # Rule-23 trigger: the #1803 intake added the EIA Annual Coal Report region
@@ -7348,6 +7400,9 @@ TIER_TAGS: dict[str, int] = {
     "planning_reserve_margin_override": 2,
     "entry_price_signal_alpha": 2,
     "entry_lookahead_reprice": 1,
+    "entry_vre_capacity_revenue": 1,
+    "entry_rate_limits": 1,
+    "entry_commissioning_lag": 1,
     "cc_peak_hr_penalty": 3,
     "ct_peak_hr_penalty": 3,
     "cc_committed_hr_mult": 3,

@@ -16,7 +16,7 @@ outages — `CC outage GW-days 2906 -> 5997`).
 
 ## TASK A — measured RTOLCAP / RTORPA acquired (committed)
 
-`scripts/fetch_ercot_ordc_reserves.py` (style of `scripts/fetch_eia930_hourly.py`)
+`scripts/data/fetch_ercot_ordc_reserves.py` (style of `scripts/data/fetch_eia930_hourly.py`)
 pulls ERCOT MIS **NP6-905-CD "Historical Real-Time Price Adders by SCED Interval"**
 (`reportTypeId=13231`) annual archives `RTM_ORDC_REL_DPLY_PRC_ADDR_RSRV_<year>` —
 **public, no API key** — and curates the reserve / scarcity-adder subset onto the
@@ -193,7 +193,7 @@ of the reserve curve.
    reserve curve is price-only (`DAM−BASE ≈ 0`), so C1/C2 must stay the
    pre-existing run143_redo FAILs above (ST_GAS/CT_PEAKER/CC_REGULAR), not regress
    further. Reproduce the measured-target join with the snippet in the commit /
-   `scripts/fetch_ercot_ordc_reserves.py` validation output.
+   `scripts/data/fetch_ercot_ordc_reserves.py` validation output.
 ### The 2023 undershoot — newly PARTLY unblocked by the measured adder series
 
 2024/25 land; **2023 is the lone year that materially undershoots** (ordc_pub2

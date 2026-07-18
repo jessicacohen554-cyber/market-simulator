@@ -7,7 +7,7 @@ one bundle (rule 16), keeps Limb A on (``neiso_dynamic_reserve_requirements``
 log entry), and flips ``neiso_offer_surface_conditional`` on — the MEASURED
 ISO-NE fast-start DA offer surface (per-asset median top-of-curve heat-rate
 multipliers, condition-binned by within-year net-load percentile, derived
-once by ``scripts/derive_neiso_offer_surface.py`` from the public masked DA
+once by ``scripts/data/derive_neiso_offer_surface.py`` from the public masked DA
 Energy Market historical offer data; ``docs/handoffs/
 neiso-limb-b-offer-surface-2026-07.md``).
 

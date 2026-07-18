@@ -3,7 +3,7 @@ regenerated ``campd-unit-outages-MISO.csv`` (measured-input staleness fix).
 
 No mechanism, no flag, no parameter changes — the ONLY delta vs the promoted
 2026-07-13-miso-64-classdonor keeper is the >= 5-day unit-outage extract,
-regenerated with the FROZEN deriver (``scripts/derive_campd_unit_outages.py
+regenerated with the FROZEN deriver (``scripts/data/derive_campd_unit_outages.py
 --iso MISO --years 2023 2024 2025``, all guards/constants untouched) on the
 committed CAMPD unit-level parquets. The committed extract predated the
 current deriver (PR #1820 vintage, 2026-07-08; the deriver was last touched
