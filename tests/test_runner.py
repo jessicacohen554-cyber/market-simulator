@@ -176,7 +176,7 @@ class TestKnownYearPeakForesight(RunnerTestBase):
             }
             return original(fleet, prior_results, year, config, loss_tracker, **kw)
 
-        config = ScenarioConfig(iso="ERCOT")
+        config = ScenarioConfig(iso="ERCOT", datacenter_load_path="off")
         with (
             patch.object(runner, "END_YEAR", 2027),
             patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
@@ -194,6 +194,12 @@ class TestKnownYearPeakForesight(RunnerTestBase):
         # while prior_results carried _scale_demand(..., 2026).max.
         self.assertIn(2027, captured)
         got = captured[2027]
+        # The pure compound-growth relation holds only when the peak is the raw
+        # _scale_demand output. Since FF-1F the DC block defaults to "mid" and
+        # RELOCATES a year-specific energy fraction (flattening each year's peak
+        # by a different amount), so pin it "off" here to isolate the
+        # peak-foresight TIMING this test targets (DC relocation is covered by
+        # test_datacenter.py). config is DC-off below.
         expected = got["prior_peak"] * (1.0 + resolve_demand_growth_rate(config, 2026))
         self.assertAlmostEqual(got["peak_demand_next"], expected, places=6)
 
@@ -795,11 +801,12 @@ class TestDatacenterBlockWiring(RunnerTestBase):
             runner.run_scenario_iso(config, "ERCOT")
         return scale_out, list(_RecordingDispatchModel.demands)
 
-    def test_default_off_demand_is_scale_demand_object_byte_identical(self):
-        # Default config => datacenter_load_path == "off" => add_datacenter_block
-        # returns the SAME array object, so the demand reaching the LP is the
-        # identical _scale_demand output (no copy, no addition): byte-identical.
-        config = ScenarioConfig(iso="ERCOT")
+    def test_off_path_demand_is_scale_demand_object_byte_identical(self):
+        # datacenter_load_path="off" => add_datacenter_block returns the SAME
+        # array object, so the demand reaching the LP is the identical
+        # _scale_demand output (no copy, no addition): byte-identical. "off" is
+        # no longer the default (FF-1F flipped it to "mid"), so pin it here.
+        config = ScenarioConfig(iso="ERCOT", datacenter_load_path="off")
         scale_out, demands = self._run_capture(config)
         self.assertEqual(len(demands), 1)  # one DispatchModel per year (2026)
         self.assertIs(demands[0], scale_out[2026])
