@@ -35,20 +35,20 @@ tests never require the model stack.
 Usage (rubric §8)::
 
     # T1-F short-forecast bundle (invariants + adequacy + provenance + runtime):
-    python scripts/forecast_verdict.py --tier t1f \\
-        --summary results/ff-t1f-baseline/ercot/full_horizon_summary.json \\
-        --run-config results/ff-t1f-baseline/ercot/run_config.json \\
+    python scripts/forecast_verdict.py --tier t1f \
+        --summary results/ff-t1f-baseline/ercot/full_horizon_summary.json \
+        --run-config results/ff-t1f-baseline/ercot/run_config.json \
         --json-out results/ff-t1f-baseline/ercot/forecast_verdict.json
 
     # T1-H hindcast bundle (FC-3 primary):
-    python scripts/forecast_verdict.py --tier t1h \\
-        --hindcast-score results/hindcast/<run_id>/score.json \\
+    python scripts/forecast_verdict.py --tier t1h \
+        --hindcast-score results/hindcast/<run_id>/score.json \
         --run-config results/hindcast/<run_id>/run_config.json
 
     # T2 gate (all instruments):
-    python scripts/forecast_verdict.py --tier t2 \\
-        --summary <t2 summary> --hindcast-score <t1h score> \\
-        --crossover-score <t1x score> --driver-battery <battery json> \\
+    python scripts/forecast_verdict.py --tier t2 \
+        --summary <t2 summary> --hindcast-score <t1h score> \
+        --crossover-score <t1x score> --driver-battery <battery json> \
         --corridor <corridor table> --dof-ledger <dof> --json-out <sidecar>
 """
 
