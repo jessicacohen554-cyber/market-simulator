@@ -322,8 +322,17 @@ class TestProbabilityBoundsLevers(unittest.TestCase):
                     )
 
     def test_demand_growth_falls_back_for_iso_without_table(self):
-        config = ScenarioConfig(iso="MISO", demand_growth_rate=0.02)
+        # An ISO absent from DEMAND_GROWTH_RATES falls back to the scalar. MISO
+        # was that ISO before FF-1C; it now has a table (see the MISO test below),
+        # so exercise the fallback with an unmodeled ISO string.
+        config = ScenarioConfig(iso="SPP", demand_growth_rate=0.02)
         self.assertEqual(resolve_demand_growth_rate(config, 2030), 0.02)
+
+    def test_demand_growth_miso_uses_table_after_ff1c(self):
+        # FF-1C added a MISO block (was the 1%/yr scalar fallback, FF-0D §1.2).
+        config = ScenarioConfig(iso="MISO", demand_growth_path="mid")
+        self.assertAlmostEqual(resolve_demand_growth_rate(config, 2028), 0.035)
+        self.assertAlmostEqual(resolve_demand_growth_rate(config, 2035), 0.025)
 
     # -- Each lever moves the intended quantity monotonically --------------
 
