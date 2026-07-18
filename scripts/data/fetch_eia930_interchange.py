@@ -39,7 +39,10 @@ from fetch_eia930_hourly import BA_TIMEZONE, _api_key, _fetch
 
 INTERCHANGE_URL = "https://api.eia.gov/v2/electricity/rto/interchange-data/data/"
 OUT_DIR = (
-    Path(__file__).resolve().parent.parent.parent / "data" / "raw" / "eia-930-interchange"
+    Path(__file__).resolve().parent.parent.parent
+    / "data"
+    / "raw"
+    / "eia-930-interchange"
 )
 
 

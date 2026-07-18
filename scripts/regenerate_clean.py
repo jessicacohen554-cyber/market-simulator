@@ -78,7 +78,7 @@ SCRIPTS_DIR = Path(__file__).resolve().parent
 
 def _script_for(datatype: str) -> Path:
     """Path of the curation script for a datatype (dashes -> underscores)."""
-    return SCRIPTS_DIR / f"curate_{datatype.replace('-', '_')}.py"
+    return SCRIPTS_DIR / "data" / f"curate_{datatype.replace('-', '_')}.py"
 
 
 def regenerate(datatypes: list[str]) -> int:

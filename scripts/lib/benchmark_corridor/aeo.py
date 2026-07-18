@@ -3,7 +3,7 @@
 EIA Annual Energy Outlook 2025 regional electricity projections — capacity mix,
 generation (energy) mix, and power-sector CO2 by Electricity Market Module (EMM)
 region — pulled from the EIA Open Data API v2 ``aeo`` route (the same route the
-fuel-price fetch ``scripts/fetch_eia_aeo.py`` already uses), NOT a table-browser
+fuel-price fetch ``scripts/data/fetch_eia_aeo.py`` already uses), NOT a table-browser
 scrape. Two tables carry everything FC-5 needs:
 
   * **Table 54 — Electric Power Projections by Electricity Market Module Region**
@@ -24,7 +24,7 @@ never a guessed ISO-exact number). An ISO total is the sum over its region rows.
 
 Raw fetch (immutable) lands at
 ``data/raw/benchmark-corridor/aeo2025/aeo2025_electricity_corridor.csv``.
-Re-fetch with ``python scripts/fetch_aeo_electricity.py``.
+Re-fetch with ``python scripts/data/fetch_aeo_electricity.py``.
 """
 
 from __future__ import annotations
