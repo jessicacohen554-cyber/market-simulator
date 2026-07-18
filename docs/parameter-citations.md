@@ -63,6 +63,10 @@ inline comment and still need a dated primary source — search the table for
 | `new_entry_costs.wind.fom_per_kw_yr` | 28.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
 | `new_entry_costs.wind.learning_rate` | 0.12 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | modeled |
 | `new_entry_costs.wind.lifetime_yr` | 30 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `entry_cod_lag_years.*` | 2 | 1 | LBNL "Queued Up" 2024 edition — median IA→COD duration ≈ 25 months for projects built 2016–2023 (861-project sample, 6 entities); applied uniformly (per-tech IA→COD medians unpublished) | 2024-04 |  |
+| `entry_growth_limit_multiple` | 2.0 | 1 | NREL ReEDS Model Documentation (2025) growth constraints — annual installation rate hard-bounded at 200% of the prior maximum (the 130–175%/175–200% capex penalty bands are not adopted: no capex-penalty channel in a screening model) | 2025-12 |  |
+| `entry_throughput_window_years` | 10 | 2 | Declared windowing choice bounding the growth-ladder seed to the modern interconnection regime (LBNL "Queued Up" 2024: median IR→COD doubled from <2 yr for 2000–2007 builds to >4 yr for 2018–2023 builds) | 2026-07 | modeled |
+| `entry_max_annual_build_seed.*` | derived at runtime | 1 | EIA-860 record at the run's vintage (`data.build_throughput.max_annual_build_gw_by_tech`): max annual COD nameplate MW by tech/ISO over the trailing window — regenerates per vintage, never hand-entered | (vintage) |  |
 | `queue_cap_gw.CAISO` | 8 | 1 | CAISO Transmission Planning Process (TPP) | 2024-03 |  |
 | `queue_cap_gw.ERCOT` | 12 | 1 | ERCOT Capacity, Demand and Reserves (CDR) Report | 2024-05 |  |
 | `scenario.discount_rate` | 0.08 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
