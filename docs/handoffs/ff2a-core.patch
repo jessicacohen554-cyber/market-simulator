@@ -1,0 +1,635 @@
+diff --git a/docs/parameter-citations.md b/docs/parameter-citations.md
+index f7a45ce..ffbe5cc 100644
+--- a/docs/parameter-citations.md
++++ b/docs/parameter-citations.md
+@@ -63,6 +63,10 @@ inline comment and still need a dated primary source — search the table for
+ | `new_entry_costs.wind.fom_per_kw_yr` | 28.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+ | `new_entry_costs.wind.learning_rate` | 0.12 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | modeled |
+ | `new_entry_costs.wind.lifetime_yr` | 30 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
++| `entry_cod_lag_years.*` | 2 | 1 | LBNL "Queued Up" 2024 edition — median IA→COD duration ≈ 25 months for projects built 2016–2023 (861-project sample, 6 entities); applied uniformly (per-tech IA→COD medians unpublished) | 2024-04 |  |
++| `entry_growth_limit_multiple` | 2.0 | 1 | NREL ReEDS Model Documentation (2025) growth constraints — annual installation rate hard-bounded at 200% of the prior maximum (the 130–175%/175–200% capex penalty bands are not adopted: no capex-penalty channel in a screening model) | 2025-12 |  |
++| `entry_throughput_window_years` | 10 | 2 | Declared windowing choice bounding the growth-ladder seed to the modern interconnection regime (LBNL "Queued Up" 2024: median IR→COD doubled from <2 yr for 2000–2007 builds to >4 yr for 2018–2023 builds) | 2026-07 | modeled |
++| `entry_max_annual_build_seed.*` | derived at runtime | 1 | EIA-860 record at the run's vintage (`data.build_throughput.max_annual_build_gw_by_tech`): max annual COD nameplate MW by tech/ISO over the trailing window — regenerates per vintage, never hand-entered | (vintage) |  |
+ | `queue_cap_gw.CAISO` | 8 | 1 | CAISO Transmission Planning Process (TPP) | 2024-03 |  |
+ | `queue_cap_gw.ERCOT` | 12 | 1 | ERCOT Capacity, Demand and Reserves (CDR) Report | 2024-05 |  |
+ | `scenario.discount_rate` | 0.08 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+diff --git a/src/market_sim/config/scenarios.py b/src/market_sim/config/scenarios.py
+index 8bc1e44..c2daa00 100644
+--- a/src/market_sim/config/scenarios.py
++++ b/src/market_sim/config/scenarios.py
+@@ -44,6 +44,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
+     "retirement_execution_lag_gas_cc_ccs",
+     "retirement_execution_lag_oil",
+     "retirement_execution_lag_nuclear",
++    # FF-2A entry-stack gates (default-off): dropped from the hash at defaults
++    # so every pre-existing cache key is byte-stable; any armed gate enters the
++    # key (a distinct scenario). See the field docstrings (BLK-7/BLK-10/term e
++    # and the clearance→COD lag).
++    "entry_vre_capacity_revenue",
++    "entry_rate_limits",
++    "entry_commissioning_lag",
+     # National CES federal EAC premium (W1-A, national-ces-eac-premium-plan
+     # §5.1): default-off block, dropped from the hash at defaults so
+     # cache_key(ScenarioConfig()) is byte-identical before/after the fields
+@@ -1199,6 +1206,51 @@ class ScenarioConfig:
+     # retire/build decision (nothing reads it back), so a run with it on is
+     # byte-identical in fleet outcome to one with it off. Used to attribute the
+     # solar-entry zero (which term starves the screen) without changing defaults.
++    entry_vre_capacity_revenue: bool = False  # GATED, default-OFF (FF-2A item 1
++    # / BLK-7 term c). When on, wind/solar candidates in the economic new-entry
++    # screen earn an ELCC-accredited resource-adequacy capacity payment:
++    # the SAME per-firm-MW capacity price seam thermal entry uses
++    # (MarketDesign.capacity_price_per_firm_mw_yr — fixed net-CONE, or the CR-1
++    # sloped curve when the clearing gate is armed) times the class's credit
++    # from the ONE adequacy resolver (resolve_renewable_capacity_credit,
++    # penetration-indexed published ELCC curve under renewable_elcc_curves —
++    # rule 19: the ledger and the payment can never diverge). Energy-only ISOs
++    # (ERCOT) price capacity at zero, so this is a no-op there by construction.
++    # Default off is byte-identical (VRE capacity revenue stays the measured $0
++    # the BLK-8 decomposition attributed — blk8-solar-entry-decomposition
++    # 2026-07-15 §4: ~$8-11k/MW-yr would-be payment, pivotal in PJM 2023).
++    entry_rate_limits: bool = False  # GATED, default-OFF (FF-2A item 2 / BLK-10
++    # + term e). When on, annual economic-entry builds and the reserve-margin
++    # backstop are rate-limited by a measured interconnection-throughput
++    # ladder: each tech's annual build is capped at
++    # ENTRY_GROWTH_LIMIT_MULTIPLE (2.0 — the ReEDS growth-constraint hard
++    # bound: annual installs may not exceed 200% of the prior maximum annual
++    # install; NREL ReEDS documentation) times the tech's PRIOR MAXIMUM annual
++    # build in the ISO — seeded from the measured EIA-860 record at the run's
++    # vintage over a trailing ENTRY_THROUGHPUT_WINDOW_YEARS window
++    # (data.build_throughput.max_annual_build_gw_by_tech) and rising endogenously as the
++    # model itself builds (the prior max includes model-year builds). Replaces
++    # the full-cap / full-deficit-in-one-step patterns with an externally
++    # identified throughput constraint; the static per-tech queue caps and the
++    # ISO budget still bind on top (both real, independent ceilings). A tech
++    # with no measured build history carries NO ladder cap (neutral fallback,
++    # rule 25 — a missing measurement must not invent a zero that forbids
++    # entry). Default off is byte-identical.
++    entry_commissioning_lag: bool = False  # GATED, default-OFF (FF-2A item 3).
++    # When on, economic-entry builds DECIDE in year Y but commission (enter the
++    # fleet / renewable pools) at Y + ENTRY_COD_LAG_YEARS[tech] — the measured
++    # clearance→COD lag (LBNL "Queued Up" 2024: median IA→COD ≈ 25 months for
++    # projects built 2016-2023). Pending (decided, not yet online) MW are
++    # netted against the per-tech queue caps in later decision years — the
++    # real developer's view of the queue, which is what prevents
++    # pipeline-stuffing cobwebs once decisions and CODs are separated. The
++    # evolution ledger records decision_year and cod_year per entry
++    # (entry_pipeline events). Forecast-machinery only (the backcast has no
++    # capacity evolution). NOTE: a vintage-start run (hindcast) has no seed of
++    # the real in-flight queue at the vintage cutoff — planned VRE rows are
++    # deliberately not wired (load_planned_additions skips them) — so arming
++    # the lag there shifts the whole entry path late by construction; see
++    # ff-entry-stack-completion-2026-07.md before arming in a hindcast leg.
+     interchange_shaping: bool = False  # Priced-interchange node: shape the
+     # import-tranche availability and export-sink floor by the measured EIA-930
+     # month x hour-of-day net-interchange envelope (transmission.
+@@ -7233,6 +7285,9 @@ TIER_TAGS: dict[str, int] = {
+     "planning_reserve_margin_override": 2,
+     "entry_price_signal_alpha": 2,
+     "entry_lookahead_reprice": 1,
++    "entry_vre_capacity_revenue": 1,
++    "entry_rate_limits": 1,
++    "entry_commissioning_lag": 1,
+     "cc_peak_hr_penalty": 3,
+     "ct_peak_hr_penalty": 3,
+     "cc_committed_hr_mult": 3,
+diff --git a/src/market_sim/model/capacity.py b/src/market_sim/model/capacity.py
+index 3b60977..917195e 100644
+--- a/src/market_sim/model/capacity.py
++++ b/src/market_sim/model/capacity.py
+@@ -97,6 +97,10 @@ from market_sim.config.constants import (
+     evaluate_renewable_elcc_curve,
+ )
+ from market_sim.config.capacity_area_crosswalk import aggregate_by_zone
++from market_sim.config.entry_config import (
++    ENTRY_COD_LAG_DEFAULT_YEARS,
++    ENTRY_COD_LAG_YEARS,
++)
+ from market_sim.config.iso_configs import get_iso_config
+ from market_sim.config.reserve_config import (
+     QUICK_START_FUEL_TYPES,
+@@ -2311,6 +2315,11 @@ def apply_economic_new_entry(
+     solar_cf: np.ndarray | None = None,
+     reserve_position: float | None = None,
+     screen_ledger: list[dict] | None = None,
++    wind_pool_mw: float = 0.0,
++    solar_pool_mw: float = 0.0,
++    peak_demand_mw: float = 0.0,
++    entry_rate_caps_mw: dict[str, float] | None = None,
++    entry_pipeline: list[dict] | None = None,
+ ) -> tuple[list[Generator], dict[str, dict[str, float]]]:
+     """Build new capacity for technologies that clear their LCOE.
+ 
+@@ -2406,6 +2415,24 @@ def apply_economic_new_entry(
+             to the pre-instrumentation path. Wired from ``evolve_fleet`` under
+             ``ScenarioConfig.entry_screen_diagnostics`` (default off) so the
+             per-candidate entry economics land in ``evolution_<year>.json``.
++        wind_pool_mw, solar_pool_mw: ISO-wide zonal-pool nameplate MW, the
++            penetration axis of the VRE adequacy-credit resolver for the
++            FF-2A VRE capacity payment (``entry_vre_capacity_revenue``).
++        peak_demand_mw: System peak for pct-of-peak ELCC curves (same use).
++        entry_rate_caps_mw: ``{tech: MW}`` current-year growth-ladder caps
++            (``entry_rate_limits`` — ENTRY_GROWTH_LIMIT_MULTIPLE × the tech's
++            prior-max annual build, resolved by the runner). When supplied,
++            each listed tech's build this year is additionally capped at its
++            ladder value; techs absent from the dict carry no ladder cap
++            (rule 25 neutral fallback). ``None`` (default) is byte-identical.
++        entry_pipeline: Cross-year pending-entry queue (mutated in place;
++            ``entry_commissioning_lag``). Rows not yet commissioned are
++            netted against the per-tech queue caps (the developer's view of
++            the queue), and — when the lag gate is on — this year's cleared
++            builds are APPENDED as ``{tech, mw, zone, decision_year,
++            cod_year, seq, kind}`` rows instead of materializing;
++            ``evolve_fleet`` commissions rows at their ``cod_year``.
++            ``None`` (default) keeps in-year commissioning byte-identically.
+ 
+     Returns:
+         Tuple ``(fleet, renewable_additions)`` -- the fleet with entering
+@@ -2442,6 +2469,17 @@ def apply_economic_new_entry(
+     # adequate. No-op unless capacity_deliverability_limits is on.
+     build_zone_long = _zone_is_long(deliverability_headroom, zone)
+ 
++    # FF-2A item 1 (BLK-7 / term c): ELCC-accredited VRE capacity revenue.
++    # Gate resolved once; the class nameplate ledger (pools + fleet units) is
++    # the SAME penetration axis accredited_firm_capacity_mw feeds the adequacy
++    # resolver (rule 19 — one resolver, one axis).
++    _vre_capacity_on = bool(getattr(config, "entry_vre_capacity_revenue", False))
++    _vre_nameplate: dict[str, float] = {}
++    if _vre_capacity_on:
++        _vre_nameplate = _renewable_nameplate_by_fuel(
++            fleet, wind_pool_mw, solar_pool_mw, iso_config.name
++        )
++
+     margins: list[tuple[float, str]] = []
+     for tech in _new_entry_candidates(year, config, iso_config.name):
+         # Emerging technologies are costed through their own LCOE path.
+@@ -2644,15 +2682,47 @@ def apply_economic_new_entry(
+             effective_revenue += (
+                 effective_attribute_price * cf_expected * HOURS_PER_YEAR
+             )
++        # FF-2A item 1 (BLK-7 / term c, gated entry_vre_capacity_revenue):
++        # wind/solar entry earns the resource-adequacy capacity payment on its
++        # accredited fraction — the SAME per-firm-MW price seam thermal entry
++        # uses (fixed net-CONE, or the CR-1 sloped curve at reserve_position
++        # when the clearing gate is armed) times the class credit from the ONE
++        # adequacy resolver (penetration-indexed published ELCC curve under
++        # renewable_elcc_curves, evaluated at the model's own installed
++        # nameplate — rule 19: the payment can never diverge from the ledger).
++        # Energy-only ISOs price capacity at zero, so this is structurally a
++        # no-op there; an RA-saturated build zone collapses the payment, the
++        # same locational gate the thermal branch applies.
++        vre_capacity_payment = 0.0
++        if _vre_capacity_on and tech in _RENEWABLE_NEW_FUELS:
++            ra_zone = get_renewable_zone(iso_config.name, tech)
++            if not _zone_is_long(deliverability_headroom, ra_zone):
++                design = MARKET_DESIGN.get(iso_config.name, DEFAULT_MARKET_DESIGN)
++                firm_price = design.capacity_price_per_firm_mw_yr(
++                    config, reserve_position, iso=iso_config.name, year=year
++                )
++                if firm_price > 0.0:
++                    credit = resolve_renewable_capacity_credit(
++                        tech,
++                        iso_config.name,
++                        installed_mw=_vre_nameplate.get(tech),
++                        peak_demand_mw=(
++                            peak_demand_mw if peak_demand_mw > 0.0 else None
++                        ),
++                        curves_enabled=config.renewable_elcc_curves,
++                    )
++                    vre_capacity_payment = firm_price * float(credit or 0.0)
++            effective_revenue += vre_capacity_payment
+         # lcoe uses base_cf internally, so lcoe x hours x base_cf is the
+         # CF-independent annualized fixed cost in $/MW-yr — it stays on
+         # base_cf even when the revenue side uses the zonal profile.
+         annual_cost = lcoe * HOURS_PER_YEAR * base_cf
+-        energy_only_rev = effective_revenue - (
++        _attr_rev = (
+             effective_attribute_price * cf_expected * HOURS_PER_YEAR
+             if effective_attribute_price > 0.0
+             else 0.0
+         )
++        energy_only_rev = effective_revenue - _attr_rev - vre_capacity_payment
+         margin = effective_revenue - annual_cost
+         if margin > 0.0:
+             margins.append((margin, tech))
+@@ -2682,12 +2752,13 @@ def apply_economic_new_entry(
+                 "cf_expected": float(cf_expected),
+                 "cf_shape_aware": bool(cf_profile is not None),
+                 "energy_revenue_per_mw_yr": float(energy_only_rev),
+-                "attribute_revenue_per_mw_yr": float(
+-                    effective_revenue - energy_only_rev
+-                ),
++                "attribute_revenue_per_mw_yr": float(_attr_rev),
+                 "attribute_price": float(effective_attribute_price),
+                 "rps_shadow_price": float(rps_shadow_price),
+-                "capacity_revenue_per_mw_yr": 0.0,
++                # Measured VRE capacity payment (BLK-7): $0 unless the
++                # entry_vre_capacity_revenue gate is armed in a capacity-
++                # market ISO.
++                "capacity_revenue_per_mw_yr": float(vre_capacity_payment),
+                 "capex_base_per_kw": float(_capex_base),
+                 "capex_wright_per_kw": float(_capex_wright),
+                 "capex_after_credit_per_kw": float(_capex_after_itc),
+@@ -2719,6 +2790,23 @@ def apply_economic_new_entry(
+     # Per-tech queue caps are tracked per cap group: hydrogen turbines and
+     # CCUS share the ``gas_cc`` group, so their builds compete for one cap.
+     group_remaining: dict[str, float] = {}
++    # FF-2A pending-queue netting (entry_commissioning_lag): decided-but-not-
++    # yet-commissioned MW occupy the same physical queue the caps measure, so
++    # they are netted from this decision year's per-tech / ladder budgets —
++    # the developer's view of the queue, and what stops the same deficit being
++    # re-decided every year of the lag (pipeline-stuffing cobweb).
++    _pending_by_tech: dict[str, float] = {}
++    if entry_pipeline:
++        for _row in entry_pipeline:
++            _pending_by_tech[_row["tech"]] = _pending_by_tech.get(
++                _row["tech"], 0.0
++            ) + float(_row["mw"])
++    # FF-2A growth-ladder budgets (entry_rate_limits): per TECH, not group —
++    # the measured throughput seed is tech-grain. Absent tech ⇒ no ladder cap.
++    _ladder_remaining: dict[str, float] = {}
++    _lag_on = bool(getattr(config, "entry_commissioning_lag", False)) and (
++        entry_pipeline is not None
++    )
+     for seq, (_, tech) in enumerate(margins):
+         if remaining <= 0.0:
+             if _diag and tech in _rows:
+@@ -2726,35 +2814,85 @@ def apply_economic_new_entry(
+                 _rows[tech]["binding_cap"] = "iso_budget_exhausted"
+             continue
+         # Each tech is capped by its (possibly shared) per-tech queue limit
+-        # and by what is left of the shared ISO budget; both bind.
++        # and by what is left of the shared ISO budget; both bind. The
++        # growth ladder and the pending queue (when armed) bind on top.
+         group = _QUEUE_CAP_GROUP.get(tech, tech)
+         if group not in group_remaining:
+-            group_remaining[group] = per_tech_cap_gw.get(group, 0.0) * 1000.0
++            group_remaining[group] = max(
++                0.0,
++                per_tech_cap_gw.get(group, 0.0) * 1000.0
++                - _pending_by_tech.get(tech, 0.0),
++            )
+         build_mw = min(group_remaining[group], remaining)
++        _cap_label = None
++        if entry_rate_caps_mw is not None and tech in entry_rate_caps_mw:
++            if tech not in _ladder_remaining:
++                _ladder_remaining[tech] = max(
++                    0.0,
++                    float(entry_rate_caps_mw[tech]) - _pending_by_tech.get(tech, 0.0),
++                )
++            if _ladder_remaining[tech] < build_mw:
++                build_mw = _ladder_remaining[tech]
++                _cap_label = "growth_ladder"
+         if build_mw <= 0.0:
+             if _diag and tech in _rows:
+                 _rows[tech]["build_mw"] = 0.0
+-                _rows[tech]["binding_cap"] = "per_tech_cap_zero"
++                _rows[tech]["binding_cap"] = _cap_label or "per_tech_cap_zero"
+             continue
+         remaining -= build_mw
+         group_remaining[group] -= build_mw
++        if tech in _ladder_remaining:
++            _ladder_remaining[tech] -= build_mw
+         if _diag and tech in _rows:
+             _rows[tech]["build_mw"] = float(build_mw)
+-            _rows[tech]["binding_cap"] = (
++            _rows[tech]["binding_cap"] = _cap_label or (
+                 "per_tech_cap"
+                 if build_mw >= per_tech_cap_gw.get(group, 0.0) * 1000.0 - 1e-6
+                 else "iso_budget"
+             )
++        # Commissioning: in-year (byte-identical default), or deferred to the
++        # measured clearance→COD lag (entry_commissioning_lag) — the decision
++        # is booked as a pending-pipeline row that evolve_fleet commissions at
++        # cod_year, with both years carried into the evolution ledger.
++        _cod_lag = (
++            ENTRY_COD_LAG_YEARS.get(tech, ENTRY_COD_LAG_DEFAULT_YEARS) if _lag_on else 0
++        )
+         if tech in _RENEWABLE_NEW_FUELS:
+             target_zone = get_renewable_zone(iso_config.name, tech)
+-            zone_acc = renewable_additions.setdefault(target_zone, {})
+-            zone_acc[tech] = zone_acc.get(tech, 0.0) + build_mw
++            if _cod_lag > 0:
++                entry_pipeline.append(
++                    {
++                        "tech": tech,
++                        "mw": float(build_mw),
++                        "zone": target_zone,
++                        "decision_year": int(year),
++                        "cod_year": int(year) + _cod_lag,
++                        "seq": int(seq),
++                        "kind": "vre",
++                    }
++                )
++            else:
++                zone_acc = renewable_additions.setdefault(target_zone, {})
++                zone_acc[tech] = zone_acc.get(tech, 0.0) + build_mw
+         else:
+-            new_fleet.append(
+-                _make_new_generator(
+-                    tech, build_mw, zone, year, seq, config, iso_config.name
++            if _cod_lag > 0:
++                entry_pipeline.append(
++                    {
++                        "tech": tech,
++                        "mw": float(build_mw),
++                        "zone": zone,
++                        "decision_year": int(year),
++                        "cod_year": int(year) + _cod_lag,
++                        "seq": int(seq),
++                        "kind": "thermal",
++                    }
++                )
++            else:
++                new_fleet.append(
++                    _make_new_generator(
++                        tech, build_mw, zone, year, seq, config, iso_config.name
++                    )
+                 )
+-            )
+ 
+     if _diag:
+         # Unprofitable candidates never enter the margins loop; record their
+@@ -2996,6 +3134,7 @@ def apply_reserve_margin_build(
+     year: int,
+     config: ScenarioConfig,
+     iso: str,
++    rate_limit_mw: float | None = None,
+ ) -> tuple[list[Generator], float]:
+     """Force-build firm capacity to meet the planning reserve margin.
+ 
+@@ -3014,6 +3153,20 @@ def apply_reserve_margin_build(
+     interconnection-queue throughput so a single year cannot add unbounded
+     capacity. Returns ``(fleet, built_mw)``; a no-op (built 0) when disabled,
+     when the margin is already met, or when the queue cap is exhausted.
++
++    ``rate_limit_mw`` (FF-2A item 2 / BLK-10, ``entry_rate_limits``): the
++    remaining gas_ct growth-ladder budget for the year — the measured
++    interconnection-throughput bound (ENTRY_GROWTH_LIMIT_MULTIPLE × the
++    prior-max annual gas_ct build, net of this year's economic gas_ct
++    decisions: the backstop and economic entry draw ONE physical queue,
++    rule 19). Replaces the full-deficit-in-one-step over-fire: a deficit
++    larger than the year's deliverable throughput carries to next year's
++    screen (and the ladder rises as builds land), so a large exit wave is
++    rebuilt over several years instead of one — the measured RC-1A/BLK-10
++    signature (PJM 2025: 6.43 GW pre-R-NEW, 2.5 GW post-R-NEW, vs actual
++    0.447 GW). ``None`` (gate off) keeps the queue-cap-only sizing
++    byte-identically. The sizing stays need-proportional: never more than
++    the nameplate gap.
+     """
+     if not resolve_reserve_margin_build_enabled(config, iso) or peak_demand_mw <= 0.0:
+         return fleet, 0.0
+@@ -3038,6 +3191,8 @@ def apply_reserve_margin_build(
+     build_mw = (
+         min(nameplate_needed, queue_cap_mw) if queue_cap_mw > 0.0 else nameplate_needed
+     )
++    if rate_limit_mw is not None:
++        build_mw = min(build_mw, max(0.0, float(rate_limit_mw)))
+     if build_mw <= 0.0:
+         return fleet, 0.0
+ 
+@@ -3443,6 +3598,8 @@ def evolve_fleet(
+     peak_demand_next: float | None = None,
+     announced_reversal_plants: frozenset[int] = frozenset(),
+     reserve_position: float | None = None,
++    entry_rate_caps_mw: dict[str, float] | None = None,
++    entry_pipeline: list[dict] | None = None,
+ ) -> tuple[
+     list[Generator],
+     dict[str, int],
+@@ -3550,6 +3707,19 @@ def evolve_fleet(
+             requirement and one basis (rule 19). ``None`` (default) /
+             ``capacity_market_clearing`` off keeps the fixed net-CONE capacity
+             payment — byte-identical to the pre-CR-1 path.
++        entry_rate_caps_mw: ``{tech: MW}`` current-year growth-ladder caps
++            (``entry_rate_limits`` — resolved by the runner from the measured
++            EIA-860 throughput seed × ENTRY_GROWTH_LIMIT_MULTIPLE, rising as
++            the model builds). Threaded into the new-entry screen; the gas_ct
++            entry shares ONE budget with the reserve-margin backstop (rule 19
++            — one physical queue). ``None`` (default) is byte-identical.
++        entry_pipeline: Cross-year pending-entry queue, MUTATED IN PLACE
++            (``entry_commissioning_lag`` — the same seam pattern as
++            ``events``): rows whose ``cod_year`` is reached commission here
++            (thermal → fleet, VRE → renewable additions) and are removed;
++            the new-entry screen appends this year's lagged decisions and
++            nets pending MW from the queue caps. ``None`` (default) keeps
++            in-year commissioning byte-identically.
+ 
+     Returns:
+         Tuple ``(fleet, loss_tracker, renewable_additions, retrofit_log,
+@@ -3845,9 +4015,47 @@ def evolve_fleet(
+             for g in _planned_now
+         )
+ 
++    # 4.5 FF-2A pipeline commissioning (entry_commissioning_lag): pending
++    # economic-entry decisions whose COD year is reached materialize now —
++    # thermal rows enter the fleet (picked up by the step-5 events diff as
++    # source "economic"), VRE rows fold into the zonal pools. Rows are
++    # removed from the pipeline (mutated in place, so they stop occupying
++    # the queue the step-5 screen nets against); deterministic, so it runs
++    # even in a year the price-driven screen is skipped.
++    _commissioned_rows: list[dict] = []
++    if entry_pipeline:
++        for r in [r for r in entry_pipeline if int(r["cod_year"]) <= year]:
++            entry_pipeline.remove(r)
++            if r.get("kind") == "vre":
++                zone_acc = renewable_additions.setdefault(r["zone"], {})
++                zone_acc[r["tech"]] = zone_acc.get(r["tech"], 0.0) + float(r["mw"])
++            else:
++                g = _make_new_generator(
++                    r["tech"],
++                    float(r["mw"]),
++                    r["zone"],
++                    int(r["cod_year"]),
++                    int(r["seq"]),
++                    config,
++                    config.iso,
++                )
++                # Distinct id per decision cohort: two cohorts can share a
++                # (tech, cod_year, seq) triple once the lag separates them.
++                g.unit_id = (
++                    f"{r['tech']}_new_{int(r['decision_year'])}"
++                    f"c{int(r['cod_year'])}_{int(r['seq'])}"
++                )
++                g.name = g.unit_id
++                fleet = fleet + [g]
++            _commissioned_rows.append(dict(r))
++
+     # 5. Economic new entry (needs a price signal). Clean technologies see
+     # the prior year's RPS shadow price as additional expected revenue.
+-    _pre_entry_ids = {g.unit_id for g in fleet} if _rec else None
++    # Decision-grain MW by tech (screen + backstop) feed the runner's
++    # growth-ladder prior-max update; tracked unconditionally (cheap).
++    _decided_mw_by_tech: dict[str, float] = {}
++    _pre_entry_ids_all = {g.unit_id for g in fleet}
++    _pre_entry_ids = _pre_entry_ids_all if _rec else None
+     # RC-0C entry-screen diagnostic sink (GATED entry_screen_diagnostics,
+     # default off): a per-candidate decomposition ledger with no decision
+     # effect, persisted into the year's evolution ledger by the runner.
+@@ -3875,8 +4083,32 @@ def evolve_fleet(
+             solar_cf=screen_solar_cf,
+             reserve_position=reserve_position,
+             screen_ledger=_screen_ledger,
++            wind_pool_mw=wind_pool_mw,
++            solar_pool_mw=solar_pool_mw,
++            peak_demand_mw=peak_demand_used,
++            entry_rate_caps_mw=entry_rate_caps_mw,
++            entry_pipeline=entry_pipeline,
+         )
+         _merge_renewable_additions(renewable_additions, entry_additions)
++        # Decision-grain accounting: in-year builds (fleet diff + VRE screen
++        # additions) plus this year's lagged pipeline appends. Commissioned
++        # rows from step 4.5 were counted at their decision year, and the
++        # step-4.5 fleet units predate _pre_entry_ids_all, so nothing double
++        # counts.
++        for g in fleet:
++            if g.unit_id not in _pre_entry_ids_all:
++                _decided_mw_by_tech[g.fuel_type] = _decided_mw_by_tech.get(
++                    g.fuel_type, 0.0
++                ) + float(g.pmax_mw)
++        for _zone_adds in entry_additions.values():
++            for _t, _mw in _zone_adds.items():
++                _decided_mw_by_tech[_t] = _decided_mw_by_tech.get(_t, 0.0) + float(_mw)
++        if entry_pipeline is not None:
++            for r in entry_pipeline:
++                if int(r.get("decision_year", -1)) == year:
++                    _decided_mw_by_tech[r["tech"]] = _decided_mw_by_tech.get(
++                        r["tech"], 0.0
++                    ) + float(r["mw"])
+     if _rec and _screen_ledger is not None:
+         events["entry_screen_diagnostics"] = _screen_ledger
+     if _rec:
+@@ -3916,9 +4148,29 @@ def evolve_fleet(
+             elcc_curves_enabled=config.renewable_elcc_curves,
+         )
+         _pre_backstop_ids = {g.unit_id for g in fleet} if _rec else None
++        # FF-2A item 2 (BLK-10): the backstop's gas_ct build draws the SAME
++        # growth-ladder budget as this year's economic gas_ct decisions —
++        # one physical queue (rule 19). None (gate off) is byte-identical.
++        _gas_ct_rate_budget: float | None = None
++        if entry_rate_caps_mw is not None and "gas_ct" in entry_rate_caps_mw:
++            _gas_ct_rate_budget = max(
++                0.0,
++                float(entry_rate_caps_mw["gas_ct"])
++                - _decided_mw_by_tech.get("gas_ct", 0.0),
++            )
+         fleet, adequacy_mw = apply_reserve_margin_build(
+-            fleet, firm_mw, peak_demand_used, year, config, config.iso
++            fleet,
++            firm_mw,
++            peak_demand_used,
++            year,
++            config,
++            config.iso,
++            rate_limit_mw=_gas_ct_rate_budget,
+         )
++        if adequacy_mw > 0.0:
++            _decided_mw_by_tech["gas_ct"] = (
++                _decided_mw_by_tech.get("gas_ct", 0.0) + adequacy_mw
++            )
+         if _rec and adequacy_mw > 0.0:
+             events["thermal_additions"].extend(
+                 {
+@@ -3958,6 +4210,17 @@ def evolve_fleet(
+             for tech, mw in techs.items()
+             if mw
+         ]
++        # FF-2A entry-stack attribution: decision-grain MW by tech (feeds the
++        # runner's growth-ladder prior-max update), and — when the COD lag is
++        # armed — the pipeline rows decided and commissioned this year, each
++        # carrying BOTH decision_year and cod_year (item 3's ledger contract).
++        events["entry_decided_mw_by_tech"] = dict(_decided_mw_by_tech)
++        if entry_pipeline is not None:
++            events["entry_pipeline"] = [
++                {**r, "event": "decided"}
++                for r in entry_pipeline
++                if int(r.get("decision_year", -1)) == year
++            ] + [{**r, "event": "commissioned"} for r in _commissioned_rows]
+ 
+     # Retirements, retrofits and new entry have reshaped the fleet;
+     # re-collapse it into efficiency-bin representatives so the next LP solve
+diff --git a/src/market_sim/runner.py b/src/market_sim/runner.py
+index 420704e..76268af 100644
+--- a/src/market_sim/runner.py
++++ b/src/market_sim/runner.py
+@@ -26,6 +26,10 @@ from market_sim.config.constants import (
+     START_YEAR,
+     resolve_capacity_market_clearing,
+ )
++from market_sim.config.entry_config import (
++    ENTRY_GROWTH_LIMIT_MULTIPLE,
++    ENTRY_THROUGHPUT_WINDOW_YEARS,
++)
+ from market_sim.config.iso_configs import get_iso_config
+ from market_sim.config.scenarios import (
+     ScenarioConfig,
+@@ -49,6 +53,7 @@ from market_sim.data.fleet import (
+     load_planned_additions,
+     load_retired_within_window,
+ )
++from market_sim.data.build_throughput import max_annual_build_gw_by_tech
+ from market_sim.data.confirmed_retirements import (
+     ConfirmedExit,
+     load_announced_reversal_plants,
+@@ -673,6 +678,33 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
+             required=_confirmed_exits_active(config),
+         )
+ 
++    # FF-2A entry-stack state (both gates default-off ⇒ both None/absent,
++    # byte-identical). The growth ladder (entry_rate_limits) tracks each
++    # tech's PRIOR MAXIMUM annual build: seeded from the measured EIA-860
++    # record at the run's vintage (trailing ENTRY_THROUGHPUT_WINDOW_YEARS
++    # window — data.build_throughput.max_annual_build_gw_by_tech reads the active
++    # vintage directory, so a 2020-vintage hindcast sees only what was
++    # knowable at the cutoff) and raised as the model's own decisions land.
++    # The pending-entry pipeline (entry_commissioning_lag) carries decided-
++    # but-not-yet-commissioned builds across years (mutated in place by
++    # evolve_fleet, the same seam pattern as the evolution-ledger events).
++    entry_prior_max_gw: dict[str, float] | None = None
++    if getattr(config, "entry_rate_limits", False):
++        _seed_through = config.eia860_vintage_year or (config.start_year - 1)
++        entry_prior_max_gw = max_annual_build_gw_by_tech(
++            iso, _seed_through, ENTRY_THROUGHPUT_WINDOW_YEARS
++        )
++        logger.info(
++            "entry growth-ladder seed (%s, through %d, %d-yr window): %s",
++            iso,
++            _seed_through,
++            ENTRY_THROUGHPUT_WINDOW_YEARS,
++            {t: round(v, 3) for t, v in sorted(entry_prior_max_gw.items())},
++        )
++    entry_pipeline: list[dict] | None = (
++        [] if getattr(config, "entry_commissioning_lag", False) else None
++    )
++
+     # Global cumulative deployment drives the Wright's-Law learning curves.
+     # It starts from the reference-year installed base and advances one year
+     # of worldwide deployment (plus this ISO's local builds) every year.
+@@ -802,7 +834,27 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
+                 peak_demand_next=peak_demand,
+                 announced_reversal_plants=announced_reversal_plants,
+                 reserve_position=curve_reserve_position,
++                entry_rate_caps_mw=(
++                    {
++                        t: ENTRY_GROWTH_LIMIT_MULTIPLE * gw * 1000.0
++                        for t, gw in entry_prior_max_gw.items()
++                    }
++                    if entry_prior_max_gw is not None
++                    else None
++                ),
++                entry_pipeline=entry_pipeline,
+             )
++            # Growth-ladder update (entry_rate_limits): this year's decision-
++            # grain builds raise the prior max, so a tech building at its
++            # ladder cap doubles its deliverable throughput next year — the
++            # ReEDS relative-growth dynamic on the measured seed.
++            if entry_prior_max_gw is not None:
++                for t, mw in (evo_events.get("entry_decided_mw_by_tech") or {}).items():
++                    # Only techs with a measured seed carry a ladder; an
++                    # unseeded tech stays uncapped (rule 25 neutral fallback)
++                    # rather than acquiring a cap from its own first build.
++                    if t in entry_prior_max_gw and mw / 1000.0 > entry_prior_max_gw[t]:
++                        entry_prior_max_gw[t] = mw / 1000.0
+             # Persist the reliability floor's attribution log next to the
+             # per-year results parquet (rule 20 analogue: floor-retained MW
+             # must be measurable per run, not argued). Written every evolved
