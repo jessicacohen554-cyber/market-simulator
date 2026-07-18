@@ -60,6 +60,16 @@ validation legs WILL shift when re-solved with the derate armed (they run
 `mode="forecast"`); that is an expected validation-lane consequence (FF-1A/2A),
 documented here, not executed.
 
+> **Update 2026-07-18 (code landed, rebased onto current main).** This doc + the
+> FF-1F tests merged first (PRs #2468/#2476/#2480), so the two `scenarios.py`
+> flips + the `backcast_config` pin were applied in a follow-up commit rebased
+> onto the latest `origin/main` (which had gained the FF-2A entry-stack fields).
+> The hashes above were measured on the pre-FF-2A base; **re-measured on the
+> current main base the backcast `cache_key` is `0aca0164b861d62d` — unchanged
+> old-vs-new** (the flip never touches it), and the forecast key shifts
+> `c9bf456fde28558d` → `f062591032a72f65`. The byte-identity claim holds
+> identically. The 50 FF-1F dispatch/config unit tests pass with the flips applied.
+
 ### 2.1 The FF-1B ORDC double-count seam holds with the flag ON
 
 The derate injects **only** a deterministic reduction of the *mean* availability
