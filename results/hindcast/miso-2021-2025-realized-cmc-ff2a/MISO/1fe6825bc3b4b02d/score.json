@@ -263,7 +263,7 @@
   },
   "flip_gate_extras": {
     "task": "FF-1A",
-    "note": "T-R10 no-inversion guard + LOYO folds (2023-2025) + BLK-10 backstop-fired MW — scorer-side, no re-solve.",
+    "note": "T-R10 no-inversion guard + LOYO folds (2023-2025) + BLK-10 backstop-fired MW \\u2014 scorer-side, no re-solve.",
     "utc": "2026-07-18T08:42:10Z"
   }
 }
