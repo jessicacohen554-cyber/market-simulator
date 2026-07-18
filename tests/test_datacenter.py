@@ -201,13 +201,35 @@ def test_pjm_and_nyiso_have_sourced_blocks():
     ) == pytest.approx(10000.0)
 
 
-@pytest.mark.parametrize("iso", ["MISO", "NEISO"])
-def test_unsourced_isos_ship_zero(iso):
-    """MISO/NEISO have no published DC decomposition -> 0 MW on every path (§2.2)."""
-    assert DATACENTER_ADDITIONS_MW[iso] == {}
+def test_neiso_ships_zero():
+    """NEISO's 2026-CELT large-load quantum (~110 MW) is immaterial -> ships {}
+    (FF-1C / FF-0D §1.4): 0 MW on every path until the CELT table (M6) lands."""
+    assert DATACENTER_ADDITIONS_MW["NEISO"] == {}
     for path in ("low", "mid", "high"):
-        cfg = ScenarioConfig(iso=iso, datacenter_load_path=path)
-        assert resolve_datacenter_mw(cfg, iso, 2030) == 0.0
+        cfg = ScenarioConfig(iso="NEISO", datacenter_load_path=path)
+        assert resolve_datacenter_mw(cfg, "NEISO", 2030) == 0.0
+
+
+def test_miso_has_sourced_block():
+    """MISO gained a sourced DC block (FF-1C) from its 2025 LTLF (8-14 GW in
+    2026-2027; ~20% of energy by 2030). low = 0 floor; mid ~18 GW / high ~25 GW
+    by 2030; the 2027 anchor is the 8-14 GW committed range."""
+    assert DATACENTER_ADDITIONS_MW["MISO"] != {}
+    assert resolve_datacenter_mw(
+        ScenarioConfig(iso="MISO", datacenter_load_path="mid"), "MISO", 2030
+    ) == pytest.approx(18000.0)
+    assert resolve_datacenter_mw(
+        ScenarioConfig(iso="MISO", datacenter_load_path="high"), "MISO", 2027
+    ) == pytest.approx(14000.0)
+    # low path is the honest 0 floor (no signed-IA subset published).
+    assert (
+        resolve_datacenter_mw(
+            ScenarioConfig(iso="MISO", datacenter_load_path="low"), "MISO", 2030
+        )
+        == 0.0
+    )
+    # Default "off" is a no-op regardless of the sourced block.
+    assert resolve_datacenter_mw(ScenarioConfig(iso="MISO"), "MISO", 2030) == 0.0
 
 
 def test_unknown_iso_ships_zero():
