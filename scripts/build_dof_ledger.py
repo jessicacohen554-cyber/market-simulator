@@ -909,6 +909,32 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "fetch only (rule 23)",
             )
         )
+    if sc.get("miso_seam_envelope_merit_cap"):
+        # G-23 seam-envelope composition fix, ZERO scalars: the measured seam
+        # deliverability envelope applied with merit-order (waterfall) band
+        # bounds instead of the uniform per-band derate — cheap base rungs
+        # keep full width, the seam total is capped at min(cap, limit)
+        # exactly, restoring the Q-Q ladder's price-to-depth pairing. No new
+        # data: the envelope and the ladder (both already ledgered) are
+        # byte-unchanged; this entry records the composition gate only.
+        out.append(
+            _entry(
+                "miso_seam_envelope_merit_cap (seam envelope merit-order ceiling)",
+                "model.transmission.inject_miso_seam_flow_limit(merit_cap=True), "
+                "both directions (scripts/run_calibration.py seam-cap sites)",
+                "measured-physical",
+                iso,
+                n_scalars=0,
+                source="Composition semantics only — no new measured series: "
+                "the (month x hod) EIA-930 deliverability envelope and the "
+                "MISO_SEAM_LADDER_BY_YEAR Q-Q rungs are byte-unchanged; band "
+                "k's bound becomes clip(cap - (k-1)*step, 0, step). Root "
+                "cause and frozen charter: docs/handoffs/miso-g23-seam-"
+                "envelope-composition-design-2026-07.md (the uniform-derate "
+                "offline replay reproduces the miso-72 keeper's solved "
+                "priced-seam net +/-0.12 TWh in all three years).",
+            )
+        )
     if sc.get("unit_outage_short_windows"):
         # Short (< 5-day) baseload-coal unit-outage windows, ZERO scalars:
         # each window is the unit's own CEMS record; the derive-script guards
