@@ -17378,3 +17378,67 @@ charter (belly + CT_PEAKER evening ramp — the C3a-2025/C5a remainder's named
 owner), and the residual +1.55/+1.79/+0.81 TWh evening import excess
 (firm-block/fossil-rung composition — not re-openable via the trimmed
 tranche without violating the measured admissibility table).
+
+
+## 2026-07-18 — ercot-82: the surfaced prb_overrides stomp CLOSED — measured RTOLCAP adopted over the WS-A forward formula (rule 14), dispatch-INERT outside already-formed tight hours, marginally toward-actual in the chartered 2023, all guards HELD; REGISTERED CANDIDATE (keeper swap owner-only)
+
+**Task (ERCOT handoff Lane 2, this session).** The ercot81 keeper's
+`coal_prb_sigmoid_overrides` carried `ercot_reserve_supply_forward: true`, which
+`run_year` applies LAST, stomping the meta top-level `false` (the ERCOT-65 defect
+class). So every ercot76→81 keeper had silently solved on the WS-A FORWARD-formula
+reserve-supply cap (mean 16.1 GW), not the measured `ercot_<year>_ordc_reserves_hourly.parquet`
+RTOLCAP series the recipe documentation and `scarcity.py` docstring claim ("backcast
+with `ercot_reserve_supply_forward` off returns the MEASURED series byte-identical
+(the validation target)"). Rule 14 prefers the measured series in backcast unless
+adjudicated misaligned — so run the single-delta A/B and adjudicate on the record.
+
+**Run.** `2026-07-18-ercot82-measured-rtolcap` (registered CANDIDATE, bundle
+`results/calibration/ercot82_measured_rtolcap_fullspan`, full-span 2023+2024+2025
+one invocation, rules 12/16). Recipe = the ercot81 keeper via the STRICT
+`replay_keeper.build_kwargs` channel with the SINGLE delta
+`--set ercot_reserve_supply_forward=false` (prb_overrides overwrites the stomped
+`true` → both channels now resolve `false`; recipe internally consistent). Zero
+fitted scalars — the only change is measured-vs-formula input selection.
+
+**A/B (full-span, same machine) — the measured cap is dispatch-INERT outside
+already-formed tight hours and marginally toward-actual in 2023:**
+- **C3a mean LMP (vs RT):** 2023 −22.1 % → **−21.8 %** (model 49.94 → 50.14 vs RT
+  64.12); 2024 **+2.1 %** and 2025 **−3.4 %** IDENTICAL (both PASS).
+- **C3b NRMSE:** 2023 0.456 → **0.449**; 2024 **0.303** and 2025 **0.086**
+  IDENTICAL.
+- **C3c >$200 h:** 2023 57 → **58** (RT 181, CAVEAT — the ercot80 availability-
+  envelope ledger exception carries); 2024 **22** and 2025 **0** IDENTICAL (RT
+  53 / 31, MODEL MISS).
+- **Guards HELD:** Aug-2023 monthly residual −64.9 → **−63.1** (model 126.8 → 128.6
+  vs RT 191.7); Jun/Sep-2023 residuals UNCHANGED at **−12.1 / −22.1** (no
+  ERCOT-78/79 over-shoot re-inflation); false-positive >$200 count UNCHANGED at
+  **8 h** (Feb 3 / Mar 2 / Apr 1 / Jun 1 / Jul 1); 2023 deep tail 57/54/38 →
+  **58/55/39** (toward actual 181/104/61).
+
+Measured RTOLCAP annual-mean spinning tier **13.5 GW** vs the forward formula's
+**16.1 GW**; the two differ mainly in the tight tail hours the LP was already
+pricing, where the lower measured cap adds a hair more tightness — hence the
+marginal 2023 gain and 2024/2025 identity. Same fail set and **NOT-YET**
+determination as the keeper.
+
+**Adjudication (rule 14).** The measured series is the physically-grounded,
+forward-admissible input (the ERCOT-published on-line responsive reserve
+capability; it regenerates for a forecast year via the WS-A formula in forecast
+mode) and it is NOT misaligned — it is the exact series the co-opt cap was
+designed to read in backcast. It does not make the backcast worse: it marginally
+improves the chartered 2023 and is dispatch-identical elsewhere. So the measured
+cap WINS, and ercot-82 corrects the keeper to the documented/correct backcast
+configuration (closing the stomp). **Recommend adopting ercot-82 as the ERCOT
+keeper; keeper swap is owner-only, so keepers.json is UNCHANGED this session.**
+The remaining Aug-2023 mid-band ($200–1,000, model $59–104 at measured RTOLCAP
+p50 ~7.9 GW) is out of scope for the reserve-supply cap — it is the ledgered
+ERCOT-75/77 offer-formation family (rule 13), Lane 1.
+
+**Ops.** legitimacy_diagnostics --json-out + build_dof_ledger (9 entries,
+8 residual — same free-param structure as the keeper) + governance/exceptions
+attestation (C3c-2023 availability-envelope CAVEAT carried) + dashboard_add_run +
+build_manifest this session; slim bundle committed
+(meta/run_config/metrics/attestation/legitimacy); ERCOT 12/15, no pruning.
+Transport: API create_branch + git push onto
+`claude/ercot-backcast-calibration-handoff-td8ncp` (small incremental pack; the
+branch-create 413 avoided by API create_branch first). Next number: ercot-83.
