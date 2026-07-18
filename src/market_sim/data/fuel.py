@@ -209,7 +209,18 @@ def resolve_annual_gas_price(config: ScenarioConfig, year: int) -> float:
     if config.gas_price_override is not None:
         return config.gas_price_override + basis
 
-    trajectory = HENRY_HUB_TRAJECTORIES[config.gas_price_path]
+    # T1-X crossover forward years (FF-0E, plan §2.2): the realized-fuel
+    # "hindcast_realized" path only carries 2021/2023-2025 and would hold the
+    # 2025 value flat past 2025 — that is a measured overlay held flat, NOT the
+    # forecast fuel methodology. A crossover's forward years (>= the boundary)
+    # must price gas on the AEO trajectory (config.crossover_forward_gas_path),
+    # the same forward driver a pure forecast uses. In-sample years (< boundary)
+    # keep config.gas_price_path (the realized hindcast fuel). No-op for every
+    # non-crossover run (crossover_forward_year is None).
+    path = config.gas_price_path
+    if config.is_crossover_forward_year(year):
+        path = config.crossover_forward_gas_path
+    trajectory = HENRY_HUB_TRAJECTORIES[path]
     henry_hub = _hold_flat_extrapolate(trajectory, year)
 
     return henry_hub * config.gas_price_factor + basis
@@ -4236,6 +4247,15 @@ def apply_plant_monthly_fuel_prices(
     # the delivered-coal channel, so gating one variant would conflate the
     # comparison (owner-approved Option 1, 2026-07-17).
     if config.mode != "backcast" and not getattr(config, "hindcast", False):
+        return
+    # T1-X crossover forward years (FF-0E, plan §2.2): the F923 plant-monthly
+    # delivered-cost overlay is a MEASURED backcast/hindcast overlay. A
+    # crossover's forward years (>= the boundary) run on forward drivers only —
+    # they must NOT read measured F923 receipts (which now carry rows into the
+    # forecast start year), so the overlay is skipped and those years fall back
+    # to the AEO trajectory coal/gas price. No-op for a plain hindcast or
+    # backcast (crossover_forward_year is None → is_crossover_forward_year False).
+    if config.is_crossover_forward_year(year):
         return
     costs = _load_monthly_cache(
         Path(monthly_costs_path) if monthly_costs_path else None
