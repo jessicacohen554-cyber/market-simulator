@@ -2302,7 +2302,12 @@ def run_year(
         # priced seam clears more import in tight hours (None keeps the p90
         # default). Still a measured-duration-curve ceiling, not a residual pin.
         _seam_pct = getattr(config, "miso_seam_flow_percentile", None)
-        if inject_miso_seam_flow_limit(fleet_arrays, iso, year, percentile=_seam_pct):
+        # miso-73: envelope composition semantics — merit-order (waterfall)
+        # ceiling instead of the uniform per-band derate when armed.
+        _seam_merit = getattr(config, "miso_seam_envelope_merit_cap", False)
+        if inject_miso_seam_flow_limit(
+            fleet_arrays, iso, year, percentile=_seam_pct, merit_cap=_seam_merit
+        ):
             from market_sim.config.constants import MISO_SEAM_FLOW_PERCENTILE
 
             logger.info(
@@ -2325,8 +2330,14 @@ def run_year(
         from market_sim.model.transmission import inject_miso_seam_flow_limit
 
         _seam_pct = getattr(config, "miso_seam_flow_percentile", None)
+        _seam_merit = getattr(config, "miso_seam_envelope_merit_cap", False)
         if inject_miso_seam_flow_limit(
-            fleet_arrays, iso, year, percentile=_seam_pct, direction="export"
+            fleet_arrays,
+            iso,
+            year,
+            percentile=_seam_pct,
+            direction="export",
+            merit_cap=_seam_merit,
         ):
             from market_sim.config.constants import MISO_SEAM_FLOW_PERCENTILE
 

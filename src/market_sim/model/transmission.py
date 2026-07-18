@@ -3457,6 +3457,7 @@ def inject_miso_seam_flow_limit(
     year: int,
     percentile: float | None = None,
     direction: str = "import",
+    merit_cap: bool = False,
 ) -> bool:
     """Cap each MISO reference-price seam's import bands at the measured envelope.
 
@@ -3495,6 +3496,22 @@ def inject_miso_seam_flow_limit(
     reduce export, never force it); the export bands keep their priced economics
     and clear the merit order below the cap. Modifies ``fleet_arrays`` in place.
 
+    ``merit_cap`` (``ScenarioConfig.miso_seam_envelope_merit_cap``, miso-73)
+    selects the envelope's composition semantics. Default ``False`` keeps the
+    historical uniform per-band derate (``availability × cap/limit``), under
+    which the seam reaches its cap only when the internal price clears the most
+    expensive band — which breaks the measured Q-Q ladder's price-to-depth
+    pairing (``pi_k`` is derived at depth ``L_k`` on the FULL-width band grid)
+    and was measured to suppress PJM imports −5.6/−8.3/−8.9 TWh and South
+    exports +2.8/+2.6/+3.1 TWh (2023/24/25) on the miso-72 keeper. ``True``
+    applies the ceiling with merit-order (waterfall) bounds — band *k* keeps
+    ``clip(cap − (k−1)·step, 0, step)`` — so cheap base rungs stay full-width,
+    the seam total is capped at ``min(cap, limit)`` exactly, and the LP fills
+    cheapest-first below the ceiling as this docstring always intended. Given
+    monotone rungs this is exactly a shared per-seam-hour ``Σ bands ≤ cap``
+    constraint, implemented availability-only (no new LP rows). See
+    ``docs/handoffs/miso-g23-seam-envelope-composition-design-2026-07.md``.
+
     Returns ``True`` when at least one seam was capped, ``False`` when no
     reference-price bands (of the requested direction) are present or no measured
     envelope is available (forecast year / unmapped ISO), leaving the seam
@@ -3528,31 +3545,76 @@ def inject_miso_seam_flow_limit(
         if not rows:
             continue
         cap = np.asarray(cap, dtype=float)
+        # Band index k from the "#k" uid suffix: band order = depth order = rung
+        # order (the Q-Q ladder's rungs are monotone in k by construction), so
+        # the merit-cap waterfall fills band 1 first.
+        rows = sorted(
+            rows, key=lambda r: int(fleet_arrays.unit_ids[r].rsplit("#", 1)[1])
+        )
         if direction == "import":
             total = float(fleet_arrays.pmax[rows].sum())  # = interface_limit_mw
             if total <= 0.0:
                 continue
-            # Uniform per-band derate so the seam's summed import availability ≤
-            # cap each hour; the bands keep their rising (flow-responsive) prices,
-            # so the LP still fills the cheapest first below the ceiling.
-            frac = np.clip(cap / total, 0.0, 1.0)
-            for r in rows:
-                fleet_arrays.availability[r, :] *= frac
+            if merit_cap:
+                # Merit-order (waterfall) ceiling: band k keeps
+                # clip(cap − (k−1)·step, 0, step), so the cheap base rungs stay
+                # full-width and Σ_k bound_k = min(cap, limit) exactly — the
+                # ceiling the measured ladder's price-to-depth pairing assumes.
+                depth = 0.0
+                for r in rows:
+                    width = float(fleet_arrays.pmax[r])
+                    if width <= 0.0:
+                        continue
+                    fleet_arrays.availability[r, :] *= np.clip(
+                        (cap - depth) / width, 0.0, 1.0
+                    )
+                    depth += width
+            else:
+                # Uniform per-band derate: the seam's summed import availability
+                # ≤ cap each hour, but every band — including the cheap base
+                # rungs — shrinks by cap/limit, so reaching the cap needs the
+                # dearest rung in the money (the miso-73 composition defect;
+                # kept as the default for pre-miso-73 replay fidelity).
+                frac = np.clip(cap / total, 0.0, 1.0)
+                for r in rows:
+                    fleet_arrays.availability[r, :] *= frac
             applied = True
         else:
             total = -float(fleet_arrays.pmin[rows].sum())  # = interface_limit_mw
             if total <= 0.0:
                 continue
-            # Uniform per-band lower-bound raise so the seam's summed max export ≤
-            # cap each hour. pmin[r] < 0; pmin[r] × frac ∈ [pmin[r], 0] raises the
-            # bound toward 0 as the cap tightens, and maximum() composes with any
-            # existing floor (the cap only reduces export, never forces it).
-            frac = np.clip(cap / total, 0.0, 1.0)
-            for r in rows:
-                capped = float(fleet_arrays.pmin[r]) * frac
-                np.maximum(
-                    fleet_arrays.min_gen[r, :], capped, out=fleet_arrays.min_gen[r, :]
-                )
+            if merit_cap:
+                # Export mirror of the waterfall: band k's lower bound becomes
+                # −clip(cap − (k−1)·step, 0, step); maximum() composes with any
+                # existing floor (the cap only reduces export, never forces it).
+                depth = 0.0
+                for r in rows:
+                    width = -float(fleet_arrays.pmin[r])
+                    if width <= 0.0:
+                        continue
+                    capped = float(fleet_arrays.pmin[r]) * np.clip(
+                        (cap - depth) / width, 0.0, 1.0
+                    )
+                    np.maximum(
+                        fleet_arrays.min_gen[r, :],
+                        capped,
+                        out=fleet_arrays.min_gen[r, :],
+                    )
+                    depth += width
+            else:
+                # Uniform per-band lower-bound raise so the seam's summed max
+                # export ≤ cap each hour. pmin[r] < 0; pmin[r] × frac ∈
+                # [pmin[r], 0] raises the bound toward 0 as the cap tightens,
+                # and maximum() composes with any existing floor (the cap only
+                # reduces export, never forces it).
+                frac = np.clip(cap / total, 0.0, 1.0)
+                for r in rows:
+                    capped = float(fleet_arrays.pmin[r]) * frac
+                    np.maximum(
+                        fleet_arrays.min_gen[r, :],
+                        capped,
+                        out=fleet_arrays.min_gen[r, :],
+                    )
             applied = True
     return applied
 
