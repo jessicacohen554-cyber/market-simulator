@@ -4457,6 +4457,43 @@ class ScenarioConfig:
     # gate; off reproduces the ERCOT-62b monkeypatch construction exactly
     # (economic bridges at any gap length).
     ercot_gas_bridge_da_horizon: bool = True
+    # ERCOT COMMITMENT POSTURE (default off, ERCOT-gated — the commitment-
+    # thinness lane, docs/handoffs/ercot-commitment-thinness-2026-07.md): the
+    # STANDALONE energy-only port of the pooled-linear commitment-posture lever
+    # (design note docs/multi-iso/miso-scarcity-posture-design-2026-07.md §A).
+    # MISO/CAISO/PJM ride the pergen RESERVE pool; ERCOT runs a fleet-wide ORDC
+    # co-opt with no pergen substrate, so the posture is built reserve-decoupled
+    # (pipeline.kwargs.apply_ercot_commitment_posture ->
+    # reserve_config.ercot_commitment_posture_spec -> dispatch posture_* kwargs).
+    # Per (zone x gas-class) merchant-gas pool p, a continuous online-capacity
+    # variable U[p,t] in [0, Σ pmax·availability] with (i) energy headroom
+    # Σ P <= U (a pool cannot dispatch more than the capacity it keeps online),
+    # (ii) the CEMS-measured min-load coupling Σ P >= mlf·U (being online costs
+    # min-load energy at the committed band; NOT a floor — forces no exogenous
+    # energy, design §A window clause), and (iii) a cyclic startup charge on ΔU⁺
+    # (SU >= U[t] − U[t−1], $/MW from the NREL/SR-5500-55433 class tables) so
+    # re-timing CC energy pays a real start instead of the P1 zero-commitment-
+    # cost relief. The pergen reserve ramp gate (design §A point 4) is OMITTED —
+    # that is the pergen-only half; ERCOT's ORDC scarcity is already fleet-wide.
+    # Thins the effective online cheap CC so peaks shift to fast-start CT (the
+    # measured ERCOT-70 CC-over/CT-under wedge). Eligibility gates on POOL
+    # PHYSICS (rule 18): candidates are gas_cc + gas_ct (CHP groups excluded by
+    # rule 19 — owned by the CHP steam floors; coal/gas_st excluded by fuel —
+    # take-or-pay / netload drag own them), and the fast-start gate exempts
+    # gas_ct so only gas_cc pools carry U. Zero fitted parameters: startup
+    # published (NREL), mlf measured (LSL/HSL p50, frozen rule 23). Requires
+    # ERCOT; default off; GATED CHANGE (alters commitment, hence dispatch
+    # volumes). Composes with the peak/midcurve offer surface; rule-19-disjoint
+    # from the default-off ercot_gas_commitment_bridge (opposite direction — the
+    # bridge thickens CC via a min-gen floor, the posture thins it via friction).
+    ercot_commitment_posture: bool = False
+    # Minimum stable load of a postured ERCOT gas-CC pool as a fraction of the
+    # pool's online capacity — the MEASURED committed-CC LSL/HSL capacity-
+    # weighted p50 (60-Day DAM disclosure Gen Resource data 2023-2025, the same
+    # ERCOT-62 derive the ercot_gas_commitment_bridge uses). A measured physical/
+    # market quantity frozen against residuals (rules 13/21/23 — NEVER swept to
+    # move the price residual). Only read when the posture gate is on.
+    ercot_commitment_posture_min_load_frac: float = 0.574
     # ERCOT FLOOR-SCOPED committed-LSL markdown (default off, ERCOT-gated —
     # ERCOT-64, the enumerated price-side lever from the ERCOT-63 diagnosis
     # §7): the measured committed-CC LSL (Min-Gen-Cost) bid from the SAME
@@ -6317,6 +6354,16 @@ class ScenarioConfig:
                     "deployment floor and the endogenous co-opt split both price "
                     "the storage energy-vs-AS choice. Enable one or the other."
                 )
+        # ERCOT standalone energy-only commitment-posture (the commitment-
+        # thinness lane): ERCOT-only — it is built reserve-decoupled for ERCOT's
+        # fleet-wide ORDC co-opt; MISO/CAISO/PJM use their own pergen posture
+        # flag. Fail loud rather than silently no-op on a mis-scoped config.
+        if self.ercot_commitment_posture and str(self.iso) != "ERCOT":
+            raise ValueError(
+                "ercot_commitment_posture is ERCOT-only (the standalone energy-"
+                "only posture for ERCOT's fleet-wide ORDC co-opt); use "
+                "miso_/caiso_/pjm_commitment_posture for those ISOs' pergen path."
+            )
         # Measured CAISO battery AS reservation vs in-LP reserve co-opt: the
         # co-opt hands storage its own reserve columns and prices the
         # energy-vs-AS split endogenously, so pre-subtracting the measured
@@ -7155,6 +7202,8 @@ TIER_TAGS: dict[str, int] = {
     "ercot_storage_as_deployment": 1,
     "ercot_storage_as_deployment_from_year": 1,
     "ercot_gas_commitment_bridge": 1,
+    "ercot_commitment_posture": 1,
+    "ercot_commitment_posture_min_load_frac": 2,
     "carry_operating_mothballs": 1,
     "ercot_gas_bridge_min_load_frac": 2,
     "ercot_gas_bridge_startup": 1,
