@@ -941,7 +941,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
         # REPLACED by a fourth measured two-way priced seam — the
         # MISO_MANITOBA_SEAM_SPEC bands priced by the frozen Q-Q ladder
         # MISO_SEAM_LADDER_BY_YEAR["Manitoba"] (derived by
-        # scripts/derive_miso_seam_ladders.py, same construction as PJM/SPP/
+        # scripts/data/derive_miso_seam_ladders.py, same construction as PJM/SPP/
         # South) and capped by the measured (month x hod) two-way MHEB
         # deliverability envelope. Measured-for-measured swap: the interface
         # limit is physically pinned (measured +2,827 MW import extreme), the
@@ -958,7 +958,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 n_scalars=0,
                 source="Q-Q duration coupling of the measured MISO DA hub LMP "
                 "with the measured EIA-930 MHEB flow on the fixed 8-band grid, "
-                "frozen scripts/derive_miso_seam_ladders.py; the two-way "
+                "frozen scripts/data/derive_miso_seam_ladders.py; the two-way "
                 "deliverability envelope is the per-(month x hod) percentile of "
                 "the measured MHEB flow, both directions. Replaces the "
                 "import-only firm block (retires its 3 per-year MW values). "
