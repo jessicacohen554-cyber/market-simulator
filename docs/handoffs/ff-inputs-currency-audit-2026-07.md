@@ -438,7 +438,7 @@ a miss. Status of each rubric §6 source:
 - **On disk (fetched, reproducible) — AEO2025.** `benchmark-corridor` source
   `AEO2025` = EIA AEO2025 regional electricity **Table 54** (capacity/generation
   by fuel + power-sector CO2) + **Table 56** (renewable capacity split), pulled
-  from the EIA Open Data API v2 `aeo` route (`scripts/fetch_aeo_electricity.py`)
+  from the EIA Open Data API v2 `aeo` route (`scripts/data/fetch_aeo_electricity.py`)
   for the 14 EMM regions crosswalked to the six ISOs, Reference case,
   2030/2035/2040 — 1,008 curated rows. This supersedes §7.3's old **M8**
   ("AEO2026, pull once FF-0A defines FC-5"): FC-5's corridor anchor is the

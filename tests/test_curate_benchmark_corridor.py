@@ -20,7 +20,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_benchmark_corridor as curate_bc
+from scripts.data import curate_benchmark_corridor as curate_bc
 from scripts.lib import benchmark_corridor as bc
 from scripts.lib import clean_io
 from scripts.lib.benchmark_corridor import aeo
