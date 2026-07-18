@@ -21,6 +21,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import inspect
 import json
 import os
@@ -192,12 +193,40 @@ def main() -> None:
     kwargs["hours"] = int(meta.get("hours", 8760))
     kwargs["reference"] = rcf._load_reference()
     kwargs["run_dir"] = Path(args.out_dir) if args.out_dir else bundle
+    # --set routes through BOTH channels: the explicit solve_and_persist kwarg
+    # (when one exists) AND the generic prb_overrides ScenarioConfig channel
+    # (when the key is a config field). run_year's override application order
+    # is mixed — prb_overrides applies after most explicit kwargs but BEFORE a
+    # trailing block of them (e.g. ercot_ecrs_conservative_deployment at
+    # run_calibration.py::run_year), so a prb-only --set of such a key is
+    # silently re-stomped by the meta's kwarg value (the ERCOT-65 defect class,
+    # kwarg-over-prb direction — discovered when an ecrs A/B replayed the
+    # keeper byte-identically, ercot84 2026-07-18). Writing the same value to
+    # both channels makes the last-applied channel carry it either way, and
+    # keeps the recorded meta/run_config internally consistent.
+    if args.overrides:
+        from market_sim.config.scenarios import ScenarioConfig
+
+        cfg_fields = {f.name for f in dataclasses.fields(ScenarioConfig)}
+        solve_params = set(inspect.signature(rcf.solve_and_persist).parameters)
     for spec in args.overrides:
         key, _, raw = spec.partition("=")
         if not key or not raw:
             raise SystemExit(f"--set expects KEY=JSON, got {spec!r}")
-        kwargs.setdefault("prb_overrides", {})
-        kwargs["prb_overrides"][key] = json.loads(raw)
+        val = json.loads(raw)
+        routed = False
+        if key in solve_params:
+            kwargs[key] = val
+            routed = True
+        if key in cfg_fields:
+            kwargs.setdefault("prb_overrides", {})
+            kwargs["prb_overrides"][key] = val
+            routed = True
+        if not routed:
+            raise SystemExit(
+                f"--set {key}: neither a solve_and_persist kwarg nor a "
+                "ScenarioConfig field — nothing would consume it"
+            )
     if args.offer_curve_json is not None:
         kwargs["offer_curve_overrides"] = rcf._parse_offer_curve_json(
             args.offer_curve_json, flag="--offer-curve-json"
