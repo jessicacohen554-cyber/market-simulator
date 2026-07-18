@@ -1,11 +1,11 @@
 {
- "CAISO": "2026-07-18-caiso-94-daytime-clean",
+ "CAISO": "2026-07-18-caiso-97-evening-trim",
  "ERCOT": "2026-07-18-ercot81-nonreleasable-as",
  "NEISO": "2026-07-13-neiso-59-cc-hr",
  "PJM": "2026-07-18-pjm-115-unit-only",
  "keepers": [
   "2026-07-18-ercot81-nonreleasable-as",
-  "2026-07-18-caiso-94-daytime-clean",
+  "2026-07-18-caiso-97-evening-trim",
   "2026-07-18-pjm-115-unit-only",
   "2026-07-13-nyiso-62-cc-hr",
   "2026-07-13-neiso-59-cc-hr",
