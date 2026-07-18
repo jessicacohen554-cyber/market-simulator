@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-18-caiso-97-evening-trim",
+  "label": "caiso 97 evening trim",
+  "date": "2026-07-18",
+  "shorthand": "caiso-97-evening-trim",
+  "definition": "caiso-97 WP-2 -- caiso-94 keeper recipe + evening hod-trim of the daytime clean tranche (6-21 -> 6-17, trimmed-window depth, FINDING-caiso94 s7 pre-registered fix, owner TRIPPED ruling) + caiso_ra_startup_trajectory carried (owner ruling), 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-18-caiso-97-evening-trim.js",
+  "bundle": "results/calibration/caiso97_hodtrim_B"
+}
