@@ -1,6 +1,6 @@
 # MIP unit-commitment cross-benchmark — ERCOT 2026, first 744h
 
-*Generated 2026-07-04 by `scripts/diag_uc_mip_crossbench.py` (PP-3.4). **DIAGNOSTIC ONLY — production stays pure LP.***
+*Generated 2026-07-04 by `scripts/archive/diag_uc_mip_crossbench.py` (PP-3.4). **DIAGNOSTIC ONLY — production stays pure LP.***
 
 Quantifies the LP-relaxation commitment bias: the production P1 LP has `pmin=0` on every tranche (DP-1), so min-load is emergent, not enforced. This adds true integer commitment (binary on/off + min-load + min-up/min-down + explicit startup cost) on the CAMPD committed tranches and compares.
 

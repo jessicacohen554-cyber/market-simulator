@@ -5,7 +5,7 @@ residual-(a) belly-commitment question — the seam-tz forensics' reattribution 
 the C3a body overprice to belly gas commitment
 (`results/calibration/FINDING-caiso-seam-tz-correction-2026-07-07.md` §4.3/§6) —
 in model-vs-actual numbers, so the next mechanism is designed against measured
-leverage, not a narrative. Reproduce: `python scripts/caiso_belly_commitment_probe.py`.
+leverage, not a narrative. Reproduce: `python scripts/archive/caiso_belly_commitment_probe.py`.
 
 ## Measurement
 
@@ -67,5 +67,5 @@ The high-leverage target is the **evening CC/CT commitment**, then the belly
   the grounded evening/belly commitment that replaces the mechanism it thins.
 
 This probe writes nothing and changes no keeper; it is the measurement gate before
-the mechanism build. `scripts/caiso_belly_commitment_probe.py` re-runs it against
+the mechanism build. `scripts/archive/caiso_belly_commitment_probe.py` re-runs it against
 any keeper via `--run-id`.

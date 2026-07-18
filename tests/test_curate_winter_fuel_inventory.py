@@ -16,7 +16,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_winter_fuel_inventory as curate_wfi
+from scripts.data import curate_winter_fuel_inventory as curate_wfi
 from scripts.lib import clean_io
 from scripts.lib import winter_fuel_inventory as wfi
 from scripts.lib.clean_io import validate_clean

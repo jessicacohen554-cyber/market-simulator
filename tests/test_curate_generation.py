@@ -1,4 +1,4 @@
-"""Tests for scripts/curate_generation.py.
+"""Tests for scripts/data/curate_generation.py.
 
 A tiny *synthetic* raw fixture (one small EIA-930 BA parquet + one PJM
 gen-by-fuel CSV) is curated through the real transform + write path and the
@@ -17,7 +17,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_generation as cg
+from scripts.data import curate_generation as cg
 from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
 

@@ -16,7 +16,7 @@ queryable/reportable rather than living only as inline code comments.
 Reads the curated clean Parquet through :func:`scripts.lib.clean_io.read_clean`;
 if the clean partition is absent (not yet regenerated), falls back to building
 the identical frame straight from ``data/raw`` via
-:mod:`scripts.curate_nyiso_renewable_curtailment` so a caller never silently
+:mod:`scripts.data.curate_nyiso_renewable_curtailment` so a caller never silently
 gets nothing on a fresh checkout without a regenerated clean tree.
 """
 
@@ -85,7 +85,7 @@ def load_annual_curtailment(
     get every row. Returns an empty frame if nothing is available (should not
     happen once the raw CSVs are committed).
     """
-    from scripts.curate_nyiso_renewable_curtailment import build_annual_frame
+    from scripts.data.curate_nyiso_renewable_curtailment import build_annual_frame
 
     frame = _read_or_rebuild(ANNUAL_DATATYPE, build_annual_frame)
     return _filter(frame, resource_type, geographic_scope)
@@ -101,7 +101,7 @@ def load_monthly_curtailment(
     production); zonal rows carry ``curtailed_energy_gwh``. See
     :func:`load_annual_curtailment` for the filter semantics.
     """
-    from scripts.curate_nyiso_renewable_curtailment import build_monthly_frame
+    from scripts.data.curate_nyiso_renewable_curtailment import build_monthly_frame
 
     frame = _read_or_rebuild(MONTHLY_DATATYPE, build_monthly_frame)
     return _filter(frame, resource_type, geographic_scope)

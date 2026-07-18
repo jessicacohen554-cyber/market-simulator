@@ -19,7 +19,7 @@ from market_sim.config.capacity_area_crosswalk import (
     map_area,
 )
 from market_sim.config.iso_configs import get_iso_config
-from scripts import curate_capacity_deliverability as curate_cd
+from scripts.data import curate_capacity_deliverability as curate_cd
 from scripts.lib import clean_io
 from scripts.lib.clean_io import read_clean
 

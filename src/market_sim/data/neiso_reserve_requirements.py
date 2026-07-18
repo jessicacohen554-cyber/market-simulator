@@ -17,10 +17,10 @@ reserve *prices* are the validation target and are NEVER read here.
 Data contract (the ``reserve-requirements`` clean datatype):
 
 * raw: ``data/raw/NEISO-AS/requirements/requirements_<start>_<end>.csv``
-  (gitignored window CSVs; ``scripts/fetch_neiso_reserve_requirements.py``
+  (gitignored window CSVs; ``scripts/data/fetch_neiso_reserve_requirements.py``
   regenerates them from the public report)
 * clean: ``data/clean/reserve-requirements/NEISO/<year>/`` via
-  ``scripts/curate_reserve_requirements.py`` (schema
+  ``scripts/data/curate_reserve_requirements.py`` (schema
   ``data/dictionary/schema/reserve-requirements.schema.yaml``)
 
 The loader raises when the clean partition is absent — the flag must never
@@ -84,8 +84,8 @@ def load_neiso_reserve_requirements(year: int, hours: int) -> dict[str, np.ndarr
         FileNotFoundError: The clean partition is absent — the
             ``neiso_dynamic_reserve_requirements`` flag hard-errors rather
             than silently reverting to the static requirements. Regenerate
-            with ``scripts/fetch_neiso_reserve_requirements.py`` then
-            ``scripts/curate_reserve_requirements.py``.
+            with ``scripts/data/fetch_neiso_reserve_requirements.py`` then
+            ``scripts/data/curate_reserve_requirements.py``.
         ValueError: A mapped series is missing from the clean data, does not
             cover the full horizon, or contains non-finite/negative values.
     """
@@ -95,8 +95,8 @@ def load_neiso_reserve_requirements(year: int, hours: int) -> dict[str, np.ndarr
             f"neiso_dynamic_reserve_requirements=True but the measured "
             f"requirement series is absent: no clean partition "
             f"reserve-requirements/NEISO/{year}. Regenerate raw with "
-            f"scripts/fetch_neiso_reserve_requirements.py, then curate with "
-            f"scripts/curate_reserve_requirements.py — the flag must not "
+            f"scripts/data/fetch_neiso_reserve_requirements.py, then curate with "
+            f"scripts/data/curate_reserve_requirements.py — the flag must not "
             f"solve on the static requirements it claims to replace."
         )
     df = clean_io.read_clean("reserve-requirements", iso="NEISO", year=int(year))

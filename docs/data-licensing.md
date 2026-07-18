@@ -72,7 +72,7 @@ everything displayed on an EIA web page is itself EIA's public-domain work.
 
 **Applies to:** `caiso-weather/`, `ercot-weather/`, `miso-weather/`,
 `neiso-weather/`, `nyiso-weather/`, `pjm-weather/` (all built by
-`scripts/fetch_zone_temperature.py` from NOAA GHCN-Daily station records).
+`scripts/data/fetch_zone_temperature.py` from NOAA GHCN-Daily station records).
 
 - NOAA's AWS Open Data Registry listing: GHCN-Daily is released under
   **CC0-1.0 Universal Public Domain Dedication** — "There are no
@@ -168,7 +168,7 @@ EIA's own Natural Gas Weekly Update page
 (<https://www.eia.gov/naturalgas/weekly/>) displays a "Spot Prices
 ($/MMBtu)" table (Henry Hub / New York / Chicago / California Composite
 Average) captioned **"Source: NGI's Daily Gas Price Index."** This project's
-own `scripts/fetch_caiso_citygate_daily.py` independently confirms the same
+own `scripts/data/fetch_caiso_citygate_daily.py` independently confirms the same
 fact in its docstring ("the same free daily print... NGI Daily GPI compiled
 by Bloomberg"). EIA is displaying, not republishing as its own — this is
 precisely the third-party carve-out EIA's copyright policy names (§1). NGI's
@@ -184,7 +184,7 @@ a free EIA display page, not released into the public domain by its actual
 owner (NGI/Hart Energy).** `nyiso_downstate_ct_gas_basis_monthly.csv` and the
 NEISO rows of `gas_basis_by_iso_month.csv` inherit the same concern — the
 NYISO downstate basis is derived in part from `transco_z6_iroquois_monthly.csv`,
-and `scripts/fetch_eia_gas_prices.py`'s own docstring already flags the
+and `scripts/data/fetch_eia_gas_prices.py`'s own docstring already flags the
 NEISO AGT index as "ISO-NE's licensed... index" (see §7).
 
 **Finding for the owner:** confirm with NGI/Hart Energy whether EIA's

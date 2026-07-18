@@ -33,7 +33,7 @@ and condition-responsive, so it is admissible in backcast **and** forecast
 
 ## CAISO coefficients (re-regressed — not ERCOT's)
 
-`scripts/derive_caiso_ct_reliability_floor.py` regresses the measured CAMPD
+`scripts/data/derive_caiso_ct_reliability_floor.py` regresses the measured CAMPD
 CT_PEAKER **evening** (h15-21 local-standard) capacity factor on EIA-930 `CISO`
 net-load, 2023-2025, time-aligned to the model's naive local-standard 8760-hour
 clock:
@@ -138,7 +138,7 @@ shape fix is structural groundwork; the under-run residual is Step 3's input.
 ## Re-derive
 
 ```
-python scripts/derive_caiso_ct_reliability_floor.py            # 2023-2025
+python scripts/data/derive_caiso_ct_reliability_floor.py            # 2023-2025
 ```
 
 Reads the committed CAMPD (`data/raw/campd-unit-level/CA_*.parquet`) and EIA-930

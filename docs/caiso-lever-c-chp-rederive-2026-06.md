@@ -23,7 +23,7 @@ the sector-default BTM share (50% for industrial) was too low.
 
 ## Changes Made
 
-### A. `scripts/derive_thermal_tranches.py`
+### A. `scripts/data/derive_thermal_tranches.py`
 
 1. **`_CHP_F923_FLOOR_FACTOR`: 0.85 → 0.40** — reduces EIA-923-derived pmin floors
    by 53%. Rationale: the minimum monthly CF of a QF cogen under-represents the

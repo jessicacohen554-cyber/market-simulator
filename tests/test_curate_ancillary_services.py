@@ -1,4 +1,4 @@
-"""Tests for scripts/curate_ancillary_services.py.
+"""Tests for scripts/data/curate_ancillary_services.py.
 
 Builds a tiny synthetic raw fixture (one small file per ISO source layout),
 curates it into a redirected temp clean tree, and asserts the output is
@@ -19,7 +19,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 
-from scripts import curate_ancillary_services as cas  # noqa: E402
+from scripts.data import curate_ancillary_services as cas  # noqa: E402
 from scripts.lib import clean_io  # noqa: E402
 
 

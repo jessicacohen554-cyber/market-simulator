@@ -174,7 +174,7 @@ committed raise would paper over a fuel-basis miss (#11).
 **Lever:** `cc_capacity_reconcile` with a **demonstrated-peak CAP** (lower model
 nameplate to CAMPD p99.9 where nameplate exceeds it). The brief notes **12/69 PJM
 CC plants have model nameplate >1.1× their CAMPD demonstrated peak** — they over-run
-the top purely on capacity. `scripts/derive_cc_capacity_reconcile.py` is currently
+the top purely on capacity. `scripts/data/derive_cc_capacity_reconcile.py` is currently
 **raise-only** (`reconciled = max(cur, p999)`, `_MIN_DELTA`), so it does nothing for
 PJM's over-capacity plants; it needs a `min(...)`/cap mode (or a PJM variant
 writing `cc_capacity_reconcile_PJM.csv`).

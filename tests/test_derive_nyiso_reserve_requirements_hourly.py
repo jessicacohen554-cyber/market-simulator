@@ -19,7 +19,7 @@ import pandas as pd
 from market_sim.data.nyiso_reserve_requirements import (
     load_nyiso_reserve_requirements,
 )
-from scripts.derive_nyiso_reserve_requirements_hourly import (
+from scripts.data.derive_nyiso_reserve_requirements_hourly import (
     build_hourly_base,
     build_tsa_windows,
     derive_year,

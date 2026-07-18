@@ -6,7 +6,7 @@ recipe + LEG A ``ercot_noncampd_plant_availability``, the promoted
 composition mechanism:
 
 * ``ercot_offer_surface_cleared_share`` — the measured DAM cleared-share
-  boundary + above-boundary offer wall (scripts/derive_ercot_dam_cleared_share
+  boundary + above-boundary offer wall (scripts/data/derive_ercot_dam_cleared_share
   .py). Prices the merchant CC/CT econ capacity ABOVE the bin's measured DAM
   cleared share at the bin's measured offered-but-uncleared wall — the
   no-must-offer participation cliff the ERCOT-72 measurement named on the
@@ -63,7 +63,7 @@ def main() -> None:
         "DAM cleared-share offer boundary (no DAM must-offer: the merchant "
         "gas econ capacity above the bin's MEASURED cleared share of live "
         "capability is floored at the bin's MEASURED offered-but-uncleared "
-        "wall; scripts/derive_ercot_dam_cleared_share.py, condition-binned by "
+        "wall; scripts/data/derive_ercot_dam_cleared_share.py, condition-binned by "
         "net-load percentile, zero fitted scalars — rules 13/14/26). "
         "Full-span 2023-2025 (rule 16)."
     )

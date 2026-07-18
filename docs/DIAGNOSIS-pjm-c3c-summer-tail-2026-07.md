@@ -164,7 +164,7 @@ derivers:**
 * **Leg A — short full-unit stops (existing mechanism, arm it for PJM).**
   `ScenarioConfig.unit_outage_short_windows=True` +
   `campd-unit-outages-short-PJM.csv` derived by the frozen deriver
-  (`scripts/derive_campd_unit_outages.py --short-windows --iso PJM`) with ONE
+  (`scripts/data/derive_campd_unit_outages.py --short-windows --iso PJM`) with ONE
   identification-basis correction: `SHORT_BASELOAD_CF` (0.55, unchanged)
   evaluated on **when-operable** hours (excluding the unit's own ≥5-day
   standard windows) instead of raw annual hours. The raw-annual basis
@@ -383,8 +383,8 @@ fixed-point factor (per-day cap 1.0, scale clip 1.25, frozen) to reproduce
    results (rules 1/11/23/26).
 
 **Measured result (2026-07-16): gate #1 FAILS at the build step — no solve.**
-The overlay was fully built (fetch `scripts/fetch_nrc_reactor_status.py` +
-committed raw NRC annual files, deriver `scripts/derive_nuclear_availability.py`
+The overlay was fully built (fetch `scripts/data/fetch_nrc_reactor_status.py` +
+committed raw NRC annual files, deriver `scripts/data/derive_nuclear_availability.py`
 → `data/raw/nuclear-availability-PJM.csv`, 15,190 reactor-days / 31 reactors;
 loader `outages.nuclear_unit_availability_series`; PJM-scoped fleet wiring
 behind `ScenarioConfig.nuclear_unit_availability`, default off, byte-identical

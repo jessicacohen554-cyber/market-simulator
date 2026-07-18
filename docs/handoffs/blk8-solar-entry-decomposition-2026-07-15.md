@@ -67,7 +67,7 @@ gap-register row until re-scored hindcasts show solar recall > 0 in ERCOT *and* 
    any retire/build decision** — a run with it on is byte-identical in fleet outcome to one
    with it off (verified: trivial-fleet A/B gives identical additions; the 174 `test_capacity`
    tests pass). Harness flag: `run_capacity_hindcast.py --entry-screen-diagnostics`. Reader:
-   `scripts/blk8_entry_decomposition.py`.
+   `scripts/archive/blk8_entry_decomposition.py`.
 2. **Offline cost side.** The solar hurdle (annualized fixed cost) depends only on config +
    global cumulative deployment — no LP — so it is computed exactly (§3) with the model's own
    `compute_lcoe` / `wright_cost` / `_capital_recovery_factor`.

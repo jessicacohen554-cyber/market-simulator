@@ -15,7 +15,7 @@
 # series (PJM 2021 hour 6983-6985: raw_mw of 4.3e8-2.1e9 MW against a
 # ~90,000 MW backdrop; several ISO-years also carry 0.0 MW "missing data"
 # sentinel hours, itself impossible for whole-BA system demand). raw/ is
-# immutable (CLAUDE.md), so `scripts/curate_demand_profile.py` repairs these
+# immutable (CLAUDE.md), so `scripts/data/curate_demand_profile.py` repairs these
 # at this curation seam: a physical-bounds screen (value <= 0, or value more
 # than 5x the (iso, year) series median) flags a hour as invalid, then linear
 # interpolation across the flagged run fills it from the nearest valid hours.

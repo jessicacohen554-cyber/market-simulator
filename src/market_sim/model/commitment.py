@@ -862,7 +862,7 @@ def caiso_ra_mustoffer_min_gen(
             ``ScenarioConfig.caiso_ra_startup_trajectory``). A real CC
             started for the evening peak fires L hours before it reaches
             load (measured CAMPD start-to-full-load p50, per plant with a
-            class fallback — ``scripts/derive_campd_cc_start_trajectory.py``);
+            class fallback — ``scripts/data/derive_campd_cc_start_trajectory.py``);
             the continuous-variable LP pays no startup and materializes
             capacity exactly at the ramp hour, so its evening starts land
             ~L hours late (FINDING-caiso95 §3: model start-histogram peak

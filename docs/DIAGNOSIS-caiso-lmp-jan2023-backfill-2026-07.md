@@ -74,7 +74,7 @@ where the real marginal unit is NOT an in-state gas unit.
   aseasonally". **The GRP zips already on this branch contain the intertie
   nodes** (`MALIN_5_N101`, `CAPTJACK_5_N003`, `PALOVRDE_ASR-APND` — 24 h/day
   each in every DAM zip): the measured January seam is recoverable with an
-  extension of `scripts/fold_caiso_oasis_grp_zips.py` + the
+  extension of `scripts/data/fold_caiso_oasis_grp_zips.py` + the
   `fetch_caiso_intertie_lmp.py` component-sum convention (LMP+MCC+MCL, no
   MGHG). Rule-14: use the measured input; whichever way it moves the
   residual, it replaces a fitted ladder in the miss month.

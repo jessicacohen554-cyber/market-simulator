@@ -13,7 +13,7 @@ Mechanism (``ScenarioConfig.pjm_da_virtual_bids``, PJM-gated, default off)
 --------------------------------------------------------------------------
 The measured HOURLY submitted INC/DEC bid curves (PJM DataMiner2
 ``hrl_da_incs_decs``, ``data/raw/pjm-da-virtuals/``,
-``scripts/fetch_pjm_da_virtuals.py``) enter the LP as a **single per-hour
+``scripts/data/fetch_pjm_da_virtuals.py``) enter the LP as a **single per-hour
 NET virtual curve** — the financial net of submitted demand and supply:
 
     net(λ) = Σ_{DEC bids ≥ λ} MW − Σ_{INC offers ≤ λ} MW
@@ -70,7 +70,7 @@ measured outcome, and clearing prices stay validation-only.
 
 Forecast substitute: the frozen condition-binned surface
 ``data/raw/_validation-source/pjm_da_virtual_surface_condbinned.json``
-(``scripts/derive_pjm_da_virtual_surface.py`` — net-load-percentile bins,
+(``scripts/data/derive_pjm_da_virtual_surface.py`` — net-load-percentile bins,
 load-fraction MW, implied-heat-rate prices; all forward-native axes that
 regenerate hourly curves from a forecast year's own load/VRE/gas drivers).
 The forecast-path wiring is not built yet — this flag lives in the
@@ -229,7 +229,7 @@ def _load_bids_frame(iso: str, year: int, hours: int) -> pd.DataFrame | None:
     if missing:
         raise FileNotFoundError(
             f"pjm_da_virtual_bids: {year} raw virtual-bid month(s) {missing} "
-            "missing — run scripts/fetch_pjm_da_virtuals.py"
+            "missing — run scripts/data/fetch_pjm_da_virtuals.py"
         )
     hmap = _hour_index_map(iso, year, hours)
     parts = []
@@ -335,7 +335,7 @@ def build_pjm_da_virtual_units(
         raise FileNotFoundError(
             "pjm_da_virtual_bids is on but data/raw/pjm-da-virtuals/ has no "
             f"hrl_da_incs_decs_{year}_* parquets — run "
-            "scripts/fetch_pjm_da_virtuals.py (the mechanism never silently "
+            "scripts/data/fetch_pjm_da_virtuals.py (the mechanism never silently "
             "no-ops)"
         )
 

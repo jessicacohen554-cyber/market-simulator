@@ -23,7 +23,7 @@ Dashboard: **`nyiso p11 smoke 2023`** (P12-confirmed keeper; see
 `docs/calibration-log.md` NYISO P11, P9b, P12 entries).
 
 Reference data (`data/raw/_validation-source/calibration_reference.json`, NYISO 2023
-block) was built by `scripts/build_calibration_reference.py`: EIA-860 year-end
+block) was built by `scripts/data/build_calibration_reference.py`: EIA-860 year-end
 renewable capacity by zone, EIA-923 by-fuel net generation (including hydro and
 oil, added for NYISO via `_EIA923_EXTRA_FUELS_BY_ISO`), measured Henry Hub, and
 the eGRID 2023 NYIS generation/emissions benchmark.
@@ -93,7 +93,7 @@ t/MWh CC rate) contributes ~−2.5 Mt.
 
 Scored against `actual_lmp.json` (per-zone DA/RT levels) +
 `actual_lmp_hourly_NYISO.parquet` (system hourly DA/RT), demand-weighted P1
-system price (`scripts/analyze_lmp_residual.py`):
+system price (`scripts/archive/analyze_lmp_residual.py`):
 
 | | model | actual RT | actual DA | residual |
 |--|------:|------:|------:|------:|

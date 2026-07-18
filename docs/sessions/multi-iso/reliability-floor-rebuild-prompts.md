@@ -54,7 +54,7 @@ Implement, in src/market_sim and scripts:
      https://www.ncei.noaa.gov/data/global-historical-climatology-network-daily/access/<id>.csv
      and has 2023–2025 TMAX/TMIN coverage). Weights = metro load share within the zone.
 
-2. FETCH SCRIPT  scripts/fetch_zone_temperature.py  (--iso ALL|<list> [--start 2023
+2. FETCH SCRIPT  scripts/data/fetch_zone_temperature.py  (--iso ALL|<list> [--start 2023
    --end 2025] [--no-fetch])
    - Reads the station table, fetches NOAA GHCN-Daily (access CSV endpoint above; TMAX/
      TMIN are tenths °C ÷10), load-weights per zone, writes
@@ -102,7 +102,7 @@ Implement, in src/market_sim and scripts:
 7. RETIRE-AS-KEEPER (default-off probes, keep code): confirm ct_mustrun_per_plant and
    ct_deployment_overlay default False and are excluded from any keeper config path.
 
-8. DERIVE SCRIPT  scripts/derive_reliability_coeffs.py (--iso <ISO>)
+8. DERIVE SCRIPT  scripts/data/derive_reliability_coeffs.py (--iso <ISO>)
    - Per plan §B: build measured (zone,class) daily CF from CAMPD grossLoad / model bin
      nameplate (reuse _zone_class_daily_cf helpers; map plants→zone via
      bin_assignments_<ISO> / custom-bin-assignments / zone_assignment.build_zone_lookup
@@ -140,11 +140,11 @@ merged. Read CLAUDE.md (#9/#10/#11) and docs/multi-iso/reliability-floor-rebuild
 claude/temp-reliability-<ISO>-data.
 
 TASK for ISO = <ISO> ONLY (touch only this ISO's files):
-1. Fetch weather:  .venv/bin/python scripts/fetch_zone_temperature.py --iso <ISO>
+1. Fetch weather:  .venv/bin/python scripts/data/fetch_zone_temperature.py --iso <ISO>
    → writes data/raw/<iso>-weather/<iso>_zone_temp_daily.csv (date,zone,tmax_c,tmin_c,
    all fossil zones, 2023–2025). Spot-check: every zone present, no NaN after fill,
    plausible seasonal range.
-2. Derive coefficients:  .venv/bin/python scripts/derive_reliability_coeffs.py --iso <ISO>
+2. Derive coefficients:  .venv/bin/python scripts/data/derive_reliability_coeffs.py --iso <ISO>
    → writes data/raw/reference/reliability_floor_coeffs_<ISO>.csv and appends to
    docs/multi-iso/reliability-floor-coefficients.md.
 3. REVIEW the coefficient table HONESTLY (CLAUDE.md #9/#11): for every (zone, class),

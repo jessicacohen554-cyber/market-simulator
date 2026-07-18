@@ -1,5 +1,5 @@
 """Round-trip tests for partial-outages curation
-(scripts/curate_partial_outages.py).
+(scripts/data/curate_partial_outages.py).
 
 Builds a tiny synthetic ``campd-partial-outages.csv`` fixture, runs
 ``curate``, and asserts the written Parquet is schema-valid, ``iso`` is
@@ -12,7 +12,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_partial_outages as cpo
+from scripts.data import curate_partial_outages as cpo
 from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
 

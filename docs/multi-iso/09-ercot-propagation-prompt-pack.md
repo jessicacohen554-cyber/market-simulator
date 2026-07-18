@@ -54,7 +54,7 @@ the capacity-revenue module M1, already landed).
 | Change | Where | Why it stays ERCOT-only |
 |--------|-------|--------------------------|
 | ORDC scarcity-price overlay (LOLP/RTORPA, multi-step floor) | `results/scarcity.py`; gated at `runner.py:547` (`iso == "ERCOT"`) | The published ORDC formula *is* ERCOT's energy-only scarcity-pricing mechanism. Capacity-market ISOs price reliability through the capacity market, not an energy-price adder. |
-| RTORDPA reliability-deployment offset (`ordc_reliability_deployment_mw`) | `results/scarcity.py`, `scripts/derive_ordc_overlay.py` | Calibrated to ERCOT 2023 ECRS conservatism; an ORDC input. |
+| RTORDPA reliability-deployment offset (`ordc_reliability_deployment_mw`) | `results/scarcity.py`, `scripts/data/derive_ordc_overlay.py` | Calibrated to ERCOT 2023 ECRS conservatism; an ORDC input. |
 | Market-design regime switch (`ercot_market_design` auto/ordc/rtcb) | `results/scarcity.py` (`ercot_market_regime`), `scenarios.py` | Encodes ERCOT's RTC+B go-live (2025-12-05). Meaningless elsewhere. |
 | Exogenous ancillary-service revenue stream | `model/ancillary.py` (gated `iso != "ERCOT"` → 0), `ERCOT_AS_REVENUE_PER_KW_YR` | ERCOT's energy-only design pays material AS revenue *outside* any capacity market. In RPM/ICAP/FCM/PRA ISOs, reliability income is the capacity payment (M1) — adding an AS stream on top risks double-counting. See decision item **D1** below before changing this. |
 | $5,000 energy-only VOLL / DA SWCAP | `iso_configs.py` `_ercot_config().voll` | Already per-ISO (`ISOConfig.voll`); other ISOs are at $2,000. No action. |

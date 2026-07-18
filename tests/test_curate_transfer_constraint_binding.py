@@ -15,7 +15,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_transfer_constraint_binding as curate_tcb
+from scripts.data import curate_transfer_constraint_binding as curate_tcb
 from scripts.lib import clean_io
 from scripts.lib import transfer_constraint_binding as tcb
 from scripts.lib.clean_io import validate_clean

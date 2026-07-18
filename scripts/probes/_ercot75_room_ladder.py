@@ -51,6 +51,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts"))
 
+sys.path.insert(0, str(REPO / "scripts" / "data"))
 from build_ercot_hsl import _prevailing_to_standard  # noqa: E402
 from derive_dam_offer_hrmults import HCAP_USD_MWH, NETLOAD_PCT_EDGES  # noqa: E402
 from derive_ercot_dam_cleared_share import _netload_pct  # noqa: E402

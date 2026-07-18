@@ -2,7 +2,7 @@
 
 Covers ``model.storage.ercot_storage_capability_caps`` — the backcast battery
 power re-basis onto the 60-Day DAM disclosure registered non-OUT storage HSL
-(``scripts/derive_ercot_storage_capability.py``) — at the trivial scale first
+(``scripts/data/derive_ercot_storage_capability.py``) — at the trivial scale first
 (2 units / 24 hours), per the repo testing pattern.
 """
 

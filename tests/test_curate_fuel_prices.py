@@ -1,4 +1,4 @@
-"""Tests for scripts/curate_fuel_prices.py.
+"""Tests for scripts/data/curate_fuel_prices.py.
 
 Drives the curation end-to-end on a *tiny synthetic* raw fixture (not the real
 data tree): a synthetic ``henry_hub_daily.csv`` -> curate -> assert the written
@@ -16,7 +16,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_fuel_prices
+from scripts.data import curate_fuel_prices
 from scripts.lib import clean_io
 from scripts.lib.clean_io import read_clean_metadata, validate_clean
 

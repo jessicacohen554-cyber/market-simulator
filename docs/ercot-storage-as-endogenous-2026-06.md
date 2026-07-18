@@ -99,7 +99,7 @@ NYISO/PJM/MISO paths are byte-identical (every new parameter defaults off).
 
 ## Run / dashboard
 
-`scripts/run_164.py` = the run163 recipe (run157 keeper with the DAM-AS overlay
+`scripts/archive/run_164.py` = the run163 recipe (run157 keeper with the DAM-AS overlay
 swapped for the endogenous multi-product co-opt + forward AS requirement,
 P1-only) **+ `ercot_storage_as_endogenous` + `ercot_reserve_supply_cap`**.
 Solved 2023/2024/2025; the acute/tail incidence vs run163 and the

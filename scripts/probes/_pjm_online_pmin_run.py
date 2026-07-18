@@ -22,7 +22,7 @@ layer + reserve co-optimization (step 3 / price formation) are NOT in this run;
 see docs/multi-iso/pjm-coal-operations-firstprinciples-2026-06.md (Thread D).
 
 NOTE: requires ``thermal_tranches_PJM.csv`` to carry the ``mustrun_online_pct``
-column (re-derive with the updated scripts/derive_thermal_tranches.py); coal
+column (re-derive with the updated scripts/data/derive_thermal_tranches.py); coal
 plants in an artifact predating the column keep ``mustrun_pct`` (no-op).
 
 One year per invocation (PJM per-plant LP is GB-heavy); merge with

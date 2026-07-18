@@ -486,7 +486,7 @@ _RTCB_FIRST_FULL_YEAR: int = 2026
 # calendar gate, not a hard-coded 2025 special case.
 RTCB_GOLIVE_HOUR: int = 338 * 24  # 8112
 
-# Per-year measured ORDC / reserves series (scripts/fetch_ercot_ordc_reserves.py).
+# Per-year measured ORDC / reserves series (scripts/data/fetch_ercot_ordc_reserves.py).
 _ERCOT_ORDC_RESERVES_TMPL = "ercot_{year}_ordc_reserves_hourly.parquet"
 
 
@@ -541,7 +541,7 @@ def ercot_rtordpa_overlay_series(year: int, hours: int, config=None) -> np.ndarr
     return out
 
 
-# Per-year measured DAM AS clearing-price series (scripts/build_ercot_dam_as_mcpc.py).
+# Per-year measured DAM AS clearing-price series (scripts/data/build_ercot_dam_as_mcpc.py).
 _ERCOT_DAM_AS_MCPC_TMPL = "ercot_{year}_dam_as_mcpc_hourly.parquet"
 
 # Default first year the DAM-AS overlay applies. The 2023 stress year's day-ahead
@@ -593,7 +593,7 @@ def ercot_dam_as_overlay_series(
 
     Read **per year** from
     ``data/raw/ercot/ercot_<year>_dam_as_mcpc_hourly.parquet`` (the ``binding_mcpc``
-    column), built by ``scripts/build_ercot_dam_as_mcpc.py`` from the 60-Day DAM
+    column), built by ``scripts/data/build_ercot_dam_as_mcpc.py`` from the 60-Day DAM
     Disclosure — an exogenous ERCOT-published quantity, backcast-able on any year
     from the same forward driver (next year's published DAM AS MCPCs), responsive
     to changed conditions (a tighter/looser AS market reprices), never fit to LMP.
@@ -763,7 +763,7 @@ def ercot_load_resource_reserve_mw(year: int, hours: int) -> np.ndarray:
     """ERCOT's measured hourly Load-Resource responsive-reserve MW for ``year``.
 
     Reads the ``rrsufr_mw`` column of ``ercot_<year>_as_up_mw.parquet`` (built by
-    ``scripts/build_ercot_as_withholding.py`` from the NP3-911 cleared-DAM-AS
+    ``scripts/data/build_ercot_as_withholding.py`` from the NP3-911 cleared-DAM-AS
     reports): RRS-UFR is the Responsive Reserve provided by **Load Resources**
     via high-set under-frequency relays — by ERCOT protocol an exclusively
     load-side service (~0.8–0.9 GW mean, capped ~1.4 GW). This is reserve supply
@@ -773,7 +773,7 @@ def ercot_load_resource_reserve_mw(year: int, hours: int) -> np.ndarray:
 
     Returns ``(hours,)`` MW, zero-padded if short and **all-zero when the file
     is absent**. ``ercot_2023_as_up_mw.parquet`` is built by
-    ``scripts/build_ercot_as_2023.py`` from the 60-Day DAM Disclosure: its
+    ``scripts/data/build_ercot_as_2023.py`` from the 60-Day DAM Disclosure: its
     ``rrsufr_mw`` is the measured 2023 load-side RRS *shape* (RRS_req minus
     cleared generator PFR/FFR), level-anchored to the measured cleared RRS-UFR
     (NP3-911 Dec-2023 = 896 MW; 2024/2025 = 904 / 787 MW), with the Dec tail
@@ -870,7 +870,7 @@ def ercot_storage_as_reserve_mw(year: int, hours: int) -> np.ndarray:
     (the per-resource-type 60-Day DAM AS awards): the RegUp/RRS/ECRS cleared by
     **batteries** (~1.25 GW in 2023 → ~2.0 GW 2024 → ~2.8 GW 2025 as the fleet
     grew; all three measured from the Gen Resource Data awards, the 2023 series
-    built by ``scripts/build_ercot_as_by_restype_from_60day.py``, save an
+    built by ``scripts/data/build_ercot_as_by_restype_from_60day.py``, save an
     Oct-2023 disclosure-file gap that zero-fills). This is responsive reserve
     ERCOT's RTOLCAP/RTOFFCAP count toward the
     ORDC adder, but which the co-opt LP drops when ``storage_as_commitment`` is
@@ -1265,7 +1265,7 @@ def ercot_rtolcap_forward_supply_cap_mw(
       (:data:`ERCOT_RTOLCAP_FWD_ONLINE_SHARE` /
       :data:`~market_sim.config.constants.ERCOT_RTOLCAP_FWD_OFFLINE_SHARE`) median
       class reserve-realization fraction, conditioned on the net-load percentile
-      bin and season (``scripts/derive_ercot_rtolcap_forward.py``). RTOLCAP is the
+      bin and season (``scripts/data/derive_ercot_rtolcap_forward.py``). RTOLCAP is the
       on-line *headroom* (HSL − basepoint) an ORDC deployment can call, so the
       share is a headroom fraction of installed capacity (a rule-#11 finding — the
       measured series is ~1.8× the fleet's 10-min ramp; the ramp physics still
@@ -1387,7 +1387,7 @@ def ercot_online_capacity_envelope_mw(
     the committed on-line HSL of the tier's responsive classes
     (:data:`~market_sim.config.constants.ERCOT_ONLINE_CAP_SHARE` /
     :data:`~market_sim.config.constants.ERCOT_ONLINE_CAP_DELIV_COEF`, derived from
-    the committed CAMPD extracts, ``scripts/derive_ercot_rtolcap_forward.py
+    the committed CAMPD extracts, ``scripts/data/derive_ercot_rtolcap_forward.py
     --emit online-cap-constant``). ``model.dispatch._build_reserve_rows`` imposes
     ``Σ_z Σ_{g∈E_h∩z} P[g] + Σ_z Σ_{p∈Prod_h} R[p,z] ≤ online_cap_env[h,t]`` on the
     envelope tiers, so the LP cannot dispatch OR reserve more thermal than the
@@ -2220,7 +2220,7 @@ def load_pjm_measured_reserve_requirement(
 
     The published reserve requirement (``pr_req_mw`` in
     ``data/raw/PJM-AS/pjm_<year>_as_up_mw.parquet``, derived by
-    ``scripts/build_pjm_as_withholding.py`` from PJM Data Miner) is a measured
+    ``scripts/data/build_pjm_as_withholding.py`` from PJM Data Miner) is a measured
     *reliability* quantity — the capacity PJM holds against its most-severe
     single contingency, set by a published market-design formula (Manual 13),
     not a price actual. Using it as the co-optimization requirement in a
@@ -2263,7 +2263,7 @@ def load_pjm_measured_mad_reserve_requirement(
     The Mid-Atlantic/Dominion Reserve Subzone requirement (Manual 11 sec 4.2:
     the RTO Reserve Zone's one Reserve Subzone) — column ``mad_pr_req_mw`` in
     ``data/raw/PJM-AS/pjm_<year>_as_up_mw.parquet``, built by
-    ``scripts/build_pjm_as_withholding.py`` from PJM Data Miner RT reserve
+    ``scripts/data/build_pjm_as_withholding.py`` from PJM Data Miner RT reserve
     market results (``locale == "MAD"``, ``service == "PR"``). Like the RTO
     series it is a measured *reliability* quantity (the subzone's contingency
     + deliverability need), not a price actual — admissible per CLAUDE.md #12.
@@ -2306,7 +2306,7 @@ def _load_pjm_req_column(
 
     Shared reader for the measured PJM reserve-requirement series (the
     Synchronized sub-product columns ``sr_req_mw`` / ``mad_sr_req_mw``, built
-    by ``scripts/build_pjm_as_withholding.py`` from the same PJM Data Miner
+    by ``scripts/data/build_pjm_as_withholding.py`` from the same PJM Data Miner
     reserve-market results as the Primary columns). Applies the same
     defensive forward/back-fill as :func:`load_pjm_measured_reserve_requirement`
     (documented ~24 h data holes read as 0 and must never yield a spuriously

@@ -22,7 +22,7 @@ import market_sim.data.renewables as renewables
 from market_sim.config.constants import HOURS_PER_YEAR
 
 # One ISO/year for the parity assertion. CAISO 2024 ships a full-footprint HSL
-# parquet (scripts/build_caiso_hsl.py), so the GEN/HSL series flow through the
+# parquet (scripts/data/build_caiso_hsl.py), so the GEN/HSL series flow through the
 # loader without the partial-footprint coverage reconciliation.
 PARITY_ISO: str = "CAISO"
 PARITY_YEAR: int = 2024

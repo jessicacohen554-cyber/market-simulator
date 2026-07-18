@@ -3,7 +3,7 @@
 **Date:** 2026-06-22
 **Branch:** `claude/ercot-outage-sensitivity-j6a0p5`
 **Touches:** `scripts/derive_campd_outages.py` (`high_load_mask`, `WINDOW_DAYS`),
-`scripts/derive_campd_unit_outages.py` (shares the filter), and the regenerated
+`scripts/data/derive_campd_unit_outages.py` (shares the filter), and the regenerated
 ERCOT `data/raw/campd-outages.csv` + `data/raw/campd-unit-outages.csv`.
 
 ## The problem
@@ -92,7 +92,7 @@ that caused the original over-fire and without under-firing the summer.
 
 ```bash
 python scripts/derive_campd_outages.py      --iso ERCOT --years 2023 2024 2025
-python scripts/derive_campd_unit_outages.py --iso ERCOT --years 2023 2024 2025
+python scripts/data/derive_campd_unit_outages.py --iso ERCOT --years 2023 2024 2025
 # legacy annual band for A/B: add  --high-load-window-days 0
 ```
 </content>

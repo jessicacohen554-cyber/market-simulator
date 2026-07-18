@@ -17,7 +17,7 @@ Numbering note: CLAUDE.md rule N = audit §8 rule N−1 (CLAUDE.md gained rule 1
 **Update (2026-07-07, verified at HEAD):** past W0, **W1 and W2 are also landed.** W1's
 diagnostics: D-10 is built (`scripts/legitimacy_diagnostics.py::run_d10`, condensed into every
 bundle's `metrics.json` `free_class_score`); D-3 (zero-forcing ablation twin) is built per-ISO
-(`scripts/run_pjm77_ablation_twin.py`, `run_pjm80_ablation_twin.py`, `run_miso41_ablation_twin.py`);
+(`scripts/archive/run_pjm77_ablation_twin.py`, `run_pjm80_ablation_twin.py`, `run_miso41_ablation_twin.py`);
 D-11/D-13/D-14 remain unbuilt. W2's neutralizations are landed: C-13 (the NYISO `13.15×`
 CT_PEAKER / `1.21` CC_REGULAR cross-ISO leak) is gone from `data/fleet.py`/`offer_curves.py`
 (retired via PR #1635, "Retire G-26 residual-identified scalars"); C-7's env-var channel
@@ -33,9 +33,9 @@ Verified against the tree at 2026-07-04 (`main` @ 7b0d150). **W0 closed 2026-07-
 |---|---|
 | S1 diagnostics D-1/D-2/D-4/D-5/D-9 | **BUILT** — `scripts/legitimacy_diagnostics.py` (+ `--keepers` CI mode) |
 | D-12 DOF ledger | **BUILT** — `scripts/build_dof_ledger.py`; `audit_keepers.py` check E8 fails a keeper without a `free_parameters` attestation section |
-| D-8 coefficient stability | **RUN** (ERCOT/PJM/CAISO) — `scripts/d8_coefficient_stability.py`, results in `docs/out-of-sample-results-2026-07.md` §2 |
+| D-8 coefficient stability | **RUN** (ERCOT/PJM/CAISO) — `scripts/archive/d8_coefficient_stability.py`, results in `docs/out-of-sample-results-2026-07.md` §2 |
 | S2 CAISO CT scrub | Landed via the caiso-51 lineage; keeper is `2026-07-03-caiso-51-firm-base` |
-| C-2 `COAL_MAX_CF_BY_PLANT` | **CLOSED** — re-derived from CAMPD outage-adjusted availability (`scripts/derive_coal_max_cf.py`), moved to `constants.py`, the `(6179, 2025)` per-year override deleted |
+| C-2 `COAL_MAX_CF_BY_PLANT` | **CLOSED** — re-derived from CAMPD outage-adjusted availability (`scripts/data/derive_coal_max_cf.py`), moved to `constants.py`, the `(6179, 2025)` per-year override deleted |
 | C-5 CAISO 7,500 MW WECC cap | **CLOSED** — superseded structurally in caiso-51 (published MIC sum + measured p95 corridor envelopes); verification record `docs/caiso-c5-wecc-cap-closeout-2026-07-03.md` |
 | C-4 `CHP_BTM_PCT_BY_SECTOR` | **PARTIAL** — industrial/commercial re-derived from EIA-923 Schedule-8 (70/65); `"merchant": 35.0` remains residual-identified (commented as forecast-risk, flagged for the ledger) |
 | C-11 generic fallback leakage | **LARGELY CLOSED** — `data/offer_curves.py` fallbacks are now ISO-neutral per rule 25; `miso_deleak_bands` lineage exists; NEISO-47 keeper carries no 13.15×. **Residual: verify D-9 green for MISO/NEISO** |

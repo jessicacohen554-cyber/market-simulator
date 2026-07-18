@@ -100,7 +100,7 @@ def _load_annual(years: list[int], states: set[str]) -> pd.DataFrame:
 
     Returns unit-year rows filtered to ``states`` (quarantined years skipped).
     Requires the clean datatype (regenerate with
-    ``scripts/curate_emissions_unit_annual.py``).
+    ``scripts/data/curate_emissions_unit_annual.py``).
     """
     frames = []
     for y in years:

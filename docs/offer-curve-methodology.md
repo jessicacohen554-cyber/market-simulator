@@ -235,7 +235,7 @@ unit is left to the economic dispatch instead of being called out.
 
 ### Unit-level detection (the sole CAMPD outage source)
 
-The per-unit detector (`scripts/derive_campd_unit_outages.py`) reads the
+The per-unit detector (`scripts/data/derive_campd_unit_outages.py`) reads the
 per-unit CAMPD extracts and runs the *same two rules per unit* (coal →
 real-run, everything else → event-based), so it catches a single-unit outage at
 a multi-unit plant and, critically, a **coal-unit outage hidden behind running
@@ -383,7 +383,7 @@ operating across the whole 2023-2025 window and the larger unit 2 (345.6 MW,
 `BIT`, status `OS`) as out of service, so the dispatched coal capacity is the
 ~108 MW unit 1 — confirming the EIA-930 ISNE coal column (0.18/0.24/0.28 TWh)
 is a low-CF winter-peaking run, not zero and not a baseload. Its **coal rank is
-derived, not assumed**: `scripts/derive_coal_supply.py --iso NEISO` sums the
+derived, not assumed**: `scripts/data/derive_coal_supply.py --iso NEISO` sums the
 plant's EIA-923 Schedule-5 fuel receipts (54,050 tons 2023-2025, **100 %
 bituminous**) and writes `data/raw/_processed-legacy/coal_supply_NEISO.csv`, which
 `fleet.coal_supply_class` merges on top of the curated ERCOT map. Merrimack
@@ -437,9 +437,9 @@ generators and are not part of the gas offer-curve tranche fleet.
 | Tranche structure, capacity split, CHP must-run post-processing | `docs/binning-methodology.md`; `src/market_sim/data/fleet.py` |
 | *n*-slice economic ramp (`_econ_curve_steps`) | `src/market_sim/data/fleet.py` |
 | Smoothing config (`offer_curve_smoothing_n` / `_exp`) | `src/market_sim/config/scenarios.py` |
-| Committed % / coal must-run % / CC peaking % derivation | `scripts/derive_thermal_tranches.py` |
+| Committed % / coal must-run % / CC peaking % derivation | `scripts/data/derive_thermal_tranches.py` |
 | Per-ISO bin-assignment export (source-tagged) | `scripts/export_iso_bin_assignments.py` |
 | CEMS→EIA split-plant remap (AES Alamitos / Huntington Beach) | `src/market_sim/data/campd.py` (`CAMPD_UNIT_PLANT_REMAP`) |
 | Shared outage detectors + thresholds (ERCOT-79-tightened) | `scripts/lib/outage_detect.py` |
-| Unit-level outage detection (sole CAMPD outage source) | `scripts/derive_campd_unit_outages.py` |
+| Unit-level outage detection (sole CAMPD outage source) | `scripts/data/derive_campd_unit_outages.py` |
 | Historic-outage overlay | `src/market_sim/data/outages.py` |

@@ -184,7 +184,7 @@ CAISO_DSW_SURPLUS_REMOTE_VOM: float = 2.5
 # import (EIA-930 CISO DIBAs, model clock) over ALL overnight hours:
 #     2023: 5,870 MW · 2024: 6,205 MW · 2025: 6,487 MW
 # Estimation-stage honesty gates (caiso-81/86/87/88 precedent, run
-# 2026-07-17 in scripts/derive_caiso_overnight_clean_depth.py): CV 0.041
+# 2026-07-17 in scripts/data/derive_caiso_overnight_clean_depth.py): CV 0.041
 # (≤0.20 PASS); LOYO (mean-of-other-two) worst 8.1 % (≤25 % PASS) — tighter
 # than the caiso-87 midday depth's own gates (0.056 / 12.5 %). The static
 # entry is the pooled mean (persistent WEIM market structure); backcast
@@ -240,7 +240,7 @@ CAISO_OVERNIGHT_CLEAN_HOD_MAX: int = 5
 # import (EIA-930 CISO DIBAs, model clock) over the daytime trigger-OFF window:
 #     2023: 5,441 MW · 2024: 5,762 MW · 2025: 5,998 MW
 # Estimation-stage honesty gates (caiso-81/86/87/88/93 precedent, run
-# 2026-07-17 in scripts/derive_caiso_daytime_clean_depth.py): CV 0.040
+# 2026-07-17 in scripts/data/derive_caiso_daytime_clean_depth.py): CV 0.040
 # (≤0.20 PASS); LOYO (mean-of-other-two) worst 8.1 % (≤25 % PASS) — as tight
 # as the caiso-93 overnight depth (0.041 / 8.1 %). The static entry is the
 # pooled mean (persistent WEIM market structure); backcast years ride their
@@ -280,7 +280,7 @@ CAISO_DAYTIME_CLEAN_HOD_MAX: int = 21
 # same population it caps — the derive script's CRITICAL window-match rule):
 # p95 of measured WECC_DSW corridor net import over hod 6-17 trigger-OFF
 # hours. Estimation-stage honesty gates (same FROZEN thresholds, run
-# 2026-07-18 in scripts/derive_caiso_daytime_clean_depth.py --evening-trim):
+# 2026-07-18 in scripts/data/derive_caiso_daytime_clean_depth.py --evening-trim):
 # CV 0.060 (≤0.20 PASS); LOYO (mean-of-other-two) worst 13.5 % (≤25 % PASS —
 # 2024 3.3 %, 2025 8.5 %). Static entry = pooled mean. Zero fitted scalars.
 # ---------------------------------------------------------------------------
@@ -355,7 +355,7 @@ IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     # literals with no cited primary source and no by-year entry. They serve
     # ONLY the static-node path (reference_price_interface off) — the priced
     # reference seam now has its own measured Q-Q derivation,
-    # PJM_SEAM_LADDER_BY_YEAR below (scripts/derive_pjm_seam_ladders.py,
+    # PJM_SEAM_LADDER_BY_YEAR below (scripts/data/derive_pjm_seam_ladders.py,
     # 2026-07-10, closing C-6 for PJM's priced path the way
     # MISO_SEAM_LADDER_BY_YEAR / the NEISO ladders closed theirs). Labelled
     # per rule 24/rule 11 honesty; values unchanged.
@@ -371,7 +371,7 @@ IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
         ("import_scarcity", 1900.0, 75.0),
     ],
     # NEISO seams (audit C-6 closure, 2026-07-06): measured-data ladders from
-    # scripts/derive_neiso_import_tranches.py — per-seam Q-Q duration coupling
+    # scripts/data/derive_neiso_import_tranches.py — per-seam Q-Q duration coupling
     # of the measured ISO-NE DA hub LMP (SMD workbooks) with the measured
     # EIA-930 per-seam flows (ISNE↔HQT/NBSO/NYIS,
     # data/raw/eia-930-interchange/"ISNE interchange hourly.parquet"),
@@ -537,7 +537,7 @@ EXPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
 # measurable HQ export depth at all).
 EXPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = {
     # NEISO: derivation + sources in the IMPORT_TRANCHES["NEISO"] comment
-    # (scripts/derive_neiso_import_tranches.py). 2023 has no export_HQ sink
+    # (scripts/data/derive_neiso_import_tranches.py). 2023 has no export_HQ sink
     # (no measurable export depth on the HQT seam); sinks clamped by the
     # no-wash ordering where the measured threshold crossed the year's
     # cheapest import rung (2023 export sinks at $16.99 = Highgate $17.00 −
@@ -845,7 +845,7 @@ MISO_SEAM_DIBA: dict[str, tuple[str, ...]] = {
 # interchange.csv — the file behind eia_loader.pjm_net_interchange and the
 # pjm_seam_flow_limit envelopes), not the EIA-930 BA-to-BA product (whose PJM
 # submission disagrees with both this meter and the counterparty meters on
-# the MISO seam; scripts/derive_pjm_seam_ladders.py BOUNDARY NOTE). Each tie
+# the MISO seam; scripts/data/derive_pjm_seam_ladders.py BOUNDARY NOTE). Each tie
 # maps to the neighbor BA it physically interconnects: the NJ–NY merchant
 # HVDC ties (Neptune / Hudson / Linden) pool into the NYISO seam; Duke
 # Progress East/West pool with Duke Carolinas; every MISO-member tie —
@@ -883,7 +883,7 @@ MISO_PJM_BORDER_HR_BY_YEAR: dict[int, float] = {
 
 # MISO per-seam measured band-price ladders (audit C-6 closure for MISO;
 # gap register G-23 residual "2025 import starvation"): the revealed seam
-# supply curve, derived by scripts/derive_miso_seam_ladders.py from two
+# supply curve, derived by scripts/data/derive_miso_seam_ladders.py from two
 # measured sources — the EIA-930 MISO BA-to-BA seam flows (pooled onto the
 # three priced seams by MISO_SEAM_DIBA) Q-Q duration-coupled with the
 # measured MISO Day-Ahead hub LMP (external transactions schedule in the DA
@@ -994,7 +994,7 @@ MISO_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
 
 # PJM per-seam measured band-price ladders (the MISO/NEISO audit-C-6 pattern
 # applied to PJM; pjm-95 C1 root-cause lead "2023 interchange duration miss"):
-# the revealed seam supply curve, derived by scripts/derive_pjm_seam_ladders.py
+# the revealed seam supply curve, derived by scripts/data/derive_pjm_seam_ladders.py
 # from two measured sources — PJM's settlement-grade tie-line interchange
 # (data/raw/iso-specific-transmission/PJM_{year}_import_export_act_sch_
 # interchange.csv, pooled onto the five priced seams by PJM_SEAM_TIE) Q-Q

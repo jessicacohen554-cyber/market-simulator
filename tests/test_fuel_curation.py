@@ -20,7 +20,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_fuel_prices
+from scripts.data import curate_fuel_prices
 from scripts.lib import clean_io
 from scripts.lib.clean_io import read_clean_metadata, validate_clean
 

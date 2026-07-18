@@ -50,15 +50,15 @@ provide this at Algonquin Citygate, Transco Zone 6 NY, and Iroquois Zone 2.
 The repo already exploits the best available free sources:
 
 - `data/raw/gas-prices/transco_z6_ny_daily.csv` — EIA Weekly structured table, daily
-  (`scripts/fetch_transco_daily_spot.py`)
+  (`scripts/data/fetch_transco_daily_spot.py`)
 - `data/raw/gas-prices/algonquin_citygate_daily.csv` — EIA Weekly narrative, ~2/week
-  (`scripts/fetch_algonquin_daily_spot.py`)
-- `data/raw/gas-prices/henry_hub_daily.csv` — EIA DNAV (`scripts/fetch_eia_gas_prices.py`)
+  (`scripts/data/fetch_algonquin_daily_spot.py`)
+- `data/raw/gas-prices/henry_hub_daily.csv` — EIA DNAV (`scripts/data/fetch_eia_gas_prices.py`)
 - `data/raw/gas-prices/transco_z6_iroquois_monthly.csv` — monthly Iroquois level
-  (`scripts/fetch_nyiso_gas_narrative.py`)
+  (`scripts/data/fetch_nyiso_gas_narrative.py`)
 - `data/raw/gas-prices/nyiso_downstate_ct_gas_basis_monthly.csv` — derived: EIA N3050NY3
   (statewide) minus Transco Z6 NY, floored at 0
-  (`scripts/fetch_nyiso_downstate_gas_basis.py`)
+  (`scripts/data/fetch_nyiso_downstate_gas_basis.py`)
 
 ### 1.4 Proposed Approximation & Admissibility
 
@@ -131,7 +131,7 @@ No new intake needed — the approximation is already wired. For improvement:
 
 - **Datatype:** `gas_delivered_cost` (existing, under `data/dictionary/schema/`)
 - **Extension:** Add a downstate-specific EIA-923 plant-level filter to
-  `scripts/fetch_nyiso_downstate_gas_basis.py` that isolates Zone-J/K plants (Bayonne,
+  `scripts/data/fetch_nyiso_downstate_gas_basis.py` that isolates Zone-J/K plants (Bayonne,
   Equus, Edgewood, Glenwood Landing) from the public EIA-923 form — these are the
   target fleet. If they appear in the public file (≥200 MW plants only; the ask-A5
   series in `nyiso-data-asks-2026-07.md` notes they may be non-reporters as merchants),
@@ -343,7 +343,7 @@ launch + 60 days).
 
 HSL for wind/solar resources IS the uncurtailed potential — the maximum the
 resource can produce given current wind/sun. `HSL - Base Point` = curtailment
-instruction. This is exactly what `scripts/build_ercot_hsl.py` needs.
+instruction. This is exactly what `scripts/data/build_ercot_hsl.py` needs.
 
 **Post-RTC+B columns (Dec 5, 2025 onward):** Ramp Rate Up/Down, per-product AS
 Capabilities, per-product AS Awards — extends the file width but does not change
@@ -382,7 +382,7 @@ The `gridstatus` Python library (https://github.com/gridstatus/gridstatus, BSD-3
 license) already implements the full ERCOT API authentication flow and parses the
 60-Day SCED Gen Resource Data into clean DataFrames. If a human registers an ERCOT
 API account and provides credentials as environment variables, the existing
-`scripts/build_ercot_hsl.py` could be adapted to use `gridstatus` as the fetch
+`scripts/data/build_ercot_hsl.py` could be adapted to use `gridstatus` as the fetch
 layer — no custom auth code needed.
 
 ### 3.7 Rule-13 Admissibility
@@ -397,14 +397,14 @@ lowers it). It is never the model's own output fed back as input.
 ### 3.8 Recommended Intake Path
 
 - **Datatype:** `ercot_hsl` (existing; schema already defined, builder at
-  `scripts/build_ercot_hsl.py`)
+  `scripts/data/build_ercot_hsl.py`)
 - **Drop zone:** `data/raw/ercot-hsl/np6/` (existing convention; the builder already
   handles NP4-732/737 files placed there)
 - **Action required:** A human registers a free ERCOT API Explorer account, then
   either:
   - **(a)** Downloads NP4-732-CD (wind) and NP4-737-CD (solar) hourly CSVs manually
     from the Data Portal for 2024–2025 and drops them under `data/raw/ercot-hsl/np6/`.
-    `python scripts/build_ercot_hsl.py --year 2024 2025` processes them with zero code
+    `python scripts/data/build_ercot_hsl.py --year 2024 2025` processes them with zero code
     changes.
   - **(b)** Provides the subscription key + credentials as env vars so a fetch script
     can pull via the API (the `60_sced_gen_res_data` endpoint, filtered by

@@ -261,7 +261,7 @@ nuclear exact. None of these move the price residual — confirmed not drivers.
 1. **D — DAILY Transco-Z6 NY spot is now IN and validated (§4e); the remaining
    D lever is a REAL monthly Iroquois Z2.** Sub-task **(a) daily resolution is
    DONE** (§4e): the real EIA NG Weekly Transco-Z6 NY **daily** spot was scraped
-   (`scripts/fetch_transco_daily_spot.py` → `data/raw/gas-prices/transco_z6_ny_daily.csv`,
+   (`scripts/data/fetch_transco_daily_spot.py` → `data/raw/gas-prices/transco_z6_ny_daily.csv`,
    674 trading days) and `iso_hub_daily_gas_prices` extended off AGT-only to
    NYISO (`_nyiso_hub_daily_gas_prices`, the measured Transco daily within-month
    shape on the monthly Iroquois level, **exactly mean-preserving**). It does
@@ -480,7 +480,7 @@ and ready for the daily follow-on. Registered as `nyiso 15 transco-z6-gas
 
 Fix #1(a) from §3. The EIA NG Weekly **archive** "New York" (Transco Z6 NY)
 **daily** spot was scraped across all 146 weekly pages of 2023-2025
-(`scripts/fetch_transco_daily_spot.py` → `data/raw/gas-prices/transco_z6_ny_daily.csv`,
+(`scripts/data/fetch_transco_daily_spot.py` → `data/raw/gas-prices/transco_z6_ny_daily.csv`,
 674 trading days; the only gaps are holiday weeks EIA does not archive).
 Two independent cross-checks confirm the scrape: the daily monthly means
 reproduce the §4d monthly file to **<$0.06** in every fully-covered month, and
@@ -542,8 +542,8 @@ path on both price and volumes. Registered as `nyiso 16 transco-daily-gas`.
 
 ## 5. What changed in code this session
 
-- **Fixed** the stale validation path in `scripts/derive_nyiso_rcpf_overlay.py`
-  and `scripts/analyze_lmp_residual.py` (`inputs/calibration` →
+- **Fixed** the stale validation path in `scripts/data/derive_nyiso_rcpf_overlay.py`
+  and `scripts/archive/analyze_lmp_residual.py` (`inputs/calibration` →
   `data/raw/_validation-source`, `paths.CALIBRATION_DIR`). This unblocked the
   measured per-zone RT-reserve validation (was printing "--") and the actual-RT
   MAE in the residual analyzer — the explicit mechanism-B "fix the
@@ -557,7 +557,7 @@ path on both price and volumes. Registered as `nyiso 16 transco-daily-gas`.
   consumed only under `--gas-hub-basis-overlay` (off by default for NYISO), so
   the keeper is byte-identical.
 - **Data + code (this session, §4e — fix #1(a)):** added
-  `scripts/fetch_transco_daily_spot.py` (scrapes the EIA NG Weekly archive "New
+  `scripts/data/fetch_transco_daily_spot.py` (scrapes the EIA NG Weekly archive "New
   York"/Transco-Z6 NY **daily** spot, 2023-2025) and its output
   `data/raw/gas-prices/transco_z6_ny_daily.csv` (674 trading days). Extended
   `iso_hub_daily_gas_prices` off its NEISO-only form to NYISO via the new

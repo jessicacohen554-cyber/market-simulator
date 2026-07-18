@@ -237,7 +237,7 @@ inherits `ercot_load_resource_reserve=True` unchanged.
 > Access Portal **UI** (not the API) and uploaded them to the repo across
 > two rounds — a different, already-authorized mechanism the closure
 > decision did not rule out. Coverage is now 24/24 months for both wind
-> and solar, both years; `scripts/build_ercot_hsl.py --year 2024 2025`
+> and solar, both years; `scripts/data/build_ercot_hsl.py --year 2024 2025`
 > builds cleanly (see `docs/ercot-hsl-2024-25-intake-attempt-2026-07.md`
 > for the full validation, including a `_read_csvs` fix for ERCOT's actual
 > zip-of-zips archive shape, and a flagged solar-vs-EIA-923 divergence kept
@@ -263,7 +263,7 @@ inherits `ercot_load_resource_reserve=True` unchanged.
 > block on the Data Access Portal was permanent, not a transient egress
 > failure. The G7 reference-curtailment-rate gross-up was the standing
 > approach for ERCOT 2024/25 HSL under that constraint. The
-> `scripts/build_ercot_hsl.py` builder always transparently ingested an
+> `scripts/data/build_ercot_hsl.py` builder always transparently ingested an
 > NP6 upload landing by another route — which is exactly what happened.
 
 ERCOT 2024/25 still have **no NP6 HSL parquet**; `hsl_potential_mw` falls back

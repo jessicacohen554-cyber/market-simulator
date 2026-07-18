@@ -114,7 +114,7 @@ with explicit UC economics (Thread D).
   coal plant = must-run / committed / econ / peak tranches forming a rising
   offer curve. `docs/binning-methodology.md`.
 - **Must-run floor** = `thermal_tranches_PJM.csv` `mustrun_pct` (P5 of all-hours
-  CF, capped 0.60), from `scripts/derive_thermal_tranches.py`. Cardinal 60 /
+  CF, capped 0.60), from `scripts/data/derive_thermal_tranches.py`. Cardinal 60 /
   Kyger 48 / Gavin 48 / Amos 37. The `_mustrun` tranche is **forced on** and
   bids **VOM+carbon+NOx only** (fuel sunk = take-or-pay assumption).
 - **Gas-keyed passthrough sigmoid** (above-must-run fuel cost) —
@@ -207,7 +207,7 @@ commitment for CC. Characterize CC cycling from CAMPD the same way as Thread A.
 - `data/fleet.py`: `bins_to_fleet` (~5051), coal pct_mr / `coal_bit_dispatchable`
   block (~5071), `apply_coal_tranches` (~2077), `campd_tranche_fuel_frac`
   (~2048), `plant_tranche_bands` (~5614), `coal_supply_class` (~3450).
-- `scripts/derive_thermal_tranches.py` (must-run/committed P5 derivation),
+- `scripts/data/derive_thermal_tranches.py` (must-run/committed P5 derivation),
   `derive_coal_supply.py` (EIA-923 rank/cost).
 - `config/scenarios.py`: `COAL_SIGMOID_DEFAULTS` (1529), `coal_bit_*` /
   `coal_bit_dispatchable` (~879).

@@ -7,7 +7,7 @@ the curated ``calibration_flags`` subset omits ~30 non-default flags) and layers
 ONLY the measured G-22 §8 heterogeneity-preserving condition-responsive offer
 surface (``ercot_offer_surface_conditional``) on top. All surface parameters
 come from the 60-Day DAM disclosure derivation
-(``scripts/derive_dam_offer_hrmults.py --condition-binned`` →
+(``scripts/data/derive_dam_offer_hrmults.py --condition-binned`` →
 ``data/raw/_validation-source/offer_curve_dam_hrmults_condbinned.json``) —
 zero fitted values. The keeper's ``offer_curve_overrides``/``deltas`` stand
 (the surface reprices the peak-band RUNGS around the keeper's resolved peak,
