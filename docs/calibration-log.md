@@ -17284,3 +17284,68 @@ place; registered per rule 15 with legitimacy diagnostics, attestation
 verdict --write-metrics both, parity OK (61 runs), manifest rebuilt; top-15
 retention pruned the 2026-07-14 miso-65 pair (oldest). Transport: session git
 gateway push, fetch-back SHA-verified (rule 27).
+
+## 2026-07-18 — caiso-97 WP-2: the evening hod-trim BUILT + SOLVED (owner-ruled TRIPPED watch) + trajectory CARRIED and REGISTERED — every pre-registered direction lands (evening λ rises toward actual all 3 years, evening net import falls −0.43/−0.61/−1.42 TWh toward measured, CC energy recovers +0.55/+0.64/+1.45 TWh, C5a energy-explained dCO2 −2.28→−2.02 / −1.47→−1.14 / −1.39→−0.72 Mt) with C1 12/12, overnight λ and C3c IDENTICAL — but the recovery lands on CC_REGULAR, not CT_PEAKER, and the mean-level cost is honest: same-machine C3a-2025 +9.1→+9.6 % (the belly over-price now owns the annual residual)
+
+**Runs:** `2026-07-18-caiso-97-evening-trim` (registered, DIAGNOSTIC — NOT a
+keeper swap; determination NOT-YET, fail set {C3a-2025, C3c, C4, C5a} — same
+family as the caiso-94 keeper), plus the unregistered same-machine fresh
+`caiso95_repro_A` re-solve (FINDING-caiso92b protocol; both legs this machine,
+this session, sequential).
+
+**Owner rulings (this session, session-logged):** (1) the caiso-94
+evening-window WATCH is **TRIPPED** (three-legged evidence + the caiso-96
+demonstration that commitment forcing cannot recover the mass), authorizing
+FINDING-caiso94 §7's PRE-REGISTERED fix; (2) `caiso_ra_startup_trajectory`
+**CARRIES** into the recipe — the B-leg is the composition (trim + trajectory).
+
+**Mechanism (`caiso_dsw_daytime_evening_trim`, ScenarioConfig, default off —
+zero new fitted scalars):** the caiso-94 daytime clean tranche window trims
+hod 6-21 → 6-17 (the §4A evening EXCLUDE cell — model UNDER-prices the peak,
+so a clean-import lever there overshoots; pre-registered in the finding before
+any solve, never fitted to a residual) with the depth RE-DERIVED over the
+trimmed window (4,994/5,563/5,770 MW; frozen gates CV 0.060, worst LOYO
+13.5 % — `derive_caiso_daytime_clean_depth.py --evening-trim`; window and
+depth move together so the depth prices the population it caps). caiso-93
+overnight (0-5) and caiso-87 surplus tranches untouched.
+
+**A/B result (same-machine, scorer frame):** every pre-registered DIRECTION
+lands —
+- evening hod 17-21 λ RISES toward actual: −6.6→−6.4 / −5.0→−4.7 / −2.4→−1.9
+  pp, still NEGATIVE everywhere (no overshoot — the §6 caveat-2 watch);
+- evening (hod 17-21) net WECC import falls toward the measured
+  5.95/6.14/7.04 TWh: 7.93→7.50 / 8.54→7.93 / 9.27→7.85 (closes 22/25/64 % of
+  the excess);
+- CC_REGULAR energy recovers +0.55/+0.64/+1.45 TWh (miss −2.96→−2.40 /
+  −1.41→−0.77 / −4.40→−2.95) — the C5a dispatch-side mass caiso-96 proved
+  commitment forcing could not reach;
+- C5a energy-explained dCO2 narrows −2.28→−2.02 / −1.47→−1.14 / −1.39→−0.72 Mt;
+- holds: C1 grid 12/12 (free 8/8), overnight λ IDENTICAL (+1.3/+0.2/+1.6),
+  C3c IDENTICAL (20 h Jan-13-2023 / 0 / 0), belly hod 10-14 essentially
+  unchanged (−0.2/−0.3/+0.1 pp), C7/C8 PASS (CC forced 6.6/6.5/7.6 % ≪ 30 %,
+  D-4 clean; D-1 sub-2 % notes unchanged from caiso-96).
+
+**The honest costs (surfaced, not tuned — rules 1/11):** (a) the recovered
+energy lands on CC_REGULAR, NOT CT_PEAKER (+0.03–0.05 TWh only) — the
+CT_PEAKER −1.1..−2.0 Mt C5a leg and its evening ramp remain open (the
+evening-STORAGE-timing charter, FINDING-caiso94 §5, stays the named owner);
+(b) mean-level: same-machine simple-mean C3a 2023 +6.2→+6.2, 2024 +7.7→+7.5,
+2025 +9.1→**+9.6 %** (registered-scorer construction +11.6 %) — raising the
+under-priced evening lifts an annual mean the BELLY (hod 10-14, +8.4 pp, the
+battery/storage sub-regime) already holds above actual. The trim is
+structurally correct where it acts; the annual C3a-2025 residual is now
+belly-owned, which is the storage charter's lane, not an import lane. Excess
+evening import +1.55/+1.79/+0.81 TWh remains (composition of firm block +
+fossil rungs — NOT re-openable via the trimmed tranche without violating the
+measured admissibility table).
+
+**Registration:** bundle slim files + `legitimacy_diagnostics.json` (D2/D4/
+D5/D9/D10 PASS; D1 sub-2 % report-only rows match caiso-96) + attestation
+(carries caiso-96's, adds the two ruling deltas) + `metrics.json`
+(`calibration_verdict --write-metrics`: NOT-YET) + registry sidecar +
+`runs/*.js`; payload parity OK (62 runs); CAISO retention 13/15, no pruning.
+Keeper unchanged (caiso-94). **Owner adjudication ask:** promote the
+composition (trim + trajectory) as the next keeper recipe on structural
+grounds (three pre-registered directions land, zero fitted parameters, all
+holds held, honest mean-level cost disclosed), or hold for the storage-timing
+charter to take the belly/evening remainder first?
