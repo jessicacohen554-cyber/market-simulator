@@ -693,6 +693,64 @@ def caiso_storage_as_soc_min(
     return soc_min
 
 
+def caiso_storage_shape_caps(
+    power_cap: np.ndarray,
+    units: list["StorageUnit"],
+    year: int,
+    hours: int,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Measured diurnal charge/discharge capability caps for CAISO batteries.
+
+    The energy-only LP arbitrages the battery fleet at up to its full
+    nameplate power in any hour; the measured CAISO fleet never operates
+    fleet-wide near nameplate -- AS holdback, DA-bid conservatism and
+    commissioning ramps hold its p95 hour-of-day rate to ~0.43-0.55 of fleet
+    MW charging and ~0.48-0.66 discharging (EIA-930 CISO ``NG: OTH`` ÷
+    EIA-860 monthly fleet; caiso-99 Mechanism B, FINDING-caiso98 §7B). This
+    returns per-unit-hour Chg/Dis upper bounds: battery rows are
+    ``env_p95[year, hod] × power_cap[s, t]`` (composing with the COD vintage
+    ramp already inside ``power_cap``); pumped-storage rows pass the power
+    cap through unchanged (not an LESR, absent from the OTH series).
+
+    The envelope is the committed rule-23 derivation
+    ``data/raw/reference/caiso-storage-shape-envelope.csv``
+    (:mod:`scripts.derive_caiso_storage_shape`); a solve year beyond the
+    derived span reuses the latest measured year's shape (the forward story:
+    per-MW behavior shape × that year's fleet). A missing envelope file
+    raises -- a gated mechanism must never silently no-op (the caiso-98
+    dead-flag lesson).
+
+    Returns ``(charge_cap, discharge_cap)`` of shape ``(n_storage, hours)``
+    for ``dispatch.solve_dispatch(storage_charge_cap=...,
+    storage_discharge_cap=...)``.
+    """
+    from market_sim.config.paths import RAW_DIR
+
+    path = RAW_DIR / "reference" / "caiso-storage-shape-envelope.csv"
+    if not path.exists():
+        raise FileNotFoundError(
+            "caiso_storage_shape_anchor is enabled but the derived envelope "
+            f"{path} is missing -- run scripts/derive_caiso_storage_shape.py"
+        )
+    env = pd.read_csv(path)
+    env_years = sorted(env["year"].unique())
+    use_year = max((y for y in env_years if y <= year), default=env_years[0])
+    ey = env[env["year"] == use_year].sort_values("hod")
+    chg_frac = ey["chg_frac_p95"].to_numpy(dtype=float)  # (24,)
+    dis_frac = ey["dis_frac_p95"].to_numpy(dtype=float)
+    hod = np.arange(hours) % 24
+
+    pc = np.asarray(power_cap, dtype=float)
+    pc2 = np.repeat(pc[:, np.newaxis], hours, axis=1) if pc.ndim == 1 else pc.copy()
+    chg_cap = pc2.copy()
+    dis_cap = pc2.copy()
+    mask = _battery_mask(units)
+    if mask.any():
+        chg_cap[mask] = pc2[mask] * chg_frac[hod][np.newaxis, :]
+        dis_cap[mask] = pc2[mask] * dis_frac[hod][np.newaxis, :]
+    return chg_cap, dis_cap
+
+
 def load_eia860_pumped_storage(
     iso: str, year: int, config: ScenarioConfig | None = None
 ) -> list[StorageUnit]:
