@@ -7,16 +7,19 @@ the end of every manager turn.
 
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
-- **Last reviewed `origin/main` HEAD:** `f637994` (2026-07-18, turn 6).
+- **Last reviewed `origin/main` HEAD:** `7d4b738` (2026-07-18, turn 7).
 - **Plan base SHA:** `c95176e`.
-- **⚠️ MAIN STILL BROKEN** as of `f637994` — the FF-1A `capacity.py` truncation
-  (deleted `evolve_fleet` + CCS/new-entry/backstop/accredited-capacity; dangling at
-  `runner.py:789`, `capacity.py:1106`, `runner.py:2096`) is **NOT fixed**. capacity.py
-  is untouched since the truncation (still 2291 lines). Turn-6 follow-ups #2433/#2435
-  (PJM/MISO R-NEW probe reports) + #2436 (harness/test rebase) landed MORE work on top of
-  the broken tree without restoring it. **FF-1A-restore has no PR — not started.** NO
-  downstream capacity work releases until it lands; the PJM/MISO probe reports are
-  PROVISIONAL (runs predate/diverge from a working tree — re-validate after restore).
+- **✅ MAIN RESTORED** (turn 7). PR **#2438** un-truncated `capacity.py` (2291→**3967**
+  lines) and re-applied R-NEW. Manager-verified faithful: all 7 deleted symbols
+  (`evolve_fleet`, `accredited_firm_capacity_mw`, `apply_ccs_retrofit`,
+  `apply_economic_new_entry`, `apply_reserve_margin_build`, `capacity_reserve_position`,
+  `resolve_reserve_margin_build_enabled`) back with byte-identical bodies; the last-good
+  573350d content returned byte-for-byte + a localized R-NEW delta (302/97). The
+  retirement pipeline (`_execution_lag_years`/`_apply_pipeline_retirements`/
+  `apply_economic_retirements`) is **md5-identical** (`46b96a2…`) to the broken-tree
+  version, so the PJM/MISO R-NEW probe reports (run on the truncated tree) exercised the
+  same code and **remain valid** — the truncation only deleted forecast-evolution helpers
+  the hindcast retirement probes don't drive. The #1 program blocker is **cleared**.
 
 Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 `verified-issues` · `correction-sent`.
@@ -34,15 +37,16 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-0C | FABLE | 0 | L-CAP | — | **verified-pass** | #2418: R-NEW memo + owner box |
 | FF-0D | OPUS | 0 | L-INP | — | **verified-pass** | #2413: audit, no source changes |
 | FF-0E | OPUS | 0 | L-VAL | — | sent | in flight — no PR |
-| FF-1A | FABLE | 1 | L-CAP | ⛔ owner-gated | **verified-issues — CRITICAL (rule-27), UNRESOLVED** | PR #2430 truncated capacity.py 3762→2291 (-39%): evolve_fleet + CCS/new-entry/backstop/accredited-capacity deleted, **main broken**. Turn-6 follow-ups #2433 (PJM probe report), #2435 (MISO probe report), #2436 (harness/test rebase) added MORE onto the broken tree — capacity.py STILL untouched. Probe reports provisional. |
-| FF-1A-restore | FABLE | 1 | L-CAP | ⛔ | **correction-sent (turn 5) — NOT STARTED (no PR)** | revert-then-redo: restore capacity.py from 573350d, re-apply ONLY R-NEW+D2, blob-verify, green suite, re-validate PJM/MISO probes, complete real scorecard |
-| FF-1B | FABLE | 1 | L-SCAR | — | **verified-pass** | PR #2423: correlated cold-event derate (default-off, measured CORRELATED_OUTAGE_CURVE from CAMPD, rule-25 no-op cross-ISO); in-year ORDC scarcity forms (Heather $4,968/MWh); CT screen 6.4→11.9 $/kW-yr (~17.5% of SOM 68); ≈56/66 residual handed to G-20/G-22 as a number (no adder); ORDC-sigma double-count seam documented. Did NOT touch capacity.py. |
+| FF-1A | FABLE | 1 | L-CAP | ⛔ owner-gated | **verified-issues — scorecard partial** | Code+restore LANDED (#2438, verified-pass). R-NEW implemented (`retirement_rule` pipeline, default legacy byte-identical), probes run. Scorecard findings doc **partial**: open PR #2440 fills PJM+MISO measured (inversion CLOSED: gas_st false-retire 8.6→0 GW, recall→76%) but **ERCOT leg / LOYO folds / precise BLK-10 / dashboard registration = PENDING** (bundles absent, need re-solve). → correction **FF-1A-C**. |
+| FF-1A-restore | FABLE | 1 | L-CAP | — | **verified-pass** | PR #2438: capacity.py 2291→3967 byte-exact restore + R-NEW re-apply + D2 delete; register_hindcast arm updated (staged-thin→r-new); 273-line test delta incl. `test_flag_off_is_byte_identical` / `test_staged_thinning_fields_are_deleted` / `test_pipeline_requires_year`. Main un-broken. |
+| FF-1A-C | FABLE | 1 | L-CAP | ⛔ | **correction-sent (turn 7)** | after #2440 merges: solve ERCOT composition leg; compute LOYO folds + precise BLK-10 fired-MW (re-solve/re-score PJM+MISO R-NEW bundles); register 3 R-NEW legs on forecast-validation dashboard; fill §5/§7/§9 complete. Unblocks FF-2A (BLK-10) + FF-2C (flip-gate). |
+| FF-1B | FABLE | 1 | L-SCAR | — | **verified-pass** | PR #2423: correlated cold-event derate (default-off, measured, rule-25 no-op cross-ISO); in-year ORDC scarcity forms (Heather $4,968/MWh); CT screen 6.4→11.9 $/kW-yr; ≈56/66 residual handed to G-20/G-22 as a number. Did NOT touch capacity.py. |
 | FF-1C | OPUS | 1 | L-INP | — | **verified-pass** | #2422: demand/DC currency + double-count fix + hydro-verify |
 | FF-1D | OPUS | 1 | L-VAL | — | not-sent | blocked: FF-0E not landed |
 | FF-1E | OPUS | 1 | L-INP | — | **sent** (turn 4) | in flight — no PR |
-| FF-2A | FABLE | 2 | L-CAP | ⛔ | not-sent | **blocked: FF-1A verified-issues** — releases only after FF-1A-restore lands verified-pass |
+| FF-2A | FABLE | 2 | L-CAP | ⛔ | not-sent | **blocked: FF-1A verified-issues** — BLK-10 re-measure + findings are its inputs; releases only after **FF-1A-C** lands verified-pass |
 | FF-2B | OPUS | 2 | L-CAP | — | not-sent | blocked: FF-2A |
-| FF-2C | OPUS | 2 | L-CAP | owner-gated | not-sent | blocked: FF-2B + owner; FF-1A scorecard is its input |
+| FF-2C | OPUS | 2 | L-CAP | owner-gated | not-sent | blocked: FF-2B + owner; FF-1A scorecard (§6 flip-gate) is its input — needs FF-1A-C |
 | FF-2D | OPUS | 2 | L-VAL | ⛔ T1 gate | not-sent | blocked: W1/W2 |
 | FF-3A | OPUS | 3 | L-VAL | ⛔ T2 | not-sent | blocked: FF-2D + owner |
 | FF-3B | OPUS | 3 | L-CES | — | not-sent | blocked: W2 |
@@ -53,8 +57,23 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-4C | OPUS | 4 | L-VAL | owner-gated | not-sent | blocked: FF-4A + owner |
 | FF-5A | OPUS | 5 | L-DASH | — | not-sent | blocked: Wave 4 |
 
-Out-of-program / trivial this window (turn 6): #2429 pjm-115 keeper (out-of-program);
-#2434 FF-1C session notes (superseded by #2422); #2431 FF-1B re-merge.
+Out-of-program / trivial this window (turn 7): only #2438 (restore) and #2437 (this
+ledger, turn 6) merged. Two OPEN PRs pending owner action — see below.
+
+---
+
+## Open PRs pending owner action (turn 7)
+
+- **PR #2440 — MERGE (recommended).** FF-1A scorecard fill. Rewrites the §0–§9 skeleton
+  into the real per-ISO gate scorecard with **measured** PJM+MISO R-NEW numbers (0 "TO
+  FILL" remaining); honestly marks ERCOT leg / LOYO / precise BLK-10 / dashboard PENDING
+  rather than inventing them. Docs-only, strict improvement over the stub on main. FF-1A-C
+  builds on it.
+- **PR #2439 — CLOSE (recommended, do NOT merge).** Redundant duplicate of #2438: a
+  second restore+implement of the same R-NEW work. Its `capacity.py` (3969L) differs from
+  main's (3967L) by only a cosmetic blank line + a functionally-identical `if
+  pipeline_events:` guard on the ledger-attribution extend. #2438 already landed the
+  restore; merging #2439 re-litigates it with no behavioural change and invites confusion.
 
 ---
 
@@ -62,15 +81,15 @@ Out-of-program / trivial this window (turn 6): #2429 pjm-115 keeper (out-of-prog
 
 **Received:**
 - **D1 = B (R-NEW), by action** (2026-07-18): FF-1A launched implementing R-NEW + D2
-  staged-thinning removal ⇒ read as the owner launching the turn-4 staged Option-B prompt
-  (= D1=B, D2=delete, D3=gas_cc-lag-1 assumed). The DECISION stands; the IMPLEMENTATION is
-  broken (rule-27) and is being restored by FF-1A-restore. Owner: correct me if D1≠B.
+  staged-thinning removal ⇒ D1=B, D2=delete, D3=gas_cc-lag=1. Implemented & restored;
+  measured inversion-closure confirmed. Owner: correct me if D1≠B.
 
 **AWAITING:**
+- **PR triage** (turn 7): merge #2440, close #2439 (above).
 - **BAU DC posture** (`datacenter_load_path` `off` vs `mid`; FF-1C rec: mid). Gates FF-4A.
-- Entry-lookahead (FF-2A), availability derate default (FF-1B — evidence now in: 6.4→11.9
-  $/kW-yr, scarcity forms; owner may set ON-for-forecast), per-ISO flips (FF-2C), NYISO
-  R5a (FF-3D), golden freeze (FF-4A), PB-5 (FF-4C).
+- Availability derate default (FF-1B — evidence in: 6.4→11.9 $/kW-yr, scarcity forms;
+  owner may set ON-for-forecast), entry-lookahead posture (FF-2A), per-ISO flips (FF-2C),
+  NYISO R5a (FF-3D), golden freeze (FF-4A), PB-5 (FF-4C).
 
 ---
 
@@ -78,10 +97,11 @@ Out-of-program / trivial this window (turn 6): #2429 pjm-115 keeper (out-of-prog
 
 1. **FF-0A-fix [OPUS]** (turn 2) — RESOLVED turn 3 (#2419).
 2. **FF-0B-redo [OPUS]** (turn 2) — open, in flight.
-3. **FF-1A-restore [FABLE]** (turn 5) — **rule-27 core-file truncation, main broken.**
-   Restore capacity.py from last-good (573350d), re-apply ONLY R-NEW + D2, blob-verify,
-   green the suite, THEN complete the deferred PJM/MISO/ERCOT measurement + real scorecard.
-   **Turn 6: still NOT started (no PR); re-flagged.**
+3. **FF-1A-restore [FABLE]** (turn 5) — **RESOLVED turn 7 (#2438).** capacity.py
+   byte-exact restored + R-NEW re-applied + D2 deleted; manager-verified faithful.
+4. **FF-1A-C [FABLE]** (turn 7) — complete the FF-1A scorecard: ERCOT composition leg,
+   LOYO folds, precise BLK-10 fired-MW, dashboard registration; fill §5/§7/§9. Builds on
+   #2440. Unblocks FF-2A + FF-2C.
 
 ---
 
@@ -91,17 +111,20 @@ Out-of-program / trivial this window (turn 6): #2429 pjm-115 keeper (out-of-prog
 - **turn 2.** `→6d6867b`. FF-0D pass; FF-0A/FF-0B issues → FF-0A-fix + FF-0B-redo. Released FF-1B+FF-1C.
 - **turn 3.** `→fa6959e`. FF-0A-fix + FF-0C pass. FF-1A owner-gated on D1; box surfaced.
 - **turn 4.** `→2144e12`. FF-1C pass. Released FF-1E. Staged FF-1A (keyed B). Surfaced DC posture.
-- **turn 5 (refresh).** `→398c1f2` (FF-1A #2430, FF-1B #2423). **FF-1B verified-pass**
-  (correlated derate, structurally clean). **FF-1A verified-issues CRITICAL**: R-NEW logic
-  landed but truncated capacity.py (-39%, main broken) — flagged owner in bold, issued
-  FF-1A-restore [FABLE] revert-then-redo. Recorded D1=B by action. FF-2A HELD (broken
-  prereq). Process note: #2430 self-merged in 9s under a docs title, bypassing the
-  integrity guard. Frontier §1.2-1 stays OPEN (retirement redesign not validly landed).
-- **turn 6 (refresh).** `→f637994`. **MAIN STILL BROKEN** — capacity.py untouched since
-  the truncation; FF-1A-restore never started (no PR). Turn-6 FF-1A follow-ups #2433 (PJM
-  R-NEW probe report), #2435 (MISO R-NEW probe report), #2436 (run_capacity_hindcast.py +
-  test_config rebase) landed MORE onto the broken tree without restoring it. Re-flagged in
-  bold; re-issued FF-1A-restore as the #1 blocker; asked owner to stop merging FF-1A-branch
-  PRs until the restore lands. Probe reports marked provisional. Out-of-program: #2429
-  pjm-115 keeper. Trivial: #2434 FF-1C session notes (superseded by #2422), #2431 FF-1B
-  re-merge. Nothing else released (all downstream still blocked on the restore / FF-0E).
+- **turn 5 (refresh).** `→398c1f2`. FF-1B verified-pass. FF-1A verified-issues CRITICAL:
+  R-NEW landed but truncated capacity.py (-39%, main broken) — issued FF-1A-restore.
+- **turn 6 (refresh).** `→f637994`. Main STILL broken; FF-1A-restore not started. Turn-6
+  FF-1A follow-ups #2433/#2435/#2436 piled onto the broken tree. Re-flagged; asked owner
+  to stop merging FF-1A-branch PRs until the restore lands.
+- **turn 7 (refresh).** `→7d4b738`. **MAIN RESTORED** — PR #2438 un-truncated capacity.py
+  (2291→3967) + re-applied R-NEW; manager-verified byte-faithful (all 7 symbols back,
+  retirement pipeline md5-identical ⇒ PJM/MISO probes stay valid). **FF-1A-restore
+  verified-pass; #1 blocker cleared.** FF-1A downgraded to verified-issues (scorecard
+  partial): open PR #2440 fills PJM+MISO measured (inversion CLOSED, gas_st 8.6→0 GW,
+  recall→76%) but ERCOT leg / LOYO / BLK-10 / dashboard PENDING → issued FF-1A-C [FABLE]
+  (solve-bearing). #2439 flagged redundant → close. FF-2A HELD (BLK-10/findings inputs
+  incomplete until FF-1A-C). Frontier §1.2-1 rewrite **deferred to FF-1A-C** (inversion is
+  measured-closed but the row can't fully close until the scorecard/flip-gate completes;
+  avoids a full-file plan push mid-measurement — rule-27 caution). No downstream wave
+  released (FF-1D still on FF-0E; Wave 2+ on FF-1A-C). In-flight unchanged: FF-0B-redo,
+  FF-0E, FF-1E (no PRs).
