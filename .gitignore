@@ -470,3 +470,6 @@ logs_g10/
 # miso-69's accumulators were committed then dropped (20f31a2); ignore the
 # namespace outright instead.
 /results/calibration/_*_acc/
+
+# ercot84+ April/May scarcity lane replay logs (transient solve logs).
+/results/calibration/ercot8*_replay.log
