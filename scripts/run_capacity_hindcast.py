@@ -87,12 +87,11 @@ def build_config(
     variant: str,
     energy_only_floor: bool = False,
     entry_lookahead_reprice: bool = False,
-    staged_oversupply_thinning: bool = False,
-    staged_thinning_max_gw_per_year: float = 3.0,
     limited_foresight_dispatch: bool = False,
     legacy_renewable_credit: bool = False,
     capacity_market_clearing: bool = False,
     correlated_forced_outage: bool = False,
+    retirement_rule: str = "legacy",
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
 
@@ -151,22 +150,19 @@ def build_config(
         # (rule 13); screens-only, never dispatch. See scenarios.py:
         # entry_lookahead_reprice and the runner call site.
         entry_lookahead_reprice=entry_lookahead_reprice,
-        # G-31 first-wave corrective arms (PROBE, default-off). The G-30
-        # lookahead only bites evolution waves 2+ because the first (largest)
-        # coal wave is decided on the un-thinned over-supplied fleet's 2021 raw
-        # dual (ORDC ≈ 0). These two attack that first-wave root cause from the
-        # LP regime, not a floor/adder:
-        #   staged_oversupply_thinning -- cap each fuel class's exits to
-        #     staged_thinning_max_gw_per_year GW/yr so the coal wave spreads into
-        #     later years whose thinned fleet the LP can price as scarce; the
-        #     retain/exit call stays the screen's (rule 11).
+        # G-31 first-wave corrective arm (PROBE, default-off):
         #   limited_foresight_dispatch -- deny the in-year LP perfect annual
         #     storage/hydro foresight so peak/net-load-ramp hours tighten and the
         #     ORDC overlay prices scarcity in-year once the fleet has thinned.
-        # Both zero fitted parameters; see scenarios.py field docstrings.
-        staged_oversupply_thinning=staged_oversupply_thinning,
-        staged_thinning_max_gw_per_year=staged_thinning_max_gw_per_year,
+        # Zero fitted parameters; see the scenarios.py field docstring.
+        # (staged_oversupply_thinning was DELETED at the FF-1A R-NEW commit,
+        # rule 26 -- the execution-lag pipeline carries the deactivation queue.)
         limited_foresight_dispatch=limited_foresight_dispatch,
+        # FF-1A R-NEW probe arm (default "legacy" = byte-identical): the
+        # decision/execution retirement pipeline, ff-retirement-rule-redesign-
+        # 2026-07.md §3.6 (owner D1 = Option B). Never the harness default
+        # pending the FF-2C flip decision.
+        retirement_rule=retirement_rule,
         # CR-3.1 frozen-penetration byte-compat arm: pin the VRE adequacy
         # credits back to the pre-curve flat constants for the BEFORE leg of
         # the before/after diagnostic. Default (False) keeps the model
@@ -267,21 +263,17 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
-        "--staged-oversupply-thinning",
-        action="store_true",
+        "--retirement-rule",
+        choices=["legacy", "pipeline"],
+        default="legacy",
         help=(
-            "G-31 corrective arm (PROBE): cap each fuel class's economic exits "
-            "to --staged-thinning-max-gw-per-year GW/yr so a large single-year "
-            "over-supply wave (e.g. the 14 GW coal first wave) spreads across "
-            "years the LP regime can price as scarce. Rate cap, not a "
-            "floor/adder -- see build_config / scenarios.py."
+            "FF-1A PROBE arm: economic-retirement decision rule. 'legacy' "
+            "(default) = per-fuel consecutive-loss counters, byte-identical. "
+            "'pipeline' = the R-NEW decision/execution split (uniform bar, "
+            "joint adequacy-capped entry, soft latch, measured per-fuel "
+            "execution lags) -- ff-retirement-rule-redesign-2026-07.md §3.6. "
+            "Never the harness default pending the FF-2C flip decision."
         ),
-    )
-    parser.add_argument(
-        "--staged-thinning-max-gw-per-year",
-        type=float,
-        default=3.0,
-        help="Per-fuel-class exit budget (GW/yr) for --staged-oversupply-thinning.",
     )
     parser.add_argument(
         "--legacy-renewable-credit",
@@ -338,12 +330,11 @@ def main(argv: list[str] | None = None) -> int:
         args.fuel_variant,
         energy_only_floor=args.energy_only_floor,
         entry_lookahead_reprice=args.entry_lookahead_reprice,
-        staged_oversupply_thinning=args.staged_oversupply_thinning,
-        staged_thinning_max_gw_per_year=args.staged_thinning_max_gw_per_year,
         limited_foresight_dispatch=args.limited_foresight_dispatch,
         legacy_renewable_credit=args.legacy_renewable_credit,
         capacity_market_clearing=args.capacity_market_clearing,
         correlated_forced_outage=args.correlated_forced_outage,
+        retirement_rule=args.retirement_rule,
     )
 
     # Bundle lives under results/hindcast/<run>/ (plan §1.5) -- deliberately
@@ -372,8 +363,7 @@ def main(argv: list[str] | None = None) -> int:
         "variant": args.fuel_variant,
         "energy_only_floor": bool(args.energy_only_floor),
         "entry_lookahead_reprice": bool(args.entry_lookahead_reprice),
-        "staged_oversupply_thinning": bool(args.staged_oversupply_thinning),
-        "staged_thinning_max_gw_per_year": float(args.staged_thinning_max_gw_per_year),
+        "retirement_rule": args.retirement_rule,
         "limited_foresight_dispatch": bool(args.limited_foresight_dispatch),
         "capacity_market_clearing": bool(args.capacity_market_clearing),
         "capacity_market_clearing_by_iso": config.capacity_market_clearing_by_iso,

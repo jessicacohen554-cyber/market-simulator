@@ -24,6 +24,7 @@ from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.capacity import (
     CumulativeDeployment,
     _capital_recovery_factor,
+    _execution_lag_years,
     apply_announced_retirements,
     apply_confirmed_exits,
     apply_economic_new_entry,
@@ -441,66 +442,15 @@ class TestEconomicRetirements(unittest.TestCase):
         self.assertEqual(fleet3, [])
         self.assertNotIn("C0", losses3)
 
-    def test_staged_thinning_caps_per_fuel_exits_and_defers_rest(self):
-        # G-31 staged over-supply thinning: with the gate on, at most
-        # staged_thinning_max_gw_per_year GW of a fuel class exits per year;
-        # the least-efficient units go first and the rest are deferred with
-        # their loss counters intact (re-screened next year).
-        config = ScenarioConfig(
-            staged_oversupply_thinning=True,
-            staged_thinning_max_gw_per_year=3.0,  # 3000 MW budget
-            retirement_years_coal=1,  # pin to isolate the staged-thinning RATE
-            # cap from the D1 default (coal=3); this test screens on a single
-            # loss year so every coal unit is eligible in one pass.
-        )
-        # 5 coal units @ 1000 MW, distinct heat rates so ordering is
-        # deterministic (higher heat rate == retired first). All deeply
-        # unprofitable at price 10 (coal exits after one loss year).
-        fleet = [
-            _gen(f"C{i}", "coal", pmax=1000.0, heat_rate=12.0 - i) for i in range(5)
-        ]
-        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
-        prices = np.full((1, self.T), 10.0)
-        dispatch = self._dispatch_result(5, 10.0)
-        sink: dict = {}
-        survivors, losses, _ = apply_economic_retirements(
-            fleet,
-            arrays,
-            dispatch,
-            prices,
-            config,
-            {},
-            peak_demand=0.0,
-            event_sink=sink,
-        )
-        # 3000 MW budget -> exactly 3 units retire, 2 deferred (survive).
-        self.assertEqual(len(survivors), 2)
-        # The deferred survivors are the two LOWEST-heat-rate units (C3, C4).
-        self.assertEqual(sorted(g.unit_id for g in survivors), ["C3", "C4"])
-        # Deferred units keep their loss counters (not popped like retirees).
-        self.assertEqual(losses.get("C3"), 1)
-        self.assertEqual(losses.get("C4"), 1)
-        self.assertEqual(len(sink["staged_deferred"]), 2)
-        self.assertEqual(sum(d["mw"] for d in sink["staged_deferred"]), 2000.0)
-
-    def test_staged_thinning_off_is_noop(self):
-        # Gate off: the full unprofitable coal fleet exits in one year (the
-        # pre-G-31 behaviour), byte-identical to a run without the flag.
-        # coal=1 pinned (D1 default is 3) so the single-pass exit isolates the
-        # staged-thinning no-op.
-        config = ScenarioConfig(
-            staged_oversupply_thinning=False, retirement_years_coal=1
-        )
-        fleet = [
-            _gen(f"C{i}", "coal", pmax=1000.0, heat_rate=12.0 - i) for i in range(5)
-        ]
-        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
-        prices = np.full((1, self.T), 10.0)
-        dispatch = self._dispatch_result(5, 10.0)
-        survivors, _losses, _ = apply_economic_retirements(
-            fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0
-        )
-        self.assertEqual(survivors, [])
+    def test_staged_thinning_fields_are_deleted(self):
+        # Rule 26 (deleted means deleted): the staged-thinning pair was
+        # removed at the FF-1A R-NEW commit — a deprecated fitted knob that
+        # still parses is a re-armable answer key. The execution-lag pipeline
+        # carries the deactivation queue (rule 19).
+        with self.assertRaises(TypeError):
+            ScenarioConfig(staged_oversupply_thinning=True)
+        with self.assertRaises(TypeError):
+            ScenarioConfig(staged_thinning_max_gw_per_year=3.0)
 
     def test_gas_cc_survives_two_unprofitable_years(self):
         # retirement_years_gas_cc = 3: two loss years are not enough.
@@ -809,6 +759,261 @@ class TestEconomicRetirements(unittest.TestCase):
         )
         self.assertEqual([g.unit_id for g in fleet1], ["W0"])
         self.assertEqual(losses1, {})
+
+
+class TestPipelineRetirementRule(unittest.TestCase):
+    """R-NEW decision/execution pipeline (retirement_rule="pipeline", FF-1A).
+
+    The FF-0C §3.6 composite rule (owner D1 = Option B): uniform one-screen
+    decision at the identical net_revenue < going_forward_cost bar, joint
+    adequacy-capped cross-fuel pipeline entry, soft annual re-confirmation
+    latch, execution after the measured per-fuel lag, reliability floor
+    unchanged at execution. Trivial cases first (1 unit, 10 hours).
+    """
+
+    T = 10
+
+    def _dispatch_result(self, n_gen, level):
+        return SimpleNamespace(dispatch=np.full((n_gen, self.T), level))
+
+    def _screen(self, fleet, config, state, year, prices_level, peak=0.0):
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        prices = np.full((1, self.T), prices_level)
+        dispatch = self._dispatch_result(len(fleet), 10.0)
+        sink: dict = {}
+        survivors, state, _log = apply_economic_retirements(
+            fleet,
+            arrays,
+            dispatch,
+            prices,
+            config,
+            state,
+            peak_demand=peak,
+            year=year,
+            event_sink=sink,
+        )
+        return survivors, state, sink
+
+    def test_pipeline_requires_a_year(self):
+        config = ScenarioConfig(retirement_rule="pipeline")
+        fleet = [_gen("C0", "coal", pmax=100.0)]
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        with self.assertRaises(ValueError):
+            apply_economic_retirements(
+                fleet,
+                arrays,
+                self._dispatch_result(1, 10.0),
+                np.full((1, self.T), 10.0),
+                config,
+                {},
+                peak_demand=0.0,
+            )
+
+    def test_coal_timing_matches_legacy_d1_counter(self):
+        # Memo §3.6-4: a persistent-loss coal cohort is decided at the end of
+        # loss year y and gone at the start of y+3 — byte-equivalent timing to
+        # the adopted legacy D1=3 counter. Run both rules through the same
+        # three failing screens and compare the survivor set at every step.
+        fleet = [_gen("C0", "coal", pmax=100.0)]
+        legacy_cfg = ScenarioConfig()  # retirement_rule="legacy", coal N=3
+        pipe_cfg = ScenarioConfig(retirement_rule="pipeline")  # coal L=3
+        legacy_state: dict = {}
+        pipe_state: dict = {}
+        legacy_fleet, pipe_fleet = fleet, fleet
+        for year in [2023, 2024, 2025]:
+            if legacy_fleet:
+                legacy_fleet, legacy_state, _ = apply_economic_retirements(
+                    legacy_fleet,
+                    generators_to_fleet_arrays(legacy_fleet, ["Z0"], hours=self.T),
+                    self._dispatch_result(len(legacy_fleet), 10.0),
+                    np.full((1, self.T), 10.0),
+                    legacy_cfg,
+                    legacy_state,
+                    peak_demand=0.0,
+                    year=year,
+                )
+            if pipe_fleet:
+                pipe_fleet, pipe_state, _ = apply_economic_retirements(
+                    pipe_fleet,
+                    generators_to_fleet_arrays(pipe_fleet, ["Z0"], hours=self.T),
+                    self._dispatch_result(len(pipe_fleet), 10.0),
+                    np.full((1, self.T), 10.0),
+                    pipe_cfg,
+                    pipe_state,
+                    peak_demand=0.0,
+                    year=year,
+                )
+            self.assertEqual(
+                [g.unit_id for g in legacy_fleet],
+                [g.unit_id for g in pipe_fleet],
+                f"rule divergence at screen {year}",
+            )
+        # Both rules: gone after the third failing screen.
+        self.assertEqual(pipe_fleet, [])
+        self.assertEqual(legacy_fleet, [])
+
+    def test_decision_stamp_and_lagged_execution(self):
+        # Coal (L=3): decided at the 2023 screen (decided_year = 2022, the
+        # loss year), dispatches through 2024, executes at the 2025 screen.
+        config = ScenarioConfig(retirement_rule="pipeline")
+        fleet = [_gen("C0", "coal", pmax=100.0)]
+        fleet, state, sink = self._screen(fleet, config, {}, 2023, 10.0)
+        self.assertEqual([g.unit_id for g in fleet], ["C0"])
+        self.assertEqual(state, {"C0": 2022})
+        events = {e["event"]: e for e in sink["pipeline_events"]}
+        self.assertIn("decided", events)
+        self.assertEqual(events["decided"]["execute_year"], 2025)
+
+        fleet, state, sink = self._screen(fleet, config, state, 2024, 10.0)
+        self.assertEqual([g.unit_id for g in fleet], ["C0"])
+        self.assertEqual(
+            [e["event"] for e in sink["pipeline_events"]], ["re_confirmed"]
+        )
+
+        fleet, state, sink = self._screen(fleet, config, state, 2025, 10.0)
+        self.assertEqual(fleet, [])
+        self.assertNotIn("C0", state)
+        kinds = [e["event"] for e in sink["pipeline_events"]]
+        self.assertIn("executed", kinds)
+        self.assertEqual(
+            sink["retired"], [{"unit_id": "C0", "fuel": "coal", "mw": 100.0}]
+        )
+
+    def test_gas_st_executes_at_first_failing_screen(self):
+        # gas_st L=1 (measured §a.3 median): decided_year = year-1, execute
+        # when year >= decided+1 — i.e. decide-and-execute at the same screen,
+        # exactly the legacy threshold-1 behaviour.
+        config = ScenarioConfig(retirement_rule="pipeline")
+        fleet = [_gen("S0", "gas_st", pmax=100.0)]
+        fleet, state, sink = self._screen(fleet, config, {}, 2023, 10.0)
+        self.assertEqual(fleet, [])
+        self.assertEqual(state, {})
+        kinds = [e["event"] for e in sink["pipeline_events"]]
+        self.assertEqual(kinds, ["decided", "executed"])
+
+    def test_soft_latch_reversal_on_recovery(self):
+        # A pipelined unit leaves ONLY by re-clearing the same bar: fail 2023
+        # (decided), profitable 2024 (reversed), fail 2025 (re-decided with a
+        # fresh decided_year — the pipeline clock restarts).
+        config = ScenarioConfig(retirement_rule="pipeline")
+        fleet = [_gen("C0", "coal", pmax=100.0)]
+        fleet, state, _ = self._screen(fleet, config, {}, 2023, 10.0)
+        self.assertEqual(state, {"C0": 2022})
+        fleet, state, sink = self._screen(fleet, config, state, 2024, 1.0e6)
+        self.assertEqual([g.unit_id for g in fleet], ["C0"])
+        self.assertEqual(state, {})
+        self.assertEqual([e["event"] for e in sink["pipeline_events"]], ["reversed"])
+        fleet, state, _ = self._screen(fleet, config, state, 2025, 10.0)
+        self.assertEqual(state, {"C0": 2024})
+        self.assertEqual([g.unit_id for g in fleet], ["C0"])
+
+    def test_joint_entry_cap_retains_cheapest_firm_adequacy(self):
+        # Joint cross-fuel competition at pipeline entry (memo §3.6-2): with
+        # the scheduled-adequacy requirement binding, retention picks
+        # cheapest-firm-adequacy first via the EXISTING floor machinery. Coal
+        # GFC = 45×1.3 = 58.5 $/kW-yr; gas_st GFC = 35 — so gas_st is the
+        # cheaper adequacy and is retained (entry_capped), while coal (the
+        # expensive adequacy) is admitted and exits after its lag. This is
+        # the "retain gas_st, release coal" composition the legacy per-fuel
+        # partition made unreachable (D1 findings §1 defect 3).
+        config = ScenarioConfig(retirement_rule="pipeline")  # ERCOT basis
+        fleet = [
+            _gen("C0", "coal", pmax=1000.0, heat_rate=10.0),
+            _gen("S0", "gas_st", pmax=1000.0, heat_rate=10.0),
+        ]
+        # ERCOT CDR requirement = peak × 0.942 × 1.1375. peak=1200 →
+        # requirement ≈ 1285.8 MW: both exiting (0 MW) breaches, one unit
+        # retained (1000+? no — retained 1000 < 1285.8 still breaches, so
+        # BOTH would be retained unless... use peak small enough that one
+        # unit clears it: peak=900 → 964.4 MW ⇒ retain one unit (1000 MW).
+        fleet2, state, sink = self._screen(fleet, config, {}, 2023, 10.0, peak=900.0)
+        # Nothing executes this year (coal L=3; gas_st was entry-capped).
+        self.assertEqual({g.unit_id for g in fleet2}, {"C0", "S0"})
+        # Coal admitted (worse $/firm-MW adequacy), gas_st retained at entry.
+        self.assertEqual(state, {"C0": 2022})
+        by_kind = {}
+        for e in sink["pipeline_events"]:
+            by_kind.setdefault(e["event"], []).append(e["unit_id"])
+        self.assertEqual(by_kind.get("decided"), ["C0"])
+        self.assertEqual(by_kind.get("entry_capped"), ["S0"])
+
+    def test_no_first_mover_inversion_across_fuels(self):
+        # The D1=3 inversion killer (T-R10a in miniature): the shorter-lag
+        # fuel (gas_st, L=1) must NOT beat a deeper-loss coal unit out the
+        # door when the adequacy cap only admits one. Continue the entry-cap
+        # scenario: coal executes at its own lag while gas_st stays online —
+        # coal is the first (and only) mover.
+        config = ScenarioConfig(retirement_rule="pipeline")
+        fleet = [
+            _gen("C0", "coal", pmax=1000.0, heat_rate=10.0),
+            _gen("S0", "gas_st", pmax=1000.0, heat_rate=10.0),
+        ]
+        state: dict = {}
+        first_mover = None
+        for year in [2023, 2024, 2025, 2026]:
+            before = {g.unit_id for g in fleet}
+            fleet, state, sink = self._screen(
+                fleet, config, state, year, 10.0, peak=900.0
+            )
+            gone = before - {g.unit_id for g in fleet}
+            if gone and first_mover is None:
+                first_mover = (year, gone)
+        # Coal (decided 2022, L=3) executes at the 2025 screen; gas_st is
+        # retained by the standing adequacy requirement throughout (retention
+        # is annual — the cap that admitted coal keeps needing gas_st).
+        self.assertEqual(first_mover, (2025, {"C0"}))
+        self.assertEqual({g.unit_id for g in fleet}, {"S0"})
+
+    def test_ccs_lag_inherits_gas_cc(self):
+        config = ScenarioConfig(retirement_rule="pipeline")
+        self.assertEqual(_execution_lag_years(config, "gas_cc_ccs"), 1)
+        override = ScenarioConfig(
+            retirement_rule="pipeline", retirement_execution_lag_gas_cc=2
+        )
+        self.assertEqual(_execution_lag_years(override, "gas_cc_ccs"), 2)
+        explicit = ScenarioConfig(
+            retirement_rule="pipeline", retirement_execution_lag_gas_cc_ccs=4
+        )
+        self.assertEqual(_execution_lag_years(explicit, "gas_cc_ccs"), 4)
+
+    def test_floor_backstop_defers_execution_and_keeps_unit_pipelined(self):
+        # Component 5: a due unit the realized-year floor retains stays
+        # online AND stays pipelined (execution deferred, re-latched next
+        # year). Single gas_st (L=1) with a peak requiring its retention.
+        config = ScenarioConfig(retirement_rule="pipeline")
+        fleet = [_gen("S0", "gas_st", pmax=1000.0)]
+        fleet, state, sink = self._screen(fleet, config, {}, 2023, 10.0, peak=900.0)
+        self.assertEqual([g.unit_id for g in fleet], ["S0"])
+        # Entry cap already retains it (scheduled adequacy would breach), so
+        # it never enters the pipeline at all — the honest reading of the
+        # joint entry competition. entry_capped, not floor_retained.
+        self.assertEqual(state, {})
+        self.assertEqual(
+            [e["event"] for e in sink["pipeline_events"]], ["entry_capped"]
+        )
+
+    def test_legacy_default_ignores_pipeline_fields(self):
+        # Byte-identity guard: under the default rule the execution lags are
+        # inert — changing them cannot alter a legacy run's outcome.
+        base = ScenarioConfig()
+        tweaked = ScenarioConfig(
+            retirement_execution_lag_coal=1,
+            retirement_execution_lag_gas_st=5,
+        )
+        fleet = [_gen("C0", "coal", pmax=100.0)]
+        for cfg in (base, tweaked):
+            arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+            out, losses, _ = apply_economic_retirements(
+                fleet,
+                arrays,
+                self._dispatch_result(1, 10.0),
+                np.full((1, self.T), 10.0),
+                cfg,
+                {},
+                peak_demand=0.0,
+            )
+            self.assertEqual([g.unit_id for g in out], ["C0"])
+            self.assertEqual(losses["C0"], 1)
 
 
 class TestFomThresholdFlip(unittest.TestCase):

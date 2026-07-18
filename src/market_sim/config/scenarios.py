@@ -28,10 +28,23 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "hindcast_fuel_variant",
     # G-30 first-wave probes (default-off): dropped from the hash at default so
     # every pre-existing cached run keeps its key; a non-default value enters
-    # the key (a distinct scenario).
-    "staged_oversupply_thinning",
-    "staged_thinning_max_gw_per_year",
+    # the key (a distinct scenario). (staged_oversupply_thinning /
+    # staged_thinning_max_gw_per_year were DELETED — not zeroed, rule 26 — at
+    # the FF-1A R-NEW flip commit: the execution-lag pipeline carries the same
+    # physical deactivation queue once, rule 19. ff-retirement-rule-redesign-
+    # 2026-07.md §3.6 / owner D2.)
     "limited_foresight_dispatch",
+    # FF-1A R-NEW decision/execution retirement pipeline (default "legacy" —
+    # byte-identical): dropped from the hash at defaults so every pre-existing
+    # cached run keeps its key; a non-default rule or lag enters the key.
+    "retirement_rule",
+    "retirement_execution_lag_coal",
+    "retirement_execution_lag_gas_ct",
+    "retirement_execution_lag_gas_st",
+    "retirement_execution_lag_oil",
+    "retirement_execution_lag_gas_cc",
+    "retirement_execution_lag_gas_cc_ccs",
+    "retirement_execution_lag_nuclear",
     # National CES federal EAC premium (W1-A, national-ces-eac-premium-plan
     # §5.1): default-off block, dropped from the hash at defaults so
     # cache_key(ScenarioConfig()) is byte-identical before/after the fields
@@ -391,9 +404,12 @@ class ScenarioConfig:
     # median = 3 yr, left-censored (66 % of announced coal MW), so a conservative
     # floor on the announcement→deactivation pipeline (D1 Option B,
     # docs/handoffs/retirement-dof-identification-2026-07-15.md §a.3/§a.4/§d). The
-    # threshold now carries the full decision+lead-time (D+L) deactivation total,
-    # so staged_oversupply_thinning stays default-off (rule 19 — the same physical
-    # queue must not be counted twice; §a.6). Owner-adopted 2026-07-16.
+    # threshold carries the full decision+lead-time (D+L) deactivation total
+    # (rule 19 — the same physical queue must not be counted twice; §a.6).
+    # Owner-adopted 2026-07-16. LEGACY-rule field: consumed only under
+    # retirement_rule="legacy"; the R-NEW pipeline uses
+    # retirement_execution_lag_* below (same §a.3 identification, coal
+    # loss→gone total unchanged at 3).
     retirement_years_gas_ct: int = 2  # CTs get 2 years
     retirement_years_gas_cc: int = 3  # modern CCs get 3 years (most flexible/valuable)
     retirement_years_gas_st: int = 2  # legacy gas steam — same grace as a CT
@@ -408,29 +424,55 @@ class ScenarioConfig:
     retirement_fom_multiplier_oil: float = 1.0
     retirement_fom_multiplier_gas_cc_ccs: float = 1.0
     retirement_fom_multiplier_nuclear: float = 1.0
-    staged_oversupply_thinning: bool = False  # GATED, default-OFF (G-30
-    # first-wave fix). When True, the economic-retirement screen may retire at
-    # most ``staged_thinning_max_gw_per_year`` GW **per fuel class per year** —
-    # the least-efficient (highest-heat-rate) eligible units go first, the rest
-    # carry their loss counter forward and are re-screened next year. This is a
-    # RATE cap on exits, not a price floor/adder: it does not change any unit's
-    # margin or the retire/keep decision, only how many exits of one fuel class
-    # a single simulation year may realize. Structural driver: a fleet does not
-    # deactivate 14 GW of one fuel in one calendar year — RTO deactivation-notice
-    # periods (ERCOT §3.14 / PJM ~90-day + RMR study), decommissioning lead time,
-    # and coal rail/take-or-pay wind-down stage large exits over multiple years.
-    # Forward analogue (rule 13): any forecast year's economic exits are throttled
-    # by the same physical lead time, and a genuinely over-supplied fleet still
-    # exits fully — just spread across years. The point (G-30 first-wave problem):
-    # spreading the exits gives a year whose fleet has thinned enough for the LP
-    # regime (the in-year ORDC overlay / lookahead pro-forma) to price scarcity
-    # and RETAIN the marginal survivor — the retention decision stays the LP's,
-    # never this cap's. Mirrors ccs_retrofit_max_gw_per_year's throughput logic.
-    staged_thinning_max_gw_per_year: float = 3.0  # GW/yr/fuel-class exit budget
-    # when staged_oversupply_thinning is on. 3.0 GW ≈ the largest single-year
-    # ERCOT coal-deactivation wave observed historically (two ~1.5 GW plants);
-    # it is a lead-time ceiling, never fitted to a retirement residual. Ignored
-    # when staged_oversupply_thinning is off (default).
+    # (staged_oversupply_thinning / staged_thinning_max_gw_per_year were
+    # DELETED, not zeroed — rule 26 — at the FF-1A R-NEW commit, owner
+    # decision D2: the R-NEW execution-lag pipeline carries the same physical
+    # deactivation queue exactly once (rule 19; RC-0B §a.6 double-count
+    # warning). ff-retirement-rule-redesign-2026-07.md §3.6.)
+    retirement_rule: str = "legacy"  # "legacy" | "pipeline". Decision rule for
+    # the economic-retirement screen (FF-0C memo ff-retirement-rule-redesign-
+    # 2026-07.md §3.6, owner D1 = Option B, 2026-07-17).
+    #   "legacy"   — per-fuel consecutive-loss counters (retirement_years_*),
+    #                the shipping default: byte-identical to every committed
+    #                run. Held as the default pending the FF-2C flip decision;
+    #                the measured per-fuel threshold INVERSION
+    #                (position-calibration-d1-findings-2026-07-16.md §6) is
+    #                the reason "pipeline" exists.
+    #   "pipeline" — R-NEW decision/execution split: uniform decision at the
+    #                identical net_revenue < going_forward_cost bar (no
+    #                per-fuel DECISION threshold), joint cross-fuel pipeline-
+    #                entry competition capped by the existing accredited-
+    #                adequacy requirement (worst-first margin-depth ordering,
+    #                cheapest-firm-adequacy retention — the floor's own
+    #                machinery/metric), soft annual re-confirmation latch
+    #                (leaves only by re-clearing the same bar), deactivation
+    #                after the per-fuel EXECUTION lag below, reliability floor
+    #                unchanged as the realized-year backstop. Zero newly tuned
+    #                parameters; decision persistence D=0 is an OPEN DOF held
+    #                by parsimony (§3.1 flat-expectation degenerate NPV form),
+    #                never tunable against a residual (rule 21/13).
+    retirement_execution_lag_coal: int = 3  # yr, decision→deactivation. RC-0B
+    # §a.3 lag table: measured EIA-860 announced-to-deactivation, cap-weighted
+    # / ≥300 MW median = 3, left-censored ⇒ conservative floor — the SAME
+    # identification as retirement_years_coal=3 (D1 Option B), so coal's
+    # persistent-loss loss→gone total is unchanged. Re-derives only on EIA-860
+    # vintage update (rule 23).
+    retirement_execution_lag_gas_ct: int = 2  # yr. §a.3 median 2
+    # (n=161 units / 2.9 GW). IDENTIFIED.
+    retirement_execution_lag_gas_st: int = 1  # yr. §a.3 median 1 (n=53 /
+    # 8.1 GW) — replaces the consistent-but-unidentified legacy 2 (rule 14:
+    # measured over estimate; LOYO-scored per FF-1A). IDENTIFIED.
+    retirement_execution_lag_oil: int = 1  # yr. §a.3 median 1 (n=242 /
+    # 2.4 GW). IDENTIFIED.
+    retirement_execution_lag_gas_cc: int = 1  # yr. §a.3 median 1 — small
+    # sample (n=26 / 1.2 GW), flagged IDENTIFIED-WEAK; owner D3 (2026-07-17)
+    # adopted the measurement (rule 14) over holding gas_ct's 2.
+    retirement_execution_lag_gas_cc_ccs: int | None = None  # yr; None =
+    # inherit retirement_execution_lag_gas_cc. No CCS retirement exists
+    # anywhere (§a.4) — OPEN DOF, inherit (memo §5).
+    retirement_execution_lag_nuclear: int = 3  # yr. §a.5: n≈2 (IP3,
+    # Palisades, both off-sheet) suggests L ≥ 3-4 but is NOT identification —
+    # OPEN DOF, held at the legacy 3; T-R7 guards the channel regardless.
     limited_foresight_dispatch: bool = False  # GATED, default-OFF (G-30 in-year
     # scarcity fix). When True, the in-year dispatch LP is denied perfect annual
     # foresight for flexible resources: storage/hydro cannot bank energy across
@@ -441,8 +483,10 @@ class ScenarioConfig:
     # is exactly why the over-supplied-fleet ORDC overlay stays inert (reserves
     # never tighten). With foresight bounded, the peak/net-load-ramp hours the
     # storage fleet can no longer pre-empt let the in-year ORDC overlay price
-    # scarcity from the LP regime once the fleet has thinned (pairs with
-    # staged_oversupply_thinning). Dispatch-side structural change, zero fitted
+    # scarcity from the LP regime once the fleet has thinned (historically
+    # paired with the now-deleted staged_oversupply_thinning; the R-NEW
+    # execution-lag pipeline carries that queue). Dispatch-side structural
+    # change, zero fitted
     # parameters; volumes still solve on the LP, the overlay reads its duals.
     # (retirement_reserve_margin was DELETED, not zeroed — rule 26. The
     # retirement reliability floor now shares the adequacy backstop's margin:
@@ -6085,6 +6129,12 @@ class ScenarioConfig:
                 f"{sorted(HYDRO_YEAR_MULTIPLIER)}, got {self.hydro_year!r}"
             )
 
+        if self.retirement_rule not in ("legacy", "pipeline"):
+            raise ValueError(
+                "ScenarioConfig.retirement_rule must be 'legacy' or "
+                f"'pipeline', got {self.retirement_rule!r}"
+            )
+
         if self.neighbor_hr_forward_skill not in (None, "elastic", "flat"):
             raise ValueError(
                 "ScenarioConfig.neighbor_hr_forward_skill must be None, "
@@ -6909,6 +6959,14 @@ TIER_TAGS: dict[str, int] = {
     "retirement_years_oil": 2,
     "retirement_years_gas_cc_ccs": 2,
     "retirement_years_nuclear": 2,
+    "retirement_rule": 2,
+    "retirement_execution_lag_coal": 2,
+    "retirement_execution_lag_gas_ct": 2,
+    "retirement_execution_lag_gas_st": 2,
+    "retirement_execution_lag_oil": 2,
+    "retirement_execution_lag_gas_cc": 2,
+    "retirement_execution_lag_gas_cc_ccs": 2,
+    "retirement_execution_lag_nuclear": 2,
     "retirement_fom_multiplier_coal": 2,
     "retirement_fom_multiplier_gas_ct": 2,
     "retirement_fom_multiplier_gas_cc": 2,
