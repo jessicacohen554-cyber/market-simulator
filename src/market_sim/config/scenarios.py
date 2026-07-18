@@ -2927,6 +2927,32 @@ class ScenarioConfig:
     # dates/values are published market design (docs/parameter-citations.md), no
     # parameter is fitted to a price residual. Default off; ERCOT multi-product
     # co-opt only. GATED.
+    ercot_nonreleasable_as_withholding: bool = False  # ERCOT multi-product co-opt:
+    # represent the PUBLISHED pre-RTC+B RRS + Reg-Up deployment design as rigid
+    # at-cap reserve demand, exactly as ercot_ecrs_conservative_deployment does
+    # for pre-reform ECRS. Pre-RTC+B, capacity awarded RRS or Reg-Up is carved
+    # out of the SCED-dispatchable range (HASL − Ancillary Service Resource
+    # Responsibility, Nodal Protocols §6.5.7.6.2.3 / §3.17): SCED has NO
+    # price-based release for it at ANY price — RRS deploys only on
+    # under-frequency / EEA events and Reg-Up only through LFC, i.e. at the
+    # administrative (VOLL) end of the curve. The 2024-08-01 ECRS release
+    # reform applied to ECRS ONLY; RRS/Reg-Up remained non-releasable until
+    # RTC+B go-live (2025-12-05), whose co-optimized AS demand curves made all
+    # AS price-responsive. Economically the pre-RTC+B design is a reserve
+    # demand step AT THE SYSTEM-WIDE OFFER CAP for the full (credited)
+    # requirement, so tight-hour energy duals rise to the marginal ENERGY
+    # offer instead of shedding held reserve down a price-responsive ramp the
+    # 2023-2025 market did not have (the ramp is the RTC+B design; using it
+    # pre-go-live lets the LP monetize withheld reserve at shadow prices SCED
+    # could never see, capping the energy price exactly in the $200-1,000 band
+    # the 2023 stress summer cleared). Window: whole year ≤2024; through the
+    # RTC+B go-live hour in 2025 (scarcity.RTCB_GOLIVE_HOUR); inert ≥2026 —
+    # the standing VOLL-anchored ramp (the ASDC representation) applies after
+    # go-live and in forecast years. All dates are published market design
+    # (docs/parameter-citations.md); requirements stay the measured/formulaic
+    # AS plan net of the LR / storage-award supply credits — no parameter is
+    # fitted to a price residual. Default off; ERCOT multi-product co-opt
+    # only. GATED — tightens every ORDC-regime year; re-gate all years.
     ercot_ordc_total_reserve: bool = False  # ERCOT multi-product co-opt: ALSO
     # enforce the lumped ORDC TOTAL-reserve demand curve (the published RTORPA
     # mechanism of the 2014-2025 ORDC regime, NPRR568 / PUCT project 37897 +
@@ -7206,6 +7232,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_ecrs_requirement_from_year": 1,
     "ercot_multiproduct_as_coopt": 1,
     "ercot_ecrs_conservative_deployment": 1,
+    "ercot_nonreleasable_as_withholding": 1,
     "ercot_ordc_total_reserve": 1,
     "ercot_storage_as_product_credit": 1,
     "ercot_as_critical_frac": 1,
