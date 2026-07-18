@@ -57,37 +57,82 @@ def test_off_path_identity_even_with_percentile_moved():
 
 
 # --------------------------------------------------------------------------
-# 2. On-path additivity — closed-form energy/peak deltas (analytic, no solve).
+# 2. On-path RELOCATION — energy-invariant double-count fix (FF-1C / CX-4 §3.5).
+#    The near-era DEMAND_GROWTH_RATES are DC-inclusive, so the block relocates
+#    (scale peaky demand down by its energy fraction, add back flat) rather than
+#    naively adding — total energy invariant, peak flattens. Analytic, no solve.
 # --------------------------------------------------------------------------
-def test_on_path_additivity_closed_form():
+def test_on_path_relocation_energy_invariant_closed_form():
     cfg = ScenarioConfig(iso="ERCOT", datacenter_load_path="mid")
     zones = get_iso_config("ERCOT").zone_names
     t = 24
-    demand = np.zeros((len(zones), t))
+    # Peaky demand whose energy comfortably contains the block (relocate regime).
+    rng = np.random.default_rng(1)
+    demand = rng.random((len(zones), t)) * 6e4 + 2e4
     out = add_datacenter_block(demand, cfg, "ERCOT", 2030, zones)
 
     dc_mw = resolve_datacenter_mw(cfg, "ERCOT", 2030)  # 37,000 MW mid @2030
     block_mw = dc_mw * cfg.datacenter_load_factor  # 37000 * 0.85
     assert block_mw == pytest.approx(37000.0 * 0.85)
 
-    # Flat block: every hour of every zone gets the same per-zone MW.
-    per_zone = out[:, 0]
-    assert np.allclose(out, per_zone[:, None])  # no hourly shape
-    # ERCOT load_shares sum to 1.0 -> total added system MW == block_mw.
-    assert out.sum(axis=0)[0] == pytest.approx(block_mw)
-    # Closed form: ΔEnergy = block_mw * T ; Δpeak = block_mw (flat).
-    assert out.sum() == pytest.approx(block_mw * t)
-    assert out.sum(axis=0).max() == pytest.approx(block_mw)
+    dc_energy = block_mw * t
+    total_energy = float(demand.sum())
+    assert dc_energy < total_energy  # relocate regime, not tail-add
+    scale = 1.0 - dc_energy / total_energy
+
+    # Closed form: out = demand*scale + flat_block; energy is INVARIANT.
+    per_zone = datacenter_block_mw_by_zone(cfg, "ERCOT", 2030, zones)
+    assert np.allclose(out, demand * scale + per_zone[:, None])
+    assert out.sum() == pytest.approx(total_energy)  # <-- double-count removed
+    # Peak flattens: new peak == base_peak*scale + block_mw < base_peak + block_mw.
+    base_peak = float(demand.sum(axis=0).max())
+    assert out.sum(axis=0).max() == pytest.approx(base_peak * scale + block_mw)
+    assert out.sum(axis=0).max() < base_peak + block_mw
 
 
-def test_block_not_netted_from_renewables_is_pure_load_add():
-    """The block is added to demand (RHS), not subtracted — it only ever raises load."""
+def test_tail_regime_adds_when_block_exceeds_total():
+    """When the block's energy exceeds the demand's, it is incremental load
+    (added, not relocated) — the full-queue tail (FF-1C add_datacenter_block)."""
     cfg = ScenarioConfig(iso="ERCOT", datacenter_load_path="high")
     zones = get_iso_config("ERCOT").zone_names
-    demand = np.full((len(zones), 12), 1000.0)
+    # A tiny demand the ERCOT-high 2035 block (158 GW * 0.85) dwarfs.
+    demand = np.full((len(zones), 12), 100.0)
+    out = add_datacenter_block(demand, cfg, "ERCOT", 2035, zones)
+    block_mw = resolve_datacenter_mw(cfg, "ERCOT", 2035) * cfg.datacenter_load_factor
+    assert out.sum() == pytest.approx(demand.sum() + block_mw * 12)  # added on top
+    assert np.all(out >= demand)  # never subtracted from load
+
+
+def test_block_is_load_side_not_netted_from_renewables():
+    """The block acts on demand (RHS), never as a renewable credit. In the
+    relocate regime total load is held (energy invariant); it is never negative."""
+    cfg = ScenarioConfig(iso="ERCOT", datacenter_load_path="mid")
+    zones = get_iso_config("ERCOT").zone_names
+    demand = np.full((len(zones), 12), 5000.0)
     out = add_datacenter_block(demand, cfg, "ERCOT", 2030, zones)
-    assert np.all(out >= demand)
-    assert out.sum() > demand.sum()
+    assert np.all(out >= 0.0)
+    assert out.sum() == pytest.approx(demand.sum())  # relocation conserves energy
+
+
+@pytest.mark.parametrize(
+    "iso,year",
+    [("ERCOT", 2030), ("PJM", 2030), ("CAISO", 2040), ("NYISO", 2031), ("MISO", 2030)],
+)
+def test_mid_relocation_conserves_energy_all_isos(iso, year):
+    """Every sourced ISO's MID block sits in the relocate regime, so folding it
+    into a representative peaky demand holds total energy invariant (no
+    growth x DC double-count) — the FF-1C continuity guarantee, per ISO."""
+    cfg = ScenarioConfig(iso=iso, datacenter_load_path="mid")
+    zones = get_iso_config(iso).zone_names
+    n = len(zones)
+    rng = np.random.default_rng(7)
+    # Large peaky demand so every mid block is contained (relocate, not tail-add).
+    demand = rng.random((n, 48)) * 3e5 + 1e5
+    before = float(demand.sum())
+    out = add_datacenter_block(demand, cfg, iso, year, zones)
+    block_mw = resolve_datacenter_mw(cfg, iso, year) * cfg.datacenter_load_factor
+    assert block_mw > 0.0  # each of these ISOs has a nonzero mid block
+    assert float(out.sum()) == pytest.approx(before)  # energy invariant
 
 
 # --------------------------------------------------------------------------
@@ -201,13 +246,25 @@ def test_pjm_and_nyiso_have_sourced_blocks():
     ) == pytest.approx(10000.0)
 
 
-@pytest.mark.parametrize("iso", ["MISO", "NEISO"])
-def test_unsourced_isos_ship_zero(iso):
-    """MISO/NEISO have no published DC decomposition -> 0 MW on every path (§2.2)."""
-    assert DATACENTER_ADDITIONS_MW[iso] == {}
+def test_miso_block_sourced_from_ltlf():
+    """FF-1C wired MISO's DC block from the Sept-2025 MISO LTLF (was {}):
+    mid ~11 GW by 2027 growing to ~20 GW by 2030; low signed-subset -> 0."""
+    mid = ScenarioConfig(iso="MISO", datacenter_load_path="mid")
+    assert resolve_datacenter_mw(mid, "MISO", 2027) == pytest.approx(11000.0)
+    assert resolve_datacenter_mw(mid, "MISO", 2030) == pytest.approx(20000.0)
+    high = ScenarioConfig(iso="MISO", datacenter_load_path="high")
+    assert resolve_datacenter_mw(high, "MISO", 2030) == pytest.approx(27000.0)
+    low = ScenarioConfig(iso="MISO", datacenter_load_path="low")
+    assert resolve_datacenter_mw(low, "MISO", 2030) == 0.0
+
+
+def test_unsourced_isos_ship_zero():
+    """NEISO's DC quantum is immaterial (~110 MW), so it still ships {} -> 0 MW
+    on every path (FF-0D §1.4, documented deferral)."""
+    assert DATACENTER_ADDITIONS_MW["NEISO"] == {}
     for path in ("low", "mid", "high"):
-        cfg = ScenarioConfig(iso=iso, datacenter_load_path=path)
-        assert resolve_datacenter_mw(cfg, iso, 2030) == 0.0
+        cfg = ScenarioConfig(iso="NEISO", datacenter_load_path=path)
+        assert resolve_datacenter_mw(cfg, "NEISO", 2030) == 0.0
 
 
 def test_unknown_iso_ships_zero():
