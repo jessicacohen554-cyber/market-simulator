@@ -59,7 +59,6 @@ from __future__ import annotations
 import logging
 import math
 from dataclasses import dataclass
-from itertools import groupby
 
 import numpy as np
 
@@ -166,7 +165,8 @@ _RPS_ELIGIBLE_FUELS: frozenset[str] = frozenset({"wind", "solar"})
 # (runner.py); it no longer participates in any retirement/adequacy decision.
 _FIRM_CLEAN_FUELS: tuple[str, ...] = ("hydro",)
 
-# Per-fuel ScenarioConfig field names for the consecutive-loss threshold.
+# Per-fuel ScenarioConfig field names for the consecutive-loss threshold
+# (LEGACY rule only — retirement_rule="legacy").
 _RETIREMENT_YEARS: dict[str, str] = {
     "coal": "retirement_years_coal",
     "gas_ct": "retirement_years_gas_ct",
@@ -176,6 +176,35 @@ _RETIREMENT_YEARS: dict[str, str] = {
     "oil": "retirement_years_oil",
     "nuclear": "retirement_years_nuclear",
 }
+
+# Per-fuel ScenarioConfig field names for the decision→deactivation EXECUTION
+# lag (R-NEW pipeline rule — retirement_rule="pipeline"). Identification:
+# RC-0B §a.3 measured EIA-860 announced-to-deactivation lag medians
+# (ff-retirement-rule-redesign-2026-07.md §5); see the field docstrings.
+_RETIREMENT_EXECUTION_LAG: dict[str, str] = {
+    "coal": "retirement_execution_lag_coal",
+    "gas_ct": "retirement_execution_lag_gas_ct",
+    "gas_cc": "retirement_execution_lag_gas_cc",
+    "gas_st": "retirement_execution_lag_gas_st",
+    "gas_cc_ccs": "retirement_execution_lag_gas_cc_ccs",
+    "oil": "retirement_execution_lag_oil",
+    "nuclear": "retirement_execution_lag_nuclear",
+}
+
+
+def _execution_lag_years(config: ScenarioConfig, fuel_type: str) -> int:
+    """Return the R-NEW decision→deactivation execution lag for one fuel.
+
+    ``gas_cc_ccs`` inherits ``retirement_execution_lag_gas_cc`` when its own
+    field is ``None`` (no CCS retirement exists anywhere — RC-0B §a.4; the
+    inheritance is the memo-§5 open-DOF disposition, not a tunable).
+    """
+    field_name = _RETIREMENT_EXECUTION_LAG[fuel_type]
+    lag = getattr(config, field_name)
+    if lag is None and fuel_type == "gas_cc_ccs":
+        lag = getattr(config, "retirement_execution_lag_gas_cc")
+    return int(lag)
+
 
 # Per-fuel ScenarioConfig field names for the effective-FOM multiplier.
 _FOM_MULTIPLIER: dict[str, str] = {
@@ -1112,72 +1141,207 @@ def _apply_reliability_floor(
     return retention_log
 
 
-def _apply_staged_thinning_cap(
-    eligible: list[Generator],
-    retired: set[str],
+def _apply_pipeline_retirements(
+    fleet: list[Generator],
+    margins: list[tuple["Generator", float, float]],
+    pipeline_state: dict[str, int],
     config: ScenarioConfig,
-    year: int | None,
+    peak_demand: float,
+    wind_pool_mw: float,
+    solar_pool_mw: float,
+    storage_firm_mw: float,
+    deliverability_headroom: dict[str, float] | None,
+    year: int,
     event_sink: dict | None,
-) -> list[Generator]:
-    """Cap each fuel class's economic exits to a per-year MW budget.
+) -> tuple[list[Generator], dict[str, int], list[dict]]:
+    """R-NEW decision/execution retirement pipeline (``retirement_rule="pipeline"``).
 
-    A staged-retirement RATE cap (G-30 first-wave fix, GATED
-    ``config.staged_oversupply_thinning``, default off). When enabled, at most
-    ``config.staged_thinning_max_gw_per_year`` GW of any single fuel class may
-    retire in one simulation year; the least-efficient (highest-heat-rate)
-    eligible units go first (``eligible`` is pre-sorted ``(fuel, -heat_rate)``),
-    and once a class's budget is spent the remaining eligible units of that
-    class are **deferred** — removed from ``retired`` so they survive this year
-    — and re-screened next year with their loss counters intact.
+    The FF-0C §3.6 composite rule (owner D1 = Option B, 2026-07-17;
+    ``docs/handoffs/ff-retirement-rule-redesign-2026-07.md``), replacing the
+    legacy per-fuel consecutive-loss counters whose threshold inversion
+    RC-1A-D1 measured. Six components, zero newly tuned parameters:
 
-    This is not a price floor or an adder: it does not touch any unit's margin
-    or the underlying retire/keep decision, only how many exits of one fuel
-    class a single year may realize (RTO deactivation-notice / RMR / coal
-    contract-wind-down lead time — a fleet does not exit 14 GW of one fuel in a
-    calendar year). Its purpose (rule 1/11) is to spread a large single-year
-    over-supply exit across years so a later year — with a fleet the LP regime
-    can price as scarce (in-year ORDC overlay or lookahead pro-forma) — makes
-    the retain/exit call on the survivors. It mirrors
-    ``ccs_retrofit_max_gw_per_year``'s throughput logic.
+    1. **Uniform decision.** A unit whose attainable margin fails the
+       identical ``net_revenue < going_forward_cost`` bar at ONE annual
+       screen becomes DECIDED (decision persistence D = 0, an open DOF held
+       by parsimony — the flat-expectation degenerate NPV form, §3.1). No
+       per-fuel decision threshold exists.
+    2. **Joint pipeline-entry competition.** All newly failing units across
+       ALL fuels compete in the same year, considered worst-first by margin
+       depth ($/kW-yr shortfall, §3.3). Admission is capped by the EXISTING
+       accredited-adequacy requirement evaluated on the schedule of pending
+       exits: :func:`_apply_reliability_floor` (the floor's own machinery
+       and cheapest-firm-adequacy metric) retains candidates until the
+       scheduled post-pipeline firm capacity clears the shared PRM
+       requirement. Removes the D1 defects 2 and 3 (the cross-fuel race and
+       the fuel-partitioned eligible set).
+    3. **Soft latch.** A pipelined unit is re-screened annually and leaves
+       the pipeline ONLY by re-clearing the same bar (economic recovery; the
+       policy-rescue reversal channel stays the confirmed registry's). No
+       band, no new parameter — one good year no longer erases the distress
+       history unless it actually restores viability.
+    4. **Execution after the identified lag.** A unit still pipelined at
+       ``decided_year + L_f`` deactivates then (``L_f`` = the RC-0B §a.3
+       measured per-fuel announcement→deactivation medians,
+       ``retirement_execution_lag_*``). It dispatches normally until then,
+       as real announced-but-operating units do. ``decided_year`` is the
+       LOSS year (the year whose dispatch failed = ``year - 1`` at screen
+       time), so a persistent-loss coal cohort (L=3) is decided end of loss
+       year ``y`` and gone at the start of ``y + 3`` — byte-equivalent
+       timing to the adopted legacy D1=3 counter.
+    5. **Reliability floor at execution, unchanged.** The realized-year
+       backstop: a floor-retained due unit stays online AND stays pipelined
+       (execution deferred, re-latched next year).
+    6. **Ledger attribution.** ``event_sink["pipeline_events"]`` records
+       decided / re_confirmed / reversed / entry_capped / executed rows with
+       years, so recall/false-retire scoring sees the decision and the
+       execution separately.
 
-    Mutates ``retired`` in place (discards deferred unit ids) and records the
-    deferrals under ``event_sink["staged_deferred"]`` when a sink is supplied.
+    ``pipeline_state`` maps ``unit_id -> decided_year`` and is threaded
+    through the same cross-year seam as the legacy loss counters (the
+    ``consecutive_loss_years`` dict); it is not mutated in place. Stale ids
+    (units that left the fleet through another channel) are inert and are
+    pruned when the unit is gone.
 
-    Returns:
-        The list of deferred generators (empty when the gate is off or no
-        class exceeds its budget).
+    Returns ``(survivors, pipeline_state, floor_retention_log)`` with the
+    same contract as the legacy branch of
+    :func:`apply_economic_retirements`.
     """
-    if not config.staged_oversupply_thinning:
-        return []
-    budget_mw = float(config.staged_thinning_max_gw_per_year) * 1000.0
-    if budget_mw <= 0.0:
-        return []
-    deferred: list[Generator] = []
-    # ``eligible`` is sorted by (fuel_type, -heat_rate), so groupby(fuel_type)
-    # yields each class least-efficient-first with no re-sort.
-    for _fuel, group in groupby(eligible, key=lambda g: g.fuel_type):
-        spent_mw = 0.0
-        for g in group:
-            if spent_mw >= budget_mw:
-                retired.discard(g.unit_id)
-                deferred.append(g)
+    state = dict(pipeline_state)
+    events: list[dict] = []
+    fleet_ids = {g.unit_id for g in fleet}
+    # Prune ids that left the fleet via another channel (confirmed exit,
+    # retrofit rename, re-aggregation): nothing to execute or reverse.
+    for uid in [u for u in state if u not in fleet_ids]:
+        state.pop(uid)
+
+    def _event(kind: str, g: Generator, decided: int | None) -> dict:
+        row = {
+            "event": kind,
+            "unit_id": g.unit_id,
+            "fuel": g.fuel_type,
+            "mw": float(g.pmax_mw),
+            "year": int(year),
+        }
+        if decided is not None:
+            row["decided_year"] = int(decided)
+            row["execute_year"] = int(decided) + _execution_lag_years(
+                config, g.fuel_type
+            )
+        return row
+
+    # --- Soft latch (component 3): re-screen every pipelined unit at the
+    # same bar; a unit that re-clears it leaves the pipeline (reversed).
+    candidates: list[tuple[Generator, float]] = []  # (unit, depth $/kW-yr)
+    for g, net_revenue, going_forward_cost in margins:
+        failing = net_revenue < going_forward_cost
+        if g.unit_id in state:
+            if failing:
+                events.append(_event("re_confirmed", g, state[g.unit_id]))
             else:
-                spent_mw += float(g.pmax_mw)
-    if deferred:
+                events.append(_event("reversed", g, state.pop(g.unit_id)))
+        elif failing:
+            depth = (
+                (going_forward_cost - net_revenue) / (g.pmax_mw * 1000.0)
+                if g.pmax_mw > 0.0
+                else 0.0
+            )
+            candidates.append((g, depth))
+
+    # --- Joint entry competition (components 1-2): worst-first margin depth,
+    # deterministic tie-break on unit_id. The uniform decision bar has already
+    # fired above; admission is capped by the scheduled-adequacy requirement.
+    candidates.sort(key=lambda item: (-item[1], item[0].unit_id))
+    new_units = [g for g, _depth in candidates]
+    depth_of = {g.unit_id: d for g, d in candidates}
+    # Scheduled-exit set: everything pending plus every new candidate; the
+    # floor machinery (cheapest-firm-adequacy retention, the EXISTING metric)
+    # un-admits new candidates until the scheduled post-pipeline accredited
+    # firm capacity clears the shared PRM requirement. Pending units admitted
+    # in prior years are not re-litigated here — the realized-year floor
+    # below remains their backstop.
+    scheduled: set[str] = set(state) | {g.unit_id for g in new_units}
+    _apply_reliability_floor(
+        fleet,
+        new_units,
+        scheduled,
+        state,
+        config,
+        peak_demand,
+        wind_pool_mw,
+        solar_pool_mw,
+        storage_firm_mw,
+        deliverability_headroom,
+        year,
+    )
+    decided_year = year - 1  # the loss year whose dispatch failed this screen
+    for g in new_units:
+        if g.unit_id in scheduled:
+            state[g.unit_id] = decided_year
+            events.append(_event("decided", g, decided_year))
+        else:
+            row = _event("entry_capped", g, None)
+            row["depth_usd_per_kw_yr"] = float(depth_of[g.unit_id])
+            events.append(row)
+
+    # --- Execution (component 4): every unit still pipelined at
+    # decided_year + L_f deactivates now, then the realized-year reliability
+    # floor (component 5, unchanged machinery) retains cheapest-firm-adequacy
+    # first. Floor-retained units stay pipelined (execution deferred).
+    unit_of = {g.unit_id: g for g in fleet}
+    due = [
+        unit_of[uid]
+        for uid in state
+        if year >= state[uid] + _execution_lag_years(config, unit_of[uid].fuel_type)
+    ]
+    # Deterministic order for the floor's eligible iteration and the ledger.
+    due.sort(key=lambda g: (g.fuel_type, -g.heat_rate))
+    retired = {g.unit_id for g in due}
+    floor_retention_log = _apply_reliability_floor(
+        fleet,
+        due,
+        retired,
+        state,
+        config,
+        peak_demand,
+        wind_pool_mw,
+        solar_pool_mw,
+        storage_firm_mw,
+        deliverability_headroom,
+        year,
+    )
+    for g in due:
+        if g.unit_id in retired:
+            events.append(_event("executed", g, state[g.unit_id]))
+
+    survivors = [g for g in fleet if g.unit_id not in retired]
+    for uid in retired:
+        state.pop(uid, None)
+
+    if retired:
         logger.info(
-            "staged thinning (year %s): deferred %d units (%.0f MW) past the "
-            "%.1f GW/fuel/yr exit budget",
+            "year %d: R-NEW pipeline executed %d exit(s), %.0f MW "
+            "(%d pending, %d entry-capped, %d reversed)",
             year,
-            len(deferred),
-            sum(float(g.pmax_mw) for g in deferred),
-            config.staged_thinning_max_gw_per_year,
+            len(retired),
+            sum(float(g.pmax_mw) for g in due if g.unit_id in retired),
+            len(state),
+            sum(1 for e in events if e["event"] == "entry_capped"),
+            sum(1 for e in events if e["event"] == "reversed"),
         )
-        if event_sink is not None:
-            event_sink["staged_deferred"] = [
-                {"unit_id": g.unit_id, "fuel": g.fuel_type, "mw": float(g.pmax_mw)}
-                for g in deferred
-            ]
-    return deferred
+    if event_sink is not None:
+        event_sink["pipeline_events"] = events
+        event_sink["retired"] = [
+            {"unit_id": g.unit_id, "fuel": g.fuel_type, "mw": float(g.pmax_mw)}
+            for g in due
+            if g.unit_id in retired
+        ]
+        event_sink["floor_retained"] = [
+            {"unit_id": g.unit_id, "fuel": g.fuel_type, "mw": float(g.pmax_mw)}
+            for g in due
+            if g.unit_id not in retired
+        ]
+    return survivors, state, floor_retention_log
 
 
 def apply_economic_retirements(
@@ -1234,15 +1398,27 @@ def apply_economic_retirements(
     legacy gross-energy-revenue-on-dispatch comparison, which overstates
     margins and under-retires -- callers should always supply ``mc``.
 
-    A year in which ``net_revenue < going_forward_cost`` increments the
-    unit's consecutive-loss counter; a profitable year resets it to zero.
-    Once the counter reaches the unit's fuel-type retirement threshold the
-    unit retires. Both the threshold and the fixed-cost multiplier are
-    fuel-type-aware: coal exits faster (one loss year) and carries a
-    higher effective fixed cost than gas, while modern ``gas_cc`` units
-    are given the longest grace period. Fuel types without a specific
-    override fall back to ``config.retirement_consecutive_years`` and a
-    multiplier of ``1.0``.
+    How a failing screen becomes a realized exit is selected by
+    ``config.retirement_rule`` (FF-1A):
+
+    * ``"legacy"`` (default): a year in which
+      ``net_revenue < going_forward_cost`` increments the unit's
+      consecutive-loss counter; a profitable year resets it to zero. Once
+      the counter reaches the unit's per-fuel ``retirement_years_*``
+      threshold the unit retires. Fuel types without a specific override
+      fall back to ``config.retirement_consecutive_years``. Byte-identical
+      to every committed run.
+    * ``"pipeline"``: the R-NEW decision/execution split
+      (:func:`_apply_pipeline_retirements`) — uniform one-screen decision,
+      joint adequacy-capped cross-fuel pipeline entry, soft annual
+      re-confirmation latch, and deactivation after the measured per-fuel
+      ``retirement_execution_lag_*``. Under this rule the
+      ``consecutive_loss_years`` dict threads the pipeline state
+      (``unit_id -> decided_year``) through the same cross-year seam.
+
+    The fixed-cost multiplier is fuel-type-aware under both rules (coal
+    carries a higher effective fixed cost than gas — regulatory/ESG risk);
+    fuels without an override use a multiplier of ``1.0``.
 
     When multiple units in the same fuel class retire, the highest
     heat-rate (least efficient) units go first. A system-wide reliability
@@ -1369,7 +1545,10 @@ def apply_economic_retirements(
     # Potomac ERCOT SOM net-revenue tables, never tuned to the retirement pace).
     _screen_stack: dict[str, list[tuple[float, float, float]]] = {}
 
-    eligible: list[Generator] = []
+    # Per-unit screen margins, shared by both decision rules: the uniform
+    # net_revenue vs going_forward_cost comparison is computed once here;
+    # the rules differ only in how a failing screen becomes a realized exit.
+    margins: list[tuple[Generator, float, float]] = []
     for g in fleet:
         if g.unit_id in exempt_unit_ids:
             # CCS-retrofitted this year (W2-C): decision already made; the
@@ -1497,11 +1676,6 @@ def apply_economic_retirements(
                 g.fuel_type, storage_power_mw, config
             )
 
-        threshold = getattr(
-            config,
-            _RETIREMENT_YEARS.get(g.fuel_type, ""),
-            config.retirement_consecutive_years,
-        )
         multiplier = getattr(config, _FOM_MULTIPLIER.get(g.fuel_type, ""), 1.0)
         going_forward_cost = (
             getattr(config, fom_field) * multiplier * g.pmax_mw * 1000.0
@@ -1517,13 +1691,7 @@ def apply_economic_retirements(
                 )
             )
 
-        if net_revenue < going_forward_cost:
-            loss_years[g.unit_id] = loss_years.get(g.unit_id, 0) + 1
-        else:
-            loss_years[g.unit_id] = 0
-
-        if loss_years[g.unit_id] >= threshold:
-            eligible.append(g)
+        margins.append((g, net_revenue, going_forward_cost))
 
     # Revenue-side audit line (diagnostic): capacity-weighted screen net
     # revenue and going-forward bar per fuel class, for the FOM+scarcity joint
@@ -1545,21 +1713,53 @@ def apply_economic_retirements(
             len(_rows),
         )
 
+    # --- Decision rule branch (FF-1A). Both rules consumed the identical
+    # per-unit margins above; retirement_rule selects how a failing screen
+    # becomes a realized exit. "pipeline" is the R-NEW decision/execution
+    # split (see _apply_pipeline_retirements); "legacy" (default) is the
+    # per-fuel consecutive-loss counter, byte-identical to every committed
+    # run.
+    if getattr(config, "retirement_rule", "legacy") == "pipeline":
+        if year is None:
+            raise ValueError(
+                "retirement_rule='pipeline' requires a simulation year "
+                "(the decision/execution pipeline is dated)"
+            )
+        return _apply_pipeline_retirements(
+            fleet,
+            margins,
+            loss_years,
+            config,
+            peak_demand,
+            wind_pool_mw,
+            solar_pool_mw,
+            storage_firm_mw,
+            deliverability_headroom,
+            year,
+            event_sink,
+        )
+
+    # Legacy rule: a failing year increments the unit's consecutive-loss
+    # counter (a profitable year resets it); the counter reaching the
+    # per-fuel retirement_years_* threshold makes the unit exit-eligible.
+    eligible: list[Generator] = []
+    for g, net_revenue, going_forward_cost in margins:
+        threshold = getattr(
+            config,
+            _RETIREMENT_YEARS.get(g.fuel_type, ""),
+            config.retirement_consecutive_years,
+        )
+        if net_revenue < going_forward_cost:
+            loss_years[g.unit_id] = loss_years.get(g.unit_id, 0) + 1
+        else:
+            loss_years[g.unit_id] = 0
+
+        if loss_years[g.unit_id] >= threshold:
+            eligible.append(g)
+
     # Within each fuel class, retire the least efficient units first.
     eligible.sort(key=lambda g: (g.fuel_type, -g.heat_rate))
     retired = {g.unit_id for g in eligible}
-
-    # Staged over-supply thinning (G-30 first-wave fix, GATED default off): cap
-    # each fuel class's exits to a per-year MW budget so a large single-year
-    # wave spreads across years the LP regime can price. A RATE cap, not a
-    # floor — the retain/exit margin is untouched; deferred units keep their
-    # loss counters and re-screen next year (see the config-field docstring).
-    # Applied BEFORE the reliability floor so the two un-retire sets stay
-    # distinct (staged = lead-time deferral; floor = adequacy retention).
-    staged_deferred = _apply_staged_thinning_cap(
-        eligible, retired, config, year, event_sink
-    )
-    staged_ids = {g.unit_id for g in staged_deferred}
 
     # Reliability floor (accredited basis, plan §3.2): never strip the
     # system's accredited firm capacity below the shared PRM requirement.
@@ -1595,9 +1795,8 @@ def apply_economic_retirements(
         event_sink["floor_retained"] = [
             {"unit_id": g.unit_id, "fuel": g.fuel_type, "mw": float(g.pmax_mw)}
             for g in eligible
-            if g.unit_id not in retired and g.unit_id not in staged_ids
+            if g.unit_id not in retired
         ]
-
     return survivors, loss_years, floor_retention_log
 
 
@@ -1788,7 +1987,7 @@ def _emerging_lcoe(
         params = _offshore_wind_params(iso, config)
         crf = _capital_recovery_factor(config.real_discount_rate, params["lifetime_yr"])
         fixed = params["capex_kw"] * crf + params["fom_kw_yr"]
-        return fixed / annual_mwh_per_kw
+        return fixed / annual_mwh_per_kw + variable if False else fixed / annual_mwh_per_kw
 
     raise KeyError(f"unknown emerging technology {tech!r}")
 
@@ -2090,1673 +2289,3 @@ def _make_new_generator(
         kwargs["eford"] = 0.05
 
     return Generator(**kwargs)
-
-
-def apply_economic_new_entry(
-    fleet: list[Generator],
-    prices: np.ndarray,
-    year: int,
-    config: ScenarioConfig,
-    iso: str,
-    rps_shadow_price: float = 0.0,
-    cumulative: CumulativeDeployment | None = None,
-    gas_price_per_mmbtu: float = 0.0,
-    carbon_price: float = 0.0,
-    storage_power_mw: float = 0.0,
-    deliverability_headroom: dict[str, float] | None = None,
-    thermal_as_revenue_per_mw_yr: dict[str, float] | None = None,
-    reserve_price_signal: np.ndarray | None = None,
-    reserve_price_signal_slow: np.ndarray | None = None,
-    zone_names: list[str] | None = None,
-    wind_cf: np.ndarray | None = None,
-    solar_cf: np.ndarray | None = None,
-    reserve_position: float | None = None,
-    screen_ledger: list[dict] | None = None,
-) -> tuple[list[Generator], dict[str, dict[str, float]]]:
-    """Build new capacity for technologies that clear their LCOE.
-
-    For each candidate technology the expected annual revenue per MW is
-    compared with its annualized levelized cost. Clean technologies
-    additionally earn an attribute payment per MWh generated -- the higher
-    of the exogenous EAC and the prior year's RPS shadow price, never
-    their sum -- so either a binding RPS or an EAC lifts their expected
-    revenue and pulls more of them across the LCOE hurdle. Profitable
-    technologies are ranked by margin and built in priority order, highest
-    margin first. Two caps bind independently:
-
-    * each technology builds at most its per-tech cap from
-      :data:`QUEUE_CAP_PER_TECH_GW`, and
-    * the total across all technologies builds at most the ISO-level
-      cap :data:`QUEUE_CAP_GW`.
-
-    The highest-margin technology draws on the shared ISO budget first;
-    once that budget is exhausted no further technologies are built.
-
-    Emerging technologies (hydrogen turbines, CCUS, enhanced geothermal,
-    offshore wind) join the candidate pool once the simulation year
-    reaches their configured availability year. Hydrogen turbines and CCUS
-    share the ``gas_cc`` per-tech queue cap; geothermal and offshore wind
-    have their own. Offshore wind enters only in eligible ISOs.
-
-    Thermal new entry (``gas_cc``, ``nuclear_smr``, the hydrogen turbines,
-    CCUS, geothermal and offshore wind) is appended to the returned fleet
-    as a :class:`Generator`. Wind and solar are *not*: variable-output
-    renewables must follow a capacity-factor profile, so their build MW is
-    routed to the zonal ``wind_cap`` / ``solar_cap`` pools (the bounds of
-    the ``W[z,t]`` and ``S[z,t]`` dispatch variables) rather than entering
-    as flat-availability thermal units.
-
-    Args:
-        fleet: The current generator fleet.
-        prices: Hourly zonal energy prices in $/MWh from the prior solve.
-        year: Simulation year.
-        config: Scenario config.
-        iso: ISO identifier, supplying the queue caps and build zone.
-        rps_shadow_price: Prior year's RPS shadow price in $/MWh. Credited
-            to RPS-eligible renewables as an attribute payment, taken as
-            the max of it and the exogenous EAC (the two do not stack).
-        cumulative: Global cumulative deployment, used to discount each
-            candidate's capex along its Wright's-Law learning curve.
-        gas_price_per_mmbtu: Delivered gas price, used to charge gas CC
-            new entry its expected variable fuel cost.
-        carbon_price: Carbon price in $/tCO2, used to charge thermal new
-            entry its expected carbon cost.
-        storage_power_mw: AS-eligible (storage) fleet power in MW, the
-            saturation driver for the exogenous AS credit.
-        deliverability_headroom: Per-zone deliverable-capacity headroom for
-            the locational RA gate (no-op when empty/off).
-        thermal_as_revenue_per_mw_yr: ``{fuel_type: $/MW-yr}`` AS credit
-            derived from the co-opt's reserve duals under
-            ``ercot_thermal_as_endogenous`` (rule 19). When supplied it
-            REPLACES the exogenous ``as_revenue_per_mw_yr`` for thermal
-            candidates. ``None`` (the default, flag off) keeps the exogenous
-            flat rate.
-        reserve_price_signal: Hourly ``(T,)`` reserve price for synchronized
-            reserve-eligible candidates (plan §5 step 2). A thermal
-            candidate's hourly value becomes ``max(0, price - vc, r)`` —
-            energy or reserve, never both on the same MW — and it is then
-            the SOLE thermal AS pricing (rule 19: the annual endogenous and
-            exogenous credits are suppressed). ``None`` keeps the legacy
-            price-duration integral + annual AS credit.
-        reserve_price_signal_slow: Hourly ``(T,)`` reserve price for the
-            offline-capable quick-start tier (gas_ct — Non-Spin only).
-        zone_names: Model zone ordering of the rows of ``prices`` /
-            ``wind_cf`` / ``solar_cf``, so a VRE candidate's build zone can
-            be indexed.
-        wind_cf, solar_cf: Zonal hourly CF profiles ``(n_zones, T)``. When
-            available, a wind/solar candidate's expected revenue is its
-            build zone's hourly CF dotted against that zone's prices — the
-            candidate's actual capture shape, including its share of
-            scarcity-priced hours — instead of the shape-blind flat mean
-            (plan §6 CX-6c). ``None`` keeps the scalar base-CF screen.
-        reserve_position: System accredited reserve position for the CR-1
-            sloped capacity demand curve (see
-            :func:`capacity_reserve_position`). ``None`` / gate off keeps the
-            fixed net-CONE capacity payment thermal entry sees (byte-identical);
-            when supplied and ``capacity_market_clearing`` is on, the capacity
-            payment for a new thermal unit slides along the ISO's demand curve.
-        screen_ledger: Optional diagnostic sink (RC-0C / BLK-8). When a list is
-            supplied, one fully-decomposed row per *candidate* technology (every
-            candidate screened, not just the ones that clear) is appended:
-            the revenue terms (``energy``/``attribute``/``capacity`` $/MW-yr),
-            the cost terms (base/Wright/post-ITC capex, CRF, FOM, annualized
-            fixed cost), the capacity factor used, the profitability margin, and
-            the queue-cap binding state / MW actually built. **Diagnostic only —
-            it has no effect on the retire/build decision** (nothing reads it
-            back); ``None`` (the default) records nothing and is byte-identical
-            to the pre-instrumentation path. Wired from ``evolve_fleet`` under
-            ``ScenarioConfig.entry_screen_diagnostics`` (default off) so the
-            per-candidate entry economics land in ``evolution_<year>.json``.
-
-    Returns:
-        Tuple ``(fleet, renewable_additions)`` -- the fleet with entering
-        thermal generators appended, and a ``{zone: {fuel: mw}}`` dict of
-        wind/solar build MW to fold into the zonal renewable capacity.
-    """
-    # RC-0C diagnostic accumulator: {tech: row}. Populated only when a
-    # ``screen_ledger`` sink is supplied; every read below is guarded by
-    # ``_diag`` so the decision path is untouched when diagnostics are off.
-    _diag = screen_ledger is not None
-    _rows: dict[str, dict] = {}
-    iso_config = get_iso_config(iso)
-    # Fail loudly when an ISO lacks queue-cap data: a silent default of
-    # zero would suppress all new entry and quietly break every forecast.
-    if iso_config.name not in QUEUE_CAP_GW:
-        raise KeyError(
-            f"QUEUE_CAP_GW has no entry for {iso_config.name!r}; economic "
-            "new entry cannot run. Add the ISO's annual interconnection-"
-            "queue cap to config/constants.py."
-        )
-    if iso_config.name not in QUEUE_CAP_PER_TECH_GW:
-        raise KeyError(
-            f"QUEUE_CAP_PER_TECH_GW has no entry for {iso_config.name!r}; "
-            "every per-tech cap would default to zero and no capacity "
-            "would ever build. Add the ISO's per-technology queue caps to "
-            "config/constants.py."
-        )
-    queue_budget_mw = QUEUE_CAP_GW[iso_config.name] * 1000.0
-    per_tech_cap_gw = QUEUE_CAP_PER_TECH_GW[iso_config.name]
-    zone = _default_build_zone(iso_config)
-    # Locational gate: new thermal built into a zone already long on deliverable
-    # firm capacity vs its requirement earns no capacity payment (RA saturated
-    # there), so new entry is not pulled forward where the zone is already
-    # adequate. No-op unless capacity_deliverability_limits is on.
-    build_zone_long = _zone_is_long(deliverability_headroom, zone)
-
-    margins: list[tuple[float, str]] = []
-    for tech in _new_entry_candidates(year, config, iso_config.name):
-        # Emerging technologies are costed through their own LCOE path.
-        if tech in _EMERGING_AVAILABLE_YEAR:
-            cf = _emerging_screen_cf(tech, iso_config.name, config)
-            lcoe = _emerging_lcoe(
-                tech,
-                year,
-                config,
-                iso_config.name,
-                cf,
-                gas_price_per_mmbtu,
-                carbon_price,
-            )
-            revenue = estimate_expected_revenue(prices, cf)
-            # Emerging clean resources also earn an attribute payment: the
-            # highest single buyer among the legacy exogenous EAC, the
-            # federal CES premium × tech credit fraction (W2-A plan §5.3 —
-            # this is what lets hydrogen_ct/hydrogen_ccgt and gas_cc_ccs
-            # candidates earn the premium), and the RPS shadow price.
-            rps_for_tech = rps_shadow_price if tech in _RENEWABLE_NEW_FUELS else 0.0
-            effective_attribute_price = max(
-                effective_eac_price_for_tech(config, tech, year), rps_for_tech
-            )
-            attribute_rev = 0.0
-            if effective_attribute_price > 0.0:
-                attribute_rev = effective_attribute_price * cf * HOURS_PER_YEAR
-                revenue += attribute_rev
-            annual_cost_emerging = lcoe * HOURS_PER_YEAR * cf
-            margin = revenue - annual_cost_emerging
-            if margin > 0.0:
-                margins.append((margin, tech))
-            if _diag:
-                _rows[tech] = {
-                    "tech": tech,
-                    "kind": "emerging",
-                    "cf_screen": float(cf),
-                    "energy_revenue_per_mw_yr": float(revenue - attribute_rev),
-                    "attribute_revenue_per_mw_yr": float(attribute_rev),
-                    "attribute_price": float(effective_attribute_price),
-                    "capacity_revenue_per_mw_yr": 0.0,
-                    "lcoe_per_mwh": float(lcoe),
-                    "annual_cost_per_mw_yr": float(annual_cost_emerging),
-                    "total_revenue_per_mw_yr": float(revenue),
-                    "margin_per_mw_yr": float(margin),
-                    "profitable": bool(margin > 0.0),
-                }
-            continue
-
-        base_cf = NEW_ENTRY_COSTS[tech]["base_cf"]
-        cum_gw = cumulative.get(tech) if cumulative else None
-
-        if tech in _THERMAL_FOM:
-            # Dispatchable thermal (gas_cc, gas_ct): a price-taking unit runs
-            # only when the clearing price clears its marginal cost, so its
-            # expected energy margin is the price-duration integral
-            # sum_t max(price_t - var_cost, 0) per MW -- which counts the
-            # scarcity-tail hours where a peaker earns the bulk of its margin.
-            # Compared against the unit's annualized FIXED cost (capex annuity
-            # + FOM), this is the net-revenue-vs-CONE test. The old flat
-            # base_cf x mean(price) understated peakers ~severalfold by
-            # ignoring the price shape.
-            heat_rate_bins = HEAT_RATE_BINS.get(tech, {})
-            best_hr = min(heat_rate_bins.values()) if heat_rate_bins else 0.0
-            co2_bins = CO2_RATES.get(tech, {})
-            best_co2 = min(co2_bins.values()) if co2_bins else 0.0
-            var_cost = (
-                best_hr * gas_price_per_mmbtu + VOM[tech] + best_co2 * carbon_price
-            )
-            price_hourly = (
-                np.asarray(prices, dtype=float).mean(axis=0)
-                if np.asarray(prices).ndim > 1
-                else np.asarray(prices, dtype=float)
-            )
-            # Reserve tier (plan §5 step 2): a candidate's hourly value is its
-            # best use — energy margin or the reserve price, never both on
-            # the same MW. A new CT is an offline-capable quick-start
-            # (Non-Spin tier); a new CC is synchronized (all products).
-            r_tech: np.ndarray | None = None
-            if reserve_price_signal is not None and tech in RESERVE_FUEL_TYPES:
-                r_tech = (
-                    reserve_price_signal_slow
-                    if tech in QUICK_START_FUEL_TYPES
-                    else reserve_price_signal
-                )
-                if r_tech is None:
-                    r_tech = np.zeros_like(reserve_price_signal)
-            hourly_value = np.maximum(price_hourly - var_cost, 0.0)
-            if r_tech is not None:
-                n = min(hourly_value.size, r_tech.size)
-                hourly_value = np.maximum(hourly_value[:n], r_tech[:n])
-            energy_margin = float(hourly_value.sum())
-            # Annualized fixed cost ($/MW-yr): Wright-adjusted capex annuity +
-            # FOM. Thermal carries no IRA ITC/PTC, so this is the clean CONE.
-            costs = resolve_new_entry_costs(config)[tech]
-            capex_per_kw = costs["capex_per_kw"]
-            ref_gw = WRIGHT_REFERENCE_GW.get(tech)
-            if cum_gw is not None and ref_gw is not None:
-                capex_per_kw = wright_cost(
-                    capex_per_kw, cum_gw, ref_gw, costs["learning_rate"]
-                )
-            crf = _capital_recovery_factor(
-                config.real_discount_rate, costs["lifetime_yr"]
-            )
-            fixed_cost = (capex_per_kw * crf + costs["fom_per_kw_yr"]) * 1000.0
-            # Module M1 capacity payment (0 in ERCOT) + ERCOT AS revenue, the
-            # same streams credited in the retirement screen above.
-            capacity_payment = (
-                0.0
-                if build_zone_long
-                else capacity_revenue_per_mw_yr(
-                    iso_config.name, tech, EFORD[tech], config, reserve_position, year
-                )
-            )
-            # AS credit — exactly one mechanism prices thermal AS (rule 19):
-            # the hourly reserve signal (already folded into energy_margin as
-            # max(energy, reserve)) suppresses both annual credits; else the
-            # per-fuel co-opt rate under ercot_thermal_as_endogenous; else
-            # the exogenous flat rate.
-            if r_tech is not None:
-                as_credit = 0.0  # hourly max above is the sole AS pricing
-            elif thermal_as_revenue_per_mw_yr is not None:
-                as_credit = thermal_as_revenue_per_mw_yr.get(tech, 0.0)
-            else:
-                as_credit = as_revenue_per_mw_yr(tech, storage_power_mw, config)
-            effective_revenue = energy_margin + capacity_payment + as_credit
-            margin = effective_revenue - fixed_cost
-            if margin > 0.0:
-                margins.append((margin, tech))
-            if _diag:
-                _rows[tech] = {
-                    "tech": tech,
-                    "kind": "thermal",
-                    "energy_revenue_per_mw_yr": float(energy_margin),
-                    "attribute_revenue_per_mw_yr": 0.0,
-                    "capacity_revenue_per_mw_yr": float(capacity_payment),
-                    "as_credit_per_mw_yr": float(as_credit),
-                    "var_cost_per_mwh": float(var_cost),
-                    "capex_base_per_kw": float(costs["capex_per_kw"]),
-                    "capex_wright_per_kw": float(capex_per_kw),
-                    "capex_after_credit_per_kw": float(capex_per_kw),
-                    "crf": float(crf),
-                    "fom_per_kw_yr": float(costs["fom_per_kw_yr"]),
-                    "cumulative_gw": (float(cum_gw) if cum_gw is not None else None),
-                    "annual_cost_per_mw_yr": float(fixed_cost),
-                    "total_revenue_per_mw_yr": float(effective_revenue),
-                    "margin_per_mw_yr": float(margin),
-                    "profitable": bool(margin > 0.0),
-                }
-            continue
-
-        # Non-dispatchable / must-run candidates (wind, solar, nuclear_smr):
-        # value the CF-shaped output at the expected price and net the
-        # levelized cost; clean attributes (EAC or RPS shadow price, the
-        # higher, never stacked) lift RPS-eligible renewables.
-        lcoe = compute_lcoe(tech, year, config, cumulative_gw=cum_gw)
-        # Shape-aware VRE revenue (plan §6 CX-6c): value the candidate's
-        # build zone's hourly CF against THAT zone's prices, so solar sees
-        # its own value cannibalization and wind its diurnal/seasonal
-        # capture rate — including each one's actual share of the
-        # scarcity-priced hours the flat mean smears across the year. Falls
-        # back to the scalar base-CF screen when profiles/zone ordering are
-        # unavailable (older callers) or the build zone has no resource.
-        cf_profile: np.ndarray | None = None
-        prices_for_rev: np.ndarray = prices
-        if tech in _RENEWABLE_NEW_FUELS and zone_names:
-            cf_zonal = wind_cf if tech == "wind" else solar_cf
-            target_zone = get_renewable_zone(iso_config.name, tech)
-            prices_arr = np.asarray(prices, dtype=float)
-            if (
-                cf_zonal is not None
-                and target_zone in zone_names
-                and prices_arr.ndim == 2
-            ):
-                zi = zone_names.index(target_zone)
-                cf_arr = np.asarray(cf_zonal, dtype=float)
-                if (
-                    cf_arr.ndim == 2
-                    and zi < cf_arr.shape[0]
-                    and zi < prices_arr.shape[0]
-                    and float(cf_arr[zi].max()) > 0.0
-                ):
-                    cf_profile = cf_arr[zi]
-                    prices_for_rev = prices_arr[zi]
-        if cf_profile is not None:
-            effective_revenue = estimate_expected_revenue(prices_for_rev, cf_profile)
-            cf_expected = float(cf_profile.mean())
-        else:
-            effective_revenue = estimate_expected_revenue(prices, base_cf)
-            cf_expected = base_cf
-        # Attribute payment: the highest single buyer among the legacy
-        # exogenous EAC, the federal CES premium × tech credit fraction
-        # (W2-A plan §5.3 — this is what lets a nuclear_smr candidate earn
-        # the premium), and the RPS shadow price — never a sum.
-        rps_for_tech = rps_shadow_price if tech in _RENEWABLE_NEW_FUELS else 0.0
-        effective_attribute_price = max(
-            effective_eac_price_for_tech(config, tech, year), rps_for_tech
-        )
-        if effective_attribute_price > 0.0:
-            effective_revenue += (
-                effective_attribute_price * cf_expected * HOURS_PER_YEAR
-            )
-        # lcoe uses base_cf internally, so lcoe x hours x base_cf is the
-        # CF-independent annualized fixed cost in $/MW-yr — it stays on
-        # base_cf even when the revenue side uses the zonal profile.
-        annual_cost = lcoe * HOURS_PER_YEAR * base_cf
-        energy_only_rev = effective_revenue - (
-            effective_attribute_price * cf_expected * HOURS_PER_YEAR
-            if effective_attribute_price > 0.0
-            else 0.0
-        )
-        margin = effective_revenue - annual_cost
-        if margin > 0.0:
-            margins.append((margin, tech))
-        if _diag:
-            # Re-derive the capex decomposition with the SAME helpers
-            # compute_lcoe uses (no drift): base -> Wright -> ITC. VRE earns
-            # no capacity payment here (BLK-7 / term c) — recorded as an
-            # explicit 0.0 so the zero is measured, not inferred.
-            _costs = resolve_new_entry_costs(config)[tech]
-            _capex_base = _costs["capex_per_kw"]
-            _capex_wright = _capex_base
-            _ref_gw = WRIGHT_REFERENCE_GW.get(tech)
-            if cum_gw is not None and _ref_gw is not None:
-                _capex_wright = wright_cost(
-                    _capex_base, cum_gw, _ref_gw, _costs["learning_rate"]
-                )
-            _capex_after_itc = _capex_wright
-            if tech == "solar" and year <= config.ira_wind_solar_last_year:
-                _capex_after_itc = _capex_wright * (1.0 - config.ira_itc_solar)
-            _crf = _capital_recovery_factor(
-                config.real_discount_rate, _costs["lifetime_yr"]
-            )
-            _rows[tech] = {
-                "tech": tech,
-                "kind": "vre" if tech in _RENEWABLE_NEW_FUELS else "must_run",
-                "cf_base": float(base_cf),
-                "cf_expected": float(cf_expected),
-                "cf_shape_aware": bool(cf_profile is not None),
-                "energy_revenue_per_mw_yr": float(energy_only_rev),
-                "attribute_revenue_per_mw_yr": float(
-                    effective_revenue - energy_only_rev
-                ),
-                "attribute_price": float(effective_attribute_price),
-                "rps_shadow_price": float(rps_shadow_price),
-                "capacity_revenue_per_mw_yr": 0.0,
-                "capex_base_per_kw": float(_capex_base),
-                "capex_wright_per_kw": float(_capex_wright),
-                "capex_after_credit_per_kw": float(_capex_after_itc),
-                "itc_solar": float(
-                    config.ira_itc_solar
-                    if tech == "solar" and year <= config.ira_wind_solar_last_year
-                    else 0.0
-                ),
-                "ptc_wind": float(
-                    config.ira_ptc_wind
-                    if tech == "wind" and year <= config.ira_wind_solar_last_year
-                    else 0.0
-                ),
-                "crf": float(_crf),
-                "fom_per_kw_yr": float(_costs["fom_per_kw_yr"]),
-                "cumulative_gw": (float(cum_gw) if cum_gw is not None else None),
-                "lcoe_per_mwh": float(lcoe),
-                "annual_cost_per_mw_yr": float(annual_cost),
-                "total_revenue_per_mw_yr": float(effective_revenue),
-                "margin_per_mw_yr": float(margin),
-                "profitable": bool(margin > 0.0),
-            }
-
-    margins.sort(reverse=True)
-
-    new_fleet = list(fleet)
-    renewable_additions: dict[str, dict[str, float]] = {}
-    remaining = queue_budget_mw
-    # Per-tech queue caps are tracked per cap group: hydrogen turbines and
-    # CCUS share the ``gas_cc`` group, so their builds compete for one cap.
-    group_remaining: dict[str, float] = {}
-    for seq, (_, tech) in enumerate(margins):
-        if remaining <= 0.0:
-            if _diag and tech in _rows:
-                _rows[tech]["build_mw"] = 0.0
-                _rows[tech]["binding_cap"] = "iso_budget_exhausted"
-            continue
-        # Each tech is capped by its (possibly shared) per-tech queue limit
-        # and by what is left of the shared ISO budget; both bind.
-        group = _QUEUE_CAP_GROUP.get(tech, tech)
-        if group not in group_remaining:
-            group_remaining[group] = per_tech_cap_gw.get(group, 0.0) * 1000.0
-        build_mw = min(group_remaining[group], remaining)
-        if build_mw <= 0.0:
-            if _diag and tech in _rows:
-                _rows[tech]["build_mw"] = 0.0
-                _rows[tech]["binding_cap"] = "per_tech_cap_zero"
-            continue
-        remaining -= build_mw
-        group_remaining[group] -= build_mw
-        if _diag and tech in _rows:
-            _rows[tech]["build_mw"] = float(build_mw)
-            _rows[tech]["binding_cap"] = (
-                "per_tech_cap"
-                if build_mw >= per_tech_cap_gw.get(group, 0.0) * 1000.0 - 1e-6
-                else "iso_budget"
-            )
-        if tech in _RENEWABLE_NEW_FUELS:
-            target_zone = get_renewable_zone(iso_config.name, tech)
-            zone_acc = renewable_additions.setdefault(target_zone, {})
-            zone_acc[tech] = zone_acc.get(tech, 0.0) + build_mw
-        else:
-            new_fleet.append(
-                _make_new_generator(
-                    tech, build_mw, zone, year, seq, config, iso_config.name
-                )
-            )
-
-    if _diag:
-        # Unprofitable candidates never enter the margins loop; record their
-        # zero build and the ISO-level caps once per row, then flush.
-        for tech, row in _rows.items():
-            row.setdefault("build_mw", 0.0)
-            row.setdefault(
-                "binding_cap", "unprofitable" if not row["profitable"] else "none"
-            )
-            row["queue_budget_gw"] = float(queue_budget_mw / 1000.0)
-            row["per_tech_cap_gw"] = float(
-                per_tech_cap_gw.get(_QUEUE_CAP_GROUP.get(tech, tech), 0.0)
-            )
-        screen_ledger.extend(_rows[t] for _, t in margins if t in _rows)
-        screen_ledger.extend(
-            row for tech, row in _rows.items() if not any(tech == t for _, t in margins)
-        )
-
-    return new_fleet, renewable_additions
-
-
-def _renewable_nameplate_by_fuel(
-    fleet: list[Generator],
-    wind_pool_mw: float,
-    solar_pool_mw: float,
-    iso: str | None,
-) -> dict[str, float]:
-    """ISO-wide installed nameplate MW per credit-accredited class.
-
-    The penetration axis for the published ELCC curves (rule 13 — the
-    model's own installed share): each class's zonal pool plus any fleet
-    units carrying a credit-bearing fuel type. One computation shared by
-    :func:`accredited_firm_capacity_mw` and
-    :func:`renewable_credits_applied` so the ledger and its diagnostics can
-    never disagree on the penetration basis.
-    """
-    nameplate_by_fuel: dict[str, float] = {
-        "wind": float(wind_pool_mw),
-        "solar": float(solar_pool_mw),
-    }
-    for g in fleet:
-        if (
-            g.fuel_type in RENEWABLE_CAPACITY_CREDIT
-            or g.fuel_type in RENEWABLE_ELCC_CURVES_BY_ISO.get(iso or "", {})
-        ):
-            nameplate_by_fuel[g.fuel_type] = nameplate_by_fuel.get(
-                g.fuel_type, 0.0
-            ) + float(g.pmax_mw)
-    return nameplate_by_fuel
-
-
-def renewable_credits_applied(
-    fleet: list[Generator],
-    wind_pool_mw: float,
-    solar_pool_mw: float,
-    iso: str | None,
-    peak_demand_mw: float | None = None,
-    elcc_curves_enabled: bool = False,
-) -> dict[str, float]:
-    """Resolved wind/solar credits on the ledger's exact basis (diagnostic).
-
-    The same resolution :func:`accredited_firm_capacity_mw` applies —
-    same nameplate computation, same ladder — surfaced so the evolution
-    ledger can record the credit each class actually earned this year
-    (the CR-3.1 penetration response made observable per run, e.g. for the
-    capacity-hindcast before/after diagnostic).
-    """
-    nameplate_by_fuel = _renewable_nameplate_by_fuel(
-        fleet, wind_pool_mw, solar_pool_mw, iso
-    )
-    out: dict[str, float] = {}
-    for fuel_type in ("wind", "solar"):
-        credit = resolve_renewable_capacity_credit(
-            fuel_type,
-            iso,
-            installed_mw=nameplate_by_fuel.get(fuel_type),
-            peak_demand_mw=peak_demand_mw,
-            curves_enabled=elcc_curves_enabled,
-        )
-        if credit is not None:
-            out[fuel_type] = float(credit)
-    return out
-
-
-def accredited_firm_capacity_mw(
-    fleet: list[Generator],
-    wind_pool_mw: float = 0.0,
-    solar_pool_mw: float = 0.0,
-    storage_firm_mw: float = 0.0,
-    iso: str | None = None,
-    peak_demand_mw: float | None = None,
-    elcc_curves_enabled: bool = False,
-) -> float:
-    """Return the system's accredited firm (ELCC/UCAP) capacity in MW.
-
-    Each resource contributes the firm fraction of its nameplate it can be
-    relied on for at the system peak, on the ISO's own published counting
-    convention when ``iso`` is given: thermal at ``1 - EFORd`` (UCAP) or at
-    its seasonal rating (:func:`_thermal_firm_mw` /
-    :data:`THERMAL_ACCREDITATION_BASIS_BY_ISO` — ERCOT's CDR basis),
-    variable renewables at their capacity credit
-    (:func:`resolve_renewable_capacity_credit` — penetration-indexed
-    published ELCC curve when ``elcc_curves_enabled``, per-ISO point
-    override, generic :data:`RENEWABLE_CAPACITY_CREDIT` fallback), storage
-    at its duration-dependent ELCC (passed in pre-accredited as
-    ``storage_firm_mw``, since the ELCC helper lives in the storage module),
-    plus any external-tie firm import the ISO's ledger counts but the model
-    topology lacks (:data:`ADEQUACY_EXTERNAL_TIE_FIRM_MW` — ERCOT's DC ties,
-    PJM's CIL-governed cleared BRA capacity imports). Wind/solar
-    held in the zonal pools (not Generators) are passed as ``wind_pool_mw``
-    / ``solar_pool_mw``.
-
-    For the CR-3.1 curves each credit-accredited class's penetration is its
-    ISO-WIDE installed nameplate — the zonal pool plus any fleet units of
-    that fuel — against ``peak_demand_mw``, both the model's own quantities
-    (rule 13). One credit per class per call: every MW of a class is
-    accredited at the same class rating, exactly the ISOs' own class-rating
-    construction. ``iso=None`` reproduces the legacy generic basis
-    byte-identically (UCAP thermal, generic credits, no tie MW), and
-    ``elcc_curves_enabled=False`` (or an unavailable axis quantity) is the
-    frozen-penetration byte-compat mode — the pre-CR-3.1 point basis.
-    """
-    nameplate_by_fuel = _renewable_nameplate_by_fuel(
-        fleet, wind_pool_mw, solar_pool_mw, iso
-    )
-
-    def _credit(fuel_type: str) -> float | None:
-        return resolve_renewable_capacity_credit(
-            fuel_type,
-            iso,
-            installed_mw=nameplate_by_fuel.get(fuel_type),
-            peak_demand_mw=peak_demand_mw,
-            curves_enabled=elcc_curves_enabled,
-        )
-
-    firm = float(storage_firm_mw)
-    firm += wind_pool_mw * (_credit("wind") or 0.0)
-    firm += solar_pool_mw * (_credit("solar") or 0.0)
-    if iso is not None:
-        firm += ADEQUACY_EXTERNAL_TIE_FIRM_MW.get(iso, 0.0)
-    for g in fleet:
-        credit = _credit(g.fuel_type)
-        if credit is not None:
-            firm += g.pmax_mw * credit
-        else:
-            firm += _thermal_firm_mw(g, iso)
-    return firm
-
-
-def capacity_reserve_position(
-    fleet: list[Generator],
-    wind_pool_mw: float,
-    solar_pool_mw: float,
-    storage_firm_mw: float,
-    config: ScenarioConfig,
-    iso: str,
-    peak_demand_mw: float,
-    year: int | None = None,
-) -> float | None:
-    """Return the system's accredited reserve position for the CR-1 curve.
-
-    ``accredited_firm_capacity_mw / resolve_adequacy_requirement_mw`` — the
-    SAME accreditation ledger and the SAME requirement the retirement
-    reliability floor and the reserve-margin backstop already compute (one
-    requirement, one basis, rule 19), so the sloped-demand-curve position feeds
-    the three capacity screens off a signal consistent with the adequacy
-    mechanisms it sits beside. A value of ``1.0`` means the accredited fleet is
-    exactly at the requirement (curve pays net-CONE); ``> 1.0`` is long (price
-    slides toward zero), ``< 1.0`` is short (price rises toward the cap).
-
-    ``year`` is threaded to the requirement resolver so a published Forecast
-    Pool Requirement of the matching delivery year devintages the position's
-    denominator (R2); ``None`` keeps the fallback ``(1 + PRM) x ratio``.
-
-    Returns ``None`` when the peak or the requirement is non-positive, so the
-    caller (and ``MarketDesign.capacity_price_per_firm_mw_yr``) cleanly falls
-    back to the fixed price. Consumed only when
-    ``config.capacity_market_clearing`` is on; the runner computes it once on
-    the entering-year fleet and threads the one value into all three screens.
-    """
-    if peak_demand_mw <= 0.0:
-        return None
-    requirement_mw = resolve_adequacy_requirement_mw(config, iso, peak_demand_mw, year)
-    if requirement_mw <= 0.0:
-        return None
-    accredited_mw = accredited_firm_capacity_mw(
-        fleet,
-        wind_pool_mw,
-        solar_pool_mw,
-        storage_firm_mw,
-        iso=iso,
-        peak_demand_mw=peak_demand_mw,
-        elcc_curves_enabled=config.renewable_elcc_curves,
-    )
-    return accredited_mw / requirement_mw
-
-
-def resolve_reserve_margin_build_enabled(config: ScenarioConfig, iso: str) -> bool:
-    """Resolve whether the reserve-margin adequacy backstop fires for ``iso``.
-
-    Market-design-dependent resolution (G-41, PJM hindcast I7 decision
-    2026-07-06 — owner-approved market-design-dependent variant). The
-    ``ScenarioConfig.reserve_margin_build_enabled`` field is tri-state:
-
-    * ``True`` / ``False`` — explicit override, honoured verbatim (rule 21: the
-      knob lands in ``run_config.json`` and a scenario can force it either way).
-    * ``None`` (default) — resolve per market design: ON when the ISO's design
-      procures capacity to an adequacy requirement
-      (``MARKET_DESIGN[iso].capacity_market`` — PJM/MISO/NYISO/NEISO/CAISO; the
-      LP analogue of RPM's absolute-IRM procurement), OFF for energy-only ERCOT
-      and for ISOs absent from :data:`MARKET_DESIGN` (conservative — the real
-      energy-only market has no absolute reliability floor: an under-remunerated
-      unit exits and ORDC/scarcity prices the resulting adequacy, so a
-      force-build backstop would manufacture firm MW the market never procures,
-      rule 1).
-
-    Energy-only ERCOT and any ``None``-default forecast on an unknown ISO
-    resolve OFF, so the pre-G-41 default-off behaviour is byte-identical there;
-    the capacity-market ISOs are where the backstop newly engages by default.
-
-    Args:
-        config: Scenario config carrying the tri-state override field.
-        iso: ISO identifier.
-
-    Returns:
-        ``True`` if the backstop should fire, else ``False``.
-    """
-    override = config.reserve_margin_build_enabled
-    if override is not None:
-        return bool(override)
-    design = MARKET_DESIGN.get(iso, DEFAULT_MARKET_DESIGN)
-    return bool(design.capacity_market)
-
-
-def apply_reserve_margin_build(
-    fleet: list[Generator],
-    firm_capacity_mw: float,
-    peak_demand_mw: float,
-    year: int,
-    config: ScenarioConfig,
-    iso: str,
-) -> tuple[list[Generator], float]:
-    """Force-build firm capacity to meet the planning reserve margin.
-
-    The structural adequacy backstop (ReEDS/NEMS/CDR): after the economic
-    new-entry screen, if accredited firm capacity is below the shared
-    requirement (:func:`resolve_adequacy_requirement_mw` — firm peak x
-    (1 + PRM) on the ISO's own counting convention) the residual gap is
-    filled with the cheapest firm dispatchable resource (a ``gas_ct``
-    peaker), so adequacy holds even when under-priced energy/scarcity
-    revenue would otherwise under-build. The economic screen still owns the
-    profitable build; this only covers the shortfall.
-
-    Sized on nameplate (the gap is a firm-MW gap, so nameplate =
-    gap / (1 - EFORd_gas_ct) for UCAP-basis ISOs, gap itself for
-    seasonal-rating ISOs). The build is capped at the ISO's annual
-    interconnection-queue throughput so a single year cannot add unbounded
-    capacity. Returns ``(fleet, built_mw)``; a no-op (built 0) when disabled,
-    when the margin is already met, or when the queue cap is exhausted.
-    """
-    if not resolve_reserve_margin_build_enabled(config, iso) or peak_demand_mw <= 0.0:
-        return fleet, 0.0
-    # Shared requirement resolution (one requirement, two verbs — plan §3.2):
-    # the same firm-peak x (1 + PRM) construction the retirement reliability
-    # floor uses, on the ISO's own counting convention.
-    required = resolve_adequacy_requirement_mw(config, iso, peak_demand_mw, year)
-    firm_gap = required - firm_capacity_mw
-    if firm_gap <= 0.0:
-        return fleet, 0.0
-
-    # Nameplate needed to close a firm-MW gap, on the ISO's accreditation
-    # basis: seasonal-rating ISOs count the new CT at nameplate; UCAP ISOs
-    # derate it by EFORd.
-    if THERMAL_ACCREDITATION_BASIS_BY_ISO.get(iso) == "seasonal_rating":
-        credit = 1.0
-    else:
-        credit = 1.0 - EFORD["gas_ct"]
-    nameplate_needed = firm_gap / credit if credit > 0.0 else firm_gap
-    iso_config = get_iso_config(iso)
-    queue_cap_mw = QUEUE_CAP_GW.get(iso_config.name, 0.0) * 1000.0
-    build_mw = (
-        min(nameplate_needed, queue_cap_mw) if queue_cap_mw > 0.0 else nameplate_needed
-    )
-    if build_mw <= 0.0:
-        return fleet, 0.0
-
-    zone = _default_build_zone(iso_config)
-    unit = _make_new_generator(
-        "gas_ct", build_mw, zone, year, 0, config, iso_config.name
-    )
-    unit.unit_id = f"gas_ct_adequacy_{year}"
-    unit.name = unit.unit_id
-    return fleet + [unit], build_mw
-
-
-def _adjust_retrofit_capex(base_capex_kw: float, cumulative_gw: float | None) -> float:
-    """Apply Wright's Law to CCS retrofit capex.
-
-    Uses the same learning rate and reference GW as new-build CCS --
-    the capture equipment manufacturing base is shared.
-
-    Args:
-        base_capex_kw: Base retrofit capex in $/kW (from config).
-        cumulative_gw: Current cumulative global CCS deployment in GW.
-
-    Returns:
-        Adjusted retrofit capex in $/kW.
-    """
-    if cumulative_gw is None or cumulative_gw <= 0:
-        return base_capex_kw
-
-    ccs_params = NEW_ENTRY_COSTS.get("gas_cc_ccs", {})
-    lr = ccs_params.get("learning_rate", 0.10)
-    ref_gw = WRIGHT_REFERENCE_GW.get("gas_cc_ccs", 2.0)
-
-    if cumulative_gw <= ref_gw:
-        return base_capex_kw
-
-    return wright_cost(base_capex_kw, cumulative_gw, ref_gw, lr)
-
-
-def _ccs_45q_window_years(config: ScenarioConfig, horizon_years: float) -> float:
-    """Return the §45Q credit-earning span within a project horizon, in years.
-
-    ``min(config.ira_45q_credit_window_years, horizon_years)`` — the
-    statutory 12-year window from placed-in-service (26 U.S.C.
-    §45Q(a)(3)-(4)) clipped to the asset's own horizon (remaining life for
-    a retrofit, book life for a new build). ``None`` models the
-    owner-requested indefinite legislative extension: the credit runs for
-    the full horizon.
-    """
-    window = config.ira_45q_credit_window_years
-    if window is None:
-        return float(horizon_years)
-    return min(float(window), float(horizon_years))
-
-
-def _ccs_retrofit_payback_years(
-    capex_per_mw: float,
-    uplift_window: float,
-    uplift_post_window: float,
-    window_years: float,
-) -> float:
-    """Return the retrofit's cumulative-uplift payback in years.
-
-    Two-segment simple payback (plan §11 Q2 — the §45Q stream is truncated
-    at its credit window rather than credited undiminished forever): the
-    annual incremental uplift is ``uplift_window`` while §45Q pays
-    (years ``0..window_years``) and ``uplift_post_window`` afterwards.
-    Payback is the point where the cumulative uplift recovers the capex;
-    ``inf`` when it never does (in-window uplift non-positive, or the
-    credit expires before recovery and the post-window uplift cannot
-    finish the job). With no 45Q (expired / zero capture) the two uplifts
-    coincide and this degenerates to the classic ``capex / uplift``.
-    """
-    if uplift_window <= 0.0:
-        return float("inf")
-    if capex_per_mw <= uplift_window * window_years:
-        return capex_per_mw / uplift_window
-    if uplift_post_window <= 0.0:
-        return float("inf")
-    remaining_capex = capex_per_mw - uplift_window * window_years
-    return window_years + remaining_capex / uplift_post_window
-
-
-def _retrofit_price_row(
-    prices: np.ndarray, zone_names: list[str] | None, zone: str
-) -> np.ndarray | None:
-    """Return the hourly price row for ``zone``, or ``None`` if unmappable.
-
-    Single-row price arrays (one-zone systems and trivial fixtures) map
-    every unit to row 0; otherwise the unit's zone must resolve through
-    ``zone_names`` (the LP's zone ordering, threaded from the prior-year
-    results). An unmappable zone skips the candidate loudly-in-debug
-    rather than silently pricing it at the wrong bus.
-    """
-    if prices.shape[0] == 1:
-        return prices[0]
-    if zone_names and zone in zone_names:
-        idx = zone_names.index(zone)
-        if idx < prices.shape[0]:
-            return prices[idx]
-    return None
-
-
-def apply_ccs_retrofit(
-    fleet: list[Generator],
-    prices: np.ndarray | None,
-    year: int,
-    config: ScenarioConfig,
-    iso: str,
-    gas_price_per_mmbtu: float,
-    carbon_price: float,
-    zone_names: list[str] | None = None,
-    cumulative: CumulativeDeployment | None = None,
-) -> tuple[list[Generator], list[dict]]:
-    """Screen existing gas CC units for CCS retrofit economics (W2-C).
-
-    A retrofit converts a ``gas_cc`` generator to ``gas_cc_ccs`` in place.
-    The unit keeps its zone, capacity and ``unit_id`` but gets:
-
-    * ``heat_rate *= (1 + config.ccs_retrofit_hr_penalty)`` -- the retrofit
-      heat rate is *derived* from the source unit's heat rate, never a fixed
-      bin, so an efficient host stays efficient after capture,
-    * ``vom += config.ccs_retrofit_vom_adder``,
-    * ``emission_rate_co2 *= (1 - config.ccs_retrofit_capture_rate)``,
-    * ``fuel_type`` changes to ``"gas_cc_ccs"``.
-
-    **Decision basis (plan §11 resolution, owner 2026-07-17).** The screen
-    values the retrofit as the INCREMENTAL uplift of the post-retrofit
-    continuation over the unit's best unabated continuation, both as
-    attainable (pro-forma) inframarginal margins over the prior year's
-    hourly price signal — the same construction as the retirement screen
-    (rule 1), so anticipated utilization is endogenous instead of the
-    former fixed 0.55 screen CF. Per MW-yr::
-
-        mc_unabated = hr·gas + vom + er·carbon
-        mc_post     = hr·(1+pen)·gas + vom + vom_adder
-                      + er_residual·carbon + captured·transport
-        m_unabated  = Σ_t max(0, p[t] − (mc_unabated − attr_unabated)) × avail
-        m_window    = Σ_t max(0, p[t] − (mc_post − attr_post − q45)) × avail
-        m_post      = Σ_t max(0, p[t] − (mc_post − attr_post)) × avail
-        uplift_window = m_window − m_unabated − ΔFOM
-        uplift_post   = m_post   − m_unabated − ΔFOM
-
-    where ``attr_*`` is each state's attribute (certificate) price —
-    ``max(legacy eac_price_*, federal CES premium × the state's credit
-    fraction)`` via :func:`policy.federal_ces.effective_eac_price_for_unit`
-    (under ``cesa_ci`` the unabated state's own partial credit is netted
-    out by construction; under ``clean_capture`` it is 0) — and ``q45`` is
-    the §45Q credit on captured tonnes
-    (:func:`policy.ira.ccus_45q_credit_per_mwh`), a SEPARATE statutory
-    instrument that stacks on top of the certificate (plan §11 Q1),
-    eligibility-gated on ``config.ira_ccus_45q_last_year`` at the retrofit
-    year. The certificate and 45Q enter as *bid offsets* inside the
-    ``max(0, ·)`` so the screen anticipates the near-baseload utilization
-    a 45Q-driven CCS unit actually runs at. ``ΔFOM`` is the going-forward
-    fixed-cost delta between the two states (same FOM × multiplier fields
-    the retirement screen prices each state at). ``avail`` is the unit's
-    flat ``1 − EFORd`` availability — the same derate the LP's
-    availability arrays carry. Capacity/AS revenue is state-invariant for
-    the same MW and nets out of the incremental comparison.
-
-    **Hurdle.** A unit retrofits when it beats staying unabated
-    (``uplift_window > 0``) AND the two-segment windowed payback
-    (:func:`_ccs_retrofit_payback_years` — the §45Q stream truncated at
-    ``min(config.ira_45q_credit_window_years, remaining life)``, plan §11
-    Q2; ``None`` ⇒ indefinite extension) clears the unit's remaining life.
-    Retrofit can therefore fire on a healthy unit well before distress
-    ("retrofit sooner if it's more profitable than staying unabated") —
-    and inside :func:`evolve_fleet` this screen runs BEFORE the economic
-    retirement screen, so a distressed CCGT whose retrofit continuation
-    clears converts instead of exiting (the joint three-way choice,
-    plan §11 final block).
-
-    Units younger than ``config.ccs_retrofit_min_remaining_life`` years
-    from end of life are skipped, candidates are ranked shortest-payback
-    first (efficient hosts win), and retrofits are applied up to the
-    annual throughput cap ``config.ccs_retrofit_max_gw_per_year``;
-    cap-displaced candidates stay unabated on the normal loss-year
-    counter and are re-screened every year.
-
-    Args:
-        fleet: Current generator fleet.
-        prices: ``(n_zones, T)`` zonal price signal from the prior year
-            (the capacity-screen ``price_signal``). ``None`` — no prior
-            dispatch — skips the screen entirely, the same rule as the
-            other price-driven capacity screens. Margins computed over a
-            shorter-than-8760 series are annualized by ``8760 / T``.
-        year: Current simulation year.
-        config: Scenario configuration.
-        iso: ISO identifier (reserved for future per-ISO calibration).
-        gas_price_per_mmbtu: Resolved gas price for this year.
-        carbon_price: Resolved carbon price for this year ($/ton CO2).
-        zone_names: LP zone ordering aligned with ``prices`` rows, from the
-            prior-year results. ``None`` is legal only for single-row price
-            arrays (trivial fixtures); multi-zone units that cannot be
-            mapped are skipped.
-        cumulative: Global cumulative deployment tracker. When supplied,
-            the retrofit capex follows the shared CCS Wright's-Law learning
-            curve, and the retrofitted GW is added back to the tracker --
-            a retrofit grows the capture-equipment experience base.
-
-    Returns:
-        Tuple ``(updated_fleet, retrofit_log)`` where ``retrofit_log`` is a
-        list of dicts recording each APPLIED retrofit for diagnostics
-        (``annual_net_savings_per_mw`` is the in-window incremental
-        uplift; the margin decomposition rides along).
-    """
-    if year < config.ccs_retrofit_available_year:
-        return fleet, []
-    if prices is None:
-        # The economics-based screen values both continuations against the
-        # prior year's hourly price signal; with no prior dispatch there is
-        # no signal (e.g. the first simulated year).
-        return fleet, []
-
-    prices = np.asarray(prices, dtype=float)
-    if prices.ndim == 1:
-        prices = prices[np.newaxis, :]
-    # Trivial fixtures screen over short series; production passes 8760.
-    annualize = float(HOURS_PER_YEAR) / prices.shape[1]
-
-    # The capture island is the same equipment whether bolted onto an
-    # existing plant or built new, so retrofit capex shares the new-build
-    # CCS learning curve.
-    adjusted_capex_kw = _adjust_retrofit_capex(
-        config.ccs_retrofit_capex_kw,
-        cumulative.get("gas_cc_ccs") if cumulative else None,
-    )
-    retrofit_capex_per_mw = adjusted_capex_kw * 1000.0
-
-    # Going-forward fixed-cost delta between the two states, $/MW-yr — the
-    # same FOM × multiplier construction the retirement screen prices each
-    # state at, so the uplift stays consistent with the model's own
-    # per-state accounting.
-    delta_fom_per_mw_yr = (
-        config.fixed_om_gas_cc_ccs * config.retirement_fom_multiplier_gas_cc_ccs
-        - config.fixed_om_gas_cc * config.retirement_fom_multiplier_gas_cc
-    ) * 1000.0
-
-    candidates: list[tuple[float, Generator, dict]] = []
-    for gen in fleet:
-        if gen.fuel_type != "gas_cc":
-            continue
-        # Skip units near end of life -- a short remaining life cannot pay
-        # back the retrofit capex.
-        age = year - gen.online_year
-        remaining_life = max(0, _THERMAL_PLANT_LIFE_YEARS - age)
-        if remaining_life < config.ccs_retrofit_min_remaining_life:
-            continue
-        price_row = _retrofit_price_row(prices, zone_names, gen.zone)
-        if price_row is None:
-            logger.debug(
-                "ccs retrofit screen: zone %r of unit %s not mappable onto "
-                "the %d-row price signal; skipping candidate",
-                gen.zone,
-                gen.unit_id,
-                prices.shape[0],
-            )
-            continue
-
-        old_hr = gen.heat_rate
-        new_hr = old_hr * (1.0 + config.ccs_retrofit_hr_penalty)
-        old_er = gen.emission_rate_co2
-        new_er = old_er * (1.0 - config.ccs_retrofit_capture_rate)
-        captured = old_er - new_er
-
-        # Full variable cost per state. Post-retrofit pays fuel at the
-        # penalized heat rate, the capture VOM adder, carbon on the residual
-        # rate only, and transport/storage on every captured tonne (the same
-        # per-tonne cost the new-build CCS LCOE carries — a stored tonne
-        # earning §45Q pays its way to the reservoir on either path).
-        mc_unabated = old_hr * gas_price_per_mmbtu + gen.vom + old_er * carbon_price
-        mc_post = (
-            new_hr * gas_price_per_mmbtu
-            + gen.vom
-            + config.ccs_retrofit_vom_adder
-            + new_er * carbon_price
-            + captured * config.co2_transport_storage_cost
-        )
-
-        # Per-state attribute (certificate) prices — max(legacy eac_price_*,
-        # premium × state credit fraction); the unabated state's cesa_ci
-        # partial credit is what makes the uplift INCREMENTAL, never gross.
-        attr_unabated = effective_eac_price_for_unit(config, "gas_cc", old_er, year)
-        attr_post = effective_eac_price_for_unit(config, "gas_cc_ccs", new_er, year)
-        # §45Q stacks on top of the certificate (separate instrument),
-        # eligibility-gated at the retrofit year.
-        q45_per_mwh = ccus_45q_credit_per_mwh(captured, year, config)
-
-        avail = max(0.0, 1.0 - gen.eford)
-        margin_unabated = (
-            float(np.maximum(price_row - (mc_unabated - attr_unabated), 0.0).sum())
-            * avail
-            * annualize
-        )
-        margin_window = (
-            float(
-                np.maximum(price_row - (mc_post - attr_post - q45_per_mwh), 0.0).sum()
-            )
-            * avail
-            * annualize
-        )
-        margin_post = (
-            float(np.maximum(price_row - (mc_post - attr_post), 0.0).sum())
-            * avail
-            * annualize
-        )
-
-        uplift_window = margin_window - margin_unabated - delta_fom_per_mw_yr
-        uplift_post = margin_post - margin_unabated - delta_fom_per_mw_yr
-        # Beats-staying-unabated gate: a retrofit whose in-window uplift is
-        # non-positive is never worth the capex.
-        if uplift_window <= 0.0:
-            continue
-
-        window_years = _ccs_45q_window_years(config, float(remaining_life))
-        payback_years = _ccs_retrofit_payback_years(
-            retrofit_capex_per_mw, uplift_window, uplift_post, window_years
-        )
-        if payback_years >= remaining_life:
-            continue
-
-        candidates.append(
-            (
-                payback_years,
-                gen,
-                {
-                    "unit_id": gen.unit_id,
-                    "zone": gen.zone,
-                    "old_hr": old_hr,
-                    "new_hr": new_hr,
-                    "old_emission_rate": old_er,
-                    "new_emission_rate": new_er,
-                    # In-window incremental uplift — the quantity the payback
-                    # recovers capex from (key name kept for the runner's
-                    # per-year retrofit logging).
-                    "annual_net_savings_per_mw": uplift_window,
-                    "payback_years": payback_years,
-                    "carbon_price": carbon_price,
-                    # Decision decomposition (W2-C): the three attainable
-                    # margins and the per-MWh credit stack behind them.
-                    "margin_unabated_per_mw_yr": margin_unabated,
-                    "margin_window_per_mw_yr": margin_window,
-                    "margin_post_window_per_mw_yr": margin_post,
-                    "uplift_post_window_per_mw_yr": uplift_post,
-                    "q45_usd_per_mwh": q45_per_mwh,
-                    "attr_post_usd_per_mwh": attr_post,
-                    "attr_unabated_usd_per_mwh": attr_unabated,
-                    "window_years": window_years,
-                    "delta_fom_per_mw_yr": delta_fom_per_mw_yr,
-                    "remaining_life_years": remaining_life,
-                },
-            )
-        )
-
-    # Shortest payback first -- the best-economics (most efficient) hosts win.
-    candidates.sort(key=lambda item: item[0])
-
-    cap_mw = config.ccs_retrofit_max_gw_per_year * 1000.0
-    retrofitted_mw = 0.0
-    retrofit_log: list[dict] = []
-    for _payback, gen, log_entry in candidates:
-        if retrofitted_mw + gen.pmax_mw > cap_mw:
-            continue
-        # Convert the generator in place -- a retrofit is irreversible.
-        gen.heat_rate = gen.heat_rate * (1.0 + config.ccs_retrofit_hr_penalty)
-        gen.vom = gen.vom + config.ccs_retrofit_vom_adder
-        gen.emission_rate_co2 = gen.emission_rate_co2 * (
-            1.0 - config.ccs_retrofit_capture_rate
-        )
-        gen.fuel_type = "gas_cc_ccs"
-        retrofitted_mw += gen.pmax_mw
-        retrofit_log.append(log_entry)
-
-    # A retrofit adds to the global CCS manufacturing experience base just
-    # like a new build, so feed the retrofitted GW back into the tracker.
-    if retrofitted_mw > 0.0 and cumulative is not None:
-        cumulative.add("gas_cc_ccs", retrofitted_mw / 1000.0)
-
-    return fleet, retrofit_log
-
-
-def _prior_attr(prior_results: object, name: str, default: object = None) -> object:
-    """Read ``name`` from ``prior_results``, which may be a dict or object."""
-    if prior_results is None:
-        return default
-    if isinstance(prior_results, dict):
-        return prior_results.get(name, default)
-    return getattr(prior_results, name, default)
-
-
-def evolve_fleet(
-    fleet: list[Generator],
-    prior_results: object,
-    year: int,
-    config: ScenarioConfig,
-    loss_tracker: dict[str, int],
-    rps_shadow_price: float = 0.0,
-    cumulative: CumulativeDeployment | None = None,
-    gas_price_per_mmbtu: float = 0.0,
-    carbon_price: float = 0.0,
-    events: dict | None = None,
-    confirmed_exits: list[ConfirmedExit] | None = None,
-    peak_demand_next: float | None = None,
-    announced_reversal_plants: frozenset[int] = frozenset(),
-    reserve_position: float | None = None,
-) -> tuple[
-    list[Generator],
-    dict[str, int],
-    dict[str, dict[str, float]],
-    list[dict],
-    list[dict],
-]:
-    """Advance the fleet by one simulation year.
-
-    The capacity mechanisms are applied in a fixed order:
-
-    0. confirmed exits (exogenous, any fuel, instrument-bound; gated on
-       ``config.confirmed_exits_enabled``, default on),
-    1. announced retirements (non-fossil within the data horizon only; announced
-       fossil dates are a default no-op — the exogenous fossil channel is step 0),
-    2. CCS retrofits (convert existing gas CC units to ``gas_cc_ccs``),
-    3. economic retirements,
-    4. known additions (planned units with ``online_year == year``),
-    5. economic new entry (generation).
-
-    Steps 2 and 3 are the JOINT retrofit-or-retire evaluation for
-    retrofit-eligible gas-CCs (W2-C, national-ces plan §11 final block),
-    still one pass (rule 10 — ordering, not iteration): the retrofit screen
-    runs FIRST, so a unit whose retrofit continuation beats staying
-    unabated and clears its windowed payback converts BEFORE the
-    retirement screen can exit it — a distressed CCGT is offered the
-    retrofit instead of the door, and a healthy one may convert early when
-    the §45Q + premium economics say so. A unit retires only when both
-    continuations fail: not-retrofitted units (uplift or payback failed,
-    or displaced by the 3 GW/yr cap) stay on the normal unabated
-    loss-year counter — a cap-displaced unit may still exit in a later
-    year if unabated keeps failing and the cap keeps binding. Units
-    retrofitted this year have their loss counters cleared and are exempt
-    from this year's retirement screen (the fresh capex decision IS the
-    year's decision); they re-enter it as ``gas_cc_ccs`` next year on
-    their own post-retrofit dispatch.
-
-    Retrofits also run before new entry so a retrofitted CC displaces some
-    of the need for new-build CCS: the new-entry screen sees the updated
-    fleet.
-
-    The reshaped fleet is then re-aggregated into efficiency-bin
-    representative units, keeping the next LP solve at ~36 thermal columns.
-    When ``config.heat_rate_bin_count`` is set, the re-aggregation uses that
-    many equal-width heat-rate bins instead of the predefined vintage bins.
-
-    The renewable portfolio standard is not applied here -- it is enforced
-    as an LP constraint in dispatch, and its shadow price
-    (``rps_shadow_price``) feeds the economic retirement and new-entry
-    screens so clean builds are economics-driven. Storage new entry is
-    handled separately in the runner.
-
-    Steps that depend on a price signal -- CCS retrofits, economic
-    retirements and economic new entry -- are skipped when
-    ``prior_results`` carries no dispatch outcome (e.g. the first
-    simulated year).
-
-    Args:
-        fleet: The fleet at the start of the year.
-        prior_results: Prior-year outcome, a dict or object that may expose
-            ``fleet_arrays``, ``dispatch_result``, ``prices``,
-            ``peak_demand`` and ``planned_additions``. ``None`` skips all
-            price-driven steps.
-        year: The simulation year being entered.
-        config: Scenario config.
-        loss_tracker: Per-unit consecutive-loss counters; not mutated in
-            place.
-        rps_shadow_price: Prior year's RPS shadow price in $/MWh, passed to
-            the economic retirement and new-entry screens as the endogenous
-            attribute payment (taken as max with the exogenous EAC).
-        cumulative: Global cumulative deployment, passed to the new-entry
-            screen so candidate capex follows a Wright's-Law learning curve.
-        gas_price_per_mmbtu: Delivered gas price for the year, passed to
-            the new-entry screen to cost gas CC variable fuel.
-        carbon_price: Carbon price in $/tCO2 for the year, passed to the
-            new-entry screen to cost thermal carbon emissions and to the
-            CCS retrofit screen. (The retrofit screen's attribute revenue
-            is no longer a caller-passed price: it resolves internally via
-            ``policy.federal_ces.effective_eac_price_for_unit`` — one
-            delivery channel, W2-C.)
-        events: Optional dict (see
-            :func:`market_sim.results.evolution_ledger.new_events`) populated
-            in place with the per-year capacity events — retirements
-            (known/economic), reliability-floor-retained units, thermal
-            additions (planned/economic/reserve_backstop), CCS retrofits,
-            renewable additions, and the fleet-by-fuel totals before/after.
-            ``None`` records nothing and leaves the solve path byte-identical.
-        peak_demand_next: The ENTERING year's known peak demand in MW
-            (deterministic from the demand path — plan §2.3 component 1).
-            When supplied it replaces the prior-year ``peak_demand`` in the
-            peak-anchored adequacy mechanisms (the retirement reliability
-            floor and the reserve-margin backstop), deleting their one-year
-            bookkeeping lag. ``None`` keeps the prior-year peak.
-        announced_reversal_plants: Plant codes whose announced retirement
-            was reversed by a public counter-instrument (registry rows all
-            superseded) — step 1 ignores their stale EIA-860 dates
-            (:func:`apply_announced_retirements`'s ``reversed_plant_codes``).
-            Independent of ``confirmed_exits_enabled``: honoring a documented
-            reversal is a data correction, not an exit injection.
-        reserve_position: System accredited reserve position (accredited firm ÷
-            requirement) for the CR-1 sloped capacity demand curve, computed
-            once on the entering fleet by the runner (see
-            :func:`capacity_reserve_position`) and threaded verbatim into BOTH
-            the retirement and thermal-entry screens so all screens share one
-            requirement and one basis (rule 19). ``None`` (default) /
-            ``capacity_market_clearing`` off keeps the fixed net-CONE capacity
-            payment — byte-identical to the pre-CR-1 path.
-
-    Returns:
-        Tuple ``(fleet, loss_tracker, renewable_additions, retrofit_log,
-        floor_retention_log)`` after all mechanisms are applied.
-        ``renewable_additions`` is a ``{zone: {"wind": mw, "solar": mw}}``
-        dict of new wind/solar capacity built this year; the caller folds it
-        into the zonal ``wind_cap`` / ``solar_cap`` pools that bound the
-        ``W[z,t]`` / ``S[z,t]`` dispatch variables. ``retrofit_log`` is the
-        list of CCS retrofit decision dicts recorded this year.
-        ``floor_retention_log`` is the retirement reliability floor's
-        attribution log — one dict per unit the floor un-retired this year
-        (persisted per-year by the runner as ``floor_retentions``).
-    """
-    loss_tracker = dict(loss_tracker)
-    renewable_additions: dict[str, dict[str, float]] = {}
-    floor_retention_log: list[dict] = []
-
-    # Ledger bookkeeping: snapshot the entering fleet so each mechanism's
-    # additions/retirements can be attributed by a before/after diff. No-op
-    # (and zero cost beyond a dict build) when ``events`` is None.
-    _rec = events is not None
-    if _rec:
-        from market_sim.results.evolution_ledger import fleet_totals_by_fuel
-
-        events["fleet_by_fuel_before"] = fleet_totals_by_fuel(fleet)
-
-    fleet_arrays = _prior_attr(prior_results, "fleet_arrays")
-    dispatch_result = _prior_attr(prior_results, "dispatch_result")
-    prices = _prior_attr(prior_results, "prices")
-    # Capacity-screen price signal (plan §2.2-§2.3): the EWMA-blended and/or
-    # lookahead-repriced series replaces raw prices in the retirement,
-    # CCS-retrofit and new-entry screens. At the runner defaults it IS the
-    # same econ_prices array (byte-identical); bare-dict callers without the
-    # key fall back to prices.
-    price_signal = _prior_attr(prior_results, "price_signal", None)
-    if price_signal is not None:
-        prices = price_signal
-    peak_demand = float(_prior_attr(prior_results, "peak_demand", 0.0) or 0.0)
-    # Peak used by the peak-anchored adequacy mechanisms (floor + backstop):
-    # the entering year's known peak when the runner supplies it (plan §2.3
-    # component 1 — deletes a pure one-year bookkeeping lag), else the
-    # prior-year peak (legacy behaviour, e.g. older callers/tests).
-    peak_demand_used = (
-        float(peak_demand_next)
-        if peak_demand_next is not None and peak_demand_next > 0.0
-        else peak_demand
-    )
-    planned = _prior_attr(prior_results, "planned_additions", []) or []
-    mc_cost = _prior_attr(prior_results, "mc_cost")
-    # AS-eligible (storage) fleet power, the AS-revenue saturation driver.
-    storage_power_mw = float(_prior_attr(prior_results, "storage_power_mw", 0.0) or 0.0)
-    # Prior-year renewable pools and accredited storage ELCC: the reliability
-    # floor (step 2) and the adequacy backstop (step 6) test the same
-    # accredited-firm-capacity ledger (plan §3.2), so both read these.
-    wind_pool_mw = float(_prior_attr(prior_results, "wind_cap_mw", 0.0) or 0.0)
-    solar_pool_mw = float(_prior_attr(prior_results, "solar_cap_mw", 0.0) or 0.0)
-    # Portfolio ELCC dilution (accreditation audit §3 follow-up): the
-    # pre-accredited storage_firm_mw the runner computed carries no
-    # penetration term, so it is diluted here — the point evolve_fleet
-    # consumes it — rather than in runner.py, whose own persisted ledger
-    # value stays undiluted (a parallel lane's file; see
-    # _storage_portfolio_elcc_dilution docstring).
-    storage_firm_mw = float(_prior_attr(prior_results, "storage_firm_mw", 0.0) or 0.0)
-    storage_firm_mw *= _storage_portfolio_elcc_dilution(storage_power_mw, config.iso)
-    # Per-fuel thermal AS credit DERIVED from the prior-year co-opt reserve duals,
-    # populated by the runner only under ercot_thermal_as_endogenous. When present
-    # the retirement/new-entry screens use it in place of the exogenous flat AS
-    # rate so exactly one mechanism prices thermal AS (rule 19); None keeps the
-    # exogenous rate (byte-identical default).
-    thermal_as_revenue_per_mw_yr = (
-        _prior_attr(prior_results, "thermal_as_revenue_per_mw_yr", None)
-        if getattr(config, "ercot_thermal_as_endogenous", False)
-        else None
-    )
-    # Hourly reserve-price signal (plan §5 step 2, screen_reserve_value_enabled):
-    # the retirement and thermal new-entry screens value each reserve-eligible
-    # unit's per-hour best use max(energy margin, reserve price). When present
-    # it is the sole thermal AS pricing (rule 19) — see the screens' docstrings.
-    reserve_price_signal = None
-    reserve_price_signal_slow = None
-    if getattr(config, "screen_reserve_value_enabled", True):
-        reserve_price_signal = _prior_attr(prior_results, "reserve_price_signal", None)
-        reserve_price_signal_slow = _prior_attr(
-            prior_results, "reserve_price_signal_slow", None
-        )
-    # Zonal hourly CF profiles + zone ordering for the shape-aware VRE
-    # new-entry revenue (plan §6 CX-6c); None falls back to the scalar screen.
-    screen_zone_names = _prior_attr(prior_results, "zone_names", None)
-    screen_wind_cf = _prior_attr(prior_results, "wind_cf", None)
-    screen_solar_cf = _prior_attr(prior_results, "solar_cf", None)
-
-    # Snapshot the entering fleet so the events recorder can attribute every
-    # unit removed by the confirmed (step 0) and announced (step 1) channels.
-    _pre_known = {g.unit_id: g for g in fleet} if _rec else None
-
-    # 0. Confirmed exits (exogenous, instrument-bound, any fuel). GATED on
-    #    confirmed_exits_enabled (default on, flipped 2026-07-05): when off, no-op
-    #    and the announced/economic channels are byte-identical to before this
-    #    channel existed. Runs first so the post-exit fleet is what the floor and the
-    #    new-entry screen see (scarcity from a confirmed exit feeds next year's
-    #    entry signal). Bypasses the reliability floor by construction.
-    #    NOTE: matching is by plant_code. A unit that survives the end-of-year
-    #    re-aggregation with its plant identity intact — a unit-grain unit (raw
-    #    EIA-860 unit that passes through, e.g. an oil unit carrying an announced
-    #    date) or a first-year exit in build_base_fleet — is matched in its exit
-    #    year. Plant-binned coal/gas tranches (is_campd_bin) also keep their
-    #    plant_code: aggregate_fleet passes them through un-aggregated (G-28 fix),
-    #    so a confirmed exit effective any number of years into a CAMPD forecast
-    #    is matched at the same per-plant grain the base year solves. (Before the
-    #    fix these tranches were merged into vintage efficiency bins after the
-    #    base year, dropping plant_code, and an exit 2+ years out went unmatched.)
-    #    ``apply_backlog`` defaults to False here (unlike build_base_fleet's
-    #    True): only the row newly effective in THIS year is selected, so a
-    #    row already applied in the pre-start backlog or a prior year's
-    #    evolve_fleet call is never re-selected against an already-shrunk
-    #    fleet (the double-derate bug fixed 2026-07-05 — a confirmed exit is a
-    #    once-at-its-date event, not a recurring per-year filter).
-    confirmed_exits = confirmed_exits or []
-    confirmed_channel_on = getattr(config, "confirmed_exits_enabled", False) and bool(
-        confirmed_exits
-    )
-    if confirmed_channel_on:
-        fleet = apply_confirmed_exits(fleet, year, confirmed_exits)
-
-    # 1. Announced (EIA-860 date) retirements. Fossil units are a default no-op
-    #    (their phaseout is economic, step 2; the exogenous fossil channel is
-    #    step 0). Non-fossil announced dates are honored within the EIA-860 data
-    #    horizon; beyond it, only when the unit is in the confirmed registry (the
-    #    horizon gate activates with the confirmed channel — off = honor all
-    #    non-fossil dates, as before). config.forecast_fossil_retirement_economic
-    #    toggles the fossil exemption.
-    horizon_years = NONFOSSIL_ANNOUNCED_HORIZON_YEARS if confirmed_channel_on else None
-    confirmed_plant_codes = (
-        frozenset(e.plant_id for e in confirmed_exits)
-        if confirmed_channel_on
-        else frozenset()
-    )
-    fleet = apply_announced_retirements(
-        fleet,
-        year,
-        fossil_economic=getattr(config, "forecast_fossil_retirement_economic", True),
-        horizon_years=horizon_years,
-        confirmed_plant_codes=confirmed_plant_codes,
-        reversed_plant_codes=announced_reversal_plants,
-    )
-    if _rec:
-        _survived = {g.unit_id for g in fleet}
-        events["retirements"].extend(
-            {
-                "unit_id": g.unit_id,
-                "fuel": g.fuel_type,
-                "mw": float(g.pmax_mw),
-                "reason": "known",
-            }
-            for uid, g in _pre_known.items()
-            if uid not in _survived
-        )
-
-    # Locational deliverability headroom per zone (empty no-op unless
-    # capacity_deliverability_limits is on and the ISO has clean data). Prior-
-    # year renewable pools / storage ELCC are ISO totals; distribute them across
-    # zones by load_share so the firm-capacity sum is zonal. Computed once on the
-    # entering fleet and shared by the retirement and new-entry screens.
-    deliverability_headroom: dict[str, float] = {}
-    if config.capacity_deliverability_limits:
-        iso_config = get_iso_config(config.iso)
-        wind_total = float(_prior_attr(prior_results, "wind_cap_mw", 0.0) or 0.0)
-        solar_total = float(_prior_attr(prior_results, "solar_cap_mw", 0.0) or 0.0)
-        storage_total = float(_prior_attr(prior_results, "storage_firm_mw", 0.0) or 0.0)
-        wind_by_zone = {z.name: wind_total * z.load_share for z in iso_config.zones}
-        solar_by_zone = {z.name: solar_total * z.load_share for z in iso_config.zones}
-        storage_by_zone = {
-            z.name: storage_total * z.load_share for z in iso_config.zones
-        }
-        deliverability_headroom = deliverability_headroom_by_zone(
-            config.iso,
-            year,
-            fleet,
-            config,
-            wind_pool_by_zone=wind_by_zone,
-            solar_pool_by_zone=solar_by_zone,
-            storage_firm_by_zone=storage_by_zone,
-        )
-
-    # 2. CCS retrofits: convert existing gas CC units to gas_cc_ccs. Runs
-    # BEFORE the economic retirement screen — the joint retrofit-or-retire
-    # choice (W2-C, plan §11 final block): a gas-CC whose retrofit
-    # continuation beats staying unabated and clears its windowed payback
-    # converts here, so the retirement screen never sees it as a distressed
-    # unabated unit; everything not converted (uplift/payback failed, or
-    # displaced by the 3 GW/yr cap) falls through to step 3 on the normal
-    # loss-year counter. Also runs before new entry so retrofits displace
-    # some new-build CCS demand. Same skip rule as the other price-driven
-    # screens: no prior-year price signal, no screen.
-    _pre_ccs = {g.unit_id: g.fuel_type for g in fleet} if _rec else None
-    fleet, retrofit_log = apply_ccs_retrofit(
-        fleet,
-        prices,
-        year,
-        config,
-        config.iso,
-        gas_price_per_mmbtu=gas_price_per_mmbtu,
-        carbon_price=carbon_price,
-        zone_names=screen_zone_names,
-        cumulative=cumulative,
-    )
-    # A retrofit is this year's capital decision for the unit: clear its
-    # unabated loss history (it re-enters the retirement screen as
-    # gas_cc_ccs next year on its own post-retrofit dispatch) and exempt it
-    # from this year's screen below.
-    _retrofitted_ids = frozenset(entry["unit_id"] for entry in retrofit_log)
-    for _uid in _retrofitted_ids:
-        loss_tracker.pop(_uid, None)
-    if _rec:
-        # A CCS retrofit is a fuel shift (gas_cc → gas_cc_ccs) on the same
-        # unit_id, not a new column. Detect by comparing fuel_type before/after.
-        _post_ccs = {g.unit_id: g for g in fleet}
-        events["ccs_retrofits"].extend(
-            {
-                "unit_id": uid,
-                "mw": float(_post_ccs[uid].pmax_mw),
-                "from_fuel": _pre_ccs[uid],
-                "to_fuel": _post_ccs[uid].fuel_type,
-            }
-            for uid in _pre_ccs
-            if uid in _post_ccs and _post_ccs[uid].fuel_type != _pre_ccs[uid]
-        )
-
-    # 3. Economic retirements (needs the prior-year dispatch). Units
-    # retrofitted in step 2 are exempt this year (see above).
-    if fleet_arrays is not None and dispatch_result is not None and prices is not None:
-        _econ_sink: dict = {} if _rec else None
-        fleet, loss_tracker, floor_retention_log = apply_economic_retirements(
-            fleet,
-            fleet_arrays,
-            dispatch_result,
-            prices,
-            config,
-            loss_tracker,
-            peak_demand_used,
-            rps_shadow_price=rps_shadow_price,
-            mc=mc_cost,
-            storage_power_mw=storage_power_mw,
-            deliverability_headroom=deliverability_headroom,
-            thermal_as_revenue_per_mw_yr=thermal_as_revenue_per_mw_yr,
-            wind_pool_mw=wind_pool_mw,
-            solar_pool_mw=solar_pool_mw,
-            storage_firm_mw=storage_firm_mw,
-            year=year,
-            event_sink=_econ_sink,
-            reserve_price_signal=reserve_price_signal,
-            reserve_price_signal_slow=reserve_price_signal_slow,
-            reserve_position=reserve_position,
-            exempt_unit_ids=_retrofitted_ids,
-        )
-        if _rec:
-            events["retirements"].extend(
-                {**e, "reason": "economic"} for e in _econ_sink.get("retired", [])
-            )
-            events["floor_retained"].extend(_econ_sink.get("floor_retained", []))
-        if floor_retention_log:
-            logger.info(
-                "year %d: reliability floor retained %d unit(s), %.0f MW "
-                "(%.0f MW UCAP) against the PRM requirement",
-                year,
-                len(floor_retention_log),
-                sum(r["pmax_mw"] for r in floor_retention_log),
-                sum(r["ucap_mw"] for r in floor_retention_log),
-            )
-
-    # 4. Known additions: planned units coming online this year.
-    _planned_now = [g for g in planned if g.online_year == year]
-    fleet = fleet + _planned_now
-    if _rec:
-        events["thermal_additions"].extend(
-            {
-                "unit_id": g.unit_id,
-                "fuel": g.fuel_type,
-                "mw": float(g.pmax_mw),
-                "zone": g.zone,
-                "source": "planned",
-                # Planned units come from the EIA-860 pipeline; their unit_id
-                # encodes the source plant (``planned_<plant>_<gen>``), so it is
-                # the traceable id when the plant_id field is unset.
-                "eia860_id": getattr(g, "plant_id", None) or g.unit_id,
-            }
-            for g in _planned_now
-        )
-
-    # 5. Economic new entry (needs a price signal). Clean technologies see
-    # the prior year's RPS shadow price as additional expected revenue.
-    _pre_entry_ids = {g.unit_id for g in fleet} if _rec else None
-    # RC-0C entry-screen diagnostic sink (GATED entry_screen_diagnostics,
-    # default off): a per-candidate decomposition ledger with no decision
-    # effect, persisted into the year's evolution ledger by the runner.
-    _screen_ledger: list[dict] | None = (
-        [] if getattr(config, "entry_screen_diagnostics", False) else None
-    )
-    if prices is not None:
-        fleet, entry_additions = apply_economic_new_entry(
-            fleet,
-            prices,
-            year,
-            config,
-            config.iso,
-            rps_shadow_price=rps_shadow_price,
-            cumulative=cumulative,
-            gas_price_per_mmbtu=gas_price_per_mmbtu,
-            carbon_price=carbon_price,
-            storage_power_mw=storage_power_mw,
-            deliverability_headroom=deliverability_headroom,
-            thermal_as_revenue_per_mw_yr=thermal_as_revenue_per_mw_yr,
-            reserve_price_signal=reserve_price_signal,
-            reserve_price_signal_slow=reserve_price_signal_slow,
-            zone_names=screen_zone_names,
-            wind_cf=screen_wind_cf,
-            solar_cf=screen_solar_cf,
-            reserve_position=reserve_position,
-            screen_ledger=_screen_ledger,
-        )
-        _merge_renewable_additions(renewable_additions, entry_additions)
-    if _rec and _screen_ledger is not None:
-        events["entry_screen_diagnostics"] = _screen_ledger
-    if _rec:
-        _new_ids = {g.unit_id for g in fleet} - _pre_entry_ids
-        events["thermal_additions"].extend(
-            {
-                "unit_id": g.unit_id,
-                "fuel": g.fuel_type,
-                "mw": float(g.pmax_mw),
-                "zone": g.zone,
-                "source": "economic",
-                "eia860_id": None,
-            }
-            for g in fleet
-            if g.unit_id in _new_ids
-        )
-
-    # 6. Reserve-margin adequacy backstop: force-build firm capacity if the
-    # economic screen left the system below its planning reserve margin
-    # against the entering year's known peak (prior-year peak when the runner
-    # did not supply it). Firm capacity nets the thermal fleet (UCAP) and the
-    # prior-year renewable pools / storage (threaded via prior_results).
-    # No-op unless the backstop resolves on (G-41 market-design resolution:
-    # capacity-market ISOs default-on, energy-only ERCOT off, explicit override
-    # wins — resolve_reserve_margin_build_enabled).
-    if (
-        resolve_reserve_margin_build_enabled(config, config.iso)
-        and peak_demand_used > 0.0
-    ):
-        firm_mw = accredited_firm_capacity_mw(
-            fleet,
-            wind_pool_mw,
-            solar_pool_mw,
-            storage_firm_mw,
-            iso=config.iso,
-            peak_demand_mw=peak_demand_used,
-            elcc_curves_enabled=config.renewable_elcc_curves,
-        )
-        _pre_backstop_ids = {g.unit_id for g in fleet} if _rec else None
-        fleet, adequacy_mw = apply_reserve_margin_build(
-            fleet, firm_mw, peak_demand_used, year, config, config.iso
-        )
-        if _rec and adequacy_mw > 0.0:
-            events["thermal_additions"].extend(
-                {
-                    "unit_id": g.unit_id,
-                    "fuel": g.fuel_type,
-                    "mw": float(g.pmax_mw),
-                    "zone": g.zone,
-                    "source": "reserve_backstop",
-                    "eia860_id": None,
-                }
-                for g in fleet
-                if g.unit_id not in _pre_backstop_ids
-            )
-        if adequacy_mw > 0.0:
-            # Same per-ISO resolution as apply_reserve_margin_build so the
-            # logged margin reflects the value actually used.
-            resolved_margin = resolve_planning_reserve_margin(config, config.iso)
-            logger.info(
-                "year %d: reserve-margin backstop built %.0f MW gas_ct "
-                "(firm %.0f MW vs peak %.0f MW x %.3f margin)",
-                year,
-                adequacy_mw,
-                firm_mw,
-                peak_demand_used,
-                1.0 + resolved_margin,
-            )
-
-    if _rec:
-        # Fleet totals BEFORE aggregation: aggregate_fleet rebins into
-        # representative units but conserves MW per fuel, so the capacity
-        # accounting is identical either way; record the physical fleet.
-        events["fleet_by_fuel_after"] = fleet_totals_by_fuel(fleet)
-        # Renewable pool builds (flattened from the {zone: {tech: mw}} dict).
-        events["renewable_additions"] = [
-            {"zone": zone, "tech": tech, "mw": float(mw)}
-            for zone, techs in renewable_additions.items()
-            for tech, mw in techs.items()
-            if mw
-        ]
-
-    # Retirements, retrofits and new entry have reshaped the fleet;
-    # re-collapse it into efficiency-bin representatives so the next LP solve
-    # gets ~36 thermal columns rather than one per physical unit.
-    fleet = aggregate_fleet(fleet, n_bins=config.heat_rate_bin_count)
-
-    return fleet, loss_tracker, renewable_additions, retrofit_log, floor_retention_log
