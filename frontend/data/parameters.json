@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-07-17",
+  "generated": "2026-07-18",
   "stale_review_cutoff": "2023-05",
   "field_order": [
     "param_id",
@@ -6038,6 +6038,69 @@
       ]
     },
     {
+      "param_id": "datacenter_additions_mw.MISO.high",
+      "display_name": "Datacenter Additions Mw / Miso / High",
+      "value": {
+        "2027": 14000.0,
+        "2030": 27000.0
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--- Data-center load block (CX-4, gap G-34; FF-1C currency refresh) ------- Cumulative data-center MW trajectories per ISO/path, consumed by data.datacenter.resolve_datacenter_mw (forecast-mode-only scenario axis; default path \"off\" => unused, byte-identical to today). Piecewise-linear between anchor years, flat after the last anchor. Anchors are ENVELOPE VALUES derived from the published headline figures in the design memo docs/handoffs/cx4-datacenter-load-design-2026-07.md §2.1 (each traced below to its primary ISO forecast / interconnection-queue source with the arithmetic shown); they are the low/mid/high support the PB sampler interpolates, refined on each forecast vintage from the ISO's MW-by-year table (memo §3.3, §10.6). parameters.json tier 2, modeled flag OFF (a forward input, not a fitted knob). ISOs with no published DC decomposition ship {} => 0 MW (memo §2.2).  DOUBLE-COUNT SAFETY (FF-0D audit §1.6): because the near-era DEMAND_GROWTH_RATES are TOTAL (DC-inclusive), add_datacenter_block does NOT add this block on top of that growth — it RELOCATES the block's energy out of the (peaky) grown demand and back as a flat block (energy invariant, 2030-continuity; CX-4 §3.5). So the block corrects DC's hourly SHAPE without double-counting its energy. At the MID path the DC block sits inside each ISO's total forecast (relocate regime); a high/full-queue path can exceed it and then adds as genuinely incremental load. FF-1C (2026-07, rule 23) refreshed the MISO block (was {}) and re-confirmed the ERCOT/PJM/CAISO/NYISO anchors against the FF-0D-cited vintages.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "datacenter_additions_mw.MISO.low",
+      "display_name": "Datacenter Additions Mw / Miso / Low",
+      "value": {
+        "2027": 0.0,
+        "2030": 0.0
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--- Data-center load block (CX-4, gap G-34; FF-1C currency refresh) ------- Cumulative data-center MW trajectories per ISO/path, consumed by data.datacenter.resolve_datacenter_mw (forecast-mode-only scenario axis; default path \"off\" => unused, byte-identical to today). Piecewise-linear between anchor years, flat after the last anchor. Anchors are ENVELOPE VALUES derived from the published headline figures in the design memo docs/handoffs/cx4-datacenter-load-design-2026-07.md §2.1 (each traced below to its primary ISO forecast / interconnection-queue source with the arithmetic shown); they are the low/mid/high support the PB sampler interpolates, refined on each forecast vintage from the ISO's MW-by-year table (memo §3.3, §10.6). parameters.json tier 2, modeled flag OFF (a forward input, not a fitted knob). ISOs with no published DC decomposition ship {} => 0 MW (memo §2.2).  DOUBLE-COUNT SAFETY (FF-0D audit §1.6): because the near-era DEMAND_GROWTH_RATES are TOTAL (DC-inclusive), add_datacenter_block does NOT add this block on top of that growth — it RELOCATES the block's energy out of the (peaky) grown demand and back as a flat block (energy invariant, 2030-continuity; CX-4 §3.5). So the block corrects DC's hourly SHAPE without double-counting its energy. At the MID path the DC block sits inside each ISO's total forecast (relocate regime); a high/full-queue path can exceed it and then adds as genuinely incremental load. FF-1C (2026-07, rule 23) refreshed the MISO block (was {}) and re-confirmed the ERCOT/PJM/CAISO/NYISO anchors against the FF-0D-cited vintages.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "datacenter_additions_mw.MISO.mid",
+      "display_name": "Datacenter Additions Mw / Miso / Mid",
+      "value": {
+        "2027": 11000.0,
+        "2030": 20000.0
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--- Data-center load block (CX-4, gap G-34; FF-1C currency refresh) ------- Cumulative data-center MW trajectories per ISO/path, consumed by data.datacenter.resolve_datacenter_mw (forecast-mode-only scenario axis; default path \"off\" => unused, byte-identical to today). Piecewise-linear between anchor years, flat after the last anchor. Anchors are ENVELOPE VALUES derived from the published headline figures in the design memo docs/handoffs/cx4-datacenter-load-design-2026-07.md §2.1 (each traced below to its primary ISO forecast / interconnection-queue source with the arithmetic shown); they are the low/mid/high support the PB sampler interpolates, refined on each forecast vintage from the ISO's MW-by-year table (memo §3.3, §10.6). parameters.json tier 2, modeled flag OFF (a forward input, not a fitted knob). ISOs with no published DC decomposition ship {} => 0 MW (memo §2.2).  DOUBLE-COUNT SAFETY (FF-0D audit §1.6): because the near-era DEMAND_GROWTH_RATES are TOTAL (DC-inclusive), add_datacenter_block does NOT add this block on top of that growth — it RELOCATES the block's energy out of the (peaky) grown demand and back as a flat block (energy invariant, 2030-continuity; CX-4 §3.5). So the block corrects DC's hourly SHAPE without double-counting its energy. At the MID path the DC block sits inside each ISO's total forecast (relocate regime); a high/full-queue path can exceed it and then adds as genuinely incremental load. FF-1C (2026-07, rule 23) refreshed the MISO block (was {}) and re-confirmed the ERCOT/PJM/CAISO/NYISO anchors against the FF-0D-cited vintages.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "datacenter_additions_mw.NYISO.high",
       "display_name": "Datacenter Additions Mw / Nyiso / High",
       "value": {
@@ -6167,7 +6230,7 @@
     {
       "param_id": "demand_growth_rates.CAISO.high.long",
       "display_name": "Demand Growth Rates / Caiso / High / Long",
-      "value": 0.018,
+      "value": 0.035,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6185,7 +6248,7 @@
     {
       "param_id": "demand_growth_rates.CAISO.high.near",
       "display_name": "Demand Growth Rates / Caiso / High / Near",
-      "value": 0.025,
+      "value": 0.042,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6203,7 +6266,7 @@
     {
       "param_id": "demand_growth_rates.CAISO.low.long",
       "display_name": "Demand Growth Rates / Caiso / Low / Long",
-      "value": 0.005,
+      "value": 0.015,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6221,7 +6284,7 @@
     {
       "param_id": "demand_growth_rates.CAISO.low.near",
       "display_name": "Demand Growth Rates / Caiso / Low / Near",
-      "value": 0.005,
+      "value": 0.015,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6239,7 +6302,7 @@
     {
       "param_id": "demand_growth_rates.CAISO.mid.long",
       "display_name": "Demand Growth Rates / Caiso / Mid / Long",
-      "value": 0.01,
+      "value": 0.025,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6257,7 +6320,7 @@
     {
       "param_id": "demand_growth_rates.CAISO.mid.near",
       "display_name": "Demand Growth Rates / Caiso / Mid / Near",
-      "value": 0.015,
+      "value": 0.028,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6293,7 +6356,7 @@
     {
       "param_id": "demand_growth_rates.ERCOT.high.near",
       "display_name": "Demand Growth Rates / Ercot / High / Near",
-      "value": 0.08,
+      "value": 0.115,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6329,7 +6392,7 @@
     {
       "param_id": "demand_growth_rates.ERCOT.low.near",
       "display_name": "Demand Growth Rates / Ercot / Low / Near",
-      "value": 0.03,
+      "value": 0.05,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6365,7 +6428,7 @@
     {
       "param_id": "demand_growth_rates.ERCOT.mid.near",
       "display_name": "Demand Growth Rates / Ercot / Mid / Near",
-      "value": 0.05,
+      "value": 0.085,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6381,9 +6444,117 @@
       ]
     },
     {
+      "param_id": "demand_growth_rates.MISO.high.long",
+      "display_name": "Demand Growth Rates / Miso / High / Long",
+      "value": 0.03,
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "Annual demand growth rates by ISO, scenario path, and era. These are TOTAL (data-center-INCLUSIVE) rates: the near era still carries the DC boom, so at the default datacenter_load_path=\"off\" they reproduce each ISO's published total-load forecast directly (byte-identical mechanism to before this refresh). When the DC block is ON, data.datacenter.add_datacenter_block RELOCATES the DC energy out of this rate into the explicit flat block under a 2030 energy-continuity constraint (energy invariant, only the peak shape flattens), so there is NO growth x DC double-count (CX-4 §3.5 / FF-0D audit §1.6). The implied organic-ex-DC near rate each ISO leaves after the mid DC block relocates is noted per block below (transparency only — it is not a live constant; the relocation is computed from the block MW, decoupling-safe).  Near-term era = year <= DEMAND_GROWTH_TRANSITION_YEAR (2030); long-term (2031-2050) decelerates as the pipeline matures. The model applies a flat hourly scalar, so peak CAGR == energy CAGR: a near rate r reproduces base_peak x (1+r)^(year-weather_year). mid = each ISO's published central forecast; low/high bracket it on the prior-vintage band ratios re-centred on the new mid (the exact published low/high scenario MW-by-year tables are the FF-0D audit §7.3 manual downloads — headline central figures are web-confirmed). RE-DERIVED 2026-07 (FF-1C, rule 23) from the FF-0D-audit-cited 2025/2026 ISO forecast vintages, replacing the stale 2024-vintage values (and the PJM/NYISO/ NEISO literal \"TODO: verify\"); see docs/handoffs/ff-inputs-currency-audit-2026-07.md §1.1-1.2 and docs/parameter-citations.md.",
+      "source_date": "2030",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "demand_growth_rates.MISO.high.near",
+      "display_name": "Demand Growth Rates / Miso / High / Near",
+      "value": 0.045,
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "Annual demand growth rates by ISO, scenario path, and era. These are TOTAL (data-center-INCLUSIVE) rates: the near era still carries the DC boom, so at the default datacenter_load_path=\"off\" they reproduce each ISO's published total-load forecast directly (byte-identical mechanism to before this refresh). When the DC block is ON, data.datacenter.add_datacenter_block RELOCATES the DC energy out of this rate into the explicit flat block under a 2030 energy-continuity constraint (energy invariant, only the peak shape flattens), so there is NO growth x DC double-count (CX-4 §3.5 / FF-0D audit §1.6). The implied organic-ex-DC near rate each ISO leaves after the mid DC block relocates is noted per block below (transparency only — it is not a live constant; the relocation is computed from the block MW, decoupling-safe).  Near-term era = year <= DEMAND_GROWTH_TRANSITION_YEAR (2030); long-term (2031-2050) decelerates as the pipeline matures. The model applies a flat hourly scalar, so peak CAGR == energy CAGR: a near rate r reproduces base_peak x (1+r)^(year-weather_year). mid = each ISO's published central forecast; low/high bracket it on the prior-vintage band ratios re-centred on the new mid (the exact published low/high scenario MW-by-year tables are the FF-0D audit §7.3 manual downloads — headline central figures are web-confirmed). RE-DERIVED 2026-07 (FF-1C, rule 23) from the FF-0D-audit-cited 2025/2026 ISO forecast vintages, replacing the stale 2024-vintage values (and the PJM/NYISO/ NEISO literal \"TODO: verify\"); see docs/handoffs/ff-inputs-currency-audit-2026-07.md §1.1-1.2 and docs/parameter-citations.md.",
+      "source_date": "2030",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "demand_growth_rates.MISO.low.long",
+      "display_name": "Demand Growth Rates / Miso / Low / Long",
+      "value": 0.012,
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "Annual demand growth rates by ISO, scenario path, and era. These are TOTAL (data-center-INCLUSIVE) rates: the near era still carries the DC boom, so at the default datacenter_load_path=\"off\" they reproduce each ISO's published total-load forecast directly (byte-identical mechanism to before this refresh). When the DC block is ON, data.datacenter.add_datacenter_block RELOCATES the DC energy out of this rate into the explicit flat block under a 2030 energy-continuity constraint (energy invariant, only the peak shape flattens), so there is NO growth x DC double-count (CX-4 §3.5 / FF-0D audit §1.6). The implied organic-ex-DC near rate each ISO leaves after the mid DC block relocates is noted per block below (transparency only — it is not a live constant; the relocation is computed from the block MW, decoupling-safe).  Near-term era = year <= DEMAND_GROWTH_TRANSITION_YEAR (2030); long-term (2031-2050) decelerates as the pipeline matures. The model applies a flat hourly scalar, so peak CAGR == energy CAGR: a near rate r reproduces base_peak x (1+r)^(year-weather_year). mid = each ISO's published central forecast; low/high bracket it on the prior-vintage band ratios re-centred on the new mid (the exact published low/high scenario MW-by-year tables are the FF-0D audit §7.3 manual downloads — headline central figures are web-confirmed). RE-DERIVED 2026-07 (FF-1C, rule 23) from the FF-0D-audit-cited 2025/2026 ISO forecast vintages, replacing the stale 2024-vintage values (and the PJM/NYISO/ NEISO literal \"TODO: verify\"); see docs/handoffs/ff-inputs-currency-audit-2026-07.md §1.1-1.2 and docs/parameter-citations.md.",
+      "source_date": "2030",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "demand_growth_rates.MISO.low.near",
+      "display_name": "Demand Growth Rates / Miso / Low / Near",
+      "value": 0.018,
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "Annual demand growth rates by ISO, scenario path, and era. These are TOTAL (data-center-INCLUSIVE) rates: the near era still carries the DC boom, so at the default datacenter_load_path=\"off\" they reproduce each ISO's published total-load forecast directly (byte-identical mechanism to before this refresh). When the DC block is ON, data.datacenter.add_datacenter_block RELOCATES the DC energy out of this rate into the explicit flat block under a 2030 energy-continuity constraint (energy invariant, only the peak shape flattens), so there is NO growth x DC double-count (CX-4 §3.5 / FF-0D audit §1.6). The implied organic-ex-DC near rate each ISO leaves after the mid DC block relocates is noted per block below (transparency only — it is not a live constant; the relocation is computed from the block MW, decoupling-safe).  Near-term era = year <= DEMAND_GROWTH_TRANSITION_YEAR (2030); long-term (2031-2050) decelerates as the pipeline matures. The model applies a flat hourly scalar, so peak CAGR == energy CAGR: a near rate r reproduces base_peak x (1+r)^(year-weather_year). mid = each ISO's published central forecast; low/high bracket it on the prior-vintage band ratios re-centred on the new mid (the exact published low/high scenario MW-by-year tables are the FF-0D audit §7.3 manual downloads — headline central figures are web-confirmed). RE-DERIVED 2026-07 (FF-1C, rule 23) from the FF-0D-audit-cited 2025/2026 ISO forecast vintages, replacing the stale 2024-vintage values (and the PJM/NYISO/ NEISO literal \"TODO: verify\"); see docs/handoffs/ff-inputs-currency-audit-2026-07.md §1.1-1.2 and docs/parameter-citations.md.",
+      "source_date": "2030",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "demand_growth_rates.MISO.mid.long",
+      "display_name": "Demand Growth Rates / Miso / Mid / Long",
+      "value": 0.02,
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "Annual demand growth rates by ISO, scenario path, and era. These are TOTAL (data-center-INCLUSIVE) rates: the near era still carries the DC boom, so at the default datacenter_load_path=\"off\" they reproduce each ISO's published total-load forecast directly (byte-identical mechanism to before this refresh). When the DC block is ON, data.datacenter.add_datacenter_block RELOCATES the DC energy out of this rate into the explicit flat block under a 2030 energy-continuity constraint (energy invariant, only the peak shape flattens), so there is NO growth x DC double-count (CX-4 §3.5 / FF-0D audit §1.6). The implied organic-ex-DC near rate each ISO leaves after the mid DC block relocates is noted per block below (transparency only — it is not a live constant; the relocation is computed from the block MW, decoupling-safe).  Near-term era = year <= DEMAND_GROWTH_TRANSITION_YEAR (2030); long-term (2031-2050) decelerates as the pipeline matures. The model applies a flat hourly scalar, so peak CAGR == energy CAGR: a near rate r reproduces base_peak x (1+r)^(year-weather_year). mid = each ISO's published central forecast; low/high bracket it on the prior-vintage band ratios re-centred on the new mid (the exact published low/high scenario MW-by-year tables are the FF-0D audit §7.3 manual downloads — headline central figures are web-confirmed). RE-DERIVED 2026-07 (FF-1C, rule 23) from the FF-0D-audit-cited 2025/2026 ISO forecast vintages, replacing the stale 2024-vintage values (and the PJM/NYISO/ NEISO literal \"TODO: verify\"); see docs/handoffs/ff-inputs-currency-audit-2026-07.md §1.1-1.2 and docs/parameter-citations.md.",
+      "source_date": "2030",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "demand_growth_rates.MISO.mid.near",
+      "display_name": "Demand Growth Rates / Miso / Mid / Near",
+      "value": 0.031,
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "Annual demand growth rates by ISO, scenario path, and era. These are TOTAL (data-center-INCLUSIVE) rates: the near era still carries the DC boom, so at the default datacenter_load_path=\"off\" they reproduce each ISO's published total-load forecast directly (byte-identical mechanism to before this refresh). When the DC block is ON, data.datacenter.add_datacenter_block RELOCATES the DC energy out of this rate into the explicit flat block under a 2030 energy-continuity constraint (energy invariant, only the peak shape flattens), so there is NO growth x DC double-count (CX-4 §3.5 / FF-0D audit §1.6). The implied organic-ex-DC near rate each ISO leaves after the mid DC block relocates is noted per block below (transparency only — it is not a live constant; the relocation is computed from the block MW, decoupling-safe).  Near-term era = year <= DEMAND_GROWTH_TRANSITION_YEAR (2030); long-term (2031-2050) decelerates as the pipeline matures. The model applies a flat hourly scalar, so peak CAGR == energy CAGR: a near rate r reproduces base_peak x (1+r)^(year-weather_year). mid = each ISO's published central forecast; low/high bracket it on the prior-vintage band ratios re-centred on the new mid (the exact published low/high scenario MW-by-year tables are the FF-0D audit §7.3 manual downloads — headline central figures are web-confirmed). RE-DERIVED 2026-07 (FF-1C, rule 23) from the FF-0D-audit-cited 2025/2026 ISO forecast vintages, replacing the stale 2024-vintage values (and the PJM/NYISO/ NEISO literal \"TODO: verify\"); see docs/handoffs/ff-inputs-currency-audit-2026-07.md §1.1-1.2 and docs/parameter-citations.md.",
+      "source_date": "2030",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "demand_growth_rates.NEISO.high.long",
       "display_name": "Demand Growth Rates / Neiso / High / Long",
-      "value": 0.018,
+      "value": 0.02,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6401,7 +6572,7 @@
     {
       "param_id": "demand_growth_rates.NEISO.high.near",
       "display_name": "Demand Growth Rates / Neiso / High / Near",
-      "value": 0.025,
+      "value": 0.022,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6419,7 +6590,7 @@
     {
       "param_id": "demand_growth_rates.NEISO.low.long",
       "display_name": "Demand Growth Rates / Neiso / Low / Long",
-      "value": 0.005,
+      "value": 0.007,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6437,7 +6608,7 @@
     {
       "param_id": "demand_growth_rates.NEISO.low.near",
       "display_name": "Demand Growth Rates / Neiso / Low / Near",
-      "value": 0.005,
+      "value": 0.007,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6455,7 +6626,7 @@
     {
       "param_id": "demand_growth_rates.NEISO.mid.long",
       "display_name": "Demand Growth Rates / Neiso / Mid / Long",
-      "value": 0.01,
+      "value": 0.012,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6473,7 +6644,7 @@
     {
       "param_id": "demand_growth_rates.NEISO.mid.near",
       "display_name": "Demand Growth Rates / Neiso / Mid / Near",
-      "value": 0.015,
+      "value": 0.013,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6491,7 +6662,7 @@
     {
       "param_id": "demand_growth_rates.NYISO.high.long",
       "display_name": "Demand Growth Rates / Nyiso / High / Long",
-      "value": 0.018,
+      "value": 0.02,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6509,7 +6680,7 @@
     {
       "param_id": "demand_growth_rates.NYISO.high.near",
       "display_name": "Demand Growth Rates / Nyiso / High / Near",
-      "value": 0.025,
+      "value": 0.03,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6527,7 +6698,7 @@
     {
       "param_id": "demand_growth_rates.NYISO.low.long",
       "display_name": "Demand Growth Rates / Nyiso / Low / Long",
-      "value": 0.005,
+      "value": 0.006,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6545,7 +6716,7 @@
     {
       "param_id": "demand_growth_rates.NYISO.low.near",
       "display_name": "Demand Growth Rates / Nyiso / Low / Near",
-      "value": 0.005,
+      "value": 0.008,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6563,7 +6734,7 @@
     {
       "param_id": "demand_growth_rates.NYISO.mid.long",
       "display_name": "Demand Growth Rates / Nyiso / Mid / Long",
-      "value": 0.01,
+      "value": 0.012,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6581,7 +6752,7 @@
     {
       "param_id": "demand_growth_rates.NYISO.mid.near",
       "display_name": "Demand Growth Rates / Nyiso / Mid / Near",
-      "value": 0.015,
+      "value": 0.018,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6599,7 +6770,7 @@
     {
       "param_id": "demand_growth_rates.PJM.high.long",
       "display_name": "Demand Growth Rates / Pjm / High / Long",
-      "value": 0.03,
+      "value": 0.04,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6635,7 +6806,7 @@
     {
       "param_id": "demand_growth_rates.PJM.low.long",
       "display_name": "Demand Growth Rates / Pjm / Low / Long",
-      "value": 0.01,
+      "value": 0.014,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6671,7 +6842,7 @@
     {
       "param_id": "demand_growth_rates.PJM.mid.long",
       "display_name": "Demand Growth Rates / Pjm / Mid / Long",
-      "value": 0.018,
+      "value": 0.024,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -6689,7 +6860,7 @@
     {
       "param_id": "demand_growth_rates.PJM.mid.near",
       "display_name": "Demand Growth Rates / Pjm / Mid / Near",
-      "value": 0.035,
+      "value": 0.036,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
@@ -18030,6 +18201,44 @@
       ]
     },
     {
+      "param_id": "scenario.caiso_dsw_daytime_clean",
+      "display_name": "Caiso Dsw Daytime Clean",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Carry the MEASURED DAYTIME",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.caiso_dsw_overnight_clean",
+      "display_name": "Caiso Dsw Overnight Clean",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Carry the MEASURED unconditional",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.caiso_dsw_surplus_clean",
       "display_name": "Caiso Dsw Surplus Clean",
       "value": false,
@@ -24208,6 +24417,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.miso_winter_citygate_daily",
+      "display_name": "Miso Winter Citygate Daily",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "MISO winter fuel-security daily citygate overlay (miso-72). In the winter months (Dec/Jan/Feb) only, for the MISO gas units in the Chicago-hub zones only (MISO-Illinois/Indiana/East, read from miso_zonal_gas_hub.csv), replace the national Henry-Hub gas_daily_shape within-month daily shape with the MEASURED Chicago Citygate daily shape (miso_citygate_daily.csv, EIA NG Weekly \"Chicago\" row), placed on gas FLOW days (Friday prices the Sat-Mon-holiday weekend package) and mean-preserving within month so the (already-correct) monthly level is unchanged. Supersedes — never stacks on — the national daily shape; the mean-zero miso_zonal_gas_basis spread is orthogonal and unperturbed (rule 19). Closes the Jan-14-17-2024 Winter Storm Heather gas tail the flat national HH shape mislocates/understates. Zero fitted scalars (the measured daily series + the published Chicago-zone assignment). Backcast-only (no forward Chicago daily rows). Off by default. See docs/handoffs/miso-winter-fuel-security-design-2026-07.md and market_sim.data.fuel.apply_miso_winter_citygate_daily.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
