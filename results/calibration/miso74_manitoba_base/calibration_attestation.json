@@ -141,7 +141,7 @@
     "where": "interchange_config.py MISO seam band-price ladders",
     "identification": "measured-physical",
     "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
-    "source": "per-seam Q-Q duration coupling of the measured MISO DA hub LMP with measured EIA-930 per-seam flows on the fixed 8-band grid, frozen scripts/derive_miso_seam_ladders.py (audit C-6 CLOSED for MISO 2026-07-07; G-23-residual import-starvation fix)",
+    "source": "per-seam Q-Q duration coupling of the measured MISO DA hub LMP with measured EIA-930 per-seam flows on the fixed 8-band grid, frozen scripts/data/derive_miso_seam_ladders.py (audit C-6 CLOSED for MISO 2026-07-07; G-23-residual import-starvation fix)",
     "note": "re-derive trigger is a source-data change only (rule 23), never a residual; representation bound: hourly placement of the scheduled seam base is duration-curve-level only (docs/multi-iso/miso-import-starvation-rootcause-2026-07.md \u00a73)"
    },
    {
@@ -149,7 +149,7 @@
     "where": "data/raw/_processed-legacy/campd_ct_run_lengths_MISO.csv via fleet.campd_ct_run_lengths",
     "identification": "measured-physical",
     "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
-    "source": "EPA CAMPD unit-level hourly grossLoad start-to-stop run blocks (simple-cycle CT units, pooled 2023-2025), frozen scripts/derive_campd_ct_run_lengths.py; start cost is the published NREL/SR-5500-55433 CT_STARTUP_PARAMS (constants.py)",
+    "source": "EPA CAMPD unit-level hourly grossLoad start-to-stop run blocks (simple-cycle CT units, pooled 2023-2025), frozen scripts/data/derive_campd_ct_run_lengths.py; start cost is the published NREL/SR-5500-55433 CT_STARTUP_PARAMS (constants.py)",
     "note": "re-derive trigger is a source-data change only (rule 23), never a residual; representation bound: monthly-granularity amortization (compute_monthly_markup), no within-day run-length variation"
    },
    {
@@ -157,7 +157,7 @@
     "where": "data/raw/_processed-legacy/campd_ct_run_bands_MISO.csv via fleet.campd_ct_run_band_ratios",
     "identification": "measured-physical",
     "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
-    "source": "EPA CAMPD start-to-stop runs keyed by start-hour within-year net-load percentile (EIA-930 D-WND-SUN), class-pooled band medians / pooled median (shape), plant median (level); frozen scripts/derive_campd_ct_run_lengths.py --condition-bands",
+    "source": "EPA CAMPD start-to-stop runs keyed by start-hour within-year net-load percentile (EIA-930 D-WND-SUN), class-pooled band medians / pooled median (shape), plant median (level); frozen scripts/data/derive_campd_ct_run_lengths.py --condition-bands",
     "note": "re-derive trigger is a CAMPD/EIA-930 source-data change only (rule 23); band edges recorded in the artifact and checked against the consumer"
    },
    {
@@ -210,7 +210,7 @@
     "identification": "measured-physical",
     "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
     "n_scalars": 0,
-    "source": "EIA Natural Gas Weekly Update spot-price table ('Chicago' row = NGI Daily GPI), 680 weekday prints 2023-2025 (scripts/fetch_miso_citygate_daily.py); Chicago-hub zone set {Illinois, Indiana, East} READ from miso_zonal_gas_hub.csv (hub == 'Chicago Citygate (IL)' \u2014 the same file apply_miso_zonal_gas_basis reads); winter months {12, 1, 2} (meteorological-winter pipeline-scarcity season); flow-date placement trade+1, weekend/holiday forward-fill (NG gas-day market structure; the caiso-90 _flow_date_staircase precedent)",
+    "source": "EIA Natural Gas Weekly Update spot-price table ('Chicago' row = NGI Daily GPI), 680 weekday prints 2023-2025 (scripts/data/fetch_miso_citygate_daily.py); Chicago-hub zone set {Illinois, Indiana, East} READ from miso_zonal_gas_hub.csv (hub == 'Chicago Citygate (IL)' \u2014 the same file apply_miso_zonal_gas_basis reads); winter months {12, 1, 2} (meteorological-winter pipeline-scarcity season); flow-date placement trade+1, weekend/holiday forward-fill (NG gas-day market structure; the caiso-90 _flow_date_staircase precedent)",
     "note": "shape-only and mean-preserving WITHIN month by construction (rule 11: the keeper's monthly MISO gas level is measured EIA-923 and already correct \u2014 only the within-month daily placement changes); Chicago-only coverage: West/Plains/South keep the national-HH shape (HH is a conservative under-proxy for MidCon/Gulf, rule 14; Lower-Michigan/MichCon daily stays a paywalled-ICE open item, miso-data-audit Item 4); forecast years take the forward curve's regional Chicago basis and its own daily shape (rule 13 forward-native); refresh rides the EIA NGWU fetch only (rule 23)"
    },
    {
@@ -219,7 +219,7 @@
     "identification": "measured-physical",
     "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
     "n_scalars": 0,
-    "source": "per-unit EPA CAMPD hourly gross generation (scripts/derive_campd_unit_outages.py --short-windows); identification guards: coal-only detector + unit annual CF >= 0.55 (the partial-outage detector's baseload constant) + the revealed-availability in-merit filter (outage_detect.filter_revealed_outages; the full-stop override cannot engage below the 5-day cap)",
+    "source": "per-unit EPA CAMPD hourly gross generation (scripts/data/derive_campd_unit_outages.py --short-windows); identification guards: coal-only detector + unit annual CF >= 0.55 (the partial-outage detector's baseload constant) + the revealed-availability in-merit filter (outage_detect.filter_revealed_outages; the full-stop override cannot engage below the 5-day cap)",
     "note": "the >= 5-day duration floor makes event-coincident short forced outages invisible (MISO Jul 28-29 2025: ~2.8 GW coal offline at the peak block beyond the overlay; docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md); CT/CC event unavailability stays unmodeled pending a max-gen-event registry intake (no identification without it)"
    },
    {
@@ -278,7 +278,7 @@
    },
    {
     "name": "maxgen-events registry (declared capacity-emergency windows)",
-    "where": "data/raw/maxgen-events/{iso}/ via scripts/curate_maxgen_events (clean_io seam; schema maxgen-events.schema.yaml)",
+    "where": "data/raw/maxgen-events/{iso}/ via scripts/data/curate_maxgen_events (clean_io seam; schema maxgen-events.schema.yaml)",
     "identification": "measured-physical",
     "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
     "n_scalars": 0,
@@ -291,7 +291,7 @@
     "identification": "measured-physical",
     "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
     "n_scalars": 0,
-    "source": "per-unit EPA CAMPD hourly gross generation inside the registry windows only (scripts/derive_campd_maxgen_outages.py); frozen guards: declared-window scope clipped to the declared start/end, $150 DA in-merit certificate (region-scoped hubs, >= 2 window hours; sensitivity across [$120,$200] recomputed at derivation), capability = max gross in a \u00b145-day window centered on the event with best-event-hour credit (F3 dual-basis stability check), no control-day screen",
+    "source": "per-unit EPA CAMPD hourly gross generation inside the registry windows only (scripts/data/derive_campd_maxgen_outages.py); frozen guards: declared-window scope clipped to the declared start/end, $150 DA in-merit certificate (region-scoped hubs, >= 2 window hours; sensitivity across [$120,$200] recomputed at derivation), capability = max gross in a \u00b145-day window centered on the event with best-event-hour credit (F3 dual-basis stability check), no control-day screen",
     "note": "inside a declared, in-merit-certified window an available unit runs, so absence/reduction below the unit's own demonstrated capability is revealed unavailability \u2014 dispatch above the derate stays free (no outcome pinning, rules 1/11/13); re-derives only on a new CAMPD/declaration vintage (rule 23)"
    },
    {
