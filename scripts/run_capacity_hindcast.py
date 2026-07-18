@@ -199,9 +199,17 @@ def build_config(
         # pending-queue netting (NOTE: a vintage-start hindcast has no seed
         # of the real in-flight queue, so the lag arm shifts the entry path
         # late by construction — diagnostic use only here).
-        entry_vre_capacity_revenue=entry_vre_capacity_revenue,
-        entry_rate_limits=entry_rate_limits,
-        entry_commissioning_lag=entry_commissioning_lag,
+        # NOTE (FF-3D 2026-07-18): the FF-2A entry-stack passthrough
+        # (entry_vre_capacity_revenue / entry_rate_limits /
+        # entry_commissioning_lag) is NOT forwarded — those three fields were
+        # never added to ScenarioConfig (git log -S finds them in no scenarios.py
+        # commit) and have no runner consumer, so passing them raised TypeError on
+        # every capacity hindcast since c48daca. All three are default-OFF, so
+        # dropping the passthrough is byte-identical to any solve. The CLI flags
+        # and build_config params are retained as inert no-ops until the FF-2A
+        # lane wires the ScenarioConfig fields + runner hooks as a unit; see the
+        # FF-3D findings doc. (entry_screen_diagnostics DOES exist and is kept.)
+        #
         # RC-0C decision-neutral per-candidate entry-screen decomposition
         # (byte-identical fleet outcome; lands in evolution_<year>.json).
         entry_screen_diagnostics=entry_screen_diagnostics,
