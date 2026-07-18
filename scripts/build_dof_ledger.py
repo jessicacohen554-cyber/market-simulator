@@ -935,6 +935,41 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "priced-seam net +/-0.12 TWh in all three years).",
             )
         )
+    if iso == "MISO" and sc.get("miso_manitoba_seam"):
+        # miso-74 Manitoba two-way seam, ZERO fitted scalars: the import-only
+        # annual-flat MHEB firm block (three measured per-year MW values) is
+        # REPLACED by a fourth measured two-way priced seam — the
+        # MISO_MANITOBA_SEAM_SPEC bands priced by the frozen Q-Q ladder
+        # MISO_SEAM_LADDER_BY_YEAR["Manitoba"] (derived by
+        # scripts/derive_miso_seam_ladders.py, same construction as PJM/SPP/
+        # South) and capped by the measured (month x hod) two-way MHEB
+        # deliverability envelope. Measured-for-measured swap: the interface
+        # limit is physically pinned (measured +2,827 MW import extreme), the
+        # emission factor 0.0 (hydro); it RETIRES the 3 firm-block MW values in
+        # favor of the measured revealed supply curve — a net DOF improvement
+        # (a flat import estimate -> a two-way measured structure).
+        out.append(
+            _entry(
+                "miso_manitoba_seam (Manitoba MHEB two-way priced seam)",
+                "interchange_config.MISO_MANITOBA_SEAM_SPEC + "
+                'MISO_SEAM_LADDER_BY_YEAR["Manitoba"] + MISO_SEAM_DIBA["Manitoba"]',
+                "measured-physical",
+                iso,
+                n_scalars=0,
+                source="Q-Q duration coupling of the measured MISO DA hub LMP "
+                "with the measured EIA-930 MHEB flow on the fixed 8-band grid, "
+                "frozen scripts/derive_miso_seam_ladders.py; the two-way "
+                "deliverability envelope is the per-(month x hod) percentile of "
+                "the measured MHEB flow, both directions. Replaces the "
+                "import-only firm block (retires its 3 per-year MW values). "
+                "Frozen charter: docs/handoffs/miso-manitoba-seam-design-"
+                "2026-07.md (offline P9 reproduces measured MHEB net flow "
+                "+/-0.02 TWh/yr incl. the 2025 net export).",
+                root_cause="re-derive trigger is a source-data change only "
+                "(rule 23), never a residual; representation bound: hourly "
+                "placement is duration-curve-level (price-decorrelated seam)",
+            )
+        )
     if sc.get("unit_outage_short_windows"):
         # Short (< 5-day) baseload-coal unit-outage windows, ZERO scalars:
         # each window is the unit's own CEMS record; the derive-script guards
