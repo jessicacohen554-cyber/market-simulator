@@ -263,6 +263,35 @@ CAISO_DSW_DAYTIME_CLEAN_DEPTH_STATIC: float = 5733.0  # pooled 2023-2025 mean
 CAISO_DAYTIME_CLEAN_HOD_MIN: int = 6
 CAISO_DAYTIME_CLEAN_HOD_MAX: int = 21
 
+# ---------------------------------------------------------------------------
+# EVENING-TRIMMED daytime window (caiso-97, ``ScenarioConfig.
+# caiso_dsw_daytime_evening_trim``, default off) — the FINDING-caiso94 §7
+# PRE-REGISTERED overshoot fix, armed by the owner's evening-watch TRIPPED
+# ruling (2026-07-18, session-logged): drop the evening peak hod 18-21 from
+# the daytime tranche window (6-21 → 6-17). Grounded in the measured per-cell
+# admissibility table (FINDING-caiso94 §4A): evening 18-21 × non_autumn was
+# an EXCLUDE cell (model UNDER-prices the peak — a clean-import lever there
+# overshoots), and the caiso-96 A/B demonstrated the excess evening import
+# volume (+1.9/+2.1/+2.2 TWh/yr vs EIA-930 hod 17-21) out-competes the
+# now-online afternoon CC capacity. Never fitted to the residual — the trim
+# window was pre-registered in the finding before any solve.
+#
+# DEPTH (measured, re-derived over the TRIMMED window so the depth prices the
+# same population it caps — the derive script's CRITICAL window-match rule):
+# p95 of measured WECC_DSW corridor net import over hod 6-17 trigger-OFF
+# hours. Estimation-stage honesty gates (same FROZEN thresholds, run
+# 2026-07-18 in scripts/derive_caiso_daytime_clean_depth.py --evening-trim):
+# CV 0.060 (≤0.20 PASS); LOYO (mean-of-other-two) worst 13.5 % (≤25 % PASS —
+# 2024 3.3 %, 2025 8.5 %). Static entry = pooled mean. Zero fitted scalars.
+# ---------------------------------------------------------------------------
+CAISO_DAYTIME_CLEAN_TRIM_HOD_MAX: int = 17
+CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_BY_YEAR: dict[int, float] = {
+    2023: 4994.0,
+    2024: 5563.0,
+    2025: 5770.0,
+}
+CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_STATIC: float = 5442.0  # pooled 2023-2025 mean
+
 # IMPORT_TRANCHES / EXPORT_TRANCHES entries: (name, capacity MW, $/MWh).
 #
 # CAISO firm-block volumes (LEVER B, 2026-07-04, FINDING-caiso-evening-merit):
