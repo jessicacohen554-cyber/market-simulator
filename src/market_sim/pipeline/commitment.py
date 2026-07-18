@@ -72,6 +72,71 @@ from market_sim.model.dispatch import solve_dispatch
 logger = logging.getLogger(__name__)
 
 
+def load_cc_start_trajectory(iso: str):
+    """Return the ISO's measured CC start-to-load duration table, or ``None``.
+
+    Reads the committed measured artifact
+    (``scripts/derive_campd_cc_start_trajectory.py`` →
+    ``data/raw/_processed-legacy/campd_cc_start_trajectory_<ISO>.csv``): per
+    CC plant the CAMPD p50 off→on-to-full-load ramp duration in hours
+    (``basis == "plant"``, gate-accepted rows only), sparse-coverage rows
+    (``basis == "sparse"``, informational — callers fall back to the class
+    row) and the pooled class p50 under ``plant_code == 0``
+    (``basis == "class"``). ``None`` when the ISO has no artifact — the
+    startup-trajectory extension is then simply inert, mirroring the
+    ramp-envelope convention (never a silent hand number, rule #23). Treat
+    the returned frame as read-only.
+    """
+    import pandas as pd
+
+    from market_sim.config.paths import PROCESSED_DIR
+
+    path = PROCESSED_DIR / f"campd_cc_start_trajectory_{iso.upper()}.csv"
+    if not path.exists():
+        return None
+    return pd.read_csv(path)
+
+
+def cc_startup_lead_hours(fleet: list, fleet_arrays, iso: str) -> np.ndarray | None:
+    """Return the ``(n_gen,)`` measured start-to-load lead hours, or ``None``.
+
+    Maps the derived CAMPD CC start-trajectory artifact
+    (:func:`load_cc_start_trajectory`) onto the dispatch fleet for the RA
+    bridge's startup-trajectory extension (caiso-96 WP-1): each merchant
+    gas-CC row gets its plant's gate-accepted p50 start-to-load duration;
+    plants without an accepted row get the artifact's pooled class p50.
+    Non-CC and cogen rows stay 0: a fast-start CT reaches load sub-hourly
+    (CT_COMMITMENT_PARAMS min-down 1 h — no lead exists at hourly LP
+    resolution, the parameter-not-class-name gate of rule 18), and CHP
+    follows its steam host's own floor (rule 19). Returns ``None`` — the
+    extension inert — when the ISO has no derived artifact (a measured
+    parameter or nothing, rule #23) or no row carries a positive lead.
+    """
+    table = load_cc_start_trajectory(iso)
+    if table is None:
+        logger.warning(
+            "caiso_ra_startup_trajectory: no derived start-trajectory artifact "
+            "for %s (scripts/derive_campd_cc_start_trajectory.py) — the "
+            "extension is inert (a measured lead or nothing, rule 23).",
+            iso,
+        )
+        return None
+    plant_lead = {
+        int(r.plant_code): float(r.lead_hours)
+        for r in table[table.basis == "plant"].itertuples()
+    }
+    cls = table[table.basis == "class"]
+    class_lead = float(cls.lead_hours.iloc[0]) if len(cls) else 0.0
+    plant_code = getattr(fleet_arrays, "plant_code", None)
+    lead = np.zeros(len(fleet), dtype=int)
+    for g, gen in enumerate(fleet):
+        if gen.fuel_type != "gas_cc" or gen.plant_group.endswith("_CHP"):
+            continue
+        pc = int(plant_code[g]) if plant_code is not None else 0
+        lead[g] = int(round(plant_lead.get(pc, class_lead)))
+    return lead if np.any(lead > 0) else None
+
+
 def caiso_ra_p1_floor_fleet(
     config,
     iso: str,
@@ -126,6 +191,15 @@ def caiso_ra_p1_floor_fleet(
         if getattr(config, "negative_renewable_offers", False)
         else 0.0
     )
+    # Startup-trajectory extension (caiso-96 WP-1): measured CC start-to-load
+    # leads floor the L pre-start hours of each detected run-start at the
+    # ramp-in trajectory (same mechanism, wider physics — rule 19; D-2
+    # attribution stays ra_mustoffer_bridge).
+    startup_lead = (
+        cc_startup_lead_hours(fleet, fleet_arrays, iso)
+        if getattr(config, "caiso_ra_startup_trajectory", False)
+        else None
+    )
     ra_floor = caiso_ra_mustoffer_min_gen(
         p0_dispatch,
         fleet_arrays,
@@ -138,6 +212,7 @@ def caiso_ra_p1_floor_fleet(
         surplus_floor_value=surplus_floor_value,
         startup_aware=startup_aware,
         release_hours=release_hours,
+        startup_lead_hours=startup_lead,
     )
     # RA-quantity gate (gap G-61 path (a)): cap the bridged fleet at the
     # published gas-fired must-offer RA capacity for the compliance year —
