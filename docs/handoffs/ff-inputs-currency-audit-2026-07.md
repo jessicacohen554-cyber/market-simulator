@@ -425,28 +425,38 @@ byte-identical):
 
 ---
 
-## 6. FC-5 benchmark-table inventory — PLACEHOLDER (FF-0A not merged)
+## 6. FC-5 benchmark-table inventory — IMPLEMENTED by FF-0F
 
-FF-0A (the forecast determination rubric + `scripts/forecast_verdict.py`, which
-owns the FC-5 external-corridor benchmark list) is **not merged at HEAD** —
-neither `docs/forecast-determination-rubric.md` nor `scripts/forecast_verdict.py`
-exists. Per the FF-0D prompt, this section is a stub until FF-0A's §3 inventory
-lands. What FC-5 will need to confront 2030/2035/2040 capacity mix, energy mix and
-CO₂ (plan §3 FC-5) is partially on disk already; a provisional gap read pending the
-real inventory:
+FF-0A merged (both `docs/forecast-determination-rubric.md` and
+`scripts/forecast_verdict.py` exist; the concrete FC-5 inventory is rubric §6),
+and **FF-0F built the intake** it called for — the `benchmark-corridor` clean
+datatype (`docs/handoffs/ff-0f-fc5-benchmark-intake-2026-07.md`). FC-5 now reads
+one curated parquet as **context, never a fit target** (rule 13); a
+model-vs-benchmark divergence is reported with an explanation and never scored as
+a miss. Status of each rubric §6 source:
 
-- **On disk / wired:** AEO2025 fuel-price + (via `cross-model-corridor-2026-07-13`)
-  the AEO2025 / NREL StdScen / CDR / Gold Book / CELT corridor context; capacity
-  hindcast actuals; ISO forecast headlines gathered here (§1).
-- **Likely intake gaps (to confirm against FF-0A):** machine-readable **AEO2026**
-  capacity/generation/emissions tables (not just fuel prices — the current AEO
-  intake is fuel-prices-only, `eia_aeo2025_fuel_prices.*`); **NREL StdScen 2024/2025**
-  capacity-mix tables; the ISO planning documents' **capacity-expansion** tables
-  (CDR, PJM RTEP, Gold Book, CELT, IEPR) as structured benchmark rows.
+- **On disk (fetched, reproducible) — AEO2025.** `benchmark-corridor` source
+  `AEO2025` = EIA AEO2025 regional electricity **Table 54** (capacity/generation
+  by fuel + power-sector CO2) + **Table 56** (renewable capacity split), pulled
+  from the EIA Open Data API v2 `aeo` route (`scripts/fetch_aeo_electricity.py`)
+  for the 14 EMM regions crosswalked to the six ISOs, Reference case,
+  2030/2035/2040 — 1,008 curated rows. This supersedes §7.3's old **M8**
+  ("AEO2026, pull once FF-0A defines FC-5"): FC-5's corridor anchor is the
+  AEO2025 vintage the rubric pins, and it lands from capacity/generation/emissions
+  tables, not just the fuel-price cut previously on disk.
+- **Intake gaps (each a `DATA NEEDED` row, filed in §7.3 as M9–M15).** The
+  remaining rubric §6 sources publish their projection tables only in PDF/XLSX or
+  behind a proxy-blocked viewer, so they are **manual downloads** — never guessed
+  (rule 5). The `benchmark-corridor` datatype already registers each as a source
+  (`scripts/lib/benchmark_corridor/`, generic unified-CSV reader) and reports it
+  `missing` until its CSV lands; the FC-5 scorer surfaces the missing-source list,
+  so an unfinished intake reads as SKIPPED-with-context and holds a T2 promotion
+  (self-enforcing, rubric §3/§6).
 
-**Action:** when FF-0A merges, replace this section with its concrete FC-5 list and
-file each missing benchmark as an intake row in §7.2 (do **not** intake here —
-FF-0D is audit-only, and FF-0A explicitly owns the inventory).
+**Action (done):** the concrete list is above; the seven manual-download gaps are
+filed in §7.3 (M9–M15). No values were guessed; the reproducible AEO2025 side is
+committed with per-value provenance in the datatype's `source_doc`/`source_page`
+columns.
 
 ---
 
@@ -492,7 +502,14 @@ is a bug; **P1** = material currency; **P2** = precision / optional.
 | M5 | **ERCOT 2025 LTLF3 / 2026 preliminary LTLF** MW-by-year | §1.1 ERCOT demand + §1.3 anchor precision | PUCT filing PDF |
 | M6 | **ISO-NE 2026 CELT** load + large-load tables | §1.1 NEISO demand + §1.4 optional DC block | CELT XLSX/PDF |
 | M7 | **CAISO CED 2025-2045** demand tables | §1.1 CAISO demand refresh (DC adder already confirmed unchanged) | CEC filebrowser XLSX |
-| M8 | **AEO2026** capacity/generation/emissions tables | §6 FC-5 corridor (beyond fuel prices) | current AEO intake is fuel-prices-only; pull once FF-0A defines FC-5 |
+| M8 | ~~**AEO2026** capacity/generation/emissions tables~~ | §6 FC-5 corridor (beyond fuel prices) | **RESOLVED by FF-0F** — the FC-5 corridor anchor is AEO**2025** (the vintage rubric §6 pins), fetched into the `benchmark-corridor` datatype from Table 54 + Table 56 via the API. A later AEO2026 refresh is an optional re-fetch (`--aeo-year 2026`), not a gap. |
+| M9 | **NREL Standard Scenarios 2024** Mid-case regional capacity/generation 2030/2035 | `benchmark-corridor` source `StdScen2024` | Scenario Viewer API proxy-blocked (502 tunnel); OEDI ReEDS S3 mirror has no stable 2024 regional CSV. Manual CSV export → `data/raw/benchmark-corridor/stdscen2024/stdscen2024.csv` |
+| M10 | **ERCOT CDR Dec 2025** planned additions by tech to 2030 + peak/reserve-margin scenarios | `benchmark-corridor` source `ERCOT_CDR_2025` | table-in-PDF → `data/raw/benchmark-corridor/ercot-cdr-2025/` |
+| M11 | **PJM 2026 Load Forecast** + 4R at-risk-retirement GW by 2030 | `benchmark-corridor` source `PJM_LOAD_2026` | table-in-PDF/XLSX → `data/raw/benchmark-corridor/pjm-load-2026/` |
+| M12 | **NYISO 2026 Gold Book** capacity/load forecast tables by zone | `benchmark-corridor` source `NYISO_GOLDBOOK_2026` | table-in-XLSX → `data/raw/benchmark-corridor/nyiso-goldbook-2026/` |
+| M13 | **ISO-NE 2026 CELT** energy/peak incl. winter-flip rows | `benchmark-corridor` source `ISONE_CELT_2026` | table-in-XLSX/PDF → `data/raw/benchmark-corridor/isone-celt-2026/` |
+| M14 | **CEC IEPR 2025 + CPUC PSP / 2025-26 TPP** new-build by tech to 2035 | `benchmark-corridor` source `CAISO_IEPR_2025` | table-in-XLSX/PDF → `data/raw/benchmark-corridor/caiso-iepr-2025/` |
+| M15 | **MISO Futures / OMS-MISO survey** capacity outlook | `benchmark-corridor` source `MISO_FUTURES` | table-in-PDF → `data/raw/benchmark-corridor/miso-futures/` |
 
 > ISO-forecast **headline** figures were web-confirmed this session (§1 URLs) and
 > form the sanity envelope those exact tables must sit inside; the manual pulls are
