@@ -16889,3 +16889,94 @@ conduct gap at zero parameter cost and mildly helps C3a-2025), and (b) does
 the WP-2 evening evidence (+2 TWh/yr excess import, CT_PEAKER −1.1..−2.0 Mt,
 evening λ −6.6/−5.0/−2.4 pp, now plus this run's demonstration that the
 commitment fix alone cannot recover the mass) trip the caiso-94 watch?
+## 2026-07-18 — miso-72: winter fuel-security Chicago Citygate daily gas overlay BUILT (prior session), SOLVED, PROBED and REGISTERED as a KEEPER CANDIDATE — every pre-registered band held (R1 C3b veto at the +0.005 edge, R2 no-SETEX, R4 not-inert, R5 honesty); the per-zone Heather-window deliverable IMPROVES IN EVERY ZONE (Illinois to within $0.89 of actual); C3c 1/7/1 unchanged exactly as pre-declared; keeper swap awaits the owner
+
+**Runs (registered + scored, rubric v2.7):** `2026-07-18-miso-72-winter`
+(main, KEEPER CANDIDATE) + `2026-07-18-miso-72-winter-base` (same-box drift
+control). Both MISO 2023+2024+2025, one bundle each, per-year +
+`--reuse-solved` (`scripts/probes/_miso72_chain.sh`, one fresh LP per process
+on the 15 GB box), warm-start pinned off, variants back to back, years
+sequential (rule 12). Charter: the fuel-security / `gas_daily_shape` lane
+pre-named by the miso-71 session; design FROZEN before the build in
+`docs/handoffs/miso-winter-fuel-security-design-2026-07.md` (diagnosis,
+mechanism, cited parameters, §3.5 bands, §3.6 R1-R5 refutation criteria all
+pre-registered; the reserve-scarcity and cold-snap-derate routes
+pre-adjudicated REFUTED by the 2024 SOM record and NOT built). Build merged
+2026-07-17 (PR #2447); this session executed Phase B: solve, per-zone
+validation, registration. Model per rule 27: Fable.
+
+**Mechanism (`miso_winter_citygate_daily`, ScenarioConfig tier 3, default OFF
+— zero fitted scalars).** ONE new overlay on the promoted miso-71 keeper
+recipe: in the winter months {Dec, Jan, Feb} only, the MISO gas units in the
+Chicago-hub zones only (MISO-Illinois/Indiana/East — READ from the published
+`miso_zonal_gas_hub.csv`, the same file `apply_miso_zonal_gas_basis` reads)
+are repriced at the MEASURED Chicago Citygate daily shape
+(`data/raw/gas-prices/miso_citygate_daily.csv`, 680 EIA-NGWU weekday prints
+2023-2025), placed on gas FLOW days (trade+1, weekend/holiday forward-fill —
+the Friday Jan-12-2024 $25.82 print prices the whole MLK storm package
+Jan-13-16 at 4.67×) and renormalized to mean 1.0 within each month,
+SUPERSEDING the national-HH `gas_daily_shape` in exactly those cells
+(divide-out/multiply-in — replace, never stack, rule 19). The measured
+EIA-923 monthly gas level and the additive annual `miso_zonal_gas_basis`
+spread are unchanged by construction. Closes the Winter Storm Heather
+(Jan-14-17-2024) delivered-gas tail the national series structurally misses:
+the even-spread interp mislocates the Jan-12 HH spike to Jan-13, and the
++$12.74 Chicago citygate basis blowout never appears in a national series.
+
+**Mechanism-only read (main − same-box base; the base reproduces the
+registered miso-71 keeper EXACTLY on every gated criterion — zero box
+drift):**
+
+- **R1 (C3b veto) HELD:** C3b **0.080 / 0.129 / 0.183** (base
+  0.079/0.124/0.184) — mechanism-only Δ +0.001/+0.005/−0.001, at/inside the
+  pre-registered ≤ +0.005 band; all years ≤ 0.20.
+- **C3c 1/7/1 IDENTICAL to base** (RT actual 30/37/88): 2024 inside the
+  pre-declared [7,9] band — the Heather event is off the Indiana scoring hub
+  exactly as pre-read (~1 in-window tail hour; 2 of 37 annual 2024 tail hours
+  in January). The design pre-declared C3c must NOT be the validation, and it
+  was not (R5 HELD — no spurious scored gain).
+- **THE DELIVERABLE — per-zone Heather-window (Jan-14-17-2024) mean-LMP
+  fidelity IMPROVES IN EVERY ZONE** (`scripts/miso72_perzone_validate.py`,
+  vs the measured per-zone RT actuals): Illinois |model−actual|
+  **12.75 → 0.89 $/MWh**, East 28.13 → 14.49, Indiana 45.33 → 31.68, West
+  45.33 → 31.69, South 42.53 → 36.91. Per-day Chicago-zone reads: Jan-14/15/16
+  lift $47.9/39.5/35.1 → $64.9/64.1/50.6 (Indiana actuals $78.7/100.0/84.5) —
+  R4 HELD, the overlay is NOT inert.
+- **R2 (SETEX fabrication) HELD:** Heather-window max LMP **$87.94** across
+  all zones — nowhere near the out-of-representation TEXAS.HUB $1070 SETEX
+  load-pocket print (never chased, rule 13).
+- C3a-2024 −6.9 → **−7.3 %** (Δ −0.4, inside the ±0.5 watch band; PASS both
+  arms); C3a-2025 **−13.7 % IDENTICAL**; C1 CC_REGULAR-2023 **−8.33** vs base
+  −8.29 TWh (0.04 TWh, noise; unchanged watch); C2/C4/C5a PASS both arms;
+  C6/C7/C8 PASS with the same ST_GAS grounded-above-budget notes — NO new
+  floors (a fuel-price shape carries no floor-mechanism id; D-2/D-4 regen
+  adds no row, fail set byte-identical to the keeper's). DOF **main 26/2,
+  base 25/2** (+1 measured-physical: the Chicago Citygate daily series —
+  zero new scalars).
+- **DISCLOSED (sub-band, non-gated):** full-January MAE broadens ~+$2 in
+  Indiana/East/West — the reduced network's North/Central zones are
+  price-uniform, so the Chicago shape moves the whole pool on the
+  mean-preserving redistribution days — while Illinois improves 1.69 → 0.34
+  and South improves. The gated C3b deltas stayed inside their band;
+  resolving per-zone winter gas WITHIN North/Central needs a zonal-topology
+  price-separation mechanism (its own charter, not this lane's).
+
+**Disposition (rules 1/13/15/22): rule-1 KEEPER CANDIDATE, swap owner-only.**
+The fail set is EXACTLY the keeper's {C1 CC_REGULAR-2023, C3a-2025, C3c×3}
+(live verdict NOT-YET — undocumented FAIL: fuelmix, price_mean, price_tail)
+with no gated PASS→FAIL regression, and ONE additional real structure at zero
+fitted scalars — the measured regional delivered-gas winter shape the
+national series cannot represent, validated per-zone against the event it
+owns. Remaining pre-named MISO lanes: G-23 imports (sequenced last, its own
+charter); the C3c-2025 deep tail stays honestly ledgered (miso-71 leg-(b)
+lower bound); the all-ISO `gas_daily_shape_factors` interp-mislocation fix
+(design §3.7) stays a separate correctness follow-up. Next number: miso-73.
+
+**Ops.** Base + main full-span solves in-session via the idempotent chain
+(base 24 min, main 22 min wall); benchmark parquets rebuilt in place
+(`--rebuild-benchmark`, no re-solve); registered per rule 15 with legitimacy
+diagnostics, attestation (DOF ledger +1 measured-physical;
+`scripts/gen_miso72_attestation.py`), parity check PASS, manifest rebuilt;
+top-15 retention pruned the 2026-07-13 miso-64 pair (oldest). Transport:
+`mcp__github__push_files`, blob-verified (rule 27). No `keepers.json` edit
+(recommendation only).
