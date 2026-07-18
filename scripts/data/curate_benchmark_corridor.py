@@ -21,8 +21,8 @@ reported as *missing*, never written as a placeholder value (rule 5).
 FC-5 scorer reads as CONTEXT (``forecast_verdict.py --benchmark-corridor``).
 
 Run:
-    python scripts/curate_benchmark_corridor.py [--sources AEO2025 ...]
-    python scripts/curate_benchmark_corridor.py --emit-corridor-json out.json
+    python scripts/data/curate_benchmark_corridor.py [--sources AEO2025 ...]
+    python scripts/data/curate_benchmark_corridor.py --emit-corridor-json out.json
 """
 
 from __future__ import annotations

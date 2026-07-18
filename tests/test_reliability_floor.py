@@ -26,7 +26,8 @@ from market_sim.model import transmission as T
 # so the coefficient-magnitude and enable-gate logic can be unit-tested directly.
 _REPO = Path(__file__).resolve().parent.parent
 _spec = importlib.util.spec_from_file_location(
-    "derive_reliability_coeffs", str(_REPO / "scripts" / "data" / "derive_reliability_coeffs.py")
+    "derive_reliability_coeffs",
+    str(_REPO / "scripts" / "data" / "derive_reliability_coeffs.py"),
 )
 drc = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(drc)
