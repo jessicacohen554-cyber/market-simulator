@@ -235,3 +235,53 @@ measured clean import to protect CO2 (rule 1); solving any year outside 2023-202
   register whatever the result (rule 15); promote only if it holds every protected
   result and improves faithfulness. Mechanism B stays owner-gated pending A's
   2025-residual read.
+
+## 11. B-leg RESULT — Mechanism A is INERT (a dead flag): NOT a keeper
+
+The Mechanism-A diagnostic was solved (`_caiso98_vintage_ramp_B.py` →
+`caiso98_vintage_ramp_B`, the caiso-97 keeper recipe with the ONLY delta
+`storage_vintage_ramp=True`, 2023-2025 one bundle). Adjudicated same-machine
+against `caiso98_repro_A`:
+
+- **Every scored metric is byte-identical to the A-leg / the caiso-97 keeper.**
+  C1 misses (CC_REGULAR −2.40/−0.77/−2.95, CT_PEAKER −3.14/−3.64/−2.13, CT_CHP
+  −1.84/−1.76/−1.08, ST_GAS −1.13/+0.19/−0.04, Panoche 60.0/40.3/8.1), the hod
+  ladder (belly +10.9/+9.0/+8.4, evening −6.4/−4.7/−1.9, overnight
+  +1.3/+0.2/+1.6), C3c (20/0/0), and even the raw storage energy budget
+  (charge 31.551 TWh, discharge 26.596 TWh, 6 units — identical to A) all match
+  to the digit. The B-leg's `meta.json` records `storage_vintage_ramp=True`, so
+  the flag was passed and recorded — but it had **zero effect on the fleet or
+  the solve.**
+- **Root cause — the flag dead-ends.** `runner.py:587` builds storage
+  **unconditionally** via `build_default_storage(iso_config, config)` (the flat
+  `STORAGE_BASE_FLEET_MW[CAISO]["mid"]` = 8 GW fleet, which takes no year and
+  ignores `storage_vintage_ramp`). The vintage-aware builder
+  `load_eia860_storage` (`model/storage.py:265` — the function that consumes
+  `config.storage_vintage_ramp` and ramps the measured EIA-860 fleet by COD
+  month; the CAISO data is present, 277 CA rows in
+  `eia860_energy_storage_operable.parquet`) is **orphaned: never called anywhere
+  in the solve path.** So `storage_vintage_ramp` is plumbed through
+  `solve_and_persist`'s signature and written to `run_config`/`meta`, but the LP
+  never sees it. (§7's "already plumbed" was true of the CLI/config surface, not
+  of the fleet builder — the honest correction is here.)
+- **Consequence:** Mechanism A as a flag-flip is NOT a keeper (a no-op). The
+  measurement (§2-6) is unaffected — the flat fleet IS wrong and DOES drive the
+  belly/evening masses; the measured-fleet *correction* simply is not wired.
+  Making it effective is a **core-infrastructure change**: wire `runner.py` to
+  call `load_eia860_storage(iso_config, year, config)` when
+  `config.storage_vintage_ramp` is set (it needs the per-year `year` argument
+  `build_default_storage` lacks), CAISO-scoped so the ERCOT/PJM backcasts —
+  which the `scenarios.py` docstring says were "calibrated against flat year-end
+  fleets" — are not perturbed. That edit is `src/market_sim/runner.py`
+  (Opus/Fable-only, rule 26), owner-gated, and must be re-validated on the §7
+  gates once wired.
+- **Registration:** the B-leg is byte-identical to the caiso-97 keeper (a
+  same-machine no-op), so it is NOT registered on the dashboard — a duplicate
+  keeper entry would be pure noise and burn a CAISO retention slot (13/15). Its
+  result is recorded here (durable, not chat), satisfying rule 15's intent.
+
+**Revised charter disposition:** Mechanism A becomes a **wiring task**
+(runner.py + re-test), not a flag-flip; Mechanism B (the measured dispatch-shape
+anchor for the 2025 residual) is unchanged (novel, owner-gated). Neither is a
+keeper this session; the keeper stays caiso-97. See the handoff prompt
+(`docs/handoffs/caiso-98-storage-charter-handoff-2026-07-18.md`).
