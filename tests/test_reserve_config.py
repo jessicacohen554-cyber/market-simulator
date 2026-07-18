@@ -897,6 +897,134 @@ class TestErcotEcrsConservativeDeployment(unittest.TestCase):
         self.assertEqual([f.name for f in design.families][2], "ECRS")
 
 
+class TestErcotNonreleasableAsWithholding(unittest.TestCase):
+    """Published pre-RTC+B RRS/Reg-Up carve-out as rigid at-cap reserve demand."""
+
+    def _design(self, year, T=24, golive_hour=None, **cfg_kw):
+        import unittest.mock as mock
+
+        import market_sim.results.scarcity as sc
+
+        def fake_req(_year, hours, code):
+            base = {"REGUP": 50.0, "RRS": 100.0, "ECRS": 150.0, "NSPIN": 120.0}
+            return np.full(hours, base[str(code)])
+
+        cfg = _cfg(
+            weather_year=year,
+            ercot_multiproduct_as_coopt=True,
+            ercot_nonreleasable_as_withholding=True,
+            ercot_as_critical_frac=0.0,
+            ercot_as_n_ramp=4,
+            **cfg_kw,
+        )
+        with mock.patch(
+            "market_sim.results.scarcity.ercot_as_plan_requirement_mw",
+            side_effect=fake_req,
+        ):
+            if golive_hour is not None:
+                with mock.patch.object(sc, "RTCB_GOLIVE_HOUR", golive_hour):
+                    return get_reserve_design(cfg, _fleet(T=T), T, ["Z0"])
+            return get_reserve_design(cfg, _fleet(T=T), T, ["Z0"])
+
+    def test_2023_rrs_and_regup_rigid_at_cap_all_year(self):
+        design = self._design(2023)
+        names = [f.name for f in design.families]
+        self.assertIn("RRS_withheld", names)
+        self.assertIn("RegUp_withheld", names)
+        self.assertNotIn("RRS_released", names)
+        for fam_name, req in (("RRS_withheld", 100.0), ("RegUp_withheld", 50.0)):
+            fam = design.families[names.index(fam_name)]
+            np.testing.assert_array_equal(fam.ordc_penalties, [5000.0])
+            self.assertTrue((fam.requirement == req).all())
+        # NonSpin stays on the standing releasable ramp (SCED-dispatchable).
+        nspin = design.families[names.index("NonSpin")]
+        self.assertGreater(nspin.ordc_penalties.size, 1)
+
+    def test_2024_still_rigid_ecrs_reform_does_not_apply(self):
+        design = self._design(2024)
+        names = [f.name for f in design.families]
+        self.assertIn("RRS_withheld", names)
+        self.assertIn("RegUp_withheld", names)
+        self.assertNotIn("RRS_released", names)
+
+    def test_2025_splits_at_rtcb_golive(self):
+        design = self._design(2025, T=24, golive_hour=12)
+        names = [f.name for f in design.families]
+        self.assertIn("RRS_withheld", names)
+        self.assertIn("RRS_released", names)
+        rigid = design.families[names.index("RRS_withheld")]
+        rel = design.families[names.index("RRS_released")]
+        self.assertTrue((rigid.requirement[:12] == 100.0).all())
+        self.assertTrue((rigid.requirement[12:] == 0.0).all())
+        self.assertTrue((rel.requirement[:12] == 0.0).all())
+        self.assertTrue((rel.requirement[12:] == 100.0).all())
+        self.assertEqual(rigid.reserve_class, rel.reserve_class)
+        # Post-go-live window carries the standing (RTC+B ASDC) ramp.
+        self.assertGreater(len(rel.ordc_penalties), 1)
+        self.assertAlmostEqual(float(rel.ordc_penalties[-1]), 5000.0)
+
+    def test_2026_forecast_year_inert(self):
+        design = self._design(2026)
+        names = [f.name for f in design.families]
+        self.assertNotIn("RRS_withheld", names)
+        self.assertIn("RRS", names)
+
+    def test_composes_with_ecrs_conservative_deployment(self):
+        design = self._design(2023, ercot_ecrs_conservative_deployment=True)
+        names = [f.name for f in design.families]
+        for n in ("RegUp_withheld", "RRS_withheld", "ECRS_withheld"):
+            self.assertIn(n, names)
+        # First n_prod families keep product identity (one entry per product).
+        self.assertEqual(len(design.families), 4)
+
+    def test_lr_credit_applies_inside_withheld_window(self):
+        import unittest.mock as mock
+
+        def fake_req(_year, hours, code):
+            base = {"REGUP": 50.0, "RRS": 100.0, "ECRS": 150.0, "NSPIN": 120.0}
+            return np.full(hours, base[str(code)])
+
+        cfg = _cfg(
+            weather_year=2023,
+            ercot_multiproduct_as_coopt=True,
+            ercot_nonreleasable_as_withholding=True,
+            ercot_load_resource_reserve=True,
+            ercot_as_n_ramp=4,
+        )
+        with (
+            mock.patch(
+                "market_sim.results.scarcity.ercot_as_plan_requirement_mw",
+                side_effect=fake_req,
+            ),
+            mock.patch(
+                "market_sim.results.scarcity.ercot_load_resource_reserve_credit_mw",
+                return_value=np.full(24, 30.0),
+            ),
+        ):
+            design = get_reserve_design(cfg, _fleet(), 24, ["Z0"])
+        names = [f.name for f in design.families]
+        rigid = design.families[names.index("RRS_withheld")]
+        # Credited requirement (100 - 30) applied inside the rigid window.
+        self.assertTrue((rigid.requirement == 70.0).all())
+        np.testing.assert_array_equal(rigid.ordc_penalties, [5000.0])
+
+    def test_flag_off_is_unchanged(self):
+        import unittest.mock as mock
+
+        def fake_req(_year, hours, code):
+            return np.full(hours, 100.0)
+
+        cfg = _cfg(weather_year=2023, ercot_multiproduct_as_coopt=True)
+        with mock.patch(
+            "market_sim.results.scarcity.ercot_as_plan_requirement_mw",
+            side_effect=fake_req,
+        ):
+            design = get_reserve_design(cfg, _fleet(), 24, ["Z0"])
+        names = [f.name for f in design.families]
+        self.assertEqual(names[0], "RegUp")
+        self.assertEqual(names[1], "RRS")
+
+
 class TestErcotCommitmentHeadroomOverrides(unittest.TestCase):
     """WS1: commitment-state-aware headroom re-scope for the P2 solve."""
 

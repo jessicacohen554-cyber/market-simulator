@@ -2494,6 +2494,7 @@ def solve_and_persist(
     miso_rdt_tcdc: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_ecrs_conservative_deployment: bool = False,
+    ercot_nonreleasable_as_withholding: bool = False,
     ercot_ordc_total_reserve: bool = False,
     ercot_ordc_cap_dual_adder: bool = False,
     ercot_storage_as_product_credit: bool = False,
@@ -2920,6 +2921,10 @@ def solve_and_persist(
         if ercot_ecrs_conservative_deployment:
             recorded_cfg = recorded_cfg.with_overrides(
                 ercot_ecrs_conservative_deployment=True
+            )
+        if ercot_nonreleasable_as_withholding:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_nonreleasable_as_withholding=True
             )
         if ercot_ordc_total_reserve:
             recorded_cfg = recorded_cfg.with_overrides(ercot_ordc_total_reserve=True)
@@ -3688,6 +3693,7 @@ def solve_and_persist(
             miso_rdt_tcdc=miso_rdt_tcdc,
             ercot_multiproduct_as_coopt=ercot_multiproduct_as_coopt,
             ercot_ecrs_conservative_deployment=ercot_ecrs_conservative_deployment,
+            ercot_nonreleasable_as_withholding=ercot_nonreleasable_as_withholding,
             ercot_ordc_total_reserve=ercot_ordc_total_reserve,
             ercot_storage_as_product_credit=ercot_storage_as_product_credit,
             gas_hh_monthly_shape=gas_hh_monthly_shape,
@@ -4142,6 +4148,7 @@ def solve_and_persist(
         "miso_rdt_tcdc": miso_rdt_tcdc,
         "ercot_multiproduct_as_coopt": ercot_multiproduct_as_coopt,
         "ercot_ecrs_conservative_deployment": ercot_ecrs_conservative_deployment,
+        "ercot_nonreleasable_as_withholding": ercot_nonreleasable_as_withholding,
         "ercot_ordc_total_reserve": ercot_ordc_total_reserve,
         "ercot_ordc_cap_dual_adder": ercot_ordc_cap_dual_adder,
         "ercot_storage_as_product_credit": ercot_storage_as_product_credit,
@@ -7118,6 +7125,22 @@ def main() -> None:
         "--ercot-multiproduct-as-coopt. ERCOT-only. Off (default).",
     )
     parser.add_argument(
+        "--ercot-nonreleasable-as-withholding",
+        action="store_true",
+        help="ERCOT: represent the PUBLISHED pre-RTC+B RRS + Reg-Up deployment "
+        "design as rigid at-cap reserve demand — capacity awarded RRS/Reg-Up "
+        "is carved out of the SCED-dispatchable range (HASL − AS Resource "
+        "Responsibility, Nodal Protocols §6.5.7.6.2.3 / §3.17) with NO "
+        "price-based SCED release in any pre-RTC+B year (RRS deploys on "
+        "under-frequency / EEA events, Reg-Up through LFC only; the "
+        "2024-08-01 release reform applied to ECRS alone), so each family "
+        "prices as a single step AT THE OFFER CAP through RTC+B go-live "
+        "(2025-12-05) and reverts to the standing VOLL-anchored ramp (the "
+        "ASDC representation) after. Published market-design dates, no "
+        "fitted parameter. Requires --energy-reserve-coopt + "
+        "--ercot-multiproduct-as-coopt. ERCOT-only. Off (default).",
+    )
+    parser.add_argument(
         "--ercot-ordc-total-reserve",
         action="store_true",
         help="ERCOT: layer the lumped ORDC TOTAL-reserve demand curve (the "
@@ -9211,6 +9234,7 @@ def main() -> None:
         ercot_storage_as_endogenous=args.ercot_storage_as_endogenous,
         ercot_storage_as_duration_gate=args.ercot_storage_as_duration_gate,
         ercot_ecrs_conservative_deployment=args.ercot_ecrs_conservative_deployment,
+        ercot_nonreleasable_as_withholding=args.ercot_nonreleasable_as_withholding,
         gas_offer_curve=args.gas_offer_curve,
         gas_monthly_actuals=args.gas_monthly_actuals,
         offer_curve_overrides=offer_curve_overrides,
