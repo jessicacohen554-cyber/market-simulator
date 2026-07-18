@@ -7,8 +7,15 @@ the end of every manager turn.
 
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
-- **Last reviewed `origin/main` HEAD:** `7d4b738` (2026-07-18, turn 7).
+- **Last reviewed `origin/main` HEAD:** `4bfb618` (2026-07-18, turn 8).
 - **Plan base SHA:** `c95176e`.
+- **turn 8 refresh:** capacity.py re-confirmed FIXED — 3967 lines, all symbols, parses
+  clean, **byte-identical to the #2438 restore** (untouched). Only new merge since turn 7
+  is PR **#2441** = the FF-1A scorecard doc fill (#2440's content; docs-only, did NOT touch
+  capacity.py). So #2440 is now ON MAIN ⇒ **FF-1A-C prelude satisfied** (run against
+  latest origin/main). PR **#2439 still open, now `dirty`/conflicting (51 files,
+  +81,978/−1,531)** — a sprawling stale duplicate; CLOSE, do not merge (its dirty state
+  blocks self-merge, lowering risk).
 - **✅ MAIN RESTORED** (turn 7). PR **#2438** un-truncated `capacity.py` (2291→**3967**
   lines) and re-applied R-NEW. Manager-verified faithful: all 7 deleted symbols
   (`evolve_fleet`, `accredited_firm_capacity_mw`, `apply_ccs_retrofit`,
@@ -37,9 +44,9 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-0C | FABLE | 0 | L-CAP | — | **verified-pass** | #2418: R-NEW memo + owner box |
 | FF-0D | OPUS | 0 | L-INP | — | **verified-pass** | #2413: audit, no source changes |
 | FF-0E | OPUS | 0 | L-VAL | — | sent | in flight — no PR |
-| FF-1A | FABLE | 1 | L-CAP | ⛔ owner-gated | **verified-issues — scorecard partial** | Code+restore LANDED (#2438, verified-pass). R-NEW implemented (`retirement_rule` pipeline, default legacy byte-identical), probes run. Scorecard findings doc **partial**: open PR #2440 fills PJM+MISO measured (inversion CLOSED: gas_st false-retire 8.6→0 GW, recall→76%) but **ERCOT leg / LOYO folds / precise BLK-10 / dashboard registration = PENDING** (bundles absent, need re-solve). → correction **FF-1A-C**. |
+| FF-1A | FABLE | 1 | L-CAP | ⛔ owner-gated | **verified-issues — scorecard partial** | Code+restore LANDED (#2438, verified-pass). R-NEW implemented (`retirement_rule` pipeline, default legacy byte-identical), probes run. Scorecard findings doc on main (PR #2441/#2440) fills PJM+MISO measured (inversion CLOSED: gas_st false-retire 8.6→0 GW, recall→76%) but **ERCOT leg / LOYO folds / precise BLK-10 / dashboard registration = PENDING** (bundles absent, need re-solve). → correction **FF-1A-C**. |
 | FF-1A-restore | FABLE | 1 | L-CAP | — | **verified-pass** | PR #2438: capacity.py 2291→3967 byte-exact restore + R-NEW re-apply + D2 delete; register_hindcast arm updated (staged-thin→r-new); 273-line test delta incl. `test_flag_off_is_byte_identical` / `test_staged_thinning_fields_are_deleted` / `test_pipeline_requires_year`. Main un-broken. |
-| FF-1A-C | FABLE | 1 | L-CAP | ⛔ | **correction-sent (turn 7)** | after #2440 merges: solve ERCOT composition leg; compute LOYO folds + precise BLK-10 fired-MW (re-solve/re-score PJM+MISO R-NEW bundles); register 3 R-NEW legs on forecast-validation dashboard; fill §5/§7/§9 complete. Unblocks FF-2A (BLK-10) + FF-2C (flip-gate). |
+| FF-1A-C | FABLE | 1 | L-CAP | ⛔ | **correction-sent (turn 7); prelude satisfied turn 8** | #2440 now on main. Run vs latest origin/main: solve ERCOT composition leg; compute LOYO folds + precise BLK-10 fired-MW (re-solve/re-score PJM+MISO R-NEW bundles); register 3 R-NEW legs on forecast-validation dashboard; fill §5/§7/§9 complete. Unblocks FF-2A (BLK-10) + FF-2C (flip-gate). |
 | FF-1B | FABLE | 1 | L-SCAR | — | **verified-pass** | PR #2423: correlated cold-event derate (default-off, measured, rule-25 no-op cross-ISO); in-year ORDC scarcity forms (Heather $4,968/MWh); CT screen 6.4→11.9 $/kW-yr; ≈56/66 residual handed to G-20/G-22 as a number. Did NOT touch capacity.py. |
 | FF-1C | OPUS | 1 | L-INP | — | **verified-pass** | #2422: demand/DC currency + double-count fix + hydro-verify |
 | FF-1D | OPUS | 1 | L-VAL | — | not-sent | blocked: FF-0E not landed |
@@ -57,23 +64,22 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-4C | OPUS | 4 | L-VAL | owner-gated | not-sent | blocked: FF-4A + owner |
 | FF-5A | OPUS | 5 | L-DASH | — | not-sent | blocked: Wave 4 |
 
-Out-of-program / trivial this window (turn 7): only #2438 (restore) and #2437 (this
-ledger, turn 6) merged. Two OPEN PRs pending owner action — see below.
+Out-of-program / trivial this window: #2438 (restore, turn 7), #2441 (FF-1A scorecard doc
+fill = #2440's content, turn 8), #2437 (this ledger, turn 6). One OPEN PR pending owner
+action — see below.
 
 ---
 
-## Open PRs pending owner action (turn 7)
+## Open PRs pending owner action
 
-- **PR #2440 — MERGE (recommended).** FF-1A scorecard fill. Rewrites the §0–§9 skeleton
-  into the real per-ISO gate scorecard with **measured** PJM+MISO R-NEW numbers (0 "TO
-  FILL" remaining); honestly marks ERCOT leg / LOYO / precise BLK-10 / dashboard PENDING
-  rather than inventing them. Docs-only, strict improvement over the stub on main. FF-1A-C
-  builds on it.
-- **PR #2439 — CLOSE (recommended, do NOT merge).** Redundant duplicate of #2438: a
-  second restore+implement of the same R-NEW work. Its `capacity.py` (3969L) differs from
-  main's (3967L) by only a cosmetic blank line + a functionally-identical `if
-  pipeline_events:` guard on the ledger-attribution extend. #2438 already landed the
-  restore; merging #2439 re-litigates it with no behavioural change and invites confusion.
+- **PR #2440 — MERGED turn 8** (as PR **#2441**). FF-1A scorecard fill now on main:
+  per-ISO gate scorecard with **measured** PJM+MISO R-NEW numbers; ERCOT leg / LOYO /
+  precise BLK-10 / dashboard still PENDING (→ FF-1A-C). Docs-only; did NOT touch
+  capacity.py.
+- **PR #2439 — CLOSE (still open, do NOT merge).** Redundant duplicate of #2438; now
+  `dirty`/conflicting against current main (51 files, +81,978/−1,531 — carries far more
+  than a restore). #2438 already landed the restore + R-NEW; merging #2439 re-litigates it
+  and invites a conflict mess. The dirty state blocks self-merge (good). Owner: close it.
 
 ---
 
@@ -85,7 +91,7 @@ ledger, turn 6) merged. Two OPEN PRs pending owner action — see below.
   measured inversion-closure confirmed. Owner: correct me if D1≠B.
 
 **AWAITING:**
-- **PR triage** (turn 7): merge #2440, close #2439 (above).
+- **PR triage:** close #2439 (#2440 already merged as #2441).
 - **BAU DC posture** (`datacenter_load_path` `off` vs `mid`; FF-1C rec: mid). Gates FF-4A.
 - Availability derate default (FF-1B — evidence in: 6.4→11.9 $/kW-yr, scarcity forms;
   owner may set ON-for-forecast), entry-lookahead posture (FF-2A), per-ISO flips (FF-2C),
@@ -100,8 +106,9 @@ ledger, turn 6) merged. Two OPEN PRs pending owner action — see below.
 3. **FF-1A-restore [FABLE]** (turn 5) — **RESOLVED turn 7 (#2438).** capacity.py
    byte-exact restored + R-NEW re-applied + D2 deleted; manager-verified faithful.
 4. **FF-1A-C [FABLE]** (turn 7) — complete the FF-1A scorecard: ERCOT composition leg,
-   LOYO folds, precise BLK-10 fired-MW, dashboard registration; fill §5/§7/§9. Builds on
-   #2440. Unblocks FF-2A + FF-2C.
+   LOYO folds, precise BLK-10 fired-MW, dashboard registration; fill §5/§7/§9. Prelude
+   (#2440 merged, turn 8) **now satisfied** — runs against latest origin/main. Unblocks
+   FF-2A + FF-2C. Open (no PR yet).
 
 ---
 
@@ -128,3 +135,9 @@ ledger, turn 6) merged. Two OPEN PRs pending owner action — see below.
   avoids a full-file plan push mid-measurement — rule-27 caution). No downstream wave
   released (FF-1D still on FF-0E; Wave 2+ on FF-1A-C). In-flight unchanged: FF-0B-redo,
   FF-0E, FF-1E (no PRs).
+- **turn 8 (refresh — owner asked "is calibration py fixed").** `→4bfb618`. **Confirmed:
+  capacity.py FIXED** (3967 lines, all symbols, parses clean, byte-identical to the #2438
+  restore — untouched). Only new merge: PR #2441 = FF-1A scorecard doc fill (#2440's
+  content; docs-only). #2440 now on main ⇒ FF-1A-C prelude satisfied. PR #2439 still open
+  but `dirty`/conflicting (51 files, +82k lines) — reconfirmed CLOSE. No new dispatches;
+  FF-1A-C already issued (turn 7), everything downstream still held on it.
