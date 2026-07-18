@@ -16787,3 +16787,54 @@ NOT-YET, deciding criteria C3a-2025/C3c/C4/C5a, consistent with the registered
 verdict). Open lanes hand off to the next charter: **the C5a / CC-under-production
 root cause (new, the promotion's own successor)**, C3a-2025 (belly/evening + the
 same CC lane), C3c lane B, C4 band-edge.
+
+## 2026-07-18 — caiso-95: WHO SERVES THE DAY — the C5a gas under-production DECOMPOSED against the metered fleet (derive-first, no new mechanism, keeper unchanged) — the CC half is a ~3-hour-LATE afternoon re-commitment (hod 13–17, NOT the belly), the CT_PEAKER half is the EVENING supply-stack composition (model over-imports the evening by ~2 TWh/yr; no floor admissible, caiso-91b stands), CT_CHP is the steam floor's LEVEL, ST_GAS is 2023-only; charter asks filed (WP-1 startup-trajectory bridge extension owner-gated)
+
+**Finding:** `results/calibration/FINDING-caiso95-who-serves-the-day-2026-07-18.md`.
+Scripts: `scripts/probes/_caiso95_repro_A.py` (same-machine repro of the
+PROMOTED caiso-94 keeper, gitignored `caiso95_repro_A`, un-registered per the
+FINDING-caiso92b protocol — reproduces the keeper to ≤0.02 TWh/class) +
+`scripts/probes/_caiso_who_serves_day.py` (hod 6–21 mirror of the frozen night
+probe + commitment-vs-dispatch decomposition ΔE = ΔOH×L_cems + OH_model×ΔL).
+NO new-mechanism solve; nothing registered; keeper stays caiso-94.
+
+**The C5a bridge closes on dispatch energy alone:** class energy gaps × bench
+eGRID intensities reproduce the scored miss essentially in full
+(−3.96/−2.96/−3.49 Mt vs −4.04/−3.02/−3.90) — an energy problem, not a rate
+problem. Composition overturns the lane's framing: **CT_PEAKER is the largest
+component in 2023 (44 %) and 2024 (66 %)**; CC_REGULAR leads only 2025 (45 %).
+
+**CC_REGULAR (−2.1/−1.3/−2.2 TWh day):** ~55–60 % under-COMMITMENT concentrated
+in the afternoon re-commitment window hod 13–17 — the belly core (10–14) shows
+NO online-capacity deficit (the RA bridge holds the trough; model min-load
+share exceeds measured). The metered fleet's run-starts peak at hod 13–15; the
+model's at 17–18 (~3 h late) with ~2× the daily starts (16 vs 8.6/day 2023 —
+LP over-cycling incl. phantom hod 4–6 morning starts). The ~40 % dispatch half
+is import-volume competition (model over-imports the belly by 3.9–4.5 TWh/yr
+vs EIA-930, absorbed by storage charging).
+
+**CT_PEAKER (−1.9/−2.0/−1.0 TWh day):** pure online-hours gap (dispatch part
+≈ 0) but NOT commitment conduct — caiso-91b's daily-merit-blocks refutation
+stands, D-2 confirms nothing floors the class, and the caiso-92 measured offer
+rungs are already in the keeper. The defect is the other side of the merit
+order: **model evening (hod 17–21) net imports exceed measured by
++1.9/+2.1/+2.2 TWh/yr** at hub rungs below the CT offer — one defect, three
+symptoms (evening λ under-priced, CT dark, CO2 under). A CT floor would deepen
+the λ miss — rule-1 forbidden. Routed to the caiso-94 evening-window WATCH
+(this is volume+CO2 evidence for the pre-registered hod 18–21 trim — owner's
+call whether the watch tripped) and the separate storage charter.
+
+**CT_CHP:** one mechanism owns it (chp_steam, 81–90 % of class energy) but the
+caiso-89 p25 available-CF LEVEL under-measures the host: measured
+loading-when-on ≥70 % in 79–88 % of on-hours (model 12–14 %), and the EIA-923
+gap (−1.8/−1.8/−1.1 TWh) is mostly CEMS-invisible cogens. Rule-23 re-derivation
+charter citing this source evidence (owner-gated). **ST_GAS:** 2023-only final
+OTC year (−1.1 TWh, 0.68 Mt), report-only.
+
+**Charter asks (owner authorization before any LP solve):** WP-1 the CC
+startup-trajectory extension of the EXISTING RA bridge (start-to-load lead L
+from measured CEMS start physics; floors the pre-start hours the detector
+emits; displaces import volume at hub-set λ so the belly clearing is untouched
+— the lane's predicted availability lever, ≈ +0.4–0.65 Mt/yr); WP-2 evening
+stack evidence handed to the caiso-94 watch + storage charter (no build here);
+WP-3 the CT_CHP level re-derivation. Do-NOT-redo list in the finding §8.
