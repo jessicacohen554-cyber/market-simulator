@@ -101,9 +101,22 @@ class TestScenarioConfig(unittest.TestCase):
         config = ScenarioConfig()
         self.assertEqual(config.retirement_years_coal, 3)
         self.assertEqual(asdict(config)["retirement_years_coal"], 3)
-        # rule 19: the deactivation queue is carried by the threshold, so the
-        # staged-thinning rate cap stays default-off (no double count).
-        self.assertFalse(config.staged_oversupply_thinning)
+        # rule 19: the deactivation queue is carried once. Under the legacy
+        # rule the threshold carries it; under R-NEW the execution-lag
+        # pipeline does (staged_oversupply_thinning was DELETED at the FF-1A
+        # commit, rule 26 — a deleted field must not parse).
+        self.assertFalse(hasattr(config, "staged_oversupply_thinning"))
+        self.assertFalse(hasattr(config, "staged_thinning_max_gw_per_year"))
+        # FF-1A: the decision rule defaults to legacy (byte-identical) and
+        # the R-NEW execution lags carry their RC-0B §a.3 identified values.
+        self.assertEqual(config.retirement_rule, "legacy")
+        self.assertEqual(config.retirement_execution_lag_coal, 3)
+        self.assertEqual(config.retirement_execution_lag_gas_ct, 2)
+        self.assertEqual(config.retirement_execution_lag_gas_st, 1)
+        self.assertEqual(config.retirement_execution_lag_oil, 1)
+        self.assertEqual(config.retirement_execution_lag_gas_cc, 1)
+        self.assertIsNone(config.retirement_execution_lag_gas_cc_ccs)
+        self.assertEqual(config.retirement_execution_lag_nuclear, 3)
 
 
 class TestRealToNominal(unittest.TestCase):
