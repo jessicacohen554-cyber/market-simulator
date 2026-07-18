@@ -92,6 +92,10 @@ def build_config(
     capacity_market_clearing: bool = False,
     correlated_forced_outage: bool = False,
     retirement_rule: str = "legacy",
+    entry_vre_capacity_revenue: bool = False,
+    entry_rate_limits: bool = False,
+    entry_commissioning_lag: bool = False,
+    entry_screen_diagnostics: bool = False,
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
 
@@ -186,6 +190,21 @@ def build_config(
         # (the G-31 question). Measured frozen curves, zero fitted parameters
         # -- see scenarios.py:correlated_forced_outage.
         correlated_forced_outage=correlated_forced_outage,
+        # FF-2A entry-stack probe arms (all default-off, never the harness
+        # default): item 1 — ELCC-accredited VRE capacity revenue in the
+        # entry screen (BLK-7 term c, one resolver — rule 19); item 2 — the
+        # measured-throughput growth ladder on entry + backstop sizing
+        # (BLK-10 / term e, ReEDS 200%-of-prior-max hard bound on the
+        # EIA-860 vintage seed); item 3 — the LBNL clearance→COD lag with
+        # pending-queue netting (NOTE: a vintage-start hindcast has no seed
+        # of the real in-flight queue, so the lag arm shifts the entry path
+        # late by construction — diagnostic use only here).
+        entry_vre_capacity_revenue=entry_vre_capacity_revenue,
+        entry_rate_limits=entry_rate_limits,
+        entry_commissioning_lag=entry_commissioning_lag,
+        # RC-0C decision-neutral per-candidate entry-screen decomposition
+        # (byte-identical fleet outcome; lands in evolution_<year>.json).
+        entry_screen_diagnostics=entry_screen_diagnostics,
     )
 
 
@@ -317,6 +336,48 @@ def main(argv: list[str] | None = None) -> int:
             "(constants.CORRELATED_OUTAGE_CURVE); see build_config."
         ),
     )
+    parser.add_argument(
+        "--entry-vre-capacity-revenue",
+        action="store_true",
+        help=(
+            "FF-2A item 1 PROBE (BLK-7 term c): wind/solar entry candidates "
+            "earn the ELCC-accredited RA capacity payment through the same "
+            "accreditation resolver and price seam thermal entry uses "
+            "(entry_vre_capacity_revenue=True). No-op in energy-only ERCOT."
+        ),
+    )
+    parser.add_argument(
+        "--entry-rate-limits",
+        action="store_true",
+        help=(
+            "FF-2A item 2 PROBE (BLK-10 / term e): rate-limit annual entry "
+            "and backstop builds at ENTRY_GROWTH_LIMIT_MULTIPLE (2.0, ReEDS "
+            "hard bound) x the measured EIA-860 prior-max annual build by "
+            "tech at the run's vintage, rising as the model builds "
+            "(entry_rate_limits=True)."
+        ),
+    )
+    parser.add_argument(
+        "--entry-commissioning-lag",
+        action="store_true",
+        help=(
+            "FF-2A item 3 DIAGNOSTIC: defer economic-entry commissioning by "
+            "the measured LBNL IA-to-COD lag (2 yr) with pending-queue "
+            "netting (entry_commissioning_lag=True). A vintage-start "
+            "hindcast has no in-flight-queue seed, so this arm shifts the "
+            "entry path late by construction — diagnostic only."
+        ),
+    )
+    parser.add_argument(
+        "--entry-screen-diagnostics",
+        action="store_true",
+        help=(
+            "RC-0C decision-neutral diagnostic: record the per-candidate "
+            "entry-screen decomposition (energy/attribute/capacity revenue, "
+            "cost terms, margin, binding cap) in each evolution ledger "
+            "(entry_screen_diagnostics=True). Byte-identical fleet outcome."
+        ),
+    )
     args = parser.parse_args(argv)
 
     iso = args.iso.upper()
@@ -335,6 +396,10 @@ def main(argv: list[str] | None = None) -> int:
         capacity_market_clearing=args.capacity_market_clearing,
         correlated_forced_outage=args.correlated_forced_outage,
         retirement_rule=args.retirement_rule,
+        entry_vre_capacity_revenue=args.entry_vre_capacity_revenue,
+        entry_rate_limits=args.entry_rate_limits,
+        entry_commissioning_lag=args.entry_commissioning_lag,
+        entry_screen_diagnostics=args.entry_screen_diagnostics,
     )
 
     # Bundle lives under results/hindcast/<run>/ (plan §1.5) -- deliberately
@@ -368,6 +433,10 @@ def main(argv: list[str] | None = None) -> int:
         "capacity_market_clearing": bool(args.capacity_market_clearing),
         "capacity_market_clearing_by_iso": config.capacity_market_clearing_by_iso,
         "correlated_forced_outage": bool(args.correlated_forced_outage),
+        "entry_vre_capacity_revenue": bool(args.entry_vre_capacity_revenue),
+        "entry_rate_limits": bool(args.entry_rate_limits),
+        "entry_commissioning_lag": bool(args.entry_commissioning_lag),
+        "entry_screen_diagnostics": bool(args.entry_screen_diagnostics),
         "renewable_elcc_curves": bool(config.renewable_elcc_curves),
         "gas_price_path": config.gas_price_path,
         "vintage_year": VINTAGE_YEAR,
