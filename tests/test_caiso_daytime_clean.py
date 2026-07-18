@@ -18,8 +18,10 @@ import numpy as np
 from market_sim.config.interchange_config import (
     CAISO_DAYTIME_CLEAN_HOD_MAX,
     CAISO_DAYTIME_CLEAN_HOD_MIN,
+    CAISO_DAYTIME_CLEAN_TRIM_HOD_MAX,
     CAISO_DSW_DAYTIME_CLEAN_DEPTH_BY_YEAR,
     CAISO_DSW_DAYTIME_CLEAN_NAME,
+    CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_BY_YEAR,
     CAISO_DSW_OVERNIGHT_CLEAN_NAME,
     CAISO_DSW_SURPLUS_CLEAN_NAME,
     CAISO_DSW_SURPLUS_REMOTE_VOM,
@@ -57,16 +59,14 @@ def _fleet(daytime_clean=True, surplus_clean=False, overnight_clean=False, hours
     return generators_to_fleet_arrays(gens, zones, hours=hours)
 
 
-def _daytime_off_mask(year, hours=HOURS):
+def _daytime_off_mask(year, hours=HOURS, hod_max=CAISO_DAYTIME_CLEAN_HOD_MAX):
     """The injector's exact window: daytime hod ∧ measured-hub ∧ NOT surplus."""
     hub = measured_intertie_hub_price_raw("CAISO", year, hours, "PALOVRDE")
     gas = np.asarray(socal_citygate_weekly_hourly(year, hours))
     floor = HR_CCGT * gas + CAISO_DSW_SURPLUS_REMOTE_VOM
     surplus = np.isfinite(hub) & np.isfinite(floor) & (hub < floor)
     hod = np.arange(hours) % 24
-    daytime_hod = (hod >= CAISO_DAYTIME_CLEAN_HOD_MIN) & (
-        hod <= CAISO_DAYTIME_CLEAN_HOD_MAX
-    )
+    daytime_hod = (hod >= CAISO_DAYTIME_CLEAN_HOD_MIN) & (hod <= hod_max)
     return daytime_hod & np.isfinite(hub) & ~surplus, hub, surplus
 
 
@@ -207,6 +207,72 @@ class TestInjector(unittest.TestCase):
         apply_interchange_injections(fleet, mc, config, "CAISO", 2024)
         row = list(fleet.unit_ids).index(DAYTIME_UID)
         self.assertGreater(float(fleet.pmax[row]), 0.0)
+
+    def test_evening_trim_window_and_depth(self):
+        """caiso-97: the trim drops hod 18-21 and swaps to the trimmed depth
+        (re-derived over the trimmed window — window and depth move together)."""
+        fleet = _fleet()
+        base_avail = fleet.availability.copy()
+        self.assertTrue(inject_caiso_firm_import_shape(fleet, "CAISO", 2024))
+        self.assertTrue(
+            inject_caiso_dsw_daytime_clean(fleet, "CAISO", 2024, evening_trim=True)
+        )
+        row = list(fleet.unit_ids).index(DAYTIME_UID)
+        depth = CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_BY_YEAR[2024]
+        self.assertEqual(float(fleet.pmax[row]), depth)
+        cap = fleet.pmax[row] * fleet.availability[row, :]
+        trimmed, _, _ = _daytime_off_mask(
+            2024, hod_max=CAISO_DAYTIME_CLEAN_TRIM_HOD_MAX
+        )
+        firm_row = list(fleet.unit_ids).index(f"{ZONE}_DSW_solar_PV")
+        firm_cap = fleet.pmax[firm_row] * fleet.availability[firm_row, :]
+        expected = (
+            np.where(trimmed, np.clip(depth - firm_cap, 0.0, None), 0.0)
+            * base_avail[row, 0]
+        )
+        np.testing.assert_allclose(cap, expected, rtol=1e-6)
+        # The evening peak 18-21 (the §4A EXCLUDE cell) never arms.
+        evening = (np.arange(HOURS) % 24 > CAISO_DAYTIME_CLEAN_TRIM_HOD_MAX) & (
+            np.arange(HOURS) % 24 <= CAISO_DAYTIME_CLEAN_HOD_MAX
+        )
+        self.assertTrue(np.all(cap[evening] == 0.0))
+        self.assertGreater(float(cap.max()), 0.0)
+
+    def test_evening_trim_default_off_is_unchanged(self):
+        """The trim kwarg defaults off — the caiso-94 leg is byte-identical."""
+        f_a = _fleet()
+        f_b = _fleet()
+        inject_caiso_firm_import_shape(f_a, "CAISO", 2024)
+        inject_caiso_firm_import_shape(f_b, "CAISO", 2024)
+        self.assertTrue(inject_caiso_dsw_daytime_clean(f_a, "CAISO", 2024))
+        self.assertTrue(
+            inject_caiso_dsw_daytime_clean(f_b, "CAISO", 2024, evening_trim=False)
+        )
+        np.testing.assert_array_equal(f_a.availability, f_b.availability)
+        np.testing.assert_array_equal(f_a.pmax, f_b.pmax)
+
+    def test_evening_trim_via_shared_seam(self):
+        """caiso_dsw_daytime_evening_trim threads through apply_interchange_injections."""
+        from market_sim.config.scenarios import ScenarioConfig
+        from market_sim.model.transmission import apply_interchange_injections
+
+        fleet = _fleet()
+        mc = np.zeros((len(fleet.unit_ids), HOURS))
+        config = ScenarioConfig().with_overrides(
+            caiso_per_hub_intertie=True,
+            caiso_dsw_daytime_clean=True,
+            caiso_dsw_daytime_evening_trim=True,
+        )
+        apply_interchange_injections(fleet, mc, config, "CAISO", 2024)
+        row = list(fleet.unit_ids).index(DAYTIME_UID)
+        self.assertEqual(
+            float(fleet.pmax[row]), CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_BY_YEAR[2024]
+        )
+        cap = fleet.pmax[row] * fleet.availability[row, :]
+        evening = (np.arange(HOURS) % 24 > CAISO_DAYTIME_CLEAN_TRIM_HOD_MAX) & (
+            np.arange(HOURS) % 24 <= CAISO_DAYTIME_CLEAN_HOD_MAX
+        )
+        self.assertTrue(np.all(cap[evening] == 0.0))
 
     def test_per_hub_pricing_raw_hub_no_wheel_no_carbon(self):
         """The measured per-hub injector prices the daytime row at the RAW hub:

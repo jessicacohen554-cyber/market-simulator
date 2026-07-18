@@ -2392,6 +2392,22 @@ class ScenarioConfig:
     # transmission.inject_caiso_dsw_daytime_clean via the shared
     # apply_interchange_injections seam. Requires caiso_per_hub_intertie (+
     # caiso_firm_import_shape). Default off (byte-identical); CAISO-only.
+    caiso_dsw_daytime_evening_trim: bool = False  # Trim the caiso-94 daytime
+    # tranche window hod 6-21 → 6-17 (caiso-97; FINDING-caiso94 §7's
+    # PRE-REGISTERED overshoot fix, armed by the owner's evening-watch TRIPPED
+    # ruling 2026-07-18). Grounded in the measured per-cell admissibility
+    # table (FINDING-caiso94 §4A): evening peak 18-21 × non_autumn was an
+    # EXCLUDE cell — the model UNDER-prices the evening peak, so a clean-import
+    # lever there overshoots (evening λ −6.6/−5.0/−2.4 pp, model evening net
+    # import +1.9/+2.1/+2.2 TWh/yr above EIA-930; the caiso-96 A/B showed the
+    # excess evening import out-competes the re-committed afternoon CC). When
+    # on, inject_caiso_dsw_daytime_clean uses the trimmed window
+    # (CAISO_DAYTIME_CLEAN_TRIM_HOD_MAX) and the depth RE-DERIVED over that
+    # trimmed window (4,994/5,563/5,770 MW 2023/24/25 — CV 0.060, LOYO ≤13.5 %,
+    # same frozen gates; window and depth move together so the depth prices the
+    # population it caps). No-op unless caiso_dsw_daytime_clean is on. Default
+    # off (byte-identical — the caiso-94 keeper recipe is unchanged);
+    # CAISO-only.
     caiso_storage_as_reservation: bool = False  # Reserve the MEASURED hourly
     # CAISO battery AS-award MW out of the battery fleet's dispatch headroom
     # (caiso-74; FINDING-caiso72 STEP-0 channel #1 / FINDING-caiso73 live lead
