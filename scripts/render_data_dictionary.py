@@ -112,6 +112,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "storage-as-awards",
     "capacity-market-avoidable-cost-rate",
     "uranium-marketing-price",
+    "benchmark-corridor",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -326,6 +327,23 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "EIA UMAR price series as published; the $/MMBtu build-up "
             "(burnup/thermal-efficiency + conversion cost) is left to the "
             "consuming derivation (P-1D), cited to this data per rule 23."
+        ),
+    },
+    "benchmark-corridor": {
+        "summary": (
+            "External forecast-corridor anchors — 2030/2035/2040 capacity mix, "
+            "energy mix, and power-sector CO2 by ISO/region — for the FC-5 "
+            "external-corridor context check. Context only, never a fit target "
+            "(rule 13)."
+        ),
+        "reconciles": (
+            "EIA AEO2025 regional electricity tables (Table 54 + Table 56, "
+            "fetched via the API), NREL Standard Scenarios, and ISO planning "
+            "documents (ERCOT CDR, PJM Load Forecast, NYISO Gold Book, ISO-NE "
+            "CELT, CAISO/CPUC IEPR/PSP, MISO futures — manual downloads) onto "
+            "one tidy (source, iso, region, scenario, target_year, quantity, "
+            "tech) frame with a canonical quantity/technology vocabulary. Per-ISO "
+            "rows in one file (iso column key); an ISO total sums its region rows."
         ),
     },
     "ercot-wtx-congestion": {
