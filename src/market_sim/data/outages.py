@@ -26,6 +26,14 @@ This module also carries the companion measured-availability overlays: short
 max-gen-event derates, per-reactor nuclear refuel series, the ERCOT class-day
 thermal DAM availability rescale, within-window retiree CEMS caps, and the
 non-CAMPD ERCOT availability caps / reliability-deployment floors.
+
+One mechanism here is NOT a backcast overlay: the correlated cold-event
+forced-outage derate (:func:`apply_correlated_outage_derate`, FF-1B) is the
+**forecast/hindcast** statistical counterpart of the measured windows — it
+regenerates a Uri-class availability event from the weather-year temperature
+series and the frozen measured excess-FOR curves, and is suppressed in
+backcast mode precisely because the overlays above already carry the actual
+events. See the section comment at the bottom of the module.
 """
 
 from __future__ import annotations
@@ -1256,3 +1264,219 @@ def nysdec_peaker_restrictions(
             }
         )
     return out
+
+
+# ---------------------------------------------------------------------------
+# Correlated cold-event forced-outage derate (forecast/hindcast; FF-1B)
+# ---------------------------------------------------------------------------
+# The forecast-mode statistical WEFOR forced-outage model is per-unit
+# INDEPENDENT and weather-blind, so it never concentrates outages into a
+# correlated deep-cold event: the in-year LP clears every hour with ample
+# reserve and the post-solve ORDC overlay prints $0 even through a Uri-scale
+# event (the G-31 finding). This section is the measured-admissible correlated
+# derate that closes that gap (design charter
+# docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D): per plant
+# class, excess(T) = clip(slope * (t0 - TMIN_sys), 0, cap) on the system daily
+# MIN temperature, with the era's climatological winter event share ADDED BACK
+# first so the mechanism relocates the cold-event share embedded in the flat
+# GADS-based WEFOR rather than stacking on it. Curves are frozen measured
+# constants (constants.CORRELATED_OUTAGE_CURVE, derived by
+# scripts/derive_correlated_outage_curve.py); the gate and anchors are
+# ScenarioConfig fields (correlated_forced_outage & co.). Backcast runs are
+# excluded — the measured CAMPD overlays above already carry the actual events
+# (charter D.5) — and ISOs without a curve entry are a no-op (rule 25).
+
+# Winter months (Dec-Feb) whose flat-WEFOR availability carries the add-back;
+# matches the fleet builder's non-summer/non-shoulder season.
+_CORRELATED_OUTAGE_WINTER_MONTHS: frozenset[int] = frozenset({12, 1, 2})
+
+
+def correlated_outage_system_tmin(
+    iso: str, year: int, hours: int = HOURS_PER_YEAR
+) -> np.ndarray | None:
+    """Return the system daily MIN temperature (deg C) broadcast per run hour.
+
+    The plain mean of ``tmin_c`` across the ISO's weather zones (the same
+    construction as the derive script's fit driver), read through
+    :func:`market_sim.data.eia_loader.load_weather` (clean Parquet primary,
+    raw CSV fallback) and broadcast to the model's fixed non-leap clock via
+    :func:`_hour_of_year` (a leap year's Feb 29 rows are dropped, the archive
+    convention). Hours the archive does not cover are ``NaN`` — the caller
+    treats them as no-derate. Returns ``None`` when the ISO/year has no
+    weather coverage at all, so callers degrade to a logged no-op.
+    """
+    from market_sim.data.eia_loader import load_weather
+
+    df = load_weather(iso, int(year))
+    if df is None or "tmin_c" not in df.columns:
+        return None
+    df = df.dropna(subset=["tmin_c"])
+    if df.empty:
+        return None
+    daily = df.groupby("date")["tmin_c"].mean()
+    out = np.full(hours, np.nan)
+    for d, t in daily.items():
+        ts = pd.Timestamp(d)
+        if ts.month == 2 and ts.day == 29:
+            continue  # non-leap model clock (ERCOT-54 convention)
+        lo = _hour_of_year(ts.month, ts.day, 0)
+        hi = min(lo + 24, hours)
+        out[lo:hi] = float(t)
+    if not np.any(np.isfinite(out)):
+        return None
+    return out
+
+
+def correlated_outage_excess_by_class(
+    iso: str,
+    weather_year: int,
+    hours: int,
+    *,
+    t0_c: float,
+    winterized_year: int,
+) -> tuple[dict[str, np.ndarray], dict[str, float]] | None:
+    """Return ``({class: (hours,) excess fraction}, {class: winter share})``.
+
+    Applies the ISO's frozen era curve (``constants.CORRELATED_OUTAGE_CURVE``)
+    to the weather year's system daily TMIN: per class,
+    ``excess = clip(slope * (t0 - TMIN), 0, cap)`` wherever the archive covers
+    the day (uncovered/NaN days carry zero excess). The era is selected from
+    the WEATHER-DRIVER year against ``winterized_year`` (PUCT 16 TAC 25.55):
+    a pre-weatherization weather year exercises the unhardened fleet's curve.
+    Returns ``None`` when the ISO has no curve (mechanism not derived for it
+    — rule 25) or no weather coverage.
+    """
+    from market_sim.config.constants import CORRELATED_OUTAGE_CURVE
+
+    iso_curves = CORRELATED_OUTAGE_CURVE.get((iso or "").upper())
+    if not iso_curves:
+        return None
+    era = "pre" if int(weather_year) < int(winterized_year) else "post"
+    curves = iso_curves.get(era)
+    if not curves:
+        return None
+    tmin = correlated_outage_system_tmin(iso, weather_year, hours)
+    if tmin is None:
+        return None
+    depth = np.where(np.isfinite(tmin), float(t0_c) - tmin, 0.0)
+    excess: dict[str, np.ndarray] = {}
+    shares: dict[str, float] = {}
+    for group, c in curves.items():
+        excess[group] = np.clip(float(c["slope_per_c"]) * depth, 0.0, float(c["cap"]))
+        shares[group] = float(c.get("winter_event_share", 0.0))
+    return excess, shares
+
+
+def apply_correlated_outage_derate(
+    fleet_arrays,
+    config,
+    iso: str,
+    year: int,
+) -> bool:
+    """Apply the correlated cold-event forced-outage derate (gated).
+
+    The gate-and-log wrapper called at the runner's availability seam (next to
+    the NEISO cold-snap derate, before the reserve/scarcity inputs are built).
+    Gated on ``config.correlated_forced_outage`` and **forecast/hindcast mode
+    only**: in a backcast the measured CAMPD outage overlays already carry the
+    actual cold-event outages, so applying the statistical event model too
+    would double-count the same events (charter D.5).
+
+    Weather-driver resolution: the SOLVE year's own weather when the archive
+    covers it (a hindcast leg reads its realized TMIN — 2021 sees Uri), else
+    the pinned ``config.weather_year`` sample (a forecast year re-experiences
+    the sampled weather year's cold events on the current fleet). Per covered
+    class the derate is ADDITIVE on availability — the excess is measured
+    over the same NERC-GADS EFORd baseline the statistical WEFOR model is
+    built on — after adding back the era's climatological Dec-Feb winter
+    event share (in-fleet double-count guard, charter D.3/D.6), clipped to
+    [0, 1].
+
+    ORDC seam (charter D.6): this changes ONLY the deterministic mean
+    availability. The post-solve ORDC point reserve reads
+    ``pmax x availability`` and therefore sees the derate additively and
+    correctly; the LOLP convolution's sigma keeps carrying the stochastic
+    reserve-error spread (``correlated_outage_sigma_scale`` stays 1.0 unless
+    a re-derived reserve-error decomposition identifies otherwise).
+
+    Modifies ``fleet_arrays.availability`` in place. Returns ``True`` when
+    any capacity was derated; ``False`` (byte-identical) when gated off, in
+    backcast mode, or when the ISO has no curve/weather coverage.
+    """
+    if not getattr(config, "correlated_forced_outage", False):
+        return False
+    if getattr(config, "mode", "forecast") != "forecast":
+        return False
+    if getattr(config, "outage_source", "statistical") == "historic":
+        return False  # measured overlays own the events (belt and braces)
+    if fleet_arrays.plant_group is None:
+        return False
+    hours = int(fleet_arrays.availability.shape[1])
+    t0_c = float(getattr(config, "correlated_outage_t0_c", -7.0))
+    winterized = int(getattr(config, "correlated_outage_winterized_year", 2022))
+
+    weather_year = int(year)
+    built = correlated_outage_excess_by_class(
+        iso, weather_year, hours, t0_c=t0_c, winterized_year=winterized
+    )
+    if built is None:
+        weather_year = int(getattr(config, "weather_year", year))
+        if weather_year != int(year):
+            built = correlated_outage_excess_by_class(
+                iso, weather_year, hours, t0_c=t0_c, winterized_year=winterized
+            )
+    if built is None:
+        logger.info(
+            "%s %d: correlated forced-outage derate armed but no curve/weather "
+            "coverage — no-op",
+            iso,
+            year,
+        )
+        return False
+    excess, shares = built
+
+    month = _MONTH_OF_HOUR[np.arange(hours) % HOURS_PER_YEAR]
+    winter = np.isin(month, list(_CORRELATED_OUTAGE_WINTER_MONTHS))
+    groups = np.asarray(fleet_arrays.plant_group)
+    touched = False
+    peak_mw = 0.0
+    peak_hour = -1
+    for group, ex in excess.items():
+        rows = np.flatnonzero((groups == group) & (fleet_arrays.pmax > 0.0))
+        if rows.size == 0:
+            continue
+        adj = shares.get(group, 0.0) * winter.astype(float) - ex
+        if not np.any(adj != 0.0):
+            continue
+        avail = fleet_arrays.availability[rows, :]
+        fleet_arrays.availability[rows, :] = np.clip(avail + adj[None, :], 0.0, 1.0)
+        touched = True
+        derated = (avail - fleet_arrays.availability[rows, :]) * fleet_arrays.pmax[
+            rows
+        ][:, None]
+        by_hour = derated.sum(axis=0)
+        h = int(by_hour.argmax())
+        if by_hour[h] > peak_mw:
+            peak_mw, peak_hour = float(by_hour[h]), h
+    if touched and peak_mw > 0.0:
+        logger.info(
+            "%s %d: correlated forced-outage derate (weather year %d, era %s) — "
+            "peak %.0f MW removed at hour %d",
+            iso,
+            year,
+            weather_year,
+            "pre" if weather_year < winterized else "post",
+            peak_mw,
+            peak_hour,
+        )
+    elif touched:
+        logger.info(
+            "%s %d: correlated forced-outage derate (weather year %d, era %s) — "
+            "no cold event below t0 in the weather year; winter event-share "
+            "add-back only",
+            iso,
+            year,
+            weather_year,
+            "pre" if weather_year < winterized else "post",
+        )
+    return touched

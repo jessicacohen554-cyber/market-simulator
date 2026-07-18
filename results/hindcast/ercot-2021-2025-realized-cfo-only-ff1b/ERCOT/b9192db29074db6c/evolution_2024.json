@@ -1,0 +1,1424 @@
+{
+  "bridge": false,
+  "ccs_retrofits": [],
+  "firm_clean_mw": 0.0,
+  "fleet_by_fuel_after": {
+    "coal": 6739.6,
+    "gas_cc": 37241.04,
+    "gas_ct": 6172.755,
+    "gas_st": 26.05,
+    "nuclear": 4980.0
+  },
+  "fleet_by_fuel_before": {
+    "coal": 13963.9,
+    "gas_cc": 37241.04,
+    "gas_ct": 6172.755,
+    "gas_st": 26.05,
+    "nuclear": 4980.0
+  },
+  "floor_retained": [
+    {
+      "fuel": "coal",
+      "mw": 124.48,
+      "unit_id": "COAL_South_p6178_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 187.2,
+      "unit_id": "COAL_South_Central_p56611_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 610.75,
+      "unit_id": "COAL_Houston_p3470_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1221.5,
+      "unit_id": "COAL_Houston_p3470_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 31.12,
+      "unit_id": "COAL_South_p6178_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 594.9,
+      "unit_id": "COAL_Northeast_p6146_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1070.82,
+      "unit_id": "COAL_Northeast_p6146_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 155.6,
+      "unit_id": "COAL_South_p6178_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 311.19999999999993,
+      "unit_id": "COAL_South_p6178_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 157.14,
+      "unit_id": "COAL_North_p7030_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 46.8,
+      "unit_id": "COAL_South_Central_p56611_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 234.0,
+      "unit_id": "COAL_South_Central_p56611_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 467.99999999999994,
+      "unit_id": "COAL_South_Central_p56611_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 718.16,
+      "unit_id": "COAL_North_p6180_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 807.9300000000003,
+      "unit_id": "COAL_North_p6180_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 30.55,
+      "unit_id": "CC_CHP_Houston_p55470_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 213.85,
+      "unit_id": "CC_CHP_Houston_p55470_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 8.0,
+      "unit_id": "CC_REGULAR_North_p50127_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 11.5,
+      "unit_id": "CC_CHP_West_p52176_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 178.485,
+      "unit_id": "CC_REGULAR_Houston_p3469_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 44.0,
+      "unit_id": "CC_REGULAR_North_p50127_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 46.98,
+      "unit_id": "CC_REGULAR_South_p55086_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 30.45,
+      "unit_id": "CC_REGULAR_South_Central_p55154_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 28.0,
+      "unit_id": "CC_REGULAR_North_p50127_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 32.18,
+      "unit_id": "CC_CHP_Houston_p50815_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 654.445,
+      "unit_id": "CC_REGULAR_Houston_p3469_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 57.46,
+      "unit_id": "CC_REGULAR_South_Central_p4937_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 53.55,
+      "unit_id": "CC_REGULAR_Houston_p56806_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 19.28,
+      "unit_id": "CC_REGULAR_South_p3631_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 258.39,
+      "unit_id": "CC_REGULAR_South_p55086_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 356.97,
+      "unit_id": "CC_REGULAR_Houston_p3469_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 140.94,
+      "unit_id": "CC_REGULAR_Northeast_p55132_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 205.53,
+      "unit_id": "CC_REGULAR_North_p55501_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 80.5,
+      "unit_id": "CC_CHP_West_p52176_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 82.56,
+      "unit_id": "CC_REGULAR_West_p56349_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 240.96,
+      "unit_id": "CC_REGULAR_North_p58001_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 121.05,
+      "unit_id": "CC_REGULAR_North_p55172_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 26.56,
+      "unit_id": "CC_REGULAR_North_p50109_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 164.43000000000004,
+      "unit_id": "CC_REGULAR_South_p55086_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 98.115,
+      "unit_id": "CC_REGULAR_Houston_p56350_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 260.1,
+      "unit_id": "CC_REGULAR_North_p55091_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 163.23,
+      "unit_id": "CC_REGULAR_South_Central_p55153_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 316.03,
+      "unit_id": "CC_REGULAR_South_Central_p4937_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 148.35,
+      "unit_id": "CC_REGULAR_South_Central_p55144_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 294.525,
+      "unit_id": "CC_REGULAR_Houston_p56806_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 15.39,
+      "unit_id": "CC_REGULAR_West_p56233_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 140.955,
+      "unit_id": "CC_REGULAR_Houston_p55062_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 284.13,
+      "unit_id": "CC_REGULAR_North_p55480_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 120.48,
+      "unit_id": "CC_REGULAR_North_p58005_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 118.26,
+      "unit_id": "CC_REGULAR_North_p55139_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 106.04,
+      "unit_id": "CC_REGULAR_South_p3631_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 192.0,
+      "unit_id": "CC_REGULAR_North_p55230_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 213.15000000000003,
+      "unit_id": "CC_REGULAR_South_Central_p55154_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 73.0,
+      "unit_id": "CC_REGULAR_South_p4939_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 166.89,
+      "unit_id": "CC_REGULAR_North_p55097_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 104.46,
+      "unit_id": "CC_REGULAR_South_Central_p7900_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 62.7,
+      "unit_id": "CC_REGULAR_North_p55223_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 155.4,
+      "unit_id": "CC_REGULAR_North_p55226_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 37.69,
+      "unit_id": "CC_REGULAR_South_p3443_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 225.26,
+      "unit_id": "CC_CHP_Houston_p50815_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 123.255,
+      "unit_id": "CC_REGULAR_North_p55320_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 172.92,
+      "unit_id": "CC_REGULAR_West_p55215_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 184.68,
+      "unit_id": "CC_REGULAR_North_p59812_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 120.15,
+      "unit_id": "CC_REGULAR_South_p55123_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 184.545,
+      "unit_id": "CC_REGULAR_Houston_p60122_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 82.695,
+      "unit_id": "CC_REGULAR_South_Central_p55545_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 201.11000000000004,
+      "unit_id": "CC_REGULAR_South_Central_p4937_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 141.03,
+      "unit_id": "CC_REGULAR_South_Central_p55137_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 92.805,
+      "unit_id": "CC_REGULAR_South_Central_p55168_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 28.26,
+      "unit_id": "CC_REGULAR_North_p54817_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 79.35,
+      "unit_id": "CC_REGULAR_South_Central_p55098_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 187.425,
+      "unit_id": "CC_REGULAR_Houston_p56806_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 73.02,
+      "unit_id": "CC_REGULAR_South_p3441_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 67.48,
+      "unit_id": "CC_REGULAR_South_p3631_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 146.08,
+      "unit_id": "CC_REGULAR_North_p50109_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 81.5,
+      "unit_id": "CC_CHP_Houston_p55047_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 57.5,
+      "unit_id": "CC_REGULAR_South_Central_p7512_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 247.68,
+      "unit_id": "CC_REGULAR_West_p56349_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 84.645,
+      "unit_id": "CC_REGULAR_West_p56233_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 234.9,
+      "unit_id": "CC_REGULAR_Northeast_p55132_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 401.5,
+      "unit_id": "CC_REGULAR_South_p4939_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 93.29,
+      "unit_id": "CC_CHP_Houston_p55327_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 294.345,
+      "unit_id": "CC_REGULAR_Houston_p56350_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 49.79,
+      "unit_id": "CC_CHP_Houston_p54676_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 274.04,
+      "unit_id": "CC_REGULAR_North_p55501_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 207.295,
+      "unit_id": "CC_REGULAR_South_p3443_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 92.96000000000001,
+      "unit_id": "CC_REGULAR_North_p50109_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 117.6,
+      "unit_id": "CC_CHP_Houston_p55464_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 890.6300000000001,
+      "unit_id": "CC_REGULAR_North_p55501_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 220.15999999999997,
+      "unit_id": "CC_REGULAR_West_p56349_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 41.93000000000001,
+      "unit_id": "CC_CHP_Houston_p52120_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 45.0,
+      "unit_id": "CC_CHP_Houston_p52088_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 563.76,
+      "unit_id": "CC_REGULAR_Northeast_p55132_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 91.83,
+      "unit_id": "CC_CHP_Houston_p55187_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 321.28,
+      "unit_id": "CC_REGULAR_North_p58001_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 15.64,
+      "unit_id": "CC_CHP_Houston_p52132_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 155.43,
+      "unit_id": "CC_REGULAR_North_p54817_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 201.75,
+      "unit_id": "CC_REGULAR_North_p55172_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 38.07,
+      "unit_id": "CC_CHP_Houston_p50043_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 53.86500000000001,
+      "unit_id": "CC_REGULAR_West_p56233_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 93.34,
+      "unit_id": "CC_CHP_South_p10554_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 401.61,
+      "unit_id": "CC_REGULAR_South_p3441_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 26.0,
+      "unit_id": "CC_CHP_Houston_p56152_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 59.33,
+      "unit_id": "CC_CHP_South_p55206_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 313.38,
+      "unit_id": "CC_REGULAR_South_Central_p7900_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 4.510000000000001,
+      "unit_id": "CC_CHP_South_Central_p58151_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 261.64,
+      "unit_id": "CC_REGULAR_Houston_p56350_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 433.5,
+      "unit_id": "CC_REGULAR_North_p55091_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 255.5,
+      "unit_id": "CC_REGULAR_South_p4939_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 188.1,
+      "unit_id": "CC_REGULAR_North_p55223_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 272.05,
+      "unit_id": "CC_REGULAR_South_Central_p55153_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 247.25,
+      "unit_id": "CC_REGULAR_South_Central_p55144_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 51.7,
+      "unit_id": "CC_CHP_South_p55313_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 316.25,
+      "unit_id": "CC_REGULAR_South_Central_p7512_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 131.915,
+      "unit_id": "CC_REGULAR_South_p3443_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 234.925,
+      "unit_id": "CC_REGULAR_Houston_p55062_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 248.08499999999995,
+      "unit_id": "CC_REGULAR_South_Central_p55545_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 1044.16,
+      "unit_id": "CC_REGULAR_North_p58001_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 473.55,
+      "unit_id": "CC_REGULAR_North_p55480_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 160.64,
+      "unit_id": "CC_REGULAR_North_p58005_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 197.1,
+      "unit_id": "CC_REGULAR_North_p55139_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 484.2,
+      "unit_id": "CC_REGULAR_North_p55172_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 278.415,
+      "unit_id": "CC_REGULAR_South_Central_p55168_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 320.0,
+      "unit_id": "CC_REGULAR_North_p55230_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 238.05,
+      "unit_id": "CC_REGULAR_South_Central_p55098_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 278.15,
+      "unit_id": "CC_REGULAR_North_p55097_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 98.91000000000001,
+      "unit_id": "CC_REGULAR_North_p54817_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 1040.4,
+      "unit_id": "CC_REGULAR_North_p55091_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 92.38,
+      "unit_id": "CC_CHP_Houston_p55299_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 652.9200000000001,
+      "unit_id": "CC_REGULAR_South_Central_p55153_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 278.56,
+      "unit_id": "CC_REGULAR_South_Central_p7900_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 13.89,
+      "unit_id": "CC_CHP_South_Central_p50118_peak"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 259.0,
+      "unit_id": "CC_REGULAR_North_p55226_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 255.57000000000005,
+      "unit_id": "CC_REGULAR_South_p3441_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 593.4,
+      "unit_id": "CC_REGULAR_South_Central_p55144_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 167.2,
+      "unit_id": "CC_REGULAR_North_p55223_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 205.425,
+      "unit_id": "CC_REGULAR_North_p55320_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 288.2,
+      "unit_id": "CC_REGULAR_West_p55215_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 246.24,
+      "unit_id": "CC_REGULAR_North_p59812_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 563.82,
+      "unit_id": "CC_REGULAR_Houston_p55062_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 200.25,
+      "unit_id": "CC_REGULAR_South_p55123_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 1136.52,
+      "unit_id": "CC_REGULAR_North_p55480_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 522.08,
+      "unit_id": "CC_REGULAR_North_p58005_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 473.03999999999996,
+      "unit_id": "CC_REGULAR_North_p55139_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 246.06,
+      "unit_id": "CC_REGULAR_Houston_p60122_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 235.05,
+      "unit_id": "CC_REGULAR_South_Central_p55137_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 768.0,
+      "unit_id": "CC_REGULAR_North_p55230_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 691.68,
+      "unit_id": "CC_REGULAR_West_p55215_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 0.8000000000000003,
+      "unit_id": "CT_PEAKER_Houston_p66597_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 3.200000000000001,
+      "unit_id": "CT_PEAKER_Houston_p66567_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 1.2599999999999998,
+      "unit_id": "CT_PEAKER_South_p66614_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 5.039999999999999,
+      "unit_id": "CT_PEAKER_Houston_p66595_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 0.8000000000000003,
+      "unit_id": "CT_PEAKER_South_p66565_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 1.6000000000000005,
+      "unit_id": "CT_PEAKER_South_Central_p66613_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 2.5199999999999996,
+      "unit_id": "CT_PEAKER_North_p67308_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 0.8000000000000003,
+      "unit_id": "CT_PEAKER_South_Central_p68736_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 42.912,
+      "unit_id": "CT_PEAKER_West_p3492_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 8.976,
+      "unit_id": "CT_PEAKER_North_p4195_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 45.0,
+      "unit_id": "CT_PEAKER_Houston_p62548_committed"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 217.8,
+      "unit_id": "CT_PEAKER_South_Central_p66604_committed"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 217.8,
+      "unit_id": "CT_PEAKER_Houston_p64383_committed"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 217.8,
+      "unit_id": "CT_PEAKER_Houston_p63335_committed"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 272.25,
+      "unit_id": "CT_PEAKER_Houston_p63688_committed"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 217.8,
+      "unit_id": "CT_PEAKER_Houston_p65373_committed"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 8.0,
+      "unit_id": "CT_PEAKER_Houston_p62548_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 22.95,
+      "unit_id": "CT_PEAKER_South_Central_p59938_committed"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 0.8320000000000001,
+      "unit_id": "CT_PEAKER_North_p55053_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 103.32,
+      "unit_id": "CT_PEAKER_South_Central_p3609_committed"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 38.72,
+      "unit_id": "CT_PEAKER_South_Central_p66604_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 38.72,
+      "unit_id": "CT_PEAKER_Houston_p64383_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 38.72,
+      "unit_id": "CT_PEAKER_Houston_p63335_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 48.4,
+      "unit_id": "CT_PEAKER_Houston_p63688_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 38.72,
+      "unit_id": "CT_PEAKER_Houston_p65373_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 0.52,
+      "unit_id": "CT_PEAKER_North_p64952_committed"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 2.88,
+      "unit_id": "CT_PEAKER_Houston_p65541_committed"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 4.08,
+      "unit_id": "CT_PEAKER_South_Central_p59938_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 18.368,
+      "unit_id": "CT_PEAKER_South_Central_p3609_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 80.64,
+      "unit_id": "CT_PEAKER_South_p3630_committed"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 105.44,
+      "unit_id": "CT_PEAKER_South_p3439_committed"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 47.0,
+      "unit_id": "CT_PEAKER_Houston_p62548_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 40.0,
+      "unit_id": "CT_PEAKER_South_p61241_committed"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 227.48,
+      "unit_id": "CT_PEAKER_South_Central_p66604_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 0.72,
+      "unit_id": "CT_PEAKER_Houston_p65541_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 227.48,
+      "unit_id": "CT_PEAKER_Houston_p64383_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 227.48,
+      "unit_id": "CT_PEAKER_Houston_p63335_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 227.48,
+      "unit_id": "CT_PEAKER_Houston_p65372_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 284.35,
+      "unit_id": "CT_PEAKER_Houston_p63688_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 20.16,
+      "unit_id": "CT_PEAKER_South_p3630_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 26.36,
+      "unit_id": "CT_PEAKER_South_p3439_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 227.48,
+      "unit_id": "CT_PEAKER_Houston_p65373_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 35.0,
+      "unit_id": "CT_PEAKER_South_p61242_committed"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 78.54,
+      "unit_id": "CT_PEAKER_South_p59391_committed"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 10.0,
+      "unit_id": "CT_PEAKER_South_p61241_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 84.7,
+      "unit_id": "CT_PEAKER_South_Central_p56674_committed"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 78.96,
+      "unit_id": "CT_PEAKER_North_p61643_committed"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 23.97,
+      "unit_id": "CT_PEAKER_South_Central_p59938_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 107.912,
+      "unit_id": "CT_PEAKER_South_Central_p3609_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 1.295,
+      "unit_id": "CT_CHP_Houston_p54330_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 455.2,
+      "unit_id": "CT_PEAKER_South_Central_p3612_committed"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 10.0,
+      "unit_id": "CT_PEAKER_South_p61242_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 0.65,
+      "unit_id": "CT_PEAKER_North_p64952_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 22.44,
+      "unit_id": "CT_PEAKER_South_p59391_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 1.6099999999999999,
+      "unit_id": "CT_CHP_South_Central_p56374_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 24.2,
+      "unit_id": "CT_PEAKER_South_Central_p56674_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 3.6000000000000005,
+      "unit_id": "CT_PEAKER_Houston_p65541_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_Houston_p65537_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_Houston_p65538_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_Houston_p65543_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_Houston_p65575_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_South_p65573_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_South_p65574_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_South_p65579_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_South_p65580_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_West_p65535_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_West_p65540_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_West_p65544_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_West_p65581_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_Houston_p65576_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_South_p65536_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_South_p65539_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_West_p65542_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_West_p65578_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 22.56,
+      "unit_id": "CT_PEAKER_North_p61643_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 15.47,
+      "unit_id": "CT_CHP_South_p10243_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 100.8,
+      "unit_id": "CT_PEAKER_South_p3630_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 131.8,
+      "unit_id": "CT_PEAKER_South_p3439_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 50.0,
+      "unit_id": "CT_PEAKER_South_p61241_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 56.9,
+      "unit_id": "CT_PEAKER_South_Central_p3612_peak"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 0.63,
+      "unit_id": "CT_PEAKER_West_p55052_committed"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 55.0,
+      "unit_id": "CT_PEAKER_South_p61242_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 123.42000000000002,
+      "unit_id": "CT_PEAKER_South_p59391_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 133.10000000000002,
+      "unit_id": "CT_PEAKER_South_Central_p56674_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 625.9,
+      "unit_id": "CT_PEAKER_South_Central_p3612_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 14.35,
+      "unit_id": "CT_CHP_South_p50475_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 1.75,
+      "unit_id": "CT_CHP_Houston_p59381_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 0.99,
+      "unit_id": "CT_PEAKER_West_p55052_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 81.0,
+      "unit_id": "CT_CHP_South_p50150_econ"
+    }
+  ],
+  "hindcast": true,
+  "iso": "ERCOT",
+  "mode": "forecast",
+  "peak_demand_mw": 85000.0,
+  "renewable_additions": [],
+  "renewable_credit_applied": {
+    "solar": 0.21,
+    "wind": 0.2
+  },
+  "reserve_margin": 0.118164,
+  "retirements": [
+    {
+      "fuel": "coal",
+      "mw": 41.0,
+      "reason": "economic",
+      "unit_id": "COAL_South_p6183_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 297.7,
+      "reason": "economic",
+      "unit_id": "COAL_South_Central_p7097_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 488.6,
+      "reason": "economic",
+      "unit_id": "COAL_Houston_p3470_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 338.0,
+      "reason": "economic",
+      "unit_id": "COAL_South_Central_p6179_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 594.8999999999999,
+      "reason": "economic",
+      "unit_id": "COAL_Northeast_p6146_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 20.5,
+      "reason": "economic",
+      "unit_id": "COAL_South_p6183_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 462.45,
+      "reason": "economic",
+      "unit_id": "COAL_North_p298_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 34.919999999999995,
+      "reason": "economic",
+      "unit_id": "COAL_North_p7030_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 74.425,
+      "reason": "economic",
+      "unit_id": "COAL_South_Central_p7097_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 122.15,
+      "reason": "economic",
+      "unit_id": "COAL_Houston_p3470_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 164.0,
+      "reason": "economic",
+      "unit_id": "COAL_South_p6183_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 184.5,
+      "reason": "economic",
+      "unit_id": "COAL_South_p6183_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 84.5,
+      "reason": "economic",
+      "unit_id": "COAL_South_Central_p6179_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 372.125,
+      "reason": "economic",
+      "unit_id": "COAL_South_Central_p7097_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 744.25,
+      "reason": "economic",
+      "unit_id": "COAL_South_Central_p7097_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 179.54000000000002,
+      "reason": "economic",
+      "unit_id": "COAL_North_p6180_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 118.98,
+      "reason": "economic",
+      "unit_id": "COAL_Northeast_p6146_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 92.49,
+      "reason": "economic",
+      "unit_id": "COAL_North_p298_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 422.5,
+      "reason": "economic",
+      "unit_id": "COAL_South_Central_p6179_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 845.0,
+      "reason": "economic",
+      "unit_id": "COAL_South_Central_p6179_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 17.459999999999997,
+      "reason": "economic",
+      "unit_id": "COAL_North_p7030_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 462.45,
+      "reason": "economic",
+      "unit_id": "COAL_North_p298_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 832.4099999999999,
+      "reason": "economic",
+      "unit_id": "COAL_North_p298_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 139.68,
+      "reason": "economic",
+      "unit_id": "COAL_North_p7030_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 89.77000000000001,
+      "reason": "economic",
+      "unit_id": "COAL_North_p6180_peak"
+    }
+  ],
+  "rps_dual": 0.0,
+  "solar_cap_mw": 38000.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [
+    {
+      "duration_h": 100.0,
+      "mw": 448.2,
+      "tech": "iron_air",
+      "unit_id": "West_iron_air_new_2024_0",
+      "zone": "West"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 919.2,
+      "tech": "iron_air",
+      "unit_id": "North_iron_air_new_2024_0",
+      "zone": "North"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 105.3,
+      "tech": "iron_air",
+      "unit_id": "Northeast_iron_air_new_2024_0",
+      "zone": "Northeast"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 794.7,
+      "tech": "iron_air",
+      "unit_id": "Houston_iron_air_new_2024_0",
+      "zone": "Houston"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 492.6,
+      "tech": "iron_air",
+      "unit_id": "South_Central_iron_air_new_2024_0",
+      "zone": "South_Central"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 240.0,
+      "tech": "iron_air",
+      "unit_id": "South_iron_air_new_2024_0",
+      "zone": "South"
+    }
+  ],
+  "storage_firm_mw": 20687.5,
+  "storage_power_mw": 26000.0,
+  "thermal_additions": [],
+  "wind_cap_mw": 52000.0,
+  "year": 2024
+}
