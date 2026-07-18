@@ -70,6 +70,7 @@ DATATYPES: tuple[str, ...] = (
     "transfer-constraint-binding",
     "maxgen-events",
     "dam-public-bids",
+    "benchmark-corridor",
 )
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
