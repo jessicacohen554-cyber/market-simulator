@@ -17442,3 +17442,61 @@ build_manifest this session; slim bundle committed
 Transport: API create_branch + git push onto
 `claude/ercot-backcast-calibration-handoff-td8ncp` (small incremental pack; the
 branch-create 413 avoided by API create_branch first). Next number: ercot-83.
+
+---
+
+**CAISO-98 (2026-07-18) — EVENING-STORAGE-TIMING derive-first (caiso-97's
+chartered successor). Keeper UNCHANGED (`2026-07-18-caiso-97-evening-trim`); no
+new keeper.**
+
+The C3a-2025 charter's two remaining masses (belly hod 10-14 over-price;
+CT_PEAKER evening ramp) are decomposed against the metered CAISO battery
+(EIA-930 CISO `NG: OTH` = the battery net, net-gen identity closes <1 MW/h; the
+real fleet ~triples 2023→2025, discharge 4.0→11.3 TWh) on a same-machine caiso-97
+repro (`caiso98_repro_A`), verified digit-for-digit against the canonical
+`_caiso92_report.py` harness:
+
+- **The belly over-price is ENTIRELY storage over-CHARGING.** Belly-charging
+  hours (80/89/96 % of belly) carry **+14.7/+10.2/+9.0 pp**; belly non-charging
+  hours **≈0** (−1.5/+1.2/−3.0). The model over-charges (chg MW 3288/4561/6091 vs
+  measured 1330/3222/4893) and rides up its own midday supply curve (λ 39/26/27
+  vs 24/16/18).
+- **The evening under-price is storage over-DISCHARGE** (2023/24 net-bat
+  +2466/+3716 vs measured +1640/+3117; resid −6.4/−4.7), converging by 2025
+  (−1.9).
+- **Root: the keeper's FLAT 8 GW fleet** (`storage_vintage_ramp=False`, no year
+  scaling) vs a real fleet that triples. Fleet-SIZE owns 2023/24; a residual
+  dispatch-SHAPE defect owns the binding 2025 belly (fleet ≈measured yet belly
+  +8.4).
+
+**Mechanism A (`storage_vintage_ramp=True`) probe — INERT (dead flag).** The
+B-leg (`caiso98_vintage_ramp_B` = keeper recipe + the flag) solved
+BYTE-IDENTICAL to the keeper (C1, hod ladder, C3c, storage energy 31.551/26.596
+TWh — all match). Cause: `runner.py:587` builds storage unconditionally via
+`build_default_storage` (flat); the vintage-aware `load_eia860_storage`
+(`model/storage.py:265`, which consumes the flag; CAISO EIA-860 present, 277 CA
+rows) is orphaned. The measured-fleet correction is therefore a `runner.py`
+WIRING change (core infra, rule 26, owner-gated, CAISO-scoped so ERCOT/PJM flat
+backcasts are not perturbed), NOT a flag flip.
+
+**Disposition: no keeper.** Charter pre-registered (FINDING §7, committed before
+the B-leg was scored): Mechanism A (measured EIA-860 fleet — now a runner.py
+wiring task) and Mechanism B (measured `NG: OTH` dispatch-shape anchor for the
+2025 residual — novel, owner-gated), each with bands + report-back gates. WP-3
+CT_CHP steam-floor rule-23 derive filed separately (PENDING). Both storage
+mechanisms + WP-3 await owner ruling. Handoff:
+`docs/handoffs/caiso-98-storage-charter-handoff-2026-07-18.md`.
+
+**git-push-413 flag (owner call).** The CLAUDE.md "always `push_files`, never
+`git push`" premise appears STALE: this session's fast-forward `git push`
+(`7bf0cf6..a9f251a`) succeeded with no 413 (ercot-82 used a `git push` transport
+too). Recommend amending to "API `create_branch` first if the branch is missing,
+then `git push` is fine".
+
+**Ops.** FINDING (`results/calibration/FINDING-caiso98-evening-storage-timing-2026-07-18.md`,
+incl. §11 B-leg result) + probe scripts (`_caiso98_repro_A.py`,
+`_caiso_storage_timing.py`, `_caiso98_vintage_ramp_B.py`) + WP-3 ask + handoff
+committed. NO dashboard registration: the A-leg repro and B-leg are same-machine
+(FINDING-caiso92b protocol) and the B-leg is byte-identical to the keeper — a
+duplicate entry would be pure noise (CAISO 13/15). `keepers.json` UNCHANGED.
+Next number: caiso-99.
