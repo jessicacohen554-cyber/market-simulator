@@ -2554,6 +2554,37 @@ class ScenarioConfig:
     # own reserve columns (energy_reserve_coopt; rule 19 — one mechanism per
     # phenomenon), enforced by a config validator. Default off
     # (byte-identical); CAISO-only.
+    caiso_storage_shape_anchor: bool = False  # Bound the CAISO battery fleet's
+    # hourly charge/discharge dispatch at the MEASURED per-MW diurnal capability
+    # envelope (caiso-99 Mechanism B; FINDING-caiso98 §7B pre-registration,
+    # owner-authorized). The energy-only LP charge-arbitrages the (measured,
+    # COD-ramped) battery fleet at up to its FULL nameplate in the midday belly
+    # and rides its own charging demand up the midday supply curve (belly
+    # over-price +10.9/+9.0/+8.4 $/MWh 2023-25, ENTIRELY in model-charging
+    # hours), and over-discharges the 2023/24 evening; the real fleet never
+    # operates near nameplate fleet-wide — AS holdback (reg/spin awards),
+    # DA-bid conservatism and commissioning ramps hold its p95 hod-rate to
+    # ~0.43-0.55 of fleet MW charging / ~0.48-0.66 discharging (EIA-930 CISO
+    # ``NG: OTH`` ÷ EIA-860 monthly fleet). This flag caps Chg/Dis[s,t] for
+    # battery units at env_p95[year, hod] × power_cap[s,t] (pumped storage
+    # exempt — not an LESR, not in the OTH series), from the committed
+    # derivation ``data/raw/reference/caiso-storage-shape-envelope.csv``
+    # (scripts/derive_caiso_storage_shape.py; rule 23 — re-derives only on an
+    # EIA-930/EIA-860 source update). p95-of-days is the repo-standard measured
+    # capability statistic (corridor measured-p95 ATC / GTC p95 convention),
+    # fixed a priori, never swept against a residual (rule 25). Rule-13 forward
+    # story: the envelope is a per-MW-of-fleet market-behavior parameter that
+    # regenerates from its sources and scales with the projected fleet — a
+    # forward year applies the latest measured year's shape × that year's fleet
+    # MW, and the bound responds to fleet growth exactly like the measured
+    # committed-CC LSL p50 (ERCOT-63) and the measured AS power reservation
+    # (rule-13's own examples). The LP keeps full economic choice of WHEN and
+    # HOW MUCH to cycle inside the envelope (hod-level statistics, not an
+    # hourly series — nothing pins dispatch to the measured 8760). Rule 19:
+    # REPLACES nothing and stacks on nothing — storage carries no other bound
+    # mechanism (caiso-74's AS power reservation is default-off/probe-inert;
+    # a validator enforces the exclusivity). Default off (byte-identical);
+    # CAISO-only.
     caiso_intertie_reference_price: bool = False  # Price each CAISO per-hub WECC
     # corridor from the FORWARD reference-price formula instead of the measured
     # OASIS hub LMP: per-hub price = (henry_hub[year] + gas_basis) × neighbor
@@ -6568,6 +6599,20 @@ class ScenarioConfig:
                 "path; energy_reserve_coopt prices storage AS endogenously in "
                 "the LP. Enable exactly one (rule 19)."
             )
+        # Measured battery shape envelope vs measured AS power reservation:
+        # both bound the same battery charge/discharge headroom (the envelope
+        # already EMBEDS the AS holdback that the reservation subtracts —
+        # the measured NG:OTH rates are net of awarded capacity), so stacking
+        # them would double-count the award MW (rule 19).
+        if getattr(self, "caiso_storage_shape_anchor", False) and (
+            self.caiso_storage_as_reservation
+        ):
+            raise ValueError(
+                "caiso_storage_shape_anchor (measured NG:OTH dispatch envelope) "
+                "and caiso_storage_as_reservation (measured AS-award power "
+                "reservation) bound the same battery headroom — the envelope "
+                "embeds the AS holdback. Enable exactly one (rule 19)."
+            )
         # CAISO's reserve co-optimization (reserve_config._caiso_design, issue
         # #1492) is priced inside the shared reserve co-opt; without it the flag
         # would silently no-op (apply_reserve_coopt gates on energy_reserve_coopt
@@ -7450,6 +7495,7 @@ TIER_TAGS: dict[str, int] = {
     "td_loss_factor": 3,
     "vintage_capacity_ramp": 3,
     "storage_vintage_ramp": 3,
+    "caiso_storage_shape_anchor": 1,
     "cod_ramp_enabled": 3,
     "coal_tranche_1_frac": 3,
     "coal_tranche_1_fuel_passthrough": 3,
