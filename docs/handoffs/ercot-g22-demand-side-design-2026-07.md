@@ -35,7 +35,7 @@ cross-ISO wedge).
    DA-expressible basis, the DAM risk premium): §5.
 2. **Thread B (2024/25 measured-HSL data vintage): root-caused at the data
    layer and FIXED.** The NP4-732/737 reports are stamped in Central
-   *Prevailing* Time; `scripts/build_ercot_hsl.py` placed them on the model's
+   *Prevailing* Time; `scripts/data/build_ercot_hsl.py` placed them on the model's
    fixed CST clock unconverted, so the entire mid-Mar–early-Nov wind/solar
    potential was **one hour late** (Jan best lag 0, Jul best lag +1 vs EIA-930,
    r = 1.0000 at both — the same series, shifted). That handed the dispatch
@@ -246,7 +246,7 @@ tail lives in offer formation.
 
 ### 6.1 The defect (found, cited, fixed)
 
-`scripts/build_ercot_hsl.py::_parse_report` placed NP4-732/737 report labels
+`scripts/data/build_ercot_hsl.py::_parse_report` placed NP4-732/737 report labels
 (`DELIVERY_DATE` + `HOUR_ENDING`, Central **Prevailing** Time) on the model's
 fixed CST clock without the CPT→CST conversion. Evidence:
 
@@ -275,7 +275,7 @@ phantom evening solar suppressing exactly the evening tightness those
 criteria score.
 
 **Fix (this branch):** `_prevailing_to_standard()` in
-`scripts/build_ercot_hsl.py` — tz-localize to US/Central with the reports'
+`scripts/data/build_ercot_hsl.py` — tz-localize to US/Central with the reports'
 `DSTFLAG` disambiguating the fall-back repeat, convert to fixed UTC-6, drop
 tz; both report families (hourly HE and 5-minute stamps) converted; the CST
 clock is covered gapless through both DST transitions (regression tests in

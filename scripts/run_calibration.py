@@ -165,7 +165,7 @@ _GAS_FUEL_TYPES: frozenset[str] = frozenset({"gas_cc", "gas_ct", "gas_st"})
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("run_calibration")
 
-# Calibration reference written by scripts/build_calibration_reference.py.
+# Calibration reference written by scripts/data/build_calibration_reference.py.
 REFERENCE_PATH: Path = CALIBRATION_DIR / "calibration_reference.json"
 
 # Fallback measured Henry Hub annual-average spot price ($/MMBtu), used when
@@ -668,7 +668,7 @@ def run_year(
         fleet_only: When True, stop after the fleet/storage arrays are built
             and return a state dict instead of solving any LP. Lets a
             post-processor (e.g. the ORDC scarcity overlay,
-            ``scripts/derive_ordc_overlay.py``) reconstruct the exact hourly
+            ``scripts/data/derive_ordc_overlay.py``) reconstruct the exact hourly
             availability a persisted bundle solved against — same config,
             same outage overlay, same derates — without re-solving.
         priced_interchange: When True, interchange is served by the priced
@@ -1748,7 +1748,7 @@ def run_year(
                 logger.warning(
                     "ercot_gtc_limits_measured: no gtc-limits clean partition "
                     "for %d — static TTC kept (supply the NP6-86 archives and "
-                    "run scripts/curate_gtc_limits.py)",
+                    "run scripts/data/curate_gtc_limits.py)",
                     year,
                 )
             else:
@@ -1775,7 +1775,7 @@ def run_year(
             logger.warning(
                 "pjm_measured_interface_limits: no transfer-interface-limits "
                 "clean partition for %d — static TTC kept (run "
-                "scripts/curate_transfer_interface_limits.py)",
+                "scripts/data/curate_transfer_interface_limits.py)",
                 year,
             )
         else:
@@ -1822,7 +1822,7 @@ def run_year(
                 logger.warning(
                     "ercot_wtx_curtailment_driver: no derived share table for %d "
                     "— ceiling skipped (run "
-                    "scripts/derive_ercot_wtx_curtailment_share.py)",
+                    "scripts/data/derive_ercot_wtx_curtailment_share.py)",
                     year,
                 )
             else:
@@ -1875,7 +1875,7 @@ def run_year(
             logger.warning(
                 "MISO %d: capacity-deliverability clean partition absent — "
                 "falling back to static PY2025-26 summer CIL/CEL caps; run "
-                "scripts/curate_capacity_deliverability.py",
+                "scripts/data/curate_capacity_deliverability.py",
                 year,
             )
     # Measured PJM EAST interface cut (pjm_east_interface_cut, backcast
@@ -1902,7 +1902,7 @@ def run_year(
                 "pjm_east_interface_cut: no transfer-interface-limits clean "
                 "partition (or no Average Eastern series) for %d — joint "
                 "EMAAC cut skipped (run "
-                "scripts/curate_transfer_interface_limits.py)",
+                "scripts/data/curate_transfer_interface_limits.py)",
                 year,
             )
         else:
@@ -4062,7 +4062,7 @@ def _report_curtailment(
     """Print the headline modeled-vs-reported renewable curtailment metric.
 
     Modeled curtailment is the dispatch's unused wind/solar potential. For
-    ISO-years with a built HSL-style parquet (scripts/build_ercot_hsl.py /
+    ISO-years with a built HSL-style parquet (scripts/data/build_ercot_hsl.py /
     build_caiso_hsl.py) the reported curtailment — the telemetered
     ``hsl - gen`` — is printed beside it, with the monthly shape (the CAISO
     P6 / ERCOT E3 headline metric): a transmission-constrained dispatch fed
@@ -4121,7 +4121,7 @@ def _report_curtailment(
     if hsl is None:
         print(
             f"    (no reported HSL data for {iso} {year}; build with "
-            "scripts/build_ercot_hsl.py / build_caiso_hsl.py — ERCOT 2024+ "
+            "scripts/data/build_ercot_hsl.py / build_caiso_hsl.py — ERCOT 2024+ "
             "needs the NP6 report uploads)"
         )
         return

@@ -16,7 +16,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_dam_public_bids as curate_dpb
+from scripts.data import curate_dam_public_bids as curate_dpb
 from scripts.lib import clean_io
 
 _HEADER = (

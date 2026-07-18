@@ -47,7 +47,7 @@ they clear ahead of CC in the shoulder.
 **Non-negotiable gates (this is where it gets hard — read before tuning):**
 1. **No fitting to the volume residual, no markup.** Re-derive the relative offer
    heights from the **measured ERCOT DAM energy offers** — the in-repo
-   `_validation-source` offer-curve JSONs / `scripts/parse_ercot_dam_offers.py` /
+   `_validation-source` offer-curve JSONs / `scripts/data/parse_ercot_dam_offers.py` /
    the `60_DAY_DAM_DISCLOSURE_*EnergyOnlyOffers*` + `*EnergyBidAwards*` parquets
    under `data/raw/ercot/` — **not** by dialing deltas until CC = 145 TWh. The
    delta must trace to a measured offer-height relationship (rule #12).
@@ -102,7 +102,7 @@ Price Adder) of `data/raw/ercot/ercot_<year>_ordc_reserves_hourly.parquet`.
   let the overlay paper over the energy base.
 
 **Backcast-able-on-2022 requirement (do NOT run 2022):**
-- Run `python scripts/fetch_ercot_ordc_reserves.py --years 2022` so
+- Run `python scripts/data/fetch_ercot_ordc_reserves.py --years 2022` so
   `data/raw/ercot/ercot_2022_ordc_reserves_hourly.parquet` exists (archive DocID
   was visible at `reportTypeId=13231`, `RTM_ORDC_REL_DPLY_PRC_ADDR_RSRV_2022`).
   Validate it (ranges/coverage) **as data only** — proof the lever has a 2022

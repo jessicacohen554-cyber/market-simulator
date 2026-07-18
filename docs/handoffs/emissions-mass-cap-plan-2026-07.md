@@ -33,7 +33,7 @@ cap-off backcast is bit-for-bit today's behaviour (§9.2 gate). Ledger by design
 | §5/§7 registry constants, all cited: `CAP_AND_TRADE_PROGRAMS`, `CARB_ALLOWANCE_BUDGET`, `CARB_FLOOR_PRICE`, `RGGI_STATE_CO2_BUDGET` (regional + per-state), `RGGI_MEMBER_STATES_BY_YEAR`, `SHORT_TON_TO_METRIC_TONNE`, `PJM_RGGI_ZONE_SHARE` (populated, per-zone-per-year) | ✅ | `config/constants.py` |
 | §5 membership-weighted (per-gen) carbon adder | ✅ | `data/fleet.py::assemble_mc` (accepts `ndarray`) |
 | §5 PJM per-unit membership: EIA-860 plant→state crosswalk + per-generator exact test | ✅ | `data/zone_assignment.py::plant_state_lookup`, `policy/cap_and_trade.py::per_generator_membership`, wired at `runner.py`'s `mass_caps` call site |
-| §7 data intake (schema + curate + cited raw CSV, incl. per-state RGGI budgets) | ✅ | `data/raw/policy/{carb-cap-schedule,rggi-co2-budgets}/`, `data/dictionary/schema/*.schema.yaml`, `scripts/curate_{carb_cap_schedule,rggi_co2_budgets}.py`, `scripts/derive_pjm_rggi_zone_share.py` |
+| §7 data intake (schema + curate + cited raw CSV, incl. per-state RGGI budgets) | ✅ | `data/raw/policy/{carb-cap-schedule,rggi-co2-budgets}/`, `data/dictionary/schema/*.schema.yaml`, `scripts/data/curate_{carb_cap_schedule,rggi_co2_budgets}.py`, `scripts/data/derive_pjm_rggi_zone_share.py` |
 | §10 call-site threading `get_active_policy_constraints(config, year, zone_names=...)` → dispatch builder | ✅ | `runner.py` |
 | §9.1–§9.6 tests incl. trivial binding-cap dual = `(mc_clean−mc_dirty)/(rate_dirty−rate_clean)`, cap-off regression, simultaneous RPS+reserve+cap dual-index, membership vectorization, no-hour-loop assertion, PJM per-unit membership, per-state RGGI budget sums | ✅ | `tests/test_cap_and_trade.py`, `tests/test_dispatch.py::TestMassCapConstraint`, `tests/test_runner.py::TestMassCapPerUnitMembershipWiring` |
 
@@ -46,7 +46,7 @@ No dispatch-side wiring remains.
 **Follow-ons landed (2026-07-05, this pass):**
 
 - **PJM fractional membership** (§5, §11): `PJM_RGGI_ZONE_SHARE` is now populated per zone per year
-  (2023/2024/2025), derived by `scripts/derive_pjm_rggi_zone_share.py` from the year-matched
+  (2023/2024/2025), derived by `scripts/data/derive_pjm_rggi_zone_share.py` from the year-matched
   EIA-860 plant/generator tables (state + operating fossil capacity) and the same PJM zone
   assignment the dispatch model uses (`data.zone_assignment.build_zone_lookup`). Virginia's 1 Jan
   2024 RGGI exit is directly visible in the derived numbers: `PJM_Dominion` (VA+NC) goes from

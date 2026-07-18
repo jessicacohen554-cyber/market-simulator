@@ -350,5 +350,5 @@ lane's exact remit.
 
 *Data provenance: `results/full-horizon/<iso>/full_horizon_summary.json` (per-ISO)
 and `results/full-horizon/_tables.md` (collated), reconstructed for partial ISOs
-from cached per-year parquets via `scripts/_gen_partial_summaries.py`. Forecast
+from cached per-year parquets via `scripts/archive/_gen_partial_summaries.py`. Forecast
 probes — not dashboard-registered.*

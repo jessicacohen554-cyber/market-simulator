@@ -10,7 +10,7 @@ startup-trajectory extension — same mechanism, wider physics, rule 19) on top
 of the OTHERWISE RECIPE-IDENTICAL caiso-94 keeper config: every detected
 run-start of a bridge-eligible merchant CC is preceded by its measured CAMPD
 start-to-load ramp (per-plant p50, frozen CV/LOYO gates —
-``scripts/derive_campd_cc_start_trajectory.py``).
+``scripts/data/derive_campd_cc_start_trajectory.py``).
 
 Adjudicated A/B against the same-machine caiso-94 keeper repro
 (``_caiso95_repro_A.py`` → ``caiso95_repro_A``; cross-machine HiGHS spread

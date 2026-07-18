@@ -153,7 +153,7 @@ The §5 recommendation was built as ``ScenarioConfig.cc_mustrun_per_plant``
 - **Window** = the plant's top ``online_frac`` fraction of hours ranked by
   system load — the measured CEMS synchronization fraction, now emitted for the
   gas committed groups (CC_REGULAR / CT_PEAKER) by
-  `scripts/derive_thermal_tranches.py` (same estimator the coal step-3a
+  `scripts/data/derive_thermal_tranches.py` (same estimator the coal step-3a
   forcing already publishes; the 139 gas `online_frac` cells were patched into
   the committed artifact with every existing column frozen, rule 21 — a full
   regen today drifts the CAMPD-derived columns, so only the new column landed).
@@ -173,7 +173,7 @@ The §5 recommendation was built as ``ScenarioConfig.cc_mustrun_per_plant``
 
 Run lineage: single-year 2024 throwaway probe (never registered, rule 16) to
 verify the floor runs eastern gas + budget/D-4, then the full 2023–2025 bundle
-`pjm98_cc_mustrun` + its `-ablation` twin (`scripts/run_pjm98_cc_mustrun.py`).
+`pjm98_cc_mustrun` + its `-ablation` twin (`scripts/archive/run_pjm98_cc_mustrun.py`).
 Keeper swap remains the owner's decision (§5 over-forcing risk sign-off).
 
 **Probe result (2024, single-delta off pjm-97) and the CT decision.** The floor

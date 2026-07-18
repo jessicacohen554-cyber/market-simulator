@@ -86,7 +86,7 @@ The PJM 2021-2025 realized capacity hindcast (`docs/hindcast-reports/pjm-2021-20
 showed `[FAIL] I9 2023: simultaneous chg+dis 6.09% of throughput; 2024: 1.32%`.
 Triage (task: PJM demand/storage-integrity session): `data/raw/eia-930/eia_demand_profiles.parquet`'s
 PJM 2021 series carried a 3-hour, ~4-5-order-of-magnitude demand spike (fixed
-by `scripts/curate_demand_profile.py`, see the hindcast report's "Update"
+by `scripts/data/curate_demand_profile.py`, see the hindcast report's "Update"
 section for the full repair writeup). That spike drove VOLL-level scarcity
 pricing into 2021's `prior_results`, which the 2022 bridge and 2023 entry/
 dispatch economics consume by design (rule 22) — a corrupted price *signal*,

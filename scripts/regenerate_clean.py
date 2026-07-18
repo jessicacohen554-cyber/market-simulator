@@ -3,7 +3,7 @@
 The ``data/clean`` tree is gitignored (derived and disposable), so it must be
 rebuilt from ``data/raw`` before the model — or CI — can read it through
 ``scripts.lib.clean_io.read_clean``. This is the single entrypoint that runs
-the per-datatype curation scripts (``scripts/curate_<datatype>.py``); each of
+the per-datatype curation scripts (``scripts/data/curate_<datatype>.py``); each of
 those writes through ``clean_io.write_clean`` and self-validates.
 
 Usage

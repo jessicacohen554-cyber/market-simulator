@@ -117,7 +117,7 @@ HSL-style uncurtailed profile (ERCOT 2023 pattern); fallback is the EIA-930
 delivered-generation distribution. See doc 01 §3 and doc 04 §4.
 
 ### Stage E — Calibration reference
-Extend `scripts/build_calibration_reference.py` to emit, per ISO-year:
+Extend `scripts/data/build_calibration_reference.py` to emit, per ISO-year:
 EIA-860 renewable capacity (year-end totals, zone shares, monthly ramp),
 measured Henry Hub (or basis-adjusted regional gas) price, EIA-930 demand
 totals, and an eGRID generation/emissions benchmark. Output lands in

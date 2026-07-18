@@ -359,7 +359,7 @@ the caiso-80 payload's GROWN CT deficit — model 0.71/0.56/0.27 vs actual
 checkable at the ESTIMATION stage, before any solve — the NYISO ST_GAS
 netload-drag precedent (2026-07-09, rejected on its own honesty gates from
 the derive script). It fails decisively
-(`scripts/derive_caiso_local_commitment.py`, committed + reproducible;
+(`scripts/data/derive_caiso_local_commitment.py`, committed + reproducible;
 `results/calibration/FINDING-caiso81-local-commitment-driver-refuted-2026-07-13.md`):
 
 - **Panel:** per-(pocket, day) measured committed MW (CAMPD CT_PEAKER via the
@@ -478,7 +478,7 @@ with the supply-consistent honest series `demand(t) = 930 NetGen(t) −
 NG_cell(t) + CEMS bench-gas grid(t) + cogen grid flat + geo/biomass fold-in
 flat − TI(t)` = **207.40/212.19/205.59 TWh** (−4.8/−5.2/−8.3 % vs the corrupt
 cell). Derived measured artifact
-(`scripts/derive_caiso_supply_consistent_demand.py` →
+(`scripts/data/derive_caiso_supply_consistent_demand.py` →
 `data/raw/reference/caiso-supply-consistent-demand/`, guard-railed to the
 committed CEMS anchors and pre-registered windows), gated
 `ScenarioConfig.caiso_supply_consistent_demand` (default off, CAISO backcast
@@ -721,7 +721,7 @@ PROBE, rule 15): **`2026-07-13-pjm-103-ct-faststart`**
 virtual depth + `tranche_startup_amortization`+`_measured_runs`+
 `_conditional_runs` on new PJM CAMPD artifacts
 (`campd_ct_run_lengths_PJM.csv` 7 h class median, `campd_ct_run_bands_PJM.csv`;
-`scripts/derive_campd_ct_run_lengths.py --iso PJM`), and
+`scripts/data/derive_campd_ct_run_lengths.py --iso PJM`), and
 **`2026-07-13-pjm-104-coal-top`** (`results/calibration/pjm104_coal_top`) =
 pjm-103 + the measured mid-curve floor re-derived with top shares
 0.975/0.995 and scoped `pjm_offer_midcurve_segments=("LONG_RUN",)` (new
@@ -1570,7 +1570,7 @@ envelope correctly polices what the spread alone would over-import.
 **Fix (audit C-6 closed for MISO, the NEISO pattern):** measured per-seam
 Q-Q band ladders — `miso_seam_measured_ladder` /
 `interchange_config.MISO_SEAM_LADDER_BY_YEAR`, derived by the frozen
-`scripts/derive_miso_seam_ladders.py` (EIA-930 per-seam flow durations
+`scripts/data/derive_miso_seam_ladders.py` (EIA-930 per-seam flow durations
 quantile-coupled with the measured MISO DA hub LMP on the existing 8-band
 grid; import `pi_k = Q_DA(1 − P[flow > L_k])`, export mirrored; no added
 hurdle; zero fitted parameters, rule 23). Band capacities, the measured
@@ -1777,7 +1777,7 @@ clone → the measured NYISO "pal" actual-load (upload U3) never reached the sol
 
 **Fix (rule 12, one code change, no new free parameter).** `load_zonal_shares`
 now falls back to parsing the raw `data/raw/zone-specific-demand` file directly
-(via the canonical `scripts.curate_zonal_shares` parsers) when the clean parquet
+(via the canonical `scripts.data.curate_zonal_shares` parsers) when the clean parquet
 is absent, so every zone gets its own **measured** diurnal/seasonal shape. Also
 curated the `capacity-deliverability` NYISO partition (needed by the keeper's
 `nyiso_li_lcr_tsl` #1345 — clean tree is gitignored). Measured shares put more
@@ -1885,7 +1885,7 @@ delivery rate**, which both LDCs publish monthly in their *Statement of Non-Firm
 Demand Response Sales and Transportation Rates* (`statnfdr` PDFs). Crawled the
 National Grid tariff archive, transcribed the "Total Monthly Tier 1
 Transportation Service" rate for all 36 months × 2 LDCs
-(`scripts/fetch_nyiso_downstate_ldc_transport.py`, committed CSV + SOURCES). What
+(`scripts/data/fetch_nyiso_downstate_ldc_transport.py`, committed CSV + SOURCES). What
 could NOT be free-sourced and was not needed: Con Edison 2023–24 GCF (purged from
 coned.com) and paywalled Platts/NGI daily citygate. Levels: KEDNY (NYC)
 ~$2.48–3.45/MMBtu, KEDLI (Long Island) ~$1.66–2.89/MMBtu, rate-case-stepped.
@@ -2017,7 +2017,7 @@ static TTC. This probe tests that hypothesis directly.
 
 **Recipe.** Re-curated the already-committed raw NP6-86 archives
 (`data/raw/iso-specific-transmission/SCEDBTCNP686_*`, no new intake, no network)
-via `scripts/curate_gtc_limits.py` → clean partition for 2023/24/25 (17/19/23
+via `scripts/data/curate_gtc_limits.py` → clean partition for 2023/24/25 (17/19/23
 GTCs). Then replayed `ercot38`'s exact recipe
 (`scripts/replay_keeper.py results/calibration/ercot38_measured_hsl_2425`) with
 the single delta `--set ercot_gtc_limits_measured=true`. Solve logs confirm the
@@ -2075,7 +2075,7 @@ physics (rule 1), not on whether the calibration residual moved.
 D-4 failure was `reliability_floor × CT_CHP` 70.8% off-window all years
 (0.0052/0.0095/0.009 TWh): the EMAAC/Central_PA CT_CHP tmax limbs carry no
 sub-daily window, so on a hot day they floor CT_CHP all 24 h. The driver
-evidence (`scripts/diag_pjm_ctchp_hotday_hod.py`) shows the class's hot-day
+evidence (`scripts/archive/diag_pjm_ctchp_hotday_hod.py`) shows the class's hot-day
 lift is an ALL-HOURS steam-host intensification (no sub-daily window matches),
 owned by `chp_steam` — so the limbs are SCRUBBED (enabled=False), not
 re-windowed (rule 19, mirrors neiso-48/caiso-52 CT tmax scrubs). Locked by
@@ -2099,7 +2099,7 @@ FAIL (bands below the SRMC floor) is CLOSED by construction.
 **(3) CT overnight-reliability evidence check (step 3) — window CORRECT, no
 change.** Owner hypothesis: real PJM CTs run overnight for reliability, so the
 drag's [15,22) window is too narrow. Tested against measurement, not intuition
-(`scripts/diag_pjm_ct_overnight_evidence.py`, CAMPD pure-play CT_PEAKER CF ×
+(`scripts/archive/diag_pjm_ct_overnight_evidence.py`, CAMPD pure-play CT_PEAKER CF ×
 hour-of-day × net-load decile × season, pooled 2023–2025; memo
 `docs/handoffs/pjm-ct-overnight-evidence-2026-07.md`). Result: overnight CF is
 a flat **~2%** net-load-INSENSITIVE economic baseline (merit-order, not
@@ -2114,7 +2114,7 @@ reserve/ORDC (G-20 Phase 2, memory-gated), NOT a widened floor and NOT a
 relaxed D-2 cap (rules 1/13/19).** The drag was not re-derived (rule 24).
 
 **Solve (step 4).** Full span 2023–2025, single invocation, sequential years
-(`scripts/run_pjm80_srmc_reground_keeper.py`, bundle
+(`scripts/archive/run_pjm80_srmc_reground_keeper.py`, bundle
 `results/calibration/pjm80_srmc_reground_keeper`) = pjm-77 recipe + the two
 changes above; the drag/reliability-floor/coal config is otherwise verbatim.
 Zero-forcing ablation twin registered (`run_pjm80_ablation_twin.py`,
@@ -2787,7 +2787,7 @@ memtest) and (b) ramp-rate data quality. Both attacked:
   measured families — a documented memory scope-down (rules 1/11).
 - **(b) Ramp data — measured intake replaces the class estimate.** New
   `ramp-capability` clean datatype (schema-first, per-ISO registry, PJM +
-  MISO curated; `scripts/curate_ramp_capability.py`): EIA-860 Schedule 3.1
+  MISO curated; `scripts/data/curate_ramp_capability.py`): EIA-860 Schedule 3.1
   "Time from Cold Shutdown to Full Load" = "10M" fast-start thermal
   capacity per plant (~3.0 GW in the PJM BA) + CAMPD CEMS max observed
   1-hour plant gross-load up-ramp (pooled 2023–2025; 2022/2026 holdouts
@@ -2864,7 +2864,7 @@ years, single invocation each (rule 12):
 - **pjm-79 / dashboard `pjm 80 srmc-reground`**
   (`results/calibration/pjm79_srmc_reground`) — pjm-78 with ST_GAS
   committed/econ_low/econ_high → 1.00/1.00/1.00 and CT_INTERMEDIATE
-  committed/econ_low → 1.00/1.00 (`scripts/run_pjm79_srmc_reground.py`).
+  committed/econ_low → 1.00/1.00 (`scripts/archive/run_pjm79_srmc_reground.py`).
 
 Both bundles hit a container OOM on the first attempt (12 GB LP, no swap;
 resolved with a 10 GB swapfile) and both initially solved against the
@@ -2874,7 +2874,7 @@ found immaterial to pjm-77). Both were re-solved end-to-end after running
 `scripts/regenerate_clean.py demand-profile`; the final bundles carry zero
 demand-fallback warnings.
 
-**Decomposition (`scripts/diag_pjm_srmc_ab.py`, per-class TWh model vs actual,
+**Decomposition (`scripts/archive/diag_pjm_srmc_ab.py`, per-class TWh model vs actual,
 2023/2024/2025):**
 
 | class | pjm-78 (baseline) | pjm-79 (re-grounded) | Δ | actual (avg) |
@@ -3423,7 +3423,7 @@ GitHub dataset (2023 fallback source; cloned `main`, no 2024/2025 files
 exist upstream). Full log: `docs/ercot-hsl-2024-25-intake-attempt-2026-07.md`;
 drop-zone placeholder `data/raw/ercot-hsl/np6/README.md`.
 
-**No code or data changed.** `scripts/build_ercot_hsl.py` already ingests a
+**No code or data changed.** `scripts/data/build_ercot_hsl.py` already ingests a
 2024/2025 NP6 upload transparently once one lands (`np6/<year>/` drop zone);
 `hsl_potential_mw` / `_forecast_uncurtailed_cf` (G7) continue supplying the
 forward-admissible gross-up for ERCOT 2024/25 unchanged. No modeled-vs-reported
@@ -3493,7 +3493,7 @@ CT econ ramp") — with independently measured mechanisms only; no residual inpu
 **Mechanisms (all default-off, NYISO via CLI).** (1) *Fast-start amortization v3*
 (`--tranche-startup-measured-runs`): simple-cycle CT tranches amortize the NREL start cost
 over the CAMPD-measured median start-to-stop run length
-(`scripts/derive_campd_ct_run_lengths.py`, pooled 2023–25; per-plant medians 2–9 h, class
+(`scripts/data/derive_campd_ct_run_lengths.py`, pooled 2023–25; per-plant medians 2–9 h, class
 fallback 4 h) as the horizon ceiling — P0 runs may only shorten it. Kills the v2 circularity
 (too-cheap offers → long P0 blocks → ≈0 markup → self-disabling, the nyiso-44 finding).
 (2) *Generator-level EIA-860 oil-primary screen* (`--oil-primary-bin-fuel` for non-ERCOT):
@@ -3836,7 +3836,7 @@ North CC freely serves the under-zones (mean zonal energy price flat at $20.1
 
 **2. GTC inventory — the buildability test (the decisive new finding).** Ranked
 every aggregate GTC (empty FromStation) in the NP6-86 archive
-(`scripts/derive_ttc_limits.py` / `analyze_sced_binding.py`) by zone and
+(`scripts/data/derive_ttc_limits.py` / `analyze_sced_binding.py`) by zone and
 modelled-or-not:
 
 | GTC | binds % | limit@bind | status |
@@ -4163,7 +4163,7 @@ ancillary-service-withholding effect (the energy-only LP holds zero AS; ERCOT
 clears ~7 GW). New opt-in flag `--as-reserve-withholding` (default OFF,
 byte-identical baseline) removes the hourly cleared DAM **upward**-AS MW
 (RegUp + RRS + ECRS + Non-Spin; Reg-Down excluded) from thermal headroom before
-the supply curve clears. Series built by `scripts/build_ercot_as_withholding.py`
+the supply curve clears. Series built by `scripts/data/build_ercot_as_withholding.py`
 from the NP3-911 cleared-AS reports (`inputs/raw-data/ercot-AS/`), on the model's
 non-leap 8760 ERCOT-local clock. **Upper bound:** books *all* AS to thermal —
 no storage/load split (the per-resource DAM Gen Resource Data needed for a true
@@ -4254,7 +4254,7 @@ multi-pocket floors).
   energy-only LP cannot dispatch out-of-merit AS/RUC peaker energy and there is
   no defensible forward fix; the CEMS floor that papered this over is gone.
 - CC_REGULAR 2024/2025 (+5.68 / +3.62): spatial-irreducible. The binding
-  congestion is **nodal, not zonal** — `scripts/analyze_sced_binding.py` over
+  congestion is **nodal, not zonal** — `scripts/archive/analyze_sced_binding.py` over
   24,881 SCED intervals: 94% of binding-constraint rent is on <200 kV local
   pockets (RGV, Permian), only 6.2% on the ≥345 kV backbone, 123 constraints for
   80% of rent. Finer zones would not bind → not built. (At the tighter 0.33%
@@ -4324,7 +4324,7 @@ CC econ deltas** (`offer_curve_deltas_cc_merit_ramp.json`, the orthogonal merit
 axis) **+ `--reliability-deployment`**. Bundle
 `results/calibration/run118_reldeploy_spatial`.
 
-**Mechanism (built, wired, tested).** `scripts/derive_reliability_deployment.py`
+**Mechanism (built, wired, tested).** `scripts/data/derive_reliability_deployment.py`
 measures, for each CEMS-covered pocket plant and hour, a deployment hour ⇔
 `net_mw > min_mw AND LZ_price(plant_zone) > MC AND HB_HUBAVG < MC`
 (MC = plant_avg_HR × hr_mult × fuel_price + vom; gas at Henry Hub, coal at its
@@ -4742,12 +4742,12 @@ when the final EIA-923 2025 annual file lands.
 
 ## Cross-class offer-curve tuning Jacobian (2026-06-11)
 
-**Tool:** `scripts/derive_offer_curve_jacobian.py` → `inputs/processed/offer_curve_jacobian.csv`
+**Tool:** `scripts/data/derive_offer_curve_jacobian.py` → `inputs/processed/offer_curve_jacobian.csv`
 (long format: `iso, year, out_class, band, in_class, dTWh_per_unit_mult, n_obs, stderr, confidence`).
 Pure parquet/JSON analysis of the existing calibration bundles — no LP re-solve. Re-run it
 after every new backcast bundle lands; unknown runs are auto-classified (scenario-config
 equality + git diff between recorded shas + note keywords) so it keeps working for every
-ISO as tuning sequences accrue. (Complements `scripts/curve_class_jacobian.py`, the step-4
+ISO as tuning sequences accrue. (Complements `scripts/archive/curve_class_jacobian.py`, the step-4
 quick-look: that tool fits one pooled regression with year fixed effects across all
 bundles; this one restricts to verified pure-curve pairs, fits each year separately,
 attaches jackknife errors per cell, and adds the adjacency validation + joint-move solver.)
@@ -4807,7 +4807,7 @@ has mass.
 EIA-923), the script solves `min ‖S·Δm + err‖² + λ‖Δm‖²` over the four price bands
 (knobs with n_obs ≥ 2), box-constrained to per-step moves |Δm| ≤ 0.15, by projected
 gradient. Worked example against Run-74's errors
-(`python scripts/derive_offer_curve_jacobian.py --iso ERCOT --validate-run Run-74`):
+(`python scripts/data/derive_offer_curve_jacobian.py --iso ERCOT --validate-run Run-74`):
 
 ```
 Recommended Δmult            Predicted errors (TWh, model − EIA-923)
@@ -4912,7 +4912,7 @@ committed −0.094.
 4. **Nuclear was already fixed and is now provably data-derived.** The
    per-year EIA-923 monthly-CF overlay (`NUCLEAR_MONTHLY_CF_BY_YEAR`, PR
    #252) holds nuclear at −0.7% in all three years (the audit's +2.4%
-   predates it). New `scripts/derive_nuclear_monthly_cf.py --check`
+   predates it). New `scripts/data/derive_nuclear_monthly_cf.py --check`
    regenerates and validates the table from EIA-923 (ERCOT 2023–2025
    reproduce exactly); the residual −0.7% is the CF≤1.0 cap vs winter net
    capability above EIA-860 nameplate — accepted.
@@ -5092,7 +5092,7 @@ each encodes basin/type/transport-specific contract economics.
 
 ## Jacobian tool v2 — dispatch-shape + LMP objectives, trust region (2026-06-12)
 
-`scripts/derive_offer_curve_jacobian.py` now regresses three error blocks
+`scripts/data/derive_offer_curve_jacobian.py` now regresses three error blocks
 per pure pair instead of annual TWh alone:
 
 * **twh** — annual class TWh (unchanged, BTM-aware);
@@ -5302,13 +5302,13 @@ All three runs rejected; the keeper stays run 79 (`e2_4_retune`). Dashboard:
 `run85 coal soft`, `run86 coal gas realloc`, `run87 gas monthly`
 (85→prunes run80, 86→run81, 87→run82, top-5 retention).
 
-**New data artifact — ERCOT hourly actual LMP.** `scripts/derive_actual_lmp.py`
+**New data artifact — ERCOT hourly actual LMP.** `scripts/data/derive_actual_lmp.py`
 now emits `inputs/calibration/actual_lmp_hourly_ERCOT.parquet` (the HB_HUBAVG
 hub-average, DAM hourly + RTM 15-min averaged to the hour, on the model's
 fixed non-leap 8760 calendar — Feb 29 dropped, DST fall-back averaged via the
 repeated-hour rows, spring-forward NaN). The annual/monthly mean formulas are
 untouched so `actual_lmp.json` does not drift (verified by diff); ERCOT gains
-`da_pct`/`rt_pct` like PJM/CAISO. This unblocks `scripts/analyze_lmp_residual.py`
+`da_pct`/`rt_pct` like PJM/CAISO. This unblocks `scripts/archive/analyze_lmp_residual.py`
 for ERCOT.
 
 ### Run 85 — softer coal dose (REJECTED, dose-response anchor)
@@ -6054,7 +6054,7 @@ Scored from the existing bundles' `system.parquet` dual prices (no re-solve):
 the four model load zones price **identically** every hour, so the modeled hub
 is the common internal price (P1 pass, demand-served zones; `HQ_import` carries
 zero load and does not enter the demand-weighted level). Comparison convention
-follows `scripts/analyze_lmp_residual.py` — modeled vs actual **RT** (DA
+follows `scripts/archive/analyze_lmp_residual.py` — modeled vs actual **RT** (DA
 reported alongside).
 
 ### 1. Level + duration-curve fit (hub `.H.INTERNAL_HUB`)
@@ -6154,7 +6154,7 @@ fuel-mix / CO₂ / interchange rows are untouched and still green.** The P12
 keepers remain the sign-off config. ERCOT / PJM / CAISO / NYISO untouched.
 Dashboard runs `neiso 2 2023` / `neiso 3 2024` / `neiso 4 2025 hydrofix`
 re-registered so the now-present NEISO `actual_lmp` benchmark drives the price
-scorecard. Reproduce: `python scripts/analyze_lmp_residual.py
+scorecard. Reproduce: `python scripts/archive/analyze_lmp_residual.py
 results/calibration/neiso_p12_base_2023 … --months 1 2 --years 2023 2024 2025`.
 
 ---
@@ -6181,7 +6181,7 @@ inflation — web-verified), and the OBDRR048 multi-step RTORPA floor ($20 ≤
 All knobs are tier-1/2 scenario fields with citations in the registry; a
 PUCT cap change is a runnable scenario (pre-Uri $9,000 tested: 2023 tail
 moves up, mean adder $2.97→$5.37, >$500 hours 15→22 — direction correct).
-Implementation: `results/scarcity.py` + `scripts/derive_ordc_overlay.py`
+Implementation: `results/scarcity.py` + `scripts/data/derive_ordc_overlay.py`
 (post-processes a bundle; reconstructs the exact hourly availability via a
 new `run_year(fleet_only=True)` exit — no LP re-solve) writing
 `scarcity.parquet` (lmp + scarcity_adder + lmp_scarcity) next to the
@@ -6263,7 +6263,7 @@ Branch `claude/nyiso-2025-refresh-rescore`.
 The user re-uploaded the EIA-930 raw long files
 (`inputs/raw-data/eia-930/NYIS_region.parquet` + `NYIS_fueltype.parquet`, now
 2015–2026). Regenerated the wide hourly with
-`python scripts/convert_eia930.py NYIS --input-dir inputs/raw-data/eia-930 --force`:
+`python scripts/data/convert_eia930.py NYIS --input-dir inputs/raw-data/eia-930 --force`:
 `NYIS hourly` now carries **8,760 h for 2025** (Demand non-null 8,760/8,760),
 where the old extract stopped at **Q1'25 (2,154 h)**. 2023 (8,760) and 2024
 (8,784, leap) are byte-identical to the prior file — Demand 147.05/150.88 TWh,
@@ -6309,7 +6309,7 @@ demand-basis gap documented for the 2023 keeper, not a dispatch error.
 
 Scored both the 2023 keeper (`nyiso_smoke_2023`) and this 2025 run against
 `actual_lmp.json` (per-zone DA/RT levels) + `actual_lmp_hourly_NYISO.parquet`
-(system duration, via `scripts/analyze_lmp_residual.py`).
+(system duration, via `scripts/archive/analyze_lmp_residual.py`).
 
 **System level + duration ($/MWh):**
 
@@ -6580,7 +6580,7 @@ re-tuned** — zero changes to the sign-off config; ERCOT/PJM/CAISO untouched
 drift since sha `6fbf83d` and probe deltas read directly against the keeper.
 Ten ±0.05 single-knob probes chain off it via `--offer-curve-delta-json`
 (each consecutive bundle pair is a verified pure-curve observation; REGISTRY
-entries added to `scripts/derive_offer_curve_jacobian.py`, plus the NEISO
+entries added to `scripts/data/derive_offer_curve_jacobian.py`, plus the NEISO
 state set for the merit-order adjacency check):
 
 CC_REGULAR committed ±, CC_REGULAR econ_high ±, CT_PEAKER committed ±,
@@ -6594,7 +6594,7 @@ panel's oil/dual-fuel coverage — and they are **dead knobs** (below).
 
 ### Knob → objective map (Jacobian, 10 pure pairs, year 2024)
 
-`python scripts/derive_offer_curve_jacobian.py --iso NEISO --baseline
+`python scripts/data/derive_offer_curve_jacobian.py --iso NEISO --baseline
 neiso_p12_base_2024 --validate-run neiso_probe_base_2024` → 70 NEISO cells in
 `inputs/processed/offer_curve_jacobian.csv`. High-confidence rows:
 
@@ -6697,7 +6697,7 @@ the committed `neiso-zonal-adequacy.md` table (every pocket-vs-hub median
 + RSP Tier-3 TTC seeds carry small, winter-loaded, CT-led separation and do not
 create spurious congestion — load zones and TTC links are sound. Drift-check
 tooling added: `scripts/probes/_neiso_probe_compare.py` (per-class TWh + dw-price diff
-of two bundles) and `scripts/_run_neiso_probe_panel.sh` (panel reproduce
+of two bundles) and `scripts/archive/_run_neiso_probe_panel.sh` (panel reproduce
 harness, concurrency-capped at 2 for the multi-GB per-plant LP).
 
 ## NEISO — full 3-year backcast re-run on current main (2026-06-16, sha `8429fdb`)
@@ -6926,7 +6926,7 @@ single-knob entries were registered then pruned per the 5-run retention
 (`caiso 1`/`caiso 2` retained; all 12 bundles kept under
 `results/calibration/caiso_probe_*`). Jacobian:
 `inputs/processed/offer_curve_jacobian.csv` (iso=CAISO, year=2023) +
-REGISTRY/ISO_STATES entries in `scripts/derive_offer_curve_jacobian.py`.
+REGISTRY/ISO_STATES entries in `scripts/data/derive_offer_curve_jacobian.py`.
 
 ## ERCOT Runs 98a/98b — the committed-band inversion, the split verdict, and the published ORDC μ/σ (2026-06-13)
 
@@ -7092,7 +7092,7 @@ The run-97a decomposition measured 31/38/44% of CEMS-covered CT_PEAKER energy
 (2023/24/25) running out of merit — hours where the RT price was below the
 unit's marginal cost — the IMM-documented ancillary-service / reliability-
 unit-commitment deployment + reserve-adequacy wedge (~1.4–2.3 TWh/yr) the
-energy-only LP structurally cannot dispatch. `scripts/derive_ct_deployment.py`
+energy-only LP structurally cannot dispatch. `scripts/data/derive_ct_deployment.py`
 measures it directly from CAMPD CEMS: for each CEMS-covered CT plant and each
 hour it generated, the hour is a **deployment hour** when `net_mw > 1` AND
 `actual RT LMP < plant_avg_heat_rate × gas_price + CT_VOM` (hr-mult 1.0,
@@ -7192,7 +7192,7 @@ carried as the documented residual (same philosophy as the PRB carve-out).
 
 Keeper: run 109a (supersedes run 97a; `calibration-best-so-far.md` updated).
 New code (default off, forecast-safe): `ScenarioConfig.ct_deployment_overlay`
-+ `ct_deployment_floor_frac`, `scripts/derive_ct_deployment.py`,
++ `ct_deployment_floor_frac`, `scripts/data/derive_ct_deployment.py`,
 `outages.ct_deployment_floor_for_year`, the `fleet.generators_to_fleet_arrays`
 min-gen block, the `--ct-deployment` flag, and the `_json_default` bundle-dump
 fix. New dead levers (do not re-probe): ST_GAS committed bid raise (cliff,
@@ -7246,7 +7246,7 @@ Tests: 295 pass (zone/transmission/neiso/iso/hydro/fuel). See
 
 ## Cross-ISO — CT_PEAKER AS-deployment overlay generalized to PJM/CAISO/NYISO/NEISO; the PJM blanket-floor refutation (2026-06-13)
 
-**The ERCOT AS-deployment overlay (runs 97a/103–109, `scripts/derive_ct_deployment.py`
+**The ERCOT AS-deployment overlay (runs 97a/103–109, `scripts/data/derive_ct_deployment.py`
 + `outages.ct_deployment_floor_for_year` + `ScenarioConfig.ct_deployment_overlay`)
 is now ISO-parameterized and extended to the four remaining ISOs.** This entry
 records (a) the PJM blanket-floor measurement that proves the targeted overlay is
@@ -7421,7 +7421,7 @@ and is stale.
 
 ### 1. Merrimack (ORIS 2364) — bituminous, COAL_BIT (data-driven, no fitted value)
 
-`scripts/derive_coal_supply.py --iso NEISO` sums Merrimack's EIA-923 Schedule-5
+`scripts/data/derive_coal_supply.py --iso NEISO` sums Merrimack's EIA-923 Schedule-5
 fuel receipts (54,050 tons 2023-2025) → **100 % bituminous** →
 `inputs/processed/coal_supply_NEISO.csv` (`2364,bituminous,receipts`).
 `fleet.coal_supply_class(2364)` now returns `bituminous`, so the dispatch class,
@@ -7501,7 +7501,7 @@ cannot move energy to CT_PEAKER/ST_GAS/oil, and the cross-ISO work proved a
 *blanket* CT floor injects net gas. The one sanctioned lever for the CT gap is
 the **targeted `ct_deployment` overlay** (floors CT to its measured output only
 in the sub-marginal hours CEMS shows it running while RT LMP < its MC). Deriving
-it for NEISO (`scripts/derive_ct_deployment.py --iso NEISO` →
+it for NEISO (`scripts/data/derive_ct_deployment.py --iso NEISO` →
 `inputs/calibration/ct_deployment_floor_NEISO.parquet`) measures the wedge at
 **0.08 / 0.04 / 0.05 TWh** (2023/24/25) — small, as expected for NEISO's 8-9-plant
 CT fleet.
@@ -7771,7 +7771,7 @@ main: `test_caiso_per_hub_intertie::test_split_resolves_to_two_flow_columns`.
 Follow-up on caiso-53's root-cause item 1 (2023 C3c tail 454h >$200 vs 21h
 actual, Jan-concentrated): intakes the daily California Composite Average
 citygate spot (EIA NG Weekly compact "Spot Prices" table, the same page
-Transco Z6 NY is scraped from, `scripts/fetch_caiso_citygate_daily.py`,
+Transco Z6 NY is scraped from, `scripts/data/fetch_caiso_citygate_daily.py`,
 2023-2025 only per the holdout quarantine) and adds a CAISO leg to
 `iso_hub_daily_gas_prices` (`_caiso_hub_daily_gas_prices`) that replaces the
 flat monthly SoCal/PG&E citygate hub level with a true-calendar-dated daily
@@ -7827,7 +7827,7 @@ UNCAPPED). Design + full writeup: `docs/handoffs/ercot-rtolcap-forward-2026-07.m
 responsive class, the median on-line **headroom-realization** fraction
 `Σ_online(eff_cap−gross)/installed_cap` from the committed CAMPD extracts,
 conditioned on the net-load percentile decile × season
-(`scripts/derive_ercot_rtolcap_forward.py`, rule #23), × the fleet's
+(`scripts/data/derive_ercot_rtolcap_forward.py`, rule #23), × the fleet's
 reserve-eligible capacity, × a deliverability coefficient fit to the measured
 RTOLCAP/RTOFFCAP **MW quantity** (never a price). Mode-aware seam (G4 pattern):
 backcast byte-identical measured parquet, forecast/probe-flag the formula. The
@@ -8790,7 +8790,7 @@ edits made after the solve's imports resolved).
 
 ### 2. Honesty-gate data ask LANDED: measured MISO ASM series intaken (`data/raw/MISO-AS`)
 
-The diagnosis-§5 blocking data ask is closed: `scripts/fetch_miso_asm.py` stages MISO's daily market
+The diagnosis-§5 blocking data ask is closed: `scripts/data/fetch_miso_asm.py` stages MISO's daily market
 reports — zonal DA ex-ante / RT final reserve MCPs (zone-level dedupe) and hourly REGIONAL cleared
 reserve MW by product (reg/spin/supp/STR, aggregated from the masked `asm_rt_co` cleared-offers
 zips) — 2023–2025 complete, zero missing days, ~2.8 MB parquet (PJM-AS staging precedent).
@@ -8930,18 +8930,18 @@ keeper's deferred D-3 ablation twin (audit_keepers E9).
 
 - **EIA-930 per-seam flows** — `data/raw/eia-930-interchange/ISNE interchange hourly.parquet`
   (HQT / NBSO / NYIS DIBAs, 2023–2025) via the new reproducible
-  `scripts/fetch_eia930_interchange.py` (closes that README's "no fetch script" gap). Per-seam
+  `scripts/data/fetch_eia930_interchange.py` (closes that README's "no fetch script" gap). Per-seam
   totals reconcile exactly with the eia-930-hourly `Total interchange` benchmark
   (−15.14/−10.35/−8.13 TWh). Seam texture: HQ deliveries collapse 10.6 → 2.8 TWh across
   2023→2025; NYISO seam grows 2.6 → 4.3 TWh.
 - **NYISO proxy-bus DA LBMPs** — `data/raw/_validation-source/nyiso_proxy_lmp_hourly_NEISO.parquet`
   (border-lmp schema; hubs `NYISO_HQ` $24.57/$33.10/$55.99, `NYISO_NPX` $35.30/$39.44/$68.15) via
-  `scripts/build_nyiso_proxy_lmp_neiso.py` from the NYISO MIS public monthly archives (36 zips,
+  `scripts/data/build_nyiso_proxy_lmp_neiso.py` from the NYISO MIS public monthly archives (36 zips,
   gitignored ~13 MB, regenerable from stable public URLs). NYISO_HQ is HQ's measured
   alternative-market price — the nearest public measure of its opportunity cost (HQ has no hub);
   NYISO_NPX is the NY-side NY–NE interface price.
 
-### Recalibration (`scripts/derive_neiso_import_tranches.py`, frozen formula)
+### Recalibration (`scripts/data/derive_neiso_import_tranches.py`, frozen formula)
 
 Per-seam **Q-Q duration coupling**: rung price = measured ISO-NE DA hub-LMP quantile whose
 exceedance duration matches the measured duration of the seam flow above the rung's
@@ -9012,7 +9012,7 @@ wind AND solar `ACTUAL`/`HSL` values in every NP6 report vintage covering those 
 `ACTUAL_LZ_WEST` wind = 276,466 MW on 2024-08-23 HE1) — a defect in ERCOT's own published file,
 not a parsing artifact (identical across every later repost of the rolling window). It had
 inflated the previously-committed 2024 parquet's wind peak to an impossible 161.5 GW.
-`_KNOWN_BAD_NP6_WINDOWS` in `scripts/build_ercot_hsl.py` now excludes exactly this cited window
+`_KNOWN_BAD_NP6_WINDOWS` in `scripts/data/build_ercot_hsl.py` now excludes exactly this cited window
 (nulled, then linearly interpolated from the clean Aug 19/24 endpoints) — narrow and documented,
 does not weaken the general `_MAX_GAP_HOURS` guard for any other window/year/upload. Separately
 fixed a 2025-schema HSL-column-preference bug (`SYSTEM_WIDE_GEN`/`SYSTEM_WIDE_HSL` replacing
@@ -9069,7 +9069,7 @@ dumping and storage absorption timing — on a byte-faithful ercot38 re-solve
 (`results/calibration/_diag_ercot38_baseline`, static TTC; reproduces ercot38
 dispatch exactly: model wind 110.84/116.28/120.38 TWh 2023/24/25). Full evidence:
 `docs/handoffs/ercot-vre-undercurtailment-step2-2026-07.md`. Analysis driver
-`scripts/_diag_vre_curtailment.py`; added a `dump` column to `system.parquet` so
+`scripts/archive/_diag_vre_curtailment.py`; added a `dump` column to `system.parquet` so
 the LP's per-zone overgeneration `Dump[z,t]` is persisted.
 
 **Q1 dumping — NOT the mechanism.** The `dump_cost` negative-MC guard never binds:
@@ -9529,7 +9529,7 @@ in summer via (a) no coal summer ambient derate and/or (b) the flat/inverted CAM
 coal offer tranches (peaking 1.05× < committed 1.15×).
 
 **Lever B (coal summer capacity derate) — DATA-REFUTED (rule 11).** Per-plant CAMPD
-daily-max CF (p99, `scripts/derive_coal_max_cf.py` method, split Jun-Sep vs
+daily-max CF (p99, `scripts/data/derive_coal_max_cf.py` method, split Jun-Sep vs
 shoulder) shows **no summer output depression** for any of the 10 ERCOT coal
 plants — summer p99 ≈ or exceeds shoulder p99 (W A Parish 1.51/1.37, Limestone
 0.95/0.88, all others flat). The cooling-water/condenser-backpressure derate leaves
@@ -9964,7 +9964,7 @@ the fix: a cited `D4_WINDOWS` entry + bundle regen, no re-solve.
 **Drag re-adjudication (the G-05 stale premise).** G-05 rejected switching
 NYISO ST_GAS onto `gas_st_netload_drag` when the drag was windowed [15,22);
 the ERCOT-46/PJM-94 keepers have since made it ALL-HOURS — worth re-testing.
-Built `scripts/derive_nyiso_st_gas_netload_drag.py` (PJM-construction-
+Built `scripts/data/derive_nyiso_st_gas_netload_drag.py` (PJM-construction-
 faithful: EIA-930 NYIS net-load, CAMPD overnight CF of the 7 pure-play
 6.38-GW ST_GAS plant set, hinge fit). It FAILS its own pre-registered honesty
 gates: overnight Spearman rho 0.32/0.39/0.72 class-wide (0.30/0.28/0.57
@@ -10317,11 +10317,11 @@ scratch this session.)
 (`ancillary-hourly-rr`; CSV endpoint
 `iso-ne.com/transform/csv/hourlyrequirements`, isox_token cookie bootstrap),
 2023–2025 in 75 fixed 15-day window CSVs (gitignored; committed downloader
-`scripts/fetch_neiso_reserve_requirements.py`). New generic
+`scripts/data/fetch_neiso_reserve_requirements.py`). New generic
 `reserve-requirements` clean datatype (schema
 `data/dictionary/schema/reserve-requirements.schema.yaml`, per-ISO registry
 `scripts/lib/reserve_requirements/`, curation
-`scripts/curate_reserve_requirements.py`, NEISO registered first): tidy
+`scripts/data/curate_reserve_requirements.py`, NEISO registered first): tidy
 (iso, location, product, utc-hour) rows, hour-ending labels aligned to true
 UTC hours (DST-aware; fall-back `02` repeat and spring-forward skip
 generated, never special-cased), single-hour publication holes step-filled
@@ -10502,7 +10502,7 @@ interchange is direction-structural (exports to MISO/NYISO in ~97–100% of
 ALL hours, imports from Carolinas/TVA/LGEE in 77–97% — firm PTP schedules
 revealed only statistically), which the hurdle-gated spot-spread reference
 seam inverts. Fix is the MISO/NEISO measured-ladder pattern applied to PJM:
-`scripts/derive_pjm_seam_ladders.py` Q-Q duration-couples PJM's
+`scripts/data/derive_pjm_seam_ladders.py` Q-Q duration-couples PJM's
 settlement-grade tie-line flows (`PJM_{year}_import_export_act_sch_
 interchange.csv`, pooled onto the five priced seams by the new
 `interchange_config.PJM_SEAM_TIE`) with the measured PJM DA system LMP →
@@ -10686,7 +10686,7 @@ back — a smear artifact). C3c-2024 therefore STAYS LEDGERED as the filed
 G-22 offer-formation residual (rules 1/13; no retune; ORDC frozen, rule 26).
 
 **Fix landed as measured data (rules 14/15).**
-`scripts/derive_ercot_nuclear_availability.py` →
+`scripts/data/derive_ercot_nuclear_availability.py` →
 `data/raw/ercot-nuclear-availability.csv`: per-reactor DAILY availability
 from the 60-Day DAM disclosure NUC Resource Status (2023-2025 delivery
 dates), monthly energy reconciled to the standing EIA-923 anchor — event
@@ -10894,7 +10894,7 @@ defect PRE-DATES ercot56; the honest nuclear input moved more days over the
 same cliff.
 
 **Fix landed as measured data (rules 13/14/15).**
-`scripts/derive_ercot_thermal_dam_availability.py` →
+`scripts/data/derive_ercot_thermal_dam_availability.py` →
 `data/raw/ercot-thermal-dam-availability.csv`: measured CLASS-day thermal
 availability from the 60-Day DAM disclosure (config-collapsed live Gen_Resource
 HSL / site p98 ratings; OUT counts zero, OFF counts its reported HSL —
@@ -11256,7 +11256,7 @@ archive for 2023–2025 (`hbdayaheadenergyoffer` daily CSVs, masked assets;
 1,058/1,096 days — the 38 absent days are scattered month-ends the endpoint
 504s on at its own gateway timeout, retried across sessions, documented in
 the derive provenance; all 9 DA>$300 tail-event days verified present).
-Derive `scripts/derive_neiso_offer_surface.py` → frozen
+Derive `scripts/data/derive_neiso_offer_surface.py` → frozen
 `data/raw/_validation-source/neiso_offer_surface_condbinned.json`: ~1.78M
 asset-hours, 110 physics-selected fast-start assets (Claim30 ≥ 0.9×EcoMax);
 per-asset median top-of-curve HR multipliers, capacity-weighted into 5
@@ -12829,9 +12829,9 @@ all-ISO re-render in the session charter). No LP was solved.
 **The defect.** Every model 8760 series is CHRONOLOGICAL — row k = k-th real
 (UTC) hour after local standard-time midnight Jan 1 (`eia_loader._eia_hourly_frame`
 sorts by UTC; demand, interchange, HSL renewables share the clock). But
-`scripts/derive_actual_lmp.py` indexed the actual-LMP parquets by the reports'
+`scripts/data/derive_actual_lmp.py` indexed the actual-LMP parquets by the reports'
 DST *prevailing* wall labels (fall-back hour averaged, spring-forward hour
-NaN'd), and `scripts/derive_miso_hub_lmp.py` / `fetch_neighbor_lmp.py` did the
+NaN'd), and `scripts/data/derive_miso_hub_lmp.py` / `fetch_neighbor_lmp.py` did the
 same for MISO via an explicit EST→Central-prevailing conversion. Result: every
 hourly-paired diagnostic (`lmpDeltaHr` heatmap, scarcity-overlay demand-weighted
 monthly MAE via `_actual_rt_padded`, any hour-of-day residual analysis) paired
@@ -12992,7 +12992,7 @@ through Dec-2025 deliveries, derive the measured storage capability basis, wire
 it as the backcast battery power basis, probe-ladder the re-basis and the
 endogenous split, and take the full-span candidate through the gates.
 
-**Intake (`scripts/fetch_ercot_60day_gen_resource.py`, new).** NP3-966-ER daily
+**Intake (`scripts/data/fetch_ercot_60day_gen_resource.py`, new).** NP3-966-ER daily
 bundles, publications 2026-01-01..2026-03-01, fetched over the free MIS API →
 `60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_2026_Jan-Mar.parquet`
 (deliveries 2025-11-02..12-31) **plus the NEW `..._ESR_Data_2026_Jan-Mar.parquet`
@@ -13011,7 +13011,7 @@ owner's 2026-07-15 binary-transport probe + the all-ISO clock-fix session's
 multi-MB parquet pushes re-validated the transport; this session pushed a 20 MB
 pack without incident). The banned-workflow/MCP-only guidance predates this.
 
-**Derive (`scripts/derive_ercot_storage_capability.py`, new, rule-23 FROZEN).**
+**Derive (`scripts/data/derive_ercot_storage_capability.py`, new, rule-23 FROZEN).**
 Hourly ISO-wide battery capability = Σ non-OUT HSL over PWRSTR rows (+ ESR rows
 post-RTC+B), prevailing→CST clock via the shared `prevailing_he_to_cst`, gaps
 ≤24 h interpolated, the Oct-2023 hole left NaN →
@@ -13420,7 +13420,7 @@ May-8 −261.5, shoulders May-9/10/12/13/21/27/29/30 = −30.8/−15.7/−20.4/�
 existing `ercot_offer_surface_conditional` reprices only the gas PEAK rungs
 (top ~263 h/yr); this adds the ERCOT analogue of the PJM mid-curve surface
 (`ercot_offer_surface_midcurve_conditional`): a frozen derive
-(`scripts/derive_ercot_offer_midcurve.py`, rule 23) samples the 60-Day DAM
+(`scripts/data/derive_ercot_offer_midcurve.py`, rule 23) samples the 60-Day DAM
 disclosure offer curves within-unit by HSL share, capacity-weighted MEAN
 implied-HR mult per (gas class, year, net-load bin, share) at finer edges
 (0.50/0.70/0.85/0.95); `fleet.build_ercot_offer_midcurve_conditional_markup`
@@ -13901,8 +13901,8 @@ days, direct physical measurement, no withholding confound; public domain, raw
 files committed).
 
 **Build (all committed, default-off, byte-identical off):**
-`scripts/fetch_nrc_reactor_status.py` + `data/raw/nrc-reactor-status/`;
-`scripts/derive_nuclear_availability.py` → `data/raw/nuclear-availability-PJM.csv`
+`scripts/data/fetch_nrc_reactor_status.py` + `data/raw/nrc-reactor-status/`;
+`scripts/data/derive_nuclear_availability.py` → `data/raw/nuclear-availability-PJM.csv`
 (ERCOT reconciliation ported verbatim — EVENT_RAW_MAX 0.90 / cap 1.0 / clip
 1.25 frozen; 923 anchor owns LEVEL, NRC owns TIMING; uprate-wedge months the
 capped fixed-point cannot bring within the existing 1 % tolerance are DROPPED
@@ -13955,7 +13955,7 @@ solve only if the caiso-81/86/87 estimation gates pass.
 **Intake (new, committed):** `data/raw/gas-prices/sumas_weekly.csv` — the
 measured **Northwest Sumas** weekly Wednesday spot print ($/MMBtu), scraped
 from the EIA Natural Gas Weekly Update archive narrative by
-`scripts/fetch_sumas_weekly.py` (clone of the `fetch_pge_socal_citygate_daily`
+`scripts/data/fetch_sumas_weekly.py` (clone of the `fetch_pge_socal_citygate_daily`
 pattern; 146 pages 2023→2026, 123 dated Wednesdays, 0 conflicts after the
 stale-republish guard). Malin itself has no row in the archive's compact spot
 table (Henry Hub / New York / Chicago / Cal. Comp. Avg. only — verified) and no
@@ -13969,7 +13969,7 @@ forward (2024-03-06 would read $1.49 where the genuine 2024-03-14 overlap
 print says $1.87) — the fetcher now drops any page whose matched sentence is
 character-identical to the immediately preceding issue's.
 
-**Derivation (`scripts/derive_caiso_pnw_surplus_depth.py`, no LP):** trigger =
+**Derivation (`scripts/data/derive_caiso_pnw_surplus_depth.py`, no LP):** trigger =
 MALIN nodal DA LMP < 6.97 × Sumas + $2.5 (the identical remote-CCGT-floor
 construction the south passed); depth = p95 of measured WECC_PNW net import
 (EIA-930 CISO DIBAs, model clock) over trigger-ON hours.
@@ -14319,7 +14319,7 @@ must-offer, and the disclosure measures the consequence directly:
   the offered subset.
 * The cleared share is CONDITION-RESPONSIVE and year-stable: CC 0.33 (p0-25
   net-load bin) -> 0.64 (p97+), CT 0.03 -> 0.47, within ±0.03 across 2023-2025
-  (`scripts/derive_ercot_dam_cleared_share.py`, frozen rule-23 artifact
+  (`scripts/data/derive_ercot_dam_cleared_share.py`, frozen rule-23 artifact
   `data/raw/_validation-source/ercot_dam_cleared_share_condbinned.json`).
 * BUT the DA stack is not the RT supply: on Aug-2024 afternoons (h14-19) the
   real CC fleet ran 23.8 GW RT against 18.0 GW DA-offered / 20.3 GW DA-cleared —
@@ -14473,7 +14473,7 @@ the class to its envelope and the same capacity is inframarginal near cost.
 `ercot_offer_surface_cleared_share_state` (requires the wall flag; hard error
 alone): each walled row-hour's markup scales by w_c(t) = clip((online_cap -
 gross)/(online_cap - cleared), 0, 1) — floored bid = base + w x (wall - base).
-Frozen rule-23 artifact (`scripts/derive_ercot_commitment_loading_state.py`;
+Frozen rule-23 artifact (`scripts/data/derive_ercot_commitment_loading_state.py`;
 CAMPD CEMS envelope + gross — the campd-unit-outages source family — x DAM
 awards rebased via the measured live-HSL share); zero fitted scalars;
 year-stable (CC mean w 0.60/0.61/0.65 across 2023-25). Backcast years read the
@@ -14700,7 +14700,7 @@ parameters — nothing refit per fold, so each year is effectively held out;
 `carry_operating_mothballs` measured-physical entry (n_scalars=0);
 miso-68 attestation = 21 entries / 2 residual (miso-67 was 20/2), the +1
 being the new boolean-arming-measured-data row
-(`scripts/gen_miso68_attestation.py`).
+(`scripts/archive/gen_miso68_attestation.py`).
 
 **Determination:** NOT-YET both arms — identical fail set to the miso-67
 keeper {C1 CC_REGULAR-2023 (shrunk), C3a, C3c}. **Keeper decision: owner's
@@ -14910,7 +14910,7 @@ rt − (RTORPA+RTORDPA) < $200 (the crossing needed the reserve adders);
   the conditional peak surface's trigger bins entirely.
 
 **Leg 1 — the named identification intake + the decisive measurement.** New
-`scripts/fetch_ercot_60day_sced_gen_resource.py` (NP3-965-ER, reportTypeId
+`scripts/data/fetch_ercot_60day_sced_gen_resource.py` (NP3-965-ER, reportTypeId
 13052 — the 60-Day SCED disclosure Gen Resource Data: the telemetered SCED1/
 SCED2 RT energy offer curves, submitted TPOs, HASL/HDL/Base-Point/TNO
 telemetry at ~15-min disclosure grain). Retention wall re-measured live:
@@ -15155,7 +15155,7 @@ Charter: `docs/handoffs/miso-price-formation-design-2026-07.md` §3/M-2
 **Mechanism (zero fitted DOF).** `ScenarioConfig.unit_outage_maxgen_events`
 (tier 3, default OFF): CAMPD revealed unit derates INSIDE the ISO's declared
 capacity-emergency windows only. Deriver
-`scripts/derive_campd_maxgen_outages.py` → `campd-unit-outages-maxgen-
+`scripts/data/derive_campd_maxgen_outages.py` → `campd-unit-outages-maxgen-
 MISO.csv` (2,158 rows), consumed hour-granularly by
 `outages.unit_outage_maxgen_derate_factors` beside the std/short overlays —
 CLASS-AGNOSTIC (the only channel that can carry the measured CT/CC
@@ -15225,7 +15225,7 @@ analogue).
 channel remain in the codebase as measured structure (rule 1); no keeper
 arms it. DOF: main 23/2 (the +2 pre-declared measured-physical entries:
 registry + derates), base 21/2. C6 PASS both (attestations
-`scripts/gen_miso69_attestation.py`). No ablation twin (rule 20 as amended
+`scripts/archive/gen_miso69_attestation.py`). No ablation twin (rule 20 as amended
 2026-07-14). Registration chain: dashboard_add_run → attestation/ledger →
 legitimacy regen → calibration_verdict --write-metrics → parity OK (47
 runs) → build_manifest. MISO registry at 11 runs (< 15, no pruning).
@@ -15616,7 +15616,7 @@ tier price formation miso-69 proved missing). By rule 1 — a keeper is the
 most structurally faithful run, not the lowest-MAE run — **miso-70-main is
 recommended as the new MISO keeper; the swap is owner-only and awaits the
 owner.** DOF: main 24/2 (+1 tier-floor schedule on miso-69's 23/2), base
-21/2. C6 PASS both (attestations `scripts/gen_miso70_attestation.py`). No
+21/2. C6 PASS both (attestations `scripts/archive/gen_miso70_attestation.py`). No
 ablation twin (rule 20 as amended 2026-07-14). Registration chain:
 dashboard_add_run → attestation/ledger → legitimacy regen (D-5 entry live)
 → calibration_verdict --write-metrics → parity OK (49 runs) →
@@ -16475,12 +16475,12 @@ create_branch + git push onto the recreated ref.
 **Full record: `results/calibration/FINDING-caiso94-daytime-wedge-2026-07-17.md`.**
 The caiso-93 promotion handoff's next charter (deciding criterion C3a-2025
 +13.3%), executed derive-first from committed data only
-(`scripts/derive_caiso_daytime_wedge.py`, cloned from the frozen
+(`scripts/data/derive_caiso_daytime_wedge.py`, cloned from the frozen
 `derive_caiso_overnight_wedge.py`; gates frozen in the docstring before
 results; every leg inherited from a committed construction — the caiso-87
 trigger, the caiso-82 §1 parity spread, the caiso-88/93 depth/gate template —
 sliced to the daytime hod blocks × season). Companion
-`scripts/derive_caiso_daytime_finegrain.py` (post-hoc fine-grain, sequencing
+`scripts/data/derive_caiso_daytime_finegrain.py` (post-hoc fine-grain, sequencing
 disclosed).
 
 **Gate results (frozen G1/G2/G3):** G1 no-wedge (per-year OFF median
@@ -16853,7 +16853,7 @@ extends the P1-native RA must-offer bridge: every detected
 by its measured start-to-load ramp — the L pre-start OFF-hours floor at the
 linear ramp-in toward min-load, maximum-composed with the gap bridges, D-2
 attribution unchanged (`ra_mustoffer_bridge`). L = per-plant CAMPD p50
-off→on-to-full-load duration (`scripts/derive_campd_cc_start_trajectory.py`,
+off→on-to-full-load duration (`scripts/data/derive_campd_cc_start_trajectory.py`,
 gates FROZEN pre-solve: ≥100 events/IQR≤4h/LOYO≤1h; 8,986 CA CC start events
 2023–25; 25 accepted plants, leads 1–6 h; class p50 3 h LOYO-stable to 0.0 h —
 matching the caiso-95 "model starts ~3 h late" measurement exactly). Zero new
@@ -17140,7 +17140,7 @@ run, keeper unchanged (caiso-94), all config/derive-script bytes untouched.
 
 **Derive-first result — the pre-registered hod-trim is derivationally
 viable.** A read-only scratchpad variant of
-`scripts/derive_caiso_daytime_clean_depth.py` (identical loaders, trigger,
+`scripts/data/derive_caiso_daytime_clean_depth.py` (identical loaders, trigger,
 p95 statistic, frozen CV ≤ 0.20 / LOYO ≤ 25 % gates; the 6-21 reference leg
 reproduces the committed 5,441/5,762/5,998 MW byte-for-digit as the
 self-check) measured the trimmed hod 6-17 trigger-OFF window the WP-2 build

@@ -6,13 +6,13 @@ calibration reference now carries for NEISO, the fleet sanity check against
 ISO-NE CELT/RSP, CEMS state coverage, and the open items mapped to the doc-08
 upload manifest (U1–U7). Done together with the NYISO audit
 (`nyiso-data-audit.md`) in one pass — both ISOs share
-`scripts/build_calibration_reference.py` + `calibration_reference.json`.
+`scripts/data/build_calibration_reference.py` + `calibration_reference.json`.
 
 ---
 
 ## 1. Calibration reference — extended for NEISO 2023–2025
 
-`scripts/build_calibration_reference.py` now derives NEISO (and NYISO)
+`scripts/data/build_calibration_reference.py` now derives NEISO (and NYISO)
 alongside ERCOT/PJM/CAISO. NEISO uses a per-ISO year override
 (`CALIBRATION_YEARS_BY_ISO["NEISO"] = (2023, 2024, 2025)`) with BA code `ISNE`
 — NEISO has the most complete CEMS coverage of the new ISOs, so all three years
@@ -224,7 +224,7 @@ $36.8/$41.5/$67.9.
 (2026-06-24, neiso-27).** The ICE/Platts daily AGT spot is paywalled, but EIA
 quotes the real Algonquin Citygate spot in the *prose* of every Natural Gas
 Weekly Update ("…the price went up $9.31 from $4.04/MMBtu last Wednesday to
-$13.35/MMBtu yesterday…"). `scripts/fetch_algonquin_daily_spot.py` harvests these
+$13.35/MMBtu yesterday…"). `scripts/data/fetch_algonquin_daily_spot.py` harvests these
 into `data/raw/gas-prices/algonquin_citygate_daily.csv` — **123 hard-dated real
 AGT prints 2023–2025**, two Wednesdays per weekly page plus winter high/low days,
 densest in the cold weeks that set the tail (max $28.36 on 2023-02-02). The
@@ -326,7 +326,7 @@ EIA-923 oil column in `data/raw/_validation-source/calibration_reference.json`
 **Merrimack classified bituminous (COAL_BIT), data-driven.** The lone NEISO coal
 unit (ORIS 2364, Bow NH; Granite Shore Power) previously carried `supply = ''`
 (unclassified) and fell to the generic `COAL` default for both delivered fuel
-cost and offer-curve key. `scripts/derive_coal_supply.py --iso NEISO` — the same
+cost and offer-curve key. `scripts/data/derive_coal_supply.py --iso NEISO` — the same
 EIA-923 Schedule-5 receipts machinery already used for PJM — sums the plant's
 coal receipts (54,050 tons 2023-2025) and finds them **100 % bituminous**,
 writing `data/raw/_processed-legacy/coal_supply_NEISO.csv` (`2364,bituminous,receipts`).
@@ -367,7 +367,7 @@ the cheapest gas, ~95 % of the EIA-923 prime-mover split); the CT_PEAKER (~2 TWh
 
 **CT_PEAKER reserve recovered via the ct_deployment overlay (keeper neiso 16).**
 The one sanctioned lever for the CT gap — the targeted `ct_deployment` overlay
-(`scripts/derive_ct_deployment.py --iso NEISO` →
+(`scripts/data/derive_ct_deployment.py --iso NEISO` →
 `data/raw/_validation-source/ct_deployment_floor_NEISO.parquet`, wedge 0.08/0.04/0.05 TWh)
 — floored CT correctly in P1 but was **stripped by the P2 commitment screen**
 because `commitment.apply_commitment_with_coal_pin` rebuilt the P2 fleet without

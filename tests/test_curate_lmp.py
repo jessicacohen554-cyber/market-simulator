@@ -1,4 +1,4 @@
-"""Tests for scripts/curate_lmp.py.
+"""Tests for scripts/data/curate_lmp.py.
 
 Builds a tiny synthetic raw fixture for each source layout (CAISO CSV, PJM
 hourly CSV, NYISO 5-min zone ZIP, ISO-NE SMD workbook), runs the curation, and
@@ -17,7 +17,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_lmp
+from scripts.data import curate_lmp
 from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
 

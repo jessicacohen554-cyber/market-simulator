@@ -100,7 +100,7 @@ python scripts/probes/_pjm_retiree_run.py 2025 results/calibration/pjm_38_y2025
 python scripts/probes/_pjm_aswh_merge.py results/calibration/pjm_38 \
     results/calibration/pjm_38_y202{3,4,5}
 python scripts/probes/_pjm_score.py pjm_38
-python scripts/analyze_lmp_residual.py results/calibration/pjm_38
+python scripts/archive/analyze_lmp_residual.py results/calibration/pjm_38
 
 # old-keeper baseline: restore pre-filter outages first
 #   git show b0c41cb^:data/raw/campd-outages-PJM.csv > data/raw/campd-outages-PJM.csv

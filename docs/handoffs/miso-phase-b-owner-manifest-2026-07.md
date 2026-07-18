@@ -40,7 +40,7 @@ open item. Promote it once (1) is understood and (2)'s tail is unblocked.
 | Issue-1 display fix (wedge + CHP unfold) | patch `01-*.patch` | fd54a20 |
 | M-1 F4 findings memo | full doc | f8aecb5 |
 | mechanism (scenarios + fleet) | patches `02/03-*.patch` | 6674dab |
-| attestation generator | full script `scripts/gen_miso67_attestation.py` | fa40f84 |
+| attestation generator | full script `scripts/archive/gen_miso67_attestation.py` | fa40f84 |
 | dof-ledger + reserve citation | patches `04/06-*.patch` | fa40f84 |
 | per-year+reuse probe | full script `scripts/probes/_miso67_stgas_vlr_level.py` | eb3b1bf |
 
@@ -76,7 +76,7 @@ payload is ~1 MB and the bench is binary). Two options:
   python $P main --out-dir R/final --years 2023,2024,2025 --reuse-solved R/y2024
   python scripts/dashboard_add_run.py --label "miso 67 stgas p25 level" --bundle R/final
   python scripts/build_dof_ledger.py R/final --iso MISO
-  python scripts/gen_miso67_attestation.py
+  python scripts/archive/gen_miso67_attestation.py
   python scripts/legitimacy_diagnostics.py --bundle R/final --iso MISO --json-out R/final/legitimacy_diagnostics.json
   ```
   KEEP THE WORKING TREE CLEAN during the solve — an untracked file poisons the

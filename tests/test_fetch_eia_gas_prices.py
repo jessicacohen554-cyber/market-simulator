@@ -15,7 +15,7 @@ from tempfile import TemporaryDirectory
 
 _SPEC = importlib.util.spec_from_file_location(
     "fetch_eia_gas_prices",
-    Path(__file__).resolve().parent.parent / "scripts" / "fetch_eia_gas_prices.py",
+    Path(__file__).resolve().parent.parent / "scripts" / "data" / "fetch_eia_gas_prices.py",
 )
 feg = importlib.util.module_from_spec(_SPEC)
 _SPEC.loader.exec_module(feg)

@@ -72,7 +72,7 @@ config/scenarios.py                  model/transmission.py
    `min_event_hours`, `distribution`. Metadata columns (not consumed by the
    engine): `commit_frac`, `min_stable_pct`, `rho`, `n`, `baseline`,
    `baseline_commit`, `threshold_basis`. Derived by
-   `scripts/derive_reliability_coeffs.py` from CAMPD CF-vs-temperature
+   `scripts/data/derive_reliability_coeffs.py` from CAMPD CF-vs-temperature
    regressions; see coefficient methodology below.
 
 3. **`RELIABILITY_FLOOR_REGISTRY`** (`config/iso_configs.py`) — `dict[str,
@@ -154,8 +154,8 @@ admissibility test (CLAUDE.md Non-Negotiable Rules #9/#10/#11):
    CF so output matches actuals. The p97-CF ceiling used by the old
    mechanism is gone.
 
-Scripts: `scripts/derive_reliability_coeffs.py --iso ALL` (main deriver);
-per-ISO legacy scripts (`scripts/derive_*_reliability_floor.py`) are
+Scripts: `scripts/data/derive_reliability_coeffs.py --iso ALL` (main deriver);
+per-ISO legacy scripts (`scripts/data/derive_*_reliability_floor.py`) are
 archived but superseded.
 
 ## Adding a New ISO or Limb
@@ -168,7 +168,7 @@ To add reliability floors for a new ISO (or new limbs in an existing ISO):
    renewable profiles are used.
 
 2. **Derive coefficients**: run
-   `python scripts/derive_reliability_coeffs.py --iso <ISO>` — writes
+   `python scripts/data/derive_reliability_coeffs.py --iso <ISO>` — writes
    `data/raw/reference/reliability_floor_coeffs_<ISO>.csv`.
 
 3. **Enable**: set `reliability_floor=True` in the calibration config or

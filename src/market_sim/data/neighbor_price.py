@@ -91,7 +91,7 @@ _FORWARD_SKILL_MODES: frozenset[str] = frozenset({"elastic", "flat"})
 #   * **Organized-market neighbors with ``hr_by_year`` (MISO's PJM/SPP seams).**
 #     Backcast years use the measured per-year realized LMP anchor (rule #12); the
 #     affine coefficients price only FORECAST years (and the forward-skill
-#     validation). Fit by scripts/derive_neighbor_hr_elasticity.py.
+#     validation). Fit by scripts/data/derive_neighbor_hr_elasticity.py.
 #   * **Coal/nuclear-set neighbors with NO organized-market LMP (PJM's Southeast
 #     seams: Carolinas/TVA/LGEE).** SERC has no nodal LMP to anchor a per-year HR
 #     to, so the affine fuel-stack form is the neighbor's price-formation anchor in
@@ -105,7 +105,7 @@ _FORWARD_SKILL_MODES: frozenset[str] = frozenset({"elastic", "flat"})
 #     diurnal swing flipped it to a wrong-direction export (+2.0 TWh vs the
 #     measured −5.9); the affine form holds it at ~$33.9 (~$9 below PJM), so the
 #     structural net-import direction holds across the gas cycle. Derived/checked
-#     by scripts/derive_southeast_inelastic_hr.py.
+#     by scripts/data/derive_southeast_inelastic_hr.py.
 #
 # The keys are neighbor names, unique across the registries today (only MISO has a
 # ``PJM``/``SPP`` seam; only PJM has ``Carolinas``/``TVA``/``LGEE``), so this never
@@ -605,7 +605,7 @@ def seam_flow_direction(
 # A neighbor that is itself a modeled ISO (PJM's NYISO neighbor, NYISO's/NEISO's
 # PJM neighbor) carries a *realized* hourly LMP the constructed reference price
 # is anchored to and validated against (scripts.validate_neighbor_price; the
-# convexity fit in scripts.derive_neighbor_convexity). That series has always
+# convexity fit in scripts.data.derive_neighbor_convexity). That series has always
 # been read from the committed realized-LMP product under
 # ``paths.CALIBRATION_DIR`` (``actual_lmp_hourly_<ISO>.parquet``: a hub-mean of
 # the ISO's trading hubs on the model's fixed non-leap 8760-hour local calendar).
@@ -624,7 +624,7 @@ USE_CLEAN_ENV: str = "MARKET_SIM_USE_CLEAN"
 # product's ``rt`` / ``da`` columns; the clean tree keys on RTM / DAM.
 _RUN_TO_MARKET: dict[str, str] = {"rt": "RTM", "da": "DAM"}
 
-# The model's fixed non-leap dispatch calendar (matches scripts.derive_actual_lmp
+# The model's fixed non-leap dispatch calendar (matches scripts.data.derive_actual_lmp
 # and market_sim.data.campd): Feb 29 dropped, hours on the local wall clock.
 _LMP_HOURS_PER_YEAR: int = 8760
 _DAYS_IN_MONTH: tuple[int, ...] = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
@@ -646,7 +646,7 @@ def _use_clean() -> bool:
 def _hour_of_year(local_ts: pd.Series) -> np.ndarray:
     """Map tz-naive local timestamps to the fixed non-leap hour-of-year (Feb 29 -> -1).
 
-    Mirror of ``scripts.derive_actual_lmp._hour_index`` so the clean-backed
+    Mirror of ``scripts.data.derive_actual_lmp._hour_index`` so the clean-backed
     series lands on byte-identical hour slots to the realized product.
     """
     month = local_ts.dt.month.to_numpy()

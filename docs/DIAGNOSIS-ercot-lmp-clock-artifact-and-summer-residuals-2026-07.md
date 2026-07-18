@@ -34,7 +34,7 @@ Jan 1 — a fixed-offset (CST) clock with no DST discontinuities. Demand,
 interchange, and the NP6 HSL wind/solar parquet all share this clock (verified
 empirically: July-2024 demand diurnal peaks at h15–16 = 16:00–18:00 CDT ✓; HSL
 July solar dies at h19 = CST sunset 19:45 ✓; January edges exact ✓). The model
-is **internally consistent**. But `scripts/derive_actual_lmp.py` indexes the
+is **internally consistent**. But `scripts/data/derive_actual_lmp.py` indexes the
 ERCOT report's *prevailing-clock* date+hour straight into the 8760 calendar
 (`hoy = month_start + (d−1)·24 + (HE−1)`, fall-back averaged, spring-forward
 NaN). Result: for the ~5,600 DST hours/year, `lmpDeltaHr[k]` compares the

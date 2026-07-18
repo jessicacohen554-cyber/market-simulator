@@ -14,7 +14,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_storage_as_awards as curate_saw
+from scripts.data import curate_storage_as_awards as curate_saw
 from scripts.lib import clean_io
 from scripts.lib import storage_as_awards as saw
 from scripts.lib.storage_as_awards import caiso as saw_caiso

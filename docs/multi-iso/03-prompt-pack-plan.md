@@ -71,11 +71,11 @@ states, regional gas basis).
 - `src/market_sim/data/renewables.py` — generalize CF derivation beyond ERCOT;
   use the EIA-930 per-fuel distribution (HSL path stays ERCOT-only until doc 04
   HSL data exists for the ISO).
-- `scripts/build_calibration_reference.py` — extend the per-ISO-year emitter
+- `scripts/data/build_calibration_reference.py` — extend the per-ISO-year emitter
   (demand stats, generation_twh by fuel, gas price, wind/solar capacity with
   zone_shares + monthly_ramp). Output `data/raw/_validation-source/{ISO}_{year}_*.csv`
   and append to `calibration_reference.json`.
-- `scripts/derive_load_shares.py` — generalize to take an ISO + zonal-load file
+- `scripts/data/derive_load_shares.py` — generalize to take an ISO + zonal-load file
   (multi-zone ISOs).
 
 **Data deps:** doc 01 §2 (EIA-930), §3 (CEMS), §4 (gas basis), §5 (zonal load).

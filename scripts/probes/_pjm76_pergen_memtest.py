@@ -30,11 +30,11 @@ from scripts.run_calibration_full import (  # noqa: E402
     _load_reference,
     solve_and_persist,
 )
-from scripts.run_pjm74_cc_ct_rebalance import (  # noqa: E402
+from scripts.archive.run_pjm74_cc_ct_rebalance import (  # noqa: E402
     BIT_OVERRIDES,
     OFFER_CURVE_OVERRIDES,
 )
-from scripts.run_pjm75_ct_drag_cc_cap import (  # noqa: E402
+from scripts.archive.run_pjm75_ct_drag_cc_cap import (  # noqa: E402
     CONFIG_OVERRIDES,
     CT_DRAG_OVERRIDES,
 )

@@ -20,10 +20,10 @@ limits, and the calibration report can compare the modeled curtailment
 against the reported ``HSL - GEN``:
 
 * ERCOT — years with a built NP6 HSL parquet
-  (scripts/build_ercot_hsl.py; 2023 from the UMass 60-Day-SCED dataset,
+  (scripts/data/build_ercot_hsl.py; 2023 from the UMass 60-Day-SCED dataset,
   2024+ from uploaded ERCOT NP6 wind/solar production reports);
 * CAISO 2023/2024/2025 — EIA-930 delivered generation plus CAISO's reported
-  5-minute wind/solar curtailment (scripts/build_caiso_hsl.py). CAISO solar
+  5-minute wind/solar curtailment (scripts/data/build_caiso_hsl.py). CAISO solar
   curtailment is multi-TWh, so without this the model cannot re-curtail.
 
 For a **high-curtailment ISO whose year has no HSL parquet** (ERCOT 2024/25,
@@ -63,7 +63,7 @@ profile is unaffected (all NEISO wind is grid-connected), and its mean CF
 benchmarks against the EIA-923 fleet average (~0.30).
 
 If ISO-NE ever publishes granular curtailment data, a dedicated HSL parquet
-can be built following the CAISO pattern in scripts/build_caiso_hsl.py — see
+can be built following the CAISO pattern in scripts/data/build_caiso_hsl.py — see
 :func:`_hsl_file` for the data-needed marker.
 
 NYISO wind and solar curtailment is modest and NYISO does not publish an
@@ -262,7 +262,7 @@ _SOLAR_ZONE_SHAPE_ISOS: frozenset[str] = frozenset({"CAISO"})
 # so North's diurnal/seasonal shape differs materially from Central/South's.
 # Each listed ISO gets a per-zone wind SHAPE from MERRA-2 reanalysis wind speed
 # at its EIA-860 wind-plant locations passed through a turbine power curve (see
-# :func:`_wind_zone_reanalysis_shapes` and scripts/build_miso_wind_shape.py),
+# :func:`_wind_zone_reanalysis_shapes` and scripts/data/build_miso_wind_shape.py),
 # reconciled to the measured EIA-930 ISO-wide series exactly (system total and
 # annual energy unchanged — only the inter-zone split moves). Gated per ISO so
 # the redistribution cannot touch any other ISO's outputs; ISOs not listed keep
@@ -301,7 +301,7 @@ _COS_ZENITH_FLOOR: float = 1.0e-3  # guards the 1/cos(zenith) air-mass at the ho
 # is present, the ERCOT backcast builds its CF profiles from the hourly HSL
 # series rather than from EIA-930 delivered generation, so the dispatch
 # re-curtails under modeled transmission limits. Built by
-# scripts/build_ercot_hsl.py (2023 from the UMass 60-Day-SCED dataset;
+# scripts/data/build_ercot_hsl.py (2023 from the UMass 60-Day-SCED dataset;
 # 2024+ from uploaded ERCOT NP6 wind/solar production reports).
 _ERCOT_HSL_DIR: Path = ERCOT_HSL_DIR
 
@@ -316,7 +316,7 @@ _HSL_COLUMNS: tuple[str, ...] = (
 
 # CAISO uncurtailed renewable potential (the HSL analogue: EIA-930 delivered
 # + CAISO's reported wind/solar curtailment), one parquet per covered year
-# with the same schema as the ERCOT file. Built by scripts/build_caiso_hsl.py;
+# with the same schema as the ERCOT file. Built by scripts/data/build_caiso_hsl.py;
 # a year without a full-year curtailment workbook has no parquet here and
 # falls back to the delivered EIA-930 hourly profile.
 _CAISO_HSL_DIR: Path = CAISO_HSL_DIR
@@ -341,7 +341,7 @@ _NYISO_HSL_DIR: Path = NYISO_HSL_DIR
 # and the MISO backcast uses EIA-930 MISO delivered wind/solar generation
 # (which embeds the historical curtailment). When the MISO curtailment reports
 # can be pulled, build one parquet per backcast year (schema: ``_HSL_COLUMNS``,
-# HSL = delivered + reported curtailment) following scripts/build_caiso_hsl.py
+# HSL = delivered + reported curtailment) following scripts/data/build_caiso_hsl.py
 # and this branch will pick it up automatically.
 _MISO_HSL_DIR: Path = MISO_HSL_DIR
 
@@ -422,7 +422,7 @@ def _hsl_file(iso: str, year: int) -> Path | None:
     # NEISO: ISO-NE reported curtailment is sub-1 % of potential — the
     # delivered EIA-930 ISNE series is the documented default; no uncurtailed-
     # potential parquet is built.  To add one, follow the CAISO pattern in
-    # scripts/build_caiso_hsl.py and wire a ``_NEISO_HSL_DIR`` constant above.
+    # scripts/data/build_caiso_hsl.py and wire a ``_NEISO_HSL_DIR`` constant above.
     # data-needed: requires ISO-NE to publish granular curtailment data.
     return None
 
@@ -443,7 +443,7 @@ def _hsl_file(iso: str, year: int) -> Path | None:
 # nothing about model output and is a no-op for authoritative full-footprint
 # NP4-732/737 HSL uploads, whose delivered already matches EIA-930 within
 # tolerance. Prefer replacing any derived source with the published ERCOT
-# NP4-732/737 HSL (scripts/build_ercot_hsl.py, np6/ drop zone) so the
+# NP4-732/737 HSL (scripts/data/build_ercot_hsl.py, np6/ drop zone) so the
 # reconciliation never fires.
 _HSL_COVERAGE_RECONCILE_TOL = 0.98  # reconcile only a > 2% footprint undercount
 
@@ -456,7 +456,7 @@ def _ercot_hsl_path(year: int) -> Path:
 def load_ercot_hsl_hourly(year: int) -> pd.DataFrame | None:
     """Return the ERCOT hourly HSL/GEN frame for ``year``, or ``None``.
 
-    The frame is the per-year parquet built by ``scripts/build_ercot_hsl.py``,
+    The frame is the per-year parquet built by ``scripts/data/build_ercot_hsl.py``,
     sorted by ``hour`` (the model's fixed non-leap 8760-hour clock): delivered
     generation (``<fuel>_gen_mw``) and uncurtailed potential
     (``<fuel>_hsl_mw``) for wind and solar, so ERCOT's *reported* curtailment
@@ -1017,7 +1017,7 @@ def _mw_to_cf(hourly_mw: np.ndarray, monthly_capacity: np.ndarray) -> np.ndarray
 # shipped behavior and remains the fallback whenever a clean partition is
 # absent. Flip ON (``MARKET_SIM_USE_CLEAN=1``) to read the schema-validated
 # clean ``renewables`` table. The two sources are bit-identical — the curation
-# (scripts/curate_renewables.py) is a pure unpivot of the wide HSL frame — so
+# (scripts/data/curate_renewables.py) is a pure unpivot of the wide HSL frame — so
 # enabling the flag does not change model output (see tests/test_consume_renewables.py).
 _USE_CLEAN_ENV: str = "MARKET_SIM_USE_CLEAN"
 _USE_CLEAN_TRUE_TOKENS: frozenset[str] = frozenset({"1", "true", "yes", "on"})
@@ -1528,7 +1528,7 @@ def _solar_zone_clearsky_shapes(
 # relative-SHAPE column per model zone (the zone's MERRA-2-derived turbine CF on
 # the model's 8760 clock). Absolute level is irrelevant — the caller reconciles
 # these to the measured EIA-930 ISO-wide series — only the inter-zone shape
-# differences survive. Built by scripts/build_miso_wind_shape.py.
+# differences survive. Built by scripts/data/build_miso_wind_shape.py.
 _WIND_SHAPE_HOUR_COLUMN: str = "hour"
 
 
@@ -1543,7 +1543,7 @@ def _wind_zone_reanalysis_shapes(
 
     For a gated multi-zone wind ISO (see :data:`_WIND_ZONE_SHAPE_ISOS`) this
     reads the precomputed per-year wind-shape parquet (built offline by
-    scripts/build_miso_wind_shape.py from MERRA-2 reanalysis wind speed at the
+    scripts/data/build_miso_wind_shape.py from MERRA-2 reanalysis wind speed at the
     ISO's EIA-860 wind-plant locations, run through a turbine power curve) and
     returns one relative hourly SHAPE per model zone. The absolute level is
     irrelevant — the caller reconciles these shapes to the measured ISO-wide

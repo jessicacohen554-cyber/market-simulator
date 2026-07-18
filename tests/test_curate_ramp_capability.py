@@ -22,7 +22,7 @@ from market_sim.data.ramp_capability import (
     PlantRampCapability,
     measured_ramp10_frac,
 )
-from scripts import curate_ramp_capability as curate_rc
+from scripts.data import curate_ramp_capability as curate_rc
 from scripts.lib import clean_io
 from scripts.lib import ramp_capability as rc
 from scripts.lib.clean_io import validate_clean

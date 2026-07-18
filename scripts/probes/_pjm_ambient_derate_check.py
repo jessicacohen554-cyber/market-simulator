@@ -18,9 +18,9 @@ sys.path.insert(0, str(_REPO))
 
 from scripts.run_calibration import run_year  # noqa: E402
 from scripts.run_calibration_full import _henry_hub_actual, _load_reference  # noqa: E402
-from scripts.run_pjm74_cc_ct_rebalance import BIT_OVERRIDES  # noqa: E402
-from scripts.run_pjm75_ct_drag_cc_cap import CONFIG_OVERRIDES, CT_DRAG_OVERRIDES  # noqa: E402
-from scripts.run_pjm90_cchp_srmc import _OFFER_OVERRIDES  # noqa: E402
+from scripts.archive.run_pjm74_cc_ct_rebalance import BIT_OVERRIDES  # noqa: E402
+from scripts.archive.run_pjm75_ct_drag_cc_cap import CONFIG_OVERRIDES, CT_DRAG_OVERRIDES  # noqa: E402
+from scripts.archive.run_pjm90_cchp_srmc import _OFFER_OVERRIDES  # noqa: E402
 
 _HOURS = 8760
 _GROUPS = ("CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP")

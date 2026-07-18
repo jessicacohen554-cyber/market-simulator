@@ -178,7 +178,7 @@ build (co-optimized commitment ↔ AS), scoped as the next step beyond this bund
 | endogenous co-opt **+ P2 commitment** | (annual $123.7) | rejected — P2 starves the reserve pool, over-fires |
 
 _Run command (all years, per-plant, P1-only, dashboard bundle `159`) — reproduce
-via the run157 recipe (`scripts/run_159.py` driver) or:_
+via the run157 recipe (`scripts/archive/run_159.py` driver) or:_
 
 ```
 python scripts/run_calibration_full.py --year 2023 2024 2025 \

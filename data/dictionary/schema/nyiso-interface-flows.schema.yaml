@@ -8,10 +8,10 @@
 # two-way tie flows from the net-interchange wedge (upstate shoulder-collapse
 # diagnosis) and provides the posted interface ratings. Aggregation
 # (mean flow, most-binding limits per hour) is documented in
-# scripts/fetch_nyiso_interface_flows.py; +/-9999 MW sentinel limits
+# scripts/data/fetch_nyiso_interface_flows.py; +/-9999 MW sentinel limits
 # ("effectively unbounded") are nulled at curation.
 #
-# Curated by scripts/curate_nyiso_interface_flows.py from
+# Curated by scripts/data/curate_nyiso_interface_flows.py from
 #   data/raw/NYISO/interface-flows/NYISO_interface_flows_hourly_<year>.csv.gz
 datatype: nyiso-interface-flows
 schema_version: 1

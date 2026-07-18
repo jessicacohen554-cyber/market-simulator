@@ -15,7 +15,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_nyiso_downstate_gas as curate_dg
+from scripts.data import curate_nyiso_downstate_gas as curate_dg
 from scripts.lib import clean_io
 from scripts.lib import nyiso_downstate_gas as dg
 from scripts.lib.clean_io import validate_clean

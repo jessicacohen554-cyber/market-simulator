@@ -178,7 +178,7 @@ commit at the pack boundary; log derived-parameter sources in
 NEISO backcast Stage E: extend the calibration reference and audit data
 readiness. Read claude.md, docs/multi-iso/05-backcast-playbook.md (§1–2),
 docs/multi-iso/08-neiso-prompt-pack.md, and
-scripts/build_calibration_reference.py.
+scripts/data/build_calibration_reference.py.
 
 1. Add "NEISO" to CALIBRATION_ISOS (years 2023, 2024, 2025) with ba_code
    ISNE. Emit, per year: EIA-930 demand stats from data/eia_hourly/ISNE
@@ -207,7 +207,7 @@ audit doc committed.
 
 ```
 NEISO backcast: verify/refresh measured unit-outage windows. Read
-docs/offer-curve-methodology.md §3 and scripts/derive_campd_unit_outages.py.
+docs/offer-curve-methodology.md §3 and scripts/data/derive_campd_unit_outages.py.
 NOTE: data/raw/campd-unit-outages-NEISO.csv already exists and is
 COMPLETE for 2023+2024+2025 — this pack VERIFIES it (and refreshes 2025 if
 NH_2025 lands).
@@ -234,7 +234,7 @@ ERCOT/PJM/CAISO CSVs untouched.
 ```
 NEISO backcast: derive per-plant offer-curve tranches and bin assignments.
 Read docs/offer-curve-methodology.md, docs/binning-methodology.md,
-scripts/derive_cc_committed_pct.py, scripts/derive_thermal_tranches.py, and
+scripts/data/derive_cc_committed_pct.py, scripts/data/derive_thermal_tranches.py, and
 the CHP/dual-fuel tags from the P3/P13 sessions.
 
 1. Run committed-% derivation per CC plant from CAMPD NE-state extracts
@@ -366,7 +366,7 @@ smoke config; citations in parameter-citations.md.
 
 ```
 NEISO backcast: demand series and zonal disaggregation. Read data/eia_loader.py,
-scripts/derive_load_shares.py, playbook §8.1.
+scripts/data/derive_load_shares.py, playbook §8.1.
 
 1. System demand: EIA-930 ISNE hourly (td_loss_factor convention). Document
    that NEISO demand is net of BTM PV (front-of-meter only).
@@ -388,7 +388,7 @@ documented; zonal shapes measured if U3 landed.
 NEISO backcast: the priced import/export node. Read
 model/transmission.py::build_import_generators / build_export_sinks (the J1
 machinery — constants.IMPORT_TRANCHES / EXPORT_TRANCHES),
-scripts/derive_import_tranches.py, playbook §8.2, pjm-backcast-2023.md §4.
+scripts/data/derive_import_tranches.py, playbook §8.2, pjm-backcast-2023.md §4.
 The HQ_import zone already exists in _neiso_config(); this pack adds tranche
 CONSTANTS and calibrates.
 
@@ -413,7 +413,7 @@ Tier 3; ERCOT/PJM/CAISO unchanged.
 
 ```
 NEISO backcast: price benchmarks and the 4-zone adequacy test. Read
-scripts/derive_actual_lmp.py and data/raw/_validation-source/actual_lmp.json.
+scripts/data/derive_actual_lmp.py and data/raw/_validation-source/actual_lmp.json.
 
 1. From data/raw/lmp-data/NEISO/ (upload U2): build NEISO 2023–2025
    entries in actual_lmp.json (DA + RT annual/monthly Hub + zonal averages:

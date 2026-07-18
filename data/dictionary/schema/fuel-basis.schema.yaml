@@ -7,7 +7,7 @@
 # Only ISOs whose hub leg has been sourced appear; absent ISO-months fall back
 # to the measured EIA-923 ISO-month delivered cost in the model.
 #
-# Curated by scripts/curate_fuel_prices.py from
+# Curated by scripts/data/curate_fuel_prices.py from
 #   data/raw/gas_basis_by_iso_month.csv
 datatype: fuel-basis
 schema_version: 1

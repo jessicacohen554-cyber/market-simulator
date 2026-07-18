@@ -325,7 +325,7 @@ def test_miso_wind_zones_have_distinct_shapes():
     diversity the single ISO-wide wind profile erased, and the load-bearing
     check that the parquet carries a column for EVERY model zone (a missing
     column silently reverts to one ISO-wide shape). Built by
-    scripts/build_miso_wind_shape.py.
+    scripts/data/build_miso_wind_shape.py.
     """
     zones = get_iso_config("MISO").zone_names
     shapes = _wind_zone_reanalysis_shapes("MISO", "wind", zones, _CAL_YEAR)
@@ -415,7 +415,7 @@ def test_caiso_backcast_cf_profile_is_uncurtailed_potential():
 
     With ``mode="backcast"`` set and the CAISO HSL-analogue parquet present
     (delivered EIA-930 generation + CAISO's reported curtailment, built by
-    scripts/build_caiso_hsl.py), the profile is the *uncurtailed* potential —
+    scripts/data/build_caiso_hsl.py), the profile is the *uncurtailed* potential —
     so the dispatch re-curtails CAISO's multi-TWh solar curtailment instead
     of inheriting it. CAISO is multi-zone, so the measured profile is
     distributed across the NP15/ZP26/LA_BASIN/SDGE/SP15_rest trading zones by
@@ -824,7 +824,7 @@ def test_2026_07_06_balance_backfill_renewables_resolve_end_to_end(iso, year):
     sandbox). The six-month BALANCE bulk archive (a different, unblocked
     host) carries the same per-fuel generation series back to 2019 and was
     folded into the extracts by
-    ``scripts/extend_eia930_hourly_from_balance.py``. This exercises the
+    ``scripts/data/extend_eia930_hourly_from_balance.py``. This exercises the
     resulting wind+solar CF path exactly like the ERCOT 2019 case above --
     CAISO/PJM/MISO still have no HSL parquet for 2019, so this is the plain
     EIA-930 delivered-generation CF path. See

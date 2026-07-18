@@ -10,7 +10,7 @@
 # footnote 249). Annual grain only — the SOM's monthly values are printed
 # as vector charts, not tables.
 #
-# Curated by scripts/curate_nyiso_som_hub_fuel_annual.py from
+# Curated by scripts/data/curate_nyiso_som_hub_fuel_annual.py from
 #   data/raw/gas-prices/nyiso_som_hub_fuel_annual.csv
 datatype: nyiso-som-hub-fuel-annual
 schema_version: 1

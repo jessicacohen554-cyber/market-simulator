@@ -255,7 +255,7 @@ supply and demand sides) — DESIGN-ONLY, must never scale solar to hit EIA-923.
 
 | Lever | Code anchor | Backcast input | Forward driver | #10 | Status | Eff | Risk |
 |---|---|---|---|---|---|---|---|
-| PJM-seam neighbor HR anchor (`hr_by_year`) | `constants.py:2562`; `data/neighbor_price.py:62`; `scripts/derive_neighbor_hr_by_year.py` | measured PJM realized RT LMP ÷ (HH×K) | structural `marginal_heat_rate` (used when no measured LMP) | PASS⁸ | **PART** | S | Med |
+| PJM-seam neighbor HR anchor (`hr_by_year`) | `constants.py:2562`; `data/neighbor_price.py:62`; `scripts/data/derive_neighbor_hr_by_year.py` | measured PJM realized RT LMP ÷ (HH×K) | structural `marginal_heat_rate` (used when no measured LMP) | PASS⁸ | **PART** | S | Med |
 | Reference-price interface (`reference_price_interface`) | `model/transmission.py:696` | forward-native (HH+basis)×HR×load | forward-native | PASS | **IMPL** | — | Low |
 | Manitoba firm imports (`miso_firm_imports`, 1400 MW @ $8) | `model/transmission.py:1786` | contract-band midpoint const | firm contract schedule | PASS | **IMPL** | — | Low |
 
@@ -582,7 +582,7 @@ HR per year. **Effort S, Risk Med** on the seam direction.
 
 **Forward analogue (IMPLEMENTED).** The flat shoulder-POF heuristic is replaced
 by a historically-derived **monthly maintenance shape** (`MAINTENANCE_MONTHLY_SHAPE`,
-`config/constants.py`; derived by `scripts/derive_maintenance_shape.py` from the
+`config/constants.py`; derived by `scripts/data/derive_maintenance_shape.py` from the
 committed CAMPD unit-outage extracts, all six ISOs pooled). Per plant group, the
 shape is the planned-maintenance excess over the annual-minimum month, normalized
 to a month-length-weighted mean of 1, so each group's **annual POF budget is

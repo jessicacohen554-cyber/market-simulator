@@ -15,7 +15,7 @@
 # is the system-wide total; zone rows (wind only) never publish their own
 # percent-of-production, so curtailed_pct is null there.
 #
-# Curated by scripts/curate_nyiso_renewable_curtailment.py from
+# Curated by scripts/data/curate_nyiso_renewable_curtailment.py from
 #   data/raw/nyiso-renewable-curtailment/nyiso_curtailment_annual.csv
 datatype: nyiso-renewable-curtailment
 schema_version: 1

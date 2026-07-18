@@ -151,7 +151,7 @@ gas fleet should be doing, hence what λ it should print). It is a
 decomposition, not a tune:
 
 1. Refresh the belly/evening commitment probe
-   (`scripts/caiso_belly_commitment_probe.py`) on the **caiso-78** payload —
+   (`scripts/archive/caiso_belly_commitment_probe.py`) on the **caiso-78** payload —
    its numbers are caiso-65-vintage and pre-date the firm-selfschedule and HR
    fixes.
 2. Adjudicate the demand-basis conflict (caiso-72 STEP-0 candidate 4): 930

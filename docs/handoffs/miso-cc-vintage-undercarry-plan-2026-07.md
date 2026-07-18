@@ -366,5 +366,5 @@ lane); the bisect + `--mode both` re-derive (`docs/calibration-log.md`
 (`docs/cc-capacity-reconcile-unification-2026-07.md`, New Covert inversion);
 the vintage machinery (`src/market_sim/config/paths.py` §`set_eia860_vintage`,
 `docs/cod-vintage-ramp.md`); the retiree channel
-(`scripts/process_eia860.py::build_within_window_retirees`,
+(`scripts/data/process_eia860.py::build_within_window_retirees`,
 `src/market_sim/data/fleet.py::load_retired_within_window`).

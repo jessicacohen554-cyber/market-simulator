@@ -64,7 +64,7 @@ it was out of scope here).
 ### CAISO / PJM / MISO — why they were originally skipped (resolved 2026-07-06)
 
 Their `<BA> hourly` extracts didn't reach back that far on disk (see table).
-Fetching more history via `scripts/fetch_eia930_hourly.py` needs the EIA API
+Fetching more history via `scripts/data/fetch_eia930_hourly.py` needs the EIA API
 v2, which is **blocked in this managed sandbox** (`api.eia.gov` returns HTTP
 403; the script's own docstring already says "Run locally — the managed
 environment's allowlist blocks api.eia.gov"), and no `EIA_API_KEY` is
@@ -76,11 +76,11 @@ The API v2 host is blocked, but the EIA Hourly Electric Grid Monitor's
 six-month **BALANCE bulk archive** (`www.eia.gov/electricity/gridmonitor/
 sixMonthFiles/`, a different host) is reachable from this sandbox and carries
 the same per-BA demand + fuel-type-generation series for every BA, back to
-2019. `scripts/fetch_eia930_balance.py` already existed for the 2022+ files;
+2019. `scripts/data/fetch_eia930_balance.py` already existed for the 2022+ files;
 it was rerun for `--year {2019,2020,2021} --half {Jan_Jun,Jul_Dec}` (6 new
 files, schema-verified against the committed 2023+ siblings).
 
-A new script, `scripts/extend_eia930_hourly_from_balance.py`, folds those
+A new script, `scripts/data/extend_eia930_hourly_from_balance.py`, folds those
 bulk rows into the wide `<BA> hourly.parquet` extracts CISO/PJM/MISO already
 had for 2022+, without touching a single already-committed row (a
 UTC-time dedup always keeps the pre-existing row when the BALANCE bulk hour
@@ -168,8 +168,8 @@ comment on `discrete_weights.weather` in that file.
 **2026-07-06 addendum:**
 
 - `data/raw/eia-930/EIA930_BALANCE_{2019,2020,2021}_{Jan_Jun,Jul_Dec}.parquet`:
-  6 new raw files (`scripts/fetch_eia930_balance.py`, `www.eia.gov` bulk host).
-- `scripts/extend_eia930_hourly_from_balance.py`: new script, folds the
+  6 new raw files (`scripts/data/fetch_eia930_balance.py`, `www.eia.gov` bulk host).
+- `scripts/data/extend_eia930_hourly_from_balance.py`: new script, folds the
   BALANCE bulk rows into `data/raw/eia-930-hourly/{CISO,PJM,MISO} hourly.parquet`
   back to 2019 without altering any already-committed row.
 - `src/market_sim/config/constants.py`: `WEATHER_YEAR_POOL_BY_ISO["CAISO"]` and

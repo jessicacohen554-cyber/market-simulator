@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts" / "data"))
 
 from derive_neiso_import_tranches import (  # noqa: E402
     derive,

@@ -94,7 +94,7 @@ the guard change. (`tests/test_fleet.py::TestNewCovertDemonstratedPeakPin`,
 
 ### A.3.2 / A.3.6 — the derive: bidirectional coverage + CT-only exclusion
 
-`scripts/derive_cc_capacity_reconcile.py` gains `--mode both` (full bidirectional
+`scripts/data/derive_cc_capacity_reconcile.py` gains `--mode both` (full bidirectional
 coverage — every CC_REGULAR plant whose demonstrated peak differs from model
 capacity in either direction) and three principled screens, all measured / no
 residual fit:

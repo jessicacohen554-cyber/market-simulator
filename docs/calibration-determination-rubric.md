@@ -99,7 +99,7 @@ never re-solves the LP and never reads the (gitignored) `dispatch/*.parquet` or
 | `frontend/data/backcast/registry/<id>.json` | sidecar | id, ISO, declared years, label, definition, bundle path |
 | `frontend/data/backcast/runs/<id>.js` | run payload (gzip+base64) | model side: `gmModel` (grid-LP TWh by class), `fuelRows` (per-fuel model TWh + hourly r + NRMSE), `lmp` (model load-weighted price + monthly), `ordc` (ERCOT tail hours) |
 | `frontend/data/backcast/bench/<ISO>/<year>.json.gz` | benchmark part | authoritative actuals: `classFull` (grid-delivered EIA-923−BTM TWh by class, vintage-reconciled), `e930` (EIA-930 grid totals by fuel), `avgLMP` (actual DA/RT mean + monthly) |
-| `frontend/data/backcast/tail/actual_tail.json` | committed part (`scripts/derive_actual_tail.py`) | the C3c actual: per-(ISO, year) RT (gated, v2.7) and DA (diagnostic) scarcity-tail hour counts at the §5 threshold, with coverage fractions (2023–2025 only — rule-22 holdout guard in the deriver) |
+| `frontend/data/backcast/tail/actual_tail.json` | committed part (`scripts/data/derive_actual_tail.py`) | the C3c actual: per-(ISO, year) RT (gated, v2.7) and DA (diagnostic) scarcity-tail hour counts at the §5 threshold, with coverage fractions (2023–2025 only — rule-22 holdout guard in the deriver) |
 | `results/calibration/<name>/run_config.json`, `meta.json` | bundle | governance config (outage source, lever flags), gas vintage |
 | `results/calibration/<name>/calibration_attestation.json` | bundle (this rubric) | governance attestation + the exceptions ledger |
 | `results/calibration/<name>/legitimacy_diagnostics.json` | bundle (S1 suite) | machine artifact of `scripts/legitimacy_diagnostics.py --json-out` — D-1 diurnal-shape rows and the D-2 per-class forced-share summary that C7/C8 score; the verdict never recomputes the diagnostics |
@@ -461,7 +461,7 @@ way FAILs C6 regardless.
     transients that push an hourly RT average over the threshold are part
     of realized scarcity and now gate.
   - *Actual:* the committed `tail/actual_tail.json` part
-    (`scripts/derive_actual_tail.py`, from the hub RT/DA hourly series;
+    (`scripts/data/derive_actual_tail.py`, from the hub RT/DA hourly series;
     coverage-annotated, 2023–2025 only).
   - *Tolerance:* model tail hours within **[0.5×, 2.0×]** of the RT actual —
     a **collapsed tail (0 hours where the RT market had scarcity) FAILs**, and
@@ -1056,7 +1056,7 @@ down to.
   BOTH sides (actual = full EIA-923 class totals × intensity; model = grid
   LP dispatch + the same measured add-back × intensity) instead of comparing
   grid-delivered totals against CHP-inclusive rates. Committed payloads were
-  re-based in place (`scripts/retrofit_co2_payloads.py`; bench parts carry
+  re-based in place (`scripts/archive/retrofit_co2_payloads.py`; bench parts carry
   `co2.btmClass` + `co2.basis = "full-plant"`), reconstruction validated
   exact against the full-923 class totals. C1/C2 stay grid-delivered.
   Effect at amendment: no keeper's overall determination flips; ERCOT/PJM/

@@ -40,7 +40,7 @@ un-authorized solve or score, and lays out the policy choice this creates.
 **Still missing, ERCOT + PJM:** CAMPD Q2–Q4 2026 (EPA unpublished), delivered
 gas May-2026+, `eia_demand_profiles` 2026 (full-8760 contract — unbuildable
 from a partial year, F3, no builder script exists), `CALIBRATION_YEARS`/
-`HENRY_HUB_ACTUAL` in `scripts/build_calibration_reference.py` have no 2026
+`HENRY_HUB_ACTUAL` in `scripts/data/build_calibration_reference.py` have no 2026
 entry (F4 — deliberately deferred to validation time).
 
 **CAISO / MISO / NYISO / NEISO: zero holdout intake.** No 2022/2026 EIA-930,

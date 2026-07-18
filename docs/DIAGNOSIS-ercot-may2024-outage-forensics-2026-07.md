@@ -154,7 +154,7 @@ Result vs the keeper reference (2024):
    retune; ORDC tariff params frozen, rule 26; envelope family exhausted at ercot41/43).
 2. **The nuclear refuel monthly smear IS a confirmed measured-input imprecision** (rule 15:
    window-grain measured data exists and is more accurate), fixed as measured data:
-   ``scripts/derive_ercot_nuclear_availability.py`` → ``data/raw/ercot-nuclear-availability.csv``
+   ``scripts/data/derive_ercot_nuclear_availability.py`` → ``data/raw/ercot-nuclear-availability.csv``
    (60-Day DAM disclosure NUC status daily series, 2023–2025: event days [raw < 0.90 — windows,
    trips, ramps, deep derates] kept exactly as measured and cross-validated against the EIA-930
    nuclear hourly; the ≥0.90 pool anchored per month to the existing EIA-923 energy, on-anchor to

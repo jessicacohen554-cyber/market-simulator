@@ -21,7 +21,7 @@
 # ------------------------------------
 # The API returns one row per (unit_code × operating-hour) with up to 20
 # MW/price breakpoints as wide columns (``mw1``–``mw20``, ``bid1``–``bid20``).
-# The curate script (``scripts/curate_energy_offers.py``) pivots these into
+# The curate script (``scripts/data/curate_energy_offers.py``) pivots these into
 # long format: one row per (unit_code × operating-hour × step index), dropping
 # null steps.  This makes price/MW slices and aggregations natural queries
 # without parsing the wide format at read time.
@@ -40,8 +40,8 @@ description: >-
   PJM Real-Time effective energy offer curves in long (normalized) format.
   One row per generating unit × operating hour × offer step.  Source: PJM
   DataMiner2 energy_market_offers feed (api.pjm.com/api/v1); raw data fetched
-  by scripts/fetch_pjm_energy_offers.py and curated by
-  scripts/curate_energy_offers.py.  Posted on a four-month delay; available
+  by scripts/data/fetch_pjm_energy_offers.py and curated by
+  scripts/data/curate_energy_offers.py.  Posted on a four-month delay; available
   from 2017-11-01 with indefinite retention.
 
 key_columns: [iso, unit_code, interval_start_utc, step_idx]

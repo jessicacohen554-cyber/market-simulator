@@ -1,7 +1,7 @@
 """Tests for the ERCOT HSL (uncurtailed potential) data path.
 
 Covers the per-year HSL parquet loaders in ``market_sim.data.renewables``
-and the NP6 report ingestion in ``scripts/build_ercot_hsl.py`` that extends
+and the NP6 report ingestion in ``scripts/data/build_ercot_hsl.py`` that extends
 HSL coverage beyond the 2023 UMass dataset.
 """
 
@@ -24,7 +24,7 @@ from market_sim.data.renewables import (
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 
-from scripts import build_ercot_hsl as hsl_script  # noqa: E402
+from scripts.data import build_ercot_hsl as hsl_script  # noqa: E402
 
 
 def _write_synthetic_hsl(directory: Path, year: int) -> dict[str, np.ndarray]:

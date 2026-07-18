@@ -1,6 +1,6 @@
 # Temperature reliability-floor coefficients
 
-Derived by `scripts/derive_reliability_coeffs.py`. `floor_pct = commit_frac x min_stable_pct`, where `min_stable_pct` is the class's PHYSICAL Pmin/Pmax of a committed unit (NREL WWSIS-2 Table 7, `constants.MIN_STABLE_PCT_PHYSICAL`), NOT the offer-curve must-run share (never residual-tuned, CLAUDE.md #9/#11). A limb is `enabled` only when `rho >= 0.3`, `n >= 30`, and `commit_frac > baseline_commit` (the flagged-day online share exceeds the mild-day online share — a like-for-like commitment test); weak limbs ship OFF but stay visible below. Onsets (`threshold`, °C) are physical anchors: hot = per-zone p95 tmax (design cooling day); cold = PJM Cold-Weather-Alert −12 °C / −20.5 °C (CT tier), else per-zone p1 tmin. See `threshold_basis` per row.
+Derived by `scripts/data/derive_reliability_coeffs.py`. `floor_pct = commit_frac x min_stable_pct`, where `min_stable_pct` is the class's PHYSICAL Pmin/Pmax of a committed unit (NREL WWSIS-2 Table 7, `constants.MIN_STABLE_PCT_PHYSICAL`), NOT the offer-curve must-run share (never residual-tuned, CLAUDE.md #9/#11). A limb is `enabled` only when `rho >= 0.3`, `n >= 30`, and `commit_frac > baseline_commit` (the flagged-day online share exceeds the mild-day online share — a like-for-like commitment test); weak limbs ship OFF but stay visible below. Onsets (`threshold`, °C) are physical anchors: hot = per-zone p95 tmax (design cooling day); cold = PJM Cold-Weather-Alert −12 °C / −20.5 °C (CT tier), else per-zone p1 tmin. See `threshold_basis` per row.
 
 ## ERCOT
 

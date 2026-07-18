@@ -3,7 +3,7 @@
 ``inject_miso_seam_ladder_prices`` overwrites every reference-price seam band
 (PJM / SPP / South, import + export) with its per-year measured band price
 from ``interchange_config.MISO_SEAM_LADDER_BY_YEAR`` (the revealed seam
-supply curve, ``scripts/derive_miso_seam_ladders.py``). Bands keep clearing
+supply curve, ``scripts/data/derive_miso_seam_ladders.py``). Bands keep clearing
 economically on the model's own hourly price; availability (the measured
 seam envelopes) is untouched. Mirrors the seam-flow-limit test structure.
 """

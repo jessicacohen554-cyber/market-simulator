@@ -248,7 +248,7 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # alternative (the ERCOT-46/PJM-94 keeper mechanism, which post-dates
     # G-05's windowed-[15,22) rejection premise) was re-evaluated 2026-07-09
     # and REJECTED on its own honesty gates
-    # (scripts/derive_nyiso_st_gas_netload_drag.py): the downstate base is
+    # (scripts/data/derive_nyiso_st_gas_netload_drag.py): the downstate base is
     # flat vs net-load below ~15 GW and its level drifts across years at
     # equal net-load (overnight Spearman rho 0.32/0.39/0.72 class-wide,
     # 0.30/0.28/0.57 NYC+LI-only — not year-stable), and the pooled hinge
@@ -753,7 +753,7 @@ D5_REGISTRY: tuple[MechanismSpec, ...] = (
         note="declared capacity-emergency event-window revealed derates "
         "(M-2): CAMPD per-unit derates inside the maxgen-events registry's "
         "declared windows only, under the frozen guards of "
-        "scripts/derive_campd_maxgen_outages.py ($150 DA in-merit "
+        "scripts/data/derive_campd_maxgen_outages.py ($150 DA in-merit "
         "certificate, ±45d capability basis, best-event-hour credit, "
         "disjointness vs std/short) — same CAMPD outage-window "
         "admissibility family as the parent overlay; the D-4 window "

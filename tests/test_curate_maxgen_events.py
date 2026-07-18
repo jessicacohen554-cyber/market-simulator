@@ -16,7 +16,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_maxgen_events as curate_mge
+from scripts.data import curate_maxgen_events as curate_mge
 from scripts.lib import clean_io
 from scripts.lib import maxgen_events as mge
 from scripts.lib.clean_io import paths, validate_clean

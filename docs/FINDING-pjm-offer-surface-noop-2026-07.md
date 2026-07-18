@@ -96,8 +96,8 @@ remains off in the keeper line until then.
 - Probe: `python scripts/probes/_pjm99_offer_surface_probe.py` (defaults).
 - Audit: `python scripts/probes/_g22_idle_supply_audit.py
   results/calibration/pjm98_baseline_20260712 --years 2023 2024 2025`.
-- Surface derive: `python scripts/derive_pjm_offer_surface.py` (requires the
-  gitignored raw offers; `scripts/fetch_pjm_energy_offers.py` regenerates,
+- Surface derive: `python scripts/data/derive_pjm_offer_surface.py` (requires the
+  gitignored raw offers; `scripts/data/fetch_pjm_energy_offers.py` regenerates,
   ~40 min).
 - ENV: 15 GB RAM box — the 5-rung ladder grows the PJM per-plant LP past the
   OOM line; a 10 GB swapfile (`fallocate -l 10G /swapfile && mkswap && swapon`)

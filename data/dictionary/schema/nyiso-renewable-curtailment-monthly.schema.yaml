@@ -11,7 +11,7 @@
 # curtailed_pct only (percent of that month's production); zonal rows carry
 # curtailed_energy_gwh only (NYISO doesn't print a zonal monthly percent).
 #
-# Curated by scripts/curate_nyiso_renewable_curtailment.py from
+# Curated by scripts/data/curate_nyiso_renewable_curtailment.py from
 #   data/raw/nyiso-renewable-curtailment/nyiso_curtailment_monthly.csv
 datatype: nyiso-renewable-curtailment-monthly
 schema_version: 1

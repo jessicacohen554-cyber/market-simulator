@@ -24,7 +24,7 @@ reserve-curve work).
 
 `scripts/probes/_ercot_offer_stack_meritorder.py` dumps the **measured** ERCOT
 60-Day DAM Disclosure energy offers (Gen Resource Data → tidy via
-`scripts/parse_ercot_dam_offers.py`) for CC vs ST_GAS vs CT_PEAKER, per-resource
+`scripts/data/parse_ercot_dam_offers.py`) for CC vs ST_GAS vs CT_PEAKER, per-resource
 median across resources, in the shoulder months, normalized both as raw $/MWh
 and as the model's heat-rate-multiplier space. **The question the prompt poses:
 do the measured offers order ST_GAS/CT below CC in the shoulder?**
@@ -97,7 +97,7 @@ flag (`KEEPER_RTORDPA=1` on the keeper probe); the per-zone price in
 
 ### Backcast-able-on-2022 proof (2022 NOT in the solve set)
 
-`python scripts/fetch_ercot_ordc_reserves.py --years 2022` built
+`python scripts/data/fetch_ercot_ordc_reserves.py --years 2022` built
 `data/raw/ercot/ercot_2022_ordc_reserves_hourly.parquet` (8760/8760 coverage,
 rtordpa mean $1.7/h, max $1752). The overlay loader applies to 2022 **unchanged**
 (demand-clock mean $1.73/h, 12 h>$200) with zero code change — proof the
@@ -159,7 +159,7 @@ winter-storm tail and the global storage-AS credit stay documented
 
 ```bash
 # Track 1 — measured offer-stack merit-order check (no solve):
-python scripts/parse_ercot_dam_offers.py --input-dir data/raw/ercot \
+python scripts/data/parse_ercot_dam_offers.py --input-dir data/raw/ercot \
   --glob '60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_2024_*.parquet' \
   --output-dir data/raw/_processed-legacy --output-name ercot_dam_offers_2024.parquet
 python scripts/probes/_ercot_offer_stack_meritorder.py \
@@ -173,6 +173,6 @@ python scripts/probes/_ercot_rtordpa_overlay_check.py results/calibration/run145
 python scripts/calibration_verdict.py results/calibration/run145_rtordpa
 
 # Backcast-ability proof (DATA only — 2022 NOT in the solve set):
-python scripts/fetch_ercot_ordc_reserves.py --years 2022
+python scripts/data/fetch_ercot_ordc_reserves.py --years 2022
 ```
 

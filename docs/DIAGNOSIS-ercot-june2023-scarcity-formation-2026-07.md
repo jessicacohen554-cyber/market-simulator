@@ -119,7 +119,7 @@ Two coupled parts:
    finished availability so each class-day mean equals the measured fraction (the model's own
    windows stay as the within-class distribution — no stacking, no double-count; uncovered
    dates keep the statistical model; forecast unchanged — the G4 mode-aware seam; zero fitted
-   parameters). Deriver `scripts/derive_ercot_thermal_dam_availability.py` →
+   parameters). Deriver `scripts/data/derive_ercot_thermal_dam_availability.py` →
    `data/raw/ercot-thermal-dam-availability.csv` (frozen, rule 23).
 2. **Mechanism (documented, NOT changed this round — owner design call):** the per-product
    shortfall penalties (`nyiso_rcpf_product_shortfall_steps`, k×VOLL/12 from step 1 = $417)

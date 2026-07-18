@@ -14,7 +14,7 @@ co-optimization, G-20 Phase 2, memory-gated — not built here).
 CT_PEAKER plant codes, the same series the drag is regressed from), pooled
 2023–2025 (26,280 h), cross-tabulated by hour-of-day × net-load decile,
 season × hour-block, and overnight-vs-ramp at matched net-load
-(`scripts/diag_pjm_ct_overnight_evidence.py`, rule-15 throwaway, no LP).
+(`scripts/archive/diag_pjm_ct_overnight_evidence.py`, rule-15 throwaway, no LP).
 
 ## Verdict: the [15,22) window is CORRECT. Do NOT widen it.
 

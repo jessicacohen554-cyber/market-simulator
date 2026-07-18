@@ -5200,7 +5200,7 @@ def _priced_node_fit_rmse(iso: str, net_export: np.ndarray) -> float | None:
 
     The lower-bound duration-curve RMSE of ``constants.IMPORT_TRANCHES`` /
     ``EXPORT_TRANCHES[iso]`` against the measured net-export series, free of
-    any modeled price (scripts/derive_import_tranches.py measured-only mode).
+    any modeled price (scripts/data/derive_import_tranches.py measured-only mode).
     The node's achievable net-export levels are the partial sums of the
     blocks in price-merit order; each measured hour is placed on its nearest
     level (the optimal price-orthogonal placement). ``None`` when the ISO has
@@ -6443,7 +6443,7 @@ def main() -> None:
         default=False,
         help="Inject the per-plant CT_PEAKER AS/RUC-deployment hourly floor "
         "(outages.ct_deployment_floor_for_year, built by "
-        "scripts/derive_ct_deployment.py): in the measured out-of-merit "
+        "scripts/data/derive_ct_deployment.py): in the measured out-of-merit "
         "hours where the RT price was below a peaker's marginal cost, floor "
         "it to its observed CEMS output, recovering the ~1.4-2.3 TWh/yr of "
         "AS/reliability deployment energy the energy-only LP omits — WITHOUT "
@@ -6465,7 +6465,7 @@ def main() -> None:
         default=False,
         help="Inject the spatial reliability-deployment hourly floor "
         "(outages.reliability_deployment_floor_for_year, built by "
-        "scripts/derive_reliability_deployment.py): the generalization of "
+        "scripts/data/derive_reliability_deployment.py): the generalization of "
         "--ct-deployment to the load-pocket thermal fleet "
         "(CC_REGULAR/COAL/ST_GAS/CC_CHP in South_Central/West/Northeast). "
         "In the hours where a pocket plant was economic at its LOCAL "
@@ -6605,7 +6605,7 @@ def main() -> None:
         help="Fast-start amortization v3 (requires "
         "--tranche-startup-amortization): the simple-cycle CT tranches "
         "amortize the NREL start cost over the unit's CAMPD-MEASURED median "
-        "start-to-stop run length (scripts/derive_campd_ct_run_lengths.py "
+        "start-to-stop run length (scripts/data/derive_campd_ct_run_lengths.py "
         "artifact, pooled 2023-2025, ISO-class fallback) as the horizon "
         "ceiling - the endogenous P0 run may only SHORTEN it. Removes the v2 "
         "circularity where too-cheap offers -> long P0 blocks -> ~0 markup "
@@ -7063,7 +7063,7 @@ def main() -> None:
         action="store_true",
         help="ERCOT upper-bound probe: remove the hourly cleared DAM up-AS MW "
         "(RegUp/RRS/ECRS/Non-Spin, from "
-        "scripts/build_ercot_as_withholding.py) from thermal headroom "
+        "scripts/data/build_ercot_as_withholding.py) from thermal headroom "
         "before the supply curve clears. Books all AS to thermal (no "
         "storage/load split). Off = no withholding (default).",
     )
@@ -7194,7 +7194,7 @@ def main() -> None:
         "availability from the 60-Day DAM disclosure NUC Resource Status "
         "(data/raw/ercot-nuclear-availability.csv, monthly energy "
         "reconciled to the same EIA-923 anchor; "
-        "scripts/derive_ercot_nuclear_availability.py). Window-grain "
+        "scripts/data/derive_ercot_nuclear_availability.py). Window-grain "
         "measured availability — the nuclear analogue of the CAMPD fossil "
         "outage windows (rule 14); uncovered dates keep the monthly smear. "
         "Off (default, keeper-reproducing).",
@@ -7206,7 +7206,7 @@ def main() -> None:
         "availability so each class-day mean equals the measured 60-Day DAM "
         "disclosure fraction (config-collapsed live Gen_Resource HSL over "
         "site ratings; data/raw/ercot-thermal-dam-availability.csv, "
-        "scripts/derive_ercot_thermal_dam_availability.py). Replaces the "
+        "scripts/data/derive_ercot_thermal_dam_availability.py). Replaces the "
         "statistical WEFOR/EFOR estimate of the same quantity with its "
         "measured realization (rule 14; the thermal analogue of "
         "--ercot-nuclear-unit-availability); uncovered dates keep the "
@@ -7223,7 +7223,7 @@ def main() -> None:
         "stays the zone-split and duration basis; uncovered dates (Oct-2023 "
         "hole) keep EIA-860 (rule 14; the storage analogue of "
         "--ercot-thermal-dam-availability). data/raw/ercot-storage-capability.csv, "
-        "scripts/derive_ercot_storage_capability.py. Off (default, "
+        "scripts/data/derive_ercot_storage_capability.py. Off (default, "
         "keeper-reproducing).",
     )
     parser.add_argument(
@@ -7237,7 +7237,7 @@ def main() -> None:
         "fleet's finished availability (measured under "
         "--ercot-thermal-dam-availability), separating commitment choice "
         "from outage state (ERCOT_ONLINE_CAP_SHARE_MEASURED / "
-        "_DELIV_PROFILE_MEASURED; scripts/derive_ercot_rtolcap_forward.py "
+        "_DELIV_PROFILE_MEASURED; scripts/data/derive_ercot_rtolcap_forward.py "
         "--emit online-cap-measured-constant; gate "
         "scripts/validate_ercot_online_capacity.py --measured). Mutually "
         "exclusive with the other envelope flags. Off (default).",
@@ -7716,7 +7716,7 @@ def main() -> None:
         default=False,
         help="PJM G-22 lever A: post the MEASURED condition-binned top-of-curve "
         "offer surface (PJM DataMiner2 energy_market_offers, "
-        "scripts/derive_pjm_offer_surface.py) onto the CC_REGULAR + CT_PEAKER "
+        "scripts/data/derive_pjm_offer_surface.py) onto the CC_REGULAR + CT_PEAKER "
         "peak-band rungs in the P1 clearing solve only, keyed by within-year "
         "net-load percentile. Loose hours and P0 run lengths stay "
         "byte-identical (ladder clamped >= the resolved peak height). "
@@ -7730,7 +7730,7 @@ def main() -> None:
         help="C1 lane WP-A (static half): REPLACE the fitted _CAISO_OFFER_CURVE "
         "gas band multipliers (CC_REGULAR/CT_PEAKER econ_low, econ_high, peak) "
         "with the MEASURED cap-weighted medians of CAISO's own DAM energy bids "
-        "(OASIS Public Bid Data, scripts/derive_caiso_offer_surface.py; "
+        "(OASIS Public Bid Data, scripts/data/derive_caiso_offer_surface.py; "
         "carbon/VOM-netted round-trip). CAISO-gated; reads the frozen "
         "data/raw/_validation-source/caiso_offer_curve_measured.json.",
     )
@@ -7751,7 +7751,7 @@ def main() -> None:
         default=False,
         help="PJM G-22 lever B: carry the Day-Ahead market's virtual bid "
         "layer as measured SUBMITTED INC/DEC bid curves (PJM DataMiner2 "
-        "hrl_da_incs_decs, scripts/derive_pjm_da_virtual_surface.py) posted "
+        "hrl_da_incs_decs, scripts/data/derive_pjm_da_virtual_surface.py) posted "
         "into the LP as pseudo-units with ENDOGENOUS clearing — the DA "
         "procurement depth at peaks (net cleared DEC-INC ~ +7-11 GW at the "
         "2024 top hours) becomes real market structure instead of the dual "
@@ -7767,7 +7767,7 @@ def main() -> None:
         "tranche P1 bids at the MEASURED mid-curve offer level of their "
         "physics segment at each row's own within-plant capacity share "
         "(PJM DataMiner2 energy_market_offers full-curve sampling, "
-        "scripts/derive_pjm_offer_midcurve.py), keyed by within-year "
+        "scripts/data/derive_pjm_offer_midcurve.py), keyed by within-year "
         "net-load percentile. P1-only (P0 run lengths unperturbed); the "
         "floor only raises bids. PJM-gated; reads the frozen "
         "data/raw/_validation-source/pjm_offer_midcurve_condbinned.json.",
@@ -7791,7 +7791,7 @@ def main() -> None:
         help="Reconcile listed CC plants' LP capacity to their demonstrated "
         "CAMPD value from the per-ISO table "
         "data/raw/_processed-legacy/cc_capacity_reconcile_<ISO>.csv "
-        "(scripts/derive_cc_capacity_reconcile.py; mode=cap rows bound a "
+        "(scripts/data/derive_cc_capacity_reconcile.py; mode=cap rows bound a "
         "plant AT its measured sustained peak, raise rows lift it). Fixes "
         "the EIA-860 CA-row block-level summer-capacity double-count "
         "(e.g. MISO Union Power 3,457 MW modeled vs 2,428 nameplate / "
@@ -8756,7 +8756,7 @@ def main() -> None:
         help="Price every PJM seam band (MISO/NYISO/Carolinas/TVA/LGEE, "
         "import + export) at the MEASURED per-year Q-Q band ladder "
         "(interchange_config.PJM_SEAM_LADDER_BY_YEAR, derived by "
-        "scripts/derive_pjm_seam_ladders.py: PJM settlement-grade tie-line "
+        "scripts/data/derive_pjm_seam_ladders.py: PJM settlement-grade tie-line "
         "flow duration curves quantile-coupled with the measured PJM DA "
         "system LMP — the MISO --miso-seam-measured-ladder / NEISO "
         "audit-C-6 pattern), replacing the gas x HR x load-shape band "
@@ -8785,7 +8785,7 @@ def main() -> None:
         "rating kept on the reverse. Supersedes pjm_congestion's static "
         "medians on mapped links (same feed, hourly). The ERCOT "
         "--ercot-gtc-limits-measured pattern; forecast years keep the "
-        "static seeds. Run scripts/curate_transfer_interface_limits.py "
+        "static seeds. Run scripts/data/curate_transfer_interface_limits.py "
         "first.",
     )
     parser.add_argument(
@@ -8858,7 +8858,7 @@ def main() -> None:
         help="Price every MISO seam band (PJM/SPP/South, import + export) at "
         "the MEASURED per-year Q-Q band ladder "
         "(interchange_config.MISO_SEAM_LADDER_BY_YEAR, derived by "
-        "scripts/derive_miso_seam_ladders.py: EIA-930 per-seam flow duration "
+        "scripts/data/derive_miso_seam_ladders.py: EIA-930 per-seam flow duration "
         "curves quantile-coupled with the measured MISO DA hub LMP — the "
         "NEISO audit-C-6 measured-ladder pattern), replacing the gas x HR x "
         "load-shape band prices + hurdle for backcast years. Fixes the G-23 "

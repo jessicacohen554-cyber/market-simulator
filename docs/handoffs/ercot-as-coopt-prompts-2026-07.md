@@ -77,7 +77,7 @@ Design (derived committed-share x ramp-capability):
   RTOFFCAP_fwd(t) = sum_{c in quick-start} offline_share_c(...) x ramp10_cap_c
 - online_share_c: per responsive class, share of installed capacity online as a
   function of net-load percentile / hour / season, derived from the committed
-  CAMPD unit extracts by a NEW derive script (scripts/derive_*, the
+  CAMPD unit extracts by a NEW derive script (scripts/data/derive_*, the
   MAINTENANCE_MONTHLY_SHAPE / ST_GAS-drag family). Rule #23: it re-derives only
   on source-data updates — cite the data in the script header.
 - ramp10_cap_c: 10-minute ramp capability per online MW from the fleet arrays'

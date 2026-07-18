@@ -107,7 +107,7 @@ def main() -> int:
         note += (
             " PLUS the measured MID-CURVE offer floor "
             "(pjm_offer_midcurve_conditional=True, G-22 lever A': "
-            "scripts/derive_pjm_offer_midcurve.py) — the depth sweep showed "
+            "scripts/data/derive_pjm_offer_midcurve.py) — the depth sweep showed "
             "+10 GW of depth buys only +$2-4/MWh on the model's too-cheap "
             "econ body, so the measured mid-curve level is the "
             "price-forming half of the fix."
