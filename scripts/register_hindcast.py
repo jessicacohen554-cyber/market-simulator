@@ -29,8 +29,6 @@ _SRC = Path(__file__).resolve().parent.parent / "src"
 if _SRC.exists() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-import check_forecast_invariants as CI  # noqa: E402  (sibling script on sys.path[0])
-
 SIDECAR_DIR = Path("frontend/data/hindcast")
 PAGE_PATH = Path("docs/codebase-site/forecast-validation.html")
 
@@ -46,6 +44,11 @@ def build_sidecar(bundle_dir: Path, preserve_invariants: bool = False) -> dict:
     invariants (I1/I9) to SKIP purely because the parquets are absent. Preserving
     them keeps the sidecar diff to the intended score change.
     """
+    # Lazy import: the invariant summary needs numpy + market_sim constants,
+    # which the Pages deploy runner (stdlib-only, --page-only path) does not
+    # install. Importing here keeps page regeneration dependency-free.
+    import check_forecast_invariants as CI  # noqa: PLC0415 (sibling script)
+
     meta = json.loads((bundle_dir / "meta.json").read_text())
     cache_dir = Path(meta["bundle"])
     if not cache_dir.exists():
@@ -211,7 +214,12 @@ def render_page(sidecars: list[dict]) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--bundle", type=Path, required=True)
+    parser.add_argument(
+        "--bundle",
+        type=Path,
+        default=None,
+        help="run_capacity_hindcast out-dir to register (omit with --page-only).",
+    )
     parser.add_argument(
         "--preserve-invariants",
         action="store_true",
@@ -221,17 +229,46 @@ def main(argv: list[str] | None = None) -> int:
             "e.g. T-R8 — avoids flipping parquet-derived invariants to SKIP)."
         ),
     )
+    parser.add_argument(
+        "--page-only",
+        action="store_true",
+        help=(
+            "Regenerate forecast-validation.html from the committed sidecars "
+            "only — no bundle, no invariant recompute, stdlib-only (the Pages "
+            "deploy assembles the page with this, mirroring build_manifest.py, "
+            "so a registered sidecar shows on the LIVE dashboard once the "
+            "deploy runs; the committed page copy is preview-only)."
+        ),
+    )
+    parser.add_argument(
+        "--site-dir",
+        type=Path,
+        default=None,
+        help=(
+            "Write the page under <site-dir>/docs/codebase-site/ instead of "
+            "the repo path (deploy staging, e.g. _site)."
+        ),
+    )
     args = parser.parse_args(argv)
 
-    SIDECAR_DIR.mkdir(parents=True, exist_ok=True)
-    sidecar = build_sidecar(args.bundle, preserve_invariants=args.preserve_invariants)
-    sidecar_path = SIDECAR_DIR / f"{sidecar['run_id']}.json"
-    sidecar_path.write_text(json.dumps(sidecar, indent=2))
-    print(f"[register] wrote sidecar {sidecar_path}")
+    if not args.page_only:
+        if args.bundle is None:
+            parser.error("--bundle is required unless --page-only")
+        SIDECAR_DIR.mkdir(parents=True, exist_ok=True)
+        sidecar = build_sidecar(
+            args.bundle, preserve_invariants=args.preserve_invariants
+        )
+        sidecar_path = SIDECAR_DIR / f"{sidecar['run_id']}.json"
+        sidecar_path.write_text(json.dumps(sidecar, indent=2))
+        print(f"[register] wrote sidecar {sidecar_path}")
 
+    page_path = PAGE_PATH
+    if args.site_dir is not None:
+        page_path = args.site_dir / PAGE_PATH
+        page_path.parent.mkdir(parents=True, exist_ok=True)
     page = render_page(_load_all_sidecars())
-    PAGE_PATH.write_text(page)
-    print(f"[register] regenerated {PAGE_PATH}")
+    page_path.write_text(page)
+    print(f"[register] regenerated {page_path}")
     return 0
 
 
