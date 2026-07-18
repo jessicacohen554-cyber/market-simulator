@@ -126,6 +126,7 @@ from market_sim.config.reserve_config import ERCOT_AS_PRODUCTS
 from market_sim.pipeline import (
     DispatchSpec,
     PriorYearResults,
+    apply_ercot_commitment_posture,
     apply_reserve_coopt,
     build_base_dispatch_kwargs,
     build_caiso_ra_p1_prep,
@@ -1521,6 +1522,10 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 solar_gen=(solar_cap[:, None] * year_solar_cf).sum(axis=0),
                 sim_year=year,
             )
+            # ERCOT standalone energy-only commitment-posture (reserve-decoupled;
+            # docs/handoffs/ercot-commitment-thinness-2026-07.md). No-op /
+            # byte-identical for every non-ERCOT run and default-off ERCOT.
+            apply_ercot_commitment_posture(dispatch_kwargs, config, fleet_arrays)
             # P0 → monthly startup markup → P1 via the shared pipeline solve
             # core (orchestrator-unification Stage 3) -- intra-year warm start
             # included, statement-for-statement the former inline sequence.

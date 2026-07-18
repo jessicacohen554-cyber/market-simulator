@@ -761,6 +761,99 @@ def _quick_start_eligible(fleet_arrays: FleetArrays) -> np.ndarray:
     return np.isin(fuel_names, sorted(QUICK_START_FUEL_TYPES))
 
 
+# CHP plant groups excluded from the ERCOT posture candidate set (rule 19 —
+# their committed state is owned by the CHP steam floors, not the posture).
+_ERCOT_POSTURE_CHP_GROUPS = ("CC_CHP", "CT_CHP", "ST_CHP")
+
+
+def ercot_commitment_posture_spec(
+    config,
+    fleet_arrays: FleetArrays,
+) -> Optional[tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]]:
+    """Return the STANDALONE energy-only posture spec for ERCOT, or ``None``.
+
+    ERCOT runs a fleet-wide ORDC co-opt with no pergen substrate, so the
+    commitment-posture lever (``ercot_commitment_posture``, design note §A;
+    ``docs/handoffs/ercot-commitment-thinness-2026-07.md``) is built
+    reserve-decoupled: pool the MERCHANT GAS fleet by (zone, fuel-class) and
+    posture the non-fast-start pools with only the energy-side rows (headroom
+    + min-load + startup), leaving ERCOT's reserve design untouched.
+
+    Returns ``(posture_gen_idx, posture_col, posture_mlf, posture_startup)`` —
+    the member fleet indices, each member's dense postured-pool index
+    (``0..q-1``), and the per-pool measured min-load fraction and NREL-table
+    startup ($/MW). Every input is measured/published (rules 5/13/23):
+
+    * **Scope (rule 19):** candidates are gas_cc + gas_ct units, excluding the
+      CHP groups (:data:`_ERCOT_POSTURE_CHP_GROUPS`); coal and gas_st are
+      already excluded by fuel — their committed state is owned by other D-2
+      mechanisms (coal take-or-pay/must-run, gas_st netload drag, CHP steam
+      floors). Members are pooled by (zone, fuel-class), the MISO convention.
+    * **Fast-start exemption (rule 18, physics, never class tuples):** the
+      capacity-weighted pool fast-start gate of :func:`_posture_pool_params`
+      (min-down ≤ 2 h AND startup < $30/MW) exempts the gas_ct pools, so only
+      the gas_cc pools carry a U column.
+    * **Startup** per pool: the NREL/SR-5500-55433 class tables, capacity-
+      weighted (identical to :func:`_posture_pool_params`).
+    * **mlf** per pool: the MEASURED committed-CC LSL/HSL capacity-weighted p50
+      (60-Day DAM disclosure, ERCOT-62 derive — the same frozen value the
+      ``ercot_gas_commitment_bridge`` uses), exposed as
+      ``ercot_commitment_posture_min_load_frac`` (frozen rule 23). Non-CC
+      postured pools (none in practice) keep the physical WWSIS-2 fallback.
+    """
+    if not getattr(config, "ercot_commitment_posture", False):
+        return None
+
+    fuel = np.asarray(fleet_arrays.fuel_type_idx, dtype=int)
+    cc_idx = FUEL_TYPE_NAMES.index("gas_cc")
+    ct_idx = FUEL_TYPE_NAMES.index("gas_ct")
+    groups = (
+        np.asarray(fleet_arrays.plant_group)
+        if getattr(fleet_arrays, "plant_group", None) is not None
+        else np.array([""] * fuel.size, dtype=object)
+    )
+    is_chp = np.isin(groups.astype(str), _ERCOT_POSTURE_CHP_GROUPS)
+    members = np.flatnonzero(np.isin(fuel, [cc_idx, ct_idx]) & ~is_chp)
+    if members.size == 0:
+        return None
+
+    # Pool by (zone, fuel-class) — the MISO/CAISO/PJM convention.
+    zone = np.asarray(fleet_arrays.zone_idx, dtype=int)[members]
+    keys = np.stack([zone, fuel[members]], axis=1)
+    _, col = np.unique(keys, axis=0, return_inverse=True)
+    n_r = int(col.max()) + 1
+
+    posture_pools, pool_mlf_phys, pool_su = _posture_pool_params(
+        fleet_arrays, members, col, n_r, "ERCOT"
+    )
+    if posture_pools.size == 0:
+        return None
+
+    # Per-pool fuel class (for the measured-mlf override).
+    pool_fuel = np.zeros(n_r, dtype=int)
+    pool_fuel[col] = fuel[members]
+    posture_fuel = pool_fuel[posture_pools]
+
+    # Measured mlf: gas_cc pools take the frozen LSL/HSL p50; any non-CC
+    # postured pool keeps the physical WWSIS-2 fallback from _posture_pool_params.
+    mlf = np.asarray(pool_mlf_phys, dtype=float).copy()
+    mlf[posture_fuel == cc_idx] = float(
+        getattr(config, "ercot_commitment_posture_min_load_frac", 0.574)
+    )
+
+    # Dense-remap members onto the postured pools (0..q-1).
+    remap = np.full(n_r, -1, dtype=int)
+    remap[posture_pools] = np.arange(posture_pools.size)
+    member_new_col = remap[col]
+    keep = member_new_col >= 0
+    return (
+        members[keep],
+        member_new_col[keep].astype(int),
+        mlf,
+        np.asarray(pool_su, dtype=float),
+    )
+
+
 # ---- ERCOT single-product -------------------------------------------------
 
 

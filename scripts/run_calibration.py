@@ -110,6 +110,7 @@ from market_sim.data.renewables import (  # noqa: E402
 )
 from market_sim.pipeline import (  # noqa: E402
     DispatchSpec,
+    apply_ercot_commitment_posture,
     apply_reserve_coopt,
     backcast_config,
     build_base_dispatch_kwargs,
@@ -566,6 +567,8 @@ def run_year(
     ercot_gas_bridge_min_load_frac: float | None = None,
     ercot_gas_bridge_startup: bool | None = None,
     ercot_gas_bridge_da_horizon: bool | None = None,
+    ercot_commitment_posture: bool | None = None,
+    ercot_commitment_posture_min_load_frac: float | None = None,
     carry_operating_mothballs: bool | None = None,
     reliability_floor: bool | None = None,
     reliability_floor_overrides: dict | None = None,
@@ -998,6 +1001,16 @@ def run_year(
     if ercot_gas_commitment_bridge is not None:
         config = config.with_overrides(
             ercot_gas_commitment_bridge=ercot_gas_commitment_bridge
+        )
+    if ercot_commitment_posture is not None:
+        config = config.with_overrides(
+            ercot_commitment_posture=ercot_commitment_posture
+        )
+    if ercot_commitment_posture_min_load_frac is not None:
+        config = config.with_overrides(
+            ercot_commitment_posture_min_load_frac=(
+                ercot_commitment_posture_min_load_frac
+            )
         )
     if ercot_gas_bridge_min_load_frac is not None:
         config = config.with_overrides(
@@ -3717,6 +3730,11 @@ def run_year(
         solar_gen=(solar_cap[:, None] * solar_cf).sum(axis=0),
         sim_year=year,
     )
+    # ERCOT standalone energy-only commitment-posture (ercot_commitment_posture,
+    # docs/handoffs/ercot-commitment-thinness-2026-07.md): reserve-decoupled, so
+    # merged as its own dispatch kwargs after the reserve seam. No-op / byte-
+    # identical for every non-ERCOT run and default-off ERCOT.
+    apply_ercot_commitment_posture(dispatch_kwargs, config, fleet_arrays)
 
     # P0 → monthly startup markup → P1 via the shared pipeline solve core
     # (orchestrator-unification Stage 3): the intra-year warm start, the
