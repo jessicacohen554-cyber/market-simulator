@@ -707,6 +707,7 @@ def caiso_ra_mustoffer_min_gen(
     release_hours: np.ndarray | None = None,
     fuel_types: tuple[str, ...] = ("gas_cc", "gas_ct"),
     max_econ_gap_hours: float | None = None,
+    startup_lead_hours: np.ndarray | None = None,
 ) -> np.ndarray:
     """Return the ``(n_gen, T)`` CAISO RA must-offer minimum-load floor.
 
@@ -856,6 +857,33 @@ def caiso_ra_mustoffer_min_gen(
             ``DA_COMMITMENT_HORIZON_HOURS``). ``None`` (default) is
             byte-identical; physical (< min-down) bridges are never capped
             (a restart bar is physics, not commitment horizon).
+        startup_lead_hours: Optional ``(n_gen,)`` integer start-to-load lead
+            hours — the STARTUP-TRAJECTORY extension (caiso-96 WP-1,
+            ``ScenarioConfig.caiso_ra_startup_trajectory``). A real CC
+            started for the evening peak fires L hours before it reaches
+            load (measured CAMPD start-to-full-load p50, per plant with a
+            class fallback — ``scripts/derive_campd_cc_start_trajectory.py``);
+            the continuous-variable LP pays no startup and materializes
+            capacity exactly at the ramp hour, so its evening starts land
+            ~L hours late (FINDING-caiso95 §3: model start-histogram peak
+            hod 17-18 vs measured 13-15). For every detected (and, under
+            ``startup_aware``, commitment-real) run-start ``s`` of a
+            bridge-eligible unit with lead ``L > 0``, the L pre-start hours
+            (clipped to hours the unit was OFF in the detected pattern — a
+            ramp cannot precede the previous run's shutdown) are floored at
+            the linear ramp-in trajectory toward minimum stable load:
+            ``floor[s-j] = target_mw × (L+1-j)/(L+1)``,
+            ``j = 1..L`` — a conservative lower envelope of the measured
+            ramp (the unit is synchronized and climbing through those
+            hours), capped at min-load like every bridge floor (above
+            min-load is dispatch's choice, not commitment's). Driver: hot
+            start-to-load physics + DAM operating-day positioning; window:
+            the L hours before the detector's own run-starts; forward
+            story: regenerates from the model's own P0 run pattern and the
+            CAMPD-measured lead (rule 12). Composes by maximum with the
+            gap-bridge floors and shares their D-2 attribution
+            (``ra_mustoffer_bridge`` — same mechanism, wider physics, rule
+            19). ``None`` (default) is byte-identical.
 
     Returns:
         The ``(n_gen, T)`` min-load floor; all-zero (a no-op) when
@@ -938,7 +966,7 @@ def caiso_ra_mustoffer_min_gen(
                 if margin_per_mw >= startup_per_mw:
                     kept_runs.append((s, e))
             runs = kept_runs
-        if len(runs) < 2:
+        if not runs:
             continue
         # The min-load target is the PLANT's minimum stable load; for a binned
         # base tranche that is min_load_frac × plant_pmax, clipped to the
@@ -952,6 +980,27 @@ def caiso_ra_mustoffer_min_gen(
         )
         target_mw = min(min_load_frac * floor_pmax, pmax[g])
         zone = int(zone_idx[g])
+        # Startup-trajectory lead (caiso-96 WP-1): a unit with a measured
+        # start-to-load duration L ramps in over the L hours BEFORE each
+        # detected run-start — floor them at the linear ramp-in toward
+        # min-load (see the startup_lead_hours arg doc). Applies to every
+        # screened run (a single-run unit still physically ramps in);
+        # maximum-composes with the gap-bridge floors below.
+        if startup_lead_hours is not None:
+            lead = int(startup_lead_hours[g])
+            if lead > 0:
+                prev_end = 0  # the ramp can only occupy hours the unit was OFF
+                for run_start, run_end in runs:
+                    lo = max(run_start - lead, prev_end)
+                    prev_end = run_end
+                    if lo >= run_start:
+                        continue
+                    pre = np.arange(lo, run_start)
+                    j = run_start - pre  # hours-before-start, L..1
+                    ramp = target_mw * (lead + 1 - j) / (lead + 1) * avail[g, pre]
+                    floor[g, pre] = np.maximum(floor[g, pre], ramp)
+        if len(runs) < 2:
+            continue
         # Floor every idle gap between two committed runs. A gap SHORTER than the
         # unit's minimum-down time is always bridged (a physical restart bar). A
         # gap AT/OVER min-down is bridged only under startup_bridge when the
