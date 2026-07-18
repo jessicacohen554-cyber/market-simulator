@@ -37,7 +37,16 @@ CISO DIBAs via ``corridor_net_import``), the trigger (the committed caiso-87
 construction), and the hod window (6-21, the FINDING-caiso94 daytime band, set
 before the depth was measured). A FAIL files a FINDING and the lane stops.
 
-Usage: .venv/bin/python scripts/derive_caiso_daytime_clean_depth.py
+``--evening-trim`` (caiso-97) derives the EVENING-TRIMMED window instead —
+hod 6-17, the FINDING-caiso94 §7 PRE-REGISTERED overshoot fix (drop the
+evening peak 18-21, the §4A EXCLUDE cell), armed by the owner's evening-watch
+TRIPPED ruling (2026-07-18, session-logged). Same frozen gates, statistic,
+series, and trigger; only the pre-registered window bound changes. Feeds
+``CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_BY_YEAR`` (the
+``ScenarioConfig.caiso_dsw_daytime_evening_trim`` leg) — window and depth
+move together so the depth prices the population it caps.
+
+Usage: .venv/bin/python scripts/derive_caiso_daytime_clean_depth.py [--evening-trim]
 """
 
 from __future__ import annotations
@@ -65,20 +74,23 @@ HOURS = 8760
 HR_CCGT = 0.37 / 0.0531  # ~6.97, the committed caiso-87 coupling
 HOD_MIN = 6  # daytime window lower hod (FINDING-caiso94 band)
 HOD_MAX = 21  # daytime window upper hod (inclusive)
+TRIM_HOD_MAX = 17  # caiso-97 evening trim (FINDING-caiso94 §7 pre-registered)
 CV_MAX = 0.20
 LOYO_MAX = 0.25
 
 
 def main() -> None:
     """Derive per-year daytime trigger-OFF depths; exit 0 PASS / 2 FAIL."""
+    evening_trim = "--evening-trim" in sys.argv[1:]
+    hod_max = TRIM_HOD_MAX if evening_trim else HOD_MAX
     net = corridor_net_import()
     hub = hub_prices()
     hod = np.arange(HOURS) % 24
-    daytime_hod = (hod >= HOD_MIN) & (hod <= HOD_MAX)
+    daytime_hod = (hod >= HOD_MIN) & (hod <= hod_max)
 
     depths: dict[int, float] = {}
     print(
-        f"=== CAISO daytime (hod {HOD_MIN}-{HOD_MAX}) trigger-OFF WECC_DSW clean depth ==="
+        f"=== CAISO daytime (hod {HOD_MIN}-{hod_max}) trigger-OFF WECC_DSW clean depth ==="
     )
     print(
         f"    window: daytime hod AND measured-hub AND NOT surplus "
@@ -124,9 +136,14 @@ def main() -> None:
         )
 
     passed = g_cv and g_loyo
+    auth = (
+        "owner evening-watch TRIPPED ruling 2026-07-18"
+        if evening_trim
+        else "owner 2026-07-17"
+    )
     print(
         f"\n  OVERALL: "
-        f"{'PASS — depth admissible; build/solve authorized (owner 2026-07-17)' if passed else 'FAIL — file FINDING, do NOT build'}"
+        f"{f'PASS — depth admissible; build/solve authorized ({auth})' if passed else 'FAIL — file FINDING, do NOT build'}"
     )
     sys.exit(0 if passed else 2)
 
