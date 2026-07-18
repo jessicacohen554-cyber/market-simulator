@@ -16647,13 +16647,15 @@ calibration does NOT rest on the facility phantom.**
 
 **Disposition.** PJM HOLDS calibrated-grade on the accurate unit-only availability
 envelope — no re-calibration lane needed (contrast the ERCOT-79 successor lane).
-Registered as a KEEPER CANDIDATE; **keeper flip to `2026-07-18-pjm-115-unit-only`
-RECOMMENDED** on the ERCOT-79 principle (a keeper should rest on accurate data,
-and this is a metric-identical, no-downside accuracy upgrade). **FLAGGED, NOT
-ACTED — the keepers.json promotion is owner-reserved** (pjm-114 precedent: "keeper
-promotion RECOMMENDED — keepers.json untouched (owner-only)"). Also owner-reserved
-and not acted: frontier (PJM has none), the calibration-complete marker (PJM has
-none — holdouts stay quarantined; solved 2023-2025 only, rule 22).
-`build_status --check` in sync; `audit_keepers --iso PJM` PASS on the unchanged
-pjm-114 keeper. Committed: the bundle slims + sidecar + `runs/<id>.js` + this entry
-(API transport, branch freshly based on origin/main).
+**OWNER-PROMOTED to PJM keeper 2026-07-18** (owner directive this session, on the
+ERCOT-79 principle — a keeper should rest on accurate data, and this is a
+metric-identical, no-downside accuracy upgrade): `keepers.json` PJM + array flipped
+to `2026-07-18-pjm-115-unit-only`, `status.js` rebuilt (**PJM: CALIBRATED**), the
+sidecar + attestation marked owner-promoted, `calibration-keeper-auditor` run
+post-flip. Not touched (owner-reserved, N/A here): frontier (PJM has none), the
+calibration-complete marker (PJM has none — holdouts stay quarantined; solved
+2023-2025 only, rule 22). Branch rebased onto latest `origin/main` for a clean
+merge — the ERCOT-80 sibling flip already on main is preserved (the two unit-only
+re-solves land side by side). Committed: the bundle slims + sidecar + `runs/<id>.js`
++ `keepers.json` + `status.js` + this entry (git-push transport, owner-authorized;
+the ~2 MB source pack cleared the proxy).
