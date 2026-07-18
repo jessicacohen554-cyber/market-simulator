@@ -3027,6 +3027,8 @@ def build_variable_bounds(
     solar_curtail_share: np.ndarray | None = None,
     storage_soc_min: np.ndarray | None = None,
     storage_discharge_min: np.ndarray | None = None,
+    storage_charge_cap: np.ndarray | None = None,
+    storage_discharge_cap: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Assemble the LP column (decision-variable) bound vectors.
 
@@ -3116,6 +3118,24 @@ def build_variable_bounds(
         col_upper[:, layout._chg_off : layout._dis_off] = power_cap
         col_upper[:, layout._dis_off : layout._soc_off] = power_cap
         col_upper[:, layout._soc_off : layout._flow_off] = energy_cap
+        if storage_charge_cap is not None:
+            # Measured diurnal charge capability (CAISO battery shape anchor,
+            # caiso_storage_shape_anchor): the fleet-wide measured p95
+            # hour-of-day charge rate — tighter than the nameplate power cap
+            # in the midday belly. Clipped at the power cap so the bound can
+            # only tighten, never loosen.
+            ccap = np.asarray(storage_charge_cap, dtype=float)
+            ccap = ccap.T if ccap.ndim == 2 else ccap[np.newaxis, :]
+            col_upper[:, layout._chg_off : layout._dis_off] = np.minimum(
+                ccap, power_cap
+            )
+        if storage_discharge_cap is not None:
+            # Discharge-side leg of the same measured envelope.
+            dcap = np.asarray(storage_discharge_cap, dtype=float)
+            dcap = dcap.T if dcap.ndim == 2 else dcap[np.newaxis, :]
+            col_upper[:, layout._dis_off : layout._soc_off] = np.minimum(
+                dcap, power_cap
+            )
         if storage_discharge_min is not None:
             # Measured-award AS→energy deployment floor (ERCOT
             # ercot_storage_as_deployment): the released reserve draw-down that
@@ -3127,7 +3147,7 @@ def build_variable_bounds(
             dmin = np.asarray(storage_discharge_min, dtype=float)
             dmin = dmin.T if dmin.ndim == 2 else dmin[np.newaxis, :]
             col_lower[:, layout._dis_off : layout._soc_off] = np.minimum(
-                dmin, power_cap
+                dmin, col_upper[:, layout._dis_off : layout._soc_off]
             )
         if storage_soc_min is not None:
             # Measured AS sustain floor (CAISO battery reservation): the SOC
@@ -3444,6 +3464,8 @@ class DispatchModel:
         storage_energy_cap: np.ndarray | None = None,
         storage_soc_min: np.ndarray | None = None,
         storage_discharge_min: np.ndarray | None = None,
+        storage_charge_cap: np.ndarray | None = None,
+        storage_discharge_cap: np.ndarray | None = None,
         storage_zone_idx: np.ndarray | None = None,
         eta_chg: "np.ndarray | float | None" = None,
         eta_dis: "np.ndarray | float | None" = None,
@@ -3789,6 +3811,8 @@ class DispatchModel:
             storage_energy_cap=storage_energy_cap,
             storage_soc_min=storage_soc_min,
             storage_discharge_min=storage_discharge_min,
+            storage_charge_cap=storage_charge_cap,
+            storage_discharge_cap=storage_discharge_cap,
             ttc=ttc,
             ordc_step_widths=ordc_step_widths,
             link_bidirectional=link_bidirectional,
@@ -4532,6 +4556,8 @@ def solve_dispatch(
     storage_energy_cap: np.ndarray | None = None,
     storage_soc_min: np.ndarray | None = None,
     storage_discharge_min: np.ndarray | None = None,
+    storage_charge_cap: np.ndarray | None = None,
+    storage_discharge_cap: np.ndarray | None = None,
     storage_zone_idx: np.ndarray | None = None,
     eta_chg: np.ndarray | float | None = None,
     eta_dis: np.ndarray | float | None = None,
@@ -4703,6 +4729,8 @@ def solve_dispatch(
         storage_energy_cap=storage_energy_cap,
         storage_soc_min=storage_soc_min,
         storage_discharge_min=storage_discharge_min,
+        storage_charge_cap=storage_charge_cap,
+        storage_discharge_cap=storage_discharge_cap,
         storage_zone_idx=storage_zone_idx,
         eta_chg=eta_chg,
         eta_dis=eta_dis,
