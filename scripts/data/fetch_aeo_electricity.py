@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Fetch the AEO2025 electricity-corridor tables into immutable raw.
 
-Companion to ``scripts/fetch_eia_aeo.py`` (which pulls the AEO *fuel-price*
+Companion to ``scripts/data/fetch_eia_aeo.py`` (which pulls the AEO *fuel-price*
 trajectories): this pulls the AEO2025 regional **electricity** projections —
 capacity mix, generation (energy) mix, and power-sector CO2 by Electricity
 Market Module region — for the ``benchmark-corridor`` datatype's FC-5 external
@@ -11,12 +11,12 @@ map, unit assertions). Output:
 ``data/raw/benchmark-corridor/aeo2025/aeo2025_electricity_corridor.csv``.
 
 Nothing in the model or ``config`` changes; re-deriving the clean datatype from
-this raw is ``scripts/curate_benchmark_corridor.py`` (rule 23 — raw fetch and
+this raw is ``scripts/data/curate_benchmark_corridor.py`` (rule 23 — raw fetch and
 curation are separate, cited steps).
 
 Usage:
-    EIA_API_KEY=your_key python scripts/fetch_aeo_electricity.py
-    python scripts/fetch_aeo_electricity.py --years 2030 2035 2040
+    EIA_API_KEY=your_key python scripts/data/fetch_aeo_electricity.py
+    python scripts/data/fetch_aeo_electricity.py --years 2030 2035 2040
 """
 
 from __future__ import annotations
