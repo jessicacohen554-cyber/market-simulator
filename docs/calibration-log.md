@@ -17500,3 +17500,149 @@ committed. NO dashboard registration: the A-leg repro and B-leg are same-machine
 (FINDING-caiso92b protocol) and the B-leg is byte-identical to the keeper — a
 duplicate entry would be pure noise (CAISO 13/15). `keepers.json` UNCHANGED.
 Next number: caiso-99.
+
+## 2026-07-18 — ERCOT-84: the Target-1 offer-surface premise re-adjudicated BY MEASUREMENT — the 60-Day DAM disclosure carries NO GW-scale cap-band offer mass in the 2023 mid-band hours (the G-22 $1,500 step is a top-sliver/fallback artifact of a ~0.8-1 GW cohort); the true $200-800 marginal-offer basis is SCED-side and PERMANENTLY unreachable for 2023 (free-path retention, owner ask filed); 2024 tails form on measured near-exhaustion of the ONLINE fleet; April-2024 over-formation ROOT-CAUSED to two coupled defects (full-stop-override economic-idle misclassification + the nonreleasable carve-out's at-cap step over-firing in near-boundary hours); keeper UNCHANGED (ercot82)
+
+**Task (fresh-lens handoff, this session; Opus/Fable).** Target 1 (2023
+mid-band offer formation), Target 2 (April-2024 over-formation), and the
+clean-slate offer-multiplier audit, on the corrected unit-only availability
+envelope. Rule-16 throwaway single-year keeper-replay probes only (2023 and
+2024 baselines + one single-delta 2024 outage probe — solved and DELETED,
+never registered). Keeper and `keepers.json` UNCHANGED
+(`2026-07-18-ercot82-measured-rtolcap`). Probe evidence scripts committed:
+`scripts/probes/_ercot84_{dam_never_offered,dam_ct_crosstab,sced_spare_offers,outage_override_audit}.py`.
+
+**Finding 1 — Target-1's named fix is REFUTED at the data layer (measured
+cross-tab, no LP).** Direct decomposition of the 60-Day DAM disclosure over
+the Aug-2023 target window (186 hours, hod 14-19 CST — the window carrying the
+~60 mid-band $200-1,000 miss hours), config-collapsed exactly as the adopted
+cleared-share wall derive (`_ercot84_dam_ct_crosstab.py`):
+
+| CT cohort (per hour) | GW | measured offer basis |
+|---|---|---|
+| DAM-cleared (award > 0) | 4.62 | award-margin price q10/q90 = $25/$47 |
+| offered-but-uncleared | 0.76 | segment prices q10/q90 = $25/$43 |
+| never-offered (no DAM energy curve) | 4.45 | 97-98% carry NO curve — unmeasurable from DAM |
+
+The ENTIRE submitted CT curve mass in the window prices $13-44 (q97 = $44).
+The G-22 offer@90%HSL identification (the $150 -> $1,500-4,000 step, 2023
+top-ventile median $4,000, `derive_ct_offer_surface.py` summary) is real as a
+statistic but is carried by a ~0.8-1 GW ON-status cohort's thin top slivers
+plus the top-price FALLBACK for curves that never reach 90% of HSL — it is NOT
+GW-scale offer mass. No DAM-derived surface can price the mid-band from it.
+This explains, at the data layer, why every DAM-basis mechanism failed the
+mid-band on the corrected fleet (flat CT surface over-withholds; midcurve belt
+routed-around; cleared-share wall measured-cheap; commitment posture
+price-inert per ercot83): the $200-800 marginal offers that formed the real
+Aug-2023 lambda (p50 $620 at RTOLCAP p50 7.9 GW) were REAL-TIME (SCED) offers
+of the ~3 GW online spare beyond the nonreleasable AS carve-out — the 2023
+conservative-operations regime lived on the RT offer surface, which the DAM
+disclosure genuinely does not contain. (The never-offered 4.45 GW is
+substantially the AS-committed cohort the ercot81/82 keeper already withholds
+as rigid reserve demand — the quantity side is represented; the RT price side
+is the gap.)
+
+**Finding 2 — the 2023 RT basis is CLOSED on the free path (provenance, not
+inference).** 60-Day SCED disclosure free-path retention is ~2.3 years
+(`scripts/fetch_ercot_60day_sced_gen_resource.py` provenance, verified live
+2026-07-16): earliest reachable delivery ~2024-01; Aug-2023 SCED Gen Resource
+Data is permanently unreachable and the credentialed data.ercot.com archive is
+owner-declined. **OWNER ASK (filed, not acted):** authorize a scoped
+credentialed-archive intake of the 2023 SCED Gen Resource window (Jun-Sep 2023
+tail-day clusters would suffice, the ERCOT-74 scoped-day pattern) if the 2023
+mid-band is ever to be measured at the offer level. Absent that authorization
+the 2023 mid-band joins the availability-envelope ledger as a
+measured-representation-limit CAVEAT with a precise reason: the price-forming
+input (2023 RT offers) is unobtainable, and rule 13 forbids reconstructing it
+from the price it formed.
+
+**Finding 3 — the current-design (2024/2025) tails ARE measurable and are
+exhaustion-shaped.** On the on-disk ercot74/75 SCED sample days
+(`_ercot84_sced_spare_offers.py`): in the six covered actual >$200 2024 hours
+the measured energy-dispatchable online spare (Base Point -> HASL, net of AS
+responsibility) was CT 0.10 + CC 0.30 + ST 0.46 ~= 0.9 GW/interval (vs
+~2.6 GW in control hours), with the spare's offer tail rising $884 -> $5,000
+(CT q70-q90). Reality's post-reform tails form on genuine near-exhaustion of
+the ONLINE fleet plus a rising RT offer tail on the last GW. The model's
+C3c-2024/2025 miss (22/53, 0/31) is the P1 perfect-commitment phantom spare;
+with `ercot_commitment_posture` probe-adjudicated price-INERT
+(2026-07-18-ercot83-commitment-posture-probe), the remaining admissible lever
+for the current-design tails is a measured RT-offer surface derived from the
+REACHABLE 2024/2025 SCED corpus (per net-load bin, the BP->HASL spare's offer
+ladder) — CHARTERED, not built this session.
+
+**Finding 4 — Target 2 ROOT-CAUSED: April-2024 over-formation is evening
+spike AMPLITUDE from two coupled, separable defects — not a broad spread.**
+Corrected-envelope keeper replay (2024): April model mean $51.6 vs actual
+$24.3; but EXCLUDING the model's 9 >$200 hours the month reads $20.8 vs $18.3
+(+$2.5) — the miss is hod 18-20 spike amplitude (+78/+259/+193 $/h residuals)
+on Apr 2/15/27, evenings that WERE genuinely tight (actual RT $694/$1,260,
+measured RTOLCAP down at 5.4-5.5 GW): the model spikes on the right days but
+prints VOLL ($5,016-5,047, ordc_adder $0 — the rigid carve-out shortage in the
+energy dual) where reality cleared $500-1,300 while still holding ~5.4 GW.
+Root-caused by measurement + one single-delta probe:
+
+* **(a) INPUT: the 5-day full-stop override manufactures shoulder-season
+  outages from merchant-gas ECONOMIC IDLES.** Offline gate-attribution of the
+  committed windows (`_ercot84_outage_override_audit.py`, same CAMPD cf +
+  EIA-930 local high-net-load mask as the derive): of 38.4 GW April-2024-
+  overlapping CC/ST window capacity, 27.1 GW is kept by the genuine
+  revealed-availability test (down through >=24 local high-net-load hours) but
+  ~4.7 GW is kept ONLY by the `FULL_STOP_OVERRIDE_DAYS=5` depth gate — 5-10
+  day CF=0 cold stretches of merchant CC (Wolf Hollow II 616 MW, Magic Valley
+  401 MW, Hays 2x242 MW, ...) in a $21/MWh record-renewables month, exactly
+  the economic-idle signature the ERCOT-79 local-band test was built to drop.
+  (The override was added 2026-07-07 for PJM baseload-coal shoulder
+  dead-stops; a merchant CC in a deep-mild month violates its "economic idling
+  rarely fully stops for weeks" premise.) Across all of 2024, 266 of 1,048 gas
+  windows (55.7 GW window capacity) are override-only by this reconstruction
+  (a LOWER bound with reconstruction noise — 253 windows re-classify
+  "neither", i.e. the offline cf basis differs from the derive's).
+  **Single-delta probe (throwaway, deleted):** the 2024 keeper replay minus
+  the override-only windows moves April +27.3 -> +19.3, October +6.6 -> +1.5,
+  January +3.1 -> +2.0 — and honestly DEGRADES May (-0.4 -> -6.3; May 7: model
+  $918 -> $62 vs actual $997) and the year tail (>$200 22 -> 14 vs actual 53):
+  the same override channel also carries REAL May outage tightness. The fix
+  must therefore DISCRIMINATE, not delete: the chartered measured
+  discriminator is ERCOT's published hourly Resource Outage Capacity report
+  (MIS NP3-233) — per-hour system-wide outage MW ground truth to reconcile the
+  CAMPD-derived envelope against, month by month (rule 14's "reconciled
+  version of the real data"). Chartered as a data-intake + reconciliation
+  lane, not built this session.
+* **(b) MECHANISM SHAPE: the nonreleasable carve-out's single at-cap step
+  over-fires in near-boundary hours.** In the probe, every non-cliff April
+  spike hour softened substantially (Apr 2 19h $512 -> $58; Apr 27 20h
+  $2,880 -> $1,085; Apr 15 20h $3,158 -> $2,493) but the two 19h peaks stayed
+  pinned at $5,016-5,047: once energy demand digs into the rigid carve-out by
+  ANY margin the step prices the hour at cap, where the real 2024 design
+  prices the same near-boundary state through the ORDC at $500-1,300 (measured
+  RTOLCAP 5.4 GW, lambda $513-966, adders small). This is the same cliff that
+  owns the 8 standing 2023 false-positive >$200 hours (Feb/Mar/Apr/Jun/Jul,
+  median $0.9-1.6k) — the "reserve-co-opt VOLL over-fire" the ercot83 probe
+  definition names. A shape refinement (the carve-out boundary priced through
+  the ORDC-at-remaining-PRC rather than a bare $5,000 step) is the chartered
+  A/B; note the design tension to adjudicate there: the step is exactly what
+  prices the caught Aug-2023 deep tail to its real $3,000-5,000 prints, so any
+  refinement must be gated on the measured PRC/ORDC state, not damped globally
+  (rule 11).
+
+**Audit (clean-slate item) — phantom-era offer_curve multipliers.** No-LP
+comparison vs the measured DAM artifacts on the corrected fleet: CC_REGULAR
+resolved peak 4.576 vs measured all-hours mode-B p50 4.33 (within 6% —
+identified); CT_PEAKER 13.15 vs measured p50 5.39 (2.4x the measured median,
+inside the measured tight-bin p70-p90 band [9.2, 66.4]; flagged — the
+conditional surface's ratio>=1 clamp means the fitted height, not the measured
+p10-p50 rungs, prices the bottom three CT peak rungs); ST_GAS 3.2 vs measured
+4.10 (below measured; the armed surface raises it). NO neutralization
+performed: Finding 1 closed the planned Target-1 stack, so nothing new prices
+these rows, and a re-derivation would be a solve-perturbing change reserved
+for its own chartered A/B. The multipliers stay on the DOF ledger as
+residual-identified entries.
+
+**Disposition.** Keeper UNCHANGED. Nothing registered (all probes rule-16
+single-year throwaways, deleted). Deliverables: this entry, the four committed
+probe scripts, three chartered follow-ups — (i) owner-gated 2023 SCED
+credentialed intake (Finding 2), (ii) NP3-233 outage-capacity reconciliation
+(Finding 4a), (iii) carve-out boundary ORDC-shape A/B (Finding 4b) — plus the
+already-chartered 2024/2025 RT-offer-surface derive (Finding 3). Next number:
+ercot-85.
