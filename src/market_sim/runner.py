@@ -725,7 +725,16 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # never solved, its data never read, and prior_results is left pointing
         # at the last solved year. Its capacity drivers (gas/carbon) come from
         # that last solved year, never from the quarantined bridge year.
-        is_bridge = config.hindcast and year in HINDCAST_BRIDGE_YEARS
+        # T1-X crossover (FF-0E, plan §2.2): a crossover SOLVES its forward
+        # years (>= the boundary) as forecast-mode years, so 2026 — a plain-
+        # hindcast quarantine bridge year — is un-bridged here. Rule-22-legal:
+        # a forecast solve of 2026+ consumes no measured H1-2026 actuals (the
+        # measured overlays are all skipped for crossover forward years).
+        is_bridge = (
+            config.hindcast
+            and year in HINDCAST_BRIDGE_YEARS
+            and not config.is_crossover_forward_year(year)
+        )
         driver_year = last_solved_year if is_bridge else year
 
         # The entering year's demand is deterministically known before the
@@ -1004,7 +1013,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # profile with NO growth scaling, so capacity logic is isolated from
         # demand-forecast error. A plain forecast keeps the once-loaded
         # weather-year base grown by _scale_demand below.
-        if config.hindcast:
+        # T1-X crossover forward years (FF-0E, plan §2.2) take the forecast
+        # branch instead: growth-scaled demand from the weather-year base (the
+        # harness pins weather_year to the last realized year), never the
+        # measured per-year load loader.
+        if config.hindcast and not config.is_crossover_forward_year(year):
             year_base_demand = load_demand(
                 iso,
                 year,
@@ -1064,10 +1077,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # year_demand / peak_demand here on the hindcast-aware basis for the LP
         # and results path: in hindcast mode the measured/pinned load
         # (year_base_demand) governs the solve, not the forecast scalar.
-        if config.hindcast:
+        if config.hindcast and not config.is_crossover_forward_year(year):
             # Measured/pinned historical load governs the hindcast LP; the
             # forecast-only DC block is never added on top of measured actuals
-            # (and datacenter_load_path is "off" in any hindcast anyway).
+            # (and datacenter_load_path is "off" in any hindcast anyway). A
+            # crossover forward year (>= boundary) falls to the forecast branch
+            # below — growth-scaled demand, no measured overlay (FF-0E §2.2).
             year_demand = year_base_demand
         else:
             # Same DC block relocation as the capacity-screen seam above (G-34),
