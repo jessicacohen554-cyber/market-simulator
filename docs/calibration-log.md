@@ -16980,3 +16980,21 @@ diagnostics, attestation (DOF ledger +1 measured-physical;
 top-15 retention pruned the 2026-07-13 miso-64 pair (oldest). Transport:
 `mcp__github__push_files`, blob-verified (rule 27). No `keepers.json` edit
 (recommendation only).
+
+## 2026-07-18 — miso-72 PROMOTED to MISO keeper (owner authorization, this session)
+
+Owner sign-off received; `frontend/data/backcast/keepers.json` MISO pointer +
+keepers list flipped to `2026-07-18-miso-72-winter` (supersedes
+`2026-07-17-miso-71-midwest`, which stays on the dashboard as the parent).
+Sidecar definition updated to KEEPER text and a `market_story` added (the
+Heather delivered-fuel story: the Jan-12 $25.82 Chicago Citygate Friday print
+prices the MLK storm package in-merit — no forcing, no floor).
+`build_status.py` rebuilt status.js (MISO: NOT-YET, run
+2026-07-18-miso-72-winter); `audit_keepers.py` PASS (0 failures, 0 warnings —
+E5 live-verdict match, E8 DOF 26/2 match, S1 status sync; superseded sidecars
+keep their historical promotion text per house style). The keeper-swap
+rule-15 chain is complete: bundle + sidecar + payload + manifest + status
+committed and pushed same-session. Remaining MISO lanes unchanged (G-23
+imports sequenced last; C3c-2025 leg-(b) ledger; the all-ISO
+`gas_daily_shape_factors` interp fix its own follow-up). Next number:
+miso-73.
