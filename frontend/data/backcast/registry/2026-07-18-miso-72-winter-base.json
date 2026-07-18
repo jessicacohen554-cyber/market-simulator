@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-18-miso-72-winter-base",
+ "label": "miso 72 winter base",
+ "date": "2026-07-18",
+ "shorthand": "miso-72-winter-base",
+ "definition": "miso-72 base (PROBE, same-box drift control) -- byte-faithful replay of the miso-71-midwest keeper recipe at HEAD, winter overlay OFF; main - base isolates miso_winter_citygate_daily. Reproduces the registered miso-71 keeper EXACTLY on every gated criterion (C1 CC_REGULAR-2023 -8.29, C3a-2025 -13.7%, C3b 0.079/0.124/0.184, C3c 1/7/1 vs RT 30/37/88) -- zero box drift, which certifies the paired mechanism-only read. Not a keeper candidate; registered per rule 15 so the paired read is reproducible from the dashboard (the miso-66 drift lesson: mechanism-only = probe - base, never probe - registered).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-18-miso-72-winter-base.js",
+ "bundle": "results/calibration/miso72_winter_citygate-base"
+}
