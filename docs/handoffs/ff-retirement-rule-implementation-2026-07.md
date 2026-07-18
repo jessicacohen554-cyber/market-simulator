@@ -48,11 +48,17 @@ a new composition bug.** Measured (raw / IS-2020, economic channel):
   information-set-correct, reality-reversed by IL CEJA; it is NOT an economic
   over-retire and does not enter the T-R10 economic-channel guard.
 
-ERCOT composition leg + LOYO folds + precise BLK-10 fired-MW are **PENDING**
-(§3 note, §5, §7): the PJM/MISO R-NEW bundles were solved by parallel sessions
-and only their reports are committed — the bundles are not on this container's
-disk, so per-fold re-scoring cannot run here without re-solving. ERCOT is
-mid-solve at write time.
+**COMPLETE (FF-1A-C, 2026-07-18).** All three R-NEW legs are re-solved at
+merged HEAD, scored (raw + IS-2020 + T-R10 + LOYO + BLK-10, all scorer-side
+via `score_capacity_hindcast.py --flip-gate-extras`), and registered on the
+forecast-validation dashboard. The ERCOT composition row is §4, the measured
+LOYO fold tables and T-R10 verdicts are §5, the ERCOT flip-gate row is §6, and
+the precise BLK-10 fired-MW per leg is §7. Headline adds: **PJM's IS-2020
+thermal total is 11.546 vs 11.121 actual (+3.8%, PASS)** — the raw +41% FAIL
+is carried entirely by the reality-reversed Byron/Dresden nuclear — and the
+**ERCOT R-NEW leg collapses the over-retirement level 12.727 → 1.87 GW
+(+730% → +22%)** while inverting its composition onto zero-real gas_st
+(T-R10a/b FAIL, the §8 pre-declared honest limit, routed to BLK-6/RD-4).
 
 ---
 
@@ -140,19 +146,24 @@ committed record (never re-solved):
 
 | Leg | Config | Status | BEFORE reference |
 |---|---|---|---|
-| PJM `pjm-2021-2025-realized-cmc-rnew` | `--capacity-market-clearing --retirement-rule pipeline` | **SOLVED** (bundle `cb5e2ecf49e7cfa3`; report committed) | `-cmc-probe-d1` (D1=3) + `-cmc-probe` (D1=1) + `-cmc-before` |
-| MISO `miso-2021-2025-realized-cmc-rnew` | same (seasonal RBDC grain resolver-native since RC-1C) | **SOLVED** (bundle `e5254f0e8abd6a48`; report committed) | `-cmc-probe-d1` / `-cmc-probe` / `-cmc-before` |
-| ERCOT `ercot-2021-2025-realized-comp-rnew` | `--entry-lookahead-reprice --limited-foresight-dispatch --retirement-rule pipeline` | **PENDING** (in-session solve; clean tree regenerating) | `-g31staged-rc2a` (thermal 12.727 GW, coal 6.466, recall 1.0, false 11.292 GW) |
+| PJM `pjm-2021-2025-realized-cmc-rnew` | `--capacity-market-clearing --retirement-rule pipeline` | **RE-SOLVED at HEAD** (bundle `784e354a7b8b7317`, FF-1A-C; supersedes the truncated-tree `cb5e2ecf49e7cfa3`) | `-cmc-probe-d1` (D1=3) + `-cmc-probe` (D1=1) + `-cmc-before` |
+| MISO `miso-2021-2025-realized-cmc-rnew` | same (seasonal RBDC grain resolver-native since RC-1C) | **RE-SOLVED at HEAD** (bundle `3860df088dfb3066`; reproduces `e5254f0e8abd6a48` exactly) | `-cmc-probe-d1` / `-cmc-probe` / `-cmc-before` |
+| ERCOT `ercot-2021-2025-realized-comp-rnew` | `--entry-lookahead-reprice --limited-foresight-dispatch --retirement-rule pipeline` | **SOLVED at HEAD** (bundle `9641a1b790fad79a`, FF-1A-C) | `-g31staged-rc2a` (thermal 12.727 GW, coal 6.466, recall 1.0, false 11.292 GW) |
 
-> **Bundle-availability note (rule 27 aftermath).** The PJM/MISO R-NEW bundles
-> were solved on parallel-session containers; only their `.md` reports were
-> committed (the sidecar/registry files are the deliverable per CLAUDE.md rule
-> 15, but the full evolution-ledger bundles are gitignored/disposable and are
-> NOT on this container's disk). The measured numbers in §4–§6 are quoted
-> **verbatim from the committed reports**; anything requiring a re-score of the
-> raw bundle (per-fold LOYO, precise backstop fired-MW) is marked PENDING rather
-> than recomputed from an absent bundle or — forbidden — invented (rule 1 /
-> RC-2B §0: only MEASURED numbers are PASS evidence).
+> **Reproduction & provenance (rule 27 aftermath, closed by FF-1A-C).** The
+> original PJM/MISO R-NEW bundles were solved on parallel-session containers
+> running the **#2430-truncated capacity.py** (the manager ledger verified the
+> retirement pipeline md5-identical across the truncated/restored trees, so
+> their retirement numbers were valid; the truncation had deleted only the
+> forecast-evolution helpers). The FF-1A-C re-solve at merged HEAD confirms
+> exactly that: **every retirement metric reproduces byte-for-byte** in both
+> ISOs (MISO's report reproduces in full), and the only PJM deltas are on the
+> restored-evolution side — the 2025 adequacy backstop re-sizes 2.353 → 2.5 GW
+> gas_ct and 2025 CO2 shifts 301.9 → 301.8 Mt (the larger backstop CT in the
+> 2025 dispatch). The HEAD bundles supersede; the committed reports were
+> regenerated from them. §4–§7 numbers are measured from the HEAD bundles'
+> committed `score.json` (raw AND IS-2020; nothing quoted from an absent
+> bundle, rule 1 / RC-2B §0).
 
 ## 4. T-R scorecard — MEASURED (bands imported by reference, never restated looser)
 
@@ -171,8 +182,8 @@ side. ❌/✅ are the reports' own band verdicts.
 | coal econ (cum) | 6.885 | 11.537 | +68% | over-retire |
 | gas_ct / oil econ | 3.491 / 0.555 | 0.0 / 0.0 | −100% | under-retire |
 | wind / solar adds | 1.619 / 13.066 | 6.0 / 24.0 | +271% / +84% | ❌ FAIL (T-R3 mix) |
-| gas_cc / gas_ct adds | 8.525 / 0.447 | 5.0 / 2.353 | −41% / +426% | ❌ FAIL |
-| 2025 system CO₂ (Mt) | 448.7 | 301.9 | −33% | ❌ FAIL |
+| gas_cc / gas_ct adds | 8.525 / 0.447 | 5.0 / 2.5 | −41% / +459% | ❌ FAIL (gas_ct = the §7 backstop row, HEAD sizing) |
+| 2025 system CO₂ (Mt) | 448.7 | 301.8 | −33% | ❌ FAIL |
 
 ### MISO (curve-ON, seasonal)
 
@@ -190,7 +201,48 @@ side. ❌/✅ are the reports' own band verdicts.
 > **Reading (T-R1/T-R2/T-R4).** Both ISOs keep the **76% recall PASS** and pass
 > their scarcity-position / CO₂ items where the D1 legs did; the **thermal-GW
 > magnitude FAILs are the signal-level residual** the redesign explicitly does
-> not address (memo §0). ERCOT (T-R3 composition leg) is PENDING (§3).
+> not address (memo §0). New with the HEAD re-score: **PJM's IS-2020 thermal
+> total is 11.546 vs 11.121 actual (+3.8%, inside the ±10% T-R1 band — PASS)**;
+> the raw +41% is entirely the information-set-correct Byron/Dresden nuclear.
+
+### ERCOT (T-R3 composition leg — energy-only; measured at HEAD, FF-1A-C)
+
+R-NEW arm `--entry-lookahead-reprice --limited-foresight-dispatch
+--retirement-rule pipeline` (the staged-thinning arm of the rc2a BEFORE no
+longer exists — D2 deleted it; this leg is its R-NEW successor, not an
+apples-to-apples rerun). BEFORE = `-g31staged-rc2a` (2026-07-16).
+
+| quantity | actual | rc2a BEFORE | R-NEW | band |
+|---|--:|--:|--:|:--|
+| thermal GW retired (level) | 1.534 | 12.727 (+730%) | **1.87 (+22%)** | ❌ FAIL (but ~7× closer) |
+| unit recall >300 MW | 3 | 3/3 (100%) | **0/3 (0%)** | ❌ FAIL |
+| false-retire raw = IS-2020 | — | 11.292 GW (89%) | **1.87 GW (100% of model)** | ❌ FAIL |
+| coal / gas_ct / gas_st econ exits | 0.932 / 0.502 / 0.0 | 6.466 / 3.023 / 3.237 | **0.0 / 0.0 / 1.87** | inversion (T-R10, §5) |
+| solar adds (T-R3c) | 25.08 | 4.0 | **0.0** | ❌ regression |
+| wind / gas_cc / gas_ct / storage adds | 12.663 / 0.244 / 3.692 / 13.691 | 15.0 / 6.0 / 6.0 / 16.0 | 20.0 / 3.0 / 0.0 / 9.0 | ❌ FAIL (storage Δ-share PASS) |
+| 2025 CO₂ (Mt) | 193.6 | 115.7 (−40%) | **140.7 (−27%)** | ❌ FAIL |
+
+- **The level is fixed by the honest mechanism, the composition is not.**
+  R-NEW's uniform bar + soft latch + execution lags collapse the rc2a
+  over-retirement 12.727 → 1.87 GW — but the surviving exits are 100% gas_st
+  (`A = 0`), decided 2021 and executed 2022 (lag 1), while the real coal/CT
+  exits are missed entirely (recall 100% → 0%). This is the §8 pre-declared
+  honest limit measured precisely: without the scarcity/AS revenue the screens
+  under-value peaking-adjacent classes (screen CT $/kW-yr ≈ 25% of the SOM ≈68
+  anchor, plan §1.2/T-R3b), so the only class the uniform bar exits is the
+  gas_st drag class reality kept online. **Routed to BLK-6/RD-4 (G-20/G-22
+  lane) as a finding — never a fuel patch (rule 1).**
+- **T-R3(a) is superseded, not failed:** the committed staged arm cannot be
+  reproduced at HEAD because `staged_oversupply_thinning` was deleted (D2,
+  rule 26); this leg replaces it as the composition probe of record.
+- **Solar entry 4 → 0 GW (T-R3c regression):** the rc2a solar entry rode the
+  staged-thinning arm's tightened fleet; with the thinning deleted and R-NEW
+  exiting only 1.87 GW, no in-year scarcity forms and the BLK-8 solar-entry
+  zero returns. Confirms BLK-8/FF-2A's entry-stack charter (and FF-1B's
+  availability work) carry this, not the decision rule.
+- I5 (no retire-reenter) and I13 (no cobweb) **PASS** on all three legs
+  (T-R5-inv); ERCOT I12 reserve-margin sits 34–47% vs the [13.8%, 28.7%] band
+  — the under-retirement + wind-overbuild signature, report-only here.
 
 ## 5. T-R10 no-inversion guard + LOYO (memo §4, pre-registered)
 
@@ -201,10 +253,14 @@ RD-5-fixed actuals (no absent-bundle dependency). Definitions (memo §4):
 **T-R10a** FAILs iff `A_{first_mover}=0`; **T-R10b** FAILs iff any fuel with
 `A_f=0` accumulates > 1 GW model economic exits.
 
-| ISO | first economic mover | `A_{first_mover}` | zero-real fuel w/ >1 GW model econ exit? | T-R10a | T-R10b |
+Now computed by the scorer (`score_tr10`, raw AND IS-2020 — identical verdicts
+in both modes on all three legs), from the HEAD bundles' `score.json`:
+
+| ISO | first economic mover (year) | `A_{first_mover}` | zero-real fuel w/ >1 GW model econ exit? | T-R10a | T-R10b |
 |---|---|--:|---|:--|:--|
-| **MISO** | coal | 10.934 GW | none (model econ exits = coal 8.054 + nuclear 0.768; both `A_f>0`) | ✅ PASS | ✅ PASS |
-| **PJM** | coal | 6.885 GW | none (model econ exits = coal 11.537; gas_ct/oil model = 0.0) | ✅ PASS | ✅ PASS |
+| **MISO** | coal (2024) | 10.934 GW | none (econ channel = coal 8.054 only; nuclear 0.768 is announced) | ✅ PASS | ✅ PASS |
+| **PJM** | coal (2024) | 6.885 GW | none (econ channel = coal 11.537 only) | ✅ PASS | ✅ PASS |
+| **ERCOT** | gas_st (2022) | **0.0 GW** | **gas_st, 1.87 GW** | ❌ FAIL | ❌ FAIL |
 
 - **MISO is the flagship BEFORE→AFTER (memo §0, D1 findings §3).** The D1=3 leg
   FAILed both gates: gas_st (`A=0`) was the first mover and accumulated
@@ -219,14 +275,33 @@ RD-5-fixed actuals (no absent-bundle dependency). Definitions (memo §4):
   channel** (Byron/Dresden reversal, `reversal_exposure`, IS-2020-excluded per
   §c.5-1) — it is not an economic exit and does not enter T-R10.
 
-**LOYO (rule 22) — PENDING (blocker stated).** The leave-one-year-out folds
-within 2023–2025 require re-scoring each R-NEW bundle with one year held out;
-the PJM/MISO R-NEW bundles are not on this container's disk (§3 note), so LOYO
-cannot be computed here without re-solving. It is **not** estimated. Next
-session (or a container with the bundles) runs: for each fold, confirm the
-T-R10a/b PASS and the 76% recall hold in ≥ 2/3 folds; a fold regression BLOCKS
-and is a finding, never a band to widen. The single-window T-R10 PASS above is
-selection evidence, not a certified fold-robust number.
+**LOYO (rule 22) — MEASURED (FF-1A-C, scorer-side folds, no re-solve).**
+Fold *y* re-scores the cumulative window with year-*y* events dropped from
+BOTH the model ledger and the actuals (`loyo_folds`, committed in each
+bundle's `score.json`); the promotion bar is a verdict holding in ≥ 2/3 folds:
+
+| ISO-fold | recall | false-retire raw / IS (GW) | T-R10a | T-R10b |
+|---|--:|--:|:--|:--|
+| PJM −2023 | 9/9 (PASS) | 11.153 / 7.056 | PASS | PASS |
+| PJM −2024 | **0/16 (FAIL)** | 4.097 / 0.0 | PASS | PASS |
+| PJM −2025 | 12/16 (PASS) | 9.194 / 5.097 | PASS | PASS |
+| MISO −2023 | 11/14 (PASS) | 0.0 / 0.0 | PASS | PASS |
+| MISO −2024 | **0/13 (FAIL)** | 0.006 / 0.006 | PASS | PASS |
+| MISO −2025 | 13/17 (PASS) | 0.0 / 0.0 | PASS | PASS |
+| ERCOT −2023/−2024/−2025 | 0/1, 0/3, 0/3 (FAIL) | 1.87 / 1.87 each | FAIL | FAIL |
+
+Verdicts (`holds_2of3`): **PJM and MISO hold ≥ 2/3 on recall, T-R10a and
+T-R10b — the rule-22 promotion criterion for the capacity-market flips is
+MET**, with T-R10a/b holding **3/3**. ERCOT holds 0/3 on everything (its
+gas_st exits are decided 2021/executed 2022 — never in a held-out year — so
+every fold sees them; consistent with §4's honest limit; ERCOT is not a flip
+candidate). One measured caveat, reported not widened: **both curve-ON ISOs'
+recall folds sit exactly at the 2/3 boundary** — the −2024 fold zeroes recall
+because the model's coal wave executes almost entirely in 2024 (coal decisions
+from 2021 + execution lag 3) while the real exits spread across 2023–2025.
+That is a timing-concentration finding for the revenue lane's level work
+(T-R1's 1.5-yr timing band neighborhood), not a rule defect: the wave's
+*membership* is fold-robust, its *calendar spread* is not.
 
 ## 6. §2.1 flip-gate items 3–4 per ISO — MEASURED (the FF-2C input)
 
@@ -237,27 +312,43 @@ false-retire blow-up), graded on the measured economic channel:
 |---|:--|:--|:--|
 | **MISO** | ✅ PASS (gas_st 8.643 → 0.0; first mover coal) | ✅ PASS (recall 29% → 76%; false-retire 8.643 → **0.0**) | **CLEARS 3–4**; blocked only on level (thermal −42%, revenue lane) |
 | **PJM** | ✅ PASS (coal-only econ exits; nuclear = announced reversal) | ⚠️ MIXED (recall 0% → 76% PASS; but false-retire 4.097→8.749 raw / 0.0→4.652 IS — the rise is coal **depth** over-retire + the IS-excluded nuclear reversal, a LEVEL issue) | **CLEARS item 3**; item 4 recall-restored but level-over on coal (RD-4 bar) |
-| **ERCOT** | PENDING (composition leg solving) | PENDING | PENDING |
+| **ERCOT** | ❌ FAIL (gas_st inversion persists under R-NEW: T-R10a/b FAIL, 1.87 GW zero-real) | ❌ FAIL (recall 100% → 0%; false-retire 100% of model, though 11.292 → 1.87 GW absolute) | **does NOT clear 3–4** — but ERCOT is energy-only, not a flip candidate; this is the §4/§8 honest limit routed to BLK-6/RD-4 |
 
-**FF-2C reading:** items 3–4 (the inversion + wave-elimination blockers RC-1A-D1
-raised) are **cleared for MISO and PJM** by R-NEW; the remaining PJM/MISO gaps
-are signal-LEVEL (over/under-retire depth), which route to the revenue lane
-(BLK-6/BLK-9, RD-4), not to the decision rule. ERCOT is the open leg.
+**FF-2C reading (final, all legs measured):** items 3–4 (the inversion +
+wave-elimination blockers RC-1A-D1 raised) are **cleared for MISO and PJM** by
+R-NEW, and the clearance is **LOYO-robust (≥ 2/3 folds, T-R10 3/3 — §5)**; the
+remaining PJM/MISO gaps are signal-LEVEL (over/under-retire depth), which
+route to the revenue lane (BLK-6/BLK-9, RD-4), not to the decision rule.
+ERCOT measured and does not clear — expected and pre-declared: it is not a
+capacity-market flip candidate, and its gas_st composition inversion is the
+revenue-lane residual (§4), not a flip-gate blocker for PJM/MISO.
 
-## 7. BLK-10 re-measure
+## 7. BLK-10 re-measure — MEASURED (FF-1A-C; the FF-2A baseline)
 
-- **PJM (from the committed D1 record, D1 findings §2):** BLK-10 —
-  the `gas_ct_adequacy_2025` backstop over-fire — was **resolved** at the
-  curve-ON level: the D1=1/D1=3 gas_ct adequacy adds went 8.428 → 0.0 (no coal
-  wave → no adequacy deficit → no backstop fire). Under **R-NEW**, the PJM
-  report shows **gas_ct adds = 2.353 GW** (economic entry, +426% vs the 0.447
-  actual) — a partial re-emergence, but the precise split between economic new
-  entry and the `reserve_margin_build` backstop requires the bundle's per-year
-  `evolution_*.json` (absent, §3). **Precise backstop-fired-MW per leg:
-  PENDING** — flagged for the next session with the bundle. The gap-register
-  "re-measure after the rule change" requirement is partially satisfied (the
-  wave-coupling finding holds); the exact fired-MW is the open number.
-- **MISO / ERCOT:** PENDING (MISO bundle absent; ERCOT solving).
+Precise `reserve_backstop`-sourced MW per leg, from each HEAD bundle's ledgers
+via `blk10_backstop_fired` (committed in `score.json`):
+
+| Leg | backstop fired (MW) | fired rows | thermal adds by source (MW) | pre-R-NEW reference |
+|---|--:|---|---|---|
+| **PJM** cmc-rnew | **2,500.229** | `gas_ct_adequacy_2025` (one step, 2025) | economic 5,000 + backstop 2,500.229 | RC-1A curve-ON probe: **6,430** in one step (`gas_ct_adequacy_2025`, gap-register §3.9) |
+| **MISO** cmc-rnew | **0.0** | none | (no thermal additions at all) | RC-1A: 640 (annual grain) / 10 (seasonal RC-1C leg) |
+| **ERCOT** comp-rnew | **0.0** | none | economic 3,000 | n/a — energy-only, backstop disabled by design (`resolve_reserve_margin_build_enabled`) |
+
+**Over-fire verdict (the gap-register §3.9 "re-measure after D1" gate, graded):**
+the R-NEW-damped exit wave **still over-fires the PJM backstop, at ~39% of the
+pre-R-NEW magnitude**. The 2024-concentrated coal execution (2021 decisions +
+lag 3) leaves the 2025 entering fleet 2,275 firm-MW short (2,500.229 nameplate
+× (1 − EFORd_gas_ct)) and the one-pass backstop rebuilds the full deficit in a
+single step — 2,500 MW of gas_ct against an ISO whose actual 2021–2025 gas_ct
+additions were 447 MW (~5.6×). Correction of the earlier reading: the
+committed truncated-tree report's 2.353 GW "economic entry" was in fact this
+backstop row at its truncated-tree sizing; at HEAD the split is measured —
+economic gas_ct entry = 0 of the 2.353→2.5, ALL of it is the backstop. MISO's
+over-fire is **fully resolved** under R-NEW (0.0 fired — the milder 0.64/0.01
+GW probe-era fires disappear entirely with the damped wave). **FF-2A's
+backstop-sizing rework is therefore chartered on PJM alone**: the finding is
+the one-pass full-deficit rebuild (§1.5 signature), now cleanly separated from
+the wave size (which R-NEW already damped 6.43 → 2.5 GW).
 
 ## 8. Honest limits & open blockers (stated in advance, memo §3.6)
 
@@ -321,9 +412,35 @@ commits merged fragments (0 / 500 / 1,020 / 1,000 lines) and did not fix it.
    ran (3+ min) and PASSED before the merge; the merge grew capacity.py
    (2291 → 3967) so the >30%-shrink guard never tripped.
 
+**FF-1A-C addendum (2026-07-18, this completion session) — three further
+push-transport events, each caught by the rule-27 verify step, none
+reaching main broken:**
+1. A `push_files` call for the branch accidentally carried a literal
+   placeholder string as `scripts/score_capacity_hindcast.py`'s content
+   (commit `54869c3` on the working branch) — exactly the
+   placeholder-overwrite failure mode rule 27 names. The immediately-following
+   blob verification caught it; the next commit (`52cb462`) restored the full
+   file and was verified byte-identical to the local blob before any further
+   work. The placeholder exists only in intermediate branch history.
+2. Generated JSON artifacts (score.json/sidecars) carry literal `\uXXXX`
+   escapes on disk; inline `push_files` emission decodes them to the raw
+   characters, so byte-identity fails while content is intact. Convention
+   adopted and applied: generated-JSON pushes are verified by **JSON-equality
+   + line count** (no content loss) and the local copy is synced to the pushed
+   bytes; hand-written source/docs remain byte-verified.
+3. The regenerated `forecast-validation.html` (~250 KB after 29 sidecars) is
+   structurally un-pushable through full-content inline transport without the
+   response-clip risk that truncated #2430 — so FF-1A-C moved the page to
+   deploy-time assembly (`register_hindcast.py --page-only --site-dir` in
+   `deploy-pages.yml`, stdlib-only, mirroring `build_manifest.py`); the
+   committed page copy is now local-preview-only, same convention as the
+   backcast manifest files.
+
 ---
 
-*Produced 2026-07-18 (FF-1A). No holdout year solved or scored; 2022 bridged;
-no backcast artifact touched; nothing tuned to a residual. Measured numbers
-quoted verbatim from committed reports; ERCOT leg + LOYO folds + precise
-BLK-10 fired-MW are PENDING with the blocker stated (§3), never estimated.*
+*Produced 2026-07-18 (FF-1A); completed 2026-07-18 (FF-1A-C). No holdout year
+solved or scored; 2022 bridged (the ERCOT gas_st executions land in the 2022
+evolution step — evolved, never solved); no backcast artifact touched; nothing
+tuned to a residual. All §4–§7 numbers are measured from the three HEAD
+bundles' committed `score.json` (raw + IS-2020), solved/scored/registered in
+this session; `capacity.py` byte-identical to `origin/main` throughout.*
