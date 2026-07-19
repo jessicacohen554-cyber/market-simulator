@@ -1,0 +1,127 @@
+diff --git a/src/market_sim/config/scenarios.py b/src/market_sim/config/scenarios.py
+index b2a266a..6296381 100644
+--- a/src/market_sim/config/scenarios.py
++++ b/src/market_sim/config/scenarios.py
+@@ -5003,6 +5003,32 @@ class ScenarioConfig:
+     # data.fleet.generators_to_fleet_arrays.
+     ercot_thermal_dam_availability: bool = False
+ 
++    # NEISO measured FLEET operable-capacity availability (default off, NEISO
++    # backcast-gated). The ISO-NE analogue of ercot_thermal_dam_availability: use
++    # the ISO-NE Morning Report Section 3 "Operable Capacity Analysis" measured
++    # daily generation-outage / operable-capacity figures IN PLACE OF the
++    # CAMPD-derived unit-outage fallback (campd-unit-outages-NEISO.csv).
++    # data/raw/neiso-operable-capacity/neiso_operable_capacity_<YYYY>.csv,
++    # built by scripts/data/build_neiso_operable_capacity.py from the daily CSVs
++    # scripts/data/fetch_neiso_morning_report.py downloads.
++    #
++    # SEMANTICS: ISO-NE publishes this only at FLEET grain (it does not publish
++    # per-unit / per-fuel availability, only masked-asset DA offers), so the
++    # measured daily availability fraction -- 1 - outages / (CSO + EcoMax-above-
++    # CSO), a transparent ratio of published MW, never a price (rule 13) -- is
++    # imposed on the covered dispatchable-thermal classes TOGETHER by the same
++    # bidirectional cap-1.0 water-fill the ERCOT class-day overlay uses (RESTORE
++    # where the measured fleet availability exceeds the model's, REMOVE where it
++    # is below), setting the covered thermal fleet's cap-weighted day-mean
++    # availability to the measured level and superseding the CAMPD unit-outage
++    # derate there. The model's own within-fleet shape is preserved below the
++    # measured level. Uncovered dates (before the 2018-07-01 archive start, any
++    # publication gap) keep the statistical/CAMPD availability. Backcast-only;
++    # forecast keeps the statistical WEFOR/POF stack (the mode-aware seam). See
++    # data.neiso_operable_capacity.neiso_thermal_availability_series and the
++    # application in data.fleet.generators_to_fleet_arrays.
++    neiso_operable_capacity_availability: bool = False
++
+     # ERCOT CAMPD-blind per-plant availability (default off, ERCOT backcast-gated
+     # — ERCOT-71). Restores measured availability for the ERCOT gas plants ABSENT
+     # from the TX CAMPD extract (Kiamichi 55501, Hidalgo 55545, Arthur Von
+diff --git a/src/market_sim/data/fleet.py b/src/market_sim/data/fleet.py
+index 8c30512..feb258a 100644
+--- a/src/market_sim/data/fleet.py
++++ b/src/market_sim/data/fleet.py
+@@ -2009,6 +2009,85 @@ def generators_to_fleet_arrays(
+             )
+         np.clip(availability, 0.0, 1.0, out=availability)
+ 
++    # NEISO measured FLEET operable-capacity availability (backcast overlay,
++    # config.neiso_operable_capacity_availability): the ISO-NE analogue of the
++    # ERCOT class-day DAM block above. ISO-NE publishes availability only at
++    # FLEET grain (Morning Report Section 3; no per-unit / per-fuel series), so a
++    # SINGLE measured day availability fraction is imposed on the covered
++    # dispatchable-thermal classes TOGETHER: set their cap-weighted day-mean
++    # availability to the measured 1 - outages/(CSO + EcoMax-above-CSO) level,
++    # superseding the CAMPD unit-outage derate applied above ("instead of the
++    # campd unit outage fallback"). Same bidirectional cap-1.0 water-fill as the
++    # ERCOT block (RESTORE toward the ceiling where measured > model, REMOVE
++    # toward zero where measured < model), here over one pooled group. Uncovered
++    # dates (pre-2018-07 archive start, publication gaps) keep the pre-overlay
++    # availability; forecast mode is untouched (the mode-aware seam). Provenance
++    # + admissibility: data.neiso_operable_capacity.
++    if (
++        config is not None
++        and _iso == "NEISO"
++        and getattr(config, "neiso_operable_capacity_availability", False)
++        and getattr(config, "mode", "forecast") == "backcast"
++        and _yr is not None
++    ):
++        from market_sim.data.neiso_operable_capacity import (
++            neiso_thermal_availability_series,
++        )
++
++        _meas = neiso_thermal_availability_series(int(_yr), hours)
++        _idx = np.array(
++            [
++                gi
++                for gi, g in enumerate(generators)
++                if g.plant_group in THERMAL_AVAILABILITY
++            ],
++            dtype=int,
++        )
++        _n_days = hours // 24
++        _t = (
++            _meas[: _n_days * 24].reshape(_n_days, 24).mean(axis=1)
++            if _idx.size
++            else np.array([])
++        )
++        _covered = np.isfinite(_t)
++        _cap = pmax[_idx] if _idx.size else np.array([])
++        _cap_sum = float(_cap.sum()) if _idx.size else 0.0
++        if _idx.size and _cap_sum > 0.0 and _covered.any():
++            _a = availability[_idx, : _n_days * 24].reshape(_idx.size, _n_days, 24)
++            _ad = _a.mean(axis=2)  # (n, days) per-unit day-mean availability
++            # Cap-weighted current pooled-thermal day-mean availability.
++            _cur = (_ad * _cap[:, None]).sum(axis=0) / _cap_sum  # (days,)
++            _restore = _covered & (_t >= _cur)
++            _remove = _covered & (_t < _cur)
++            _lam = np.clip((_t - _cur) / np.maximum(1.0 - _cur, 1e-9), 0.0, 1.0)
++            _new = _ad.copy()
++            _new[:, _restore] = _ad[:, _restore] + _lam[None, _restore] * (
++                1.0 - _ad[:, _restore]
++            )
++            _mu = np.where(_remove, _t / np.maximum(_cur, 1e-9), 1.0)
++            _new[:, _remove] = _ad[:, _remove] * _mu[None, _remove]
++            # Preserve each unit's intra-day shape by the per-unit day ratio; a
++            # unit revived from a zeroed day is set flat (no shape to scale).
++            _ratio = np.divide(_new, _ad, out=np.zeros_like(_ad), where=_ad > 1e-9)
++            _scaled = _a * _ratio[:, :, None]
++            _flat = (_ad <= 1e-9) & (_new > 1e-9)
++            if _flat.any():
++                _scaled[_flat, :] = _new[_flat][:, None]
++            _scaled = np.minimum(_scaled, 1.0)
++            _scaled[:, ~_covered, :] = _a[:, ~_covered, :]  # uncovered untouched
++            availability[_idx, : _n_days * 24] = _scaled.reshape(_idx.size, -1)
++            np.clip(availability, 0.0, 1.0, out=availability)
++            logger.info(
++                "NEISO measured operable-capacity availability (%d): pooled "
++                "thermal fleet set to measured fleet level on %d day(s) "
++                "(restore %d / remove %d), median target %.3f",
++                _yr,
++                int(_covered.sum()),
++                int(_restore.sum()),
++                int(_remove.sum()),
++                float(np.median(_t[_covered])),
++            )
++
+     # Reallocate each CC_REGULAR plant's outage derate from pro-rata to
+     # top-of-stack (config.cc_outage_derate_from_top): the plant's hourly
+     # available MW is unchanged, but it now fills the tranches bottom-up in
