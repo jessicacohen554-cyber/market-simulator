@@ -17978,3 +17978,93 @@ surfaces DIGIT-FOR-DIGIT — A: +1.3/+10.9/−6.4 | +0.2/+9.0/−4.7 |
   mechanism solve, nothing registered this session; keeper stays
   `2026-07-19-caiso-99-storage-shape`. WP-3 ask still PENDING (untouched).
   Next number: caiso-101.
+
+## 2026-07-19 — miso-76 (Phases A2/A3/B/C): measured marginal-loss physics (M3) built and A/B-solved — the FROZEN charter's pre-registered R2 tripped on East-2025 → REJECTED PROBE; R1 (C3b ≤0.20 veto) HELD every year; the mechanism (zero fitted scalars) stays merged tier-3 default-OFF; keeper UNCHANGED
+
+**Lane (charter frozen before build).** `docs/handoffs/miso-nc-price-separation-design-2026-07.md`
+(miso-76 Phase A, owner-selected lane B). Bands B1–B4 / refutations R1–R5
+pre-registered; per pre-registration nothing was revised after the first LP solve.
+
+**A2 (intake).** New `lmp-components` datatype (schema-first, registry-driven):
+the verbatim raw record already existed in the committed D6 hub staging
+(`data/raw/lmp-data/MISO`, all three LMP/MCC/MLC value rows, 8 hubs, 2023-2025
+both markets, verified gap-free) — no ~2,190-file re-download; 6 clean
+partitions curated (70,080/70,272 rows), MEC identity (LMP−MCC−MLC uniform
+across hubs per interval) 0 warnings. bc_HIST annual consolidations mirrored
+verbatim (gitignored bulk per caiso-public-bids precedent; sha256 provenance in
+the MISO README; validation layer ONLY, rule 13 — deliberately NO clean-datatype
+extension). Full-year measured DA dMLC targets vs Indiana (the B1 basis):
+West −1.636/−1.911/−1.306, Illinois −1.316/−1.383/−2.077, East
+−0.135/−0.143/−0.024 (2023/24/25).
+
+**A3 (derive, frozen rule 23).** `scripts/data/derive_miso_loss_surface.py` →
+`data/raw/iso-specific-transmission/MISO_loss_surface.csv`: per-zone (month)
+dimensionless marginal delivery-factor deviations dev = Σ MLC / Σ MEC (DA
+basis; MLC = MEC × (DF−1), MISO BPM-002), per-year rows for backcast train
+years (same-year measured-physical class as CEMS rates) + pooled year-0 rows
+(the forecast forward analogue); Plains = documented West+Illinois bracketing
+proxy (D6). Byte-deterministic. **Offline B1 acceptance PASS 9/9** (implied
+dual-ratio separation vs measured mean dMLC, ratios 0.96–1.01) BEFORE any solve.
+
+**B (build; implementation = per-link loss fractions, gated on the A3 pass).**
+`ScenarioConfig.miso_zonal_loss_surface` (tier 3, GATED default off,
+MISO-scoped rule 24): L1–L6 split into one-way pairs
+(`transmission.apply_miso_zonal_loss_links`, the RDT pair's structure, 0.001
+flow tiebreak = storage-ε class), receiving-end balance coefficient
+1 − eps(month) with eps_(x→y),m = max(0, (dev_y−dev_x)/(1+dev_y))
+(`build_miso_link_loss` → `dispatch.build_constraints(link_loss)`, vectorized
+sparse correction): interior uncongested duals separate by exactly the
+measured DF ratio — losses consume MWh, prices stay duals (rule 4), zero
+fitted scalars (DOF +1 measured-physical, n_scalars 0; ledger main 29/2 vs
+base 28/2). Reverse direction clamps to 0 (conservative — no fabricated
+inverted separation). Off-state byte-identical; 9 unit tests + 246 regression
+tests; 168 h full-pipeline smoke separated the pool with the measured sign
+structure. CLI on both calibration CLIs; `replay_keeper` gained
+`--years`/`--reuse-solved` (rule-12 per-year chain on a 15 GB box).
+
+**C (A/B, per-year chains + --reuse-solved, years sequential).** Runs:
+`2026-07-19-miso-76-loss-surface` (main) + `2026-07-19-miso-76-loss-base`
+(same-box miso-75 keeper replica; reproduces the registered keeper exactly —
+C3a −2.5/−8.9/−15.4 %, C3b 0.082/0.137/0.198, C3c 0/6/0, max LMP $152.01,
+Midwest span $0.00 — zero box drift). Scorer:
+`scripts/probes/_miso76_ab_score.py`.
+
+- **R2 (no fabricated separation) TRIPPED — East-2025:** model annual-mean
+  separation −0.066 vs measured RT TOTAL mean +0.033 (>1.0×). The East−Indiana
+  2025 monthly surface flips sign 6/6 months (annual net −0.0003): a monthly
+  one-way mechanism cannot reproduce the near-zero measured annual net that
+  reality's OFFSETTING CONGESTION produces — congestion is the documented
+  data-blocked M4 gap. **→ REJECTED PROBE by pre-registration.**
+- **B1 (the deliverable) 5/9 pair-years in [0.5×,1.5×]:** 2023 ALL PASS (West
+  0.57× / Illinois 0.69× / East 1.23×), West-2025 0.52× PASS; West-2024 0.35× /
+  Illinois-2024 0.47× / Illinois-2025 0.40× undershoot — the one-way clamp
+  transmits the DF ratio only in typical-direction, uncongested, marginal
+  hours (realized transmission ≈ 35–70%; the offline acceptance measured the
+  algebra at 100% typical-direction transmission — the LP's realized flow
+  pattern is the gap); East-2025 2.81× overshoot (the cancellation pair-year).
+- **R1 (C3b ≤ 0.20 VETO) HELD every year:** 0.082/0.135/0.198 (base
+  0.082/0.137/0.198) — the pre-named riskiest gate did NOT trip; the 2025
+  headroom 0.002 is unchanged. **R3** not inert (moves to $0.93). **R4** held:
+  C1/C2/C4/C5a/C7/C8 unchanged (C8 ST_GAS grounded-above-budget, same as the
+  keeper; NO new floors — D-2 adds no row for the loss physics). **B3**
+  (rule-14 disclosure): C3a +0.1pp each year (−2.5→−2.4, −8.9→−8.7,
+  −15.4→−15.3 %) — a side effect, never validation (**R5**: the lane's claim
+  was B1 and only B1, and B1 FAILED). **B2** report-only: model separations
+  sit well inside measured totals except the East-2025 sign case. **B4**
+  report-only: January MAE Indiana/East/West flat (−0.34..+0.68) — the
+  miso-72 partial-reduction hypothesis not confirmed. C3c unchanged — the
+  irreducible tail.
+
+**Adjudication & disposition (rules 1/11/15).** REJECTED PROBE — the charter's
+own pre-registered R2 governs the label. The mechanism itself is structurally
+faithful measured physics (rule 1): it stays merged, tier-3, DEFAULT OFF, and
+is NOT reverted; no band was re-tuned. Both arms registered (registry pruned
+16 → 14: dropped oldest pair miso-69). Keeper UNCHANGED
+(`2026-07-18-miso-75-manitoba-meritcap`); determination NOT-YET on the same 2
+fails {C3a-2025, C3c}. **Frontier evidenced:** loss physics alone carries
+roughly half the persistent wind-belt separation (in-band 2023, undershooting
+2024-25) and cannot represent cancellation pair-years; closing the remainder
+requires direction-symmetric loss structure (re-opens the negative-price
+disposal problem) or the congestion component — M4 (OASIS-AFC feasibility,
+contingent, own charter). The determination-path proposal remains DECLINED
+(2026-07-19, un-applied). Next number: miso-77.
