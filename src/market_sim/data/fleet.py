@@ -3882,6 +3882,11 @@ def build_ercot_offer_surface_cleared_share_markup(
       byte-identical. The RT leg is never state-weighted (the SCED spare is
       measured on the online fleet — the commitment state is already
       conditioned into the surface). ST_GAS stays DAM-basis (rule 19).
+    * ``ercot_faststart_pool_offer`` (ERCOT-88) is a SEPARATE builder
+      (:func:`build_ercot_faststart_pool_markup`) that REPLACES every
+      surface's markup — this wall's included — on the fast-start rows above
+      the measured offline-pool boundary (the caller composes by mask, one
+      owner per row-hour; see that builder's docstring).
     """
     state_flag = getattr(config, "ercot_offer_surface_cleared_share_state", False)
     steam_flag = getattr(config, "ercot_offer_surface_cleared_share_steam", False)
@@ -4229,6 +4234,225 @@ def build_ercot_offer_surface_cleared_share_markup(
             sorted(rt_walls),
         )
     return markup
+
+
+def build_ercot_faststart_pool_markup(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    mc_base: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+    year: int,
+) -> "tuple[np.ndarray, np.ndarray] | None":
+    """Build the ERCOT-88 offline fast-start pool ``(markup, own_mask)``.
+
+    The §6.2 mechanism of
+    ``docs/handoffs/ercot-residual-midband-formation-lane-2026-07.md`` (§9,
+    ``ScenarioConfig.ercot_faststart_pool_offer``). The ERCOT-87 measurement
+    adjudicated that the actual $150-500 moderate-tightness band prices on the
+    OFFLINE startable CT pool (telemetered OFFQS/OFFNS — ~5x the online
+    spare's in-band offer mass; 12-18 CT starts per covered band hour), not on
+    any online-spare or unmitigated-CC surface. This builder offers that
+    capability to the LP at its measured price::
+
+        boundary(bin) = 1 - pool_frac(bin)          # measured pool share
+        rel           = (share_g - boundary) / (1 - boundary)
+        target[g, t]  = interp(rel, ladder_q, pool_ladder(bin)) x gas_day(t)
+        markup[g, t]  = max(0, min(target, cap_frac x VOLL) - mc_base[g, t])
+
+    on the merchant CT rows (the cleared-share wall's measured "CT" class
+    scope) whose WITHIN-PLANT cumulative-capacity midpoint lies above the
+    hour-bin's measured pool boundary — the top-of-curve capacity that in
+    reality is telemetered offline-startable.
+
+    * **Eligibility is unit physics** (rule 12 / charter §9.2):
+      ``min_down_hours <= constants.FASTSTART_POOL_MIN_DOWN_HOURS`` — the
+      SCED-startable-intra-hour inequality. CC rows fail by physics (4-8 h),
+      ST_GAS by its 8-12 h min-down; no class tuple gates eligibility.
+    * **Replace composition, by mask** (rule 19 / charter §9.1): the returned
+      ``own_mask`` (n_gen, T) marks the row-hours the pool owns; the caller
+      REPLACES every other offer surface's markup there (conditional peak
+      surface, cleared-share wall, RT leg alike) — that capability is
+      offline, so an online-basis price is refuted for it by status. One
+      owner per row-hour, enforced at the composition site. In a measured
+      row-hour whose pool target sits below the model's base cost the markup
+      is 0 and the row bids cost (the pool is OFFERED, never forced).
+    * **An offer-availability, never a floor**: no ``min_gen`` is touched —
+      forced-energy (D-2) and off-window-binding (D-4) exposure is vacuous by
+      construction, so the rule-17 hazard (a CT floor binding overnight at
+      CF ~ 0) is structurally impossible.
+    * **Above-LSL basis**: the ladder is derived from the pool's above-LSL
+      startable increment only (``derive_ercot_faststart_pool.py``) — the
+      negative below-LSL min-gen curve bottoms never enter, and the markup
+      only ever RAISES a bid.
+    * **Year-scoped** (rule 13): no pooled fallback — a year absent from the
+      artifact returns None (every surface byte-identical; 2024/2025 only,
+      the RT wall's own 2023 input-blocked bar). Zero fitted scalars; the
+      artifact is frozen against residuals (rule 23).
+    * P1-only via the shared ``mc_bid_adjust`` seam: P0 run lengths and the
+      startup-amortization coupling are untouched.
+
+    Requires the cleared-share wall armed (the recipe context the §9.1
+    rule-19 enumeration was performed against); arming the pool leg without
+    it is a hard error.
+    """
+    if not getattr(config, "ercot_faststart_pool_offer", False):
+        return None
+    if config.iso != "ERCOT":
+        return None
+    if not getattr(config, "ercot_offer_surface_cleared_share", False):
+        raise ValueError(
+            "ercot_faststart_pool_offer composes against the cleared-share "
+            "wall's row pricing (charter §9.1 enumeration) — arm "
+            "ercot_offer_surface_cleared_share too."
+        )
+    from market_sim.config.constants import FASTSTART_POOL_MIN_DOWN_HOURS
+
+    pool_path = getattr(config, "ercot_faststart_pool_offer_path", None)
+    if not pool_path:
+        from market_sim.config import paths as _paths
+
+        pool_path = str(_paths.CALIBRATION_DIR / "ercot_faststart_pool_condbinned.json")
+    pool_surface = json.loads(Path(pool_path).read_text())
+    prov = pool_surface.get("_provenance", {})
+    edges = tuple(float(x) for x in prov.get("netload_pct_edges", ()))
+    ladder_q = np.asarray(prov.get("ladder_quantiles", ()), dtype=float)
+    if not edges or ladder_q.size == 0:
+        raise ValueError(
+            "ercot_faststart_pool_offer: pool artifact carries no "
+            "edges/quantiles — re-derive scripts/data/derive_ercot_faststart_pool.py"
+        )
+    # Same bin geometry as the wall artifacts by construction (the derive
+    # imports the shared NETLOAD_PCT_EDGES/LADDER_QUANTILES); assert against
+    # the wall artifact when the wall is armed so a drifted re-derive is loud.
+    wall_path = getattr(config, "ercot_offer_surface_cleared_share_path", None)
+    if not wall_path:
+        from market_sim.config import paths as _paths
+
+        wall_path = str(
+            _paths.CALIBRATION_DIR / "ercot_dam_cleared_share_condbinned.json"
+        )
+    wall_prov = json.loads(Path(wall_path).read_text()).get("_provenance", {})
+    wall_edges = tuple(float(x) for x in wall_prov.get("netload_pct_edges", ()))
+    if wall_edges and wall_edges != edges:
+        raise ValueError(
+            "ercot_faststart_pool_offer: pool artifact bin edges "
+            f"{edges} != cleared-share wall edges {wall_edges} — re-derive "
+            "scripts/data/derive_ercot_faststart_pool.py"
+        )
+    n_bins = len(edges) + 1
+
+    tbl = pool_surface.get("CT", {}).get("years", {}).get(str(year))
+    if not tbl:  # year-scoped: no pooled fallback (rule 13)
+        logger.info(
+            "ERCOT fast-start pool (ERCOT-88): year %s absent from the pool "
+            "artifact — every surface byte-identical (year-scoped, rule 13)",
+            year,
+        )
+        return None
+    frac = np.asarray(tbl.get("pool_frac", ()), dtype=float)
+    lad = tbl.get("ladder", ())
+    if frac.size != n_bins or len(lad) != n_bins:
+        return None
+    pool_bnd = 1.0 - np.clip(frac, 0.0, 1.0)  # (n_bins,)
+    pool_wall = np.array(
+        [[float(pt[1]) for pt in lad_b] for lad_b in lad], dtype=float
+    )  # (n_bins, n_q)
+
+    hours = int(mc_base.shape[1])
+    net_load = np.asarray(net_load_mw, dtype=float)[:hours]
+    thresholds = np.quantile(net_load, edges)
+    hour_bin = np.searchsorted(thresholds, net_load, side="right")  # (T,)
+
+    # Delivered-gas day series (the wall's own price normalizer).
+    from market_sim.config.constants import GAS_BASIS_DIFFERENTIAL
+    from market_sim.data.fuel import HENRY_HUB_DAILY_PATH
+
+    hh = pd.read_csv(HENRY_HUB_DAILY_PATH, parse_dates=["date"])
+    s = hh.set_index("date")["price_usd_mmbtu"].sort_index()
+    full = pd.date_range(s.index.min(), s.index.max() + pd.Timedelta(days=14), freq="D")
+    daily = s.reindex(full).ffill() + float(GAS_BASIS_DIFFERENTIAL["ERCOT"])
+    hour_days = pd.date_range(f"{year}-01-01", periods=hours, freq="h").normalize()
+    gas_day = daily.reindex(hour_days).ffill().bfill().to_numpy(dtype=float)  # (T,)
+
+    # Row universe: the wall's measured merchant-CT class scope (the pool
+    # ladder's own measured class); ELIGIBILITY within it is unit physics.
+    ct_groups = {
+        grp for grp, key in _ERCOT_CLEARED_SHARE_CLASS_OF.items() if key == "CT"
+    }
+    prefixes: dict[str, list[int]] = {}
+    for g, gen in enumerate(generators):
+        if (getattr(gen, "plant_group", None) or "") not in ct_groups:
+            continue
+        prefixes.setdefault(gen.unit_id.rpartition("_")[0], []).append(g)
+
+    pmax = fleet_arrays.pmax
+    voll_cap = float(
+        getattr(config, "ercot_offer_surface_price_cap_frac", 0.95)
+    ) * float(getattr(config, "voll", 5000.0))
+    markup = np.zeros_like(mc_base)
+    own_mask = np.zeros_like(mc_base, dtype=bool)
+    n_priced = 0
+    mean_mc = mc_base.mean(axis=1)
+    for rows in prefixes.values():
+        rows_arr = np.asarray(rows, dtype=int)
+        order = rows_arr[np.argsort(mean_mc[rows_arr], kind="stable")]
+        caps = pmax[order]
+        total = caps.sum()
+        if total <= 0.0:
+            continue
+        cum = np.cumsum(caps)
+        mids = (cum - 0.5 * caps) / total  # within-plant share midpoints
+        for g, s_g in zip(order, mids):
+            gen = generators[g]
+            # Rule-12 physics gate: SCED-startable intra-hour. Committed and
+            # must-run blocks stay with their own floor structure (rule 19) —
+            # only the bid tranches (econ*/peak*) join the pool universe.
+            if (
+                float(getattr(gen, "min_down_hours", 0) or 0)
+                > FASTSTART_POOL_MIN_DOWN_HOURS
+            ):
+                continue
+            sfx = gen.unit_id.rpartition("_")[2]
+            if not (sfx.startswith("econ") or sfx.startswith("peak")):
+                continue
+            mult_b = np.zeros(n_bins)
+            has_b = np.zeros(n_bins, dtype=bool)
+            for b in range(n_bins):
+                pb = pool_bnd[b]
+                if not np.isfinite(pb) or pb >= 1.0 or s_g <= pb:
+                    continue
+                if not np.isfinite(pool_wall[b]).all():
+                    continue
+                rel = (s_g - pb) / (1.0 - pb)
+                mult_b[b] = float(np.interp(rel, ladder_q, pool_wall[b]))
+                has_b[b] = True
+            if not has_b.any():
+                continue
+            target = mult_b[hour_bin] * gas_day  # (T,)
+            target = np.minimum(target, voll_cap)
+            row = np.maximum(0.0, target - mc_base[g, :])
+            mask = has_b[hour_bin]  # (T,)
+            markup[g, :] = np.where(mask, row, 0.0)
+            own_mask[g, :] = mask
+            n_priced += 1
+
+    if not own_mask.any():
+        logger.info(
+            "ERCOT fast-start pool (ERCOT-88): no fast-start row above the "
+            "measured pool boundary — byte-identical"
+        )
+        return None
+    logger.info(
+        "ERCOT fast-start pool (ERCOT-88): %d fast-start rows carry the "
+        "offline-pool above-LSL SCED2 ladder (year table %s; physics gate "
+        "min_down <= %.0f h; replace-by-mask composition, never "
+        "state-weighted)",
+        n_priced,
+        year,
+        FASTSTART_POOL_MIN_DOWN_HOURS,
+    )
+    return markup, own_mask
 
 
 # Model tranche suffixes carrying the gas fleet's committed (LSL) block and the
