@@ -1,4 +1,23 @@
-# Python
+# =============================================================================
+# .gitignore — organized into pattern rules. Sections:
+#   1. Python / build / OS
+#   2. Secrets & local environment
+#   3. Root-level detritus & stray downloads
+#   4. data/raw source exclusions (raw downloads; provenance comments verbatim)
+#   5. data/clean curated tree (derived, disposable)
+#   6. Dashboard / codebase-site generated data
+#   7. results/ forecast & scenario caches
+#   8. results/calibration slim-bundle rules (heavy regenerable intermediates)
+#   9. results/calibration & results/hindcast scratch families
+#  10. Misc local caches
+# One-off, session-specific scratch-dir names are intentionally NOT enumerated:
+# any bundle's heavy contents are already covered by the §8 slim-bundle rules,
+# and the recurring scratch families are covered by §9.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# 1. Python / build / OS
+# -----------------------------------------------------------------------------
 __pycache__/
 *.py[cod]
 *.egg-info/
@@ -6,23 +25,42 @@ __pycache__/
 venv/
 dist/
 build/
+.DS_Store
 
-# Calibration bundle model_changes.diff (captured git diff at solve time, large, regenerable)
-/results/calibration/*/model_changes.diff
+# -----------------------------------------------------------------------------
+# 2. Secrets & local environment — never commit credentials. Keys resolve at
+#    runtime from a local, untracked .env; commit a keys-only .env.example.
+# -----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
 
-# Calibration solve outputs are expendable/re-solvable: only the slim bundle
-# JSONs (meta/metrics/run_config/legitimacy_diagnostics/attestation) are
-# committed (via the registration workflow); the large per-year dispatch and
-# system parquets are never hand-committed. Throwaway probe dirs (rule 16) are
-# never registered at all.
-/results/calibration/*/dispatch/
-/results/calibration/*/*.parquet
-/results/calibration/*probe*/
-/results/calibration/miso_probe_*/
-# Same-machine A/B baselines (repro mode, FINDING-caiso92b protocol): un-registered
-# diagnostic reruns of a keeper recipe, disposable like probe dirs.
-/results/calibration/*_repro_A/
+# -----------------------------------------------------------------------------
+# 3. Root-level detritus & stray downloads. Extract archives into data/raw/
+#    instead; scratch scripts belong in scripts/probes/, logs are transient.
+# -----------------------------------------------------------------------------
+/*.zip
+/*.log
+/scratchpad_*.py
+/probe_run*.log
+/scratch/
+/scratchpad/
+/scratchpad_logs/
+/scratch_hindcast/
+/scratch_logs/
+/logs/
+/logs_g10/
+# Local compatibility shim: symlinks (inputs/ -> data/raw/...) so tooling that
+# still records the pre-W1-relocation inputs/ paths in old bundle configs can
+# resolve them; never a committed artifact.
+/inputs/
+# Agent tool worktrees (per-session isolated worktrees, not repo content)
+.claude/worktrees/
 
+# -----------------------------------------------------------------------------
+# 4. data/raw source exclusions — raw downloads are re-fetchable and too large
+#    for the push endpoint; provenance comments kept verbatim.
+# -----------------------------------------------------------------------------
 # Per-ISO EIA-860 override CSVs — raw source files (parquet/json) are committed
 data/raw/eia-860/*.csv
 
@@ -64,6 +102,21 @@ data/raw/lmp-data/NYISO/*realtime_zone_csv.zip
 # record, per the holdout-register staging precedent).
 data/raw/lmp-data/NYISO/NYISO_zonal_hourly.zip
 
+# NYISO ancillary-services raw pull cache.
+data/raw/NYISO-AS/raw/
+# ISO-NE hourly reserve-requirement window CSVs (75 files, 2023-2025): kept
+# out of the pack per the NYISO-archive precedent; regenerate with
+# scripts/fetch_neiso_reserve_requirements.py (README.md in that dir).
+data/raw/NEISO-AS/requirements/requirements_*.csv
+# ISO-NE DA energy-offer daily CSVs (~1.4 GB for 2023-2025): gitignored, same
+# precedent; regenerate with scripts/fetch_neiso_da_energy_offers.py.
+data/raw/NEISO-AS/da-energy-offers/hbdayaheadenergyoffer_*.csv
+
+# NOAA GHCN-Daily raw per-station pull cache for scripts/fetch_zone_temperature.py
+# (re-fetchable; --no-fetch re-derives the zone CSVs from it). NEVER commit — the
+# raw station archives are hundreds of MB and trip the remote's 413 push limit.
+data/raw/*-weather/_ghcn_cache/
+
 # Derived binned-fleet cache (side output of the fleet loader)
 data/raw/_processed-legacy/*.parquet
 # The EIA-923 extracts ARE committed: they are small (~16 KB cost,
@@ -81,162 +134,39 @@ data/raw/_processed-legacy/*.parquet
 # The fleet loader reads it so a multi-year backcast buckets each year's gas
 # cogens with that year's CHP designation instead of the latest snapshot's.
 !data/raw/_processed-legacy/eia860_chp_by_year.parquet
-
-# Generated backcast dashboard data files (frontend/data/backcast/manifest.js,
-# benchmark.js, completeness.js) — assembled from the committed registry
-# sidecars + bench parts by scripts/build_manifest.py. These ARE committed (so
-# a raw checkout's local preview works via the bc-data.js fallback), but only
-# the "Deploy site to GitHub Pages" workflow ever refreshes them on main — it is
-# the single writer, pushing with GITHUB_TOKEN. Calibration runs still commit
-# ONLY their own namespace files (registry/<id>.json, runs/<id>.js, bench parts)
-# and must never hand-commit these shared files, which is what keeps concurrent
-# sessions merging without conflicts. The root backcast-results.html is a
-# static redirect stub to docs/codebase-site/ — committed, never regenerated.
-
-# Codebase-site backcast data subset — generated at deploy time by
-# scripts/build_codebase_site_backcast.py from frontend/data/backcast/.
-docs/codebase-site/data/backcast/
-
 # Class-totals cache for scripts/derive_offer_curve_jacobian.py (rebuilt on
 # demand from the calibration bundles; the CSV it derives IS committed)
 data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 
-# OS
-.DS_Store
+# -----------------------------------------------------------------------------
+# 5. data/clean curated tree is DERIVED and disposable: regenerated from
+#    data/raw by the per-datatype scripts/curate_*.py (each writing through
+#    scripts/lib/clean_io.write_clean). Sessions commit the curation script + its
+#    test, never the generated parquet. The schema YAMLs and the data dictionary
+#    under data/dictionary/ ARE committed (they are the contract, not output).
+# -----------------------------------------------------------------------------
+/data/clean/
 
-# Stray root-level download archives (extract into data/raw/ instead)
-/*.zip
+# -----------------------------------------------------------------------------
+# 6. Dashboard / codebase-site generated data. frontend/data/backcast/*.js
+#    (manifest/benchmark/completeness) ARE committed (raw-checkout preview via
+#    the bc-data.js fallback); the "Deploy site to GitHub Pages" workflow is
+#    their single writer on main. The codebase-site subset below is generated at
+#    deploy time by scripts/build_codebase_site_backcast.py and never committed.
+# -----------------------------------------------------------------------------
+docs/codebase-site/data/backcast/
 
-# warm-start solver benchmark output (generated by scripts/bench_warmstart.py)
-/results/warmstart_bench.txt
-# cross-year warm-start benchmark output + captured-LP cache (generated by
-# scripts/bench_warmstart_xyear.py); the measured numbers live in
-# docs/cross-year-warmstart.md
-/results/warmstart_xyear_bench.txt
-/results/warmstart_xyear_capture.pkl
-# NYISO citygate-overlay validation scratch (base vs --gas-hub-basis-overlay,
-# regenerable; the keeper is regenerated last once the overlay is signed off).
-/results/calibration/_cg_base_*
-/results/calibration/_cg_ovl_*
-# Throwaway single-year diagnostic probes (rule #14): never registered keepers.
-/results/calibration/_diag_*
-/results/calibration/miso_diag_*
-# MISO scarcity-tail session: keeper-repro diagnostic bundle + console log
-# (regenerable from the miso-38 recorded flags; bind-gate reads it in place).
-/results/calibration/MISO/_diag_*
-# run159 measured-AS-requirement re-solve: the baseline for the forward-AS
-# requirement (run162) acute/tail comparison; throwaway (the dashboard keeper is
-# 162, compared against the committed run159).
-/results/calibration/159repro/
-/results/calibration/_cold_2023/
-# ercot40 rtolcap-forward: the measured-cap re-solve baseline for the WS-A
-# one-delta dw comparison; throwaway (the registered run is the formula-cap
-# ercot40, compared against the committed ercot32 keeper).
-/results/calibration/ercot40_measured_baseline*
-/results/calibration/_warm_2023/
-# G-22 PJM same-day re-solve baselines (rule-16 throwaways): the A/B base for
-# the pjm-99 offer-surface probe; regenerable via replay_keeper off the
-# committed pjm98_cc_mustrun meta.json. Never registered.
-/results/calibration/pjm97_baseline_*
-/results/calibration/pjm98_baseline_*
-# Console solve logs for the G-22 lever-B/A' probe bundles (regenerable; the
-# committed slim files + dashboard sidecars are the deliverable).
-/results/calibration/pjm100_da_virtual_bids_solve.log
-/results/calibration/pjm101_depth_surfaces_solve.log
-/results/calibration/pjm101_depth_surfaces-ablation_solve.log
-/results/calibration/caiso_reprice_pass*/
-/results/calibration/caiso_probe2_*/
-/results/calibration/caiso_tune*/
-/results/calibration/caiso_hydro*/
-# Evening CT-vs-CC merit diagnosis (2026-07-04): single-year throwaway probe,
-# regenerable from FINDING-caiso-evening-merit-2026-07-04.md; not a keeper.
-/results/calibration/caiso_diag_*/
-# NYISO scratch backcasts: Step-1 measured-zonal-load re-runs for the
-# locational-reserve / interface diagnostics (regenerable; keepers stay
-# nyiso_cal_* until the structure is green and keepers are regenerated last).
-/results/calibration/nyiso_u3_*/
-/results/calibration/caiso_ixshape*/
-# CAISO body-overprice campaign (2026-06-21) scratch backcasts: keeper repro and
-# the PNW_hydro_base / solar-shape-band probes, plus the per-run logs. Regenerable
-# from run_calibration_full.py; only the registered runs' force-added meta/
-# run_config + dashboard sidecars are committed (see DIAGNOSIS-caiso-body-
-# overprice-2026-06-21.md).
-/results/calibration/caiso_keeper_repro*/
-/results/calibration/caiso_pnwhydro*/
-/results/calibration/caiso_ssband*/
-# ERCOT Waha CT-floor campaign (2026-06): single-year direction probes, matched
-# baseline, and the 3-yr -0.50 floor run (REJECTED as non-physical per the
-# measured 100%-spot contract data; a documented data point in
-# docs/ercot-ct-waha-offer-floor-2026-06.md, not a registered keeper). All
-# regenerable from _keeper_2023as_run.py with ERCOT_GAS_FLOOR/HAIRCUT.
-/results/calibration/ctfloor_probe_*/
-/results/calibration/ctfloor_baseline_*/
-/results/calibration/ctfloor_3yr/
-# PJM coal rebuild step 3 (SRMC sync tranche + subbit sigmoid tune) scratch:
-# per-year solve dirs (merged into pjm_47_sync_srmc) and curve-calibration
-# probes. Regenerable from scripts/probes/_pjm_sync_srmc_run.py; only the merged
-# keeper bundle's slim files + dashboard sidecars are committed.
-/results/calibration/pjm_47_sync_srmc_20*/
-/results/calibration/pjm_47_cal_*/
-/results/calibration/logs/
-# MISO export-cap session scratch: control-vs-treatment solve logs (regenerable).
-/results/calibration/MISO/_repro_logs/
-# Throwaway miso18 reproduction probe (byte-confirmed the reconstructed
-# export-cap source; the registered keeper is miso18, regenerable from source).
-/results/calibration/MISO/miso19_export_cap_repro/
-# CC-intermediate-only diagnostic probe (superseded by the combined CC+border run;
-# regenerable from --cc-intermediate-split).
-/results/calibration/MISO/miso20_cc_intermediate/
-# Session B (negative curtailable-renewable offers) scratch backcasts.
-/results/calibration/caiso_negrenew*/
-# CAISO RA must-offer gas-floor scratch backcasts (Session A frac sweep +
-# 3-yr keeper) and its matched no-floor+repin baseline; regenerable from
-# --caiso-gas-commitment-floor.
-/results/calibration/caiso_floor*/
-/results/calibration/caiso_base_repin*/
-/results/calibration/nyiso_ce_*/
-# CAISO import-ladder diagnosis scratch backcasts (2026-06-19): the keeper-config
-# baseline + import re-price sensitivity probes behind the
-# DIAGNOSIS-caiso-import-ladder doc. Regenerable from run_calibration_full /
-# scripts/probes/_caiso_import_probe.py.
-/results/calibration/caiso_keeper_*/
-/results/calibration/caiso_probe_*/
-# CAISO no-OASIS import-discipline scratch backcasts (2026-06-20): the keeper-config
-# baseline + lever-B × interchange-shaping variants behind the RESULTS-caiso-no-oasis
-# doc. Regenerable from run_calibration_full.
-/results/calibration/caiso_base_2024/
-/results/calibration/caiso_B_shape_2024/
-/results/calibration/caiso_B_shapeexp_2024/
-/results/calibration/caiso_shape_2024/
-# _shared/ holds the hashed input parquets the scratch calibration runs write
-# (campd/eia923/eia930); nothing under it is tracked.
-/results/calibration/_shared/
-/results/calibration/nyiso_oc_*/
-# CAISO AS operating-reserve formula before/after bundles (regenerable via
-# run_config.json; the before/after is reported, the parquet is scratch).
-/results/calibration/caiso_asformula_*/
-# PJM coal-rank retiree-fallback per-year solve dirs: intermediate single-year
-# bundles merged into the committed pjm_34_coalbit bundle by _pjm_aswh_merge.py.
-/results/calibration/pjm_34_coalbit_20*/
-# ERCOT CC steam-turbine-coupling gate probe (2026-06-19): the keeper-recipe
-# re-run that exercises the new steam-augmented unit-outage capacities.
-# Regenerable from the run131 recipe; scratch until/unless adopted as a keeper.
-/results/calibration/ercot_dam_ccsteam_3yr/
-# CAISO CHP must-run floor re-derivation probe (Lever C, 2026-06-27): diagnostic
-# probe, NOT a registered keeper (Step 6 handles final keeper). Regenerable from
-# run_calibration_full.py with the updated thermal_tranches_CAISO.csv.
-/results/calibration/caiso_chp_rederive/
-
-# Forecast / scenario run caches: transient per-ISO LP outputs keyed by
-# cache_key (results/<ISO>/<cache_key>/). Only results/calibration/ bundles
-# are tracked; capacity-expansion forecast runs are reproducible from config.
+# -----------------------------------------------------------------------------
+# 7. results/ forecast & scenario caches — transient per-ISO LP outputs keyed by
+#    cache_key (results/<ISO>/<cache_key>/). Only results/calibration/ bundles
+#    are tracked; capacity-expansion forecast runs are reproducible from config.
+# -----------------------------------------------------------------------------
 /results/ERCOT/
 /results/CAISO/
 /results/PJM/
 /results/MISO/
 /results/NYISO/
 /results/NEISO/
-
 # Full-horizon forecast runs and ad-hoc forecast probes: disposable diagnostic
 # cache, never committed (forecast probes are not dashboard-registered —
 # CLAUDE.md rule 15/16; regenerate from config). Covers the run dirs and their
@@ -246,235 +176,88 @@ data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 /results/probe-*/
 /results/verify-*/
 /results/*.log
-
-# run119 dispatch parquets too large for the push endpoint (dashboard renders from the payload; regen via run_config.json)
-
-# run119 bundle kept local only (push endpoint caps payload size); dashboard renders from the committed run payload, bundle reproducible via run_config.json
-results/calibration/run119_cps_mustrun/
-results/calibration/run119_cps_mustrun.log
-data/raw/NYISO-AS/raw/
-# ISO-NE hourly reserve-requirement window CSVs (75 files, 2023-2025): kept
-# out of the pack per the NYISO-archive precedent; regenerate with
-# scripts/fetch_neiso_reserve_requirements.py (README.md in that dir).
-data/raw/NEISO-AS/requirements/requirements_*.csv
-# ISO-NE DA energy-offer daily CSVs (~1.4 GB for 2023-2025): gitignored, same
-# precedent; regenerate with scripts/fetch_neiso_da_energy_offers.py.
-data/raw/NEISO-AS/da-energy-offers/hbdayaheadenergyoffer_*.csv
-/results/calibration/pjm_29_20*/
-# Intermediate per-year reference-price (pjm_30) run bundles; only the merged
-# 3-year results/calibration/pjm_30 is committed (after the interface-limit fix).
-/results/calibration/pjm_30_20*/
-# Intermediate per-year reference-price+convexity (pjm_32) run bundles; only the
-# merged 3-year results/calibration/pjm_32 is committed.
-/results/calibration/pjm_32_20*/
-# Intermediate per-year MISO-reanchored seam (pjm_33) run bundles; only the
-# merged 3-year results/calibration/pjm_33 is committed.
-/results/calibration/pjm_33_20*/
-# Intermediate per-year CC-steam-derate re-baseline (pjm_35) run bundles; only
-# the merged 3-year results/calibration/pjm_35 is committed.
-/results/calibration/pjm_35_20*/
-# Intermediate per-year retiree-thread (pjm_36 / pjm_37) run bundles; only the
-# merged 3-year results/calibration/pjm_36 (and pjm_37) is committed.
-/results/calibration/pjm_36_20*/
-/results/calibration/pjm_37_20*/
-# Session scratch: background-solve driver/per-year logs.
-/logs/
-
-# Local compatibility shim: symlinks (inputs/ -> data/raw/...) so tooling that
-# still records the pre-W1-relocation inputs/ paths in old bundle configs can
-# resolve them; never a committed artifact.
-/inputs/
-
-# Calibration bundles are committed slim (input/summary parquets only): the
-# per-hour dispatch dir and system.parquet are large regenerable intermediates
-# (the dashboard bakes their metrics into frontend/data/backcast/runs/<id>.js),
-# matching the registered bundles (e.g. ercot_dam_offers_cconly_3yr).
-results/calibration/*/dispatch/
-# per-pass min-gen floors + mechanism ids (legitimacy diagnostics D-2/D-4) —
-# large regenerable intermediates, rebuilt via run_year(fleet_only=True).
-results/calibration/*/floors/
-results/calibration/*/*/floors/
-results/calibration/*/system.parquet
-# Solve console log — regenerable (the report reproduces via --report DIR); keep bundles slim.
-results/calibration/*/solve.log
-# capdel probe replay-driver console logs (regenerable; the bundle records the config).
-results/calibration/*-capdel-probe.log
-# Storage series and the post-solve RCPF/scarcity overlay outputs (availability
-# reconstruction + scarcity adder) are regenerable from the bundle via
-# scripts/derive_*_rcpf_overlay.py — scratch, never committed.
-results/calibration/*/storage.parquet
-results/calibration/*/btm.parquet
-results/calibration/*/availability_rcpf*.parquet
-results/calibration/*/scarcity*.parquet
-# Commitment-posture hourly frame (pjm_commitment_posture / miso_commitment_posture)
-# — regenerable diagnostic; the honesty gate's SUMMARY-posture-gate.md is the
-# committed result, the per-pool U/SU/R parquet is scratch.
-results/calibration/*/posture.parquet
-results/calibration/*/*/posture.parquet
-# ISO-scoped bundle layout (run_calibration_full default out-dir is now
-# results/calibration/<ISO>/<name>/ — one level deeper than the flat bundles
-# above, so the single-* patterns miss it). Mirror the slim-bundle ignores at
-# the two-level depth; only the 4 text files (meta/run_config/SUMMARY/diff) and
-# the dashboard payload are committed, never the regenerable parquets/_shared.
-results/calibration/*/*/dispatch/
-results/calibration/*/*/system.parquet
-results/calibration/*/flows.parquet
-results/calibration/*/*/flows.parquet
-results/calibration/*/*/solve.log
-results/calibration/*/*/storage.parquet
-results/calibration/*/*/btm.parquet
-results/calibration/*/*/availability_rcpf*.parquet
-results/calibration/*/*/scarcity*.parquet
-results/calibration/*/_shared/
-# run131 same-extract baseline re-run: gate-only scratch, not registered.
-results/calibration/ercot_dam_cconly_rerun_3yr/
-# Shared input cache written by calibration runs (scratch).
-/results/calibration/_shared/
-
-# Curated clean tree is DERIVED and disposable: regenerated from data/raw by the
-# per-datatype scripts/curate_*.py (each writing through
-# scripts/lib/clean_io.write_clean). Sessions commit the curation script + its
-# test, never the generated parquet. The schema YAMLs and the data dictionary
-# under data/dictionary/ ARE committed (they are the contract, not output).
-/data/clean/
-
-# NEISO CC-steam investigation scratch bundles (regenerable; superseded by neiso_ccsteam_keeper_3yr)
-results/calibration/neiso_ccsteam_3yr/
-results/calibration/neiso_oldoutage_2025/
-# CAISO gas-coupled import lever scratch runs (2026-06-20 session; reproducible)
-/results/calibration/caiso_base_2024/
-/results/calibration/caiso_B_shape_2024/
-/results/calibration/caiso_B_shapeexp_2024/
-/results/calibration/caiso_shape_2024/
-/results/calibration/caiso_Balone_2024/
-/results/calibration/caiso_Bcouple_2024/
-/results/calibration/caiso_base_2023/
-/results/calibration/caiso_base_2025/
-/results/calibration/caiso_Bcouple_2023/
-/results/calibration/caiso_Bcouple_2025/
-/results/calibration/caiso_Bcoupneg_2024/
-/results/calibration/caiso_Bcoupss_2024/
-/results/calibration/caiso_Bcoupss2_2024/
-/results/calibration/caiso_Bcoupss3_2024/
-/results/calibration/caiso_sw25_8_2024/
-/results/calibration/caiso_sw35_12_2024/
-/results/calibration/caiso_sw32_10_2024/
-/results/calibration/caiso_sw40_15_2024/
-/results/calibration/caiso_final3010_2024/
-/results/calibration/caiso_final3010_2025/
-results/outage_gate_audit/
-/results/calibration/*_y20[0-9][0-9]/
+# warm-start solver benchmark output + captured-LP cache (generated by
+# scripts/bench_warmstart.py / bench_warmstart_xyear.py; measured numbers live
+# in docs/cross-year-warmstart.md).
+/results/warmstart_bench.txt
+/results/warmstart_xyear_bench.txt
+/results/warmstart_xyear_capture.pkl
+# Outage-gate audit scratch.
 /results/outage_gate_audit/
-
-# run154 LMP-shape session (claude/ercot-154-lmp-shape): scratch + throwaway
-# single-year baseline reproduction (rule #14 — never a registered keeper).
-/scratchpad_logs/
-/results/calibration/_smoke_baseline_2024/
-
-# run155 LMP-shape probe bundles: commit only the slim run_config.json/meta.json
-# (matching the ERCOT keeper convention); the heavy dispatch artifacts stay local.
-/results/calibration/ercot_run155*/system.parquet
-/results/calibration/ercot_run155*/storage.parquet
-/results/calibration/ercot_run155*/dispatch/
-/results/calibration/ercot_run155*/p2_state/
-/results/calibration/ercot_run155*/btm.parquet
-/results/calibration/ercot_run155*/plant_cf_bands.parquet
-/results/calibration/ercot_run155*/plant_hourly_fit.parquet
-/results/calibration/ercot_run155*/model_changes.diff
-
-# run158 endogenous-collapse probe bundle: commit only the slim
-# run_config.json/meta.json/calibration_attestation.json (ERCOT keeper
-# convention); the heavy dispatch artifacts stay local + regenerable.
-/results/calibration/ercot_run158*/p2_state/
-/results/calibration/ercot_run158*/plant_cf_bands.parquet
-/results/calibration/ercot_run158*/plant_hourly_fit.parquet
-/scratchpad/
-results/calibration/_probe_160_2024/
-results/calibration/_probe*/
-results/calibration/MISO/miso17_y2024/
-
-# CAISO CT_PEAKER net-load-drag (Step 2 / Lever B) session scratch: keeper-repro
-# baseline vs net-load-drag bundles + solve logs (regenerable; not a registered
-# keeper — shape-only Step-2 groundwork).
-/scratch/caiso_netload_drag/
-
-# NOAA GHCN-Daily raw per-station pull cache for scripts/fetch_zone_temperature.py
-# (re-fetchable; --no-fetch re-derives the zone CSVs from it). NEVER commit — the
-# raw station archives are hundreds of MB and trip the remote's 413 push limit.
-data/raw/*-weather/_ghcn_cache/
-
 # Stage-0 regression goldens (docs/handoffs/orchestrator-unification-plan-2026-07.md
 # §7.3): multi-GB re-solved keeper bundles used only for before/after stage
 # comparison. The bundles live in <stage-tag>/<ISO>/ subdirs — ignore those (they
 # trip the remote's 413 push limit); the hashes-only <stage-tag>/manifest.json
 # stays tracked as the committed deliverable.
 /results/regression-goldens/*/*/
-scratch_hindcast/
 
-# Capacity-hindcast bundle internals are reproducible from the recorded config
-# (meta.json carries the harness flags + cache key; build_config is pure), so
-# the committed deliverable is the slim set: meta.json + score.json + the
-# frontend sidecar + the report (FF-1A-C convention — per-plant PJM/MISO
-# evolution ledgers run 10k+ lines each, past what the API push transport can
-# carry byte-safely; ff-retirement-rule-implementation-2026-07.md §9).
-# Ledgers/configs committed under the earlier "ledgers+score" convention stay
+# -----------------------------------------------------------------------------
+# 8. results/calibration slim-bundle rules. Bundles are committed slim: only the
+#    text files (meta/run_config/metrics/legitimacy_diagnostics/attestation/
+#    SUMMARY) + the dashboard payload. The per-hour dispatch dir, system/storage/
+#    btm/scarcity/availability/posture/flows parquets, floors, solve logs and the
+#    captured model_changes.diff are large regenerable intermediates. Rules cover
+#    both the flat (results/calibration/<name>/) and ISO-scoped
+#    (results/calibration/<ISO>/<name>/) bundle layouts.
+# -----------------------------------------------------------------------------
+results/calibration/*/model_changes.diff
+results/calibration/*/dispatch/
+results/calibration/*/*.parquet
+results/calibration/*/floors/
+results/calibration/*/solve.log
+results/calibration/*-capdel-probe.log
+results/calibration/*/_shared/
+results/calibration/_shared/
+results/calibration/logs/
+# ISO-scoped (two-level) bundle internals — the single-* rules above miss them.
+results/calibration/*/*/dispatch/
+results/calibration/*/*/floors/
+results/calibration/*/*/system.parquet
+results/calibration/*/*/storage.parquet
+results/calibration/*/*/btm.parquet
+results/calibration/*/*/availability_rcpf*.parquet
+results/calibration/*/*/scarcity*.parquet
+results/calibration/*/*/posture.parquet
+results/calibration/*/*/flows.parquet
+results/calibration/*/*/solve.log
+results/calibration/*/*/_shared/
+
+# -----------------------------------------------------------------------------
+# 9. results/calibration & results/hindcast scratch families — recurring
+#    throwaway-probe naming (rule 14/16: never registered keepers; regenerable
+#    from run_config.json). One-off per-session dir names are NOT enumerated;
+#    their heavy contents are already ignored by §8.
+# -----------------------------------------------------------------------------
+results/calibration/*probe*/
+results/calibration/_diag_*
+results/calibration/caiso_diag_*/
+results/calibration/miso_diag_*
+results/calibration/*_repro_A/
+results/calibration/*_y20[0-9][0-9]/
+# Per-year probe accumulator scaffolding (e.g. results/calibration/_miso70_acc/
+# {main,base}/y2023): fully disposable intermediates — the registered final
+# bundles are the deliverable.
+results/calibration/_*_acc/
+results/calibration/MISO/_diag_*
+results/calibration/MISO/_repro_logs/
+# Capacity-hindcast bundle internals are reproducible from the recorded config;
+# the committed deliverable is the slim set (meta.json + score.json + frontend
+# sidecar + report). Ledgers/configs committed under the earlier convention stay
 # tracked (gitignore never untracks).
 results/hindcast/*/*/*/year_*.parquet
 results/hindcast/*/*/*/evolution_*.json
 results/hindcast/*/*/*/year_*_floor_retentions.json
 results/hindcast/*/*/*/config.yaml
+results/hindcast/*/*/*/*.parquet
 results/hindcast/*/run_config.yaml
-# Capacity-hindcast harness stdout logs are scratch (bundles carry the record).
 results/hindcast/*.log
 results/hindcast/*/run.log
-scratch_logs/
+
+# -----------------------------------------------------------------------------
+# 10. Misc local caches (docs/handoffs driver scratch — the committed
+#     deliverables are the driver-battery-<iso>-<date>.{md,json} memos).
+# -----------------------------------------------------------------------------
 docs/handoffs/_fom_grid_cache/
 docs/handoffs/_foresight_ab_cache/
-# Driver-battery (run_driver_battery.py) disposable solve caches + per-rung
-# metrics memo; the committed deliverable is driver-battery-<iso>-<date>.{md,json}.
 docs/handoffs/_battery_cache_*/
 docs/handoffs/_battery_metrics/
-
-# ERCOT G-22 offer-surface A/B probe bundles: large disposable solve outputs
-# (dispatch/system parquets, 115M each). The reproducibility record
-# (run_config.json/meta.json) is force-added; the dashboard payload is in
-# frontend/data/backcast/runs/. Matches the keeper-bundle tracking pattern.
-/results/calibration/ercot37_g22surface_off/
-/results/calibration/ercot37_g22surface_on/
-
-# Agent tool worktrees (per-session isolated worktrees, not repo content)
-.claude/worktrees/
-logs_g10/
-# ERCOT-61 binding-regime ST_GAS lane: rule-16 2023-only throwaway probe
-# bundles + solve logs (never registered; regenerable from the probe runners).
-/results/calibration/ercot61*
-# ERCOT-66 storage-capability lane: rule-16 2023-only throwaway probe
-# bundles (never registered; regenerable from _ercot66_ladder_probe.py).
-/results/calibration/ercot66_keeper_2023/
-/results/calibration/ercot66_storagecap_2023/
-/results/calibration/ercot66_endog_2023/
-/results/calibration/ercot66_storagecap_endog_2023/
-# ERCOT-68 joint-completion lane: rule-16 SINGLE-YEAR throwaway probe
-# bundles (never registered; regenerable from _ercot68_ladder_probe.py).
-# The full-span record bundle (ercot68_v3fix_fullspan) is NOT ignored — it
-# registers on the dashboard as the honest rejected-probe record (rule 15).
-/results/calibration/ercot68_keeper_2024/
-/results/calibration/ercot68_legJ_2024/
-/results/calibration/ercot68_legJfix_2024/
-/results/calibration/ercot68_legJfix_2023/
-
-# Capacity-hindcast probe bundles: dispatch-cache parquet and run logs are
-# disposable (the committed evolution_*.json / score.json / meta.json ledgers are
-# the deliverable, mirroring the existing hindcast bundle convention).
-/results/hindcast/*/*/*/*.parquet
-/results/hindcast/*/run.log
-
-# Per-year probe accumulator scaffolding (the <=16 GB per-year + --reuse-solved
-# orchestration, e.g. results/calibration/_miso70_acc/{main,base}/y2023): fully
-# disposable intermediates — the registered final bundles are the deliverable.
-# miso-69's accumulators were committed then dropped (20f31a2); ignore the
-# namespace outright instead.
-/results/calibration/_*_acc/
-
-# ercot84+ April/May scarcity lane replay logs (transient solve logs).
-/results/calibration/ercot8*_replay.log

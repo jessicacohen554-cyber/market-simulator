@@ -212,7 +212,7 @@ def _join_egrid_heat_rate(df: pd.DataFrame) -> None:
     """
     from market_sim.config.paths import FLEET_DIR
 
-    egrid_path = FLEET_DIR / "egrid2023_data_rev2 2.xlsx"
+    egrid_path = FLEET_DIR / "egrid2023_data_rev2.xlsx"
     if not egrid_path.exists():
         logger.warning(
             "eGRID workbook not found at %s; heat_rate left blank", egrid_path

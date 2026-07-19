@@ -50,7 +50,7 @@ def _use_clean() -> bool:
 
 
 # eGRID 2023 plant-level workbook (from the central path registry).
-_EGRID_PATH: Path = FLEET_DIR / "egrid2023_data_rev2 2.xlsx"
+_EGRID_PATH: Path = FLEET_DIR / "egrid2023_data_rev2.xlsx"
 
 # EIA-860 plant file — current plant coordinates and balancing-authority
 # codes. Used to zone plants too new for the eGRID 2023 vintage.

@@ -134,7 +134,7 @@ HENRY_HUB_ACTUAL: dict[int, float] = {
 # eGRID benchmark workbook (EPA Emissions & Generation Resource Integrated
 # Database, 2023 data release). The plant-level sheet PLNT23 carries a
 # one-row banner above the header, hence skiprows=1.
-EGRID_PATH: Path = FLEET_DIR / "egrid2023_data_rev2 2.xlsx"
+EGRID_PATH: Path = FLEET_DIR / "egrid2023_data_rev2.xlsx"
 EGRID_SHEET: str = "PLNT23"
 EGRID_SKIPROWS: int = 1
 EGRID_YEAR: int = 2023
