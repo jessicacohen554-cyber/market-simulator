@@ -4605,6 +4605,42 @@ class ScenarioConfig:
     # owns (unchanged — floors compose independently of bids); the PEAK rungs
     # stay owned by ercot_offer_surface_conditional. Zero fitted scalars.
     ercot_offer_surface_cleared_share_steam: bool = False
+    # ERCOT-86 RT/SCED-BASIS correction of the cleared-share wall's ladder
+    # (default off; requires ercot_offer_surface_cleared_share — the builder
+    # hard-errors on rt-without-wall). The wall's boundary (which rows are
+    # above the measured DAM cleared share) is correct, but its DAM-basis
+    # price ladder is measured CHEAP ($25-47 effective, ERCOT-84 Finding 1):
+    # the real $150-800 moderate-tightness band cleared on the RT (SCED)
+    # offers of the ~3 GW online spare beyond the AS carve-out — a surface the
+    # 60-Day DAM disclosure genuinely does not contain. This gate re-prices
+    # the SAME above-boundary CC_REGULAR/CT_PEAKER econ* rows at the MEASURED
+    # SCED spare-offer ladder (Base Point -> HASL curve segments of online
+    # merchant gas, cap-weighted quantiles as effective-HR multipliers per
+    # net-load-percentile bin; scripts/data/derive_ercot_sced_offer_wall.py,
+    # frozen rule 23, same bin geometry as the DAM artifact — asserted).
+    # YEAR-SCOPED (rule 13): the RT ladder applies only to years present in
+    # its own artifact (no pooled fallback — a 2024/2025-derived surface is
+    # barred from 2023's distinct conservative-ops regime); absent years keep
+    # the DAM basis byte-identical. The ERCOT-73 state weight is NOT applied
+    # to RT-floored hours: w measures how much of the above-DA capability
+    # reality committed online, and the SCED spare ladder is measured ON that
+    # online fleet (Base Point -> HASL is the un-loaded remainder per
+    # interval) — the commitment state is already conditioned into the
+    # surface, so weighting it again would double-count the correction.
+    # ST_GAS stays DAM-basis under the steam extension (rule 19 — the RT
+    # artifact deliberately carries no ST block). Zero fitted scalars.
+    ercot_offer_surface_cleared_share_rt: bool = False
+    # Path to the frozen SCED offer-wall JSON (default:
+    # data/raw/_validation-source/ercot_sced_offer_wall_condbinned.json). None →
+    # the builder falls back to that default path.
+    ercot_offer_surface_cleared_share_rt_path: str | None = None
+    # RT-wall composition (ERCOT-86 A/B): "replace" (composition A, preferred)
+    # swaps the DAM ladder for the RT ladder in every bin the RT artifact
+    # measures (one wall, one ladder source per bin — the mutual exclusion is
+    # structural); "tier" (composition B) keeps the state-weighted DAM wall
+    # everywhere and floors at max(DAM, RT) — the RT ladder rides above the
+    # DAM wall's reach where measured. Any other value is a hard error.
+    ercot_offer_surface_cleared_share_rt_mode: str = "replace"
     # Path to the measured condition-binned ladder JSON (default: the frozen
     # data/raw/_validation-source/offer_curve_dam_hrmults_condbinned.json). None →
     # the mechanism is a no-op even when the flag is on.
@@ -7508,6 +7544,9 @@ TIER_TAGS: dict[str, int] = {
     "ercot_offer_surface_cleared_share_state": 1,
     "ercot_offer_surface_cleared_share_state_path": 3,
     "ercot_offer_surface_cleared_share_steam": 1,
+    "ercot_offer_surface_cleared_share_rt": 1,
+    "ercot_offer_surface_cleared_share_rt_path": 3,
+    "ercot_offer_surface_cleared_share_rt_mode": 1,
     "nysdec_peaker_rule_availability": 1,
     "gas_st_wefor_base_override": 3,
     "as_reserve_withholding": 1,
