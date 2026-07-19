@@ -2593,10 +2593,15 @@ class TestComputeLCOE(unittest.TestCase):
         self.assertGreater(at_ref, 0.0)
         self.assertLess(grown, at_ref)
 
-    def test_nuclear_smr_cheaper_than_large(self):
+    def test_nuclear_smr_costlier_than_large(self):
+        # ATB 2024 costs a small modular reactor HIGHER per kW/MWh than a large
+        # LWR (a FOAK/economies-of-scale premium: SMR Moderate CAPEX @2030 =
+        # $9,650/kW vs large $7,616/kW, 2022$). NEW_ENTRY_COSTS is now derived
+        # from that ATB extract (FF-1E), so SMR LCOE exceeds large — the reverse
+        # of the pre-FF-1E hand-set values ($6,800 < $8,500) that had no source.
         smr = compute_lcoe("nuclear_smr", 2030, ScenarioConfig())
         large = compute_lcoe("nuclear_large", 2030, ScenarioConfig())
-        self.assertLess(smr, large)
+        self.assertGreater(smr, large)
 
     def test_solar_itc_discounts_only_the_capital_component(self):
         # The IRA ITC reduces capex before annualization, so the credit

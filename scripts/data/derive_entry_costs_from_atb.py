@@ -125,8 +125,9 @@ def load_atb(raw_root=None) -> pd.DataFrame:
     return df
 
 
-def _value(df: pd.DataFrame, tech: str, detail: str, param: str, case: str,
-           year: int) -> float:
+def _value(
+    df: pd.DataFrame, tech: str, detail: str, param: str, case: str, year: int
+) -> float:
     """Return the single ATB value for one (tech, detail, param, case, year)."""
     row = df[
         (df["technology"] == tech)
@@ -143,7 +144,9 @@ def _value(df: pd.DataFrame, tech: str, detail: str, param: str, case: str,
     return float(row["value"].iloc[0])
 
 
-def derive_new_entry_costs(df: pd.DataFrame | None = None) -> dict[str, dict[str, float]]:
+def derive_new_entry_costs(
+    df: pd.DataFrame | None = None,
+) -> dict[str, dict[str, float]]:
     """Return ATB-derived ``{tech: {capex_per_kw, fom_per_kw_yr}}`` in 2026 USD."""
     if df is None:
         df = load_atb()
@@ -192,12 +195,16 @@ def main(argv: list[str] | None = None) -> int:
     print(f"# inflation factor (2022$->2026$) = {inflation_factor():.6f}")
     print("\nNEW_ENTRY_COSTS capex/fom (2026$):")
     for tech, vals in derive_new_entry_costs(df).items():
-        print(f"  {tech:14} capex_per_kw={vals['capex_per_kw']:>9} "
-              f"fom_per_kw_yr={vals['fom_per_kw_yr']:>6}")
+        print(
+            f"  {tech:14} capex_per_kw={vals['capex_per_kw']:>9} "
+            f"fom_per_kw_yr={vals['fom_per_kw_yr']:>6}"
+        )
     print("\nTECH_COST_MULTIPLIERS capex low/high (Advanced/Mod, Conservative/Mod):")
     for tech, vals in derive_tech_cost_multipliers(df).items():
-        print(f"  {tech:14} low={vals['low']['capex_per_kw']:>7} "
-              f"high={vals['high']['capex_per_kw']:>7}")
+        print(
+            f"  {tech:14} low={vals['low']['capex_per_kw']:>7} "
+            f"high={vals['high']['capex_per_kw']:>7}"
+        )
     return 0
 
 
