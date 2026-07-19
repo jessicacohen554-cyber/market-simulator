@@ -1,5 +1,7 @@
 # ERCOT session prompt — cool the residual 2025 LMP overshoot
 
+> Status: RECORD (frozen 2026-07-18) — executed one-shot session prompt.
+
 **Goal:** close the **2025** demand-weighted LMP overshoot that run131 left on the
 table — model **$43.7** vs actual **$32.5** (+$11.2; MAE 11.3) — and its fat
 high-price tail (**>$200: 60 vs 31** actual; **>$500: 39 vs 3** actual) —
