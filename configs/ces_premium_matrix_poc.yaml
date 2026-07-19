@@ -13,8 +13,10 @@
 # campaign results; the run registers as kind "ces-poc". No premium-ladder
 # conclusions are drawn from a 5-year window (FF-3B item 2).
 #
-# Run (FF-3B POC — ERCOT 2026-2030 only):
-#   market-sim matrix --config configs/scenarios/ercot_ces_poc_2026_2030.yaml \
+# Run (FF-3B POC — ERCOT 2026-2030 only). Prereqs (ff-3b-ces-poc F-1): first
+# `PYTHONPATH=. python scripts/data/curate_confirmed_retirements.py`, then:
+#   PYTHONPATH=. market-sim matrix \
+#       --config configs/scenarios/ercot_ces_poc_2026_2030.yaml \
 #       --matrix configs/ces_premium_matrix_poc.yaml --workers 1
 # then scripts/report_ces_campaign.py on the matrix out-dir.
 mode: cases
