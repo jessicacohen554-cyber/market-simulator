@@ -15,16 +15,22 @@ Retrieval sessions produce one *unified CSV* per ISO under
 ``data/raw/capacity-deliverability/<iso>/<iso>.csv`` with exactly the canonical
 columns; :func:`parse_unified_csv` is the generic reader every ISO uses unless
 its spec supplies a custom ``parse`` hook for a native (non-CSV) source.
+
+The registry scaffolding (``IsoSpec``, ``REGISTRY``, ``register``,
+``load_registry``, ``raw_dir_for``, ``finalize``) is built by the shared
+:func:`scripts.lib.datatype_registry.make_registry` factory; only the columns,
+spec fields, vocabularies, ``validate_tidy`` and ``parse_unified_csv`` are
+datatype-specific and live here.
 """
 
 from __future__ import annotations
 
-import importlib
-from dataclasses import dataclass, field
+from dataclasses import field
 from pathlib import Path
-from typing import Callable
 
 import pandas as pd
+
+from scripts.lib.datatype_registry import make_registry
 
 DATATYPE = "capacity-deliverability"
 
@@ -92,93 +98,38 @@ _STRING_COLS = (
 _FLOAT_COLS = ("value_mw", "value_pu")
 
 
-@dataclass(frozen=True)
-class IsoSpec:
-    """Declarative description of one ISO's capacity-deliverability source.
-
-    Attributes
-    ----------
-    iso:
-        Canonical ISO label used in the ``iso`` column and the clean partition
-        (e.g. ``"PJM"``, ``"MISO"``, ``"NYISO"``, ``"ISONE"``, ``"CAISO"``).
-    default_area_type:
-        Area type stamped on rows whose CSV leaves ``area_type`` blank.
-    metric_aliases:
-        Map of native metric label (lower-cased, e.g. ``"ceto"``) -> canonical
-        metric, so a retrieval CSV may carry either the native or canonical name.
-    delivery_year_kind:
-        ``"planning"`` (label like ``"2025/2026"``) or ``"calendar"`` (``"2025"``);
-        documentation only, used by the parser to sanity-check the label shape.
-    parse:
-        Optional custom reader ``(raw_dir: Path, spec: IsoSpec) -> DataFrame``
-        for a native (non-unified-CSV) source. Defaults to
-        :func:`parse_unified_csv`.
-    """
-
-    iso: str
-    default_area_type: str
-    metric_aliases: dict[str, str] = field(default_factory=dict)
-    delivery_year_kind: str = "planning"
-    parse: Callable[["Path", "IsoSpec"], pd.DataFrame] | None = None
-
-
-# The registry every ISO module populates at import time.
-REGISTRY: dict[str, IsoSpec] = {}
-
-# ISO submodules to import so their register() calls run. Missing modules (an
-# ISO not yet implemented) are skipped, so intake waves land independently.
-_ISO_MODULES: tuple[str, ...] = ("pjm", "miso", "nyiso", "isone", "caiso")
-_loaded = False
-
-
-def register(spec: IsoSpec) -> IsoSpec:
-    """Register an :class:`IsoSpec` under its ISO label. Returns the spec."""
+def _check_default_area_type(spec) -> None:
+    """Reject a spec whose ``default_area_type`` is not in the area vocabulary."""
     if spec.default_area_type not in AREA_TYPES:
         raise ValueError(
             f"{spec.iso}: default_area_type {spec.default_area_type!r} not in {sorted(AREA_TYPES)}"
         )
-    REGISTRY[spec.iso.upper()] = spec
-    return spec
 
 
-def load_registry() -> dict[str, IsoSpec]:
-    """Import every available ISO module (idempotent) and return the registry."""
-    global _loaded
-    if not _loaded:
-        for name in _ISO_MODULES:
-            try:
-                importlib.import_module(f"{__name__}.{name}")
-            except ModuleNotFoundError:
-                continue  # ISO not implemented yet — additive by design.
-        _loaded = True
-    return REGISTRY
-
-
-def raw_dir_for(iso: str, raw_root: Path) -> Path:
-    """Directory holding an ISO's raw capacity-deliverability inputs."""
-    return raw_root / DATATYPE / iso.lower()
-
-
-def finalize(df: pd.DataFrame) -> pd.DataFrame:
-    """Coerce a parsed frame to the canonical dtypes + column order.
-
-    Missing optional columns (``value_mw`` / ``value_pu`` / source locators) are
-    filled with nulls so a source that carries only one value form still yields
-    a schema-shaped frame.
-    """
-    out = df.copy()
-    for col in CANONICAL_COLUMNS:
-        if col not in out.columns:
-            out[col] = pd.NA
-    for col in _STRING_COLS:
-        out[col] = out[col].astype("string")
-    for col in _FLOAT_COLS:
-        out[col] = pd.to_numeric(out[col], errors="coerce").astype("float64")
-    out = out[list(CANONICAL_COLUMNS)]
-    out = out.sort_values(["delivery_year", "season", "area", "metric"]).reset_index(
-        drop=True
-    )
-    return out
+_R = make_registry(
+    DATATYPE,
+    CANONICAL_COLUMNS,
+    [
+        ("iso", str),
+        ("default_area_type", str),
+        ("metric_aliases", dict, field(default_factory=dict)),
+        ("delivery_year_kind", str, "planning"),
+        ("parse", "Callable[[Path, 'IsoSpec'], pd.DataFrame] | None", None),
+    ],
+    package=__name__,
+    iso_modules=("pjm", "miso", "nyiso", "isone", "caiso"),
+    raw_subpath=(DATATYPE,),
+    string_cols=_STRING_COLS,
+    float_cols=_FLOAT_COLS,
+    sort_by=("delivery_year", "season", "area", "metric"),
+    register_check=_check_default_area_type,
+)
+IsoSpec = _R.IsoSpec
+REGISTRY: dict[str, "IsoSpec"] = _R.REGISTRY
+register = _R.register
+load_registry = _R.load_registry
+raw_dir_for = _R.raw_dir_for
+finalize = _R.finalize
 
 
 def validate_tidy(df: pd.DataFrame) -> pd.DataFrame:
