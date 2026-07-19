@@ -7,6 +7,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
+from scripts.lib import bundle_io
 from scripts.lib.bundle_io import (
     bundle_input_path,
     content_hash,
@@ -70,6 +71,45 @@ class TestSharedInputStore(unittest.TestCase):
         df = pd.DataFrame({"a": [1, 2], "b": [3, 4]})
         self.assertEqual(content_hash(df), content_hash(df.copy()))
         self.assertNotEqual(content_hash(df), content_hash(df[["b", "a"]]))
+
+
+class TestBundlePathHelpers(unittest.TestCase):
+    def test_bundles_root_under_repo(self):
+        self.assertEqual(bundle_io.bundles_root(), bundle_io.BUNDLES_ROOT)
+        self.assertEqual(bundle_io.bundles_root().name, "calibration")
+        self.assertEqual(bundle_io.bundles_root().parent.name, "results")
+
+    def test_dispatch_path(self):
+        run = Path("/x/results/calibration/run")
+        self.assertEqual(
+            bundle_io.dispatch_path(run, 2024),
+            run / "dispatch" / "2024_P1.parquet",
+        )
+        self.assertEqual(
+            bundle_io.dispatch_path(run, 2023, pass_label="P0"),
+            run / "dispatch" / "2023_P0.parquet",
+        )
+
+    def test_bundle_meta_reads_or_empty(self):
+        with TemporaryDirectory() as t:
+            run = Path(t) / "run"
+            run.mkdir()
+            self.assertEqual(bundle_io.bundle_meta(run), {})
+            (run / "meta.json").write_text(json.dumps({"iso": "PJM"}))
+            self.assertEqual(bundle_io.bundle_meta(run), {"iso": "PJM"})
+
+    def test_resolve_bundle_existing_path(self):
+        with TemporaryDirectory() as t:
+            run = Path(t) / "results" / "calibration" / "run"
+            run.mkdir(parents=True)
+            self.assertEqual(bundle_io.resolve_bundle(run), run)
+            # A path-like string that does not exist is still taken literally.
+            missing = str(Path(t) / "nope" / "run")
+            self.assertEqual(bundle_io.resolve_bundle(missing), Path(missing))
+
+    def test_resolve_bundle_unknown_raises(self):
+        with self.assertRaises(FileNotFoundError):
+            bundle_io.resolve_bundle("definitely-not-a-real-run-id-xyz")
 
 
 if __name__ == "__main__":
