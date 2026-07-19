@@ -173,6 +173,28 @@ def main() -> None:
         "(defaults to the BTM-basis replay note)",
     )
     ap.add_argument(
+        "--years",
+        nargs="+",
+        type=int,
+        default=None,
+        help="solve only these years instead of the bundle's full span — the "
+        "per-year invocation chain of CLAUDE.md rule 12 (a single year's "
+        "per-plant LP already needs most of a small box's RAM, so a fresh "
+        "process per year avoids heap-fragmentation OOM). Pair later "
+        "invocations with --reuse-solved so already-solved years byte-copy "
+        "forward. A partial-years replay is a NEW run, never the keeper "
+        "fixed in place (its meta timestamp is not restored).",
+    )
+    ap.add_argument(
+        "--reuse-solved",
+        default=None,
+        metavar="BUNDLE",
+        help="byte-copy already-solved years from this prior bundle when its "
+        "recipe matches exactly (run_calibration_full.plan_reuse_solved — "
+        "same gate as the calibration CLI's --reuse-solved). Reused years "
+        "are copies, not fresh evidence.",
+    )
+    ap.add_argument(
         "--offer-curve-json",
         default=None,
         metavar="JSON_OR_PATH",
@@ -188,11 +210,13 @@ def main() -> None:
     orig_ts = meta.get("timestamp", "")
 
     kwargs = build_kwargs(meta)
-    kwargs["years"] = [int(y) for y in meta["years"]]
+    kwargs["years"] = [int(y) for y in (args.years or meta["years"])]
     kwargs["iso"] = meta["iso"]
     kwargs["hours"] = int(meta.get("hours", 8760))
     kwargs["reference"] = rcf._load_reference()
     kwargs["run_dir"] = Path(args.out_dir) if args.out_dir else bundle
+    if args.reuse_solved is not None:
+        kwargs["reuse_solved"] = Path(args.reuse_solved)
     # --set routes through BOTH channels: the explicit solve_and_persist kwarg
     # (when one exists) AND the generic prb_overrides ScenarioConfig channel
     # (when the key is a config field). run_year's override application order
@@ -246,9 +270,15 @@ def main() -> None:
 
     # Preserve the original run id: restore the meta.json timestamp date so the
     # dashboard id (<date>-<shorthand>) is unchanged. Only for byte-faithful
-    # replays — an overridden run (--set / --offer-curve-json) is a NEW probe,
-    # not the keeper fixed in place, and must mint its own dated id.
-    if orig_ts and not args.overrides and args.offer_curve_json is None:
+    # full-span replays — an overridden run (--set / --offer-curve-json) or a
+    # partial-years chain invocation (--years) is a NEW run, not the keeper
+    # fixed in place, and must mint its own dated id.
+    if (
+        orig_ts
+        and not args.overrides
+        and args.offer_curve_json is None
+        and args.years is None
+    ):
         new_meta = json.loads((run_dir / "meta.json").read_text())
         new_ts = new_meta.get("timestamp", "")
         new_meta["timestamp"] = orig_ts[:10] + new_ts[10:] if new_ts else orig_ts
