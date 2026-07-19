@@ -48,6 +48,10 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO))  # resolve `scripts.lib` when run as a plain script
+
+from scripts.lib.bundle_io import bundle_meta  # noqa: E402  (stdlib-only helpers)
+
 DATA_DIR = REPO / "frontend" / "data" / "backcast"
 REGISTRY_DIR = DATA_DIR / "registry"
 RUNS_DIR = DATA_DIR / "runs"
@@ -487,14 +491,13 @@ def load_artifacts(run_id: str) -> dict:
     attestation = None
     if bundle_dir and bundle_dir.exists():
         rc = bundle_dir / "run_config.json"
-        meta = bundle_dir / "meta.json"
         config = {
             "scenario_config": (
                 json.loads(rc.read_text()).get("scenario_config", {})
                 if rc.exists()
                 else {}
             ),
-            "meta": json.loads(meta.read_text()) if meta.exists() else {},
+            "meta": bundle_meta(bundle_dir),
         }
         att = bundle_dir / "calibration_attestation.json"
         if att.exists():
