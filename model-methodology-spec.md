@@ -136,6 +136,33 @@ For this model, the pragmatic path is (1) as a guard once durations lengthen, es
                                 # dispatch link_bidirectional in both runners.
 ```
 
+**Marginal transmission losses** (`ScenarioConfig.miso_zonal_loss_surface`,
+tier 3, GATED default off — MISO-scoped per rule 24): each Midwest-internal
+bidirectional link (L1–L6) splits into a one-way pair
+(`transmission.apply_miso_zonal_loss_links`, the RDT pair's structure plus a
+0.001 $/MWh flow tiebreak of the storage-ε class), and each direction's
+RECEIVING-end energy-balance coefficient becomes `1 − eps(month)`
+(`transmission.build_miso_link_loss` → `dispatch.build_constraints(link_loss)`,
+an hour-varying sparse correction on the kron balance). The loss fraction
+`eps_(x→y),m = max(0, (dev_y − dev_x)/(1 + dev_y))` comes from the
+dimensionless per-zone monthly marginal delivery-factor deviation surface
+derived from MISO's own published per-hub LMP components (MLC = MEC × (DF−1);
+frozen derive `scripts/data/derive_miso_loss_surface.py`, DA basis; per-year
+rows for backcast train years — the same-year measured-physical class as CEMS
+rates — and pooled rows for forecast years). Transported energy then consumes
+MWh and interior uncongested duals separate by exactly the measured
+delivery-factor ratio `λ_y/λ_x = (1+dev_y)/(1+dev_x)` — prices stay LP duals
+(never an adder), zero fitted scalars. The reverse direction of each pair
+clamps to zero loss (the marginal-DF linearization is oriented by the month's
+persistent gradient; atypical-direction hours carry no separation rather than
+a fabricated inverted one — a documented conservative under-transmission).
+Adjudication: the miso-76 A/B (2026-07-19) was a REJECTED PROBE under its
+frozen charter's pre-registered R2 (an East-2025 cancellation pair-year the
+loss-only mechanism cannot represent; the offsetting congestion component is
+the data-blocked M4 gap), so the flag ships default-off in every keeper; see
+`docs/handoffs/miso-nc-price-separation-design-2026-07.md` and the
+2026-07-19 miso-76 calibration-log entry.
+
 **Aggregate interface groups** (`InterfaceLimit`, `iso_configs.py`): one row
 per group per hour caps the **signed sum** of member-link flows. Each listed
 ``(from, to)`` pair pulls in EVERY link joining that zone pair — matching
