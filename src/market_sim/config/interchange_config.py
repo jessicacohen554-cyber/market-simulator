@@ -621,8 +621,36 @@ IMPORT_NODE_LINKS: dict[str, list[tuple[str, float]]] = {
         ("PJM_Dominion", 6300.0),
         ("PJM_EMAAC", 5700.0),
     ],
+    # NYISO border links follow the physical landing zones of the external
+    # ties (the MISO-Illinois/Indiana/East reconciled-split precedent below:
+    # the seam envelope is measured at BA level, the split follows tie
+    # geography, and the SIL still caps the simultaneous total):
+    #   * Upstate_West — the northern/western seams: Hydro-Québec
+    #     (Chateauguay 1,999 MW + Cedars 325 MW), Ontario/IESO (~1,900 MW)
+    #     and the PJM western AC ties; their summed capability far exceeds
+    #     the conservative 3,000 MW aggregate retained here.
+    #   * Capital_Hudson — the EASTERN AC seams, which land east of the
+    #     Central-East interface: the PJM→NY AC capability via the Ramapo
+    #     345 kV ties into Zone G (~1,000 MW of the PJM seam) and the
+    #     ISO-NE→NY AC ties into Zones F/G (New Scotland / Pleasant Valley
+    #     corridor, ~600 MW of the NE seam). Without this link every seam
+    #     MW is forced through the Upstate node BEHIND the measured
+    #     Central-East limit (1,450-2,725 MW monthly in 2023, pre-NY-Transco),
+    #     so the pre-upgrade backcast cannot reproduce the real market's
+    #     eastern import response — the 2023 downstate VOLL over-formation
+    #     root-caused by the nyiso-63 phantom-outage re-audit (the stale
+    #     outage extract's phantom eastern capacity was compensating for the
+    #     missing eastern seam landing). Source: NYISO Gold Book external
+    #     interconnections (tie landing points); the split re-homes part of
+    #     the same lumped seam capability, adds no import energy (the
+    #     monthly EIA-930 reconciliation band still pins net volumes) and
+    #     stays under the published ~4,350 MW SIL.
+    #   * NYC / Long_Island — the downstate HVDC merchant ties at their
+    #     converter ratings (HTP 660 + Linden VFT 315 into J; Neptune 660 +
+    #     Cross Sound 330 + Northport-Norwalk 286 into K).
     "NYISO": [
         ("Upstate_West", 3000.0),
+        ("Capital_Hudson", 1600.0),
         ("NYC", 1000.0),
         ("Long_Island", 1200.0),
     ],
