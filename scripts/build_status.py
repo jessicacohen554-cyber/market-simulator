@@ -1,27 +1,36 @@
-"""Emit the all-ISO Calibration Status data file for the backcast dashboard.
+"""Emit the per-ISO Calibration Status data parts for the backcast dashboard.
 
-The dashboard's "Calibration Status" view (one page, every ISO) renders entirely
-client-side from ``frontend/data/backcast/status.js`` — a committed
-``window.BC.status`` payload this script produces. For each ISO's CURRENT keeper
-(listed in ``frontend/data/backcast/keepers.json``) it runs the SAME scorer the
-gate uses — ``scripts/calibration_verdict.py`` — and embeds the full machine
-verdict, so the page can never disagree with ``calibration_verdict.py``. It also
-emits the rubric reference (what each criterion measures, its authoritative actual
-source, and its tolerance — the tolerances read straight off the scorer's module
-constants, never re-typed) and the best-practice methodology notes.
+The dashboard's "Calibration Status" view (one page, every ISO) renders
+client-side from COMMITTED, PER-ISO status parts (sharded 2026-07-19 so
+concurrent keeper promotions in different ISOs never touch the same file):
 
-Why a COMMITTED file (mirroring ``runs/<id>.js``) rather than a deploy-time
+* ``frontend/data/backcast/status/<ISO>.js`` — that ISO's current-keeper
+  machine verdict (``window.BC.statusParts[ISO]``), rebuilt on promotion via
+  ``--iso <ISO>``. For each ISO's CURRENT keeper (``keepers/<ISO>.json``, via
+  ``scripts.lib.keeper_store``) it runs the SAME scorer the gate uses —
+  ``scripts/calibration_verdict.py`` — and embeds the full verdict, so the
+  page can never disagree with the gate.
+* ``frontend/data/backcast/status/shared.js`` — the rubric reference,
+  benchmark table and methodology notes (``window.BC.statusShared``).
+  Deterministic (no timestamp): its bytes change only when the rubric/scorer
+  constants change, so rewriting it from any session is conflict-free.
+
+``docs/codebase-site/js/bc-data.js`` composes the parts back into the legacy
+``window.BC.status`` shape (the old monolithic ``status.js`` is retired).
+
+Why COMMITTED files (mirroring ``runs/<id>.js``) rather than a deploy-time
 rebuild like manifest.js/benchmark.js: the C6 governance verdict reads each
 bundle's ``calibration_attestation.json`` / ``run_config.json`` under
 ``results/calibration/``, which the GitHub Pages deploy's sparse checkout does
-NOT fetch. So the verdict can only be computed where the bundles live — here,
-locally — and the result is committed. ``build_manifest.py`` merely wires the
-committed ``status.js`` into the shell (it does not regenerate it).
+NOT fetch. So verdicts can only be computed where the bundles live — here,
+locally — and the results are committed.
 
-Stdlib-only (json, calibration_verdict). Run after a keeper changes:
+Stdlib-only (json, calibration_verdict, keeper_store). Run after a keeper
+changes:
 
-    python scripts/build_status.py            # refresh frontend/data/backcast/status.js
-    python scripts/build_status.py --check     # verify status.js is in sync, exit 1 if not
+    python scripts/build_status.py --iso MISO  # rebuild only MISO's part (+ shared)
+    python scripts/build_status.py             # rebuild every ISO part + shared
+    python scripts/build_status.py --check     # verify parts in sync, exit 1 if not
 """
 
 from __future__ import annotations
@@ -36,10 +45,11 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
 from scripts import calibration_verdict as cv  # noqa: E402  (after sys.path insert)
+from scripts.lib import keeper_store  # noqa: E402  (after sys.path insert)
 
 DATA = REPO / "frontend" / "data" / "backcast"
-KEEPERS_FILE = DATA / "keepers.json"
-STATUS_FILE = DATA / "status.js"
+STATUS_DIR = DATA / "status"
+SHARED_FILE = STATUS_DIR / "shared.js"
 # D-7 statistical-mode fail-count gaps (REPORTED next to each keeper, never
 # gating): committed data seeded from docs/statistical-mode-results-2026-07.md,
 # refreshed whenever a statmode probe re-measures a keeper.
@@ -447,96 +457,155 @@ def _iso_sort_key(iso: str) -> tuple[int, str]:
     return (ISO_ORDER.index(iso) if iso in ISO_ORDER else len(ISO_ORDER), iso)
 
 
-def build() -> dict:
-    """Score every current keeper and assemble the status payload."""
-    if not KEEPERS_FILE.exists():
-        raise SystemExit(f"no keeper list at {KEEPERS_FILE} — cannot build status.")
-    spec = json.loads(KEEPERS_FILE.read_text())
-    statmode = (
-        json.loads(STATMODE_D7_FILE.read_text()) if STATMODE_D7_FILE.exists() else {}
-    )
-    # Owner-declared "frontier achieved" designations (keepers.json "frontier"
-    # map): every named admissible mechanism for the ISO's residual caveats has
-    # been tried on record, and what remains is either inadmissible
-    # (residual-fitting, rule 26) or blocked on data that does not exist
-    # publicly. Rendered as a badge + note on the Calibration Status page;
-    # purely declarative — never gating, never touching the verdict.
-    frontier = spec.get("frontier", {})
-    keepers = []
-    for run_id in spec.get("keepers", []):
-        if not (cv.REGISTRY_DIR / f"{run_id}.json").exists():
-            print(f"  skip {run_id}: no registry sidecar", file=sys.stderr)
-            continue
-        verdict = cv.determine(run_id)
-        if verdict["iso"] in frontier:
-            verdict["frontier"] = frontier[verdict["iso"]]
-        d7 = statmode.get("isos", {}).get(verdict["iso"])
-        if d7:
-            # REPORTED line, never gating: the overlay-vs-statistical fail
-            # gap (audit D-7). ``stale`` marks a gap measured against a
-            # since-replaced keeper — re-measure with run_statmode_probe.py.
-            verdict["statmode_d7"] = {
-                **d7,
-                "measured": statmode.get("measured"),
-                "source": statmode.get("source"),
-                "stale": d7.get("measured_against") != run_id,
-            }
-        keepers.append(verdict)
-    keepers.sort(key=lambda v: _iso_sort_key(v["iso"]))
-    if not keepers:
-        raise SystemExit(
-            "no scorable keepers found; refusing to write an empty status."
-        )
+def build_shared() -> dict:
+    """The ISO-independent status payload (``window.BC.statusShared``).
+
+    Deliberately carries NO timestamp: its bytes are a pure function of the
+    scorer/rubric constants, so any session can rewrite it and get identical
+    bytes unless the rubric itself changed — conflict-free by construction.
+    """
     return {
-        "generated": datetime.now().strftime("%Y-%m-%d %H:%M"),
         "rubric_version": cv.RUBRIC_VERSION,
+        "iso_order": list(ISO_ORDER),
         "rubric": rubric(),
         "benchmark": benchmark(),
         "methodology": methodology(),
-        "keepers": keepers,
     }
 
 
-def serialize(payload: dict) -> str:
-    """Render the ``window.BC.status`` data file (compact, deterministic)."""
+def build_part(iso: str) -> dict | None:
+    """Score one ISO's current keeper into its status part payload.
+
+    Returns None (with a stderr note) when the ISO has no scorable keeper —
+    a missing shard or sidecar must never abort the other lanes.
+    """
+    rec = keeper_store.load_shard(iso) or {}
+    run_id = rec.get("keeper")
+    if not run_id:
+        print(f"  skip {iso}: no keeper in keepers/{iso}.json", file=sys.stderr)
+        return None
+    if not (cv.REGISTRY_DIR / f"{run_id}.json").exists():
+        print(f"  skip {iso}: keeper {run_id} has no registry sidecar", file=sys.stderr)
+        return None
+    statmode = (
+        json.loads(STATMODE_D7_FILE.read_text()) if STATMODE_D7_FILE.exists() else {}
+    )
+    verdict = cv.determine(run_id)
+    # Owner-declared "frontier achieved" designation (the shard's "frontier"
+    # block): every named admissible mechanism for the ISO's residual caveats
+    # has been tried on record, and what remains is either inadmissible
+    # (residual-fitting, rule 26) or blocked on data that does not exist
+    # publicly. Rendered as a badge + note on the Calibration Status page;
+    # purely declarative — never gating, never touching the verdict.
+    if rec.get("frontier"):
+        verdict["frontier"] = rec["frontier"]
+    d7 = statmode.get("isos", {}).get(iso)
+    if d7:
+        # REPORTED line, never gating: the overlay-vs-statistical fail
+        # gap (audit D-7). ``stale`` marks a gap measured against a
+        # since-replaced keeper — re-measure with run_statmode_probe.py.
+        verdict["statmode_d7"] = {
+            **d7,
+            "measured": statmode.get("measured"),
+            "source": statmode.get("source"),
+            "stale": d7.get("measured_against") != run_id,
+        }
+    return {
+        "generated": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "keeper": verdict,
+    }
+
+
+def serialize_shared(payload: dict) -> str:
+    """Render ``status/shared.js`` (compact, deterministic — no timestamp)."""
     return (
-        "window.BC=window.BC||{};window.BC.status="
+        "window.BC=window.BC||{};window.BC.statusShared="
         + json.dumps(payload, sort_keys=True, separators=(",", ":"))
         + ";"
     )
 
 
+def serialize_part(iso: str, payload: dict) -> str:
+    """Render one ``status/<ISO>.js`` part (compact, deterministic)."""
+    return (
+        "window.BC=window.BC||{};window.BC.statusParts=window.BC.statusParts||{};"
+        + f"window.BC.statusParts[{json.dumps(iso)}]="
+        + json.dumps(payload, sort_keys=True, separators=(",", ":"))
+        + ";"
+    )
+
+
+def _strip_gen(js_text: str, marker: str) -> str:
+    """Canonical JSON of a part/shared file with the timestamp removed."""
+    obj = json.loads(js_text.split(marker, 1)[1].rstrip().rstrip(";"))
+    if isinstance(obj, dict):
+        obj.pop("generated", None)
+    return json.dumps(obj, sort_keys=True)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument(
+        "--iso",
+        nargs="+",
+        metavar="ISO",
+        help="rebuild only these ISOs' status parts (default: every ISO). "
+        "shared.js is always (re)written — deterministic, byte-identical "
+        "unless the rubric changed.",
+    )
+    ap.add_argument(
         "--check",
         action="store_true",
-        help="verify status.js matches the current verdicts (ignoring the timestamp); "
-        "exit 1 if it is stale.",
+        help="verify the status parts match the current verdicts (ignoring "
+        "timestamps); exit 1 if any is stale.",
     )
     args = ap.parse_args()
-    payload = build()
-    text = serialize(payload)
+    all_isos = keeper_store.iso_list()
+    if not all_isos:
+        raise SystemExit("no ISOs in the keeper store — cannot build status.")
+    targets = [i.upper() for i in args.iso] if args.iso else list(all_isos)
+    unknown = [i for i in targets if i not in all_isos]
+    if unknown:
+        raise SystemExit(f"unknown ISO(s) {unknown} — known: {all_isos}")
+
+    shared_text = serialize_shared(build_shared())
+    parts = {iso: build_part(iso) for iso in targets}
+    built = {iso: p for iso, p in parts.items() if p is not None}
+    if not built:
+        raise SystemExit("no scorable keepers found; refusing to write empty parts.")
+
     if args.check:
-        if not STATUS_FILE.exists():
-            sys.exit(f"{STATUS_FILE} missing — run: python scripts/build_status.py")
-        cur = STATUS_FILE.read_text()
-
-        def _strip_gen(s: str) -> str:
-            obj = json.loads(s.split("window.BC.status=", 1)[1].rstrip().rstrip(";"))
-            obj.pop("generated", None)
-            return json.dumps(obj, sort_keys=True)
-
-        if _strip_gen(cur) != _strip_gen(text):
+        stale: list[str] = []
+        if not SHARED_FILE.exists() or _strip_gen(
+            SHARED_FILE.read_text(), "window.BC.statusShared="
+        ) != _strip_gen(shared_text, "window.BC.statusShared="):
+            stale.append(str(SHARED_FILE))
+        for iso, part in built.items():
+            path = STATUS_DIR / f"{iso}.js"
+            marker = f"window.BC.statusParts[{json.dumps(iso)}]="
+            if not path.exists() or _strip_gen(path.read_text(), marker) != _strip_gen(
+                serialize_part(iso, part), marker
+            ):
+                stale.append(str(path))
+        if stale:
             sys.exit(
-                f"{STATUS_FILE} is stale vs the current verdicts — "
-                "re-run: python scripts/build_status.py"
+                "stale vs the current verdicts: "
+                + ", ".join(stale)
+                + " — re-run: python scripts/build_status.py"
+                + (" --iso " + " ".join(targets) if args.iso else "")
             )
-        print(f"{STATUS_FILE.name} is in sync ({len(payload['keepers'])} keepers).")
+        print(f"status parts in sync ({len(built)} keepers: {', '.join(built)}).")
         return
-    STATUS_FILE.write_text(text)
-    dets = ", ".join(f"{v['iso']}:{v['determination']}" for v in payload["keepers"])
-    print(f"wrote {STATUS_FILE} — {len(payload['keepers'])} keepers [{dets}]")
+
+    STATUS_DIR.mkdir(parents=True, exist_ok=True)
+    SHARED_FILE.write_text(shared_text)
+    for iso, part in built.items():
+        (STATUS_DIR / f"{iso}.js").write_text(serialize_part(iso, part))
+    dets = ", ".join(f"{i}:{p['keeper']['determination']}" for i, p in built.items())
+    print(
+        f"wrote {SHARED_FILE.relative_to(REPO)} + {len(built)} part(s) under "
+        f"{STATUS_DIR.relative_to(REPO)}/ [{dets}]"
+    )
 
 
 if __name__ == "__main__":

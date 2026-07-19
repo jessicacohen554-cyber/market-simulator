@@ -30,9 +30,12 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO))
+
+from scripts.lib import keeper_store  # noqa: E402  (after sys.path insert)
+
 REGISTRY_DIR = REPO / "frontend" / "data" / "backcast" / "registry"
 RUNS_DIR = REPO / "frontend" / "data" / "backcast" / "runs"
-KEEPERS_PATH = REPO / "frontend" / "data" / "backcast" / "keepers.json"
 
 
 def main() -> int:
@@ -77,15 +80,15 @@ def main() -> int:
                     f"{rid}: {field} -> {ref!r} has a sidecar but no runs/{ref}.js payload"
                 )
 
-    if KEEPERS_PATH.exists():
-        keepers = json.loads(KEEPERS_PATH.read_text())
-        for rid in keepers.get("keepers", []):
-            if rid not in sidecars:
-                problems.append(f"keepers.json: keeper {rid!r} has no registry sidecar")
-            elif not (RUNS_DIR / f"{rid}.js").exists():
-                problems.append(
-                    f"keepers.json: keeper {rid!r} has no runs/{rid}.js payload"
-                )
+    for iso, rid in keeper_store.keeper_ids().items():
+        if rid not in sidecars:
+            problems.append(
+                f"keepers/{iso}.json: keeper {rid!r} has no registry sidecar"
+            )
+        elif not (RUNS_DIR / f"{rid}.js").exists():
+            problems.append(
+                f"keepers/{iso}.json: keeper {rid!r} has no runs/{rid}.js payload"
+            )
 
     if problems:
         print("registry/payload parity FAILED:", file=sys.stderr)

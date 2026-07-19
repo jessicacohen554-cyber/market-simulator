@@ -153,8 +153,13 @@ data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 #    the bc-data.js fallback); the "Deploy site to GitHub Pages" workflow is
 #    their single writer on main. The codebase-site subset below is generated at
 #    deploy time by scripts/build_codebase_site_backcast.py and never committed.
+#    The RETIRED keeper/status monoliths (sharded per-ISO 2026-07-19 into
+#    keepers/<ISO>.json + status/<ISO>.js so parallel promotions never collide)
+#    are ignored so a stale tool can't resurrect them into a commit.
 # -----------------------------------------------------------------------------
 docs/codebase-site/data/backcast/
+frontend/data/backcast/keepers.json
+frontend/data/backcast/status.js
 
 # -----------------------------------------------------------------------------
 # 7. results/ forecast & scenario caches — transient per-ISO LP outputs keyed by
