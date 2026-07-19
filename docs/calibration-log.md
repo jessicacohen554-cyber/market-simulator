@@ -18405,3 +18405,83 @@ determination stays **NOT-YET**, fail set {C3c, C4, C5a(2024 CAVEAT)}.
 - Issue #2546: the $5 fallback literal — still OPEN, no ruling this session.
 
 Next number: caiso-103.
+
+## 2026-07-19 — ERCOT-88 (charter §6.2 build, owner-authorized): the offline fast-start pool offer BUILT, both single-year probes clear the C3a/zero-spurious gates but the pool clears INFRAMARGINAL — dispatch-inert (2025: 0 cells / 0 GWh; 2024: 0.7 GWh, 4 already-scarce hours repriced, ZERO new mid-band hours); the offer-surface enumeration for the moderate-tightness band is CLOSED, residual is quantity-side; mechanism MERGED default-OFF (NEISO Limb B pattern), keeper UNCHANGED (ercot86, promoted this session)
+
+**Task.** The owner authorized the charter §6.2 build (the ERCOT-87 measure-first
+adjudication SUPPORTED basis A: the actual $150–500 band prices on the offline
+startable CT pool). ONE mechanism, per §8.3: an economic fast-start availability —
+the OFFQS/OFFNS offline CT pool offered to the LP at its measured per-net-load-bin
+above-LSL SCED2 ladder, physics-gated (min-down ≤ 2 h), an OFFER not a floor.
+
+**Build (all committed).** `ScenarioConfig.ercot_faststart_pool_offer` (default off,
++`_path`); derive `scripts/data/derive_ercot_faststart_pool.py` → year-scoped 2024/2025
+artifact (`data/raw/_validation-source/ercot_faststart_pool_condbinned.json`:
+above-LSL OFFQS/OFFNS ladder + `pool_frac` per bin, zero fitted scalars, frozen
+rule 23); standalone builder `fleet.build_ercot_faststart_pool_markup` prices the
+merchant-CT econ*/peak* rows above the measured pool boundary (`1 − pool_frac`) at
+the pool ladder, REPLACE-BY-MASK at the `run_calibration.py` seam (one owner per
+row-hour, rule 19); eligibility by unit physics (`constants.FASTSTART_POOL_MIN_DOWN_HOURS
+= 2`, rule 12 — CC fails at 4–8 h, ST_GAS at 8–12 h). Rule-19 D-2 attribution
+enumerated BEFORE the seam (charter §9.1): disjoint from the RT wall (ON-status
+spare), the gas commitment bridge (merchant gas-CC, physics-excluded), and the DAM
+availability overlay (only-OUT-is-out, so the pool HSL is already in the LP — the
+leg re-prices, never adds MW). Trivial-case tests + artifact invariants
+(`tests/test_ercot_faststart_pool_offer.py`, 12 pass; 40 with the wall suites).
+
+**Probes (rule-16 single-year throwaways, C3a level guard + zero-spurious gate, the
+ERCOT-86 analyzer convention `scripts/probes/_ercot88_midband_check.py`).** Base =
+the ercot86 keeper recipe; +gate on. Pool leg ENGAGED (173 fast-start rows 2024, 91
+rows 2025 carry the ladder — not inert by mis-wiring). Result:
+
+| year | C3a resid (base→probe) | mid-band formed | spurious Δ | dispatch shifted | price hrs Δ>$1 |
+|---|---|---|---|---|---|
+| 2024 | −1.3% → −1.2% HELD | 5/68 → 5/68 | +0 HELD | 0.7 GWh / 462.9 TWh | 4 (all already-scarce, >$2,000; +$83 max) |
+| 2025 | +1.4% → +1.4% HELD | 4/65 → 4/65 | +0 HELD | 0.0 GWh | 0 |
+
+**Finding — the pool clears INFRAMARGINAL; the band residual is QUANTITY-side, not
+offer-side.** Both years clear both gates (harm-free), but the mechanism forms ZERO
+new mid-band hours: the LP dispatches the pool's startable increment only in hours
+already at/above scarcity, where the price barely moves (4 hours in 2024, none in
+2025), and leaves it un-cleared in the diffuse Apr/May/Jul/Oct/Dec shoulder hours the
+ERCOT-86 wall also cannot reach — because the model still carries CHEAPER online
+headroom there. This is exactly ERCOT-87 §8.2 caveat (a) ("most started MW clears
+cheap; the band prices on the marginal tail — OFFER the pool, never force it") borne
+out: the offer is real and correctly priced, but it is not marginal in the residual
+hours. The **offer-surface enumeration for the moderate-tightness band is now CLOSED**
+— both the online-spare wall (ERCOT-86, adopted) and the offline fast-start pool
+(ERCOT-88, this entry) are built and measured-faithful, and neither fills the diffuse
+band. The successor is **quantity-side**: the hour-level online-capability envelope
+(how much merchant CT/CC is actually committed/online in those specific shoulder
+hours), not the offer price. Its own charter.
+
+**Disposition (rule 1 / rule 11 — a real market behaviour stays in even if the
+residual doesn't move; NEISO Limb B precedent).** The mechanism is structurally
+faithful (offline fast-start CTs DO participate in RT via SCED at startup-inclusive
+offers — ERCOT-87 measured 12–18 starts/covered-band-hour) and harm-free, so it is
+MERGED **default-OFF** as a dormant, forecast-available structural addition. It is
+**NOT** promoted into the keeper (band-inert; promoting a mechanism that changes only
+4 already-scarce hours would be tuning-to-noise, rule 1's converse). **No full-span
+run / no dashboard registration**: with both single years dispatch-inert (0.7 / 0.0
+GWh) and 2023 year-scoped-absent (byte-identical by construction + test), a full-span
+solve would reproduce the ercot86 keeper to the dollar outside 4 scarce hours — it is
+neither a keeper nor a rejected keeper-candidate, exactly as NEISO Limb B was kept
+default-off without a separate registration.
+
+**Keeper — ERCOT swapped to ercot86 this session (owner-approved).** Independent of
+the §6.2 build: on the owner directive ("if it's a keeper in your opinion promote"),
+`2026-07-19-ercot86-rt-wall-fullspan` was promoted over ercot82 after the conditional
+gates cleared (byte-faithful replay regenerated the bundle outputs; governance
+attestation + DOF ledger + `legitimacy_diagnostics.json` built; re-scored C6/C7/C8
+PASS — 2025 ST_GAS grounded-above-budget clean pass; C3a/C3b 2023 → ledgered CAVEAT
+input-blocked/rule-14; C3c stays FAIL). Determination NOT-YET on C3c only — the same
+offer/scarcity-recalibration-against-corrected-availability successor lane as ercot80/82.
+`keepers.json`/`status.js`/sidecar swapped, calibration-keeper-auditor PASS (repaired
+the stale "keeper stays ercot82" sidecar line).
+
+**Ops.** Mechanism + derive + artifact + tests + probe analyzer committed; ercot86
+attestation/diagnostics/metrics + keeper swap committed and pushed onto
+`claude/ercot-87-midband-basis-0cqnof` (rebased onto main after the caiso-102 merge;
+both ERCOT=ercot86 and CAISO=caiso-102 keepers preserved). Throwaway probe bundles
+deleted (rule 16). Charter §9 carries the build record + rule-19 enumeration + these
+probe results. Next number: ercot-89.
