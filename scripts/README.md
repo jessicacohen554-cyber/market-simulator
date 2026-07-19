@@ -65,10 +65,13 @@ that must stay in lockstep:
 runs `prune_iso`, which keeps the 15 newest runs for that ISO (by date, then id)
 and deletes the sidecar, payload **and** mapped bundle dir of every displaced
 oldest run *together*. Two protections are never pruned regardless of age: any
-current keeper in `keepers.json`, and any run referenced by a surviving
+current keeper in the sharded keeper store (`keepers/<ISO>.json`), and any run referenced by a surviving
 sidecar's `ablation_twin`/`ablation_of` link. Pass `--no-prune` to register
 without sweeping (used by the one-time backfill/cleanup operations); the caller
-stages the deletions with the rest of the commit.
+stages the deletions with the rest of the commit. (Keepers live in the sharded
+per-ISO store `frontend/data/backcast/keepers/<ISO>.json` — 2026-07-19, via
+`scripts/lib/keeper_store.py` — so keeper promotions in different ISOs commit
+disjoint files; the monolithic `keepers.json`/`status.js` are retired.)
 
 `scripts/check_registry_payload_parity.py` is the CI gate for this invariant and
 checks **both directions**: a sidecar with no payload (invisible in the Run

@@ -209,35 +209,49 @@ statistical-mode gap as a REPORTED line, the tests conducted, and the
 best-practice justification, with a deep link into each keeper's Run Explorer
 report. It renders client-side from `status.js` (`window.BC.status`).
 
-Unlike manifest.js/benchmark.js, **status.js is a committed file** (built where
+Unlike manifest.js/benchmark.js, **the status data is committed** (built where
 the bundles live, not at deploy time): the C6 governance verdict reads each
 bundle's `calibration_attestation.json`, which the Pages deploy's sparse
-checkout does not fetch. So when a keeper changes:
+checkout does not fetch. Since 2026-07-19 both the keeper registry and the
+status data are **sharded per ISO** — `keepers/<ISO>.json` +
+`status/<ISO>.js` (+ the deterministic `status/shared.js` rubric block) — so
+keeper promotions in DIFFERENT ISOs touch disjoint files and merge without
+rebasing (the old monolithic `keepers.json`/`status.js` are retired and
+gitignored; `bc-data.js` composes the shards client-side). So when a keeper
+changes:
 
-1. Update the current keeper run id for that ISO in
-   `frontend/data/backcast/keepers.json`.
-2. **Run the keeper-text auditor.** Editing `keepers.json` fires the
+1. Update the current keeper run id in that ISO's shard,
+   `frontend/data/backcast/keepers/<ISO>.json` (or:
+   `python scripts/lib/keeper_store.py --set <ISO> <run-id>`).
+2. **Run the keeper-text auditor.** Editing a keeper shard fires the
    `keeper-audit.sh` PostToolUse hook, which asks you to launch the
    `calibration-keeper-auditor` subagent (Agent tool, `subagent_type:
-   calibration-keeper-auditor`). It runs `scripts/audit_keepers.py` to confirm
-   every keeper's run-report header (its registry-sidecar `definition`) and the
-   Calibration Status page still match the keeper's actual results, repairs any
-   placeholder/stale text, and rebuilds `status.js`. You can also run it directly:
+   calibration-keeper-auditor`). It runs `scripts/audit_keepers.py --iso <ISO>`
+   to confirm the keeper's run-report header (its registry-sidecar
+   `definition`) and the Calibration Status page still match the keeper's
+   actual results, repairs any placeholder/stale text, and rebuilds that ISO's
+   status part. You can also run it directly:
    ```bash
-   python scripts/audit_keepers.py            # exits 1 on any FAIL
+   python scripts/audit_keepers.py --iso <ISO>   # exits 1 on any FAIL
    ```
-3. Regenerate + commit the status data (re-runs `calibration_verdict.py` for
-   every keeper, so the page can never disagree with the gate):
+3. Regenerate + commit that ISO's status part (re-runs `calibration_verdict.py`
+   for the keeper, so the page can never disagree with the gate):
    ```bash
-   python scripts/build_status.py
-   git add frontend/data/backcast/keepers.json frontend/data/backcast/status.js
+   python scripts/build_status.py --iso <ISO>
+   git add frontend/data/backcast/keepers/<ISO>.json \
+           frontend/data/backcast/status/<ISO>.js
    ```
-   `python scripts/build_status.py --check` fails (exit 1) if status.js is stale
-   vs the current verdicts — a cheap CI/pre-commit guard.
+   Stage `status/shared.js` too ONLY if it changed (it only moves when the
+   rubric/scorer constants changed). `python scripts/build_status.py --check
+   [--iso <ISO>]` fails (exit 1) if a part is stale vs the current verdicts —
+   a cheap CI/pre-commit guard. **Never touch another ISO's shard or status
+   part in a promotion commit** — per-ISO lane isolation is what keeps
+   parallel promotions conflict-free.
 
-`build_manifest.py` never regenerates status.js — it is committed on its own via
-`build_status.py` (above); the Pages deploy publishes that committed copy as-is
-(unlike manifest.js/benchmark.js, which the deploy rebuilds from the sidecars).
+`build_manifest.py` never regenerates the status parts — they are committed on
+their own via `build_status.py` (above); the Pages deploy publishes the
+committed `keepers/` + `status/` dirs as-is (unlike manifest.js/benchmark.js,
+which the deploy rebuilds from the sidecars).
 
 ## Notes
 
@@ -246,11 +260,14 @@ checkout does not fetch. So when a keeper changes:
   HTTP (`python -m http.server`) — `keepers.json` is fetched, so plain
   `file://` opening hits the CORS trap. Run `python scripts/build_manifest.py`
   first if `manifest.js`/`benchmark.js` aren't fresh in your checkout.
-- Avoid editing shared, append-style files (e.g. `docs/calibration-log.md`)
-  from parallel sessions — that is the one remaining way two sessions can
-  conflict. Put per-run findings in the run's sidecar definition or a
-  `SUMMARY-*.md` inside the bundle dir, and update the shared log in one
-  place afterwards.
+- Calibration-log entries go to the PER-ISO continuation logs
+  (`docs/calibration-log/<iso>.md`, lowercase — e.g. `ercot.md`;
+  cross-ISO/governance entries to `docs/calibration-log/governance.md`). The
+  monolithic `docs/calibration-log.md` is frozen as the pre-2026-07-19
+  archive — never append to it. Per-run findings belong in the run's sidecar
+  definition or a `SUMMARY-*.md` inside the bundle dir; with the sharded
+  keeper/status/log lanes, parallel sessions in different ISOs share no
+  editable file at all.
 - This is a **reporting** tool: it never edits the model or `config/`. The two
   capture metrics and the CHP behind-the-meter add-back live in the generator;
   don't second-guess them here.

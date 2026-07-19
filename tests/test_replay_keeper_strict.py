@@ -58,7 +58,9 @@ class TestCurrentKeepersReplayCleanly(unittest.TestCase):
     mode — the CI --replay-bundle path depends on it."""
 
     def test_all_keeper_metas_build(self):
-        keepers = json.loads((REPO / "frontend/data/backcast/keepers.json").read_text())
+        from scripts.lib import keeper_store
+
+        keepers = keeper_store.keeper_ids(REPO)
         checked = 0
         for iso in ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"):
             rid = keepers.get(iso)

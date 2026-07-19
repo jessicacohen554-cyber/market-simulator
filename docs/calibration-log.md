@@ -1,5 +1,15 @@
 # Calibration Log
 
+> **FROZEN ARCHIVE (2026-07-19).** This monolithic log is closed to new
+> entries — appending here from parallel per-ISO sessions was a standing
+> merge-conflict source (every promotion collided at the file tail). New
+> entries go to the **per-ISO continuation logs**:
+> `docs/calibration-log/<iso>.md` (`ercot.md`, `pjm.md`, `caiso.md`,
+> `miso.md`, `nyiso.md`, `neiso.md`) and, for cross-ISO/rubric/governance
+> entries, `docs/calibration-log/governance.md`. Same entry format
+> (`## YYYY-MM-DD — title`), newest at the bottom. Everything below this
+> banner is the pre-2026-07-19 record, unchanged.
+
 This log records calibration runs that compare simulated results against
 published benchmarks on common inputs. Each run is produced by
 `market_sim.results.calibration.run_calibration_check`, which loads one
