@@ -1,0 +1,11 @@
+{
+ "note": "ISO display order for the sharded keeper store (keepers/<ISO>.json, one lane per ISO \u2014 see keepers/README.md). Edited only when an ISO is added/removed from the model, never by a keeper promotion.",
+ "isos": [
+  "ERCOT",
+  "PJM",
+  "CAISO",
+  "NYISO",
+  "NEISO",
+  "MISO"
+ ]
+}

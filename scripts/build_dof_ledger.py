@@ -1403,8 +1403,11 @@ def main() -> None:
     args = ap.parse_args()
     targets: list[tuple[Path, str]] = []
     if args.all_keepers:
-        keepers = json.loads((REPO / "frontend/data/backcast/keepers.json").read_text())
-        for run_id in keepers.get("keepers", []):
+        if str(REPO) not in sys.path:
+            sys.path.insert(0, str(REPO))
+        from scripts.lib import keeper_store
+
+        for run_id in keeper_store.keeper_list(REPO):
             side = json.loads(
                 (
                     REPO / "frontend/data/backcast/registry" / f"{run_id}.json"
