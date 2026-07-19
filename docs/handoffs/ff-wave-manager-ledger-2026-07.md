@@ -7,7 +7,7 @@ the end of every manager turn.
 
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
-- **Last reviewed `origin/main` HEAD:** `9fa016b` (2026-07-19, turn 29 — manager session `turn-1-anm4jn`).
+- **Last reviewed `origin/main` HEAD:** `0e5983f` (2026-07-19, turn 30 — manager session `turn-1-anm4jn`).
 - **Plan base SHA:** `c95176e` (amended in place 2026-07-19 — POC-first re-scope, see directive entry below).
 - **OWNER DIRECTIVE (2026-07-19, out-of-band — recorded by the directive's executing
   session, not a manager turn): POC-first re-scope of THE PLAN.** The plan is amended in
@@ -24,6 +24,40 @@ the end of every manager turn.
   keeper + calibration-complete marker, T1 POC gates green, crossover input gap +
   readiness battery + projected cost, and an explicit per-campaign owner authorization.
   Status-table rows updated below; active front unchanged (FF-2B).
+- **turn 30 (manager `turn-1-anm4jn`, refresh). `9fa016b→0e5983f` (8 merges). FF-3B LANDED
+  VERIFIED-PASS (#2613) — Wave-3's only active prompt closes; the program is now fully blocked
+  on the owner's FF-2C/FF-2D decision.** FF-3B verified against all 3 items: (1) **W3-R verdict =
+  NO-GO** for the W4 premium-ladder campaign (`docs/handoffs/ces-w3r-readiness-2026-07.md`) —
+  R1 NOT MET (ERCOT hindcast solar entry 0.0 GW vs 25.08 actual; PJM overshoots 19.32 vs 13.07),
+  R2 NOT MET (exit magnitude fixed but composition inverts 100% onto gas_st, unit-recall 0.0;
+  revenue-basis fix named + open), R3 MET (PJM coal exit 11.54 GW, 76.5% unit-recall, band PASS,
+  BLK-9 broken), R4 PARTIAL (PJM I7 passes post-W2-D; NEW multi-year I4 leak "A1" open + golden
+  band-test frozen/unverified at HEAD) — blocking list routed to lanes, quarantine-legal method
+  (committed-evidence read, no 2026-2050 re-run; §2.1b-compliant by construction); (2) **T1-scale
+  CES POC = machinery-proven**: full W4 pipeline (matrix_configs → run_scenario_iso → market-sim
+  matrix → report_ces_campaign.py → register_forecast_baseline.py) ran end-to-end on ERCOT
+  2026-2030 × {BAU, CES-20, CES-40} — each leg its own 5-solve-year invocation (≤5-yr cap ✓),
+  registered `kind="ces-poc"` (`frontend/data/hindcast/ercot-2026-2030-ces-poc-*.json`, meta
+  verified), no premium-ladder conclusions drawn; premium demonstrably moves the whole surface
+  (clean_share 0.400→0.506, solar captured price $30→$1.4/MWh at CES-40 — the §6 cannibalization
+  story reproduced structurally); 3 findings fixed-at-POC-scale or routed (incl. F-3:
+  generate_financial_reports.py not runnable on fresh checkout — W4-B prerequisite); (3) wall/RSS
+  §2.4 ledger delivered in the findings doc (~132-137 s/yr, 3.7-4.2 GB peak, with the explicit
+  NON-LINEAR caution for FF-3E: early years are a firm lower bound, late-horizon LPs grow
+  super-linearly — do not extrapolate flat). **Interpretive call (flag, accepted):** the prompt
+  nests the POC under "On GO:"; the worker ran it despite NO-GO with a documented decoupling
+  rationale (POC = plumbing proof per plan §0 Phase A, independent of screen-fitness for
+  conclusions) — consistent with program intent; noting for the record, no correction. Also
+  noted: the worker solved on session-start tree `57ed9fc` and rebased onto `415df68` with a
+  documented no-touch argument. **Out-of-program (7):** #2605/#2612 (ercot-88/89 lane — #2612
+  amends CLAUDE.md rule 15: KEEPER bundles now commit hourly/ sidecars, + run_calibration_full.py
+  sidecar writer + tests — governance infra, content-reasonable), #2607/#2610/#2611 (PJM DAM /
+  NEISO operable-capacity / MISO outage data intakes), #2609 (phase-refactor calendar-metrics —
+  new src/utils/hour_calendar.py + metrics.py touch), #2606 (ledger t29). **Rule-27 clean:** all
+  four core counts unchanged (4269/7962/7604/2470). **Nothing dispatchable remains:** FF-2C
+  (owner sign-off) → FF-2D → FF-3E → FF-5A is the whole remaining chain; FF-3C stays
+  trigger-gated (the POC's I9-adjacent negative-price/degeneracy signals at CES-40 and the A1/I4
+  leak are FF-2D-input material, not yet a measured §2.4 budget breach).
 - **turn 29 (manager `turn-1-anm4jn`, refresh). `735e302→9fa016b` (10 merges). QUIET for FF —
   nothing FF landed beyond my t28 ledger (#2595 merged), nothing unlocked, no corrections.
   FF-3B still awaiting worker launch — no branch on origin.** Out-of-program (9): #2596 (NYISO
@@ -199,19 +233,22 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-2A-posture-redo | OPUS | 2 | L-CAP | — | **verified-pass (turn 25)** — #2539 | Landed the flip #2522 only described: scenarios.py `entry_lookahead_reprice` False→True + backcast coercion + plan §2.1a row e + measured-cache-key byte-identity attestation. Closes the 3-non-delivery saga. |
 | FF-2B | OPUS | 2 | L-CAP | — | **verified-pass (turn 28)** — #2582+#2586/#2588/#2590+#2589+#2591, source `96eac04` | All 4 items: NEISO I7+I12 PASS (Net ICR 0.1102, ER23-405-000), CAISO +3,371 MW cited (residual→FF-1C hydro), NYISO basis-correct (residual→FF-1C); Pass-1B + FIRST NEISO pair (bands pre-registered #2582 before run); T1-F base-year sidecars + gap-register. Bonus UNSET runner.py fix. ⚠ git-push deviation, blob-verified — owner note. |
 | FF-2C | OPUS | 2 | L-CAP | — | **issued (turn 14), owner-gated — per-ISO sign-off NOW DECISION-READY (t28)** | FF-2A+FF-2B evidence in hand. NEISO: basis clean but pair FAILs T-R bands (over-retire/over-build) — items 3–4 grade FAIL. NYISO NOT flip-ready (nyiso-64 NOT-YET, marker withdrawn). Rule 1: worsened fit = root-cause. |
-| FF-2D | OPUS | 2 | L-VAL | ⛔ T1 gate | **issued (turn 14), gated on FF-2C disposition** | Prereq "W1/W2 lane merges complete" leaves FF-2C outstanding. Owner picks: flips first (FF-2C→FF-2D) or defer flips (FF-2D unlocks at HEAD). Rubric verdicts + promotion table. |
+| FF-2D | OPUS | 2 | L-VAL | ⛔ T1 gate | **issued (turn 14), gated on FF-2C disposition** | Prereq "W1/W2 lane merges complete" leaves FF-2C outstanding. Owner picks: flips first (FF-2C→FF-2D) or defer flips (FF-2D unlocks at HEAD). Rubric verdicts + promotion table. NEW inputs to fold in: #2601 storage-cost re-derivation (baseline attribution), FF-3B's A1/I4 multi-year leak + frozen-golden flag. |
 | FF-3A | — | 3 | L-VAL | ⛔ T2 | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | T2 deferred with its tier behind plan §2.1b; prompt re-authored at gate-open. Do not dispatch. |
-| FF-3B | OPUS | 3 | L-CES | — | **sent (turn 28), awaiting worker launch — no branch on origin (t29)** | Re-emitted from amended plan §6, supersedes turn-14 prompt. W3-R readiness + T1-scale CES POC (ERCOT 2026-2030) ONLY; W4 campaign deferred (§2.1b). R1 = FF-2A headline (solar recall). Runs solo (L-CES; no other worker in flight). |
+| FF-3B | OPUS | 3 | L-CES | — | **verified-pass (turn 30)** — #2613 | W3-R = NO-GO (R1/R2 NOT MET, R3 MET, R4 partial; routed). POC = machinery-proven: 3×5yr legs, kind="ces-poc", premium moves full surface; wall/RSS ledger + nonlinear caution for FF-3E. POC-despite-NO-GO decoupling accepted (plan §0 Phase A). L-CES lane CLOSED until §2.1b gate-open. |
 | FF-3C | FABLE | 3 | L-PERF | conditional | not-sent | trigger-gated — inactive (only remaining FABLE prompt); trigger re-worded to active-tier breach (plan §6) |
 | FF-3D | OPUS | 3 | L-CAP | — | **verified-issues (incomplete)** — LANDED #2463 | Intake + Option-B pairing + pre-registered bands; flip-gate Basis PASSES. Pair run via FF-3D-run. |
 | FF-3D-run | OPUS | 3 | L-CAP | — | **landed** (#2471/#2473/#2478 + `5bb0c9b`) | NYISO fixed/curve/realized pair registered. Closed. |
-| FF-3E | OPUS | 3 | L-VAL | ⛔ §2.1b evidence | not-sent | NEW (owner 2026-07-19): full-solve readiness battery + POC close-out (absorbs FF-4B honest-unfit list; adds >5-yr CLI guard). After FF-2D. |
+| FF-3E | OPUS | 3 | L-VAL | ⛔ §2.1b evidence | not-sent | NEW (owner 2026-07-19): full-solve readiness battery + POC close-out (absorbs FF-4B honest-unfit list; adds >5-yr CLI guard). After FF-2D. Wall/RSS anchor now in hand (FF-3B §2.4 table + nonlinear caution). |
 | FF-4A | — | 4 | L-VAL | ⛔ | **WITHDRAWN (owner 2026-07-19)** | Prompt withdrawn outright (was HELD t18); Wave 4 deferred behind §2.1b. Do not dispatch, do not restore from history. |
 | FF-4B | — | 4 | L-VAL | — | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | Honest-unfit list moved to FF-3E close-out; rest re-authored at gate-open. |
 | FF-4C | — | 4 | L-VAL | owner-gated | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | PB-5 deferred with Wave 4 (§2.1b). |
 | FF-5A | OPUS | 5 | L-DASH | — | not-sent | blocked: active-wave close-out (deferred Wave 4 NOT a prerequisite — §2.1b) |
 
-Out-of-program / trivial (turn 29): #2596 (NYISO fuel-mix curation), #2597/#2602 (ercot-89
+Out-of-program / trivial (turn 30): #2605/#2612 (ercot-88/89 — #2612 amends CLAUDE.md rule 15
+hourly-sidecar keeper requirement + run_calibration_full.py writer), #2607/#2610/#2611 (PJM DAM /
+NEISO operable-capacity / MISO outage intakes), #2609 (calendar-metrics refactor), #2606 (ledger
+t29). (turn 29): #2596 (NYISO fuel-mix curation), #2597/#2602 (ercot-89
 shoulder-online), #2598 (reserve-req unify refactor), #2599/#2600/#2603 (backcast-artifacts
 refactor libs + tests), #2601 (capacity-cost-grounding — cited constants.py storage-cost
 re-derivation, FF-relevant for FF-2D baseline attribution), #2604 (NYISO DR intake + loader),
@@ -263,6 +300,7 @@ backcast keepers + ledger commits.
 - **§2.1b gate-open per ISO** (replaces the former FF-4A golden-freeze and PB-5 waits —
   both WITHDRAWN-DEFERRED 2026-07-19; conditions: backcast keeper + marker, T1 POC
   gates, crossover gap + FF-3E readiness + projected cost, per-campaign authorization).
+  FF-3B's W3-R NO-GO (R1/R2) is now recorded §2.1b(b/c) evidence for any future ask.
 - **Per-ISO FF-2C sign-off — DECISION-READY as of turn 28** (FF-2B verified-pass). Evidence on
   the desk: FF-1A flip-gate scorecard + FF-2B findings (`docs/handoffs/ff-2b-adequacy-basis-
   2026-07.md`) + first NEISO pair (FAILs T-R retirement/addition bands — items 3–4 grade FAIL).
@@ -271,7 +309,8 @@ backcast keepers + ledger commits.
 - **FF-2D sequencing (coupled to the above):** flips first (FF-2C executes, then FF-2D scores the
   T1 gate on flipped defaults) OR defer flips (FF-2D unlocks immediately at HEAD, scores pre-flip
   posture). Manager recommendation: decide flips first — a T1 battery immediately invalidated by
-  a flip wastes the 6-ISO solve budget.
+  a flip wastes the 6-ISO solve budget. **This is now the program's sole critical path** (turn 30:
+  FF-3B closed; remaining chain is FF-2C → FF-2D → FF-3E → FF-5A).
 - **Rule-deviation note (FF-2B):** worker used a small source-only `git push` (blob-verified)
   when `push_files` corrupted 345 KB constants.py — bless a narrow documented exception, or
   direct an alternative large-file transport; no action needed on the landed bytes (verified).
@@ -344,3 +383,8 @@ backcast keepers + ledger commits.
   #2601 (storage-cost re-derivation in constants.py, cited) flagged as an FF-2D baseline-attribution
   input; #2604 (NYISO DR intake) noted as a potential future cited I7 credit. FF-3B still awaiting
   launch (no branch). Rule-27 clean. No dispatches, no corrections; owner decisions unchanged.
+- **turn 30 (`→0e5983f`).** **FF-3B verified-pass (#2613):** W3-R NO-GO (R1/R2 blockers routed;
+  R3 met; R4 partial — new A1/I4 multi-year leak recorded), CES POC machinery-proven at 3×5yr
+  ≤cap, kind="ces-poc", wall/RSS ledger with the nonlinear FF-3E caution. POC-despite-NO-GO
+  decoupling accepted as an interpretive call. Rule-27 clean. Wave 3's active prompt closes;
+  program now fully blocked on owner FF-2C sign-off / FF-2D sequencing. 7 out-of-program.
