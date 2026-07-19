@@ -133,9 +133,8 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
-sys.path.insert(0, str(REPO / "scripts"))
 
-from lib import clean_io  # noqa: E402
+from scripts.lib import clean_io  # noqa: E402
 
 OUT_STATIC = (
     REPO / "data" / "raw" / "_validation-source" / "caiso_offer_curve_measured.json"
