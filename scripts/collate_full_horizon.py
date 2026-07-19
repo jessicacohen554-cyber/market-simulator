@@ -47,8 +47,9 @@ from market_sim.model.dispatch import DispatchResult  # noqa: E402
 # gets it for free via its ``results.outputs`` import; the collator must
 # import it explicitly.
 from market_sim.results import outputs as _outputs  # noqa: E402,F401
+from market_sim.config.iso_configs import SUPPORTED_ISOS  # noqa: E402
 
-ISO_ORDER = ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"]
+ISO_ORDER = list(SUPPORTED_ISOS)
 SNAPSHOT_YEARS = [2026, 2030, 2040, 2050]
 INVARIANT_IDS = [f"I{i}" for i in range(1, 15)]
 
