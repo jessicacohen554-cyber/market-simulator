@@ -154,10 +154,34 @@ flow toward the measured volume), NOT a caiso-95-artifact patch (the §4
 aligned measurement is the basis), and it RETIRES two Tier-3 fitted contract
 costs from the price-formation path (DOF ledger shrinks by two rows).
 
-## 4. Priority 3 — caiso-92 offer-surface re-derive (issue #2562)
+## 4. Priority 3 — caiso-92 offer-surface re-derive (issue #2562): CONSUMED VALUES BYTE-IDENTICAL — the 2025 +1h mispairing was immaterial at the condbinned grain
 
-(appended after the re-derive runs — the gitignored public-bids corpus is
-refetched on this container first)
+Rule-23 re-derive citing issue #2562 (the +1h frame defect; never a
+residual). The gitignored OASIS corpus was refetched in-session (1,095 daily
+zips, 2023-2025 — 2023-06-01 has no data in the OASIS archive itself, same
+as the original derive), curated through the frozen clean_io seam
+(13.7M/15.6M/17.5M rows), and `derive_caiso_offer_surface.py` re-run through
+the FIXED `_eia_hourly_frame_filled` (the 2025 net-load percentiles now pair
+on the correct clock). Result:
+
+- **Every estimation gate PASSES** (G1 capacity reconciliation CC 0.981,
+  CT 1.416, both in bounds; G2 cut-robustness PASS; G3 LOYO PASS; G4
+  physical sanity PASS — the derive writes only on all-pass).
+- **Every consumed statistic is BYTE-IDENTICAL** to the committed artifact:
+  `caiso_offer_surface_summary.csv` md5-equal; the two consumed JSONs differ
+  ONLY in the `_provenance.derived_utc` timestamp and the script path
+  (`scripts/` → `scripts/data/`, a repo-refactor rename). The 1-hour
+  rotation of the 2025 net-load series is absorbed by the derivation's
+  grain: within-year percentile ranks of a slowly-varying hourly series,
+  per-resource MEDIANS across ~364 days, and the 0.80/0.90/0.97 bin edges
+  are all invariant to an off-by-one pairing.
+- **Consequences:** no verdict flip → no LOYO re-adjudication, no B-leg
+  solve, no keeper change (rule 22 clause is vacuous — nothing moved). The
+  caiso-92 pooled artifact was NOT materially contaminated; issue #2562
+  item 3 closes as "re-derived through the fixed loader, values unchanged"
+  (the refreshed provenance is committed as the record). The PJM/MISO
+  items of #2562 are unaffected by this result (their contamination is in
+  the solved keeper legs, not a percentile pairing).
 
 ## 5. Issue #2546
 
