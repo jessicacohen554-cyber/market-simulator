@@ -111,6 +111,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
 # never run looser than the rubric it cites (CLAUDE.md rules 17/20/23 — one
 # materiality line, no off-registry duplicate constant).
 from scripts.calibration_verdict import PROTECTIVE_MIN_LOAD_FRAC  # noqa: E402
+from scripts.lib import keeper_store  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("legitimacy_diagnostics")
@@ -1087,12 +1088,10 @@ def run_d9(run_config: dict, iso: str, label: str = "") -> GateResult:
 
 
 def run_d9_keepers(repo_root: Path) -> GateResult:
-    """D-9 across every keeper bundle in frontend/data/backcast/keepers.json."""
+    """D-9 across every keeper bundle in the sharded keeper store
+    (``frontend/data/backcast/keepers/<ISO>.json``; legacy monolith fallback)."""
     res = GateResult("D-9 overlay quarantine (all keepers)")
-    keepers = json.loads(
-        (repo_root / "frontend/data/backcast/keepers.json").read_text()
-    )
-    for run_id in keepers.get("keepers", []):
+    for run_id in keeper_store.keeper_list(repo_root):
         side_path = repo_root / "frontend/data/backcast/registry" / f"{run_id}.json"
         side = json.loads(side_path.read_text())
         bundle = repo_root / side["bundle"]
@@ -1145,12 +1144,11 @@ def run_d2_keepers_verify(repo_root: Path) -> GateResult:
     are skipped, exactly as the C7/C8 rubric treats them.
     """
     res = GateResult("D-2 forced-energy recompute (all keepers)")
-    keepers_path = repo_root / "frontend/data/backcast/keepers.json"
-    if not keepers_path.exists():
+    keeper_ids = keeper_store.keeper_list(repo_root)
+    if not keeper_ids:
         return res
     bridge_name = MECH_NAMES[MECH_RA_MUSTOFFER]
-    keepers = json.loads(keepers_path.read_text())
-    for run_id in keepers.get("keepers", []):
+    for run_id in keeper_ids:
         side_path = repo_root / "frontend/data/backcast/registry" / f"{run_id}.json"
         side = json.loads(side_path.read_text())
         bundle = repo_root / side["bundle"]

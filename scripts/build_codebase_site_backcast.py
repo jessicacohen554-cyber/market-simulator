@@ -98,11 +98,17 @@ def main() -> None:
         f"window.BC.manifest={manifest_arr};"
     )
 
-    # Copy shared data files
+    # Copy shared data files. keepers/ + status/ are the per-ISO sharded
+    # stores (2026-07-19); the monolithic status.js / keepers.json are retired
+    # but still copied when present so a historical checkout previews cleanly.
     for name in ("benchmark.js", "completeness.js", "status.js", "keepers.json"):
         src = src_data / name
         if src.exists():
             shutil.copy2(src, dst_data / name)
+    for sub in ("keepers", "status"):
+        src = src_data / sub
+        if src.is_dir():
+            shutil.copytree(src, dst_data / sub, dirs_exist_ok=True)
 
     # Copy selected run payloads and registry sidecars
     copied_runs = 0

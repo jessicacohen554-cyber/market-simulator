@@ -1,0 +1,62 @@
+# Calibration Log — governance / cross-ISO
+
+Continuation of `docs/calibration-log.md` (frozen archive, entries through
+2026-07-19) for cross-ISO entries: rubric amendments, owner rulings, audits and mechanisms spanning multiple ISOs (single-ISO work goes to that ISO's own file). Same entry format — `## YYYY-MM-DD — title`,
+newest at the BOTTOM. Only this lane's sessions append here, so parallel
+per-ISO calibration sessions never conflict (the per-ISO lane convention,
+2026-07-19; see `frontend/data/backcast/keepers/README.md`).
+
+## 2026-07-19 — Per-ISO keeper lanes: keepers.json + status.js sharded; CAISO keeper record reconciled; #2558 partial registration flagged
+
+**What changed (process, no solve, no model change).** Keeper promotions used
+to rewrite three cross-ISO shared files — `frontend/data/backcast/keepers.json`,
+the monolithic generated `status.js` (single-line ~200 KB, plus an embedded
+timestamp, so ANY two rebuilds conflicted), and the tail of
+`docs/calibration-log.md` — so concurrent promotions in different ISOs always
+collided and forced rebases. All three are now sharded per ISO:
+`keepers/<ISO>.json` (+ `index.json`, `README.md`), `status/<ISO>.js` (+ the
+deterministic, timestamp-free `status/shared.js` rubric block), and
+`docs/calibration-log/<iso>.md`. `scripts/lib/keeper_store.py` is the single
+reader/writer (legacy-monolith fallback for old checkouts/fixtures);
+`build_status.py`/`audit_keepers.py` gained `--iso` lane scoping (the S1 sync
+check is scoped so a stale part in another lane cannot fail this lane's
+audit); `bc-data.js` composes the shards client-side with a monolith fallback;
+the keeper-audit hook, auditor agent, calibration-report skill, and retention
+protection all read the store. Retired monoliths are gitignored so a stale
+tool cannot resurrect them. Status parts were migrated VERBATIM from the HEAD
+`status.js` bytes (no re-derivation on an incomplete checkout).
+
+**Collision damage witnessed while migrating (three separate divergences in
+one day — live proof of the disease).** (a) At the morning HEAD, `status.js`
+(built 09:29 by the caiso-101 session) carried CAISO = `caiso-101` while
+`keepers.json` still said `caiso-97` — the owner-authorized caiso-99 →
+caiso-101 promotions were merge-clobbered out of `keepers.json`. (b) By
+mid-afternoon other sessions had promoted `ercot86-rt-wall-fullspan` and
+`caiso-102-hourfix` and rebuilt `status.js` (15:17), manually re-reconciling
+the earlier clobber. (c) `nyiso-64-outage-refix` was then promoted AFTER that
+15:17 build, leaving `keepers.json` (nyiso-64) and `status.js` (nyiso-63)
+divergent AGAIN at the moment of this migration. The shards were split from
+the newest state (`keepers.json` @ `6b5b6c4`); status parts were migrated
+verbatim from the 15:17 `status.js` bytes for ERCOT/PJM/CAISO/MISO/NEISO (all
+four rebuild-able lanes reproduce byte-for-byte, timestamps aside), and the
+NYISO part was rebuilt fresh against the shard's `nyiso-64` (its bundle IS
+committed): **NYISO = nyiso-64 = CALIBRATED-WITH-CAVEATS** — the corrected-
+outage re-calibration recovered same-day, which the stale monolithic
+`status.js` never showed.
+
+**Pre-existing sidecar-only registrations flagged, NOT fixed here (need their
+owning sessions to re-push artifacts):** three runs were registered without
+their `runs/<id>.js` payloads — `2026-07-13-neiso-60-phantom-outage` (payload
+AND `results/calibration/` bundle missing; its status part therefore still
+carries the degraded 15:17 verdict — the FINDING doc says the true
+determination is CWC, but the repo cannot substantiate it until the bundle
+lands), `2026-07-13-nyiso-63-phantom-outage` (payload + bundle missing;
+superseded as keeper by nyiso-64 but still parity-failing), and
+`2026-07-13-nyiso-64-outage-refix` (the CURRENT NYISO keeper — bundle
+committed but payload missing, so it is invisible in the Run Explorer). This
+is the exact failure mode the calibration-report skill warns about; the
+parity CI gate was removed 2026-07-14, so nothing caught it.
+`check_registry_payload_parity.py` fails on all three; `audit_keepers` E1
+fails NEISO + NYISO. Repair = regenerate each payload where its bundle lives
+(`dashboard_add_run.py` re-registration, or re-push from the producing
+session; NEISO also needs its bundle), then `build_status.py --iso NEISO`.
