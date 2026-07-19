@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-19-caiso-100-cycling-cost",
+  "label": "caiso 100 cycling cost",
+  "date": "2026-07-19",
+  "shorthand": "caiso-100-cycling-cost",
+  "definition": "caiso-100 B-leg -- caiso-99 KEEPER recipe + battery_dispatch_adder=14.25 (DERIVED li-ion cycling-degradation cost per MWh discharged, NREL ATB 2024 capex / 5000 LFP cycles x 0.25 replacement; owner-granted 2026-07-19, FINDING-caiso100 s6 pre-registered gates), 2023-2025 REJECTED PROBE per the pre-registered s6 hard gates (adjudicated A/B vs the same-machine caiso100_repro_A): the price-side conduct moves sharply toward measured -- belly hod10-14 resid +7.7/+7.6/+6.3 -> +6.3/+4.9/+2.9 (no overshoot), evening -5.3/-4.4/-2.3 -> -4.3/-3.0/-1.0 (no cross), revealed conduct cost c* rises from ~$7 to $13-17 bracketing the measured $11-17, C3a flips FAIL->PASS, C5a improves every year (-11.6/-9.6/-12.8 -> -11.3/-8.5/-11.4), C1 12/12 and C3c/C7/C8 hold -- BUT the two-sided +-15% battery-only NG:OTH throughput guard hard-fails (chg 6.77<7.40 2024, 10.28<11.07 2025; dis 2.97/5.76/8.74 vs floors 3.42/6.43/9.57 all years) and 2025 evening discharge moves 0.64 TWh away from measured (7.02 vs 8.00, allowance 0.3). Verdict: the real fleet buys its volume DESPITE the conduct cost (inelastic DA-award/RA/AS drivers), so a flat marginal bid adder is not the mechanism -- it trades the belly price fix for a volume collapse reality contradicts (rule 1). Keeper stays 2026-07-19-caiso-99-storage-shape; no value sweep permitted (rule 25). EXECUTION DISCOVERY (issue #2546, FINDING-caiso100 s8): the baseline's live adder was a hidden unrecorded CAISO-only $5/MWh run_year fallback (recorded 0.0; prb-channel stomp + recorder fixed, 23a0ed1) -- the true A/B delta is live-$5(tuned, off-registry) -> $14.25(derived, registered).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-19-caiso-100-cycling-cost.js",
+  "bundle": "results/calibration/caiso100_cycling_B"
+}
