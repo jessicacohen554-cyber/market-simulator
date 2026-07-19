@@ -731,8 +731,9 @@ class ScenarioConfig:
     # (scripts/run_calibration.py) via fleet.load_mothballed_but_operating.
     carry_operating_mothballs: bool = False
     # INERT since 2026-07-17: the facility-summed CAMPD outage overlay this flag
-    # gated was removed (scripts/derive_campd_outages.py -> campd-outages*.csv,
-    # deleted — it summed a plant's units, hiding single-unit outages and folding
+    # gated was removed (the campd-outages*.csv builder was deleted; its
+    # detection primitives now live in scripts/lib/outage_detect.py — it summed
+    # a plant's units, hiding single-unit outages and folding
     # daily-cycling combined cycles into phantom summer outages;
     # results/calibration/FINDING-ercot79-phantom-outage-2026-07.md). The
     # per-unit derate (fleet.unit_outage_derate_factors) is now the SOLE CAMPD
