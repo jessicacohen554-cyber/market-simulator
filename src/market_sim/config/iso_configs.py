@@ -994,6 +994,12 @@ _ISO_BUILDERS = {
     "NEISO": _neiso_config,
 }
 
+# Canonical tuple of every registered ISO, in builder-registration order
+# (ERCOT, CAISO, MISO, PJM, NYISO, NEISO). Single source of truth for the
+# six-ISO set — scripts should import this instead of hardcoding the tuple so a
+# new ISO registered in ``_ISO_BUILDERS`` propagates everywhere automatically.
+SUPPORTED_ISOS: tuple[str, ...] = tuple(_ISO_BUILDERS)
+
 
 def get_iso_config(iso_name: str) -> ISOConfig:
     """Return the :class:`ISOConfig` for the named ISO.
