@@ -217,13 +217,18 @@ BAU + CES-20 + CES-40, registered `kind="ces-poc"`). Rationale:
   unconditionally; the "On GO" phrasing in the prompt contrasts POC-vs-W4, it does not make
   the POC conditional on a GO.
 
-The POC will run the **legacy screen at HEAD defaults** (Nuance 2), so ERCOT VRE entry is ~0
-in it too; the premium's visible effect there is on **dispatch offers** (credited resources
-bid down → prices / clean-share / captured-price / negative-price-hours move) and on the
-**entry-margin diagnostics** (how much the premium shifts each candidate's screen margin,
-even when entry stays 0). That is the full reporting surface the POC must exercise — and it
-is exercised without needing R1–R4 met. POC results, wall/RSS ledger, and any bug found are
-in the companion findings doc `docs/handoffs/ff-3b-ces-poc-2026-07.md`.
+The premium moves the **full** reporting surface in the POC (clean-share, negative-price
+hours, captured-price cannibalization, VRE entry, premium-capture) — exercised without R1–R4
+met, which is the point. **Correction (measured in the POC, updating an earlier prediction
+here):** the *forward* POC does **not** show ~0 VRE entry — the forward BAU builds **9 GW
+solar** (→ 19–20 GW under the premium). This *strengthens* R1 rather than softening it: the
+forward entry mechanism builds solar only because forward DC-load/demand-growth/fuel inflate
+the price signal, whereas the R1 **hindcast** — the *validation* instrument — shows the same
+mechanism yields **0** against realized 2021–2025 prices. The forward solar is therefore
+exactly the *unvalidated* forward entry R1 flags; a forward run building it is not evidence
+the mechanism works. (Nuance 2's `retirement_rule=legacy` point stands — it governs
+retirements, not entry.) POC results, the wall/RSS ledger, and the three findings are in the
+companion doc `docs/handoffs/ff-3b-ces-poc-2026-07.md`.
 
 ---
 
