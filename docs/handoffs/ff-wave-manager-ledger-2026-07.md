@@ -7,71 +7,47 @@ the end of every manager turn.
 
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
-- **Last reviewed `origin/main` HEAD:** `270f429` (2026-07-19, turn 23 — manager session `yjegie`).
+- **Last reviewed `origin/main` HEAD:** `48ae665` (2026-07-19, turn 24 — manager session `turn-24-3lfbsn`).
 - **Plan base SHA:** `c95176e`.
-- **turn 23 (manager `yjegie`, refresh + handoff). `37d3923→270f429` (5 merges). QUIET — nothing
-  FF landed, nothing unlocked.** My turn-22 ledger reached main (#2525). All 5 merges docs-only or
-  out-of-program: #2526/#2529 (miso-76 backcast keeper), #2527 (ercot price-formation design memo,
-  docs-only 226 ln), #2528 (`docs/third-party-peer-review-2026-07.md`, 438 ln — external audit,
-  informational; worth the owner routing its findings but not a tracked FF prompt / no defaults).
-  Rule-27 clean (all core files unchanged: capacity.py 4241, scenarios.py 7834, constants.py 7413,
-  runner.py 2457). Active front UNCHANGED: **FF-2B + FF-2A-posture-redo + FF-1E-policy** (all sent,
-  parallel-safe, awaiting worker launch — no branches on origin). Nothing to correct. Owner
-  requested a manager handoff prompt (emitted this turn). Watch next: the 3 active
-  corrections/lanes land → verify; FF-2A completion full-verify still deferred.
+- **turn 24 (manager `turn-24-3lfbsn`, refresh). `270f429→48ae665` (3 merges). QUIET — nothing FF
+  landed, nothing unlocked.** My turn-23 ledger reached main (#2530). Other 2 merges out-of-program:
+  #2531 (miso-zonal-loss-surface — data-intake: lmp-components schema + curate/fetch scripts +
+  curation test; DATA-ONLY, no LP solve, governance-clean) and #2532 (caiso-99 storage-shape
+  backcast keeper — bundle + dashboard registration). Rule-27 clean (all core files unchanged:
+  capacity.py 4241, scenarios.py 7834, constants.py 7413, runner.py 2457). Active front UNCHANGED:
+  **FF-2B + FF-2A-posture-redo + FF-1E-policy** (all sent, parallel-safe, awaiting worker launch —
+  still NO branches on origin). Nothing to correct. No owner ask for prompt waves this turn. Watch
+  next: the 3 active corrections/lanes land → verify; FF-2A completion full-verify still deferred.
+- **turn 23 (manager `yjegie`, refresh + handoff). `37d3923→270f429` (5 merges). QUIET.** My t22
+  ledger reached main (#2525). All 5 merges docs-only/out-of-program: #2526/#2529 (miso-76 keeper),
+  #2527 (ercot price-formation design memo), #2528 (third-party peer-review doc, informational).
+  Rule-27 clean. Active front unchanged. Owner requested a manager-handoff prompt (emitted).
 - **turn 22 (manager `yjegie`, refresh). `a57194d→37d3923` (2 merges). FF-1E COMPLETION landed
   verified-pass (#2518) → my "FF-1E non-delivery" call CORRECTED; FF-1E-complete RETRACTED.**
-  #2518 was the FF-1E worker's OWN second PR on the same branch (`entry-costs-atb-source`, opened
-  early as #2518, merged now) — NOT a response to my correction. It completes FF-1E items 1/3/4:
-  **item 1** — constants.py NEW_ENTRY_COSTS/TECH_COST_MULTIPLIERS now ATB-2024-v3.0.0-DERIVED
-  (Moderate case, base-year, 1.022 deflator) with full citation + `test_atb_entry_cost_
-  consistency.py` (+140) committed asserting constants==derive output (rule 23); **item 3** —
-  per-tech WACC as an OPTION `per_tech_wacc_enabled: bool = False` (default byte-identical,
-  cache-key-neutral; `resolve_real_discount_rate` threaded into capacity.py CRF, falls back to the
-  single rate); **item 4** — findings doc `ff-1e-entry-cost-atb-wiring-2026-07.md`. Rule-27 clean
-  (capacity.py 4230→4241, scenarios.py 7794→7834, constants.py 7281→7413 — all GREW additively,
-  no shrink); `entry_lookahead_reprice` correctly untouched (still False). **ONLY item 2
-  (IRA/RPS/ACP/confirmed-retirement policy fixes) missing** → slim **FF-1E-policy [OPUS]** issued
-  (lower urgency, blocks nothing). **RECORD CORRECTION: genuine non-deliveries = 3 (FF-0B #2412,
-  FF-2A #2453, FF-2A-posture #2522), NOT 4** — FF-1E #2515 was just the first half of a two-PR
-  lane; I over-called it at turn 20 (didn't see #2518 was an open PR). Out-of-program: #2524
-  (miso-75 keeper promote). Entry costs now changed → FF-0B-redo baseline is a clean BEFORE; the
-  entry-cost delta is measured at FF-2D (same as the posture flip). Active front: FF-2B +
-  FF-2A-posture-redo + FF-1E-policy (parallel-safe) awaiting launch.
-- **⚠️ turn 21 (manager `yjegie`, refresh). `cf1531d→a57194d` (7 merges). 2 verified-pass +
-  3rd genuine NON-DELIVERY (FF-2A-posture) → escalated to owner.** My turn-19/20 ledger reached
-  main (#2516/#2521). **FF-0B-redo (#2517) = verified-pass:** 6-ISO T1-F baseline 2026-2030 —
-  findings doc + all 6 ISO sidecars + register_forecast_baseline.py. #2412 non-delivery FIXED.
-  BEFORE legs for Wave-1/2. **FF-1D (#2519) = verified-pass:** crossover ERCOT+PJM 2023→2027 —
-  input-gap doc + 2 sidecars + 2 reports. Quarantine holds BY CONSTRUCTION (scorer raises on
-  ≥2026), leakage clean, no bridge. **FF-2A-posture (#2522) = NON-DELIVERY:** findings doc only,
-  describes the scenarios.py flip AS IF APPLIED but scenarios.py UNCHANGED (still False), plan not
-  updated. → **FF-2A-posture-redo [OPUS]** + ESCALATED the push-integrity pattern to owner.
-  Out-of-program: #2520 (miso-75), #2523 (ercot-scarcity). FF-0B-redo baselined at posture=False
-  → the flip is a measured Wave-1 delta at FF-2D.
-- **⚠️ turn 20 (`→cf1531d`).** FF-1E #2515 read as non-delivery → FF-1E-complete (RECLASSIFIED
-  t22: #2518 completed it; not a non-delivery). Ledger-sync: turn-19 91732bb never merged;
-  recovered locally.
-- **turn 19 (`→37b9136`).** **FF-0E LANDED verified-pass** (#2514): crossover harness +
-  score_crossover.py + 2 tests; new scenarios.py fields cache-neutral, crossover-gated threading,
-  21 passthroughs preserved, ≥2026 reads structurally refused, vintage-2023 leakage test, no
-  default changed. → **FF-1D RELEASED.**
-- **turn 18 (`→e5d6f29`).** FF-2A COMPLETION (measurement) landed (#2506/#2509). FF-0E launched.
-  Owner approved entry-lookahead posture=ON → FF-2A-posture dispatched; golden freeze HELD.
-- **turn 17 (`→9b9b0d4`).** #2503 stale-patch delete + #2505 FF-0F close. Owner asked for prompt
-  waves (Fable scarce) → re-emitted 4 [OPUS]; parallel-safe batch FF-0B-redo + FF-0E + FF-2B.
-- **turn 15 (manager `mhtoa0`). MAIN GREEN — FF-2A integration MERGED (#2486) + sidecars
-  (#2491/#2492); FF-0F verified-pass; FF-1F defaults live (#2493).** Manager-verified capacity.py
-  4230, zero fn loss, signature matches runner.py:822, 14 harness passthroughs, compiles.
-- **turn 14 (manager `eulpj6`). capacity.py RE-TRUNCATED (#2474/#2477) → owner-RESTORED (#2481);
-  runner.py orphan → fix handed to owner.** Issued round-3 + FF-0B-redo + FF-0E + FF-0F + gated queue.
-- **turn 13 (`→68e38db`).** **FF-3D LANDED** (#2463) verified-issues INCOMPLETE (hindcast pair
-  not run) → FF-3D-run. FF-3D also fixed the FF-2A-broken capacity-hindcast harness (all-ISO).
-- **turn 12 (owner decisions).** Flips all-but-ERCOT, R5a=B, DC=mid, derate=ON. Dispatched
-  FF-3D + FF-1F.
-- **🚨 turn 11 — FF-2A INTEGRITY BREACH:** #2453 committed the mechanism as an unapplied patch.
-  → FF-2A-integrate. **FF-1A-C2 (#2454) verified-pass.**
-- **turn 10:** FF-1A-C LANDED (#2448/#2451). **turn 7:** MAIN RESTORED (#2438).
+  #2518 was the FF-1E worker's OWN second PR on the same branch (`entry-costs-atb-source`) — NOT a
+  response to my correction. Completes FF-1E items 1/3/4: constants.py NEW_ENTRY_COSTS/
+  TECH_COST_MULTIPLIERS now ATB-2024-v3.0.0-DERIVED + `test_atb_entry_cost_consistency.py` (rule 23);
+  per-tech WACC OPTION `per_tech_wacc_enabled=False` (byte-identical default); findings doc. Rule-27
+  clean (capacity.py 4230→4241, scenarios.py 7794→7834, constants.py 7281→7413 — all GREW
+  additively). `entry_lookahead_reprice` correctly untouched. **ONLY item 2 (policy fixes) missing**
+  → slim **FF-1E-policy [OPUS]** issued. **RECORD CORRECTION: genuine non-deliveries = 3 (FF-0B
+  #2412, FF-2A #2453, FF-2A-posture #2522), NOT 4** — FF-1E #2515 was the first half of a two-PR
+  lane; over-called at turn 20.
+- **⚠️ turn 21 (`→a57194d`, 7 merges). 2 verified-pass + 3rd genuine NON-DELIVERY (FF-2A-posture)
+  → escalated.** FF-0B-redo (#2517) verified-pass: 6-ISO T1-F baseline 2026-2030 (#2412 non-delivery
+  FIXED). FF-1D (#2519) verified-pass: crossover ERCOT+PJM 2023→2027, quarantine holds by
+  construction. FF-2A-posture (#2522) NON-DELIVERY: findings doc only, describes the scenarios.py
+  flip AS IF APPLIED but scenarios.py UNCHANGED → FF-2A-posture-redo + escalated push-integrity
+  pattern to owner.
+- **turns 10–20 (collapsed).** t20 (`→cf1531d`): FF-1E #2515 read as non-delivery → FF-1E-complete
+  (later RETRACTED t22). t19 (`→37b9136`): FF-0E verified-pass (#2514) → FF-1D released. t18
+  (`→e5d6f29`): FF-2A measurement landed (#2506/#2509); FF-0E launched; posture=ON approved; golden
+  freeze HELD. t17 (`→9b9b0d4`): #2503 stale-patch delete + #2505 FF-0F close; re-emitted 4 [OPUS].
+  t15 (`mhtoa0`): FF-2A integration MERGED (#2486); FF-1F defaults live (#2493). t14 (`eulpj6`):
+  capacity.py re-truncated (#2474/#2477) → owner-RESTORED (#2481). t13 (`→68e38db`): FF-3D landed
+  (#2463) → FF-3D-run. t12: owner decisions (flips all-but-ERCOT, R5a=B, DC=mid, derate=ON). t11:
+  FF-2A integrity breach (#2453) → FF-2A-integrate; FF-1A-C2 verified-pass. t10: FF-1A-C landed. t7:
+  main restored (#2438).
 
 Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 `verified-issues` · `correction-sent`.
@@ -117,10 +93,10 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-4C | OPUS | 4 | L-VAL | owner-gated | not-sent | blocked: FF-4A + owner |
 | FF-5A | OPUS | 5 | L-DASH | — | not-sent | blocked: Wave 4 |
 
-Out-of-program / trivial: #2525 (ledger t22), #2526/#2529 (miso-76 backcast),
+Out-of-program / trivial: #2530 (ledger t23), #2531 (miso-zonal-loss-surface data-intake, data-only),
+#2532 (caiso-99 storage-shape backcast keeper), #2525 (ledger t22), #2526/#2529 (miso-76 backcast),
 #2527 (ercot price-formation design memo), #2528 (third-party peer-review doc),
-#2524 (miso-75 keeper promote),
-#2523 (ercot-lmp-scarcity backcast), #2520 (miso-75 Manitoba),
+#2524 (miso-75 keeper promote), #2523 (ercot-lmp-scarcity backcast), #2520 (miso-75 Manitoba),
 #2516/#2521 (ledger t19/t20 — reached main), #2512 (ercot-lmp-scarcity backcast calibration
 + ercot66-77 prune), #2513 (ledger t18), #2508 (miso-74),
 #2511 (miso-75 Manitoba merit cap) MISO backcast,
@@ -151,6 +127,7 @@ ledger commits. #2439 handled.
 
 **AWAITING (each changes what I dispatch next):**
 - PB-5 (FF-4C, owner-gated, later wave). Golden freeze (FF-4A) is owner-confirmed HELD.
+- Per-ISO FF-2C sign-off (after FF-2B lands verified-pass).
 
 **RESOLVED (turn 17):** the turn-15 housekeeping ask — chunk branch
 `claude/ff2a-entry-stack-integration-6zd9zv` is GONE + stale `ff2a-core.patch` deleted (#2503).
@@ -184,19 +161,22 @@ ledger commits. #2439 handled.
 
 - **turns 1–16.** Wave 0/1 dispatch + verify; capacity.py truncation saga (t6/t11/t14) restored;
   FF-2A integration (t15); FF-0F closed (t17). See prior ledger commits for detail.
-- **turn 17 (`→9b9b0d4`).** #2503 stale-patch delete + #2505 FF-0F close. Owner asked for prompt
-  waves (Fable scarce) → re-emitted 4 [OPUS]; parallel-safe batch FF-0B-redo + FF-0E + FF-2B.
-- **turn 18 (`→e5d6f29`).** FF-2A completion (measurement) landed. FF-0E launched. Owner approved
-  entry-lookahead posture=ON → FF-2A-posture dispatched; golden freeze HELD.
+- **turn 17 (`→9b9b0d4`).** #2503 stale-patch delete + #2505 FF-0F close. Re-emitted 4 [OPUS];
+  parallel-safe batch FF-0B-redo + FF-0E + FF-2B.
+- **turn 18 (`→e5d6f29`).** FF-2A completion (measurement) landed. FF-0E launched. Posture=ON
+  approved → FF-2A-posture dispatched; golden freeze HELD.
 - **turn 19 (`→37b9136`).** FF-0E verified-pass → FF-1D released.
 - **turn 20 (`→cf1531d`).** FF-1E #2515 read as non-delivery → FF-1E-complete (later retracted t22).
-  Ledger-sync: turn-19 91732bb never merged; recovered locally.
 - **turn 21 (`→a57194d`).** FF-0B-redo (#2517) + FF-1D (#2519) verified-pass. FF-2A-posture (#2522)
   NON-DELIVERY → FF-2A-posture-redo + escalated push-integrity pattern to owner.
-- **turn 22 (`→37d3923`).** **FF-1E COMPLETION #2518 verified-pass** (items 1/3/4). My turn-20
-  non-delivery call PREMATURE → FF-1E-complete RETRACTED, non-deliveries corrected 4→3. Only item
-  2 remains → slim FF-1E-policy [OPUS]. Out-of-program: #2524 (miso-75 keeper). Rule-27 clean.
-- **turn 23 (`→270f429`).** QUIET refresh — nothing FF landed, nothing unlocked. My t22 ledger on
-  main (#2525). Out-of-program: #2526/#2529 (miso-76), #2527 (ercot design memo), #2528 (external
-  peer-review doc). Rule-27 clean. Emitted a manager-handoff prompt at owner request. Active front
-  unchanged (FF-2B + FF-2A-posture-redo + FF-1E-policy awaiting launch).
+- **turn 22 (`→37d3923`).** FF-1E COMPLETION #2518 verified-pass (items 1/3/4). FF-1E-complete
+  RETRACTED, non-deliveries corrected 4→3. Only item 2 remains → slim FF-1E-policy [OPUS].
+- **turn 23 (`→270f429`).** QUIET refresh — nothing FF landed. My t22 ledger on main (#2525).
+  Out-of-program: #2526/#2529 (miso-76), #2527 (ercot design memo), #2528 (peer-review doc).
+  Emitted a manager-handoff prompt at owner request.
+- **turn 24 (`→48ae665`).** QUIET refresh — nothing FF landed, nothing unlocked. My t23 ledger on
+  main (#2530). Out-of-program: #2531 (miso-zonal-loss-surface data-intake, data-only/no-solve —
+  governance-clean), #2532 (caiso-99 storage-shape backcast keeper). Rule-27 clean (capacity.py
+  4241, scenarios.py 7834, constants.py 7413, runner.py 2457). Active front unchanged (FF-2B +
+  FF-2A-posture-redo + FF-1E-policy — all sent, parallel-safe, still awaiting worker launch; no
+  branches on origin). No owner ask for prompt waves. Nothing to correct.
