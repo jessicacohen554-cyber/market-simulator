@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-19T05:50:24",
+  "timestamp": "2026-07-19T06:25:27",
   "iso": "MISO",
   "years": [
     2023,
@@ -57,8 +57,7 @@
     "miso_midwest_subregional_reserves": true,
     "miso_winter_citygate_daily": true,
     "miso_manitoba_seam": true,
-    "miso_seam_envelope_merit_cap": true,
-    "miso_zonal_loss_surface": true
+    "miso_seam_envelope_merit_cap": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -81,7 +80,7 @@
   "miso_measured_reserve_requirements": true,
   "miso_south_seam_split": true,
   "miso_rdt_tcdc": true,
-  "miso_zonal_loss_surface": true,
+  "miso_zonal_loss_surface": false,
   "ercot_multiproduct_as_coopt": false,
   "ercot_ecrs_conservative_deployment": false,
   "ercot_nonreleasable_as_withholding": false,
@@ -248,10 +247,10 @@
     "eia923": "../_shared/MISO/eia923-96136b23f6a3.parquet",
     "campd": "../_shared/MISO/campd-0c8c8860e930.parquet"
   },
-  "git_sha": "4285fac",
+  "git_sha": "da52003",
   "highspy_version": "1.14.0",
   "reuse": {
-    "source_bundle": "results/calibration/miso76_probe_chain/main_2324",
+    "source_bundle": "results/calibration/miso76_probe_chain/base_2324",
     "requested_years": [
       2023,
       2024,
@@ -262,15 +261,15 @@
         "passes": [
           "P1"
         ],
-        "cache_key": "e518ed205d1eea72",
-        "scenario_config_sha256": "d402ffcb82ea04fe"
+        "cache_key": "b5a569a69bd3f47a",
+        "scenario_config_sha256": "33b05d3e164b29c3"
       },
       "2024": {
         "passes": [
           "P1"
         ],
-        "cache_key": "973593e9da221efa",
-        "scenario_config_sha256": "c865f72879ea1078"
+        "cache_key": "5f50b353805ef42a",
+        "scenario_config_sha256": "2b1621f8657d125e"
       }
     },
     "fresh_years": [
@@ -280,7 +279,7 @@
       "2025": "year not solved in the prior bundle"
     },
     "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
-    "source_timestamp": "2026-07-19T05:38:58",
-    "source_git_sha": "4285fac"
+    "source_timestamp": "2026-07-19T06:14:13",
+    "source_git_sha": "da52003"
   }
 }
