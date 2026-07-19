@@ -28,10 +28,10 @@ import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT / "src"))
-sys.path.insert(0, str(REPO_ROOT / "scripts"))
+sys.path.insert(0, str(REPO_ROOT))
 
-from lib import clean_io  # noqa: E402
-from lib.dam_public_bids import DATATYPE, IsoSpec, load_specs  # noqa: E402
+from scripts.lib import clean_io  # noqa: E402
+from scripts.lib.dam_public_bids import DATATYPE, IsoSpec, load_specs  # noqa: E402
 
 
 def _curate_spec(
