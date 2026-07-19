@@ -41,13 +41,23 @@ if str(_ROOT) not in sys.path:
 from scripts import register_hindcast as RH  # noqa: E402
 
 
-def build_sidecar(summary_path: Path, label: str) -> dict:
+def build_sidecar(
+    summary_path: Path,
+    label: str,
+    kind: str = "t1f",
+    extra_meta: dict | None = None,
+) -> dict:
     """Assemble the forecast-validation sidecar dict from a full-horizon summary.
 
     ``summary_path`` is a ``full_horizon_summary.json`` written by
-    ``run_full_horizon.py``; ``label`` is the campaign tag (e.g.
-    ``ff-t1f-baseline``). The two FF-1F posture defaults resolved by forecast
-    mode (``datacenter_load_path="mid"``, ``correlated_forced_outage=True``) are
+    ``run_full_horizon.py`` (or a leg summary of the same shape, e.g. the
+    FF-3B CES POC driver); ``label`` is the campaign tag (e.g.
+    ``ff-t1f-baseline`` or ``ces-poc-bau``). ``kind`` records the run family the
+    FF-5A forecast run explorer groups by (``t1f`` default; ``ces-poc`` for a
+    T1-scale CES proof-of-concept leg). ``extra_meta`` is merged into ``meta``
+    verbatim — used to record a CES leg's premium level / case / campaign. The
+    two FF-1F posture defaults resolved by forecast mode
+    (``datacenter_load_path="mid"``, ``correlated_forced_outage=True``) are
     recorded in ``meta`` so the "before" leg is self-describing.
     """
     summary = json.loads(summary_path.read_text())
@@ -93,7 +103,7 @@ def build_sidecar(summary_path: Path, label: str) -> dict:
 
     meta = {
         "iso": iso,
-        "kind": "t1f",
+        "kind": kind,
         "label": label,
         "variant": "forecast-baseline",
         "mode": "forecast",
@@ -116,6 +126,8 @@ def build_sidecar(summary_path: Path, label: str) -> dict:
         # No hindcast bridge/holdout concept in a pure-forecast run.
         "bridged_years": [],
     }
+    if extra_meta:
+        meta.update(extra_meta)
     return {
         "run_id": run_id,
         "meta": meta,
@@ -139,14 +151,29 @@ def main(argv: list[str] | None = None) -> int:
         help="Campaign tag recorded in the run_id and meta (default ff-t1f-baseline).",
     )
     parser.add_argument(
+        "--kind",
+        default="t1f",
+        help="Run family the FF-5A explorer groups by (default t1f; "
+        "'ces-poc' for a T1-scale CES proof-of-concept leg).",
+    )
+    parser.add_argument(
+        "--extra-meta",
+        default=None,
+        help="Optional JSON object merged verbatim into meta (e.g. a CES leg's "
+        'premium level: \'{"premium_usd_per_mwh": 20.0, "case": "CES-20"}\').',
+    )
+    parser.add_argument(
         "--no-page",
         action="store_true",
         help="Write the sidecar only; skip regenerating forecast-validation.html.",
     )
     args = parser.parse_args(argv)
 
+    extra_meta = json.loads(args.extra_meta) if args.extra_meta else None
     RH.SIDECAR_DIR.mkdir(parents=True, exist_ok=True)
-    sidecar = build_sidecar(args.summary, args.label)
+    sidecar = build_sidecar(
+        args.summary, args.label, kind=args.kind, extra_meta=extra_meta
+    )
     sidecar_path = RH.SIDECAR_DIR / f"{sidecar['run_id']}.json"
     sidecar_path.write_text(json.dumps(sidecar, indent=2, ensure_ascii=False) + "\n")
     print(f"[register-forecast] wrote sidecar {sidecar_path}")

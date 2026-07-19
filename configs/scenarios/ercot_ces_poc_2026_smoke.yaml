@@ -1,0 +1,12 @@
+# ERCOT CES POC 2026-only smoke (FF-3B).
+#
+# Identical to configs/scenarios/ercot_ces_poc_2026_2030.yaml except
+# end_year: a single-year T0 smoke to prove the campaign machinery (matrix
+# expansion, CES resolver, per-year cache, invariant gating, reporting) at the
+# cheapest possible cost before the 5-year POC run. Never used for CES-vs-BAU
+# deltas.
+mode: forecast
+iso: ERCOT
+start_year: 2026
+end_year: 2026
+entry_screen_diagnostics: true
