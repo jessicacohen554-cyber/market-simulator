@@ -584,7 +584,14 @@ def _eia_hourly_frame_filled(ba_code: str, year: int) -> pd.DataFrame | None:
     # last present rows fix the UTC<->local offset at each end (both ends are
     # on standard time, so the offsets are exact even mid-DST).
     utc = pd.DatetimeIndex(df["UTC time"])
-    loc = pd.DatetimeIndex(df["Local time"])
+    # ``Local time`` is the HOUR-ENDING label (HE convention, uniform across
+    # the per-BA extracts: the year's first interval [00:00, 01:00) is
+    # stamped 01:00 / Hour 1). Row k of this frame must be local hour k
+    # INTERVAL-BEGINNING to match the strict frame's positional clock, so
+    # shift the stamps back one hour before anchoring. Without this the whole
+    # reconstructed year lands one hour late — the CISO-2025 solar-profile
+    # +1h shift (FINDING-caiso102, 2026-07-19; also hit PJM-2023/MISO-2025).
+    loc = pd.DatetimeIndex(df["Local time"]) - pd.Timedelta(hours=1)
     utc_start = utc[0] - (loc[0] - pd.Timestamp(year=year, month=1, day=1))
     utc_end = utc[-1] + (pd.Timestamp(year=year, month=12, day=31, hour=23) - loc[-1])
     full = pd.date_range(utc_start, utc_end, freq="h")
