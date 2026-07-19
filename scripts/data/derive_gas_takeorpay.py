@@ -34,11 +34,11 @@ Usage:
     python scripts/data/derive_gas_takeorpay.py --iso ERCOT
     python scripts/data/derive_gas_takeorpay.py --iso ERCOT --year 2023 2024 2025
 
-Requires the raw ``f923_*.zip`` releases under ``inputs/raw-data/`` (gitignored;
+Requires the raw ``f923_*.zip`` releases under ``data/raw/`` (gitignored;
 only the derived per-plant CSV is committed). Re-download from the EIA-923
 **archive** path (the live ``/xls/`` path 301-redirects to the homepage):
 
-    curl -o inputs/raw-data/f923_2024.zip \\
+    curl -o data/raw/f923_2024.zip \\
       https://www.eia.gov/electricity/data/eia923/archive/xls/f923_2024.zip
 
 (The current in-progress year's annual file is not published until ~Sept of the
@@ -61,6 +61,7 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
+from market_sim.config.paths import RAW_DIR  # noqa: E402
 from market_sim.data.fleet import load_fleet_from_csv  # noqa: E402
 from scripts.data.process_f923_fuel_costs import _find_zips, _load_receipts  # noqa: E402
 
@@ -97,7 +98,7 @@ def _gas_spot_table(iso: str, years: list[int] | None) -> pd.DataFrame:
     logger.info("%s EIA-860 fleet has %d gas plants", iso, len(gas_codes))
 
     rframes = []
-    for zip_path in _find_zips(REPO / "inputs" / "raw-data"):
+    for zip_path in _find_zips(RAW_DIR):
         m = re.search(r"f923[_-]?(\d{4})", zip_path.stem)
         yr = int(m.group(1)) if m else 0
         if years is not None and yr not in years:

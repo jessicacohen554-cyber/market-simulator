@@ -29,12 +29,12 @@ Usage:
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
+from market_sim.config.paths import CALIBRATION_DIR
 from market_sim.data.eia_loader import _eia930_net_interchange
 from market_sim.data.neighbor_price import (
     interface_reference_prices,
@@ -42,7 +42,10 @@ from market_sim.data.neighbor_price import (
 )
 
 HOURS = 8760
-_LMP_DIR = Path(__file__).resolve().parents[1] / "inputs" / "calibration"
+# Measured actual-LMP parquets live under the single W1 data root
+# (paths.CALIBRATION_DIR = data/raw/_validation-source); the pre-W1
+# ``inputs/calibration`` path was removed by the relocation.
+_LMP_DIR = CALIBRATION_DIR
 
 # EIA-930 BA code for each ISO's own net interchange (export-positive).
 _ISO_BA = {"PJM": "PJM", "CAISO": "CISO", "NYISO": "NYIS", "NEISO": "ISNE"}
@@ -52,10 +55,23 @@ _NEIGHBOR_LMP_ISO = {"NYISO": "NYISO"}
 
 
 def _actual_lmp(iso: str, year: int) -> np.ndarray | None:
-    """Return the ISO's clean actual RT LMP for ``year`` (or ``None``)."""
+    """Return the ISO's clean actual RT LMP for ``year``.
+
+    The measured LMP parquet is a *required* input for this validation gate: an
+    absent file is a hard error, never a silent skip. (The pre-W1
+    ``inputs/calibration`` dead path meant this always resolved to a missing
+    file, so every comparison degraded to a no-op and the gate silently passed —
+    fail loudly instead so a missing reference cannot hide a broken gate.)
+    ``None`` is returned only when the file is present but its on-file series has
+    the wrong length (a data-quality skip, distinct from an absent file).
+    """
     path = _LMP_DIR / f"actual_lmp_hourly_{iso}.parquet"
     if not path.exists():
-        return None
+        raise FileNotFoundError(
+            f"measured actual-LMP file absent: {path} — required by "
+            f"validate_neighbor_price for {iso}; build it with "
+            f"scripts/data/derive_actual_lmp.py"
+        )
     df = pd.read_parquet(path)
     s = df[df["year"] == year].sort_values("hour")["rt"]
     if len(s) != HOURS:
