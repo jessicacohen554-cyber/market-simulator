@@ -1,5 +1,7 @@
 # Session prompt — DAM-tuned offer curves (ERCOT)
 
+> Status: RECORD (frozen 2026-07-17) — executed one-shot session prompt.
+
 Paste the block below into a fresh Claude Code session on this repo. It is
 self-contained; everything it references is committed.
 
