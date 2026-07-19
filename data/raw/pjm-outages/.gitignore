@@ -1,5 +1,7 @@
-# Raw Data Miner 2 pull — reproducible via scripts/data/fetch_pjm_outages.py.
-# The tidy data ships as the committed by-year/ CSVs (current-day actuals);
-# the full-horizon parquet is derived locally, so the large raw pull is not
-# committed.
+# Locally-generated PJM outage data (reproducible via
+# scripts/data/fetch_pjm_outages.py + scripts/data/derive_pjm_dam_availability.py).
+# Not committed via this API-only session: the raw pull is large and the derived
+# CSVs/parquet are bulk data the push path can't carry (see README "Data-file
+# status"). A session with local git can land the by-year/ CSVs.
 gen_outages_by_type.csv
+by-year/
