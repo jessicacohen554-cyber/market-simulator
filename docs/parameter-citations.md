@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1488 parameters registered** (799 flagged `needs-citation`).
+**1491 parameters registered** (800 flagged `needs-citation`).
 
 
 ## Calibration
@@ -1040,6 +1040,8 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ercot_ecrs_conservative_deployment` | False | 1 | Published pre-reform ECRS deployment design. 2023-06-10 go-live (ER… | 2024-09 |  |
 | `scenario.ercot_ecrs_requirement` | False | 1 | ERCOT co-opt: ADD the measured ECRS |  | auto-generated, needs-citation |
 | `scenario.ercot_ecrs_requirement_from_year` | 2023 | 1 | First weather year the ECRS |  | auto-generated, needs-citation |
+| `scenario.ercot_faststart_pool_offer` | False | 1 | ERCOT-88 offline fast-start pool offer (default off; charter §9 of … | 2026-07 | auto-generated |
+| `scenario.ercot_faststart_pool_offer_path` | None | 3 | Path to the frozen fast-start pool JSON (default: data/raw/_validat… |  | auto-generated, needs-citation |
 | `scenario.ercot_gtc_limits_measured` | False | 3 | Measured ERCOT GTC transfer limits (backcast/calibration overlay). … |  | auto-generated, needs-citation |
 | `scenario.ercot_multiproduct_as_coopt` | False | 1 | ERCOT: replace the single lumped |  | auto-generated, needs-citation |
 | `scenario.ercot_nonreleasable_as_withholding` | False | 1 | ERCOT multi-product co-opt: |  | auto-generated, needs-citation |
@@ -1485,6 +1487,7 @@ inline comment and still need a dated primary source — search the table for
 | `ercot_rtolcap_fwd_online_share.CT_PEAKER` | [[0.0136, 0.0147, 0.0196, 0.0232, 0.0… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `ercot_rtolcap_fwd_online_share.ST_CHP` | [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, … | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `ercot_sced_intervals_per_hour` | 12 | 2 | ERCOT SCED cadence: one SCED execution every ~5 minutes (ERCOT Noda… |  | auto-generated, needs-citation |
+| `faststart_pool_min_down_hours` | 2.0 | 2 | Fast-start eligibility threshold (h) for the ERCOT offline fast-sta… | 2026-07 | auto-generated |
 | `forecast_pool_requirement_by_iso.PJM.2025/2026` | 0.938 | 2 | (1+0.178) x 0.7963; PPP posted 2024-04-08 | 2024-04 | auto-generated |
 | `forecast_pool_requirement_by_iso.PJM.2026/2027` | 0.917 | 2 | 146,105 MW UCAP / 159,329 MW peak; PPP 2025-05-09 | 2025-05 | auto-generated |
 | `forecast_pool_requirement_by_iso.PJM.2027/2028` | 0.926 | 2 | (1+0.200) x 0.7717; BRA report 2025-12-17 | 2025-12 | auto-generated |
