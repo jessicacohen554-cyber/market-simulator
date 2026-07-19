@@ -17850,3 +17850,84 @@ mirrors; A3 `derive_miso_loss_surface.py` + offline acceptance test; B LP
 build (`miso_zonal_loss_surface`, default off); C solve main + same-box base
 full span, register both arms (rules 12/15/16), owner adjudicates. Next
 number stays miso-76 (this session produced no registered run).
+
+---
+
+## 2026-07-19 — CAISO — caiso-99 STORAGE CHARTER: Mechanism A falsified-as-already-LIVE (the caiso-98 dead-flag root cause was wrong — the backcast never touches runner.py and the keeper has dispatched the measured COD-ramped EIA-860 fleet all along) + Mechanism B (measured NG:OTH p95 dispatch-shape envelope) BUILT, SOLVED, and PROMOTED — belly falls in all three years (+10.9/+9.0/+8.4 → +7.7/+7.6/+6.3) with C1 12/12, C3a-2025 +11.6→+10.8 %, C5a-2024 FAIL→CAVEAT
+
+**Runs:** `2026-07-19-caiso-99-storage-shape` (bundle `caiso99_shape_B`) —
+**PROMOTED to CAISO keeper** (owner pre-authorization "if a keeper candidate
+you recommend then just promote"); same-machine baseline `caiso99_repro_A`
+(gitignored, un-registered per FINDING-caiso92b). Keeper was
+`2026-07-18-caiso-97-evening-trim`.
+
+**Mechanism A (owner-gated runner.py wiring) — NOT EXECUTED: premise
+falsified, mechanism ALREADY LIVE.** Code-trace + committed-data + solved-
+bundle proof (FINDING-caiso99 §1): the backcast path is `solve_and_persist` →
+`run_calibration.run_year:3297` → `load_eia860_storage(iso, year, config)`
+(unconditional, per-year); `backcast_config.py:1350` sets
+`storage_vintage_ramp=True` for CAISO, so the caiso-97 keeper always dispatched
+the measured EIA-860 per-vintage fleet with the intra-year COD ramp engaged
+(A-leg `storage.parquet`: Jan-2023 peak charging 4,443 MW = exactly the
+January EIA-860 fleet; year-end 8.1/11.7/15.4 GW). The caiso-98 B-leg was
+byte-identical because its flag-flip was True→True (the keeper meta's `False`
+is the `solve_and_persist` kwarg echo — the ercot-65 recorder-defect pattern,
+reversed); the "flat 8 GW `STORAGE_BASE_FLEET_MW`" reading was a numeric
+coincidence with the vintage-2023 year-end CA total (8,009 MW).
+`runner.py:587` is the FORECAST orchestrator only — the authorized wiring
+cannot move the backcast A/B by a byte and was not made (unvalidatable
+core-infra surface on a falsified premise; rule 26/24). CORRECTION block
+appended to FINDING-caiso98 §11; the §2–§6 measured decomposition stands, its
+"2025 residual dispatch-SHAPE defect" in fact owning all three years.
+
+**Mechanism B (measured NG:OTH dispatch-shape anchor — chartered
+FINDING-caiso98 §7B, trigger met: A in force + belly residual persists) —
+BUILT + SOLVED + PROMOTED.** New `ScenarioConfig.caiso_storage_shape_anchor`
+(default off, CAISO-gated, rule-19 validator vs the probe-inert caiso-74 AS
+reservation whose holdback the envelope embeds): battery `Chg/Dis[s,t]` capped
+at `env_p95[year, hod] × power_cap[s,t]` (composes with the COD ramp; PS
+exempt; missing-envelope hard-fail — the caiso-98 dead-flag lesson). Anchor =
+committed rule-23 derivation `data/raw/reference/caiso-storage-shape-envelope.csv`
+(`scripts/derive_caiso_storage_shape.py`: EIA-930 CISO `NG: OTH` ÷ EIA-860
+monthly battery fleet, p95-of-days per (year, hod) — the repo-standard
+measured-capability statistic, fixed a priori, p90/p99 transparency-only;
+belly chg p95 0.428/0.517/0.510, evening dis p95 0.475/0.576/0.547, max-ever
+~0.67–0.76 — nameplate fleet-wide operation is unobserved, AS holdback +
+DA-bid conservatism + commissioning ramps are the embedded physics). Ex-ante
+bind (the caiso-74 inertness lesson): the model's mean belly charging rate
+(~0.55/0.46/0.45 of fleet) already sat AT/ABOVE the measured p95. LP plumbing:
+`storage_charge_cap`/`storage_discharge_cap` optional bounds through
+`build_variable_bounds`/`solve_dispatch` (None → byte-identical), `run_year`
+hook feeding P0+P1; 11 new unit tests + end-to-end cap-bind micro-LP + 164
+neighboring tests green. One new DOF entry (identification: measured;
+n_residual unchanged).
+
+**A/B (same-machine, B = keeper recipe + the single flag; FINDING-caiso99 §6):**
+belly λ resid +10.9/+9.0/+8.4 → **+7.7/+7.6/+6.3** (no overshoot; belly-charging
+split +14.7/+10.2/+9.0 → +10.1/+8.5/+6.7, non-charging control ≈0); evening
+−6.4/−4.7 → −5.3/−4.4 (no cross), 2025 −1.9 → −2.3 *while the dispatch
+converges to measured* (net-bat +3,760 → +4,118 vs 4,361; 7.66 vs 8.00 TWh —
+worse-fit-more-faithful, §5 clause); overnight no new under-price
+(+1.2/+0.3/+1.8); every storage budget toward measured (2023 belly chg
+4.82 → 4.19 vs 2.16; total chg 6.82 → 6.06 vs 4.07); C1 misses shrink or hold
+everywhere (CT_PEAKER recovers +0.37/+0.12/+0.20 TWh). **Verdict:** NOT-YET,
+fail set unchanged {C3a-2025, C3c, C4, C5a} but C1 **12/12** · free 8/8,
+C2/C3b/C6/C7/C8 PASS, **C3a-2025 +11.6 → +10.8 %**, **C5a
+−12.5/−10.1/−13.9 → −11.6/−9.6/−12.8 % (2024 FAIL → CAVEAT, commercial
+band)**, C3c-2024 0 → 1 h toward the actual 35. Sole counter-move: C4 gas r
+−0.002/−0.009 inside an already-failing supporting criterion. No criterion
+status regresses → promoted per the pre-authorized ruling; keeper swap +
+status/parity/audit all PASS.
+
+**Remaining CAISO masses (next lanes):** (a) the residual belly
+(+7.7/+7.6/+6.3) — reality charges MORE SELECTIVELY *inside* the envelope
+(model charges at cap in ~every economic hour; measured mean is ~half its own
+p95) — closing it needs the charge-side ECONOMICS (DA-spread bidding /
+cycling-cost), not a tighter envelope (a sub-p95 cap would be
+residual-fitting); (b) C3c tail depth (20/1/0 vs 47/35/8 RT — scarcity
+formation); (c) C4 gas hourly shape; (d) C5a level 2023/2025; (e) WP-3 CT_CHP
+steam-floor rule-23 derive (ask still PENDING,
+`docs/handoffs/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md`). Transport:
+stop-hook auto-committed the mechanism mid-session (blob-verified all ≥300-line
+sources by SHA vs origin — rule 27 clean); branch rebased onto main by the
+same automation; final rebase+push this session. Next number: caiso-100.
