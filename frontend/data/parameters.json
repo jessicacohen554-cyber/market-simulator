@@ -10888,6 +10888,24 @@
       ]
     },
     {
+      "param_id": "faststart_pool_min_down_hours",
+      "display_name": "Faststart Pool Min Down Hours",
+      "value": 2.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Fast-start eligibility threshold (h) for the ERCOT offline fast-start pool offer leg (ScenarioConfig.ercot_faststart_pool_offer): a unit is SCED-startable intra-hour — the OFFQS/OFFNS telemetry family the pool ladder is measured on — iff its min-down fits inside the operating hour's dispatch horizon. CT physics (CT_COMMITMENT_PARAMS: 1 h min-down) clears the gate; every CC (4-8 h) and gas-steam (8-12 h) row fails it. Rule 17's own fast-start line (min-down <= 2 h); eligibility by unit physics, never a class-name tuple (rule 12 / charter §9.2, docs/handoffs/ercot-residual-midband-formation-lane-2026-07.md).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "forecast_pool_requirement_by_iso.PJM.2025/2026",
       "display_name": "Forecast Pool Requirement By Iso / Pjm / 2025/2026",
       "value": 0.938,
@@ -22963,6 +22981,43 @@
       "domain": "Structural",
       "tier": 1,
       "source": "First weather year the ECRS",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_faststart_pool_offer",
+      "display_name": "Ercot Faststart Pool Offer",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "ERCOT-88 offline fast-start pool offer (default off; charter §9 of docs/handoffs/ercot-residual-midband-formation-lane-2026-07.md). The ERCOT-87 measurement adjudicated that the $150-500 moderate-tightness band prices on the OFFLINE startable CT pool (telemetered OFFQS/OFFNS, ~5x the online spare's in-band offer mass), not on any online-spare or unmitigated-CC surface. Its own builder (fleet.build_ercot_faststart_pool_markup) prices the merchant-CT bid rows (econ*/peak*) above the measured pool boundary (1 - pool_frac per net-load bin, within-plant share coordinates) — the top-of-curve capacity that in reality is telemetered offline-startable — at the pool's measured above-LSL SCED2 ladder (scripts/data/derive_ercot_faststart_pool.py). Composition is REPLACE-BY-MASK at the call site: in the pool's row-hours every other offer surface's markup (conditional peak surface, cleared-share wall, RT leg) is replaced, one owner per row-hour (rule 19 — an online/DA-basis price is refuted for offline capability by status). Eligibility is UNIT PHYSICS (min_down_hours <= constants.FASTSTART_POOL_MIN_DOWN_HOURS, rule 12) — never a class tuple; CC rows fail by physics (4-8 h), ST_GAS by its 8-12 h min-down. An offer-availability, NEVER a floor: no min_gen, no forced energy — D-2/D-4 exposure is structurally vacuous (charter §9.1). YEAR-SCOPED (rule 13): no pooled fallback; years absent from the artifact are byte-identical (2024/2025 only — the RT wall's own 2023 bar). Requires the cleared-share wall armed (the §9.1 enumeration context). Zero fitted scalars; frozen against residuals (rule 23).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_faststart_pool_offer_path",
+      "display_name": "Ercot Faststart Pool Offer Path",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "Path to the frozen fast-start pool JSON (default: data/raw/_validation-source/ercot_faststart_pool_condbinned.json).",
       "source_date": "",
       "page_or_table": "",
       "url": "",
