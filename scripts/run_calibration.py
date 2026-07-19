@@ -520,6 +520,7 @@ def run_year(
     miso_measured_reserve_requirements: bool = False,
     miso_south_seam_split: bool = False,
     miso_rdt_tcdc: bool = False,
+    miso_zonal_loss_surface: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_ecrs_conservative_deployment: bool = False,
     ercot_nonreleasable_as_withholding: bool = False,
@@ -1332,6 +1333,12 @@ def run_year(
         config = config.with_overrides(miso_south_seam_split=True)
     if miso_rdt_tcdc:
         config = config.with_overrides(miso_rdt_tcdc=True)
+    # MISO marginal-loss physics (miso-76 M3): the flag rides config into
+    # apply_interchange_topology (L1-L6 one-way loss pairs) and the
+    # DispatchSpec link_loss assembly below. Measured delivery-factor
+    # surface, zero fitted scalars.
+    if miso_zonal_loss_surface:
+        config = config.with_overrides(miso_zonal_loss_surface=True)
     if ercot_multiproduct_as_coopt:
         config = config.with_overrides(ercot_multiproduct_as_coopt=True)
     # Published pre-reform ECRS deployment design (no price-based release
