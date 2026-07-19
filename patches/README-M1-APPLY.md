@@ -28,7 +28,7 @@ git apply patches/pjm-m1-code.patch
 
 # 2. Regenerate the corrected wide parquet FROM the committed pre-fix parquet.
 #    Run EXACTLY ONCE (it shifts committed values; a second run double-shifts).
-python scripts/extend_eia930_hourly_from_balance.py --rebuild-pjm-input-clock
+python scripts/data/extend_eia930_hourly_from_balance.py --rebuild-pjm-input-clock
 
 # 3. Verify the source-anchored gates (all PASS in the sandbox):
 #    demand daily-peak mode-0 vs hrl_load_metered  2023 96.4% / 2024 96.7% / 2025 97.0%
@@ -50,7 +50,7 @@ inputs → byte-identical dispatch) and register:
 
 ```bash
 # fetch the DataMiner virtual-bid corpus the recipe's pjm_da_virtual_bids leg needs
-python scripts/fetch_pjm_da_virtuals.py --years 2023 2024 2025 --feeds hrl_da_incs_decs
+python scripts/data/fetch_pjm_da_virtuals.py --years 2023 2024 2025 --feeds hrl_da_incs_decs
 # re-solve all three years, one bundle (origin machine — no per-year OOM workaround needed)
 python scripts/run_calibration_full.py --replay-bundle results/calibration/pjm110_bench_hygiene \
     --out-dir results/calibration/pjm112_input_clock --year 2023 2024 2025 \
@@ -69,9 +69,11 @@ Keeper CANDIDATE only — do NOT touch `keepers.json` (owner promotes).
 ## Calibration-log
 
 The 894 KB `docs/calibration-log.md` could not be pushed from the sandbox.
-Fold `docs/_pjm112_input_clock_log_entry.md` (this branch) as the newest entry
-under `## Runs`, above the already-present `docs/_pjm_phase_drift_log_entry.md`
-(the Fable diagnostic stub), then delete both stubs.
+Fold `docs/sessions/_pjm112_input_clock_log_entry.md` (this branch) as the newest
+entry under `## Runs`, above the already-present
+`docs/sessions/_pjm_phase_drift_log_entry.md` (the Fable diagnostic stub), then
+delete both stubs. (The two stubs were archived to `docs/sessions/` by the
+2026-07 docs reorg.)
 
 ## Notes for the memory workaround (informational)
 

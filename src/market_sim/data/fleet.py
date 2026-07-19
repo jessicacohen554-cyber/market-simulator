@@ -1586,8 +1586,9 @@ def generators_to_fleet_arrays(
     # those hours. Forward/forecast runs leave outages statistical
     # (outage_source == "statistical", the default). The unit-level derate below
     # is the SOLE CAMPD outage layer for every ISO — the old facility-summed
-    # overlay (scripts/derive_campd_outages.py -> campd-outages*.csv, a hard
-    # availability=0 per plant) was removed 2026-07-17 because summing a plant's
+    # overlay (the campd-outages*.csv builder, a hard availability=0 per plant;
+    # its detection primitives now live in scripts/lib/outage_detect.py) was
+    # removed 2026-07-17 because summing a plant's
     # units hid single-unit outages and folded daily-cycling combined cycles
     # into phantom summer outages
     # (results/calibration/FINDING-ercot79-phantom-outage-2026-07.md).
