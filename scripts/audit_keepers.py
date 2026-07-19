@@ -71,9 +71,8 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
 from scripts import calibration_verdict as cv  # noqa: E402  (after sys.path insert)
+from scripts.lib import holdout_policy  # noqa: E402  (after sys.path insert)
 from scripts.lib import keeper_store  # noqa: E402  (after sys.path insert)
-
-DATA = REPO / "frontend" / "data" / "backcast"
 
 # A sidecar whose definition still reads like this never described the run.
 _PLACEHOLDER_RE = re.compile(r"^\s*calibration run from bundle\b", re.IGNORECASE)
@@ -93,11 +92,13 @@ _MULTI_YEAR_ISOS = {"CAISO", "PJM", "NEISO", "NYISO", "MISO"}
 # handled inline in ablation_twin_finding().
 
 # H1 holdout quarantine (CLAUDE.md rule 22 / audit D-6, amended 2026-07-04).
-# Kept stdlib-inline (this module must run without numpy/model imports); a
-# parity test asserts these match legitimacy_diagnostics.D6_CALIBRATION_YEARS
-# / D6_MARKER_FILE — the same gate run by `legitimacy_diagnostics --keepers`.
-CALIBRATION_YEARS = frozenset({2023, 2024, 2025})
-MARKER_FILE = DATA / "calibration-complete.json"
+# Window + marker come from the single-home ``scripts.lib.holdout_policy``
+# (stdlib-only, so this module still runs without numpy/model imports) — the
+# same constants legitimacy_diagnostics.run_d6_quarantine and
+# run_calibration_full's --year gate use, so they can no longer drift (this
+# replaces the earlier stdlib-inline literals + cross-file parity test).
+CALIBRATION_YEARS = holdout_policy.CALIBRATION_YEARS
+MARKER_FILE = REPO / holdout_policy.MARKER_FILE
 
 
 def holdout_quarantine_failures() -> list[str]:

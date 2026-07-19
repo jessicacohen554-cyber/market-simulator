@@ -32,10 +32,11 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
+from scripts.lib import backcast_artifacts as ba  # noqa: E402
 from scripts.lib import keeper_store  # noqa: E402  (after sys.path insert)
 
-REGISTRY_DIR = REPO / "frontend" / "data" / "backcast" / "registry"
-RUNS_DIR = REPO / "frontend" / "data" / "backcast" / "runs"
+REGISTRY_DIR = ba.REGISTRY
+RUNS_DIR = ba.RUNS
 
 
 def main() -> int:
