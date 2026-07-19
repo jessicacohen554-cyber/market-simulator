@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-19-ercot85-measured-availability-dam",
+  "label": "ercot85 measured availability dam",
+  "date": "2026-07-19",
+  "shorthand": "ercot85-measured-availability-dam",
+  "definition": "ercot-85: measured-availability backcast \u2014 DAM class-day (CC/CT/ST_GAS) REPLACES statistical WEFOR via resurrection-safe water-fill + wefor_residual 0.02; all-classes measured-first; successor to ercot82; PROBE",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-19-ercot85-measured-availability-dam.js",
+  "bundle": "results/calibration/ercot85_measured_availability"
+}
