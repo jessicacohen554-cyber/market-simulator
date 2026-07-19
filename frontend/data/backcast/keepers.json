@@ -1,11 +1,11 @@
 {
- "CAISO": "2026-07-18-caiso-97-evening-trim",
- "ERCOT": "2026-07-18-ercot82-measured-rtolcap",
+ "CAISO": "2026-07-19-caiso-102-hourfix",
+ "ERCOT": "2026-07-19-ercot86-rt-wall-fullspan",
  "NEISO": "2026-07-13-neiso-60-phantom-outage",
  "PJM": "2026-07-18-pjm-115-unit-only",
  "keepers": [
-  "2026-07-18-ercot82-measured-rtolcap",
-  "2026-07-18-caiso-97-evening-trim",
+  "2026-07-19-ercot86-rt-wall-fullspan",
+  "2026-07-19-caiso-102-hourfix",
   "2026-07-18-pjm-115-unit-only",
   "2026-07-13-nyiso-64-outage-refix",
   "2026-07-13-neiso-60-phantom-outage",
