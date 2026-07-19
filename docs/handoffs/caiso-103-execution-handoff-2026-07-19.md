@@ -49,7 +49,20 @@ DO (priority):
    single-delta legs first (attribution), composition leg only on owner ask.
 2. M-EVE-1 pre-measurement (before its B-leg): the firm-flow conduct in
    negative-hub hours (fixes the bid constant -eps vs $0 a priori, no sweep).
-3. Issue #2546 ruling if carried.
+3. DAM OUTAGE DATA (owner-directed 2026-07-19): use CAISO DAM-published
+   outage/derate data as the backcast outage source WHERE AVAILABLE, with
+   the existing CAMPD-inferred windows as the fallback for units/periods
+   the DAM reports don't cover (rule 14: prefer measured over inferred —
+   published outage schedules are the measured instrument, CAMPD windows
+   are inference from emissions gaps; rule 13-admissible: physical
+   availability events with a forward analogue, exactly like the existing
+   CAMPD overlay). Path: data-intake protocol (schema-first, clean_io seam,
+   per-ISO registry) -> extend the outage loader with the
+   DAM-before-CAMPD precedence -> single-delta A/B on the keeper recipe vs
+   caiso102_repro_A (2023-2025 one bundle), register whatever results
+   (rule 15). Keep the precedence unit-level and documented; do NOT drop
+   the CAMPD fallback (coverage gaps are real).
+4. Issue #2546 ruling if carried.
 
 GUARDRAILS: all 3 years one bundle (rule 16); NO twin (rule 21); SEQUENTIAL
 solves (~8 min/year, 15 GB box OOMs on 2 concurrent); solves IN-SESSION only
