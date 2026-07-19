@@ -29,14 +29,16 @@ registration.
 ## 2. Why (the two-line case)
 
 The caiso-99 keeper still over-prices the belly +7.7/+7.6/+6.3 because the
-zero-cycling-cost LP charges at the p95 envelope cap in ~every economic hour
-at a marginal spread of just the efficiency-loss floor (~$3-4/MWh). The
-measured fleet's charge distribution reveals a conduct cost of **$15-20/MWh at
-its 5-10 % margin** (FINDING §3) — bracketing the derived **$14.25** physical
-cycling cost — and CAISO's own DEB design prices exactly this term (DMM 2024
-Eq 2.11.1 ρ; MSC Nov-2024: degradation terms "appropriate to include").
-The model's current $0 is the estimate; the derived cost is the measured
-replacement (rule 14).
+zero-cycling-cost LP's charge BID is nearly its full evening-implied value:
+charging rides up the supply curve to a charge-weighted λ of $38.0/23.4/25.7
+(2023/24/25) instead of clearing at reality's ~$18-26 glut floor where the
+measured fleet buys the SAME volume, and its charge margin prices only the
+efficiency-loss floor (revealed c* ≈ $7 vs the measured fleet's **$11-17 at
+its 5-10 % charge margin**, FINDING §3/§5) — bracketing the derived
+**$14.25** physical cycling cost. CAISO's own DEB design prices exactly this
+term (DMM 2024 Eq 2.11.1 ρ; MSC Nov-2024: degradation terms "appropriate to
+include"). The model's current $0 is the estimate; the derived cost is the
+measured replacement (rule 14).
 
 ## 3. Why this re-opens caiso-76's "no-change" honestly (both grounds moved)
 
@@ -48,14 +50,16 @@ The 2026-07-11 caiso-76 session resolved this knob NO-CHANGE on two grounds:
   one in force.
 - *"The zero-adder LP already UNDER-cycles CAISO"* (then: model discharge
   5.33/7.60/10.48 vs LESR RTD 5.67/10.04/12.06 TWh) — measured on the
-  caiso-65-era model. On today's stack the under-cycling is GONE
-  (battery-only, NG:OTH basis): **belly charge runs over +87 %/+14 %/+11 %**
-  (4.04/6.34/9.66 vs measured 2.16/5.57/8.70 TWh) at a charge-weighted λ
-  $12-15 above reality's glut floor, while 2024/25 annual charge is at
-  parity (8.82/12.61 vs 8.71/13.02; 2023 +40 %) — the failure mode is
-  belly concentration + price, exactly what a throughput cost trims.
-  FINDING §6 carries a two-sided throughput guard so the B-leg cannot trade
-  the belly fix for a new under-cycling defect on either measured basis.
+  caiso-65-era model. On today's KEEPER stack broad under-cycling is gone
+  (battery-only, NG:OTH basis): **belly charge +45 %/+6 %/+5 %**
+  (3.13/5.90/9.15 vs measured 2.16/5.57/8.70 TWh) at a charge-weighted λ
+  **$12.2/$5.8/$7.6 above reality's glut floor**, annual charge
+  +14 %/−4 %/−8 % — the failure mode is belly PRICE + concentration,
+  exactly what a throughput cost re-prices (the −4/−8 % annual under-charge
+  sits outside the belly in the shoulder/overnight conduct channel — a
+  recorded non-target, FINDING §5). FINDING §6 carries a two-sided ±15 %
+  throughput guard (which the keeper baseline clears everywhere) so the
+  B-leg cannot trade the belly fix for a volume collapse.
 
 ## 4. What was measured-refuted and is NOT proposed
 

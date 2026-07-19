@@ -114,17 +114,17 @@ shape the data refutes.
   ($11-17/MWh at the margin) shows the fleet behaves as if it faces one.
   (ii) *"the zero-adder LP already UNDER-cycles CAISO"* — measured on the
   caiso-65-era model (5.33/7.60/10.48 TWh discharge vs LESR RTD
-  5.67/10.04/12.06). On today's stack (battery-only, NG:OTH basis) the
-  under-cycling is GONE and the defect is concentration + price: belly
-  charge runs over +87 %/+14 %/+11 % (model 4.04/6.34/9.66 vs measured
-  2.16/5.57/8.70 TWh, pre-envelope A-leg) at a charge-weighted λ $12-15
-  above reality's glut floor, while 2024/25 ANNUAL charge is at parity
-  (8.82/12.61 vs 8.71/13.02; 2023 +40 %). An adder trims exactly the
-  marginal-spread belly hours; §6's two-sided throughput guard protects the
-  annual parity so the belly fix cannot buy a new under-cycling defect (on
-  either measured basis — the LESR-RTD series is reported alongside).
-  Re-opening a resolved ruling is the owner's call — hence the gate on this
-  whole mechanism.
+  5.67/10.04/12.06). On today's KEEPER stack (battery-only, NG:OTH basis)
+  broad under-cycling is gone and the defect is price + belly
+  concentration: belly charge +45 %/+6 %/+5 % (3.13/5.90/9.15 vs measured
+  2.16/5.57/8.70 TWh) at a charge-weighted λ $12.2/$5.8/$7.6 ABOVE
+  reality's glut floor, while annual charge is +14 %/−4 %/−8 % (and the
+  −4/−8 % under-charge sits OUTSIDE the belly — the shoulder/overnight
+  conduct channel, a recorded non-target of this mechanism, §5). The adder
+  targets the price/margin defect; §6's two-sided throughput guard bounds
+  the volume side so the belly fix cannot buy a new under-cycling defect
+  (the LESR-RTD basis is reported alongside). Re-opening a resolved ruling
+  is the owner's call — hence the gate on this whole mechanism.
 - **Rule 13 (forward story):** the cost regenerates for any forward year from
   forward drivers (ATB capex projections × cycle life × replacement
   fraction) and responds to changed conditions (falling capex → falling
@@ -153,28 +153,56 @@ shape the data refutes.
 ## 5. The model side (fresh same-machine repro): the LP's charge margin sits at its efficiency-loss floor on a spread surface it compresses itself
 
 `_caiso100_charge_econ.py` on the fresh A-leg (caiso-97 recipe, pre-envelope)
-— model spreads computed on the model's OWN demand-weighted CA λ:
+and B-leg (the caiso-99 KEEPER recipe, envelope armed) — model spreads
+computed on the model's OWN demand-weighted CA λ:
 
-| metric (2023/24/25) | measured (RT) | model A-leg |
-|---|---|---|
-| day-median TB4 spread | 47.3 / 37.3 / 33.5 | **18.0 / 13.2 / 13.4** |
-| S05 revealed threshold → c* | 15.2 / 14.9 / 10.8 | **4.7 / 5.1 / 5.3** |
-| S10 → c* | 19.7 / 17.7 / 14.8 | 5.8 / 6.1 / 5.7 |
-| charge-wtd λ_chg (belly) | 25.8 / 17.6 / 18.1 | 40.7 / 26.0 / 30.6 |
-| u deciles p50/p90 | 0.48-0.73 / 0.83-0.87 | 0.74-1.05 / 1.16-1.60 |
+| metric (2023/24/25) | measured (RT) | model A-leg | model B-leg (keeper) |
+|---|---|---|---|
+| day-median TB4 spread | 47.3 / 37.3 / 33.5 | 18.0 / 13.2 / 13.4 | **24.5 / 16.9 / 19.4** |
+| S05 revealed threshold → c* | 15.2 / 14.9 / 10.8 | 4.7 / 5.1 / 5.3 | **7.0 / 6.6 / 7.4** |
+| S10 → c* | 19.7 / 17.7 / 14.8 | 5.8 / 6.1 / 5.7 | 9.2 / 7.4 / 7.9 |
+| charge-wtd λ_chg (belly) | 25.8 / 17.6 / 18.1 | 40.7 / 26.0 / 30.6 | **38.0 / 23.4 / 25.7** |
+| u deciles p50/p90 | 0.48-0.73 / 0.83-0.87 | 0.74-1.05 / 1.16-1.60 | 0.76-0.89 / 1.0 (clipped) |
+| belly chg TWh | 2.16 / 5.57 / 8.70 | 4.04 / 6.34 / 9.66 | 3.13 / 5.90 / 9.15 |
+| annual chg TWh | 4.07 / 8.71 / 13.02 | 5.68 / 8.82 / 12.61 | 4.62 / 8.36 / 11.93 |
+| annual dis TWh | 4.02 / 7.57 / 11.26 | 4.83 / 7.49 / 10.72 | 3.93 / 7.11 / 10.14 |
 
-TBD-MODEL-B
+Reading, in three parts:
 
-Reading: the LP charges down to days whose spread just covers round-trip
-losses (c* ≈ $5 ≈ its efficiency-loss floor — zero conduct cost), at charge
-prices $12-15 above reality's glut floor, and its own equilibrium COMPRESSES
-the daily spread to ~40 % of actual (the over-charged belly and under-served
-evening are the two ends of the same compression). Reality's margin prices
-≈ the derived cycling cost; the model's prices ≈ nothing. A real per-MWh
-cycling cost moves the fixed point: marginal-spread charge-hours drop out,
-belly λ falls toward the glut floor, evening λ rises, the spread decompresses
-until the marginal stored MWh covers its true cost — the residual's exact
-signature, produced by a cost that exists in the real market's bid structure.
+- **The LP's charge margin prices nothing.** In both legs the model charges
+  down to days whose spread just covers round-trip losses (c* ≈ $5-7 ≈ its
+  efficiency-loss floor + LP ε), where reality's margin prices ≈ the derived
+  cycling cost ($11-17). When the keeper charges, it charges AT the envelope
+  (u p90 = 1.0, clipped): the envelope fixed capability; the economics
+  inside it are still free.
+- **The residual is now a PRICE defect more than a volume defect.** Under
+  the envelope the keeper's belly volume excess is only +6/+5 % (2024/25)
+  — but its charge-weighted λ sits $5.8-12.2 above reality's glut floor.
+  The zero-cost LP's implied charge BID is nearly its full evening-implied
+  value (≈ η·λ_eve − eff), so charging rides UP the supply curve to $23-38
+  instead of clearing at the ~$18 floor where reality buys the SAME volume.
+  The adder lowers the charge bid by ≈ η × $14.25 ≈ $12 — the clearing
+  point moves DOWN the glut supply curve; volume holds wherever floor-priced
+  glut supply exists (it does — reality charges 5.57/8.70 TWh there), and
+  drops only where even floor-priced charging cannot cover the true cost
+  (the 2023-style marginal days). This is why the coherent prediction is
+  "belly λ falls, volume ≈ holds", not "volume collapses".
+- **The model's annual under-charge (−4/−8 % in 2024/25) sits OUTSIDE the
+  belly** (measured non-belly charge 3.14/4.32 TWh vs model 2.46/2.78) —
+  the shoulder/overnight charging reality does for AS positioning and
+  morning discharge, the price-inelastic conduct channel the ERCOT cycling
+  lane documented (`DIAGNOSIS-ercot-storage-cycling-lane-2026-07.md` §4/§7).
+  A cost CANNOT create this energy and must not be blamed for missing it;
+  it is a recorded non-target and the residual re-charter's subject if the
+  ask is refused.
+- The model's own equilibrium compresses the daily spread to ~40-60 % of
+  actual (B day-median TB4 16.9-24.5 vs actual 33.5-47.3); the over-charged
+  belly and under-served evening are the two ends of one compression. A
+  real per-MWh cycling cost moves the fixed point: marginal charge-hours
+  drop out or clear lower, belly λ falls toward the glut floor, evening λ
+  rises, the spread decompresses until the marginal stored MWh covers its
+  true cost — the residual's exact signature, produced by a cost that
+  exists in the real market's bid structure.
 
 ## 6. Pre-registered report-back (bands + gates, BEFORE any B-leg — binding on the build session)
 
@@ -194,22 +222,29 @@ HARD GATES (all must clear; breaking a passing criterion FAILs):
   actual.** 2025 evening battery discharge (7.66 vs measured 8.00 TWh
   incl-PS basis in FINDING-caiso99 §6) must not move away from measured by
   more than 0.3 TWh.
-- **Two-sided throughput guard (battery-only, NG:OTH basis):** annual battery
-  charge AND discharge must not fall below the measured year value by more
-  than 10 % (charge floors: 3.66/7.84/11.72 TWh; discharge floors:
-  3.62/6.81/10.13). 2023's +40 % annual excess falls; 2024/25 stay near
-  parity.
+- **Two-sided throughput guard (battery-only, NG:OTH basis; bands set from
+  the measured B-leg baseline — chg +14/−4/−8 %, dis −2/−6/−10 %):** annual
+  battery charge AND discharge stay within **15 % of the measured year
+  value** in every year (charge floors 3.46/7.40/11.07 TWh, discharge
+  floors 3.42/6.43/9.57; ceilings +15 %). The keeper baseline clears every
+  band; the band hard-fails a volume collapse (the plausible failure mode
+  of an over-large cost) while allowing the bounded movement the bid-shift
+  mechanism (§5) predicts. Additionally, BELLY charge must not fall below
+  the measured belly (2.16/5.57/8.70 TWh) — the λ no-overshoot gate has a
+  volume twin.
 - **Protected results:** C1 12/12 holds; overnight λ no new under-price; C3c
   unchanged or toward the actual tail; C7/C8 PASS; C5a improves or holds
   (2024 CAVEAT must not regress to FAIL).
 
 REPORTED DIAGNOSTICS (directional, not gated — they compare distributions
 across two different price surfaces): the model's S05/S10 revealed thresholds
-and c* rise from the efficiency-loss floor (~$5) toward the measured rows
-($11-20); the model's day-median TB4 spread decompresses from ~13-18 toward
-the actual 33-47; skip-share and u-distribution move toward §2's measured
-rows (the A-leg baseline already skips 12-13 % of days in 2023/24 on its
-compressed surface, so skip-share is reported, never gated).
+and c* rise from the efficiency-loss floor (~$7) toward the measured rows
+($11-20); the model's day-median TB4 spread decompresses from ~17-25 toward
+the actual 33-47; the charge-weighted λ_chg gap ($5.8-12.2 above measured)
+closes toward the glut floor; skip-share and u-distribution move toward §2's
+measured rows (the keeper baseline already skips 12 % of days in 2023/24 and
+6 % in 2025 on its compressed surface, so skip-share is reported, never
+gated).
 
 A worse aggregate fit that is more structurally faithful still passes
 provided no hard gate breaks (rule 1). Registered whatever the result
