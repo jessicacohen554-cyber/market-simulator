@@ -2911,6 +2911,34 @@ def run_year(
                 if offer_surface_mc_bid_adjust is None
                 else offer_surface_mc_bid_adjust + _ercot_cleared_share
             )
+    # ERCOT-88 offline fast-start pool (charter §9 of the residual-midband
+    # lane): the merchant-CT bid rows above the measured offline-pool
+    # boundary priced at the pool's above-LSL SCED2 ladder
+    # (fleet.build_ercot_faststart_pool_markup). REPLACE-BY-MASK composition
+    # (rule 19, one owner per row-hour): in the pool's row-hours the pool
+    # markup REPLACES the summed surface markups above (conditional peak
+    # surface + cleared-share wall/RT) — offline-startable capability prices
+    # on its startup-inclusive RT offer, not on any online/DA basis. P1-only;
+    # None (byte-identical) when the gate is off or the year is unmeasured.
+    if getattr(config, "ercot_faststart_pool_offer", False) and iso == "ERCOT":
+        from market_sim.data.fleet import build_ercot_faststart_pool_markup
+
+        _fsp_net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        _fsp = build_ercot_faststart_pool_markup(
+            fleet_arrays, fleet, mc_base, _fsp_net_load, config, year
+        )
+        if _fsp is not None:
+            _fsp_markup, _fsp_mask = _fsp
+            if offer_surface_mc_bid_adjust is None:
+                offer_surface_mc_bid_adjust = _fsp_markup
+            else:
+                offer_surface_mc_bid_adjust = np.where(
+                    _fsp_mask, _fsp_markup, offer_surface_mc_bid_adjust
+                )
     # ERCOT G-22 conditional-offer-distribution LOW leg: the trough-side mirror
     # of the surface above at the P1-only seam, but P0-CONDITIONED — the
     # measured committed-unit LSL/lower-body markdown (ratio clamped <= 1) is
