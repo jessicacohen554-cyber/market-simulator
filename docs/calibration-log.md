@@ -18309,3 +18309,24 @@ NOT-YET, same 2 fails). Remaining congestion reopening paths: RO-1
 physics-network program). Open MISO lanes otherwise unchanged
 (direction-symmetric losses charter; D1 Z2/Z7 load split; all-ISO
 `gas_daily_shape` interp fix; PJM merit-cap twin). Next number: miso-80.
+
+## 2026-07-19 — ERCOT-87 (measure-first, charter §6.1): the residual mid-band basis question ADJUDICATED BY MEASUREMENT — basis B (CC beyond the mitigated SCED2 ceiling) REFUTED on its own kill criterion (SCED1 ≡ SCED2 on the CC spare, 0/72 gain hours; the ~29-52 mult ceiling is the SUBMITTED offer shape, not mitigation) and CLOSED; basis A (offline-CT startup-inclusive RT participation) SUPPORTED (OFFQS/OFFNS pool carries ~5× the online surfaces' in-band mass; 12-18 CT starts/hr in covered mid-band hours; started CTs clear within ±33% of λ in 25/35 + 30/37 hours); NO apply seam, NO solve, keeper UNCHANGED (ercot82)
+
+**Probe:** `scripts/probes/ercot87_midband_basis_measure.py`; **artifact:**
+`data/raw/_validation-source/ercot87_midband_basis_measurement.json` (not a
+model input — measurement record only). Corpus: the four on-disk NP3-965
+sample-day parquets (no new intake). Coverage 35/68 (2024) / 37/65 (2025)
+actual $150-500 hours; the Jan-2024 winter cluster is outside the corpus and
+disclosed as unmeasured. Full numbers + the honest caveats (hourly-λ
+smoothing, permissive raw-max flags, inframarginal majority of started MW,
+negative pool curve bottoms) in the charter's new §8
+(`docs/handoffs/ercot-residual-midband-formation-lane-2026-07.md`).
+
+**Consequence:** the lane collapses to ONE candidate mechanism — an economic
+fast-start availability offering the offline-CT pool at its measured per-bin
+SCED2 ladder (year-scoped 2024/2025, physics-gated, disjoint by status+class
+from both the RT wall and the gas commitment bridge). The §6.2 build
+(default-off gate → 2024 probe → 2025 → full-span LOYO) remains OWNER-GATED;
+nothing was armed this session.
+
+Next number: ercot-88.
