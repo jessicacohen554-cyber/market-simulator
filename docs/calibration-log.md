@@ -18265,3 +18265,47 @@ the owner's** (charter §7, a single decision): sign off the NO-BUILD verdict
 its own lane, or redirect the MISO lane (open lanes: direction-symmetric
 losses charter; D1 Z2/Z7 split, blocked on a load split; all-ISO
 `gas_daily_shape` interp fix; PJM merit-cap twin). Next number: miso-79.
+
+## 2026-07-19 — miso-79: RO-3 boundary-mass probe (owner-directed) — NEGATIVE: no zone refinement at any zonal granularity can capture MISO's internal congestion mass; the miso-78 NO-BUILD verdict is FUNDAMENTAL, not provisional. Derive-only — NO LP, NO solve, NO registration; keeper UNCHANGED
+
+**Ask.** After the miso-78 charter draft (PR #2555, pending sign-off) the
+owner asked "do we need more granular zones or what is our next option" and
+directed the recommended derive-only probe: measure whether ANY finer zone
+split could convert the internal congestion mass into between-zone boundary
+mass — the probe evidence the charter's reopening condition RO-3 explicitly
+requires before a zonal-refinement charter could be drafted.
+
+**Method** (`scripts/probes/_miso79_split_boundary_mass.py`; DA bc_HIST
+2023–2025 re-fetched via the sanctioned `fetch_miso_bc_hist.py`, in-train,
+shadow prices location-only per rule 13): parse each binding constraint's
+From/To control areas at LBA granularity (one level below the miso-76
+zone-boundary probe, same CA→zone crosswalk), decompose each internal
+class's Σ|SP| into intra-LBA (uncapturable by ANY LBA-granularity split) vs
+cross-LBA (the ceiling), and exhaustively enumerate LBA bipartitions per
+zone for the captured-mass optimum.
+
+**Findings — NEGATIVE, decisively:**
+- **Intra-LBA mass is 88–99.7 % of every internal class, every year.** The
+  ToCA-`*` rows (25–34 % of West class mass) are not a caveat: 99.4 % are
+  XF transformers — single-substation equipment that physically cannot
+  straddle any boundary (2024: 19,319 XF / 97 ZBR / 13 PS of 19,429).
+- **Best single-zone bipartition ≤ 1.87 % of total congestion mass**
+  (Plains 2023 `{ALTW}`, non-persistent — 0.14 % by 2025). Best persistent
+  candidate West `{NSP,OTP}` peaks at 1.35 % (2025). Indiana ≤ 0.28 %,
+  East ≤ 0.70 % and declining, Illinois ≤ 0.12 %.
+- **All six zones optimally split simultaneously (~12-zone model): only
+  ~1.9–3.8 % of total mass** becomes between-zone boundary mass.
+
+**Disposition.** RO-3 cannot fire from finer zones alone — real Midwest
+congestion is intra-LBA branch congestion whose zonal price expression
+requires shift factors at ANY practical zone count. Charter §6 RO-3 carries
+a dated pre-sign-off addendum recording this; the NO-BUILD verdict
+(data-blocked-at-representation) is confirmed fundamental. Committed on the
+miso-78 branch (PR #2555) so the owner's sign-off decision sees the probe
+evidence. Docs+probe only; nothing to register (rule 15 N/A); quarantine
+untouched. Keeper UNCHANGED (`2026-07-18-miso-75-manitoba-meritcap`,
+NOT-YET, same 2 fails). Remaining congestion reopening paths: RO-1
+(published PTDFs / boundary-aligned limits) or RO-2 (owner-chartered
+physics-network program). Open MISO lanes otherwise unchanged
+(direction-symmetric losses charter; D1 Z2/Z7 load split; all-ISO
+`gas_daily_shape` interp fix; PJM merit-cap twin). Next number: miso-80.
