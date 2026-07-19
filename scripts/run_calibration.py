@@ -137,6 +137,7 @@ from market_sim.model.transmission import (  # noqa: E402
     apply_interchange_injections,
     build_incidence_matrix,
     build_interface_groups,
+    build_miso_link_loss,
     get_link_bidirectional_array,
     get_link_flow_cost_array,
     get_ttc_array,
@@ -3620,6 +3621,15 @@ def run_year(
         # Priced RDT TCDC tiers (miso_rdt_tcdc): $/MWh on the tiered one-way
         # links' directed flow; None (all links free) is byte-identical.
         link_flow_cost=get_link_flow_cost_array(iso_config.links),
+        # Marginal loss fractions on the one-way Midwest loss pairs
+        # (miso_zonal_loss_surface): (n_links, T) receiving-side losses from
+        # the derived delivery-factor surface; None (flag off / other ISOs)
+        # keeps the ±1 incidence coefficients — byte-identical.
+        link_loss=(
+            build_miso_link_loss(iso_config.links, iso, year, int(demand.shape[1]))
+            if getattr(config, "miso_zonal_loss_surface", False)
+            else None
+        ),
         hydro_monthly_energy=hydro_monthly_energy,
         hydro_gen_idx=hydro_gen_idx,
         oil_monthly_budget=oil_monthly_budget,
