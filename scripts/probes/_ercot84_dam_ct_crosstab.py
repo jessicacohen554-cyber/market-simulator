@@ -7,7 +7,6 @@ import sys
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts"))
@@ -52,7 +51,9 @@ def main() -> None:
     print("\nstatus mix of CLEARED rows:")
     print(d[d.cleared]["Resource Status"].value_counts().head(8).to_dict())
     print("status mix of cleared NO-CURVE rows:")
-    print(d[d.cleared & ~d.has_curve]["Resource Status"].value_counts().head(8).to_dict())
+    print(
+        d[d.cleared & ~d.has_curve]["Resource Status"].value_counts().head(8).to_dict()
+    )
 
     # Award-margin price for cleared WITH-curve rows, award-weighted.
     cw = d.cleared & d.has_curve
@@ -65,8 +66,7 @@ def main() -> None:
     qs = wq(price[m], tgt[m], (0.1, 0.3, 0.5, 0.7, 0.9))
     print(
         f"\ncleared-with-curve award ({tgt.sum() / n_hours / 1e3:.2f} GW/h): "
-        f"award-margin price q10/30/50/70/90: "
-        + " ".join(f"${q:,.0f}" for q in qs)
+        f"award-margin price q10/30/50/70/90: " + " ".join(f"${q:,.0f}" for q in qs)
     )
     # Full offered curve of with-curve rows (any award state), MW-weighted
     hc = d.has_curve
@@ -90,9 +90,7 @@ def main() -> None:
     print(
         f"ALL offered CT curve MW ({smw.sum() / n_hours / 1e3:.2f} GW/h), "
         f"MW-wtd price q10/30/50/70/90/97: "
-        + " ".join(
-            f"${q:,.0f}" for q in wq(spr, smw, (0.1, 0.3, 0.5, 0.7, 0.9, 0.97))
-        )
+        + " ".join(f"${q:,.0f}" for q in wq(spr, smw, (0.1, 0.3, 0.5, 0.7, 0.9, 0.97)))
     )
     # And the price of the MW between award and curve-top (offered, uncleared)
     prev = np.zeros(hc.sum())
