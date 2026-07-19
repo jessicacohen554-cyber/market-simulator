@@ -1934,6 +1934,106 @@ def test_miso_zonal_gas_basis_skips_other_isos():
     np.testing.assert_array_equal(prices, base)
 
 
+# --- §3.7 national HH daily shape: true-date staircase (all-ISO fix) ---------
+
+
+def _hh_dated(monkeypatch, jan: dict[int, float]):
+    """Patch the dated HH loader with synthetic Jan-2024 quotes only."""
+    monkeypatch.setattr(
+        "market_sim.data.fuel._henry_hub_daily_dated",
+        lambda path=None: {2024: {1: jan}},
+    )
+
+
+def test_gas_daily_shape_spike_lands_on_true_date(monkeypatch):
+    """A convex single-day spike prices its own trade date, not an interp slot.
+
+    Trivial case (rule: 1-gen/1-zone/24-h analogue): weekday quotes at $3 with a
+    single $30 Friday print on Jan-12 bracketed by a weekend+holiday gap
+    (no quotes Jan-13/14/15). The pre-fix even-spread ``np.interp`` relocated
+    the spike off its date (Jan-12 -> ~Jan-13); the true-date staircase pins it
+    to Jan-12.
+    """
+    jan = {d: 3.0 for d in (2, 3, 4, 5, 8, 9, 10, 11, 16, 17, 18, 19, 22, 23)}
+    jan[12] = 30.0
+    _hh_dated(monkeypatch, jan)
+    hours = 31 * 24
+    f = fuel.gas_daily_shape_factors(2024, hours)
+    daily = f[::24]  # one factor per January day
+    # The spike day itself carries the month's maximum factor...
+    assert daily[11] == daily.max()
+    # ...and the day BEFORE the spike is a plain $3 day (no backward leak —
+    # the even-spread interp raised Jan-11 toward the spike).
+    np.testing.assert_allclose(daily[10], daily[7], atol=1e-9)
+
+
+def test_gas_daily_shape_holiday_gap_staircase(monkeypatch):
+    """The Friday quote covers Sat/Sun/Mon-holiday flat — staircase, no interp.
+
+    Non-trading days carry the LAST trade date's value: Jan-13/14/15 (weekend +
+    MLK Monday, no quotes) must equal Jan-12's factor exactly, then Jan-16 steps
+    down to its own quote. A linear interpolation across the gap would instead
+    decay monotonically from $30 toward $3.
+    """
+    jan = {d: 3.0 for d in (2, 3, 4, 5, 8, 9, 10, 11, 16, 17, 18, 19, 22, 23)}
+    jan[12] = 30.0
+    _hh_dated(monkeypatch, jan)
+    hours = 31 * 24
+    daily = fuel.gas_daily_shape_factors(2024, hours)[::24]
+    for d in (13, 14, 15):
+        np.testing.assert_allclose(daily[d - 1], daily[11], atol=1e-9)
+    # Jan-16 steps down to its own $3 quote (same factor as any plain $3 day).
+    np.testing.assert_allclose(daily[15], daily[7], atol=1e-9)
+    # Mean preservation holds exactly (by construction, not renormalization).
+    np.testing.assert_allclose(daily.mean(), 1.0, atol=1e-9)
+
+
+def test_gas_daily_shape_gapless_month_unchanged(monkeypatch):
+    """A month quoted every calendar day reproduces quote/mean exactly.
+
+    With no trading gaps the staircase is the quotes themselves, so the factors
+    equal each day's quote over the month mean — identical to the pre-fix
+    even-spread output for a gap-free month (the fix only moves months WITH
+    gaps).
+    """
+    quotes = {d: 3.0 + 0.1 * d for d in range(1, 32)}
+    _hh_dated(monkeypatch, quotes)
+    hours = 31 * 24
+    daily = fuel.gas_daily_shape_factors(2024, hours)[::24]
+    vals = np.array([quotes[d] for d in range(1, 32)])
+    np.testing.assert_allclose(daily, vals / vals.mean(), atol=1e-12)
+
+
+def test_gas_daily_shape_months_without_quotes_are_ones(monkeypatch):
+    """Months with no quotes stay all-ones (no shape), as before the fix."""
+    _hh_dated(monkeypatch, {12: 30.0, 15: 3.0})  # January-only quotes
+    f = fuel.gas_daily_shape_factors(2024, 8760)
+    assert np.any(f[: 31 * 24] != 1.0)
+    np.testing.assert_array_equal(f[31 * 24 :], np.ones(8760 - 31 * 24))
+
+
+def test_gas_daily_shape_off_is_byte_inert(monkeypatch):
+    """gas_daily_shape=False never touches the daily HH series (byte-inert).
+
+    The fixed loader/staircase must be unreachable when the flag is off: with
+    the dated loader booby-trapped, resolve_fuel_prices with
+    ``gas_daily_shape=False`` still returns, byte-identical to a run with no
+    daily data at all.
+    """
+
+    def _boom(path=None):
+        raise AssertionError("gas_daily_shape=False must not read the daily HH series")
+
+    fleet = _sample_fleet()
+    config = _config(gas_seasonality=False)
+    assert config.gas_daily_shape is False
+    baseline = resolve_fuel_prices(config, fleet, year=2026)
+    monkeypatch.setattr("market_sim.data.fuel._henry_hub_daily_dated", _boom)
+    monkeypatch.setattr("market_sim.data.fuel._trade_date_staircase", _boom)
+    off = resolve_fuel_prices(config, fleet, year=2026)
+    np.testing.assert_array_equal(off, baseline)
+
+
 # --- miso-72 winter fuel-security citygate daily overlay ---------------------
 
 _MISO_WINTER_HOURS = 8760
@@ -1997,12 +2097,18 @@ def test_miso_winter_citygate_daily_lifts_coldsnap_mean_preserving():
     )
     apply_miso_winter_citygate_daily(on, fleet, config, 2024)
     il = list(fleet.unit_ids).index("GAS_ILLINOIS")
-    # The true tail days Jan-15/16 (record-peak Tuesday) — which the national HH
-    # shape mislocates and drops to below-average (~0.9×) — are lifted well above
-    # base by the Chicago flow-date shape (the whole point of the mechanism).
+    # The true tail days Jan-15/16 (record-peak Tuesday) are lifted well above
+    # the flat level by the Chicago flow-date shape (the whole point of the
+    # mechanism). Since the §3.7 fix the national HH shape also carries the
+    # Jan-12 Friday print across the Jan-13-15 gap (trade-date staircase), so
+    # Jan-15's base is no longer the mislocated ~0.9× trough: the Chicago
+    # overlay still reprices it (4.67× vs the national 3.3×), and on Jan-16
+    # (where the national shape steps down to its own Tuesday quote but the
+    # Friday flow package still prices Chicago gas) the lift stays >3× base.
     for d in (15, 16):
-        assert on[il, _jan_hour(d)] > 3.0 * base[il, _jan_hour(d)]
+        assert on[il, _jan_hour(d)] > base[il, _jan_hour(d)]
         assert on[il, _jan_hour(d)] > 15.0  # ~$21 gas -> prices the winter tail
+    assert on[il, _jan_hour(16)] > 3.0 * base[il, _jan_hour(16)]
     # January monthly mean unchanged (mean-preserving: the level does not move).
     np.testing.assert_allclose(on[il, :744].mean(), base[il, :744].mean(), atol=1e-9)
 
