@@ -7,7 +7,7 @@ the end of every manager turn.
 
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
-- **Last reviewed `origin/main` HEAD:** `735e302` (2026-07-19, turn 28 — manager session `turn-1-anm4jn`).
+- **Last reviewed `origin/main` HEAD:** `9fa016b` (2026-07-19, turn 29 — manager session `turn-1-anm4jn`).
 - **Plan base SHA:** `c95176e` (amended in place 2026-07-19 — POC-first re-scope, see directive entry below).
 - **OWNER DIRECTIVE (2026-07-19, out-of-band — recorded by the directive's executing
   session, not a manager turn): POC-first re-scope of THE PLAN.** The plan is amended in
@@ -24,6 +24,23 @@ the end of every manager turn.
   keeper + calibration-complete marker, T1 POC gates green, crossover input gap +
   readiness battery + projected cost, and an explicit per-campaign owner authorization.
   Status-table rows updated below; active front unchanged (FF-2B).
+- **turn 29 (manager `turn-1-anm4jn`, refresh). `735e302→9fa016b` (10 merges). QUIET for FF —
+  nothing FF landed beyond my t28 ledger (#2595 merged), nothing unlocked, no corrections.
+  FF-3B still awaiting worker launch — no branch on origin.** Out-of-program (9): #2596 (NYISO
+  fuel-mix curation, curate_generation.py +85), #2597/#2602 (ercot-89 shoulder-online probe +
+  measurement + ercot86 hourly parquets), #2598 (phase-refactor reserve-req unify — per-ISO
+  modules consolidated into shared `data/reserve_requirements.py`, genuine refactor, net +220),
+  #2599/#2600/#2603 (backcast-artifacts refactor — new scripts/lib modules + tests incl.
+  `holdout_policy.py`), **#2601 (capacity-cost-grounding-complete — constants.py +280/−103:
+  Li-ion storage capex/FOM RE-DERIVED from the committed NREL ATB extract via
+  derive_cost_benchmark_envelope.py + asserted by test, replacing hand-set values whose
+  ATB/BNEF labels matched no published point; cited, rule-15-clean. FF-RELEVANT: moves storage
+  entry economics → FF-2D's regression-vs-FF-0B-baseline must name this causal merge for any
+  storage-entry metric shift)**, #2604 (NYISO SCR/EDRP demand-response intake + loader —
+  FF-adjacent: a future cited NYISO DR supply credit could narrow its I7 hydro-dominated gap).
+  Rule-27 clean: constants.py 7514→7604 (+90 net), capacity.py/scenarios.py/runner.py unchanged.
+  Active front: FF-3B (sent, awaiting launch); FF-2C sign-off + FF-2D sequencing still on the
+  owner's desk (unchanged from t28).
 - **turn 28 (manager `turn-1-anm4jn`, first turn of the successor manager). `30f546e→6b5b6c4`
   (30 merges). FF-2B LANDED VERIFIED-PASS — the active Wave-2 front closes; FF-3B dispatched
   (re-emitted from the amended plan §6); FF-2C/FF-2D sequencing decision surfaced to owner.**
@@ -184,7 +201,7 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-2C | OPUS | 2 | L-CAP | — | **issued (turn 14), owner-gated — per-ISO sign-off NOW DECISION-READY (t28)** | FF-2A+FF-2B evidence in hand. NEISO: basis clean but pair FAILs T-R bands (over-retire/over-build) — items 3–4 grade FAIL. NYISO NOT flip-ready (nyiso-64 NOT-YET, marker withdrawn). Rule 1: worsened fit = root-cause. |
 | FF-2D | OPUS | 2 | L-VAL | ⛔ T1 gate | **issued (turn 14), gated on FF-2C disposition** | Prereq "W1/W2 lane merges complete" leaves FF-2C outstanding. Owner picks: flips first (FF-2C→FF-2D) or defer flips (FF-2D unlocks at HEAD). Rubric verdicts + promotion table. |
 | FF-3A | — | 3 | L-VAL | ⛔ T2 | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | T2 deferred with its tier behind plan §2.1b; prompt re-authored at gate-open. Do not dispatch. |
-| FF-3B | OPUS | 3 | L-CES | — | **sent (turn 28) — re-emitted from amended plan §6, supersedes turn-14 prompt** | W3-R readiness + T1-scale CES POC (ERCOT 2026-2030) ONLY; W4 campaign deferred (§2.1b). R1 = FF-2A headline (solar recall). Runs solo (L-CES; no other worker in flight). |
+| FF-3B | OPUS | 3 | L-CES | — | **sent (turn 28), awaiting worker launch — no branch on origin (t29)** | Re-emitted from amended plan §6, supersedes turn-14 prompt. W3-R readiness + T1-scale CES POC (ERCOT 2026-2030) ONLY; W4 campaign deferred (§2.1b). R1 = FF-2A headline (solar recall). Runs solo (L-CES; no other worker in flight). |
 | FF-3C | FABLE | 3 | L-PERF | conditional | not-sent | trigger-gated — inactive (only remaining FABLE prompt); trigger re-worded to active-tier breach (plan §6) |
 | FF-3D | OPUS | 3 | L-CAP | — | **verified-issues (incomplete)** — LANDED #2463 | Intake + Option-B pairing + pre-registered bands; flip-gate Basis PASSES. Pair run via FF-3D-run. |
 | FF-3D-run | OPUS | 3 | L-CAP | — | **landed** (#2471/#2473/#2478 + `5bb0c9b`) | NYISO fixed/curve/realized pair registered. Closed. |
@@ -194,7 +211,11 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-4C | — | 4 | L-VAL | owner-gated | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | PB-5 deferred with Wave 4 (§2.1b). |
 | FF-5A | OPUS | 5 | L-DASH | — | not-sent | blocked: active-wave close-out (deferred Wave 4 NOT a prerequisite — §2.1b) |
 
-Out-of-program / trivial (turn 28): #2559/#2561/#2567 (docs-index + artifact-contract docs),
+Out-of-program / trivial (turn 29): #2596 (NYISO fuel-mix curation), #2597/#2602 (ercot-89
+shoulder-online), #2598 (reserve-req unify refactor), #2599/#2600/#2603 (backcast-artifacts
+refactor libs + tests), #2601 (capacity-cost-grounding — cited constants.py storage-cost
+re-derivation, FF-relevant for FF-2D baseline attribution), #2604 (NYISO DR intake + loader),
+#2595 (ledger t28). (turn 28): #2559/#2561/#2567 (docs-index + artifact-contract docs),
 #2563/#2574 (caiso-102 keeper), #2564/#2566/#2568/#2572 (refactor consolidation, scripts/lib),
 #2565 (gas daily-shape fuel.py fix), #2569/#2570/#2575/#2580 (ercot-86/88 lanes — gated+cited
 constants/scenarios fields), #2571/#2578 (NYISO refix — keeper→nyiso-64, NOT-YET, marker stays
@@ -319,3 +340,7 @@ backcast keepers + ledger commits.
   withdrawn. Rule-27 clean (all core files grew). **Dispatched FF-3B** (re-emitted from amended
   plan §6). FF-2C sign-off + FF-2D sequencing surfaced as coupled owner decisions. Wave 2 close-out
   now waits only on FF-2C disposition.
+- **turn 29 (`→9fa016b`).** QUIET refresh. t28 ledger on main (#2595). 9 out-of-program merges;
+  #2601 (storage-cost re-derivation in constants.py, cited) flagged as an FF-2D baseline-attribution
+  input; #2604 (NYISO DR intake) noted as a potential future cited I7 credit. FF-3B still awaiting
+  launch (no branch). Rule-27 clean. No dispatches, no corrections; owner decisions unchanged.
