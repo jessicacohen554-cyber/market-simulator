@@ -7,8 +7,32 @@ the end of every manager turn.
 
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
-- **Last reviewed `origin/main` HEAD:** `48ae665` (2026-07-19, turn 24 — manager session `turn-24-3lfbsn`).
+- **Last reviewed `origin/main` HEAD:** `567ef3c` (2026-07-19, turn 25 — manager session `turn-24-3lfbsn`).
 - **Plan base SHA:** `c95176e`.
+- **turn 25 (manager `turn-24-3lfbsn`, refresh). `48ae665→567ef3c` (12 merges). TWO FF LANES
+  LANDED verified-pass; the 3-non-delivery saga on the posture flip is CLOSED.** My turn-24 ledger
+  reached main (#2536). **FF-2A-posture-redo (#2539) = verified-pass:** scenarios.py:1248
+  `entry_lookahead_reprice` default False→True (owner-approved 2026-07-18) + `__post_init__`
+  `if mode=="backcast": =False` coercion + plan §2.1a **row e** + full byte-identity attestation
+  with MEASURED cache keys (ERCOT backcast key `c44c3d9b7549de73` unchanged; forecast key
+  `cdf095573872a069→1d4a8acfa187a505` shifts as intended). Forecast/screen-only, zero-DOF, cited
+  (ff-entry-stack-completion §4.1 + ercot-g30 report). **The 4th attempt on this lineage finally
+  landed the source change — the redo worked.** **FF-1E-policy (#2535 doc + #2540 constants.py) =
+  verified-pass, item 2 COMPLETE:** IRA/OBBBA verified CURRENT vs 26 U.S.C. + intake CSV (no-change
+  is the correct disposition, not a miss); NEISO ACP `65.0→50.0` the sole runtime delta, cited
+  verbatim to 225 CMR 14.08 (stale MA $67.62→$40 2021 reset); PJM load weights → primary Monitoring
+  Analytics 2024 file (OH/VA up, KY added); confirmed-retire re-query → no binding instrument
+  (Brandon Shores RMR still pending FERC). **Backcast byte-identical BY CONSTRUCTION** (`backcast_config`
+  hardcodes `rps_enabled=False`; these constants read only under `if config.rps_enabled`) — no keeper
+  re-solve; test_capacity.py assertion updated 65→50 in-test-cited. Rule-27 clean (capacity.py 4241=,
+  scenarios.py 7834→7923, constants.py 7413→7434, runner.py 2457→2469 — all GREW). Out-of-program (8):
+  #2544/#2542 miso-76, #2543/#2537 caiso-belly-charge, **#2541/#2534 ercot-86-rt-wall** (adds 3
+  default-off, on-registry (TIER_TAGS), cited RT/SCED-basis gates to scenarios.py — ERCOT trough/spread
+  calibration lane, clean), **#2538 miso-zonal-loss-surface** (runner.py `build_miso_link_loss` kwarg,
+  gated/`UNSET`-off → byte-identical), **#2533 codebase-refactor-consolidation** (plan + prompt-pack,
+  docs-only 1203 ln — a SEPARATE refactor initiative, not FF; flag to owner for awareness). No
+  corrections. **Active front now FF-2B ONLY** (still sent/awaiting worker launch — no branch on
+  origin). FF-2A-posture-redo + FF-1E-policy both CLOSED.
 - **turn 24 (manager `turn-24-3lfbsn`, refresh). `270f429→48ae665` (3 merges). QUIET — nothing FF
   landed, nothing unlocked.** My turn-23 ledger reached main (#2530). Other 2 merges out-of-program:
   #2531 (miso-zonal-loss-surface — data-intake: lmp-components schema + curate/fetch scripts +
@@ -74,12 +98,12 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-1D | OPUS | 1 | L-VAL | — | **verified-pass (turn 21)** — #2519 | Crossover ERCOT+PJM 2023→2027: input-gap doc + 2 crossover sidecars + 2 run reports. Governance exemplary — quarantine holds BY CONSTRUCTION (scorer raises on ≥2026 reads), leakage clean, no bridge year. |
 | FF-1E | OPUS | 1 | L-INP | — | **verified-pass, items 1/3/4 (turn 22)** — #2515+#2518 | Two-PR lane: #2515 the derive script, #2518 the completion — constants.py ATB-derived (cited) + `test_atb_entry_cost_consistency.py` + per-tech WACC option (default-off, byte-identical) + findings. entry_lookahead_reprice untouched; rule-27 clean. **Item 2 (policy fixes) remains → FF-1E-policy.** |
 | FF-1E-complete | OPUS | 1 | L-INP | — | **RETRACTED (turn 22)** | Superseded by #2518 (items 1/3/4 done). Replaced by the slim item-2-only **FF-1E-policy**. |
-| FF-1E-policy | OPUS | 1 | L-INP | — | **sent (turn 22, slim)** | Item 2 only: FF-0D §4 IRA field/window fixes (policy/ira.py), STATE_RPS_TARGETS/ACP refresh, confirmed-retirement additions — all cited (rule 23). Lower urgency (blocks nothing; needed before FF-2D/golden freeze). Parallel-safe; blob-verify if constants.py touched. |
+| FF-1E-policy | OPUS | 1 | L-INP | — | **verified-pass, item 2 COMPLETE (turn 25)** — #2535+#2540 | Two-PR lane. IRA/OBBBA verified CURRENT vs 26 U.S.C. + intake CSV (no-change = correct disposition); NEISO ACP 65→50 the sole runtime delta, cited verbatim (225 CMR 14.08, MA $67.62→$40 stale); PJM load weights → primary Monitoring Analytics 2024 (OH/VA up, KY added); confirmed-retire re-query → no binding instrument. **Backcast byte-identical BY CONSTRUCTION** (`backcast_config` hardcodes `rps_enabled=False`). test_capacity.py 65→50 in-test-cited. On-registry (constants.py), rule-23 clean. Closes FF-0D §7.2 P2. |
 | FF-1F | OPUS | 1 | L-INP | — | **landed + defaults LIVE** (#2468/#2476/#2480 + #2493) | DC=mid, derate=ON with backcast byte-identity guards; plan §2.1 recorded. Closed. |
 | FF-2A | FABLE | 2 | L-CAP | — | **COMPLETE (turn 18) — mechanism + measurement both landed** | Mechanism #2486 (t15); measurement #2506/#2509 (t18): findings doc + ERCOT/MISO/PJM `*-ff2a-r2` legs. VRE cap-rev near-pivotal, BLK-10 2.5→1.103 GW, PJM solar +84%→+48%, ERCOT solar zero → G-20/G-22. Full manager-verify pending. |
 | FF-2A-integrate | FABLE | 2 | L-CAP | — | **verified-pass (turn 15, via #2486 + #2491/#2492)** | 0 fn loss, signature matches runner, fields on-registry, 14 harness refs, compiles. Sidecars governance-clean. Lane CLOSED. |
 | FF-2A-posture | OPUS | 2 | L-CAP | — | **verified-issues, NON-DELIVERY (turn 21)** — #2522 | Committed ONLY the findings doc, which describes the flip AS IF APPLIED — but scenarios.py UNCHANGED (still False), plan not updated. Flip did not land. 3rd genuine non-delivery. → **FF-2A-posture-redo**. |
-| FF-2A-posture-redo | OPUS | 2 | L-CAP | — | **sent (turn 21, correction)** | Land the EXACT change the #2522 dead doc specifies: scenarios.py entry_lookahead_reprice default False→True + `__post_init__` backcast coercion + plan §2.1a row e. BLOB-VERIFY scenarios.py contains it before touching the doc (push-integrity is the point). Parallel-safe (scenarios.py — disjoint from FF-2B/FF-1E-policy). |
+| FF-2A-posture-redo | OPUS | 2 | L-CAP | — | **verified-pass (turn 25)** — #2539 | Landed the EXACT change #2522 only described: scenarios.py:1248 `entry_lookahead_reprice` False→True + `__post_init__` `mode=="backcast"→False` coercion + plan §2.1a row e + byte-identity attestation w/ measured cache keys (ERCOT backcast `c44c3d9b7549de73` unchanged; forecast `cdf095573872a069→1d4a8acfa187a505` shifts as intended). Forecast/screen-only, zero-DOF, cited. **4th attempt on this lineage — source change finally landed; closes the 3-non-delivery saga.** |
 | FF-2B | OPUS | 2 | L-CAP | — | **sent (turn 17) — in the parallel batch; not yet pushed** | Prereq FF-2A met, drift-clean. On the FF-2C critical path + produces the first NEISO cap-hindcast pair (NEISO evidence-free). CAISO/NEISO/NYISO I7 + NEISO Net ICR + first NEISO pair; bands pre-registered BEFORE the run. |
 | FF-2C | OPUS | 2 | L-CAP | — | **issued (turn 14), owner-gated** | owner-approved flip all-but-ERCOT, staged by readiness. After FF-2A(done) + FF-2B. Rule 1: worsened fit = root-cause. |
 | FF-2D | OPUS | 2 | L-VAL | ⛔ T1 gate | **issued (turn 14), gated** | runs after W1/W2 merges. Rubric verdicts + promotion table. |
@@ -93,7 +117,11 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-4C | OPUS | 4 | L-VAL | owner-gated | not-sent | blocked: FF-4A + owner |
 | FF-5A | OPUS | 5 | L-DASH | — | not-sent | blocked: Wave 4 |
 
-Out-of-program / trivial: #2530 (ledger t23), #2531 (miso-zonal-loss-surface data-intake, data-only),
+Out-of-program / trivial: #2536 (ledger t24), #2544/#2542 (miso-76 backcast reg + loss ab-register),
+#2543/#2537 (caiso-belly-charge-economics), #2541/#2534 (ercot-86-rt-wall — default-off cited RT/SCED
+gates, ERCOT calibration lane), #2538 (miso-zonal-loss-surface — runner.py kwarg gated/UNSET-off),
+#2533 (codebase-refactor-consolidation plan + prompt-pack, docs-only — separate refactor initiative),
+#2530 (ledger t23), #2531 (miso-zonal-loss-surface data-intake, data-only),
 #2532 (caiso-99 storage-shape backcast keeper), #2525 (ledger t22), #2526/#2529 (miso-76 backcast),
 #2527 (ercot price-formation design memo), #2528 (third-party peer-review doc),
 #2524 (miso-75 keeper promote), #2523 (ercot-lmp-scarcity backcast), #2520 (miso-75 Manitoba),
@@ -120,7 +148,7 @@ ledger commits. #2439 handled.
 - **datacenter_load_path default = mid** (turn 12). FF-1F applies.
 - **correlated_forced_outage default = ON** (turn 12). FF-1F applies.
 - **Entry-lookahead posture = ON** (turn 18, 2026-07-18) — owner approved `entry_lookahead_reprice`
-  default-ON. #2522 was a non-delivery (findings doc only) → **FF-2A-posture-redo** lands it.
+  default-ON. FF-2A-posture-redo LANDED it (turn 25, #2539).
 - **Golden freeze HOLDS** (turn 18) — until backcast is calibrated on the testing years.
   FF-4A stays gated.
 - **#2439** — owner handled → resolved.
@@ -148,12 +176,13 @@ ledger commits. #2439 handled.
 9. **FF-1E-complete [OPUS]** (turn 20) — **RETRACTED turn 22.** #2518 completed FF-1E items 1/3/4;
    #2515 was NOT a non-delivery, just the first half of a two-PR lane. Genuine non-deliveries = 3.
    Replaced by slim **FF-1E-policy [OPUS]** (item 2 only).
-10. **FF-2A-posture-redo [OPUS]** (turn 21) — non-delivery fix. #2522 committed only a findings
-    doc that DESCRIBES the flip as applied; scenarios.py unchanged (still False). Correction lands
-    the exact scenarios.py flip + coercion + plan row, blob-verified. **3rd genuine non-delivery
-    (FF-0B #2412, FF-2A #2453, FF-2A-posture #2522) — ESCALATED to owner.**
+10. **FF-2A-posture-redo [OPUS]** (turn 21) — non-delivery fix. **RESOLVED turn 25 (#2539),
+    verified-pass** — 4th attempt on this lineage finally landed the scenarios.py flip + coercion +
+    plan row e + byte-identity attestation. Genuine non-deliveries stay 3 (FF-0B #2412, FF-2A #2453,
+    FF-2A-posture #2522); this closes the saga.
 11. **FF-1E-policy [OPUS]** (turn 22) — slim item-2-only follow-up (NOT a non-delivery fix):
-    FF-0D §4 IRA/RPS/ACP/confirmed-retirement policy-currency fixes. Lower urgency.
+    FF-0D §4 IRA/RPS/ACP/confirmed-retirement policy-currency fixes. **RESOLVED turn 25
+    (#2535+#2540), verified-pass** — item 2 complete; NEISO ACP 65→50 the sole cited runtime delta.
 
 ---
 
@@ -176,7 +205,15 @@ ledger commits. #2439 handled.
   Emitted a manager-handoff prompt at owner request.
 - **turn 24 (`→48ae665`).** QUIET refresh — nothing FF landed, nothing unlocked. My t23 ledger on
   main (#2530). Out-of-program: #2531 (miso-zonal-loss-surface data-intake, data-only/no-solve —
-  governance-clean), #2532 (caiso-99 storage-shape backcast keeper). Rule-27 clean (capacity.py
-  4241, scenarios.py 7834, constants.py 7413, runner.py 2457). Active front unchanged (FF-2B +
-  FF-2A-posture-redo + FF-1E-policy — all sent, parallel-safe, still awaiting worker launch; no
-  branches on origin). No owner ask for prompt waves. Nothing to correct.
+  governance-clean), #2532 (caiso-99 storage-shape backcast keeper). Rule-27 clean. Active front
+  unchanged (FF-2B + FF-2A-posture-redo + FF-1E-policy).
+- **turn 25 (`→567ef3c`).** TWO FF LANES landed verified-pass. FF-2A-posture-redo (#2539) — the
+  posture flip's 4th attempt finally landed the scenarios.py source change + coercion + plan row e
+  + measured-cache-key byte-identity attestation; **3-non-delivery saga CLOSED**. FF-1E-policy
+  (#2535+#2540) — item 2 complete: IRA CURRENT, NEISO ACP 65→50 cited, PJM weights refreshed,
+  confirmed-retire no-add; backcast byte-identical by construction. Rule-27 clean (capacity.py
+  4241=, scenarios.py 7923, constants.py 7434, runner.py 2469 — all grew). Out-of-program (8):
+  miso-76 (#2544/#2542), caiso-belly-charge (#2543/#2537), ercot-86-rt-wall (#2541/#2534 — default-off
+  cited RT/SCED gates), miso-zonal-loss-surface (#2538 — runner.py kwarg gated/UNSET-off), and
+  #2533 (codebase-refactor-consolidation planning docs — separate initiative, flag to owner). No
+  corrections. **Active front now FF-2B ONLY** (awaiting worker launch; no branch on origin).
