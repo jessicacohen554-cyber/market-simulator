@@ -21,3 +21,31 @@ level if it is part of a *standing* workflow — invoked by CI, a skill, tests,
 the calibration/forecast/hindcast programs, or governance rules. A script tied
 to one specific superseded run belongs in `archive/`; anything that fetches or
 transforms data belongs in `data/`.
+
+## Dashboard retention (top-15 per ISO, all three stores)
+
+The backcast dashboard keeps the **top 15 runs per ISO** (user-set 2026-06-21,
+superseding the earlier 10-run rule). A registered run lives in **three stores**
+that must stay in lockstep:
+
+1. `frontend/data/backcast/registry/<id>.json` — the manifest sidecar.
+2. `frontend/data/backcast/runs/<id>.js` — the run payload.
+3. `results/calibration/<bundle>/` — the solved bundle (the sidecar's `bundle`
+   field).
+
+`scripts/dashboard_add_run.py` **governs all three**: after registering a run it
+runs `prune_iso`, which keeps the 15 newest runs for that ISO (by date, then id)
+and deletes the sidecar, payload **and** mapped bundle dir of every displaced
+oldest run *together*. Two protections are never pruned regardless of age: any
+current keeper in `keepers.json`, and any run referenced by a surviving
+sidecar's `ablation_twin`/`ablation_of` link. Pass `--no-prune` to register
+without sweeping (used by the one-time backfill/cleanup operations); the caller
+stages the deletions with the rest of the commit.
+
+`scripts/check_registry_payload_parity.py` is the CI gate for this invariant and
+checks **both directions**: a sidecar with no payload (invisible in the Run
+Explorer) *and* an **orphan payload** with no sidecar (a dead `runs/<id>.js`
+left behind if a sidecar were ever pruned without its payload). Run it before
+every dashboard push. Bundles no longer referenced by any sidecar are swept in
+the owner-signed one-time bundle sweep, not by `prune_iso` (which only touches
+the bundle of a run it is actively pruning).
