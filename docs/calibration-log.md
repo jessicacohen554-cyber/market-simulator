@@ -18165,3 +18165,53 @@ first time.
   stack is the next largest λ-ladder residual.
 
 Next number: caiso-102.
+
+## 2026-07-19 — miso-77: M4 feasibility investigation (owner-selected lane) — VERDICT GO (qualified): a measured per-flowgate MW-limit series IS publicly fetchable for the CMP/M2M flowgate universe on the proven docs.misoenergy.org channel; OASIS-AFC itself is registration-gated; East-internal congestion stays ~75 % uncovered. Investigation-only — NO LP, NO solve, NO registration; the mechanism design is deferred to the M4 charter per the frozen miso-76 charter §3
+
+**Lane selection.** First action confirmed the miso-76 registration branch
+merged (PR #2544, `origin/main` 567ef3c). The owner then selected lane (a)
+of the miso-76 handoff — the contingent M4 investigation (charter
+`docs/handoffs/miso-nc-price-separation-design-2026-07.md` §3): establish
+whether a measured per-flowgate MW-limit series is publicly fetchable, with
+2023–2025 coverage and a mappable flowgate→zone-boundary crosswalk, before
+any congestion charter is drafted. Investigation-only by construction.
+
+**Findings** (full record + fetch evidence:
+`docs/handoffs/miso-77-m4-afc-feasibility-2026-07.md`):
+
+- **GO (qualified).** The M2M/CMP report family on
+  `docs.misoenergy.org/marketreports/` (the existing lmp-components/RDT
+  channel, no auth) publishes: hourly per-flowgate **FFE MW**
+  (`M2M_FFE_YYYY_MM_DD.CSV`, 764→1,084 flowgates), daily per-flowgate
+  **allocations + allocation-to-rating %** ⇒ implied **total flowgate
+  rating MW** (`Allocation_on_MISO_Flowgates`, 493 flowgates, cross-checks
+  against the OASIS static ratings PDF within ~1 %), hourly per-flowgate
+  settlement **shadow prices / market flows / FFEs** for MISO–PJM AND
+  MISO–SPP (`M2M_Settlement_srw_YYYY.csv`, 385 flowgates 2024; answer
+  class — validation only, rule 13), and daily flowgate registry snapshots.
+  All verified HTTP 200 across the full 2023–2025 train window.
+- **The literal OASIS-AFC series is NOT publicly fetchable** (webSmartOASIS
+  APIs 403 without a registered session; NAESB CGI templates dead; Data
+  Exchange key-gated per the 2026-07-11/12 RDT adjudication). OASIS
+  publicly exposes only static per-flowgate seasonal ratings + TRM/CBM and
+  the coordinated-flowgate registry (PDFs, mirrored as evidence).
+- **Coverage** (DA bc_HIST Σ|SP| token-matched to the fetchable universe,
+  location-only use of shadow prices): **69/74/72 %** of 2023/2024/2025
+  congestion mass at the ≥2-token match (52/51/40 % conservative ≥3-token).
+  By boundary class: seams ~90 %, West-internal ~74–78 %, Illinois ~83–85 %,
+  Indiana ~64–77 %, Plains ~43–51 %, **East-internal only ~23–27 %** — the
+  East-2025 R2-cancellation corridor remains substantially data-blocked.
+- **No source publishes shift factors/PTDFs or the hourly operationally
+  derated limit** — the two qualifications that bound the future charter
+  (representation on a 6-zone network without an invented apportionment is
+  the M1-refutation concern, still live for the design phase).
+
+**Disposition.** No run, nothing to register (rule 15 N/A — no solve was
+performed; quarantine untouched, all fetches in-train 2023–2025 plus
+current-snapshot registries). Keeper UNCHANGED
+(`2026-07-18-miso-75-manitoba-meritcap`, determination NOT-YET, same 2
+fails). Next session: draft the **M4 congestion charter** (charter-first,
+rule 27 model assignment) resolving the five §5 items in the findings doc —
+crosswalk curation, no-PTDF representation, rating-vs-FFE cap choice, East
+disclosure, intake mechanics. Next number: miso-78 (miso-77 = this
+investigation).
