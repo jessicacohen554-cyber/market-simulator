@@ -40,12 +40,14 @@ uv run market-sim run --config <scenario.yaml> [--iso ERCOT]
 uv run market-sim sweep --sweep <sweep.yaml> [--workers N]
 ```
 
-> **Test status:** the suite collects ~3200 tests (3198 as of this writing). A
-> handful of *known, pre-existing* failures are tied to optional local data and
-> are unrelated to setup — the four `test_eia_loader` CAISO/NYISO zonal-share
-> fallback cases, plus a NEISO committed-artifact determinism check. A clean
-> checkout reports almost all passing / 2 skipped alongside these. Don't chase
-> them as part of a docs or environment change.
+> **Test status:** run `uv run python -m pytest -q` for the current suite; the
+> authoritative pass/fail signal is the CI test job (this README deliberately
+> does not track an exact count, which drifts). A handful of *known,
+> pre-existing* failures are tied to optional local data and are unrelated to
+> setup — the four `test_eia_loader` CAISO/NYISO zonal-share fallback cases,
+> plus a NEISO committed-artifact determinism check. A clean checkout reports
+> almost all passing / 2 skipped alongside these. Don't chase them as part of a
+> docs or environment change.
 
 > **Single-year runs are smoke tests only.** `--year 2024` above is for
 > quickly checking the environment works. Rule 16 (`CLAUDE.md`) requires
@@ -82,8 +84,8 @@ market-simulator/
 │                        #   uncertainty_ercot.yaml, scenarios/) consumed by the CLI.
 ├── data/                # Input datasets — raw/ (sources), dictionary/ (schema docs).
 │                        #   Read-only at runtime; see data/README.md.
-├── scripts/             # Calibration backcasts, data builders, and analysis/probe
-│                        #   tooling (e.g. run_calibration_full.py).
+├── scripts/             # Core runners, scoring, dashboard & governance tooling
+│                        #   (see scripts/README.md).
 ├── tests/               # pytest suite (unit + regression against golden baselines).
 ├── docs/                # Methodology notes, calibration logs, cleanup/reorg plans.
 ├── frontend/            # Static explainer site (HTML/CSS/JS, parameter views) and
@@ -106,16 +108,27 @@ market-simulator/
 
 ## Further reading
 
+- [`docs/README.md`](docs/README.md) — the documentation index (start here; the
+  four-layer information architecture over everything below).
 - [`model-methodology-spec.md`](model-methodology-spec.md) — the full model
   methodology (LP formulation, pricing, capacity evolution, calibration).
-- [`CLAUDE.md`](CLAUDE.md) — working instructions, architecture overview, and
-  repo conventions for contributors and agents.
-- [`docs/data-reorg-plan.md`](docs/data-reorg-plan.md) — the data-layout
-  reorganization plan (`data/raw` → `data/clean`, dictionary).
-- [`docs/code-docs-cleanup-plan.md`](docs/code-docs-cleanup-plan.md) — the
-  documentation/code cleanup plan this front-door work is part of.
-- [`docs/data-licensing.md`](docs/data-licensing.md) — source, license terms,
-  and redistribution status for every dataset committed under `data/raw/`.
+- [`docs/codebase/README.md`](docs/codebase/README.md) — the code-derived
+  engineering reference (what the code actually does, page by page).
+- [`docs/multi-iso/README.md`](docs/multi-iso/README.md) — the six-ISO topology
+  and per-ISO addition protocol.
+- [`docs/forecast-development-plan-2026-07.md`](docs/forecast-development-plan-2026-07.md)
+  — the forecast program (tier ladder, lanes, waves, prompt pack).
+- [`docs/calibration-determination-rubric.md`](docs/calibration-determination-rubric.md)
+  and [`docs/forecast-determination-rubric.md`](docs/forecast-determination-rubric.md)
+  — how a calibration/forecast run is judged.
+- The dashboard —
+  [`docs/codebase-site/backcast-runs.html`](docs/codebase-site/backcast-runs.html)
+  (run explorer) and
+  [`docs/codebase-site/calibration-status.html`](docs/codebase-site/calibration-status.html)
+  (keeper summary) — for live results.
+- [`CLAUDE.md`](CLAUDE.md) — working instructions and repo conventions for
+  contributors and agents; [`docs/data-licensing.md`](docs/data-licensing.md)
+  for dataset licensing.
 
 Docs are kept in sync with the code via the `/sync-docs` skill — run it at the
 end of a session once an approach has settled.

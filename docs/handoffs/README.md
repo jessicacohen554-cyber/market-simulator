@@ -3,7 +3,7 @@
 # docs/handoffs — index
 
 Design specs, session handoffs, decision memos, plans, and evidence records
-produced by the calibration/forecast program. **171 documents** as of the freeze
+produced by the calibration/forecast program. **172 documents** as of the freeze
 date below. This is layer **L3** (dated records) of the docs IA — see
 [`../README.md`](../README.md).
 
@@ -35,7 +35,7 @@ each filename, and overlay the `forecast-development-plan-2026-07.md` §9 ledger
 dispositions onto the default `RECORD` status. Mark clearly that the result is a
 new point-in-time snapshot and stamp the freeze date.
 
-## Index (alphabetical, 171 docs)
+## Index (alphabetical, 172 docs)
 
 | Doc | Date | Status |
 |---|---|---|
@@ -205,6 +205,7 @@ new point-in-time snapshot and stamp the freeze date.
 | [`scalar-remediation-prompts-2026-07.md`](scalar-remediation-prompts-2026-07.md) | 2026-07 | RECORD |
 | [`scalar-remediation-w0-closure-2026-07-05.md`](scalar-remediation-w0-closure-2026-07-05.md) | 2026-07-05 | RECORD |
 | [`sensitivity-tornado-ercot-2026-07-04.md`](sensitivity-tornado-ercot-2026-07-04.md) | 2026-07-04 | RECORD |
+| [`stage7_getattr_extraction_design.md`](stage7_getattr_extraction_design.md) | — | RECORD |
 | [`temp-derate-keeper-rerun-playbook-2026-07.md`](temp-derate-keeper-rerun-playbook-2026-07.md) | 2026-07 | RECORD |
 | [`wallclock-baseline-2026-07.md`](wallclock-baseline-2026-07.md) | 2026-07 | RECORD |
 | [`wallclock-efficiency-plan-2026-07.md`](wallclock-efficiency-plan-2026-07.md) | 2026-07 | RECORD |

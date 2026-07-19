@@ -1,5 +1,7 @@
 # Code & Documentation Cleanup Plan — market-simulator
 
+> Status: SUPERSEDED-BY docs/refactor-consolidation-plan-2026-07.md — executed; folded into the consolidation charter.
+
 Sibling to [`data-reorg-plan.md`](data-reorg-plan.md). That plan owns the **data**
 reorg (raw/clean split, schemas, curation); this one owns **code** and
 **documentation** hygiene. They run in parallel sessions and touch mostly
