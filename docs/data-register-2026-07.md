@@ -306,6 +306,15 @@ under any holdout-year backcast until it's addressed).
   time series.
 - **NEISO winter fuel-security inventory** — hand-curated from ISO-NE's 2018 OFSA study and
   2018-2020 ESI filings; a fixed planning-study snapshot, not a rolling measured series.
+- **NREL ATB 2024 extract** (`data/raw/nrel-atb/`) — forward cost/performance trajectories
+  (CAPEX/Fixed O&M, 2022-2050, three cost cases; the FINAL ATB edition — no 2025/2026 exists);
+  feeds `NEW_ENTRY_COSTS`, `STORAGE_TECHS` li-ion, `OFFSHORE_WIND_PARAMS`, EGS FOM (EGS classes
+  appended part11+ 2026-07-19). Forecast-only consumer (entry screens).
+- **New-build cost benchmark set** (`data/raw/new-build-cost-benchmarks/`, landed 2026-07-19) —
+  cross-source overnight-cost/FOM table (EIA/S&L Jan-2024 study, AEO2026 EMM Tables 3-4, AEO2025
+  LCOE report, Lazard LCOE+ v18.0, Brattle 2025 PJM CONE) + QA'd markdown conversions; drives the
+  literature-envelope `TECH_COST_MULTIPLIERS` and the mid-in-envelope validation
+  (`docs/new-build-cost-methodology-2026-07.md`). Forecast-only consumer.
 
 ---
 
