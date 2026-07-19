@@ -242,3 +242,46 @@ re-tuning any import tranche — the offset is a measurement artifact of the
 night/day probes' hour-ending hod, and the aligned measurement (§4) shows no
 evening import excess to remove; do not derive conduct mechanisms from the
 pre-hourfix 2025 charge geometry.
+
+## 9. B-LEG ADJUDICATION (same session, post-pre-registration) — every hard gate CLEARS; PROMOTED to CAISO keeper on the owner's in-session ruling
+
+`caiso102_hourfix_B` solved 2023-2025 one bundle (sequential) on the §5 fix
+set. Against the §6 pre-registered gates:
+
+- **2023/2024 byte-identity: PASS.** Per-year dispatch/system/storage/flows
+  frames are IDENTICAL to `caiso102_repro_A` (dataframe equality, all four
+  families) — the fix moved only the defective year.
+- **2025 solar lag-0 alignment: PASS.** Dispatched 2025 solar hod profile vs
+  measured: lag 0 r=0.99987, every ±1-2h lag ≤0.947 (was lag −1 r=0.9997).
+- **C1 12/12 (free 8/8): PASS. C7 shape: PASS. C8 forced-share: PASS.**
+
+Scored result (vs the caiso-101 keeper = the A-leg): the criteria grid is
+IDENTICAL — zero status regression, fail set stays {C3c, C4, C5a} — while
+every 2025 ladder block improves: **belly +5.0 → +4.3, evening −3.0 → −1.1,
+overnight +1.6 → +1.4** (2023/2024 ladders unchanged by construction);
+2025 C1 misses essentially unchanged (CC_REGULAR −4.07→−4.03, CT_PEAKER
+−1.96→−2.01 TWh); C3c model tail 19/0/0 unchanged; annual C3a mean ≈
+unchanged (+1.76→+1.74 dw) — the gain is intra-day shape, exactly what a
+clock rotation predicts. Post-fix 2025 evening composition (§4 re-run):
+solar 4.37 vs 4.20 TWh (phantom gone), battery net 8.03 vs 7.96 (the
+envelope's evening discharge lands on the measured clock), hod-17 resid
+−10.1 → −4.5, Q1 depth −20.2 → −15.4; the surviving evening structure is
+the SAME CT-rung composition defect as 2023/2024 (Q1: measured CT 567 MW vs
+model 189, model gas −2.1 GW, imports ≈ measured) — the merit-stack lane's
+next target, now measured on a clean clock.
+
+**Registered `2026-07-19-caiso-102-hourfix`; PROMOTED to CAISO keeper**
+(owner in-session ruling 2026-07-19: "if it's a keeper in your opinion,
+promote" — judgment: zero status regression + strictly more structurally
+faithful, a rule-14 measured-input integrity fix with zero DOF delta;
+supersedes `2026-07-19-caiso-101-chp-steam`, whose sidecar carries the
+ERCOT-65-style record-correction note; registry 15/15, no prune).
+Determination stays **NOT-YET**, fail set {C3c, C4, C5a(2024 CAVEAT)}.
+
+Post-fix 2025 charge windows (§3 re-measured on the B-leg): morning model
+charge 1.35 → 2.57 TWh (measured 2.84), non-belly total 2.87 → 3.64
+(measured 3.97), belly 9.32 → 9.37 (measured 8.26), pm-shoulder 1.43 → 1.01
+(measured 0.73) — the 2025-only morning gap was mostly the frame defect, and
+the surviving all-years inelastic gap is the overnight second cycle (model
+0.05 vs measured 0.36 TWh) plus the belly/shoulder over-charge geometry the
+§7 allocation re-charter now measures from a clean surface.
