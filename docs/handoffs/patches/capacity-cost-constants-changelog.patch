@@ -1,0 +1,490 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 01fcec0..2c7edc6 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,5 +1,52 @@
+ # Changelog
+ 
++## 2026-07-19 — New-build capacity costs: cross-source grounding, literature-envelope ranges, storage/offshore/EGS/H2 derivation-lock
++
++Forecast-only cost-input grounding (capacity-expansion entry screens); **no LP
++formulation change, backcast byte-identical** (evolution is `mode="forecast"`
++gated). Full methodology + citations:
++`docs/new-build-cost-methodology-2026-07.md`.
++
++- **New raw benchmark datatype** `data/raw/new-build-cost-benchmarks/`:
++  cross-source overnight-cost/FOM table (`benchmarks_2026.csv`) transcribed
++  from five downloaded-and-markdown-converted documents — EIA/Sargent & Lundy
++  Jan-2024 capital-cost study (AEO2025 basis), EIA AEO2026 EMM assumptions
++  (Apr 2026, Tables 3-4 incl. 25-region costs), EIA AEO2025 LCOE report,
++  Lazard LCOE+ v18.0 (Jun 2025, incl. LCOS v10 and the $2,400-2,600/kW CCGT
++  market-quote case), Brattle 2025 PJM CONE report (Apr 2025) — with QA'd
++  conversions committed under `md/`, sha256-pinned re-download script
++  (`scripts/data/fetch_cost_benchmark_sources.py`), and per-row
++  `in_envelope`/`verified` flags (unreachable primaries — DOE Liftoff, PNNL —
++  are recorded `verified=0` and never enforce).
++- **`TECH_COST_MULTIPLIERS` capex low/high re-derived as the published-cost
++  literature envelope** (`scripts/data/derive_cost_benchmark_envelope.py`,
++  asserted by new `tests/test_cost_benchmark_envelope.py`): min/max across
++  ATB 2024's own three cases ∪ the verified benchmark rows, normalized to
++  2026$ — replacing FF-1E's ATB-internal ratios, which were degenerate for
++  mature techs (gas_ct 1.0/1.0 → 0.6246/1.0372; gas_cc ±1% → 0.5852/1.6783).
++  Mid stays the pinned ATB 2024 Moderate (defaults byte-identical; ATB 2024
++  verified to be the FINAL ATB edition, so the pin is current).
++- **Derivation-locked the hand-set cost tables** onto committed sources:
++  li-ion `STORAGE_TECHS` (4hr $1,140→$1,810.3, 8hr $2,280→$3,154.3, 12hr
++  $3,100→$4,498.4 via ATB's exactly-linear duration split, + FOM);
++  `OFFSHORE_WIND_PARAMS` (fixed $4,200→$6,312.3 @2026, floating
++  $5,500→$10,243.8 @2030 — the FF-1E-flagged re-derivation);
++  `GEOTHERMAL_PARAMS` EGS FOM 0→163.4 (ATB NF-EGS Flash; capex $5,000 kept on
++  the DOE-Liftoff level, decorative "ATB" label corrected);
++  `HYDROGEN_TURBINE_PARAMS` ($1,400/$1,800 → $1,499.0/$1,661.2 = ATB gas
++  hosts × the AEO2026-measured H2/frame-CT premium; FOM onto the same basis).
++  ATB extract extended with the four EGS classes (append parts 11-12,
++  FF-1E parts byte-untouched).
++- Parameter-citation registry regen run locally (`--check` green) but its
++  push is deferred to the standing registry-reconcile chore (1.5 MB pair
++  exceeds a safe single-call API payload; no new top-level keys, so
++  `validate_parameters.py` is green against main's registry — verified).
++  Data register + `data/raw/nrel-atb/README.md` updated.
++- **Collateral main fix:** `runner.py` used the `UNSET` sentinel without
++  importing it (miso-76 B, `2ad50aa`) — a `NameError` killing EVERY
++  forecast-mode run on main (backcasts don't traverse `run_scenario_iso`).
++  One-line import fix, found by this session's T0 forecast smoke.
++
+ ## 2026-07-17 — Consolidate CAMPD outage detection: delete the facility-summed layer, per-unit detector is the sole source (all ISOs)
+ 
+ Core-infra refactor + data-derive; **no LP solve**. Enables the two ERCOT/PJM
+diff --git a/src/market_sim/config/constants.py b/src/market_sim/config/constants.py
+index 3f963c2..0fdf758 100644
+--- a/src/market_sim/config/constants.py
++++ b/src/market_sim/config/constants.py
+@@ -2358,63 +2358,102 @@ RGGI_STATE_CO2_BUDGET: dict[str, dict[int, float]] = {
+ }
+ 
+ # Storage technology parameters.
+-# Source: NREL ATB 2024 (li-ion), DOE LDES Liftoff (iron-air).
++#
++# Li-ion capex/FOM are DERIVED from the committed NREL ATB 2024 extract
++# (scripts/data/derive_cost_benchmark_envelope.py::derive_storage_li_ion,
++# asserted by tests/test_cost_benchmark_envelope.py — capacity-cost-grounding
++# session 2026-07-19): ATB Moderate utility-scale battery @2026 in the model's
++# constant 2026$ (the exact FF-1E NEW_ENTRY_COSTS convention). This REPLACES
++# the prior hand-set values (4hr $1,140/kW, 8hr $2,280, 12hr $3,100) whose
++# "NREL ATB 2024 / BNEF 2025" labels matched no published ATB point — the
++# committed ATB battery rows were on disk but never read. The re-derived level
++# sits mid-envelope of the 2024-2026 literature for an all-in developer basis:
++# S&L Jan-2024 150MW/600MWh $1,744/kW (2023$); AEO2026 EMM $1,521/kW (2025$);
++# Brattle 2025 PJM CONE BESS 4-hr $1,750-1,980/kW (nominal 2028 online, incl.
++# interconnection + owner costs); Lazard LCOS v10.0 utility 4-hr computes
++# $565-1,459/kW (2025$, EPC-scope, excl. augmentation — its low end is a
++# minimal-BOS config, not an all-in developer cost). Full table + links:
++# data/raw/new-build-cost-benchmarks/ and
++# docs/new-build-cost-methodology-2026-07.md §4.
++#
++# li_ion_12hr extends ATB's own EXACTLY-linear power/energy cost split across
++# its 2/4/6/8/10-hr classes to 12 h (fixed $/kW power component + $/kWh energy
++# slope; residual 0 on the committed extract — the derive script hard-fails if
++# ATB's structure stops being linear). capex_per_kwh is the bundled
++# capex_per_kw / duration convention the degradation term uses. rte / cycles /
++# learning_rate / lifetime are NOT ATB CAPEX/FOM quantities and keep their
++# existing bases (rte 0.86 li-ion, ATB round-trip efficiency; learning 0.18
++# BNEF li-ion learning curve).
++#
++# iron_air (DOE Pathways to Commercial Liftoff: Long Duration Energy Storage,
++# May 2023; Form Energy's public <$20/kWh energy-cost target corroborates) and
++# flow_battery / compressed_air (PNNL 2022 Grid Energy Storage Technology Cost
++# and Performance Assessment, Viswanathan et al., PNNL-33283: VRFB 100MW/10hr
++# total installed ≈$443.5/kWh 2021$; CAES geology-dependent, model config is
++# non-cavern adiabatic) keep their recorded values: their primaries could not
++# be re-fetched from this environment at the 2026-07-19 intake
++# (liftoff.energy.gov DNS-unreachable, pnnl.gov PDF bot-walled) so they are
++# benchmarks_2026.csv verified=0 rows — citations corrected here (the old
++# "PNNL 2023"/"NREL ATB 2024" labels pointed at documents that do not carry
++# CAES/VRFB numbers), values unchanged, flagged for browser re-verification.
+ STORAGE_TECHS: dict[str, dict[str, float]] = {
+-    "li_ion_4hr": {  # NREL ATB 2024 — 4-hour lithium-ion battery
++    "li_ion_4hr": {  # 4-hour lithium-ion battery
+         "duration_hr": 4,
+         "rte": 0.86,
+         "cycles": 5000,
+-        "capex_per_kw": 1140.0,  # was 1380. ~$285/kWh × 4hr. NREL ATB 2024b, BNEF 2025.
+-        "capex_per_kwh": 285.0,  # was 345. LFP pack costs ~$100/kWh + BOS.
+-        "fom_per_kw_yr": 30.0,  # was 34.5.
++        "capex_per_kw": 1810.3,  # ATB 2024 Moderate 4Hr Battery @2026, 2026$ (derived)
++        "capex_per_kwh": 452.6,  # capex_per_kw / 4 h (bundled convention, derived)
++        "fom_per_kw_yr": 40.9,  # ATB 2024 Moderate @2026, 2026$ (derived)
+         "learning_rate": 0.18,
+     },
+-    "li_ion_8hr": {  # NREL ATB 2024 — 8-hour lithium-ion battery
++    "li_ion_8hr": {  # 8-hour lithium-ion battery
+         "duration_hr": 8,
+         "rte": 0.86,
+         "cycles": 5000,
+-        "capex_per_kw": 2280.0,  # was 2760. $285/kWh × 8hr.
+-        "capex_per_kwh": 285.0,  # was 345.
+-        "fom_per_kw_yr": 48.0,  # was 55.2.
++        "capex_per_kw": 3154.3,  # ATB 2024 Moderate 8Hr Battery @2026, 2026$ (derived)
++        "capex_per_kwh": 394.3,  # capex_per_kw / 8 h (bundled convention, derived)
++        "fom_per_kw_yr": 73.4,  # ATB 2024 Moderate @2026, 2026$ (derived)
+         "learning_rate": 0.18,
+     },
+-    "iron_air": {  # DOE LDES Liftoff — 100-hour iron-air battery
++    "iron_air": {  # DOE LDES Liftoff (May 2023) — 100-hour iron-air battery
+         "duration_hr": 100,
+         "rte": 0.50,
+         "cycles": 3000,
+-        "capex_per_kw": 2000.0,
+-        "capex_per_kwh": 20.0,
++        "capex_per_kw": 2000.0,  # verified=0 (primary unreachable 2026-07-19)
++        "capex_per_kwh": 20.0,  # Form Energy public <$20/kWh energy-cost target
+         "fom_per_kw_yr": 20.0,
+         "learning_rate": 0.10,
+     },
+     # Additional long-duration storage technologies. ``capex_per_kw`` is the
+     # total capital per kW of power (energy capex × duration + power capex),
+     # matching the convention of the li-ion / iron-air entries above.
+-    "li_ion_12hr": {  # NREL ATB 2024 — 12-hour lithium-ion battery
++    "li_ion_12hr": {  # 12-hour lithium-ion battery (ATB linear split @12 h)
+         "duration_hr": 12,
+-        "rte": 0.78,  # lower RTE at longer duration. NREL ATB 2024
++        "rte": 0.78,  # lower RTE at longer duration
+         "cycles": 4000,
+-        "capex_per_kw": 3100.0,  # was 3560. $240/kWh × 12hr + $220/kW.
+-        "capex_per_kwh": 240.0,  # was 280.
+-        "fom_per_kw_yr": 10.0,  # was 12.0.
++        "capex_per_kw": 4498.4,  # ATB 2024 linear power/energy split @12h, 2026$ (derived)
++        "capex_per_kwh": 374.9,  # capex_per_kw / 12 h (bundled convention, derived)
++        "fom_per_kw_yr": 105.8,  # ATB 2024 linear FOM split @12h, 2026$ (derived)
+         "learning_rate": 0.15,  # BNEF lithium-ion learning curve 2024
+         "lifetime_yr": 20,
+     },
+-    "flow_battery": {  # PNNL 2023 — vanadium redox flow battery
++    "flow_battery": {  # PNNL-33283 (2022) — vanadium redox flow battery
+         "duration_hr": 10,
+-        "rte": 0.70,  # vanadium redox. PNNL 2023 flow battery review
+-        "cycles": 15000,  # long cycle life — major advantage. PNNL 2023
+-        "capex_per_kw": 4700.0,  # 350 $/kWh × 10 h + 1200 $/kW. PNNL 2023
++        "rte": 0.70,  # vanadium redox. PNNL-33283
++        "cycles": 15000,  # long cycle life — major advantage. PNNL-33283
++        "capex_per_kw": 4700.0,  # 350 $/kWh × 10 h + 1200 $/kW power (verified=0)
+         "capex_per_kwh": 350.0,
+         "fom_per_kw_yr": 15.0,
+         "learning_rate": 0.10,
+         "lifetime_yr": 25,
+     },
+-    "compressed_air": {  # NREL ATB 2024 — adiabatic compressed-air storage
++    "compressed_air": {  # PNNL-33283 (2022) — adiabatic compressed-air storage
+         "duration_hr": 8,
+-        "rte": 0.55,  # adiabatic CAES. NREL ATB 2024
++        "rte": 0.55,  # adiabatic CAES
+         "cycles": 10000,
+-        "capex_per_kw": 2700.0,  # 150 $/kWh × 8 h + 1500 $/kW. NREL ATB 2024
++        "capex_per_kw": 2700.0,  # 150 $/kWh × 8 h + 1500 $/kW power (verified=0;
++        # non-cavern adiabatic config — salt-cavern CAES is cheaper but
++        # geology-gated, which this ISO-agnostic entry screen cannot site)
+         "capex_per_kwh": 150.0,
+         "fom_per_kw_yr": 10.0,
+         "learning_rate": 0.05,  # mature concept, limited recent deployment
+@@ -4497,99 +4536,113 @@ NEW_ENTRY_COSTS: dict[str, dict[str, float]] = {
+ # Per-tech capex + learning-rate multipliers for the PB-1 tech-cost
+ # uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile,
+ # docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to
+-# NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to
+-# NREL ATB 2024 cost scenarios: "low"=Advanced, "mid"=Moderate, "high"=
+-# Conservative. "mid" is 1.0 by construction (Moderate is NEW_ENTRY_COSTS' base
+-# snapshot, so the neutral default is an exact no-op).
++# NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. "mid" is 1.0 by
++# construction (the pinned ATB 2024 Moderate case is NEW_ENTRY_COSTS' base
++# snapshot, so the neutral default is an exact no-op — default runs are
++# byte-identical whatever the low/high bounds say).
+ #
+-# capex_per_kw low/high are DERIVED (FF-1E) from the committed ATB 2024 extract
+-# by scripts/data/derive_entry_costs_from_atb.py: the Advanced/Moderate and
+-# Conservative/Moderate CAPEX ratios at each tech's base year (2026; 2030 for
+-# nuclear). The ratios are dimensionless (the dollar-year deflator cancels), so
+-# they are ATB's *actual* near-year cost-case spread — replacing the prior
+-# engineering-judgment magnitudes the dict's own comment flagged as un-scraped
+-# (ff-inputs-currency-audit-2026-07.md §3.3). ATB's near-year spread is narrow
+-# for the mature techs (gas_ct is identical across all three cases -> 1.0) and
+-# wide for FOAK nuclear; the long-horizon divergence between the cost cases is
+-# carried by the learning_rate multiplier. tests/test_atb_entry_cost_
+-# consistency.py asserts these capex ratios equal the derivation (rule 23).
++# capex_per_kw low/high are the PUBLISHED-COST LITERATURE ENVELOPE (capacity-
++# cost-grounding session 2026-07-19, superseding FF-1E's ATB-internal
++# Advanced/Conservative ratios): min/max over every in-envelope, source-
++# verified point of {ATB 2024 Advanced/Moderate/Conservative; EIA/Sargent &
++# Lundy Jan-2024 capital-cost study; EIA AEO2026 EMM Table 3; Lazard LCOE+
++# v18.0 (incl. its CCGT market-quote high case); Brattle 2025 PJM CONE
++# report}, each normalized to constant 2026$ (INFLATION_RATE convention),
++# divided by the ATB Moderate mid. DERIVED by
++# scripts/data/derive_cost_benchmark_envelope.py from the committed ATB
++# extract + data/raw/new-build-cost-benchmarks/benchmarks_2026.csv, asserted
++# by tests/test_cost_benchmark_envelope.py (rule 23). Rationale: ATB's
++# *internal* near-year case spread is degenerate for mature techs (the gas CT
++# was 1.0/1.0 — an inert uncertainty lever — and gas CC ±1 %, unable to
++# express the 2024-26 turbine-market escalation that Lazard's $2,400-2,600/kW
++# CCGT market quotes and the Brattle CONE report document), while the
++# cross-source spread is the honest published range. The envelope always
++# contains ATB's own three cases, so it can never be narrower than FF-1E's
++# basis. Per-source values + links: docs/new-build-cost-methodology-2026-07.md
++# §3-4.
+ #
+-# learning_rate multipliers are NOT ATB-derived: ATB publishes cost
++# learning_rate multipliers are NOT source-derived: ATB publishes cost
+ # trajectories, not Wright's-Law learning rates, so they keep their documented
+ # judgment basis — the trajectory-divergence channel of the tech-cost lever, a
+-# DOF-ledger free parameter. gas_cc_ccs is NETL-based (see NEW_ENTRY_COSTS), so
+-# both its multipliers stay judgment (ATB has no 90 % CCS case).
++# DOF-ledger free parameter. gas_cc_ccs dispatch physics stay NETL-based (see
++# NEW_ENTRY_COSTS); its capex envelope spans S&L/AEO2026 CCS points.
+ TECH_COST_MULTIPLIERS: dict[str, dict[str, dict[str, float]]] = {
+     "wind": {
+         "low": {
+-            "capex_per_kw": 0.9784,
++            "capex_per_kw": 0.948,
+             "learning_rate": 1.35,
+-        },  # capex: ATB Advanced/Moderate @2026
++        },  # capex: S&L 2024 onshore $1,489/kW (2023$)
+         "mid": {"capex_per_kw": 1.00, "learning_rate": 1.00},
+         "high": {
+-            "capex_per_kw": 1.0551,
++            "capex_per_kw": 1.402,
+             "learning_rate": 0.65,
+-        },  # capex: ATB Conservative/Moderate @2026
++        },  # capex: Lazard v18 onshore high $2,300/kW (2025$)
+     },
+     "solar": {
+         "low": {
+-            "capex_per_kw": 0.9629,
++            "capex_per_kw": 0.7523,
+             "learning_rate": 1.25,
+-        },  # capex: ATB Advanced/Moderate @2026
++        },  # capex: Lazard v18 utility PV low $1,150/kW (2025$)
+         "mid": {"capex_per_kw": 1.00, "learning_rate": 1.00},
+         "high": {
+             "capex_per_kw": 1.0513,
+             "learning_rate": 0.60,
+-        },  # capex: ATB Conservative/Moderate @2026
++        },  # capex: ATB Conservative/Moderate @2026 (envelope max)
+     },
+     "gas_cc": {
+         "low": {
+-            "capex_per_kw": 0.9923,
++            "capex_per_kw": 0.5852,
+             "learning_rate": 1.5,
+-        },  # capex: ATB Advanced/Moderate @2026
++        },  # capex: S&L 2024 CC 2x2x1 H-class $868/kW (2023$, NOAK EPC basis)
+         "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+         "high": {
+-            "capex_per_kw": 1.0076,
++            "capex_per_kw": 1.6783,
+             "learning_rate": 0.5,
+-        },  # capex: ATB Conservative/Moderate @2026
++        },  # capex: Lazard v18 CCGT market quotes $2,600/kW (2025$, post-2028 COD)
+     },
+     "gas_ct": {
+         "low": {
+-            "capex_per_kw": 1.0,
++            "capex_per_kw": 0.6246,
+             "learning_rate": 1.5,
+-        },  # capex: ATB CT identical across cost cases
++        },  # capex: S&L 2024 H-class frame CT $836/kW (2023$)
+         "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+         "high": {
+-            "capex_per_kw": 1.0,
++            "capex_per_kw": 1.0372,
+             "learning_rate": 0.5,
+-        },  # capex: ATB CT identical across cost cases
++        },  # capex: Lazard v18 gas peaking high $1,450/kW (2025$)
+     },
+     "nuclear_smr": {
+         "low": {
+             "capex_per_kw": 0.6649,
+             "learning_rate": 1.5,
+-        },  # capex: ATB Advanced/Moderate @2030
++        },  # capex: ATB Advanced/Moderate @2030 (envelope min)
+         "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+         "high": {
+             "capex_per_kw": 1.3141,
+             "learning_rate": 0.5,
+-        },  # capex: ATB Conservative/Moderate @2030
++        },  # capex: ATB Conservative/Moderate @2030 (envelope max)
+     },
+     "nuclear_large": {
+         "low": {
+             "capex_per_kw": 0.8497,
+             "learning_rate": 1.5,
+-        },  # capex: ATB Advanced/Moderate @2030
++        },  # capex: ATB Advanced/Moderate @2030 (envelope min)
+         "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+         "high": {
+-            "capex_per_kw": 1.554,
++            "capex_per_kw": 1.8228,
+             "learning_rate": 0.5,
+-        },  # capex: ATB Conservative/Moderate @2030
++        },  # capex: Lazard v18 US nuclear high $14,820/kW (2025$, Vogtle-level)
+     },
+-    "gas_cc_ccs": {  # capex: ATB 95% CCS Advanced/Conservative-vs-Moderate @2026
+-        "low": {"capex_per_kw": 0.9605, "learning_rate": 1.5},
++    "gas_cc_ccs": {
++        "low": {
++            "capex_per_kw": 0.8131,
++            "learning_rate": 1.5,
++        },  # capex: S&L 2024 CC+95% capture $2,365/kW (2023$)
+         "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+-        "high": {"capex_per_kw": 1.0395, "learning_rate": 0.5},
++        "high": {
++            "capex_per_kw": 1.0395,
++            "learning_rate": 0.5,
++        },  # capex: ATB Conservative/Moderate @2026 (envelope max)
+     },
+ }
+ 
+@@ -4631,26 +4684,41 @@ ATB_TECH_WACC_REAL: dict[str, float] = {
+ # Hydrogen-fired turbine parameters. H2 turbines are thermal generators whose
+ # fuel cost is DERIVED from renewable LCOE / electrolyzer efficiency (see
+ # :mod:`market_sim.data.hydrogen`) rather than an exogenous price path.
++#
++# capex_kw / fom_kw_yr are DERIVED (capacity-cost-grounding session
++# 2026-07-19; derive_cost_benchmark_envelope.py::derive_hydrogen_turbines,
++# test-asserted): the model's ATB-derived gas CT/CC costs × the AEO2026 EMM
++# Table 3 measured H2-turbine premium over the industrial-frame CT
++# (capex $1,215/$1,158 = 1.0492; FOM $8.59/$7.18 = 1.1964 — the only
++# published US-agency H2-turbine cost found; the old $1,400/$1,800 "NREL ATB
++# 2024, BloombergNEF" labels were decorative, ATB carries no H2-turbine
++# class). Applying the dimensionless AEO ratios to the ATB gas basis keeps
++# the H2-vs-gas entry competition on ONE cost basis — mixing AEO's absolute
++# FOM convention (frame CT $7.18/kW-yr) with ATB's ($27.9/kW-yr; different
++# maintenance scope) would make H2 artificially cheap against its direct gas
++# competitor. Heat rates / VOM / EFOR keep their DOE H2 Turbine Program /
++# NETL bases (physics, not the AEO cost table's scope; AEO2026's H2-turbine
++# heat rate 8,295 Btu/kWh is recorded in benchmarks_2026.csv for reference).
+ HYDROGEN_TURBINE_PARAMS: dict[str, dict[str, float]] = {
+     "h2_ct": {  # simple-cycle H2 turbine (peaker)
+         "heat_rate": 9.5,  # MMBtu/MWh. GE HA specs, DOE H2 Turbine Program 2023
+-        "vom": 4.0,  # $/MWh. NREL ATB 2024 (gas CT analog + H2 premium)
++        "vom": 4.0,  # $/MWh. gas CT analog + H2 premium
+         "emission_rate_co2": 0.0,  # tCO2/MWh — zero direct CO2 (green H2)
+         "nox_rate": 0.00015,  # tons NOx/MWh — H2 burns hot. DOE/NETL 2023
+         "eford": 0.06,  # above gas CT — immature fleet. Engineering judgment
+-        "capex_kw": 1400.0,  # $/kW. NREL ATB 2024, BloombergNEF H2 Outlook 2024
+-        "fom_kw_yr": 12.0,  # $/kW-yr. NREL ATB 2024
++        "capex_kw": 1499.0,  # ATB gas_ct × AEO2026 H2/frame-CT capex ratio (derived)
++        "fom_kw_yr": 33.4,  # ATB gas_ct FOM × AEO2026 H2/frame-CT FOM ratio (derived)
+         "lifetime_yr": 30,
+         "learning_rate": 0.10,  # analogy to gas CT maturation
+     },
+     "h2_ccgt": {  # combined-cycle H2 turbine (mid-merit/baseload)
+         "heat_rate": 6.9,  # MMBtu/MWh. DOE H2 Turbine Program 2023
+-        "vom": 3.5,  # $/MWh. NREL ATB 2024
++        "vom": 3.5,  # $/MWh. gas CC analog + H2 premium
+         "emission_rate_co2": 0.0,
+         "nox_rate": 0.00012,  # DOE/NETL 2023
+         "eford": 0.06,
+-        "capex_kw": 1800.0,  # $/kW — premium over gas CCGT. NREL ATB 2024
+-        "fom_kw_yr": 15.0,  # $/kW-yr. NREL ATB 2024
++        "capex_kw": 1661.2,  # ATB gas_cc × AEO2026 H2/frame-CT capex ratio (derived)
++        "fom_kw_yr": 43.2,  # ATB gas_cc FOM × AEO2026 H2/frame-CT FOM ratio (derived)
+         "lifetime_yr": 30,
+         "learning_rate": 0.10,
+     },
+@@ -4723,23 +4791,37 @@ CCUS_PARAMS: dict[str, dict[str, float]] = {
+ # with zero fuel cost and high capacity factor, dispatchable down to
+ # ``pmin_fraction`` of rated capacity (flexible baseload). Not intermittent.
+ #
+-# FF-1E reconciliation (not re-derived): the committed ATB extract's geothermal
+-# class is "HydroFlash" (ATB's `default` hydrothermal-flash class, ~$7,416/kW
+-# @2026 in 2026$), which is a DIFFERENT resource from EGS — ATB's own EGS
+-# ("DeepEGS"/"NF EGS") classes are not in the committed CAPEX/FOM extract. So
+-# these Fervo/ARPA-E/DOE-cited EGS values are kept as-is; a future intake that
+-# adds ATB's EGS techdetail (+ its CF rows) can re-derive them like
+-# NEW_ENTRY_COSTS (scripts/data/derive_entry_costs_from_atb.py).
++# Cost grounding (capacity-cost-grounding session 2026-07-19, closing the
++# FF-1E "ATB EGS classes not in the extract" gap — the four ATB 2024 EGS
++# classes are NOW committed, data/raw/nrel-atb part11+):
++# * capex_kw $5,000 = the DOE next-generation-geothermal commercial-liftoff
++#   cost level (DOE Pathways to Commercial Liftoff: Next-Generation Geothermal
++#   Power — 2030 liftoff at ~$5,000/kW, current EGS projects ~$4,500-6,000/kW;
++#   primary re-fetch blocked from this environment, benchmarks_2026.csv
++#   verified=0 — the old "NREL ATB 2024" label on this value was decorative).
++#   ATB 2024's own EGS classes are far higher (NF-EGS Flash $9,492/kW, Deep-
++#   EGS Binary $16,168/kW @2026 2026$) but derive from pre-Fervo GETEM
++#   assumptions; DOE Liftoff post-dates the 2023-25 measured drilling-cost
++#   declines (Utah FORGE / Fervo) and is the more current federal assessment
++#   (rule 14 currency). The ATB EGS band is carried as the conservative bound
++#   in the benchmark table.
++# * fom_kw_yr = ATB 2024 NF-EGS Flash Moderate @2026 (2026$), DERIVED from
++#   the committed extract (derive_cost_benchmark_envelope.py::derive_egs_fom,
++#   test-asserted) — the cheapest published EGS-class FOM, replacing the
++#   indefensible 0.0 ("captured in VOM": $1/MWh ≈ $8/kW-yr vs the $150-208
++#   published EGS range). With the DOE capex level this puts the screen LCOE
++#   at ~$66/MWh — inside DOE Liftoff's own $60-70/MWh 2030 corridor, a
++#   cross-source coherence check documented in the methodology doc §4.
+ GEOTHERMAL_PARAMS: dict[str, dict[str, float]] = {
+     "egs": {
+         "capacity_factor": 0.90,  # high availability. DOE GeoVision 2019
+-        "vom": 1.0,  # $/MWh — minimal, no fuel. NREL ATB 2024
++        "vom": 1.0,  # $/MWh — minimal, no fuel
+         "emission_rate_co2": 0.0,  # zero direct emissions
+         "nox_rate": 0.0,
+         "eford": 0.05,  # comparable to nuclear. DOE GeoVision 2019
+         "pmin_fraction": 0.20,  # turn down to 20% for flexibility. Fervo 2024
+-        "capex_kw": 5000.0,  # $/kW — high upfront, early-stage. NREL ATB 2024
+-        "fom_kw_yr": 0.0,  # $/kW-yr — captured in VOM. NREL ATB 2024
++        "capex_kw": 5000.0,  # $/kW. DOE Liftoff next-gen geothermal liftoff level
++        "fom_kw_yr": 163.4,  # ATB 2024 NF-EGS Flash Moderate @2026, 2026$ (derived)
+         "lifetime_yr": 30,
+         "learning_rate": 0.15,  # steep — analogous to early solar. Fervo, ARPA-E
+         "heat_rate": 0.0,  # no fuel
+@@ -4749,28 +4831,36 @@ GEOTHERMAL_PARAMS: dict[str, dict[str, float]] = {
+ # Offshore wind parameters. A separate renewable category from onshore wind:
+ # higher and less variable capacity factors, higher costs, distinct zones.
+ #
+-# FF-1E reconciliation (documented, not re-derived): ATB 2024 does carry these
+-# classes (OffShoreWind Class3 fixed-bottom ~$6,312/kW @2026 2026$; Class12
+-# floating starts 2028), and the capex_kw values below sit below that near-year
+-# ATB Moderate level — the same "anchored to a later, declined ATB year"
+-# pattern FF-1E corrected in NEW_ENTRY_COSTS. They are NOT re-derived here:
+-# offshore is a minor, ISO-gated build (base_cf and the per-ISO
+-# _offshore_wind_params structure are entangled) and FF-0D graded it
+-# CURRENT-vintage, so a full re-derivation (both classes, floating's 2028 start,
+-# CF rows) is a bounded follow-up for a dedicated emerging-tech-cost session,
+-# not FF-1E's P0/P1 core. Values kept on their prior ATB-2024 basis.
++# capex_kw / fom_kw_yr are DERIVED from the committed ATB 2024 extract
++# (scripts/data/derive_cost_benchmark_envelope.py::derive_offshore_wind,
++# asserted by tests/test_cost_benchmark_envelope.py) — the dedicated
++# emerging-tech-cost follow-up FF-1E flagged: fixed-bottom = OffShoreWind
++# Class3 Moderate @2026; floating = Class12 Moderate @2030 (ATB's earliest
++# floating year — the same earliest-published-year convention as new nuclear),
++# both in constant 2026$. This replaces the prior hand-set $4,200/$5,500,
++# which sat below every 2024-26 published fixed-bottom point and re-armed the
++# "anchored to a later, declined ATB year" pattern FF-1E corrected in
++# NEW_ENTRY_COSTS. Cross-source envelope (2026$): S&L Jan-2024 monopile
++# $3,689/kW (2023$) and AEO2026 EMM $3,711/kW (2025$) sit LOW (pre-cost-crisis
++# engineering bases); Lazard v18 spans $3,450-6,550/kW (2025$); ATB Moderate
++# @2026 ($6,312) reflects the post-2023 offshore cost reset near Lazard's
++# high — an honestly expensive tech that rarely clears the entry screen
++# unsubsidized, matching observed US offshore economics. The model's own
++# Wright's-Law learning then declines the floating FOAK base with global
++# deployment. base_cf / lifetime / learning_rate are not ATB CAPEX/FOM
++# quantities and keep their bases (per-ISO CF override structure unchanged).
+ OFFSHORE_WIND_PARAMS: dict[str, dict[str, float]] = {
+     "fixed_bottom": {
+         "base_cf": 0.45,  # annual average. NREL ATB 2024
+-        "capex_kw": 4200.0,  # $/kW. NREL ATB 2024
+-        "fom_kw_yr": 80.0,  # $/kW-yr — marine access premium. NREL ATB 2024
++        "capex_kw": 6312.3,  # ATB 2024 Moderate Class3 @2026, 2026$ (derived)
++        "fom_kw_yr": 89.7,  # ATB 2024 Moderate Class3 @2026, 2026$ (derived)
+         "lifetime_yr": 30,
+         "learning_rate": 0.08,  # NREL ATB 2024, IRENA 2024
+     },
+     "floating": {
+         "base_cf": 0.48,  # deeper water, better resource. NREL ATB 2024
+-        "capex_kw": 5500.0,  # $/kW — early stage. NREL ATB 2024
+-        "fom_kw_yr": 95.0,
++        "capex_kw": 10243.8,  # ATB 2024 Moderate Class12 @2030 (earliest), 2026$ (derived)
++        "fom_kw_yr": 79.0,  # ATB 2024 Moderate Class12 @2030, 2026$ (derived)
+         "lifetime_yr": 30,
+         "learning_rate": 0.12,  # steeper — less mature. NREL ATB 2024
+     },

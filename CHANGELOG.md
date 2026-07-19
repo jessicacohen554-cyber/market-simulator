@@ -1,5 +1,52 @@
 # Changelog
 
+## 2026-07-19 — New-build capacity costs: cross-source grounding, literature-envelope ranges, storage/offshore/EGS/H2 derivation-lock
+
+Forecast-only cost-input grounding (capacity-expansion entry screens); **no LP
+formulation change, backcast byte-identical** (evolution is `mode="forecast"`
+gated). Full methodology + citations:
+`docs/new-build-cost-methodology-2026-07.md`.
+
+- **New raw benchmark datatype** `data/raw/new-build-cost-benchmarks/`:
+  cross-source overnight-cost/FOM table (`benchmarks_2026.csv`) transcribed
+  from five downloaded-and-markdown-converted documents — EIA/Sargent & Lundy
+  Jan-2024 capital-cost study (AEO2025 basis), EIA AEO2026 EMM assumptions
+  (Apr 2026, Tables 3-4 incl. 25-region costs), EIA AEO2025 LCOE report,
+  Lazard LCOE+ v18.0 (Jun 2025, incl. LCOS v10 and the $2,400-2,600/kW CCGT
+  market-quote case), Brattle 2025 PJM CONE report (Apr 2025) — with QA'd
+  conversions committed under `md/`, sha256-pinned re-download script
+  (`scripts/data/fetch_cost_benchmark_sources.py`), and per-row
+  `in_envelope`/`verified` flags (unreachable primaries — DOE Liftoff, PNNL —
+  are recorded `verified=0` and never enforce).
+- **`TECH_COST_MULTIPLIERS` capex low/high re-derived as the published-cost
+  literature envelope** (`scripts/data/derive_cost_benchmark_envelope.py`,
+  asserted by new `tests/test_cost_benchmark_envelope.py`): min/max across
+  ATB 2024's own three cases ∪ the verified benchmark rows, normalized to
+  2026$ — replacing FF-1E's ATB-internal ratios, which were degenerate for
+  mature techs (gas_ct 1.0/1.0 → 0.6246/1.0372; gas_cc ±1% → 0.5852/1.6783).
+  Mid stays the pinned ATB 2024 Moderate (defaults byte-identical; ATB 2024
+  verified to be the FINAL ATB edition, so the pin is current).
+- **Derivation-locked the hand-set cost tables** onto committed sources:
+  li-ion `STORAGE_TECHS` (4hr $1,140→$1,810.3, 8hr $2,280→$3,154.3, 12hr
+  $3,100→$4,498.4 via ATB's exactly-linear duration split, + FOM);
+  `OFFSHORE_WIND_PARAMS` (fixed $4,200→$6,312.3 @2026, floating
+  $5,500→$10,243.8 @2030 — the FF-1E-flagged re-derivation);
+  `GEOTHERMAL_PARAMS` EGS FOM 0→163.4 (ATB NF-EGS Flash; capex $5,000 kept on
+  the DOE-Liftoff level, decorative "ATB" label corrected);
+  `HYDROGEN_TURBINE_PARAMS` ($1,400/$1,800 → $1,499.0/$1,661.2 = ATB gas
+  hosts × the AEO2026-measured H2/frame-CT premium; FOM onto the same basis).
+  ATB extract extended with the four EGS classes (append parts 11-12,
+  FF-1E parts byte-untouched).
+- Parameter-citation registry regen run locally (`--check` green) but its
+  push is deferred to the standing registry-reconcile chore (1.5 MB pair
+  exceeds a safe single-call API payload; no new top-level keys, so
+  `validate_parameters.py` is green against main's registry — verified).
+  Data register + `data/raw/nrel-atb/README.md` updated.
+- **Collateral main fix:** `runner.py` used the `UNSET` sentinel without
+  importing it (miso-76 B, `2ad50aa`) — a `NameError` killing EVERY
+  forecast-mode run on main (backcasts don't traverse `run_scenario_iso`).
+  One-line import fix, found by this session's T0 forecast smoke.
+
 ## 2026-07-17 — Consolidate CAMPD outage detection: delete the facility-summed layer, per-unit detector is the sole source (all ISOs)
 
 Core-infra refactor + data-derive; **no LP solve**. Enables the two ERCOT/PJM
