@@ -85,13 +85,7 @@ resolve that finding).
 from __future__ import annotations
 
 import argparse
-import csv
-import io
 import sys
-import time
-import urllib.error
-import urllib.parse
-import urllib.request
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -104,20 +98,15 @@ import pyarrow.parquet as pq
 # Repo path bootstrap
 # ---------------------------------------------------------------------------
 REPO = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 from market_sim.config import paths  # noqa: E402
+from scripts.lib import pjm_dataminer  # noqa: E402
 
 OUT_DIR = paths.PJM_AS_DIR
 
-# PJM DataMiner2 REST API — subscription key is PUBLIC (embedded in the
-# DataMiner2 Angular app's settings.json at /config/settings.json); same key
-# scripts/data/fetch_pjm_energy_offers.py already uses.
-API_BASE = "https://api.pjm.com/api/v1"
-SUB_KEY = "6a75d9f6d933401dbb4f36f8e70b95b3"
-
-PAGE_SIZE = (
-    50_000  # rows per page (max the API allows; matches the energy-offers fetcher)
-)
+# The API base / public subscription key / page size live in
+# scripts.lib.pjm_dataminer (shared across the fetch_pjm_* scripts).
 
 # The intake authorization (2026-07-10 session, CLAUDE.md rule 22) covers only
 # Jan 1 - Jun 30 2026 for the "H1-2026" leg — this is a hard cap, not a default,
@@ -208,75 +197,6 @@ def _date_filter(start: date, end_exclusive: date) -> str:
     )
 
 
-def _build_url(feed: str, start: date, end_exclusive: date, start_row: int) -> str:
-    """Compose the DataMiner2 CSV export URL for one page of a date window."""
-    params = {
-        "startRow": str(start_row),
-        "rowCount": str(PAGE_SIZE),
-        "sort": "datetime_beginning_utc",
-        "order": "Asc",
-        "format": "csv",
-        "datetime_beginning_utc": _date_filter(start, end_exclusive),
-    }
-    return f"{API_BASE}/{feed}?" + urllib.parse.urlencode(params)
-
-
-def _fetch_page(url: str, *, retries: int = 4, sleep_s: float = 1.5) -> list[dict]:
-    """Fetch one CSV page; return list of row dicts.
-
-    Retries on HTTP 429/503 with exponential back-off. A genuine HTTP 404, or
-    a 200 with an empty body (DataMiner2's actual response for a window with
-    no rows — e.g. entirely before a feed's retention floor, or not yet
-    published), both return an empty list rather than raising: "no data for
-    this window" is a legitimate, expected outcome here, not an error.
-
-    HTTP 400 is treated the same way (logged, not raised): confirmed live
-    2026-07-10 that the ``ancillary_services`` feed returns 400 (not an empty
-    200) for a 2018 full-year window even though its own ``/metadata``
-    advertises ``firstAvailable: 2012-10-01`` — DataMiner2 is evidently
-    inconsistent across feeds about how it signals "before this feed's real
-    data starts." Logged distinctly from 404 so a genuinely malformed request
-    is still visible in the run log, not silently indistinguishable.
-    """
-    delay = sleep_s
-    for attempt in range(retries + 1):
-        try:
-            req = urllib.request.Request(
-                url,
-                headers={
-                    "Ocp-Apim-Subscription-Key": SUB_KEY,
-                    "Accept": "text/csv",
-                    "User-Agent": "market-sim/fetch_pjm_as",
-                },
-            )
-            with urllib.request.urlopen(req, timeout=120) as resp:
-                raw = resp.read().decode("utf-8-sig", errors="replace")  # strip BOM
-            if not raw.strip():
-                return []
-            rows = list(csv.DictReader(io.StringIO(raw)))
-            return rows
-        except urllib.error.HTTPError as exc:
-            if exc.code == 404:
-                return []
-            if exc.code == 400:
-                print(f"    HTTP 400 — treating as no data for this window ({url})")
-                return []
-            if exc.code in (429, 503) and attempt < retries:
-                print(f"    HTTP {exc.code} — back-off {delay:.0f}s …")
-                time.sleep(delay)
-                delay *= 2
-                continue
-            raise
-        except (urllib.error.URLError, TimeoutError) as exc:
-            if attempt < retries:
-                print(f"    network error ({exc}) — back-off {delay:.0f}s …")
-                time.sleep(delay)
-                delay *= 2
-                continue
-            raise
-    return []
-
-
 def _fetch_window(
     feed: str,
     start: date,
@@ -285,28 +205,28 @@ def _fetch_window(
     sleep_s: float = 1.5,
     retries: int = 4,
 ) -> pd.DataFrame:
-    """Download every page for one ``[start, end)`` date window of one feed."""
-    all_rows: list[dict] = []
-    start_row = 1
-    page = 1
+    """Download every page for one ``[start, end)`` date window of one feed.
 
-    while True:
-        url = _build_url(feed, start, end_exclusive, start_row)
-        print(f"  page {page:3d}  startRow={start_row:>8d} … ", end="", flush=True)
-        rows = _fetch_page(url, retries=retries, sleep_s=sleep_s)
-        print(f"{len(rows):>6d} rows")
-
-        all_rows.extend(rows)
-        if len(rows) < PAGE_SIZE:
-            break  # last page (or no data at all in this window)
-
-        start_row += PAGE_SIZE
-        page += 1
-        time.sleep(sleep_s)
-
-    if not all_rows:
-        return pd.DataFrame()
-    return pd.DataFrame(all_rows)
+    A genuine HTTP 404, an HTTP 400, or a 200 with an empty body all mean "no
+    data for this window" (before a feed's retention floor, or not yet
+    published — DataMiner2 signals it inconsistently across feeds) and yield an
+    empty frame rather than raising; see :func:`scripts.lib.pjm_dataminer.fetch_page`.
+    """
+    params = {
+        "sort": "datetime_beginning_utc",
+        "order": "Asc",
+        "format": "csv",
+        "datetime_beginning_utc": _date_filter(start, end_exclusive),
+    }
+    rows = pjm_dataminer.fetch_feed(
+        feed,
+        params,
+        user_agent="market-sim/fetch_pjm_as",
+        sleep_s=sleep_s,
+        retries=retries,
+        no_data_codes=(404, 400),
+    )
+    return pd.DataFrame(rows) if rows else pd.DataFrame()
 
 
 def _coerce_dtypes(df: pd.DataFrame, spec: FeedSpec) -> pd.DataFrame:
