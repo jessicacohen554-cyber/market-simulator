@@ -38,6 +38,11 @@ data/raw/pjm-energy-offers/*
 data/raw/caiso-public-bids/*
 !data/raw/caiso-public-bids/README.md
 
+# MISO annual bc_HIST source mirrors (~20-70 MB raw each; validation layer
+# only, rule 13): refetch with scripts/data/fetch_miso_bc_hist.py (see
+# data/raw/transfer-constraint-binding/MISO/README.md provenance table).
+data/raw/transfer-constraint-binding/MISO/*_bc_HIST.csv.gz
+
 # PJM DataMiner2 DA virtual-bid feeds (hrl_da_incs_decs, hrl_dmd_bids): same
 # non-member redistribution restriction as pjm-energy-offers; refetch with
 # scripts/fetch_pjm_da_virtuals.py (see data/raw/pjm-da-virtuals/README.md).
