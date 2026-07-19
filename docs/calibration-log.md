@@ -17931,3 +17931,50 @@ steam-floor rule-23 derive (ask still PENDING,
 stop-hook auto-committed the mechanism mid-session (blob-verified all ≥300-line
 sources by SHA vs origin — rule 27 clean); branch rebased onto main by the
 same automation; final rebase+push this session. Next number: caiso-100.
+
+### 2026-07-19 — CAISO — caiso-100 (belly charge-economics DERIVE-FIRST: day-threshold hypothesis REFUTED, cycling-cost anchor identified at the derived $14.25; owner ask filed, nothing solved with the mechanism); keeper stays caiso-99
+
+Derive-first + owner-gated session (the CAISO-100 charter; carrier carried no
+execution ruling → measured, pre-registered, ask filed). Full record:
+`results/calibration/FINDING-caiso100-charge-economics-2026-07-19.md`; probe
+`scripts/probes/_caiso100_charge_econ.py` (committed); fresh same-machine
+`caiso99_repro_A` + `caiso99_shape_B` (both reproduce their recorded scored
+surfaces DIGIT-FOR-DIGIT — A: +1.3/+10.9/−6.4 | +0.2/+9.0/−4.7 |
++1.6/+8.4/−1.9, C3c 20/0/0; B: +1.2/+7.7/−5.3 | +0.3/+7.6/−4.4 |
++1.8/+6.3/−2.3, C3c 20/1/0 — FINDING-caiso92b protocol upheld, gitignored).
+
+- **Hypothesis (b) — DA-spread day-level charging threshold: MEASURED-REFUTED,
+  CLOSED.** The mature fleet charges ~every day (skip-share u<0.25: 0.19/0.02/
+  0.02; u p10-p90 a broad 0.4-0.9 band; corr(u, TB4) 0.07-0.31; charge-weighted
+  spread median ≈ day median on every RT/DA basis). No day-gate exists for a
+  threshold to anchor.
+- **Hypothesis (a) — cited cycling-degradation cost: SUPPORTED at the margin.**
+  Revealed conduct cost at the fleet's 5-10 % charge margin c* = $11-17
+  (2024/25, RT + DA bases; 2023 $14-24) vs the DERIVED
+  `_degradation_cost_per_mwh("li_ion_4hr")` = 285$/kWh×1000/5000cyc×0.25 =
+  **$14.25/MWh discharged** (NREL ATB 2024 + LFP warranty; constants.py:4128 —
+  the identical formula ERCOT's cycling lane quoted). Model margin prices only
+  its efficiency-loss floor (B-leg c* $6.6-7.4).
+- **The keeper's residual belly is a PRICE defect more than a volume defect**
+  (battery-only, NG:OTH): belly chg +45/+6/+5 % but charge-weighted λ
+  $12.2/$5.8/$7.6 above the measured glut floor; model day-median TB4 spread
+  on its own λ 24.5/16.9/19.4 vs actual 47.3/37.3/33.5 (the zero-cost LP
+  compresses its own spread to its only hurdle). Annual under-charge −4/−8 %
+  (2024/25) sits OUTSIDE the belly (shoulder/overnight inelastic conduct — the
+  ERCOT-lane channel, recorded non-target). PS-inclusion basis note: prior
+  FINDING charge totals included 1.14/1.70/1.60 TWh Helms; battery-only is the
+  clean basis and used throughout.
+- **caiso-76's battery-adder NO-CHANGE ruling: both grounds measured as moved**
+  (RDT $0 is the fallback, not the design — DEB ρ carries cycling costs, DMM
+  2024 Eq 2.11.1 + MSC Nov-2024; under-cycling ground now inverted into
+  belly-price excess). Re-opening is the owner's call: **OWNER ASK FILED**
+  (`docs/handoffs/caiso-100-charge-econ-ask-2026-07-19.md`) — arm
+  `battery_dispatch_adder` 0.0 → the derived 14.25 for the CAISO backcast
+  recipe, single-delta A/B under FINDING §6's PRE-REGISTERED bands/gates
+  (belly falls no overshoot; evening toward 0 no cross; two-sided ±15 %
+  battery-only throughput guard + belly-volume floor; C1 12/12; C7/C8 PASS;
+  C5a holds/improves; register whatever, promote only on no-status-regression;
+  registration must prune CAISO retention to top-15). No knob change, no
+  mechanism solve, nothing registered this session; keeper stays
+  `2026-07-19-caiso-99-storage-shape`. WP-3 ask still PENDING (untouched).
+  Next number: caiso-101.
