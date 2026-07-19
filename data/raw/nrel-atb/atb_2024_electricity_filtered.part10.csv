@@ -1,0 +1,163 @@
+atb_year,technology,techdetail,display_name,core_metric_parameter,core_metric_case,tax_credit_case,scenario,default,core_metric_variable,value
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Advanced,1,2034,760.2303814239264
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Advanced,1,2035,682.8963556917138
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Advanced,1,2036,674.8745152900256
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Advanced,1,2037,666.8526748883373
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Advanced,1,2038,658.8308344866492
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Advanced,1,2039,650.8089940849611
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Advanced,1,2040,642.7871536832729
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Advanced,1,2041,634.7653132815848
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Advanced,1,2042,626.7434728798966
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Advanced,1,2043,618.7216324782083
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Advanced,1,2044,610.6997920765202
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Advanced,1,2045,602.6779516748321
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Advanced,1,2046,594.6561112731439
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Advanced,1,2047,586.6342708714557
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Advanced,1,2048,578.6124304697676
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Advanced,1,2049,570.5905900680793
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Advanced,1,2050,562.568749666391
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2022,1482.6832803021205
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2023,1610.904664478271
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2024,1575.7665332950637
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2025,1540.6284021118563
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2026,1505.4902709286494
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2027,1470.3521397454424
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2028,1435.214008562235
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2029,1400.0758773790278
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2030,1364.9377461958204
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2031,1329.7996150126132
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2032,1294.6614838294058
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2033,1259.5233526461986
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2034,1224.385221462991
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2035,1189.2470902797832
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2036,1169.6520271690672
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2037,1150.0569640583512
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2038,1130.461900947635
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2039,1110.866837836919
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2040,1091.2717747262031
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2041,1071.6767116154872
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2042,1052.0816485047712
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2043,1032.486585394055
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2044,1012.891522283339
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2045,993.296459172623
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2046,973.7013960619072
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2047,954.106332951191
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2048,934.5112698404748
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2049,914.916206729759
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Conservative,1,2050,895.3211436190419
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2022,1482.6832803021205
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2023,1610.904664478271
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2024,1551.2727044066685
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2025,1491.6407443350658
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2026,1432.0087842634634
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2027,1372.376824191861
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2028,1312.7448641202586
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2029,1253.112904048656
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2030,1193.4809439770536
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2031,1133.8489839054512
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2032,1074.217023833849
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2033,1014.5850637622466
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2034,954.9531036906442
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2035,895.3211436190419
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2036,881.1594910905533
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2037,866.9978385620647
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2038,852.8361860335762
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2039,838.6745335050875
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2040,824.5128809765989
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2041,810.3512284481103
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2042,796.1895759196219
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2043,782.0279233911332
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2044,767.8662708626447
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2045,753.7046183341562
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2046,739.5429658056674
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2047,725.381313277179
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2048,711.2196607486902
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2049,697.0580082202017
+2024,UtilityPV,Class5,Utility PV - Class 5,CAPEX,Market,PTC,Moderate,1,2050,682.8963556917138
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2022,23.76560345636052
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2023,22.21880245374066
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2024,21.407927793054256
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2025,20.60212091897841
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2026,19.80106328492619
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2027,19.00446249365733
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2028,18.21204966800207
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2029,17.423577132574675
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2030,16.638816364391797
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2031,15.85755617669643
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2032,15.079601105603478
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2033,14.304769973624769
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2034,13.5328946078553
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2035,12.763818693735924
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2036,12.670208627372556
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2037,12.576819678078229
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2038,12.483648495594316
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2039,12.390691797004074
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2040,12.297946365049109
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2041,12.205409046496044
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2042,12.113076750551793
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2043,12.02094644732558
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2044,11.929015166336262
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2045,11.837279995063293
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2046,11.745738077539931
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2047,11.654386612987205
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2048,11.563222854487256
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2049,11.47224410769484
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Advanced,1,2050,11.381447729585558
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2022,23.76560345636052
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2023,22.21880245374066
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2024,21.86050190158937
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2025,21.50289995550892
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2026,21.145979982021444
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2027,20.789725871538124
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2028,20.4341220178948
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2029,20.079153298839376
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2030,19.72480505741983
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2031,19.371063084224648
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2032,19.01791360043056
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2033,18.665343241614966
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2034,18.313339042293293
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2035,17.96188842114344
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2036,17.76460103121754
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2037,17.567505950951663
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2038,17.370600649955545
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2039,17.173882642037867
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2040,16.977349484245448
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2041,16.780998775927294
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2042,16.584828157822976
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2043,16.388835311174372
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2044,16.19301795686025
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2045,15.997373854552936
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2046,15.80190080189642
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2047,15.606596633705244
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2048,15.41145922118362
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2049,15.216486471164158
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Conservative,1,2050,15.021676325365569
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2022,23.76560345636052
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2023,22.21880245374066
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2024,21.60888881661824
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2025,21.00107658115607
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2026,20.395279725063983
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2027,19.79141685802126
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2028,19.1894109140506
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2029,18.589188868087376
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2030,17.99068147455273
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2031,17.393823025963098
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2032,16.798551129807034
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2033,16.20480650209682
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2034,15.612532776158696
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2035,15.021676325365569
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2036,14.869318093880388
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2037,14.717240636279373
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2038,14.56543934971196
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2039,14.413909731389564
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2040,14.262647375881173
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2041,14.11164797249625
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2042,13.960907302751526
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2043,13.8104212379187
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2044,13.660185736649964
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2045,13.510196842678514
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2046,13.36045068259131
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2047,13.210943463671404
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2048,13.061671471807394
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2049,12.912631069467482
+2024,UtilityPV,Class5,Utility PV - Class 5,Fixed O&M,Market,PTC,Moderate,1,2050,12.763818693735924
