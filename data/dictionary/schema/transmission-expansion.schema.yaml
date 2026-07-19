@@ -1,0 +1,105 @@
+datatype: transmission-expansion
+schema_version: 1
+title: Committed transmission-expansion projects (binding-instrument registry)
+description: >-
+  One row per (project, affected model element): transmission projects whose
+  construction is bound by an enforceable public instrument — ISO board / RTO
+  plan approval with cost allocation (MISO LRTP tranche, CAISO TPP, PJM RTEP
+  designation), a state-regulator order (PUCT, NYPSC, CPUC), a signed contract
+  (NY Tier 4, MA 83D), or physical construction/energization — mapped onto the
+  model's reduced zonal topology as a transfer-capability delta. Roadmap /
+  study / recommended-but-unapproved projects do NOT belong here (they are
+  watchlist entries in the raw README, mirroring confirmed-retirements'
+  announced-exclusion). Deltas are ADDITIVE to each ISO's base static limits
+  and admitted only when in_service_year postdates the ISO's base-static
+  vintage (data.transmission_expansion.TRANSMISSION_BASE_STATIC_VINTAGE), so a project already
+  embedded in a measured base static is never double-counted. A project that
+  cannot change any modeled limit (fully inside one zone, or an external
+  supply-side line) is still recorded — with target_kind intra_zonal /
+  import_tranche and a dispatch-inert delta — so the research is preserved
+  without inventing a mapping.
+key_columns: [iso, row_id]
+allow_additional_columns: false
+columns:
+  - {name: iso,               dtype: string,  unit: none, nullable: false,
+     description: Model ISO the affected element belongs to (ERCOT/CAISO/PJM/MISO/NYISO/NEISO).}
+  - {name: row_id,            dtype: string,  unit: none, nullable: false,
+     description: Stable slug "<project_id>--<element>" unique per (project,
+       affected model element); a project touching two links carries two rows.}
+  - {name: project_id,        dtype: string,  unit: none, nullable: false,
+     description: Stable project slug shared by all of a project's rows
+       (e.g. necec, chpe, miso-lrtp-t1).}
+  - {name: project_name,      dtype: string,  unit: none, nullable: false,
+     description: Human-readable project name for review.}
+  - {name: sponsor,           dtype: string,  unit: none, nullable: true,
+     description: Developer / transmission owner(s).}
+  - {name: status_tier,       dtype: string,  unit: none, nullable: false,
+     description: One of energized | under_construction | approved_funded.
+       Vocabulary is closed; roadmap/planned is deliberately NOT a member.}
+  - {name: instrument,        dtype: string,  unit: none, nullable: false,
+     description: Full citation of the binding instrument — approving body,
+       docket/case or plan id, order/decision name, date signed.}
+  - {name: instrument_id,     dtype: string,  unit: none, nullable: true,
+     description: Short stable docket / plan-id slug where one exists
+       (e.g. puct-55718, miso-lrtp-t2.1).}
+  - {name: instrument_date,   dtype: "datetime64[ns]", unit: none, nullable: true,
+     description: Date the instrument became binding (board vote, order signed,
+       contract executed).}
+  - {name: in_service_year,   dtype: int64,   unit: year, nullable: false,
+     description: Calendar year the element's capability change is expected in
+       service (projected COD; actual year for energized rows).}
+  - {name: in_service_month,  dtype: int64,   unit: month, nullable: true,
+     description: Month (1-12) within in_service_year where published.}
+  - {name: target_kind,       dtype: string,  unit: none, nullable: false,
+     description: One of link | interface | import_tranche | intra_zonal.
+       link = a model TransferLink TTC delta; interface = a named
+       InterfaceLimit cap delta; import_tranche = external supply-side
+       capability into a zone (recorded, dispatch-inert in V1); intra_zonal =
+       entirely inside one model zone (recorded, delta_mw forced 0).}
+  - {name: from_zone,         dtype: string,  unit: none, nullable: true,
+     description: Model zone name — the link's from side (link rows); the
+       containing zone (intra_zonal rows); null for interface/import_tranche.}
+  - {name: to_zone,           dtype: string,  unit: none, nullable: true,
+     description: Model zone name — the link's to side (link rows); the
+       receiving zone (import_tranche rows); null otherwise.}
+  - {name: interface_name,    dtype: string,  unit: none, nullable: true,
+     description: InterfaceLimit.name the delta applies to (interface rows
+       only, e.g. HQ_import_simultaneous).}
+  - {name: delta_mw,          dtype: float64, unit: mw,   nullable: false,
+     description: Transfer-capability increase in MW, additive to the base
+       static limit, in the row's listed from_zone->to_zone orientation (or
+       the interface's listed direction). Must be 0.0 for intra_zonal rows
+       and >= 0 always; deratings/cancellations are expressed by superseding
+       the row, never by a negative delta.}
+  - {name: delta_mw_reverse,  dtype: float64, unit: mw,   nullable: true,
+     description: Reverse-direction delta where a source quantifies an
+       asymmetric change (interface rows with reverse_cap_mw; one-way link
+       pairs carry separate rows instead). Null = symmetric (link rows apply
+       delta_mw to the link's symmetric ttc_mw).}
+  - {name: capacity_basis,    dtype: string,  unit: none, nullable: true,
+     description: What the published MW measures — one of thermal_rating |
+       interface_uplift | converter_rating. A thermal_rating basis must carry
+       a mapping_note reconciling line rating to interface-TTC uplift.}
+  - {name: mapping_confidence, dtype: string, unit: none, nullable: false,
+     description: One of exact | reconciled | ambiguous — how directly the
+       physical project maps onto the model element.}
+  - {name: mapping_note,      dtype: string,  unit: none, nullable: false,
+     description: REQUIRED reconciliation note (CLAUDE.md rule 14) — which
+       physical facilities, why this model element, what share of the
+       published MW, and which base static value the delta is additive to.}
+  - {name: superseded,        dtype: bool,    unit: none, nullable: false,
+     description: True when a counter-instrument (cancellation, withdrawal,
+       re-scope) suspends this row. Kept for audit; loader ignores.}
+  - {name: superseding_instrument, dtype: string, unit: none, nullable: true,
+     description: Citation of the counter-instrument when superseded.}
+  - {name: superseding_instrument_date, dtype: "datetime64[ns]", unit: none, nullable: true,
+     description: Date the counter-instrument became binding, when known.}
+  - {name: source_url,        dtype: string,  unit: none, nullable: false,
+     description: Authoritative URL of the instrument, plan document, or
+       project posting the row transcribes.}
+  - {name: source_doc,        dtype: string,  unit: none, nullable: true,
+     description: Document title / table / page reference within source_url.}
+  - {name: accessed,          dtype: "datetime64[ns]", unit: none, nullable: false,
+     description: Date the source was last re-queried (the intake vintage stamp).}
+  - {name: notes,             dtype: string,  unit: none, nullable: true,
+     description: Free-text context (phasing, companion segments, watchlist links).}
