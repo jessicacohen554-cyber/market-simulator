@@ -1,7 +1,10 @@
 # ERCOT-87 (design/charter) — the residual mid-band formation lane: offline-CT RT participation + CC beyond the mitigated SCED2 ceiling
 
-**Status: design/feasibility only. No code, no solve, no registration this
-document.** Successor lane to ERCOT-86 (`ercot-moderate-tightness-formation-design-2026-07.md`),
+**Status: §6 step 1 (measure-first) EXECUTED 2026-07-19 — see §8. Basis B
+(CC beyond the mitigated ceiling) is MEASUREMENT-REFUTED and closed; basis A
+(offline-CT startup-inclusive participation) is measurement-supported. No
+apply seam, no solve, no registration — the §6 step 2 build remains
+owner-gated.** Successor lane to ERCOT-86 (`ercot-moderate-tightness-formation-design-2026-07.md`),
 opened per rule 19 (one mechanism per phenomenon — the ERCOT-86 RT/SCED online-spare
 wall is closed; what it does *not* reach is a distinct phenomenon with its own
 measured basis, not a knob on that wall).
@@ -143,3 +146,78 @@ conditioning and per-year artifact scoping.
 ## 7. Deliverable of this charter
 
 This document only. The build is chartered, not started, pending owner go-ahead.
+
+## 8. Measurement results — §6 step 1 executed (2026-07-19)
+
+Probe: `scripts/probes/ercot87_midband_basis_measure.py`; artifact:
+`data/raw/_validation-source/ercot87_midband_basis_measurement.json`.
+Measurement only — nothing here feeds the model; observed lambda enters only
+as the adjudication reference. Corpus: the four on-disk NP3-965 sample-day
+parquets (ERCOT-74/75/86 intake, no new fetch). Coverage: **35/68** (2024) and
+**37/65** (2025) actual $150–500 hours fall on sample days; the largest
+uncovered block is the Jan-2024 winter-morning cluster (Jan 15/16/21–22 —
+never intaken; the corpus's 2024 tail days start Mar 4). Actual RT is hourly
+(mean of 4–12 SCED intervals), so per-hour reach flags are conservative;
+MW-mass fields — not raw curve maxima, which saturate on tiny cap-priced
+proxy-extension slivers — carry the evidence.
+
+### 8.1 Basis B — REFUTED and closed
+
+The mitigated-ceiling hypothesis fails its own §3.2 kill criterion: **SCED1
+and SCED2 are indistinguishable on the CC online spare** in the covered
+mid-band hours — identical spare MW (means 349 vs 349 in 2024, 629 vs 629 in
+2025), in-band mass within noise (27 vs 25 MW; 19 vs 21 MW), ladders equal
+rung-for-rung within 1–3 mult points in every net-load bin, and
+`basisB_gain` (SCED1 reaches lambda where SCED2 does not) fires in **0/72**
+covered hours. The Submitted TPO curve tops out *lower* still (median hourly
+max $89–104): the high tops on SCED1/SCED2 are the proxy extension, not
+submitted offers. So the ~29–52 p90 effective-HR ceiling on CC is the
+**submitted offer shape itself, not mitigation** — there is no unmitigated CC
+offer mass in the band for an apply seam to recover, on any disclosed step.
+The CC half of the residual cannot form from CC offers; in those same hours
+the band-priced mass sits in the offline quick-start pool (below), which
+unifies the phenomenon under basis A.
+
+### 8.2 Basis A — SUPPORTED
+
+* **The pool exists and is band-priced.** The offline startable CT pool
+  (statuses OFFQS/OFFNS; full SCED curves, startup offers and Min Gen Cost
+  disclosed) averages 700–800 MW across the covered mid-band hours, of which
+  **102–140 MW is priced inside $150–500** and 74–107 MW within ±33% of
+  lambda — roughly **5× the in-band mass of the entire online CT spare**
+  (24–35 MW) and 6× the CC spare's (19–27 MW). The online-spare wall was not
+  mis-priced; it is simply not where the band's offer mass lives.
+* **SCED demonstrably uses it.** 4,191 (2024) / 2,988 (2025) OFF→ON CT
+  starts in the corpus; in the covered mid-band hours the median hour sees
+  **12–18 CT units (215–491 MW) start**, and a just-started CT clears at an
+  as-offered price within ±33% of lambda in **25/35** (2024) and **30/37**
+  (2025) covered hours.
+* **The ladder shape is right where the residual lives.** The pool's
+  SCED2-basis p70/p90 rungs in the tight bins (p90/p97 net-load, bins 5–6)
+  sit at effective-HR mult ~44–620 (2024) / ~45–356 (2025) ≈ $110–1,800 at
+  prevailing gas — the $150–500 band's mult range (~50–200) falls inside the
+  pool's upper-rung span in exactly the bins where ERCOT-86's un-formed hours
+  cluster. Coverage per bin is 165–512 intervals over 9–35 days (thinnest:
+  bin 6, 2024 — 192 intervals/9 days; disclosed, not capped).
+* **Honest caveats.** (a) Most *started* MW clears cheap (MW-weighted median
+  cleared mult 13–16 ≈ $35–45 — inframarginal reliability/AS starts); the
+  band prices on the marginal tail, so an apply seam must offer the pool at
+  its ladder and let the LP clear it, never force it. (b) The per-hour max
+  cleared price often lands far above lambda (Base Point falling on
+  proxy-extension segments), which is why raw-max flags are permissive.
+  (c) The pool ladders' p10–p30 rungs are negative (min-gen curve bottoms) —
+  an apply seam consumes only the above-LSL startable increment.
+
+### 8.3 What this means for §6 step 2 (still owner-gated)
+
+One mechanism only (basis B is closed): an **economic fast-start
+availability** — the offline-CT pool offered to the LP at its measured
+per-bin SCED2 ladder, year-scoped 2024/2025 (rule 13, same 2023 bar as the
+RT wall), gated on unit physics (min-down ≤ 2 h — rule 12), reconciled with
+existing mechanisms per rule 19 (no overlap by construction with the ERCOT
+gas commitment bridge, which is merchant gas-**CC** only, and none with the
+RT wall, which is ON-status spare only — this pool is disjoint from both by
+status and class). D-2 attribution enumeration stays mandatory before the
+seam is written. Cadence per §6.2: default-off gate, single-year 2024
+rule-16 probe, C3a level guard + zero-spurious check, then 2025, then
+full-span LOYO.
