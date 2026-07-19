@@ -221,3 +221,79 @@ status and class). D-2 attribution enumeration stays mandatory before the
 seam is written. Cadence per §6.2: default-off gate, single-year 2024
 rule-16 probe, C3a level guard + zero-spurious check, then 2025, then
 full-span LOYO.
+
+## 9. §6.2 build record (ERCOT-88, 2026-07-19 — owner go-ahead this session)
+
+The owner authorized the §6.2 build. One mechanism only, per §8.3:
+`ScenarioConfig.ercot_faststart_pool_offer` (default **off**) — the offline
+fast-start pool's measured per-bin SCED2 ladder as a third ladder source
+inside the cleared-share wall builder
+(`fleet.build_ercot_offer_surface_cleared_share_markup`). Derive:
+`scripts/data/derive_ercot_faststart_pool.py` →
+`data/raw/_validation-source/ercot_faststart_pool_condbinned.json`.
+
+### 9.1 Rule-19 / D-2 attribution enumeration (written BEFORE the seam)
+
+Every mechanism touching fast-start (`min_down_hours ≤ 2`) gas rows in the
+ercot86 base recipe, and the reconciliation:
+
+**Bid-side (P1 `mc_bid_adjust` seam):**
+
+1. `ercot_offer_surface_conditional` (ON) — owns the **peak** rungs. The pool
+   leg targets the wall's **econ*** row universe only → disjoint row families,
+   markups never stack on a row.
+2. `ercot_offer_surface_cleared_share` (+`_state`, +`_rt`) (ON) — owns econ*
+   rows above the measured DAM cleared-share boundary; the RT leg swaps the
+   ladder source per measured bin. The pool leg partitions the SAME row
+   universe at the measured **pool boundary** `1 − pool_frac(bin)`: rows above
+   it take the pool ladder (**replace** composition, the ERCOT-86 precedent —
+   the online-spare basis is refuted there: that capability is telemetered
+   OFFQS/OFFNS, not online spare); rows between the cleared boundary and the
+   pool boundary keep the wall/RT basis. One owner per row-bin by construction.
+3. `ercot_offer_surface_midcurve_conditional` / `_lowcurve*` — OFF in the
+   recipe (midcurve is mutually-exclusive-hard-error with the wall anyway).
+4. Monthly startup-amortization markup — additive on all rows, unchanged; the
+   pool leg inherits the wall's floor convention (`max(0, target − mc_base)`
+   added to the amortized bid), consistent with every other surface leg.
+
+**Floor-side (min_gen forcing — the D-2 registry):**
+
+5. `ercot_gas_commitment_bridge` (ON) — merchant gas-**CC** only, physics
+   inequality `min_down > 2 h` is the same physics that EXCLUDES those rows
+   from the pool leg → disjoint by physics, overlap impossible.
+6. CT floors: `ct_mustrun_per_plant=False`, `ct_netload_drag` off, commitment
+   posture off → no CT min_gen in the recipe. CT_CHP is outside the wall's
+   measured-class row universe (rule 19 — CHP committed rows are the CHP
+   export-floor structure's; the measured pool classes SCGT90/SCLE90 are the
+   wall's merchant CT scope).
+7. **The pool leg adds NO floor.** It is an availability-at-an-offer: no
+   min_gen, no forced energy. D-2 forced-share and D-4 off-window exposure are
+   structurally vacuous — the rule-17 hazard (a CT floor binding overnight at
+   CF ≈ 0) is impossible by construction.
+
+**Quantity/availability side:**
+
+8. `ercot_thermal_dam_availability` (ON) — the measured class-day availability
+   counts only `Resource Status == "OUT"` as out (verified in
+   `derive_ercot_thermal_dam_availability.py`), so the OFFQS/OFFNS pool's HSL
+   **is already inside** the LP's measured availability. The pool leg
+   re-prices that capacity; it never adds MW → no quantity double-count.
+9. Reserve side: the measured RTOLCAP/RTOFFCAP reserve-supply cap
+   (`ercot_reserve_supply_forward=false`) already carries the pool's
+   off-line-responsive RESERVE role; the pool leg touches only ENERGY bids →
+   no reserve double-count. `ercot_nonreleasable_as_withholding` (ON) is
+   quantity-side and status-agnostic — composes independently.
+
+### 9.2 Admissibility (rules 12/13/14/23)
+
+* Ladder + pool share are ex-ante posted offers and telemetered statuses of
+  the offline startable pool (OFFQS/OFFNS), measured per net-load-percentile
+  bin — condition-responsive, forward-native driver, zero fitted scalars.
+* **Above-LSL startable increment only** (§8.2 caveat c): segments start at
+  `max(LSL, 0)`, so the negative below-LSL min-gen curve bottoms never enter
+  the ladder; the markup construction additionally only ever RAISES a bid.
+* Year-scoped 2024/2025, NO pooled fallback (same 2023 bar as the RT wall);
+  an absent year keeps the wall byte-identical.
+* Frozen against residuals (rule 23): re-derive only on SCED source update.
+* Physics gate `min_down_hours ≤ 2` (rule 12) — never a class tuple; CC rows
+  fail the gate by physics, ST_GAS by its 8–12 h min-down.

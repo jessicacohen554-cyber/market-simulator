@@ -119,6 +119,17 @@ DA_COMMITMENT_HORIZON_HOURS: int = 24
 # 1 h min-down unit it can never fire anyway.
 RA_BRIDGE_ECON_MIN_DOWN_HOURS: float = 4.0
 
+# Fast-start eligibility threshold (h) for the ERCOT offline fast-start pool
+# offer leg (ScenarioConfig.ercot_faststart_pool_offer): a unit is
+# SCED-startable intra-hour — the OFFQS/OFFNS telemetry family the pool
+# ladder is measured on — iff its min-down fits inside the operating hour's
+# dispatch horizon. CT physics (CT_COMMITMENT_PARAMS: 1 h min-down) clears
+# the gate; every CC (4-8 h) and gas-steam (8-12 h) row fails it. Rule 17's
+# own fast-start line (min-down <= 2 h); eligibility by unit physics, never
+# a class-name tuple (rule 12 / charter §9.2,
+# docs/handoffs/ercot-residual-midband-formation-lane-2026-07.md).
+FASTSTART_POOL_MIN_DOWN_HOURS: float = 2.0
+
 # CAISO gas-fired MUST-OFFER Resource-Adequacy capacity (MW), by compliance
 # year — the PUBLISHED quantity the RA must-offer bridge is gated to when
 # ScenarioConfig.caiso_ra_mustoffer_quantity_gate is on (gap G-61 path (a)).
