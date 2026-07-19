@@ -1840,6 +1840,71 @@ class TestPJMAdequacySideRegistries(unittest.TestCase):
         )
 
 
+class TestFF2BAdequacyBasis(unittest.TestCase):
+    """FF-2B (2026-07-19): NEISO Net ICR requirement + CAISO/NEISO RA imports.
+
+    Every value is ISO-published and forward-regenerable (rules 5/13), never
+    tuned to clear I7. NEISO's requirement is its own Net ICR construction
+    (Net ICR / 50-50 peak - 1, FCA 17); its DR fraction is the rule-14
+    reconciliation (cleared FCM demand resources / Net ICR); the firm-import
+    credits are the ISOs' RA/FCM firm import products, credited additively in
+    the accredited ledger for the import-node ISOs without double-counting the
+    dispatch node.
+    """
+
+    def test_neiso_prm_is_net_icr_over_5050_peak(self):
+        from market_sim.config.constants import PLANNING_RESERVE_MARGIN_BY_ISO
+
+        # FCA 17 (CCP 2026/2027), Docket ER23-405-000: Net ICR 30,305 MW,
+        # summer 50/50 peak 27,298 MW.
+        self.assertAlmostEqual(
+            PLANNING_RESERVE_MARGIN_BY_ISO["NEISO"],
+            30_305.0 / 27_298.0 - 1.0,
+            places=6,
+        )
+
+    def test_neiso_dr_fraction_reconstructs_cleared_fca_demand_resources(self):
+        from market_sim.config.constants import (
+            ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
+        )
+
+        # FCA 17 cleared 2,940 MW demand resources against the 30,305 MW Net ICR.
+        self.assertAlmostEqual(
+            ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["NEISO"] * 30_305.0,
+            2_940.0,
+            places=6,
+        )
+
+    def test_neiso_requirement_netting_reproduces_net_icr_minus_dr(self):
+        # At ISO-NE's own 50/50 peak the DR-netted requirement equals its own
+        # construction: Net ICR minus the cleared supply-side demand resources.
+        cfg = ScenarioConfig(iso="NEISO")
+        self.assertAlmostEqual(
+            resolve_adequacy_requirement_mw(cfg, "NEISO", 27_298.0),
+            30_305.0 - 2_940.0,
+            places=3,
+        )
+
+    def test_firm_import_credits_for_import_node_isos(self):
+        from market_sim.config.constants import ADEQUACY_EXTERNAL_TIE_FIRM_MW
+        from market_sim.model.capacity import (
+            _firm_import_mw,
+            accredited_firm_capacity_mw,
+        )
+
+        self.assertEqual(ADEQUACY_EXTERNAL_TIE_FIRM_MW["CAISO"], 3_371.0)
+        self.assertEqual(ADEQUACY_EXTERNAL_TIE_FIRM_MW["NEISO"], 567.0)
+        # One resolver, and an empty fleet accredits exactly the firm import.
+        self.assertEqual(_firm_import_mw("CAISO"), 3_371.0)
+        self.assertEqual(_firm_import_mw(None), 0.0)
+        self.assertAlmostEqual(
+            accredited_firm_capacity_mw([], iso="CAISO"), 3_371.0, places=6
+        )
+        self.assertAlmostEqual(
+            accredited_firm_capacity_mw([], iso="NEISO"), 567.0, places=6
+        )
+
+
 class TestReserveMarginBuild(unittest.TestCase):
     """The adequacy backstop: force-build firm capacity to the reserve margin."""
 
