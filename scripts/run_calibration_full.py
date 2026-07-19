@@ -2989,9 +2989,18 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 ercot_storage_as_duration_gate=True
             )
-        if battery_dispatch_adder:
+        # Mirror run_year's effective adder resolution (caiso-100 discovery,
+        # rule 24): a prb-carried adder was already applied above and governs;
+        # otherwise CAISO's $5 fallback is what the LP actually solves with —
+        # it was silently recorded as 0.0 before this fix.
+        _recorded_adder = battery_dispatch_adder
+        if (prb_overrides or {}).get("battery_dispatch_adder") is not None:
+            _recorded_adder = None  # prb channel already recorded above
+        elif not _recorded_adder and iso.upper() == "CAISO":
+            _recorded_adder = 5.0
+        if _recorded_adder:
             recorded_cfg = recorded_cfg.with_overrides(
-                battery_dispatch_adder=battery_dispatch_adder
+                battery_dispatch_adder=_recorded_adder
             )
         if gas_offer_curve:
             recorded_cfg = recorded_cfg.with_overrides(gas_offer_curve=True)
