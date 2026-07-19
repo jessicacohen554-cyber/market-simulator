@@ -1,0 +1,20 @@
+# ERCOT national-CES POC base, 2026-2030 (FF-3B, T1-scale POC).
+#
+# The BAU base leg for the T1-scale CES proof-of-concept
+# (docs/forecast-development-plan-2026-07.md FF-3B §879-903; §2.1b caps every
+# schedulable invocation at 5 solve-years, so the campaign's 2026-2050 horizon
+# is DEFERRED — this POC exercises the W4 campaign machinery end-to-end at T1
+# cost only). Identical to configs/scenarios/ercot_ces_base_2026_2050.yaml
+# except end_year: 2030 (five solve-years), so the machinery, seams and
+# reporting are proven bug-free before any authorized full-horizon run.
+#
+# NOT a campaign horizon. No premium-ladder conclusions are drawn from a
+# 5-year window; the matrix bundle registers as kind "ces-poc", never as
+# campaign results (FF-3B item 2). entry_screen_diagnostics records how much
+# each CES case moves every candidate's entry margin per year (CES plan §6.4) —
+# pure observability, byte-identical fleet outcome.
+mode: forecast
+iso: ERCOT
+start_year: 2026
+end_year: 2030
+entry_screen_diagnostics: true
