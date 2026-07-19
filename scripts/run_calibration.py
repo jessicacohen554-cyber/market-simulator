@@ -137,6 +137,7 @@ from market_sim.model.transmission import (  # noqa: E402
     apply_interchange_injections,
     build_incidence_matrix,
     build_interface_groups,
+    build_miso_link_loss,
     get_link_bidirectional_array,
     get_link_flow_cost_array,
     get_ttc_array,
@@ -519,6 +520,7 @@ def run_year(
     miso_measured_reserve_requirements: bool = False,
     miso_south_seam_split: bool = False,
     miso_rdt_tcdc: bool = False,
+    miso_zonal_loss_surface: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_ecrs_conservative_deployment: bool = False,
     ercot_nonreleasable_as_withholding: bool = False,
@@ -1331,6 +1333,12 @@ def run_year(
         config = config.with_overrides(miso_south_seam_split=True)
     if miso_rdt_tcdc:
         config = config.with_overrides(miso_rdt_tcdc=True)
+    # MISO marginal-loss physics (miso-76 M3): the flag rides config into
+    # apply_interchange_topology (L1-L6 one-way loss pairs) and the
+    # DispatchSpec link_loss assembly below. Measured delivery-factor
+    # surface, zero fitted scalars.
+    if miso_zonal_loss_surface:
+        config = config.with_overrides(miso_zonal_loss_surface=True)
     if ercot_multiproduct_as_coopt:
         config = config.with_overrides(ercot_multiproduct_as_coopt=True)
     # Published pre-reform ECRS deployment design (no price-based release
@@ -3620,6 +3628,15 @@ def run_year(
         # Priced RDT TCDC tiers (miso_rdt_tcdc): $/MWh on the tiered one-way
         # links' directed flow; None (all links free) is byte-identical.
         link_flow_cost=get_link_flow_cost_array(iso_config.links),
+        # Marginal loss fractions on the one-way Midwest loss pairs
+        # (miso_zonal_loss_surface): (n_links, T) receiving-side losses from
+        # the derived delivery-factor surface; None (flag off / other ISOs)
+        # keeps the ±1 incidence coefficients — byte-identical.
+        link_loss=(
+            build_miso_link_loss(iso_config.links, iso, year, int(demand.shape[1]))
+            if getattr(config, "miso_zonal_loss_surface", False)
+            else None
+        ),
         hydro_monthly_energy=hydro_monthly_energy,
         hydro_gen_idx=hydro_gen_idx,
         oil_monthly_budget=oil_monthly_budget,
