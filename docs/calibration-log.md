@@ -17730,3 +17730,69 @@ credentialed intake (Finding 2), (ii) NP3-233 outage-capacity reconciliation
 (Finding 4a), (iii) carve-out boundary ORDC-shape A/B (Finding 4b) — plus the
 already-chartered 2024/2025 RT-offer-surface derive (Finding 3). Next number:
 ercot-85.
+
+## 2026-07-19 — miso-75: the {Manitoba two-way seam + seam-envelope merit-cap} composition — the pre-registered success case HELD on BOTH gates: R1 (C3b ≤0.20 veto) held every year (0.082/0.137/0.198) AND B1 net-interchange volume STRICTLY closed every year (total err −5.46/−7.38/−7.27 → −0.58/−1.21/−2.40 TWh); every priced seam improves every year with zero fitted scalars; keeper-upgrade CANDIDATE (owner-only swap, NOT self-promoted)
+
+**Lane (pre-registered composition partner).** The composition the miso-74 and
+miso-73 charters both pre-declared (miso-74 §3d/§8, miso-73 §5 R1): the miso-74
+Manitoba two-way seam (keeper-on) + the miso-73 seam-envelope merit-cap
+(default-off, R1-vetoed as a STANDALONE on the miso-72 base because restoring the
+priced-seam imports flattened C3b-2025 0.183 → 0.200). Frozen charter (Phase A,
+derive-first, no LP): `docs/handoffs/miso-manitoba-meritcap-composition-design-2026-07.md`.
+
+**Diagnosis (frozen, no LP).** The miso-74 keeper carries a net-interchange
+VOLUME miss (total err −5.46/−7.38/−7.27 TWh) — the pre-registered rule-14
+exposure of the priced-seam (PJM/South) under-import the firm block had been
+masking. That under-import is the miso-73 merit-cap defect: the uniform per-band
+derate suppresses PJM imports −5.6/−8.3/−8.9 and South exports +2.8/+2.6/+3.1
+TWh. The merit cap closes it; the open question was whether it would re-trip the
+C3b veto. Manitoba's 2025 supply removal (firm +1.96 → seam −0.99 TWh)
+un-flattened C3b-2025 0.183 → 0.181, opening 0.019 pp of headroom — the
+pre-declared hypothesis: the supply removal offsets the merit cap's flattening.
+
+**Mechanism (ZERO new code, ZERO fitted scalars).** Both frozen flags on;
+`miso_seam_envelope_merit_cap=True` selects merit-order (waterfall) envelope
+bounds `ub_k=clip(cap−(k−1)·step,0,step)` over EVERY seam (incl. the two-way
+Manitoba seam) through the shared `inject_miso_seam_flow_limit` path (no fork).
+DOF main 28/2 vs base 27/2 — the merit cap is a measured-physical composition
+gate, n_scalars 0. A/B = main ({both on}) − same-box base ({Manitoba only} = the
+miso-74 keeper replica, zero box drift).
+
+**Runs.** `2026-07-18-miso-75-manitoba-meritcap` (main, keeper-upgrade CANDIDATE)
++ `2026-07-18-miso-75-meritcap-base` (same-box {Manitoba only} drift control).
+Full span 2023+2024+2025, per-year + `--reuse-solved` (rules 12/16). Rubric v2.7.
+
+**A/B (main − same-box base) — the pre-registered success case:**
+- **R1 (C3b ≤0.20 veto) HELD every year:** 0.080/0.126/0.181 → 0.082/0.137/**0.198**
+  all PASS. 2025 flattened to 0.198 exactly as pre-registered (base 0.181 + the
+  merit cap's ~+0.017) — Manitoba's supply removal held it **0.002 under the
+  veto** (tight but PASS; the disclosed caveat).
+- **B1 (net-interchange volume, the deliverable) STRICTLY closed every year:**
+  total net err −5.46/−7.38/−7.27 → **−0.58/−1.21/−2.40 TWh**.
+- **B2 (per-seam, `scripts/miso73_perseam_validate.py` vs measured EIA-930):**
+  every priced seam improves EVERY year — PJM err −5.36/−9.56/−11.19 →
+  −0.42/−1.69/−3.13, South +3.41/+3.42/+4.06 → +0.59/+0.65/+1.47, Manitoba
+  −2.79/−1.64/+0.61 → **−0.81/−0.67/−0.58** (the merit cap un-suppresses
+  Manitoba's own deep import rungs, FIXING the miso-74 B1 annual-net miss while
+  2025 stays net export), SPP flat/better; per-seam duration RMSE better every
+  seam-year (e.g. PJM 900/1317/1567 → 805/792/982 MW).
+- **B3 (rule-14 honest):** C3a moved DOWN every year (−0.8/−6.7/−13.3 →
+  −2.5/−8.9/**−15.4** %) from the restored net supply — a disclosed side effect,
+  not gated, not the objective (charter B3). C3c unchanged (0/6/1 → 0/6/0 vs RT
+  30/37/88) — the irreducible scarcity tail.
+- **R-criteria held:** R2 not-inert (2025 net moved > 1 TWh); R3 no overshoot
+  (landed between base and the offline bound); R4/R5 no fabricated scarcity —
+  max LMP FELL (main 2025 $152.01 vs base $214.42). C1/C2/C4/C5a/C6/C7/C8 hold
+  (NO new floors; C8 ST_GAS grounded-above-budget, same as the keeper).
+
+**Adjudication (rules 1/11/14) & disposition.** keeper-upgrade CANDIDATE — per
+rules 1/11 the most structurally faithful MISO surface to date (the correct
+merit-order seam semantics composed on the correct two-way seam), closing a
+large net-interchange diagnostic while holding EVERY gated criterion and the
+veto, with zero fitted scalars. Determination stays NOT-YET on the SAME 2 fails
+{C3a-2025, C3c} — both the irreducible scarcity tail (Phase-A §0). Per rule 27
+the swap is **OWNER-ONLY** — NOT self-promoted; `keepers.json` stays
+`2026-07-18-miso-74-manitoba-seam` pending owner authorization. The one caveat
+surfaced for the owner: C3b-2025 0.198 sits 0.002 under the 0.20 veto (tight).
+Registry pruned to 14 (dropped oldest: miso-67 single + miso-68 pair). Next
+number: miso-76.
