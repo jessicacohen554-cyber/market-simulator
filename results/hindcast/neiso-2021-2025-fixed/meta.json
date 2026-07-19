@@ -1,0 +1,37 @@
+{
+  "iso": "NEISO",
+  "kind": "hindcast",
+  "variant": "realized",
+  "energy_only_floor": false,
+  "entry_lookahead_reprice": false,
+  "retirement_rule": "legacy",
+  "limited_foresight_dispatch": false,
+  "capacity_market_clearing": false,
+  "capacity_market_clearing_by_iso": null,
+  "correlated_forced_outage": false,
+  "entry_vre_capacity_revenue": false,
+  "entry_rate_limits": false,
+  "entry_commissioning_lag": false,
+  "entry_screen_diagnostics": false,
+  "renewable_elcc_curves": true,
+  "gas_price_path": "hindcast_realized",
+  "crossover": false,
+  "crossover_forward_year": null,
+  "crossover_forward_gas_path": null,
+  "vintage_year": 2020,
+  "start_year": 2021,
+  "end_year": 2025,
+  "cache_key": "00d64a46ce67e38c",
+  "bundle": "results/hindcast/neiso-2021-2025-fixed/NEISO/00d64a46ce67e38c",
+  "solved_years": [
+    2021,
+    2023,
+    2024,
+    2025
+  ],
+  "bridged_years": [
+    2022
+  ],
+  "leakage_violations": [],
+  "started_utc": "2026-07-19T15:13:28Z"
+}
