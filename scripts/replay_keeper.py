@@ -62,6 +62,11 @@ _IGNORE = {
     "shared_inputs",
     "git_sha",
     "highspy_version",
+    # Runtime environment block (python/platform + numerics stack versions).
+    # Provenance only — never a solve kwarg. main() surfaces a mismatch as a
+    # loud non-fatal WARNING; here it must be ignored so build_kwargs (and the
+    # --reuse-solved comparator that calls it) does not treat it as unmapped.
+    "environment",
     "iso",
     "years",
     "hours",
@@ -145,6 +150,40 @@ def build_kwargs(meta: dict) -> dict:
     return kwargs
 
 
+def _warn_on_environment_mismatch(meta: dict) -> None:
+    """Print a loud (non-fatal) WARNING when the runtime environment drifted.
+
+    A byte-faithful replay is only meaningful under the same solver/numerics
+    stack the keeper was solved with (alternate-optimal vertices move across
+    versions). We surface any drift so a non-reproducing replay can be traced to
+    it — but never fail: a bundle solved before the environment block existed
+    records nothing, and the operator may deliberately replay on a new stack.
+    """
+    recorded = meta.get("environment")
+    if not recorded:
+        return  # pre-environment-block bundle; nothing to compare
+    current = rcf._environment_block()
+    diffs: list[str] = []
+    for field in ("python_version", "platform"):
+        if recorded.get(field) != current.get(field):
+            diffs.append(
+                f"{field}: bundle {recorded.get(field)!r} != now {current.get(field)!r}"
+            )
+    rec_pkgs = recorded.get("packages") or {}
+    cur_pkgs = current.get("packages") or {}
+    for name in sorted(set(rec_pkgs) | set(cur_pkgs)):
+        if rec_pkgs.get(name) != cur_pkgs.get(name):
+            diffs.append(
+                f"{name}: bundle {rec_pkgs.get(name)!r} != now {cur_pkgs.get(name)!r}"
+            )
+    if diffs:
+        print(
+            "WARNING: replay environment differs from the bundle's recorded "
+            "environment — byte-identity is not guaranteed:\n  " + "\n  ".join(diffs),
+            file=sys.stderr,
+        )
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("bundle", help="bundle dir, e.g. results/calibration/<name>")
@@ -208,6 +247,7 @@ def main() -> None:
     bundle = Path(args.bundle)
     meta = json.loads((bundle / "meta.json").read_text())
     orig_ts = meta.get("timestamp", "")
+    _warn_on_environment_mismatch(meta)
 
     kwargs = build_kwargs(meta)
     kwargs["years"] = [int(y) for y in (args.years or meta["years"])]
