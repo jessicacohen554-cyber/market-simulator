@@ -126,16 +126,14 @@ the refactor-consolidation moves land.
 |---|---|---|
 | `us-gen-ownership.md` (repo root) | [`us-gen-ownership.md`](us-gen-ownership.md) | root-cleanup PR #2551 (merged) |
 | `docs/multi-iso/` — 27 executed session/investigation notes | [`sessions/multi-iso/`](sessions/multi-iso/) | 2026-07 docs reorg (see [`handoffs/multi-iso-triage-2026-07.md`](handoffs/multi-iso-triage-2026-07.md)) |
+| the 8 merged `docs/_*_log_entry.md` staging files + the two `_caiso79_*.patch.xz.b64` payloads | [`sessions/`](sessions/) | `phase-refactor/stale-refs-docs` (this session) |
+| the 5 executed one-shot `docs/*-session-prompt.md` prompts (now banner'd `RECORD`) | [`sessions/`](sessions/) | `phase-refactor/stale-refs-docs` (this session) |
+| `src/market_sim/pipeline/stage7_getattr_extraction_design.md` | [`handoffs/stage7_getattr_extraction_design.md`](handoffs/stage7_getattr_extraction_design.md) | `phase-refactor/stale-refs-docs` (this session) |
 
-**Pending moves (row will need updating).** The `phase-refactor/stale-refs-docs`
-session had **not** landed when this index was written, so the following are still at
-`docs/` root and are indexed here against the *current* tree. When that session
-lands, they move to [`sessions/`](sessions/) and these rows must be updated:
-
-- the 8 staging files — `_caiso79_*`, `_caiso80_log_entry.md`, `_caiso81*_log_entry.md`,
-  `_pjm112_input_clock_log_entry.md`, `_pjm_phase_drift_log_entry.md`,
-  `_rubric25_log_entry.md`, and the two `_caiso79_*.patch.xz.b64` payloads;
-- executed one-shot session prompts (`*-session-prompt.md`).
+The `phase-refactor/stale-refs-docs` moves listed above have **landed** — the
+docs-index author's earlier "pending moves" note is now resolved: the staging
+files and executed session prompts are in [`sessions/`](sessions/) and the
+stage-7 design doc is in [`handoffs/`](handoffs/).
 
 ## L3 — dated records (reached by class, not row-indexed)
 

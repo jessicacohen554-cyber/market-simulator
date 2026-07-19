@@ -1,5 +1,7 @@
 # NEISO calibration — best config so far
 
+> Status: SUPERSEDED-BY frontend/data/backcast/keepers.json + docs/codebase-site/calibration-status.html — historical keeper snapshot, not current keeper truth.
+
 > **DETERMINATION: CALIBRATED-WITH-CAVEATS.** Current keeper
 > `2026-07-09-neiso-56-reserve-coopt` (bundle
 > `results/calibration/neiso56_reserve_coopt`, years 2023/24/25; ablation twin

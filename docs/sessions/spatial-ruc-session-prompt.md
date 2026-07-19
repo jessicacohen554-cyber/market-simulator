@@ -1,5 +1,7 @@
 # Session prompt — ERCOT spatial reliability-deployment (RUC) overlay
 
+> Status: RECORD (frozen 2026-07-18) — executed one-shot session prompt.
+
 ROLE & GOAL
 Fix the ERCOT **spatial dispatch imbalance** in the keeper backcast
 (results/calibration/run115b_ccduct_prb73_relief06): the model systematically

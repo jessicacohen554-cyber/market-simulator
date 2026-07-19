@@ -798,10 +798,11 @@ TRANSCO_Z6_NY_DAILY_PATH: Path = GAS_PRICES_DIR / "transco_z6_ny_daily.csv"
 # sparse (<2 print) covered months; both are EIA Weekly archive series.
 ALGONQUIN_DAILY_PATH: Path = GAS_PRICES_DIR / "algonquin_citygate_daily.csv"
 
-# Measured Iroquois Zone 2 *daily* spot prints, harvested from the prose of the
-# EIA Natural Gas Weekly Update archive by scripts/fetch_iroquois_daily_spot.py
-# (the Iroquois analogue of ALGONQUIN_DAILY_PATH — EIA's compact spot table has
-# no Iroquois row, but the narrative quotes the hub in the cold weeks that set
+# Measured Iroquois Zone 2 *daily* spot prints, to be harvested from the prose of
+# the EIA Natural Gas Weekly Update archive by a planned Iroquois daily-spot
+# fetcher (not yet landed; analogue of ALGONQUIN_DAILY_PATH — EIA's compact spot
+# table has no Iroquois row, but the narrative quotes the hub in the cold weeks
+# that set
 # the eastern-NY winter price). Iroquois Z2 is the measured hub of the NYISO
 # reference zone (Capital_Hudson) and the Lower_Hudson / Long_Island zones; the
 # committed monthly reconstruction (Transco Z6 NY monthly + the SOM *annual*
@@ -1345,7 +1346,7 @@ def _iroquois_z2_daily(path: Path | None) -> dict[int, dict[int, dict[int, float
 
     The eastern-NY analogue of :func:`_algonquin_daily`, reading the sparse real
     Iroquois Zone 2 spot prints harvested from the EIA NG Weekly Update narrative
-    (:data:`IROQUOIS_Z2_DAILY_PATH`, by ``scripts/fetch_iroquois_daily_spot.py``).
+    (:data:`IROQUOIS_Z2_DAILY_PATH`, from a planned, not-yet-landed fetcher).
     Prints are keyed by true calendar day; an absent file yields an empty map so
     every consumer degrades to the existing reconstruction (byte-identical until
     the fetch workflow lands the data). Cached per path.
@@ -1606,8 +1607,8 @@ def _nyiso_hub_daily_gas_prices(
     exactly as in the monthly path.
 
     Where the **measured Iroquois Z2 daily prints** exist for a month
-    (:func:`_iroquois_z2_daily`, harvested from the EIA NG Weekly narrative by
-    ``scripts/fetch_iroquois_daily_spot.py``; ≥2 prints required so a lone quote
+    (:func:`_iroquois_z2_daily`, harvested from the EIA NG Weekly narrative by a
+    planned, not-yet-landed fetcher; ≥2 prints required so a lone quote
     never re-levels a month), they supersede the reconstruction for the days they
     bracket: prints are placed on their true days and interpolated between, and
     outside the bracketed span the series falls back to the Transco-shaped

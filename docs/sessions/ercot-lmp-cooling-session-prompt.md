@@ -1,5 +1,7 @@
 # Handoff: cool the ERCOT 2024/2025 LMP hot bias from run129
 
+> Status: RECORD (frozen 2026-07-18) — executed one-shot session prompt.
+
 ## Task
 
 Continue ERCOT calibration on branch `claude/ercot-dam-offer-hrmults-ycl68p`

@@ -288,6 +288,48 @@ def _tier_for(pid: str) -> int:
     return 2
 
 
+def _repair_stale_script_paths(entries: list[dict]) -> int:
+    """Repair provenance citations whose ``scripts/<...>.py`` path went stale.
+
+    The registry preserves each existing entry's harvested/hand-written
+    ``source`` across regenerations (only ``value`` is refreshed). When a cited
+    derivation script is *moved* on disk — e.g. the 2026-07 ``scripts/`` reorg
+    that relocated the ``derive_*``/``fetch_*``/``curate_*`` builders under
+    ``scripts/data/`` — the preserved citation keeps pointing at the old path and
+    silently dangles. This pass rewrites any ``scripts/<...>.py`` token in a
+    ``source`` that no longer resolves to the *unique* current on-disk location
+    of that basename under ``scripts/``. Ambiguous (multiple matches) or vanished
+    (no match) basenames are left untouched so a genuine deletion still surfaces
+    for a human. Deterministic and filesystem-driven, so a re-run after any
+    future move self-heals the citation.
+
+    Returns the number of tokens rewritten.
+    """
+    locs: dict[str, list[str]] = {}
+    for p in sorted((REPO / "scripts").rglob("*.py")):
+        locs.setdefault(p.name, []).append(p.relative_to(REPO).as_posix())
+
+    token_re = re.compile(r"scripts/(?:[A-Za-z0-9_./-]+/)?[A-Za-z0-9_.-]+\.py")
+    repaired = 0
+
+    def _repl(m: re.Match[str]) -> str:
+        nonlocal repaired
+        ref = m.group(0)
+        if (REPO / ref).exists():
+            return ref  # still resolves — leave it
+        cands = [c for c in locs.get(Path(ref).name, []) if c != ref]
+        if len(cands) == 1:
+            repaired += 1
+            return cands[0]
+        return ref  # 0 or >1 candidates: gone/ambiguous — leave for a human
+
+    for e in entries:
+        src = e.get("source")
+        if isinstance(src, str) and "scripts/" in src:
+            e["source"] = token_re.sub(_repl, src)
+    return repaired
+
+
 def build_registry() -> tuple[dict, dict]:
     expected = expected_param_ids()
 
@@ -341,6 +383,10 @@ def build_registry() -> tuple[dict, dict]:
         key=lambda e: e["param_id"],
     )
     ordered = existing_order + added
+
+    # Self-heal citations whose scripts/ provenance path moved (e.g. the 2026-07
+    # scripts/ reorg). Preserved sources otherwise keep dangling silently.
+    stats["script_paths_repaired"] = _repair_stale_script_paths(ordered)
 
     out = registry if isinstance(registry, dict) else {"parameters": ordered}
     if isinstance(out, dict):
@@ -423,6 +469,7 @@ def main(argv: list[str]) -> int:
         f"  preserved {stats['existing']} existing "
         f"(value-refreshed {stats['value_fixed']}), added {stats['added']} new"
     )
+    print(f"  repaired {stats['script_paths_repaired']} stale scripts/ citation(s)")
     print(f"Citations rendered: {CITATIONS_MD.relative_to(REPO)}")
 
     if "--check" in argv:
