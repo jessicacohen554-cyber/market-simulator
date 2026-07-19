@@ -78,6 +78,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # are byte-stable; a non-default window (None = indefinite extension, or
     # a sensitivity value) enters the key as a distinct scenario.
     "ira_45q_credit_window_years",
+    # Per-tech WACC option (FF-1E §3.6): default False dropped from the hash so
+    # every pre-existing cache key is byte-stable; True enters the key (a
+    # distinct financing scenario).
+    "per_tech_wacc_enabled",
 )
 
 
@@ -415,6 +419,17 @@ class ScenarioConfig:
     # day-ahead operator cannot shift across days either). Off = today's
     # annual-cyclic behaviour. See model-methodology-spec.md (storage).
     nominal_discount_rate: float = 0.08  # Nominal WACC, $/MWh LCOE basis
+    # Per-technology WACC OPTION (FF-1E, docs/handoffs/
+    # ff-inputs-currency-audit-2026-07.md §3.6). Default False = every
+    # technology's LCOE annuity uses the single `real_discount_rate` (derived
+    # from nominal_discount_rate), byte-identical to pre-FF-1E. When True the
+    # new-entry screen annualizes each candidate at its OWN ATB 2024 real WACC
+    # (constants.ATB_TECH_WACC_REAL) — capital-heavy nuclear/offshore vs
+    # low-cost-of-capital solar priced on their published financing, per the
+    # ReEDS financing-multiplier literature. Flipping it on is an owner decision
+    # at the FF-2D gate (it interacts with the separately-modelled IRA credits —
+    # ATB's Market WACC embeds tax-credit financing — so it is NOT enabled here).
+    per_tech_wacc_enabled: bool = False
     retirement_consecutive_years: int = 2  # fallback if no per-fuel override
     forecast_fossil_retirement_economic: bool = True  # In a forecast, fossil
     # (coal/gas/oil) units are NOT retired on their announced EIA-860 planned-
@@ -6959,6 +6974,31 @@ def resolve_new_entry_costs(config: "ScenarioConfig") -> dict[str, dict[str, flo
                 scaled[param] = costs[param] * mult
         resolved[tech] = scaled
     return resolved
+
+
+def resolve_real_discount_rate(config: "ScenarioConfig", tech: str) -> float:
+    """Return the real discount rate to annualize ``tech``'s capex.
+
+    Default (``per_tech_wacc_enabled`` False): the single
+    ``config.real_discount_rate`` for every technology — byte-identical to the
+    pre-FF-1E behaviour. When the per-tech-WACC option is on, returns
+    ``constants.ATB_TECH_WACC_REAL[tech]`` (NREL ATB 2024 real WACC) where the
+    technology has an entry, else falls back to the single rate (so a tech ATB
+    does not finance-differentiate is unchanged). See the FF-1E §3.6 option
+    note on ``ScenarioConfig.per_tech_wacc_enabled``.
+
+    Args:
+        config: Scenario config supplying the option flag and the single rate.
+        tech: Technology key (``NEW_ENTRY_COSTS`` / emerging-tech vocabulary).
+
+    Returns:
+        The real discount rate (fraction/yr) for this technology.
+    """
+    if not config.per_tech_wacc_enabled:
+        return config.real_discount_rate
+    from market_sim.config.constants import ATB_TECH_WACC_REAL
+
+    return ATB_TECH_WACC_REAL.get(tech, config.real_discount_rate)
 
 
 def resolve_demand_growth_rate(config: "ScenarioConfig", year: int) -> float:
