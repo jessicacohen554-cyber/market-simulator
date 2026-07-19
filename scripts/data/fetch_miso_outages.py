@@ -337,7 +337,7 @@ fuel-class identity (the public report does not disclose it).
 - `miso_generation_outages_forecast.parquet` -- the 7-day-ahead forecast block
   (one row per publish_date, region, cause_type, interval_date); forward signal.
 
-**Coverage built:** {{start.isoformat()}} -> {{end.isoformat()}} ({{n_files}} source
+**Coverage built:** {start.isoformat()} -> {end.isoformat()} ({n_files} source
 files). MISO does not publish `_mom.xlsx` before 2023-01-01 (2018-2022 dates
 404), so the record cannot extend earlier.
 
