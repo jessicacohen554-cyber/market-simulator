@@ -9,8 +9,9 @@ statistical WEFOR/POF availability model.
 The **per-unit derate** (:func:`unit_outage_derate_factors`, from
 ``campd-unit-outages[-<ISO>].csv`` built by
 ``scripts/data/derive_campd_unit_outages.py``) is the SOLE CAMPD outage layer for
-every ISO. The old facility-summed overlay (``scripts/derive_campd_outages.py``
--> ``campd-outages*.csv``, a hard ``availability = 0`` per plant) was removed
+every ISO. The old facility-summed overlay (which built ``campd-outages*.csv``,
+a hard ``availability = 0`` per plant; its detection primitives are now
+consolidated in ``scripts/lib/outage_detect.py``) was removed
 2026-07-17: summing a plant's units hid single-unit outages and folded
 daily-cycling combined cycles into phantom summer outages
 (``results/calibration/FINDING-ercot79-phantom-outage-2026-07.md``). Each unit

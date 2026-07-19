@@ -51,13 +51,7 @@ from __future__ import annotations
 
 import argparse
 import calendar
-import csv
-import io
 import sys
-import time
-import urllib.error
-import urllib.parse
-import urllib.request
 from pathlib import Path
 
 import pandas as pd
@@ -66,17 +60,17 @@ import pandas as pd
 # Repo path bootstrap
 # ---------------------------------------------------------------------------
 REPO = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 from market_sim.config import paths  # noqa: E402
+from scripts.lib import pjm_dataminer  # noqa: E402
 
 OUT_DIR = paths.PJM_ENERGY_OFFERS_DIR
 
-# PJM DataMiner2 REST API — subscription key is PUBLIC (embedded in the
-# DataMiner2 Angular app's settings.json at /config/settings.json).
-API_BASE = "https://api.pjm.com/api/v1"
-SUB_KEY = "6a75d9f6d933401dbb4f36f8e70b95b3"
-
-PAGE_SIZE = 50_000  # rows per page (max the API allows)
+# The DataMiner2 feed and this fetcher's User-Agent; the API base / public
+# subscription key / page size live in scripts.lib.pjm_dataminer.
+FEED = "energy_market_offers"
+USER_AGENT = "market-sim/fetch_pjm_energy_offers"
 
 
 # ---------------------------------------------------------------------------
@@ -97,85 +91,21 @@ def _date_filter(year: int, month: int) -> str:
     return f"{start} to {end}"
 
 
-def _build_url(year: int, month: int, start_row: int) -> str:
-    """Compose the DataMiner2 CSV export URL for one page of a calendar month."""
+def _fetch_month(
+    year: int, month: int, *, sleep_s: float = 1.5, retries: int = 4
+) -> pd.DataFrame:
+    """Download all pages for one calendar month; return a concatenated DataFrame."""
     params = {
-        "startRow": str(start_row),
-        "rowCount": str(PAGE_SIZE),
         "isActiveMetadata": "true",
         "sort": "bid_datetime_beginning_ept",
         "order": "Asc",
         "format": "csv",
         "bid_datetime_beginning_ept": _date_filter(year, month),
     }
-    return f"{API_BASE}/energy_market_offers?" + urllib.parse.urlencode(params)
-
-
-def _fetch_page(url: str, *, retries: int = 4, sleep_s: float = 1.5) -> list[dict]:
-    """Fetch one CSV page; return list of row dicts.
-
-    Retries on HTTP 429/503 with exponential back-off.
-    Returns empty list on a genuine empty response.
-    """
-    delay = sleep_s
-    for attempt in range(retries + 1):
-        try:
-            req = urllib.request.Request(
-                url,
-                headers={
-                    "Ocp-Apim-Subscription-Key": SUB_KEY,
-                    "Accept": "text/csv",
-                    "User-Agent": "market-sim/fetch_pjm_energy_offers",
-                },
-            )
-            with urllib.request.urlopen(req, timeout=120) as resp:
-                raw = resp.read().decode("utf-8-sig", errors="replace")  # strip BOM
-            rows = list(csv.DictReader(io.StringIO(raw)))
-            return rows
-        except urllib.error.HTTPError as exc:
-            if exc.code in (429, 503) and attempt < retries:
-                print(f"    HTTP {exc.code} — back-off {delay:.0f}s …")
-                time.sleep(delay)
-                delay *= 2
-                continue
-            raise
-        except (urllib.error.URLError, TimeoutError) as exc:
-            if attempt < retries:
-                print(f"    network error ({exc}) — back-off {delay:.0f}s …")
-                time.sleep(delay)
-                delay *= 2
-                continue
-            raise
-    return []
-
-
-def _fetch_month(
-    year: int, month: int, *, sleep_s: float = 1.5, retries: int = 4
-) -> pd.DataFrame:
-    """Download all pages for one calendar month; return a concatenated DataFrame."""
-    all_rows: list[dict] = []
-    start_row = 1
-    page = 1
-
-    while True:
-        url = _build_url(year, month, start_row)
-        print(f"  page {page:3d}  startRow={start_row:>8d} … ", end="", flush=True)
-        rows = _fetch_page(url, retries=retries, sleep_s=sleep_s)
-        print(f"{len(rows):>6d} rows")
-
-        all_rows.extend(rows)
-
-        if len(rows) < PAGE_SIZE:
-            break  # last page (or empty)
-
-        start_row += PAGE_SIZE
-        page += 1
-        time.sleep(sleep_s)
-
-    if not all_rows:
-        return pd.DataFrame()
-
-    return pd.DataFrame(all_rows)
+    rows = pjm_dataminer.fetch_feed(
+        FEED, params, user_agent=USER_AGENT, sleep_s=sleep_s, retries=retries
+    )
+    return pd.DataFrame(rows) if rows else pd.DataFrame()
 
 
 # ---------------------------------------------------------------------------
