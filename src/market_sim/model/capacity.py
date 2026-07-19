@@ -106,7 +106,11 @@ from market_sim.config.reserve_config import (
     QUICK_START_FUEL_TYPES,
     RESERVE_FUEL_TYPES,
 )
-from market_sim.config.scenarios import ScenarioConfig, resolve_new_entry_costs
+from market_sim.config.scenarios import (
+    ScenarioConfig,
+    resolve_new_entry_costs,
+    resolve_real_discount_rate,
+)
 from market_sim.data import capacity_deliverability as capdel
 from market_sim.model.ancillary import as_revenue_per_mw_yr
 from market_sim.data.confirmed_retirements import ConfirmedExit
@@ -1940,7 +1944,9 @@ def _emerging_lcoe(
     if tech in ("hydrogen_ct", "hydrogen_ccgt"):
         key = "h2_ct" if tech == "hydrogen_ct" else "h2_ccgt"
         params = HYDROGEN_TURBINE_PARAMS[key]
-        crf = _capital_recovery_factor(config.real_discount_rate, params["lifetime_yr"])
+        crf = _capital_recovery_factor(
+            resolve_real_discount_rate(config, tech), params["lifetime_yr"]
+        )
         fixed = params["capex_kw"] * crf + params["fom_kw_yr"]
         h2_cost = compute_h2_fuel_cost(year, config, iso)
         h2_cost = max(0.0, h2_cost - h2_45v_credit_per_mmbtu(year, config))
@@ -1949,7 +1955,8 @@ def _emerging_lcoe(
 
     if tech == "gas_cc_ccs":
         ccs = CCUS_PARAMS["gas_cc_ccs_90"]
-        crf = _capital_recovery_factor(config.real_discount_rate, ccs["lifetime_yr"])
+        rate = resolve_real_discount_rate(config, tech)
+        crf = _capital_recovery_factor(rate, ccs["lifetime_yr"])
         fixed = ccs["capex_kw"] * crf + ccs["fom_kw_yr"]
         base_hr = min(HEAT_RATE_BINS["gas_cc"].values())
         base_co2 = min(CO2_RATES["gas_cc"].values())
@@ -1967,9 +1974,7 @@ def _emerging_lcoe(
         q45 = ccus_45q_credit_per_mwh(captured, year, config)
         if q45 > 0.0:
             window_years = _ccs_45q_window_years(config, float(ccs["lifetime_yr"]))
-            q45 *= crf / _capital_recovery_factor(
-                config.real_discount_rate, window_years
-            )
+            q45 *= crf / _capital_recovery_factor(rate, window_years)
         variable = (
             base_hr * ccs["heat_rate_penalty"] * gas_price_per_mmbtu
             + VOM["gas_cc"]
@@ -1982,14 +1987,18 @@ def _emerging_lcoe(
 
     if tech == "geothermal":
         egs = GEOTHERMAL_PARAMS["egs"]
-        crf = _capital_recovery_factor(config.real_discount_rate, egs["lifetime_yr"])
+        crf = _capital_recovery_factor(
+            resolve_real_discount_rate(config, tech), egs["lifetime_yr"]
+        )
         fixed = egs["capex_kw"] * crf + egs["fom_kw_yr"]
         lcoe = fixed / annual_mwh_per_kw + egs["vom"]
         return apply_ira_credits_to_lcoe("geothermal", lcoe, year, config)
 
     if tech == "offshore_wind":
         params = _offshore_wind_params(iso, config)
-        crf = _capital_recovery_factor(config.real_discount_rate, params["lifetime_yr"])
+        crf = _capital_recovery_factor(
+            resolve_real_discount_rate(config, tech), params["lifetime_yr"]
+        )
         fixed = params["capex_kw"] * crf + params["fom_kw_yr"]
         return fixed / annual_mwh_per_kw
 
@@ -2145,7 +2154,9 @@ def compute_lcoe(
         if year <= config.ira_wind_solar_last_year:
             capex_per_kw *= 1.0 - config.ira_itc_solar
 
-    crf = _capital_recovery_factor(config.real_discount_rate, costs["lifetime_yr"])
+    crf = _capital_recovery_factor(
+        resolve_real_discount_rate(config, tech_type), costs["lifetime_yr"]
+    )
     annual_cost_per_kw = capex_per_kw * crf + costs["fom_per_kw_yr"]
     # Annual generation per kW of capacity, expressed in MWh.
     annual_mwh_per_kw = HOURS_PER_YEAR * costs["base_cf"] / 1000.0
@@ -2582,7 +2593,7 @@ def apply_economic_new_entry(
                     capex_per_kw, cum_gw, ref_gw, costs["learning_rate"]
                 )
             crf = _capital_recovery_factor(
-                config.real_discount_rate, costs["lifetime_yr"]
+                resolve_real_discount_rate(config, tech), costs["lifetime_yr"]
             )
             fixed_cost = (capex_per_kw * crf + costs["fom_per_kw_yr"]) * 1000.0
             # Module M1 capacity payment (0 in ERCOT) + ERCOT AS revenue, the
@@ -2743,7 +2754,7 @@ def apply_economic_new_entry(
             if tech == "solar" and year <= config.ira_wind_solar_last_year:
                 _capex_after_itc = _capex_wright * (1.0 - config.ira_itc_solar)
             _crf = _capital_recovery_factor(
-                config.real_discount_rate, _costs["lifetime_yr"]
+                resolve_real_discount_rate(config, tech), _costs["lifetime_yr"]
             )
             _rows[tech] = {
                 "tech": tech,
