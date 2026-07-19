@@ -205,17 +205,20 @@ D4_MAX_OFFWINDOW_SHARE: float = 0.05
 D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # chp_steam (MECH_CHP_STEAM — fleet.py chp_grid_pmin_mw, the structural
     # steam-host grid floor; level from the p2 artifact / eia923_cf columns,
-    # or the all-hours p25 operating level under chp_steam_floor_p25): the
+    # or the measured steam operating level under chp_steam_floor_p25 —
+    # since WP-3 (owner-ruled 2026-07-19) the loading-when-on construction
+    # for CAMPD-visible cogens plus the EIA-923 delivery-implied level for
+    # CEMS-invisible ones, superseding the all-hours p25): the
     # driver-justified window is ALL 24 hours BY MEASUREMENT — host thermal
     # demand is around-the-clock (CAISO CC_CHP steam fleet: CEMS net flat
     # 0.65-0.76 GW across every hour-of-day, May-2023, hod max/min 1.16;
     # the ERCOT industrial-cogen conduct the original CHP_PMIN_CF_BY_PLANT
-    # p2 floors were derived from is the same shape). Under the p25 level
-    # swap the statistic additionally enforces the window per plant: a cogen
-    # offline >25% of its available hours measures p25_allhr_cf = 0 and
-    # carries no operating-level floor (cyclers keep only their p2/923-CF
-    # never-below base). D2-exempt structural must-run; row exists for the
-    # rule-12/17 declaration, not for a C8 escalation path.
+    # p2 floors were derived from is the same shape). Under the level
+    # swap the statistic additionally enforces the window per plant: a
+    # rarely-online cogen's on-frequency (or delivered energy) collapses its
+    # level toward 0 and it carries no operating-level floor (cyclers keep
+    # only their p2/923-CF never-below base). D2-exempt structural must-run;
+    # row exists for the rule-12/17 declaration, not for a C8 escalation path.
     (MECH_CHP_STEAM, None): (0, 24),
     (MECH_RELIABILITY_FLOOR, "CT_PEAKER"): (14, 22),
     (MECH_RELIABILITY_FLOOR, "CT_CHP"): (14, 22),
