@@ -49,6 +49,7 @@ REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
+from market_sim.config.paths import PROCESSED_DIR  # noqa: E402
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data import campd  # noqa: E402
 from market_sim.data.fleet import load_campd_bins  # noqa: E402
@@ -71,12 +72,12 @@ _ONLINE_FRAC: float = 0.05
 # ramp-transient hours while still capturing the minimum stable load.
 _FLOOR_PCTILE: int = 5
 
-_OUT_CSV: Path = REPO / "inputs" / "processed" / "cc_committed_pct.csv"
+_OUT_CSV: Path = PROCESSED_DIR / "cc_committed_pct.csv"
 
 
 def _parasitic_factor_map() -> dict[int, float]:
     """Return ``{plant_id: net/gross factor}`` from the derived artifact."""
-    path = REPO / "inputs" / "processed" / "parasitic_load_factors.parquet"
+    path = PROCESSED_DIR / "parasitic_load_factors.parquet"
     if not path.exists():
         return {}
     return campd.pooled_factor_map(pd.read_parquet(path))

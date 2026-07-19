@@ -65,6 +65,11 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
 from market_sim.config.constants import HOURS_PER_YEAR, VOM  # noqa: E402
+from market_sim.config.paths import (  # noqa: E402
+    CALIBRATION_DIR,
+    CAMPD_BINS_CSV,
+    PROCESSED_DIR,
+)
 from market_sim.data import campd  # noqa: E402
 
 # Annual Henry Hub gas price ($/MMBtu) the ERCOT backcast bids gas against
@@ -81,13 +86,11 @@ DEFAULT_EXCLUDE: frozenset[int] = frozenset({7325})
 
 
 def _out_default(iso: str) -> Path:
-    return (
-        REPO / "inputs" / "calibration" / f"ct_deployment_floor_{iso.upper()}.parquet"
-    )
+    return CALIBRATION_DIR / f"ct_deployment_floor_{iso.upper()}.parquet"
 
 
 def _lmp_default(iso: str) -> Path:
-    return REPO / "inputs" / "calibration" / f"actual_lmp_hourly_{iso.upper()}.parquet"
+    return CALIBRATION_DIR / f"actual_lmp_hourly_{iso.upper()}.parquet"
 
 
 def _ct_peaker_heat_rates(bins_path: Path) -> dict[int, float]:
@@ -139,7 +142,7 @@ def main() -> None:
     ap.add_argument("--iso", default="ERCOT")
     ap.add_argument(
         "--bins",
-        default=str(REPO / "inputs" / "custom-bin-assignments.csv"),
+        default=str(CAMPD_BINS_CSV),
         help="ERCOT per-plant bin CSV; supplies the CT_PEAKER plant set + heat "
         "rates for ERCOT. Ignored for other ISOs (heat rates come from the "
         "ISO's EIA-860 fleet via load_fleet_from_csv).",
@@ -227,7 +230,7 @@ def main() -> None:
 
     lmp = pd.read_parquet(lmp_path)
     states = campd.states_for_iso(iso)
-    par_path = REPO / "inputs" / "processed" / "parasitic_load_factors.parquet"
+    par_path = PROCESSED_DIR / "parasitic_load_factors.parquet"
     factors = (
         campd.pooled_factor_map(pd.read_parquet(par_path)) if par_path.exists() else {}
     )

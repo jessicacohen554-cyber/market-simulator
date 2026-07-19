@@ -34,6 +34,7 @@ rc = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(rc)
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
+from market_sim.config.paths import REFERENCE_DIR  # noqa: E402
 from market_sim.data.coal import COAL_PLANT_SUPPLY  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
     BIN_GROUP_TO_FUEL,
@@ -166,7 +167,10 @@ def build_rows(year: int = 2023) -> pd.DataFrame:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--out", default=str(REPO / "inputs" / "plant-tranche-config.csv"))
+    # Editable tranche-config sheet, a sibling of custom-bin-assignments.csv
+    # under the single W1 data root (paths.REFERENCE_DIR = data/raw/reference);
+    # the pre-W1 ``inputs/`` root was removed by the relocation.
+    ap.add_argument("--out", default=str(REFERENCE_DIR / "plant-tranche-config.csv"))
     ap.add_argument(
         "--year",
         type=int,

@@ -48,13 +48,16 @@ import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
+from market_sim.config.paths import RAW_DIR
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import _hour_to_month_index
 from market_sim.model.storage import load_eia860_storage
 
 HOURS_PER_YEAR = 8760
 REPO_ROOT = Path(__file__).resolve().parents[2]
-AS_DIR = REPO_ROOT / "inputs" / "raw-data" / "ercot-AS"
+# ERCOT AS disclosure zips under the single W1 data root (paths.RAW_DIR =
+# data/raw); the pre-W1 ``inputs/raw-data`` path was removed by the relocation.
+AS_DIR = RAW_DIR / "ercot-AS"
 # ERCOT ECRS went live 2023-06-10 (hour-of-year index on the non-leap clock).
 ECRS_START_HOUR = (31 + 28 + 31 + 30 + 31 + 9) * 24  # 2023-06-10 00:00
 
