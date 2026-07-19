@@ -1,0 +1,12 @@
+NEISO zonal load file not found (/home/user/market-simulator/data/raw/zone-specific-demand/NEISO/NEISO_load_hourly_2024.csv); skipping
+NEISO: CC plant 52026 fleet pmax sum 94.3 MW exceeds trusted bound 74.1 MW (nameplate; corrupt summer-capacity rows) — reconciled (20.2 MW removed)
+NEISO: CC plant 60903 fleet pmax sum 1156.4 MW exceeds trusted bound 798.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (358.2 MW removed)
+NEISO: CC plant 52026 fleet pmax sum 94.3 MW exceeds trusted bound 74.1 MW (nameplate; corrupt summer-capacity rows) — reconciled (20.2 MW removed)
+NEISO: CC plant 60903 fleet pmax sum 1156.4 MW exceeds trusted bound 798.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (358.2 MW removed)
+
+===== NEISO full-horizon summary =====
+  years solved: 1 / 1  ([2026]..[2026])
+  total wall: 2.1 min   global peak RSS: 3.27 GB
+  median year wall: 123.8s   max per-year peak RSS: 3.27 GB
+  invariants: 0 FAIL, 0 WARN
+  wrote results/ff2b-after/neiso/full_horizon_summary.json
