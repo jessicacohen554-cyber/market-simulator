@@ -36,7 +36,7 @@ from scripts.lib.clean_io import validate_clean, write_clean  # noqa: E402
 # eGRID plant-sheet workbooks by vintage year (mirrors market_sim.data.egrid).
 EGRID_FILES: dict[int, str] = {
     2022: "egrid2022_data.xlsx",  # epa.gov eGRID2022 (retrieved 2026-07-04)
-    2023: "egrid2023_data_rev2 2.xlsx",
+    2023: "egrid2023_data_rev2.xlsx",
     2024: "egrid2024_data.xlsx",
 }
 

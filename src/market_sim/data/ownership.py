@@ -4,7 +4,7 @@ This module turns raw EIA-860 ownership data into a generator-to-parent
 mapping and uses it to attribute fleet capacity and dispatch emissions to
 ultimate parent companies.
 
-The single most important design fact (see ``us-gen-ownership.md`` §1) is
+The single most important design fact (see ``docs/us-gen-ownership.md`` §1) is
 that EIA-860 **Schedule 4 is sparse**: a generator appears there only if it
 is jointly owned or wholly owned by an entity other than its operator. Any
 generator absent from Schedule 4 is 100% owned by the Schedule 3 operator.
@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 # Tolerance for the per-generator ``percent_owned`` summation check. EIA
 # does not enforce the constraint at survey time, so rounding drift is
-# expected (see us-gen-ownership.md §1).
+# expected (see docs/us-gen-ownership.md §1).
 PERCENT_OWNED_TOLERANCE: float = 0.02
 
 # Canonical columns returned by :func:`load_eia860_ownership`.

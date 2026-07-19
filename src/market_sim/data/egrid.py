@@ -57,7 +57,7 @@ _EGRID_FILES: dict[int, str] = {
     # eGRID2022: epa.gov/egrid published workbook, retrieved 2026-07-04 for
     # the 2022 holdout-year intake (before it, 2022 rode the latest vintage).
     2022: "egrid2022_data.xlsx",
-    2023: "egrid2023_data_rev2 2.xlsx",
+    2023: "egrid2023_data_rev2.xlsx",
     2024: "egrid2024_data.xlsx",
 }
 _LATEST_EGRID_VINTAGE: int = max(_EGRID_FILES)
