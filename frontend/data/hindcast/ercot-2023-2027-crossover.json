@@ -1,0 +1,558 @@
+{
+  "run_id": "ercot-2023-2027-crossover",
+  "meta": {
+    "iso": "ERCOT",
+    "kind": "crossover",
+    "variant": "realized",
+    "energy_only_floor": false,
+    "entry_lookahead_reprice": false,
+    "retirement_rule": "legacy",
+    "limited_foresight_dispatch": false,
+    "capacity_market_clearing": false,
+    "capacity_market_clearing_by_iso": null,
+    "correlated_forced_outage": false,
+    "entry_vre_capacity_revenue": false,
+    "entry_rate_limits": false,
+    "entry_commissioning_lag": false,
+    "entry_screen_diagnostics": false,
+    "renewable_elcc_curves": true,
+    "gas_price_path": "hindcast_realized",
+    "crossover": true,
+    "crossover_forward_year": 2026,
+    "crossover_forward_gas_path": "mid",
+    "vintage_year": 2023,
+    "start_year": 2023,
+    "end_year": 2027,
+    "cache_key": "1e0260169cddd989",
+    "bundle": "results/hindcast/ercot-2023-2027-crossover/ERCOT/1e0260169cddd989",
+    "solved_years": [
+      2023,
+      2024,
+      2025,
+      2026,
+      2027
+    ],
+    "bridged_years": [],
+    "leakage_violations": [],
+    "started_utc": "2026-07-19T00:39:16Z"
+  },
+  "score": {
+    "run_id": "ercot-2023-2027-crossover",
+    "iso": "ERCOT",
+    "kind": "crossover",
+    "variant": "realized",
+    "vintage_year": 2023,
+    "crossover_forward_year": 2026,
+    "scored_years": [
+      2023,
+      2024,
+      2025
+    ],
+    "forward_years": [
+      2026,
+      2027
+    ],
+    "generated_utc": "2026-07-19T00:54:55Z",
+    "dispatch_skill": {
+      "keeper_run_id": "2026-07-18-ercot82-measured-rtolcap",
+      "keeper_note": null,
+      "metrics": {
+        "fuelmix": {
+          "2023": {
+            "forecast_err": 97.849,
+            "forecast_signed": 97.849,
+            "keeper_backcast_err": 11.247,
+            "input_gap": 8.7,
+            "unit": "TWh (Σ|Δ|)",
+            "forecast_status": "FAIL",
+            "forecast_per_class": {
+              "CC_REGULAR": {
+                "model": 123.968,
+                "actual": 141.743,
+                "abs_twh": 17.775,
+                "status": "FAIL"
+              },
+              "CC_CHP": {
+                "model": 24.345,
+                "actual": 28.514,
+                "abs_twh": 4.169,
+                "status": "PASS"
+              },
+              "CT_PEAKER": {
+                "model": 6.573,
+                "actual": 7.098,
+                "abs_twh": 0.525,
+                "status": "PASS"
+              },
+              "ST_GAS": {
+                "model": 1.876,
+                "actual": 16.7,
+                "abs_twh": 14.824,
+                "status": "FAIL"
+              },
+              "ST_CHP": {
+                "model": 0.3,
+                "actual": 0.164,
+                "abs_twh": 0.136,
+                "status": "PASS"
+              },
+              "COAL_PRB": {
+                "model": 0.0,
+                "actual": 45.085,
+                "abs_twh": 45.085,
+                "status": "FAIL"
+              },
+              "COAL_LIGNITE": {
+                "model": 0.0,
+                "actual": 15.335,
+                "abs_twh": 15.335,
+                "status": "FAIL"
+              }
+            }
+          },
+          "2024": {
+            "forecast_err": 91.125,
+            "forecast_signed": 91.125,
+            "keeper_backcast_err": 9.234,
+            "input_gap": 9.868,
+            "unit": "TWh (Σ|Δ|)",
+            "forecast_status": "FAIL",
+            "forecast_per_class": {
+              "CC_REGULAR": {
+                "model": 131.511,
+                "actual": 143.778,
+                "abs_twh": 12.267,
+                "status": "FAIL"
+              },
+              "CC_CHP": {
+                "model": 24.67,
+                "actual": 30.03,
+                "abs_twh": 5.36,
+                "status": "PASS"
+              },
+              "CT_PEAKER": {
+                "model": 7.329,
+                "actual": 7.651,
+                "abs_twh": 0.322,
+                "status": "PASS"
+              },
+              "ST_GAS": {
+                "model": 2.69,
+                "actual": 18.102,
+                "abs_twh": 15.412,
+                "status": "FAIL"
+              },
+              "ST_CHP": {
+                "model": 0.302,
+                "actual": 0.155,
+                "abs_twh": 0.147,
+                "status": "PASS"
+              },
+              "COAL_PRB": {
+                "model": 0.0,
+                "actual": 43.676,
+                "abs_twh": 43.676,
+                "status": "FAIL"
+              },
+              "COAL_LIGNITE": {
+                "model": 0.0,
+                "actual": 13.941,
+                "abs_twh": 13.941,
+                "status": "FAIL"
+              }
+            }
+          },
+          "2025": {
+            "forecast_err": 62.215,
+            "forecast_signed": 62.215,
+            "keeper_backcast_err": 1.386,
+            "input_gap": 44.888,
+            "unit": "TWh (Σ|Δ|)",
+            "forecast_status": "FAIL",
+            "forecast_per_class": {
+              "COAL_PRB": {
+                "model": 0.0,
+                "actual": 47.63,
+                "abs_twh": 47.63,
+                "status": "FAIL"
+              },
+              "COAL_LIGNITE": {
+                "model": 0.0,
+                "actual": 14.585,
+                "abs_twh": 14.585,
+                "status": "FAIL"
+              }
+            }
+          }
+        },
+        "price_mean": {
+          "2023": {
+            "forecast_err": 0.6915,
+            "forecast_signed": -0.6915,
+            "keeper_backcast_err": 0.218,
+            "input_gap": 3.172,
+            "unit": "frac (|Δ|/actual)",
+            "forecast_status": "FAIL"
+          },
+          "2024": {
+            "forecast_err": 0.4444,
+            "forecast_signed": -0.4444,
+            "keeper_backcast_err": 0.0211,
+            "input_gap": 21.062,
+            "unit": "frac (|Δ|/actual)",
+            "forecast_status": "FAIL"
+          },
+          "2025": {
+            "forecast_err": 0.2549,
+            "forecast_signed": -0.2549,
+            "keeper_backcast_err": 0.0342,
+            "input_gap": 7.453,
+            "unit": "frac (|Δ|/actual)",
+            "forecast_status": "FAIL"
+          }
+        },
+        "price_shape": {
+          "2023": {
+            "forecast_err": 1.166,
+            "forecast_signed": 1.166,
+            "keeper_backcast_err": 0.449,
+            "input_gap": 2.597,
+            "unit": "NRMSE",
+            "forecast_status": "FAIL"
+          },
+          "2024": {
+            "forecast_err": 0.501,
+            "forecast_signed": 0.501,
+            "keeper_backcast_err": 0.303,
+            "input_gap": 1.653,
+            "unit": "NRMSE",
+            "forecast_status": "FAIL"
+          },
+          "2025": {
+            "forecast_err": 0.274,
+            "forecast_signed": 0.274,
+            "keeper_backcast_err": 0.086,
+            "input_gap": 3.186,
+            "unit": "NRMSE",
+            "forecast_status": "FAIL"
+          }
+        },
+        "co2": {
+          "2023": {
+            "forecast_err": 0.4887,
+            "forecast_signed": -0.4887,
+            "keeper_backcast_err": 0.0249,
+            "input_gap": 19.627,
+            "unit": "frac (|Δ|/actual)",
+            "forecast_status": "FAIL",
+            "basis": "full-plant (bench intensities, BTM added back)"
+          },
+          "2024": {
+            "forecast_err": 0.4616,
+            "forecast_signed": -0.4616,
+            "keeper_backcast_err": 0.005,
+            "input_gap": 92.32,
+            "unit": "frac (|Δ|/actual)",
+            "forecast_status": "FAIL",
+            "basis": "full-plant (bench intensities, BTM added back)"
+          },
+          "2025": {
+            "forecast_err": 0.5532,
+            "forecast_signed": -0.5532,
+            "keeper_backcast_err": 0.0127,
+            "input_gap": 43.559,
+            "unit": "frac (|Δ|/actual)",
+            "forecast_status": "FAIL",
+            "basis": "full-plant (bench intensities, BTM added back)"
+          }
+        }
+      },
+      "deferred": {
+        "sysvol": "C2 EIA-930 family system-volume: needs the bench e930 family reconcile the crossover bundle does not carry in a scorer-ready form.",
+        "price_tail": "C3c hourly scarcity tail: needs the ORDC/scarcity overlay payload (ordc.hoursGt200) the crossover DispatchResult does not carry.",
+        "dispatch_corr": "C4 per-plant hourly correlation: needs the per-plant CAMPD b64 hourly bench + per-plant model hourly series (calibration-bundle only).",
+        "shape": "C7 diurnal shape: needs the bundle's legitimacy_diagnostics.json (not produced for a crossover bundle).",
+        "forced_share": "C8 forced-share: needs the bundle's legitimacy_diagnostics.json (not produced for a crossover bundle)."
+      },
+      "reconstruction": {
+        "note": "ypay rebuilt from year_<year>.parquet DispatchResult + FleetContext (crossover bundle is not the calibration-bundle layout build_payload consumes). gmModel/lmp/co2 grid-delivered; C5a on the keeper's full-plant basis via bench intensities.",
+        "per_year": {
+          "2023": {
+            "physical_co2_mt": 101.6875,
+            "has_demand": true,
+            "n_gen": 623,
+            "n_zones": 7
+          },
+          "2024": {
+            "physical_co2_mt": 98.4897,
+            "has_demand": true,
+            "n_gen": 621,
+            "n_zones": 7
+          },
+          "2025": {
+            "physical_co2_mt": 129.7127,
+            "has_demand": true,
+            "n_gen": 234,
+            "n_zones": 7
+          }
+        }
+      }
+    },
+    "retirements": {
+      "total_gw": {
+        "actual": 1.534,
+        "model": 21.066,
+        "err_frac": 12.734,
+        "band": "FAIL"
+      },
+      "per_fuel": {
+        "biomass": {
+          "actual_gw": 0.019,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "coal": {
+          "actual_gw": 0.932,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "gas_cc": {
+          "actual_gw": 0.08,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "gas_ct": {
+          "actual_gw": 0.502,
+          "model_gw": 9.795,
+          "err_frac": 18.497
+        },
+        "gas_st": {
+          "actual_gw": 0.0,
+          "model_gw": 11.27,
+          "err_frac": null
+        }
+      },
+      "unit_recall_gt300": {
+        "n_big_actual": 3,
+        "matched": 1,
+        "recall": 0.333,
+        "grain": "fuel-mw-coverage",
+        "plant_recall_frac": 0.333,
+        "plant_matched": 1,
+        "band": "FAIL"
+      },
+      "false_retire": {
+        "false_gw": 20.563,
+        "frac_of_model": 0.976,
+        "grain": "per-fuel-excess",
+        "band": "FAIL"
+      }
+    },
+    "additions": {
+      "by_tech": {
+        "wind": {
+          "actual_gw": 12.663,
+          "model_gw": 10.0,
+          "err_frac": -0.21,
+          "band": "FAIL"
+        },
+        "solar": {
+          "actual_gw": 25.08,
+          "model_gw": 0.0,
+          "err_frac": -1.0,
+          "band": "FAIL"
+        },
+        "gas_cc": {
+          "actual_gw": 0.244,
+          "model_gw": 0.0,
+          "err_frac": -1.0,
+          "band": "FAIL"
+        },
+        "gas_ct": {
+          "actual_gw": 3.692,
+          "model_gw": 0.0,
+          "err_frac": -1.0,
+          "band": "FAIL"
+        },
+        "storage": {
+          "actual_gw": 13.691,
+          "model_gw": 6.0,
+          "err_frac": -0.562,
+          "band": "FAIL"
+        }
+      },
+      "shares": {
+        "wind": {
+          "actual_share": 0.228,
+          "model_share": 0.625,
+          "delta_pp": 0.397,
+          "band": "FAIL"
+        },
+        "solar": {
+          "actual_share": 0.452,
+          "model_share": 0.0,
+          "delta_pp": -0.452,
+          "band": "FAIL"
+        },
+        "gas_cc": {
+          "actual_share": 0.004,
+          "model_share": 0.0,
+          "delta_pp": -0.004,
+          "band": "PASS"
+        },
+        "gas_ct": {
+          "actual_share": 0.067,
+          "model_share": 0.0,
+          "delta_pp": -0.067,
+          "band": "FAIL"
+        },
+        "storage": {
+          "actual_share": 0.247,
+          "model_share": 0.375,
+          "delta_pp": 0.128,
+          "band": "FAIL"
+        }
+      },
+      "actual_total_gw": 55.436,
+      "model_total_gw": 16.0
+    },
+    "co2": {
+      "model": {
+        "2023": 101687458.06418708,
+        "2024": 98489672.94411859,
+        "2025": 129712734.75633933
+      },
+      "actual": {
+        "2023": 191435844.4022851,
+        "2024": 191324345.6416519,
+        "2025": 193564905.05488053
+      }
+    },
+    "bands": {
+      "thermal_gw_retired_total_frac": 0.1,
+      "thermal_gw_retired_perfuel_frac": 0.2,
+      "retire_recall_min": 0.7,
+      "false_retire_frac_max": 0.15,
+      "retire_timing_years_max": 1.5,
+      "add_gw_frac_default": 0.15,
+      "add_gw_frac_storage": 0.25,
+      "techmix_share_pp_max": 0.05,
+      "co2_2025_frac": 0.1
+    },
+    "forward_invariants": {
+      "years": [
+        2026,
+        2027
+      ],
+      "scored": false,
+      "note": "invariants / plausibility only — years >= 2026 are quarantined (locked test / forward edge, rule 22); no bench or actual is read and no skill is scored. Numbers below are model-only forecast output (physical CO2, grid generation).",
+      "per_year": {
+        "2026": {
+          "model_co2_mt": 131.8812,
+          "total_gen_twh": 281.459,
+          "wind_twh": 170.743,
+          "solar_twh": 82.339,
+          "dispatch_nonneg": true,
+          "price_finite": true,
+          "n_gen": 234
+        },
+        "2027": {
+          "model_co2_mt": 139.9513,
+          "total_gen_twh": 316.643,
+          "wind_twh": 184.844,
+          "solar_twh": 80.521,
+          "dispatch_nonneg": true,
+          "price_finite": true,
+          "n_gen": 235
+        }
+      }
+    }
+  },
+  "invariants": [
+    {
+      "ident": "I1",
+      "name": "energy balance",
+      "status": "PASS",
+      "detail": "max |supply−demand| = 4.009e-09 MW (year 2027); tol 1.0"
+    },
+    {
+      "ident": "I2",
+      "name": "no NaN/inf",
+      "status": "PASS",
+      "detail": "clean"
+    },
+    {
+      "ident": "I3",
+      "name": "unserved/dump",
+      "status": "FAIL",
+      "detail": "2027: slack 0.01% of load"
+    },
+    {
+      "ident": "I4",
+      "name": "capacity accounting",
+      "status": "PASS",
+      "detail": "closes"
+    },
+    {
+      "ident": "I5",
+      "name": "no retire-and-reenter",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I6",
+      "name": "econ-retirement sanity",
+      "status": "FAIL",
+      "detail": "2025: 26.9% of thermal retired in one year"
+    },
+    {
+      "ident": "I7",
+      "name": "reliability floor",
+      "status": "FAIL",
+      "detail": "2025: thermal 57105 < retirement-bounded floor 78171 MW"
+    },
+    {
+      "ident": "I8",
+      "name": "planned-additions gating",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I9",
+      "name": "storage integrity",
+      "status": "FAIL",
+      "detail": "2026: simultaneous chg+dis 1.25% of throughput; 2027: simultaneous chg+dis 2.36% of throughput"
+    },
+    {
+      "ident": "I10",
+      "name": "RPS dual sign+stability",
+      "status": "PASS",
+      "detail": "≥0, stable"
+    },
+    {
+      "ident": "I11",
+      "name": "one-pass",
+      "status": "PASS",
+      "detail": "single pass"
+    },
+    {
+      "ident": "I12",
+      "name": "reserve-margin band",
+      "status": "FAIL",
+      "detail": "scalar floor [13.8%, 28.7%]; out: 2024:30.7% (band [13.8%, 28.7%]), 2025:12.5% (band [13.8%, 28.7%]), 2026:8.1% (band [13.8%, 28.7%]), 2027:6.7% (band [13.8%, 28.7%])"
+    },
+    {
+      "ident": "I13",
+      "name": "cobweb detector",
+      "status": "PASS",
+      "detail": "smooth"
+    },
+    {
+      "ident": "I14",
+      "name": "price sanity",
+      "status": "WARN",
+      "detail": "2027: LW $254.7 outside [0.5×,3.0×] CC MC $14.3"
+    }
+  ],
+  "registered_utc": "2026-07-19T01:19:59Z"
+}
