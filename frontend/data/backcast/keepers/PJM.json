@@ -1,4 +1,5 @@
 {
  "iso": "PJM",
- "keeper": "2026-07-18-pjm-115-unit-only"
+ "keeper": "2026-07-19-pjm-gasshape-interpfix",
+ "promotion_note": "Promoted 2026-07-19 (owner-authorized in-session): the pjm-115 recipe on the gas_daily_shape_factors true-date staircase fix (miso-72 spec 3.7 all-ISO correctness fix) + the inherited 2026-07-19 +1h frame-defect fix. CALIBRATED, all scored criteria PASS; same-box A/B base registered (2026-07-19-pjm-gasshape-interpfix-base)."
 }
