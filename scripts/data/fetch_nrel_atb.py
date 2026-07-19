@@ -80,6 +80,21 @@ TECH_TECHDETAIL: list[tuple[str, str]] = [
     ("Geothermal", "HydroFlash"),
     ("OffShoreWind", "Class3"),
     ("OffShoreWind", "Class12"),
+    # ATB's four EGS (enhanced geothermal) classes — added 2026-07-19 for the
+    # new-build cost benchmarking session (capacity-cost-grounding), closing
+    # the FF-1E gap ("ATB's EGS classes are not in the committed CAPEX/FOM
+    # extract"). NF = near-field (adjacent to an existing hydrothermal field,
+    # ATB's first-mover EGS class); Deep = deep greenfield EGS. These rows are
+    # committed as APPENDED part files (part11+) after the original extract
+    # parts, NOT interleaved in this script's sort order — see
+    # data/raw/nrel-atb/README.md for the append convention and the source
+    # 1-ulp float-repr drift note (a from-scratch regeneration reproduces
+    # every value but reorders rows and re-serializes 9/3162 floats'
+    # last digit).
+    ("Geothermal", "NFEGSFlash"),
+    ("Geothermal", "NFEGSBinary"),
+    ("Geothermal", "DeepEGSFlash"),
+    ("Geothermal", "DeepEGSBinary"),
 ]
 
 # core_metric_parameter values to keep. Scoped to exactly what the D4
