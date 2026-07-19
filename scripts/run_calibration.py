@@ -1482,8 +1482,18 @@ def run_year(
     # CAISO defaults to $5/MWh when no explicit adder is passed: the 10+ GW
     # fleet with perfect-foresight LP over-cycles without a throughput cost
     # proxy for degradation + ancillary-service opportunity cost.
+    # caiso-100 discovery (2026-07-19): this block runs AFTER the generic
+    # prb_overrides ScenarioConfig application above, so it silently STOMPED a
+    # prb-carried adder back to the kwarg/fallback value (the pre-registered
+    # B-leg's derived 14.25 never reached the LP), and the CAISO fallback was
+    # live in every keeper-lineage solve while run_config recorded 0.0 (the
+    # recorder in run_calibration_full never mirrored it — fixed there too).
+    # Per the ERCOT-65 convention the generic channel governs: skip this block
+    # when prb_overrides carries the key.
     _batt_adder = battery_dispatch_adder
-    if not _batt_adder and iso.upper() == "CAISO":
+    if (prb_overrides or {}).get("battery_dispatch_adder") is not None:
+        _batt_adder = None  # prb channel already applied above and governs
+    elif not _batt_adder and iso.upper() == "CAISO":
         _batt_adder = 5.0
     if _batt_adder:
         config = config.with_overrides(battery_dispatch_adder=_batt_adder)

@@ -1,25 +1,25 @@
-plant_code,plant_group,name,status,online_hours,nameplate_mw,committed_pct,mustrun_pct,mustrun_online_pct,online_frac,p25_cf,median_cf,peaking_pct,chp_pmin_cf,chp_sector,p25_allhr_cf,chp_btm_pct
-10034,CC_CHP,Gilroy Power Plant,ok,1191,101.0,12.9,0.0,0.0,,76.2,98.0,3.5,0.0,merchant,0.0,
-10213,CC_CHP,El Segundo Cogen,eia923_cf,0,171.6,,,,,,,,25.0,industrial,,
-10262,CC_CHP,California Institute of Technology,eia923_cf,0,11.1,,,,,,,,0.0,commercial,,
-10294,CC_CHP,King City Power Plant,ok,1082,115.0,9.6,0.0,0.0,,47.0,95.7,5.5,0.0,merchant,0.0,
-10342,CC_CHP,Marathon Bay Area Cogen,eia923_cf,0,103.5,,,,,,,,0.0,merchant,,
-10405,CC_CHP,Kingsburg Cogen,ok,601,33.8,11.8,0.0,0.0,,50.3,62.1,0.0,0.0,merchant,0.0,
-50061,CC_CHP,San Diego State University,eia923_cf,0,11.1,,,,,,,,16.6,commercial,,
-50216,CC_CHP,Watson Cogeneration,eia923_cf,0,398.0,,,,,,,,14.7,industrial,,65.0
-50849,CC_CHP,PE Berkeley,eia923_cf,0,24.0,,,,,,,,0.0,commercial,,
-50850,CC_CHP,CamChino Leasing LLC,eia923_cf,0,29.0,,,,,,,,0.5,merchant,,
-50851,CC_CHP,CSUCI Site Authority,eia923_cf,0,28.3,,,,,,,,0.0,merchant,,
-52109,CC_CHP,Richmond Cogen,eia923_cf,0,130.4,,,,,,,,18.3,industrial,,65.0
-54749,CC_CHP,Goal Line LP,ok,678,49.4,18.2,0.0,0.0,,81.0,85.0,3.9,0.0,merchant,0.0,
-54912,CC_CHP,Martinez Refining,eia923_cf,0,80.0,,,,,,,,22.0,industrial,,
-55084,CC_CHP,Crockett Cogen Project,eia923_cf,0,247.0,,,,,,,,0.9,merchant,,
-55217,CC_CHP,Los Medanos Energy Center,ok,22539,559.0,40.3,0.0,0.0,,78.4,101.6,1.6,0.0,merchant,75.0,
-55400,CC_CHP,Elk Hills Power LLC,ok,22659,525.0,70.0,0.0,0.0,,83.0,94.5,2.2,0.0,merchant,81.5,
-56356,CC_CHP,Clearwater Power Plant,eia923_cf,0,28.0,,,,,,,,0.8,merchant,,
-57122,CC_CHP,UCI Facilities Management Central Plant,eia923_cf,0,19.0,,,,,,,,0.0,commercial,,
-57584,CC_CHP,University of California San Diego Hybri,eia923_cf,0,30.0,,,,,,,,0.0,commercial,,
-58198,CC_CHP,Parnassus Central Utility Plant,eia923_cf,0,12.5,,,,,,,,22.6,commercial,,
+plant_code,plant_group,name,status,online_hours,nameplate_mw,committed_pct,mustrun_pct,mustrun_online_pct,online_frac,p25_cf,median_cf,peaking_pct,chp_pmin_cf,chp_sector,chp_btm_pct,steam_level_cf
+10034,CC_CHP,Gilroy Power Plant,ok,1191,101.0,12.9,0.0,0.0,,76.2,98.0,3.5,0.0,merchant,,19.7
+10213,CC_CHP,El Segundo Cogen,eia923_cf,0,171.6,,,,,,,,25.0,industrial,,80.5
+10262,CC_CHP,California Institute of Technology,eia923_cf,0,11.1,,,,,,,,0.0,commercial,,41.5
+10294,CC_CHP,King City Power Plant,ok,1082,115.0,9.6,0.0,0.0,,47.0,95.7,5.5,0.0,merchant,,21.3
+10342,CC_CHP,Marathon Bay Area Cogen,eia923_cf,0,103.5,,,,,,,,0.0,merchant,,69.8
+10405,CC_CHP,Kingsburg Cogen,ok,601,33.8,11.8,0.0,0.0,,50.3,62.1,0.0,0.0,merchant,,11.3
+50061,CC_CHP,San Diego State University,eia923_cf,0,11.1,,,,,,,,16.6,commercial,,57.5
+50216,CC_CHP,Watson Cogeneration,eia923_cf,0,398.0,,,,,,,,14.7,industrial,65.0,54.7
+50849,CC_CHP,PE Berkeley,eia923_cf,0,24.0,,,,,,,,0.0,commercial,,78.3
+50850,CC_CHP,CamChino Leasing LLC,eia923_cf,0,29.0,,,,,,,,0.5,merchant,,3.4
+50851,CC_CHP,CSUCI Site Authority,eia923_cf,0,28.3,,,,,,,,0.0,merchant,,0.4
+52109,CC_CHP,Richmond Cogen,eia923_cf,0,130.4,,,,,,,,18.3,industrial,65.0,80.5
+54749,CC_CHP,Goal Line LP,ok,678,49.4,18.2,0.0,0.0,,81.0,85.0,3.9,0.0,merchant,,17.3
+54912,CC_CHP,Martinez Refining,eia923_cf,0,80.0,,,,,,,,22.0,industrial,,100.0
+55084,CC_CHP,Crockett Cogen Project,eia923_cf,0,247.0,,,,,,,,0.9,merchant,,63.5
+55217,CC_CHP,Los Medanos Energy Center,ok,22539,559.0,40.3,0.0,0.0,,78.4,101.6,1.6,0.0,merchant,,99.8
+55400,CC_CHP,Elk Hills Power LLC,ok,22659,525.0,70.0,0.0,0.0,,83.0,94.5,2.2,0.0,merchant,,92.6
+56356,CC_CHP,Clearwater Power Plant,eia923_cf,0,28.0,,,,,,,,0.8,merchant,,4.8
+57122,CC_CHP,UCI Facilities Management Central Plant,eia923_cf,0,19.0,,,,,,,,0.0,commercial,,62.2
+57584,CC_CHP,University of California San Diego Hybri,eia923_cf,0,30.0,,,,,,,,0.0,commercial,,82.3
+58198,CC_CHP,Parnassus Central Utility Plant,eia923_cf,0,12.5,,,,,,,,22.6,commercial,,62.1
 260,CC_REGULAR,Dynegy Moss Landing Power Plant Hybrid,ok,18574,1020.0,16.8,0.0,0.0,,47.2,75.6,0.6,,,,
 358,CC_REGULAR,Mountainview Generating Station,ok,11815,1018.0,17.4,0.0,0.0,,45.5,62.3,3.1,,,,
 10169,CC_REGULAR,Carson Cogeneration,ok,1412,49.3,10.1,0.0,0.0,,46.7,79.1,0.0,,,,
@@ -43,71 +43,71 @@ plant_code,plant_group,name,status,online_hours,nameplate_mw,committed_pct,mustr
 57978,CC_REGULAR,Lodi Energy Center,ok,9636,273.0,38.5,0.0,0.0,,54.9,66.3,1.0,,,,
 62115,CC_REGULAR,AES Alamitos Energy Center,ok,13264,603.0,23.7,0.0,0.0,,60.0,104.5,0.1,,,,
 62116,CC_REGULAR,AES Huntington Beach Energy Project,ok,14045,630.0,23.3,0.0,0.0,,69.7,104.1,0.1,,,,
-10115,CT_CHP,Grossmont Hospital,eia923_cf,0,4.2,,,,,,,,13.2,commercial,,
-10156,CT_CHP,Fresno Cogen Partners,ok,318,70.8,7.1,0.0,0.0,,17.3,33.9,,0.0,merchant,0.0,
-10175,CT_CHP,Childrens Hospital,eia923_cf,0,4.8,,,,,,,,17.4,commercial,,
-10206,CT_CHP,Loma Linda University Cogen,eia923_cf,0,9.6,,,,,,,,16.0,commercial,,
-10349,CT_CHP,Greenleaf 2 Power Plant,ok,4256,49.5,34.3,0.0,0.0,,42.4,46.5,,0.0,merchant,0.0,
-10496,CT_CHP,Kern River Cogeneration,eia923_cf,0,288.0,,,,,,,,0.0,merchant,,
-10548,CT_CHP,San Jose Cogeneration,eia923_cf,0,5.6,,,,,,,,0.0,commercial,,
-10649,CT_CHP,Bear Mountain Limited,ok,3283,46.0,32.6,0.0,0.0,,80.4,84.8,,0.0,merchant,0.0,
-10650,CT_CHP,Badger Creek Limited,ok,1359,46.0,17.4,0.0,0.0,,71.7,78.3,,0.0,merchant,0.0,
-10720,CT_CHP,Kyocera International Inc.(San Diego),eia923_cf,0,1.7,,,,,,,,10.4,industrial,,
-50003,CT_CHP,Chalk Cliff Limited,eia923_cf,0,46.0,,,,,,,,0.0,merchant,,
-50064,CT_CHP,University of California Santa Cruz,eia923_cf,0,4.4,,,,,,,,15.0,commercial,,
-50115,CT_CHP,US Borax,eia923_cf,0,39.0,,,,,,,,2.8,industrial,,
-50134,CT_CHP,Sycamore Cogeneration,eia923_cf,0,300.0,,,,,,,,0.0,merchant,,
-50170,CT_CHP,Berry Cogen,eia923_cf,0,35.0,,,,,,,,0.0,industrial,,75.0
-50234,CT_CHP,San Antonio Regional Hospital,eia923_cf,0,2.7,,,,,,,,8.1,commercial,,
-50464,CT_CHP,Oxnard,eia923_cf,0,70.9,,,,,,,,21.8,industrial,,
-50495,CT_CHP,High Sierra Limited,eia923_cf,0,46.0,,,,,,,,0.7,merchant,,
-50537,CT_CHP,SRI International Cogen Project,eia923_cf,0,5.6,,,,,,,,17.2,commercial,,
-50612,CT_CHP,McKittrick Limited,ok,1558,46.0,17.4,0.0,0.0,,71.7,82.6,,0.0,merchant,0.0,
-50622,CT_CHP,Berry Cogen Tanne Hills 18,eia923_cf,0,16.0,,,,,,,,13.5,industrial,,75.0
-50674,CT_CHP,Municipal Cogen Plant,eia923_cf,0,1.2,,,,,,,,5.5,commercial,,
-50750,CT_CHP,Coalinga Cogeneration Facility,eia923_cf,0,6.4,,,,,,,,12.8,industrial,,75.0
-50751,CT_CHP,Southeast Kern River Cogen,eia923_cf,0,20.8,,,,,,,,0.0,industrial,,75.0
-50752,CT_CHP,South Belridge Cogeneration Facility,eia923_cf,0,57.0,,,,,,,,25.7,industrial,,75.0
-50865,CT_CHP,Salinas River Cogeneration,ok,22665,33.0,70.0,0.0,0.0,,93.9,100.0,,0.0,merchant,90.9,
-50963,CT_CHP,Naval Hospital Medical Center,eia923_cf,0,4.4,,,,,,,,0.0,commercial,,
-50985,CT_CHP,Solano County Cogen Plant,eia923_cf,0,2.8,,,,,,,,5.5,commercial,,
-52076,CT_CHP,McKittrick Cogen,eia923_cf,0,9.6,,,,,,,,12.3,industrial,,75.0
-52077,CT_CHP,Lost Hills Cogeneration Plant,eia923_cf,0,5.4,,,,,,,,1.0,industrial,,75.0
-52081,CT_CHP,Cymric 31X Cogen,eia923_cf,0,5.4,,,,,,,,8.5,industrial,,75.0
-52082,CT_CHP,Cymric 6Z Cogen,eia923_cf,0,5.4,,,,,,,,13.9,industrial,,75.0
-52085,CT_CHP,Taft 26C Cogen,eia923_cf,0,10.8,,,,,,,,12.0,industrial,,75.0
-52086,CT_CHP,Coalinga 25D Cogen,eia923_cf,0,10.8,,,,,,,,8.9,industrial,,75.0
-52096,CT_CHP,Berry Placerita Cogen,eia923_cf,0,40.0,,,,,,,,0.0,industrial,,75.0
-52104,CT_CHP,Cymric 36W Cogen,eia923_cf,0,10.8,,,,,,,,10.2,industrial,,75.0
-52107,CT_CHP,Kern River Eastridge Cogen,eia923_cf,0,41.6,,,,,,,,14.8,industrial,,75.0
-52147,CT_CHP,CP Kelco San Diego Plant,eia923_cf,0,18.5,,,,,,,,6.5,industrial,,
-52169,CT_CHP,Midway Sunset Cogen,eia923_cf,0,219.0,,,,,,,,0.0,merchant,,
-52186,CT_CHP,Yuba City Cogen Partners,eia923_cf,0,49.9,,,,,,,,0.8,merchant,,
-54296,CT_CHP,Biola University Hybrid,eia923_cf,0,4.0,,,,,,,,9.4,commercial,,
-54410,CT_CHP,Western Power & Steam Inc,eia923_cf,0,19.6,,,,,,,,0.0,industrial,,
-54447,CT_CHP,Welport Lease Project,eia923_cf,0,4.0,,,,,,,,10.5,industrial,,75.0
-54449,CT_CHP,Dome Project,eia923_cf,0,5.0,,,,,,,,19.7,industrial,,75.0
-54477,CT_CHP,"Oroville Cogeneration, LLC",eia923_cf,0,7.7,,,,,,,,0.1,industrial,,
-54768,CT_CHP,Live Oak Limited,ok,1933,46.0,15.2,0.0,0.0,,76.1,80.4,,0.0,merchant,0.0,
-54800,CT_CHP,Saint Agnes Medical Center,eia923_cf,0,5.4,,,,,,,,9.4,commercial,,
-55184,CT_CHP,Aera San Ardo Cogen Facility,eia923_cf,0,2.8,,,,,,,,14.0,industrial,,75.0
-55851,CT_CHP,Valero Refinery Cogeneration Unit 1,eia923_cf,0,45.4,,,,,,,,0.0,industrial,,70.0
-56080,CT_CHP,SJ/SC WPCP,eia923_cf,0,12.8,,,,,,,,0.0,commercial,,
-57573,CT_CHP,CCCSD Wastewater Treatment Plnt,eia923_cf,0,3.0,,,,,,,,0.0,commercial,,
-57580,CT_CHP,Broadridge Cogen,eia923_cf,0,4.2,,,,,,,,7.9,merchant,,
-57585,CT_CHP,Oxnard Paper Mill,eia923_cf,0,29.0,,,,,,,,0.0,industrial,,
-57977,CT_CHP,High Sierra Cogeneration Plant,eia923_cf,0,5.6,,,,,,,,12.9,merchant,,
-58168,CT_CHP,Energy Center,eia923_cf,0,0.9,,,,,,,,3.8,commercial,,
-58169,CT_CHP,CSUF Trigeneration,eia923_cf,0,4.3,,,,,,,,0.0,commercial,,
-58223,CT_CHP,Hoag Hospital Cogen Plant,eia923_cf,0,3.6,,,,,,,,0.0,commercial,,
-58432,CT_CHP,Glass House Camarillo Cultivation,eia923_cf,0,13.2,,,,,,,,7.0,merchant,,
-58585,CT_CHP,Sierra Nevada Brewing Co Hybrid,eia923_cf,0,1.7,,,,,,,,8.4,industrial,,
-58607,CT_CHP,One Market Plaza,eia923_cf,0,1.5,,,,,,,,0.3,commercial,,
-58619,CT_CHP,Transamerica Pyramid,eia923_cf,0,1.0,,,,,,,,1.1,commercial,,
-58914,CT_CHP,MCAGCC Cogen Plant,eia923_cf,0,16.2,,,,,,,,5.2,merchant,,
-59458,CT_CHP,W Plant,eia923_cf,0,4.0,,,,,,,,0.0,commercial,,
-62176,CT_CHP,Berry NMW Cogens,eia923_cf,0,10.0,,,,,,,,14.5,industrial,,75.0
-66472,CT_CHP,San Manuel Central Plant Cogens,eia923_cf,0,5.0,,,,,,,,10.7,industrial,,
+10115,CT_CHP,Grossmont Hospital,eia923_cf,0,4.2,,,,,,,,13.2,commercial,,71.9
+10156,CT_CHP,Fresno Cogen Partners,ok,318,70.8,7.1,0.0,0.0,,17.3,33.9,,0.0,merchant,,0.4
+10175,CT_CHP,Childrens Hospital,eia923_cf,0,4.8,,,,,,,,17.4,commercial,,62.0
+10206,CT_CHP,Loma Linda University Cogen,eia923_cf,0,9.6,,,,,,,,16.0,commercial,,66.7
+10349,CT_CHP,Greenleaf 2 Power Plant,ok,4256,49.5,34.3,0.0,0.0,,42.4,46.5,,0.0,merchant,,7.5
+10496,CT_CHP,Kern River Cogeneration,eia923_cf,0,288.0,,,,,,,,0.0,merchant,,6.9
+10548,CT_CHP,San Jose Cogeneration,eia923_cf,0,5.6,,,,,,,,0.0,commercial,,65.2
+10649,CT_CHP,Bear Mountain Limited,ok,3283,46.0,32.6,0.0,0.0,,80.4,84.8,,0.0,merchant,,10.6
+10650,CT_CHP,Badger Creek Limited,ok,1359,46.0,17.4,0.0,0.0,,71.7,78.3,,0.0,merchant,,4.0
+10720,CT_CHP,Kyocera International Inc.(San Diego),eia923_cf,0,1.7,,,,,,,,10.4,industrial,,59.9
+50003,CT_CHP,Chalk Cliff Limited,eia923_cf,0,46.0,,,,,,,,0.0,merchant,,4.7
+50064,CT_CHP,University of California Santa Cruz,eia923_cf,0,4.4,,,,,,,,15.0,commercial,,84.0
+50115,CT_CHP,US Borax,eia923_cf,0,39.0,,,,,,,,2.8,industrial,,84.2
+50134,CT_CHP,Sycamore Cogeneration,eia923_cf,0,300.0,,,,,,,,0.0,merchant,,13.7
+50170,CT_CHP,Berry Cogen,eia923_cf,0,35.0,,,,,,,,0.0,industrial,75.0,4.7
+50234,CT_CHP,San Antonio Regional Hospital,eia923_cf,0,2.7,,,,,,,,8.1,commercial,,44.2
+50464,CT_CHP,Oxnard,eia923_cf,0,70.9,,,,,,,,21.8,industrial,,78.4
+50495,CT_CHP,High Sierra Limited,eia923_cf,0,46.0,,,,,,,,0.7,merchant,,4.6
+50537,CT_CHP,SRI International Cogen Project,eia923_cf,0,5.6,,,,,,,,17.2,commercial,,51.7
+50612,CT_CHP,McKittrick Limited,ok,1558,46.0,17.4,0.0,0.0,,71.7,82.6,,0.0,merchant,,4.9
+50622,CT_CHP,Berry Cogen Tanne Hills 18,eia923_cf,0,16.0,,,,,,,,13.5,industrial,75.0,95.5
+50674,CT_CHP,Municipal Cogen Plant,eia923_cf,0,1.2,,,,,,,,5.5,commercial,,68.6
+50750,CT_CHP,Coalinga Cogeneration Facility,eia923_cf,0,6.4,,,,,,,,12.8,industrial,75.0,71.5
+50751,CT_CHP,Southeast Kern River Cogen,eia923_cf,0,20.8,,,,,,,,0.0,industrial,75.0,35.5
+50752,CT_CHP,South Belridge Cogeneration Facility,eia923_cf,0,57.0,,,,,,,,25.7,industrial,75.0,92.1
+50865,CT_CHP,Salinas River Cogeneration,ok,22665,33.0,70.0,0.0,0.0,,93.9,100.0,,0.0,merchant,,86.2
+50963,CT_CHP,Naval Hospital Medical Center,eia923_cf,0,4.4,,,,,,,,0.0,commercial,,48.2
+50985,CT_CHP,Solano County Cogen Plant,eia923_cf,0,2.8,,,,,,,,5.5,commercial,,31.2
+52076,CT_CHP,McKittrick Cogen,eia923_cf,0,9.6,,,,,,,,12.3,industrial,75.0,74.8
+52077,CT_CHP,Lost Hills Cogeneration Plant,eia923_cf,0,5.4,,,,,,,,1.0,industrial,75.0,12.5
+52081,CT_CHP,Cymric 31X Cogen,eia923_cf,0,5.4,,,,,,,,8.5,industrial,75.0,60.6
+52082,CT_CHP,Cymric 6Z Cogen,eia923_cf,0,5.4,,,,,,,,13.9,industrial,75.0,74.3
+52085,CT_CHP,Taft 26C Cogen,eia923_cf,0,10.8,,,,,,,,12.0,industrial,75.0,56.6
+52086,CT_CHP,Coalinga 25D Cogen,eia923_cf,0,10.8,,,,,,,,8.9,industrial,75.0,57.7
+52096,CT_CHP,Berry Placerita Cogen,eia923_cf,0,40.0,,,,,,,,0.0,industrial,75.0,4.6
+52104,CT_CHP,Cymric 36W Cogen,eia923_cf,0,10.8,,,,,,,,10.2,industrial,75.0,59.9
+52107,CT_CHP,Kern River Eastridge Cogen,eia923_cf,0,41.6,,,,,,,,14.8,industrial,75.0,62.8
+52147,CT_CHP,CP Kelco San Diego Plant,eia923_cf,0,18.5,,,,,,,,6.5,industrial,,52.6
+52169,CT_CHP,Midway Sunset Cogen,eia923_cf,0,219.0,,,,,,,,0.0,merchant,,8.2
+52186,CT_CHP,Yuba City Cogen Partners,eia923_cf,0,49.9,,,,,,,,0.8,merchant,,4.8
+54296,CT_CHP,Biola University Hybrid,eia923_cf,0,4.0,,,,,,,,9.4,commercial,,34.4
+54410,CT_CHP,Western Power & Steam Inc,eia923_cf,0,19.6,,,,,,,,0.0,industrial,,16.4
+54447,CT_CHP,Welport Lease Project,eia923_cf,0,4.0,,,,,,,,10.5,industrial,75.0,80.0
+54449,CT_CHP,Dome Project,eia923_cf,0,5.0,,,,,,,,19.7,industrial,75.0,100.0
+54477,CT_CHP,"Oroville Cogeneration, LLC",eia923_cf,0,7.7,,,,,,,,0.1,industrial,,0.7
+54768,CT_CHP,Live Oak Limited,ok,1933,46.0,15.2,0.0,0.0,,76.1,80.4,,0.0,merchant,,5.9
+54800,CT_CHP,Saint Agnes Medical Center,eia923_cf,0,5.4,,,,,,,,9.4,commercial,,63.1
+55184,CT_CHP,Aera San Ardo Cogen Facility,eia923_cf,0,2.8,,,,,,,,14.0,industrial,75.0,83.2
+55851,CT_CHP,Valero Refinery Cogeneration Unit 1,eia923_cf,0,45.4,,,,,,,,0.0,industrial,70.0,45.0
+56080,CT_CHP,SJ/SC WPCP,eia923_cf,0,12.8,,,,,,,,0.0,commercial,,35.5
+57573,CT_CHP,CCCSD Wastewater Treatment Plnt,eia923_cf,0,3.0,,,,,,,,0.0,commercial,,76.4
+57580,CT_CHP,Broadridge Cogen,eia923_cf,0,4.2,,,,,,,,7.9,merchant,,44.3
+57585,CT_CHP,Oxnard Paper Mill,eia923_cf,0,29.0,,,,,,,,0.0,industrial,,69.5
+57977,CT_CHP,High Sierra Cogeneration Plant,eia923_cf,0,5.6,,,,,,,,12.9,merchant,,73.7
+58168,CT_CHP,Energy Center,eia923_cf,0,0.9,,,,,,,,3.8,commercial,,39.5
+58169,CT_CHP,CSUF Trigeneration,eia923_cf,0,4.3,,,,,,,,0.0,commercial,,80.7
+58223,CT_CHP,Hoag Hospital Cogen Plant,eia923_cf,0,3.6,,,,,,,,0.0,commercial,,36.0
+58432,CT_CHP,Glass House Camarillo Cultivation,eia923_cf,0,13.2,,,,,,,,7.0,merchant,,53.2
+58585,CT_CHP,Sierra Nevada Brewing Co Hybrid,eia923_cf,0,1.7,,,,,,,,8.4,industrial,,48.4
+58607,CT_CHP,One Market Plaza,eia923_cf,0,1.5,,,,,,,,0.3,commercial,,4.4
+58619,CT_CHP,Transamerica Pyramid,eia923_cf,0,1.0,,,,,,,,1.1,commercial,,6.0
+58914,CT_CHP,MCAGCC Cogen Plant,eia923_cf,0,16.2,,,,,,,,5.2,merchant,,38.9
+59458,CT_CHP,W Plant,eia923_cf,0,4.0,,,,,,,,0.0,commercial,,85.1
+62176,CT_CHP,Berry NMW Cogens,eia923_cf,0,10.0,,,,,,,,14.5,industrial,75.0,83.9
+66472,CT_CHP,San Manuel Central Plant Cogens,eia923_cf,0,5.0,,,,,,,,10.7,industrial,,61.3
 341,CT_PEAKER,Long Beach Generation,ok,466,260.0,8.1,0.0,0.0,,18.5,18.5,,,,,
 422,CT_PEAKER,Glenarm,ok,5227,138.4,11.6,0.0,0.0,,13.0,22.4,,,,,
 7449,CT_PEAKER,Combustion Turbine Project No 2,ok,407,49.3,22.9,0.0,0.0,,82.2,93.3,,,,,

@@ -18068,3 +18068,100 @@ requires direction-symmetric loss structure (re-opens the negative-price
 disposal problem) or the congestion component — M4 (OASIS-AFC feasibility,
 contingent, own charter). The determination-path proposal remains DECLINED
 (2026-07-19, un-applied). Next number: miso-77.
+
+## 2026-07-19 — CAISO — caiso-101: BOTH pending asks RULED GRANTED in-session and executed. (1) caiso-100 cycling-cost B-leg — REJECTED PROBE on the pre-registered §6 volume gates, after exposing and fixing a run_config/live-solve drift (the hidden unrecorded CAISO $5/MWh battery adder, issue #2546); (2) WP-3 CT_CHP steam-level rule-23 re-derive at scope (a)+(b) — PROMOTED to keeper after LOYO (C3a FAIL→PASS, C5a improves every year, zero status regressions)
+
+**Runs:** `2026-07-19-caiso-100-cycling-cost` (bundle `caiso100_cycling_B`,
+REJECTED PROBE) and `2026-07-19-caiso-101-chp-steam` (bundle `caiso101_wp3_B`,
+**NEW CAISO KEEPER**, supersedes `2026-07-19-caiso-99-storage-shape`). One
+fresh same-machine baseline (`caiso100_repro_A`, un-registered per the
+FINDING-caiso92b protocol) served both A/B pairs. Retention: the caiso-80
+pair (main + ablation twin, 2026-07-13, oldest) pruned; registry 14/15.
+
+### Rulings
+
+Both asks pending from CAISO-98/100 were ruled by the owner in-session (via
+the session question gate): the caiso-100 `battery_dispatch_adder` ask
+**GRANTED** (0.0 → the derived 14.25), and the WP-3 CT_CHP steam-floor
+re-derive **GRANTED at scope (a)+(b)**. Both ask docs updated from PENDING to
+GRANTED in place.
+
+### Arc 1 — caiso-100 cycling-cost B-leg: REJECTED PROBE + the hidden-$5 discovery
+
+Executed exactly per FINDING-caiso100 §6. The FIRST B solve came back
+byte-identical to A (storage/system/flows md5-equal) at recorded 14.25 —
+which exposed the second instance of the ERCOT-65 recorder/live-drift
+pattern (issue #2546): `run_year` re-resolves `battery_dispatch_adder` from
+its explicit kwarg AFTER the generic prb_overrides application (stomping the
+prb-carried 14.25), and with no explicit adder falls back to a **hardcoded,
+never-recorded CAISO-only $5/MWh** — live in every keeper-lineage CAISO
+solve while run_config recorded 0.0 (rule 24 off-registry literal;
+behavioral proof: the fresh $5-live A-leg reproduces the caiso-99 registered
+ladder exactly). Fixed both sides (prb channel now governs; the recorder
+writes the effective adder), FINDING-caiso100 gains §8, the caiso-99 sidecar
+carries an ERCOT-65-style record-correction note, and the $5 literal's
+disposition (delete vs. registered default) is filed for owner ruling in
+issue #2546. The true A/B delta was therefore live-$5(tuned, hidden) →
+$14.25(derived, registered).
+
+Re-solved B on the fixed code and adjudicated: price-side conduct moves
+sharply toward measured — belly resid +7.7/+7.6/+6.3 → +6.3/+4.9/+2.9 (no
+overshoot), evening −5.3/−4.4/−2.3 → −4.3/−3.0/−1.0 (no cross), revealed
+conduct cost c* rises from ~$7 to $13-17 bracketing the measured $11-17,
+C3a flips FAIL→PASS, C5a improves every year — **but the pre-registered
+two-sided ±15 % battery-only NG:OTH throughput guard hard-fails** (chg
+6.77 < 7.40 in 2024, 10.28 < 11.07 in 2025; dis 2.97/5.76/8.74 vs floors
+3.42/6.43/9.57 in all years) and 2025 evening discharge moves 0.64 TWh away
+from measured (7.02 vs 8.00; allowance 0.3). REJECTED per the binding gates
+(rule 1: the C3a "pass" is bought with a volume collapse reality
+contradicts). No sweep (rule 25). **Key structural finding for the
+re-charter: the measured fleet buys its volume DESPITE a revealed $11-17
+conduct cost — battery charge volume is inelastic to marginal cost, i.e.
+the belly's remaining over-price lives in the inelastic-conduct channels
+(DA-award allocation, RA/AS obligation charging), not in the bid ladder.**
+
+### Arc 2 — WP-3 CT_CHP steam level: PROMOTED to keeper
+
+Rule-23 re-derivation citing FINDING-caiso95 §5 (never a residual):
+`steam_level_cf` replaces `p25_allhr_cf` in `thermal_tranches_CAISO.csv` —
+lens (a) loading-when-on (on-hour frequency × p50
+loading-conditional-on-online, pooled 2023-2025 CAMPD) for CAMPD-visible
+cogens (flat hosts rise: Los Medanos 75.0 → 99.8, Elk Hills 81.5 → 92.6;
+cyclers collapse by on-frequency), lens (b) the pooled EIA-923
+delivery-implied level for the CEMS-invisible Kern-EOR/refinery/campus
+fleet the CAMPD percentile could never see (the −1.4 to −1.8 TWh bulk).
+Column-merged per the caiso-89 precedent (0 drifted cells across all 16
+shared columns); reader renamed `thermal_tranche_chp_steam_level` with a
+pre-WP-3 fallback (byte-identical on old artifacts, verified); same
+MECH_CHP_STEAM id (rule 19 level source swap); zero fitted scalars.
+
+A/B vs `caiso100_repro_A`: CT_CHP energy gap **−1.83/−1.75/−1.08 →
+−0.57/−0.48/+0.20 TWh**; C1 holds 12/12 (free 8/8); **C3a FAIL→PASS** (belly
+resid improves to 6.0/6.6/5.0); **C5a improves every year** (−11.6/−9.6/−12.8
+→ −11.1/−9.1/−12.1, 2024 stays CAVEAT); C7/C8 PASS; D-1 CT_CHP clears
+(ungated pass; 2025 profile_r 0.433 with cv_ratio ~0 noted — flat-floor
+shape, bounded by class immateriality). Report-noted non-gates: evening
+resid deepens −5.3/−4.4/−2.3 → −5.8/−4.9/−3.0 (the flat cogen baseload
+displaces marginal evening gas — the next real residual); C3c 20/1/0 →
+19/0/0 (1 h drift, status unchanged). Rule-22 LOYO on the level estimation:
+class-level drift worst +4.6 % (CT_CHP leave-2025-out), CC_CHP ≤0.8 % —
+inside the caiso-88/89 CV≤0.20 / LOYO≤25 % gates. Promoted on
+no-status-regression + most-structurally-faithful (rule 1); keeper audit
+PASS 0 failures (the auditor also fixed a keepers.json top-level-vs-array
+divergence introduced by the swap). Determination stays **NOT-YET**, fail
+set now **{C3c, C4, C5a(2024 CAVEAT)}** — C3a leaves the fail set for the
+first time.
+
+### Open threads
+
+- Issue #2546: owner disposition of the $5 fallback literal + record
+  corrections for the pre-caiso-99 registered CAISO bundles ($5-live /
+  0.0-recorded).
+- The belly residual re-charter now has hard evidence for the
+  inelastic-conduct channels (derive-first: DA-award allocation,
+  AS-deployment variance, shoulder/overnight inelastic charging — the
+  −4/−8 % annual under-charge outside the belly).
+- Evening under-price deepened by the CHP baseload — the evening merit
+  stack is the next largest λ-ladder residual.
+
+Next number: caiso-102.

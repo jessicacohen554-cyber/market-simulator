@@ -18,7 +18,7 @@ from market_sim.data.fleet import (
     bins_to_fleet,
     fleet_to_bins,
     load_fleet_from_csv,
-    thermal_tranche_chp_p25_allhr,
+    thermal_tranche_chp_steam_level,
     thermal_tranche_overrides,
     thermal_tranche_peaking,
 )
@@ -224,10 +224,12 @@ class TestCaisoFleetBuild(unittest.TestCase):
 class TestCaisoChpSteamFloorP25(unittest.TestCase):
     """The CHP steam-host operating-level floor (``chp_steam_floor_p25``).
 
-    Exercises the level swap against the committed CAISO artifact: the two
-    flat merchant steam hosts (Elk Hills 55400, Midway-Sunset 55217) gain the
-    all-hours-p25 grid floor; measured-and-collapsed cyclers (p25_allhr_cf =
-    0.0) and the default-off build stay byte-identical to the p2 floors.
+    Exercises the level swap against the committed CAISO artifact, which since
+    WP-3 (owner-ruled 2026-07-19) carries ``steam_level_cf`` — the
+    loading-when-on construction for CAMPD-visible cogens (flat hosts keep
+    their high on-load baseload; cyclers' on-frequency collapses their level)
+    plus the EIA-923 delivery-implied level for CEMS-invisible cogens — and
+    the default-off build stays byte-identical to the p2 floors.
     """
 
     @classmethod
@@ -245,19 +247,23 @@ class TestCaisoChpSteamFloorP25(unittest.TestCase):
         return sum(g.chp_grid_pmin_mw for g in fleet if g.plant_code == code)
 
     def test_loader_reads_artifact(self):
-        m = thermal_tranche_chp_p25_allhr("CAISO")
-        positive = {k: v for k, v in m.items() if v > 0.0}
-        self.assertEqual(
-            set(positive),
-            {(55217, "CC_CHP"), (55400, "CC_CHP"), (50865, "CT_CHP")},
-        )
-        # measured-and-collapsed cyclers carry explicit zeros, not absence
-        self.assertIn((10034, "CC_CHP"), m)
-        self.assertEqual(m[(10034, "CC_CHP")], 0.0)
+        m = thermal_tranche_chp_steam_level("CAISO")
+        # WP-3 lens (a): the flat CAMPD-visible hosts carry their measured
+        # loading-when-on baseload (on-frequency x p50 on-load).
+        self.assertAlmostEqual(m[(55217, "CC_CHP")], 99.8, delta=0.1)
+        self.assertAlmostEqual(m[(55400, "CC_CHP")], 92.6, delta=0.1)
+        self.assertAlmostEqual(m[(50865, "CT_CHP")], 86.2, delta=0.1)
+        # WP-3 lens (b): CEMS-invisible cogens carry the pooled EIA-923
+        # delivery-implied level (previously invisible to the CAMPD p25).
+        self.assertAlmostEqual(m[(10213, "CC_CHP")], 80.5, delta=0.1)
+        self.assertAlmostEqual(m[(50752, "CT_CHP")], 92.1, delta=0.1)
+        # a partial cycler's on-frequency collapses its level well below the
+        # flat hosts' (Gilroy: online a minority of available hours)
+        self.assertLess(m[(10034, "CC_CHP")], 25.0)
 
     def test_flat_hosts_gain_operating_level_floor(self):
-        """Floor = p25_allhr x (1 - BTM share) x nameplate for the flat hosts."""
-        m = thermal_tranche_chp_p25_allhr("CAISO")
+        """Floor = steam_level x (1 - BTM share) x nameplate for the flat hosts."""
+        m = thermal_tranche_chp_steam_level("CAISO")
         for code, group in ((55217, "CC_CHP"), (55400, "CC_CHP")):
             nameplate = float(
                 self.synth[
@@ -266,7 +272,17 @@ class TestCaisoChpSteamFloorP25(unittest.TestCase):
                 ]["capacity_mw"].iloc[0]
             )
             btm = chp_btm_pct(code, group, iso="CAISO") / 100.0
-            expected = m[(code, group)] / 100.0 * (1.0 - btm) * nameplate
+            # The floor is clipped to the plant's committed+econ band (the
+            # duct-firing peak tranche never carries the steam base) — at the
+            # WP-3 loading-when-on level (~93-100 %) that physical cap can
+            # bind, so expect the smaller of the formula and the non-peak
+            # band.
+            band_cap = sum(
+                g.pmax_mw
+                for g in self.fleet_on
+                if g.plant_code == code and not g.unit_id.endswith("_peak")
+            )
+            expected = min(m[(code, group)] / 100.0 * (1.0 - btm) * nameplate, band_cap)
             self.assertAlmostEqual(
                 self._plant_floor_mw(self.fleet_on, code),
                 expected,
@@ -281,12 +297,23 @@ class TestCaisoChpSteamFloorP25(unittest.TestCase):
             lp = sum(g.pmax_mw for g in self.fleet_on if g.plant_code == code)
             self.assertLessEqual(self._plant_floor_mw(self.fleet_on, code), lp + 0.6)
 
-    def test_cyclers_keep_p2_floor(self):
-        """A measured-and-collapsed cogen (p25_allhr_cf = 0.0) is unchanged."""
-        for code in (10034, 10294):  # rarely-online CC_CHP, p25_allhr 0.0
-            self.assertEqual(
-                self._plant_floor_mw(self.fleet_on, code),
-                self._plant_floor_mw(self.fleet_off, code),
+    def test_cycler_floor_is_delivery_bounded(self):
+        """A partial cycler's floor is its (collapsed) measured level, not the
+        flat-host baseload: the WP-3 statistic self-targets by on-frequency."""
+        m = thermal_tranche_chp_steam_level("CAISO")
+        for code in (10034, 10294):  # partial-cycling merchant CC_CHP
+            level = m[(code, "CC_CHP")]
+            self.assertLess(level, 25.0)
+            nameplate = float(
+                self.synth[
+                    (self.synth["Plant_Code"] == code)
+                    & (self.synth["Plant_Group"] == "CC_CHP")
+                ]["capacity_mw"].iloc[0]
+            )
+            btm = chp_btm_pct(code, "CC_CHP", iso="CAISO") / 100.0
+            expected = level / 100.0 * (1.0 - btm) * nameplate
+            self.assertAlmostEqual(
+                self._plant_floor_mw(self.fleet_on, code), expected, delta=1.0
             )
 
     def test_default_off_identical(self):

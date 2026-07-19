@@ -273,3 +273,36 @@ values; LOYO is vacuous for a derived constant but the verdict-flip clause
 - WP-3 (CT_CHP steam-floor rule-23 re-derive) remains PENDING its own ask
   (`docs/handoffs/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md`) — untouched
   this session per the charter's "if ruled" condition.
+
+## 8. Execution addendum (CAISO-101 session, 2026-07-19) — the B-leg exposed a hidden live $5 adder; the A/B baseline is $5, not $0
+
+Executing the owner-GRANTED B-leg per §6 exposed a run-config/live-solve
+drift (issue #2546; the ERCOT-65 pattern, second instance): `run_year`
+applies the generic `prb_overrides` channel and a LATER explicit-kwarg block
+re-resolved `battery_dispatch_adder` from the kwarg default — stomping the
+prb-carried 14.25 — and, with no explicit adder, fell back to a **CAISO-only
+hardcoded $5/MWh** that the recorder never wrote. The first B solve came
+back byte-identical to A (storage/system/flows md5-equal) at recorded 14.25;
+behaviorally, `caiso100_repro_A` (live $5) reproduces the caiso-99 keeper's
+registered ladder exactly, proving the keeper lineage solved at $5-live /
+0.0-recorded (rule 24 off-registry literal, filed for owner disposition).
+
+Consequences for this FINDING's framing (measured numbers unchanged):
+
+- §5's "the model's charge margin prices only its efficiency-loss floor
+  (c* ≈ $7)" mis-attributed the floor: the revealed c* ≈ $7 was the hidden
+  $5 adder plus the efficiency-loss/tiebreaker term. The measured rows and
+  the $5.8-12.2 charge-weighted λ gap stand as measured.
+- The ruled swap is therefore live-$5(hidden, tuned) → $14.25(derived,
+  registered) — a stronger rule-24/25 improvement than the recorded
+  0.0 → 14.25: it replaces an off-registry tuned literal with the derived
+  physical cost.
+- §6's bands and gates are UNCHANGED (they are defined on model outputs and
+  the measured series, not on the adder's recorded value). The A-leg stays
+  the same-machine keeper-recipe baseline (its live behavior IS the keeper's).
+
+Fix landed (branch claude/caiso-charge-economics-96lnqj, commit 23a0ed1):
+prb-carried adder now governs (never stomped), and run_config records the
+EFFECTIVE adder including the fallback. The B-leg re-solved on the fixed
+code; scores in the registered bundle and the 2026-07-19 caiso-101
+calibration-log entry.
