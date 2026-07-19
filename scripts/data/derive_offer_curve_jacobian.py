@@ -111,12 +111,17 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
+sys.path.insert(0, str(REPO / "src"))
+from market_sim.config.paths import CALIBRATION_DIR, PROCESSED_DIR  # noqa: E402
 from scripts.lib.bundle_io import bundle_input_path  # noqa: E402
 
+# Derived artifacts under the single W1 data root (paths.PROCESSED_DIR =
+# data/raw/_processed-legacy, paths.CALIBRATION_DIR = data/raw/_validation-source);
+# the pre-W1 ``inputs/`` root was removed by the relocation.
 DEFAULT_ROOT = REPO / "results" / "calibration"
-DEFAULT_OUT = REPO / "inputs" / "processed" / "offer_curve_jacobian.csv"
-CACHE_PATH = REPO / "inputs" / "processed" / ".offer_curve_jacobian_cache.json"
-FUEL_COSTS = REPO / "inputs" / "processed" / "eia923_monthly_fuel_costs.parquet"
+DEFAULT_OUT = PROCESSED_DIR / "offer_curve_jacobian.csv"
+CACHE_PATH = PROCESSED_DIR / ".offer_curve_jacobian_cache.json"
+FUEL_COSTS = PROCESSED_DIR / "eia923_monthly_fuel_costs.parquet"
 
 # Offer-curve knobs per class as resolved in run_config.json
 # scenario_config.offer_curve_by_group. The first four are heat-rate band
@@ -139,7 +144,7 @@ GAS_NONCHP_CLASSES = ("CC_REGULAR", "CT_PEAKER", "ST_GAS")
 
 # Committed actual-LMP reference produced by scripts/data/derive_actual_lmp.py:
 # {"ERCOT": {"2024": {"rt": ..., "rt_mon": [...12...], ...}, ...}, ...}.
-ACTUAL_LMP_JSON = REPO / "inputs" / "calibration" / "actual_lmp.json"
+ACTUAL_LMP_JSON = CALIBRATION_DIR / "actual_lmp.json"
 
 # Fixed non-leap dispatch calendar (matches market_sim.data.campd and
 # scripts/archive/analyze_lmp_residual.py).

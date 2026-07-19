@@ -27,6 +27,13 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO / "src"))
+# paths.py is stdlib-only (os + pathlib), so importing it keeps this launcher
+# dependency-free. REFERENCE_DIR (data/raw/reference) is where the editable
+# tranche-config sheet lives after the W1 data relocation; the pre-W1 ``inputs/``
+# root was removed.
+from market_sim.config.paths import REFERENCE_DIR  # noqa: E402
+
 PORT = 8765
 BASELINE_BUNDLE = REPO / "results" / "calibration" / "run10_peak85"
 
@@ -52,9 +59,9 @@ def _log(line: str) -> None:
 
 
 def _list_configs() -> list[dict]:
-    """Return the candidate tranche-config CSVs under inputs/ (+ configs/)."""
+    """Return the candidate tranche-config CSVs under data/raw/reference (+ configs/)."""
     out = []
-    for d in (REPO / "inputs", REPO / "configs"):
+    for d in (REFERENCE_DIR, REPO / "configs"):
         if not d.is_dir():
             continue
         for p in sorted(d.glob("*.csv")):
@@ -236,7 +243,7 @@ a.btn{display:inline-block;text-decoration:none;margin-top:12px}
 .hide{display:none}
 </style></head><body><div class=wrap>
 <h1>Market Simulator — Run Launcher</h1>
-<p class=sub>Pick a per-plant tranche-config sheet, choose years, and run the ERCOT backcast. Edit the sheet in Excel (inputs/plant-tranche-config.csv) to reshape each plant's tranches.</p>
+<p class=sub>Pick a per-plant tranche-config sheet, choose years, and run the ERCOT backcast. Edit the sheet in Excel (data/raw/reference/plant-tranche-config.csv) to reshape each plant's tranches.</p>
 
 <div class=card>
  <div class=row>

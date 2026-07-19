@@ -26,12 +26,20 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
-DAM_DIR = REPO / "inputs" / "raw-data" / "lmp-data" / "CAISO"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import RAW_DIR  # noqa: E402
+
+# Committed CAISO DAM hourly aggregates under the single W1 data root
+# (paths.RAW_DIR = data/raw); the pre-W1 ``inputs/raw-data`` path was removed by
+# the relocation.
+DAM_DIR = RAW_DIR / "lmp-data" / "CAISO"
 
 HUBS = {
     "NP15": "TH_NP15_GEN-APND",
