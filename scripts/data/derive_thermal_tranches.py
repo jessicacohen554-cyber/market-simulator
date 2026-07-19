@@ -108,19 +108,27 @@ _CHP_GROUPS: frozenset[str] = frozenset({"CC_CHP", "CT_CHP", "ST_CHP"})
 # (p2 CAMPD gross CF, non-outage hours).
 _CHP_PMIN_PCTILE: int = 2
 
-# Percentile of the SAME all-hours available-CF distribution emitted as a CHP
-# cogen's steam-host OPERATING level (``p25_allhr_cf``): the output the host's
-# thermal demand sustains three-quarters of the plant's available hours. The
-# sample is the deriver's ``all_cat`` — outage hours are excluded (avail_cap =
-# 0 drops out of the mask), while economic/host-driven offline hours count as
-# zeros — so the statistic self-targets: a genuinely flat steam host (CAISO
-# Elk Hills 55217 / Midway-Sunset 55400: CEMS net flat 0.65-0.76 GW all 24 hod,
-# May-2023) keeps its online level, and a cycling cogen (online a minority of
-# available hours) collapses to exactly 0 with no threshold parameter. The p2
-# floor above only captures the never-below minimum (~0 for any plant with a
-# few non-outage offline hours), which is why the CAISO CC_CHP steam base was
-# invisible to ``chp_pmin_cf``. Consumed by ScenarioConfig.chp_steam_floor_p25.
-_CHP_P25_ALLHR_PCTILE: int = 25
+# Percentile of the ONLINE-hours available-CF distribution used in a CHP
+# cogen's steam-host OPERATING level (``steam_level_cf``). WP-3 (owner-ruled
+# 2026-07-19, `docs/handoffs/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md`,
+# rule-23 re-derivation citing FINDING-caiso95 §5): the former p25-of-all-hours
+# statistic mixed economic/host-driven offline zeros into the LEVEL, so a host
+# that runs a high baseload when on but takes offline stretches (the measured
+# CAISO CT_CHP conduct: >=70 % loading in 79/85/88 % of on-capacity-hours,
+# 2023/24/25) under-measured to a ~12-14 % trickle. The replacement conditions
+# on being online:
+#
+#   steam_level_cf = (on-hour frequency over available hours)
+#                    x (p50 available-CF conditional on online)
+#
+# which reproduces the measured loading-when-on baseload directly. The
+# statistic still self-targets with no threshold parameter: outage hours drop
+# out of the sample (avail_cap = 0), a rarely-online cycler's on-frequency
+# collapses its level toward 0, and a genuinely flat steam host keeps its
+# online level. The p2 floor above only captures the never-below minimum.
+# Consumed by ScenarioConfig.chp_steam_floor_p25 (field name kept for run-config
+# lineage; the level source is this statistic since WP-3).
+_CHP_STEAM_LEVEL_ON_PCTILE: int = 50
 
 # EIA-923 Page 1 "EIA Sector Number" -> the BTM sector class the model's
 # chp_btm_pct uses. Cogen sectors map directly (3 = NAICS-22 / merchant cogen,
@@ -197,8 +205,8 @@ _DAYS_IN_MONTH: tuple[int, ...] = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 3
 def _chp_f923_floor_cf(
     years: list[int],
     cap: dict[tuple[int, str], float],
-) -> dict[tuple[int, str], float]:
-    """Return ``{(code, group): pmin_cf %}`` from EIA-923 monthly generation.
+) -> dict[tuple[int, str], tuple[float, float]]:
+    """Return ``{(code, group): (pmin_cf %, steam_level_cf %)}`` from EIA-923.
 
     For each CHP ``(plant, group)`` in the fleet, every reported month's net
     generation of that class (canonical :func:`classify_plant` bucketing)
@@ -208,6 +216,17 @@ def _chp_f923_floor_cf(
     extracts cannot see. Plants with no class generation at all are absent
     from the result (no row, no floor); a plant with a zero month keeps a row
     with a zero floor — its EIA-923 sector still sizes the BTM share.
+
+    The second element is the WP-3 scope-(b) steam-host operating LEVEL for
+    CEMS-invisible cogens (owner-ruled 2026-07-19): the pooled mean class CF —
+    the plant's measured EIA-923 grid delivery spread over its reported
+    months, i.e. the implied sustained baseload the host's steam contract
+    delivers. It is the EIA-923 analogue of the CAMPD loading-when-on
+    construction (on-frequency x median-on loading integrates to the same
+    delivered-energy level), so the two lenses emit ONE statistic family into
+    ``steam_level_cf``. Uncapped except at 100 % of nameplate; a cycling or
+    mostly-idle cogen's low delivered energy keeps its level low (the
+    statistic self-targets on delivery, no threshold parameter).
     """
     from market_sim.config.plant_taxonomy import classify_plant
     from market_sim.data.eia923 import load_monthly_generation, monthly_netgen_columns
@@ -222,11 +241,11 @@ def _chp_f923_floor_cf(
     ]
     mcols = monthly_netgen_columns()
     by_key = gen.groupby(["plant_id", "klass", "year"])[mcols].sum()
-    out: dict[tuple[int, str], float] = {}
+    out: dict[tuple[int, str], tuple[float, float]] = {}
     for (code, group), nameplate in cap.items():
         if group not in _CHP_GROUPS or nameplate <= 0:
             continue
-        min_cf, total_mwh = np.inf, 0.0
+        min_cf, total_mwh, total_hours = np.inf, 0.0, 0.0
         for year in years:
             try:
                 months = by_key.loc[(code, group, year)].to_numpy(dtype=float)
@@ -238,12 +257,19 @@ def _chp_f923_floor_cf(
             cf = months / (nameplate * hours)
             min_cf = min(min_cf, float(np.nanmin(cf)))
             total_mwh += float(np.nansum(months))
+            total_hours += float(np.sum(hours[np.isfinite(cf)]))
         if total_mwh <= 0.0 or not np.isfinite(min_cf):
             continue
-        out[(code, group)] = min(
+        pmin = min(
             100.0 * max(min_cf, 0.0) * _CHP_F923_FLOOR_FACTOR,
             _CHP_F923_FLOOR_CAP,
         )
+        level = (
+            min(100.0, 100.0 * max(total_mwh, 0.0) / (nameplate * total_hours))
+            if total_hours > 0.0
+            else 0.0
+        )
+        out[(code, group)] = (pmin, level)
     return out
 
 
@@ -392,7 +418,11 @@ def _consume_chp_floors(rows: list[dict], prior: pd.DataFrame) -> list[dict]:
                 mustrun_pct=None,
                 p25_cf=None,
                 median_cf=None,
+                # Null the steam LEVEL columns: the new statistic
+                # (steam_level_cf, WP-3) and the superseded p25_allhr_cf a
+                # pre-WP-3 prior artifact may still carry.
                 p25_allhr_cf=None,
+                steam_level_cf=None,
                 online_hours=0,
             )
             print(
@@ -602,10 +632,17 @@ def main() -> None:
                 100.0 * float(np.percentile(all_cat, _CHP_PMIN_PCTILE)), 1
             )
             row["chp_sector"] = chp_sectors.get(code, "")
-            # Steam-host operating level (see _CHP_P25_ALLHR_PCTILE): the
-            # multi-year all-hours p25 of the same sample the p2 floor uses.
-            row["p25_allhr_cf"] = round(
-                100.0 * float(np.percentile(all_cat, _CHP_P25_ALLHR_PCTILE)), 1
+            # Steam-host operating level (see _CHP_STEAM_LEVEL_ON_PCTILE):
+            # on-hour frequency x median loading-conditional-on-online, over
+            # the same multi-year sample and masks the p2 floor uses (WP-3
+            # loading-when-on construction; supersedes the p25-of-all-hours
+            # statistic that mixed offline zeros into the level).
+            on_freq = len(on_cat) / len(all_cat) if len(all_cat) else 0.0
+            row["steam_level_cf"] = round(
+                100.0
+                * on_freq
+                * float(np.percentile(on_cat, _CHP_STEAM_LEVEL_ON_PCTILE)),
+                1,
             )
         rows.append(row)
 
@@ -620,7 +657,7 @@ def main() -> None:
         if r["status"] == "ok" and r["plant_group"] in _CHP_GROUPS
     }
     f923_floors = _chp_f923_floor_cf(args.years, cap)
-    for (code, group), pmin in sorted(f923_floors.items()):
+    for (code, group), (pmin, level) in sorted(f923_floors.items()):
         if (code, group) in have_floor or primary.get(code) != group:
             continue
         rows.append(
@@ -632,6 +669,10 @@ def main() -> None:
                 "nameplate_mw": round(cap[(code, group)], 1),
                 "online_hours": 0,
                 "chp_pmin_cf": round(pmin, 1),
+                # WP-3 scope (b): the EIA-923 delivery-implied steam level for
+                # cogens the CAMPD extracts cannot see (below the Part 75 CEMS
+                # threshold — the bulk of the CAISO CT_CHP delivery gap).
+                "steam_level_cf": round(level, 1),
                 "chp_sector": chp_sectors.get(code, ""),
             }
         )
