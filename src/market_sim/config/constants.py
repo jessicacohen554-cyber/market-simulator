@@ -4169,12 +4169,18 @@ STATE_RPS_FLOORS: dict[str, dict[int, float]] = {
         # renewable target is applied as the wind+solar floor; the tiers'
         # small biomass/landfill/hydro share is folded in). Rule 13 admissible
         # (policy parameter, forward-reproducible, relaxes as VRE builds).
-        # Tier 3 (calibration) — load weights are approximate; verify against
-        # the exact Monitoring Analytics PJM-load-by-state file. Sources:
-        # per-state renewable-tier schedules from PJM-EIS "Comparison of RPS
-        # Programs in PJM States" (4/15/2025); PJM load shares from Monitoring
-        # Analytics "Percentage of PJM Load by State" (PA~20/VA~14/OH~14/
-        # IL~12/NJ~11/MD~7/WV~4/IN~3/DE~2/DC~1.5/MI~1/NC~1%).
+        # Tier 3 (calibration). Load weights REFRESHED to the primary Monitoring
+        # Analytics "Percentage of PJM Load by State" 2024 annual file
+        # (PJM_Load_by_State_2024_20250716.XLS; FF-1E-policy 2026-07-19):
+        # OH 20.1 / PA 18.9 / VA 17.6 / IL 11.6 / NJ 9.6 / MD 7.8 / WV 4.6 /
+        # KY 3.0 / IN 2.75 / DE 1.5 / DC 1.25 / MI 0.56 / NC 0.55 / TN 0.21 %.
+        # (Corrects the prior approximate weights, which understated OH 14→20
+        # and VA 14→18 and OMITTED KY 3% — all low/no-RPS load.) Re-blending the
+        # per-state renewable-tier schedules (PJM-EIS "Comparison of RPS Programs
+        # in PJM States", 4/15/2025) on these corrected weights reproduces the
+        # 2030 knot at ~0.22 — within Tier-3 tolerance of the 0.23 below, KEPT
+        # (the OH/KY-down and VA-up corrections offset). Knots stay approximate;
+        # a full per-state re-blend is a bounded intake follow-up.
         2026: 0.185,
         2030: 0.23,
         2040: 0.30,
@@ -4194,26 +4200,41 @@ STATE_RPS_FLOORS: dict[str, dict[int, float]] = {
 # (the REC shadow price) at this ceiling. Rule 13 admissible: a published policy
 # parameter that regenerates for any forecast year and responds to conditions
 # (as the fleet builds VRE the escape goes unused and the dual falls below it).
-# Tier 3 (calibration) — verify against each state's current ACP schedule.
-# Sources:
-#   CAISO — CA RPS non-compliance penalty $50/MWh (Pub. Util. Code §399.15;
-#     CPUC RPS enforcement), the effective ACP ceiling for SB 100 compliance.
-#   NYISO — NY Clean Energy Standard Tier 1 ACP (NYSERDA/PSC Case 15-E-0302);
-#     ~$40/MWh order of magnitude for recent compliance years.
-#   NEISO — MA Class I RPS ACP ($67.62/MWh, 2024, 225 CMR 14.08) blended with
-#     CT Class I ($55/MWh, Conn. Gen. Stat. §16-245a) across the six-state
-#     region; ~$65/MWh regional Class I ACP.
+# Tier 3 (calibration). Sources — per-state ACP schedules re-verified against
+# primary regulators/statutes (FF-1E-policy 2026-07-19):
+#   CAISO — CA RPS non-compliance penalty $50/MWh per deficient REC (Pub. Util.
+#     Code §399.15; CPUC RPS enforcement), the effective ACP ceiling for SB 100
+#     compliance. VERIFIED CURRENT (unchanged).
+#   NYISO — NY Clean Energy Standard Tier 1. NYSERDA ELIMINATED the fixed Tier 1
+#     ACP after compliance year 2024 ("no ACPs will be collected for compliance
+#     year 2025 onward"); the post-2024 Tier 1 obligation is a cost-recovery
+#     charge (NYSERDA net REC-procurement cost ÷ statewide load), not a $/MWh
+#     buyout. $40/MWh is KEPT as the forward REC-price-ceiling proxy — the
+#     historical Tier 1 ACP order of magnitude, consistent with index-REC net
+#     cost (NYSERDA/PSC Case 15-E-0302). Tier 3; a strike-price-derived ceiling
+#     is a bounded follow-up.
+#   NEISO — load-weighted New England Class I / renewable-tier ACP. REFRESHED:
+#     MA Class I RPS ACP is $40/MWh (Compliance Year 2023+, then CPI-adjusted —
+#     225 CMR 14.08(3)(a)(2): a 2021 reform that RESET the rate DOWN a $60/$50/
+#     $40 glide from the pre-2021 CPI-escalated ~$67 series; the old $67.62 was
+#     stale). Blended with CT Class I $55 (Conn. Gen. Stat. §16-245a), NH Class I
+#     $62.24 (2024)/$63.29 (2025) (NH DoE, ½-CPI-adjusted), ME Class I $50
+#     statutory max (35-A M.R.S. §3210), RI RES $83.37 (2024, RI PUC) over ISO-NE
+#     state load shares (MA ≈48 / CT ≈24 / NH ≈9 / ME ≈9 / RI ≈6 / VT ≈4 %) ⇒
+#     ≈$50/MWh regional Class I ACP (was $65, stale on the old MA input).
 #   PJM — PJM-load-weighted blend of member-state Tier-I (non-solar) ACPs:
 #     PA $45 (Tier I, 73 Pa. Code §75), DC $50 & NJ $50 (Class I), VA ~$47
-#     (2021 $45 +1%/yr, Code §56-585.5), MD ~$25 (declining to $22.35 by 2030),
-#     DE $25, OH $45; IL/NC are cost-capped with no ACP. Load-weighted ≈ $45.
-#     Source: PJM-EIS "Comparison of RPS Programs in PJM States" (4/15/2025).
+#     (2021 $45 +1%/yr, Code §56-585.5), MD ~$30 declining to $22.35 by 2030
+#     (MD PSC RPS report, CY2024), DE $25, OH $45; IL/NC/KY are cost-capped or
+#     RPS-free with no ACP. Load-weighted on the corrected weights above ≈ $45,
+#     unchanged. Source: PJM-EIS "Comparison of RPS Programs in PJM States"
+#     (4/15/2025).
 # ISOs without a STATE_RPS_FLOORS entry (ERCOT) need no ACP — their RPS row is
 # never built, so the escape column is absent and the LP is byte-identical.
 STATE_RPS_ACP: dict[str, float] = {
     "CAISO": 50.0,
     "NYISO": 40.0,
-    "NEISO": 65.0,
+    "NEISO": 50.0,  # was 65.0 — stale MA Class I input ($67.62→$40); see above
     "PJM": 45.0,
 }
 

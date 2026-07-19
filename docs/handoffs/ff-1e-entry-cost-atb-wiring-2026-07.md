@@ -140,15 +140,18 @@ FF-2D gate, not FF-1E's.
   `federalregister.gov` returns a redirect/bot-wall in this environment (302,
   unchanged from FF-0D). The 2033–2036 steps remain triangulated from two
   secondary sources; unchanged.
-- **State RPS / ACP (§4.3):** schedules are CURRENT; the PJM load-weight blend
-  and ACP levels are already primary-sourced Tier-3 (constant comments cite
-  PJM-EIS 4/15/2025 + Monitoring Analytics). No citable delta found to justify a
-  change (rules 5/6 forbid moving a CURRENT value without a primary-source
-  delta); a full precision refresh (parse the Monitoring Analytics load-by-state
-  report + each state's ACP schedule) is a bounded data-intake follow-up.
+- **State RPS / ACP (§4.3):** deferred here to the item-2 session and now
+  **landed** in `docs/handoffs/ff-1e-policy-currency-2026-07.md` — the precision
+  refresh DID surface a citable delta: the **MA Class I RPS ACP was stale
+  ($67.62 → $40/MWh, 225 CMR 14.08 2021 reset)**, dropping `STATE_RPS_ACP["NEISO"]
+  65 → 50; the PJM load weights were refreshed to the primary Monitoring Analytics
+  2024 annual file (OH/VA understated, KY omitted). CAISO $50 / NYISO $40 / PJM
+  $45 verified/kept. All forecast-only (backcast byte-identical). (This session
+  itself made no RPS/ACP change — the delta was found by the dedicated cited-
+  values pass, not this entry-cost session.)
 - **Confirmed retirements (§4.4):** registry current; no new binding instrument
-  in the 2026-07-05 → 2026-07-18 window (FF-0D's pending items are next-intake
-  re-queries, not additions this session). **No additions.**
+  (re-confirmed 2026-07-19 — Brandon Shores 2031 RMR extension still PENDING
+  FERC, new DOE §202(c) orders are retirement *deferrals*). **No additions.**
 
 ---
 

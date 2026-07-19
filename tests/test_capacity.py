@@ -2750,13 +2750,16 @@ class TestGetRPSACP(unittest.TestCase):
     """RPS Alternative Compliance Payment ceiling lookup."""
 
     def test_rps_iso_returns_acp_ceiling(self):
-        self.assertAlmostEqual(get_rps_acp("NEISO"), 65.0)
+        # NEISO refreshed 65.0 -> 50.0 (FF-1E-policy 2026-07-19): the MA Class I
+        # RPS ACP input was stale ($67.62 -> $40/MWh, 225 CMR 14.08(3)(a)(2)
+        # 2021 reset), so the load-weighted NE Class I ACP falls to ~$50.
+        self.assertAlmostEqual(get_rps_acp("NEISO"), 50.0)
         self.assertAlmostEqual(get_rps_acp("CAISO"), 50.0)
         self.assertAlmostEqual(get_rps_acp("NYISO"), 40.0)
         self.assertAlmostEqual(get_rps_acp("PJM"), 45.0)
 
     def test_case_insensitive(self):
-        self.assertAlmostEqual(get_rps_acp("neiso"), 65.0)
+        self.assertAlmostEqual(get_rps_acp("neiso"), 50.0)
 
     def test_iso_without_rps_is_none(self):
         # ERCOT floor is a modeled zero (no ACP); MISO has no entry at all.
