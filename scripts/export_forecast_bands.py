@@ -32,14 +32,17 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import base64
-import gzip
 import json
+import sys
 from pathlib import Path
 
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO))
+
+from scripts.lib import backcast_artifacts as ba  # noqa: E402
+
 FRONTEND_DIR = REPO / "frontend" / "data" / "forecast"
 
 # The frozen §4.1 layer enum, in the order the fan chart draws them (back to
@@ -53,19 +56,6 @@ LAYER_ORDER: tuple[str, ...] = (
     "parametric_plus_structural",
 )
 DEFAULT_METRIC = "emissions_mt"
-
-
-def _gzb64(obj) -> str:
-    """Return gzip+base64 of a JSON-serializable object (byte-deterministic).
-
-    Mirrors ``scripts/render_backcast.py``'s ``_gzb64`` exactly (``mtime=0``)
-    so re-exporting unchanged data produces byte-identical output.
-    """
-    return base64.b64encode(
-        gzip.compress(
-            json.dumps(obj, sort_keys=True).encode(), compresslevel=9, mtime=0
-        )
-    ).decode()
 
 
 def is_dispatch_conditional(meta: dict) -> bool:
@@ -293,7 +283,7 @@ def write_payload_js(
     out_path.write_text(
         "window.FB=window.FB||{};window.FB.bandsGz=window.FB.bandsGz||{};"
         f"window.FB.bandsGz[{json.dumps(ensemble_id)}]="
-        + json.dumps(_gzb64(payload))
+        + json.dumps(ba.gzb64(payload, sort_keys=True))
         + ";"
     )
     return out_path

@@ -31,8 +31,6 @@ Output is byte-deterministic (gzip mtime=0).
 from __future__ import annotations
 
 import argparse
-import base64
-import gzip
 import json
 import sys
 from pathlib import Path
@@ -40,10 +38,12 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
-DATA = REPO / "frontend" / "data" / "backcast"
-REGISTRY_DIR = DATA / "registry"
-RUNS_DIR = DATA / "runs"
-BENCH_DIR = DATA / "bench"
+from scripts.lib import backcast_artifacts as ba  # noqa: E402  (after sys.path insert)
+
+DATA = ba.DATA
+REGISTRY_DIR = ba.REGISTRY
+RUNS_DIR = ba.RUNS
+BENCH_DIR = ba.BENCH
 COMPLETENESS_DIR = DATA / "completeness"
 
 # Manifest-entry fields the shell consumes (everything but the bundle path).
@@ -64,13 +64,6 @@ ENTRY_FIELDS = (
 OPTIONAL_ENTRY_FIELDS = ("ablation_twin", "market_story", "ablation_of")
 
 
-def _gzb64(obj) -> str:
-    """gzip+base64 a JSON-serializable object, byte-deterministically."""
-    return base64.b64encode(
-        gzip.compress(json.dumps(obj).encode(), compresslevel=9, mtime=0)
-    ).decode()
-
-
 def _load_entries() -> list[dict]:
     """Return manifest entries from the registry sidecars, sorted by id.
 
@@ -82,12 +75,7 @@ def _load_entries() -> list[dict]:
     half-synced checkout still yields a dashboard of the runs it can serve.
     """
     entries: list[dict] = []
-    for path in sorted(REGISTRY_DIR.glob("*.json")):
-        try:
-            rec = json.loads(path.read_text())
-        except json.JSONDecodeError as exc:
-            print(f"  skip {path.name}: invalid JSON ({exc})", file=sys.stderr)
-            continue
+    for path, rec in ba.iter_sidecars(REGISTRY_DIR):
         if not all(k in rec for k in ENTRY_FIELDS):
             rec = _upgrade_skinny(rec, path)
             if rec is None:
@@ -150,12 +138,7 @@ def _assemble_benchmark() -> tuple[dict, dict]:
         parts = []
         for f in sorted(iso_dir.glob("*.json.gz"), reverse=True):
             try:
-                parts.append(
-                    (
-                        int(f.stem.split(".")[0]),
-                        json.loads(gzip.decompress(f.read_bytes())),
-                    )
-                )
+                parts.append((int(f.stem.split(".")[0]), ba.load_bench_part(f)))
             except (ValueError, OSError, json.JSONDecodeError) as exc:
                 print(f"  skip bench part {iso}/{f.name}: {exc}", file=sys.stderr)
         if not parts:
@@ -234,21 +217,13 @@ def main() -> None:
         )
     completeness = _assemble_completeness()
 
-    meta_js = json.dumps(meta_by_iso, sort_keys=True)
-    manifest_js = json.dumps(entries, sort_keys=True)
-    bench_gz = {i: _gzb64(b) for i, b in bench_by_iso.items()}
+    bench_gz = {i: ba.gzb64(b) for i, b in bench_by_iso.items()}
     bench_js = json.dumps(bench_gz, sort_keys=True)
     completeness_js = json.dumps(completeness, sort_keys=True)
 
     out_data = site / "frontend" / "data" / "backcast"
     out_data.mkdir(parents=True, exist_ok=True)
-    (out_data / "manifest.js").write_text(
-        "window.BC=window.BC||{};window.BC.meta="
-        + meta_js
-        + ";window.BC.manifest="
-        + manifest_js
-        + ";"
-    )
+    ba.write_manifest_js(out_data / "manifest.js", meta_by_iso, entries, sort_keys=True)
     (out_data / "benchmark.js").write_text(
         "window.BC=window.BC||{};window.BC.benchGz=" + bench_js + ";"
     )
