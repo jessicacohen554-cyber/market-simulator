@@ -1,0 +1,14 @@
+CAISO TAC-area load for 2024 covers 8758/8760 hours; uncovered hours use the sample-average zone shares
+CAISO: CC plant 55985 fleet pmax sum 581.4 MW exceeds trusted bound 559.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (22.4 MW removed)
+CAISO: CC plant 56041 fleet pmax sum 139.0 MW exceeds trusted bound 130.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (9.0 MW removed)
+CAISO: CC plant 55985 fleet pmax sum 581.4 MW exceeds trusted bound 559.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (22.4 MW removed)
+CAISO: CC plant 56041 fleet pmax sum 139.0 MW exceeds trusted bound 130.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (9.0 MW removed)
+
+===== CAISO full-horizon summary =====
+  years solved: 1 / 1  ([2026]..[2026])
+  total wall: 4.4 min   global peak RSS: 4.31 GB
+  median year wall: 265.7s   max per-year peak RSS: 4.31 GB
+  invariants: 1 FAIL, 1 WARN
+    [FAIL] I7   reliability floor          2026: accredited firm 46105 < requirement 57306 MW
+    [WARN] I12  reserve-margin band        requirement-implied floor [15.0%, 30.0%]; out: 2026:-7.5% (band [15.0%, 30.0%])
+  wrote results/ff2b-after/caiso/full_horizon_summary.json
