@@ -1,5 +1,7 @@
 # PJM calibration — best config so far
 
+> Status: SUPERSEDED-BY frontend/data/backcast/keepers.json + docs/codebase-site/calibration-status.html — historical keeper snapshot, not current keeper truth.
+
 > **DETERMINATION (2026-06-22, scorer): NOT-YET** for the registered keeper
 > `pjm-38-outage-regate` (`python scripts/calibration_verdict.py --run-id
 > 2026-06-21-pjm-38-outage-regate`; bundle `results/calibration/pjm_38`). This is

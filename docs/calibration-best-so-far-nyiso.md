@@ -1,5 +1,7 @@
 # NYISO calibration — best config so far
 
+> Status: SUPERSEDED-BY frontend/data/backcast/keepers.json + docs/codebase-site/calibration-status.html — historical keeper snapshot, not current keeper truth.
+
 ## Frontier achieved (2026-07-11)
 
 **Formal designation**, registered in `frontend/data/backcast/keepers.json`

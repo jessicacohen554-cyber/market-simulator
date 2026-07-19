@@ -1,5 +1,7 @@
 # Frontend audit — web trees, build paths, overlap & orphans
 
+> Status: SUPERSEDED — investigation record (2026-06-19); frontend/site organization now governed by docs/refactor-consolidation-plan-2026-07.md §7-G.
+
 **Date:** 2026-06-19 · **Scope:** investigation only — nothing is moved, merged, or
 deleted by this document. Every "orphan" and "build path" claim below was verified
 by `grep`/file-reference search (commands noted inline); git history was *not* usable

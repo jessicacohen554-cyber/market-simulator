@@ -1,5 +1,7 @@
 # ERCOT calibration — best config so far
 
+> Status: SUPERSEDED-BY frontend/data/backcast/keepers.json + docs/codebase-site/calibration-status.html — historical keeper snapshot, not current keeper truth.
+
 > **STATUS (2026-06-22): NEW KEEPER — run144 = run143 re-solved on the LOCAL
 > (seasonal) net-load outage band.** `results/calibration/ercot_dam_2023as_localband`
 > (dashboard `run144 local-band outages`). This is a **byte-faithful re-solve of
