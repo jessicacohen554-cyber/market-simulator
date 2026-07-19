@@ -32,15 +32,20 @@ from __future__ import annotations
 
 import argparse
 import sys
-from pathlib import Path
 
-# derive_actual_lmp lives in scripts/data/ since the 2026-07-18 reorg; this
-# script is run directly (python scripts/<iso>_zonal_sufficiency.py), so only
-# its own directory is on sys.path by default.
-sys.path.insert(0, str(Path(__file__).resolve().parent / "data"))
+from market_sim.config.paths import REPO_ROOT
 
-from lib.zonal_sufficiency import analyze, render_concentration, render_table
-from derive_actual_lmp import nyiso_zone_hourly
+sys.path.insert(0, str(REPO_ROOT))
+# derive_actual_lmp lives in scripts/data/ since the 2026-07-18 reorg; add it so
+# the sibling import below resolves when the script is run directly.
+sys.path.insert(0, str(REPO_ROOT / "scripts" / "data"))
+
+from scripts.lib.zonal_sufficiency import (  # noqa: E402
+    analyze,
+    render_concentration,
+    render_table,
+)
+from derive_actual_lmp import nyiso_zone_hourly  # noqa: E402
 
 # (zone_a, zone_b, label) — the prompt's J−A / K−A / Capital−A spreads in
 # model-zone terms (Upstate_West is zone A's aggregate).
