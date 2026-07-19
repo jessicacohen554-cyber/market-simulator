@@ -18,22 +18,54 @@ Wall-clock frugality and agility govern every scheduling decision (§2.4). Hard
 capacity-expansion design questions are grounded in commercial/academic practice
 (GenX, ReEDS, US-REGEN, EPA IPM, PLEXOS, Aurora — §4) rather than invented locally.
 
+**Owner amendment (2026-07-19) — POC-first re-scope; golden prompts WITHDRAWN.** We
+are not there yet on full-horizon solves. The Wave-4 golden-solve prompt (FF-4A) and
+its dependents are withdrawn outright, and the T2 mid-tier is deferred with them:
+**no forecast invocation over more than a ~5-year window (the T0/T1 instruments) may
+be scheduled anywhere in this program** until the §2.1b full-solve authorization gate
+opens, per ISO, on (a) completed backcast calibration, (b) green T1 proof-of-concept
+gates, (c) the measured worth-the-compute evidence (crossover input gap + projected
+full-horizon cost), and (d) an explicit, per-campaign owner authorization. The active
+program is re-aimed at what CAN be finished now: build **all** forecast infrastructure
+(CES and every other forecast parameter/variable) and prove it bug-free at POC scale —
+so that when full solves are finally authorized, a 10-hour run is never spent
+discovering a bug. §0 (two-phase framing), §2.1b, and the re-cut Waves 3–4 in §6 carry
+the details; the graduated-ladder sentence above stands as design intent, but its T2/T3
+rungs are now schedulable only through §2.1b.
+
 ---
 
-## 0. Definition of done
+## 0. Definition of done — two phases (amended 2026-07-19)
 
-The program is DONE when, per ISO:
+**Phase A — ACTIVE: infrastructure + proof of concept (≤ ~5-year windows only).**
+This is the whole schedulable program today. Phase A is DONE when, per ISO:
 
-1. A **golden 2026–2050 BAU bundle** exists, produced at HEAD defaults (plus the
-   owner-decided DC-load posture), scored by the **forecast determination rubric** (§3)
-   with no FAIL, registered on the forecast-validation dashboard with a
-   **DOF-ledger attestation** (every free parameter → identification source; rule 21
-   analogue), and reproducible from `run_config.json`.
+1. **All forecast infrastructure is built, wired, and POC-exercised.** Every forecast
+   parameter/variable a golden run would lean on — the CES resolver + premium configs,
+   DC load path, capacity-market clearing + accreditation, the redesigned retirement
+   rule, the entry stack (incl. lag/sizing), forward-input currency, policy fields —
+   has been exercised end-to-end in a T0/T1 solve with invariants green. No mechanism
+   reaches a full-horizon run untested at POC scale.
 2. The capacity-evolution skill claims are **measured, not asserted**: hindcast bands
    (retirements, additions, CO2) and crossover dispatch-gap numbers are on the dashboard,
    and `docs/forecasting-entry-exit-assessment.md` verdict rows are updated to match.
-3. What remains unfit is **named** (the honest-unfit list, FF-4B) — locational siting,
-   forward-auction timing, and anything still gated stays labeled, not implied-solved.
+3. The **T1 gate battery verdicts (FF-2D)** are registered, and **full-solve readiness
+   is PROVEN (FF-3E)**: the golden-posture config resolves every input for every year
+   2026–2050 without error, the kill-resume drill passes, and the projected
+   full-horizon wall/RSS cost table is published from measured per-year anchors.
+4. What remains unfit is **named** (the honest-unfit list, now part of FF-3E's
+   close-out) — locational siting, forward-auction timing, and anything still gated
+   stays labeled, not implied-solved — and the per-ISO §2.1b gate scorecard is
+   delivered for the owner's gate-open decision.
+
+**Phase B — DEFERRED: the golden solves (opens ONLY through §2.1b, per ISO).** The
+original deliverable, unchanged in content but unscheduled: a **golden 2026–2050 BAU
+bundle**, produced at the frozen config (incl. the owner-decided §2.1a posture), scored
+by the **forecast determination rubric** (§3) with no FAIL, registered on the
+forecast-validation dashboard with a **DOF-ledger attestation** (every free parameter →
+identification source; rule 21 analogue), and reproducible from `run_config.json` —
+plus the FF-4B-style attestation and close-out. Its prompts were withdrawn 2026-07-19
+(§6 Wave 4) and are re-authored at gate-open; none of its work is schedulable now.
 
 Out of scope for the iteration loop, by rule 22: the locked-test one-shots (2019,
 H1-2026) and the 2022 validation year. They are owner-gated events run AFTER a keeper
@@ -81,7 +113,8 @@ config freezes, never inside this program's iterations (§2.3).
    `docs/handoffs/ff-entry-stack-completion-2026-07.md` §8.
 4. **Non-equilibrium two-phase trajectory** (full-horizon P-3A): de-firm to ~2035 then
    cap-market over-build (RM→30–67%) / ERCOT chronic shortage + #2064 non-monotone
-   scarcity. Cure = responsive capacity price (flips) + entry dynamics; re-measured at T2.
+   scarcity. Cure = responsive capacity price (flips) + entry dynamics; re-measured at
+   T2 when that tier is eventually authorized (§2.1b).
 5. **Base-year adequacy accounting**: I7 FAILs at 2026 for CAISO/NEISO/NYISO (PJM now
    clean after W2-D — the working A/B); NEISO requirement is a NERC stand-in
    (`0.157`, needs Net ICR citation). → FF-2B.
@@ -93,10 +126,12 @@ config freezes, never inside this program's iterations (§2.3).
    proxy — FF-1F 2026-07-18, §2.1a**; implementation still pending) — curve-ineligible;
    **NEISO evidence-free** (no capacity hindcast at all). → FF-3D / FF-2B.
 8. **Numerics**: storage ε-tiebreak degeneracy at high penetration (I9, CAISO →5.8% of
-   throughput); RPS dual cobweb (I10 WARN). → FF-3C (with T2 evidence).
+   throughput); RPS dual cobweb (I10 WARN). → FF-3C (on measured active-tier evidence;
+   T2 deferred — §2.1b).
 9. **Runtime**: late-horizon LPs grow super-linearly (PJM 2045–2050 ≈ 30–40 min/yr,
    9–10 GB RSS; two per-plant ISOs cannot co-run late years on a 15 GB box). → §2.4 rules
-   now, FF-3C if T2 breaches budget.
+   now; FF-3E projects the full-horizon cost, FF-3C on a measured breach (T2 itself
+   deferred — §2.1b).
 10. **MISO forecast path unverified** since the storage-registry fix landed. → FF-0B.
 
 ### 1.3 Absorbed workstreams (state + what remains)
@@ -104,11 +139,11 @@ config freezes, never inside this program's iterations (§2.3).
 | Lane (old id) | Detailed spec (still citable) | Done | Remaining (now chartered here) |
 |---|---|---|---|
 | Retirement / flip-gate (RC-*) | `docs/handoffs/forecast-retirement-calibration-plan-2026-07.md` (§2.1 gate, §3 T-R bands), flip memo 2026-07-16, D1 findings | RC-0A…RC-2B incl. D1 re-probe; per-ISO gate; vintages; seasonal MISO; R5b; coal threshold identified | Decision-rule redesign (FF-0C/1A), flips (FF-2C), NYISO R5a (FF-3D), NEISO first pair (FF-2B), BLK-10 re-measure (FF-1A/2A) |
-| National CES (W*) | `docs/handoffs/national-ces-eac-premium-plan-2026-07.md` | Waves 1–2 fully merged (#2375–#2399): resolver, wiring, W2-C retrofit, reporting harness, W2-D, W2-E | W3-R readiness gate → W4 campaign → W5 optional (FF-3B; CES plan §7 R1–R4 map onto this program's gates) |
+| National CES (W*) | `docs/handoffs/national-ces-eac-premium-plan-2026-07.md` | Waves 1–2 fully merged (#2375–#2399): resolver, wiring, W2-C retrofit, reporting harness, W2-D, W2-E | W3-R readiness gate + T1-scale CES POC (FF-3B); W4 campaign + W5 DEFERRED behind §2.1b (2026-07-19; CES plan §7 R1–R4 map onto this program's gates) |
 | PJM forecast workstream (owner) | commits on `claude/forecast-workstream-pjm-*` | state-RPS entry floor, W2-D adequacy, AS-revenue scaffolding, MISO storage registry, I12 floor | Multi-ISO adequacy basis (FF-2B), state-RPS pattern for other ISOs where cited (FF-2A), effect measurement (FF-0B/1A) |
 | Capacity economics (CX-*) | `docs/handoffs/capacity-economics-plan-2026-07.md`, `cx4-datacenter-load-design-2026-07.md` | Floor accreditation redesign, joint FOM/scarcity protocol, DC-block mechanism | DC trajectories/siting currency + BAU posture (FF-1C); FOM default flip stays gated on screen-revenue work (tracked under FF-1B/2A) |
 | Forecast validation (W0-P4) | `docs/handoffs/forecast-validation-program-2026-07.md` | Invariants, ledger, hindcast harness, goldens, dashboard page | Rubric + crossover instrument + tier gating (FF-0A/0E, §2–§3) |
-| Probability bounds (PB-*) | `docs/handoffs/probability-bounds-plan-2026-07.md` | PB-0…PB-4 machinery | PB-5 production band — scheduled post-golden as FF-4C (owner call) |
+| Probability bounds (PB-*) | `docs/handoffs/probability-bounds-plan-2026-07.md` | PB-0…PB-4 machinery | PB-5 production band — DEFERRED with Wave 4 behind §2.1b (was FF-4C; owner call) |
 
 ---
 
@@ -122,14 +157,17 @@ config freezes, never inside this program's iterations (§2.3).
 | **T1-F short forecast** | **2026–2030** | run_full_horizon + rubric | The owner's initial forecast-only test. All six ISOs. | ≲ 45 min |
 | **T1-X crossover** | **2023–2027** | crossover harness (FF-0E): EIA-860 **2023-vintage** init, realized inputs 2023–2025, forward drivers 2026–2027 | Dispatch-side backcast→forecast input gap (scored 2023–2025 ONLY vs bench + vs the keeper's same-year scores) + 2-step capacity evolution vs registry actuals; 2026–2027 = invariants/plausibility only. Fully quarantine-legal (§2.3). | ≲ 45 min |
 | **T1-H hindcast** | 2021–2025 (2020 vintage, 2022 bridged) | existing harness + pre-registered bands (program §1.4, T-R battery) | The capacity-evolution skill instrument — 4 scoreable years; KEEP as the primary retire/build scorecard (already built; cheapest signal per solve-year). | ≲ 1–2.5 h |
-| **T2 mid** | **2026–2035** | run_full_horizon / `market-sim matrix` (BAU + stress cases) | Equilibrium behavior beyond the first entry waves; only T1-passing ISOs/features enter. | ≲ 2 h BAU |
-| **T3 golden** | **2026–2050** | run_full_horizon, staged concurrency | The BAU deliverable. Only T2 passers. Target ≤ 2–3 attempts per ISO, ever. | 1.2–9 h |
+| **T2 mid** | **2026–2035** | run_full_horizon / `market-sim matrix` (BAU + stress cases) | **DEFERRED (§2.1b).** Equilibrium behavior beyond the first entry waves; only T1-passing ISOs/features enter — and only once the gate opens. | ≲ 2 h BAU |
+| **T3 golden** | **2026–2050** | run_full_horizon, staged concurrency | **DEFERRED (§2.1b).** The BAU deliverable. Only T2 passers. Target ≤ 2–3 attempts per ISO, ever. | 1.2–9 h |
 
 **Promotion gates** (scored by the rubric, §3): T0→T1 = invariants I1–I14 no-FAIL on the
 feature probe. T1→T2 = FC-1 PASS, FC-2 no-FAIL, FC-3/FC-4 within pre-registered bands,
 FC-6 driver battery green. T2→T3 = adds FC-5 corridor conformance + stability through
 2035 (no I12 breach trend, no I13). A feature that fails a gate goes back to its lane;
-it does NOT ride along into longer solves "to see what happens."
+it does NOT ride along into longer solves "to see what happens." **Amended 2026-07-19:**
+passing the T1→T2 rubric gate makes an ISO *eligible* only — T2 and T3 are additionally
+**unschedulable** until the §2.1b authorization gate opens for that ISO; eligibility
+never implies scheduling.
 
 ### 2.1a Owner-decided forecast posture (FF-1F, 2026-07-18)
 
@@ -174,6 +212,44 @@ quantity (rule 13), re-opening nothing. T0 evidence + citations:
 recommendation) + `docs/hindcast-reports/ercot-g30-entry-lookahead-2026-07-08.md`
 (G-30 single-term isolation) + `docs/handoffs/ff-2a-posture-entry-lookahead-2026-07-18.md`
 (this session's findings note).
+
+### 2.1b Full-solve authorization gate — owner amendment 2026-07-19 (the "10-hour rule")
+
+The owner withdrew the golden-solve prompts (Wave 4) and capped the schedulable program
+at proof-of-concept windows: backcast calibration and measured proof it is worth the
+compute come BEFORE any full forecast solve. Binding on every FF session and on the
+wave manager:
+
+1. **Window cap.** No forecast/hindcast invocation launched under this program may span
+   more than **5 solve-years**. The schedulable instruments are exactly T0, T1-F
+   (2026–2030), T1-X (2023–2027), and T1-H (2021–2025). T2 (2026–2035), T3 golden
+   (2026–2050), the CES W4 campaign (2026–2050), PB-5 band production, and any stress
+   matrix beyond a T1 window are **DEFERRED — unschedulable at any HEAD** until this
+   gate opens for the ISO in question.
+2. **Gate conditions — ALL required, per ISO, evidence committed before the ask:**
+   - **(a) Backcast calibration proof.** The ISO's backcast calibration is complete: a
+     designated full-span keeper (rule 16) on the calibration dashboard AND the ISO's
+     calibration-complete marker present (the same
+     `frontend/data/backcast/calibration-complete.json` object rule 22 keys on; a
+     withdrawn marker — e.g. NYISO, 2026-07-19 — closes this gate until
+     re-calibration). The model first proves it can reproduce reality where reality
+     is known.
+   - **(b) POC gates green.** The FF-2D T1 battery rubric verdict at the T1→T2 bar
+     (FC-1 PASS, FC-2 no-FAIL, FC-3/FC-4 in-band, FC-6 green).
+   - **(c) Worth-the-compute evidence.** The T1-X crossover input gap (FC-4) measured
+     and reported for the ISO, plus FF-3E's readiness battery green (full-horizon
+     input resolution, kill-resume drill) and its projected wall/RSS cost table —
+     together, the honest answer to "what would 10 hours of compute buy."
+   - **(d) Explicit owner authorization**, session-logged, naming the ISO(s), the
+     window, and the compute budget. There is NO standing authorization: each
+     full-horizon campaign (BAU golden, CES W4, PB-5, the T2 battery) is authorized
+     separately, and a gate-condition regression (e.g. a withdrawn calibration
+     marker) re-closes the gate.
+3. **No riders.** A deferred tier/campaign never rides along inside another session
+   "to see what happens" — the §2.1 promotion-gate clause extends to scheduling.
+4. **Enforcement.** Discipline-level today (this section + §7); FF-3E adds a
+   `run_full_horizon.py` schedulability guard (> 5 solve-years requires
+   `--full-solve-authorized`, mirroring the rule-22 `--holdout-authorized` pattern).
 
 ### 2.2 The crossover instrument, precisely
 
@@ -228,6 +304,9 @@ co-run on a 15 GB box** (measured OOM, RC-1A-D1); CES 25-yr leg ≈ 4–5 h.
 
 Standing scheduling rules:
 
+0. **§2.1b binds first: ≤ 5 solve-years per invocation.** No T2/T3/W4-campaign/PB-5
+   window is schedulable at any HEAD until the full-solve authorization gate opens for
+   that ISO (per-campaign owner authorization required).
 1. Iterate features on NEISO/ERCOT T0 probes; touch PJM/CAISO only at gate time.
 2. Years sequential within an invocation, ALWAYS; ≤ 2 concurrent invocations, and **1**
    when any per-plant multi-zone ISO is past ~2035 (or on a 15 GB box, whenever two
@@ -272,8 +351,10 @@ Category sketch (FF-0A finalizes metrics/thresholds, pre-registered before T1 sc
   sources, no off-registry knobs (rule 24 sweep), defaults cited.
 - **FC-8 Runtime feasibility** — wall/RSS within §2.4 budget (WARN-level, reported).
 
-Golden bundles additionally carry the attestation of §0.1. The rubric versions like the
-backcast one (v1.0 at FF-0A; changes are owner-signed amendments).
+Golden bundles (Phase B — deferred, §2.1b) additionally carry the attestation of §0
+Phase B. The rubric versions like the backcast one (v1.0 at FF-0A; changes are
+owner-signed amendments); its T2/T3 tiers stay defined so the instrument is ready the
+day the gate opens.
 
 ---
 
@@ -314,8 +395,8 @@ the later-listed session starts only after the earlier merges.
 | **L-CAP** capacity screens & clearing | retirement rule, entry stack, backstop, flips, adequacy bases | `model/capacity.py`, capacity fields in `scenarios.py`/`constants.py`, hindcast harness probe flags |
 | **L-SCAR** availability & scarcity revenue | correlated forced outage / extreme-weather derate, screen reserve value, ERCOT level gap (consumes G-20/G-22, never extends it) | `data/outages.py`, availability seam in `runner.py`, `model/ancillary.py` exogenous-AS registry |
 | **L-INP** forward inputs | demand growth + DC block currency, fuel/ATB/policy currency, hydro fix, planned-pipeline vintage | `data/*` loaders, demand/DC constants, `policy/ira.py` params |
-| **L-VAL** validation & rubric | rubric + scorer, crossover harness, tier batteries, goldens, registration | `scripts/forecast_verdict.py`, `scripts/score_crossover.py`, `run_capacity_hindcast.py` CLI, `docs/forecast-determination-rubric.md` |
-| **L-CES** CES campaign | W3-R gate, W4 campaign, W5 | CES configs, `report_ces_campaign.py` |
+| **L-VAL** validation & rubric | rubric + scorer, crossover harness, tier batteries, readiness battery (FF-3E), registration; goldens deferred (§2.1b) | `scripts/forecast_verdict.py`, `scripts/score_crossover.py`, `run_capacity_hindcast.py` CLI, `docs/forecast-determination-rubric.md` |
+| **L-CES** CES campaign | W3-R gate + T1-scale CES POC; W4 campaign/W5 deferred (§2.1b) | CES configs, `report_ces_campaign.py` |
 | **L-PERF** runtime & numerics | late-horizon LP growth, storage ε degeneracy, warm-start/HiGHS opts | solver/perf seams only, on measured evidence |
 | **L-DASH** dashboard | forecast run explorer + status pages (§8, LAST) | `docs/codebase-site/`, `frontend/data/forecast/` |
 
@@ -352,18 +433,19 @@ WAVE 2 (after W1):
   FF-2C [OPUS]     flip execution for owner-approved ISOs + gated re-runs  (L-CAP, after FF-2B; owner-gated)
   FF-2D [OPUS]  ⛔ T1 gate battery: 6 ISOs re-run + rubric verdicts        (L-VAL)
 
-WAVE 3 (after FF-2D T1 gate):
-  FF-3A [OPUS]  ⛔ T2 mid-horizon 2026-2035 + stress matrix                (L-VAL)
-  FF-3B [OPUS]     CES W3-R readiness → GO/NO-GO → W4 campaign             (L-CES)
-  FF-3C [FABLE]    performance & numerics (only on measured T2 breach)     (L-PERF)
+WAVE 3 (after FF-2D T1 gate — POC close-out; ≤5-yr windows only, §2.1b):
+  FF-3A            T2 mid-horizon — DEFERRED with its tier (§2.1b; prompt
+                   WITHDRAWN 2026-07-19, re-authored at gate-open)
+  FF-3B [OPUS]     CES W3-R readiness → GO/NO-GO + T1-scale CES POC        (L-CES; W4 deferred)
+  FF-3C [FABLE]    performance & numerics (only on measured budget breach)  (L-PERF)
   FF-3D [OPUS]     NYISO R5a implementation + first curve-ON probe         (L-CAP, owner-gated)
+  FF-3E [OPUS]  ⛔ full-solve readiness battery + POC close-out package    (L-VAL)
 
-WAVE 4 (after T2 pass):
-  FF-4A [OPUS]  ⛔ T3 golden 2026-2050 × 6 ISOs, rubric-scored, registered (L-VAL)
-  FF-4B [FABLE]    golden attestation + verdict update + honest-unfit list (L-VAL)
-  FF-4C [OPUS]     (optional, owner) PB-5 probability band production run  (L-VAL)
+WAVE 4 — DEFERRED IN FULL (owner amendment 2026-07-19; §2.1b). Golden 2026-2050
+  solves (was FF-4A ⛔), attestation (FF-4B), PB-5 band (FF-4C): prompts
+  WITHDRAWN — nothing here is schedulable; re-authored only at gate-open.
 
-WAVE 5 (last):
+WAVE 5 (last active wave; does NOT wait on the deferred Wave 4):
   FF-5A [OPUS]     forecast run explorer + status dashboard build-out (§8) (L-DASH)
 ```
 
@@ -761,8 +843,9 @@ holds — record the SHA). Read CLAUDE.md, docs/forecast-development-plan-2026-0
    changes touched capacity behavior (probe legs only — BEFORE legs reused).
    Rule 12 scheduling per plan §2.4.
 2. Score everything with forecast_verdict.py (t1f/t1x/t1h tiers); produce the per-ISO
-   promotion table (T2-eligible: yes/no + blocking category rows); regression vs the
-   FF-0B baseline (every metric that moved names the causal merge).
+   promotion table (T2-eligible: yes/no + blocking category rows; eligibility never
+   implies scheduling — §2.1b); regression vs the FF-0B baseline (every metric that
+   moved names the causal merge).
 3. Golden fixture: if cited behavior changes moved the ERCOT 2026-2040 bands, regen
    via the established script citing the causal commits (rule 23 spirit) — never
    silently.
@@ -773,54 +856,54 @@ holds — record the SHA). Read CLAUDE.md, docs/forecast-development-plan-2026-0
 
 ### Wave 3
 
-#### FF-3A [OPUS] ⛔ — T2 mid-horizon + stress matrix
+#### FF-3A — T2 mid-horizon: DEFERRED, prompt WITHDRAWN (owner amendment 2026-07-19)
+
+The 2026–2035 battery + stress matrix is deferred with its tier behind the §2.1b
+full-solve authorization gate — a 10-year solve churns runtime the POC phase has not
+yet justified. The tier definition and its T2→T3 promotion logic stay live in §2.1/§3
+so the rubric is ready when the gate opens; the wall/RSS-ledger duty this session
+carried moves to FF-3E's projection until real T2 data exists. Do not schedule any
+2026–2035 (or longer) run under this ID; the prompt is re-authored at gate-open.
+
+#### FF-3B [OPUS] — CES readiness + T1-scale POC (W4 campaign DEFERRED)
 
 ```
-[OPUS] FF-3A — T2: 2026-2035 for promoted ISOs + the stress matrix
-
-Requires FF-2D promotion list + owner confirmation. Read CLAUDE.md, docs/
-forecast-development-plan-2026-07.md §2 (§7 binds), the rubric, matrix.py docs.
-
-1. BAU 2026-2035 per promoted ISO (run_full_horizon). Then the stress matrix via
-   market-sim matrix per ISO where T1 evidence justifies it: cases {BAU, DC-high,
-   gas-high, gas-low, carbon-stress} (existing named-case machinery; cases are
-   scenario axes, not tuned variants). Rule 12: this is the wave where late-horizon
-   RSS starts to bite — serialize per-plant ISOs' post-2032 years; capture wall/RSS.
-2. Score: rubric t2 tier (adds FC-5 corridor + stability-through-2035); paired
-   invariants P1-P3 on the stress pairs; equilibrium read: does the two-phase
-   de-firm→overshoot signature persist at the current mechanism set? (I12 trajectory
-   is the fingerprint; compare against the P-3A tables.)
-3. Deliverable docs/handoffs/ff-t2-gate-2026-XX.md: per-ISO T3-eligibility, FAIL rows
-   routed to lanes (a failed ISO loops back — do NOT carry it to T3), wall/RSS ledger
-   (FF-3C trigger data). Register runs + sidecars.
-```
-
-#### FF-3B [OPUS] — CES readiness → campaign
-
-```
-[OPUS] FF-3B — CES W3-R readiness verification; on GO, run the W4 campaign
+[OPUS] FF-3B — CES W3-R readiness verification + T1-scale CES POC; the W4 campaign
+is DEFERRED behind §2.1b — do NOT launch it
 
 Read CLAUDE.md, docs/handoffs/national-ces-eac-premium-plan-2026-07.md §7-§8 (the
-lane spec — W3-R/W4-A/W4-B/W4-C prompts there remain binding), and docs/
-forecast-development-plan-2026-07.md §2 (§7 binds; this program's FF-2A headline
-metric IS the CES R1 criterion). Evaluate R1-R4 on then-current main with evidence;
-write the GO/NO-GO doc the CES plan specifies. On GO (and owner confirmation): execute
-W4-A/W4-B (ERCOT+PJM premium ladders, clean_capture, 2026-2050 — budget ~8-10 h wall
-per ISO at 2-concurrent; per-year cache resumable) and W4-C synthesis per the CES
-plan's own prompts, updated only for file/flag drift. On NO-GO: the blocking list
-routes to this program's lanes and W4 waits.
+lane spec — its §7 W3-R readiness criteria remain binding; its W4 prompts are
+deferred), and docs/forecast-development-plan-2026-07.md §2/§2.1b (§7 binds; this
+program's FF-2A headline metric IS the CES R1 criterion).
+
+1. Evaluate R1-R4 on then-current main with evidence; write the GO/NO-GO doc the CES
+   plan specifies. On NO-GO: the blocking list routes to this program's lanes.
+2. On GO: do NOT execute W4 (2026-2050, ~8-10 h wall/ISO — §2.1b defers it). Instead
+   run the CES POC at T1 scale: exercise the W4 campaign machinery end-to-end on
+   ERCOT 2026-2030 with 2-3 premium rungs (clean_capture crediting, per-year cache
+   on, report_ces_campaign.py consuming the bundles) purely to prove the configs,
+   seams, and reporting execute bug-free at POC cost. Register as kind "ces-poc" —
+   never as campaign results; no premium-ladder conclusions are drawn from a 5-year
+   window.
+3. Wall/RSS per year to the §2.4 ledger (feeds FF-3E's full-horizon projection).
+   Findings doc; any bug found is a lane finding fixed at POC scale — exactly the
+   class of defect the POC phase exists to catch before a 10-hour run finds it.
+W4-A/W4-B/W4-C execute only at gate-open under a fresh, separate owner authorization
+(§2.1b(d)), with the CES plan's prompts updated for drift at that time.
 ```
 
 #### FF-3C [FABLE] — Performance & numerics (conditional)
 
 ```
-[FABLE] FF-3C — Late-horizon runtime + numerical hygiene (trigger: measured T2 breach
-of the §2.4 budget, or I9/I10 FAILs persisting at T2)
+[FABLE] FF-3C — Late-horizon runtime + numerical hygiene (trigger: a measured breach
+of the §2.4 budget at any scheduled tier, or I9/I10 FAILs persisting at T1; the T2
+references below apply when that tier is eventually authorized — §2.1b)
 
 Read CLAUDE.md (rule 2, rule 9), docs/forecast-development-plan-2026-07.md §1.2-8/-9
 and §2.4 (§7 binds), docs/handoffs/full-horizon-findings-2026-07-12.md §2 (feasibility
 data), docs/handoffs/wallclock-efficiency-plan-2026-07.md (what is already optimal —
-do not re-litigate its explicit skips), and the FF-3A wall/RSS ledger.
+do not re-litigate its explicit skips), and the latest wall/RSS ledgers (FF-2D battery
++ FF-3E projection; FF-3A is deferred).
 
 Candidate work, adopt on measured evidence only, byte-identity or cited-behavior-change
 discipline per item:
@@ -856,67 +939,62 @@ NYISO's flip-gate items; register + findings. The flip itself remains a separate
 owner decision (FF-2C pattern).
 ```
 
-### Wave 4
-
-#### FF-4A [OPUS] ⛔ — T3 golden solves
+#### FF-3E [OPUS] ⛔ — Full-solve readiness battery + POC close-out (new 2026-07-19)
 
 ```
-[OPUS] FF-4A — The golden 2026-2050 BAU solves, all T2-promoted ISOs
+[OPUS] FF-3E — Prove the full-horizon path is bug-free BEFORE any full solve is
+authorized; assemble the POC close-out package (the §2.1b evidence)
 
-Requires FF-3A T2 pass + owner confirmation of the golden config (incl. the DC posture
-decision and any owner-flipped defaults — record the exact SHA + run_config). Read
-CLAUDE.md, docs/forecast-development-plan-2026-07.md §0/§2 (§7 binds), the rubric.
+Requires FF-2D scored (Wave-3 lane merges folded in as they land). Read CLAUDE.md,
+docs/forecast-development-plan-2026-07.md §0/§2.1b/§2.4 (§7 binds), the FF-2D gate
+doc, the rubric, and scripts/run_full_horizon.py.
 
-1. Solve 2026-2050 per ISO with the staged schedule: small ISOs may pair (≤2
-   concurrent); per-plant multi-zone ISOs (PJM/CAISO/MISO) run their post-~2035 years
-   SOLO (measured 9-10 GB tails). Use the per-year cache: a stopped run resumes —
-   plan the session in resumable chunks rather than one heroic invocation.
-2. Score rubric t3 per ISO; register each bundle on the forecast-validation dashboard
-   as a GOLDEN CANDIDATE with its rubric JSON + evolution ledgers + wall/RSS ledger.
-3. Any FAIL: stop, route to the owning lane, do not iterate config inside this
-   session (golden attempts are budgeted — a failed attempt's diagnosis is FF-4B's
-   input, and the re-attempt happens only after the lane fix merges).
-Deliverable: per-ISO golden-candidate table + docs/handoffs/ff-t3-golden-2026-XX.md.
+1. Build the readiness battery (script under scripts/, tests trivial-first, NO solve
+   beyond T0 scale anywhere in it):
+   a. Input-resolution walk: per ISO at the golden posture (§2.1a), resolve EVERY
+      forward input for EVERY year 2026-2050 — demand + DC trajectory, fuel paths,
+      ATB entry costs, policy fields (IRA/OBBBA windows, RPS/ACP, CES premium
+      configs, carbon programs), capacity-market params, confirmed-retirements
+      horizon, weather-year pool — loader-level execution with no LP, fail-loud per
+      missing/stale/unresolvable item.
+   b. Config completeness: the golden-posture ScenarioConfig round-trips
+      run_config.json (rule 24), cache_key stable, every §2.1a decision reflected.
+   c. Kill-resume drill: T0 run (NEISO 2026-2028), killed mid-year, resumed from the
+      per-year cache to a result-equivalent bundle (dispatch/ledger values identical;
+      wall-clock metadata may differ) vs an uninterrupted control.
+   d. Wall/RSS projection: from the measured §2.4 anchors + FF-0B/FF-2D/FF-3B
+      per-year ledgers, publish the per-ISO projected full-horizon wall-clock/RSS
+      table with the concurrency plan a golden run would use — the "what would 10
+      hours buy" table §2.1b(c) requires.
+   e. Schedulability guard: run_full_horizon.py refuses > 5 solve-years unless
+      --full-solve-authorized is passed (mirrors the rule-22 --holdout-authorized
+      pattern), with a test.
+2. Fix ONLY fail-loud plumbing gaps the battery exposes (cited registry values,
+   loader resolution); anything structural is a finding routed to its lane — this
+   battery is exactly where "wasted 10 hours" bugs are meant to die at minutes of
+   cost.
+3. POC close-out package docs/handoffs/ff-poc-closeout-2026-XX.md: the per-ISO §2.1b
+   gate scorecard (backcast keeper/marker state, T1 verdicts, crossover input gap,
+   readiness result, projected cost), the honest-unfit list (absorbed from FF-4B),
+   and the owner-decision box for opening the gate per ISO. Register battery
+   artifacts on the forecast-validation namespace; findings only otherwise — the
+   gate-open decision is the owner's.
 ```
 
-#### FF-4B [FABLE] — Golden attestation & program close-out
+### Wave 4 — DEFERRED IN FULL; prompts WITHDRAWN (owner amendment 2026-07-19)
 
-```
-[FABLE] FF-4B — Attest the golden bundles; update the verdict; name what remains unfit
+The golden-solve wave is deferred in its entirety behind the §2.1b full-solve
+authorization gate: we are not there yet, and no full-horizon runtime is spent before
+backcast-calibration proof, green T1 POC gates, the worth-the-compute evidence, and an
+explicit per-campaign owner authorization exist (per ISO). The former prompts — FF-4A
+(T3 golden 2026–2050 BAU solves; rubric t3, staged §2.4 concurrency, resumable chunks,
+≤2–3 attempts/ISO ever), FF-4B (golden attestation + verdict rewrite; its honest-unfit
+list moved into the active phase as part of FF-3E's close-out), and FF-4C (PB-5
+probability band, G-35, owner call) — are **withdrawn**: do not execute, restore, or
+paraphrase them from git history. At gate-open the owner re-authors them against
+then-current HEAD; until then nothing in this wave is schedulable.
 
-Read CLAUDE.md (rule 21), docs/forecast-development-plan-2026-07.md §0 (§7 binds), the
-FF-4A bundles + rubric output, docs/forecasting-entry-exit-assessment.md, the flip
-memo, and every open plan-§1.2 row.
-
-1. Per golden ISO: the DOF-ledger attestation (every free parameter → identification
-   source; open DOFs listed as open, not hidden), rubric verdict summary, and the
-   reproducibility check (run_config → same bundle).
-2. Rewrite docs/forecasting-entry-exit-assessment.md verdict rows against the golden
-   evidence (the P-3C convention: measured, adversarial, no celebration).
-3. The honest-unfit list: what these goldens still cannot claim (locational siting,
-   forward-auction timing, any ISO/mechanism still gated) — in the plan §0 terms.
-4. Owner sign-off package: which bundles are promoted from candidate to GOLDEN;
-   schedule the SEPARATE owner-gated events (PB-5 band run FF-4C; the rule-22
-   locked-test one-shots per ISO once calibration-complete markers + freeze exist).
-Memo session — no solve, no code, no tuning.
-```
-
-#### FF-4C [OPUS] — PB-5 probability band (optional, owner call)
-
-```
-[OPUS] FF-4C — Produce the first production probability band on the golden config
-
-Owner-gated (G-35). Read docs/handoffs/probability-bounds-plan-2026-07.md (the spec —
-sizing, sampler, structural prior, honest labels) + docs/probability-bounds-ercot-
-2026-07.md (the 5-member pilot closeout) + docs/forecast-development-plan-2026-07.md
-§2.4 (§7 binds). Execute the PB-5 batch per the PB plan's own sizing on the golden
-ERCOT config (members via market-sim ensemble --sampler + --structural-prior;
-rule 12 scheduling; resumable). Publish via export_forecast_bands.py to the fan-chart
-page with the PB plan's honest-label discipline (dispatch-conditional caveats as its
-§3.4 requires, updated for what the golden bundles now validate). Register + findings.
-```
-
-### Wave 5 — FF-5A dashboard: see §8 (run LAST).
+### Wave 5 — FF-5A dashboard: see §8 (run LAST among the ACTIVE waves — deferred Wave 4 is not a prerequisite).
 
 ---
 
@@ -946,6 +1024,9 @@ page with the PB plan's honest-label discipline (dispatch-conditional caveats as
 8. **Docs:** findings docs to `docs/handoffs/ff-*.md`; `/sync-docs` when a session
    settles methodology; this plan's §1.2 frontier table is updated by any session that
    closes or opens a row (append-edit, small commits).
+9. **§2.1b window cap (2026-07-19):** no invocation over 5 solve-years, ever, in the
+   active phase; T2/T3/W4-campaign/PB-5 are deferred — unschedulable without the
+   per-ISO gate conditions AND a per-campaign, session-logged owner authorization.
 
 ---
 
@@ -955,8 +1036,9 @@ page with the PB plan's honest-label discipline (dispatch-conditional caveats as
 forecast-validation.html` (self-contained hindcast scorecards + invariant chips,
 regenerated by `register_hindcast.py` from `frontend/data/hindcast/*.json`) plus
 `forecast-bands.html` (fan chart). It is deliberately minimal and stays that way until
-the program has golden bundles worth exploring — build this **after Wave 4** (or when
-the owner calls it). Scope sketch for the future session: a **forecast run explorer**
+there are bundles worth exploring — build this **after the active waves close** (or
+when the owner calls it; the deferred Wave 4 is NOT a prerequisite — §2.1b). Scope
+sketch for the future session: a **forecast run explorer**
 (sibling of `backcast-runs.html`) over a new registry namespace, and a **forecast
 status page** (sibling of `calibration-status.html`) showing per-ISO tier/gate state.
 Draft prompt (final wording may be refreshed at launch):
@@ -1001,13 +1083,13 @@ evidence base and stay as-is.
 | Doc | Disposition |
 |---|---|
 | `docs/handoffs/forecast-retirement-calibration-plan-2026-07.md` ⚑ | Coordination → this plan (L-CAP); remains the lane's technical spec (§2.1 gate, §3 T-R bands, §5 data needs). Its §4 prompts are superseded by §6 here. |
-| `docs/handoffs/national-ces-eac-premium-plan-2026-07.md` ⚑ | Coordination → this plan (FF-3B); W1+W2 merged; §7/§8 W3-R/W4/W5 specs remain binding and are invoked by FF-3B. |
+| `docs/handoffs/national-ces-eac-premium-plan-2026-07.md` ⚑ | Coordination → this plan (FF-3B); W1+W2 merged; §7 W3-R readiness criteria remain binding (FF-3B). Its W4/W5 execution is DEFERRED behind §2.1b (2026-07-19) — do not launch from its §8. |
 | `docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md` ⚑ | ARCHIVED — waves executed; scorecard/battery definitions remain citable; successor lanes live here. |
 | `docs/handoffs/forecast-validation-program-2026-07.md` ⚑ | ARCHIVED — machinery delivered (invariants, ledger, hindcast, goldens); hindcast band tables remain citable (FC-3). |
 | `docs/handoffs/capacity-economics-plan-2026-07.md` ⚑ | ARCHIVED — stages executed; open remainders (FOM default flip, foresight posture) tracked as plan-§1.2/FF-1B/FF-2A items. |
 | `docs/handoffs/cx4-datacenter-load-design-2026-07.md` ⚑ | Mechanism LANDED since authoring; remaining trajectory/siting/posture items = FF-1C. Spec stays citable. |
-| `docs/handoffs/probability-bounds-plan-2026-07.md` ⚑ | Machinery landed; PB-5 scheduled as FF-4C (owner-gated). Spec current for FF-4C. |
-| `docs/handoffs/probability-bounds-prompts-2026-07.md` | Companion prompts — superseded for scheduling by FF-4C; content current (ledger-marked only). |
+| `docs/handoffs/probability-bounds-plan-2026-07.md` ⚑ | Machinery landed; PB-5 DEFERRED with Wave 4 behind §2.1b (was FF-4C, owner-gated; 2026-07-19). Spec stays current for the eventual run. |
+| `docs/handoffs/probability-bounds-prompts-2026-07.md` | Companion prompts — superseded for scheduling (PB-5 deferred behind §2.1b, was FF-4C); content current (ledger-marked only). |
 | `docs/forecast-validation-plan.md` | Already SUPERSEDED-bannered (historical). |
 | `docs/forecast-methodology-gaps-2026-06.md` | Already supersession-noticed → gap-register. Historical. |
 | `docs/forecast-methodology-gaps-prompts-2026-06.md` ⚑ | STALE — do not execute; banner added. |
@@ -1025,3 +1107,17 @@ recorded in this session. Owner decisions currently pending inside this program:
 FF-0C decision box (retirement rule), DC BAU posture (FF-1C), entry-lookahead +
 availability defaults (FF-1B/FF-2A boxes), per-ISO flip sign-offs (FF-2C), NYISO R5a
 option (FF-3D), golden config freeze (FF-4A), PB-5 go (FF-4C).*
+
+*Amended 2026-07-19 (owner directive, no LP solved, no parameter changed): POC-first
+re-scope. Wave-4/T3 golden prompts WITHDRAWN (never restore from history) and FF-3A/T2
+deferred with them behind the new §2.1b full-solve authorization gate (≤5-solve-year
+window cap; gate = backcast keeper + calibration-complete marker, T1 POC gates green,
+crossover input gap + FF-3E readiness battery + projected cost, explicit per-campaign
+owner authorization). FF-3B re-scoped (W3-R readiness + T1-scale CES POC; W4 campaign
+deferred). FF-3E chartered (readiness battery + POC close-out, absorbing FF-4B's
+honest-unfit list). §0 re-framed into the active-POC / deferred-golden phases. Of the
+07-17 pending list above, FF-0C's decision box, the DC posture, the availability and
+entry-lookahead defaults, and the NYISO R5a option have since been decided (§2.1a +
+wave-manager ledger); the golden-freeze and PB-5 items are superseded by §2.1b. Still
+pending: per-ISO flip sign-offs (FF-2C — NYISO no longer flip-ready after its
+2026-07-19 calibration-marker withdrawal), and §2.1b gate-open per ISO.*
