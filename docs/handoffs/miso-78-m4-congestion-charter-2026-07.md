@@ -255,6 +255,28 @@ never a direct build:
   probe evidence that the refined boundary actually carries the congestion
   mass — at 6 zones the between-zone share is ≤ 0.8 %, and a split that
   does not move that number is RP-1 with more zones.
+
+  *Addendum 2026-07-19 (pre-sign-off, owner-directed probe — miso-79,
+  `scripts/probes/_miso79_split_boundary_mass.py`): the required probe
+  evidence was produced and is NEGATIVE — RO-3 is empirically dead at any
+  zonal granularity.* Decomposing each internal class's DA Σ|SP| mass at
+  LBA granularity (the finest partition zonal load data could ever
+  support): **intra-LBA mass is 88–99.7 % of every internal class, every
+  train year** — much of it literally single-substation transformers (XF =
+  99.4 % of ToCA-`*` rows) and single-LBA lines that no zone boundary can
+  ever cross. The exhaustive-enumeration optimum over all LBA bipartitions
+  captures at most **1.87 % of total congestion mass** for any single
+  zone-year (Plains 2023 `{ALTW}`, non-persistent — 0.14 % by 2025; the
+  best persistent candidate, West `{NSP,OTP}`, peaks at 1.35 %), and
+  splitting **all six zones at their optimal boundaries simultaneously**
+  (a ~12-zone model) converts only **~1.9–3.8 %** of total mass into
+  between-zone boundaries. RO-3 therefore cannot fire from finer zones
+  alone: real Midwest congestion is intra-LBA branch congestion whose
+  zonal price expression requires shift factors at ANY practical zone
+  count, confirming the §3 verdict as fundamental rather than provisional.
+  RO-3 remains formally open only for the degenerate case RO-1 also
+  covers: a future *published* boundary definition that demonstrably
+  carries the mass.
 - **RO-4 — Publication of the hourly operationally derated limit series:
   does NOT alone reopen.** It upgrades the §4.3 cap-series choice within a
   successor charter opened by RO-1/2/3, but the representation block is
