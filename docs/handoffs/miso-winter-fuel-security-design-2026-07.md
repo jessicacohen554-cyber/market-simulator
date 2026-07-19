@@ -255,6 +255,17 @@ spike → modeled Jan-13). Fix precedent: NYISO's `_transco_z6_daily_dated`
 (mean-preserving keeps the tail-day level ~$4 nationally), so it stays OUT of the
 miso-72 keeper case. Filed as a follow-up.
 
+**RESOLVED 2026-07-19** (PR #2565 + the same-day registration session): fixed via
+`_henry_hub_daily_dated` + `_trade_date_staircase` — TRADE-date placement (the HH
+daily spot prints its own trading day's price, unlike the next-day-delivery
+citygate indexes that keep `_flow_date_staircase`), staircase across non-trading
+gaps, mean-preserving per month exactly by construction. All-ISO A/B on the
+keeper recipes (2023-2025, both arms registered): mean LMP Δ ≤$0.10/MWh
+everywhere, spike-day relocation only; PJM + MISO keepers advanced onto the fix
+(`2026-07-19-{pjm,miso}-gasshape-interpfix`), CAISO 2025-only/small, NEISO/NYISO
+exactly inert (hub overlays supersede). Full entry:
+`docs/calibration-log/governance.md` 2026-07-19.
+
 ---
 
 ## 4. Phase B — build / probe / register plan

@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-19-neiso-gasshape-interpfix-base",
+  "label": "neiso gasshape interpfix base",
+  "date": "2026-07-19",
+  "shorthand": "neiso-gasshape-interpfix-base",
+  "definition": "gas_daily_shape 3.7 interp-fix A/B BASE arm (pre-fix code at 66879ac: even-spread np.interp HH daily shape); recipe = neiso-60 keeper (= neiso-59 recipe on corrected outages) via replay_keeper.build_kwargs; full span 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-07-19-neiso-gasshape-interpfix-base.js",
+  "bundle": "results/calibration/neiso_gasshape_interpfix_base"
+}

@@ -1,4 +1,5 @@
 {
  "iso": "MISO",
- "keeper": "2026-07-18-miso-75-manitoba-meritcap"
+ "keeper": "2026-07-19-miso-gasshape-interpfix",
+ "promotion_note": "Promoted 2026-07-19 (owner-authorized in-session): the miso-75 manitoba-meritcap recipe on the gas_daily_shape_factors true-date staircase fix (the lane's own spec 3.7 follow-up) + the inherited +1h frame-defect fix. Determination unchanged NOT-YET on the ledgered irreducible {C3a-2025, C3c} tail (C3a-2025 -15.3% -> -15.1%); same-box A/B base registered (2026-07-19-miso-gasshape-interpfix-base)."
 }
