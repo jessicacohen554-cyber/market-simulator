@@ -34,6 +34,7 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -46,7 +47,137 @@ _spec = importlib.util.spec_from_file_location(
 rb = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(rb)
 
-REGISTRY_DIR = REPO / "frontend" / "data" / "backcast" / "registry"
+DATA_DIR = REPO / "frontend" / "data" / "backcast"
+REGISTRY_DIR = DATA_DIR / "registry"
+RUNS_DIR = DATA_DIR / "runs"
+KEEPERS_PATH = DATA_DIR / "keepers.json"
+CALIB_ROOT = REPO / "results" / "calibration"
+
+# Retention rule (2026-06-21, user-set; supersedes the 10-run rule): the
+# dashboard keeps the top-15 runs per ISO. When a registration pushes an ISO
+# over the cap, ``prune_iso`` drops the displaced OLDEST runs — deleting the
+# registry sidecar, the ``runs/<id>.js`` payload AND the mapped
+# ``results/calibration/<bundle>/`` dir together, so the three stores can never
+# drift into orphans (keepers and ablation-referenced twins are never pruned).
+KEEP_PER_ISO = 15
+
+
+def _protected_run_ids() -> set[str]:
+    """Return run ids retention must never prune, whatever their age.
+
+    * Every current keeper in ``keepers.json`` — dropping its bundle would break
+      the all-ISO Calibration Status page (whose verdicts read the bundle).
+    * Any run referenced by a surviving sidecar's ``ablation_twin`` /
+      ``ablation_of`` link — pruning it would dangle the cross-reference that
+      ``check_registry_payload_parity.py`` enforces.
+    """
+    protected: set[str] = set()
+    if KEEPERS_PATH.exists():
+        keepers = json.loads(KEEPERS_PATH.read_text())
+        protected.update(keepers.get("keepers", []))
+        # the per-ISO convenience keys (CAISO/ERCOT/...) duplicate the list;
+        # collect any id-shaped top-level value defensively.
+        protected.update(
+            v for v in keepers.values() if isinstance(v, str) and v.startswith("20")
+        )
+    for path in REGISTRY_DIR.glob("*.json"):
+        try:
+            rec = json.loads(path.read_text())
+        except json.JSONDecodeError:
+            continue
+        for field in ("ablation_twin", "ablation_of"):
+            ref = rec.get(field)
+            if isinstance(ref, str) and ref.startswith("20"):
+                protected.add(ref)
+    return protected
+
+
+def _bundle_dir(rec: dict) -> Path | None:
+    """Resolve a sidecar's ``bundle`` field to a path under
+    ``results/calibration`` (None if absent or — as a hard safety guard —
+    outside that root, so retention can never delete an arbitrary path)."""
+    raw = rec.get("bundle")
+    if not raw:
+        return None
+    p = Path(raw)
+    p = p if p.is_absolute() else REPO / p
+    try:
+        p.resolve().relative_to(CALIB_ROOT.resolve())
+    except ValueError:
+        return None
+    return p
+
+
+def prune_iso(
+    iso: str, *, keep: int = KEEP_PER_ISO, dry_run: bool = False
+) -> list[str]:
+    """Enforce the top-``keep``-per-ISO retention rule across all three stores.
+
+    Keeps the ``keep`` newest runs for ``iso`` (by date, then id) plus every
+    protected id, and for each displaced run deletes its registry sidecar,
+    ``runs/<id>.js`` payload and mapped ``results/calibration/<bundle>/`` dir
+    together. A bundle shared by a surviving sidecar is left in place (only its
+    orphaned sidecar/payload go). Returns the pruned ids; caller stages the
+    deletions with the rest of the commit.
+    """
+    protected = _protected_run_ids()
+    entries: list[tuple[str, str, dict, Path]] = []
+    for path in sorted(REGISTRY_DIR.glob("*.json")):
+        try:
+            rec = json.loads(path.read_text())
+        except json.JSONDecodeError:
+            continue
+        if rec.get("iso") != iso:
+            continue
+        entries.append((rec.get("date", ""), rec.get("id", path.stem), rec, path))
+    # Newest first (date, then id); the oldest beyond the cap fall off the end.
+    entries.sort(key=lambda e: (e[0], e[1]), reverse=True)
+
+    to_prune = [
+        (rid, rec, sidecar)
+        for _, rid, rec, sidecar in entries[keep:]
+        if rid not in protected
+    ]
+    pruned_ids = {rid for rid, _, _ in to_prune}
+    # Bundle paths still referenced by any run that is NOT being pruned — never
+    # delete a directory another sidecar still points at.
+    kept_bundles: set[Path] = set()
+    for path in REGISTRY_DIR.glob("*.json"):
+        try:
+            rec = json.loads(path.read_text())
+        except json.JSONDecodeError:
+            continue
+        if rec.get("id", path.stem) in pruned_ids:
+            continue
+        b = _bundle_dir(rec)
+        if b is not None:
+            kept_bundles.add(b.resolve())
+
+    pruned: list[str] = []
+    for rid, rec, sidecar in to_prune:
+        payload = RUNS_DIR / f"{rid}.js"
+        bundle = _bundle_dir(rec)
+        drop_bundle = (
+            bundle if (bundle and bundle.resolve() not in kept_bundles) else None
+        )
+        targets = [sidecar, payload] + ([drop_bundle] if drop_bundle else [])
+        existing = [t for t in targets if t.exists()]
+        note = " [dry-run]" if dry_run else ""
+        print(
+            f"  prune {rid}: "
+            + (
+                ", ".join(str(t.relative_to(REPO)) for t in existing)
+                or "(nothing on disk)"
+            )
+            + note
+        )
+        if not dry_run:
+            sidecar.unlink(missing_ok=True)
+            payload.unlink(missing_ok=True)
+            if drop_bundle and drop_bundle.exists():
+                shutil.rmtree(drop_bundle)
+        pruned.append(rid)
+    return pruned
 
 
 def main() -> None:
@@ -56,6 +187,17 @@ def main() -> None:
     )
     ap.add_argument(
         "--bundle", required=True, help="Bundle dir, e.g. results/calibration/<name>."
+    )
+    ap.add_argument(
+        "--no-prune",
+        action="store_true",
+        help="Skip the top-15-per-ISO retention sweep after registering.",
+    )
+    ap.add_argument(
+        "--keep-per-iso",
+        type=int,
+        default=KEEP_PER_ISO,
+        help=f"Retention cap per ISO (default {KEEP_PER_ISO}).",
     )
     args = ap.parse_args()
 
@@ -106,6 +248,18 @@ def main() -> None:
         print(f"wrote {metrics_path.relative_to(REPO)}")
     except Exception as exc:  # pragma: no cover - defensive
         print(f"determination: unavailable ({exc})")
+
+    # Retention: enforce the top-15-per-ISO cap for the ISO we just registered
+    # into, deleting the sidecar + payload + bundle of any displaced oldest run
+    # together (see KEEP_PER_ISO / prune_iso). Keepers and ablation-referenced
+    # twins are never pruned. The caller stages the deletions with the commit.
+    if not args.no_prune:
+        pruned = prune_iso(iso, keep=args.keep_per_iso)
+        if pruned:
+            print(
+                f"pruned {len(pruned)} run(s) beyond top-{args.keep_per_iso} "
+                f"{iso} retention: {pruned}"
+            )
 
 
 if __name__ == "__main__":

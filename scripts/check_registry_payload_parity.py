@@ -1,4 +1,4 @@
-"""CI gate: every committed registry sidecar must have its run payload.
+"""CI gate: registry sidecars and run payloads must be in 1:1 parity.
 
 `scripts/build_manifest.py` silently skips a `registry/<id>.json` sidecar
 whose `runs/<id>.js` payload is absent (the "half-synced checkout" guard) —
@@ -9,6 +9,16 @@ pjm-84, pjm-85, caiso-66) were registered sidecar-only and never rendered
 (2026-07 loading-issue investigation). This script makes that failure loud
 instead of silent, and additionally catches dangling `ablation_twin` /
 `ablation_of` cross-references (a link to a sidecar-only or nonexistent run).
+
+It checks BOTH directions of the parity so retention can never leave a store
+behind:
+
+* sidecar -> payload: a `registry/<id>.json` with no `runs/<id>.js` (above).
+* payload -> sidecar: a `runs/<id>.js` **orphan** with no `registry/<id>.json`.
+  These arise when a sidecar is pruned without its payload — the exact drift
+  `dashboard_add_run.py`'s three-store retention exists to prevent — leaving a
+  dead payload committed forever (it is never rendered, since only registered
+  runs appear in the manifest).
 
 Usage: ``python scripts/check_registry_payload_parity.py`` (exit 1 on any gap).
 """
@@ -41,6 +51,19 @@ def main() -> int:
                 f"{path.name}: registry sidecar has no matching "
                 f"runs/{rid}.js payload — invisible in the Run Explorer"
             )
+
+    # payload -> sidecar: an orphan runs/<id>.js with no registry sidecar. A
+    # sidecar pruned without its payload leaves this dead file committed
+    # forever; retention (dashboard_add_run.prune_iso) deletes both together, so
+    # any orphan here is a parity break to fix.
+    if RUNS_DIR.exists():
+        for path in sorted(RUNS_DIR.glob("*.js")):
+            rid = path.stem
+            if rid not in sidecars:
+                problems.append(
+                    f"runs/{path.name}: orphan payload has no registry/{rid}.json "
+                    f"sidecar — dead file, never rendered"
+                )
 
     for rid, rec in sidecars.items():
         for field in ("ablation_twin", "ablation_of"):

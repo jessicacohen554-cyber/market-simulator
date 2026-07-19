@@ -79,12 +79,18 @@ are auto-derived from each bundle's `run_config.json` model-changes note.
 completed run — keeper or probe alike (mark rejected probes "(PROBE)" in the
 sidecar definition). **Do not run a probe bundle without registering it** —
 the dashboard is the only way the user sees results; an unregistered /tmp
-probe leaves them flying blind. When over the 15-run limit, delete the
-displaced **oldest** runs' sidecar (`registry/<id>.json`) and payload
-(`runs/<id>.js`) in the same commit — drop the oldest even when an old run
-scored better, because the model design evolves and only the prior keeper
-stays a meaningful comparison. Then regen/rebuild the manifest. Bundles in
-`results/calibration/` are kept — only the dashboard registration is pruned.
+probe leaves them flying blind. Retention is now **automatic and governs all
+three stores**: `dashboard_add_run.py` runs `prune_iso` after every
+registration, keeping the 15 newest runs for that ISO (by date, then id) and
+deleting the displaced **oldest** runs' sidecar (`registry/<id>.json`),
+payload (`runs/<id>.js`) **and** mapped `results/calibration/<bundle>/` dir
+together (drop the oldest even when an old run scored better — only the prior
+keeper stays a meaningful comparison as the design evolves). Keepers
+(`keepers.json`) and ablation-referenced twins are never pruned; pass
+`--no-prune` to register without sweeping. The pruned deletions are staged
+with your commit; then regen/rebuild the manifest. See **scripts/README.md →
+"Dashboard retention (top-15 per ISO, all three stores)"** for the full rule
+and the `check_registry_payload_parity.py` both-direction gate.
 
 From 2026-06 onward, label **PJM** runs sequentially as `pjm 1 <keyword>`,
 `pjm 2 <keyword>`, ... — a running integer plus a brief keyword descriptor of
