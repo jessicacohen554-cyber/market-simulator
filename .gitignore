@@ -253,6 +253,16 @@ results/hindcast/*/run_config.yaml
 results/hindcast/*.log
 results/hindcast/*/run.log
 
+# FF-2B base-year adequacy solves (results/ff2b-after/<iso>, run via
+# run_full_horizon at T0 scale for the 2026 I7 check the *-ff-2b-adequacy
+# sidecars point to): the slim deliverable is full_horizon_summary.json +
+# evolution_*.json (the capacity accounting); the dispatch parquet and config
+# are reproducible from the recorded run. The ff2b-before/ baselines are
+# unreferenced diagnostic scratch (disposable, no sidecar points at them).
+/results/ff2b-before/
+results/ff2b-after/*/*/*/year_*.parquet
+results/ff2b-after/*/*/*/config.yaml
+
 # -----------------------------------------------------------------------------
 # 10. Misc local caches (docs/handoffs driver scratch — the committed
 #     deliverables are the driver-battery-<iso>-<date>.{md,json} memos).
