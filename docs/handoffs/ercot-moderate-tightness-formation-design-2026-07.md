@@ -293,3 +293,63 @@ the residual).
 (§5). OOM note for successors: two concurrent ERCOT per-plant co-opt solves
 exceed the 15 GB session container — run year-probes sequentially despite
 rule 12's ~2-run allowance.
+
+## 10. 2025 EXTENSION + FULL-SPAN CANDIDATE (session 2026-07-19b, ercot86-2025)
+
+**Owner decisions resolved (this round).** (1) 2023 SCED is permanently
+unreachable on the free path (retention ~2.3 yr) and the credentialed archive is
+owner-declined → **§5 option (b) ADOPTED**: RT wall ships 2024/2025 only; the
+2023 summer mid-band under-price is a documented **input-blocked
+measured-representation caveat**, not a model defect. 2023 keeps the DAM basis
+automatically (year-scoped artifact, rule 13) — nothing is retuned to paper it.
+(2) 2025 tail days fetched free-path in-session.
+
+**2025 tail-day SCED intake (task 1).** 11 RT-tail delivery days (Jan 15,
+Feb 19/20, May 16/30, Jul 1/11/30, Oct 21, Dec 1/15 — RT>$200 clusters that land
+in the p80/p90/p97 net-load bins), full-day, via `fetch_ercot_60day_sced_gen_resource.py`
+→ `data/raw/ercot/…_2025_ercot86_tail_days.parquet` (66 MB, verified: no dup
+(interval,resource) rows; 15-min publish cadence except Dec 15 at 5-min; all days
+reachable). Re-derive `--years 2024 2025` (rule 23 source-data addition):
+**2024 tables byte-identical** (input unchanged); 2025 tail bins now
+**312/304/168 intervals** (was 172/144/40, control-only), each ≥10 sample days —
+coverage adequate, no thin-bin caveat.
+
+**2025 single-year probe A (rule-16 throwaway, NOT registered; slim record at
+`results/calibration/ercot86_rtwall_2025_A`).** ercot85 base + RT wall
+(composition A). Effective price = demand-weighted `price` column, which already
+sums the co-opt energy dual + RTORPA overlay (this keeper carries **no** post-solve
+`ordc_adder` — scarcity is endogenous in the co-opt; the generic "price+ordc_adder"
+convention would double-count / mis-measure here).
+
+| metric (2025) | ercot85 base | A (replace) | actual |
+|---|---|---|---|
+| annual mean resid | −0.90 | **+0.44** | — |
+| $150–500 hrs | ~0–1 | **6** | 65 |
+| $500–2k hrs | (unrec.) | 1 | 3 |
+| model @ actual mid-band (p50/p90) | ~$40 ceiling | **$65 / $137** | — |
+
+* **C3a guard CLEARS**: |resid| shrinks 0.90 → 0.44; the +$0.44/MWh sign-flip
+  (1.4 % of the $32 mean) is within noise — the wall closes the level without
+  material over-lift.
+* **6 model mid-band hours, ALL correctly placed, ZERO spurious**: Feb 20 h6–7
+  (winter morning, actual $188/$250) and Aug 20 h18–21 (summer evening, actual
+  $104–175). No model >$150 hour where actual ≤$100.
+* **Same partial-fill structure as 2024**: the wall lifts the model at genuine
+  tight hours from the ~$40 stack ceiling to p50 $65 / p90 $137, crossing 6 of 65
+  actual mid-band hours into the band; the remaining 59 (spread Apr/May/Jul/Dec
+  shoulder) sit $50–120 — the same out-of-scope online-spare shortfall (offline-CT
+  startup-inclusive RT participation + CC spare beyond the mitigated SCED2 ceiling),
+  the §11 residual lane, not a knob here (rule 19).
+
+**Verdict: 2025 CLEARS.** The mechanism generalizes — 2024 and 2025 both form the
+mid-band where the stack genuinely exhausts, price the formed hours in-band, and
+close the annual level as a side effect, with zero spurious hours. Because the wall
+is derived independently per-year from that year's own measured SCED offers with
+**zero fitted scalars**, each year's improvement is itself leave-one-year-out
+evidence (no cross-year parameter sharing to overfit).
+
+**Full-span candidate (task 4).** 2023+2024+2025 in one bundle
+(`results/calibration/ercot86_rtwall_fullspan`), RT wall on; 2023 auto-retains the
+DAM basis (year-scoped). Scored LOYO within 2023–2025, registered on the dashboard
+with the 2023 input-blocked caveat in the run note. Keeper swap remains OWNER-ONLY
+(rule 27) — ercot82 stays the keeper.
