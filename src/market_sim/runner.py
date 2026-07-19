@@ -101,6 +101,7 @@ from market_sim.model.transmission import (
     apply_interchange_injections,
     build_incidence_matrix,
     build_interface_groups,
+    build_miso_link_loss,
     forward_corridor_interface_groups,
     get_link_bidirectional_array,
     get_link_flow_cost_array,
@@ -1403,6 +1404,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 # Priced RDT TCDC tiers (miso_rdt_tcdc): $/MWh on the tiered
                 # one-way links; None (all links free) is byte-identical.
                 link_flow_cost=get_link_flow_cost_array(iso_config.links),
+                # Marginal loss fractions on the one-way Midwest loss pairs
+                # (miso_zonal_loss_surface): forecast years resolve to the
+                # pooled multi-year surface rows. UNSET off the flag, so the
+                # forecast kwargs key set is unchanged (byte-identical).
+                link_loss=(
+                    build_miso_link_loss(
+                        iso_config.links, iso, year, int(base_demand.shape[1])
+                    )
+                    if getattr(config, "miso_zonal_loss_surface", False)
+                    else UNSET
+                ),
                 storage_power_cap=storage.power_cap,
                 storage_energy_cap=storage.energy_cap,
                 storage_zone_idx=storage.zone_idx,

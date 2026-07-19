@@ -122,6 +122,11 @@ class DispatchSpec:
     # miso_rdt_tcdc) — (n_links,) $/MWh, nonzero only on one-way links.
     # None/UNSET keeps the flow block zero-cost (byte-identical).
     link_flow_cost: Any = UNSET
+    # Per-link-hour marginal loss fractions on one-way links
+    # (miso_zonal_loss_surface) — (n_links, T), receiving end gains
+    # (1 - loss) per MW. None/UNSET keeps the ±1 incidence coefficients
+    # (byte-identical).
+    link_loss: Any = UNSET
 
     def to_dispatch_kwargs(self) -> dict:
         """Return the base ``dispatch_kwargs`` dict, key-for-key.

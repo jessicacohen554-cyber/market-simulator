@@ -1870,4 +1870,22 @@ def apply_interchange_topology(
                 else ""
             ),
         )
+    # 7. ``config.miso_zonal_loss_surface`` — split the Midwest-internal
+    #    bilateral links (L1–L6) into one-way loss pairs so the measured
+    #    marginal delivery-factor surface can enter the energy balance as
+    #    hour-varying receiving-side loss fractions (miso-76 M3; the
+    #    fractions themselves are built per solve year by
+    #    transmission.build_miso_link_loss). Internal links only, so it
+    #    composes with every step above (the RDT/South links are untouched
+    #    — South separation stays RDT-owned, rule 19).
+    if getattr(config, "miso_zonal_loss_surface", False) and iso == "MISO":
+        from market_sim.model.transmission import apply_miso_zonal_loss_links
+
+        iso_config = apply_miso_zonal_loss_links(iso_config)
+        logger.info(
+            "MISO %d: miso_zonal_loss_surface — Midwest L1-L6 split into "
+            "one-way loss pairs (marginal delivery-factor physics, "
+            "miso-76 charter §4)",
+            year,
+        )
     return iso_config
