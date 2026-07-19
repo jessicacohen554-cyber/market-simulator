@@ -18215,3 +18215,97 @@ rule 27 model assignment) resolving the five §5 items in the findings doc —
 crosswalk curation, no-PTDF representation, rating-vs-FFE cap choice, East
 disclosure, intake mechanics. Next number: miso-78 (miso-77 = this
 investigation).
+
+## 2026-07-19 — miso-78: M4 congestion charter DRAFTED — VERDICT NO-BUILD (data-blocked-at-representation), PENDING OWNER SIGN-OFF. Charter-first, docs-only: NO LP, NO solve, NO intake, NO registration; keeper UNCHANGED
+
+**Lane.** First action confirmed the miso-77 branch merged (PR #2550,
+`origin/main` 3dabf56). Per the miso-77 GO verdict and the frozen miso-76
+charter §3 M4 clause, this session drafted the M4 congestion charter —
+`docs/handoffs/miso-78-m4-congestion-charter-2026-07.md` — before any code,
+resolving the five findings-§5 items (crosswalk, no-PTDF representation,
+cap-series choice, East disclosure, intake mechanics).
+
+**Adjudication (charter §2, pre-registered).** Six representation candidates,
+five refuted, one not chartered: RP-1 per-corridor caps (M1 redux — invented
+apportionment, and inert anyway: between-model-zone corridor pairs carry
+≤ 0.8 % of measured congestion mass); RP-2 boundary-class rating sums (Σ of
+branch ratings ≠ simultaneous transfer capability, unit-shift-factor
+assumption, and the dominant *-internal classes have no model link to cap);
+RP-3 explicit flowgate rows (coefficients are either assumed — invented — or
+fitted from settlement flows / bc_HIST shadow prices — answer class, rule
+13); RP-4 generation-pocket derates (no published flowgate→pocket mapping;
+not an ERCOT-GTC analogue); RP-5 seam-link substitution (flowgates are
+loop-flow-loaded internal elements, not interchange interfaces — rule-14
+misalignment; the seam already carries boundary-aligned measured structure);
+RP-6 physics-derived reduced network (admissible in principle, NOT chartered
+— a major standalone program: CEII network model, estimated impedances,
+unvalidated 6-zone reduction fidelity; reopening condition RO-2).
+
+**Verdict: NO-BUILD.** The congestion component beyond existing structure
+(CIL/CEL + RDT/TCDC + seam ladders) is ledgered as
+**data-blocked-at-representation** — the miso-77 GO moved the block from the
+data layer to the representation layer (the missing object is the
+shift-factor / network-reduction coefficient set, which nothing publishes).
+Pre-registered reopening conditions RO-1–RO-4 (published PTDFs or
+boundary-aligned interface limits; an owner-chartered RP-6 lane; zone
+refinement that actually moves the between-zone congestion share; the
+derated-limit series alone does NOT reopen). NO intake under NO-BUILD (no
+admissible consumer; a dormant crosswalk+mirror next to a refuted mechanism
+class is a rule-26 re-armable channel) — the intake/crosswalk mechanics are
+frozen as a conditional spec (charter §5) executed only on a reopening. East
+disclosure stands unconditionally (~75 % of East-internal congestion mass
+outside the fetchable universe).
+
+**Disposition.** Docs-only; nothing to register (rule 15 N/A — no solve);
+quarantine untouched. Keeper UNCHANGED
+(`2026-07-18-miso-75-manitoba-meritcap`, determination NOT-YET, same 2 fails
+{C3a-2025, C3c} = the ledgered irreducible scarcity tail). **Next action is
+the owner's** (charter §7, a single decision): sign off the NO-BUILD verdict
+(charter freezes), or override — charter the RP-6 physics-network program as
+its own lane, or redirect the MISO lane (open lanes: direction-symmetric
+losses charter; D1 Z2/Z7 split, blocked on a load split; all-ISO
+`gas_daily_shape` interp fix; PJM merit-cap twin). Next number: miso-79.
+
+## 2026-07-19 — miso-79: RO-3 boundary-mass probe (owner-directed) — NEGATIVE: no zone refinement at any zonal granularity can capture MISO's internal congestion mass; the miso-78 NO-BUILD verdict is FUNDAMENTAL, not provisional. Derive-only — NO LP, NO solve, NO registration; keeper UNCHANGED
+
+**Ask.** After the miso-78 charter draft (PR #2555, pending sign-off) the
+owner asked "do we need more granular zones or what is our next option" and
+directed the recommended derive-only probe: measure whether ANY finer zone
+split could convert the internal congestion mass into between-zone boundary
+mass — the probe evidence the charter's reopening condition RO-3 explicitly
+requires before a zonal-refinement charter could be drafted.
+
+**Method** (`scripts/probes/_miso79_split_boundary_mass.py`; DA bc_HIST
+2023–2025 re-fetched via the sanctioned `fetch_miso_bc_hist.py`, in-train,
+shadow prices location-only per rule 13): parse each binding constraint's
+From/To control areas at LBA granularity (one level below the miso-76
+zone-boundary probe, same CA→zone crosswalk), decompose each internal
+class's Σ|SP| into intra-LBA (uncapturable by ANY LBA-granularity split) vs
+cross-LBA (the ceiling), and exhaustively enumerate LBA bipartitions per
+zone for the captured-mass optimum.
+
+**Findings — NEGATIVE, decisively:**
+- **Intra-LBA mass is 88–99.7 % of every internal class, every year.** The
+  ToCA-`*` rows (25–34 % of West class mass) are not a caveat: 99.4 % are
+  XF transformers — single-substation equipment that physically cannot
+  straddle any boundary (2024: 19,319 XF / 97 ZBR / 13 PS of 19,429).
+- **Best single-zone bipartition ≤ 1.87 % of total congestion mass**
+  (Plains 2023 `{ALTW}`, non-persistent — 0.14 % by 2025). Best persistent
+  candidate West `{NSP,OTP}` peaks at 1.35 % (2025). Indiana ≤ 0.28 %,
+  East ≤ 0.70 % and declining, Illinois ≤ 0.12 %.
+- **All six zones optimally split simultaneously (~12-zone model): only
+  ~1.9–3.8 % of total mass** becomes between-zone boundary mass.
+
+**Disposition.** RO-3 cannot fire from finer zones alone — real Midwest
+congestion is intra-LBA branch congestion whose zonal price expression
+requires shift factors at ANY practical zone count. Charter §6 RO-3 carries
+a dated pre-sign-off addendum recording this; the NO-BUILD verdict
+(data-blocked-at-representation) is confirmed fundamental. Committed on the
+miso-78 branch (PR #2555) so the owner's sign-off decision sees the probe
+evidence. Docs+probe only; nothing to register (rule 15 N/A); quarantine
+untouched. Keeper UNCHANGED (`2026-07-18-miso-75-manitoba-meritcap`,
+NOT-YET, same 2 fails). Remaining congestion reopening paths: RO-1
+(published PTDFs / boundary-aligned limits) or RO-2 (owner-chartered
+physics-network program). Open MISO lanes otherwise unchanged
+(direction-symmetric losses charter; D1 Z2/Z7 load split; all-ISO
+`gas_daily_shape` interp fix; PJM merit-cap twin). Next number: miso-80.
