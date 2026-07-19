@@ -48,11 +48,14 @@ The 2026-07-11 caiso-76 session resolved this knob NO-CHANGE on two grounds:
   one in force.
 - *"The zero-adder LP already UNDER-cycles CAISO"* (then: model discharge
   5.33/7.60/10.48 vs LESR RTD 5.67/10.04/12.06 TWh) — measured on the
-  caiso-65-era model. The caiso-99 keeper stack now **OVER-charges** on the
-  NG:OTH basis (6.06/10.20/13.76 vs measured 4.07/8.71/13.02 TWh); the
-  failure mode the adder addresses is now present. FINDING §6 carries a
-  two-sided throughput guard so the B-leg cannot trade the belly fix for a
-  new under-cycling defect on either measured basis.
+  caiso-65-era model. On today's stack the under-cycling is GONE
+  (battery-only, NG:OTH basis): **belly charge runs over +87 %/+14 %/+11 %**
+  (4.04/6.34/9.66 vs measured 2.16/5.57/8.70 TWh) at a charge-weighted λ
+  $12-15 above reality's glut floor, while 2024/25 annual charge is at
+  parity (8.82/12.61 vs 8.71/13.02; 2023 +40 %) — the failure mode is
+  belly concentration + price, exactly what a throughput cost trims.
+  FINDING §6 carries a two-sided throughput guard so the B-leg cannot trade
+  the belly fix for a new under-cycling defect on either measured basis.
 
 ## 4. What was measured-refuted and is NOT proposed
 
