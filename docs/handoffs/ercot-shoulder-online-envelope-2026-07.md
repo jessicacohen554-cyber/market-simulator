@@ -198,4 +198,86 @@ cluster remains un-intaken, inherited from ERCOT-87 §8).
 
 ## 8. Measurement results — §4 step 1 executed (2026-07-19)
 
-*(filled after the model-side replays completed — see below)*
+Artifact: `data/raw/_validation-source/ercot89_shoulder_online_measurement.json`.
+Coverage: **35/68** (2024) and **37/65** (2025) actual band hours on sample
+days (residual = model < $150 at those hours: 35 and 33; the 4 formed 2025
+hours fall on sample days, the 5 formed 2024 hours do not; Jan-2024
+winter-morning cluster still un-intaken, inherited). Model side from
+single-year throwaway replays of the ercot86 keeper (deleted after
+measurement; their slim class/system hourlies harvested into
+`results/calibration/ercot86_rtwall_fullspan/hourly/`).
+
+### 8.1 H1 — the phantom online margin is real (CONFIRMED, both years)
+
+Medians over covered residual hours; "spare" = ON-status HASL − Base Point,
+"headroom" = estimated model capability − model dispatch:
+
+| year | class | meas ON HSL | meas BP | meas ON spare | model cap (est) | model MW | model headroom |
+|---|---|---|---|---|---|---|---|
+| 2024 | CC | 22,080 | 21,913 | **325** | 22,169 | 19,697 | **2,274** |
+| 2024 | CT | 6,892 | 6,795 | **100** | 5,688 | 3,558 | **1,924** |
+| 2025 | CC | 27,126 | 24,927 | **446** | 25,503 | 23,380 | **2,117** |
+| 2025 | CT | 7,113 | 7,043 | **77** | 5,408 | 4,065 | **1,437** |
+
+The real market ran the residual band hours on a **~0.4–0.5 GW total
+merchant online margin**; the model carries **~3.6–4.2 GW** of base-offer
+headroom in the same hours — **8–10×**. This is the direct block on band
+formation: the ERCOT-86 wall prices spare at the measured per-MW-rank
+ladders, so with ~10× the spare MW the model's marginal rank sits deep in
+the cheap rungs. **The quantity is the error, not the price** — with
+reality's spare, the already-measured ladders would price the band.
+
+### 8.2 H2 — the thin-margin state is condition-specific (CONFIRMED; CT by
+ON share, CC by loading depth)
+
+Vs bin-matched controls (same net-load bins, actual & model < $150):
+
+* **CT commits FOR the band hours**: ON share 0.76 vs 0.49 (2024) and 0.71
+  vs 0.52 (2025), separated in EVERY net-load bin (e.g. 2024 bin 1: 0.71 vs
+  0.28; 2025 bin 4: 0.64 vs 0.45), with resid spare thinner than control
+  spare in nearly every bin. The discriminator survives net-load
+  conditioning — a conditional driver exists beyond annual net-load
+  percentile (candidates for step 2: finer net-load structure, season ×
+  hour block, ramp position).
+* **CC is ~always ON** (share 0.97–0.99 in both sets); its state variable is
+  **loading depth**: ON spare collapses control → resid (867 → 325 MW in
+  2024; 1,079 → 446 in 2025). The model reproduces the direction but not
+  the level (headroom 4.0 → 2.3 GW in 2024) — it never gets thin.
+* OUT is also higher in 2024 resid hours (CC 2,646 vs 1,895 MW) — intra-day
+  outage structure the day-mean overlay partially smooths (§2 property 2).
+
+### 8.3 Class attribution — where the model's cheap energy comes from
+
+Total gas is RIGHT in both hour sets (2024 resid: model ≈ 34.0 GW vs
+EIA-930 NG 34.7); the failure is **composition and state within gas**.
+Control → resid, reality surges merchant CT (BP 4.3 → 6.8 GW, via starts —
+the ERCOT-87 measured 12–18 starts/hour) and loads CC to its ON ceiling;
+the model instead rides **ST_GAS 4.1 → 6.1 GW** (2024; 6.1 GW again in
+2025) and under-dispatches merchant CC+CT by ~4.5–5.5 GW vs measured Base
+Points. Inference (not directly measured — the corpus lacks ST restypes):
+reality's non-CHP steam-gas contribution in these hours is ~1–2 GW, so the
+model's ST_GAS is ~3× over-dispatched in exactly these hours; a
+CAMPD-based ST_GAS hourly check is the named follow-up measurement if step
+2 needs it. Secondary signal, a fortiori: the model carries ~4.6 GW LESS
+VRE than reality in the 2024 resid hours (evening solar shape) and still
+clears $30–80.
+
+### 8.4 Caveats
+
+(a) Merchant-scope offset: corpus CC/CT restypes ≠ model CC_REGULAR/
+CT_PEAKER exactly (2025 meas ON CC 27.1 GW > model cap 25.5; meas nonOUT CT
+9.5–10.6 GW vs model cap 5.4–5.7) — within-basis shares/deltas carry the
+evidence, cross-basis levels do not. (b) `model cap` is the disclosed
+cap_hat × DAM-day-avail estimate. (c) Hourly lambda smooths intra-hour
+spikes. (d) ST_GAS attribution is inferred, not measured.
+
+### 8.5 Verdict for §7
+
+H1 and H2 both hold; the class attribution names two coupled quantity-side
+objects for the owner-gated step 2: **(i)** the merchant CC/CT hour-level
+online margin (the envelope proper — §6 shapes (a)/(c), CT by conditional
+ON share, CC by conditional loading depth), and **(ii)** the ST_GAS
+shoulder-hour dispatch level (rule-19-owned by the ST_GAS drag lane — any
+fix there is that lane's, not this one's; the two must be reconciled in the
+step-2 D-2 enumeration, not stacked). The lane proceeds to the §7 owner
+decision with the measurement supporting a build.
