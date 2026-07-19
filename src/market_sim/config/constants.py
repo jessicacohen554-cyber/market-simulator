@@ -3458,11 +3458,25 @@ PLANNING_RESERVE_MARGIN_BY_ISO: dict[str, float] = {
     # Final Base Case (24.4%); NYISO's IRM is structurally high (locality +
     # transmission-security constraints).
     "NYISO": 0.244,
-    # ISO-NE: FCM sizes capacity to Net ICR rather than publishing a single RM,
-    # so this uses the NERC reference margin level for ISO-NE (~15.7%) as a
-    # stand-in until the ICR-implied margin is wired in. Source: NERC 2023 LTRA
-    # reference margin levels. needs-citation (firm ISO-NE RM filing).
-    "NEISO": 0.157,
+    # ISO-NE: the FCM sizes capacity to a Net Installed Capacity Requirement
+    # (Net ICR = ICR - HQICC), NOT a published reserve-margin percentage, so the
+    # ISO's own planning reserve margin is the Net-ICR-implied margin over its
+    # summer 50/50 peak-load forecast. FF-2B (2026-07-19) replaced the prior
+    # 0.157 NERC-reference-margin stand-in with ISO-NE's own Net ICR construction
+    # (capacity-clearing flip memo R-7(i); rule 12 -- prefer the ISO's published
+    # value over a generic estimate). Vintage = CCP 2026/2027 (FCA 17), the
+    # delivery year covering the 2026 forecast base year, matching the vintage
+    # the other capacity anchors use: Net ICR 30,305 MW / summer 50/50 peak
+    # 27,298 MW - 1 = 11.02%. Both are ISO-NE's own published, forward-
+    # regenerable values (recomputed each FCA), and the 50/50 peak is on the same
+    # "Net (with Reductions for BTM PV)" basis as the model's EIA-930 demand, so
+    # the margin pairs cleanly with the model's peak. Source: ISO New England,
+    # "Installed Capacity Requirement, Related Values, and HQICCs for the
+    # 2026-2027 Capacity Commitment Period" (FCA 17), FERC Docket ER23-405-000,
+    # filed 2022-11-08: ICR 31,306 MW, HQICC 1,001 MW, Net ICR 30,305 MW (p.2-3);
+    # 50/50 summer peak 27,298 MW (p.9-10, 2022 CELT). Kept as an explicit
+    # expression so both published MW values stay traceable (rule 5).
+    "NEISO": 30_305.0 / 27_298.0 - 1.0,  # Net ICR / 50-50 peak - 1 = 0.1102 (FCA 17)
 }
 
 # Data-horizon gate for honoring an ANNOUNCED (non-fossil) EIA-860 retirement
@@ -3867,14 +3881,42 @@ ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO: dict[str, float] = {
     # 5,795 MW UCAP DR ÷ 146,105 MW UCAP RTO Reliability Requirement = 3.97%
     # (2026/2027 BRA Report Table 6 / p.3 — reconciliation documented above).
     "PJM": 5_795.0 / 146_105.0,
+    # NEISO (FF-2B, 2026-07-19): ISO-NE's Forward Capacity Market clears Demand
+    # Resources — energy efficiency, load management, and distributed generation
+    # — as capacity SUPPLY that holds a Capacity Supply Obligation against the
+    # Net ICR, exactly the PJM situation (DR is a cleared supply product, not a
+    # load-forecast netting), so — as for PJM — the value is a documented
+    # reconciliation (rule 14), never a raw fraction of peak. FCA 17 (CCP
+    # 2026/2027) cleared 2,940 MW of demand resources (ISO-NE FCA 17
+    # initial-results press release, 2023-03-10: "2,940 MW (including 130 MW new)
+    # of demand resources, including energy efficiency, load management, and
+    # distributed generation resources"). Divided by the Net ICR requirement
+    # (30,305 MW — the quantity these resources clear against, NOT the ICAP peak),
+    # so under the Net-ICR requirement path the netted credit reproduces ISO-NE's
+    # own supply-side counting: requirement = peak × (1 − f) × (1 + PRM_NetICR) =
+    # (peak / CELT_peak) × (Net_ICR − DR) when peak = CELT_peak. Recurring FCM
+    # product that regenerates each delivery year and scales with enrolment
+    # (rule 13). Refresh on a vintage re-anchor (source-data change, rule 23),
+    # never a residual.
+    "NEISO": 2_940.0 / 30_305.0,
 }
 
-# Firm import contribution of external ties counted by the ISO's own
-# adequacy ledger but absent from the model topology (neither the model's
-# ERCOT nor its PJM has an import node — unlike CAISO's WECC_import and
-# NEISO's HQ node). Added on the supply side of
-# :func:`market_sim.model.capacity.accredited_firm_capacity_mw`, exactly
-# where each ISO's own ledger counts it. ISOs absent here add nothing.
+# Firm import capacity counted by the ISO's own resource-adequacy ledger,
+# credited on the supply side of
+# :func:`market_sim.model.capacity.accredited_firm_capacity_mw` (via
+# :func:`market_sim.model.capacity._firm_import_mw`) exactly where each ISO's
+# own ledger counts it. Two provenance cases share this one registry (rule 19,
+# one mechanism per phenomenon — "firm import the adequacy ledger counts"):
+#   (a) ISOs the model has NO import node for (ERCOT, PJM) — the firm tie is
+#       otherwise entirely absent from the model, so this is its only entry.
+#   (b) ISOs whose import node DOES live in the dispatch topology (CAISO's
+#       WECC_import, NEISO's HQ_import — FF-2B, 2026-07-19). This adequacy
+#       credit does NOT double-count the dispatch node: the accredited ledger
+#       is a static firm-capacity accounting built from the persistent
+#       ``fleet``, which never contains the import pseudo-generators (they live
+#       only in the transient dispatch fleet), so the credit is purely additive
+#       to the fleet's firm MW, never derived from dispatch flow.
+# ISOs absent here add nothing (byte-identical).
 # * ERCOT: 817 MW asynchronous (DC) ties, "based on average net import
 #   contribution during the EEA events: summer 2023 and winter 2020/2021 EEA
 #   events" — December 2025 CDR, Seasonal Summary (non-synchronous ties row).
@@ -3892,9 +3934,36 @@ ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO: dict[str, float] = {
 #   delivery year and responds to conditions (2027/2028 BRA: 1,005.9 MW
 #   UCAP), not an outcome pin. Vintage anchored to the 2026/2027 BRA
 #   alongside the DR fraction above.
+# * CAISO (FF-2B, 2026-07-19): 3,371 MW of firm RA import contracts. CAISO's
+#   CPUC resource-adequacy program credits imports toward the system RA
+#   requirement as capacity-backed, must-offer supply (self-scheduled or bid at
+#   or below $0/MWh during the availability-assessment hours, CPUC D.20-06-028).
+#   The model's WECC_import node hosts these in dispatch but the accredited
+#   ledger (fleet-based) omits them — case (b) above. Value = the measured
+#   average system RA "Imports" capacity, CAISO DMM Annual Report on Market
+#   Issues & Performance, 2024 report (Aug 2025) Table 15.6 = 3,371 MW (excl.
+#   "Imports-MSS", internal metered subsystems); this is exactly the model's own
+#   firm CAISO import tranches (interchange_config.IMPORT_TRANCHES["CAISO"]:
+#   PNW_hydro_base 1,566 + DSW_solar_PV 1,805 = 3,371), so dispatch and adequacy
+#   read the same firm-import quantity. Latest measured year carried forward as
+#   the forward story (RA import contracting is a persistent market structure —
+#   rule 13; the 2025 DMM report is not yet published). NOT the Maximum Import
+#   Capability (16,148 MW) — the MIC is a deliverability LIMIT, not the RA
+#   capacity actually contracted, and crediting it would overstate.
+# * NEISO (FF-2B, 2026-07-19): 567 MW of import capacity that cleared FCA 17
+#   (CCP 2026/2027) holding Capacity Supply Obligations — "567 MW of imports
+#   from New York, Québec, and New Brunswick" (ISO-NE FCA 17 initial-results
+#   press release, 2023-03-10). These are Import Capacity Resources that count
+#   as SUPPLY toward the Net ICR; the HQICC tie benefit (1,001 MW) is already
+#   netted from the requirement (Net ICR = ICR − HQICC, see the NEISO
+#   PLANNING_RESERVE_MARGIN entry) and is NOT double-counted here. The model's
+#   HQ_import node hosts imports in dispatch but the accredited ledger omits the
+#   cleared import CSOs — case (b) above. Recurring FCM product (rule 13).
 ADEQUACY_EXTERNAL_TIE_FIRM_MW: dict[str, float] = {
     "ERCOT": 817.0,
     "PJM": 1_281.7,  # 2026/2027 BRA Report Table 7 (cleared import UCAP)
+    "CAISO": 3_371.0,  # DMM 2024 Table 15.6 RA Imports (= model firm import tranches)
+    "NEISO": 567.0,  # FCA 17 cleared imports (NY/QC/NB), CSO-holding supply
 }
 
 # ICAP-basis planning-reserve-margin correction (stage-5 §6 ICAP/UCAP
