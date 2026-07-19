@@ -49,9 +49,7 @@ def main() -> None:
     top_mw = np.nanmax(np.where(np.isfinite(MW), MW, np.nan), axis=1)
     top_mw = np.where(np.isfinite(top_mw), top_mw, 0.0)
     last_idx = np.argmax(mw_f, axis=1)
-    top_pr = np.minimum(
-        PR[np.arange(len(rep)), last_idx], dcs.HCAP_USD_MWH
-    )
+    top_pr = np.minimum(PR[np.arange(len(rep)), last_idx], dcs.HCAP_USD_MWH)
     avail = rep["avail"].to_numpy(float)
     award = rep["award"].to_numpy(float)
 
@@ -137,12 +135,12 @@ def main() -> None:
     # (via the derive's own segment machinery, filtered to these hours):
     site_hours, segments = dcs._collapse_and_segment(df, gas_day)
     seg = segments[(segments.cls == "CT") & segments.hoy.isin(aug_hoy)]
-    gd = gas_day.reindex(
-        pd.date_range(f"{YEAR}-08-01", periods=31, freq="D")
-    ).mean()
+    gd = gas_day.reindex(pd.date_range(f"{YEAR}-08-01", periods=31, freq="D")).mean()
     if len(seg):
         qs = dcs._weighted_quantiles(
-            seg.mult.to_numpy() * float(gd), seg.mw.to_numpy(), (0.1, 0.3, 0.5, 0.7, 0.9)
+            seg.mult.to_numpy() * float(gd),
+            seg.mw.to_numpy(),
+            (0.1, 0.3, 0.5, 0.7, 0.9),
         )
         print(
             f"   uncleared-OFFERED segment prices same hours (at Aug-mean gas "
