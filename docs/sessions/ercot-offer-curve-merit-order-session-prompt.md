@@ -1,5 +1,7 @@
 # ERCOT Session 2 prompt — offer-curve merit order (CC_REGULAR↔ST_GAS↔CT_PEAKER) + grounded 2023 market-design adder
 
+> Status: RECORD (frozen 2026-07-18) — executed one-shot session prompt.
+
 **Branch off `main`** (PR #726 is merged — the measured RTOLCAP/RTORPA series,
 the run143_redo / ordc_pub2 re-baselines, and
 `docs/ercot-reserve-supply-scarcity-handoff-2026-06.md` are all on `main`).
