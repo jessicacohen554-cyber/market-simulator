@@ -438,7 +438,7 @@ def score_dispatch_skill(bundle_dir: Path, iso: str, keeper_run_id: str | None) 
         except SystemExit as exc:  # missing keeper artifacts — degrade, don't crash
             keeper_note = f"keeper {keeper_run_id!r} not scorable: {exc}"
     else:
-        keeper_note = f"no keeper registered for {iso} in keepers.json"
+        keeper_note = f"no keeper registered for {iso} in keepers/{iso}.json"
 
     metrics: dict[str, dict] = {cid: {} for cid in _METRIC_LABELS}
     extras_by_year: dict[int, dict] = {}
@@ -705,8 +705,12 @@ def write_report(score: dict, report_path: Path) -> None:
 # Driver
 # --------------------------------------------------------------------------- #
 def _load_keepers() -> dict:
-    path = REPO / "frontend/data/backcast/keepers.json"
-    return json.loads(path.read_text()) if path.exists() else {}
+    """Per-ISO keeper map from the sharded store (legacy monolith fallback)."""
+    if str(REPO) not in sys.path:
+        sys.path.insert(0, str(REPO))
+    from scripts.lib import keeper_store
+
+    return keeper_store.keeper_ids(REPO)
 
 
 def score_crossover(bundle: Path, report_dir: Path) -> dict:

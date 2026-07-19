@@ -88,7 +88,9 @@ for _k, _v in DETERMINISM_ENV.items():
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("capture_keeper_goldens")
 
-KEEPERS_JSON = REPO / "frontend" / "data" / "backcast" / "keepers.json"
+
+from scripts.lib import keeper_store  # noqa: E402  (after sys.path insert)
+
 REGISTRY_DIR = REPO / "frontend" / "data" / "backcast" / "registry"
 GOLDENS_ROOT = REPO / "results" / "regression-goldens"
 
@@ -164,15 +166,15 @@ def _git_dirty() -> bool:
 def resolve_keeper_bundles() -> dict[str, dict]:
     """Map each ISO to its keeper id and frozen bundle path.
 
-    Reads ``keepers.json`` for the six current keeper ids and each keeper's
+    Reads the sharded keeper store (``keepers/<ISO>.json``, via
+    ``scripts.lib.keeper_store``) for the current keeper ids and each keeper's
     registry sidecar for the bundle directory (the sidecar's ``bundle`` field —
     NOT the id-named directory, which is empty).
 
     Returns:
         ``{iso: {"keeper_id": str, "bundle": Path, "years": list[int]}}``.
     """
-    keepers = json.loads(KEEPERS_JSON.read_text())
-    ids = keepers["keepers"]
+    ids = keeper_store.keeper_list(REPO)
     out: dict[str, dict] = {}
     for keeper_id in ids:
         sidecar = REGISTRY_DIR / f"{keeper_id}.json"
