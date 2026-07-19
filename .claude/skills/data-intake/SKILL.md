@@ -35,7 +35,14 @@ the single-source reference.
    For a multi-ISO datatype, put each ISO's parsing in its own module
    (`scripts/lib/<datatype>/<iso>.py`) that registers a spec in a shared
    registry, and keep the dispatcher generic. This is what lets parallel intake
-   sessions add ISOs without touching a shared file or colliding.
+   sessions add ISOs without touching a shared file or colliding. Build the
+   shared scaffolding (the frozen `IsoSpec`, `REGISTRY`, `register`,
+   `load_registry`, `raw_dir_for`, `finalize`) from
+   `scripts.lib.datatype_registry.make_registry(datatype, canonical_columns,
+   spec_fields, …)` and keep only the datatype-specific `validate_tidy` /
+   `parse_unified_csv` in the package `__init__.py` (see
+   `scripts/lib/capacity_deliverability/__init__.py` and
+   `scripts/lib/capacity_market_demand_curve/__init__.py` for the pattern).
 
 4. **Curation script.** `scripts/data/curate_<datatype>.py` (underscored): read only
    `data/raw`, build a schema-shaped frame, then write through

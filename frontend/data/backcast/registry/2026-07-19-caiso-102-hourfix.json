@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-19-caiso-102-hourfix",
+  "label": "caiso 102 hourfix",
+  "date": "2026-07-19",
+  "shorthand": "caiso-102-hourfix",
+  "definition": "caiso-102 B-leg -- caiso-101 KEEPER recipe on the +1h _eia_hourly_frame_filled interval-beginning fix (rebuilt 2025 HSL profile + re-derived 2025 supply-consistent demand; 2023/2024 byte-identity pre-registered as a hard gate), 2023-2025. OWNER-PROMOTED to CAISO keeper 2026-07-19 (owner in-session ruling: 'if it's a keeper in your opinion, promote') -- supersedes 2026-07-19-caiso-101-chp-steam: every pre-registered gate cleared (2023/2024 solve outputs byte-identical to the A-leg, 2025 solar lag-0 r=0.99987, C1 12/12 free 8/8, C7/C8 PASS), 2025 belly +5.0->+4.3, evening -3.0->-1.1 TWh; zero DOF delta (a defect fix, no tunable moved). DETERMINATION stays NOT-YET, fail set unchanged {C3c, C4, C5a(2024 CAVEAT)}.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-19-caiso-102-hourfix.js",
+  "bundle": "results/calibration/caiso102_hourfix_B"
+}

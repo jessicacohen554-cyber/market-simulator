@@ -35,29 +35,22 @@ from __future__ import annotations
 
 import argparse
 import calendar
-import csv
-import io
 import sys
-import time
-import urllib.error
-import urllib.parse
-import urllib.request
 from pathlib import Path
 
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config import paths  # noqa: E402
+from scripts.lib import pjm_dataminer  # noqa: E402
 
 OUT_DIR = paths.PJM_DA_VIRTUALS_DIR
 
-API_BASE = "https://api.pjm.com/api/v1"
-# Public key embedded in DataMiner2's own settings.json (see
-# fetch_pjm_energy_offers.py).
-SUB_KEY = "6a75d9f6d933401dbb4f36f8e70b95b3"
-PAGE_SIZE = 50_000
+# The API base / public subscription key / page size live in
+# scripts.lib.pjm_dataminer (shared across the fetch_pjm_* scripts).
 
 #: feed name -> (datetime filter/sort field, float columns)
 FEEDS: dict[str, tuple[str, tuple[str, ...]]] = {
@@ -77,71 +70,21 @@ def _date_filter(year: int, month: int) -> str:
     return f"{start} to {end}"
 
 
-def _build_url(feed: str, ts_field: str, year: int, month: int, start_row: int) -> str:
-    """Compose the DataMiner2 CSV export URL for one page of one month."""
+def _fetch_month(
+    feed: str, ts_field: str, year: int, month: int, *, sleep_s: float = 1.5
+) -> pd.DataFrame:
+    """Download all pages for one feed-month; return a concatenated frame."""
     params = {
-        "startRow": str(start_row),
-        "rowCount": str(PAGE_SIZE),
         "isActiveMetadata": "true",
         "sort": ts_field,
         "order": "Asc",
         "format": "csv",
         ts_field: _date_filter(year, month),
     }
-    return f"{API_BASE}/{feed}?" + urllib.parse.urlencode(params)
-
-
-def _fetch_page(url: str, *, retries: int = 4, sleep_s: float = 1.5) -> list[dict]:
-    """Fetch one CSV page with 429/503 exponential back-off."""
-    delay = sleep_s
-    for attempt in range(retries + 1):
-        try:
-            req = urllib.request.Request(
-                url,
-                headers={
-                    "Ocp-Apim-Subscription-Key": SUB_KEY,
-                    "Accept": "text/csv",
-                    "User-Agent": "market-sim/fetch_pjm_da_virtuals",
-                },
-            )
-            with urllib.request.urlopen(req, timeout=120) as resp:
-                raw = resp.read().decode("utf-8-sig", errors="replace")
-            return list(csv.DictReader(io.StringIO(raw)))
-        except urllib.error.HTTPError as exc:
-            if exc.code in (429, 503) and attempt < retries:
-                print(f"    HTTP {exc.code} — back-off {delay:.0f}s …")
-                time.sleep(delay)
-                delay *= 2
-                continue
-            raise
-        except (urllib.error.URLError, TimeoutError) as exc:
-            if attempt < retries:
-                print(f"    network error ({exc}) — back-off {delay:.0f}s …")
-                time.sleep(delay)
-                delay *= 2
-                continue
-            raise
-    return []
-
-
-def _fetch_month(
-    feed: str, ts_field: str, year: int, month: int, *, sleep_s: float = 1.5
-) -> pd.DataFrame:
-    """Download all pages for one feed-month; return a concatenated frame."""
-    all_rows: list[dict] = []
-    start_row, page = 1, 1
-    while True:
-        url = _build_url(feed, ts_field, year, month, start_row)
-        print(f"  page {page:3d}  startRow={start_row:>8d} … ", end="", flush=True)
-        rows = _fetch_page(url, sleep_s=sleep_s)
-        print(f"{len(rows):>6d} rows")
-        all_rows.extend(rows)
-        if len(rows) < PAGE_SIZE:
-            break
-        start_row += PAGE_SIZE
-        page += 1
-        time.sleep(sleep_s)
-    return pd.DataFrame(all_rows)
+    rows = pjm_dataminer.fetch_feed(
+        feed, params, user_agent="market-sim/fetch_pjm_da_virtuals", sleep_s=sleep_s
+    )
+    return pd.DataFrame(rows)
 
 
 def main(argv: list[str] | None = None) -> int:
