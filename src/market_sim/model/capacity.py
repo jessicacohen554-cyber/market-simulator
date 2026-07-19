@@ -2988,6 +2988,29 @@ def renewable_credits_applied(
     return out
 
 
+def _firm_import_mw(iso: str | None) -> float:
+    """Firm import capacity the ISO's own resource-adequacy ledger counts.
+
+    The single resolver (rule 19) for the "firm import the adequacy ledger
+    counts" phenomenon, reading :data:`ADEQUACY_EXTERNAL_TIE_FIRM_MW`. Two
+    provenance cases share it:
+
+    * ISOs the model has **no** import node for (ERCOT DC ties, PJM cleared BRA
+      capacity imports) — the firm tie is otherwise absent from the model.
+    * ISOs whose import node **does** live in the dispatch topology (CAISO's
+      WECC_import, NEISO's HQ_import — FF-2B). For these the adequacy credit is
+      the ISO's RA/FCM firm-import product and is **additive, not
+      double-counted**: :func:`accredited_firm_capacity_mw` builds the accredited
+      ledger from the persistent ``fleet``, which never contains the import
+      pseudo-generators (those exist only in the transient dispatch fleet), so
+      this credit is purely additive to the fleet's firm MW and is never derived
+      from dispatch flow.
+
+    ``iso=None`` credits nothing (byte-identical legacy behaviour).
+    """
+    return ADEQUACY_EXTERNAL_TIE_FIRM_MW.get(iso or "", 0.0)
+
+
 def accredited_firm_capacity_mw(
     fleet: list[Generator],
     wind_pool_mw: float = 0.0,
@@ -3010,9 +3033,11 @@ def accredited_firm_capacity_mw(
     override, generic :data:`RENEWABLE_CAPACITY_CREDIT` fallback), storage
     at its duration-dependent ELCC (passed in pre-accredited as
     ``storage_firm_mw``, since the ELCC helper lives in the storage module),
-    plus any external-tie firm import the ISO's ledger counts but the model
-    topology lacks (:data:`ADEQUACY_EXTERNAL_TIE_FIRM_MW` — ERCOT's DC ties,
-    PJM's CIL-governed cleared BRA capacity imports). Wind/solar
+    plus the firm import capacity the ISO's own adequacy ledger counts
+    (:func:`_firm_import_mw` / :data:`ADEQUACY_EXTERNAL_TIE_FIRM_MW` — ERCOT's DC
+    ties, PJM's CIL-governed cleared BRA imports, and the RA/FCM firm imports of
+    the import-node ISOs CAISO/NEISO, credited additively without
+    double-counting the dispatch import node). Wind/solar
     held in the zonal pools (not Generators) are passed as ``wind_pool_mw``
     / ``solar_pool_mw``.
 
@@ -3042,8 +3067,11 @@ def accredited_firm_capacity_mw(
     firm = float(storage_firm_mw)
     firm += wind_pool_mw * (_credit("wind") or 0.0)
     firm += solar_pool_mw * (_credit("solar") or 0.0)
-    if iso is not None:
-        firm += ADEQUACY_EXTERNAL_TIE_FIRM_MW.get(iso, 0.0)
+    # Firm imports the ISO's own adequacy ledger counts (one resolver, rule 19):
+    # ERCOT/PJM ties absent from topology AND the RA/FCM firm imports of the
+    # import-node ISOs (CAISO WECC_import, NEISO HQ_import) — additive, never
+    # double-counted against the dispatch node (see :func:`_firm_import_mw`).
+    firm += _firm_import_mw(iso)
     for g in fleet:
         credit = _credit(g.fuel_type)
         if credit is not None:
