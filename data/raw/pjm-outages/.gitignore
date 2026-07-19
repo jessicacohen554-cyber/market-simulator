@@ -1,0 +1,5 @@
+# Raw Data Miner 2 pull — reproducible via scripts/data/fetch_pjm_outages.py.
+# The tidy data ships as the committed by-year/ CSVs (current-day actuals);
+# the full-horizon parquet is derived locally, so the large raw pull is not
+# committed.
+gen_outages_by_type.csv

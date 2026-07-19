@@ -1,0 +1,5 @@
+# Gitignored: the API-only push path cannot commit binary blobs. This
+# parquet regenerates deterministically from the committed per-year CSVs in
+# pjm-outages/by-year/ (or the raw pull) via
+# scripts/data/derive_pjm_dam_availability.py.
+pjm-dam-availability.parquet
