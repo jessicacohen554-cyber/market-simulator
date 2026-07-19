@@ -177,11 +177,60 @@ holds. A worse aggregate fit that is more structurally faithful still passes
 provided no protected result degrades; breaking a passing criterion FAILs.
 Registered whatever the result (rule 15).
 
-## 6. B-leg RESULT
+## 6. B-leg RESULT — every pre-registered direction lands; PROMOTED
 
-*(recorded after the A/B solved — see the calibration-log entry of this date
-and the registered bundle for the scored numbers)*
+A/B same-machine (`caiso99_repro_A` reproduces the keeper's scored surface
+digit-for-digit: C1 grid, hod ladder +1.3/+10.9/−6.4 | +0.2/+9.0/−4.7 |
++1.6/+8.4/−1.9, C3c 20/0/0, and the §2 decomposition to the digit — and its
+solved `storage.parquet` confirms §1 end-to-end: `*_eia860_storage` units, Jan
+2023 peak charging = 4,443 MW = exactly the January EIA-860 fleet, the COD ramp
+binding in the LP). B = A + `caiso_storage_shape_anchor=True` only
+(envelope armed and logged: 2023 belly charge cap mean 4,443 MW vs 7,602 MW
+fleet power):
 
-## 7. Disposition
+| | 2023 A→B | 2024 A→B | 2025 A→B |
+|---|---|---|---|
+| belly λ resid | +10.9 → **+7.7** | +9.0 → **+7.6** | +8.4 → **+6.3** |
+| evening λ resid | −6.4 → **−5.3** | −4.7 → **−4.4** | −1.9 → −2.3 |
+| overnight λ resid | +1.3 → +1.2 | +0.2 → +0.3 | +1.6 → +1.8 |
+| belly-charging resid | +14.7 → **+10.1** | +10.2 → **+8.5** | +9.0 → **+6.7** |
+| belly chg TWh (meas) | 4.82 → 4.19 (2.16) | 7.42 → 7.15 (5.57) | 10.68 → 10.33 (8.70) |
+| evening dis TWh (meas) | 4.50 → 3.88 (2.99) | 6.81 → 6.72 (5.72) | 7.08 → **7.66** (8.00) |
+| total chg TWh (meas) | 6.82 → 6.06 (4.07) | 10.52 → 10.20 (8.71) | 14.21 → 13.76 (13.02) |
 
-*(recorded with §6)*
+- **Belly falls in ALL THREE years with no overshoot** (all residuals stay
+  positive; the non-charging control stays ≈0/negative: −3.1/+0.9/−2.3).
+- **Evening 2023/24 improve with no cross** (still below actual). The 2025
+  evening λ moves −1.9 → −2.3 — but the DISPATCH converges to measured (net-bat
+  +3,760 → +4,118 vs measured +4,361; 7.66 vs 8.00 TWh): the belly charge caps
+  free SOC/rearrange the day so the under-discharging 2025 evening rises toward
+  the real fleet. Worse-fit-more-faithful (the §5 clause), and no passing
+  criterion degrades.
+- **Overnight: no new under-price** (all stay positive; +0.2 drift from
+  displaced charging landing where the measured fleet also charges).
+- **C1 misses shrink or hold in every class-year** (CC −2.40/−0.77/−2.95 →
+  −2.34/−0.64/−2.55; CT_PEAKER −3.14/−3.64/−2.13 → −2.77/−3.52/−1.93 — the
+  starved CT rung recovers energy in all three years; CT_CHP flat; ST_GAS 2024
+  +0.19 → +0.26 the only counter-drift, 0.07 TWh).
+- **Formal verdict (`2026-07-19-caiso-99-storage-shape`): C1 12/12 · free 8/8,
+  C2/C3b/C6/C7/C8 PASS, C8 forced share unchanged** (the mechanism is an upper
+  bound — it can force nothing). Fail set unchanged {C3a-2025, C3c, C4, C5a},
+  every load-bearing magnitude better: **C3a-2025 +11.6 % → +10.8 %** (the
+  binding fail), **C5a −12.5/−10.1/−13.9 % → −11.6/−9.6/−12.8 % with 2024
+  crossing FAIL → CAVEAT** (commercial band), C3c 2024 0 h → 1 h toward the
+  actual 35 (2023 20 h unchanged). Sole counter-move: C4 gas r −0.002/−0.009
+  (2023/2025) inside an already-failing supporting criterion.
+
+## 7. Disposition — PROMOTED to CAISO keeper (owner pre-authorization)
+
+`2026-07-19-caiso-99-storage-shape` becomes the CAISO keeper (owner:
+"if one of these is a keeper candidate you recommend then just promote"):
+no criterion status regresses, the binding C3a-2025 and every C5a year improve,
+C3c moves toward the tail, and the run is strictly more structurally faithful —
+the measured fleet now dispatches inside its measured capability envelope.
+Keeper swap + status/parity/audit refreshed; caiso-97 remains registered
+(lineage). Mechanism A is closed as already-live (§1); the runner.py wiring was
+not made (falsified premise). Remaining CAISO lanes: the residual belly
+(+7.7/+7.6/+6.3 — reality's sub-envelope charge selectivity), C3c tail depth,
+C4 gas shape, C5a level (2023/2025), and the WP-3 CT_CHP steam-floor ask
+(owner ruling still pending).
