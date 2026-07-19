@@ -137,7 +137,9 @@ The owner fixed the default forecast posture for T1+/golden runs (§0 "produced 
 HEAD defaults plus the owner-decided DC-load posture"). Recorded here per the
 standing instruction (the Wave-1 FF-1C prompt, §6: "record the decision in this
 plan §2.1 when made"); §7 binds. Two are `ScenarioConfig` default flips executed
-in FF-1F; two are execution/design decisions carried by later, owner-gated lanes.
+in FF-1F (c, d); a third (e, `entry_lookahead_reprice`) was added by
+**FF-2A-posture** on 2026-07-18; the remaining two (a, b) are execution/design
+decisions carried by later, owner-gated lanes.
 
 | # | Decision | Value | Execution |
 |---|---|---|---|
@@ -145,6 +147,7 @@ in FF-1F; two are execution/design decisions carried by later, owner-gated lanes
 | b | NYISO R5a reserve-requirement construction | **Option B** (NYCA-wide static proxy — not the lagged model-derived factor of Option A) | **FF-3D** (owner-gated) implements it and runs the first curve-ON probe. |
 | c | `datacenter_load_path` default | **`mid`** (was `off`) — model the published DC boom as a flat, energy-invariant block (FF-1C §7) | **FF-1F** (`scenarios.py`). Forecast-only axis; `__post_init__` coerces it to `off` in backcast/hindcast, so keepers stay byte-identical. |
 | d | `correlated_forced_outage` default | **ON** (was `False`) — the measured Uri/Elliott/Heather cold-event derate (FF-1B §3 recommendation) | **FF-1F** (`scenarios.py`). ERCOT-only curve; hard no-op in backcast (keepers byte-identical); hindcast legs inherit it on re-solve (a validation-lane consequence, not a keeper change). |
+| e | `entry_lookahead_reprice` default | **ON** (was `False`), owner-approved **2026-07-18** — the zero-DOF, G-30-validated entry-screen lookahead reprice (re-price the entering year's known net load against the current fleet with the published ORDC curve; every input an existing model quantity, rule-13 admissible). Cite `docs/handoffs/ff-entry-stack-completion-2026-07.md` §4.1 + `docs/hindcast-reports/ercot-g30-entry-lookahead-2026-07-08.md`. | **FF-2A-posture** (`scenarios.py`). Forecast/screen-only: the runner read site gates on `mode=="forecast"` (a backcast runs no capacity evolution), `__post_init__` coerces it `False` in a plain backcast (belt-and-braces, the FF-1F `datacenter_load_path` pattern), and the hindcast harness passes it explicitly (own `False` default) — so backcast keepers **and** existing hindcast legs stay byte-identical. Re-opens **nothing** (zero-DOF). |
 
 **FF-1F byte-identity attestation (c, d).** Backcast `cache_key` is **unchanged**
 by the flip (DC coerces to `off`, and `backcast_config` pins
@@ -152,6 +155,25 @@ by the flip (DC coerces to `off`, and `backcast_config` pins
 derate is additionally a mechanism-level no-op in backcast. The forecast default
 `cache_key` shifts **as intended** — the golden posture is now a distinct
 scenario. T0 evidence + citations: `docs/handoffs/ff-1f-posture-defaults-2026-07-18.md`.
+
+**FF-2A-posture byte-identity attestation (e).** `entry_lookahead_reprice`
+default `False → True`, owner-approved 2026-07-18 (FF-2A §4.1). The field is
+**not** in `_CACHE_KEY_OPTIONAL_FIELDS`, so its value always enters the key; the
+backcast `cache_key` is nonetheless **unchanged** by the flip because
+`__post_init__` coerces the flag `False` in any `mode=="backcast"` config
+(measured identical across all six keeper ISOs — e.g. ERCOT `c44c3d9b7549de73`),
+and the runner reads it only under `mode=="forecast"` (a backcast has no capacity
+evolution at all). Existing
+hindcast legs are likewise unaffected — the harness passes the flag explicitly
+with its own `False` default, so the model-default flip is invisible to them; a
+probe leg that armed it already ran `True`. The forecast default `cache_key`
+shifts **as intended** (`cdf095573872a069` → `1d4a8acfa187a505`) — the golden
+posture is now a distinct scenario. Zero-DOF — every input is an existing model
+quantity (rule 13), re-opening nothing. T0 evidence + citations:
+`docs/handoffs/ff-entry-stack-completion-2026-07.md` §4.1 (default-ON
+recommendation) + `docs/hindcast-reports/ercot-g30-entry-lookahead-2026-07-08.md`
+(G-30 single-term isolation) + `docs/handoffs/ff-2a-posture-entry-lookahead-2026-07-18.md`
+(this session's findings note).
 
 ### 2.2 The crossover instrument, precisely
 
