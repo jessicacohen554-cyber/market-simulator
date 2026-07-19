@@ -1,0 +1,8 @@
+{
+ "iso": "NEISO",
+ "keeper": "2026-07-13-neiso-60-phantom-outage",
+ "frontier": {
+  "declared": "2026-07-11",
+  "note": "Frontier achieved: every named admissible mechanism for the ledgered C3c/C5b winter/summer scarcity-price-formation family has been tried on record \u2014 winter fuel-security stack (adopted, dormant), in-LP reserve co-optimization (keeper, dormant at static requirements), measured dynamic reserve requirements (Limb A, engages 1 of 12 2025 tail hours), and the measured fast-start DA offer surface (Limb B, dormant \u2014 the real tail forms while the model still carries cheaper non-fast-start headroom). Further C3c work needs a NEW measured identification (oil-parity/import/DA-bid offer formation), its own charter; C2 waits on the final 2025 EIA-923 vintage. 2026-07-11 calibration-log entry; docs/handoffs/neiso-limb-b-offer-surface-2026-07.md \u00a75."
+ }
+}

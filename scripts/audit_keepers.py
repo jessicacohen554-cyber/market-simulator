@@ -3,10 +3,11 @@
 The backcast dashboard shows three kinds of keeper text, with very different
 trust levels:
 
-* The **Calibration Status** page (``status.js``) is regenerated from the SAME
-  scorer the gate uses (``scripts/build_status.py`` -> ``calibration_verdict``),
-  so it can never *say* the wrong determination — but it goes **stale** the
-  moment a keeper changes, a bundle is re-solved, or the benchmark/rubric moves.
+* The **Calibration Status** page (the per-ISO ``status/<ISO>.js`` parts +
+  ``status/shared.js``) is regenerated from the SAME scorer the gate uses
+  (``scripts/build_status.py`` -> ``calibration_verdict``), so it can never
+  *say* the wrong determination — but a part goes **stale** the moment its
+  keeper changes, its bundle is re-solved, or the benchmark/rubric moves.
 * Each keeper's **run-report header** is the human-written ``definition`` in its
   registry sidecar (``frontend/data/backcast/registry/<id>.json``). This is the
   one surface that can silently *lie*: a placeholder, a copy from the wrong run,
@@ -18,7 +19,9 @@ This module checks the editable surfaces against the bundle and the live
 verdict. It is the deterministic core the ``calibration-keeper-auditor``
 subagent runs (and is safe to wire into CI / a pre-commit ``--check``).
 
-For every keeper id in ``frontend/data/backcast/keepers.json`` it verifies:
+For every keeper in the sharded keeper store (``frontend/data/backcast/
+keepers/<ISO>.json``, via ``scripts.lib.keeper_store`` — legacy monolith
+parsed as a fallback) it verifies:
 
   E1  sidecar, run payload and bundle dir all exist.
   E2  sidecar ``iso`` matches the bundle's ``calibration_flags.iso``.
@@ -27,7 +30,8 @@ For every keeper id in ``frontend/data/backcast/keepers.json`` it verifies:
   E4  ``definition`` is real prose, not the auto-generated placeholder / empty.
   E5  any determination token the ``definition`` asserts ("NOT-YET",
       "CALIBRATED-WITH-CAVEATS", "CALIBRATED") matches the CURRENT verdict.
-  E6  keepers.json names exactly one keeper per ISO.
+  E6  exactly one keeper per ISO (per-shard by construction; still catches a
+      shard whose keeper's sidecar claims a DIFFERENT iso — the wrong lane).
   E8  the bundle attestation carries a ``free_parameters`` DOF ledger and every
       residual-sourced entry references an open root cause (CLAUDE.md rule 20).
   E9  a DECLARED ``ablation_twin`` sidecar link resolves to a registered run.
@@ -36,8 +40,8 @@ For every keeper id in ``frontend/data/backcast/keepers.json`` it verifies:
       forcing-legitimacy rests on the DOF ledger + ``legitimacy_diagnostics``).
       Absence of a twin is OK; only a dangling link — a sidecar naming a twin
       with no registry payload — FAILs, as a data-integrity check.
-  S1  ``status.js`` is in sync with the current verdicts
-      (``build_status.py --check``).
+  S1  the ``status/`` parts are in sync with the current verdicts
+      (``build_status.py --check``, scoped to the audited ISOs).
   H1  holdout quarantine (CLAUDE.md rule 22 / audit D-6, amended 2026-07-04):
       NO registered bundle — keeper or probe — declares a solve year outside
       the 2023–2025 calibration window unless its ISO has a
@@ -67,9 +71,9 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
 from scripts import calibration_verdict as cv  # noqa: E402  (after sys.path insert)
+from scripts.lib import keeper_store  # noqa: E402  (after sys.path insert)
 
 DATA = REPO / "frontend" / "data" / "backcast"
-KEEPERS_FILE = DATA / "keepers.json"
 
 # A sidecar whose definition still reads like this never described the run.
 _PLACEHOLDER_RE = re.compile(r"^\s*calibration run from bundle\b", re.IGNORECASE)
@@ -369,29 +373,37 @@ def audit_keeper(run_id: str, rep: Report) -> None:
 
 
 def audit(isos: list[str] | None) -> Report:
-    """Audit every keeper in keepers.json (optionally filtered to ``isos``)."""
+    """Audit every keeper in the sharded store (optionally filtered to ``isos``)."""
     rep = Report()
-    spec = _load_json(KEEPERS_FILE)
-    if not spec:
-        rep.fail("-", "-", "E0", f"cannot read {KEEPERS_FILE}")
+    keeper_map = keeper_store.keeper_ids()
+    if not keeper_map:
+        rep.fail("-", "-", "E0", f"no keepers found in {keeper_store.keepers_dir()}")
         return rep
-    keeper_ids = spec.get("keepers", [])
 
-    # E6: exactly one keeper per ISO.
+    # E6: exactly one keeper per ISO. Sharding makes multiplicity impossible by
+    # construction (one keepers/<ISO>.json each); what can still break is a
+    # shard whose keeper's registry sidecar claims a DIFFERENT iso — the wrong
+    # lane — or two shards naming runs that resolve to the same sidecar iso.
     seen: dict[str, list[str]] = {}
-    for run_id in keeper_ids:
+    for shard_iso, run_id in keeper_map.items():
         side = _load_json(cv.REGISTRY_DIR / f"{run_id}.json")
-        iso = (side or {}).get("iso", "?")
-        seen.setdefault(iso, []).append(run_id)
+        side_iso = (side or {}).get("iso", "?")
+        seen.setdefault(side_iso, []).append(run_id)
+        if side is not None and side_iso != shard_iso:
+            rep.fail(
+                run_id,
+                shard_iso,
+                "E6",
+                f"keepers/{shard_iso}.json names {run_id}, but its sidecar says "
+                f"iso={side_iso} — wrong lane",
+            )
     for iso, ids in seen.items():
         if len(ids) > 1:
             rep.fail(ids[0], iso, "E6", f"{iso} has {len(ids)} keepers: {ids}")
 
     want = {s.upper() for s in isos} if isos else None
-    for run_id in keeper_ids:
-        side = _load_json(cv.REGISTRY_DIR / f"{run_id}.json")
-        iso = (side or {}).get("iso", "?")
-        if want and iso.upper() not in want:
+    for shard_iso, run_id in keeper_map.items():
+        if want and shard_iso.upper() not in want:
             continue
         audit_keeper(run_id, rep)
 
@@ -407,21 +419,21 @@ def audit(isos: list[str] | None) -> Report:
             "holdout quarantine",
         )
 
-    # S1: global status.js sync check.
-    proc = subprocess.run(
-        [sys.executable, str(REPO / "scripts" / "build_status.py"), "--check"],
-        capture_output=True,
-        text=True,
-    )
+    # S1: status-part sync check, scoped to the audited ISOs so a stale part
+    # in ANOTHER lane can never fail this lane's audit (per-ISO isolation).
+    cmd = [sys.executable, str(REPO / "scripts" / "build_status.py"), "--check"]
+    if isos:
+        cmd += ["--iso", *sorted({s.upper() for s in isos})]
+    proc = subprocess.run(cmd, capture_output=True, text=True)
     if proc.returncode == 0:
-        rep.ok("status.js", "-", "S1", proc.stdout.strip() or "status.js in sync")
+        rep.ok("status", "-", "S1", proc.stdout.strip() or "status parts in sync")
     else:
         rep.fail(
-            "status.js",
+            "status",
             "-",
             "S1",
             (proc.stdout + proc.stderr).strip()
-            or "status.js stale — run scripts/build_status.py",
+            or "status part(s) stale — run scripts/build_status.py",
         )
     return rep
 
