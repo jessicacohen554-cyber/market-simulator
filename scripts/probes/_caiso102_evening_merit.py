@@ -21,6 +21,16 @@ drop Feb-29 (2024) and zero-pad short tails (2025 EIA-930 ends 8751 h — the
 pad hours carry zero weight in every conditioned stat because pairing masks on
 finite actuals).
 
+CLOCK CONVENTION (verified this session): EIA-930 rows are HOUR-ENDING labeled
+(Hour 1..25 = CAISO HE convention; `Local time` 01:00 = interval 00:00-01:00),
+so this probe indexes measured rows POSITIONALLY within the local day — row j
+of a day = interval [j, j+1), matching the model/LMP interval-beginning hour.
+NOTE: `_caiso_who_serves_night/day.py` instead take hod = dt.hour of the
+HOUR-ENDING `Local time` stamp, which places every EIA-930 series one hour
+EARLY relative to the model window (their "evening 17-21" measured = intervals
+16:00-21:00 vs model 17:00-22:00) — the caiso-95 §4 evening import comparison
+carries that offset; see FINDING-caiso102.
+
 Emits, per year:
   1. evening composition (TWh): model vs measured, by source + gas by klass;
   2. per-hod (17..21) lambda residual + the model-minus-measured avg-MW deltas
@@ -186,18 +196,18 @@ def main() -> int:
         dwr = float((resid[ok] * m["demand"][ok]).sum() / m["demand"][ok].sum())
         print(f"evening demand-weighted resid (model - actual rt): {dwr:+.1f} $/MWh")
 
-        # 1. composition TWh
-        mgas = sum(m.get(f"k_{k}", np.zeros(8760)) for k in GAS_KLASSES)
-        mhyd = sum(
-            m.get(f"k_{k}", np.zeros(8760)) for k in ("HYDRO", "HYDRO_PS")
-        ) + np.clip(m["ps_net"], 0, None)
+        # 1. composition TWh (dispatch klasses are lowercase for non-thermal:
+        # hydro / solar / wind / nuclear / import / OTHER / biomass / oil)
+        z = np.zeros(8760)
+        mgas = sum(m.get(f"k_{k}", z) for k in GAS_KLASSES)
+        mhyd = m.get("k_hydro", z) + np.clip(m["ps_net"], 0, None)
         rows = [
             ("imports", m["imports"], e["imports"]),
             ("gas TOTAL", mgas, e["gas"]),
             ("hydro(+PSdis)", mhyd, e["hydro"]),
-            ("solar", m.get("k_SOLAR", np.zeros(8760)), e["solar"]),
-            ("wind", m.get("k_WIND", np.zeros(8760)), e["wind"]),
-            ("nuclear", m.get("k_NUCLEAR", np.zeros(8760)), e["nuclear"]),
+            ("solar", m.get("k_solar", z), e["solar"]),
+            ("wind", m.get("k_wind", z), e["wind"]),
+            ("nuclear", m.get("k_nuclear", z), e["nuclear"]),
             ("battery(net)", m["battery_net"], e["battery"]),
             ("demand", m["demand"], e["demand"]),
         ]
@@ -244,7 +254,7 @@ def main() -> int:
                 f" {(mgas - e['gas'])[b].mean():6.0f}"
                 f" {(m['battery_net'] - e['battery'])[b].mean():6.0f}"
                 f" {(mhyd - e['hydro'])[b].mean():6.0f}"
-                f" {(m.get('k_SOLAR', np.zeros(8760)) - e['solar'])[b].mean():7.0f} |"
+                f" {(m.get('k_solar', np.zeros(8760)) - e['solar'])[b].mean():7.0f} |"
                 f" {ct_m[b].mean():5.0f}|{c['CT_PEAKER'][b].mean():5.0f}"
                 f" {cc_m[b].mean():5.0f}|{c['CC_REGULAR'][b].mean():5.0f}"
             )
