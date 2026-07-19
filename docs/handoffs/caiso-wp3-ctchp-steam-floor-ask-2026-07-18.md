@@ -1,11 +1,12 @@
 # OWNER-ASK (CAISO-98 / WP-3): rule-23 authorization to revise the CT_CHP steam-floor LEVEL derive
 
-**Status: PENDING owner ruling. No derive-script change, no solve, nothing
-registered under this ask.** This memo files the WP-3 request that
-FINDING-caiso95 §7 (item 3) deferred to the owner. The CAISO-98 session read
-the WP-3 gate in its prompt as *pending* (no ruling carried), so per the
-prompt's own instruction it does derive-first work only (the
-EVENING-STORAGE-TIMING charter, separate deliverable) and files this ask.
+**Status: GRANTED at scope (a)+(b) (owner ruling, 2026-07-19 CAISO-101
+session — delivered in-session via the owner question gate).** Both lenses of
+the CT_CHP level defect re-derive as one rule-23 change per §3's
+recommendation: (a) the loading-when-on statistic for CEMS-visible cogens and
+(b) the EIA-923-delivery-anchored level for CEMS-invisible cogens, executed
+per §5 (A/B probe, registered whatever the result). Original filing context
+below is preserved verbatim.
 
 ## 1. What WP-3 would change (one derive statistic)
 
