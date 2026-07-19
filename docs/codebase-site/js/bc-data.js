@@ -14,6 +14,7 @@ let _benchGz = null;
 let _completeness = null;
 let _status = null;
 let _keepers = null;
+let _keeperIdx;  // undefined = not probed; null = sharded keeper store absent
 const _runCache = {};
 
 function _ensureBC() {
@@ -76,22 +77,80 @@ async function initBC() {
   return _meta;
 }
 
-/** Load status.js only (for Calibration Status page). */
+/** ISO list of the sharded keeper store (keepers/index.json), or null when
+ *  the store is absent (pre-2026-07-19 checkout → legacy monolith fallback). */
+async function _keeperIndex() {
+  if (_keeperIdx !== undefined) return _keeperIdx;
+  try {
+    const resp = await fetch(`${DATA_ROOT}/keepers/index.json`);
+    _keeperIdx = resp.ok ? ((await resp.json()).isos || null) : null;
+  } catch {
+    _keeperIdx = null;
+  }
+  return _keeperIdx;
+}
+
+/** Load the Calibration Status payload (for Calibration Status page).
+ *  Composes the per-ISO status/<ISO>.js parts + status/shared.js back into
+ *  the legacy window.BC.status shape; falls back to a monolithic status.js
+ *  when the sharded store is absent. */
 async function loadStatus() {
   _ensureBC();
   if (_status) return _status;
   await _probeDataRoot();
-  await _loadScript(`${DATA_ROOT}/status.js`);
-  _status = window.BC.status;
+  const isos = await _keeperIndex();
+  if (!isos) {
+    await _loadScript(`${DATA_ROOT}/status.js`);
+    _status = window.BC.status;
+    return _status;
+  }
+  await _loadScript(`${DATA_ROOT}/status/shared.js`);
+  // A missing part (ISO between promotion and status rebuild) must not blank
+  // the whole page — load what resolves, render what loaded.
+  await Promise.allSettled(
+    isos.map(iso => _loadScript(`${DATA_ROOT}/status/${iso}.js`))
+  );
+  const parts = window.BC.statusParts || {};
+  const shared = window.BC.statusShared || {};
+  const order = (shared.iso_order || isos).filter(iso => parts[iso])
+    .concat(isos.filter(iso => parts[iso] && !(shared.iso_order || isos).includes(iso)));
+  _status = {
+    ...shared,
+    generated: order.map(iso => parts[iso].generated).filter(Boolean).sort().pop() || '',
+    keepers: order.map(iso => parts[iso].keeper),
+  };
   return _status;
 }
 
-/** Load keepers.json. */
+/** Load the keeper map. Composes the sharded keepers/<ISO>.json lanes into
+ *  the legacy keepers.json shape ({ISO: id, keepers: [...], frontier: {...}});
+ *  falls back to the monolith when the sharded store is absent. */
 async function loadKeepers() {
   if (_keepers) return _keepers;
   await _probeDataRoot();
-  const resp = await fetch(`${DATA_ROOT}/keepers.json`);
-  _keepers = await resp.json();
+  const isos = await _keeperIndex();
+  if (!isos) {
+    const resp = await fetch(`${DATA_ROOT}/keepers.json`);
+    _keepers = await resp.json();
+    return _keepers;
+  }
+  const shards = await Promise.allSettled(isos.map(async iso => {
+    const resp = await fetch(`${DATA_ROOT}/keepers/${iso}.json`);
+    if (!resp.ok) throw new Error(`no keeper shard for ${iso}`);
+    return resp.json();
+  }));
+  const merged = { keepers: [], frontier: {} };
+  shards.forEach((res, i) => {
+    if (res.status !== 'fulfilled' || !res.value) return;
+    const rec = res.value;
+    const iso = rec.iso || isos[i];
+    if (rec.keeper) {
+      merged[iso] = rec.keeper;
+      merged.keepers.push(rec.keeper);
+    }
+    if (rec.frontier) merged.frontier[iso] = rec.frontier;
+  });
+  _keepers = merged;
   return _keepers;
 }
 

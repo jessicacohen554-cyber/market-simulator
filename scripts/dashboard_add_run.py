@@ -47,10 +47,12 @@ _spec = importlib.util.spec_from_file_location(
 rb = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(rb)
 
+from scripts.lib import keeper_store  # noqa: E402  (after sys.path insert)
+
+
 DATA_DIR = REPO / "frontend" / "data" / "backcast"
 REGISTRY_DIR = DATA_DIR / "registry"
 RUNS_DIR = DATA_DIR / "runs"
-KEEPERS_PATH = DATA_DIR / "keepers.json"
 CALIB_ROOT = REPO / "results" / "calibration"
 
 # Retention rule (2026-06-21, user-set; supersedes the 10-run rule): the
@@ -65,21 +67,14 @@ KEEP_PER_ISO = 15
 def _protected_run_ids() -> set[str]:
     """Return run ids retention must never prune, whatever their age.
 
-    * Every current keeper in ``keepers.json`` — dropping its bundle would break
-      the all-ISO Calibration Status page (whose verdicts read the bundle).
+    * Every current keeper in the sharded keeper store (``keepers/<ISO>.json``,
+      via ``scripts.lib.keeper_store``) — dropping its bundle would break the
+      all-ISO Calibration Status page (whose verdicts read the bundle).
     * Any run referenced by a surviving sidecar's ``ablation_twin`` /
       ``ablation_of`` link — pruning it would dangle the cross-reference that
       ``check_registry_payload_parity.py`` enforces.
     """
-    protected: set[str] = set()
-    if KEEPERS_PATH.exists():
-        keepers = json.loads(KEEPERS_PATH.read_text())
-        protected.update(keepers.get("keepers", []))
-        # the per-ISO convenience keys (CAISO/ERCOT/...) duplicate the list;
-        # collect any id-shaped top-level value defensively.
-        protected.update(
-            v for v in keepers.values() if isinstance(v, str) and v.startswith("20")
-        )
+    protected: set[str] = set(keeper_store.keeper_list())
     for path in REGISTRY_DIR.glob("*.json"):
         try:
             rec = json.loads(path.read_text())
