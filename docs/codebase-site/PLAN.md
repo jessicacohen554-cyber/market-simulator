@@ -1,5 +1,7 @@
 # Codebase Explorer Site — Build Plan
 
+> Status: ARCHIVED — executed (the codebase-site pages under docs/codebase-site/ were built & deployed).
+
 > **Status:** Draft for review. No code yet — this is the blueprint.
 >
 > **Goal:** A polished, static HTML site (GitHub Pages) that lets a reader
