@@ -1,32 +1,32 @@
 {
- "CAISO": "2026-07-19-caiso-99-storage-shape",
- "ERCOT": "2026-07-18-ercot82-measured-rtolcap",
- "NEISO": "2026-07-13-neiso-59-cc-hr",
- "PJM": "2026-07-18-pjm-115-unit-only",
- "keepers": [
-  "2026-07-18-ercot82-measured-rtolcap",
-  "2026-07-19-caiso-99-storage-shape",
-  "2026-07-18-pjm-115-unit-only",
-  "2026-07-13-nyiso-62-cc-hr",
-  "2026-07-13-neiso-59-cc-hr",
-  "2026-07-18-miso-75-manitoba-meritcap"
- ],
- "note": "Current calibration keeper per ISO — the newest, most structurally faithful run for each market (claude.md #1/#11/#12: keeper = most faithful, not lowest error). This list drives the dashboard's all-ISO Calibration Status page. When a new keeper supersedes one here, replace the run id and re-run `python scripts/build_status.py` to refresh frontend/data/backcast/status.js (the verdicts need the bundles under results/calibration/, which the Pages deploy does not check out, so status.js is committed, not deploy-generated).",
- "MISO": "2026-07-18-miso-75-manitoba-meritcap",
- "NYISO": "2026-07-13-nyiso-62-cc-hr",
- "frontier": {
-  "NEISO": {
-   "declared": "2026-07-11",
-   "note": "Frontier achieved: every named admissible mechanism for the ledgered C3c/C5b winter/summer scarcity-price-formation family has been tried on record — winter fuel-security stack (adopted, dormant), in-LP reserve co-optimization (keeper, dormant at static requirements), measured dynamic reserve requirements (Limb A, engages 1 of 12 2025 tail hours), and the measured fast-start DA offer surface (Limb B, dormant — the real tail forms while the model still carries cheaper non-fast-start headroom). Further C3c work needs a NEW measured identification (oil-parity/import/DA-bid offer formation), its own charter; C2 waits on the final 2025 EIA-923 vintage. 2026-07-11 calibration-log entry; docs/handoffs/neiso-limb-b-offer-surface-2026-07.md §5."
-  },
-  "NYISO": {
-   "declared": "2026-07-11",
-   "note": "Frontier achieved: the deep >$300 tail's two candidate reserve levers are chased to ground — the largest-contingency requirement formula is already in the model as the measured NYCA families, and the ORDC/RCPF stack is verified complete and SOM-grounded (fires to VOLL in 2023). The sole remaining gap is the net-load forecast-uncertainty reserve increment — IMM Recommendation 2021-1, which NYISO has not implemented and which has no published formula; adding it in-model would be residual-fitting (rule 26). No admissible mechanism exists today. 2026-07-11 calibration-log entry (nyiso-61 follow-up research)."
-  },
-  "ERCOT": {
-   "declared": "2026-07-17",
-   "withdrawn": "2026-07-17",
-   "note": "FRONTIER WITHDRAWN — ERCOT reverts to NOT-YET (owner directive 2026-07-17, the ERCOT-79 availability-envelope audit: 'we can't have a keeper on inaccurate data'). The 2026-07-17 frontier declaration rested on a keeper (ercot76) whose scarcity tail was formed on a PHANTOM CAMPD facility-outage bug: the run-based detector hard-zeroed ~1.9-5.7 GW of daily-cycling combined-cycle capability its own CEMS shows generating (T H Wharton et al.), artificially exhausting the event-time fleet so the co-opt priced into its ORDC steps. ERCOT-79 found and fixed the detector (event-based detection for cycling classes; source-faithful, measured CEMS + EIA-930, validated 58h false-outage 1,904->0 MW/h, 0% genuine-outage over-correction) and the fix was ADOPTED (corrected campd-outages.csv installed). On the corrected fleet the keeper recipe (re-solved as keeper 2026-07-17-ercot79-corrected-outages) resolves the 2023 summer over-shoot ($1,068->$242, confirming ERCOT-78) but UN-CATCHES the real scarcity tail (2023 C3c 179->53 vs RT 181, Aug caught 71->25, 2025 tail 19->0) — the offer/scarcity calibration was tuned against the phantom-tightened fleet. DETERMINATION: NOT-YET (C3a/C3b/C3c fail on accurate data). OPEN LANE (successor): a full ERCOT offer-curve + ORDC/co-opt re-calibration against the corrected availability envelope, so the real scarcity re-forms on real fleet tightness. CROSS-ISO: the detector is shared — PJM's committed facility csv shows a stronger phantom signature and all six ISOs' unit-level extracts use it; each ISO is its own regenerate-and-re-audit lane. See results/calibration/FINDING-ercot79-phantom-outage-2026-07.md. Prior frontier content (now moot as a 'final' claim, kept for lineage): trough/spread at frontier (ERCOT-65, zone-split refuted ERCOT-76); shoulder formation enumeration closed (ERCOT-69/75/77); the NE-boundary import rating (ercot76). Log: ERCOT-65 (2026-07-13), ERCOT-74/75/76/77/78 (2026-07-16/17), ERCOT-79 (2026-07-17)."
+  "CAISO": "2026-07-19-caiso-101-chp-steam",
+  "ERCOT": "2026-07-18-ercot82-measured-rtolcap",
+  "NEISO": "2026-07-13-neiso-59-cc-hr",
+  "PJM": "2026-07-18-pjm-115-unit-only",
+  "keepers": [
+    "2026-07-18-ercot82-measured-rtolcap",
+    "2026-07-19-caiso-101-chp-steam",
+    "2026-07-18-pjm-115-unit-only",
+    "2026-07-13-nyiso-62-cc-hr",
+    "2026-07-13-neiso-59-cc-hr",
+    "2026-07-18-miso-75-manitoba-meritcap"
+  ],
+  "note": "Current calibration keeper per ISO — the newest, most structurally faithful run for each market (claude.md #1/#11/#12: keeper = most faithful, not lowest error). This list drives the dashboard's all-ISO Calibration Status page. When a new keeper supersedes one here, replace the run id and re-run `python scripts/build_status.py` to refresh frontend/data/backcast/status.js (the verdicts need the bundles under results/calibration/, which the Pages deploy does not check out, so status.js is committed, not deploy-generated).",
+  "MISO": "2026-07-18-miso-75-manitoba-meritcap",
+  "NYISO": "2026-07-13-nyiso-62-cc-hr",
+  "frontier": {
+    "NEISO": {
+      "declared": "2026-07-11",
+      "note": "Frontier achieved: every named admissible mechanism for the ledgered C3c/C5b winter/summer scarcity-price-formation family has been tried on record — winter fuel-security stack (adopted, dormant), in-LP reserve co-optimization (keeper, dormant at static requirements), measured dynamic reserve requirements (Limb A, engages 1 of 12 2025 tail hours), and the measured fast-start DA offer surface (Limb B, dormant — the real tail forms while the model still carries cheaper non-fast-start headroom). Further C3c work needs a NEW measured identification (oil-parity/import/DA-bid offer formation), its own charter; C2 waits on the final 2025 EIA-923 vintage. 2026-07-11 calibration-log entry; docs/handoffs/neiso-limb-b-offer-surface-2026-07.md §5."
+    },
+    "NYISO": {
+      "declared": "2026-07-11",
+      "note": "Frontier achieved: the deep >$300 tail's two candidate reserve levers are chased to ground — the largest-contingency requirement formula is already in the model as the measured NYCA families, and the ORDC/RCPF stack is verified complete and SOM-grounded (fires to VOLL in 2023). The sole remaining gap is the net-load forecast-uncertainty reserve increment — IMM Recommendation 2021-1, which NYISO has not implemented and which has no published formula; adding it in-model would be residual-fitting (rule 26). No admissible mechanism exists today. 2026-07-11 calibration-log entry (nyiso-61 follow-up research)."
+    },
+    "ERCOT": {
+      "declared": "2026-07-17",
+      "withdrawn": "2026-07-17",
+      "note": "FRONTIER WITHDRAWN — ERCOT reverts to NOT-YET (owner directive 2026-07-17, the ERCOT-79 availability-envelope audit: 'we can't have a keeper on inaccurate data'). The 2026-07-17 frontier declaration rested on a keeper (ercot76) whose scarcity tail was formed on a PHANTOM CAMPD facility-outage bug: the run-based detector hard-zeroed ~1.9-5.7 GW of daily-cycling combined-cycle capability its own CEMS shows generating (T H Wharton et al.), artificially exhausting the event-time fleet so the co-opt priced into its ORDC steps. ERCOT-79 found and fixed the detector (event-based detection for cycling classes; source-faithful, measured CEMS + EIA-930, validated 58h false-outage 1,904->0 MW/h, 0% genuine-outage over-correction) and the fix was ADOPTED (corrected campd-outages.csv installed). On the corrected fleet the keeper recipe (re-solved as keeper 2026-07-17-ercot79-corrected-outages) resolves the 2023 summer over-shoot ($1,068->$242, confirming ERCOT-78) but UN-CATCHES the real scarcity tail (2023 C3c 179->53 vs RT 181, Aug caught 71->25, 2025 tail 19->0) — the offer/scarcity calibration was tuned against the phantom-tightened fleet. DETERMINATION: NOT-YET (C3a/C3b/C3c fail on accurate data). OPEN LANE (successor): a full ERCOT offer-curve + ORDC/co-opt re-calibration against the corrected availability envelope, so the real scarcity re-forms on real fleet tightness. CROSS-ISO: the detector is shared — PJM's committed facility csv shows a stronger phantom signature and all six ISOs' unit-level extracts use it; each ISO is its own regenerate-and-re-audit lane. See results/calibration/FINDING-ercot79-phantom-outage-2026-07.md. Prior frontier content (now moot as a 'final' claim, kept for lineage): trough/spread at frontier (ERCOT-65, zone-split refuted ERCOT-76); shoulder formation enumeration closed (ERCOT-69/75/77); the NE-boundary import rating (ercot76). Log: ERCOT-65 (2026-07-13), ERCOT-74/75/76/77/78 (2026-07-16/17), ERCOT-79 (2026-07-17)."
+    }
   }
- }
 }
