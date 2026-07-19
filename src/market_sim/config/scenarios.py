@@ -4674,6 +4674,35 @@ class ScenarioConfig:
     # everywhere and floors at max(DAM, RT) — the RT ladder rides above the
     # DAM wall's reach where measured. Any other value is a hard error.
     ercot_offer_surface_cleared_share_rt_mode: str = "replace"
+    # ERCOT-88 offline fast-start pool offer (default off; charter §9 of
+    # docs/handoffs/ercot-residual-midband-formation-lane-2026-07.md). The
+    # ERCOT-87 measurement adjudicated that the $150-500 moderate-tightness
+    # band prices on the OFFLINE startable CT pool (telemetered OFFQS/OFFNS,
+    # ~5x the online spare's in-band offer mass), not on any online-spare or
+    # unmitigated-CC surface. Its own builder
+    # (fleet.build_ercot_faststart_pool_markup) prices the merchant-CT bid
+    # rows (econ*/peak*) above the measured pool boundary (1 - pool_frac per
+    # net-load bin, within-plant share coordinates) — the top-of-curve
+    # capacity that in reality is telemetered offline-startable — at the
+    # pool's measured above-LSL SCED2 ladder
+    # (scripts/data/derive_ercot_faststart_pool.py). Composition is
+    # REPLACE-BY-MASK at the call site: in the pool's row-hours every other
+    # offer surface's markup (conditional peak surface, cleared-share wall,
+    # RT leg) is replaced, one owner per row-hour (rule 19 — an
+    # online/DA-basis price is refuted for offline capability by status).
+    # Eligibility is UNIT PHYSICS (min_down_hours <=
+    # constants.FASTSTART_POOL_MIN_DOWN_HOURS, rule 12) — never a class
+    # tuple; CC rows fail by physics (4-8 h), ST_GAS by its 8-12 h min-down.
+    # An offer-availability, NEVER a floor: no min_gen, no forced energy —
+    # D-2/D-4 exposure is structurally vacuous (charter §9.1). YEAR-SCOPED
+    # (rule 13): no pooled fallback; years absent from the artifact are
+    # byte-identical (2024/2025 only — the RT wall's own 2023 bar). Requires
+    # the cleared-share wall armed (the §9.1 enumeration context). Zero
+    # fitted scalars; frozen against residuals (rule 23).
+    ercot_faststart_pool_offer: bool = False
+    # Path to the frozen fast-start pool JSON (default:
+    # data/raw/_validation-source/ercot_faststart_pool_condbinned.json).
+    ercot_faststart_pool_offer_path: str | None = None
     # Path to the measured condition-binned ladder JSON (default: the frozen
     # data/raw/_validation-source/offer_curve_dam_hrmults_condbinned.json). None →
     # the mechanism is a no-op even when the flag is on.
@@ -7603,6 +7632,8 @@ TIER_TAGS: dict[str, int] = {
     "ercot_offer_surface_cleared_share_rt": 1,
     "ercot_offer_surface_cleared_share_rt_path": 3,
     "ercot_offer_surface_cleared_share_rt_mode": 1,
+    "ercot_faststart_pool_offer": 1,
+    "ercot_faststart_pool_offer_path": 3,
     "nysdec_peaker_rule_availability": 1,
     "gas_st_wefor_base_override": 3,
     "as_reserve_withholding": 1,
