@@ -1230,16 +1230,29 @@ class ScenarioConfig:
     # growth. A/B control arm per capacity-economics plan 2026-07 §2.2/§2.4;
     # probe value 0.6. Screens-only: never touches dispatch, results, or the
     # backcast (backcast mode has no capacity evolution).
-    entry_lookahead_reprice: bool = False  # GATED, default-OFF growth-scaled
-    # lookahead (plan §2.3.2): re-price the prior year's marginal-cost supply
-    # stack against the ENTERING year's known net-load duration
-    # (demand_Y - prior-year VRE output), with the same ORDC scarcity curve
-    # the runner's capacity-economics overlay uses where the stack exhausts.
-    # The pro-forma a real developer runs — projected load against the known
-    # fleet — with ZERO fitted parameters (every input is an existing model
-    # quantity; rule 13 admissible: regenerates from forward drivers in any
-    # year). Feeds ONLY the capacity screens (retirement / new entry /
-    # storage), never dispatch, results, or the backcast.
+    entry_lookahead_reprice: bool = True  # Owner-approved default-ON forecast
+    # posture (FF-2A, owner sign-off 2026-07-18; was default-OFF). GATED,
+    # growth-scaled lookahead (plan §2.3.2): re-price the prior year's
+    # marginal-cost supply stack against the ENTERING year's known net-load
+    # duration (demand_Y - prior-year VRE output), with the same ORDC scarcity
+    # curve the runner's capacity-economics overlay uses where the stack
+    # exhausts. The pro-forma a real developer runs — projected load against
+    # the known fleet — with ZERO fitted parameters (every input is an existing
+    # model quantity; rule 13 admissible, G-30-validated zero-DOF: regenerates
+    # from forward drivers in any year). Feeds ONLY the capacity screens
+    # (retirement / new entry / storage), never dispatch, results, or the
+    # backcast. FORECAST-ONLY, so this default flip leaves backcast/hindcast
+    # byte-identical: the runner read site gates on ``mode == "forecast"`` (a
+    # backcast runs no capacity evolution), ``__post_init__`` coerces this
+    # ``False`` in a plain backcast (belt-and-braces — the field is not in
+    # ``_CACHE_KEY_OPTIONAL_FIELDS`` so its value always enters the key), and
+    # the hindcast harness passes it explicitly (its own ``False`` default).
+    # Sign-off + evidence:
+    # docs/handoffs/ff-entry-stack-completion-2026-07.md §4.1 (the default-ON
+    # recommendation) and docs/hindcast-reports/ercot-g30-entry-lookahead-
+    # 2026-07-08.md (G-30 single-term isolation: ERCOT solar entry 0→4 GW,
+    # gas_st over-retire 8.83→1.87 GW, intended negative feedback as year Y's
+    # entry re-fills the stack the Y+1 pro-forma reads).
     entry_screen_diagnostics: bool = False  # GATED, default-OFF diagnostic
     # (RC-0C / BLK-8). When on, the economic new-entry screen appends a fully
     # decomposed per-candidate ledger — revenue terms (energy/attribute/
@@ -6540,6 +6553,22 @@ class ScenarioConfig:
             )
         if self.mode == "backcast" or self.hindcast:
             self.datacenter_load_path = "off"
+
+        # entry_lookahead_reprice is a FORECAST-only capacity-screen price
+        # signal (the runner reads it only under mode=="forecast"; a backcast
+        # runs no capacity evolution). Coerce it OFF in a plain backcast so the
+        # FF-2A owner-approved default-ON flip (2026-07-18, default off -> on)
+        # leaves every backcast keeper's cache_key + run_config.json
+        # BYTE-IDENTICAL to the legacy default -- the field is not in
+        # _CACHE_KEY_OPTIONAL_FIELDS, so its value always enters the key and a
+        # backcast inheriting the flipped default would otherwise shift it.
+        # Belt-and-braces with the runner's own mode gate, and the exact FF-1F
+        # datacenter_load_path coercion pattern above. NOT coerced when
+        # hindcast (mode=="forecast", hindcast=True): the capacity-hindcast
+        # harness passes/arms it explicitly, like every other forecast-path
+        # screen, so probe legs stay armable and existing legs byte-identical.
+        if self.mode == "backcast":
+            self.entry_lookahead_reprice = False
 
         # T1-X crossover boundary (FF-0E, plan §2.2): only meaningful on the
         # vintage-seeded capacity-hindcast harness (forecast machinery). A
