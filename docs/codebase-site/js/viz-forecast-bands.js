@@ -24,6 +24,7 @@ import {
   styleAxis,
   margin,
 } from './chart-utils.js';
+import { inflateGz } from './bc-data.js';
 
 const LAYER_META = {
   scenario_envelope: { label: 'Scenario envelope (min/max)', swatch: 'area dashed', color: 'var(--text-muted)' },
@@ -34,18 +35,6 @@ const LAYER_META = {
 };
 
 const BEST_LAYER_ORDER = ['parametric_plus_structural', 'parametric'];
-
-/** Decompress a base64-encoded gzip string -> JSON object (same algorithm as bc-data.js). */
-function inflateGz(b64) {
-  const bin = atob(b64);
-  const bytes = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  const ds = new DecompressionStream('gzip');
-  const writer = ds.writable.getWriter();
-  writer.write(bytes);
-  writer.close();
-  return new Response(ds.readable).text().then(t => JSON.parse(t));
-}
 
 function loadScript(url) {
   return new Promise((resolve, reject) => {
