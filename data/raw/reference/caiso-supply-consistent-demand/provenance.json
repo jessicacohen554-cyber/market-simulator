@@ -19,7 +19,7 @@
    "flat_adders_mw": 2419.9
   },
   "2025": {
-   "annual_twh": 205.586,
+   "annual_twh": 205.59,
    "eia930_demand_cell_twh": 223.804,
    "gas_cems_grid_twh": 43.988,
    "gas_cogen_grid_twh": 7.609,
