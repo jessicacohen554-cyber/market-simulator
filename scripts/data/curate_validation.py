@@ -1,5 +1,23 @@
 """Curate the ``validation`` clean datatype from ``data/raw/_validation-source``.
 
+STATUS: PARKED (curated, not yet consumed) — 2026-07-19.
+    This datatype is *written* here and round-trips through the schema/clean
+    contract, but a repo-wide scan finds **no reader**: nothing calls
+    ``read_clean("validation")`` on any solve, scoring, or reporting path (the
+    scorer still reads the legacy ``calibration_reference.json`` that
+    ``build_calibration_reference.py`` emits, via
+    ``run_calibration.py::_load_reference``). It is deliberately kept as the
+    curated, schema-validated *replacement* for that JSON reference (see below),
+    staged for the migration but not wired in.
+
+    The tee'd-up next step (owner's pick) is to teach
+    ``run_calibration.py::_load_reference`` to reconstruct the reference dict
+    from ``read_clean("validation")`` behind a **default-off** flag, gated by a
+    parity test asserting the reconstructed reference equals the current JSON
+    output byte-for-byte (the docstring below notes the two are "byte-aligned
+    with the builder by construction"). Until that flip lands, treat this script
+    as a data-contract fixture, not a live input.
+
 The backcast calibrates against a heterogeneous pile of reference benchmarks —
 EIA-860 renewable capacity, EIA-923 by-fuel net generation, EPA eGRID 2023
 emissions, EIA-930 demand totals, the measured Henry Hub gas price, and the
