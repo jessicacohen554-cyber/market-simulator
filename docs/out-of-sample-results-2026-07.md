@@ -375,6 +375,34 @@ CAISO/MISO (zero intake) remain open.
 
 ---
 
+### 1.5 Intake 2026-07-19 — NEISO Morning Report operable-capacity (2018-07 → present)
+
+Executed under the owner's explicit request (*"get as much as you can between
+2018 and 2026"*), extending NEISO's existing rule-22 Option-2 intake
+authorization (§1.4; marker declared 2026-07-07). **Intake + gated wiring only,
+NO solve, NO scoring, NO marker change.** The measured ISO-NE DAM-equivalent of
+what ERCOT uses for outages/availability — the Morning Report **Section 3
+Operable Capacity Analysis** (published daily generation-outage / operable-
+capacity MW) — for the NEISO backcast to use IN PLACE OF the CAMPD-derived
+unit-outage fallback. Full detail: `docs/handoffs/neiso-operable-capacity-intake-2026-07.md`.
+
+| Datatype | Years | NEISO | Provenance |
+|---|---|---|---|
+| Morning Report operable-capacity (daily) | 2018-07 → 2026-07 | ✅ ~2,940 daily rows; identity `H=A+B−C−D+E−F−G` = 0 MW/row | `iso-ne.com/transform/csv/morningreport` via `scripts/data/fetch_neiso_morning_report.py` → `build_neiso_operable_capacity.py` → `data/raw/neiso-operable-capacity/neiso_operable_capacity_<YYYY>.csv` (committed per-year CSVs, ERCOT-analogue precedent; API-only push can't round-trip binary) |
+
+Grain: ISO-NE publishes this only at **fleet** total (no public per-unit / per-
+fuel outage series — only masked-asset DA offers, already intaken §1.4-adjacent
+`NEISO-AS/da-energy-offers/`). Consumed as one pooled fleet thermal-availability
+fraction `1 − outages/(CSO+EcoMax-above-CSO)`, gated
+`ScenarioConfig.neiso_operable_capacity_availability` (**default OFF**;
+byte-identical NEISO runs until opted in), backcast-only. Data + loader committed
+directly; the gate + fleet block ship as
+`docs/handoffs/patches/neiso-operable-capacity-wiring.patch` (oversized-core-file
+transport). Any *solve* of an out-of-training year remains separately
+quarantined per rule 22.
+
+---
+
 ## 2. D-8 — frozen-coefficient stability (RUN)
 
 **Design.** For each *fitted-to-the-scored-years* coefficient family, refit on a
