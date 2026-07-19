@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-19-ercot86-rt-wall-fullspan",
+  "label": "ercot86 rt wall fullspan",
+  "date": "2026-07-19",
+  "shorthand": "ercot86-rt-wall-fullspan",
+  "definition": "ERCOT-86 RT/SCED offer-wall candidate: the cleared-share wall's price ladder re-based from the measured-cheap DAM offers to the measured SCED online-spare offers (year-scoped, 2024/2025). Fills the $150-500 mid-band where the stack genuinely exhausts, zero spurious hours: 2024 resid -0.34 (13/68 mid-band hrs), 2025 resid +0.44 (6/65). 2023 keeps the DAM basis (SCED unreachable on the free path, credentialed archive owner-declined) -- its summer under-price (resid -11.6) is a documented input-blocked measured-representation caveat, NOT a model defect, and nothing is retuned to paper it. Keeper stays ercot82 (rule 27, owner-only swap).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-19-ercot86-rt-wall-fullspan.js",
+  "bundle": "results/calibration/ercot86_rtwall_fullspan"
+}
