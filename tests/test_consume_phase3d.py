@@ -112,7 +112,7 @@ class PartialOutageDerateParity(_UseCleanEnvMixin, unittest.TestCase):
 
 
 @unittest.skipUnless(
-    (paths.FLEET_DIR / "egrid2023_data_rev2 2.xlsx").is_file(),
+    (paths.FLEET_DIR / "egrid2023_data_rev2.xlsx").is_file(),
     "eGRID 2023 workbook absent",
 )
 class EgridZoneAssignmentParity(_UseCleanEnvMixin, unittest.TestCase):
