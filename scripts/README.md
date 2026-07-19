@@ -22,6 +22,34 @@ the calibration/forecast/hindcast programs, or governance rules. A script tied
 to one specific superseded run belongs in `archive/`; anything that fetches or
 transforms data belongs in `data/`.
 
+## Bootstrap & shared CLI helpers
+
+`market_sim` is always importable (editable install), but the `scripts`
+package is only importable with the repo root on `sys.path`. Every
+`scripts.*`-importing tool uses the same **canonical three-line bootstrap** at
+the top of the file, before any `from scripts.…` import:
+
+```python
+import sys
+from market_sim.config.paths import REPO_ROOT
+sys.path.insert(0, str(REPO_ROOT))
+```
+
+after which `from scripts.lib.cli import add_iso_arg` (etc.) resolves
+regardless of the script's depth or the process's working directory. Do **not**
+hand-roll `Path(__file__).resolve().parents[N]` repo-root math or insert
+`REPO / "scripts"` — the bootstrap above is depth-independent. `scripts.lib.cli`
+also exposes `repo_root()` (a re-export of `config.paths.REPO_ROOT`) and the
+canonical argparse builders `add_iso_arg` / `add_years_arg` (its help text
+documents the rule-22 holdout gate) / `add_out_dir_arg` / `add_bundle_arg`;
+`--iso` is constrained to `iso_configs.SUPPORTED_ISOS`, so a new ISO propagates
+everywhere without touching a hardcoded tuple.
+
+Exception: the stdlib-only dashboard-deploy trio (`build_manifest.py`,
+`build_codebase_site_backcast.py`, `register_hindcast.py`) runs on a bare
+`python3` with no installed deps and keeps its own stdlib bootstrap — it must
+not import `scripts.lib.cli` (which imports `market_sim`).
+
 ## Dashboard retention (top-15 per ISO, all three stores)
 
 The backcast dashboard keeps the **top 15 runs per ISO** (user-set 2026-06-21,
