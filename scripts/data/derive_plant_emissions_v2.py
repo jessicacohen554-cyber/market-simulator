@@ -47,6 +47,7 @@ if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
 from market_sim.config import paths  # noqa: E402
+from market_sim.config.iso_configs import SUPPORTED_ISOS  # noqa: E402
 from market_sim.data import campd  # noqa: E402
 from scripts.lib import clean_io  # noqa: E402
 
@@ -59,7 +60,11 @@ PARASITIC_PATH = PROCESSED_DIR / "parasitic_load_factors.parquet"
 OUT_PATH = PROCESSED_DIR / "plant_emission_rates_v2.parquet"
 CSV_PATH = PROCESSED_DIR / "plant_emission_rates_v2.csv"
 
-ALL_ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO")
+# Canonical registry order (iso_configs.SUPPORTED_ISOS). Output is fanned out
+# over every ISO of an overlapping state and then sorted by ["iso", ...], so the
+# derived artifact is invariant to this order (rule 26 preserved); the tuple only
+# drives which ISOs the state map covers and the --iso default.
+ALL_ISOS = SUPPORTED_ISOS
 
 _OUT_COLUMNS = [
     "iso",
