@@ -41,9 +41,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import base64
-import gzip
-import importlib.util
 import json
 import re
 import sys
@@ -53,22 +50,22 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
-_spec = importlib.util.spec_from_file_location(
-    "rch", str(REPO / "scripts" / "render_calibration_html.py")
-)
-rch = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(rch)
 
-DATA_DIR = REPO / "frontend" / "data" / "backcast"
-RUNS_DIR = DATA_DIR / "runs"
-BENCH_DIR = DATA_DIR / "bench"
+from scripts import render_calibration_html as rch  # noqa: E402  (after sys.path)
+from scripts.lib import backcast_artifacts as ba  # noqa: E402
+
+DATA_DIR = ba.DATA
+RUNS_DIR = ba.RUNS
+BENCH_DIR = ba.BENCH
 
 
 def _gzb64(obj) -> str:
-    """Return gzip+base64 of a JSON-serializable object (byte-deterministic)."""
-    return base64.b64encode(
-        gzip.compress(json.dumps(obj).encode(), compresslevel=9, mtime=0)
-    ).decode()
+    """Return gzip+base64 of a JSON-serializable object (byte-deterministic).
+
+    Back-compat alias for :func:`scripts.lib.backcast_artifacts.gzb64` (kept so
+    archived render probes importing ``render_backcast._gzb64`` still resolve).
+    """
+    return ba.gzb64(obj)
 
 
 def _slug(text: str) -> str:
@@ -150,12 +147,7 @@ def _write_bench_part(iso: str, year: int, meta: dict, bench_year: dict) -> Path
     identical content produces identical bytes, so unchanged parts never show
     up as a git diff.
     """
-    part_dir = BENCH_DIR / iso
-    part_dir.mkdir(parents=True, exist_ok=True)
-    part = {"meta": {**meta, "years": [int(year)]}, "bench": bench_year}
-    path = part_dir / f"{year}.json.gz"
-    path.write_bytes(gzip.compress(json.dumps(part).encode(), compresslevel=9, mtime=0))
-    return path
+    return ba.write_bench_part(BENCH_DIR, iso, year, meta, bench_year)
 
 
 def generate(
@@ -201,11 +193,7 @@ def generate(
             rid = rm["id"]
             model = D["model"][i]
             model["label"] = rm["label"]
-            js = (
-                "window.BC=window.BC||{};window.BC.runGz=window.BC.runGz||{};"
-                f"window.BC.runGz[{json.dumps(rid)}]=" + json.dumps(_gzb64(model)) + ";"
-            )
-            (RUNS_DIR / f"{rid}.js").write_text(js)
+            (RUNS_DIR / f"{rid}.js").write_text(ba.encode_run_js(rid, model))
             rm["file"] = f"frontend/data/backcast/runs/{rid}.js"
             manifest.append(rm)
 
@@ -214,14 +202,11 @@ def generate(
     )
     (DATA_DIR / "benchmark.js").write_text(bench_js)
 
-    manifest_js = (
-        "window.BC=window.BC||{};window.BC.meta="
-        + json.dumps(meta_by_iso)
-        + ";window.BC.manifest="
-        + json.dumps(manifest)
-        + ";"
+    # Local-preview manifest (sort_keys=False reproduces the historical bytes;
+    # the deploy rebuilds it via build_manifest.py, which sorts).
+    ba.write_manifest_js(
+        DATA_DIR / "manifest.js", meta_by_iso, manifest, sort_keys=False
     )
-    (DATA_DIR / "manifest.js").write_text(manifest_js)
 
     sz = sum(f.stat().st_size for f in DATA_DIR.rglob("*.js")) / 1e6
     print(
