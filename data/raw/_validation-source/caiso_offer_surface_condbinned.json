@@ -1,8 +1,8 @@
 {
  "_provenance": {
   "source": "CAISO OASIS Public Bid Data (PUB_DAM_GRP GroupZip, 90-day-lag masked DAM bids), dam-public-bids clean datatype, trade years [2023, 2024, 2025]",
-  "derived_utc": "2026-07-17T00:37:43+00:00",
-  "method": "see scripts/derive_caiso_offer_surface.py module docstring",
+  "derived_utc": "2026-07-19T18:23:34+00:00",
+  "method": "see scripts/data/derive_caiso_offer_surface.py module docstring",
   "gas_basis": "CA-composite citygate daily on gas FLOW days (trade+1 staircase, caiso-90 semantics), data/raw/gas-prices/caiso_citygate_daily.csv",
   "carbon_basis": {
    "usd_per_t": {
