@@ -1,0 +1,17 @@
+NYISO: CC plant 7314 fleet pmax sum 199.5 MW exceeds trusted bound 170.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (29.5 MW removed)
+NYISO: CC plant 10190 fleet pmax sum 92.0 MW exceeds trusted bound 72.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (20.0 MW removed)
+NYISO: CC plant 56196 fleet pmax sum 662.0 MW exceeds trusted bound 560.0 MW (demonstrated peak; corrupt summer-capacity rows) — reconciled (102.0 MW removed)
+confirmed-retirements: HINDCAST INFORMATION-GATE WARNING — clean partition for NYISO absent; run scripts/data/curate_confirmed_retirements.py (and scripts/regenerate_clean.py) before trusting any hindcast A/B leg that expects this ISO's confirmed-exit/reversal channel — a missing partition silently degrades to the economic screen and must never be mistaken for information discipline (RC-1B D4). No confirmed exits for NYISO this call.
+confirmed-retirements: HINDCAST INFORMATION-GATE WARNING — clean partition for NYISO absent; no reversal suppression applied. A missing partition must never be mistaken for information discipline (RC-1B D4) — run scripts/data/curate_confirmed_retirements.py + scripts/regenerate_clean.py first.
+NYISO: CC plant 7314 fleet pmax sum 199.5 MW exceeds trusted bound 170.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (29.5 MW removed)
+NYISO: CC plant 10190 fleet pmax sum 92.0 MW exceeds trusted bound 72.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (20.0 MW removed)
+NYISO: CC plant 56196 fleet pmax sum 662.0 MW exceeds trusted bound 560.0 MW (demonstrated peak; corrupt summer-capacity rows) — reconciled (102.0 MW removed)
+
+===== NYISO full-horizon summary =====
+  years solved: 1 / 1  ([2026]..[2026])
+  total wall: 2.7 min   global peak RSS: 2.71 GB
+  median year wall: 159.2s   max per-year peak RSS: 2.71 GB
+  invariants: 1 FAIL, 1 WARN
+    [FAIL] I7   reliability floor          2026: accredited firm 30322 < requirement 32121 MW
+    [WARN] I12  reserve-margin band        requirement-implied floor [8.0%, 23.0%]; out: 2026:1.9% (band [8.0%, 23.0%])
+  wrote results/ff2b-after/nyiso/full_horizon_summary.json
