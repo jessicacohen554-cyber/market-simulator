@@ -224,3 +224,72 @@ at the offer level from any on-disk or free-path data**, for two independent rea
 This document; no code, no solve, no registration, keeper unchanged. The build
 (`derive_ercot_sced_offer_wall.py` + the `_rt` gate + tests) is chartered, not
 started, pending owner go-ahead on §6 step 1 and the §5 2023 decision.
+
+## 9. BUILD + 2024 A/B PROBE RESULTS (session 2026-07-19, ercot86)
+
+§6 step 1 executed. Built (branch `claude/ercot-86-rt-wall-nrxeun`): the §3.1
+derive (`scripts/data/derive_ercot_sced_offer_wall.py`, frozen rule 23, DAM bin
+geometry imported so agreement holds by construction, per-bin coverage
+disclosed in provenance), the 2024 artifact
+(`data/raw/_validation-source/ercot_sced_offer_wall_condbinned.json`, 47 sample
+days, no pooled fallback, no ST block; DAM artifact byte-stable), the §3.2/3.3
+apply gate (`ercot_offer_surface_cleared_share_rt` + `_rt_path` + `_rt_mode`,
+both compositions; the RT leg is **never state-weighted** — the SCED spare is
+measured on the online fleet, so the ERCOT-73 commitment-state correction is
+already conditioned into the surface, and weighting it again would
+double-count), and the §3.5 tests (13, all green; existing wall suite green).
+
+**Measured surface (2024).** The thesis held in the data: the CT online-spare's
+upper rungs carry the RT surface the DAM lacks (q90 effective-HR multipliers
+217–1289 in the p50–p90 bins vs DAM's 25–42 → $540–3,200 at 2024 gas); CC caps
+near multiplier 52 (≈$130–160 — the mitigated SCED2 ceiling). RT is NOT
+uniformly ≥ DAM: the CC tight-bin DAM upper rungs (q90 196.9 in >p97) exceed
+RT's (52.4) — the compositions handle this divergence honestly.
+
+**Probe (rule 16 throwaway, NOT registered; slim bundles committed at
+`results/calibration/ercot86_rtwall_2024_{A,B}`).** Single-year 2024 on the
+ercot85 base (keeper + `ercot_thermal_dam_availability` + `wefor_residual=0.02`):
+
+| metric (2024) | ercot85 base | A (replace) | B (tier) | actual |
+|---|---|---|---|---|
+| annual mean resid | −2.75 | **−0.34** | −0.32 | — |
+| $150–500 hrs | ~0–1 | **13** | 13 | 68 |
+| $500–2k hrs | (unrec.) | 2 | 2 | 13 |
+| $2k+ hrs | (unrec.) | 3 | 3 | 3 |
+
+* **C3a guard CLEARS**: the annual level moves −2.75 → −0.34, i.e. the wall
+  *closes* level residual without over-lifting.
+* **Partial mid-band formation, correctly placed**: 12 of the 13 model
+  mid-band hours are the real Jan-15 winter event (model $172–238 vs actual
+  $114–244); the 13th is Aug-19 h18 (model $230 vs actual $3,060 — an
+  under-formation, not an over-). Zero spurious mid-band hours.
+* **The remaining 55/68 hours are the spread-out shoulder/summer
+  moderate-tightness hours** (Apr 11, May 11, Oct 6, Aug 6 actual hrs …). At
+  actual mid-band hours the model now prices p50 $52 / p90 $128 — up from the
+  ~$40 stack ceiling, but short of $150. Structure of the shortfall: the wall
+  floors only ABOVE-boundary CC/CT econ rows, and in those hours the LP still
+  finds un-walled supply (below-boundary rows, other classes) before the RT
+  rungs; the CC ladder's mitigated-ceiling cap (~$130–160) sits below the
+  band in exactly the bins where CC is the marginal walled class.
+* **A ≈ B** (hourly |Δ| ≤ $1.60, 1,356 hrs differ, band occupancy identical):
+  the RT ladder dominates the state-weighted DAM leg in every operative bin,
+  so the tier composition adds nothing. **Composition A (replace) is the
+  recommended form** — cleaner ownership (one ladder source per bin), same
+  result.
+
+**Verdict.** The mechanism is structurally validated — it forms the mid-band
+where the supply stack genuinely exhausts, prices the formed hours in-band,
+and repairs the annual level as a side effect — but the measured online-spare
+wall alone under-fills the band ~5×. The un-formed remainder is consistent
+with the charter's own scope note: the RT wall prices the *online spare*; the
+spread-out mid-band hours in reality also involve offline-CT RT participation
+(startup-inclusive offers) and the CC spare beyond the mitigated ceiling,
+neither of which this surface contains. That residual formation gap is a NEW
+named lane, not a knob on this one (rule 19 — no cap/boundary retune against
+the residual).
+
+**Open owner decisions (unchanged from §5/§6):** 2025 tail-day SCED intake
+(§4 option i) before any 2024+2025 span; 2023 credentialed intake vs caveat
+(§5). OOM note for successors: two concurrent ERCOT per-plant co-opt solves
+exceed the 15 GB session container — run year-probes sequentially despite
+rule 12's ~2-run allowance.
