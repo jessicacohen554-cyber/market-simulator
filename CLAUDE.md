@@ -29,17 +29,15 @@ LP-based electricity market dispatch simulator. Forecasting model (2026–2050) 
 
 ```
 src/market_sim/
-  config/    → scenarios.py (ScenarioConfig dataclass), constants.py, iso_configs.py (6-ISO topology), paths.py (on-disk path registry), reserve_config.py (reserve co-opt config), interchange_config.py (interchange/seam spec), capacity_area_crosswalk.py (ISO capacity-area↔zone crosswalk), plant_taxonomy.py (fuel/class taxonomy)
-  data/      → eia_loader.py, fleet.py (CAMPD binning), renewables.py, fuel.py, outages.py, hydro.py, ownership.py, ownership_config.py, campd.py (CEMS loader), egrid.py, eia923.py (delivered fuel cost), coal.py, chp.py, cod_ramp.py (COD vintage ramp), confirmed_retirements.py, emission_rates.py (forward CO2-rate estimator), offer_curves.py, floor_mechanisms.py (D-2 floor attribution registry), zone_assignment.py, neighbor_price.py, gtc.py, local_capacity.py, capacity_deliverability.py, winter_fuel_inventory.py, hydrogen.py, nyiso_reserve_requirements.py (measured NYISO hourly reserve-requirement series), miso_reserve_requirements.py (measured MISO hourly cleared-reserve series), ramp_capability.py (measured per-plant ramp/fast-start capability intake)
-  model/     → dispatch.py (LP core), commitment.py (3-solve UC screen), transmission.py, storage.py, capacity.py, ancillary.py (ERCOT AS revenue)
-  policy/    → ira.py, rps.py, carbon.py, eac.py, constraints.py, cap_and_trade.py (unified carbon-program resolver)
-  results/   → cache.py, outputs.py, emissions.py, export.py, calibration.py, plant_financials.py, rcpf.py (NYISO RCPF scarcity overlay), scarcity.py (ERCOT ORDC scarcity overlay), evolution_ledger.py (persisted per-year capacity ledger)
-  pipeline/  → spec.py, kwargs.py, prior.py, result.py, backcast_config.py (backcast ScenarioConfig builder), commitment.py (shared P2 commitment pass), solve.py (shared P0/P1 energy solve loop) — shared per-year solve-core typed contracts (orchestrator-unification)
-  ensemble.py         → weather-year / scenario ensemble aggregation
-  matrix.py           → deterministic scenario-matrix runner (PB-0/1.1)
-  uncertainty.py      → multivariate forecast-uncertainty sampler (PB-2)
-  structural_prior.py → structural-error prior + convolution (PB-3)
-  runner.py  → main orchestrator (P0→P1→P2 solve loop, year evolution)
+  config/    → ScenarioConfig, constants, 6-ISO topology, on-disk path registry, reserve/interchange specs, crosswalks, taxonomy
+  data/      → source loaders & derived inputs (demand, fleet/CAMPD binning, renewables, fuel, outages, hydro, emissions, offer curves, capacity/reserve inputs)
+  model/     → the ISO-agnostic LP: dispatch (LP core, duals=price), commitment, transmission, storage, capacity evolution, ancillary
+  policy/    → IRA, RPS, carbon / cap-and-trade, EAC, constraints
+  results/   → caching, outputs, emissions, export, calibration/scoring, scarcity overlays, evolution ledger
+  pipeline/  → shared per-year solve core (spec, kwargs, prior, result, backcast_config, commitment, solve)
+  ensemble / matrix / uncertainty / structural_prior → ensemble & forecast-uncertainty layer
+  runner.py  → main orchestrator (P0→P1 solve loop, year evolution)
+  (full, current per-module inventory: docs/codebase/01-architecture.md — kept in sync with the code; this tree is the elevator view)
 tests/       → pytest, one file per module
 scripts/     → core entry points & standing tooling ONLY (calibration/hindcast/forecast runners, scoring, dashboard, governance) — see scripts/README.md
   data/      → data fetching & processing (fetch_*, curate_*, derive_*, per-source build_*) — not core engine
