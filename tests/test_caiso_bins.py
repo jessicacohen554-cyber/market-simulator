@@ -18,7 +18,7 @@ from market_sim.data.fleet import (
     bins_to_fleet,
     fleet_to_bins,
     load_fleet_from_csv,
-    thermal_tranche_chp_p25_allhr,
+    thermal_tranche_chp_steam_level,
     thermal_tranche_overrides,
     thermal_tranche_peaking,
 )
@@ -245,7 +245,7 @@ class TestCaisoChpSteamFloorP25(unittest.TestCase):
         return sum(g.chp_grid_pmin_mw for g in fleet if g.plant_code == code)
 
     def test_loader_reads_artifact(self):
-        m = thermal_tranche_chp_p25_allhr("CAISO")
+        m = thermal_tranche_chp_steam_level("CAISO")
         positive = {k: v for k, v in m.items() if v > 0.0}
         self.assertEqual(
             set(positive),
@@ -257,7 +257,7 @@ class TestCaisoChpSteamFloorP25(unittest.TestCase):
 
     def test_flat_hosts_gain_operating_level_floor(self):
         """Floor = p25_allhr x (1 - BTM share) x nameplate for the flat hosts."""
-        m = thermal_tranche_chp_p25_allhr("CAISO")
+        m = thermal_tranche_chp_steam_level("CAISO")
         for code, group in ((55217, "CC_CHP"), (55400, "CC_CHP")):
             nameplate = float(
                 self.synth[

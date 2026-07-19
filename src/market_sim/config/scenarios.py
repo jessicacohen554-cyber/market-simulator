@@ -5594,33 +5594,40 @@ class ScenarioConfig:
     chp_export_floor_measured: bool = False
 
     # Measured multi-year steam-host operating-level floor (composes with
-    # chp_steam_following; caiso-89 lane, 2026-07-16). When True, a CHP bin
-    # whose ISO tranche artifact carries a positive ``p25_allhr_cf`` (the
-    # all-hours p25 of CAMPD available-CF, pooled across the artifact's
-    # multi-year window by the frozen derive_thermal_tranches estimator) uses
-    # it as the ``pmin_cf`` feeding the grid steam floor
-    # ``pmin_cf x (1 - btm_share)`` wherever it exceeds the p2/eia923_cf level
-    # — the host-driven operating level the steam contract sustains, not just
-    # the never-below minimum. Rule-17 grounding: (a) driver = host thermal
-    # demand (EIA-860 CHP designation; CEMS conduct is the measurement);
-    # (b) window = ALL 24 hours BY MEASUREMENT — the CAISO CC_CHP steam fleet
-    # runs flat 0.65-0.76 GW net across every hour-of-day (May-2023 CEMS
-    # signature, hod max/min 1.16), and the statistic itself enforces the
-    # window (a plant offline >25% of its available hours scores p25 = 0, so
-    # cycling cogens carry NO floor — no threshold parameter); (c) forward
-    # story = CHP host steam contracts persist, the level regenerates from any
-    # multi-year CAMPD window and responds to changed host conditions (a
+    # chp_steam_following; caiso-89 lane, 2026-07-16; level statistic revised
+    # by the WP-3 rule-23 re-derivation, owner-ruled 2026-07-19 — field name
+    # kept for run-config lineage). When True, a CHP bin whose ISO tranche
+    # artifact carries a positive ``steam_level_cf`` uses it as the
+    # ``pmin_cf`` feeding the grid steam floor ``pmin_cf x (1 - btm_share)``
+    # wherever it exceeds the p2/eia923_cf level — the host-driven operating
+    # level the steam contract sustains, not just the never-below minimum.
+    # The WP-3 statistic (two lenses, one family — see
+    # fleet.thermal_tranche_chp_steam_level and
+    # docs/handoffs/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md): CAMPD-
+    # visible cogens derive the loading-when-on construction (on-hour
+    # frequency x p50 loading-conditional-on-online — the pre-WP-3
+    # p25-of-all-hours mixed offline zeros into the level and under-measured
+    # a high-baseload host that takes offline stretches, FINDING-caiso95 §5);
+    # CEMS-invisible cogens (below the Part 75 threshold) derive the pooled
+    # EIA-923 delivery-implied level. Pre-WP-3 artifacts fall back to their
+    # committed ``p25_allhr_cf``. Rule-17 grounding: (a) driver = host
+    # thermal demand (EIA-860 CHP designation; CEMS/EIA-923 conduct is the
+    # measurement); (b) window = ALL 24 hours BY MEASUREMENT — the CAISO
+    # CC_CHP steam fleet runs flat 0.65-0.76 GW net across every hour-of-day
+    # (May-2023 CEMS signature, hod max/min 1.16), and the statistic itself
+    # enforces the window (a cycler's on-frequency or delivered energy
+    # collapses its level — no threshold parameter); (c) forward story = CHP
+    # host steam contracts persist, the level regenerates from any multi-year
+    # CAMPD/EIA-923 window and responds to changed host conditions (a
     # shrinking host shrinks the measured level; a retired host exits the
     # fleet). Rule-13 admissibility: multi-year-pooled conduct conditioned on
     # availability — never the solved year's own outcome (contrast
     # chp_export_floor_measured, which pins the same-year 923 CF and stays a
-    # separate, default-off overlay). Estimation-stage cross-year stability
-    # (CAISO, 2023-2025): class-level per-year CV 0.056, LOYO worst-case 9.1%
-    # — inside the CV<=0.20 / LOYO<=25% gates that closed FINDING-caiso88.
-    # Same mechanism id as the p2 floor (MECH_CHP_STEAM — a level source swap,
-    # one mechanism per phenomenon, rule 19); outage windows still relax it
-    # (min_gen clipped to pmax x availability), and the LP keeps upward
-    # freedom above the floor. Off by default; byte-identical when off.
+    # separate, default-off overlay). Same mechanism id as the p2 floor
+    # (MECH_CHP_STEAM — a level source swap, one mechanism per phenomenon,
+    # rule 19); outage windows still relax it (min_gen clipped to
+    # pmax x availability), and the LP keeps upward freedom above the floor.
+    # Off by default; byte-identical when off.
     chp_steam_floor_p25: bool = False
 
     # Measured ERCOT GTC transfer limits (backcast/calibration overlay). When
