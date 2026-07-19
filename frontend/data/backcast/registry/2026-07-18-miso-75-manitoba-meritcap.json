@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-18-miso-75-manitoba-meritcap",
+  "label": "miso 75 manitoba meritcap",
+  "date": "2026-07-18",
+  "shorthand": "miso-75-manitoba-meritcap",
+  "definition": "MISO keeper-upgrade CANDIDATE (owner-only swap \u2014 NOT self-promoted; keepers.json stays 2026-07-18-miso-74-manitoba-seam pending authorization). NOT-YET, the SAME 2 fails as the miso-74 keeper {C3a-2025 -15.4%, C3c 0/6/0 vs RT 30/37/88} \u2014 the irreducible scarcity tail. The pre-registered {Manitoba two-way seam + seam-envelope merit-cap} composition (miso-74 charter \u00a73d): both frozen flags through the shared inject_miso_seam_flow_limit path (no fork), ZERO fitted scalars (a composition-semantics gate). R1 (the C3b \u22640.20 veto) HELD every year \u2014 0.082/0.137/0.198 all PASS (base 0.080/0.126/0.181; 2025 flattened to 0.198 exactly as pre-registered, 0.002 under the veto \u2014 the disclosed caveat). B1 net-interchange volume STRICTLY closed every year: total err -5.46/-7.38/-7.27 \u2192 -0.58/-1.21/-2.40 TWh; every priced seam improves every year (PJM -5.36/-9.56/-11.19 \u2192 -0.42/-1.69/-3.13, South +3.41/+3.42/+4.06 \u2192 +0.59/+0.65/+1.47, Manitoba -2.79/-1.64/+0.61 \u2192 -0.81/-0.67/-0.58 \u2014 the merit cap un-suppresses Manitoba's own deep import rungs, FIXING the miso-74 B1 annual-net miss while 2025 stays net export) with better per-seam duration RMSE every seam-year. Per rule-14 (B3) C3a moved DOWN (-0.8/-6.7/-13.3 \u2192 -2.5/-8.9/-15.4%) from the restored supply \u2014 disclosed, not gated; C3c unchanged; R5 held (max LMP FELL, $152.01 vs base $214.42, no fabricated scarcity). The correct merit-order seam semantics composed on the correct two-way seam \u2014 the most structurally faithful MISO surface. DOF main 28/2 (base 27/2; +1 merit-cap gate, zero new scalars). Charter: docs/handoffs/miso-manitoba-meritcap-composition-design-2026-07.md.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-18-miso-75-manitoba-meritcap.js",
+  "bundle": "results/calibration/miso75_manitoba_meritcap"
+}
