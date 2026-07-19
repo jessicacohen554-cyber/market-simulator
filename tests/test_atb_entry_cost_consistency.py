@@ -38,17 +38,32 @@ class TestAtbEntryCostConsistency(unittest.TestCase):
                     f"re-run scripts/data/derive_entry_costs_from_atb.py",
                 )
 
-    def test_tech_cost_multiplier_capex_match_atb_ratios(self) -> None:
+    def test_tech_cost_multiplier_capex_bracket_atb_ratios(self) -> None:
+        # Since the capacity-cost-grounding session (2026-07-19) the committed
+        # low/high capex multipliers are the cross-source literature envelope
+        # (min/max over ATB's cases + the verified benchmark rows — exact
+        # equality asserted in tests/test_cost_benchmark_envelope.py). The
+        # ATB-internal ratios derived here remain envelope MEMBERS, so the
+        # committed bounds must bracket them: this guards the FF-1E invariant
+        # that the lever can never be narrower than ATB's own case spread.
         derived = derive.derive_tech_cost_multipliers()
         for tech, cases in derived.items():
             self.assertIn(tech, TECH_COST_MULTIPLIERS, tech)
-            for case in ("low", "mid", "high"):
-                self.assertEqual(
-                    TECH_COST_MULTIPLIERS[tech][case]["capex_per_kw"],
-                    cases[case]["capex_per_kw"],
-                    f"TECH_COST_MULTIPLIERS[{tech!r}][{case!r}]['capex_per_kw'] "
-                    f"drifted from the ATB ratio",
-                )
+            self.assertLessEqual(
+                TECH_COST_MULTIPLIERS[tech]["low"]["capex_per_kw"],
+                cases["low"]["capex_per_kw"],
+                f"{tech}: committed low above the ATB Advanced ratio",
+            )
+            self.assertGreaterEqual(
+                TECH_COST_MULTIPLIERS[tech]["high"]["capex_per_kw"],
+                cases["high"]["capex_per_kw"],
+                f"{tech}: committed high below the ATB Conservative ratio",
+            )
+            self.assertEqual(
+                TECH_COST_MULTIPLIERS[tech]["mid"]["capex_per_kw"],
+                cases["mid"]["capex_per_kw"],
+                f"{tech}: mid must stay the exact ATB Moderate no-op (1.0)",
+            )
 
     def test_gas_cc_ccs_uses_atb_95pct_ccs_class(self) -> None:
         # gas_cc_ccs is mapped to ATB's 95 % CCS class (nearest to the model's
