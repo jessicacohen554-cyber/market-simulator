@@ -17796,3 +17796,57 @@ the swap is **OWNER-ONLY** — NOT self-promoted; `keepers.json` stays
 surfaced for the owner: C3b-2025 0.198 sits 0.002 under the 0.20 veto (tight).
 Registry pruned to 14 (dropped oldest: miso-67 single + miso-68 pair). Next
 number: miso-76.
+
+## 2026-07-19 — miso-76 (Phase A): the owner DECLINED the determination-path ledger conversion and selected lane B — the Midwest (N/C) zonal price-separation topology lane; Phase-A derive-only diagnosis run and the design charter FROZEN (no LP solved); corridor-cap and measured-hurdle mechanisms pre-refuted at the data layer; the build target is measured marginal-loss physics (M3), congestion beyond existing structure documented data-blocked
+
+**Owner decision (this session, AskUserQuestion).** The determination-path
+proposal (convert the miso-75 keeper's two remaining FAILs {C3a-2025 −15.4%,
+C3c 0/6/0 vs RT 30/37/88} to ledgered ACCEPTED MEASURED-INPUT LIMITATION
+caveats — dry-run verified scorer-only to flip MISO NOT-YET →
+CALIBRATED-WITH-CAVEATS at 2/3 ledger budget) was put to the owner with the
+full precedent analysis (NYISO-62/NEISO-59 ledgered-tail keepers; ERCOT-82
+the deliberate counter-example) and the rubric-§3 collapsed-tail tension.
+**DECLINED — owner selected lane B instead** (frontier declaration N/A). The
+proposal doc stays on record UN-APPLIED
+(`docs/handoffs/miso-76-determination-proposal-2026-07.md`); keeper,
+attestation, registry, keepers.json, dashboard all unchanged; MISO stays
+NOT-YET on the same 2 fails.
+
+**Lane B Phase A (derive-only, NO LP).** Charter FROZEN before any build:
+`docs/handoffs/miso-nc-price-separation-design-2026-07.md` (bands B1-B4,
+refutations R1-R5, out-of-scope ledger pre-registered). Probe evidence
+committed: `scripts/probes/_miso76_{separation_anatomy,component_decomposition,bc_boundary_rank}.py`.
+Findings:
+
+- **The separation is real, persistent, and DA-VISIBLE — in representation**
+  (the anti-C3c): Indiana runs $3-5/MWh above Illinois in ANNUAL MEAN every
+  year in BOTH markets (RT and DA); Minnesota is the volatile wind-belt leg
+  (spread MAE $9-12, p95 $33-41); the miso-75 model Midwest span is
+  $0.14/$0.38/$0.38 — the flat pool (all ten intra-Midwest mean orderings
+  wrong, Gate-2 standing).
+- **Decomposition (sampled MISO ex-post LMP components, 36 days/yr):**
+  congestion (MCC) carries ~62-105% of the persistent spread; marginal
+  losses (MLC) a real $0.2-2.9 secondary ($1-3 on the West/Illinois legs).
+- **Measured congestion location refutes the corridor-cap family:** the
+  DA binding-constraint record (annual `YYYY_da_bc_HIST.csv` consolidations,
+  fetched 2023-2025) maps by control area to WITHIN-zone constraints
+  (West-internal alone 20-26% of Σ|shadow|) + external/seam (20-32%);
+  between-model-zone corridor pairs barely register (West|Plains peak 0.8%).
+  With NO published flowgate MW limits anywhere in the record, per-corridor
+  caps could only be invented apportionment (scope D4) — M1 REFUTED, and
+  M2 (hurdles from measured MCC spreads) REFUTED as answer-feeding (C6).
+- **The build target (M3): measured marginal-loss physics** — the
+  dimensionless marginal delivery-factor surface derived from the published
+  per-hub MLC record, entering the LP as physics (prices stay duals, rule 4),
+  closing the measured dMLC component ([0.5x,1.5x] band B1) and giving the
+  interior its first distance metric (seam pull / winter-gas localization =
+  report-only B2/B4). Congestion beyond existing structure is a DOCUMENTED
+  data-blocked limitation pending the contingent M4 OASIS-AFC feasibility
+  investigation (own charter if it lands). Pre-named riskiest gate: the C3b
+  veto at 0.198-2025 (0.002 headroom) — R1.
+
+**Next steps (in order):** A2 `lmp-components` data intake + bc_HIST source
+mirrors; A3 `derive_miso_loss_surface.py` + offline acceptance test; B LP
+build (`miso_zonal_loss_surface`, default off); C solve main + same-box base
+full span, register both arms (rules 12/15/16), owner adjudicates. Next
+number stays miso-76 (this session produced no registered run).
