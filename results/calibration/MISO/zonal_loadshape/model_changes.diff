@@ -1,4 +1,0 @@
-# No working-tree model changes vs origin/main at solve time.
-# This run was solved on git_sha 7910d91 with all MISO structural work
-# (zonal load shapes, RDT asymmetric links, per-zone wind shapes, #812 coal
-# curves, firm-hydro import) already merged to main — so the diff is empty.
