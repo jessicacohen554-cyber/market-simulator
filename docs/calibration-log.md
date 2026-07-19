@@ -18330,3 +18330,78 @@ from both the RT wall and the gas commitment bridge). The §6.2 build
 nothing was armed this session.
 
 Next number: ercot-88.
+
+## 2026-07-19 — CAISO — caiso-102: the inelastic-charge channels MEASURED (DA award allocates 76-84 % of realized battery charge, FMM covers 94-97 %, RT additions are reg-down-deployment-shaped, non-belly charge clears $6-9 above the belly floor) + the evening merit diagnosis exposed a +1h FRAME DEFECT (`_eia_hourly_frame_filled` hour-ending anchor — CISO-2025/PJM-2023/MISO-2025 solved one hour late); fixed at the root, single-delta B-leg cleared every pre-registered gate → PROMOTED to keeper (2025 belly +5.0→+4.3, evening −3.0→−1.1, zero status regression, zero DOF delta)
+
+**Runs:** `2026-07-19-caiso-102-hourfix` (bundle `caiso102_hourfix_B`, **NEW
+CAISO KEEPER**, supersedes `2026-07-19-caiso-101-chp-steam`). Same-machine
+baseline `caiso102_repro_A` (un-registered, FINDING-caiso92b protocol;
+reproduces the caiso-101 keeper ladder digit-for-digit). Registry 15/15 (no
+prune). Owner in-session ruling: "if it's a keeper in your opinion, promote."
+
+### Arc 1 — priority 1, the inelastic-conduct derive (no mechanism built or solved)
+
+`scripts/probes/_caiso102_charge_channels.py` on the committed CAISO Daily
+Energy Storage Report quarterly xlsx (market_output: IFM/RUC/RTPD/RTD EN +
+SOC + RU/RD/SR/NR, LESR basis), 2023-2025:
+
+- **(a) DA-award allocation:** 84/80/76 % of realized (RTD) charge was
+  already IFM-scheduled (belly 91/89/82 %); the FMM (RTPD) covers 94-97 %.
+  Daily IFM volume is fleet-size-driven (p10-p90 ±30 %), month-detrended
+  spread corr only 0.26/0.47/0.47. The charge decision is a DAM allocation;
+  the RT margin the LP prices re-times 16-24 % of it.
+- **(b) AS-deployment variance:** reg-down book 571/743/810 MW avg (peaking
+  ~1-1.2 GW morning/belly); by 2025 corr(RTD−IFM, RD) = −0.46, slope −1.34
+  MW/MW-RD, 58 % of extra-RT charge in top-RD-quartile hours.
+- **(c) shoulder/overnight inelastic charge:** non-belly realized charge
+  1.38/2.68/3.97 TWh at charge-weighted λ $6-9 ABOVE the same-year belly
+  floor — obligation/positioning conduct (a real second daily cycle:
+  overnight charge → morning discharge peak 0.45-1.7 GW; SOC restoration
+  under the AS book). Model misses: overnight −0.24/−0.25/−0.32 TWh in all
+  years + a 2025-only morning gap (−1.49 TWh) that was mostly the Arc-2
+  frame defect (post-fix: morning model charge 1.35→2.57 vs measured 2.84;
+  non-belly total 2.87→3.64 vs 3.97 — the surviving inelastic gap is the
+  overnight second cycle, 0.05 vs 0.36 TWh).
+
+**No conduct mechanism proposed this session** — any allocation mechanism
+design starts from the post-hourfix residual surface (FINDING-caiso102 §7).
+
+### Arc 2 — priority 2, the evening merit diagnosis → the +1h frame defect → keeper
+
+`_caiso102_evening_merit.py` (hour-paired, resid-quartile conditioned)
+established the aligned evening picture: the model does NOT over-import the
+evening (caiso-95 §4's +2 TWh excess was a measurement artifact — the
+night/day probes bucket EIA-930 by its HOUR-ENDING stamp, one hour early vs
+the model window); the composition defect is CC-over / CT_PEAKER-under
+(Q1-deepest hours: measured CT 1.33/1.19/0.51 GW vs model 0.58/0.31/0.12,
+model gas ~3 GW under, imports at/above measured). Chasing 2025's phantom
+evening solar (model 8.41 vs measured 4.20 TWh) found the root cause:
+`eia_loader._eia_hourly_frame_filled` anchored its reconstructed year on the
+hour-ending `Local time` stamp as interval-beginning — every gap-bridged
+BA-year rotated +1h (train-year blast radius: CISO-2025, PJM-2023,
+MISO-2025; issue #2562, cross-ISO record corrections + pooled-artifact
+re-derives enumerated there). Fixed at the loader root; re-derived
+`caiso_2025_hsl_hourly.parquet` + `caiso_supply_consistent_demand_2025.csv`
+(2023/2024 artifacts byte-identical, md5-checked). Single-delta
+`caiso102_hourfix_B` against pre-registered gates (FINDING-caiso102 §6,
+committed before adjudication): 2023/2024 solve outputs BYTE-IDENTICAL to
+the A-leg (all four parquet families); 2025 solar lag-0 r=0.99987; C1 12/12
+(free 8/8); C7/C8 PASS — all clear. 2025 ladder: belly +5.0→+4.3, evening
+−3.0→−1.1, overnight +1.6→+1.4 (hod-17 −10.1→−4.5; Q1 depth −20.2→−15.4);
+C3c 19/0/0 unchanged; annual C3a mean ≈ unchanged (the gain is intra-day
+shape, exactly what a clock rotation predicts); C5a statuses unchanged.
+Zero DOF delta (a defect fix — no tunable moved). Promoted on
+no-status-regression + most-structurally-faithful (rule 1/14);
+determination stays **NOT-YET**, fail set {C3c, C4, C5a(2024 CAVEAT)}.
+
+### Open threads
+
+- The evening merit lane's residual is now cleanly the CT-rung composition
+  (all three years, same signature); the belly (+6.0/+6.6/+4.3) re-charter
+  designs an ALLOCATION mechanism (hold volume, re-price the margin) from
+  the §1-§3 channel measurements, on the post-fix surface.
+- Issue #2562: PJM-2023 / MISO-2025 record corrections + re-solves in their
+  lanes; caiso-92 offer-surface 2025-slice rule-23 re-derive (pooled).
+- Issue #2546: the $5 fallback literal — still OPEN, no ruling this session.
+
+Next number: caiso-103.
