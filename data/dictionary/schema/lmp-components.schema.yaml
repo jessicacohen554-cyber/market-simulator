@@ -1,0 +1,97 @@
+# Canonical schema: LMP component decomposition (energy/congestion/loss)
+#
+# Verbatim per-node LMP component record from an ISO's published ex-post
+# price reports, kept SEPARATE from the `lmp` datatype deliberately:
+#   - `lmp` is the cross-ISO benchmark price contract (market keys DAM/RTM,
+#     mixed per-ISO sources, consumed by the scoring/benchmark chain);
+#   - `lmp-components` is the component decomposition record for a specific
+#     report family, first used as the derive source for the MISO marginal
+#     delivery-factor (loss) surface (miso-76 lane, charter
+#     docs/handoffs/miso-nc-price-separation-design-2026-07.md §4) and for
+#     congestion-vs-loss decomposition validation.
+#
+# First ISO: MISO. Source: the daily all-node market reports
+#   https://docs.misoenergy.org/marketreports/YYYYMMDD_da_expost_lmp.csv
+#   https://docs.misoenergy.org/marketreports/YYYYMMDD_rt_lmp_final.csv
+# Each carries per-node rows Value in {LMP, MCC, MLC} x hour-ending 1-24,
+# Eastern Standard Time YEAR-ROUND (no DST; each file's header says so).
+# The system marginal energy component (MEC) is NOT stored: it is implied,
+# MEC = LMP - MCC - MLC, identical across nodes per (market, interval) up to
+# the report's 2-decimal rounding. Only published values are stored; derived
+# quantities live in derive scripts (rule 23).
+#
+# Raw home note: the MISO raw holding is the committed D6 hub staging under
+# data/raw/lmp-data/MISO/ (verbatim daily-report hub rows, all three
+# components, staged by scripts/data/fetch_miso_hub_lmp.py) — shared with
+# the `lmp` validation pipeline rather than duplicated; see
+# data/raw/lmp-components/README.md.
+datatype: lmp-components
+schema_version: 1
+title: LMP component decomposition (LMP / congestion / loss)
+description: >-
+  Hourly per-node locational marginal price with its published congestion
+  (MCC) and loss (MLC) components, by ISO and market run — the verbatim
+  component record backing loss-surface derivation and
+  congestion-vs-loss decomposition validation.
+
+key_columns: [iso, market, node, interval_start_utc]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO code (MISO; other ISOs register their own modules).
+  - name: market
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Market run — "da" (day-ahead ex-post) or "rt" (real-time final),
+      matching the sibling MISO market-report datatype vocabulary
+      (transfer-constraint-binding).
+  - name: node
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Pricing node exactly as posted (e.g. "MINN.HUB"). Current MISO
+      holding covers the eight named trading hubs (scope decision D6).
+  - name: node_type
+    dtype: string
+    unit: none
+    nullable: true
+    description: Source node-type column as posted ("Hub" for the hub set).
+  - name: interval_start_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: >-
+      tz-aware UTC start of the hour (hour-beginning). Source hours are
+      hour-ending 1-24 in EST year-round (UTC-5 fixed, no DST), so
+      UTC = market date + (HE-1) hours + 5 hours.
+  - name: interval_start_est
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: true
+    description: >-
+      EST hour-beginning wall clock as posted (informational; UTC is
+      authoritative for joins). MISO market time is EST year-round.
+  - name: lmp_usd_per_mwh
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: >-
+      Total locational marginal price as posted (blank source cells stay
+      null — values are verbatim, never imputed).
+  - name: mcc_usd_per_mwh
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: Marginal congestion component (MCC) as posted.
+  - name: mlc_usd_per_mwh
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: Marginal loss component (MLC) as posted.
