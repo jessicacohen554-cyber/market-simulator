@@ -66,7 +66,8 @@ the same source file byte-for-byte reproduces `atb_2024_electricity_filtered.csv
 | Coal_FE | Coal-new | existing-coal FOM cross-reference | ATB `default`=1 |
 | Biopower | Dedicated | biomass | ATB `default`=1 |
 | Hydropower | NPD1 | hydro | ATB `default`=1 |
-| Geothermal | HydroFlash | geothermal | ATB `default`=1 |
+| Geothermal | HydroFlash | geothermal (conventional cross-reference) | ATB `default`=1 |
+| Geothermal | NFEGSFlash, NFEGSBinary, DeepEGSFlash, DeepEGSBinary | geothermal EGS (`GEOTHERMAL_PARAMS`) | explicit — all four ATB EGS classes (added 2026-07-19) |
 | OffShoreWind | Class3, Class12 | offshore_wind | both ATB `default`=1 (fixed-bottom + floating) |
 
 Parameters landed: `CAPEX`, `Fixed O&M` only — exactly the D4 calendar-year
@@ -119,7 +120,7 @@ regenerates cleanly rather than overwriting history).
 
 ## DATA (landed)
 
-- [x] `atb_2024_electricity_filtered.csv` — 3,162 rows (19 tech/techdetail
+- [x] `atb_2024_electricity_filtered.csv` — 3,858 rows (23 tech/techdetail
       combos x up to 2 parameters (CAPEX, Fixed O&M) x 3 cost cases x 27
       years, crpyears-deduped as above; not every combination populated for
       every tech).
@@ -132,6 +133,22 @@ regenerates cleanly rather than overwriting history).
 > lake (`scripts/data/fetch_nrel_atb.py`, byte-reproducible) and re-committed it
 > complete. See `docs/handoffs/ff-1e-entry-cost-atb-wiring-2026-07.md`.
 
+> **EGS extension (2026-07-19, capacity-cost-grounding session):** the four ATB
+> EGS classes (NFEGSFlash/NFEGSBinary/DeepEGSFlash/DeepEGSBinary, 696 rows)
+> were added as **appended** parts `part11`/`part12` — the FF-1E parts 00-10
+> are byte-untouched. Two consequences, both deliberate: (1) row order no
+> longer equals a fresh `fetch_nrel_atb.py` regeneration (which would sort the
+> EGS rows into the Geothermal block mid-file); `curate_nrel_atb.parse` is
+> order-independent (keyed dedup/validation), so this is layout-only. (2) At
+> this re-fetch the OEDI source object's float *serialization* had drifted on
+> 9/3,162 pre-existing rows (last-digit repr only, e.g. `…5144` vs `…51434`;
+> numeric identity verified at rtol 1e-12) — the committed FF-1E bytes were
+> kept rather than churning attested parts for ulp noise. A from-scratch
+> regeneration therefore reproduces every VALUE but not byte order. ATB 2024
+> remains the **final ATB edition** (no 2025/2026 edition exists — verified
+> 2026-07-19 against the renamed lab's site and the OEDI listing, which ends
+> at `csv/2024/`), so this extract is the current-latest, not a stale vintage.
+
 ## What this doesn't cover
 
 - **Compressed-air storage** — not an ATB-covered technology; the model's
@@ -143,11 +160,17 @@ regenerates cleanly rather than overwriting history).
   single `nominal_discount_rate=0.08` gap is DOCUMENT-AS-LIMITATION per the
   capacity-economics plan and out of scope for this intake.
 
-## Consumer
+## Consumers
 
 `scripts/data/derive_entry_costs_from_atb.py` (FF-1E) derives
-`NEW_ENTRY_COSTS`, `TECH_COST_MULTIPLIERS`, `CCUS_PARAMS` (gas_cc_ccs) and
-`ATB_TECH_WACC_REAL` from this extract; `tests/test_atb_entry_cost_consistency.py`
-asserts the committed constants equal that derivation (CLAUDE.md rule 23). A
-future extension can add ATB's CF / EGS-techdetail / storage-duration rows to the
-fetch to also re-derive `base_cf`, geothermal and `STORAGE_TECH_COSTS`.
+`NEW_ENTRY_COSTS`, `CCUS_PARAMS` (gas_cc_ccs) and `ATB_TECH_WACC_REAL` from
+this extract; `tests/test_atb_entry_cost_consistency.py` asserts the committed
+constants equal that derivation (CLAUDE.md rule 23).
+`scripts/data/derive_cost_benchmark_envelope.py` (capacity-cost-grounding,
+2026-07-19) additionally derives the li-ion `STORAGE_TECHS` costs (4/8 hr
+direct, 12 hr via ATB's exactly-linear power/energy split),
+`OFFSHORE_WIND_PARAMS`, the EGS `fom_kw_yr`, and — joined with
+`data/raw/new-build-cost-benchmarks/benchmarks_2026.csv` — the
+literature-envelope `TECH_COST_MULTIPLIERS` low/high capex ratios;
+`tests/test_cost_benchmark_envelope.py` asserts those. A future extension can
+add ATB's CF rows to also re-derive `base_cf`.
