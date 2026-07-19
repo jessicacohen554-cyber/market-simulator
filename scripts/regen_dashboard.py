@@ -69,6 +69,50 @@ def _load_registry(registry_dir: Path) -> list[dict]:
     return entries
 
 
+def _dry_run(runs: list[tuple[str, Path]], years: set[int] | None) -> int:
+    """Render into a throwaway dir and report parity vs the committed tree.
+
+    Non-mutating: reroutes ``render_backcast``'s output constants to a temp dir,
+    renders every registered run there, then diffs the produced
+    ``runs/<id>.js`` + ``bench/<ISO>/<year>.json.gz`` against the committed
+    copies under ``frontend/data/backcast/`` (``manifest.js``/``benchmark.js``
+    are deploy-generated previews, so they are reported but not gated). Prints a
+    per-file verdict and returns 0 when every rendered file is byte-identical to
+    what is committed (full-render parity), 1 otherwise. Use it before/after a
+    bundle sweep to prove the surviving runs render unchanged.
+    """
+    import filecmp
+    import tempfile
+
+    committed = REPO / "frontend" / "data" / "backcast"
+    with tempfile.TemporaryDirectory() as td:
+        tmp = Path(td) / "backcast"
+        rb.DATA_DIR, rb.RUNS_DIR, rb.BENCH_DIR = tmp, tmp / "runs", tmp / "bench"
+        rb.generate(runs, years=years)
+        rendered = sorted(
+            p
+            for p in tmp.rglob("*")
+            if p.is_file() and p.name not in ("manifest.js", "benchmark.js")
+        )
+        identical = changed = new = 0
+        for p in rendered:
+            rel = p.relative_to(tmp)
+            other = committed / rel
+            if not other.exists():
+                new += 1
+                print(f"  NEW      {rel} (rendered, not committed)")
+            elif filecmp.cmp(p, other, shallow=False):
+                identical += 1
+            else:
+                changed += 1
+                print(f"  CHANGED  {rel}")
+    print(
+        f"dry-run parity: {identical} identical, {changed} changed, {new} new "
+        f"(of {len(rendered)} rendered files; manifest.js/benchmark.js excluded)"
+    )
+    return 0 if (changed == 0 and new == 0) else 1
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--registry-dir", default=str(REGISTRY_DIR))
@@ -78,6 +122,12 @@ def main() -> None:
         type=int,
         default=None,
         help="Restrict to these calendar years (default: all).",
+    )
+    ap.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Render into a temp dir and report parity vs the committed tree "
+        "without writing anything (exit 1 if any rendered file differs).",
     )
     args = ap.parse_args()
 
@@ -90,10 +140,14 @@ def main() -> None:
             "registry is empty (no usable bundles); refusing to wipe the dashboard."
         )
     runs = [(e["label"], e["_bundle_path"]) for e in entries]
+    years = set(args.years) if args.years else None
+    if args.dry_run:
+        print(f"dry-run: rendering {len(runs)} registry entries into a temp dir")
+        sys.exit(_dry_run(runs, years))
     print(f"regenerating dashboard from {len(runs)} registry entries:")
     for e in entries:
         print(f"  - {e['label']!r} <- {e['bundle']}")
-    rb.generate(runs, years=set(args.years) if args.years else None)
+    rb.generate(runs, years=years)
 
 
 if __name__ == "__main__":
