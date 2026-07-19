@@ -32,3 +32,36 @@ If `main` has moved and a hunk is stale, `git apply --3way` resolves it
 (the change is disjoint from other regions). After applying, the cost tests go
 green — until then main CI is red because the already-merged tests assert these
 values.
+
+## neiso-operable-capacity-wiring.patch (2026-07-19)
+
+NEISO operable-capacity availability overlay — the model-consumption wiring for
+the ISO-NE Morning Report intake (`docs/handoffs/neiso-operable-capacity-intake-2026-07.md`).
+Two disjoint, additive edits the API cannot carry inline (`scenarios.py` ~534 KB,
+`fleet.py` ~505 KB):
+
+- `src/market_sim/config/scenarios.py` (+26): the `neiso_operable_capacity_availability`
+  gate (default `False`), beside `ercot_thermal_dam_availability`.
+- `src/market_sim/data/fleet.py` (+79): the pooled-thermal measured-availability
+  water-fill block in `generators_to_fleet_arrays`, beside the ERCOT class-day
+  block.
+
+Everything else (the committed CSV, fetch/build scripts, the
+`data.neiso_operable_capacity` loader, the test, docs) lands directly via the API.
+
+**Generated as** `git diff origin/main` with the two edits applied. Both edits
+are purely additive (new field / new gated block) and textually disjoint from
+any concurrent main change, so the merge is clean.
+
+**Verified 2026-07-19:** applies cleanly onto a pristine `origin/main` checkout
+and re-adds the config field; the end-to-end drive lands the covered-day
+cap-weighted thermal availability on the measured fleet fraction, and is inert
+when the gate is off. Unlike the cost patch, this one does **not** turn CI red
+before it applies — no committed test asserts the gate (the committed
+`tests/test_build_neiso_operable_capacity.py` exercises only the build + loader).
+
+**Apply (after this branch is on `main`, from the repo root):**
+```
+git apply docs/handoffs/patches/neiso-operable-capacity-wiring.patch
+```
+`git apply --3way` if a hunk is stale.
