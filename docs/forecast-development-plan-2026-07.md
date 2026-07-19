@@ -115,9 +115,20 @@ config freezes, never inside this program's iterations (§2.3).
    cap-market over-build (RM→30–67%) / ERCOT chronic shortage + #2064 non-monotone
    scarcity. Cure = responsive capacity price (flips) + entry dynamics; re-measured at
    T2 when that tier is eventually authorized (§2.1b).
-5. **Base-year adequacy accounting**: I7 FAILs at 2026 for CAISO/NEISO/NYISO (PJM now
-   clean after W2-D — the working A/B); NEISO requirement is a NERC stand-in
-   (`0.157`, needs Net ICR citation). → FF-2B.
+5. **Base-year adequacy accounting** — FF-2B (2026-07-19) PARTIALLY closed. **NEISO
+   I7 now PASSES**: the NEISO basis mis-pairing was closed with ISO-NE's own FCA 17
+   values — Net ICR requirement (`0.157`→`0.110`, Docket ER23-405-000) + cleared FCM
+   demand resources (2,940 MW) + cleared imports (567 MW). **Refined finding**: the
+   base-year failures were NOT one #1532 basis bug — only NEISO is a basis
+   mis-pairing. **CAISO/NYISO I7 STAY FAIL**, dominated by hydro that is dispatched
+   but excluded from the accredited ledger (`accredited_firm_capacity_mw` reads the
+   persistent `fleet`, which never contains hydro — CAISO 3.6 GW / NYISO 3.3 GW),
+   NOT a basis mismatch. CAISO gained its cited firm RA-import credit (3,371 MW,
+   DMM 2024) and NYISO's requirement basis was already correct (FF-3D ratio). The
+   hydro-in-ledger fix is routed to FF-1C (its charter, this row §1.2-6); CAISO also
+   carries peak-currency (FF-1C) + VRE/storage ELCC (CR-3.1). Not tuned to force
+   closure (rule 1/11). See `docs/handoffs/ff-2b-adequacy-basis-2026-07.md`.
+   → FF-1C (hydro-in-ledger), CR-3.1 (VRE/storage ELCC).
 6. **Inputs currency**: DC zone shares empty; growth/ATB/fuel/policy vintages unaudited
    at HEAD; `NEW_ENTRY_COSTS` hardcoded (ATB-cited) rather than reading the curated ATB
    datatype; hydro fleet silently drops ~3.3 GW (NYISO) past the last EIA-923 vintage.
