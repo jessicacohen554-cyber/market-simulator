@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-19-miso-gasshape-interpfix",
+  "label": "miso gasshape interpfix",
+  "date": "2026-07-19",
+  "shorthand": "miso-gasshape-interpfix",
+  "definition": "gas_daily_shape 3.7 interp-fix A/B MAIN arm (fixed code: true-trade-date + staircase HH daily shape; miso_winter_citygate_daily still supersedes Chicago-zone winter cells); recipe = miso-75 keeper via replay_keeper.build_kwargs; full span 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-19-miso-gasshape-interpfix.js",
+  "bundle": "results/calibration/miso_gasshape_interpfix_main"
+}

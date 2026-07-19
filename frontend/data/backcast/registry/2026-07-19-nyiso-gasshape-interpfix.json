@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-19-nyiso-gasshape-interpfix",
+  "label": "nyiso gasshape interpfix",
+  "date": "2026-07-19",
+  "shorthand": "nyiso-gasshape-interpfix",
+  "definition": "gas_daily_shape 3.7 interp-fix A/B MAIN arm (fixed code: true-trade-date + staircase HH daily shape); recipe = nyiso-63 keeper (= nyiso-62 recipe on corrected outages) via replay_keeper.build_kwargs; full span 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-19-nyiso-gasshape-interpfix.js",
+  "bundle": "results/calibration/nyiso_gasshape_interpfix_main"
+}
