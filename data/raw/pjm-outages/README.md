@@ -28,22 +28,32 @@ for the CAMPD unit-outage fallback in a PJM backcast.
   native feed columns (`forecast_execution_date_ept`, `forecast_date`, `region`,
   and the four MW columns). Current pull: execution dates
   **2018-01-01 → 2026-07-19**, 3 regions, 7 lead days each (65,511 rows).
-- `by-year/gen_outages_by_type_<YEAR>.csv` — **committed** tidy per-year CSVs
-  (the in-repo data the model reads). One file per year (~0.5 MB) with the
-  `pjm-outages` schema: `forecast_execution_date`, `forecast_date`, `lead_days`
-  (0..6), `region`, and the four MW columns.
+- `by-year/gen_outages_by_type_<YEAR>.csv` — tidy per-year CSVs (the in-repo
+  data the model reads). One file per year (~0.5 MB) with the `pjm-outages`
+  schema: `forecast_execution_date`, `forecast_date`, `lead_days` (0..6),
+  `region`, and the four MW columns. **Written locally by the derive step;
+  see "Data-file status" below.**
 
-## Processed / committed artifact
+## Processed artifact
 
-The tidy data ships as the **committed per-year CSVs** under `by-year/` above.
-`scripts/data/derive_pjm_dam_availability.py` also writes the efficient columnar
-`../pjm-dam-availability.parquet` (top-level `data/raw/`), which the loader
-prefers when present — but that parquet is **gitignored**: the repo's API-only
-push path (`mcp__github__push_files`) commits file content as UTF-8 text and
-cannot round-trip a binary blob, so the portable committed form is CSV and the
-parquet regenerates locally. Both carry the identical schema
+`scripts/data/derive_pjm_dam_availability.py` writes two things from the raw
+pull: the per-year CSVs above (the intended in-repo form) and the efficient
+columnar `../pjm-dam-availability.parquet` (top-level `data/raw/`), which the
+loader prefers when present. Both carry the identical schema
 (`data/dictionary/schema/pjm-outages.schema.yaml`) and the deriver enforces the
 RTO == sub-region-sum and components == total invariants.
+
+## Data-file status (why the data bytes aren't committed here)
+
+This intake session could commit only through the repo's **API-only push path**
+(`mcp__github__push_files`), which commits file content as UTF-8 text emitted in
+the call. That path **cannot** carry (a) the binary parquet (no binary
+round-trip) nor (b) the ~4.3 MB of CSV rows (too large to emit reliably), and
+`git push` is disallowed here. So the **data bytes are not committed**; what *is*
+committed is the full, one-command-reproducible pipeline. The loader degrades
+gracefully (returns NaN / empty, statistical fallback) until the data is present.
+To land it, run the two commands under **Regenerate**, or land the `by-year/`
+CSVs via a session with local `git`.
 
 ## Regenerate
 
@@ -55,7 +65,7 @@ python scripts/data/derive_pjm_dam_availability.py
 ## Consumption
 
 `market_sim.data.pjm_outages.pjm_dam_availability_series(year)` reads the source
-(`pjm_outage_mw_series` → parquet-if-present else the committed per-year CSV),
+(`pjm_outage_mw_series` → parquet-if-present else the per-year CSV),
 selects the current-day actual (`lead_days == 0`), sums the unplanned components
 (forced + maintenance) for the `PJM RTO` region, and converts to a fleet-wide
 availability fraction against the model's PJM fossil-thermal nameplate, applied
