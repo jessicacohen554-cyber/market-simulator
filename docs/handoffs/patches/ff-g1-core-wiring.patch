@@ -1,0 +1,419 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 2c7edc6..00024d1 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,5 +1,49 @@
+ # Changelog
+ 
++## 2026-07-19 — Transmission expansion: committed-instrument registry + gated forward TTC channel (FF-G1, WAVE FI)
++
++The forecast's network topology was frozen at base-year statics for all 25
++forecast years; board/regulator-committed builds were invisible. Forecast-only
++channel, **GATED default-off** (`transmission_expansion_enabled`, in
++`_CACHE_KEY_OPTIONAL_FIELDS`; backcast/hindcast coerced off) — **every
++existing cache key, backcast keeper, and default forecast is unchanged**
++(verified: pre-change vs flag-off NEISO 2026 result frames + objective exactly
++equal). Standing methodology: `docs/transmission-expansion-methodology-2026-07.md`;
++session record: `docs/handoffs/transmission-expansion-grounding-2026-07.md`.
++
++- **New raw datatype** `data/raw/transmission-expansion/` (schema
++  `transmission-expansion.schema.yaml`, lib `scripts/lib/transmission_expansion/`,
++  curation `scripts/data/curate_transmission_expansion.py` with live
++  topology-resolvability validation, sha256-pinned sources + page-marked md
++  conversions via `scripts/data/fetch_transmission_expansion_sources.py`):
++  35 rows across all six ISOs, closed instrument vocabulary
++  (energized/under_construction/approved_funded — roadmap excluded), per-row
++  rule-14 `mapping_note`, deltas additive to each ISO's base-static vintage
++  (new `data.transmission_expansion.TRANSMISSION_BASE_STATIC_VINTAGE`, kept beside its sole consumer).
++- **Applied deltas (10 rows)**: NECEC +1,200 MW (NEISO HQ_import→North +
++  simultaneous cap, energized 2026-01); CAISO SWIP-North +1,117.5 MW ISO
++  entitlement on the WECC simultaneous cap (2028); MISO LRTP Tranche 1
++  published per-LRZ CIL uplifts (+658/+1,443/+492/+166/+2,327 on the five CIL
++  groups, 2030); ERCOT 765 kV STEP WTX-export re-rate +3,500 MW split 8:3
++  per the WESTEX convention (2032). Where an instrument publishes **no MW**
++  (all six PJM RTEP corridors, Propel NY, Gates–Los Banos No. 3, IV–NoSONGS),
++  rows carry delta 0.0 — documented, dispatch-inert, never guessed (rule 5).
++- **Consumption seam**: `src/market_sim/data/transmission_expansion.py`
++  (fail-loud W2-E/G12 loader cloned from confirmed-retirements;
++  `apply_transmission_expansion` returns the same object when nothing applies)
++  wired at the runner's per-year `year_ttc` seam with per-year interface-group
++  rebuild; `scripts/run_full_horizon.py --transmission-expansion`.
++- **T0 smoke (NEISO 2026–2028, ON)**: 2026 applies HQ_import→North 900→2,100
++  and simultaneous 3,850→5,050; flows re-route onto the new wires
++  (HQ→Boston mean 1,612→1,930, HQ→CT 1,118→1,430) while total HQ energy stays
++  tranche-depth-limited (1,987.6 MW mean both legs) — measured confirmation
++  that the import-tranche energy-depth seam is the named V1 follow-up
++  (methodology §6.1), alongside the ERCOT import-direction split, the
++  hindcast information gate, and the no-published-MW re-rates.
++- Registered as **WAVE FI** in the FF plan (§1.2-11 + §6) with the FF-G2…G5
++  companion prompts (fuel forwards, net-CONE vintages, load-shape memo,
++  nuclear registry) and gap-register §3.11 rows.
++
+ ## 2026-07-19 — New-build capacity costs: cross-source grounding, literature-envelope ranges, storage/offshore/EGS/H2 derivation-lock
+ 
+ Forecast-only cost-input grounding (capacity-expansion entry screens); **no LP
+diff --git a/docs/forecast-development-plan-2026-07.md b/docs/forecast-development-plan-2026-07.md
+index 1b9bd69..8343d9b 100644
+--- a/docs/forecast-development-plan-2026-07.md
++++ b/docs/forecast-development-plan-2026-07.md
+@@ -144,6 +144,19 @@ config freezes, never inside this program's iterations (§2.3).
+    now; FF-3E projects the full-horizon cost, FF-3C on a measured breach (T2 itself
+    deferred — §2.1b).
+ 10. **MISO forecast path unverified** since the storage-registry fix landed. → FF-0B.
++11. **Forward-input provenance gaps (deep-research audit 2026-07-19)** — five forward
++    inputs with WEAK/MEDIUM provenance × HIGH sensitivity that no lane chartered,
++    ranked: (1) transmission/TTC frozen at base-year statics for all 25 forecast years
++    (**FF-G1 — LANDED 2026-07-19**: committed-instrument registry + gated per-year
++    channel, `docs/transmission-expansion-methodology-2026-07.md`, default off);
++    (2) fuel forward curves one AEO vintage stale + ~$1/MMBtu low near-term vs STEO,
++    NYMEX strip unused (audit §7.2-P1 orphaned by FF-1E) → FF-G2; (3) net-CONE
++    vintages hold-last 25 years (the capacity-price-validation "CR-2 follow-up",
++    chartered nowhere) → FF-G3; (4) load-shape evolution absent — peak-CAGR ≡
++    energy-CAGR by construction, no electrification reshaping, ISO-NE winter-flip
++    unexpressible → FF-G4 (memo-first); (5) nuclear license/uprate/restart lifetimes
++    ungrounded past ~2030 (only Diablo Canyon in the confirmed registry; BLK-9
++    inverts the screen against nuclear) → FF-G5. → WAVE FI (§6).
+ 
+ ### 1.3 Absorbed workstreams (state + what remains)
+ 
+@@ -1007,6 +1020,24 @@ then-current HEAD; until then nothing in this wave is schedulable.
+ 
+ ### Wave 5 — FF-5A dashboard: see §8 (run LAST among the ACTIVE waves — deferred Wave 4 is not a prerequisite).
+ 
++### WAVE FI — forward-input deep-research grounding (parallel-anytime; owner-dispatched)
++
++Registered 2026-07-19 from the §1.2-11 provenance audit. These are file-disjoint
++data-intake/grounding sessions in the capacity-cost-grounding template
++(`docs/new-build-cost-methodology-2026-07.md` + its handoff), independent of Waves 0–5:
++no solve beyond T0 (G2–G5 need ≈ zero LP), §7 binds, findings-first (no default
++flips), and `constants.py` collisions serialize with any in-flight L-INP session
++(rebase-don't-race, the FF-1E convention). Full standalone prompts were delivered in
++the FF-G1 session (2026-07-19); the owner dispatches each in its own session.
++
++| ID | Model | Scope | Lane | Status |
++|---|---|---|---|---|
++| **FF-G1** | FABLE | transmission-expansion registry + forward TTC channel | L-INP | **LANDED 2026-07-19** (this session; gate default-off, T1-F A/B pending before any flip) |
++| **FF-G2** | OPUS | fuel forward trajectories: AEO2026 re-derive + STEO/strip triangulation + methodology doc (executes audit §7.2-P1) | L-INP | prompt issued |
++| **FF-G3** | OPUS | forward net-CONE vintages + beyond-published evolution methodology (CR-2 follow-up; NO flip execution — FF-2C owns flips) | L-CAP | prompt issued |
++| **FF-G4** | FABLE/OPUS | load-shape evolution design memo (FF-0C memo pattern, NO code; reuses audit M3–M7/M11–M13) | L-INP | prompt issued |
++| **FF-G5** | OPUS | nuclear license/uprate/restart registry + forward-channel design memo (coordinates BLK-9 / R-NEW; rule 19 — no second exit mechanism) | L-INP | prompt issued |
++
+ ---
+ 
+ ## 7. Standing constraints (every FF session)
+diff --git a/docs/gap-register-2026-07.md b/docs/gap-register-2026-07.md
+index 9456108..9a25867 100644
+--- a/docs/gap-register-2026-07.md
++++ b/docs/gap-register-2026-07.md
+@@ -94,3 +94,18 @@ restoration of 3.1–3.8.*
+ | R5a | **NYISO ICAP/UCAP pairing audit.** NYISO's published IRM (24.4%) is stated on an **ICAP** basis, but the registry carries **no ICAP→UCAP ratio** for NYISO (unlike PJM's FPR/(1+IRM) or MISO's (1+PRM_UCAP)/(1+PRM_ICAP) conversions) — so today's pairing tests an ICAP-stated requirement against the model's UCAP-counted supply ledger ((1−EFORd), which otherwise already matches NYISO's own UCAP construction — the requirement is the broken half). Same basis-mismatch error class as the PJM #1532 flag, but in the **opposite direction**: position understated ~5–7%, over-pays. Blocks NYISO curve eligibility (anchor 50.55 $/kW-yr, published ARV) until the published IRM→UCAP translation is intaken — no touching the pairing without that citation (rule 13). | `docs/handoffs/accreditation-basis-memo-2026-07-12.md` §2(a) table (NYISO row), §4.3 item R5, §6 Option A (recommended); parent issue #1532; resolution shares BLK-3/BLK-4's chain; RC-0A raw-document research `data/raw/capacity-market/accreditation-filings/nyiso/README.md`; adjudication `docs/handoffs/nyiso-neiso-capacity-pairing-adjudication-2026-07-15.md` §2–3 | blocks-claim | M — published-parameter filing search + citation, no LP (same discipline as the PJM R1–R4 steps) | P-2B accreditation-basis lane; unassigned — P-2A separately already blocks NYISO on curve vintage | **ADJUDICATED, NOT IMPLEMENTED (2026-07-15, RC-1D).** NYISO's own ICAP Manual §2.5/2.6 defines the translation factor as a formula recomputed twice per Capability Year from the realized fleet's own UCAP/ICAP roll-up — no filed constant exists to intake (confirmed, not a research gap). The two candidate constructions (model-derived roll-up vs. static proxy from the one located number, NYC-Locational 5.18% Summer 2025) were both found NOT unambiguous enough to implement this session: a same-year model-derived factor is mathematically degenerate in this repo's call graph (`accredited_firm_capacity_mw` cancels out of the reserve-position ratio, erasing all per-class accreditation signal — adjudication §2.3); the only concrete static number is Locational (NYC), not NYCA-wide, a boundary mismatch per rule 5. Code unchanged (`PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO` still absent for NYISO, ratio-1.0 fallback). **NYISO stays curve-INELIGIBLE** pending owner sign-off on the adjudication's owner-decision box (adjudication §3: lagged model-derived factor vs. NYCA-wide data intake vs. status quo). NYSRC IRM Study Appendix D (Table D.1.1) added to MANUAL DOWNLOADS NEEDED (adjudication §4) as the artifact that would unblock the static-proxy path. |
+ | R5b | **NEISO qualified-capacity pairing audit.** NEISO's requirement is stated on a **Net ICR** basis against **qualified capacity** (≈ seasonal claimed capability with **no EFORd derate** — ISO-NE prices outage/availability risk separately, through Pay-for-Performance) — a third accreditation convention distinct from PJM's ELCC-class and MISO/NYISO's EFORd-flavored bases. The model's B2 supply ledger ((1−EFORd) thermal) likely **under-counts** relative to ISO-NE's own qualified-capacity ledger, since it derates for an outage risk that FCA's PFP construct already prices elsewhere. Needs the FCA qualified-capacity definition intaken and reconciled against the model's ledger before NEISO's curve (anchor 108.94 $/kW-yr, published FCA18) is curve-eligible. | `docs/handoffs/accreditation-basis-memo-2026-07-12.md` §2(a) table (NEISO row), §4.3 item R5, §6 Option A (recommended); parent issue #1532; resolution shares BLK-3/BLK-4's chain; RC-0A raw-document research `data/raw/capacity-market/accreditation-filings/neiso/README.md`; adjudication `docs/handoffs/nyiso-neiso-capacity-pairing-adjudication-2026-07-15.md` §1 | blocks-claim | M — FCA qualified-capacity filing search + citation, no LP | P-2B accreditation-basis lane; unassigned | **IMPLEMENTED (2026-07-15, RC-1D).** Market Rule 1 §III.13.1.2.2.1.1 (eff. 2025-05-03) confirmed Qualified Capacity is the median of 5-year Seasonal Claimed Capability with no EFORd term (zero matches for "EFORd" across the 235-page FCM tariff sections); EFORd sizes only the system-wide GE MARS/ICR simulation, never an individual resource's own QC. `THERMAL_ACCREDITATION_BASIS_BY_ISO["NEISO"] = "claimed_capability"` added (`src/market_sim/config/constants.py`), handled by `thermal_accreditation_fraction` (`src/market_sim/model/capacity.py`, returns 1.0, no derate — one resolver feeds both the adequacy ledger and the payment, rule 19). Basis-consistency tests added (`tests/test_capacity.py::TestClaimedCapabilityBasis`, mirrors the PJM R2/R3 pattern). Dating caveat carried inline: the FCM sunsets after CCP2027-2028 (final FCA already held); this basis is current-through-sunset only, not checked against ISO-NE's Capacity Accreditation Reform successor. Curve eligibility on the requirement side (`PLANNING_RESERVE_MARGIN_BY_ISO["NEISO"]`, the NERC-reference-margin stand-in) is unaffected — a separate, already-flagged `needs-citation` item, out of R5b's scope. **Requirement side CLOSED (FF-2B, 2026-07-19):** `PLANNING_RESERVE_MARGIN_BY_ISO["NEISO"]` `0.157`→`30_305/27_298−1 = 0.110` (ISO-NE's own Net ICR / 50-50 peak, FCA 17 Docket ER23-405-000), + cleared FCM demand resources (`ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["NEISO"]`) + cleared imports (`ADEQUACY_EXTERNAL_TIE_FIRM_MW["NEISO"]`) — NEISO base-year I7 now PASSES; per-vintage Pass-1B re-scored (−22…+13% frozen-anchor residual) + first NEISO capacity-hindcast pair produced. `docs/handoffs/ff-2b-adequacy-basis-2026-07.md`. Both R5b halves (supply + requirement) now on ISO-NE's own published basis. |
+ | R5c | **Hydro excluded from the accredited-supply ledger (dispatched-but-not-accredited).** FF-2B (2026-07-19) found, reconciling the base-year I7 ledger, that conventional hydro contributes **0 MW** to `accredited_firm_capacity_mw` for every ISO: hydro is built by `renewables.py`/the hydro energy-budget path into the *dispatch* fleet (`hydro_gen_idx`) but never enters the persistent `fleet` the accredited ledger reads, and it is not passed as a credited pool (`_FIRM_CLEAN_FUELS=("hydro",)` sums to 0 in all three 2026 snapshots). This is the **dominant** cause of the NYISO I7 base-year FAIL (3,343 MW hydro dispatched, ~1.7–3.0 GW firm uncounted ≈ the entire 1.8 GW gap) and a major CAISO contributor (3,601 MW dispatched). It is a **ledger-structure exclusion**, distinct from — and refining — the §1.2-6 "hydro fleet drops past the EIA-923 vintage" forecast-year data-currency framing (CAISO/NYISO 2026 hydro is present in dispatch, just unaccredited). NOT an adequacy-basis mismatch, so out of FF-2B's charter (rule 1/11 — CAISO/NYISO left FAIL rather than over-credited). | `docs/handoffs/ff-2b-adequacy-basis-2026-07.md` §2.2/§2.3/§4; base-year snapshots `results/ff2b-{before,after}/{caiso,nyiso}/…/evolution_2026.json` (`firm_clean_mw=0`); hydro budgets (`market_sim.data.hydro.load_hydro_budget`: CAISO 3,601 / NYISO 3,343 / NEISO 30 MW for 2026) | blocks-claim (CAISO/NYISO base-year I7) | M — pass the model's own hydro capability to `accredited_firm_capacity_mw` as a credited pool at each ISO's published hydro RA accreditation (CPUC monthly QC / NYISO CAF / ISO-NE QC — not the generic 0.50), mirroring wind/solar; no LP for the ledger change | **FF-1C** (hydro lane owns the fix + the per-ISO hydro RA credit); found + routed by FF-2B 2026-07-19 |
++
++### 3.11 Forward-input provenance gaps (WAVE FI, opened 2026-07-19)
++
++Opened by the FF-G1 deep-research session from the forward-input provenance audit
++(FF plan §1.2-11). Each row is chartered as a WAVE FI session (plan §6); the
++capacity-cost-grounding template applies (registry/benchmark datatype + methodology
++doc + consistency tests, findings-first, no default flips).
++
++| ID | Gap | Evidence / cross-refs | Severity | Effort | Owner / lane | Status |
++|---|---|---|---|---|---|---|
++| FF-G1 | **Forecast topology frozen at base-year statics** — `ttc` computed once pre-loop and reused for all 25 forecast years; committed builds (NECEC, ERCOT 765 kV program, MISO LRTP, CHPE, SWIP-North) invisible to 2026–2050 congestion/zonal basis. | `docs/transmission-expansion-methodology-2026-07.md`; `docs/handoffs/transmission-expansion-grounding-2026-07.md`; registry `data/raw/transmission-expansion/` | blocks-claim (zonal basis/interchange trajectory) | done | L-INP; this session | **LANDED 2026-07-19**: committed-instrument registry (6 ISOs, 35 rows, 10 applied deltas) + gated per-year channel (`transmission_expansion_enabled`, default off, cache-key-stable, backcast/hindcast-coerced); byte-identity + NEISO T0 smoke verified. Open follow-ups tracked in methodology §6 (import-tranche seam, ERCOT import-direction split, hindcast information gate, no-published-MW re-rates). |
++| FF-G2 | **Fuel forward curves one AEO vintage stale and ~$1/MMBtu low near-term** (model mid $2.74/2026 vs STEO ~$3.60; NYMEX strip unused even as context); audit §7.2-P1 routed the refresh to FF-1E which closed without it. | `HENRY_HUB_TRAJECTORIES` (constants ~L1091, header notes AEO2026 available); `docs/handoffs/ff-inputs-currency-audit-2026-07.md` §7.2-P1 | blocks-claim (price level, all ISOs) | M (no LP) | L-INP; prompt issued | OPEN |
++| FF-G3 | **Net-CONE anchors hold-last for 25 forecast years** — `MARKET_DESIGN_VINTAGES` forward-carry (constants ~L3442); the capacity-price-validation "CR-2 follow-up: per-forecast-year net-CONE" is chartered nowhere; FF-2C only re-bases the level. Feeds the BLK-9 payment chain. | `docs/handoffs/capacity-price-validation-2026-07-12.md` §6/§7 prereq 3; `docs/handoffs/ff-2b-adequacy-basis-2026-07.md:211`; BLK-9 | blocks-claim (capacity-market retire/entry 2030s+) | M (no LP) | L-CAP; prompt issued (no flip execution) | OPEN |
++| FF-G4 | **Load-shape evolution absent** — one growth scalar per era forces peak-CAGR ≡ energy-CAGR on a frozen weather-year hourly shape; DC block deliberately flat; published divergence unexpressible (ISO-NE winter peak ~2.6%/yr vs energy ~1.0%; PJM peak +3.6%/yr; ISO-NE winter-flip). | `resolve_demand_growth_rate`; plan §2.1a row (c); audit §1.1 + M3–M7/M11–M13 | blocks-claim (scarcity timing, storage value, winter risk) | M memo, L implementation | L-INP; memo-first prompt issued (FF-0C pattern) | OPEN |
++| FF-G5 | **Nuclear lifetimes ungrounded past ~2030** — `NONFOSSIL_ANNOUNCED_HORIZON_YEARS=5` + confirmed registry carrying only Diablo Canyon means 2035–2050 nuclear exits ride the economic screen BLK-9 shows is inverted against nuclear; NRC license/SLR/uprate/restart record exists but is not a model input. | constants ~L3533; `data/raw/confirmed-retirements/README.md`; BLK-9; R5c (clean-firm accounting precedent) | blocks-claim (2035–2050 clean-firm supply) | M registry + memo (no LP) | L-INP; prompt issued (rule 19 — reconcile with existing exit channels, never stack) | OPEN |
+diff --git a/scripts/regenerate_clean.py b/scripts/regenerate_clean.py
+index b1ad1b0..f4e10df 100644
+--- a/scripts/regenerate_clean.py
++++ b/scripts/regenerate_clean.py
+@@ -45,6 +45,7 @@ DATATYPES: tuple[str, ...] = (
+     "partial-outages",
+     "capacity-deliverability",
+     "confirmed-retirements",
++    "transmission-expansion",
+     "gtc-limits",
+     "transfer-interface-limits",
+     "winter-fuel-inventory",
+diff --git a/scripts/render_data_dictionary.py b/scripts/render_data_dictionary.py
+index 2315d8f..7d6522a 100644
+--- a/scripts/render_data_dictionary.py
++++ b/scripts/render_data_dictionary.py
+@@ -81,6 +81,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
+     "partial-outages",
+     "capacity-deliverability",
+     "confirmed-retirements",
++    "transmission-expansion",
+     "gtc-limits",
+     "transfer-interface-limits",
+     "ramp-capability",
+@@ -731,6 +732,33 @@ NARRATIVE: dict[str, dict[str, str]] = {
+             "`confirmed_exits_enabled`, default off)."
+         ),
+     },
++    "transmission-expansion": {
++        "summary": (
++            "Committed transmission-expansion registry: projects bound by an "
++            "enforceable public instrument, mapped onto the model's reduced "
++            "zonal topology as forward transfer-capability deltas."
++        ),
++        "reconciles": (
++            "PUCT Permian/765 kV orders + ERCOT board Tier 1 endorsements, "
++            "MISO board-approved LRTP tranches, PJM board-approved RTEP "
++            "window portfolios, CAISO board-approved TPP projects, NYISO "
++            "Tier 4 contracts / public-policy selections, and ISO-NE "
++            "state-contracted HVDC — onto one long frame keyed by "
++            "`(iso, row_id)` with closed `status_tier` "
++            "(`energized`/`under_construction`/`approved_funded` — "
++            "roadmap/planned is deliberately excluded) and `target_kind` "
++            "(`link`/`interface`/`import_tranche`/`intra_zonal`) "
++            "vocabularies. Deltas are additive to each ISO's base-static "
++            "vintage (`data.transmission_expansion.TRANSMISSION_BASE_STATIC_VINTAGE`); rows "
++            "whose instrument publishes no MW carry `delta_mw = 0.0` "
++            "(documented, dispatch-inert — numbers are never guessed), and "
++            "every row's `mapping_note` carries the rule-14 reconciliation. "
++            "Consumed forecast-forward only by "
++            "`data.transmission_expansion.load_transmission_expansions` → "
++            "the per-year link/interface uplift in `runner.run_scenario_iso` "
++            "(GATED `transmission_expansion_enabled`, default off)."
++        ),
++    },
+     "coal-basin-price": {
+         "summary": (
+             "EIA Annual Coal Report region/rank f.o.b.-mine coal price "
+diff --git a/scripts/run_full_horizon.py b/scripts/run_full_horizon.py
+index 402acbe..e81d77e 100644
+--- a/scripts/run_full_horizon.py
++++ b/scripts/run_full_horizon.py
+@@ -108,13 +108,18 @@ class Sampler:
+ # Reference forecast config
+ # --------------------------------------------------------------------------- #
+ def reference_config(
+-    iso: str, start_year: int, end_year: int, cmc: bool
++    iso: str,
++    start_year: int,
++    end_year: int,
++    cmc: bool,
++    transmission_expansion: bool = False,
+ ) -> ScenarioConfig:
+     """The P-3A reference forecast: all defaults, forecast mode, P-2A pins.
+ 
+-    Every field except mode/iso/horizon/capacity_market_clearing is left at the
+-    ScenarioConfig default, so ``use_campd_bins=True`` yields each ISO's own
+-    per-plant CAMPD bins where an artifact exists (the ISO default).
++    Every field except mode/iso/horizon/capacity_market_clearing (and the
++    optional FF-G1 ``transmission_expansion_enabled`` probe gate) is left at
++    the ScenarioConfig default, so ``use_campd_bins=True`` yields each ISO's
++    own per-plant CAMPD bins where an artifact exists (the ISO default).
+     """
+     return ScenarioConfig(
+         iso=iso.upper(),
+@@ -122,6 +127,7 @@ def reference_config(
+         start_year=start_year,
+         end_year=end_year,
+         capacity_market_clearing=cmc,
++        transmission_expansion_enabled=transmission_expansion,
+     )
+ 
+ 
+@@ -237,6 +243,14 @@ def main(argv: list[str] | None = None) -> int:
+         action="store_true",
+         help="Flip the CR-1 sloped-curve gate on (default OFF = P-2A recommendation).",
+     )
++    ap.add_argument(
++        "--transmission-expansion",
++        action="store_true",
++        help=(
++            "Flip the FF-G1 forward transmission-expansion gate on "
++            "(default OFF; committed-registry TTC deltas per solve year)."
++        ),
++    )
+     ap.add_argument(
+         "--sample-interval", type=float, default=0.5, help="RSS sampling seconds."
+     )
+@@ -265,7 +279,11 @@ def main(argv: list[str] | None = None) -> int:
+     runnermod.save_result = _timed_save
+ 
+     config = reference_config(
+-        iso, args.start_year, args.end_year, args.capacity_market_clearing
++        iso,
++        args.start_year,
++        args.end_year,
++        args.capacity_market_clearing,
++        transmission_expansion=args.transmission_expansion,
+     )
+ 
+     sampler = Sampler(interval=args.sample_interval)
+diff --git a/src/market_sim/config/scenarios.py b/src/market_sim/config/scenarios.py
+index b2a266a..183026f 100644
+--- a/src/market_sim/config/scenarios.py
++++ b/src/market_sim/config/scenarios.py
+@@ -82,6 +82,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
+     # every pre-existing cache key is byte-stable; True enters the key (a
+     # distinct financing scenario).
+     "per_tech_wacc_enabled",
++    # Forward transmission-expansion channel (FF-G1): default False dropped
++    # from the hash so every pre-existing cache key is byte-stable; True
++    # enters the key (a distinct topology scenario).
++    "transmission_expansion_enabled",
+ )
+ 
+ 
+@@ -6097,6 +6101,25 @@ class ScenarioConfig:
+     # market_sim.model.transmission.build_pjm_external_flow_groups.
+     pjm_congestion: bool = False
+ 
++    # Forward transmission-expansion channel (FF-G1, GATED default off). When
++    # on in forecast mode, the committed-instrument registry
++    # (data/raw/transmission-expansion via data.transmission_expansion) adds
++    # each in-service project's transfer-capability delta to the matching
++    # TransferLink TTC / InterfaceLimit cap per solve year — cumulative from
++    # each row's in_service_year, additive to the ISO's base-static vintage
++    # (data.transmission_expansion.TRANSMISSION_BASE_STATIC_VINTAGE), so the 2026-2050 topology
++    # evolves with board/regulator-committed builds (NECEC, Permian plan,
++    # LRTP) instead of staying frozen at the base year. Registry rows are
++    # binding-instrument only (energized / under_construction /
++    # approved_funded — the confirmed-retirements admissibility convention,
++    # rule 13); measured backcast overlays are untouched (backcast coerces
++    # this off in __post_init__; hindcast is excluded in V1 pending an RC-1B
++    # style instrument_date information gate). Off by default: every existing
++    # forecast and backcast is byte-identical (the flag is also in
++    # _CACHE_KEY_OPTIONAL_FIELDS, so default-off cache keys are unchanged).
++    # See docs/transmission-expansion-methodology-2026-07.md.
++    transmission_expansion_enabled: bool = False
++
+     pjm_seam_flow_limit: bool = False  # PJM reference-price seam: the PJM
+     # analogue of miso_seam_flow_limit. Cap each of PJM's 5 reference-price
+     # seams' (MISO/NYISO/Carolinas/TVA/LGEE) import-band availability at the
+@@ -6678,6 +6701,17 @@ class ScenarioConfig:
+         if self.mode == "backcast":
+             self.entry_lookahead_reprice = False
+ 
++        # Forward transmission-expansion channel (FF-G1): forecast-forward
++        # only. A backcast's transmission is the measured overlays
++        # (NYISO_INTERFACE_TTC_BY_YEAR, measured GTC/interface series), and
++        # the hindcast harness is excluded in V1 (no RC-1B instrument_date
++        # information gate yet — a 2021-vintage hindcast must not know about
++        # a 2024 board approval). Coercing keeps every backcast keeper and
++        # hindcast leg byte-identical regardless of the flag (the FF-1F
++        # datacenter_load_path coercion pattern above).
++        if self.mode == "backcast" or self.hindcast:
++            self.transmission_expansion_enabled = False
++
+         # T1-X crossover boundary (FF-0E, plan §2.2): only meaningful on the
+         # vintage-seeded capacity-hindcast harness (forecast machinery). A
+         # crossover is always hindcast=True / mode="forecast"; guard against a
+diff --git a/src/market_sim/runner.py b/src/market_sim/runner.py
+index f69fd8b..d8b5eb3 100644
+--- a/src/market_sim/runner.py
++++ b/src/market_sim/runner.py
+@@ -60,6 +60,12 @@ from market_sim.data.confirmed_retirements import (
+     load_confirmed_exits,
+ )
+ from market_sim.data.outages import apply_correlated_outage_derate
++from market_sim.data.transmission_expansion import (
++    TransmissionExpansion,
++    apply_transmission_expansion,
++    cumulative_deltas,
++    load_transmission_expansions,
++)
+ from market_sim.data.fuel import (
+     apply_coal_supply_pricing,
+     resolve_annual_gas_price,
+@@ -546,6 +552,27 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
+                 len(_corridor_groups),
+             )
+ 
++    # Forward transmission-expansion channel (FF-G1, GATED
++    # transmission_expansion_enabled, default off): committed-instrument
++    # registry rows loaded once here, applied per solve year at the year_ttc
++    # seam below. Forecast-forward only — __post_init__ coerces the flag off
++    # in backcast/hindcast, and the mode gate here is belt-and-braces.
++    # required=True is the fail-loud condition (W2-E / G12 convention): with
++    # the flag on, a never-curated checkout raises with the regeneration
++    # command instead of silently running the frozen-topology forecast.
++    _txexp_expansions: list[TransmissionExpansion] = []
++    if (
++        config.mode == "forecast"
++        and not config.hindcast
++        and getattr(config, "transmission_expansion_enabled", False)
++    ):
++        _txexp_expansions = load_transmission_expansions(iso, required=True)
++    # Base (pre-corridor) interface-group count: a per-year expansion rebuild
++    # regenerates exactly the declared-limit groups and re-appends any
++    # corridor extension groups verbatim (one group per InterfaceLimit, so the
++    # declared count is len(iso_config.interface_limits)).
++    _txexp_base_group_count = len(iso_config.interface_limits)
++
+     fleet = None
+     loss_tracker: dict[str, int] = {}
+     prior_results = None
+@@ -1375,12 +1402,58 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
+             # array needs recomputing per year; incidence and
+             # link_bidirectional are topology-only and unaffected.
+             year_ttc = ttc
++            _year_iso_config = iso_config
+             if iso == "CAISO" and getattr(config, "caiso_per_year_import_caps", False):
+                 _caiso_year_iso_config = apply_caiso_local_import_limits(
+                     iso_config, iso, year
+                 )
+                 if _caiso_year_iso_config is not iso_config:
++                    _year_iso_config = _caiso_year_iso_config
+                     year_ttc = get_ttc_array(_caiso_year_iso_config.links)
++            # Forward transmission-expansion channel (FF-G1): add the
++            # cumulative in-service committed deltas to this solve year's link
++            # TTCs / interface caps. apply_transmission_expansion returns the
++            # SAME object when nothing applies (pre-COD years, zero-row
++            # registry, flag off => _txexp_expansions empty and this block is
++            # skipped), so the default path is byte-identical. Only the TTC
++            # array — and, when an interface cap moved, the declared-limit
++            # groups (corridor extension groups re-appended verbatim) — are
++            # recomputed per year; incidence and link_bidirectional are
++            # topology-order-only and unaffected.
++            year_interface_groups = interface_groups
++            if _txexp_expansions:
++                _txexp_year_config = apply_transmission_expansion(
++                    _year_iso_config, iso, year, _txexp_expansions
++                )
++                if _txexp_year_config is not _year_iso_config:
++                    year_ttc = get_ttc_array(_txexp_year_config.links)
++                    if (
++                        _txexp_year_config.interface_limits
++                        is not _year_iso_config.interface_limits
++                    ):
++                        year_interface_groups = (
++                            build_interface_groups(
++                                _txexp_year_config.links,
++                                _txexp_year_config.interface_limits,
++                            )
++                            + interface_groups[_txexp_base_group_count:]
++                        )
++                    _txexp_links, _txexp_ifaces = cumulative_deltas(
++                        _txexp_expansions, year
++                    )
++                    logger.info(
++                        "%s %d: transmission-expansion deltas applied "
++                        "(links %s; interfaces %s)",
++                        iso,
++                        year,
++                        {f"{a}->{b}": round(v, 1) for (a, b), v in _txexp_links.items()}
++                        or "none",
++                        {
++                            k: (round(f, 1), round(r, 1))
++                            for k, (f, r) in _txexp_ifaces.items()
++                        }
++                        or "none",
++                    )
+             # Base dispatch kwargs + priced import-node band: the shared
+             # pipeline assembly (orchestrator-unification Stage 2) -- the same
+             # key set the inline dict carried, byte-identical values.
+@@ -1398,7 +1471,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
+                 voll=iso_config.voll,
+                 incidence=incidence,
+                 ttc=year_ttc,
+-                interface_groups=interface_groups or None,
++                interface_groups=year_interface_groups or None,
+                 # One-way links (MISO's RDT directional pair) floor their flow
+                 # at 0; all-True for every other ISO (byte-identical bounds).
+                 link_bidirectional=get_link_bidirectional_array(iso_config.links),
