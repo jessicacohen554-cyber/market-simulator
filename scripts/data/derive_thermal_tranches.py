@@ -157,9 +157,13 @@ def _chp_sector_map(years: list[int]) -> dict[int, str]:
     import zipfile
     from collections import Counter
 
+    from market_sim.config.paths import RAW_DIR
+
     votes: dict[int, Counter] = {}
     for year in years:
-        zpath = REPO / "inputs" / "raw-data" / f"f923_{year} (1).zip"
+        # Raw f923_*.zip releases under the single W1 data root (paths.RAW_DIR =
+        # data/raw); the pre-W1 ``inputs/raw-data`` path was removed.
+        zpath = RAW_DIR / f"f923_{year} (1).zip"
         if not zpath.exists():
             print(f"  (no EIA-923 archive for {year}: {zpath.name})")
             continue
