@@ -10,8 +10,15 @@
 # (results/export.py::real_to_nominal via scripts/report_ces_campaign.py
 # --nominal).
 #
-# Run (W4-A/W4-B, BLOCKED on the §7 screen-readiness gate / W3-R GO):
-#   market-sim matrix --config configs/scenarios/<iso>_ces_base_2026_2050.yaml \
+# Run (W4-A/W4-B, BLOCKED on the §7 screen-readiness gate / W3-R GO).
+# FF-3B POC prerequisites (ff-3b-ces-poc-2026-07.md F-1 — the console command
+# crashes without both): first
+#   PYTHONPATH=. python scripts/data/curate_confirmed_retirements.py
+# (the confirmed-exit clean partition is gitignored), then PREFIX the run with
+# PYTHONPATH=. (the market-sim console entry point does not add the repo root to
+# sys.path, and load_confirmed_exits imports scripts.lib.clean_io):
+#   PYTHONPATH=. market-sim matrix \
+#       --config configs/scenarios/<iso>_ces_base_2026_2050.yaml \
 #       --matrix configs/ces_premium_matrix.yaml
 # then scripts/report_ces_campaign.py on the matrix out-dir.
 mode: cases

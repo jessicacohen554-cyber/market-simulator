@@ -281,3 +281,11 @@ docs/handoffs/_fom_grid_cache/
 docs/handoffs/_foresight_ab_cache/
 docs/handoffs/_battery_cache_*/
 docs/handoffs/_battery_metrics/
+
+# FF-3B CES T1-scale POC: disposable per-year solve cache + logs, and the
+# throwaway driver/registration instrumentation. The committed POC deliverables
+# are docs/handoffs/ff-3b-ces-poc-2026-07.md (with the wall/RSS ledger + report
+# tables) and the kind="ces-poc" sidecars under frontend/data/hindcast/ (which
+# carry meta.per_year_perf for FF-3E).
+/results/ces-poc/
+/scratchpad-local/
