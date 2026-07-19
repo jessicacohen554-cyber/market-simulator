@@ -60,3 +60,68 @@ parity CI gate was removed 2026-07-14, so nothing caught it.
 fails NEISO + NYISO. Repair = regenerate each payload where its bundle lives
 (`dashboard_add_run.py` re-registration, or re-push from the producing
 session; NEISO also needs its bundle), then `build_status.py --iso NEISO`.
+
+## 2026-07-19 — gas_daily_shape §3.7 interp-mislocation fix: all-ISO A/B (true-date + trade-date staircase); PJM + MISO keepers advanced
+
+**Task (standing correctness follow-up from the miso-72 winter lane, spec
+`docs/handoffs/miso-winter-fuel-security-design-2026-07.md` §3.7 — NOT a miso-N
+session).** `gas_daily_shape_factors` resampled each month's Henry Hub daily
+quote LIST with an even-spread `np.interp`, mislocating any convex single-day
+spike bracketed by a trading-holiday gap (the Jan-12-2024 Heather Friday print
+priced Jan-13) and linearly smearing every peak between quotes. Fix (PR #2565,
+merged to main this session): a dated HH loader (`_henry_hub_daily_dated`, raw
++ clean branches) + `_trade_date_staircase` — quotes sit on their TRUE trade
+dates, non-trading days carry the last trade forward (staircase, never an
+interpolation across a gap; trade-date, not flow-date, because the HH daily
+spot prints the price of its own trading day, unlike the next-day-delivery
+citygate indexes that keep `_flow_date_staircase`). Mean preservation per month
+holds EXACTLY by construction (divisor = the staircase's own calendar-day
+mean), subsuming the G-A1 renormalization — no forcing. Rule 23: zero new
+parameters; the fix re-derives from source-data handling only. Unit tests:
+spike-on-true-date, holiday-gap staircase (Fri covers Sat/Sun/Mon), gap-free
+month identity, no-quote months all-ones, off-state byte-inert (booby-trapped
+loader).
+
+**Affectedness (keeper `run_config.gas_daily_shape`):** CAISO/PJM/MISO/NEISO/
+NYISO true, ERCOT false (byte-inert, no ERCOT arm). MISO's
+`miso_winter_citygate_daily` supersedes only Chicago-zone winter cells; the
+national shape is live everywhere else.
+
+**A/B (rule 15: both arms registered, whatever the verdict).** Per ISO: main =
+fixed code, base = pre-fix code (66879ac), SAME data + keeper recipe both arms
+via `replay_keeper.build_kwargs`, full span 2023-2025 one bundle each. Both
+arms inherit the 2026-07-19 +1h frame-defect fix (7e29e44), so base ≠ the
+registered keeper bundle byte-for-byte; the A/B isolates the §3.7 fix alone.
+Registered pairs: `2026-07-19-{caiso,pjm,miso,neiso,nyiso}-gasshape-interpfix`
+(+`-base`).
+
+**Result — the expected signature everywhere, and nothing else (rules 13/14):**
+annual mean LMP moves ≤$0.10/MWh in every ISO-year; hourly relocation
+concentrates exactly in the gap-bracketed spike windows.
+
+- **PJM**: mean Δ ≤$0.01 all years; 2024 max |Δ| $81/MWh at h359 (the Heather
+  weekend), 2025 max $54 (Jan cold snap); 647/1353/1903 hours >|$1|. Verdict:
+  **CALIBRATED**, every scored criterion PASS (base identical minus C7/C8
+  scoring). **Keeper advanced** to `2026-07-19-pjm-gasshape-interpfix`
+  (owner-authorized in-session).
+- **MISO**: mean Δ +0.00/+0.10/+0.08; 2024 max |Δ| $60 at h358, 2025 max $36;
+  409/1217/1327 hours >|$1|. Verdict: NOT-YET on the same ledgered irreducible
+  {C3a-2025, C3c} tail as miso-75 (out of scope), C3a-2025 improves −15.3% →
+  −15.1%. **Keeper advanced** to `2026-07-19-miso-gasshape-interpfix`
+  (owner-authorized in-session).
+- **CAISO**: 2023/2024 price-identical (the measured citygate daily overlay
+  supersedes the national shape); 2025 mean −$0.04, 207 hours >|$1|, max $22.
+  **No keeper action**: the CAISO keeper advanced to caiso-102-hourfix
+  mid-session (PR #2563), so this A/B (caiso-97 recipe) registers as probes.
+- **NEISO / NYISO**: exactly price-inert all years — the hub-basis daily
+  overlays (AGT / Transco legs) replace the gas rows in every covered month, so
+  the national shape never reaches dispatch. Registered as inertness probes; no
+  keeper action (NYISO's keeper also advanced mid-session to nyiso-64).
+
+**Ops.** Ten full-span solves, years sequential within each invocation, arms
+concurrent for CAISO/NEISO/NYISO, PJM/MISO solo (P1 peaks ~15/11 GB; 12 G swap
+file); base arm from a sparse pre-fix worktree via `MARKET_SIM_DATA_ROOT`.
+Fresh-checkout restorations: `transfer-interface-limits`/`ramp-capability`/
+`capacity-deliverability`/`winter-fuel-inventory`(+NYISO) clean partitions
+rebuilt, `pjm-da-virtuals` re-fetched (fail-loud caught it). Retention sweep
+pruned pjm-102/102b, caiso-84-gas-spot, miso-70-tier-base.

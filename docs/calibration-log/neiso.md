@@ -33,3 +33,12 @@ registry: `docs/out-of-sample-results-2026-07.md §1.5`; design + admissibility:
 `docs/handoffs/neiso-operable-capacity-intake-2026-07.md`. Turning the gate on /
 promoting is a future NEISO-lane decision — this session delivers data + opt-in
 wiring, verified inert when off.
+
+## 2026-07-19 — gas_daily_shape §3.7 fix A/B: NEISO exactly price-inert (hub overlay supersedes); probes registered
+
+Cross-ISO session (full entry: `docs/calibration-log/governance.md` 2026-07-19
+gas_daily_shape §3.7). On the neiso-60 keeper recipe the fix is exactly
+price-inert in all three years — the AGT hub-basis daily overlay replaces every
+covered gas row, so the national HH shape never reaches NEISO dispatch.
+Registered `2026-07-19-neiso-gasshape-interpfix`(+`-base`) as the inertness
+record; no keeper action.
