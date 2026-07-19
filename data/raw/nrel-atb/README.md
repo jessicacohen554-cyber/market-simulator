@@ -124,6 +124,14 @@ regenerates cleanly rather than overwriting history).
       years, crpyears-deduped as above; not every combination populated for
       every tech).
 
+> **FF-1E completeness fix (2026-07):** the extract was previously committed as
+> only `.part00`/`.part01` (600 rows, the four alphabetically-first techs —
+> Biopower/Coal_FE/Geothermal/Hydropower); the entry technologies wind, solar,
+> gas, nuclear and battery were **absent**, so `NEW_ENTRY_COSTS` could not be
+> derived from it. Re-fetched the full 3,162-row extract from the OEDI S3 data
+> lake (`scripts/data/fetch_nrel_atb.py`, byte-reproducible) and re-committed it
+> complete. See `docs/handoffs/ff-1e-entry-cost-atb-wiring-2026-07.md`.
+
 ## What this doesn't cover
 
 - **Compressed-air storage** — not an ATB-covered technology; the model's
@@ -137,7 +145,9 @@ regenerates cleanly rather than overwriting history).
 
 ## Consumer
 
-None yet (intake only this session). Future consumer: a calendar-year
-re-derivation of `NEW_ENTRY_COSTS` / `STORAGE_TECH_COSTS` and a real-data
-replacement for the engineering-judgment `TECH_COST_MULTIPLIERS` ratios
-(P-1D / a follow-up session, cited to this data change per CLAUDE.md rule 23).
+`scripts/data/derive_entry_costs_from_atb.py` (FF-1E) derives
+`NEW_ENTRY_COSTS`, `TECH_COST_MULTIPLIERS`, `CCUS_PARAMS` (gas_cc_ccs) and
+`ATB_TECH_WACC_REAL` from this extract; `tests/test_atb_entry_cost_consistency.py`
+asserts the committed constants equal that derivation (CLAUDE.md rule 23). A
+future extension can add ATB's CF / EGS-techdetail / storage-duration rows to the
+fetch to also re-derive `base_cf`, geothermal and `STORAGE_TECH_COSTS`.
