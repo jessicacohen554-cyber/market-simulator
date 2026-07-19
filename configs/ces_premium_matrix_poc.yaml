@@ -1,0 +1,33 @@
+# National CES EAC-premium POC ladder (FF-3B, T1-scale proof-of-concept).
+#
+# docs/forecast-development-plan-2026-07.md FF-3B §879-903. A DELIBERATELY
+# SMALL 2-rung ladder (BAU + CES-20 + CES-40, `clean_capture` crediting — the
+# ScenarioConfig default mode, not set here) run only to exercise the W4
+# campaign machinery end-to-end at POC cost: matrix expansion, the federal-CES
+# resolver seams, the per-year cache, and scripts/report_ces_campaign.py.
+#
+# NOT the campaign ladder. The first real campaign runs {10, 20, 30} over
+# 2026-2050 (configs/ces_premium_matrix.yaml) and is DEFERRED behind the §2.1b
+# full-solve authorization gate. These rung values (20, 40) are intentionally
+# distinct from the campaign ladder so a POC bundle can never be mistaken for
+# campaign results; the run registers as kind "ces-poc". No premium-ladder
+# conclusions are drawn from a 5-year window (FF-3B item 2).
+#
+# Run (FF-3B POC — ERCOT 2026-2030 only):
+#   market-sim matrix --config configs/scenarios/ercot_ces_poc_2026_2030.yaml \
+#       --matrix configs/ces_premium_matrix_poc.yaml --workers 1
+# then scripts/report_ces_campaign.py on the matrix out-dir.
+mode: cases
+
+cases:
+  # Business-as-usual reference leg: no federal CES. Every delta the POC
+  # report emits is measured against this case.
+  BAU: {}
+
+  CES-20:
+    federal_ces_enabled: true
+    federal_ces_premium_usd_per_mwh: 20.0
+
+  CES-40:
+    federal_ces_enabled: true
+    federal_ces_premium_usd_per_mwh: 40.0
