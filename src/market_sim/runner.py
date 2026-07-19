@@ -130,6 +130,7 @@ from market_sim.results.evolution_ledger import (
 )
 from market_sim.config.reserve_config import ERCOT_AS_PRODUCTS
 from market_sim.pipeline import (
+    UNSET,
     DispatchSpec,
     PriorYearResults,
     apply_ercot_commitment_posture,
