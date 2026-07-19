@@ -7,8 +7,28 @@ the end of every manager turn.
 
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
-- **Last reviewed `origin/main` HEAD:** `7544814` (2026-07-19, turn 26 — manager session `turn-24-phaekh`).
+- **Last reviewed `origin/main` HEAD:** `30f546e` (2026-07-19, turn 27 — manager session `turn-24-phaekh`).
 - **Plan base SHA:** `c95176e`.
+- **turn 27 (manager `turn-24-phaekh`, refresh). `0e5cbbe→30f546e` (3 merges). QUIET for FF —
+  nothing FF landed, nothing unlocked, no corrections; but one governance-relevant backcast event.**
+  My turn-26 ledger reached main (#2557, merge `0e5cbbe`). All 3 merges out-of-program: #2556
+  (ercot-87-midband-basis-measurement — probe + 6.9k-line measurement json + design doc, ERCOT
+  trough/spread lane), #2555 (miso-78-m4-congestion-charter — charter doc + probe), **#2558
+  (pjm-neiso-nyiso phantom-outage re-audit — ERCOT-79 cross-ISO lane).** **⚠️ #2558 WITHDREW NYISO's
+  calibration-complete marker** (2026-07-19): NYISO keeper nyiso-62 was calibrated against a
+  stale/under-counted outage extract (1,598 vs 2,641 rows); on the consolidated detector the recipe
+  re-solves VERBATIM to NOT-YET (C1/C3a/C3b FAIL) — rule-11 co-dependence on the inaccurate
+  availability envelope. NYISO marker now in `withdrawn{}`; CI quarantine re-blocks all NYISO
+  out-of-training solve/score; the 2019+H1-2026 locked test was NEVER spent and stays available.
+  **NEISO HOLDS** (re-audit reproduced its determination byte-for-byte, TRAIN keeper → neiso-60
+  corrected envelope). Current markers: **COMPLETE = {NEISO}; WITHDRAWN = {NYISO}** (CAISO/ERCOT/
+  PJM/MISO carry no marker in this file). **Impact on FF:** FF-2B is NOT blocked — its ≤2021
+  hindcast pair is NEISO-only (marker present ✓), and its CAISO/NYISO work is base-year forecast
+  reconciliation + Pass-1B no-LP (no out-of-training solve). But **FF-2C NYISO flip readiness is now
+  gone** — NYISO must re-calibrate before any per-ISO flip sign-off. Rule-27 clean (capacity.py 4241,
+  scenarios.py 7930, constants.py 7434, runner.py 2469 — unchanged). **Active front UNCHANGED: FF-2B
+  ONLY** (re-emitted drift-clean at HEAD this turn on owner request; still awaiting worker launch —
+  no branch on origin).
 - **turn 26 (manager `turn-24-phaekh`, refresh). `567ef3c→7544814` (8 merges). QUIET — nothing FF
   landed, nothing unlocked, no corrections.** My turn-25 ledger reached main (#2549). All 8 merges
   out-of-program: #2545 (caiso-charge-economics probes, 2 scripts), #2547 (caiso-100 cycling-cost +
@@ -91,8 +111,8 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-2A-integrate | FABLE | 2 | L-CAP | — | **verified-pass (turn 15, via #2486 + #2491/#2492)** | 0 fn loss, on-registry, compiles. Lane CLOSED. |
 | FF-2A-posture | OPUS | 2 | L-CAP | — | **verified-issues, NON-DELIVERY (turn 21)** — #2522 | Doc-only; scenarios.py UNCHANGED. 3rd genuine non-delivery. → FF-2A-posture-redo. |
 | FF-2A-posture-redo | OPUS | 2 | L-CAP | — | **verified-pass (turn 25)** — #2539 | Landed the flip #2522 only described: scenarios.py `entry_lookahead_reprice` False→True + backcast coercion + plan §2.1a row e + measured-cache-key byte-identity attestation. Closes the 3-non-delivery saga. |
-| FF-2B | OPUS | 2 | L-CAP | — | **sent (turn 17), awaiting worker launch — no branch on origin (t26)** | Prereq FF-2A met, drift-clean. On the FF-2C critical path + produces the first NEISO cap-hindcast pair (NEISO evidence-free). CAISO/NEISO/NYISO I7 + NEISO Net ICR + first NEISO pair; bands pre-registered BEFORE the run. |
-| FF-2C | OPUS | 2 | L-CAP | — | **issued (turn 14), owner-gated** | owner-approved flip all-but-ERCOT, staged by readiness. After FF-2A(done) + FF-2B. Needs per-ISO sign-off. Rule 1: worsened fit = root-cause. |
+| FF-2B | OPUS | 2 | L-CAP | — | **sent (turn 17), re-emitted drift-clean t27, awaiting worker launch — no branch on origin** | Prereq FF-2A met, drift-clean. On the FF-2C critical path + produces the first NEISO cap-hindcast pair (NEISO evidence-free). CAISO/NEISO/NYISO I7 + NEISO Net ICR + first NEISO pair; bands pre-registered BEFORE the run. |
+| FF-2C | OPUS | 2 | L-CAP | — | **issued (turn 14), owner-gated** | owner-approved flip all-but-ERCOT, staged by readiness. After FF-2A(done) + FF-2B. Needs per-ISO sign-off. NYISO NO LONGER flip-ready (t27, marker withdrawn). Rule 1: worsened fit = root-cause. |
 | FF-2D | OPUS | 2 | L-VAL | ⛔ T1 gate | **issued (turn 14), gated** | runs after W1/W2 merges. Rubric verdicts + promotion table. |
 | FF-3A | OPUS | 3 | L-VAL | ⛔ T2 | not-sent | blocked: FF-2D + owner |
 | FF-3B | OPUS | 3 | L-CES | — | **issued (turn 14), gated** | W3-R readiness → GO/NO-GO → W4. R1 = FF-2A headline (solar recall). |
@@ -104,7 +124,10 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-4C | OPUS | 4 | L-VAL | owner-gated | not-sent | blocked: FF-4A + owner (PB-5) |
 | FF-5A | OPUS | 5 | L-DASH | — | not-sent | blocked: Wave 4 |
 
-Out-of-program / trivial (turn 26): #2545 (caiso-charge-economics probes), #2547 (caiso-100/101
+Out-of-program / trivial (turn 27): #2556 (ercot-87-midband-basis-measurement — probe + measurement
+json + design doc), #2555 (miso-78-m4-congestion-charter — doc + probe), #2558 (pjm-neiso-nyiso
+phantom-outage re-audit — **WITHDREW NYISO calibration-complete marker**, NEISO HOLDS), #2557 (ledger
+t26). (turn 26): #2545 (caiso-charge-economics probes), #2547 (caiso-100/101
 backcast keepers — gated/cited scenarios.py CHP-steam fields, train years), #2548 (ercot-86-rt-wall-2025
 — ERCOT trough/spread lane + 66MB 2025 tail-days parquet), #2550 (miso-77-lane-selection docs),
 #2551 (phase-refactor/root-cleanup), #2552 (phase-refactor/retention-sweep — 413k deletions, no src/,
@@ -135,7 +158,14 @@ backcast keepers + ledger commits.
 
 **AWAITING (each changes what I dispatch next):**
 - PB-5 (FF-4C, owner-gated, later wave). Golden freeze (FF-4A) is owner-confirmed HELD.
-- Per-ISO FF-2C sign-off (after FF-2B lands verified-pass).
+- Per-ISO FF-2C sign-off (after FF-2B lands verified-pass). **NYISO is NO LONGER flip-ready** as of
+  turn 27 (#2558 withdrew its calibration-complete marker) — its flip sign-off must wait for
+  re-calibration; near-term FF-2C candidates are the calibration-ready all-but-ERCOT ISOs whose
+  adequacy basis FF-2B closes.
+- **(Out-of-FF-program, surfaced turn 27, flag only)** NEISO holdout-data-equivalency register
+  sign-off — `docs/holdout-data-equivalency-register-2026-07.md` §NEISO is the owner exit gate before
+  any NEISO one-shot (locked test) may be re-authorized (rule 22). Backcast/validation matter, not
+  FF, but a genuine pending owner sign-off.
 
 ---
 
@@ -184,3 +214,8 @@ backcast keepers + ledger commits.
   caiso probes (#2545/#2554). Rule-27 clean (capacity.py 4241, scenarios.py 7930, constants.py 7434,
   runner.py 2469 — no shrink). Active front FF-2B only, awaiting worker launch. FF-2C stays
   owner-gated pending FF-2B.
+- **turn 27 (`→30f546e`).** QUIET refresh for FF (3 merges, all out-of-program). t26 ledger on main
+  (#2557). ⚠️ #2558 phantom-outage re-audit WITHDREW NYISO's calibration-complete marker (rule-11
+  co-dependence on under-counted outages); NEISO HOLDS. Markers now COMPLETE={NEISO}, WITHDRAWN=
+  {NYISO}. FF-2B unaffected (NEISO-only ≤2021 hindcast); FF-2C NYISO flip readiness lost pending
+  re-calibration. FF-2B re-emitted drift-clean on owner request; still awaiting launch. Rule-27 clean.
