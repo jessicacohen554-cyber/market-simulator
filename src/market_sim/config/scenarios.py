@@ -2891,6 +2891,26 @@ class ScenarioConfig:
     # (standing market design through 2025; date-gate per rule 23 if MISO
     # adopts the IMM's cap-at-$500 recommendation). Zero fitted scalars.
     # Default off; GATED CHANGE (alters congestion depth).
+    miso_zonal_loss_surface: bool = False  # MISO: marginal transmission-loss
+    # physics on the Midwest-internal links (miso-76 M3, charter
+    # docs/handoffs/miso-nc-price-separation-design-2026-07.md §4). Each
+    # bidirectional L1-L6 link splits into a one-way pair
+    # (transmission.apply_miso_zonal_loss_links) and each direction's
+    # receiving-end energy-balance coefficient becomes 1 - eps(month)
+    # (dispatch.build_constraints link_loss), where eps is derived from
+    # MISO's own published per-hub MLC record — the dimensionless marginal
+    # delivery-factor deviation surface (frozen derive
+    # scripts/data/derive_miso_loss_surface.py; per-year rows for backcast
+    # train years, pooled rows for forecast years). Transported energy then
+    # consumes MWh and the zonal duals separate by the measured
+    # delivery-factor ratio (LMP = MEC x DF + congestion; MISO BPM-002) —
+    # prices stay LP duals (rule #4), never a price adder, zero fitted
+    # scalars (DOF +1 measured-physical). Closes the measured $1-3/MWh
+    # loss component of intra-Midwest separation; the congestion component
+    # beyond CIL/CEL + RDT + seams remains a documented data-blocked
+    # limitation (charter §2b/§3 M4). MISO-scoped (rule #24): the surface
+    # is MISO's own published components, byte-identical off and for every
+    # other ISO. Default off; GATED CHANGE (adds zonal price separation).
     caiso_scarcity_pricing: bool = False  # CAISO: enable the post-solve
     # power-balance scarcity price overlay (results.scarcity.caiso_scarcity_
     # overlay). Adds a probabilistic LOLP × (VOLL - λ) adder to the scored
@@ -7561,6 +7581,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_south_seam_split": 1,
     "miso_rdt_tcdc": 1,
     "miso_rpe_pricing": 1,
+    "miso_zonal_loss_surface": 3,
     "caiso_commitment_posture": 1,
     "caiso_reserve_online_scoped": 1,
     "ercot_load_resource_reserve": 1,
