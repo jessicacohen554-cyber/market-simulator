@@ -1,5 +1,7 @@
 # ISO Model Unification & Codebase Streamlining Plan
 
+> Status: ARCHIVED — largely executed (phases 0–2 + Phase-4 halves; self-status'd inline).
+
 **Status 2026-07.** Phases 0-2 and the module halves of Phase 4 are effectively
 landed: `config/reserve_config.py` (Phase 1), `config/interchange_config.py`
 (Phase 2), and `data/fleet.py::build_dispatch_fleet` (Phase 4) all exist and are

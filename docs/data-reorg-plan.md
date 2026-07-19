@@ -1,5 +1,7 @@
 # Data Reorganization Plan — market-simulator
 
+> Status: ARCHIVED — executed (the data/raw + data/clean split shipped).
+
 ## Context
 
 **Why this is being done.** The repo's data is fragmented across **two competing roots** (`inputs/` and `data/`), totalling ~2.1 GB of mostly-committed files (639 tracked files under `inputs/`, no Git LFS). The model reads these files through **~9 loader modules that each hardcode paths** like `Path(__file__).parents[3] / "inputs" / "raw-data" / ...` — there is **no central path registry**, so any file move breaks the model with `FileNotFoundError`. Directory naming is inconsistent (`ercot-AS`, `PJM-AS`, `NYISO-AS`, `caiso-hsl`, `lmp-data`, `zone-specific-demand`, `ISO-specific-gen-data`), column schemas differ across ISOs (CAISO LMP uses `LMP/MCC/MCE`; PJM uses `DA_LMP/RT_LMP`; NYISO AS uses `spin_10/op_30`), and there is **no standalone data dictionary**.
