@@ -68,6 +68,7 @@ DATATYPES: tuple[str, ...] = (
     "capacity-market-elcc",
     "capacity-market-avoidable-cost-rate",
     "transfer-constraint-binding",
+    "lmp-components",
     "maxgen-events",
     "dam-public-bids",
     "benchmark-corridor",
