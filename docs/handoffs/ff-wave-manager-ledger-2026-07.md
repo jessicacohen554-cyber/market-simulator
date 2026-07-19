@@ -8,7 +8,22 @@ the end of every manager turn.
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
 - **Last reviewed `origin/main` HEAD:** `30f546e` (2026-07-19, turn 27 — manager session `turn-24-phaekh`).
-- **Plan base SHA:** `c95176e`.
+- **Plan base SHA:** `c95176e` (amended in place 2026-07-19 — POC-first re-scope, see directive entry below).
+- **OWNER DIRECTIVE (2026-07-19, out-of-band — recorded by the directive's executing
+  session, not a manager turn): POC-first re-scope of THE PLAN.** The plan is amended in
+  place (§0 two-phase framing, new §2.1b full-solve authorization gate, §6 Waves 3–4
+  re-cut): **FF-4A/FF-4B/FF-4C prompts WITHDRAWN** — Wave 4 deferred in full; the
+  turn-18 "golden freeze HELD" hardens into outright prompt withdrawal (never restore
+  from history). **FF-3A (T2) deferred with its tier** (prompt withdrawn). **FF-3B
+  re-scoped** — W3-R readiness + a T1-scale (ERCOT 2026–2030) CES POC only; the W4
+  2026–2050 campaign is deferred, so the issued turn-14 FF-3B prompt is **SUPERSEDED —
+  re-emit from the amended plan §6 before any launch**. **FF-3E [OPUS] ⛔ chartered**
+  (full-solve readiness battery + POC close-out; absorbs FF-4B's honest-unfit list;
+  adds the run_full_horizon.py >5-solve-year guard). Hard cap: **≤5 solve-years per
+  invocation, program-wide**. Long solves reopen per ISO only through §2.1b: backcast
+  keeper + calibration-complete marker, T1 POC gates green, crossover input gap +
+  readiness battery + projected cost, and an explicit per-campaign owner authorization.
+  Status-table rows updated below; active front unchanged (FF-2B).
 - **turn 27 (manager `turn-24-phaekh`, refresh). `0e5cbbe→30f546e` (3 merges). QUIET for FF —
   nothing FF landed, nothing unlocked, no corrections; but one governance-relevant backcast event.**
   My turn-26 ledger reached main (#2557, merge `0e5cbbe`). All 3 merges out-of-program: #2556
@@ -114,15 +129,16 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-2B | OPUS | 2 | L-CAP | — | **sent (turn 17), re-emitted drift-clean t27, awaiting worker launch — no branch on origin** | Prereq FF-2A met, drift-clean. On the FF-2C critical path + produces the first NEISO cap-hindcast pair (NEISO evidence-free). CAISO/NEISO/NYISO I7 + NEISO Net ICR + first NEISO pair; bands pre-registered BEFORE the run. |
 | FF-2C | OPUS | 2 | L-CAP | — | **issued (turn 14), owner-gated** | owner-approved flip all-but-ERCOT, staged by readiness. After FF-2A(done) + FF-2B. Needs per-ISO sign-off. NYISO NO LONGER flip-ready (t27, marker withdrawn). Rule 1: worsened fit = root-cause. |
 | FF-2D | OPUS | 2 | L-VAL | ⛔ T1 gate | **issued (turn 14), gated** | runs after W1/W2 merges. Rubric verdicts + promotion table. |
-| FF-3A | OPUS | 3 | L-VAL | ⛔ T2 | not-sent | blocked: FF-2D + owner |
-| FF-3B | OPUS | 3 | L-CES | — | **issued (turn 14), gated** | W3-R readiness → GO/NO-GO → W4. R1 = FF-2A headline (solar recall). |
-| FF-3C | FABLE | 3 | L-PERF | conditional | not-sent | trigger-gated — inactive (only remaining FABLE prompt) |
+| FF-3A | — | 3 | L-VAL | ⛔ T2 | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | T2 deferred with its tier behind plan §2.1b; prompt re-authored at gate-open. Do not dispatch. |
+| FF-3B | OPUS | 3 | L-CES | — | **issued prompt SUPERSEDED (owner 2026-07-19) — re-emit from amended plan before launch** | Re-scoped: W3-R readiness + T1-scale CES POC (ERCOT 2026-2030) ONLY; W4 campaign deferred (§2.1b). R1 = FF-2A headline (solar recall). |
+| FF-3C | FABLE | 3 | L-PERF | conditional | not-sent | trigger-gated — inactive (only remaining FABLE prompt); trigger re-worded to active-tier breach (plan §6) |
 | FF-3D | OPUS | 3 | L-CAP | — | **verified-issues (incomplete)** — LANDED #2463 | Intake + Option-B pairing + pre-registered bands; flip-gate Basis PASSES. Pair run via FF-3D-run. |
 | FF-3D-run | OPUS | 3 | L-CAP | — | **landed** (#2471/#2473/#2478 + `5bb0c9b`) | NYISO fixed/curve/realized pair registered. Closed. |
-| FF-4A | OPUS | 4 | L-VAL | ⛔ owner-gated | **HELD by owner (turn 18)** | Golden freeze holds until backcast is calibrated on the testing (validation/locked) years. Do not dispatch. |
-| FF-4B | FABLE | 4 | L-VAL | — | not-sent | blocked: FF-4A |
-| FF-4C | OPUS | 4 | L-VAL | owner-gated | not-sent | blocked: FF-4A + owner (PB-5) |
-| FF-5A | OPUS | 5 | L-DASH | — | not-sent | blocked: Wave 4 |
+| FF-3E | OPUS | 3 | L-VAL | ⛔ §2.1b evidence | not-sent | NEW (owner 2026-07-19): full-solve readiness battery + POC close-out (absorbs FF-4B honest-unfit list; adds >5-yr CLI guard). After FF-2D. |
+| FF-4A | — | 4 | L-VAL | ⛔ | **WITHDRAWN (owner 2026-07-19)** | Prompt withdrawn outright (was HELD t18); Wave 4 deferred behind §2.1b. Do not dispatch, do not restore from history. |
+| FF-4B | — | 4 | L-VAL | — | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | Honest-unfit list moved to FF-3E close-out; rest re-authored at gate-open. |
+| FF-4C | — | 4 | L-VAL | owner-gated | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | PB-5 deferred with Wave 4 (§2.1b). |
+| FF-5A | OPUS | 5 | L-DASH | — | not-sent | blocked: active-wave close-out (deferred Wave 4 NOT a prerequisite — §2.1b) |
 
 Out-of-program / trivial (turn 27): #2556 (ercot-87-midband-basis-measurement — probe + measurement
 json + design doc), #2555 (miso-78-m4-congestion-charter — doc + probe), #2558 (pjm-neiso-nyiso
@@ -153,11 +169,17 @@ backcast keepers + ledger commits.
 - **correlated_forced_outage default = ON** (turn 12). FF-1F applies.
 - **Entry-lookahead posture = ON** (turn 18, 2026-07-18). FF-2A-posture-redo LANDED it (turn 25, #2539).
 - **Golden freeze HOLDS** (turn 18) — until backcast is calibrated on the testing years.
-  FF-4A stays gated.
+  FF-4A stays gated. **Superseded 2026-07-19: hardened into full Wave-4 prompt
+  withdrawal + the plan §2.1b gate (directive entry above).**
+- **POC-first re-scope (2026-07-19, out-of-band):** Wave-4 prompts WITHDRAWN, FF-3A/T2
+  deferred, ≤5-solve-year cap, §2.1b gate installed; FF-3B re-scoped (W4 deferred,
+  T1-scale CES POC); FF-3E chartered. Plan amended in place.
 - **#2439** — owner handled → resolved.
 
 **AWAITING (each changes what I dispatch next):**
-- PB-5 (FF-4C, owner-gated, later wave). Golden freeze (FF-4A) is owner-confirmed HELD.
+- **§2.1b gate-open per ISO** (replaces the former FF-4A golden-freeze and PB-5 waits —
+  both WITHDRAWN-DEFERRED 2026-07-19; conditions: backcast keeper + marker, T1 POC
+  gates, crossover gap + FF-3E readiness + projected cost, per-campaign authorization).
 - Per-ISO FF-2C sign-off (after FF-2B lands verified-pass). **NYISO is NO LONGER flip-ready** as of
   turn 27 (#2558 withdrew its calibration-complete marker) — its flip sign-off must wait for
   re-calibration; near-term FF-2C candidates are the calibration-ready all-but-ERCOT ISOs whose
