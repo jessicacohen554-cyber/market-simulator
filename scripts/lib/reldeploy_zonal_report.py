@@ -21,6 +21,8 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
+sys.path.insert(0, str(REPO / "src"))
+from market_sim.config.paths import CAMPD_BINS_CSV  # noqa: E402
 from scripts.lib.bundle_io import bundle_input_path  # noqa: E402
 
 # CEMS-covered thermal classes (the dispatch klass / bin-sheet Plant_Group).
@@ -43,9 +45,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("bundle")
     ap.add_argument("--year", type=int, default=2025)
-    ap.add_argument(
-        "--bins", default=str(REPO / "inputs" / "custom-bin-assignments.csv")
-    )
+    ap.add_argument("--bins", default=str(CAMPD_BINS_CSV))
     args = ap.parse_args()
     bundle = Path(args.bundle)
     year = args.year

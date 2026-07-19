@@ -18,10 +18,15 @@ Outputs (CSV, one file per scope/BA):
 import argparse
 import json
 import os
+import sys
 import time
 from pathlib import Path
 
 import requests
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+
+from market_sim.config.paths import EIA_860_DIR  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Config
@@ -37,7 +42,9 @@ if not API_KEY:
             if line.startswith("EIA_API_KEY="):
                 API_KEY = line.split("=", 1)[1].strip()
 
-OUTPUT_DIR = Path(__file__).parent.parent.parent / "inputs" / "raw-data" / "eia-860"
+# Single W1 data root (paths.EIA_860_DIR = data/raw/eia-860); the pre-W1
+# ``inputs/raw-data`` path was removed by the relocation.
+OUTPUT_DIR = EIA_860_DIR
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 PAGE_SIZE = 5000  # max rows per request

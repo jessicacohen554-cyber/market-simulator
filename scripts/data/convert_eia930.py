@@ -9,7 +9,7 @@ parquet files per balancing authority in ``data/raw``:
   family series (``type`` in ``D``/``DF``/``NG``/``TI``) in ``value_mwh``.
 
 This script pivots both into the wide schema that
-``data/eia_hourly/<BA> hourly.parquet`` uses (the same layout as the existing
+``data/raw/eia-930-hourly/<BA> hourly.parquet`` uses (the same layout as the existing
 ``ERCO hourly`` extract that ``market_sim.data.renewables`` /
 ``market_sim.data.eia_loader`` consume): one row per hour with ``NG: <CODE>``
 generation columns, the ``Demand``/``Demand forecast``/``Net generation``/
@@ -38,8 +38,15 @@ from pathlib import Path
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-INPUT_DIR = REPO_ROOT / "inputs" / "raw-data"
-OUTPUT_DIR = REPO_ROOT / "data" / "eia_hourly"
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from market_sim.config.paths import EIA_HOURLY_DIR, RAW_DIR  # noqa: E402
+
+# Both roots moved in the W1 relocation: the raw EIA-930 downloads to
+# paths.RAW_DIR (data/raw) and the converted hourly parquets to
+# paths.EIA_HOURLY_DIR (data/raw/eia-930-hourly, formerly data/eia_hourly).
+INPUT_DIR = RAW_DIR
+OUTPUT_DIR = EIA_HOURLY_DIR
 
 # EIA-930 balancing-authority local timezone. The Hourly Grid Monitor reports
 # each BA on its own local clock; these are the IANA/Olson zones EIA uses for
