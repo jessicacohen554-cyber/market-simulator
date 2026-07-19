@@ -37,11 +37,16 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
+from market_sim.config.paths import CAMPD_BINS_CSV, PLANT_REGISTRY_CSV  # noqa: E402
+
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("tag_mixed_plants")
 
-DEFAULT_BINS = REPO / "inputs" / "custom-bin-assignments.csv"
-DEFAULT_REGISTRY = REPO / "inputs" / "master-plant-registry.csv"
+# Curated reference sheets under the single W1 data root
+# (paths.REFERENCE_DIR = data/raw/reference); the pre-W1 ``inputs/`` root was
+# removed by the relocation.
+DEFAULT_BINS = CAMPD_BINS_CSV
+DEFAULT_REGISTRY = PLANT_REGISTRY_CSV
 
 # Plant_Group -> (fuel tag, code digit). Same digit groups configs of one fuel.
 _GROUP_TAG: dict[str, tuple[str, int]] = {

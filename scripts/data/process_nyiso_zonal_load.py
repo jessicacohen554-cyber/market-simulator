@@ -29,13 +29,21 @@ from __future__ import annotations
 
 import argparse
 import io
+import sys
 import zipfile
 from pathlib import Path
 
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
-NYISO_DIR = REPO / "inputs" / "raw-data" / "zone-specific-demand" / "NYISO"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import ZONE_DEMAND_DIR  # noqa: E402
+
+# NYISO zonal-load downloads under the single W1 data root
+# (paths.ZONE_DEMAND_DIR = data/raw/zone-specific-demand); the pre-W1
+# ``inputs/raw-data`` path was removed by the relocation.
+NYISO_DIR = ZONE_DEMAND_DIR / "NYISO"
 RAW_DIR = NYISO_DIR / "raw"
 
 # The eleven NYISO settlement-zone names as they appear in the pal CSVs.

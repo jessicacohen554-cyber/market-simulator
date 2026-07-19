@@ -35,6 +35,7 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
+from market_sim.config.paths import RAW_DIR  # noqa: E402
 from market_sim.config.plant_taxonomy import COAL_CODE_TO_SUPPLY  # noqa: E402
 from market_sim.data.fleet import PROCESSED_DIR, load_fleet_from_csv  # noqa: E402
 from scripts.data.process_f923_fuel_costs import (  # noqa: E402
@@ -45,11 +46,12 @@ from scripts.data.process_f923_fuel_costs import (  # noqa: E402
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("derive_coal_supply")
 
-# Raw f923_*.zip releases live here when present. The W1 layout collapse removed
-# them from this repo, leaving only the already-processed EIA-923 Page-1
-# generation parquet; ``_processed_generation`` reads that as the fallback source
-# so the generation-based classification still runs without the raw zips.
-_RAW_ZIP_DIR = REPO / "inputs" / "raw-data"
+# Raw f923_*.zip releases live under the single W1 data root (paths.RAW_DIR =
+# data/raw) when present. They are not committed to this repo, leaving only the
+# already-processed EIA-923 Page-1 generation parquet; ``_processed_generation``
+# reads that as the fallback source so the generation-based classification still
+# runs without the raw zips.
+_RAW_ZIP_DIR = RAW_DIR
 _PROCESSED_GENERATION_PARQUET = PROCESSED_DIR / "eia923_monthly_generation.parquet"
 
 # EIA-923 ENERGY_SOURCE coal rank code -> model supply class, from the canonical

@@ -63,6 +63,11 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
 from market_sim.config.constants import HOURS_PER_YEAR, VOM  # noqa: E402
+from market_sim.config.paths import (  # noqa: E402
+    CALIBRATION_DIR,
+    CAMPD_BINS_CSV,
+    PROCESSED_DIR,
+)
 from market_sim.data import campd  # noqa: E402
 from market_sim.data.coal import COAL_PLANT_SUPPLY  # noqa: E402
 from market_sim.data.fuel import (  # noqa: E402
@@ -108,12 +113,7 @@ _CLASS_VOM: dict[str, float] = {
 
 
 def _out_default(iso: str) -> Path:
-    return (
-        REPO
-        / "inputs"
-        / "calibration"
-        / f"reliability_deployment_floor_{iso.upper()}.parquet"
-    )
+    return CALIBRATION_DIR / f"reliability_deployment_floor_{iso.upper()}.parquet"
 
 
 def _plant_meta(bins_path: Path, classes: set[str], zones: set[str]) -> dict:
@@ -190,13 +190,13 @@ def main() -> None:
     ap.add_argument("--iso", default="ERCOT")
     ap.add_argument(
         "--bins",
-        default=str(REPO / "inputs" / "custom-bin-assignments.csv"),
+        default=str(CAMPD_BINS_CSV),
         help="ERCOT per-plant bin CSV; supplies the in-scope plant set, zones "
         "and heat rates.",
     )
     ap.add_argument(
         "--lmp",
-        default=str(REPO / "inputs" / "calibration" / "actual_lmp_zonal_ERCOT.parquet"),
+        default=str(CALIBRATION_DIR / "actual_lmp_zonal_ERCOT.parquet"),
         help="Zonal LMP parquet (year, hour, settlement_point, rt, da). The rt "
         "series of the plant's load zone and HB_HUBAVG are the local / hub "
         "out-of-merit reference prices.",
@@ -277,7 +277,7 @@ def main() -> None:
     meta = _plant_meta(Path(args.bins), classes, zones)
     lmp = pd.read_parquet(args.lmp)
     states = campd.states_for_iso(iso)
-    par_path = REPO / "inputs" / "processed" / "parasitic_load_factors.parquet"
+    par_path = PROCESSED_DIR / "parasitic_load_factors.parquet"
     factors = (
         campd.pooled_factor_map(pd.read_parquet(par_path)) if par_path.exists() else {}
     )
