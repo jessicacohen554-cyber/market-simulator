@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-13-nyiso-64-outage-refix",
+  "label": "nyiso 64 outage refix",
+  "date": "2026-07-13",
+  "shorthand": "nyiso-64-outage-refix",
+  "definition": "nyiso-64 corrected-outage refix: ST reliability-floor coefficients re-derived on the corrected campd-unit-outages-NYISO.csv (rule-23 source-data re-derivation) + eastern AC seam landing split (IMPORT_NODE_LINKS Capital_Hudson 1600 MW: PJM Ramapo + ISO-NE eastern AC ties east of Central-East)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-13-nyiso-64-outage-refix.js",
+  "bundle": "results/calibration/nyiso64_outage_refix"
+}
