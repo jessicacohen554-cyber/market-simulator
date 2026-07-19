@@ -1,0 +1,5 @@
+# Local efficient / cache artifacts produced by scripts/data/fetch_miso_outages.py.
+# The committed in-repo form is the per-year wide CSV (miso_outages_estimated_*.csv);
+# the binary parquet cannot be carried by this repo's text-only web push path.
+*.parquet
+_xlsx_cache/
