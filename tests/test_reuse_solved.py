@@ -132,6 +132,20 @@ class TestHappyPath(_PlanBase):
         self.assertEqual(record["source_git_sha"], _SHA)
         self.assertIn("NOT fresh evidence", record["warning"])
 
+    def test_environment_block_is_ignored_by_reuse(self):
+        # The environment stamp (A6) lives at meta/run_config top level, NOT in
+        # scenario_config, so the reuse comparator must ignore it entirely — a
+        # prior bundle carrying it (and a different one) still reuses cleanly.
+        self.meta["environment"] = {
+            "python_version": "3.11.9",
+            "platform": "some-other-box",
+            "packages": {"highspy": "1.7.2", "numpy": "1.99"},
+        }
+        self.run_config["environment"] = self.meta["environment"]
+        plan, record = self._plan()
+        self.assertEqual(sorted(plan), self.years)
+        self.assertEqual(record["fresh_years"], [])
+
     def test_sha_drift_without_model_diff_is_allowed(self):
         # A docs/frontend-only commit between the prior solve and now must
         # not break reuse — only src/scripts/data changes do.
