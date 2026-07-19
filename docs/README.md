@@ -71,6 +71,7 @@ produced is L3.)
 | [`reference-price-interface.md`](reference-price-interface.md) | ACTIVE | Calibration — reference-price/scoring interface | — |
 | [`verifying-dashboard-numbers.md`](verifying-dashboard-numbers.md) | ACTIVE | Calibration — dashboard/number verification | — |
 | [`calibration-report.md`](calibration-report.md) | ACTIVE | Calibration — dashboard registration guide | — |
+| [`backcast-artifact-contract.md`](backcast-artifact-contract.md) | ACTIVE | Calibration — bundle/registry/payload/bench/dashboard schema (field tables, the three byte codecs, FROZEN list) | — |
 | [`binning-methodology.md`](binning-methodology.md) | ACTIVE | Dispatch/fleet — CAMPD per-plant binning & tranche offer curves | — |
 | [`offer-curve-methodology.md`](offer-curve-methodology.md) | ACTIVE | Dispatch/offer — offer-curve construction | — |
 | [`thermal-cycling-adders.md`](thermal-cycling-adders.md) | ACTIVE | Dispatch — cycling/startup adders | — |
