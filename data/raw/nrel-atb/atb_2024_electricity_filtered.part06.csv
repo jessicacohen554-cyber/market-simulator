@@ -1,0 +1,301 @@
+atb_year,technology,techdetail,display_name,core_metric_parameter,core_metric_case,tax_credit_case,scenario,default,core_metric_variable,value
+2024,Nuclear,Nuclear - Small,Nuclear - Small,Fixed O&M,Market,ITC,Moderate,0,2033,136.0
+2024,Nuclear,Nuclear - Small,Nuclear - Small,Fixed O&M,Market,ITC,Moderate,0,2034,136.0
+2024,Nuclear,Nuclear - Small,Nuclear - Small,Fixed O&M,Market,ITC,Moderate,0,2035,136.0
+2024,Nuclear,Nuclear - Small,Nuclear - Small,Fixed O&M,Market,ITC,Moderate,0,2036,136.0
+2024,Nuclear,Nuclear - Small,Nuclear - Small,Fixed O&M,Market,ITC,Moderate,0,2037,136.0
+2024,Nuclear,Nuclear - Small,Nuclear - Small,Fixed O&M,Market,ITC,Moderate,0,2038,136.0
+2024,Nuclear,Nuclear - Small,Nuclear - Small,Fixed O&M,Market,ITC,Moderate,0,2039,136.0
+2024,Nuclear,Nuclear - Small,Nuclear - Small,Fixed O&M,Market,ITC,Moderate,0,2040,136.0
+2024,Nuclear,Nuclear - Small,Nuclear - Small,Fixed O&M,Market,ITC,Moderate,0,2041,136.0
+2024,Nuclear,Nuclear - Small,Nuclear - Small,Fixed O&M,Market,ITC,Moderate,0,2042,136.0
+2024,Nuclear,Nuclear - Small,Nuclear - Small,Fixed O&M,Market,ITC,Moderate,0,2043,136.0
+2024,Nuclear,Nuclear - Small,Nuclear - Small,Fixed O&M,Market,ITC,Moderate,0,2044,136.0
+2024,Nuclear,Nuclear - Small,Nuclear - Small,Fixed O&M,Market,ITC,Moderate,0,2045,136.0
+2024,Nuclear,Nuclear - Small,Nuclear - Small,Fixed O&M,Market,ITC,Moderate,0,2046,136.0
+2024,Nuclear,Nuclear - Small,Nuclear - Small,Fixed O&M,Market,ITC,Moderate,0,2047,136.0
+2024,Nuclear,Nuclear - Small,Nuclear - Small,Fixed O&M,Market,ITC,Moderate,0,2048,136.0
+2024,Nuclear,Nuclear - Small,Nuclear - Small,Fixed O&M,Market,ITC,Moderate,0,2049,136.0
+2024,Nuclear,Nuclear - Small,Nuclear - Small,Fixed O&M,Market,ITC,Moderate,0,2050,136.0
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2030,6477.910926745628
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2031,5688.9537065615705
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2032,5245.01124586083
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2033,4943.157672894031
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2034,4717.672237228957
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2035,4539.387267577848
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2036,4150.398543108061
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2037,3894.794293542524
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2038,3707.423633588234
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2039,3561.041909630508
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2040,3441.7961879574204
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2041,3341.7335238158525
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2042,3255.889438372419
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2043,3180.969468083996
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2044,3114.682400311102
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2045,3055.373963119461
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2046,3001.813181287157
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2047,2953.061107758938
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2048,2908.3861199562743
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2049,2867.2073767382462
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Advanced,1,2050,2829.057123042142
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2030,14694.080933283514
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2031,13147.58014241136
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2032,11940.437368000568
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2033,10878.445896669104
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2034,9896.5040688286
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2035,8965.024907752282
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2036,8500.185248485519
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2037,8185.06778723182
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2038,7948.711009914901
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2039,7760.6690399571235
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2040,7605.15661300234
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2041,7472.966859253759
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2042,7358.275623946195
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2043,7257.173122228623
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2044,7166.912138481487
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2045,7085.490827383075
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2046,7011.407694073399
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2047,6943.508040998983
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2048,6880.886181715813
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2049,6822.818697929462
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Conservative,1,2050,6768.719094195102
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2030,9389.80193904546
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2031,8067.06723197478
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2032,7095.599392350529
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2033,6767.91518522148
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2034,6520.491272121226
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2035,6323.164713405064
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2036,5887.0577874997725
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2037,5596.000719809534
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2038,5380.186361205431
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2039,5210.046139165582
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2040,5070.399245508735
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2041,4952.4606658573
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2042,4850.710690907628
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2043,4761.46493188418
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2044,4682.147576183981
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2045,4610.890818748608
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2046,4546.2989334618105
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2047,4487.303256884511
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2048,4433.0679498563
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2049,4382.927689283712
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,CAPEX,Market,ITC,Moderate,1,2050,4336.344872820436
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2030,66.3388
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2031,64.2049
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2032,63.0042
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2033,62.1877
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2034,61.5779
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2035,61.0956
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2036,60.0435
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2037,59.3522
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2038,58.8454
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2039,58.4495
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2040,58.127
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2041,57.8563
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2042,57.6242
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2043,57.4215
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2044,57.2422
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2045,57.0818
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2046,56.937
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2047,56.8051
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2048,56.6843
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2049,56.5729
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Advanced,1,2050,56.4697
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2030,80.1437
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2031,78.173
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2032,77.0153
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2033,76.2053
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2034,75.5871
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2035,75.0897
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2036,73.9762
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2037,73.2213
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2038,72.6551
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2039,72.2047
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2040,71.8321
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2041,71.5155
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2042,71.2407
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2043,70.9985
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2044,70.7823
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2045,70.5873
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2046,70.4098
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2047,70.2471
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2048,70.0971
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2049,69.958
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Conservative,1,2050,69.8284
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2030,72.3817
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2031,70.2456
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2032,69.0175
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2033,68.1704
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2034,67.5309
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2035,67.0208
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2036,65.8935
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2037,65.1411
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2038,64.5832
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2039,64.1434
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2040,63.7825
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2041,63.4776
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2042,63.2146
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2043,62.9839
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2044,62.7789
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2045,62.5947
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2046,62.4277
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2047,62.2752
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2048,62.135
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2049,62.0054
+2024,OffShoreWind,Class12,Offshore Wind - Class 12,Fixed O&M,Market,ITC,Moderate,1,2050,61.885
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2022,5571.879237590099
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2023,5159.113278227192
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2024,4915.552141647416
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2025,4745.533764313401
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2026,4268.2451017350695
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2027,3817.6805642055465
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2028,3384.701355312374
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2029,3311.4211331579845
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2030,3247.777507897582
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2031,3162.496635471112
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2032,3090.504707658675
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2033,3028.41091601326
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2034,2973.955534607357
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2035,2925.561456124764
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2036,2893.2017639764927
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2037,2863.140823539583
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2038,2835.0932587696147
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2039,2808.822697589389
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2040,2784.130795887223
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2041,2760.8505853947017
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2042,2738.83926722091
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2043,2717.9742205790853
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2044,2698.149565856785
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2045,2679.273060292176
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2046,2661.2639914686533
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2047,2644.05118167817
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2048,2627.57165749678
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2049,2611.7697628350115
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Advanced,1,2050,2596.595495907305
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2022,7700.971342745294
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2023,7663.375654307231
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2024,7629.122102955069
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2025,7597.68428408161
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2026,7568.649987844914
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2027,7541.690488537245
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2028,7516.539146925178
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2029,7492.977219055471
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2030,6942.324850188543
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2031,6351.602757750966
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2032,5769.983651134414
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2033,5195.216895645116
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2034,4625.787581309884
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2035,4060.6290403263183
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2036,4035.961973213876
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2037,4012.9352085789887
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2038,3991.351954471831
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2039,3971.0482360789993
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2040,3951.886465338672
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2041,3933.749454030588
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2042,3916.537309452329
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2043,3900.1638866207873
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2044,3884.5540165545663
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2045,3869.642508455641
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2046,3855.371710597862
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2047,3841.691177720854
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2048,3828.555675393334
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2049,3815.925180013108
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Conservative,1,2050,3803.7637701200447
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2022,6341.976471646462
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2023,6135.89039835466
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2024,5989.624310455337
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2025,5877.078717178738
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2026,5786.067706648185
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2027,5709.944589182579
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2028,5282.299606251053
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2029,4862.93086121388
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2030,4450.059465713347
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2031,4011.577510428253
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2032,3584.5921962862817
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2033,3528.6135897543822
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2034,3479.3090574735006
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2035,3435.322120848647
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2036,3405.8181847812707
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2037,3378.343811211637
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2038,3352.6509868486155
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2039,3328.534161114754
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2040,3305.82048970032
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2041,3284.363847653276
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2042,3264.039285944067
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2043,3244.7393727983986
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2044,3226.370978504802
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2045,3208.852947171857
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2046,3192.1139902228106
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2047,3176.091355971126
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2048,3160.729499196037
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2049,3145.9787507180945
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,CAPEX,Market,ITC,Moderate,1,2050,3131.7949847930554
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2022,90.5272
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2023,84.7678
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2024,81.3694
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2025,78.9971
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2026,77.1931
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2027,75.7474
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2028,74.547
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2029,73.5245
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2030,72.6365
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2031,71.4466
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2032,70.4421
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2033,69.5757
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2034,68.8159
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2035,68.1406
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2036,67.6891
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2037,67.2697
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2038,66.8783
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2039,66.5118
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2040,66.1672
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2041,65.8424
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2042,65.5353
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2043,65.2442
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2044,64.9675
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2045,64.7042
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2046,64.4529
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2047,64.2127
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2048,63.9828
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2049,63.7623
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Advanced,1,2050,63.5506
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2022,90.5272
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2023,90.0259
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2024,89.5693
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2025,89.1501
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2026,88.763
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2027,88.4036
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2028,88.0683
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2029,87.7542
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2030,87.4588
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2031,86.6292
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2032,85.921
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2033,85.3042
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2034,84.7585
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2035,84.2697
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2036,83.9408
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2037,83.6338
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2038,83.3461
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2039,83.0754
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2040,82.8199
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2041,82.5781
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2042,82.3487
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2043,82.1304
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2044,81.9222
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2045,81.7234
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2046,81.5332
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2047,81.3508
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2048,81.1757
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2049,81.0073
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Conservative,1,2050,80.8451
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2022,90.5272
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2023,87.4498
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2024,85.2657
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2025,83.5851
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2026,82.2261
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2027,81.0894
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2028,80.1151
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2029,79.2644
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2030,78.5107
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2031,77.3746
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2032,76.4101

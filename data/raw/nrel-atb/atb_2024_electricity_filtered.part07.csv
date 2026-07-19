@@ -1,0 +1,301 @@
+atb_year,technology,techdetail,display_name,core_metric_parameter,core_metric_case,tax_credit_case,scenario,default,core_metric_variable,value
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2033,75.5742
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2034,74.838
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2035,74.1812
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2036,73.7406
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2037,73.3303
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2038,72.9467
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2039,72.5866
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2040,72.2474
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2041,71.927
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2042,71.6235
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2043,71.3353
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2044,71.061
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2045,70.7994
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2046,70.5495
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2047,70.3102
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2048,70.0808
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2049,69.8606
+2024,OffShoreWind,Class3,Offshore Wind - Class 3,Fixed O&M,Market,ITC,Moderate,1,2050,69.6488
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2022,4532.05918275957
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2023,4486.642472196448
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2024,3722.1262899259377
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2025,2959.012486785936
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2026,2837.2585954551328
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2027,2715.59402716905
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2028,2593.774587583599
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2029,2471.910111469906
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2030,2352.1577501920124
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2031,2312.9914921925856
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2032,2273.825188041019
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2033,2232.6075792317456
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2034,2193.4431758504875
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2035,2156.471001630565
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2036,2115.243192082649
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2037,2076.081472582945
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2038,2036.9198878934585
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2039,1997.7584465465068
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2040,1956.5053836229545
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2041,1917.3457562757944
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2042,1880.424612712702
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2043,1841.2673808182672
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2044,1800.0015643573245
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2045,1760.846386500334
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2046,1721.6917050519953
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2047,1682.5375586936284
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2048,1641.235271648831
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2049,1602.0827100156623
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Advanced,0,2050,1565.2395334491666
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2022,4532.05918275957
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2023,4486.642472196448
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2024,4728.701044538067
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2025,4661.999232764512
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2026,4480.552702106681
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2027,4299.2412143579095
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2028,4118.079029260547
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2029,3937.082487461376
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2030,3756.270404463208
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2031,3731.261734802026
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2032,3706.253065140846
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2033,3681.244395479665
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2034,3656.2357258184834
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2035,3631.2270561573023
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2036,3606.218386496121
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2037,3581.2097168349405
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2038,3556.201047173759
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2039,3531.192377512578
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2040,3506.183707851397
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2041,3481.175038190216
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2042,3456.166368529034
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2043,3431.157698867854
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2044,3406.149029206673
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2045,3381.140359545492
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2046,3356.131689884311
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2047,3331.123020223129
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2048,3306.114350561948
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2049,3281.105680900767
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Conservative,0,2050,3256.097011239588
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2022,4532.05918275957
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2023,4486.642472196448
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2024,4150.724267093813
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2025,3638.921285164085
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2026,3507.3589684180465
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2027,3375.6398635874384
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2028,3243.745017461576
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2029,3111.6522937069712
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2030,2979.3356753381063
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2031,2930.723654087831
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2032,2882.13824191227
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2033,2833.580475470554
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2034,2785.051445979728
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2035,2736.552302851726
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2036,2688.084257625242
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2037,2639.648588220727
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2038,2591.246643549961
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2039,2542.879848515137
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2040,2494.5497094364155
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2041,2446.257819951405
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2042,2398.0058674351585
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2043,2349.795639995056
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2044,2301.6290341015347
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2045,2253.5080629231675
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2046,2205.434865443081
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2047,2157.411716443559
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2048,2109.441037456825
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2049,2061.5254087928724
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,CAPEX,Market,,Moderate,0,2050,2013.667582769996
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2022,106.807289688
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2023,105.711898534
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2024,87.27277661685805
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2025,68.86747823460153
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2026,65.93093496946398
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2027,62.996546058347725
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2028,60.05842185576644
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2029,57.119211431527255
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2030,54.23094243124152
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2031,53.28630394871149
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2032,52.34166435305272
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2033,51.34754999472729
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2034,50.40295624314124
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2035,49.51123616736953
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2036,48.51687578068283
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2037,47.57234676077984
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2038,46.62782099232144
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2039,45.683298681095934
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2040,44.68832921629817
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2041,43.74385065635497
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2042,42.85336137271641
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2043,41.90894058793332
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2044,40.91366352463567
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2045,39.96929228052645
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2046,39.02493300913916
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2047,38.08058664341621
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2048,37.08442995774079
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2049,36.14012181349936
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Advanced,0,2050,35.25151299097998
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2022,106.807289688
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2023,105.711898534
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2024,111.55003202286994
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2025,109.94127230278905
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2026,105.56502131186052
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2027,101.19202737777655
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2028,96.82263442671388
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2029,92.45723657351957
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2030,88.09628762330372
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2031,87.49311149758911
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2032,86.88993537187451
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2033,86.28675924615992
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2034,85.68358312044529
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2035,85.08040699473071
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2036,84.47723086901608
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2037,83.87405474330149
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2038,83.27087861758687
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2039,82.66770249187226
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2040,82.06452636615766
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2041,81.46135024044305
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2042,80.85817411472846
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2043,80.25499798901386
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2044,79.65182186329925
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2045,79.04864573758465
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2046,78.44546961187005
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2047,77.84229348615543
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2048,77.23911736044083
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2049,76.63594123472622
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Conservative,0,2050,76.03276510901166
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2022,106.807289688
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2023,105.711898534
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2024,97.609994504082
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2025,85.2659816496623
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2026,82.09287210085292
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2027,78.91598103024768
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2028,75.73485131140421
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2029,72.54894904515673
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2030,69.35764673613095
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2031,68.18518890298157
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2032,67.01337284561684
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2033,65.84222356688765
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2034,64.67176738550978
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2035,63.50203202378304
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2036,62.33304670242268
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2037,61.1648422431844
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2038,59.99745118004112
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2039,58.83090787975428
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2040,57.66524867277931
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2041,56.500511995553325
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2042,55.33673854533693
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2043,54.17397144892161
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2044,53.01225644667291
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2045,51.851642093561374
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2046,50.69217997903871
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2047,49.53392496785317
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2048,48.37693546416797
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2049,47.2212737016567
+2024,Utility-Scale Battery Storage,10Hr Battery Storage,Utility-Scale Battery Storage - 10Hr,Fixed O&M,Market,,Moderate,0,2050,46.06700606260632
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2022,1290.3512471521203
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2023,1278.1807523378366
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2024,1073.3103397431776
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2025,867.9884263021866
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2026,835.7300119907013
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2027,803.4428398138068
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2028,771.2055289912464
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2029,738.9827178358411
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2030,706.0799039513817
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2031,695.4316298942763
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2032,684.7833706960133
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2033,674.7955361781314
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2034,664.1466650202458
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2035,652.7919980471177
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2036,642.8074476925767
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2037,632.1577124496754
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2038,621.5079338041551
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2039,610.8581090090063
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2040,600.8816890667231
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2041,590.231280248022
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2042,578.8601837771592
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2043,568.2090037341087
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2044,558.2366898376159
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2045,547.584848490055
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2046,536.9328473219994
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2047,526.2806738798632
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2048,516.3201018148897
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2049,505.6674181649554
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Advanced,0,2050,494.271219947937
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2022,1290.3512471521203
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2023,1278.1807523378366
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2024,1343.150294521574
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2025,1325.923901597508
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2026,1283.7289550688524
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2027,1241.4903454531286
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2028,1199.2034621833996
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2029,1156.8630218790834
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2030,1114.4629409705717
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2031,1107.5421525777483
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2032,1100.6213641849251
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2033,1093.7005757921015
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2034,1086.7797873992783
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2035,1079.8589990064552
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2036,1072.9382106136318
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2037,1066.0174222208086
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2038,1059.0966338279852
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2039,1052.175845435162
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2040,1045.2550570423389
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2041,1038.3342686495157
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2042,1031.413480256692
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2043,1024.492691863869
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2044,1017.5719034710456
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2045,1010.6511150782223
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2046,1003.7303266853992
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2047,996.8095382925758
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2048,989.8887498997524
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2049,982.9679615069292
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Conservative,0,2050,976.0471731141064
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2022,1290.3512471521203
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2023,1278.1807523378366
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2024,1200.6968043851575
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2025,1068.896874034551
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2026,1043.405862330124
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2027,1017.9620266767472
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2028,992.5710699161737
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2029,967.239652661684
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2030,941.9756031780385
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2031,930.4660234065976
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2032,918.948437216362
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2033,907.4225326864084
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2034,895.8879814798535
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2035,884.3444377495222
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2036,872.7915369548859
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2037,861.2288945817729
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2038,849.6561047553931
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2039,838.072738736159
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2040,826.4783432865884
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2041,814.8724388962041
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2042,803.2545178498193
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2043,791.6240421228439
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2044,779.9804410852677
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2045,768.323108993717
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2046,756.6514022484089
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2047,744.9646363888792
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2048,733.2620827989954
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2049,721.5429650878966
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,CAPEX,Market,,Moderate,0,2050,709.8064551090512
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2022,28.621570104
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2023,28.328033822
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2024,23.38682969492837
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2025,18.434735962974223
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2026,17.65670555873003
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2027,16.87798155270388
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2028,16.100460136776984
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2029,15.323288433696764
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2030,14.529715961717471
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2031,14.2728936365667
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2032,14.016071669791604
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2033,13.775178275205093
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2034,13.518341548771076
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2035,13.244481958220286
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2036,13.003667773321736
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2037,12.746810206296871
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2038,12.489951592458088
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2039,12.233091865551136
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2040,11.9924737754722
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2041,11.735599962687498
+2024,Utility-Scale Battery Storage,2Hr Battery Storage,Utility-Scale Battery Storage - 2Hr,Fixed O&M,Market,,Advanced,0,2042,11.461344114321909
