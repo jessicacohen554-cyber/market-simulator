@@ -1,0 +1,16 @@
+{
+  "id": "2026-07-19-caiso-101-chp-steam",
+  "label": "caiso 101 chp steam",
+  "date": "2026-07-19",
+  "shorthand": "caiso-101-chp-steam",
+  "definition": "caiso-101 WP-3 B-leg -- caiso-99 KEEPER recipe on the re-derived CT_CHP steam level (steam_level_cf: loading-when-on for CAMPD-visible cogens + EIA-923 delivery-implied level for CEMS-invisible cogens; rule-23 re-derivation owner-ruled 2026-07-19 at scope (a)+(b), WP-3 ask s5 report-back), 2023-2025 A/B vs the same-machine caiso100_repro_A (pre-WP-3 artifact): the CT_CHP energy gap closes -1.83/-1.75/-1.08 -> -0.57/-0.48/+0.20 TWh (the re-derived level reaches the CEMS-invisible Kern/refinery cogen fleet the p25 statistic could never see); C1 holds 12/12 (free 8/8); C3a flips FAIL->PASS (2025 mean into band as the belly resid improves 7.7/7.6/6.3 -> 6.0/6.6/5.0); C5a improves every year (-11.6/-9.6/-12.8 -> -11.1/-9.1/-12.1, 2024 stays CAVEAT); C7/C8 PASS; D-1 CT_CHP shape clears (ungated pass; 2025 profile_r 0.433 with cv_ratio ~0 noted -- the flat-floor signature bounded by the class's immateriality). Report-noted non-gates: evening resid deepens -5.3/-4.4/-2.3 -> -5.8/-4.9/-3.0 (the added flat cogen baseload displaces marginal evening gas -- the next real residual, not a reason to keep a mis-measuring level, rule 14); C3c 20/1/0 -> 19/0/0 (1h drift). Zero fitted scalars; recorded battery_dispatch_adder=5.0 is the previously-hidden run_year fallback now honestly recorded (issue #2546) -- live adder behavior identical to the keeper and the A-leg.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-19-caiso-101-chp-steam.js",
+  "bundle": "results/calibration/caiso101_wp3_B",
+  "market_story": "CT_CHP: CAISO's CT_CHP class is the Kern County EOR steam-flood, refinery, and campus/hospital cogen fleet — steam-host obligations run the turbines as high-loading baseload whenever the host operates (measured >=70% loading in 79/85/88% of on-capacity-hours, 2023/24/25), and most of the fleet sits below the Part 75 CEMS threshold so its grid delivery appears only in EIA-923; the steam floor carries that measured delivered baseload times the sector grid-delivery share, which is why the class delivers ~1.5-2 TWh/yr independent of the merit order. CC_CHP: the flat merchant steam hosts (Los Medanos, Elk Hills) hold their measured loading-when-on baseload around the clock, while partial cyclers (Gilroy, King City) carry only their on-frequency-collapsed delivered level. Storage: the battery fleet dispatches inside the measured EIA-930 NG:OTH p95 diurnal envelope (caiso-99 anchor, carried)."
+}
