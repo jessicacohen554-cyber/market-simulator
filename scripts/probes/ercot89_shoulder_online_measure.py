@@ -281,6 +281,75 @@ def _model_capability(
     return pd.DataFrame(out), caps
 
 
+EIA930_FUEL = REPO / "data" / "raw" / "ERCO_fueltype.parquet"
+
+
+def _model_mix(bundle: Path, year: int) -> pd.DataFrame | None:
+    """Hourly model MW per dispatch-frame class (all classes) + demand."""
+    path = bundle / "dispatch" / f"{year}_P1.parquet"
+    if not path.exists():
+        return None
+    d = pd.read_parquet(path, columns=["pass", "klass", "hour", "mw"])
+    if "pass" in d.columns:
+        d = d[d["pass"].astype(str) == "P1"]
+    piv = (
+        d.groupby(["klass", "hour"], observed=True)["mw"]
+        .sum()
+        .unstack("klass")
+        .reindex(range(HOURS))
+        .fillna(0.0)
+    )
+    sysdf = pd.read_parquet(bundle / "system.parquet")
+    sysdf = sysdf[(sysdf["year"] == year) & (sysdf["pass"] == "P1")]
+    piv["_demand"] = sysdf.groupby("hour")["demand"].sum().reindex(range(HOURS))
+    return piv
+
+
+def _actual_mix(year: int) -> pd.DataFrame | None:
+    """Hourly EIA-930 actual MW by fuel type on the hoy clock."""
+    if not EIA930_FUEL.exists():
+        return None
+    df = pd.read_parquet(EIA930_FUEL)
+    std = pd.DatetimeIndex(df["period"]).tz_convert(_STD_TZ)
+    ok = (std.year == year) & ~((std.month == 2) & (std.day == 29))
+    df = df.loc[np.asarray(ok)].copy()
+    stdo = std[np.asarray(ok)]
+    df["hoy"] = _MONTH_START_HOUR[stdo.month - 1] + (stdo.day - 1) * 24 + stdo.hour
+    return (
+        df.groupby(["type_name", "hoy"], observed=True)["value_mwh"]
+        .sum()
+        .unstack("type_name")
+        .reindex(range(HOURS))
+    )
+
+
+def _mix_summary(
+    model_mix: pd.DataFrame | None,
+    actual_mix: pd.DataFrame | None,
+    mask: np.ndarray,
+) -> dict:
+    """Median model class MW and actual fuel MW over the masked hours."""
+    out: dict = {}
+    hours = np.flatnonzero(mask)
+    if model_mix is not None:
+        m = model_mix.iloc[hours]
+        med = m.median()
+        out["model"] = {
+            str(k): round(float(v), 1)
+            for k, v in med.sort_values(ascending=False).items()
+            if abs(v) >= 50.0
+        }
+    if actual_mix is not None:
+        a = actual_mix.iloc[hours]
+        med = a.median()
+        out["actual_eia930"] = {
+            str(k): round(float(v), 1)
+            for k, v in med.sort_values(ascending=False).items()
+            if np.isfinite(v) and abs(v) >= 50.0
+        }
+    return out
+
+
 def _dam_avail(year: int) -> dict[str, np.ndarray]:
     """Class-day DAM availability fraction on the hoy clock (NaN uncovered)."""
     if not DAM_AVAIL_CSV.exists():
@@ -348,6 +417,8 @@ def measure_year(year: int, bundle: Path, actual: pd.DataFrame) -> dict:
     class_mw = _model_class_mw(bundle, year)
     dam = _dam_avail(year)
     model_cap, cap_hat = _model_capability(class_mw, dam)
+    model_mix = _model_mix(bundle, year)
+    actual_mix = _actual_mix(year)
 
     act = actual[actual["year"] == year].set_index("hour")["rt"]
     rt = act.reindex(range(HOURS)).to_numpy(float)
@@ -486,6 +557,8 @@ def measure_year(year: int, bundle: Path, actual: pd.DataFrame) -> dict:
         "formed_summary": {c: _agg(formed, c) for c in ("CC", "CT")},
         "control_summary": {c: _agg(control, c) for c in ("CC", "CT")},
         "on_share_by_bin": by_bin,
+        "supply_mix_residual": _mix_summary(model_mix, actual_mix, resid_mask),
+        "supply_mix_control": _mix_summary(model_mix, actual_mix, control_mask),
         "residual_hours": hours_out,
     }
 
