@@ -30,12 +30,82 @@ import hashlib
 import json
 import os
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-import pandas as pd
+if TYPE_CHECKING:  # pandas is imported lazily so stdlib-only tools can import
+    import pandas as pd  # this module (calibration_verdict, audit_keepers, deploy).
+
+# Repo root (scripts/lib/bundle_io.py -> parents[2]) and the bundle / registry
+# roots derived from it, so the path-resolution helpers below stay stdlib-only
+# (no ``market_sim`` / pandas import) and are usable by the no-numpy governance
+# scorers and the bare-python deploy toolchain.
+REPO_ROOT: Path = Path(__file__).resolve().parents[2]
+BUNDLES_ROOT: Path = REPO_ROOT / "results" / "calibration"
+REGISTRY_DIR: Path = REPO_ROOT / "frontend" / "data" / "backcast" / "registry"
 
 # The deterministic input/benchmark frames eligible for the shared store. The
 # solve outputs (dispatch/system/storage/btm) are per-run and never shared.
 SHARED_INPUT_NAMES: tuple[str, ...] = ("campd", "eia930", "eia923")
+
+
+def bundles_root() -> Path:
+    """Return the calibration bundles root (``results/calibration`` under repo)."""
+    return BUNDLES_ROOT
+
+
+def resolve_bundle(name_or_path: str | Path) -> Path:
+    """Resolve a bundle spec to its on-disk run directory.
+
+    Accepts any of the spellings the standing tools take on the command line:
+
+    * an existing path (absolute or relative) to a bundle dir — returned as-is;
+    * a registry run id (``<id>`` with a ``registry/<id>.json`` sidecar) — the
+      sidecar's ``bundle`` field, resolved under the repo root;
+    * a bare bundle name — resolved under :func:`bundles_root`.
+
+    The returned path is not required to exist (callers decide), except the
+    registry-sidecar branch, which reads the sidecar to find the bundle.
+
+    Raises:
+        FileNotFoundError: if ``name_or_path`` is neither an existing path, a
+            known run id, nor a name under the bundles root.
+    """
+    p = Path(name_or_path)
+    # An explicit path (has a separator, or already exists) is taken literally.
+    if p.exists():
+        return p
+    text = str(name_or_path)
+    if os.sep in text or (os.altsep and os.altsep in text):
+        return p
+    sidecar = REGISTRY_DIR / f"{text}.json"
+    if sidecar.exists():
+        bundle = json.loads(sidecar.read_text()).get("bundle")
+        if bundle:
+            return REPO_ROOT / bundle
+    candidate = BUNDLES_ROOT / text
+    if candidate.exists():
+        return candidate
+    raise FileNotFoundError(
+        f"cannot resolve bundle {name_or_path!r}: not an existing path, a "
+        f"registry run id ({sidecar}), or a name under {BUNDLES_ROOT}"
+    )
+
+
+def bundle_meta(run_dir: Path) -> dict:
+    """Return a bundle's parsed ``meta.json``, or an empty dict if absent."""
+    meta_path = Path(run_dir) / "meta.json"
+    if not meta_path.exists():
+        return {}
+    return json.loads(meta_path.read_text())
+
+
+def dispatch_path(run_dir: Path, year: int, pass_label: str = "P1") -> Path:
+    """Return the dispatch parquet path for ``year``/``pass_label`` in a bundle.
+
+    The bundle stores one dispatch parquet per solved year and pass under
+    ``dispatch/<year>_<pass_label>.parquet`` (e.g. ``dispatch/2024_P1.parquet``).
+    """
+    return Path(run_dir) / "dispatch" / f"{year}_{pass_label}.parquet"
 
 
 def content_hash(df: pd.DataFrame) -> str:
@@ -47,6 +117,8 @@ def content_hash(df: pd.DataFrame) -> str:
     pandas version; a version bump may shift the hash, which only adds a new
     (still-correct) store entry.
     """
+    import pandas as pd
+
     h = hashlib.sha256()
     h.update("\x00".join(map(str, df.columns)).encode("utf-8"))
     h.update(pd.util.hash_pandas_object(df, index=True).values.tobytes())
@@ -94,5 +166,7 @@ def bundle_input_path(run_dir: Path, name: str) -> Path | None:
 
 def read_bundle_input(run_dir: Path, name: str) -> pd.DataFrame | None:
     """Read a bundle input parquet via :func:`bundle_input_path`, or ``None``."""
+    import pandas as pd
+
     path = bundle_input_path(run_dir, name)
     return pd.read_parquet(path) if path is not None else None
