@@ -2492,6 +2492,7 @@ def solve_and_persist(
     miso_measured_reserve_requirements: bool = False,
     miso_south_seam_split: bool = False,
     miso_rdt_tcdc: bool = False,
+    miso_zonal_loss_surface: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_ecrs_conservative_deployment: bool = False,
     ercot_nonreleasable_as_withholding: bool = False,
@@ -2894,6 +2895,8 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(miso_south_seam_split=True)
         if miso_rdt_tcdc:
             recorded_cfg = recorded_cfg.with_overrides(miso_rdt_tcdc=True)
+        if miso_zonal_loss_surface:
+            recorded_cfg = recorded_cfg.with_overrides(miso_zonal_loss_surface=True)
         if pjm_reserve_supply_cap:
             recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_supply_cap=True)
         if pjm_reserve_pergen:
@@ -3696,6 +3699,7 @@ def solve_and_persist(
             miso_measured_reserve_requirements=miso_measured_reserve_requirements,
             miso_south_seam_split=miso_south_seam_split,
             miso_rdt_tcdc=miso_rdt_tcdc,
+            miso_zonal_loss_surface=miso_zonal_loss_surface,
             ercot_multiproduct_as_coopt=ercot_multiproduct_as_coopt,
             ercot_ecrs_conservative_deployment=ercot_ecrs_conservative_deployment,
             ercot_nonreleasable_as_withholding=ercot_nonreleasable_as_withholding,
@@ -4152,6 +4156,7 @@ def solve_and_persist(
         "miso_measured_reserve_requirements": miso_measured_reserve_requirements,
         "miso_south_seam_split": miso_south_seam_split,
         "miso_rdt_tcdc": miso_rdt_tcdc,
+        "miso_zonal_loss_surface": miso_zonal_loss_surface,
         "ercot_multiproduct_as_coopt": ercot_multiproduct_as_coopt,
         "ercot_ecrs_conservative_deployment": ercot_ecrs_conservative_deployment,
         "ercot_nonreleasable_as_withholding": ercot_nonreleasable_as_withholding,
@@ -7333,6 +7338,20 @@ def main() -> None:
         "default off.",
     )
     parser.add_argument(
+        "--miso-zonal-loss-surface",
+        action="store_true",
+        help="MISO marginal transmission-loss physics (miso-76 M3): split "
+        "the Midwest L1-L6 links into one-way pairs whose receiving-end "
+        "energy-balance coefficient is 1 - eps(month), eps derived from "
+        "MISO's published per-hub MLC record (the dimensionless marginal "
+        "delivery-factor deviation surface, frozen derive "
+        "scripts/data/derive_miso_loss_surface.py). Zonal duals then "
+        "separate by the measured delivery-factor ratio — losses consume "
+        "MWh, prices stay duals, zero fitted scalars (charter "
+        "docs/handoffs/miso-nc-price-separation-design-2026-07.md §4). "
+        "MISO-only; default off.",
+    )
+    parser.add_argument(
         "--pjm-reserve-pergen",
         action="store_true",
         help="PJM PER-GENERATOR reserve co-optimization "
@@ -9217,6 +9236,7 @@ def main() -> None:
         miso_measured_reserve_requirements=args.miso_measured_reserve_requirements,
         miso_south_seam_split=args.miso_south_seam_split,
         miso_rdt_tcdc=args.miso_rdt_tcdc,
+        miso_zonal_loss_surface=args.miso_zonal_loss_surface,
         pjm_reserve_pergen=args.pjm_reserve_pergen,
         pjm_reserve_pergen_sync=args.pjm_reserve_pergen_sync,
         pjm_reserve_pergen_size_split=args.pjm_reserve_pergen_size_split,

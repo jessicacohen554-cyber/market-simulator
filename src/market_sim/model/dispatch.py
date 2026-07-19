@@ -2501,6 +2501,7 @@ def build_constraints(
     posture_gen_idx: np.ndarray | None = None,
     posture_col: np.ndarray | None = None,
     posture_mlf: np.ndarray | None = None,
+    link_loss: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Assemble the LP constraint matrix and its row bound vectors.
 
@@ -2551,6 +2552,16 @@ def build_constraints(
         incidence: Node-link incidence of shape ``(n_zones, n_links)``; the
             coefficient of ``Flow`` in each zone's balance. ``None`` when
             there are no links.
+        link_loss: Optional ``(n_links, T)`` per-link-hour marginal loss
+            fraction on ONE-WAY links (miso_zonal_loss_surface): the
+            receiving zone of link ``l`` gains ``(1 - link_loss[l, t])``
+            per MW of flow instead of 1, so transported energy consumes
+            MWh and the zonal duals separate by the measured
+            delivery-factor ratio. Zero rows leave a link lossless;
+            ``None`` (default) skips the correction entirely
+            (byte-identical). Loss entries are only meaningful on one-way
+            (``is_bidirectional=False``) links — a signed bidirectional
+            link with loss would create energy on reverse flow.
         storage_zone_idx: Zone index of each storage unit, shape
             ``(n_storage,)``. Defaults to zone ``0`` for every unit.
         eta_chg: Charge efficiency, scalar or ``(n_storage,)``. Defaults
@@ -2627,6 +2638,35 @@ def build_constraints(
 
     # Replicate the per-hour block across all hours without a Python loop.
     energy_balance = sp.kron(sp.eye(T, format="csr"), per_hour, format="csr")
+
+    # Marginal transmission losses (miso_zonal_loss_surface): scale the
+    # RECEIVING-end incidence entry of each lossy one-way link from +1 to
+    # ``1 - link_loss[l, t]`` — transported energy costs MWh, so the zonal
+    # duals separate by the measured delivery-factor ratio (prices stay LP
+    # duals, rule #4; never a price adder). The loss fraction is hour-varying
+    # (a monthly measured surface expanded hourly), so it cannot ride the
+    # static ``per_hour`` kron block; instead the correction is a sparse
+    # subtraction with one entry per (lossy link, hour), built fully
+    # vectorized (rule #2). ``None`` (every flag off) skips the block —
+    # byte-identical constraint matrix.
+    if link_loss is not None and n_links:
+        loss = np.asarray(link_loss, dtype=float)
+        lossy = np.flatnonzero(loss.max(axis=1) > 0.0)  # links with any loss
+        if lossy.size:
+            inc_csc = sp.csc_matrix(flow_block)
+            # Receiving zone of each lossy link = the +1 incidence row.
+            recv = np.empty(lossy.size, dtype=int)
+            for j, ln in enumerate(lossy):  # ln: lossy-link column (few)
+                col = inc_csc.getcol(int(ln))
+                recv[j] = int(col.indices[np.argmax(col.data)])
+            hours_idx = np.arange(T)
+            rows = (hours_idx[None, :] * n_zones + recv[:, None]).ravel()
+            cols = (
+                hours_idx[None, :] * vph + layout._flow_off + lossy[:, None]
+            ).ravel()
+            data = -loss[lossy, :].ravel()
+            correction = sp.csr_matrix((data, (rows, cols)), shape=energy_balance.shape)
+            energy_balance = (energy_balance + correction).tocsr()
 
     # RHS: row r = t * n_zones + z must hold demand[z, t]; demand.T ravels
     # in that hour-major, zone-minor order.
@@ -3533,6 +3573,7 @@ class DispatchModel:
         posture_startup: np.ndarray | None = None,
         link_bidirectional: np.ndarray | None = None,
         link_flow_cost: np.ndarray | None = None,
+        link_loss: np.ndarray | None = None,
         slack_cost: np.ndarray | None = None,
         T: int | None = None,
     ) -> None:
@@ -3799,6 +3840,7 @@ class DispatchModel:
             posture_gen_idx=(posture_gen_idx if standalone_posture else None),
             posture_col=(posture_col if standalone_posture else None),
             posture_mlf=(posture_mlf if standalone_posture else None),
+            link_loss=link_loss,
         )
         col_lower, col_upper = build_variable_bounds(
             layout,
@@ -4625,6 +4667,7 @@ def solve_dispatch(
     posture_startup: np.ndarray | None = None,
     link_bidirectional: np.ndarray | None = None,
     link_flow_cost: np.ndarray | None = None,
+    link_loss: np.ndarray | None = None,
     T: int | None = None,
 ) -> DispatchResult:
     """Solve the linear economic-dispatch problem with HiGHS.
@@ -4796,6 +4839,7 @@ def solve_dispatch(
         posture_startup=posture_startup,
         link_bidirectional=link_bidirectional,
         link_flow_cost=link_flow_cost,
+        link_loss=link_loss,
         T=T,
     )
     return model.solve(
