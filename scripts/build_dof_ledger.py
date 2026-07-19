@@ -970,6 +970,47 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "placement is duration-curve-level (price-decorrelated seam)",
             )
         )
+    if iso == "MISO" and sc.get("miso_zonal_loss_surface"):
+        # miso-76 M3 marginal-loss physics, ZERO fitted scalars: the Midwest
+        # L1-L6 links become one-way pairs whose receiving-end energy-balance
+        # coefficient is 1 - eps(month), eps derived from MISO's OWN published
+        # per-hub LMP component record (MLC = MEC x (DF - 1), MISO BPM-002) as
+        # the dimensionless per-zone monthly delivery-factor deviation surface
+        # (frozen derive; per-year rows for backcast train years — the
+        # same-year measured-physical class as CEMS emission rates — and
+        # pooled rows as the forecast forward analogue). Zonal duals then
+        # separate by the measured DF ratio: losses consume MWh and prices
+        # stay LP duals (rule 4), never a price adder. The surface is the
+        # measured object; the only non-measured device is the 0.001 flow
+        # tiebreak (storage-eps class, transmission.MISO_LOSS_LINK_TIEBREAK_EPS).
+        out.append(
+            _entry(
+                "miso_zonal_loss_surface (marginal delivery-factor surface)",
+                "data/raw/iso-specific-transmission/MISO_loss_surface.csv via "
+                "data.loss_surface.load_zone_month_deviation -> "
+                "transmission.apply_miso_zonal_loss_links + "
+                "build_miso_link_loss -> dispatch.build_constraints(link_loss)",
+                "measured-physical",
+                iso,
+                n_scalars=0,
+                source="Ratio-of-sums dev_z,m = sum(MLC)/sum(MEC) per zone-"
+                "month from the lmp-components clean record (MISO daily "
+                "da_expost_lmp, 8 named hubs, DA basis; MEC recovered as the "
+                "cross-hub mean of LMP-MCC-MLC, identity checked at "
+                "curation). Plains (hub-less) = the documented West+Illinois "
+                "bracketing proxy (D6). Frozen derive "
+                "scripts/data/derive_miso_loss_surface.py; offline B1 "
+                "acceptance 9/9 pair-years in [0.5x,1.5x] (ratios 0.96-1.01) "
+                "before any solve. Charter: docs/handoffs/miso-nc-price-"
+                "separation-design-2026-07.md §4.",
+                root_cause="re-derive trigger is a source-data change only "
+                "(rule 23), never a residual; representation bound: one-way "
+                "monthly linearization (reverse direction clamps to 0 — "
+                "under-transmits in atypical-direction/congested hours; the "
+                "congestion component of separation is the documented "
+                "data-blocked M4 gap)",
+            )
+        )
     if sc.get("unit_outage_short_windows"):
         # Short (< 5-day) baseload-coal unit-outage windows, ZERO scalars:
         # each window is the unit's own CEMS record; the derive-script guards
