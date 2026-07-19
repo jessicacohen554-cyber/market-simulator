@@ -111,6 +111,11 @@ data/raw/NEISO-AS/requirements/requirements_*.csv
 # ISO-NE DA energy-offer daily CSVs (~1.4 GB for 2023-2025): gitignored, same
 # precedent; regenerate with scripts/fetch_neiso_da_energy_offers.py.
 data/raw/NEISO-AS/da-energy-offers/hbdayaheadenergyoffer_*.csv
+# ISO-NE Morning Report daily CSVs (~2,940 files, 2018-07 -> present): gitignored,
+# same precedent; the committed neiso_operable_capacity_daily.csv is the
+# deliverable. Regenerate with scripts/data/fetch_neiso_morning_report.py, then
+# scripts/data/build_neiso_operable_capacity.py (README.md in that dir).
+data/raw/neiso-operable-capacity/daily/morning_report_*.csv
 
 # NOAA GHCN-Daily raw per-station pull cache for scripts/fetch_zone_temperature.py
 # (re-fetchable; --no-fetch re-derives the zone CSVs from it). NEVER commit — the
