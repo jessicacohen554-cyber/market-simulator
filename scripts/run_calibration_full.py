@@ -16,6 +16,12 @@ A run bundle lives in ``results/calibration/<iso>/<timestamp>/`` and holds:
     (COAL_LIGNITE / COAL_PRB) so mine-mouth and PRB can be separated.
   * ``system.parquet`` — per-zone hourly price, load slack and demand target,
     for every year and pass.
+  * ``hourly/class_hourly_<year>.parquet`` + ``hourly/system_<year>.parquet``
+    — committable slim sidecars (class-hour dispatch aggregate; per-year
+    system slices). ``dispatch/`` and ``system.parquet`` are gitignored by
+    the slim-bundle rules, so KEEPER bundles commit ``hourly/`` and
+    diagnostics read it instead of replaying the solve; a replay is
+    justified only for unit-level questions.
   * ``eia930.parquet`` — EIA-930 hourly benchmark series (gas, coal, wind,
     solar, nuclear, net generation).
   * ``eia923.parquet`` — EIA-923 net generation per (plant, class), annual and
@@ -500,6 +506,48 @@ def _dispatch_frame(
     df["mw"] = df["mw"].astype(np.float32)
     df["lmp"] = df["lmp"].astype(np.float32)
     return df
+
+
+def _write_class_hourly_sidecar(run_dir: Path, year: int, labels: list[str]) -> Path:
+    """Write the committable class-hour dispatch sidecar for one year.
+
+    Aggregates the (gitignored) unit-hour ``dispatch/<year>_<pass>.parquet``
+    frames to ``(year, pass, klass, hour, mw)`` and writes
+    ``hourly/class_hourly_<year>.parquet`` — a sub-MB committable summary so
+    keeper diagnostics can read class-level dispatch and price series without
+    replaying the solve (remote containers are ephemeral; before this sidecar
+    every measurement session re-solved the keeper). ``hourly/`` escapes the
+    slim-bundle gitignore rules by construction. Returns the path written.
+    """
+    hourly_dir = run_dir / "hourly"
+    hourly_dir.mkdir(parents=True, exist_ok=True)
+    frames = [
+        pd.read_parquet(
+            run_dir / "dispatch" / f"{year}_{label}.parquet",
+            columns=["year", "pass", "klass", "hour", "mw"],
+        )
+        .groupby(["year", "pass", "klass", "hour"], observed=True)["mw"]
+        .sum()
+        .reset_index()
+        for label in labels
+    ]
+    out = hourly_dir / f"class_hourly_{year}.parquet"
+    pd.concat(frames, ignore_index=True).to_parquet(out, index=False)
+    return out
+
+
+def _write_system_year_sidecars(run_dir: Path, system_df: pd.DataFrame) -> None:
+    """Write per-year committable slices of the system frame to ``hourly/``.
+
+    ``system.parquet`` itself is gitignored by the slim-bundle rules; these
+    per-year copies (``hourly/system_<year>.parquet``) are small enough to
+    commit for keeper bundles, giving probes the hourly price/demand series
+    without a replay.
+    """
+    hourly_dir = run_dir / "hourly"
+    hourly_dir.mkdir(parents=True, exist_ok=True)
+    for year, g in system_df.groupby("year"):
+        g.to_parquet(hourly_dir / f"system_{int(year)}.parquet", index=False)
 
 
 def _flows_frame(year: int, pass_label: str, result, links) -> "pd.DataFrame | None":
@@ -4090,13 +4138,14 @@ def solve_and_persist(
         # previous year's result/context/P2-state into the next build pushed a
         # 3-year backcast past 16 GB and into the OOM killer. Only the compact
         # per-year frames accumulated above survive the loop.
+        _write_class_hourly_sidecar(run_dir, year, [lbl for lbl, _ in labelled])
         del result, context, result_p1, p2_state, demand, must_run
         del must_run_total, labelled, res
         gc.collect()
 
-    pd.concat(system_frames, ignore_index=True).to_parquet(
-        run_dir / "system.parquet", index=False
-    )
+    system_all = pd.concat(system_frames, ignore_index=True)
+    system_all.to_parquet(run_dir / "system.parquet", index=False)
+    _write_system_year_sidecars(run_dir, system_all)
     if flows_frames:
         pd.concat(flows_frames, ignore_index=True).to_parquet(
             run_dir / "flows.parquet", index=False
