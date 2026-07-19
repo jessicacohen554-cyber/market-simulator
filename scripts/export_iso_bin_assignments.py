@@ -67,10 +67,23 @@ _CHP_GROUPS: frozenset[str] = frozenset({"CC_CHP", "CT_CHP", "ST_CHP"})
 
 
 def _chp_floor_status(iso: str) -> dict[int, str]:
-    """Return ``{plant_code: artifact status}`` for the ISO's CHP rows."""
-    path = REPO / "inputs" / "processed" / f"thermal_tranches_{iso}.csv"
+    """Return ``{plant_code: artifact status}`` for the ISO's CHP rows.
+
+    The thermal-tranche artifact is required to tag CHP must-run provenance. An
+    absent file is a hard error, never a silent ``{}`` — a missing artifact used
+    to drop every CHP ``Must_Run_Source`` to ``chp_sector_default`` unnoticed
+    (the pre-W1 ``inputs/processed`` dead path guaranteed it). A present file
+    with no CHP rows correctly yields an empty map.
+    """
+    from market_sim.config.paths import PROCESSED_DIR
+
+    path = PROCESSED_DIR / f"thermal_tranches_{iso}.csv"
     if not path.exists():
-        return {}
+        raise SystemExit(
+            f"{iso}: thermal-tranche artifact absent: {path} — required for CHP "
+            f"floor provenance; build it with "
+            f"scripts/data/derive_thermal_tranches.py"
+        )
     df = pd.read_csv(path)
     chp = df[df["plant_group"].isin(_CHP_GROUPS)]
     return {int(c): str(s) for c, s in zip(chp["plant_code"], chp["status"])}
