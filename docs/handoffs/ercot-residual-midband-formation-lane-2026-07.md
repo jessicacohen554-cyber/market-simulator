@@ -297,3 +297,32 @@ ercot86 base recipe, and the reconciliation:
 * Frozen against residuals (rule 23): re-derive only on SCED source update.
 * Physics gate `min_down_hours ≤ 2` (rule 12) — never a class tuple; CC rows
   fail the gate by physics, ST_GAS by its 8–12 h min-down.
+
+## 10. §6.2 probe results (ERCOT-88, 2026-07-19) — pool clears inframarginal, lane CLOSED
+
+Both single-year rule-16 throwaway probes (base = ercot86 keeper + the gate;
+`scripts/probes/_ercot88_midband_check.py`) clear the C3a level guard and the
+zero-spurious gate, but the pool leg is **dispatch-inert** and forms **zero new
+mid-band hours**:
+
+| year | C3a resid base→probe | mid-band formed | spurious Δ | dispatch shifted | rows carrying ladder |
+|---|---|---|---|---|---|
+| 2024 | −1.3% → −1.2% | 5/68 → 5/68 | +0 | 0.7 GWh / 462.9 TWh | 173 |
+| 2025 | +1.4% → +1.4% | 4/65 → 4/65 | +0 | 0.0 GWh | 91 |
+
+The pool leg engages (the ladder reaches 173/91 fast-start rows) and prices them,
+but the LP clears the startable increment only in hours already at/above scarcity
+(4 hours repriced in 2024, all > $2,000; none in 2025) and leaves it un-cleared in
+the diffuse shoulder hours the band lives in — the model carries cheaper online
+headroom there. This is §8.2 caveat (a) borne out: the band prices on the marginal
+tail, and the pool is not marginal in the residual hours.
+
+**Disposition.** The mechanism is structurally faithful (rule 1) and harm-free, so
+it is MERGED **default-OFF** (dormant, forecast-available — the NEISO Limb B
+precedent). It is NOT promoted into the keeper (band-inert) and NOT registered
+(a full-span would reproduce the ercot86 keeper to the dollar outside 4 scarce
+hours). **The offer-surface enumeration for the moderate-tightness band is CLOSED**
+— both the ERCOT-86 online-spare wall and this ERCOT-88 offline pool are built and
+measured-faithful, and neither fills the diffuse band. The band residual is
+**quantity-side** (the hour-level online-capability envelope in the shoulder hours),
+its own successor charter. ERCOT-86's partial fill stands as the honest result.

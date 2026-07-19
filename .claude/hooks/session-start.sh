@@ -3,9 +3,10 @@
 #
 # Guarantees the lint toolchain is present in the ephemeral web container so the
 # ruff-autofix PostToolUse hook (and any manual `uv run ruff ...`) can actually
-# run during the session. `ruff` ships in the project's `dev` extra, so a single
-# `uv sync --extra dev` installs the exact pinned ruff from uv.lock — the same
-# toolchain .github/workflows/lint.yml uses in CI.
+# run during the session. `ruff` ships in the project's `dev` dependency group,
+# which `uv sync` installs by default, so a single `uv sync` installs the exact
+# pinned ruff from uv.lock — the same toolchain .github/workflows/lint.yml uses
+# in CI.
 #
 # Synchronous + idempotent: re-running is a near no-op once the container is
 # warm, and finishing before the agent starts means ruff is ready on the very
@@ -21,4 +22,4 @@ fi
 cd "${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
 
 # Install runtime + dev deps (ruff, pytest, ...) from the locked environment.
-uv sync --extra dev
+uv sync

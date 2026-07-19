@@ -46,14 +46,14 @@ nothing to sync.
 
 ### 1. Determine the changed code surface
 List the changed files under `src/market_sim/`, `config/`, `scripts/`,
-`inputs/`. Group them by subsystem (dispatch, commitment, capacity, fleet/
+`data/`. Group them by subsystem (dispatch, commitment, capacity, fleet/
 binning, outages, fuel, emissions/policy, transmission, storage, calibration,
-config/ISO topology, results schema, frontend).
+config/ISO topology, pipeline/solve-core, results schema, frontend).
 
 ### 2. Map each changed subsystem to its docs
 Use the **code→doc map** below to find every doc that makes claims about the
 changed subsystem. A single code change often touches several docs (e.g. a new
-ISO topology hits `claude.md`, the methodology spec, and `docs/multi-iso/`).
+ISO topology hits `CLAUDE.md`, the methodology spec, and `docs/multi-iso/`).
 
 ### 3. Verify the *current* behaviour against source — do not trust memory
 For each candidate doc claim, read the actual code (the function, the constant,
@@ -97,12 +97,12 @@ items parked for later. Do not commit/push unless the user asks.
 
 | Code area | Docs that describe it |
 |---|---|
-| `model/dispatch.py` (LP vars, objective, constraints, duals=price) | `model-methodology-spec.md` §1–2; `claude.md` (Objective / Key Constraints) |
+| `model/dispatch.py` (LP vars, objective, constraints, duals=price) | `model-methodology-spec.md` §1–2; `CLAUDE.md` (Objective / Key Constraints) |
 | `model/commitment.py` (P0/P1/P2, startup amortization, screens) | `model-methodology-spec.md` (Unit-commitment section) & §7.2; `docs/calibration-log.md`, `docs/calibration-session-log.md` |
-| `model/capacity.py` (retire / new entry / CCS retrofit) | `model-methodology-spec.md` §5; `claude.md` (Capacity Evolution) |
-| `model/transmission.py`, `config/iso_configs.py` (topology/TTC) | `model-methodology-spec.md` Scope & §1.3; `claude.md` (What This Is); `docs/multi-iso/00…`, `04…` |
-| `model/storage.py` | `model-methodology-spec.md` §1.3, §1.5.5, §5.5; `claude.md` |
-| `data/fleet.py`, `inputs/custom-bin-assignments.csv` (CAMPD bins, tranches, offer curves) | `docs/binning-methodology.md`; `model-methodology-spec.md` (Fleet representation); `claude.md` |
+| `model/capacity.py` (retire / new entry / CCS retrofit) | `model-methodology-spec.md` §5; `CLAUDE.md` (Capacity Evolution) |
+| `model/transmission.py`, `config/iso_configs.py` (topology/TTC) | `model-methodology-spec.md` Scope & §1.3; `CLAUDE.md` (What This Is); `docs/multi-iso/00…`, `04…` |
+| `model/storage.py` | `model-methodology-spec.md` §1.3, §1.5.5, §5.5; `CLAUDE.md` |
+| `data/fleet.py`, `data/raw/reference/custom-bin-assignments.csv` (CAMPD bins, tranches, offer curves) | `docs/binning-methodology.md`; `model-methodology-spec.md` (Fleet representation); `CLAUDE.md` |
 | `data/outages.py` (backcast overlay) + `data/fleet.py` seasonal POF/WEFOR (forecast) | `model-methodology-spec.md` (Outage modelling) & §7.2; `results/calibration/SUMMARY-outage-overlay.md` |
 | `data/fuel.py`, `data/eia923.py`, `data/hydrogen.py` | `model-methodology-spec.md` §1.5.1; `docs/parameter-citations.md`; `docs/binning-methodology.md` (fuel pricing) |
 | `results/emissions.py`, `policy/carbon.py`, `policy/rps.py`, `policy/ira.py`, `policy/eac.py` | `model-methodology-spec.md` §1.4, §1.5, §5.3 |
@@ -111,6 +111,13 @@ items parked for later. Do not commit/push unless the user asks.
 | `results/cache.py`, `results/export.py`, `results/outputs.py` | `docs/data-dictionary.md` |
 | `data/ownership.py`, `data/ownership_config.py` | `us-gen-ownership.md` |
 | `frontend/`, `*.html` (color palettes) | `docs/DESIGN_SYSTEM.md` |
+| `pipeline/*.py` (spec, kwargs, prior, result, backcast_config, commitment, solve — shared per-year solve core) | `model-methodology-spec.md` §5.1; `CLAUDE.md` (Architecture; Dispatch & Commitment) |
+| `scripts/legitimacy_diagnostics.py` (D-1/D-2/D-4 legitimacy diagnostics + gates) | `docs/calibration-determination-rubric.md`; `docs/forecast-determination-rubric.md`; `docs/model-legitimacy-audit-2026-07.md`; `CLAUDE.md` (rules 17–26) |
+| `scripts/` layout & standing tooling (keeper-rotation rule) | `scripts/README.md` |
+| the forecast program (tier ladder, lanes/waves, entry/exit) | `docs/forecast-development-plan-2026-07.md`; `docs/forecast-determination-rubric.md` |
+| the codebase-site / dashboard (`docs/codebase-site/*.html`) | `docs/codebase-site/PLAN.md`, `docs/codebase-site/UPDATE-PLAN-2026-07.md`; `docs/verifying-dashboard-numbers.md` (generated at deploy — `.github/workflows/deploy-pages.yml`) |
+| any `src/market_sim/` subsystem — "what does the code do here?" | `docs/codebase/` (code-derived engineering pages + `codebase/README.md`) |
+| repo-wide conventions (naming, layout, workflow) | `CONVENTIONS.md`; `CLAUDE.md`; docs IA index `docs/README.md` |
 | anything | `CHANGELOG.md` (always append), `README.md` (only if the elevator pitch changed) |
 
 Keep this map current: when a new doc or major module is added, add the row

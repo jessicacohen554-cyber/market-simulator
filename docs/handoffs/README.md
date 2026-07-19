@@ -3,7 +3,7 @@
 # docs/handoffs — index
 
 Design specs, session handoffs, decision memos, plans, and evidence records
-produced by the calibration/forecast program. **171 documents** as of the freeze
+produced by the calibration/forecast program. **172 documents** as of the freeze
 date below. This is layer **L3** (dated records) of the docs IA — see
 [`../README.md`](../README.md).
 
@@ -35,7 +35,7 @@ each filename, and overlay the `forecast-development-plan-2026-07.md` §9 ledger
 dispositions onto the default `RECORD` status. Mark clearly that the result is a
 new point-in-time snapshot and stamp the freeze date.
 
-## Index (alphabetical, 171 docs)
+## Index (alphabetical, 172 docs)
 
 | Doc | Date | Status |
 |---|---|---|
@@ -169,7 +169,7 @@ new point-in-time snapshot and stamp the freeze date.
 | [`miso-run66-triage-design-2026-07.md`](miso-run66-triage-design-2026-07.md) | 2026-07 | RECORD |
 | [`miso-winter-fuel-security-design-2026-07.md`](miso-winter-fuel-security-design-2026-07.md) | 2026-07 | RECORD |
 | [`multi-iso-triage-2026-07.md`](multi-iso-triage-2026-07.md) | 2026-07 | RECORD |
-| [`national-ces-eac-premium-plan-2026-07.md`](national-ces-eac-premium-plan-2026-07.md) | 2026-07 | ACTIVE — W3-R/W4/W5 specs binding (FF-3B); W1+W2 merged |
+| [`national-ces-eac-premium-plan-2026-07.md`](national-ces-eac-premium-plan-2026-07.md) | 2026-07 | ACTIVE — W3-R criteria binding (FF-3B); W4/W5 DEFERRED behind FF plan §2.1b (2026-07-19); W1+W2 merged |
 | [`neiso-calibration-complete-memo-2026-07.md`](neiso-calibration-complete-memo-2026-07.md) | 2026-07 | RECORD |
 | [`neiso-limb-b-offer-surface-2026-07.md`](neiso-limb-b-offer-surface-2026-07.md) | 2026-07 | RECORD |
 | [`nyiso-data-asks-2026-07.md`](nyiso-data-asks-2026-07.md) | 2026-07 | RECORD |
@@ -195,8 +195,8 @@ new point-in-time snapshot and stamp the freeze date.
 | [`pjm-thermal-elcc-intake-2026-07-14.md`](pjm-thermal-elcc-intake-2026-07-14.md) | 2026-07-14 | RECORD |
 | [`position-calibration-d1-findings-2026-07-16.md`](position-calibration-d1-findings-2026-07-16.md) | 2026-07-16 | RECORD |
 | [`position-calibration-findings-2026-07-16.md`](position-calibration-findings-2026-07-16.md) | 2026-07-16 | RECORD |
-| [`probability-bounds-plan-2026-07.md`](probability-bounds-plan-2026-07.md) | 2026-07 | ACTIVE — spec current for FF-4C; machinery landed |
-| [`probability-bounds-prompts-2026-07.md`](probability-bounds-prompts-2026-07.md) | 2026-07 | SUPERSEDED (scheduling) by FF-4C; content current |
+| [`probability-bounds-plan-2026-07.md`](probability-bounds-plan-2026-07.md) | 2026-07 | ACTIVE — PB-5 spec; run DEFERRED behind FF plan §2.1b (was FF-4C, 2026-07-19); machinery landed |
+| [`probability-bounds-prompts-2026-07.md`](probability-bounds-prompts-2026-07.md) | 2026-07 | SUPERSEDED (scheduling) — PB-5 deferred behind FF plan §2.1b; content current |
 | [`rc1b-plumbing-2026-07-15.md`](rc1b-plumbing-2026-07-15.md) | 2026-07-15 | RECORD |
 | [`rc1c-miso-seasonal-nyiso-vintage-2026-07-16.md`](rc1c-miso-seasonal-nyiso-vintage-2026-07-16.md) | 2026-07-16 | RECORD |
 | [`retirement-dof-identification-2026-07-15.md`](retirement-dof-identification-2026-07-15.md) | 2026-07-15 | RECORD |
@@ -205,6 +205,7 @@ new point-in-time snapshot and stamp the freeze date.
 | [`scalar-remediation-prompts-2026-07.md`](scalar-remediation-prompts-2026-07.md) | 2026-07 | RECORD |
 | [`scalar-remediation-w0-closure-2026-07-05.md`](scalar-remediation-w0-closure-2026-07-05.md) | 2026-07-05 | RECORD |
 | [`sensitivity-tornado-ercot-2026-07-04.md`](sensitivity-tornado-ercot-2026-07-04.md) | 2026-07-04 | RECORD |
+| [`stage7_getattr_extraction_design.md`](stage7_getattr_extraction_design.md) | — | RECORD |
 | [`temp-derate-keeper-rerun-playbook-2026-07.md`](temp-derate-keeper-rerun-playbook-2026-07.md) | 2026-07 | RECORD |
 | [`wallclock-baseline-2026-07.md`](wallclock-baseline-2026-07.md) | 2026-07 | RECORD |
 | [`wallclock-efficiency-plan-2026-07.md`](wallclock-efficiency-plan-2026-07.md) | 2026-07 | RECORD |

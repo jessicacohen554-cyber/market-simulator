@@ -1,5 +1,7 @@
 # Fable Prompt Pack — 2026-07-04
 
+> Status: RECORD (frozen 2026-07-04) — executed Fable-access prompt pack; standing successors are docs/refactor-consolidation-plan-2026-07.md and docs/forecast-development-plan-2026-07.md.
+
 Companion to `docs/fable-repo-audit-2026-07.md` (finding IDs like EM-1, RC-2, AR-1, TC-1
 refer to that doc). This pack turns the audit into scheduled work: **Wave 0** is the set of
 Fable planning sessions to run while Fable access remains (3 days); **Wave 1** runs in

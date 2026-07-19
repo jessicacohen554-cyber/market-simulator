@@ -18330,3 +18330,158 @@ from both the RT wall and the gas commitment bridge). The §6.2 build
 nothing was armed this session.
 
 Next number: ercot-88.
+
+## 2026-07-19 — CAISO — caiso-102: the inelastic-charge channels MEASURED (DA award allocates 76-84 % of realized battery charge, FMM covers 94-97 %, RT additions are reg-down-deployment-shaped, non-belly charge clears $6-9 above the belly floor) + the evening merit diagnosis exposed a +1h FRAME DEFECT (`_eia_hourly_frame_filled` hour-ending anchor — CISO-2025/PJM-2023/MISO-2025 solved one hour late); fixed at the root, single-delta B-leg cleared every pre-registered gate → PROMOTED to keeper (2025 belly +5.0→+4.3, evening −3.0→−1.1, zero status regression, zero DOF delta)
+
+**Runs:** `2026-07-19-caiso-102-hourfix` (bundle `caiso102_hourfix_B`, **NEW
+CAISO KEEPER**, supersedes `2026-07-19-caiso-101-chp-steam`). Same-machine
+baseline `caiso102_repro_A` (un-registered, FINDING-caiso92b protocol;
+reproduces the caiso-101 keeper ladder digit-for-digit). Registry 15/15 (no
+prune). Owner in-session ruling: "if it's a keeper in your opinion, promote."
+
+### Arc 1 — priority 1, the inelastic-conduct derive (no mechanism built or solved)
+
+`scripts/probes/_caiso102_charge_channels.py` on the committed CAISO Daily
+Energy Storage Report quarterly xlsx (market_output: IFM/RUC/RTPD/RTD EN +
+SOC + RU/RD/SR/NR, LESR basis), 2023-2025:
+
+- **(a) DA-award allocation:** 84/80/76 % of realized (RTD) charge was
+  already IFM-scheduled (belly 91/89/82 %); the FMM (RTPD) covers 94-97 %.
+  Daily IFM volume is fleet-size-driven (p10-p90 ±30 %), month-detrended
+  spread corr only 0.26/0.47/0.47. The charge decision is a DAM allocation;
+  the RT margin the LP prices re-times 16-24 % of it.
+- **(b) AS-deployment variance:** reg-down book 571/743/810 MW avg (peaking
+  ~1-1.2 GW morning/belly); by 2025 corr(RTD−IFM, RD) = −0.46, slope −1.34
+  MW/MW-RD, 58 % of extra-RT charge in top-RD-quartile hours.
+- **(c) shoulder/overnight inelastic charge:** non-belly realized charge
+  1.38/2.68/3.97 TWh at charge-weighted λ $6-9 ABOVE the same-year belly
+  floor — obligation/positioning conduct (a real second daily cycle:
+  overnight charge → morning discharge peak 0.45-1.7 GW; SOC restoration
+  under the AS book). Model misses: overnight −0.24/−0.25/−0.32 TWh in all
+  years + a 2025-only morning gap (−1.49 TWh) that was mostly the Arc-2
+  frame defect (post-fix: morning model charge 1.35→2.57 vs measured 2.84;
+  non-belly total 2.87→3.64 vs 3.97 — the surviving inelastic gap is the
+  overnight second cycle, 0.05 vs 0.36 TWh).
+
+**No conduct mechanism proposed this session** — any allocation mechanism
+design starts from the post-hourfix residual surface (FINDING-caiso102 §7).
+
+### Arc 2 — priority 2, the evening merit diagnosis → the +1h frame defect → keeper
+
+`_caiso102_evening_merit.py` (hour-paired, resid-quartile conditioned)
+established the aligned evening picture: the model does NOT over-import the
+evening (caiso-95 §4's +2 TWh excess was a measurement artifact — the
+night/day probes bucket EIA-930 by its HOUR-ENDING stamp, one hour early vs
+the model window); the composition defect is CC-over / CT_PEAKER-under
+(Q1-deepest hours: measured CT 1.33/1.19/0.51 GW vs model 0.58/0.31/0.12,
+model gas ~3 GW under, imports at/above measured). Chasing 2025's phantom
+evening solar (model 8.41 vs measured 4.20 TWh) found the root cause:
+`eia_loader._eia_hourly_frame_filled` anchored its reconstructed year on the
+hour-ending `Local time` stamp as interval-beginning — every gap-bridged
+BA-year rotated +1h (train-year blast radius: CISO-2025, PJM-2023,
+MISO-2025; issue #2562, cross-ISO record corrections + pooled-artifact
+re-derives enumerated there). Fixed at the loader root; re-derived
+`caiso_2025_hsl_hourly.parquet` + `caiso_supply_consistent_demand_2025.csv`
+(2023/2024 artifacts byte-identical, md5-checked). Single-delta
+`caiso102_hourfix_B` against pre-registered gates (FINDING-caiso102 §6,
+committed before adjudication): 2023/2024 solve outputs BYTE-IDENTICAL to
+the A-leg (all four parquet families); 2025 solar lag-0 r=0.99987; C1 12/12
+(free 8/8); C7/C8 PASS — all clear. 2025 ladder: belly +5.0→+4.3, evening
+−3.0→−1.1, overnight +1.6→+1.4 (hod-17 −10.1→−4.5; Q1 depth −20.2→−15.4);
+C3c 19/0/0 unchanged; annual C3a mean ≈ unchanged (the gain is intra-day
+shape, exactly what a clock rotation predicts); C5a statuses unchanged.
+Zero DOF delta (a defect fix — no tunable moved). Promoted on
+no-status-regression + most-structurally-faithful (rule 1/14);
+determination stays **NOT-YET**, fail set {C3c, C4, C5a(2024 CAVEAT)}.
+
+### Open threads
+
+- The evening merit lane's residual is now cleanly the CT-rung composition
+  (all three years, same signature); the belly (+6.0/+6.6/+4.3) re-charter
+  designs an ALLOCATION mechanism (hold volume, re-price the margin) from
+  the §1-§3 channel measurements, on the post-fix surface.
+- Issue #2562: PJM-2023 / MISO-2025 record corrections + re-solves in their
+  lanes; caiso-92 offer-surface 2025-slice rule-23 re-derive (pooled).
+- Issue #2546: the $5 fallback literal — still OPEN, no ruling this session.
+
+Next number: caiso-103.
+
+## 2026-07-19 — ERCOT-88 (charter §6.2 build, owner-authorized): the offline fast-start pool offer BUILT, both single-year probes clear the C3a/zero-spurious gates but the pool clears INFRAMARGINAL — dispatch-inert (2025: 0 cells / 0 GWh; 2024: 0.7 GWh, 4 already-scarce hours repriced, ZERO new mid-band hours); the offer-surface enumeration for the moderate-tightness band is CLOSED, residual is quantity-side; mechanism MERGED default-OFF (NEISO Limb B pattern), keeper UNCHANGED (ercot86, promoted this session)
+
+**Task.** The owner authorized the charter §6.2 build (the ERCOT-87 measure-first
+adjudication SUPPORTED basis A: the actual $150–500 band prices on the offline
+startable CT pool). ONE mechanism, per §8.3: an economic fast-start availability —
+the OFFQS/OFFNS offline CT pool offered to the LP at its measured per-net-load-bin
+above-LSL SCED2 ladder, physics-gated (min-down ≤ 2 h), an OFFER not a floor.
+
+**Build (all committed).** `ScenarioConfig.ercot_faststart_pool_offer` (default off,
++`_path`); derive `scripts/data/derive_ercot_faststart_pool.py` → year-scoped 2024/2025
+artifact (`data/raw/_validation-source/ercot_faststart_pool_condbinned.json`:
+above-LSL OFFQS/OFFNS ladder + `pool_frac` per bin, zero fitted scalars, frozen
+rule 23); standalone builder `fleet.build_ercot_faststart_pool_markup` prices the
+merchant-CT econ*/peak* rows above the measured pool boundary (`1 − pool_frac`) at
+the pool ladder, REPLACE-BY-MASK at the `run_calibration.py` seam (one owner per
+row-hour, rule 19); eligibility by unit physics (`constants.FASTSTART_POOL_MIN_DOWN_HOURS
+= 2`, rule 12 — CC fails at 4–8 h, ST_GAS at 8–12 h). Rule-19 D-2 attribution
+enumerated BEFORE the seam (charter §9.1): disjoint from the RT wall (ON-status
+spare), the gas commitment bridge (merchant gas-CC, physics-excluded), and the DAM
+availability overlay (only-OUT-is-out, so the pool HSL is already in the LP — the
+leg re-prices, never adds MW). Trivial-case tests + artifact invariants
+(`tests/test_ercot_faststart_pool_offer.py`, 12 pass; 40 with the wall suites).
+
+**Probes (rule-16 single-year throwaways, C3a level guard + zero-spurious gate, the
+ERCOT-86 analyzer convention `scripts/probes/_ercot88_midband_check.py`).** Base =
+the ercot86 keeper recipe; +gate on. Pool leg ENGAGED (173 fast-start rows 2024, 91
+rows 2025 carry the ladder — not inert by mis-wiring). Result:
+
+| year | C3a resid (base→probe) | mid-band formed | spurious Δ | dispatch shifted | price hrs Δ>$1 |
+|---|---|---|---|---|---|
+| 2024 | −1.3% → −1.2% HELD | 5/68 → 5/68 | +0 HELD | 0.7 GWh / 462.9 TWh | 4 (all already-scarce, >$2,000; +$83 max) |
+| 2025 | +1.4% → +1.4% HELD | 4/65 → 4/65 | +0 HELD | 0.0 GWh | 0 |
+
+**Finding — the pool clears INFRAMARGINAL; the band residual is QUANTITY-side, not
+offer-side.** Both years clear both gates (harm-free), but the mechanism forms ZERO
+new mid-band hours: the LP dispatches the pool's startable increment only in hours
+already at/above scarcity, where the price barely moves (4 hours in 2024, none in
+2025), and leaves it un-cleared in the diffuse Apr/May/Jul/Oct/Dec shoulder hours the
+ERCOT-86 wall also cannot reach — because the model still carries CHEAPER online
+headroom there. This is exactly ERCOT-87 §8.2 caveat (a) ("most started MW clears
+cheap; the band prices on the marginal tail — OFFER the pool, never force it") borne
+out: the offer is real and correctly priced, but it is not marginal in the residual
+hours. The **offer-surface enumeration for the moderate-tightness band is now CLOSED**
+— both the online-spare wall (ERCOT-86, adopted) and the offline fast-start pool
+(ERCOT-88, this entry) are built and measured-faithful, and neither fills the diffuse
+band. The successor is **quantity-side**: the hour-level online-capability envelope
+(how much merchant CT/CC is actually committed/online in those specific shoulder
+hours), not the offer price. Its own charter.
+
+**Disposition (rule 1 / rule 11 — a real market behaviour stays in even if the
+residual doesn't move; NEISO Limb B precedent).** The mechanism is structurally
+faithful (offline fast-start CTs DO participate in RT via SCED at startup-inclusive
+offers — ERCOT-87 measured 12–18 starts/covered-band-hour) and harm-free, so it is
+MERGED **default-OFF** as a dormant, forecast-available structural addition. It is
+**NOT** promoted into the keeper (band-inert; promoting a mechanism that changes only
+4 already-scarce hours would be tuning-to-noise, rule 1's converse). **No full-span
+run / no dashboard registration**: with both single years dispatch-inert (0.7 / 0.0
+GWh) and 2023 year-scoped-absent (byte-identical by construction + test), a full-span
+solve would reproduce the ercot86 keeper to the dollar outside 4 scarce hours — it is
+neither a keeper nor a rejected keeper-candidate, exactly as NEISO Limb B was kept
+default-off without a separate registration.
+
+**Keeper — ERCOT swapped to ercot86 this session (owner-approved).** Independent of
+the §6.2 build: on the owner directive ("if it's a keeper in your opinion promote"),
+`2026-07-19-ercot86-rt-wall-fullspan` was promoted over ercot82 after the conditional
+gates cleared (byte-faithful replay regenerated the bundle outputs; governance
+attestation + DOF ledger + `legitimacy_diagnostics.json` built; re-scored C6/C7/C8
+PASS — 2025 ST_GAS grounded-above-budget clean pass; C3a/C3b 2023 → ledgered CAVEAT
+input-blocked/rule-14; C3c stays FAIL). Determination NOT-YET on C3c only — the same
+offer/scarcity-recalibration-against-corrected-availability successor lane as ercot80/82.
+`keepers.json`/`status.js`/sidecar swapped, calibration-keeper-auditor PASS (repaired
+the stale "keeper stays ercot82" sidecar line).
+
+**Ops.** Mechanism + derive + artifact + tests + probe analyzer committed; ercot86
+attestation/diagnostics/metrics + keeper swap committed and pushed onto
+`claude/ercot-87-midband-basis-0cqnof` (rebased onto main after the caiso-102 merge;
+both ERCOT=ercot86 and CAISO=caiso-102 keepers preserved). Throwaway probe bundles
+deleted (rule 16). Charter §9 carries the build record + rule-19 enumeration + these
+probe results. Next number: ercot-89.

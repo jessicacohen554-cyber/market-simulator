@@ -1810,6 +1810,38 @@ def _highspy_version() -> str:
         return ""
 
 
+# Packages whose versions can move alternate-optimal vertices (and thus a
+# bundle's per-class TWh at an identical objective). Recorded so a byte-identity
+# claim is checkable across environments.
+_ENVIRONMENT_PACKAGES = ("highspy", "numpy", "scipy", "pandas", "pyarrow", "pydantic")
+
+
+def _environment_block() -> dict:
+    """Capture the runtime environment for cross-environment reproducibility.
+
+    Records the Python version, platform string, and the installed versions of
+    the solver/numerics stack in :data:`_ENVIRONMENT_PACKAGES`. Stamped into
+    both ``meta.json`` and ``run_config.json``. ``replay_keeper`` warns (never
+    fails) on a mismatch; the ``--reuse-solved`` gate ignores this block (reuse
+    is pinned by the persisted ``scenario_config`` plus the dedicated highspy
+    version gate), so adding it does not change any reuse decision.
+    """
+    import platform
+    from importlib.metadata import PackageNotFoundError, version
+
+    versions: dict[str, str] = {}
+    for name in _ENVIRONMENT_PACKAGES:
+        try:
+            versions[name] = version(name)
+        except PackageNotFoundError:
+            versions[name] = ""
+    return {
+        "python_version": platform.python_version(),
+        "platform": platform.platform(),
+        "packages": versions,
+    }
+
+
 def _json_default(obj: object) -> object:
     """JSON encoder fallback for bundle metadata.
 
@@ -2020,6 +2052,10 @@ def write_run_config(
             )
         },
         "scenario_config": dataclasses.asdict(cfg),
+        # Runtime environment mirror (same block stamped into meta.json). Kept
+        # OUTSIDE scenario_config so the --reuse-solved comparator — which only
+        # diffs scenario_config — is unaffected.
+        "environment": meta.get("environment") or _environment_block(),
     }
     if "reuse" in meta:
         # Mixed --reuse-solved bundle: mirror the reuse labeling into the
@@ -4363,6 +4399,9 @@ def solve_and_persist(
         # identical objective. Record the version so a non-reproducing
         # bundle can be traced to a solver upgrade.
         "highspy_version": _highspy_version(),
+        # Full runtime environment (python/platform + numerics stack versions).
+        # replay_keeper warns on a mismatch; --reuse-solved ignores this block.
+        "environment": _environment_block(),
     }
     if reuse_record is not None:
         # --reuse-solved labeling (only ever present when the flag was
@@ -5079,12 +5118,67 @@ def _print_plant_cf_bands(year: int, bands: pd.DataFrame) -> None:
     _print_table(rows)
 
 
+# p2_state on-disk envelope version. v2 wraps the state dict as
+# {'format_version': 2, 'git_sha': ..., 'state': p2_state}; the reader
+# (_load_p2_state) treats a bare dict — no 'format_version' key — as v1, the
+# pre-envelope format used by the committed 2026-era pickles.
+_P2_STATE_FORMAT_VERSION = 2
+
+
 def _save_p2_state(run_dir: Path, year: int, p2_state: dict) -> None:
-    """Pickle the cached P1 inputs so P2 can be re-run as a post-process."""
+    """Pickle the cached P1 inputs so P2 can be re-run as a post-process.
+
+    Wrapped in a versioned envelope (``format_version`` / ``git_sha`` /
+    ``state``) so a future reader can branch on the format and trace a pickle to
+    the code that wrote it. :func:`_load_p2_state` unwraps a v2 envelope and
+    treats a bare dict as v1.
+    """
     d = run_dir / "p2_state"
     d.mkdir(parents=True, exist_ok=True)
+    envelope = {
+        "format_version": _P2_STATE_FORMAT_VERSION,
+        "git_sha": _git_sha(),
+        "state": p2_state,
+    }
     with gzip.open(d / f"{year}.pkl.gz", "wb") as fh:
-        pickle.dump(p2_state, fh, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(envelope, fh, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+def _load_p2_state(path: Path) -> dict:
+    """Load a p2_state pickle, unwrapping the versioned envelope.
+
+    A v2 payload is ``{'format_version', 'git_sha', 'state'}`` — the inner
+    ``state`` dict is returned. A bare dict (no ``format_version`` key) is the v1
+    pre-envelope format (the committed 2026-era pickles) and is returned as-is.
+    """
+    with gzip.open(path, "rb") as fh:
+        loaded = pickle.load(fh)
+    if isinstance(loaded, dict) and "format_version" in loaded:
+        return loaded["state"]
+    return loaded
+
+
+def _rebuild_p2_config(old, *, screen_coal: bool):
+    """Rebuild a current ``ScenarioConfig`` from a (possibly stale) pickled one.
+
+    The committed 2026-era p2_state pickles carry a ``ScenarioConfig`` that is
+    missing fields added since (and carries a few since-removed ones), so
+    ``old.with_overrides(...)`` — i.e. ``dataclasses.replace`` — raises
+    ``AttributeError`` on the first ``default_factory`` field it cannot read off
+    the stale instance. Reconstruct through ``__init__`` from only the fields
+    that still exist (new fields take their current defaults; dropped fields fall
+    away), THEN apply the P2 overrides on the valid instance.
+    """
+    import dataclasses
+
+    from market_sim.config.scenarios import ScenarioConfig
+
+    current = {f.name for f in dataclasses.fields(ScenarioConfig)}
+    rebuilt = ScenarioConfig(**{k: v for k, v in vars(old).items() if k in current})
+    return rebuilt.with_overrides(
+        commitment_enabled=True,
+        commitment_screen_coal=screen_coal,
+    )
 
 
 def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
@@ -5110,13 +5204,9 @@ def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
 
     system_p2, btm_p2, storage_p2 = [], [], []
     for sp in states:
-        with gzip.open(sp, "rb") as fh:
-            state = pickle.load(fh)
+        state = _load_p2_state(sp)
         year = int(state["year"])
-        cfg = state["config"].with_overrides(
-            commitment_enabled=True,
-            commitment_screen_coal=screen_coal,
-        )
+        cfg = _rebuild_p2_config(state["config"], screen_coal=screen_coal)
         logger.info("P2 post-process %d (screen_coal=%s)", year, screen_coal)
         result = _commitment_pass(state, cfg)
         ctx = state["context"]
