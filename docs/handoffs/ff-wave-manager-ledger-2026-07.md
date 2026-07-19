@@ -7,7 +7,7 @@ the end of every manager turn.
 
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
-- **Last reviewed `origin/main` HEAD:** `0e5983f` (2026-07-19, turn 30 — manager session `turn-1-anm4jn`).
+- **Last reviewed `origin/main` HEAD:** `cbff148` (2026-07-19, turn 31 — manager session `turn-1-anm4jn`).
 - **Plan base SHA:** `c95176e` (amended in place 2026-07-19 — POC-first re-scope, see directive entry below).
 - **OWNER DIRECTIVE (2026-07-19, out-of-band — recorded by the directive's executing
   session, not a manager turn): POC-first re-scope of THE PLAN.** The plan is amended in
@@ -24,6 +24,19 @@ the end of every manager turn.
   keeper + calibration-complete marker, T1 POC gates green, crossover input gap +
   readiness battery + projected cost, and an explicit per-campaign owner authorization.
   Status-table rows updated below; active front unchanged (FF-2B).
+- **turn 31 (manager `turn-1-anm4jn`). `0e5983f→cbff148` (3 merges: #2614/#2618 miso-dam
+  intakes, #2616 ledger t30 — quiet). OWNER DECISION RECEIVED: FF-2C flip sign-off DELEGATED to
+  the manager ("You can flip them all on if you think they're ready so we can move forward"),
+  manager call recorded: APPROVED = PJM, MISO, CAISO, NEISO; NYISO DEFERRED — sole ISO whose
+  train determination is NOT-YET AND whose flip-gate pair evidence (FF-3D-run) was produced on
+  the corrupted pre-re-audit outage envelope (rule-11 taint); it auto-joins the flip queue when
+  re-calibration lands + pair regenerates on the corrected envelope, no new charter. NEISO
+  approved on rule-1 grounds (FCM is the real market design; its failing pair bands are a
+  root-cause item, never a flip blocker — worsened fit routes to root-cause, not revert).
+  **FF-2C [OPUS] DISPATCHED** (re-emitted drift-clean from plan §6 at `cbff148`: 4-ISO scope,
+  NYISO exclusion + rationale, FF-2B findings as read-first, ≤5-yr cap restated, rule-1 NEISO
+  note, push-integrity rules). FF-2D unlocks on FF-2C landing verified-pass (flips-first
+  sequencing per manager recommendation, now moot — owner chose flips).
 - **turn 30 (manager `turn-1-anm4jn`, refresh). `9fa016b→0e5983f` (8 merges). FF-3B LANDED
   VERIFIED-PASS (#2613) — Wave-3's only active prompt closes; the program is now fully blocked
   on the owner's FF-2C/FF-2D decision.** FF-3B verified against all 3 items: (1) **W3-R verdict =
@@ -232,20 +245,21 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-2A-posture | OPUS | 2 | L-CAP | — | **verified-issues, NON-DELIVERY (turn 21)** — #2522 | Doc-only; scenarios.py UNCHANGED. 3rd genuine non-delivery. → FF-2A-posture-redo. |
 | FF-2A-posture-redo | OPUS | 2 | L-CAP | — | **verified-pass (turn 25)** — #2539 | Landed the flip #2522 only described: scenarios.py `entry_lookahead_reprice` False→True + backcast coercion + plan §2.1a row e + measured-cache-key byte-identity attestation. Closes the 3-non-delivery saga. |
 | FF-2B | OPUS | 2 | L-CAP | — | **verified-pass (turn 28)** — #2582+#2586/#2588/#2590+#2589+#2591, source `96eac04` | All 4 items: NEISO I7+I12 PASS (Net ICR 0.1102, ER23-405-000), CAISO +3,371 MW cited (residual→FF-1C hydro), NYISO basis-correct (residual→FF-1C); Pass-1B + FIRST NEISO pair (bands pre-registered #2582 before run); T1-F base-year sidecars + gap-register. Bonus UNSET runner.py fix. ⚠ git-push deviation, blob-verified — owner note. |
-| FF-2C | OPUS | 2 | L-CAP | — | **issued (turn 14), owner-gated — per-ISO sign-off NOW DECISION-READY (t28)** | FF-2A+FF-2B evidence in hand. NEISO: basis clean but pair FAILs T-R bands (over-retire/over-build) — items 3–4 grade FAIL. NYISO NOT flip-ready (nyiso-64 NOT-YET, marker withdrawn). Rule 1: worsened fit = root-cause. |
+| FF-2C | OPUS | 2 | L-CAP | — | **sent (turn 31) — owner delegated sign-off; approved PJM/MISO/CAISO/NEISO, NYISO deferred** | Re-emitted drift-clean at `cbff148`. NEISO approved on rule-1 grounds (failing pair = root-cause item, not blocker). NYISO auto-joins on re-calibration + pair regen (rule-11 taint on its gate evidence). Rule 1: worsened fit = root-cause, never revert. |
 | FF-2D | OPUS | 2 | L-VAL | ⛔ T1 gate | **issued (turn 14), gated on FF-2C disposition** | Prereq "W1/W2 lane merges complete" leaves FF-2C outstanding. Owner picks: flips first (FF-2C→FF-2D) or defer flips (FF-2D unlocks at HEAD). Rubric verdicts + promotion table. NEW inputs to fold in: #2601 storage-cost re-derivation (baseline attribution), FF-3B's A1/I4 multi-year leak + frozen-golden flag. |
 | FF-3A | — | 3 | L-VAL | ⛔ T2 | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | T2 deferred with its tier behind plan §2.1b; prompt re-authored at gate-open. Do not dispatch. |
 | FF-3B | OPUS | 3 | L-CES | — | **verified-pass (turn 30)** — #2613 | W3-R = NO-GO (R1/R2 NOT MET, R3 MET, R4 partial; routed). POC = machinery-proven: 3×5yr legs, kind="ces-poc", premium moves full surface; wall/RSS ledger + nonlinear caution for FF-3E. POC-despite-NO-GO decoupling accepted (plan §0 Phase A). L-CES lane CLOSED until §2.1b gate-open. |
 | FF-3C | FABLE | 3 | L-PERF | conditional | not-sent | trigger-gated — inactive (only remaining FABLE prompt); trigger re-worded to active-tier breach (plan §6) |
 | FF-3D | OPUS | 3 | L-CAP | — | **verified-issues (incomplete)** — LANDED #2463 | Intake + Option-B pairing + pre-registered bands; flip-gate Basis PASSES. Pair run via FF-3D-run. |
-| FF-3D-run | OPUS | 3 | L-CAP | — | **landed** (#2471/#2473/#2478 + `5bb0c9b`) | NYISO fixed/curve/realized pair registered. Closed. |
+| FF-3D-run | OPUS | 3 | L-CAP | — | **landed** (#2471/#2473/#2478 + `5bb0c9b`) | NYISO fixed/curve/realized pair registered. Closed. ⚠ t31: pair evidence rule-11-tainted (pre-re-audit envelope) — regenerate before NYISO flip. |
 | FF-3E | OPUS | 3 | L-VAL | ⛔ §2.1b evidence | not-sent | NEW (owner 2026-07-19): full-solve readiness battery + POC close-out (absorbs FF-4B honest-unfit list; adds >5-yr CLI guard). After FF-2D. Wall/RSS anchor now in hand (FF-3B §2.4 table + nonlinear caution). |
 | FF-4A | — | 4 | L-VAL | ⛔ | **WITHDRAWN (owner 2026-07-19)** | Prompt withdrawn outright (was HELD t18); Wave 4 deferred behind §2.1b. Do not dispatch, do not restore from history. |
 | FF-4B | — | 4 | L-VAL | — | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | Honest-unfit list moved to FF-3E close-out; rest re-authored at gate-open. |
 | FF-4C | — | 4 | L-VAL | owner-gated | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | PB-5 deferred with Wave 4 (§2.1b). |
 | FF-5A | OPUS | 5 | L-DASH | — | not-sent | blocked: active-wave close-out (deferred Wave 4 NOT a prerequisite — §2.1b) |
 
-Out-of-program / trivial (turn 30): #2605/#2612 (ercot-88/89 — #2612 amends CLAUDE.md rule 15
+Out-of-program / trivial (turn 31): #2614/#2618 (miso-dam intakes), #2616 (ledger t30).
+(turn 30): #2605/#2612 (ercot-88/89 — #2612 amends CLAUDE.md rule 15
 hourly-sidecar keeper requirement + run_calibration_full.py writer), #2607/#2610/#2611 (PJM DAM /
 NEISO operable-capacity / MISO outage intakes), #2609 (calendar-metrics refactor), #2606 (ledger
 t29). (turn 29): #2596 (NYISO fuel-mix curation), #2597/#2602 (ercot-89
@@ -295,22 +309,20 @@ backcast keepers + ledger commits.
   deferred, ≤5-solve-year cap, §2.1b gate installed; FF-3B re-scoped (W4 deferred,
   T1-scale CES POC); FF-3E chartered. Plan amended in place.
 - **#2439** — owner handled → resolved.
+- **FF-2C flip sign-off (turn 31, 2026-07-19):** owner delegated the per-ISO call to the
+  manager ("flip them all on if you think they're ready"). Manager call: **APPROVED =
+  PJM/MISO/CAISO/NEISO; NYISO DEFERRED** (NOT-YET determination + rule-11-tainted gate
+  evidence; auto-joins on re-calibration). FF-2C dispatched turn 31.
 
 **AWAITING (each changes what I dispatch next):**
 - **§2.1b gate-open per ISO** (replaces the former FF-4A golden-freeze and PB-5 waits —
   both WITHDRAWN-DEFERRED 2026-07-19; conditions: backcast keeper + marker, T1 POC
   gates, crossover gap + FF-3E readiness + projected cost, per-campaign authorization).
   FF-3B's W3-R NO-GO (R1/R2) is now recorded §2.1b(b/c) evidence for any future ask.
-- **Per-ISO FF-2C sign-off — DECISION-READY as of turn 28** (FF-2B verified-pass). Evidence on
-  the desk: FF-1A flip-gate scorecard + FF-2B findings (`docs/handoffs/ff-2b-adequacy-basis-
-  2026-07.md`) + first NEISO pair (FAILs T-R retirement/addition bands — items 3–4 grade FAIL).
-  NYISO NOT flip-ready (nyiso-64 NOT-YET, marker withdrawn). Owner picks which of
-  PJM/MISO/CAISO/NEISO flip now, and whether NEISO waits on its pair root-cause.
-- **FF-2D sequencing (coupled to the above):** flips first (FF-2C executes, then FF-2D scores the
-  T1 gate on flipped defaults) OR defer flips (FF-2D unlocks immediately at HEAD, scores pre-flip
-  posture). Manager recommendation: decide flips first — a T1 battery immediately invalidated by
-  a flip wastes the 6-ISO solve budget. **This is now the program's sole critical path** (turn 30:
-  FF-3B closed; remaining chain is FF-2C → FF-2D → FF-3E → FF-5A).
+- ~~Per-ISO FF-2C sign-off~~ **RESOLVED turn 31** (delegated; approved PJM/MISO/CAISO/NEISO,
+  NYISO deferred — see Received above). ~~FF-2D sequencing~~ **RESOLVED turn 31** (flips first;
+  FF-2D dispatches after FF-2C lands verified-pass). Critical path is now FF-2C execution →
+  FF-2D → FF-3E → FF-5A.
 - **Rule-deviation note (FF-2B):** worker used a small source-only `git push` (blob-verified)
   when `push_files` corrupted 345 KB constants.py — bless a narrow documented exception, or
   direct an alternative large-file transport; no action needed on the landed bytes (verified).
@@ -388,3 +400,6 @@ backcast keepers + ledger commits.
   ≤cap, kind="ces-poc", wall/RSS ledger with the nonlinear FF-3E caution. POC-despite-NO-GO
   decoupling accepted as an interpretive call. Rule-27 clean. Wave 3's active prompt closes;
   program now fully blocked on owner FF-2C sign-off / FF-2D sequencing. 7 out-of-program.
+- **turn 31 (`→cbff148`).** OWNER DECISION: flip sign-off delegated → approved
+  PJM/MISO/CAISO/NEISO, NYISO deferred (NOT-YET + rule-11-tainted gate evidence).
+  **FF-2C dispatched** drift-clean at `cbff148`. FF-2D queued behind it. 3 quiet merges.
