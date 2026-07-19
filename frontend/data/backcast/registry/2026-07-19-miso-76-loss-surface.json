@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-19-miso-76-loss-surface",
+ "label": "miso 76 loss surface",
+ "date": "2026-07-19",
+ "shorthand": "miso-76-loss-surface",
+ "definition": "miso-76 loss-surface probe \u2014 REJECTED PROBE per the FROZEN charter's pre-registered criteria (docs/handoffs/miso-nc-price-separation-design-2026-07.md \u00a75-\u00a76). The miso-75 keeper recipe + ONE change: miso_zonal_loss_surface=True \u2014 Midwest L1-L6 split into one-way loss pairs whose receiving-end balance coefficient is 1-eps(month), eps = the dimensionless marginal delivery-factor deviation surface derived from MISO's OWN published per-hub MLC record (frozen derive, DA basis, per-year rows; offline B1 acceptance 9/9 BEFORE any solve; DOF +1 measured-physical, n_scalars 0). Losses consume MWh; prices stay duals. ADJUDICATION (A/B = main - same-box base): R2 TRIPPED on East-2025 (model -0.066 vs measured RT TOTAL +0.033 \u2014 the East-Indiana 2025 monthly surface flips sign 6/6 months, annual net -0.0003; reality's offsetting congestion is the documented data-blocked M4 gap) -> REJECTED PROBE. B1 5/9 in [0.5x,1.5x]: 2023 ALL PASS (West 0.57x/Illinois 0.69x/East 1.23x), West-2025 0.52x PASS; West-2024 0.35x/Illinois-2024 0.47x/Illinois-2025 0.40x undershoot (the conservative one-way clamp transmits only in typical-direction uncongested marginal hours; realized transmission ~35-70%); East-2025 2.81x overshoot. R1 (C3b<=0.20 veto) HELD: 0.082/0.135/0.198 (2025 headroom 0.002 unchanged). R3 not inert (moves to $0.93). R4 held (C1/C2/C4/C5a/C7/C8 unchanged; NO new floors). B3 disclosure: C3a +0.1pp/yr \u2014 never validation (R5). B4 flat (-0.34..+0.68 Jan MAE). C3c unchanged \u2014 the irreducible tail. Keeper UNCHANGED; mechanism stays merged tier-3 default-OFF (rule 1). Frontier evidenced: loss physics alone closes ~half the wind-belt separation; the rest is direction-symmetric loss structure or the M4 congestion component.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-19-miso-76-loss-surface.js",
+ "bundle": "results/calibration/miso76_loss_surface"
+}
