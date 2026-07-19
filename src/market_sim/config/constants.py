@@ -4299,68 +4299,96 @@ QUEUE_CAP_PER_TECH_GW: dict[str, dict[str, float]] = {
 # cap above, since they reuse the same gas-turbine supply chain and queue.
 
 # New entry technology cost and performance parameters.
-# Source: NREL ATB 2024.
+#
+# capex_per_kw and fom_per_kw_yr are DERIVED from the committed NREL ATB 2024
+# (v3.0.0) extract by scripts/data/derive_entry_costs_from_atb.py — not
+# hand-set. Each is the ATB Moderate-case value at the technology's base
+# projection year (2026 = REAL_DOLLAR_BASE_YEAR / model start year; 2030 for
+# new nuclear, ATB's earliest published nuclear year), converted from ATB 2024's
+# 2022-USD basis to the model's constant-2026-USD basis with INFLATION_RATE
+# (factor 1.022**(2026-2022) = 1.090947). tests/test_atb_entry_cost_
+# consistency.py asserts these constants equal that derivation (CLAUDE.md
+# rule 23 source-consistency); refresh for a new ATB edition by re-running
+# scripts/data/fetch_nrel_atb.py then the derive script and pasting its output.
+# (FF-1E — docs/handoffs/ff-inputs-currency-audit-2026-07.md §3.2 "STALE +
+# UNWIRED": replaces the pre-FF-1E hand-transcribed values that carried an
+# "NREL ATB 2024" label but matched no single ATB projection year — wind ≈
+# ATB-2037, solar ≈ 2032, gas_cc ≈ 2049, nuclear_smr ≈ 2039 in the Moderate
+# case — and were never read from the ATB extract on disk.)
+#
+# base_cf, learning_rate and lifetime_yr are NOT re-derived here: ATB's CF /
+# heat-rate parameters and the Wright's-Law learning rates are outside the
+# committed extract's CAPEX/Fixed-O&M scope (data/raw/nrel-atb/README.md), so
+# they keep their prior citations. gas_cc_ccs keeps its NETL Rev 4 basis (90 %
+# capture; ATB publishes only 95 %/97 % CCS) — see its inline note.
 NEW_ENTRY_COSTS: dict[str, dict[str, float]] = {
-    "wind": {  # NREL ATB 2024 — onshore wind
-        "capex_per_kw": 1300.0,
-        "fom_per_kw_yr": 28.0,
-        "learning_rate": 0.12,
-        "base_cf": 0.38,
+    "wind": {  # onshore wind
+        "capex_per_kw": 1676.6,  # ATB 2024 Moderate LandbasedWind/Class4 @2026, 2026$ (derived)
+        "fom_per_kw_yr": 33.7,  # ATB 2024 Moderate @2026, 2026$ (derived)
+        "learning_rate": 0.12,  # Wright's-Law rate — literature, outside ATB CAPEX/FOM scope
+        "base_cf": 0.38,  # NREL ATB 2024 CF (not in the committed CAPEX/FOM extract)
         "lifetime_yr": 30,
     },
-    "solar": {  # NREL ATB 2024 — utility-scale solar PV
-        "capex_per_kw": 1100.0,
-        "fom_per_kw_yr": 16.0,
-        "learning_rate": 0.20,
-        "base_cf": 0.27,
+    "solar": {  # utility-scale solar PV
+        "capex_per_kw": 1562.2,  # ATB 2024 Moderate UtilityPV/Class5 @2026, 2026$ (derived)
+        "fom_per_kw_yr": 22.3,  # ATB 2024 Moderate @2026, 2026$ (derived)
+        "learning_rate": 0.20,  # Wright's-Law rate — literature, outside ATB CAPEX/FOM scope
+        "base_cf": 0.27,  # NREL ATB 2024 CF (not in the committed CAPEX/FOM extract)
         "lifetime_yr": 30,
     },
-    "gas_cc": {  # NREL ATB 2024 — combined-cycle gas
-        "capex_per_kw": 1200.0,
-        "fom_per_kw_yr": 30.0,
-        "learning_rate": 0.02,
-        "base_cf": 0.55,
+    "gas_cc": {  # combined-cycle gas
+        "capex_per_kw": 1583.3,  # ATB 2024 Moderate NG 2-on-1 CC (F-Frame) @2026, 2026$ (derived)
+        "fom_per_kw_yr": 36.1,  # ATB 2024 Moderate @2026, 2026$ (derived)
+        "learning_rate": 0.02,  # Wright's-Law rate — mature tech, outside ATB CAPEX/FOM scope
+        "base_cf": 0.55,  # NREL ATB 2024 CF (not in the committed CAPEX/FOM extract)
         "lifetime_yr": 30,
     },
-    "gas_ct": {  # NREL ATB 2024 frame combustion turbine / peaker. Annualized
-        # fixed cost (capex annuity + FOM) ~ the Brattle ERCOT CONE-for-2026
-        # frame-CT reference (~$162/kW-yr gross). base_cf is a nominal peaker
+    "gas_ct": {  # frame combustion turbine / peaker. base_cf is a nominal peaker
         # duty cycle; the new-entry screen prices a gas_ct on its price-duration
-        # energy margin, not base_cf x mean price.
-        "capex_per_kw": 1250.0,
-        "fom_per_kw_yr": 21.0,
-        "learning_rate": 0.02,
-        "base_cf": 0.12,
+        # energy margin, not base_cf x mean price. ATB gives the CT the same
+        # CAPEX in all three cost cases, so its tech-cost multiplier is 1.0.
+        "capex_per_kw": 1428.7,  # ATB 2024 Moderate NG CT (F-Frame) @2026, 2026$ (derived)
+        "fom_per_kw_yr": 27.9,  # ATB 2024 Moderate @2026, 2026$ (derived)
+        "learning_rate": 0.02,  # Wright's-Law rate — mature tech, outside ATB CAPEX/FOM scope
+        "base_cf": 0.12,  # nominal peaker duty cycle (not an ATB CF)
         "lifetime_yr": 30,
     },
-    "nuclear_smr": {  # NREL ATB 2024, NuScale FOAK estimates
-        "capex_per_kw": 6800.0,
-        "fom_per_kw_yr": 100.0,
-        "learning_rate": 0.08,
-        "base_cf": 0.90,
+    "nuclear_smr": {  # small modular reactor. ATB costs new nuclear from 2030 only,
+        # so the base snapshot is ATB's 2030 projection (its earliest year).
+        "capex_per_kw": 10527.6,  # ATB 2024 Moderate Nuclear-Small @2030, 2026$ (derived)
+        "fom_per_kw_yr": 148.4,  # ATB 2024 Moderate @2030, 2026$ (derived)
+        "learning_rate": 0.08,  # Wright's-Law rate — FOAK learning, outside ATB CAPEX/FOM scope
+        "base_cf": 0.90,  # NREL ATB 2024 CF (not in the committed CAPEX/FOM extract)
         "lifetime_yr": 40,
     },
-    "nuclear_large": {  # NREL ATB 2024 mid-case, Lazard LCOE v17
-        "capex_per_kw": 8500.0,
-        "fom_per_kw_yr": 130.0,
-        "learning_rate": 0.03,
-        "base_cf": 0.92,
+    "nuclear_large": {  # large LWR. ATB costs new nuclear from 2030 only.
+        "capex_per_kw": 8309.0,  # ATB 2024 Moderate Nuclear-Large @2030, 2026$ (derived)
+        "fom_per_kw_yr": 190.9,  # ATB 2024 Moderate @2030, 2026$ (derived)
+        "learning_rate": 0.03,  # Wright's-Law rate — mature LWR, outside ATB CAPEX/FOM scope
+        "base_cf": 0.92,  # NREL ATB 2024 CF (not in the committed CAPEX/FOM extract)
         "lifetime_yr": 60,
     },
     "gas_cc_ccs": {
-        "capex_per_kw": 2300.0,  # $/kW total plant cost (host CCGT + capture island).
-        # Source: NETL Cost & Performance Baseline Rev 4, 2021.
-        # Reflects 90% capture, amine-based post-combustion.
-        "fom_per_kw_yr": 45.0,  # $/kW-yr. Source: NETL Rev 4.
+        # capex/FOM are ATB-derived from ATB 2024's 95 % CCS class @2026 (2026$)
+        # — the nearest published new-CCGT-CCS cost to the model's 90 % capture
+        # (ATB has no 90 % variant; 95 % is slightly conservative). Keeping the
+        # host gas_cc on ATB while gas_cc_ccs stayed on its older-dollar NETL
+        # basis made the capture island look nearly free (a ~$700/kW increment
+        # vs the NETL/ATB ~$1,500/kW), so both now share one ATB 2026$ basis.
+        # The unit's DISPATCH physics (heat-rate penalty, emission rate) still
+        # come from CCUS_PARAMS["gas_cc_ccs_90"] (90 % capture) — only the cost
+        # basis is ATB's 95 % class.
+        "capex_per_kw": 3104.7,  # ATB 2024 Moderate NG CC 95% CCS @2026, 2026$ (derived)
+        "fom_per_kw_yr": 71.1,  # ATB 2024 Moderate @2026, 2026$ (derived)
         "learning_rate": 0.10,  # 10% cost reduction per doubling of cumulative deployment.
         # Source: Rubin et al. (2015) "The cost of CO2 capture
-        # and storage", Int J Greenhouse Gas Control.
-        # Range in literature: 0.08–0.12 for first-of-a-kind
-        # industrial process technologies.
-        # CCS is early on its deployment curve (~2 GW base),
-        # so each doubling comes quickly and has large effect.
+        # and storage", Int J Greenhouse Gas Control. Wright's-Law
+        # rate, outside the ATB CAPEX/FOM extract's scope; also
+        # used by the CCS retrofit screen (shared capture-equipment
+        # manufacturing base).
         "base_cf": 0.80,  # Lower than unabated CC (0.85) due to higher MC
         # pushing it later in merit order at low carbon prices.
+        # NREL ATB 2024 CF (not in the committed CAPEX/FOM extract).
         "lifetime_yr": 30,  # Same as gas CC host plant.
     },
 }
@@ -4369,54 +4397,129 @@ NEW_ENTRY_COSTS: dict[str, dict[str, float]] = {
 # uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile,
 # docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to
 # NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to
-# NREL ATB 2024 technology innovation scenarios: "low"=Advanced (full
-# learning/cost-decline realized), "mid"=Moderate, "high"=Conservative
-# (costs stay closer to flat). "mid" is 1.0 on every tech BY CONSTRUCTION --
-# NEW_ENTRY_COSTS' base values are the model's existing reference case, not
-# a re-scraped ATB Moderate figure, so the neutral default must be an exact
-# no-op. The low/high spreads are engineering-judgment magnitudes anchored to
-# ATB's published case *definitions* and typical per-tech spread ordering
-# (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest --
-# mature, well-characterized plant costs); this environment could not reach
-# atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up
-# should replace these with exact figures the next time ATB is re-pulled
-# (PP-3.2 item 2 tracks the next AEO/ATB refresh).
+# NREL ATB 2024 cost scenarios: "low"=Advanced, "mid"=Moderate, "high"=
+# Conservative. "mid" is 1.0 by construction (Moderate is NEW_ENTRY_COSTS' base
+# snapshot, so the neutral default is an exact no-op).
+#
+# capex_per_kw low/high are DERIVED (FF-1E) from the committed ATB 2024 extract
+# by scripts/data/derive_entry_costs_from_atb.py: the Advanced/Moderate and
+# Conservative/Moderate CAPEX ratios at each tech's base year (2026; 2030 for
+# nuclear). The ratios are dimensionless (the dollar-year deflator cancels), so
+# they are ATB's *actual* near-year cost-case spread — replacing the prior
+# engineering-judgment magnitudes the dict's own comment flagged as un-scraped
+# (ff-inputs-currency-audit-2026-07.md §3.3). ATB's near-year spread is narrow
+# for the mature techs (gas_ct is identical across all three cases -> 1.0) and
+# wide for FOAK nuclear; the long-horizon divergence between the cost cases is
+# carried by the learning_rate multiplier. tests/test_atb_entry_cost_
+# consistency.py asserts these capex ratios equal the derivation (rule 23).
+#
+# learning_rate multipliers are NOT ATB-derived: ATB publishes cost
+# trajectories, not Wright's-Law learning rates, so they keep their documented
+# judgment basis — the trajectory-divergence channel of the tech-cost lever, a
+# DOF-ledger free parameter. gas_cc_ccs is NETL-based (see NEW_ENTRY_COSTS), so
+# both its multipliers stay judgment (ATB has no 90 % CCS case).
 TECH_COST_MULTIPLIERS: dict[str, dict[str, dict[str, float]]] = {
     "wind": {
-        "low": {"capex_per_kw": 0.85, "learning_rate": 1.35},
+        "low": {
+            "capex_per_kw": 0.9784,
+            "learning_rate": 1.35,
+        },  # capex: ATB Advanced/Moderate @2026
         "mid": {"capex_per_kw": 1.00, "learning_rate": 1.00},
-        "high": {"capex_per_kw": 1.12, "learning_rate": 0.65},
+        "high": {
+            "capex_per_kw": 1.0551,
+            "learning_rate": 0.65,
+        },  # capex: ATB Conservative/Moderate @2026
     },
     "solar": {
-        "low": {"capex_per_kw": 0.65, "learning_rate": 1.25},
+        "low": {
+            "capex_per_kw": 0.9629,
+            "learning_rate": 1.25,
+        },  # capex: ATB Advanced/Moderate @2026
         "mid": {"capex_per_kw": 1.00, "learning_rate": 1.00},
-        "high": {"capex_per_kw": 1.15, "learning_rate": 0.60},
+        "high": {
+            "capex_per_kw": 1.0513,
+            "learning_rate": 0.60,
+        },  # capex: ATB Conservative/Moderate @2026
     },
     "gas_cc": {
-        "low": {"capex_per_kw": 0.95, "learning_rate": 1.5},
+        "low": {
+            "capex_per_kw": 0.9923,
+            "learning_rate": 1.5,
+        },  # capex: ATB Advanced/Moderate @2026
         "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
-        "high": {"capex_per_kw": 1.08, "learning_rate": 0.5},
+        "high": {
+            "capex_per_kw": 1.0076,
+            "learning_rate": 0.5,
+        },  # capex: ATB Conservative/Moderate @2026
     },
     "gas_ct": {
-        "low": {"capex_per_kw": 0.95, "learning_rate": 1.5},
+        "low": {
+            "capex_per_kw": 1.0,
+            "learning_rate": 1.5,
+        },  # capex: ATB CT identical across cost cases
         "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
-        "high": {"capex_per_kw": 1.08, "learning_rate": 0.5},
+        "high": {
+            "capex_per_kw": 1.0,
+            "learning_rate": 0.5,
+        },  # capex: ATB CT identical across cost cases
     },
     "nuclear_smr": {
-        "low": {"capex_per_kw": 0.80, "learning_rate": 1.5},
+        "low": {
+            "capex_per_kw": 0.6649,
+            "learning_rate": 1.5,
+        },  # capex: ATB Advanced/Moderate @2030
         "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
-        "high": {"capex_per_kw": 1.25, "learning_rate": 0.5},
+        "high": {
+            "capex_per_kw": 1.3141,
+            "learning_rate": 0.5,
+        },  # capex: ATB Conservative/Moderate @2030
     },
     "nuclear_large": {
-        "low": {"capex_per_kw": 0.90, "learning_rate": 1.5},
+        "low": {
+            "capex_per_kw": 0.8497,
+            "learning_rate": 1.5,
+        },  # capex: ATB Advanced/Moderate @2030
         "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
-        "high": {"capex_per_kw": 1.15, "learning_rate": 0.5},
+        "high": {
+            "capex_per_kw": 1.554,
+            "learning_rate": 0.5,
+        },  # capex: ATB Conservative/Moderate @2030
     },
-    "gas_cc_ccs": {
-        "low": {"capex_per_kw": 0.85, "learning_rate": 1.5},
+    "gas_cc_ccs": {  # capex: ATB 95% CCS Advanced/Conservative-vs-Moderate @2026
+        "low": {"capex_per_kw": 0.9605, "learning_rate": 1.5},
         "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
-        "high": {"capex_per_kw": 1.20, "learning_rate": 0.5},
+        "high": {"capex_per_kw": 1.0395, "learning_rate": 0.5},
     },
+}
+
+# Per-technology real WACC (FF-1E per-tech-WACC OPTION — §3.6). Consumed ONLY
+# when ScenarioConfig.per_tech_wacc_enabled is True (default False, in which
+# case every tech's LCOE annuity uses the single derived real_discount_rate and
+# this table is untouched — byte-identical). Values are NREL ATB 2024 (v3.0.0)
+# "WACC Real" (Market financial case) per ATB technology at the tech's base year
+# (2026; 2030 for new nuclear — ATB's earliest nuclear year), the same base year
+# NEW_ENTRY_COSTS uses. ATB stores WACC per technology (techdetail "*"), scenario
+# -invariant; it varies only mildly by year as the tax-credit financing benefit
+# phases out. Not in the committed CAPEX/FOM extract (fetch_nrel_atb.py filters
+# to CAPEX/Fixed O&M) — extractable by adding "WACC Real" to that script's
+# PARAMETERS; the values here were pulled from ATB 2024 for this option.
+#
+# CAVEAT (why this stays OFF until the FF-2D gate): ATB's Market WACC embeds the
+# tax-equity financing benefit of the PTC/ITC, which this model ALSO credits
+# separately (ira.compute_dispatch_credits, the solar ITC in compute_lcoe). So
+# enabling per-tech WACC on top of the explicit IRA credits risks double-counting
+# the credit benefit for wind/solar/nuclear — an interaction the owner resolves
+# at FF-2D, not FF-1E.
+ATB_TECH_WACC_REAL: dict[str, float] = {
+    "wind": 0.050352,  # ATB 2024 WACC Real Market, LandbasedWind @2026
+    "solar": 0.042271,  # ATB 2024 WACC Real Market, UtilityPV @2026
+    "gas_cc": 0.053585,  # ATB 2024 WACC Real Market, NaturalGas_FE @2026
+    "gas_ct": 0.053585,  # ATB 2024 WACC Real Market, NaturalGas_FE @2026
+    "gas_cc_ccs": 0.053585,  # ATB 2024 WACC Real Market, NaturalGas_FE @2026
+    "nuclear_large": 0.056473,  # ATB 2024 WACC Real Market, Nuclear @2030
+    "nuclear_smr": 0.056473,  # ATB 2024 WACC Real Market, Nuclear @2030
+    "offshore_wind": 0.051528,  # ATB 2024 WACC Real Market, OffShoreWind @2026
+    "geothermal": 0.051520,  # ATB 2024 WACC Real Market, Geothermal @2026
 }
 
 # --- Emerging generation technologies -------------------------------------
@@ -4493,13 +4596,23 @@ MMBTU_PER_BBL_RESIDUAL: float = 6.287  # No. 6 residual fuel oil
 # ccs_capture_rate (NETL 2022 Case B31B) — a former "capture_rate" key here
 # was dead code that silently contradicted any swept ccs_capture_rate, so it
 # was deleted per rule 26 (W2-C; ces-ci-crediting-audit-2026-07.md §3.3).
+# capex_kw / fom_kw_yr are the OPERATIVE new-build CCS cost (this dict, not
+# NEW_ENTRY_COSTS["gas_cc_ccs"], is what capacity._emerging_lcoe screens new CCS
+# on). FF-1E reconciled them onto the same ATB 2024 95%-CCS @2026 (2026$) basis
+# as the re-derived gas_cc host and NEW_ENTRY_COSTS["gas_cc_ccs"] — leaving them
+# on their prior "$2,500/kW / $22/kW-yr" basis while gas_cc rose to ATB 2026$
+# made the capture island look nearly free (a ~$900/kW increment vs ATB's
+# ~$1,500/kW). test_atb_entry_cost_consistency asserts these equal the
+# NEW_ENTRY_COSTS gas_cc_ccs values. The 90 %-capture physics
+# (heat_rate_penalty, ccs_capture_rate) and the NETL/CCS-Institute-cited
+# adders are unchanged.
 CCUS_PARAMS: dict[str, dict[str, float]] = {
     "gas_cc_ccs_90": {  # gas CCGT with 90% post-combustion capture
         "heat_rate_penalty": 1.16,  # ×base CC heat rate — 16% parasitic. NETL 2022 Rev 4, Case B31B
         "vom_adder": 8.0,  # $/MWh — amine solvent, maintenance. NETL 2022
         "co2_transport_storage": 15.0,  # $/tCO2 — pipeline + saline injection. NETL 2022, Gulf Coast
-        "capex_kw": 2500.0,  # $/kW installed. NREL ATB 2024
-        "fom_kw_yr": 22.0,  # $/kW-yr. NREL ATB 2024
+        "capex_kw": 3104.7,  # $/kW installed. ATB 2024 Moderate NG CC 95% CCS @2026, 2026$ (derived)
+        "fom_kw_yr": 71.1,  # $/kW-yr. ATB 2024 Moderate NG CC 95% CCS @2026, 2026$ (derived)
         "lifetime_yr": 30,
         "learning_rate": 0.05,  # slow — limited deployment. Global CCS Institute 2024
     },
@@ -4508,6 +4621,14 @@ CCUS_PARAMS: dict[str, dict[str, float]] = {
 # Enhanced geothermal (EGS) parameters. EGS enters as a thermal generator
 # with zero fuel cost and high capacity factor, dispatchable down to
 # ``pmin_fraction`` of rated capacity (flexible baseload). Not intermittent.
+#
+# FF-1E reconciliation (not re-derived): the committed ATB extract's geothermal
+# class is "HydroFlash" (ATB's `default` hydrothermal-flash class, ~$7,416/kW
+# @2026 in 2026$), which is a DIFFERENT resource from EGS — ATB's own EGS
+# ("DeepEGS"/"NF EGS") classes are not in the committed CAPEX/FOM extract. So
+# these Fervo/ARPA-E/DOE-cited EGS values are kept as-is; a future intake that
+# adds ATB's EGS techdetail (+ its CF rows) can re-derive them like
+# NEW_ENTRY_COSTS (scripts/data/derive_entry_costs_from_atb.py).
 GEOTHERMAL_PARAMS: dict[str, dict[str, float]] = {
     "egs": {
         "capacity_factor": 0.90,  # high availability. DOE GeoVision 2019
@@ -4526,6 +4647,17 @@ GEOTHERMAL_PARAMS: dict[str, dict[str, float]] = {
 
 # Offshore wind parameters. A separate renewable category from onshore wind:
 # higher and less variable capacity factors, higher costs, distinct zones.
+#
+# FF-1E reconciliation (documented, not re-derived): ATB 2024 does carry these
+# classes (OffShoreWind Class3 fixed-bottom ~$6,312/kW @2026 2026$; Class12
+# floating starts 2028), and the capex_kw values below sit below that near-year
+# ATB Moderate level — the same "anchored to a later, declined ATB year"
+# pattern FF-1E corrected in NEW_ENTRY_COSTS. They are NOT re-derived here:
+# offshore is a minor, ISO-gated build (base_cf and the per-ISO
+# _offshore_wind_params structure are entangled) and FF-0D graded it
+# CURRENT-vintage, so a full re-derivation (both classes, floating's 2028 start,
+# CF rows) is a bounded follow-up for a dedicated emerging-tech-cost session,
+# not FF-1E's P0/P1 core. Values kept on their prior ATB-2024 basis.
 OFFSHORE_WIND_PARAMS: dict[str, dict[str, float]] = {
     "fixed_bottom": {
         "base_cf": 0.45,  # annual average. NREL ATB 2024
