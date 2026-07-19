@@ -1,0 +1,89 @@
+datatype: pjm-outages
+schema_version: 1
+title: PJM generation-outage forecast by type and region (Data Miner 2)
+description: >-
+  One tidy row per (forecast_execution_date, forecast_date, region) from PJM
+  Data Miner 2's "Generation Outage for Seven Days by Type" feed
+  (gen_outages_by_type). PJM posts, daily at 06:00 EPT, the active/approved MW
+  on outage for the operating day and the next six days, split by outage type
+  (forced / maintenance / planned) and by region (Mid Atlantic - Dominion,
+  Western, and the PJM RTO total == the two sub-regions summed). This is PJM's
+  published, DAM-horizon capacity-availability quantity -- the PJM analogue of
+  ERCOT's 60-Day DAM disclosure thermal availability, and the aggregate-coverage
+  intake replacement for the CAMPD unit-outage fallback in a PJM backcast.
+  Rule-13 admissibility class: an operator-published, forward-looking
+  availability forecast that regenerates for a future day and responds to
+  conditions -- a measured/forecast INPUT, never a fitted answer pinned to
+  actuals. The current-day actual is the lead_days == 0 row; the six forward
+  lead days are the published scheduled-outage forecast. Consumed by
+  market_sim.data.pjm_outages.pjm_dam_availability_series (intended gate
+  ScenarioConfig.pjm_dam_availability, backcast only; the flag + data.fleet
+  application are the ready-to-apply patch in
+  docs/handoffs/pjm-dam-availability-wiring-2026-07.md). Source pull:
+  scripts/data/fetch_pjm_outages.py; processed by
+  scripts/data/derive_pjm_dam_availability.py. FROZEN AGAINST RESIDUALS
+  (CLAUDE.md rule 23): re-derive only when the raw PJM source is re-pulled.
+key_columns: [forecast_execution_date, forecast_date, region]
+allow_additional_columns: false
+columns:
+  - name: forecast_execution_date
+    dtype: string
+    unit: date
+    nullable: false
+    description: >-
+      Calendar date (EPT, YYYY-MM-DD) the outage forecast was posted by PJM.
+  - name: forecast_date
+    dtype: string
+    unit: date
+    nullable: false
+    description: >-
+      Delivery date (EPT, YYYY-MM-DD) the outage MW pertains to. Equals
+      forecast_execution_date on the current-day actual row (lead_days == 0).
+  - name: lead_days
+    dtype: int64
+    unit: days
+    nullable: false
+    description: >-
+      forecast_date - forecast_execution_date, an integer 0..6. lead_days == 0
+      is the current-day actual outage; 1..6 are the forward scheduled-outage
+      forecast for the seven-day horizon.
+  - name: region
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      PJM outage region, closed vocabulary: "Mid Atlantic - Dominion",
+      "Western", or "PJM RTO". The RTO total equals the two sub-regions summed
+      (verified to <= 1 MW residual by the deriver).
+  - name: total_outages_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: >-
+      Total active/approved MW on outage = planned + maintenance + forced
+      (verified to sum by the deriver). Always >= 0.
+  - name: planned_outages_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: >-
+      Scheduled (planned) outage MW -- dominated by scheduled nuclear refuel and
+      fossil maintenance. Always >= 0. Excluded from the default availability
+      transform to avoid double-counting the nuclear refuel the nuclear overlay
+      already carries.
+  - name: maintenance_outages_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: >-
+      Maintenance outage MW. Carries occasional small negatives (a PJM
+      reconciliation artifact where MW is reclassified between categories);
+      preserved verbatim (rule 11) since the three components still sum to total.
+  - name: forced_outages_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: >-
+      Forced (unplanned) outage MW. Always >= 0. With maintenance, the UNPLANNED
+      component the default availability transform uses (the measured analogue
+      of the statistical forced-outage / EFOR rate).
