@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-18-miso-75-meritcap-base",
+  "label": "miso 75 meritcap base",
+  "date": "2026-07-18",
+  "shorthand": "miso-75-meritcap-base",
+  "definition": "(PROBE) Same-box {Manitoba only} drift control for the miso-75 {Manitoba + merit-cap} composition \u2014 the miso-74 keeper recipe with seam-envelope merit-cap OFF (uniform per-band derate), so mechanism-only = main \u2212 base. Reproduces the registered miso-74 keeper on every gated criterion (C3b 0.080/0.126/0.181 PASS, C3a -0.8/-6.7/-13.3%, C3c 0/6/1 vs RT 30/37/88, total net interchange err -5.46/-7.38/-7.27 TWh) \u2014 zero box drift (C3b-2024 0.124\u21920.126 within noise). Not a keeper candidate; registered per rule 15 so the paired read is reproducible.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-18-miso-75-meritcap-base.js",
+  "bundle": "results/calibration/miso75_meritcap_base"
+}
