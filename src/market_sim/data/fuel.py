@@ -870,6 +870,7 @@ NYISO_DOWNSTATE_CT_GAS_BASIS_PATH: Path = (
 _WINTER_BASIS_CACHE: dict[Path, pd.DataFrame | None] = {}
 _HH_MONTHLY_CACHE: dict[Path, dict[tuple[int, int], float]] = {}
 _HH_DAILY_CACHE: dict[Path, dict[int, dict[int, list[float]]]] = {}
+_HH_DAILY_DATED_CACHE: dict[Path, dict[int, dict[int, dict[int, float]]]] = {}
 _TRANSCO_DAILY_CACHE: dict[Path, dict[int, dict[int, list[float]]]] = {}
 _TRANSCO_DAILY_DATED_CACHE: dict[Path, dict[int, dict[int, dict[int, float]]]] = {}
 _ALGONQUIN_DAILY_CACHE: dict[Path, dict[int, dict[int, dict[int, float]]]] = {}
@@ -894,6 +895,9 @@ _HENRY_HUB_CLEAN_KEY: tuple[str, str] = ("gas", "henry_hub")
 # Clean-backed daily series cache, keyed by (fuel, hub) so a multi-year run reads
 # the curated parquet once. Separate from _HH_DAILY_CACHE (raw, keyed by path).
 _HH_DAILY_CLEAN_CACHE: dict[tuple[str, str], dict[int, dict[int, list[float]]]] = {}
+_HH_DAILY_DATED_CLEAN_CACHE: dict[
+    tuple[str, str], dict[int, dict[int, dict[int, float]]]
+] = {}
 
 # Per-datatype clean-path caches (separate from raw caches to avoid type collision).
 _WINTER_BASIS_CLEAN_CACHE: dict[str, pd.DataFrame | None] = {}
@@ -938,6 +942,36 @@ def _clean_fuel_price_daily(fuel: str, hub: str) -> dict[int, dict[int, list[flo
         ts = row.interval_start_utc
         out.setdefault(ts.year, {}).setdefault(ts.month, []).append(
             float(row.price_usd_per_mmbtu)
+        )
+    return out
+
+
+def _clean_fuel_price_daily_dated(
+    fuel: str, hub: str
+) -> dict[int, dict[int, dict[int, float]]]:
+    """Dated daily price for one ``(fuel, hub)`` from the clean tree.
+
+    The **true-date** sibling of :func:`_clean_fuel_price_daily` (the clean-backed
+    mirror of :func:`_henry_hub_daily_dated`): the same curated ``fuel-prices``
+    rows, but keyed ``{year: {month: {day-of-month: $/MMBtu}}}`` so each
+    trading-day quote keeps its actual calendar day instead of collapsing into a
+    positional month list.
+    """
+    from scripts.lib.clean_io import read_clean
+
+    df = read_clean(
+        _FUEL_PRICES_DATATYPE,
+        validate=False,
+        columns=["interval_start_utc", "fuel", "hub", "price_usd_per_mmbtu"],
+    )
+    sel = df[(df["fuel"] == fuel) & (df["hub"] == hub)].sort_values(
+        "interval_start_utc"
+    )
+    out: dict[int, dict[int, dict[int, float]]] = {}
+    for row in sel.itertuples(index=False):
+        ts = row.interval_start_utc
+        out.setdefault(ts.year, {}).setdefault(ts.month, {})[ts.day] = float(
+            row.price_usd_per_mmbtu
         )
     return out
 
@@ -1177,6 +1211,44 @@ def _henry_hub_daily(path: Path | None) -> dict[int, dict[int, list[float]]]:
     return out
 
 
+def _henry_hub_daily_dated(
+    path: Path | None,
+) -> dict[int, dict[int, dict[int, float]]]:
+    """Return ``{year: {month: {day-of-month: $/MMBtu}}}`` measured Henry Hub spot.
+
+    The **true-date** view of the same measured series :func:`_henry_hub_daily`
+    reads (the :func:`_transco_z6_daily_dated` construction applied to Henry
+    Hub): each trading-day quote keyed by its actual calendar day, so the
+    national daily shape (:func:`gas_daily_shape_factors`) can place each print
+    where it really occurred and staircase the non-trading gaps, instead of
+    spreading the month's quote list evenly across calendar days (which
+    mislocated the Winter Storm Heather Friday 2024-01-12 spike onto Jan-13 —
+    the miso-72 §3.7 all-ISO correctness finding,
+    ``docs/handoffs/miso-winter-fuel-security-design-2026-07.md``). Same
+    clean-tree opt-in as the list view; cached per path.
+    """
+    if path is None and _use_clean_data():
+        from scripts.lib.clean_io import clean_exists
+
+        if clean_exists(_FUEL_PRICES_DATATYPE):
+            key = _HENRY_HUB_CLEAN_KEY
+            if key not in _HH_DAILY_DATED_CLEAN_CACHE:
+                _HH_DAILY_DATED_CLEAN_CACHE[key] = _clean_fuel_price_daily_dated(*key)
+            return _HH_DAILY_DATED_CLEAN_CACHE[key]
+    resolved = Path(path) if path else HENRY_HUB_DAILY_PATH
+    if resolved in _HH_DAILY_DATED_CACHE:
+        return _HH_DAILY_DATED_CACHE[resolved]
+    out: dict[int, dict[int, dict[int, float]]] = {}
+    if resolved.exists():
+        frame = pd.read_csv(resolved, parse_dates=["date"]).sort_values("date")
+        for r in frame.itertuples():
+            out.setdefault(r.date.year, {}).setdefault(r.date.month, {})[r.date.day] = (
+                float(r.price_usd_mmbtu)
+            )
+    _HH_DAILY_DATED_CACHE[resolved] = out
+    return out
+
+
 def _transco_z6_daily(path: Path | None) -> dict[int, dict[int, list[float]]]:
     """Return ``{year: {month: [daily $/MMBtu, ...]}}`` measured Transco Z6 NY spot.
 
@@ -1410,54 +1482,63 @@ def gas_daily_shape_factors(
 ) -> np.ndarray:
     """Return ``(hours,)`` within-month daily gas-price shape factors.
 
-    Each calendar day's factor is the measured Henry Hub daily spot divided by
-    that month's own daily mean, then the calendar-day factors are renormalized
-    so they average to EXACTLY 1.0 within every month — multiplying the
-    (correctly-levelled) monthly gas series by them adds the real intra-month
-    commodity swing while leaving the monthly mean, and hence the annual
-    generation mix, unchanged. The daily spot has only trading days; the
-    (typically ~21) quotes are spread evenly across the month's calendar days
-    (a weekend inherits the bracketing trading values' block), and a month with
-    no quotes resolves to all-ones (no shape). This is the same mechanism a
-    forecast would use (a forward monthly level times a representative daily
-    shape), so it is not backcast-only.
+    Each measured Henry Hub daily-spot quote is placed on its **true calendar
+    (trade) date** and non-trading days (weekends / holidays) carry the last
+    trading day's value forward — the :func:`_trade_date_staircase`, the
+    :func:`_transco_z6_daily_dated` true-date construction — then each calendar
+    day's factor is the staircase value divided by that month's own
+    calendar-day staircase mean. Multiplying the (correctly-levelled) monthly
+    gas series by these adds the real intra-month commodity swing while
+    leaving the monthly mean, and hence the annual generation mix, unchanged.
+    A month with no quotes resolves to all-ones (no shape). This is the same
+    mechanism a forecast would use (a forward monthly level times a
+    representative daily shape), so it is not backcast-only.
 
-    The explicit renormalization is REQUIRED, not cosmetic: bare ``np.interp``
-    resampling of the trading-day quotes onto the calendar-day grid does not
-    preserve the mean in a convex gas-spike month, so a cold-snap spike
-    overshot the month mean by ~2% pre-fix (worst Jan-2024, +$0.10/MMBtu
-    delivered — the G-A1 finding, docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md).
-    This mirrors the per-hub daily-basis mechanisms below, which already
-    renormalize their calendar-day factors to 1.0.
+    True-date placement is REQUIRED, not cosmetic (the miso-72 §3.7 all-ISO
+    correctness fix, ``docs/handoffs/miso-winter-fuel-security-design-2026-07.md``):
+    the previous even-spread ``np.interp`` resampling of the month's quote LIST
+    onto the calendar grid mislocated any spike bracketed by a trading gap —
+    the Winter Storm Heather Friday 2024-01-12 Henry Hub print priced Jan-13 in
+    the model — and linearly smeared every peak between quotes. The staircase
+    keeps the spike on the day it printed and holds it flat across the
+    following non-trading gap, never interpolating across a gap.
+
+    Mean preservation per month HOLDS EXACTLY, by construction rather than by a
+    post-hoc renormalization: the divisor is the same staircase's own
+    calendar-day mean, so the factors average to exactly 1.0 in every full
+    month (this subsumes the earlier G-A1 explicit-renormalization fix,
+    docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md, which corrected the
+    non-mean-preserving bare-``np.interp`` resampling). What the staircase
+    changes about the mean's WEIGHTING is honest and documented: a quote
+    bracketing a weekend/holiday gap now enters the month mean once per
+    calendar day it covers (a Friday counts ~3×), exactly as the flat-priced
+    non-trading days it prices, where the even-spread gave every quote equal
+    calendar weight regardless of gap structure.
     """
     factors = np.ones(hours, dtype=float)
-    by_year = _henry_hub_daily(path).get(year)
-    if not by_year:
+    dated = _henry_hub_daily_dated(path).get(year)
+    if not dated:
+        return factors
+    daily = _trade_date_staircase(dated, year)  # (365,) true-date staircase
+    if daily is None:
         return factors
     hour = 0
+    day0 = 0  # cumulative day-of-year offset of the month on the non-leap clock
     for month_idx, n_days in enumerate(_DAYS_IN_MONTH):
         month_hours = n_days * 24
-        quotes = by_year.get(month_idx + 1)
-        if quotes and hour < hours:
-            arr = np.asarray(quotes, dtype=float)
-            mean = float(arr.mean())
+        if dated.get(month_idx + 1) and hour < hours:
+            seg = daily[day0 : day0 + n_days]
+            mean = float(seg.mean())
             if mean > 0:
-                # Spread the month's trading-day quotes across its calendar
-                # days, then RENORMALIZE so the calendar-day factors average to
-                # exactly 1.0 (np.interp resampling does not preserve the mean
-                # in a convex spike month — G-A1 fix), then repeat each day's
-                # factor across its 24 hours.
-                day_factor = np.interp(
-                    np.linspace(0.0, 1.0, n_days),
-                    np.linspace(0.0, 1.0, len(arr)),
-                    arr / mean,
-                )
-                fbar = float(day_factor.mean())
-                if fbar > 0:
-                    day_factor = day_factor / fbar
+                # Dividing by the month's own calendar-day staircase mean makes
+                # the factors average to exactly 1.0 — mean-preserving with no
+                # separate renormalization step — then repeat each day's factor
+                # across its 24 hours.
+                day_factor = seg / mean
                 shaped = np.repeat(day_factor, 24)[: max(0, hours - hour)]
                 factors[hour : hour + len(shaped)] = shaped
         hour += month_hours
+        day0 += n_days
     return factors
 
 
@@ -1624,6 +1705,38 @@ def _flow_date_staircase(
     idx = pd.date_range(f"{year}-01-01", f"{year}-12-31", freq="D")
     s = pd.Series(stamps).sort_index()
     s = s.reindex(idx.union(s.index)).sort_index().ffill().bfill().reindex(idx)
+    s = s[~((s.index.month == 2) & (s.index.day == 29))]
+    return s.to_numpy(dtype=float)
+
+
+def _trade_date_staircase(
+    dated_year: dict[int, dict[int, float]], year: int
+) -> np.ndarray | None:
+    """365-day true-trade-date staircase ($/MMBtu) from dated daily quotes.
+
+    The trade-date sibling of :func:`_flow_date_staircase`, for a commodity spot
+    series whose print IS the price on its own trading day (Henry Hub daily
+    spot), not a next-day-delivery index: each quote sits on its true calendar
+    (trade) date, and every non-trading day (weekend / holiday) carries the
+    LAST trading day's value forward — a staircase, never an interpolation
+    across the gap, so a convex single-day spike stays exactly on the day it
+    printed instead of leaking into (or being relocated onto) its neighbours.
+    Feb-29 is dropped to land on the model's non-leap 365-day clock (a Feb-29
+    quote still forward-fills any following non-trading days); days before the
+    year's first quote back-fill from it (the same left-edge constant extension
+    the flow-date staircase applies). Returns ``None`` when the year has no
+    quotes.
+    """
+    stamps = {
+        pd.Timestamp(year=year, month=m, day=d): v
+        for m, days in sorted(dated_year.items())
+        for d, v in sorted(days.items())
+    }
+    if not stamps:
+        return None
+    idx = pd.date_range(f"{year}-01-01", f"{year}-12-31", freq="D")
+    s = pd.Series(stamps).sort_index()
+    s = s.reindex(idx).ffill().bfill()
     s = s[~((s.index.month == 2) & (s.index.day == 29))]
     return s.to_numpy(dtype=float)
 
@@ -3266,11 +3379,14 @@ def miso_chicago_daily_shape_factors(
     Flow-date placement is REQUIRED, not cosmetic: the daily citygate is a
     next-day-delivery index, so the Winter Storm Heather Friday 2024-01-12 print
     ($25.82/MMBtu) prices the whole Sat-Mon-holiday weekend package — gas flowing
-    Jan-13/14/15/16, including the record-peak Tuesday. An even-spread resampling
-    (:func:`gas_daily_shape_factors`) instead mislocates it to Jan-13 and drops the
-    true tail days to 0.88-0.96×; the flow-date staircase lands it on Jan-13-16 at
-    4.67× (verified monthly-mean factor 1.000). Returns all-ones for a year with no
-    Chicago quotes (the caller stays inert).
+    Jan-13/14/15/16, including the record-peak Tuesday. The pre-§3.7-fix
+    even-spread resampling in :func:`gas_daily_shape_factors` instead mislocated
+    it to Jan-13 and dropped the true tail days to 0.88-0.96×; the flow-date
+    staircase lands it on Jan-13-16 at 4.67× (verified monthly-mean factor
+    1.000). (The national Henry Hub shape now uses the TRADE-date staircase —
+    :func:`_trade_date_staircase` — because the HH daily spot prints the price
+    of its own trading day, unlike this next-day-delivery citygate index.)
+    Returns all-ones for a year with no Chicago quotes (the caller stays inert).
     """
     factors = np.ones(hours, dtype=float)
     dated = _miso_citygate_daily_dated(path).get(year, {})
