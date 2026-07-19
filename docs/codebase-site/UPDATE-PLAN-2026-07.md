@@ -1,5 +1,7 @@
 # Documentation & Codebase-Site Update Plan — 2026-07
 
+> Status: ARCHIVED — executed via docs/codebase-site/UPDATE-PROMPT-PACK-2026-07.md (site refresh shipped).
+
 > **Status:** Blueprint for a documentation + code-explorer-site refresh. No
 > content written yet — this is the plan and the code-grounded fact base that
 > the follow-on prompt pack (`UPDATE-PROMPT-PACK-2026-07.md`) executes against.

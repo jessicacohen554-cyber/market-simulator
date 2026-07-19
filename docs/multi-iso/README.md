@@ -1,9 +1,11 @@
 # Multi-ISO Expansion — Planning Set
 
 Planning documents for expanding the simulator from ERCOT to a faithful
-backcast across **CAISO, PJM, ISO-NE (NEISO), MISO, SPP, and NYISO**.
+backcast across **CAISO, PJM, ISO-NE (NEISO), MISO, and NYISO** — six ISOs with
+ERCOT. (SPP is *not* a registered ISO; it appears only as a MISO RDT wheeling
+path.)
 
-> **Status (largely executed):** these started as forward plans, but all seven
+> **Status (largely executed):** these started as forward plans, but all six
 > ISOs are now registered multi-zone in `config/iso_configs.py`, and several
 > (ERCOT, NEISO, NYISO, PJM, CAISO) have backcasts on the calibration dashboard.
 > Treat these as the *rationale and process* record; for current topology and

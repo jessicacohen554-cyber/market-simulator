@@ -10,7 +10,7 @@ read every sheet. RTM is averaged 15-min -> hourly. Writes
 This is the per-hub/zone counterpart to the system HB_HUBAVG series in
 ``derive_actual_lmp.py`` — used to scope the spatial reliability-deployment
 overlay on each pocket plant's LOCAL load-zone price (see
-docs/spatial-ruc-session-prompt.md).
+docs/sessions/spatial-ruc-session-prompt.md).
 
 Schema note: RTM uses columns ``Settlement Point Name`` + ``Delivery Hour``
 (int 1-24) + ``Delivery Interval`` (1-4); DAM uses ``Settlement Point`` +
