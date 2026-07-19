@@ -7,8 +7,29 @@ the end of every manager turn.
 
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
-- **Last reviewed `origin/main` HEAD:** `37b9136` (2026-07-18, turn 19 — manager session `yjegie`).
+- **Last reviewed `origin/main` HEAD:** `cf1531d` (2026-07-19, turn 20 — manager session `yjegie`).
 - **Plan base SHA:** `c95176e`.
+- **⚠️ turn 20 (manager `yjegie`, refresh). `37b9136→cf1531d` (1 merge). FF-1E = verified-issues,
+  NON-DELIVERY → correction FF-1E-complete [OPUS].** LEDGER-SYNC NOTE: my turn-19 ledger
+  (`91732bb`) never merged to main (its branch was cleaned after #2513 merged turn-18); recovered
+  the object locally, rebuilt the branch from it, so no content lost — but MAIN's ledger lags at
+  turn 18 (`53d2b04`) until this pushes. Rule-27 clean (capacity.py 4230, constants.py 7281,
+  scenarios.py 7794, runner.py 2457 — all UNCHANGED). **FF-1E (#2515) is the 3rd "prose exceeds
+  delivery" non-delivery** (after FF-0B #2412, FF-2A #2453): it committed ONLY
+  `scripts/data/derive_entry_costs_from_atb.py` (+205) and NONE of what that script's docstring
+  promises — the cited test `tests/test_atb_entry_cost_consistency.py` was never committed, the
+  script is imported by nothing (dead code), **constants.py is untouched** (NEW_ENTRY_COSTS /
+  TECH_COST_MULTIPLIERS still hold the old "decorative" values the docstring itself flags as
+  matching no ATB year → **entry economics UNCHANGED**), item 2 policy fixes (IRA/RPS/ACP/
+  confirmed-retirements) absent, no T0 smoke, no findings doc. The derivation LOGIC is sound; the
+  application didn't land. Verified: NEW_ENTRY_COSTS is consumed via
+  `scenarios.py::resolve_new_entry_costs` (already wired → the fix is values-in-constants, NOT a
+  rewire → does NOT touch capacity.py). Issued **FF-1E-complete [OPUS]**: run the script, write the
+  ATB-derived values into constants.py with vintage citations, commit the consistency test, apply
+  the FF-0D policy fixes, T0 smoke + backcast byte-identity + findings. Parallel-safe with
+  FF-0B-redo/FF-1D/FF-2A-posture; may contend with FF-2B on constants.py (stagger if both run).
+  Nothing else landed. Active front unchanged: FF-1D + FF-0B-redo + FF-2B + FF-2A-posture +
+  FF-1E-complete (all awaiting worker launch).
 - **turn 19 (manager `yjegie`, refresh). `e5d6f29→37b9136` (3 merges). FF-0E LANDED &
   verified-pass → FF-1D RELEASED.** Rule-27 clean (capacity.py 4230, constants.py 7281; scenarios.py
   7717→7794 and runner.py 2442→2457 both GREW = additive, attributed below — no shrink). **FF-0E =
@@ -199,7 +220,8 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-1B | FABLE | 1 | L-SCAR | — | **verified-pass** | #2423: correlated cold-event derate. |
 | FF-1C | OPUS | 1 | L-INP | — | **verified-pass** | #2422: demand/DC currency + hydro. |
 | FF-1D | OPUS | 1 | L-VAL | — | **RELEASED (turn 19)** — FF-0E merged+verified | Run crossover 2023→2027 ERCOT+PJM (vintage 2023), score with score_crossover.py, publish input-gap doc. Findings-only, parallel-safe. Prompt re-emitted turn 19 with FF-0E-merged confirmation + exact invocation. |
-| FF-1E | OPUS | 1 | L-INP | — | **HELD (turn 17) — next after FF-2B's capacity.py merges** | Drift-clean, prereqs met (#2413/#2422/#2486). Leaf lane (unblocks nothing but the FF-2D gate) → sequenced AFTER FF-2B, which is on the FF-2C critical path. Both edit capacity.py; only one per parallel batch. Fire when a capacity.py slot frees. |
+| FF-1E | OPUS | 1 | L-INP | — | **verified-issues, NON-DELIVERY (turn 20)** — #2515 | Committed ONLY `scripts/data/derive_entry_costs_from_atb.py` (+205). Cited test never committed, script imported by nothing, constants.py untouched (entry economics unchanged), item-2 policy fixes + T0 smoke + findings all absent. Derivation logic sound; application didn't land. → **FF-1E-complete**. |
+| FF-1E-complete | OPUS | 1 | L-INP | — | **sent (turn 20, correction)** | Run the derive script → write ATB-derived NEW_ENTRY_COSTS/TECH_COST_MULTIPLIERS into constants.py (vintage-cited, out-of-scope params preserved), commit `test_atb_entry_cost_consistency.py`, apply FF-0D IRA/RPS/ACP/confirmed-retirement fixes, T0 smoke + backcast byte-identity + findings doc. Values-in-constants (no capacity.py rewire — resolve_new_entry_costs already wired). Parallel-safe w/ 0B/1D/2A-posture; stagger vs FF-2B on constants.py. |
 | FF-1F | OPUS | 1 | L-INP | — | **landed + defaults LIVE** (#2468/#2476/#2480 + #2493) | #2493 flips `datacenter_load_path`→"mid", `correlated_forced_outage`→True with backcast byte-identity guards; plan §2.1 recorded. Closed. |
 | FF-2A | FABLE | 2 | L-CAP | — | **COMPLETE (turn 18) — mechanism + measurement both landed** | Mechanism merged #2486 (t15); measurement half landed #2506/#2509 (t18, docs/data-only): findings doc + ERCOT/MISO/PJM `*-ff2a-r2` legs. Results: VRE cap-rev near-pivotal, BLK-10 2.5→1.103 GW, PJM solar +84%→+48%, ERCOT solar zero → G-20/G-22. Full manager-verify of the completion pending next refresh (prima facie clean). Stale patch deleted #2503. |
 | FF-2A-integrate | FABLE | 2 | L-CAP | — | **verified-pass (turn 15, via #2486 `e9f9d60` + #2491/#2492)** | Mechanism merged + manager-verified (0 fn loss, signature matches runner, fields on-registry, 14 harness refs, compiles). PJM/MISO/ERCOT r2 sidecars governance-clean. FF-2A lane CLOSED. Housekeeping done (t17): chunk branch gone + stale patch deleted #2503. |
@@ -218,7 +240,8 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-5A | OPUS | 5 | L-DASH | — | not-sent | blocked: Wave 4 |
 
 Out-of-program / trivial: #2512 (ercot-lmp-scarcity backcast calibration + ercot66-77 prune),
-#2513 (ledger t18), #2508 (miso-74), #2511 (miso-75 Manitoba merit cap) MISO backcast,
+#2513 (ledger t18 — carried the ledger to main; turn-19 91732bb did NOT merge), #2508 (miso-74),
+#2511 (miso-75 Manitoba merit cap) MISO backcast,
 #2507/#2510 (ledger t17), #2501 (ercot-84 offer-surface re-adjudication + probes),
 #2504 (caiso-99 attestation), #2483/#2487 (caiso-98 probe/charter), #2484/#2495 (miso-74 seam +
 attestation), #2489 (ercot83 posture backcast), #2494 (ercot apr/may scarcity tooling),
@@ -275,6 +298,10 @@ attestation), #2489 (ercot83 posture backcast), #2494 (ercot apr/may scarcity to
 8. **runner.py orphan revert** (turn 14) — **RETRACTED turn 15.** Superseded by merging #2486
    (whose `e9f9d60` gives evolve_fleet the kwargs runner.py passes). Landing the revert now
    would re-orphan in the other direction.
+9. **FF-1E-complete [OPUS]** (turn 20) — non-delivery fix. #2515 committed only the derive
+   script; constants unchanged, cited test absent, script dead, policy fixes + smoke + findings
+   missing. Correction applies the derivation to constants.py + commits the test + does item 2.
+   3rd non-delivery pattern (FF-0B #2412, FF-2A #2453, FF-1E #2515).
 
 ---
 
@@ -363,3 +390,12 @@ attestation), #2489 (ercot83 posture backcast), #2494 (ercot apr/may scarcity to
   backcast — no forecast default flip; pruned 8 old ercot runs), #2513 = my t18 ledger. FF-2A-posture
   / FF-0B-redo / FF-2B still awaiting worker launch. Nothing to correct. Watch next: FF-1D +
   batch land; verify FF-2A completion + FF-2A-posture on their merges.
+- **turn 20 (manager `yjegie`, refresh).** `37b9136→cf1531d` (1 merge). **FF-1E (#2515) =
+  verified-issues NON-DELIVERY** (3rd of the pattern): only the derive script landed, no test/no
+  constants change/no policy fixes/no smoke/no findings; entry economics unchanged; script's own
+  docstring cites a test that isn't committed. → **FF-1E-complete [OPUS]** correction issued
+  (apply derivation to constants.py + commit the test + item-2 policy fixes; values-in-constants,
+  no capacity.py rewire). Rule-27 clean (all core files unchanged). **Ledger-sync note:** my
+  turn-19 push (91732bb) never merged — main's ledger lagged at turn 18; recovered turn-19 from
+  the local object, rebuilt the branch, this push carries turn 19+20 forward (no content lost).
+  Watch next: FF-1E-complete + the batch land; verify FF-2A completion + FF-2A-posture on merge.
