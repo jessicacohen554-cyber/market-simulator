@@ -1,0 +1,119 @@
+{
+  "run_id": "2026-07-19-nyiso-gasshape-interpfix-base",
+  "iso": "NYISO",
+  "label": "nyiso gasshape interpfix base",
+  "target_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "scorable_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "data_blocked_years": [],
+  "rubric_version": 2.7,
+  "determination": "NOT-YET",
+  "reasons": [
+    "governance gate UNATTESTED: no governance attestation in bundle"
+  ],
+  "notes": [],
+  "criteria": {
+    "fuelmix": {
+      "label": "C1 fuel-mix by class (grid-delivered)",
+      "tier": "load-bearing",
+      "status": "PASS"
+    },
+    "sysvol": {
+      "label": "C2 system volume (gas/coal families)",
+      "tier": "load-bearing",
+      "status": "PASS"
+    },
+    "price_mean": {
+      "label": "C3a mean LMP",
+      "tier": "load-bearing",
+      "status": "PASS"
+    },
+    "price_shape": {
+      "label": "C3b price duration/shape",
+      "tier": "load-bearing",
+      "status": "PASS"
+    },
+    "price_tail": {
+      "label": "C3c price tail / scarcity (RT hourly)",
+      "tier": "supporting",
+      "status": "FAIL"
+    },
+    "dispatch_corr": {
+      "label": "C4 fleet hourly dispatch correlation",
+      "tier": "supporting",
+      "status": "PASS"
+    },
+    "co2": {
+      "label": "C5a CO2 vs eGRID",
+      "tier": "load-bearing",
+      "status": "CAVEAT",
+      "caveat_kind": "commercial-band"
+    },
+    "governance": {
+      "label": "C6 governance gate",
+      "tier": "protective",
+      "status": "UNATTESTED"
+    },
+    "shape": {
+      "label": "C7 diurnal shape (D-1)",
+      "tier": "protective",
+      "status": "SKIPPED"
+    },
+    "forced_share": {
+      "label": "C8 forced-energy share (D-2)",
+      "tier": "protective",
+      "status": "SKIPPED"
+    }
+  },
+  "caveats": {
+    "protective": [],
+    "ledgered": [],
+    "commercial_band": [
+      "C5a CO2 vs eGRID"
+    ],
+    "budget": {
+      "protective_max": 1,
+      "ledgered_max": 3
+    }
+  },
+  "grade_summary": {
+    "scored": 7,
+    "target_grade": 5,
+    "commercial_grade": 1,
+    "ledgered": 0,
+    "fails": 1
+  },
+  "free_class_score": {
+    "iso": "NYISO",
+    "pinned_classes": [
+      "CC_CHP",
+      "CT_CHP",
+      "ST_CHP",
+      "hydro",
+      "imports",
+      "nuclear",
+      "solar",
+      "wind"
+    ],
+    "excluded_from_free": [
+      "CC_CHP",
+      "ST_CHP"
+    ],
+    "all": {
+      "pass": 14,
+      "total": 14
+    },
+    "free": {
+      "pass": 10,
+      "total": 10
+    },
+    "headline": "C1 all 14/14 \u00b7 free 10/10"
+  }
+}
