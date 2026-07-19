@@ -39,24 +39,21 @@ from __future__ import annotations
 
 import argparse
 import calendar
-import csv
-import io
-import time
-import urllib.error
-import urllib.parse
-import urllib.request
+import sys
 from datetime import date
 from pathlib import Path
 
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO))
+from scripts.lib import pjm_dataminer  # noqa: E402
+
 TRANS_DIR = REPO / "data" / "raw" / "iso-specific-transmission"
 LMP_DIR = REPO / "data" / "raw" / "lmp-data"
 
-API_BASE = "https://api.pjm.com/api/v1"
-SUB_KEY = "6a75d9f6d933401dbb4f36f8e70b95b3"
-PAGE_SIZE = 50_000
+# The API base / public subscription key / page size live in
+# scripts.lib.pjm_dataminer (shared across the fetch_pjm_* scripts).
 
 
 def _date_filter(year: int, month: int) -> str:
@@ -71,57 +68,20 @@ def _fetch_all_pages(
     feed: str, date_filter: str, extra_params: dict, sleep_s: float, retries: int
 ) -> pd.DataFrame:
     """Page through one DataMiner2 feed for one calendar month; return concatenated rows."""
-    frames: list[pd.DataFrame] = []
-    start_row = 1
-    while True:
-        params = {
-            "startRow": str(start_row),
-            "rowCount": str(PAGE_SIZE),
-            "datetime_beginning_ept": date_filter,
-            "format": "csv",
-            **extra_params,
-        }
-        url = f"{API_BASE}/{feed}?" + urllib.parse.urlencode(params)
-        delay = sleep_s
-        rows: list[dict] = []
-        for attempt in range(retries + 1):
-            try:
-                req = urllib.request.Request(
-                    url,
-                    headers={
-                        "Ocp-Apim-Subscription-Key": SUB_KEY,
-                        "Accept": "text/csv",
-                        "User-Agent": "market-sim/fetch_pjm_transmission",
-                    },
-                )
-                with urllib.request.urlopen(req, timeout=120) as resp:
-                    raw = resp.read().decode("utf-8-sig", errors="replace")
-                rows = list(csv.DictReader(io.StringIO(raw)))
-                break
-            except urllib.error.HTTPError as exc:
-                if exc.code in (429, 503) and attempt < retries:
-                    print(f"    HTTP {exc.code} — back-off {delay:.0f}s …")
-                    time.sleep(delay)
-                    delay *= 2
-                    continue
-                raise
-            except (urllib.error.URLError, TimeoutError) as exc:
-                if attempt < retries:
-                    print(f"    network error ({exc}) — back-off {delay:.0f}s …")
-                    time.sleep(delay)
-                    delay *= 2
-                    continue
-                raise
-        if not rows:
-            break
-        frames.append(pd.DataFrame(rows))
-        if len(rows) < PAGE_SIZE:
-            break
-        start_row += PAGE_SIZE
-        time.sleep(sleep_s)
-    if not frames:
-        return pd.DataFrame()
-    return pd.concat(frames, ignore_index=True)
+    params = {
+        "datetime_beginning_ept": date_filter,
+        "format": "csv",
+        **extra_params,
+    }
+    rows = pjm_dataminer.fetch_feed(
+        feed,
+        params,
+        user_agent="market-sim/fetch_pjm_transmission",
+        sleep_s=sleep_s,
+        retries=retries,
+        verbose=False,
+    )
+    return pd.DataFrame(rows) if rows else pd.DataFrame()
 
 
 def _fetch_year(
