@@ -21,42 +21,14 @@ Usage::
 
 from __future__ import annotations
 
-import json
 import shutil
 import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO))
 
-
-def _parse_manifest_js(path: Path) -> tuple[dict, list[dict]]:
-    """Extract meta and manifest array from a manifest.js file.
-
-    Anchors ``json.JSONDecoder.raw_decode`` at each assignment's opening bracket
-    rather than a non-greedy ``\\{.*?\\};`` / ``\\[.*?\\];`` regex. A run's
-    ``definition``/``market_story`` string may legitimately contain ``];`` or
-    ``};`` (e.g. the C3c ``[7,9]`` band notation), which the non-greedy match
-    truncated at — breaking the whole deploy with a JSONDecodeError and freezing
-    the LIVE dashboard at the last successful build. ``raw_decode`` consumes
-    exactly one well-formed JSON value from the bracket and ignores the trailing
-    ``;`` and everything after, so any string content is safe.
-    """
-    text = path.read_text()
-    dec = json.JSONDecoder()
-
-    def _decode_after(marker: str):
-        i = text.find(marker)
-        if i < 0:
-            sys.exit(f"Cannot parse manifest from {path}: missing {marker!r}")
-        j = i + len(marker)
-        while j < len(text) and text[j] not in "{[":
-            j += 1
-        if j >= len(text):
-            sys.exit(f"Cannot parse manifest from {path}: no value after {marker!r}")
-        obj, _ = dec.raw_decode(text, j)
-        return obj
-
-    return _decode_after("window.BC.meta="), _decode_after("window.BC.manifest=")
+from scripts.lib import backcast_artifacts as ba  # noqa: E402  (stdlib-only)
 
 
 def main() -> None:
@@ -80,7 +52,10 @@ def main() -> None:
             f"manifest.js not found at {manifest_js} — run build_manifest.py first"
         )
 
-    meta, entries = _parse_manifest_js(manifest_js)
+    try:
+        meta, entries = ba.parse_manifest_js(manifest_js)
+    except ValueError as exc:
+        sys.exit(str(exc))
     # Every registered run flows through — registration enforces the
     # top-15-per-ISO retention, so the manifest is already the curated set.
     selected = entries
@@ -91,12 +66,7 @@ def main() -> None:
         (dst_data / sub).mkdir(parents=True, exist_ok=True)
 
     # Write filtered manifest.js
-    meta_js = json.dumps(meta, sort_keys=True)
-    manifest_arr = json.dumps(selected, sort_keys=True)
-    (dst_data / "manifest.js").write_text(
-        f"window.BC=window.BC||{{}};window.BC.meta={meta_js};"
-        f"window.BC.manifest={manifest_arr};"
-    )
+    ba.write_manifest_js(dst_data / "manifest.js", meta, selected, sort_keys=True)
 
     # Copy shared data files. keepers/ + status/ are the per-ISO sharded
     # stores (2026-07-19); the monolithic status.js / keepers.json are retired
