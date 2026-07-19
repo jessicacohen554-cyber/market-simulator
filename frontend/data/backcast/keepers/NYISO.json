@@ -1,0 +1,9 @@
+{
+ "iso": "NYISO",
+ "keeper": "2026-07-13-nyiso-64-outage-refix",
+ "frontier": {
+  "declared": "2026-07-11",
+  "withdrawn": "2026-07-19",
+  "note": "FRONTIER WITHDRAWN \u2014 NYISO reverts to NOT-YET (2026-07-19 phantom-outage re-audit, the ERCOT-79 cross-ISO lane). The 2026-07-11 frontier and the 2026-07-13 calibration-complete marker rested on keeper nyiso-62, solved against a STALE-detector unit-outage extract (campd-unit-outages-NYISO.csv, 1,598 rows, mtime 2026-07-16) that predated the 2026-07-17 detector consolidation. Regenerating on the consolidated detector yields 2,641 rows (+1,056 real outage windows the stale detector under-counted \u2014 exactly the 1,598-vs-2,641 gap the 2026-07-12 intake_log flagged as owed adjudication). SUCCESSOR (2026-07-19, same session): keeper pointer advanced to nyiso-64-outage-refix - the corrected-envelope re-calibration (ST floors re-derived on the corrected extract per rule 23 + the eastern AC seam landing split, Capital_Hudson 1,600 MW). C1 14/14 PASS, C3a 2024/2025 +0.6%/+4.8%, C3c 31h vs RT 10h (ledgered); determination NOT-YET on 2023 C3a +19.8% lw / C3b NRMSE 0.232 only - year-specific to the pre-NY-Transco Central-East regime. Frontier stays WITHDRAWN pending the named successor levers (measured per-tie eastern seam intake; SCR/EDRP demand response; NYISO hydro reserve eligibility) - see the nyiso-64 attestation _open_items. The one-shot holdout remains blocked (marker withdrawn); the locked test (2019, H1-2026) is unspent."
+ }
+}

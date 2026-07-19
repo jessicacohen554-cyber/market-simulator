@@ -326,6 +326,6 @@ Always test with trivial cases first: 1 gen, 1 zone, 24 hours. Then scale up.
 - `docs/binning-methodology.md` — CAMPD per-plant binning & tranche offer curves (ERCOT default)
 - `docs/parameter-citations.md` — every numeric input traced to a primary source
 - `docs/multi-iso/` — protocol & status for adding ISOs beyond ERCOT
-- `docs/calibration-log.md`, `docs/calibration-session-log.md` — calibration history
+- `docs/calibration-log.md` (frozen archive ≤2026-07-19) + `docs/calibration-log/<iso>.md` per-ISO continuations (`governance.md` for cross-ISO), `docs/calibration-session-log.md` — calibration history. Keeper promotions are per-ISO lanes: edit `frontend/data/backcast/keepers/<ISO>.json` + rebuild `status/<ISO>.js` (`build_status.py --iso`) — never another ISO's files (see `frontend/data/backcast/keepers/README.md`)
 - `docs/forecast-development-plan-2026-07.md` — THE forecast program (Forecast Finalization Program): tier ladder, lanes/waves, prompt pack, rubric charter. All prior forecast plans are superseded as coordination docs by it (its §9 migration ledger).
 - **Code is the source of truth.** When docs and code disagree, fix the docs (run `/sync-docs`). When the methodology is genuinely ambiguous, the spec wins.
