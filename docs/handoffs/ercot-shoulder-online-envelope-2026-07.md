@@ -386,7 +386,67 @@ Deltas for the span:
    this lane alone while the displacement wedge stands.
 
 ### 9.4 Probe results (rule-16 single-year throwaways, pre-committed guards)
+— REJECTED AS ARMED, no retune
 
-*(filled by the probe session — C3a level guard, zero-spurious, tail/C3b/C3c
-no-degradation guard, band occupancy; base = the committed ercot86 keeper
-2024/2025 hourlies.)*
+Base = the committed ercot86 keeper 2024/2025 hourly sidecars; probe =
+`replay_keeper --set ercot_shoulder_online_span=true --set
+ercot_faststart_pool_offer=true`; analyzer
+`scripts/probes/_ercot89_span_check.py`. The mechanism ENGAGED both years
+(466/473 walled rows re-anchored; 486/497 fast-start rows on the span
+boundary vs ERCOT-88's 173/91 — not inert by mis-wiring):
+
+| year | C3a resid (base→probe) | band formed | spurious Δ | h>$200 model (actual) | NRMSE proxy | gates |
+|---|---|---|---|---|---|---|
+| 2024 | −1.3% → **+3.0%** | 5/68 → 7/68 | **+2** (7→9) | 13→21 (53) | 2.044→2.109 | C3a **DEGRADED**; spurious **TRIPPED**; tail HELD |
+| 2025 | +1.4% → **+4.8%** | 4/65 → 10/65 | **+5** (2→7) | 1→10 (31) | 0.970→0.957 | C3a **DEGRADED**; spurious **TRIPPED**; tail HELD |
+
+Failure decomposition (both years, same signature): the level/spurious trip
+is **death-by-small-lifts** — ~230 (2024) / ~228 (2025) hours with actual
+< $150 rise $9–19 each, because the cell-mean span compresses in
+conditioning cells that MIX residual hours with same-cell control hours
+(the §9.1 partial-driver limit realized). The new spurious hours are 1–2 h
+bleeds around real price events (2024: the May cluster whose core hour
+cleared $912 actual; 2025: an October shoulder cluster). Band fill is
+modest (+2 / +6 formed hours). The true sub-scarcity tail moves TOWARD
+actual in both years (2024: mean +$141 in actual->$500 hours, h>$200
+13→21 vs 53; 2025: 1→10 vs 31) — real but belonging to the standing C3c
+successor lane's regime, and not grounds to keep a mechanism that trips
+the level and spurious guards in both current-design years (the §6.1-style
+pre-committed rule inherited at §3: degrading the current-design years is
+a rejection; rules 1/11: no re-sweep of the frozen span table against
+this residual).
+
+### 9.5 Disposition and structural conclusion
+
+**REJECTED as armed; the mechanism stays MERGED default-OFF** (the
+ercot41/43 rejected-probe pattern: machinery + artifact + tests + this
+record kept, byte-identical when off — the flag-off no-op is
+test-enforced). Keeper stays **ercot86**; nothing registered (rule-16
+throwaway bundles deleted after analysis). The structural findings:
+
+1. **H1's wedge is real but its rule-13-admissible projection is too
+   coarse to form the band.** The conditional ON-share structure carries
+   ~½ (2024) / ~⅓ (2025) of the residual-vs-control separation; the
+   band-forming remainder is day-of commitment information (forecasts,
+   outages, RUC) with no forward analogue. At cell-mean grain the
+   compression cannot distinguish a residual hour from a control hour in
+   the same (bin × season × block) cell — it lifts both, and ~230 lifted
+   control hours/year is exactly the C3a/spurious signature observed.
+   Sharper conditioning within rule 13 needs a materially broader
+   SCED-disclosure corpus (finer cells with ≥6-hour coverage — a
+   data-intake question, not a mechanism question).
+2. **The ST_GAS displacement wedge remains the binding blocker** (§9.2,
+   confirmed by the probes): even where the span binds, the LP re-clears
+   the shoulder hours on CC mid-rungs + ST_GAS headroom that reality did
+   not have. Re-visit shape (a) only AFTER the ST_GAS drag lane closes
+   its shoulder-hour level — the two lanes' coupling is now quantified.
+3. **The tail improvement is a lead for the C3c lane**, not this one: the
+   span geometry materially helps exactly where dispatch is pinned at
+   capability (the ercot86 keeper's known h>$200 deficit). If that lane
+   ever re-opens the scarcity-formation design, the span-anchored ladder
+   in the TOP bins (where commitment saturates and control-hour
+   contamination vanishes) is measured, built, and dormant here.
+
+The §0/§1 objective stands honestly un-met: the ERCOT-86 partial fill
+remains the keeper result, now with the quantity-side envelope measured,
+built, probed, and adjudicated rather than hypothesized.
