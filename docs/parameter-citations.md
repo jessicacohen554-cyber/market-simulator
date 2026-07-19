@@ -1,6 +1,6 @@
 # Parameter Citation Registry
 
-_Generated 2026-07-18. Every numeric input to the model traces to a primary source
+_Generated 2026-07-19. Every numeric input to the model traces to a primary source
 here. This file is rendered from `frontend/data/parameters.json` by
 `scripts/generate_parameter_registry.py`; edit citations in the JSON (or the
 constant's comment, then re-run the generator), not here._
@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1465 parameters registered** (790 flagged `needs-citation`).
+**1488 parameters registered** (799 flagged `needs-citation`).
 
 
 ## Calibration
@@ -49,24 +49,20 @@ inline comment and still need a dated primary source — search the table for
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
 | `new_entry_costs.gas_cc.base_cf` | 0.55 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | modeled |
-| `new_entry_costs.gas_cc.capex_per_kw` | 1200.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
-| `new_entry_costs.gas_cc.fom_per_kw_yr` | 30.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `new_entry_costs.gas_cc.capex_per_kw` | 1583.3 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `new_entry_costs.gas_cc.fom_per_kw_yr` | 36.1 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
 | `new_entry_costs.gas_cc.learning_rate` | 0.02 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | modeled |
 | `new_entry_costs.gas_cc.lifetime_yr` | 30 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
 | `new_entry_costs.solar.base_cf` | 0.27 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | modeled |
-| `new_entry_costs.solar.capex_per_kw` | 1100.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
-| `new_entry_costs.solar.fom_per_kw_yr` | 16.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `new_entry_costs.solar.capex_per_kw` | 1562.2 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `new_entry_costs.solar.fom_per_kw_yr` | 22.3 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
 | `new_entry_costs.solar.learning_rate` | 0.2 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | modeled |
 | `new_entry_costs.solar.lifetime_yr` | 30 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
 | `new_entry_costs.wind.base_cf` | 0.38 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | modeled |
-| `new_entry_costs.wind.capex_per_kw` | 1300.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
-| `new_entry_costs.wind.fom_per_kw_yr` | 28.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `new_entry_costs.wind.capex_per_kw` | 1676.6 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `new_entry_costs.wind.fom_per_kw_yr` | 33.7 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
 | `new_entry_costs.wind.learning_rate` | 0.12 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | modeled |
 | `new_entry_costs.wind.lifetime_yr` | 30 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
-| `entry_cod_lag_years.*` | 2 | 1 | LBNL "Queued Up" 2024 edition — median IA→COD duration ≈ 25 months for projects built 2016–2023 (861-project sample, 6 entities); applied uniformly (per-tech IA→COD medians unpublished) | 2024-04 |  |
-| `entry_growth_limit_multiple` | 2.0 | 1 | NREL ReEDS Model Documentation (2025) growth constraints — annual installation rate hard-bounded at 200% of the prior maximum (the 130–175%/175–200% capex penalty bands are not adopted: no capex-penalty channel in a screening model) | 2025-12 |  |
-| `entry_throughput_window_years` | 10 | 2 | Declared windowing choice bounding the growth-ladder seed to the modern interconnection regime (LBNL "Queued Up" 2024: median IR→COD doubled from <2 yr for 2000–2007 builds to >4 yr for 2018–2023 builds) | 2026-07 | modeled |
-| `entry_max_annual_build_seed.*` | derived at runtime | 1 | EIA-860 record at the run's vintage (`data.build_throughput.max_annual_build_gw_by_tech`): max annual COD nameplate MW by tech/ISO over the trailing window — regenerates per vintage, never hand-entered | (vintage) |  |
 | `queue_cap_gw.CAISO` | 8 | 1 | CAISO Transmission Planning Process (TPP) | 2024-03 |  |
 | `queue_cap_gw.ERCOT` | 12 | 1 | ERCOT Capacity, Demand and Reserves (CDR) Report | 2024-05 |  |
 | `scenario.discount_rate` | 0.08 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
@@ -82,32 +78,32 @@ inline comment and still need a dated primary source — search the table for
 
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
-| `new_entry_costs.nuclear_large.capex_per_kw` | 8500.0 | 2 | $/kW total plant cost (host CCGT + capture island). |  | auto-generated, needs-citation |
+| `new_entry_costs.nuclear_large.capex_per_kw` | 8309.0 | 2 | $/kW total plant cost (host CCGT + capture island). |  | auto-generated, needs-citation |
 | `new_entry_costs.nuclear_large.learning_rate` | 0.03 | 2 | 10% cost reduction per doubling of cumulative deployment. |  | auto-generated, needs-citation |
-| `new_entry_costs.nuclear_smr.capex_per_kw` | 6800.0 | 2 | $/kW total plant cost (host CCGT + capture island). |  | auto-generated, needs-citation |
+| `new_entry_costs.nuclear_smr.capex_per_kw` | 10527.6 | 2 | $/kW total plant cost (host CCGT + capture island). |  | auto-generated, needs-citation |
 | `new_entry_costs.nuclear_smr.learning_rate` | 0.08 | 2 | 10% cost reduction per doubling of cumulative deployment. |  | auto-generated, needs-citation |
 | `scenario.nominal_discount_rate` | 0.08 | 2 | Nominal WACC, $/MWh LCOE basis |  | auto-generated, needs-citation |
-| `tech_cost_multipliers.nuclear_large.high.capex_per_kw` | 1.15 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
+| `tech_cost_multipliers.nuclear_large.high.capex_per_kw` | 1.554 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.nuclear_large.high.learning_rate` | 0.5 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
-| `tech_cost_multipliers.nuclear_large.low.capex_per_kw` | 0.9 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
+| `tech_cost_multipliers.nuclear_large.low.capex_per_kw` | 0.8497 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.nuclear_large.low.learning_rate` | 1.5 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.nuclear_large.mid.capex_per_kw` | 1.0 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.nuclear_large.mid.learning_rate` | 1.0 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
-| `tech_cost_multipliers.nuclear_smr.high.capex_per_kw` | 1.25 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
+| `tech_cost_multipliers.nuclear_smr.high.capex_per_kw` | 1.3141 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.nuclear_smr.high.learning_rate` | 0.5 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
-| `tech_cost_multipliers.nuclear_smr.low.capex_per_kw` | 0.8 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
+| `tech_cost_multipliers.nuclear_smr.low.capex_per_kw` | 0.6649 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.nuclear_smr.low.learning_rate` | 1.5 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.nuclear_smr.mid.capex_per_kw` | 1.0 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.nuclear_smr.mid.learning_rate` | 1.0 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
-| `tech_cost_multipliers.solar.high.capex_per_kw` | 1.15 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
+| `tech_cost_multipliers.solar.high.capex_per_kw` | 1.0513 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.solar.high.learning_rate` | 0.6 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
-| `tech_cost_multipliers.solar.low.capex_per_kw` | 0.65 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
+| `tech_cost_multipliers.solar.low.capex_per_kw` | 0.9629 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.solar.low.learning_rate` | 1.25 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.solar.mid.capex_per_kw` | 1.0 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.solar.mid.learning_rate` | 1.0 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
-| `tech_cost_multipliers.wind.high.capex_per_kw` | 1.12 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
+| `tech_cost_multipliers.wind.high.capex_per_kw` | 1.0551 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.wind.high.learning_rate` | 0.65 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
-| `tech_cost_multipliers.wind.low.capex_per_kw` | 0.85 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
+| `tech_cost_multipliers.wind.low.capex_per_kw` | 0.9784 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.wind.low.learning_rate` | 1.35 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.wind.mid.capex_per_kw` | 1.0 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.wind.mid.learning_rate` | 1.0 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
@@ -168,7 +164,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.caiso_supply_consistent_demand` | False | 2 | Replace the CAISO backcast |  | auto-generated, needs-citation |
 | `scenario.ct_netload_drag` | False | 3 | CT_PEAKER net-load reliability drag (the simple-cycle analog of the… | 2023 | auto-generated |
 | `scenario.datacenter_load_factor` | 0.85 | 2 | Flat hourly CF of the DC block. |  | auto-generated, needs-citation |
-| `scenario.datacenter_load_path` | off | 2 | "off" \| "low" \| "mid" \| "high" — |  | auto-generated, needs-citation |
+| `scenario.datacenter_load_path` | mid | 2 | "off" \| "low" \| "mid" \| "high" — |  | auto-generated, needs-citation |
 | `scenario.demand_growth_path` | mid | 1 | "low", "mid", "high" — selects from DEMAND_GROWTH_RATES |  | auto-generated, needs-citation |
 | `scenario.demand_growth_percentile` | 0.5 | 1 | Continuous counterpart of |  | auto-generated, needs-citation |
 | `scenario.demand_growth_rate` | 0.01 | 1 | Market simulator model design decision | 2026-05 | modeled |
@@ -184,6 +180,8 @@ inline comment and still need a dated primary source — search the table for
 
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
+| `atb_tech_wacc_real.geothermal` | 0.05152 | 2 | ATB 2024 WACC Real Market, Geothermal @2026 | 2024 | auto-generated |
+| `atb_tech_wacc_real.offshore_wind` | 0.051528 | 2 | ATB 2024 WACC Real Market, OffShoreWind @2026 | 2024 | auto-generated |
 | `electrolyzer_params.alkaline.capex_kw` | 800.0 | 2 | $/kW — for LCOH if needed. BNEF 2024 | 2024 | auto-generated |
 | `electrolyzer_params.alkaline.efficiency` | 0.63 | 2 | base year. Source: IRENA Green H2 2023 | 2023 | auto-generated |
 | `electrolyzer_params.alkaline.efficiency_2035` | 0.68 | 2 | DOE Hydrogen Shot targets |  | auto-generated, needs-citation |
@@ -319,6 +317,8 @@ inline comment and still need a dated primary source — search the table for
 | `as_revenue_per_kw_yr_by_iso.ERCOT.gas_cc` | 8.0 | 2 | Per-ISO exogenous AS-revenue registry — the modular generalization … | 2023 | auto-generated |
 | `as_revenue_per_kw_yr_by_iso.ERCOT.gas_ct` | 22.0 | 2 | Per-ISO exogenous AS-revenue registry — the modular generalization … | 2023 | auto-generated |
 | `as_revenue_per_kw_yr_by_iso.ERCOT.gas_st` | 15.0 | 2 | Per-ISO exogenous AS-revenue registry — the modular generalization … | 2023 | auto-generated |
+| `atb_tech_wacc_real.gas_cc` | 0.053585 | 2 | ATB 2024 WACC Real Market, NaturalGas_FE @2026 | 2024 | auto-generated |
+| `atb_tech_wacc_real.gas_ct` | 0.053585 | 2 | ATB 2024 WACC Real Market, NaturalGas_FE @2026 | 2024 | auto-generated |
 | `biomass_price_per_mmbtu` | 2.5 | 2 | Delivered biomass fuel price ($/MMBtu) for wood/MSW/landfill-gas un… | 2024 | auto-generated |
 | `caiso_ra_mustoffer_gas_mw` | {"2023": 19130.0, "2024": 15566.0, "2… | 2 | CAISO gas-fired MUST-OFFER Resource-Adequacy capacity (MW), by comp… | 2023 | auto-generated |
 | `carb_floor_price` | {"2023": 22.21, "2024": 24.04, "2025"… | 2 | CARB Auction Reserve (floor) price by year ($/tonne), rising 5% + C… | 2023 | auto-generated |
@@ -404,8 +404,8 @@ inline comment and still need a dated primary source — search the table for
 | `miso_rdt_tcdc_step1_price` | 40.0 | 2 | RDT Transmission Constraint Demand Curve (TCDC): MISO prices RDT vi… | 2024 | auto-generated |
 | `miso_rdt_tcdc_step2_price` | 500.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `new_entry_costs.gas_ct.base_cf` | 0.12 | 2 | Lower than unabated CC (0.85) due to higher MC |  | auto-generated, needs-citation |
-| `new_entry_costs.gas_ct.capex_per_kw` | 1250.0 | 2 | $/kW total plant cost (host CCGT + capture island). |  | auto-generated, needs-citation |
-| `new_entry_costs.gas_ct.fom_per_kw_yr` | 21.0 | 2 | $/kW-yr. Source: NETL Rev 4. |  | auto-generated, needs-citation |
+| `new_entry_costs.gas_ct.capex_per_kw` | 1428.7 | 2 | $/kW total plant cost (host CCGT + capture island). |  | auto-generated, needs-citation |
+| `new_entry_costs.gas_ct.fom_per_kw_yr` | 27.9 | 2 | $/kW-yr. Source: NETL Rev 4. |  | auto-generated, needs-citation |
 | `new_entry_costs.gas_ct.learning_rate` | 0.02 | 2 | 10% cost reduction per doubling of cumulative deployment. |  | auto-generated, needs-citation |
 | `new_entry_costs.gas_ct.lifetime_yr` | 30 | 2 | Same as gas CC host plant. |  | auto-generated, needs-citation |
 | `nuclear_fuel_price_historical` | {"2006": 0.5608, "2007": 0.6831, "200… | 2 | --- Nuclear fuel price ($/MMBtu, real 2024$) --- D2 fix (P-1D, CLAU… | 2024 | auto-generated |
@@ -491,6 +491,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.coal_waste_passthrough_gas_mid` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.coal_waste_passthrough_gas_slope` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.coal_waste_passthrough_sigmoid` | False | 3 | Waste coal (culm/gob/mine-refuse, the PJM COAL_WC class): the fuel … |  | auto-generated, needs-citation |
+| `scenario.crossover_forward_gas_path` | mid | 2 | AEO Henry Hub trajectory the crossover uses for its FORWARD years (… | 2025 | auto-generated |
 | `scenario.dual_fuel_oil_reattribution` | False | 3 | Tier 3 (calibration) — re-attribute dual-fuel switched generation t… |  | auto-generated, needs-citation |
 | `scenario.dual_fuel_switching` | False | 3 | Tier 3 (calibration) — dual-fuel switching (doc 03 Pack G). Gas uni… |  | auto-generated, needs-citation |
 | `scenario.eac_price_geothermal` | 0.0 | 1 | $/MWh, clean firm generation credit |  | auto-generated, needs-citation |
@@ -498,7 +499,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.eac_price_offshore_wind` | 0.0 | 1 | $/MWh, offshore-specific EAC (may differ from onshore) |  | auto-generated, needs-citation |
 | `scenario.eac_price_solar` | 0.0 | 1 | $/MWh |  | auto-generated, needs-citation |
 | `scenario.eac_price_wind` | 0.0 | 1 | $/MWh, onshore wind REC |  | auto-generated, needs-citation |
-| `scenario.entry_lookahead_reprice` | False | 1 | GATED, default-OFF growth-scaled |  | auto-generated, needs-citation |
+| `scenario.entry_lookahead_reprice` | True | 1 | GATED, default-OFF growth-scaled |  | auto-generated, needs-citation |
 | `scenario.entry_price_signal_alpha` | 1.0 | 2 | EWMA blend of the price signal the |  | auto-generated, needs-citation |
 | `scenario.ercot_gas_bridge_da_horizon` | True | 1 | Cap economic bridges at one DA operating day (constants.DA_COMMITME… |  | auto-generated, needs-citation |
 | `scenario.ercot_gas_contract_haircut` | False | 3 | Tier 3 (calibration) — MEASURED re-grounding of the West/Waha floor… |  | auto-generated, needs-citation |
@@ -565,15 +566,15 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.temp_derate_ref_c_coal` | 25.0 | 2 | coal condenser-derate onset (~77 F) |  | auto-generated, needs-citation |
 | `scenario.temp_derate_slope_coal` | 0.004 | 2 | coal fractional loss per C above ref |  | auto-generated, needs-citation |
 | `scenario.temp_derate_slope_st_gas` | 0.0054 | 2 | gas-steam fractional loss per C |  | auto-generated, needs-citation |
-| `tech_cost_multipliers.gas_cc.high.capex_per_kw` | 1.08 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
+| `tech_cost_multipliers.gas_cc.high.capex_per_kw` | 1.0076 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.gas_cc.high.learning_rate` | 0.5 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
-| `tech_cost_multipliers.gas_cc.low.capex_per_kw` | 0.95 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
+| `tech_cost_multipliers.gas_cc.low.capex_per_kw` | 0.9923 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.gas_cc.low.learning_rate` | 1.5 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.gas_cc.mid.capex_per_kw` | 1.0 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.gas_cc.mid.learning_rate` | 1.0 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
-| `tech_cost_multipliers.gas_ct.high.capex_per_kw` | 1.08 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
+| `tech_cost_multipliers.gas_ct.high.capex_per_kw` | 1.0 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.gas_ct.high.learning_rate` | 0.5 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
-| `tech_cost_multipliers.gas_ct.low.capex_per_kw` | 0.95 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
+| `tech_cost_multipliers.gas_ct.low.capex_per_kw` | 1.0 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.gas_ct.low.learning_rate` | 1.5 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.gas_ct.mid.capex_per_kw` | 1.0 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.gas_ct.mid.learning_rate` | 1.0 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
@@ -637,7 +638,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.rps_enabled` | True | 1 | whether to enforce RPS as LP constraint |  | auto-generated, needs-citation |
 | `scenario.wind_ptc_vintage_offers` | False | 1 | ERCOT-65 PTC vintage scoping (structural flag, default off): wind d… | 2026-07 | auto-generated |
 | `state_rps_acp.CAISO` | 50.0 | 2 | RPS Alternative Compliance Payment (ACP) ceiling, $/MWh, by ISO.  E… | 2024 | auto-generated |
-| `state_rps_acp.NEISO` | 65.0 | 2 | RPS Alternative Compliance Payment (ACP) ceiling, $/MWh, by ISO.  E… | 2024 | auto-generated |
+| `state_rps_acp.NEISO` | 50.0 | 2 | RPS Alternative Compliance Payment (ACP) ceiling, $/MWh, by ISO.  E… | 2024 | auto-generated |
 | `state_rps_acp.NYISO` | 40.0 | 2 | RPS Alternative Compliance Payment (ACP) ceiling, $/MWh, by ISO.  E… | 2024 | auto-generated |
 | `state_rps_acp.PJM` | 45.0 | 2 | PJM-load-weighted blend of member-state Tier-I non-solar ACPs: PA $… | 2025-04 | auto-generated |
 | `state_rps_floors.CAISO` | {"2026": 0.5, "2030": 0.6, "2040": 0.… | 1 | California SB 100 — The 100 Percent Clean Energy Act of 2018 | 2018-09 | stale |
@@ -711,6 +712,7 @@ inline comment and still need a dated primary source — search the table for
 | `planning_reserve_margin_by_iso.NYISO` | 0.244 | 2 | Target planning reserve margin per ISO for the reserve-margin adequ… |  | auto-generated, needs-citation |
 | `planning_reserve_margin_by_iso.PJM` | 0.178 | 2 | Target planning reserve margin per ISO for the reserve-margin adequ… |  | auto-generated, needs-citation |
 | `planning_reserve_margin_icap_to_ucap_ratio_by_iso.MISO` | 0.9325842696629213 | 2 | ICAP-basis planning-reserve-margin correction (stage-5 §6 ICAP/UCAP… | 2026-07 | auto-generated |
+| `planning_reserve_margin_icap_to_ucap_ratio_by_iso.NYISO` | 0.8679 | 2 | 1 - NYCA translation (Derate) factor, CY 2024-2025 | 2024 | auto-generated |
 | `planning_reserve_margin_icap_to_ucap_ratio_by_iso.PJM` | 0.7699412258606213 | 2 | ICAP-basis planning-reserve-margin correction (stage-5 §6 ICAP/UCAP… | 2026-07 | auto-generated |
 | `rggi_reserve_escalation` | 0.07 | 2 | RGGI Cost Containment Reserve (CCR) trigger price rises 7%/yr nomin… | 2017 | auto-generated |
 | `scenario.as_reserve_formula` | False | 1 | CAISO backcast: withhold a formula-based |  | auto-generated, needs-citation |
@@ -718,7 +720,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.caiso_reserve_coopt` | False | 2 | CAISO: enable the per-generator |  | auto-generated, needs-citation |
 | `scenario.caiso_reserve_online_scoped` | False | 1 | CAISO: online-quality scoping |  | auto-generated, needs-citation |
 | `scenario.cc_outage_derate_from_top` | False | 2 | Outage capacity comes off the TOP of a CC_REGULAR plant's offer sta… |  | auto-generated, needs-citation |
-| `scenario.correlated_forced_outage` | False | 2 | Correlated cold-event forced-outage |  | auto-generated, needs-citation |
+| `scenario.correlated_forced_outage` | True | 2 | Correlated cold-event forced-outage |  | auto-generated, needs-citation |
 | `scenario.correlated_outage_sigma_scale` | 1.0 | 2 | ORDC reserve-error sigma |  | auto-generated, needs-citation |
 | `scenario.correlated_outage_t0_c` | -7.0 | 2 | Hinge onset (deg C, ~20 degF): above |  | auto-generated, needs-citation |
 | `scenario.correlated_outage_winterized_year` | 2022 | 2 | First weather-driver year |  | auto-generated, needs-citation |
@@ -812,6 +814,7 @@ inline comment and still need a dated primary source — search the table for
 | `renewable_elcc_curves_by_iso.PJM.solar` | {"penetration_basis": "installed_mw",… | 2 | Penetration-indexed ELCC accreditation curves per ISO (CR-3.1, plan… | 2026-07 | auto-generated |
 | `renewable_elcc_curves_by_iso.PJM.wind` | {"penetration_basis": "installed_mw",… | 2 | Penetration-indexed ELCC accreditation curves per ISO (CR-3.1, plan… | 2026-07 | auto-generated |
 | `scenario.caiso_storage_as_reservation` | False | 2 | Reserve the MEASURED hourly |  | auto-generated, needs-citation |
+| `scenario.caiso_storage_shape_anchor` | False | 1 | Bound the CAISO battery fleet's |  | auto-generated, needs-citation |
 | `scenario.co2_transport_storage_cost` | 15.0 | 2 | NETL 2022 (Rev 4) transport + saline storage, Gulf Coast basis — pi… | 2022 |  |
 | `scenario.eac_price_storage` | 0.0 | 1 | $/MWh on discharge |  | auto-generated, needs-citation |
 | `scenario.ercot_storage_as_deployment` | False | 1 | ERCOT: measured-award energy |  | auto-generated, needs-citation |
@@ -1001,6 +1004,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.confirmed_exits_enabled` | True | 2 | GATED, default-ON (flipped 2026-07-05). Owner sign-off once the con… | 2026-07-05 | curated |
 | `scenario.control_retrofit_forward` | False | 2 | Forward emission-control retrofit channel (Tier 2; default OFF). do… | 2026-07 | auto-generated |
 | `scenario.control_retrofit_path` | /home/user/market-simulator/data/raw/… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.crossover_forward_year` | None | 2 | T1-X crossover boundary (FF-0E, plan §2.2): the first FORECAST year… | 2026 | auto-generated |
 | `scenario.ct_committed_hr_mult` | 1.28 | 3 | CT part-load penalty ~28% |  | auto-generated, needs-citation |
 | `scenario.ct_committed_hr_override` | None | 3 | CT_CHP tranche heat-rate overrides (relative to base HR), applied t… |  | auto-generated, needs-citation |
 | `scenario.ct_deployment_floor_frac` | 1.0 | 3 | Fraction of the measured deployment energy to force (1.0 = the full… |  | auto-generated, needs-citation |
@@ -1024,7 +1028,10 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.egs_pmin_fraction` | 0.2 | 2 | EGS turn-down floor (fraction of rated) |  | auto-generated, needs-citation |
 | `scenario.eia860_vintage_year` | None | 2 | Year-matched EIA-860 vintage for a |  | auto-generated, needs-citation |
 | `scenario.end_year` | None | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.entry_commissioning_lag` | False | 1 | GATED, default-OFF (FF-2A item 3). |  | auto-generated, needs-citation |
+| `scenario.entry_rate_limits` | False | 1 | GATED, default-OFF (FF-2A item 2 / BLK-10 |  | auto-generated, needs-citation |
 | `scenario.entry_screen_diagnostics` | False | 2 | GATED, default-OFF diagnostic |  | auto-generated, needs-citation |
+| `scenario.entry_vre_capacity_revenue` | False | 1 | GATED, default-OFF (FF-2A item 1 |  | auto-generated, needs-citation |
 | `scenario.ercot_as_adequacy_frac` | 1.0 | 2 | AS-aware commitment: the coverage |  | auto-generated, needs-citation |
 | `scenario.ercot_as_critical_frac` | 0.0 | 1 | Reserve level (as a fraction of each AS |  | auto-generated, needs-citation |
 | `scenario.ercot_as_forward_requirement` | False | 1 | ERCOT: set each multi-product AS |  | auto-generated, needs-citation |
@@ -1039,6 +1046,9 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ercot_offer_surface_binned_path` | None | 2 | Path to the measured condition-binned ladder JSON (default: the fro… |  | auto-generated, needs-citation |
 | `scenario.ercot_offer_surface_cleared_share` | False | 1 | ERCOT DAM CLEARED-SHARE offer boundary (ERCOT-72, default off, ERCO… | 2024 | auto-generated |
 | `scenario.ercot_offer_surface_cleared_share_path` | None | 3 | Path to the frozen cleared-share boundary JSON (default: data/raw/_… |  | auto-generated, needs-citation |
+| `scenario.ercot_offer_surface_cleared_share_rt` | False | 1 | ERCOT-86 RT/SCED-BASIS correction of the cleared-share wall's ladde… | 2024 | auto-generated |
+| `scenario.ercot_offer_surface_cleared_share_rt_mode` | replace | 1 | RT-wall composition (ERCOT-86 A/B): "replace" (composition A, prefe… |  | auto-generated, needs-citation |
+| `scenario.ercot_offer_surface_cleared_share_rt_path` | None | 3 | Path to the frozen SCED offer-wall JSON (default: data/raw/_validat… |  | auto-generated, needs-citation |
 | `scenario.ercot_offer_surface_cleared_share_state` | False | 1 | ERCOT-73 commitment-STATE conditioning of the cleared-share wall (d… |  | auto-generated, needs-citation |
 | `scenario.ercot_offer_surface_cleared_share_state_path` | None | 3 | Path to the frozen commitment-loading state JSON (default: data/raw… |  | auto-generated, needs-citation |
 | `scenario.ercot_offer_surface_cleared_share_steam` | False | 1 | ERCOT-77 STEAM extension of the cleared-share wall (default off; re… | 2024 | auto-generated |
@@ -1086,16 +1096,19 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.measured_ramp_capability` | False | 1 | Reconcile FleetArrays.ramp10's |  | auto-generated, needs-citation |
 | `scenario.miso_firm_import_floor` | False | 1 | Firm (must-flow) import floor on the |  | auto-generated, needs-citation |
 | `scenario.miso_firm_imports` | False | 1 | Manitoba Hydro firm-hydro import block: |  | auto-generated, needs-citation |
+| `scenario.miso_manitoba_seam` | False | 1 | MISO: replace the import-only annual-flat |  | auto-generated, needs-citation |
 | `scenario.miso_pjm_border_anchor` | False | 1 | MISO eastern PJM seam: re-anchor the |  | auto-generated, needs-citation |
 | `scenario.miso_pjm_lmp_import_pricing` | False | 1 | MISO PJM seam: price each PJM |  | auto-generated, needs-citation |
 | `scenario.miso_rdt_tcdc` | False | 1 | MISO: replace the static JOA contract |  | auto-generated, needs-citation |
 | `scenario.miso_rpe_pricing` | False | 1 | MISO: price the Reserve Procurement |  | auto-generated, needs-citation |
+| `scenario.miso_seam_envelope_merit_cap` | False | 1 | MISO seam deliverability |  | auto-generated, needs-citation |
 | `scenario.miso_seam_export_limit` | False | 1 | MISO reference-price seam: the EXPORT |  | auto-generated, needs-citation |
 | `scenario.miso_seam_flow_limit` | False | 1 | MISO reference-price seam: cap each |  | auto-generated, needs-citation |
 | `scenario.miso_seam_flow_percentile` | None | 3 | Override the per-seam import |  | auto-generated, needs-citation |
 | `scenario.miso_seam_measured_ladder` | False | 1 | MISO reference-price seams: price |  | auto-generated, needs-citation |
 | `scenario.miso_south_seam_split` | False | 1 | MISO: host the South seam's |  | auto-generated, needs-citation |
 | `scenario.miso_winter_citygate_daily` | False | 3 | MISO winter fuel-security daily citygate overlay (miso-72). In the … | 2024 | auto-generated |
+| `scenario.miso_zonal_loss_surface` | False | 3 | MISO: marginal transmission-loss |  | auto-generated, needs-citation |
 | `scenario.mode` | forecast | 0 | "forecast" \| "backcast". Backcast pins the run |  | auto-generated, needs-citation |
 | `scenario.must_run_cf` | 0.85 | 3 | assumed CF for CHP must-run emissions post-processing |  | auto-generated, needs-citation |
 | `scenario.negative_renewable_offers` | False | 1 | Let curtailable wind/solar set a |  | auto-generated, needs-citation |
@@ -1124,6 +1137,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ordc_lolp_sigma_mw` | 1400.0 | 2 | PROVISIONAL flat fallback, bounded from the OBDRR048 floor breakpoi… | 2023-11 |  |
 | `scenario.ordc_mcl_mw` | 3000.0 | 1 | OBDRR038 (Minimum Contingency Level Updates to Align with PUCT Orde… | 2022-01 |  |
 | `scenario.ordc_multistep_floor` | True | 2 | OBDRR048 multi-step RTORPA price floor, PUCT-approved 2023-10-12, e… | 2023-11 |  |
+| `scenario.per_tech_wacc_enabled` | False | 2 | Per-technology WACC OPTION (FF-1E, docs/handoffs/ ff-inputs-currenc… | 2026-07 | auto-generated |
 | `scenario.pjm_congestion` | False | 3 | PJM transmission-congestion lever (break the copper-plate). PJM cle… |  | auto-generated, needs-citation |
 | `scenario.pjm_da_virtual_bids` | False | 2 | PJM Day-Ahead virtual-bid layer (G-22 lever B — DA procurement dept… | 2024 | auto-generated |
 | `scenario.pjm_da_virtual_surface_path` | None | 2 | Path to the measured condition-binned virtual-bid surface JSON (def… |  | auto-generated, needs-citation |
@@ -1170,14 +1184,17 @@ inline comment and still need a dated primary source — search the table for
 
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
+| `atb_tech_wacc_real.gas_cc_ccs` | 0.053585 | 2 | ATB 2024 WACC Real Market, NaturalGas_FE @2026 | 2024 | auto-generated |
+| `atb_tech_wacc_real.nuclear_large` | 0.056473 | 2 | ATB 2024 WACC Real Market, Nuclear @2030 | 2024 | auto-generated |
+| `atb_tech_wacc_real.nuclear_smr` | 0.056473 | 2 | ATB 2024 WACC Real Market, Nuclear @2030 | 2024 | auto-generated |
 | `cc_commitment_params` | [[6.5, {"startup_per_mw": 63.8, "min_… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `cc_startup_params` | [[6.5, 63.8], [7.5, 48.6], [99.0, 24.1]] | 2 | CC/CT startup costs ($/MW per start) keyed by ascending heat-rate c… | 2012 | auto-generated |
 | `ccs_retrofit_hr_penalty_reference.default` | 0.12 | 2 | CCS retrofit heat rate penalty: parasitic load from amine scrubbing… | 2021 | auto-generated |
 | `ccs_retrofit_hr_penalty_reference.netl_ngcc_range` | [0.1, 0.16] | 2 | CCS retrofit heat rate penalty: parasitic load from amine scrubbing… | 2021 | auto-generated |
 | `ccs_retrofit_hr_penalty_reference.source` | NETL Cost & Performance Baseline for … | 2 | CCS retrofit heat rate penalty: parasitic load from amine scrubbing… | 2021 | auto-generated |
-| `ccus_params.gas_cc_ccs_90.capex_kw` | 2500.0 | 2 | $/kW installed. NREL ATB 2024 | 2024 | auto-generated |
+| `ccus_params.gas_cc_ccs_90.capex_kw` | 3104.7 | 2 | $/kW installed. NREL ATB 2024 | 2024 | auto-generated |
 | `ccus_params.gas_cc_ccs_90.co2_transport_storage` | 15.0 | 2 | $/tCO2 — pipeline + saline injection. NETL 2022, Gulf Coast | 2022 | auto-generated |
-| `ccus_params.gas_cc_ccs_90.fom_kw_yr` | 22.0 | 2 | $/kW-yr. NREL ATB 2024 | 2024 | auto-generated |
+| `ccus_params.gas_cc_ccs_90.fom_kw_yr` | 71.1 | 2 | $/kW-yr. NREL ATB 2024 | 2024 | auto-generated |
 | `ccus_params.gas_cc_ccs_90.heat_rate_penalty` | 1.16 | 2 | ×base CC heat rate — 16% parasitic. NETL 2022 Rev 4, Case B31B | 2022 | auto-generated |
 | `ccus_params.gas_cc_ccs_90.learning_rate` | 0.05 | 2 | slow — limited deployment. Global CCS Institute 2024 | 2024 | auto-generated |
 | `ccus_params.gas_cc_ccs_90.lifetime_yr` | 30 | 2 | Carbon capture, utilization and storage parameters. CCUS is a varia… |  | auto-generated, needs-citation |
@@ -1233,15 +1250,15 @@ inline comment and still need a dated primary source — search the table for
 | `import_tranches.PJM` | [["import_scarcity_1", 1000.0, 46.0],… | 2 | Priced import/export node, per ISO (playbook §8.2): an interconnect… |  | auto-generated, needs-citation |
 | `import_tranches_by_year.NYISO` | {"2023": [["HQ_hydro", 900.0, 13.0], … | 2 | Export sinks: each block absorbs up to its capacity as *negative* g… | 2023 | auto-generated |
 | `new_entry_costs.gas_cc_ccs.base_cf` | 0.8 | 2 | Lower than unabated CC (0.85) due to higher MC |  | auto-generated, needs-citation |
-| `new_entry_costs.gas_cc_ccs.capex_per_kw` | 2300.0 | 2 | $/kW total plant cost (host CCGT + capture island). |  | auto-generated, needs-citation |
-| `new_entry_costs.gas_cc_ccs.fom_per_kw_yr` | 45.0 | 2 | $/kW-yr. Source: NETL Rev 4. |  | auto-generated, needs-citation |
+| `new_entry_costs.gas_cc_ccs.capex_per_kw` | 3104.7 | 2 | $/kW total plant cost (host CCGT + capture island). |  | auto-generated, needs-citation |
+| `new_entry_costs.gas_cc_ccs.fom_per_kw_yr` | 71.1 | 2 | $/kW-yr. Source: NETL Rev 4. |  | auto-generated, needs-citation |
 | `new_entry_costs.gas_cc_ccs.learning_rate` | 0.1 | 2 | 10% cost reduction per doubling of cumulative deployment. |  | auto-generated, needs-citation |
 | `new_entry_costs.gas_cc_ccs.lifetime_yr` | 30 | 2 | Same as gas CC host plant. |  | auto-generated, needs-citation |
 | `new_entry_costs.nuclear_large.base_cf` | 0.92 | 2 | Lower than unabated CC (0.85) due to higher MC |  | auto-generated, needs-citation |
-| `new_entry_costs.nuclear_large.fom_per_kw_yr` | 130.0 | 2 | $/kW-yr. Source: NETL Rev 4. |  | auto-generated, needs-citation |
+| `new_entry_costs.nuclear_large.fom_per_kw_yr` | 190.9 | 2 | $/kW-yr. Source: NETL Rev 4. |  | auto-generated, needs-citation |
 | `new_entry_costs.nuclear_large.lifetime_yr` | 60 | 2 | Same as gas CC host plant. |  | auto-generated, needs-citation |
 | `new_entry_costs.nuclear_smr.base_cf` | 0.9 | 2 | Lower than unabated CC (0.85) due to higher MC |  | auto-generated, needs-citation |
-| `new_entry_costs.nuclear_smr.fom_per_kw_yr` | 100.0 | 2 | $/kW-yr. Source: NETL Rev 4. |  | auto-generated, needs-citation |
+| `new_entry_costs.nuclear_smr.fom_per_kw_yr` | 148.4 | 2 | $/kW-yr. Source: NETL Rev 4. |  | auto-generated, needs-citation |
 | `new_entry_costs.nuclear_smr.lifetime_yr` | 40 | 2 | Same as gas CC host plant. |  | auto-generated, needs-citation |
 | `nuclear_dormant_until` | {"8011": 2027} | 2 | Dormant nuclear plants the EIA-860 operable schedule lists as OP th… | 2019 | auto-generated |
 | `nuclear_monthly_cf.MISO` | [0.93, 0.92, 0.85, 0.82, 0.78, 0.91, … | 2 | Nuclear monthly capacity factors (12 values, Jan–Dec) by ISO. Sprin… | 2019 | auto-generated |
@@ -1325,9 +1342,9 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.tranche_startup_measured_runs` | False | 1 | Fast-start amortization v3 — MEASURED run-length basis (requires ``… | 2023 | auto-generated |
 | `st_gas_commitment_params` | [[10.0, {"startup_per_mw": 55.0, "min… | 2 | Gas steam (legacy oil/gas boilers): high thermal inertia — slow to … | 2012 | auto-generated |
 | `st_gas_startup_params` | [[10.0, 55.0], [99.0, 75.0]] | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
-| `tech_cost_multipliers.gas_cc_ccs.high.capex_per_kw` | 1.2 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
+| `tech_cost_multipliers.gas_cc_ccs.high.capex_per_kw` | 1.0395 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.gas_cc_ccs.high.learning_rate` | 0.5 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
-| `tech_cost_multipliers.gas_cc_ccs.low.capex_per_kw` | 0.85 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
+| `tech_cost_multipliers.gas_cc_ccs.low.capex_per_kw` | 0.9605 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.gas_cc_ccs.low.learning_rate` | 1.5 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.gas_cc_ccs.mid.capex_per_kw` | 1.0 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.gas_cc_ccs.mid.learning_rate` | 1.0 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
@@ -1388,6 +1405,8 @@ inline comment and still need a dated primary source — search the table for
 |---|---|---|---|---|---|
 | `adequacy_external_tie_firm_mw.ERCOT` | 817.0 | 2 | Firm import contribution of asynchronous external ties counted by t… | 2023 | auto-generated |
 | `as_saturation_ref_gw_by_iso.ERCOT` | 4.0 | 2 | ERCOT AS-eligible (storage) fleet at the 2023 AS-revenue calibratio… | 2023 | auto-generated |
+| `atb_tech_wacc_real.solar` | 0.042271 | 2 | ATB 2024 WACC Real Market, UtilityPV @2026 | 2024 | auto-generated |
+| `atb_tech_wacc_real.wind` | 0.050352 | 2 | ATB 2024 WACC Real Market, LandbasedWind @2026 | 2024 | auto-generated |
 | `caiso_citygate_transport_adder` | 0.46 | 2 | CAISO citygate -> burner-tip transport adder ($/MMBtu). The CAISO g… | 2024 | auto-generated |
 | `caiso_curtail_release_eps_mw` | 1.0 | 2 | Float-noise guard on the RA bridge's curtailed-VRE release (gap G-6… |  | auto-generated, needs-citation |
 | `cap_and_trade_programs.CAISO` | {"name": "CARB", "member_states": ["C… | 2 | ISO → cap-and-trade program. ERCOT and MISO have no program (no ent… |  | auto-generated, needs-citation |
@@ -1397,7 +1416,7 @@ inline comment and still need a dated primary source — search the table for
 | `capacity_curve_eligible_by_iso.CAISO` | True | 2 | bilateral RA, no demand_curve — eligibility is moot |  | auto-generated, needs-citation |
 | `capacity_curve_eligible_by_iso.MISO` | True | 2 | --- CR-1C curve eligibility (governance gate) ---------------------… | 2026-07 | auto-generated |
 | `capacity_curve_eligible_by_iso.NEISO` | True | 2 | --- CR-1C curve eligibility (governance gate) ---------------------… | 2026-07 | auto-generated |
-| `capacity_curve_eligible_by_iso.NYISO` | False | 2 | R5a pairing adjudicated; owner sign-off pending |  | auto-generated, needs-citation |
+| `capacity_curve_eligible_by_iso.NYISO` | True | 2 | R5a pairing adjudicated; owner sign-off pending |  | auto-generated, needs-citation |
 | `capacity_curve_eligible_by_iso.PJM` | True | 2 | --- CR-1C curve eligibility (governance gate) ---------------------… | 2026-07 | auto-generated |
 | `carb_allowance_budget` | {"2023": 294.1, "2024": 280.7, "2025"… | 2 | California GHG annual allowance budget (MMT CO2e/yr; 1 CA GHG allow… | 2021 | auto-generated |
 | `carb_floor_escalation` | 0.07 | 2 | Forward-year allowance-price escalation rates (nominal, per year). … |  | auto-generated, needs-citation |
