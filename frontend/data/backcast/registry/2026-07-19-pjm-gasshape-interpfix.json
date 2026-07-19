@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-19-pjm-gasshape-interpfix",
+  "label": "pjm gasshape interpfix",
+  "date": "2026-07-19",
+  "shorthand": "pjm-gasshape-interpfix",
+  "definition": "gas_daily_shape 3.7 interp-fix A/B MAIN arm (fixed code: true-trade-date + staircase HH daily shape); recipe = pjm-115 keeper via replay_keeper.build_kwargs; full span 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-19-pjm-gasshape-interpfix.js",
+  "bundle": "results/calibration/pjm_gasshape_interpfix_main"
+}
