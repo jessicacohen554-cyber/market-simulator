@@ -1,0 +1,482 @@
+{
+ "_provenance": {
+  "source": "CAISO OASIS Public Bid Data (PUB_DAM_GRP GroupZip, 90-day-lag masked DAM bids), dam-public-bids clean datatype, trade years [2023, 2024, 2025]",
+  "derived_utc": "2026-07-19T18:23:34+00:00",
+  "method": "see scripts/data/derive_caiso_offer_surface.py module docstring",
+  "gas_basis": "CA-composite citygate daily on gas FLOW days (trade+1 staircase, caiso-90 semantics), data/raw/gas-prices/caiso_citygate_daily.csv",
+  "carbon_basis": {
+   "usd_per_t": {
+    "2023": 33.03,
+    "2024": 35.23,
+    "2025": 28.06
+   },
+   "co2_factor_t_per_mmbtu": 0.057,
+   "note": "CARB C&T allowance (STATE_CARBON_PRICE_BY_ISO); static mults net of carbon at band HR, ladder mults net of carbon at the measured static peak HR (the mechanism's fuel-only repricing basis)"
+  },
+  "vom_usd_per_mwh": {
+   "CC_REGULAR": 2.0,
+   "CT_PEAKER": 3.5
+  },
+  "classifier": {
+   "body_frac": 0.35,
+   "gas_slope_range": [
+    4.0,
+    18.0
+   ],
+   "min_r": 0.6,
+   "min_days": 120,
+   "min_cap_mw": 20.0,
+   "hr_cut": 8.5,
+   "contamination_note": "CT bucket may include the 2.9 GW OTC/RMR ST_GAS steamers and priced CT_CHP; CC bucket may include CC_CHP. Same-fuel near-SRMC bidders; bounded by G1, robust via cap-weighted medians; masked ids preclude per-plant mapping."
+  },
+  "band_windows_geometry": {
+   "CC_REGULAR": {
+    "pct_committed": 27.37,
+    "pct_peaking": 3.44,
+    "econ_low_share": 0.5
+   },
+   "CT_PEAKER": {
+    "pct_committed": 10.9,
+    "pct_peaking": 7.0,
+    "econ_low_share": 0.526
+   }
+  },
+  "netload_pct_edges": [
+   0.8,
+   0.9,
+   0.97
+  ],
+  "peak_ladder_qs": [
+   0.1,
+   0.3,
+   0.5,
+   0.7,
+   0.9
+  ],
+  "per_year_band_mults": {
+   "CC_REGULAR": {
+    "committed": {
+     "2023": 0.869,
+     "2024": 1.013,
+     "2025": 1.077
+    },
+    "econ_low": {
+     "2023": 1.056,
+     "2024": 0.991,
+     "2025": 1.077
+    },
+    "econ_high": {
+     "2023": 1.052,
+     "2024": 1.047,
+     "2025": 1.084
+    },
+    "peak": {
+     "2023": 1.279,
+     "2024": 1.35,
+     "2025": 1.387
+    }
+   },
+   "CT_PEAKER": {
+    "committed": {
+     "2023": 1.438,
+     "2024": 1.125,
+     "2025": 0.827
+    },
+    "econ_low": {
+     "2023": 1.148,
+     "2024": 1.131,
+     "2025": 1.126
+    },
+    "econ_high": {
+     "2023": 1.147,
+     "2024": 1.233,
+     "2025": 1.196
+    },
+    "peak": {
+     "2023": 1.168,
+     "2024": 1.189,
+     "2025": 1.172
+    }
+   }
+  },
+  "gates": {
+   "G1_capacity_reconciliation": {
+    "CC_REGULAR": {
+     "bucket_mw": 13454.0,
+     "fleet_mw": 13708.0,
+     "ratio": 0.981,
+     "bounds": [
+      0.5,
+      1.3
+     ],
+     "pass": true
+    },
+    "CT_PEAKER": {
+     "bucket_mw": 10785.0,
+     "fleet_mw": 7616.0,
+     "ratio": 1.416,
+     "bounds": [
+      0.5,
+      1.6
+     ],
+     "pass": true
+    }
+   },
+   "G2_cut_robustness": {
+    "cut": 8.5,
+    "deltas": {
+     "-0.25": {
+      "CC_REGULAR.econ_low": {
+       "alt": 1.041,
+       "dev": 0.01,
+       "tol": 0.105,
+       "pass": true
+      },
+      "CC_REGULAR.econ_high": {
+       "alt": 1.051,
+       "dev": 0.002,
+       "tol": 0.105,
+       "pass": true
+      },
+      "CC_REGULAR.peak": {
+       "alt": 1.292,
+       "dev": 0.041,
+       "tol": 0.133,
+       "pass": true
+      },
+      "CT_PEAKER.econ_low": {
+       "alt": 1.117,
+       "dev": 0.03,
+       "tol": 0.115,
+       "pass": true
+      },
+      "CT_PEAKER.econ_high": {
+       "alt": 1.181,
+       "dev": 0.001,
+       "tol": 0.118,
+       "pass": true
+      },
+      "CT_PEAKER.peak": {
+       "alt": 1.167,
+       "dev": 0.009,
+       "tol": 0.118,
+       "pass": true
+      }
+     },
+     "+0.25": {
+      "CC_REGULAR.econ_low": {
+       "alt": 1.057,
+       "dev": 0.006,
+       "tol": 0.105,
+       "pass": true
+      },
+      "CC_REGULAR.econ_high": {
+       "alt": 1.066,
+       "dev": 0.013,
+       "tol": 0.105,
+       "pass": true
+      },
+      "CC_REGULAR.peak": {
+       "alt": 1.359,
+       "dev": 0.026,
+       "tol": 0.133,
+       "pass": true
+      },
+      "CT_PEAKER.econ_low": {
+       "alt": 1.167,
+       "dev": 0.02,
+       "tol": 0.115,
+       "pass": true
+      },
+      "CT_PEAKER.econ_high": {
+       "alt": 1.222,
+       "dev": 0.04,
+       "tol": 0.118,
+       "pass": true
+      },
+      "CT_PEAKER.peak": {
+       "alt": 1.19,
+       "dev": 0.014,
+       "tol": 0.118,
+       "pass": true
+      }
+     }
+    },
+    "pass": true
+   },
+   "G3_estimation_loyo": {
+    "CC_REGULAR": {
+     "econ_low": {
+      "pooled": 1.051,
+      "loyo": {
+       "2023": 1.031,
+       "2024": 1.064,
+       "2025": 1.031
+      },
+      "worst_dev": 0.02,
+      "tol": 0.105,
+      "pass": true
+     },
+     "econ_high": {
+      "pooled": 1.053,
+      "loyo": {
+       "2023": 1.064,
+       "2024": 1.057,
+       "2025": 1.05
+      },
+      "worst_dev": 0.011,
+      "tol": 0.105,
+      "pass": true
+     },
+     "peak": {
+      "pooled": 1.333,
+      "loyo": {
+       "2023": 1.387,
+       "2024": 1.333,
+       "2025": 1.287
+      },
+      "worst_dev": 0.054,
+      "tol": 0.133,
+      "pass": true
+     }
+    },
+    "CT_PEAKER": {
+     "econ_low": {
+      "pooled": 1.147,
+      "loyo": {
+       "2023": 1.126,
+       "2024": 1.147,
+       "2025": 1.148
+      },
+      "worst_dev": 0.021,
+      "tol": 0.115,
+      "pass": true
+     },
+     "econ_high": {
+      "pooled": 1.182,
+      "loyo": {
+       "2023": 1.215,
+       "2024": 1.167,
+       "2025": 1.177
+      },
+      "worst_dev": 0.033,
+      "tol": 0.118,
+      "pass": true
+     },
+     "peak": {
+      "pooled": 1.176,
+      "loyo": {
+       "2023": 1.18,
+       "2024": 1.168,
+       "2025": 1.176
+      },
+      "worst_dev": 0.008,
+      "tol": 0.118,
+      "pass": true
+     }
+    }
+   },
+   "G4_physical_sanity": {
+    "CC_REGULAR": {
+     "ordered": true,
+     "in_range": true,
+     "pass": true
+    },
+    "CT_PEAKER": {
+     "ordered": true,
+     "in_range": true,
+     "pass": true
+    }
+   }
+  },
+  "committed_band_unarmed_note": "measured committed-band mults reported in per_year_band_mults but NOT consumed: min-load self-commitment conduct is owned by unit commitment, not the P1 offer (Lever-A inversion lesson; rule 19)"
+ },
+ "CC_REGULAR": {
+  "base_hr": 7.442,
+  "peak_p50": 1.481,
+  "binned_ladder": [
+   [
+    [
+     0.2,
+     1.481
+    ],
+    [
+     0.2,
+     1.481
+    ],
+    [
+     0.2,
+     1.487
+    ],
+    [
+     0.2,
+     1.733
+    ],
+    [
+     0.2,
+     3.363
+    ]
+   ],
+   [
+    [
+     0.2,
+     1.481
+    ],
+    [
+     0.2,
+     1.481
+    ],
+    [
+     0.2,
+     1.481
+    ],
+    [
+     0.2,
+     1.703
+    ],
+    [
+     0.2,
+     3.08
+    ]
+   ],
+   [
+    [
+     0.2,
+     1.481
+    ],
+    [
+     0.2,
+     1.481
+    ],
+    [
+     0.2,
+     1.544
+    ],
+    [
+     0.2,
+     1.758
+    ],
+    [
+     0.2,
+     3.853
+    ]
+   ],
+   [
+    [
+     0.2,
+     1.481
+    ],
+    [
+     0.2,
+     1.481
+    ],
+    [
+     0.2,
+     1.521
+    ],
+    [
+     0.2,
+     1.766
+    ],
+    [
+     0.2,
+     3.883
+    ]
+   ]
+  ]
+ },
+ "CT_PEAKER": {
+  "base_hr": 10.862,
+  "peak_p50": 1.438,
+  "binned_ladder": [
+   [
+    [
+     0.2,
+     1.438
+    ],
+    [
+     0.2,
+     1.438
+    ],
+    [
+     0.2,
+     1.438
+    ],
+    [
+     0.2,
+     2.186
+    ],
+    [
+     0.2,
+     4.434
+    ]
+   ],
+   [
+    [
+     0.2,
+     1.438
+    ],
+    [
+     0.2,
+     1.438
+    ],
+    [
+     0.2,
+     1.438
+    ],
+    [
+     0.2,
+     2.428
+    ],
+    [
+     0.2,
+     4.112
+    ]
+   ],
+   [
+    [
+     0.2,
+     1.438
+    ],
+    [
+     0.2,
+     1.438
+    ],
+    [
+     0.2,
+     1.438
+    ],
+    [
+     0.2,
+     2.895
+    ],
+    [
+     0.2,
+     4.262
+    ]
+   ],
+   [
+    [
+     0.2,
+     1.438
+    ],
+    [
+     0.2,
+     1.438
+    ],
+    [
+     0.2,
+     1.542
+    ],
+    [
+     0.2,
+     3.272
+    ],
+    [
+     0.2,
+     4.209
+    ]
+   ]
+  ]
+ }
+}
