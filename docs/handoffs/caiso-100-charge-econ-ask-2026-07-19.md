@@ -1,11 +1,13 @@
 # OWNER-ASK (CAISO-100): arm the battery cycling-degradation cost for CAISO — `battery_dispatch_adder` 0.0 → the DERIVED $14.25/MWh (re-opens the caiso-76 no-change ruling on moved evidence)
 
-**Status: PENDING owner ruling. No knob change, no new-mechanism solve, nothing
-registered under this ask.** The CAISO-100 charter is derive-first +
-owner-gated and its carrier carried no execution ruling, so this session
-measured, pre-registered, and filed. Full evidence:
-`results/calibration/FINDING-caiso100-charge-economics-2026-07-19.md`
-(pre-registered bands + gates in its §6, binding on the build session).
+**Status: GRANTED (owner ruling, 2026-07-19 CAISO-101 session — delivered
+in-session via the owner question gate).** The B-leg executes EXACTLY per
+FINDING-caiso100 §6 (pre-registered bands + gates, binding): fresh
+same-machine `caiso100_repro_A` vs `caiso100_cycling_B` (the ONLY delta
+`battery_dispatch_adder = 14.25`), 2023-2025 one bundle each, registered
+whatever the result, promotion only on no-status-regression. Original filing
+context below is preserved verbatim. Full evidence:
+`results/calibration/FINDING-caiso100-charge-economics-2026-07-19.md`.
 
 ## 1. What would change (one registered scalar, one B-leg)
 
