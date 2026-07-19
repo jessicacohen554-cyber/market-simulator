@@ -354,17 +354,21 @@ class TestEmergingCapacityEvolution(unittest.TestCase):
 
     def test_ccus_needs_high_carbon_price(self):
         # Hydrogen and geothermal disabled so CCUS competes for the shared
-        # gas_cc queue group against unabated gas alone. The $67.5/MWh
-        # screening price sits below new-entry nuclear's LCOE, keeping
-        # nuclear out of the ISO queue so the gas_cc group has budget to
-        # spare for CCUS once high carbon prices retire unabated gas.
+        # gas_cc queue group against unabated gas alone. A $110/MWh flat
+        # screening price gives the (FF-1E) ATB-derived CCS its margin at high
+        # carbon; the mechanism under test is the carbon-dependence (no CCS at
+        # carbon 0, CCS at carbon 200), not the exact threshold. (Pre-FF-1E this
+        # used $67.5 tuned to the then-understated CCS capex; the operative
+        # new-build CCS cost — CCUS_PARAMS, reconciled to ATB 2024's 95% CCS
+        # class — is now ~$3,100/kW / ~$71/kW-yr, so CCS clears at a higher
+        # screening price.)
         config = ScenarioConfig(
             iso="ERCOT", h2_available_year=2099, egs_available_year=2099
         )
         # Year 2032 is the last year the §45Q credit is available (OBBBA).
         cheap_carbon, _ = apply_economic_new_entry(
             [],
-            np.full(8760, 67.5),
+            np.full(8760, 110.0),
             2032,
             config,
             "ERCOT",
@@ -374,7 +378,7 @@ class TestEmergingCapacityEvolution(unittest.TestCase):
         self.assertFalse(any(g.fuel_type == "gas_cc_ccs" for g in cheap_carbon))
         dear_carbon, _ = apply_economic_new_entry(
             [],
-            np.full(8760, 67.5),
+            np.full(8760, 110.0),
             2032,
             config,
             "ERCOT",

@@ -1,0 +1,301 @@
+atb_year,technology,techdetail,display_name,core_metric_parameter,core_metric_case,tax_credit_case,scenario,default,core_metric_variable,value
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Conservative,1,2032,80.5
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Conservative,1,2033,80.0
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Conservative,1,2034,79.0
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Conservative,1,2035,78.7
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Conservative,1,2036,78.1
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Conservative,1,2037,77.5
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Conservative,1,2038,76.9
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Conservative,1,2039,76.3
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Conservative,1,2040,75.7
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Conservative,1,2041,75.1
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Conservative,1,2042,74.5
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Conservative,1,2043,73.9
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Conservative,1,2044,73.3
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Conservative,1,2045,72.7
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Conservative,1,2046,72.1
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Conservative,1,2047,71.5
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Conservative,1,2048,70.9
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Conservative,1,2049,70.3
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Conservative,1,2050,69.7
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2022,86.5
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2023,86.1
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2024,85.7
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2025,85.3
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2026,84.9
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2027,84.5
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2028,84.1
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2029,83.7
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2030,83.3
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2031,82.9
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2032,82.5
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2033,82.0
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2034,82.0
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2035,81.2
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2036,80.6
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2037,79.9
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2038,79.3
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2039,78.6
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2040,77.9
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2041,77.3
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2042,76.6
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2043,75.9
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2044,75.3
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2045,74.6
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2046,74.0
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2047,73.3
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2048,72.6
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2049,72.0
+2024,Coal_FE,Coal-new,Coal-new,Fixed O&M,Market,,Moderate,1,2050,71.3
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2022,7213.472139143207
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2023,7011.356575088485
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2024,6820.659163547733
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2025,6640.279542920247
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2026,6469.261375685166
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2027,6306.768932385136
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2028,6152.068170567338
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2029,6004.511322895277
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2030,5863.524250014293
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2031,5728.595990252216
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2032,5599.270068754541
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2033,5475.1372261820325
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2034,5355.829300688869
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2035,5241.014052442069
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2036,5215.485008035156
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2037,5190.083608850278
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2038,5164.809216661325
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2039,5139.661196433316
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2040,5114.638916306447
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2041,5089.741747580212
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2042,5064.969064697609
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2043,5040.320245229418
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2044,5015.794669858569
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2045,4991.391722364574
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2046,4967.110789608048
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2047,4942.951261515306
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2048,4918.912531063027
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2049,4894.99399426301
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Advanced,1,2050,4871.195050146992
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2022,7213.472139143207
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2023,7178.147034081288
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2024,7142.998554544677
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2025,7108.02581740575
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2026,7073.227943952517
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2027,7038.60405986655
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2028,7004.153295201013
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2029,6969.874784358804
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2030,6935.767666070807
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2031,6901.831083374249
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2032,6868.064183591174
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2033,6834.466118307014
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2034,6801.036043349275
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2035,6767.773118766325
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2036,6734.676508806289
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2037,6701.745381896055
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2038,6668.978910620372
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2039,6636.376271701065
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2040,6603.936645976356
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2041,6571.65921838027
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2042,6539.543177922164
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2043,6507.587717666351
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2044,6475.792034711815
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2045,6444.155330172052
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2046,6412.676809154988
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2047,6381.355680743009
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2048,6350.1911579730895
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2049,6319.182457817021
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Conservative,1,2050,6288.328801161732
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2022,7213.472139143207
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2023,7096.799185929678
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2024,6989.497616165266
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2025,6890.214586821563
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2026,6797.864594829243
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2027,6711.564109663961
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2028,6630.584914859766
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2029,6554.320105119375
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2030,6482.25884787322
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2031,6413.967342159384
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2032,6349.074241690446
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2033,6287.2593476620805
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2034,6228.244732717668
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2035,6171.787697859847
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2036,6141.658810751171
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2037,6111.68056807804
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2038,6081.852216618273
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2039,6052.173006915805
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2040,6022.64219326185
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2041,5993.259033676165
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2042,5964.022789888408
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2043,5934.9327273195895
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2044,5905.988115063616
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2045,5877.188225868921
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2046,5848.5323361202
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2047,5820.019725820223
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2048,5791.649678571746
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2049,5763.421481559511
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,CAPEX,Market,ITC,Moderate,1,2050,5735.334425532337
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2022,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2023,120.3737936775098
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2024,119.63193786805768
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2025,118.89008205860556
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2026,118.14822624915344
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2027,117.40637043970132
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2028,116.66451463024922
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2029,115.9226588207971
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2030,115.18080301134498
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2031,114.43894720189286
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2032,113.69709139244074
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2033,112.95523558298862
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2034,112.2133797735365
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2035,111.47152396408444
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2036,111.47152396408444
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2037,111.47152396408444
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2038,111.47152396408444
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2039,111.47152396408444
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2040,111.47152396408444
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2041,111.47152396408444
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2042,111.47152396408444
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2043,111.47152396408444
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2044,111.47152396408444
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2045,111.47152396408444
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2046,111.47152396408444
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2047,111.47152396408444
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2048,111.47152396408444
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2049,111.47152396408444
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Advanced,1,2050,111.47152396408444
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2022,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2023,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2024,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2025,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2026,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2027,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2028,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2029,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2030,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2031,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2032,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2033,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2034,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2035,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2036,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2037,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2038,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2039,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2040,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2041,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2042,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2043,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2044,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2045,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2046,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2047,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2048,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2049,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Conservative,1,2050,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2022,121.11564948696191
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2023,120.43984538801548
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2024,119.76404128906904
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2025,119.0882371901226
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2026,118.41243309117615
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2027,117.73662899222973
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2028,117.06082489328328
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2029,116.38502079433682
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2030,115.70921669539038
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2031,115.03341259644394
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2032,114.3576084974975
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2033,113.68180439855104
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2034,113.0060002996046
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2035,112.33019620065808
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2036,112.33019620065808
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2037,112.33019620065808
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2038,112.33019620065808
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2039,112.33019620065808
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2040,112.33019620065808
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2041,112.33019620065808
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2042,112.33019620065808
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2043,112.33019620065808
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2044,112.33019620065808
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2045,112.33019620065808
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2046,112.33019620065808
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2047,112.33019620065808
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2048,112.33019620065808
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2049,112.33019620065808
+2024,Geothermal,HydroFlash,Geothermal - Hydro / Flash,Fixed O&M,Market,ITC,Moderate,1,2050,112.33019620065808
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2022,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2023,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2024,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2025,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2026,3209.402094837186
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2027,3176.4032673280803
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2028,3144.46891812572
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2029,3111.4700906166145
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2030,3079.5357414142545
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2031,3051.859305438876
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2032,3024.182869463498
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2033,2995.441955181373
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2034,2967.765519205994
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2035,2940.089083230616
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2036,2912.412647255237
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2037,2884.7362112798583
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2038,2855.9952969977344
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2039,2828.318861022356
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2040,2800.6424250469768
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2041,2800.6424250469768
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2042,2800.6424250469768
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2043,2800.6424250469768
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2044,2800.6424250469768
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2045,2800.6424250469768
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2046,2800.6424250469768
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2047,2800.6424250469768
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2048,2800.6424250469768
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2049,2800.6424250469768
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Advanced,1,2050,2800.6424250469768
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2022,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2023,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2024,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2025,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2026,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2027,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2028,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2029,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2030,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2031,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2032,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2033,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2034,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2035,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2036,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2037,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2038,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2039,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2040,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2041,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2042,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2043,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2044,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2045,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2046,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2047,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2048,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2049,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Conservative,1,2050,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2022,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2023,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2024,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2025,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2026,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2027,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2028,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2029,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2030,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2031,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2032,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2033,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2034,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2035,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2036,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2037,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2038,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2039,3241.3364440395458
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2040,3111.4700906166145
+2024,Hydropower,NPD1,Hydropower - NPD 1,CAPEX,Market,ITC,Moderate,1,2041,3111.4700906166145
