@@ -3088,6 +3088,143 @@ def apply_miso_rdt_tcdc(iso_config: ISOConfig, rpe_pricing: bool = False) -> ISO
     return extended
 
 
+# Loss-pair flow tiebreaker (miso_zonal_loss_surface): the same role and
+# magnitude as the storage ε = 0.001 $/MWh (CLAUDE.md rule #9) and
+# CAISO_INTERTIE_TIEBREAK_EPS — charged on BOTH one-way directions of each
+# lossy Midwest link so (a) a degenerate lossless-direction wash nets to one
+# direction per hour, and (b) circulating flow (both directions at once,
+# which dissipates ε_loss × flow at each end — free disposal) is strictly
+# cost-positive whenever |zonal dual| × loss fraction < this charge. With
+# MISO renewables offering at ≥ $0 (negative_renewable_offers is CAISO-only)
+# the model's zonal duals floor near -dump ε, so 0.001 dominates the
+# disposal value in every hour. Numerical device, not a hurdle rate (the
+# measured-MCC hurdle family is refuted — charter §3 M2); not a fitted level.
+MISO_LOSS_LINK_TIEBREAK_EPS = 1e-3
+
+
+def _miso_midwest_internal(from_zone: str, to_zone: str) -> bool:
+    """Whether a link joins two MISO Midwest zones (South/RDT excluded)."""
+    return (
+        from_zone.startswith("MISO-")
+        and to_zone.startswith("MISO-")
+        and "MISO-South" not in (from_zone, to_zone)
+    )
+
+
+def apply_miso_zonal_loss_links(iso_config: ISOConfig) -> ISOConfig:
+    """Split each Midwest-internal bidirectional link into a one-way loss pair.
+
+    The miso-76 M3 topology transform (charter
+    ``docs/handoffs/miso-nc-price-separation-design-2026-07.md`` §4, gated on
+    ``ScenarioConfig.miso_zonal_loss_surface``): every bidirectional
+    Midwest-internal link (L1–L6) becomes TWO one-way links
+    (``is_bidirectional=False``, same TTC each way — the RDT pair's
+    established structure), each charged the
+    :data:`MISO_LOSS_LINK_TIEBREAK_EPS` flow cost. The per-direction
+    marginal loss fractions themselves are hour-varying and enter the
+    energy balance via :func:`build_miso_link_loss` +
+    ``dispatch.build_constraints(link_loss=...)`` — the split exists
+    because a loss coefficient on a SIGNED link would create energy on
+    reverse flow (see the ``link_loss`` docstring), so each direction must
+    be its own nonnegative column.
+
+    Interface groups (the CIL/CEL envelopes and static ``MISO_CIL_*``
+    limits) match links by zone pair with orientation signs, so the pair
+    sums to the net corridor flow automatically — the same mechanism the
+    RDT one-way pair already rides. The RDT/South links and external seams
+    are untouched: South separation stays owned by the RDT TCDC structure
+    (one mechanism per phenomenon, rule #19).
+
+    Returns a validated copy; a config with no Midwest-internal
+    bidirectional links (already split, or not MISO) is returned unchanged.
+    """
+    new_links: list[TransferLink] = []
+    changed = False
+    for ln in iso_config.links:
+        if ln.is_bidirectional and _miso_midwest_internal(ln.from_zone, ln.to_zone):
+            for frm, to in ((ln.from_zone, ln.to_zone), (ln.to_zone, ln.from_zone)):
+                new_links.append(
+                    ln.model_copy(
+                        update={
+                            "from_zone": frm,
+                            "to_zone": to,
+                            "is_bidirectional": False,
+                            "flow_cost": ln.flow_cost + MISO_LOSS_LINK_TIEBREAK_EPS,
+                        }
+                    )
+                )
+            changed = True
+        else:
+            new_links.append(ln)
+    if not changed:
+        return iso_config
+    extended = iso_config.model_copy(update={"links": new_links})
+    extended.validate_topology()
+    return extended
+
+
+def build_miso_link_loss(
+    links: list[TransferLink], iso: str, year: int, hours: int
+) -> np.ndarray | None:
+    """Return the ``(n_links, hours)`` per-link marginal loss fractions.
+
+    For each one-way Midwest-internal link ``x -> y`` and month ``m``, the
+    receiving-side loss fraction is::
+
+        eps_(x->y),m = max(0, (dev_y,m - dev_x,m) / (1 + dev_y,m))
+
+    so an interior, uncongested flow ``x -> y`` prices the receiving zone at
+    ``lambda_y = lambda_x x (1 + dev_y,m)/(1 + dev_x,m)`` — exactly the
+    measured marginal delivery-factor ratio (MLC construction: LMP's loss
+    component is ``MEC x (DF - 1)``). The reverse direction of the pair
+    clamps to 0 for that month (the marginal-DF linearization is oriented
+    by the month's persistent gradient; the clamp is conservative —
+    atypical-direction hours carry no separation rather than a fabricated
+    inverted one). Months where the measured gradient flips sign swap the
+    lossy direction automatically.
+
+    The monthly surface comes from
+    :func:`market_sim.data.loss_surface.load_zone_month_deviation` (year
+    rows for a train backcast year, pooled rows otherwise) and expands to
+    hours on the model's fixed non-leap calendar. Non-Midwest links carry
+    zero rows. Fails loud if any Midwest-internal link is still
+    bidirectional (the loss coefficient would create energy on reverse
+    flow — apply :func:`apply_miso_zonal_loss_links` first), or if a
+    Midwest zone is missing from the surface.
+
+    Returns ``None`` for a non-MISO ``iso`` (byte-identical elsewhere,
+    rule 24).
+    """
+    if iso.upper() != "MISO":
+        return None
+    from market_sim.data.loss_surface import load_zone_month_deviation
+
+    surface = load_zone_month_deviation(iso, year)
+    month_of_hour = np.repeat(np.arange(12), _MONTH_HOURS)[:hours]
+    loss = np.zeros((len(links), hours), dtype=float)
+    for i, ln in enumerate(links):  # i: link column (few links, not hours)
+        if not _miso_midwest_internal(ln.from_zone, ln.to_zone):
+            continue
+        if ln.is_bidirectional:
+            raise ValueError(
+                f"link {ln.from_zone}->{ln.to_zone} is bidirectional; "
+                "apply_miso_zonal_loss_links must run before "
+                "build_miso_link_loss (a signed lossy link would create "
+                "energy on reverse flow)"
+            )
+        try:
+            dev_from = np.asarray(surface[ln.from_zone], dtype=float)
+            dev_to = np.asarray(surface[ln.to_zone], dtype=float)
+        except KeyError as exc:
+            raise ValueError(
+                f"loss surface has no zone {exc.args[0]!r} — regenerate "
+                "scripts/data/derive_miso_loss_surface.py"
+            ) from exc
+        eps_m = np.maximum(0.0, (dev_to - dev_from) / (1.0 + dev_to))
+        loss[i, :] = eps_m[month_of_hour]
+    return loss if np.any(loss > 0.0) else None
+
+
 # CAISO SP15-split internal import-limited links (foundation 2026-07-09): the
 # one-way pockets whose TTC is upgraded from the static 2023 baked-in value to
 # the solve year's measured LCT import_cap (peak_load - requirement) by
