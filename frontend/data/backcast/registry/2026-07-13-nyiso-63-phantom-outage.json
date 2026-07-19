@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-13-nyiso-63-phantom-outage",
+  "label": "nyiso 63 phantom outage",
+  "date": "2026-07-13",
+  "shorthand": "nyiso-63-phantom-outage",
+  "definition": "nyiso-63 phantom-outage re-audit (ERCOT-79 cross-ISO lane, 2026-07-19): the nyiso-62 keeper recipe re-solved byte-faithfully on the corrected CAMPD unit-outage extract (consolidated per-unit event-based detector; 1,598→2,641 rows, +1,056 real outage windows added, matching the 2026-07-12 intake-log-flagged detector-vintage gap). Unlike NEISO, the correction is NOT inert: three load-bearing criteria flip PASS→FAIL on the accurate envelope — C1 fuel-mix (2024 ST_GAS −3.36 TWh, −2.3pp), C3a mean LMP (2023 +25.0% vs DA +22.4%; model mean LMP $30.6→$47.2 vs actual $31, a +51% overshoot), C3b shape (2023 NRMSE 0.385) — and C3c over-forms (2023 model 50h vs actual 10h >$200, 5.0×). ST_GAS sheds ~1.1–1.5 TWh/yr into CT_PEAKER/CC every year once the previously under-counted outage capacity is restored, exposing that the nyiso-62 keeper's offer curves were silently compensating for the under-counted outages (rule 11) — the ERCOT-79 co-dependency pattern, not the PJM-115 inert pattern. DETERMINATION: the nyiso-62 CALIBRATED-WITH-CAVEATS keeper flips to NOT-YET here. NYISO's 2026-07-11 frontier and 2026-07-13 calibration-complete marker are WITHDRAWN accordingly; the locked-test holdout (2019, H1-2026) was NOT spent on a keeper that fails on accurate data (rule 22). Open successor lane: re-calibrate NYISO's offer curves against the corrected outages, reproducing the full 2023–2025 span (rules 11/16).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-13-nyiso-63-phantom-outage.js",
+  "bundle": "results/calibration/nyiso62_reaudit_corrected_outages"
+}
