@@ -281,3 +281,112 @@ shoulder-hour dispatch level (rule-19-owned by the ST_GAS drag lane — any
 fix there is that lane's, not this one's; the two must be reconciled in the
 step-2 D-2 enumeration, not stacked). The lane proceeds to the §7 owner
 decision with the measurement supporting a build.
+
+## 9. Step-2 build record (ERCOT-89, 2026-07-19 — owner-authorized design round)
+
+The owner authorized ONE step-2 design round. Mechanism built:
+`ScenarioConfig.ercot_shoulder_online_span` (default **off**) — §6 shape (a)
+implemented as a GEOMETRY correction of the two existing seams (rule 19: the
+wall and the pool stay the owners of their rows; the span is a measured
+conditional parameter of both, never a third channel):
+
+* **Wall seam** (`fleet.build_ercot_offer_surface_cleared_share_markup`): the
+  RT/SCED spare-offer ladder's rel denominator re-anchors from the full
+  DAM-available span to the measured conditional online span —
+  `rel = (share − boundary) / (span(cell) − boundary)`, clipped to the ladder
+  top above the span. The ERCOT-86 ladder is measured on the ONLINE fleet's
+  Base-Point→HASL segments; stretching it over capability that is telemetered
+  OFF at the same conditions is exactly the §8.1 8–10× phantom-headroom wedge.
+  Same owner, same rows, same ladders — only the coordinate mapping changes.
+* **Pool seam** (`fleet.build_ercot_faststart_pool_markup`): the boundary
+  generalizes from the ERCOT-88 static `1 − pool_frac(bin)` to the span
+  (clamped below by the bin's DA cleared share), so the FULL offline CT
+  increment — not just the OFFQS/OFFNS quick-start slice — is PRICED at the
+  measured start-inclusive ladder. Physics gate unchanged (rule 12,
+  `min_down ≤ 2 h`); slow rows above the span keep the wall's ladder-top
+  clamp. §3(ii) is honoured by construction: no LP row, no cap, no floor, the
+  co-opt's shared reserve headroom untouched; D-2 forced-share / D-4
+  off-window exposure vacuous (no forced energy anywhere in the mechanism).
+
+**The conditional driver** (rule 13): `scripts/data/
+derive_ercot_shoulder_online_span.py` →
+`data/raw/_validation-source/ercot_shoulder_online_span_condbinned.json` —
+mean telemetered ON share of non-OUT capability per (net-load bin × season ×
+4h block), hierarchically coverage-gated (≥6 corpus hours per cell, fallback
+bin×block → bin×season → bin), year-scoped 2024/2025 with NO pooled fallback,
+zero fitted scalars, frozen against residuals (rule 23). The non-OUT
+denominator is the DAM-availability overlay's own only-OUT-is-out basis, so
+the span coordinates map exactly onto the capability the overlay leaves in
+the LP.
+
+### 9.1 Driver adjudication (pre-build, leave-one-out)
+
+The conditional structure is REAL but PARTIAL. Cell-mean LOO assignment vs
+the measured per-hour truth over residual/control hours:
+
+| year | measured resid vs control ON share | best conditional (bin×season×block ±idr) LOO gap | share of separation carried |
+|---|---|---|---|
+| 2024 | 0.752 vs 0.480 (gap +0.27) | 0.63–0.65 vs 0.50 (gap +0.14–0.15) | ~½ |
+| 2025 | 0.713 vs 0.530 (gap +0.18) | 0.60–0.61 vs 0.55 (gap +0.05–0.07) | ~⅓ |
+
+The remainder is day-of commitment information (forecasts, outages, RUC
+decisions) with no forward analogue — deliberately NOT encoded (rule 13's
+bright line). H2's kill criterion (indistinguishable on every measurable
+conditional) is NOT triggered; the build proceeds on the partial driver, its
+partial reach disclosed in the artifact provenance.
+
+### 9.2 Static supply-stack screen (design-time, pre-LP)
+
+A fixed-dispatch re-clearing of the keeper's gas-trio demand against the
+re-priced stack (keeper sidecar hourlies + the artifacts), run before the
+seam was written:
+
+* **Standalone the mechanism is predicted near-band-inert**: with the span
+  compression active, the residual hours' static median moves only $27→$34
+  (2024) / $48→$72 (2025); the marginal supply in the residual hours is NOT
+  merchant CT — it is ~2.3–2.4 GW of CC mid-rungs at $40–130 plus ST_GAS
+  headroom, i.e. exactly the §8.3 ST_GAS displacement wedge (the model's CC
+  slack exists because ST_GAS over-dispatches into the hours where reality
+  loaded CC to its ON ceiling). The mechanism's band potency is therefore
+  CONDITIONAL on the ST_GAS lane closing its shoulder-hour level —
+  pre-registered here before the probes ran.
+* Spurious risk small (6–12 static hours); 2024 static scarcity-tail median
+  moves +$60 toward actual (watch the pre-committed tail guard, both
+  directions).
+
+### 9.3 Rule-19 / D-2 attribution enumeration (re-derived for this seam)
+
+Baseline: the ERCOT-88 §9.1 map (`ercot-residual-midband-formation-lane`).
+Deltas for the span:
+
+1. `ercot_offer_surface_conditional` (ON) — PEAK rungs, untouched; the span
+   touches econ* rows inside the wall builder only. The pool's
+   REPLACE-BY-MASK may own peak row-hours above the span, the unchanged
+   ERCOT-88 semantic (one owner per row-hour, wider mask).
+2. `ercot_offer_surface_cleared_share` + `_state` + `_rt` (ON) — the span
+   MODIFIES this owner's rel geometry; DAM and RT legs compress identically;
+   the state weight and replace/tier composition are untouched.
+3. `ercot_faststart_pool_offer` (REQUIRED armed) — boundary parameter
+   generalized; ladder, physics gate, composition unchanged.
+4. `ercot_gas_commitment_bridge` (ON) — merchant-CC min-gen FLOORS (quantity
+   side); the span is bid-side only on econ rows — disjoint axes, no
+   overlap. No CT floor exists in the recipe → the rule-17 hazard is
+   structurally impossible.
+5. `ercot_thermal_dam_availability` (ON) — the quantity seam is untouched:
+   the span re-prices within the availability, never removes MW; no
+   phantom reserve shortage is possible (the ercot41/43 §7.4 conclusion
+   stays closed).
+6. Reserve side (`ercot_reserve_supply_cap`, `ercot_nonreleasable_as_
+   withholding`, ON) — quantity-side, status-agnostic; the span never
+   touches reserve rows or headroom tiers.
+7. **ST_GAS — RECONCILED, NOT FIXED** (§8.5(ii)): the drag lane owns the
+   ST_GAS level; the span deliberately leaves ST_GAS rows untouched
+   (`ercot_offer_surface_cleared_share_steam` stays off in the recipe). The
+   §9.2 finding quantifies the coupling: the band residual cannot close from
+   this lane alone while the displacement wedge stands.
+
+### 9.4 Probe results (rule-16 single-year throwaways, pre-committed guards)
+
+*(filled by the probe session — C3a level guard, zero-spurious, tail/C3b/C3c
+no-degradation guard, band occupancy; base = the committed ercot86 keeper
+2024/2025 hourlies.)*
