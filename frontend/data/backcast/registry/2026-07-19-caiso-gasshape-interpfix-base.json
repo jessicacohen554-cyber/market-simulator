@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-19-caiso-gasshape-interpfix-base",
+  "label": "caiso gasshape interpfix base",
+  "date": "2026-07-19",
+  "shorthand": "caiso-gasshape-interpfix-base",
+  "definition": "gas_daily_shape 3.7 interp-fix A/B BASE arm (pre-fix code at 66879ac: even-spread np.interp HH daily shape); recipe = caiso-97 keeper via replay_keeper.build_kwargs; full span 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-19-caiso-gasshape-interpfix-base.js",
+  "bundle": "results/calibration/caiso_gasshape_interpfix_base"
+}

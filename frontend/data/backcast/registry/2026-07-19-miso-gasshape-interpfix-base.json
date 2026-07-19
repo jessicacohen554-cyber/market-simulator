@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-19-miso-gasshape-interpfix-base",
+  "label": "miso gasshape interpfix base",
+  "date": "2026-07-19",
+  "shorthand": "miso-gasshape-interpfix-base",
+  "definition": "gas_daily_shape 3.7 interp-fix A/B BASE arm (pre-fix code at 66879ac: even-spread np.interp HH daily shape; miso_winter_citygate_daily supersedes Chicago-zone winter cells in both arms); recipe = miso-75 keeper via replay_keeper.build_kwargs; full span 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-19-miso-gasshape-interpfix-base.js",
+  "bundle": "results/calibration/miso_gasshape_interpfix_base"
+}
