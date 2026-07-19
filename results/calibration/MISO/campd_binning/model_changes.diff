@@ -1,9 +1,0 @@
-# Model change vs origin/main at solve time: none in the working tree.
-#
-# This run was solved with the MISO per-plant CAMPD tranche binning change
-# (add "MISO" to CAMPD_BINNING_ISOS + the derived thermal_tranches_MISO.csv /
-# bin_assignments_MISO.csv artifacts) ALREADY MERGED to main via PR #843, and
-# the all-ISO biomass measured must-run change merged via PR #844. The branch
-# was rebased onto fresh origin/main before solving, so the working-tree diff
-# vs main is empty — the run reflects committed main code plus the committed
-# per-plant tranche artifact.

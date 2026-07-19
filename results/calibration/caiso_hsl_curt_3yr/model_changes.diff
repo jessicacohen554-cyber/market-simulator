@@ -1,9 +1,0 @@
-diff --git a/frontend/data/backcast/bench/ERCOT/2023.json.gz b/frontend/data/backcast/bench/ERCOT/2023.json.gz
-index fd1e13c..f35fdf2 100644
-Binary files a/frontend/data/backcast/bench/ERCOT/2023.json.gz and b/frontend/data/backcast/bench/ERCOT/2023.json.gz differ
-diff --git a/frontend/data/backcast/bench/ERCOT/2024.json.gz b/frontend/data/backcast/bench/ERCOT/2024.json.gz
-index e02a068..093cad6 100644
-Binary files a/frontend/data/backcast/bench/ERCOT/2024.json.gz and b/frontend/data/backcast/bench/ERCOT/2024.json.gz differ
-diff --git a/frontend/data/backcast/bench/ERCOT/2025.json.gz b/frontend/data/backcast/bench/ERCOT/2025.json.gz
-index 4cbf25b..1d2bdfa 100644
-Binary files a/frontend/data/backcast/bench/ERCOT/2025.json.gz and b/frontend/data/backcast/bench/ERCOT/2025.json.gz differ

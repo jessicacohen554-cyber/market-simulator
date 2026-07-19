@@ -1,0 +1,897 @@
+path	action	reason
+results/calibration/159	ARCHIVE	bare-numeric legacy 159..166
+results/calibration/160	ARCHIVE	bare-numeric legacy 159..166
+results/calibration/161	ARCHIVE	bare-numeric legacy 159..166
+results/calibration/162e	ARCHIVE	bare-numeric legacy 159..166
+results/calibration/162f	ARCHIVE	bare-numeric legacy 159..166
+results/calibration/162fwdas	ARCHIVE	bare-numeric legacy 159..166
+results/calibration/163	ARCHIVE	bare-numeric legacy 159..166
+results/calibration/164	ARCHIVE	bare-numeric legacy 159..166
+results/calibration/165	ARCHIVE	bare-numeric legacy 159..166
+results/calibration/166	ARCHIVE	bare-numeric legacy 159..166
+results/calibration/_cg_nyiso_transco_daily	KEEP	infra/_prefixed
+results/calibration/_configs	KEEP	infra/_prefixed
+results/calibration/caiso-41-endogenous-spill	DELETE	unregistered, no keep-signal
+results/calibration/caiso-capdel-arma	DELETE	unregistered, no keep-signal
+results/calibration/caiso-capdel-probe	DELETE	unregistered, no keep-signal
+results/calibration/caiso10_baseline	DELETE	unregistered, no keep-signal
+results/calibration/caiso11_ixshape	DELETE	unregistered, no keep-signal
+results/calibration/caiso12_ixexportonly	DELETE	unregistered, no keep-signal
+results/calibration/caiso13_voll_ccsteam	KEEP	doc-cited
+results/calibration/caiso29_ctfloor_localra	DELETE	unregistered, no keep-signal
+results/calibration/caiso30_ctbase	DELETE	unregistered, no keep-signal
+results/calibration/caiso31_eor	DELETE	unregistered, no keep-signal
+results/calibration/caiso32_eor_exportcap	KEEP	doc-cited
+results/calibration/caiso35_reference_seam	KEEP	doc-cited
+results/calibration/caiso36_midday_convexity	KEEP	doc-cited
+results/calibration/caiso37_offer_curve	KEEP	doc-cited
+results/calibration/caiso38_delivered_gas	KEEP	doc-cited
+results/calibration/caiso39_import_atc	KEEP	doc-cited
+results/calibration/caiso40_ra_minload	KEEP	doc-cited
+results/calibration/caiso42_atc_hydro	KEEP	doc-cited
+results/calibration/caiso43_gasfloor_probe	KEEP	doc-cited
+results/calibration/caiso48_solar_decommit_bridge	DELETE	unregistered, no keep-signal
+results/calibration/caiso49_perhub_seam	KEEP	doc-cited
+results/calibration/caiso50_perhub_bridge	KEEP	doc-cited
+results/calibration/caiso51_firm_base	KEEP	doc-cited
+results/calibration/caiso51_firm_base_co2re	DELETE	unregistered, no keep-signal
+results/calibration/caiso51_r1_baseline	DELETE	unregistered, no keep-signal
+results/calibration/caiso51_r1_signflip	DELETE	unregistered, no keep-signal
+results/calibration/caiso51_statmode_v2	KEEP	statmode-pin+doc-cited
+results/calibration/caiso52_ct_scrub	KEEP	doc-cited
+results/calibration/caiso52_probeW_windowed_2024	DELETE	unregistered, no keep-signal
+results/calibration/caiso52_probeX_nolimbs_2024	DELETE	unregistered, no keep-signal
+results/calibration/caiso53_lever_ab	KEEP	doc-cited
+results/calibration/caiso54_daily_gas	KEEP	doc-cited
+results/calibration/caiso55_ctscrub_head	KEEP	doc-cited
+results/calibration/caiso56_zerodrag_ablation	KEEP	doc-cited
+results/calibration/caiso57_ramplcr_dragoff	KEEP	doc-cited
+results/calibration/caiso58_v2_regate	KEEP	doc-cited
+results/calibration/caiso58_v2_regate_ablation	DELETE	unregistered, no keep-signal
+results/calibration/caiso59_lcr_proxy	DELETE	unregistered, no keep-signal
+results/calibration/caiso59_reserve_coopt	KEEP	doc-cited
+results/calibration/caiso60_p1native_ra	DELETE	unregistered, no keep-signal
+results/calibration/caiso60_p1native_ra-ablation	DELETE	unregistered, no keep-signal
+results/calibration/caiso61_lolp_tail	KEEP	doc-cited
+results/calibration/caiso62_coopt_full	DELETE	unregistered, no keep-signal
+results/calibration/caiso63_g61b_startup_aware	DELETE	unregistered, no keep-signal
+results/calibration/caiso64_g61c_curtail_release	DELETE	unregistered, no keep-signal
+results/calibration/caiso65_seam_envelope_clock	KEEP	doc-cited
+results/calibration/caiso65_seam_envelope_clock-ablation	DELETE	unregistered, no keep-signal
+results/calibration/caiso65_statmode	KEEP	statmode-pin+doc-cited
+results/calibration/caiso66_g61b_on_seamclock	KEEP	doc-cited
+results/calibration/caiso66_g61b_on_seamclock-ablation	DELETE	unregistered, no keep-signal
+results/calibration/caiso67_zonalgas_asympaths	DELETE	unregistered, no keep-signal
+results/calibration/caiso68_tempderate	DELETE	unregistered, no keep-signal
+results/calibration/caiso68_tempderate-ablation	DELETE	unregistered, no keep-signal
+results/calibration/caiso69_sp15split	DELETE	unregistered, no keep-signal
+results/calibration/caiso69_sp15split-ablation	DELETE	unregistered, no keep-signal
+results/calibration/caiso70_g61b_decrowd	DELETE	unregistered, no keep-signal
+results/calibration/caiso70_g61b_decrowd-ablation	DELETE	unregistered, no keep-signal
+results/calibration/caiso72_hydro_envelope	DELETE	unregistered, no keep-signal
+results/calibration/caiso72_hydro_envelope-ablation	DELETE	unregistered, no keep-signal
+results/calibration/caiso72_step0_diag2024	KEEP	doc-cited
+results/calibration/caiso72_step0_env2024	DELETE	unregistered, no keep-signal
+results/calibration/caiso72_step0_env2b2024	DELETE	unregistered, no keep-signal
+results/calibration/caiso73_firm_shape	DELETE	unregistered, no keep-signal
+results/calibration/caiso73_firm_shape-ablation	DELETE	unregistered, no keep-signal
+results/calibration/caiso73_step0_diag2024	KEEP	doc-cited
+results/calibration/caiso74_storage_as	DELETE	unregistered, no keep-signal
+results/calibration/caiso74_storage_as-ablation	DELETE	unregistered, no keep-signal
+results/calibration/caiso75_demand_clock	DELETE	unregistered, no keep-signal
+results/calibration/caiso75_demand_clock-ablation	DELETE	unregistered, no keep-signal
+results/calibration/caiso76_hydro_budget	DELETE	unregistered, no keep-signal
+results/calibration/caiso76_hydro_budget-ablation	DELETE	unregistered, no keep-signal
+results/calibration/caiso77_firm_selfschedule	DELETE	unregistered, no keep-signal
+results/calibration/caiso77_firm_selfschedule-ablation	DELETE	unregistered, no keep-signal
+results/calibration/caiso78_cc_hr_basis	KEEP	doc-cited
+results/calibration/caiso78_cc_hr_basis-ablation	DELETE	unregistered, no keep-signal
+results/calibration/caiso80_supply_consistent_demand	KEEP	registered+doc-cited
+results/calibration/caiso80_supply_consistent_demand-ablation	KEEP	registered
+results/calibration/caiso84_gas_spot_level	KEEP	registered
+results/calibration/caiso85_scarcity_import_headroom	KEEP	registered
+results/calibration/caiso87_dsw_surplus_clean	KEEP	registered
+results/calibration/caiso89_chp_steam_floor	KEEP	registered+doc-cited
+results/calibration/caiso90_citygate_flow_date	KEEP	registered+doc-cited
+results/calibration/caiso91_reserve_online_scoped	KEEP	registered+doc-cited
+results/calibration/caiso92_measured_offer_surface	KEEP	registered+doc-cited
+results/calibration/caiso92_repro_A	KEEP	doc-cited
+results/calibration/caiso93_overnight_clean	KEEP	registered+doc-cited
+results/calibration/caiso94_daytime_clean	KEEP	registered+doc-cited
+results/calibration/caiso96_startup_trajectory	KEEP	registered
+results/calibration/caiso97_hodtrim_B	KEEP	registered
+results/calibration/caiso99_shape_B	KEEP	registered+doc-cited
+results/calibration/caiso_19_localband	DELETE	unregistered, no keep-signal
+results/calibration/caiso_44_baseline	DELETE	unregistered, no keep-signal
+results/calibration/caiso_44_startup_bridge	DELETE	unregistered, no keep-signal
+results/calibration/caiso_45_export_sink	DELETE	unregistered, no keep-signal
+results/calibration/caiso_bidir_basisOnly_3yr	DELETE	unregistered, no keep-signal
+results/calibration/caiso_bidir_floor_3yr	DELETE	unregistered, no keep-signal
+results/calibration/caiso_bidir_intertie	KEEP	doc-cited
+results/calibration/caiso_bidir_wheelOnly_3yr	DELETE	unregistered, no keep-signal
+results/calibration/caiso_cc_econ_minus10_3yr	KEEP	doc-cited
+results/calibration/caiso_corridor_flow_3yr	KEEP	doc-cited
+results/calibration/caiso_final3010_2024	DELETE	unregistered, no keep-signal
+results/calibration/caiso_gascommodity_repro_3yr	KEEP	doc-cited
+results/calibration/caiso_hsl_curt_3yr	DELETE	unregistered, no keep-signal
+results/calibration/caiso_import_cap_floor_on_3yr	DELETE	unregistered, no keep-signal
+results/calibration/caiso_import_simul_cap_3yr	DELETE	unregistered, no keep-signal
+results/calibration/caiso_intertie_forward_3yr	KEEP	doc-cited
+results/calibration/caiso_ixshape_full_2024	DELETE	unregistered, no keep-signal
+results/calibration/caiso_keeper_newoutage_2024	KEEP	doc-cited
+results/calibration/caiso_keeper_newoutage_3yr	DELETE	unregistered, no keep-signal
+results/calibration/caiso_keeper_repro_2024	DELETE	unregistered, no keep-signal
+results/calibration/caiso_keeper_v2_3yr	DELETE	unregistered, no keep-signal
+results/calibration/caiso_perhub_intertie_3yr	KEEP	doc-cited
+results/calibration/caiso_perhub_legs_3yr	KEEP	doc-cited
+results/calibration/caiso_perhub_legs_ss_3yr	DELETE	unregistered, no keep-signal
+results/calibration/caiso_perhub_shaping_diag_3yr	KEEP	doc-cited
+results/calibration/caiso_pnwhydro_collapse_2024	DELETE	unregistered, no keep-signal
+results/calibration/caiso_probe_cc_regular_econ_high_minus	DELETE	unregistered, no keep-signal
+results/calibration/caiso_probe_cc_regular_econ_low_minus	DELETE	unregistered, no keep-signal
+results/calibration/caiso_probe_cc_regular_peak_minus	DELETE	unregistered, no keep-signal
+results/calibration/caiso_probe_ct_chp_committed_minus	DELETE	unregistered, no keep-signal
+results/calibration/caiso_probe_ct_peaker_committed_minus	DELETE	unregistered, no keep-signal
+results/calibration/caiso_probe_ct_peaker_econ_low_minus	DELETE	unregistered, no keep-signal
+results/calibration/caiso_probe_st_gas_committed_plus	DELETE	unregistered, no keep-signal
+results/calibration/caiso_relfloor_rebuild	DELETE	unregistered, no keep-signal
+results/calibration/caiso_statmode_2026-07	KEEP	statmode-pin
+results/calibration/caiso_statmode_2026-07_r2	KEEP	statmode-pin
+results/calibration/caiso_step5_chp_steam_credit	DELETE	unregistered, no keep-signal
+results/calibration/caiso_step6_ixshape	KEEP	doc-cited
+results/calibration/caiso_stgas_hrfix_3yr	DELETE	unregistered, no keep-signal
+results/calibration/coalprb_foll078_3yr	KEEP	p2_state+doc-cited
+results/calibration/ct_cheapcommit_2024	KEEP	doc-cited
+results/calibration/ct_hrpure_2024	KEEP	doc-cited
+results/calibration/ctharcut_3yr	KEEP	p2_state
+results/calibration/ctharcut_pp_3yr	KEEP	p2_state+doc-cited
+results/calibration/d2_noCT	KEEP	doc-cited
+results/calibration/d2_noOutage	KEEP	doc-cited
+results/calibration/d4a_meritramp	KEEP	doc-cited
+results/calibration/d4b_ccfix	KEEP	doc-cited
+results/calibration/d8-coefficient-stability	KEEP	doc-cited
+results/calibration/ercot32_head_configfaithful	DELETE	unregistered, no keep-signal
+results/calibration/ercot32_head_regate	KEEP	doc-cited
+results/calibration/ercot32_statmode_2026-07	KEEP	statmode-pin+doc-cited
+results/calibration/ercot32_v2rescore	KEEP	doc-cited
+results/calibration/ercot33_exoverlay_baseline_2026-07	DELETE	unregistered, no keep-signal
+results/calibration/ercot34_statmode_v2	KEEP	statmode-pin
+results/calibration/ercot37_g22surface_off	DELETE	unregistered, no keep-signal
+results/calibration/ercot37_g22surface_on	DELETE	unregistered, no keep-signal
+results/calibration/ercot38_measured_hsl_2425	KEEP	doc-cited
+results/calibration/ercot39_gtc_measured_probe	KEEP	doc-cited
+results/calibration/ercot42_wtx_curtail_ablation	KEEP	doc-cited
+results/calibration/ercot42_wtx_curtail_probe	KEEP	doc-cited
+results/calibration/ercot44_hsl_clock_fix	KEEP	doc-cited
+results/calibration/ercot44b_control	DELETE	unregistered, no keep-signal
+results/calibration/ercot45_clock_unified	DELETE	unregistered, no keep-signal
+results/calibration/ercot46_clock_steamgas	KEEP	doc-cited
+results/calibration/ercot46_clock_steamgas_ablation	DELETE	unregistered, no keep-signal
+results/calibration/ercot46_statmode	KEEP	statmode-pin+doc-cited
+results/calibration/ercot48_tempderate_full	DELETE	unregistered, no keep-signal
+results/calibration/ercot48_tempderate_full-ablation	DELETE	unregistered, no keep-signal
+results/calibration/ercot49_offer_retune_tempderate	DELETE	unregistered, no keep-signal
+results/calibration/ercot49_offer_retune_tempderate-ablation	DELETE	unregistered, no keep-signal
+results/calibration/ercot49_sweep_c1_2023	DELETE	unregistered, no keep-signal
+results/calibration/ercot49_sweep_ecrsoff2023	KEEP	doc-cited
+results/calibration/ercot49_sweep_keeper2023	DELETE	unregistered, no keep-signal
+results/calibration/ercot50_offer_surface_cond	KEEP	doc-cited
+results/calibration/ercot50_offer_surface_control	KEEP	doc-cited
+results/calibration/ercot51_coal_netsummer_ablation	DELETE	unregistered, no keep-signal
+results/calibration/ercot51_coal_netsummer_derate	DELETE	unregistered, no keep-signal
+results/calibration/ercot52_capdual_2023	KEEP	doc-cited
+results/calibration/ercot52_capdual_surface_2023	KEEP	doc-cited
+results/calibration/ercot52_diag_base_2023	KEEP	doc-cited
+results/calibration/ercot52_ordc_capdual	KEEP	doc-cited
+results/calibration/ercot52_ordc_capdual_ablation	KEEP	doc-cited
+results/calibration/ercot53_diag_2023	DELETE	unregistered, no keep-signal
+results/calibration/ercot53_diag_2024	DELETE	unregistered, no keep-signal
+results/calibration/ercot53_diag_2025	DELETE	unregistered, no keep-signal
+results/calibration/ercot53_hsl_930fill	DELETE	unregistered, no keep-signal
+results/calibration/ercot53_hsl_930fill_ablation	DELETE	unregistered, no keep-signal
+results/calibration/ercot53_hslfix_2024	KEEP	doc-cited
+results/calibration/ercot53_sync_2023	KEEP	doc-cited
+results/calibration/ercot54_diag_2024	KEEP	doc-cited
+results/calibration/ercot55_930gap_ablation	DELETE	unregistered, no keep-signal
+results/calibration/ercot55_930gap_c2fix	DELETE	unregistered, no keep-signal
+results/calibration/ercot55_surface_ab	DELETE	unregistered, no keep-signal
+results/calibration/ercot55_surface_ablation	DELETE	unregistered, no keep-signal
+results/calibration/ercot56_nucwin	DELETE	unregistered, no keep-signal
+results/calibration/ercot56_nucwin_ablation	DELETE	unregistered, no keep-signal
+results/calibration/ercot57_thermavail	DELETE	unregistered, no keep-signal
+results/calibration/ercot57_thermavail_ablation	DELETE	unregistered, no keep-signal
+results/calibration/ercot58_joint	KEEP	doc-cited
+results/calibration/ercot58_joint_ablation	DELETE	unregistered, no keep-signal
+results/calibration/ercot63_gas_bridge	DELETE	unregistered, no keep-signal
+results/calibration/ercot63_gas_bridge_ablation	DELETE	unregistered, no keep-signal
+results/calibration/ercot66_storage_rebasis	DELETE	unregistered, no keep-signal
+results/calibration/ercot66_storage_rebasis_measuredas	DELETE	unregistered, no keep-signal
+results/calibration/ercot68_v3fix_fullspan	DELETE	unregistered, no keep-signal
+results/calibration/ercot71_availability_fullspan	KEEP	doc-cited
+results/calibration/ercot72_cleared_share_fullspan	DELETE	unregistered, no keep-signal
+results/calibration/ercot73_state_wall_fullspan	KEEP	doc-cited
+results/calibration/ercot76_ne_import_fullspan	KEEP	doc-cited
+results/calibration/ercot77_steam_cliff_fullspan	DELETE	unregistered, no keep-signal
+results/calibration/ercot79_corrected_outages_fullspan	KEEP	registered+doc-cited
+results/calibration/ercot80_unit_only_outages_fullspan	KEEP	registered+doc-cited
+results/calibration/ercot81_nonreleasable_withholding_fullspan	KEEP	registered+doc-cited
+results/calibration/ercot82_measured_rtolcap_fullspan	KEEP	registered+doc-cited
+results/calibration/ercot83_commitment_posture	KEEP	registered
+results/calibration/ercot85_measured_availability	KEEP	registered
+results/calibration/ercot86_rtwall_2024_A	DELETE	unregistered, no keep-signal
+results/calibration/ercot86_rtwall_2024_B	DELETE	unregistered, no keep-signal
+results/calibration/ercot_baseline_3yr	KEEP	doc-cited
+results/calibration/ercot_baseline_coopt_3yr	KEEP	doc-cited
+results/calibration/ercot_cc_coal_rebalance	DELETE	unregistered, no keep-signal
+results/calibration/ercot_cc_coal_rebalance_v2	DELETE	unregistered, no keep-signal
+results/calibration/ercot_chp_floor_v1	DELETE	unregistered, no keep-signal
+results/calibration/ercot_ct_drag_v1	DELETE	unregistered, no keep-signal
+results/calibration/ercot_dam_2023as_final	DELETE	unregistered, no keep-signal
+results/calibration/ercot_dam_2023as_keeper	DELETE	unregistered, no keep-signal
+results/calibration/ercot_dam_2023as_loadcredit	DELETE	unregistered, no keep-signal
+results/calibration/ercot_dam_2023as_localband	KEEP	doc-cited
+results/calibration/ercot_dam_2023as_netload	KEEP	doc-cited
+results/calibration/ercot_dam_2023as_outagefix	DELETE	unregistered, no keep-signal
+results/calibration/ercot_dam_2023as_stgasfix	DELETE	unregistered, no keep-signal
+results/calibration/ercot_dam_2023as_stor2023	DELETE	unregistered, no keep-signal
+results/calibration/ercot_dam_ctcool1_3yr	KEEP	doc-cited
+results/calibration/ercot_dam_lrcredit_3yr	KEEP	doc-cited
+results/calibration/ercot_dam_offercool_3yr	DELETE	unregistered, no keep-signal
+results/calibration/ercot_dam_offers_3yr	KEEP	doc-cited
+results/calibration/ercot_dam_offers_cconly_3yr	KEEP	doc-cited
+results/calibration/ercot_dam_storageas_3yr	KEEP	doc-cited
+results/calibration/ercot_dam_storageas_ccsteam_3yr	DELETE	unregistered, no keep-signal
+results/calibration/ercot_dam_storageas_ccsteam_regen	KEEP	doc-cited
+results/calibration/ercot_dam_storageas_measured2023credit_3yr	DELETE	unregistered, no keep-signal
+results/calibration/ercot_g22_envelope_off	DELETE	unregistered, no keep-signal
+results/calibration/ercot_g22_envelope_on	DELETE	unregistered, no keep-signal
+results/calibration/ercot_gtc_limits_v1	DELETE	unregistered, no keep-signal
+results/calibration/ercot_offer_wall_v1	KEEP	doc-cited
+results/calibration/ercot_ordc_published	DELETE	unregistered, no keep-signal
+results/calibration/ercot_ordc_structure_v1	KEEP	doc-cited
+results/calibration/ercot_ordc_total_full_v1	DELETE	unregistered, no keep-signal
+results/calibration/ercot_ordc_total_gasshape_v1	DELETE	unregistered, no keep-signal
+results/calibration/ercot_ordc_total_measstor_v1	DELETE	unregistered, no keep-signal
+results/calibration/ercot_ordc_total_rtolcap_v1	KEEP	doc-cited
+results/calibration/ercot_ordc_total_v1	DELETE	unregistered, no keep-signal
+results/calibration/ercot_relfloor_rebuild_v2	DELETE	unregistered, no keep-signal
+results/calibration/ercot_rtolcap_forward_v1	DELETE	unregistered, no keep-signal
+results/calibration/ercot_run154_netload_gas	KEEP	doc-cited
+results/calibration/ercot_run155a_storageas2024	DELETE	unregistered, no keep-signal
+results/calibration/ercot_run155b_adder0	DELETE	unregistered, no keep-signal
+results/calibration/ercot_run155c_storageas2024_adder0	DELETE	unregistered, no keep-signal
+results/calibration/ercot_run156_ecrs	DELETE	unregistered, no keep-signal
+results/calibration/ercot_run157_damas2024	DELETE	unregistered, no keep-signal
+results/calibration/ercot_run158_netload_gas_endog_collapse	KEEP	doc-cited
+results/calibration/ercot_run160_hsl_curt_3yr	DELETE	unregistered, no keep-signal
+results/calibration/ercot_stage4_overlayoff_v1	DELETE	unregistered, no keep-signal
+results/calibration/ercot_stage4_overlayoff_v2	DELETE	unregistered, no keep-signal
+results/calibration/ercot_stage4_overlayoff_v2-ablation	DELETE	unregistered, no keep-signal
+results/calibration/ercot_statmode_2026-07	KEEP	statmode-pin
+results/calibration/ercot_stgas_drag_v1	DELETE	unregistered, no keep-signal
+results/calibration/ercot_storage_deploy	DELETE	unregistered, no keep-signal
+results/calibration/ercot_storage_deploy_ablation	DELETE	unregistered, no keep-signal
+results/calibration/ercot_tempderate23_off	DELETE	unregistered, no keep-signal
+results/calibration/ercot_tempderate23_on	KEEP	doc-cited
+results/calibration/keeper_anchor	KEEP	doc-cited
+results/calibration/miso1_baseline	DELETE	unregistered, no keep-signal
+results/calibration/miso2_importnode	DELETE	unregistered, no keep-signal
+results/calibration/miso3_reservecoopt	KEEP	doc-cited
+results/calibration/miso49_tempderate	DELETE	unregistered, no keep-signal
+results/calibration/miso49_tempderate-ablation	DELETE	unregistered, no keep-signal
+results/calibration/miso4_coaltakeorpay	DELETE	unregistered, no keep-signal
+results/calibration/miso50_coalsigmoid	KEEP	doc-cited
+results/calibration/miso50_coalsigmoid-ablation	KEEP	doc-cited
+results/calibration/miso51_gasdaily_hydro	DELETE	unregistered, no keep-signal
+results/calibration/miso51_gasdaily_hydro-ablation	DELETE	unregistered, no keep-signal
+results/calibration/miso52_sigmoid_monthly_key	DELETE	unregistered, no keep-signal
+results/calibration/miso53_som_coal_offers	DELETE	unregistered, no keep-signal
+results/calibration/miso53_som_coal_offers-ablation	DELETE	unregistered, no keep-signal
+results/calibration/miso54_som_restored	KEEP	doc-cited
+results/calibration/miso54_som_restored-ablation	DELETE	unregistered, no keep-signal
+results/calibration/miso55_ct_faststart	KEEP	doc-cited
+results/calibration/miso55_ct_faststart-ablation	DELETE	unregistered, no keep-signal
+results/calibration/miso56_measured_scarcity	DELETE	unregistered, no keep-signal
+results/calibration/miso56_measured_scarcity-ablation	DELETE	unregistered, no keep-signal
+results/calibration/miso57_rdt_congestion	KEEP	doc-cited
+results/calibration/miso58_rdt_congestion	DELETE	unregistered, no keep-signal
+results/calibration/miso58_rdt_congestion-ablation	DELETE	unregistered, no keep-signal
+results/calibration/miso59_coal_warm	DELETE	unregistered, no keep-signal
+results/calibration/miso59_coal_warm-ablation	DELETE	unregistered, no keep-signal
+results/calibration/miso5_firmhydro	DELETE	unregistered, no keep-signal
+results/calibration/miso60_stgas_vlr	DELETE	unregistered, no keep-signal
+results/calibration/miso60_stgas_vlr-ablation	DELETE	unregistered, no keep-signal
+results/calibration/miso61_rpe_pricing	DELETE	unregistered, no keep-signal
+results/calibration/miso61_rpe_pricing-ablation	DELETE	unregistered, no keep-signal
+results/calibration/miso62_bitpricing	DELETE	unregistered, no keep-signal
+results/calibration/miso62_bitpricing-ablation	DELETE	unregistered, no keep-signal
+results/calibration/miso63_shortout_rpe	KEEP	doc-cited
+results/calibration/miso63_shortout_rpe-ablation	DELETE	unregistered, no keep-signal
+results/calibration/miso64_classdonor	KEEP	doc-cited
+results/calibration/miso64_classdonor-ablation	DELETE	unregistered, no keep-signal
+results/calibration/miso65_outage_regen	KEEP	doc-cited
+results/calibration/miso65_outage_regen-ablation	DELETE	unregistered, no keep-signal
+results/calibration/miso66_coalconduct	KEEP	doc-cited
+results/calibration/miso66_coalconduct-ablation	DELETE	unregistered, no keep-signal
+results/calibration/miso67_stgas_vlr_level	KEEP	doc-cited
+results/calibration/miso68_cottonwood_mothballs	DELETE	unregistered, no keep-signal
+results/calibration/miso68_cottonwood_mothballs-base	DELETE	unregistered, no keep-signal
+results/calibration/miso69_maxgen_derates	DELETE	unregistered, no keep-signal
+results/calibration/miso69_maxgen_derates-base	DELETE	unregistered, no keep-signal
+results/calibration/miso6_coalclass	DELETE	unregistered, no keep-signal
+results/calibration/miso70_tier_pricing	KEEP	registered+doc-cited
+results/calibration/miso70_tier_pricing-base	KEEP	registered
+results/calibration/miso71_midwest	KEEP	registered
+results/calibration/miso71_midwest-base	KEEP	registered
+results/calibration/miso72_winter_citygate	KEEP	registered+doc-cited
+results/calibration/miso72_winter_citygate-base	KEEP	registered
+results/calibration/miso73_seam_meritcap	KEEP	registered
+results/calibration/miso73_seam_meritcap-base	KEEP	registered
+results/calibration/miso74_manitoba_base	KEEP	registered
+results/calibration/miso74_manitoba_seam	KEEP	registered+doc-cited
+results/calibration/miso75_manitoba_meritcap	KEEP	registered+doc-cited
+results/calibration/miso75_meritcap_base	KEEP	registered
+results/calibration/miso76_loss_base	KEEP	registered
+results/calibration/miso76_loss_surface	KEEP	registered
+results/calibration/miso_deleak_bands	KEEP	doc-cited
+results/calibration/miso_reserve_coopt	DELETE	unregistered, no keep-signal
+results/calibration/miso_statmode_2026-07	KEEP	statmode-pin
+results/calibration/neiso-daily-basis-a-low	KEEP	doc-cited
+results/calibration/neiso-daily-basis-a-off	KEEP	doc-cited
+results/calibration/neiso44_base	KEEP	doc-cited
+results/calibration/neiso45_flat	DELETE	unregistered, no keep-signal
+results/calibration/neiso46_joint	DELETE	unregistered, no keep-signal
+results/calibration/neiso47_faststart	KEEP	doc-cited
+results/calibration/neiso47_faststart_co2re	DELETE	unregistered, no keep-signal
+results/calibration/neiso48_head_regate	KEEP	doc-cited
+results/calibration/neiso49_resolve_confirm	KEEP	doc-cited
+results/calibration/neiso49_resolve_confirm-ablation	DELETE	unregistered, no keep-signal
+results/calibration/neiso51_priced_ix_measured	DELETE	unregistered, no keep-signal
+results/calibration/neiso52_head_baseline	DELETE	unregistered, no keep-signal
+results/calibration/neiso53_winter_coldsnap_ab	KEEP	doc-cited
+results/calibration/neiso53_winter_coldsnap_ab_off	KEEP	doc-cited
+results/calibration/neiso54_steamgas_ct_drag	DELETE	unregistered, no keep-signal
+results/calibration/neiso54_steamgas_ct_drag-ablation	DELETE	unregistered, no keep-signal
+results/calibration/neiso55_tempderate	DELETE	unregistered, no keep-signal
+results/calibration/neiso55_tempderate-ablation	DELETE	unregistered, no keep-signal
+results/calibration/neiso56_reserve_coopt	KEEP	registered+doc-cited
+results/calibration/neiso56_reserve_coopt-ablation	KEEP	registered
+results/calibration/neiso57_dynamic_rr	KEEP	doc-cited
+results/calibration/neiso57_dynamic_rr-ablation	DELETE	unregistered, no keep-signal
+results/calibration/neiso58_offer_surface	KEEP	doc-cited
+results/calibration/neiso58_offer_surface-ablation	DELETE	unregistered, no keep-signal
+results/calibration/neiso59_cc_hr_regate	KEEP	registered
+results/calibration/neiso59_cc_hr_regate-ablation	KEEP	registered
+results/calibration/neiso_23_outage_btm	KEEP	doc-cited
+results/calibration/neiso_24_localband	DELETE	unregistered, no keep-signal
+results/calibration/neiso_25_fullstop	DELETE	unregistered, no keep-signal
+results/calibration/neiso_26_ps_diag	DELETE	unregistered, no keep-signal
+results/calibration/neiso_28_hydro_codramp_3yr	DELETE	unregistered, no keep-signal
+results/calibration/neiso_29_biomass_mustrun_3yr	DELETE	unregistered, no keep-signal
+results/calibration/neiso_30_other_carry_3yr	KEEP	doc-cited
+results/calibration/neiso_31_cc_minload_floor_3yr	DELETE	unregistered, no keep-signal
+results/calibration/neiso_32_btm_solar_3yr	KEEP	doc-cited
+results/calibration/neiso_33_no_ctfloor_3yr	KEEP	doc-cited
+results/calibration/neiso_34_tempfloor_priced_3yr	DELETE	unregistered, no keep-signal
+results/calibration/neiso_35_tempfloor_3yr	DELETE	unregistered, no keep-signal
+results/calibration/neiso_37_tempfloor_dailybasis_hydrofix_3yr	DELETE	unregistered, no keep-signal
+results/calibration/neiso_39_offer_curve	DELETE	unregistered, no keep-signal
+results/calibration/neiso_40_floor_outage_exempt_3yr	DELETE	unregistered, no keep-signal
+results/calibration/neiso_40_oil_budget	DELETE	unregistered, no keep-signal
+results/calibration/neiso_agt_3yr	KEEP	doc-cited
+results/calibration/neiso_agt_daily_real_3yr	DELETE	unregistered, no keep-signal
+results/calibration/neiso_cc_coalbit_3yr	KEEP	doc-cited
+results/calibration/neiso_ccsteam_keeper_3yr	KEEP	doc-cited
+results/calibration/neiso_closeout	KEEP	doc-cited
+results/calibration/neiso_ct_deploy2x_3yr	DELETE	unregistered, no keep-signal
+results/calibration/neiso_ct_mustrun_3yr	DELETE	unregistered, no keep-signal
+results/calibration/neiso_ct_peak_cap	DELETE	unregistered, no keep-signal
+results/calibration/neiso_ctbase	KEEP	doc-cited
+results/calibration/neiso_ctdeploy_3yr	KEEP	doc-cited
+results/calibration/neiso_ctscrub	KEEP	doc-cited
+results/calibration/neiso_ctscrub-ablation	DELETE	unregistered, no keep-signal
+results/calibration/neiso_deleak_bands	DELETE	unregistered, no keep-signal
+results/calibration/neiso_hydro930_2025	KEEP	doc-cited
+results/calibration/neiso_monthly_keeper	KEEP	doc-cited
+results/calibration/neiso_mystic_cod_3yr	DELETE	unregistered, no keep-signal
+results/calibration/neiso_oil_agtdaily_3yr	DELETE	unregistered, no keep-signal
+results/calibration/neiso_probe_v2_base_2024	KEEP	doc-cited
+results/calibration/neiso_probe_v2_cc_committed_plus	DELETE	unregistered, no keep-signal
+results/calibration/neiso_probe_v2_cc_econ_high_minus	DELETE	unregistered, no keep-signal
+results/calibration/neiso_probe_v2_cc_econ_high_plus	DELETE	unregistered, no keep-signal
+results/calibration/neiso_probe_v2_cc_econ_low_plus	DELETE	unregistered, no keep-signal
+results/calibration/neiso_probe_v2_st_gas_committed_minus	DELETE	unregistered, no keep-signal
+results/calibration/neiso_relfloor_rebuild	DELETE	unregistered, no keep-signal
+results/calibration/neiso_statmode_2026-07	KEEP	statmode-pin
+results/calibration/neiso_statmode_2026-07_r2	KEEP	statmode-pin
+results/calibration/neiso_wfuelsec_ab_v2	KEEP	doc-cited
+results/calibration/neiso_wfuelsec_ab_v2off	KEEP	doc-cited
+results/calibration/nyiso-10-import-node-zones	DELETE	unregistered, no keep-signal
+results/calibration/nyiso-11-cc-steam-rebaseline	KEEP	doc-cited
+results/calibration/nyiso-12-interchange-shaping	DELETE	unregistered, no keep-signal
+results/calibration/nyiso-13-citygate-gas	KEEP	doc-cited
+results/calibration/nyiso-14-som-anchored-gas	KEEP	doc-cited
+results/calibration/nyiso-15-transco-z6-gas	DELETE	unregistered, no keep-signal
+results/calibration/nyiso-19-locational-reserve-coopt	DELETE	unregistered, no keep-signal
+results/calibration/nyiso-8-seasonal-ce-ttc	DELETE	unregistered, no keep-signal
+results/calibration/nyiso-9-priced-interchange	DELETE	unregistered, no keep-signal
+results/calibration/nyiso39_priced_interchange	KEEP	doc-cited
+results/calibration/nyiso40_truedate	DELETE	unregistered, no keep-signal
+results/calibration/nyiso41_head_offerAB	KEEP	doc-cited
+results/calibration/nyiso41_head_regate	KEEP	doc-cited
+results/calibration/nyiso41_hubprices	KEEP	doc-cited
+results/calibration/nyiso41_hubprices_co2re	DELETE	unregistered, no keep-signal
+results/calibration/nyiso42_iroquois_spread	DELETE	unregistered, no keep-signal
+results/calibration/nyiso43_ceiling_oilbasis	KEEP	doc-cited
+results/calibration/nyiso44_faststart	KEEP	doc-cited
+results/calibration/nyiso45_measuredruns	DELETE	unregistered, no keep-signal
+results/calibration/nyiso46_decpeaker	DELETE	unregistered, no keep-signal
+results/calibration/nyiso50_downstate_ctgas	DELETE	unregistered, no keep-signal
+results/calibration/nyiso51_floor_rederive	DELETE	unregistered, no keep-signal
+results/calibration/nyiso52_floor_rederive_ctgas	DELETE	unregistered, no keep-signal
+results/calibration/nyiso53_litsl_v2	KEEP	doc-cited
+results/calibration/nyiso53_litsl_v2-ablation	KEEP	doc-cited
+results/calibration/nyiso53_litsl_v2off	DELETE	unregistered, no keep-signal
+results/calibration/nyiso54_downstate_daily	KEEP	doc-cited
+results/calibration/nyiso54_downstate_daily-ablation	DELETE	unregistered, no keep-signal
+results/calibration/nyiso55_ldc_transport	DELETE	unregistered, no keep-signal
+results/calibration/nyiso55_ldc_transport-ablation	DELETE	unregistered, no keep-signal
+results/calibration/nyiso56_measuredshares	DELETE	unregistered, no keep-signal
+results/calibration/nyiso56_measuredshares-ablation	DELETE	unregistered, no keep-signal
+results/calibration/nyiso57_locational_rcpf	DELETE	unregistered, no keep-signal
+results/calibration/nyiso58_tempderate	KEEP	doc-cited
+results/calibration/nyiso58_tempderate-ablation	DELETE	unregistered, no keep-signal
+results/calibration/nyiso59_dynamic_rr	KEEP	doc-cited
+results/calibration/nyiso59_dynamic_rr-ablation	DELETE	unregistered, no keep-signal
+results/calibration/nyiso60_ldc_transport	KEEP	doc-cited
+results/calibration/nyiso60_ldc_transport-ablation	DELETE	unregistered, no keep-signal
+results/calibration/nyiso61_downstate_import	KEEP	registered+doc-cited
+results/calibration/nyiso61_downstate_import-ablation	KEEP	registered
+results/calibration/nyiso62_cc_hr_regate	KEEP	registered+doc-cited
+results/calibration/nyiso62_cc_hr_regate-ablation	KEEP	registered
+results/calibration/nyiso_17_localband	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_18_local_floors	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_20_daily_coopt	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_21_family_elig	KEEP	doc-cited
+results/calibration/nyiso_22_gas_offer	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_23_li_oil_fix	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_24_import_recon	KEEP	doc-cited
+results/calibration/nyiso_25_steam_merit	KEEP	doc-cited
+results/calibration/nyiso_26_cc-nameplate	KEEP	doc-cited
+results/calibration/nyiso_27_cc-offer	KEEP	doc-cited
+results/calibration/nyiso_28_native-hr	KEEP	doc-cited
+results/calibration/nyiso_29_synch-reserve	KEEP	doc-cited
+results/calibration/nyiso_30_fwd-band	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_31_synch-commit	KEEP	doc-cited
+results/calibration/nyiso_32_steam_markup	KEEP	doc-cited
+results/calibration/nyiso_33_ct_tempfloor	KEEP	doc-cited
+results/calibration/nyiso_34_st_tempfloor	KEEP	doc-cited
+results/calibration/nyiso_35_relfloor_rebuild	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_3yr_default	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_cal_2023	KEEP	doc-cited
+results/calibration/nyiso_cal_2024	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_cal_2025	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_deleak_bands	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_deleak_ccecon	KEEP	doc-cited
+results/calibration/nyiso_deleak_ccecon-ablation	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_probe_base_2023	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_probe_cc_chp_committed_minus	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_probe_cc_regular_committed_minus	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_probe_cc_regular_committed_plus	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_probe_cc_regular_econ_high_minus	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_probe_cc_regular_econ_high_plus	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_probe_ct_chp_committed_minus	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_probe_ct_peaker_committed_minus	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_probe_ct_peaker_committed_plus	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_probe_st_gas_committed_minus	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_probe_st_gas_peak_minus	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_relfloor_rebuild_v2	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_statmode_2026-07	KEEP	statmode-pin
+results/calibration/nyiso_statmode_2026-07_r2	KEEP	statmode-pin
+results/calibration/nyiso_unified_downstate	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_unified_downstate_v3	DELETE	unregistered, no keep-signal
+results/calibration/nyiso_zonal_gas_basis	KEEP	doc-cited
+results/calibration/ordc_pub2	KEEP	doc-cited
+results/calibration/pjm-capdel-arma	DELETE	unregistered, no keep-signal
+results/calibration/pjm-capdel-probe	DELETE	unregistered, no keep-signal
+results/calibration/pjm100_da_virtual_bids	KEEP	doc-cited
+results/calibration/pjm101_depth_surfaces	KEEP	doc-cited
+results/calibration/pjm101_depth_surfaces-ablation	DELETE	unregistered, no keep-signal
+results/calibration/pjm102_net_virtual_bids	KEEP	registered+doc-cited
+results/calibration/pjm102b_net_only	KEEP	registered+doc-cited
+results/calibration/pjm103_ct_faststart_level	KEEP	registered+doc-cited
+results/calibration/pjm104_coal_top	KEEP	registered+doc-cited
+results/calibration/pjm105_symmetric_net	KEEP	registered+doc-cited
+results/calibration/pjm105_symmetric_net-ablation	KEEP	registered
+results/calibration/pjm107_gas_daily	KEEP	registered
+results/calibration/pjm107_gas_daily-ablation	KEEP	registered
+results/calibration/pjm108_cc_belt	KEEP	registered
+results/calibration/pjm110_bench_hygiene	KEEP	registered
+results/calibration/pjm111_cc_reconcile	KEEP	registered
+results/calibration/pjm112_input_clock	KEEP	doc-cited
+results/calibration/pjm112_unit_availability	KEEP	registered
+results/calibration/pjm113_short_only	KEEP	registered
+results/calibration/pjm115_unit_only_outages	KEEP	registered+doc-cited
+results/calibration/pjm49_seam_hr	DELETE	unregistered, no keep-signal
+results/calibration/pjm50_seam_firm	DELETE	unregistered, no keep-signal
+results/calibration/pjm51_se_inelastic	KEEP	doc-cited
+results/calibration/pjm52_coalbit	DELETE	unregistered, no keep-signal
+results/calibration/pjm53_zonalgas	DELETE	unregistered, no keep-signal
+results/calibration/pjm54_congestion	DELETE	unregistered, no keep-signal
+results/calibration/pjm55_offer_curves	DELETE	unregistered, no keep-signal
+results/calibration/pjm56_cc_committed_lift	DELETE	unregistered, no keep-signal
+results/calibration/pjm57_hydro_measured	DELETE	unregistered, no keep-signal
+results/calibration/pjm58_seam_border	DELETE	unregistered, no keep-signal
+results/calibration/pjm59_ct_cc_peak	DELETE	unregistered, no keep-signal
+results/calibration/pjm60_ercot_parity	DELETE	unregistered, no keep-signal
+results/calibration/pjm61_consolidate	DELETE	unregistered, no keep-signal
+results/calibration/pjm62_coopt_deliverable	KEEP	doc-cited
+results/calibration/pjm63_offercurve	DELETE	unregistered, no keep-signal
+results/calibration/pjm64_offercurve	DELETE	unregistered, no keep-signal
+results/calibration/pjm66_cc_ct_calibration	DELETE	unregistered, no keep-signal
+results/calibration/pjm67_relfloor_ccct	DELETE	unregistered, no keep-signal
+results/calibration/pjm68_hydro_interchange	DELETE	unregistered, no keep-signal
+results/calibration/pjm69_interchange_caps	DELETE	unregistered, no keep-signal
+results/calibration/pjm74_cc_ct_rebalance	DELETE	unregistered, no keep-signal
+results/calibration/pjm75_ct_drag_cc_cap	DELETE	unregistered, no keep-signal
+results/calibration/pjm76_outage_fix	KEEP	doc-cited
+results/calibration/pjm77_ct_relfloor_reconcile	KEEP	doc-cited
+results/calibration/pjm77_ct_relfloor_reconcile-ablation	DELETE	unregistered, no keep-signal
+results/calibration/pjm77_regate_corrupt	KEEP	doc-cited
+results/calibration/pjm77_regate_repaired	KEEP	doc-cited
+results/calibration/pjm77_v2rescore	KEEP	doc-cited
+results/calibration/pjm78_srmc_baseline	KEEP	doc-cited
+results/calibration/pjm79_srmc_reground	KEEP	doc-cited
+results/calibration/pjm80_srmc_reground_keeper	KEEP	doc-cited
+results/calibration/pjm80_srmc_reground_keeper-ablation	DELETE	unregistered, no keep-signal
+results/calibration/pjm81_coopt_pergen	KEEP	doc-cited
+results/calibration/pjm82_commitment_posture	KEEP	doc-cited
+results/calibration/pjm84_online_gated_reserve	DELETE	unregistered, no keep-signal
+results/calibration/pjm85_commitment_scoped_reserve	DELETE	unregistered, no keep-signal
+results/calibration/pjm86_pjm83_head_baseline	DELETE	unregistered, no keep-signal
+results/calibration/pjm87_pergen_oppcost	DELETE	unregistered, no keep-signal
+results/calibration/pjm88_pergen_sizesplit	DELETE	unregistered, no keep-signal
+results/calibration/pjm89_full	DELETE	unregistered, no keep-signal
+results/calibration/pjm90_cchp_srmc	KEEP	doc-cited
+results/calibration/pjm90_cchp_srmc-ablation	DELETE	unregistered, no keep-signal
+results/calibration/pjm90_statmode	KEEP	statmode-pin+doc-cited
+results/calibration/pjm91_ambient_derate	DELETE	unregistered, no keep-signal
+results/calibration/pjm93_tempderate	DELETE	unregistered, no keep-signal
+results/calibration/pjm93_tempderate-ablation	DELETE	unregistered, no keep-signal
+results/calibration/pjm94_stgas_netload_drag	DELETE	unregistered, no keep-signal
+results/calibration/pjm94_stgas_netload_drag-ablation	DELETE	unregistered, no keep-signal
+results/calibration/pjm95_stgas_drag_tempderate	DELETE	unregistered, no keep-signal
+results/calibration/pjm95_stgas_drag_tempderate-ablation	DELETE	unregistered, no keep-signal
+results/calibration/pjm96_seam_ladder	DELETE	unregistered, no keep-signal
+results/calibration/pjm97_measured_interfaces	KEEP	doc-cited
+results/calibration/pjm97_measured_interfaces-ablation	DELETE	unregistered, no keep-signal
+results/calibration/pjm98_cc_mustrun	KEEP	doc-cited
+results/calibration/pjm98_cc_mustrun-ablation	DELETE	unregistered, no keep-signal
+results/calibration/pjm99_offer_surface	KEEP	doc-cited
+results/calibration/pjm_21a_wefor24	DELETE	unregistered, no keep-signal
+results/calibration/pjm_21b_fixes24	DELETE	unregistered, no keep-signal
+results/calibration/pjm_21c_rebal24	DELETE	unregistered, no keep-signal
+results/calibration/pjm_21d_rebal25	DELETE	unregistered, no keep-signal
+results/calibration/pjm_21e_bitup25	DELETE	unregistered, no keep-signal
+results/calibration/pjm_25a_eh25	DELETE	unregistered, no keep-signal
+results/calibration/pjm_25b_eh24	DELETE	unregistered, no keep-signal
+results/calibration/pjm_25c_eh23	DELETE	unregistered, no keep-signal
+results/calibration/pjm_26	KEEP	doc-cited
+results/calibration/pjm_27_aswh	KEEP	doc-cited
+results/calibration/pjm_28	KEEP	doc-cited
+results/calibration/pjm_29	DELETE	unregistered, no keep-signal
+results/calibration/pjm_32	DELETE	unregistered, no keep-signal
+results/calibration/pjm_35	KEEP	doc-cited
+results/calibration/pjm_37	KEEP	doc-cited
+results/calibration/pjm_38	KEEP	doc-cited
+results/calibration/pjm_39	KEEP	doc-cited
+results/calibration/pjm_40	KEEP	doc-cited
+results/calibration/pjm_41	KEEP	doc-cited
+results/calibration/pjm_42_campdfix	KEEP	doc-cited
+results/calibration/pjm_43	KEEP	doc-cited
+results/calibration/pjm_44	KEEP	doc-cited
+results/calibration/pjm_46	KEEP	doc-cited
+results/calibration/pjm_47	KEEP	doc-cited
+results/calibration/pjm_47_sync_srmc	DELETE	unregistered, no keep-signal
+results/calibration/pjm_coal_bit_floor	DELETE	unregistered, no keep-signal
+results/calibration/pjm_coal_bit_floor_065	DELETE	unregistered, no keep-signal
+results/calibration/pjm_g21_keeper2024_diag	KEEP	doc-cited
+results/calibration/pjm_measix24	DELETE	unregistered, no keep-signal
+results/calibration/pjm_relfloor_rebuild	DELETE	unregistered, no keep-signal
+results/calibration/pjm_repro24	DELETE	unregistered, no keep-signal
+results/calibration/pjm_reserve_coopt	KEEP	doc-cited
+results/calibration/pjm_statmode_2026-07	KEEP	statmode-pin
+results/calibration/pjm_tempderate25_off	DELETE	unregistered, no keep-signal
+results/calibration/pjm_tempderate25_on	KEEP	doc-cited
+results/calibration/pjmcong1_east_cut	KEEP	registered+doc-cited
+results/calibration/run100b_committed_ramp	DELETE	unregistered, no keep-signal
+results/calibration/run101_retune1	DELETE	unregistered, no keep-signal
+results/calibration/run102_st_relief	DELETE	unregistered, no keep-signal
+results/calibration/run103_ct_deployment	DELETE	unregistered, no keep-signal
+results/calibration/run104a_ctdeploy_strelief02	DELETE	unregistered, no keep-signal
+results/calibration/run104b_ctdeploy_strelief08	DELETE	unregistered, no keep-signal
+results/calibration/run105a_strelief08_stbid025	DELETE	unregistered, no keep-signal
+results/calibration/run105b_strelief08_stbid015	DELETE	unregistered, no keep-signal
+results/calibration/run106a_relief10_lig72	DELETE	unregistered, no keep-signal
+results/calibration/run106b_relief11_lig72	DELETE	unregistered, no keep-signal
+results/calibration/run107a_relief11	DELETE	unregistered, no keep-signal
+results/calibration/run107b_relief125	DELETE	unregistered, no keep-signal
+results/calibration/run108a_relief11_lig66	DELETE	unregistered, no keep-signal
+results/calibration/run109a_relief11_lig675	KEEP	doc-cited
+results/calibration/run109b_lig675_ccbid	DELETE	unregistered, no keep-signal
+results/calibration/run110a_prb_floor71	DELETE	unregistered, no keep-signal
+results/calibration/run110b_cc_lift	DELETE	unregistered, no keep-signal
+results/calibration/run111a_prb_floor72	DELETE	unregistered, no keep-signal
+results/calibration/run111b_prb_floor73	DELETE	unregistered, no keep-signal
+results/calibration/run112a_prb_floor70	DELETE	unregistered, no keep-signal
+results/calibration/run112b_prb_floor68	DELETE	unregistered, no keep-signal
+results/calibration/run113a_ccduct	DELETE	unregistered, no keep-signal
+results/calibration/run113b_ccduct_prb71	DELETE	unregistered, no keep-signal
+results/calibration/run114a_ccduct_prb72_relief06	DELETE	unregistered, no keep-signal
+results/calibration/run115a_ccduct_prb73_relief07	DELETE	unregistered, no keep-signal
+results/calibration/run115b_ccduct_prb73_relief06	KEEP	doc-cited
+results/calibration/run116a_ccduct_prb71_relief06	DELETE	unregistered, no keep-signal
+results/calibration/run116b_ccduct_prb71_relief05	DELETE	unregistered, no keep-signal
+results/calibration/run117a_ccduct_prb73_relief10	DELETE	unregistered, no keep-signal
+results/calibration/run117b_ccduct_prb73_relief085	DELETE	unregistered, no keep-signal
+results/calibration/run118_reldeploy_spatial	KEEP	doc-cited
+results/calibration/run120_meritramp_defensible	KEEP	doc-cited
+results/calibration/run121_storage_vintage	KEEP	doc-cited
+results/calibration/run122_storage_as_2024	DELETE	unregistered, no keep-signal
+results/calibration/run123_storage_as_2023est	DELETE	unregistered, no keep-signal
+results/calibration/run124_reldeploy_2024	KEEP	doc-cited
+results/calibration/run124_reldeploy_2025	DELETE	unregistered, no keep-signal
+results/calibration/run124_storage_as_keeper	KEEP	doc-cited
+results/calibration/run125_cod_keeper	DELETE	unregistered, no keep-signal
+results/calibration/run126_cod_reconcile	DELETE	unregistered, no keep-signal
+results/calibration/run143_redo	KEEP	doc-cited
+results/calibration/run145_rtordpa	KEEP	doc-cited
+results/calibration/run146_zonalgas	KEEP	doc-cited
+results/calibration/run147_newoutage_baseline	DELETE	unregistered, no keep-signal
+results/calibration/run147_zonalgas_ep	DELETE	unregistered, no keep-signal
+results/calibration/run149_zonalgas_coalfix	DELETE	unregistered, no keep-signal
+results/calibration/run96_lignite_keeper	KEEP	doc-cited
+results/calibration/run97a_gas_plants	KEEP	doc-cited
+results/calibration/run97b_coal_plants	KEEP	doc-cited
+results/calibration/run98a_warm_committed	DELETE	unregistered, no keep-signal
+results/calibration/run98b_warm_parish	DELETE	unregistered, no keep-signal
+results/calibration/run99_availability	DELETE	unregistered, no keep-signal
+results/calibration/statmode_d1	KEEP	statmode-pin+doc-cited
+results/calibration/stgas_netload_drag_v1	KEEP	p2_state+doc-cited
+results/calibration/MISO/bit_takeorpay_sigmoid	FLATTEN	MISO->flat; doc-cited
+results/calibration/MISO/campd_binning	DELETE	MISO nested, unregistered
+results/calibration/MISO/manitoba_firm	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso15_ct_intermediate	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso16_st_gas_intermediate	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso17_round2	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso18_seam_export_cap	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso21_cc_border	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso22_offer_curve	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso23_cc_min_load_premium	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso25_pjm_lmp_import	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso26_reserve_coopt	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso27_interchange_shape	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso27b_interchange_shape_full	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso41_v2rescore	FLATTEN	MISO->flat; doc-cited
+results/calibration/MISO/miso47_statmode	FLATTEN	MISO->flat; statmode-pin+doc-cited
+results/calibration/MISO/miso_29_gas_basis_derate	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso_30_cc_coal_tuning	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso_31_coal_sigmoid_retune	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso_33_ct_bit_retune	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso_35_zonal_refinement	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso_36_coopt_flag_inert	FLATTEN	MISO->flat; doc-cited
+results/calibration/MISO/miso_37_coopt_wired	FLATTEN	MISO->flat; doc-cited
+results/calibration/MISO/miso_38_zonal_reserves	FLATTEN	MISO->flat; doc-cited
+results/calibration/MISO/miso_39_reserve_pergen	FLATTEN	MISO->flat; doc-cited
+results/calibration/MISO/miso_41_ct_evening_window	FLATTEN	MISO->flat; doc-cited
+results/calibration/MISO/miso_41_ct_evening_window-ablation	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso_42_coal_econ_srmc	FLATTEN	MISO->flat; doc-cited
+results/calibration/MISO/miso_42_coal_econ_srmc-ablation	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso_43_commitment_posture	FLATTEN	MISO->flat; doc-cited
+results/calibration/MISO/miso_44_wefor_neutral	FLATTEN	MISO->flat; doc-cited
+results/calibration/MISO/miso_44_wefor_neutral-ablation	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso_45_cc_capacity_cap	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso_45_cc_capacity_cap-ablation	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso_45_head_replay	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso_46_seam_ladder	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso_46_seam_ladder-ablation	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso_47_steamgas_ct_drag	FLATTEN	MISO->flat; doc-cited
+results/calibration/MISO/miso_47_steamgas_ct_drag-ablation	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso_48_stgas_srmc	FLATTEN	MISO->flat; doc-cited
+results/calibration/MISO/miso_48_stgas_srmc-ablation	DELETE	MISO nested, unregistered
+results/calibration/MISO/miso_relfloor_rebuild	DELETE	MISO nested, unregistered
+results/calibration/MISO/nuclear_derate	DELETE	MISO nested, unregistered
+results/calibration/MISO/seam_deliverability	DELETE	MISO nested, unregistered
+results/calibration/MISO/seam_pjm_hr_elastic_fwdskill	DELETE	MISO nested, unregistered
+results/calibration/MISO/seam_pjm_hranchor	DELETE	MISO nested, unregistered
+results/calibration/MISO/spp_seam	DELETE	MISO nested, unregistered
+results/calibration/MISO/tz_localclock	DELETE	MISO nested, unregistered
+results/calibration/MISO/zonal_loadshape	DELETE	MISO nested, unregistered
+results/calibration/AUDIT-caiso-cod-ramp-all-classes-2026-06-24.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/AUDIT-caiso-structural.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/DETERMINATION-caiso-gas-commodity-and-perhub-2026-06-25.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/DIAGNOSIS-caiso-body-overprice-2026-06-21.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/DIAGNOSIS-caiso-cc-offer-midday-2026-06-24.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/DIAGNOSIS-caiso-chp-midday-2026-06-24.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/DIAGNOSIS-caiso-corridor-deliverability-2026-06-23.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/DIAGNOSIS-caiso-fleet-mix-outage-2026-06-21.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/DIAGNOSIS-caiso-import-ladder-2026-06-19.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/DIAGNOSIS-caiso-perhub-overimport-diurnal-2026-06-23.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/DIAGNOSIS-caiso-scoring-2026-06-17.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/DIAGNOSIS-caiso36-body-overprice-domestic-2026-06-28.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/DIAGNOSIS-miso-bench-emon-doubling-2026-06-23.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/DIAGNOSIS-neiso-ccsteam-2026-06-19.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso-c2c4-bench-basis-930ng-2026-07-12.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso-evening-merit-2026-07-04.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso-seam-diurnal-2026-07-07.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/FINDING-caiso-seam-tz-correction-2026-07-07.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso-winter-gas-level-2026-07-15.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/FINDING-caiso100-charge-economics-2026-07-19.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso37-offer-curve-2026-06-28.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/FINDING-caiso38-delivered-gas-2026-06-29.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/FINDING-caiso39-import-atc-2026-06-29.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/FINDING-caiso40-ra-minload-2026-06-29.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/FINDING-caiso43-curtailment-2026-07-01.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/FINDING-caiso49-import-seam-2026-07-03.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso70-bridge-decrowding-negative-2026-07-10.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso71-locational-as-inert-2026-07-10.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso72-hydro-envelope-2026-07-10.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/FINDING-caiso72-step0-evening-displacement-2026-07-10.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso73-firm-import-shape-2026-07-10.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/FINDING-caiso74-storage-as-reservation-2026-07-11.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso75-demand-clock-2026-07-11.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso76-hydro-budget-2026-07-11.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/FINDING-caiso77-c1-cluster-firm-selfschedule-2026-07-11.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso78-cc-hr-basis-2026-07-12.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/FINDING-caiso79-step0-greaterbay-bind-2026-07-12.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso80-demand-basis-wedge-2026-07-13.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso81-local-commitment-driver-refuted-2026-07-13.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso82-soft-month-margin-2026-07-14.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso86-import-ladder-gates-2026-07-15.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/FINDING-caiso86b-partial-ladder-gates-2026-07-16.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/FINDING-caiso91b-ct-committed-conduct-refuted-2026-07-16.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso91c-overnight-cc-evidence-2026-07-16.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso92b-overnight-cc-is-import-pricing-2026-07-17.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso93-overnight-no-wedge-2026-07-17.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso94-daytime-wedge-2026-07-17.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso95-who-serves-the-day-2026-07-18.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso98-evening-storage-timing-2026-07-18.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-caiso99-storage-shape-2026-07-18.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/FINDING-ercot79-phantom-outage-2026-07.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-miso-august-scarcity-2026-07.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-miso-burndown-2026-07.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-miso-c5b-storage-benchmark-2026-07.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-miso-c5c-storage-shape-basis-2026-07.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-miso-cc-decomposition-2026-07.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/FINDING-ramp-lcr-caiso-2026-07.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/HANDOFF-caiso-import-volume-and-2023-data-2026-06-24.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/NEGRENEW-caiso-findings.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/NEXT-caiso-floor-prompts.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/NEXT-caiso-roadmap-2026-06-23.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/PLAN-caiso-gas-coupled-imports-2026-06-20.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/RESULTS-caiso-gas-coupled-imports-2026-06-20.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/RESULTS-caiso-leverB-citygate-2026-06-19.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/RESULTS-caiso-negative-tail-solar-shape-2026-06-21.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/RESULTS-caiso-ra-mustoffer-floor.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/SUMMARY-caiso-calibration.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/SUMMARY-coal-calibration.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/SUMMARY-coal-lig-prb.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/SUMMARY-outage-overlay.md	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/_probe_miso_coalconduct_base_2024_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/_probe_miso_coalconduct_base_2025_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/_probe_miso_coalconduct_reg_2023_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/_probe_miso_coalconduct_reg_2024_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/_probe_miso_coalconduct_reg_2025_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/_probe_miso_coalconduct_regb_2023_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/_probe_miso_coalconduct_regb_2024_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/_probe_miso_coalconduct_regb_2025_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/_probe_miso_shortout_2025_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso-as-reserve-formula-findings.md	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso39_offer_curve_jacobian.csv	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso48_solar_decommit_bridge_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso49_perhub_seam_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso50_perhub_bridge_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso51_firm_base_solve.log	ARCHIVE-LOOSE-REF	loose clutter — path-referenced
+results/calibration/caiso52_ct_scrub_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso52_probeW_windowed_2024_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso52_probeX_nolimbs_2024_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso53_lever_ab_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso56_zerodrag_ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso57_ramplcr_dragoff_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso58_v2_regate_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso61_lolp_tail_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso61_overlay_diag.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso62_coopt_full_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso63_g61b_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso64_g61c_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso70_g61b_decrowd-ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso70_g61b_decrowd_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso73_firm_shape-ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso73_firm_shape_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso73_step0_diag2024_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso_bidir_floorOnly_3yr_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso_statmode_2026-07_r2_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/caiso_statmode_2026-07_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot32_head_configfaithful_report.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot32_head_configfaithful_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot32_statmode_2026-07_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot33_overlay_decomposition.json	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot33_overlay_decomposition_annual.csv	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot33_overlay_decomposition_hourly.csv	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot33_overlay_decomposition_monthly.csv	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot44_hsl_clock_fix.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot44b_control_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot45_clock_unified_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot46_clock_steamgas_ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot46_clock_steamgas_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot49_offer_retune_tempderate-ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot49_offer_retune_tempderate_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot49_sweep_c1_2023.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot49_sweep_ecrsoff2023.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot49_sweep_keeper2023.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot54_diag_2024_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot55_offer_surface_c2_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot71_availability_fullspan_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot72_cleared_share_fullspan_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot73_state_wall_fullspan_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot_rtolcap_forward_v1_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot_stage4_overlayoff_v1_report.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot_stage4_overlayoff_v1_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot_stage4_overlayoff_v2-ablation_report.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot_stage4_overlayoff_v2-ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot_stage4_overlayoff_v2_report.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot_stage4_overlayoff_v2_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/ercot_statmode_2026-07_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso51_gasdaily_hydro_ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso51_gasdaily_hydro_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso52_sigmoid_monthly_key_ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso52_sigmoid_monthly_key_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso53_som_coal_offers_ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso53_som_coal_offers_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso55_ct_faststart_ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso55_ct_faststart_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso56_measured_scarcity_ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso56_measured_scarcity_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso58_rdt_congestion_ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso58_rdt_congestion_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso58_replay_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso59_coal_warm_ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso59_coal_warm_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso60_stgas_vlr_ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso60_stgas_vlr_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso61_rpe_pricing_ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso61_rpe_pricing_ablation_solve.prerebase.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso61_rpe_pricing_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso63_shortout_rpe_ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso63_shortout_rpe_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso65_outage_regen_ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso65_outage_regen_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso69_maxgen_derates_base_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso69_maxgen_derates_main_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso70_tier_pricing_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso72_chain.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso73_chain.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/miso_statmode_2026-07_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/neiso50_ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/neiso51_priced_ix_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/neiso52_head_baseline_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/neiso56_reserve_coopt-ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/neiso56_reserve_coopt_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/neiso57_dynamic_rr-ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/neiso57_dynamic_rr_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/neiso58_offer_surface-ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/neiso58_offer_surface_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/neiso_statmode_2026-07_r2_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/neiso_statmode_2026-07_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/nyiso57_dynamic_rr_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/nyiso_offer_curve_jacobian.csv	ARCHIVE-LOOSE	loose clutter
+results/calibration/nyiso_statmode_2026-07_r2_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/nyiso_statmode_2026-07_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/pjm_statmode_2026-07_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/MISO/miso_42_ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/MISO/miso_42_coal_econ_srmc_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/MISO/miso_43_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/MISO/miso_45_ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/MISO/miso_45_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/MISO/miso_48_ablation_solve.log	ARCHIVE-LOOSE	loose clutter
+results/calibration/MISO/miso_48_solve.log	ARCHIVE-LOOSE	loose clutter
