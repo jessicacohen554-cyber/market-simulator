@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-19-miso-76-loss-base",
+ "label": "miso 76 loss base",
+ "date": "2026-07-19",
+ "shorthand": "miso-76-loss-base",
+ "definition": "miso-76 same-box base (drift control) \u2014 the miso-75 keeper recipe strict-replayed (loss surface OFF) so the paired mechanism-only read is main - base, never main - registered (miso-66 lesson). Reproduces the registered miso-75 keeper on every gated criterion: C3a -2.5/-8.9/-15.4%, C3b 0.082/0.137/0.198, C3c 0/6/0 vs RT 30/37/88, max LMP $152.01, Midwest zonal span $0.00 (the flat pool) \u2014 zero box drift. Not a keeper candidate; registered per rule 15 so the paired read is reproducible from the dashboard.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-19-miso-76-loss-base.js",
+ "bundle": "results/calibration/miso76_loss_base"
+}
