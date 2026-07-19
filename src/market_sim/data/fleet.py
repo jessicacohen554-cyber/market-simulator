@@ -3871,9 +3871,21 @@ def build_ercot_offer_surface_cleared_share_markup(
       outage-overlay pattern); years absent from the artifact fall back to
       its pooled climatology (net-load-percentile bin x 4-hour block,
       forward-native). Zero fitted scalars.
+    * ``ercot_offer_surface_cleared_share_rt`` (ERCOT-86, default off)
+      re-prices the SAME above-boundary CC/CT rows at the MEASURED SCED
+      spare-offer ladder (``scripts/data/derive_ercot_sced_offer_wall.py`` —
+      the RT/SCED data-basis correction of the wall's measured-cheap DAM
+      ladder, ERCOT-84 Finding 1). ``_rt_mode`` selects composition
+      ``"replace"`` (A: RT-measured bins swap ladder source) or ``"tier"``
+      (B: floor at max(state-weighted DAM, RT)). YEAR-SCOPED (rule 13): no
+      pooled fallback — years absent from the RT artifact keep the DAM basis
+      byte-identical. The RT leg is never state-weighted (the SCED spare is
+      measured on the online fleet — the commitment state is already
+      conditioned into the surface). ST_GAS stays DAM-basis (rule 19).
     """
     state_flag = getattr(config, "ercot_offer_surface_cleared_share_state", False)
     steam_flag = getattr(config, "ercot_offer_surface_cleared_share_steam", False)
+    rt_flag = getattr(config, "ercot_offer_surface_cleared_share_rt", False)
     if not getattr(config, "ercot_offer_surface_cleared_share", False):
         if state_flag and config.iso == "ERCOT":
             raise ValueError(
@@ -3887,9 +3899,24 @@ def build_ercot_offer_surface_cleared_share_markup(
                 "cleared-share wall — arm ercot_offer_surface_cleared_share "
                 "too (the steam scope has no wall to extend on its own)."
             )
+        if rt_flag and config.iso == "ERCOT":
+            raise ValueError(
+                "ercot_offer_surface_cleared_share_rt re-prices the "
+                "cleared-share wall's ladder — arm "
+                "ercot_offer_surface_cleared_share too (the RT basis has no "
+                "wall to re-price on its own)."
+            )
         return None
     if config.iso != "ERCOT":
         return None
+    rt_mode = str(
+        getattr(config, "ercot_offer_surface_cleared_share_rt_mode", "replace")
+    )
+    if rt_flag and rt_mode not in ("replace", "tier"):
+        raise ValueError(
+            "ercot_offer_surface_cleared_share_rt_mode must be 'replace' "
+            f"(composition A) or 'tier' (composition B), got {rt_mode!r}"
+        )
     # Effective class scope: the base merchant CC/CT map, plus the ST_GAS ->
     # "ST" extension when the ERCOT-77 steam flag is armed.
     class_of = dict(_ERCOT_CLEARED_SHARE_CLASS_OF)
@@ -3993,6 +4020,55 @@ def build_ercot_offer_surface_cleared_share_markup(
             [[float(pt[1]) for pt in lad_b] for lad_b in lad], dtype=float
         )  # (n_bins, n_q)
 
+    # ERCOT-86 RT/SCED-basis ladder (data-basis correction of the wall's
+    # price surface — same boundary, same rows, same bin geometry, the
+    # measured SCED online-spare offer ladder instead of the measured-cheap
+    # DAM offered-but-uncleared ladder). YEAR-SCOPED by design (rule 13): only
+    # a year present in the RT artifact gets an RT ladder — no pooled
+    # fallback, so a 2024/2025-derived surface can never reach 2023's
+    # conservative-ops regime; absent years keep the DAM basis byte-identical.
+    rt_walls: dict[str, np.ndarray] = {}
+    if rt_flag:
+        rt_path = getattr(config, "ercot_offer_surface_cleared_share_rt_path", None)
+        if not rt_path:
+            from market_sim.config import paths as _paths
+
+            rt_path = str(
+                _paths.CALIBRATION_DIR / "ercot_sced_offer_wall_condbinned.json"
+            )
+        rt_surface = json.loads(Path(rt_path).read_text())
+        rt_prov = rt_surface.get("_provenance", {})
+        rt_edges = tuple(float(x) for x in rt_prov.get("netload_pct_edges", ()))
+        rt_q = np.asarray(rt_prov.get("ladder_quantiles", ()), dtype=float)
+        if rt_edges != edges or not np.array_equal(rt_q, ladder_q):
+            raise ValueError(
+                "ercot_offer_surface_cleared_share_rt: RT artifact bin "
+                f"geometry (edges {rt_edges}, quantiles {rt_q.tolist()}) != "
+                f"DAM wall geometry (edges {edges}, quantiles "
+                f"{ladder_q.tolist()}) — re-derive "
+                "scripts/data/derive_ercot_sced_offer_wall.py"
+            )
+        for cls_key in set(class_of.values()):
+            entry = rt_surface.get(cls_key)
+            if not entry:
+                continue
+            tbl = entry.get("years", {}).get(str(year))  # year-scoped: no pooled
+            if not tbl:
+                continue
+            lad = tbl.get("ladder", ())
+            if len(lad) != n_bins:
+                continue
+            rt_walls[cls_key] = np.array(
+                [[float(pt[1]) for pt in lad_b] for lad_b in lad], dtype=float
+            )  # (n_bins, n_q)
+        if not rt_walls:
+            logger.info(
+                "ERCOT cleared-share RT basis: year %s absent from the RT "
+                "artifact — DAM basis retained byte-identical (year-scoped, "
+                "rule 13)",
+                year,
+            )
+
     # Target rows + within-plant share midpoints: every tranche of the plant
     # ordered by its annual-mean base cost — the model's own rising CAMPD
     # tranche curve defines each row's curve position (the mid-curve
@@ -4012,6 +4088,7 @@ def build_ercot_offer_surface_cleared_share_markup(
     ) * float(getattr(config, "voll", 5000.0))
     markup = np.zeros_like(mc_base)
     n_priced = 0
+    n_rt_priced = 0
     mean_mc = mc_base.mean(axis=1)
     for rows in prefixes.values():
         rows_arr = np.asarray(rows, dtype=int)
@@ -4053,7 +4130,23 @@ def build_ercot_offer_surface_cleared_share_markup(
                     continue
                 rel = (s_g - bnd[b]) / (1.0 - bnd[b])
                 mult_b[b] = float(np.interp(rel, ladder_q, wall[b]))
-            if not mult_b.any():
+            # ERCOT-86 RT ladder for the SAME above-boundary rows (same
+            # boundary test, the SCED spare-offer quantile ladder as the
+            # price source). rt_has marks bins the RT artifact measures —
+            # only those bins ever leave the DAM basis.
+            rt_mult_b = np.zeros(n_bins)
+            rt_has = np.zeros(n_bins, dtype=bool)
+            rtw = rt_walls.get(cls_key)
+            if rtw is not None:
+                for b in range(n_bins):
+                    if not np.isfinite(bnd[b]) or bnd[b] >= 1.0 or s_g <= bnd[b]:
+                        continue
+                    if not np.isfinite(rtw[b]).all():
+                        continue
+                    rel = (s_g - bnd[b]) / (1.0 - bnd[b])
+                    rt_mult_b[b] = float(np.interp(rel, ladder_q, rtw[b]))
+                    rt_has[b] = True
+            if not mult_b.any() and not rt_has.any():
                 continue
             target = mult_b[hour_bin] * gas_day  # (T,); 0 where no floor
             target = np.minimum(target, voll_cap)
@@ -4063,8 +4156,33 @@ def build_ercot_offer_surface_cleared_share_markup(
                 # measured commitment-loading regime scales the markup.
                 w = state_w.get(cls_key)
                 if w is None:
-                    continue  # no measured state for the class: no wall
-                row = row * w
+                    if not rt_has.any():
+                        continue  # no measured state for the class: no wall
+                    row = np.zeros_like(row)  # DAM leg dead; RT leg may floor
+                else:
+                    row = row * w
+            if rt_has.any():
+                # RT leg is NEVER state-weighted: the SCED spare ladder is
+                # measured on the ONLINE fleet (Base Point -> HASL is the
+                # un-loaded remainder per interval), so the commitment state
+                # the w-weight corrects for is already conditioned into the
+                # surface — weighting it again would double-count.
+                rt_target = rt_mult_b[hour_bin] * gas_day  # (T,)
+                rt_target = np.minimum(rt_target, voll_cap)
+                rt_row = np.maximum(0.0, rt_target - mc_base[g, :])
+                rt_row = np.where(rt_has[hour_bin], rt_row, 0.0)
+                if rt_mode == "replace":
+                    # Composition A: one wall, one ladder source per bin —
+                    # RT-measured bins take the RT floor (even where it is
+                    # BELOW the DAM ladder: the DAM basis is refuted there,
+                    # not composed with); unmeasured bins keep the DAM basis.
+                    row = np.where(rt_has[hour_bin], rt_row, row)
+                else:
+                    # Composition B: the state-weighted DAM wall stands
+                    # everywhere; the RT tier rides above its reach.
+                    row = np.maximum(row, rt_row)
+                if rt_row.any():
+                    n_rt_priced += 1
             if row.any():
                 markup[g, :] = row
                 n_priced += 1
@@ -4100,6 +4218,16 @@ def build_ercot_offer_surface_cleared_share_markup(
         if state_flag
         else "",
     )
+    if rt_flag and rt_walls:
+        logger.info(
+            "ERCOT cleared-share RT basis (ERCOT-86): %s composition — %d "
+            "rows carry the measured SCED spare-offer ladder (year table %s, "
+            "classes %s; RT leg un-state-weighted by construction)",
+            rt_mode,
+            n_rt_priced,
+            year,
+            sorted(rt_walls),
+        )
     return markup
 
 
