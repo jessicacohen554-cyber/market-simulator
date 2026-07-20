@@ -130,6 +130,143 @@ class TestExpectationSplitByIso(unittest.TestCase):
         self.assertEqual(pjm, ["T1.7a"])  # monotone-retirement gate
         self.assertEqual(ercot, ["T1.7b"])  # byte-identical negative control
 
+    def test_t17a_scores_the_economic_channel_not_the_masked_total(self):
+        # FF-2C §2.2 point 2: the cumulative total mixes in net-CONE-invariant
+        # exogenous exits; the gate must score the economic component.
+        lad = next(x for x in B.build_ladders() if x.test_id == "T1.7")
+        a = next(e for e in lad.expectations if e.expr_id == "T1.7a")
+        b = next(e for e in lad.expectations if e.expr_id == "T1.7b")
+        self.assertEqual(a.metric, "economic_retired_thermal_gw")
+        self.assertEqual(a.rule, "monotone_down")
+        # The ERCOT negative control stays on the full capacity-drop total (the
+        # strongest byte-identity check).
+        self.assertEqual(b.metric, "retired_thermal_gw")
+        self.assertEqual(b.rule, "all_equal")
+
+
+class TestRetirementChannelSplit(unittest.TestCase):
+    def test_splits_economic_from_exogenous_thermal_only(self):
+        ledgers = {
+            2027: {
+                "retirements": [
+                    {"fuel": "coal", "mw": 1000.0, "reason": "economic"},
+                    {"fuel": "gas_ct", "mw": 500.0, "reason": "confirmed"},
+                    {"fuel": "gas_cc", "mw": 300.0, "reason": "announced"},
+                    {"fuel": "gas_st", "mw": 200.0, "reason": "known"},  # legacy
+                    {"fuel": "solar", "mw": 999.0, "reason": "economic"},  # non-thermal
+                ],
+                "confirmed_derates": [
+                    {"fuel": "coal", "derate_mw": 100.0},
+                    {"fuel": "wind", "derate_mw": 50.0},  # non-thermal, ignored
+                ],
+            },
+            2028: {
+                "retirements": [{"fuel": "coal", "mw": 400.0, "reason": "economic"}]
+            },
+        }
+        econ, exog = B._retirement_channel_split(ledgers)
+        self.assertAlmostEqual(econ, 1.4)  # (1000 + 400) MW
+        # confirmed 500 + announced 300 + known 200 + derate 100 = 1100 MW
+        self.assertAlmostEqual(exog, 1.1)
+
+    def test_empty_and_legacy_ledgers_are_safe(self):
+        self.assertEqual(B._retirement_channel_split({}), (0.0, 0.0))
+        # A ledger missing both keys (pre-RC-1B) contributes nothing, not a crash.
+        self.assertEqual(B._retirement_channel_split({2027: {}}), (0.0, 0.0))
+
+
+class TestNetConeScalarPatch(unittest.TestCase):
+    """The T1.7 rig patch scales the channel a POST-FLIP curve ISO prices on."""
+
+    def test_scale_market_design_scales_both_anchors_preserving_curve(self):
+        from market_sim.config import constants as C
+
+        base = C.MARKET_DESIGN["PJM"]
+        scaled = B._scale_market_design(base, 2.0)
+        self.assertAlmostEqual(scaled.net_cone_per_kw_yr, base.net_cone_per_kw_yr * 2.0)
+        self.assertAlmostEqual(
+            scaled.net_cone_curve_per_kw_yr, base.net_cone_curve_per_kw_yr * 2.0
+        )
+        # The curve SHAPE (dimensionless VRR points) is preserved untouched — only
+        # the $ anchor scales.
+        self.assertEqual(scaled.demand_curve, base.demand_curve)
+        self.assertGreater(len(scaled.demand_curve), 0)
+
+    def test_scale_market_design_scales_miso_seasonal_anchor(self):
+        from market_sim.config import constants as C
+
+        base = C.MARKET_DESIGN["MISO"]
+        scaled = B._scale_market_design(base, 0.5)
+        self.assertIsNotNone(scaled.seasonal_rbdc)
+        self.assertAlmostEqual(
+            scaled.seasonal_rbdc.daily_net_cone_per_mw_day,
+            base.seasonal_rbdc.daily_net_cone_per_mw_day * 0.5,
+        )
+        # Season shapes/day-weights preserved.
+        self.assertEqual(scaled.seasonal_rbdc.seasons, base.seasonal_rbdc.seasons)
+
+    def test_scale_vintages_scales_every_vintage_anchor(self):
+        from market_sim.config import constants as C
+
+        base = C.MARKET_DESIGN_VINTAGES["PJM"]
+        scaled = B._scale_vintages(base, 3.0)
+        self.assertEqual(len(scaled), len(base))
+        for sv, bv in zip(scaled, base):
+            self.assertAlmostEqual(
+                sv.net_cone_curve_per_kw_yr, bv.net_cone_curve_per_kw_yr * 3.0
+            )
+            self.assertEqual(sv.demand_curve, bv.demand_curve)  # shape preserved
+
+    def test_apply_patches_is_effectively_inert_for_energy_only_ercot(self):
+        # ERCOT is in MARKET_DESIGN as capacity_market=False with zero anchors, so
+        # scaling produces an anchor-identical design and the pricing seam returns
+        # 0 regardless — the negative control stays byte-identical across the
+        # ladder. It carries no vintages, so that registry is untouched.
+        from market_sim.config import constants as C
+        from market_sim.model import capacity as cap
+
+        before_vint = dict(C.MARKET_DESIGN_VINTAGES)
+        saved_cap = cap.MARKET_DESIGN
+        try:
+            clean = B._apply_probe_patches({"_net_cone_scalar": 2.0}, "ERCOT")
+            design = cap.MARKET_DESIGN["ERCOT"]
+            self.assertFalse(design.capacity_market)
+            self.assertEqual(design.net_cone_per_kw_yr, 0.0)
+            self.assertEqual(design.net_cone_curve_per_kw_yr, 0.0)
+            self.assertEqual(design.demand_curve, ())
+            self.assertEqual(C.MARKET_DESIGN_VINTAGES, before_vint)  # no ERCOT vintage
+            self.assertEqual(clean, {})  # the _-prefixed key is stripped
+        finally:
+            cap.MARKET_DESIGN = saved_cap
+
+    def test_apply_patches_scales_registry_and_vintages_for_pjm(self):
+        # _apply_probe_patches rebinds the capacity/constants module registries;
+        # snapshot and restore so this in-process test does not contaminate others
+        # (the real harness runs each rung in a fresh process, so it never does).
+        from market_sim.config import constants as C
+        from market_sim.model import capacity as cap
+
+        base_curve = C.MARKET_DESIGN["PJM"].net_cone_curve_per_kw_yr
+        base_vint0 = C.MARKET_DESIGN_VINTAGES["PJM"][0].net_cone_curve_per_kw_yr
+        saved_cap = cap.MARKET_DESIGN
+        saved_vint = C.MARKET_DESIGN_VINTAGES
+        try:
+            B._apply_probe_patches({"_net_cone_scalar": 2.0}, "PJM")
+            self.assertAlmostEqual(
+                cap.MARKET_DESIGN["PJM"].net_cone_curve_per_kw_yr, base_curve * 2.0
+            )
+            self.assertEqual(
+                len(cap.MARKET_DESIGN["PJM"].demand_curve),
+                len(C.MARKET_DESIGN["PJM"].demand_curve),
+            )
+            self.assertAlmostEqual(
+                C.MARKET_DESIGN_VINTAGES["PJM"][0].net_cone_curve_per_kw_yr,
+                base_vint0 * 2.0,
+            )
+        finally:
+            cap.MARKET_DESIGN = saved_cap
+            C.MARKET_DESIGN_VINTAGES = saved_vint
+
 
 class TestRunLadderWithSeam(unittest.TestCase):
     """run_ladder end-to-end with an injected evaluate_fn (no real solve)."""
