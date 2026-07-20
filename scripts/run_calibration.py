@@ -3529,6 +3529,32 @@ def run_year(
             ),
         )
 
+    # Measured DA charge-allocation schedule (caiso_charge_allocation_schedule,
+    # M1 — owner-granted caiso-103 belly ask, executed caiso-104; GATED default
+    # off): floor each day's fleet battery charge in every measured-support
+    # hour at alloc_share[hod] x da_frac x (day total charge) — the DAM
+    # allocation conduct, volume-holding by construction (dispatch.
+    # _build_storage_alloc_rows). Statistics from the committed rule-23
+    # derive data/raw/reference/caiso-charge-allocation-profile.csv. None
+    # (flag off / other ISOs) leaves the keys unset — identical LP.
+    storage_alloc_params = None
+    if getattr(config, "caiso_charge_allocation_schedule", False) and iso == "CAISO":
+        from market_sim.model.storage import caiso_charge_allocation_params
+
+        storage_alloc_params = caiso_charge_allocation_params(
+            storage_units, config.weather_year, config.hours
+        )
+        _b_idx, _share, _dafrac = storage_alloc_params
+        logger.info(
+            "CAISO DA charge-allocation schedule (%d): %d battery units, "
+            "da_frac %.4f, belly(10-14) share %.3f, active hods %d",
+            config.weather_year,
+            int(_b_idx.size),
+            _dafrac,
+            float(_share[10:15].sum()),
+            int((_share[:24] > 0).sum()),
+        )
+
     if fleet_only:
         # Availability-reconstruction exit (no LP): everything a post-solve
         # consumer needs to recompute pmax x availability per unit-hour,
@@ -3705,6 +3731,15 @@ def run_year(
         dispatch_kwargs.update(
             storage_charge_cap=storage_charge_cap,
             storage_discharge_cap=storage_discharge_cap,
+        )
+    # Measured DA charge-allocation schedule (caiso_charge_allocation_schedule,
+    # M1): the per-day allocation floor rows' inputs. None (flag off / other
+    # ISOs / no batteries) leaves the keys unset — identical LP.
+    if storage_alloc_params is not None and storage_alloc_params[0].size:
+        dispatch_kwargs.update(
+            storage_alloc_batt_idx=storage_alloc_params[0],
+            storage_alloc_share=storage_alloc_params[1],
+            storage_alloc_da_frac=storage_alloc_params[2],
         )
     # Declared-window ELMP emergency-tier pricing (maxgen_emergency_tier_
     # pricing, GATED default off — the MISO F5 scarcity-depth lane): inside a
