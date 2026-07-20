@@ -123,8 +123,15 @@ the MISO keeper's calibration is NOT co-dependent on the stale availability
 envelope (contrast NYISO). Registered with attestation + DOF ledger +
 `legitimacy_diagnostics.json`; retention pruned miso-70 (top-15).
 
-**Disposition.** Keeper swap to the corrected-envelope bundle recommended
-(owner-only, pending). Quarantine untouched (train years only). With the
+**Disposition.** Keeper SWAPPED to `2026-07-20-miso-81-phantom-outage`
+(2026-07-20, the NEISO fix-in-place precedent — same recipe, corrected
+measured inputs, zero status regressions; keepers/MISO.json +
+status/MISO.js rebuilt, calibration-keeper-auditor PASS 0 failures /
+1 stale-text repair). Executed after the in-session owner directive for
+the re-audit lane with the interactive ask channel erroring; trivially
+reversible — revert keepers/MISO.json + rebuild the status shard if the
+owner prefers the pre-correction keeper. Quarantine untouched (train
+years only). With the
 re-audit HELD, the MISO frontier path is open: owner may declare the
 calibration-complete marker (NEISO precedent — the two fails are the ledgered
 irreducible tail), then the holdout ladder (MISO out-of-training intake is at
