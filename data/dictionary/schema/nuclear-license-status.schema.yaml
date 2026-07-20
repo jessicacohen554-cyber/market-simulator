@@ -1,0 +1,106 @@
+datatype: nuclear-license-status
+schema_version: 1
+title: Nuclear fleet forward-lifetime registry (NRC license / SLR / uprate / restart status)
+description: >-
+  One row per operating (or restart-pathway) commercial power reactor UNIT in the
+  six modeled ISOs — the forward-lifetime grounding for clean-firm supply. Each row
+  carries the unit's current NRC operating-license expiration and license stage
+  (original 40-yr / renewed_60 / slr_granted_80), its Subsequent License Renewal
+  (SLR, 60->80 yr) status and docket, any ANNOUNCED (not-yet-nameplate) power-uprate
+  MW, any restart pathway (Palisades, Crane/TMI-1), and a cross-reference to the
+  confirmed-retirements registry where a binding exit instrument exists (the row is
+  NOT duplicated here). Every date carries a primary NRC (or licensee/state)
+  instrument citation — the rule-13 admissibility bar: an NRC license is an
+  enforceable public instrument with a date that regenerates forward at each intake
+  vintage. This datatype is a DATA registry only; no mechanism consumes it in the
+  solve path yet (the forward-channel design is
+  docs/handoffs/ff-g5-nuclear-registry-2026-07.md).
+key_columns: [iso, eia_plant_id, unit]
+allow_additional_columns: false
+columns:
+  - {name: iso,                    dtype: string,  unit: none, nullable: false,
+     description: ISO/RTO the unit belongs to (ERCOT/CAISO/PJM/MISO/NYISO/NEISO).}
+  - {name: plant_name,             dtype: string,  unit: none, nullable: false,
+     description: EIA-860 plant name (human-readable; not the join key).}
+  - {name: unit,                   dtype: string,  unit: none, nullable: false,
+     description: EIA-860 generator ID within the plant (also the NRC unit number
+       for nuclear; joins the fleet spine's generator_id).}
+  - {name: eia_plant_id,           dtype: int64,   unit: none, nullable: false,
+     description: EIA plant code (joins the EIA-860 fleet spine and
+       data/raw/reference/master-plant-registry.csv `plantid`).}
+  - {name: capacity_mw,            dtype: float64, unit: mw,   nullable: true,
+     description: Nameplate MW cross-check against EIA-860 (mismatch >5% fails
+       curation), same discipline as confirmed-retirements.}
+  - {name: nrc_docket,             dtype: string,  unit: none, nullable: true,
+     description: NRC docket number (50-xxx) for the unit's operating license.}
+  - {name: license_issued_date,    dtype: "datetime64[ns]", unit: none, nullable: true,
+     description: Date the current (renewed, where applicable) operating license
+       was issued by the NRC.}
+  - {name: current_license_expiry, dtype: "datetime64[ns]", unit: none, nullable: true,
+     description: Current NRC operating-license EXPIRATION date (reflects any
+       initial renewal or SLR already granted). The federal license ceiling — a
+       state ceiling (e.g. CA SB 846 for Diablo Canyon) is captured in
+       retirement_announcement / the confirmed-retirements registry, not here.}
+  - {name: license_stage,          dtype: string,  unit: none, nullable: false,
+     description: One of original | renewed_60 | slr_granted_80. Closed vocabulary.
+       `original` = still on the initial 40-yr license; `renewed_60` = initial
+       license renewal granted (to 60 yr); `slr_granted_80` = Subsequent License
+       Renewal granted (to 80 yr).}
+  - {name: license_instrument,     dtype: string,  unit: none, nullable: true,
+     description: Citation of the operating-license / renewal instrument (NRC
+       renewed license number, NUREG safety-evaluation report, or amendment).}
+  - {name: slr_status,             dtype: string,  unit: none, nullable: false,
+     description: One of granted | under_review | announced_intent | none. Closed
+       vocabulary. `granted` implies license_stage slr_granted_80; `under_review`
+       = SLR application docketed/accepted; `announced_intent` = licensee has
+       publicly stated intent to file; `none` = no SLR pathway (the case closest
+       to a confirmed license-expiry exit — see the design memo).}
+  - {name: slr_docket,             dtype: string,  unit: none, nullable: true,
+     description: NRC SLR application docket / ADAMS accession, when an SLR
+       application exists.}
+  - {name: slr_instrument,         dtype: string,  unit: none, nullable: true,
+     description: Citation of the SLR instrument (application, acceptance, or
+       issuance letter / NUREG).}
+  - {name: slr_instrument_date,    dtype: "datetime64[ns]", unit: none, nullable: true,
+     description: Date of the SLR instrument (application-accepted date for
+       under_review; issuance date for granted).}
+  - {name: announced_uprate_mw,    dtype: float64, unit: mw,   nullable: true,
+     description: ANNOUNCED (not-yet-implemented / not-yet-in-nameplate) power
+       uprate in MW-electric. Historical uprates already baked into `capacity_mw`
+       are NOT recorded here (they are context in the methodology doc). Null when
+       no forward uprate is announced.}
+  - {name: uprate_status,          dtype: string,  unit: none, nullable: true,
+     description: One of approved | under_review | announced_intent | none, for a
+       FORWARD uprate. Null/none when no forward uprate. Closed vocabulary.}
+  - {name: uprate_instrument,      dtype: string,  unit: none, nullable: true,
+     description: Citation of the forward-uprate instrument (NRC amendment /
+       application docket, or licensee filing).}
+  - {name: restart_status,         dtype: string,  unit: none, nullable: true,
+     description: One of returned | in_progress | planned | none, for a shut-down
+       unit on a restart pathway (Palisades, Crane/TMI-1). Closed vocabulary;
+       null/none for a normally-operating unit.}
+  - {name: restart_target_year,    dtype: int64,   unit: year, nullable: true,
+     description: Target calendar year of return to service for a restart-pathway
+       unit. Null when not a restart case or already returned.}
+  - {name: restart_instrument,     dtype: string,  unit: none, nullable: true,
+     description: Citation of the restart instrument (NRC reauthorization / power
+       ascension approval, PPA, or licensee announcement).}
+  - {name: retirement_announcement, dtype: string, unit: none, nullable: true,
+     description: Free-text note of any retirement announcement affecting this
+       unit. If a BINDING exit instrument exists it lives in the
+       confirmed-retirements registry — reference it via
+       confirmed_retirement_ref; do NOT duplicate the row here.}
+  - {name: confirmed_retirement_ref, dtype: string, unit: none, nullable: true,
+     description: The `instrument_id` of the confirmed-retirements row that governs
+       this unit's binding exit, when one exists (e.g. sb846-diablo-1). Cross-ref
+       only — the authoritative exit row lives in confirmed-retirements.}
+  - {name: source_url,             dtype: string,  unit: none, nullable: false,
+     description: Authoritative primary-source URL (NRC info-finder / license /
+       SLR / uprate page, or state/licensee filing).}
+  - {name: source_doc,             dtype: string,  unit: none, nullable: true,
+     description: Document title / page reference within source_url.}
+  - {name: accessed,               dtype: "datetime64[ns]", unit: none, nullable: false,
+     description: Date the sources were last re-queried (the intake vintage stamp).}
+  - {name: notes,                  dtype: string,  unit: none, nullable: true,
+     description: Free-text context (restart detail, federal-vs-state ceiling,
+       SLR-under-review, MANUAL DOWNLOAD NEEDED provenance, etc.).}
