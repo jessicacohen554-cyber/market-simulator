@@ -2931,6 +2931,14 @@ def apply_gas_st_netload_drag_floor(
     if getattr(config, "gas_st_drag_seasonal", False):
         hours = int(fleet_arrays.availability.shape[1])
         slope, intercept, cap = _load_ercot_stgas_seasonal_drag(config, hours)
+        logger.info(
+            "ST_GAS net-load drag: SEASON-RESOLVED curve armed "
+            "(gas_st_drag_seasonal, ERCOT-91 rule-22 grain fix) — per-hour "
+            "coefficients from the frozen seasonal artifact replace the "
+            "pooled scalars; slope range [%.5f, %.5f]/GW",
+            float(np.min(slope)),
+            float(np.max(slope)),
+        )
     # All-hours boiler floor (no ramp window); peaker-class ST_GAS plants run on
     # price and are excluded.
     return apply_netload_reliability_floor(
