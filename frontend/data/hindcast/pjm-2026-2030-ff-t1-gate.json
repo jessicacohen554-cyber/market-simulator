@@ -1,0 +1,37 @@
+{
+  "run_id": "pjm-2026-2030-ff-t1-gate",
+  "meta": {
+    "iso": "PJM",
+    "kind": "t1f",
+    "label": "ff-t1-gate",
+    "variant": "forecast-baseline",
+    "mode": "forecast",
+    "start_year": 2026,
+    "end_year": 2030,
+    "capacity_market_clearing": true,
+    "datacenter_load_path": "mid",
+    "correlated_forced_outage": true,
+    "cache_key": "29609b775df34260",
+    "bundle": "results/ff-t1-gate/pjm/PJM/29609b775df34260",
+    "solved_years": [2026, 2027, 2028, 2029, 2030],
+    "n_solved_years": 5,
+    "error": null,
+    "total_wall_s": 1478.9,
+    "global_peak_rss_mb": 8813.9,
+    "year_summary": [
+      {"year": 2026, "reserve_margin": -0.1019, "lw_price": 39.95, "max_hourly_price": 60.0, "co2_mt": 346.12, "hours_ge_500": 0, "retire_mw": 0.0, "builds_thermal_mw": 0.0, "builds_renew_mw": 0.0, "builds_storage_mw": 0.0},
+      {"year": 2027, "reserve_margin": -0.0982, "lw_price": 38.07, "max_hourly_price": 56.8, "co2_mt": 342.55, "hours_ge_500": 0, "retire_mw": 0.0, "builds_thermal_mw": 2500.0, "builds_renew_mw": 7500.0, "builds_storage_mw": 0.0},
+      {"year": 2028, "reserve_margin": -0.1032, "lw_price": 39.37, "max_hourly_price": 59.1, "co2_mt": 353.8, "hours_ge_500": 0, "retire_mw": 0.0, "builds_thermal_mw": 0.0, "builds_renew_mw": 7500.0, "builds_storage_mw": 0.0},
+      {"year": 2029, "reserve_margin": -0.1183, "lw_price": 41.71, "max_hourly_price": 60.6, "co2_mt": 356.17, "hours_ge_500": 0, "retire_mw": 3302.0, "builds_thermal_mw": 2500.0, "builds_renew_mw": 7500.0, "builds_storage_mw": 0.0},
+      {"year": 2030, "reserve_margin": -0.1143, "lw_price": 46.94, "max_hourly_price": 69.8, "co2_mt": 370.0, "hours_ge_500": 0, "retire_mw": 0.0, "builds_thermal_mw": 2500.0, "builds_renew_mw": 7500.0, "builds_storage_mw": 0.0}
+    ]
+  },
+  "score": null,
+  "invariants": [
+    {"ident": "I4", "name": "capacity accounting", "status": "FAIL", "detail": "2029:coal off by 742.6 MW"},
+    {"ident": "I12", "name": "reserve-margin band", "status": "PASS", "detail": "requirement-implied floor [-12.9%, 2.1%]; all in-band"},
+    {"ident": "I13", "name": "cobweb detector", "status": "PASS", "detail": "smooth"}
+  ],
+  "invariants_note": "sole FC-1 blocker is I4; all other I1-I14 PASS (FC-2 clean). full set in results bundle",
+  "registered_utc": "2026-07-20T15:52:34Z"
+}

@@ -1,0 +1,38 @@
+{
+  "run_id": "miso-2026-2030-ff-t1-gate",
+  "meta": {
+    "iso": "MISO",
+    "kind": "t1f",
+    "label": "ff-t1-gate",
+    "variant": "forecast-baseline",
+    "mode": "forecast",
+    "start_year": 2026,
+    "end_year": 2030,
+    "capacity_market_clearing": true,
+    "datacenter_load_path": "mid",
+    "correlated_forced_outage": true,
+    "cache_key": "f7f3bf42eb680e7d",
+    "bundle": "results/ff-t1-gate/miso/MISO/f7f3bf42eb680e7d",
+    "solved_years": [2026, 2027, 2028, 2029, 2030],
+    "n_solved_years": 5,
+    "error": null,
+    "total_wall_s": 1784.4,
+    "global_peak_rss_mb": 9567.2,
+    "year_summary": [
+      {"year": 2026, "reserve_margin": 0.087, "lw_price": 36.92, "max_hourly_price": 1549.3, "co2_mt": 358.01, "hours_ge_500": 4, "retire_mw": 0.0, "builds_thermal_mw": 0.0, "builds_renew_mw": 0.0, "builds_storage_mw": 0.0},
+      {"year": 2027, "reserve_margin": 0.1347, "lw_price": 34.4, "max_hourly_price": 84.0, "co2_mt": 336.44, "hours_ge_500": 0, "retire_mw": 0.0, "builds_thermal_mw": 6267.6, "builds_renew_mw": 4000.0, "builds_storage_mw": 4000.0},
+      {"year": 2028, "reserve_margin": 0.1183, "lw_price": 36.04, "max_hourly_price": 188.3, "co2_mt": 348.41, "hours_ge_500": 0, "retire_mw": 0.0, "builds_thermal_mw": 714.7, "builds_renew_mw": 0.0, "builds_storage_mw": 0.0},
+      {"year": 2029, "reserve_margin": 0.1209, "lw_price": 39.64, "max_hourly_price": 1385.8, "co2_mt": 357.18, "hours_ge_500": 5, "retire_mw": 0.0, "builds_thermal_mw": 5000.0, "builds_renew_mw": 0.0, "builds_storage_mw": 0.0},
+      {"year": 2030, "reserve_margin": 0.1148, "lw_price": 47.14, "max_hourly_price": 1391.6, "co2_mt": 377.99, "hours_ge_500": 9, "retire_mw": 633.0, "builds_thermal_mw": 3000.0, "builds_renew_mw": 0.0, "builds_storage_mw": 0.0}
+    ]
+  },
+  "score": null,
+  "invariants": [
+    {"ident": "I4", "name": "capacity accounting", "status": "FAIL", "detail": "2029:coal off by 1639.8 MW"},
+    {"ident": "I7", "name": "reliability floor", "status": "FAIL", "detail": "2026: accredited firm 133834 < requirement 135371 MW"},
+    {"ident": "I12", "name": "reserve-margin band", "status": "WARN", "detail": "requirement-implied floor [10.0%, 25.0%]; out: 2026:8.7%"},
+    {"ident": "I13", "name": "cobweb detector", "status": "WARN", "detail": "gas_ct(3) - flip-induced entry cobweb"}
+  ],
+  "invariants_note": "structural I1/I2/I3/I5/I6/I8/I9/I10/I11/I14 PASS (omitted); full set in results bundle",
+  "registered_utc": "2026-07-20T15:52:34Z"
+}

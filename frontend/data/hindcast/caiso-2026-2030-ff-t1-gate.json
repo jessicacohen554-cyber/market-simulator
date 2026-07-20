@@ -1,0 +1,39 @@
+{
+  "run_id": "caiso-2026-2030-ff-t1-gate",
+  "meta": {
+    "iso": "CAISO",
+    "kind": "t1f",
+    "label": "ff-t1-gate",
+    "variant": "forecast-baseline",
+    "mode": "forecast",
+    "start_year": 2026,
+    "end_year": 2030,
+    "capacity_market_clearing": false,
+    "datacenter_load_path": "mid",
+    "correlated_forced_outage": true,
+    "cache_key": "f1bafe12c7154890",
+    "bundle": "results/ff-t1-gate/caiso/CAISO/f1bafe12c7154890",
+    "solved_years": [2026, 2027, 2028, 2029, 2030],
+    "n_solved_years": 5,
+    "error": null,
+    "total_wall_s": 1011.0,
+    "global_peak_rss_mb": 4471.3,
+    "year_summary": [
+      {"year": 2026, "reserve_margin": -0.0748, "lw_price": 56.14, "max_hourly_price": 72.5, "co2_mt": 31.85, "hours_ge_500": 0, "retire_mw": 0.0, "builds_thermal_mw": 0.0, "builds_renew_mw": 0.0, "builds_storage_mw": 0.0},
+      {"year": 2027, "reserve_margin": 0.0433, "lw_price": 54.04, "max_hourly_price": 970.5, "co2_mt": 28.67, "hours_ge_500": 9, "retire_mw": 1492.5, "builds_thermal_mw": 9000.0, "builds_renew_mw": 7000.0, "builds_storage_mw": 0.0},
+      {"year": 2028, "reserve_margin": 0.1744, "lw_price": 56.77, "max_hourly_price": 969.7, "co2_mt": 22.34, "hours_ge_500": 19, "retire_mw": 0.8, "builds_thermal_mw": 7293.0, "builds_renew_mw": 7000.0, "builds_storage_mw": 0.0},
+      {"year": 2029, "reserve_margin": 0.1725, "lw_price": 59.48, "max_hourly_price": 973.0, "co2_mt": 15.44, "hours_ge_500": 32, "retire_mw": 0.0, "builds_thermal_mw": 195.9, "builds_renew_mw": 7000.0, "builds_storage_mw": 0.0},
+      {"year": 2030, "reserve_margin": 0.172, "lw_price": 64.49, "max_hourly_price": 1085.0, "co2_mt": 13.46, "hours_ge_500": 36, "retire_mw": 1122.0, "builds_thermal_mw": 1469.5, "builds_renew_mw": 7000.0, "builds_storage_mw": 0.0}
+    ]
+  },
+  "score": null,
+  "invariants": [
+    {"ident": "I3", "name": "unserved/dump", "status": "FAIL", "detail": "2030: slack 0.02% of load"},
+    {"ident": "I4", "name": "capacity accounting", "status": "FAIL", "detail": "2027:gas_st off by 1333.0 MW"},
+    {"ident": "I7", "name": "reliability floor", "status": "FAIL", "detail": "2026: accredited firm 46105 < requirement 57306 MW; 2027: accredited firm 53227 < requirement 58671 MW"},
+    {"ident": "I9", "name": "storage integrity", "status": "FAIL", "detail": "2030: simultaneous chg+dis 0.26% of throughput"},
+    {"ident": "I12", "name": "reserve-margin band", "status": "WARN", "detail": "requirement-implied floor [15.0%, 30.0%]; out: 2026:-7.5%, 2027:4.3%"}
+  ],
+  "invariants_note": "structural I1/I2/I5/I6/I8/I10/I11/I13/I14 PASS (omitted); full set in results bundle",
+  "registered_utc": "2026-07-20T15:52:34Z"
+}

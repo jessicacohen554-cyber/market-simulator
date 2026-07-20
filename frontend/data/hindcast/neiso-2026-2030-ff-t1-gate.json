@@ -1,0 +1,37 @@
+{
+  "run_id": "neiso-2026-2030-ff-t1-gate",
+  "meta": {
+    "iso": "NEISO",
+    "kind": "t1f",
+    "label": "ff-t1-gate",
+    "variant": "forecast-baseline",
+    "mode": "forecast",
+    "start_year": 2026,
+    "end_year": 2030,
+    "capacity_market_clearing": true,
+    "datacenter_load_path": "mid",
+    "correlated_forced_outage": true,
+    "cache_key": "cecad92eb95076d3",
+    "bundle": "results/ff-t1-gate/neiso/NEISO/cecad92eb95076d3",
+    "solved_years": [2026, 2027, 2028, 2029, 2030],
+    "n_solved_years": 5,
+    "error": null,
+    "total_wall_s": 462.8,
+    "global_peak_rss_mb": 3497.7,
+    "year_summary": [
+      {"year": 2026, "reserve_margin": 0.1144, "lw_price": 52.12, "max_hourly_price": 69.1, "co2_mt": 16.29, "hours_ge_500": 0, "retire_mw": 0.0, "builds_thermal_mw": 0.0, "builds_renew_mw": 0.0, "builds_storage_mw": 0.0},
+      {"year": 2027, "reserve_margin": 0.1208, "lw_price": 50.49, "max_hourly_price": 63.2, "co2_mt": 16.18, "hours_ge_500": 0, "retire_mw": 0.0, "builds_thermal_mw": 0.0, "builds_renew_mw": 3000.0, "builds_storage_mw": 0.0},
+      {"year": 2028, "reserve_margin": 0.0708, "lw_price": 52.62, "max_hourly_price": 73.4, "co2_mt": 13.73, "hours_ge_500": 0, "retire_mw": 1375.6, "builds_thermal_mw": 0.0, "builds_renew_mw": 3000.0, "builds_storage_mw": 0.0},
+      {"year": 2029, "reserve_margin": 0.075, "lw_price": 55.55, "max_hourly_price": 78.5, "co2_mt": 11.62, "hours_ge_500": 0, "retire_mw": 54.0, "builds_thermal_mw": 0.0, "builds_renew_mw": 3000.0, "builds_storage_mw": 0.0},
+      {"year": 2030, "reserve_margin": 0.0811, "lw_price": 63.27, "max_hourly_price": 86.1, "co2_mt": 9.66, "hours_ge_500": 0, "retire_mw": 0.0, "builds_thermal_mw": 0.0, "builds_renew_mw": 3000.0, "builds_storage_mw": 0.0}
+    ]
+  },
+  "score": null,
+  "invariants": [
+    {"ident": "I4", "name": "capacity accounting", "status": "FAIL", "detail": "2028:coal off by 54.0 MW"},
+    {"ident": "I7", "name": "reliability floor", "status": "PASS", "detail": "held (FF-2C flip fixed base-year adequacy)"},
+    {"ident": "I12", "name": "reserve-margin band", "status": "PASS", "detail": "requirement-implied floor [0.2%, 15.2%]; all in-band"}
+  ],
+  "invariants_note": "sole FC-1 blocker is I4; I7/I12 now PASS via the flip; other I1-I14 PASS. full set in results bundle",
+  "registered_utc": "2026-07-20T15:52:34Z"
+}
