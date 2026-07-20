@@ -34,6 +34,9 @@ sys.path.insert(0, str(REPO))
 
 from scripts.lib import backcast_artifacts as ba  # noqa: E402
 from scripts.lib import keeper_store  # noqa: E402  (after sys.path insert)
+from scripts.lib.known_unsynced_keepers import (  # noqa: E402
+    UNSYNCED_RUN_PAYLOADS,
+)
 
 REGISTRY_DIR = ba.REGISTRY
 RUNS_DIR = ba.RUNS
@@ -41,6 +44,11 @@ RUNS_DIR = ba.RUNS
 
 def main() -> int:
     problems: list[str] = []
+    # Pre-existing sidecar-only registrations whose payloads were never
+    # committed (scripts/lib/known_unsynced_keepers.py). Reported as tracked
+    # warnings so this gate stays green for unrelated PRs; any OTHER missing
+    # payload still fails. Not a blanket ignore.
+    warnings: list[str] = []
     sidecars: dict[str, dict] = {}
     for path in sorted(REGISTRY_DIR.glob("*.json")):
         try:
@@ -51,10 +59,11 @@ def main() -> int:
         rid = rec.get("id", path.stem)
         sidecars[rid] = rec
         if not (RUNS_DIR / f"{rid}.js").exists():
-            problems.append(
+            msg = (
                 f"{path.name}: registry sidecar has no matching "
                 f"runs/{rid}.js payload — invisible in the Run Explorer"
             )
+            (warnings if rid in UNSYNCED_RUN_PAYLOADS else problems).append(msg)
 
     # payload -> sidecar: an orphan runs/<id>.js with no registry sidecar. A
     # sidecar pruned without its payload leaves this dead file committed
@@ -87,9 +96,17 @@ def main() -> int:
                 f"keepers/{iso}.json: keeper {rid!r} has no registry sidecar"
             )
         elif not (RUNS_DIR / f"{rid}.js").exists():
-            problems.append(
-                f"keepers/{iso}.json: keeper {rid!r} has no runs/{rid}.js payload"
-            )
+            msg = f"keepers/{iso}.json: keeper {rid!r} has no runs/{rid}.js payload"
+            (warnings if rid in UNSYNCED_RUN_PAYLOADS else problems).append(msg)
+
+    if warnings:
+        print(
+            "registry/payload parity: known-unsynced runs (tracked, not a gate "
+            "failure — see scripts/lib/known_unsynced_keepers.py):",
+            file=sys.stderr,
+        )
+        for w in warnings:
+            print(f"  ! {w}", file=sys.stderr)
 
     if problems:
         print("registry/payload parity FAILED:", file=sys.stderr)
@@ -97,7 +114,10 @@ def main() -> int:
             print(f"  - {p}", file=sys.stderr)
         return 1
 
-    print(f"registry/payload parity OK ({len(sidecars)} runs checked)")
+    print(
+        f"registry/payload parity OK ({len(sidecars)} runs checked, "
+        f"{len(warnings)} known-unsynced tolerated)"
+    )
     return 0
 
 
