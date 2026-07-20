@@ -53,7 +53,7 @@ class TestForwardNetConeAnchor(unittest.TestCase):
 
     def test_none_when_no_vintage_table(self):
         # CAISO (fixed CPM-soft-cap proxy) and ERCOT (energy-only) have no
-        # vintage table — None, so the caller keeps its fixed proxy, exactly as
+        # vintage table → None, so the caller keeps its fixed proxy, exactly as
         # resolve_demand_curve_vintage does.
         self.assertIsNone(forward_net_cone_anchor("CAISO", 2030))
         self.assertIsNone(forward_net_cone_anchor("CAISO", 2030, "reindex_net"))
@@ -151,7 +151,7 @@ class TestEscalationRegistryHygiene(unittest.TestCase):
 
     def test_central_rates_are_inflation_only_zero_real(self):
         # The cited central finding (field escalates gross + re-nets; Brattle
-        # out-year guidance is inflation-only — ~0.0 real). A non-zero central
+        # out-year guidance is inflation-only ⇒ ~0.0 real). A non-zero central
         # rate would be a forecast-of-real-net-CONE-growth, which the field does
         # not do — a positive rate is a SCENARIO input, never the default.
         for iso, rate in NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO.items():
@@ -181,7 +181,7 @@ class TestScenarioConfigField(unittest.TestCase):
         )
 
     def test_reindex_mode_changes_cache_key(self):
-        # A reindex run IS a distinct forward-capacity-price scenario — distinct
+        # A reindex run IS a distinct forward-capacity-price scenario → distinct
         # key (so it never collides with a cached hold_last run).
         self.assertNotEqual(
             ScenarioConfig().cache_key(),
@@ -193,7 +193,7 @@ class TestScenarioConfigField(unittest.TestCase):
         )
 
     def test_backcast_coerces_to_hold_last(self):
-        # A backcast has no capacity evolution — the axis is inert; coerce to
+        # A backcast has no capacity evolution → the axis is inert; coerce to
         # hold_last so a backcast that sets it non-default stays byte-identical.
         bc = ScenarioConfig(mode="backcast", net_cone_forward_escalation="reindex_net")
         self.assertEqual(bc.net_cone_forward_escalation, "hold_last")
