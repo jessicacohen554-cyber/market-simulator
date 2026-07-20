@@ -28,13 +28,15 @@ Then upload the refreshed ``data/eia_hourly/NYIS hourly.parquet``.
 from __future__ import annotations
 
 import argparse
-import os
 import sys
 import time
 from pathlib import Path
 
 import pandas as pd
 import requests
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from scripts.lib.env_keys import get_api_key  # noqa: E402
 
 REGION_URL = "https://api.eia.gov/v2/electricity/rto/region-data/data/"
 FUEL_URL = "https://api.eia.gov/v2/electricity/rto/fuel-type-data/data/"
@@ -63,16 +65,9 @@ REGION_TYPES: dict[str, str] = {
 
 def _api_key() -> str:
     """Resolve the EIA API key from the environment or the repo ``.env``."""
-    key = os.environ.get("EIA_API_KEY", "")
-    if not key:
-        env_path = Path(__file__).parent.parent.parent / ".env"
-        if env_path.exists():
-            for line in env_path.read_text().splitlines():
-                if line.startswith("EIA_API_KEY="):
-                    key = line.split("=", 1)[1].strip()
-    if not key:
-        sys.exit("EIA_API_KEY not set (export it or add it to .env).")
-    return key
+    return get_api_key(
+        "EIA_API_KEY", hint="free at https://www.eia.gov/opendata/register.php"
+    )
 
 
 _RATE_LIMIT_BACKOFFS_S = (15, 30, 60, 120, 240)  # DEMO_KEY throttles bursts
