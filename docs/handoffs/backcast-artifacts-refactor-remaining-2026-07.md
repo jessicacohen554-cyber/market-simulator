@@ -1,9 +1,35 @@
 # Backcast-artifacts refactor — remaining consumer migrations (handoff)
 
-> Status: ACTIVE handoff. Branch `claude/backcast-artifacts-refactor-8w5y8d`.
-> The three shared libraries and 8 of the 13 consumer migrations are landed and
-> byte-verified; this documents the 5 files not yet migrated and the exact,
-> byte-parity-preserving edits each needs.
+> Status: ACTIVE handoff. Branch `phase-refactor/artifact-io-closure` (Wave 2A
+> closure; the original library + first-8 work landed on
+> `claude/backcast-artifacts-refactor-8w5y8d`).
+> The three shared libraries and 12 of the 13 consumer migrations are landed and
+> byte-verified. Wave 2A closure (2026-07-20) migrated **4 of the 5** files
+> documented below — `score_crossover.py` (§1), `calibration_verdict.py` (§2),
+> `render_calibration_html.py` (§3), `legitimacy_diagnostics.py` (§5) — each its
+> own commit, blob-verified after push, with every per-file parity check green:
+> the six-keeper verdict dict is byte-identical; the CAISO D-1/D-2/D-4
+> `legitimacy_diagnostics.json` is byte-identical; `test_benchmark_basis_default`
+> stays green; `build_manifest.py` output and `check_registry_payload_parity.py`
+> state are unchanged from the pre-existing baseline.
+>
+> **`run_calibration_full.py` (§4) is the SOLE remaining Wave 2A item**: DEFERRED,
+> push-blocked at 457 KB — a single `push_files` full-content commit truncates
+> under the response budget (exactly the rule-27 hazard). Its
+> `HOLDOUT_CALIBRATION_YEARS` literal stays a parity-tested mirror of the single
+> source: `tests/test_holdout_year_gate.py` asserts
+> `_RCF.HOLDOUT_CALIBRATION_YEARS == legitimacy.D6_CALIBRATION_YEARS`
+> (`legitimacy_diagnostics.D6_CALIBRATION_YEARS` now aliases
+> `holdout_policy.CALIBRATION_YEARS`), so the literal cannot silently drift from the
+> single source until a large-file-capable push path lands it.
+>
+> §2 deviation from the edit script (byte-parity correction): `COAL_CLASSES` was
+> **not** aliased to `bs.COAL_CLASSES`. This scorer emits its per-class records in
+> `COAL_CLASSES` iteration order, and `bs.COAL_CLASSES` is the (different) taxonomy
+> roll-up order, so aliasing reordered the committed six-keeper verdicts (verified).
+> `COAL_CLASSES` is kept as its frozen ordered tuple; only `GAS_CLASSES`
+> (order-identical to `bs`) is sourced from `bs`. The handoff's "byte-safe" note for
+> COAL below was empirically wrong and is superseded by this line.
 
 ## What is done (landed on the branch, byte-verified)
 
@@ -80,6 +106,9 @@ benchmark_semantics (delete the by-comment mirrors):
   (`from scripts.lib import benchmark_semantics as bs`); note `bs.COAL_CLASSES`
   is the taxonomy order — a different order than the current literal but the
   same set, used only in sums/membership (byte-safe).
+  **[SUPERSEDED — see status header §2 deviation: aliasing COAL_CLASSES to
+  bs.COAL_CLASSES reorders the committed verdicts; keep COAL_CLASSES as its
+  frozen ordered tuple, alias only GAS_CLASSES.]**
 - `VINTAGE_RECONCILE_FRAC` (229) → `bs.VINTAGE_RECONCILE_FRAC`.
 - `CEMS_GAS_ANCHOR_ISOS` (246) → `bs.EIA930_NG_CELL_CORRUPT`;
   `CEMS_GAS_ANCHOR_ONSET` (247) → `bs.EIA930_NG_CORRUPT_ONSET` (keep the local
