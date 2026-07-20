@@ -162,3 +162,61 @@ charter §6: C3a level + zero-spurious + no scarcity-tail/C3b/C3c degradation,
 §8.3 carries a superseded-note pointing here. Ops: probe + artifact + charter +
 this entry committed on `claude/ercot-90-stgas-shoulder-edgsep`. Next number:
 ercot-91.
+
+## 2026-07-20 — ERCOT-91 (step 2, authorized design round): band-hour steam-wall arm REJECTED (zero-spurious/C3a trips both years, alone and composed — the trip is intrinsic to the DAM-basis ST ladder in cold-snap hours, not the drag); winter seam PASSES — `gas_st_drag_seasonal`, the rule-22 season-grain re-derive of the drag curve from its own CAMPD source (DJF zero-crossing ~31 GW vs pooled 15.2), all guards held both years, full-span candidate `ercot91_seasonal_drag_fullspan`; keeper UNCHANGED (ercot86)
+
+**Task.** The ERCOT-90 §4 verdict's two seams, one design round (charter §6
+guards pre-committed): (a) arm the ERCOT-77 steam extension of the cleared-share
+wall (`ercot_offer_surface_cleared_share_steam`); (b) season-resolve the
+`gas_st_netload_drag` curve from the same CAMPD source. D-2 enumeration
+re-derived first: `st_netload_drag` is the class's only floor (26.7-32.0 %
+forced share); the wall is bid-axis-only inside the existing cleared-share
+owner; peak rungs/conditional, bridge (CC-only), pool/span (off) all disjoint —
+no stacking. Probes: `replay_keeper` single-delta throwaways off the ercot86
+keeper, 2024 → 2025 → composition, scored with `_ercot89_span_check` + the
+ercot90 measurement re-run + winter C1/C4 rows.
+
+**Band-hour seam (a) — REJECTED as armed (charter §8.1).** Engages as designed
+(516 walled rows; ST boundary/wall + measured ST state weight, DAM basis) and
+moves the LEVEL toward measured everywhere (2024 residual 5,445→5,315 MW vs
+measured 4,247, controls +540→+158, annual +25 %→+15 %; 2025 residual
+5,672→5,012, annual +24 %→+10 %; freed energy → CC/CT, reality's surge
+pattern) — but trips the pre-committed gates in BOTH years: 2024 spurious 7→15
+(all 8 new hours ONE Jan-14 cold-snap cluster, actual $85-107 → probe $153),
+2025 C3a +1.4 %→+3.5 % DEGRADED + spurious 2→3; band fill unchanged (5/68,
+4/65). Composition with the winter seam refutes the coupling hypothesis — the
+same 8 Jan hours trip with the seasonal drag armed (C3a +2.8 %): the trip is
+intrinsic to pricing the un-cleared steam increment on the DAM-basis ST ladder
+in tight-winter hours (the ERCOT-84/86 measured-cheap/mis-based DAM-ladder
+lesson, now on ST). ercot41/43 pattern: machinery stays merged default-off,
+byte-identical; frontier = an RT/SCED-basis ST ladder + finer state
+conditioning (data-intake, a new charter). The ERCOT-89 §9.5(2) span revisit
+stays parked (no ST_GAS band-hour fix armed).
+
+**Winter seam (b) — PASSES (charter §8.2).** New standing derive
+`scripts/data/derive_ercot_stgas_drag_seasonal.py` (same CAMPD source,
+drag-covered plants unit-routed, EIA-930 ERCO net-load, overnight 23-05h,
+NYISO/PJM-family hinge estimator) → frozen artifact
+`ercot_stgas_drag_seasonal.json`: DJF 0.01354/−0.4257/0.270 (crossing 31.4 GW),
+MAM 0.00731/−0.1073/0.241, JJA 0.01149/−0.2800/0.359, SON 0.00601/−0.0810/0.276;
+pooled re-fit check ≈ armed scalars. LOYO 2-year re-fits: MAM/JJA/SON stable,
+DJF knee 24-38 GW (winter-event variance) but always ≫ the pooled 15.2 GW.
+Mechanism: `gas_st_drag_seasonal` (default off, tier 3, ISO-guarded rule 25)
+swaps the pooled scalars for per-season coefficients inside
+`apply_gas_st_netload_drag_floor` — same mech id/rows/window, flag-off
+byte-identical (test-enforced). Probes: ALL gates held both years (2024 C3a
+−1.3 %→−0.6 % improved; 2025 +1.4 %→+2.0 % inside threshold); DJF over-carry
++1.77→+0.52 TWh (2024) and +1.39→+0.23 (2025); annual +25 %→+12 % / +24 %→+10 %
+over the CAMPD basis; winter C4 flat-to-improved; residual band hours barely
+move (economic, as pre-registered). Disclosed cost: MAM/SON shift slightly
+further under measured (floor released MW the econ layer doesn't re-add — the
+ST_GAS econ-offer axis, not the floor; rule 14 keeps the finer-grain curve).
+
+**Disposition.** Keeper stays **ercot86** (owner-only swap). Band-hour probe
+bundles deleted (rule 16). Winter full-span 2023-2025 candidate solved as
+`ercot91_seasonal_drag_fullspan` and registered on the dashboard as a
+candidate. Pre-existing main breakage noted for the owner (not this lane):
+`tests/test_net_cone_forward.py` fails collection on main (FF-G3 merge imports
+`NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO` missing from `constants.py`).
+Ops: derive + artifact + mechanism + tests + charter §8 + this entry on
+`claude/ercot-91-stgas-shoulder-seams-tgrv1j`. Next number: ercot-92.
