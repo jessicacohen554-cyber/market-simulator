@@ -1004,16 +1004,18 @@ def kill_resume_drill(
         # kill and resume share one cache_key (the resume actually resumes).
         return golden_posture_config(iso, start_year, end_year)
 
-    def _cache_key() -> str:
-        return _config().cache_key()
-
     try:
-        # 1. control — full window, fresh cache root.
+        # 1. control — full window, fresh cache root. The RUNNER-returned key is
+        #    the authoritative cache key: run_scenario_iso applies each ISO's
+        #    default config overrides (runner.py ~431-441) BEFORE hashing, so it
+        #    differs from a bare golden_posture_config().cache_key(). We locate
+        #    every bundle by this returned key, never a recomputed one.
         cachemod.CACHE_ROOT = control_root
         control_key = runnermod.run_scenario_iso(_config(), iso)
 
         # 2. kill — same config, second cache root, interrupted after the
-        #    final-pass save of `kill_after_year`.
+        #    final-pass save of `kill_after_year`. Same config ⇒ same runner key
+        #    ⇒ the partial cache lands under resume_root/iso/control_key.
         cachemod.CACHE_ROOT = resume_root
 
         def _killing_save(result, config, iso_, year, **kwargs):
@@ -1033,8 +1035,7 @@ def kill_resume_drill(
 
         # Snapshot the pre-kill cached parquets' mtimes (proof they are loaded,
         # not re-solved, on resume).
-        resume_key = _cache_key()
-        resume_dir = resume_root / iso / resume_key
+        resume_dir = resume_root / iso / control_key
         pre_kill_years = list(range(start_year, kill_after_year + 1))
         mtimes_before = {
             y: (resume_dir / f"year_{y}.parquet").stat().st_mtime
@@ -1077,7 +1078,7 @@ def kill_resume_drill(
             }
         )
 
-    key_match = control_key == resume_key2 == resume_key
+    key_match = control_key == resume_key2
     green = bool(killed and key_match and cached_years_loaded and sigs_equal)
     result = {
         "instrument": "kill-resume-drill",
