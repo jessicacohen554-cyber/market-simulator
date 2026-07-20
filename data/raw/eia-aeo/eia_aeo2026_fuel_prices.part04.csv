@@ -1,0 +1,151 @@
+fuel,metric,region,scenario,scenario_name,year,value,unit,series_id,table_id,table_name
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2027,4.99791,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2028,6.003934,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2029,6.613264,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2030,6.91399,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2031,7.28894,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2032,7.834542,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2033,8.070283,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2034,8.296114,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2035,8.620185,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2036,9.16389,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2037,9.665433,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2038,9.90163,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2039,10.222271,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2040,10.381156,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2041,11.068767,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2042,11.484284,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2043,11.741126,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2044,12.001648,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2045,12.45398,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2046,12.794847,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2047,13.048809,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2048,13.27298,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2049,13.475178,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2050,13.670992,2025 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2025,3.61317,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2026,3.276809,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2027,3.254183,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2028,3.179111,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2029,3.098124,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2030,2.969201,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2031,2.763557,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2032,2.862122,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2033,2.896434,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2034,2.970852,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2035,2.976297,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2036,2.991293,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2037,3.03545,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2038,3.066823,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2039,3.10697,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2040,3.14675,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2041,3.182619,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2042,3.210997,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2043,3.239656,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2044,3.279343,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2045,3.328703,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2046,3.39147,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2047,3.425394,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2048,3.462193,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2049,3.492503,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,cb2026,Counterfactual Baseline case,2050,3.523059,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2025,3.612751,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2026,3.283695,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2027,3.281227,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2028,3.182141,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2029,3.039177,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2030,2.863245,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2031,2.629018,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2032,2.695042,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2033,2.749766,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2034,2.764531,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2035,2.772906,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2036,2.773169,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2037,2.79438,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2038,2.785366,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2039,2.789223,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2040,2.822249,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2041,2.851007,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2042,2.874527,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2043,2.870267,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2044,2.919537,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2045,2.939137,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2046,2.969608,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2047,2.977373,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2048,3.00338,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2049,3.034357,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2050,3.035546,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2025,3.612644,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2026,3.359363,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2027,3.406811,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2028,3.297849,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2029,3.191462,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2030,3.055397,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2031,2.872354,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2032,2.973691,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2033,3.036992,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2034,3.090104,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2035,3.148427,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2036,3.200388,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2037,3.25585,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2038,3.281846,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2039,3.352341,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2040,3.403966,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2041,3.458322,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2042,3.502641,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2043,3.54216,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2044,3.572891,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2045,3.600838,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2046,3.645969,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2047,3.687649,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2048,3.73206,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2049,3.77958,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2050,3.81551,2025 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2025,2.274578,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2026,1.705447,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2027,1.866632,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2028,1.98081,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2029,2.057333,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2030,2.113335,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2031,2.132693,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2032,2.125742,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2033,2.166716,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2034,2.210674,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2035,2.236392,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2036,2.250254,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2037,2.266881,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2038,2.252387,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2039,2.257752,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2040,2.273479,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2041,2.273246,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2042,2.241175,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2043,2.19378,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2044,2.112226,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2045,1.995906,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2046,2.001886,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2047,2.041852,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2048,2.067541,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2049,2.096327,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,cb2026,Counterfactual Baseline case,2050,2.12689,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2025,2.274579,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2026,1.598605,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2027,1.775144,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2028,1.89745,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2029,1.952553,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2030,1.981884,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2031,1.996672,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2032,1.995377,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2033,2.029961,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2034,2.046614,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2035,2.058651,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2036,2.062884,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2037,2.062117,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2038,2.048932,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2039,2.045381,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2040,2.0436,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2041,2.018771,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2042,1.979696,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2043,1.91749,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2044,1.824893,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2045,1.704629,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2046,1.705661,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
