@@ -1,0 +1,55 @@
+{
+  "env": {
+    "MARKET_SIM_HIGHS_THREADS": "1",
+    "MARKET_SIM_WARMSTART": "1",
+    "MARKET_SIM_WARMSTART_XYEAR": "0"
+  },
+  "git_dirty": false,
+  "git_sha": "de17cbe",
+  "hash_scheme": "sha256-of-canonical-column-float64-bytes",
+  "highspy_version": "unknown",
+  "keepers": {
+    "ERCOT": {
+      "bundle": "results/calibration/ercot91_seasonal_drag_fullspan",
+      "content_hashes": {
+        "btm.parquet": "8acf053bb5aa6bcb2a38a4081ee9030ed5ef6afc967c7892f6b7bff8d50fd376",
+        "dispatch/2023_P1.parquet": "ec3147129487f0c3ddd29cecea34c34e819b78eeca63089d945fa08bb69496b0",
+        "dispatch/2024_P1.parquet": "f49d88231506d0096d7dccf3e83cc20981a3bdec0b2e5dd10863bd73524dc038",
+        "dispatch/2025_P1.parquet": "c8fcf95c78cfbac81b3aed6307d92bdc987ae67f07d0dd9173c784ae1360f278",
+        "flows.parquet": "c655d5a00dff6b880919704c190ab1ddeea48f1983eefd41b9ef431500e9b461",
+        "storage.parquet": "098af1b5d07590f8801c2dc248835ffbd16baeefa3a7bb8b492bfde1568cb185",
+        "system.parquet": "c5a0cfd24e8026fb7ecdff7678d5f98cceb64cd58a010f825fa5b75dd16b6d98"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_takeorpay_from_data",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "plant_tranche_config",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [],
+        "meta_keeper_only": [],
+        "meta_matched": 209,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [],
+        "scenario_config_matched": 587
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-20-ercot91-seasonal-drag-fullspan",
+      "recorded_flag_count": 199,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    }
+  },
+  "note": "Current-HEAD regression baselines (Stage-0). NOT byte-reproductions of the registered July-3 keeper bundles. Multi-GB bundles are gitignored; only this manifest is committed.",
+  "stage_tag": "constants-split-before"
+}
