@@ -258,7 +258,11 @@ Points. Inference (not directly measured — the corpus lacks ST restypes):
 reality's non-CHP steam-gas contribution in these hours is ~1–2 GW, so the
 model's ST_GAS is ~3× over-dispatched in exactly these hours; a
 CAMPD-based ST_GAS hourly check is the named follow-up measurement if step
-2 needs it. Secondary signal, a fortiori: the model carries ~4.6 GW LESS
+2 needs it. *[Superseded 2026-07-20: the ERCOT-90 direct CEMS measurement
+(`docs/handoffs/ercot-stgas-shoulder-2026-07.md`) refutes this inference in
+magnitude — measured real steam-gas in these hours is 4.2–4.8 GW, so the
+over-dispatch is ×1.27–1.37 (+1.3–1.7 GW), not ~3×; the model-side 6.1 GW
+is confirmed.]* Secondary signal, a fortiori: the model carries ~4.6 GW LESS
 VRE than reality in the 2024 resid hours (evening solar shape) and still
 clears $30–80.
 
