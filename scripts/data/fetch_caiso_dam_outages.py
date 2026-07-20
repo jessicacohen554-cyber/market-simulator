@@ -35,9 +35,16 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 OUT = REPO / "data" / "raw" / "caiso-dam-outages" / "daily"
-URL = (
+# Two published filename conventions for the same daily report: the compact
+# YYYYMMDD suffix (2023 through ~May 2024, and again from ~mid-2025) and the
+# mon-DD-YYYY suffix (~Jun 2024 .. early 2025, e.g. ...report-jun-10-2024
+# .xlsx — the monthly library pages carry the authoritative names). The fetch
+# tries both; a day missing under BOTH is a real publication gap.
+URL_PATTERNS = (
     "https://www.caiso.com/documents/"
-    "curtailed-non-operational-generator-prior-trade-date-report-{d}.xlsx"
+    "curtailed-non-operational-generator-prior-trade-date-report-{compact}.xlsx",
+    "https://www.caiso.com/documents/"
+    "curtailed-non-operational-generator-prior-trade-date-report-{mon}-{dd}-{yyyy}.xlsx",
 )
 
 
@@ -56,17 +63,33 @@ def main() -> int:
             n_skip += 1
             d += timedelta(days=1)
             continue
-        url = URL.format(d=stamp)
-        try:
-            with urllib.request.urlopen(url, timeout=60) as resp:
-                blob = resp.read()
-            if len(blob) < 1000:
-                raise OSError(f"suspiciously small payload ({len(blob)} B)")
+        urls = [
+            pat.format(
+                compact=stamp,
+                mon=d.strftime("%b").lower(),
+                dd=d.strftime("%d"),
+                yyyy=d.strftime("%Y"),
+            )
+            for pat in URL_PATTERNS
+        ]
+        blob = None
+        last_exc: Exception | None = None
+        for url in urls:
+            try:
+                with urllib.request.urlopen(url, timeout=60) as resp:
+                    blob = resp.read()
+                if len(blob) < 1000:
+                    raise OSError(f"suspiciously small payload ({len(blob)} B)")
+                break
+            except Exception as exc:  # try the next filename convention
+                blob = None
+                last_exc = exc
+        if blob is not None:
             dest.write_bytes(blob)
             n_ok += 1
-        except Exception as exc:  # 404s and transient errors both recorded
-            missing.append(f"{stamp}\t{exc}")
-            print(f"MISS {stamp}: {exc}", flush=True)
+        else:  # missing under every convention: a real publication gap
+            missing.append(f"{stamp}\t{last_exc}")
+            print(f"MISS {stamp}: {last_exc}", flush=True)
         if (n_ok + len(missing)) % 50 == 0:
             print(f"... {d} fetched={n_ok} missing={len(missing)}", flush=True)
         time.sleep(0.3)  # be polite to caiso.com
