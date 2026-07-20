@@ -1,0 +1,244 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 2c7edc6..211a0f1 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,5 +1,43 @@
+ # Changelog
+ 
++## 2026-07-20 — FF-G3: forward net-CONE evolution (design + grounding, default-inert)
++
++Forecast-only capacity-price surface; **no default flip, no LP solve, pricing
++seam untouched, backcast byte-identical** (default `cache_key` cache-neutral
++— unchanged with the field added; current base-main key `494427c4405cba78`). Full methodology, per-ISO grounding, delta ledger,
++divergence quantification, field survey, and owner-decision box:
++`docs/capacity-price-forward-methodology-2026-07.md` +
++`docs/handoffs/ff-g3-net-cone-forward-2026-07.md`.
++
++- **Designs the explicit forward-evolution rule** for the net-CONE anchor beyond
++  the last published vintage (today `resolve_demand_curve_vintage` silently
++  HOLDS-LAST for 25 forecast years, a live bias — PJM's cleared 2028/29 net-CONE
++  is +34% over the 2027/28 value on disk). New `ScenarioConfig.
++  net_cone_forward_escalation` (`"hold_last"` default | `"reindex_net"` |
++  `"reindex_gross"`), in `_CACHE_KEY_OPTIONAL_FIELDS` (default cache-neutral),
++  TIER-2, `__post_init__`-coerced to `"hold_last"` in backcast.
++- **`constants.forward_net_cone_anchor(iso, year, escalation, *, rate,
++  eas_offset_per_kw_yr)`** — pure resolver on `resolve_demand_curve_vintage`;
++  escalates only years past the last published vintage; `None` for CAISO/ERCOT.
++  `constants.NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO` — cited per-ISO real rate,
++  **0.0 for all** (field finding: ISOs escalate GROSS CONE by a construction
++  index and RE-NET the E&AS offset each year; net-CONE is never indexed directly,
++  and Brattle's out-year guidance is inflation-only, so sharp recent moves are
++  step re-anchorings, not a real trend).
++- **Scope guard:** the escalation is NOT wired into the pricing seam
++  `capacity_price_per_firm_mw_yr` (FF-2C owns the seam wiring + per-ISO
++  `capacity_market_clearing` flips); `forward_net_cone_anchor` is exercised by
++  tests + the offline divergence quantification only.
++- **Researched forward vintages filed as MANUAL DOWNLOADS NEEDED** (not encoded —
++  the machine-readable sources are bot-walled here; rule 13 forbids guessing):
++  PJM 2028/29 (325.69 $/MW-day UCAP), NYISO 2026/27, MISO PY2026/27 (per-LRZ +
++  RBDC), ISO-NE FCA 19 2028/29 (regime-superseded — the FCM is terminating for a
++  prompt/seasonal market with no published parameters). sha256-pinned where a PDF
++  was obtained (`data/raw/capacity-market/demand-curve/README.md`).
++- `tests/test_net_cone_forward.py` (19): hold_last ≡ the seam's current anchor
++  (byte-identity), central-rate collapse, reindex arithmetic, no-escalation
++  at/before the last vintage, registry hygiene, config cache/backcast invariants.
++
+ ## 2026-07-19 — New-build capacity costs: cross-source grounding, literature-envelope ranges, storage/offshore/EGS/H2 derivation-lock
+ 
+ Forecast-only cost-input grounding (capacity-expansion entry screens); **no LP
+diff --git a/src/market_sim/config/constants.py b/src/market_sim/config/constants.py
+index 0fdf758..e46d201 100644
+--- a/src/market_sim/config/constants.py
++++ b/src/market_sim/config/constants.py
+@@ -3460,6 +3460,117 @@ def resolve_demand_curve_vintage(
+     return chosen
+ 
+ 
++# --- FF-G3: forward net-CONE evolution beyond the last published vintage ----
++#
++# ``resolve_demand_curve_vintage`` HOLDS-LAST for any year after an ISO's most
++# recent published delivery-year vintage (docstring third bullet): a 2026-2050
++# forecast reads one frozen net-CONE anchor for every year past the last
++# auction on disk. FF-G3 designs the explicit alternative — an escalation rule
++# with a cited forward story — WITHOUT flipping any default (the shipped mode
++# stays ``"hold_last"``, byte-identical) and WITHOUT touching the pricing seam
++# (:meth:`MarketDesign.capacity_price_per_firm_mw_yr`; the FF-2C wiring lane
++# owns that + the per-ISO clearing flips). See
++# docs/capacity-price-forward-methodology-2026-07.md for the per-ISO grounding
++# tables, delta ledger, field survey, and owner-decision box.
++#
++# FIELD FINDING (agent survey 2026-07-20; PJM OATT Attachment DD §5.10(a)(iv)
++# BLS-Composite index ×1.022; NYISO tariff MST 5.14.1.2.2.1 composite BLS
++# (WPUID612/WPU1197) + BEA GDP-deflator blend; ISO-NE Tariff §III.13 interim
++# inflation/fuel updates + Handy-Whitman on qualification thresholds; MISO
++# Tariff §69A.8 annual GDP-deflator recompute; Brattle 2025 PJM CONE report):
++# every ISO escalates GROSS CONE by a construction-cost index and RE-NETS the
++# E&AS offset each year — net-CONE is a derived residual, NEVER indexed
++# directly. Brattle's own out-year guidance is to escalate the Reference Price
++# "on inflation only", i.e. ~0.0 in REAL terms; the sharp recent moves (PJM CC
++# gross CONE +44% vs the 2022 study) are STEP re-anchorings picked up by
++# intaking each newly-published vintage, not a smooth real trend. Hence the
++# cited central REAL rate below is 0.0 for every ISO: a positive value is an
++# explicit structural-tightness SENSITIVITY (the 2022-25 turbine surge
++# persisting), never a fit (rule 1/13).
++NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO: dict[str, float] = {
++    "PJM": 0.0,
++    "NYISO": 0.0,
++    "NEISO": 0.0,
++    "MISO": 0.0,
++    "CAISO": 0.0,  # no vintage table (fixed CPM-soft-cap proxy); rate unused
++}
++
++
++def forward_net_cone_anchor(
++    iso: "str | None",
++    year: "int | None",
++    escalation: str = "hold_last",
++    *,
++    rate: "float | None" = None,
++    eas_offset_per_kw_yr: "float | None" = None,
++) -> "float | None":
++    """Return the $/kW-yr net-CONE anchor governing ``iso``'s ``year`` (FF-G3).
++
++    The forward-evolution resolver layered on top of
++    :func:`resolve_demand_curve_vintage`. It applies an escalation rule ONLY to
++    years *after* the last published vintage's delivery-period start year; a
++    year at or before the last vintage returns that vintage's published anchor
++    unchanged (the published parameter is the measured input — rule 13).
++
++    ``escalation``:
++
++    * ``"hold_last"`` (default) — byte-identical to
++      ``resolve_demand_curve_vintage(iso, year).net_cone_curve_per_kw_yr``. The
++      status quo the pricing seam reads today.
++    * ``"reindex_net"`` — the last published net-CONE grown by
++      ``(1 + rate) ** (year − last_start)``. A cheap approximation; the field
++      does NOT index net-CONE directly (see the module finding), so this is a
++      documented lower-fidelity option.
++    * ``"reindex_gross"`` — the FIELD-STANDARD construction: escalate GROSS CONE
++      (``net + eas_offset``) by ``(1 + rate)`` per year and re-subtract the E&AS
++      offset — ``(net + eas) * (1 + rate) ** n − eas``. ``eas_offset_per_kw_yr``
++      is the published gross−net gap held real-flat here (an offline illustration
++      for the methodology doc); the STRUCTURALLY-FAITHFUL version re-nets against
++      the model's OWN simulated E&AS margin each forecast year and is wired at
++      solve time by FF-2C (this session designs, does not wire).
++
++    ``rate`` (real, per year) defaults to
++    :data:`NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO` for ``iso`` (0.0 → every
++    mode collapses to ``hold_last``, the byte-identity guarantee and the honest
++    central finding). Returns ``None`` when ``iso``/``year`` is ``None`` or the
++    ISO has no vintage table (CAISO/ERCOT) — the caller then keeps the fixed
++    registry proxy, exactly as :func:`resolve_demand_curve_vintage` does.
++
++    Not consumed by the live pricing seam this session (scope guard); exercised
++    only by tests and the offline divergence quantification in the methodology
++    doc until FF-2C wires it.
++    """
++    vintage = resolve_demand_curve_vintage(iso, year)
++    if vintage is None or year is None:
++        return None
++    base = vintage.net_cone_curve_per_kw_yr
++    if escalation == "hold_last":
++        return base
++    last_start = int(vintage.delivery_year[:4])
++    n = year - last_start
++    if n <= 0:
++        # Year at/before the resolved (last published) vintage — published
++        # anchor, never escalated (rule 13: the measured parameter governs).
++        return base
++    r = NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO.get(iso, 0.0) if rate is None else rate
++    if escalation == "reindex_net":
++        return base * (1.0 + r) ** n
++    if escalation == "reindex_gross":
++        if eas_offset_per_kw_yr is None:
++            raise ValueError(
++                "forward_net_cone_anchor(escalation='reindex_gross') requires "
++                "eas_offset_per_kw_yr (the published gross−net gap, or the "
++                "model's simulated E&AS offset once FF-2C wires it)"
++            )
++        gross = base + eas_offset_per_kw_yr
++        return gross * (1.0 + r) ** n - eas_offset_per_kw_yr
++    raise ValueError(
++        "forward_net_cone_anchor: escalation must be one of "
++        "('hold_last', 'reindex_net', 'reindex_gross'), got "
++        f"{escalation!r}"
++    )
++
++
+ # Target planning reserve margin per ISO for the reserve-margin adequacy
+ # backstop (capacity.py::apply_reserve_margin_build). Each ISO sets its own
+ # installed-reserve-margin / planning-reserve-margin target through its
+diff --git a/src/market_sim/config/scenarios.py b/src/market_sim/config/scenarios.py
+index c45697b..d1758f3 100644
+--- a/src/market_sim/config/scenarios.py
++++ b/src/market_sim/config/scenarios.py
+@@ -82,6 +82,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
+     # every pre-existing cache key is byte-stable; True enters the key (a
+     # distinct financing scenario).
+     "per_tech_wacc_enabled",
++    # FF-G3 forward net-CONE evolution: default "hold_last" dropped from the hash
++    # so every pre-existing cache key is byte-stable; a reindex mode enters the
++    # key (a distinct forward-capacity-price scenario). Backcast-coerced to
++    # "hold_last" in __post_init__.
++    "net_cone_forward_escalation",
+ )
+ 
+ 
+@@ -214,6 +219,18 @@ class ScenarioConfig:
+     # named_program_price, P-1D), an explicit alternative to the default
+     # single floor-band escalator (policy.cap_and_trade.projected_price).
+     # None (default) keeps today's behavior exactly; "mid" reproduces it too.
++    net_cone_forward_escalation: str = "hold_last"  # "hold_last" |
++    # "reindex_net" | "reindex_gross" — FF-G3 forward net-CONE evolution beyond
++    # the last published capacity-market vintage (constants.
++    # forward_net_cone_anchor). "hold_last" (default) is the status quo the
++    # pricing seam reads today (resolve_demand_curve_vintage holds the last
++    # published anchor flat forward), byte-identical. The reindex modes escalate
++    # the anchor at constants.NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO (0.0 real
++    # by default → collapses to hold_last; a positive rate is a structural-
++    # tightness sensitivity). Forecast-only screen input; __post_init__ coerces
++    # it to "hold_last" in backcast (no capacity evolution there). NOT yet wired
++    # into capacity_price_per_firm_mw_yr — FF-2C owns that + the clearing flips
++    # (scope guard). See docs/capacity-price-forward-methodology-2026-07.md.
+     demand_growth_rate: float = (
+         0.01  # flat override used only when no structured rates exist
+     )
+@@ -6735,6 +6752,30 @@ class ScenarioConfig:
+         if self.mode == "backcast" or self.hindcast:
+             self.datacenter_load_path = "off"
+ 
++        # FF-G3 forward net-CONE evolution: validate the label, then COERCE it to
++        # "hold_last" in a plain backcast. Capacity evolution / the capacity-price
++        # seam run only in forecast mode, so the escalation axis is meaningless in
++        # a backcast; coercing keeps every backcast keeper's cache_key +
++        # run_config.json byte-identical even though the field is a scenario axis
++        # (mirrors the datacenter_load_path / entry_lookahead_reprice patterns).
++        # NOT coerced when hindcast (mode=="forecast", hindcast=True): the
++        # capacity-hindcast harness is the forecast path and arms forecast screens
++        # explicitly. (The field is also in _CACHE_KEY_OPTIONAL_FIELDS, so the
++        # default is cache-neutral regardless — this is belt-and-braces so a
++        # backcast that sets it non-default cannot shift its key.)
++        if self.net_cone_forward_escalation not in (
++            "hold_last",
++            "reindex_net",
++            "reindex_gross",
++        ):
++            raise ValueError(
++                "ScenarioConfig.net_cone_forward_escalation must be one of "
++                "('hold_last', 'reindex_net', 'reindex_gross'), got "
++                f"{self.net_cone_forward_escalation!r}"
++            )
++        if self.mode == "backcast":
++            self.net_cone_forward_escalation = "hold_last"
++
+         # entry_lookahead_reprice is a FORECAST-only capacity-screen price
+         # signal (the runner reads it only under mode=="forecast"; a backcast
+         # runs no capacity evolution). Coerce it OFF in a plain backcast so the
+@@ -7515,6 +7556,7 @@ TIER_TAGS: dict[str, int] = {
+     "mass_cap_program": 1,
+     "mass_cap_tons": 1,
+     "carbon_program_price_path": 1,
++    "net_cone_forward_escalation": 2,
+     "demand_growth_rate": 1,
+     "demand_growth_path": 1,
+     "demand_growth_percentile": 1,
