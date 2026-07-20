@@ -617,6 +617,104 @@ class TestGasStNetloadDragFloor(unittest.TestCase):
         np.testing.assert_allclose(fa.min_gen[2], 0.0)
 
 
+class TestGasStSeasonalDrag(unittest.TestCase):
+    """ERCOT-91 season-grain fix of the ST_GAS drag curve (gas_st_drag_seasonal)."""
+
+    _SEASONS = {
+        "0": {"name": "DJF", "slope_per_gw": 0.014, "intercept": -0.43, "cap": 0.27},
+        "1": {"name": "MAM", "slope_per_gw": 0.007, "intercept": -0.11, "cap": 0.24},
+        "2": {"name": "JJA", "slope_per_gw": 0.011, "intercept": -0.28, "cap": 0.36},
+        "3": {"name": "SON", "slope_per_gw": 0.006, "intercept": -0.08, "cap": 0.28},
+    }
+
+    def _artifact(self, tmp, iso="ERCOT", drop_season=None):
+        import json as _json
+
+        seasons = dict(self._SEASONS)
+        if drop_season is not None:
+            seasons.pop(drop_season)
+        path = tmp / "seasonal.json"
+        path.write_text(
+            _json.dumps(
+                {
+                    "_provenance": {
+                        "iso": iso,
+                        "season_of_month": [0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 0],
+                    },
+                    "seasons": seasons,
+                }
+            )
+        )
+        return str(path)
+
+    def test_seasonal_swaps_coefficients_by_calendar_season(self):
+        import pathlib
+        import tempfile
+
+        gens = TestGasStNetloadDragFloor._st_tranches()
+        fa = generators_to_fleet_arrays(gens, ["North"], hours=8760)
+        with tempfile.TemporaryDirectory() as td:
+            cfg = ScenarioConfig(
+                gas_st_netload_drag=True,
+                gas_st_drag_seasonal=True,
+                gas_st_drag_seasonal_path=self._artifact(pathlib.Path(td)),
+            )
+            self.assertTrue(
+                apply_gas_st_netload_drag_floor(fa, gens, np.full(8760, 40_000.0), cfg)
+            )
+        # Hour 0 is January (DJF): clip(0.014*40 - 0.43, 0, 0.27) = 0.13.
+        np.testing.assert_allclose(fa.min_gen[0, 0], 0.13 * 200.0, rtol=1e-6)
+        # July 1 (hoy = 181*24) is JJA: clip(0.011*40 - 0.28, 0, 0.36) = 0.16.
+        jul = 181 * 24
+        np.testing.assert_allclose(fa.min_gen[0, jul], 0.16 * 200.0, rtol=1e-6)
+        # April 1 (hoy = 90*24) is MAM: clip(0.007*40 - 0.11, 0, 0.24) = 0.17.
+        apr = 90 * 24
+        np.testing.assert_allclose(fa.min_gen[0, apr], 0.17 * 200.0, rtol=1e-6)
+        # the _peak scarcity tranche is never floored, seasonal or not.
+        np.testing.assert_allclose(fa.min_gen[2], 0.0)
+
+    def test_seasonal_off_keeps_pooled_scalars(self):
+        gens = TestGasStNetloadDragFloor._st_tranches()
+        fa = generators_to_fleet_arrays(gens, ["North"], hours=48)
+        cfg = ScenarioConfig(gas_st_netload_drag=True, gas_st_drag_seasonal=False)
+        apply_gas_st_netload_drag_floor(fa, gens, np.full(48, 40_000.0), cfg)
+        frac = 0.00906 * 40.0 - 0.1376
+        np.testing.assert_allclose(fa.min_gen[0], frac * 200.0, rtol=1e-6)
+
+    def test_iso_mismatch_is_hard_error(self):
+        import pathlib
+        import tempfile
+
+        gens = TestGasStNetloadDragFloor._st_tranches()
+        fa = generators_to_fleet_arrays(gens, ["North"], hours=48)
+        with tempfile.TemporaryDirectory() as td:
+            cfg = ScenarioConfig(
+                iso="PJM",
+                gas_st_netload_drag=True,
+                gas_st_drag_seasonal=True,
+                gas_st_drag_seasonal_path=self._artifact(pathlib.Path(td)),
+            )
+            with self.assertRaisesRegex(ValueError, "rule 25"):
+                apply_gas_st_netload_drag_floor(fa, gens, np.full(48, 40_000.0), cfg)
+
+    def test_missing_season_is_hard_error(self):
+        import pathlib
+        import tempfile
+
+        gens = TestGasStNetloadDragFloor._st_tranches()
+        fa = generators_to_fleet_arrays(gens, ["North"], hours=48)
+        with tempfile.TemporaryDirectory() as td:
+            cfg = ScenarioConfig(
+                gas_st_netload_drag=True,
+                gas_st_drag_seasonal=True,
+                gas_st_drag_seasonal_path=self._artifact(
+                    pathlib.Path(td), drop_season="2"
+                ),
+            )
+            with self.assertRaisesRegex(ValueError, "season 2"):
+                apply_gas_st_netload_drag_floor(fa, gens, np.full(48, 40_000.0), cfg)
+
+
 class TestAssembleMC(unittest.TestCase):
     """Tests for the vectorized marginal cost assembly."""
 
