@@ -243,6 +243,7 @@ results/calibration/_diag_*
 results/calibration/caiso_diag_*/
 results/calibration/miso_diag_*
 results/calibration/*_repro_A/
+results/calibration/caiso106_binding_*/
 results/calibration/*_y20[0-9][0-9]/
 # Per-year probe accumulator scaffolding (e.g. results/calibration/_miso70_acc/
 # {main,base}/y2023): fully disposable intermediates — the registered final
