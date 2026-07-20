@@ -1,15 +1,16 @@
 diff --git a/CHANGELOG.md b/CHANGELOG.md
-index 2c7edc6..211a0f1 100644
+index fadaed8..a002167 100644
 --- a/CHANGELOG.md
 +++ b/CHANGELOG.md
-@@ -1,5 +1,43 @@
+@@ -1,5 +1,44 @@
  # Changelog
  
 +## 2026-07-20 — FF-G3: forward net-CONE evolution (design + grounding, default-inert)
 +
 +Forecast-only capacity-price surface; **no default flip, no LP solve, pricing
-+seam untouched, backcast byte-identical** (default `cache_key` cache-neutral
-+— unchanged with the field added; current base-main key `494427c4405cba78`). Full methodology, per-ISO grounding, delta ledger,
++seam untouched, backcast byte-identical** (default `cache_key` cache-neutral —
++unchanged with the field added; the field is dropped from the hash at its
++`"hold_last"` default). Full methodology, per-ISO grounding, delta ledger,
 +divergence quantification, field survey, and owner-decision box:
 +`docs/capacity-price-forward-methodology-2026-07.md` +
 +`docs/handoffs/ff-g3-net-cone-forward-2026-07.md`.
@@ -43,14 +44,14 @@ index 2c7edc6..211a0f1 100644
 +  (byte-identity), central-rate collapse, reindex arithmetic, no-escalation
 +  at/before the last vintage, registry hygiene, config cache/backcast invariants.
 +
- ## 2026-07-19 — New-build capacity costs: cross-source grounding, literature-envelope ranges, storage/offshore/EGS/H2 derivation-lock
+ ## 2026-07-20 — Fuel-forward trajectories: AEO2025 → AEO2026 vintage bump + near-term triangulation (FF-G2)
  
- Forecast-only cost-input grounding (capacity-expansion entry screens); **no LP
+ Forecast-only fuel-price refresh; **no LP formulation change, backcast
 diff --git a/src/market_sim/config/constants.py b/src/market_sim/config/constants.py
-index 0fdf758..e46d201 100644
+index 8efc724..057bc6e 100644
 --- a/src/market_sim/config/constants.py
 +++ b/src/market_sim/config/constants.py
-@@ -3460,6 +3460,117 @@ def resolve_demand_curve_vintage(
+@@ -3483,6 +3483,117 @@ def resolve_demand_curve_vintage(
      return chosen
  
  
@@ -169,7 +170,7 @@ index 0fdf758..e46d201 100644
  # backstop (capacity.py::apply_reserve_margin_build). Each ISO sets its own
  # installed-reserve-margin / planning-reserve-margin target through its
 diff --git a/src/market_sim/config/scenarios.py b/src/market_sim/config/scenarios.py
-index c45697b..d1758f3 100644
+index 5f71f90..362ec38 100644
 --- a/src/market_sim/config/scenarios.py
 +++ b/src/market_sim/config/scenarios.py
 @@ -82,6 +82,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
@@ -203,7 +204,7 @@ index c45697b..d1758f3 100644
      demand_growth_rate: float = (
          0.01  # flat override used only when no structured rates exist
      )
-@@ -6735,6 +6752,30 @@ class ScenarioConfig:
+@@ -6781,6 +6798,30 @@ class ScenarioConfig:
          if self.mode == "backcast" or self.hindcast:
              self.datacenter_load_path = "off"
  
@@ -234,7 +235,7 @@ index c45697b..d1758f3 100644
          # entry_lookahead_reprice is a FORECAST-only capacity-screen price
          # signal (the runner reads it only under mode=="forecast"; a backcast
          # runs no capacity evolution). Coerce it OFF in a plain backcast so the
-@@ -7515,6 +7556,7 @@ TIER_TAGS: dict[str, int] = {
+@@ -7577,6 +7618,7 @@ TIER_TAGS: dict[str, int] = {
      "mass_cap_program": 1,
      "mass_cap_tons": 1,
      "carbon_program_price_path": 1,
