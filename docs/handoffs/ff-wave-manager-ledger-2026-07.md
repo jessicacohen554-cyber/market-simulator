@@ -7,7 +7,7 @@ the end of every manager turn.
 
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
-- **Last reviewed `origin/main` HEAD:** `40dde11` (2026-07-19, turn 33 — manager session `turn-1-anm4jn`).
+- **Last reviewed `origin/main` HEAD:** `15dfe15f` (2026-07-20, turn 34 — manager session `turn-1-anm4jn`).
 - **Plan base SHA:** `c95176e` (amended in place 2026-07-19 — POC-first re-scope, see directive entry below).
 - **OWNER DIRECTIVE (2026-07-19, out-of-band — recorded by the directive's executing
   session, not a manager turn): POC-first re-scope of THE PLAN.** The plan is amended in
@@ -24,6 +24,39 @@ the end of every manager turn.
   keeper + calibration-complete marker, T1 POC gates green, crossover input gap +
   readiness battery + projected cost, and an explicit per-campaign owner authorization.
   Status-table rows updated below; active front unchanged (FF-2B).
+- **turn 34 (manager `turn-1-anm4jn`). `40dde11→15dfe15f` (19 merges). FF-2C LANDED
+  VERIFIED-PASS (#2645/#2647/#2649, branch `capacity-market-clearing-flips-mvy7al`) — Wave 2
+  CLOSES; FF-2D DISPATCHED; slim FF-2C-rig follow-up dispatched (parallel-safe).**
+  **FF-2C verification:** (item 1 ✓) `capacity_market_clearing_by_iso` default →
+  {PJM,MISO,CAISO,NEISO: True} via the one `resolve_capacity_market_clearing` seam;
+  NYISO/ERCOT deliberately absent; backcast `__post_init__` coercion keeps every keeper
+  cache-key byte-identical (hindcast NOT coerced so pairs stay scoreable); R4 re-derived all
+  four fixed anchors to published-basis (PJM 77.431 = 212.14 $/MW-day BRA 2026/27; MISO 79.8;
+  NEISO 108.94 FCA-18; CAISO 88.08 = exact CPM soft-offer cap ER24-1225), reconciliation tests
+  tightened; rule-27 blob attestation in-doc. (item 2 ✓ partial-with-cause) PJM+MISO curve-ON
+  hindcast re-scores REGISTERED on the shipping D1=3/R4 config (`{pjm,miso}-2021-2025-curve-ff2c`)
+  — both honest band-FAIL: at the current mis-based (too-long) position the curve pays ~$0, so
+  the wave lands on wrong classes (PJM 18.2/11.1 GW +63%, nuclear-inversion 4.1 GW false
+  PERSISTS; MISO 10.8/15.2 −29%, gas_st 8.6 vs 0) — rule-1 discipline held: routed to
+  retirement-rule/BLK-10/BLK-3-position lanes, nothing tuned. T1.7 ladder attempted → found a
+  GENUINE RIG DEFECT: `run_driver_battery.py:595` `_net_cone_scalar` patches the bypassed fixed
+  anchor and drops `demand_curve`/`net_cone_curve_per_kw_yr`, so the ladder is uninformative
+  post-flip (ERCOT negative control byte-identical ✓); fix routed → **FF-2C-rig dispatched this
+  turn**. Documented deferrals accepted: CAISO hindcast (flip is a pricing no-op by construction
+  — flip memo §1.5), NEISO (FF-2B curve leg reusable — R4 touched only the fixed anchor),
+  equilibrium T-R5 25-yr + tornado (correctly NOT run — §2.1b makes a 25-yr leg unschedulable;
+  status is gate-blocked, not owed). (item 3 ✓) assessment rows 7-12/14 + gap-register updated
+  (#2645); parameter-citations + methodology spec synced (#2647). **PJM position caveat carried
+  to FF-2D:** flipped curve prices $0 until the BLK-3 R2/R3 requirement/position half lands.
+  **Out-of-program (16):** #2631 (ledger t33); **G-series (owner-launched forecast-input lanes,
+  FF-adjacent — ALL are FF-2D baseline-attribution inputs):** FF-G2 #2637 (fuel-forward →
+  AEO2026, constants.py), FF-G3 #2633/#2638/#2639/#2641/#2648 (forward net-CONE evolution —
+  core + tests + methodology + owner-decision box), FF-G4 #2643/#2644 (load-shape design memo
+  only), FF-G5 #2640 (nuclear-license registry + `data/nuclear_license.py` loader +
+  owner-decision box); plus #2632/#2634/#2646 (caiso-m1/meve1 execution), #2635 (caiso-dam
+  intake), #2636/#2642 (ercot-90/91 stgas-shoulder). G3/G5 carry owner-decision boxes (their
+  lanes', not FF's). Rule-27 clean: scenarios.py 7997→8102, constants.py 7604→7627 (growth
+  only; 4269/2470 flat). Unmerged branch: ercot-91 (out-of-program lane).
 - **turn 33 (manager `turn-1-anm4jn`, refresh). `a615fe3→40dde11` (3 merges). QUIET for FF.**
   t32 ledger on main (#2628). Out-of-program: #2630 (caiso-103/92 rederive), #2629 (ercot-89
   shoulder-online mechanism — scenarios.py +35 gated ERCOT fields). Rule-27 clean
@@ -268,8 +301,9 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-2A-posture | OPUS | 2 | L-CAP | — | **verified-issues, NON-DELIVERY (turn 21)** — #2522 | Doc-only; scenarios.py UNCHANGED. 3rd genuine non-delivery. → FF-2A-posture-redo. |
 | FF-2A-posture-redo | OPUS | 2 | L-CAP | — | **verified-pass (turn 25)** — #2539 | Landed the flip #2522 only described: scenarios.py `entry_lookahead_reprice` False→True + backcast coercion + plan §2.1a row e + measured-cache-key byte-identity attestation. Closes the 3-non-delivery saga. |
 | FF-2B | OPUS | 2 | L-CAP | — | **verified-pass (turn 28)** — #2582+#2586/#2588/#2590+#2589+#2591, source `96eac04` | All 4 items: NEISO I7+I12 PASS (Net ICR 0.1102, ER23-405-000), CAISO +3,371 MW cited (residual→FF-1C hydro), NYISO basis-correct (residual→FF-1C); Pass-1B + FIRST NEISO pair (bands pre-registered #2582 before run); T1-F base-year sidecars + gap-register. Bonus UNSET runner.py fix. ⚠ git-push deviation, blob-verified — owner note. |
-| FF-2C | OPUS | 2 | L-CAP | — | **sent (turn 31), re-emitted t33, awaiting worker launch — no branch on origin** | Owner delegated sign-off; approved PJM/MISO/CAISO/NEISO, NYISO deferred. Drift-clean at `40dde11`. NEISO approved on rule-1 grounds. NYISO auto-joins on re-calibration + pair regen (nyiso-65 still NOT-YET on 2023 C3a/C3b — deferral stands). Rule 1: worsened fit = root-cause, never revert. |
-| FF-2D | OPUS | 2 | L-VAL | ⛔ T1 gate | **issued (turn 14), gated on FF-2C disposition** | Prereq "W1/W2 lane merges complete" leaves FF-2C outstanding. Owner picks: flips first (FF-2C→FF-2D) or defer flips (FF-2D unlocks at HEAD). Rubric verdicts + promotion table. NEW inputs to fold in: #2601 storage-cost re-derivation (baseline attribution), FF-3B's A1/I4 multi-year leak + frozen-golden flag. |
+| FF-2C | OPUS | 2 | L-CAP | — | **verified-pass (turn 34)** — #2645/#2647/#2649 | Flip {PJM,MISO,CAISO,NEISO}=ON + R4 published anchors + byte-identity coercion + tests. PJM/MISO curve hindcasts registered (honest FAILs, routed). T1.7 rig defect found → FF-2C-rig. CAISO no-op / NEISO reuse / T-R5+tornado §2.1b-blocked — documented, accepted. Wave 2 CLOSED (NYISO flip pends re-calibration). |
+| FF-2C-rig | OPUS | 2 | L-CAP | — | **sent (turn 34)** | Slim: fix `run_driver_battery.py` `_net_cone_scalar` to preserve `demand_curve`/`seasonal_rbdc` + scale `net_cone_curve_per_kw_yr` for curve ISOs + report economic-vs-exogenous retirement split; re-run PJM T1.7 ladder. Parallel-safe with FF-2D (FF-2D doesn't edit the rig). |
+| FF-2D | OPUS | 2 | L-VAL | — | **sent (turn 34)** — unlocked by FF-2C verified-pass | T1 gate battery at HEAD (record SHA): T1-F 6 ISOs on flipped defaults, T1-X, T1-H probe legs; rubric verdicts + promotion table; regression vs FF-0B naming causal merges (#2601 storage costs, FF-G2 AEO2026 fuel, FF-G3 net-CONE evolution, FF-G5 nuclear registry, FF-2C flip+R4); folds FF-3B A1/I4 leak + frozen-golden + PJM position caveat. Eligibility ≠ scheduling (§2.1b). |
 | FF-3A | — | 3 | L-VAL | ⛔ T2 | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | T2 deferred with its tier behind plan §2.1b; prompt re-authored at gate-open. Do not dispatch. |
 | FF-3B | OPUS | 3 | L-CES | — | **verified-pass (turn 30)** — #2613 | W3-R = NO-GO (R1/R2 NOT MET, R3 MET, R4 partial; routed). POC = machinery-proven: 3×5yr legs, kind="ces-poc", premium moves full surface; wall/RSS ledger + nonlinear caution for FF-3E. POC-despite-NO-GO decoupling accepted (plan §0 Phase A). L-CES lane CLOSED until §2.1b gate-open. |
 | FF-3C | FABLE | 3 | L-PERF | conditional | not-sent | trigger-gated — inactive (only remaining FABLE prompt); trigger re-worded to active-tier breach (plan §6) |
@@ -281,7 +315,11 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-4C | — | 4 | L-VAL | owner-gated | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | PB-5 deferred with Wave 4 (§2.1b). |
 | FF-5A | OPUS | 5 | L-DASH | — | not-sent | blocked: active-wave close-out (deferred Wave 4 NOT a prerequisite — §2.1b) |
 
-Out-of-program / trivial (turn 33): #2630 (caiso-103/92 rederive), #2629 (ercot-89
+Out-of-program / trivial (turn 34): #2631 (ledger t33), FF-G2 #2637 (AEO2026 fuel-forward),
+FF-G3 #2633/#2638/#2639/#2641/#2648 (forward net-CONE evolution + owner box), FF-G4
+#2643/#2644 (load-shape design memo), FF-G5 #2640 (nuclear-license registry + owner box),
+#2632/#2634/#2646 (caiso-m1/meve1), #2635 (caiso-dam intake), #2636/#2642 (ercot-90/91).
+(turn 33): #2630 (caiso-103/92 rederive), #2629 (ercot-89
 shoulder-online mechanism — gated scenarios.py fields), #2628 (ledger t32). (turn 32):
 #2619/#2624 (calendar-metrics), #2620 (caiso-103/92),
 #2622/#2623 (DAM intakes), #2608 (backcast-artifacts late merge), #2625 (transmission-expansion
@@ -340,24 +378,20 @@ backcast keepers + ledger commits.
 - **FF-2C flip sign-off (turn 31, 2026-07-19):** owner delegated the per-ISO call to the
   manager ("flip them all on if you think they're ready"). Manager call: **APPROVED =
   PJM/MISO/CAISO/NEISO; NYISO DEFERRED** (NOT-YET determination + rule-11-tainted gate
-  evidence; auto-joins on re-calibration). FF-2C dispatched turn 31.
+  evidence; auto-joins on re-calibration). FF-2C dispatched turn 31. **EXECUTED + verified-pass
+  turn 34 (#2645/#2647/#2649) — Wave 2 closed.**
 
 **AWAITING (each changes what I dispatch next):**
 - **§2.1b gate-open per ISO** (replaces the former FF-4A golden-freeze and PB-5 waits —
   both WITHDRAWN-DEFERRED 2026-07-19; conditions: backcast keeper + marker, T1 POC
   gates, crossover gap + FF-3E readiness + projected cost, per-campaign authorization).
   FF-3B's W3-R NO-GO (R1/R2) is now recorded §2.1b(b/c) evidence for any future ask.
-- ~~Per-ISO FF-2C sign-off~~ **RESOLVED turn 31** (delegated; approved PJM/MISO/CAISO/NEISO,
-  NYISO deferred — see Received above). ~~FF-2D sequencing~~ **RESOLVED turn 31** (flips first;
-  FF-2D dispatches after FF-2C lands verified-pass). Critical path is now FF-2C execution →
-  FF-2D → FF-3E → FF-5A.
 - **Rule-deviation note (FF-2B):** worker used a small source-only `git push` (blob-verified)
   when `push_files` corrupted 345 KB constants.py — bless a narrow documented exception, or
   direct an alternative large-file transport; no action needed on the landed bytes (verified).
-- **(Out-of-FF-program, surfaced turn 27, flag only)** NEISO holdout-data-equivalency register
-  sign-off — `docs/holdout-data-equivalency-register-2026-07.md` §NEISO is the owner exit gate before
-  any NEISO one-shot (locked test) may be re-authorized (rule 22). Backcast/validation matter, not
-  FF, but a genuine pending owner sign-off.
+- **(Out-of-FF-program, flag only)** NEISO holdout-data-equivalency register sign-off
+  (`docs/holdout-data-equivalency-register-2026-07.md` §NEISO, rule-22 exit gate before any
+  NEISO one-shot). Also: FF-G3 and FF-G5 landed owner-decision boxes in their own lanes.
 
 ---
 
@@ -378,6 +412,8 @@ backcast keepers + ledger commits.
     verified-pass.** Genuine non-deliveries stay 3 (FF-0B #2412, FF-2A #2453, FF-2A-posture #2522).
 11. **FF-1E-policy [OPUS]** (turn 22) — slim item-2-only follow-up. **RESOLVED turn 25
     (#2535+#2540), verified-pass** — NEISO ACP 65→50 the sole cited runtime delta.
+12. **FF-2C-rig [OPUS]** (turn 34) — slim T1.7 rig fix (curve-anchor scaling + econ/exogenous
+    retirement split in `run_driver_battery.py`), found by FF-2C. Open.
 
 ---
 
@@ -437,3 +473,8 @@ backcast keepers + ledger commits.
 - **turn 33 (`→40dde11`).** QUIET refresh. t32 ledger on main (#2628). FF-2C re-emitted at owner
   request (drift-clean at `40dde11`). New unmerged `ff-g4-load-shape-design` branch flagged for
   classification on landing. Rule-27 clean. 2 out-of-program.
+- **turn 34 (`→15dfe15f`).** **FF-2C verified-pass (#2645/#2647/#2649) — Wave 2 CLOSES.** Flip +
+  R4 + tests + byte-identity clean; PJM/MISO curve hindcasts honest FAILs (routed, rule 1);
+  T1.7 rig defect → **FF-2C-rig dispatched**; CAISO/NEISO/T-R5 deferrals accepted with cause.
+  **FF-2D dispatched** (unlocked; runs parallel with FF-2C-rig). G-series (FF-G2/G3/G4/G5)
+  classified as owner-launched input lanes → FF-2D attribution list. Rule-27 clean.
