@@ -30,12 +30,15 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import os
 import sys
 from pathlib import Path
 from urllib.request import urlopen
 
 REPO = Path(__file__).resolve().parent.parent.parent
+
+sys.path.insert(0, str(REPO))
+from scripts.lib.env_keys import get_api_key  # noqa: E402
+
 ERCOT_EP_PATH = REPO / "data" / "raw" / "ercot_electric_power_gas_price.csv"
 PJM_ZONAL_PATH = REPO / "data" / "raw" / "pjm_zonal_gas_hub.csv"
 HH_MONTHLY_PATH = REPO / "data" / "raw" / "gas-prices" / "henry_hub_monthly.csv"
@@ -79,16 +82,9 @@ _MONTH_ABBR = (
 
 def _api_key() -> str:
     """Resolve the EIA API key from the environment or the repo ``.env``."""
-    key = os.environ.get("EIA_API_KEY", "")
-    if not key:
-        env_path = REPO / ".env"
-        if env_path.exists():
-            for line in env_path.read_text().splitlines():
-                if line.startswith("EIA_API_KEY="):
-                    key = line.split("=", 1)[1].strip()
-    if not key:
-        sys.exit("EIA_API_KEY not set (export it or add it to .env).")
-    return key
+    return get_api_key(
+        "EIA_API_KEY", hint="free at https://www.eia.gov/opendata/register.php"
+    )
 
 
 def _monthly_series(sid: str, key: str) -> dict[tuple[int, int], float]:
