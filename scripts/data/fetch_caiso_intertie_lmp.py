@@ -66,6 +66,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from scripts.data.fetch_caiso_oasis import _extract_csv, _fetch, _url
 
 REPO = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO / "src"))
+from market_sim.utils.hour_calendar import hour_index  # noqa: E402
+
 OUT_PARQUET = (
     REPO
     / "data"
@@ -108,11 +111,8 @@ _HOURS_PER_YEAR = 8760
 _OASIS_RETENTION_START = dt.date(2023, 3, 12)
 
 
-def _hour_index(ts: pd.Series) -> np.ndarray:
-    """Local timestamps -> fixed non-leap hour-of-year (Feb 29 -> -1)."""
-    base = np.asarray([_MONTH_START_HOUR[m - 1] for m in ts.dt.month])
-    idx = base + (ts.dt.day.to_numpy() - 1) * 24 + ts.dt.hour.to_numpy()
-    return np.where((ts.dt.month == 2) & (ts.dt.day == 29), -1, idx)
+# Local timestamps -> fixed non-leap hour-of-year (Feb 29 -> -1); shared helper.
+_hour_index = hour_index
 
 
 def _fetch_node_year(
