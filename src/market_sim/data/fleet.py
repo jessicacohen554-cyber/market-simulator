@@ -3888,6 +3888,17 @@ def build_ercot_offer_surface_cleared_share_markup(
       surface's markup — this wall's included — on the fast-start rows above
       the measured offline-pool boundary (the caller composes by mask, one
       owner per row-hour; see that builder's docstring).
+    * ``ercot_shoulder_online_span`` (ERCOT-89, default off) re-anchors the
+      wall/RT ladder's rel geometry on the measured CONDITIONAL online span
+      (mean telemetered ON share of non-OUT capability per net-load bin x
+      season x 4h block): rel = (share - boundary) / (span - boundary),
+      clipped to the ladder top above the span — the SCED spare ladder is
+      measured on the ONLINE fleet, and the span stops it being stretched
+      over capability that is telemetered OFF at the same conditions
+      (charter §8.1's measured 8-10x phantom-headroom wedge). Requires the
+      RT leg and the fast-start pool leg armed (the above-span increment is
+      PRICED by the pool at the caller, never capped — charter §3(ii)).
+      Year-scoped (rule 13): absent years keep this geometry byte-identical.
     """
     state_flag = getattr(config, "ercot_offer_surface_cleared_share_state", False)
     steam_flag = getattr(config, "ercot_offer_surface_cleared_share_steam", False)
@@ -3911,6 +3922,16 @@ def build_ercot_offer_surface_cleared_share_markup(
                 "cleared-share wall's ladder — arm "
                 "ercot_offer_surface_cleared_share too (the RT basis has no "
                 "wall to re-price on its own)."
+            )
+        if (
+            getattr(config, "ercot_shoulder_online_span", False)
+            and config.iso == "ERCOT"
+        ):
+            raise ValueError(
+                "ercot_shoulder_online_span re-anchors the cleared-share "
+                "wall's ladder geometry — arm ercot_offer_surface_cleared_"
+                "share too (the span has no wall geometry to re-anchor on "
+                "its own)."
             )
         return None
     if config.iso != "ERCOT":
@@ -4075,6 +4096,46 @@ def build_ercot_offer_surface_cleared_share_markup(
                 year,
             )
 
+    # ERCOT-89 shoulder online-span anchor (ercot_shoulder_online_span): the
+    # measured CONDITIONAL online span (mean telemetered ON share of non-OUT
+    # capability per net-load bin x season x 4h block,
+    # scripts/data/derive_ercot_shoulder_online_span.py) re-anchors this
+    # wall's ladder GEOMETRY — rel maps the walled rows onto the ladder over
+    # [boundary, span] instead of [boundary, 1.0] — because the SCED spare
+    # ladder is measured on the ONLINE fleet, and stretching it over
+    # capability that is telemetered OFF at the same conditions is the
+    # measured 8-10x phantom-headroom wedge (charter §8.1,
+    # docs/handoffs/ercot-shoulder-online-envelope-2026-07.md). Rows above
+    # the span clamp at the ladder top HERE; the fast-start subset of them is
+    # REPLACED by the pool leg's start-inclusive ladder at the caller
+    # (REPLACE-BY-MASK — hence the required ercot_faststart_pool_offer arm),
+    # so the above-span increment is PRICED, never capped (charter §3(ii)
+    # no-cap line: the rejected ercot41/43 envelope family is not re-opened).
+    # YEAR-SCOPED (rule 13): an absent year keeps span_h empty and the
+    # full-span geometry byte-identical.
+    span_flag = getattr(config, "ercot_shoulder_online_span", False)
+    span_h: dict[str, np.ndarray] = {}
+    if span_flag:
+        if not rt_flag:
+            raise ValueError(
+                "ercot_shoulder_online_span re-anchors the RT/SCED wall "
+                "ladder's geometry — arm ercot_offer_surface_cleared_share_rt "
+                "too (there is no measured online-spare ladder to re-anchor "
+                "without it)."
+            )
+        if not getattr(config, "ercot_faststart_pool_offer", False):
+            raise ValueError(
+                "ercot_shoulder_online_span prices the above-span increment "
+                "on the fast-start pool's start-inclusive ladder (charter "
+                "§3(ii): re-price the offline increment, never cap/clamp-"
+                "only) — arm ercot_faststart_pool_offer too."
+            )
+        span_tables, _season_idx, _block_idx = _load_ercot_online_span_tables(
+            config, year, edges, hours
+        )
+        for _k, _tbl in span_tables.items():
+            span_h[_k] = _tbl[hour_bin, _season_idx, _block_idx]  # (T,)
+
     # Target rows + within-plant share midpoints: every tranche of the plant
     # ordered by its annual-mean base cost — the model's own rising CAMPD
     # tranche curve defines each row's curve position (the mid-curve
@@ -4126,35 +4187,67 @@ def build_ercot_offer_surface_cleared_share_markup(
                 continue
             bnd = boundaries[cls_key]  # (n_bins,)
             wall = walls[cls_key]  # (n_bins, n_q)
-            # Per-bin target multiplier: 0 (no floor) at/below the boundary or
-            # where the bin carries no measured boundary/wall.
-            mult_b = np.zeros(n_bins)
-            for b in range(n_bins):
-                if not np.isfinite(bnd[b]) or bnd[b] >= 1.0 or s_g <= bnd[b]:
-                    continue
-                if not np.isfinite(wall[b]).all():
-                    continue
-                rel = (s_g - bnd[b]) / (1.0 - bnd[b])
-                mult_b[b] = float(np.interp(rel, ladder_q, wall[b]))
-            # ERCOT-86 RT ladder for the SAME above-boundary rows (same
-            # boundary test, the SCED spare-offer quantile ladder as the
-            # price source). rt_has marks bins the RT artifact measures —
-            # only those bins ever leave the DAM basis.
-            rt_mult_b = np.zeros(n_bins)
-            rt_has = np.zeros(n_bins, dtype=bool)
             rtw = rt_walls.get(cls_key)
-            if rtw is not None:
+            sp = span_h.get(cls_key) if span_flag else None
+            if sp is None:
+                # Per-bin target multiplier: 0 (no floor) at/below the
+                # boundary or where the bin carries no measured boundary/wall.
+                mult_b = np.zeros(n_bins)
                 for b in range(n_bins):
                     if not np.isfinite(bnd[b]) or bnd[b] >= 1.0 or s_g <= bnd[b]:
                         continue
-                    if not np.isfinite(rtw[b]).all():
+                    if not np.isfinite(wall[b]).all():
                         continue
                     rel = (s_g - bnd[b]) / (1.0 - bnd[b])
-                    rt_mult_b[b] = float(np.interp(rel, ladder_q, rtw[b]))
-                    rt_has[b] = True
-            if not mult_b.any() and not rt_has.any():
+                    mult_b[b] = float(np.interp(rel, ladder_q, wall[b]))
+                # ERCOT-86 RT ladder for the SAME above-boundary rows (same
+                # boundary test, the SCED spare-offer quantile ladder as the
+                # price source). rt_has marks bins the RT artifact measures —
+                # only those bins ever leave the DAM basis.
+                rt_mult_b = np.zeros(n_bins)
+                rt_has = np.zeros(n_bins, dtype=bool)
+                if rtw is not None:
+                    for b in range(n_bins):
+                        if not np.isfinite(bnd[b]) or bnd[b] >= 1.0 or s_g <= bnd[b]:
+                            continue
+                        if not np.isfinite(rtw[b]).all():
+                            continue
+                        rel = (s_g - bnd[b]) / (1.0 - bnd[b])
+                        rt_mult_b[b] = float(np.interp(rel, ladder_q, rtw[b]))
+                        rt_has[b] = True
+                mult_h = mult_b[hour_bin]  # (T,); 0 where no floor
+                rt_mult_h = rt_mult_b[hour_bin]
+                rt_has_h = rt_has[hour_bin]
+            else:
+                # ERCOT-89 span-anchored geometry: rel is TIME-varying — the
+                # ladder is stretched over [boundary, span(cell)] instead of
+                # [boundary, 1.0]. Rows above the measured span (or above a
+                # zero-width span) take the ladder top; the fast-start subset
+                # of those row-hours is replaced by the pool leg at the
+                # caller (one owner per row-hour, rule 19).
+                bnd_t = bnd[hour_bin]  # (T,)
+                span_eff = np.maximum(sp, bnd_t)  # span never below DA share
+                above = (s_g > bnd_t) & np.isfinite(bnd_t) & (bnd_t < 1.0)
+                width = span_eff - bnd_t
+                rel_t = np.full(hours, np.nan)
+                in_span = above & (width > 0.0) & (s_g <= span_eff)
+                rel_t[in_span] = (s_g - bnd_t[in_span]) / width[in_span]
+                rel_t[above & ~in_span] = 1.0
+                mult_h = np.zeros(hours)
+                rt_mult_h = np.zeros(hours)
+                rt_has_h = np.zeros(hours, dtype=bool)
+                for b in range(n_bins):
+                    sel = (hour_bin == b) & np.isfinite(rel_t)
+                    if not sel.any():
+                        continue
+                    if np.isfinite(wall[b]).all():
+                        mult_h[sel] = np.interp(rel_t[sel], ladder_q, wall[b])
+                    if rtw is not None and np.isfinite(rtw[b]).all():
+                        rt_mult_h[sel] = np.interp(rel_t[sel], ladder_q, rtw[b])
+                        rt_has_h[sel] = True
+            if not mult_h.any() and not rt_has_h.any():
                 continue
-            target = mult_b[hour_bin] * gas_day  # (T,); 0 where no floor
+            target = mult_h * gas_day  # (T,); 0 where no floor
             target = np.minimum(target, voll_cap)
             row = np.maximum(0.0, target - mc_base[g, :])
             if state_flag:
@@ -4162,27 +4255,27 @@ def build_ercot_offer_surface_cleared_share_markup(
                 # measured commitment-loading regime scales the markup.
                 w = state_w.get(cls_key)
                 if w is None:
-                    if not rt_has.any():
+                    if not rt_has_h.any():
                         continue  # no measured state for the class: no wall
                     row = np.zeros_like(row)  # DAM leg dead; RT leg may floor
                 else:
                     row = row * w
-            if rt_has.any():
+            if rt_has_h.any():
                 # RT leg is NEVER state-weighted: the SCED spare ladder is
                 # measured on the ONLINE fleet (Base Point -> HASL is the
                 # un-loaded remainder per interval), so the commitment state
                 # the w-weight corrects for is already conditioned into the
                 # surface — weighting it again would double-count.
-                rt_target = rt_mult_b[hour_bin] * gas_day  # (T,)
+                rt_target = rt_mult_h * gas_day  # (T,)
                 rt_target = np.minimum(rt_target, voll_cap)
                 rt_row = np.maximum(0.0, rt_target - mc_base[g, :])
-                rt_row = np.where(rt_has[hour_bin], rt_row, 0.0)
+                rt_row = np.where(rt_has_h, rt_row, 0.0)
                 if rt_mode == "replace":
                     # Composition A: one wall, one ladder source per bin —
                     # RT-measured bins take the RT floor (even where it is
                     # BELOW the DAM ladder: the DAM basis is refuted there,
                     # not composed with); unmeasured bins keep the DAM basis.
-                    row = np.where(rt_has[hour_bin], rt_row, row)
+                    row = np.where(rt_has_h, rt_row, row)
                 else:
                     # Composition B: the state-weighted DAM wall stands
                     # everywhere; the RT tier rides above its reach.
@@ -4235,6 +4328,87 @@ def build_ercot_offer_surface_cleared_share_markup(
             sorted(rt_walls),
         )
     return markup
+
+
+def _load_ercot_online_span_tables(
+    config: ScenarioConfig,
+    year: int,
+    wall_edges: tuple[float, ...],
+    hours: int,
+) -> "tuple[dict[str, np.ndarray], np.ndarray, np.ndarray]":
+    """Resolve the ERCOT-89 conditional online-span artifact for ``year``.
+
+    Returns ``(tables, season_idx, block_idx)`` where ``tables`` maps the
+    measured class key (``"CC"``/``"CT"``) to its resolved
+    ``(n_bins, n_seasons, n_blocks)`` conditional ON-share table
+    (``scripts/data/derive_ercot_shoulder_online_span.py``), and
+    ``season_idx`` / ``block_idx`` are the ``(hours,)`` calendar coordinates
+    on the model's fixed-CST non-leap clock. Cells the corpus never covers
+    (null in the artifact) resolve to **1.0** — full-span geometry, i.e. the
+    mechanism is inert for those hours (no measured conditional, no
+    correction). A year absent from the artifact returns ``({}, ...)`` — the
+    caller stays byte-identical (YEAR-SCOPED, rule 13: no pooled fallback;
+    a 2024/2025-derived table never reaches 2023's conservative-ops regime).
+    """
+    span_path = getattr(config, "ercot_shoulder_online_span_path", None)
+    if not span_path:
+        from market_sim.config import paths as _paths
+
+        span_path = str(
+            _paths.CALIBRATION_DIR / "ercot_shoulder_online_span_condbinned.json"
+        )
+    surface = json.loads(Path(span_path).read_text())
+    prov = surface.get("_provenance", {})
+    edges = tuple(float(x) for x in prov.get("netload_pct_edges", ()))
+    season_of_month = [int(x) for x in prov.get("season_of_month", ())]
+    block_h = int(prov.get("hour_block_hours", 0))
+    if edges != tuple(wall_edges):
+        raise ValueError(
+            "ercot_shoulder_online_span: span artifact bin edges "
+            f"{edges} != cleared-share wall edges {tuple(wall_edges)} — "
+            "re-derive scripts/data/derive_ercot_shoulder_online_span.py"
+        )
+    if len(season_of_month) != 12 or block_h <= 0:
+        raise ValueError(
+            "ercot_shoulder_online_span: span artifact carries no "
+            "season_of_month/hour_block_hours — re-derive "
+            "scripts/data/derive_ercot_shoulder_online_span.py"
+        )
+    # Calendar coordinates on the model's fixed-CST non-leap 8760 clock (the
+    # derive's own hoy convention): month via cumulative month-start hours,
+    # 4h block via hour-of-day.
+    month_start_h = (
+        np.cumsum([0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30]) * 24
+    )  # (12,) Jan..Dec starts
+    hoy = np.arange(hours)
+    month_idx = np.searchsorted(month_start_h[1:], hoy % 8760, side="right")  # 0..11
+    season_idx = np.asarray(season_of_month, dtype=int)[month_idx]  # (hours,)
+    block_idx = (hoy % 24) // block_h  # (hours,)
+
+    tables: dict[str, np.ndarray] = {}
+    for cls_key in ("CC", "CT"):
+        tbl = surface.get(cls_key, {}).get("years", {}).get(str(year))
+        if not tbl:
+            continue
+        span = np.array(
+            [
+                [[np.nan if v is None else float(v) for v in row] for row in mat]
+                for mat in tbl.get("span", ())
+            ],
+            dtype=float,
+        )
+        if span.ndim != 3 or span.shape[0] != len(edges) + 1:
+            continue
+        # Uncovered cells -> 1.0: full-span geometry, mechanism inert there.
+        tables[cls_key] = np.nan_to_num(span, nan=1.0)
+    if not tables:
+        logger.info(
+            "ERCOT shoulder online span (ERCOT-89): year %s absent from the "
+            "span artifact — full-span wall geometry retained byte-identical "
+            "(year-scoped, rule 13)",
+            year,
+        )
+    return tables, season_idx, block_idx
 
 
 def build_ercot_faststart_pool_markup(
@@ -4290,6 +4464,12 @@ def build_ercot_faststart_pool_markup(
       artifact returns None (every surface byte-identical; 2024/2025 only,
       the RT wall's own 2023 input-blocked bar). Zero fitted scalars; the
       artifact is frozen against residuals (rule 23).
+    * **ERCOT-89 span boundary** (``ercot_shoulder_online_span``, default
+      off): the boundary generalizes from ``1 - pool_frac(bin)`` to the
+      measured conditional online span (charter §6 shape (a) — the FULL
+      offline increment of merchant CT priced at the pool's start-inclusive
+      ladder, clamped below by the bin's DA cleared share). Span years
+      absent from the span artifact keep the static boundary byte-identical.
     * P1-only via the shared ``mc_bid_adjust`` seam: P0 run lengths and the
       startup-amortization coupling are untouched.
 
@@ -4365,6 +4545,37 @@ def build_ercot_faststart_pool_markup(
     thresholds = np.quantile(net_load, edges)
     hour_bin = np.searchsorted(thresholds, net_load, side="right")  # (T,)
 
+    # ERCOT-89 shoulder online-span boundary (ercot_shoulder_online_span):
+    # when armed, the pool boundary generalizes from the measured OFFQS/OFFNS
+    # pool share (1 - pool_frac per bin) to the measured CONDITIONAL online
+    # span (charter §6 shape (a): the FULL offline increment of merchant CT
+    # is priced at the pool's start-inclusive ladder, not just its
+    # quick-start slice). The span is clamped below by the bin's measured
+    # DA cleared share (DA-cleared capability is committed, so the online
+    # span can never sit below it — the wall leg uses the same clamp).
+    # YEAR-SCOPED (rule 13): a year absent from the span artifact keeps the
+    # ERCOT-88 static boundary byte-identical.
+    span_ct: "np.ndarray | None" = None
+    if getattr(config, "ercot_shoulder_online_span", False):
+        span_tables, _season_idx, _block_idx = _load_ercot_online_span_tables(
+            config, year, edges, hours
+        )
+        span_tbl = span_tables.get("CT")
+        if span_tbl is not None:
+            wall_surface = json.loads(Path(wall_path).read_text())
+            wall_ct = wall_surface.get("CT", {})
+            wall_tbl = wall_ct.get("years", {}).get(str(year)) or wall_ct.get("pooled")
+            bnd_ct = (
+                np.asarray(wall_tbl.get("cleared_share", ()), dtype=float)
+                if wall_tbl
+                else np.full(n_bins, np.nan)
+            )
+            if bnd_ct.size != n_bins:
+                bnd_ct = np.full(n_bins, np.nan)
+            span_raw = span_tbl[hour_bin, _season_idx, _block_idx]  # (T,)
+            bnd_t = np.where(np.isfinite(bnd_ct[hour_bin]), bnd_ct[hour_bin], 0.0)
+            span_ct = np.maximum(span_raw, bnd_t)
+
     # Delivered-gas day series (the wall's own price normalizer).
     from market_sim.config.constants import GAS_BASIS_DIFFERENTIAL
     from market_sim.data.fuel import HENRY_HUB_DAILY_PATH
@@ -4417,23 +4628,48 @@ def build_ercot_faststart_pool_markup(
             sfx = gen.unit_id.rpartition("_")[2]
             if not (sfx.startswith("econ") or sfx.startswith("peak")):
                 continue
-            mult_b = np.zeros(n_bins)
-            has_b = np.zeros(n_bins, dtype=bool)
-            for b in range(n_bins):
-                pb = pool_bnd[b]
-                if not np.isfinite(pb) or pb >= 1.0 or s_g <= pb:
+            if span_ct is None:
+                # ERCOT-88 static boundary: the measured OFFQS/OFFNS pool
+                # share per net-load bin.
+                mult_b = np.zeros(n_bins)
+                has_b = np.zeros(n_bins, dtype=bool)
+                for b in range(n_bins):
+                    pb = pool_bnd[b]
+                    if not np.isfinite(pb) or pb >= 1.0 or s_g <= pb:
+                        continue
+                    if not np.isfinite(pool_wall[b]).all():
+                        continue
+                    rel = (s_g - pb) / (1.0 - pb)
+                    mult_b[b] = float(np.interp(rel, ladder_q, pool_wall[b]))
+                    has_b[b] = True
+                if not has_b.any():
                     continue
-                if not np.isfinite(pool_wall[b]).all():
+                mult_h = mult_b[hour_bin]  # (T,)
+                mask = has_b[hour_bin]  # (T,)
+            else:
+                # ERCOT-89 span boundary: the row-hours ABOVE the measured
+                # conditional online span take the pool's start-inclusive
+                # ladder (rel over (span, 1]); hours whose span reaches 1.0
+                # (fully-online cells, or cells the corpus never covers)
+                # are never pool-owned.
+                own_t = (s_g > span_ct) & (span_ct < 1.0)
+                rel_t = np.zeros(hours)
+                rel_t[own_t] = (s_g - span_ct[own_t]) / (1.0 - span_ct[own_t])
+                mult_h = np.zeros(hours)
+                mask = np.zeros(hours, dtype=bool)
+                for b in range(n_bins):
+                    sel = (hour_bin == b) & own_t
+                    if not sel.any():
+                        continue
+                    if not np.isfinite(pool_wall[b]).all():
+                        continue
+                    mult_h[sel] = np.interp(rel_t[sel], ladder_q, pool_wall[b])
+                    mask[sel] = True
+                if not mask.any():
                     continue
-                rel = (s_g - pb) / (1.0 - pb)
-                mult_b[b] = float(np.interp(rel, ladder_q, pool_wall[b]))
-                has_b[b] = True
-            if not has_b.any():
-                continue
-            target = mult_b[hour_bin] * gas_day  # (T,)
+            target = mult_h * gas_day  # (T,)
             target = np.minimum(target, voll_cap)
             row = np.maximum(0.0, target - mc_base[g, :])
-            mask = has_b[hour_bin]  # (T,)
             markup[g, :] = np.where(mask, row, 0.0)
             own_mask[g, :] = mask
             n_priced += 1
@@ -4445,10 +4681,11 @@ def build_ercot_faststart_pool_markup(
         )
         return None
     logger.info(
-        "ERCOT fast-start pool (ERCOT-88): %d fast-start rows carry the "
+        "ERCOT fast-start pool (ERCOT-88%s): %d fast-start rows carry the "
         "offline-pool above-LSL SCED2 ladder (year table %s; physics gate "
         "min_down <= %.0f h; replace-by-mask composition, never "
         "state-weighted)",
+        ("; ERCOT-89 conditional online-span boundary" if span_ct is not None else ""),
         n_priced,
         year,
         FASTSTART_POOL_MIN_DOWN_HOURS,
