@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-17T00:07:38",
+  "timestamp": "2026-07-20T06:32:56",
   "iso": "MISO",
   "years": [
     2023,
@@ -53,7 +53,11 @@
     "coal_committed_takeorpay_regulated": true,
     "st_gas_mustrun_p25_level": true,
     "unit_outage_maxgen_events": true,
-    "maxgen_emergency_tier_pricing": true
+    "maxgen_emergency_tier_pricing": true,
+    "miso_midwest_subregional_reserves": true,
+    "miso_winter_citygate_daily": true,
+    "miso_manitoba_seam": true,
+    "miso_seam_envelope_merit_cap": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -70,13 +74,16 @@
   "as_reserve_withholding": false,
   "energy_reserve_coopt": true,
   "miso_zonal_reserves": true,
+  "miso_midwest_subregional_reserves": false,
   "miso_reserve_pergen": true,
   "miso_commitment_posture": false,
   "miso_measured_reserve_requirements": true,
   "miso_south_seam_split": true,
   "miso_rdt_tcdc": true,
+  "miso_zonal_loss_surface": false,
   "ercot_multiproduct_as_coopt": false,
   "ercot_ecrs_conservative_deployment": false,
+  "ercot_nonreleasable_as_withholding": false,
   "ercot_ordc_total_reserve": false,
   "ercot_ordc_cap_dual_adder": false,
   "ercot_storage_as_product_credit": false,
@@ -116,6 +123,7 @@
   "gas_monthly_actuals": false,
   "pjm_zonal_gas_basis": false,
   "miso_zonal_gas_basis": true,
+  "miso_winter_citygate_daily": false,
   "pjm_congestion": false,
   "offer_curve_overrides": {},
   "offer_curve_deltas": {},
@@ -132,6 +140,7 @@
   "ercot_offer_surface_midcurve_conditional": false,
   "ercot_offer_surface_cleared_share": false,
   "ercot_offer_surface_cleared_share_state": false,
+  "ercot_offer_surface_cleared_share_steam": false,
   "ercot_offer_surface_lowcurve": false,
   "ercot_offer_surface_lowcurve_floorscoped": false,
   "wind_ptc_vintage_offers": false,
@@ -139,6 +148,8 @@
   "pjm_offer_surface_conditional": false,
   "pjm_da_virtual_bids": false,
   "pjm_offer_midcurve_conditional": false,
+  "caiso_offer_surface_measured": false,
+  "caiso_offer_surface_conditional": false,
   "pjm_offer_midcurve_segments": null,
   "ercot_nuclear_unit_availability": false,
   "ercot_thermal_dam_availability": false,
@@ -165,6 +176,8 @@
   "ercot_gas_bridge_min_load_frac": null,
   "ercot_gas_bridge_startup": null,
   "ercot_gas_bridge_da_horizon": null,
+  "ercot_commitment_posture": null,
+  "ercot_commitment_posture_min_load_frac": null,
   "carry_operating_mothballs": true,
   "reliability_floor": true,
   "ct_netload_drag": null,
@@ -209,6 +222,7 @@
   "miso_seam_flow_limit": true,
   "miso_seam_flow_percentile": null,
   "miso_seam_export_limit": true,
+  "miso_seam_envelope_merit_cap": false,
   "miso_pjm_border_anchor": true,
   "miso_cc_coal_rebalance": false,
   "miso_firm_import_floor": false,
@@ -233,39 +247,37 @@
     "eia923": "../_shared/MISO/eia923-96136b23f6a3.parquet",
     "campd": "../_shared/MISO/campd-0c8c8860e930.parquet"
   },
-  "git_sha": "c934e98",
+  "git_sha": "2bd63e4",
   "highspy_version": "1.14.0",
+  "environment": {
+    "python_version": "3.11.15",
+    "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+    "packages": {
+      "highspy": "1.14.0",
+      "numpy": "2.4.6",
+      "scipy": "1.17.1",
+      "pandas": "3.0.3",
+      "pyarrow": "24.0.0",
+      "pydantic": "2.13.4"
+    }
+  },
   "reuse": {
-    "source_bundle": "results/calibration/_miso70_acc/main/y2024",
+    "source_bundle": "results/calibration/miso81_phantom_outage",
     "requested_years": [
       2023,
       2024,
       2025
     ],
-    "reused_years": {
-      "2023": {
-        "passes": [
-          "P1"
-        ],
-        "cache_key": "3374da389fed9160",
-        "scenario_config_sha256": "71e83dc8a8d9f7e9"
-      },
-      "2024": {
-        "passes": [
-          "P1"
-        ],
-        "cache_key": "df172fb4e2a26e2e",
-        "scenario_config_sha256": "97bc0499621a8e78"
-      }
-    },
+    "reused_years": {},
     "fresh_years": [
+      2023,
+      2024,
       2025
     ],
     "refusals": {
-      "2025": "year not solved in the prior bundle"
+      "bundle": "effective ScenarioConfig for year 2023 differs from the prior bundle's persisted scenario_config: ['gas_price_override', 'weather_year']"
     },
     "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
-    "source_timestamp": "2026-07-16T23:57:20",
-    "source_git_sha": "c106ba6"
+    "source_timestamp": "2026-07-20T05:37:14"
   }
 }
