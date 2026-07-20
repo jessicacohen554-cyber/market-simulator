@@ -4704,6 +4704,39 @@ class ScenarioConfig:
     # Path to the frozen fast-start pool JSON (default:
     # data/raw/_validation-source/ercot_faststart_pool_condbinned.json).
     ercot_faststart_pool_offer_path: str | None = None
+    # ERCOT-89 shoulder online-span anchor (default off; step-2 mechanism of
+    # docs/handoffs/ercot-shoulder-online-envelope-2026-07.md, owner-authorized
+    # design round 2026-07-19). The charter §8 measurement: the model's
+    # availability basis (class-day, only-OUT-is-out, day-flat) hands the LP
+    # the FULL non-OUT merchant CC/CT capability as online base/wall-priced
+    # headroom every hour, while reality ran the residual $150-500 shoulder
+    # hours on a ~0.4-0.5 GW online margin (8-10x wedge) — the quantity is the
+    # error, not the price. This gate re-anchors the cleared-share wall's
+    # ladder GEOMETRY on the measured CONDITIONAL online span (mean telemetered
+    # ON share of non-OUT capability per net-load bin x season x 4h block —
+    # scripts/data/derive_ercot_shoulder_online_span.py; the per-hour ON
+    # series is an operational outcome and never enters, rule 13): walled
+    # rows within the span map onto the ladder at rel = (share - boundary) /
+    # (span - boundary), so the measured ONLINE-spare offer distribution is
+    # stretched over the measured online span instead of over capability that
+    # is telemetered OFF at the same conditions; the increment ABOVE the span
+    # is PRICED, never capped (charter §3(ii) no-cap line — the rejected
+    # ercot41/43 envelope family is not re-opened): fast-start CT rows
+    # (rule-12 physics gate, min_down <= constants.FASTSTART_POOL_MIN_DOWN_
+    # HOURS) take the ERCOT-88 offline-pool start-inclusive ladder there (the
+    # pool leg's boundary generalizes from 1 - pool_frac(bin) to the span),
+    # all other rows clamp at their own ladder's top rung. No LP row, no
+    # min_gen, no floor — D-2 forced-share / D-4 off-window exposure is
+    # vacuous; the co-opt's shared reserve headroom is untouched. YEAR-SCOPED
+    # (rule 13, 2024/2025 only): no pooled fallback — absent years keep the
+    # full-span geometry byte-identical. Requires the cleared-share wall + RT
+    # leg (it corrects THAT ladder's geometry) and the fast-start pool leg
+    # (the above-span increment must be priced) — hard error otherwise. Zero
+    # fitted scalars; frozen against residuals (rule 23).
+    ercot_shoulder_online_span: bool = False
+    # Path to the frozen conditional online-span JSON (default:
+    # data/raw/_validation-source/ercot_shoulder_online_span_condbinned.json).
+    ercot_shoulder_online_span_path: str | None = None
     # Path to the measured condition-binned ladder JSON (default: the frozen
     # data/raw/_validation-source/offer_curve_dam_hrmults_condbinned.json). None →
     # the mechanism is a no-op even when the flag is on.
@@ -7635,6 +7668,8 @@ TIER_TAGS: dict[str, int] = {
     "ercot_offer_surface_cleared_share_rt_mode": 1,
     "ercot_faststart_pool_offer": 1,
     "ercot_faststart_pool_offer_path": 3,
+    "ercot_shoulder_online_span": 1,
+    "ercot_shoulder_online_span_path": 3,
     "nysdec_peaker_rule_availability": 1,
     "gas_st_wefor_base_override": 3,
     "as_reserve_withholding": 1,
