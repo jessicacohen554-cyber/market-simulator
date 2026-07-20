@@ -6309,8 +6309,8 @@ def apply_statistical_mode(args) -> None:
 # outside this set is a designated holdout (2022, H1-2026) and requires
 # --holdout-authorized plus a calibration-complete marker for the target ISO
 # (frontend/data/backcast/calibration-complete.json) — the one-shot frozen-
-# config holdout score. Mirrors calibration-run.yml's workflow_dispatch gate
-# (the GH-Actions UI path) and legitimacy_diagnostics.py's D6_CALIBRATION_YEARS
+# config holdout score. Mirrored the workflow_dispatch gate of calibration-run.yml
+# (the GH-Actions UI path, removed 2026-07-14) and legitimacy_diagnostics.py's D6_CALIBRATION_YEARS
 # / audit_keepers.py's CALIBRATION_YEARS (kept as separate literals per this
 # repo's existing convention; a parity test asserts they agree).
 HOLDOUT_CALIBRATION_YEARS: frozenset[int] = frozenset({2023, 2024, 2025})
@@ -6325,7 +6325,7 @@ def enforce_holdout_year_gate(
     docs/handoffs/holdout-policy-memo-2026-07.md (b)(2): direct invocation of
     this script with ``--year 2022``/``--year 2026`` solved today with no
     code-level gate — only the GH-Actions ``workflow_dispatch`` wrapper
-    (calibration-run.yml) validated the year. This closes that gap at the
+    (calibration-run.yml, since removed) validated the year. This closes that gap at the
     script entry point itself. Authorization requires BOTH ``--holdout-
     authorized`` on the command line AND the target ISO already carrying a
     ``calibration-complete`` marker (the marker is what turns a holdout year
@@ -6865,7 +6865,7 @@ def main() -> None:
         help="Re-solve a committed bundle's exact recipe: DIR/meta.json "
         "supplies every solve kwarg (scripts/replay_keeper.py's mapping), so "
         "a keeper/probe recipe reproduces without expressing it flag-by-flag "
-        "— the CI-dispatchable replay for calibration-run.yml (extra_flags). "
+        "— the CI-dispatchable replay recipe, formerly the removed calibration-run.yml (extra_flags). "
         "--out-dir/--note override the destination and provenance note; "
         "--year (if given) overrides the solved span, still holdout-gated; "
         "--zero-forcing-ablation composes to solve the recipe's D-3 ablation "
