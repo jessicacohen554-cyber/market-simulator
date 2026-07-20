@@ -108,13 +108,49 @@ a MEASURED, net-load-conditioned EVENING import-exhaustion ceiling on the
 CAISO import node (the class of the MISO/PJM/NEISO measured deliverability
 envelopes and the caiso-87/93/94 measured depths), with pre-registered
 estimation + solve gates (both windows, all 3 years, one bundle; LOYO
-structural scoring before promotion). PENDING owner ruling — nothing built or
-solved.
+structural scoring before promotion). **WITHDRAWN by the binding check in §5
+below** — its own pre-registered kill condition fired; nothing built or solved.
+Re-charter in the ask doc §7.
 
-## 5. Model-side binding check (single-year 2024 diagnostic)
+## 5. Model-side binding check (single-year 2024 diagnostic) — the ask INVERTS
 
-<!-- FILLED AFTER THE 2024 REPRO SOLVE — model evening/belly TOTAL import vs
-the measured ceiling; the "does the ceiling bind" number. -->
+Single-year 2024 keeper-recipe repro (`caiso106_binding_2024`, un-registered);
+model TOTAL net import into CA (`flows.parquet`) vs the measured envelope
+(`_caiso106_binding_analysis.py`):
+
+| window (2024) | model mean | model p95 | measured mean | measured p95 (by band) | ceiling binds? |
+|---|---|---|---|---|---|
+| EVENING (17-21) | **+4165 MW** | +5745 | +4557 MW | ~7000-7600 | **SLACK — every band** |
+| BELLY (10-14) | **+3619 MW** | +6986 | +994 MW | −1240…+5400 | **BINDS — deep-surplus bands** |
+
+**This inverts the drafted ask.** The evening volume-ceiling's pre-registered
+KILL condition #1 (ask §4: "the ceiling does not bind → the evening defect is
+not over-import") FIRES: the model imports slightly LESS than reality in the
+evening (4.2 vs 4.6 GW) and never approaches the measured p95 exhaustion depth,
+so a volume cap is inert for the evening. The evening under-price is therefore
+NOT an import-volume-exhaustion problem — it is a PRICE / merit-order problem:
+the model imports a reasonable evening volume but prices the marginal MW at the
+hub-EQUALIZED level (caiso-105 §2), 10-12 $ below reality's marginal supply, so
+λ clears too cheap. The correct evening lever is an INELASTIC / exhaustion
+PREMIUM on the marginal evening import (measured RT-over-hub in the tight
+state), NOT a quantity cap.
+
+Symmetrically, the volume ceiling DOES bind in the BELLY — the model
+over-imports +2.6 GW (3.6 vs 1.0 GW measured; matches FINDING-caiso105 §4) and
+exceeds the measured p95 in the deep-surplus bands. So the volume lever belongs
+to the belly, whose depth is exactly the arm that FAILED the year-stability gate
+(§3). Neither window yields a clean, ready ask: the evening's measurement is
+stable but the volume mechanism doesn't bind; the belly's mechanism binds but
+the measurement isn't stable.
+
+**Verdict:** the drafted M-EVE-EXH-1 evening volume ceiling is WITHDRAWN by its
+own pre-registered kill condition (no mechanism filed on refuted evidence —
+rule 1 / pre-registration discipline). Re-charter (§4 of the ask doc, updated):
+* EVENING → a MEASURED exhaustion/inelastic PREMIUM lane (the marginal tight-hour
+  import prices above the hub by the measured RT-over-hub separation) — needs its
+  own measurement + gates.
+* BELLY → the volume ceiling is the right mechanism but needs a WEST-WIDE
+  observable (Palo Verde / Malin hub LEVEL) to make the depth year-stable.
 
 ## 6. Session artifacts
 
