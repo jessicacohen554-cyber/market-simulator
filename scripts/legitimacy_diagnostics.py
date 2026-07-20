@@ -112,6 +112,7 @@ from scripts.calibration_verdict import PROTECTIVE_MIN_LOAD_FRAC  # noqa: E402
 from scripts.lib import backcast_artifacts as ba  # noqa: E402
 from scripts.lib import holdout_policy  # noqa: E402
 from scripts.lib import keeper_store  # noqa: E402
+from scripts.lib.known_unsynced_keepers import UNSYNCED_KEEPERS  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("legitimacy_diagnostics")
@@ -1115,7 +1116,24 @@ def run_d9_keepers(repo_root: Path) -> GateResult:
         side_path = repo_root / "frontend/data/backcast/registry" / f"{run_id}.json"
         side = json.loads(side_path.read_text())
         bundle = repo_root / side["bundle"]
-        rc = json.loads((bundle / "run_config.json").read_text())
+        rc_path = bundle / "run_config.json"
+        if not rc_path.exists():
+            # A keeper whose bundle was never committed cannot be D-9 screened
+            # (there is no run_config.json to inspect). Tolerate ONLY the tracked
+            # known-unsynced ids (scripts/lib/known_unsynced_keepers.py); any
+            # other missing bundle is a real break and FAILs.
+            if run_id in UNSYNCED_KEEPERS:
+                res.notes.append(
+                    f"{run_id}: bundle {side['bundle']} not committed — D-9 "
+                    "skipped (known-unsynced keeper; payload re-sync owed)"
+                )
+                continue
+            res.failures.append(
+                f"{run_id}: bundle {side['bundle']} missing run_config.json — "
+                "cannot run D-9 overlay quarantine"
+            )
+            continue
+        rc = json.loads(rc_path.read_text())
         sub = run_d9(rc, side.get("iso", ""), label=run_id)
         res.rows.extend(sub.rows)
         res.failures.extend(sub.failures)
@@ -1196,9 +1214,22 @@ def run_d2_keepers_verify(repo_root: Path) -> GateResult:
                 committed_bridge_twh[k] = committed_bridge_twh.get(k, 0.0) + row.get(
                     "forced_twh", 0.0
                 )
-        recomputed = diagnose_bundle(
-            bundle, iso, years, repo_root=repo_root, only={"D2"}
-        )
+        try:
+            recomputed = diagnose_bundle(
+                bundle, iso, years, repo_root=repo_root, only={"D2"}
+            )
+        except FileNotFoundError as exc:
+            # The D-2 recompute rebuilds floors via run_year, which needs the
+            # keeper's FETCHED raw inputs — uncommitted (e.g. data/raw/
+            # pjm-da-virtuals/ tracks only a README). Absent them this keeper
+            # can't be recomputed: note and skip rather than crash. The fast CI
+            # gate skips D-2 wholesale (--no-d2-recompute); this keeps a local
+            # --keepers run on a partial tree from aborting the whole sweep.
+            res.notes.append(
+                f"{run_id}: D-2 recompute needs fetched raw inputs absent on "
+                f"this tree ({exc}) — skipped"
+            )
+            continue
         d2 = next((r for r in recomputed if r.name.startswith("D-2")), None)
         recomputed_summary = (
             {(row["year"], row["class"]): row for row in d2.summary}
@@ -1922,6 +1953,16 @@ def main(argv: list[str] | None = None) -> int:
         "recompute-vs-committed staleness check across every keeper bundle "
         "(CI mode)",
     )
+    parser.add_argument(
+        "--no-d2-recompute",
+        action="store_true",
+        help="in --keepers mode, skip the D-2 recompute-vs-committed staleness "
+        "check. That check rebuilds per-plant floors via run_year (needs each "
+        "keeper's fetched raw inputs, uncommitted, and minutes of compute), so "
+        "it is unfit for the fast hermetic per-PR CI gate — the D-9 overlay + "
+        "D-6 holdout quarantines (the rule-22 enforcement) still run. Run the "
+        "full --keepers (D-2 included) locally / in a data-provisioned tier.",
+    )
     parser.add_argument("--report", type=Path, help="write a markdown report")
     parser.add_argument(
         "--json-out",
@@ -1936,7 +1977,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.keepers:
         results.append(run_d9_keepers(REPO_ROOT))
         results.append(run_d6_quarantine(REPO_ROOT))
-        results.append(run_d2_keepers_verify(REPO_ROOT))
+        if not args.no_d2_recompute:
+            results.append(run_d2_keepers_verify(REPO_ROOT))
         bundle_label = "all keepers"
     if args.bundle:
         if not args.iso:
