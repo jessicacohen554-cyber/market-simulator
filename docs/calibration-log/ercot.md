@@ -247,3 +247,58 @@ basis as ercot86 — `price_tail` undocumented beyond 2023, the standing C3
 successor lane); `build_status.py --iso ERCOT` rebuilt;
 `calibration-keeper-auditor --iso ERCOT` PASS (one prose repair: sidecar
 definition candidate→keeper). Branch rebased onto main post-#2651.
+
+## 2026-07-20 — ERCOT-92 (measure-first, corpus adjudication): the RT/SCED steam-basis frontier RESOLVED FROM COMMITTED DATA — the ERCOT-89 §8.3 "corpus lacks ST restypes" note is OVERTURNED (all four NP3-965 sample-day parquets carry GSNONR/GSREH/GSSUP: 44 resources, 100 %-populated SCED2 curves, telemetered statuses), the RT/SCED-basis ST ladder (ERCOT-86 construction, steam leg) DERIVED and FROZEN (`ercot_sced_offer_wall_steam_condbinned.json`, 2024/2025, fleet-scoped, zero fitted scalars); step-2 arming OWNER-GATED, keeper UNCHANGED (ercot91)
+
+**Task.** The ERCOT-91 §8.1 rejection named the band-hour frontier as two
+data-intake questions: an RT/SCED-basis ST ladder and finer state conditioning.
+Scope: measure-first corpus adjudication (no apply, no mechanism, no solve),
+deliverable = a derivability verdict, plus the frozen artifact if committed data
+suffices. Record: `docs/handoffs/ercot-stgas-shoulder-2026-07.md` §9.
+
+**Adjudication (§9.1).** (a) The on-disk NP3-965 SCED corpus CARRIES steam —
+the §8.3 parenthetical described the derived CC/CT artifact's `CLASS_OF_RESTYPE`
+scope, not the raw data: 44 gas-steam resources per file, SCED1/SCED2 curves
+100 %-populated on ON-family rows (median 8 steps), BP/HASL present, positive
+online spare on ~half the ON rows; §8.3 corrected in place (rule 14). (b) The
+60-Day DAM disclosure's steam rows (45 resources, full-year) carry only the
+QSE-submitted DAM offer curve + awards + ex-ante status — no SCED curves, no
+BP/HASL, no telemetry: NOT SCED-usable; it is exactly the measured-cheap DAM
+basis the ERCOT-91 trip refuted. (c) Steam ON/OFF resolves at hour grain from
+the same corpus's per-interval `Telemetered Resource Status` (sample days only:
+25+22 d 2024, 11+24 d 2025) — the state-conditioning half is also
+committed-data-derivable if a step-2 round wants it. **Verdict: derivable from
+committed data, 2024/2025; no intake, no data authorization needed; 2023 stays
+DAM-basis unreachable (no sample days + regime bar).**
+
+**Artifact (§9.2–§9.3).** New standing derive
+`scripts/data/derive_ercot_sced_offer_wall_steam.py` →
+`data/raw/_validation-source/ercot_sced_offer_wall_steam_condbinned.json`
+(+ 9 tests). ERCOT-86 construction byte-shared (helpers imported from the
+frozen CC/CT derive — which stays byte-identical and ST-free, test-enforced;
+rule 19: the steam ladder is the steam-owner seam's own basis). Fleet-scoped to
+the model's own 17 plants via an exact 36-resource name map validated
+per-plant against nameplate (CFB absent from the corpus, consistent with its
+zero CEMS operation; 8 excluded ≤49 MW industrial/CHP resources ≈ 0.2 % of
+ON-spare, disclosed; unmapped corpus name = hard error). Year-scoped
+2024/2025, no pooled fallback, deterministic, frozen rule 23. All 7 net-load
+bins populated both years (168-505 intervals/bin). Headline: from bin 1 up the
+RT steam surface's upper rungs stand far above the DAM ST ladder (2024 b3-b5
+q90 153-184 vs DAM 81-91; 2025 b5 q90 438 vs 84 — regression-tested on the
+mid-band bins), and the keeper's whole steam offer stack (econ mult 10.8,
+committed 14.8 = 0.97/1.32 × 11.18 fleet HR) prices at the measured RT
+surface's ~q10-q30 in every mid/high bin — the ERCOT-91 §8.1 trip's root
+cause, now carrying its measured replacement. Disclosed, not encoded: b0 and
+2024-b6 exceptions (scarcity-bin ON steam runs near-fully loaded; thin cheap
+residual spare vs DAM cap-level rungs).
+
+**Disposition.** STOP per charter — step-2 arming (ladder-source swap in the
+steam wall leg; state-weight basis question; Jan-14-2024 cold-snap regression
+first) is a separate owner-gated round with the ERCOT-91 §6 guards inherited,
+bases from the ercot91 keeper's committed hourly sidecars (all years, no
+replays). Keeper UNCHANGED (`2026-07-20-ercot91-seasonal-drag-fullspan`);
+nothing registered (no solve). Out of scope, unchanged: LP caps (ercot41/43),
+frozen-artifact re-tunes (rule 23), the C3c tail lane, the ERCOT-89 span
+re-probe (§9.5(2) condition still unmet). Ops: derive + artifact + tests +
+handoff §9 + envelope §8.3 correction + this entry on
+`claude/stgas-band-hour-frontier-1kn1fl`. Next number: ercot-93.
