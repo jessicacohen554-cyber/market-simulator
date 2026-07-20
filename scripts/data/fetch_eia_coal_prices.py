@@ -57,7 +57,6 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import os
 import sys
 import time
 from pathlib import Path
@@ -66,6 +65,10 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 REPO = Path(__file__).resolve().parent.parent.parent
+
+sys.path.insert(0, str(REPO))
+from scripts.lib.env_keys import get_api_key  # noqa: E402
+
 OUT_DIR = REPO / "data" / "raw" / "coal-prices"
 MARKET_SALES_OUT = OUT_DIR / "eia_coal_market_sales_price.csv"
 PRICE_BY_RANK_OUT = OUT_DIR / "eia_coal_price_by_rank.csv"
@@ -190,17 +193,9 @@ def main() -> None:
     ap.add_argument("--sleep", type=float, default=0.5)
     args = ap.parse_args()
 
-    key = os.environ.get("EIA_API_KEY")
-    if not key and (REPO / ".env").exists():
-        for line in (REPO / ".env").read_text().splitlines():
-            if line.startswith("EIA_API_KEY="):
-                key = line.split("=", 1)[1].strip()
-    if not key:
-        print(
-            "ERROR: set EIA_API_KEY (free: https://www.eia.gov/opendata/register.php)",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+    key = get_api_key(
+        "EIA_API_KEY", hint="free at https://www.eia.gov/opendata/register.php"
+    )
 
     print("=== coal/market-sales-price (region x market-type, all ranks) ===")
     market_rows = fetch_market_sales_price(key, args.start_year, args.sleep)

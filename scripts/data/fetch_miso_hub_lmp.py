@@ -64,7 +64,7 @@ import csv
 import io
 import json
 import logging
-import os
+import sys
 import threading
 import time
 import urllib.error
@@ -74,6 +74,9 @@ from datetime import date, timedelta
 from pathlib import Path
 
 from market_sim.config.paths import RAW_DIR
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from scripts.lib.env_keys import get_api_key  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 log = logging.getLogger("fetch_miso_hub_lmp")
@@ -90,15 +93,7 @@ _API_CALLS_PER_MINUTE = 90  # MISO Data Exchange quota is 100/min; leave margin
 
 def _pricing_api_key() -> str | None:
     """Return ``MISO_PRICING_API_KEY`` from the environment or ``.env`` fallback."""
-    key = os.environ.get("MISO_PRICING_API_KEY")
-    if key:
-        return key
-    env_path = Path(__file__).resolve().parents[2] / ".env"
-    if env_path.is_file():
-        for line in env_path.read_text().splitlines():
-            if line.startswith("MISO_PRICING_API_KEY="):
-                return line.split("=", 1)[1].strip()
-    return None
+    return get_api_key("MISO_PRICING_API_KEY", required=False)
 
 
 class _RateLimiter:

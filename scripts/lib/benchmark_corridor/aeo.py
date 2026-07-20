@@ -31,7 +31,6 @@ from __future__ import annotations
 
 import csv
 import json
-import os
 import time
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -42,6 +41,7 @@ import pandas as pd
 
 from scripts.lib import benchmark_corridor as bc
 from scripts.lib.clean_io import paths
+from scripts.lib.env_keys import get_api_key
 
 SOURCE = "AEO2025"
 RAW_SUBDIR = "aeo2025"
@@ -258,15 +258,7 @@ _BOUNDARY_NOTE = (
 # ---------------------------------------------------------------------------
 def load_api_key() -> str:
     """Resolve the EIA API key: ``EIA_API_KEY`` env, repo ``.env``, then DEMO_KEY."""
-    key = os.environ.get("EIA_API_KEY")
-    if not key and (paths.REPO_ROOT / ".env").exists():
-        for line in (paths.REPO_ROOT / ".env").read_text().splitlines():
-            if line.startswith("EIA_API_KEY="):
-                candidate = line.split("=", 1)[1].strip()
-                if candidate:
-                    key = candidate
-                break
-    return key or _DEMO_KEY
+    return get_api_key("EIA_API_KEY", required=False) or _DEMO_KEY
 
 
 def _fetch_json(
