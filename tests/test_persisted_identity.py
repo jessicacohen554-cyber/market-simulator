@@ -45,7 +45,24 @@ FROZEN_PICKLE_PATHS: dict[str, list[str]] = {
 # ScenarioConfig().cache_key() with the current frozen field set/defaults.
 # Recompute intentionally (never to "fix" a failure): a change here means a
 # field that reaches asdict() moved, which orphans every on-disk cache.
-PINNED_DEFAULT_CACHE_KEY = "2a1cb71048210ebf"
+#
+# 2026-07-20 advance 2a1cb71048210ebf -> edbc1b103207170a. Investigated (field-set
+# diff of ScenarioConfig between baseline 0ba2bb0 and HEAD) and every difference is
+# traceable to four merged, attributed FF/calibration commits — no removed/renamed
+# field, and the ONLY pre-existing-field default change is the intended, owner-
+# signed-off FF-2C flip:
+#   - 9752a64 (ERCOT-91): +gas_st_drag_seasonal (=False), +gas_st_drag_seasonal_path
+#     (=None) — new default-off fields.
+#   - 0cc47af (caiso-104): +caiso_charge_allocation_schedule (=False) — new
+#     default-off field.
+#   - 85c261f (ERCOT-89): +ercot_shoulder_online_span (=False),
+#     +ercot_shoulder_online_span_path (=None) — new default-off fields.
+#   - dbbae9c (FF-2C): capacity_market_clearing_by_iso default FLIPPED None ->
+#     {"PJM","MISO","CAISO","NEISO": True} (NOT a new field — a pre-existing
+#     field's default changed). It is not in _CACHE_KEY_OPTIONAL_FIELDS and the
+#     default config is mode="forecast" (no __post_init__ backcast coercion), so
+#     the dict enters the hash and is the dominant contributor to this change.
+PINNED_DEFAULT_CACHE_KEY = "edbc1b103207170a"
 
 
 @pytest.mark.parametrize(
