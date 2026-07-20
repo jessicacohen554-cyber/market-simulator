@@ -339,3 +339,52 @@ observable or a belly-tranche re-pricing). Neither filed.
 
 Full record: `results/calibration/FINDING-caiso107-intertie-recharter-2026-07-20.md`.
 Next number: caiso-108.
+
+---
+
+## caiso-108 (2026-07-20) — P0 GATE ATTRIBUTION: the keeper's blockers are an import/gas VOLUME defect, not the price ladder — intertie-reprice lane STOPPED, keeper UNCHANGED
+
+**Keeper `2026-07-19-caiso-102-hourfix` UNCHANGED (NOT-YET). No solve, no
+mechanism armed, nothing registered.** The caiso-108 charter required a P0 gate
+attribution BEFORE any P1 intertie build, to break the four-session
+measure→refute loop. P0 done; the P1 condition ("only if C3c/C4/C5a are shown to
+be intertie/ladder-driven") is FALSE, so the chartered P1 is not executed.
+
+**The three failing gates all root to ONE cause.** Scored from committed
+artifacts (`scripts/calibration_verdict.py`): FAIL = C3c (scarcity tail,
+SUPPORT), C4 (gas hourly corr, SUPPORT), C5a (CO2, **LOAD** — the only
+load-bearing fail). Decoding the keeper's run payload, every year the model
+**over-imports 6–10 TWh and under-dispatches gas 5–14 TWh** (2023 gas −13.66 TWh
+/ net-import +8.28; 2024 −6.61 / +9.65; 2025 −5.40 / +6.35), a near 1:1
+substitution. Imports carry zero CO2 in the model → the substitution IS the
+−11% C5a miss (scaling model CO2 to the actual gas TWh lands on the actual, so
+C5a is a gas-VOLUME not a rate problem). C4 fails on NRMSE/level (r 0.84–0.91
+good, level low) — the high-r/low-level signature of uniform economic
+under-dispatch. C3c under-forms because cheap firm imports cap peak λ below the
+$200 band.
+
+**The chased ladder residual lives in PASSING gates.** C3a (mean LMP) and C3b
+(shape) both PASS. The belly +6/evening −5 $/MWh ladder caiso-104/105/106/107
+chased is a shape wiggle whose belly-over/evening-under cancel in the mean — not
+a keeper blocker. Four sessions tuned a residual inside already-passing gates.
+
+**Why the chartered P1 would not flip a failing gate.** The chartered P1 reprices
+the marginal firm-import rung to the live hub, gated on the evening residual. But
+(1) it is a PRICE change and the blockers are VOLUME — in the belly (where the
++2.6 GW over-import that dominates the annual gap sits) the live hub is
+low/negative, so repricing "to the live hub" leaves the firm rung cheap midday →
+belly over-import and CO2 unchanged; and (2) the evening residual is in passing
+C3a/C3b, so zeroing it leaves C5a (LOAD) + C4 failing. Pre-registering
+"evening resid → 0" as the P1 primary gate would reproduce the loop.
+
+**Re-charter (caiso-109):** the import/gas substitution itself — why the model
+prefers 6–10 TWh of imports over CA gas — scored on **C5a / C4 / C3c**, NOT the
+±5 $/MWh ladder. Lever family still plausibly the firm-import supply curve
+(caiso-103 §6 static $28/$48 firm blocks too cheap/available), but as a
+VOLUME/availability lever. Derive-first first measurement: is the gas
+under-dispatch economic (import offer stack underprices gas) or physical (gas
+fleet clips its ceiling)? DO-NOT-REDO adds: the evening firm-rung PRICE reprice
+gated on the evening residual — targets a passing gate, cannot move C5a.
+
+Full record: `results/calibration/FINDING-caiso108-gate-attribution-2026-07-20.md`.
+Next number: caiso-109.
