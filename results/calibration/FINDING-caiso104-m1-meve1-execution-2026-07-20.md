@@ -193,6 +193,48 @@ v1 bundle is retained (`caiso104_m1v1_zero_B`) and registered as the failed
 probe (rule 15); the v2 leg re-solves under the IDENTICAL §3 pre-registered
 gates.
 
+### 3b. B-leg v2 (`caiso104_m1_B`): mechanism armed and conduct-faithful, but **REJECTED on the pre-registered gates** — the belly λ does NOT decouple
+
+v2 (support-fixed profile, identical recipe otherwise, same pre-registered
+gates), scored vs the same-machine A-leg:
+
+| gate | result |
+|---|---|
+| 1 — belly resid falls all 3 yrs | **FAIL**: +6.0→+5.9 / +6.6→**+6.6** / +4.3→+4.1 (2024 unchanged; movement ≈ nil everywhere) |
+| 2 — no overshoot | PASS (belly resid stays ≥ +4.1) |
+| 3 — volume ±5 % | **FAIL 2024**: annual +3.48 % / **+6.10 %** / +3.93 % (belly window +1.8/+2.2/−1.5 % all pass) |
+| 4 — evening not >0.5 deeper; overnight ≥ −1.5 | PASS (evening −5.8→−5.8 / −4.9→−5.1 / −1.1→−1.3; overnight +1.0/+0.1/+1.5) |
+| 5 — C1/C3c | PASS (C1 grid ~unchanged, CC/CT misses improve ≤0.11 TWh; C3c identical incl. the 2023-01-13 19-day cluster) |
+| 6 — conduct report | floors bind in 0.654/0.636/0.504 of charging-day × active-hod slots; reallocation B−A: overnight +0.21/+0.24/+0.29 TWh, pm-shoulder +0.09/+0.12/+0.23, morning −0.20/+0.03/+0.13, belly +0.06/+0.13/−0.14 |
+
+**Verdict: REJECTED probe (both legs registered per rule 15; keeper
+`2026-07-19-caiso-102-hourfix` UNCHANGED).** The mechanism did exactly what
+it claimed mechanically — the allocation followed the measured DAM bundle
+(gate-6 binding shares), volume held within ~4–6 %, nothing collapsed — and
+the belly λ still did not move. The decoupling hypothesis fails for a
+structural reason visible in the S-elimination algebra: the marginal stored
+MWh now prices at the SHAPE-WEIGHTED DAY BUNDLE, but the bundle is itself
+~72 % belly, so ~72 % of the battery's arbitrage margin still lands on
+belly-hour duals — bundling redistributes the charge-demand pressure only
+across the ~28 % non-belly allocation (which is where the small overnight/
+pm-shoulder λ effects and the +3.5–6 % volume rise went). A conduct-correct
+allocation cannot remove a price effect that comes from the VOLUME being
+priced at the margin at all.
+
+**Lane implication (the belly re-charter's starting point):** the belly
++6/+6.6/+4 residual has now survived BOTH structural correction families
+the measured conduct supports — the marginal-cost family (caiso-100/101
+adder, volume-refuted) and the allocation family (this leg, λ-inert). What
+remains is the third term of the identity: the DEMAND-side price the LP
+pays for charge — i.e. the belly λ is propped not by WHEN the fleet charges
+(allocation) nor by WHAT the charge costs (adder), but by the LP's
+requirement that the marginal charged MWh be arbitrage-profitable at all —
+reality's DA-cleared charge is a PRICE-TAKING schedule whose day-ahead
+clearing price is NOT the RT belly λ the backcast scores against (the
+measured DA-vs-RT belly wedge, FINDING-caiso102 §3). The re-charter should
+measure that wedge directly (charge-weighted DA λ vs RT λ in model-charge
+hours) before proposing any further mechanism.
+
 ## 4. M-EVE-1 B-leg gates (CONTINGENT on the §2 pin-check failing)
 
 Only if the firm blocks are NOT pinned on the fresh A-leg: gate
