@@ -1214,7 +1214,11 @@ def _write(out: Path | None, name: str, payload: dict) -> None:
         return
     out.mkdir(parents=True, exist_ok=True)
     p = out / name
-    p.write_text(json.dumps(payload, indent=2) + "\n")
+    # ensure_ascii=False so the committed artifact carries readable UTF-8
+    # (em-dash, §) rather than \uXXXX escapes — the registered JSON is a
+    # human-read dashboard sidecar, and this keeps it byte-reproducible against
+    # what a reader sees.
+    p.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n")
     print(f"  wrote {p}")
 
 
