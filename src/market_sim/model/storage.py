@@ -751,6 +751,63 @@ def caiso_storage_shape_caps(
     return chg_cap, dis_cap
 
 
+def caiso_charge_allocation_params(
+    units: list["StorageUnit"],
+    year: int,
+    hours: int,
+) -> tuple[np.ndarray, np.ndarray, float]:
+    """Measured DA charge-allocation schedule parameters for CAISO batteries.
+
+    The M1 belly allocation mechanism (``caiso_charge_allocation_schedule``,
+    owner-granted caiso-103 ask executed caiso-104): the measured CAISO fleet's
+    intra-day charge allocation is set in the DAM (IFM schedules 76-84 % of
+    realized charge) on a fleet-size-invariant hod shape (cross-year r >= 0.994
+    across a 3.5x fleet, FINDING-caiso103 §1A), while the single-market LP
+    re-times the whole charge volume at the RT margin. This returns the
+    committed rule-23 statistics the per-day allocation rows consume
+    (:func:`market_sim.model.dispatch._build_storage_alloc_rows` via the
+    backcast orchestrator):
+
+    * ``batt_idx`` — indices of the battery storage units (pumped storage
+      exempt: not an LESR, absent from the storage-report basis);
+    * ``share`` — ``(hours,)`` hod-mapped ``alloc_share`` (the year's hod
+      share of annual IFM charge, Σ over a day = 1);
+    * ``da_frac`` — the year's DA-share of realized charge (the bounded free
+      RT-margin slice is ``1 - da_frac``).
+
+    Source: ``data/raw/reference/caiso-charge-allocation-profile.csv``
+    (:mod:`scripts.data.derive_caiso_charge_allocation`, from the CAISO Daily
+    Energy Storage Report IFM layer). A solve year beyond the derived span
+    uses the LATEST measured year's row — the caiso-99 envelope precedent
+    (latest-year carry; owner sub-ruling caiso-104) — so the mechanism
+    regenerates forward as shape x that year's endogenous charge volume. A
+    missing artifact raises — a gated mechanism must never silently no-op
+    (the caiso-98 dead-flag lesson).
+
+    Returns ``(batt_idx, share, da_frac)``; ``batt_idx`` may be empty (no
+    batteries), which the caller treats as a no-op.
+    """
+    from market_sim.config.paths import RAW_DIR
+
+    path = RAW_DIR / "reference" / "caiso-charge-allocation-profile.csv"
+    if not path.exists():
+        raise FileNotFoundError(
+            "caiso_charge_allocation_schedule is enabled but the derived "
+            f"allocation profile {path} is missing -- run "
+            "scripts/data/derive_caiso_charge_allocation.py"
+        )
+    prof = pd.read_csv(path)
+    prof_years = sorted(prof["year"].unique())
+    use_year = max((y for y in prof_years if y <= year), default=prof_years[0])
+    py = prof[prof["year"] == use_year].sort_values("hod")
+    share24 = py["alloc_share"].to_numpy(dtype=float)  # (24,)
+    da_frac = float(py["da_frac"].iloc[0])
+    hod = np.arange(hours) % 24
+    share = share24[hod]  # (hours,)
+    batt_idx = np.flatnonzero(_battery_mask(units))
+    return batt_idx, share, da_frac
+
+
 def load_eia860_pumped_storage(
     iso: str, year: int, config: ScenarioConfig | None = None
 ) -> list[StorageUnit]:

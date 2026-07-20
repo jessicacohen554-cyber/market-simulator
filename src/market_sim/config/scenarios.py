@@ -2646,6 +2646,46 @@ class ScenarioConfig:
     # mechanism (caiso-74's AS power reservation is default-off/probe-inert;
     # a validator enforces the exclusivity). Default off (byte-identical);
     # CAISO-only.
+    caiso_charge_allocation_schedule: bool = False  # Constrain the CAISO battery
+    # fleet's INTRA-DAY charge allocation to the measured DAM-allocation shape
+    # (M1, the owner-granted caiso-103 belly ask — docs/handoffs/caiso-103-
+    # belly-allocation-ask-2026-07-19.md; executed caiso-104). The measured
+    # fleet's charge volume is DA-fixed upstream of the RT margin (the IFM
+    # schedules 76-84 % of realized charge, FINDING-caiso102 §1) and the
+    # DA-allocation shape is fleet-size-invariant (pairwise cross-year
+    # r >= 0.994 across a 3.5x fleet, FINDING-caiso103 §1A), but the
+    # single-market LP re-optimizes the hour-grain charge at the RT margin,
+    # propping belly lambda at the fleet's arbitrage value (+6.0/+6.6/+4.3
+    # 2023-25). Per solve-day d the ask's construction is a scheduled-volume
+    # variable S[d] >= 0 with 24 floor rows Chg_fleet[h] >= alloc_share[hod]
+    # x S[d] and one cap row sum_h Chg_fleet[h] <= S[d] / da_frac; S[d] is
+    # costless and appears only in those rows, so it is eliminated exactly
+    # (Fourier-Motzkin) into the equivalent per-day rows the LP carries:
+    #   Chg_fleet[h] >= alloc_share[hod(h)] x da_frac x sum_{h' in d}
+    #   Chg_fleet[h']   (one row per day-hour with alloc_share > 0)
+    # — identical feasible region and duals, no layout change. VOLUME-HOLDING
+    # BY CONSTRUCTION: the day total stays endogenous (zero charge stays
+    # feasible, no objective change — the caiso-100 volume-collapse failure
+    # mode is structurally excluded); the marginal stored MWh prices at the
+    # shape-weighted day bundle, so belly lambda decouples from the battery's
+    # arbitrage value while the LP keeps re-timing the measured 16-24 %
+    # RT-margin slice (1 - da_frac). Fleet battery charge only (pumped
+    # storage exempt — not an LESR). Consumes the committed rule-23 derive
+    # ``data/raw/reference/caiso-charge-allocation-profile.csv``
+    # (scripts/data/derive_caiso_charge_allocation.py: per-year 24-value
+    # alloc_share + da_frac from the storage-report IFM layer — 24+1 measured
+    # statistics/year, zero residual-fitted values). Rule-12: driver = the
+    # measured DAM allocation conduct; window = the measured shape support
+    # (hod 1-17; evening/late shares ~ 0 force nothing by construction);
+    # forward story = latest-year-carry shape x endogenous volume (owner
+    # sub-ruling caiso-104: da_frac carries the latest measured year, the
+    # envelope precedent). Rule-19: composes with the caiso-99 envelope, not
+    # stacks — the envelope caps the hourly RATE (capability), this allocates
+    # INSIDE it (conduct); the refuted adder family (economics) stays out.
+    # Charge-side rows create no merchant forced energy (C8 untouched by
+    # construction). Carried by model.storage.caiso_charge_allocation_params
+    # + dispatch._build_storage_alloc_rows via run_calibration.run_year.
+    # Default off (byte-identical); CAISO-only.
     caiso_intertie_reference_price: bool = False  # Price each CAISO per-hub WECC
     # corridor from the FORWARD reference-price formula instead of the measured
     # OASIS hub LMP: per-hub price = (henry_hub[year] + gas_basis) × neighbor
@@ -7776,6 +7816,7 @@ TIER_TAGS: dict[str, int] = {
     "vintage_capacity_ramp": 3,
     "storage_vintage_ramp": 3,
     "caiso_storage_shape_anchor": 1,
+    "caiso_charge_allocation_schedule": 1,
     "cod_ramp_enabled": 3,
     "coal_tranche_1_frac": 3,
     "coal_tranche_1_fuel_passthrough": 3,
