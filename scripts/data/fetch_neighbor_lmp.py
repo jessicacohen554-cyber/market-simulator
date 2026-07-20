@@ -68,6 +68,7 @@ sys.path.insert(0, str(REPO))
 # — the all-ISO scoring-clock artifact, DIAGNOSIS-ercot-lmp-clock-artifact §1.)
 from scripts.data.derive_actual_lmp import (  # noqa: E402
     _HOURS_PER_YEAR,
+    _std_hour_index,
 )
 
 # Write alongside the other realized-LMP parquets (actual_lmp_hourly_<ISO>.parquet),

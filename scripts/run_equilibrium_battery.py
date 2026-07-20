@@ -305,7 +305,6 @@ def t2_2_oscillation(summary: dict) -> dict:
     """
     iso = summary["iso"]
     run = C.load_run(Path(summary["run_dir"]))
-    design = MARKET_DESIGN.get(iso, DEFAULT_MARKET_DESIGN)
     traj = sorted(summary["trajectory"], key=lambda r: r["year"])
 
     price_series = [
