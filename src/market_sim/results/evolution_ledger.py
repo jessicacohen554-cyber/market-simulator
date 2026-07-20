@@ -51,9 +51,9 @@ import json
 from collections import defaultdict
 from pathlib import Path
 
-# Fuel classes carried in the persistent thermal fleet. Renewables (wind/solar)
-# and storage grow separate pools, so they are ledgered in their own lists, not
-# in ``fleet_by_fuel_*``.
+# Ledger schema version, stamped into every payload by :func:`write_ledger`.
+# Bump only on a breaking schema change; both readers treat an absent
+# ``ledger_version`` key (pre-versioning bundles) as version 1 (legacy).
 LEDGER_VERSION = 1
 
 _LEDGER_PREFIX = "evolution_"
@@ -100,10 +100,18 @@ def new_events() -> dict:
 
 
 def write_ledger(path: Path, ledger: dict) -> Path:
-    """Write ``ledger`` as pretty JSON to ``path`` and return the path."""
+    """Write ``ledger`` as pretty JSON to ``path`` and return the path.
+
+    Stamps ``ledger_version`` (:data:`LEDGER_VERSION`) into the written payload
+    when the caller has not already set it — additive, so existing callers and
+    readers are unaffected (a reader that ignores the key sees the same data).
+    The input dict is not mutated.
+    """
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(ledger, indent=2, sort_keys=True))
+    payload = dict(ledger)
+    payload.setdefault("ledger_version", LEDGER_VERSION)
+    path.write_text(json.dumps(payload, indent=2, sort_keys=True))
     return path
 
 

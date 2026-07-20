@@ -13,13 +13,12 @@ import io
 import unittest
 import zipfile
 from pathlib import Path
-from tempfile import TemporaryDirectory
 
 import pandas as pd
 
 from scripts.data import curate_lmp
-from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
+from tests.helpers.base import CleanDirTestCase
 
 
 def _write_caiso(raw_dir: Path) -> None:
@@ -98,23 +97,15 @@ def _write_neiso(raw_dir: Path) -> None:
         ct.to_excel(xw, sheet_name="CT", index=False)
 
 
-class TestCurateLmp(unittest.TestCase):
+class TestCurateLmp(CleanDirTestCase):
     def setUp(self):
-        self._tmp = TemporaryDirectory()
-        root = Path(self._tmp.name)
-        self.raw = root / "lmp-data"
+        super().setUp()  # redirects paths.CLEAN_DIR to self.tmp_path / "clean"
+        self.raw = self.tmp_path / "lmp-data"
         self.raw.mkdir(parents=True)
         _write_caiso(self.raw)
         _write_pjm(self.raw)
         _write_nyiso(self.raw)
         _write_neiso(self.raw)
-        # Redirect CLEAN_DIR so writes never touch the real tree.
-        self._orig_clean = clean_io.paths.CLEAN_DIR
-        clean_io.paths.CLEAN_DIR = root / "clean"
-
-    def tearDown(self):
-        clean_io.paths.CLEAN_DIR = self._orig_clean
-        self._tmp.cleanup()
 
     def _run(self):
         df = curate_lmp.curate(self.raw)

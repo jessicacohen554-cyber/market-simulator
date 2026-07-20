@@ -56,10 +56,15 @@ the single-source reference.
    in `scripts/regenerate_clean.py`.
 
 6. **Test with a tiny fixture + redirected CLEAN_DIR.** `tests/test_curate_<datatype>.py`:
-   set `clean_io.paths.CLEAN_DIR` to a tmp dir, write a minimal raw fixture, run
-   `curate(raw_root=tmp, …)`, assert `validate_clean` passes and the
-   reconciliation is correct. Trivial case first (1 row / 1 area), then scale.
-   Restore `CLEAN_DIR` in tearDown.
+   subclass **`tests.helpers.base.CleanDirTestCase`** (call `super().setUp()`) — it
+   redirects `paths.CLEAN_DIR` to a per-test tempdir and restores it for you, so you
+   never hand-roll the save/point/restore dance or a `tearDown`. Use `self.tmp_path`
+   for the raw fixture root (or `RawFixtureTestCase`, which adds a `raw_dir`). For a
+   pytest-style test use the `tmp_clean_dir` fixture instead. Then write a minimal
+   raw fixture (reuse `tests.helpers.raw_fixtures` writers where one fits), run
+   `curate(raw_root=tmp, …)`, and assert with `assert_clean_valid` /
+   `read_clean_or_fail`. Trivial case first (1 row / 1 area), then scale. See
+   `docs/testing.md` for the helper layer.
 
 7. **Consumption seam (when wiring into the model).** Add
    `src/market_sim/data/<datatype>.py` with a reader over
@@ -88,5 +93,5 @@ the single-source reference.
 - [ ] per-ISO modules register specs; shared code has no `if iso ==` ladder
 - [ ] `curate_<datatype>.py` writes only via `write_clean`, re-runs cleanly
 - [ ] datatype added to `regenerate_clean.py` `DATATYPES`
-- [ ] `tests/test_curate_<datatype>.py` passes with a tmp `CLEAN_DIR`
+- [ ] `tests/test_curate_<datatype>.py` passes on `CleanDirTestCase` / `tmp_clean_dir`
 - [ ] docs/dictionary updated
