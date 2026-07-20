@@ -853,6 +853,84 @@ def _build_storage_daily_cycle_rows(
     ).tocsr()
 
 
+def _build_storage_alloc_rows(
+    layout: VariableLayout,
+    batt_idx: np.ndarray,
+    share: np.ndarray,
+    da_frac: float,
+) -> sp.csr_matrix:
+    """Per-day DA charge-allocation floor rows (``caiso_charge_allocation_schedule``).
+
+    The M1 belly allocation mechanism (owner-granted caiso-103 ask, executed
+    caiso-104): the ask's per-day scheduled-volume variable ``S[d] >= 0`` with
+    ``Chg_fleet[h] >= alloc_share[hod] x S[d]`` (24 floors/day) and
+    ``sum_h Chg_fleet[h] <= S[d] / da_frac`` (1 cap/day) is eliminated exactly
+    — ``S[d]`` is costless and appears only in those rows, so the LP always
+    picks the minimal feasible ``S[d] = da_frac x sum_h Chg_fleet[h]`` and the
+    Fourier-Motzkin projection onto the ``Chg`` columns is::
+
+        sum_{s in batt} Chg[s, h]
+          - share[hod(h)] x da_frac x sum_{h' in day} sum_{s in batt} Chg[s, h']
+          >= 0            (one row per day-hour with share > 0)
+
+    Identical feasible region and identical energy-balance duals, with no new
+    columns (the per-hour ``VariableLayout`` invariant is preserved). Every
+    charged MWh buys the measured allocation bundle across the day's shape
+    except the bounded free RT-margin slice ``1 - da_frac``; a zero-charge day
+    stays feasible (nothing is forced — volume-holding by construction).
+
+    ``share`` is the hod-mapped ``(T,)`` profile (identical across days by
+    construction — :func:`market_sim.model.storage
+    .caiso_charge_allocation_params`); hours with ``share == 0`` (the measured
+    evening/late support) carry no row. The per-day coefficient block is
+    identical for every day, so the year block is a single
+    ``kron(eye(n_days), day_block)`` — no Python loop over hours (rule #2).
+
+    Returns a CSR block of shape ``(n_active_hods * n_days, total_columns)``
+    (zero rows when there are no batteries or the shape is empty); row bounds
+    are ``[0, inf)`` — appended by :func:`build_constraints`.
+    """
+    T = layout.T
+    vph = layout.vars_per_hour
+    batt_idx = np.asarray(batt_idx, dtype=int)
+    n_days = T // 24
+    if batt_idx.size == 0 or n_days == 0:
+        return sp.csr_matrix((0, layout.total_columns))
+    share24 = np.asarray(share, dtype=float)[:24]
+    act = np.flatnonzero(share24 > 0.0)  # active hods (the measured support)
+    if act.size == 0:
+        return sp.csr_matrix((0, layout.total_columns))
+    nb = batt_idx.size
+    # Column pattern of one day: every battery Chg column of each in-day hour.
+    base_cols = (
+        np.arange(24)[:, None] * vph + layout._chg_off + batt_idx[None, :]
+    ).ravel()  # (24 * nb,)
+    hprime = np.repeat(np.arange(24), nb)  # in-day hour of each entry
+    # Row k (active hod act[k]): +1 on hour act[k]'s own Chg columns,
+    # -share[act[k]] x da_frac on every in-day Chg column (including its own,
+    # so the diagonal coefficient is 1 - share x da_frac).
+    data = (hprime[None, :] == act[:, None]).astype(float) - (
+        share24[act][:, None] * float(da_frac)
+    )  # (n_act, 24 * nb)
+    rows = np.repeat(np.arange(act.size), 24 * nb)
+    cols = np.tile(base_cols, act.size)
+    day_block = sp.coo_matrix(
+        (data.ravel(), (rows, cols)), shape=(act.size, 24 * vph)
+    ).tocsr()
+    block = sp.kron(sp.eye(n_days, format="csr"), day_block, format="csr")
+    if block.shape[1] < layout.total_columns:
+        # Horizon tail shorter than a whole day (never in the 8760 frame):
+        # pad zero columns so the block conforms.
+        block = sp.hstack(
+            [
+                block,
+                sp.csr_matrix((block.shape[0], layout.total_columns - block.shape[1])),
+            ],
+            format="csr",
+        )
+    return block
+
+
 def _build_interface_rows(
     layout: VariableLayout,
     interface_groups: list[tuple[np.ndarray, float | np.ndarray, bool]],
@@ -2460,6 +2538,9 @@ def build_constraints(
     oil_gen_hour_coeff: np.ndarray | None = None,
     oil_group_index: np.ndarray | None = None,
     storage_daily_cycle_hours: int | None = None,
+    storage_alloc_batt_idx: np.ndarray | None = None,
+    storage_alloc_share: np.ndarray | None = None,
+    storage_alloc_da_frac: float | None = None,
     interface_groups: list[tuple[np.ndarray, float, bool]] | None = None,
     ramp_gen_idx: np.ndarray | None = None,
     ramp_group_col: np.ndarray | None = None,
@@ -2776,6 +2857,36 @@ def build_constraints(
             del cycle_block
             row_lower = np.concatenate([row_lower, zeros])
             row_upper = np.concatenate([row_upper, zeros])
+
+    # Optional per-day DA charge-allocation floors (caiso_charge_allocation_
+    # schedule, M1 — the owner-granted caiso-103 belly ask executed
+    # caiso-104): the fleet battery charge in each measured-support hour must
+    # carry at least alloc_share[hod] x da_frac of the day's total fleet
+    # charge (the exact Fourier-Motzkin elimination of the ask's per-day
+    # scheduled-volume variable S[d] — see _build_storage_alloc_rows). Volume
+    # stays endogenous (a zero-charge day is feasible); only the intra-day
+    # allocation is conduct-constrained. Appended after the SOC/cycle rows,
+    # before interface/hydro/RPS, so the front-anchored energy-balance duals
+    # and the end-anchored RPS/reserve duals keep their positions. No rows
+    # (identical LP) when the inputs are absent.
+    if (
+        storage_alloc_batt_idx is not None
+        and storage_alloc_share is not None
+        and storage_alloc_da_frac is not None
+        and n_storage
+    ):
+        alloc_block = _build_storage_alloc_rows(
+            layout,
+            storage_alloc_batt_idx,
+            storage_alloc_share,
+            float(storage_alloc_da_frac),
+        )
+        if alloc_block.shape[0]:
+            n_alloc = alloc_block.shape[0]
+            blocks.append(alloc_block)
+            del alloc_block
+            row_lower = np.concatenate([row_lower, np.zeros(n_alloc)])
+            row_upper = np.concatenate([row_upper, np.full(n_alloc, np.inf)])
 
     # Optional aggregate interface limits: one row per group per hour capping
     # the signed sum of a set of links' flows at the interface's *simultaneous*
@@ -3525,6 +3636,9 @@ class DispatchModel:
         oil_gen_hour_coeff: np.ndarray | None = None,
         oil_group_index: np.ndarray | None = None,
         storage_daily_cycle_hours: int | None = None,
+        storage_alloc_batt_idx: np.ndarray | None = None,
+        storage_alloc_share: np.ndarray | None = None,
+        storage_alloc_da_frac: float | None = None,
         interface_groups: list[tuple[np.ndarray, float, bool]] | None = None,
         ramp_gen_idx: np.ndarray | None = None,
         ramp_group_col: np.ndarray | None = None,
@@ -3795,6 +3909,9 @@ class DispatchModel:
             oil_gen_hour_coeff=oil_gen_hour_coeff,
             oil_group_index=oil_group_index,
             storage_daily_cycle_hours=storage_daily_cycle_hours,
+            storage_alloc_batt_idx=storage_alloc_batt_idx,
+            storage_alloc_share=storage_alloc_share,
+            storage_alloc_da_frac=storage_alloc_da_frac,
             interface_groups=interface_groups,
             ramp_gen_idx=ramp_gen_idx,
             ramp_group_col=ramp_group_col,
@@ -4619,6 +4736,9 @@ def solve_dispatch(
     oil_gen_hour_coeff: np.ndarray | None = None,
     oil_group_index: np.ndarray | None = None,
     storage_daily_cycle_hours: int | None = None,
+    storage_alloc_batt_idx: np.ndarray | None = None,
+    storage_alloc_share: np.ndarray | None = None,
+    storage_alloc_da_frac: float | None = None,
     interface_groups: list[tuple[np.ndarray, float, bool]] | None = None,
     ramp_gen_idx: np.ndarray | None = None,
     ramp_group_col: np.ndarray | None = None,
@@ -4793,6 +4913,9 @@ def solve_dispatch(
         oil_gen_hour_coeff=oil_gen_hour_coeff,
         oil_group_index=oil_group_index,
         storage_daily_cycle_hours=storage_daily_cycle_hours,
+        storage_alloc_batt_idx=storage_alloc_batt_idx,
+        storage_alloc_share=storage_alloc_share,
+        storage_alloc_da_frac=storage_alloc_da_frac,
         interface_groups=interface_groups,
         ramp_gen_idx=ramp_gen_idx,
         ramp_group_col=ramp_group_col,
