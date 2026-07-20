@@ -47,6 +47,9 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO / "src"))
+from market_sim.utils.hour_calendar import hour_index  # noqa: E402
+
 NYISO_DIR = REPO / "data" / "raw" / "lmp-data" / "NYISO"
 OUT_PARQUET = (
     REPO
@@ -66,11 +69,8 @@ _MONTH_START_HOUR = (np.cumsum([0, *_DAYS[:-1]]) * 24).tolist()
 _HOURS_PER_YEAR = 8760
 
 
-def _hour_index(ts: pd.Series) -> np.ndarray:
-    """Local timestamps -> fixed non-leap hour-of-year (Feb 29 -> -1)."""
-    base = np.asarray([_MONTH_START_HOUR[m - 1] for m in ts.dt.month])
-    idx = base + (ts.dt.day.to_numpy() - 1) * 24 + ts.dt.hour.to_numpy()
-    return np.where((ts.dt.month == 2) & (ts.dt.day == 29), -1, idx)
+# Local timestamps -> fixed non-leap hour-of-year (Feb 29 -> -1); shared helper.
+_hour_index = hour_index
 
 
 def _read_month(path: Path) -> pd.DataFrame:
