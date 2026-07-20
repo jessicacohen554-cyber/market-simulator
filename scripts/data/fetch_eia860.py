@@ -17,7 +17,6 @@ Outputs (CSV, one file per scope/BA):
 
 import argparse
 import json
-import os
 import sys
 import time
 from pathlib import Path
@@ -25,22 +24,19 @@ from pathlib import Path
 import requests
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from market_sim.config.paths import EIA_860_DIR  # noqa: E402
+from scripts.lib.env_keys import get_api_key  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
 
 BASE_URL = "https://api.eia.gov/v2/electricity/operating-generator-capacity"
-API_KEY = os.environ.get("EIA_API_KEY", "")
-
-if not API_KEY:
-    env_path = Path(__file__).parent.parent.parent / ".env"
-    if env_path.exists():
-        for line in env_path.read_text().splitlines():
-            if line.startswith("EIA_API_KEY="):
-                API_KEY = line.split("=", 1)[1].strip()
+# Resolved but not required at import time; ``main`` raises if still missing so
+# ``--help`` works without a key.
+API_KEY = get_api_key("EIA_API_KEY", required=False) or ""
 
 # Single W1 data root (paths.EIA_860_DIR = data/raw/eia-860); the pre-W1
 # ``inputs/raw-data`` path was removed by the relocation.
