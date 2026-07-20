@@ -107,21 +107,88 @@ class Sampler:
 # --------------------------------------------------------------------------- #
 # Reference forecast config
 # --------------------------------------------------------------------------- #
+# §2.1b window cap (the owner's "10-hour rule", 2026-07-19). A forecast/hindcast
+# invocation launched under the Forecast Finalization Program may span at most
+# this many solve-years unless --full-solve-authorized is passed (the FF-3E
+# schedulability guard, mirroring run_calibration_full.py's rule-22 gate).
+MAX_UNAUTHORIZED_SOLVE_YEARS = 5
+
+
+def assert_schedulable(
+    start_year: int, end_year: int, full_solve_authorized: bool
+) -> int:
+    """Enforce the §2.1b window cap; return the solve-year count.
+
+    A forecast run solves every year in the closed window, so the solve-year
+    count is ``end - start + 1``. A window wider than
+    :data:`MAX_UNAUTHORIZED_SOLVE_YEARS` is REFUSED (``SystemExit``) unless the
+    owner authorized the full-horizon campaign for this ISO
+    (``full_solve_authorized``) — the FF-3E schedulability guard mirroring
+    ``run_calibration_full.py``'s rule-22 ``--holdout-authorized`` gate (plan
+    §2.1b / §2.4-0 / §7.9). Extracted as a pure function so the guard is
+    unit-testable without a solve.
+
+    Args:
+        start_year: First solve year.
+        end_year: Last solve year (inclusive).
+        full_solve_authorized: Whether the owner authorized a > 5-year window.
+
+    Returns:
+        The number of solve-years in the window.
+
+    Raises:
+        SystemExit: When the window exceeds the cap and is unauthorized.
+    """
+    n_solve_years = end_year - start_year + 1
+    if n_solve_years > MAX_UNAUTHORIZED_SOLVE_YEARS and not full_solve_authorized:
+        raise SystemExit(
+            f"REFUSING full-horizon solve: {start_year}-{end_year} is "
+            f"{n_solve_years} solve-years, over the §2.1b cap of "
+            f"{MAX_UNAUTHORIZED_SOLVE_YEARS}. The schedulable instruments are T0, "
+            f"T1-F (2026-2030), T1-X (2023-2027), T1-H (2021-2025) — all ≤5 yr. "
+            f"T2/T3/golden/W4-campaign windows are DEFERRED until the owner opens "
+            f"the gate for this ISO (plan §2.1b: backcast keeper + calibration-"
+            f"complete marker, green T1 POC gates, crossover gap + FF-3E readiness "
+            f"+ projected cost, and explicit per-campaign owner authorization). "
+            f"Pass --full-solve-authorized ONLY when that authorization exists."
+        )
+    return n_solve_years
+
+
 def reference_config(
-    iso: str, start_year: int, end_year: int, cmc: bool
+    iso: str, start_year: int, end_year: int, cmc: bool, golden_posture: bool = False
 ) -> ScenarioConfig:
     """The P-3A reference forecast: all defaults, forecast mode, P-2A pins.
 
     Every field except mode/iso/horizon/capacity_market_clearing is left at the
     ScenarioConfig default, so ``use_campd_bins=True`` yields each ISO's own
-    per-plant CAMPD bins where an artifact exists (the ISO default).
+    per-plant CAMPD bins where an artifact exists (the ISO default). The FF-1F /
+    FF-2A default flips (``datacenter_load_path="mid"``,
+    ``correlated_forced_outage=True``, ``entry_lookahead_reprice=True``) are the
+    ScenarioConfig defaults and therefore already active here (plan §2.1a c/d/e).
+
+    ``golden_posture`` (FF-3E) layers on the ONE §2.1a decision the defaults do
+    NOT carry: decision (a), per-ISO capacity-market clearing ON for every ISO
+    with a real capacity market (PJM/MISO/NYISO/NEISO/CAISO; energy-only ERCOT
+    stays OFF). Executed here through ``capacity_market_clearing_by_iso`` (the
+    FF-2C per-ISO seam), so a golden solve launched through this runner takes the
+    frozen §2.1a posture instead of the pre-flip probe posture. Default False =
+    byte-identical to the P-3A probe (the field stays ``None``); the constant is
+    imported lazily from the FF-3E battery, the single authoritative encoding of
+    the §2.1a decision, so this module's import time is unchanged.
     """
+    cmc_by_iso = None
+    if golden_posture:
+        from scripts.ff_readiness_battery import GOLDEN_CMC_BY_ISO
+
+        cmc_by_iso = dict(GOLDEN_CMC_BY_ISO)
     return ScenarioConfig(
         iso=iso.upper(),
         mode="forecast",
         start_year=start_year,
         end_year=end_year,
         capacity_market_clearing=cmc,
+        capacity_market_clearing_by_iso=cmc_by_iso,
     )
 
 
@@ -240,7 +307,34 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument(
         "--sample-interval", type=float, default=0.5, help="RSS sampling seconds."
     )
+    ap.add_argument(
+        "--golden-posture",
+        action="store_true",
+        help=(
+            "Layer the §2.1a decision-(a) per-ISO capacity-market clearing onto "
+            "the config (PJM/MISO/NYISO/NEISO/CAISO curve-ON, ERCOT energy-only "
+            "OFF). Off by default = the P-3A probe posture. Use for a golden solve."
+        ),
+    )
+    ap.add_argument(
+        "--full-solve-authorized",
+        action="store_true",
+        help=(
+            "Lift the §2.1b window cap (the '10-hour rule'). Without it this "
+            "runner REFUSES a window wider than 5 solve-years — the schedulable "
+            "instruments are T0/T1-F/T1-X/T1-H (≤5 yr). Mirrors the rule-22 "
+            "--holdout-authorized gate: a full-horizon (T2/T3/golden) solve is "
+            "unschedulable until the owner authorizes it per ISO (plan §2.1b)."
+        ),
+    )
     args = ap.parse_args(argv)
+
+    # §2.1b full-solve authorization gate (the FF-3E schedulability guard). No
+    # forecast/hindcast invocation under this program may span > 5 solve-years
+    # unless the owner has authorized the full-horizon campaign for this ISO
+    # (plan §2.1b/§2.4-0, §7.9). Discipline-level enforcement, mirroring
+    # run_calibration_full.py's rule-22 --holdout gate.
+    assert_schedulable(args.start_year, args.end_year, args.full_solve_authorized)
 
     iso = args.iso.upper()
     out_dir = args.out_dir
@@ -265,7 +359,11 @@ def main(argv: list[str] | None = None) -> int:
     runnermod.save_result = _timed_save
 
     config = reference_config(
-        iso, args.start_year, args.end_year, args.capacity_market_clearing
+        iso,
+        args.start_year,
+        args.end_year,
+        args.capacity_market_clearing,
+        golden_posture=args.golden_posture,
     )
 
     sampler = Sampler(interval=args.sample_interval)
