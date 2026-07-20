@@ -23,8 +23,10 @@ from __future__ import annotations
 
 import argparse
 import sys
+from pathlib import Path
 
-from scripts.lib.benchmark_corridor import aeo
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from scripts.lib.benchmark_corridor import aeo  # noqa: E402
 
 
 def main(argv: list[str] | None = None) -> int:
