@@ -40,7 +40,6 @@ Nothing here is tuned and no LP is solved. Usage::
 from __future__ import annotations
 
 import argparse
-import gzip
 import json
 import sys
 from datetime import datetime, timezone
@@ -68,6 +67,9 @@ import score_capacity_hindcast as CH  # noqa: E402
 import calibration_verdict as V  # noqa: E402
 
 REPO = Path(__file__).resolve().parent.parent
+if str(REPO) not in sys.path:
+    sys.path.insert(0, str(REPO))
+from scripts.lib import backcast_artifacts as ba  # noqa: E402
 
 # The ONLY years a crossover is scored for skill on. 2026/2027 are the crossover
 # forward-driver years: invariants/plausibility only, and any bench/actual read
@@ -136,10 +138,10 @@ def load_bench_year(iso: str, year: int) -> dict:
     ``2026.json.gz`` raises before ``gzip.open`` is ever reached.
     """
     _assert_scoreable_year(year)
-    part = V.BENCH_DIR / iso / f"{year}.json.gz"
+    part = ba.BENCH / iso / f"{year}.json.gz"
     if not part.exists():
         raise SystemExit(f"no committed bench for {iso} {year}: {part}")
-    obj = json.loads(gzip.decompress(part.read_bytes()))
+    obj = ba.load_bench_part(part)
     # Belt-and-braces: refuse if the part's own meta smuggles a >= 2026 year.
     for y in obj.get("meta", {}).get("years", []):
         _assert_scoreable_year(y)
