@@ -283,3 +283,11 @@ regardless (both arms will be registered on the pre-registered gates),
 or redirect the MISO lane (open lanes: D1 Z2/Z7 split, blocked on a load
 split; the PJM merit-cap twin; scarcity-tail successor work is ledgered
 out of scope). Next number: miso-81.
+
+---
+
+**OWNER SIGN-OFF (2026-07-20):** NO-BUILD verdict signed off in-session
+("Ok do it", responding to the recommendation to sign off this charter and
+proceed to the phantom-outage re-audit as miso-81). This charter is FROZEN.
+The Midwest-separation lane closes at its representation frontier pending
+RO-S1/RO-S2/RO-S3.
