@@ -76,10 +76,8 @@ from __future__ import annotations
 
 import argparse
 import base64
-import gzip
 import json
 import logging
-import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -111,6 +109,8 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
 # never run looser than the rubric it cites (CLAUDE.md rules 17/20/23 — one
 # materiality line, no off-registry duplicate constant).
 from scripts.calibration_verdict import PROTECTIVE_MIN_LOAD_FRAC  # noqa: E402
+from scripts.lib import backcast_artifacts as ba  # noqa: E402
+from scripts.lib import holdout_policy  # noqa: E402
 from scripts.lib import keeper_store  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -427,8 +427,8 @@ D9_GENERIC_SHARE_GROUPS: tuple[str, ...] = (
 # in frontend/data/backcast/calibration-complete.json (which authorizes the
 # one-shot frozen-config holdout score). Extend only when a new year is
 # formally promoted from holdout to in-sample with a new designated holdout.
-D6_CALIBRATION_YEARS: frozenset[int] = frozenset({2023, 2024, 2025})
-D6_MARKER_FILE = "frontend/data/backcast/calibration-complete.json"
+D6_CALIBRATION_YEARS: frozenset[int] = holdout_policy.CALIBRATION_YEARS
+D6_MARKER_FILE = holdout_policy.MARKER_FILE
 
 
 # ---------------------------------------------------------------------------
@@ -1397,7 +1397,7 @@ def _decode_cf_bytes(b64: str, annual_twh: float | None, npl: float) -> np.ndarr
 def load_bench(repo_root: Path, iso: str, year: int) -> dict[str, dict]:
     """Load the CAMPD bench file: plant id -> {group, zone, npl, mw}."""
     path = repo_root / "frontend/data/backcast/bench" / iso / f"{year}.json.gz"
-    data = json.loads(gzip.open(path, "rt").read())
+    data = ba.load_bench_part(path)
     plants = {}
     for pid, p in data["bench"]["plants"].items():
         if p.get("nodata") or not p.get("campd"):
@@ -1429,8 +1429,7 @@ def load_payload_plants(
 ) -> dict[str, np.ndarray]:
     """Decode the run payload's per-plant hourly model MW for one year."""
     txt = (repo_root / sidecar["file"]).read_text()
-    blob = re.search(r'="(H4sI[^"]+)"', txt).group(1)
-    run = json.loads(gzip.decompress(base64.b64decode(blob)))
+    run = ba.decode_run_js(txt)
     plants = run["years"][str(year)]["plants"]
     out = {}
     for pid, p in plants.items():
@@ -1454,10 +1453,10 @@ def load_payload_total_load_mwh(
     the guard disabled so no breach is hidden by a missing denominator.
     """
     txt = (repo_root / sidecar["file"]).read_text()
-    match = re.search(r'="(H4sI[^"]+)"', txt)
-    if match is None:
+    try:
+        run = ba.decode_run_js(txt)
+    except ValueError:
         return None
-    run = json.loads(gzip.decompress(base64.b64decode(match.group(1))))
     rows = run.get("years", {}).get(str(year), {}).get("fuelRows") or []
     total_twh = sum((row.get("m") or 0.0) for row in rows)
     return total_twh * 1e6 if total_twh > 0.0 else None
