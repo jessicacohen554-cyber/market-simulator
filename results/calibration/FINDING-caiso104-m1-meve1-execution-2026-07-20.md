@@ -85,6 +85,27 @@ belly/evening effect signs differ from the granted ask). If the pin does
 NOT hold (something downstream breaks the floor), M-EVE-1 proceeds as
 granted with the §4 gates.
 
+**ADJUDICATION RESULT (this session, `_caiso104_firm_pin_check.py` on the
+fresh A-leg — which reproduces the keeper ladder DIGIT-FOR-DIGIT: belly
++6.0/+6.6/+4.3, evening −5.8/−4.9/−1.1, overnight +0.8/−0.0/+1.4):
+PINNED — `dispatch == min_gen == pmax × availability` in 1.0000 of
+positive-capability hours for BOTH blocks in ALL THREE years** (floor > 0 in
+0.878/0.913/0.930 of hours; the remainder are shape-zero hours where the
+capability itself is 0, so the blocks are fully determined in all 8760
+hours; block means 1051–1777 MW). Verdict per the pre-registered criterion:
+**M-EVE-1-as-granted is INERT — no B-leg solved.** Owner ruling (in-session,
+on this evidence): **adjudicate inert and RE-CHARTER the evening lane** — a
+follow-up session re-decomposes the Q1 margin with a PIN-AWARE method
+(interior = strictly between the LP's own bounds, `min_gen` from the
+bundle's `floors/*.npz` + caps from the `run_year(fleet_only=True)`
+reconstruction — never the unit-year p99 proxy that produced the caiso-103
+artifact) to find what actually sets Q1 λ one rung below CT entry, and files
+a new ask. The floor→$0-bid replacement (motivated by §1's measured
+negative-hub curtailment conduct, which the live must-flow floor
+contradicts) was offered and NOT taken this session; it remains a candidate
+for the re-charter. The evening residual and the hub-separation defect
+(model λ 8–40 $ below the measured hubs Q1) remain REAL and OPEN.
+
 ## 3. M1 (DA charge-allocation schedule) — built; B-leg gates PRE-REGISTERED
 
 Implementation (committed this session, all default-off):
