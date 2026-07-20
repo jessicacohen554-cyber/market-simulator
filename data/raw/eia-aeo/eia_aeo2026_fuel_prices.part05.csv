@@ -1,0 +1,109 @@
+fuel,metric,region,scenario,scenario_name,year,value,unit,series_id,table_id,table_name
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2047,1.710226,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2048,1.725876,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2049,1.74079,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2050,1.754754,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2025,2.274604,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2026,1.709326,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2027,1.950911,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2028,2.058929,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2029,2.132987,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2030,2.19967,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2031,2.264907,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2032,2.146864,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2033,2.33429,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2034,2.377548,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2035,2.407008,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2036,2.446873,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2037,2.486868,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2038,2.528289,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2039,2.555866,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2040,2.57505,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2041,2.583628,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2042,2.569886,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2043,2.531647,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2044,2.457709,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2045,2.324971,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2046,2.350477,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2047,2.387372,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2048,2.422253,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2049,2.451302,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2050,2.487377,2025 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2025,65.148003,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2026,49.887131,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2027,56.767761,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2028,60.832802,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2029,63.428471,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2030,65.117981,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2031,64.298637,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2032,64.974174,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2033,66.360207,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2034,67.643944,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2035,68.21875,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2036,69.15097,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2037,70.140305,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2038,70.987114,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2039,71.445137,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2040,72.12532,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2041,73.045189,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2042,73.418816,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2043,74.287598,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2044,75.240959,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2045,77.335464,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2046,78.545303,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2047,79.736069,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2048,81.018463,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2049,82.021057,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,cb2026,Counterfactual Baseline case,2050,83.599159,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2025,65.148003,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2026,46.680294,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2027,54.473412,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2028,58.136623,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2029,60.156811,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2030,60.624302,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2031,60.066547,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2032,59.760605,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2033,61.214767,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2034,61.202682,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2035,61.201324,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2036,61.741703,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2037,63.540489,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2038,62.850479,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2039,63.019455,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2040,62.421299,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2041,62.8792,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2042,62.882622,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2043,64.660515,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2044,64.359413,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2045,63.356548,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2046,63.790314,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2047,63.927647,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2048,64.375153,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2049,65.085258,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2050,65.519943,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2025,65.148003,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2026,49.784359,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2027,62.678368,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2028,67.558311,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2029,71.427826,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2030,73.697083,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2031,74.574707,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2032,75.64682,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2033,78.285828,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2034,79.970123,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2035,81.814529,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2036,86.389885,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2037,88.377831,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2038,90.054604,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2039,91.55085,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2040,92.984383,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2041,95.007973,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2042,96.726669,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2043,98.441544,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2044,99.927391,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2045,101.536064,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2046,103.275856,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2047,104.976273,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2048,106.707664,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2049,108.310532,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2050,109.501076,2025 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices

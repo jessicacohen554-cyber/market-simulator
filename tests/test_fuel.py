@@ -678,10 +678,13 @@ def test_dual_fuel_caps_only_above_parity_hours(monkeypatch):
         dual_fuel_switching=True,
     )
     oil_price = resolve_annual_oil_price(config, 2030)
-    gas = np.array([3.0, 30.0, 17.9, 50.0])
+    # The middle hour's gas (10.0) sits clearly below the delivered oil price so
+    # it stays a cheap-gas hour the cap must leave alone -- robust to the oil
+    # trajectory level (AEO2026 mid 2030 oil is ~$17.8/MMBtu, FF-G2 vintage).
+    gas = np.array([3.0, 30.0, 10.0, 50.0])
     fuel_prices = np.vstack([gas, gas, np.full(4, oil_price)])
     apply_dual_fuel_pricing(fuel_prices, fleet, config, 2030)
-    np.testing.assert_allclose(fuel_prices[0], [3.0, oil_price, 17.9, oil_price])
+    np.testing.assert_allclose(fuel_prices[0], [3.0, oil_price, 10.0, oil_price])
     np.testing.assert_allclose(fuel_prices[1], gas)  # gas-only untouched
 
 
