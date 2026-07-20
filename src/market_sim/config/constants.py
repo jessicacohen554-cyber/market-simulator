@@ -3078,25 +3078,28 @@ MARKET_DESIGN: dict[str, MarketDesign] = {
     "ERCOT": MarketDesign(capacity_market=False),
     # RA program with a soft capacity price — no centralized auction/demand
     # curve, so CAISO keeps the FIXED proxy in BOTH modes (documented
-    # low-fidelity member of the registry, CR-1 §3.2). Re-cited: the 90 $/kW-yr
-    # anchor ≈ the CPM soft-offer cap ($7.34/kW-month × 12 = $88.08/kW-yr,
-    # FERC ER24-1225 effective 2024-06-01), between it and the CPUC 2023 RA
-    # report system price ($14.51/kW-month = $174/kW-yr for 2024). No
+    # low-fidelity member of the registry, CR-1 §3.2; RA-not-auction, so the
+    # FF-2C gate flip is a pricing no-op — flip memo §1.5). FF-2C R4 (owner
+    # sign-off 2026-07-19): the fixed anchor is re-derived from the 90 rounding
+    # to the EXACT published CPM soft-offer cap — $7.34/kW-month × 12 = $88.08/
+    # kW-yr (FERC ER24-1225 effective 2024-06-01), between it and the CPUC 2023
+    # RA report system price ($14.51/kW-month = $174/kW-yr for 2024). No
     # demand_curve ⇒ capacity_price_per_firm_mw_yr returns the fixed anchor even
     # when capacity_market_clearing is on. Source: CPUC 2023 Resource Adequacy
     # Report; CAISO CPM soft-offer-cap tariff (P-0B caiso.csv).
-    "CAISO": MarketDesign(capacity_market=True, net_cone_per_kw_yr=90.0),
-    # Capacity markets. The legacy net_cone_per_kw_yr is the FIXED-mode anchor
-    # (kept labeled legacy — the fixed-mode default is byte-identical, and its
-    # own re-derivation to the published UCAP basis is reserved for the P-2A
-    # default flip, R4/accreditation-basis memo §4.3); net_cone_curve_per_kw_yr
-    # is the PUBLISHED UCAP net-CONE the CR-1 curve scales, now on PJM's own
-    # UCAP basis (R1 above).
-    # Source: PJM 2026/2027 BRA planning parameters (fixed anchor ~$100/kW-yr
-    # legacy; curve anchor 77.431 $/kW-yr = 212.14 $/MW-day UCAP).
+    "CAISO": MarketDesign(capacity_market=True, net_cone_per_kw_yr=88.08),
+    # Capacity markets. FF-2C R4 (owner sign-off 2026-07-19, accreditation-basis
+    # memo §4.3-R4): the legacy fixed-mode net_cone_per_kw_yr anchor is
+    # re-derived to the SAME published UCAP net-CONE basis as the CR-1 curve
+    # anchor now that the default flip has landed — the ~$100/kW-yr placeholder
+    # (neither the ICAP 60.4 nor UCAP 77.4 published figure, kept only for
+    # pre-flip default byte-identity) is retired. Both anchors are now on PJM's
+    # own published UCAP basis.
+    # Source: PJM 2026/2027 BRA planning parameters — 212.14 $/MW-day UCAP
+    # net-CONE × 365 / 1000 = 77.431 $/kW-yr (fixed anchor = curve anchor).
     "PJM": MarketDesign(
         capacity_market=True,
-        net_cone_per_kw_yr=100.0,
+        net_cone_per_kw_yr=77.431,
         demand_curve=_PJM_VRR_CURVE,
         net_cone_curve_per_kw_yr=77.431,
         demand_curve_delivery_year="2026/2027",
@@ -3118,10 +3121,13 @@ MARKET_DESIGN: dict[str, MarketDesign] = {
             "Demand Curve Length)"
         ),
     ),
-    # Source: ISO-NE FCM net-CONE (fixed anchor ~$95/kW-yr).
+    # Source: ISO-NE FCM net-CONE. FF-2C R4 (owner sign-off 2026-07-19): the
+    # fixed anchor is re-derived from the ~$95/kW-yr placeholder to the SAME
+    # published FCA 18 (2027/2028) net-CONE the CR-1 curve scales — 9.078
+    # $/kW-month × 12 = 108.936 $/kW-yr (fixed anchor = curve anchor 108.94).
     "NEISO": MarketDesign(
         capacity_market=True,
-        net_cone_per_kw_yr=95.0,
+        net_cone_per_kw_yr=108.94,
         demand_curve=_NEISO_FCA_CURVE,
         net_cone_curve_per_kw_yr=108.94,
         demand_curve_delivery_year="2027-2028",
@@ -3148,11 +3154,13 @@ MARKET_DESIGN: dict[str, MarketDesign] = {
     # representative value pending the M8 seasonal/zonal RA-timing build.
     # Source: MISO CONE & Net-CONE Update (RASC, 2024-09-23) and MISO PRA
     # results postings (PY2024/25, PY2025/26). See parameter-citations.md.
-    # The CR-1 curve scales the published North/Central Net CONE (79.8 $/kW-yr);
-    # the fixed anchor keeps its 80.0 rounding for default byte-identity.
+    # FF-2C R4 (owner sign-off 2026-07-19): the fixed anchor is re-derived from
+    # the 80.0 rounding to the SAME published North/Central Net CONE (79.8
+    # $/kW-yr) the CR-1 curve scales, now that the default flip has landed (the
+    # rounding was kept only for pre-flip default byte-identity).
     "MISO": MarketDesign(
         capacity_market=True,
-        net_cone_per_kw_yr=80.0,
+        net_cone_per_kw_yr=79.8,
         demand_curve=_MISO_RBDC_CURVE,
         net_cone_curve_per_kw_yr=79.8,
         demand_curve_delivery_year="2025-2026",
