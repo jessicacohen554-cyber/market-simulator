@@ -1,6 +1,6 @@
 {
  "iso": "ERCOT",
- "keeper": "2026-07-19-ercot86-rt-wall-fullspan",
+ "keeper": "2026-07-20-ercot91-seasonal-drag-fullspan",
  "frontier": {
   "declared": "2026-07-17",
   "withdrawn": "2026-07-17",

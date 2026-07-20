@@ -5,9 +5,9 @@ EXECUTED 2026-07-20 (ERCOT-91, §8): the band-hour seam
 (`ercot_offer_surface_cleared_share_steam`) is REJECTED as armed
 (zero-spurious/C3a trips in both current-design years, alone and composed);
 the winter seam (`gas_st_drag_seasonal`, the rule-22 season-grain re-derive
-of the drag curve) PASSES all pre-committed guards both years and is solved
-full-span as candidate `ercot91_seasonal_drag_fullspan`. Keeper UNCHANGED
-(ercot86 — owner-only swap).** Successor lane opened per
+of the drag curve) PASSES all pre-committed guards in all three years and is
+OWNER-PROMOTED to ERCOT keeper same-session:
+`2026-07-20-ercot91-seasonal-drag-fullspan` supersedes ercot86.** Successor lane opened per
 ERCOT-89's §9.5(2) frontier (`ercot-shoulder-online-envelope-2026-07.md`):
 the span mechanism was rejected as armed with the ST_GAS displacement wedge
 named as the binding blocker, and §8.3 named this exact measurement — a
@@ -314,8 +314,10 @@ shift further under measured (the shallower shoulder floors release MW the
 econ layer does not re-add; that under-run belongs to the ST_GAS econ-offer
 axis, not the floor — rule 14: the finer-grain measured curve stands).
 
-Disposition: solved full-span 2023-2025 as candidate bundle
+Disposition: solved full-span 2023-2025 as
 `ercot91_seasonal_drag_fullspan`, registered on the dashboard per rules
 15/16 in the same session (see the calibration-log entry for the final
-gate table); keeper stays **ercot86** (owner-only swap decision on the
-candidate).
+gate table), and **OWNER-PROMOTED to ERCOT keeper same-session**
+(`2026-07-20-ercot91-seasonal-drag-fullspan`, superseding ercot86;
+attestation + keeper shard + market_story + status rebuild +
+keeper-auditor PASS — see the calibration-log promotion amendment).
