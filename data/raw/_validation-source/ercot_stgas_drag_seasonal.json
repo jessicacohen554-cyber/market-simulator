@@ -1,0 +1,361 @@
+{
+ "_provenance": {
+  "script": "scripts/data/derive_ercot_stgas_drag_seasonal.py",
+  "iso": "ERCOT",
+  "role": "Season-resolved re-derive of the ERCOT ST_GAS net-load drag curve from its own CAMPD source (rule-22 grain fix; ERCOT-90 \u00a73.3 season-axis finding, ERCOT-91 winter seam). Same mechanism owner (fleet.apply_gas_st_netload_drag_floor), same rows, same all-hours window \u2014 only the coefficient grain changes (per meteorological season instead of pooled).",
+  "grain_fix_of": "docs/ercot-st-gas-netload-drag-2026-06.md pooled curve (gas_st_drag_slope_per_gw/_intercept/_cap = 0.00906/-0.1376/0.34)",
+  "trigger": "docs/handoffs/ercot-stgas-shoulder-2026-07.md \u00a73.3 \u2014 DJF sub-$150 control hours: model 1.6-1.9 GW vs measured 0.6-1.1 GW at the same net-load (a source-grain limit, not a level error; overnight curve still tracks, rho 0.69/0.75)",
+  "measured_source": "campd-unit-level/TX_<year>.parquet \u2014 the model's drag-covered ST_GAS plants (custom-bin-assignments.csv, non-ST_GAS_PEAKER_PLANTS, split facilities unit-routed per data.outages), CT/CC unit types dropped, x0.95 net (campd.DEFAULT_PARASITIC_LOAD_PCT)",
+  "netload_source": "eia-930-hourly/ERCO hourly.parquet Demand - NG:WND - NG:SUN, fixed-CST non-leap clock (derive_ercot_dam_cleared_share convention)",
+  "years": [
+   2023,
+   2024,
+   2025
+  ],
+  "floor_base_mw": 8923.4,
+  "season_of_month": [
+   0,
+   0,
+   1,
+   1,
+   1,
+   2,
+   2,
+   2,
+   3,
+   3,
+   3,
+   0
+  ],
+  "overnight_window_h": [
+   23,
+   6
+  ],
+  "estimator": "median overnight CF per 2-GW net-load bin (>=12 h/cell), hinge fit clip(slope*netGW + intercept, 0, cap) via knee grid-search + least-squares (no scipy.optimize), cap = p95 of the season's overnight CF \u2014 the NYISO/PJM standing-derive estimator",
+  "pooled_refit_check": {
+   "slope_per_gw": 0.00932,
+   "intercept": -0.1863,
+   "cap": 0.293,
+   "armed_keeper_scalars": {
+    "slope_per_gw": 0.00906,
+    "intercept": -0.1376,
+    "cap": 0.34
+   }
+  },
+  "frozen": "rule 23 \u2014 re-derive only on a CAMPD/EIA-930 source-data update, never because a residual moved"
+ },
+ "seasons": {
+  "0": {
+   "name": "DJF",
+   "slope_per_gw": 0.01354,
+   "intercept": -0.4257,
+   "cap": 0.27,
+   "n_overnight_hours": 1890,
+   "spearman_nl_vs_cf": 0.669,
+   "binned_median_cf": [
+    [
+     13.0,
+     0.0017
+    ],
+    [
+     15.0,
+     0.0017
+    ],
+    [
+     17.0,
+     0.0017
+    ],
+    [
+     19.0,
+     0.0017
+    ],
+    [
+     21.0,
+     0.0051
+    ],
+    [
+     23.0,
+     0.0018
+    ],
+    [
+     25.0,
+     0.0062
+    ],
+    [
+     27.0,
+     0.0104
+    ],
+    [
+     29.0,
+     0.0122
+    ],
+    [
+     31.0,
+     0.0106
+    ],
+    [
+     33.0,
+     0.0436
+    ],
+    [
+     35.0,
+     0.0549
+    ],
+    [
+     37.0,
+     0.0884
+    ],
+    [
+     39.0,
+     0.0846
+    ],
+    [
+     41.0,
+     0.1048
+    ],
+    [
+     43.0,
+     0.1053
+    ],
+    [
+     45.0,
+     0.1349
+    ],
+    [
+     47.0,
+     0.2421
+    ],
+    [
+     49.0,
+     0.2677
+    ],
+    [
+     51.0,
+     0.2608
+    ],
+    [
+     53.0,
+     0.3179
+    ]
+   ]
+  },
+  "1": {
+   "name": "MAM",
+   "slope_per_gw": 0.00731,
+   "intercept": -0.1073,
+   "cap": 0.241,
+   "n_overnight_hours": 1932,
+   "spearman_nl_vs_cf": 0.732,
+   "binned_median_cf": [
+    [
+     13.0,
+     0.008
+    ],
+    [
+     15.0,
+     0.0168
+    ],
+    [
+     17.0,
+     0.0196
+    ],
+    [
+     19.0,
+     0.0276
+    ],
+    [
+     21.0,
+     0.053
+    ],
+    [
+     23.0,
+     0.055
+    ],
+    [
+     25.0,
+     0.059
+    ],
+    [
+     27.0,
+     0.0838
+    ],
+    [
+     29.0,
+     0.103
+    ],
+    [
+     31.0,
+     0.1164
+    ],
+    [
+     33.0,
+     0.1272
+    ],
+    [
+     35.0,
+     0.1575
+    ],
+    [
+     37.0,
+     0.1646
+    ],
+    [
+     39.0,
+     0.1853
+    ],
+    [
+     41.0,
+     0.1947
+    ]
+   ]
+  },
+  "2": {
+   "name": "JJA",
+   "slope_per_gw": 0.01149,
+   "intercept": -0.28,
+   "cap": 0.359,
+   "n_overnight_hours": 1932,
+   "spearman_nl_vs_cf": 0.747,
+   "binned_median_cf": [
+    [
+     27.0,
+     0.0839
+    ],
+    [
+     29.0,
+     0.0788
+    ],
+    [
+     31.0,
+     0.0879
+    ],
+    [
+     33.0,
+     0.0896
+    ],
+    [
+     35.0,
+     0.1019
+    ],
+    [
+     37.0,
+     0.125
+    ],
+    [
+     39.0,
+     0.1407
+    ],
+    [
+     41.0,
+     0.1584
+    ],
+    [
+     43.0,
+     0.1838
+    ],
+    [
+     45.0,
+     0.2046
+    ],
+    [
+     47.0,
+     0.2617
+    ],
+    [
+     49.0,
+     0.279
+    ],
+    [
+     51.0,
+     0.3216
+    ],
+    [
+     53.0,
+     0.3645
+    ],
+    [
+     55.0,
+     0.3859
+    ]
+   ]
+  },
+  "3": {
+   "name": "SON",
+   "slope_per_gw": 0.00601,
+   "intercept": -0.081,
+   "cap": 0.276,
+   "n_overnight_hours": 1911,
+   "spearman_nl_vs_cf": 0.63,
+   "binned_median_cf": [
+    [
+     17.0,
+     0.0292
+    ],
+    [
+     19.0,
+     0.037
+    ],
+    [
+     21.0,
+     0.0579
+    ],
+    [
+     23.0,
+     0.0681
+    ],
+    [
+     25.0,
+     0.0717
+    ],
+    [
+     27.0,
+     0.0726
+    ],
+    [
+     29.0,
+     0.0834
+    ],
+    [
+     31.0,
+     0.0843
+    ],
+    [
+     33.0,
+     0.1229
+    ],
+    [
+     35.0,
+     0.1311
+    ],
+    [
+     37.0,
+     0.132
+    ],
+    [
+     39.0,
+     0.1288
+    ],
+    [
+     41.0,
+     0.1463
+    ],
+    [
+     43.0,
+     0.1737
+    ],
+    [
+     45.0,
+     0.2042
+    ],
+    [
+     47.0,
+     0.2371
+    ],
+    [
+     49.0,
+     0.2151
+    ]
+   ]
+  }
+ }
+}

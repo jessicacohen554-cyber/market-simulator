@@ -2723,9 +2723,9 @@ def apply_netload_reliability_floor(
     net_load_mw: np.ndarray,
     *,
     plant_group: str,
-    slope: float,
-    intercept: float,
-    cap: float,
+    slope: "float | np.ndarray",
+    intercept: "float | np.ndarray",
+    cap: "float | np.ndarray",
     ramp_window: tuple[int, int] | None = None,
     exclude_plant_codes: frozenset[int] = frozenset(),
     mech_id: int = MECH_CT_NETLOAD_DRAG,
@@ -2744,7 +2744,10 @@ def apply_netload_reliability_floor(
     a per-hour minimum-generation floor of
     ``clip(slope*netload_GW + intercept, 0, cap) x pmax``, capped at available
     capacity and composed with any existing floor via ``maximum``; the LP
-    dispatches economically *above* it.
+    dispatches economically *above* it. ``slope``/``intercept``/``cap`` may
+    each be a scalar (one curve, the pooled derive) or a per-hour ``(T,)``
+    array (a calendar-conditioned curve, e.g. the season-resolved ERCOT
+    ST_GAS grain fix) — the clip is element-wise either way.
 
     ``ramp_window=(start, end)`` gates the floor to the local-standard
     hour-of-day window ``[start, end)`` (``hour t -> t % 24`` on the model's
@@ -2801,6 +2804,72 @@ def apply_netload_reliability_floor(
     return True
 
 
+def _load_ercot_stgas_seasonal_drag(
+    config: ScenarioConfig, hours: int
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Resolve the season-resolved ERCOT ST_GAS drag curve to per-hour arrays.
+
+    Reads the frozen artifact
+    (``scripts/data/derive_ercot_stgas_drag_seasonal.py`` →
+    ``data/raw/_validation-source/ercot_stgas_drag_seasonal.json``) — the
+    rule-22 season-grain re-derive of the pooled 2026-06 curve from the same
+    CAMPD source (ERCOT-90 §3.3 / ERCOT-91 winter seam) — and maps its per-
+    meteorological-season ``(slope, intercept, cap)`` onto the model's
+    fixed-CST non-leap 8760 clock via the artifact's own ``season_of_month``.
+    Returns ``(slope_h, intercept_h, cap_h)`` each of shape ``(hours,)``.
+
+    Hard errors (never a silent fallback): missing/malformed artifact, a
+    season absent from the artifact, or an ISO mismatch — the curve is fitted
+    on ERCOT CAMPD data and must not cross ISO boundaries (rule 25).
+    """
+    path = getattr(config, "gas_st_drag_seasonal_path", None)
+    if not path:
+        from market_sim.config import paths as _paths
+
+        path = str(_paths.CALIBRATION_DIR / "ercot_stgas_drag_seasonal.json")
+    art = json.loads(Path(path).read_text())
+    prov = art.get("_provenance", {})
+    art_iso = str(prov.get("iso", ""))
+    if art_iso != str(config.iso):
+        raise ValueError(
+            f"gas_st_drag_seasonal: artifact is fitted on {art_iso or '?'} "
+            f"data but the run ISO is {config.iso} — a fitted curve never "
+            "crosses ISO boundaries (rule 25)"
+        )
+    season_of_month = [int(x) for x in prov.get("season_of_month", ())]
+    seasons = art.get("seasons", {})
+    if len(season_of_month) != 12 or not seasons:
+        raise ValueError(
+            "gas_st_drag_seasonal: artifact carries no season_of_month/"
+            "seasons — re-derive "
+            "scripts/data/derive_ercot_stgas_drag_seasonal.py"
+        )
+    # Calendar coordinates on the model's fixed-CST non-leap 8760 clock (the
+    # span-loader convention): month via cumulative month-start hours.
+    month_start_h = (
+        np.cumsum([0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30]) * 24
+    )  # (12,) Jan..Dec starts
+    hoy = np.arange(hours)
+    month_idx = np.searchsorted(month_start_h[1:], hoy % 8760, side="right")  # 0..11
+    season_idx = np.asarray(season_of_month, dtype=int)[month_idx]  # (hours,)
+
+    n_seasons = int(max(season_of_month)) + 1
+    slope_s = np.full(n_seasons, np.nan)
+    icept_s = np.full(n_seasons, np.nan)
+    cap_s = np.full(n_seasons, np.nan)
+    for s in range(n_seasons):
+        entry = seasons.get(str(s))
+        if not entry:
+            raise ValueError(
+                f"gas_st_drag_seasonal: season {s} absent from the artifact "
+                "— re-derive scripts/data/derive_ercot_stgas_drag_seasonal.py"
+            )
+        slope_s[s] = float(entry["slope_per_gw"])
+        icept_s[s] = float(entry["intercept"])
+        cap_s[s] = float(entry["cap"])
+    return slope_s[season_idx], icept_s[season_idx], cap_s[season_idx]
+
+
 def apply_gas_st_netload_drag_floor(
     fleet_arrays: "FleetArrays",
     generators: list[Generator],
@@ -2850,6 +2919,26 @@ def apply_gas_st_netload_drag_floor(
     """
     if not getattr(config, "gas_st_netload_drag", False):
         return False
+    # ERCOT-91 season-grain fix (gas_st_drag_seasonal, default off): the same
+    # curve re-derived per meteorological season from the same CAMPD source
+    # (rule 22 — the pooled net-load axis conflates the winter and summer
+    # net-load limbs, which carry different overnight commitment levels;
+    # ERCOT-90 §3.3). Same mechanism id, same rows, same all-hours window —
+    # only the coefficient grain changes.
+    slope: "float | np.ndarray" = config.gas_st_drag_slope_per_gw
+    intercept: "float | np.ndarray" = config.gas_st_drag_intercept
+    cap: "float | np.ndarray" = config.gas_st_drag_cap
+    if getattr(config, "gas_st_drag_seasonal", False):
+        hours = int(fleet_arrays.availability.shape[1])
+        slope, intercept, cap = _load_ercot_stgas_seasonal_drag(config, hours)
+        logger.info(
+            "ST_GAS net-load drag: SEASON-RESOLVED curve armed "
+            "(gas_st_drag_seasonal, ERCOT-91 rule-22 grain fix) — per-hour "
+            "coefficients from the frozen seasonal artifact replace the "
+            "pooled scalars; slope range [%.5f, %.5f]/GW",
+            float(np.min(slope)),
+            float(np.max(slope)),
+        )
     # All-hours boiler floor (no ramp window); peaker-class ST_GAS plants run on
     # price and are excluded.
     return apply_netload_reliability_floor(
@@ -2857,9 +2946,9 @@ def apply_gas_st_netload_drag_floor(
         generators,
         net_load_mw,
         plant_group="ST_GAS",
-        slope=config.gas_st_drag_slope_per_gw,
-        intercept=config.gas_st_drag_intercept,
-        cap=config.gas_st_drag_cap,
+        slope=slope,
+        intercept=intercept,
+        cap=cap,
         ramp_window=None,
         exclude_plant_codes=ST_GAS_PEAKER_PLANTS,
         mech_id=MECH_ST_NETLOAD_DRAG,
