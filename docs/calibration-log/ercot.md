@@ -213,9 +213,23 @@ further under measured (floor released MW the econ layer doesn't re-add — the
 ST_GAS econ-offer axis, not the floor; rule 14 keeps the finer-grain curve).
 
 **Disposition.** Keeper stays **ercot86** (owner-only swap). Band-hour probe
-bundles deleted (rule 16). Winter full-span 2023-2025 candidate solved as
-`ercot91_seasonal_drag_fullspan` and registered on the dashboard as a
-candidate. Pre-existing main breakage noted for the owner (not this lane):
+bundles deleted (rule 16). Winter full-span 2023-2025 candidate solved and
+registered as `2026-07-20-ercot91-seasonal-drag-fullspan` (NOT-YET —
+governance attestation absent by design for a candidate; C-rows in the
+sidecar definition). Full-span gates vs TRUE bases, all three years, ALL
+HELD: 2023 resid −24.0 % → −23.7 % (the keeper's committed bundle lacks its
+2023 hourly sidecars — vs rule 15 — so the base was re-established by a
+byte-recipe keeper replay; the definition text's "−11.6" is the same number
+in $ on the simple-mean basis; the seasonal floor cannot bind in 2023's
+scarcity hours — dispatch 7.5-8.5 GW ≫ floor ~3 GW — so August is untouched
+by construction); 2024 C3a −1.3 % → −0.6 %, 2025 +1.4 % → +2.0 %,
+spurious/tail/NRMSE flat, band fill unchanged. Bonus, scorer-verified: D-2
+ST_GAS forced share 29.0/26.7/32.0 % → **20.8/18.8/22.8 %** — the keeper's
+only D-2 failure (2025 over-cap, rubric-v2.2 grounded) passes under the
+30 % budget outright in the candidate; D-1 shape passes all years
+(profile_r 0.969-0.998). The candidate bundle commits its hourly sidecars
+for ALL THREE years (closing the sidecar gap class the ercot86 2023 miss
+exemplifies). Pre-existing main breakage noted for the owner (not this lane):
 `tests/test_net_cone_forward.py` fails collection on main (FF-G3 merge imports
 `NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO` missing from `constants.py`).
 Ops: derive + artifact + mechanism + tests + charter §8 + this entry on
