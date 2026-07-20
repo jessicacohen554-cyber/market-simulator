@@ -1,0 +1,977 @@
+{
+ "_provenance": {
+  "probe": "ercot90_stgas_shoulder_measure",
+  "charter": "docs/handoffs/ercot-stgas-shoulder-2026-07.md",
+  "named_by": "docs/handoffs/ercot-shoulder-online-envelope-2026-07.md \u00a78.3 (the CAMPD-based ST_GAS hourly check)",
+  "role": "MEASUREMENT ONLY \u2014 direct CAMPD/CEMS measurement of the non-CHP steam-gas fleet's hourly output vs the keeper's ST_GAS class dispatch in the shoulder residual/control hour sets; adjudicates which seam (drag shape / committed offer level / availability basis) owns the \u00a78.3 displacement wedge. Not a model input, no apply seam. The drag curve is validated against its own source evidence, never re-fit (rule 22).",
+  "mid_band_usd_mwh": [
+   150.0,
+   500.0
+  ],
+  "keeper": "/home/user/market-simulator/results/calibration/ercot86_rtwall_fullspan",
+  "model_side": "committed keeper hourly sidecars (class_hourly/system) \u2014 no keeper replay",
+  "drag_params_from_keeper_run_config": {
+   "slope_per_gw": 0.00906,
+   "intercept": -0.1376,
+   "cap": 0.34,
+   "committed_hr_mult": 1.32,
+   "econ_hr_mult": 0.97,
+   "cleared_share_steam": false
+  },
+  "st_net_of_gross": 0.95,
+  "netload_pct_edges": [
+   0.25,
+   0.5,
+   0.7,
+   0.8,
+   0.9,
+   0.97
+  ],
+  "season_of_month": [
+   0,
+   0,
+   1,
+   1,
+   1,
+   2,
+   2,
+   2,
+   3,
+   3,
+   3,
+   0
+  ],
+  "hour_block_h": 4,
+  "overnight_window_h": [
+   23,
+   6
+  ],
+  "caveat_floor_reconstruction": "floor_ub = frac(NL_hat) x base with NL_hat = keeper demand - VRE DISPATCH (>= the runner's potential-convention net-load) and no availability cap \u2014 an UPPER bound on the true applied floor; floor_avail refines with the class-day DAM availability. Model MW above floor_ub is therefore PROVABLY economic (not floor-forced).",
+  "caveat_hourly_lambda": "actual RT is hourly (mean of SCED intervals); intra-hour spikes are smoothed"
+ },
+ "2024": {
+  "campd_source": "campd-unit-level/TX_2024.parquet",
+  "n_plants": 17,
+  "nameplate_mw": 12390.9,
+  "floor_base_mw": 8923.4,
+  "n_band_hours_actual": 68,
+  "n_residual": 63,
+  "n_formed": 5,
+  "n_control": 6471,
+  "residual_summary": {
+   "n": 63,
+   "meas_net_med": 4246.5,
+   "model_med": 5444.9,
+   "model_minus_meas_med": 1328.6,
+   "model_over_meas_ratio_med": 1.29,
+   "floor_ub_med": 2804.8,
+   "floor_avail_med": 2804.8,
+   "model_minus_floor_ub_med": 2993.2,
+   "share_hours_model_above_floor_ub": 1.0,
+   "meas_minus_floor_ub_med": 1756.9,
+   "model_price_med": 47.7,
+   "actual_rt_med": 220.4,
+   "nl_hat_med": 49880.2
+  },
+  "formed_summary": {
+   "n": 5,
+   "meas_net_med": 6098.0,
+   "model_med": 9388.9,
+   "model_minus_meas_med": 3290.8,
+   "model_over_meas_ratio_med": 1.54,
+   "floor_ub_med": 3034.0,
+   "floor_avail_med": 3034.0,
+   "model_minus_floor_ub_med": 6354.9,
+   "share_hours_model_above_floor_ub": 1.0,
+   "meas_minus_floor_ub_med": 3064.1,
+   "model_price_med": 235.1,
+   "actual_rt_med": 206.1,
+   "nl_hat_med": 64852.9
+  },
+  "control_summary": {
+   "n": 6471,
+   "meas_net_med": 2054.9,
+   "model_med": 2362.5,
+   "model_minus_meas_med": 540.0,
+   "model_over_meas_ratio_med": 1.26,
+   "floor_ub_med": 1850.3,
+   "floor_avail_med": 1850.3,
+   "model_minus_floor_ub_med": 463.0,
+   "share_hours_model_above_floor_ub": 0.642,
+   "meas_minus_floor_ub_med": 325.4,
+   "model_price_med": 25.7,
+   "actual_rt_med": 21.9,
+   "nl_hat_med": 38073.6
+  },
+  "all_hours_summary": {
+   "n": 8760,
+   "meas_net_med": 1521.4,
+   "model_med": 1561.1,
+   "model_minus_meas_med": 264.5,
+   "model_over_meas_ratio_med": 1.18,
+   "floor_ub_med": 1544.8,
+   "floor_avail_med": 1544.8,
+   "model_minus_floor_ub_med": 0.0,
+   "share_hours_model_above_floor_ub": 0.488,
+   "meas_minus_floor_ub_med": 175.9,
+   "model_price_med": 23.2,
+   "actual_rt_med": 19.8,
+   "nl_hat_med": 34295.0
+  },
+  "notes": [
+   "plant 56708 (CFB Power Plant): no CAMPD rows in 2024"
+  ],
+  "by_season_block": {
+   "s0_b1": {
+    "resid_n": 5,
+    "control_n": 215,
+    "resid_model_med": 5441.8,
+    "resid_meas_med": 2392.1,
+    "resid_floor_ub_med": 2938.9,
+    "control_model_med": 1759.8,
+    "control_meas_med": 673.5
+   },
+   "s0_b2": {
+    "resid_n": 2,
+    "control_n": 213,
+    "resid_model_med": 5404.4,
+    "resid_meas_med": 2437.2,
+    "resid_floor_ub_med": 2911.6,
+    "control_model_med": 1138.0,
+    "control_meas_med": 422.8
+   },
+   "s0_b4": {
+    "resid_n": 3,
+    "control_n": 249,
+    "resid_model_med": 8520.8,
+    "resid_meas_med": 5102.4,
+    "resid_floor_ub_med": 3034.0,
+    "control_model_med": 2270.3,
+    "control_meas_med": 716.3
+   },
+   "s0_b5": {
+    "resid_n": 2,
+    "control_n": 282,
+    "resid_model_med": 5470.7,
+    "resid_meas_med": 3782.4,
+    "resid_floor_ub_med": 2696.6,
+    "control_model_med": 1649.3,
+    "control_meas_med": 430.3
+   },
+   "s1_b0": {
+    "resid_n": 1,
+    "control_n": 177,
+    "resid_model_med": 2865.9,
+    "resid_meas_med": 2605.8,
+    "resid_floor_ub_med": 1696.2,
+    "control_model_med": 1140.0,
+    "control_meas_med": 1730.9
+   },
+   "s1_b1": {
+    "resid_n": 1,
+    "control_n": 211,
+    "resid_model_med": 2177.2,
+    "resid_meas_med": 2242.9,
+    "resid_floor_ub_med": 1333.5,
+    "control_model_med": 1731.4,
+    "control_meas_med": 1901.0
+   },
+   "s1_b2": {
+    "resid_n": 1,
+    "control_n": 195,
+    "resid_model_med": 2392.0,
+    "resid_meas_med": 2780.7,
+    "resid_floor_ub_med": 1760.4,
+    "control_model_med": 1279.0,
+    "control_meas_med": 1813.6
+   },
+   "s1_b3": {
+    "resid_n": 6,
+    "control_n": 205,
+    "resid_model_med": 3688.1,
+    "resid_meas_med": 3112.7,
+    "resid_floor_ub_med": 1956.5,
+    "control_model_med": 1976.2,
+    "control_meas_med": 2661.9
+   },
+   "s1_b4": {
+    "resid_n": 15,
+    "control_n": 256,
+    "resid_model_med": 4460.3,
+    "resid_meas_med": 3398.2,
+    "resid_floor_ub_med": 2015.0,
+    "control_model_med": 3267.4,
+    "control_meas_med": 2847.6
+   },
+   "s1_b5": {
+    "resid_n": 2,
+    "control_n": 289,
+    "resid_model_med": 4035.5,
+    "resid_meas_med": 2450.5,
+    "resid_floor_ub_med": 2015.4,
+    "control_model_med": 2116.1,
+    "control_meas_med": 2249.6
+   },
+   "s2_b4": {
+    "resid_n": 10,
+    "control_n": 355,
+    "resid_model_med": 8950.1,
+    "resid_meas_med": 6776.8,
+    "resid_floor_ub_med": 3034.0,
+    "control_model_med": 6801.8,
+    "control_meas_med": 4759.5
+   },
+   "s3_b3": {
+    "resid_n": 1,
+    "control_n": 264,
+    "resid_model_med": 2551.2,
+    "resid_meas_med": 2033.0,
+    "resid_floor_ub_med": 1521.9,
+    "control_model_med": 3225.5,
+    "control_meas_med": 2933.6
+   },
+   "s3_b4": {
+    "resid_n": 13,
+    "control_n": 322,
+    "resid_model_med": 7324.8,
+    "resid_meas_med": 4981.8,
+    "resid_floor_ub_med": 3034.0,
+    "control_model_med": 5211.2,
+    "control_meas_med": 3550.6
+   },
+   "s3_b5": {
+    "resid_n": 1,
+    "control_n": 326,
+    "resid_model_med": 4624.8,
+    "resid_meas_med": 4466.9,
+    "resid_floor_ub_med": 2562.7,
+    "control_model_med": 2828.0,
+    "control_meas_med": 2260.1
+   }
+  },
+  "by_season_control": {
+   "s0": {
+    "n": 1307,
+    "meas_net_med": 610.9,
+    "model_med": 1584.6,
+    "floor_ub_med": 1674.2,
+    "model_minus_meas_med": 972.7,
+    "share_hours_model_above_floor_ub": 0.395,
+    "model_price_med": 27.9
+   },
+   "s1": {
+    "n": 1333,
+    "meas_net_med": 2259.1,
+    "model_med": 1858.0,
+    "floor_ub_med": 1418.9,
+    "model_minus_meas_med": -70.3,
+    "share_hours_model_above_floor_ub": 0.697,
+    "model_price_med": 23.4
+   },
+   "s2": {
+    "n": 2183,
+    "meas_net_med": 2603.0,
+    "model_med": 3248.0,
+    "floor_ub_med": 2323.0,
+    "model_minus_meas_med": 600.9,
+    "share_hours_model_above_floor_ub": 0.747,
+    "model_price_med": 25.6
+   },
+   "s3": {
+    "n": 1648,
+    "meas_net_med": 2138.4,
+    "model_med": 2525.2,
+    "floor_ub_med": 1866.1,
+    "model_minus_meas_med": 509.2,
+    "share_hours_model_above_floor_ub": 0.657,
+    "model_price_med": 25.8
+   }
+  },
+  "by_netload_bin": {
+   "1": {
+    "resid_n": 10,
+    "control_n": 2171,
+    "resid_model_med": 3990.1,
+    "resid_meas_med": 2506.1,
+    "resid_floor_ub_med": 1780.3,
+    "control_model_med": 1049.9,
+    "control_meas_med": 1210.3
+   },
+   "2": {
+    "resid_n": 10,
+    "control_n": 1740,
+    "resid_model_med": 3165.0,
+    "resid_meas_med": 2533.2,
+    "resid_floor_ub_med": 1883.4,
+    "control_model_med": 2170.1,
+    "control_meas_med": 1861.0
+   },
+   "3": {
+    "resid_n": 2,
+    "control_n": 871,
+    "resid_model_med": 4638.7,
+    "resid_meas_med": 4223.7,
+    "resid_floor_ub_med": 2453.9,
+    "control_model_med": 2940.2,
+    "control_meas_med": 2320.8
+   },
+   "4": {
+    "resid_n": 13,
+    "control_n": 860,
+    "resid_model_med": 5372.7,
+    "resid_meas_med": 4466.9,
+    "resid_floor_ub_med": 2656.5,
+    "control_model_med": 4447.6,
+    "control_meas_med": 3329.8
+   },
+   "5": {
+    "resid_n": 16,
+    "control_n": 594,
+    "resid_model_med": 6908.2,
+    "resid_meas_med": 4952.8,
+    "resid_floor_ub_med": 3034.0,
+    "control_model_med": 6854.7,
+    "control_meas_med": 4530.5
+   },
+   "6": {
+    "resid_n": 12,
+    "control_n": 235,
+    "resid_model_med": 8823.0,
+    "resid_meas_med": 6659.5,
+    "resid_floor_ub_med": 3034.0,
+    "control_model_med": 8310.6,
+    "control_meas_med": 5893.8
+   }
+  },
+  "overnight_drag_check": {
+   "spearman_nl_vs_meas_cf": 0.691,
+   "per_nl_bin": [
+    {
+     "nl_gw_bin": "14-16",
+     "n": 70,
+     "meas_overnight_cf_med": 0.011,
+     "curve_frac_med": 0.0,
+     "model_cf_med": 0.0
+    },
+    {
+     "nl_gw_bin": "16-18",
+     "n": 79,
+     "meas_overnight_cf_med": 0.008,
+     "curve_frac_med": 0.016,
+     "model_cf_med": 0.0
+    },
+    {
+     "nl_gw_bin": "18-20",
+     "n": 157,
+     "meas_overnight_cf_med": 0.026,
+     "curve_frac_med": 0.037,
+     "model_cf_med": 0.015
+    },
+    {
+     "nl_gw_bin": "20-22",
+     "n": 138,
+     "meas_overnight_cf_med": 0.045,
+     "curve_frac_med": 0.052,
+     "model_cf_med": 0.03
+    },
+    {
+     "nl_gw_bin": "22-24",
+     "n": 165,
+     "meas_overnight_cf_med": 0.077,
+     "curve_frac_med": 0.071,
+     "model_cf_med": 0.046
+    },
+    {
+     "nl_gw_bin": "24-26",
+     "n": 147,
+     "meas_overnight_cf_med": 0.09,
+     "curve_frac_med": 0.088,
+     "model_cf_med": 0.065
+    },
+    {
+     "nl_gw_bin": "26-28",
+     "n": 137,
+     "meas_overnight_cf_med": 0.091,
+     "curve_frac_med": 0.108,
+     "model_cf_med": 0.085
+    },
+    {
+     "nl_gw_bin": "28-30",
+     "n": 163,
+     "meas_overnight_cf_med": 0.109,
+     "curve_frac_med": 0.126,
+     "model_cf_med": 0.103
+    },
+    {
+     "nl_gw_bin": "30-32",
+     "n": 165,
+     "meas_overnight_cf_med": 0.129,
+     "curve_frac_med": 0.144,
+     "model_cf_med": 0.123
+    },
+    {
+     "nl_gw_bin": "32-34",
+     "n": 192,
+     "meas_overnight_cf_med": 0.151,
+     "curve_frac_med": 0.162,
+     "model_cf_med": 0.141
+    },
+    {
+     "nl_gw_bin": "34-36",
+     "n": 245,
+     "meas_overnight_cf_med": 0.165,
+     "curve_frac_med": 0.179,
+     "model_cf_med": 0.163
+    },
+    {
+     "nl_gw_bin": "36-38",
+     "n": 179,
+     "meas_overnight_cf_med": 0.188,
+     "curve_frac_med": 0.198,
+     "model_cf_med": 0.203
+    },
+    {
+     "nl_gw_bin": "38-40",
+     "n": 194,
+     "meas_overnight_cf_med": 0.177,
+     "curve_frac_med": 0.215,
+     "model_cf_med": 0.229
+    },
+    {
+     "nl_gw_bin": "40-42",
+     "n": 171,
+     "meas_overnight_cf_med": 0.202,
+     "curve_frac_med": 0.234,
+     "model_cf_med": 0.277
+    },
+    {
+     "nl_gw_bin": "42-44",
+     "n": 133,
+     "meas_overnight_cf_med": 0.249,
+     "curve_frac_med": 0.252,
+     "model_cf_med": 0.309
+    },
+    {
+     "nl_gw_bin": "44-46",
+     "n": 82,
+     "meas_overnight_cf_med": 0.318,
+     "curve_frac_med": 0.27,
+     "model_cf_med": 0.366
+    },
+    {
+     "nl_gw_bin": "46-48",
+     "n": 39,
+     "meas_overnight_cf_med": 0.37,
+     "curve_frac_med": 0.287,
+     "model_cf_med": 0.438
+    }
+   ]
+  },
+  "residual_drag_check": {
+   "resid_meas_cf_med": 47.6,
+   "resid_curve_frac_med": 31.4,
+   "resid_model_cf_med": 61.0,
+   "units": "percent of drag-covered net base"
+  },
+  "annual": {
+   "meas_net_twh": 16.61,
+   "model_twh": 20.77,
+   "meas_max_concurrent_mw": 8739.0,
+   "model_max_mw": 10408.0,
+   "dam_avail_st_mean": 0.6643,
+   "plants_never_running": [
+    "56708 (CFB Power Plant)"
+   ]
+  },
+  "per_plant_residual_med_mw": {
+   "3504 (Stryker Creek)": 220.4,
+   "34702 (W A Parish [ST])": 449.3,
+   "3460 (Cedar Bayou)": 693.5,
+   "3452 (Lake Hubbard)": 505.4,
+   "3453 (Mountain Creek)": 35.1,
+   "3490 (Graham)": 236.5,
+   "3491 (Handley)": 357.2,
+   "3507 (Trinidad (TX))": 50.3,
+   "3576 (Ray Olinger)": 0.0,
+   "4266 (Spencer)": 0.0,
+   "49392 (Barney M Davis [ST])": 0.0,
+   "3601 (Sim Gideon)": 273.6,
+   "3611 (O W Sommers)": 543.4,
+   "3612 (V H Braunig)": 496.8,
+   "3628 (R W Miller)": 142.5,
+   "56708 (CFB Power Plant)": 0.0,
+   "6243 (Dansby)": 32.3
+  },
+  "ercot89_covered_subset": {
+   "n": 35,
+   "n_also_residual_here": 35,
+   "model_med": 6114.7,
+   "meas_net_med": 4454.5,
+   "floor_ub_med": 2719.0
+  }
+ },
+ "2025": {
+  "campd_source": "campd-unit-level/TX_2025.parquet",
+  "n_plants": 17,
+  "nameplate_mw": 12390.9,
+  "floor_base_mw": 8923.4,
+  "n_band_hours_actual": 65,
+  "n_residual": 61,
+  "n_formed": 4,
+  "n_control": 6506,
+  "residual_summary": {
+   "n": 61,
+   "meas_net_med": 4233.2,
+   "model_med": 5671.8,
+   "model_minus_meas_med": 1335.5,
+   "model_over_meas_ratio_med": 1.27,
+   "floor_ub_med": 2826.8,
+   "floor_avail_med": 2826.8,
+   "model_minus_floor_ub_med": 2821.6,
+   "share_hours_model_above_floor_ub": 0.967,
+   "meas_minus_floor_ub_med": 1667.6,
+   "model_price_med": 61.7,
+   "actual_rt_med": 193.0,
+   "nl_hat_med": 50153.1
+  },
+  "formed_summary": {
+   "n": 4,
+   "meas_net_med": 6956.4,
+   "model_med": 8505.9,
+   "model_minus_meas_med": 1549.6,
+   "model_over_meas_ratio_med": 1.22,
+   "floor_ub_med": 3034.0,
+   "floor_avail_med": 3034.0,
+   "model_minus_floor_ub_med": 5472.0,
+   "share_hours_model_above_floor_ub": 1.0,
+   "meas_minus_floor_ub_med": 3922.4,
+   "model_price_med": 168.6,
+   "actual_rt_med": 181.5,
+   "nl_hat_med": 68185.1
+  },
+  "control_summary": {
+   "n": 6506,
+   "meas_net_med": 1527.1,
+   "model_med": 2047.5,
+   "model_minus_meas_med": 495.7,
+   "model_over_meas_ratio_med": 1.3,
+   "floor_ub_med": 1893.3,
+   "floor_avail_med": 1893.3,
+   "model_minus_floor_ub_med": 100.1,
+   "share_hours_model_above_floor_ub": 0.531,
+   "meas_minus_floor_ub_med": -163.6,
+   "model_price_med": 33.6,
+   "actual_rt_med": 29.3,
+   "nl_hat_med": 38606.6
+  },
+  "all_hours_summary": {
+   "n": 8760,
+   "meas_net_med": 1137.6,
+   "model_med": 1450.7,
+   "model_minus_meas_med": 239.2,
+   "model_over_meas_ratio_med": 1.17,
+   "floor_ub_med": 1578.0,
+   "floor_avail_med": 1578.0,
+   "model_minus_floor_ub_med": -48.5,
+   "share_hours_model_above_floor_ub": 0.406,
+   "meas_minus_floor_ub_med": -37.5,
+   "model_price_med": 31.0,
+   "actual_rt_med": 25.9,
+   "nl_hat_med": 34706.6
+  },
+  "notes": [
+   "plant 56708 (CFB Power Plant): no CAMPD rows in 2025"
+  ],
+  "by_season_block": {
+   "s0_b0": {
+    "resid_n": 3,
+    "control_n": 247,
+    "resid_model_med": 3800.8,
+    "resid_meas_med": 3705.9,
+    "resid_floor_ub_med": 2325.8,
+    "control_model_med": 1828.3,
+    "control_meas_med": 958.6
+   },
+   "s0_b1": {
+    "resid_n": 11,
+    "control_n": 262,
+    "resid_model_med": 5617.9,
+    "resid_meas_med": 3833.2,
+    "resid_floor_ub_med": 2909.2,
+    "control_model_med": 2378.6,
+    "control_meas_med": 1158.0
+   },
+   "s0_b2": {
+    "resid_n": 1,
+    "control_n": 251,
+    "resid_model_med": 7024.1,
+    "resid_meas_med": 5694.3,
+    "resid_floor_ub_med": 3034.0,
+    "control_model_med": 1513.1,
+    "control_meas_med": 1009.8
+   },
+   "s0_b4": {
+    "resid_n": 4,
+    "control_n": 262,
+    "resid_model_med": 7448.3,
+    "resid_meas_med": 5902.8,
+    "resid_floor_ub_med": 2981.9,
+    "control_model_med": 2389.4,
+    "control_meas_med": 1241.7
+   },
+   "s0_b5": {
+    "resid_n": 9,
+    "control_n": 298,
+    "resid_model_med": 6132.9,
+    "resid_meas_med": 4755.7,
+    "resid_floor_ub_med": 2769.6,
+    "control_model_med": 1927.5,
+    "control_meas_med": 1078.2
+   },
+   "s1_b1": {
+    "resid_n": 2,
+    "control_n": 214,
+    "resid_model_med": 4960.3,
+    "resid_meas_med": 3810.0,
+    "resid_floor_ub_med": 2142.2,
+    "control_model_med": 1217.9,
+    "control_meas_med": 1242.1
+   },
+   "s1_b4": {
+    "resid_n": 8,
+    "control_n": 249,
+    "resid_model_med": 5678.0,
+    "resid_meas_med": 4798.4,
+    "resid_floor_ub_med": 2893.8,
+    "control_model_med": 2248.8,
+    "control_meas_med": 2187.8
+   },
+   "s1_b5": {
+    "resid_n": 5,
+    "control_n": 307,
+    "resid_model_med": 4415.8,
+    "resid_meas_med": 3679.3,
+    "resid_floor_ub_med": 2581.7,
+    "control_model_med": 1650.6,
+    "control_meas_med": 1696.7
+   },
+   "s2_b2": {
+    "resid_n": 1,
+    "control_n": 306,
+    "resid_model_med": 1011.0,
+    "resid_meas_med": 1412.6,
+    "resid_floor_ub_med": 1567.7,
+    "control_model_med": 1529.2,
+    "control_meas_med": 1329.0
+   },
+   "s2_b4": {
+    "resid_n": 6,
+    "control_n": 360,
+    "resid_model_med": 6431.2,
+    "resid_meas_med": 4790.8,
+    "resid_floor_ub_med": 3034.0,
+    "control_model_med": 4234.8,
+    "control_meas_med": 3812.3
+   },
+   "s2_b5": {
+    "resid_n": 2,
+    "control_n": 364,
+    "resid_model_med": 5220.8,
+    "resid_meas_med": 4118.2,
+    "resid_floor_ub_med": 2873.3,
+    "control_model_med": 3923.2,
+    "control_meas_med": 3252.3
+   },
+   "s3_b4": {
+    "resid_n": 9,
+    "control_n": 324,
+    "resid_model_med": 5793.3,
+    "resid_meas_med": 4199.0,
+    "resid_floor_ub_med": 2857.2,
+    "control_model_med": 4454.0,
+    "control_meas_med": 3118.4
+   }
+  },
+  "by_season_control": {
+   "s0": {
+    "n": 1480,
+    "meas_net_med": 1095.8,
+    "model_med": 1922.7,
+    "floor_ub_med": 1829.1,
+    "model_minus_meas_med": 769.3,
+    "share_hours_model_above_floor_ub": 0.547,
+    "model_price_med": 36.5
+   },
+   "s1": {
+    "n": 1201,
+    "meas_net_med": 1439.2,
+    "model_med": 1303.6,
+    "floor_ub_med": 1444.4,
+    "model_minus_meas_med": 50.3,
+    "share_hours_model_above_floor_ub": 0.415,
+    "model_price_med": 34.5
+   },
+   "s2": {
+    "n": 2129,
+    "meas_net_med": 2033.0,
+    "model_med": 2413.2,
+    "floor_ub_med": 2211.0,
+    "model_minus_meas_med": 469.4,
+    "share_hours_model_above_floor_ub": 0.543,
+    "model_price_med": 31.5
+   },
+   "s3": {
+    "n": 1696,
+    "meas_net_med": 1478.7,
+    "model_med": 2295.2,
+    "floor_ub_med": 1815.8,
+    "model_minus_meas_med": 641.3,
+    "share_hours_model_above_floor_ub": 0.584,
+    "model_price_med": 33.0
+   }
+  },
+  "by_netload_bin": {
+   "1": {
+    "resid_n": 1,
+    "control_n": 2173,
+    "resid_model_med": 1220.1,
+    "resid_meas_med": 1172.3,
+    "resid_floor_ub_med": 1362.1,
+    "control_model_med": 1012.1,
+    "control_meas_med": 893.0
+   },
+   "2": {
+    "resid_n": 3,
+    "control_n": 1739,
+    "resid_model_med": 4718.7,
+    "resid_meas_med": 3794.3,
+    "resid_floor_ub_med": 1986.9,
+    "control_model_med": 1819.9,
+    "control_meas_med": 1401.2
+   },
+   "3": {
+    "resid_n": 7,
+    "control_n": 864,
+    "resid_model_med": 5102.1,
+    "resid_meas_med": 3825.6,
+    "resid_floor_ub_med": 2254.5,
+    "control_model_med": 2700.8,
+    "control_meas_med": 2011.6
+   },
+   "4": {
+    "resid_n": 22,
+    "control_n": 847,
+    "resid_model_med": 4909.4,
+    "resid_meas_med": 4027.5,
+    "resid_floor_ub_med": 2625.3,
+    "control_model_med": 3686.2,
+    "control_meas_med": 2913.6
+   },
+   "5": {
+    "resid_n": 20,
+    "control_n": 587,
+    "resid_model_med": 6191.8,
+    "resid_meas_med": 4728.6,
+    "resid_floor_ub_med": 3001.2,
+    "control_model_med": 5244.5,
+    "control_meas_med": 4039.4
+   },
+   "6": {
+    "resid_n": 8,
+    "control_n": 296,
+    "resid_model_med": 8310.2,
+    "resid_meas_med": 6662.8,
+    "resid_floor_ub_med": 3034.0,
+    "control_model_med": 6850.3,
+    "control_meas_med": 5163.7
+   }
+  },
+  "overnight_drag_check": {
+   "spearman_nl_vs_meas_cf": 0.752,
+   "per_nl_bin": [
+    {
+     "nl_gw_bin": "14-16",
+     "n": 40,
+     "meas_overnight_cf_med": 0.023,
+     "curve_frac_med": 0.0,
+     "model_cf_med": 0.0
+    },
+    {
+     "nl_gw_bin": "16-18",
+     "n": 81,
+     "meas_overnight_cf_med": 0.027,
+     "curve_frac_med": 0.017,
+     "model_cf_med": 0.0
+    },
+    {
+     "nl_gw_bin": "18-20",
+     "n": 106,
+     "meas_overnight_cf_med": 0.035,
+     "curve_frac_med": 0.035,
+     "model_cf_med": 0.01
+    },
+    {
+     "nl_gw_bin": "20-22",
+     "n": 139,
+     "meas_overnight_cf_med": 0.052,
+     "curve_frac_med": 0.053,
+     "model_cf_med": 0.028
+    },
+    {
+     "nl_gw_bin": "22-24",
+     "n": 112,
+     "meas_overnight_cf_med": 0.072,
+     "curve_frac_med": 0.069,
+     "model_cf_med": 0.046
+    },
+    {
+     "nl_gw_bin": "24-26",
+     "n": 120,
+     "meas_overnight_cf_med": 0.072,
+     "curve_frac_med": 0.088,
+     "model_cf_med": 0.066
+    },
+    {
+     "nl_gw_bin": "26-28",
+     "n": 138,
+     "meas_overnight_cf_med": 0.079,
+     "curve_frac_med": 0.107,
+     "model_cf_med": 0.082
+    },
+    {
+     "nl_gw_bin": "28-30",
+     "n": 164,
+     "meas_overnight_cf_med": 0.092,
+     "curve_frac_med": 0.126,
+     "model_cf_med": 0.101
+    },
+    {
+     "nl_gw_bin": "30-32",
+     "n": 167,
+     "meas_overnight_cf_med": 0.096,
+     "curve_frac_med": 0.142,
+     "model_cf_med": 0.118
+    },
+    {
+     "nl_gw_bin": "32-34",
+     "n": 196,
+     "meas_overnight_cf_med": 0.1,
+     "curve_frac_med": 0.162,
+     "model_cf_med": 0.133
+    },
+    {
+     "nl_gw_bin": "34-36",
+     "n": 225,
+     "meas_overnight_cf_med": 0.106,
+     "curve_frac_med": 0.179,
+     "model_cf_med": 0.161
+    },
+    {
+     "nl_gw_bin": "36-38",
+     "n": 226,
+     "meas_overnight_cf_med": 0.136,
+     "curve_frac_med": 0.197,
+     "model_cf_med": 0.18
+    },
+    {
+     "nl_gw_bin": "38-40",
+     "n": 198,
+     "meas_overnight_cf_med": 0.156,
+     "curve_frac_med": 0.217,
+     "model_cf_med": 0.203
+    },
+    {
+     "nl_gw_bin": "40-42",
+     "n": 151,
+     "meas_overnight_cf_med": 0.185,
+     "curve_frac_med": 0.233,
+     "model_cf_med": 0.248
+    },
+    {
+     "nl_gw_bin": "42-44",
+     "n": 150,
+     "meas_overnight_cf_med": 0.181,
+     "curve_frac_med": 0.252,
+     "model_cf_med": 0.299
+    },
+    {
+     "nl_gw_bin": "44-46",
+     "n": 105,
+     "meas_overnight_cf_med": 0.233,
+     "curve_frac_med": 0.27,
+     "model_cf_med": 0.344
+    },
+    {
+     "nl_gw_bin": "46-48",
+     "n": 75,
+     "meas_overnight_cf_med": 0.304,
+     "curve_frac_med": 0.288,
+     "model_cf_med": 0.383
+    },
+    {
+     "nl_gw_bin": "48-50",
+     "n": 58,
+     "meas_overnight_cf_med": 0.353,
+     "curve_frac_med": 0.305,
+     "model_cf_med": 0.458
+    },
+    {
+     "nl_gw_bin": "50-52",
+     "n": 46,
+     "meas_overnight_cf_med": 0.429,
+     "curve_frac_med": 0.325,
+     "model_cf_med": 0.557
+    },
+    {
+     "nl_gw_bin": "52-54",
+     "n": 18,
+     "meas_overnight_cf_med": 0.498,
+     "curve_frac_med": 0.34,
+     "model_cf_med": 0.696
+    }
+   ]
+  },
+  "residual_drag_check": {
+   "resid_meas_cf_med": 47.4,
+   "resid_curve_frac_med": 31.7,
+   "resid_model_cf_med": 63.6,
+   "units": "percent of drag-covered net base"
+  },
+  "annual": {
+   "meas_net_twh": 14.41,
+   "model_twh": 17.92,
+   "meas_max_concurrent_mw": 7395.8,
+   "model_max_mw": 8705.5,
+   "dam_avail_st_mean": 0.6337,
+   "plants_never_running": [
+    "56708 (CFB Power Plant)"
+   ]
+  },
+  "per_plant_residual_med_mw": {
+   "3504 (Stryker Creek)": 622.2,
+   "34702 (W A Parish [ST])": 308.8,
+   "3460 (Cedar Bayou)": 360.1,
+   "3452 (Lake Hubbard)": 507.3,
+   "3453 (Mountain Creek)": 231.8,
+   "3490 (Graham)": 376.2,
+   "3491 (Handley)": 429.4,
+   "3507 (Trinidad (TX))": 217.5,
+   "3576 (Ray Olinger)": 0.0,
+   "4266 (Spencer)": 0.0,
+   "49392 (Barney M Davis [ST])": 0.0,
+   "3601 (Sim Gideon)": 408.5,
+   "3611 (O W Sommers)": 408.5,
+   "3612 (V H Braunig)": 0.0,
+   "3628 (R W Miller)": 306.8,
+   "56708 (CFB Power Plant)": 0.0,
+   "6243 (Dansby)": 78.8
+  },
+  "ercot89_covered_subset": {
+   "n": 33,
+   "n_also_residual_here": 33,
+   "model_med": 6132.9,
+   "meas_net_med": 4769.0,
+   "floor_ub_med": 3034.0
+  }
+ }
+}
