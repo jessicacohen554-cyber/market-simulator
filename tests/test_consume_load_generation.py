@@ -22,6 +22,7 @@ import pytest
 
 from market_sim.config.paths import EIA_HOURLY_DIR
 from market_sim.data import eia_loader as L
+from tests.helpers import requires_raw
 
 pytestmark = [pytest.mark.slow, pytest.mark.integration]
 
@@ -39,11 +40,6 @@ _YEAR = 2023
 _TOL = 1e-6
 
 
-def _raw_absent() -> bool:
-    """Whether the raw EIA-930 hourly extract for the parity BA is missing."""
-    return not (EIA_HOURLY_DIR / f"{_BA} hourly.parquet").is_file()
-
-
 def _clean_absent(datatype: str) -> bool:
     """Whether the regenerated clean partition is missing (or the seam is)."""
     seam = L._read_clean_seam()
@@ -53,7 +49,7 @@ def _clean_absent(datatype: str) -> bool:
     return not clean_exists(datatype, iso=_ISO, year=_YEAR)
 
 
-@pytest.mark.skipif(_raw_absent(), reason="raw EIA-930 ERCO hourly extract absent")
+@requires_raw(EIA_HOURLY_DIR / f"{_BA} hourly.parquet")
 @pytest.mark.skipif(
     _clean_absent("load"),
     reason="clean load partition absent (run scripts/regenerate_clean.py load)",
@@ -73,7 +69,7 @@ def test_clean_demand_matches_raw_loader(monkeypatch):
     np.testing.assert_allclose(clean, raw, rtol=0.0, atol=_TOL)
 
 
-@pytest.mark.skipif(_raw_absent(), reason="raw EIA-930 ERCO hourly extract absent")
+@requires_raw(EIA_HOURLY_DIR / f"{_BA} hourly.parquet")
 @pytest.mark.skipif(
     _clean_absent("generation"),
     reason="clean generation partition absent (run scripts/regenerate_clean.py generation)",

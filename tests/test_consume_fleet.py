@@ -27,6 +27,7 @@ from market_sim.data.fleet import (
     load_fleet_from_csv,
 )
 from scripts.lib import clean_io
+from tests.helpers import requires_raw
 
 pytestmark = [pytest.mark.slow, pytest.mark.integration]
 
@@ -42,18 +43,10 @@ _HOURS = 8760
 _CLEAN_FLEET_YEAR = fleet._clean_fleet_year(active_eia860_dir())
 
 
-def _raw_fleet_present() -> bool:
-    return (active_eia860_dir() / EIA_860_PARQUET_NAME).is_file()
-
-
-def _raw_as_present() -> bool:
-    return (RAW_DATA_DIR / "ercot-AS" / f"ercot_{_AS_YEAR}_as_up_mw.parquet").is_file()
-
-
 # ---------------------------------------------------------------------------
 # fleet attributes: clean vs raw
 # ---------------------------------------------------------------------------
-@pytest.mark.skipif(not _raw_fleet_present(), reason="raw EIA-860 parquet absent")
+@requires_raw(active_eia860_dir() / EIA_860_PARQUET_NAME)
 @pytest.mark.skipif(
     not clean_io.clean_exists("fleet", year=_CLEAN_FLEET_YEAR),
     reason="clean fleet slice absent — run scripts/regenerate_clean.py fleet",
@@ -115,7 +108,7 @@ def _model_clock_fold(local_ts: pd.Series, values: np.ndarray, year: int) -> np.
     return grouped.reindex(fleet._AS_MODEL_INDEX).to_numpy(dtype=float)
 
 
-@pytest.mark.skipif(not _raw_as_present(), reason="raw ercot AS withholding absent")
+@requires_raw(RAW_DATA_DIR / "ercot-AS" / f"ercot_{_AS_YEAR}_as_up_mw.parquet")
 @pytest.mark.skipif(
     not clean_io.clean_exists(
         "ancillary-services", iso=_AS_ISO, market="DAM", year=_AS_YEAR
@@ -146,7 +139,7 @@ def test_as_reserve_withholding_total_parity(monkeypatch):
     np.testing.assert_allclose(clean[covered], raw[covered], rtol=1e-6, atol=1e-3)
 
 
-@pytest.mark.skipif(not _raw_as_present(), reason="raw ercot AS withholding absent")
+@requires_raw(RAW_DATA_DIR / "ercot-AS" / f"ercot_{_AS_YEAR}_as_up_mw.parquet")
 @pytest.mark.skipif(
     not clean_io.clean_exists(
         "ancillary-services", iso=_AS_ISO, market="DAM", year=_AS_YEAR

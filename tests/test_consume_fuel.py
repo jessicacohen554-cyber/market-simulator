@@ -26,15 +26,11 @@ import pytest
 from market_sim.config import paths
 from market_sim.data import fuel
 from scripts.data import curate_fuel_prices
+from tests.helpers import requires_raw
 
 pytestmark = [pytest.mark.slow, pytest.mark.integration]
 
 _RAW_HH_DAILY = paths.GAS_PRICES_DIR / "henry_hub_daily.csv"
-
-requires_raw = pytest.mark.skipif(
-    not _RAW_HH_DAILY.is_file(),
-    reason=f"raw Henry Hub daily series absent at {_RAW_HH_DAILY}",
-)
 
 
 @pytest.fixture()
@@ -56,7 +52,7 @@ def clean_tree(tmp_path, monkeypatch):
     fuel._HH_DAILY_CACHE.clear()
 
 
-@requires_raw
+@requires_raw(_RAW_HH_DAILY)
 def test_clean_daily_matches_raw_loader(clean_tree, monkeypatch):
     """The clean-backed daily Henry Hub series equals the raw-CSV loader."""
     monkeypatch.delenv(fuel._USE_CLEAN_ENV, raising=False)  # raw default
@@ -67,7 +63,7 @@ def test_clean_daily_matches_raw_loader(clean_tree, monkeypatch):
     assert clean == raw
 
 
-@requires_raw
+@requires_raw(_RAW_HH_DAILY)
 def test_default_is_raw_not_clean(clean_tree, monkeypatch):
     """With the flag unset, _henry_hub_daily serves raw, not the clean tree."""
     monkeypatch.delenv(fuel._USE_CLEAN_ENV, raising=False)
@@ -82,7 +78,7 @@ def test_default_is_raw_not_clean(clean_tree, monkeypatch):
     assert out == fuel._HH_DAILY_CACHE[fuel.HENRY_HUB_DAILY_PATH]
 
 
-@requires_raw
+@requires_raw(_RAW_HH_DAILY)
 def test_env_flag_routes_to_clean(clean_tree, monkeypatch):
     """With MARKET_SIM_USE_CLEAN set, _henry_hub_daily serves the clean series."""
     clean = fuel._clean_fuel_price_daily(*fuel._HENRY_HUB_CLEAN_KEY)
@@ -94,7 +90,7 @@ def test_env_flag_routes_to_clean(clean_tree, monkeypatch):
     assert routed == clean
 
 
-@requires_raw
+@requires_raw(_RAW_HH_DAILY)
 def test_gas_daily_shape_factors_parity(clean_tree, monkeypatch):
     """The public daily-shape consumer is byte-identical under raw vs clean."""
     year, hours = 2024, fuel.HOURS_PER_YEAR
@@ -110,7 +106,7 @@ def test_gas_daily_shape_factors_parity(clean_tree, monkeypatch):
     np.testing.assert_array_equal(raw_factors, clean_factors)
 
 
-@requires_raw
+@requires_raw(_RAW_HH_DAILY)
 def test_gas_daily_shape_factors_mean_preserving(monkeypatch):
     """Each month's daily-shape factors average to EXACTLY 1.0 (G-A1 fix).
 
