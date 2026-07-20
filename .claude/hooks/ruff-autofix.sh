@@ -5,8 +5,9 @@
 # Stop hook only fires *after* the turn ends — too late to keep an unclean push
 # from landing. Fixing each Python file the instant it is written guarantees the
 # bytes are already ruff-clean by the time the agent stages and pushes them, so
-# the tree physically cannot fail the lint.yml gate
-# (`ruff check .` / `ruff format --check .`).
+# the tree physically cannot fail the .github/workflows/ci.yml `lint` job
+# (`ruff check .` / `ruff format --check .`; the former standalone lint.yml was
+# folded into ci.yml when CI was restored).
 #
 # SAFETY: applies ONLY the fixes the pinned baseline already uses. `ruff check
 # --fix` applies ruff's *safe* fixes by default (no --unsafe-fixes), and both
