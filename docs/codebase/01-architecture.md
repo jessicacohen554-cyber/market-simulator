@@ -19,7 +19,8 @@ src/market_sim/
 │   └── plant_taxonomy.py# canonical fuel/class/coal-rank taxonomy
 ├── data/                # loaders: Pydantic objects + numpy arrays from disk
 │   ├── fleet.py         # Generator, FleetArrays, CAMPD binning, tranche curves
-│   ├── eia_loader.py    # EIA-930 demand/generation/interchange + weather
+│   ├── eia930/          # EIA-930 loaders package (frames/demand/zonal_shares/envelopes/weather/actuals)
+│   ├── eia_loader.py    # facade → eia930 (aliases the historical import path; W-D2 split)
 │   ├── fuel.py          # gas/coal/oil/H2 delivered prices
 │   ├── renewables.py    # wind/solar hourly capacity factors
 │   ├── outages.py       # historic availability overlays (backcast)
@@ -96,7 +97,7 @@ weather-fixed inputs (loaded ONCE per run)
         │
         ▼
 for year in START_YEAR .. END_YEAR  (SEQUENTIAL — never parallel):
-   ┌─────────────────────────────────────────────────────────┐
+   ┌───────────────────────────────────────────────────────────┐
    │ 1. build (year 1) or evolve (years 2+) the fleet         │
    │ 2. generators_to_fleet_arrays() → FleetArrays (SoA)      │
    │ 3. assemble_mc(): per-(g,t) marginal cost vector         │
@@ -106,7 +107,7 @@ for year in START_YEAR .. END_YEAR  (SEQUENTIAL — never parallel):
    │ 7. P2 solve  (optional commitment screen; default off)   │
    │ 8. post-solve: CHP must-run, ORDC scarcity overlay       │
    │ 9. save_result() Parquet; build prior_results feedback   │
-   └─────────────────────────────────────────────────────────┘
+   └────────────────────────────────────────────────┘
         │  (prices → next year's capacity economics)
         ▼
 results/<iso>/<cache_key>/year_<year>.parquet (+ _p1 if commitment)
