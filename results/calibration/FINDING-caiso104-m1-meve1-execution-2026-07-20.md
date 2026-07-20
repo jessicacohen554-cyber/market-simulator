@@ -159,6 +159,40 @@ promotion only on no-status-regression, owner call):**
    this FINDING from `storage.parquet` — the D-2-equivalent conduct report
    for a charge-side mechanism.
 
+### 3a. B-leg v1 (`caiso104_m1v1_zero_B`): GATE-3 FAIL — total charge collapse to ZERO, root-caused to a composition construction defect; support rule fixed a priori, v2 re-solved
+
+The first B-leg solved with the v1 derived profile and **failed the
+pre-registered volume gate catastrophically: battery charge 4.70/8.56/13.02
+TWh (A) → 0.000 in ALL THREE years** — the exact caiso-100 volume-collapse
+mode the construction claims to exclude. Root cause (adjudicated from the
+committed artifacts, no re-solve): the v1 profile carried MEASUREMENT-DUST
+shares (1.7e-5 … 2.8e-3) in hods where the caiso-99 envelope's charge cap
+is EXACTLY 0 (2023: hod 17/18/21; 2024: hod 18/22; 2025: hod 22/23). A
+floor row `Chg_fleet[h] ≥ share_h × da_frac × Σ Chg` with `share_h > 0` in
+an `env_cap[h] = 0` hour makes ANY positive daily volume infeasible, so the
+LP's only feasible point was zero charge — a **composition defect between
+two measured artifacts at their support margins**, not an economic response
+(the S-elimination algebra and the volume-holding property are intact; the
+trivial-case tests exercise exactly that and pass). The ask's own window
+declaration ("evening/late shares are measured ≈ 0, so the floor forces
+nothing there BY CONSTRUCTION") presumed a support the v1 artifact did not
+literally have.
+
+**Fix (v2 derive, `SUPPORT_MIN_SHARE = 0.005`):** a hod belongs to the
+measured DA-allocation support only when it carries ≥ 0.5 % of annual IFM
+charge; sub-threshold shares are set to exactly 0 and the profile
+renormalized (Σ = 1). Fixed A PRIORI — before any λ effect of a feasible
+leg was observed — as a support definition (composition safety), never a
+residual response (rule 23/25 posture documented in the derive script).
+v2 artifact: 13–14 active hods/yr, zero share>0 ∧ env=0 conflicts, belly
+share 0.706/0.730/0.723, da_frac unchanged. Worst-case composition bound:
+max feasible daily volume `min_h env_h/(share_h × da_frac)` = 3.3/3.9/4.2
+MWh per fleet-MW vs the A-leg's realized mean 2.3/2.6/3.0 — the composed
+constraint binds only on extreme days (intended conduct, not a choke). The
+v1 bundle is retained (`caiso104_m1v1_zero_B`) and registered as the failed
+probe (rule 15); the v2 leg re-solves under the IDENTICAL §3 pre-registered
+gates.
+
 ## 4. M-EVE-1 B-leg gates (CONTINGENT on the §2 pin-check failing)
 
 Only if the firm blocks are NOT pinned on the fresh A-leg: gate
