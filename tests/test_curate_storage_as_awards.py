@@ -15,10 +15,10 @@ from tempfile import TemporaryDirectory
 import pandas as pd
 
 from scripts.data import curate_storage_as_awards as curate_saw
-from scripts.lib import clean_io
 from scripts.lib import storage_as_awards as saw
 from scripts.lib.storage_as_awards import caiso as saw_caiso
 from scripts.lib.clean_io import validate_clean
+from tests.helpers.base import CleanDirTestCase
 
 
 def _fixture_frame() -> pd.DataFrame:
@@ -56,23 +56,15 @@ def _fixture_frame() -> pd.DataFrame:
     )
 
 
-class TestCurateStorageAsAwards(unittest.TestCase):
+class TestCurateStorageAsAwards(CleanDirTestCase):
     def setUp(self) -> None:
-        self._tmp = TemporaryDirectory()
-        root = Path(self._tmp.name)
-        self.raw_root = root / "raw"
+        super().setUp()  # redirects paths.CLEAN_DIR to self.tmp_path / "clean"
+        self.raw_root = self.tmp_path / "raw"
         d = self.raw_root / saw_caiso.RAW_SUBDIR
         d.mkdir(parents=True)
         _fixture_frame().to_excel(
             d / "storage-report-2024q9.xlsx", sheet_name="market_output", index=False
         )
-        # Redirect CLEAN_DIR so writes never touch the repo.
-        self._orig_clean = clean_io.paths.CLEAN_DIR
-        clean_io.paths.CLEAN_DIR = root / "clean"
-
-    def tearDown(self) -> None:
-        clean_io.paths.CLEAN_DIR = self._orig_clean
-        self._tmp.cleanup()
 
     def test_curate_reconciles_and_validates(self) -> None:
         written = curate_saw.curate(raw_root=self.raw_root, isos=["CAISO"])
