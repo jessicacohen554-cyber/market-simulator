@@ -128,13 +128,14 @@ Two compounding reasons the ladder does not cleanly exercise the flipped curve:
    net-CONE-invariant; at PJM's healthy 2026–2030 energy price (~$39.68) the
    *economic* component adds ~0 marginal sensitivity, so the total is flat.
 
-**Follow-up (routed, not fixed here — rule 6):** update the T1.7 rig to
-preserve `demand_curve`/`seasonal_rbdc` and scale `net_cone_curve_per_kw_yr`
-for curve ISOs, and to report the *economic* retirement component separately
-from exogenous exits, before the net-CONE ladder is informative for a flipped
-ISO. This is a `scripts/run_driver_battery.py` change (Opus/Fable, rule 27),
-its own small commit. **ERCOT T1.7 is byte-identical across rungs (energy-only
-negative control), as expected.**
+**Follow-up (routed → DONE this session, FF-2C-rig, rule 6):** the T1.7 rig now
+preserves `demand_curve`/`seasonal_rbdc` and scales `net_cone_curve_per_kw_yr`
+(registry + per-year vintages) for curve ISOs, and reports the *economic*
+retirement component separately from exogenous exits. Rig repair only, no
+behavioural tuning (rules 1/13). The fixed-rig re-measurement is **§2.3 below**;
+it supersedes the flat-11.836-GW artifact above as the informative reading.
+**ERCOT T1.7 is byte-identical across rungs (energy-only negative control), as
+expected.**
 
 **Position caveat (compounds #1):** even a curve-preserving rig would find PJM
 at a position (~1.29–1.36) past its curve's 1.045 zero-cross → the curve pays
@@ -168,6 +169,60 @@ FF-2B `neiso-2021-2025-curve` leg — R4 changed only the fixed anchor, so its
 curve-ON dispatch is unchanged), equilibrium T-R5 (25-yr), tornado. Commands
 in §4.
 
+### 2.3 Fixed-rig T1.7 re-measurement (FF-2C-rig, this session)
+
+The §2.2 follow-up landed. `run_driver_battery.py`'s `_net_cone_scalar` now
+(a) preserves `demand_curve` / `net_cone_curve_per_kw_yr` / `seasonal_rbdc` and
+scales the **curve** anchor — registry **and** the per-delivery-year
+`MARKET_DESIGN_VINTAGES` anchors, whose vintage override (`resolve_demand_curve_
+vintage`) otherwise governs every threaded model year and would silently bypass
+a registry-only scale; and (b) the battery reports the **economic** retirement
+channel (RC-1B ledger `retirements[].reason`) separately from exogenous
+(confirmed + announced) exits. A companion cache-namespace fix (`make_rung_specs`
+gives each rung its own solve cache) was required: T1.7's scalar is a
+worker-level module patch stripped from the ScenarioConfig, so all rungs share
+one `config.cache_key()` and a shared solve cache pinned every dispatch-derived
+metric to rung 0 — the §2.2 single-`lw_price`/single-`co2` signature. Rig repair
+only, no behavioural tuning (rules 1/13); the curve scaling is verified to move
+the PJM curve price **exactly 2.0×** at 2× (vs the old patch's flat fixed-
+fallback ~1.43×), with the VRR shape / vintage structure intact.
+
+**PJM T1.7 (flipped, 2026–2030, legacy bins), net-CONE {0,1,2}×:**
+
+| metric | 0× | 1× | 2× | gate |
+|---|--:|--:|--:|---|
+| **economic_retired_thermal_gw** | **0.797** | **0.000** | **0.000** | **T1.7a PASS** (↓) |
+| exogenous_retired_thermal_gw | 4.575 | 4.575 | 4.575 | flat by construction |
+| retired_thermal_gw (old total) | 11.836 | 9.336 | 4.575 | confounded (net of entry) |
+| entry_thermal_gw | 9.38 | 8.25 | 10.32 | — |
+| lw_price ($/MWh) | 39.68 | 39.46 | 39.22 | now varies (was pinned) |
+| co₂ (Mt) | 1936.1 | 1933.4 | 1937.4 | now varies |
+
+The ladder now **moves on the net-CONE-sensitive channel**: economic
+retirements fall 0.797 → 0 GW as the capacity anchor goes 0× → 1× (T1.7a PASS,
+`monotone_down`), while the exogenous channel is **exactly flat** (4.575 GW) —
+confirming the split isolates the sensitive component the old cumulative total
+masked (the total itself, 11.836 → 4.575, is confounded: it nets same-fuel
+entry, which is why §2.2 called it net-CONE-invariant *and* why it is the wrong
+metric to gate on). Dispatch metrics now vary per rung (lw_price 39.68 → 39.22),
+proving the cache fix — under the shared cache they were all pinned to rung 0.
+**ERCOT T1.7 is byte-identical across all three rungs** (economic / exogenous /
+total retire 0, entry 17.31, lw 29.516, co₂ 1092.651, rm 0.0653) → **T1.7b
+PASS** — the energy-only negative control (net-CONE inert) holds under the fixed
+rig, so the movement above is a genuine curve-ISO signal, not a rig artifact.
+
+**What still bounds it (report what moves, claim nothing that doesn't).** The
+effect **saturates by 1×** — 1× and 2× are identical on every retirement metric.
+This is the §2.2 position caveat made visible: PJM sits at/past its VRR curve's
+1.045 zero-cross (flip memo §2, position ~1.29–1.36), so beyond a modest anchor
+the position-limited curve payment retains no further units. The fixed rig now
+lets the ladder cleanly **see** the net-CONE → economic-retirement response
+(~0.8 GW at the 0×→1× step) **and** its saturation; but the **quantitative**
+magnitude stays gated on the BLK-3 requirement/position half (R2/R3,
+FF-2B-adjacent). Until that lands, the 0×→1× step is the informative directional
+signal, **not** a forecast of PJM's net-CONE retirement elasticity — exactly the
+flip memo's measured caveat, now measurable rather than masked.
+
 ---
 
 ## 3. Blocker-register impact
@@ -196,8 +251,8 @@ are lighter.
 
 | Re-run | Command | Status |
 |---|---|---|
-| T1.7 net-CONE ladder, PJM (flipped) | `run_driver_battery.py --iso PJM --tests T1.7` | see §2.2 |
-| T1.7 ERCOT negative control | `run_driver_battery.py --iso ERCOT --tests T1.7` | control (energy-only, net-CONE inert) |
+| T1.7 net-CONE ladder, PJM (flipped) | `run_driver_battery.py --iso PJM --tests T1.7` | **DONE (fixed rig) — §2.3** (T1.7a PASS) |
+| T1.7 ERCOT negative control | `run_driver_battery.py --iso ERCOT --tests T1.7` | **DONE — §2.3** (T1.7b PASS, byte-identical) |
 | PJM hindcast re-score (curve-ON = flipped default) | `run_capacity_hindcast.py --iso PJM --vintage 2020 --fuel-variant realized --capacity-market-clearing --out-dir results/hindcast/pjm-2021-2025-curve-ff2c` then `register_hindcast.py --bundle …` | see §2.2 |
 | MISO hindcast re-score | `… --iso MISO --capacity-market-clearing --out-dir results/hindcast/miso-2021-2025-curve-ff2c` | pending (per-plant, sequential) |
 | CAISO hindcast re-score | `… --iso CAISO --capacity-market-clearing --out-dir results/hindcast/caiso-2021-2025-curve-ff2c` (pricing no-op; measures the R4 88.08 anchor) | pending |
