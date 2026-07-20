@@ -244,12 +244,12 @@ PASSES (CV 0.02-0.20); the year-relative tightest-quintile p95 ceiling
 7055/6875/7555 MW, CV 0.040, LOYO ≤ 7.8 %. This is the rung behind the evening
 under-price (−5.8/−4.9/−1.1): the model fills the evening margin with elastic
 hub-equalized import (caiso-105 §2: CA λ = a WECC node in 76/100/97 %, 10-12 $
-below CT entry) instead of climbing the domestic rung. → owner ask
+below CT entry) instead of climbing the domestic rung. Drafted owner ask
 `docs/handoffs/caiso-106-evening-intertie-exhaustion-ask-2026-07-20.md`
-(M-EVE-EXH-1: a measured net-load-conditioned evening net-import CEILING — a
-deliverability envelope, rule-1 admissible, NOT a throttle — with
-pre-registered estimation + A/B + LOYO gates and explicit kill conditions).
-PENDING owner ruling.
+(M-EVE-EXH-1: a measured net-load-conditioned evening net-import CEILING) with
+pre-registered estimation + A/B + LOYO gates and explicit kill conditions —
+then **WITHDRAWN by its own binding check** (Arc 3): the ceiling is inert for
+the evening.
 
 **Arc 2 — BELLY surplus-collapse is real but NOT year-stable (held back).**
 Direction unanimous: deepest net-load quintile TOTAL net import mean
@@ -265,10 +265,21 @@ West is correlated-tight, so CAISO tightness proxies the neighbor. Verdict
 (rule 1): no LP form on an unstable measurement — the belly needs a west-wide
 observable (candidate: the Palo Verde / Malin hub LEVEL) as a follow-on lane.
 
-**Arc 3 — binding check (single-year 2024 diagnostic).** Does the model
-over-import past the measured ceiling (the go/no-go for the ask)? See FINDING
-§5 (`scripts/probes/_caiso106_binding_2024.py`, keeper-recipe repro restricted
-to 2024, un-registered per the FINDING-caiso92b protocol).
+**Arc 3 — binding check INVERTS the ask (single-year 2024 diagnostic).**
+Keeper-recipe repro (`caiso106_binding_2024`, un-registered) model TOTAL net
+import vs the measured envelope (`_caiso106_binding_analysis.py`): EVENING model
++4165 MW mean (p95 +5745) — LESS than measured +4557, far below the measured
+p95 ~7-7.6 GW → the volume ceiling is SLACK in every band → the ask's KILL
+condition #1 fires. The evening under-price is a PRICE/merit-order defect (the
+marginal import prices at hub-equalized, 10-12 $ below reality's marginal
+supply), NOT a volume-exhaustion defect. BELLY model +3619 vs measured +994
+(+2.6 GW over-import) → the ceiling BINDS in the deep-surplus bands — but that
+arm's depth is the one that FAILED year-stability (Arc 2). So the volume lever
+belongs to the belly (unstable depth) and the evening needs a PRICE lever
+(inelastic exhaustion premium) — two distinct lanes, neither ready to file. The
+drafted ask is WITHDRAWN (no mechanism on refuted evidence); re-charter in the
+ask doc §7 (EVENING measured RT-over-hub premium; BELLY hub-LEVEL-conditioned
+depth). Derive-first holds: measure each before any ask.
 
 **Arc 4 — DAM-outage intake (priority 3):** advanced on main by PR #2669
 (`src/market_sim/data/caiso_outages.py` + tests + loader-wiring) while this

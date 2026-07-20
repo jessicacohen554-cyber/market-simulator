@@ -1,5 +1,21 @@
 # CAISO-106 owner ask — the measured EVENING intertie-exhaustion ceiling (the evening under-price fix)
 
+**Status: WITHDRAWN by the pre-registered binding check (same session,
+2026-07-20) — the ceiling is inert for the evening.** The single-year 2024
+binding check (FINDING §5, `_caiso106_binding_analysis.py`) fired this ask's
+own KILL condition #1 (§4): the model imports +4165 MW mean in the evening
+(p95 +5745) — LESS than measured (+4557) and far below the measured p95
+exhaustion depth (~7-7.6 GW) — so a volume ceiling never binds. The evening
+under-price is a PRICE / merit-order defect (the marginal import prices at the
+hub-equalized level, 10-12 $ below reality's marginal supply), not an
+import-volume-exhaustion defect; the correct lever is an inelastic exhaustion
+PREMIUM, not a quantity cap. The volume ceiling DOES bind in the BELLY (model
+over-imports +2.6 GW), but that arm's depth is not year-stable (FINDING §3).
+No mechanism filed. Re-charter in §7 below. Original ask text preserved
+unchanged for the record.
+
+---
+
 **Status: PENDING owner ruling.** No mechanism built or solved; measured
 derivation in `results/calibration/FINDING-caiso106-intertie-elasticity-2026-07-20.md`
 §2 (`scripts/probes/_caiso106_intertie_elasticity.py`, pure raw-data, gated).
@@ -132,3 +148,32 @@ measured p50 ~5.0 / p95 ~7.6 GW @ net-load [20,25); BINDS at pXX = ... -->
   shape, the caiso-87/93/94 clean-depth tranches, or the caiso-77 must-flow
   floor — it is an upper bound on net import, orthogonal to the priced supply
   rungs below it.
+
+## 7. Re-charter (post-binding-check, 2026-07-20) — two separate lanes, neither ready to file
+
+The binding check (§5 of the FINDING) split the caiso-105 unified
+"too-elastic-both-directions" diagnosis into two mechanistically DISTINCT
+defects that the drafted single volume ceiling cannot both serve:
+
+1. **EVENING = a PRICE defect (measured exhaustion PREMIUM lane).** The model's
+   evening import VOLUME is fine (≈ measured); it prices the marginal MW at the
+   hub-equalized level, 10-12 $ below reality's marginal supply. Candidate LP
+   form: an inelastic exhaustion premium that lifts the marginal tight-hour
+   import offer above the hub by the MEASURED RT-over-hub separation in the
+   tight state — a measured re-pricing (the MISO/NEISO Q-Q measured-ladder
+   class), NOT a quantity cap and NOT a residual-tuned adder. NEXT STEP: measure
+   the tight-evening RT-over-hub premium and run its CV/LOYO gates before any
+   ask (derive-first — do not reuse this withdrawn ask's gates for a different
+   mechanism).
+
+2. **BELLY = a VOLUME defect (the volume ceiling is correct, the depth is not).**
+   The model over-imports +2.6 GW in deep surplus; a net-import ceiling is the
+   right mechanism and it BINDS. The blocker is identification: the depth is not
+   year-stable on any CAISO-observable state (FINDING §3, west-wide dependence).
+   NEXT STEP: measure the belly net-transfer conduct conditioned on the Palo
+   Verde / Malin hub LEVEL (the observable that prices the neighbor surplus) and
+   test whether that state stabilizes the depth; only then draft the ceiling ask.
+
+Neither lane is filed this session — both need a fresh measurement first
+(derive-first). The withdrawn §2 volume-ceiling form stays on record as the
+tested-and-refuted evening candidate.
