@@ -268,6 +268,23 @@ class TestNetConeScalarPatch(unittest.TestCase):
             C.MARKET_DESIGN_VINTAGES = saved_vint
 
 
+class TestPerRungCacheNamespace(unittest.TestCase):
+    def test_each_rung_gets_its_own_cache_root(self):
+        # T1.7's rungs share one config.cache_key (the scalar is a module patch,
+        # stripped from the config), so a shared solve cache would cross-
+        # contaminate them. make_rung_specs must namespace cache_root per rung.
+        lad = next(x for x in B.build_ladders() if x.test_id == "T1.7")
+        specs = B.make_rung_specs(
+            lad, "PJM", 2026, 2030, cache_root="/base/cache", metrics_root="/m"
+        )
+        roots = [s.cache_root for s in specs]
+        self.assertEqual(len(roots), len(set(roots)), "cache roots must be distinct")
+        for s in specs:
+            safe = s.rung_id.replace(":", "__").replace(" ", "_")
+            self.assertTrue(s.cache_root.endswith(safe), s.cache_root)
+            self.assertTrue(s.cache_root.startswith("/base/cache"), s.cache_root)
+
+
 class TestRunLadderWithSeam(unittest.TestCase):
     """run_ladder end-to-end with an injected evaluate_fn (no real solve)."""
 
