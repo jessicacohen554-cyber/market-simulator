@@ -1,6 +1,17 @@
-"""Derive AEO2025-grounded fuel-price trajectories: gas, coal, oil, and a
+"""Derive AEO-grounded fuel-price trajectories: gas, coal, oil, and a
 $/MMBtu nuclear fuel-cycle cost — CLAUDE.md rule 23 re-derivation triggered by
 the P-0C data intake (data/raw/eia-aeo/, data/raw/uranium-marketing/).
+
+VINTAGE (FF-G2, 2026-07-20): the default edition is now **AEO2026** (released
+2026-04-08), bumped from AEO2025 under rule 23 — the trigger is the source-data
+edition change, not a residual. Two edition differences the code handles: (a)
+AEO2026 is published in real **2025$** (AEO2025 was 2024$), carried into the
+printed block labels; (b) AEO2026 renamed its central case "Reference" ->
+"Counterfactual Baseline" (scenario id ``ref2025`` -> ``cb2026``), still the
+central projection the model's "mid" path tracks (EIA AEO2026 narrative).
+Re-derive an earlier edition with ``--aeo-year 2025``. Nuclear fuel is NOT
+re-derived by the AEO bump (its EIA-UMAR source is unchanged) and stays in
+2024$.
 
 WHY THIS SCRIPT EXISTS: ``HENRY_HUB_TRAJECTORIES`` (constants.py) carried a
 standing "TODO: verify against AEO Table 13" since it was hand-typed from
@@ -80,11 +91,20 @@ logger = logging.getLogger(__name__)
 AEO_DIR = RAW_DATA_DIR / "eia-aeo"
 URANIUM_CSV = RAW_DATA_DIR / "uranium-marketing" / "eia_umar_uranium_price.csv"
 
-# AEO2025 scenario id -> model gas/coal/oil price-path lever.
-_SCENARIO_TO_PATH: dict[str, str] = {
-    "highogs": "low",
-    "ref2025": "mid",
-    "lowogs": "high",
+# The AEO edition this script re-derives against by default. Bumped
+# 2025 -> 2026 for the FF-G2 vintage refresh (CLAUDE.md rule 23: source-data
+# change is the AEO2025 -> AEO2026 edition bump). AEO2026 (released 2026-04-08)
+# is in real **2025$** (AEO2025 was 2024$) and renamed its central case
+# "Reference" -> "Counterfactual Baseline" (cb2026); see the module docstring.
+DEFAULT_AEO_YEAR: int = 2026
+
+# AEO edition -> {scenario id: model gas/coal/oil price-path lever}. The
+# central-case scenario id is edition-specific (ref2025 -> cb2026); the
+# High/Low Oil and Gas Supply side cases keep their ids. Mirrors
+# scripts/data/fetch_eia_aeo.py::SCENARIOS_BY_AEO so the two stay in lockstep.
+_SCENARIO_TO_PATH_BY_AEO: dict[int, dict[str, str]] = {
+    2025: {"highogs": "low", "ref2025": "mid", "lowogs": "high"},
+    2026: {"highogs": "low", "cb2026": "mid", "lowogs": "high"},
 }
 
 # --- Nuclear fuel-cycle physical constants (World Nuclear Association,
@@ -106,21 +126,25 @@ _DISTILLATE_MMBTU_PER_GAL: float = 0.1385  # No. 2 distillate fuel oil
 _RESIDUAL_MMBTU_PER_GAL: float = 0.1497  # No. 6 residual fuel oil
 
 
-def _load_aeo() -> pd.DataFrame:
-    files = sorted(glob.glob(str(AEO_DIR / "eia_aeo2025_fuel_prices.part*.csv")))
-    single = AEO_DIR / "eia_aeo2025_fuel_prices.csv"
+def _load_aeo(aeo_year: int = DEFAULT_AEO_YEAR) -> pd.DataFrame:
+    single = AEO_DIR / f"eia_aeo{aeo_year}_fuel_prices.csv"
     if single.exists():
         return pd.read_csv(single)
+    files = sorted(glob.glob(str(AEO_DIR / f"eia_aeo{aeo_year}_fuel_prices.part*.csv")))
     if not files:
-        raise FileNotFoundError(f"no AEO fuel-price CSV found under {AEO_DIR}")
+        raise FileNotFoundError(
+            f"no AEO{aeo_year} fuel-price CSV found under {AEO_DIR}"
+        )
     return pd.concat([pd.read_csv(f) for f in files], ignore_index=True)
 
 
-def derive_gas_trajectory(aeo: pd.DataFrame) -> dict[str, dict[int, float]]:
+def derive_gas_trajectory(
+    aeo: pd.DataFrame, scenario_to_path: dict[str, str]
+) -> dict[str, dict[int, float]]:
     """Return ``{path: {year: $/MMBtu}}`` from AEO Table 13 Henry Hub spot."""
     rows = aeo[(aeo["fuel"] == "gas") & (aeo["metric"] == "henry_hub_spot")]
     out: dict[str, dict[int, float]] = {}
-    for scenario, path in _SCENARIO_TO_PATH.items():
+    for scenario, path in scenario_to_path.items():
         sub = rows[rows["scenario"] == scenario].sort_values("year")
         out[path] = {
             int(y): round(float(v), 2) for y, v in zip(sub["year"], sub["value"])
@@ -128,7 +152,9 @@ def derive_gas_trajectory(aeo: pd.DataFrame) -> dict[str, dict[int, float]]:
     return out
 
 
-def derive_coal_trajectory(aeo: pd.DataFrame) -> dict[str, dict[int, float]]:
+def derive_coal_trajectory(
+    aeo: pd.DataFrame, scenario_to_path: dict[str, str]
+) -> dict[str, dict[int, float]]:
     """Return ``{path: {year: $/MMBtu}}`` from AEO Table 15 national delivered coal."""
     rows = aeo[
         (aeo["fuel"] == "coal")
@@ -136,7 +162,7 @@ def derive_coal_trajectory(aeo: pd.DataFrame) -> dict[str, dict[int, float]]:
         & (aeo["region"] == "usa")
     ]
     out: dict[str, dict[int, float]] = {}
-    for scenario, path in _SCENARIO_TO_PATH.items():
+    for scenario, path in scenario_to_path.items():
         sub = rows[rows["scenario"] == scenario].sort_values("year")
         out[path] = {
             int(y): round(float(v), 4) for y, v in zip(sub["year"], sub["value"])
@@ -144,7 +170,9 @@ def derive_coal_trajectory(aeo: pd.DataFrame) -> dict[str, dict[int, float]]:
     return out
 
 
-def derive_oil_trajectory(aeo: pd.DataFrame) -> dict[str, dict[int, float]]:
+def derive_oil_trajectory(
+    aeo: pd.DataFrame, scenario_to_path: dict[str, str]
+) -> dict[str, dict[int, float]]:
     """Return ``{path: {year: $/MMBtu}}`` averaging AEO distillate + residual
     electric-power fuel oil prices (matching ``OIL_PRICE_PER_MMBTU``'s
     existing documented blend construction).
@@ -156,7 +184,7 @@ def derive_oil_trajectory(aeo: pd.DataFrame) -> dict[str, dict[int, float]]:
     dist = aeo[(aeo["fuel"] == "oil") & (aeo["metric"] == "electric_power_distillate")]
     resid = aeo[(aeo["fuel"] == "oil") & (aeo["metric"] == "electric_power_residual")]
     out: dict[str, dict[int, float]] = {}
-    for scenario, path in _SCENARIO_TO_PATH.items():
+    for scenario, path in scenario_to_path.items():
         d = (
             dist[dist["scenario"] == scenario].set_index("year")["value"]
             / _DISTILLATE_MMBTU_PER_GAL
@@ -227,28 +255,60 @@ def _print_path_literal(name: str, table: dict[str, dict[int, float]]) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.parse_args()
-
-    aeo = _load_aeo()
-
-    print("# --- HENRY_HUB_TRAJECTORIES (AEO2025 Table 13, real 2024$/MMBtu) ---")
-    _print_path_literal("HENRY_HUB_AEO2025", derive_gas_trajectory(aeo))
-    print()
-    print(
-        "# --- COAL_PRICE_TRAJECTORIES (AEO2025 Table 15 national delivered, "
-        "real 2024$/MMBtu) ---"
+    parser.add_argument(
+        "--aeo-year",
+        type=int,
+        default=DEFAULT_AEO_YEAR,
+        help=(
+            "AEO edition to derive against (default "
+            f"{DEFAULT_AEO_YEAR}); reads data/raw/eia-aeo/eia_aeo<year>_"
+            "fuel_prices.csv"
+        ),
     )
-    _print_path_literal("COAL_PRICE_TRAJECTORIES", derive_coal_trajectory(aeo))
-    print()
+    args = parser.parse_args()
+
+    aeo_year = args.aeo_year
+    scenario_to_path = _SCENARIO_TO_PATH_BY_AEO[aeo_year]
+    aeo = _load_aeo(aeo_year)
+    # AEO2026 is published in 2025$; AEO2025 was 2024$. Label the printed
+    # blocks with the edition's own real-dollar basis so the paste carries the
+    # correct citation. Coal enters the model as a dollar-year-invariant RATIO
+    # to each ISO's own anchor (resolve_annual_coal_price), so its dollar basis
+    # never affects a delivered price; gas and oil enter as absolute levels.
+    dollar_year = {2025: 2024, 2026: 2025}[aeo_year]
+    tag = f"AEO{aeo_year}"
+
     print(
-        "# --- OIL_PRICE_TRAJECTORIES (AEO2025 Table 12 distillate+residual "
-        "average, real 2024$/MMBtu) ---"
+        f"# --- HENRY_HUB_TRAJECTORIES ({tag} Table 13, real {dollar_year}$/MMBtu) ---"
     )
-    _print_path_literal("OIL_PRICE_TRAJECTORIES", derive_oil_trajectory(aeo))
+    _print_path_literal(
+        f"HENRY_HUB_{tag}", derive_gas_trajectory(aeo, scenario_to_path)
+    )
     print()
     print(
-        "# --- NUCLEAR_FUEL_PRICE_PER_MMBTU (EIA UMAR-derived fuel-cycle "
-        "cost, real 2024$/MMBtu) ---"
+        f"# --- COAL_PRICE_TRAJECTORIES ({tag} Table 15 national delivered, "
+        f"real {dollar_year}$/MMBtu) ---"
+    )
+    _print_path_literal(
+        "COAL_PRICE_TRAJECTORIES", derive_coal_trajectory(aeo, scenario_to_path)
+    )
+    print()
+    print(
+        f"# --- OIL_PRICE_TRAJECTORIES ({tag} Table 12 distillate+residual "
+        f"average, real {dollar_year}$/MMBtu) ---"
+    )
+    _print_path_literal(
+        "OIL_PRICE_TRAJECTORIES", derive_oil_trajectory(aeo, scenario_to_path)
+    )
+    print()
+    # Nuclear fuel is NOT re-derived by the AEO bump: its source (EIA Uranium
+    # Marketing Annual Report) is unchanged, so under CLAUDE.md rule 23 it is
+    # not re-triggered and stays in its own real-2024$ basis. Printed here for
+    # completeness only; the FF-G2 refresh leaves NUCLEAR_FUEL_PRICE_HISTORICAL
+    # byte-identical.
+    print(
+        "# --- NUCLEAR_FUEL_PRICE_HISTORICAL (EIA UMAR-derived fuel-cycle "
+        "cost, real 2024$/MMBtu — UNCHANGED by the AEO bump; source not updated) ---"
     )
     _print_dict_literal(
         "NUCLEAR_FUEL_PRICE_HISTORICAL", derive_nuclear_fuel_trajectory()
