@@ -262,7 +262,14 @@ CAMPD-based ST_GAS hourly check is the named follow-up measurement if step
 (`docs/handoffs/ercot-stgas-shoulder-2026-07.md`) refutes this inference in
 magnitude — measured real steam-gas in these hours is 4.2–4.8 GW, so the
 over-dispatch is ×1.27–1.37 (+1.3–1.7 GW), not ~3×; the model-side 6.1 GW
-is confirmed.]* Secondary signal, a fortiori: the model carries ~4.6 GW LESS
+is confirmed.]* *[Corpus note also superseded 2026-07-20 (ERCOT-92): the
+NP3-965 sample-day corpus DOES carry the gas-steam restypes
+(GSNONR/GSREH/GSSUP — 44 resources, fully populated SCED1/SCED2 curves and
+telemetered statuses); what lacked an ST block was the derived CC/CT
+RT-wall artifact's restype scope, not the raw data. The RT/SCED-basis steam
+ladder is now derived from the committed corpus:
+`ercot_sced_offer_wall_steam_condbinned.json`, record in
+`docs/handoffs/ercot-stgas-shoulder-2026-07.md` §9.]* Secondary signal, a fortiori: the model carries ~4.6 GW LESS
 VRE than reality in the 2024 resid hours (evening solar shape) and still
 clears $30–80.
 
