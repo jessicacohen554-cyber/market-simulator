@@ -57,7 +57,7 @@ import logging
 import sys
 import time
 from concurrent.futures import ProcessPoolExecutor, as_completed
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from datetime import date
 from pathlib import Path
 
@@ -473,12 +473,13 @@ def build_ladders() -> list[Ladder]:
         )
     )
 
-    # T1.7 — capacity-revenue net-CONE {0,1,2}x. On a capacity-market ISO
-    # retirements ↓ / entry ↑ as net-CONE rises; ERCOT is the energy-only
-    # negative control (byte-identical retirements across the ladder). The
-    # scalar has no ScenarioConfig field yet (P-1B adds capacity_market_clearing);
-    # until then it is a documented worker-level probe patch (never persisted,
-    # never a keeper).
+    # T1.7 — capacity-revenue net-CONE {0,1,2}x. On a capacity-market ISO economic
+    # retirements ↓ / entry ↑ as net-CONE rises; ERCOT is the energy-only negative
+    # control (byte-identical retirements across the ladder). The scalar is applied
+    # by _apply_probe_patches as a worker-level module patch (never persisted,
+    # never a keeper): it scales BOTH the fixed and the CURVE net-CONE anchors
+    # (registry + per-year vintages), preserving the demand curve, so a POST-FLIP
+    # curve ISO is exercised on the channel it actually prices on (FF-2C §2.2).
     ladders.append(
         Ladder(
             test_id="T1.7",
@@ -489,8 +490,9 @@ def build_ladders() -> list[Ladder]:
             expectations=[
                 Expectation(
                     "T1.7a",
-                    "thermal retirements monotone ↓ in net-CONE (capacity-market ISO)",
-                    "retired_thermal_gw",
+                    "ECONOMIC thermal retirements monotone ↓ in net-CONE "
+                    "(capacity-market ISO)",
+                    "economic_retired_thermal_gw",
                     "monotone_down",
                 ),
                 Expectation(
@@ -502,8 +504,12 @@ def build_ladders() -> list[Ladder]:
                     tol=1e-6,
                 ),
             ],
-            note="Expectation T1.7a applies to PJM; T1.7b is the ERCOT negative "
-            "control — the scorer picks per ISO (see EXPECTATIONS_BY_ISO).",
+            note="Expectation T1.7a scores the ECONOMIC retirement channel only "
+            "(the net-CONE-sensitive one); the cumulative total mixes in "
+            "net-CONE-invariant confirmed/announced exits and masks the signal "
+            "(FF-2C §2.2). T1.7a applies to PJM; T1.7b is the ERCOT negative "
+            "control on the full capacity-drop total (the strongest byte-identity "
+            "check) — the scorer picks per ISO (see _expectations_for).",
         )
     )
 
@@ -576,6 +582,66 @@ class RungSpec:
     metrics_cache: str  # path to the memoized metrics json (check-before-run)
 
 
+def _scale_seasonal_rbdc(seasonal, scalar: float):
+    """Return a copy of a ``SeasonalRBDC`` with its net-CONE $ level scaled.
+
+    MISO alone prices its curve channel through the seasonal RBDC sum, whose $
+    level is ``daily_net_cone_per_mw_day`` — NOT ``net_cone_curve_per_kw_yr``,
+    which the seasonal branch of the pricing seam bypasses. Scaling that anchor
+    (season shapes/day-weights preserved) is what moves MISO's curve price on the
+    T1.7 ladder. ``None`` (every non-MISO design/vintage) passes through.
+    """
+    if seasonal is None:
+        return None
+    return replace(
+        seasonal,
+        daily_net_cone_per_mw_day=seasonal.daily_net_cone_per_mw_day * scalar,
+    )
+
+
+def _scale_market_design(base, scalar: float):
+    """Scale BOTH net-CONE anchors of a ``MarketDesign``, preserving the curve.
+
+    The pre-flip patch rebuilt the design with only ``net_cone_per_kw_yr``,
+    dropping ``demand_curve`` / ``net_cone_curve_per_kw_yr`` / ``seasonal_rbdc``.
+    Post-flip a curve ISO prices on the CURVE anchor (or the seasonal RBDC), so
+    that patch scaled the now-bypassed FIXED channel and — with the curve dropped
+    — even reverted the pricing seam to the fixed fallback (FF-2C §2.2 rig
+    defect). Preserve every field and scale the curve anchor (and MISO's seasonal
+    $ level) alongside the fixed one, so the rung moves the channel the ISO
+    actually clears on. Energy-only ISOs never reach here (absent from
+    :data:`MARKET_DESIGN`).
+    """
+    return replace(
+        base,
+        net_cone_per_kw_yr=base.net_cone_per_kw_yr * scalar,
+        net_cone_curve_per_kw_yr=base.net_cone_curve_per_kw_yr * scalar,
+        seasonal_rbdc=_scale_seasonal_rbdc(base.seasonal_rbdc, scalar),
+    )
+
+
+def _scale_vintages(vintages, scalar: float):
+    """Scale each demand-curve vintage's net-CONE anchor (curve shape preserved).
+
+    The pricing seam resolves a per-delivery-year vintage INSIDE the curve branch,
+    and that vintage's ``net_cone_curve_per_kw_yr`` **overrides** the registry
+    anchor for the priced year (:func:`constants.resolve_demand_curve_vintage`).
+    Every capacity screen (retirement, thermal entry, storage entry) threads the
+    model year, so scaling only the registry anchor is silently bypassed for every
+    year that resolves to a vintage — which, for the flipped ISOs, is all of them.
+    Scale the vintage anchors too (and any seasonal RBDC they carry) so the ladder
+    actually moves the curve channel.
+    """
+    return tuple(
+        replace(
+            v,
+            net_cone_curve_per_kw_yr=v.net_cone_curve_per_kw_yr * scalar,
+            seasonal_rbdc=_scale_seasonal_rbdc(v.seasonal_rbdc, scalar),
+        )
+        for v in vintages
+    )
+
+
 def _apply_probe_patches(overrides: dict, iso: str):
     """Apply the two off-config diagnostic scalars, returning cleaned overrides.
 
@@ -592,15 +658,23 @@ def _apply_probe_patches(overrides: dict, iso: str):
         from market_sim.config import constants as C
         from market_sim.model import capacity as cap
 
+        scalar = float(scalar)
         base = C.MARKET_DESIGN.get(iso)
         if base is not None:
-            patched = C.MarketDesign(
-                capacity_market=base.capacity_market,
-                net_cone_per_kw_yr=base.net_cone_per_kw_yr * float(scalar),
-            )
-            # Patch the reference the retirement/entry screens actually read.
+            # Scale the FIXED and CURVE anchors together, preserving demand_curve /
+            # seasonal_rbdc so a flipped ISO stays on its curve channel. Patch the
+            # registry the retirement/entry/storage screens read (capacity imports
+            # MARKET_DESIGN into its own namespace, so rebind cap's copy).
             cap.MARKET_DESIGN = dict(cap.MARKET_DESIGN)
-            cap.MARKET_DESIGN[iso] = patched
+            cap.MARKET_DESIGN[iso] = _scale_market_design(base, scalar)
+            # The pricing seam resolves a per-delivery-year vintage whose anchor
+            # overrides the registry anchor for every threaded year, so scale the
+            # vintages too or the curve channel never moves (constants module
+            # global; resolve_demand_curve_vintage reads it dynamically).
+            vintages = C.MARKET_DESIGN_VINTAGES.get(iso)
+            if vintages:
+                C.MARKET_DESIGN_VINTAGES = dict(C.MARKET_DESIGN_VINTAGES)
+                C.MARKET_DESIGN_VINTAGES[iso] = _scale_vintages(vintages, scalar)
     seed = overrides.get("_storage_seed_gw")
     if seed is not None:
         # Seed via the existing storage_deployment axis is coarse; the precise
@@ -676,6 +750,38 @@ def evaluate_rung(spec_dict: dict) -> dict:
     return out
 
 
+def _retirement_channel_split(ledgers: dict) -> tuple[float, float]:
+    """Split thermal retirements into (economic_gw, exogenous_gw) from the ledgers.
+
+    Uses the RC-1B evolution-ledger ``retirements[].reason`` attribution: the
+    ECONOMIC screen is the only net-CONE-sensitive channel, while confirmed
+    (step 0) + announced (step 1) exits are exogenous and net-CONE-INVARIANT by
+    construction. The cumulative capacity-drop total (``retired_thermal_gw``) sums
+    both, so it masks the T1.7 ladder signal — the T1.7a gate scores the economic
+    component this returns (FF-2C §2.2). Legacy pre-RC-1B bundles carry
+    ``reason="known"``; that falls into the exogenous bucket (never economic), so
+    an old cache degrades to "all exogenous" rather than mis-attributing. Confirmed
+    registry derates (``confirmed_derates[].derate_mw`` — a tranche shrunk without
+    retiring its ``unit_id``) are exogenous too. Only :data:`THERMAL_FUELS` count.
+    """
+    economic_gw = 0.0
+    exogenous_gw = 0.0
+    for _y in sorted(ledgers):
+        led = ledgers[_y]
+        for r in led.get("retirements", []):
+            if r.get("fuel") not in THERMAL_FUELS:
+                continue
+            mw_gw = float(r.get("mw", 0.0)) / 1000.0
+            if r.get("reason") == "economic":
+                economic_gw += mw_gw
+            else:  # confirmed | announced | known (legacy) — all exogenous
+                exogenous_gw += mw_gw
+        for d in led.get("confirmed_derates", []):
+            if d.get("fuel") in THERMAL_FUELS:
+                exogenous_gw += float(d.get("derate_mw", 0.0)) / 1000.0
+    return economic_gw, exogenous_gw
+
+
 def _extract_metrics(spec, config, cache, key, ledgers, summarize) -> dict:
     """Read the per-rung scalar metrics the expectations score, from the cache.
 
@@ -733,10 +839,12 @@ def _extract_metrics(spec, config, cache, key, ledgers, summarize) -> dict:
         for a in led.get("storage_additions", []):
             total_build_gw += float(a.get("mw", 0.0)) / 1000.0
     total_build_gw += renew_build_gw
+    economic_retired_gw, exogenous_retired_gw = _retirement_channel_split(ledgers)
 
     # Retired thermal GW = first-year minus last-year thermal capacity (the only
     # observable retirement signal without threading an explicit log, same as
-    # the tornado).
+    # the tornado). Net of same-fuel additions, so it under-reports gross exits;
+    # the ledger-attributed economic/exogenous split above is the clean signal.
     retired_thermal_gw = 0.0
     if cap_first is not None:
         for fuel in THERMAL_FUELS:
@@ -758,6 +866,8 @@ def _extract_metrics(spec, config, cache, key, ledgers, summarize) -> dict:
         "renewable_build_gw": round(renew_build_gw, 4),
         "total_build_gw": round(total_build_gw, 4),
         "retired_thermal_gw": round(retired_thermal_gw, 4),
+        "economic_retired_thermal_gw": round(economic_retired_gw, 4),
+        "exogenous_retired_thermal_gw": round(exogenous_retired_gw, 4),
         "reserve_margin_final": round(final_rm, 5) if final_rm is not None else None,
     }
     if mass_cap_prices:
@@ -1066,6 +1176,8 @@ def render_report(
                     "lw_price",
                     "scarcity_hours",
                     "retired_thermal_gw",
+                    "economic_retired_thermal_gw",
+                    "exogenous_retired_thermal_gw",
                     "mass_cap_price",
                     "rps_dual_over_acp",
                     "reserve_margin_final",
