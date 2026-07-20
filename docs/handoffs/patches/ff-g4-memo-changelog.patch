@@ -1,0 +1,48 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 2c7edc6..bb6972f 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,5 +1,43 @@
+ # Changelog
+ 
++## 2026-07-20 — FF-G4 load-shape evolution design memo (WAVE FI, lane L-INP; memo-only)
++
++Design memo `docs/handoffs/ff-g4-load-shape-design-memo-2026-07.md` — **no
++code, no solve, no default moved** (FF-0C memo pattern; implementing session
++chartered from its §8 owner-decision boxes). Diagnoses the frozen
++weather-year-shape × single-era-scalar demand construction (peak-CAGR ≡
++energy-CAGR by construction; seasonal + hourly structure frozen 25 years;
++ISO-NE winter-peaking flip unexpressible).
++
++- **Grounding**: per-ISO peak/energy CAGR decomposition re-verified against
++  current forecast vintages (ISO-NE 2026 CELT winter flip 2035/36 with
++  published HEF/TEF MW components; PJM 2026 winter 4.0 %/yr > summer
++  3.6 %/yr while energy 5.3 %/yr — divergence runs in *both* directions;
++  NYISO **2026** Gold Book baseline flip ~2039; MISO **2026** LTLF). Audit
++  M-row staleness found: **M3 (MISO Sept-2025 LTLF) and M4 (NYISO 2025 Gold
++  Book) are superseded by 2026 editions**. Field survey (plan §4): NREL
++  EFS/dsgrid/ReEDS-EER, EPA IPM, Modo/CPUC-SERVM/E3, EPRI US-REGEN — additive
++  end-use layering is the field's shape-evolution mechanism; dual
++  peak/energy stretch is its calibration step; weather-year multiplicity is
++  the uncertainty axis.
++- **Recommendation (owner boxes pending)**: Option B — additive end-use
++  layers (EV + heat-pump) on the CX-4 DC-block relocation seam
++  (`add_datacenter_block` generalized to a layer iterator), published
++  profiles × published adoption trajectories, gate default-off and
++  backcast/hindcast-coerced off (byte-identity by construction); dual-scalar
++  morph graded as fallback; weather-year blending rejected for this
++  phenomenon. First-ISO order NEISO → PJM. Scoring design: seasonal
++  peak/scarcity split in `full_horizon_summary`, proposed I15 load-shape
++  integrity invariant, FC-6 monotonicity row.
++- **Registration note**: FF plan §1.2-11 / gap-register §3.11 FF-G4 rows are
++  not on main (they live in the unapplied
++  `docs/handoffs/patches/ff-g1-core-wiring.patch`); their post-patch status
++  is recorded in the memo instead of editing the missing sections.
++- This CHANGELOG entry ships as
++  `docs/handoffs/patches/ff-g4-memo-changelog.patch` (CHANGELOG.md is 4.5 k
++  lines — not safely API-transportable whole; the 2026-07-19 costs-session
++  precedent).
++
+ ## 2026-07-19 — New-build capacity costs: cross-source grounding, literature-envelope ranges, storage/offshore/EGS/H2 derivation-lock
+ 
+ Forecast-only cost-input grounding (capacity-expansion entry screens); **no LP
