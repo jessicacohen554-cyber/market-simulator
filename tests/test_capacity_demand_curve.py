@@ -322,10 +322,13 @@ class TestScreenByteIdentity(unittest.TestCase):
         return sorted(g.unit_id for g in survivors)
 
     def test_gate_off_ignores_reserve_position(self):
-        # With capacity_market_clearing off (default), passing a reserve
-        # position must not change which units retire — the gate, not the
-        # position, controls curve mode (proves default-off byte-identity).
-        config = ScenarioConfig(iso="PJM")  # gate defaults off
+        # With the clearing gate off, passing a reserve position must not change
+        # which units retire — the gate, not the position, controls curve mode
+        # (proves gate-off byte-identity). PJM's default flipped ON at FF-2C, so
+        # the gate is disabled explicitly here via the per-ISO override row.
+        config = ScenarioConfig(
+            iso="PJM", capacity_market_clearing_by_iso={"PJM": False}
+        )  # gate explicitly off for PJM
         self.assertFalse(config.capacity_market_clearing)
         base = self._run(config, None)
         self.assertEqual(base, self._run(config, 0.80))
@@ -345,9 +348,14 @@ class TestStorageCurve(unittest.TestCase):
     """estimate_capacity_value routes through the shared curve seam."""
 
     def test_fixed_mode_byte_identity(self):
-        # Default (gate off / no reserve position) == net_cone x ELCC x derate,
-        # byte-identical to the pre-CR-1 storage capacity value.
-        config = ScenarioConfig(iso="PJM", storage_capacity_value=True)
+        # Gate off / no reserve position == net_cone x ELCC x derate,
+        # byte-identical to the pre-CR-1 storage capacity value. PJM's clearing
+        # gate flipped ON by default at FF-2C, so it is disabled explicitly here.
+        config = ScenarioConfig(
+            iso="PJM",
+            storage_capacity_value=True,
+            capacity_market_clearing_by_iso={"PJM": False},
+        )
         v_none = estimate_capacity_value("li_ion_4hr", 0.0, config, "PJM")
         v_gate_off = estimate_capacity_value(
             "li_ion_4hr", 0.0, config, "PJM", reserve_position=0.8
@@ -410,6 +418,11 @@ class TestP0BReconciliation(unittest.TestCase):
         self.assertAlmostEqual(
             design.net_cone_curve_per_kw_yr, net_cone_day * 365.0 / 1000.0, 3
         )
+        # FF-2C R4: the fixed-mode anchor is re-derived to the SAME published
+        # UCAP basis as the curve anchor (the ~$100 placeholder is retired).
+        self.assertAlmostEqual(
+            design.net_cone_per_kw_yr, net_cone_day * 365.0 / 1000.0, 3
+        )
         # Curve x-positions.
         cps = rows[rows.metric == "curve_point"].sort_values("point_index")
         self.assertEqual(
@@ -454,6 +467,9 @@ class TestP0BReconciliation(unittest.TestCase):
         self.assertAlmostEqual(
             design.net_cone_curve_per_kw_yr, net_cone_month * 12.0, 1
         )
+        # FF-2C R4: the fixed-mode anchor is re-derived to the SAME published
+        # FCA 18 net-CONE basis as the curve anchor.
+        self.assertAlmostEqual(design.net_cone_per_kw_yr, net_cone_month * 12.0, 1)
         cap_month = self._scalar(rows, "price_cap")
         self.assertAlmostEqual(
             design.demand_curve[0].price_frac_net_cone,
@@ -470,6 +486,9 @@ class TestP0BReconciliation(unittest.TestCase):
             rows, "net_cone", area="North/Central", y_unit="usd_per_mw_yr"
         )
         self.assertAlmostEqual(design.net_cone_curve_per_kw_yr, net_cone / 1000.0, 2)
+        # FF-2C R4: the fixed-mode anchor is re-derived to the SAME published
+        # North/Central Net CONE basis as the curve anchor.
+        self.assertAlmostEqual(design.net_cone_per_kw_yr, net_cone / 1000.0, 2)
         # Cap fraction ~ North/Central average gross CONE / Net CONE. The RBDC
         # shape is first-order (documented), so this is a band, not equality.
         nc_lrz = rows[(rows.metric == "gross_cone") & (rows.area.str.startswith("LRZ"))]
@@ -482,8 +501,9 @@ class TestP0BReconciliation(unittest.TestCase):
         )
 
     def test_caiso_proxy_recited_to_cpm_soft_offer_cap(self):
-        # CAISO carries no curve; its fixed anchor is re-cited to the CPM
-        # soft-offer cap. Assert the anchor is within 5% of the published cap.
+        # CAISO carries no curve; its fixed anchor is re-derived to the CPM
+        # soft-offer cap. FF-2C R4 tightened this from within-5% to EXACT: the
+        # anchor now equals the published cap ($7.34/kW-month × 12).
         rows = self.dc.parse_iso("CAISO", RAW_DIR)
         soft_cap_month = float(
             rows[
@@ -493,9 +513,7 @@ class TestP0BReconciliation(unittest.TestCase):
         soft_cap_yr = soft_cap_month * 12.0
         design = MARKET_DESIGN["CAISO"]
         self.assertEqual(design.demand_curve, ())
-        self.assertLess(
-            abs(design.net_cone_per_kw_yr - soft_cap_yr) / soft_cap_yr, 0.05
-        )
+        self.assertAlmostEqual(design.net_cone_per_kw_yr, soft_cap_yr, places=2)
 
 
 class TestMarketDesignVintages(unittest.TestCase):
