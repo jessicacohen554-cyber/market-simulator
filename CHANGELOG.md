@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-07-20 — Fuel-forward trajectories: AEO2025 → AEO2026 vintage bump + near-term triangulation (FF-G2)
+
+Forecast-only fuel-price refresh; **no LP formulation change, backcast
+byte-identical** (the trajectories are read only in `mode="forecast"`; the sole
+backcast reader is the neighbor-price seam, which reads gas ≤2025 historical
+actuals held fixed). Full grounding + near-term AEO-vs-STEO-vs-strip
+triangulation + owner-decision box: `docs/fuel-forward-methodology-2026-07.md`.
+
+- **Vintage bump (CLAUDE.md rule 23 — source-data edition change).** Re-derived
+  `HENRY_HUB_TRAJECTORIES`, `COAL_PRICE_TRAJECTORIES`, `OIL_PRICE_TRAJECTORIES`
+  from **AEO2026** (was AEO2025) via `fetch_eia_aeo.py --aeo-year 2026` →
+  `derive_fuel_trajectories.py`. AEO2026 is in real **2025$** (was 2024$) and
+  renamed its central case Reference → **Counterfactual Baseline** (`cb2026`).
+  Both scripts are now vintage-aware (`SCENARIOS_BY_AEO`, `--aeo-year`).
+- **Gas near-term corrected.** Mid Henry Hub 2026 rises $2.74 → **$3.88**, 2027
+  $2.62 → $3.62 — closing (and slightly overshooting) the ~$1/MMBtu low bias vs
+  the EIA STEO ($3.67 for 2026). Gas 2023/2024/2025 historical actuals unchanged
+  (backcast seam). Gas 2050 low/high spread widens ($2.75/$13.67), lifting the
+  forecast-only `uncertainty.GasMarginal` AEO σ floor 0.555 → 0.843.
+- **Coal/oil** re-vintaged whole (forecast-only); coal is a dollar-year-invariant
+  ratio to each ISO's `COAL_PRICE_BASE` anchor (anchor year 2024 → 2025). Oil
+  eases modestly. Nuclear **unchanged** (EIA-UMAR source not updated, rule 23).
+- **New benchmark datatype** `data/raw/fuel-forward-benchmarks/`: EIA STEO Henry
+  Hub snapshot (API-fetched) + the EIA free NYMEX feed (stale-flagged) +
+  sha256-pinned README with a MANUAL-download row for the current CME strip;
+  fetch script `scripts/data/fetch_fuel_forward_benchmarks.py`. Benchmarks are
+  context only, never fit targets (rule 1).
+- **Consistency tests** `tests/test_fuel_trajectory_consistency.py` (new, 10):
+  constants == AEO2026 derivation; gas historical actuals fixed; nuclear
+  unchanged. Two value-tests updated for the new vintage
+  (`test_uncertainty`, `test_fuel` dual-fuel). Full suite green.
+- **Owner decision (findings-first, no default flip):** the vintage bump alone
+  closed the near-term gap, so a strip/STEO near-term blend is now low-value —
+  recommended posture is pure AEO2026 paths (methodology doc §6). Nothing beyond
+  the refresh implemented pending the owner's pick.
+
 ## 2026-07-19 — New-build capacity costs: cross-source grounding, literature-envelope ranges, storage/offshore/EGS/H2 derivation-lock
 
 Forecast-only cost-input grounding (capacity-expansion entry screens); **no LP
