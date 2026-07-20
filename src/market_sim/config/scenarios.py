@@ -1162,15 +1162,39 @@ class ScenarioConfig:
     # exercised only end-to-end via the runner (which supplies the reserve
     # position). Flipping the default is gated on the P-2A auction-history
     # validation (CR-2); this session lands the mechanism default-off only.
-    capacity_market_clearing_by_iso: dict[str, bool] | None = None  # RC-1B
+    capacity_market_clearing_by_iso: dict[str, bool] | None = field(
+        default_factory=lambda: {
+            "PJM": True,
+            "MISO": True,
+            "CAISO": True,
+            "NEISO": True,
+        }
+    )  # RC-1B / FF-2C
     # per-ISO override for the CR-1 clearing gate (P-2A §7 prerequisite 5): a
     # {iso: bool} mapping resolved through the one seam
-    # constants.resolve_capacity_market_clearing, letting a future flip be ON for
-    # one ISO while OFF elsewhere (the scalar capacity_market_clearing above
-    # cannot express that). None (the default) means every ISO falls through to
-    # the scalar, so the default path is byte-identical to the pre-RC-1B stub.
-    # A row present for an ISO wins over the scalar for that ISO only. No default
-    # flip lands here (rule 22 LOYO + P-2A gate govern any ON flip).
+    # constants.resolve_capacity_market_clearing, letting a flip be ON for one
+    # ISO while OFF elsewhere (the scalar capacity_market_clearing above cannot
+    # express that). A row present for an ISO wins over the scalar for that ISO
+    # only; an ISO absent from the mapping falls through to the scalar (default
+    # off). ERCOT (energy-only, no capacity market) and NYISO (curve-eligible
+    # but its train-tier determination is NOT-YET and its flip-gate evidence
+    # predates the corrected outage envelope — excluded pending re-calibration)
+    # are deliberately absent → gate off.
+    #   FF-2C default-ON flip (owner sign-off 2026-07-19, per the RC-2B per-ISO
+    # flip memo docs/handoffs/capacity-clearing-flip-memo-2026-07-16.md §4 and
+    # the §5 D1=3 re-probe that unblocked it): the CR-1 sloped capacity curve is
+    # the resource-adequacy price for PJM/MISO/CAISO/NEISO in forecast mode,
+    # replacing the flat net-CONE × UCAP stub. Rows are added one-per-ISO across
+    # the FF-2C flip commits. __post_init__ coerces this to None in a plain
+    # backcast (no capacity evolution runs there) so every backcast keeper's
+    # cache_key + run_config.json stay BYTE-IDENTICAL to the legacy default —
+    # the field is not in _CACHE_KEY_OPTIONAL_FIELDS, so its value always enters
+    # the key. NOT coerced when hindcast (mode=="forecast", hindcast=True): the
+    # capacity-hindcast harness passes/arms it explicitly, like every other
+    # forecast-path screen. CAISO has no published auction curve so it keeps the
+    # fixed proxy even when on (RA-not-auction construction, a documented no-op
+    # for pricing — flip memo §1.5); its row is carried for completeness/gate
+    # provenance. Zero fitted parameters (rule 13).
     renewable_elcc_curves: bool = True  # CR-3.1 (plan §3.4.1; P-2B Option A
     # basis): the adequacy ledger accredits wind/solar (and any published VRE
     # class) at the ISO's OWN published penetration-indexed ELCC curve
@@ -6772,6 +6796,22 @@ class ScenarioConfig:
         # screen, so probe legs stay armable and existing legs byte-identical.
         if self.mode == "backcast":
             self.entry_lookahead_reprice = False
+
+        # capacity_market_clearing_by_iso is the FF-2C per-ISO capacity-clearing
+        # flip (default-ON for PJM/MISO/CAISO/NEISO, owner sign-off 2026-07-19).
+        # It gates FORECAST-only capacity-evolution screens (retirement, thermal
+        # entry, storage entry price adequacy off the CR-1 curve); a plain
+        # backcast runs no capacity evolution, so coerce it to None there to keep
+        # every backcast keeper's cache_key + run_config.json BYTE-IDENTICAL to
+        # the legacy None default — this field is not in
+        # _CACHE_KEY_OPTIONAL_FIELDS, so a backcast inheriting the flipped dict
+        # default would otherwise shift the key. Same discipline as the FF-2A
+        # entry_lookahead_reprice and FF-1F datacenter_load_path coercions above.
+        # NOT coerced when hindcast (mode=="forecast", hindcast=True): the
+        # capacity-hindcast harness arms the gate explicitly per leg, so the
+        # fixed↔curve pair stays scoreable and existing legs byte-identical.
+        if self.mode == "backcast":
+            self.capacity_market_clearing_by_iso = None
 
         # T1-X crossover boundary (FF-0E, plan §2.2): only meaningful on the
         # vintage-seeded capacity-hindcast harness (forecast machinery). A
