@@ -11,9 +11,7 @@ updates (CLAUDE.md rule 23), so a silent edit fails here.
 
 from __future__ import annotations
 
-import shutil
 import sys
-import tempfile
 import unittest
 from pathlib import Path
 
@@ -25,17 +23,13 @@ if str(_REPO_ROOT) not in sys.path:
 
 from scripts.data import curate_som_competitive_conduct as mod  # noqa: E402
 from scripts.lib import clean_io  # noqa: E402
+from tests.helpers.base import CleanDirTestCase  # noqa: E402
 
 
-class CurateSomCompetitiveConductTest(unittest.TestCase):
+class CurateSomCompetitiveConductTest(CleanDirTestCase):
     def setUp(self) -> None:
-        self._tmp = tempfile.mkdtemp()
-        self._old_clean = clean_io.paths.CLEAN_DIR
-        clean_io.paths.CLEAN_DIR = Path(self._tmp) / "clean"
-
-    def tearDown(self) -> None:
-        clean_io.paths.CLEAN_DIR = self._old_clean
-        shutil.rmtree(self._tmp, ignore_errors=True)
+        super().setUp()  # redirects paths.CLEAN_DIR to self.tmp_path / "clean"
+        self._tmp = self.tmp_path  # kept for the test bodies' Path(self._tmp)
 
     def test_trivial_fixture_roundtrip(self) -> None:
         """1 ISO / 2 rows: curate writes a validating partition."""
