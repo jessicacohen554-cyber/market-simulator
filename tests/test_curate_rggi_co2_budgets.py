@@ -8,13 +8,12 @@ skip-empty path and the holdout-year quarantine guard (rule 22).
 
 import unittest
 from pathlib import Path
-from tempfile import TemporaryDirectory
 
 import pandas as pd
 
 from scripts.data import curate_rggi_co2_budgets as curate_mod
-from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
+from tests.helpers.base import CleanDirTestCase
 
 # Regional + per-state budget and a floor-price row; deliberately mixed years
 # and metrics. Illustrative values (a fixture, not the authoritative schedule).
@@ -32,18 +31,11 @@ def _write_fixture(raw_root: Path, csv: str = _CSV) -> None:
     curate_mod.raw_csv_path(raw_root).write_text(csv)
 
 
-class TestCurateRggiCo2Budgets(unittest.TestCase):
+class TestCurateRggiCo2Budgets(CleanDirTestCase):
     def setUp(self) -> None:
-        self._tmp = TemporaryDirectory()
-        root = Path(self._tmp.name)
-        self.raw_root = root / "raw"
+        super().setUp()  # redirects paths.CLEAN_DIR to self.clean_dir
+        self.raw_root = self.tmp_path / "raw"
         self.raw_root.mkdir(parents=True)
-        self._orig_clean = clean_io.paths.CLEAN_DIR
-        clean_io.paths.CLEAN_DIR = root / "clean"
-
-    def tearDown(self) -> None:
-        clean_io.paths.CLEAN_DIR = self._orig_clean
-        self._tmp.cleanup()
 
     def test_schema_valid_and_values_round_trip(self) -> None:
         _write_fixture(self.raw_root)
