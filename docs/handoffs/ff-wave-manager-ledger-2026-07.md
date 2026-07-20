@@ -7,7 +7,7 @@ the end of every manager turn.
 
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
-- **Last reviewed `origin/main` HEAD:** `cbff148` (2026-07-19, turn 31 — manager session `turn-1-anm4jn`).
+- **Last reviewed `origin/main` HEAD:** `a615fe3` (2026-07-19, turn 32 — manager session `turn-1-anm4jn`).
 - **Plan base SHA:** `c95176e` (amended in place 2026-07-19 — POC-first re-scope, see directive entry below).
 - **OWNER DIRECTIVE (2026-07-19, out-of-band — recorded by the directive's executing
   session, not a manager turn): POC-first re-scope of THE PLAN.** The plan is amended in
@@ -24,6 +24,20 @@ the end of every manager turn.
   keeper + calibration-complete marker, T1 POC gates green, crossover input gap +
   readiness battery + projected cost, and an explicit per-campaign owner authorization.
   Status-table rows updated below; active front unchanged (FF-2B).
+- **turn 32 (manager `turn-1-anm4jn`, refresh). `cbff148→a615fe3` (10 merges). QUIET for FF —
+  FF-2C still awaiting worker launch (no branch on origin); nothing unlocked, no corrections.**
+  t31 ledger on main (#2621). Out-of-program (9): #2619/#2624 (calendar-metrics refactor
+  continuation), #2620 (caiso-103/caiso-92 rederive — CAISO backcast lane), #2622/#2623
+  (MISO/PJM DAM intakes), #2608 (backcast-artifacts refactor, late merge), #2625
+  (transmission-expansion data intake — new schema + per-ISO registries + cited source docs;
+  FF-adjacent future forecast input, additive-only), #2626 (gasshape §3.7 wrap), **#2627 (NYISO
+  recovery progress: keeper → nyiso-65-scr-edrp — SCR/EDRP emergency DR as endogenous
+  price-responsive supply at the published $500/MWh EDRP strike, rule-13/17-admissible, ZERO new
+  free parameters, LOYO-clean improvement (2025 C3a +4.8→+2.8%); determination STILL NOT-YET on
+  2023 C3a/C3b only (cheap-gas-2023 offer-level overshoot), marker stays WITHDRAWN → NYISO flip
+  deferral STANDS; two named levers remain: downstate heat-rate/fleet-assignment check vs C1
+  bench + hydro/PS reserve eligibility)**. Rule-27 clean (4269/7962/7604/2470 unchanged).
+  Active front: FF-2C (sent t31, awaiting launch); FF-2D queued behind it.
 - **turn 31 (manager `turn-1-anm4jn`). `0e5983f→cbff148` (3 merges: #2614/#2618 miso-dam
   intakes, #2616 ledger t30 — quiet). OWNER DECISION RECEIVED: FF-2C flip sign-off DELEGATED to
   the manager ("You can flip them all on if you think they're ready so we can move forward"),
@@ -245,7 +259,7 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-2A-posture | OPUS | 2 | L-CAP | — | **verified-issues, NON-DELIVERY (turn 21)** — #2522 | Doc-only; scenarios.py UNCHANGED. 3rd genuine non-delivery. → FF-2A-posture-redo. |
 | FF-2A-posture-redo | OPUS | 2 | L-CAP | — | **verified-pass (turn 25)** — #2539 | Landed the flip #2522 only described: scenarios.py `entry_lookahead_reprice` False→True + backcast coercion + plan §2.1a row e + measured-cache-key byte-identity attestation. Closes the 3-non-delivery saga. |
 | FF-2B | OPUS | 2 | L-CAP | — | **verified-pass (turn 28)** — #2582+#2586/#2588/#2590+#2589+#2591, source `96eac04` | All 4 items: NEISO I7+I12 PASS (Net ICR 0.1102, ER23-405-000), CAISO +3,371 MW cited (residual→FF-1C hydro), NYISO basis-correct (residual→FF-1C); Pass-1B + FIRST NEISO pair (bands pre-registered #2582 before run); T1-F base-year sidecars + gap-register. Bonus UNSET runner.py fix. ⚠ git-push deviation, blob-verified — owner note. |
-| FF-2C | OPUS | 2 | L-CAP | — | **sent (turn 31) — owner delegated sign-off; approved PJM/MISO/CAISO/NEISO, NYISO deferred** | Re-emitted drift-clean at `cbff148`. NEISO approved on rule-1 grounds (failing pair = root-cause item, not blocker). NYISO auto-joins on re-calibration + pair regen (rule-11 taint on its gate evidence). Rule 1: worsened fit = root-cause, never revert. |
+| FF-2C | OPUS | 2 | L-CAP | — | **sent (turn 31), awaiting worker launch — no branch on origin (t32)** | Owner delegated sign-off; approved PJM/MISO/CAISO/NEISO, NYISO deferred. Re-emitted drift-clean at `cbff148`. NEISO approved on rule-1 grounds. NYISO auto-joins on re-calibration + pair regen (t32: nyiso-65 landed, still NOT-YET on 2023 C3a/C3b — deferral stands). Rule 1: worsened fit = root-cause, never revert. |
 | FF-2D | OPUS | 2 | L-VAL | ⛔ T1 gate | **issued (turn 14), gated on FF-2C disposition** | Prereq "W1/W2 lane merges complete" leaves FF-2C outstanding. Owner picks: flips first (FF-2C→FF-2D) or defer flips (FF-2D unlocks at HEAD). Rubric verdicts + promotion table. NEW inputs to fold in: #2601 storage-cost re-derivation (baseline attribution), FF-3B's A1/I4 multi-year leak + frozen-golden flag. |
 | FF-3A | — | 3 | L-VAL | ⛔ T2 | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | T2 deferred with its tier behind plan §2.1b; prompt re-authored at gate-open. Do not dispatch. |
 | FF-3B | OPUS | 3 | L-CES | — | **verified-pass (turn 30)** — #2613 | W3-R = NO-GO (R1/R2 NOT MET, R3 MET, R4 partial; routed). POC = machinery-proven: 3×5yr legs, kind="ces-poc", premium moves full surface; wall/RSS ledger + nonlinear caution for FF-3E. POC-despite-NO-GO decoupling accepted (plan §0 Phase A). L-CES lane CLOSED until §2.1b gate-open. |
@@ -258,7 +272,10 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-4C | — | 4 | L-VAL | owner-gated | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | PB-5 deferred with Wave 4 (§2.1b). |
 | FF-5A | OPUS | 5 | L-DASH | — | not-sent | blocked: active-wave close-out (deferred Wave 4 NOT a prerequisite — §2.1b) |
 
-Out-of-program / trivial (turn 31): #2614/#2618 (miso-dam intakes), #2616 (ledger t30).
+Out-of-program / trivial (turn 32): #2619/#2624 (calendar-metrics), #2620 (caiso-103/92),
+#2622/#2623 (DAM intakes), #2608 (backcast-artifacts late merge), #2625 (transmission-expansion
+intake), #2626 (gasshape wrap), #2627 (nyiso-65 — NOT-YET, marker stays withdrawn), #2621
+(ledger t31). (turn 31): #2614/#2618 (miso-dam intakes), #2616 (ledger t30).
 (turn 30): #2605/#2612 (ercot-88/89 — #2612 amends CLAUDE.md rule 15
 hourly-sidecar keeper requirement + run_calibration_full.py writer), #2607/#2610/#2611 (PJM DAM /
 NEISO operable-capacity / MISO outage intakes), #2609 (calendar-metrics refactor), #2606 (ledger
@@ -403,3 +420,6 @@ backcast keepers + ledger commits.
 - **turn 31 (`→cbff148`).** OWNER DECISION: flip sign-off delegated → approved
   PJM/MISO/CAISO/NEISO, NYISO deferred (NOT-YET + rule-11-tainted gate evidence).
   **FF-2C dispatched** drift-clean at `cbff148`. FF-2D queued behind it. 3 quiet merges.
+- **turn 32 (`→a615fe3`).** QUIET refresh — FF-2C awaiting launch. t31 ledger on main (#2621).
+  NYISO progress noted (nyiso-65 SCR/EDRP lever, still NOT-YET, marker withdrawn — flip deferral
+  stands). Rule-27 clean. 9 out-of-program.
