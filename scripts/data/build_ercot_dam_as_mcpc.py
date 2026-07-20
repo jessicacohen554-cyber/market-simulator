@@ -45,6 +45,7 @@ import pandas as pd
 import pyarrow.parquet as pq
 
 from market_sim.config.paths import RAW_DATA_DIR
+from market_sim.utils.hour_calendar import DAYS_IN_MONTH_NOLEAP
 
 _GENRES_GLOB = "60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_{year}_*.parquet"
 # DAM AS up/contingency products whose scarcity rent lifts the energy price, mapped
@@ -56,7 +57,8 @@ _MCPC_COLS: dict[str, str] = {
     "NonSpin MCPC": "nonspin_mcpc",
 }
 
-_DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+# Non-leap month lengths — the shared calendar constant, aliased locally.
+_DAYS_IN_MONTH = DAYS_IN_MONTH_NOLEAP
 
 
 def _hour_of_year(month: int, day: int, hour_of_day: int) -> int:
