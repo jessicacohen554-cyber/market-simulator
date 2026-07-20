@@ -85,7 +85,6 @@ def main() -> int:
     heather = list(
         range(_jan_hour(14), _jan_hour(17, 23) + 1)
     )  # Jan-14 00 .. Jan-17 23
-    flow = list(range(_jan_hour(13), _jan_hour(16, 23) + 1))  # Jan-13..16 flow days
     jan = list(range(_jan_hour(1), _jan_hour(31, 23) + 1))
 
     def _mean(df: pd.DataFrame, col: str, zone: str, hours: list[int]) -> float:

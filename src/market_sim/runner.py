@@ -1938,7 +1938,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     # dispatched under: unloaded import that could NOT be delivered
                     # through the corridor is not reserve.
                     env = measured_corridor_flow_envelope(
-                        iso, year, hours, direction="import"
+                        iso, year, imp_disp.shape[0], direction="import"
                     )
                     if env:
                         corridor_cap = np.sum(list(env.values()), axis=0)
