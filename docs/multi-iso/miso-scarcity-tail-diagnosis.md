@@ -1,5 +1,11 @@
 # MISO scarcity tail (>$200) — root cause, event anatomy, and the deliverability mechanism
 
+> **2026-07-20 (miso-82) follow-up:** this diagnosis is now externally validated
+> against primary MISO market-design and PCM-literature sources, with a
+> current-keeper empirical re-confirmation. See
+> `docs/multi-iso/miso-scarcity-tail-external-validation-2026-07.md`. MISO is
+> documented **at frontier** on the ledgered {C3a-2025, C3c} tail.
+
 **Date:** 2026-07-02. **Session:** `claude/miso-scarcity-tail-8q5k84`.
 **Starting point:** keeper `2026-07-02-miso-38-zonal-reserves`, gate 4 PARTIAL —
 the MISO-South zonal ORDC family fires (dual nonzero 266/287/875 h) but only at

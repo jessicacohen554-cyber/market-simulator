@@ -137,3 +137,75 @@ calibration-complete marker (NEISO precedent — the two fails are the ledgered
 irreducible tail), then the holdout ladder (MISO out-of-training intake is at
 zero; data-readiness session next, then the 2022 validation one-shot per rule
 22/G-19). Next number: miso-82.
+
+## 2026-07-20 — miso-82: MISO documented AT FRONTIER on the ledgered {C3a-2025, C3c} scarcity tail — externally validated (deep-research, 24/25 claims confirmed 3-0) + current-keeper empirical re-confirmation; holdout marker NOT declared (owner declined); forecast-mode VOLL/ORDC change filed; docs-only, NO solve/intake, quarantine untouched
+
+**Lane.** Owner declined to declare the MISO calibration-complete marker or
+authorize out-of-training intake this session, and instead asked the sharper
+question: *could layering scarcity pricing close C3c, and where are the missing
+scarcity hours coming from?* This session answers it, grounds the answer in
+primary sources, documents MISO at frontier, and files the forecast-mode ORDC
+change. Docs-only — NO LP, NO solve, NO intake, NO registration (rule 15 N/A);
+keeper UNCHANGED (`2026-07-20-miso-81-phantom-outage`, NOT-YET on {C3a-2025
+−14.8%, C3c 0/6/0 vs RT 30/37/88}).
+
+**Empirical re-confirmation on the current keeper (no re-solve).** Took the
+miso-81 keeper's committed `hourly/system_2025.parquet` against the Indiana-Hub
+actual tail: in the **88 actual 2025 RT>$200 hours** the model prices **~$50
+median / $83 p90 / $157 max** (energy), the reserve adder fires **2 of 88**,
+energy+reserve exceeds $200 in **1 of 88**, and there is **zero load-shed**. The
+model is an order of magnitude below, not just-under-threshold. The actual DA in
+those hours is mostly low (hour 6425 RT $1,598 / DA $99; hour 2274 RT $876 / DA
+$52) — ~90% are RT forecast-error transients the DA market never saw either, out
+of a perfect-foresight hourly LP's representation by construction. Reproduces the
+2026-07-02 bind-gate diagnosis on the current keeper (deliverable reserve ≥11 GW
+vs ~4.4 GW requirement in every event hour; LP re-times energy for ≤$23/MWh <
+the $200 ORDC step).
+
+**External validation (deep-research pass, 17 primary sources, 24/25 claims
+confirmed at 3-0 adversarial votes).** The decisive finding: **MISO's real
+scarcity tail is not an emergent marginal-cost outcome even in MISO's own SCED.**
+It is an administrative stepped ORDC/RCPF curve (two energy steps $1,100/$2,100
+anchored to $3,500 VOLL in the 2023–2025 window; per-product reserve curves spin
+$65/$98, reg ~$140, ST up to $500), and that ORDC is itself **derived from a
+Monte-Carlo LOLP simulation** over net-load/outage uncertainty in a 10–30 min
+window scaled by a $35,000/MWh target cost (MISO Scarcity Pricing White Paper
+Mar-2024 §3.2.1). It prices **probabilistic short-term risk** a deterministic
+perfect-foresight hourly LP does not contain. ELMP (live 2015) is a pricing-only
+convex-hull LP relaxation on single-interval DA(1h)/RT(5min) dispatch. The
+generic PCM literature confirms the limitation is universal: 23/23 surveyed
+models are hourly+deterministic (arXiv 2101.02303); deterministic perfect-
+foresight LPs systematically under-produce the spike tail (PyPSA-Eur arXiv
+2606.16486; IOPscience 10.1088/2753-3751/ae3f34); limited-foresight helps only
+marginally (SMAPE 21.3→20.8%); scarcity binds rarely (7 shortage days fall-2025,
+Potomac IMM). Coverage caveat: no vendor-specific docs for
+PLEXOS/Aurora/GE-MAPS/PROMOD/Dayzer/EnCompass/Ascend surfaced (pages
+unreliable/paywalled); the 23-model survey is the proxy.
+
+**Conclusion — C3c is at the representation frontier.** "Layering scarcity
+pricing" = the NYISO/NEISO post-solve ORDC/RCPF adder; §1 shows it fires ~2 of 88
+hours because the model's reserves do not go short, and §2 explains why at the
+mechanism level. Reaching the tail would require manufacturing the uncertainty
+(an LOLP/forecast-error-inflated requirement or stochastic net-load draw) — out
+of representation or a fit to the residual (rule #1/#10 forbid the fitted path).
+The reachable structure is already built and adopted per rule #1 (reserve
+deliverability miso-39, Midwest sub-regional miso-71, measured requirements
+miso-56). No untried admissible pricing layer closes C3c.
+
+**Deliverables.** (1) `docs/multi-iso/miso-scarcity-tail-external-validation-2026-07.md`
+— the finding (empirical + literature + sources). (2) Pointer added to
+`docs/multi-iso/miso-scarcity-tail-diagnosis.md`. (3) Frontier block on
+`frontend/data/backcast/keepers/MISO.json` (declared 2026-07-20) + `status/MISO.js`
+rebuilt (calibration-keeper-auditor PASS, 0 failures, 1 stale-status repair).
+(4) **Forecast-mode note filed** (finding §5): for `mode="forecast"` years
+spanning 2025-09-30+, MISO's FERC-approved VOLL rose $3,500 → **$10,000/MWh** with
+a new **$6,000/MWh ORDC cap** and floors lowered to **$600/$1,100** — use these,
+not the backcast $3,500/$1,100–$2,100 curve; the $35,000 is the LOLP-scaling
+target cost, distinct from the $10,000 price cap. Backcast keepers unaffected
+(2023–2025 entirely pre-reform).
+
+**Disposition.** Frontier documented; marker NOT declared (owner declined — the
+holdout ladder + 2022 one-shot remain a future owner-authorized session, G-19
+HOLD in force regardless). MISO out-of-training intake still at zero; the
+equivalency-register MISO section stays open (no intake this session). Quarantine
+untouched (no out-of-training year read/derived/solved). Next number: miso-83.
