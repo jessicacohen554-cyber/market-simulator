@@ -350,6 +350,26 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # tests/test_maxgen_tier_pricing.py (off-window/off-state byte
     # identity). Admissibility declaration: D-5 registry
     # ("maxgen_emergency_tier_pricing", backcast_only).
+    #
+    # caiso_charge_allocation_schedule (M1, caiso-104 — the owner-granted
+    # caiso-103 belly ask) likewise carries NO row here BY CONSTRUCTION, and
+    # this note is its rule-12 window declaration: it is a CHARGE-SIDE
+    # per-day allocation floor on the fleet battery Chg columns
+    # (dispatch._build_storage_alloc_rows — Chg_fleet[h] >= alloc_share[hod]
+    # x da_frac x day-total charge, the Fourier-Motzkin elimination of the
+    # ask's S[d] variable) that never raises any generator's min_gen and
+    # creates NO merchant-class generation, so D-2/D-4 (which score thermal
+    # min_gen floor mechanisms) cannot see it and C8 is untouched by
+    # construction. Its declared window is the measured DAM-allocation shape
+    # support (hod with alloc_share > 0 — hod 1-17 in every derived year;
+    # evening/late shares are measured ~0, so the floor forces nothing there
+    # BY CONSTRUCTION: a zero share is a zero row). Volume-holding: a
+    # zero-charge day is feasible (S=0), asserted by
+    # tests/test_caiso_charge_allocation.py. Statistics: the committed
+    # rule-23 derive data/raw/reference/caiso-charge-allocation-profile.csv
+    # (scripts/data/derive_caiso_charge_allocation.py); binding-share and
+    # forced-reallocation MWh are reported per-leg in the FINDING from the
+    # solved bundle's storage.parquet (charge-side conduct, not gated here).
 }
 
 # D-9: overlay probes that must be OFF/zero in every keeper run_config.json
