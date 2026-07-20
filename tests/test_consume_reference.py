@@ -29,6 +29,7 @@ import unittest
 import pytest
 
 from market_sim.config import paths
+from tests.helpers import requires_raw
 
 pytestmark = [pytest.mark.slow, pytest.mark.integration]
 
@@ -36,10 +37,8 @@ pytestmark = [pytest.mark.slow, pytest.mark.integration]
 _RAW_BINS = paths.CAMPD_BINS_CSV
 _RAW_REGISTRY = paths.PLANT_REGISTRY_CSV
 
-_RAW_PRESENT = _RAW_BINS.is_file() and _RAW_REGISTRY.is_file()
 
-
-@unittest.skipUnless(_RAW_PRESENT, "raw reference inputs absent")
+@requires_raw(_RAW_BINS, _RAW_REGISTRY, reason="raw reference inputs absent")
 class TestConsumeReferenceParity(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
