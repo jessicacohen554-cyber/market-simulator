@@ -7,7 +7,7 @@ the end of every manager turn.
 
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
-- **Last reviewed `origin/main` HEAD:** `15dfe15f` (2026-07-20, turn 34 — manager session `turn-1-anm4jn`).
+- **Last reviewed `origin/main` HEAD:** `5b9e79c2` (2026-07-20, turn 35 — manager session `turn-1-anm4jn`).
 - **Plan base SHA:** `c95176e` (amended in place 2026-07-19 — POC-first re-scope, see directive entry below).
 - **OWNER DIRECTIVE (2026-07-19, out-of-band — recorded by the directive's executing
   session, not a manager turn): POC-first re-scope of THE PLAN.** The plan is amended in
@@ -24,6 +24,31 @@ the end of every manager turn.
   keeper + calibration-complete marker, T1 POC gates green, crossover input gap +
   readiness battery + projected cost, and an explicit per-campaign owner authorization.
   Status-table rows updated below; active front unchanged (FF-2B).
+- **turn 35 (manager `turn-1-anm4jn`, refresh). `15dfe15f→5b9e79c2` (16 merges). FF-2C-rig
+  LANDED VERIFIED-PASS (#2654/#2662, branch `ff-2c-net-cone-curve-isos-mhn006`); FF-2D IN FLIGHT
+  (branch `claude/t1-gate-scoring-zrc3xa` on origin, unmerged). No new dispatches — the wave is
+  FF-2D running.** **FF-2C-rig verification (all 3 items ✓):** (1) `_net_cone_scalar` now
+  preserves `demand_curve`/`net_cone_curve_per_kw_yr`/`seasonal_rbdc` and scales the CURVE anchor
+  — registry AND per-delivery-year `MARKET_DESIGN_VINTAGES` (the vintage override would have
+  silently bypassed a registry-only scale); verified to move the PJM curve price EXACTLY 2.0× at
+  2× (old patch: flat fixed-fallback ~1.43×). Bonus second genuine defect found+fixed: all T1.7
+  rungs shared one solve cache (scalar is a worker-level patch outside cache_key) pinning every
+  dispatch metric to rung 0 — `make_rung_specs` now namespaces per rung (explains §2.2's
+  single-lw_price signature). (2) economic-vs-exogenous retirement split via the RC-1B ledger
+  reason field. (3) PJM T1.7 re-measured on the fixed rig: economic retirements 0.797→0→0 GW
+  across {0,1,2}× — **T1.7a PASS (monotone_down)**; exogenous exactly flat 4.575 GW (control ✓);
+  ERCOT negative control byte-identical ✓; findings doc §2.3 supersedes the flat-11.836 artifact.
+  Rig repair only, no tuning — rules 1/13 clean. **Out-of-program (13):** #2651 (ledger t34),
+  #2652/#2658/#2664 (miso-80 direction-symmetric loss), #2653/#2661 (caiso-belly-evening decomp),
+  #2656 (stgas-band-hour-frontier), #2650 (ercot-91), #2655 (nyiso-65 scr-edrp land — archive
+  solve script + loader test; marker state unchanged), #2657/#2665 (phase-refactor artifact-io),
+  #2663 (test-helpers, branch still open), **#2659/#2660 (secrets remediation: a committed `.env`
+  with 5 free data-portal API keys (EIA, MISO×2, ERCOT, data.gov) — leaked since the
+  benchmark-corridor era — untracked, keys-only `.env.example` + `env_keys.py` resolver added,
+  fetchers ported, and a rotation + no-history-rewrite decision DOCUMENTED. ⚠ Owner flag: verify
+  the 5 keys were actually rotated at the portals — the repo can only document the decision, not
+  prove rotation; the values remain in git history by explicit decision).** Rule-27 clean
+  (4269/8102/7627/2470 — all flat). Next unlock: FF-3E when FF-2D lands verified-pass.
 - **turn 34 (manager `turn-1-anm4jn`). `40dde11→15dfe15f` (19 merges). FF-2C LANDED
   VERIFIED-PASS (#2645/#2647/#2649, branch `capacity-market-clearing-flips-mvy7al`) — Wave 2
   CLOSES; FF-2D DISPATCHED; slim FF-2C-rig follow-up dispatched (parallel-safe).**
@@ -302,8 +327,8 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-2A-posture-redo | OPUS | 2 | L-CAP | — | **verified-pass (turn 25)** — #2539 | Landed the flip #2522 only described: scenarios.py `entry_lookahead_reprice` False→True + backcast coercion + plan §2.1a row e + measured-cache-key byte-identity attestation. Closes the 3-non-delivery saga. |
 | FF-2B | OPUS | 2 | L-CAP | — | **verified-pass (turn 28)** — #2582+#2586/#2588/#2590+#2589+#2591, source `96eac04` | All 4 items: NEISO I7+I12 PASS (Net ICR 0.1102, ER23-405-000), CAISO +3,371 MW cited (residual→FF-1C hydro), NYISO basis-correct (residual→FF-1C); Pass-1B + FIRST NEISO pair (bands pre-registered #2582 before run); T1-F base-year sidecars + gap-register. Bonus UNSET runner.py fix. ⚠ git-push deviation, blob-verified — owner note. |
 | FF-2C | OPUS | 2 | L-CAP | — | **verified-pass (turn 34)** — #2645/#2647/#2649 | Flip {PJM,MISO,CAISO,NEISO}=ON + R4 published anchors + byte-identity coercion + tests. PJM/MISO curve hindcasts registered (honest FAILs, routed). T1.7 rig defect found → FF-2C-rig. CAISO no-op / NEISO reuse / T-R5+tornado §2.1b-blocked — documented, accepted. Wave 2 CLOSED (NYISO flip pends re-calibration). |
-| FF-2C-rig | OPUS | 2 | L-CAP | — | **sent (turn 34)** | Slim: fix `run_driver_battery.py` `_net_cone_scalar` to preserve `demand_curve`/`seasonal_rbdc` + scale `net_cone_curve_per_kw_yr` for curve ISOs + report economic-vs-exogenous retirement split; re-run PJM T1.7 ladder. Parallel-safe with FF-2D (FF-2D doesn't edit the rig). |
-| FF-2D | OPUS | 2 | L-VAL | — | **sent (turn 34)** — unlocked by FF-2C verified-pass | T1 gate battery at HEAD (record SHA): T1-F 6 ISOs on flipped defaults, T1-X, T1-H probe legs; rubric verdicts + promotion table; regression vs FF-0B naming causal merges (#2601 storage costs, FF-G2 AEO2026 fuel, FF-G3 net-CONE evolution, FF-G5 nuclear registry, FF-2C flip+R4); folds FF-3B A1/I4 leak + frozen-golden + PJM position caveat. Eligibility ≠ scheduling (§2.1b). |
+| FF-2C-rig | OPUS | 2 | L-CAP | — | **verified-pass (turn 35)** — #2654/#2662 | Curve-anchor scaling (registry + vintages) verified exactly 2.0×; bonus rung-cache-namespace defect fixed; econ/exogenous split; PJM T1.7a PASS monotone_down (0.797→0→0 GW econ; exogenous flat 4.575); ERCOT control clean. Findings doc §2.3. |
+| FF-2D | OPUS | 2 | L-VAL | — | **sent (turn 34), IN FLIGHT t35** — branch `t1-gate-scoring-zrc3xa` on origin | T1 gate battery at HEAD (record SHA): T1-F 6 ISOs on flipped defaults, T1-X, T1-H probe legs; rubric verdicts + promotion table; regression vs FF-0B naming causal merges (#2601 storage costs, FF-G2 AEO2026 fuel, FF-G3 net-CONE evolution, FF-G5 nuclear registry, FF-2C flip+R4); folds FF-3B A1/I4 leak + frozen-golden + PJM position caveat. Eligibility ≠ scheduling (§2.1b). |
 | FF-3A | — | 3 | L-VAL | ⛔ T2 | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | T2 deferred with its tier behind plan §2.1b; prompt re-authored at gate-open. Do not dispatch. |
 | FF-3B | OPUS | 3 | L-CES | — | **verified-pass (turn 30)** — #2613 | W3-R = NO-GO (R1/R2 NOT MET, R3 MET, R4 partial; routed). POC = machinery-proven: 3×5yr legs, kind="ces-poc", premium moves full surface; wall/RSS ledger + nonlinear caution for FF-3E. POC-despite-NO-GO decoupling accepted (plan §0 Phase A). L-CES lane CLOSED until §2.1b gate-open. |
 | FF-3C | FABLE | 3 | L-PERF | conditional | not-sent | trigger-gated — inactive (only remaining FABLE prompt); trigger re-worded to active-tier breach (plan §6) |
@@ -315,7 +340,10 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-4C | — | 4 | L-VAL | owner-gated | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | PB-5 deferred with Wave 4 (§2.1b). |
 | FF-5A | OPUS | 5 | L-DASH | — | not-sent | blocked: active-wave close-out (deferred Wave 4 NOT a prerequisite — §2.1b) |
 
-Out-of-program / trivial (turn 34): #2631 (ledger t33), FF-G2 #2637 (AEO2026 fuel-forward),
+Out-of-program / trivial (turn 35): #2652/#2658/#2664 (miso-80), #2653/#2661 (caiso-belly
+decomp), #2656 (stgas frontier), #2650 (ercot-91), #2655 (nyiso-65 land), #2657/#2665
+(artifact-io), #2663 (test-helpers), #2659/#2660 (secrets remediation — rotation flag to owner),
+#2651 (ledger t34). (turn 34): #2631 (ledger t33), FF-G2 #2637 (AEO2026 fuel-forward),
 FF-G3 #2633/#2638/#2639/#2641/#2648 (forward net-CONE evolution + owner box), FF-G4
 #2643/#2644 (load-shape design memo), FF-G5 #2640 (nuclear-license registry + owner box),
 #2632/#2634/#2646 (caiso-m1/meve1), #2635 (caiso-dam intake), #2636/#2642 (ercot-90/91).
@@ -386,9 +414,16 @@ backcast keepers + ledger commits.
   both WITHDRAWN-DEFERRED 2026-07-19; conditions: backcast keeper + marker, T1 POC
   gates, crossover gap + FF-3E readiness + projected cost, per-campaign authorization).
   FF-3B's W3-R NO-GO (R1/R2) is now recorded §2.1b(b/c) evidence for any future ask.
+- ~~Per-ISO FF-2C sign-off~~ **RESOLVED turn 31** (delegated; approved PJM/MISO/CAISO/NEISO,
+  NYISO deferred — see Received above). ~~FF-2D sequencing~~ **RESOLVED turn 31** (flips first;
+  FF-2D dispatches after FF-2C lands verified-pass). Critical path is now FF-2C execution →
+  FF-2D → FF-3E → FF-5A.
 - **Rule-deviation note (FF-2B):** worker used a small source-only `git push` (blob-verified)
   when `push_files` corrupted 345 KB constants.py — bless a narrow documented exception, or
   direct an alternative large-file transport; no action needed on the landed bytes (verified).
+- **Key-rotation verification (t35, secrets remediation #2659/#2660):** confirm the 5 leaked
+  data-portal keys (EIA, MISO×2, ERCOT, data.gov) were rotated at their portals — the repo
+  documents the decision but cannot prove rotation.
 - **(Out-of-FF-program, flag only)** NEISO holdout-data-equivalency register sign-off
   (`docs/holdout-data-equivalency-register-2026-07.md` §NEISO, rule-22 exit gate before any
   NEISO one-shot). Also: FF-G3 and FF-G5 landed owner-decision boxes in their own lanes.
@@ -412,8 +447,8 @@ backcast keepers + ledger commits.
     verified-pass.** Genuine non-deliveries stay 3 (FF-0B #2412, FF-2A #2453, FF-2A-posture #2522).
 11. **FF-1E-policy [OPUS]** (turn 22) — slim item-2-only follow-up. **RESOLVED turn 25
     (#2535+#2540), verified-pass** — NEISO ACP 65→50 the sole cited runtime delta.
-12. **FF-2C-rig [OPUS]** (turn 34) — slim T1.7 rig fix (curve-anchor scaling + econ/exogenous
-    retirement split in `run_driver_battery.py`), found by FF-2C. Open.
+12. **FF-2C-rig [OPUS]** (turn 34) — slim T1.7 rig fix, found by FF-2C. **RESOLVED turn 35
+    (#2654/#2662), verified-pass** — T1.7a PASS on the fixed rig; bonus rung-cache defect fixed.
 
 ---
 
@@ -478,3 +513,7 @@ backcast keepers + ledger commits.
   T1.7 rig defect → **FF-2C-rig dispatched**; CAISO/NEISO/T-R5 deferrals accepted with cause.
   **FF-2D dispatched** (unlocked; runs parallel with FF-2C-rig). G-series (FF-G2/G3/G4/G5)
   classified as owner-launched input lanes → FF-2D attribution list. Rule-27 clean.
+- **turn 35 (`→5b9e79c2`).** **FF-2C-rig verified-pass (#2654/#2662)** — T1.7a PASS monotone_down
+  on the fixed rig; bonus rung-cache defect fixed; corrections item 12 RESOLVED. **FF-2D in
+  flight** (`t1-gate-scoring-zrc3xa`). Secrets remediation (#2659/#2660) noted — key-rotation
+  verification flagged to owner. No new dispatches; next unlock FF-3E on FF-2D verified-pass.
