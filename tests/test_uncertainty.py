@@ -136,13 +136,14 @@ class TestGasMarginal(unittest.TestCase):
     def test_floor_widens_back_years(self):
         floored = GasMarginal(sigma_front=0.35, sigma_back=0.41, floor_to_aeo=True)
         raw = GasMarginal(sigma_front=0.35, sigma_back=0.41, floor_to_aeo=False)
-        # The AEO 2050 spread (~0.55, re-derived from the actual AEO2025 Table
-        # 13 data in P-1D — HENRY_HUB_TRAJECTORIES's low/high 2050 spread
-        # widened from the prior hand-typed values) exceeds the 0.41 back
-        # anchor, so the floor lifts the reference sigma above the
+        # The AEO 2050 spread (~0.84, from AEO2026 Table 13 — FF-G2 vintage
+        # bump: the Low Oil and Gas Supply "high" 2050 Henry Hub rose to
+        # $13.67/MMBtu vs the mid $4.64, so the implied log P10/P90 half-spread
+        # log(13.67/4.64)/z90 widened well past the prior AEO2025 ~0.55) exceeds
+        # the 0.41 back anchor, so the floor lifts the reference sigma above the
         # un-floored schedule.
         self.assertGreater(floored.sigma_reference(), raw.sigma_reference())
-        self.assertAlmostEqual(floored.sigma_reference(), 0.555, delta=0.01)
+        self.assertAlmostEqual(floored.sigma_reference(), 0.843, delta=0.01)
 
     def test_reference_is_horizon_max(self):
         gas = GasMarginal(sigma_front=0.35, sigma_back=0.41)
