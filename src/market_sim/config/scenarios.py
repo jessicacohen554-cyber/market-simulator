@@ -4514,6 +4514,28 @@ class ScenarioConfig:
     gas_st_drag_slope_per_gw: float = 0.00906  # overnight CF per GW net-load
     gas_st_drag_intercept: float = -0.1376  # floor zero-crossing ~15.2 GW
     gas_st_drag_cap: float = 0.34  # max observed overnight floor fraction (~50 GW)
+    # ERCOT-91 SEASON-GRAIN fix of the ST_GAS drag curve (default off; rule-22
+    # re-derive of the SAME curve from the SAME CAMPD source at meteorological-
+    # season grain — scripts/data/derive_ercot_stgas_drag_seasonal.py, frozen
+    # rule 23). The ERCOT-90 measurement (charter
+    # docs/handoffs/ercot-stgas-shoulder-2026-07.md §3.3) found the pooled
+    # net-load axis conflates the winter and summer net-load limbs: at the
+    # same net-load, measured DJF overnight steam commitment is far below the
+    # pooled curve (season-resolved zero-crossing DJF ~31 GW vs pooled
+    # ~15 GW), so the season-blind drag over-carries winter sub-$150 hours by
+    # +0.8-1.0 GW median. When armed, apply_gas_st_netload_drag_floor swaps
+    # the three pooled scalars above for the artifact's per-season
+    # (slope, intercept, cap), mapped onto the model clock by the artifact's
+    # own season_of_month — same mechanism id, same rows, same all-hours
+    # window (D-4 unchanged); only the coefficient grain changes. The season
+    # axis is the calendar, so the curve regenerates for a forward year and
+    # responds to changed conditions exactly as the pooled curve does
+    # (rules 13/17). ISO-guarded: the artifact records the ISO it was fitted
+    # on and the loader hard-errors on a mismatch (rule 25).
+    gas_st_drag_seasonal: bool = False
+    # Path to the frozen season-resolved drag JSON (default:
+    # data/raw/_validation-source/ercot_stgas_drag_seasonal.json).
+    gas_st_drag_seasonal_path: str | None = None
 
     # CT_PEAKER net-load reliability drag (the simple-cycle analog of the ST_GAS
     # drag). ERCOT commits fast-start peakers for summer-peak + evening
@@ -7876,6 +7898,8 @@ TIER_TAGS: dict[str, int] = {
     "gas_st_drag_slope_per_gw": 3,
     "gas_st_drag_intercept": 3,
     "gas_st_drag_cap": 3,
+    "gas_st_drag_seasonal": 3,
+    "gas_st_drag_seasonal_path": 3,
     "ct_netload_drag": 3,
     "ramp_limits": 3,
     "local_capacity_constraints": 3,
