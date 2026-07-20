@@ -257,9 +257,10 @@ retirement/entry screens' capacity-revenue term (rule-1 mechanism), so the
   `reindex_gross` re-net + requires-offset; CAISO/ERCOT → None; registry hygiene
   (exactly the capacity-market ISOs, all rates 0.0); config default / cache-
   neutrality / reindex-changes-key / backcast coercion / validation.
-- **Default `cache_key` cache-neutral** — reverting the change and re-adding it
-  reproduces the same base-main key (`494427c4405cba78` on current main; the
-  field is dropped from the hash at its `"hold_last"` default).
+- **Default `cache_key` cache-neutral** — reverting the field and re-adding it
+  reproduces the same base-main key byte-for-byte (verified by diffing the
+  hashed payloads; the field is dropped from the hash at its `"hold_last"`
+  default).
 - `tests/test_capacity_demand_curve.py` (58) + `tests/test_config.py` (…) green;
   no vintage anchor changed (no new vintage encoded — §6).
 - Pricing seam untouched; no LP solved; nothing registered on any dashboard.
