@@ -15,6 +15,24 @@ import pytest
 from market_sim.config import paths
 from tests.helpers import REPO_ROOT
 
+# Full-8760 LP-solving test classes that are genuinely slow (measured: the
+# TestEndToEnd runner cases ~1-13 s each, the TestPerformance 8760 solve ~27 s)
+# but live in a 900+-line module. Marking them here (rather than editing that
+# large file) keeps the slow gate close to the lane config and avoids a
+# rule-27 full-file rewrite. Matched by nodeid substring at collection time.
+_SLOW_NODEID_SUBSTRINGS = (
+    "test_soundness.py::TestEndToEnd",
+    "test_soundness.py::TestPerformance",
+)
+
+
+def pytest_collection_modifyitems(config, items):
+    """Tag the measured-slow full-8760 LP test classes with ``slow``."""
+    slow = pytest.mark.slow
+    for item in items:
+        if any(sub in item.nodeid for sub in _SLOW_NODEID_SUBSTRINGS):
+            item.add_marker(slow)
+
 
 @pytest.fixture
 def repo_root() -> Path:

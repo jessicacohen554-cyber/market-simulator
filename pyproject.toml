@@ -32,10 +32,20 @@ testpaths = ["tests"]
 # The clean-vs-raw parity tests (tests/test_consume_*.py) carry both: they
 # regenerate a slice of data/clean from raw and compare the clean-backed loader
 # against the raw loader, so they are slow and need real inputs present.
+#
+# The two documented lanes (see docs/testing.md):
+#   fast:  pytest -n auto -m "not slow and not integration and not fulldata"
+#   full:  pytest              (serial, everything, pre-push)
 markers = [
-    "slow: test is slow (regenerates clean data / runs the model)",
+    "slow: test is slow (regenerates clean data / runs the model / full-8760 LP)",
     "integration: exercises real data inputs, not a hermetic unit test",
+    "fulldata: needs the real data/raw tree present (replaces ad-hoc raw-data skipifs)",
+    "golden: byte-identity / band-regression golden guard (see docs/testing.md)",
 ]
+# --strict-markers ONLY: an unregistered @pytest.mark typo is an error, not a
+# silently-ignored mark. Deliberately NOT a default `-m` deselection — the lane
+# is chosen on the command line so a bare `pytest` always runs the full suite.
+addopts = "--strict-markers"
 
 [tool.setuptools.packages.find]
 where = ["src"]
