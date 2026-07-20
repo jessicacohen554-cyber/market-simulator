@@ -48,3 +48,72 @@ degradation guard, then 2025, then full-span LOYO) is OWNER-GATED, not started.
 Keeper stays ercot86; nothing registered (the replays reproduce the keeper).
 Ops: charter + probe + artifact + sidecars + this entry committed and pushed on
 `claude/ercot-88-midband-offer-closed-b997ar`. Next number: ercot-90.
+
+## 2026-07-19 — ERCOT-89 (step-2 build, owner-authorized design round): the conditional online-span mechanism BUILT (wall-ladder geometry re-anchor + generalized pool boundary, `ercot_shoulder_online_span`, default-off) and REJECTED AS ARMED — both single-year probes trip the pre-committed C3a level guard (−1.3→+3.0% / +1.4→+4.8%) and zero-spurious gate (+2/+5) via ~230 same-cell sub-$150 hours lifted $10–20; the rule-13-admissible conditional carries only ~½ (2024) / ~⅓ (2025) of the measured ON-share separation; mechanism stays MERGED default-OFF, keeper UNCHANGED (ercot86)
+
+**Task.** The owner authorized ONE step-2 design round for the shoulder-hour
+online-capability lane (charter §7.1 cadence). Built: charter §6 shape (a) as a
+GEOMETRY correction of the two existing seams (rule 19 — no third channel):
+`ercot_shoulder_online_span` re-anchors the ERCOT-86 RT wall ladder's rel
+denominator on the measured CONDITIONAL online span (`rel = (share − boundary) /
+(span(cell) − boundary)`, ladder-top clamp above the span — the SCED spare ladder
+is measured on the ONLINE fleet, and stretching it over capability telemetered
+OFF at the same conditions is the §8.1 8–10× wedge), and generalizes the ERCOT-88
+fast-start pool boundary from `1 − pool_frac(bin)` to the span so the FULL
+offline CT increment is PRICED at the measured start-inclusive ladder — never an
+LP cap (§3(ii): the ercot41/43 envelope family stays closed; no floor, no
+reserve-headroom compression, D-2/D-4 vacuous). Driver:
+`derive_ercot_shoulder_online_span.py` → year-scoped 2024/2025 conditional
+ON-share table (net-load bin × season × 4h block, hierarchical ≥6-hour cells,
+zero fitted scalars, rule-23 frozen; the per-hour ON series never ships).
+Hard-error composition (wall + RT + pool required); 11 trivial-case tests +
+artifact invariants; year-absent and span=1.0 paths byte-identical (tested).
+
+**Pre-build adjudication (charter §9.1–§9.3, written before the seam).**
+(1) Driver is PARTIAL: leave-one-out cell means recover +0.14/+0.27 (2024) and
++0.05–0.07/+0.18 (2025) of the residual-vs-control CT ON-share separation — the
+remainder is day-of commitment information with no forward analogue, deliberately
+not encoded (rule 13 bright line). (2) A pre-LP static supply-stack screen
+predicted standalone near-band-inertness: the residual hours' marginal supply is
+~2.3 GW of CC mid-rungs + ST_GAS headroom — the §8.3 ST_GAS displacement wedge
+(rule-19-owned by the drag lane, RECONCILED not fixed; coupling now quantified).
+(3) D-2 enumeration re-derived: span modifies the wall's geometry and the pool's
+boundary parameter — same owners, no stacking; bridge/availability/reserve seams
+untouched.
+
+**Probes (rule-16 single-year throwaways; base = the committed ercot86 keeper
+hourly sidecars; analyzer `scripts/probes/_ercot89_span_check.py`).** Mechanism
+ENGAGED (466/473 walled rows re-anchored, 486/497 pool rows vs ERCOT-88's
+173/91):
+
+| year | C3a resid (base→probe) | band formed | spurious Δ | h>$200 (act) | gates |
+|---|---|---|---|---|---|
+| 2024 | −1.3% → **+3.0%** | 5/68 → 7/68 | **+2** | 13→21 (53) | C3a DEGRADED; spurious TRIPPED; tail HELD |
+| 2025 | +1.4% → **+4.8%** | 4/65 → 10/65 | **+5** | 1→10 (31) | C3a DEGRADED; spurious TRIPPED; tail HELD |
+
+**Finding — the admissible conditional is too coarse to price the band.** The
+failure is death-by-small-lifts: ~230/228 hours with actual < $150 rise $9–19
+each, because cell-mean compression cannot distinguish a residual hour from a
+control hour in the SAME (bin × season × block) cell — it lifts both. The new
+spurious hours are 1–2 h bleeds around real price events (May-2024 $912 core;
+an Oct-2025 cluster). Band fill is modest (+2/+6). The sub-scarcity tail moves
+TOWARD actual in both years (2024: +$141 mean at actual>$500, h>$200 13→21 vs
+53) — real, but the C3c successor lane's regime, and no offset for tripped
+level/spurious guards in both current-design years (pre-committed rejection
+rule; rules 1/11 — the frozen span table is NOT re-swept against the residual).
+
+**Disposition (charter §9.5).** REJECTED as armed; mechanism stays MERGED
+**default-OFF** (ercot41/43 rejected-probe pattern — machinery + artifact +
+tests + record kept, byte-identical off). Keeper stays **ercot86**; NO
+registration (single-year throwaways, deleted after analysis; a full-span solve
+of a guard-tripped mechanism would register nothing but harm). Frontier
+recorded in charter §9.5: (i) sharper conditioning within rule 13 needs a
+broader SCED corpus (data-intake question); (ii) revisit shape (a) only after
+the ST_GAS drag lane closes the shoulder-hour displacement (the binding
+blocker, now quantified); (iii) the span's tail behaviour is a measured,
+dormant lead for the C3c scarcity-formation lane.
+
+**Ops.** Mechanism + derive + artifact + tests + analyzer + charter §9 record
+committed and pushed on `claude/ercot-89-shoulder-online-mechanism-jdyxl7`
+(rebased onto main post-#2627). Probe bundles deleted (rule 16). Next number:
+ercot-90.
