@@ -21,6 +21,7 @@ from market_sim.config.plant_taxonomy import (
     classify_plant,
     coal_code_to_class,
 )
+from market_sim.utils.hour_calendar import DAYS_IN_MONTH_NOLEAP
 
 logger = logging.getLogger(__name__)
 
@@ -208,20 +209,8 @@ _EIA860_CHP_SECTORS: dict[int, str] = {3: "merchant", 5: "commercial", 7: "indus
 _COAL_CHP_FLOOR_FACTOR: float = 0.85
 _COAL_CHP_FLOOR_CAP_PCT: float = 75.0
 
-_DAYS_IN_MONTH_NONLEAP: tuple[int, ...] = (
-    31,
-    28,
-    31,
-    30,
-    31,
-    30,
-    31,
-    31,
-    30,
-    31,
-    30,
-    31,
-)
+# Non-leap month lengths — the shared calendar constant, aliased locally.
+_DAYS_IN_MONTH_NONLEAP = DAYS_IN_MONTH_NOLEAP
 
 
 @lru_cache(maxsize=8)
