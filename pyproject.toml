@@ -75,6 +75,12 @@ ignore = [
 # precede that bootstrap, so import-not-at-top is expected and intentional here.
 "scripts/**" = ["E402"]
 "tests/**" = ["E402"]
+# config/constants.py is the facade for the 2026-07 constants split: it
+# re-imports every name moved to config/{fuel_trajectories,capacity_market,
+# ercot_envelopes}.py purely to re-export them (the imports ARE the public
+# surface, asserted by tests/test_constants_facade.py), so unused-import is
+# expected and intentional here.
+"src/market_sim/config/constants.py" = ["F401"]
 
 # Single dev dependency group (consolidated from the former
 # [project.optional-dependencies].dev + [dependency-groups].dev duplication).
