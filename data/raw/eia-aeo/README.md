@@ -103,13 +103,27 @@ one-off transcription — rule-13 admissible.
       here (unlike the `rggi-co2-budgets`/`carb-cap-schedule` measured-anchor
       datatypes).
 
+## AEO2026 (landed FF-G2, 2026-07-20)
+
+`eia_aeo2026_fuel_prices.csv` — 858 rows (11 series × 3 scenarios × 26 years,
+2025-2050), fetched by `fetch_eia_aeo.py --aeo-year 2026` and committed as
+header-repeating parts (`eia_aeo2026_fuel_prices.part00.csv` …) per the on-disk
+layout note above; `derive_fuel_trajectories.py` reads the single file if
+present, else concatenates the parts. Two edition
+differences from AEO2025: (a) real **2025$** (AEO2025 was 2024$); (b) the
+central case is `cb2026` ("Counterfactual Baseline", formerly Reference) —
+`SCENARIOS_BY_AEO[2026]` in the fetch script maps `highogs`→low, `cb2026`→mid,
+`lowogs`→high. Consumed by `derive_fuel_trajectories.py --aeo-year 2026` to
+refresh `HENRY_HUB_TRAJECTORIES` / `COAL_PRICE_TRAJECTORIES` /
+`OIL_PRICE_TRAJECTORIES` (forecast years only; gas keeps its ≤2025 historical
+actuals). Full grounding: `docs/fuel-forward-methodology-2026-07.md`.
+
 ## What this doesn't cover
 
-- **Gas forward strips (N13)** — CME Henry Hub futures settles for a
-  near-term blend — explicitly flagged `MANUAL (owner)` in the audit plan
-  (paywalled/scrape-hostile); not attempted here.
-- **AEO2026** — released after this session's data-currency cutoff context;
-  re-run `--aeo-year 2026` once it's out.
+- **Gas forward strips (N13)** — CME Henry Hub futures for a near-term blend —
+  snapshotted (STEO) and flagged MANUAL (current CME strip) in the FF-G2
+  benchmark datatype `data/raw/fuel-forward-benchmarks/`; benchmarks/context
+  only, never fit targets.
 
 ## Consumer
 

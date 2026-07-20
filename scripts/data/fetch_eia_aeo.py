@@ -14,8 +14,12 @@ diff; re-deriving the trajectories from this data is a separate, deliberate
 step (CLAUDE.md rule 23: derive scripts cite the data change that triggered
 them).
 
-Series pulled (AEO2025; re-run with ``--aeo-year`` for a later edition once
-released):
+Series pulled (defaults to AEO2025; pass ``--aeo-year 2026`` for the current
+AEO2026 edition — released April 8, 2026, in real **2025$** and with the
+central case renamed **Counterfactual Baseline** (``cb2026``, formerly the
+Reference case), per the EIA AEO2026 narrative). The series ids are stable
+across editions (the ``y13`` token is the table-format tag, not the dollar
+year), so only the scenario ids and the output-file vintage differ:
 
   * Table 13 (Natural Gas Supply, Disposition, and Prices):
     Henry Hub spot price, 2024 $/MMBtu.
@@ -69,19 +73,47 @@ from urllib.request import urlopen
 
 REPO = Path(__file__).resolve().parent.parent.parent
 OUT_DIR = REPO / "data" / "raw" / "eia-aeo"
-OUT_CSV = OUT_DIR / "eia_aeo2025_fuel_prices.csv"
 
 BASE = "https://api.eia.gov/v2"
 
-# scenario id -> (scenario description, model gas_price_path-style label).
-# Mapping matches the comment block above HENRY_HUB_TRAJECTORIES in
-# constants.py ("low" = more supply = lower price, etc.) -- reproduced here,
-# not redefined, so a re-derivation session has one source of truth to check.
-SCENARIOS: dict[str, tuple[str, str]] = {
-    "ref2025": ("Reference case", "mid"),
-    "highogs": ("High Oil and Gas Supply", "low"),
-    "lowogs": ("Low Oil and Gas Supply", "high"),
+# AEO edition -> {scenario id: (scenario description, model gas_price_path label)}.
+# The central-case scenario id is edition-specific: AEO2025 used ``ref2025``
+# (Reference case); AEO2026 renamed it to ``cb2026`` (Counterfactual Baseline
+# case, "formerly called the Reference case" -- EIA AEO2026 narrative), the
+# direct successor and still the central projection the model's "mid" path
+# tracks. The High/Low Oil and Gas Supply side cases keep the ``highogs`` /
+# ``lowogs`` ids across editions. The "low"/"mid"/"high" mapping matches the
+# comment block above HENRY_HUB_TRAJECTORIES in constants.py ("low" = more
+# supply = lower price, etc.) -- reproduced here, not redefined, so a
+# re-derivation session has one source of truth to check.
+SCENARIOS_BY_AEO: dict[int, dict[str, tuple[str, str]]] = {
+    2025: {
+        "ref2025": ("Reference case", "mid"),
+        "highogs": ("High Oil and Gas Supply", "low"),
+        "lowogs": ("Low Oil and Gas Supply", "high"),
+    },
+    2026: {
+        "cb2026": ("Counterfactual Baseline case", "mid"),
+        "highogs": ("High Oil and Gas Supply", "low"),
+        "lowogs": ("Low Oil and Gas Supply", "high"),
+    },
 }
+
+
+def _scenarios_for(aeo_year: int) -> dict[str, tuple[str, str]]:
+    """Return the ``{scenario id: (desc, path)}`` map for an AEO edition.
+
+    Raises ``KeyError`` for an unmapped edition rather than guessing scenario
+    ids -- verify the new edition's central-case id against the API's
+    ``facet/scenario`` listing and add it here (CLAUDE.md rule 5).
+    """
+    return SCENARIOS_BY_AEO[aeo_year]
+
+
+def _out_csv_for(aeo_year: int) -> Path:
+    """Return the vintage-tagged raw output path for an AEO edition."""
+    return OUT_DIR / f"eia_aeo{aeo_year}_fuel_prices.csv"
+
 
 # (table_id, series_id, fuel, metric, region, unit) -- unit is the AEO API's
 # own `unit` field, recorded here only for the human-readable docstring/log;
@@ -240,9 +272,10 @@ def _fetch_series(
 
 def fetch_all(aeo_year: int, key: str, start_year: int, sleep_s: float) -> list[dict]:
     """Fetch every (series, scenario) combination in :data:`SERIES`."""
+    scenarios = _scenarios_for(aeo_year)
     rows: list[dict] = []
     for table_id, series_id, fuel, metric, region in SERIES:
-        for scenario in SCENARIOS:
+        for scenario in scenarios:
             print(f"  fetching {fuel}/{metric}/{region} scenario={scenario} ...")
             for rec in _fetch_series(
                 aeo_year, table_id, series_id, scenario, key, start_year, sleep_s
@@ -295,11 +328,20 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument(
         "--start-year",
         type=int,
-        default=2024,
-        help="earliest AEO projection year to pull (AEO2025 starts 2024)",
+        default=None,
+        help=(
+            "earliest AEO projection year to pull; defaults to the edition's "
+            "own first year (AEO2025 starts 2024, AEO2026 starts 2025)"
+        ),
     )
     ap.add_argument("--sleep", type=float, default=0.3)
     args = ap.parse_args(argv)
+
+    # Each AEO edition's series begin at its own first projection year.
+    default_start = {2025: 2024, 2026: 2025}
+    start_year = args.start_year
+    if start_year is None:
+        start_year = default_start.get(args.aeo_year, args.aeo_year - 1)
 
     key = _load_key()
     if key == _DEMO_KEY:
@@ -311,9 +353,10 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     print(f"=== AEO{args.aeo_year} fuel-price trajectories (gas/coal/oil) ===")
-    rows = fetch_all(args.aeo_year, key, args.start_year, args.sleep)
-    _write_csv(OUT_CSV, rows)
-    print(f"wrote {len(rows)} rows -> {OUT_CSV}")
+    rows = fetch_all(args.aeo_year, key, start_year, args.sleep)
+    out_csv = _out_csv_for(args.aeo_year)
+    _write_csv(out_csv, rows)
+    print(f"wrote {len(rows)} rows -> {out_csv}")
     return 0
 
 

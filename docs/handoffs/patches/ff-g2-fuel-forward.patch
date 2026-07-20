@@ -1,0 +1,699 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 2c7edc6..fadaed8 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,5 +1,41 @@
+ # Changelog
+ 
++## 2026-07-20 — Fuel-forward trajectories: AEO2025 → AEO2026 vintage bump + near-term triangulation (FF-G2)
++
++Forecast-only fuel-price refresh; **no LP formulation change, backcast
++byte-identical** (the trajectories are read only in `mode="forecast"`; the sole
++backcast reader is the neighbor-price seam, which reads gas ≤2025 historical
++actuals held fixed). Full grounding + near-term AEO-vs-STEO-vs-strip
++triangulation + owner-decision box: `docs/fuel-forward-methodology-2026-07.md`.
++
++- **Vintage bump (CLAUDE.md rule 23 — source-data edition change).** Re-derived
++  `HENRY_HUB_TRAJECTORIES`, `COAL_PRICE_TRAJECTORIES`, `OIL_PRICE_TRAJECTORIES`
++  from **AEO2026** (was AEO2025) via `fetch_eia_aeo.py --aeo-year 2026` →
++  `derive_fuel_trajectories.py`. AEO2026 is in real **2025$** (was 2024$) and
++  renamed its central case Reference → **Counterfactual Baseline** (`cb2026`).
++  Both scripts are now vintage-aware (`SCENARIOS_BY_AEO`, `--aeo-year`).
++- **Gas near-term corrected.** Mid Henry Hub 2026 rises $2.74 → **$3.88**, 2027
++  $2.62 → $3.62 — closing (and slightly overshooting) the ~$1/MMBtu low bias vs
++  the EIA STEO ($3.67 for 2026). Gas 2023/2024/2025 historical actuals unchanged
++  (backcast seam). Gas 2050 low/high spread widens ($2.75/$13.67), lifting the
++  forecast-only `uncertainty.GasMarginal` AEO σ floor 0.555 → 0.843.
++- **Coal/oil** re-vintaged whole (forecast-only); coal is a dollar-year-invariant
++  ratio to each ISO's `COAL_PRICE_BASE` anchor (anchor year 2024 → 2025). Oil
++  eases modestly. Nuclear **unchanged** (EIA-UMAR source not updated, rule 23).
++- **New benchmark datatype** `data/raw/fuel-forward-benchmarks/`: EIA STEO Henry
++  Hub snapshot (API-fetched) + the EIA free NYMEX feed (stale-flagged) +
++  sha256-pinned README with a MANUAL-download row for the current CME strip;
++  fetch script `scripts/data/fetch_fuel_forward_benchmarks.py`. Benchmarks are
++  context only, never fit targets (rule 1).
++- **Consistency tests** `tests/test_fuel_trajectory_consistency.py` (new, 10):
++  constants == AEO2026 derivation; gas historical actuals fixed; nuclear
++  unchanged. Two value-tests updated for the new vintage
++  (`test_uncertainty`, `test_fuel` dual-fuel). Full suite green.
++- **Owner decision (findings-first, no default flip):** the vintage bump alone
++  closed the near-term gap, so a strip/STEO near-term blend is now low-value —
++  recommended posture is pure AEO2026 paths (methodology doc §6). Nothing beyond
++  the refresh implemented pending the owner's pick.
++
+ ## 2026-07-19 — New-build capacity costs: cross-source grounding, literature-envelope ranges, storage/offshore/EGS/H2 derivation-lock
+ 
+ Forecast-only cost-input grounding (capacity-expansion entry screens); **no LP
+diff --git a/src/market_sim/config/constants.py b/src/market_sim/config/constants.py
+index 0fdf758..db3f700 100644
+--- a/src/market_sim/config/constants.py
++++ b/src/market_sim/config/constants.py
+@@ -1061,30 +1061,38 @@ DATACENTER_ZONE_SHARE: dict[str, dict[str, float]] = {}
+ # approach, which used a flat 2%/yr exponential that diverged from EIA's
+ # modeled supply/demand/LNG-export dynamics.
+ #
+-# AEO2025 Reference case: Henry Hub rises from $2.88 (2025) to $4.80 (2050),
+-# driven by LNG export growth through mid-2030s and rising marginal
+-# production costs as producers access less economical resources.
+-# Source: https://www.eia.gov/todayinenergy/detail.php?id=65724
++# AEO2026 Counterfactual Baseline case (the "mid" path): Henry Hub is $3.88
++# (2026), eases to ~$3.6-3.7 through 2028, then rises to a ~$5.4 plateau
++# (2040-41) on LNG-export growth and rising marginal production cost before
++# declining to $4.64 (2050). Source: EIA AEO2026 Table 13 (real 2025$/MMBtu),
++# https://www.eia.gov/outlooks/aeo/
+ #
+ # The model's gas_price_path lever ("low"/"mid"/"high") maps to AEO cases:
+ #   "low"  -> AEO High Oil and Gas Supply case (more supply -> lower prices)
+-#   "mid"  -> AEO Reference case
++#   "mid"  -> AEO Counterfactual Baseline case (formerly the Reference case)
+ #   "high" -> AEO Low Oil and Gas Supply case (less supply -> higher prices)
+ #
+-# RE-DERIVED 2026-07 (P-1D, CLAUDE.md rule 23) from the actual AEO2025 Table
+-# 13 data (data/raw/eia-aeo/eia_aeo2025_fuel_prices.part*.csv, API-fetched by
+-# scripts/data/fetch_eia_aeo.py in the P-0C intake), replacing the prior
+-# hand-typed "approximate interpolations from published AEO2025 charts and
+-# text" this TODO used to flag. Re-derive with
+-# scripts/data/derive_fuel_trajectories.py::derive_gas_trajectory and paste; see
+-# docs/handoffs/aeo-verification-2026-07-11.md for the before/after diff.
+-# AEO2026 was released April 8, 2026 and may carry updated trajectories —
+-# re-run scripts/data/fetch_eia_aeo.py --aeo-year 2026 when that vintage is wanted.
++# VINTAGE: RE-DERIVED 2026-07-20 (FF-G2, CLAUDE.md rule 23) from AEO2026 Table
++# 13 (data/raw/eia-aeo/eia_aeo2026_fuel_prices.csv, API-fetched by
++# scripts/data/fetch_eia_aeo.py --aeo-year 2026), bumping the prior AEO2025
++# vintage (P-1D). Two edition changes: (a) AEO2026 is in real 2025$ (AEO2025
++# was 2024$) — the ~$1/MMBtu near-term lift over the old mid ($2.74 in 2026)
++# is a real modeled change, not a dollar-year artifact (the 2024$->2025$ shift
++# is only ~2.2%); (b) EIA renamed the central case "Reference" ->
++# "Counterfactual Baseline" (cb2026), still the central projection. Re-derive
++# with scripts/data/derive_fuel_trajectories.py::derive_gas_trajectory (default
++# --aeo-year 2026) and paste the FORECAST years (2026-2050) only; see
++# docs/fuel-forward-methodology-2026-07.md (FF-G2) for the full grounding,
++# near-term AEO-vs-STEO-vs-strip triangulation, and the AEO-vs-AEO delta ledger.
+ #
+-# The 2023 and 2024 entries are historical actuals, not AEO projections:
+-# they are the EIA Henry Hub spot price annual averages ($2.54 in 2023,
+-# $2.19 in 2024) and are identical across all three paths because a
+-# realized price has no scenario branching.
++# The 2023/2024/2025 entries are historical actuals, NOT AEO projections:
++# the EIA Henry Hub spot annual averages ($2.54 in 2023, $2.19 in 2024, $3.52
++# in 2025), identical across all three paths because a realized price has no
++# scenario branching. They are DELIBERATELY kept unchanged across the vintage
++# bump (AEO2026's own 2025 base-year value $3.47 is discarded in favour of the
++# measured $3.52): the backcast neighbor-price seam (data.neighbor_price) reads
++# these <=2025 values, so keeping them fixed preserves backcast byte-identity —
++# the AEO2026 refresh touches only forecast years 2026+.
+ # Source: EIA Henry Hub Natural Gas Spot Price, annual averages.
+ # URL: https://www.eia.gov/dnav/ng/hist/rngwhhdA.htm
+ 
+@@ -1099,31 +1107,31 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
+         # forecast value). Consumed only by the backcast neighbor-price seam for
+         # 2025 (forecasts start at START_YEAR 2026), so this keeps each
+         # neighbor's gas consistent with the ISO's own 2025 delivered gas.
+-        2026: 2.11,
+-        2027: 2.03,
+-        2028: 2.14,
+-        2029: 2.21,
+-        2030: 2.32,
+-        2031: 2.42,
+-        2032: 2.68,
+-        2033: 2.76,
+-        2034: 2.79,
+-        2035: 2.81,
+-        2036: 2.82,
+-        2037: 2.79,
+-        2038: 2.78,
+-        2039: 2.79,
+-        2040: 2.84,
+-        2041: 2.89,
+-        2042: 2.92,
+-        2043: 2.91,
+-        2044: 2.88,
+-        2045: 2.89,
+-        2046: 2.92,
+-        2047: 2.90,
+-        2048: 2.89,
+-        2049: 2.86,
+-        2050: 2.83,
++        2026: 3.2,
++        2027: 2.82,
++        2028: 2.74,
++        2029: 2.8,
++        2030: 2.96,
++        2031: 3.1,
++        2032: 3.43,
++        2033: 3.43,
++        2034: 3.36,
++        2035: 3.42,
++        2036: 3.52,
++        2037: 3.54,
++        2038: 3.45,
++        2039: 3.37,
++        2040: 3.3,
++        2041: 3.21,
++        2042: 3.11,
++        2043: 3.03,
++        2044: 2.97,
++        2045: 2.92,
++        2046: 2.88,
++        2047: 2.86,
++        2048: 2.83,
++        2049: 2.78,
++        2050: 2.75,
+     },
+     # AEO Reference case -> model "mid" gas price path.
+     "mid": {
+@@ -1134,31 +1142,31 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
+         # forecast value). Consumed only by the backcast neighbor-price seam for
+         # 2025 (forecasts start at START_YEAR 2026), so this keeps each
+         # neighbor's gas consistent with the ISO's own 2025 delivered gas.
+-        2026: 2.74,
+-        2027: 2.62,
+-        2028: 2.73,
+-        2029: 2.89,
+-        2030: 3.08,
+-        2031: 3.23,
+-        2032: 3.70,
+-        2033: 4.10,
+-        2034: 4.34,
+-        2035: 4.43,
+-        2036: 4.42,
+-        2037: 4.37,
+-        2038: 4.31,
+-        2039: 4.24,
+-        2040: 4.27,
+-        2041: 4.34,
+-        2042: 4.42,
+-        2043: 4.56,
+-        2044: 4.64,
+-        2045: 4.70,
+-        2046: 4.78,
+-        2047: 4.83,
+-        2048: 4.83,
+-        2049: 4.81,
+-        2050: 4.80,
++        2026: 3.88,
++        2027: 3.62,
++        2028: 3.67,
++        2029: 3.84,
++        2030: 4.48,
++        2031: 4.85,
++        2032: 5.27,
++        2033: 5.23,
++        2034: 5.04,
++        2035: 5.05,
++        2036: 5.17,
++        2037: 5.28,
++        2038: 5.3,
++        2039: 5.31,
++        2040: 5.36,
++        2041: 5.38,
++        2042: 5.29,
++        2043: 5.14,
++        2044: 5.05,
++        2045: 5.0,
++        2046: 5.01,
++        2047: 4.9,
++        2048: 4.79,
++        2049: 4.7,
++        2050: 4.64,
+     },
+     # AEO Low Oil and Gas Supply case -> model "high" gas price path.
+     # Lower resource recovery + slower tech = higher prices.
+@@ -1170,31 +1178,31 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
+         # forecast value). Consumed only by the backcast neighbor-price seam for
+         # 2025 (forecasts start at START_YEAR 2026), so this keeps each
+         # neighbor's gas consistent with the ISO's own 2025 delivered gas.
+-        2026: 4.07,
+-        2027: 4.12,
+-        2028: 4.44,
+-        2029: 4.94,
+-        2030: 5.90,
+-        2031: 6.58,
+-        2032: 7.28,
+-        2033: 7.63,
+-        2034: 7.84,
+-        2035: 8.02,
+-        2036: 8.32,
+-        2037: 8.40,
+-        2038: 8.31,
+-        2039: 8.47,
+-        2040: 8.50,
+-        2041: 8.55,
+-        2042: 8.50,
+-        2043: 8.36,
+-        2044: 8.55,
+-        2045: 8.59,
+-        2046: 8.69,
+-        2047: 8.97,
+-        2048: 9.25,
+-        2049: 9.50,
+-        2050: 9.75,
++        2026: 4.31,
++        2027: 5.0,
++        2028: 6.0,
++        2029: 6.61,
++        2030: 6.91,
++        2031: 7.29,
++        2032: 7.83,
++        2033: 8.07,
++        2034: 8.3,
++        2035: 8.62,
++        2036: 9.16,
++        2037: 9.67,
++        2038: 9.9,
++        2039: 10.22,
++        2040: 10.38,
++        2041: 11.07,
++        2042: 11.48,
++        2043: 11.74,
++        2044: 12.0,
++        2045: 12.45,
++        2046: 12.79,
++        2047: 13.05,
++        2048: 13.27,
++        2049: 13.48,
++        2050: 13.67,
+     },
+     # --- Capacity-hindcast gas paths (W2-P5, plan §1.2) --------------------
+     # "hindcast_realized": the year's ACTUAL Henry Hub spot annual average
+@@ -1390,13 +1398,22 @@ COAL_PRICE_BASE: dict[str, float] = {
+ # Source: EIA AEO 2024 coal supply module — ~1% real escalation.
+ COAL_PRICE_ESCALATION: float = 0.01
+ 
+-# --- National delivered coal-price trajectories (real 2024$/MMBtu) ---
+-# AEO2025 Table 15 ("Coal Supply, Disposition, and Prices"), delivered to the
++# --- National delivered coal-price trajectories (real 2025$/MMBtu) ---
++# AEO2026 Table 15 ("Coal Supply, Disposition, and Prices"), delivered to the
+ # electric power sector, national ("usa") — data/raw/eia-aeo/
+-# eia_aeo2025_fuel_prices.part*.csv, derived via
+-# scripts/data/derive_fuel_trajectories.py::derive_coal_trajectory (P-1D, CLAUDE.md
+-# rule 23 — resolves the D2 gap: "coal flat 1%/yr escalation" with no AEO
+-# grounding). Replaces the flat COAL_PRICE_ESCALATION forward SHAPE — each
++# eia_aeo2026_fuel_prices.csv, derived via
++# scripts/data/derive_fuel_trajectories.py::derive_coal_trajectory (FF-G2,
++# CLAUDE.md rule 23 — the AEO2025->AEO2026 vintage bump; the original P-1D
++# grounding resolved the D2 "coal flat 1%/yr" gap). Consumed as a dollar-year-
++# invariant RATIO to each ISO's own COAL_PRICE_BASE anchor
++# (data.fuel.resolve_annual_coal_price), so the 2024$->2025$ basis change does
++# NOT shift any delivered coal price — only the AEO's real forward shape does.
++# The first-knot (anchor) year is now 2025 (AEO2026 starts 2025; AEO2025 started
++# 2024): the ratio renormalizes to trajectory[2025], a ~1-2% reanchoring the
++# FF-G2 methodology doc's delta ledger records. FORECAST-ONLY (backcast coal
++# uses the flat COAL_PRICE_ESCALATION fallback / F923 measured receipts, see
++# data.fuel.resolve_fuel_prices), so this whole table is safe to re-vintage
++# without touching any backcast surface. Replaces the flat forward SHAPE — each
+ # ISO's own COAL_PRICE_BASE level anchor is unchanged (a single national
+ # series can't resolve ERCOT lignite vs PJM Appalachian vs MISO PRB+ILB basin
+ # economics, the CLAUDE.md rule-14 misalignment exception), but the year-over-
+@@ -1409,91 +1426,88 @@ COAL_PRICE_ESCALATION: float = 0.01
+ # ``ScenarioConfig.coal_price_path`` (default "mid").
+ COAL_PRICE_TRAJECTORIES: dict[str, dict[int, float]] = {
+     "low": {
+-        2024: 2.4892,
+-        2025: 2.4487,
+-        2026: 2.3346,
+-        2027: 2.2747,
+-        2028: 2.1624,
+-        2029: 2.1008,
+-        2030: 2.1363,
+-        2031: 2.0803,
+-        2032: 1.9438,
+-        2033: 1.9227,
+-        2034: 1.9102,
+-        2035: 1.8753,
+-        2036: 1.9415,
+-        2037: 1.7727,
+-        2038: 1.7835,
+-        2039: 1.6129,
+-        2040: 1.6268,
+-        2041: 1.6452,
+-        2042: 1.6734,
+-        2043: 1.6889,
+-        2044: 1.6997,
+-        2045: 1.7125,
+-        2046: 1.7257,
+-        2047: 2.5028,
+-        2048: 2.5050,
+-        2049: 2.5103,
+-        2050: 2.5186,
++        2025: 2.5603,
++        2026: 2.4991,
++        2027: 2.3822,
++        2028: 2.3469,
++        2029: 2.3561,
++        2030: 2.4065,
++        2031: 2.3716,
++        2032: 2.545,
++        2033: 2.5479,
++        2034: 2.5407,
++        2035: 2.5311,
++        2036: 2.5321,
++        2037: 2.5249,
++        2038: 2.5206,
++        2039: 2.6232,
++        2040: 2.6145,
++        2041: 2.6034,
++        2042: 2.618,
++        2043: 2.6453,
++        2044: 2.4385,
++        2045: 2.3742,
++        2046: 2.3735,
++        2047: 2.3688,
++        2048: 2.3729,
++        2049: 2.3932,
++        2050: 2.4005,
+     },
+     "mid": {
+-        2024: 2.4894,
+-        2025: 2.4296,
+-        2026: 2.3760,
+-        2027: 2.3295,
+-        2028: 2.2352,
+-        2029: 2.2066,
+-        2030: 2.2390,
+-        2031: 2.1980,
+-        2032: 1.9780,
+-        2033: 1.9591,
+-        2034: 1.9663,
+-        2035: 1.9590,
+-        2036: 1.9698,
+-        2037: 1.9409,
+-        2038: 1.9523,
+-        2039: 2.0667,
+-        2040: 2.0647,
+-        2041: 2.0645,
+-        2042: 2.0657,
+-        2043: 2.0720,
+-        2044: 2.0491,
+-        2045: 2.0574,
+-        2046: 1.8790,
+-        2047: 2.3516,
+-        2048: 2.3543,
+-        2049: 2.3533,
+-        2050: 2.3608,
++        2025: 2.5613,
++        2026: 2.5155,
++        2027: 2.4765,
++        2028: 2.4618,
++        2029: 2.483,
++        2030: 2.4728,
++        2031: 2.4416,
++        2032: 2.4798,
++        2033: 2.4986,
++        2034: 2.4866,
++        2035: 2.4794,
++        2036: 2.4787,
++        2037: 2.5029,
++        2038: 2.513,
++        2039: 2.5717,
++        2040: 2.564,
++        2041: 2.557,
++        2042: 2.5755,
++        2043: 2.575,
++        2044: 2.4629,
++        2045: 2.3251,
++        2046: 2.238,
++        2047: 2.4198,
++        2048: 2.4233,
++        2049: 2.4511,
++        2050: 2.4621,
+     },
+     "high": {
+-        2024: 2.4888,
+-        2025: 2.4729,
+-        2026: 2.5108,
+-        2027: 2.4361,
+-        2028: 2.3718,
+-        2029: 2.3786,
+-        2030: 2.4118,
+-        2031: 2.3955,
+-        2032: 2.2343,
+-        2033: 2.2295,
+-        2034: 2.2286,
+-        2035: 2.2222,
+-        2036: 2.2280,
+-        2037: 2.2003,
+-        2038: 2.1834,
+-        2039: 2.1566,
+-        2040: 2.1498,
+-        2041: 2.1658,
+-        2042: 2.1537,
+-        2043: 2.1320,
+-        2044: 2.0534,
+-        2045: 2.0908,
+-        2046: 2.0391,
+-        2047: 2.1600,
+-        2048: 2.1896,
+-        2049: 2.1906,
+-        2050: 2.1325,
++        2025: 2.558,
++        2026: 2.509,
++        2027: 2.5561,
++        2028: 2.5843,
++        2029: 2.6078,
++        2030: 2.5706,
++        2031: 2.5157,
++        2032: 2.6296,
++        2033: 2.6447,
++        2034: 2.6671,
++        2035: 2.6802,
++        2036: 2.6955,
++        2037: 2.7131,
++        2038: 2.714,
++        2039: 2.7169,
++        2040: 2.7087,
++        2041: 2.7053,
++        2042: 2.7046,
++        2043: 2.6855,
++        2044: 2.7028,
++        2045: 2.6968,
++        2046: 2.704,
++        2047: 2.6961,
++        2048: 2.7003,
++        2049: 2.7017,
++        2050: 2.716,
+     },
+ }
+ 
+@@ -1629,107 +1643,108 @@ COAL_SIGMOID_FOLLOWER_DISCOUNT: float = 0.87
+ # forecast year outside OIL_PRICE_TRAJECTORIES' range.
+ OIL_PRICE_PER_MMBTU: float = 18.0
+ 
+-# --- Forecast-year oil-price trajectories (real 2024$/MMBtu) ---
+-# AEO2025 Table 12 ("Petroleum and Other Liquids Prices"), electric-power
++# --- Forecast-year oil-price trajectories (real 2025$/MMBtu) ---
++# AEO2026 Table 12 ("Petroleum and Other Liquids Prices"), electric-power
+ # distillate + residual fuel oil, averaged (same blend construction as
+ # OIL_PRICE_PER_MMBTU above) — data/raw/eia-aeo/
+-# eia_aeo2025_fuel_prices.part*.csv, derived via
+-# scripts/data/derive_fuel_trajectories.py::derive_oil_trajectory (P-1D, CLAUDE.md
+-# rule 23). AEO prices this series at $/gal; converted to $/MMBtu via EIA fuel
+-# heat contents (0.1385 MMBtu/gal distillate, 0.1497 MMBtu/gal residual).
+-# Replaces the flat OIL_PRICE_PER_MMBTU scalar for FORECAST years (backcast
+-# months keep the measured EIA-923 receipt series; OIL_PRICE_PER_MMBTU stays
+-# the fallback for unreported backcast months and any year outside this
+-# table's range). Selected via ``ScenarioConfig.oil_price_path`` (default
+-# "mid"); scenario mapping matches HENRY_HUB_TRAJECTORIES (highogs -> "low",
+-# ref2025 -> "mid", lowogs -> "high").
++# eia_aeo2026_fuel_prices.csv, derived via
++# scripts/data/derive_fuel_trajectories.py::derive_oil_trajectory (FF-G2,
++# CLAUDE.md rule 23 — the AEO2025->AEO2026 vintage bump). AEO prices this
++# series at $/gal; converted to $/MMBtu via EIA fuel heat contents
++# (0.1385 MMBtu/gal distillate, 0.1497 MMBtu/gal residual). Now in real 2025$
++# (AEO2025 was 2024$) and starting at 2025 (AEO2026's first year; AEO2025
++# started 2024). FORECAST-ONLY: replaces the flat OIL_PRICE_PER_MMBTU scalar for
++# forecast years (backcast months keep the measured EIA-923 receipt series;
++# OIL_PRICE_PER_MMBTU stays the fallback for unreported backcast months and any
++# year outside this table's range) — so it never touches a backcast surface.
++# Oil rarely sets price (peaker economics), so the vintage change is
++# second-order. Selected via ``ScenarioConfig.oil_price_path`` (default "mid");
++# scenario mapping matches HENRY_HUB_TRAJECTORIES (highogs -> "low",
++# cb2026 -> "mid", lowogs -> "high").
+ OIL_PRICE_TRAJECTORIES: dict[str, dict[int, float]] = {
+     "low": {
+-        2024: 21.67,
+-        2025: 20.49,
+-        2026: 19.98,
+-        2027: 19.48,
+-        2028: 18.91,
+-        2029: 18.42,
+-        2030: 17.95,
+-        2031: 17.91,
+-        2032: 17.80,
+-        2033: 17.93,
+-        2034: 17.94,
+-        2035: 17.95,
+-        2036: 17.98,
+-        2037: 18.07,
+-        2038: 18.18,
+-        2039: 18.22,
+-        2040: 18.26,
+-        2041: 18.27,
+-        2042: 18.30,
+-        2043: 18.85,
+-        2044: 18.62,
+-        2045: 18.54,
+-        2046: 18.59,
+-        2047: 18.67,
+-        2048: 18.75,
+-        2049: 18.76,
+-        2050: 18.72,
++        2025: 20.64,
++        2026: 17.19,
++        2027: 17.77,
++        2028: 17.83,
++        2029: 17.49,
++        2030: 16.96,
++        2031: 16.16,
++        2032: 16.39,
++        2033: 16.71,
++        2034: 16.82,
++        2035: 16.89,
++        2036: 16.9,
++        2037: 16.98,
++        2038: 16.9,
++        2039: 16.9,
++        2040: 17.01,
++        2041: 17.04,
++        2042: 16.99,
++        2043: 16.77,
++        2044: 16.64,
++        2045: 16.3,
++        2046: 16.42,
++        2047: 16.46,
++        2048: 16.61,
++        2049: 16.77,
++        2050: 16.82,
+     },
+     "mid": {
+-        2024: 21.67,
+-        2025: 19.07,
+-        2026: 18.41,
+-        2027: 18.51,
+-        2028: 18.68,
+-        2029: 18.91,
+-        2030: 19.22,
+-        2031: 19.25,
+-        2032: 19.49,
+-        2033: 19.78,
+-        2034: 19.91,
+-        2035: 20.09,
+-        2036: 20.13,
+-        2037: 20.23,
+-        2038: 20.38,
+-        2039: 20.45,
+-        2040: 20.58,
+-        2041: 20.73,
+-        2042: 20.76,
+-        2043: 20.91,
+-        2044: 20.83,
+-        2045: 20.64,
+-        2046: 20.90,
+-        2047: 21.41,
+-        2048: 21.46,
+-        2049: 21.52,
+-        2050: 21.70,
++        2025: 20.64,
++        2026: 17.53,
++        2027: 17.98,
++        2028: 18.09,
++        2029: 18.06,
++        2030: 17.78,
++        2031: 17.1,
++        2032: 17.43,
++        2033: 17.69,
++        2034: 18.11,
++        2035: 18.21,
++        2036: 18.31,
++        2037: 18.53,
++        2038: 18.59,
++        2039: 18.76,
++        2040: 18.95,
++        2041: 19.08,
++        2042: 19.08,
++        2043: 19.02,
++        2044: 18.89,
++        2045: 18.68,
++        2046: 18.93,
++        2047: 19.19,
++        2048: 19.4,
++        2049: 19.61,
++        2050: 19.82,
+     },
+     "high": {
+-        2024: 21.67,
+-        2025: 22.30,
+-        2026: 21.91,
+-        2027: 21.45,
+-        2028: 21.12,
+-        2029: 20.84,
+-        2030: 20.82,
+-        2031: 20.90,
+-        2032: 21.27,
+-        2033: 21.64,
+-        2034: 21.81,
+-        2035: 21.99,
+-        2036: 22.39,
+-        2037: 22.59,
+-        2038: 22.73,
+-        2039: 22.97,
+-        2040: 23.10,
+-        2041: 23.21,
+-        2042: 23.23,
+-        2043: 23.21,
+-        2044: 23.23,
+-        2045: 23.26,
+-        2046: 23.49,
+-        2047: 23.84,
+-        2048: 24.08,
+-        2049: 24.22,
+-        2050: 24.29,
++        2025: 20.64,
++        2026: 17.84,
++        2027: 18.82,
++        2028: 18.78,
++        2029: 18.65,
++        2030: 18.38,
++        2031: 17.93,
++        2032: 17.91,
++        2033: 18.76,
++        2034: 19.1,
++        2035: 19.41,
++        2036: 19.73,
++        2037: 20.06,
++        2038: 20.29,
++        2039: 20.64,
++        2040: 20.89,
++        2041: 21.11,
++        2042: 21.23,
++        2043: 21.24,
++        2044: 21.11,
++        2045: 20.76,
++        2046: 21.01,
++        2047: 21.29,
++        2048: 21.56,
++        2049: 21.83,
++        2050: 22.08,
+     },
+ }
+ 
+diff --git a/tests/test_fuel.py b/tests/test_fuel.py
+index 1d81b75..628b95a 100644
+--- a/tests/test_fuel.py
++++ b/tests/test_fuel.py
+@@ -678,10 +678,13 @@ def test_dual_fuel_caps_only_above_parity_hours(monkeypatch):
+         dual_fuel_switching=True,
+     )
+     oil_price = resolve_annual_oil_price(config, 2030)
+-    gas = np.array([3.0, 30.0, 17.9, 50.0])
++    # The middle hour's gas (10.0) sits clearly below the delivered oil price so
++    # it stays a cheap-gas hour the cap must leave alone -- robust to the oil
++    # trajectory level (AEO2026 mid 2030 oil is ~$17.8/MMBtu, FF-G2 vintage).
++    gas = np.array([3.0, 30.0, 10.0, 50.0])
+     fuel_prices = np.vstack([gas, gas, np.full(4, oil_price)])
+     apply_dual_fuel_pricing(fuel_prices, fleet, config, 2030)
+-    np.testing.assert_allclose(fuel_prices[0], [3.0, oil_price, 17.9, oil_price])
++    np.testing.assert_allclose(fuel_prices[0], [3.0, oil_price, 10.0, oil_price])
+     np.testing.assert_allclose(fuel_prices[1], gas)  # gas-only untouched
+ 
+ 
