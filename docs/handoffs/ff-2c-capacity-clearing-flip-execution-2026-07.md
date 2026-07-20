@@ -143,11 +143,30 @@ FF-2B-adjacent) must land before PJM's flipped curve prices non-zero. So the
 flip is live and correct, but its *quantitative* retirement effect for PJM is
 gated on the position fix — exactly the flip memo's measured caveat.
 
-**Hindcast re-scores / equilibrium T-R5 / tornado (per-plant, hours each):**
-launched but not carried to completion in this restart-prone session (the
-container restarted mid-solve). Exact continuation commands in §4. The
-already-published curve-ON evidence (§2.1) stands as the measured post-flip
-record until they land.
+**Fresh curve-ON hindcast re-scores (registered on the forecast-validation
+dashboard, this session):** both band-FAIL, and honest (rule 1 — the flip is
+the structurally-correct mechanism; the residual is the retirement-rule +
+backstop lanes', not tuned). At each ISO's current (mis-based, too-long)
+position the flipped curve pays ~$0, so retirements are energy-driven and the
+wave lands on the wrong classes:
+
+| ISO | thermal retire model / actual | wave lands on | nuclear-inversion | recall | notes |
+|---|---|---|---|--:|---|
+| **MISO** (`miso-2021-2025-curve-ff2c`) | 10.8 / 15.2 GW (−29%) | gas_st 8.6 (actual 0) | — (nuclear 0.77≈actual 0.81) | 0.118 | coal under-retires (1.4 vs 10.9); solar 0 (BLK-8) |
+| **PJM** (`pjm-2021-2025-curve-ff2c`) | 18.2 / 11.1 GW (+63%) | gas_st 10.4 (actual 0) | **4.1 GW false** (actual 0) | 0.235 | coal 0 (vs 6.9); solar over-builds 24 vs 13 |
+
+The **PJM nuclear-inversion persists** (4.1 GW false-retired) — confirming that
+the flip alone does not fix retirement direction while the position pays $0
+(BLK-3 R2/R3 requirement half still open, flip memo §2). Both are the expected
+curve-ON over-fire / mis-direction signature (BLK-10 successor), now measured on
+the *shipping* (D1=3, R4-anchor) config for the first time — not the RC-1A D1=1
+probe config.
+
+**Still pending (documented, not run — per-plant hours each in a restart-prone
+session):** CAISO hindcast (R4-anchor effect; pricing no-op), NEISO (reuse the
+FF-2B `neiso-2021-2025-curve` leg — R4 changed only the fixed anchor, so its
+curve-ON dispatch is unchanged), equilibrium T-R5 (25-yr), tornado. Commands
+in §4.
 
 ---
 
