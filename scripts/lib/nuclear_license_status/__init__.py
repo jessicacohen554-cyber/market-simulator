@@ -29,7 +29,7 @@ at ``src/market_sim/data/nuclear_license.py`` for tests / future wiring.
 from __future__ import annotations
 
 import importlib
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
 
