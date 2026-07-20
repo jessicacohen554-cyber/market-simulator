@@ -63,7 +63,6 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import os
 import sys
 import time
 from pathlib import Path
@@ -73,6 +72,9 @@ from urllib.request import urlopen
 
 REPO = Path(__file__).resolve().parent.parent.parent
 OUT_DIR = REPO / "data" / "raw" / "eia-aeo"
+
+sys.path.insert(0, str(REPO))
+from scripts.lib.env_keys import get_api_key  # noqa: E402
 
 BASE = "https://api.eia.gov/v2"
 
@@ -193,15 +195,7 @@ def _load_key() -> str:
     """Resolve the EIA API key: ``EIA_API_KEY`` env var, then repo ``.env``,
     then the public ``DEMO_KEY`` fallback (rate-limited but functional for
     this route -- verified during this intake)."""
-    key = os.environ.get("EIA_API_KEY")
-    if not key and (REPO / ".env").exists():
-        for line in (REPO / ".env").read_text().splitlines():
-            if line.startswith("EIA_API_KEY="):
-                candidate = line.split("=", 1)[1].strip()
-                if candidate:
-                    key = candidate
-                break
-    return key or _DEMO_KEY
+    return get_api_key("EIA_API_KEY", required=False) or _DEMO_KEY
 
 
 def _fetch_series(
