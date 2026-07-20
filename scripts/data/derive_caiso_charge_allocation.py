@@ -51,6 +51,18 @@ REPO = Path(__file__).resolve().parents[2]
 RAW = REPO / "data" / "raw" / "storage-as-awards" / "CAISO"
 OUT = REPO / "data" / "raw" / "reference" / "caiso-charge-allocation-profile.csv"
 YEARS = (2023, 2024, 2025)
+# Support definition (v2, caiso-104): a hod belongs to the measured
+# DA-allocation SUPPORT only when it carries >= 0.5 % of the annual IFM
+# charge; sub-threshold shares are measurement dust set to EXACTLY 0 and the
+# profile renormalized to sum 1. This makes the ask's own declaration
+# ("evening/late shares are measured ~ 0, so the floor forces nothing there
+# BY CONSTRUCTION") literally true in the artifact: the v1 derive kept trace
+# shares (1e-5..3e-3) in hods where the caiso-99 envelope's charge cap is
+# exactly 0, which made ANY positive daily volume infeasible and collapsed
+# the B-leg's battery charge to zero (FINDING-caiso104 §3a — a composition
+# construction defect, not a residual response; the threshold is fixed a
+# priori, before any lambda effect of the v2 leg was observed).
+SUPPORT_MIN_SHARE = 0.005
 
 
 def load_market_output(cache: Path | None) -> pd.DataFrame:
@@ -116,6 +128,10 @@ def main() -> int:
         for h in range(24):
             share[h] = chg_ifm[hod == h].sum() / ann_ifm
         assert abs(share.sum() - 1.0) < 1e-9
+        # v2 support rule: drop measurement-dust hods, renormalize (see
+        # SUPPORT_MIN_SHARE comment).
+        share[share < SUPPORT_MIN_SHARE] = 0.0
+        share = share / share.sum()
         for h in range(24):
             rows.append(
                 {
