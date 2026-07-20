@@ -26,12 +26,12 @@ rate is a reproducible physical input that would regenerate for a forward year.
 from __future__ import annotations
 
 import logging
-import os
 from pathlib import Path
 
 import pandas as pd
 
 from market_sim.config.paths import FLEET_DIR, PROCESSED_DIR
+from market_sim.data.clean_access import use_clean
 from market_sim.data.campd import KG_PER_TONNE, SHORT_TON_TO_KG
 
 logger = logging.getLogger(__name__)
@@ -45,9 +45,9 @@ _USE_CLEAN_ENV = "MARKET_SIM_USE_CLEAN"
 _USE_CLEAN_TRUTHY = frozenset({"1", "true", "yes", "on"})
 
 
-def _use_clean() -> bool:
-    """Whether the opt-in clean-data read path is enabled (default ``False``)."""
-    return os.environ.get(_USE_CLEAN_ENV, "").strip().lower() in _USE_CLEAN_TRUTHY
+# The clean-data read gate is centralised in data.clean_access; aliased here so
+# call sites do not churn (behaviour byte-identical, default OFF).
+_use_clean = use_clean
 
 
 # eGRID plant-sheet workbooks by vintage year. The plant sheet (``PLNT<YY>``)
