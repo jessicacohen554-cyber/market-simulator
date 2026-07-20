@@ -971,7 +971,23 @@ def resolve_dynamic_rungs(ladder: Ladder, solved: dict[str, dict]) -> list[Rung]
 def make_rung_specs(
     ladder, iso, start_year, end_year, cache_root, metrics_root, rungs=None
 ):
-    """Build a :class:`RungSpec` per rung for one ISO."""
+    """Build a :class:`RungSpec` per rung for one ISO.
+
+    Each rung gets its OWN ``cache_root`` subdirectory (keyed by the safe rung
+    id). This is required for correctness on any ladder whose driver is a
+    worker-level module patch rather than a ScenarioConfig field — T1.7's
+    ``_net_cone_scalar`` (and any future such probe): the scalar is stripped from
+    the config, so all of T1.7's rungs share one ``config.cache_key()``. With a
+    SHARED solve cache the per-year dispatch (check-before-run keyed on
+    ``(cache_key, year)``, config-only) would load rung 0's cached solve for
+    rungs 1/2, cross-contaminating every dispatch-derived metric and the
+    prior-year prices the economic-retirement screen reads — the net-CONE ladder
+    then can't move (FF-2C §2.2). Per-rung namespacing forces each scalar to
+    solve fully independently. Ladders whose rungs carry distinct configs already
+    have distinct cache_keys, so this is a no-op for them; only probe-patch
+    ladders change (and only to become correct). Per-rung metrics json (rule 7
+    resume) is unchanged.
+    """
     specs = []
     for rung in rungs if rungs is not None else ladder.rungs:
         rung_id = f"{ladder.test_id}:{iso}:{rung.label}"
@@ -985,7 +1001,7 @@ def make_rung_specs(
                 overrides=dict(rung.overrides),
                 start_year=start_year,
                 end_year=end_year,
-                cache_root=cache_root,
+                cache_root=str(Path(cache_root) / safe),
                 metrics_cache=str(Path(metrics_root) / iso / f"{safe}.json"),
             )
         )
