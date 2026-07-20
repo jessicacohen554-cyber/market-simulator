@@ -1024,15 +1024,25 @@ delivery year where one is published (`resolve_adequacy_requirement_mw` prefers
 falling back to `firm_peak × (1 + PRM) × icap_to_ucap_ratio` otherwise — so an ISO
 with no published FPR is byte-identical to the pre-migration construction.
 
-**Fixed mode (default).** The seam returns the flat `net_cone_per_kw_yr × 1000`,
-the same per-ISO net-CONE anchor (CAISO 90 / PJM 100 / NYISO 110 / ISO-NE 95 /
-MISO 80 $/kW-yr) every qualifying MW has always earned. The price does not
-respond to the fleet.
+**Fixed mode.** The seam returns the flat `net_cone_per_kw_yr × 1000`, the
+per-ISO net-CONE anchor every qualifying MW earns when the clearing gate is off.
+FF-2C R4 (2026-07-20) re-derived every anchor to the ISO's **published basis**
+(CAISO 88.08 = CPM soft-offer cap / PJM 77.431 = UCAP net-CONE / ISO-NE 108.94 =
+FCA 18 / MISO 79.8 = North/Central Net CONE $/kW-yr; NYISO 110 unchanged) — for
+the curve ISOs the fixed anchor now equals the published curve anchor. This is
+the active price only where the gate is off (NYISO, and any unflipped ISO); it
+does not respond to the fleet.
 
-**CR-1 sloped demand curve** (`ScenarioConfig.capacity_market_clearing`, GATED,
-default **off**, byte-identical when off). When on, the fixed price is replaced
-by the market's own **net-CONE-anchored sloped demand curve** evaluated at the
-model's own accredited reserve position:
+**CR-1 sloped demand curve** (`ScenarioConfig.capacity_market_clearing` /
+`capacity_market_clearing_by_iso`, resolved per ISO through
+`resolve_capacity_market_clearing`). **Default ON for PJM/MISO/CAISO/NEISO**
+(FF-2C flip, owner sign-off 2026-07-19 — the CR-1 curve is the resource-adequacy
+price for those four ISOs in forecast mode); OFF for NYISO (curve-ineligible
+until R5a) and ERCOT (energy-only). A plain backcast coerces the mapping to
+`None` (no capacity evolution runs there, so keepers stay cache-byte-identical);
+a hindcast arms it per leg. When on, the fixed price is replaced by the market's
+own **net-CONE-anchored sloped demand curve** evaluated at the model's own
+accredited reserve position:
 
 ```
 reserve_position = accredited_firm_capacity_mw / requirement_mw
@@ -1045,9 +1055,10 @@ price/net-CONE)` points, flat-extrapolated past both ends: the price cap on the
 left, the zero-cross on the right); `net_cone_curve_iso` is the ISO's *published*
 net-CONE on the basis the auction clears in (PJM's is the **UCAP** net-CONE
 77.431 $/kW-yr = 212.14 $/MW-day × 365/1000 — R1, replacing the legacy ICAP-annual
-60.396 that mis-scaled the UCAP curve by PJM's ~0.78 factor), kept distinct from
-the legacy fixed `net_cone_per_kw_yr` anchor so the default (fixed) path stays
-byte-identical until the P-2A default flip reconciles them. The
+60.396 that mis-scaled the UCAP curve by PJM's ~0.78 factor). The legacy fixed
+`net_cone_per_kw_yr` anchor was kept distinct for pre-flip default byte-identity;
+**FF-2C R4 (2026-07-20) reconciled the two — the fixed anchor is now re-derived
+to the same published basis as the curve anchor for every curve ISO.** The
 `requirement_mw` and the accreditation are the **exact same** ones the
 retirement reliability floor and the reserve-margin backstop compute
 (`capacity_reserve_position` calls `resolve_adequacy_requirement_mw` — published
