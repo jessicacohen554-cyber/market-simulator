@@ -365,7 +365,7 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-3C | FABLE | 3 | L-PERF | conditional | not-sent | trigger-gated — inactive (only remaining FABLE prompt); trigger re-worded to active-tier breach (plan §6) |
 | FF-3D | OPUS | 3 | L-CAP | — | **verified-issues (incomplete)** — LANDED #2463 | Intake + Option-B pairing + pre-registered bands; flip-gate Basis PASSES. Pair run via FF-3D-run. |
 | FF-3D-run | OPUS | 3 | L-CAP | — | **landed** (#2471/#2473/#2478 + `5bb0c9b`) | NYISO fixed/curve/realized pair registered. Closed. ⚠ t31: pair evidence rule-11-tainted (pre-re-audit envelope) — regenerate before NYISO flip. |
-| FF-3E | OPUS | 3 | L-VAL | ⛔ §2.1b evidence | **sent (turn 37)** — prereq FF-2D scored | Full-solve readiness battery (input-resolution walk / config round-trip / kill-resume drill / wall-RSS projection / >5-solve-year CLI guard) + POC close-out doc with per-ISO §2.1b gate scorecard + honest-unfit list (absorbs FF-4B's: I4 "A1" leak, I7 base-year adequacy, ERCOT I3 scarcity, MISO I13 cobweb, frozen ERCOT golden fixture). T0-scale only anywhere; no full solve. Register battery on forecast-validation namespace; findings-only otherwise. Solo in L-VAL. |
+| FF-3E | OPUS | 3 | L-VAL | ⛔ §2.1b evidence | **sent (turn 37)** — prereq FF-2D scored | Full-solve readiness battery (input-resolution walk / config round-trip / kill-resume drill / wall-RSS projection / >5-solve-year CLI guard) + POC close-out doc with per-ISO §2.1b gate scorecard + honest-unfit list (absorbs FF-4B's: I4 "A1" leak, I7 base-year adequacy, ERCOT I3 scarcity, MISO I13 cobweb, frozen ERCOT golden fixture). T0-scale only anywhere; no full solve. Register battery on forecast-validation namespace; findings-only otherwise. Solo in L-VAL. **LANDED #2691 (turn 38) — deliverables on main (closeout doc + scripts/ff_readiness_battery.py + run_full_horizon.py guard MAX_UNAUTHORIZED_SOLVE_YEARS=5); full verify + FF-5A dispatch pending next loop.** |
 | FF-4A | — | 4 | L-VAL | ⛔ | **WITHDRAWN (owner 2026-07-19)** | Prompt withdrawn outright (was HELD t18); Wave 4 deferred behind §2.1b. Do not dispatch, do not restore from history. |
 | FF-4B | — | 4 | L-VAL | — | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | Honest-unfit list moved to FF-3E close-out; rest re-authored at gate-open. |
 | FF-4C | — | 4 | L-VAL | owner-gated | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | PB-5 deferred with Wave 4 (§2.1b). |
@@ -441,23 +441,25 @@ backcast keepers + ledger commits.
   turn 34 (#2645/#2647/#2649) — Wave 2 closed.**
 
 **AWAITING (each changes what I dispatch next):**
-- **§2.1b gate-open per ISO** (replaces the former FF-4A golden-freeze and PB-5 waits —
-  both WITHDRAWN-DEFERRED 2026-07-19; conditions: backcast keeper + marker, T1 POC
-  gates, crossover gap + FF-3E readiness + projected cost, per-campaign authorization).
-  FF-3B's W3-R NO-GO (R1/R2) is now recorded §2.1b(b/c) evidence for any future ask.
-- ~~Per-ISO FF-2C sign-off~~ **RESOLVED turn 31** (delegated; approved PJM/MISO/CAISO/NEISO,
-  NYISO deferred — see Received above). ~~FF-2D sequencing~~ **RESOLVED turn 31** (flips first;
-  FF-2D dispatches after FF-2C lands verified-pass). Critical path is now FF-2C execution →
-  FF-2D → FF-3E → FF-5A.
-- **Rule-deviation note (FF-2B):** worker used a small source-only `git push` (blob-verified)
-  when `push_files` corrupted 345 KB constants.py — bless a narrow documented exception, or
-  direct an alternative large-file transport; no action needed on the landed bytes (verified).
-- **Key-rotation verification (t35, secrets remediation #2659/#2660):** confirm the 5 leaked
-  data-portal keys (EIA, MISO×2, ERCOT, data.gov) were rotated at their portals — the repo
-  documents the decision but cannot prove rotation.
-- **(Out-of-FF-program, flag only)** NEISO holdout-data-equivalency register sign-off
-  (`docs/holdout-data-equivalency-register-2026-07.md` §NEISO, rule-22 exit gate before any
-  NEISO one-shot). Also: FF-G3 and FF-G5 landed owner-decision boxes in their own lanes.
+- **§2.1b gate-open per ISO** — **NOT AUTHORIZED YET (owner, turn 38, 2026-07-20): "Not running
+  full solves yet."** No ISO opened; no full 2026–2050 solve may run. FF-3E's closeout scorecard
+  is the standing evidence for a future ask (PJM/NEISO closest — I4 "A1" leak sole blocker).
+  Re-surface only when the owner initiates. Conditions unchanged: backcast keeper + marker, T1 POC
+  gates, crossover gap + FF-3E readiness + projected cost, per-campaign authorization.
+
+**RESOLVED (owner, turn 38, 2026-07-20):**
+- **Key-rotation verification (#2659/#2660) — CLOSED, no action.** Owner: the 5 data-portal keys
+  are public/free-tier ("public, don't worry about it"). Flag retired; no rotation needed.
+- **FF-2B git-push exception — BLESSED.** Owner approved the narrow "small source-only `git push`
+  + mandatory blob-verify" fallback for when `push_files` corrupts a large file. Documented
+  exception to the Git § API-only rule; still last-resort, still blob-verify mandatory.
+- **NEISO — HOLD, do nothing.** Owner: "Don't do anything in NEISO." No holdout-equivalency
+  sign-off, no NEISO solve/score/dispatch until the owner reopens it.
+- **Stray file cleanup — APPROVED, actioned turn 38** (`.constants_push_stage.txt` deleted).
+
+Historic (resolved earlier): ~~Per-ISO FF-2C sign-off~~ **turn 31** (approved PJM/MISO/CAISO/NEISO,
+NYISO deferred). ~~FF-2D sequencing~~ **turn 31** (flips first). FF-G3/FF-G5 owner boxes live in
+their own lanes.
 
 ---
 
@@ -558,3 +560,13 @@ backcast keepers + ledger commits.
   1960), guarded by test_constants_facade.py — watch set now 8 files, all at baseline. **FF-3E
   dispatched** ([OPUS], solo L-VAL, prereq FF-2D met). Next unlock: FF-5A on FF-3E verified-pass.
   20 merges, 14 out-of-program. No merges beyond f49cf768 (turn 36 already saw #2685).
+- **turn 38 (`→b6ace721`).** Refresh + owner decisions recorded. **FF-3E LANDED (#2691)** —
+  deliverables verified present on main (docs/handoffs/ff-poc-closeout-2026-07.md +
+  scripts/ff_readiness_battery.py + run_full_horizon.py guard MAX_UNAUTHORIZED_SOLVE_YEARS=5); full
+  verify + FF-5A dispatch deferred to next loop. **Owner decisions:** §2.1b gate-open NOT authorized
+  ("not running full solves yet") — no full solve may run; key-rotation flag CLOSED (keys public);
+  FF-2B small-source-push+blob-verify exception BLESSED; NEISO HOLD (do nothing); stray
+  `.constants_push_stage.txt` deleted (#e87216e). 7 merges since t37; out-of-program: #2692
+  (miso-82 frontier), #2687/#2689 (phase-refactor eia930-package), #2688 (caiso-intertie-evening-
+  belly), #2686 (t1-gate follow-up), #2690 (turn-37 ledger). Rule-27 8-file set flat. Next loop:
+  verify FF-3E deliverables in depth → dispatch FF-5A (final Phase-A rung).
