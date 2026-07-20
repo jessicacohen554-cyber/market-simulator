@@ -7,7 +7,7 @@ the end of every manager turn.
 
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
-- **Last reviewed `origin/main` HEAD:** `5b9e79c2` (2026-07-20, turn 35 — manager session `turn-1-anm4jn`).
+- **Last reviewed `origin/main` HEAD:** `f49cf768` (2026-07-20, turn 37 — manager session `ff-wave-manager-7ra116`; re-applies the lost turn-36 update, which never reached origin).
 - **Plan base SHA:** `c95176e` (amended in place 2026-07-19 — POC-first re-scope, see directive entry below).
 - **OWNER DIRECTIVE (2026-07-19, out-of-band — recorded by the directive's executing
   session, not a manager turn): POC-first re-scope of THE PLAN.** The plan is amended in
@@ -24,6 +24,37 @@ the end of every manager turn.
   keeper + calibration-complete marker, T1 POC gates green, crossover input gap +
   readiness battery + projected cost, and an explicit per-campaign owner authorization.
   Status-table rows updated below; active front unchanged (FF-2B).
+- **turn 37 (manager `ff-wave-manager-7ra116`, NEW session — re-applies lost turn 36 + full loop).
+  `5b9e79c2→f49cf768` (20 merges). FF-2D LANDED VERIFIED-PASS; FF-3E DISPATCHED (last-but-one
+  Phase-A rung). The turn-36 ledger push never reached origin (last push #2668 = turn-35 ledger),
+  so this session re-verified FF-2D independently and records it here.** FIRST-ACTION check: ledger
+  on main still showed last-reviewed `5b9e79c2` / FF-2D IN FLIGHT (turn-35 state) → turn 36
+  re-applied. **FF-2D verification (all deliverables confirmed on disk at HEAD, not trusted from PR
+  text):** (1) `docs/handoffs/ff-t1-gate-2026-07.md` (20,490 B) present; (2)
+  `docs/handoffs/ff-t1-gate-verdicts.json` present + GENUINE — all six ISOs read **HOLD /
+  T2-ineligible**, FC-1 structural FAIL the dominant gate; sample CAISO-t1f FC-1 = FAIL
+  [I3,I4,I7,I9] (I4 gas_st off 1,333 MW = the FF-0B "A1" capacity-accounting leak; I7 base-year
+  accredited-firm < requirement 2026/2027; I3 slack); ERCOT-t1f FC-1 = FAIL [I3] scarcity slack;
+  ERCOT-t1x adds FC-2/FC-4 FAIL. (3) Dashboard registration confirmed on the **forecast-validation
+  namespace** (`frontend/data/hindcast/`, kind `t1f`/`crossover`) — 6 ISO `*-2026-2030-ff-t1f-
+  baseline.json` + `ercot/pjm-2023-2027-crossover.json`; NOT the backcast registry (correct — no
+  keeper/holdout). Golden fixture disclosed **frozen-not-regenerated** (carried to FF-3E honest-unfit
+  list). Branch `claude/t1-gate-scoring-zrc3xa` fully merged #2666/#2681/#2684/#2685. **Closest to
+  the §2.1b gate: PJM + NEISO (I4 "A1" leak is their SOLE blocker).** **RULE-27 BASELINE MOVED
+  (verified, NOT a truncation):** `constants.py` split into a re-export FACADE (2,422 lines) + three
+  siblings — `config/fuel_trajectories.py` (1,050), `config/capacity_market.py` (2,392),
+  `config/ercot_envelopes.py` (1,960); content preserved, guarded by `tests/test_constants_facade.py`
+  (#2675/#2677/#2682). Watch set is now EIGHT files: capacity.py 4269 · scenarios.py 8102 ·
+  constants.py-facade 2422 · runner.py 2470 · fuel_trajectories 1050 · capacity_market 2392 ·
+  ercot_envelopes 1960 — all at expected baseline, no shrink. **FF-3E DISPATCHED** this turn (prompt
+  re-emitted drift-clean at `f49cf768`; [OPUS], solo in L-VAL — no lane conflict). **Out-of-program
+  (14 merges):** #2668 (turn-35 ledger push), #2670 (miso-80 direction-symmetric loss), #2667
+  (nyiso-65 scr-edrp land2 — NYISO recovery, marker still WITHDRAWN), #2669/#2672 (caiso-dam
+  intake), #2671/#2674/#2680 (phase-refactor calendar-callers), #2676/#2679 (phase-refactor
+  ci-restoration), #2673/#2678/#2683 (intertie-elasticity-measurement — CAISO measurement lane),
+  #2675/#2677/#2682 (constants-split-refactor infra — the rule-27 baseline move above). Next unlock:
+  FF-5A (L-DASH close-out) when FF-3E lands verified-pass; FF-3C stays trigger-gated/inactive. No
+  new merges beyond f49cf768 to review (turn 36 already saw through #2685).
 - **turn 35 (manager `turn-1-anm4jn`, refresh). `15dfe15f→5b9e79c2` (16 merges). FF-2C-rig
   LANDED VERIFIED-PASS (#2654/#2662, branch `ff-2c-net-cone-curve-isos-mhn006`); FF-2D IN FLIGHT
   (branch `claude/t1-gate-scoring-zrc3xa` on origin, unmerged). No new dispatches — the wave is
@@ -328,13 +359,13 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-2B | OPUS | 2 | L-CAP | — | **verified-pass (turn 28)** — #2582+#2586/#2588/#2590+#2589+#2591, source `96eac04` | All 4 items: NEISO I7+I12 PASS (Net ICR 0.1102, ER23-405-000), CAISO +3,371 MW cited (residual→FF-1C hydro), NYISO basis-correct (residual→FF-1C); Pass-1B + FIRST NEISO pair (bands pre-registered #2582 before run); T1-F base-year sidecars + gap-register. Bonus UNSET runner.py fix. ⚠ git-push deviation, blob-verified — owner note. |
 | FF-2C | OPUS | 2 | L-CAP | — | **verified-pass (turn 34)** — #2645/#2647/#2649 | Flip {PJM,MISO,CAISO,NEISO}=ON + R4 published anchors + byte-identity coercion + tests. PJM/MISO curve hindcasts registered (honest FAILs, routed). T1.7 rig defect found → FF-2C-rig. CAISO no-op / NEISO reuse / T-R5+tornado §2.1b-blocked — documented, accepted. Wave 2 CLOSED (NYISO flip pends re-calibration). |
 | FF-2C-rig | OPUS | 2 | L-CAP | — | **verified-pass (turn 35)** — #2654/#2662 | Curve-anchor scaling (registry + vintages) verified exactly 2.0×; bonus rung-cache-namespace defect fixed; econ/exogenous split; PJM T1.7a PASS monotone_down (0.797→0→0 GW econ; exogenous flat 4.575); ERCOT control clean. Findings doc §2.3. |
-| FF-2D | OPUS | 2 | L-VAL | — | **sent (turn 34), IN FLIGHT t35** — branch `t1-gate-scoring-zrc3xa` on origin | T1 gate battery at HEAD (record SHA): T1-F 6 ISOs on flipped defaults, T1-X, T1-H probe legs; rubric verdicts + promotion table; regression vs FF-0B naming causal merges (#2601 storage costs, FF-G2 AEO2026 fuel, FF-G3 net-CONE evolution, FF-G5 nuclear registry, FF-2C flip+R4); folds FF-3B A1/I4 leak + frozen-golden + PJM position caveat. Eligibility ≠ scheduling (§2.1b). |
+| FF-2D | OPUS | 2 | L-VAL | — | **verified-pass (turn 37)** — #2666/#2681/#2684/#2685 | T1 gate SCORED: all 6 ISOs HOLD / T2-ineligible; FC-1 structural FAIL dominant. Deliverables confirmed on disk: `ff-t1-gate-2026-07.md` + `ff-t1-gate-verdicts.json` (genuine — CAISO FC-1 [I3,I4,I7,I9], ERCOT [I3]) + 6 t1f baselines + 2 crossover legs on forecast-validation namespace. I4 "A1" leak = dominant cross-ISO blocker; PJM+NEISO closest (I4 sole blocker). Golden fixture frozen-not-regenerated (→ FF-3E). Branch fully merged. |
 | FF-3A | — | 3 | L-VAL | ⛔ T2 | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | T2 deferred with its tier behind plan §2.1b; prompt re-authored at gate-open. Do not dispatch. |
 | FF-3B | OPUS | 3 | L-CES | — | **verified-pass (turn 30)** — #2613 | W3-R = NO-GO (R1/R2 NOT MET, R3 MET, R4 partial; routed). POC = machinery-proven: 3×5yr legs, kind="ces-poc", premium moves full surface; wall/RSS ledger + nonlinear caution for FF-3E. POC-despite-NO-GO decoupling accepted (plan §0 Phase A). L-CES lane CLOSED until §2.1b gate-open. |
 | FF-3C | FABLE | 3 | L-PERF | conditional | not-sent | trigger-gated — inactive (only remaining FABLE prompt); trigger re-worded to active-tier breach (plan §6) |
 | FF-3D | OPUS | 3 | L-CAP | — | **verified-issues (incomplete)** — LANDED #2463 | Intake + Option-B pairing + pre-registered bands; flip-gate Basis PASSES. Pair run via FF-3D-run. |
 | FF-3D-run | OPUS | 3 | L-CAP | — | **landed** (#2471/#2473/#2478 + `5bb0c9b`) | NYISO fixed/curve/realized pair registered. Closed. ⚠ t31: pair evidence rule-11-tainted (pre-re-audit envelope) — regenerate before NYISO flip. |
-| FF-3E | OPUS | 3 | L-VAL | ⛔ §2.1b evidence | not-sent | NEW (owner 2026-07-19): full-solve readiness battery + POC close-out (absorbs FF-4B honest-unfit list; adds >5-yr CLI guard). After FF-2D. Wall/RSS anchor now in hand (FF-3B §2.4 table + nonlinear caution). |
+| FF-3E | OPUS | 3 | L-VAL | ⛔ §2.1b evidence | **sent (turn 37)** — prereq FF-2D scored | Full-solve readiness battery (input-resolution walk / config round-trip / kill-resume drill / wall-RSS projection / >5-solve-year CLI guard) + POC close-out doc with per-ISO §2.1b gate scorecard + honest-unfit list (absorbs FF-4B's: I4 "A1" leak, I7 base-year adequacy, ERCOT I3 scarcity, MISO I13 cobweb, frozen ERCOT golden fixture). T0-scale only anywhere; no full solve. Register battery on forecast-validation namespace; findings-only otherwise. Solo in L-VAL. |
 | FF-4A | — | 4 | L-VAL | ⛔ | **WITHDRAWN (owner 2026-07-19)** | Prompt withdrawn outright (was HELD t18); Wave 4 deferred behind §2.1b. Do not dispatch, do not restore from history. |
 | FF-4B | — | 4 | L-VAL | — | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | Honest-unfit list moved to FF-3E close-out; rest re-authored at gate-open. |
 | FF-4C | — | 4 | L-VAL | owner-gated | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | PB-5 deferred with Wave 4 (§2.1b). |
@@ -517,3 +548,13 @@ backcast keepers + ledger commits.
   on the fixed rig; bonus rung-cache defect fixed; corrections item 12 RESOLVED. **FF-2D in
   flight** (`t1-gate-scoring-zrc3xa`). Secrets remediation (#2659/#2660) noted — key-rotation
   verification flagged to owner. No new dispatches; next unlock FF-3E on FF-2D verified-pass.
+- **turn 37 (`→f49cf768`, NEW manager `ff-wave-manager-7ra116`; re-applies lost turn 36).** The
+  turn-36 ledger push never reached origin (last push #2668 = turn-35 ledger); this session
+  independently re-verified. **FF-2D verified-pass (#2666/#2681/#2684/#2685)** — T1 gate SCORED,
+  all 6 ISOs HOLD/T2-ineligible; deliverables on disk (gate doc + genuine verdicts JSON + 6 t1f
+  baselines + 2 crossover legs on forecast-validation namespace); I4 "A1" leak dominant blocker,
+  PJM+NEISO closest. **RULE-27 baseline MOVED** (verified, not truncation): constants.py split into
+  a facade (2422) + 3 siblings (fuel_trajectories 1050 / capacity_market 2392 / ercot_envelopes
+  1960), guarded by test_constants_facade.py — watch set now 8 files, all at baseline. **FF-3E
+  dispatched** ([OPUS], solo L-VAL, prereq FF-2D met). Next unlock: FF-5A on FF-3E verified-pass.
+  20 merges, 14 out-of-program. No merges beyond f49cf768 (turn 36 already saw #2685).
