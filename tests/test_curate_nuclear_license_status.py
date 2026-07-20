@@ -11,15 +11,13 @@ the four closed vocabularies, and the skip-empty path.
 """
 
 import unittest
-from pathlib import Path
-from tempfile import TemporaryDirectory
 
 import pandas as pd
 
 from scripts.data import curate_nuclear_license_status as curate_nls
-from scripts.lib import clean_io
 from scripts.lib import nuclear_license_status as nls
 from scripts.lib.clean_io import validate_clean
+from tests.helpers.base import CleanDirTestCase
 
 # Three units for MISO: a renewed_60, an SLR-granted (must carry slr_granted_80),
 # and a restart-pathway unit with an announced uprate. All identities match the
@@ -40,20 +38,13 @@ _SPINE = pd.DataFrame(
 )
 
 
-class TestCurateNuclearLicenseStatus(unittest.TestCase):
+class TestCurateNuclearLicenseStatus(CleanDirTestCase):
     def setUp(self) -> None:
-        self._tmp = TemporaryDirectory()
-        root = Path(self._tmp.name)
-        self.raw_root = root / "raw"
+        super().setUp()  # redirects paths.CLEAN_DIR to self.tmp_path / "clean"
+        self.raw_root = self.tmp_path / "raw"
         (self.raw_root / nls.DATATYPE).mkdir(parents=True)
-        self.spine_path = root / "spine.parquet"
+        self.spine_path = self.tmp_path / "spine.parquet"
         _SPINE.to_parquet(self.spine_path, index=False)
-        self._orig_clean = clean_io.paths.CLEAN_DIR
-        clean_io.paths.CLEAN_DIR = root / "clean"
-
-    def tearDown(self) -> None:
-        clean_io.paths.CLEAN_DIR = self._orig_clean
-        self._tmp.cleanup()
 
     def _write(self, text: str, iso: str = "miso") -> None:
         (self.raw_root / nls.DATATYPE / f"{iso}.csv").write_text(text)
@@ -101,9 +92,7 @@ class TestCurateNuclearLicenseStatus(unittest.TestCase):
 
     def test_granted_without_stage_fails(self) -> None:
         # slr_status=granted but license_stage left renewed_60 -> inconsistency.
-        bad = _MISO_CSV.replace(
-            "2055-02-02,slr_granted_80", "2055-02-02,renewed_60"
-        )
+        bad = _MISO_CSV.replace("2055-02-02,slr_granted_80", "2055-02-02,renewed_60")
         self._write(bad)
         with self.assertRaises(ValueError) as ctx:
             curate_nls.curate(

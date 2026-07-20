@@ -21,6 +21,7 @@ import pytest
 from market_sim.config import paths
 from market_sim.data import neighbor_price
 from market_sim.data.neighbor_price import USE_CLEAN_ENV, neighbor_lmp_hourly
+from tests.helpers import requires_raw
 
 pytestmark = [pytest.mark.slow, pytest.mark.integration]
 
@@ -35,15 +36,11 @@ _YEAR = 2024
 _TOL = 1e-2
 
 
-def _raw_available() -> bool:
-    return (paths.CALIBRATION_DIR / f"actual_lmp_hourly_{_ISO}.parquet").is_file()
-
-
 def _clean_available() -> bool:
     return paths.clean_path("lmp", iso=_ISO, market=_MARKET, year=_YEAR).is_file()
 
 
-@pytest.mark.skipif(not _raw_available(), reason="realized raw LMP product absent")
+@requires_raw(paths.CALIBRATION_DIR / f"actual_lmp_hourly_{_ISO}.parquet")
 @pytest.mark.skipif(
     not _clean_available(),
     reason="clean lmp partition absent (run scripts/regenerate_clean.py lmp)",
