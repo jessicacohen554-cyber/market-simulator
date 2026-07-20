@@ -15,15 +15,14 @@ import io
 import unittest
 import zipfile
 from pathlib import Path
-from tempfile import TemporaryDirectory
 
 import numpy as np
 import pandas as pd
 
 from market_sim.config.iso_configs import get_iso_config
 from scripts.data import curate_gtc_limits
-from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
+from tests.helpers.base import CleanDirTestCase
 
 _HEADER = (
     "SCEDTimeStamp,RepeatedHourFlag,ConstraintID,ConstraintName,"
@@ -59,11 +58,10 @@ def _monthly_archive(path: Path, intervals: dict[str, bytes]) -> None:
         oz.writestr("day1.zip", daily.getvalue())
 
 
-class CurateGtcLimitsTest(unittest.TestCase):
+class CurateGtcLimitsTest(CleanDirTestCase):
     def setUp(self):
-        self._tmp = TemporaryDirectory()
-        root = Path(self._tmp.name)
-        self.raw_root = root / "raw"
+        super().setUp()  # redirects paths.CLEAN_DIR to self.tmp_path / "clean"
+        self.raw_root = self.tmp_path / "raw"
         arch_dir = self.raw_root / "iso-specific-transmission"
         arch_dir.mkdir(parents=True)
 
@@ -83,14 +81,6 @@ class CurateGtcLimitsTest(unittest.TestCase):
             ),
         }
         _monthly_archive(arch_dir / "SCEDBTCNP686_202301.zip", intervals)
-
-        # Redirect CLEAN_DIR so writes never touch the repo.
-        self._orig_clean = clean_io.paths.CLEAN_DIR
-        clean_io.paths.CLEAN_DIR = root / "clean"
-
-    def tearDown(self):
-        clean_io.paths.CLEAN_DIR = self._orig_clean
-        self._tmp.cleanup()
 
     def _curated(self) -> pd.DataFrame:
         written = curate_gtc_limits.curate(raw_root=self.raw_root)

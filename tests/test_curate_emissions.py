@@ -10,7 +10,6 @@ dir (as in tests/test_clean_io.py) so nothing touches the real clean tree.
 
 import unittest
 from pathlib import Path
-from tempfile import TemporaryDirectory
 
 import pandas as pd
 
@@ -21,6 +20,7 @@ from scripts.data.curate_emissions import (
     clean_campd_frame,
     curate_year,
 )
+from tests.helpers.base import CleanDirTestCase
 
 
 def _raw_unit() -> pd.DataFrame:
@@ -78,18 +78,17 @@ def _write_fixture(root: Path) -> tuple[Path, Path]:
     return unit_dir, fac_dir
 
 
-class CleanDirRedirectMixin(unittest.TestCase):
-    """Redirect CLEAN_DIR to a temp dir so writes never touch the repo."""
+class CleanDirRedirectMixin(CleanDirTestCase):
+    """Redirect CLEAN_DIR to a temp dir so writes never touch the repo.
+
+    Thin adapter over the shared :class:`tests.helpers.base.CleanDirTestCase`
+    that keeps this module's ``self.root`` (== the tempdir) contract for its
+    subclasses.
+    """
 
     def setUp(self):
-        self._tmp = TemporaryDirectory()
-        self.root = Path(self._tmp.name)
-        self._orig_clean = clean_io.paths.CLEAN_DIR
-        clean_io.paths.CLEAN_DIR = self.root / "clean"
-
-    def tearDown(self):
-        clean_io.paths.CLEAN_DIR = self._orig_clean
-        self._tmp.cleanup()
+        super().setUp()  # redirects paths.CLEAN_DIR to self.tmp_path / "clean"
+        self.root = self.tmp_path
 
 
 class TestCleanFrame(unittest.TestCase):

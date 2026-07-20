@@ -12,14 +12,13 @@ then the committed 2023-2025 registry is smoke-parsed from the real raw tree
 
 import unittest
 from pathlib import Path
-from tempfile import TemporaryDirectory
 
 import pandas as pd
 
 from scripts.data import curate_maxgen_events as curate_mge
-from scripts.lib import clean_io
 from scripts.lib import maxgen_events as mge
 from scripts.lib.clean_io import paths, validate_clean
+from tests.helpers.base import CleanDirTestCase
 
 # One hour-precision row exercising the EST->UTC conversion (14:00 EST =
 # 19:00 UTC) plus one day-precision row.
@@ -35,19 +34,11 @@ def _write_miso_fixture(raw_root: Path, csv: str = _MISO_CSV) -> None:
     (d / "miso.csv").write_text(csv)
 
 
-class TestCurateMaxgenEvents(unittest.TestCase):
+class TestCurateMaxgenEvents(CleanDirTestCase):
     def setUp(self) -> None:
-        self._tmp = TemporaryDirectory()
-        root = Path(self._tmp.name)
-        self.raw_root = root / "raw"
+        super().setUp()  # redirects paths.CLEAN_DIR to self.clean_dir
+        self.raw_root = self.tmp_path / "raw"
         self.raw_root.mkdir(parents=True)
-        # Redirect CLEAN_DIR so writes never touch the repo.
-        self._orig_clean = clean_io.paths.CLEAN_DIR
-        clean_io.paths.CLEAN_DIR = root / "clean"
-
-    def tearDown(self) -> None:
-        clean_io.paths.CLEAN_DIR = self._orig_clean
-        self._tmp.cleanup()
 
     def test_trivial_roundtrip_and_est_to_utc(self) -> None:
         """1-ISO fixture: written partition validates; EST+5h = UTC."""
