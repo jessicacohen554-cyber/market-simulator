@@ -214,3 +214,4 @@ cyclic storage SOC dynamics, transmission `-TTC ≤ Flow ≤ TTC`, optional hydr
 monthly-energy budgets, optional RPS, optional reserve co-optimization.
 
 The full formulation is in [`02-lp-dispatch.md`](02-lp-dispatch.md).
+</content>
