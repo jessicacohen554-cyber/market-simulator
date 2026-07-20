@@ -6,7 +6,12 @@ Additive, scorer-side only; touches no model behavior.
       -> reads meta.json (the faithful flag surface); adds mode=forecast
          (the hindcast harness runs mode='forecast', hindcast=True — FF-2C §1.2)
 Writes run_config.json beside the summary / at the bundle root."""
-import json, sys, pathlib, yaml
+
+import json
+import sys
+import pathlib
+import yaml
+
 kind = sys.argv[1]
 if kind == "summary":
     summ_path = pathlib.Path(sys.argv[2])
@@ -21,4 +26,6 @@ elif kind == "hindcast":
 else:
     raise SystemExit(f"unknown kind {kind!r}")
 out.write_text(json.dumps(cfg, indent=2, default=str) + "\n")
-print(f"wrote {out}  (mode={cfg.get('mode')}, cmc={cfg.get('capacity_market_clearing')}, cmc_by_iso={cfg.get('capacity_market_clearing_by_iso')})")
+print(
+    f"wrote {out}  (mode={cfg.get('mode')}, cmc={cfg.get('capacity_market_clearing')}, cmc_by_iso={cfg.get('capacity_market_clearing_by_iso')})"
+)
