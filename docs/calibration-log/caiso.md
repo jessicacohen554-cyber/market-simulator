@@ -223,3 +223,57 @@ exclusion, DAM-before-CAMPD loader precedence, single-delta A/B — dedicated
 session.
 
 Next number: caiso-106.
+
+## 2026-07-20 — CAISO-106: intertie-elasticity MEASURED (derive-first); evening exhaustion is admissible + owner ask drafted, belly held back
+
+Keeper `2026-07-19-caiso-102-hourfix` UNCHANGED (NOT-YET, fail {C3c, C4,
+C5a(2024 CAVEAT)}); no mechanism armed, no leg registered. Executed the
+caiso-105 intertie-elasticity re-charter: MEASURE the state-conditioned
+conduct before proposing any LP form (rule 1). Instrument (committed):
+`scripts/probes/_caiso106_intertie_elasticity.py` — pure raw-data (EIA-930
+CISO corridor interchange + WECC hub DA LMP + CA actual LMP + EIA-930
+net-load), NO solve, conditioned on net-load (quintiles + FIXED GW bands) and
+hub-negative state, with the caiso-81/86/87 CV/LOYO honesty gates.
+
+**Arc 1 — EVENING intertie EXHAUSTS (admissible).** Measured TOTAL net import
+saturates and BACKS OFF as CAISO tightens: fixed-band p50 ~5.1-5.4 GW / p95
+~7.6-8.6 GW around net-load 20-30 GW, declining to ~4.5 / ~6.6-7.0 GW in the
+tightest band [30,45) GW — the West is ramping-tight at CAISO's sunset too, so
+the import margin is spent, not elastic. Every populated fixed-band p50/p95
+PASSES (CV 0.02-0.20); the year-relative tightest-quintile p95 ceiling
+7055/6875/7555 MW, CV 0.040, LOYO ≤ 7.8 %. This is the rung behind the evening
+under-price (−5.8/−4.9/−1.1): the model fills the evening margin with elastic
+hub-equalized import (caiso-105 §2: CA λ = a WECC node in 76/100/97 %, 10-12 $
+below CT entry) instead of climbing the domestic rung. → owner ask
+`docs/handoffs/caiso-106-evening-intertie-exhaustion-ask-2026-07-20.md`
+(M-EVE-EXH-1: a measured net-load-conditioned evening net-import CEILING — a
+deliverability envelope, rule-1 admissible, NOT a throttle — with
+pre-registered estimation + A/B + LOYO gates and explicit kill conditions).
+PENDING owner ruling.
+
+**Arc 2 — BELLY surplus-collapse is real but NOT year-stable (held back).**
+Direction unanimous: deepest net-load quintile TOTAL net import mean
+−2078/−2207/−1174 MW, export share 91/92/80 % (hub-negative: export 73/70/45 %,
+measured RT<0 66/78/65 %) — the corridor REVERSES to export where the model
+imports +3-4 GW at hub prices (caiso-105 §4). But the DEPTH fails every gate:
+year-relative deepest-quintile p95 CV 0.531 (LOYO 28-416 %); even the FIXED-band
+p50 response drifts (CV 0.33-0.37). Root cause: belly conduct depends on the
+WEST-WIDE surplus state that CAISO net-load doesn't observe (same CA net-load
+pairs with a flush or a tighter West), compounded by 2025 non-stationarity
+(belly net-load reaches −7.2 GW). The evening escapes this because at sunset the
+West is correlated-tight, so CAISO tightness proxies the neighbor. Verdict
+(rule 1): no LP form on an unstable measurement — the belly needs a west-wide
+observable (candidate: the Palo Verde / Malin hub LEVEL) as a follow-on lane.
+
+**Arc 3 — binding check (single-year 2024 diagnostic).** Does the model
+over-import past the measured ceiling (the go/no-go for the ask)? See FINDING
+§5 (`scripts/probes/_caiso106_binding_2024.py`, keeper-recipe repro restricted
+to 2024, un-registered per the FINDING-caiso92b protocol).
+
+**Arc 4 — DAM-outage intake (priority 3):** advanced on main by PR #2669
+(`src/market_sim/data/caiso_outages.py` + tests + loader-wiring) while this
+lane ran — not duplicated here. #2546 delete+re-gate remains a dedicated-session
+item.
+
+Full record: `results/calibration/FINDING-caiso106-intertie-elasticity-2026-07-20.md`.
+Next number: caiso-107.
