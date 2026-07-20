@@ -158,6 +158,35 @@ Grades: **YES / PARTIAL / NO / BLOCKED**. Every NO carries its blocker ID (§5).
 | 13 | **Anything — MISO** | **BLOCKED** | forecast raises `ValueError` before the first solve | BLK-1 |
 | 14 | **Long-horizon CO2 / energy-mix trajectory** | **NO** | corridor report: PJM CO2 +57 % / ERCOT +34 % by 2040 under default policy while every external model shows declines; direct consequence of rows 5/7/10 | BLK-9 → rows 5/7/10; corridor §1 |
 
+**Post-flip update — rows 7–12, 14 (FF-2C, 2026-07-20, commit `dbbae9c`).**
+`capacity_market_clearing` is now ON by default for **PJM/MISO/CAISO/NEISO**
+(owner sign-off 2026-07-19), and R1/R4 closed the −22 % anchor error. The
+qualifier **"(by construction)"** on rows 7–12/14 no longer holds for those
+four ISOs: their capacity-evolution screens price on the CR-1 curve, not the
+flat payment, so BLK-4 is resolved and BLK-9 is off the default path (it
+persists only for unflipped NYISO). The rows stay graded **NO / PARTIAL** — the
+flip does not by itself make the *forecasts* right — but the binding blocker has
+**shifted**:
+- **Row 7 (retire/keep fossil):** from "impossible (flat payment)" → the
+  curve-ON **over-retirement wave** (BLK-10) — measured for NEISO (FF-2B: 9.3
+  GW, +880 %) and PJM (RC-1A: coal +44 %). Different failure, root-caused in the
+  retirement-rule + backstop lanes, not a payment issue.
+- **Rows 9–11 (entry / adequacy):** the curve now moves the screens, but PJM's
+  position (~1.29–1.36) sits past its curve's 1.045 zero-cross → the curve pays
+  $0 (BLK-3 requirement/position half, R2/R3, still open). MISO's 2025 shortage
+  year stays under-priced (RC-1A one-sided residual). BLK-7 (VRE earns no
+  capacity revenue) and BLK-8 (solar entry 0) are unchanged by the flip.
+- **Row 12 (capacity-price forecasting):** the instrument is validated and the
+  fixed-anchor −22 % error is closed (R4); the position still pays $0 until R2/R3.
+- **Row 14 (CO₂ trajectory):** downstream of rows 7/10 — unchanged in sign until
+  those close.
+- **NYISO / ERCOT unchanged:** NYISO stays fixed-mode (curve-ineligible, R5a);
+  ERCOT is energy-only (rows 5–6 unaffected, BLK-5/BLK-6).
+Measured re-runs on the flipped defaults (fresh T1.7 rig-limitation finding;
+per-plant hindcast/equilibrium/tornado re-runs launched, continuation in the
+FF-2C findings doc §4) —
+`docs/handoffs/ff-2c-capacity-clearing-flip-execution-2026-07.md`.
+
 Rows 1–4 are the honest extent of "fit to forecast" today. The program's own
 framing stands confirmed end-to-end: *an entry/retirement loop driven by a
 non-responsive capacity price cannot equilibrate* — and the backcast
@@ -170,13 +199,13 @@ blockers below clear.
 |---|---|---|---|
 | **BLK-1** | `STORAGE_BASE_FLEET_MW` omits MISO → `build_default_storage` raises; **1/6 ISOs has no runnable forecast path** | P-3A ranked issue #1 (`full-horizon-findings-2026-07-12.md` §3); needs a cited EIA-860 base fleet (rules 5/24) | verdict rows — all of MISO |
 | **BLK-2** | ERCOT scarcity non-monotone in load/one-pass evolution (slack hours [34,0,58] across the T1.4 ladder; [0,…,11,0,39,107] over 2026–2040) | GitHub **#2064** | row 11 (adequacy timing); any scarcity-driven exit call |
-| **BLK-3** | ICAP/UCAP/FPR accreditation basis: PJM position ~18 pp too long from basis alone; anchor −22 %; payment CT/CC distortion. **P-2B adopted Option A — none of R1–R6 implemented yet** | **#1532** / P-2B memo §4 | rows 7–12; P-2A flip prerequisite 1 |
-| **BLK-4** | `capacity_market_clearing` default-off and unflippable until position/anchor/vintage fixed (P-2A §7 prerequisites 1–4: #1532; position calibration incl. retirement fix + CR-3.1; per-year net-CONE; MISO seasonal + NYISO vintage) | P-2A §7 | rows 7–12 |
+| **BLK-3** | ICAP/UCAP/FPR accreditation basis: PJM position ~18 pp too long from basis alone; anchor −22 %; payment CT/CC distortion. P-2B adopted Option A. **The anchor half is CLOSED: R1 (curve anchor 60.4→77.43 UCAP) and R4 (fixed anchor re-derived to the published basis for all four flipped ISOs) landed by FF-2C 2026-07-20 (commit `dbbae9c`) — the uniform −22 % anchor error is gone.** The requirement/position half (FPR requirement, ELCC-class supply, R2/R3/R5/R6) continues under the accreditation-basis lane. | **#1532** / P-2B memo §4; FF-2C (R4) | rows 7–12; P-2A flip prerequisite 1 (satisfied) |
+| ~~BLK-4~~ | ~~`capacity_market_clearing` default-off and unflippable~~ — **RESOLVED for PJM/MISO/CAISO/NEISO (FF-2C, 2026-07-20, commit `dbbae9c`).** Flipped ON by default via `capacity_market_clearing_by_iso` (owner sign-off 2026-07-19, RC-2B flip memo §4, unblocked by the §5 D1=3 re-probe); R4 re-derived each fixed anchor to its published basis (PJM 100→77.431, MISO 80→79.8, NEISO 95→108.94, CAISO 90→88.08). NYISO remains the one exception (curve-ineligible until R5a). | P-2A §7 → **FF-2C done**; `docs/handoffs/ff-2c-capacity-clearing-flip-execution-2026-07.md` | rows 7–12 (now testable — see the row notes) |
 | **BLK-5** | Retirement-screen level miscalibration, ERCOT direction (22.8 vs 1.5 GW; false-retire 96 %) | G-30/G-31 hindcast lane | rows 4–6 |
 | **BLK-6** | ERCOT scarcity/AS revenue level: screens capture ~25 % of the SOM CT net-revenue anchor (17.2 vs ≈68 $/kW-yr); `as_revenue_enabled` default off | G-20/G-22 AS co-opt lane; corridor report §2 (T3.2) | rows 3, 5, 6 |
 | **BLK-7** | VRE new-entry screens earn no capacity revenue anywhere (even in ISOs that pay it), and PJM wind ELCC has no published declining axis yet | audit D7; P-2C follow-ups #1/#4 | rows 6, 10 |
 | **BLK-8** | Solar entry = 0 GW in BOTH hindcasts against 25.1 (ERCOT) / 13.1 (PJM) GW actual — the single largest additions miss; root cause in the entry-economics stack (cost/queue/negative-price interaction), not yet diagnosed | hindcast lane (G-30 adjacent); no dedicated gap row — **should get one** | rows 6, 10, 14 |
-| **BLK-9** | Fixed capacity payment ≥ 1.3× GFC for all fossil (§2): fossil exit impossible, nuclear-only retirement inversion | confirmed in `capacity-revenue-fom-ratio-2026-07-13.md` (PR #2160, answering P-3B §8.3); **needs a gap-register row**; resolution = BLK-3 + BLK-4 (the CR chain), not a payment haircut (rule 13) | rows 7, 8, 11, 14 |
+| **BLK-9** | Fixed capacity payment ≥ 1.3× GFC for all fossil (§2): fossil exit impossible, nuclear-only retirement inversion. **No longer the active default for PJM/MISO/CAISO/NEISO (FF-2C, 2026-07-20): they now price on the CR-1 curve, so the flat-payment arithmetic is off the default path.** Persists only for NYISO (unflipped). The curve-ON successor open item is the over-retirement wave (BLK-10). | `capacity-revenue-fom-ratio-2026-07-13.md` (PR #2160); gap-register §3.9 BLK-9; resolution = the CR chain (BLK-3+BLK-4, both now landed for the flipped ISOs via R1/R4/FF-2C), not a payment haircut (rule 13) | rows 7, 8, 11, 14 |
 | ~~BLK-10~~ | ~~#2063 IRA phaseout crash~~ — **CLOSED at HEAD** (P-1C fields + regression test; verified by P-2C) | #2063 | — |
 
 ## 6. What would flip the table (ordered, no new mechanisms invented)
@@ -185,6 +214,9 @@ blockers below clear.
 2. **P-2B Option A steps R1–R4** (anchor 60.4→77.43; FPR requirement; ELCC
    class-rating supply+payment basis; thermal-ratings intake R3) → removes
    ~2/3 of the PJM position bias and the −22 % anchor → re-run P-2A Pass 2.
+   **R1 + R4 DONE (FF-2C, 2026-07-20): the −22 % anchor error is closed — PJM
+   curve anchor 77.43 and every flipped ISO's fixed anchor now on its published
+   basis. R2/R3 (FPR requirement + ELCC-class supply) remain.**
 3. **Retirement/entry level calibration** (G-30/G-31 + BLK-8 root cause) —
    the remaining ~1/3 of the position error and the solar-entry miss. This is
    root-cause work on the screens' revenue inputs, not tuning (rules 1/13).
@@ -192,6 +224,18 @@ blockers below clear.
    ISO, only once its Pass-2 position lands in its curve's priced region) →
    rows 7–12 become testable; re-run T1.7 + tornado; re-run P-3A to completion
    (all six ISOs, full horizon) and P-3D re-scores.
+   **DONE for PJM/MISO/CAISO/NEISO (FF-2C, 2026-07-20, commit `dbbae9c`; owner
+   sign-off 2026-07-19).** The gate is ON by default via
+   `capacity_market_clearing_by_iso`; R4 re-derived each fixed anchor to its
+   published basis. Rows 7–12 are now *testable* rather than NO-by-construction.
+   Measured post-flip behaviour so far: the fixed-mode 0-retire/nuclear-
+   inversion pathology (BLK-9) is off the default path, replaced by the curve-ON
+   over-retirement wave (BLK-10, e.g. NEISO 9.3 GW +880% FF-2B; PJM RC-1A
+   +44%) — a successor open item root-caused in the retirement-rule + backstop
+   lanes, NOT tuned. PJM's *quantitative* curve effect is still gated on the
+   BLK-3 requirement/position half (its curve pays $0 past the zero-cross).
+   NYISO stays unflipped (R5a). See
+   `docs/handoffs/ff-2c-capacity-clearing-flip-execution-2026-07.md`.
 5. **ERCOT scarcity level** stays with G-20/G-22 (structural co-opt, never a
    fitted rent) — gates rows 5–6.
 
