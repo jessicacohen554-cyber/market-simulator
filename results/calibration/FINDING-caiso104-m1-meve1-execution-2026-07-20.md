@@ -159,6 +159,82 @@ promotion only on no-status-regression, owner call):**
    this FINDING from `storage.parquet` — the D-2-equivalent conduct report
    for a charge-side mechanism.
 
+### 3a. B-leg v1 (`caiso104_m1v1_zero_B`): GATE-3 FAIL — total charge collapse to ZERO, root-caused to a composition construction defect; support rule fixed a priori, v2 re-solved
+
+The first B-leg solved with the v1 derived profile and **failed the
+pre-registered volume gate catastrophically: battery charge 4.70/8.56/13.02
+TWh (A) → 0.000 in ALL THREE years** — the exact caiso-100 volume-collapse
+mode the construction claims to exclude. Root cause (adjudicated from the
+committed artifacts, no re-solve): the v1 profile carried MEASUREMENT-DUST
+shares (1.7e-5 … 2.8e-3) in hods where the caiso-99 envelope's charge cap
+is EXACTLY 0 (2023: hod 17/18/21; 2024: hod 18/22; 2025: hod 22/23). A
+floor row `Chg_fleet[h] ≥ share_h × da_frac × Σ Chg` with `share_h > 0` in
+an `env_cap[h] = 0` hour makes ANY positive daily volume infeasible, so the
+LP's only feasible point was zero charge — a **composition defect between
+two measured artifacts at their support margins**, not an economic response
+(the S-elimination algebra and the volume-holding property are intact; the
+trivial-case tests exercise exactly that and pass). The ask's own window
+declaration ("evening/late shares are measured ≈ 0, so the floor forces
+nothing there BY CONSTRUCTION") presumed a support the v1 artifact did not
+literally have.
+
+**Fix (v2 derive, `SUPPORT_MIN_SHARE = 0.005`):** a hod belongs to the
+measured DA-allocation support only when it carries ≥ 0.5 % of annual IFM
+charge; sub-threshold shares are set to exactly 0 and the profile
+renormalized (Σ = 1). Fixed A PRIORI — before any λ effect of a feasible
+leg was observed — as a support definition (composition safety), never a
+residual response (rule 23/25 posture documented in the derive script).
+v2 artifact: 13–14 active hods/yr, zero share>0 ∧ env=0 conflicts, belly
+share 0.706/0.730/0.723, da_frac unchanged. Worst-case composition bound:
+max feasible daily volume `min_h env_h/(share_h × da_frac)` = 3.3/3.9/4.2
+MWh per fleet-MW vs the A-leg's realized mean 2.3/2.6/3.0 — the composed
+constraint binds only on extreme days (intended conduct, not a choke). The
+v1 bundle is retained (`caiso104_m1v1_zero_B`) and registered as the failed
+probe (rule 15); the v2 leg re-solves under the IDENTICAL §3 pre-registered
+gates.
+
+### 3b. B-leg v2 (`caiso104_m1_B`): mechanism armed and conduct-faithful, but **REJECTED on the pre-registered gates** — the belly λ does NOT decouple
+
+v2 (support-fixed profile, identical recipe otherwise, same pre-registered
+gates), scored vs the same-machine A-leg:
+
+| gate | result |
+|---|---|
+| 1 — belly resid falls all 3 yrs | **FAIL**: +6.0→+5.9 / +6.6→**+6.6** / +4.3→+4.1 (2024 unchanged; movement ≈ nil everywhere) |
+| 2 — no overshoot | PASS (belly resid stays ≥ +4.1) |
+| 3 — volume ±5 % | **FAIL 2024**: annual +3.48 % / **+6.10 %** / +3.93 % (belly window +1.8/+2.2/−1.5 % all pass) |
+| 4 — evening not >0.5 deeper; overnight ≥ −1.5 | PASS (evening −5.8→−5.8 / −4.9→−5.1 / −1.1→−1.3; overnight +1.0/+0.1/+1.5) |
+| 5 — C1/C3c | PASS (C1 grid ~unchanged, CC/CT misses improve ≤0.11 TWh; C3c identical incl. the 2023-01-13 19-day cluster) |
+| 6 — conduct report | floors bind in 0.654/0.636/0.504 of charging-day × active-hod slots; reallocation B−A: overnight +0.21/+0.24/+0.29 TWh, pm-shoulder +0.09/+0.12/+0.23, morning −0.20/+0.03/+0.13, belly +0.06/+0.13/−0.14 |
+
+**Verdict: REJECTED probe (both legs registered per rule 15; keeper
+`2026-07-19-caiso-102-hourfix` UNCHANGED).** The mechanism did exactly what
+it claimed mechanically — the allocation followed the measured DAM bundle
+(gate-6 binding shares), volume held within ~4–6 %, nothing collapsed — and
+the belly λ still did not move. The decoupling hypothesis fails for a
+structural reason visible in the S-elimination algebra: the marginal stored
+MWh now prices at the SHAPE-WEIGHTED DAY BUNDLE, but the bundle is itself
+~72 % belly, so ~72 % of the battery's arbitrage margin still lands on
+belly-hour duals — bundling redistributes the charge-demand pressure only
+across the ~28 % non-belly allocation (which is where the small overnight/
+pm-shoulder λ effects and the +3.5–6 % volume rise went). A conduct-correct
+allocation cannot remove a price effect that comes from the VOLUME being
+priced at the margin at all.
+
+**Lane implication (the belly re-charter's starting point):** the belly
++6/+6.6/+4 residual has now survived BOTH structural correction families
+the measured conduct supports — the marginal-cost family (caiso-100/101
+adder, volume-refuted) and the allocation family (this leg, λ-inert). What
+remains is the third term of the identity: the DEMAND-side price the LP
+pays for charge — i.e. the belly λ is propped not by WHEN the fleet charges
+(allocation) nor by WHAT the charge costs (adder), but by the LP's
+requirement that the marginal charged MWh be arbitrage-profitable at all —
+reality's DA-cleared charge is a PRICE-TAKING schedule whose day-ahead
+clearing price is NOT the RT belly λ the backcast scores against (the
+measured DA-vs-RT belly wedge, FINDING-caiso102 §3). The re-charter should
+measure that wedge directly (charge-weighted DA λ vs RT λ in model-charge
+hours) before proposing any further mechanism.
+
 ## 4. M-EVE-1 B-leg gates (CONTINGENT on the §2 pin-check failing)
 
 Only if the firm blocks are NOT pinned on the fresh A-leg: gate

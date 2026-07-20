@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-16-caiso-89-chp-steam",
+  "run_id": "2026-07-20-caiso-104-m1-v1",
   "iso": "CAISO",
-  "label": "caiso 89 chp steam",
+  "label": "caiso 104 m1 v1",
   "target_years": [
     2023,
     2024,
@@ -13,17 +13,17 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.5,
+  "rubric_version": 2.7,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_tail, dispatch_corr"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
   "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -38,12 +38,12 @@
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_tail": {
-      "label": "C3c price tail / scarcity (DA-expressible)",
+      "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -53,22 +53,13 @@
     "co2": {
       "label": "C5a CO2 vs eGRID",
       "tier": "load-bearing",
-      "status": "PASS"
-    },
-    "storage": {
-      "label": "C5b storage throughput",
-      "tier": "supporting",
-      "status": "SKIPPED"
-    },
-    "storage_shape": {
-      "label": "C5c storage dispatch shape",
-      "tier": "supporting",
-      "status": "SKIPPED"
+      "status": "CAVEAT",
+      "caveat_kind": "commercial-band"
     },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "PASS"
+      "status": "UNATTESTED"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -84,18 +75,20 @@
   "caveats": {
     "protective": [],
     "ledgered": [],
-    "commercial_band": [],
+    "commercial_band": [
+      "C5a CO2 vs eGRID"
+    ],
     "budget": {
       "protective_max": 1,
       "ledgered_max": 3
     }
   },
   "grade_summary": {
-    "scored": 10,
-    "target_grade": 6,
-    "commercial_grade": 0,
+    "scored": 9,
+    "target_grade": 5,
+    "commercial_grade": 1,
     "ledgered": 0,
-    "fails": 4
+    "fails": 3
   },
   "free_class_score": {
     "iso": "CAISO",
@@ -113,13 +106,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 11,
+      "pass": 12,
       "total": 12
     },
     "free": {
-      "pass": 7,
+      "pass": 8,
       "total": 8
     },
-    "headline": "C1 all 11/12 \u00b7 free 7/8"
+    "headline": "C1 all 12/12 \u00b7 free 8/8"
   }
 }

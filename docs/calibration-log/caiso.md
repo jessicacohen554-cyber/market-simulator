@@ -89,3 +89,78 @@ margin, propping the belly UP and pinning the tight evening DOWN. The two
 pending asks are the two sides' structural corrections.
 
 Next number: caiso-104.
+
+## 2026-07-20 — CAISO — caiso-104: BOTH caiso-103 asks executed and the belly ALLOCATION family REFUTED — M1 solved twice (v1 zero-charge composition defect; v2 conduct-faithful but belly-λ INERT, REJECTED on pre-registered gates); M-EVE-1 adjudicated INERT before any solve (the caiso-77 must-flow floor is LIVE in the keeper — the caiso-103 "withheld GW" attribution was a proxy artifact); DAM-outage corpus intaken; keeper UNCHANGED
+
+Owner rulings obtained in-session: M1 GRANTED, M-EVE-1 GRANTED (with the
+pre-measurement mandate), da_frac forward = latest-year carry, #2546
+delegated → recommendation recorded on the issue (defer as-is this session;
+delete + re-gate as a dedicated follow-up). Keeper stays
+`2026-07-19-caiso-102-hourfix` (NOT-YET; ladder unchanged: belly
++6.0/+6.6/+4.3, evening −5.8/−4.9/−1.1, overnight +0.8/−0.0/+1.4 — the
+fresh same-machine `caiso102_repro_A` reproduces it digit-for-digit). Full
+record: `results/calibration/FINDING-caiso104-m1-meve1-execution-2026-07-20.md`.
+
+**Arc 1 — M-EVE-1 (evening): adjudicated INERT, no leg.** The pre-measurement
+(`_caiso104_firm_negative_hub.py`, a-priori rule) fixed the bid constant at
+$0 (5/6 corridor-years show curtailment conduct in negative-hub hours; the
+PNW corridor flips to net EXPORT). But the pin-check
+(`_caiso104_firm_pin_check.py` on the fresh A-leg) found both firm blocks
+PINNED at `dispatch == min_gen == pmax × availability` in 1.0000 of capable
+hours in all three years — the caiso-77 floor (`caiso_firm_import_
+selfschedule=True`) is live in the keeper recipe (also in the keeper's own
+recorded scenario_config), so the granted bid swap is provably byte-inert
+and FINDING-caiso103 §3's "interior / 1.7-2.5 GW withheld" attribution was
+an artifact of its unit-year-p99 interior proxy on pinned month-varying
+dispatch. Owner ruling on the evidence: RE-CHARTER the evening lane — a
+follow-up re-decomposes Q1 with a pin-aware method (bounds from floors npz +
+fleet_only caps, never the p99 proxy); the floor→$0-bid replacement (which
+the §1 conduct measurement supports and the live floor contradicts) is a
+candidate for that re-charter. The evening residual and the hub-separation
+defect (model λ 8-40 $ below the measured hubs in Q1) remain REAL and OPEN.
+
+**Arc 2 — M1 (belly): built, solved twice, REFUTED.** Full implementation
+committed (rule-23 derive `derive_caiso_charge_allocation.py` → 24-value
+hod shares + da_frac 0.8399/0.7994/0.7603, reproducing FINDING-caiso102 §1
+exactly; `ScenarioConfig.caiso_charge_allocation_schedule`, default off;
+`dispatch._build_storage_alloc_rows` — the ask's per-day S[d] eliminated
+exactly by Fourier-Motzkin into per-day fleet-charge floor rows, no layout
+change; 11 new tests + 167 regression green). B-leg v1
+(`2026-07-20-caiso-104-m1-v1`): battery charge collapsed 4.7/8.6/13.0 TWh →
+ZERO — root-caused to a COMPOSITION defect (trace v1 shares of 1e-5..3e-3
+in hods where the caiso-99 envelope's charge cap is exactly 0 make any
+positive daily volume infeasible); support rule fixed A PRIORI
+(SUPPORT_MIN_SHARE = 0.005, renormalized). B-leg v2
+(`2026-07-20-caiso-104-m1-v2`): the mechanism did everything it claimed
+mechanically — floors bind in 0.50-0.65 of charging-day×active-hod slots,
+charge reallocates toward overnight/pm-shoulder, volume holds within
++3.5/+6.1/+3.9 % — and the belly λ still did not move (+6.0→+5.9 /
++6.6→+6.6 / +4.3→+4.1). REJECTED on pre-registered gates 1 (belly must fall
+all three years) and 3 (2024 volume +6.1 % vs ±5 %); evening/overnight/C1/
+C3c protections all held. Structural reading: the measured DA bundle is
+itself ~72 % belly, so the marginal stored MWh still prices mostly at belly
+duals — allocation CANNOT decouple a price effect that comes from the
+volume being priced at the RT margin at all. The belly lane has now refuted
+BOTH conduct-supported families (bid-cost: caiso-100/101; allocation:
+caiso-104); the FINDING §3b re-charter pointer is the DA-vs-RT price basis
+itself (reality's charge clears at DA prices, the backcast scores RT λ —
+measure the charge-weighted DA-RT belly wedge before proposing anything).
+
+**Arc 3 — DAM-outage intake (owner-directed) opened.** CAISO's daily
+Curtailed and Non-Operational Generator prior-trade-date reports fetched
+and committed: 1,094/1,096 trade days 2023-2025 (2 real publication gaps;
+dual filename conventions handled), consolidated to per-MRID windows
+(`caiso-dam-outage-windows.parquet`: 794k episodes, 1,548 resources).
+Remaining stages handed off: RESOURCE ID → ORIS crosswalk (rule-19 design
+decision: exclude AMBIENT_DUE_TO_TEMP episodes — that phenomenon is owned
+by `temp_dependent_derate`), schema/clean_io intake, unit-level
+DAM-before-CAMPD loader precedence (CAMPD stays the fallback per the owner
+directive), single-delta A/B.
+
+Registered: `2026-07-20-caiso-104-m1-v1`, `2026-07-20-caiso-104-m1-v2`
+(both PROBE/REJECTED); retention pruned caiso-85/-87/-89. Housekeeping
+note: `check_registry_payload_parity.py` flags pre-existing gaps in OTHER
+lanes (nyiso-65 sidecar + NYISO/NEISO keeper payloads) — not touched per
+per-ISO lane isolation; their lanes should repair them.
+
+Next number: caiso-105.
