@@ -288,3 +288,54 @@ item.
 
 Full record: `results/calibration/FINDING-caiso106-intertie-elasticity-2026-07-20.md`.
 Next number: caiso-107.
+
+## 2026-07-20 — CAISO-107: both re-chartered intertie lanes NOT READY on any CAISO-observable state — evening premium wrong-signed + unstable, belly depth NOT stabilized by hub level; lane re-charters onto import supply-curve pricing; keeper UNCHANGED
+
+Executes the caiso-106 re-charter (ask doc §7), derive-first, measurement-only.
+Keeper `2026-07-19-caiso-102-hourfix` (NOT-YET, fail {C3c, C4, C5a(2024 CAVEAT)})
+UNCHANGED; ladder unchanged (belly +6.0/+6.6/+4.3, evening −5.8/−4.9/−1.1,
+overnight +0.8/−0.0/+1.4); no mechanism armed, no solve, nothing registered.
+Instrument (committed): `scripts/probes/_caiso107_intertie_recharter.py` — pure
+raw-data, reuses the caiso-106 primitives (`_load`, windows, fixed net-load
+bands, CV/LOYO gate).
+
+**LANE 1 — EVENING RT-over-hub premium: WRONG-SIGNED + year-unstable → NOT
+filed.** Measured mean(CA RT − DA hub) in the evening, conditioned on the
+observable tightness, is NEGATIVE in exactly the state the mechanism targets:
+tight ([20,45) GW) mean RT − max(hub) = −17.1 $/MWh (positive in 0 % of tight
+band-years), RT − min(hub) = −9.3 (positive 11 %) — CA RT prints BELOW the DA
+hub when CAISO is tight because the DA hub spikes with the correlated-tight West
+(PALO DA $145/$96/$64 vs CA RT $78/$62/$54 in [30,45)). An exhaustion premium
+lifting the marginal import ABOVE the hub would push tight-hour λ the wrong way.
+It also fails stability: tightest-quintile premium −73/−31/−8 (max-hub, CV 0.72,
+LOYO ≤ 559 %) and −34/−21/−6 (min-hub, CV 0.57); per-band $ gate FAILs every
+tight band (CV 0.31–0.62) and sign-flips across transition bands. Confound: the
+hub is DAY-AHEAD, CA RT is real-time, and the evening CA DA−RT basis is large
+(+7.7/+8.5/+43.3 in tight bands) — a clean premium can't even be defined against
+a DA hub. Reconciles with caiso-103 §6 ("RT ≈ at/above hub"): that was measured
+in the MODEL's Q1 under-price hours (a model-residual state, unobservable in raw
+data), not the tightest net-load; on the observable it's wrong-signed.
+
+**LANE 2 — BELLY depth on hub LEVEL: NOT stabilized (CV WORSE than net-load) →
+NOT filed.** Belly p50 TOTAL net import by PALO/min-hub LEVEL band is CV 0.49–1.62
+— worse than the net-load conditioning that already failed (caiso-106 §3, CV
+0.33–0.37). Same hub level pairs with net EXPORT in 2023 and +900–1300 MW net
+IMPORT in 2024/25 ([−2,8) band); the p95 ceiling also fails (CV 0.16–0.29). The
+hub−CA basis is CV 0.71–0.89 with import-side bands sparse — also FAIL. Root:
+the DA hub level is itself non-stationary (2025 more solar/EDAM) and the CA belly
+transfer depends on the full west-wide balance a single hub price doesn't
+summarize.
+
+**Unifying read + re-charter.** Both defects are model-λ-formation problems whose
+corrective quantity is only cleanly defined against the MODEL's own state, not
+any raw CAISO observable — the caiso-103 §6 root cause is the static-priced FIRM
+import blocks ($28/$48 contract proxies under `caiso_perhub_firm_base`) pinning
+λ below the hub when marginal. The right-signed lever is import SUPPLY-CURVE
+re-pricing (marginal firm/import rung prices at the live endogenous hub dual,
+forward-reproducible by construction), NOT a conditioned raw-data envelope.
+EVENING exhaustion-premium lane CLOSED; BELLY volume-ceiling remains right-signed
+but has no admissible identification (held pending a west-wide surplus-QUANTITY
+observable or a belly-tranche re-pricing). Neither filed.
+
+Full record: `results/calibration/FINDING-caiso107-intertie-recharter-2026-07-20.md`.
+Next number: caiso-108.
