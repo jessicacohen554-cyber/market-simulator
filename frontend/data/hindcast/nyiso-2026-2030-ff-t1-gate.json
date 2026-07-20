@@ -1,0 +1,36 @@
+{
+  "run_id": "nyiso-2026-2030-ff-t1-gate",
+  "meta": {
+    "iso": "NYISO",
+    "kind": "t1f",
+    "label": "ff-t1-gate",
+    "variant": "forecast-baseline",
+    "mode": "forecast",
+    "start_year": 2026,
+    "end_year": 2030,
+    "capacity_market_clearing": false,
+    "datacenter_load_path": "mid",
+    "correlated_forced_outage": true,
+    "cache_key": "26d1e6d33e65e44a",
+    "bundle": "results/ff-t1-gate/nyiso/NYISO/26d1e6d33e65e44a",
+    "solved_years": [2026, 2027, 2028, 2029, 2030],
+    "n_solved_years": 5,
+    "error": null,
+    "total_wall_s": 560.0,
+    "global_peak_rss_mb": 3409.8,
+    "year_summary": [
+      {"year": 2026, "reserve_margin": 0.0192, "lw_price": 50.48, "max_hourly_price": 67.2, "co2_mt": 24.28, "hours_ge_500": 0, "retire_mw": 0.0, "builds_thermal_mw": 0.0, "builds_renew_mw": 0.0, "builds_storage_mw": 0.0},
+      {"year": 2027, "reserve_margin": 0.0857, "lw_price": 47.59, "max_hourly_price": 62.1, "co2_mt": 24.63, "hours_ge_500": 0, "retire_mw": 8.0, "builds_thermal_mw": 2196.0, "builds_renew_mw": 1000.0, "builds_storage_mw": 0.0},
+      {"year": 2028, "reserve_margin": 0.1134, "lw_price": 48.91, "max_hourly_price": 63.7, "co2_mt": 23.83, "hours_ge_500": 0, "retire_mw": 0.0, "builds_thermal_mw": 1000.0, "builds_renew_mw": 1000.0, "builds_storage_mw": 0.0},
+      {"year": 2029, "reserve_margin": 0.1402, "lw_price": 52.72, "max_hourly_price": 64.9, "co2_mt": 23.03, "hours_ge_500": 0, "retire_mw": 0.0, "builds_thermal_mw": 1000.0, "builds_renew_mw": 1000.0, "builds_storage_mw": 0.0},
+      {"year": 2030, "reserve_margin": 0.1354, "lw_price": 57.59, "max_hourly_price": 72.6, "co2_mt": 17.85, "hours_ge_500": 0, "retire_mw": 0.0, "builds_thermal_mw": 0.0, "builds_renew_mw": 1000.0, "builds_storage_mw": 0.0}
+    ]
+  },
+  "score": null,
+  "invariants": [
+    {"ident": "I7", "name": "reliability floor", "status": "FAIL", "detail": "2026: accredited firm 30322 < requirement 32121 MW"},
+    {"ident": "I12", "name": "reserve-margin band", "status": "WARN", "detail": "requirement-implied floor [8.0%, 23.0%]; out: 2026:1.9%"}
+  ],
+  "invariants_note": "sole FC-1 blocker is I7; structural I1-I6/I8-I11/I13/I14 PASS (omitted); full set in results bundle",
+  "registered_utc": "2026-07-20T15:52:34Z"
+}
