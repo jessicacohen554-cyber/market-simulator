@@ -551,7 +551,6 @@ George Neal North,1091,3,584.1,584.1,100.0,COAL,eia_exact,2023-03-28,2023-04-23,
 George Neal North,1091,3,584.1,584.1,100.0,COAL,eia_exact,2023-04-26,2023-05-02,6.3,0,1
 George Neal North,1091,3,584.1,584.1,100.0,COAL,eia_exact,2023-05-23,2023-05-30,6.4,0,1
 George Neal North,1091,3,584.1,584.1,100.0,COAL,eia_exact,2023-06-24,2023-06-29,5.0,0,1
-George Neal North,1091,3,584.1,584.1,100.0,COAL,eia_exact,2023-08-31,2023-09-07,7.1,0,1
 George Neal North,1091,3,584.1,584.1,100.0,COAL,eia_exact,2023-09-18,2023-09-24,6.9,0,1
 George Neal North,1091,3,584.1,584.1,100.0,COAL,eia_exact,2023-09-28,2023-10-07,9.1,0,1
 George Neal North,1091,3,584.1,584.1,100.0,COAL,eia_exact,2023-11-04,2023-11-10,5.1,0,1
@@ -560,9 +559,7 @@ George Neal North,1091,3,584.1,584.1,100.0,COAL,eia_exact,2023-12-23,2023-12-31,
 George Neal North,1091,3,584.1,584.1,100.0,COAL,eia_exact,2024-02-14,2024-03-22,37.8,0,1
 George Neal North,1091,3,584.1,584.1,100.0,COAL,eia_exact,2024-03-28,2024-06-09,73.2,0,1
 George Neal North,1091,3,584.1,584.1,100.0,COAL,eia_exact,2024-08-31,2024-09-23,23.1,0,1
-George Neal North,1091,3,584.1,584.1,100.0,COAL,eia_exact,2024-10-16,2024-11-05,20.1,0,1
 George Neal North,1091,3,584.1,584.1,100.0,COAL,eia_exact,2024-11-15,2024-11-21,6.4,0,1
-George Neal North,1091,3,584.1,584.1,100.0,COAL,eia_exact,2024-11-28,2024-12-05,7.2,0,1
 George Neal North,1091,3,584.1,584.1,100.0,COAL,eia_exact,2024-12-13,2024-12-24,10.9,0,1
 George Neal North,1091,3,584.1,584.1,100.0,COAL,eia_exact,2024-12-25,2024-12-31,6.4,0,1
 George Neal North,1091,3,584.1,584.1,100.0,COAL,eia_exact,2025-01-21,2025-01-29,7.6,0,1
@@ -3106,7 +3103,6 @@ TES Filer City Station,50835,1,35.0,70.0,50.0,COAL,optime_proxy,2025-02-05,2025-
 TES Filer City Station,50835,1,35.0,70.0,50.0,COAL,optime_proxy,2025-02-21,2025-03-01,8.6,1,2
 TES Filer City Station,50835,1,35.0,70.0,50.0,COAL,optime_proxy,2025-04-19,2025-04-30,11.0,1,2
 TES Filer City Station,50835,2,35.0,70.0,50.0,COAL,optime_proxy,2023-05-07,2023-06-01,24.4,1,2
-TES Filer City Station,50835,2,35.0,70.0,50.0,COAL,optime_proxy,2023-07-11,2023-08-13,33.3,1,2
 TES Filer City Station,50835,2,35.0,70.0,50.0,COAL,optime_proxy,2023-08-24,2023-09-27,33.4,1,2
 TES Filer City Station,50835,2,35.0,70.0,50.0,COAL,optime_proxy,2023-11-29,2023-12-05,5.8,1,2
 TES Filer City Station,50835,2,35.0,70.0,50.0,COAL,optime_proxy,2024-01-28,2024-02-05,7.9,1,2
