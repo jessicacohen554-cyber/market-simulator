@@ -1,0 +1,131 @@
+name: CI
+
+# Restored per-PR safety net (owner decision D-2, refactor-consolidation plan
+# §2-A). All four workflows CLAUDE.md rule 22 and the .claude hooks cite
+# (ci.yml, lint.yml, clean-parity.yml, forecast-invariants.yml) were DELETED
+# wholesale on 2026-07-14 (commit 27c0152 "Remove all GitHub Actions workflows
+# and patch cruft" — the sweep that killed the per-task solve/apply workflows
+# burning Actions minutes) and never restored; the CI safety net was collateral.
+# This one durable workflow is sanctioned CI infrastructure — NOT a per-task
+# workflow — and folds the former standalone lint.yml back in as the `lint` job.
+#
+# Every job is seconds-to-a-few-minutes and path-filtered; the jobs run in
+# parallel, so wall time is the slowest job (fast-tests). NO LP solves, no data
+# regeneration, no cron — heavy work runs in Claude sessions, per the repo CI
+# cost policy.
+
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "scripts/**"
+      - "tests/**"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".python-version"
+      - "conftest.py"
+      - "frontend/data/backcast/**"
+      - "CLAUDE.md"
+      - ".github/workflows/ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  quarantine-gates:
+    name: Rule-22 quarantine gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up uv + Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: uv sync
+      # E1-E9 keeper-text integrity + H1 holdout-quarantine (audit D-6/D-9,
+      # re-arms CLAUDE.md rules 22/24/25). Fast (reads committed artifacts).
+      - name: audit_keepers --check
+        run: uv run python scripts/audit_keepers.py --check
+      # D-9 overlay quarantine + D-6 holdout quarantine (the rule-22 marker
+      # enforcement). --no-d2-recompute skips the D-2 recompute-vs-committed
+      # check, which rebuilds per-plant floors via run_year (needs each keeper's
+      # FETCHED raw inputs — uncommitted — and minutes of compute), so it is
+      # unfit for the fast hermetic PR tier; run the full --keepers in a
+      # data-provisioned lane. See scripts/legitimacy_diagnostics.py.
+      - name: legitimacy_diagnostics --keepers (fast tier)
+        run: uv run python scripts/legitimacy_diagnostics.py --keepers --no-d2-recompute
+      # Registry sidecar <-> run payload 1:1 parity (a sidecar-only run never
+      # renders in the Run Explorer). Tolerates only the tracked known-unsynced
+      # ids (scripts/lib/known_unsynced_keepers.py); any new gap fails.
+      - name: check_registry_payload_parity
+        run: uv run python scripts/check_registry_payload_parity.py
+
+  lint:
+    name: Ruff lint + format
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up uv + Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: uv sync
+      - name: Ruff lint
+        run: uv run ruff check .
+      - name: Ruff format check
+        run: uv run ruff format --check .
+
+  fast-tests:
+    name: Fast test tier
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up uv + Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: uv sync
+      # Parallel fast tier. The `fulldata` mark is not yet registered (lands
+      # with Wave 2D); naming it in the -m expression is harmless (it simply
+      # matches nothing today), so this line needs no edit when 2D adds it.
+      #
+      # ADVISORY (continue-on-error) — TEMPORARY. When CI was restored
+      # (2026-07-20) this tier surfaced 72 PRE-EXISTING failures + 1 collection
+      # error that accumulated across the ~6-day CI outage (2026-07-14 sweep →
+      # restoration) — real code/test + committed-artifact drift, unrelated to
+      # any one change (e.g. test_net_cone_forward imports a constant since
+      # removed from constants.py). They are NOT masked (the tier runs and
+      # reports every failure in-log), but the job does not BLOCK until the
+      # backlog is triaged — fixing all 72 or citing+xfail'ing them per the
+      # old ci.yml's 11-failure precedent. Remove `continue-on-error` to make
+      # this tier blocking once the tree is green. Full breakdown: the
+      # phase-refactor/ci-restoration PR body.
+      - name: Fast pytest tier (advisory until pre-existing failures triaged)
+        continue-on-error: true
+        run: uv run python -m pytest -n 2 -m "not slow and not integration and not fulldata"
+
+  refactor-guards:
+    name: Structural refactor guards
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up uv + Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: uv sync
+      # Byte-compile every module (a syntax break anywhere fails fast).
+      - name: compileall
+        run: uv run python -m compileall -q src scripts
+      # pkgutil import-walk of market_sim + a script-reference lint (a moved or
+      # deleted script that leaves a live code/config invocation dangling).
+      - name: import-walk + script-reference lint
+        run: uv run python scripts/ci_refactor_guards.py
