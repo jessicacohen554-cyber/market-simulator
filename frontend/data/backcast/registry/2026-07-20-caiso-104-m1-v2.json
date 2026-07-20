@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-20-caiso-104-m1-v2",
+  "label": "caiso 104 m1 v2",
+  "date": "2026-07-20",
+  "shorthand": "caiso-104-m1-v2",
+  "definition": "caiso-104 M1 B-leg -- keeper recipe + caiso_charge_allocation_schedule (the owner-granted DA charge-allocation schedule, single delta vs the same-machine caiso102_repro_A; gates pre-registered in FINDING-caiso104 s3), 2023-2025 (PROBE \u2014 REJECTED on pre-registered gates: belly \u03bb inert (+6.0\u2192+5.9 / +6.6\u2192+6.6 / +4.3\u2192+4.1 \u2014 gate 1 requires a fall in all three years) and 2024 annual charge volume +6.1% vs the \u00b15% band; allocation floors bound in 0.50-0.65 of slots, evening/overnight/C1/C3c protections held. The measured DA-allocation bundle is ~72% belly, so the marginal stored MWh still prices mostly at belly duals \u2014 the allocation family joins the bid-cost family as refuted for the belly residual; FINDING-caiso104 \u00a73b. Keeper unchanged.)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-20-caiso-104-m1-v2.js",
+  "bundle": "results/calibration/caiso104_m1_B"
+}
