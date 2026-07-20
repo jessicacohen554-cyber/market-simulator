@@ -234,3 +234,16 @@ exemplifies). Pre-existing main breakage noted for the owner (not this lane):
 `NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO` missing from `constants.py`).
 Ops: derive + artifact + mechanism + tests + charter §8 + this entry on
 `claude/ercot-91-stgas-shoulder-seams-tgrv1j`. Next number: ercot-92.
+
+**Promotion amendment (same session, owner directive "Promote").**
+`2026-07-20-ercot91-seasonal-drag-fullspan` is the ERCOT KEEPER, superseding
+`2026-07-19-ercot86-rt-wall-fullspan`. Executed: `calibration_attestation.json`
+written (ercot86's governance + exceptions carried forward with updated
+magnitudes — 2023 C3a −32.5 % vs −32.8 %, C3b 0.631 vs 0.632, tail byte-flat;
+DOF ledger +1 measured-physical entry for the seasonal curve, superseding the
+pooled scalars); keeper shard swapped (`keeper_store.py --set ERCOT`);
+`market_story` added to the sidecar; verdict re-scored (NOT-YET on the same
+basis as ercot86 — `price_tail` undocumented beyond 2023, the standing C3
+successor lane); `build_status.py --iso ERCOT` rebuilt;
+`calibration-keeper-auditor --iso ERCOT` PASS (one prose repair: sidecar
+definition candidate→keeper). Branch rebased onto main post-#2651.
