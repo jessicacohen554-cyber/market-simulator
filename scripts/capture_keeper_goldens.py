@@ -163,13 +163,18 @@ def _git_dirty() -> bool:
         return False
 
 
-def resolve_keeper_bundles() -> dict[str, dict]:
+def resolve_keeper_bundles(only_isos: set[str] | None = None) -> dict[str, dict]:
     """Map each ISO to its keeper id and frozen bundle path.
 
     Reads the sharded keeper store (``keepers/<ISO>.json``, via
     ``scripts.lib.keeper_store``) for the current keeper ids and each keeper's
     registry sidecar for the bundle directory (the sidecar's ``bundle`` field —
     NOT the id-named directory, which is empty).
+
+    Args:
+        only_isos: When given, resolve (and validate) only these ISOs, so a
+            scoped ``--iso`` capture does not fail on an unrelated ISO whose
+            keeper bundle is missing from the tree.
 
     Returns:
         ``{iso: {"keeper_id": str, "bundle": Path, "years": list[int]}}``.
@@ -182,6 +187,8 @@ def resolve_keeper_bundles() -> dict[str, dict]:
             raise FileNotFoundError(f"registry sidecar missing: {sidecar}")
         reg = json.loads(sidecar.read_text())
         iso = reg["iso"].upper()
+        if only_isos is not None and iso not in only_isos:
+            continue
         bundle = REPO / reg["bundle"]
         if not (bundle / "meta.json").is_file():
             raise FileNotFoundError(
@@ -511,7 +518,8 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    bundles = resolve_keeper_bundles()
+    only = {i.upper() for i in args.iso} if args.iso and not args.all else None
+    bundles = resolve_keeper_bundles(only_isos=only)
     if args.all:
         isos = sorted(bundles)
     elif args.iso:
