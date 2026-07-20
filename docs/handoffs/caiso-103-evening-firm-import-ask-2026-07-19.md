@@ -1,5 +1,22 @@
 # CAISO-103 owner ask — price-taking firm import blocks (the evening CT-rung composition fix)
 
+**Status: GRANTED (caiso-104 session, 2026-07-20) then ADJUDICATED INERT —
+no leg solved; evening lane RE-CHARTERED (owner ruling on the evidence).**
+The caiso-104 pin-check (`scripts/probes/_caiso104_firm_pin_check.py`)
+established that the caiso-77 must-flow floor
+(`caiso_firm_import_selfschedule=True`) is LIVE in the caiso-102-hourfix
+keeper recipe: both firm blocks are pinned at `dispatch == min_gen == pmax ×
+availability` in 1.0000 of capable hours in all three years, so the bid swap
+this ask proposes is provably byte-inert, and §1's "interior / 1.7–2.5 GW
+withheld" attribution was an artifact of the p99 interior-dispatch proxy on
+pinned month-varying dispatch. The §3.2 pre-measurement WAS executed
+(negative-hub conduct → bid constant $0, `_caiso104_firm_negative_hub.py`)
+and stands for any successor mechanism. See
+`results/calibration/FINDING-caiso104-m1-meve1-execution-2026-07-20.md` §1–§2.
+The original ask text is preserved below unchanged for the record.
+
+---
+
 **Status: PENDING owner ruling.** No mechanism built or solved; measured
 decomposition in FINDING-caiso103 §3 (`_caiso103_evening_margin.py` on the
 same-machine `caiso102_repro_A`, which reproduces the caiso-102-hourfix
