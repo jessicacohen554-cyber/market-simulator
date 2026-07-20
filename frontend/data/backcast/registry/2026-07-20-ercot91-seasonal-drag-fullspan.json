@@ -1,0 +1,16 @@
+{
+  "id": "2026-07-20-ercot91-seasonal-drag-fullspan",
+  "label": "ercot91 seasonal drag fullspan",
+  "date": "2026-07-20",
+  "shorthand": "ercot91-seasonal-drag-fullspan",
+  "definition": "ERCOT-91 winter-seam KEEPER (owner-promoted 2026-07-20, supersedes 2026-07-19-ercot86-rt-wall-fullspan): the ercot86 keeper recipe + gas_st_drag_seasonal, the rule-22 season-grain re-derive of the ST_GAS net-load drag curve from its own CAMPD source (derive_ercot_stgas_drag_seasonal.py; DJF zero-crossing ~31 GW vs pooled 15.2 \u2014 the ERCOT-90 S3.3 winter over-carry, fixed at curve grain). All pre-committed gates held in all three years vs true bases (2023 base re-solved byte-recipe: resid -24.0% -> -23.7%; 2024 C3a -1.3% -> -0.6%; 2025 +1.4% -> +2.0%; spurious/tail/NRMSE flat): DJF ST_GAS over-carry +1.77 -> +0.52 TWh (2024) and +1.39 -> +0.23 (2025); annual class energy +25%/+24% -> +12%/+10% over the same-plant CAMPD basis; winter C4 flat-to-improved. D-2 ST_GAS forced share 29.0/26.7/32.0% -> 20.8/18.8/22.8% \u2014 the 2025 over-cap C8 row now passes under the 30% budget outright. Band-hour steam-wall arm was probed the same round and REJECTED (charter S8.1). Governance attestation on file (calibration_attestation.json). Determination NOT-YET, unchanged vs ercot86: 2023 C3a/C3b carry the same input-blocked measured-representation caveat (RT/SCED offer basis unreachable for 2023), and C3c price tail still FAILs \u2014 the RT scarcity tail stays collapsed on the corrected availability envelope (byte-flat vs ercot86; successor lane is the ERCOT offer-curve/ORDC re-calibration, not this seasonal-drag change).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-20-ercot91-seasonal-drag-fullspan.js",
+  "bundle": "results/calibration/ercot91_seasonal_drag_fullspan",
+  "market_story": "ST_GAS: ERCOT RUC-commits legacy steam boilers at minimum load for reserve-tightness reliability; the amount held rises with net-load, and at the SAME net-load winter holds far less steam than summer \u2014 a cold January morning at 45 GW net-load has the fleet largely offline (winter overnight commitment barely exists below ~31 GW), while an August 45 GW evening carries ~3 GW, because summer heat drives sustained multi-day commitment cycles the winter's short cold snaps do not. The season-resolved drag carries exactly that measured operating rule (CAMPD overnight CF per season x net-load), so the winter troughs stop carrying phantom must-run steam. CC_REGULAR: picks the released winter energy back up (+0.9 TWh DJF 2024) \u2014 the real market's marginal winter unit is the combined cycle, not the boiler. The residual $150-500 band-hour ST_GAS over-dispatch (~+1.3-1.7 GW, economic) is a commitment-state/offer-surface question that stays OPEN (charter \u00a78.1: the DAM-basis steam wall is refuted; an RT/SCED ST ladder is the admissible successor)."
+}
