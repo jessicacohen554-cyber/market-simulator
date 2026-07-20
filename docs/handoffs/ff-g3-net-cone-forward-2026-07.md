@@ -113,7 +113,7 @@ wire; route to FF-2C/an owner call.
 
 ## 6. Verification
 
-- Default `cache_key` cache-neutral (base-main key `494427c4405cba78` reproduced with the field added).
+- Default `cache_key` cache-neutral (the hashed payload is byte-identical with the field added, verified by diff; dropped at its `"hold_last"` default).
 - `test_net_cone_forward.py` (19) + `test_capacity_demand_curve.py` (58) +
   `test_config.py` green. No vintage anchor changed. Seam untouched.
 - No solve/score/intake touched 2022, ≤2021, 2019, or H1-2026 (rule 22): this is
