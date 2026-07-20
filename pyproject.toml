@@ -52,6 +52,11 @@ where = ["src"]
 
 [tool.ruff]
 target-version = "py311"
+# The frozen calibration record (CLAUDE.md / refactor-consolidation-plan §1:
+# scripts/probes/ + scripts/archive/ are the per-run probe/retired-driver
+# history, exempt from all boilerplate retrofits). Linting them would force
+# edits ruff's own policy forbids, so they are out of the lint/format scope.
+extend-exclude = ["scripts/archive", "scripts/probes"]
 
 [tool.ruff.lint]
 # Pin ruff's historical default ruleset (pyflakes F + pycodestyle E4/E7/E9) so
