@@ -1,0 +1,9 @@
+# ERCOT nuclear-license-status registry.
+# Comanche Peak 1-2 (50-445/446) + South Texas Project 1-2 (50-498/499).
+# All initial-renewed (60-yr); expiries to the late 2040s/2050s. No SLR,
+# uprate, restart, or retirement instruments on file for ERCOT nuclear.
+iso,plant_name,unit,eia_plant_id,capacity_mw,nrc_docket,license_issued_date,current_license_expiry,license_stage,license_instrument,slr_status,slr_docket,slr_instrument,slr_instrument_date,announced_uprate_mw,uprate_status,uprate_instrument,restart_status,restart_target_year,restart_instrument,retirement_announcement,confirmed_retirement_ref,source_url,source_doc,accessed,notes
+ERCOT,Comanche Peak,1,6145,1215.0,50-445,1990-04-17,2050-02-08,renewed_60,"NRC operating license (renewed), docket 50-445 — see info-finder page",none,,,,,,,,,,,,https://www.nrc.gov/info-finder/reactors/cp1,NRC info-finder reactor page (Operating License / Renewed License Expires),2026-07-20,
+ERCOT,Comanche Peak,2,6145,1215.0,50-446,1993-04-06,2053-02-02,renewed_60,"NRC operating license (renewed), docket 50-446 — see info-finder page",none,,,,,,,,,,,,https://www.nrc.gov/info-finder/reactors/cp2,NRC info-finder reactor page (Operating License / Renewed License Expires),2026-07-20,
+ERCOT,South Texas Project,1,6251,1354.3,50-498,1988-03-22,2047-08-20,renewed_60,"NRC operating license (renewed), docket 50-498 — see info-finder page",none,,,,,,,,,,,,https://www.nrc.gov/info-finder/reactors/stp1,NRC info-finder reactor page (Operating License / Renewed License Expires),2026-07-20,
+ERCOT,South Texas Project,2,6251,1354.3,50-499,1989-03-28,2048-12-15,renewed_60,"NRC operating license (renewed), docket 50-499 — see info-finder page",none,,,,,,,,,,,,https://www.nrc.gov/info-finder/reactors/stp2,NRC info-finder reactor page (Operating License / Renewed License Expires),2026-07-20,
