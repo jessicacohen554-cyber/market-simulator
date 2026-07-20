@@ -1,0 +1,7 @@
+# NEISO nuclear-license-status registry.
+# Millstone 2 (50-336) & 3 (50-423) + Seabrook 1 (50-443). All initial-
+# renewed (60-yr). No SLR application on file yet for any NEISO unit.
+iso,plant_name,unit,eia_plant_id,capacity_mw,nrc_docket,license_issued_date,current_license_expiry,license_stage,license_instrument,slr_status,slr_docket,slr_instrument,slr_instrument_date,announced_uprate_mw,uprate_status,uprate_instrument,restart_status,restart_target_year,restart_instrument,retirement_announcement,confirmed_retirement_ref,source_url,source_doc,accessed,notes
+NEISO,Millstone,2,566,909.9,50-336,1975-09-26,2035-07-31,renewed_60,"NRC operating license (renewed), docket 50-336 — see info-finder page",none,,,,,,,,,,,,https://www.nrc.gov/info-finder/reactors/mill2,NRC info-finder reactor page (Operating License / Renewed License Expires),2026-07-20,
+NEISO,Millstone,3,566,1350.0,50-423,1986-01-31,2045-11-25,renewed_60,"NRC operating license (renewed), docket 50-423 — see info-finder page",none,,,,,,,,,,,,https://www.nrc.gov/info-finder/reactors/mill3,NRC info-finder reactor page (Operating License / Renewed License Expires),2026-07-20,
+NEISO,Seabrook,1,6115,1242.0,50-443,1990-03-15,2050-03-15,renewed_60,"NRC operating license (renewed), docket 50-443 — see info-finder page",none,,,,,,,,,,,,https://www.nrc.gov/info-finder/reactors/seab1,NRC info-finder reactor page (Operating License / Renewed License Expires),2026-07-20,
