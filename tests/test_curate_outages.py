@@ -10,13 +10,12 @@ to a tmp dir (as in tests/test_clean_io.py) so it never touches the real tree.
 
 import unittest
 from pathlib import Path
-from tempfile import TemporaryDirectory
 
 import pandas as pd
 
 from scripts.data import curate_outages
-from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
+from tests.helpers.base import CleanDirTestCase
 
 
 def _write_registry(ref_dir: Path) -> None:
@@ -88,25 +87,16 @@ def _write_tx_outages(ref_dir: Path) -> None:
     ).to_csv(ref_dir / "tx-jan-aug23-unit-outages.csv", index=False)
 
 
-class TestCurateOutages(unittest.TestCase):
+class TestCurateOutages(CleanDirTestCase):
     def setUp(self):
-        self._tmp = TemporaryDirectory()
-        root = Path(self._tmp.name)
-        self.raw_dir = root / "raw"
+        super().setUp()  # redirects paths.CLEAN_DIR to self.tmp_path / "clean"
+        self.raw_dir = self.tmp_path / "raw"
         self.ref_dir = self.raw_dir / "reference"
         self.ref_dir.mkdir(parents=True)
 
         _write_registry(self.ref_dir)
         _write_campd_unit_outages(self.raw_dir)
         _write_tx_outages(self.ref_dir)
-
-        # Redirect CLEAN_DIR so writes never touch the repo (see test_clean_io).
-        self._orig_clean = clean_io.paths.CLEAN_DIR
-        clean_io.paths.CLEAN_DIR = root / "clean"
-
-    def tearDown(self):
-        clean_io.paths.CLEAN_DIR = self._orig_clean
-        self._tmp.cleanup()
 
     def _curate(self) -> pd.DataFrame:
         written = curate_outages.curate(
