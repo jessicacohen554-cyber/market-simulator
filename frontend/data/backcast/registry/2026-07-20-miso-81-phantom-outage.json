@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-20-miso-81-phantom-outage",
+ "label": "miso 81 phantom outage",
+ "date": "2026-07-20",
+ "shorthand": "miso-81-phantom-outage",
+ "definition": "miso-81 phantom-outage re-audit (ERCOT-79 cross-ISO corrected-availability lane; NEISO/PJM fix-in-place precedent): the miso-gasshape-interpfix keeper recipe replayed VERBATIM on the MISO outage extracts regenerated from their frozen derivers (standard 4,418->4,414 windows; SHORT 205->291 windows, +171 GW-days of 1-5-day baseload-coal stops \u2014 the 2026-07-15 when-operable guard had only been re-derived for PJM; maxgen byte-identical). Zero parameter changes (rule 14/15 measured-input correctness). VERDICT: MISO HOLDS \u2014 determination REPRODUCES as NOT-YET on the same 2 ledgered fails {C3a-2025 (-15.1% -> -14.8%), C3c 0/6/0 vs RT 30/37/88 = the irreducible scarcity tail}; C3b/C4/C5a/C6/C7/C8 all hold, zero status regressions. The NEISO/PJM pattern, not the NYISO flip \u2014 the MISO keeper calibration is NOT co-dependent on the stale availability envelope. Keeper-swap candidate (owner-only).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-20-miso-81-phantom-outage.js",
+ "bundle": "results/calibration/miso81_phantom_outage"
+}
