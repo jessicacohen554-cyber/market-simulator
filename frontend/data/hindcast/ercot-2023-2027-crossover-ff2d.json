@@ -1,0 +1,27 @@
+{
+  "run_id": "ercot-2023-2027-crossover-ff2d",
+  "meta": {
+    "iso": "ERCOT",
+    "kind": "crossover",
+    "label": "ff2d",
+    "vintage_year": 2023,
+    "scored_years": [2023, 2024, 2025],
+    "forward_years": [2026, 2027],
+    "capacity_market_clearing": false,
+    "refusal_marker": {"read_ge_2026": false, "scored_max_year": 2025},
+    "bundle": "results/hindcast/ercot-2023-2027-crossover-ff2d"
+  },
+  "fc4": "FAIL",
+  "fc4_k_iso": 1.5,
+  "dispatch_skill": {
+    "price_mean_forecast_err_frac": {"2023": 0.692, "2024": 0.427, "2025": 0.086},
+    "co2_forecast_err_frac": {"2023": 0.489, "2024": 0.431, "2025": 0.499},
+    "note": "price converges 69%->9% by 2025 (2025 PASS); CO2 43-50% partly a full-plant reconstruction-basis artifact (directional)"
+  },
+  "capacity_events_report_only": {
+    "retire_total_gw": {"model": 20.05, "actual": 1.534, "band": "FAIL"},
+    "unit_recall_gt300": 0.333,
+    "note": "2-step evolution, weak-alone (plan 2.2); report-only, does not gate FC-4"
+  },
+  "registered_utc": "2026-07-20T15:35:00Z"
+}

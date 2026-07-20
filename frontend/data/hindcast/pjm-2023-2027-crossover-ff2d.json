@@ -1,0 +1,28 @@
+{
+  "run_id": "pjm-2023-2027-crossover-ff2d",
+  "meta": {
+    "iso": "PJM",
+    "kind": "crossover",
+    "label": "ff2d",
+    "vintage_year": 2023,
+    "scored_years": [2023, 2024, 2025],
+    "forward_years": [2026, 2027],
+    "capacity_market_clearing": true,
+    "refusal_marker": {"read_ge_2026": false, "scored_max_year": 2025},
+    "bundle": "results/hindcast/pjm-2023-2027-crossover-ff2d"
+  },
+  "fc4": "FAIL",
+  "fc4_k_iso": 3.0,
+  "fc1": "PASS",
+  "dispatch_skill": {
+    "price_mean_forecast_err_frac": {"2023": 0.032, "2024": 0.08, "2025": 0.175},
+    "co2_forecast_err_frac": {"2023": 0.458, "2024": 0.429, "2025": 0.579},
+    "note": "price strong (3%->17.5%, 2025 CAVEAT); FC-4 FAIL is CO2-driven (>30% K=3.0 band), partly reconstruction-basis; crossover invariants clean (FC-1 PASS)"
+  },
+  "capacity_events_report_only": {
+    "retire_total_gw": {"model": 0.057, "actual": 11.121, "band": "FAIL"},
+    "unit_recall_gt300": 0.0,
+    "note": "2-step evolution, weak-alone (plan 2.2); report-only, does not gate FC-4"
+  },
+  "registered_utc": "2026-07-20T15:44:00Z"
+}
