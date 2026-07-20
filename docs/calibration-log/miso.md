@@ -84,3 +84,49 @@ NOT-YET, same 2 fails {C3a-2025 −15.1%, C3c}). **Next action is the owner's**
 closes at its frontier pending RO-S1/S2/S3), override to the §6-gated build,
 or redirect (open lanes: D1 Z2/Z7 load split; PJM merit-cap twin). Next
 number: miso-81.
+
+## 2026-07-20 — miso-81: phantom-outage regenerate-and-re-audit (ERCOT-79 cross-ISO lane) — MISO HOLDS on the corrected availability envelope; the SHORT extract was stale (+86 net windows, +171 GW-days of 1-5-day coal stops); determination REPRODUCES NOT-YET on the same 2 ledgered fails; miso-80 NO-BUILD signed off in-session
+
+**Lane.** The owner signed off the miso-80 NO-BUILD charter in-session and
+directed the recommended next lane: MISO's own regenerate-and-re-audit per the
+ERCOT-79 cross-ISO corrected-availability program
+(`results/calibration/FINDING-neiso-nyiso-phantom-outage-reaudit-2026-07-19`:
+"CAISO and MISO remain their own regenerate-and-re-audit lanes"; NEISO/PJM
+HELD, NYISO's marker was WITHDRAWN).
+
+**Staleness audit (all three extracts vs their frozen derivers at HEAD).**
+Standard `campd-unit-outages-MISO.csv`: 4,418 → 4,414 windows — 4 rows the
+frozen deriver no longer emits after the post-07-14 deriver-lane changes (3×
+George Neal North `eia_exact`, 1× TES Filer City `optime_proxy`); the file had
+been regenerated 2026-07-14 (miso-65) and was otherwise current. SHORT
+`campd-unit-outages-short-MISO.csv`: **205 → 291 windows (+91/−5, +171
+GW-days of 1–5-day baseload-coal full stops at
+Merom/Cayuga/Monroe/Gibson/Sioux/Sherco, 32/31/28 by year)** — the 2026-07-15
+when-operable short-guard change (86918fa) was re-derived for PJM only (rule
+24), leaving MISO stale against its own frozen deriver. Maxgen extract:
+byte-identical (2,158 rows). Corrected extracts committed BEFORE any solve
+(2bd63e4, rule 12); zero parameter changes — rule-14/15 measured-input
+correctness.
+
+**Re-audit (run `2026-07-20-miso-81-phantom-outage`, bundle
+`results/calibration/miso81_phantom_outage`).** The
+`2026-07-19-miso-gasshape-interpfix` keeper recipe replayed VERBATIM
+(`replay_keeper`, per-year chain then a merged full-span pass, years
+sequential per rule 12) on the corrected envelope, full span 2023–2025.
+**Determination REPRODUCES: NOT-YET on exactly the keeper's 2 ledgered fails
+{C3a-2025, C3c} — MISO HOLDS.** C3a-2025 −15.1% → **−14.8%** (the added coal
+stops tighten supply slightly; 2023/2024 C3a stay PASS); C3c unchanged 0/6/0
+vs RT 30/37/88 (the irreducible scarcity tail); C3b PASS every year;
+C4/C5a/C6/C7/C8 hold (C8 2025 ST_GAS grounded-above-budget clean pass, same
+as the keeper); zero status regressions. The NEISO/PJM fix-in-place pattern —
+the MISO keeper's calibration is NOT co-dependent on the stale availability
+envelope (contrast NYISO). Registered with attestation + DOF ledger +
+`legitimacy_diagnostics.json`; retention pruned miso-70 (top-15).
+
+**Disposition.** Keeper swap to the corrected-envelope bundle recommended
+(owner-only, pending). Quarantine untouched (train years only). With the
+re-audit HELD, the MISO frontier path is open: owner may declare the
+calibration-complete marker (NEISO precedent — the two fails are the ledgered
+irreducible tail), then the holdout ladder (MISO out-of-training intake is at
+zero; data-readiness session next, then the 2022 validation one-shot per rule
+22/G-19). Next number: miso-82.
