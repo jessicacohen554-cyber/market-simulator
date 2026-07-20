@@ -1,0 +1,140 @@
+resource_id,resource_name,resource_pmax_mw,facility_id,facility_name,plant_group,match_method,score
+MOSSLD_2_PSP1,MOSS LANDING POWER BLOCK 1,510.0,260,Moss Landing Power Plant,CC_REGULAR,name-token,0.9
+MOSSLD_2_PSP2,MOSS LANDING POWER BLOCK 2,510.0,260,Moss Landing Power Plant,CC_REGULAR,name-token,0.9
+ALAMIT_2_PL1X3,Alamitos Energy Center Unit 7,674.7,315,AES Alamitos,,name-token,0.9
+ALAMIT_7_UNIT 3,ALAMITOS GEN STA. UNIT 3,326.76,315,AES Alamitos,,name-token,0.9
+ALAMIT_7_UNIT 4,ALAMITOS GEN STA. UNIT 4,334.43,315,AES Alamitos,,name-token,0.9
+ALAMIT_7_UNIT 5,ALAMITOS GEN STA. UNIT 5,480.0,315,AES Alamitos,,name-token,0.9
+ELSEGN_2_UN1011,El Segundo Energy Center 5/6,274.31,330,El Segundo,,name-token,1.0
+ELSEGN_2_UN2021,El Segundo Energy Center 7/8,271.74,330,El Segundo,,name-token,1.0
+HNTGBH_2_PL1X3,Huntington Beach Energy,673.8,335,AES Huntington Beach,,name-token,0.9
+HNTGBH_7_UNIT 2,HUNTINGTON BEACH GEN STA. UNIT 2,226.84,335,AES Huntington Beach,,name-token,0.9
+HINSON_6_LBECH1,Long Beach Unit 1,63.0,341,Long Beach Generating Station,,name-token,1.0
+HINSON_6_LBECH2,Long Beach Unit 2,63.0,341,Long Beach Generating Station,,name-token,1.0
+HINSON_6_LBECH3,Long Beach Unit 3,63.0,341,Long Beach Generating Station,,name-token,1.0
+HINSON_6_LBECH4,Long Beach Unit 4,63.0,341,Long Beach Generating Station,,name-token,1.0
+ORMOND_7_UNIT 1,ORMOND BEACH GEN STA. UNIT 1,741.27,350,"Ormond Beach Power, LLC.",,name-token,1.0
+ORMOND_7_UNIT 2,ORMOND BEACH GEN STA. UNIT 2,750.0,350,"Ormond Beach Power, LLC.",,name-token,1.0
+REDOND_7_UNIT 5,REDONDO GEN STA. UNIT 5,178.87,356,AES Redondo Beach,ST_GAS,name-token,0.9
+REDOND_7_UNIT 6,REDONDO GEN STA. UNIT 6,174.29,356,AES Redondo Beach,ST_GAS,name-token,0.9
+REDOND_7_UNIT 8,REDONDO GEN STA. UNIT 8,480.0,356,AES Redondo Beach,ST_GAS,name-token,0.9
+SBERDO_2_PSP3,Mountainview Gen Sta. Unit 3,555.0,358,Mountainview Generating Station,CC_REGULAR,name-token,1.0
+SBERDO_2_PSP4,Mountainview Gen Sta. Unit 4,555.0,358,Mountainview Generating Station,CC_REGULAR,name-token,1.0
+HARBGN_7_UNITS,HARBOR COGEN COMBINED CYCLE,109.01,399,Harbor Generating Station,,name-token,1.0
+GLNARM_2_UNIT 5,Glenarm Turbine 5,65.81,422,Glenarm,CC_REGULAR,name-token,0.9
+LODI25_2_UNIT 1,LODI GAS TURBINE,25.0,7451,Lodi,,verified-prefix,1.0
+LODI25_6_ERKNG1,LODI STRATEGIC RESERVE,47.97,7451,Lodi,,verified-prefix,1.0
+CHARMN_2_PGONG1,PROCTER  AND  GAMBLE OXNARD I,19.87,7551,Procter and Gamble Power Plant,,name-token,0.9
+SNCLRA_6_PROCGN,Procter and Gamble Oxnard 2,47.9,7551,Procter and Gamble Power Plant,,name-token,0.9
+GILROY_1_UNIT,GILROY COGEN AGGREGATE,120.0,10034,"Calpine Gilroy Cogen, LP",CC_CHP,verified-prefix,1.0
+AGRICO_6_PL3N5,Fresno Peaker,22.69,10156,"Fresno Cogeneration Partners, LP",CT_CHP,name-token,1.0
+AGRICO_7_UNIT,Fresno Cogen,59.97,10156,"Fresno Cogeneration Partners, LP",CT_CHP,name-token,1.0
+LGHTHP_6_ICEGEN,CARSON COGENERATION,48.0,10169,Carson Cogeneration Company,CC_REGULAR,verified-prefix,1.0
+BASICE_2_UNITS,King City Cogen,120.0,10294,King City Power Plant,CC_CHP,name-token,1.0
+GRNLF2_1_UNIT,GREENLEAF II COGEN,49.2,10349,Yuba City Energy Center,CT_CHP,verified-prefix,1.0
+YUBACT_1_SUNSWT,YUBA CITY COGEN,49.97,10349,Yuba City Energy Center,CT_CHP,name-token,1.0
+YUBACT_6_UNITA1,Yuba City Energy Center (Calpine),47.16,10349,Yuba City Energy Center,CT_CHP,name-token,0.9
+GRNLF1_1_PL1X2,Greenleaf 1,60.0,10350,Greenleaf One,,name-token,0.9
+KINGCO_1_KINGBR,Kingsburg Cogen,34.5,10405,Kingsburg Cogen Facility,CC_CHP,name-token,1.0
+BEARMT_1_UNIT,Bear Mountain Limited,49.21,10649,Bear Mountain Limited,CT_CHP,name-token,1.0
+BDGRCK_1_UNITS,BADGER CREEK LIMITED,48.08,10650,Badger Creek Limited,CT_CHP,name-token,1.0
+SMPRIP_1_SMPSON,Ripon Cogeneration Unit 1,46.05,50299,AltaGas Ripon Energy Inc.,,verified-prefix,1.0
+MKTRCK_1_UNIT 1,MCKITTRICK LIMITED,47.72,50612,McKittrick Limited,CT_CHP,name-token,1.0
+SALIRV_2_UNIT,Salinas River Cogeneration,39.0,50865,Salinas River Cogeneration Facility,CT_CHP,name-token,1.0
+SUNSET_2_UNITS,MIDWAY SUNSET COGENERATION PLANT,248.0,52169,Midway Sunset Cogen,,verified-prefix,1.0
+ESCO_6_GLMQF,Goal Line Cogen,49.9,54749,Goal Line,CC_CHP,name-token,1.0
+LIVOAK_1_UNIT 1,LIVE OAK LIMITED,49.7,54768,Live Oak Limited,CT_CHP,name-token,1.0
+LAPLMA_2_UNIT 1,La Paloma Generating Plant Unit #1,267.0,55151,La Paloma Generating Plant,CC_REGULAR,name-token,1.0
+LAPLMA_2_UNIT 2,La Paloma Generating Plant Unit #2,266.0,55151,La Paloma Generating Plant,CC_REGULAR,name-token,1.0
+LAPLMA_2_UNIT 3,La Paloma Generating Plant Unit #3,266.0,55151,La Paloma Generating Plant,CC_REGULAR,name-token,1.0
+LAPLMA_2_UNIT 4,"LA PALOMA GENERATING PLANT, UNIT #4",267.0,55151,La Paloma Generating Plant,CC_REGULAR,name-token,1.0
+SUNRIS_2_PL1X3,Sunrise Power Project AGGREGATE II,586.02,55182,Sunrise Power Company,CC_REGULAR,name-token,1.0
+LMEC_1_PL1X3,Los Medanos Energy Center AGGREGATE,580.0,55217,"Los Medanos Energy Center, LLC",CC_CHP,name-token,1.0
+BUCKBL_2_PL1X3,Blythe Energy Center,493.63,55295,Blythe Energy,CC_REGULAR,name-token,1.0
+DELTA_2_PL1X4,DELTA ENERGY CENTER AGGREGATE,880.0,55333,"Delta Energy Center, LLC",CC_REGULAR,name-token,1.0
+OTMESA_2_PL1X3,OTAY MESA ENERGY CENTER,603.68,55345,"Otay Mesa Energy Center, LLC",CC_REGULAR,name-token,1.0
+METEC_2_PL1X3,Metcalf Energy Center,597.05,55393,Metcalf Energy Center,CC_REGULAR,name-token,1.0
+ELKHIL_2_PL1X3,ELK HILLS COMBINED CYCLE (AGGREGATE),551.7,55400,Elk Hills Power,CC_CHP,name-token,1.0
+VACADX_1_UNITA1,CalPeak Power Vaca Dixon Unit 1,51.91,55499,CalPeak Power - Vaca Dixon,,name-token,1.0
+PNOCHE_1_UNITA1,CalPeak Power Panoche Unit 1,52.3,55508,CalPeak Power - Panoche,,name-token,1.0
+BORDER_6_UNITA1,CalPeak Power Border Unit 1,51.25,55510,CalPeak Power - Border,,name-token,1.0
+ELCAJN_6_UNITA1,Cuyamaca Peak Energy Plant,45.42,55512,Cuyamaca Peak Energy,,name-token,1.0
+ESCNDO_6_UNITB1,CalPeak Power Enterprise Unit 1,50.96,55513,CalPeak Power - Enterprise,,name-token,1.0
+HIDSRT_2_UNITS,HIGH DESERT POWER PROJECT AGGREGATE,850.0,55518,High Desert Power Project,CC_REGULAR,name-token,1.0
+ESCNDO_6_PL1X2,MMC Escondido Aggregate,48.71,55538,"Escondido Energy Center, LLC",,name-token,0.9
+OTAY_6_PL1X2,"Chula Vista Energy Center, LLC",39.57,55540,Chula Vista Energy Center,,name-token,1.0
+INDIGO_1_UNIT 1,INDIGO PEAKER UNIT 1,45.3,55541,Indigo Generation Facility,,name-token,1.0
+INDIGO_1_UNIT 2,INDIGO PEAKER UNIT 2,45.3,55541,Indigo Generation Facility,,name-token,1.0
+INDIGO_1_UNIT 3,INDIGO PEAKER UNIT 3,45.3,55541,Indigo Generation Facility,,name-token,1.0
+LARKSP_6_UNIT 1,LARKSPUR PEAKER UNIT 1,49.0,55542,Larkspur Energy Facility,,name-token,1.0
+LARKSP_6_UNIT 2,LARKSPUR PEAKER UNIT 2,49.0,55542,Larkspur Energy Facility,,name-token,1.0
+LMBEPK_2_UNITA2,"Creed Energy Center, Unit #1",47.6,55625,Creed Energy Center,,name-token,1.0
+LMBEPK_2_UNITA1,"Lambie Energy Center, Unit #1",47.5,55626,Lambie Energy Center,,name-token,1.0
+LMBEPK_2_UNITA3,"Goose Haven Energy Center, Unit #1",47.75,55627,Goose Haven Energy Center,,name-token,1.0
+LEBECS_2_UNITS,Pastoria Energy Facility,799.47,55656,Pastoria Energy Facility,CC_REGULAR,name-token,1.0
+GWFPWR_1_UNITS,Hanford Peaker Plant,98.46,55698,Hanford Energy Park Peaker,,name-token,0.9
+LECEF_1_UNITS,LOS ESTEROS ENERGY FACILITY AGGREGATE,309.84,55748,Los Esteros Critical Energy Facility,CC_REGULAR,name-token,0.9
+HENRTA_6_UNITA1,GWF HENRIETTA PEAKER PLANT UNIT 1,49.98,55807,Henrietta Peaker Plant,,name-token,0.9
+HENRTA_6_UNITA2,GWF HENRIETTA PEAKER PLANT UNIT 2,49.42,55807,Henrietta Peaker Plant,,name-token,0.9
+GILRPP_1_PL1X2,GILROY ENERGY CENTER UNITS 1&2 AGGREGATE,95.2,55810,"Gilroy Energy Center, LLC",,name-token,1.0
+GILRPP_1_PL3X4,"GILROY ENERGY CENTER, UNIT #3",46.2,55810,"Gilroy Energy Center, LLC",,name-token,1.0
+KNGCTY_6_UNITA1,"King City Energy Center, Unit 1",44.6,55811,King City Peaking,,verified-prefix,1.0
+BOGUE_1_UNITA1,"Feather River Energy Center, Unit #1",48.69,55847,Feather River Energy Center,,name-token,1.0
+WOLFSK_1_UNITA1,Wolfskill Energy Center,48.68,55855,Wolfskill Energy Center,,name-token,1.0
+SCHLTE_1_PL1X3,Tracy Combined Cycle Power Plant,336.04,55933,Tracy Combined Cycle Power Plant,CC_REGULAR,name-token,1.0
+COLTON_6_AGUAM1,AGUA MANSA UNIT 1 (CITY OF COLTON),43.0,55951,Agua Mansa Power,,name-token,0.9
+RVRVEW_1_UNITA1,Riverview Energy Center (GP Antioch),48.7,55963,Riverview Energy Center,,name-token,0.9
+PALOMR_2_PL1X3,Palomar Energy Center,588.21,55985,Palomar Energy Center,CC_REGULAR,name-token,1.0
+DUANE_1_PL1X3,DONALD VON RAESFELD POWER PROJECT,147.8,56026,Donald Von Raesfeld,CC_REGULAR,name-token,1.0
+VERNON_6_MALBRG,Malburg Generating Station,139.0,56041,Malburg Generating Station,CC_REGULAR,name-token,1.0
+MAGNLA_6_ANAHEIM,Magnolia Power Plant Anaheim,115.0,56046,Magnolia Power Project,,name-token,0.9
+MAGNLA_6_PASADENA,Magnolia Power Plant - PASADENA,18.0,56046,Magnolia Power Project,,name-token,0.9
+MRGT_6_MEF2,Miramar Energy Facility II,44.0,56232,Miramar Energy Facility,,name-token,1.0
+MRGT_6_MMAREF,Miramar Energy Facility,45.0,56232,Miramar Energy Facility,,name-token,1.0
+MALAGA_1_PL1X2,Malaga Power Aggregate,96.61,56239,Malaga Power,,name-token,1.0
+RUSCTY_2_UNITS,Russell City Energy Center,615.18,56467,Russell City Energy Company LLC,CC_REGULAR,name-token,1.0
+MNDALY_6_MCGRTH,McGrath Beach Peaker,48.56,56471,McGrath Generating Station,,name-token,0.9
+ETIWND_6_GRPLND,Grapeland Peaker,45.64,56472,Grapeland Generating Station,,name-token,1.0
+MIRLOM_6_PEAKER,Mira Loma Peaker,47.18,56473,Mira Loma Generating Station,,name-token,1.0
+BARRE_6_PEAKER,Barre Peaker,49.0,56474,Barre Generating Station,,name-token,1.0
+GATWAY_2_PL1X3,GATEWAY GENERATING STATION,585.0,56476,Gateway Generating Station,CC_REGULAR,name-token,1.0
+COLUSA_2_PL1X3,Colusa Generating Station,641.0,56532,Colusa Generating Station,CC_REGULAR,name-token,1.0
+PNCHPP_1_PL1X2,Midway Peaking Aggregate,119.91,56639,Midway Peaking,,name-token,1.0
+PNCHEG_2_PL1X4,PANOCHE ENERGY CENTER (Aggregated),417.0,56803,Panoche Energy Center,,name-token,1.0
+OGROVE_6_PL1X2,Orange Grove Energy Center,96.0,56914,Orange Grove Project,,name-token,1.0
+ELCAJN_6_LM6K,El Cajon Energy Center,48.1,57001,El Cajon Energy Center,,name-token,1.0
+ANAHM_2_CANYN1,CANYON POWER PLANT UNIT 1,49.21,57027,Canyon Power Plant,,name-token,1.0
+ANAHM_2_CANYN2,CANYON POWER PLANT UNIT 2,48.04,57027,Canyon Power Plant,,name-token,1.0
+ANAHM_2_CANYN3,CANYON POWER PLANT UNIT 3,46.49,57027,Canyon Power Plant,,name-token,1.0
+ANAHM_2_CANYN4,CANYON POWER PLANT UNIT 4,49.8,57027,Canyon Power Plant,,name-token,1.0
+IVANPA_1_UNIT1,Ivanpah 1,126.0,57074,Ivanpah 1,,name-token,1.0
+IVANPA_1_UNIT2,Ivanpah 2,133.0,57074,Ivanpah 1,,name-token,1.0
+IVANPA_1_UNIT3,Ivanpah 3,133.0,57074,Ivanpah 1,,name-token,1.0
+COCOPP_2_CTG1,Marsh Landing 1,204.2,57267,Marsh Landing Generating Station,,name-token,1.0
+COCOPP_2_CTG2,Marsh Landing 2,202.7,57267,Marsh Landing Generating Station,,name-token,1.0
+COCOPP_2_CTG3,Marsh Landing 3,208.96,57267,Marsh Landing Generating Station,,name-token,1.0
+COCOPP_2_CTG4,Marsh Landing 4,204.29,57267,Marsh Landing Generating Station,,name-token,1.0
+SENTNL_2_CTG1,Sentinel Unit 1,107.68,57482,"Sentinel Energy Center, LLC",,name-token,1.0
+SENTNL_2_CTG2,Sentinel Unit 2,104.19,57482,"Sentinel Energy Center, LLC",,name-token,1.0
+SENTNL_2_CTG3,Sentinel Unit 3,105.69,57482,"Sentinel Energy Center, LLC",,name-token,1.0
+SENTNL_2_CTG4,Sentinel Unit 4,106.55,57482,"Sentinel Energy Center, LLC",,name-token,1.0
+SENTNL_2_CTG5,Sentinel Unit 5,107.52,57482,"Sentinel Energy Center, LLC",,name-token,1.0
+SENTNL_2_CTG6,Sentinel Unit 6,105.0,57482,"Sentinel Energy Center, LLC",,name-token,1.0
+SENTNL_2_CTG7,Sentinel Unit 7,106.73,57482,"Sentinel Energy Center, LLC",,name-token,1.0
+SENTNL_2_CTG8,Sentinel Unit 8,106.85,57482,"Sentinel Energy Center, LLC",,name-token,1.0
+KELSO_2_UNITS,Mariposa Energy,198.03,57483,Mariposa Energy Project,,name-token,1.0
+WALCRK_2_CTG1,Walnut Creek Energy Park Unit 1,100.1,57515,Walnut Creek Energy Park,,name-token,1.0
+WALCRK_2_CTG2,Walnut Creek Energy Park Unit 2,100.1,57515,Walnut Creek Energy Park,,name-token,1.0
+WALCRK_2_CTG3,Walnut Creek Energy Park Unit 3,100.1,57515,Walnut Creek Energy Park,,name-token,1.0
+WALCRK_2_CTG4,Walnut Creek Energy Park Unit 4,100.1,57515,Walnut Creek Energy Park,,name-token,1.0
+WALCRK_2_CTG5,Walnut Creek Energy Park Unit 5,100.1,57515,Walnut Creek Energy Park,,name-token,1.0
+PIOPIC_2_CTG1,Pio Pico Unit 1,111.3,57555,Pio Pico Energy Center LLC,,name-token,1.0
+PIOPIC_2_CTG2,Pio Pico Unit 2,112.7,57555,Pio Pico Energy Center LLC,,name-token,1.0
+PIOPIC_2_CTG3,Pio Pico Unit 3,112.0,57555,Pio Pico Energy Center LLC,,name-token,1.0
+SGREGY_6_SANGER,Algonquin Power Sanger 2,48.3,57564,Algonquin Power Sanger,CC_REGULAR,name-token,1.0
+LODIEC_2_PL1X2,Lodi Energy Center,302.58,57978,Lodi Energy Center,CC_REGULAR,name-token,1.0
+VESTAL_2_WELLHD,Wellhead Power Delano,49.0,58122,"Delano Energy Center, LLC",,name-token,0.9
+CARLS1_2_CARCT1,Carlsbad 1,422.0,59002,Carlsbad Energy Center,,verified-prefix,1.0
+CARLS2_1_CARCT1,Carlsbad 2,105.5,59002,Carlsbad Energy Center,,verified-prefix,1.0
+STANTN_2_STAGT1,Stanton 1,49.65,60698,Stanton Energy Reliability Center,,name-token,0.9
+STANTN_2_STAGT2,Stanton 2,49.65,60698,Stanton Energy Reliability Center,,name-token,0.9
