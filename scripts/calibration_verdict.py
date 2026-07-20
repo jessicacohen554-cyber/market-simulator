@@ -40,22 +40,26 @@ from __future__ import annotations
 
 import argparse
 import base64
-import gzip
 import json
 import math
-import re
 import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))  # resolve `scripts.lib` when run as a plain script
 
+from scripts.lib import backcast_artifacts as ba  # noqa: E402
+from scripts.lib import benchmark_semantics as bs  # noqa: E402
+from scripts.lib.backcast_artifacts import (  # noqa: E402
+    decode_run_js as _decode_run_js,
+    resolve_run_id,
+)
 from scripts.lib.bundle_io import bundle_meta  # noqa: E402  (stdlib-only helpers)
 
-DATA_DIR = REPO / "frontend" / "data" / "backcast"
-REGISTRY_DIR = DATA_DIR / "registry"
-RUNS_DIR = DATA_DIR / "runs"
-BENCH_DIR = DATA_DIR / "bench"
+DATA_DIR = ba.DATA
+REGISTRY_DIR = ba.REGISTRY
+RUNS_DIR = ba.RUNS
+BENCH_DIR = ba.BENCH
 # Per-year EIA-923 completeness parts (scripts/audit_eia923_completeness.py): the
 # committed source of truth for which (ISO, class) actuals are complete enough to
 # gate in a preliminary-vintage year. Stdlib-readable so this scorer stays
@@ -155,7 +159,11 @@ TIER_LOAD, TIER_SUPPORT, TIER_PROTECT = "load-bearing", "supporting", "protectiv
 # removed the two criteria from the rubric outright, and the tier with them.)
 
 # --- fuel-family class membership (plant_taxonomy.classes_for_fuel930 roll-up) --
-GAS_CLASSES = ("CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP")
+GAS_CLASSES = bs.GAS_CLASSES
+# Same membership as bs.COAL_CLASSES, but this scorer emits its per-class records
+# in COAL_CLASSES iteration order, so the historical record ORDER is frozen here
+# for verdict byte-parity (bs is the taxonomy roll-up order, which differs). The
+# set is drift-guarded against the taxonomy via bs (tests/test_benchmark_semantics).
 COAL_CLASSES = ("COAL_PRB", "COAL_LIGNITE", "COAL_BIT", "COAL_WC", "COAL")
 # Classes excluded from the per-class fuel-mix gate (C1), each justified in the
 # rubric: CT_CHP is a BTM peaker the grid LP zeroes by construction; OTHER /
@@ -226,7 +234,9 @@ SYSVOL_MIN_TWH = 10.0  # below this a family is immaterial: C1's per-class
 # coal ~0.3 TWh — a percent band on a near-zero family is pure noise).
 DISP_MIN_TWH = 5.0  # below this a fleet's hourly r/NRMSE is degenerate (NEISO
 # coal); the per-class C1 absolute band is the meaningful check, not correlation.
-VINTAGE_RECONCILE_FRAC = 0.97  # render_calibration_html._VINTAGE_RECONCILE_FRAC
+VINTAGE_RECONCILE_FRAC = (
+    bs.VINTAGE_RECONCILE_FRAC
+)  # render_calibration_html._VINTAGE_RECONCILE_FRAC
 # ISOs whose EIA-930 "Natural Gas" cell is demonstrably corrupted against two
 # independent measured sources, with the CEMS-anchored replacement committed in
 # the bench part by render_calibration_html (owner-signed rework 2026-07-12;
@@ -243,8 +253,8 @@ VINTAGE_RECONCILE_FRAC = 0.97  # render_calibration_html._VINTAGE_RECONCILE_FRAC
 # Mirrors render_calibration_html.EIA930_NG_CELL_CORRUPT / _ONSET; membership
 # is CEMS-evidence-gated per ISO, never generic (the other ISOs' NG cells show
 # no corruption and keep G-21/G-21b unchanged).
-CEMS_GAS_ANCHOR_ISOS: frozenset = frozenset({"CAISO"})
-CEMS_GAS_ANCHOR_ONSET = {"CAISO": 2024}  # first contaminated vintage year
+CEMS_GAS_ANCHOR_ISOS: frozenset = bs.EIA930_NG_CELL_CORRUPT
+CEMS_GAS_ANCHOR_ONSET = bs.EIA930_NG_CORRUPT_ONSET  # first contaminated vintage year
 PRELIM_923_FROM_YEAR = 2025  # current-year preliminary EIA-923 vintage
 # C3 price gates — rubric v2 two-band (2026-07-06 fitness re-anchor), target
 # bands re-set by the 2026-07-09 owner amendment (rubric v2.3): the target
@@ -432,38 +442,6 @@ CRITERIA = {
 # ---------------------------------------------------------------------------
 # Artifact loading
 # ---------------------------------------------------------------------------
-def _decode_run_js(text: str) -> dict:
-    """Decode a ``runs/<id>.js`` payload (``window.BC.runGz[..]="<b64>"``)."""
-    m = re.search(r'=\s*"([A-Za-z0-9+/=]+)"', text)
-    if not m:
-        raise ValueError("no gzip+base64 payload found in run js")
-    return json.loads(gzip.decompress(base64.b64decode(m.group(1))))
-
-
-def resolve_run_id(arg: str) -> str:
-    """Return the run id for a CLI arg that is either a run id or a bundle dir.
-
-    A run id resolves when its sidecar exists. Otherwise ``arg`` is treated as a
-    bundle path and matched against each sidecar's stored ``bundle`` field.
-    """
-    if (REGISTRY_DIR / f"{arg}.json").exists():
-        return arg
-    p = Path(arg)
-    cand = {arg, p.name, str(p)}
-    try:
-        cand.add(str(p.resolve().relative_to(REPO)))
-    except ValueError:
-        pass
-    for side in sorted(REGISTRY_DIR.glob("*.json")):
-        rec = json.loads(side.read_text())
-        if rec.get("bundle") in cand or Path(rec.get("bundle", "")).name == p.name:
-            return rec["id"]
-    raise SystemExit(
-        f"could not resolve a registered run from {arg!r} "
-        f"(no registry sidecar and no bundle match)."
-    )
-
-
 def load_artifacts(run_id: str) -> dict:
     """Load every committed artifact the scorer needs for ``run_id``.
 
@@ -482,7 +460,7 @@ def load_artifacts(run_id: str) -> dict:
 
     bench: dict[int, dict] = {}
     for part in sorted((BENCH_DIR / iso).glob("*.json.gz")) if iso else []:
-        obj = json.loads(gzip.decompress(part.read_bytes()))
+        obj = ba.load_bench_part(part)
         for y in obj.get("meta", {}).get("years", []):
             bench[int(y)] = obj.get("bench", {})
 
@@ -1033,12 +1011,7 @@ def score_sysvol(
                 # BAT/UES), so the OTHER-class generation the 923 books sits
                 # inside NG:NG — subtract only the genuinely-folded portion
                 # (mirrors render_calibration_html._gas_foldin_deflation).
-                actual -= max(
-                    0.0,
-                    float(cf.get("OTHER", 0.0))
-                    + float(cf.get("biomass", 0.0))
-                    - float(e930.get("other", 0.0)),
-                )
+                actual -= bs.gas_foldin_deflation(cf, e930, iso)
             reconciled = bool(actual and a923_fam < VINTAGE_RECONCILE_FRAC * actual)
             err = _pct(m_fam, actual) if actual else None
             # Rubric v2.5 (owner amendment 2026-07-13): a preliminary-923
