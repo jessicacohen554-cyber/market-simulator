@@ -1,0 +1,66 @@
+diff --git a/src/market_sim/config/scenarios.py b/src/market_sim/config/scenarios.py
+index c45697b..458821b 100644
+--- a/src/market_sim/config/scenarios.py
++++ b/src/market_sim/config/scenarios.py
+@@ -6482,6 +6482,25 @@ class ScenarioConfig:
+     # market_sim.data.outages and generators_to_fleet_arrays.
+     outage_source: str = "statistical"
+ 
++    # Tier 3 (calibration, CAISO only) — use CAISO's measured DAM outage
++    # disclosure for the availability overlay with DAM-before-CAMPD precedence,
++    # instead of the CAMPD zero-generation derivation (the "CAMPD unit outage
++    # fallback"). When set (and ``outage_source == "historic"``), each CAISO
++    # thermal plant the DAM reports cover is derated by the measured curtailment
++    # episodes from the daily Curtailed & Non-Operational Generator
++    # prior-trade-date reports (owner-directed intake caiso-104:
++    # data/raw/caiso-dam-outages/caiso-dam-outage-windows.parquet, crosswalked to
++    # model plants via data/raw/reference/caiso-resource-eia-crosswalk.csv; loader
++    # market_sim.data.caiso_outages.caiso_dam_outage_derate_factors); every
++    # plant/period the DAM reports do NOT cover keeps its CAMPD window.
++    # Driver (rule 13/14): a measured physical availability event (an outage
++    # window with a curtailed-MW level and a real FORCED/PLANNED label) whose
++    # forecast analogue is the statistical WEFOR/POF draw — prefer-measured over
++    # the emissions-gap inference, not a fitted overlay. CAISO's series begins
++    # 2021-06-18; earlier years and any resource without an accepted crosswalk
++    # row fall back to CAMPD. Default off; GATED CHANGE (alters availability).
++    caiso_dam_outages: bool = False
++
+     # Tier 3 (calibration) — short (1-5 day) unit-outage windows for baseload
+     # coal, the sub-floor companion of the >= 5-day unit-outage overlay.
+     # Driver (rule 12): discrete forced-outage events measured in per-unit
+diff --git a/src/market_sim/data/fleet.py b/src/market_sim/data/fleet.py
+index ce7aa0b..7c9bb54 100644
+--- a/src/market_sim/data/fleet.py
++++ b/src/market_sim/data/fleet.py
+@@ -1615,6 +1615,31 @@ def generators_to_fleet_arrays(
+             getattr(config, "campd_bins_path", str(CAMPD_BINS_CSV)),
+             iso=_iso or "ERCOT",
+         )
++        # CAISO DAM-outage precedence (gated caiso_dam_outages, CAISO only):
++        # override the CAMPD zero-generation derivation with CAISO's measured
++        # curtailment disclosure for the thermal plants the DAM reports cover,
++        # keeping the CAMPD window everywhere the DAM reports don't reach
++        # (uncovered plants, and years before CAISO's 2021-06-18 series). A
++        # per-(plant_code, plant_group) merge, so covered plants use the measured
++        # schedule while the rest fall back — never silently zeroed.
++        if _iso == "CAISO" and getattr(config, "caiso_dam_outages", False):
++            from market_sim.data.caiso_outages import (
++                caiso_dam_outage_derate_factors,
++                has_dam_coverage,
++            )
++
++            if has_dam_coverage(config.weather_year):
++                dam = caiso_dam_outage_derate_factors(
++                    config.weather_year, hours, iso="CAISO"
++                )
++                if dam:
++                    ufac = {**ufac, **dam}  # DAM wins for covered plants
++                    logger.info(
++                        "CAISO DAM-outage precedence (%d): %d plant-tranches from "
++                        "measured curtailment reports override CAMPD",
++                        config.weather_year,
++                        len(dam),
++                    )
+         if ufac:
+             # NEISO temperature-reliability-floor exemption (CLAUDE.md #11). The
+             # lone Merrimack-class COAL unit and lone ST_GAS unit are winter
