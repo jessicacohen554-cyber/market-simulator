@@ -46,6 +46,14 @@ replacement, if the evidence supports it, is filed as a NEW owner ask; it
 un-promotes part of caiso-77).
 
 Usage: python scripts/probes/_caiso105_evening_q1_pin.py <bundle_dir>
+           [--window belly]
+
+--window belly re-points the SAME instrument at the belly (hod 10-14),
+conditioning on the deepest OVER-price quartile (resid >= p75 — the belly
+residual's sign): with all three storage-conduct families closed
+(bid-cost caiso-100/101, allocation caiso-104, price-basis caiso-105
+§1), the belly re-charter needs the supply-side price-setter in exactly
+the hours the model over-prices.
 """
 
 import json
@@ -136,16 +144,24 @@ def main() -> int:
         print(__doc__)
         return 2
     bundle = Path(sys.argv[1])
+    belly_mode = "--window" in sys.argv and "belly" in sys.argv
+    win_hods = [10, 11, 12, 13, 14] if belly_mode else EVENING
     hod = np.arange(8760) % 24
-    ev_mask = np.isin(hod, EVENING)
+    ev_mask = np.isin(hod, win_hods)
 
     for y in YEARS:
         m = model_hourly(bundle, y)
         rt = actual_rt(y)
         resid = m["lambda"] - rt
         ok = ev_mask & np.isfinite(resid) & (np.abs(rt) > 1e-9)
-        q1_edge = np.nanquantile(resid[ok], 0.25)
-        q1 = ok & (resid <= q1_edge)
+        if belly_mode:
+            # belly residual is an OVER-price: condition on the deepest
+            # over-price quartile (resid >= p75)
+            q1_edge = np.nanquantile(resid[ok], 0.75)
+            q1 = ok & (resid >= q1_edge)
+        else:
+            q1_edge = np.nanquantile(resid[ok], 0.25)
+            q1 = ok & (resid <= q1_edge)
         n_q1, n_ev = int(q1.sum()), int(ok.sum())
 
         # --- LP bounds: floors npz (lower) + fleet_only caps (upper) -------
@@ -185,9 +201,11 @@ def main() -> int:
         tol = np.maximum(1.0, 1e-4 * cap)
         interior = (mw > min_gen + tol) & (mw < cap - tol)
 
+        wlbl = "belly" if belly_mode else "evening"
+        cmp = ">=" if belly_mode else "<="
         print(f"\n===================== {y} =====================")
         print(
-            f"Q1 = {n_q1}/{n_ev} evening hours, resid <= {q1_edge:+.1f}; "
+            f"Q1 = {n_q1}/{n_ev} {wlbl} hours, resid {cmp} {q1_edge:+.1f}; "
             f"dw resid {np.average(resid[q1], weights=m['demand'][q1]):+.1f}; "
             f"mean model lam {m['lambda'][q1].mean():.1f} vs actual "
             f"{rt[q1].mean():.1f}"
