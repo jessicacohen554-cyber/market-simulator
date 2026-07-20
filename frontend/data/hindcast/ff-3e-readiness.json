@@ -1,0 +1,403 @@
+{
+  "run_id": "ff-3e-readiness",
+  "meta": {
+    "battery": "ff-3e-readiness",
+    "kind": "readiness",
+    "session": "FF-3E",
+    "produced": "2026-07-20",
+    "horizon": [
+      2026,
+      2050
+    ]
+  },
+  "green": true,
+  "input_resolution": {
+    "green": true,
+    "hard_fail_count": 0,
+    "hard_fails": [],
+    "plateau_notes": [
+      "ERCOT:demand_growth_rate — constant from 2031 through 2050 (held-flat horizon tail)",
+      "ERCOT:datacenter_block_mw — constant from 2030 through 2050 (held-flat horizon tail)",
+      "CAISO:demand_growth_rate — constant from 2031 through 2050 (held-flat horizon tail)",
+      "CAISO:datacenter_block_mw — constant from 2040 through 2050 (held-flat horizon tail)",
+      "CAISO:rps_target — constant from 2045 through 2050 (held-flat horizon tail)",
+      "CAISO:capacity_price_firm — constant from 2026 through 2050 (held-flat horizon tail)",
+      "PJM:demand_growth_rate — constant from 2031 through 2050 (held-flat horizon tail)",
+      "PJM:datacenter_block_mw — constant from 2030 through 2050 (held-flat horizon tail)",
+      "PJM:rps_target — constant from 2045 through 2050 (held-flat horizon tail)",
+      "PJM:capacity_price_firm — constant from 2027 through 2050 (held-flat horizon tail)",
+      "MISO:demand_growth_rate — constant from 2031 through 2050 (held-flat horizon tail)",
+      "MISO:datacenter_block_mw — constant from 2030 through 2050 (held-flat horizon tail)",
+      "MISO:capacity_price_firm — constant from 2026 through 2050 (held-flat horizon tail)",
+      "NYISO:demand_growth_rate — constant from 2031 through 2050 (held-flat horizon tail)",
+      "NYISO:datacenter_block_mw — constant from 2031 through 2050 (held-flat horizon tail)",
+      "NYISO:rps_target — constant from 2040 through 2050 (held-flat horizon tail)",
+      "NYISO:capacity_price_firm — constant from 2026 through 2050 (held-flat horizon tail)",
+      "NEISO:demand_growth_rate — constant from 2031 through 2050 (held-flat horizon tail)",
+      "NEISO:rps_target — constant from 2045 through 2050 (held-flat horizon tail)",
+      "NEISO:capacity_price_firm — constant from 2027 through 2050 (held-flat horizon tail)"
+    ],
+    "per_iso": {
+      "ERCOT": {
+        "hard_fails": [],
+        "plateaus": [
+          "demand_growth_rate",
+          "datacenter_block_mw"
+        ]
+      },
+      "CAISO": {
+        "hard_fails": [],
+        "plateaus": [
+          "demand_growth_rate",
+          "datacenter_block_mw",
+          "rps_target",
+          "capacity_price_firm"
+        ]
+      },
+      "PJM": {
+        "hard_fails": [],
+        "plateaus": [
+          "demand_growth_rate",
+          "datacenter_block_mw",
+          "rps_target",
+          "capacity_price_firm"
+        ]
+      },
+      "MISO": {
+        "hard_fails": [],
+        "plateaus": [
+          "demand_growth_rate",
+          "datacenter_block_mw",
+          "capacity_price_firm"
+        ]
+      },
+      "NYISO": {
+        "hard_fails": [],
+        "plateaus": [
+          "demand_growth_rate",
+          "datacenter_block_mw",
+          "rps_target",
+          "capacity_price_firm"
+        ]
+      },
+      "NEISO": {
+        "hard_fails": [],
+        "plateaus": [
+          "demand_growth_rate",
+          "rps_target",
+          "capacity_price_firm"
+        ]
+      }
+    }
+  },
+  "config_completeness": {
+    "green": true,
+    "per_iso": {
+      "ERCOT": true,
+      "CAISO": true,
+      "PJM": true,
+      "MISO": true,
+      "NYISO": true,
+      "NEISO": true
+    }
+  },
+  "kill_resume_drill": {
+    "instrument": "kill-resume-drill",
+    "iso": "NEISO",
+    "window": [
+      2026,
+      2028
+    ],
+    "kill_after_year": 2027,
+    "killed_mid_horizon": true,
+    "cache_key_match": true,
+    "cached_years_loaded_not_resolved": true,
+    "resumed_years": [
+      2026,
+      2027
+    ],
+    "result_identical": true,
+    "green": true,
+    "per_year": [
+      {
+        "year": 2026,
+        "equal": true,
+        "resumed_from_cache": true,
+        "control": {
+          "dispatch_sum": 110210243.53,
+          "dispatch_hash": "6da403dd81affee9",
+          "price_sum": 2251755.833,
+          "price_hash": "ec5c1b7a8a58be31",
+          "n_retire": 0,
+          "n_thermal_add": 0,
+          "n_renew_add": 0,
+          "n_storage_add": 0
+        },
+        "resume": {
+          "dispatch_sum": 110210243.53,
+          "dispatch_hash": "6da403dd81affee9",
+          "price_sum": 2251755.833,
+          "price_hash": "ec5c1b7a8a58be31",
+          "n_retire": 0,
+          "n_thermal_add": 0,
+          "n_renew_add": 0,
+          "n_storage_add": 0
+        }
+      },
+      {
+        "year": 2027,
+        "equal": true,
+        "resumed_from_cache": true,
+        "control": {
+          "dispatch_sum": 106597423.75,
+          "dispatch_hash": "2aa84ba41082b548",
+          "price_sum": 2182072.244,
+          "price_hash": "52f376f2eeaf96fb",
+          "n_retire": 0,
+          "n_thermal_add": 0,
+          "n_renew_add": 2,
+          "n_storage_add": 0
+        },
+        "resume": {
+          "dispatch_sum": 106597423.75,
+          "dispatch_hash": "2aa84ba41082b548",
+          "price_sum": 2182072.244,
+          "price_hash": "52f376f2eeaf96fb",
+          "n_retire": 0,
+          "n_thermal_add": 0,
+          "n_renew_add": 2,
+          "n_storage_add": 0
+        }
+      },
+      {
+        "year": 2028,
+        "equal": true,
+        "resumed_from_cache": false,
+        "control": {
+          "dispatch_sum": 103093111.805,
+          "dispatch_hash": "ab795c5f9bb759b9",
+          "price_sum": 2260666.599,
+          "price_hash": "e043337bdab9d32c",
+          "n_retire": 99,
+          "n_thermal_add": 0,
+          "n_renew_add": 2,
+          "n_storage_add": 0
+        },
+        "resume": {
+          "dispatch_sum": 103093111.805,
+          "dispatch_hash": "ab795c5f9bb759b9",
+          "price_sum": 2260666.599,
+          "price_hash": "e043337bdab9d32c",
+          "n_retire": 99,
+          "n_thermal_add": 0,
+          "n_renew_add": 2,
+          "n_storage_add": 0
+        }
+      }
+    ]
+  },
+  "wall_rss_projection": {
+    "instrument": "wall-rss-projection",
+    "horizon_years": 25,
+    "box_ram_gb": 15.0,
+    "no_corun_rss_gb": 8.6,
+    "caveat": "Early years are a firm lower bound; late-horizon LPs grow super-linearly (FF-3B §2.4) — do NOT extrapolate the median flat. CES-armed legs add ~4-5 h/ISO (deferred W4).",
+    "per_iso": {
+      "ERCOT": {
+        "median_yr_s": 144.0,
+        "t1f_peak_rss_gb": 3.71,
+        "late_mult": 3.0,
+        "lower_bound_h": 1.0,
+        "projected_h": 2.0,
+        "projected_late_yr_min": 7.2,
+        "proj_peak_rss_gb": 4.6,
+        "no_corun": false
+      },
+      "CAISO": {
+        "median_yr_s": 200.0,
+        "t1f_peak_rss_gb": 4.37,
+        "late_mult": 3.0,
+        "lower_bound_h": 1.39,
+        "projected_h": 2.78,
+        "projected_late_yr_min": 10.0,
+        "proj_peak_rss_gb": 5.5,
+        "no_corun": false
+      },
+      "NYISO": {
+        "median_yr_s": 90.0,
+        "t1f_peak_rss_gb": 3.33,
+        "late_mult": 2.5,
+        "lower_bound_h": 0.62,
+        "projected_h": 1.09,
+        "projected_late_yr_min": 3.8,
+        "proj_peak_rss_gb": 4.2,
+        "no_corun": false
+      },
+      "NEISO": {
+        "median_yr_s": 78.0,
+        "t1f_peak_rss_gb": 3.42,
+        "late_mult": 2.5,
+        "lower_bound_h": 0.54,
+        "projected_h": 0.95,
+        "projected_late_yr_min": 3.2,
+        "proj_peak_rss_gb": 4.3,
+        "no_corun": false
+      },
+      "PJM": {
+        "median_yr_s": 235.0,
+        "t1f_peak_rss_gb": 8.61,
+        "late_mult": 8.0,
+        "lower_bound_h": 1.63,
+        "projected_h": 7.34,
+        "projected_late_yr_min": 31.3,
+        "proj_peak_rss_gb": 10.0,
+        "no_corun": true
+      },
+      "MISO": {
+        "median_yr_s": 324.0,
+        "t1f_peak_rss_gb": 9.34,
+        "late_mult": 8.0,
+        "lower_bound_h": 2.25,
+        "projected_h": 10.12,
+        "projected_late_yr_min": 43.2,
+        "proj_peak_rss_gb": 10.5,
+        "no_corun": true
+      }
+    },
+    "concurrency_plan": {
+      "solo_isos": [
+        "PJM",
+        "MISO"
+      ],
+      "pairable_isos": [
+        "ERCOT",
+        "CAISO",
+        "NYISO",
+        "NEISO"
+      ],
+      "solo_wall_h": 17.46,
+      "paired_wall_h": 3.87,
+      "total_serial_wall_h": 21.33
+    },
+    "what_would_10h_buy": "A 10-hour budget buys ONE full-horizon golden ISO for ['CAISO', 'ERCOT', 'NEISO', 'NYISO', 'PJM'] (each projected <= 10 h). The heaviest (PJM/MISO) approach or exceed 10 h alone at the super-linear projection and must run solo (>= 8.6 GB). Cheapest is NEISO at ~0.95 h."
+  },
+  "gate_scorecard": {
+    "ERCOT": {
+      "gate_a_backcast": {
+        "marker": "none",
+        "keeper": null
+      },
+      "gate_b_t1f": {
+        "determination": "HOLD",
+        "reasons": [
+          "FC-1 structural integrity (I1-I14) FAIL"
+        ]
+      },
+      "gate_c_readiness": {
+        "input_resolution_green": true,
+        "config_green": true
+      },
+      "gate_c_projected_wall_h": 2.0,
+      "gate_c_solo": false,
+      "gate_open": false
+    },
+    "CAISO": {
+      "gate_a_backcast": {
+        "marker": "none",
+        "keeper": null
+      },
+      "gate_b_t1f": {
+        "determination": "HOLD",
+        "reasons": [
+          "FC-1 structural integrity (I1-I14) FAIL"
+        ]
+      },
+      "gate_c_readiness": {
+        "input_resolution_green": true,
+        "config_green": true
+      },
+      "gate_c_projected_wall_h": 2.78,
+      "gate_c_solo": false,
+      "gate_open": false
+    },
+    "PJM": {
+      "gate_a_backcast": {
+        "marker": "none",
+        "keeper": null
+      },
+      "gate_b_t1f": {
+        "determination": "HOLD",
+        "reasons": [
+          "FC-1 structural integrity (I1-I14) FAIL"
+        ]
+      },
+      "gate_c_readiness": {
+        "input_resolution_green": true,
+        "config_green": true
+      },
+      "gate_c_projected_wall_h": 7.34,
+      "gate_c_solo": true,
+      "gate_open": false
+    },
+    "MISO": {
+      "gate_a_backcast": {
+        "marker": "none",
+        "keeper": null
+      },
+      "gate_b_t1f": {
+        "determination": "HOLD",
+        "reasons": [
+          "FC-1 structural integrity (I1-I14) FAIL",
+          "FC-2 adequacy & equilibrium behavior FAIL"
+        ]
+      },
+      "gate_c_readiness": {
+        "input_resolution_green": true,
+        "config_green": true
+      },
+      "gate_c_projected_wall_h": 10.12,
+      "gate_c_solo": true,
+      "gate_open": false
+    },
+    "NYISO": {
+      "gate_a_backcast": {
+        "marker": "withdrawn",
+        "keeper": "2026-07-11-nyiso-61-downstate-import",
+        "withdrawn": "2026-07-19"
+      },
+      "gate_b_t1f": {
+        "determination": "HOLD",
+        "reasons": [
+          "FC-1 structural integrity (I1-I14) FAIL"
+        ]
+      },
+      "gate_c_readiness": {
+        "input_resolution_green": true,
+        "config_green": true
+      },
+      "gate_c_projected_wall_h": 1.09,
+      "gate_c_solo": false,
+      "gate_open": false
+    },
+    "NEISO": {
+      "gate_a_backcast": {
+        "marker": "complete",
+        "keeper": "2026-07-08-neiso-54-steamgas-ct",
+        "declared": "2026-07-07"
+      },
+      "gate_b_t1f": {
+        "determination": "HOLD",
+        "reasons": [
+          "FC-1 structural integrity (I1-I14) FAIL"
+        ]
+      },
+      "gate_c_readiness": {
+        "input_resolution_green": true,
+        "config_green": true
+      },
+      "gate_c_projected_wall_h": 0.95,
+      "gate_c_solo": false,
+      "gate_open": false
+    }
+  }
+}
