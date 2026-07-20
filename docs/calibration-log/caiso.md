@@ -164,3 +164,62 @@ lanes (nyiso-65 sidecar + NYISO/NEISO keeper payloads) — not touched per
 per-ISO lane isolation; their lanes should repair them.
 
 Next number: caiso-105.
+
+## 2026-07-20 — CAISO-105: belly DA/RT basis wedge measured (third family CLOSED, no mechanism), pin-aware Q1 re-decomposition lands BOTH windows on the intertie supply curve; floor→$0-bid NOT filed; DAM-outage crosswalk committed
+
+**Keeper `2026-07-19-caiso-102-hourfix` UNCHANGED; measurement-only session —
+no mechanism armed, no B-leg, nothing registered.** Fresh same-machine
+`caiso102_repro_A` reproduces the keeper ladder digit-for-digit (belly
++6.0/+6.6/+4.3, evening −5.8/−4.9/−1.1, overnight +0.8/−0.0/+1.4). Full
+record: `results/calibration/FINDING-caiso105-basis-pin-decomp-2026-07-20.md`.
+
+**Arc 1 — belly price-basis wedge (caiso-104 §3b re-charter): MEASURED and
+CLOSED.** `_caiso105_da_rt_basis.py`: the charge-weighted DA−RT belly wedge
+is +3.6/+1.1/−0.3 (IFM weights; RTD +4.6/+1.7/+0.1; model-charge
++4.8/+2.1/+0.3) against a belly residual of +6.0/+6.6/+4.3 — wrong magnitude
+AND wrong year-shape (wedge shrinks to ≈0 by 2025, residual persists; wedge
+smallest in 2024 where the residual peaks). DA sits slightly ABOVE RT in the
+belly, so re-basing the LP's charge to DA could not pull the model down.
+Derive-first verdict: NO mechanism, no ask. All three storage-conduct
+families are now closed (bid-cost caiso-100/101; allocation caiso-104;
+price-basis caiso-105) — the belly residual is NOT a storage-charge artifact.
+
+**Arc 2 — pin-aware Q1 re-decomposition (caiso-104 owner re-charter):
+executed with true LP bounds** (floors npz min_gen + fleet_only caps;
+`_caiso105_evening_q1_pin.py`). EVENING Q1: CA λ is EQUALIZED to a WECC node
+in 76/100/97 % of hours — the price-setter is the elastic hub-priced import
+rung (import interior 217-811 MW; thermal interior tens of MW; battery
+envelope bound only 8-36 %; λ +9.6/+10.4/+12.3 below the cheapest available
+CT offer). The caiso-103 "withheld firm GW" attribution is definitively
+replaced. BELLY Q1 (over-price tail, --window belly): the model imports
++3740/+3271/+4215 MW avg vs measured +1106/+487/+1837 in exactly those hours
+(import tranche interior in 78-91 %, 1.8-2.3 GW; battery discharge ZERO;
+measured RT < 0 in 22-56 % of the hours vs model 5-25 %). UNIFIED DIAGNOSIS:
+the WECC intertie supply is hub-anchored and too elastic in both directions —
+belly imports too deep at hub prices (props λ above the surplus-collapsed
+RT), evening margin hub-equalized (holds λ below the hub-separated RT). Next
+mechanism family (owner-ask territory, rule-1 guardrail — measured
+condition-derived depth/direction, never a fitted throttle): condition the
+intertie depth on the observable surplus/tightness state, both directions
+(the WEIM clean-transfer tranches already carry the conditioning machinery).
+
+**Arc 3 — floor→$0-bid replacement NOT filed.** The pre-measured candidate
+(caiso-104 §1) fails its own efficacy test on the fresh bytes: the Q1
+price-setter is the economic import rung, not the pinned firm blocks; the
+forced negative-λ firm MWh (PNW 2.9/7.8/4.6 TWh/yr) coincide with a BOUND
+corridor and high CA λ (curtailment CA-inert), and the only CA-visible slice
+(DSW 20-90 GWh in negative-CA-λ belly hours) would raise deep-negative belly
+hours — worsening the +6 over-price. Un-promoting part of caiso-77 for
+zero-to-adverse gain is refused; the $0-bid form stays available for a future
+intertie redesign.
+
+**Arc 4 — DAM-outage intake: crosswalk stage DONE** (caiso-104 handoff §3):
+`derive_caiso_dam_resource_crosswalk.py` +
+`data/raw/reference/caiso-dam-resource-crosswalk.csv` — 139 thermal resources
+→ 88 plants (token matcher + non-thermal/sub-15-MW exclusion + 10 EIA-860
+hand-verified prefix pins + 6 false-positive excludes; details in the
+FINDING §5). Remaining: schema-first clean_io intake, rule-19 ambient
+exclusion, DAM-before-CAMPD loader precedence, single-delta A/B — dedicated
+session.
+
+Next number: caiso-106.
