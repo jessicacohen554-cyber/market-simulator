@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-21-nyiso-67-outage-resync",
+  "label": "nyiso 67 outage resync",
+  "date": "2026-07-21",
+  "shorthand": "nyiso-67-outage-resync",
+  "definition": "nyiso-67: nyiso-62 base recipe replayed with the restored 2,641-row corrected campd-unit-outages-NYISO.csv (was stale 1,599). Makes solve-time availability consistent with the ST reliability-floor fracs already re-derived on the 2,641-row extract in reliability_floor_coeffs_NYISO.csv. Data-sync restore of the un-synced nyiso-64 outage ingredient; no residual tuning.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-21-nyiso-67-outage-resync.js",
+  "bundle": "results/calibration/nyiso67_outage_resync"
+}
