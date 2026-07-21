@@ -32,7 +32,7 @@ import time
 from dataclasses import replace
 
 from market_sim.config.scenarios import ScenarioConfig
-from market_sim.runner import _run_pair
+from market_sim.pipeline.api import run_pair
 from market_sim.uncertainty import UncertaintySpec, draw_to_config, sample_draws
 
 logger = logging.getLogger("pb5_member_slice")
@@ -90,7 +90,7 @@ def main() -> None:
     for draw in slice_draws:
         config = draw_to_config(base, draw)
         t0 = time.time()
-        key = _run_pair((config, iso))
+        key = run_pair((config, iso))
         logger.info(
             "pb5 member done: draw_id=%s cache_key=%s wall_s=%.1f "
             "gas_factor=%.4f load_pct=%.4f tech_pct=%.4f weather=%d hydro=%s "
