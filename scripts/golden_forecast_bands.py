@@ -62,8 +62,8 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
+from market_sim.pipeline.api import run_scenario  # noqa: E402
 from market_sim.results import cache as cachemod  # noqa: E402
-from market_sim.runner import run_scenario_iso  # noqa: E402
 from scripts import check_forecast_invariants as C  # noqa: E402
 
 GOLDEN_DIR = REPO / "tests" / "golden"
@@ -124,7 +124,7 @@ def solve_reference(cache_root: Path) -> tuple[C.Run, Path, ScenarioConfig]:
     """Solve the pinned reference scenario into ``cache_root`` and load it."""
     cachemod.CACHE_ROOT = cache_root
     config = ScenarioConfig(**REFERENCE_SCENARIO_KWARGS)
-    key = run_scenario_iso(config, config.iso)
+    key = run_scenario(config, config.iso)
     run_dir = cache_root / config.iso / key
     return C.load_run(run_dir), run_dir, config
 
