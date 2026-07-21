@@ -82,6 +82,20 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # every pre-existing cache key is byte-stable; True enters the key (a
     # distinct financing scenario).
     "per_tech_wacc_enabled",
+    # NYISO SCR/EDRP demand-response axis (commit 62aac3b). Both fields are
+    # default-off / a market-design constant and were intended "byte-identical
+    # for every other config", but they reach asdict() and were not registered
+    # here, so they entered the hash and moved the pinned default cache_key
+    # (edbc1b1 -> 9b36bae). Dropped from the hash at their defaults so every
+    # pre-existing cache key is byte-stable again; a DR run (nyiso_scr_edrp True,
+    # or a non-default strike) enters the key as a distinct scenario.
+    "nyiso_scr_edrp",
+    "nyiso_scr_edrp_strike",
+    # FF-G3 forward net-CONE evolution: default "hold_last" dropped from the hash
+    # so every pre-existing cache key is byte-stable; a reindex mode enters the
+    # key (a distinct forward-capacity-price scenario). Backcast-coerced to
+    # "hold_last" in __post_init__.
+    "net_cone_forward_escalation",
 )
 
 
@@ -214,6 +228,18 @@ class ScenarioConfig:
     # named_program_price, P-1D), an explicit alternative to the default
     # single floor-band escalator (policy.cap_and_trade.projected_price).
     # None (default) keeps today's behavior exactly; "mid" reproduces it too.
+    net_cone_forward_escalation: str = "hold_last"  # "hold_last" |
+    # "reindex_net" | "reindex_gross" — FF-G3 forward net-CONE evolution beyond
+    # the last published capacity-market vintage (constants.
+    # forward_net_cone_anchor). "hold_last" (default) is the status quo the
+    # pricing seam reads today (resolve_demand_curve_vintage holds the last
+    # published anchor flat forward), byte-identical. The reindex modes escalate
+    # the anchor at constants.NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO (0.0 real
+    # by default → collapses to hold_last; a positive rate is a structural-
+    # tightness sensitivity). Forecast-only screen input; __post_init__ coerces
+    # it to "hold_last" in backcast (no capacity evolution there). NOT yet wired
+    # into capacity_price_per_firm_mw_yr — FF-2C owns that + the clearing flips
+    # (scope guard). See docs/capacity-price-forward-methodology-2026-07.md.
     demand_growth_rate: float = (
         0.01  # flat override used only when no structured rates exist
     )
@@ -6804,6 +6830,30 @@ class ScenarioConfig:
         if self.mode == "backcast" or self.hindcast:
             self.datacenter_load_path = "off"
 
+        # FF-G3 forward net-CONE evolution: validate the label, then COERCE it to
+        # "hold_last" in a plain backcast. Capacity evolution / the capacity-price
+        # seam run only in forecast mode, so the escalation axis is meaningless in
+        # a backcast; coercing keeps every backcast keeper's cache_key +
+        # run_config.json byte-identical even though the field is a scenario axis
+        # (mirrors the datacenter_load_path / entry_lookahead_reprice patterns).
+        # NOT coerced when hindcast (mode=="forecast", hindcast=True): the
+        # capacity-hindcast harness is the forecast path and arms forecast screens
+        # explicitly. (The field is also in _CACHE_KEY_OPTIONAL_FIELDS, so the
+        # default is cache-neutral regardless — this is belt-and-braces so a
+        # backcast that sets it non-default cannot shift its key.)
+        if self.net_cone_forward_escalation not in (
+            "hold_last",
+            "reindex_net",
+            "reindex_gross",
+        ):
+            raise ValueError(
+                "ScenarioConfig.net_cone_forward_escalation must be one of "
+                "('hold_last', 'reindex_net', 'reindex_gross'), got "
+                f"{self.net_cone_forward_escalation!r}"
+            )
+        if self.mode == "backcast":
+            self.net_cone_forward_escalation = "hold_last"
+
         # entry_lookahead_reprice is a FORECAST-only capacity-screen price
         # signal (the runner reads it only under mode=="forecast"; a backcast
         # runs no capacity evolution). Coerce it OFF in a plain backcast so the
@@ -7600,6 +7650,7 @@ TIER_TAGS: dict[str, int] = {
     "mass_cap_program": 1,
     "mass_cap_tons": 1,
     "carbon_program_price_path": 1,
+    "net_cone_forward_escalation": 2,
     "demand_growth_rate": 1,
     "demand_growth_path": 1,
     "demand_growth_percentile": 1,
