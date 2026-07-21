@@ -253,13 +253,27 @@ def test_pjm_and_nyiso_have_sourced_blocks():
 
 
 def test_miso_block_sourced_from_ltlf():
-    """FF-1C wired MISO's DC block from the Sept-2025 MISO LTLF (was {}):
-    mid ~11 GW by 2027 growing to ~20 GW by 2030; low signed-subset -> 0."""
+    """MISO's DC block comes from the MISO LTLF (was {}), refined 2026-07-21 to
+    the forecast's granular DC peak-demand trajectory: mid 1.2 GW (2026) ->
+    20.5 GW (2030) -> 33.5 GW (2046); high 27 GW by 2030 extended to 2046;
+    low signed-subset -> 0."""
     mid = ScenarioConfig(iso="MISO", datacenter_load_path="mid")
-    assert resolve_datacenter_mw(mid, "MISO", 2027) == pytest.approx(11000.0)
-    assert resolve_datacenter_mw(mid, "MISO", 2030) == pytest.approx(20000.0)
+    assert resolve_datacenter_mw(mid, "MISO", 2026) == pytest.approx(1200.0)
+    assert resolve_datacenter_mw(mid, "MISO", 2030) == pytest.approx(20500.0)
+    assert resolve_datacenter_mw(mid, "MISO", 2046) == pytest.approx(33500.0)
+    # Anchors interpolate piecewise-linearly and flat-hold past the last anchor.
+    assert resolve_datacenter_mw(mid, "MISO", 2028) == pytest.approx(
+        1200.0 + (20500.0 - 1200.0) * (2028 - 2026) / (2030 - 2026)
+    )
+    assert resolve_datacenter_mw(mid, "MISO", 2050) == pytest.approx(33500.0)
     high = ScenarioConfig(iso="MISO", datacenter_load_path="high")
     assert resolve_datacenter_mw(high, "MISO", 2030) == pytest.approx(27000.0)
+    assert resolve_datacenter_mw(high, "MISO", 2046) == pytest.approx(44100.0)
+    # High never dips below mid across the horizon (the ratio-preserved tail).
+    for year in (2030, 2035, 2040, 2046, 2050):
+        assert resolve_datacenter_mw(high, "MISO", year) >= resolve_datacenter_mw(
+            mid, "MISO", year
+        )
     low = ScenarioConfig(iso="MISO", datacenter_load_path="low")
     assert resolve_datacenter_mw(low, "MISO", 2030) == 0.0
 
