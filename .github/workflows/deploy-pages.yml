@@ -25,6 +25,7 @@ on:
       - "scripts/build_manifest.py"
       - "scripts/build_codebase_site_backcast.py"
       - "scripts/register_hindcast.py"
+      - "scripts/register_forecast_run.py"
       - ".github/workflows/deploy-pages.yml"
   # Manual trigger (Actions tab → this workflow → "Run workflow").
   workflow_dispatch: {}
@@ -75,12 +76,15 @@ jobs:
           set -euo pipefail
           python3 scripts/build_manifest.py --site-dir _site
           python3 scripts/build_codebase_site_backcast.py --site-dir _site
-          # Forecast-validation page from the committed hindcast sidecars
-          # (stdlib-only --page-only path), so a registered hindcast run shows
-          # on the live dashboard without committing the ~250 KB generated page
-          # (committed copy = local preview only, same convention as the
-          # backcast manifest files).
-          python3 scripts/register_hindcast.py --page-only --site-dir _site
+          # Forecast dashboard (FF-5A): regenerate the whole forecast namespace
+          # (registry/<id>.json + runs/<id>.js + manifest.js + program-status.js)
+          # into _site from the committed inputs — the hindcast sidecars
+          # (frontend/data/hindcast/*.json), the ff-verdicts.json snapshot (bakes
+          # FC-1..FC-8, so no docs/handoffs access is needed), and
+          # program-status.json. Stdlib-only; these outputs are generated data
+          # (gitignored — deploy is their single writer). The Run Explorer +
+          # Program Status pages read them from frontend/data/forecast/.
+          python3 scripts/register_forecast_run.py --reindex --site-dir _site
           echo "Staged $(find _site -type f | wc -l) files, $(du -sh _site | cut -f1)"
 
       - name: Configure Pages
