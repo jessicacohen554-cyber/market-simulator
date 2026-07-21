@@ -271,13 +271,16 @@ def main(argv: list[str] | None = None) -> int:
         sidecar_path.write_text(json.dumps(sidecar, indent=2))
         print(f"[register] wrote sidecar {sidecar_path}")
 
-    page_path = PAGE_PATH
-    if args.site_dir is not None:
-        page_path = args.site_dir / PAGE_PATH
-        page_path.parent.mkdir(parents=True, exist_ok=True)
-    page = render_page(_load_all_sidecars())
-    page_path.write_text(page)
-    print(f"[register] regenerated {page_path}")
+    # FF-5A: the self-contained forecast-validation.html is retired (now a static
+    # redirect stub to forecast-status.html). The live forecast dashboard is the
+    # Forecast Run Explorer + Program Status, fed by the SINGLE registration path
+    # scripts/register_forecast_run.py (rule 19 spirit). Delegate the namespace /
+    # manifest rebuild there rather than regenerating the retired page. The
+    # render_page helper above is kept for any external caller but is no longer
+    # wired to forecast-validation.html.
+    import register_forecast_run as RF  # noqa: PLC0415 (sibling; avoids cycle)
+
+    RF.reindex(args.site_dir if args.site_dir is not None else RF.REPO)
     return 0
 
 
