@@ -495,3 +495,77 @@ build. No core LP touched (rule 26/27; the wiring is caiso-110). Keeper UNCHANGE
 
 Full record: `results/calibration/FINDING-caiso109-gas-underdispatch-economic-2026-07-21.md`.
 Next number: caiso-110.
+
+## caiso-111 (2026-07-21) — FRESH-LOOK SCOPING: the belly over-import has TWO structural drivers (NEW export-floor asymmetry + import-depth pricing), BTM/demand-netting is clean, solar is Lever-D under-curtailment, granularity is not the lever; field survey shows every CAISO model uses a bidirectional/endogenous West and none publishes error bars as tight as our C-gates; endogenous WECC node (caiso-110) REINFORCED; keeper UNCHANGED
+
+**Keeper `2026-07-19-caiso-102-hourfix` UNCHANGED (NOT-YET, fail {C3c, C4,
+C5a(2024 CAVEAT)}); measurement-only, NO SOLVE, nothing registered.** Research/
+scoping charter (derive-first). Instrument (committed):
+`scripts/probes/_caiso111_belly_attribution.py` — full belly energy-balance
+attribution from committed artifacts + raw EIA-930/HSL (keeper-proxy
+`caiso104_m1_B` hourly + the caiso-109 CEMS-basis gas reconstruction). Full
+record: `results/calibration/FINDING-caiso111-belly-drivers-and-field-survey-2026-07-21.md`.
+
+**R1 — BTM/solar/demand.** (a) Demand basis CLEAN: the keeper's
+supply-consistent series is EIA-930 metered demand (already net of ~15+ GW BTM
+PV), reconstructed CEMS-anchored (caiso-80), dispatched against FOM-only supply
+— BTM is single-netted, not double-netted or missing. Not a driver. (b) The P0
+"solar +2.5–3 TWh over" is exactly `model − delivered` (+2.48/+2.54/+3.04 TWh)
+= Lever-D UNDER-curtailment: `caiso_solar_deliverability` is ON but curtails
+only 0.03/0.63/0.44 TWh vs actual 2.51/3.17/3.48; k=0.15/floor=0.50 under-shoots
+~4–40×. Real, independent, supporting lever (secondary in magnitude, +0.8 GW
+belly). (c) NEW **export-floor asymmetry**: reality net-EXPORTS in 1235/963/799
+hrs/yr (14.1/11.0/9.1 %, mostly the Apr–Jul belly), but the model's
+`WECC_import` node is inject-only (min net import = 0 MW), so it imports where
+reality exports. Belly wedge (model−actual net import) +2.58/+2.63/+2.24 GW
+decomposes ~half **export-hours** (+1.37/+1.38/+0.94, of which reality<0 "floor"
+part +0.69/+0.53/+0.38) + ~half **import-hours** (+1.21/+1.25/+1.30). In belly
+export-hours the model is +3.2–4.3 GW off (actual −1.66 vs model +1.6/+2.6/+1.9).
+Model oversupply dumps 1.7 TWh WECC_PNW + 0.5 TWh WECC_DSW, **0 in every CA
+zone** → tie phenomenon, not CA-locational. TWO drivers, not one; the
+export-floor is reachable by neither the import-depth lanes nor the killed
+observable-conditioning lanes.
+
+**R2 — zone granularity NOT the lever.** Residual is system-level (gas
+under-dispatch uniform across 66–70 % of hours, caiso-109; model dump 0 in every
+CA zone; the defect is the tie sign/price). Finer intra-CA granularity cannot
+move it. No zone should be added.
+
+**R3 — measured inputs.** Highest-value = measured delivered West hub LMP (Palo
+Verde/Malin), largely already on disk (`measured_import_hub_prices`), the exact
+input the caiso-110 West-MC fix needs — DMM 2024 corroborates the level (DSW $31
+/ PNW $49). WEIM GHG-attribution filed 2nd; CEC BTM PV not needed (R1a); RA
+must-offer / 60-day disclosure low-value.
+
+**R4 — how others run CAISO + acceptable results.** Every production/academic
+model (WECC ADS/GridView nodal; CPUC RESOLVE/E3 + Astrapé SERVM zonal; PLEXOS
+WECC nodal; NREL Cambium/ReEDS) uses a **bidirectional, endogenously-cleared**
+WECC import (hurdle-rate zonal or full nodal — ADS hurdle rates both ways,
+RESOLVE explicit 5,000 MW export limit) and **un-nets BTM PV** (gross load + DG,
+or supply-side ELCC). Our inject-only static-tranche node is the outlier on both
+counts. NONE publishes backcast error bars as tight as our C-gates: ADS
+validates procedurally (unserved-load tally), RESOLVE on the input side (scale
+to CEC forecast), PLEXOS uses MAE/RMSE/SMAPE as tools with no threshold; the one
+quantitative academic dispatch backcast (PyPSA-Eur, arXiv 2606.16486) accepts
+~21 % price SMAPE as good AND shows the SAME gas-under-dispatch signature we
+have. **Our gates are ambitious, not loose — keep them;** the field lesson is to
+adopt the bidirectional/endogenous West structure the export-floor points to.
+
+**R5 — endogenous WECC node REINFORCED.** It fixes BOTH halves: bidirectional
+tie (export-floor) + endogenous West price (depth). The export-floor is a second
+symptom of the same missing structure; import pricing stays central (import-hours
+half). Field-standard; West price DMM-corroborated.
+
+**Recommended next single-delta A/B — L1a (bidirectional-tie diagnostic) before
+the full West-MC build:** give the existing tie an export path priced at the
+measured West hub, isolating the export-floor half without the endogenous
+fleet's 84-min tie-pinned degeneracy. Pre-registered (single-delta vs fresh
+`caiso102_repro_A`, 3 years one bundle, in-session): PRIMARY C5a → 0 (gas rises,
+no overshoot >+7 %); net import → 28.9/32.4/36.2 TWh with belly export hours
+appearing; C4 NRMSE<0.30 r≥0.70; C3c up; GUARD C3a/C3b STAY PASS; C8 budget;
+rule-22 LOYO. KILL → escalate to L1b (caiso-110 West-MC fix + ε flow_cost) if
+the import-hours depth keeps C5a failing. Supporting: L2 re-derive Lever-D k to
+curtail the measured 2.5–3.5 TWh. NO-GO: zone granularity. KILLED: CA-price /
+west-surplus-quantity depth gates (caiso-107/109).
+
+Next number: caiso-112.
