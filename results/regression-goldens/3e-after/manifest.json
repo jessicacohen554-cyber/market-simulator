@@ -1,0 +1,123 @@
+{
+  "env": {
+    "MARKET_SIM_HIGHS_THREADS": "1",
+    "MARKET_SIM_WARMSTART": "1",
+    "MARKET_SIM_WARMSTART_XYEAR": "0"
+  },
+  "git_dirty": false,
+  "git_sha": "77821cb2",
+  "hash_scheme": "sha256-of-canonical-column-float64-bytes",
+  "highspy_version": "unknown",
+  "keepers": {
+    "CAISO": {
+      "bundle": "results/calibration/caiso102_hourfix_B",
+      "content_hashes": {
+        "btm.parquet": "f59e46c76213b7b67bed113a70233bcc9484bc2c50bef1daed6a4c88b8150545",
+        "dispatch/2023_P1.parquet": "51c51d57244086abe2944643be25934bfa84169eb84a62502c2dfccfd5902f77",
+        "dispatch/2024_P1.parquet": "c6b92dbd9c8e527cfd412bfd7bd0a467645ee995144c9a62595156dfdbee0ec9",
+        "dispatch/2025_P1.parquet": "82fc92d5640c5b3843f75fb86524a9d802bb78a19a72e9058f49b3b324aad1b6",
+        "flows.parquet": "b0810089e113f87c8a641543f6cfd772ad345d603fd38c620594743b9a259615",
+        "storage.parquet": "2c506e624e2c0924687926f832be4eea5f85d30a266481f98b9b27bc3d0fb334",
+        "system.parquet": "b289345cd64b237510d40c28fa47b6f96ef27870138ac481792f2cdf101af97c"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_takeorpay_from_data",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "nyiso_scr_edrp",
+        "nyiso_scr_edrp_strike",
+        "plant_tranche_config",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "environment",
+          "nyiso_scr_edrp",
+          "nyiso_scr_edrp_strike"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 208,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [
+          "caiso_charge_allocation_schedule",
+          "ercot_faststart_pool_offer",
+          "ercot_faststart_pool_offer_path",
+          "ercot_shoulder_online_span",
+          "ercot_shoulder_online_span_path",
+          "gas_st_drag_seasonal",
+          "gas_st_drag_seasonal_path",
+          "net_cone_forward_escalation",
+          "nyiso_scr_edrp",
+          "nyiso_scr_edrp_strike"
+        ],
+        "scenario_config_matched": 580
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-19-caiso-102-hourfix",
+      "recorded_flag_count": 199,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
+    "MISO": {
+      "bundle": "results/calibration/miso81_phantom_outage",
+      "content_hashes": {
+        "btm.parquet": "7b908ee7b042a1ac7f34db1bd47eeccc637333c0ab5e37709b901da946fbad59",
+        "dispatch/2023_P1.parquet": "cac4b3d55ff3321ce4ff14bbf2653162bc432617d264910fa5ffdc9e10d447a7",
+        "dispatch/2024_P1.parquet": "d6bbe5e5df0601eece3379bfebbfe8c5649fd5d0bd70a0051b8170af4eb6e80f",
+        "dispatch/2025_P1.parquet": "29d07f4073fe6a6e8a9c4ccde4cb3998aa4752b843c18b9cf5754ce40e96632f",
+        "flows.parquet": "6845830f02e8eacf81efd73d208fdc9ed9ea7ae5d710f62fdc83e55945305e33",
+        "storage.parquet": "ef7f4fe2d15383daea17e32292dd34a76bfc0a68d16d6171b0b007754c507e22",
+        "system.parquet": "aafe1f04611a471d82f56dae4a40289c98fa98bc261253cb5191aa77bcbc24a4"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_takeorpay_from_data",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "nyiso_scr_edrp",
+        "nyiso_scr_edrp_strike",
+        "plant_tranche_config",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "nyiso_scr_edrp",
+          "nyiso_scr_edrp_strike"
+        ],
+        "meta_keeper_only": [
+          "reuse"
+        ],
+        "meta_matched": 209,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [
+          "net_cone_forward_escalation",
+          "nyiso_scr_edrp",
+          "nyiso_scr_edrp_strike"
+        ],
+        "scenario_config_matched": 587
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-20-miso-81-phantom-outage",
+      "recorded_flag_count": 199,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    }
+  },
+  "note": "Current-HEAD regression baselines (Stage-0). NOT byte-reproductions of the registered July-3 keeper bundles. Multi-GB bundles are gitignored; only this manifest is committed.",
+  "stage_tag": "3e-after"
+}
