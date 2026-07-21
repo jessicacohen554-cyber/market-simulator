@@ -256,6 +256,12 @@ FUEL_TYPE_MAP: dict[str, int] = {
     "offshore_wind": 13,  # offshore wind (fixed-bottom and floating)
     "gas_st": 14,  # legacy natural-gas steam boiler (conventional ST)
     "biomass": 15,  # biomass / wood / MSW / landfill-gas thermal steam
+    "demand_response": 16,  # price-responsive DR supply block (NYISO SCR/EDRP):
+    # a pseudo-generator that clears the energy balance at its strike price with
+    # heat_rate=0 / emission_rate=0, so it carries no fuel/emission cost and is
+    # excluded from generation-mix scoring (it is avoided load, not generation —
+    # see results.export). Falls outside every reserve/AS/renewable/RPS fuel set,
+    # so it is dispatch-only and never evolves. data.nyiso_demand_response.
 }
 
 # Inverse of FUEL_TYPE_MAP: fuel type name indexed by its integer code.
