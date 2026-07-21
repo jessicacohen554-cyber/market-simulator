@@ -16,9 +16,15 @@ but the lane is complete only after assembly.
 
 ## Contents
 
-`rule27-bigfiles.tar.gz.b64.part00.txt` … `part08.txt` — consecutive byte
-slices (43,000 B each; part08 = 34,748 B) of the single-line base64 encoding
-of `rule27-bigfiles.tar.gz`.
+Consecutive byte slices of the single-line base64 encoding of
+`rule27-bigfiles.tar.gz`, in lexicographic filename order:
+`rule27-bigfiles.tar.gz.b64.part00.txt` (one 43,000 B slice), then
+`part01-00.txt` … `part08-08.txt` (4,300 B pieces; the final piece
+`part08-08.txt` is 348 B). The piece split exists because whole 43,000 B
+parts proved unreliable to transcribe through model tool calls (single-
+character substitutions, always caught by per-blob verification); 4,300 B
+pieces localize any error to a cheap retry. `cat` in lexicographic order
+(the `part*` glob below) reproduces the byte stream exactly.
 
 * sha256(concatenated .b64) = `e63fdb8288de639bde860aef960d53fbd3a9d11111423c2fbcdf0372e803966d`
 * sha256(decoded .tar.gz)   = `ce56d4f1b3271e941fb1bd4ce343c6bce9efdcf55ac095aa25aae9c112caba88`
