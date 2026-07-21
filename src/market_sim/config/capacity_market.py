@@ -1413,6 +1413,117 @@ def resolve_demand_curve_vintage(
     return chosen
 
 
+# --- FF-G3: forward net-CONE evolution beyond the last published vintage ----
+#
+# ``resolve_demand_curve_vintage`` HOLDS-LAST for any year after an ISO's most
+# recent published delivery-year vintage (docstring third bullet): a 2026-2050
+# forecast reads one frozen net-CONE anchor for every year past the last
+# auction on disk. FF-G3 designs the explicit alternative — an escalation rule
+# with a cited forward story — WITHOUT flipping any default (the shipped mode
+# stays ``"hold_last"``, byte-identical) and WITHOUT touching the pricing seam
+# (:meth:`MarketDesign.capacity_price_per_firm_mw_yr`; the FF-2C wiring lane
+# owns that + the per-ISO clearing flips). See
+# docs/capacity-price-forward-methodology-2026-07.md for the per-ISO grounding
+# tables, delta ledger, field survey, and owner-decision box.
+#
+# FIELD FINDING (agent survey 2026-07-20; PJM OATT Attachment DD §5.10(a)(iv)
+# BLS-Composite index ×1.022; NYISO tariff MST 5.14.1.2.2.1 composite BLS
+# (WPUID612/WPU1197) + BEA GDP-deflator blend; ISO-NE Tariff §III.13 interim
+# inflation/fuel updates + Handy-Whitman on qualification thresholds; MISO
+# Tariff §69A.8 annual GDP-deflator recompute; Brattle 2025 PJM CONE report):
+# every ISO escalates GROSS CONE by a construction-cost index and RE-NETS the
+# E&AS offset each year — net-CONE is a derived residual, NEVER indexed
+# directly. Brattle's own out-year guidance is to escalate the Reference Price
+# "on inflation only", i.e. ~0.0 in REAL terms; the sharp recent moves (PJM CC
+# gross CONE +44% vs the 2022 study) are STEP re-anchorings picked up by
+# intaking each newly-published vintage, not a smooth real trend. Hence the
+# cited central REAL rate below is 0.0 for every ISO: a positive value is an
+# explicit structural-tightness SENSITIVITY (the 2022-25 turbine surge
+# persisting), never a fit (rule 1/13).
+NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO: dict[str, float] = {
+    "PJM": 0.0,
+    "NYISO": 0.0,
+    "NEISO": 0.0,
+    "MISO": 0.0,
+    "CAISO": 0.0,  # no vintage table (fixed CPM-soft-cap proxy); rate unused
+}
+
+
+def forward_net_cone_anchor(
+    iso: "str | None",
+    year: "int | None",
+    escalation: str = "hold_last",
+    *,
+    rate: "float | None" = None,
+    eas_offset_per_kw_yr: "float | None" = None,
+) -> "float | None":
+    """Return the $/kW-yr net-CONE anchor governing ``iso``'s ``year`` (FF-G3).
+
+    The forward-evolution resolver layered on top of
+    :func:`resolve_demand_curve_vintage`. It applies an escalation rule ONLY to
+    years *after* the last published vintage's delivery-period start year; a
+    year at or before the last vintage returns that vintage's published anchor
+    unchanged (the published parameter is the measured input — rule 13).
+
+    ``escalation``:
+
+    * ``"hold_last"`` (default) — byte-identical to
+      ``resolve_demand_curve_vintage(iso, year).net_cone_curve_per_kw_yr``. The
+      status quo the pricing seam reads today.
+    * ``"reindex_net"`` — the last published net-CONE grown by
+      ``(1 + rate) ** (year − last_start)``. A cheap approximation; the field
+      does NOT index net-CONE directly (see the module finding), so this is a
+      documented lower-fidelity option.
+    * ``"reindex_gross"`` — the FIELD-STANDARD construction: escalate GROSS CONE
+      (``net + eas_offset``) by ``(1 + rate)`` per year and re-subtract the E&AS
+      offset — ``(net + eas) * (1 + rate) ** n − eas``. ``eas_offset_per_kw_yr``
+      is the published gross−net gap held real-flat here (an offline illustration
+      for the methodology doc); the STRUCTURALLY-FAITHFUL version re-nets against
+      the model's OWN simulated E&AS margin each forecast year and is wired at
+      solve time by FF-2C (this session designs, does not wire).
+
+    ``rate`` (real, per year) defaults to
+    :data:`NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO` for ``iso`` (0.0 → every
+    mode collapses to ``hold_last``, the byte-identity guarantee and the honest
+    central finding). Returns ``None`` when ``iso``/``year`` is ``None`` or the
+    ISO has no vintage table (CAISO/ERCOT) — the caller then keeps the fixed
+    registry proxy, exactly as :func:`resolve_demand_curve_vintage` does.
+
+    Not consumed by the live pricing seam this session (scope guard); exercised
+    only by tests and the offline divergence quantification in the methodology
+    doc until FF-2C wires it.
+    """
+    vintage = resolve_demand_curve_vintage(iso, year)
+    if vintage is None or year is None:
+        return None
+    base = vintage.net_cone_curve_per_kw_yr
+    if escalation == "hold_last":
+        return base
+    last_start = int(vintage.delivery_year[:4])
+    n = year - last_start
+    if n <= 0:
+        # Year at/before the resolved (last published) vintage — published
+        # anchor, never escalated (rule 13: the measured parameter governs).
+        return base
+    r = NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO.get(iso, 0.0) if rate is None else rate
+    if escalation == "reindex_net":
+        return base * (1.0 + r) ** n
+    if escalation == "reindex_gross":
+        if eas_offset_per_kw_yr is None:
+            raise ValueError(
+                "forward_net_cone_anchor(escalation='reindex_gross') requires "
+                "eas_offset_per_kw_yr (the published gross−net gap, or the "
+                "model's simulated E&AS offset once FF-2C wires it)"
+            )
+        gross = base + eas_offset_per_kw_yr
+        return gross * (1.0 + r) ** n - eas_offset_per_kw_yr
+    raise ValueError(
+        "forward_net_cone_anchor: escalation must be one of "
+        "('hold_last', 'reindex_net', 'reindex_gross'), got "
+        f"{escalation!r}"
+    )
+
+
 # Target planning reserve margin per ISO for the reserve-margin adequacy
 # backstop (capacity.py::apply_reserve_margin_build). Each ISO sets its own
 # installed-reserve-margin / planning-reserve-margin target through its
