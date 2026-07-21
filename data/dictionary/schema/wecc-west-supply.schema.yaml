@@ -1,0 +1,85 @@
+# Canonical schema: WECC-West neighbor hourly balance (CAISO endogenous-import
+# node foundation, caiso-110). The measured hourly net position of the western
+# interconnect OUTSIDE CAISO — EIA-930 BALANCE Region NW + SW aggregate — the
+# input to the co-optimized WECC_import zone (its demand + renewable availability
+# + thermal fleet). See
+# docs/handoffs/caiso-endogenous-wecc-node-design-2026-07-21.md.
+#
+# Keyed on the UTC hour: the DATA layer is clock-neutral; the LP-wiring aligns
+# UTC -> CAISO model clock via the same map the corridor loaders use
+# (eia_loader._caiso_interchange_model_clock), so this file carries no model
+# clock assumption. The demand + fuel columns are rule-13 inputs (regenerate for
+# a forward year from forward West solar/load drivers, respond to changed
+# conditions — never fitted to the CAISO residual). net_export_mw =
+# net_generation - demand is the West's measured net interchange (see below: a
+# "clean surplus over demand" is degenerately zero, so the export is a
+# price/congestion outcome, not a surplus threshold).
+datatype: wecc-west-supply
+schema_version: 1
+title: WECC-West neighbor hourly balance and net export
+description: >-
+  Hourly aggregate of the western-interconnect balancing authorities outside
+  CAISO (EIA-930 BALANCE Region NW + SW): demand, net generation by fuel, and
+  the derived net export (MW). The input to the co-optimized WECC_import zone
+  (caiso-110).
+
+key_columns: [interval_start_utc]
+allow_additional_columns: false
+
+columns:
+  - name: interval_start_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: tz-aware UTC start of the hour.
+  - name: demand_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: WECC-West aggregate demand (adjusted) over the hour.
+  - name: solar_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: WECC-West aggregate solar net generation (adjusted, all solar sub-types).
+  - name: wind_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: WECC-West aggregate wind net generation (adjusted, all wind sub-types).
+  - name: hydro_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: WECC-West aggregate hydro net generation (adjusted; incl. pumped storage where the source aggregates it).
+  - name: gas_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: WECC-West aggregate natural-gas net generation (adjusted).
+  - name: coal_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: WECC-West aggregate coal net generation (adjusted).
+  - name: nuclear_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: WECC-West aggregate nuclear net generation (adjusted).
+  - name: net_generation_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: WECC-West aggregate total net generation (adjusted).
+  - name: net_export_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: >-
+      Derived West net export = net_generation - demand (may be negative). The
+      West's measured net interchange position — the quantity the co-optimized
+      WECC_import zone (Option A) must reproduce. NOTE: renewables alone never
+      exceed West demand (solar ~3-5 GW vs demand ~70 GW), so a "clean surplus
+      over demand" is degenerately zero — the West's export to CAISO is a
+      price/congestion outcome, not a renewable-surplus threshold (design §3).
