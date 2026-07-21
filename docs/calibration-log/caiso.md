@@ -456,5 +456,26 @@ deepens evening/overnight under-import); belly-depth re-derivation on any CA
 price observable (caiso-107 L2); any residual-fitted throttle/haircut on the
 depth (rule 1/23/25).
 
+**P1-A (owner GRANTED the west-wide surplus-quantity gate) — DERIVE-FIRST KILL.**
+Before building, measured whether a west-wide surplus QUANTITY stabilizes the
+belly import depth (`_caiso109_westwide_surplus.py`, pure EIA-930 BALANCE, all 66
+BAs already on disk; no fetch, no LP). Conditioning the measured CISO belly (hod
+10–14) net import on the WECC-West (Region NW+SW) aggregate solar / solar
+penetration / net-gen surplus — at p50, at the p95 ceiling, and inside CAISO's
+own solar-peak — **every signal FAILS the CV≤0.20/LOYO≤0.25 gate**, the second
+observable class to fail after caiso-107's CA prices. Signature: a monotone
+CA-side year-drift — belly net import rises +743→+1234→+1868 MW (~+560/yr) at
+EVERY fixed west-surplus level (CA belly solar +1.5 GW/yr, storage ~2×), a drift
+no import-supply observable removes. Also the relationship is POSITIVE (West
+flush → CAISO imports MORE, physically correct), so the "shrink depth when West
+flush" hypothesis is backwards; the over-import is a LEVEL/non-stationarity
+defect. Verdict (rule 1): lever (A) NOT filed — the belly transfer is endogenous
+to the co-evolving CA+West fleets; no conditioned depth gate is forward-stable.
+Redirect re-raised to owner: (1) endogenous WECC import node (structural, the
+right fix, a MAJOR multi-session charter — EIA-930 BALANCE data shown on disk);
+(2) midday gas commitment/min-load (P0 §6 B, one-session, risks C8); (3) file +
+re-charter as caiso-110. No form armed pending grant. Full record:
+`results/calibration/FINDING-caiso109-westwide-surplus-derive-2026-07-21.md`.
+
 Full record: `results/calibration/FINDING-caiso109-gas-underdispatch-economic-2026-07-21.md`.
 Next number: caiso-110.
