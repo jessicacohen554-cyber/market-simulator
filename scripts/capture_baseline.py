@@ -26,8 +26,8 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
+from market_sim.pipeline.api import run_scenario  # noqa: E402
 from market_sim.results.cache import CACHE_ROOT  # noqa: E402
-from market_sim.runner import run_scenario_iso  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("capture_baseline")
@@ -44,7 +44,7 @@ def capture(iso: str, out_dir: Path, years: list[int] | None = None) -> None:
     logger.info(
         "Running backcast for %s (config.cache_key=%s)", iso, config.cache_key()
     )
-    cache_key = run_scenario_iso(config, iso)
+    cache_key = run_scenario(config, iso)
 
     out_dir.mkdir(parents=True, exist_ok=True)
 
