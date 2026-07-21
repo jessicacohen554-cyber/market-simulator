@@ -179,9 +179,12 @@ def main(argv: list[str] | None = None) -> int:
     print(f"[register-forecast] wrote sidecar {sidecar_path}")
 
     if not args.no_page:
-        page = RH.render_page(RH._load_all_sidecars())
-        RH.PAGE_PATH.write_text(page)
-        print(f"[register-forecast] regenerated {RH.PAGE_PATH}")
+        # FF-5A: forecast-validation.html is retired (redirect stub). Register the
+        # run into the live forecast namespace via the single path instead of
+        # regenerating the retired self-contained page.
+        from scripts import register_forecast_run as RF  # noqa: PLC0415
+
+        RF.register_one(sidecar)
     return 0
 
 
