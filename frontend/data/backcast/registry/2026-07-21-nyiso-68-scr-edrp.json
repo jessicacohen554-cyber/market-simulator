@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-21-nyiso-68-scr-edrp",
+  "label": "nyiso 68 scr edrp",
+  "date": "2026-07-21",
+  "shorthand": "nyiso-68-scr-edrp",
+  "definition": "nyiso-68: nyiso-62 base recipe + restored 2,641-row corrected campd-unit-outages-NYISO.csv + SCR/EDRP emergency demand response (nyiso_scr_edrp, published $500/MWh EDRP strike) as endogenous per-zone price-responsive supply blocks. Restores both un-synced nyiso-64/65 ingredients: the corrected outage extract makes solve-time availability consistent with the re-derived ST reliability floors (closes C1 fuel-mix), and the DR blocks cap the downstate scarcity tail those outages tighten (Gold-Book-registered capability, market-design strike, endogenous trigger \u2014 rule 13/17). No residual tuning. DETERMINATION NOT-YET: C1 fuel-mix now PASS all years (nyiso-66-resync-base FAILed 13/14, 2023 CC_REGULAR -3.76 TWh); C2/C4/C6/C7 PASS; C8 forced-share PASS (2024 ST_GAS 38.7% grounded-above-budget); C5a CO2 CAVEAT (2025 +8.3%, commercial band); remaining blockers are all 2023 price criteria: C3a mean +17.8%, C3b shape NRMSE 0.215, C3c tail 31h vs RT actual 10h (3.1x) - diagnosed as downstate summer reserve-price formation the corrected outages now expose (thermal-only reserve co-opt lacks NYISO's hydro/pumped-storage + SCR/EDRP operating-reserve supply; issue #1344).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-21-nyiso-68-scr-edrp.js",
+  "bundle": "results/calibration/nyiso68_scr_edrp"
+}
