@@ -1202,32 +1202,33 @@ DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
 # share}} summing to 1.0 per ISO (memo §3.3). DEFAULT (ISO absent here) = each
 # zone's iso_configs load_share, applied by data.datacenter.datacenter_zone_shares.
 # Override ONLY where published queue siting geography differs from the load
-# distribution (memo names ERCOT North/West and PJM Dominion skews). Ships EMPTY:
+# distribution (memo names ERCOT North/West and PJM Dominion skews). PJM carries
+# a reconciled override (below); ERCOT and MISO stay on the load_share default
+# (their per-zone MW fractions are not yet sourceable — see the per-ISO notes).
 # FF-1C (2026-07) confirmed the skew DIRECTIONS are published (ERCOT LFL queue
-# concentrates in North/Oncor + West; PJM DC concentrates in Dominion/DOM) but
-# no published per-zone MW FRACTION split was sourceable in-session (the exact
-# queue-geography tables are FF-0D audit §7.3-adjacent manual pulls). Per the
-# memo's "never invent a split" rule and FF-1C's charter ("no published
-# decomposition => ships as load-share default, documented — never invented"),
-# every ISO keeps its load_share default; populating ERCOT/PJM from the published
-# queue-geography fractions is the remaining P2 data-intake follow-up.
+# concentrates in North/Oncor + West; PJM DC concentrates in Dominion/DOM). The
+# exact per-zone MW FRACTION tables (PJM Load Forecast Table B-9b; ERCOT LFL
+# queue geography) are separate Excel/queue pulls not fetchable in-session; per
+# the memo's "never invent a split" rule an ISO is overridden only when at least
+# one zone's share is grounded in a published magnitude (rule 14 — a reconciled
+# version of real data), never a wholesale guess.
 #
-# 2026-07-21 follow-up — sharpened this deferral with the concrete published
-# anchors and the exact artifact each ISO still needs to close it (kept as a
-# deferral: the per-zone MW fractions live in separate Excel/queue-geography
-# tables not fetchable in-session, and the dominant PJM fraction is itself
-# horizon-uncertain, so a judged number is not buried here):
-#   PJM — Dominion (DOM, "data center alley") hosts the world's largest DC
-#     concentration: ~20 GW DC by 2037 vs PJM's ~30 GW DC by 2030 (DC = 94% of
-#     the +32 GW 2024-2030 peak growth), so DOM's DC share is ~0.45-0.60 and
-#     horizon-sensitive (~0.6 at the 2030 block horizon, ~0.4 by 2037); DOM, AEP,
-#     COMED and PL together carry ~74% of PJM growth (ComEd +3.7 GW to 2031). A
-#     rule-14 "reconciled" DOM-anchored vector (DOM at its published share,
-#     residual by load_share) is constructable and would materially beat the
-#     load_share default (which gives DOM only 0.15), but the exact per-zone DC MW
-#     is PJM Load Forecast Table B-9b (a separate Excel) and the DOM fraction is
-#     horizon-uncertain, so it stays deferred. Source: PJM 2025 Long-Term Load
-#     Forecast Report (Table B-9b); EIA Today-in-Energy (Virginia/DOM ~20 GW).
+# 2026-07-21 follow-up — the per-ISO status and the anchors behind it:
+#   PJM — POPULATED below (rule-14 reconciled, DOM-anchored). Dominion (DOM,
+#     "data center alley") hosts the world's largest DC concentration: ~20 GW DC
+#     by 2037 vs PJM's ~30 GW DC by 2030 (DC = 94% of the +32 GW 2024-2030 peak
+#     growth). Interpolating the ~20 GW/2037 figure back to the block's ~2030
+#     horizon (~16.5 GW) over ~30 GW PJM DC 2030 gives DOM ~0.55 (band 0.45-0.60,
+#     horizon-sensitive: ~0.6 near-term, ~0.4 by 2037 as other zones catch up).
+#     DOM is anchored at 0.55; the residual 0.45 is distributed across the other
+#     7 zones by their iso_configs load_share (the memo §3.3 default) — ONE
+#     published anchor + the documented default, NOT an invented full split. This
+#     materially beats the pure load_share default (which gives DOM only 0.15) for
+#     siting-sensitive results (Dominion congestion / locational RA). Documented
+#     limitation: ComEd (+3.7 GW to 2031), AEP and PL are the next-largest DC
+#     zones, so the load_share residual mildly understates them; refine all 8
+#     anchors when Table B-9b is read. Source: PJM 2025 Long-Term Load Forecast
+#     Report (Table B-9b); EIA Today-in-Energy (Virginia/DOM ~20 GW).
 #   ERCOT — the large-flexible-load queue concentrates in Oncor (North/DFW) +
 #     West Texas (data center = 72.9% of the ~226 GW Nov-2025 queue), but no
 #     per-weather-zone MW split is published in the accessible primary docs (the
@@ -1235,10 +1236,27 @@ DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
 #     the DIRECTION is sourceable -> stays load_share default. Source: ERCOT Large
 #     Load Integration / 2025 Report on Existing & Potential Constraints & Needs.
 #   MISO — growth concentrates in the central region (IL/IN/MI) per the 2025 LTLF,
-#     a further siting candidate; likewise no per-zone MW fraction sourced.
-# All three keep the load_share default until a per-zone MW table lands (never an
-# invented split, memo §3.3 / rule 23).
-DATACENTER_ZONE_SHARE: dict[str, dict[str, float]] = {}
+#     a further siting candidate; likewise no per-zone MW fraction sourced ->
+#     stays load_share default.
+# ERCOT and MISO keep the load_share default until a per-zone MW table lands
+# (never an invented split, memo §3.3 / rule 23).
+DATACENTER_ZONE_SHARE: dict[str, dict[str, float]] = {
+    # PJM — reconciled DOM-anchored siting (full derivation in the note above):
+    # DOM at its published ~0.55 near-2030 DC share, residual 0.45 by load_share
+    # across the other 7 zones. Keys are the model zone_names; shares sum to 1.0
+    # (datacenter_zone_shares raises otherwise). Refine to a full 8-zone anchor
+    # when PJM Load Forecast Table B-9b (per-zone DC MW) is read.
+    "PJM": {
+        "PJM_ComEd": 0.062728,  # load_share 0.1185 (DC-heavy: +3.7 GW/2031, understated by residual)
+        "PJM_AEP_Ohio": 0.115292,  # load_share 0.2178 (named DC-growth zone)
+        "PJM_ATSI": 0.044677,  # load_share 0.0844
+        "PJM_West_APS": 0.041554,  # load_share 0.0785
+        "PJM_Central_PA": 0.058281,  # load_share 0.1101 (PPL/PL — named DC-growth zone)
+        "PJM_Dominion": 0.550001,  # ANCHOR — published ~0.55 near-2030 DC share (world's largest DC hub)
+        "PJM_EMAAC": 0.088507,  # load_share 0.1672 (incl. PSEG — named DC-growth zone)
+        "PJM_SWMAAC": 0.038960,  # load_share 0.0736 (incl. BGE — named DC-growth zone)
+    },
+}
 
 # --- Fuel-price trajectories, availability shapes & carbon price paths ------
 # MOVED to config/fuel_trajectories.py (constants split, 2026-07-20).
