@@ -68,21 +68,45 @@ can be built following the CAISO pattern in scripts/data/build_caiso_hsl.py — 
 :func:`_hsl_file` for the data-needed marker.
 
 NYISO wind and solar curtailment is modest and NYISO does not publish an
-hourly uncurtailed-potential series comparable to CAISO or ERCOT NP6 — only
-a monthly/zonal *aggregate* estimate in its annual "NYCA Renewables"
-presentation (nyiso.com/reports-information, "Real-Time Market
+hourly uncurtailed-potential (or hourly curtailment) series comparable to
+CAISO's 5-minute Production-and-Curtailment workbooks or ERCOT NP6 — only
+annual + monthly + zonal *aggregate* estimates in its annual "NYCA
+Renewables" presentation (nyiso.com/reports-information, "Real-Time Market
 Curtailments"): NYCA wind curtailment was 66.6 GWh (1.1% of production) in
-2024 and 76.6 GWh (1.1%) in 2025; FTM solar was 1.04 GWh (0.2%) in 2024 and
-20.18 GWh (2.1%) in 2025 (checked 2026-07-05) — genuinely well under 1 TWh/yr
-and too coarse (monthly, not hourly; zonal, not per-plant) to derive an
-hourly potential series from. Both its magnitude (~1% of production, below the
-threshold where explicit re-curtailment moves dispatch) and its granularity
-make NYISO a **deliberate genuine-gap decision**, not merely a missing upload:
-the documented default for NYISO backcasts remains the EIA-930 NYIS
+2024 and 76.6 GWh (1.1%) in 2025 (3.4% in 2023); FTM solar was 1.04 GWh
+(0.2%) in 2024 and 20.18 GWh (2.1%) in 2025 (checked 2026-07-05; NYISO
+re-examined as its own uncurtailed-basis decision 2026-07-21, see
+docs/multi-iso/nyiso-uncurtailed-hsl-finding-2026-07.md). NYISO is a
+**deliberate genuine-gap decision**, not merely a missing upload: the
+documented default for NYISO backcasts remains the EIA-930 NYIS
 delivered-generation series and NYISO stays OUT of
-:data:`_UNCURTAILED_FALLBACK_ISOS`. Zone-shaping uses EIA-860 capacity shares:
-upstate NY counties (zones A–E) hold the bulk of wind capacity, and solar
-spreads across upstate and downstate zones.
+:data:`_UNCURTAILED_FALLBACK_ISOS` for two reasons sharper than "no hourly
+series" (the reference-rate gross-up MISO wind takes needs only an annual
+RATE, and the NYCA-wide annual wind % printed in the deck — ~1.9% mean over
+2023-2025 — *would* technically supply one, so granularity alone is not the
+bar):
+
+1. **Immaterial magnitude.** ~1.1% of wind production (well under 1 TWh/yr)
+   sits below the threshold where explicit re-curtailment moves dispatch.
+   MISO qualifies at ~4.9% / multi-TWh (see above); NYISO does not.
+2. **Driver misaligned to the reduced network (CLAUDE.md #12 exception).**
+   NYISO's wind curtailment is dominated by North/Central Zone *local*
+   transmission-upgrade outages — North+Central is 72-93% of zonal
+   curtailment every reported year (2020 North alone = 85%), and the 2021
+   deck annotates North curtailment as "coincident with several long-term
+   facility outages related to transmission upgrades." That is a sub-zonal
+   physical event the reduced 5-zone NYISO network does not represent, so
+   grossing the delivered NYIS shape up by a uniform ~1% would hand the LP
+   headroom it cannot endogenously re-curtail — phantom wind energy that
+   makes results *less* reflective of reality. The NYCA-wide rate is a real
+   number but the wrong instrument for a locally-driven, immaterial
+   curtailment; using it literally would be the #12 "misaligned to our
+   representation" failure, not an improvement over the measured delivered
+   series.
+
+Zone-shaping uses EIA-860 capacity shares: upstate NY counties (zones A–E)
+hold the bulk of wind capacity, and solar spreads across upstate and
+downstate zones.
 
 MISO, by contrast, IS a fallback ISO for wind: MISO's IMM (Potomac Economics)
 publishes measured annual/quarterly wind curtailment in its State-of-the-Market
@@ -343,15 +367,24 @@ _HSL_COLUMNS: tuple[str, ...] = (
 # falls back to the delivered EIA-930 hourly profile.
 _CAISO_HSL_DIR: Path = CAISO_HSL_DIR
 
-# NYISO curtailment parquet directory (currently empty — a deliberate genuine
-# gap, not a pending upload). NYISO curtailment is ~1% of production (well under
-# 1 TWh/yr) and only published as a monthly/zonal aggregate, so it is both below
-# the threshold where explicit re-curtailment moves dispatch AND too coarse to
-# derive an hourly potential (or even a reliable per-tech rate) from — see the
-# module docstring. NYISO therefore stays OUT of :data:`_UNCURTAILED_FALLBACK_ISOS`
-# and its backcast uses EIA-930 NYIS delivered generation. If NYISO ever
-# publishes an hourly series, build one parquet per year (schema:
-# ``_HSL_COLUMNS``) here and extend :func:`_hsl_file`.
+# NYISO curtailment parquet directory (does not exist on disk — a deliberate
+# genuine gap, not a pending upload; re-examined 2026-07-21, see
+# docs/multi-iso/nyiso-uncurtailed-hsl-finding-2026-07.md). NYISO publishes only
+# annual/monthly/zonal AGGREGATE curtailment (data/raw/nyiso-renewable-curtailment/),
+# never an hourly per-plant potential/HSL series. A NYCA-wide annual wind
+# curtailment RATE (~1.9% mean 2023-2025) IS derivable — so, unlike the earlier
+# "too coarse for even a rate" wording, granularity is not what disqualifies the
+# reference-rate gross-up. NYISO stays OUT of :data:`_UNCURTAILED_FALLBACK_ISOS`
+# because (1) its curtailment is immaterial (~1.1%/yr, well under 1 TWh, below
+# the dispatch-moving threshold; cf. MISO ~4.9%/multi-TWh) and (2) it is
+# dominated by North/Central Zone LOCAL transmission-upgrade outages
+# (North+Central = 72-93% of zonal curtailment every year) — a sub-zonal driver
+# the reduced 5-zone network cannot re-curtail, so a uniform NYCA gross-up would
+# inject phantom wind (CLAUDE.md #12 "misaligned to our representation"). The
+# backcast therefore uses EIA-930 NYIS delivered generation. DATA NEEDED to move
+# NYISO onto an uncurtailed path: an HOURLY wind/solar curtailment or HSL series
+# (NP6/CAISO-workbook granularity). If NYISO ever publishes one, build one
+# parquet per year (schema: ``_HSL_COLUMNS``) here and extend :func:`_hsl_file`.
 _NYISO_HSL_DIR: Path = NYISO_HSL_DIR
 
 # MISO curtailment directory. No hourly ``miso_<year>_hsl_hourly.parquet`` is
@@ -407,9 +440,11 @@ def renewable_bound_provenance(iso: str, year: int, fuel: str) -> str:
       the raw delivered EIA-930 profile as the upper bound (L1's HIGH-severity
       leakage, docs/model-legitimacy-audit-2026-07.md §4), so the LP rides the
       bound and the class's C1 row is scoring plumbing, not skill. This is
-      NYISO/NEISO (sub-1% curtailment, no rate derivable), MISO solar (no
-      published curtailment series), and any ERCOT/CAISO year where HSL
-      coverage runs out AND no reference curtailment rate exists.
+      NYISO/NEISO (sub-1% curtailment; for NYISO a NYCA-wide annual rate exists
+      but is the wrong instrument — its curtailment is locally driven and the
+      reduced network can't re-curtail a gross-up, see the module docstring),
+      MISO solar (no published curtailment series), and any ERCOT/CAISO year
+      where HSL coverage runs out AND no reference curtailment rate exists.
     """
     hsl_path = _hsl_file(iso, year)
     if hsl_path is not None and hsl_path.exists():
@@ -431,10 +466,14 @@ def _hsl_file(iso: str, year: int) -> Path | None:
     if iso == "CAISO":
         return _CAISO_HSL_DIR / f"caiso_{year}_hsl_hourly.parquet"
     if iso == "NYISO":
-        # DATA NEEDED: nyiso_<year>_hsl_hourly.parquet in _NYISO_HSL_DIR.
-        # NYISO wind/solar curtailment is small (well under 1 TWh/yr per
-        # EIA-923) and no hourly curtailment series is currently published.
-        # The delivered EIA-930 NYIS profile is the documented default.
+        # DATA NEEDED: an HOURLY nyiso_<year>_hsl_hourly.parquet in
+        # _NYISO_HSL_DIR. NYISO publishes only annual/monthly/zonal AGGREGATE
+        # curtailment (~1.1%/yr, well under 1 TWh) — no hourly potential/HSL
+        # series, and its curtailment is dominated by North/Central local
+        # transmission-upgrade outages the reduced network can't re-curtail, so
+        # NYISO is NOT in _UNCURTAILED_FALLBACK_ISOS and takes no reference-rate
+        # gross-up either (see _NYISO_HSL_DIR and the module docstring). The
+        # delivered EIA-930 NYIS profile is the documented default.
         candidate = _NYISO_HSL_DIR / f"nyiso_{year}_hsl_hourly.parquet"
         return candidate if candidate.exists() else None
     if iso == "MISO":
