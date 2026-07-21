@@ -1,0 +1,836 @@
+diff --git a/docs/handoffs/pjm-m3-gas-bridge-evidence-2026-07.md b/docs/handoffs/pjm-m3-gas-bridge-evidence-2026-07.md
+new file mode 100644
+index 0000000..4552d35
+--- /dev/null
++++ b/docs/handoffs/pjm-m3-gas-bridge-evidence-2026-07.md
+@@ -0,0 +1,106 @@
++# PJM M-3 gas-CC commitment bridge — evidence + mechanism (2026-07)
++
++**Lane:** PJM frontier readiness. **Mechanism:** `pjm_gas_commitment_bridge`
++(default off, PJM-gated). **Status:** implemented + unit-tested; probe solve
++pending. This is the on-record "admissible mechanism tried" that a PJM frontier
++declaration needs (`docs/calibration-and-validation-methodology.md` §5;
++`DIAGNOSIS-pjm-2025-phase-drift-and-zonal-structure-2026-07.md` §6, M-3).
++
++## 1. What it is
++
++The PJM analogue of `ercot_gas_commitment_bridge` (ERCOT-63) and the CAISO RA
++must-offer bridge — the **same ISO-neutral P1-native detector**
++(`model.commitment.caiso_ra_mustoffer_min_gen`: min-down physics + the
++startup-restart inequality on the model's OWN base-cost **P0** run pattern and
++duals) routed onto the PJM merchant gas-CC fleet. A CC the P0 pattern runs
++before AND after an idle gap is held at `min_load_frac × pmax × availability`
++across the gap when either (a) the gap is shorter than its physical min-down (a
++restart bar), or (b) re-paying its published startup cost exceeds the net cost
++of holding at min-load priced at the model's own P0 duals (the standard UC
++restart inequality). Bounded to one DA operating day
++(`DA_COMMITMENT_HORIZON_HOURS`) on the economic leg.
++
++**Target residual:** PJM's model-side ~1 h-early lead (§1c) and the D-1p
++flat-overnight residual (§4) — one phenomenon: P1 has no overnight commitment
++posture, so it cycles CC off between run-days and restarts at the exact
++economic crossing while reality carries commitment inertia (measured overnight
+++$2–6 LMP overshoot).
++
++**Forward-native / admissibility (rules 13/18):** no measured generation
++enters the solve — only the model's own P0 run pattern + physical constants +
++one measured scalar (`min_load_frac`). Regenerates in any forecast year.
++
++## 2. Committed-state evidence + the min_load_frac scalar
++
++`scripts/derive_pjm_gas_bridge_params.py` — frozen against residuals (rule 23;
++re-derive only when the offers corpus updates). Source: PJM DataMiner2
++`energy_market_offers` feed (`data/raw/pjm-energy-offers/`, gitignored — the
++non-member redistribution restriction + ~1–2 GB size; regenerate with
++`scripts/fetch_pjm_energy_offers.py`). Cross-season 2024 (Jan/Apr/Jul/Oct):
++
++| quantity | value |
++|---|---|
++| **min_load_frac** (cap-weighted p50 `avg_ecomin/avg_ecomax`, CC segment) | **0.564** |
++| CC-like units / total EcoMax | 302 / 76.8 GW |
++| `avg_ecomin/avg_ecomax` quartiles (unweighted) | 0.52 / 0.63 / 0.77 |
++| CC unit-hours with `avg_ecomin>0`, overnight h0–6 | **0.968** |
++| CC unit-hours with `avg_ecomin>0`, midday h12–18 | 0.968 |
++
++**CC identification** is by unit PHYSICS (the offers carry no fuel label; the
++`unit_code` is hashed), using the SAME frozen segmentation as
++`scripts/derive_pjm_offer_surface.py` (G-22 §2): per-unit median `min_runtime`
++∈ (2, 16] h AND median `ecomin/ecomax` > 0.2, excluding nuclear-like baseload
++(median ratio ≥ 0.95 AND EcoMax ≥ 800 MW) and zero-offer hydro/PS/storage
++(median top-of-curve < $1). The 76.8 GW total matches PJM's gas-CC fleet
++(sanity check). 0.564 sits physically alongside the ERCOT committed-CC p50
++(0.574, 60-Day DAM disclosure) — both merchant gas-CC.
++
++**The overnight evidence** (0.968 at h0–6, equal to midday) is the market-side
++confirmation that committed PJM CC units carry an LSL floor through the
++overnight hours rather than cycling cold — the counterpart of the model's
++flat-overnight dispatch residual the bridge targets.
++
++## 3. Attribution / gates
++
++- **D-2 id:** `MECH_PJM_GAS_COMMITMENT_BRIDGE = 18` — its own id (distinct from
++  the ERCOT bridge's 17) so per-ISO attribution/ablation stay independent (the
++  `MECH_ST_GAS_MUSTRUN_PER_PLANT` precedent). Merchant floor → subject to the
++  D-2/C8 forced-share gate; carries a D-3 ablation entry
++  (`{"pjm_gas_commitment_bridge": False}`).
++- **D-4 window:** `(MECH_PJM_GAS_COMMITMENT_BRIDGE, "CC_REGULAR") = (0, 24)` —
++  economic self-windowing (idle gaps between run-days); off-window binding is 0
++  by construction (rule 12: window + driver + forward story all stated).
++- **Rule 19:** mutually exclusive with the PJM path-B reserve fleet mask
++  (`pjm_reserve_commitment_scoped`) — both replace the P1 fleet; enforced loud
++  at `build_pjm_gas_bridge_p1_prep`. The keeper uses `pjm_reserve_pergen`
++  (kwargs hook only), so no conflict.
++
++## 4. Wiring
++
++- `config/scenarios.py`: `pjm_gas_commitment_bridge` (off),
++  `pjm_gas_bridge_min_load_frac=0.564`, `pjm_gas_bridge_startup` (on),
++  `pjm_gas_bridge_da_horizon` (on) + `TIER_TAGS`.
++- `pipeline/commitment.py`: `_pjm_gas_bridge_floor` + `build_pjm_gas_bridge_p1_prep`.
++- `runner.py` + `scripts/run_calibration.py`: built at the P0→P1 seam, added to
++  the `p1_fleet_prep` `or` chain (ISO-exclusive; forecast + backcast parity).
++- `data/floor_mechanisms.py`, `scripts/legitimacy_diagnostics.py`: id + name +
++  ablation + D-4 window.
++- Tests: `tests/test_pjm_gas_commitment_bridge.py` (8 cases: gate/ISO guards,
++  overnight floor + tag, startup/DA-horizon legs, CT-never-floored, rule-19
++  raise, registry).
++
++## 5. Probe plan (pending solve)
++
++Baseline = **pjm-115** (the current keeper `pjmcong1_east_cut` recipe +
++`gas_daily_shape` interp-fix). A/B via `replay_keeper.py`:
++
++```
++# Arm A (pjm-115 base):  replay keeper --set gas_daily_shape=true
++# Arm B (M-3 probe):     replay keeper --set gas_daily_shape=true --set pjm_gas_commitment_bridge=true
++```
++
++Full span 2023–2025 in one bundle (rule 16). Adjudicate on: overnight LMP
++overshoot / D-1p flat-overnight residual (structure, not MAE — rule 1), the
++C8 forced-share (< 30 % of CC energy at the floor) and D-4 off-window (< 5 %)
++gates, and no cross-criterion regression. Register the result (keeper or
++rejected probe) on the dashboard the same session (rule 15).
+diff --git a/scripts/derive_pjm_gas_bridge_params.py b/scripts/derive_pjm_gas_bridge_params.py
+new file mode 100644
+index 0000000..2fd1e4f
+--- /dev/null
++++ b/scripts/derive_pjm_gas_bridge_params.py
+@@ -0,0 +1,160 @@
++"""Derive the PJM gas-CC commitment-bridge min-load fraction + overnight evidence.
++
++The PJM analogue of the ERCOT ``ercot_gas_bridge_min_load_frac`` derive
++(``derive_ercot_thermal_dam_availability`` family, 60-Day DAM disclosure): for
++the M-3 overnight commitment bridge
++(``ScenarioConfig.pjm_gas_commitment_bridge``,
++``docs/DIAGNOSIS-pjm-2025-phase-drift-and-zonal-structure-2026-07.md`` §6) the
++one parameter the mechanism needs is ``min_load_frac`` — a bridged CC's minimum
++stable load as a fraction of its available capacity.
++
++Source: the PJM DataMiner2 ``energy_market_offers`` feed
++(``data/raw/pjm-energy-offers/pjm_energy_offers_<year>_<month>.parquet``,
++``scripts/fetch_pjm_energy_offers.py``). Each row is one (unit_code x
++operating-hour) offer carrying ``avg_ecomin`` / ``avg_ecomax`` (the unit's
++economic min/max = committed LSL/HSL) plus the commitment-physics fields
++(``min_runtime``, ``no_load_cost``, start costs).
++
++``min_load_frac`` = the capacity-weighted p50 of ``avg_ecomin / avg_ecomax``
++over the CC-like segment, where CC-like is selected by unit PHYSICS (never fuel
++— the offers carry no fuel label; the unit_code is hashed) using the SAME
++frozen segmentation as ``scripts/derive_pjm_offer_surface.py`` (the G-22 §2
++segmentation): per-unit median ``min_runtime`` in
++``(FAST_START_MAX_MIN_RUNTIME_H, CC_MAX_MIN_RUNTIME_H]`` h AND median
++``ecomin/ecomax`` > ``CC_MIN_ECOMIN_RATIO``, excluding nuclear-like baseload
++(median ratio >= ``NUCLEAR_ECOMIN_RATIO`` AND EcoMax >= ``NUCLEAR_MIN_ECOMAX_MW``)
++and zero-offer hydro/PS/storage (median top-of-curve < ``ZERO_TOP_FLOOR_USD``).
++
++Overnight committed-state evidence (the M-3 D-4 justification): the fraction of
++CC-segment unit-hours that carry a positive ``avg_ecomin`` floor, by EPT hour —
++committed CC units bidding an LSL floor through the overnight hours is the
++market-side evidence that the class holds min-load rather than cycling cold
++overnight (the model-side D-1p flat-overnight residual, diagnosis §4/§6).
++
++Provenance / admissibility (CLAUDE.md rules 13/18/23): ``avg_ecomin`` /
++``avg_ecomax`` are PJM-published, unit-resolved MW capability quantities — a
++physical/market min-stable-load measurement, never a price. The bridge reads
++only the derived SCALAR (like the ERCOT 0.574); no measured series enters the
++solve, and the mechanism regenerates in a forecast year from the model's own P0
++run pattern + physical constants. FROZEN AGAINST RESIDUALS (rule 23): re-derive
++only when the offers corpus updates; never because a residual moved.
++
++Usage::
++
++    python scripts/derive_pjm_gas_bridge_params.py [--months-glob '*2024*'] [--json OUT]
++"""
++
++from __future__ import annotations
++
++import argparse
++import glob
++import json
++import sys
++from pathlib import Path
++
++import numpy as np
++import pandas as pd
++
++REPO = Path(__file__).resolve().parent.parent
++sys.path.insert(0, str(REPO / "scripts"))
++
++RAW_DIR = REPO / "data" / "raw" / "pjm-energy-offers"
++OUT_JSON = REPO / "data" / "raw" / "_validation-source" / "pjm_gas_bridge_params.json"
++
++_BID_COLS = [f"bid{i}" for i in range(1, 21)]
++
++
++def _load_offers(pattern: str) -> pd.DataFrame:
++    files = sorted(glob.glob(str(RAW_DIR / pattern)))
++    if not files:
++        raise SystemExit(
++            f"no offer parquets match {RAW_DIR / pattern} — run "
++            "scripts/fetch_pjm_energy_offers.py first"
++        )
++    frames = [pd.read_parquet(f) for f in files]
++    df = pd.concat(frames, ignore_index=True)
++    df["top"] = df[_BID_COLS].max(axis=1)
++    df["ratio"] = df["avg_ecomin"] / df["avg_ecomax"].replace(0, np.nan)
++    return df, [Path(f).name for f in files]
++
++
++def _cc_segment(df: pd.DataFrame):
++    """Return (per-unit frame, boolean CC-like mask) via the frozen segmentation."""
++    from derive_pjm_offer_surface import (
++        CC_MAX_MIN_RUNTIME_H,
++        CC_MIN_ECOMIN_RATIO,
++        FAST_START_MAX_MIN_RUNTIME_H,
++        NUCLEAR_ECOMIN_RATIO,
++        NUCLEAR_MIN_ECOMAX_MW,
++        ZERO_TOP_FLOOR_USD,
++    )
++
++    g = df.groupby("unit_code").agg(
++        med_minrun=("min_runtime", "median"),
++        med_ratio=("ratio", "median"),
++        med_ecomax=("avg_ecomax", "median"),
++        med_top=("top", "median"),
++        n=("unit_code", "size"),
++    )
++    cc = (
++        (g["med_minrun"] > FAST_START_MAX_MIN_RUNTIME_H)
++        & (g["med_minrun"] <= CC_MAX_MIN_RUNTIME_H)
++        & (g["med_ratio"] > CC_MIN_ECOMIN_RATIO)
++    )
++    nuke = (g["med_ratio"] >= NUCLEAR_ECOMIN_RATIO) & (
++        g["med_ecomax"] >= NUCLEAR_MIN_ECOMAX_MW
++    )
++    zerotop = g["med_top"] < ZERO_TOP_FLOOR_USD
++    return g, (cc & ~nuke & ~zerotop)
++
++
++def _cap_weighted_p50(ratio: np.ndarray, weight: np.ndarray) -> float:
++    order = np.argsort(ratio)
++    rs, ws = ratio[order], weight[order]
++    cum = np.cumsum(ws) / ws.sum()
++    return float(np.interp(0.5, cum, rs))
++
++
++def main() -> None:
++    ap = argparse.ArgumentParser(description=__doc__)
++    ap.add_argument("--months-glob", default="pjm_energy_offers_*.parquet")
++    ap.add_argument("--json", default=str(OUT_JSON))
++    args = ap.parse_args()
++
++    df, files = _load_offers(args.months_glob)
++    g, cc_sel = _cc_segment(df)
++    ccg = g[cc_sel]
++    r = ccg["med_ratio"].to_numpy(float)
++    w = ccg["med_ecomax"].to_numpy(float)
++    p50 = _cap_weighted_p50(r, w)
++
++    # Overnight committed-state evidence: CC unit-hours with ecomin>0 by EPT hour.
++    hours = pd.to_datetime(df["bid_datetime_beginning_ept"], errors="coerce").dt.hour
++    cc_mask = df["unit_code"].isin(set(ccg.index))
++    by_hour = (
++        (df.loc[cc_mask, "avg_ecomin"] > 0)
++        .groupby(hours[cc_mask])
++        .mean()
++        .reindex(range(24))
++    )
++
++    out = {
++        "min_load_frac": round(p50, 3),
++        "n_cc_units": int(cc_sel.sum()),
++        "cc_ecomax_mw_total": round(float(ccg["med_ecomax"].sum())),
++        "ratio_quartiles": [round(float(q), 3) for q in np.percentile(r, [25, 50, 75])],
++        "overnight_ecomin_positive_frac_h0_6": round(float(by_hour.loc[0:6].mean()), 3),
++        "midday_ecomin_positive_frac_h12_18": round(
++            float(by_hour.loc[12:18].mean()), 3
++        ),
++        "source_files": files,
++        "segmentation": "derive_pjm_offer_surface physics thresholds (frozen)",
++    }
++    print(json.dumps(out, indent=2))
++    Path(args.json).parent.mkdir(parents=True, exist_ok=True)
++    Path(args.json).write_text(json.dumps(out, indent=2) + "\n")
++    print(f"\nwrote {args.json}")
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/scripts/legitimacy_diagnostics.py b/scripts/legitimacy_diagnostics.py
+index b7bd4eb..a9ef8a5 100644
+--- a/scripts/legitimacy_diagnostics.py
++++ b/scripts/legitimacy_diagnostics.py
+@@ -98,6 +98,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
+     MECH_CT_NETLOAD_DRAG,
+     MECH_GAS_COMMITMENT_BRIDGE,
+     MECH_NAMES,
++    MECH_PJM_GAS_COMMITMENT_BRIDGE,
+     MECH_RA_MUSTOFFER,
+     MECH_RELIABILITY_FLOOR,
+     MECH_ST_GAS_MUSTRUN_PER_PLANT,
+@@ -312,6 +313,18 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
+     #   own P0 run pattern + physical constants; no measured series enters
+     #   (the CAISO RA bridge convention, rules 13/18).
+     (MECH_GAS_COMMITMENT_BRIDGE, "CC_REGULAR"): (0, 24),
++    # pjm_gas_commitment_bridge (M-3, MECH_PJM_GAS_COMMITMENT_BRIDGE —
++    # pipeline.commitment.build_pjm_gas_bridge_p1_prep): the PJM analogue of the
++    # ERCOT bridge above, identical construction. Self-windowing by the same
++    # P0-gap detector; hour-of-day window ALL 24 hours (the driver does not
++    # restrict clock hours — gap placement is the model's own PJM run pattern;
++    # measured incidence is overnight-dominated, the D-1p flat-overnight
++    # residual, diagnosis §4/§6). Driver: DAM one-operating-day commitment + the
++    # restart inequality; min-load = the measured PJM committed-CC LSL/HSL
++    # cap-weighted p50 (DataMiner2 energy_market_offers,
++    # scripts/derive_pjm_gas_bridge_params.py). Forward story identical (P0
++    # pattern + physical constants; rules 13/18).
++    (MECH_PJM_GAS_COMMITMENT_BRIDGE, "CC_REGULAR"): (0, 24),
+ }
+ 
+ # D-9: overlay probes that must be OFF/zero in every keeper run_config.json
+diff --git a/scripts/run_calibration.py b/scripts/run_calibration.py
+index 6d64c5e..a37983e 100644
+--- a/scripts/run_calibration.py
++++ b/scripts/run_calibration.py
+@@ -114,6 +114,7 @@ from market_sim.pipeline import (  # noqa: E402
+     build_caiso_ra_p1_prep,
+     build_caiso_reserve_p1_prep,
+     build_ercot_gas_bridge_p1_preps,
++    build_pjm_gas_bridge_p1_prep,
+     build_pjm_reserve_p1_prep,
+     run_commitment_pass,
+     run_energy_solve,
+@@ -3695,6 +3696,14 @@ def run_year(
+     pjm_fleet_prep, pjm_kwargs_prep = build_pjm_reserve_p1_prep(
+         config, iso, fleet_arrays
+     )
++    # P1-native PJM gas commitment bridge (M-3): committed-state floor on the
++    # merchant gas-CC fleet from the P0 run pattern (the overnight-between-
++    # run-days carrier). None for every non-PJM / gate-off run (byte-identical);
++    # mutually exclusive with the PJM path-B reserve fleet mask above (raises at
++    # the prep builder). ISO-exclusive with the CAISO/ERCOT fleet hooks.
++    pjm_gas_bridge_prep = build_pjm_gas_bridge_p1_prep(
++        config, iso, fleet, fleet_arrays, mc_base
++    )
+     # P1-native CAISO online-scoped reserve split (caiso_reserve_online_scoped):
+     # the kwargs hook recomputes the (2*n_r, T) spin/non-spin product-split
+     # ramp caps from the P0 run pattern — SPIN scoped to online iron, NONSPIN
+@@ -3711,7 +3720,9 @@ def run_year(
+         dispatch_kwargs,
+         config,
+         xyear_cache=xyear_cache,
+-        p1_fleet_prep=ra_p1_prep or ercot_bridge_prep or pjm_fleet_prep,
++        p1_fleet_prep=(
++            ra_p1_prep or ercot_bridge_prep or pjm_gas_bridge_prep or pjm_fleet_prep
++        ),
+         p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
+         mc_bid_adjust=offer_surface_mc_bid_adjust,
+         # The v2 lowcurve and the ERCOT-64 floor-scoped bid hooks are mutually
+diff --git a/src/market_sim/config/scenarios.py b/src/market_sim/config/scenarios.py
+index ea14534..59d9413 100644
+--- a/src/market_sim/config/scenarios.py
++++ b/src/market_sim/config/scenarios.py
+@@ -4178,6 +4178,63 @@ class ScenarioConfig:
+     # micro-run failure mode it guards is bounded instead by the anchor
+     # run-length evidence recorded in the ERCOT-63 probe analysis.
+ 
++    # PJM gas-CC COMMITMENT BRIDGE (default off, PJM-gated): the PJM analogue
++    # of ercot_gas_commitment_bridge above (M-3 in
++    # docs/DIAGNOSIS-pjm-2025-phase-drift-and-zonal-structure-2026-07.md §6 —
++    # "overnight commitment inertia"). The model-side ~1 h-early lead (§1c) and
++    # the D-1p flat-overnight residual (§4) are one phenomenon: P1 has no
++    # overnight commitment posture, so it cycles CC off between run-days and
++    # restarts at the exact economic crossing while reality carries commitment
++    # inertia (min-run, startup lead). The SAME ISO-neutral P1-native
++    # commitment-bridge internals adopted for CAISO/ERCOT
++    # (model.commitment.caiso_ra_mustoffer_min_gen via
++    # pipeline.commitment.build_pjm_gas_bridge_p1_prep, injected at the P0→P1
++    # seam) applied to the PJM merchant gas-CC fleet: a CC the model's OWN
++    # base-cost P0 pattern runs before AND after an idle gap is held at
++    # min-load across the gap when (a) the gap is shorter than its physical
++    # min-down, or (b) re-paying its published startup cost exceeds the net
++    # cost of holding at min-load priced at the model's own P0 duals (the
++    # standard UC restart inequality). Forward-native by construction (P0
++    # pattern + physical constants; no measured generation enters — rules
++    # 13/18). D-2 id MECH_PJM_GAS_COMMITMENT_BRIDGE (its own id — same
++    # phenomenon as the ERCOT bridge, but a separate id keeps per-ISO
++    # attribution/ablation independent, the MECH_ST_GAS_MUSTRUN_PER_PLANT
++    # precedent), D-4 window
++    # (MECH_PJM_GAS_COMMITMENT_BRIDGE, CC_REGULAR)=(0,24) in
++    # scripts/legitimacy_diagnostics.py (economic self-windowing — idle gaps
++    # between run-days). CLASS SCOPE: CC only (fuel_types=("gas_cc",));
++    # CT_PEAKER is excluded by its own physics (fast-start min-down <
++    # RA_BRIDGE_ECON_MIN_DOWN_HOURS — rule 18). Committed-state evidence +
++    # min_load_frac derive: scripts/derive_pjm_gas_bridge_params.py
++    # (docs/handoffs/pjm-m3-gas-bridge-evidence-2026-07.md). MUTUALLY EXCLUSIVE
++    # with the PJM reserve commitment-scoped path-B fleet mask
++    # (pjm_reserve_commitment_scoped — both replace the P1 fleet; rule 19,
++    # enforced at the prep builder).
++    pjm_gas_commitment_bridge: bool = False
++    # Minimum stable load of a bridged PJM gas-CC as a fraction of the PLANT's
++    # available capacity — the MEASURED committed-CC LSL/HSL (avg_ecomin /
++    # avg_ecomax) capacity-weighted p50 from the PJM DataMiner2
++    # energy_market_offers corpus, physics-segmented CC-like units per the
++    # frozen derive_pjm_offer_surface segmentation (median min_runtime ∈
++    # (2,16] h, median ecomin/ecomax > 0.2, nuclear-like excluded). A measured
++    # physical/market quantity frozen against residuals (rules 13/21/23); only
++    # read when the bridge gate is on. Cross-season 2024 (Jan/Apr/Jul/Oct)
++    # value (0.564: cap-weighted p50 of avg_ecomin/avg_ecomax over 302
++    # physics-segmented CC-like units, 76.8 GW; overnight ecomin-positive
++    # fraction 0.968) — see scripts/derive_pjm_gas_bridge_params.py.
++    pjm_gas_bridge_min_load_frac: float = 0.564
++    # Economic (≥ min-down) bridging on the startup-restart inequality — the
++    # overnight-between-run-days carrier. Same construction/admissibility as
++    # ercot_gas_bridge_startup (MC and LMP are the model's own P0 quantities).
++    # Default on WITH the gate; off = the physical-restart-bar-only probe arm.
++    pjm_gas_bridge_startup: bool = True
++    # Cap economic bridges at one DA operating day
++    # (constants.DA_COMMITMENT_HORIZON_HOURS): a unit idle longer than one DA
++    # cycle is a next-day decommit/re-offer decision, never an intra-day
++    # min-load hold. Bounds the mechanism to its declared D-4 window. Default
++    # on with the gate.
++    pjm_gas_bridge_da_horizon: bool = True
++
+     # ERCOT unit-level (window-grain) nuclear refuel availability (default off,
+     # ERCOT backcast-gated). Replaces the NUCLEAR_MONTHLY_CF_BY_YEAR fleet-month
+     # smear for the four ERCOT reactors with the measured per-reactor DAILY
+@@ -6618,6 +6675,10 @@ TIER_TAGS: dict[str, int] = {
+     "ercot_gas_bridge_min_load_frac": 2,
+     "ercot_gas_bridge_startup": 1,
+     "ercot_gas_bridge_da_horizon": 1,
++    "pjm_gas_commitment_bridge": 1,
++    "pjm_gas_bridge_min_load_frac": 2,
++    "pjm_gas_bridge_startup": 1,
++    "pjm_gas_bridge_da_horizon": 1,
+     "ercot_offer_surface_lowcurve_floorscoped": 1,
+     "ercot_storage_as_endogenous": 1,
+     "ercot_thermal_as_endogenous": 1,
+diff --git a/src/market_sim/data/floor_mechanisms.py b/src/market_sim/data/floor_mechanisms.py
+index 672b544..14b6969 100644
+--- a/src/market_sim/data/floor_mechanisms.py
++++ b/src/market_sim/data/floor_mechanisms.py
+@@ -84,6 +84,17 @@ MECH_ST_GAS_MUSTRUN_PER_PLANT: int = 16
+ # precedent). A merchant commitment floor — subject to the D-2 forced-share
+ # gate; ablated in the zero-forcing twin.
+ MECH_GAS_COMMITMENT_BRIDGE: int = 17
++# PJM gas-CC commitment bridge (ScenarioConfig.pjm_gas_commitment_bridge, M-3):
++# the PJM analogue of MECH_GAS_COMMITMENT_BRIDGE above — the same ISO-neutral
++# internals (model.commitment.caiso_ra_mustoffer_min_gen: min-down physics +
++# the startup-restart inequality on the model's OWN P0 run pattern and duals)
++# routed onto the PJM merchant gas-CC fleet with min_load_frac = the MEASURED
++# committed-CC LSL/HSL capacity-weighted p50 (PJM DataMiner2 energy_market_offers
++# corpus, scripts/derive_pjm_gas_bridge_params.py). Separate id from the ERCOT
++# bridge so D-2/D-4 attribution and per-ISO arming/ablation stay independent
++# (the MECH_ST_GAS_MUSTRUN_PER_PLANT precedent). A merchant commitment floor —
++# subject to the D-2 forced-share gate; carries its own ablation entry.
++MECH_PJM_GAS_COMMITMENT_BRIDGE: int = 18
+ 
+ MECH_NAMES: dict[int, str] = {
+     MECH_NONE: "none",
+@@ -104,6 +115,7 @@ MECH_NAMES: dict[int, str] = {
+     MECH_CC_MUSTRUN_PER_PLANT: "cc_mustrun_per_plant",
+     MECH_ST_GAS_MUSTRUN_PER_PLANT: "st_gas_mustrun_per_plant",
+     MECH_GAS_COMMITMENT_BRIDGE: "gas_commitment_bridge",
++    MECH_PJM_GAS_COMMITMENT_BRIDGE: "pjm_gas_commitment_bridge",
+ }
+ 
+ # Mechanisms whose forced energy is exempt from the D-2 merchant-class gates
+@@ -151,6 +163,7 @@ MECH_ABLATION_FIELDS: dict[int, dict[str, object]] = {
+     MECH_CC_MUSTRUN_PER_PLANT: {"cc_mustrun_per_plant": False},
+     MECH_ST_GAS_MUSTRUN_PER_PLANT: {"st_gas_mustrun_per_plant": False},
+     MECH_GAS_COMMITMENT_BRIDGE: {"ercot_gas_commitment_bridge": False},
++    MECH_PJM_GAS_COMMITMENT_BRIDGE: {"pjm_gas_commitment_bridge": False},
+ }
+ 
+ # Mechanisms KEPT in the ablation twin (carry NO ablation entry): the structural
+diff --git a/src/market_sim/pipeline/__init__.py b/src/market_sim/pipeline/__init__.py
+index 98b8642..1e66a19 100644
+--- a/src/market_sim/pipeline/__init__.py
++++ b/src/market_sim/pipeline/__init__.py
+@@ -52,6 +52,7 @@ from market_sim.pipeline.commitment import (
+     build_caiso_reserve_p1_prep,
+     build_ercot_gas_bridge_p1_prep,
+     build_ercot_gas_bridge_p1_preps,
++    build_pjm_gas_bridge_p1_prep,
+     build_pjm_reserve_p1_prep,
+     caiso_ra_p1_floor_fleet,
+     ercot_gas_bridge_p1_floor_fleet,
+@@ -79,6 +80,7 @@ __all__ = [
+     "build_caiso_reserve_p1_prep",
+     "build_ercot_gas_bridge_p1_prep",
+     "build_ercot_gas_bridge_p1_preps",
++    "build_pjm_gas_bridge_p1_prep",
+     "build_pjm_reserve_p1_prep",
+     "caiso_ra_p1_floor_fleet",
+     "ercot_gas_bridge_p1_floor_fleet",
+diff --git a/src/market_sim/pipeline/commitment.py b/src/market_sim/pipeline/commitment.py
+index 8eab3fe..6153a29 100644
+--- a/src/market_sim/pipeline/commitment.py
++++ b/src/market_sim/pipeline/commitment.py
+@@ -496,6 +496,124 @@ def build_ercot_gas_bridge_p1_preps(
+     return _fleet_prep, bid_prep
+ 
+ 
++def _pjm_gas_bridge_floor(
++    config,
++    fleet: list,
++    fleet_arrays,
++    p0_dispatch: np.ndarray,
++    p0_prices: np.ndarray | None,
++    mc_base: np.ndarray,
++) -> np.ndarray | None:
++    """Compute the raw ``(n_gen, T)`` PJM gas-CC bridge floor (or ``None``).
++
++    The PJM analogue of :func:`_ercot_gas_bridge_floor` — the SAME ISO-neutral
++    detector (:func:`model.commitment.caiso_ra_mustoffer_min_gen`, fed the
++    model's own base-cost P0 run pattern + duals) scoped to the merchant
++    gas-CC fleet (``fuel_types=("gas_cc",)``), reading the PJM bridge config
++    (``pjm_gas_bridge_min_load_frac`` / ``pjm_gas_bridge_startup`` /
++    ``pjm_gas_bridge_da_horizon``). Assumes the caller already checked the
++    ``pjm_gas_commitment_bridge`` + ISO gate. Returns ``None`` when the
++    detector produces no floor.
++    """
++    from market_sim.config.constants import DA_COMMITMENT_HORIZON_HOURS
++    from market_sim.model.commitment import caiso_ra_mustoffer_min_gen, find_runs
++
++    startup_bridge = bool(getattr(config, "pjm_gas_bridge_startup", True))
++    max_gap = (
++        float(DA_COMMITMENT_HORIZON_HOURS)
++        if getattr(config, "pjm_gas_bridge_da_horizon", True)
++        else None
++    )
++    bridge_floor = caiso_ra_mustoffer_min_gen(
++        p0_dispatch,
++        fleet_arrays,
++        fleet,
++        float(config.pjm_gas_bridge_min_load_frac),
++        p1_prices=p0_prices if startup_bridge else None,
++        base_mc=mc_base if startup_bridge else None,
++        startup_bridge=startup_bridge,
++        fuel_types=("gas_cc",),
++        max_econ_gap_hours=max_gap,
++    )
++    if not np.any(bridge_floor > 0.0):
++        return None
++    # Diagnostic trace for the D-4 window / probe analysis: every floored
++    # segment IS a bridged gap, so its length distribution is the direct
++    # evidence the declared window (idle gaps between run-days) is what binds.
++    seg_lengths = [
++        e - s
++        for g in np.flatnonzero((bridge_floor > 0.0).any(axis=1))
++        for s, e in find_runs(bridge_floor[g] > 0.0)
++    ]
++    if seg_lengths:
++        seg = np.array(seg_lengths)
++        buckets = {
++            "<4h": int((seg < 4).sum()),
++            "4-8h": int(((seg >= 4) & (seg < 8)).sum()),
++            "8-16h": int(((seg >= 8) & (seg < 16)).sum()),
++            "16-24h": int(((seg >= 16) & (seg <= 24)).sum()),
++            ">24h": int((seg > 24).sum()),
++        }
++        logger.info(
++            "PJM gas commitment bridge: %d unit-hours floored "
++            "(%.2f TWh floor volume), %d bridged gaps by length %s",
++            int((bridge_floor > 0.0).sum()),
++            float(bridge_floor.sum()) / 1e6,
++            len(seg_lengths),
++            buckets,
++        )
++    return bridge_floor
++
++
++def build_pjm_gas_bridge_p1_prep(config, iso: str, fleet: list, fleet_arrays, mc_base):
++    """Return a ``p1_fleet_prep`` hook for the PJM gas commitment bridge.
++
++    The PJM analogue of :func:`build_ercot_gas_bridge_p1_prep`
++    (``pjm_gas_commitment_bridge``, M-3 — the committed-STATE overnight bridge,
++    docs/DIAGNOSIS-pjm-2025-phase-drift-and-zonal-structure-2026-07.md §6): the
++    ISO-neutral detector (:func:`_pjm_gas_bridge_floor`) scoped to merchant
++    gas-CC with the measured PJM committed-CC LSL/HSL p50 min-load and a
++    DA-operating-day cap on the economic leg. D-2 attribution
++    ``MECH_PJM_GAS_COMMITMENT_BRIDGE`` (its own id — the same phenomenon as the
++    ERCOT bridge, but a separate id keeps per-ISO attribution/ablation
++    independent, the MECH_ST_GAS_MUSTRUN_PER_PLANT precedent). Returns ``None``
++    when the
++    mechanism is off, the ISO is not PJM, or the detector produces no floor, so
++    every other path is byte-identical. ISO-exclusive with the CAISO/ERCOT P1
++    fleet hooks (each gates on its ISO).
++
++    Raises:
++        ValueError: If both ``pjm_gas_commitment_bridge`` and
++            ``pjm_reserve_commitment_scoped`` (path B) are on — both replace
++            the P1 fleet with a masked/floored ``FleetArrays`` on the same PJM
++            fleet (CLAUDE.md rule 19 — one mechanism per phenomenon; enable
++            exactly one).
++    """
++    if not (getattr(config, "pjm_gas_commitment_bridge", False) and iso == "PJM"):
++        return None
++    if getattr(config, "pjm_reserve_commitment_scoped", False):
++        raise ValueError(
++            "pjm_gas_commitment_bridge is mutually exclusive with "
++            "pjm_reserve_commitment_scoped (path B): both replace the P1 fleet "
++            "with a masked/floored FleetArrays (CLAUDE.md rule 19 — one "
++            "mechanism per phenomenon); enable exactly one."
++        )
++
++    from market_sim.data.floor_mechanisms import MECH_PJM_GAS_COMMITMENT_BRIDGE
++
++    def _fleet_prep(r0):
++        bridge_floor = _pjm_gas_bridge_floor(
++            config, fleet, fleet_arrays, r0.dispatch, r0.prices, mc_base
++        )
++        if bridge_floor is None:
++            return None
++        return _bridge_floored_fleet(
++            fleet_arrays, bridge_floor, MECH_PJM_GAS_COMMITMENT_BRIDGE
++        )
++
++    return _fleet_prep
++
++
+ def _pjm_unit_commitment_physics(fleet_arrays) -> tuple[np.ndarray, np.ndarray]:
+     """Per-unit ``(min_down_hours, startup $/MW)`` from the published class tables.
+ 
+diff --git a/src/market_sim/runner.py b/src/market_sim/runner.py
+index 4c657b7..8f6771a 100644
+--- a/src/market_sim/runner.py
++++ b/src/market_sim/runner.py
+@@ -129,6 +129,7 @@ from market_sim.pipeline import (
+     build_caiso_ra_p1_prep,
+     build_caiso_reserve_p1_prep,
+     build_ercot_gas_bridge_p1_preps,
++    build_pjm_gas_bridge_p1_prep,
+     build_pjm_reserve_p1_prep,
+     run_commitment_pass,
+     run_energy_solve,
+@@ -1555,6 +1556,15 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
+             pjm_fleet_prep, pjm_kwargs_prep = build_pjm_reserve_p1_prep(
+                 config, iso, fleet_arrays
+             )
++            # P1-native PJM gas commitment bridge (M-3): committed-state floor
++            # on merchant gas-CC from the P0 run pattern (the overnight-between-
++            # run-days carrier) -- forward-native by construction, so the
++            # forecast path carries it identically. None for every non-PJM /
++            # gate-off run (byte-identical); mutually exclusive with the PJM
++            # path-B reserve fleet mask above (raises at the prep builder).
++            pjm_gas_bridge_prep = build_pjm_gas_bridge_p1_prep(
++                config, iso, dispatch_fleet, fleet_arrays, mc_base
++            )
+             # P1-native CAISO online-scoped reserve split
+             # (caiso_reserve_online_scoped): the kwargs hook recomputes the
+             # (2*n_r, T) spin/non-spin product-split ramp caps from the P0
+@@ -1573,7 +1583,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
+                 dispatch_kwargs,
+                 config,
+                 xyear_cache=None,
+-                p1_fleet_prep=ra_p1_prep or ercot_bridge_prep or pjm_fleet_prep,
++                p1_fleet_prep=(
++                    ra_p1_prep
++                    or ercot_bridge_prep
++                    or pjm_gas_bridge_prep
++                    or pjm_fleet_prep
++                ),
+                 p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
+                 p1_bid_adjust_prep=ercot_bridge_bid_prep,
+             )
+diff --git a/tests/test_pjm_gas_commitment_bridge.py b/tests/test_pjm_gas_commitment_bridge.py
+new file mode 100644
+index 0000000..0a02005
+--- /dev/null
++++ b/tests/test_pjm_gas_commitment_bridge.py
+@@ -0,0 +1,175 @@
++"""Validation of the PJM gas-CC commitment bridge (M-3).
++
++Covers :func:`market_sim.pipeline.commitment.build_pjm_gas_bridge_p1_prep` — the
++PJM analogue of the ERCOT gas commitment bridge (the CAISO RA must-offer
++internals routed onto the PJM merchant gas-CC fleet with the measured PJM
++committed-CC LSL/HSL p50 min-load). The shared detector internals themselves
++(``fuel_types`` scope, ``max_econ_gap_hours`` DA-horizon cap on
++:func:`model.commitment.caiso_ra_mustoffer_min_gen`) are exercised by
++``tests/test_ercot_gas_commitment_bridge.py``; this file covers the PJM-gated
++wrapper contract:
++
++* flag off / non-PJM ⇒ ``None`` (byte-identical P1 — rules 14/26);
++* the P1-native prep floors gas-CC only and tags
++  ``MECH_PJM_GAS_COMMITMENT_BRIDGE`` (its own id, distinct from the ERCOT
++  bridge — per-ISO attribution/ablation independence);
++* the startup (economic ≥ min-down) leg and the DA-horizon cap default on;
++* mutual exclusivity with the PJM path-B reserve fleet mask
++  (``pjm_reserve_commitment_scoped``) is enforced loud (rule 19);
++* the mechanism is registered + carries a D-3 ablation decision.
++"""
++
++import unittest
++
++import numpy as np
++
++from market_sim.config.scenarios import ScenarioConfig
++from market_sim.data.fleet import Generator, generators_to_fleet_arrays
++from market_sim.data.floor_mechanisms import (
++    MECH_NAMES,
++    MECH_PJM_GAS_COMMITMENT_BRIDGE,
++    assert_ablation_coverage,
++)
++from market_sim.pipeline.commitment import build_pjm_gas_bridge_p1_prep
++
++
++def _cc_gen(pmax=300.0, heat_rate=7.0, plant_group="CC_REGULAR", fuel="gas_cc"):
++    return Generator(
++        unit_id="CC",
++        name="CC",
++        zone="z",
++        fuel_type=fuel,
++        pmax_mw=pmax,
++        pmin_mw=0.0,
++        heat_rate=heat_rate,
++        eford=0.0,
++        plant_group=plant_group,
++    )
++
++
++def _overnight_dispatch(hours=48):
++    """Two run-days with an 8 h overnight gap (>= the f-class 6 h min-down)."""
++    disp = np.zeros(hours)
++    disp[6:22] = 300.0  # day 1 run, ends h22
++    disp[30:46] = 300.0  # day 2 run, starts h30 -> gap h22..29 = 8 h
++    return disp
++
++
++class _R0:
++    def __init__(self, dispatch, prices):
++        self.dispatch = dispatch
++        self.prices = prices
++
++
++class TestPjmGasBridgePrep(unittest.TestCase):
++    """The PJM-gated P1-native prep wrapper."""
++
++    def _setup(self, hours=48, **overrides):
++        gen = _cc_gen()
++        fa = generators_to_fleet_arrays([gen], ["z"], hours=hours)
++        cfg = ScenarioConfig(iso="PJM").with_overrides(
++            pjm_gas_commitment_bridge=True, **overrides
++        )
++        p0 = _overnight_dispatch(hours).reshape(1, hours)
++        mc = np.full((1, hours), 30.0)
++        lmp = np.full((1, hours), 25.0)
++        return cfg, [gen], fa, p0, lmp, mc
++
++    def test_gate_off_returns_none(self):
++        cfg, gens, fa, p0, lmp, mc = self._setup()
++        cfg = cfg.with_overrides(pjm_gas_commitment_bridge=False)
++        self.assertIsNone(build_pjm_gas_bridge_p1_prep(cfg, "PJM", gens, fa, mc))
++
++    def test_non_pjm_returns_none(self):
++        cfg, gens, fa, p0, lmp, mc = self._setup()
++        self.assertIsNone(build_pjm_gas_bridge_p1_prep(cfg, "ERCOT", gens, fa, mc))
++
++    def test_overnight_economic_bridge_floors_and_tags(self):
++        # Near-marginal gas: hold (30-25) x 0.564 x 8 = 22.6 < ~48.6 startup ->
++        # the overnight gap is held at min-load; default p50 x pmax = 169.2.
++        cfg, gens, fa, p0, lmp, mc = self._setup()
++        prep = build_pjm_gas_bridge_p1_prep(cfg, "PJM", gens, fa, mc)
++        self.assertIsNotNone(prep)
++        out = prep(_R0(p0, lmp))
++        self.assertIsNotNone(out)
++        np.testing.assert_allclose(out.min_gen[0, 22:30], 0.564 * 300.0)
++        self.assertTrue(np.all(out.min_gen[0, :22] == 0.0))
++        self.assertTrue(
++            np.all(out.min_gen_mechanism[0, 22:30] == MECH_PJM_GAS_COMMITMENT_BRIDGE)
++        )
++        self.assertTrue(np.all(out.min_gen_mechanism[0, :22] == 0))
++        # LP feasibility: availability covers the floor on floored hours.
++        need = out.min_gen[0, 22:30] / 300.0
++        self.assertTrue(np.all(out.availability[0, 22:30] >= need - 1e-12))
++        # Input fleet untouched (dataclasses.replace, not mutation).
++        self.assertTrue(fa.min_gen is None or np.all(fa.min_gen == 0.0))
++
++    def test_startup_leg_off_drops_overnight_gap(self):
++        # The 8 h gap >= the 6 h min-down: the physical bar alone catches
++        # nothing (the ERCOT-62b "physical-only is near-inert" arm).
++        cfg, gens, fa, p0, lmp, mc = self._setup(pjm_gas_bridge_startup=False)
++        prep = build_pjm_gas_bridge_p1_prep(cfg, "PJM", gens, fa, mc)
++        self.assertIsNotNone(prep)
++        self.assertIsNone(prep(_R0(p0, lmp)))
++
++    def test_da_horizon_caps_multiday_gap(self):
++        # A 35 h gap bridges without the horizon and is dropped with it.
++        hours = 72
++        gen = _cc_gen()
++        fa = generators_to_fleet_arrays([gen], ["z"], hours=hours)
++        disp = np.zeros(hours)
++        disp[0:6] = 300.0
++        disp[41:48] = 300.0
++        p0 = disp.reshape(1, hours)
++        mc = np.full((1, hours), 26.0)
++        lmp = np.full((1, hours), 25.0)
++        on = ScenarioConfig(iso="PJM").with_overrides(pjm_gas_commitment_bridge=True)
++        off = on.with_overrides(pjm_gas_bridge_da_horizon=False)
++        self.assertIsNone(
++            build_pjm_gas_bridge_p1_prep(on, "PJM", [gen], fa, mc)(_R0(p0, lmp))
++        )
++        out = build_pjm_gas_bridge_p1_prep(off, "PJM", [gen], fa, mc)(_R0(p0, lmp))
++        self.assertIsNotNone(out)
++        self.assertTrue(np.all(out.min_gen[0, 6:41] > 0.0))
++
++    def test_ct_never_floored(self):
++        # A fast-start CT with the same bridgeable pattern is never touched
++        # (rule-18 physics: min-down < RA_BRIDGE_ECON_MIN_DOWN_HOURS).
++        hours = 48
++        gen = _cc_gen(plant_group="CT_PEAKER", fuel="gas_ct", heat_rate=10.5)
++        fa = generators_to_fleet_arrays([gen], ["z"], hours=hours)
++        cfg = ScenarioConfig(iso="PJM").with_overrides(pjm_gas_commitment_bridge=True)
++        p0 = _overnight_dispatch(hours).reshape(1, hours)
++        lmp = np.full((1, hours), 25.0)
++        mc = np.full((1, hours), 30.0)
++        self.assertIsNone(
++            build_pjm_gas_bridge_p1_prep(cfg, "PJM", [gen], fa, mc)(_R0(p0, lmp))
++        )
++
++    def test_mutual_exclusion_with_path_b_raises(self):
++        # Both replace the P1 fleet on the same PJM fleet — rule 19.
++        cfg, gens, fa, p0, lmp, mc = self._setup(pjm_reserve_commitment_scoped=True)
++        with self.assertRaises(ValueError):
++            build_pjm_gas_bridge_p1_prep(cfg, "PJM", gens, fa, mc)
++
++
++class TestRegistry(unittest.TestCase):
++    def test_mechanism_registered_and_ablated(self):
++        self.assertEqual(
++            MECH_NAMES[MECH_PJM_GAS_COMMITMENT_BRIDGE], "pjm_gas_commitment_bridge"
++        )
++        assert_ablation_coverage()
++        from market_sim.data.floor_mechanisms import MECH_ABLATION_FIELDS
++
++        self.assertEqual(
++            MECH_ABLATION_FIELDS[MECH_PJM_GAS_COMMITMENT_BRIDGE],
++            {"pjm_gas_commitment_bridge": False},
++        )
++        # Distinct id from the ERCOT bridge (per-ISO attribution independence).
++        from market_sim.data.floor_mechanisms import MECH_GAS_COMMITMENT_BRIDGE
++
++        self.assertNotEqual(MECH_PJM_GAS_COMMITMENT_BRIDGE, MECH_GAS_COMMITMENT_BRIDGE)
++
++
++if __name__ == "__main__":
++    main()
