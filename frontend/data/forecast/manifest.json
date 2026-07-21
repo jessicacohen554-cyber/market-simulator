@@ -1,5 +1,15 @@
 {
   "ensembles": {
+    "ercot-pb-bands-t1": {
+      "dispatch_conditional": true,
+      "has_matrix": false,
+      "iso": "ERCOT",
+      "layers_present": [
+        "parametric"
+      ],
+      "n_draws": 5,
+      "synthetic": false
+    },
     "synthetic-fixture-ercot-v1": {
       "dispatch_conditional": true,
       "has_matrix": true,
