@@ -368,12 +368,33 @@ IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
         ("import_scarcity_1", 1000.0, 46.0),
         ("import_scarcity_2", 3000.0, 60.0),
     ],
+    # NYISO import ladder (audit C-6 / gap register G-26 / issue #1350 closure,
+    # 2026-07-21): measured total-net Q-Q derivation from
+    # scripts/data/derive_nyiso_import_tranches.py — the anti-monotone duration
+    # coupling of the measured NYISO Day-Ahead zonal-mean LBMP
+    # (data/raw/_validation-source/actual_lmp_hourly_NYISO.parquet) with the
+    # measured hourly net external import (the four "SCH -" external seams —
+    # HQ/IESO/PJM/NE — of the NYISO MIS ExternalLimitsFlows posting,
+    # data/raw/NYISO/interface-flows/). Single import node → the AGGREGATE
+    # net-import supply curve is the object reconciled to the model (rule 14),
+    # not per-seam curves. HQ_hydro kept at the firm-base 900 MW so the
+    # always-on firm-import floor (NYISO_FIRM_IMPORT_FLOOR_FRAC) is unchanged;
+    # five equal-MW economic rungs span [900, ~4,350 MW SIL] (the clearable
+    # range) so a rung lands at the off-peak operating depth and reprices it
+    # measured; import_scarcity is the SIL-blocked deep tail. Replaces the
+    # residual-fitted ladder whose IESO $22.5 → PJM_west $34.2 gap pinned ~3000
+    # off-peak hours at $34.2 (the real seam cleared them at $20-28). Rule 23:
+    # re-derive only when the interface-flow / DA-LMP source data extends. This
+    # static entry is the POOLED 2023-2025 derivation (multi-year revealed
+    # supply curve, forward story); backcast years use IMPORT_TRANCHES_BY_YEAR.
     "NYISO": [
-        ("HQ_hydro", 900.0, 14.0),
-        ("IESO_Ontario", 1200.0, 24.0),
-        ("PJM_west", 1100.0, 34.0),
-        ("ISONE_tie", 800.0, 44.0),
-        ("import_scarcity", 1900.0, 75.0),
+        ("HQ_hydro", 900.0, 20.78),
+        ("IESO_Ontario", 690.0, 26.36),
+        ("PJM_shoulder", 690.0, 32.24),
+        ("PJM_west", 690.0, 40.13),
+        ("eastern_mid", 690.0, 51.03),
+        ("ISONE_tie", 690.0, 71.46),
+        ("import_scarcity", 2035.0, 152.97),
     ],
     # NEISO seams (audit C-6 closure, 2026-07-06): measured-data ladders from
     # scripts/data/derive_neiso_import_tranches.py — per-seam Q-Q duration coupling
@@ -439,27 +460,41 @@ IMPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = 
             ("WECC_scarcity", 3000.0, 180.0),
         ],
     },
+    # NYISO year-grounded measured ladders (derivation + sources in the static
+    # IMPORT_TRANCHES["NYISO"] comment above; scripts/data/
+    # derive_nyiso_import_tranches.py). Year texture is real market history: the
+    # rung prices scale with each year's measured DA LMP (mean $31.1 / $36.7 /
+    # $60.7), and the 2023 off-peak marginal (PJM_west rung) falls to $27.9 —
+    # the fitted ladder's $34.2 was the audit-C6 over-price that pinned the
+    # 2023 trough. Offline (actual-DA-driven, SIL-capped) reproduction of the
+    # measured net import: 98% of volume every year, duration RMSE ≤328 MW.
     "NYISO": {
         2023: [
-            ("HQ_hydro", 900.0, 13.0),
-            ("IESO_Ontario", 1200.0, 22.5),
-            ("PJM_west", 1100.0, 34.2),
-            ("ISONE_tie", 800.0, 39.9),
-            ("import_scarcity", 1900.0, 68.4),
+            ("HQ_hydro", 900.0, 15.20),
+            ("IESO_Ontario", 690.0, 18.67),
+            ("PJM_shoulder", 690.0, 22.91),
+            ("PJM_west", 690.0, 27.88),
+            ("eastern_mid", 690.0, 33.61),
+            ("ISONE_tie", 690.0, 40.23),
+            ("import_scarcity", 2230.0, 71.66),
         ],
         2024: [
-            ("HQ_hydro", 900.0, 13.5),
-            ("IESO_Ontario", 1200.0, 23.6),
-            ("PJM_west", 1100.0, 35.4),
-            ("ISONE_tie", 800.0, 44.9),
-            ("import_scarcity", 1900.0, 79.7),
+            ("HQ_hydro", 900.0, 20.97),
+            ("IESO_Ontario", 690.0, 25.70),
+            ("PJM_shoulder", 690.0, 29.85),
+            ("PJM_west", 690.0, 35.02),
+            ("eastern_mid", 690.0, 41.83),
+            ("ISONE_tie", 690.0, 54.38),
+            ("import_scarcity", 2120.0, 122.71),
         ],
         2025: [
-            ("HQ_hydro", 900.0, 20.2),
-            ("IESO_Ontario", 1200.0, 37.0),
-            ("PJM_west", 1100.0, 49.4),
-            ("ISONE_tie", 800.0, 82.6),
-            ("import_scarcity", 1900.0, 135.2),
+            ("HQ_hydro", 900.0, 31.32),
+            ("IESO_Ontario", 690.0, 44.09),
+            ("PJM_shoulder", 690.0, 59.82),
+            ("PJM_west", 690.0, 79.19),
+            ("eastern_mid", 690.0, 102.99),
+            ("ISONE_tie", 690.0, 128.54),
+            ("import_scarcity", 1725.0, 208.77),
         ],
     },
     # NEISO: year-grounded measured ladders (derivation + sources in the
