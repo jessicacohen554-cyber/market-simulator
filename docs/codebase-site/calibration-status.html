@@ -70,6 +70,29 @@
       return 'NOT CALIBRATED';
     }
 
+    /** Is the owner's "frontier achieved" designation live (declared and not
+        withdrawn)? A withdrawn frontier (e.g. ERCOT/NYISO after the 2026-07-19
+        phantom-outage re-audit) must render as if there were no frontier at
+        all — the block is kept in keepers/<ISO>.json for lineage, not display. */
+    function frontierActive(keeper) {
+      return !!(keeper.frontier && keeper.frontier.declared && !keeper.frontier.withdrawn);
+    }
+
+    /** Determination as displayed. When frontier is live, a CALIBRATED-WITH-
+        CAVEATS keeper is shown as the clean "CALIBRATED" headline — the
+        remaining misses are the owner-declared, research-backed representation-
+        frontier caveats (documented as footnotes in the frontier note + the
+        criteria table), not headline-downgrading failures. A NOT-YET keeper is
+        never upgraded: the green headline requires every miss to be a documented
+        caveat, so an ISO with any undocumented FAIL still reads NOT YET. */
+    function effectiveDet(keeper) {
+      const det = keeper.determination;
+      if (frontierActive(keeper) && det && det.toUpperCase().includes('CAVEAT')) {
+        return 'CALIBRATED';
+      }
+      return det;
+    }
+
     /** Return glyph + color class for criterion status. */
     function criterionGlyph(status) {
       if (!status) return { glyph: '—', cls: '' };
@@ -158,12 +181,12 @@
       grid.innerHTML = '';
 
       keepers.forEach(keeper => {
-        const dc = detClass(keeper.determination);
+        const dc = detClass(effectiveDet(keeper));
         const card = document.createElement('div');
         card.className = `cs-card ${dc}`;
         card.tabIndex = 0;
         card.setAttribute('role', 'button');
-        card.setAttribute('aria-label', `${keeper.iso} — ${detLabel(keeper.determination)}`);
+        card.setAttribute('aria-label', `${keeper.iso} — ${detLabel(effectiveDet(keeper))}`);
         card.dataset.iso = keeper.iso;
 
         // Color accent from ISO palette
@@ -175,8 +198,8 @@
           <div class="cs-card-header">
             <span class="cs-iso-name" style="color: var(${colorVar})">${esc(keeper.iso)}</span>
             <span class="cs-badges">
-              ${keeper.frontier ? `<span class="cs-badge det-frontier" title="Frontier achieved ${esc(keeper.frontier.declared || '')}: ${esc(keeper.frontier.note || '')}">FRONTIER</span>` : ''}
-              <span class="cs-badge ${dc}">${detLabel(keeper.determination)}</span>
+              ${frontierActive(keeper) ? `<span class="cs-badge det-frontier" title="Frontier achieved ${esc(keeper.frontier.declared || '')}: ${esc(keeper.frontier.note || '')}">FRONTIER</span>` : ''}
+              <span class="cs-badge ${dc}">${detLabel(effectiveDet(keeper))}</span>
             </span>
           </div>`;
 
@@ -271,7 +294,7 @@
 
     function renderDetail(keeper) {
       const pane = document.getElementById('detailPane');
-      const dc = detClass(keeper.determination);
+      const dc = detClass(effectiveDet(keeper));
       const colorVar = isoColorVar(keeper.iso);
 
       let html = `<div class="bc-panel">`;
@@ -281,8 +304,8 @@
         <div class="cs-results-header">
           <span class="cs-iso-name" style="color: var(${colorVar})">${esc(keeper.iso)}</span>
           <span class="cs-badges">
-            ${keeper.frontier ? `<span class="cs-badge det-frontier">FRONTIER ACHIEVED${keeper.frontier.declared ? ' ' + esc(keeper.frontier.declared) : ''}</span>` : ''}
-            <span class="cs-badge ${dc}">${detLabel(keeper.determination)}</span>
+            ${frontierActive(keeper) ? `<span class="cs-badge det-frontier">FRONTIER ACHIEVED${keeper.frontier.declared ? ' ' + esc(keeper.frontier.declared) : ''}</span>` : ''}
+            <span class="cs-badge ${dc}">${detLabel(effectiveDet(keeper))}</span>
           </span>
         </div>`;
 
@@ -290,7 +313,7 @@
       // the admissible-mechanism inventory is exhausted on record; remaining
       // residuals are inadmissible to close (residual-fitting) or blocked on
       // non-public data. Declarative only, never gating.
-      if (keeper.frontier && keeper.frontier.note) {
+      if (frontierActive(keeper) && keeper.frontier.note) {
         html += `
         <div class="cs-reason" style="margin-top: 8px;">
           <p style="margin: 4px 0;">
@@ -590,6 +613,10 @@
             <div class="cs-method-card">
               <h4><span class="cs-legend-dot not" style="display:inline-block; vertical-align:-1px; margin-right:6px;"></span>Not Calibrated</h4>
               <p>Governance unattested, any criterion beyond the commercial band without a documented measured-input reason, or a ledgered-caveat budget exceeded. The ISO has not yet completed its calibration cycle.</p>
+            </div>
+            <div class="cs-method-card">
+              <h4><span class="cs-badge det-frontier" style="vertical-align:-1px; margin-right:6px;">FRONTIER</span>Frontier achieved</h4>
+              <p>An owner-declared designation: every named admissible mechanism for the remaining misses has been tried on record and adopted (rule&nbsp;#1), and each residual is a documented, research-backed <em>representation-frontier</em> caveat — a structure a deterministic perfect-foresight LP cannot form without manufacturing inputs the rules forbid (rules&nbsp;#1/#10), not a fit failure. A frontier ISO whose only misses are these documented caveats shows the clean <span class="cs-badge det-cal" style="vertical-align:-1px;">CALIBRATED</span> headline; the caveats remain listed in the frontier note and the criteria table below. This is the train-tier (2023–2025) determination plus the frontier designation — <strong>not</strong> a locked-test / calibration-complete claim. A withdrawn frontier (kept for lineage) does not display.</p>
             </div>
           </div>
         </div>`;
