@@ -9,8 +9,13 @@ bundle is absent or metrics-only on the tree, so the payload cannot be
 regenerated in-session (that needs a re-solve, which the CI-cost policy and
 rule 12 keep out of this lane).
 
-Two of them are current ISO keepers (NYISO ``nyiso-65-scr-edrp``, NEISO
-``neiso-60-phantom-outage``); the other two are stale NYISO probes.
+One of them is a current ISO keeper (NEISO ``neiso-60-phantom-outage``); the
+other three are stale NYISO probes/registrations. The NYISO
+``nyiso-65-scr-edrp`` phantom was retired 2026-07-20: its keeper shard was
+re-pointed to ``2026-07-20-nyiso-66-resync-base`` (a real in-session solve of
+the reproducible on-tree nyiso-62 base recipe, artifacts committed) and its
+payload-less registry sidecar was deleted, so it is no longer a keeper and no
+longer a payload-less registration.
 
 The three quarantine gates (``check_registry_payload_parity``,
 ``audit_keepers``, ``legitimacy_diagnostics --keepers``) consult this set so
@@ -36,7 +41,8 @@ UNSYNCED_RUN_PAYLOADS: frozenset[str] = frozenset(
         "2026-07-13-neiso-60-phantom-outage",  # NEISO keeper; bundle metrics-only
         "2026-07-13-nyiso-63-phantom-outage",  # probe; bundle absent
         "2026-07-13-nyiso-64-outage-refix",  # probe; bundle metrics/attestation only
-        "2026-07-19-nyiso-65-scr-edrp",  # NYISO keeper; bundle absent
+        # 2026-07-19-nyiso-65-scr-edrp retired 2026-07-20: keeper re-pointed to
+        # 2026-07-20-nyiso-66-resync-base and the payload-less sidecar deleted.
     }
 )
 
@@ -47,6 +53,5 @@ UNSYNCED_RUN_PAYLOADS: frozenset[str] = frozenset(
 UNSYNCED_KEEPERS: frozenset[str] = frozenset(
     {
         "2026-07-13-neiso-60-phantom-outage",
-        "2026-07-19-nyiso-65-scr-edrp",
     }
 )
