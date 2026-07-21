@@ -19,7 +19,7 @@ fabricated or tuned to any backcast target.
 | 4 | Chicago Citygate + MichCon monthly gas 2023-2025 | EIA citygate state series (proxy) | **got** (proxy) / **blocked** (ICE hub) | `data/raw/gas-prices/eia_citygate_IL_MI_monthly_2023-2025.csv` (+ `SOURCES_miso_citygate.md`) | EIA IL citygate = Chicago proxy; MI citygate = MichCon proxy. The ICE daily hub indices are paywalled/off-allowlist (manual manifest). |
 | 5 | Per-zone wind CF shape 2023-2025 | NASA POWER hourly `WS50M` (MERRA-2 reanalysis) at EIA-860 wind-plant locations | **built** | `data/raw/miso-wind-shape/miso_{2023,2024,2025}_wind_zone_shape.parquet` | Distinct North/Central/South wind shapes via turbine power curve; reconciled to EIA-930 MISO-wide aggregate (level not pinned). See model-structure Item 5 below. |
 | 6 | North↔Central corridor + Central↔South RDT asymmetry | MISO/SPP JOA (RDT 3,000/2,500 MW); MTEP/OASIS (N↔C, blocked) | **partial** | `config/iso_configs._miso_config` | RDT now an asymmetric one-way link pair (3,000 N→S / 2,500 S→N). N↔C posted TTC is allowlist-blocked (HTTP 403) — documented reconciled estimate. See model-structure Item 6 below. |
-| 7 | MISO wind/solar curtailment (HSL) 2023-2025 | MISO Market Reports (misoenergy.org) | **blocked** | `data/raw/miso-hsl/` (empty) | misoenergy.org HTTP 403. DATA NEEDED stub wired (`renewables._hsl_file` MISO branch); backcast uses EIA-930 delivered. See model-structure Item 7 below. |
+| 7 | MISO wind/solar curtailment (HSL) 2023-2025 | MISO Market Reports (misoenergy.org, blocked) → Potomac Economics IMM annual aggregate (got) | **wind wired (reference-rate)** / **solar gap** | `data/raw/miso-hsl/miso_wind_curtailment_annual.csv` | misoenergy.org still HTTP 403, so no hourly HSL parquet. Wind uses the measured IMM annual curtailment rate (~4.9%) via the forecast-uncurtailed gross-up (`_miso_wind_reference_curtailment_rate` → `_UNCURTAILED_FALLBACK_ISOS`); solar keeps delivered (no series). See model-structure Item 7 below (2026-07-21). |
 
 ---
 
@@ -385,22 +385,42 @@ Files: `config/iso_configs._miso_config` (`links` block only),
 `tests/test_iso_config.py::test_miso_rdt_contract_path_present`. The LP support
 for one-way links is `transmission.get_link_bidirectional_array`.
 
-### Item 7 — HSL / curtailment (DATA NEEDED stub)
+### Item 7 — HSL / curtailment (wind now on the forecast-uncurtailed reference-rate path, 2026-07-21)
 
 MISO publishes wind & solar curtailment in its Market Reports, but those live on
-misoenergy.org, which is allowlist-blocked here (HTTP 403). No reproducible
-hourly uncurtailed-potential (HSL) series could be built, so — per the task and
-CLAUDE.md (do not fabricate) — a clearly-labelled **DATA NEEDED** stub is wired,
-mirroring the NYISO stub:
+misoenergy.org, which stays allowlist-blocked here (HTTP 403), so **no hourly
+uncurtailed-potential (HSL) parquet is built** — `renewables._hsl_file` returns
+`None` for MISO and `data/raw/miso-hsl/` holds no `miso_<year>_hsl_hourly.parquet`.
 
-- `paths.MISO_HSL_DIR` (`data/raw/miso-hsl/`, empty) and
-  `renewables._MISO_HSL_DIR`;
-- `renewables._hsl_file` returns the MISO parquet when present, else `None`, so
-  the MISO backcast uses EIA-930 MISO delivered wind/solar generation (which
-  embeds the historical curtailment) until the reports can be pulled.
+What *did* land (2026-07-08 collection pass, `data/raw/miso-hsl/`): the Potomac
+Economics (MISO IMM) **annual/quarterly** wind curtailment aggregate
+(`miso_wind_curtailment_annual.csv` + quarterly + forecast-method CSVs). This is
+coarser than CAISO/ERCOT's hourly/5-minute sources — too coarse for an hourly
+parquet — but it *is* a measured, forward-reproducible per-tech curtailment
+**rate**. MISO wind curtailment is material (~4.9% of potential, ~500-660 MW
+average — multi-TWh/yr), comparable to ERCOT/CAISO and well above NYISO's
+sub-1%.
 
-When the curtailment reports are downloadable, build per-year HSL parquets
-(`HSL = delivered + reported curtailment`, schema `_HSL_COLUMNS`) following
-`scripts/data/build_caiso_hsl.py`; the branch picks them up automatically. CAMPD
-per-plant binning stays OFF for MISO and `pmax` remains generic EIA-860
-net-summer capacity (unchanged).
+**Change (2026-07-21, branch `claude/forecast-uncurtailed-hsl`):** MISO wind is
+moved off the delivered-pinned profile onto the **forecast-uncurtailed
+reference-rate path** — the same mechanism ERCOT's no-NP6 years use, not a
+fabricated hourly series:
+
+- `renewables._miso_wind_reference_curtailment_rate()` reads the annual CSV and
+  returns the training-window (2023-2025, rule 22) firm (non-estimate) mean of
+  `curtailed / (delivered + curtailed)` ≈ **0.0489** (2023 + 2024). It
+  re-derives only when the CSV updates (rule 24) and references no target-year
+  outcome, so it cannot pin the backcast (rules 11/13).
+- `renewables._reference_curtailment_rate` falls back to that rate for
+  `(MISO, wind)`; `MISO` is added to `_UNCURTAILED_FALLBACK_ISOS`.
+- Effect: MISO wind's renewable bound is now `forecast_uncurtailed` (delivered
+  EIA-930 shape ÷ (1 − rate)); the LP re-curtails endogenously. **MISO solar**
+  has no published curtailment series, so it returns no rate and keeps the
+  delivered profile (`delivered_pinned`) — an honest gap, not fabricated.
+
+If the misoenergy.org hourly workbooks ever become reachable, build per-year HSL
+parquets (`HSL = delivered + reported curtailment`, schema `_HSL_COLUMNS`)
+following `scripts/data/build_caiso_hsl.py`; `_hsl_file` picks them up
+automatically and upgrades MISO wind from `forecast_uncurtailed` to
+`measured_potential`. CAMPD per-plant binning stays OFF for MISO and `pmax`
+remains generic EIA-860 net-summer capacity (unchanged).
