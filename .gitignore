@@ -183,6 +183,7 @@ frontend/data/backcast/status.js
 # loose top-level run logs (e.g. results/probe-pjm-rps.log).
 /results/full-horizon/
 /results/ff-t1f-baseline/
+/results/ff-ces-t1/
 /results/probe-*/
 /results/verify-*/
 /results/*.log
