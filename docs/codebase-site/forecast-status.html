@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forecast Program Status — Codebase Explorer</title>
+  <meta name="description" content="Forecast Finalization Program per-ISO status board — tier reached, the FF-2D rubric gate scorecard, the §2.1b full-solve authorization gate, and the honest-unfit list. The §2.1b evidence board, not a green-wash.">
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/bc-pages.css">
+  <link rel="stylesheet" href="css/ff-pages.css">
+</head>
+<body>
+  <nav id="topNav" aria-label="Site navigation"></nav>
+
+  <div class="content-section" style="padding: var(--space-lg); max-width: var(--max-content); margin: 0 auto;">
+    <div class="bc-page-header">
+      <h1>Forecast Program Status</h1>
+    </div>
+    <p class="bc-page-sub" id="genStamp">Loading program status&hellip;</p>
+
+    <div id="board"></div>
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script type="module">
+    import { loadProgramStatus } from './js/ff-data.js';
+
+    const $ = s => document.querySelector(s);
+    const esc = s => String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const stCls = s => 'ff-st-' + String(s || 'na').toLowerCase().replace(/[^a-z]/g, '');
+    const cellCls = s => 'st-' + String(s || 'na').toLowerCase().replace(/[^a-z]/g, '');
+    const isoColor = iso => `var(--iso-${String(iso).toLowerCase()}, var(--hydro))`;
+
+    const FC_NAMES = {
+      'FC-1': 'Structural (I1–I14)', 'FC-2': 'Adequacy & equilibrium',
+      'FC-3': 'Cap-evolution (T1-H)', 'FC-4': 'Crossover skill (T1-X)',
+      'FC-5': 'Corridor', 'FC-6': 'Driver battery', 'FC-7': 'DOF ledger', 'FC-8': 'Feasibility',
+    };
+    const GATE_LABELS = {
+      a_keeper_marker: '(a) keeper + marker',
+      b_t1f_verdict: '(b) T1 rubric verdict',
+      c_crossover_gap: '(c) crossover gap',
+      c_readiness: '(c) readiness',
+      c_cost: '(c) projected cost',
+      d_owner_auth: '(d) owner auth',
+    };
+    const GATE_ORDER = ['a_keeper_marker', 'b_t1f_verdict', 'c_crossover_gap', 'c_readiness', 'c_cost', 'd_owner_auth'];
+
+    function detBadge(det, label) {
+      if (!det) return '';
+      const d = det.toUpperCase();
+      const cls = d === 'HOLD' ? 'hold' : (d === 'PASS' ? 'pass' : (d.includes('FAIL') ? 'fail' : 'na'));
+      return `<span class="ff-det ${cls}">${esc(label || '')}${esc(det)}</span>`;
+    }
+
+    function gatePill(key, g) {
+      const st = (g && g.status) || 'na';
+      return `<span class="ff-gate-pill g-${esc(st)}" title="${esc((g && g.detail) || '')}"><span class="dot"></span>${esc(GATE_LABELS[key])}</span>`;
+    }
+
+    function fcChips(fc) {
+      if (!fc) return '';
+      return `<div class="ff-grid-chips" style="margin-top:8px">` + Object.keys(FC_NAMES).map(k => {
+        const st = fc[k];
+        if (!st) return '';
+        return `<div class="ff-cell ${cellCls(st)}"><span class="ff-cell-code">${k}</span><span class="ff-cell-name">${esc(FC_NAMES[k])}</span><span class="ff-cell-status">${esc(st)}</span></div>`;
+      }).join('') + `</div>`;
+    }
+
+    function isoCard(iso, d) {
+      const gate = d.gate || {};
+      const open = gate.open;
+      const closedOn = (gate.closed_on || []).join(', ');
+      const track = GATE_ORDER.map(k => gatePill(k, gate[k])).join('');
+      const blockers = (d.blocking_rows || []).map(r => `<li>${esc(r)}</li>`).join('');
+      const t1x = d.t1x_determination && d.t1x_determination !== 'n/a'
+        ? `<span class="ff-chip ${stCls(d.t1x_determination.split(' ')[0])}" title="T1-X crossover">T1-X ${esc(d.t1x_determination)}</span>` : '';
+      return `<section class="bc-panel" id="iso-${esc(iso)}" style="border-left:5px solid ${isoColor(iso)}">
+        <div class="cs-results-header">
+          <span class="iso-badge" style="--c:${isoColor(iso)}"><span class="dot"></span> ${esc(iso)}</span>
+          <span class="cs-iso-name">Tier ${esc(d.tier_reached || '—')}</span>
+          <span class="cs-badges">
+            ${detBadge(d.t1f_determination, 'T1-F ')}
+            <span class="ff-gate-verdict ${open ? 'open' : 'closed'}">${open ? 'GATE OPEN' : 'GATE CLOSED'}${!open && closedOn ? ' · on ' + esc(closedOn) : ''}</span>
+          </span>
+        </div>
+        <p class="cs-keeper-info" style="margin:8px 0 4px">${esc(d.flip || '')}</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:6px">${t1x}</div>
+
+        <div class="finding-cat">§2.1b full-solve gate</div>
+        <div class="ff-gate-track">${track}</div>
+        ${gate.note ? `<p class="panel-sub" style="margin:4px 0 0">${esc(gate.note)}</p>` : ''}
+
+        <div class="finding-cat">FF-2D rubric scorecard</div>
+        ${fcChips(d.fc)}
+        ${blockers ? `<div class="finding-cat">Blocking rows</div><ul style="margin:0;padding-left:18px;font-size:.82rem;line-height:1.6">${blockers}</ul>` : ''}
+
+        <p class="ff-kv" style="margin-top:var(--space-md)">
+          <b>Golden/candidate:</b> ${esc(d.golden || '—')}${d.candidate ? ' · candidate ' + esc(d.candidate) : ' · no candidate'}<br>
+          <a class="cs-open-link" href="forecast-runs.html#iso=${esc(iso)}">Open ${esc(iso)} runs in the explorer →</a>
+        </p>
+      </section>`;
+    }
+
+    function render(ps) {
+      $('#genStamp').innerHTML = `The §2.1b evidence board — <b>not a green-wash</b>. Generated ${esc(ps.generated || '')}.
+        Sources: ${(ps.sources || []).map(s => `<code style="font-family:var(--font-mono);font-size:.72rem">${esc(s.split(' ')[0])}</code>`).join(', ')}.`;
+
+      let html = '';
+      // Headline
+      html += `<div class="ff-notice">
+        <b>${esc(ps.program || 'Forecast Program')}.</b> ${esc(ps.headline || '')}
+      </div>`;
+      html += `<section class="bc-panel">
+        <h2>Gate reading</h2>
+        <p class="panel-sub" style="color:var(--text-secondary)">${esc(ps.gate_reading || '')}</p>
+        <p class="panel-sub" style="color:var(--text-secondary);margin:0">${esc(ps.readiness || '')}</p>
+        <p class="ff-kv" style="margin-top:var(--space-md)"><b>Flip config:</b> ${esc(ps.flip_config || '')}</p>
+      </section>`;
+
+      // Tier ladder
+      if (ps.tier_ladder) {
+        const cells = ps.tier_ladder.map(t => {
+          const scored = /scored/.test(t.status);
+          const deferred = /deferred/.test(t.status);
+          const cls = scored ? 'ff-st-pass' : (deferred ? 'ff-st-na' : 'ff-st-caveat');
+          return `<div class="kpi-card">
+            <div class="kpi-label">${esc(t.tier)} <span class="ff-chip ${cls}" style="float:right">${esc(t.status)}</span></div>
+            <div class="ff-kv" style="font-size:.72rem"><b>${esc(t.window)}</b><br>${esc(t.note)}</div>
+          </div>`;
+        }).join('');
+        html += `<section class="bc-panel"><h2>Tier ladder (§2.1)</h2>
+          <p class="panel-sub">The schedulable instruments are T0, T1-F, T1-X, T1-H (≤ 5 solve-years). T2 / T3 are deferred behind the §2.1b full-solve authorization gate.</p>
+          <div class="kpi-grid">${cells}</div></section>`;
+      }
+
+      // Per-ISO cards
+      html += `<div class="bc-page-header" style="margin-top:var(--space-lg)"><h1 style="font-size:1.15rem">Per-ISO status</h1></div>`;
+      html += `<div class="cs-legend" style="margin-bottom:var(--space-md)">
+        <span><span class="cs-legend-dot cal"></span> gate condition met</span>
+        <span><span class="cs-legend-dot not"></span> gate condition failed</span>
+        <span><span class="cs-legend-dot" style="background:var(--info)"></span> informational</span>
+        <span><span class="cs-legend-dot" style="background:var(--text-muted)"></span> n/a or none</span>
+      </div>`;
+      const order = ps.iso_order || Object.keys(ps.isos || {});
+      html += order.filter(iso => (ps.isos || {})[iso]).map(iso => isoCard(iso, ps.isos[iso])).join('');
+
+      // Honest-unfit list
+      if (ps.honest_unfit) {
+        html += `<section class="bc-panel"><h2>Honest-unfit list — open structural blockers</h2>
+          <p class="panel-sub">What a golden bundle <b>cannot</b> claim, named so it is never implied-solved (FF-3E §8; rule 1). Each routes to its owning lane — none is a dashboard/FF-5A target.</p>
+          ${ps.honest_unfit.map(u => `<div class="ff-unfit">
+            <span class="ff-unfit-id">${esc(u.id)}</span>
+            <span class="ff-unfit-body"><b>${esc(u.title)}</b> <span class="ff-unfit-isos">(${(u.isos || []).join(', ')})</span><br>
+            ${esc(u.detail)}<span class="ff-unfit-lane">lane: ${esc(u.lane)}</span></span>
+          </div>`).join('')}
+        </section>`;
+      }
+
+      // Open frontier rows (plan §1.2)
+      if (ps.open_frontier) {
+        html += `<section class="bc-panel"><h2>Open frontier rows (plan §1.2)</h2>
+          <p class="panel-sub">The ranked measured frontier — the lanes that must land before an ISO can clear the gate. Each names its owning lane (§5).</p>
+          <div class="bc-table-wrap"><table>
+            <thead><tr><th>#</th><th>Frontier row</th><th>Lane</th><th>Detail</th></tr></thead>
+            <tbody>${ps.open_frontier.map(r => `<tr>
+              <td class="num">${r.rank}</td>
+              <td><b>${esc(r.title)}</b></td>
+              <td style="white-space:nowrap"><code style="font-family:var(--font-mono);font-size:.72rem">${esc(r.lane)}</code></td>
+              <td style="white-space:normal;min-width:280px">${esc(r.detail)}</td>
+            </tr>`).join('')}</tbody>
+          </table></div></section>`;
+      }
+
+      // Readiness limits
+      if (ps.readiness_limits) {
+        html += `<section class="bc-panel"><h2>Readiness limits (documented, not bugs)</h2>
+          <p class="panel-sub">Standing §0.3 items a golden run inherits — named, not silently passed (FF-3E §8).</p>
+          <div class="cs-method-grid">
+            ${ps.readiness_limits.map(l => `<div class="cs-method-card"><h4>${esc(l.title)}</h4><p>${esc(l.detail)}</p></div>`).join('')}
+          </div></section>`;
+      }
+
+      $('#board').innerHTML = html;
+
+      // Deep-link to an ISO card via #iso=
+      const h = new URLSearchParams(location.hash.slice(1));
+      const iso = h.get('iso');
+      if (iso && document.getElementById('iso-' + iso)) {
+        document.getElementById('iso-' + iso).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    async function init() {
+      let ps;
+      try {
+        ps = await loadProgramStatus();
+      } catch (err) {
+        $('#genStamp').innerHTML = `<span class="clr-bad">Failed to load program status: ${esc(err.message)}</span>`;
+        return;
+      }
+      if (!ps) {
+        $('#board').innerHTML = `<div class="ff-empty">No program-status seed found (frontend/data/forecast/program-status.json).
+          Run <code>scripts/register_forecast_run.py --build</code> to assemble it.</div>`;
+        $('#genStamp').textContent = '';
+        return;
+      }
+      render(ps);
+    }
+    init();
+  </script>
+</body>
+</html>
