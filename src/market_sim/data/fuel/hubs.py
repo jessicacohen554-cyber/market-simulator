@@ -844,7 +844,9 @@ def _nyiso_hub_daily_gas_prices(
     monthly hub series is unavailable (forward years, no basis rows), so
     :func:`apply_hub_basis_overlay` falls back to the flat monthly overlay.
     """
-    monthly = _pkg_ns().iso_hub_monthly_gas_prices(config, year, basis_path, henry_hub_path)
+    monthly = _pkg_ns().iso_hub_monthly_gas_prices(
+        config, year, basis_path, henry_hub_path
+    )
     if monthly is None:
         return None
     transco_dated = _pkg_ns()._transco_z6_daily_dated(transco_path).get(year, {})
@@ -1025,7 +1027,9 @@ def _caiso_hub_daily_gas_prices(
     the +$0.46 citygate->plant transport is still layered on by the caller
     (:func:`apply_hub_basis_overlay`).
     """
-    monthly = _pkg_ns().iso_hub_monthly_gas_prices(config, year, basis_path, henry_hub_path)
+    monthly = _pkg_ns().iso_hub_monthly_gas_prices(
+        config, year, basis_path, henry_hub_path
+    )
     if monthly is None:
         return None
     citygate_dated = _pkg_ns()._caiso_citygate_daily_dated(citygate_path).get(year, {})
