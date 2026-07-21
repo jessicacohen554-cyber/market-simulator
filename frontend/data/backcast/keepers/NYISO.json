@@ -1,9 +1,4 @@
 {
  "iso": "NYISO",
- "keeper": "2026-07-19-nyiso-65-scr-edrp",
- "frontier": {
-  "declared": "2026-07-11",
-  "withdrawn": "2026-07-19",
-  "note": "FRONTIER STAYS WITHDRAWN — NYISO remains NOT-YET. Keeper advanced nyiso-64-outage-refix -> nyiso-65-scr-edrp (2026-07-19): the nyiso-64 corrected-envelope recipe VERBATIM (2,641-row outage extract + re-derived ST floors + eastern AC seam Capital_Hudson 1,600 MW) + one new structural lever, nyiso_scr_edrp — SCR/EDRP emergency demand response as endogenous price-responsive supply blocks (~1.3 GW Gold-Book-registered capability at the published $500/MWh EDRP compensation-floor strike). A rule-13/17-admissible real NYISO market mechanism with no prior model analogue; it replaces the invented downstate VOLL scarcity prints with the EDRP-strike clears. LOYO-clean improvement, ZERO new free parameters: C3a vs RT 2023 +19.8%->+17.8%, 2024 +0.6%->+0.9%, 2025 +4.8%->+2.8%; C3b 2023 0.232->0.215; C1 14/14 PASS; C4/C6/C7/C8 PASS (C8 2024 ST_GAS grounded-above-budget). DETERMINATION NOT-YET on the two 2023 price criteria only (C3a +17.8% / C3b NRMSE 0.215) — the BROAD year-specific offer-level overshoot of cheap-gas 2023 (marginal gas_cc ~$34 model vs ~$19 actual; 2024/2025 near-exact with the SAME curves). DR is scarcity-tail-only and does not close it. Named remaining levers (nyiso-65 attestation _open_items): (a) downstate gas_st/gas_cc heat-rate & fleet-assignment check vs the NYISO C1 gen-by-fuel bench (measured, rule 11); (b) NYISO hydro/pumped-storage reserve eligibility (untested; CAISO precedent). Lever 1 (measured eastern seam) was EMPIRICALLY RULED OUT: the EIA-930 monthly reconciliation band caps imports at the measured level, so the eastern landing is not binding. The one-shot holdout stays BLOCKED (marker withdrawn); the locked test (2019, H1-2026) is UNSPENT."
- }
+ "keeper": "2026-07-20-nyiso-66-resync-base"
 }
