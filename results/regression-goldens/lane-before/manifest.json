@@ -1,0 +1,135 @@
+{
+  "env": {
+    "MARKET_SIM_HIGHS_THREADS": "1",
+    "MARKET_SIM_WARMSTART": "1",
+    "MARKET_SIM_WARMSTART_XYEAR": "0"
+  },
+  "git_dirty": true,
+  "git_sha": "d7dbce9",
+  "hash_scheme": "sha256-of-canonical-column-float64-bytes",
+  "highspy_version": "unknown",
+  "keepers": {
+    "CAISO": {
+      "bundle": "results/calibration/caiso102_hourfix_B",
+      "content_hashes": {
+        "btm.parquet": "f59e46c76213b7b67bed113a70233bcc9484bc2c50bef1daed6a4c88b8150545",
+        "dispatch/2023_P1.parquet": "a92e07081026c6fa6e568969428b40305f0f7f37f562203e174b34cf6e8c504d",
+        "dispatch/2024_P1.parquet": "a5c150e57fdfb38650316851b0ac655fdcaca657272d2bd5bf9f58f9572e378a",
+        "dispatch/2025_P1.parquet": "871d7bd1353c4fba4d25289fe9ce0f116e4a0d474c7fe676ff3e34cb94ba6527",
+        "flows.parquet": "d294488869c8ad18a20423a1536bff694f6699f232357782a8f29d5338be8015",
+        "storage.parquet": "e6e657f38d309823584a39cc00f1207abb74cad1936cb3bb9421d8d8d837f63f",
+        "system.parquet": "8ced0800ef5af1193589147210b95598d87d47ad925c7288cad142d5a9171b89"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_takeorpay_from_data",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "nyiso_scr_edrp",
+        "nyiso_scr_edrp_strike",
+        "plant_tranche_config",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "environment",
+          "nyiso_scr_edrp",
+          "nyiso_scr_edrp_strike"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 208,
+        "scenario_config_drift": [
+          "campd_bins_path",
+          "cc_capacity_reconcile_path",
+          "control_retrofit_path",
+          "plant_emission_rates_path",
+          "plant_emission_rates_v2_path",
+          "plant_registry_path"
+        ],
+        "scenario_config_head_only": [
+          "caiso_charge_allocation_schedule",
+          "ercot_faststart_pool_offer",
+          "ercot_faststart_pool_offer_path",
+          "ercot_shoulder_online_span",
+          "ercot_shoulder_online_span_path",
+          "gas_st_drag_seasonal",
+          "gas_st_drag_seasonal_path",
+          "net_cone_forward_escalation",
+          "nyiso_scr_edrp",
+          "nyiso_scr_edrp_strike"
+        ],
+        "scenario_config_matched": 574
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-19-caiso-102-hourfix",
+      "recorded_flag_count": 199,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
+    "ERCOT": {
+      "bundle": "results/calibration/ercot91_seasonal_drag_fullspan",
+      "content_hashes": {
+        "btm.parquet": "8acf053bb5aa6bcb2a38a4081ee9030ed5ef6afc967c7892f6b7bff8d50fd376",
+        "dispatch/2023_P1.parquet": "ec3147129487f0c3ddd29cecea34c34e819b78eeca63089d945fa08bb69496b0",
+        "dispatch/2024_P1.parquet": "f49d88231506d0096d7dccf3e83cc20981a3bdec0b2e5dd10863bd73524dc038",
+        "dispatch/2025_P1.parquet": "c8fcf95c78cfbac81b3aed6307d92bdc987ae67f07d0dd9173c784ae1360f278",
+        "flows.parquet": "c655d5a00dff6b880919704c190ab1ddeea48f1983eefd41b9ef431500e9b461",
+        "storage.parquet": "098af1b5d07590f8801c2dc248835ffbd16baeefa3a7bb8b492bfde1568cb185",
+        "system.parquet": "c5a0cfd24e8026fb7ecdff7678d5f98cceb64cd58a010f825fa5b75dd16b6d98"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_takeorpay_from_data",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "nyiso_scr_edrp",
+        "nyiso_scr_edrp_strike",
+        "plant_tranche_config",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "nyiso_scr_edrp",
+          "nyiso_scr_edrp_strike"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 209,
+        "scenario_config_drift": [
+          "campd_bins_path",
+          "cc_capacity_reconcile_path",
+          "control_retrofit_path",
+          "plant_emission_rates_path",
+          "plant_emission_rates_v2_path",
+          "plant_registry_path"
+        ],
+        "scenario_config_head_only": [
+          "net_cone_forward_escalation",
+          "nyiso_scr_edrp",
+          "nyiso_scr_edrp_strike"
+        ],
+        "scenario_config_matched": 581
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-20-ercot91-seasonal-drag-fullspan",
+      "recorded_flag_count": 199,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    }
+  },
+  "note": "Current-HEAD regression baselines (Stage-0). NOT byte-reproductions of the registered July-3 keeper bundles. Multi-GB bundles are gitignored; only this manifest is committed.",
+  "stage_tag": "lane-before"
+}
