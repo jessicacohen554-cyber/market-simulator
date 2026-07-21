@@ -2422,18 +2422,61 @@ STATE_RPS_ACP: dict[str, float] = {
 }
 
 # Annual interconnection queue caps (GW/yr) by ISO.
-# Source: ERCOT CDR, CAISO TPP.
+#
+# Semantics: this is a *ceiling* on the total nameplate MW the economic
+# new-entry screen (capacity_evolution.new_entry) and the reserve-margin
+# adequacy backstop (capacity_evolution.adequacy) may build in a single
+# forecast year -- the institutional/physical interconnection *throughput*
+# limit, i.e. how much capacity can plausibly reach commercial operation
+# (COD) per year. It is deliberately NOT the queue-*request* volume (which
+# runs at 100s of GW/ISO and never all builds), and NOT a central-case
+# forecast -- it caps the pace, so a value modestly above each ISO's
+# demonstrated peak annual COD is correct. Rule-13 admissible: a published
+# throughput ceiling that regenerates for any forecast year.
+#
+# Sourcing convention below: each cap is anchored to the ISO's cited recent
+# peak annual COD (a measured throughput). Where a cap sits materially ABOVE
+# demonstrated throughput it is a forward-ceiling *estimate* (driver: queue
+# reform clearing backlog / offshore-wind pipeline bursts) and is LABELLED
+# as such -- see docs/handoffs/queue-cap-citation-2026-07.md (rule 11
+# follow-up; NYISO/NEISO strike-a-real-throughput-number is open there).
 QUEUE_CAP_GW: dict[str, float] = {
-    "ERCOT": 12,  # ERCOT CDR — annual queue throughput cap
-    "CAISO": 8,  # CAISO TPP — annual queue throughput cap
-    # Eastern-ISO caps are Tier 3 approximations of recent annual
-    # commercial-operation throughput (not queue *requests*, which run far
-    # higher). Source: LBNL "Queued Up" 2024 completion-rate analysis; ISO
-    # planning reports. needs-citation: verify against each ISO's latest
-    # planning report before quoting any eastern-ISO forecast.
+    # ERCOT: CDR interconnection throughput; recent COD ~5-10 GW/yr (mostly
+    # solar+storage). ERCOT Capacity, Demand & Reserves report (ercotcdr).
+    "ERCOT": 12,
+    # CAISO: Transmission Planning Process deliverability throughput; recent
+    # COD ~4-8 GW/yr. CAISO 20-Year TPP / annual TPP.
+    "CAISO": 8,
+    # PJM: demonstrated peak annual COD ~8-10 GW in the 2015-2018 gas
+    # build-out (2013-2017 added ~11 GW of gas CC alone; S&P: 2017 additions
+    # led by gas-CC + renewables). Recent COD is backlog-depressed -- ~2 GW
+    # (2023), 4.8 GW (2024), 2.8 GW (2025) -- but the reformed cluster ("Cycle")
+    # process is clearing a large backlog (~63 GW queued for 2025-2028 review;
+    # first cycle drew 220 GW of requests), so 10 GW/yr is a defensible forward
+    # throughput ceiling at the demonstrated historical peak. CITED.
+    # Sources: EIA Today-in-Energy id=37293 (PJM gas build-out); S&P Global
+    # "PJM 2017 capacity additions"; PJM Inside Lines 2024/2025 year-in-review
+    # (recent COD); Utility Dive "PJM ... less than 2 GW added" (728145).
     "PJM": 10,
+    # MISO: recent COD 5.6 GW (2023), 7.5 GW (2024), ~26.8 GW over 2023-2025
+    # (~9 GW/yr and rising, ~60% solar). 10 GW/yr forward ceiling sits just
+    # above the demonstrated ~9 GW/yr throughput. CITED.
+    # Source: MISO System Planning Committee "Resource Adequacy & Generator
+    # Interconnection Queue Update" (2025-09/2025-12); MISO GI queue-cycle
+    # results (misoenergy.org).
     "MISO": 10,
+    # NYISO: measured COD throughput is SMALL -- ~2,274 MW of additions total
+    # over 2019-2024 (~0.5 GW/yr; NYISO 2024 Gold Book / Power Trends). The
+    # 4 GW/yr cap is a forward-ceiling ESTIMATE well above demonstrated
+    # throughput, justified only by the CLCPA offshore-wind + downstate
+    # pipeline able to commission in bursts (a single OSW project is ~1-2.5 GW).
+    # LABELLED ESTIMATE -- not a measured throughput; see the handoff follow-up.
     "NYISO": 4,
+    # NEISO: measured COD throughput is likewise SMALL (~0.5-1.5 GW/yr, mostly
+    # solar + storage; ISO-NE Annual Markets Report Fig. 1-9). The 43 GW queue
+    # is dominated by slow-moving offshore wind. The 4 GW/yr cap is a
+    # forward-ceiling ESTIMATE above demonstrated throughput, driver = MA/RI/CT
+    # OSW pipeline bursts. LABELLED ESTIMATE -- see the handoff follow-up.
     "NEISO": 4,
 }
 
@@ -2459,8 +2502,14 @@ QUEUE_CAP_PER_TECH_GW: dict[str, dict[str, float]] = {
         "geothermal": 3.0,  # CA geothermal resource assessment
         "offshore_wind": 3.0,  # BOEM Pacific lease areas, CAISO TPP
     },
-    # Eastern-ISO per-tech caps: Tier 3, sized from each ISO's recent build
-    # mix (LBNL "Queued Up" 2024; ISO planning reports). needs-citation.
+    # Eastern-ISO per-tech caps are ENGINEERING-JUDGMENT ESTIMATES: the cited
+    # ISO-total throughput ceiling (QUEUE_CAP_GW, above) disaggregated by each
+    # ISO's recent build mix -- solar/storage-led in PJM & MISO, offshore-wind-
+    # weighted in NYISO & NEISO (EIA 2026 outlook: solar 51% / storage 28% /
+    # wind 14% of planned US additions; LBNL "Queued Up" 2024 queue mix; each
+    # ISO's planning report). Not a per-tech measured throughput -- the split is
+    # a judgment; the binding ISO-total is the cited quantity. Same rule-11
+    # follow-up as QUEUE_CAP_GW (docs/handoffs/queue-cap-citation-2026-07.md).
     "PJM": {
         "wind": 1.5,
         "solar": 6.0,
