@@ -6,7 +6,7 @@ fleet-scope splitter at trivial scale (unknown-name hard error, fleet vs
 disclosed non-fleet split, NaN-HSL null-not-NaN discipline), the resource-name
 map's integrity against the model's own ST_GAS fleet registry, and — when the
 committed artifact is present — its geometry (shared DAM bin edges/quantiles),
-year scoping (2024/2025 only, no pooled fallback, no 2023), fleet-scope
+year scoping (2023-2025 training window, no pooled fallback), fleet-scope
 disclosure, and the measured mid-band relationship (RT steam upper rungs above
 the DAM steam ladder's — the ERCOT-84/86 measured-cheap-DAM-basis finding, on
 steam). The CC/CT RT artifact's ST-free invariant stays where it lives
@@ -127,8 +127,10 @@ def test_artifact_is_year_scoped_st_only():
     assert set(st) == {"_provenance", "ST"}
     assert "pooled" not in st["ST"], "no pooled fallback by design (rule 13)"
     years = set(st["ST"]["years"])
-    assert years <= {"2024", "2025"}
-    assert "2023" not in years, "2023 is DAM-basis-only (regime bar, no sample days)"
+    # 2023 included since the full-year NP3-965 intake (2026-07-21): the owner
+    # authorized extending the SCED basis to 2023, lifting the earlier
+    # post-Uri regime bar. Training window only — no 2022/2026 holdout years.
+    assert years <= {"2023", "2024", "2025"}
 
 
 @pytest.mark.skipif(not _ST_JSON.exists(), reason="steam RT artifact not derived")
