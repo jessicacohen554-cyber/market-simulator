@@ -601,6 +601,8 @@ def run_year(
     ramp_limits: bool | None = None,
     local_capacity_constraints: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
+    nyiso_scr_edrp: bool | None = None,
+    nyiso_scr_edrp_strike: float | None = None,
     nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
     nyiso_import_hub_prices: bool | None = None,
@@ -1134,6 +1136,10 @@ def run_year(
         )
     if nyiso_local_selfsupply is not None:
         config = config.with_overrides(nyiso_local_selfsupply=nyiso_local_selfsupply)
+    if nyiso_scr_edrp is not None:
+        config = config.with_overrides(nyiso_scr_edrp=nyiso_scr_edrp)
+    if nyiso_scr_edrp_strike is not None:
+        config = config.with_overrides(nyiso_scr_edrp_strike=nyiso_scr_edrp_strike)
     if nyiso_firm_imports is not None:
         config = config.with_overrides(nyiso_firm_imports=nyiso_firm_imports)
     if nyiso_import_reconciliation is not None:
@@ -2203,6 +2209,21 @@ def run_year(
         # indexes it by generator position): virtual units pass their full
         # "fuel" cost through (frac 1.0 = no take-or-pay discount).
         fuel_fracs = fuel_fracs + [1.0] * len(virtual_units)
+    # NYISO SCR/EDRP emergency demand response (config.nyiso_scr_edrp, NYISO-
+    # gated, default off): one price-responsive supply block per model zone at
+    # the zone's Gold-Book-registered DR MW and the EDRP-floor strike, appended
+    # to the plain fleet list like the virtual units above. It clears the energy
+    # balance only when the zone LBMP exceeds the strike (endogenous scarcity
+    # trigger); the summer/winter capability-period availability is stamped on
+    # the arrays after they are built (inject_nyiso_dr_availability, below).
+    if getattr(config, "nyiso_scr_edrp", False) and iso == "NYISO":
+        from market_sim.data.nyiso_demand_response import build_nyiso_dr_generators
+
+        dr_units = build_nyiso_dr_generators(config, year)
+        fleet = fleet + dr_units
+        # Row-parallel with the fleet list; DR blocks carry heat_rate 0 so their
+        # fuel frac is inert (frac 1.0, matching the virtual-unit convention).
+        fuel_fracs = fuel_fracs + [1.0] * len(dr_units)
     # CT_PEAKER reliability must-run floor: pass the peakers' CAMPD/CEMS hourly
     # on/off shape so the floor starts/stops with the real unit (zero in every
     # hour the plant did not report load), instead of being smeared flat. The
@@ -2230,6 +2251,15 @@ def run_year(
         year=config.weather_year,
     )
     inject_offshore_wind_availability(fleet_arrays, wind_cf, config, iso)
+    # NYISO SCR/EDRP demand-response blocks: overwrite the flat pseudo-gen
+    # availability (1 - eford = 1.0) with the summer/winter capability-period
+    # seasonal profile — the mirror of inject_offshore_wind_availability. A
+    # no-op unless config.nyiso_scr_edrp is on, the ISO is NYISO, and DR rows
+    # are present (the function guards internally).
+    if getattr(config, "nyiso_scr_edrp", False) and iso == "NYISO":
+        from market_sim.data.nyiso_demand_response import inject_nyiso_dr_availability
+
+        inject_nyiso_dr_availability(fleet_arrays, config, iso, year, list(zone_names))
     # Net-load-indexed ST_GAS + CT_PEAKER reliability-drag min-gen floors —
     # the single shared gate-and-log wrapper both orchestrators call
     # (fleet.apply_netload_drag_floors, orchestrator-unification Stage 6).
