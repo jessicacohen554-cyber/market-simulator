@@ -43,14 +43,15 @@
         { label: 'Calibration Status',   href: 'calibration-status.html', num: '&#9678;' },
         { label: 'Calibration Rubric',   href: 'calibration-rubric.html', num: '&#9878;' },
         { label: 'Model Validity',       href: 'model-validity.html',     num: '&#8982;' },
-        { label: 'Forecast Validation',  href: 'forecast-validation.html', num: '&#9873;' },
         { label: 'Data Completeness',    href: 'data-completeness.html',  num: '&#9745;' },
       ],
     },
     {
       label: 'Forecast',
       dropdown: [
-        { label: 'Forecast Bands', href: 'forecast-bands.html', num: '&#8767;' },
+        { label: 'Run Explorer',    href: 'forecast-runs.html',    num: '&#128202;' },
+        { label: 'Program Status',  href: 'forecast-status.html',  num: '&#9873;' },
+        { label: 'Forecast Bands',  href: 'forecast-bands.html',   num: '&#8767;' },
       ],
     },
     {
