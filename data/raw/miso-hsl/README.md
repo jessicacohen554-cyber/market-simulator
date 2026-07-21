@@ -1,9 +1,19 @@
-# MISO HSL (uncurtailed renewable potential) — coarse aggregate collected, hourly build still open
+# MISO HSL — wind on the forecast-uncurtailed reference-rate path; no hourly parquet
 
-No hourly `miso_<year>_hsl_hourly.parquet` exists yet, so
-`market_sim.data.renewables._hsl_file` still returns `None` for MISO and the
-backcast falls back to EIA-930 MISO delivered wind/solar generation (which
-embeds the historical curtailment).
+No hourly `miso_<year>_hsl_hourly.parquet` exists (misoenergy.org's 5-minute
+workbooks stay HTTP 403), so `market_sim.data.renewables._hsl_file` returns
+`None` for MISO — there is no *measured hourly* uncurtailed series.
+
+**MISO wind now re-curtails anyway (2026-07-21).** The Potomac Economics annual
+aggregate below gives a measured, forward-reproducible wind curtailment RATE
+(~4.9% of potential, training-window 2023+2024 firm mean), which
+`renewables._miso_wind_reference_curtailment_rate` feeds into the
+forecast-uncurtailed gross-up (`delivered ÷ (1 − rate)`, the same mechanism
+ERCOT's no-NP6 years use). So MISO wind's renewable bound is `forecast_uncurtailed`
+and the LP re-curtails endogenously. **MISO solar** has no published curtailment
+series, so it keeps the EIA-930 delivered profile (`delivered_pinned`) — a
+documented genuine gap, not a fabricated series. An hourly parquet, if the
+workbooks ever unblock, would upgrade wind to `measured_potential`.
 
 `misoenergy.org` and `cdn.misoenergy.org` — MISO's own Market Reports site,
 which would carry a CAISO-style 5-minute curtailment workbook — remain
