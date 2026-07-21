@@ -17,6 +17,7 @@ import pandas as pd
 from market_sim.config.constants import END_YEAR, START_YEAR
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.ensemble import (
+    _config_year_range,
     _default_workers,
     compute_bands,
     export_sampler_ensemble,
@@ -296,6 +297,76 @@ class TestExportSamplerEnsemble(unittest.TestCase):
         self.assertIn("structural_prior", meta)
         self.assertTrue(meta["structural_prior"]["dispatch_conditional"])
         self.assertIn("dispatch-conditional", meta["label"])
+
+
+class TestConfigYearRange(unittest.TestCase):
+    def test_none_bounds_default_to_module_horizon(self):
+        self.assertEqual(_config_year_range(ScenarioConfig()), (START_YEAR, END_YEAR))
+
+    def test_absent_config_defaults_to_module_horizon(self):
+        self.assertEqual(_config_year_range(None), (START_YEAR, END_YEAR))
+
+    def test_uses_config_bounds_when_set(self):
+        cfg = ScenarioConfig(start_year=2026, end_year=2030)
+        self.assertEqual(_config_year_range(cfg), (2026, 2030))
+
+
+class TestShortHorizonAggregation(unittest.TestCase):
+    """A T1-window ensemble must aggregate over its own solved horizon.
+
+    Regression for the short-horizon band gap: a member solved only over
+    2026-2028 (``start_year``/``end_year`` set) has no cached result past 2028,
+    so the old hardcoded ``range(START_YEAR, END_YEAR + 1)`` raised
+    ``FileNotFoundError`` at 2029. The aggregation must read the config horizon.
+    """
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self._orig_root = cache.CACHE_ROOT
+        cache.CACHE_ROOT = Path(self._tmp.name) / "cache"
+        self.iso = "ERCOT"
+        self.start, self.end = 2026, 2028
+        self.spec = _spec(n=4)
+        self.base = ScenarioConfig(
+            iso=self.iso, start_year=self.start, end_year=self.end
+        )
+        self.configs, self.drawset = sample_ensemble_configs(self.base, self.spec)
+        # The sampler must preserve the base horizon on every member.
+        for cfg in self.configs.values():
+            self.assertEqual((cfg.start_year, cfg.end_year), (self.start, self.end))
+        self.members = {}
+        for i, (draw_id, cfg) in enumerate(self.configs.items()):
+            for year in range(self.start, self.end + 1):
+                cache.save_result(
+                    _make_result(seed=i * 1000 + year),
+                    cfg,
+                    iso=self.iso,
+                    year=year,
+                    context=_make_context(),
+                )
+            self.members[draw_id] = cfg.cache_key()
+
+    def tearDown(self):
+        cache.CACHE_ROOT = self._orig_root
+        self._tmp.cleanup()
+
+    def test_aggregates_over_solved_horizon_only(self):
+        out = Path(self._tmp.name) / "ensemble"
+        paths = export_sampler_ensemble(
+            self.base,
+            self.spec,
+            self.iso,
+            self.members,
+            self.drawset,
+            self.configs,
+            out,
+        )
+        years = [self.start, self.start + 1, self.start + 2]
+        bands = pd.read_parquet(paths["bands"])
+        self.assertEqual(sorted(bands.year.unique()), years)
+        metrics = pd.read_parquet(paths["metrics"])
+        self.assertEqual(sorted(metrics.year.unique()), years)
+        self.assertTrue((bands.n == 4).all())
 
 
 if __name__ == "__main__":
