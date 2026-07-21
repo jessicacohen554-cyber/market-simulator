@@ -2796,9 +2796,10 @@ class TestGetRPSTarget(unittest.TestCase):
         # 2028 sits midway between 2026 (0.50) and 2030 (0.60).
         self.assertAlmostEqual(get_rps_target("CAISO", 2028), 0.55)
 
-    def test_iso_without_rps_is_none(self):
-        # MISO has no STATE_RPS_FLOORS entry (no ISO-wide standard modeled).
-        self.assertIsNone(get_rps_target("MISO", 2030))
+    def test_unregistered_iso_is_none(self):
+        # An ISO with no STATE_RPS_FLOORS entry (SPP is not modeled) -> None.
+        # All six registered ISOs now carry a floor entry (MISO added after PJM).
+        self.assertIsNone(get_rps_target("SPP", 2030))
 
     def test_ercot_floor_is_zero(self):
         self.assertAlmostEqual(get_rps_target("ERCOT", 2030), 0.0)
@@ -2809,6 +2810,16 @@ class TestGetRPSTarget(unittest.TestCase):
         self.assertAlmostEqual(get_rps_target("PJM", 2026), 0.185)
         self.assertAlmostEqual(get_rps_target("PJM", 2028), 0.2075, places=4)
         self.assertAlmostEqual(get_rps_target("PJM", 2030), 0.23)
+
+    def test_miso_blended_floor_interpolates(self):
+        # MISO carries a load-weighted blend of its member-state renewable
+        # tiers, diluted by its many no-RPS states: ~11% (2026) rising to
+        # 16% (2030); 2028 sits midway.
+        self.assertAlmostEqual(get_rps_target("MISO", 2026), 0.11)
+        self.assertAlmostEqual(get_rps_target("MISO", 2028), 0.135, places=4)
+        self.assertAlmostEqual(get_rps_target("MISO", 2030), 0.16)
+        # Below PJM at every knot (more no-RPS load).
+        self.assertLess(get_rps_target("MISO", 2030), get_rps_target("PJM", 2030))
 
 
 class TestGetRPSACP(unittest.TestCase):
@@ -2822,15 +2833,20 @@ class TestGetRPSACP(unittest.TestCase):
         self.assertAlmostEqual(get_rps_acp("CAISO"), 50.0)
         self.assertAlmostEqual(get_rps_acp("NYISO"), 40.0)
         self.assertAlmostEqual(get_rps_acp("PJM"), 45.0)
+        # MISO is a deliberately low forward REC-price-ceiling proxy (soft
+        # Midwest enforcement / cheap RECs): below PJM and NEISO.
+        self.assertAlmostEqual(get_rps_acp("MISO"), 30.0)
+        self.assertLess(get_rps_acp("MISO"), get_rps_acp("PJM"))
 
     def test_case_insensitive(self):
         self.assertAlmostEqual(get_rps_acp("neiso"), 50.0)
+        self.assertAlmostEqual(get_rps_acp("miso"), 30.0)
 
-    def test_iso_without_rps_is_none(self):
-        # ERCOT floor is a modeled zero (no ACP); MISO has no entry at all.
+    def test_iso_without_acp_is_none(self):
+        # ERCOT has a modeled-zero floor but no ACP entry; SPP is unregistered.
         # Either way no escape column is built and the LP is unchanged there.
         self.assertIsNone(get_rps_acp("ERCOT"))
-        self.assertIsNone(get_rps_acp("MISO"))
+        self.assertIsNone(get_rps_acp("SPP"))
 
 
 def _entry_by_tech(
