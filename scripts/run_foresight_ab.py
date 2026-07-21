@@ -220,7 +220,7 @@ def evaluate_arm(spec_dict: dict) -> dict:
             **BASE_OVERRIDES,
             **spec.overrides,
         )
-        key = runner.run_scenario_iso(config, "ERCOT")
+        key = run_scenario(config, "ERCOT")
 
         for year in range(spec.start_year, spec.end_year + 1):
             result = cache.load_result("ERCOT", key, year)

@@ -338,8 +338,10 @@ def solve_and_summarize(
     out_dir.mkdir(parents=True, exist_ok=True)
 
     # runner binds ``save_result`` by name at import; patch it there to record
-    # per-year completion timestamps.
+    # per-year completion timestamps. The solve itself goes through the public
+    # facade (which delegates to runner at call time, so the patch is seen).
     from market_sim import runner as runnermod
+    from market_sim.pipeline.api import run_scenario
 
     year_marks: list[tuple[int, float]] = []
     _orig_save = runnermod.save_result
@@ -362,7 +364,7 @@ def solve_and_summarize(
     sampler.start()
     run_start = time.monotonic()
     try:
-        cache_key = runnermod.run_scenario_iso(config, iso)
+        cache_key = run_scenario(config, iso)
     except Exception as exc:  # noqa: BLE001 — capture, report, keep partials
         error = f"{type(exc).__name__}: {exc}"
         traceback.print_exc()
