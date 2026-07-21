@@ -420,9 +420,7 @@ class TestZonalBasisParity(unittest.TestCase):
                 zone_names = list(get_iso_config(iso).zone_names)
                 fixture = self._fixture_csv(tmp, iso, zone_names)
                 fleet = _stub_fleet(iso, len(zone_names))
-                config = ScenarioConfig(
-                    iso=iso, **{_FLAG_BY_ISO[iso]: True}
-                )
+                config = ScenarioConfig(iso=iso, **{_FLAG_BY_ISO[iso]: True})
                 rng = np.random.default_rng(20240721)
                 base = 3.0 + rng.random((fleet.fuel_type_idx.size, self.HOURS))
 
@@ -430,7 +428,9 @@ class TestZonalBasisParity(unittest.TestCase):
                 b = base.copy()
                 standalone = getattr(fuel, f"apply_{iso.lower()}_zonal_gas_basis")
                 standalone(a, fleet, config, self.YEAR, path=fixture)
-                fuel.ZONAL_BASIS_APPLIERS[iso](b, fleet, config, self.YEAR, path=fixture)
+                fuel.ZONAL_BASIS_APPLIERS[iso](
+                    b, fleet, config, self.YEAR, path=fixture
+                )
 
                 self.assertTrue(
                     np.array_equal(a, b),
@@ -463,7 +463,9 @@ class TestZonalBasisParity(unittest.TestCase):
                     continue
                 fixture = self._fixture_csv(tmp, other, zone_names)
                 arr = base.copy()
-                fuel.ZONAL_BASIS_APPLIERS[other](arr, fleet, config, self.YEAR, path=fixture)
+                fuel.ZONAL_BASIS_APPLIERS[other](
+                    arr, fleet, config, self.YEAR, path=fixture
+                )
                 self.assertTrue(
                     np.array_equal(arr, base), f"{other} applier fired for {iso} config"
                 )
