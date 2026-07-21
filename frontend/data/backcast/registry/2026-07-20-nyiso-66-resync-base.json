@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-20-nyiso-66-resync-base",
+  "label": "nyiso 66 resync base",
+  "date": "2026-07-20",
+  "shorthand": "nyiso-66-resync-base",
+  "definition": "nyiso-66 resync: reproducible on-tree base of the NYISO 62/64/65 lineage (nyiso-62 cc_hr_regate meta replay + eastern-seam Capital_Hudson 1600 MW code-level). Re-solved to replace the phantom nyiso-65-scr-edrp keeper whose run payload + bundle were never committed. Excludes the un-synced nyiso-65 ingredients (orphaned nyiso_scr_edrp DR lever; 2641-row corrected outage extract). DETERMINATION NOT-YET: C1 fuel-mix FAIL (13/14, 2023 CC_REGULAR -3.76 TWh), C3b price-shape FAIL (2024 NRMSE 0.201), C3c tail FAIL; C3a mean-LMP PASS all years (2023 +8.8%, 2024 -7.2%); C2/C4 PASS; C6/C7/C8 PASS (C8 ST_GAS grounded-above-budget); C5a CO2 CAVEAT (2025 +9.5%). Closing C1/C3b needs the un-synced nyiso-64/65 ingredients restored.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-20-nyiso-66-resync-base.js",
+  "bundle": "results/calibration/nyiso66_resync_base"
+}
