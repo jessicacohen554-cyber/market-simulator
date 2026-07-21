@@ -3,7 +3,7 @@
   "label": "neiso 60 phantom outage",
   "date": "2026-07-13",
   "shorthand": "neiso-60-phantom-outage",
-  "definition": "neiso-60 phantom-outage re-audit (ERCOT-79 cross-ISO lane, 2026-07-19): the neiso-59 keeper recipe re-solved byte-faithfully on the corrected CAMPD unit-outage extract (consolidated per-unit event-based detector; 3,892→1,425 rows — −2,957 dropped, mostly BTM-CHP full-year phantom windows, +490 real CC outage windows added). Effect is dispatch/price-inert: C3a mean LMP vs DA improves every year (2023 −5.4%→−1.2%, 2024 −4.8%→−1.4%, 2025 +3.0%→+6.0%, all in band), scarcity tail unchanged (model 0h >$200 both extracts), and the only material gen-mix movers are CT_PEAKER (+0.11–+0.40 TWh) offset by CC_REGULAR (−0.34/−0.36 TWh) — the real CC outage windows the stale extract missed. DETERMINATION: CALIBRATED-WITH-CAVEATS, unchanged from neiso-59 (identical C1–C8 pattern, C3c ledgered caveat byte-identical at model 0h). NEISO's calibration does not rest on the phantom; adopted as a fix-in-place keeper swap (PJM-115 pattern) — the 2026-07-11 frontier and 2026-07-07 calibration-complete marker both survive the re-audit.",
+  "definition": "neiso-60 phantom-outage re-audit re-solve: neiso-59 recipe replayed verbatim on the corrected 1,425-row unit-outage extract (per-unit event-based detector). Fix-in-place keeper swap (PJM-115 pattern). Regenerates the full bundle + run payload the 2026-07-19 slim commit omitted.",
   "years": [
     2023,
     2024,
