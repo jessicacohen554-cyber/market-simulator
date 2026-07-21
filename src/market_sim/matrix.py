@@ -89,9 +89,10 @@ def run_matrix(
     Returns:
         A dict mapping each case name to the ``cache_key`` of its run.
     """
-    # Local import mirrors ensemble.py: avoids a module-load cycle since
-    # runner.py imports this module for its CLI subcommand.
-    from market_sim.runner import _run_pair
+    # Public picklable worker entry point; local import mirrors ensemble.py
+    # (runner.py imports this module for its CLI subcommand — api delegates
+    # to runner lazily, so there is no module-load cycle).
+    from market_sim.pipeline.api import run_pair
 
     iso = iso.upper()
     if not configs:
@@ -107,10 +108,10 @@ def run_matrix(
     logger.info("run_matrix start: iso=%s cases=%s workers=%d", iso, names, workers)
 
     if workers == 1:
-        keys = [_run_pair(pair) for pair in pairs]
+        keys = [run_pair(pair) for pair in pairs]
     else:
         with ProcessPoolExecutor(max_workers=workers) as executor:
-            keys = list(executor.map(_run_pair, pairs))
+            keys = list(executor.map(run_pair, pairs))
 
     return dict(zip(names, keys))
 

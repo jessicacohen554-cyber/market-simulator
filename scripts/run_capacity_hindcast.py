@@ -73,7 +73,8 @@ if str(_ROOT) not in sys.path:
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.results import cache as cachemod  # noqa: E402
 from market_sim.results.evolution_ledger import load_ledgers_for_run  # noqa: E402
-from market_sim.runner import HINDCAST_BRIDGE_YEARS, run_scenario_iso  # noqa: E402
+from market_sim.pipeline.api import run_scenario  # noqa: E402
+from market_sim.runner import HINDCAST_BRIDGE_YEARS  # noqa: E402
 
 # The only years a plain hindcast may solve. 2022/2026 are quarantined (rule
 # 22); 2022 is bridged (evolved, not solved), 2026 is out of the window entirely.
@@ -618,7 +619,7 @@ def main(argv: list[str] | None = None) -> int:
             else ""
         )
     )
-    key = run_scenario_iso(config, iso)
+    key = run_scenario(config, iso)
     bundle = args.out_dir / iso / key
     ledgers = load_ledgers_for_run(bundle)
 
