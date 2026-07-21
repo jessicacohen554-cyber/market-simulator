@@ -11,8 +11,8 @@
     "capacity_market_clearing": false,
     "datacenter_load_path": "mid",
     "correlated_forced_outage": true,
-    "cache_key": "9acbcee84538e384",
-    "bundle": "results/ERCOT/9acbcee84538e384",
+    "cache_key": "31675a6e21393f4d",
+    "bundle": "results/ERCOT/31675a6e21393f4d",
     "solved_years": [
       2026,
       2027,
@@ -22,42 +22,42 @@
     ],
     "n_solved_years": 5,
     "error": null,
-    "total_wall_s": 683.5,
-    "global_peak_rss_mb": 3779.8,
+    "total_wall_s": 673.5,
+    "global_peak_rss_mb": 3792.8,
     "per_year_perf": [
       {
         "year": 2026,
-        "wall_s": 159.3,
-        "peak_rss_mb": 3482.8
+        "wall_s": 165.2,
+        "peak_rss_mb": 3484.3
       },
       {
         "year": 2027,
-        "wall_s": 129.0,
-        "peak_rss_mb": 3676.1
+        "wall_s": 125.5,
+        "peak_rss_mb": 3593.7
       },
       {
         "year": 2028,
-        "wall_s": 135.6,
-        "peak_rss_mb": 3593.0
+        "wall_s": 128.9,
+        "peak_rss_mb": 3687.2
       },
       {
         "year": 2029,
-        "wall_s": 132.5,
-        "peak_rss_mb": 3779.8
+        "wall_s": 125.2,
+        "peak_rss_mb": 3792.8
       },
       {
         "year": 2030,
-        "wall_s": 127.0,
-        "peak_rss_mb": 3605.0
+        "wall_s": 128.4,
+        "peak_rss_mb": 3549.5
       }
     ],
     "year_summary": [
       {
         "year": 2026,
         "reserve_margin": 0.1459,
-        "lw_price": 24.89,
-        "max_hourly_price": 44.9,
-        "co2_mt": 175.49,
+        "lw_price": 34.44,
+        "max_hourly_price": 65.5,
+        "co2_mt": 189.63,
         "hours_ge_500": 0,
         "retire_mw": 0.0,
         "builds_thermal_mw": 0.0,
@@ -66,61 +66,60 @@
       },
       {
         "year": 2027,
-        "reserve_margin": 0.1337,
-        "lw_price": 58.38,
+        "reserve_margin": 0.1422,
+        "lw_price": 65.34,
         "max_hourly_price": 5000.0,
-        "co2_mt": 174.7,
+        "co2_mt": 188.76,
         "hours_ge_500": 49,
         "retire_mw": 0.0,
         "builds_thermal_mw": 3880.0,
-        "builds_renew_mw": 5000.0,
+        "builds_renew_mw": 9000.0,
         "builds_storage_mw": 0.0
       },
       {
         "year": 2028,
-        "reserve_margin": 0.1075,
-        "lw_price": 70.03,
+        "reserve_margin": 0.144,
+        "lw_price": 65.79,
         "max_hourly_price": 5000.0,
-        "co2_mt": 200.21,
-        "hours_ge_500": 63,
+        "co2_mt": 211.05,
+        "hours_ge_500": 49,
         "retire_mw": 0.0,
-        "builds_thermal_mw": 4085.0,
+        "builds_thermal_mw": 7085.0,
         "builds_renew_mw": 0.0,
         "builds_storage_mw": 0.0
       },
       {
         "year": 2029,
-        "reserve_margin": 0.115,
-        "lw_price": 70.12,
+        "reserve_margin": 0.1491,
+        "lw_price": 65.63,
         "max_hourly_price": 5000.0,
-        "co2_mt": 222.64,
-        "hours_ge_500": 63,
-        "retire_mw": 0.0,
+        "co2_mt": 234.37,
+        "hours_ge_500": 49,
+        "retire_mw": 30.6,
         "builds_thermal_mw": 7344.8,
         "builds_renew_mw": 5000.0,
         "builds_storage_mw": 0.0
       },
       {
         "year": 2030,
-        "reserve_margin": 0.1174,
-        "lw_price": 68.48,
+        "reserve_margin": 0.126,
+        "lw_price": 79.54,
         "max_hourly_price": 5000.0,
-        "co2_mt": 241.2,
+        "co2_mt": 250.92,
         "hours_ge_500": 62,
         "retire_mw": 0.0,
-        "builds_thermal_mw": 8000.0,
-        "builds_renew_mw": 4000.0,
+        "builds_thermal_mw": 5000.0,
+        "builds_renew_mw": 5000.0,
         "builds_storage_mw": 0.0
       }
     ],
-    "started_utc": "2026-07-19T17:57:47Z",
+    "started_utc": "2026-07-21T00:48:35Z",
     "bridged_years": [],
-    "campaign": "ff-3b-ces-poc",
     "case": "BAU",
     "premium_usd_per_mwh": 0.0,
-    "federal_ces_enabled": false,
+    "campaign": "ff-ces-infra-t1",
     "federal_ces_crediting": "clean_capture",
-    "poc_note": "T1-scale machinery proof (ERCOT 2026-2030); NOT campaign results; no premium-ladder conclusions (FF-3B)."
+    "poc_note": "FF-3F hardened per-leg harness (run_ces_leg.py); machinery proof only, no W4 conclusions"
   },
   "score": null,
   "invariants": [
@@ -140,7 +139,7 @@
       "ident": "I3",
       "name": "unserved/dump",
       "status": "FAIL",
-      "detail": "2027: slack 0.03% of load; 2028: slack 0.05% of load; 2029: slack 0.03% of load; 2030: slack 0.03% of load"
+      "detail": "2027: slack 0.03% of load; 2028: slack 0.02% of load; 2029: slack 0.01% of load; 2030: slack 0.02% of load"
     },
     {
       "ident": "I4",
@@ -193,8 +192,8 @@
     {
       "ident": "I12",
       "name": "reserve-margin band",
-      "status": "FAIL",
-      "detail": "scalar floor [13.8%, 28.7%]; out: 2027:13.4% (band [13.8%, 28.7%]), 2028:10.7% (band [13.8%, 28.7%]), 2029:11.5% (band [13.8%, 28.7%]), 2030:11.7% (band [13.8%, 28.7%])"
+      "status": "WARN",
+      "detail": "scalar floor [13.8%, 28.7%]; out: 2030:12.6% (band [13.8%, 28.7%])"
     },
     {
       "ident": "I13",
@@ -206,8 +205,8 @@
       "ident": "I14",
       "name": "price sanity",
       "status": "WARN",
-      "detail": "2027: LW $58.4 outside [0.5×,3.0×] CC MC $15.7; 2028: LW $70.0 outside [0.5×,3.0×] CC MC $15.7; 2029: LW $70.1 outside [0.5×,3.0×] CC MC $15.7; 2030: LW $68.5 outside [0.5×,3.0×] CC MC $15.7"
+      "detail": "2030: LW $79.5 outside [0.5×,3.0×] CC MC $23.7"
     }
   ],
-  "registered_utc": "2026-07-19T17:57:47Z"
+  "registered_utc": "2026-07-21T00:48:35Z"
 }
