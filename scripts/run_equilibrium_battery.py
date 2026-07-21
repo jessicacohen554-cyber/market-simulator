@@ -155,7 +155,9 @@ def solve_overbuild(iso: str, start_year: int, end_year: int, out_dir: Path) -> 
     config = FH.reference_config(iso, start_year, end_year, cmc=False)
     runnermod, orig_loader = _install_overbuild_patch(iso, start_year, config)
     try:
-        cache_key = runnermod.run_scenario_iso(config, iso.upper())
+        from market_sim.pipeline.api import run_scenario
+
+        cache_key = run_scenario(config, iso.upper())
     finally:
         runnermod.load_planned_additions = orig_loader
 

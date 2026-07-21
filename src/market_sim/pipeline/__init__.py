@@ -46,6 +46,7 @@ by both ``run_calibration.py`` and ``run_calibration_full.py``.
 
 from __future__ import annotations
 
+from market_sim.pipeline.api import run_pair, run_scenario
 from market_sim.pipeline.backcast_config import backcast_config
 from market_sim.pipeline.commitment import (
     build_caiso_ra_p1_prep,
@@ -63,12 +64,23 @@ from market_sim.pipeline.kwargs import (
     apply_reserve_coopt,
     build_base_dispatch_kwargs,
 )
+from market_sim.pipeline.persist import write_run_config
 from market_sim.pipeline.prior import PriorYearResults
+from market_sim.pipeline.reference import henry_hub_actual, load_reference
 from market_sim.pipeline.result import YearSolveResult
 from market_sim.pipeline.solve import EnergySolveResult, run_energy_solve
 from market_sim.pipeline.spec import UNSET, DispatchSpec, ReserveSpec
+from market_sim.pipeline.ttc import (
+    apply_iso_monthly_ttc,
+    apply_iso_year_ttc,
+    apply_ttc_overrides,
+    build_transmission_base,
+)
+from market_sim.pipeline.year import YearSolveOutput, run_year_solve
 
 __all__ = [
+    "run_scenario",
+    "run_pair",
     "DispatchSpec",
     "ReserveSpec",
     "UNSET",
@@ -89,4 +101,13 @@ __all__ = [
     "ercot_gas_bridge_p1_floor_fleet",
     "pjm_commitment_scoped_reserve_fleet",
     "backcast_config",
+    "build_transmission_base",
+    "apply_ttc_overrides",
+    "apply_iso_year_ttc",
+    "apply_iso_monthly_ttc",
+    "YearSolveOutput",
+    "run_year_solve",
+    "write_run_config",
+    "load_reference",
+    "henry_hub_actual",
 ]

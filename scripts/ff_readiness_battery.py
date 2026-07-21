@@ -983,6 +983,7 @@ def kill_resume_drill(
     import tempfile
 
     from market_sim import runner as runnermod
+    from market_sim.pipeline.api import run_scenario
     from market_sim.results import cache as cachemod
 
     kill_after_year = end_year - 1
@@ -1011,7 +1012,7 @@ def kill_resume_drill(
         #    differs from a bare golden_posture_config().cache_key(). We locate
         #    every bundle by this returned key, never a recomputed one.
         cachemod.CACHE_ROOT = control_root
-        control_key = runnermod.run_scenario_iso(_config(), iso)
+        control_key = run_scenario(_config(), iso)
 
         # 2. kill — same config, second cache root, interrupted after the
         #    final-pass save of `kill_after_year`. Same config ⇒ same runner key
@@ -1027,7 +1028,7 @@ def kill_resume_drill(
         runnermod.save_result = _killing_save
         killed = False
         try:
-            runnermod.run_scenario_iso(_config(), iso)
+            run_scenario(_config(), iso)
         except _KillSignal:
             killed = True
         finally:
@@ -1044,7 +1045,7 @@ def kill_resume_drill(
         }
 
         # 3. resume — same config, over the partial cache.
-        resume_key2 = runnermod.run_scenario_iso(_config(), iso)
+        resume_key2 = run_scenario(_config(), iso)
         mtimes_after = {
             y: (resume_dir / f"year_{y}.parquet").stat().st_mtime
             for y in pre_kill_years

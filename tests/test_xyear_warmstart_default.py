@@ -60,11 +60,15 @@ class TestForecastStaysColdOnly:
     """runner.py must pass xyear_cache=None — the forecast can't warm-start."""
 
     def test_runner_passes_xyear_cache_none_literal(self):
-        """Static guard: the runner's run_energy_solve call pins the cache None.
+        """Static guard: the runner's per-year solve call pins the cache None.
 
-        Parses runner.py and asserts every ``run_energy_solve(...)`` call passes
-        ``xyear_cache`` as a literal ``None`` keyword — so the calibration
-        default-ON gate can never reach the forecast loop, whatever the env var.
+        The forecast's energy solve now goes through the shared per-year body
+        (``pipeline.year.run_year_solve``, which forwards ``xyear_cache``
+        verbatim into ``run_energy_solve``). Parses runner.py and asserts every
+        ``run_year_solve(...)`` (or residual ``run_energy_solve(...)``) call
+        passes ``xyear_cache`` as a literal ``None`` keyword — so the
+        calibration default-ON gate can never reach the forecast loop,
+        whatever the env var.
         """
         src = (REPO / "src" / "market_sim" / "runner.py").read_text()
         tree = ast.parse(src)
@@ -73,9 +77,9 @@ class TestForecastStaysColdOnly:
             for node in ast.walk(tree)
             if isinstance(node, ast.Call)
             and isinstance(node.func, ast.Name)
-            and node.func.id == "run_energy_solve"
+            and node.func.id in ("run_year_solve", "run_energy_solve")
         ]
-        assert calls, "no run_energy_solve call found in runner.py"
+        assert calls, "no run_year_solve/run_energy_solve call found in runner.py"
         for call in calls:
             kw = {k.arg: k.value for k in call.keywords}
             assert "xyear_cache" in kw, "runner must pin xyear_cache explicitly"
@@ -83,6 +87,32 @@ class TestForecastStaysColdOnly:
             assert isinstance(val, ast.Constant) and val.value is None, (
                 "runner.py must pass xyear_cache=None so the forecast path stays "
                 "cold-only (docs/cross-year-warmstart.md)"
+            )
+
+    def test_year_body_forwards_xyear_cache_verbatim(self):
+        """Static guard: pipeline/year.py forwards its ``xyear_cache`` param.
+
+        The runner-side literal-None guard above is only sound if the shared
+        per-year body passes its own ``xyear_cache`` parameter through to
+        ``run_energy_solve`` unmodified — assert exactly that.
+        """
+        src = (REPO / "src" / "market_sim" / "pipeline" / "year.py").read_text()
+        tree = ast.parse(src)
+        calls = [
+            node
+            for node in ast.walk(tree)
+            if isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and node.func.id == "run_energy_solve"
+        ]
+        assert calls, "no run_energy_solve call found in pipeline/year.py"
+        for call in calls:
+            kw = {k.arg: k.value for k in call.keywords}
+            assert "xyear_cache" in kw
+            val = kw["xyear_cache"]
+            assert isinstance(val, ast.Name) and val.id == "xyear_cache", (
+                "pipeline/year.py must forward its xyear_cache parameter "
+                "verbatim into run_energy_solve"
             )
 
     def test_none_cache_never_applies_even_with_env_on(self, monkeypatch):

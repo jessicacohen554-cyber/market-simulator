@@ -21,7 +21,7 @@ import time
 
 from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
 from market_sim.matrix import matrix_configs
-from market_sim.runner import _run_pair
+from market_sim.pipeline.api import run_pair
 
 logger = logging.getLogger("pb5_matrix_slice")
 
@@ -55,7 +55,7 @@ def main() -> None:
     logger.info("pb5 matrix slice start: iso=%s cases=%s", iso, args.cases)
     for case in args.cases:
         t0 = time.time()
-        key = _run_pair((configs[case], iso))
+        key = run_pair((configs[case], iso))
         logger.info(
             "pb5 matrix case done: case=%s cache_key=%s wall_s=%.1f",
             case,
