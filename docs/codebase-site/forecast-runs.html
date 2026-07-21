@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forecast Run Explorer — Codebase Explorer</title>
+  <meta name="description" content="Forecast Finalization Program run explorer — per-run rubric verdicts (FC-1..FC-8), forecast invariants (I1..I14), evolution-ledger tables, and capacity / CO2 / price trajectory sparklines across every FF run kind.">
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/bc-pages.css">
+  <link rel="stylesheet" href="css/ff-pages.css">
+</head>
+<body>
+  <nav id="topNav" aria-label="Site navigation"></nav>
+
+  <div style="padding: var(--space-lg) var(--space-lg) 0; max-width: var(--max-content); margin: 0 auto;">
+    <div class="bc-page-header">
+      <h1>Forecast Run Explorer</h1>
+      <span id="hdrCount" class="ff-tag" style="text-transform:none"></span>
+    </div>
+    <p class="bc-page-sub">
+      Every registered run of the Forecast Finalization Program (FF), grouped by kind and tier.
+      Each run shows its rubric verdict (FC-1..FC-8), the forecast invariants (I1..I14), the
+      evolution ledger, and capacity / CO2 / price trajectories. Forecast runs live on a namespace
+      separate from the backcast registry (plan §7.5) — the backcast CI gates never see a forecast id.
+      Sibling pages: <a href="forecast-status.html">Program Status</a> (the §2.1b gate board) and
+      <a href="forecast-bands.html">Forecast Bands</a>.
+    </p>
+  </div>
+
+  <!-- Filter bar -->
+  <div style="padding: 0 var(--space-lg); max-width: var(--max-content); margin: 0 auto;">
+    <div class="bc-controls" style="margin-bottom: var(--space-md)">
+      <div class="ctl">
+        <span class="ctl-label" id="lblISO">ISO</span>
+        <div class="ff-filters" id="fISO" role="group" aria-labelledby="lblISO"></div>
+      </div>
+      <div class="ctl">
+        <span class="ctl-label" id="lblKind">Kind</span>
+        <div class="ff-filters" id="fKind" role="group" aria-labelledby="lblKind"></div>
+      </div>
+      <div class="ctl">
+        <span class="ctl-label" id="lblTier">Tier</span>
+        <div class="ff-filters" id="fTier" role="group" aria-labelledby="lblTier"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bc-layout" style="padding-top:0">
+    <!-- Sidebar: run list -->
+    <aside class="bc-sidebar" aria-label="Run list">
+      <h3>Runs</h3>
+      <p class="ff-count" id="listCount"></p>
+      <div class="ff-runlist" id="runList"></div>
+    </aside>
+
+    <!-- Main: detail -->
+    <main class="bc-main" id="detail">
+      <div class="ff-empty" id="emptyState">Select a run from the list to see its verdict, invariants, and trajectories.</div>
+    </main>
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script type="module">
+    import { loadManifest, loadRun, hashState, fmtNum } from './js/ff-data.js';
+
+    const $ = s => document.querySelector(s);
+
+    /* -------- static label maps -------- */
+    const FC_NAMES = {
+      'FC-1': 'Structural integrity (I1–I14)',
+      'FC-2': 'Adequacy & equilibrium behavior',
+      'FC-3': 'Capacity-evolution skill (T1-H)',
+      'FC-4': 'Crossover dispatch skill (T1-X)',
+      'FC-5': 'Cross-model corridor conformance',
+      'FC-6': 'Driver battery',
+      'FC-7': 'DOF ledger / identification',
+      'FC-8': 'Feasibility (wall / RSS)',
+    };
+    const KIND_LABEL = {
+      't1f': 'T1-F forecast', 't1x': 'T1-X crossover', 't1h': 'T1-H hindcast',
+      'adequacy': 'Base-year adequacy', 'ces-poc': 'CES POC', 'readiness': 'Readiness battery',
+      't2': 'T2 mid', 't3-golden': 'T3 golden', 'pb-band': 'Probability band',
+    };
+    const TIER_LABEL = {
+      't1f': 'T1-F', 't1x': 'T1-X', 't1h': 'T1-H', 'poc': 'POC', 'battery': 'Battery',
+      't2': 'T2', 't3': 'T3', 'pb': 'PB',
+    };
+    const ISO_ORDER = ['ERCOT', 'CAISO', 'PJM', 'MISO', 'NYISO', 'NEISO', 'ALL'];
+
+    /* -------- helpers -------- */
+    const esc = s => String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const stCls = s => 'ff-st-' + String(s || 'na').toLowerCase().replace(/[^a-z]/g, '');
+    const cellCls = s => 'st-' + String(s || 'na').toLowerCase().replace(/[^a-z]/g, '');
+    const isoColor = iso => `var(--iso-${String(iso).toLowerCase()}, var(--hydro))`;
+
+    function detBadge(det) {
+      if (!det) return `<span class="ff-det na" title="not gate-scored">—</span>`;
+      const d = det.toUpperCase();
+      const cls = d === 'HOLD' ? 'hold' : (d === 'PASS' ? 'pass' : (d.includes('FAIL') ? 'fail' : 'na'));
+      return `<span class="ff-det ${cls}">${esc(det)}</span>`;
+    }
+    function kindTag(kind, disabled) {
+      return `<span class="ff-tag kind-${esc(kind)}${disabled ? ' schema-ready' : ''}">${esc(KIND_LABEL[kind] || kind)}</span>`;
+    }
+
+    /* -------- state -------- */
+    let MANIFEST = [];
+    let META = null;
+    const filters = { iso: 'ALL_FACET', kind: 'ALL_FACET', tier: 'ALL_FACET' };
+    let selected = null;
+
+    /* -------- filter chips -------- */
+    function chip(label, value, facet, disabled) {
+      const active = filters[facet] === value;
+      return `<button class="ff-fchip${active ? ' active' : ''}" data-facet="${facet}" data-val="${esc(value)}"${disabled ? ' disabled' : ''}>${esc(label)}</button>`;
+    }
+    function renderFilters() {
+      const isos = (META.isos || []).slice().sort((a, b) => ISO_ORDER.indexOf(a) - ISO_ORDER.indexOf(b));
+      $('#fISO').innerHTML = chip('All', 'ALL_FACET', 'iso')
+        + isos.map(i => chip(i === 'ALL' ? 'Program-wide' : i, i, 'iso')).join('');
+
+      const kinds = META.kinds || [];
+      const schemaKinds = (META.schema_ready && META.schema_ready.kinds) || [];
+      $('#fKind').innerHTML = chip('All', 'ALL_FACET', 'kind')
+        + kinds.map(k => chip(KIND_LABEL[k] || k, k, 'kind')).join('')
+        + schemaKinds.map(k => chip((KIND_LABEL[k] || k) + ' · 0', k, 'kind', true)).join('');
+
+      const tiers = META.tiers || [];
+      const schemaTiers = (META.schema_ready && META.schema_ready.tiers) || [];
+      $('#fTier').innerHTML = chip('All', 'ALL_FACET', 'tier')
+        + tiers.map(t => chip(TIER_LABEL[t] || t, t, 'tier')).join('')
+        + schemaTiers.map(t => chip((TIER_LABEL[t] || t) + ' · 0', t, 'tier', true)).join('');
+
+      document.querySelectorAll('.ff-fchip').forEach(b => {
+        if (b.disabled) return;
+        b.addEventListener('click', () => {
+          filters[b.dataset.facet] = b.dataset.val;
+          hashState.update(b.dataset.facet, b.dataset.val === 'ALL_FACET' ? '' : b.dataset.val);
+          // If the open run is now hidden by the filters, clear the detail so the
+          // panel never shows a run absent from (and unhighlighted in) the list.
+          const sel = selected && MANIFEST.find(x => x.id === selected);
+          if (sel && !passesFilters(sel)) {
+            selected = null;
+            hashState.update('run', '');
+            $('#detail').innerHTML = `<div class="ff-empty">The selected run is hidden by the active filters. Clear a filter or pick another run.</div>`;
+          }
+          renderFilters();
+          renderList();
+        });
+      });
+    }
+
+    /* -------- run list -------- */
+    function passesFilters(e) {
+      if (filters.iso !== 'ALL_FACET' && e.iso !== filters.iso) return false;
+      if (filters.kind !== 'ALL_FACET' && e.kind !== filters.kind) return false;
+      if (filters.tier !== 'ALL_FACET' && e.tier !== filters.tier) return false;
+      return true;
+    }
+    function renderList() {
+      const rows = MANIFEST.filter(passesFilters);
+      $('#listCount').textContent = `${rows.length} of ${MANIFEST.length} runs`;
+      $('#hdrCount').textContent = `${MANIFEST.length} runs · ${(META.isos || []).filter(i => i !== 'ALL').length} ISOs`;
+      if (!rows.length) { $('#runList').innerHTML = `<p class="ff-count">No runs match these filters.</p>`; return; }
+      $('#runList').innerHTML = rows.map(e => {
+        const sel = selected === e.id ? ' selected' : '';
+        const yr = e.start_year && e.end_year ? `${e.start_year}–${e.end_year}` : '';
+        const det = e.determination ? `<span class="ff-chip ${stCls(e.determination)}">${esc(e.determination)}</span>` : '';
+        return `<div class="ff-run-row${sel}" role="button" tabindex="0" data-id="${esc(e.id)}" style="--c:${isoColor(e.iso)}">
+          <span class="ff-run-iso"></span>
+          <span class="ff-run-main">
+            <span class="ff-run-id">${esc(e.id)}</span>
+            <span class="ff-run-sub">${esc(e.iso)} · ${esc(KIND_LABEL[e.kind] || e.kind)} · ${yr}${e.mode ? ' · ' + esc(e.mode) : ''}</span>
+          </span>
+          <span class="ff-run-tags">${det}</span>
+        </div>`;
+      }).join('');
+      document.querySelectorAll('.ff-run-row').forEach(r => {
+        const go = () => selectRun(r.dataset.id);
+        r.addEventListener('click', go);
+        r.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); go(); } });
+      });
+    }
+
+    /* -------- sparkline -------- */
+    function sparkline(vals, color) {
+      const finite = vals.filter(v => typeof v === 'number' && isFinite(v));
+      if (finite.length < 2) return '<svg viewBox="0 0 100 40" preserveAspectRatio="none"></svg>';
+      const min = Math.min(...finite), max = Math.max(...finite);
+      const span = (max - min) || 1;
+      const n = vals.length;
+      // Plot only the finite samples (a null/undefined mid-series metric is
+      // skipped, not coerced to a spurious 0 or a path-breaking NaN).
+      const pts = vals
+        .map((v, i) => [n === 1 ? 0 : (i / (n - 1)) * 100, v])
+        .filter(p => typeof p[1] === 'number' && isFinite(p[1]))
+        .map(([x, v]) => [x, 36 - ((v - min) / span) * 32]);
+      const path = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+      const last = pts[pts.length - 1];
+      return `<svg viewBox="0 0 100 40" preserveAspectRatio="none" role="img" aria-hidden="true">
+        <path d="${path}" fill="none" stroke="${color}" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
+        <circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="2.4" fill="${color}"/>
+      </svg>`;
+    }
+    function sparkPanel(title, unit, years, vals, fmt, color) {
+      const finite = vals.filter(v => typeof v === 'number' && isFinite(v));
+      if (finite.length < 2) return '';
+      const lastVal = [...vals].reverse().find(v => typeof v === 'number' && isFinite(v));
+      return `<div class="ff-spark">
+        <div class="ff-spark-head"><span>${esc(title)}</span><b>${fmt(lastVal)}<span style="font-size:.62rem;font-weight:400;color:var(--text-muted)"> ${esc(unit)}</span></b></div>
+        ${sparkline(vals, color)}
+        <div class="ff-spark-axis"><span>${years[0]}</span><span>${years[years.length - 1]}</span></div>
+      </div>`;
+    }
+
+    /* -------- detail sections -------- */
+    function verdictSection(run) {
+      const v = run.verdict;
+      if (!v) {
+        const has = [];
+        if ((run.invariants || []).length) has.push('invariants');
+        if ((run.meta && run.meta.year_summary || []).length) has.push('trajectory');
+        if (run.score) has.push('score');
+        if (run.extras) has.push('recorded data');
+        const tail = has.length
+          ? ` Its ${has.join(' / ')} ${has.length === 1 ? 'is' : 'are'} below.`
+          : '';
+        return `<section class="bc-panel">
+          <h2>Rubric verdict</h2>
+          <p class="panel-sub">This run is not a gate instrument — no FC-1..FC-8 determination was scored for it
+          (${esc(KIND_LABEL[run.kind] || run.kind)} runs are diagnostic legs).${tail}</p>
+        </section>`;
+      }
+      const cats = v.categories || {};
+      const chips = Object.keys(FC_NAMES).map(fc => {
+        const c = cats[fc] || { status: 'n/a' };
+        const st = c.status || 'n/a';
+        return `<div class="ff-cell ${cellCls(st)}">
+          <span class="ff-cell-code">${fc}</span>
+          <span class="ff-cell-name">${esc(FC_NAMES[fc])}</span>
+          <span class="ff-cell-status">${esc(st)}</span>
+        </div>`;
+      }).join('');
+      const gating = [];
+      for (const fc of Object.keys(FC_NAMES)) {
+        const c = cats[fc];
+        if (!c || !c.gating_rows) continue;
+        for (const g of c.gating_rows) {
+          if (!g.detail) continue;
+          gating.push(`<p class="ff-gating"><b>${fc} · <span class="ff-chip ${stCls(g.status)}">${esc(g.status)}</span></b> ${esc(g.detail)}</p>`);
+        }
+      }
+      const reasons = (v.reasons || []).map(r => `<li>${esc(r)}</li>`).join('');
+      return `<section class="bc-panel">
+        <h2>Rubric verdict — ${detBadge(v.determination)}</h2>
+        <p class="panel-sub">Tier <b>${esc((v.tier || run.tier).toUpperCase())}</b> · verdict key <code style="font-family:var(--font-mono);font-size:.72rem">${esc(run.verdict_key || '—')}</code>
+        · from <code style="font-family:var(--font-mono);font-size:.72rem">ff-t1-gate-verdicts.json</code></p>
+        ${reasons ? `<ul style="margin:0 0 var(--space-md);padding-left:18px;font-size:.82rem;line-height:1.6">${reasons}</ul>` : ''}
+        <div class="ff-grid-chips">${chips}</div>
+        ${gating.length ? `<div style="margin-top:var(--space-md)">${gating.join('')}</div>` : ''}
+      </section>`;
+    }
+
+    function invariantSection(run) {
+      const inv = run.invariants || [];
+      if (!inv.length) return '';
+      const chips = inv.map(i => `<div class="ff-cell ${cellCls(i.status)}" title="${esc(i.name)} — ${esc(i.detail)}">
+        <span class="ff-cell-code">${esc(i.ident)}</span>
+        <span class="ff-cell-name">${esc(i.name)}</span>
+        <span class="ff-cell-status">${esc(i.status)}</span>
+      </div>`).join('');
+      const note = run.invariants_note ? `<p class="panel-sub" style="margin-top:var(--space-md)">${esc(run.invariants_note)}</p>` : '';
+      return `<section class="bc-panel">
+        <h2>Forecast invariants (I1–I14)</h2>
+        <p class="panel-sub">Structural checks from <code style="font-family:var(--font-mono);font-size:.72rem">check_forecast_invariants</code>. Hover a chip for detail.</p>
+        <div class="ff-grid-chips">${chips}</div>${note}
+      </section>`;
+    }
+
+    function trajectorySection(run) {
+      const ys = (run.meta && run.meta.year_summary) || [];
+      if (!ys.length) return '';
+      const years = ys.map(r => r.year);
+      const price = ys.map(r => r.lw_price);
+      const co2 = ys.map(r => r.co2_mt);
+      const rm = ys.map(r => (typeof r.reserve_margin === 'number' ? r.reserve_margin * 100 : null));
+      // Net capacity change = cumulative (builds thermal+renew+storage − retire), GW.
+      let cum = 0;
+      const netcap = ys.map(r => {
+        cum += ((r.builds_thermal_mw || 0) + (r.builds_renew_mw || 0) + (r.builds_storage_mw || 0) - (r.retire_mw || 0)) / 1000;
+        return cum;
+      });
+      const panels = [
+        sparkPanel('Load-weighted price', '$/MWh', years, price, v => '$' + Number(v).toFixed(1), 'var(--iso-pjm)'),
+        sparkPanel('CO₂ emissions', 'Mt', years, co2, v => Number(v).toFixed(0), 'var(--fossil-coal)'),
+        sparkPanel('Reserve margin', '%', years, rm, v => Number(v).toFixed(1) + '%', 'var(--wind)'),
+        sparkPanel('Cumulative net capacity Δ', 'GW', years, netcap, v => (v >= 0 ? '+' : '') + Number(v).toFixed(1), 'var(--storage)'),
+      ].filter(Boolean).join('');
+      if (!panels) return '';
+      return `<section class="bc-panel">
+        <h2>Trajectory ${years[0]}–${years[years.length - 1]}</h2>
+        <p class="panel-sub">Per-year headline metrics from the run's <code style="font-family:var(--font-mono);font-size:.72rem">year_summary</code>. The last value is annotated.</p>
+        <div class="ff-spark-grid">${panels}</div>
+      </section>`;
+    }
+
+    function ledgerSection(run) {
+      const ys = (run.meta && run.meta.year_summary) || [];
+      if (ys.length) {
+        const rows = ys.map(r => `<tr>
+          <td>${r.year}</td>
+          <td class="num">${fmtNum(r.retire_mw || 0)}</td>
+          <td class="num">${fmtNum(r.builds_thermal_mw || 0)}</td>
+          <td class="num">${fmtNum(r.builds_renew_mw || 0)}</td>
+          <td class="num">${fmtNum(r.builds_storage_mw || 0)}</td>
+          <td class="num">${r.reserve_margin != null ? (r.reserve_margin * 100).toFixed(1) + '%' : '—'}</td>
+          <td class="num">${r.hours_ge_500 != null ? r.hours_ge_500 : '—'}</td>
+        </tr>`).join('');
+        return `<section class="bc-panel">
+          <h2>Evolution ledger (retire / build by year)</h2>
+          <p class="panel-sub">MW retired and built per capacity-evolution step, with the adequacy signals (reserve margin, scarcity hours ≥ $500).</p>
+          <div class="bc-table-wrap"><table>
+            <thead><tr><th>Year</th><th>Retire MW</th><th>Build thermal</th><th>Build renew</th><th>Build storage</th><th>Reserve margin</th><th>Hrs ≥ $500</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table></div>
+        </section>`;
+      }
+      return scoreSection(run);
+    }
+
+    function scoreSection(run) {
+      const s = run.score;
+      if (!s) return '';
+      let out = '';
+      // Retirements
+      if (s.retirements) {
+        const r = s.retirements, pf = r.per_fuel || {};
+        const fuelRows = Object.keys(pf).map(f => `<tr><td>${esc(f)}</td>
+          <td class="num">${pf[f].actual_gw}</td><td class="num">${pf[f].model_gw}</td>
+          <td class="num">${pf[f].err_frac == null ? '—' : (pf[f].err_frac * 100).toFixed(0) + '%'}</td></tr>`).join('');
+        out += `<h3 style="margin:var(--space-md) 0 6px;font-size:.92rem">Retirements (GW)</h3>
+          <p class="ff-kv">Total: actual <b>${r.total_gw.actual}</b> · model <b>${r.total_gw.model}</b>
+          <span class="ff-chip ${stCls(r.total_gw.band)}">${esc(r.total_gw.band)}</span>
+          · unit recall &gt;300 MW ${r.unit_recall_gt300 && r.unit_recall_gt300.recall != null ? (r.unit_recall_gt300.recall * 100).toFixed(0) + '%' : '—'}
+          <span class="ff-chip ${stCls(r.unit_recall_gt300 && r.unit_recall_gt300.band)}">${esc(r.unit_recall_gt300 && r.unit_recall_gt300.band || 'n/a')}</span></p>
+          <div class="bc-table-wrap"><table><thead><tr><th>Fuel</th><th>Actual GW</th><th>Model GW</th><th>Err</th></tr></thead><tbody>${fuelRows}</tbody></table></div>`;
+      }
+      // Additions
+      if (s.additions && s.additions.by_tech) {
+        const bt = s.additions.by_tech;
+        const rows = Object.keys(bt).map(t => `<tr><td>${esc(t)}</td>
+          <td class="num">${bt[t].actual_gw}</td><td class="num">${bt[t].model_gw}</td>
+          <td class="num">${bt[t].err_frac == null ? '—' : (bt[t].err_frac * 100).toFixed(0) + '%'}</td>
+          <td><span class="ff-chip ${stCls(bt[t].band)}">${esc(bt[t].band)}</span></td></tr>`).join('');
+        out += `<h3 style="margin:var(--space-lg) 0 6px;font-size:.92rem">Additions by tech (GW)</h3>
+          <div class="bc-table-wrap"><table><thead><tr><th>Tech</th><th>Actual GW</th><th>Model GW</th><th>Err</th><th>Band</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+      }
+      // CO2
+      if (s.co2 && s.co2.model) {
+        const yrs = Object.keys(s.co2.model).sort();
+        const rows = yrs.map(y => {
+          const m = s.co2.model[y], a = (s.co2.actual || {})[y];
+          const err = a ? (((m - a) / a) * 100).toFixed(0) + '%' : '—';
+          return `<tr><td>${y}</td><td class="num">${(m / 1e6).toFixed(1)}</td><td class="num">${a ? (a / 1e6).toFixed(1) : '—'}</td><td class="num">${err}</td></tr>`;
+        }).join('');
+        out += `<h3 style="margin:var(--space-lg) 0 6px;font-size:.92rem">CO₂ (Mt)</h3>
+          <div class="bc-table-wrap"><table><thead><tr><th>Year</th><th>Model</th><th>Actual</th><th>Err</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+      }
+      // Crossover dispatch skill (price / co2 forecast |err|)
+      const ds = (s.dispatch_skill && s.dispatch_skill.metrics) || null;
+      if (ds && (ds.price_mean || ds.co2)) {
+        const yrs = Object.keys(ds.price_mean || ds.co2 || {}).sort();
+        const rows = yrs.map(y => {
+          const pm = ds.price_mean && ds.price_mean[y], c = ds.co2 && ds.co2[y];
+          return `<tr><td>${y}</td>
+            <td class="num">${pm ? (pm.forecast_err * 100).toFixed(1) + '%' : '—'}</td>
+            <td>${pm ? `<span class="ff-chip ${stCls(pm.forecast_status)}">${esc(pm.forecast_status)}</span>` : '—'}</td>
+            <td class="num">${c ? (c.forecast_err * 100).toFixed(1) + '%' : '—'}</td>
+            <td>${c ? `<span class="ff-chip ${stCls(c.forecast_status)}">${esc(c.forecast_status)}</span>` : '—'}</td></tr>`;
+        }).join('');
+        out += `<h3 style="margin:var(--space-lg) 0 6px;font-size:.92rem">Crossover dispatch skill — forecast |err|</h3>
+          <p class="panel-sub">Backcast→forecast input gap: forecast-mode absolute error vs actuals (K<sub>iso</sub> band). Price is the load-bearing signal; CO₂ is directional (partly a full-plant reconstruction artifact).</p>
+          <div class="bc-table-wrap"><table><thead><tr><th>Year</th><th>Price |err|</th><th></th><th>CO₂ |err|</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+      }
+      if (!out) return '';
+      return `<section class="bc-panel"><h2>Capacity-hindcast score</h2>
+        <p class="panel-sub">Pre-registered retire / build / CO₂ bands (rules 1/11/14 — a missed band is a root-cause investigation, never widened).</p>${out}</section>`;
+    }
+
+    function metaSection(run) {
+      const m = run.meta || {};
+      const perf = (m.per_year_perf || []).map(p => `${p.year}: ${p.wall_s ? p.wall_s.toFixed(0) + 's' : '—'}${p.peak_rss_mb ? ' / ' + (p.peak_rss_mb / 1024).toFixed(1) + 'GB' : ''}`).join(' · ');
+      const flags = [];
+      if (m.capacity_market_clearing != null) flags.push(`capacity clearing ${m.capacity_market_clearing ? 'ON' : 'OFF'}`);
+      if (m.datacenter_load_path) flags.push(`DC load ${m.datacenter_load_path}`);
+      if (m.correlated_forced_outage != null) flags.push(`correlated outage ${m.correlated_forced_outage ? 'ON' : 'OFF'}`);
+      if (m.entry_lookahead_reprice != null) flags.push(`entry lookahead ${m.entry_lookahead_reprice ? 'ON' : 'OFF'}`);
+      if (m.gas_price_path) flags.push(`gas ${m.gas_price_path}`);
+      const bridged = m.bridged_years && m.bridged_years.length ? `bridged (rule 22): ${JSON.stringify(m.bridged_years)}` : '';
+      // A run whose meta carries none of the displayed fields (e.g. the readiness
+      // battery) gets no empty "Run configuration" card.
+      const rows = [
+        m.bundle && `Bundle: <code>${esc(m.bundle)}</code> · run_config lives in <code>${esc(m.bundle)}/run_config.json</code>`,
+        m.cache_key && `Cache key: <code>${esc(m.cache_key)}</code>`,
+        (m.mode || m.variant || m.n_solved_years) && `${m.mode ? `Mode: <b>${esc(m.mode)}</b>` : ''}${m.variant ? ` · variant <b>${esc(m.variant)}</b>` : ''}${m.n_solved_years ? ` · ${m.n_solved_years} solve-years` : ''}`,
+        (m.total_wall_s || m.global_peak_rss_mb) && `${m.total_wall_s ? `Wall: <b>${(m.total_wall_s / 60).toFixed(1)} min</b>` : ''}${m.global_peak_rss_mb ? ` · peak RSS <b>${(m.global_peak_rss_mb / 1024).toFixed(1)} GB</b>` : ''}`,
+        flags.length && `Posture: ${flags.map(f => `<code>${esc(f)}</code>`).join(' ')}`,
+        bridged && esc(bridged),
+        m.poc_note && `<span class="bc-mute">${esc(m.poc_note)}</span>`,
+        perf && `<span class="bc-mute">Per-year: ${esc(perf)}</span>`,
+      ].filter(Boolean);
+      if (!rows.length) return '';
+      return `<section class="bc-panel">
+        <h2>Run configuration</h2>
+        <div class="ff-kv">${rows.join('<br>')}</div>
+      </section>`;
+    }
+
+    // Surface any top-level sidecar fields the structured sections don't render
+    // (e.g. the readiness battery's results, or a crossover-ff2d stub's fc4 /
+    // dispatch_skill), so a listed run never opens to an empty detail. Scalars
+    // are shown inline; objects/arrays as scrollable JSON.
+    function extrasSection(run) {
+      const ex = run.extras;
+      if (!ex || !Object.keys(ex).length) return '';
+      const parts = Object.keys(ex).map(k => {
+        const val = ex[k];
+        if (val == null) return '';
+        if (typeof val === 'object') {
+          return `<details class="cs-detail"><summary>${esc(k)}</summary>
+            <pre style="margin:0;padding:var(--space-md);overflow-x:auto;font-size:.72rem;font-family:var(--font-mono);white-space:pre-wrap;word-break:break-word">${esc(JSON.stringify(val, null, 2))}</pre></details>`;
+        }
+        return `<p class="ff-kv"><b>${esc(k)}:</b> ${esc(String(val))}</p>`;
+      }).filter(Boolean).join('');
+      if (!parts) return '';
+      return `<section class="bc-panel"><h2>Recorded data</h2>
+        <p class="panel-sub">Sidecar fields outside the structured sections above — shown verbatim so nothing registered is hidden.</p>${parts}</section>`;
+    }
+
+    /* -------- detail render -------- */
+    async function selectRun(id) {
+      selected = id;
+      hashState.update('run', id);
+      renderList();
+      $('#detail').innerHTML = `<div class="ff-empty">Loading ${esc(id)}…</div>`;
+      let run;
+      try {
+        run = await loadRun(id);
+      } catch (err) {
+        $('#detail').innerHTML = `<div class="bc-diag-alert">Failed to load run <code>${esc(id)}</code>: ${esc(err.message)}</div>`;
+        return;
+      }
+      const m = run.meta || {};
+      const yr = m.start_year && m.end_year ? `${m.start_year}–${m.end_year}` : '';
+      $('#detail').innerHTML = `
+        <div class="bc-panel">
+          <div class="cs-results-header">
+            <span class="iso-badge" style="--c:${isoColor(run.iso)}"><span class="dot"></span> ${esc(run.iso)}</span>
+            <span class="cs-iso-name" style="font-family:var(--font-mono);font-size:1rem">${esc(run.id)}</span>
+            ${detBadge(run.determination)}
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px">
+            ${kindTag(run.kind)}
+            <span class="ff-tag">Tier ${esc(TIER_LABEL[run.tier] || run.tier)}</span>
+            ${yr ? `<span class="ff-tag" style="text-transform:none">${yr}</span>` : ''}
+            ${run.label ? `<span class="ff-tag" style="text-transform:none">${esc(run.label)}</span>` : ''}
+            ${m.campaign ? `<span class="ff-tag" style="text-transform:none">${esc(m.campaign)}</span>` : ''}
+          </div>
+        </div>
+        ${verdictSection(run)}
+        ${trajectorySection(run)}
+        ${ledgerSection(run)}
+        ${invariantSection(run)}
+        ${extrasSection(run)}
+        ${metaSection(run)}
+      `;
+    }
+
+    /* -------- init -------- */
+    async function init() {
+      try {
+        const res = await loadManifest();
+        META = res.meta || { isos: [], kinds: [], tiers: [], schema_ready: {} };
+        MANIFEST = res.manifest || [];
+      } catch (err) {
+        $('#detail').innerHTML = `<div class="bc-diag-alert">Failed to load the forecast manifest: ${esc(err.message)}.
+          Has a run been registered yet (scripts/register_forecast_run.py --reindex)?</div>`;
+        return;
+      }
+      const h = hashState.get();
+      if (h.iso && (META.isos || []).includes(h.iso)) filters.iso = h.iso;
+      if (h.kind && (META.kinds || []).includes(h.kind)) filters.kind = h.kind;
+      if (h.tier && (META.tiers || []).includes(h.tier)) filters.tier = h.tier;
+      // Reconcile a shared deep link: if #run points at a run the #iso/#kind/#tier
+      // filters would hide, prefer the run and relax the conflicting facets so the
+      // link is self-consistent (the selected run stays visible in its own list).
+      const target = h.run && MANIFEST.find(x => x.id === h.run);
+      if (target) {
+        if (filters.iso !== 'ALL_FACET' && target.iso !== filters.iso) filters.iso = 'ALL_FACET';
+        if (filters.kind !== 'ALL_FACET' && target.kind !== filters.kind) filters.kind = 'ALL_FACET';
+        if (filters.tier !== 'ALL_FACET' && target.tier !== filters.tier) filters.tier = 'ALL_FACET';
+      }
+      renderFilters();
+      renderList();
+      if (target) selectRun(h.run);
+    }
+    init();
+  </script>
+</body>
+</html>
