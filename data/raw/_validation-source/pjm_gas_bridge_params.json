@@ -1,0 +1,19 @@
+{
+  "min_load_frac": 0.564,
+  "n_cc_units": 302,
+  "cc_ecomax_mw_total": 76840,
+  "ratio_quartiles": [
+    0.52,
+    0.633,
+    0.767
+  ],
+  "overnight_ecomin_positive_frac_h0_6": 0.968,
+  "midday_ecomin_positive_frac_h12_18": 0.968,
+  "source_files": [
+    "pjm_energy_offers_2024_01.parquet",
+    "pjm_energy_offers_2024_04.parquet",
+    "pjm_energy_offers_2024_07.parquet",
+    "pjm_energy_offers_2024_10.parquet"
+  ],
+  "segmentation": "derive_pjm_offer_surface physics thresholds (frozen)"
+}
