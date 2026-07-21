@@ -1111,7 +1111,10 @@ DEMAND_GROWTH_TRANSITION_YEAR: int = 2030
 # path the DC block sits inside each ISO's total forecast (relocate regime); a
 # high/full-queue path can exceed it and then adds as genuinely incremental load.
 # FF-1C (2026-07, rule 23) refreshed the MISO block (was {}) and re-confirmed the
-# ERCOT/PJM/CAISO/NYISO anchors against the FF-0D-cited vintages.
+# ERCOT/PJM/CAISO/NYISO anchors against the FF-0D-cited vintages. A 2026-07-21
+# follow-up refined the MISO block to the forecast's granular DC peak-demand
+# trajectory (1.2 / 20.5 / 33.5 GW at 2026 / 2030 / 2046, replacing the 2027/2030
+# band) and enriched the NEISO + DATACENTER_ZONE_SHARE deferral notes.
 DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
     # ERCOT — large-load queue ~226 GW (Nov 2025) vs 63 GW (end-2024); ~70% is
     # data center; ~77% of large load targets in-service by 2030; 2030 adjusted
@@ -1156,25 +1159,42 @@ DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
         "mid": {2025: 0.0, 2031: 3000.0},
         "high": {2025: 0.0, 2031: 10000.0},
     },
-    # MISO — Sept-2025 Long-Term Load Forecast now publishes an explicit DC
-    # decomposition (FF-0D audit §1.4, closing the memo §2.2 "no source" gap):
-    # 8-14 GW of data centers in 2026-2027, DC reaching ~20% of MISO energy by
-    # 2030. low = signed-subset MW not separately published -> 0; mid = 11 GW by
-    # 2027 (mid of the 8-14 GW band) growing to ~20 GW by 2030 (0.20 x ~774 TWh
-    # 2030 energy / 0.85 LF / 8760 h ~= 20.4 GW); high = 14 GW (top of the band)
-    # by 2027 -> ~27 GW by 2030 (upper-DC). Source: MISO 2025 Long-Term Load
-    # Forecast; FF-0D audit §1.2/§1.4.
+    # MISO — Sept-2025 Long-Term Load Forecast publishes an explicit DC
+    # decomposition (FF-0D audit §1.4, closing the memo §2.2 "no source" gap),
+    # refined 2026-07-21 to the forecast's granular DC PEAK-DEMAND trajectory
+    # (replaces the earlier 2027/2030 band approximation and its flat-hold after
+    # 2030 — the 8-14 GW band was NAMEPLATE additions, a different, larger metric
+    # than the peak-demand basis the block represents): DC peak demand
+    # 1.2 GW (2026) -> 20.5 GW (2030) -> 33.5 GW (2046); DC = 20% of MISO energy
+    # by 2030 and 25% by 2040. The 20.5 GW 2030 anchor cross-checks the energy
+    # share (20.5 GW x 8760 h x 0.85 LF / 0.20 ~= 763 TWh total 2030, ~ the
+    # ~774 TWh forecast). low = signed-subset MW not separately published -> 0
+    # (floor convention, as PJM/NYISO); mid = the published current-trajectory
+    # curve; high = the upper-DC scenario (27 GW by 2030, FF-0D §1.4), extended to
+    # 2046 preserving the published 2030 high/mid ratio (33.5 x 27/20.5 ~= 44.1 GW;
+    # MISO publishes no granular high beyond 2030). Growth concentrates in the
+    # central region (IL/IN/MI) — a DATACENTER_ZONE_SHARE[MISO] siting candidate
+    # once a per-zone MW split is published (deferred, see that table's comment).
+    # Source: MISO 2025 Long-Term Load Forecast (Dec-2024 whitepaper + Sept-2025
+    # update); FF-0D audit §1.2/§1.4.
     "MISO": {
-        "low": {2027: 0.0, 2030: 0.0},
-        "mid": {2027: 11000.0, 2030: 20000.0},
-        "high": {2027: 14000.0, 2030: 27000.0},
+        "low": {2026: 0.0, 2030: 0.0},
+        "mid": {2026: 1200.0, 2030: 20500.0, 2046: 33500.0},
+        "high": {2026: 1400.0, 2030: 27000.0, 2046: 44100.0},
     },
-    # NEISO — ISO-NE 2026 CELT added a large-load (DC/crypto/large-industrial)
-    # forecast framework, but its DC quantum is immaterial (~110 MW to peak in the
-    # 2030s per the CELT summary, <0.6% of NEISO peak). Per the "no MATERIAL
-    # source => ship {}" rule this stays {} (=> 0 MW; DC stays implicit in the
+    # NEISO — ISO-NE 2026 CELT (May 2026) added a large-load (DC/crypto/large-
+    # industrial) forecast framework, but its DC quantum is immaterial, and a
+    # 2026-07-21 recheck of the CELT large-load deck confirmed it: only two
+    # proposed large-load projects are in the formal study phase (<=285 MW total
+    # nameplate; the lone NEMA data center is 200 MW nameplate -> 85 MW effective
+    # after ISO-NE's milestone derating), contributing ~110 MW to summer/winter
+    # peak in the 2030s rising to ~130 MW in the 2040s — <0.6% of the ~26 GW
+    # winter peak, and ISO-NE states New England "has not witnessed the scale of
+    # data center proposals" seen in other ISOs. Per the "no MATERIAL source =>
+    # ship {}" rule this stays {} (=> 0 MW; DC stays implicit in the
     # DEMAND_GROWTH_RATES near era) until a material decomposition lands — a
     # documented deferral, not an omission (FF-0D audit §1.4, P2 low-materiality).
+    # Source: ISO-NE 2026 CELT Report + Large Load Forecast deck (fx2026_large_loads).
     "NEISO": {},
 }
 
@@ -1191,6 +1211,33 @@ DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
 # decomposition => ships as load-share default, documented — never invented"),
 # every ISO keeps its load_share default; populating ERCOT/PJM from the published
 # queue-geography fractions is the remaining P2 data-intake follow-up.
+#
+# 2026-07-21 follow-up — sharpened this deferral with the concrete published
+# anchors and the exact artifact each ISO still needs to close it (kept as a
+# deferral: the per-zone MW fractions live in separate Excel/queue-geography
+# tables not fetchable in-session, and the dominant PJM fraction is itself
+# horizon-uncertain, so a judged number is not buried here):
+#   PJM — Dominion (DOM, "data center alley") hosts the world's largest DC
+#     concentration: ~20 GW DC by 2037 vs PJM's ~30 GW DC by 2030 (DC = 94% of
+#     the +32 GW 2024-2030 peak growth), so DOM's DC share is ~0.45-0.60 and
+#     horizon-sensitive (~0.6 at the 2030 block horizon, ~0.4 by 2037); DOM, AEP,
+#     COMED and PL together carry ~74% of PJM growth (ComEd +3.7 GW to 2031). A
+#     rule-14 "reconciled" DOM-anchored vector (DOM at its published share,
+#     residual by load_share) is constructable and would materially beat the
+#     load_share default (which gives DOM only 0.15), but the exact per-zone DC MW
+#     is PJM Load Forecast Table B-9b (a separate Excel) and the DOM fraction is
+#     horizon-uncertain, so it stays deferred. Source: PJM 2025 Long-Term Load
+#     Forecast Report (Table B-9b); EIA Today-in-Energy (Virginia/DOM ~20 GW).
+#   ERCOT — the large-flexible-load queue concentrates in Oncor (North/DFW) +
+#     West Texas (data center = 72.9% of the ~226 GW Nov-2025 queue), but no
+#     per-weather-zone MW split is published in the accessible primary docs (the
+#     2025 Constraints & Needs report carries no zonal large-load table), so only
+#     the DIRECTION is sourceable -> stays load_share default. Source: ERCOT Large
+#     Load Integration / 2025 Report on Existing & Potential Constraints & Needs.
+#   MISO — growth concentrates in the central region (IL/IN/MI) per the 2025 LTLF,
+#     a further siting candidate; likewise no per-zone MW fraction sourced.
+# All three keep the load_share default until a per-zone MW table lands (never an
+# invented split, memo §3.3 / rule 23).
 DATACENTER_ZONE_SHARE: dict[str, dict[str, float]] = {}
 
 # --- Fuel-price trajectories, availability shapes & carbon price paths ------
