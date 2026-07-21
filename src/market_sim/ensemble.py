@@ -155,9 +155,9 @@ def _run_configs(configs: dict, iso: str, workers: int | None) -> dict:
         A dict mapping each member id to the ``cache_key`` of its run, in the
         input order.
     """
-    # Local import avoids a module-load cycle: runner imports this module for
-    # its CLI subcommand, and this calls back into runner only at run time.
-    from market_sim.runner import _run_pair
+    # Public picklable worker entry point (delegates to runner lazily, so no
+    # module-load cycle: runner imports this module for its CLI subcommand).
+    from market_sim.pipeline.api import run_pair
 
     workers = _default_workers(workers)
     member_ids = list(configs)
@@ -171,10 +171,10 @@ def _run_configs(configs: dict, iso: str, workers: int | None) -> dict:
     )
 
     if workers == 1:
-        keys = [_run_pair(pair) for pair in pairs]
+        keys = [run_pair(pair) for pair in pairs]
     else:
         with ProcessPoolExecutor(max_workers=workers) as executor:
-            keys = list(executor.map(_run_pair, pairs))
+            keys = list(executor.map(run_pair, pairs))
 
     return dict(zip(member_ids, keys))
 
