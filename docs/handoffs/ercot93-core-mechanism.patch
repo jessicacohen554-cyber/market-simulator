@@ -1,0 +1,262 @@
+diff --git a/src/market_sim/config/scenarios.py b/src/market_sim/config/scenarios.py
+index b88857de..b83ec6b2 100644
+--- a/src/market_sim/config/scenarios.py
++++ b/src/market_sim/config/scenarios.py
+@@ -115,6 +115,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
+     # key (a distinct forward-capacity-price scenario). Backcast-coerced to
+     # "hold_last" in __post_init__.
+     "net_cone_forward_escalation",
++    # ERCOT-93 ST_GAS steam RT/SCED basis + telemetered online span (all
++    # default-off / None): dropped from the hash at defaults so every
++    # pre-existing keeper replay's cache key is byte-stable; an armed steam RT
++    # basis or online span enters the key (a distinct scenario).
++    "ercot_offer_surface_cleared_share_rt_steam_path",
++    "ercot_shoulder_online_span_steam",
++    "ercot_shoulder_online_span_steam_path",
+ )
+ 
+ 
+@@ -6734,6 +6741,42 @@ class ScenarioConfig:
+     # explicitly. A forecast may pin gas as a sensitivity without flipping
+     # the renewables loader into historical-actuals mode.
+ 
++    # --- ERCOT-93 ST_GAS steam RT/SCED basis + telemetered online span -------
++    # New fields appended as one contiguous block (field-group convention).
++    # The ST_GAS steam-offer seam's SCED-basis leg: the ERCOT-92 §9.4 design
++    # questions (i) the RT/SCED steam ladder + (ii) the hour-grain telemetered
++    # online span, built on the full-year NP3-965 corpus (2026-07-21). All
++    # default-off and in _CACHE_KEY_OPTIONAL_FIELDS, so cache_key(ScenarioConfig())
++    # is byte-identical and every pre-existing keeper replay is unchanged.
++    #
++    # Override path for the steam RT/SCED spare-offer wall (rule 19: the steam
++    # ladder lives in its OWN artifact, ercot_sced_offer_wall_steam_condbinned.json,
++    # keeping the CC/CT RT artifact ST-free). Consumed only when
++    # ercot_offer_surface_cleared_share_steam AND ..._cleared_share_rt are both
++    # armed; the "ST" class is then priced from the measured SCED online-spare
++    # ladder instead of the measured-cheap DAM "ST" ladder (the ERCOT-91 §8.1
++    # trip's root cause — the DAM basis sits below the real surface). None =
++    # resolve the default committed artifact.
++    ercot_offer_surface_cleared_share_rt_steam_path: str | None = None
++    # ST_GAS telemetered online span (ercot_shoulder_online_span_steam): the
++    # measured ON-share-of-non-OUT conditional (net-load percentile bin x season
++    # x 4h block, scripts/data/derive_ercot_shoulder_online_span_steam.py)
++    # re-anchors the steam RT wall's ladder geometry over [boundary, span]
++    # instead of [boundary, 1.0] — the forward-regenerable "hour-level online
++    # envelope" that stops the online-measured RT steam ladder being stretched
++    # over ST_GAS capability telemetered OFF at the same conditions (the
++    # ERCOT-90/92 phantom-headroom wedge: in the shoulder bins only ~14-52% of
++    # non-OUT ST_GAS was online, while the class-day availability hands the LP
++    # ~100%). Steam-scoped, NO fast-start-pool coupling — steam min-down 8-12h
++    # fails fast-start eligibility, so the above-span steam increment keeps the
++    # ladder-top (priced, not capped; rule 12). Requires the steam leg + RT
++    # basis (the builder hard-errors otherwise). Default off; zero fitted
++    # scalars (rule 13 bright line: only the conditional distribution enters,
++    # never the per-hour ON series). YEAR-SCOPED (rule 13): absent years keep
++    # the full-span geometry byte-identical.
++    ercot_shoulder_online_span_steam: bool = False
++    ercot_shoulder_online_span_steam_path: str | None = None
++
+     def __post_init__(self) -> None:
+         if self.mode not in ("forecast", "backcast"):
+             raise ValueError(
+@@ -7696,6 +7739,9 @@ TIER_TAGS: dict[str, int] = {
+     "ercot_faststart_pool_offer_path": 3,
+     "ercot_shoulder_online_span": 1,
+     "ercot_shoulder_online_span_path": 3,
++    "ercot_offer_surface_cleared_share_rt_steam_path": 3,
++    "ercot_shoulder_online_span_steam": 1,
++    "ercot_shoulder_online_span_steam_path": 3,
+     "nysdec_peaker_rule_availability": 1,
+     "gas_st_wefor_base_override": 3,
+     "as_reserve_withholding": 1,
+diff --git a/src/market_sim/data/fleet.py b/src/market_sim/data/fleet.py
+index 753b7b99..c31f85dc 100644
+--- a/src/market_sim/data/fleet.py
++++ b/src/market_sim/data/fleet.py
+@@ -4028,6 +4028,16 @@ def build_ercot_offer_surface_cleared_share_markup(
+                 "share too (the span has no wall geometry to re-anchor on "
+                 "its own)."
+             )
++        if (
++            getattr(config, "ercot_shoulder_online_span_steam", False)
++            and config.iso == "ERCOT"
++        ):
++            raise ValueError(
++                "ercot_shoulder_online_span_steam re-anchors the steam RT/SCED "
++                "wall's ladder geometry — arm ercot_offer_surface_cleared_"
++                "share (and ..._steam + ..._rt) too (the steam span has no "
++                "wall to re-anchor on its own)."
++            )
+         return None
+     if config.iso != "ERCOT":
+         return None
+@@ -4191,6 +4201,49 @@ def build_ercot_offer_surface_cleared_share_markup(
+                 year,
+             )
+ 
++    # ERCOT-93 steam RT/SCED basis: the ST_GAS spare-offer ladder lives in its
++    # OWN artifact (rule 19 — the CC/CT RT artifact stays ST-free, test-
++    # enforced), so the "ST" class is priced from
++    # ercot_sced_offer_wall_steam_condbinned.json when the steam leg + RT basis
++    # are both armed. This is the ERCOT-91 §8.1 trip's root-cause fix: the
++    # DAM-basis "ST" ladder sits below the real surface (§9.3 measured the
++    # keeper's steam offers at the RT surface's ~q10-q30), so pricing the
++    # un-cleared steam increment off the online-measured SCED ladder is the
++    # structural correction. Same bin geometry (asserted). YEAR-SCOPED (rule
++    # 13): a year absent from the steam RT artifact keeps the DAM "ST" basis.
++    if rt_flag and steam_flag and "ST" in set(class_of.values()):
++        from market_sim.config import paths as _paths
++
++        steam_rt_path = getattr(
++            config, "ercot_offer_surface_cleared_share_rt_steam_path", None
++        ) or str(_paths.CALIBRATION_DIR / "ercot_sced_offer_wall_steam_condbinned.json")
++        steam_rt_surface = json.loads(Path(steam_rt_path).read_text())
++        steam_rt_prov = steam_rt_surface.get("_provenance", {})
++        steam_rt_edges = tuple(
++            float(x) for x in steam_rt_prov.get("netload_pct_edges", ())
++        )
++        steam_rt_q = np.asarray(steam_rt_prov.get("ladder_quantiles", ()), dtype=float)
++        if steam_rt_edges != edges or not np.array_equal(steam_rt_q, ladder_q):
++            raise ValueError(
++                "ercot_offer_surface_cleared_share_steam RT basis: steam RT "
++                f"artifact geometry (edges {steam_rt_edges}, quantiles "
++                f"{steam_rt_q.tolist()}) != wall geometry (edges {edges}, "
++                f"quantiles {ladder_q.tolist()}) — re-derive "
++                "scripts/data/derive_ercot_sced_offer_wall_steam.py"
++            )
++        _st_tbl = steam_rt_surface.get("ST", {}).get("years", {}).get(str(year))
++        if _st_tbl and len(_st_tbl.get("ladder", ())) == n_bins:
++            rt_walls["ST"] = np.array(
++                [[float(pt[1]) for pt in lad_b] for lad_b in _st_tbl["ladder"]],
++                dtype=float,
++            )  # (n_bins, n_q)
++        else:
++            logger.info(
++                "ERCOT cleared-share steam RT basis: year %s absent from the "
++                "steam RT artifact — DAM 'ST' basis retained (year-scoped)",
++                year,
++            )
++
+     # ERCOT-89 shoulder online-span anchor (ercot_shoulder_online_span): the
+     # measured CONDITIONAL online span (mean telemetered ON share of non-OUT
+     # capability per net-load bin x season x 4h block,
+@@ -4231,6 +4284,30 @@ def build_ercot_offer_surface_cleared_share_markup(
+         for _k, _tbl in span_tables.items():
+             span_h[_k] = _tbl[hour_bin, _season_idx, _block_idx]  # (T,)
+ 
++    # ERCOT-93 steam online span (ercot_shoulder_online_span_steam): the ST_GAS
++    # analogue of the ERCOT-89 anchor above, on its OWN artifact
++    # (ercot_shoulder_online_span_steam_condbinned.json, rule 19). It re-anchors
++    # the steam RT wall's geometry over [boundary, span] so the RT steam ladder
++    # (measured on the ONLINE fleet) is not stretched over ST_GAS capability
++    # telemetered OFF at the same conditions — the ERCOT-90/92 phantom-headroom
++    # wedge. STEAM-SCOPED and NO fast-start-pool coupling: steam min-down 8-12h
++    # fails fast-start eligibility (build_ercot_faststart_pool_markup is CT-
++    # only), so the above-span steam increment keeps the ladder-top (priced,
++    # not capped) with no pool to replace it. Requires the steam leg + RT basis.
++    if getattr(config, "ercot_shoulder_online_span_steam", False):
++        if not (steam_flag and rt_flag):
++            raise ValueError(
++                "ercot_shoulder_online_span_steam re-anchors the steam RT/SCED "
++                "wall's ladder geometry — arm ercot_offer_surface_cleared_"
++                "share_steam and ercot_offer_surface_cleared_share_rt too "
++                "(there is no steam RT ladder to re-anchor without them)."
++            )
++        steam_span_tables, _s_idx, _b_idx = _load_ercot_steam_online_span_tables(
++            config, year, edges, hours
++        )
++        for _k, _tbl in steam_span_tables.items():
++            span_h[_k] = _tbl[hour_bin, _s_idx, _b_idx]  # (T,)
++
+     # Target rows + within-plant share midpoints: every tranche of the plant
+     # ordered by its annual-mean base cost — the model's own rising CAMPD
+     # tranche curve defines each row's curve position (the mid-curve
+@@ -4283,7 +4360,11 @@ def build_ercot_offer_surface_cleared_share_markup(
+             bnd = boundaries[cls_key]  # (n_bins,)
+             wall = walls[cls_key]  # (n_bins, n_q)
+             rtw = rt_walls.get(cls_key)
+-            sp = span_h.get(cls_key) if span_flag else None
++            # span_h carries a key only when that class's online span is armed
++            # (CC/CT via ercot_shoulder_online_span, ST via
++            # ercot_shoulder_online_span_steam); a class without a loaded span
++            # keeps the full-span [boundary, 1.0] geometry (sp is None).
++            sp = span_h.get(cls_key)
+             if sp is None:
+                 # Per-bin target multiplier: 0 (no floor) at/below the
+                 # boundary or where the bin carries no measured boundary/wall.
+@@ -4506,6 +4587,75 @@ def _load_ercot_online_span_tables(
+     return tables, season_idx, block_idx
+ 
+ 
++def _load_ercot_steam_online_span_tables(
++    config: ScenarioConfig,
++    year: int,
++    wall_edges: tuple[float, ...],
++    hours: int,
++) -> "tuple[dict[str, np.ndarray], np.ndarray, np.ndarray]":
++    """Resolve the ERCOT-93 ST_GAS conditional online-span artifact for ``year``.
++
++    The steam analogue of :func:`_load_ercot_online_span_tables`: returns
++    ``({"ST": table}, season_idx, block_idx)`` from
++    ``scripts/data/derive_ercot_shoulder_online_span_steam.py`` (its OWN
++    artifact, rule 19). Cells the corpus never covers (null) resolve to
++    **1.0** — full-span geometry, mechanism inert there. A year absent from the
++    artifact returns ``({}, ...)`` — the caller keeps the "ST" rows byte-
++    identical (YEAR-SCOPED, rule 13: no pooled fallback).
++    """
++    span_path = getattr(config, "ercot_shoulder_online_span_steam_path", None)
++    if not span_path:
++        from market_sim.config import paths as _paths
++
++        span_path = str(
++            _paths.CALIBRATION_DIR / "ercot_shoulder_online_span_steam_condbinned.json"
++        )
++    surface = json.loads(Path(span_path).read_text())
++    prov = surface.get("_provenance", {})
++    edges = tuple(float(x) for x in prov.get("netload_pct_edges", ()))
++    season_of_month = [int(x) for x in prov.get("season_of_month", ())]
++    block_h = int(prov.get("hour_block_hours", 0))
++    if edges != tuple(wall_edges):
++        raise ValueError(
++            "ercot_shoulder_online_span_steam: span artifact bin edges "
++            f"{edges} != cleared-share wall edges {tuple(wall_edges)} — "
++            "re-derive scripts/data/derive_ercot_shoulder_online_span_steam.py"
++        )
++    if len(season_of_month) != 12 or block_h <= 0:
++        raise ValueError(
++            "ercot_shoulder_online_span_steam: span artifact carries no "
++            "season_of_month/hour_block_hours — re-derive "
++            "scripts/data/derive_ercot_shoulder_online_span_steam.py"
++        )
++    month_start_h = np.cumsum([0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30]) * 24
++    hoy = np.arange(hours)
++    month_idx = np.searchsorted(month_start_h[1:], hoy % 8760, side="right")
++    season_idx = np.asarray(season_of_month, dtype=int)[month_idx]  # (hours,)
++    block_idx = (hoy % 24) // block_h  # (hours,)
++
++    tables: dict[str, np.ndarray] = {}
++    tbl = surface.get("ST", {}).get("years", {}).get(str(year))
++    if tbl:
++        span = np.array(
++            [
++                [[np.nan if v is None else float(v) for v in row] for row in mat]
++                for mat in tbl.get("span", ())
++            ],
++            dtype=float,
++        )
++        if span.ndim == 3 and span.shape[0] == len(edges) + 1:
++            # Uncovered cells -> 1.0: full-span geometry, mechanism inert there.
++            tables["ST"] = np.nan_to_num(span, nan=1.0)
++    if not tables:
++        logger.info(
++            "ERCOT steam online span (ERCOT-93): year %s absent from the steam "
++            "span artifact — full-span steam wall geometry retained byte-"
++            "identical (year-scoped, rule 13)",
++            year,
++        )
++    return tables, season_idx, block_idx
++
++
+ def build_ercot_faststart_pool_markup(
+     fleet_arrays: "FleetArrays",
+     generators: list[Generator],
