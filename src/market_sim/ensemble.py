@@ -277,6 +277,48 @@ def _member_config(iso: str, cache_key: str) -> "ScenarioConfig | None":
     return ScenarioConfig.from_yaml(config_path)
 
 
+def _config_year_range(config: "ScenarioConfig | None") -> tuple[int, int]:
+    """Return the ``(start, end)`` forecast years a config was solved over.
+
+    Mirrors ``runner.evolve_fleet``: ``config.start_year`` / ``end_year`` when
+    set, else the module :data:`START_YEAR` / :data:`END_YEAR` default (the full
+    2026-2050 horizon). A ``None`` config (a hand-built fixture cache carrying no
+    ``config.yaml``) also defers to the module default. At the default horizon
+    this is byte-identical to the pre-horizon-aware behaviour.
+
+    The band aggregation MUST use this rather than the module constants directly:
+    a member solved over a narrower T1 window (e.g. 2026-2030) has no cached
+    result past its ``end_year``, so iterating the module 2026-2050 would raise
+    ``FileNotFoundError`` on the first unsolved year.
+    """
+    start = (
+        config.start_year
+        if config is not None and config.start_year is not None
+        else START_YEAR
+    )
+    end = (
+        config.end_year
+        if config is not None and config.end_year is not None
+        else END_YEAR
+    )
+    return start, end
+
+
+def _members_year_range(members: dict, iso: str) -> tuple[int, int]:
+    """Resolve the solved-year range from the members' own cached configs.
+
+    Ensemble members share the base config's horizon (the sampler and weather
+    overrides never touch ``start_year`` / ``end_year``), so the first member
+    that carries a config fixes the range for the whole ensemble. Falls back to
+    the module full-horizon default when no member cache carries a config.
+    """
+    for key in members.values():
+        config = _member_config(iso, key)
+        if config is not None:
+            return _config_year_range(config)
+    return START_YEAR, END_YEAR
+
+
 def _distribution(values: list[float]) -> dict[str, float]:
     """Return summary distribution statistics for a list of member values.
 
@@ -361,19 +403,24 @@ def summarize_ensemble(members: dict[int, str], iso: str) -> dict:
     if not members:
         raise ValueError("members must be non-empty")
 
+    # Aggregate over the members' own solved horizon, not the module 2026-2050
+    # default: a T1-window ensemble (e.g. 2026-2030) has no cache past its
+    # end_year (see :func:`_config_year_range`).
+    start_year, end_year = _members_year_range(members, iso)
+
     # Per-member, per-year summaries reusing the canonical export aggregation.
     per_member: dict[int, dict[str, dict]] = {}
     for wy, key in members.items():
         config = _member_config(iso, key)
         years: dict[str, dict] = {}
-        for year in range(START_YEAR, END_YEAR + 1):
+        for year in range(start_year, end_year + 1):
             result = cache.load_result(iso, key, year)
             context = cache.load_fleet_context(iso, key, year)
             years[str(year)] = _summarize_year(result, context, config)
         per_member[wy] = years
 
     distribution: dict[str, dict] = {}
-    for year in range(START_YEAR, END_YEAR + 1):
+    for year in range(start_year, end_year + 1):
         ys = str(year)
         distribution[ys] = _aggregate_year({wy: per_member[wy][ys] for wy in members})
 
@@ -431,13 +478,22 @@ _FUEL_METRIC_PREFIX: str = "generation_twh:"
 
 
 def _member_metric_values(
-    members: dict[str, str], iso: str
+    members: dict[str, str],
+    iso: str,
+    year_range: tuple[int, int] | None = None,
 ) -> dict[int, dict[str, list[float]]]:
     """Load every sampled member and index metric values by year then metric.
 
     Args:
         members: Map of draw-id to ``cache_key`` (from :func:`run_ensemble`).
         iso: ISO identifier the members were run for.
+        year_range: The ``(start, end)`` forecast years to aggregate over,
+            inclusive. Pass the base config's range (:func:`_config_year_range`)
+            so a T1-window ensemble is read over the horizon it was actually
+            solved for; ``None`` resolves it from the members' own cached configs
+            (:func:`_members_year_range`), falling back to the module 2026-2050
+            default. Reading past a member's ``end_year`` would raise
+            ``FileNotFoundError`` on the first unsolved year.
 
     Returns:
         ``values[year][metric]`` = list of that metric's value across members,
@@ -448,13 +504,14 @@ def _member_metric_values(
     Raises:
         FileNotFoundError: When a member's cached result is missing.
     """
+    start_year, end_year = year_range or _members_year_range(members, iso)
     # Per (draw, year) summary, then transpose to year -> metric -> [values].
     summaries: dict[str, dict[int, dict]] = {}
     fuels: set[str] = set()
     for draw_id, key in members.items():
         config = _member_config(iso, key)
         by_year: dict[int, dict] = {}
-        for year in range(START_YEAR, END_YEAR + 1):
+        for year in range(start_year, end_year + 1):
             result = cache.load_result(iso, key, year)
             context = cache.load_fleet_context(iso, key, year)
             summary = _summarize_year(result, context, config)
@@ -466,7 +523,7 @@ def _member_metric_values(
         f"{_FUEL_METRIC_PREFIX}{fuel}" for fuel in sorted(fuels)
     ]
     values: dict[int, dict[str, list[float]]] = {}
-    for year in range(START_YEAR, END_YEAR + 1):
+    for year in range(start_year, end_year + 1):
         per_metric: dict[str, list[float]] = {m: [] for m in metrics}
         for draw_id in members:
             summary = summaries[draw_id][year]
@@ -724,7 +781,9 @@ def export_sampler_ensemble(
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    values = _member_metric_values(members, iso)
+    # Aggregate over the base config's solved horizon (authoritative -- the
+    # draws share it), so a T1-window ensemble reads only its solved years.
+    values = _member_metric_values(members, iso, _config_year_range(base_config))
     draws_path = out_dir / "draws.parquet"
     metrics_path = out_dir / "metrics.parquet"
     bands_path = out_dir / "bands.parquet"
