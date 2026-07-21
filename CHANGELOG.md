@@ -1,5 +1,44 @@
 # Changelog
 
+## 2026-07-20 — FF-G3: forward net-CONE evolution (design + grounding, default-inert)
+
+Forecast-only capacity-price surface; **no default flip, no LP solve, pricing
+seam untouched, backcast byte-identical** (default `cache_key` cache-neutral —
+unchanged with the field added; the field is dropped from the hash at its
+`"hold_last"` default). Full methodology, per-ISO grounding, delta ledger,
+divergence quantification, field survey, and owner-decision box:
+`docs/capacity-price-forward-methodology-2026-07.md` +
+`docs/handoffs/ff-g3-net-cone-forward-2026-07.md`.
+
+- **Designs the explicit forward-evolution rule** for the net-CONE anchor beyond
+  the last published vintage (today `resolve_demand_curve_vintage` silently
+  HOLDS-LAST for 25 forecast years, a live bias — PJM's cleared 2028/29 net-CONE
+  is +34% over the 2027/28 value on disk). New `ScenarioConfig.
+  net_cone_forward_escalation` (`"hold_last"` default | `"reindex_net"` |
+  `"reindex_gross"`), in `_CACHE_KEY_OPTIONAL_FIELDS` (default cache-neutral),
+  TIER-2, `__post_init__`-coerced to `"hold_last"` in backcast.
+- **`constants.forward_net_cone_anchor(iso, year, escalation, *, rate,
+  eas_offset_per_kw_yr)`** — pure resolver on `resolve_demand_curve_vintage`;
+  escalates only years past the last published vintage; `None` for CAISO/ERCOT.
+  `constants.NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO` — cited per-ISO real rate,
+  **0.0 for all** (field finding: ISOs escalate GROSS CONE by a construction
+  index and RE-NET the E&AS offset each year; net-CONE is never indexed directly,
+  and Brattle's out-year guidance is inflation-only, so sharp recent moves are
+  step re-anchorings, not a real trend).
+- **Scope guard:** the escalation is NOT wired into the pricing seam
+  `capacity_price_per_firm_mw_yr` (FF-2C owns the seam wiring + per-ISO
+  `capacity_market_clearing` flips); `forward_net_cone_anchor` is exercised by
+  tests + the offline divergence quantification only.
+- **Researched forward vintages filed as MANUAL DOWNLOADS NEEDED** (not encoded —
+  the machine-readable sources are bot-walled here; rule 13 forbids guessing):
+  PJM 2028/29 (325.69 $/MW-day UCAP), NYISO 2026/27, MISO PY2026/27 (per-LRZ +
+  RBDC), ISO-NE FCA 19 2028/29 (regime-superseded — the FCM is terminating for a
+  prompt/seasonal market with no published parameters). sha256-pinned where a PDF
+  was obtained (`data/raw/capacity-market/demand-curve/README.md`).
+- `tests/test_net_cone_forward.py` (19): hold_last ≡ the seam's current anchor
+  (byte-identity), central-rate collapse, reindex arithmetic, no-escalation
+  at/before the last vintage, registry hygiene, config cache/backcast invariants.
+
 ## 2026-07-20 — Fuel-forward trajectories: AEO2025 → AEO2026 vintage bump + near-term triangulation (FF-G2)
 
 Forecast-only fuel-price refresh; **no LP formulation change, backcast
