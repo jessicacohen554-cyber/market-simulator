@@ -1194,7 +1194,18 @@ DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
     # ship {}" rule this stays {} (=> 0 MW; DC stays implicit in the
     # DEMAND_GROWTH_RATES near era) until a material decomposition lands — a
     # documented deferral, not an omission (FF-0D audit §1.4, P2 low-materiality).
-    # Source: ISO-NE 2026 CELT Report + Large Load Forecast deck (fx2026_large_loads).
+    # 2026-07-21 RE-VERIFICATION (this branch): re-checked the latest published
+    # ISO-NE vintages — the 2026 CELT Report (published 2026-05-01) and the
+    # fx2026_large_loads Large Load Forecast deck (dated 2026-03-27) are STILL the
+    # current vintages; no newer ISO-NE large-load decomposition has been
+    # published. The deck's energy leg corroborates the immateriality: large loads
+    # consume ~800 GWh/yr over 2030-2035 rising to ~1,000 GWh in the 2040s, i.e.
+    # ~0.68% of the ~117 TWh 2025 net energy — like the ~0.5%-of-peak figure, an
+    # order of magnitude under the ~1% materiality bar. Deferral CONFIRMED; {}
+    # holds (no forward-sourceable MW-by-year DC trajectory to populate; forcing
+    # one would violate rule 5/11).
+    # Source: ISO-NE 2026 CELT Report (2026-05-01) + Large Load Forecast deck
+    # (fx2026_large_loads.pdf, 2026-03-27).
     "NEISO": {},
 }
 
