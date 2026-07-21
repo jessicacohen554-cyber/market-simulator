@@ -1,0 +1,124 @@
+{
+  "env": {
+    "MARKET_SIM_HIGHS_THREADS": "1",
+    "MARKET_SIM_WARMSTART": "1",
+    "MARKET_SIM_WARMSTART_XYEAR": "0"
+  },
+  "git_dirty": true,
+  "git_sha": "d7868fc0",
+  "hash_scheme": "sha256-of-canonical-column-float64-bytes",
+  "highspy_version": "unknown",
+  "keepers": {
+    "CAISO": {
+      "bundle": "results/calibration/caiso102_hourfix_B",
+      "content_hashes": {
+        "btm.parquet": "f59e46c76213b7b67bed113a70233bcc9484bc2c50bef1daed6a4c88b8150545",
+        "dispatch/2023_P1.parquet": "51c51d57244086abe2944643be25934bfa84169eb84a62502c2dfccfd5902f77",
+        "dispatch/2024_P1.parquet": "c6b92dbd9c8e527cfd412bfd7bd0a467645ee995144c9a62595156dfdbee0ec9",
+        "dispatch/2025_P1.parquet": "82fc92d5640c5b3843f75fb86524a9d802bb78a19a72e9058f49b3b324aad1b6",
+        "flows.parquet": "b0810089e113f87c8a641543f6cfd772ad345d603fd38c620594743b9a259615",
+        "storage.parquet": "2c506e624e2c0924687926f832be4eea5f85d30a266481f98b9b27bc3d0fb334",
+        "system.parquet": "b289345cd64b237510d40c28fa47b6f96ef27870138ac481792f2cdf101af97c"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_takeorpay_from_data",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "nyiso_scr_edrp",
+        "nyiso_scr_edrp_strike",
+        "plant_tranche_config",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "environment",
+          "nyiso_scr_edrp",
+          "nyiso_scr_edrp_strike"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 208,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [
+          "caiso_charge_allocation_schedule",
+          "ercot_faststart_pool_offer",
+          "ercot_faststart_pool_offer_path",
+          "ercot_shoulder_online_span",
+          "ercot_shoulder_online_span_path",
+          "gas_st_drag_seasonal",
+          "gas_st_drag_seasonal_path",
+          "net_cone_forward_escalation",
+          "nyiso_scr_edrp",
+          "nyiso_scr_edrp_strike"
+        ],
+        "scenario_config_matched": 580
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-19-caiso-102-hourfix",
+      "recorded_flag_count": 199,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
+    "NEISO": {
+      "bundle": "results/calibration/neiso59_reaudit_corrected_outages",
+      "content_hashes": {
+        "btm.parquet": "30e617f6492cc201e0cfc976b286e76484548e4d3203dc81f6709d8f55a207fe",
+        "dispatch/2023_P1.parquet": "5466b7d661bb0a45b44b9eba94f3f6d75fce91ab79443d2c4e5a38f177bf71ea",
+        "dispatch/2023_P2.parquet": "f408b37f4c36c53475a12630c858eb5d1b7400649bc07c08620049395f63b7bf",
+        "dispatch/2024_P1.parquet": "2ddcf739becddc1002a3acbb03b0ee55c664836d4f07738806a6e58e26f200ea",
+        "dispatch/2024_P2.parquet": "56cc070ff31ff0461b884260da5ad28d25ffc9f593e0096b3283fe444345f625",
+        "dispatch/2025_P1.parquet": "70e5d830d66a85e1fb5c39f858282bb97114971abc647f52bef47a199fe85b31",
+        "dispatch/2025_P2.parquet": "b2ac32791a00862d58fedd5e3b968227aac7eb1f6cc340c2699de7e283fc9ade",
+        "flows.parquet": "ed3960ef0c23b13450b66d6a7a6c401609f9a5d327d64a4d6a44f04ee2ac0c6d",
+        "storage.parquet": "97bbfbde0964f244a2a68177ba4200491632aef0032d2dd03eb2b4911fd67b42",
+        "system.parquet": "0b8135c7c75f5e44c748be9d3357c412eee85a63856dac4de42cc3f0a25f1ef1"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_takeorpay_from_data",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "nyiso_scr_edrp",
+        "nyiso_scr_edrp_strike",
+        "plant_tranche_config",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "nyiso_scr_edrp",
+          "nyiso_scr_edrp_strike"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 209,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [
+          "net_cone_forward_escalation",
+          "nyiso_scr_edrp",
+          "nyiso_scr_edrp_strike"
+        ],
+        "scenario_config_matched": 587
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-13-neiso-60-phantom-outage",
+      "recorded_flag_count": 199,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    }
+  },
+  "note": "Current-HEAD regression baselines (Stage-0). NOT byte-reproductions of the registered July-3 keeper bundles. Multi-GB bundles are gitignored; only this manifest is committed.",
+  "stage_tag": "3f-transmission-before"
+}
