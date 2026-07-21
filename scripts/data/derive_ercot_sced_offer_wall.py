@@ -7,7 +7,8 @@ windows the *entire* submitted DAM curve mass prices $13-44 effective, while the
 real $150-800 moderate-tightness band cleared on the RT (SCED) offers of the
 ~3 GW online spare beyond the AS carve-out — a surface the 60-Day DAM
 disclosure genuinely does not contain. This derive measures that surface from
-the 60-Day **SCED** Gen Resource Data sample days on disk:
+the 60-Day **SCED** Gen Resource Data full-year corpus on disk (the
+publication-month shards ``data/raw/ercot/YYYY-MM.part*.parquet``):
 
 * Per SCED interval, per merchant gas class (CCGT90/CCLE90 -> CC,
   SCGT90/SCLE90 -> CT; ST_GAS deliberately EXCLUDED — rule 19, the steam class
@@ -28,15 +29,19 @@ an ex-ante market-design measurement (posted RT offers of online capability,
 never clearing-price outcomes fed back as inputs); the driver is the year's own
 net-load percentile (forward-native); zero fitted scalars. The artifact is
 **YEAR-SCOPED**: no pooled fallback is emitted — a year absent from the
-artifact gets NO RT wall (the DAM basis is retained byte-identical). This is
-deliberate (charter §3.4/§5): the on-disk SCED corpus is scoped SAMPLE days,
-and a 2024/2025-derived surface is barred from 2023's distinct post-Uri
-conservative-operations regime.
+artifact gets NO RT wall (the DAM basis is retained byte-identical), and each
+year's ladder is derived only from that year's own posted RT offers. Since the
+full-year NP3-965 intake (2026-07-21) the training window 2023-2025 is all
+present; the owner authorized extending the SCED basis to 2023, lifting the
+earlier post-Uri regime bar. The publication shards carry ~60-day-lagged
+delivery, so rows are filtered to the exact DELIVERY year (`_delivery_year_rows`)
+— the validation-holdout 2022 and locked-test 2026 rows carried in adjacent
+publication files never enter a training-year surface.
 
 Coverage is DISCLOSED, never silently capped: the provenance block records the
-per-year sample-day inventory and the per-(class x bin) interval/day counts, so
-an under-sampled bin (e.g. 2025's tail bins, control days only) is visible at
-the artifact level.
+per-year source-file inventory and the per-(class x bin) interval/day counts, so
+an under-sampled bin (e.g. 2024-05, sparse in the corpus; 2025 Nov partial / Dec
+absent, published after the corpus cutoff) is visible at the artifact level.
 
 FROZEN AGAINST RESIDUALS (rule 23): re-derive only when the SCED disclosure
 source files update; never because a residual moved. Re-derivation commits must
@@ -53,6 +58,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -106,20 +112,93 @@ _READ_COLS = [
     "Base Point",
 ] + [c for pair in zip(_SCED2_MW, _SCED2_PR) for c in pair]
 
+# Numeric SCED columns stored as strings in the corpus — the full-year
+# publication shards leave unused curve steps as EMPTY STRINGS ('') where the
+# sample-day extracts left them null, so a bare ``.to_numpy(float)`` raises.
+# Coerced once at load ('' -> NaN); the segment builder already treats NaN as
+# an absent step (np.isfinite guard).
+_NUMERIC_COLS = _SCED2_MW + _SCED2_PR + ["HASL", "HSL", "HDL", "LSL", "Base Point"]
+
+
+def _coerce_sced_numeric(df: pd.DataFrame) -> pd.DataFrame:
+    """In-place-coerce the string-typed numeric SCED columns present to float."""
+    cols = [c for c in _NUMERIC_COLS if c in df.columns]
+    df[cols] = df[cols].apply(pd.to_numeric, errors="coerce")
+    return df
+
+
+# Full-year publication-month shard name: ``YYYY-MM.partNNNN.parquet``. The
+# ``YYYY-MM`` is the ERCOT MIS PUBLICATION month; NP3-965 posts ~60 days after
+# delivery, so a publication file carries delivery dates ~2 months earlier. A
+# file is therefore NEVER trusted to belong to its filename year — the shards
+# are selected by a publication WINDOW and rows are filtered to the exact
+# DELIVERY year (`_delivery_year_rows`). Without that filter the ~60-day bleed
+# would fold the validation holdout (Nov/Dec 2022, carried in early-2023
+# publication files) and the locked-test 2026 rows into adjacent training
+# years — a rule-22 holdout leak.
+_PUB_SHARD_RE = re.compile(r"(\d{4})-(\d{2})\.part\d+\.parquet$")
+
+
+def _sced_source_files(year: int) -> list[Path]:
+    """Parquet shards that may contain SCED delivery rows for ``year``.
+
+    Unions the two on-disk naming families:
+
+    * legacy delivery-labeled sample-day files
+      (``60_DAY_SCED_DISCLOSURE_..._{year}_*.parquet``), and
+    * full-year publication-month shards (``YYYY-MM.partNNNN.parquet``) whose
+      publication month falls in ``[(year, Feb) .. (year+1, Mar)]`` — the
+      window that brackets delivery year ``year`` (delivery month M publishes
+      ~M+2; ±1 month margin for the 60-day lag straddling month boundaries).
+
+    Row-level delivery-year filtering (`_delivery_year_rows`) is still applied
+    after read, so an over-wide window only costs a wasted read, never a leak.
+    """
+    lo = year * 12 + 1  # (year, Feb), 0-based month index
+    hi = (year + 1) * 12 + 2  # (year+1, Mar)
+    pub: list[Path] = []
+    for p in SCED_DIR.glob("[0-9][0-9][0-9][0-9]-[0-1][0-9].part*.parquet"):
+        m = _PUB_SHARD_RE.search(p.name)
+        if m and lo <= int(m.group(1)) * 12 + (int(m.group(2)) - 1) <= hi:
+            pub.append(p)
+    # The full-year publication-month corpus SUPERSEDES the legacy
+    # delivery-labeled sample-day extracts: those specific days also appear in
+    # the full-year shards (and the legacy extracts are hour-windowed subsets),
+    # so unioning both would double-weight them. Fall back to legacy only when
+    # no full-year shard covers the year's publication window.
+    if pub:
+        return sorted(pub)
+    legacy = SCED_DIR.glob(
+        f"60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_{year}_*.parquet"
+    )
+    return sorted(legacy)
+
+
+def _delivery_year_rows(df: pd.DataFrame, year: int) -> pd.DataFrame:
+    """Keep only rows whose SCED delivery year == ``year``.
+
+    The delivery year is the ``SCED Time Stamp`` (Central Prevailing Time)
+    calendar year. The corpus stamps are ``MM/DD/YYYY HH:MM:SS`` (the NP3-965
+    publication format); legacy sample-day files were ISO ``YYYY-MM-DD``. The
+    year is the only 4-consecutive-digit run in either format (month/day are
+    always 2 digits), so a first-``\\d{4}`` extract reads the year from both.
+    This equals the CST year everywhere except the sub-hour Jan-1 boundary
+    (negligible against the whole-month 60-day-lag bleed this removes).
+    """
+    yr = df["SCED Time Stamp"].astype(str).str.extract(r"(\d{4})", expand=False)
+    return df[yr == str(year)]
+
 
 def _load_year(year: int) -> tuple[pd.DataFrame, list[str]]:
     """ON-status merchant gas SCED rows for ``year`` + the source file names."""
-    files = sorted(
-        SCED_DIR.glob(
-            f"60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_{year}_*.parquet"
-        )
-    )
+    files = _sced_source_files(year)
     frames: list[pd.DataFrame] = []
     for path in files:
         df = pd.read_parquet(path, columns=_READ_COLS)
+        df = _delivery_year_rows(df, year)
         df = df[df["Resource Type"].isin(CLASS_OF_RESTYPE)]
         stat = df["Telemetered Resource Status"].astype(str).str.strip()
-        frames.append(df[stat.str.startswith("ON")].copy())
+        frames.append(_coerce_sced_numeric(df[stat.str.startswith("ON")].copy()))
     if not frames:
         return pd.DataFrame(columns=_READ_COLS), []
     return pd.concat(frames, ignore_index=True), [p.name for p in files]
@@ -172,14 +251,21 @@ def _spare_segments(df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def derive_year(year: int, gas_day: pd.Series) -> tuple[dict, dict, list[str]]:
-    """Return ``({cls: {"ladder": [...]}}, coverage, source_files)`` for one year."""
-    df, files = _load_year(year)
-    if df.empty:
-        return {}, {}, files
+def _chunk_segments(
+    df: pd.DataFrame, gas_day: pd.Series, hour_bin: np.ndarray
+) -> pd.DataFrame:
+    """One file's ON-gas rows -> priced/binned spare segments (memory-bounded).
 
-    # CPT -> fixed CST -> non-leap hour-of-year (the probe's clock handling;
-    # Feb 29 dropped to match the model's 8760 clock and _netload_pct).
+    The per-file leg of the streaming derive: CPT->CST clock, hour-of-year,
+    delivered-gas normalization and net-load binning, applied to a single
+    shard's rows so the wide 70-column frame is never held for a whole year.
+    Returns segments with ``cls, bin, mult, mw, ts, day`` (empty frame if the
+    shard contributes nothing).
+    """
+    if df.empty:
+        return pd.DataFrame(columns=["cls", "bin", "mult", "mw", "ts", "day"])
+    # CPT -> fixed CST -> non-leap hour-of-year (Feb 29 dropped to match the
+    # model's 8760 clock and _netload_pct).
     ts = pd.to_datetime(df["SCED Time Stamp"])
     cst = ts.dt.tz_localize(
         "America/Chicago", ambiguous=True, nonexistent="shift_forward"
@@ -189,46 +275,92 @@ def derive_year(year: int, gas_day: pd.Series) -> tuple[dict, dict, list[str]]:
     hh = cst.dt.hour.to_numpy()
     ok = ~((mo == 2) & (dy == 29))
     df = df.loc[np.asarray(ok)].copy()
+    if df.empty:
+        return pd.DataFrame(columns=["cls", "bin", "mult", "mw", "ts", "day"])
     df["hoy"] = _MONTH_START_HOUR[mo[ok] - 1] + (dy[ok] - 1) * 24 + hh[ok]
     df["cls"] = df["Resource Type"].map(CLASS_OF_RESTYPE)
     df["_ts_key"] = df["SCED Time Stamp"].to_numpy()
     df["_date"] = cst.dt.normalize().dt.tz_localize(None)[np.asarray(ok)].to_numpy()
+    df["gas_day"] = gas_day.reindex(pd.DatetimeIndex(df["_date"])).to_numpy(float)
+    df = df[df["gas_day"] > 0]
+    if df.empty:
+        return pd.DataFrame(columns=["cls", "bin", "mult", "mw", "ts", "day"])
 
-    gas = gas_day.reindex(pd.DatetimeIndex(df["_date"])).to_numpy(float)
-    df["gas_day"] = gas
-    df = df[df["gas_day"] > 0].copy()
-
-    segments = _spare_segments(df)
-    # Effective-HR multiplier normalization: price / delivered-gas day (the
-    # DAM wall's own convention, so the apply-time target = mult x gas_day).
+    seg = _spare_segments(df)
+    if seg.empty:
+        return pd.DataFrame(columns=["cls", "bin", "mult", "mw", "ts", "day"])
+    # Effective-HR multiplier: price / delivered-gas day (the DAM wall's own
+    # convention, so the apply-time target = mult x gas_day).
     date_by_ts = dict(zip(df["_ts_key"], df["gas_day"]))
-    segments["mult"] = segments["price"] / segments["ts"].map(date_by_ts).astype(float)
+    seg["mult"] = (seg["price"] / seg["ts"].map(date_by_ts).astype(float)).astype(
+        "float32"
+    )
+    seg["mw"] = seg["mw"].astype("float32")
+    seg["bin"] = hour_bin[np.minimum(seg["hoy"].to_numpy(int), HOURS - 1)]
+    seg["day"] = seg["hoy"].to_numpy(int) // 24
+    return seg[["cls", "bin", "mult", "mw", "ts", "day"]]
 
+
+def derive_year(year: int, gas_day: pd.Series) -> tuple[dict, dict, list[str]]:
+    """Return ``({cls: {"ladder": [...]}}, coverage, source_files)`` for one year.
+
+    Streams the year's source shards one at a time, accumulating only the
+    compact ``(mult, mw)`` arrays and interval/day sets per ``(class, bin)`` —
+    the full-year corpus's wide offer-curve frame never lands in memory at once
+    (the non-streaming build OOM'd at ~12 GB on a full year).
+    """
+    files = _sced_source_files(year)
     pct = _netload_pct(year)
     edges = np.asarray(NETLOAD_PCT_EDGES)
     hour_bin = np.searchsorted(edges, pct, side="right")  # (HOURS,)
     n_bins = len(edges) + 1
-    segments["bin"] = hour_bin[np.minimum(segments["hoy"].to_numpy(int), HOURS - 1)]
+
+    mult_acc: dict[tuple, list[np.ndarray]] = {}
+    mw_acc: dict[tuple, list[np.ndarray]] = {}
+    ts_seen: dict[tuple, set] = {}
+    day_seen: dict[tuple, set] = {}
+    saw_rows = False
+    for path in files:
+        df = pd.read_parquet(path, columns=_READ_COLS)
+        df = _delivery_year_rows(df, year)
+        df = df[df["Resource Type"].isin(CLASS_OF_RESTYPE)]
+        stat = df["Telemetered Resource Status"].astype(str).str.strip()
+        df = _coerce_sced_numeric(df[stat.str.startswith("ON")].copy())
+        seg = _chunk_segments(df, gas_day, hour_bin)
+        del df
+        if seg.empty:
+            continue
+        saw_rows = True
+        for (cls, b), grp in seg.groupby(["cls", "bin"], sort=False):
+            key = (cls, int(b))
+            mult_acc.setdefault(key, []).append(grp["mult"].to_numpy())
+            mw_acc.setdefault(key, []).append(grp["mw"].to_numpy())
+            ts_seen.setdefault(key, set()).update(grp["ts"].tolist())
+            day_seen.setdefault(key, set()).update(grp["day"].tolist())
+        del seg
+    if not saw_rows:
+        return {}, {}, [p.name for p in files]
 
     out: dict[str, dict] = {}
     coverage: dict[str, list[dict]] = {}
-    for cls in sorted(segments["cls"].unique()):
-        seg = segments[segments["cls"] == cls]
+    for cls in sorted({c for (c, _b) in mult_acc}):
         ladders: list[list[list[float]]] = []
         cov: list[dict] = []
         for b in range(n_bins):
-            gb = seg[seg["bin"] == b]
-            n_iv = int(gb["ts"].nunique())
-            n_days = int(pd.Series(gb["hoy"] // 24).nunique())
-            qs = (
-                _weighted_quantiles(
-                    gb["mult"].to_numpy(float),
-                    gb["mw"].to_numpy(float),
-                    LADDER_QUANTILES,
+            key = (cls, b)
+            if key in mult_acc:
+                mult = np.concatenate(mult_acc[key])
+                mw = np.concatenate(mw_acc[key])
+                qs = _weighted_quantiles(
+                    mult.astype(float), mw.astype(float), LADDER_QUANTILES
                 )
-                if len(gb)
-                else [float("nan")] * len(LADDER_QUANTILES)
-            )
+                n_iv = len(ts_seen[key])
+                n_days = len(day_seen[key])
+                mw_sum = float(mw.sum())
+            else:
+                qs = [float("nan")] * len(LADDER_QUANTILES)
+                n_iv = n_days = 0
+                mw_sum = 0.0
             ladders.append(
                 [[float(q), round(m, 3)] for q, m in zip(LADDER_QUANTILES, qs)]
             )
@@ -236,14 +368,12 @@ def derive_year(year: int, gas_day: pd.Series) -> tuple[dict, dict, list[str]]:
                 {
                     "intervals": n_iv,
                     "days": n_days,
-                    "mean_spare_gw": round(
-                        float(gb["mw"].sum()) / max(n_iv, 1) / 1e3, 3
-                    ),
+                    "mean_spare_gw": round(mw_sum / max(n_iv, 1) / 1e3, 3),
                 }
             )
         out[cls] = {"ladder": ladders}
         coverage[cls] = cov
-    return out, coverage, files
+    return out, coverage, [p.name for p in files]
 
 
 def main() -> None:
@@ -271,8 +401,17 @@ def main() -> None:
     result: dict = {
         "_provenance": {
             "source": (
-                "ERCOT 60-Day SCED Disclosure Gen Resource Data, scoped sample "
-                "days, delivery years " + "-".join(str(y) for y in args.years)
+                "ERCOT 60-Day SCED Disclosure Gen Resource Data (NP3-965), "
+                "full-year publication-month corpus (data/raw/ercot/"
+                "YYYY-MM.part*.parquet), rows filtered to delivery years "
+                + "-".join(str(y) for y in args.years)
+                + "; publication files carry ~60-day-lagged delivery, so "
+                "rows are delivery-year-filtered — 2022 (validation holdout) "
+                "and 2026 (locked test) rows carried in adjacent publication "
+                "files are excluded. Per-delivery-year coverage (may be "
+                "partial at the corpus edges — 2024-05 sparse; 2025 Nov "
+                "partial and Dec absent, published after the corpus cutoff) "
+                "is disclosed per (class x bin) in coverage below"
             ),
             "method": (
                 "per-interval Base Point -> HASL segments of the SCED2 "
@@ -296,13 +435,16 @@ def main() -> None:
                 "CT": ["SCGT90", "SCLE90"],
             },
             "year_scoped": (
-                "NO pooled fallback by design (rule 13): the SCED corpus is "
-                "scoped sample days and the RT offer surface is regime-bound "
-                "— a year absent from this artifact gets NO RT wall (the DAM "
-                "basis is retained); a 2024/2025-derived ladder is barred "
-                "from 2023's post-Uri conservative-operations regime"
+                "Per-year ladders, NO pooled fallback (rule 13): a year "
+                "absent from this artifact gets NO RT wall (the DAM basis is "
+                "retained byte-identical). 2023 is now INCLUDED — the "
+                "full-year NP3-965 corpus intake (2026-07-21) supplies "
+                "complete 2023 delivery coverage, and the owner authorized "
+                "extending the SCED basis to 2023, lifting the earlier "
+                "post-Uri regime bar (charter §3.4/§5). Each year's ladder is "
+                "still derived only from that year's own posted RT offers"
             ),
-            "sample_day_files": sources,
+            "source_files": sources,
             "coverage": coverage,
             "frozen": (
                 "rule 23 — re-derive only on a SCED disclosure source-data "
