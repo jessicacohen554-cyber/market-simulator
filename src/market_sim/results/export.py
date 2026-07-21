@@ -102,6 +102,14 @@ def _summarize_year(result, context, config=None) -> dict:
     generation_twh: dict[str, float] = {}
     capacity_gw: dict[str, float] = {}
     for g, fuel in enumerate(context.fuel_types):
+        # Demand-response pseudo-generators (NYISO SCR/EDRP price-responsive
+        # blocks) clear the energy balance as supply but represent AVOIDED LOAD,
+        # not generation — they are absent from the EIA-923 generation benchmark,
+        # so counting their scarcity-hour MWh as a "demand_response" fuel class
+        # would create a spurious generation-mix miss. Exclude from both the
+        # generation and nameplate summaries (data.nyiso_demand_response).
+        if fuel == "demand_response":
+            continue
         generation_twh[fuel] = (
             generation_twh.get(fuel, 0.0) + float(gen_per_unit[g]) / _MWH_PER_TWH
         )

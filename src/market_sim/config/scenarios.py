@@ -1895,6 +1895,29 @@ class ScenarioConfig:
     # Forward-reproducible: the NYISO Locality Bulk-Power Transmission Capability
     # tables publish every capability year and respond to new cables / topology
     # (rule #12/#13/#17). Default off (byte-identical); NYISO-only.
+    nyiso_scr_edrp: bool = False  # NYISO SCR/EDRP emergency demand response as
+    # price-responsive supply blocks (data.nyiso_demand_response). NYISO
+    # registers ~1.2-1.5 GW (summer) of demand-side reliability capability in
+    # two programs — Special Case Resources (SCR) and the Emergency Demand
+    # Response Program (EDRP) — dispatched only when NYISO declares a
+    # reliability event, which in practice falls on summer heat-driven scarcity
+    # peaks. When on, one pseudo-generator per model zone is added at capacity =
+    # the zone's Gold-Book-registered DR MW and marginal cost = the strike
+    # (nyiso_scr_edrp_strike); it clears the ordinary energy balance and only
+    # dispatches when the zone LBMP would exceed the strike — an ENDOGENOUS
+    # scarcity trigger, NEVER pinned to observed event dates (rule 13/17). The
+    # capacity re-derives from the next Gold Book, the strike is a market-design
+    # constant, and deployment responds to whatever scarcity a forward year
+    # produces, so it is admissible in backcast AND forecast. Seasonal
+    # availability (summer/winter capability period) is applied by
+    # data.nyiso_demand_response.inject_nyiso_dr_availability. Default off
+    # (byte-identical); NYISO-only. Targets the downstate scarcity tail.
+    nyiso_scr_edrp_strike: float = 500.0  # DR block marginal cost ($/MWh): the
+    # published NYISO EDRP compensation floor — EDRP pays the greater of the
+    # real-time LBMP or $500/MWh (NYISO Emergency Operations Manual / Market
+    # Services Tariff §5.12), so $500 is the price below which the registered
+    # demand-side capability will not curtail. Rule 4: not a residual-fit knob —
+    # a market-design constant. Only consumed when nyiso_scr_edrp is on.
     nyiso_firm_imports: bool = False  # NYISO firm (must-flow) import baseload:
     # Hydro-Québec (Châteauguay/Cedars) and Ontario (IESO) sell NY firm,
     # long-term scheduled hydro/nuclear baseload that flows regardless of NY's
