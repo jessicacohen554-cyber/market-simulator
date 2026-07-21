@@ -477,5 +477,21 @@ right fix, a MAJOR multi-session charter — EIA-930 BALANCE data shown on disk)
 re-charter as caiso-110. No form armed pending grant. Full record:
 `results/calibration/FINDING-caiso109-westwide-surplus-derive-2026-07-21.md`.
 
+**Owner GRANTED (2) build the endogenous WECC node — foundation delivered this
+session (LP wiring + A/B = caiso-110).** Design/handoff:
+`docs/handoffs/caiso-endogenous-wecc-node-design-2026-07-21.md` — replace the
+static clean-depth tranches at the existing `WECC_import` node (already carries
+the COI/Path-46 ties) with a real neighbor that clears endogenously against
+CAISO, so the belly transfer co-evolves with both fleets (the only forward-stable
+form, given both conditioned-depth levers are killed). Data foundation committed:
+`data/dictionary/schema/wecc-west-supply.schema.yaml` +
+`scripts/data/derive_wecc_west_supply.py` (EIA-930 BALANCE Region NW+SW → clean
+`wecc-west-supply` frame via `write_clean`; verified West demand ~54–57 GW, solar
+6.8/9.5/11.8 GW belly-peaked & growing, net export +2.2 GW). Foundation finding:
+the reduced "measured-surplus supply curve" (Option B) is DEGENERATE — West
+renewables never exceed its ~55 GW demand, so the export is a price/congestion
+outcome, not a surplus threshold ⇒ the full co-optimized zone (Option A) is the
+build. No core LP touched (rule 26/27; the wiring is caiso-110). Keeper UNCHANGED.
+
 Full record: `results/calibration/FINDING-caiso109-gas-underdispatch-economic-2026-07-21.md`.
 Next number: caiso-110.
