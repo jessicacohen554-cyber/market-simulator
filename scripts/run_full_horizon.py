@@ -291,6 +291,190 @@ def extract_trajectory(run: "C.Run") -> list[dict]:
 
 
 # --------------------------------------------------------------------------- #
+# Instrumented solve engine (shared: reference forecast + CES campaign leg)
+# --------------------------------------------------------------------------- #
+def solve_and_summarize(
+    config: ScenarioConfig,
+    iso: str,
+    out_dir: Path,
+    *,
+    sample_interval: float = 0.5,
+    redirect_cache: bool = True,
+    extra_summary: dict | None = None,
+) -> dict:
+    """Solve one forecast config with instrumentation, write its summary, return it.
+
+    The shared engine behind :func:`main` (the P-3A reference forecast) and
+    ``scripts/run_ces_leg.py`` (one premium-ladder leg — FF-3F): it solves
+    ``config`` for ``iso`` with per-year wall/RSS sampling, scores the I1-I14
+    forecast invariants and the headline trajectory over the cached years,
+    writes ``<out_dir>/full_horizon_summary.json`` (the sidecar
+    ``register_forecast_baseline.py`` consumes), prints the console report, and
+    returns the summary dict.
+
+    Args:
+        config: A forecast ``ScenarioConfig`` (caller sets the window + posture;
+            the §2.1b window cap is the caller's ``assert_schedulable`` gate).
+        iso: ISO identifier.
+        out_dir: Directory the ``full_horizon_summary.json`` is written to.
+        sample_interval: RSS sampling period in seconds.
+        redirect_cache: When True (default — ``run_full_horizon``'s behavior)
+            the cache root is pointed at ``out_dir`` so an isolated reference
+            solve lands under its own directory. A CES campaign leg passes
+            False so its solve lands in the DEFAULT ``results/`` cache — where
+            ``report_ces_campaign.py`` and the matrix bundle assemble every leg
+            by ``cache_key`` (a redirected leg would be invisible to the report).
+            The cache root is restored afterward either way.
+        extra_summary: Optional dict merged into the summary verbatim (a leg
+            records its ``case`` / ``premium_usd_per_mwh`` / ``crediting`` /
+            ``campaign`` there for the CES sidecar).
+
+    Returns:
+        The summary dict (also written to disk). ``summary["error"]`` is the
+        stringified solve exception or ``None``.
+    """
+    iso = iso.upper()
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    # runner binds ``save_result`` by name at import; patch it there to record
+    # per-year completion timestamps.
+    from market_sim import runner as runnermod
+
+    year_marks: list[tuple[int, float]] = []
+    _orig_save = runnermod.save_result
+    _orig_cache_root = cachemod.CACHE_ROOT
+
+    def _timed_save(result, config_, iso_, year, **kwargs):
+        path = _orig_save(result, config_, iso_, year, **kwargs)
+        # record only the final-pass save (pass_label=None) as the boundary
+        if kwargs.get("pass_label") is None:
+            year_marks.append((int(year), time.monotonic()))
+        return path
+
+    sampler = Sampler(interval=sample_interval)
+    error = None
+    cache_key = None
+    if redirect_cache:
+        # Point the cache root at this run's out-dir (isolated reference solve).
+        cachemod.CACHE_ROOT = out_dir
+    runnermod.save_result = _timed_save
+    sampler.start()
+    run_start = time.monotonic()
+    try:
+        cache_key = runnermod.run_scenario_iso(config, iso)
+    except Exception as exc:  # noqa: BLE001 — capture, report, keep partials
+        error = f"{type(exc).__name__}: {exc}"
+        traceback.print_exc()
+    finally:
+        run_end = time.monotonic()
+        sampler.stop()
+        runnermod.save_result = _orig_save
+
+    total_wall = run_end - run_start
+
+    # Per-year wall + peak RSS from the recorded boundaries.
+    per_year_perf: list[dict] = []
+    prev_t = run_start
+    for year, t in sorted(year_marks, key=lambda kv: kv[1]):
+        per_year_perf.append(
+            {
+                "year": year,
+                "wall_s": round(t - prev_t, 1),
+                "peak_rss_mb": round(sampler.peak_between(prev_t, t), 1),
+            }
+        )
+        prev_t = t
+
+    # Locate the run dir (via the live cache root, so this resolves whether or
+    # not the cache was redirected) and score invariants + trajectory.
+    run_dir = (
+        cachemod.get_cache_path(iso, cache_key, config.start_year).parent
+        if cache_key
+        else None
+    )
+    invariants: list[dict] = []
+    trajectory: list[dict] = []
+    solved_years: list[int] = []
+    if run_dir and run_dir.exists():
+        try:
+            results = C.run_single(run_dir)
+            invariants = [
+                {"id": r.ident, "name": r.name, "status": r.status, "detail": r.detail}
+                for r in results
+            ]
+        except Exception as exc:  # noqa: BLE001
+            invariants = [
+                {
+                    "id": "LOAD",
+                    "name": "invariant load",
+                    "status": "FAIL",
+                    "detail": f"{type(exc).__name__}: {exc}",
+                }
+            ]
+        try:
+            run = C.load_run(run_dir)
+            solved_years = run.solved_years
+            trajectory = extract_trajectory(run)
+        except Exception:  # noqa: BLE001
+            traceback.print_exc()
+
+    # Restore the cache root now that every cache read is done (matters when the
+    # engine is called more than once in a process, e.g. a leg then an assembly).
+    cachemod.CACHE_ROOT = _orig_cache_root
+
+    start_year, end_year = config.start_year, config.end_year
+    summary = {
+        "iso": iso,
+        "start_year": start_year,
+        "end_year": end_year,
+        "capacity_market_clearing": bool(config.capacity_market_clearing),
+        "cache_key": cache_key,
+        "run_dir": str(run_dir) if run_dir else None,
+        "error": error,
+        "total_wall_s": round(total_wall, 1),
+        "global_peak_rss_mb": round(sampler.global_peak, 1),
+        "n_solved_years": len(solved_years),
+        "solved_years": solved_years,
+        "per_year_perf": per_year_perf,
+        "invariants": invariants,
+        "trajectory": trajectory,
+    }
+    if extra_summary:
+        summary.update(extra_summary)
+    summary_path = out_dir / "full_horizon_summary.json"
+    summary_path.write_text(json.dumps(summary, indent=2) + "\n")
+
+    # Console report.
+    print(f"\n===== {iso} {start_year}-{end_year} summary =====")
+    print(
+        f"  years solved: {len(solved_years)} / {end_year - start_year + 1}"
+        f"  ({solved_years[:1]}..{solved_years[-1:]})"
+    )
+    print(
+        f"  total wall: {total_wall / 60:.1f} min   global peak RSS: {sampler.global_peak / 1024:.2f} GB"
+    )
+    if error:
+        print(f"  ERROR: {error}")
+    if per_year_perf:
+        med = sorted(p["wall_s"] for p in per_year_perf)[len(per_year_perf) // 2]
+        maxrss = max(p["peak_rss_mb"] for p in per_year_perf)
+        print(
+            f"  median year wall: {med:.1f}s   max per-year peak RSS: {maxrss / 1024:.2f} GB"
+        )
+    n_fail = sum(1 for i in invariants if i["status"] == "FAIL")
+    n_warn = sum(1 for i in invariants if i["status"] == "WARN")
+    print(f"  invariants: {n_fail} FAIL, {n_warn} WARN")
+    for i in invariants:
+        if i["status"] in ("FAIL", "WARN"):
+            print(
+                f"    [{i['status']}] {i['id']:<4} {i['name']:<26} {i['detail'][:120]}"
+            )
+    print(f"  wrote {summary_path}")
+    return summary
+
+
+# --------------------------------------------------------------------------- #
 # Driver
 # --------------------------------------------------------------------------- #
 def main(argv: list[str] | None = None) -> int:
@@ -337,27 +521,6 @@ def main(argv: list[str] | None = None) -> int:
     assert_schedulable(args.start_year, args.end_year, args.full_solve_authorized)
 
     iso = args.iso.upper()
-    out_dir = args.out_dir
-    out_dir.mkdir(parents=True, exist_ok=True)
-
-    # Redirect the cache root so this ISO's run lands in its own out-dir.
-    cachemod.CACHE_ROOT = out_dir
-    # runner binds ``save_result`` by name at import; patch it there to record
-    # per-year completion timestamps.
-    from market_sim import runner as runnermod
-
-    year_marks: list[tuple[int, float]] = []
-    _orig_save = runnermod.save_result
-
-    def _timed_save(result, config, iso_, year, **kwargs):
-        path = _orig_save(result, config, iso_, year, **kwargs)
-        # record only the final-pass save (pass_label=None) as the boundary
-        if kwargs.get("pass_label") is None:
-            year_marks.append((int(year), time.monotonic()))
-        return path
-
-    runnermod.save_result = _timed_save
-
     config = reference_config(
         iso,
         args.start_year,
@@ -365,111 +528,14 @@ def main(argv: list[str] | None = None) -> int:
         args.capacity_market_clearing,
         golden_posture=args.golden_posture,
     )
-
-    sampler = Sampler(interval=args.sample_interval)
-    sampler.start()
-    run_start = time.monotonic()
-    error = None
-    cache_key = None
-    try:
-        cache_key = runnermod.run_scenario_iso(config, iso)
-    except Exception as exc:  # noqa: BLE001 — capture, report, keep partials
-        error = f"{type(exc).__name__}: {exc}"
-        traceback.print_exc()
-    finally:
-        run_end = time.monotonic()
-        sampler.stop()
-        runnermod.save_result = _orig_save
-
-    total_wall = run_end - run_start
-
-    # Per-year wall + peak RSS from the recorded boundaries.
-    per_year_perf: list[dict] = []
-    prev_t = run_start
-    for year, t in sorted(year_marks, key=lambda kv: kv[1]):
-        per_year_perf.append(
-            {
-                "year": year,
-                "wall_s": round(t - prev_t, 1),
-                "peak_rss_mb": round(sampler.peak_between(prev_t, t), 1),
-            }
-        )
-        prev_t = t
-
-    # Locate the run dir and score invariants + trajectory.
-    run_dir = out_dir / iso / cache_key if cache_key else None
-    invariants: list[dict] = []
-    trajectory: list[dict] = []
-    solved_years: list[int] = []
-    if run_dir and run_dir.exists():
-        try:
-            results = C.run_single(run_dir)
-            invariants = [
-                {"id": r.ident, "name": r.name, "status": r.status, "detail": r.detail}
-                for r in results
-            ]
-        except Exception as exc:  # noqa: BLE001
-            invariants = [
-                {
-                    "id": "LOAD",
-                    "name": "invariant load",
-                    "status": "FAIL",
-                    "detail": f"{type(exc).__name__}: {exc}",
-                }
-            ]
-        try:
-            run = C.load_run(run_dir)
-            solved_years = run.solved_years
-            trajectory = extract_trajectory(run)
-        except Exception:  # noqa: BLE001
-            traceback.print_exc()
-
-    summary = {
-        "iso": iso,
-        "start_year": args.start_year,
-        "end_year": args.end_year,
-        "capacity_market_clearing": args.capacity_market_clearing,
-        "cache_key": cache_key,
-        "run_dir": str(run_dir) if run_dir else None,
-        "error": error,
-        "total_wall_s": round(total_wall, 1),
-        "global_peak_rss_mb": round(sampler.global_peak, 1),
-        "n_solved_years": len(solved_years),
-        "solved_years": solved_years,
-        "per_year_perf": per_year_perf,
-        "invariants": invariants,
-        "trajectory": trajectory,
-    }
-    summary_path = out_dir / "full_horizon_summary.json"
-    summary_path.write_text(json.dumps(summary, indent=2) + "\n")
-
-    # Console report.
-    print(f"\n===== {iso} full-horizon summary =====")
-    print(
-        f"  years solved: {len(solved_years)} / {args.end_year - args.start_year + 1}"
-        f"  ({solved_years[:1]}..{solved_years[-1:]})"
+    summary = solve_and_summarize(
+        config,
+        iso,
+        args.out_dir,
+        sample_interval=args.sample_interval,
+        redirect_cache=True,
     )
-    print(
-        f"  total wall: {total_wall / 60:.1f} min   global peak RSS: {sampler.global_peak / 1024:.2f} GB"
-    )
-    if error:
-        print(f"  ERROR: {error}")
-    if per_year_perf:
-        med = sorted(p["wall_s"] for p in per_year_perf)[len(per_year_perf) // 2]
-        maxrss = max(p["peak_rss_mb"] for p in per_year_perf)
-        print(
-            f"  median year wall: {med:.1f}s   max per-year peak RSS: {maxrss / 1024:.2f} GB"
-        )
-    n_fail = sum(1 for i in invariants if i["status"] == "FAIL")
-    n_warn = sum(1 for i in invariants if i["status"] == "WARN")
-    print(f"  invariants: {n_fail} FAIL, {n_warn} WARN")
-    for i in invariants:
-        if i["status"] in ("FAIL", "WARN"):
-            print(
-                f"    [{i['status']}] {i['id']:<4} {i['name']:<26} {i['detail'][:120]}"
-            )
-    print(f"  wrote {summary_path}")
-    return 1 if error else 0
+    return 1 if summary.get("error") else 0
 
 
 if __name__ == "__main__":
