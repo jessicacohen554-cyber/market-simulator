@@ -388,3 +388,73 @@ gated on the evening residual — targets a passing gate, cannot move C5a.
 
 Full record: `results/calibration/FINDING-caiso108-gate-attribution-2026-07-20.md`.
 Next number: caiso-109.
+
+## caiso-109 (2026-07-21) — P0 ECONOMIC-VS-PHYSICAL: gas under-dispatch is ECONOMIC (physical closed), but the chartered firm-rung lever is REFUTED — the over-import is the BELLY/daytime clean-import DEPTH; owner-ask raised, keeper UNCHANGED
+
+**Session 2026-07-21 (CAISO-109 — P0 diagnosis, NO SOLVE; keeper
+`2026-07-19-caiso-102-hourfix` (NOT-YET, fail {C3c, C4, C5a(2024 CAVEAT)})
+UNCHANGED, no mechanism armed, nothing registered.** Model & actual gas hourly
+reconstructed from committed artifacts only — the keeper's own per-plant
+dispatch (`plants[].m`), the CAISO CEMS bench (`plants[].campd`), and the
+keeper-proxy `caiso104_m1_B` (gas within 0.25 %) for hourly LMP/import. No solve
+needed. Instrument: `scripts/probes/_caiso109_econ_vs_physical.py`.
+
+**VERDICT — ECONOMIC. Physical is ruled out on the bytes.** In the
+under-dispatched gas hours (66–70 % of all hours): model gas is at >90 % of its
+own annual peak in **0.0–0.4 %** of them (never pinned), gas peaks at 18–19 GW
+vs 26 GW nameplate (26–31 % headroom even at the annual peak), CEMS ran the gas
+fleet **1.27–1.31×** higher there (the capacity physically existed), and the
+model LMP is below the cheapest CA CCGT MC in 37–66 % (gas priced out). The LP
+CHOSE imports over available CA gas.
+
+**The substitution is ~1:1 on the CEMS basis (the caiso-108 −13.66 was the
+corrupted 930 NG cell).** On the honest CEMS gas actual (`gas_cems_grid +
+gas_cogen_grid`): gas gap −8.2/−6.6/−5.4 TWh ≈ net-import over +8.3/+9.7/+6.4 TWh.
+Solar is model-*over*, so the excess import displaces **gas, not solar**. Closing
+the ~8 TWh over-import recovers the gas → closes C5a.
+
+**PIN STATE — firm rung PINNED and NOT the culprit (chartered lever refuted twice).**
+`caiso_firm_import_selfschedule=True` floors both firm tranches at
+`min_gen == pmax × availability`, so their $28/$48 price is inert bookkeeping —
+an offer-price change is byte-inert (the charter's KILL). And decomposition shows
+the pinned firm floor is only **69–89 % of actual imports**, correctly shaped
+(backs off midday), and does **not** over-import; a firm-floor availability derate
+would deepen the evening/overnight under-import and miss the belly. Both the
+firm-rung price form and the firm-floor availability form are dead.
+
+**WHERE the over-import lives — the BELLY/daytime clean-import DEPTH.** Over-import
+by window: overnight +0.1/+0.6, **belly (h10–15) +2.1/+2.5**, evening −0.0/−0.3 GW
+(slightly UNDER). It sits above the pinned firm floor (low midday) — the economic
+import layer runs +2.4/+2.7 GW in the belly vs actual ≈0.5 GW, de-committing
+~1.0–1.2 GW of midday gas. The armed belly supply is the clean-depth tranches
+(daytime-clean caiso-94 capability 4994/5563/5770 MW; surplus/overnight-clean),
+priced at the **raw hub with EF 0 (zero carbon)** — so midday a zero-carbon import
+undercuts CA gas (which also pays the CARB adder).
+
+**This is caiso-106/107's belly defect, whose CA-observable derivation caiso-107
+already refuted.** caiso-107 L2 tried the belly depth on CA **price** observables
+(net-load / PaloVerde hub level / hub−CA basis) — all fail year-stability (CV
+0.33–1.62). Its §2 root cause: the CA belly transfer depends on the full
+**west-wide surplus QUANTITY** (WECC solar+hydro+load), which no CA price
+summarizes. caiso-107 tested prices, not a west-wide surplus quantity — the one
+un-refuted lever class.
+
+**Owner-ask (raised, no form armed pending grant):** the chartered firm-rung
+lever family is refuted; the belly-depth-on-CA-price lever is refuted (caiso-107).
+Which P1 direction — (A) a **west-wide surplus-QUANTITY** constraint on the
+daytime/surplus clean-import capability (structural, forward-regenerable, the
+untested observable class; scope: new mechanism + likely a WECC-neighbor EIA-930
+intake); (B) a **midday gas commitment/min-load** floor (keep the ~1.2 GW of
+midday gas online, less belly room for imports; risk C8 forced-energy); or (C)
+file P0 and re-charter west-wide surplus as its own structural charter
+(caiso-110)? Per derive-first, no form is armed without a grant on a specific LP
+construction.
+
+**DO-NOT-REDO carried forward:** firm-rung offer-price reprice (pinned,
+byte-inert); firm-floor availability derate (firm floor is not the culprit;
+deepens evening/overnight under-import); belly-depth re-derivation on any CA
+price observable (caiso-107 L2); any residual-fitted throttle/haircut on the
+depth (rule 1/23/25).
+
+Full record: `results/calibration/FINDING-caiso109-gas-underdispatch-economic-2026-07-21.md`.
+Next number: caiso-110.
