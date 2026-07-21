@@ -21,8 +21,8 @@ does, via ``register_hindcast.render_page`` over every committed sidecar.
 
 Usage::
 
-    python scripts/register_forecast_baseline.py \\
-        --summary results/ff-t1f-baseline/miso/full_horizon_summary.json \\
+    python scripts/register_forecast_baseline.py \
+        --summary results/ff-t1f-baseline/miso/full_horizon_summary.json \
         --label ff-t1f-baseline
 """
 
