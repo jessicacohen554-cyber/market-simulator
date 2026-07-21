@@ -168,9 +168,34 @@ def test_import_node_zone_gets_zero_block():
     assert per_zone[idx] == 0.0
 
 
-def test_zone_share_default_table_is_empty():
-    """No published siting override ships; every ISO uses its load_share default."""
-    assert DATACENTER_ZONE_SHARE == {}
+def test_pjm_zone_share_reconciled_dom_anchored():
+    """PJM carries a rule-14 reconciled DOM-anchored siting override (2026-07-21):
+    Dominion at its published ~0.55 near-2030 DC share, residual by load_share.
+    Only PJM is overridden; every other ISO keeps its load_share default."""
+    assert set(DATACENTER_ZONE_SHARE) == {"PJM"}
+    pjm = DATACENTER_ZONE_SHARE["PJM"]
+    zones = get_iso_config("PJM").zone_names
+    # Keys match the model zone_names exactly and shares sum to 1.0.
+    assert set(pjm) == set(zones)
+    assert sum(pjm.values()) == pytest.approx(1.0, abs=1e-6)
+    # DOM is the anchor and dominates — far above its ~0.15 load_share.
+    assert pjm["PJM_Dominion"] == pytest.approx(0.55, abs=1e-3)
+    assert pjm["PJM_Dominion"] == max(pjm.values())
+    # The resolved share vector (via the consumer) sums to 1 and puts DOM on top.
+    shares = datacenter_zone_shares("PJM", zones)
+    assert shares.sum() == pytest.approx(1.0, abs=1e-6)
+    assert shares[zones.index("PJM_Dominion")] == pytest.approx(0.55, abs=1e-3)
+
+
+def test_nonpjm_zone_share_is_load_share_default():
+    """ERCOT/CAISO/NYISO/MISO carry no siting override -> load_share default."""
+    for iso in ("ERCOT", "CAISO", "NYISO", "MISO"):
+        assert iso not in DATACENTER_ZONE_SHARE
+        iso_cfg = get_iso_config(iso)
+        zones = iso_cfg.zone_names
+        shares = datacenter_zone_shares(iso, zones)
+        expected = np.array([z.load_share for z in iso_cfg.zones])
+        assert np.allclose(shares, expected)
 
 
 # --------------------------------------------------------------------------
