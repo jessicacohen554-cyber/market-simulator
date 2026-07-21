@@ -88,3 +88,22 @@ the cited URLs if the deck is superseded or a new year's deck is published.
 `scripts/curate_nyiso_renewable_curtailment.py` -> `market_sim.data.nyiso_renewable_curtailment`
 (a labeled coarse-aggregate diagnostic; does **not** feed the hourly HSL/
 uncurtailed-potential path used by dispatch — see that module's docstring).
+
+## Uncurtailed-potential decision (re-examined 2026-07-21)
+
+This aggregate does **not** move NYISO onto an uncurtailed-potential renewable
+basis in `market_sim.data.renewables`; NYISO stays on the EIA-930 NYIS
+*delivered* CF, OUT of `_UNCURTAILED_FALLBACK_ISOS`. The deferral was
+re-examined on its own and re-confirmed — see
+`docs/multi-iso/nyiso-uncurtailed-hsl-finding-2026-07.md`. Basis (sharper than
+"no hourly series"): (1) curtailment is **immaterial** (~1.9% wind mean
+2023-2025, well under 1 TWh/yr — below where re-curtailment moves dispatch; cf.
+MISO ~4.9%), and (2) it is dominated by **North/Central Zone local
+transmission-upgrade outages** (North+Central = 72-93% of zonal curtailment
+every year) — a sub-zonal driver the reduced 5-zone network can't re-curtail, so
+a uniform NYCA-wide gross-up would inject phantom wind (CLAUDE.md #12
+"misaligned to our representation"). A NYCA annual **rate** *is* derivable from
+this file, but it is the wrong instrument for a locally-driven, immaterial
+curtailment. **DATA NEEDED to reverse the deferral:** an HOURLY per-plant/zonal
+wind/solar curtailment or HSL series (NP6 / CAISO-workbook granularity) — this
+annual/monthly aggregate cannot supply one, and no proxy should be fabricated.
