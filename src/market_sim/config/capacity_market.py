@@ -2369,6 +2369,48 @@ STATE_RPS_FLOORS: dict[str, dict[int, float]] = {
         2040: 0.30,
         2045: 0.33,
     },
+    "MISO": {
+        # Like PJM, MISO has no single ISO-wide standard: this is the
+        # MISO-load-weighted blend of its member states' RPS *renewable-tier*
+        # obligations (the wind+solar analogue — the renewable standard, NOT the
+        # nuclear-counting clean/carbon-free tiers), so the large share of MISO
+        # load in no-RPS states dilutes the aggressive ones. It is markedly
+        # lower than PJM because MISO-South (AR/LA/MS/E-TX, 27.1% of load) and
+        # MISO-Indiana (IN/KY, 13.4%) carry NO binding RPS at all, and
+        # MISO-Plains is mostly no-mandate Iowa. Rule 13 admissible (policy
+        # parameter, forward-reproducible, relaxes as VRE builds). Tier 3
+        # (calibration).
+        #
+        # Rule 5 reconciliation (RPS is state-level; MISO is the model zone):
+        # the blend is anchored on THIS MODEL'S OWN measured MISO zone load
+        # shares (iso_configs.build_miso_config, from EIA-930 sub-BA data,
+        # summing to 1.0) — West 0.1466 (MN/ND/SD/MT), Plains 0.1385 (IA/MO),
+        # Illinois 0.0676 (IL-Ameren), Indiana 0.1340 (IN/KY), East 0.2422
+        # (WI/MI), South 0.2711 (AR/LA/MS/E-TX). Each multi-state zone is split
+        # to its member states by EIA-861 2023 retail sales restricted to the
+        # MISO-served portion (MN≈.77/ND/SD/MT of West; IA≈.57/MO of Plains;
+        # MI≈.57/WI of East). Per-state renewable-tier trajectories:
+        #   MN — 55% renewable by 2035 (2023 HF7 / Minn. Stat. §216B.1691; the
+        #     80/90/100% 2030-40 targets are CARBON-FREE incl. nuclear/hydro,
+        #     excluded), ramped from the pre-2023 25%-by-2025 standard:
+        #     .26→.40→.55→.55.
+        #   MI — 50% renewable by 2030, 60% by 2035 (2023 PA 235 / SB 271; the
+        #     100%-clean-by-2040 CES is nuclear-counting, excluded), ramped from
+        #     the prior 15%-by-2021: .35→.50→.60→.60.
+        #   IL (Ameren/MISO portion only; ComEd is PJM) — 40% by 2030, 50% by
+        #     2040 (CEJA / 20 ILCS 3855): .25→.40→.50→.50.
+        #   MO 15% by 2021 (RSMo §393.1030) and MT 15% — flat .15. WI 10%
+        #     (Wis. Stat. §196.378) — flat .10. IA (105-MW nominal mandate, no
+        #     %), IN/ND/SD (voluntary goals), AR/LA/MS/KY/E-TX (no RPS) — 0.
+        # Zone-blended → MISO-wide: 2026≈0.114, 2030≈0.161, 2040≈0.198, held
+        # flat to 2045 (every binding state's renewable tier plateaus by 2035-40;
+        # further decarbonization is the excluded clean tier). Knots stored
+        # rounded; a full per-utility re-blend is a bounded intake follow-up.
+        2026: 0.11,
+        2030: 0.16,
+        2040: 0.20,
+        2045: 0.20,
+    },
 }
 
 # RPS Alternative Compliance Payment (ACP) ceiling, $/MWh, by ISO.
@@ -2412,6 +2454,19 @@ STATE_RPS_FLOORS: dict[str, dict[int, float]] = {
 #     RPS-free with no ACP. Load-weighted on the corrected weights above ≈ $45,
 #     unchanged. Source: PJM-EIS "Comparison of RPS Programs in PJM States"
 #     (4/15/2025).
+#   MISO — $30/MWh, a deliberately LOW forward REC-price-ceiling proxy (cf. the
+#     NYISO note: a proxy kept where no liquid statutory buyout governs). Unlike
+#     PJM/New England, MISO has NO robust current $/MWh ACP: its binding states
+#     enforce via budget/rate-cap/physical-compliance, not a high buyout —
+#     Illinois's ARES ACP (16-115D) was RETIRED under CEJA's centralized IPA
+#     procurement, Missouri caps RPS cost at 1%/yr of rates and excuses the
+#     obligation above it (RSMo §393.1030), and MN/MI compliance is physical
+#     with PUC/MPSC-set penalties, no fixed rate. With abundant Midwest wind,
+#     compliance-REC clearing prices run well below the coastal ISOs, so the
+#     REC-market ceiling here is genuinely soft. $30 (< PJM $45, < NEISO $50)
+#     anchors on current IPA Adjustable-Block / utility-scale REC clearing
+#     prices (low-$30s/MWh) as the marginal buyout proxy. Tier 3; a per-utility
+#     REC-price-ceiling refinement is a bounded follow-up.
 # ISOs without a STATE_RPS_FLOORS entry (ERCOT) need no ACP — their RPS row is
 # never built, so the escape column is absent and the LP is byte-identical.
 STATE_RPS_ACP: dict[str, float] = {
@@ -2419,6 +2474,7 @@ STATE_RPS_ACP: dict[str, float] = {
     "NYISO": 40.0,
     "NEISO": 50.0,  # was 65.0 — stale MA Class I input ($67.62→$40); see above
     "PJM": 45.0,
+    "MISO": 30.0,  # low forward REC-price-ceiling proxy — see note above
 }
 
 # Annual interconnection queue caps (GW/yr) by ISO.
