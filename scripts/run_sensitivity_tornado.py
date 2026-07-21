@@ -385,6 +385,7 @@ def evaluate_variant(spec_dict: dict) -> dict:
     """
     spec = VariantSpec(**spec_dict)
     from market_sim import runner
+    from market_sim.pipeline.api import run_scenario
     from market_sim.results import cache
     from market_sim.results.export import _summarize_year
 
@@ -400,7 +401,7 @@ def evaluate_variant(spec_dict: dict) -> dict:
     )
     try:
         config = _build_config(spec)
-        key = runner.run_scenario_iso(config, spec.iso)
+        key = run_scenario(config, spec.iso)
 
         per_year = []
         cap_by_fuel_first: dict[str, float] | None = None
