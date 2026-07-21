@@ -15,12 +15,18 @@ Memory: years are processed one at a time. Only the small annual summary
 frames are retained for the trajectory NPV; hourly data is written and
 released per year, and is emitted to parquet only under ``--include-hourly``.
 
+Inputs resolve through the on-disk path registry by default, so the script is
+runnable on a fresh checkout with no data laid out by hand (FF-3B finding F-3):
+the EIA-860 fleet + ownership schedules come from the committed
+``data/raw/eia-860`` partition, not a hand-placed ``data/fleet/*.xlsx``. Both
+resolvers are fail-loud — a missing input is refused, never silently skipped
+into a structurally-wrong report (rules 5/13).
+
 Usage:
     python scripts/generate_financial_reports.py \\
         --results-dir results/ERCOT/abc123def/ \\
-        --eia860-path data/fleet/eia860_2024.xlsx \\
-        --ownership-map data/ownership/parent_company_fleet_2024.parquet \\
         --iso ERCOT --output-dir reports/ --years 2026-2050 \\
+        [--eia860-dir data/raw/eia-860] [--ownership-map <prebuilt>.parquet] \\
         [--discount-rate 0.08] [--include-hourly]
 """
 
@@ -41,9 +47,11 @@ from market_sim.config.constants import (  # noqa: E402
     COAL_PRICE_BASE,
     START_YEAR,
 )
+from market_sim.config.paths import active_eia860_dir  # noqa: E402
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data.fuel import resolve_annual_gas_price  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
+    EIA860_OPERABLE_VINTAGE,
     PROCESSED_DIR,
     load_fleet_from_csv,
 )
@@ -61,13 +69,72 @@ from market_sim.results.plant_financials import (  # noqa: E402
     compute_trajectory_npv,
     disaggregate_dispatch,
 )
-from market_sim.data.ownership import build_parent_mapping  # noqa: E402
+from market_sim.data.ownership import (  # noqa: E402
+    build_parent_mapping,
+    load_eia860_ownership,
+)
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("generate_financial_reports")
 
 # Model fuel types that burn natural gas and pay the escalated gas price.
 _GAS_FUELS = ("gas_cc", "gas_ct", "gas_cc_ccs")
+
+
+def _require_input(path: Path, what: str, remedy: str) -> Path:
+    """Return ``path`` if it exists, else fail loud (rules 5/13 — no silent skip).
+
+    A financial-report run that silently dropped a missing fleet or ownership
+    input would still emit CSVs — empty companies, zero attribution — that read
+    as a result. Refuse instead, naming the input and how to produce it.
+    """
+    if not path.exists():
+        raise SystemExit(f"missing {what}: {path}\n  → {remedy}")
+    return path
+
+
+def _resolve_eia860_dir(arg: Path | None) -> Path:
+    """Resolve the EIA-860 directory: the CLI override, else the path registry.
+
+    Default is the registry's active EIA-860 vintage directory
+    (:func:`market_sim.config.paths.active_eia860_dir` — the committed
+    ``data/raw/eia-860`` partition), so a fresh checkout resolves with no
+    ``--eia860-dir`` flag (FF-3B F-3). No hardcoded path literal (rule 5).
+    """
+    eia_dir = Path(arg) if arg is not None else active_eia860_dir()
+    return _require_input(
+        eia_dir,
+        "EIA-860 directory",
+        "pass --eia860-dir, or confirm data/raw/eia-860 is present",
+    )
+
+
+def _resolve_ownership(arg: Path | None, eia_dir: Path) -> pd.DataFrame:
+    """Return the parent-company ownership frame: CLI parquet, else registry-built.
+
+    With no ``--ownership-map`` the mapping is built in-process from the
+    committed EIA-860 ownership schedules under ``eia_dir``
+    (:func:`market_sim.data.ownership.load_eia860_ownership` at the registry
+    vintage :data:`market_sim.data.fleet.EIA860_OPERABLE_VINTAGE`, then
+    :func:`build_parent_mapping`), so a fresh checkout needs no pre-built
+    parquet (FF-3B F-3). A supplied parquet takes precedence and is fail-loud
+    checked.
+    """
+    if arg is not None:
+        path = _require_input(
+            Path(arg),
+            "ownership-map parquet",
+            "drop --ownership-map to build it from the EIA-860 registry",
+        )
+        return build_parent_mapping(pd.read_parquet(path))
+    _require_input(
+        eia_dir / "eia860_owner.parquet",
+        "EIA-860 ownership schedule",
+        "confirm data/raw/eia-860/eia860_owner.parquet is present, "
+        "or pass a pre-built --ownership-map",
+    )
+    ownership_raw = load_eia860_ownership(eia_dir, EIA860_OPERABLE_VINTAGE)
+    return build_parent_mapping(ownership_raw)
 
 
 def _parse_years(spec: str) -> list[int]:
@@ -145,8 +212,20 @@ def main() -> None:
     """Run the financial-report pipeline for one cached scenario."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--results-dir", type=Path, required=True)
-    parser.add_argument("--eia860-path", type=Path, required=True)
-    parser.add_argument("--ownership-map", type=Path, required=True)
+    parser.add_argument(
+        "--eia860-dir",
+        type=Path,
+        default=None,
+        help="EIA-860 directory (per-sheet parquets). Default: the path-registry "
+        "active vintage (data/raw/eia-860) — fresh checkouts need no flag.",
+    )
+    parser.add_argument(
+        "--ownership-map",
+        type=Path,
+        default=None,
+        help="Pre-built parent_company_fleet parquet. Default: built in-process "
+        "from the committed EIA-860 ownership registry (no pre-built file needed).",
+    )
     parser.add_argument("--iso", required=True)
     parser.add_argument("--output-dir", type=Path, default=REPO / "reports")
     parser.add_argument("--years", default="2026-2050")
@@ -185,12 +264,17 @@ def main() -> None:
     iso_config = get_iso_config(args.iso)
     zone_names = list(iso_config.zone_names)
 
+    # Fresh-checkout inputs resolve through the path registry (FF-3B F-3): the
+    # EIA-860 fleet + ownership come from the committed data/raw/eia-860
+    # partition, not a hand-laid data/fleet/*.xlsx. Both are fail-loud.
+    eia860_dir = _resolve_eia860_dir(args.eia860_dir)
+
     # Plant-bin map: ensure the binned-fleet parquet exists, then build it.
-    load_fleet_from_csv(args.iso, iso_config, data_dir=args.eia860_path.parent)
+    load_fleet_from_csv(args.iso, iso_config, data_dir=eia860_dir)
     fleet_parquet = PROCESSED_DIR / f"{args.iso.lower()}_fleet_binned.parquet"
     plant_map = build_plant_bin_map(fleet_parquet)
 
-    ownership_df = build_parent_mapping(pd.read_parquet(args.ownership_map))
+    ownership_df = _resolve_ownership(args.ownership_map, eia860_dir)
 
     annual_summaries: list[pd.DataFrame] = []
     company_summaries: list[pd.DataFrame] = []
