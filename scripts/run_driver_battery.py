@@ -723,7 +723,6 @@ def evaluate_rung(spec_dict: dict) -> dict:
     }
     try:
         clean = _apply_probe_patches(spec.overrides, spec.iso)
-        from market_sim import runner
 
         config = ScenarioConfig(
             iso=spec.iso,
@@ -732,7 +731,7 @@ def evaluate_rung(spec_dict: dict) -> dict:
             end_year=spec.end_year,
             **clean,
         )
-        key = runner.run_scenario_iso(config, spec.iso)
+        key = run_scenario(config, spec.iso)
         run_dir = cache.CACHE_ROOT / spec.iso / key
         ledgers = load_ledgers_for_run(run_dir)
         metrics = _extract_metrics(spec, config, cache, key, ledgers, _summarize_year)
