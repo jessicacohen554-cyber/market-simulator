@@ -302,3 +302,69 @@ frozen-artifact re-tunes (rule 23), the C3c tail lane, the ERCOT-89 span
 re-probe (§9.5(2) condition still unmet). Ops: derive + artifact + tests +
 handoff §9 + envelope §8.3 correction + this entry on
 `claude/stgas-band-hour-frontier-1kn1fl`. Next number: ercot-93.
+
+## 2026-07-21 — ERCOT-93 (step-2 arming + full-year corpus intake): ST_GAS steam RT/SCED-basis wall + telemetered online span BUILT and PROBED — REJECTED (zero-spurious cold-snap trip, intrinsic to the RT wall's net-load-bin-only price ladder); full-year NP3-965 corpus re-freezes both offer walls (2023 now populated); machinery default-off, keeper UNCHANGED (ercot91)
+
+**Deliverable 1 — full-year corpus re-derive.** Both offer walls re-derived on the
+full-year 60-Day SCED Disclosure publication-month corpus
+(`data/raw/ercot/YYYY-MM.part*.parquet`), replacing the tail-biased sample-day
+extracts. **2023 is populated for the first time** (the big scarcity year); the
+thin b0/2024-b6 bins gain real coverage; mid-band p50s drop (the sample days were
+tail-biased) — a rule-23 data-basis correction, byte-identical on re-run. The
+CC/CT RT wall is keeper-consumed (`cleared_share_rt`), so the refresh moves the
+keeper's 2024 C3a base (~−2.3 → ~−5.0 %): the accurate walls reveal the model is
+*more* under-priced than the biased sample showed (rule 11 — the open C3 tail is
+the real issue, not the walls).
+
+**Deliverable 2 — ST_GAS steam RT wall + telemetered online span.** Built in the
+`ercot_offer_surface_cleared_share_steam` owner (default-off): the steam RT/SCED
+ladder in its own artifact (`ercot_sced_offer_wall_steam_condbinned.json`, rule
+19) + the hour-level online-span conditional
+(`ercot_shoulder_online_span_steam_condbinned.json`,
+`scripts/data/derive_ercot_shoulder_online_span_steam.py`; 2023 ON-share b0→b6
+0.14→0.99). Measurement: the shoulder over-carry is ~97–98 % ECONOMIC (offer
+surface owns it, not the drag).
+
+**Probe verdict: REJECTED.** Holds C3a and improves mid-band fill but TRIPS the
+pre-committed zero-spurious §6 gate (+11) on the Jan-14/15 winter cold-snap
+cluster (reality $85–107 → model $185–216). RT-only isolation trips +10 (all
+cold-snap) → the trip is intrinsic to the RT steam WALL, not the span. Full-span:
+C3a 2023 −18.4 % / 2024 +2.5 % / 2025 +10.8 %; spurious 28/18/19. Root: the wall's
+price ladder is net-load-percentile-bin-conditioned ONLY, so the not-RT-scarce
+winter high-net-load cold snap draws the summer-scarcity-dominated expensive
+high-bin ladder. Machinery MERGED default-OFF (`git apply`
+`docs/handoffs/ercot93-core-mechanism.patch`; 11 steam-RT tests pass), keeper
+UNCHANGED (`2026-07-20-ercot91-seasonal-drag-fullspan`). Next number: ercot-94.
+
+## 2026-07-21 — ERCOT-94 (season-offer-wall charter → measure + diagnose): the season-conditioned offer wall is REJECTED as the 2023-summer-LMP lever — it is a WINTER fix (fixes the ERCOT-93 cold-snap trip) but orthogonal to the blocker, which is an ORDC/reserve scarcity-pricing COLLAPSE (C3c tail); keeper UNCHANGED, no solve, no registration
+
+**Charter (owner reframe).** The lane goal was sharpened to "fix 2023 summer LMP".
+The ercot91 keeper is NOT-YET, blocked by **C3c price-tail FAIL** (2023 model 40 h
+vs RT 181 h >$200, 0.22×; 2024 13 h vs 53 h); C3a-2023 = −32.5 % (load-weighted) is
+a ledgered caveat sharing the same root per its own attestation
+("SCARCITY-TAIL COLLAPSE ON THE CORRECTED AVAILABILITY ENVELOPE").
+
+**Measure (full-year corpus, `scripts/probes/_ercot94_season_offer_gap.py`).** The
+DJF-vs-JJA offer-level split is real but is a **winter-cheaper** signal: summer
+high bins barely move (ST b4 pooled 29.5 → JJA 32.5, ~+10 %; b5 ~+2 %; CC/CT
+JJA≈pooled), and **b6 — the scarcity-tail bin — has ZERO DJF coverage in 2023**
+(already pure-summer, nothing to un-blend).
+
+**Diagnose (ercot91 2023 sidecar, rule 15, no re-solve).** The model's ORDC adder
+fires only **3 hours all of 2023** (annual-mean $0.27/MWh); the 40 model >$200
+hours are the **energy dual hitting HCAP** in genuine shortage, not the overlay.
+Price mass: [50,100)=236 h, near-miss **[100,200)=9 h**, [200,1000)=11 h,
+[1000+)=29 h. The ~141 missing tail hours are model-priced ~$50–100 vs actual
+>$200 — a scarcity-PRICING gap the offer wall's 2–10 % mid-band bump cannot bridge
+(offers top ~$150 outside shortage). **The season wall is orthogonal; do not
+promote it.** Real lane = ORDC/reserve scarcity recalibration on the corrected
+envelope without phantom fleet tightness (rules 1/11) — `src/market_sim/results/
+scarcity.py`; full diagnosis + ERCOT-95 handoff in
+`docs/handoffs/ercot94-scarcity-tail-diagnosis-2026-07.md`.
+
+**Ops.** Full-year offer-wall artifacts re-derived on the clean corpus (all three
+present; the ercot91 keeper should be re-solved on them in the ERCOT-95 lane).
+Corpus defect surfaced + quarantined: `data/raw/ercot/2026-02.part0001-0009.parquet`
+(Dec 3–9 2025 delivery, "Add files via upload") lack the HASL column and crash the
+2025 derive — owner to re-intake or remove. Keeper UNCHANGED; nothing registered
+(no solve). Next number: ercot-95.
