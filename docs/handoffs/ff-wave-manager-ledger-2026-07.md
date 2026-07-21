@@ -7,7 +7,7 @@ the end of every manager turn.
 
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
-- **Last reviewed `origin/main` HEAD:** `cf306c95` (2026-07-21, turn 40 — manager session `ff-wave-manager-7ra116`).
+- **Last reviewed `origin/main` HEAD:** `3cbf5b16` (2026-07-21, turn 41 — manager session `ff-wave-manager-standing-e90gfj`).
 - **Plan base SHA:** `c95176e` (amended in place 2026-07-19 — POC-first re-scope, see directive entry below).
 - **OWNER DIRECTIVE (2026-07-19, out-of-band — recorded by the directive's executing
   session, not a manager turn): POC-first re-scope of THE PLAN.** The plan is amended in
@@ -228,3 +228,18 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
   (G-series lane), + dashboard band-payload uploads (FF-3H). NEISO hold-scope question CLOSED
   (owner: out of manager scope). Nothing dispatchable at T1 — only §2.1b-gated full campaigns
   remain (owner holding). `git fetch` was timing out; verified via GitHub API.
+- **turn 41 (manager `ff-wave-manager-standing-e90gfj`, NEW session — clean refresh. `cf306c95→3cbf5b16`,
+  3 merges + direct commits). NO FF work landed; nothing dispatchable; program AT REST.** FIRST-ACTION
+  check: ledger on main confirmed at turn-40 state (last-reviewed `cf306c95`, FF-3H verified-pass) —
+  turn-40 push merged via #2724, proceeded. **Merges since (all OUT-OF-PROGRAM backcast lanes, none FF):**
+  #2724 (turn-40 ledger, our own); #2725 (nyiso-downstate-reserve-scarcity — NYISO keeper json + registry
+  sidecar, +16/-1); #2726 (caiso-110 endogenous-wecc-west-zone — 4 NEW files: `data/wecc_west_fleet.py`
+  + tests + probes, +531/-0). Direct-to-main commits: nyiso-69 keeper promotion (`cbea16e8`, dashboard
+  metadata) + caiso-110 fleet builder commits (`86b60dcc`/`70ad5f0f`). All are default-off/additive
+  backcast-calibration work — no FF solve/score/flip. **RULE-27 CLEAN:** no watch-set source file
+  touched or shrunk; #2726 all-additive new files, #2725 json-only. Watch set unchanged (capacity.py-facade
+  32 + capacity_evolution/ package · scenarios.py 8102 · constants.py-facade 2422 · runner.py 2470 ·
+  fuel_trajectories 1050 · capacity_market 2392 · ercot_envelopes 1960). **Nothing dispatchable** — all
+  T1 infra verified-pass, §2.1b gate held by owner (“not running full solves yet”), FF-3C trigger-gated
+  inactive, Wave-4/T2/T3/CES-W4/PB-5 WITHDRAWN-DEFERRED. Program intentionally at rest pending an owner
+  gate-open. `git fetch` still timing out; reviewed via GitHub API.
