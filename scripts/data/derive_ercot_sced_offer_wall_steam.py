@@ -26,16 +26,18 @@ share bytes-level conventions), applied to the gas-steam restypes:
 
 Scope: the model's OWN 17-plant ST_GAS fleet (`data/raw/reference/
 custom-bin-assignments.csv`, Plant_Group == ST_GAS), via the exact
-resource-name map below — 36 of the corpus's 44 gas-steam resources map onto
+resource-name map below — 36 of the corpus's 46 gas-steam resources map onto
 16 of the 17 plants (CFB Power Plant never appears in the corpus, consistent
-with its zero CEMS operation in the ERCOT-90 measurement); the remaining 8
-resources are small industrial/municipal CHP steam OUTSIDE the model's
-non-CHP fleet classing and are EXCLUDED, with their (negligible, ~0.2 % of
-ON-spare MW) footprint disclosed in the provenance rather than silently
-dropped. The map was validated against nameplate: per-plant sum of max HSL
-tracks `custom-bin-assignments` nameplate for all 16 plants (ERCOT-92 log
-entry). An unmapped gas-steam resource name in a future corpus update is a
-HARD ERROR — the map is reviewed on source update, never silently extended.
+with its zero CEMS operation in the ERCOT-90 measurement); the remaining 10
+resources are small industrial/municipal CHP steam and two zero-HSL
+non-operating registrations, all OUTSIDE the model's non-CHP fleet classing
+and EXCLUDED, with their (negligible) footprint disclosed in the provenance
+rather than silently dropped. The map was validated against nameplate:
+per-plant sum of max HSL tracks `custom-bin-assignments` nameplate for all 16
+plants (ERCOT-92 log entry). An unmapped gas-steam resource name in a future
+corpus update is a HARD ERROR — the map is reviewed on source update, never
+silently extended (the full-year NP3-965 intake surfaced the two zero-HSL
+registrations, reviewed and classed non-fleet 2026-07-21).
 
 Provenance / admissibility (CLAUDE.md rule 13): the SCED spare offer ladder
 is an ex-ante market-design measurement (posted RT offers of online
@@ -43,9 +45,11 @@ capability, never clearing-price outcomes fed back as inputs); the driver is
 the year's own net-load percentile (forward-native); zero fitted scalars.
 The artifact is **YEAR-SCOPED**: no pooled fallback is emitted — a year
 absent from the artifact gets NO RT steam wall (the DAM basis is retained
-byte-identical). 2023 is absent by construction: the on-disk corpus carries
-no 2023 sample days, and a 2024/2025-derived surface is barred from 2023's
-distinct post-Uri conservative-operations regime (the ERCOT-86 clause).
+byte-identical). Since the full-year NP3-965 intake (2026-07-21) 2023-2025
+are all present; the owner authorized extending the SCED basis to 2023,
+lifting the earlier post-Uri regime bar. NOTE: this steam artifact has no
+apply path in src/ (measure-first, step-2 arming owner-gated per ERCOT-92),
+so re-deriving it keeps it in sync with the CC/CT wall but changes no solve.
 
 FROZEN AGAINST RESIDUALS (rule 23): re-derive only when the SCED disclosure
 source files update; never because a residual moved. Re-derivation commits
@@ -84,10 +88,12 @@ from derive_ercot_dam_cleared_share import (  # noqa: E402
     _weighted_quantiles,
 )
 from derive_ercot_sced_offer_wall import (  # noqa: E402
-    SCED_DIR,
     _SCED2_MW,
     _SCED2_PR,
     _STD_TZ,
+    _coerce_sced_numeric,
+    _delivery_year_rows,
+    _sced_source_files,
     _spare_segments,
 )
 
@@ -160,6 +166,14 @@ NON_FLEET_RESOURCES: frozenset[str] = frozenset(
         "STEAM1A_STEAM_1",
         "STEAM_STEAM_2",
         "STEAM_STEAM_3",
+        # Surfaced by the full-year NP3-965 intake (2026-07-21): two additional
+        # gas-steam resources absent from the earlier sample-day corpus. Both
+        # carry max HSL = 0.0 across 2023-2025 (registered but non-operating —
+        # like the CFB zero-CEMS note), contribute zero ON-spare, and belong to
+        # no model ST_GAS plant (the fleet's 17 are all accounted: 16 present +
+        # CFB absent). Out-of-fleet → excluded and disclosed, not mapped.
+        "SL_SL_G3",
+        "SL_SL_G4",
     }
 )
 
@@ -213,112 +227,185 @@ def _scope_fleet(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
 
 def _load_year(year: int) -> tuple[pd.DataFrame, dict, list[str]]:
     """ON-status fleet gas-steam SCED rows + excluded disclosure + file names."""
-    files = sorted(
-        SCED_DIR.glob(
-            f"60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_{year}_*.parquet"
-        )
-    )
+    files = _sced_source_files(year)
     frames: list[pd.DataFrame] = []
     for path in files:
         df = pd.read_parquet(path, columns=_READ_COLS)
+        df = _delivery_year_rows(df, year)
         frames.append(df[df["Resource Type"].isin(ST_RESTYPES)])
     if not frames:
         return pd.DataFrame(columns=_READ_COLS), {}, []
-    fleet, excluded = _scope_fleet(pd.concat(frames, ignore_index=True))
+    allrows = _coerce_sced_numeric(pd.concat(frames, ignore_index=True))
+    fleet, excluded = _scope_fleet(allrows)
     stat = fleet["Telemetered Resource Status"].astype(str).str.strip()
     fleet["_status"] = stat
     return fleet[stat.str.startswith("ON")].copy(), excluded, [p.name for p in files]
 
 
+def _merge_excluded(dst: dict, src: dict) -> None:
+    """Accumulate one chunk's excluded-resource disclosure into ``dst``."""
+    for name, e in src.items():
+        d = dst.setdefault(
+            name, {"rows": 0, "max_hsl_mw": None, "on_spare_mw_sum": 0.0}
+        )
+        d["rows"] += e["rows"]
+        d["on_spare_mw_sum"] = round(d["on_spare_mw_sum"] + e["on_spare_mw_sum"], 1)
+        if e["max_hsl_mw"] is not None:
+            d["max_hsl_mw"] = (
+                e["max_hsl_mw"]
+                if d["max_hsl_mw"] is None
+                else max(d["max_hsl_mw"], e["max_hsl_mw"])
+            )
+
+
 def derive_year(year: int, gas_day: pd.Series) -> tuple[dict, dict, list[str]]:
-    """Return ``({"ST": {"ladder": [...]}}, coverage, source_files)`` for one year."""
-    df, excluded, files = _load_year(year)
-    if df.empty:
-        return {}, {}, files
+    """Return ``({"ST": {"ladder": [...]}}, coverage, source_files)`` for one year.
 
-    # CPT -> fixed CST -> non-leap hour-of-year (the ERCOT-86 clock handling;
-    # Feb 29 dropped to match the model's 8760 clock and _netload_pct).
-    ts = pd.to_datetime(df["SCED Time Stamp"])
-    cst = ts.dt.tz_localize(
-        "America/Chicago", ambiguous=True, nonexistent="shift_forward"
-    ).dt.tz_convert(_STD_TZ)
-    mo = cst.dt.month.to_numpy()
-    dy = cst.dt.day.to_numpy()
-    hh = cst.dt.hour.to_numpy()
-    ok = ~((mo == 2) & (dy == 29))
-    df = df.loc[np.asarray(ok)].copy()
-    df["hoy"] = _MONTH_START_HOUR[mo[ok] - 1] + (dy[ok] - 1) * 24 + hh[ok]
-    df["cls"] = "ST"
-    df["plant"] = df["Resource Name"].map(FLEET_PLANT_OF_RESOURCE)
-    df["_ts_key"] = df["SCED Time Stamp"].to_numpy()
-    df["_date"] = cst.dt.normalize().dt.tz_localize(None)[np.asarray(ok)].to_numpy()
-
-    gas = gas_day.reindex(pd.DatetimeIndex(df["_date"])).to_numpy(float)
-    df["gas_day"] = gas
-    df = df[df["gas_day"] > 0].copy()
-
-    segments = _spare_segments(df)
-    date_by_ts = dict(zip(df["_ts_key"], df["gas_day"]))
-    segments["mult"] = segments["price"] / segments["ts"].map(date_by_ts).astype(float)
-
+    Streams the year's source shards one at a time (the full-year corpus's wide
+    frame never lands in memory at once — the non-streaming build OOM'd), while
+    still merging the steam-specific disclosure (per-plant ON coverage, status
+    families, excluded out-of-fleet resources) across shards.
+    """
+    files = _sced_source_files(year)
     pct = _netload_pct(year)
     edges = np.asarray(NETLOAD_PCT_EDGES)
     hour_bin = np.searchsorted(edges, pct, side="right")  # (HOURS,)
     n_bins = len(edges) + 1
-    segments["bin"] = hour_bin[np.minimum(segments["hoy"].to_numpy(int), HOURS - 1)]
+
+    mult_acc: dict[int, list[np.ndarray]] = {}
+    mw_acc: dict[int, list[np.ndarray]] = {}
+    ts_seen: dict[int, set] = {}
+    day_seen: dict[int, set] = {}
+    plant_count: dict[str, int] = {}
+    plant_spare: dict[str, float] = {}
+    status_rows: dict[str, int] = {}
+    excluded: dict[str, dict] = {}
+    saw_rows = False
+    for path in files:
+        chunk = pd.read_parquet(path, columns=_READ_COLS)
+        chunk = _delivery_year_rows(chunk, year)
+        chunk = chunk[chunk["Resource Type"].isin(ST_RESTYPES)]
+        if chunk.empty:
+            continue
+        chunk = _coerce_sced_numeric(chunk)
+        fleet, exc = _scope_fleet(chunk)
+        _merge_excluded(excluded, exc)
+        del chunk
+        stat = fleet["Telemetered Resource Status"].astype(str).str.strip()
+        df = fleet[stat.str.startswith("ON")].copy()
+        df["_status"] = stat[stat.str.startswith("ON")]
+        if df.empty:
+            continue
+        # CPT -> fixed CST -> non-leap hour-of-year (Feb 29 dropped to match the
+        # model's 8760 clock and _netload_pct).
+        ts = pd.to_datetime(df["SCED Time Stamp"])
+        cst = ts.dt.tz_localize(
+            "America/Chicago", ambiguous=True, nonexistent="shift_forward"
+        ).dt.tz_convert(_STD_TZ)
+        mo = cst.dt.month.to_numpy()
+        dy = cst.dt.day.to_numpy()
+        hh = cst.dt.hour.to_numpy()
+        ok = ~((mo == 2) & (dy == 29))
+        df = df.loc[np.asarray(ok)].copy()
+        if df.empty:
+            continue
+        df["hoy"] = _MONTH_START_HOUR[mo[ok] - 1] + (dy[ok] - 1) * 24 + hh[ok]
+        df["cls"] = "ST"
+        df["plant"] = df["Resource Name"].map(FLEET_PLANT_OF_RESOURCE)
+        df["_ts_key"] = df["SCED Time Stamp"].to_numpy()
+        dates = cst.dt.normalize().dt.tz_localize(None)[np.asarray(ok)]
+        df["gas_day"] = gas_day.reindex(pd.DatetimeIndex(dates)).to_numpy(float)
+        df = df[df["gas_day"] > 0]
+        if df.empty:
+            continue
+        saw_rows = True
+
+        # per-plant ON coverage + status families (row-level, pre-segmentation)
+        spare_row = np.maximum(
+            df["HASL"].to_numpy(float)
+            - np.maximum(df["Base Point"].to_numpy(float), 0.0),
+            0.0,
+        )
+        pp = (
+            pd.DataFrame({"plant": df["plant"].to_numpy(), "spare": spare_row})
+            .groupby("plant")["spare"]
+            .agg(["count", "sum"])
+        )
+        for plant, r in pp.iterrows():
+            plant_count[plant] = plant_count.get(plant, 0) + int(r["count"])
+            plant_spare[plant] = plant_spare.get(plant, 0.0) + float(r["sum"])
+        for st, n in df["_status"].value_counts().to_dict().items():
+            status_rows[st] = status_rows.get(st, 0) + int(n)
+
+        seg = _spare_segments(df)
+        if not seg.empty:
+            date_by_ts = dict(zip(df["_ts_key"], df["gas_day"]))
+            mult = (seg["price"] / seg["ts"].map(date_by_ts).astype(float)).astype(
+                "float32"
+            )
+            bins = hour_bin[np.minimum(seg["hoy"].to_numpy(int), HOURS - 1)]
+            days = seg["hoy"].to_numpy(int) // 24
+            frame = pd.DataFrame(
+                {
+                    "bin": bins,
+                    "mult": mult.to_numpy(),
+                    "mw": seg["mw"].to_numpy().astype("float32"),
+                    "ts": seg["ts"].to_numpy(),
+                    "day": days,
+                }
+            )
+            for b, grp in frame.groupby("bin", sort=False):
+                bi = int(b)
+                mult_acc.setdefault(bi, []).append(grp["mult"].to_numpy())
+                mw_acc.setdefault(bi, []).append(grp["mw"].to_numpy())
+                ts_seen.setdefault(bi, set()).update(grp["ts"].tolist())
+                day_seen.setdefault(bi, set()).update(grp["day"].tolist())
+        del df, fleet, seg
+    if not saw_rows:
+        return {}, {}, [p.name for p in files]
 
     ladders: list[list[list[float]]] = []
     cov_bins: list[dict] = []
     for b in range(n_bins):
-        gb = segments[segments["bin"] == b]
-        n_iv = int(gb["ts"].nunique())
-        n_days = int(pd.Series(gb["hoy"] // 24).nunique())
-        qs = (
-            _weighted_quantiles(
-                gb["mult"].to_numpy(float),
-                gb["mw"].to_numpy(float),
-                LADDER_QUANTILES,
+        if b in mult_acc:
+            mult = np.concatenate(mult_acc[b])
+            mw = np.concatenate(mw_acc[b])
+            qs = _weighted_quantiles(
+                mult.astype(float), mw.astype(float), LADDER_QUANTILES
             )
-            if len(gb)
-            else [float("nan")] * len(LADDER_QUANTILES)
-        )
+            n_iv = len(ts_seen[b])
+            n_days = len(day_seen[b])
+            mw_sum = float(mw.sum())
+        else:
+            qs = [float("nan")] * len(LADDER_QUANTILES)
+            n_iv = n_days = 0
+            mw_sum = 0.0
         ladders.append([[float(q), round(m, 3)] for q, m in zip(LADDER_QUANTILES, qs)])
         cov_bins.append(
             {
                 "intervals": n_iv,
                 "days": n_days,
-                "mean_spare_gw": round(float(gb["mw"].sum()) / max(n_iv, 1) / 1e3, 3),
+                "mean_spare_gw": round(mw_sum / max(n_iv, 1) / 1e3, 3),
             }
         )
 
-    # Steam-specific disclosure: which plants carry the surface, under which
-    # telemetered status families, and what was excluded as out-of-fleet.
-    spare_row = np.maximum(
-        df["HASL"].to_numpy(float) - np.maximum(df["Base Point"].to_numpy(float), 0.0),
-        0.0,
-    )
-    per_plant = (
-        pd.DataFrame({"plant": df["plant"].to_numpy(), "spare": spare_row})
-        .groupby("plant")["spare"]
-        .agg(["count", "sum"])
-    )
-    total_spare = float(per_plant["sum"].sum()) or 1.0
+    total_spare = sum(plant_spare.values()) or 1.0
     coverage = {
         "bins": cov_bins,
         "plants": {
             p: {
-                "on_rows": int(r["count"]),
-                "on_spare_share": round(float(r["sum"]) / total_spare, 4),
+                "on_rows": plant_count[p],
+                "on_spare_share": round(plant_spare[p] / total_spare, 4),
             }
-            for p, r in per_plant.iterrows()
+            for p in sorted(plant_count)
         },
-        "status_rows": df["_status"].value_counts().to_dict(),
+        "status_rows": status_rows,
         "excluded_non_fleet": excluded,
         "fleet_plants_absent": sorted(
-            set(FLEET_PLANT_OF_RESOURCE.values()) - set(per_plant.index)
+            set(FLEET_PLANT_OF_RESOURCE.values()) - set(plant_count)
         ),
     }
-    return {"ST": {"ladder": ladders}}, coverage, files
+    return {"ST": {"ladder": ladders}}, coverage, [p.name for p in files]
 
 
 def main() -> None:
@@ -344,8 +431,16 @@ def main() -> None:
     result: dict = {
         "_provenance": {
             "source": (
-                "ERCOT 60-Day SCED Disclosure Gen Resource Data, scoped sample "
-                "days, delivery years " + "-".join(str(y) for y in args.years)
+                "ERCOT 60-Day SCED Disclosure Gen Resource Data (NP3-965), "
+                "full-year publication-month corpus (data/raw/ercot/"
+                "YYYY-MM.part*.parquet), rows filtered to delivery years "
+                + "-".join(str(y) for y in args.years)
+                + "; publication files carry ~60-day-lagged delivery, so rows "
+                "are delivery-year-filtered (2022 validation + 2026 locked-test "
+                "rows carried in adjacent publication files excluded). NOTE: "
+                "this steam artifact has NO apply path in src/ (measure-first, "
+                "step-2 arming owner-gated per ERCOT-92) — re-deriving it keeps "
+                "it in sync with the CC/CT wall but does not change any solve"
             ),
             "method": (
                 "per-interval Base Point -> HASL segments of the SCED2 "
@@ -387,15 +482,15 @@ def main() -> None:
                 ),
             },
             "year_scoped": (
-                "NO pooled fallback by design (rule 13): the SCED corpus is "
-                "scoped sample days and the RT offer surface is regime-bound "
-                "— a year absent from this artifact gets NO RT steam wall "
-                "(the DAM basis is retained); 2023 is absent by construction "
-                "(no 2023 sample days on disk, and a 2024/2025-derived "
-                "ladder is barred from 2023's post-Uri "
-                "conservative-operations regime)"
+                "Per-year ladders, NO pooled fallback (rule 13): a year "
+                "absent gets NO RT steam wall. 2023 is now INCLUDED — the "
+                "full-year NP3-965 corpus intake (2026-07-21) supplies "
+                "complete 2023 delivery coverage and the owner authorized "
+                "extending the SCED basis to 2023 (lifting the earlier "
+                "post-Uri regime bar). Each year's ladder is derived only "
+                "from that year's own posted RT offers"
             ),
-            "sample_day_files": sources,
+            "source_files": sources,
             "coverage": coverage,
             "adjudication": (
                 "ERCOT-92: supersedes the ERCOT-89 §8.3 working note 'the "
