@@ -83,8 +83,11 @@ def resolve_fuel_prices(
     (``oil``) pay the AEO2025 oil-price trajectory in forecast mode
     (:func:`resolve_annual_oil_price`) or the flat delivered price
     (:data:`~market_sim.config.constants.OIL_PRICE_PER_MMBTU`) in backcast
-    mode. Biomass units (``biomass``) pay the delivered biomass fuel cost
-    (:data:`~market_sim.config.constants.BIOMASS_PRICE_PER_MMBTU`). Nuclear
+    mode. Biomass units (``biomass``) pay the flat delivered biomass fuel cost
+    (:data:`~market_sim.config.constants.BIOMASS_PRICE_PER_MMBTU`) in BOTH
+    modes -- held flat because EIA/AEO publishes no forward biomass price (NEMS
+    models biomass via supply curves, verified against the AEO2026 API; see
+    docs/handoffs/biomass-fuel-price-audit-2026-07.md). Nuclear
     units (``nuclear``) pay the EIA-uranium-marketing-derived fuel-cycle cost
     (:func:`resolve_nuclear_fuel_price`) in both modes. All other generators
     (wind, solar, hydro, imports) carry a zero fuel price.
@@ -164,7 +167,9 @@ def resolve_fuel_prices(
     # backcast (oil sits far above gas — peaker economics — and any measured
     # EIA-923 receipts take precedence via the dual-fuel pass below); forecast
     # years use the AEO2025 delivered-oil trajectory. Biomass has no commodity
-    # trajectory or F923 plant-monthly override at all.
+    # trajectory or F923 plant-monthly override at all -- EIA/AEO publishes no
+    # forward biomass price (NEMS uses biomass supply curves), so it is held
+    # flat like nuclear fuel (docs/handoffs/biomass-fuel-price-audit-2026-07.md).
     oil_price = (
         resolve_annual_oil_price(config, year)
         if config.mode == "forecast"
