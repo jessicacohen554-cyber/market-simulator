@@ -1240,17 +1240,31 @@ DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
 #     zones, so the load_share residual mildly understates them; refine all 8
 #     anchors when Table B-9b is read. Source: PJM 2025 Long-Term Load Forecast
 #     Report (Table B-9b); EIA Today-in-Energy (Virginia/DOM ~20 GW).
-#   ERCOT — the large-flexible-load queue concentrates in Oncor (North/DFW) +
-#     West Texas (data center = 72.9% of the ~226 GW Nov-2025 queue), but no
-#     per-weather-zone MW split is published in the accessible primary docs (the
-#     2025 Constraints & Needs report carries no zonal large-load table), so only
-#     the DIRECTION is sourceable -> stays load_share default. Source: ERCOT Large
-#     Load Integration / 2025 Report on Existing & Potential Constraints & Needs.
+#   ERCOT — POPULATED (2026-07-21) from ERCOT's OWN per-weather-zone large-load
+#     additions, so it is a full published decomposition rather than the single
+#     published anchor + load_share residual PJM ships. Basis: the 2025 ERCOT
+#     Adjusted Long-Term Load Forecast (ErcotAdjustedForecast.xlsb, posted with
+#     the Apr-2025 LTLF), which carries per-weather-zone `<zone>_contracts` +
+#     `<zone>_officer_letters` large-load columns — the TSP-attested Large Load
+#     additions that are ~73% data centers (Dec-8/9-2025 ERCOT Board System
+#     Planning update, Item 16.2). Taking those columns' 2030-horizon peak MW per
+#     weather zone and aggregating onto the 7 model transmission zones by the SAME
+#     weather-zone -> transmission-zone crosswalk iso_configs already documents
+#     (West <- FAR_WEST+WEST, North <- NORTH+NORTH_C, Northeast <- EAST,
+#     Houston <- COAST, South_Central <- SOUTH_C, South <- SOUTHERN; ERCOT has no
+#     Panhandle weather zone -> Panhandle 0) gives the split below (52,306 MW
+#     total). It confirms the published skew with real MW — West Texas/Permian
+#     (West 0.244 vs 0.149 load_share) and North/Oncor are DC-heavy, while the
+#     Coast/Houston load pocket is load-heavy but NOT DC-heavy (0.114 vs 0.265
+#     load_share). A source-driven decomposition (rule 23) that regenerates each
+#     forecast vintage (rule 13), NOT an invented split. Source: ERCOT 2025
+#     Adjusted LTLF (ErcotAdjustedForecast.xlsb), per-weather-zone contracts +
+#     officer letters; end-use share from ERCOT Board Item 16.2 (Dec 2025).
 #   MISO — growth concentrates in the central region (IL/IN/MI) per the 2025 LTLF,
 #     a further siting candidate; likewise no per-zone MW fraction sourced ->
 #     stays load_share default.
-# ERCOT and MISO keep the load_share default until a per-zone MW table lands
-# (never an invented split, memo §3.3 / rule 23).
+# MISO keeps the load_share default until a per-zone MW table lands (never an
+# invented split, memo §3.3 / rule 23).
 DATACENTER_ZONE_SHARE: dict[str, dict[str, float]] = {
     # PJM — reconciled DOM-anchored siting (full derivation in the note above):
     # DOM at its published ~0.55 near-2030 DC share, residual 0.45 by load_share
@@ -1266,6 +1280,23 @@ DATACENTER_ZONE_SHARE: dict[str, dict[str, float]] = {
         "PJM_Dominion": 0.550001,  # ANCHOR — published ~0.55 near-2030 DC share (world's largest DC hub)
         "PJM_EMAAC": 0.088507,  # load_share 0.1672 (incl. PSEG — named DC-growth zone)
         "PJM_SWMAAC": 0.038960,  # load_share 0.0736 (incl. BGE — named DC-growth zone)
+    },
+    # ERCOT — large-load-additions-anchored siting (full derivation in the note
+    # above): the 2030-horizon per-weather-zone large-load additions (contracts +
+    # officer letters, ~73% data centers) from ERCOT's own 2025 Adjusted LTLF
+    # (ErcotAdjustedForecast.xlsb), aggregated onto the 7 model transmission zones
+    # by the iso_configs weather-zone crosswalk (52,306 MW total). Keys are the
+    # model zone_names in LP order; shares sum to 1.0 (datacenter_zone_shares
+    # raises otherwise). Materially DC-skews toward West/Permian and South_Central
+    # and away from the Houston/Coast load pocket vs the load_share default.
+    "ERCOT": {
+        "West": 0.244408,  # FAR_WEST 7,746 + WEST 5,038 = 12,784 MW (Permian/DC-heavy; load_share 0.1494)
+        "Panhandle": 0.000000,  # no ERCOT weather zone maps here -> 0 (load_share 0.0)
+        "North": 0.277388,  # NORTH 5,711 + NORTH_C 8,798 = 14,509 MW (Oncor/DFW; load_share 0.3064)
+        "Northeast": 0.005219,  # EAST 273 MW (load_share 0.0351)
+        "Houston": 0.114021,  # COAST 5,964 MW (load-heavy, not DC-heavy; load_share 0.2649)
+        "South_Central": 0.220032,  # SOUTH_C 11,509 MW (Austin/San Antonio corridor; load_share 0.1642)
+        "South": 0.138932,  # SOUTHERN 7,267 MW (load_share 0.0800)
     },
 }
 
