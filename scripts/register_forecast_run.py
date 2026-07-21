@@ -111,9 +111,11 @@ VERDICT_MAP = {
     "miso-2026-2030-ff-t1-gate": "miso-t1f",
     "nyiso-2026-2030-ff-t1-gate": "nyiso-t1f",
     "neiso-2026-2030-ff-t1-gate": "neiso-t1f",
-    "ercot-2023-2027-crossover": "ercot-t1x",
+    # Only the FF-2D re-solve (-ff2d) carries the FF-2D t1x verdict. The older
+    # plain FF-0E crossover solves have their OWN (different) dispatch-skill score,
+    # so attaching the ff2d verdict to them would contradict the run's own score
+    # on the same page (a PASS/FAIL flip) — they render score-only, no verdict.
     "ercot-2023-2027-crossover-ff2d": "ercot-t1x",
-    "pjm-2023-2027-crossover": "pjm-t1x",
     "pjm-2023-2027-crossover-ff2d": "pjm-t1x",
     "pjm-2021-2025-curve-ff2c": "pjm-2021-2025-curve-ff2c-t1h",
     "miso-2021-2025-curve-ff2c": "miso-2021-2025-curve-ff2c-t1h",
