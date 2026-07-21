@@ -152,9 +152,11 @@ def test_default_zone_shares_sum_to_one(iso):
 
 
 def test_default_zone_shares_equal_load_share():
-    iso_cfg = get_iso_config("ERCOT")
+    # MISO carries no siting override, so its default zone shares equal load_share.
+    # (ERCOT and PJM now carry published overrides — see their dedicated tests.)
+    iso_cfg = get_iso_config("MISO")
     zones = iso_cfg.zone_names
-    shares = datacenter_zone_shares("ERCOT", zones)
+    shares = datacenter_zone_shares("MISO", zones)
     expected = np.array([z.load_share for z in iso_cfg.zones])
     assert np.allclose(shares, expected)
 
@@ -171,8 +173,8 @@ def test_import_node_zone_gets_zero_block():
 def test_pjm_zone_share_reconciled_dom_anchored():
     """PJM carries a rule-14 reconciled DOM-anchored siting override (2026-07-21):
     Dominion at its published ~0.55 near-2030 DC share, residual by load_share.
-    Only PJM is overridden; every other ISO keeps its load_share default."""
-    assert set(DATACENTER_ZONE_SHARE) == {"PJM"}
+    PJM and ERCOT are overridden; every other ISO keeps its load_share default."""
+    assert set(DATACENTER_ZONE_SHARE) == {"PJM", "ERCOT"}
     pjm = DATACENTER_ZONE_SHARE["PJM"]
     zones = get_iso_config("PJM").zone_names
     # Keys match the model zone_names exactly and shares sum to 1.0.
@@ -187,9 +189,35 @@ def test_pjm_zone_share_reconciled_dom_anchored():
     assert shares[zones.index("PJM_Dominion")] == pytest.approx(0.55, abs=1e-3)
 
 
+def test_ercot_zone_share_large_load_anchored():
+    """ERCOT carries a large-load-additions-anchored siting override (2026-07-21):
+    per-weather-zone large-load additions (contracts + officer letters, ~73% data
+    centers) from ERCOT's own 2025 Adjusted LTLF, aggregated onto the model's 7
+    transmission zones. A full published decomposition (unlike PJM's single
+    anchor); every non-ERCOT/PJM ISO keeps its load_share default."""
+    ercot = DATACENTER_ZONE_SHARE["ERCOT"]
+    iso_cfg = get_iso_config("ERCOT")
+    zones = iso_cfg.zone_names
+    # Keys match the model zone_names exactly and shares sum to 1.0.
+    assert set(ercot) == set(zones)
+    assert sum(ercot.values()) == pytest.approx(1.0, abs=1e-6)
+    # The Panhandle carries no ERCOT weather zone -> no DC block.
+    assert ercot["Panhandle"] == 0.0
+    # The published West-Texas/Permian skew: West is materially DC-heavier than
+    # its ~0.149 load_share, while the Houston/Coast load pocket is DC-lighter
+    # than its ~0.265 load_share (load-heavy, not DC-heavy).
+    load_share = {z.name: z.load_share for z in iso_cfg.zones}
+    assert ercot["West"] > load_share["West"]
+    assert ercot["Houston"] < load_share["Houston"]
+    # The resolved share vector (via the consumer) sums to 1 and is DC-skewed.
+    shares = datacenter_zone_shares("ERCOT", zones)
+    assert shares.sum() == pytest.approx(1.0, abs=1e-6)
+    assert shares[zones.index("West")] == pytest.approx(ercot["West"], abs=1e-9)
+
+
 def test_nonpjm_zone_share_is_load_share_default():
-    """ERCOT/CAISO/NYISO/MISO carry no siting override -> load_share default."""
-    for iso in ("ERCOT", "CAISO", "NYISO", "MISO"):
+    """CAISO/NYISO/MISO carry no siting override -> load_share default."""
+    for iso in ("CAISO", "NYISO", "MISO"):
         assert iso not in DATACENTER_ZONE_SHARE
         iso_cfg = get_iso_config(iso)
         zones = iso_cfg.zone_names
