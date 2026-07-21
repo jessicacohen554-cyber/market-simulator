@@ -24,14 +24,21 @@ existing `data/raw/miso-pra/` secondary-sourced auction prices are.
 **annual and quarterly average/peak MW figures**, not an hourly time series.
 This is coarser than CAISO/ERCOT's HSL sources — closer to the "NYISO only
 publishes a coarse annual curtailment aggregate" case already documented in
-`docs/data-register-2026-07.md` (#27-analogue). Building an
+`docs/data-register-2026-07.md` (#27-analogue). An
 `miso_<year>_hsl_hourly.parquet` per the `ercot-hsl`/`caiso-hsl` pattern is
-**not done here** — it would require spreading these aggregate MW figures
-across hours using a physically motivated shape (e.g. the existing
-`data/raw/miso-wind-shape/` reanalysis), which is a distinct engineering/
-methodology decision left for a follow-up, not a "collect the source data"
-task. `market_sim.data.renewables._hsl_file` still falls back to the EIA-930
-delivered profile for MISO until that follow-up lands.
+**still not built** — it would require spreading these aggregate MW figures
+across hours using a modeled (not measured) shape, a distinct methodology
+decision, so `_hsl_file` returns `None` for MISO.
+
+**Used instead (2026-07-21):** this annual table is the source for MISO's
+*reference curtailment rate*, not an hourly series. `renewables.
+_miso_wind_reference_curtailment_rate` reads the firm training-window rows
+(2023-2025 non-estimate) and returns the mean `curtailed / (delivered +
+curtailed)` ≈ 0.0489, which drives the forecast-uncurtailed gross-up so MISO
+wind re-curtails endogenously (bound = `forecast_uncurtailed`). This uses only
+the measured *rate* (a rule-13 forward-reproducible parameter), never a
+fabricated hourly shape. MISO solar has no curtailment series here, so it keeps
+the EIA-930 delivered profile.
 
 ## Files in this directory
 

@@ -19,22 +19,23 @@ potential and re-curtails wind and solar under the modeled transmission
 limits, and the calibration report can compare the modeled curtailment
 against the reported ``HSL - GEN``:
 
-* ERCOT — years with a built NP6 HSL parquet
-  (scripts/data/build_ercot_hsl.py; 2023 from the UMass 60-Day-SCED dataset,
-  2024+ from uploaded ERCOT NP6 wind/solar production reports);
-* CAISO 2023/2024/2025 — EIA-930 delivered generation plus CAISO's reported
-  5-minute wind/solar curtailment (scripts/data/build_caiso_hsl.py). CAISO solar
-  curtailment is multi-TWh, so without this the model cannot re-curtail.
+* ERCOT 2023/2024/2025 — all three buildable backcast years now carry a built
+  HSL parquet (scripts/data/build_ercot_hsl.py; 2023 from the UMass 60-Day-SCED
+  dataset, 2024/2025 from ERCOT's own published NP6 wind/solar production
+  reports, landed 2026-07-06 — see data/raw/ercot-hsl/np6/README.md);
+* CAISO 2023/2024/2025 (plus 2019-2021) — EIA-930 delivered generation plus
+  CAISO's reported 5-minute wind/solar curtailment (scripts/data/build_caiso_hsl.py).
+  CAISO solar curtailment is multi-TWh, so without this the model cannot re-curtail.
 
-For a **high-curtailment ISO whose year has no HSL parquet** (ERCOT 2024/25,
-where no NP6 upload could be sourced — see
-data/raw/ercot-hsl/np6/README.md for the data-needed marker — see
-:data:`_UNCURTAILED_FALLBACK_ISOS`), the dispatch is instead
-handed a **forecast uncurtailed CF**: the EIA-930 weather-year delivered
-profile (its real level and shape) grossed up by the per-tech *reference
-curtailment rate* from the ISO's most recent HSL year (see
-:func:`_forecast_uncurtailed_cf`) — *not* the delivered net-of-curtailment
-series consumed as the upper bound. The LP then curtails endogenously and the
+For a **high-curtailment ISO-year-tech with no HSL parquet** (any future ERCOT
+year without an NP6 upload; MISO wind, which has no hourly series at all — see
+:data:`_UNCURTAILED_FALLBACK_ISOS`), the dispatch is instead handed a
+**forecast uncurtailed CF**: the EIA-930 weather-year delivered profile (its
+real level and shape) grossed up by the per-tech *reference curtailment rate*
+from a *different* source year — an HSL year (ERCOT/CAISO) or the Potomac
+Economics measured annual wind curtailment rate (MISO) — via
+:func:`_forecast_uncurtailed_cf`, *not* the delivered net-of-curtailment series
+consumed as the upper bound. The LP then curtails endogenously and the
 modeled-vs-reported curtailment gap is a diagnostic, never a fit target
 (CLAUDE.md #11). The reference rate comes from a *different* year, so the
 potential is never scaled so the target year's delivered output lands on
@@ -74,11 +75,24 @@ Curtailments"): NYCA wind curtailment was 66.6 GWh (1.1% of production) in
 2024 and 76.6 GWh (1.1%) in 2025; FTM solar was 1.04 GWh (0.2%) in 2024 and
 20.18 GWh (2.1%) in 2025 (checked 2026-07-05) — genuinely well under 1 TWh/yr
 and too coarse (monthly, not hourly; zonal, not per-plant) to derive an
-hourly potential series from, so the documented default for NYISO backcasts
-remains the EIA-930 NYIS delivered-generation series. Zone-shaping uses
-EIA-860 capacity shares: upstate NY counties (zones A–E) hold the bulk of
-wind capacity, and solar spreads across upstate and downstate zones. The HSL
-path is stubbed in :func:`_hsl_file`; see the data-needed marker there.
+hourly potential series from. Both its magnitude (~1% of production, below the
+threshold where explicit re-curtailment moves dispatch) and its granularity
+make NYISO a **deliberate genuine-gap decision**, not merely a missing upload:
+the documented default for NYISO backcasts remains the EIA-930 NYIS
+delivered-generation series and NYISO stays OUT of
+:data:`_UNCURTAILED_FALLBACK_ISOS`. Zone-shaping uses EIA-860 capacity shares:
+upstate NY counties (zones A–E) hold the bulk of wind capacity, and solar
+spreads across upstate and downstate zones.
+
+MISO, by contrast, IS a fallback ISO for wind: MISO's IMM (Potomac Economics)
+publishes measured annual/quarterly wind curtailment in its State-of-the-Market
+reports — multi-TWh/yr (~4.9% of potential, ~500-660 MW average) — reachable
+where misoenergy.org's hourly workbooks are allowlist-blocked. That aggregate is
+also too coarse for an hourly HSL parquet, but it is enough for a measured
+per-tech reference curtailment RATE, so MISO wind takes the forecast-uncurtailed
+reference-rate gross-up (:func:`_miso_wind_reference_curtailment_rate`,
+:func:`_forecast_uncurtailed_cf`). MISO solar has no published curtailment
+series and keeps the delivered profile.
 """
 
 from __future__ import annotations
@@ -134,17 +148,25 @@ _RENEWABLE_FUELS: tuple[str, str] = ("wind", "solar")
 # ISOs whose reported wind/solar curtailment is material (multi-TWh/yr) so the
 # dispatch must re-curtail an *uncurtailed* potential rather than inherit the
 # curtailment baked into EIA-930 delivered output. For a backcast year these
-# prefer a built HSL parquet (ERCOT NP6, CAISO delivered+reported-curtailment);
-# when none covers the year (ERCOT 2024/25 — no NP6 upload could be sourced;
-# see data/raw/ercot-hsl/np6/README.md) they fall back to the FORECAST
-# per-tech uncurtailed CF (EIA-930 weather-year shape x physical normal-year
-# RENEWABLE_AVG_CF, floored at delivered) — NOT the delivered net-of-curtailment
-# series — so the LP still curtails endogenously and responds to changed build.
-# Every ISO NOT listed keeps the delivered EIA-930 profile as its documented
-# fallback (curtailment there is sub-1%/yr, below where explicit re-curtailment
-# moves dispatch). The modeled-vs-reported curtailment gap is a diagnostic,
-# never a fit target (CLAUDE.md #11).
-_UNCURTAILED_FALLBACK_ISOS: frozenset[str] = frozenset({"ERCOT", "CAISO"})
+# prefer a built HSL parquet (ERCOT NP6 all three years; CAISO
+# delivered+reported-curtailment); when none covers the ISO-year-tech they fall
+# back to the per-tech reference-rate gross-up (EIA-930 weather-year delivered
+# shape ÷ (1 − reference curtailment rate)) — NOT the delivered
+# net-of-curtailment series — so the LP still curtails endogenously and responds
+# to changed build. The reference rate is a measured curtailment rate from a
+# *different* source year (:func:`_reference_curtailment_rate`): a recent HSL
+# year for ERCOT/CAISO, or — for MISO, which publishes no hourly HSL series —
+# the Potomac Economics (MISO IMM) measured annual wind curtailment rate
+# (:func:`_miso_wind_reference_curtailment_rate`). MISO qualifies because its
+# wind curtailment is multi-TWh/yr (~4.9% of potential, ~500-660 MW average per
+# the IMM's SOM reports); MISO solar has no published curtailment series so it
+# stays on the delivered profile. Every ISO NOT listed keeps the delivered
+# EIA-930 profile as its documented fallback — NYISO and NEISO curtailment is
+# sub-1%/yr (below where explicit re-curtailment moves dispatch) and neither
+# publishes a series granular enough to derive a rate from. The
+# modeled-vs-reported curtailment gap is a diagnostic, never a fit target
+# (CLAUDE.md #11).
+_UNCURTAILED_FALLBACK_ISOS: frozenset[str] = frozenset({"ERCOT", "CAISO", "MISO"})
 
 # Years probed (newest first) for an HSL-covered reference year when grossing a
 # no-HSL year's delivered profile up to an uncurtailed potential (see
@@ -321,28 +343,31 @@ _HSL_COLUMNS: tuple[str, ...] = (
 # falls back to the delivered EIA-930 hourly profile.
 _CAISO_HSL_DIR: Path = CAISO_HSL_DIR
 
-# NYISO curtailment parquet directory (reserved for future data).
-# DATA NEEDED: NYISO does not publish hourly uncurtailed-potential series
-# comparable to CAISO or ERCOT NP6, so this directory is currently empty.
-# When NYISO begins publishing such data, build one parquet per backcast year
-# (schema: ``_HSL_COLUMNS``) under this directory and extend :func:`_hsl_file`.
-# Until then the NYISO backcast uses EIA-930 NYIS delivered generation and
-# curtailment is not explicitly modeled (it embeds the historical curtailment,
-# which EIA-923 shows is well under 1 TWh/yr — below the threshold where
-# explicit re-curtailment changes dispatch materially).
+# NYISO curtailment parquet directory (currently empty — a deliberate genuine
+# gap, not a pending upload). NYISO curtailment is ~1% of production (well under
+# 1 TWh/yr) and only published as a monthly/zonal aggregate, so it is both below
+# the threshold where explicit re-curtailment moves dispatch AND too coarse to
+# derive an hourly potential (or even a reliable per-tech rate) from — see the
+# module docstring. NYISO therefore stays OUT of :data:`_UNCURTAILED_FALLBACK_ISOS`
+# and its backcast uses EIA-930 NYIS delivered generation. If NYISO ever
+# publishes an hourly series, build one parquet per year (schema:
+# ``_HSL_COLUMNS``) here and extend :func:`_hsl_file`.
 _NYISO_HSL_DIR: Path = NYISO_HSL_DIR
 
-# MISO curtailment parquet directory (reserved for future data).
-# DATA NEEDED: MISO does publish wind & solar curtailment in its Market Reports
-# (Daily/Monthly "Wind & Solar Curtailment" series), but those reports live on
-# misoenergy.org, which is allowlist-blocked from this environment (HTTP 403;
-# see docs/multi-iso/miso-data-audit.md). No granular hourly uncurtailed-
-# potential (HSL) series is reproducible here yet, so this directory is empty
-# and the MISO backcast uses EIA-930 MISO delivered wind/solar generation
-# (which embeds the historical curtailment). When the MISO curtailment reports
-# can be pulled, build one parquet per backcast year (schema: ``_HSL_COLUMNS``,
-# HSL = delivered + reported curtailment) following scripts/data/build_caiso_hsl.py
-# and this branch will pick it up automatically.
+# MISO curtailment directory. No hourly ``miso_<year>_hsl_hourly.parquet`` is
+# built (misoenergy.org's 5-minute workbooks stay allowlist-blocked; HTTP 403,
+# see docs/multi-iso/miso-data-audit.md), so :func:`_hsl_file` returns ``None``
+# for MISO. Instead this directory holds the Potomac Economics (MISO IMM) annual
+# wind-curtailment table (``miso_wind_curtailment_annual.csv`` +
+# quarterly/forecast-method CSVs, README/SOURCES.md), a measured AGGREGATE source
+# from which :func:`_miso_wind_reference_curtailment_rate` derives MISO's
+# forward-reproducible wind curtailment rate. MISO wind therefore takes the
+# reference-rate gross-up (``forecast_uncurtailed`` provenance), while MISO solar
+# — no published curtailment series — keeps the delivered EIA-930 profile. If the
+# hourly workbooks ever become reachable, build per-year HSL parquets (schema:
+# ``_HSL_COLUMNS``, HSL = delivered + reported curtailment) following
+# scripts/data/build_caiso_hsl.py and :func:`_hsl_file` will pick them up,
+# upgrading MISO wind from ``forecast_uncurtailed`` to ``measured_potential``.
 _MISO_HSL_DIR: Path = MISO_HSL_DIR
 
 # Provenance labels for :func:`renewable_bound_provenance` — the L1 finding's
@@ -376,13 +401,15 @@ def renewable_bound_provenance(iso: str, year: int, fuel: str) -> str:
       shape grossed up by a *different* year's measured rate
       (:func:`_forecast_uncurtailed_cf`) — real headroom, endogenously
       re-curtailed, but a weaker measurement than a published potential
-      series (ERCOT 2024/2025 today).
+      series. This is MISO wind (Potomac Economics measured annual rate) and
+      any future ERCOT year lacking an NP6 upload.
     * ``"delivered_pinned"`` — neither of the above: the dispatch is handed
       the raw delivered EIA-930 profile as the upper bound (L1's HIGH-severity
       leakage, docs/model-legitimacy-audit-2026-07.md §4), so the LP rides the
       bound and the class's C1 row is scoring plumbing, not skill. This is
-      every ISO other than ERCOT/CAISO, every year for those two ISOs where
-      HSL coverage runs out AND no reference curtailment rate exists.
+      NYISO/NEISO (sub-1% curtailment, no rate derivable), MISO solar (no
+      published curtailment series), and any ERCOT/CAISO year where HSL
+      coverage runs out AND no reference curtailment rate exists.
     """
     hsl_path = _hsl_file(iso, year)
     if hsl_path is not None and hsl_path.exists():
@@ -411,12 +438,14 @@ def _hsl_file(iso: str, year: int) -> Path | None:
         candidate = _NYISO_HSL_DIR / f"nyiso_{year}_hsl_hourly.parquet"
         return candidate if candidate.exists() else None
     if iso == "MISO":
-        # DATA NEEDED: miso_<year>_hsl_hourly.parquet in _MISO_HSL_DIR. MISO's
-        # wind/solar curtailment reports (misoenergy.org Market Reports) are
-        # allowlist-blocked here (HTTP 403; see _MISO_HSL_DIR and the audit
-        # doc). Until they can be pulled the MISO backcast uses EIA-930 MISO
-        # delivered generation, which embeds the historical curtailment. The
-        # branch picks up the parquet automatically once one is built.
+        # MISO publishes no hourly uncurtailed-potential series (misoenergy.org's
+        # 5-minute workbooks are allowlist-blocked; see _MISO_HSL_DIR and the
+        # audit doc), so no miso_<year>_hsl_hourly.parquet is built and this
+        # returns None. MISO wind still re-curtails: it takes the forecast-
+        # uncurtailed reference-rate gross-up from the Potomac Economics measured
+        # annual rate (_UNCURTAILED_FALLBACK_ISOS / _forecast_uncurtailed_cf),
+        # not this hourly path. The branch would pick up an hourly parquet
+        # automatically if one were ever built.
         candidate = _MISO_HSL_DIR / f"miso_{year}_hsl_hourly.parquet"
         return candidate if candidate.exists() else None
     # NEISO: ISO-NE reported curtailment is sub-1 % of potential — the
@@ -527,6 +556,75 @@ def _eia930_delivered_mwh(iso: str, year: int, fuel: str) -> float | None:
     return total if total > 0.0 else None
 
 
+# Potomac Economics (MISO's FERC-designated Independent Market Monitor) annual
+# wind-curtailment table — the reproducible aggregate MISO wind curtailment
+# source, used because misoenergy.org's 5-minute curtailment workbooks stay
+# allowlist-blocked (HTTP 403; see data/raw/miso-hsl/SOURCES.md and the audit
+# doc). One row per year carries average delivered (real-time) wind output and
+# average curtailed MW, so the annual curtailment RATE
+# ``curtailed / (delivered + curtailed)`` is a measured, forward-reproducible
+# market parameter (a new SOM report lands each June/July for the prior year).
+# It is NOT an hourly series — MISO publishes none — so it feeds the
+# reference-rate gross-up (:func:`_forecast_uncurtailed_cf`), never an
+# uncurtailed-potential (HSL) parquet, and MISO wind's renewable bound is
+# labelled ``forecast_uncurtailed``, not ``measured_potential``.
+_MISO_WIND_CURTAILMENT_ANNUAL: Path = MISO_HSL_DIR / "miso_wind_curtailment_annual.csv"
+
+# Training-window years (CLAUDE.md #22) whose firm (non-estimate) annual rows
+# set the MISO wind reference curtailment rate. Restricted to 2023-2025 so the
+# structural rate never reads a validation/locked holdout year (2019/2022/H1
+# 2026); 2025 is currently a source-flagged estimate and is dropped by the
+# non-estimate filter, so today the rate is the 2023+2024 firm mean (~4.9%).
+_MISO_REFERENCE_RATE_YEARS: frozenset[int] = frozenset({2023, 2024, 2025})
+
+
+def _miso_wind_reference_curtailment_rate() -> tuple[float, int] | None:
+    """Return ``(rate, year)`` — MISO's measured annual wind curtailment rate.
+
+    Reads the Potomac Economics (MISO IMM) annual wind-curtailment table
+    (:data:`_MISO_WIND_CURTAILMENT_ANNUAL`) and returns the training-window
+    (:data:`_MISO_REFERENCE_RATE_YEARS`) mean of the firm (``is_estimate`` false)
+    annual rates ``curtailed / (delivered + curtailed)``, tagged with the latest
+    contributing year. This is MISO's forward-reproducible reference curtailment
+    rate: a measured aggregate market parameter — MISO does not publish an hourly
+    curtailment series — used to gross the delivered EIA-930 wind profile up to
+    an uncurtailed potential (:func:`_forecast_uncurtailed_cf`), the same
+    forecast-uncurtailed construction ERCOT's no-HSL years use. It references no
+    target-year dispatch outcome, so it cannot pin the backcast (CLAUDE.md
+    #11/#13), and it re-derives only when the source table updates (#24). The
+    2023-2025 restriction keeps it clear of every holdout year (#22).
+
+    Returns ``None`` when the table is missing or carries no firm training-year
+    row with both delivered and curtailed MW.
+    """
+    if not _MISO_WIND_CURTAILMENT_ANNUAL.exists():
+        return None
+    try:
+        table = pd.read_csv(_MISO_WIND_CURTAILMENT_ANNUAL)
+    except (OSError, ValueError):
+        return None
+    rates: list[float] = []
+    latest_year = 0
+    for _, row in table.iterrows():
+        year = _as_int(row.get("year"))
+        if year is None or year not in _MISO_REFERENCE_RATE_YEARS:
+            continue
+        if str(row.get("is_estimate", "")).strip().upper() == "TRUE":
+            continue
+        curtailed = _as_float(row.get("avg_wind_curtailed_mw"))
+        delivered_gw = _as_float(row.get("avg_wind_output_rt_gw"))
+        if curtailed is None or curtailed < 0.0 or delivered_gw is None:
+            continue
+        potential_mw = delivered_gw * 1_000.0 + curtailed  # RT output is GW
+        if potential_mw <= 0.0:
+            continue
+        rates.append(curtailed / potential_mw)
+        latest_year = max(latest_year, year)
+    if not rates:
+        return None
+    return sum(rates) / len(rates), latest_year
+
+
 def _reference_curtailment_rate(iso: str, fuel: str) -> tuple[float, int] | None:
     """Return ``(rate, year)`` — the per-tech curtailment rate of a recent HSL year.
 
@@ -539,6 +637,14 @@ def _reference_curtailment_rate(iso: str, fuel: str) -> tuple[float, int] | None
     potential; it never references the target year's own actuals, so it cannot
     pin the backcast (CLAUDE.md #11).
 
+    MISO publishes no hourly HSL series, but its IMM (Potomac Economics)
+    publishes a measured aggregate annual wind curtailment rate — a
+    forward-reproducible market parameter that grosses the delivered wind
+    profile up to an uncurtailed potential exactly as an HSL-year rate does — so
+    MISO wind falls back to :func:`_miso_wind_reference_curtailment_rate`. MISO
+    solar has no such published series, so it returns ``None`` and keeps the
+    delivered profile.
+
     Returns ``None`` when the ISO has no HSL-covered reference year (the caller
     then keeps the delivered profile, leaving curtailment unmodeled).
     """
@@ -550,6 +656,8 @@ def _reference_curtailment_rate(iso: str, fuel: str) -> tuple[float, int] | None
         hsl = float(df[f"{fuel}_hsl_mw"].sum())
         if hsl > 0.0 and 0.0 < gen <= hsl:
             return 1.0 - gen / hsl, ref_year
+    if iso == "MISO" and fuel == "wind":
+        return _miso_wind_reference_curtailment_rate()
     return None
 
 
@@ -561,15 +669,16 @@ def _forecast_uncurtailed_cf(
 ) -> np.ndarray | None:
     """Return an uncurtailed CF profile for a no-HSL backcast year, or ``None``.
 
-    For a high-curtailment ISO whose year has no HSL parquet (ERCOT 2024/25,
-    where no NP6 upload could be sourced — see data-needed marker below),
+    For a high-curtailment ISO-year-tech with no HSL parquet (MISO wind, which
+    has no hourly series at all; any future ERCOT year lacking an NP6 upload),
     the dispatch still needs an *uncurtailed* renewable upper bound so it can
     re-curtail endogenously rather than inherit the curtailment baked into
     delivered output. This builds one the same way the CAISO HSL parquet does —
     delivered + curtailment — except the year's own hourly curtailment series is
     unavailable, so the EIA-930 weather-year delivered profile (its real level
     and shape) is grossed up by the per-tech **reference curtailment rate** from
-    the ISO's most recent HSL year (:func:`_reference_curtailment_rate`)::
+    a *different* source year — a recent HSL year, or the Potomac Economics
+    measured annual wind rate for MISO (:func:`_reference_curtailment_rate`)::
 
         uncurtailed_cf(t) = delivered_cf(t) / (1 - reference_rate)
 
@@ -1794,13 +1903,14 @@ def load_renewable_profiles(
     where one covers the ISO-year — ERCOT years with a built NP6 HSL
     parquet, CAISO's delivered-plus-reported-curtailment analogue — so the
     dispatch re-curtails (see :func:`_hsl_cf_profile`). When no HSL parquet
-    covers the year, a high-curtailment ISO
+    covers the ISO-year-tech, a high-curtailment fallback ISO
     (:data:`_UNCURTAILED_FALLBACK_ISOS`) instead gets a forecast uncurtailed CF
     (the weather-year delivered profile grossed up by the per-tech reference
-    curtailment rate from the ISO's most recent HSL year, so the potential is
+    curtailment rate from a *different* source year — a recent HSL year, or the
+    Potomac Economics measured annual wind rate for MISO — so the potential is
     always >= delivered; see :func:`_forecast_uncurtailed_cf`) so the dispatch
-    still re-curtails, while every other ISO uses the delivered ``<BA> hourly``
-    net generation for its balancing authority (see
+    still re-curtails, while every other ISO/tech uses the delivered
+    ``<BA> hourly`` net generation for its balancing authority (see
     :func:`_eia_hourly_cf_profile`).
 
     Each technology's installed capacity is distributed across the ISO's
@@ -1877,12 +1987,15 @@ def load_renewable_profiles(
             # CAISO covered years). Both are normalized per MW of online
             # capacity, so the vintage ramp distributes them across zones, and
             # neither takes the CF knob tuned to EIA-930 data. When no HSL
-            # parquet covers the year the fallback splits by ISO: a
-            # high-curtailment ISO (:data:`_UNCURTAILED_FALLBACK_ISOS`) is
-            # handed the *forecast* per-tech uncurtailed CF below so the
-            # dispatch re-curtails endogenously, while every other ISO keeps
-            # the delivered ``<BA> hourly`` net generation (its documented
-            # default — sub-1%/yr curtailment that re-curtailment would not
+            # parquet covers the ISO-year-tech the fallback splits by ISO and
+            # tech: a high-curtailment fallback ISO
+            # (:data:`_UNCURTAILED_FALLBACK_ISOS`) with a reference curtailment
+            # rate for this tech (ERCOT/CAISO wind & solar, MISO wind) is handed
+            # the *forecast* per-tech uncurtailed CF below so the dispatch
+            # re-curtails endogenously; everything else (other ISOs, and MISO
+            # solar — which has no published curtailment series) keeps the
+            # delivered ``<BA> hourly`` net generation (its documented default —
+            # sub-1%/yr or unmeasured curtailment that re-curtailment would not
             # move).
             measured_cf = None
             if is_backcast:
