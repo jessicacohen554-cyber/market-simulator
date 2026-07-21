@@ -2702,6 +2702,8 @@ def solve_and_persist(
     ramp_limits: bool | None = None,
     local_capacity_constraints: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
+    nyiso_scr_edrp: bool | None = None,
+    nyiso_scr_edrp_strike: float | None = None,
     nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
     nyiso_import_hub_prices: bool | None = None,
@@ -3449,6 +3451,12 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_local_selfsupply=nyiso_local_selfsupply
             )
+        if nyiso_scr_edrp is not None:
+            recorded_cfg = recorded_cfg.with_overrides(nyiso_scr_edrp=nyiso_scr_edrp)
+        if nyiso_scr_edrp_strike is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_scr_edrp_strike=nyiso_scr_edrp_strike
+            )
         if nyiso_firm_imports is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_firm_imports=nyiso_firm_imports
@@ -3928,6 +3936,8 @@ def solve_and_persist(
             ramp_limits=ramp_limits,
             local_capacity_constraints=local_capacity_constraints,
             nyiso_local_selfsupply=nyiso_local_selfsupply,
+            nyiso_scr_edrp=nyiso_scr_edrp,
+            nyiso_scr_edrp_strike=nyiso_scr_edrp_strike,
             nyiso_firm_imports=nyiso_firm_imports,
             nyiso_import_reconciliation=nyiso_import_reconciliation,
             nyiso_import_hub_prices=nyiso_import_hub_prices,
@@ -4407,6 +4417,8 @@ def solve_and_persist(
         "ramp_limits": ramp_limits,
         "local_capacity_constraints": local_capacity_constraints,
         "nyiso_local_selfsupply": nyiso_local_selfsupply,
+        "nyiso_scr_edrp": nyiso_scr_edrp,
+        "nyiso_scr_edrp_strike": nyiso_scr_edrp_strike,
         "nyiso_firm_imports": nyiso_firm_imports,
         "nyiso_import_reconciliation": nyiso_import_reconciliation,
         "nyiso_import_hub_prices": nyiso_import_hub_prices,
@@ -8691,6 +8703,28 @@ def main() -> None:
         "value (off).",
     )
     parser.add_argument(
+        "--nyiso-scr-edrp",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NYISO SCR/EDRP emergency demand response as endogenous "
+        "price-responsive supply blocks: add one pseudo-generator per model "
+        "zone at the zone's Gold-Book-registered DR MW and the EDRP-floor "
+        "strike (--nyiso-scr-edrp-strike), clearing the energy balance only "
+        "when the zone LBMP would exceed the strike (endogenous scarcity "
+        "trigger, never pinned to event dates). Caps the downstate scarcity "
+        "tail. Gold-Book-registered capability + market-design strike, "
+        "forward-reproducible (rule 13/17). NYISO-only. Default (unset) keeps "
+        "the base config value (off).",
+    )
+    parser.add_argument(
+        "--nyiso-scr-edrp-strike",
+        type=float,
+        default=None,
+        help="Marginal cost ($/MWh) of the NYISO SCR/EDRP demand-response "
+        "blocks (default: the published EDRP $500/MWh compensation floor). "
+        "Only consumed when --nyiso-scr-edrp is on.",
+    )
+    parser.add_argument(
         "--nyiso-firm-imports",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -9500,6 +9534,8 @@ def main() -> None:
         local_capacity_constraints=args.local_capacity_constraints,
         ct_netload_drag=args.ct_netload_drag,
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,
+        nyiso_scr_edrp=args.nyiso_scr_edrp,
+        nyiso_scr_edrp_strike=args.nyiso_scr_edrp_strike,
         nyiso_firm_imports=args.nyiso_firm_imports,
         nyiso_import_reconciliation=args.nyiso_import_reconciliation,
         nyiso_import_hub_prices=args.nyiso_import_hub_prices,
