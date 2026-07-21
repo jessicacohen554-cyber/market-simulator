@@ -1,0 +1,172 @@
+{
+  "program": "Forecast Finalization Program (FF)",
+  "generated": "2026-07-20",
+  "sources": [
+    "docs/handoffs/ff-t1-gate-2026-07.md (FF-2D — T1 gate battery, six ISOs)",
+    "docs/handoffs/ff-poc-closeout-2026-07.md (FF-3E — full-solve readiness + §2.1b scorecard)",
+    "docs/handoffs/ff-t1-gate-verdicts.json (FC-1..FC-8 rubric verdicts)",
+    "docs/forecast-development-plan-2026-07.md §1.2 / §2.1 / §2.1b"
+  ],
+  "headline": "No ISO clears the T1→T2 rubric gate at HEAD — all six read HOLD (FF-2D). No ISO clears the §2.1b full-solve authorization gate either (FF-3E). This board is the §2.1b evidence, not a green-wash: every remaining blocker is structural, routed to its L-CAP lane, none an FF-5A/dashboard target (rule 1).",
+  "gate_reading": "The dominant T1-F blocker is FC-1 structural — the I4 capacity-accounting leak (the FF-0B \"A1\" finding, still open) for CAISO/PJM/MISO/NEISO, plus I7 base-year adequacy (A2) for CAISO/MISO/NYISO and ERCOT's I3 scarcity slack. PJM and NEISO are closest — their only T1-F blocker is the single I4 leak invariant; fix A1 and both clear FC-1. The FF-2C capacity-clearing flip is the structurally-correct mechanism and is working; the residuals it exposes are the open retirement-rule / backstop / capacity-accounting lanes, not tuning targets.",
+  "readiness": "The FF-3E full-horizon readiness battery is GREEN for all six ISOs — the path is bug-free (input-resolution walk, config round-trip, kill-resume drill all clean; wall/RSS projected). Ten hours of compute today would buy a mechanically-clean but structurally-flawed golden run. Compute is not the binding constraint; the T1-F structural blockers are.",
+  "tier_ladder": [
+    {"tier": "T0 smoke", "window": "1–3 yr", "status": "schedulable", "note": "Per-feature probe; default iteration vehicle."},
+    {"tier": "T1-F short forecast", "window": "2026–2030", "status": "scored (FF-2D)", "note": "All six ISOs HOLD."},
+    {"tier": "T1-X crossover", "window": "2023–2027 (scored 2023–2025)", "status": "scored (FF-2D)", "note": "ERCOT + PJM HOLD; FC-4 CO2 drives both fails."},
+    {"tier": "T1-H hindcast", "window": "2021–2025", "status": "scored (FF-2D)", "note": "Four curve legs FC-3 FAIL on curve-ON over-fire."},
+    {"tier": "T2 mid", "window": "2026–2035", "status": "deferred (§2.1b)", "note": "Unschedulable until the full-solve gate opens per ISO."},
+    {"tier": "T3 golden", "window": "2026–2050", "status": "deferred (§2.1b, Wave 4 withdrawn)", "note": "The BAU deliverable; only T2 passers, once authorized."}
+  ],
+  "flip_config": "FF-2C shipping default: capacity-market clearing ON for PJM / MISO / CAISO / NEISO (curve-ON), OFF for energy-only ERCOT and (owner call pending) NYISO. Posture flips baked in: datacenter_load_path=mid, correlated_forced_outage=True (ERCOT), entry_lookahead_reprice=True.",
+  "iso_order": ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"],
+  "isos": {
+    "ERCOT": {
+      "tier_reached": "T1",
+      "t1f_determination": "HOLD",
+      "t1x_determination": "HOLD",
+      "flip": "energy-only (capacity clearing OFF)",
+      "fc": {"FC-1": "FAIL", "FC-2": "CAVEAT", "FC-4": "FAIL", "FC-7": "CAVEAT", "FC-8": "PASS"},
+      "blocking_rows": ["FC-1 I3 scarcity slack 2027–2030 (0.01–0.03% of load)", "FC-4 crossover dispatch skill (CO2 43–50%; price converges 69%→9%)"],
+      "gate": {
+        "a_keeper_marker": {"status": "fail", "detail": "frontier withdrawn 2026-07-17 (phantom-outage audit); no calibration-complete marker."},
+        "b_t1f_verdict": {"status": "fail", "detail": "HOLD — FC-1 FAIL I3 (scarcity slack 2027–30)."},
+        "c_crossover_gap": {"status": "fail", "detail": "FC-4 FAIL — price 69%→9% (converges), CO2 43–50% (partly reconstruction-basis)."},
+        "c_readiness": {"status": "green", "detail": "battery green."},
+        "c_cost": {"status": "info", "detail": "~2.0 h full-horizon (2026–2050), ~4.6 GB, pairable."},
+        "d_owner_auth": {"status": "none", "detail": "no authorization exists."},
+        "open": false,
+        "closed_on": ["a", "b"]
+      },
+      "golden": "deferred (Wave 4, §2.1b); fixture tests/golden/ercot_2026_2040.json is FROZEN (seeded f0f7c67, bands moved).",
+      "candidate": null
+    },
+    "CAISO": {
+      "tier_reached": "T1",
+      "t1f_determination": "HOLD",
+      "t1x_determination": "n/a",
+      "flip": "curve-ON (capacity clearing) — but a pricing no-op for CAISO",
+      "fc": {"FC-1": "FAIL", "FC-2": "CAVEAT", "FC-7": "CAVEAT", "FC-8": "PASS"},
+      "blocking_rows": ["FC-1 I3 (2030 slack 0.02%), I4 (2027 gas_st off 1333 MW, A1), I7 (2026/2027 base-year adequacy, A2), I9 (2030 sim chg+dis 0.26%)"],
+      "gate": {
+        "a_keeper_marker": {"status": "fail", "detail": "keeper caiso-102-hourfix; no calibration-complete marker."},
+        "b_t1f_verdict": {"status": "fail", "detail": "HOLD — FC-1 FAIL I3, I4, I7, I9."},
+        "c_crossover_gap": {"status": "na", "detail": "not run (FF-2D scope)."},
+        "c_readiness": {"status": "green", "detail": "battery green."},
+        "c_cost": {"status": "info", "detail": "~2.8 h full-horizon, ~5.5 GB, pairable."},
+        "d_owner_auth": {"status": "none", "detail": "no authorization exists."},
+        "open": false,
+        "closed_on": ["a", "b"]
+      },
+      "golden": "deferred (§2.1b).",
+      "candidate": null
+    },
+    "PJM": {
+      "tier_reached": "T1",
+      "t1f_determination": "HOLD",
+      "t1x_determination": "HOLD",
+      "flip": "curve-ON (capacity clearing) — position past zero-cross pays $0 (BLK-3 open)",
+      "fc": {"FC-1": "FAIL", "FC-2": "PASS", "FC-4": "FAIL", "FC-7": "CAVEAT", "FC-8": "CAVEAT"},
+      "blocking_rows": ["FC-1 I4 (2029 coal off 743 MW, A1) — sole T1-F blocker", "FC-4 crossover CO2 43–58% (price in-band except 2025 CAVEAT)"],
+      "gate": {
+        "a_keeper_marker": {"status": "fail", "detail": "keeper pjm-gasshape-interpfix; no calibration-complete marker."},
+        "b_t1f_verdict": {"status": "fail", "detail": "HOLD — FC-1 FAIL I4 (2029 coal off 743 MW)."},
+        "c_crossover_gap": {"status": "fail", "detail": "FC-4 FAIL — CO2 43–58% > 30% band; price 2025 17.5% CAVEAT."},
+        "c_readiness": {"status": "green", "detail": "battery green."},
+        "c_cost": {"status": "info", "detail": "~7.3 h full-horizon (solo, ~10 GB late-horizon)."},
+        "d_owner_auth": {"status": "none", "detail": "no authorization exists."},
+        "open": false,
+        "closed_on": ["a", "b"]
+      },
+      "golden": "deferred (§2.1b).",
+      "candidate": null
+    },
+    "MISO": {
+      "tier_reached": "T1",
+      "t1f_determination": "HOLD",
+      "t1x_determination": "HOLD (crossover launched, may fold)",
+      "flip": "curve-ON (capacity clearing) — enabled cap-market storage entry (+4 GW)",
+      "fc": {"FC-1": "FAIL", "FC-2": "FAIL", "FC-7": "CAVEAT", "FC-8": "CAVEAT"},
+      "blocking_rows": ["FC-1 I4 (2029 coal off 1640 MW, A1), I7 (2026 base-year adequacy)", "FC-2 I13 gas_ct cobweb (NEW, flip-induced)"],
+      "gate": {
+        "a_keeper_marker": {"status": "fail", "detail": "keeper miso-81-phantom-outage; no calibration-complete marker."},
+        "b_t1f_verdict": {"status": "fail", "detail": "HOLD — FC-1 FAIL I4, I7 + FC-2 FAIL I13 cobweb."},
+        "c_crossover_gap": {"status": "na", "detail": "crossover launched (may fold); FF-2D scope."},
+        "c_readiness": {"status": "green", "detail": "battery green."},
+        "c_cost": {"status": "info", "detail": "~10.1 h full-horizon (solo, ~10.5 GB late-horizon)."},
+        "d_owner_auth": {"status": "none", "detail": "no authorization exists."},
+        "open": false,
+        "closed_on": ["a", "b", "FC-2"]
+      },
+      "golden": "deferred (§2.1b).",
+      "candidate": null
+    },
+    "NYISO": {
+      "tier_reached": "T1",
+      "t1f_determination": "HOLD",
+      "t1x_determination": "n/a",
+      "flip": "curve-OFF (owner call pending; R5a Option B unimplemented)",
+      "fc": {"FC-1": "FAIL", "FC-2": "CAVEAT", "FC-7": "CAVEAT", "FC-8": "PASS"},
+      "blocking_rows": ["FC-1 I7 (2026 base-year adequacy: firm 30.3 < 32.1 GW, A2)"],
+      "gate": {
+        "a_keeper_marker": {"status": "fail", "detail": "calibration-complete marker WITHDRAWN 2026-07-19 (co-dependent offer curves vs corrected phantom-outage envelope)."},
+        "b_t1f_verdict": {"status": "fail", "detail": "HOLD — FC-1 FAIL I7 (2026 firm 30.3 < 32.1 GW)."},
+        "c_crossover_gap": {"status": "na", "detail": "not run."},
+        "c_readiness": {"status": "green", "detail": "battery green."},
+        "c_cost": {"status": "info", "detail": "~1.1 h full-horizon, pairable."},
+        "d_owner_auth": {"status": "none", "detail": "no authorization exists."},
+        "open": false,
+        "closed_on": ["a", "b"]
+      },
+      "golden": "deferred (§2.1b).",
+      "candidate": null
+    },
+    "NEISO": {
+      "tier_reached": "T1",
+      "t1f_determination": "HOLD",
+      "t1x_determination": "n/a",
+      "flip": "curve-ON (capacity clearing) — priced RA closed base-year adequacy (I7/I12 fixed)",
+      "fc": {"FC-1": "FAIL", "FC-2": "PASS", "FC-7": "CAVEAT", "FC-8": "PASS"},
+      "blocking_rows": ["FC-1 I4 (2028 coal off 54 MW, A1) — sole T1-F blocker"],
+      "gate": {
+        "a_keeper_marker": {"status": "pass", "detail": "marker present 2026-07-07; keeper neiso-60-phantom-outage — the ONLY ISO meeting gate (a)."},
+        "b_t1f_verdict": {"status": "fail", "detail": "HOLD — FC-1 FAIL I4 (2028 coal off 54 MW)."},
+        "c_crossover_gap": {"status": "na", "detail": "not run (FF-2D scope)."},
+        "c_readiness": {"status": "green", "detail": "battery green."},
+        "c_cost": {"status": "info", "detail": "~1.0 h full-horizon (cheapest), ~4.3 GB, pairable."},
+        "d_owner_auth": {"status": "none", "detail": "no authorization exists."},
+        "open": false,
+        "closed_on": ["b"],
+        "note": "Closest to the gate — the only ISO meeting (a); fix the I4/A1 lane and NEISO clears FC-1 (b)."
+      },
+      "golden": "deferred (§2.1b).",
+      "candidate": null
+    }
+  },
+  "honest_unfit": [
+    {"id": "I4 / A1", "title": "Capacity-accounting leak", "isos": ["CAISO", "PJM", "MISO", "NEISO"], "lane": "L-CAP (model/capacity.py + results/evolution_ledger.py)", "detail": "Steam/coal MW removed with no matching ledger retirements record — the dominant T1-F blocker (4/6 ISOs). Fix A1 and NEISO + PJM clear FC-1. Un-actioned since FF-0B; the ledger_version stamp did NOT touch it."},
+    {"id": "I7 / A2", "title": "Base-year adequacy", "isos": ["CAISO", "MISO", "NYISO"], "lane": "FF-1C (hydro-in-ledger) + CR-3.1 (VRE/storage ELCC)", "detail": "Hydro dispatched but excluded from the accredited firm-capacity ledger (accredited_firm_capacity_mw reads the persistent fleet, which never contains hydro). NEISO closed via the FF-2C flip."},
+    {"id": "I3", "title": "ERCOT scarcity slack", "isos": ["ERCOT"], "lane": "L-CAP / L-SCAR", "detail": "Slack 0.01–0.03% of load 2027–2030, plus the #2064 non-monotone scarcity signature — one-pass discreteness + cfo/AEO fuel."},
+    {"id": "I13", "title": "MISO gas_ct cobweb", "isos": ["MISO"], "lane": "L-CAP entry-sizing (BLK-10 / FF-1A)", "detail": "NEW, FF-2C flip-induced → FC-2 FAIL. Alternating gas_ct entry loop under the priced curve."},
+    {"id": "golden", "title": "Frozen ERCOT golden fixture", "isos": ["ERCOT"], "lane": "owner-authorized golden-refresh one-off", "detail": "tests/golden/ercot_2026_2040.json seeded f0f7c67 (use_campd_bins=False); bands moved (FF-1F DC=mid+cfo, FF-2A entry-lookahead, FF-G2 AEO fuel; 2030 LW $45→$79.5). Reseed is a 15-solve-year invocation — breaches the §2.1b 5-year cap; left un-widened and un-touched (a stale-but-honest fixture > a silently-regenerated one)."}
+  ],
+  "open_frontier": [
+    {"rank": 1, "title": "Retirement decision-rule inversion", "lane": "FF-0C → FF-1A", "detail": "retirement_years_coal=3 eliminates PJM's coal wave in-window (recall 76%→0) and inverts MISO onto gas_st (8.6 GW false-retire). Consecutive-loss counters race fuels against each other. Blocks every flip."},
+    {"rank": 2, "title": "ERCOT screen revenue level + in-year scarcity", "lane": "L-SCAR / G-20/G-22", "detail": "Correlated forced-outage derate landed (FF-1B); 2024 forms in-year scarcity on the un-staged fleet but is absorbed on the staged/threshold-3 fleet; Uri-2021 stays $0 (a demand-input gap). Residual ≈ 56–66 $/kW-yr to SOM."},
+    {"rank": 3, "title": "Entry stack — ERCOT solar residual", "lane": "FF-2A (landed, gated) / G-20/G-22", "detail": "VRE capacity revenue measured near-pivotal; BLK-10 backstop 2.5→1.103 GW; ERCOT solar zero is a pure term-(a) price-signal residual (−9.7k best-year margin)."},
+    {"rank": 4, "title": "Non-equilibrium two-phase trajectory", "lane": "T2 (deferred §2.1b)", "detail": "De-firm to ~2035 then cap-market over-build (RM→30–67%) / ERCOT chronic shortage + #2064 non-monotone scarcity. Re-measured at T2 when that tier is authorized."},
+    {"rank": 5, "title": "Base-year adequacy accounting", "lane": "FF-1C (hydro-in-ledger), CR-3.1 (ELCC)", "detail": "FF-2B partially closed (NEISO I7 now PASSES); CAISO/NYISO I7 stay FAIL, dominated by hydro dispatched-but-unaccredited. Same family as honest-unfit I7/A2."},
+    {"rank": 6, "title": "Inputs currency", "lane": "FF-0D audit, FF-1C/1E", "detail": "DC zone shares empty; growth/ATB/fuel/policy vintages unaudited at HEAD; NEW_ENTRY_COSTS hardcoded; hydro fleet silently drops ~3.3 GW (NYISO) past the last EIA-923 vintage."},
+    {"rank": 7, "title": "NYISO R5a / NEISO evidence", "lane": "FF-3D / FF-2B", "detail": "NYISO R5a adjudicated-unimplemented (owner decided Option B — NYCA-wide static proxy; implementation pending) — curve-ineligible; NEISO was evidence-free (no capacity hindcast) before FF-2B."},
+    {"rank": 8, "title": "Numerics", "lane": "FF-3C (on measured active-tier evidence)", "detail": "Storage ε-tiebreak degeneracy at high penetration (I9, CAISO →5.8% of throughput); RPS dual cobweb (I10 WARN). T2 deferred (§2.1b)."},
+    {"rank": 9, "title": "Runtime (late-horizon)", "lane": "§2.4 rules / FF-3E / FF-3C", "detail": "Late-horizon LPs grow super-linearly (PJM 2045–2050 ≈ 30–40 min/yr, 9–10 GB RSS; two per-plant ISOs cannot co-run late years on a 15 GB box)."},
+    {"rank": 10, "title": "MISO forecast path unverified", "lane": "FF-0B", "detail": "MISO forecast path unverified since the storage-registry fix landed."}
+  ],
+  "readiness_limits": [
+    {"title": "Locational siting", "detail": "DATACENTER_ZONE_SHARE is empty — the DC block sites by load-share, not published campus locations, and plateaus post-2030/2040. No zonal DC siting claim."},
+    {"title": "Forward-auction timing", "detail": "Capacity price uses fixed net-CONE anchors past the last published VRR vintage — no forward auction-clearing-date claim."},
+    {"title": "Confirmed-retirement horizon", "detail": "No confirmed exit past ~2030 (NYISO registry empty); 2031–2050 retirements are entirely the economic screen's."},
+    {"title": "IRA/OBBBA credits", "detail": "Wind/solar PTC/ITC expire 2027 (OBBBA cliff), 45U/45Q/45V by 2032 — 2033–2050 runs credit-expired (policy-correct)."},
+    {"title": "Gated mechanisms", "detail": "capacity_deliverability_limits part (b) unvalidated in any keeper; legacy P2 economic-commitment archived; CES premium ladder CES-off in BAU (seam verified, campaign deferred, W4)."}
+  ]
+}
