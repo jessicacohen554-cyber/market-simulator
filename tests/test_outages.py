@@ -677,7 +677,9 @@ class ErcotThermalDamAvailabilityTest(unittest.TestCase):
         from market_sim.data.outages import ercot_thermal_dam_availability_series
 
         s = ercot_thermal_dam_availability_series(2023)
-        self.assertEqual(set(s), {"CC_REGULAR", "CT_PEAKER"})
+        # ST_GAS joined the covered scope 2026-07-18 (the measured-availability
+        # backcast re-architecture — see the derive script's class-scope note).
+        self.assertEqual(set(s), {"CC_REGULAR", "CT_PEAKER", "ST_GAS"})
         cc = s["CC_REGULAR"]
         self.assertEqual(cc.shape, (HOURS_PER_YEAR,))
         # Jun 14 2023 (a June over-formation day): measured CC fraction ~0.834
@@ -759,6 +761,186 @@ class ErcotThermalDamAvailabilityTest(unittest.TestCase):
             (fa_fc.availability[:, day].mean(axis=1) * pmax).sum() / pmax.sum()
         )
         self.assertNotAlmostEqual(fc_frac, float(target[d0]), places=3)
+
+    def test_committed_hourly_series_reconciles_with_day_grain(self):
+        """ERCOT-96 class-hour series: shape, day-mean reconciliation, the
+        summer afternoon dip, and the Oct-2023 publication hole."""
+        from market_sim.data.outages import (
+            ercot_thermal_dam_availability_hourly_series,
+            ercot_thermal_dam_availability_series,
+        )
+
+        s = ercot_thermal_dam_availability_hourly_series(2023)
+        self.assertEqual(set(s), {"CC_REGULAR", "CT_PEAKER", "ST_GAS"})
+        cc = s["CC_REGULAR"]
+        self.assertEqual(cc.shape, (HOURS_PER_YEAR,))
+        finite = np.isfinite(cc)
+        self.assertTrue((cc[finite] >= 0.0).all())
+        self.assertTrue((cc[finite] <= 1.0).all())
+        # Day-mean of the hourly grain reconciles with the day file (both come
+        # from the same site-hour intermediate; rounding tolerance only).
+        day = ercot_thermal_dam_availability_series(2023)["CC_REGULAR"]
+        d0 = _hour_of_year(6, 14, 0)
+        self.assertAlmostEqual(
+            float(np.nanmean(cc[d0 : d0 + 24])), float(day[d0]), places=2
+        )
+        # The measured afternoon ambient dip on a 2023 tail day (Aug 25):
+        # hod 14 (HE 15) sits below the overnight hod 4 (HE 5) capability.
+        a0 = _hour_of_year(8, 25, 0)
+        self.assertLess(cc[a0 + 14], cc[a0 + 4])
+        # Oct-2023 disclosure publication hole -> NaN (statistical kept).
+        self.assertTrue(np.isnan(cc[_hour_of_year(10, 15, 12)]))
+
+    def test_fleet_application_hourly_grain(self):
+        """ERCOT-96 grain switch: the class-hour cap-weighted availability
+        lands on the measured hourly fraction; the hourly flag alone (base
+        off) is a no-op; uncovered days keep the pre-overlay stack."""
+        from market_sim.config.scenarios import ScenarioConfig
+        from market_sim.data.fleet import Generator, generators_to_fleet_arrays
+
+        def cc(i: int, mw: float) -> Generator:
+            return Generator(
+                unit_id=f"55555_{i}",
+                name=f"cc {i}",
+                zone="Houston",
+                fuel_type="gas_cc",
+                pmax_mw=mw,
+                pmin_mw=0.0,
+                heat_rate=7.5,
+                vom=2.0,
+                emission_rate_co2=0.4,
+                nox_rate=0.0,
+                eford=0.05,
+                online_year=2005,
+                plant_code=55555,
+                is_campd_bin=True,
+                plant_group="CC_REGULAR",
+            )
+
+        gens = [cc(1, 400.0), cc(2, 300.0), cc(3, 300.0)]
+        zones = ["Houston"]
+        pmax = np.array([400.0, 300.0, 300.0])
+        base = dict(weather_year=2023, iso="ERCOT", mode="backcast")
+        cfg_day = ScenarioConfig(**base, ercot_thermal_dam_availability=True)
+        cfg_hr = ScenarioConfig(
+            **base,
+            ercot_thermal_dam_availability=True,
+            ercot_thermal_dam_availability_hourly=True,
+        )
+        fa_day = generators_to_fleet_arrays(
+            gens, zones, hours=HOURS_PER_YEAR, iso="ERCOT", config=cfg_day, year=2023
+        )
+        fa_hr = generators_to_fleet_arrays(
+            gens, zones, hours=HOURS_PER_YEAR, iso="ERCOT", config=cfg_hr, year=2023
+        )
+        from market_sim.data.outages import (
+            ercot_thermal_dam_availability_hourly_series,
+        )
+
+        t_h = ercot_thermal_dam_availability_hourly_series(2023)["CC_REGULAR"]
+        # Aug 25 hod 14 (HE 15) — a covered tail-day afternoon hour: the
+        # cap-weighted class availability equals the measured HOURLY fraction,
+        # not the day-flat one.
+        h = _hour_of_year(8, 25, 14)
+        got = float((fa_hr.availability[:, h] * pmax).sum() / pmax.sum())
+        self.assertAlmostEqual(got, float(t_h[h]), places=3)
+        day_flat = float((fa_day.availability[:, h] * pmax).sum() / pmax.sum())
+        self.assertNotAlmostEqual(got, day_flat, places=3)
+        # The measured intra-day SHAPE survives: afternoon below overnight.
+        h4 = _hour_of_year(8, 25, 4)
+        got4 = float((fa_hr.availability[:, h4] * pmax).sum() / pmax.sum())
+        self.assertLess(got, got4)
+        # Uncovered day (Oct-2023 hole): byte-identical to the day-grain run
+        # (both fall through to the pre-overlay statistical stack there).
+        o0 = _hour_of_year(10, 15, 0)
+        np.testing.assert_array_equal(
+            fa_hr.availability[:, o0 : o0 + 24],
+            fa_day.availability[:, o0 : o0 + 24],
+        )
+        # Hourly flag WITHOUT the base flag: the mechanism is unarmed — the
+        # whole overlay (either grain) must not apply.
+        cfg_orphan = ScenarioConfig(
+            **base, ercot_thermal_dam_availability_hourly=True
+        )
+        cfg_off = ScenarioConfig(**base)
+        fa_orphan = generators_to_fleet_arrays(
+            gens, zones, hours=HOURS_PER_YEAR, iso="ERCOT", config=cfg_orphan, year=2023
+        )
+        fa_off = generators_to_fleet_arrays(
+            gens, zones, hours=HOURS_PER_YEAR, iso="ERCOT", config=cfg_off, year=2023
+        )
+        np.testing.assert_array_equal(fa_orphan.availability, fa_off.availability)
+
+    def test_plant_grain_preserves_class_total_and_pins_plants(self):
+        """ERCOT-97 plant grain: a crosswalked plant is pinned to its own
+        measured fraction and the unmapped remainder is water-filled so the
+        class-HOUR cap-weighted total is UNCHANGED (a within-class
+        redistribution, not a level change; zero fitted parameters)."""
+        import logging
+
+        from market_sim.data.fleet import (
+            _dam_waterfill,
+            _ercot_dam_plant_hourly_apply,
+        )
+
+        # Water-fill invariant: the cap-weighted mean lands on the target.
+        a = np.array([[0.9, 0.5], [0.8, 0.2]])
+        cap = np.array([100.0, 50.0])
+        tgt = np.array([0.7, 0.9])
+        new = _dam_waterfill(a, cap, tgt, np.array([True, True]))
+        cw = (new * cap[:, None]).sum(axis=0) / cap.sum()
+        np.testing.assert_allclose(cw, tgt, atol=1e-9)
+        self.assertLessEqual(float(new.max()), 1.0)
+
+        # Redistribution: class of 1200 MW, measured class fraction 0.75 (class
+        # live = 900 MW). Two mapped plants (101 @ 0.50 over 400 MW = 200;
+        # 202 @ 1.00 over 300 MW = 300; mapped live = 500), one unmapped plant
+        # (303, 500 MW). Residual target = (900 − 500)/500 = 0.80.
+        class _G:
+            def __init__(self, pc, grp, pm):
+                self.plant_code = pc
+                self.plant_group = grp
+                self.pmax_mw = pm
+
+        gens = [
+            _G(101, "CC_REGULAR", 200.0),
+            _G(101, "CC_REGULAR", 200.0),
+            _G(202, "CC_REGULAR", 300.0),
+            _G(303, "CC_REGULAR", 500.0),
+        ]
+        pmax = np.array([200.0, 200.0, 300.0, 500.0])
+        avail = np.ones((4, 2))
+        meas_h = {"CC_REGULAR": np.array([0.75, 0.75])}
+        plant_series = {101: np.array([0.50, 0.50]), 202: np.array([1.0, 1.0])}
+        done = _ercot_dam_plant_hourly_apply(
+            avail, gens, pmax, 2, 2023, meas_h, plant_series, logging.getLogger("t")
+        )
+        self.assertEqual(done, {"CC_REGULAR"})
+        # Mapped plants pinned to their measured fractions.
+        cw101 = (avail[0:2] * pmax[0:2, None]).sum(axis=0) / 400.0
+        np.testing.assert_allclose(cw101, [0.5, 0.5], atol=1e-9)
+        np.testing.assert_allclose(avail[2], [1.0, 1.0], atol=1e-9)
+        # Unmapped residual water-filled to 0.80.
+        np.testing.assert_allclose(avail[3], [0.8, 0.8], atol=1e-9)
+        # Class total UNCHANGED (measured): 0.75 × 1200 = 900 MW.
+        class_live = (avail * pmax[:, None]).sum(axis=0)
+        np.testing.assert_allclose(class_live, [900.0, 900.0], atol=1e-6)
+
+    def test_plant_series_missing_files_is_a_noop(self):
+        """The plant loader degrades to {} when its inputs are absent, so the
+        caller keeps the class-HOUR grain (missing-file no-op convention)."""
+        import market_sim.data.outages as _o
+
+        real_xw = _o.ERCOT_DAM_PLANT_CROSSWALK_CSV
+        try:
+            _o.ercot_thermal_dam_availability_plant_series.cache_clear()
+            _o.ERCOT_DAM_PLANT_CROSSWALK_CSV = real_xw.parent / "does-not-exist.csv"
+            self.assertEqual(
+                _o.ercot_thermal_dam_availability_plant_series(2023), {}
+            )
+        finally:
+            _o.ERCOT_DAM_PLANT_CROSSWALK_CSV = real_xw
+            _o.ercot_thermal_dam_availability_plant_series.cache_clear()
 
     def test_zeroed_tranches_stay_zero_and_cap_holds(self):
         """The rescale is multiplicative (zeros preserved) and caps at 1.0."""
