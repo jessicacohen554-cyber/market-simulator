@@ -1,6 +1,6 @@
 {
  "iso": "ERCOT",
- "keeper": "2026-07-20-ercot91-seasonal-drag-fullspan",
+ "keeper": "2026-07-22-ercot96-dam-hourly-grain",
  "frontier": {
   "declared": "2026-07-17",
   "withdrawn": "2026-07-17",
