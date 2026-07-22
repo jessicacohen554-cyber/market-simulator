@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-22-caiso-112-export-floor",
+  "label": "caiso 112 export floor",
+  "date": "2026-07-22",
+  "shorthand": "caiso-112-export-floor",
+  "definition": "caiso-112 B-leg -- caiso-102 KEEPER recipe + caiso_wecc_export_floor (L1a bidirectional tie: bridge preserves per-hub WECC export legs' negative bound so the tie net-exports in the belly), single delta, 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-22-caiso-112-export-floor.js",
+  "bundle": "results/calibration/caiso112_export_floor_B"
+}
