@@ -49,7 +49,12 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config.constants import HOURS_PER_YEAR
-from market_sim.config.paths import CALIBRATION_DIR, CAMPD_BINS_CSV, RAW_DATA_DIR
+from market_sim.config.paths import (
+    CALIBRATION_DIR,
+    CAMPD_BINS_CSV,
+    RAW_DATA_DIR,
+    REFERENCE_DIR,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -865,6 +870,146 @@ def ercot_thermal_dam_availability_series(
         hi = min(lo + 24, hours)
         arr = out.setdefault(str(r.klass), np.full(hours, np.nan))
         arr[lo:hi] = float(r.avail)
+    return out
+
+
+# ERCOT measured CLASS-hour thermal availability — the ERCOT-96 grain refinement
+# of the class-day series above, from the SAME 60-Day DAM disclosure rows
+# (scripts/data/derive_ercot_thermal_dam_availability.py --hourly-out). Keeps
+# the hourly ambient-derate shape the day mean discards: the ERCOT-95 diagnosis
+# (docs/handoffs/ercot95-scarcity-tail-diagnosis-2026-07.md Finding 6) measured
+# the day-flat overlay handing the model a +216 MW mean (+433 p90) CC+CT
+# phantom on the 181 actual 2023 RT tail hours (hod 13-19), and an equal
+# under-credit overnight. Gated by
+# ScenarioConfig.ercot_thermal_dam_availability_hourly on top of the class-day
+# flag (the grain switch of the SAME mechanism, not a second overlay).
+ERCOT_THERMAL_DAM_AVAILABILITY_HOURLY_CSV: Path = (
+    RAW_DATA_DIR / "ercot-thermal-dam-availability-hourly.csv"
+)
+
+
+@lru_cache(maxsize=None)
+def ercot_thermal_dam_availability_hourly_series(
+    year: int, hours: int = HOURS_PER_YEAR
+) -> dict[str, np.ndarray]:
+    """Return ``{plant_group: (hours,) measured class-HOUR availability}``.
+
+    Each covered delivery date contributes its 24 per-``Hour Ending`` measured
+    fractions (config-collapsed live HSL over the sites present at that HE) on
+    the model's fixed non-leap clock (:func:`_hour_of_year`; a leap year's
+    Feb 29 row dropped, the archive convention). Hours the disclosure does not
+    cover — the Oct-2023 publication hole, Nov-Dec 2025 until the 2026 files
+    land, an uncovered HE — are ``NaN``: the caller keeps the statistical
+    availability there, hour by hour. Returns an empty dict when the CSV is
+    absent or the year has no rows, so callers degrade to the class-day grain
+    (and from there to the statistical model) unchanged.
+    """
+    if not ERCOT_THERMAL_DAM_AVAILABILITY_HOURLY_CSV.exists():
+        return {}
+    df = pd.read_csv(ERCOT_THERMAL_DAM_AVAILABILITY_HOURLY_CSV)
+    df = df.rename(columns={"class": "klass"})
+    df["date"] = pd.to_datetime(df["date"])
+    df = df[df["date"].dt.year == int(year)]
+    if df.empty:
+        return {}
+    he_cols = [f"he{h:02d}" for h in range(1, 25)]
+    out: dict[str, np.ndarray] = {}
+    for r in df.itertuples(index=False):
+        mo, dy = int(r.date.month), int(r.date.day)
+        if mo == 2 and dy == 29:
+            continue  # non-leap model clock (ERCOT-54 convention)
+        lo = _hour_of_year(mo, dy, 0)
+        hi = min(lo + 24, hours)
+        arr = out.setdefault(str(r.klass), np.full(hours, np.nan))
+        vals = np.array([getattr(r, c) for c in he_cols], dtype=float)
+        arr[lo:hi] = vals[: hi - lo]
+    return out
+
+
+# ERCOT measured PLANT-hour thermal availability (ERCOT-97 plant grain) — the
+# same 60-Day DAM disclosure site-hour intermediate
+# (scripts/data/derive_ercot_thermal_dam_availability.py --site-hourly-out),
+# but resolved to EIA plant codes through the reviewed, accepted-gated
+# DAM-site -> EIA-plant crosswalk (build_ercot_dam_resource_crosswalk.py). For
+# each crosswalked plant, its measured availability fraction at a delivery hour
+# is Σ live_HSL / Σ site-rating over the DAM sites (physical trains) mapped onto
+# that plant. Only ``accepted=1`` crosswalk rows are consumed, so an unreviewed
+# guess never enters a solve (CLAUDE.md rules 1/11 — crosswalk rows are
+# identification metadata, not a tuning channel). Gated by
+# ScenarioConfig.ercot_thermal_dam_availability_plant on top of the class-hour
+# flag; the plant caps redistribute WHICH plant is derated inside a class while
+# the class-hour water-fill still lands the class total on the measured class
+# fraction (ERCOT-96 Finding: per-plant misallocation ~259 MW mean on the 2023
+# tail hours; net-zero on the class total — a merit-mix/zonal channel).
+ERCOT_THERMAL_DAM_AVAILABILITY_SITE_HOURLY: Path = (
+    RAW_DATA_DIR / "ercot-thermal-dam-availability-site-hourly.parquet"
+)
+ERCOT_DAM_PLANT_CROSSWALK_CSV: Path = REFERENCE_DIR / "ercot-dam-plant-crosswalk.csv"
+
+
+@lru_cache(maxsize=None)
+def ercot_thermal_dam_availability_plant_series(
+    year: int, hours: int = HOURS_PER_YEAR
+) -> dict[int, np.ndarray]:
+    """Return ``{plant_code: (hours,) measured plant availability fraction}``.
+
+    Keyed by EIA ``plant_code`` for the plants an ``accepted=1`` crosswalk row
+    maps a DAM site onto; the fraction is Σ live / Σ rating over that plant's
+    mapped sites, per delivery hour, on the model's fixed non-leap clock
+    (:func:`_hour_of_year`). Hours the disclosure does not cover for a plant
+    (an all-OUT day still carries rows -> fraction 0; a genuinely missing
+    (date, HE) -> ``NaN``) let the caller keep the class-hour treatment for
+    that plant-hour. Returns an empty dict when either the site-hour parquet or
+    the crosswalk is absent, has no accepted rows, or the year has no rows — so
+    callers degrade to the class-hour grain unchanged.
+    """
+    if not (
+        ERCOT_THERMAL_DAM_AVAILABILITY_SITE_HOURLY.exists()
+        and ERCOT_DAM_PLANT_CROSSWALK_CSV.exists()
+    ):
+        return {}
+    xw = pd.read_csv(ERCOT_DAM_PLANT_CROSSWALK_CSV)
+    xw = xw[xw["accepted"] == 1][["site", "plant_code"]]
+    if xw.empty:
+        return {}
+    site2plant = {str(s): int(p) for s, p in zip(xw["site"], xw["plant_code"])}
+
+    sh = pd.read_parquet(
+        ERCOT_THERMAL_DAM_AVAILABILITY_SITE_HOURLY,
+        columns=["date", "site", "he", "live_mw", "rating_mw"],
+    )
+    sh = sh[sh["site"].isin(site2plant)].copy()
+    if sh.empty:
+        return {}
+    sh["date"] = pd.to_datetime(sh["date"])
+    sh = sh[sh["date"].dt.year == int(year)]
+    if sh.empty:
+        return {}
+    sh["plant_code"] = sh["site"].map(site2plant).astype(int)
+    # One crosswalked plant may aggregate several DAM sites (physical trains):
+    # sum live + rating over its mapped sites at each (date, HE) before dividing.
+    agg = (
+        sh.groupby(["plant_code", "date", "he"], as_index=False)[["live_mw", "rating_mw"]]
+        .sum()
+    )
+    agg["frac"] = np.where(
+        agg["rating_mw"] > 0.0,
+        np.clip(agg["live_mw"] / agg["rating_mw"], 0.0, 1.0),
+        np.nan,
+    )
+    out: dict[int, np.ndarray] = {}
+    for r in agg.itertuples(index=False):
+        mo, dy = int(r.date.month), int(r.date.day)
+        if mo == 2 and dy == 29:
+            continue  # non-leap model clock (ERCOT-54 convention)
+        he = int(r.he)
+        if he < 1 or he > 24:
+            continue
+        h = _hour_of_year(mo, dy, he - 1)
+        if h >= hours:
+            continue
+        arr = out.setdefault(int(r.plant_code), np.full(hours, np.nan))
+        arr[h] = float(r.frac)
     return out
 
 
