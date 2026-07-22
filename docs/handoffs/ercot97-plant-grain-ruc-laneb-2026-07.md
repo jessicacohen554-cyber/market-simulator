@@ -19,9 +19,11 @@ grounding facts the ERCOT-96 session verified for each lane.
    accepted rows ONLY) is the template — an unreviewed guess never enters a
    solve. The site×hour intermediate is already computed inside
    `derive_ercot_thermal_dam_availability.derive_year` (live_sh / rating).
-2. **Measured RUC conduct data is ALREADY IN-REPO.** The 60-Day SCED
-   disclosure corpus (`data/raw/ercot/SCED/`, full-year intake landed
-   ERCOT-93) carries per-resource per-interval `Telemetered Resource Status`;
+2. **Measured RUC conduct data: RE-FETCH FIRST.** The 60-Day SCED disclosure
+   corpus was purged from HEAD in the owner-ordered 2026-07-22 bloat clear
+   (866 MB SCED/ + ~2 GB monthly parts) — re-fetch the needed windows with
+   scripts/data/fetch_ercot_60day_sced_gen_resource.py and slim on arrival
+   with slim_ercot_dam_disclosure.py --sced. The corpus (pre-purge) carries per-resource per-interval `Telemetered Resource Status`;
    `ONRUC` marks RUC-committed unit-hours — ERCOT capacity committed by the
    operator that economics would not have committed (the ERCOT-95 Finding 5
    "reality RUC/self-commits that capacity" conduct). ERCOT-93's ST_GAS
@@ -138,12 +140,18 @@ HARD GUARDRAILS (CLAUDE.md)
 - Rule 15/16: every completed run on the dashboard same-session (probe bundles
   gitignored by results/calibration/*probe*/ — name candidates without 'probe');
   all years in ONE bundle for any candidate.
-- Rules 26/27: Opus/Fable only; push via mcp__github__push_files with per-blob
-  SHA verification (this caught 2 real transcription defects in ERCOT-96 — verify
-  EVERY blob); files >~80 KB never travel whole through a model response — patch
-  or staging protocol (docs/handoffs/ercot96-thermal-dam-grain-2026-07.md
-  "Transport manifest" has the working recipe); oversized run payloads go to the
-  owner via the session file channel with sha256 manifest.
+- Rules 26/27: Opus/Fable only. TRANSPORT UPDATE (proven end-of-ERCOT-96,
+  owner-authorized): git push WORKS on this remote for packs ≤~60 MB — the
+  historical HARD-413 is pack-size-dependent (multi-GB pushes), so binaries
+  and bulk changes go via plumbing commits + direct push in ≤60 MB chunks
+  (read-tree tip → hash-object -w → update-index --cacheinfo → write-tree
+  --missing-ok → commit-tree → push; recipe in the ERCOT-96 session log,
+  used for the 3.2 GB purge + 196 MB slim swap + keeper placement). Verify
+  every pushed blob SHA vs git hash-object regardless. push_files stays fine
+  for small text; never emit >~80 KB of file content through a model response
+  (3 transcription defects caught by verification in ERCOT-96). If the
+  standing CLAUDE.md 'never git push' rule should be amended to reflect the
+  pack-size reality, that is the owner's edit to make.
 - No CI solves (private repo). Solve in-session, years sequential.
 
 ENV GOTCHAS (from ERCOT-96, all verified)
