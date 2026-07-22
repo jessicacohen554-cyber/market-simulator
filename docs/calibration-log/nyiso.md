@@ -216,10 +216,26 @@ the system mean (38.06 → 37.44 $/MWh), so +15.9% remains after it is fully
 absorbed. That is a broad 2023 energy-price **level** issue (offer surface / gas
 basis / import pricing), a separate lever from reserve formation.
 
-**Disposition.** Per the step-2 promotion gate ("if it closes 2023, promote"),
-2023 does **not** fully close → registered `2026-07-22-nyiso-70-scr-edrp` as a
-**CANDIDATE**, both flags kept **default-off**; **nyiso-68 remains the keeper**
-(no keeper-shard edit, no keeper churn — the nyiso-69 staging precedent). Both
-reserve-eligibility flags are validated-correct and stay armed for the follow-up
-that attacks the 2023 C3a mean-level gap. Remaining East-side piece unchanged:
-Blenheim-Gilboa PS into the dispatch fleet (helps East-10min, secondary).
+**Known C7 regression (recorded, not hidden).** The extra reserve supply lets
+ST_GAS provide less reserve, so its 2023 **off-peak** dispatch flattens: the C7
+diurnal-shape gate for ST_GAS 2023 flips PASS→FAIL (off-peak CV ratio 0.548 →
+**0.483**, threshold 0.5). Marginal (0.483 vs 0.5), single-class, confined to the
+already-NOT-YET 2023 (2024/2025 ST_GAS C7 PASS at 0.703/0.641). Same underlying
+lever as the C3a mean-level gap — the 2023 energy-price-level workstream governs
+ST_GAS off-peak dispatch shape and should resolve both.
+
+**Disposition — PROMOTED to keeper (owner-directed 2026-07-22).** Per rule 1 the
+keeper is the **most structurally faithful** run, not the one that crosses a
+determination threshold — and both nyiso-68 and nyiso-70 are NOT-YET. nyiso-70
+adds two real, grounded reserve mechanisms nyiso-68 lacks, closes the load-bearing
+C3b 2023, and regresses only the marginal C7 ST_GAS-2023 shape. The owner
+authorized the promotion with the C3b-close-for-C7-flip trade explicitly in view.
+Swapped the keeper shard `frontend/data/backcast/keepers/NYISO.json` → nyiso-70,
+rebuilt `status/NYISO`, generated the bundle's `calibration_attestation.json`
+(DOF ledger n_residual **unchanged at 5** — both flags are eligibility unions,
+zero tunable) + `legitimacy_diagnostics.json`, re-scored (C6 governance PASS).
+The two flags stay **default-off** in `ScenarioConfig`; the keeper recipe enables
+them explicitly (the standard keeper-lever pattern, as nyiso-68 does for
+`nyiso_scr_edrp`). Named follow-up: the 2023 energy-price-level lever (closes C3a
+and the ST_GAS C7 shape together); secondary, Blenheim-Gilboa PS into the dispatch
+fleet for East-10min reserve.
