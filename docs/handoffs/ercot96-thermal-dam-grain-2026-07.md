@@ -90,10 +90,32 @@ since the 2026-07-18 ST_GAS scope change) + `test_flag_registry` /
 `test_flag_registry` FAIL — `add_flag_arguments` missing — pre-exists on
 pristine `4ff3118b`).
 
-## A/B status
+## A/B status (final, 2026-07-22)
 
-Filled in by the session's follow-up commits (2023 rule-16 throwaway on the
-ercot91 keeper meta via `replay_keeper.py --set
-ercot_thermal_dam_availability_hourly=true`, then full-span 2023-2025 if
-gates hold; Lane B `ordc_lolp_params_path` probe after). Every completed run
-lands on the dashboard per rule 15.
+Base = byte-recipe ercot91 replay on this tree: reproduces the keeper's 2023
+EXACTLY (40 tail h, mean $36.94) — tree drift solve-neutral. Probe (+hourly
+grain, 2023): C3c 40→51 h (in-actual 38→46; 5 spurious all Jun-18/19
+near-misses), C3a mean-px gap −26.0%→−22.1%, summer hod corr 0.885→0.908,
+trough untouched. Full span `2026-07-22-ercot96-dam-hourly-grain`: 2024 tail
+13→13 (C3a −7.3%→−6.6%), 2025 tail 1→0 (removed hour was spurious). Verdict:
+C7 PASS, C8 PASS, C3a −27.8% / C3b NRMSE 0.539 ledgered CAVEATs (improved
+from −32.5% / 0.631), C3c NOT-YET driver (2024/2025 unledgered). LOYO clean
+(zero fitted parameters). Keeper UNCHANGED (ercot91) — promotion + C3c
+ledgering are owner calls. Lane B moved to ERCOT-97 by owner direction
+(2026-07-22, this session), joined by the plant-grain crosswalk and the
+measured RUC-conduct lanes — see
+`docs/handoffs/ercot97-plant-grain-ruc-laneb-2026-07.md`.
+
+Full log entry: `docs/calibration-log/ercot.md` § 2026-07-22 — ERCOT-96.
+
+## Oversized-artifact placement (owner step)
+
+The registered run's `runs/<id>.js` payload (1.48 MB), the bundle's hourly
+parquets + slims, the appended `docs/calibration-log/ercot.md`, the registry
+SIDECAR (pulled back off the branch so it lands atomically WITH the payload —
+the calibration-report hard rule), and the hourly CSV travel to the owner as
+`ercot96-oversized-artifacts.tar.gz` (sha256
+`f867dffa1649e51e0f4138f15c615f3f0dd576f2fda83c84c764d8b7b06e7ea1`) via the
+session file channel, with `PLACEMENT-MANIFEST.md` carrying per-file git blob
+SHAs and the one-command placement. Until that tar is extracted + pushed, the
+run is registered in-session but INVISIBLE on the live dashboard.
