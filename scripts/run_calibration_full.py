@@ -575,6 +575,53 @@ def _flows_frame(year: int, pass_label: str, result, links) -> "pd.DataFrame | N
     )
 
 
+# caiso-110: the external WECC-West zone(s) whose real fleet + demand must be
+# excluded from CAISO's scored metrics (the results pipeline is zone-blind). The
+# endogenous node keeps the single WECC_import zone (no per-hub split).
+_WECC_ENDOGENOUS_EXTERNAL_ZONES: frozenset[str] = frozenset({"WECC_import"})
+
+
+def _wecc_net_import_row(
+    year: int, pass_label: str, result, links, zone_names: list[str], hours: int
+) -> "pd.DataFrame | None":
+    """Synthetic ``klass='import'`` row carrying the endogenous WECC net import.
+
+    With the endogenous WECC-West node (caiso-110), CAISO's net import is the
+    tie FLOW into the CAISO zones (WECC_import->NP15 + WECC_import->SP15_rest,
+    positive = West->CA = import), NOT the West fleet's total dispatch. The West
+    fleet rows are zone-excluded from the dispatch frame; this single pseudo-unit
+    re-injects the net import so the interchange fuelRow + the net-import metric
+    (vs actual 28.9/32.4/36.2 TWh) and the C7/C8 total-load denominator stay
+    correct. Priced at the NP15 LMP (a CAISO trading zone). Returns ``None`` when
+    the solve carried no flows.
+    """
+    flows = getattr(result, "flows", None)
+    if flows is None or not links:
+        return None
+    net = np.zeros(hours, dtype=np.float32)
+    for i, ln in enumerate(links):
+        if ln.from_zone == "WECC_import" and ln.to_zone in ("NP15", "SP15_rest"):
+            net += np.asarray(flows[i, :hours], dtype=np.float32)
+    zidx = {z: i for i, z in enumerate(zone_names)}
+    np15 = zidx.get("NP15", 0)
+    lmp = np.asarray(result.prices, dtype=np.float32)[np15, :hours]
+    return pd.DataFrame(
+        {
+            "year": np.int16(year),
+            "pass": pass_label,
+            "unit_id": "WECC_WEST_NET_IMPORT",
+            "plant_code": np.int32(0),
+            "klass": "import",
+            "fuel": "import",
+            "supply": "",
+            "zone": "NP15",
+            "hour": np.arange(hours, dtype=np.int32),
+            "mw": net,
+            "lmp": lmp,
+        }
+    )
+
+
 def _system_frame(
     year: int,
     pass_label: str,
@@ -2773,13 +2820,24 @@ def solve_and_persist(
         k: v for k, v in locals().items() if k not in _REUSE_KWARG_EXEMPT
     }
     iso_config = get_iso_config(iso)
+    # caiso-110: the endogenous WECC-West node keeps the SINGLE WECC_import zone
+    # (no per-hub split — run_year does not split it either), so this caller's
+    # zone_names / report frames must match. Read from the generic prb_overrides
+    # channel (the same way run_year receives it).
+    _endog_wecc = iso == "CAISO" and bool(
+        (prb_overrides or {}).get("caiso_endogenous_wecc_node", False)
+    )
     if priced_interchange:
         # Interchange served by the priced import/export node (external zone
         # + import tranches + export sinks) instead of the measured schedule;
         # the bundle's zone set and demand frames follow the extended
         # topology so they match run_year's solve.
         iso_config = extend_with_import_node(iso_config)
-        if (caiso_per_hub_intertie or caiso_reference_price_seam) and iso == "CAISO":
+        if (
+            (caiso_per_hub_intertie or caiso_reference_price_seam)
+            and iso == "CAISO"
+            and not _endog_wecc
+        ):
             # Split WECC_import into the two per-hub corridors so this caller's
             # zone_names / must-run / report frames match run_year's solve
             # (run_year applies the same split idempotently). Both the measured
@@ -3899,9 +3957,7 @@ def solve_and_persist(
             ercot_thermal_dam_availability_hourly=(
                 ercot_thermal_dam_availability_hourly
             ),
-            ercot_thermal_dam_availability_plant=(
-                ercot_thermal_dam_availability_plant
-            ),
+            ercot_thermal_dam_availability_plant=(ercot_thermal_dam_availability_plant),
             ercot_noncampd_plant_availability=ercot_noncampd_plant_availability,
             ercot_storage_capability_measured=ercot_storage_capability_measured,
             ercot_online_capacity_envelope_measured=(
@@ -4028,7 +4084,7 @@ def solve_and_persist(
 
         for label, res in labelled:
             passes_seen.add(label)
-            _dispatch_frame(
+            _dispf = _dispatch_frame(
                 year,
                 label,
                 res,
@@ -4037,32 +4093,46 @@ def solve_and_persist(
                 iso=iso,
                 must_run=must_run,
                 oil_switch_mask=p2_state.get("dual_fuel_oil_mask"),
-            ).to_parquet(run_dir / "dispatch" / f"{year}_{label}.parquet", index=False)
-            system_frames.append(
-                _system_frame(
-                    year,
-                    label,
-                    res,
-                    demand,
-                    zone_names,
-                    iso=iso,
-                    ercot_rtordpa_overlay=ercot_rtordpa_overlay,
-                    ercot_dam_as_overlay=ercot_dam_as_overlay,
-                    ercot_dam_as_overlay_from_year=ercot_dam_as_overlay_from_year,
-                    ercot_dam_as_scarcity_threshold=ercot_dam_as_scarcity_threshold,
-                    ercot_reserve_supply_cap=ercot_reserve_supply_cap,
-                    ercot_storage_as_endogenous=ercot_storage_as_endogenous,
-                    ercot_ordc_total_reserve=ercot_ordc_total_reserve,
-                    ercot_ordc_cap_dual_adder=ercot_ordc_cap_dual_adder,
-                    # ORDC-only realized-room RTORPA: computed on the P1
-                    # result in run_year; None for other passes/configs.
-                    ercot_ordc_realized_adder=(
-                        p2_state.get("ercot_ordc_realized_adder")
-                        if label == "P1"
-                        else None
-                    ),
-                )
             )
+            _sysf = _system_frame(
+                year,
+                label,
+                res,
+                demand,
+                zone_names,
+                iso=iso,
+                ercot_rtordpa_overlay=ercot_rtordpa_overlay,
+                ercot_dam_as_overlay=ercot_dam_as_overlay,
+                ercot_dam_as_overlay_from_year=ercot_dam_as_overlay_from_year,
+                ercot_dam_as_scarcity_threshold=ercot_dam_as_scarcity_threshold,
+                ercot_reserve_supply_cap=ercot_reserve_supply_cap,
+                ercot_storage_as_endogenous=ercot_storage_as_endogenous,
+                ercot_ordc_total_reserve=ercot_ordc_total_reserve,
+                ercot_ordc_cap_dual_adder=ercot_ordc_cap_dual_adder,
+                # ORDC-only realized-room RTORPA: computed on the P1
+                # result in run_year; None for other passes/configs.
+                ercot_ordc_realized_adder=(
+                    p2_state.get("ercot_ordc_realized_adder") if label == "P1" else None
+                ),
+            )
+            if _endog_wecc:
+                # caiso-110: the results pipeline is zone-blind, so the
+                # endogenous WECC-West fleet + demand must be excluded from
+                # CAISO's dispatch/system frames (every downstream metric
+                # inherits it), and CAISO's net import re-injected from the tie
+                # flow (a synthetic klass="import" row) since the West units are
+                # no longer klass="import" dispatch. See _wecc_net_import_row.
+                _dispf = _dispf[~_dispf["zone"].isin(_WECC_ENDOGENOUS_EXTERNAL_ZONES)]
+                _imp = _wecc_net_import_row(
+                    year, label, res, p2_state.get("links"), zone_names, hours
+                )
+                if _imp is not None:
+                    _dispf = pd.concat([_dispf, _imp], ignore_index=True)
+                _sysf = _sysf[~_sysf["zone"].isin(_WECC_ENDOGENOUS_EXTERNAL_ZONES)]
+            _dispf.to_parquet(
+                run_dir / "dispatch" / f"{year}_{label}.parquet", index=False
+            )
+            system_frames.append(_sysf)
             # Reserve-dual diagnostic sidecar (MARKET_SIM_RESERVE_DUAL_DUMP,
             # default OFF): the per-family reserve balance-row duals
             # (reserve_price_by_family, (T, n_fam)) and the per-zone reserve MW
@@ -4377,9 +4447,7 @@ def solve_and_persist(
         "ercot_thermal_dam_availability_hourly": (
             ercot_thermal_dam_availability_hourly
         ),
-        "ercot_thermal_dam_availability_plant": (
-            ercot_thermal_dam_availability_plant
-        ),
+        "ercot_thermal_dam_availability_plant": (ercot_thermal_dam_availability_plant),
         "ercot_noncampd_plant_availability": ercot_noncampd_plant_availability,
         "ercot_storage_capability_measured": ercot_storage_capability_measured,
         "ercot_online_capacity_envelope_measured": (

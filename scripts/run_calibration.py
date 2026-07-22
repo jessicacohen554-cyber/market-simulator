@@ -1625,7 +1625,28 @@ def run_year(
     # the priced-interchange block below (CAISO-only), so a non-priced or
     # non-CAISO run keeps it False.
     caiso_corridors = False
-    if priced_interchange:
+    # caiso-110 Option A: when the endogenous WECC-West node is on (CAISO only),
+    # the WECC_import node becomes a REAL co-optimized neighbor ZONE — its own
+    # measured demand + a reduced import-priced fleet built from the
+    # wecc-west-supply frame — instead of the static import tranches. It
+    # SUPERSEDES the tranche fleet, the per-hub topology split, and the CAISO
+    # import injectors (firm/clean/spot) — one mechanism per phenomenon (rule 18;
+    # docs/handoffs/caiso-endogenous-wecc-node-design-2026-07-21.md). The base
+    # _caiso_config already carries the single WECC_import zone, its two corridor
+    # ties, and the 7,500 MW simultaneous cap, so no apply_interchange_topology
+    # runs (no split); the tie flow carries the West's endogenous net export.
+    _endogenous_wecc = (
+        getattr(config, "caiso_endogenous_wecc_node", False) and iso == "CAISO"
+    )
+    _wecc_west_avail: dict[str, np.ndarray] = {}
+    _wecc_west_demand: np.ndarray | None = None
+    if _endogenous_wecc:
+        from market_sim.data.wecc_west_fleet import build_wecc_west_fleet
+
+        import_generators, _wecc_west_avail, _wecc_west_demand = build_wecc_west_fleet(
+            year, gas_price, hours
+        )
+    elif priced_interchange:
         # CARB levies its cap-and-trade allowance on unspecified WECC imports
         # (border carbon adjustment, EF 0.428 t/MWh x allowance), so every
         # CAISO import tranche carries it in its delivered cost — the same
@@ -1683,6 +1704,16 @@ def run_year(
         demand = demand[:, : config.hours]
         wind_cf = wind_cf[:, : config.hours]
         solar_cf = solar_cf[:, : config.hours]
+
+    # caiso-110: give the WECC_import zone its OWN measured West demand (EIA-930
+    # Region NW+SW aggregate) — the neighbor's energy balance. load_demand left
+    # this row at 0 (load_share 0.0); the West fleet built above serves it and
+    # exports the surplus over the ties. The West zone stays out of CAISO's
+    # scored load/gen/CO2 via the results zone-exclusion (run_calibration_full).
+    if _endogenous_wecc and _wecc_west_demand is not None:
+        _wecc_idx = zone_names.index("WECC_import")
+        demand = demand.copy()
+        demand[_wecc_idx, : config.hours] = _wecc_west_demand[: config.hours]
 
     # CAISO Lever-D: re-curtail the uncurtailed HSL solar potential the dispatch
     # is handed. The reduced 3-zone topology cannot see the sub-area / local
@@ -2279,6 +2310,17 @@ def run_year(
         from market_sim.data.nyiso_demand_response import inject_nyiso_dr_availability
 
         inject_nyiso_dr_availability(fleet_arrays, config, iso, year, list(zone_names))
+    # caiso-110: shape the endogenous WECC-West VRE / hydro / nuclear pseudo-gens
+    # to their MEASURED hourly output (availability = measured MW / nameplate),
+    # the mirror of the NYISO-DR / offshore-wind availability overlays above.
+    # Dispatchable West thermal (coal/gas) keeps its flat 1.0 (economic to
+    # nameplate). No-op unless the endogenous node is on (rows absent otherwise).
+    if _endogenous_wecc and _wecc_west_avail:
+        _uid_to_row = {uid: i for i, uid in enumerate(fleet_arrays.unit_ids)}
+        for _uid, _series in _wecc_west_avail.items():
+            _r = _uid_to_row.get(_uid)
+            if _r is not None:
+                fleet_arrays.availability[_r, : config.hours] = _series[: config.hours]
     # Net-load-indexed ST_GAS + CT_PEAKER reliability-drag min-gen floors —
     # the single shared gate-and-log wrapper both orchestrators call
     # (fleet.apply_netload_drag_floors, orchestrator-unification Stage 6).
@@ -3366,17 +3408,44 @@ def run_year(
             - (solar_cap[:, None] * solar_cf).sum(axis=0)
             - (wind_cap[:, None] * wind_cf).sum(axis=0)
         )
-    apply_interchange_injections(
-        fleet_arrays,
-        mc_base,
-        config,
-        iso,
-        year,
-        carbon_price=carbon_price,
-        gas_scenario=config.gas_price_path,
-        net_load=_interchange_net_load,
-        measured_overlay=_backcast_measured_interchange_prices,
-    )
+    # caiso-110: the endogenous WECC-West fleet REPLACES the import tranches, so
+    # the CAISO import injectors (firm-shape/self-schedule, clean-depth surplus/
+    # overnight/daytime, per-hub hub pricing, gas coupling) have nothing to price
+    # and MUST NOT run — the West units are fuel_type="import" and would be
+    # repriced away from their measured vom. One mechanism per phenomenon
+    # (rule 18); the mutual exclusion is enforced here.
+    if not _endogenous_wecc:
+        apply_interchange_injections(
+            fleet_arrays,
+            mc_base,
+            config,
+            iso,
+            year,
+            carbon_price=carbon_price,
+            gas_scenario=config.gas_price_path,
+            net_load=_interchange_net_load,
+            measured_overlay=_backcast_measured_interchange_prices,
+        )
+    else:
+        # caiso-114: re-price the endogenous WECC-West GAS export units at the
+        # MEASURED delivered West hub (+ CARB border carbon), hour-varying, via
+        # an mc_base override — the import-price-injection pattern. Bare Henry-Hub
+        # gas MC under-prices the West and floods the tie (caiso-110 diagnostic);
+        # the measured hub sets the West's export price so the tie clears
+        # interior. No-op (West stays on its Henry-Hub vom) when the measured hub
+        # is unavailable or the endogenous node built no fleet.
+        if _wecc_west_avail:
+            from market_sim.data.wecc_west_fleet import build_wecc_west_thermal_mc
+
+            _wecc_thermal_mc = build_wecc_west_thermal_mc(
+                year, gas_price, carbon_price, config.hours
+            )
+            if _wecc_thermal_mc:
+                _uid_to_row = {uid: i for i, uid in enumerate(fleet_arrays.unit_ids)}
+                for _uid, _mc in _wecc_thermal_mc.items():
+                    _r = _uid_to_row.get(_uid)
+                    if _r is not None:
+                        mc_base[_r, : config.hours] = _mc[: config.hours]
 
     wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
     wind_mc -= wind_eac
