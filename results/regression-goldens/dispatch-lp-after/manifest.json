@@ -1,0 +1,160 @@
+{
+  "env": {
+    "MARKET_SIM_HIGHS_THREADS": "1",
+    "MARKET_SIM_WARMSTART": "1",
+    "MARKET_SIM_WARMSTART_XYEAR": "0"
+  },
+  "git_dirty": true,
+  "git_sha": "6edd6266",
+  "hash_scheme": "sha256-of-canonical-column-float64-bytes",
+  "highspy_version": "unknown",
+  "keepers": {
+    "ERCOT": {
+      "bundle": "results/calibration/ercot79_corrected_outages_fullspan",
+      "content_hashes": {
+        "btm.parquet": "8acf053bb5aa6bcb2a38a4081ee9030ed5ef6afc967c7892f6b7bff8d50fd376",
+        "dispatch/2023_P1.parquet": "cf3a286304e1405e487c37316002151fc1ffba3c762f52cd483eda7b1de4ac08",
+        "dispatch/2024_P1.parquet": "05ac191ee8e36b1ec693b87446cf877ea7f5a0bf6d04efca8299c1cd0aec7a74",
+        "dispatch/2025_P1.parquet": "8c84258c02eac698a02ea41a1768d7cb1c9663cc8661b0da5e5c43182cde4735",
+        "flows.parquet": "6bbb0badefea8e1e47908e9ea6a8ced3a363ba6fbf82945aba058698cf08e2fd",
+        "storage.parquet": "9d52984ad1be232a545c31ef0ddfcf20769515bce1ed624664750269844b4ca1",
+        "system.parquet": "374720c10a66505ad9f9275ca0318b6d8f3190df3a046d2f6b8db2e457d8c1cb"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_takeorpay_from_data",
+        "ercot_commitment_posture",
+        "ercot_commitment_posture_min_load_frac",
+        "ercot_nonreleasable_as_withholding",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "miso_seam_envelope_merit_cap",
+        "miso_winter_citygate_daily",
+        "miso_zonal_loss_surface",
+        "nyiso_scr_edrp",
+        "nyiso_scr_edrp_strike",
+        "plant_tranche_config",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "environment",
+          "ercot_commitment_posture",
+          "ercot_commitment_posture_min_load_frac",
+          "ercot_nonreleasable_as_withholding",
+          "miso_seam_envelope_merit_cap",
+          "miso_winter_citygate_daily",
+          "miso_zonal_loss_surface",
+          "nyiso_scr_edrp",
+          "nyiso_scr_edrp_strike"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 202,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [
+          "caiso_charge_allocation_schedule",
+          "caiso_dsw_daytime_clean",
+          "caiso_dsw_daytime_evening_trim",
+          "caiso_dsw_overnight_clean",
+          "caiso_ra_startup_trajectory",
+          "caiso_storage_shape_anchor",
+          "correlated_forced_outage",
+          "correlated_outage_sigma_scale",
+          "correlated_outage_t0_c",
+          "correlated_outage_winterized_year",
+          "crossover_forward_gas_path",
+          "crossover_forward_year",
+          "entry_commissioning_lag",
+          "entry_rate_limits",
+          "entry_vre_capacity_revenue",
+          "ercot_commitment_posture",
+          "ercot_commitment_posture_min_load_frac",
+          "ercot_faststart_pool_offer",
+          "ercot_faststart_pool_offer_path",
+          "ercot_nonreleasable_as_withholding",
+          "ercot_offer_surface_cleared_share_rt",
+          "ercot_offer_surface_cleared_share_rt_mode",
+          "ercot_offer_surface_cleared_share_rt_path",
+          "ercot_shoulder_online_span",
+          "ercot_shoulder_online_span_path",
+          "gas_st_drag_seasonal",
+          "gas_st_drag_seasonal_path",
+          "ira_45q_credit_window_years",
+          "miso_manitoba_seam",
+          "miso_seam_envelope_merit_cap",
+          "miso_winter_citygate_daily",
+          "miso_zonal_loss_surface",
+          "net_cone_forward_escalation",
+          "nyiso_scr_edrp",
+          "nyiso_scr_edrp_strike",
+          "per_tech_wacc_enabled",
+          "retirement_execution_lag_coal",
+          "retirement_execution_lag_gas_cc",
+          "retirement_execution_lag_gas_cc_ccs",
+          "retirement_execution_lag_gas_ct",
+          "retirement_execution_lag_gas_st",
+          "retirement_execution_lag_nuclear",
+          "retirement_execution_lag_oil",
+          "retirement_rule"
+        ],
+        "scenario_config_matched": 546
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-17-ercot79-corrected-outages",
+      "recorded_flag_count": 193,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
+    "NYISO": {
+      "bundle": "results/calibration/nyiso68_scr_edrp",
+      "content_hashes": {
+        "btm.parquet": "9b5d612ff4c1d121a1e568f829487cc9b834b6b99b82aee58efbc8edb4bfd348",
+        "dispatch/2023_P1.parquet": "a660b5f078b1d02c8b98fe3cb166b620188dcc77fff8d7e9d47899c2818baa74",
+        "dispatch/2024_P1.parquet": "2455e9b9585c33ddf077839047e30cb2fdaf74f688695e2a8118b04c2ea4c800",
+        "dispatch/2025_P1.parquet": "945dc1f5fb8b1ac9503653a49362b7ca535afb87ba02d1de669739b8d8a04a01",
+        "flows.parquet": "7825effe9385c92422074d50def224bd296c2308b3f317b13d0d0402d61566cd",
+        "storage.parquet": "61fae2635a0ca1a1680e9aff0b8908fc6e8d267e322bd73d6f73fa328e8315bf",
+        "system.parquet": "9b4b42a2c8bacb22a1d1ed1754bfe5d6121419956f76d6774a060cd89a291c48"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_takeorpay_from_data",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "plant_tranche_config",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [],
+        "meta_keeper_only": [],
+        "meta_matched": 211,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [
+          "net_cone_forward_escalation"
+        ],
+        "scenario_config_matched": 589
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-21-nyiso-68-scr-edrp",
+      "recorded_flag_count": 201,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    }
+  },
+  "note": "Current-HEAD regression baselines (Stage-0). NOT byte-reproductions of the registered July-3 keeper bundles. Multi-GB bundles are gitignored; only this manifest is committed.",
+  "stage_tag": "dispatch-lp-after"
+}
