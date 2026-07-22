@@ -1,0 +1,239 @@
+{
+    "schema": "calibration-attestation/v1",
+    "governance": {
+        "levers_trace_to_measured_input": true,
+        "no_fit_to_price_residuals": true,
+        "no_pinning_to_actuals": true,
+        "outage_filter_exogenous_net_load": true,
+        "attested_by": "nyiso-70 session 2026-07-22: the nyiso-68 keeper recipe (replay_keeper.py of results/calibration/nyiso68_scr_edrp/meta.json) re-solved across 2023-2025 with BOTH lever-3 reserve-SUPPLY unions turned on and NOTHING else changed. (a) nyiso_hydro_reserve_eligible (lever 3 step 1): NYISO's in-fleet conventional hydro (~4.6 GW; Upstate_West NYCA + Capital_Hudson East) joins the energy+reserve co-opt's full-30min and quick-10min eligible set (the CAISO _caiso_reserve_eligible precedent; NYPA Niagara/St-Lawrence + Capital hydro are certified NYISO reserve providers; held reserve spends no water). (b) NEW nyiso_scr_edrp_reserve_eligible (lever 3 step 2): the downstate SCR/EDRP demand-response blocks already in the fleet (energy-only $500-strike, nyiso_scr_edrp) are made eligible to SUPPLY the FULL (30-min) operating reserve, scoped to the downstate SENY zones NYC + Long_Island + Lower_Hudson. SCR is a NYISO-certified 30-min operating-reserve provider (Ancillary Services Manual S4 / MST S15). BOTH unions are grounded market-design eligibility gates (rules 1/11/13) with ZERO new tunable: n_residual is UNCHANGED at 5, the offer_curve_by_group residual DOF is inherited from nyiso-68 byte-identical. No residual fitting performed this session.",
+        "note": "This is the named lever-3 fix from the nyiso-68 _open_items, now IMPLEMENTED. The added downstate reserve headroom (DR + hydro) absorbs the SENY/NYC-30min ORDC shadow that had leaked into the 2023 LBMP. All other levers carried from nyiso-68 unchanged (nyiso_nyc_lcr_tsl + nyiso_li_lcr_tsl, nyiso_downstate_ct_gas_daily, nyiso_dynamic_reserve_requirements, corrected 2,641-row CAMPD outages, F923 fuel, plant emission rates v2, energy+reserve co-opt). Energy dispatch is essentially unchanged (largest class shift ST_GAS +/-0.08 TWh ~ 0.05% of load; C1 fuel-mix PASS) \u2014 the reserve is HELD, not dispatched (the per-zone reserve-headroom row trades it against the $500 strike).",
+        "residuals_note": "DETERMINATION NOT-YET, fully scored; promoted as the NYISO keeper over nyiso-68 on rule 1 (most structurally faithful: two real reserve mechanisms nyiso-68 lacked, zero new tunable) \u2014 both runs are NOT-YET. Scorecard vs nyiso-68 (calibration_verdict RT-basis): C1 PASS unchanged; C2/C4 PASS; C5a CO2 2025 +8.5% CAVEAT (reserve-inert). C3 WINS (2023): C3b shape NRMSE 0.215->0.198 CLOSES (C3b now PASS all years); C3a mean +17.8%->+15.9% and C3c tail 3.10x->2.20x both IMPROVE (still just over band); 2024/2025 hold every C3 criterion (C3a 2024 +0.9%->-0.7%, 2025 +2.8%->+1.6%). LOYO holds \u2014 the mechanism moves every year toward actual with no cross-fold regression. KNOWN REGRESSION (recorded, not hidden): C7 diurnal shape for ST_GAS 2023 flips PASS->FAIL (off-peak CV ratio 0.548->0.483, threshold 0.5) \u2014 the added reserve supply lets ST_GAS provide less reserve, flattening its off-peak dispatch just below the gate; marginal (0.483 vs 0.5), single-class, confined to the already-NOT-YET 2023 (2024/2025 ST_GAS C7 PASS 0.703/0.641). Owner-authorized promotion 2026-07-22 with this trade in view. Remaining root cause of the 2023 misses: the C3a MEAN-level gap (+15.9%) is NOT reserve-driven (the full reserve over-spike is only ~1.6% of the system mean), a broad 2023 energy-price LEVEL issue (offer surface / gas basis / import pricing) \u2014 a separate lever, and the likely lever for the ST_GAS off-peak shape as well. No residual tune taken."
+    },
+    "_open_items": "(1) LOAD-BEARING ROOT CAUSE \u2014 the 2023 C3a MEAN-level gap (+15.9%) is NOT reserve-driven (lever 3 fully absorbed the reserve over-spike, which was only ~1.6% of the system mean). It is a broad 2023 energy-price LEVEL residual (candidate levers: CC/ST offer surface, Transco/Iroquois gas basis, neighbor import pricing) \u2014 a separate workstream, NOT a residual tune (rule 22). This lever is also the most likely fix for the C7 ST_GAS 2023 off-peak shape (see (3)). (2) Lever 3 (hydro + SCR/EDRP 30-min reserve-supply eligibility) is DONE and is the reason C3b 2023 closed and C3c/C3a improved; the nyiso-68 _open_items (1) reserve-supply fix is CLOSED. Remaining East-side piece: add Blenheim-Gilboa PS (~1160 MW, prime-mover PS, excluded from build_hydro_fleet) to the dispatch fleet for East-10min reserve \u2014 secondary to the SENY-30min DR lever already landed. (3) KNOWN C7 REGRESSION: ST_GAS 2023 off-peak CV ratio 0.483 < 0.5 (nyiso-68 passed at 0.548). The reserve reshuffle flattens ST_GAS off-peak dispatch. Marginal and confined to 2023; owner-authorized as an accepted trade for the C3b close. Expected to resolve with the (1) energy-price-level lever, which governs ST_GAS off-peak dispatch shape. (4) offer_curve_by_group re-tune remains deliberately NOT taken (rule 22).",
+    "exceptions": [],
+    "free_parameters": {
+        "schema": "dof-ledger/v1",
+        "seeded": "2026-07-22 nyiso-70 \u2014 carried forward from the nyiso-68 ledger UNCHANGED except TWO added MEASURED/GROUNDED reserve-eligibility levers (nyiso_hydro_reserve_eligible, nyiso_scr_edrp_reserve_eligible). Both add NO free parameter (n_residual UNCHANGED at 5): they are market-design eligibility unions \u2014 which certified resource class supplies which reserve product \u2014 with no tunable value, re-derivable for a forward year from the same NYISO reserve rules. The offer_curve_by_group residual DOF (5 entries) is inherited from nyiso-68 unchanged.",
+        "n_entries": 14,
+        "n_residual": 5,
+        "entries": [
+            {
+                "name": "offer_curve_by_group",
+                "where": "run_config.scenario_config.offer_curve_by_group",
+                "identification": "residual",
+                "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+                "value": {
+                    "CC_REGULAR": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "pct_peaking",
+                        "peak"
+                    ],
+                    "CC_INTERMEDIATE": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "pct_peaking",
+                        "peak"
+                    ],
+                    "CC_CHP": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "pct_peaking",
+                        "peak"
+                    ],
+                    "CT_CHP": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "peak"
+                    ],
+                    "CT_PEAKER": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "pct_peaking",
+                        "peak"
+                    ],
+                    "CT_INTERMEDIATE": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "pct_peaking",
+                        "peak"
+                    ],
+                    "ST_GAS": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "pct_peaking",
+                        "peak"
+                    ],
+                    "ST_GAS_INTERMEDIATE": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "pct_peaking",
+                        "peak"
+                    ],
+                    "COAL_LIGNITE": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "peak"
+                    ],
+                    "COAL_PRB": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "peak"
+                    ],
+                    "COAL_BIT": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "peak"
+                    ],
+                    "COAL_WC": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "peak"
+                    ],
+                    "COAL": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "peak"
+                    ]
+                },
+                "n_scalars": 72,
+                "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+                "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page \u00b7 NYISO B-NYI-1/C-13: CC_REGULAR econ_high de-leaked 1.21 -> 1.0 (ERCOT cross-borrowed markup removed); the exposed C3a hole is missing NYISO reserve/scarcity price formation, not a CC markup \u2014 open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1344"
+            },
+            {
+                "name": "offer_curve_smoothing",
+                "where": "run_config.scenario_config.offer_curve_smoothing_*",
+                "identification": "residual",
+                "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+                "value": {
+                    "offer_curve_smoothing_n": 6,
+                    "offer_curve_smoothing_exp": 1.0
+                },
+                "n_scalars": 2,
+                "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+                "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+            },
+            {
+                "name": "COAL_SIGMOID_DEFAULTS[NYISO]",
+                "where": "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via coal_prb_passthrough_sigmoid)",
+                "identification": "residual",
+                "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+                "n_scalars": 4,
+                "source": "gas-keyed coal passthrough sigmoids \u2014 the largest fitted surface (audit C-1); owner-sanctioned under rule #1",
+                "root_cause": "weakly identified: each asymptote is pinned by a single gas regime (floor by 2024, gas_mid/ceil by 2025 \u2014 docs/out-of-sample-results-2026-07.md \u00a72C); open: literature/physical anchoring of floor/ceil, plus identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+            },
+            {
+                "name": "wefor_multiplier",
+                "where": "run_config.scenario_config.wefor_multiplier",
+                "identification": "residual",
+                "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+                "value": 0.7,
+                "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+                "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+            },
+            {
+                "name": "GAS_AVAILABILITY_FACTOR[NYISO]",
+                "where": "constants.py GAS_AVAILABILITY_FACTOR",
+                "identification": "published",
+                "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+                "value": 0.866,
+                "source": "NERC GADS Generating Unit Statistical Brochure 3, 2019-2023 (NERC-wide \u2014 no per-ISO breakdown exists), 'FOSSIL Gas Primary, All Sizes', EFORd=13.44%",
+                "note": "open R2-vs-R5 disposition (not a residual on this value): GAS_AVAILABILITY_FACTOR is not read anywhere in src/market_sim (dead/orphaned, confirmed by grep 2026-07-05), so this verified value has zero materiality today. Either wire it in with a fleet-mix-weighted reconciliation against the ISO's own CT/CC/ST capacity shares (replacing, never stacking with, the existing per-unit EFORD-derived availability) or delete it as dead code (rule 26) \u2014 tracked in https://github.com/jessicacohen554-cyber/market-simulator/issues/1349"
+            },
+            {
+                "name": "reliability_floor coefficients",
+                "where": "data/raw/reference/reliability_floor_coeffs_NYISO.csv",
+                "identification": "measured-physical",
+                "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+                "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+                "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+            },
+            {
+                "name": "IMPORT_TRANCHES/EXPORT_TRANCHES[NYISO]",
+                "where": "interchange_config.py per-ISO seam supply-curve ladders",
+                "identification": "residual",
+                "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+                "source": "fitted seam price/volume ladders (audit C-6/L7/L8); CAISO's keeper supersedes the fitted ladder with measured hub prices on the binding path but the static ladder remains the fallback; NEISO closed this item (see the NEISO-only entry, measured-physical) \u2014 remaining scope for this item is NYISO/PJM/MISO/CAISO's static ladder",
+                "root_cause": "audit C-6/#1350 open item: replace year-keyed rungs with measured hub prices / published wheeling costs per seam, following the NEISO precedent (scripts/derive_neiso_import_tranches.py); identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+            },
+            {
+                "name": "nyiso_li_lcr_tsl (Zone-K locality import limit)",
+                "where": "data/raw/capacity-deliverability/nyiso/nyiso.csv (325/275/275 MW) via transmission.apply_nyiso_li_tsl_import_cap",
+                "identification": "published",
+                "note": "REPLACES the residual-identified NYISO_LOCAL_SELFSUPPLY_FRAC['Long_Island']=0.45 (nyiso-41 DOF ledger S5) \u2014 the issue-#1345 closure. Published NYISO Locality Bulk-Power Transmission Capability values; HB14-21 window shared with the PR-#1442 floor ramps; boundary reconciled vs measured top-100-load-hour LI implied inflow 1,493/1,440/1,598 MW (in-window capability 1,525/1,475/1,475 MW)."
+            },
+            {
+                "name": "use_plant_emission_rates_v2",
+                "where": "data/raw/_processed-legacy/plant_emission_rates_v2.parquet via fleet.bins_to_fleet (backcast wiring 2026-07-06)",
+                "identification": "measured",
+                "note": "Same-year CAMPD plant-specific CO2/NOx/SO2 rates (rule-13 canonical admissible backcast overlay), replacing heat_rate x FUEL_CO2_FACTOR estimates; dispatch-affecting under the RGGI state carbon price. Zero fitted values."
+            },
+            {
+                "name": "nyiso_downstate_ct_gas_daily",
+                "where": "data/clean/nyiso-downstate-gas (scripts/curate_nyiso_downstate_gas.py from data/raw/gas-prices/{transco_z6_ny_daily,nyiso_downstate_ldc_transport_monthly}.csv) via fuel.apply_nyiso_downstate_ct_gas_daily",
+                "identification": "measured",
+                "note": "Per-zone daily LDC-transport delivered-gas index for the downstate CT_PEAKER fleet (G-13 closure): Transco Z6 NY daily commodity spot + KEDNY SC-22 (NYC) / KEDLI SC-19 (Long Island) monthly non-firm Tier-1 transportation delivery rate, broadcast monthly->daily; non-trading days interpolated. SUPERSEDES the v1 monthly statewide citygate premium (nyiso_downstate_ct_gas_basis, OFF in this config - rule 19, one mechanism per phenomenon). Zero fitted values; re-derives only on source-data updates (rule 23)."
+            },
+            {
+                "name": "nyiso_dynamic_reserve_requirements",
+                "where": "data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_{year}.csv via data.nyiso_reserve_requirements (reserve_config._nyiso_design)",
+                "identification": "measured",
+                "note": "Measured as-enforced hourly locational reserve-requirement series (issue #1344): published LRR base with the SENY 30-min hourly step schedule (dated Locational-Reserve-Requirements postings, Wayback-bounded v2020/v2021/v2026) x TSA-window zeroing from the B2 MIS event logs; derived by the frozen scripts/derive_nyiso_reserve_requirements_hourly.py. Zero fitted values; re-derives only on source-data updates (rule 23). Lower bound in non-TSA hours pending B1."
+            },
+            {
+                "name": "nyiso_scr_edrp",
+                "where": "ScenarioConfig.nyiso_scr_edrp / nyiso_scr_edrp_strike; data/raw/nyiso-demand-response/nyiso_scr_edrp_enrollment.csv via data.nyiso_demand_response.build_nyiso_dr_generators",
+                "identification": "measured/published",
+                "value": {
+                    "nyiso_scr_edrp": true,
+                    "nyiso_scr_edrp_strike": 500.0
+                },
+                "note": "NYISO SCR/EDRP emergency demand response as endogenous per-zone price-responsive supply blocks. Capacity = Gold-Book-registered SCR+EDRP MW per model zone (2023/24/25 summer 1.23/1.29/1.49 GW, scripts/data/build_nyiso_scr_edrp.py, byte-identical to the transcribed enrollment CSV). Strike = the published NYISO EDRP $500/MWh compensation floor (Market Services Tariff \u00a75.12) \u2014 a market-design constant, NOT a residual. Clears the energy balance only when the zone LBMP exceeds the strike (endogenous scarcity trigger, never pinned to observed event dates; rule 13/17). ZERO fitted values; re-derives for a forward year from the next Gold Book (rule 23). Excluded from generation-mix scoring (avoided load, not generation)."
+            },
+            {
+                "name": "nyiso_hydro_reserve_eligible",
+                "where": "ScenarioConfig.nyiso_hydro_reserve_eligible; reserve_config._nyiso_design (fuel==hydro union into full+quick eligible)",
+                "identification": "measured/published",
+                "value": {
+                    "nyiso_hydro_reserve_eligible": true
+                },
+                "note": "NYISO in-fleet conventional hydro (data.hydro.build_hydro_fleet, ~4.6 GW) made eligible to supply operating reserve in BOTH the full-30min and quick-10min classes. NYPA Niagara/St-Lawrence + Capital hydro are NYISO-certified operating-reserve providers (Ancillary Services Manual); the eligibility union mirrors the CAISO _caiso_reserve_eligible hydro seam. Held reserve spends no water \u2014 the monthly hydro energy budget bounds only DISPATCHED energy, so budget and reserve headroom compose correctly. ZERO fitted value; a market-design eligibility gate, not a parameter."
+            },
+            {
+                "name": "nyiso_scr_edrp_reserve_eligible",
+                "where": "ScenarioConfig.nyiso_scr_edrp_reserve_eligible; reserve_config._nyiso_design (fuel==demand_response AND downstate zone union into full-30min eligible)",
+                "identification": "measured/published",
+                "value": {
+                    "nyiso_scr_edrp_reserve_eligible": true
+                },
+                "note": "The downstate SCR/EDRP demand-response blocks (already in the fleet, energy-only $500 strike) made eligible to SUPPLY the FULL 30-min operating reserve, scoped to the downstate SENY zones NYC + Long_Island + Lower_Hudson. SCR is a NYISO-certified 30-min operating-reserve provider (Ancillary Services Manual S4 / MST S15) \u2014 a real market-design eligibility, 30-min only (not spinning/10-min). ZERO fitted value; a market-design eligibility gate, not a parameter. Held reserve forces no energy (the per-zone reserve-headroom row trades it against the $500 strike)."
+            }
+        ]
+    }
+}
