@@ -1,0 +1,32 @@
+diff --git a/src/market_sim/config/scenarios.py b/src/market_sim/config/scenarios.py
+index b88857d..8f9cece 100644
+--- a/src/market_sim/config/scenarios.py
++++ b/src/market_sim/config/scenarios.py
+@@ -2457,6 +2457,27 @@ class ScenarioConfig:
+     # split that creates the corridor links). Carried by eia_loader
+     # .measured_corridor_flow_envelope + transmission.build_caiso_corridor_flow_
+     # groups. Default off (byte-identical); CAISO-only.
++    caiso_wecc_export_floor: bool = False  # L1a bidirectional-tie: let the
++    # per-hub WECC export legs (WECC_PNW_export_MALIN / WECC_DSW_export_PALOVRDE,
++    # priced at the measured West hub by inject_caiso_per_hub_intertie_prices)
++    # NET-EXPORT in the SCORED P1 pass. build_caiso_per_hub_intertie already
++    # builds those legs with a negative lower bound (pmin = -corridor TTC) and
++    # they clear correctly in P0, but the P1-native RA/commitment bridge floor
++    # (pipeline.commitment._bridge_floored_fleet) composed the bridge floor with a
++    # plain np.maximum(base_min_gen, bridge_floor); for the export legs
++    # base_min_gen = -TTC and bridge_floor = 0, so np.maximum clamped their bound
++    # up to 0 and pinned them to zero in the scored fleet — the model could never
++    # net-export (min net import = 0), so it imported in the ~700-900 belly hours
++    # a year CAISO actually exports its spring-solar surplus (FINDING-caiso111
++    # export-floor asymmetry). When on, the bridge preserves the negative export
++    # bound (raising min_gen only where bridge_floor > 0), so the tie reverses to
++    # export whenever CA λ falls below the measured West hub. No fitted value: the
++    # export price is the same measured Palo Verde/Malin hub the import tranches
++    # use (rule 13). Requires caiso_per_hub_intertie; MUTUALLY EXCLUSIVE with the
++    # (not-yet-landed) caiso_endogenous_wecc_node gate — both re-price/re-sign the
++    # WECC tie and must not compose (rule 18). Carried by
++    # pipeline.commitment._bridge_floored_fleet (preserve_negative_min_gen).
++    # Default off (byte-identical); CAISO-only.
+     caiso_firm_import_shape: bool = False  # Shape the firm/contracted CAISO
+     # import blocks' hourly availability by the MEASURED revealed import-base
+     # profile instead of a flat 8760 block (caiso-73; FINDING-caiso72 live
