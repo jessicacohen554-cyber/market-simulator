@@ -308,6 +308,36 @@ def _detect_years(unit_dir: Path) -> list[int]:
     return sorted(y for y in years if y not in QUARANTINED_YEARS)
 
 
+def _intake_authorized_isos() -> set[str]:
+    """Return ISOs with a logged rule-22 data-intake authorization (uppercased).
+
+    Rule 22 (Option 2, docs/handoffs/holdout-policy-memo-2026-07.md §(e)) permits
+    out-of-training DATA INTAKE for any ISO under explicit, session-logged owner
+    authorization — a channel *separate* from the calibration-complete marker,
+    which gates only solve / score / dashboard registration. Every ISO named in an
+    ``intake_log`` entry of ``calibration-complete.json`` has been through such an
+    authorization, so ``--holdout-intake`` may put the data on disk on that logged
+    authorization alone; the marker is NOT required for data readiness (it remains
+    required, elsewhere, before any out-of-training solve/score/register).
+    """
+    import json
+    import re
+
+    marker_path = (
+        paths.REPO_ROOT / "frontend" / "data" / "backcast" / "calibration-complete.json"
+    )
+    try:
+        log = json.loads(marker_path.read_text()).get("intake_log") or []
+    except (OSError, ValueError):
+        return set()
+    known = {"ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"}
+    authorized: set[str] = set()
+    for entry in log:
+        text = " ".join(str(entry.get(k, "")) for k in ("scope", "by"))
+        authorized |= {iso for iso in known if re.search(rf"\b{iso}\b", text)}
+    return authorized
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Curate CAMPD unit-level CEMS into emissions-unit-annual."
@@ -324,8 +354,9 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         metavar="ISO",
         help="authorize rolling up quarantined-year (2022/2026) extracts for the "
-        "named ISO's one-shot holdout validation (requires its "
-        "calibration-complete marker; CLAUDE.md rule 22).",
+        "named ISO's holdout DATA readiness (requires its calibration-complete "
+        "marker OR a logged intake_log authorization; CLAUDE.md rule 22 — data "
+        "intake, not solve).",
     )
     parser.add_argument(
         "--states",
@@ -358,11 +389,14 @@ def main(argv: list[str] | None = None) -> int:
         except (OSError, ValueError):
             complete = set()
         iso = args.holdout_intake.upper()
-        if iso not in complete:
+        authorized = _intake_authorized_isos()
+        if iso not in complete and iso not in authorized:
             parser.error(
-                f"no calibration-complete marker for {iso} in {marker_path} "
-                f"(complete: {sorted(complete) or 'none'}); rule 22 one-shot "
-                "holdout intake requires the marker"
+                f"{iso} has neither a calibration-complete marker nor a logged "
+                f"intake_log authorization in {marker_path} (complete: "
+                f"{sorted(complete) or 'none'}; intake-authorized: "
+                f"{sorted(authorized) or 'none'}); rule 22 data intake needs one "
+                "or the other"
             )
         allow_quarantined = True
 
