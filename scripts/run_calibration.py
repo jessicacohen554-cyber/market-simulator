@@ -502,6 +502,8 @@ def run_year(
     caiso_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
+    ercot_thermal_dam_availability_hourly: bool = False,
+    ercot_thermal_dam_availability_plant: bool = False,
     ercot_noncampd_plant_availability: bool = False,
     ercot_storage_capability_measured: bool = False,
     ercot_online_capacity_envelope_measured: bool = False,
@@ -792,6 +794,18 @@ def run_year(
         # disclosure HSL/status; ScenarioConfig field docstring has the full
         # provenance/admissibility note). ERCOT-gated in the fleet application.
         config = config.with_overrides(ercot_thermal_dam_availability=True)
+    if ercot_thermal_dam_availability_hourly:
+        # ERCOT-96 grain switch: the same measured DAM availability applied at
+        # class-HOUR grain (per-Hour-Ending fraction replaces the day-flat
+        # block; ScenarioConfig field docstring has the full provenance note).
+        # No effect unless ercot_thermal_dam_availability is also on.
+        config = config.with_overrides(ercot_thermal_dam_availability_hourly=True)
+    if ercot_thermal_dam_availability_plant:
+        # ERCOT-97 plant grain: pin accepted-crosswalked plants to their own
+        # measured site-hour fraction and water-fill the unmapped remainder so
+        # the class-HOUR total is unchanged (redistribution; ScenarioConfig
+        # field docstring has the full note). Requires the class-HOUR flag.
+        config = config.with_overrides(ercot_thermal_dam_availability_plant=True)
     if ercot_noncampd_plant_availability:
         # Measured CAMPD-blind per-plant availability (60-Day DAM disclosure
         # live HSL + EIA-923 zero months; ScenarioConfig field docstring has the

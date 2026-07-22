@@ -2650,6 +2650,8 @@ def solve_and_persist(
     caiso_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
+    ercot_thermal_dam_availability_hourly: bool = False,
+    ercot_thermal_dam_availability_plant: bool = False,
     ercot_noncampd_plant_availability: bool = False,
     ercot_storage_capability_measured: bool = False,
     ercot_online_capacity_envelope_measured: bool = False,
@@ -3193,6 +3195,18 @@ def solve_and_persist(
             # measured thermal class-day availability the LP solved with.
             recorded_cfg = recorded_cfg.with_overrides(
                 ercot_thermal_dam_availability=True
+            )
+        if ercot_thermal_dam_availability_plant:
+            # Mirror run_year's with_overrides so run_config.json records the
+            # ERCOT-97 plant grain the LP solved with.
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_thermal_dam_availability_plant=True
+            )
+        if ercot_thermal_dam_availability_hourly:
+            # Mirror run_year's with_overrides so run_config.json records the
+            # ERCOT-96 class-HOUR grain switch the LP solved with.
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_thermal_dam_availability_hourly=True
             )
         if ercot_noncampd_plant_availability:
             # Mirror run_year's with_overrides so run_config.json records the
@@ -3882,6 +3896,12 @@ def solve_and_persist(
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
             ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
             ercot_thermal_dam_availability=ercot_thermal_dam_availability,
+            ercot_thermal_dam_availability_hourly=(
+                ercot_thermal_dam_availability_hourly
+            ),
+            ercot_thermal_dam_availability_plant=(
+                ercot_thermal_dam_availability_plant
+            ),
             ercot_noncampd_plant_availability=ercot_noncampd_plant_availability,
             ercot_storage_capability_measured=ercot_storage_capability_measured,
             ercot_online_capacity_envelope_measured=(
@@ -4354,6 +4374,12 @@ def solve_and_persist(
         ),
         "ercot_nuclear_unit_availability": ercot_nuclear_unit_availability,
         "ercot_thermal_dam_availability": ercot_thermal_dam_availability,
+        "ercot_thermal_dam_availability_hourly": (
+            ercot_thermal_dam_availability_hourly
+        ),
+        "ercot_thermal_dam_availability_plant": (
+            ercot_thermal_dam_availability_plant
+        ),
         "ercot_noncampd_plant_availability": ercot_noncampd_plant_availability,
         "ercot_storage_capability_measured": ercot_storage_capability_measured,
         "ercot_online_capacity_envelope_measured": (
@@ -7386,6 +7412,31 @@ def main() -> None:
         "statistical model. Off (default, keeper-reproducing).",
     )
     parser.add_argument(
+        "--ercot-thermal-dam-availability-hourly",
+        action="store_true",
+        help="ERCOT backcast: apply the measured DAM thermal availability at "
+        "class-HOUR grain (per-Hour-Ending fraction from the same 60-Day DAM "
+        "disclosure rows; data/raw/ercot-thermal-dam-availability-hourly.csv) "
+        "instead of the day-flat block — the ERCOT-96 grain switch keeping "
+        "the afternoon ambient-derate dip the day mean discards (ERCOT-95 "
+        "Finding 6: +216 MW mean phantom CC+CT on the 181 actual 2023 tail "
+        "hours). No effect unless --ercot-thermal-dam-availability is also "
+        "on. Off (default, keeper-reproducing).",
+    )
+    parser.add_argument(
+        "--ercot-thermal-dam-availability-plant",
+        action="store_true",
+        help="ERCOT backcast: redistribute the measured DAM availability to the "
+        "PLANT grain (ERCOT-97) — pin each accepted DAM-site->EIA-plant "
+        "crosswalk plant (data/raw/reference/ercot-dam-plant-crosswalk.csv, "
+        "build_ercot_dam_resource_crosswalk.py) to its own measured site-hour "
+        "fraction and water-fill the unmapped remainder so the class-HOUR total "
+        "is unchanged (within-class redistribution, ~259 MW-mean per-plant "
+        "misallocation the class grain smears; zero fitted parameters). "
+        "Requires --ercot-thermal-dam-availability-hourly. Off (default, "
+        "keeper-reproducing).",
+    )
+    parser.add_argument(
         "--ercot-storage-capability-measured",
         action="store_true",
         help="ERCOT backcast: re-base the battery fleet's hourly power cap on "
@@ -9454,6 +9505,12 @@ def main() -> None:
         ercot_storage_as_product_credit=args.ercot_storage_as_product_credit,
         ercot_nuclear_unit_availability=args.ercot_nuclear_unit_availability,
         ercot_thermal_dam_availability=args.ercot_thermal_dam_availability,
+        ercot_thermal_dam_availability_hourly=(
+            args.ercot_thermal_dam_availability_hourly
+        ),
+        ercot_thermal_dam_availability_plant=(
+            args.ercot_thermal_dam_availability_plant
+        ),
         ercot_storage_capability_measured=args.ercot_storage_capability_measured,
         ercot_online_capacity_envelope_measured=(
             args.ercot_online_capacity_envelope_measured
