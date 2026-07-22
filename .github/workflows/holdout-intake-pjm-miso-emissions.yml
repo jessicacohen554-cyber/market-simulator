@@ -34,7 +34,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
+      # Sparse + partial checkout: this repo commits hundreds of MB of raw data
+      # (eia-930 ~230 MB, lmp-data, gas-prices, …) a full clone chokes on. Fetch
+      # only what the intake touches — the package, the scripts, the schema, the
+      # 2022 CAMPD inputs, the merge-target artifact, and the intake-log gate.
+      # blob:none makes it a partial clone (blobs fetched lazily for the cone).
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout: |
+            src
+            scripts
+            frontend
+            data/dictionary
+            data/raw/campd-unit-level
+            data/raw/_processed-legacy
+          sparse-checkout-cone-mode: true
 
       - name: Set up uv + Python
         uses: astral-sh/setup-uv@v5
