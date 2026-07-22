@@ -610,6 +610,7 @@ def run_year(
     nyiso_synchronised_reserve: bool | None = None,
     nyiso_spin_headroom_frac: float | None = None,
     nyiso_dynamic_reserve_requirements: bool | None = None,
+    nyiso_hydro_reserve_eligible: bool | None = None,
     neiso_dynamic_reserve_requirements: bool | None = None,
     miso_firm_imports: bool | None = None,
     miso_seam_flow_limit: bool = False,
@@ -1163,6 +1164,10 @@ def run_year(
     if nyiso_dynamic_reserve_requirements is not None:
         config = config.with_overrides(
             nyiso_dynamic_reserve_requirements=nyiso_dynamic_reserve_requirements
+        )
+    if nyiso_hydro_reserve_eligible is not None:
+        config = config.with_overrides(
+            nyiso_hydro_reserve_eligible=nyiso_hydro_reserve_eligible
         )
     if neiso_dynamic_reserve_requirements is not None:
         config = config.with_overrides(
