@@ -64,7 +64,7 @@ jobs:
           echo "=== Disk BEFORE reclaim ==="
           df -h /
           sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
-                      /usr/local/lib/CodeQL /usr/local/.ghcup \
+                      /opt/hostedtoolcache/CodeQL /usr/local/.ghcup \
                       /usr/local/share/boost /usr/local/graalvm 2>/dev/null || true
           sudo docker image prune --all --force >/dev/null 2>&1 || true
           echo "=== Disk AFTER reclaim ==="
