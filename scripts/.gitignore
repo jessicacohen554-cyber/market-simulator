@@ -1,0 +1,12 @@
+# scripts/.gitignore — scoped ignore rules for the scripts/ tree.
+#
+# Push-staging scaffolding. The rule-27 "API 413 / large-file" push workaround
+# wrote a rule27-bigfiles.tar.gz split into base64 chunks under
+# _rule27_push_staging/ (dozens of *.tar.gz.b64.part*.txt files, committed over
+# many web-UI/API commits). That is *transport scaffolding*, never a repo
+# artifact — it was removed from tracking on 2026-07-22. These patterns stop any
+# future session from re-committing it. See
+# docs/handoffs/repo-clone-bloat-audit-2026-07.md for the full clone-bloat audit.
+_rule27_push_staging/
+*.tar.gz.b64.part*.txt
+rule27-bigfiles.tar.gz
