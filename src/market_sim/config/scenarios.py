@@ -1100,6 +1100,29 @@ class ScenarioConfig:
     # (byte-identical); NYISO-only. Mutually exclusive with nyiso_rcpf_enabled
     # under energy_reserve_coopt (rule 19 — see reserve_config._nyiso_design).
 
+    nyiso_hydro_reserve_eligible: bool = False  # GATED, default-OFF
+    # NYISO conventional-hydro reserve-SUPPLY eligibility (issue #1344, lever 3).
+    # When on (NYISO + energy_reserve_coopt), NYISO's in-fleet conventional
+    # hydro (prime-mover HY, data.hydro.build_hydro_fleet — 154 units, ~4.6 GW:
+    # Upstate_West ~4.1 GW incl. the NYPA Niagara/St-Lawrence projects,
+    # Capital_Hudson ~0.55 GW) joins the co-opt reserve-eligible set alongside
+    # thermal, in BOTH the full (30-min) and quick-start (10-min) classes —
+    # hydro governors deliver full headroom inside the 10-minute window
+    # (conventional-hydro fast-ramp physics, the same basis as CAISO's
+    # CAISO_HYDRO_RAMP10_FRAC hydro-reserve seam in _caiso_reserve_eligible).
+    # Empirical need: with nyiso_dynamic_reserve_requirements on (SENY/East peak
+    # steps), the co-opt reserve supply is thermal+storage-only, so in tight
+    # summer hours the East-10min / NYCA-30min ORDC shadow price over-spikes
+    # into the LBMP (2023 over-price, nyiso-68). NYPA hydro is a real certified
+    # NYISO operating-reserve provider (NYISO Ancillary Services Manual), so
+    # crediting it is structurally correct (rule 1), NOT a residual tune. Held
+    # (undeployed) reserve spends no water — the monthly energy budget
+    # (dispatch._build_hydro_rows) bounds only dispatched energy, so budget and
+    # reserve headroom compose correctly (the _caiso_reserve_eligible clause).
+    # Pumped storage (Blenheim-Gilboa, prime-mover PS) is NOT included — it is
+    # excluded from build_hydro_fleet and remains a separate lever-3 step.
+    # Default off (byte-identical); NYISO-only; requires energy_reserve_coopt.
+
     # NEISO (ISO-NE) RCPF scarcity overlay — the ISO-NE analogue of the NYISO
     # lever above (post-solve; never an LP input). ISO-NE prices real-time
     # scarcity through Reserve Constraint Penalty Factors on its nested
