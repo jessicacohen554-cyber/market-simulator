@@ -2097,6 +2097,7 @@ def write_run_config(
                 "temp_dependent_derate",
                 "nyiso_dynamic_reserve_requirements",
                 "nyiso_hydro_reserve_eligible",
+                "nyiso_scr_edrp_reserve_eligible",
                 "git_sha",
             )
         },
@@ -2715,6 +2716,7 @@ def solve_and_persist(
     nyiso_spin_headroom_frac: float | None = None,
     nyiso_dynamic_reserve_requirements: bool | None = None,
     nyiso_hydro_reserve_eligible: bool | None = None,
+    nyiso_scr_edrp_reserve_eligible: bool | None = None,
     neiso_dynamic_reserve_requirements: bool | None = None,
     miso_firm_imports: bool | None = None,
     miso_seam_flow_limit: bool = False,
@@ -3505,6 +3507,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_hydro_reserve_eligible=nyiso_hydro_reserve_eligible
             )
+        if nyiso_scr_edrp_reserve_eligible is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_scr_edrp_reserve_eligible=nyiso_scr_edrp_reserve_eligible
+            )
         if neiso_dynamic_reserve_requirements is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 neiso_dynamic_reserve_requirements=neiso_dynamic_reserve_requirements
@@ -3899,9 +3905,7 @@ def solve_and_persist(
             ercot_thermal_dam_availability_hourly=(
                 ercot_thermal_dam_availability_hourly
             ),
-            ercot_thermal_dam_availability_plant=(
-                ercot_thermal_dam_availability_plant
-            ),
+            ercot_thermal_dam_availability_plant=(ercot_thermal_dam_availability_plant),
             ercot_noncampd_plant_availability=ercot_noncampd_plant_availability,
             ercot_storage_capability_measured=ercot_storage_capability_measured,
             ercot_online_capacity_envelope_measured=(
@@ -3972,6 +3976,7 @@ def solve_and_persist(
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
             nyiso_dynamic_reserve_requirements=nyiso_dynamic_reserve_requirements,
             nyiso_hydro_reserve_eligible=nyiso_hydro_reserve_eligible,
+            nyiso_scr_edrp_reserve_eligible=nyiso_scr_edrp_reserve_eligible,
             neiso_dynamic_reserve_requirements=neiso_dynamic_reserve_requirements,
             miso_firm_imports=miso_firm_imports,
             miso_seam_flow_limit=miso_seam_flow_limit,
@@ -4377,9 +4382,7 @@ def solve_and_persist(
         "ercot_thermal_dam_availability_hourly": (
             ercot_thermal_dam_availability_hourly
         ),
-        "ercot_thermal_dam_availability_plant": (
-            ercot_thermal_dam_availability_plant
-        ),
+        "ercot_thermal_dam_availability_plant": (ercot_thermal_dam_availability_plant),
         "ercot_noncampd_plant_availability": ercot_noncampd_plant_availability,
         "ercot_storage_capability_measured": ercot_storage_capability_measured,
         "ercot_online_capacity_envelope_measured": (
@@ -4460,6 +4463,7 @@ def solve_and_persist(
         "nyiso_spin_headroom_frac": nyiso_spin_headroom_frac,
         "nyiso_dynamic_reserve_requirements": nyiso_dynamic_reserve_requirements,
         "nyiso_hydro_reserve_eligible": nyiso_hydro_reserve_eligible,
+        "nyiso_scr_edrp_reserve_eligible": nyiso_scr_edrp_reserve_eligible,
         "neiso_dynamic_reserve_requirements": neiso_dynamic_reserve_requirements,
         "miso_firm_imports": miso_firm_imports,
         "miso_seam_flow_limit": miso_seam_flow_limit,
@@ -8902,6 +8906,23 @@ def main() -> None:
         "NYISO-only. Default (unset) keeps the base config value (off).",
     )
     parser.add_argument(
+        "--nyiso-scr-edrp-reserve-eligible",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NYISO SCR/EDRP demand-response reserve-SUPPLY eligibility (issue "
+        "#1344, lever 3 step 2 — the SENY tail): the in-fleet SCR/EDRP "
+        "demand-response blocks (already energy-only $500-strike pseudo-gens) "
+        "join the co-opt reserve-eligible set in the FULL (30-min) class only, "
+        "scoped to the downstate zones NYC + Long_Island + Lower_Hudson. SCR is "
+        "a NYISO-certified 30-min operating-reserve provider (Ancillary Services "
+        "Manual §4 / MST §15), so this supplies the SENY/NYC 30-min reserve the "
+        "hydro union (East/NYCA) cannot reach — the driver of the unclosed 2023 "
+        "downstate >$300 tail. Held reserve forces no energy (the per-zone "
+        "headroom row trades it against the $500 strike). A structural mechanism "
+        "(rule 1), not a residual tune. Requires --energy-reserve-coopt and "
+        "--nyiso-scr-edrp; NYISO-only. Default (unset) keeps the base value (off).",
+    )
+    parser.add_argument(
         "--neiso-dynamic-reserve-requirements",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -9625,6 +9646,7 @@ def main() -> None:
         nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,
         nyiso_dynamic_reserve_requirements=args.nyiso_dynamic_reserve_requirements,
         nyiso_hydro_reserve_eligible=args.nyiso_hydro_reserve_eligible,
+        nyiso_scr_edrp_reserve_eligible=args.nyiso_scr_edrp_reserve_eligible,
         neiso_dynamic_reserve_requirements=args.neiso_dynamic_reserve_requirements,
         miso_firm_imports=miso_firm_imports,
         miso_seam_flow_limit=args.miso_seam_flow_limit,
