@@ -8,4 +8,5 @@ Runs: curate_emissions_unit_annual --years 2022 --holdout-intake PJM;
 Merges into data/raw/_processed-legacy/plant_emission_rates_v2.{parquet,csv}
 with every pre-existing row asserted byte-frozen; re-run-safe (clash guard).
 
-attempt 2: sparse + partial checkout (run 1 failed on the full-clone checkout).
+attempt 3: per-ISO state-scoped curate (run 1 full-clone checkout; run 2
+all-states curate OOM). Branch restarted from main after PR #2771 merged.
