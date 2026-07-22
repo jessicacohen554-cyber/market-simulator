@@ -461,3 +461,76 @@ superseding `2026-07-20-ercot91-seasonal-drag-fullspan`. Attestation updated
 was NOT taken with this promotion — determination stays NOT-YET on the unledgered
 2024/2025 tail rows; that remains a separate owner action (with the ERCOT-97 lanes
 as the alternative close-out). ERCOT-97 baselines on THIS keeper.
+
+## 2026-07-22 — ERCOT-97 (three lanes on the 2023-summer C3c frontier, on the ercot96 keeper): plant-grain DAM availability BUILT + directional-A/B'd (structural win — summer hod-corr 0.40→0.60, spurious tail 32→24 — at a merit-mix C3a-level cost; NOT a clean C3c closer); measured RUC conduct SIZED and found IMMATERIAL (~281 gas unit-hours vs the bridge's ~51k, 178x → no mechanism, rule 19/14); published ORDC-LOLP swap REJECTED (adds real+spurious tail, zero-spurious fails). Keeper UNCHANGED — owner adjudication.
+
+**Charter.** Baselined on `2026-07-22-ercot96-dam-hourly-grain` (owner-promoted keeper),
+three lanes to move the NOT-YET C3c: (A) DAM-site→EIA-plant crosswalk + plant×hour
+availability, (B) measured RUC-conduct commitment state, (C) the ERCOT-95 Finding-4 ORDC
+LOLP swap. Base assembled from `docs/handoffs/ercot96-lane-a-core.patch` (7 files, all 7
+post-apply blob SHAs verified against the manifest) + the committed hourly CSV (blob
+7d93a2eb, verified); `solve_and_persist` carries `ercot_thermal_dam_availability_hourly`
+→ True.
+
+**Lane A (PRIMARY) — plant grain BUILT, directional A/B.**
+- A-1 crosswalk (`scripts/data/build_ercot_dam_resource_crosswalk.py` →
+  `data/raw/reference/ercot-dam-plant-crosswalk.csv`): 262 DAM sites (58 CC 30.5 GW / 165
+  CT 11.3 GW / 39 ST 10.4 GW) proposed against `custom-bin-assignments.csv` with per-row
+  evidence (p98 rating, settlement points, QSE, capacity ratio, distinctive-abbreviation
+  corroboration). ERCOT substation mnemonics do NOT token-match EIA names and 2-char
+  initialisms collide (WHCCS2→Wharton is a FALSE match, correctly rejected; it is Wolf
+  Hollow II) — so a strict, collision-aware accept gate: strong+distinctive corroboration
+  AND unique-in-class AND capacity-plausible, plus the 3 forensic seeds. 22 auto-accepted
+  (12 CC / 6 CT / 4 ST), every one hand-verified correct (zero false positives); the rest
+  accepted=0 → class-hour envelope fallback (CLAUDE.md rules 1/11 — accepted-gated
+  identification metadata, not a tuning channel). CC is the coverage priority.
+- A-2 mechanism (`ercot_thermal_dam_availability_plant`, default off, requires `_hourly`):
+  the derive emits a site×hour parquet (the live_sh/rating intermediate it already
+  computes; reconciles to the class-hour grain exactly); the fleet hook pins each accepted
+  plant to its OWN measured site-hour fraction and water-fills the unmapped remainder so
+  the class-HOUR total is UNCHANGED — a within-class REDISTRIBUTION, zero fitted
+  parameters (unit-tested: class total preserved exactly, plants pinned, missing-file
+  no-op).
+- A-3 A/B (2023 rule-16 throwaway, keeper-config base vs +plant probe, both re-solved this
+  session; base gas bridge floored 51,607 unit-hours — matches the keeper's ~50k, base is
+  faithful): plant grain moves spurious tail 32→24 (−8), real-tail capture 45→47 (+2),
+  summer hod-profile corr vs actual 0.40→0.60 (+0.19) — the afternoon price SHAPE improves
+  markedly. Dispatch shifts to CC_REGULAR (+1278 GWh) from ST_GAS/CT/coal (the predicted
+  merit-mix redistribution). BUT mean price 37.66→33.58 drops further below actual (49.93)
+  — a C3a-LEVEL cost from the cheaper-CC merit shift. Verdict: a genuine STRUCTURAL
+  refinement but NOT a clean C3c closer (C3a level worsens); the gate "C3a not worse" is
+  not met on the price level. Needs the full rubric + LOYO + owner judgment — not
+  promoted. (2023 site-hour parquet is Dec-short pending the 2024_Jan-Mar spillover file;
+  ~17.5k CC plant-hours fell back to class grain, so the effect is a floor.)
+
+**Lane B (SECOND) — measured RUC conduct IMMATERIAL, no mechanism.**
+`scripts/probes/_ercot97_ruc_measure.py` over the slim SCED tail/control-day subsets that
+survived the purge (2024/2025; 2023 SCED absent — re-fetch to extend): ONRUC (RUC-committed)
+≈ 303 unit-hours total (281 gas: ST_GAS ~236 / CC ~28 / CT ~17), evening-ramp weighted
+(hod 18-20 peak, 49% in hod 13-19), dominated by the old gas-steam fleet (Olinger, Lake
+Hubbard, Mountain Creek, Spencer, V H Braunig — the units the ST_GAS drag already governs).
+vs the keeper gas bridge's ~51k unit-hours ⇒ 178x smaller ⇒ NOT material. Lane B step 2
+(thread a measured RUC commitment-state input) NOT triggered: a RUC floor would replace a
+tiny slice of the bridge, not change the committed state (rule 19 one-mechanism, rule 14
+measured-over-derived both better served by leaving the bridge + ST_GAS drag in place).
+
+**Lane C (LAST) — published ORDC-LOLP swap REJECTED.**
+Keeper 2023 replay with `--set ordc_lolp_params_path=.../ercot_ordc_lolp_params.csv`
+(summer mu 0→904, sigma 1400→1333): tail 77→112 (real captured 45→62, +17) BUT spurious
+32→50 (+18); mean price 37.66→39.70 (toward actual). The published LOLP envelope raises
+scarcity pricing but adds MORE spurious tail than real — the zero-spurious gate FAILS.
+Not adoptable standalone (charter: "adopt ONLY if C7 + zero-spurious hold"; predicted "NOT
+a C3c closer" — confirmed).
+
+**Disposition.** All three lanes landed/exhausted; C3c still out of band. Plant grain is a
+real structural asset (better summer hod shape, fewer spurious tails) banked as a
+default-off, LOYO-pending mechanism; RUC is immaterial; the LOLP swap is refuted
+standalone. Keeper UNCHANGED. The ERCOT-95/96 close-out still stands as the owner's option:
+LEDGER C3c 2024/2025 (3/3 MAX_LEDGERED_CAVEATS → CALIBRATED-WITH-CAVEATS) — owner sign-off,
+never unilateral. Code + crosswalk + probe on branch `claude/ercot-97-c3c-frontier-rtd17r`;
+no dashboard registration (2023-only throwaways, rule 16).
+
+**Transport (rule 26/27).** git push from the blob-filtered partial clone triggers a
+multi-GB promisor backfill that disconnects (each attempt leaves a multi-GB tmp pack);
+worked around by pushing with partial-clone disabled + pre-fetching the boundary blobs
+individually. Full detail + repro in `docs/handoffs/ercot97-results-2026-07.md`.
