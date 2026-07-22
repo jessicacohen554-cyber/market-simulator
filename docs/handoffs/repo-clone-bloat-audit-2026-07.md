@@ -1,250 +1,273 @@
-# Repo clone-bloat audit & remediation — 2026-07-22
+# Repo clone-bloat audit (2026-07)
 
-**Session:** standalone repo/git-hygiene infrastructure (Opus). Branch
-`claude/repo-clone-bloat-fix-3rvic7`.
-
-**TL;DR.** The repository is **11.49 GiB** on GitHub (packed, all history). That
-is why fresh full-history clones hang and `git fetch` disconnects through the
-proxy — a container that tries to pull ~11.5 GB over the relay never finishes
-(the auto-clone in this very session was found **stuck at 6.1 GB with an empty
-working tree**). Almost none of the weight is code: the blobless commit+tree
-graph is only **10.73 MiB**. The other ~99.9 % is **file-blob content** — mostly
-gigabytes of immutable binary reference data under `data/raw/` (legit-keep), plus
-a real layer of **history churn from 443 web-UI "Add files via upload" commits**
-that dropped files in the wrong place (repo root, `inputs/raw-data/`) and later
-relocated/deleted them, orphaning the blobs in every clone's pack.
-
-**The fix that actually unsticks the loop is the partial/shallow clone recipe
-(§3) — it needs no history change.** Untracking clutter (§2, done) stops
-re-growth but reclaims only working-tree bytes, not pack size. Shrinking the pack
-is a history rewrite (§4) and is **owner-gated** — diagnosed and costed below, not
-executed.
+*Standalone infra session. Diagnoses the recurring "cloning loop" (sessions
+landing on stale/half clones; `git fetch` stalling; `git push` 413ing), stops the
+forward bleed without touching history, makes the fast-clone pattern the standard,
+and hands the owner a costed, owner-gated recommendation for any deeper cleanup.*
 
 ---
 
-## 1. Diagnosis
+## TL;DR (lead with the numbers)
 
-### 1a. Headline numbers (authoritative)
+| Measure | Value |
+|---|---|
+| Server-side git pack (what a full clone downloads) | **11.49 GiB** (`GET /repos` `size` = 12,044,217 KB) |
+| Current tracked tree, uncompressed | **12.03 GiB** across **9,728** files |
+| `data/raw/` (immutable source data) | **11.69 GiB — 97% of the tree** (ERCOT alone 7.4 GiB) |
+| Already-compressed binary (parquet 9.34 + zip 0.99 + xlsx 0.56 GiB) | **10.9 GiB** — git cannot shrink these |
+| Confirmed-removable clutter (`scripts/_rule27_push_staging/`) | **0.365 MiB** (81 files) — **removed this session** |
+| Regenerable dashboard JS (`manifest`/`benchmark`/`completeness.js`) | 0.629 MiB current; **~100+ historical versions of `benchmark.js` alone** |
+| Reclaimable **history** bloat (deleted/superseded blobs) | **negligible — a few hundred MiB at most**, ~all of it regenerable payloads |
 
-| Metric | Value | Source |
-|---|---|---|
-| **Repo size on GitHub (packed, all history)** | **11.49 GiB** (12,044,045 KB) | GitHub API `size` |
-| Blobless clone metadata (commits + trees only) | 10.73 MiB / 48,717 objects | `git count-objects -vH` |
-| Total commits | 9,123 | `git rev-list --count --all` |
-| **"Add files via upload" web-UI commits** | **443** | commit-message scan |
-| Current tracked files (HEAD) | 9,728 | `git ls-tree -r HEAD` |
+**Root cause of the loop is the clone *method*, not primarily repo size.** The
+commit/tree graph is ~11 MiB and clones in ~2 s; only the file *blobs* (11.5 GiB,
+97% immutable `data/raw/`) are heavy. A full-history clone / full `git fetch` has
+to move all of it through the egress proxy, which stalls — leaving the session on
+a stale or half-checked-out tree; the next full fetch stalls the same way and
+`git push` 413s. A **blobless partial clone fixes this today with no history
+change** (proven this session: full graph in 1.6 s, blobs fetched on demand).
 
-The 10.73 MiB-vs-11.49 GiB gap is the whole story: **the repo is not
-code-heavy, it is blob-heavy.** ~99.9 % of the pack is file content, current +
-historical.
-
-### 1b. Current-tree composition (HEAD)
-
-By file type (current tree): 2,917 `.parquet`, 1,660 `.json`, 1,436 `.py`,
-**1,135 `.xlsx`**, 871 `.md`, 657 `.csv`, **316 `.zip`**, 130 `.yaml`, 23
-`.pdf`, 60 `.gz`. The heavy binaries are overwhelmingly under **`data/raw/`**
-(4,906 files: all 316 zip, 2,574 parquet, 1,135 xlsx). A 1,132-blob sample
-(11.6 % of HEAD, 0.887 GiB) is essentially 100 % `data/raw`; the biggest current
-files are all immutable source:
-
-```
- 29.25 MiB  data/raw/caiso-curtailment/productionandcurtailmentsdata_2018.xlsx
- 22.81 MiB  data/raw/NYISO/nyiso load reports 3.zip
- 21.85 MiB  data/raw/caiso-curtailment/productionandcurtailmentsdata_2023.xlsx
- …(7 more CAISO curtailment xlsx, 20–22 MiB each)…
- 13.76 MiB  data/raw/NYISO/NYISO-2025-SOM-Report__5-19-2026-final.pdf
- 10.95 MiB  data/raw/PJM-AS/reserve_market_results_2025.parquet
-```
-
-**Estimated current-tree total ≈ 6–8 GiB**, dominated by `data/raw` immutable
-binary source. (Estimate, not exact: measuring it precisely means fetching every
-current blob, which re-triggers the clone hang and fills the session disk — so it
-was deliberately not completed. The 11.49 GiB total is exact.)
-
-### 1c. History bloat — the 443 web-UI upload commits
-
-The owner's read is confirmed. The 443 `Add files via upload` commits touched
-2,336 paths, rolled up:
-
-| Destination | Path-touches | In HEAD now? | Verdict |
-|---|---|---|---|
-| `data/raw/…` | 2,108 | mostly yes | legit source (just uploaded via web UI) |
-| **`inputs/raw-data/…`** | **187** | **0 (deleted)** | **orphaned in history** — pre-W1 path, relocated into `data/raw/`, `/inputs/` now gitignored |
-| root-level `*.zip` | 22 distinct | **0 (deleted)** | **orphaned in history** — CAISO DAM/RTM LMP group zips uploaded to repo root (incl. `… 2.zip` duplicates), now `/*.zip`-ignored |
-| `data/reference/…` | 19 | yes | legit |
-
-`inputs/` was touched by **225 commits total** and is entirely deleted from HEAD.
-Web-UI "Add files via upload" replaces rather than moves, so each relocation
-created **new** blobs while the old ones stay reachable in history forever. This
-is the churn layer on top of the immutable-source baseline.
-
-Good news, confirmed by history scan: the truly-huge gitignored corpora
-(`caiso-public-bids` ~0.5–0.9 GB, `pjm-energy-offers`, `NEISO-AS/da-energy-offers`
-~1.4 GB, GHCN caches, NYISO damlbmp zips) were **never bulk-committed** — each
-appears in exactly one commit (the README). That discipline held; they are *not*
-in the pack.
-
-**Estimated history-only (orphaned) bloat ≈ 3.5–5.5 GiB** = total (11.49) −
-current-tree (~6–8), i.e. deleted `inputs/` + root zips + superseded churn of
-calibration parquet and dashboard payloads.
-
-### 1d. Keep / removable / regenerable classification
-
-| Class | What | Size | Action |
-|---|---|---|---|
-| **(i) LEGIT-KEEP** | `data/raw/**` immutable source (xlsx/parquet/zip/pdf/csv) | ~6–8 GiB current | **Never touch** (task constraint + rule 13) |
-| **(i) LEGIT-KEEP** | `results/calibration/<name>/` slim keeper bundles (meta/metrics/attestation/SUMMARY + sidecars) | small | Keep — dashboard deliverables (rule 15) |
-| **(i) LEGIT-KEEP** | `frontend/data/backcast/registry/<id>.json` + `runs/<id>.js` | 65 MiB dir | Keep — committed sidecars (rule 15) |
-| **(ii) REMOVABLE-NOW** | `scripts/_rule27_push_staging/` — 81 base64 tarball chunks (content landed on main, superseded) | 0.36 MiB (×30 history versions) | **Removed** (§2) |
-| **(ii) REMOVABLE-NOW** | `tmp_bin_probe.bin` — 27-byte stray binary probe at root | 27 B | **Removed** (§2) |
-| **(iii) REGENERABLE** | `frontend/data/backcast/{manifest,benchmark,completeness}.js` | part of 65 MiB | Rebuilt by Pages deploy; **kept** by policy (§6 preview fallback) — untracking is an owner option, not done here |
-| **(iii) REGENERABLE** | `results/calibration/*/*.parquet` tracked despite `.gitignore` §8 (predate the rule) | 313 files | **Owner-review cleanup** (see §4) — not swept now (needs care to not touch a keeper) |
-| **flag only** | `patches/pjm-m1-code.patch` (+README), `docs/handoffs/*.patch` — unapplied patches | ~20 KB | Left in place; remove only if owner confirms superseded |
-| **flag only** | `scope2-lce-portfolio/` — a coherent sub-project (own `src/`, `tests/`, `data/`, `results/`, `pyproject.toml`), not referenced by CLAUDE.md | 194 files | Owner review — is it in scope for this repo? |
+**A history purge would reclaim almost nothing** — the 11.7 GiB of `data/raw/` is
+*append-only* (each big file appears in exactly **1** commit; spot-checked), so it
+is not duplicated across history. Only *removing `data/raw/` from git tracking*
+(Git LFS or external object store, which still needs a history rewrite to drop the
+single live copy from the pack) materially shrinks the repo. That is a big,
+owner-gated, blast-radius change — **and only worth it if the 11.5 GiB itself is a
+problem.** See §4.
 
 ---
 
-## 2. Stop the bleed — DONE (forward-only, no history rewrite)
+## 1. Symptom & confirmation
 
-Three commits on `claude/repo-clone-bloat-fix-3rvic7` (pushed via the GitHub
-API — `git push` 413s here):
+The owner's read — "manual data uploads + committed push-scaffolding bloated the
+repo" — is confirmed by the commit history and the size data:
 
-1. **Removed `scripts/_rule27_push_staging/`** (81 files) — the base64-chunked
-   `rule27-bigfiles.tar.gz` relay. Verified safe: the 5 staged source files
-   (`run_calibration_full.py`, `run_calibration.py`, `runner.py`,
-   `backcast_config.py`, the orchestrator-unification plan) were assembled onto
-   main and have since grown past the staged versions (current line counts
-   9,578 > 9,166; 4,631 > 4,326; 2,470 > 2,292; 2,001 > 1,764), and commit
-   `8d5a1cb4 docs: archive merged staging files` confirms the merge.
-2. **Removed `tmp_bin_probe.bin`** — 27-byte binary test probe at repo root.
-3. **Hardened `.gitignore` (new §11)** so the clutter can't re-enter the pack:
-   `_*_push_staging/`, `*.tar.gz.b64.part*.txt`, and stray `*.bin` root probes.
-   Byte-verified after push (blob SHA matches local `git hash-object`).
+- **Manual web-UI uploads.** Many commits are literally `Add files via upload`
+  (committer `web-flow` = GitHub web UI). These added the large `data/raw/`
+  parquet/xlsx/zip. They bloat the **current tree** (see §2), but because each
+  file is uploaded once and never rewritten, they do **not** bloat history.
+- **Committed push-scaffolding.** Dozens of commits — `Stage rule-27 payload part
+  NN as verified pieces`, `Update staging manifest for the piece-split payload
+  layout` — wrote a base64-chunked `rule27-bigfiles.tar.gz` under
+  `scripts/_rule27_push_staging/` (81 `*.tar.gz.b64.part*.txt` files). Pure
+  transport scaffolding for the API-413 workaround; never a repo artifact.
+- **The friction is already logged.** Recent commit messages repeatedly record
+  *"git push 413s"*, *"all git fetches disconnect through the proxy"*, *"ran on a
+  1572-commit-stale clone (066fb98)"*, and the turn-43 ledger explicitly surfaced
+  to the owner: *"staging-dir bloat, stranded PJM M-3 unapplied patch, recurring
+  stale-clone/proxy friction."* This session is the response.
+- **Stale-clone reproduced.** This environment's working copy started at
+  `066fb98` while true `origin/main` was `a4a17c9` — i.e. the auto full clone
+  landed ~1,500+ commits behind (it stalls during the 11.5 GiB blob transfer).
+  The blobless clone reached true `a4a17c9` in **1.6 s**.
 
-**Important:** `git rm --cached` / file deletion shrinks the working tree and
-stops growth **but does not shrink the pack/history** — every removed blob is
-still in every existing clone. Reclaiming pack size is §4.
+## 2. Diagnosis — where the weight is
 
----
+### 2a. Current tree (GitHub recursive tree API, exact per-blob sizes)
 
-## 3. Make fast clone the standard (this is what unsticks the loop)
+`data/raw/` is **11.69 GiB / 4,906 files = 97%** of the 12.03 GiB tree:
 
-No history change; every future session avoids the hang by **never doing a
-full-history clone or `git fetch` over full history**. The recipe (also in
-`docs/handoffs/fast-clone.md` and proposed for CLAUDE.md's remote-environment
-section):
+| sub-area | size | files |
+|---|---:|---:|
+| `data/raw/ercot` | 7,555 MiB | 1,839 |
+| `data/raw/campd-unit-level` | 786 MiB | 308 |
+| `data/raw/lmp-data` | 761 MiB | 213 |
+| `data/raw/ercot-AS` | 599 MiB | 65 |
+| `data/raw/zone-specific-demand` | 272 MiB | 89 |
+| `data/raw/ercot-hsl` | 234 MiB | 54 |
+| `data/raw/eia-930` | 196 MiB | 107 |
+| `data/raw/caiso-dam-outages` | 164 MiB | 1,098 |
+| `data/raw/caiso-curtailment` | 158 MiB | 9 |
+| (…rest) | — | — |
+
+By file type: **`.parquet` 9.34 GiB (2,917)**, `.zip` 0.99 GiB (316), `.csv`
+766 MiB (657), `.xlsx` 562 MiB (1,135). The `.parquet`/`.zip`/`.xlsx` are already
+internally compressed, so git's zlib gains almost nothing — this ~10.9 GiB is the
+pack's hard floor.
+
+Non-`data/raw/` is only ~0.34 GiB: `results/` 243 MiB (mostly
+`results/calibration` keeper bundles, 239 MiB), `frontend/` 67 MiB (backcast
+sidecars + runs), `docs/` 10 MiB, `scripts/` 9 MiB, `src/` 4.6 MiB,
+`scope2-lce-portfolio/` 7 MiB.
+
+### 2b. History bloat (near-zero, and it's the regenerable payloads)
+
+The server pack (**11.49 GiB**) is essentially equal to the *packed current
+tree* — the ~10.9 GiB of pre-compressed binary + ~0.3 GiB of compressible text.
+There is no room left for a large mass of deleted/superseded blobs. Confirmed by
+targeted `commits?path=` counts:
+
+- Big `data/raw/` files — **1 commit each** (added once, never rewritten →
+  append-only → **zero** history duplication). Spot-checked: the 63 MiB ERCOT
+  SCED parquet, the 22 MiB CAISO curtailment xlsx, the eGRID xlsx, the 22 MiB
+  NYISO zip — all `1 commit`.
+- `frontend/data/backcast/benchmark.js` — **100+ commits** (rewritten on every
+  keeper registration; ~0.6 MiB × 100+ versions ≈ tens of MiB of history). This
+  is the *only* class that churns history, and it is exactly the **regenerable**
+  dashboard payload the Pages deploy rebuilds.
+
+So whatever reclaimable history bloat exists (a few hundred MiB at most) is the
+regenerable/clutter category, **not** `data/raw/`.
+
+*Method note:* a full `git rev-list --objects --all` blob→path map was attempted
+in a blobless clone but is impractically slow in this CPU-throttled container
+(~100 obj/s). It is unnecessary: the server-pack-vs-current-tree identity plus the
+per-path commit counts bound the history bloat tightly.
+
+### 2c. Classification
+
+**(i) LEGIT-KEEP — do not touch.**
+- `data/raw/` immutable source data — 11.69 GiB (CLAUDE.md: never delete).
+- Committed keeper bundles — `results/calibration/<name>/` slim files (239 MiB),
+  `frontend/data/backcast/registry/<id>.json`, `runs/<id>.js`, `bench/`,
+  `status/`, `keepers/` (65 MiB) — the dashboard deliverables (CLAUDE.md rule 15).
+
+**(ii) REMOVABLE-NOW — never needed in git.**
+- `scripts/_rule27_push_staging/` — 81 files, 0.365 MiB. **Removed this session**
+  (81 `delete_file` commits) + gitignored (`scripts/.gitignore`).
+- `*.patch` files — 18 files, 0.208 MiB (e.g. `docs/handoffs/pjm-m3-gas-bridge.patch`).
+  **Left in place** — these are session hand-off artifacts, not clone-loop
+  drivers, and one (`pjm-m3-gas-bridge.patch`) is a still-relevant unapplied
+  change the owner may want re-based. Owner call, not removed here.
+
+**(iii) REGENERABLE — rebuilt by the Pages deploy.**
+- `frontend/data/backcast/manifest.js` / `benchmark.js` / `completeness.js` —
+  0.629 MiB current, but ~100+ historical `benchmark.js` versions.
+  **Left tracked** this session: the root `.gitignore` §6 documents them as
+  *intentionally committed* for the `file://` preview fallback, and untracking
+  them (a) contradicts that documented policy, (b) breaks the local preview, and
+  (c) reclaims <1 MiB from the current tree. This is a genuine but *small* owner
+  decision — see the decision box.
+
+## 3. What this session changed (Step 2 + Step 3 — no history rewrite)
+
+All via the GitHub API (`git push` 413s here); all forward-only and reversible.
+
+1. **Untracked `scripts/_rule27_push_staging/`** — 81 `delete_file` commits
+   removing every `*.tar.gz.b64.part*.txt` chunk + `MANIFEST.md`. Verified gone
+   (dir now 404 on the branch).
+2. **Added `scripts/.gitignore`** — ignores `_rule27_push_staging/`,
+   `*.tar.gz.b64.part*.txt`, `rule27-bigfiles.tar.gz` so the scaffolding can never
+   be re-committed. (A scoped nested ignore, deliberately **not** a rewrite of the
+   304-line root `.gitignore`, per CLAUDE.md rule-27 push-integrity.) Blob-verified
+   after push (sha match).
+3. **`docs/fast-clone.md`** — the fast-clone / anti-loop recipe (Step 3), incl. a
+   *described-not-merged* `SessionStart` hook addition and the environment
+   clone-filter proposal.
+
+> **`git rm --cached` shrinks the working tree and stops growth, but does NOT
+> shrink the pack / clone size** — the removed blobs remain in history. Pack
+> reduction is the owner-gated §4 call. In this repo that distinction barely
+> matters anyway: the removed clutter is 0.365 MiB.
+
+## 4. Owner-gated recommendation (DIAGNOSE + PROPOSE only — nothing run)
+
+### Recommendation, in priority order
+
+**Option 0 — Adopt the fast partial-clone standard. Do this; it fully fixes the
+loop. No history change, zero risk.**
+The cloning loop is a clone-*method* problem. A `--filter=blob:none` clone of the
+11.5 GiB repo is fast because it defers the blobs. Adopt it as the environment
+default (and/or the `SessionStart` fast-forward in `docs/fast-clone.md`). **If the
+11.5 GiB storage itself is not a concern, stop here — no history rewrite is
+warranted.**
+
+**Option A — Clutter/regenerable-only history purge. NOT recommended on its own.**
+A `git filter-repo` dropping the staging chunks + the regenerable dashboard-JS
+history reclaims only ~a few hundred MiB (**< 3%** of the pack) yet still forces a
+full-history rewrite + force-push + re-clone of everyone. The blast radius dwarfs
+the benefit. Only fold this in if you are already doing Option B.
+
+**Option B — Move `data/raw/` out of git blobs. The only lever that materially
+shrinks the repo (~11.5 GiB → ~0.5–1.5 GiB in git). Owner-gated; big blast
+radius; must be run from a full clone outside Claude web sessions.** Two variants:
+
+- **B1 — Git LFS.** Rewrite history replacing `data/raw/` large binaries with LFS
+  pointers. Keeps *every byte* (in the LFS store), so it honours "never delete
+  `data/raw/`." Post-migration git is ~0.5–1.5 GiB; clones pull pointers + fetch
+  LFS objects on demand. **Costs:** GitHub LFS storage + bandwidth billing;
+  force-push to `main`; every clone re-synced; all open branches rebased. **Risk
+  to validate first:** LFS uses a separate batch/transfer protocol — given `git
+  push` 413s and `git fetch` stalls through this proxy, **LFS transfers may not
+  work from Claude web sessions at all**; the migration and day-to-day LFS pulls
+  likely require a normal (non-proxied) environment.
+- **B2 — External object store + gitignore + refetch.** Extend the pattern the
+  repo *already uses* — `data/raw/pjm-energy-offers/`, `caiso-public-bids/`, the
+  NYISO/NEISO archives are already gitignored with `scripts/fetch_*.py` + a
+  README — to the heavy committed parquet. Move bytes to S3/GCS (or rely on the
+  primary-source URLs), gitignore them, add fetch scripts, and `filter-repo` them
+  out of history. **Costs:** same history rewrite/force-push/re-clone. **Risk:**
+  some ERCOT 60-Day disclosure windows may no longer be re-fetchable from the
+  primary source (rolling retention) — for those, B1 (which keeps the bytes) is
+  safer than B2 (which trusts refetch).
+
+### Exact commands for Option B (run from a FULL clone, NOT here — do not run)
 
 ```bash
-ORIGIN=$(git -C "$PWD" remote get-url origin 2>/dev/null || echo \
-  "https://github.com/jessicacohen554-cyber/market-simulator.git")
-
-# Blobless partial clone: full commit/tree graph, NO file blobs.
-# Fast even on an 11.5 GB repo — blobs are fetched lazily only when checked out.
-git clone --filter=blob:none --no-checkout "$ORIGIN" /tmp/mktsim && cd /tmp/mktsim
-
-# If even that hangs, depth-1 blobless + rely on the GitHub API for the rest:
-git clone --depth 1 --filter=blob:none "$ORIGIN" /tmp/mktsim-shallow
-```
-
-Rules for working inside a partial clone (learned the hard way this session):
-
-- **Don't `git checkout` the whole tree** and **don't `git fetch origin <branch>`
-  over full history** — both lazily fetch every blob and re-hang. Check out only
-  what you need (`git sparse-checkout set <dir>`), or read files via the GitHub
-  API / MCP `get_file_contents`.
-- **`git rev-list --objects --all` hangs** in a blobless clone unless you pass
-  **`--missing=allow-any`** (otherwise it tries to fetch promisor blobs).
-- **Push only via `mcp__github__push_files` / `create_or_update_file` /
-  `delete_file`** — `git push` 413s on this relay regardless of pack size.
-- Get repo/file sizes from the **GitHub API** (`search_repositories` → `size`,
-  `get_file_contents` → per-file `size`), not by fetching blobs.
-
-**Proposed setup-hook change (NOT merged — CLAUDE.md forbids editing
-workflows/setup without owner sign-off):** if the environment's initial-clone
-step is configurable (the container clone hook), switch it from a full clone to
-`git clone --filter=blob:none` (optionally `--depth 1`). That single change
-prevents the container-start hang for every future session. Point of change: the
-remote-environment clone/setup hook that provisions
-`/home/user/market-simulator` at container start. **Owner to approve and wire
-in** — this session did not modify any CI/setup file.
-
----
-
-## 4. Owner-gated recommendation — history purge / LFS (DIAGNOSE + PROPOSE ONLY)
-
-The pack does not shrink until history is rewritten. Two levers, both requiring
-a **force-push to `main` that invalidates every existing clone and open branch**.
-**Not executed. Owner decision required.**
-
-### Option A — targeted history purge of orphaned/regenerable blobs (moderate)
-
-Drop from *all* history the blobs that are already deleted from HEAD or are
-regenerable: the push-staging tarball, the 187 `inputs/raw-data` files, the 22
-root `*.zip` LMP uploads, and superseded calibration `*.parquet` / dashboard
-payloads.
-
-- **Estimated reclaim: ~3.5–5.5 GiB** → repo from 11.49 GiB to roughly **6–8 GiB**.
-- **Keeps** `data/raw` current source and all keeper bundles intact.
-- Exact commands (run on a full mirror, off this constrained relay):
-
-```bash
+# 0. Full mirror clone on a normal machine (NOT this proxied env).
 git clone --mirror https://github.com/jessicacohen554-cyber/market-simulator.git
 cd market-simulator.git
-# requires git-filter-repo
-git filter-repo --force \
-  --path scripts/_rule27_push_staging/ \
-  --path inputs/ \
-  --path-glob '*.tar.gz.b64.part*.txt' \
-  --path-glob '/*.zip' \
-  --path tmp_bin_probe.bin \
-  --invert-paths
-git reflog expire --expire=now --all && git gc --prune=now --aggressive
-# then, coordinated force-push (see blast radius):
-git push --force --mirror
-```
+git count-objects -vH          # record the true "before" pack size
 
-### Option B — migrate `data/raw` binaries to Git LFS (large reclaim, larger effort)
-
-Rewrite history so `data/raw/**.{xlsx,parquet,zip,pdf,csv,gz}` live in LFS
-pointers instead of pack blobs.
-
-- **Estimated reclaim: the git pack drops to <1 GiB** (source only); the binary
-  bytes move to LFS storage (billed separately, but not in every clone).
-- Bigger change: needs `.gitattributes`, an LFS-enabled remote, and every
-  collaborator/session to have `git-lfs` installed. `git clone --filter=blob:none`
-  already gives most of the clone-speed benefit **without** LFS, so LFS is only
-  worth it if the owner wants a genuinely small git repo.
-
-```bash
+# --- B1: Git LFS ---------------------------------------------------------
+#   migrate the heavy binary types in data/raw across ALL history to LFS
 git lfs migrate import --everything \
-  --include='data/raw/**/*.{xlsx,parquet,zip,pdf,csv,gz}'
-git push --force --all && git push --force --tags
+  --include="data/raw/**/*.parquet,data/raw/**/*.zip,data/raw/**/*.xlsx,data/raw/**/*.csv.gz"
+git count-objects -vH          # "after" (git side); LFS store holds the bytes
+#   then force-push the rewritten refs (coordinated — see blast radius)
+
+# --- B2: strip from history (external-store variant) ---------------------
+#   pip install git-filter-repo
+git filter-repo --path data/raw --path-glob 'data/raw/**' --invert-paths \
+  --path scripts/_rule27_push_staging --invert-paths
+#   (add the raw files to .gitignore + a fetch script BEFORE force-pushing)
+
+# Clutter-only (Option A), if ever done standalone:
+git filter-repo --invert-paths \
+  --path-glob 'scripts/_rule27_push_staging/**' \
+  --path-glob 'frontend/data/backcast/benchmark.js' \
+  --path-glob 'frontend/data/backcast/manifest.js' \
+  --path-glob 'frontend/data/backcast/completeness.js'
 ```
 
-### Blast radius (identical for A and B)
+### Blast radius (applies to A and B — any history rewrite)
 
-- **Force-push to `main` rewrites every commit SHA.** Every existing clone
-  (including stuck container clones) and **all open branches** must be re-based
-  onto the new history or re-cloned. Open PR branches at time of writing:
-  `claude/ff-wave-manager-standing-e90gfj`,
+- **Every commit SHA changes** → every existing clone is invalidated and must
+  re-clone; old SHAs referenced in `docs/`, `calibration-log.md`, PR bodies become
+  dangling.
+- **Force-push to `main`** required (this is the irreversible step).
+- **All open branches rebased** onto the rewritten base. Currently on origin:
+  `main`, `claude/ff-wave-manager-standing-e90gfj`,
   `claude/holdout-backcast-readiness-x8jf60`,
   `claude/orchestrator-unification-refactor-iyc472`,
-  `claude/transmission-interchange-refactor-93bbm6`, plus this one.
-- CI/Pages deploy re-runs against rewritten history.
-- Must be done off this relay (needs a working `git push --force --mirror`).
-- Coordinate a quiet window (no in-flight sessions) and re-base all live branches
-  immediately after.
+  `claude/transmission-interchange-refactor-93bbm6` — plus any open PRs, which
+  must be recreated/rebased.
+- **Must be executed from a full clone in a normal environment** — the rewrite,
+  the force-push, and (for B1) LFS transfers cannot be done from a Claude web
+  session (proxy 413/stall).
+- CI content checks (`file-integrity-guard`, `quarantine-gates`) are SHA-agnostic
+  and unaffected; but re-clone everyone before the next session or they'll fork.
 
-> ### ☐ OWNER DECISION
-> - **☐ Do nothing further** — keep §2 + §3 (fast-clone standard already fixes
->   the hang; repo stays 11.5 GB). *Lowest risk, recommended if the clone hang is
->   the only pain.*
-> - **☐ Option A** (targeted purge, ~6–8 GiB, moderate risk) — schedule a
->   coordinated force-push window.
-> - **☐ Option B** (LFS migration, <1 GiB git, higher effort) — only if a small
->   git repo is explicitly wanted.
-> - **☐ Approve the setup-hook switch to `--filter=blob:none`** (§3) so
->   container starts stop hanging.
-> - **☐ Approve/decline the follow-up untracking sweeps** — `results/calibration/*/*.parquet`
->   that predate `.gitignore` §8 (313 files); the regenerable
->   `frontend/data/backcast/*.js`; `patches/`; `scope2-lce-portfolio/`.
+---
+
+## 5. Owner decision box
+
+Please pick one (the session already did Option 0's repo-side prep — the
+fast-clone doc + clutter removal — regardless):
+
+- [ ] **A — Fast-clone only (recommended default).** Keep `data/raw/` in git;
+      adopt the partial-clone standard (and set the environment clone filter to
+      `blob:none`). No history rewrite. Closes the loop. *Choose this unless the
+      11.5 GiB pack size is itself a problem.*
+- [ ] **B — Also shrink the repo via LFS/external-store migration of `data/raw/`
+      (owner runs it from a full clone).** Reclaims ~11 GiB from git. Accept the
+      force-push + re-clone-everyone + branch-rebase blast radius above.
+      Sub-choice: [ ] B1 Git LFS (keeps bytes) · [ ] B2 external store + refetch.
+- [ ] **Also apply the described `SessionStart` blobless fast-forward hook** in
+      `docs/fast-clone.md` (I left it un-merged pending your sign-off).
+- [ ] **Untrack the regenerable dashboard JS** (`manifest`/`benchmark`/
+      `completeness.js`) and flip root `.gitignore` §6 — small (<1 MiB now, but
+      it's the main history-churn file), and it changes the documented preview
+      policy. Default: leave as-is.
+- [ ] **Re-base or drop `docs/handoffs/pjm-m3-gas-bridge.patch`** (stranded
+      unapplied 39 KiB patch) — separate lane, not a clone-loop driver.
