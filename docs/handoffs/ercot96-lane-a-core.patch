@@ -1,0 +1,573 @@
+diff --git a/scripts/data/derive_ercot_thermal_dam_availability.py b/scripts/data/derive_ercot_thermal_dam_availability.py
+index c12e396a..f1ffb0b5 100644
+--- a/scripts/data/derive_ercot_thermal_dam_availability.py
++++ b/scripts/data/derive_ercot_thermal_dam_availability.py
+@@ -1,18 +1,39 @@
+-"""Derive ERCOT measured class-day thermal availability from the 60-Day DAM disclosure.
++"""Derive ERCOT measured thermal availability from the 60-Day DAM disclosure.
+ 
+ The thermal-fleet analogue of ``derive_ercot_nuclear_availability.py`` (ERCOT-56),
+-at CLASS-day grain: for each covered model class (CC_REGULAR, CT_PEAKER, ST_GAS)
+-and each delivery day, the DAM-registered fleet's measured availability fraction
++at TWO grains from the same source rows:
+ 
+-    avail(class, day) = sum_sites live_HSL(day) / sum_sites rating
++* CLASS-day (the original, ``--out``): for each covered model class
++  (CC_REGULAR, CT_PEAKER, ST_GAS) and each delivery day, the DAM-registered
++  fleet's measured availability fraction
+ 
+-where a combined-cycle plant's alternative registered configurations are
+-config-collapsed to physical trains (a site's live capability is the max
++      avail(class, day) = sum_sites live_HSL(day) / sum_sites rating
++
++* CLASS-hour (``--hourly-out``, added ERCOT-96 2026-07-22): the same fraction
++  per delivery HOUR (``Hour Ending`` 1-24),
++
++      avail(class, day, he) = sum_sites live_HSL(day, he) / sum_sites rating
++
++  keeping the hourly ambient-derate shape the day mean discards. The ERCOT-95
++  diagnosis (docs/handoffs/ercot95-scarcity-tail-diagnosis-2026-07.md Finding
++  6) measured the day-flat overlay handing the model a +216 MW mean (+433 p90,
++  +578 max) CC+CT phantom on the 181 actual 2023 RT tail hours — real HSL dips
++  below the day mean exactly in the hod 13-19 window where the missing tail
++  sits (and exceeds it overnight). Same source, finer grain — a rule-13
++  measured re-derive, not a new parameter (rule 23: this is a grain/schema
++  extension; the disclosure source files are unchanged).
++
++In both grains a combined-cycle plant's alternative registered configurations
++are config-collapsed to physical trains (a site's live capability is the max
+ non-OUT config HSL; its rating the max config rating), an ``OUT`` resource
+ contributes zero, and an ``OFF`` (uncommitted but startable) resource
+ contributes its reported HSL — commitment state is not an availability event.
+ ``rating`` is the site's 98th-percentile HSL across its non-OUT, non-zero rows
+-of the delivery year (robust to jack-bus zeros and one-off test values).
++of the delivery year (robust to jack-bus zeros and one-off test values). The
++hourly denominator counts the sites present at that (date, HE) so partial-hour
++coverage (DST short day, a resource's missing rows) cannot bias the fraction
++down; an entirely uncovered (date, HE) is emitted empty -> NaN -> the caller
++keeps the statistical availability there, hour by hour.
+ 
+ Provenance / admissibility (CLAUDE.md rules 13/14): the 60-Day DAM disclosure
+ Gen_Resource HSL + Resource Status is an ERCOT-published, unit-resolved MW
+@@ -51,7 +72,8 @@ from DAM.)
+ Usage::
+ 
+     python scripts/data/derive_ercot_thermal_dam_availability.py \
+-        [--years 2023 2024 2025] [--out data/raw/ercot-thermal-dam-availability.csv]
++        [--years 2023 2024 2025] [--out data/raw/ercot-thermal-dam-availability.csv] \
++        [--hourly-out data/raw/ercot-thermal-dam-availability-hourly.csv]
+ """
+ 
+ from __future__ import annotations
+@@ -65,6 +87,7 @@ import pandas as pd
+ REPO = Path(__file__).resolve().parents[2]
+ DAM_DIR = REPO / "data" / "raw" / "ercot"
+ DEFAULT_OUT = REPO / "data" / "raw" / "ercot-thermal-dam-availability.csv"
++DEFAULT_HOURLY_OUT = REPO / "data" / "raw" / "ercot-thermal-dam-availability-hourly.csv"
+ 
+ # DAM Resource Type -> covered model class. Scope covers the grid-registered gas
+ # fleet DAM resolves cleanly by Resource Type: CC (CCGT90/CCLE90), CT_PEAKER
+@@ -138,11 +161,21 @@ def _load_year(year: int) -> pd.DataFrame:
+     return pd.concat(frames, ignore_index=True)
+ 
+ 
+-def derive_year(year: int) -> pd.DataFrame:
+-    """Return the class-day availability frame for one delivery year."""
++def derive_year(year: int) -> tuple[pd.DataFrame, pd.DataFrame]:
++    """Return the (class-day, class-hour) availability frames for one year.
++
++    Both grains come from the SAME config-collapsed site-hour live/rating
++    intermediate, so the hourly file's day mean reconciles with the day file
++    up to the per-HE present-site denominator (an uncovered HE drops out of
++    the day mean's numerator AND the hourly row entirely).
++    """
++    empty_day = pd.DataFrame(columns=["date", "class", "rating_mw", "live_mw", "avail"])
++    empty_hr = pd.DataFrame(
++        columns=["date", "class"] + [f"he{h:02d}" for h in range(1, 25)]
++    )
+     df = _load_year(year)
+     if df.empty:
+-        return pd.DataFrame(columns=["date", "class", "rating_mw", "live_mw", "avail"])
++        return empty_day, empty_hr
+     df["cls"] = df["Resource Type"].map(RESTYPE_TO_CLASS)
+     df["site"] = [_site(n, t) for n, t in zip(df["Resource Name"], df["Resource Type"])]
+     df["date"] = pd.to_datetime(df["Delivery Date"]).dt.normalize()
+@@ -184,19 +217,49 @@ def derive_year(year: int) -> pd.DataFrame:
+     out["avail"] = (out["live_mw"] / out["rating_mw"]).clip(0.0, 1.0).round(4)
+     out = out.reset_index().rename(columns={"cls": "class"})
+     out["date"] = out["date"].dt.strftime("%Y-%m-%d")
+-    return out[["date", "class", "rating_mw", "live_mw", "avail"]]
++    day_frame = out[["date", "class", "rating_mw", "live_mw", "avail"]]
++
++    # ------------------------------------------------------------- class-hour
++    # Same intermediate, per-HE: numerator = sum of live site-HE MW; the
++    # denominator counts only the sites PRESENT at that (date, HE) (a fully-OUT
++    # site still carries rows, so it stays in the denominator with live 0; a
++    # site with no row at that HE — DST short hour, a data gap — drops from
++    # both sides so partial coverage cannot bias the fraction).
++    sh = live_sh.rename("live").reset_index()
++    sh["rating_site"] = rating.reindex(
++        pd.MultiIndex.from_frame(sh[["cls", "site"]])
++    ).values
++    ch = sh.groupby(["cls", "date", "Hour Ending"])[["live", "rating_site"]].sum()
++    ch["avail"] = (ch["live"] / ch["rating_site"]).clip(0.0, 1.0).round(4)
++    wide = ch["avail"].unstack("Hour Ending")
++    # HE 1-24 on the model clock; drop any out-of-range HE (a DST 25th hour
++    # would arrive as HE 25 in some vintages — not observed in this corpus).
++    wide = wide.reindex(columns=range(1, 25))
++    wide.columns = [f"he{h:02d}" for h in wide.columns]
++    wide = wide.reset_index().rename(columns={"cls": "class"})
++    wide["date"] = wide["date"].dt.strftime("%Y-%m-%d")
++    hour_frame = wide[["date", "class"] + [f"he{h:02d}" for h in range(1, 25)]]
++    return day_frame, hour_frame
+ 
+ 
+ def main() -> None:
+-    """Derive and write the class-day availability CSV."""
++    """Derive and write the class-day + class-hour availability CSVs."""
+     ap = argparse.ArgumentParser(description=__doc__)
+     ap.add_argument("--years", type=int, nargs="+", default=[2023, 2024, 2025])
+     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
++    ap.add_argument("--hourly-out", type=Path, default=DEFAULT_HOURLY_OUT)
+     args = ap.parse_args()
+ 
+-    frames = [derive_year(y) for y in args.years]
+-    out = pd.concat(frames, ignore_index=True).sort_values(["date", "class"])
++    pairs = [derive_year(y) for y in args.years]
++    out = pd.concat([p[0] for p in pairs], ignore_index=True).sort_values(
++        ["date", "class"]
++    )
+     args.out.write_text(out.to_csv(index=False))
++    hourly = pd.concat([p[1] for p in pairs], ignore_index=True).sort_values(
++        ["date", "class"]
++    )
++    args.hourly_out.write_text(hourly.to_csv(index=False))
++    he_cols = [f"he{h:02d}" for h in range(1, 25)]
+     for y in args.years:
+         yr = out[out["date"].str.startswith(str(y))]
+         for cls, g in yr.groupby("class"):
+@@ -205,7 +268,18 @@ def main() -> None:
+                 f"{g['avail'].quantile(0.05):.3f}/{g['avail'].median():.3f}/"
+                 f"{g['avail'].quantile(0.95):.3f}, rating ~{g['rating_mw'].median():.0f} MW"
+             )
++        hy = hourly[hourly["date"].str.startswith(str(y))]
++        for cls, g in hy.groupby("class"):
++            vals = g[he_cols].to_numpy(dtype=float)
++            import numpy as _np
++
++            print(
++                f"{y} {cls} hourly: {len(g)} days x 24, coverage "
++                f"{_np.isfinite(vals).mean():.1%}, intra-day spread "
++                f"(day max-min) median {_np.nanmedian(_np.nanmax(vals, axis=1) - _np.nanmin(vals, axis=1)):.3f}"
++            )
+     print(f"wrote {args.out}")
++    print(f"wrote {args.hourly_out}")
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/scripts/run_calibration.py b/scripts/run_calibration.py
+index f5aed225..d70e0676 100644
+--- a/scripts/run_calibration.py
++++ b/scripts/run_calibration.py
+@@ -502,6 +502,7 @@ def run_year(
+     caiso_offer_surface_conditional: bool = False,
+     ercot_nuclear_unit_availability: bool = False,
+     ercot_thermal_dam_availability: bool = False,
++    ercot_thermal_dam_availability_hourly: bool = False,
+     ercot_noncampd_plant_availability: bool = False,
+     ercot_storage_capability_measured: bool = False,
+     ercot_online_capacity_envelope_measured: bool = False,
+@@ -791,6 +792,12 @@ def run_year(
+         # disclosure HSL/status; ScenarioConfig field docstring has the full
+         # provenance/admissibility note). ERCOT-gated in the fleet application.
+         config = config.with_overrides(ercot_thermal_dam_availability=True)
++    if ercot_thermal_dam_availability_hourly:
++        # ERCOT-96 grain switch: the same measured DAM availability applied at
++        # class-HOUR grain (per-Hour-Ending fraction replaces the day-flat
++        # block; ScenarioConfig field docstring has the full provenance note).
++        # No effect unless ercot_thermal_dam_availability is also on.
++        config = config.with_overrides(ercot_thermal_dam_availability_hourly=True)
+     if ercot_noncampd_plant_availability:
+         # Measured CAMPD-blind per-plant availability (60-Day DAM disclosure
+         # live HSL + EIA-923 zero months; ScenarioConfig field docstring has the
+diff --git a/scripts/run_calibration_full.py b/scripts/run_calibration_full.py
+index 36bda4dd..247cce4c 100644
+--- a/scripts/run_calibration_full.py
++++ b/scripts/run_calibration_full.py
+@@ -2649,6 +2649,7 @@ def solve_and_persist(
+     caiso_offer_surface_conditional: bool = False,
+     ercot_nuclear_unit_availability: bool = False,
+     ercot_thermal_dam_availability: bool = False,
++    ercot_thermal_dam_availability_hourly: bool = False,
+     ercot_noncampd_plant_availability: bool = False,
+     ercot_storage_capability_measured: bool = False,
+     ercot_online_capacity_envelope_measured: bool = False,
+@@ -3192,6 +3193,12 @@ def solve_and_persist(
+             recorded_cfg = recorded_cfg.with_overrides(
+                 ercot_thermal_dam_availability=True
+             )
++        if ercot_thermal_dam_availability_hourly:
++            # Mirror run_year's with_overrides so run_config.json records the
++            # ERCOT-96 class-HOUR grain switch the LP solved with.
++            recorded_cfg = recorded_cfg.with_overrides(
++                ercot_thermal_dam_availability_hourly=True
++            )
+         if ercot_noncampd_plant_availability:
+             # Mirror run_year's with_overrides so run_config.json records the
+             # measured CAMPD-blind per-plant availability the LP solved with.
+@@ -3876,6 +3883,9 @@ def solve_and_persist(
+             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
+             ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
+             ercot_thermal_dam_availability=ercot_thermal_dam_availability,
++            ercot_thermal_dam_availability_hourly=(
++                ercot_thermal_dam_availability_hourly
++            ),
+             ercot_noncampd_plant_availability=ercot_noncampd_plant_availability,
+             ercot_storage_capability_measured=ercot_storage_capability_measured,
+             ercot_online_capacity_envelope_measured=(
+@@ -4347,6 +4357,9 @@ def solve_and_persist(
+         ),
+         "ercot_nuclear_unit_availability": ercot_nuclear_unit_availability,
+         "ercot_thermal_dam_availability": ercot_thermal_dam_availability,
++        "ercot_thermal_dam_availability_hourly": (
++            ercot_thermal_dam_availability_hourly
++        ),
+         "ercot_noncampd_plant_availability": ercot_noncampd_plant_availability,
+         "ercot_storage_capability_measured": ercot_storage_capability_measured,
+         "ercot_online_capacity_envelope_measured": (
+@@ -7377,6 +7390,18 @@ def main() -> None:
+         "--ercot-nuclear-unit-availability); uncovered dates keep the "
+         "statistical model. Off (default, keeper-reproducing).",
+     )
++    parser.add_argument(
++        "--ercot-thermal-dam-availability-hourly",
++        action="store_true",
++        help="ERCOT backcast: apply the measured DAM thermal availability at "
++        "class-HOUR grain (per-Hour-Ending fraction from the same 60-Day DAM "
++        "disclosure rows; data/raw/ercot-thermal-dam-availability-hourly.csv) "
++        "instead of the day-flat block — the ERCOT-96 grain switch keeping "
++        "the afternoon ambient-derate dip the day mean discards (ERCOT-95 "
++        "Finding 6: +216 MW mean phantom CC+CT on the 181 actual 2023 tail "
++        "hours). No effect unless --ercot-thermal-dam-availability is also "
++        "on. Off (default, keeper-reproducing).",
++    )
+     parser.add_argument(
+         "--ercot-storage-capability-measured",
+         action="store_true",
+@@ -9430,6 +9455,9 @@ def main() -> None:
+         ercot_storage_as_product_credit=args.ercot_storage_as_product_credit,
+         ercot_nuclear_unit_availability=args.ercot_nuclear_unit_availability,
+         ercot_thermal_dam_availability=args.ercot_thermal_dam_availability,
++        ercot_thermal_dam_availability_hourly=(
++            args.ercot_thermal_dam_availability_hourly
++        ),
+         ercot_storage_capability_measured=args.ercot_storage_capability_measured,
+         ercot_online_capacity_envelope_measured=(
+             args.ercot_online_capacity_envelope_measured
+diff --git a/src/market_sim/config/scenarios.py b/src/market_sim/config/scenarios.py
+index b88857de..943382b6 100644
+--- a/src/market_sim/config/scenarios.py
++++ b/src/market_sim/config/scenarios.py
+@@ -5211,6 +5211,33 @@ class ScenarioConfig:
+     # data.fleet.generators_to_fleet_arrays.
+     ercot_thermal_dam_availability: bool = False
+ 
++    # ERCOT measured class-HOUR thermal availability (default off, ERCOT
++    # backcast-gated — ERCOT-96, 2026-07-22). The GRAIN switch of the mechanism
++    # above, not a second overlay (rule 19): when armed on top of
++    # ercot_thermal_dam_availability, the covered classes' availability is set
++    # to the measured 60-Day DAM fraction per delivery HOUR (Hour Ending 1-24)
++    # instead of the day-flat mean — same disclosure rows, finer resolution
++    # (scripts/data/derive_ercot_thermal_dam_availability.py --hourly-out,
++    # data/raw/ercot-thermal-dam-availability-hourly.csv). Owns the hourly
++    # ambient-derate shape the day mean discards: the ERCOT-95 diagnosis
++    # (docs/handoffs/ercot95-scarcity-tail-diagnosis-2026-07.md Finding 6)
++    # measured the flat block handing the model +216 MW mean (+433 p90, +578
++    # max) phantom CC+CT capacity on the 181 actual 2023 RT tail hours — real
++    # HSL dips below its day mean exactly in the hod 13-19 afternoon window
++    # where the missing scarcity tail sits — and symmetrically under-crediting
++    # the fleet overnight. Application (data.fleet): the same bidirectional
++    # cap-1.0 water-fill as the day grain, per HOUR — restore a' = a + λ(1−a)
++    # toward the measured level, remove a' = a·(t/cur) — so the cap-weighted
++    # class-hour mean lands exactly on the measured fraction; NaN hours (the
++    # Oct-2023 hole, an uncovered HE) keep the pre-overlay statistical stack,
++    # hour by hour. Rule-13 admissible identically to the day grain (published
++    # MW capability, regenerates for any year, responds to conditions — never a
++    # price); rule 23: a grain/schema extension of the frozen derive, source
++    # files unchanged. Forecast mode untouched (the statistical stack is the
++    # forward analogue — the G4 mode-aware seam). No effect unless
++    # ercot_thermal_dam_availability is also on.
++    ercot_thermal_dam_availability_hourly: bool = False
++
+     # ERCOT CAMPD-blind per-plant availability (default off, ERCOT backcast-gated
+     # — ERCOT-71). Restores measured availability for the ERCOT gas plants ABSENT
+     # from the TX CAMPD extract (Kiamichi 55501, Hidalgo 55545, Arthur Von
+diff --git a/src/market_sim/data/fleet.py b/src/market_sim/data/fleet.py
+index 753b7b99..69c65b9d 100644
+--- a/src/market_sim/data/fleet.py
++++ b/src/market_sim/data/fleet.py
+@@ -1941,8 +1941,69 @@ def generators_to_fleet_arrays(
+         from market_sim.data.outages import ercot_thermal_dam_availability_series
+ 
+         _meas = ercot_thermal_dam_availability_series(int(_yr), hours)
++        # ERCOT-96 grain switch (config.ercot_thermal_dam_availability_hourly):
++        # apply the SAME measured mechanism at class-HOUR grain — the measured
++        # per-Hour-Ending fraction replaces the day-flat block, keeping the
++        # afternoon ambient-derate dip / overnight headroom the day mean
++        # discards (ERCOT-95 Finding 6: +216 MW mean phantom CC+CT on the 181
++        # actual 2023 tail hours). Same bidirectional water-fill semantics as
++        # the day grain below, per hour: restore a' = a + λ(1−a) toward the
++        # measured level, remove a' = a·(t/cur); the cap-weighted class-hour
++        # mean lands exactly on the measured fraction, tranches cap at 1.0,
++        # NaN hours keep the pre-overlay stack hour by hour. Classes the
++        # hourly file does not cover fall through to the day-grain loop.
++        _hourly_done: set[str] = set()
++        if getattr(config, "ercot_thermal_dam_availability_hourly", False):
++            from market_sim.data.outages import (
++                ercot_thermal_dam_availability_hourly_series,
++            )
++
++            _meas_h = ercot_thermal_dam_availability_hourly_series(int(_yr), hours)
++            for _cls, _t_h in _meas_h.items():
++                _idx = np.array(
++                    [gi for gi, g in enumerate(generators) if g.plant_group == _cls],
++                    dtype=int,
++                )
++                if _idx.size == 0:
++                    continue
++                _cap = pmax[_idx]  # (n,)
++                _cap_sum = float(_cap.sum())
++                if _cap_sum <= 0.0:
++                    continue
++                _t = _t_h[:hours]  # (hours,) measured fraction, NaN uncovered
++                _covered = np.isfinite(_t)
++                if not _covered.any():
++                    continue
++                _a = availability[_idx, :hours]  # (n, hours)
++                _cur = (_a * _cap[:, None]).sum(axis=0) / _cap_sum  # (hours,)
++                _restore = _covered & (_t >= _cur)
++                _remove = _covered & (_t < _cur)
++                _lam = np.clip(
++                    (_t - _cur) / np.maximum(1.0 - _cur, 1e-9), 0.0, 1.0
++                )
++                _new = _a.copy()
++                _new[:, _restore] = _a[:, _restore] + _lam[None, _restore] * (
++                    1.0 - _a[:, _restore]
++                )
++                _mu = np.where(_remove, _t / np.maximum(_cur, 1e-9), 1.0)
++                _new[:, _remove] = _a[:, _remove] * _mu[None, _remove]
++                availability[_idx, :hours] = np.minimum(_new, 1.0)
++                _hourly_done.add(_cls)
++                logger.info(
++                    "ERCOT measured thermal DAM availability (%d): %s set to "
++                    "measured class-HOUR level on %d hour(s) (restore %d / "
++                    "remove %d), median target %.3f",
++                    _yr,
++                    _cls,
++                    int(_covered.sum()),
++                    int(_restore.sum()),
++                    int(_remove.sum()),
++                    float(np.median(_t[_covered])),
++                )
+         _n_days = hours // 24
+         for _cls, _target_h in _meas.items():
++            if _cls in _hourly_done:
++                continue  # ERCOT-96: already applied at the finer hour grain
+             _idx = np.array(
+                 [gi for gi, g in enumerate(generators) if g.plant_group == _cls],
+                 dtype=int,
+diff --git a/src/market_sim/data/outages.py b/src/market_sim/data/outages.py
+index 517b933d..637bf554 100644
+--- a/src/market_sim/data/outages.py
++++ b/src/market_sim/data/outages.py
+@@ -868,6 +868,59 @@ def ercot_thermal_dam_availability_series(
+     return out
+ 
+ 
++# ERCOT measured CLASS-hour thermal availability — the ERCOT-96 grain refinement
++# of the class-day series above, from the SAME 60-Day DAM disclosure rows
++# (scripts/data/derive_ercot_thermal_dam_availability.py --hourly-out). Keeps
++# the hourly ambient-derate shape the day mean discards: the ERCOT-95 diagnosis
++# (docs/handoffs/ercot95-scarcity-tail-diagnosis-2026-07.md Finding 6) measured
++# the day-flat overlay handing the model a +216 MW mean (+433 p90) CC+CT
++# phantom on the 181 actual 2023 RT tail hours (hod 13-19), and an equal
++# under-credit overnight. Gated by
++# ScenarioConfig.ercot_thermal_dam_availability_hourly on top of the class-day
++# flag (the grain switch of the SAME mechanism, not a second overlay).
++ERCOT_THERMAL_DAM_AVAILABILITY_HOURLY_CSV: Path = (
++    RAW_DATA_DIR / "ercot-thermal-dam-availability-hourly.csv"
++)
++
++
++@lru_cache(maxsize=None)
++def ercot_thermal_dam_availability_hourly_series(
++    year: int, hours: int = HOURS_PER_YEAR
++) -> dict[str, np.ndarray]:
++    """Return ``{plant_group: (hours,) measured class-HOUR availability}``.
++
++    Each covered delivery date contributes its 24 per-``Hour Ending`` measured
++    fractions (config-collapsed live HSL over the sites present at that HE) on
++    the model's fixed non-leap clock (:func:`_hour_of_year`; a leap year's
++    Feb 29 row dropped, the archive convention). Hours the disclosure does not
++    cover — the Oct-2023 publication hole, Nov-Dec 2025 until the 2026 files
++    land, an uncovered HE — are ``NaN``: the caller keeps the statistical
++    availability there, hour by hour. Returns an empty dict when the CSV is
++    absent or the year has no rows, so callers degrade to the class-day grain
++    (and from there to the statistical model) unchanged.
++    """
++    if not ERCOT_THERMAL_DAM_AVAILABILITY_HOURLY_CSV.exists():
++        return {}
++    df = pd.read_csv(ERCOT_THERMAL_DAM_AVAILABILITY_HOURLY_CSV)
++    df = df.rename(columns={"class": "klass"})
++    df["date"] = pd.to_datetime(df["date"])
++    df = df[df["date"].dt.year == int(year)]
++    if df.empty:
++        return {}
++    he_cols = [f"he{h:02d}" for h in range(1, 25)]
++    out: dict[str, np.ndarray] = {}
++    for r in df.itertuples(index=False):
++        mo, dy = int(r.date.month), int(r.date.day)
++        if mo == 2 and dy == 29:
++            continue  # non-leap model clock (ERCOT-54 convention)
++        lo = _hour_of_year(mo, dy, 0)
++        hi = min(lo + 24, hours)
++        arr = out.setdefault(str(r.klass), np.full(hours, np.nan))
++        vals = np.array([getattr(r, c) for c in he_cols], dtype=float)
++        arr[lo:hi] = vals[: hi - lo]
++    return out
++
++
+ # ERCOT CAMPD-blind per-plant availability (EIA-923 zero-month outage windows;
+ # scripts/data/derive_ercot_noncampd_availability.py). Restores measured
+ # availability for the ERCOT gas plants ABSENT from the TX CAMPD extract
+diff --git a/tests/test_outages.py b/tests/test_outages.py
+index 7d8387bd..eaa35b8a 100644
+--- a/tests/test_outages.py
++++ b/tests/test_outages.py
+@@ -677,7 +677,9 @@ class ErcotThermalDamAvailabilityTest(unittest.TestCase):
+         from market_sim.data.outages import ercot_thermal_dam_availability_series
+ 
+         s = ercot_thermal_dam_availability_series(2023)
+-        self.assertEqual(set(s), {"CC_REGULAR", "CT_PEAKER"})
++        # ST_GAS joined the covered scope 2026-07-18 (the measured-availability
++        # backcast re-architecture — see the derive script's class-scope note).
++        self.assertEqual(set(s), {"CC_REGULAR", "CT_PEAKER", "ST_GAS"})
+         cc = s["CC_REGULAR"]
+         self.assertEqual(cc.shape, (HOURS_PER_YEAR,))
+         # Jun 14 2023 (a June over-formation day): measured CC fraction ~0.834
+@@ -760,6 +762,115 @@ class ErcotThermalDamAvailabilityTest(unittest.TestCase):
+         )
+         self.assertNotAlmostEqual(fc_frac, float(target[d0]), places=3)
+ 
++    def test_committed_hourly_series_reconciles_with_day_grain(self):
++        """ERCOT-96 class-hour series: shape, day-mean reconciliation, the
++        summer afternoon dip, and the Oct-2023 publication hole."""
++        from market_sim.data.outages import (
++            ercot_thermal_dam_availability_hourly_series,
++            ercot_thermal_dam_availability_series,
++        )
++
++        s = ercot_thermal_dam_availability_hourly_series(2023)
++        self.assertEqual(set(s), {"CC_REGULAR", "CT_PEAKER", "ST_GAS"})
++        cc = s["CC_REGULAR"]
++        self.assertEqual(cc.shape, (HOURS_PER_YEAR,))
++        finite = np.isfinite(cc)
++        self.assertTrue((cc[finite] >= 0.0).all())
++        self.assertTrue((cc[finite] <= 1.0).all())
++        # Day-mean of the hourly grain reconciles with the day file (both come
++        # from the same site-hour intermediate; rounding tolerance only).
++        day = ercot_thermal_dam_availability_series(2023)["CC_REGULAR"]
++        d0 = _hour_of_year(6, 14, 0)
++        self.assertAlmostEqual(
++            float(np.nanmean(cc[d0 : d0 + 24])), float(day[d0]), places=2
++        )
++        # The measured afternoon ambient dip on a 2023 tail day (Aug 25):
++        # hod 14 (HE 15) sits below the overnight hod 4 (HE 5) capability.
++        a0 = _hour_of_year(8, 25, 0)
++        self.assertLess(cc[a0 + 14], cc[a0 + 4])
++        # Oct-2023 disclosure publication hole -> NaN (statistical kept).
++        self.assertTrue(np.isnan(cc[_hour_of_year(10, 15, 12)]))
++
++    def test_fleet_application_hourly_grain(self):
++        """ERCOT-96 grain switch: the class-hour cap-weighted availability
++        lands on the measured hourly fraction; the hourly flag alone (base
++        off) is a no-op; uncovered days keep the pre-overlay stack."""
++        from market_sim.config.scenarios import ScenarioConfig
++        from market_sim.data.fleet import Generator, generators_to_fleet_arrays
++
++        def cc(i: int, mw: float) -> Generator:
++            return Generator(
++                unit_id=f"55555_{i}",
++                name=f"cc {i}",
++                zone="Houston",
++                fuel_type="gas_cc",
++                pmax_mw=mw,
++                pmin_mw=0.0,
++                heat_rate=7.5,
++                vom=2.0,
++                emission_rate_co2=0.4,
++                nox_rate=0.0,
++                eford=0.05,
++                online_year=2005,
++                plant_code=55555,
++                is_campd_bin=True,
++                plant_group="CC_REGULAR",
++            )
++
++        gens = [cc(1, 400.0), cc(2, 300.0), cc(3, 300.0)]
++        zones = ["Houston"]
++        pmax = np.array([400.0, 300.0, 300.0])
++        base = dict(weather_year=2023, iso="ERCOT", mode="backcast")
++        cfg_day = ScenarioConfig(**base, ercot_thermal_dam_availability=True)
++        cfg_hr = ScenarioConfig(
++            **base,
++            ercot_thermal_dam_availability=True,
++            ercot_thermal_dam_availability_hourly=True,
++        )
++        fa_day = generators_to_fleet_arrays(
++            gens, zones, hours=HOURS_PER_YEAR, iso="ERCOT", config=cfg_day, year=2023
++        )
++        fa_hr = generators_to_fleet_arrays(
++            gens, zones, hours=HOURS_PER_YEAR, iso="ERCOT", config=cfg_hr, year=2023
++        )
++        from market_sim.data.outages import (
++            ercot_thermal_dam_availability_hourly_series,
++        )
++
++        t_h = ercot_thermal_dam_availability_hourly_series(2023)["CC_REGULAR"]
++        # Aug 25 hod 14 (HE 15) — a covered tail-day afternoon hour: the
++        # cap-weighted class availability equals the measured HOURLY fraction,
++        # not the day-flat one.
++        h = _hour_of_year(8, 25, 14)
++        got = float((fa_hr.availability[:, h] * pmax).sum() / pmax.sum())
++        self.assertAlmostEqual(got, float(t_h[h]), places=3)
++        day_flat = float((fa_day.availability[:, h] * pmax).sum() / pmax.sum())
++        self.assertNotAlmostEqual(got, day_flat, places=3)
++        # The measured intra-day SHAPE survives: afternoon below overnight.
++        h4 = _hour_of_year(8, 25, 4)
++        got4 = float((fa_hr.availability[:, h4] * pmax).sum() / pmax.sum())
++        self.assertLess(got, got4)
++        # Uncovered day (Oct-2023 hole): byte-identical to the day-grain run
++        # (both fall through to the pre-overlay statistical stack there).
++        o0 = _hour_of_year(10, 15, 0)
++        np.testing.assert_array_equal(
++            fa_hr.availability[:, o0 : o0 + 24],
++            fa_day.availability[:, o0 : o0 + 24],
++        )
++        # Hourly flag WITHOUT the base flag: the mechanism is unarmed — the
++        # whole overlay (either grain) must not apply.
++        cfg_orphan = ScenarioConfig(
++            **base, ercot_thermal_dam_availability_hourly=True
++        )
++        cfg_off = ScenarioConfig(**base)
++        fa_orphan = generators_to_fleet_arrays(
++            gens, zones, hours=HOURS_PER_YEAR, iso="ERCOT", config=cfg_orphan, year=2023
++        )
++        fa_off = generators_to_fleet_arrays(
++            gens, zones, hours=HOURS_PER_YEAR, iso="ERCOT", config=cfg_off, year=2023
++        )
++        np.testing.assert_array_equal(fa_orphan.availability, fa_off.availability)
++
+     def test_zeroed_tranches_stay_zero_and_cap_holds(self):
+         """The rescale is multiplicative (zeros preserved) and caps at 1.0."""
+         from market_sim.config.scenarios import ScenarioConfig
