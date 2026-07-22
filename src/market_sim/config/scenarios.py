@@ -5234,6 +5234,52 @@ class ScenarioConfig:
     # data.fleet.generators_to_fleet_arrays.
     ercot_thermal_dam_availability: bool = False
 
+    # ERCOT measured class-HOUR thermal availability (default off, ERCOT
+    # backcast-gated — ERCOT-96, 2026-07-22). The GRAIN switch of the mechanism
+    # above, not a second overlay (rule 19): when armed on top of
+    # ercot_thermal_dam_availability, the covered classes' availability is set
+    # to the measured 60-Day DAM fraction per delivery HOUR (Hour Ending 1-24)
+    # instead of the day-flat mean — same disclosure rows, finer resolution
+    # (scripts/data/derive_ercot_thermal_dam_availability.py --hourly-out,
+    # data/raw/ercot-thermal-dam-availability-hourly.csv). Owns the hourly
+    # ambient-derate shape the day mean discards: the ERCOT-95 diagnosis
+    # (docs/handoffs/ercot95-scarcity-tail-diagnosis-2026-07.md Finding 6)
+    # measured the flat block handing the model +216 MW mean (+433 p90, +578
+    # max) phantom CC+CT capacity on the 181 actual 2023 RT tail hours — real
+    # HSL dips below its day mean exactly in the hod 13-19 afternoon window
+    # where the missing scarcity tail sits — and symmetrically under-crediting
+    # the fleet overnight. Application (data.fleet): the same bidirectional
+    # cap-1.0 water-fill as the day grain, per HOUR — restore a' = a + λ(1−a)
+    # toward the measured level, remove a' = a·(t/cur) — so the cap-weighted
+    # class-hour mean lands exactly on the measured fraction; NaN hours (the
+    # Oct-2023 hole, an uncovered HE) keep the pre-overlay statistical stack,
+    # hour by hour. Rule-13 admissible identically to the day grain (published
+    # MW capability, regenerates for any year, responds to conditions — never a
+    # price); rule 23: a grain/schema extension of the frozen derive, source
+    # files unchanged. Forecast mode untouched (the statistical stack is the
+    # forward analogue — the G4 mode-aware seam). No effect unless
+    # ercot_thermal_dam_availability is also on.
+    ercot_thermal_dam_availability_hourly: bool = False
+
+    # ERCOT measured PLANT-grain DAM availability (default off, ERCOT-97). On top
+    # of the class-HOUR flag (requires ercot_thermal_dam_availability_hourly):
+    # each plant an accepted DAM-site -> EIA-plant crosswalk row maps
+    # (data/raw/reference/ercot-dam-plant-crosswalk.csv, build_ercot_dam_resource
+    # _crosswalk.py) is pinned to its OWN measured site-hour availability
+    # fraction, and the unmapped remainder is water-filled so the class-HOUR
+    # total still lands on the measured class fraction. A within-class
+    # REDISTRIBUTION (which plant carries the derate), not a level change: the
+    # class total is unchanged, so this is a merit-mix/zonal-placement channel,
+    # not a system-tightness one (ERCOT-96 Finding: per-plant misallocation
+    # ~259 MW mean on the 181 actual 2023 tail hours; net-zero on the class
+    # total). Zero fitted parameters — crosswalk rows are accepted-gated
+    # identification metadata (rules 1/11), the fractions are the same measured
+    # DAM HSL/rating as the class grain (rule 13), and a residual/mapped split
+    # is arithmetic. NaN plant-hours fall back to the class grain. No effect
+    # unless ercot_thermal_dam_availability + _hourly are also on; forecast mode
+    # untouched (the statistical stack is the forward analogue — G4 seam).
+    ercot_thermal_dam_availability_plant: bool = False
+
     # ERCOT CAMPD-blind per-plant availability (default off, ERCOT backcast-gated
     # — ERCOT-71). Restores measured availability for the ERCOT gas plants ABSENT
     # from the TX CAMPD extract (Kiamichi 55501, Hidalgo 55545, Arthur Von

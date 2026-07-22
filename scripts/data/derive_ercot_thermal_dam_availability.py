@@ -1,18 +1,39 @@
-"""Derive ERCOT measured class-day thermal availability from the 60-Day DAM disclosure.
+"""Derive ERCOT measured thermal availability from the 60-Day DAM disclosure.
 
 The thermal-fleet analogue of ``derive_ercot_nuclear_availability.py`` (ERCOT-56),
-at CLASS-day grain: for each covered model class (CC_REGULAR, CT_PEAKER, ST_GAS)
-and each delivery day, the DAM-registered fleet's measured availability fraction
+at TWO grains from the same source rows:
 
-    avail(class, day) = sum_sites live_HSL(day) / sum_sites rating
+* CLASS-day (the original, ``--out``): for each covered model class
+  (CC_REGULAR, CT_PEAKER, ST_GAS) and each delivery day, the DAM-registered
+  fleet's measured availability fraction
 
-where a combined-cycle plant's alternative registered configurations are
-config-collapsed to physical trains (a site's live capability is the max
+      avail(class, day) = sum_sites live_HSL(day) / sum_sites rating
+
+* CLASS-hour (``--hourly-out``, added ERCOT-96 2026-07-22): the same fraction
+  per delivery HOUR (``Hour Ending`` 1-24),
+
+      avail(class, day, he) = sum_sites live_HSL(day, he) / sum_sites rating
+
+  keeping the hourly ambient-derate shape the day mean discards. The ERCOT-95
+  diagnosis (docs/handoffs/ercot95-scarcity-tail-diagnosis-2026-07.md Finding
+  6) measured the day-flat overlay handing the model a +216 MW mean (+433 p90,
+  +578 max) CC+CT phantom on the 181 actual 2023 RT tail hours — real HSL dips
+  below the day mean exactly in the hod 13-19 window where the missing tail
+  sits (and exceeds it overnight). Same source, finer grain — a rule-13
+  measured re-derive, not a new parameter (rule 23: this is a grain/schema
+  extension; the disclosure source files are unchanged).
+
+In both grains a combined-cycle plant's alternative registered configurations
+are config-collapsed to physical trains (a site's live capability is the max
 non-OUT config HSL; its rating the max config rating), an ``OUT`` resource
 contributes zero, and an ``OFF`` (uncommitted but startable) resource
 contributes its reported HSL — commitment state is not an availability event.
 ``rating`` is the site's 98th-percentile HSL across its non-OUT, non-zero rows
-of the delivery year (robust to jack-bus zeros and one-off test values).
+of the delivery year (robust to jack-bus zeros and one-off test values). The
+hourly denominator counts the sites present at that (date, HE) so partial-hour
+coverage (DST short day, a resource's missing rows) cannot bias the fraction
+down; an entirely uncovered (date, HE) is emitted empty -> NaN -> the caller
+keeps the statistical availability there, hour by hour.
 
 Provenance / admissibility (CLAUDE.md rules 13/14): the 60-Day DAM disclosure
 Gen_Resource HSL + Resource Status is an ERCOT-published, unit-resolved MW
@@ -48,10 +69,24 @@ residual re-fit — the source files are unchanged; it widens coverage to the
 gas-steam class the measured-availability backcast re-architecture now sources
 from DAM.)
 
+* SITE-hour (``--site-hourly-out``, added ERCOT-97 2026-07-22): the same
+  config-collapsed live/rating intermediate emitted per (class, site, date,
+  Hour Ending) — one row per physical train per delivery hour, columns
+  ``live_mw`` (clipped live HSL) and ``rating_mw`` (the site p98 rating). This
+  is the plant×hour input: the DAM-site -> EIA-plant crosswalk
+  (``build_ercot_dam_resource_crosswalk.py``) maps accepted sites onto plant
+  codes, and ``ercot_thermal_dam_availability_plant`` caps each crosswalked
+  plant's tranches at its own measured site-hour fraction while the class-hour
+  water-fill still lands the class total on the measured class fraction
+  (redistribution, zero fitted parameters). Same source rows as the two class
+  grains — a rule-13/23 grain extension, not a new parameter.
+
 Usage::
 
     python scripts/data/derive_ercot_thermal_dam_availability.py \
-        [--years 2023 2024 2025] [--out data/raw/ercot-thermal-dam-availability.csv]
+        [--years 2023 2024 2025] [--out data/raw/ercot-thermal-dam-availability.csv] \
+        [--hourly-out data/raw/ercot-thermal-dam-availability-hourly.csv] \
+        [--site-hourly-out data/raw/ercot-thermal-dam-availability-site-hourly.parquet]
 """
 
 from __future__ import annotations
@@ -65,6 +100,10 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 DAM_DIR = REPO / "data" / "raw" / "ercot"
 DEFAULT_OUT = REPO / "data" / "raw" / "ercot-thermal-dam-availability.csv"
+DEFAULT_HOURLY_OUT = REPO / "data" / "raw" / "ercot-thermal-dam-availability-hourly.csv"
+DEFAULT_SITE_HOURLY_OUT = (
+    REPO / "data" / "raw" / "ercot-thermal-dam-availability-site-hourly.parquet"
+)
 
 # DAM Resource Type -> covered model class. Scope covers the grid-registered gas
 # fleet DAM resolves cleanly by Resource Type: CC (CCGT90/CCLE90), CT_PEAKER
@@ -138,11 +177,26 @@ def _load_year(year: int) -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True)
 
 
-def derive_year(year: int) -> pd.DataFrame:
-    """Return the class-day availability frame for one delivery year."""
+def derive_year(year: int) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Return the (class-day, class-hour, site-hour) availability frames.
+
+    All three grains come from the SAME config-collapsed site-hour live/rating
+    intermediate, so the hourly file's day mean reconciles with the day file
+    up to the per-HE present-site denominator (an uncovered HE drops out of
+    the day mean's numerator AND the hourly row entirely), and the site-hour
+    frame is that intermediate itself — its per-(class, date, HE) live/rating
+    sum over sites reproduces the class-hour fraction exactly.
+    """
+    empty_day = pd.DataFrame(columns=["date", "class", "rating_mw", "live_mw", "avail"])
+    empty_hr = pd.DataFrame(
+        columns=["date", "class"] + [f"he{h:02d}" for h in range(1, 25)]
+    )
+    empty_sh = pd.DataFrame(
+        columns=["date", "class", "site", "he", "live_mw", "rating_mw"]
+    )
     df = _load_year(year)
     if df.empty:
-        return pd.DataFrame(columns=["date", "class", "rating_mw", "live_mw", "avail"])
+        return empty_day, empty_hr, empty_sh
     df["cls"] = df["Resource Type"].map(RESTYPE_TO_CLASS)
     df["site"] = [_site(n, t) for n, t in zip(df["Resource Name"], df["Resource Type"])]
     df["date"] = pd.to_datetime(df["Delivery Date"]).dt.normalize()
@@ -184,19 +238,75 @@ def derive_year(year: int) -> pd.DataFrame:
     out["avail"] = (out["live_mw"] / out["rating_mw"]).clip(0.0, 1.0).round(4)
     out = out.reset_index().rename(columns={"cls": "class"})
     out["date"] = out["date"].dt.strftime("%Y-%m-%d")
-    return out[["date", "class", "rating_mw", "live_mw", "avail"]]
+    day_frame = out[["date", "class", "rating_mw", "live_mw", "avail"]]
+
+    # ------------------------------------------------------------- class-hour
+    # Same intermediate, per-HE: numerator = sum of live site-HE MW; the
+    # denominator counts only the sites PRESENT at that (date, HE) (a fully-OUT
+    # site still carries rows, so it stays in the denominator with live 0; a
+    # site with no row at that HE — DST short hour, a data gap — drops from
+    # both sides so partial coverage cannot bias the fraction).
+    sh = live_sh.rename("live").reset_index()
+    sh["rating_site"] = rating.reindex(
+        pd.MultiIndex.from_frame(sh[["cls", "site"]])
+    ).values
+    ch = sh.groupby(["cls", "date", "Hour Ending"])[["live", "rating_site"]].sum()
+    ch["avail"] = (ch["live"] / ch["rating_site"]).clip(0.0, 1.0).round(4)
+    wide = ch["avail"].unstack("Hour Ending")
+    # HE 1-24 on the model clock; drop any out-of-range HE (a DST 25th hour
+    # would arrive as HE 25 in some vintages — not observed in this corpus).
+    wide = wide.reindex(columns=range(1, 25))
+    wide.columns = [f"he{h:02d}" for h in wide.columns]
+    wide = wide.reset_index().rename(columns={"cls": "class"})
+    wide["date"] = wide["date"].dt.strftime("%Y-%m-%d")
+    hour_frame = wide[["date", "class"] + [f"he{h:02d}" for h in range(1, 25)]]
+
+    # ------------------------------------------------------------- site-hour
+    # The plant×hour input (ERCOT-97): one row per physical train per delivery
+    # hour, carrying the clipped live HSL and the site p98 rating. This is the
+    # SAME ``sh`` intermediate the class-hour grain sums over sites — so a
+    # crosswalked plant's Σ live_mw / Σ rating_mw over its mapped sites is the
+    # plant's measured availability fraction, and the residual (unmapped) sites
+    # still reconcile to the class-hour total. Emitted as parquet (one delivery
+    # year is ~2.5 M rows; CSV would be ~150 MB/yr).
+    site_frame = sh.rename(
+        columns={"cls": "class", "Hour Ending": "he", "rating_site": "rating_mw",
+                 "live": "live_mw"}
+    ).copy()
+    site_frame["date"] = site_frame["date"].dt.strftime("%Y-%m-%d")
+    site_frame["he"] = site_frame["he"].astype(int)
+    site_frame["live_mw"] = site_frame["live_mw"].round(2)
+    site_frame["rating_mw"] = site_frame["rating_mw"].round(2)
+    site_frame = site_frame[
+        (site_frame["he"] >= 1) & (site_frame["he"] <= 24)
+    ][["date", "class", "site", "he", "live_mw", "rating_mw"]].reset_index(drop=True)
+    return day_frame, hour_frame, site_frame
 
 
 def main() -> None:
-    """Derive and write the class-day availability CSV."""
+    """Derive and write the class-day + class-hour availability CSVs."""
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", type=int, nargs="+", default=[2023, 2024, 2025])
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
+    ap.add_argument("--hourly-out", type=Path, default=DEFAULT_HOURLY_OUT)
+    ap.add_argument("--site-hourly-out", type=Path, default=DEFAULT_SITE_HOURLY_OUT)
     args = ap.parse_args()
 
-    frames = [derive_year(y) for y in args.years]
-    out = pd.concat(frames, ignore_index=True).sort_values(["date", "class"])
+    triples = [derive_year(y) for y in args.years]
+    out = pd.concat([p[0] for p in triples], ignore_index=True).sort_values(
+        ["date", "class"]
+    )
     args.out.write_text(out.to_csv(index=False))
+    hourly = pd.concat([p[1] for p in triples], ignore_index=True).sort_values(
+        ["date", "class"]
+    )
+    args.hourly_out.write_text(hourly.to_csv(index=False))
+    site_hourly = pd.concat([p[2] for p in triples], ignore_index=True).sort_values(
+        ["date", "class", "site", "he"]
+    )
+    args.site_hourly_out.parent.mkdir(parents=True, exist_ok=True)
+    site_hourly.to_parquet(args.site_hourly_out, index=False)
+    he_cols = [f"he{h:02d}" for h in range(1, 25)]
     for y in args.years:
         yr = out[out["date"].str.startswith(str(y))]
         for cls, g in yr.groupby("class"):
@@ -205,7 +315,25 @@ def main() -> None:
                 f"{g['avail'].quantile(0.05):.3f}/{g['avail'].median():.3f}/"
                 f"{g['avail'].quantile(0.95):.3f}, rating ~{g['rating_mw'].median():.0f} MW"
             )
+        hy = hourly[hourly["date"].str.startswith(str(y))]
+        for cls, g in hy.groupby("class"):
+            vals = g[he_cols].to_numpy(dtype=float)
+            import numpy as _np
+
+            print(
+                f"{y} {cls} hourly: {len(g)} days x 24, coverage "
+                f"{_np.isfinite(vals).mean():.1%}, intra-day spread "
+                f"(day max-min) median {_np.nanmedian(_np.nanmax(vals, axis=1) - _np.nanmin(vals, axis=1)):.3f}"
+            )
     print(f"wrote {args.out}")
+    print(f"wrote {args.hourly_out}")
+    for y in args.years:
+        sy = site_hourly[site_hourly["date"].str.startswith(str(y))]
+        print(
+            f"{y} site-hour: {len(sy)} rows, "
+            f"{sy['site'].nunique()} sites x {sy['date'].nunique()} days"
+        )
+    print(f"wrote {args.site_hourly_out}")
 
 
 if __name__ == "__main__":

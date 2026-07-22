@@ -986,6 +986,140 @@ def _ramp10_capability(
 _COAL_SYNC_FORCE_ALL: float = 0.99
 
 
+def _dam_waterfill(
+    a: np.ndarray, cap: np.ndarray, target: np.ndarray, active: np.ndarray
+) -> np.ndarray:
+    """Bidirectional water-fill of an availability sub-block to a per-hour target.
+
+    ``a`` is (m, H) unit availability, ``cap`` (m,) the units' pmax, ``target``
+    (H,) the desired cap-weighted mean availability, ``active`` (H,) the hours
+    to touch. Restore (target >= cur): ``a' = a + λ(1 − a)`` with
+    ``λ = (target − cur)/(1 − cur)``; remove (target < cur): ``a' = a·
+    (target/cur)`` — both land the cap-weighted mean on ``target`` while keeping
+    each unit's relative shape; tranches cap at 1.0; inactive hours untouched.
+    Identical semantics to the class-HOUR water-fill in
+    :func:`generators_to_fleet_arrays`, factored so a mapped plant and the
+    unmapped residual set share one implementation (ERCOT-97 plant grain).
+    """
+    cap_sum = float(cap.sum())
+    if cap_sum <= 0.0 or a.shape[0] == 0:
+        return a
+    cur = (a * cap[:, None]).sum(axis=0) / cap_sum  # (H,)
+    restore = active & np.isfinite(target) & (target >= cur)
+    remove = active & np.isfinite(target) & (target < cur)
+    new = a.copy()
+    lam = np.clip((target - cur) / np.maximum(1.0 - cur, 1e-9), 0.0, 1.0)
+    new[:, restore] = a[:, restore] + lam[None, restore] * (1.0 - a[:, restore])
+    mu = np.where(remove, target / np.maximum(cur, 1e-9), 1.0)
+    new[:, remove] = a[:, remove] * mu[None, remove]
+    return np.minimum(new, 1.0)
+
+
+def _ercot_dam_plant_hourly_apply(
+    availability: np.ndarray,
+    generators: "list[Generator]",
+    pmax: np.ndarray,
+    hours: int,
+    year: int,
+    meas_h: "dict[str, np.ndarray]",
+    plant_series: "dict[int, np.ndarray]",
+    logger: "logging.Logger",
+) -> set:
+    """Redistribute measured DAM availability to the PLANT grain (ERCOT-97).
+
+    For each covered class, the crosswalked plants are pinned to their own
+    measured site-hour fraction (``plant_series``) and the UNMAPPED remainder is
+    water-filled so the class-HOUR cap-weighted mean still lands on the measured
+    class fraction (``meas_h``). The class total is thus unchanged (measured);
+    only WHICH plant carries the derate moves — the ~259 MW-mean per-plant
+    misallocation the class grain smears (ERCOT-96 Finding). Zero fitted
+    parameters. Returns the set of classes it handled (the caller skips them in
+    the class-HOUR loop). A class with no crosswalked plant is left untouched so
+    the class-HOUR grain handles it.
+    """
+    done: set = set()
+    # plant_code -> class-local unit indices, for plants that actually have
+    # units in the fleet (a crosswalk row for a retired/absent plant is inert).
+    plant_of_unit = {gi: int(g.plant_code) for gi, g in enumerate(generators)}
+    for cls, t_full in meas_h.items():
+        idx = np.array(
+            [gi for gi, g in enumerate(generators) if g.plant_group == cls], dtype=int
+        )
+        if idx.size == 0:
+            continue
+        cap = pmax[idx]
+        cap_sum = float(cap.sum())
+        if cap_sum <= 0.0:
+            continue
+        t = t_full[:hours]
+        covered = np.isfinite(t)
+        if not covered.any():
+            continue
+        # Partition this class's units into mapped (crosswalked, present in
+        # plant_series) and unmapped.
+        mapped_plants: dict[int, np.ndarray] = {}
+        for j, gi in enumerate(idx):
+            pc = plant_of_unit[gi]
+            if pc in plant_series:
+                mapped_plants.setdefault(pc, []).append(j)
+        if not mapped_plants:
+            continue  # no plant grain for this class -> class-hour handles it
+        mapped_plants = {pc: np.array(v, dtype=int) for pc, v in mapped_plants.items()}
+        local_mapped = np.concatenate(list(mapped_plants.values()))
+        unmapped = np.array(
+            [j for j in range(idx.size) if j not in set(local_mapped.tolist())],
+            dtype=int,
+        )
+
+        # Mapped MW per hour from the plants' own measured fractions, and pin
+        # each plant's units to its fraction via the shared water-fill.
+        mapped_mw = np.zeros(hours)
+        nanhit = 0
+        for pc, loc in mapped_plants.items():
+            pf = plant_series[pc][:hours]
+            pf_fin = np.isfinite(pf)
+            active = covered & pf_fin
+            nanhit += int((covered & ~pf_fin).sum())
+            gidx = idx[loc]
+            cap_p = pmax[gidx]
+            availability[gidx, :hours] = _dam_waterfill(
+                availability[gidx, :hours], cap_p, pf, active
+            )
+            mapped_mw[active] += pf[active] * float(cap_p.sum())
+
+        # Residual target so the class-hour total still equals the measured
+        # class fraction: (t·cap_sum − mapped_mw) spread over the unmapped cap.
+        if unmapped.size > 0:
+            res_gidx = idx[unmapped]
+            res_cap = pmax[res_gidx]
+            res_cap_sum = float(res_cap.sum())
+            if res_cap_sum > 0.0:
+                res_frac = np.full(hours, np.nan)
+                res_frac[covered] = np.clip(
+                    (t[covered] * cap_sum - mapped_mw[covered]) / res_cap_sum,
+                    0.0,
+                    1.0,
+                )
+                availability[res_gidx, :hours] = _dam_waterfill(
+                    availability[res_gidx, :hours], res_cap, res_frac, covered
+                )
+        done.add(cls)
+        logger.info(
+            "ERCOT measured thermal DAM availability (%d): %s plant-grain "
+            "redistribution — %d crosswalked plant(s), %d unmapped tranche(s), "
+            "median class target %.3f%s",
+            year,
+            cls,
+            len(mapped_plants),
+            int(unmapped.size),
+            float(np.median(t[covered])),
+            f" ({nanhit} covered plant-hour(s) fell back to class grain)"
+            if nanhit
+            else "",
+        )
+    return done
+
+
 def generators_to_fleet_arrays(
     generators: list[Generator],
     zone_names: list[str],
@@ -1941,8 +2075,98 @@ def generators_to_fleet_arrays(
         from market_sim.data.outages import ercot_thermal_dam_availability_series
 
         _meas = ercot_thermal_dam_availability_series(int(_yr), hours)
+        # ERCOT-96 grain switch (config.ercot_thermal_dam_availability_hourly):
+        # apply the SAME measured mechanism at class-HOUR grain — the measured
+        # per-Hour-Ending fraction replaces the day-flat block, keeping the
+        # afternoon ambient-derate dip / overnight headroom the day mean
+        # discards (ERCOT-95 Finding 6: +216 MW mean phantom CC+CT on the 181
+        # actual 2023 tail hours). Same bidirectional water-fill semantics as
+        # the day grain below, per hour: restore a' = a + λ(1−a) toward the
+        # measured level, remove a' = a·(t/cur); the cap-weighted class-hour
+        # mean lands exactly on the measured fraction, tranches cap at 1.0,
+        # NaN hours keep the pre-overlay stack hour by hour. Classes the
+        # hourly file does not cover fall through to the day-grain loop.
+        _hourly_done: set[str] = set()
+        if getattr(config, "ercot_thermal_dam_availability_hourly", False):
+            from market_sim.data.outages import (
+                ercot_thermal_dam_availability_hourly_series,
+            )
+
+            _meas_h = ercot_thermal_dam_availability_hourly_series(int(_yr), hours)
+            # ERCOT-97 plant grain (config.ercot_thermal_dam_availability_plant,
+            # requires _hourly): pin each accepted-crosswalked plant to its own
+            # measured site-hour fraction and water-fill the unmapped remainder
+            # so the class-HOUR total is unchanged — a within-class
+            # redistribution (which plant is derated), zero fitted parameters.
+            # Classes it handles are added to _hourly_done so the class-HOUR
+            # loop below skips them; a class with no crosswalked plant still
+            # gets the plain class-HOUR treatment.
+            if getattr(config, "ercot_thermal_dam_availability_plant", False):
+                from market_sim.data.outages import (
+                    ercot_thermal_dam_availability_plant_series,
+                )
+
+                _plant_series = ercot_thermal_dam_availability_plant_series(
+                    int(_yr), hours
+                )
+                if _plant_series:
+                    _hourly_done |= _ercot_dam_plant_hourly_apply(
+                        availability,
+                        generators,
+                        pmax,
+                        hours,
+                        int(_yr),
+                        _meas_h,
+                        _plant_series,
+                        logger,
+                    )
+            for _cls, _t_h in _meas_h.items():
+                if _cls in _hourly_done:
+                    continue  # ERCOT-97: handled at the finer plant grain
+                _idx = np.array(
+                    [gi for gi, g in enumerate(generators) if g.plant_group == _cls],
+                    dtype=int,
+                )
+                if _idx.size == 0:
+                    continue
+                _cap = pmax[_idx]  # (n,)
+                _cap_sum = float(_cap.sum())
+                if _cap_sum <= 0.0:
+                    continue
+                _t = _t_h[:hours]  # (hours,) measured fraction, NaN uncovered
+                _covered = np.isfinite(_t)
+                if not _covered.any():
+                    continue
+                _a = availability[_idx, :hours]  # (n, hours)
+                _cur = (_a * _cap[:, None]).sum(axis=0) / _cap_sum  # (hours,)
+                _restore = _covered & (_t >= _cur)
+                _remove = _covered & (_t < _cur)
+                _lam = np.clip(
+                    (_t - _cur) / np.maximum(1.0 - _cur, 1e-9), 0.0, 1.0
+                )
+                _new = _a.copy()
+                _new[:, _restore] = _a[:, _restore] + _lam[None, _restore] * (
+                    1.0 - _a[:, _restore]
+                )
+                _mu = np.where(_remove, _t / np.maximum(_cur, 1e-9), 1.0)
+                _new[:, _remove] = _a[:, _remove] * _mu[None, _remove]
+                availability[_idx, :hours] = np.minimum(_new, 1.0)
+                _hourly_done.add(_cls)
+                logger.info(
+                    "ERCOT measured thermal DAM availability (%d): %s set to "
+                    "measured class-HOUR level on %d hour(s) (restore %d / "
+                    "remove %d), median target %.3f",
+                    _yr,
+                    _cls,
+                    int(_covered.sum()),
+                    int(_restore.sum()),
+                    int(_remove.sum()),
+                    float(np.median(_t[_covered])),
+                )
         _n_days = hours // 24
         for _cls, _target_h in _meas.items():
+            if _cls in _hourly_done:
+                continue  # ERCOT-96: already applied at the finer hour grain
             _idx = np.array(
                 [gi for gi, g in enumerate(generators) if g.plant_group == _cls],
                 dtype=int,
