@@ -219,6 +219,36 @@ def _calibration_complete_isos() -> set[str]:
     return {str(k).upper() for k in (data.get("complete") or {})}
 
 
+def _intake_authorized_isos() -> set[str]:
+    """Return ISOs with a logged rule-22 data-intake authorization (uppercased).
+
+    Rule 22 (Option 2) permits out-of-training DATA INTAKE for any ISO under
+    explicit, session-logged owner authorization — a channel *separate* from the
+    calibration-complete marker, which gates only solve / score / dashboard
+    registration. Every ISO named in an ``intake_log`` entry has been through such
+    an authorization, so ``--holdout-intake`` may extend the artifact on that
+    logged authorization alone; the marker is NOT required for data readiness (it
+    remains required before any out-of-training solve/score/register).
+    """
+    marker = (
+        paths.REPO_ROOT / "frontend" / "data" / "backcast" / "calibration-complete.json"
+    )
+    try:
+        import json
+
+        log = json.loads(marker.read_text()).get("intake_log") or []
+    except (OSError, ValueError):
+        return set()
+    import re
+
+    known = {"ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"}
+    authorized: set[str] = set()
+    for entry in log:
+        text = " ".join(str(entry.get(k, "")) for k in ("scope", "by"))
+        authorized |= {iso for iso in known if re.search(rf"\b{iso}\b", text)}
+    return authorized
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--iso", nargs="+", default=list(ALL_ISOS))
@@ -228,11 +258,11 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         metavar="ISO",
         help="authorize extending the artifact with quarantined-year (2022/2026) "
-        "rows for this ISO only (requires its calibration-complete marker; "
-        "CLAUDE.md rule 22 one-shot holdout validation). In this mode --years "
-        "must be quarantined years only and --iso must equal the named ISO; the "
-        "new rows are MERGED into the existing artifact with every pre-existing "
-        "row asserted byte-frozen.",
+        "rows for this ISO only (requires its calibration-complete marker OR a "
+        "logged intake_log authorization; CLAUDE.md rule 22 — data intake, not "
+        "solve). In this mode --years must be quarantined years only and --iso "
+        "must equal the named ISO; the new rows are MERGED into the existing "
+        "artifact with every pre-existing row asserted byte-frozen.",
     )
     args = ap.parse_args(argv)
 
@@ -243,11 +273,13 @@ def main(argv: list[str] | None = None) -> int:
     if args.holdout_intake:
         iso = args.holdout_intake.upper()
         complete = _calibration_complete_isos()
-        if iso not in complete:
+        authorized = _intake_authorized_isos()
+        if iso not in complete and iso not in authorized:
             ap.error(
-                f"no calibration-complete marker for {iso} "
-                f"(complete: {sorted(complete) or 'none'}); declare the ISO "
-                "complete before its one-shot holdout intake (rule 22)"
+                f"{iso} has neither a calibration-complete marker nor a logged "
+                f"intake_log authorization (complete: {sorted(complete) or 'none'}"
+                f"; intake-authorized: {sorted(authorized) or 'none'}); rule 22 "
+                "data intake needs one or the other"
             )
         if [i.upper() for i in args.iso] != [iso]:
             ap.error(f"--holdout-intake {iso} requires --iso {iso} (and only it)")
