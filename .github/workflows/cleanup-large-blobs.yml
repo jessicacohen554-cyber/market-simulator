@@ -64,7 +64,7 @@ jobs:
           echo "=== Disk BEFORE reclaim ==="
           df -h /
           sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
-                      /opt/hostedtoolcache/CodeQL /usr/local/.ghcup \
+                      /usr/local/lib/CodeQL /usr/local/.ghcup \
                       /usr/local/share/boost /usr/local/graalvm 2>/dev/null || true
           sudo docker image prune --all --force >/dev/null 2>&1 || true
           echo "=== Disk AFTER reclaim ==="
@@ -449,20 +449,74 @@ jobs:
           git remote add origin "$REPO_URL"
           git config --unset remote.origin.mirror 2>/dev/null || true
 
-          echo "=== Force pushing ALL branches ==="
-          branch_count=$(git for-each-ref --format='%(refname:short)' refs/heads/ | wc -l)
-          echo "Pushing $branch_count branches..."
-          git push --force --all origin
+          # WHY THIS IS NOT A PLAIN `git push --all`:
+          # A history rewrite changes every commit SHA, so the server shares NO
+          # objects with us. A single `push --force --all` must therefore upload
+          # the ENTIRE object graph (~4.76 GiB here) as ONE pack, and GitHub's
+          # smart-HTTP endpoint drops that with:
+          #     error: RPC failed; HTTP 500
+          #     send-pack: unexpected disconnect while reading sideband packet
+          # The current tree is genuinely multi-GiB, so filter-repo cannot shrink
+          # the pack below the limit — the push itself must be chunked.
+          #
+          # Fix, three parts:
+          #   1. Force HTTP/1.1 + a large post buffer. The HTTP/2 sideband is the
+          #      proximate cause of the 500 on multi-GiB packs; HTTP/1.1 is the
+          #      documented mitigation.
+          #   2. Upload DEFAULT_BRANCH history in bounded commit-count increments
+          #      to a THROWAWAY ref (refs/blob-cleanup-tmp/prime, NOT refs/heads/*
+          #      so no `on: push` workflow fires). Each push sends only the delta
+          #      the server does not yet have, so no single pack is large enough
+          #      to trip the limit.
+          #   3. Once the server holds the objects, the real branch tips + tags
+          #      are cheap ref updates. Finally delete the throwaway ref.
+          git config --global http.version HTTP/1.1
+          git config --global http.postBuffer 1048576000
+
+          PRIME_REF="refs/blob-cleanup-tmp/prime"
+          BATCH=200
+
+          echo "=== Priming server object store from ${DEFAULT_BRANCH} history ==="
+          mapfile -t COMMITS < <(git rev-list --topo-order --reverse "refs/heads/${DEFAULT_BRANCH}")
+          total=${#COMMITS[@]}
+          echo "  ${DEFAULT_BRANCH} has $total commits; pushing checkpoints every $BATCH commits to $PRIME_REF"
+
+          i=$BATCH
+          while [ "$i" -lt "$total" ]; do
+            sha="${COMMITS[$i]}"
+            echo "  checkpoint $i/$total -> $sha"
+            git push --force origin "${sha}:${PRIME_REF}"
+            i=$((i + BATCH))
+          done
+
+          # Advance the prime ref to the exact tip (sends the final <BATCH delta).
+          echo "  checkpoint tip -> refs/heads/${DEFAULT_BRANCH}"
+          git push --force origin "refs/heads/${DEFAULT_BRANCH}:${PRIME_REF}"
 
           echo ""
-          echo "=== Force pushing all tags ==="
+          echo "=== Updating real branch refs (cheap deltas now) ==="
+          branch_count=$(git for-each-ref --format='%(refname:short)' refs/heads/ | wc -l)
+          # Default branch first so the other branches share its objects.
+          git push --force origin "refs/heads/${DEFAULT_BRANCH}:refs/heads/${DEFAULT_BRANCH}"
+          for branch in $(git for-each-ref --format='%(refname:short)' refs/heads/); do
+            [ "$branch" = "${DEFAULT_BRANCH}" ] && continue
+            echo "  push $branch"
+            git push --force origin "refs/heads/${branch}:refs/heads/${branch}"
+          done
+
+          echo ""
+          echo "=== Pushing all tags ==="
           git push --force --tags origin
+
+          echo ""
+          echo "=== Removing throwaway prime ref ==="
+          git push origin ":${PRIME_REF}" || true
 
           echo ""
           echo "============================================================"
           echo "  DONE — History rewritten successfully"
           echo "============================================================"
-          echo "  - All $branch_count branches force-pushed"
+          echo "  - All $branch_count branches force-pushed (chunked)"
           echo "  - All tags force-pushed"
           echo "  - ${DEFAULT_BRANCH} content is byte-for-byte UNCHANGED"
           echo "  - Out-of-scope files unchanged on every branch"
