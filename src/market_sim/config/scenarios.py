@@ -1127,6 +1127,33 @@ class ScenarioConfig:
     # excluded from build_hydro_fleet and remains a separate lever-3 step.
     # Default off (byte-identical); NYISO-only; requires energy_reserve_coopt.
 
+    nyiso_scr_edrp_reserve_eligible: bool = False  # GATED, default-OFF
+    # NYISO SCR/EDRP demand-response reserve-SUPPLY eligibility (issue #1344,
+    # lever 3 step 2 — the SENY tail the hydro union above cannot reach). When on
+    # (NYISO + energy_reserve_coopt + nyiso_scr_edrp), the SCR/EDRP
+    # demand-response blocks (fuel demand_response, data.nyiso_demand_response —
+    # already in the fleet as energy-only $500-strike pseudo-gens) join the
+    # co-opt reserve-eligible set in the FULL (30-min) class ONLY, scoped to the
+    # DOWNSTATE (SENY) zones NYC + Long_Island + Lower_Hudson. Structural basis
+    # (rule 1): Special Case Resources are NYISO-certified 30-minute
+    # operating-reserve providers (NYISO Ancillary Services Manual §4 / MST §15
+    # — SCR responds to a 30-min activation, EDRP the same reliability trigger),
+    # so crediting them as 30-min reserve supply is a real market-design input,
+    # NOT a residual tune. Scoped to downstate because the SENY/NYC 30-min
+    # locational reserve families (and the unclosed 2023 >$300 downstate tail,
+    # nyiso-68 C3) are exactly where NYISO leans on SCR for reliability; the
+    # hydro union (nyiso_hydro_reserve_eligible) is East/NYCA and closes only the
+    # East-10min half of the named gap (no downstate hydro exists). 10-min
+    # (quick-start) class is deliberately NOT unioned — SCR is a 30-min product,
+    # not a spinning/synchronised resource. Held (undeployed) reserve forces no
+    # energy: a DR block dispatched for energy loses that headroom via the
+    # per-zone reserve-headroom constraint (sum P + R <= cap), so reserve and the
+    # $500 energy strike compose correctly and the block prices the SENY-30 ORDC
+    # shadow without being forced on. Zero new tunable (n_residual unchanged —
+    # both the eligibility and the strike are grounded inputs). Promotion gate:
+    # leave-one-year-out within 2023-2025 (rule 22). Default off (byte-identical);
+    # NYISO-only; requires energy_reserve_coopt and nyiso_scr_edrp.
+
     # NEISO (ISO-NE) RCPF scarcity overlay — the ISO-NE analogue of the NYISO
     # lever above (post-solve; never an LP input). ISO-NE prices real-time
     # scarcity through Reserve Constraint Penalty Factors on its nested
