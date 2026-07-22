@@ -588,3 +588,12 @@ OWNER-ONLY and still requires the C6 governance attestation + keeper-shard flip 
 sidecars) + registry sidecar + runs payload + full-span parquet, all on branch
 `claude/ercot-97-c3c-frontier-rtd17r` (rebased onto main after PR #2791 merged the ERCOT-97
 code). Engineering detail: `docs/handoffs/ercot97-results-2026-07.md`.
+
+**PROMOTED 2026-07-22 (owner directive "promote it as the keeper but I'm not willing to
+call it calibrated yet").** ERCOT keeper flipped to `2026-07-22-ercot97-plant-grain-fullspan`
+(`keepers/ERCOT.json`), `status/ERCOT.js` rebuilt **[ERCOT:NOT-YET]**, DOF ledger seeded into
+the bundle attestation (`build_dof_ledger.py`), `audit_keepers.py --iso ERCOT` **PASS** (0
+failures). The keeper designates the most structurally-faithful run; the DETERMINATION
+REMAINS **NOT-YET** — C6 governance intentionally left UNATTESTED and C3a/C3b intentionally
+NOT ledgered, so the verdict stays NOT-YET (not calibrated). Supersedes
+`2026-07-22-ercot96-dam-hourly-grain`.
