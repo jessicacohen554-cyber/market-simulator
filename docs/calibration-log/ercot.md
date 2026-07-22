@@ -534,3 +534,57 @@ no dashboard registration (2023-only throwaways, rule 16).
 multi-GB promisor backfill that disconnects (each attempt leaves a multi-GB tmp pack);
 worked around by pushing with partial-clone disabled + pre-fetching the boundary blobs
 individually. Full detail + repro in `docs/handoffs/ercot97-results-2026-07.md`.
+
+## 2026-07-22 — ERCOT-97 KEEPER TRACK (owner directive "structurally more accurate = new keeper"): plant-grain DAM availability SOLVED + SCORED full-span 2023-2025. Structurally faithful (C7/C8/D-9/D-10 PASS, zero fitted params); marginal ledgerable price cost (C3a −27.8→−27.9%, C3b 0.539→0.545). Recommend promotion — OWNER SIGN-OFF PENDING.
+
+**Reframe (owner, rule 1).** The three-lane entry above banked plant grain as "default-off,
+LOYO-pending" because it worsened the C3a level. Owner correction: a mechanism that is
+STRUCTURALLY more faithful (measured plant-hour availability vs a class envelope) is the
+keeper *even if the fit worsens* — the C3a cost is a rule-11 root-cause signal, not grounds
+to reject the structure. So Lane A was run full-span as a keeper candidate.
+
+**Reproducibility (the "ercot96 not on disk" issue, RESOLVED).** ercot96's class-hour base
+(`ercot-thermal-dam-availability-hourly.csv`) reproduces BYTE-IDENTICALLY from source
+(md5 7ea628f1…) once the 2026_Jan-Mar 60-day-disclosure spillover file is materialized (it
+carries the 2025 Nov-Dec delivery days; the derive already scans year+1 and filters on
+Delivery Date). 2023 (335d, Dec genuinely absent) and 2024 (366d) reproduce as-is. So the
+class-hour base is UNCHANGED and the plant grain is a PURE delta on ercot96 (not a new base).
+
+**Run.** `2026-07-22-ercot97-plant-grain-fullspan` (registered): ercot96 keeper recipe +
+`ercot_thermal_dam_availability_plant`, via `replay_keeper --set …plant=true --years 2023
+2024 2025`, one bundle (rule 16). Site-hourly parquet re-derived full-span (2023:335d /
+2024:366d / 2025:365d), committed. Base A/B twin = ercot96 recipe replayed same-box (plant
+OFF), which reproduces the ercot96 committed C3a −27.8% / C3b 0.539 EXACTLY (validates the
+same-box comparison); the twin is A/B-only, not registered on the dashboard.
+
+**A/B (candidate plant-ON vs base plant-OFF, same box, all 3 years in one bundle each):**
+- C1 fuel-mix / C2 volume / C4 dispatch-corr / C5a CO₂: **PASS** (both).
+- C3a mean LMP 2023: base −27.8% → candidate **−27.9%** (marginal, ledgered CAVEAT).
+- C3b price shape 2023: base NRMSE 0.539 → candidate **0.545** (marginal, ledgered CAVEAT).
+- C3c tail: SKIPPED both (no committed RT actual_tail for ERCOT-year; not a differentiator).
+- **C7 diurnal shape (D-1): PASS all classes** (CC_REGULAR profile_r 0.99, CT_PEAKER 0.974,
+  ST_GAS 0.998; gated classes clear). The finer grain keeps the afternoon supply shape
+  faithful — the structural payoff (cf. the 2023 A/B: summer hod-corr 0.40→0.60, spurious
+  tail 32→24).
+- **C8 forced-share (D-2): PASS** — CT_PEAKER 13.6% < 15%, ST_GAS 20.2% < 30%, CC_REGULAR
+  bridge 0.7% + reliability 0.4%; CHP classes exempt. Forced energy budgeted.
+- D-9 overlay quarantine PASS; D-10 renewable-provenance PASS.
+
+**DOF / LOYO (rule 15/22).** Plant grain adds ZERO free parameters — it is a within-class
+REDISTRIBUTION of the (unchanged) class-hour availability total onto measured per-plant
+site-hour fractions, water-filling the unmapped remainder (22 crosswalked plants, all
+hand-verified; 12 CC / 3 CT / 3 ST in 2023). No tuned value can move, so the LOYO test is
+trivially clean (same argument the ercot96 hourly-grain carried).
+
+**Determination.** Same gate PROFILE as the ercot96 keeper — C1/C2/C4/C5a PASS, C3a/C3b
+ledgered CAVEATs, C3c NOT-YET — plus a strictly MORE faithful measured grain (C7 PASS at
+plant resolution, zero params). By rule 1 and the owner's directive this is the more
+structurally-faithful keeper. **Verdict: CALIBRATED-WITH-CAVEATS candidate, recommend
+promotion to ERCOT keeper, superseding `2026-07-22-ercot96-dam-hourly-grain`.** Promotion is
+OWNER-ONLY and still requires the C6 governance attestation + keeper-shard flip +
+`audit_keepers.py --iso ERCOT` + the calibration-keeper-auditor — NOT taken unilaterally.
+
+**Committed.** Slim bundle (meta/run_config/metrics/legitimacy_diagnostics + hourly
+sidecars) + registry sidecar + runs payload + full-span parquet, all on branch
+`claude/ercot-97-c3c-frontier-rtd17r` (rebased onto main after PR #2791 merged the ERCOT-97
+code). Engineering detail: `docs/handoffs/ercot97-results-2026-07.md`.
