@@ -7,8 +7,10 @@ the end of every manager turn.
 
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
-- **Last reviewed `origin/main` HEAD:** `fe1fe5ce` (2026-07-21, turn 43 — manager session `ff-wave-manager-standing-e90gfj`).
+- **Last reviewed `origin/main` HEAD:** `22cfd56a` (2026-07-22, turn 44 — manager session `ff-wave-manager-standing-atbiwx`).
 - **Plan base SHA:** `c95176e` (amended in place 2026-07-19 — POC-first re-scope, see directive entry below).
+- **Watch-set path prefix (confirmed t44):** source lives under `src/market_sim/` (e.g.
+  `src/market_sim/config/scenarios.py`, `src/market_sim/model/reserves/spec.py`).
 - **OWNER DIRECTIVE (2026-07-19, out-of-band — recorded by the directive's executing
   session, not a manager turn): POC-first re-scope of THE PLAN.** The plan is amended in
   place (§0 two-phase framing, new §2.1b full-solve authorization gate, §6 Waves 3–4
@@ -21,23 +23,21 @@ the end of every manager turn.
   §2.1b: backcast keeper + calibration-complete marker, T1 POC gates green, crossover
   input gap + readiness battery + projected cost, and an explicit per-campaign owner
   authorization.
-- **turn 42 (`3cbf5b16→71a610ca`).** NO FF-manager work; program AT REST. Big out-of-program
-  infra-refactor + forecast-input batch, RULE-27 CLEAN. **Two sanctioned FACADE SPLITS (verified,
-  NOT truncation):** #2729 `config/interchange_config.py` 1919→~30 facade (→ `model/interchange/
-  spec.py` 1924) + `config/reserve_config.py` 2928→~27 facade (→ `model/reserves/spec.py` 2932),
-  pinned by `tests/test_config_model_layering.py` + byte-identical regression goldens + CI
-  `intentional-shrink`; #2730 orchestrator-unification pipeline.api facade (ADDITIVE). **NEW
-  facades ADDED to watch set: `model/interchange/spec.py` (1924) + `model/reserves/spec.py`
-  (2932).** Forecast-input lanes (#2731-#2738, G-series category) additive. Flagged stray
-  `scripts/_rule27_push_staging/` dir. (Full t42 detail in prior ledger commit `df13a4e`.)
-- **turn 41 (`3cbf5b16`).** Clean refresh; 3 out-of-program backcast merges (#2725 nyiso-reserve,
-  #2726 caiso-110 wecc-west, +nyiso-69/caiso-110 direct). Rule-27 clean. (Ledger `f6a2be5`.)
-- **turn 40 (`cf306c95`).** **FF-3H verified-pass (#2722) — T1 INFRASTRUCTURE PROGRAM COMPLETE.**
-  All four T1-infra prompts (FF-5A/3F/3G/3H) + FF-3E verified-pass. Nothing dispatchable at T1.
-- **turn 39 (`08c831c9`).** Active-wave build-out COMPLETE (FF-3E/5A/3F/3G verified-pass). Owner
-  re-scope "just build the infrastructure." capacity.py→32 facade + `capacity_evolution/` package.
-- **turn 37-38 (`f49cf768`→`b6ace721`).** FF-2D verified-pass (all 6 ISOs HOLD, I4 "A1" leak
-  dominant blocker; PJM+NEISO closest); FF-3E dispatched+LANDED (#2691). constants.py→facade split.
+- **turn 43 (`71a610ca→fe1fe5ce`).** NO FF-manager work; program AT REST. 8 PRs #2749-#2756 +
+  ~20 direct commits, all out-of-program (backcast calibration + orchestrator refactor), RULE-27
+  CLEAN. Raised THREE housekeeping/infra-friction flags (staging-dir bloat, stranded PJM M-3
+  patch, stale-clone/proxy friction). (Ledger `b7ea783`; stack `f6a2be5`/t41 → `df13a4e`/t42 →
+  `b7ea783`/t43 all merged to main by t44.)
+- **turns 40–42 (collapsed).** t40: FF-3H verified-pass (#2722) — **T1 INFRASTRUCTURE PROGRAM
+  COMPLETE**, all four T1-infra prompts + FF-3E verified-pass. t41: clean refresh, 3 backcast
+  merges. t42: RULE-27 CLEAN, two sanctioned FACADE splits (#2729 interchange/reserve →
+  `model/interchange/spec.py` 1924 + `model/reserves/spec.py` 2932, added to watch set) + #2730
+  orchestrator-unification (additive) + forecast-input G-series lanes. (Ledger commits `cf306c95`
+  / `f6a2be5` / `df13a4e`.)
+- **turns 37–39 (collapsed).** FF-2D verified-pass (all 6 ISOs HOLD, I4 "A1" leak dominant
+  blocker; PJM+NEISO closest). Active-wave build-out COMPLETE (FF-3E/5A/3F/3G verified-pass).
+  Owner re-scope "just build the infrastructure." capacity.py→32 facade + `capacity_evolution/`
+  package; constants.py→facade split.
 - **turns 10–36 (collapsed — see prior ledger commits).** Waves 0/1 CLOSED; FF-2A posture=ON;
   FF-2B verified-pass (#2582, NEISO I7+I12 PASS); FF-2C flip {PJM,MISO,CAISO,NEISO}=ON — Wave 2
   CLOSED; FF-2C-rig; FF-3B verified-pass (W3-R NO-GO + CES POC); NYISO marker WITHDRAWN (t27).
@@ -85,11 +85,18 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
   infrastructure. T1-infra halves dispatchable now; only full-horizon campaign RUNS stay gated.
   **ALL FOUR T1-infra prompts + FF-3E verified-pass (t40).**
 
-**RESOLVED (owner, turns 38–40):**
+**RESOLVED (owner, turns 38–44):**
 - **Key-rotation (#2659/#2660) — CLOSED.** Keys public/free-tier.
 - **FF-2B git-push exception — BLESSED** (narrow last-resort, blob-verify mandatory).
 - **NEISO — HOLD; hold-scope CLOSED (t40, owner: out of manager scope, do not track).**
 - **Stray file cleanup (t38)** — `.constants_push_stage.txt` deleted (`e87216e`).
+- **Staging-dir bloat [t43 flag 1] — RESOLVED (t44).** `scripts/_rule27_push_staging/` no longer
+  exists on main (owner-ordered bloat purge, `07fee6e`). Cleaned.
+- **Stale-clone/proxy friction [t43 flag 3] — OWNER ADDRESSING (t44).** SessionStart blobless
+  fast-forward hook (`f72db66`) + `cleanup-large-blobs.yml` workflow (owner-direct) + repo bloat
+  purge + ERCOT parquet slimming + gitignore hardening (#2775/#2777). ERCOT lane also reports
+  "small git pushes proven" (413 is pack-size-dependent). Watch for residual friction; no manager
+  action.
 
 **AWAITING (each changes what I dispatch next):**
 - **§2.1b gate-open per ISO** — NOT authorized (owner: “not running full solves yet”). FF-3E's
@@ -97,18 +104,11 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
   Re-surface only when owner initiates.
 - **(nothing dispatchable at T1)** — all T1-infra prompts verified-pass. Only §2.1b-gated
   full-horizon campaigns remain (owner-held). FF-3C trigger-gated inactive.
-- **⚠ HOUSEKEEPING / infra-friction flags to owner (surfaced t43 — out-of-program, not stop-the-line):**
-  (1) `scripts/_rule27_push_staging/` has BLOATED — the orchestrator-unification worker (session
-  01DoiBA8) is committing a base64-chunked `rule27-bigfiles.tar.gz` across dozens of 1-line files
-  (parts 03–08, ×00–09 sub-pieces + retries) via #2751/#2752/#2753/#2755. Push-scaffolding clutter,
-  NOT a truncation (no source touched), but the dir should be cleaned once that refactor lands.
-  (2) PJM M-3 gas-bridge (#2756) landed as an **UNAPPLIED** `docs/handoffs/pjm-m3-gas-bridge.patch`
-  (836 lines) + status doc — mechanism is NOT in main; the authoring session ran on a 1572-commit-
-  stale clone (066fb98) and couldn't sync (proxy disconnects) or push (413), so it left a stale-based
-  patch needing re-basing by a fresh working-clone session. Stranded out-of-program PJM deliverable.
-  (3) Recurring STALE-CLONE / proxy friction — multiple worker sessions (013PAHQQ, 01DoiBA8) and this
-  manager are on stale clones with `git fetch` disconnecting + `git push` 413ing. Environment issue
-  the owner may want to address (fresh working-clones for large-file sessions).
+- **⚠ HOUSEKEEPING flag still open (out-of-program, not stop-the-line):**
+  (2) PJM M-3 gas-bridge (#2756) — `docs/handoffs/pjm-m3-gas-bridge.patch` (836L) remains an
+  UNAPPLIED stale-based patch; the M-3 mechanism is NOT in main. Needs a fresh working-clone
+  session to re-base + apply. With "small git pushes proven" this is now more tractable, but not
+  yet done. Out-of-program PJM deliverable; keep visible.
 
 ---
 
@@ -121,33 +121,32 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 
 ## Turn log
 
-- **turns 1–40 (collapsed — see prior ledger commits + entries above).** Waves 0/1 CLOSED; FF-2B/2C/
-  2C-rig/2D verified-pass (Wave 2 CLOSED, all 6 ISOs HOLD); FF-3B verified-pass; FF-3E/5A/3F/3G/3H
-  all verified-pass by t40 — **T1 INFRASTRUCTURE PROGRAM COMPLETE.** Rule-27 baselines moved via
-  sanctioned facade splits (capacity.py, constants.py).
-- **turn 41 (`→3cbf5b16`, clean refresh).** NO FF work; 3 out-of-program backcast merges. Ledger
-  `f6a2be5`.
-- **turn 42 (`→71a610ca`, refresh).** NO FF-manager work; RULE-27 CLEAN. Two sanctioned facade
-  splits (#2729 interchange/reserve → model/ packages) + #2730 orchestrator-unification (additive) +
-  forecast-input lanes #2731-#2738. NEW watch-set facades: interchange/spec, reserves/spec. Ledger
-  `df13a4e`.
-- **turn 43 (manager `ff-wave-manager-standing-e90gfj`, refresh. `71a610ca→fe1fe5ce`, 8 PRs #2749-#2756
-  + ~20 direct commits). NO FF-manager work landed; nothing dispatchable; program AT REST. All
-  out-of-program (backcast calibration + orchestrator refactor) — RULE-27 verified CLEAN.** (turn-42
-  ledger `df13a4e` not yet merged to main; carried forward on branch.) **Merges/commits classified:**
-  #2751/#2752/#2753/#2755 orchestrator-unification — touch ONLY `scripts/_rule27_push_staging/`
-  (base64 tarball chunks, NO source); #2756 pjm-frontier-readiness — adds an UNAPPLIED
-  `pjm-m3-gas-bridge.patch` (836L) + data json + doc (PJM M-3 mechanism NOT in main); #2754 ERCOT-94
-  (season offer wall REJECTED as 2023-summer lever — real lane is ORDC/reserve scarcity-tail per
-  ERCOT-95 handoff; calibration log + MEASURE probe, keeper unchanged, no solve); #2749 caiso-
-  calibration-gaps + caiso-111 log (keeper caiso-102 unchanged); #2750 nyiso-calibration-scarcity;
-  85eb73ff NYISO import tranches measured Q-Q derivation (rule-14, `model/interchange/spec.py`
-  +55/-20 = **net GROWTH** on the t42 watch-set facade — no shrink); 6d8c1e1a fixed the nyiso-69
-  PHANTOM keeper (re-pointed 69→68, dropped payload-less sidecar — the phantom I noted t41, now
-  self-corrected). **RULE-27 CLEAN:** no watch-set file shrank; scenarios.py 8102 · constants.py-
-  facade · runner.py 2470 · capacity.py-facade+package · fuel_trajectories 1050 · capacity_market
-  2392 · ercot_envelopes 1960 · interchange/spec (grew) · reserves/spec — all intact. **THREE
-  housekeeping/infra-friction flags surfaced to owner** (staging-dir bloat, stranded PJM M-3
-  unapplied-patch, recurring stale-clone/proxy friction — see AWAITING §). **Nothing dispatchable** —
-  §2.1b gate owner-held; FF-3C trigger-gated inactive; all T1 infra verified-pass. `git fetch` still
-  timing out; reviewed via GitHub API.
+- **turns 1–40 (collapsed — see prior ledger commits + header entries).** Waves 0/1 CLOSED; FF-2B/
+  2C/2C-rig/2D verified-pass (Wave 2 CLOSED, all 6 ISOs HOLD); FF-3B verified-pass; FF-3E/5A/3F/3G/3H
+  all verified-pass by t40 — **T1 INFRASTRUCTURE PROGRAM COMPLETE.**
+- **turns 41–43 (collapsed — three consecutive clean refreshes).** NO FF-manager work; program AT
+  REST; RULE-27 CLEAN throughout. Out-of-program: backcast calibration lanes + two sanctioned facade
+  splits (interchange/reserve → model/ packages, t42) + orchestrator-unification refactor + G-series
+  forecast-input lanes. t43 raised three housekeeping flags. Ledger stack `f6a2be5`→`df13a4e`→
+  `b7ea783`, all merged to main by t44.
+- **turn 44 (`fe1fe5ce→22cfd56a`, refresh. NO FF-manager work landed; nothing dispatchable; program
+  AT REST. All out-of-program — RULE-27 CLEAN.)** Reviewed ~40 commits since t43 HEAD, all
+  out-of-program: (a) **owner-ordered repo bloat purge** (`07fee6e`: SCED corpus + monthly parts +
+  zero-consumer DAM members + pre-7/14 calibration bundles/payloads deleted; findings .md kept, 35
+  in-bundle findings restored `9d62252`) + ERCOT DAM disclosure parquet slimming (Fable, byte-
+  identical derive verified) + `slim_ercot_dam_disclosure.py`; (b) **owner infra for stale-clone
+  fix** — SessionStart blobless fast-forward hook (`f72db66`) + `cleanup-large-blobs.yml` workflow
+  (owner-direct, 3 commits) + gitignore hardening (#2775/#2777); (c) **backcast calibration** —
+  ERCOT-96 dam-hourly-grain keeper promotion (#2776/#2778/#2779/#2780, owner-promoted) + ERCOT-97
+  charter; NYISO lever-3 hydro-reserve (#2781/#2782, nyiso-69 candidate NOT-YET, keeper nyiso-68
+  unchanged); CAISO-113 L1a′ export-leg bound (#2783/#2784, B = REJECTED probe, keeper caiso-102
+  unchanged). **RULE-27 CLEAN:** the only source-touching commit is NYISO lever-3 (`0375810`) —
+  `config/scenarios.py` +23 / `model/reserves/spec.py` +13, ADDITIONS-ONLY gated flag
+  `nyiso_hydro_reserve_eligible` (default-off) → GROWTH, no watch-set shrink. CAISO-113 source
+  changes shipped as an UNAPPLIED patch (`caiso113-l1a-prime.patch`), scenarios.py not modified by
+  it. No watch-set file shrank. **Turn-43 flags: (1) staging-dir bloat RESOLVED** (dir gone via
+  purge); **(3) stale-clone/proxy friction OWNER-ADDRESSED** (SessionStart hook + cleanup workflow +
+  purge + slimming); **(2) PJM M-3 unapplied patch still open.** Note: owner created a new Actions
+  workflow (`cleanup-large-blobs.yml`) directly — owner repo-admin, not an FF-worker action, no
+  violation. `git fetch` still hangs through proxy; reviewed entirely via GitHub API. **Nothing
+  dispatchable** — §2.1b gate owner-held; FF-3C trigger-gated inactive; all T1 infra verified-pass.
