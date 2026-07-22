@@ -1,0 +1,11 @@
+Holdout DATA-READINESS intake request — PJM + MISO 2022 per-plant CO2-rate rows.
+
+Authorized: owner, 2026-07-22 (calibration-complete.json intake_log).
+Scope: DATA intake only (rule 22 Option 2). No solve / score / register.
+Runs: curate_emissions_unit_annual --years 2022 --holdout-intake PJM;
+      derive_plant_emissions_v2 --iso PJM  --years 2022 --holdout-intake PJM;
+      derive_plant_emissions_v2 --iso MISO --years 2022 --holdout-intake MISO.
+Merges into data/raw/_processed-legacy/plant_emission_rates_v2.{parquet,csv}
+with every pre-existing row asserted byte-frozen; re-run-safe (clash guard).
+
+attempt 2: sparse + partial checkout (run 1 failed on the full-clone checkout).
