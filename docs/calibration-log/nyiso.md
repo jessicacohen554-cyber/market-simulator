@@ -163,3 +163,63 @@ re-gate 2023 (leave-one-year-out within 2023–2025 before promoting a combined
 keeper). Blenheim-Gilboa PS (Capital → East-10min, prime-mover PS, excluded from
 `build_hydro_fleet`) is the remaining East-side piece, lower priority than the
 SENY-30min DR lever.
+
+## 2026-07-22 — nyiso-70 CANDIDATE: lever 3 step 2 (SCR/EDRP 30-min reserve supply, SENY tail) + hydro; C3b 2023 CLOSES, C3a/C3c improve, determination unchanged
+
+Executed the named step 2. Added `nyiso_scr_edrp_reserve_eligible` (GATED,
+default-off): the downstate SCR/EDRP demand response already in the fleet
+(`nyiso_scr_edrp`, fuel `demand_response`, $500 strike, **energy-only** until
+now) is made eligible to **supply** the 30-min operating reserve, unioned into
+the FULL (30-min) reserve class **only** (never the 10-min quick-start class —
+SCR responds on a 30-min activation, it is not spinning) and **scoped to the
+downstate SENY zones** NYC + Long_Island + Lower_Hudson. SCR is a
+NYISO-certified 30-min operating-reserve provider (Ancillary Services Manual §4 /
+MST §15), so the union is a grounded market-design input (rules 1/13), **zero new
+tunable** — n_residual stays 5. Modelled exactly like the hydro union in
+`reserve_config._nyiso_design` (mask by fuel + downstate zone, `full_elig |=`);
+threaded through `run_calibration{,_full}.py`; unit test
+`tests/test_nyiso_reserve_eligibility.py` (covers 30-min-only, downstate-scope,
+default-off, and composition with the hydro union — also backfills the
+previously-untested hydro flag).
+
+**Combined solve (nyiso-70).** Replayed the nyiso-68 recipe with BOTH lever-3
+flags on (`--set nyiso_hydro_reserve_eligible=true`
+`--set nyiso_scr_edrp_reserve_eligible=true`), all three years in one bundle
+(`results/calibration/nyiso70_scr_edrp_reserve`, rule 16). Binding confirmed
+**not** from run_config alone (the prb_overrides-stomp trap) but from the LP:
+the flags route through both the solve kwarg and the prb_overrides channel with
+the same value, and the price columns move (2023 max |Δ| $221). The added
+downstate reserve headroom absorbs the SENY/NYC-30min ORDC over-spike that had
+been leaking into the LBMP — **downstate reserve-shortage zone-hours collapse**
+(2023 915→177, 2024 696→114, 2025 1215→255) and the >$300 downstate tail drops
+every year — while **energy dispatch is essentially unchanged** (largest class
+shift ST_GAS ±0.08 TWh ≈ 0.05% of load; C1 fuel-mix PASS, unchanged). The
+reserve is held, not dispatched: the per-zone reserve-headroom row trades it
+against the $500 strike, so nothing is forced.
+
+Scorecard vs nyiso-68 (`calibration_verdict`, RT load-weighted basis):
+
+| year | C3a mean LMP | C3b NRMSE | C3c >$300 tail |
+|---|---|---|---|
+| 2023 | +17.8% → **+15.9%** (FAIL) | 0.215 → **0.198 PASS** ✓ | 31h/10h 3.10× → **22h/10h 2.20×** (FAIL) |
+| 2024 | +0.9% → −0.7% (PASS) | 0.177 → 0.177 (PASS) | 22h → 10h (PASS) |
+| 2025 | +2.8% → +1.6% (PASS) | 0.132 → 0.148 (PASS) | 40h → 27h (PASS) |
+
+C1 PASS · C5a CO₂ 2025 +8.5% CAVEAT (≈ nyiso-68's +8.3%, reserve-inert). **C3b
+2023 closes** (C3b now PASS all years); C3a and C3c 2023 both improve materially
+(C3c from 3.10× down to 2.20×, just over the 2× band) with **no 2024/2025
+regression** — LOYO holds (the mechanism moves every year toward actual; no
+cross-fold degradation). **Determination stays NOT-YET**: 2023 C3a (+15.9%) and
+C3c (2.20×) still miss. Root cause of the residual: the 2023 C3a **mean-level**
+gap is **not** reserve-driven — the entire reserve over-spike is only ~1.6% of
+the system mean (38.06 → 37.44 $/MWh), so +15.9% remains after it is fully
+absorbed. That is a broad 2023 energy-price **level** issue (offer surface / gas
+basis / import pricing), a separate lever from reserve formation.
+
+**Disposition.** Per the step-2 promotion gate ("if it closes 2023, promote"),
+2023 does **not** fully close → registered `2026-07-22-nyiso-70-scr-edrp` as a
+**CANDIDATE**, both flags kept **default-off**; **nyiso-68 remains the keeper**
+(no keeper-shard edit, no keeper churn — the nyiso-69 staging precedent). Both
+reserve-eligibility flags are validated-correct and stay armed for the follow-up
+that attacks the 2023 C3a mean-level gap. Remaining East-side piece unchanged:
+Blenheim-Gilboa PS into the dispatch fleet (helps East-10min, secondary).
