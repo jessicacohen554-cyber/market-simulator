@@ -1,0 +1,72 @@
+diff --git a/src/market_sim/pipeline/commitment.py b/src/market_sim/pipeline/commitment.py
+index 4bccc6e..a7392ea 100644
+--- a/src/market_sim/pipeline/commitment.py
++++ b/src/market_sim/pipeline/commitment.py
+@@ -232,10 +232,20 @@ def caiso_ra_p1_floor_fleet(
+             apply_ra_mustoffer_quantity_gate(ra_floor, fleet, fleet_arrays, cap_mw)
+     if not np.any(ra_floor > 0.0):
+         return None
+-    return _bridge_floored_fleet(fleet_arrays, ra_floor, MECH_RA_MUSTOFFER)
++    return _bridge_floored_fleet(
++        fleet_arrays,
++        ra_floor,
++        MECH_RA_MUSTOFFER,
++        preserve_negative_min_gen=getattr(config, "caiso_wecc_export_floor", False),
++    )
+ 
+ 
+-def _bridge_floored_fleet(fleet_arrays, bridge_floor: np.ndarray, mech_id: int):
++def _bridge_floored_fleet(
++    fleet_arrays,
++    bridge_floor: np.ndarray,
++    mech_id: int,
++    preserve_negative_min_gen: bool = False,
++):
+     """Compose a P1-native bridge floor onto a ``FleetArrays`` (shared tail).
+ 
+     The floor-composition/attribution/feasibility sequence both P1-native
+@@ -248,6 +258,16 @@ def _bridge_floored_fleet(fleet_arrays, bridge_floor: np.ndarray, mech_id: int):
+     infeasible — the same guard the P2 preserve_min_gen path applied, minus
+     the coal pin / commitment mask (P1 solves every unit freely above the
+     floor; there is no second pass to lock a prior dispatch into).
++
++    ``preserve_negative_min_gen`` (CAISO ``caiso_wecc_export_floor``, default
++    off) fixes the export-floor artifact: a plain ``np.maximum(base, floor)``
++    clamps any NEGATIVE base bound up to 0 wherever the bridge does not floor
++    the unit (``bridge_floor == 0``), silently pinning the per-hub WECC export
++    sinks (``pmin = -corridor TTC``) to zero in the scored P1 fleet so the tie
++    can never net-export. When on, the floor is applied ONLY where it is a real
++    raise (``bridge_floor > 0``); elsewhere ``base_min_gen`` is kept, so the
++    export legs retain their negative bound and clear normally (they already do
++    in P0). Byte-identical off the flag (the ERCOT bridges pass ``False``).
+     """
+     import dataclasses
+ 
+@@ -256,14 +276,25 @@ def _bridge_floored_fleet(fleet_arrays, bridge_floor: np.ndarray, mech_id: int):
+         if fleet_arrays.min_gen is not None
+         else np.broadcast_to(fleet_arrays.pmin[:, None], bridge_floor.shape)
+     )
+-    new_min_gen = np.maximum(base_min_gen, bridge_floor)
+     base_mech = getattr(fleet_arrays, "min_gen_mechanism", None)
+     new_mech = (
+         base_mech.copy()
+         if base_mech is not None
+         else np.zeros(bridge_floor.shape, dtype=np.int8)
+     )
+-    new_mech[bridge_floor > base_min_gen] = mech_id
++    if preserve_negative_min_gen:
++        # Raise min_gen only on gen-hours the bridge genuinely floors
++        # (bridge_floor > 0); keep base_min_gen (incl. negative export bounds)
++        # everywhere else. Tag the mechanism only where the floor strictly
++        # raised above max(base, 0), so a preserved negative bound is not
++        # mis-attributed to the bridge.
++        new_min_gen = np.where(
++            bridge_floor > 0.0, np.maximum(base_min_gen, bridge_floor), base_min_gen
++        )
++        new_mech[bridge_floor > np.maximum(base_min_gen, 0.0)] = mech_id
++    else:
++        new_min_gen = np.maximum(base_min_gen, bridge_floor)
++        new_mech[bridge_floor > base_min_gen] = mech_id
+     avail = fleet_arrays.availability.copy()
+     pmax_safe = np.maximum(fleet_arrays.pmax, 1.0)[:, None]
+     floored = new_min_gen > 0.0
