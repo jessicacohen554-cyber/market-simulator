@@ -21,6 +21,13 @@ name: Cleanup Large File Blobs from History (Protected)
 # runner disk ("unable to write file"). Every operation reads the object
 # database directly.
 #
+# AUTH: pushing a rewritten history re-introduces every commit under new SHAs,
+# including the .github/workflows/* blobs. The built-in GITHUB_TOKEN (a GitHub
+# App token) is NOT permitted to create/update workflow files, and the
+# `workflows` permission cannot be granted to it in the `permissions:` block.
+# So the push must authenticate with a PAT (or App token) that carries the
+# `workflow` scope, provided as the repo secret HISTORY_REWRITE_PAT.
+#
 # WARNING: This rewrites history. All collaborators must re-clone afterward.
 
 on:
@@ -57,6 +64,23 @@ jobs:
         run: |
           echo "::error::You must type 'REWRITE-HISTORY' to confirm. Aborting."
           exit 1
+
+      - name: Validate push token
+        working-directory: ${{ github.workspace }}
+        if: ${{ inputs.dry_run == false }}
+        env:
+          HISTORY_REWRITE_PAT: ${{ secrets.HISTORY_REWRITE_PAT }}
+        run: |
+          if [ -z "${HISTORY_REWRITE_PAT}" ]; then
+            echo "::error::Secret HISTORY_REWRITE_PAT is not set. The built-in GITHUB_TOKEN"
+            echo "cannot push commits that create/update .github/workflows/* files, and a"
+            echo "history rewrite re-writes those blobs under new commits. Create a token"
+            echo "with the 'workflow' scope (classic PAT: repo + workflow; fine-grained:"
+            echo "Contents=RW + Workflows=RW on this repo) and add it as the repository"
+            echo "secret HISTORY_REWRITE_PAT, then re-run. Aborting before any work."
+            exit 1
+          fi
+          echo "Push token present."
 
       - name: Free runner disk space
         working-directory: /
@@ -441,10 +465,16 @@ jobs:
 
       - name: Force push cleaned history
         if: ${{ inputs.dry_run == false && steps.check.outputs.skip != 'true' }}
+        env:
+          HISTORY_REWRITE_PAT: ${{ secrets.HISTORY_REWRITE_PAT }}
         run: |
           set -euo pipefail
 
-          REPO_URL="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          # Authenticate with a PAT/App token that has the `workflow` scope. The
+          # built-in GITHUB_TOKEN is refused the moment a pushed commit touches
+          # .github/workflows/* — which every rewritten commit does — so it
+          # cannot be used here (see the AUTH note at the top of this file).
+          REPO_URL="https://x-access-token:${HISTORY_REWRITE_PAT}@github.com/${{ github.repository }}.git"
           git remote remove origin 2>/dev/null || true
           git remote add origin "$REPO_URL"
           git config --unset remote.origin.mirror 2>/dev/null || true
