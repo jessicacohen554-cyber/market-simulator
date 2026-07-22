@@ -115,6 +115,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # key (a distinct forward-capacity-price scenario). Backcast-coerced to
     # "hold_last" in __post_init__.
     "net_cone_forward_escalation",
+    # Endogenous WECC-West neighbor zone (caiso-110): default False dropped from
+    # the hash so every pre-existing cache key is byte-stable; True enters the
+    # key (a distinct scenario — WECC_import becomes a real co-optimized zone).
+    "caiso_endogenous_wecc_node",
 )
 
 
@@ -2721,6 +2725,46 @@ class ScenarioConfig:
     # population it caps). No-op unless caiso_dsw_daytime_clean is on. Default
     # off (byte-identical — the caiso-94 keeper recipe is unchanged);
     # CAISO-only.
+    caiso_endogenous_wecc_node: bool = False  # Make the WECC_import node a REAL
+    # co-optimized WECC-West neighbor ZONE instead of a set of static import
+    # tranches (caiso-110; Option A of
+    # docs/handoffs/caiso-endogenous-wecc-node-design-2026-07-21.md). The two
+    # prior belly-import fixes were killed by derive-first measurement — the
+    # belly clean-import DEPTH is not year-stable on any CA PRICE observable
+    # (caiso-107) NOR any WEST-WIDE surplus QUANTITY (caiso-109 P1-A): the belly
+    # transfer is genuinely ENDOGENOUS to the co-evolving CA + West fleets (CA
+    # belly solar +1.5 GW/yr, storage ~2x), so no conditioned static tranche can
+    # be forward-stable. When on (CAISO only), run_year gives the single
+    # WECC_import zone its OWN measured hourly demand (~54-57 GW, EIA-930 Region
+    # NW+SW aggregate), renewable/hydro/nuclear availability shaped to measured
+    # output, and a reduced thermal fleet (coal / gas-CC / gas-CT) priced at
+    # the measured WECC intertie hub (caiso-114 — the delivered West energy price
+    # at the CA border; Henry-Hub gas-MC alone under-prices the West and floods
+    # the tie) — all as fuel_type="import" pseudo-gens whose DISTINCT marginal
+    # costs live in the vom field / an hourly mc_base override (so the LP
+    # co-optimizes a real West merit order while the results pipeline keeps the
+    # whole zone external — imports, not CAISO gen/CO2/load). The one
+    # ISO-agnostic LP then co-dispatches CA + West and the WECC->CAISO tie flow
+    # (Path-66/COI + Path-46/WOR, the 7,500 MW simultaneous cap) becomes a pure
+    # congestion outcome that co-evolves with both fleets: because the West is
+    # thermal-marginal in ~100% of hours (its own solar+wind+hydro never exceed
+    # its own demand), the West's export price tracks the measured hub — LOW in
+    # the belly (self-limiting the belly over-import) and HIGH in the evening
+    # (CA runs its own gas) — instead of flooding a flat clean capability.
+    # SUPERSEDES caiso_dsw_surplus_clean / _overnight_clean / _daytime_clean at
+    # WECC_import (mutually exclusive — one mechanism per phenomenon, rule 18):
+    # when on, run_year skips the import-tranche fleet, the per-hub split, and
+    # the apply_interchange_injections import path for CAISO, and keeps the ISO's
+    # measured interchange out of CAISO demand (no double count). DOF ledger:
+    # every West-fleet parameter is a MEASURED input (EIA-930 balance,
+    # EIA-860-West nameplate, the measured WECC intertie hub LMP, COAL_PRICE_BASE,
+    # HEAT_RATE_BINS / VOM constants) — 0 fitted params, nothing new enters
+    # run_config.json but this bool. Forward story: the West demand + renewable
+    # availability regenerate for a forward year from forward West solar/load
+    # drivers exactly like CAISO's own; the thermal caps/HRs and the delivered
+    # hub price are the published fleet + the forward-native corridor reference
+    # price. Default off (byte-identical — the flag is in
+    # _CACHE_KEY_OPTIONAL_FIELDS so an off run keeps its cache key); CAISO-only.
     caiso_storage_as_reservation: bool = False  # Reserve the MEASURED hourly
     # CAISO battery AS-award MW out of the battery fleet's dispatch headroom
     # (caiso-74; FINDING-caiso72 STEP-0 channel #1 / FINDING-caiso73 live lead
