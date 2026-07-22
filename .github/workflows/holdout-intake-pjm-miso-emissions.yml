@@ -60,14 +60,29 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
-      - name: Curate 2022 emissions-unit-annual (holdout-authorized)
-        run: uv run python scripts/data/curate_emissions_unit_annual.py --years 2022 --holdout-intake PJM
+      # Curate is memory-bound in the number of state extracts it loads at once
+      # (it concatenates every state's hourly frame before the per-unit rollup).
+      # Curating ALL ~50 states blew the runner (run 2). Restrict each pass to
+      # the target ISO's own states — that is all derive needs (it filters by
+      # state), and it keeps peak memory to one ISO's fleet. The two passes run
+      # sequentially; the second curate overwrites the ephemeral 2022 clean
+      # partition, but PJM's rows are already merged into the artifact by then,
+      # and derive's byte-frozen guard preserves them across the MISO merge.
+      - name: PJM 2022 — curate its states, derive + merge (rows frozen)
+        run: |
+          set -euo pipefail
+          PJM_STATES=$(uv run python -c "from market_sim.data import campd; print(' '.join(sorted(campd.states_for_iso('PJM'))))")
+          echo "PJM states: $PJM_STATES"
+          uv run python scripts/data/curate_emissions_unit_annual.py --years 2022 --holdout-intake PJM --states $PJM_STATES
+          uv run python scripts/data/derive_plant_emissions_v2.py --iso PJM --years 2022 --holdout-intake PJM
 
-      - name: Derive PJM 2022 rows (merge into artifact, pre-existing rows frozen)
-        run: uv run python scripts/data/derive_plant_emissions_v2.py --iso PJM --years 2022 --holdout-intake PJM
-
-      - name: Derive MISO 2022 rows (merge into artifact, pre-existing rows frozen)
-        run: uv run python scripts/data/derive_plant_emissions_v2.py --iso MISO --years 2022 --holdout-intake MISO
+      - name: MISO 2022 — curate its states, derive + merge (rows frozen)
+        run: |
+          set -euo pipefail
+          MISO_STATES=$(uv run python -c "from market_sim.data import campd; print(' '.join(sorted(campd.states_for_iso('MISO'))))")
+          echo "MISO states: $MISO_STATES"
+          uv run python scripts/data/curate_emissions_unit_annual.py --years 2022 --holdout-intake MISO --states $MISO_STATES
+          uv run python scripts/data/derive_plant_emissions_v2.py --iso MISO --years 2022 --holdout-intake MISO
 
       - name: Summarize new rows
         run: |
