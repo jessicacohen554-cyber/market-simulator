@@ -2096,6 +2096,7 @@ def write_run_config(
                 "ercot_dam_as_scarcity_threshold",
                 "temp_dependent_derate",
                 "nyiso_dynamic_reserve_requirements",
+                "nyiso_hydro_reserve_eligible",
                 "git_sha",
             )
         },
@@ -2711,6 +2712,7 @@ def solve_and_persist(
     nyiso_synchronised_reserve: bool | None = None,
     nyiso_spin_headroom_frac: float | None = None,
     nyiso_dynamic_reserve_requirements: bool | None = None,
+    nyiso_hydro_reserve_eligible: bool | None = None,
     neiso_dynamic_reserve_requirements: bool | None = None,
     miso_firm_imports: bool | None = None,
     miso_seam_flow_limit: bool = False,
@@ -3485,6 +3487,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_dynamic_reserve_requirements=nyiso_dynamic_reserve_requirements
             )
+        if nyiso_hydro_reserve_eligible is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_hydro_reserve_eligible=nyiso_hydro_reserve_eligible
+            )
         if neiso_dynamic_reserve_requirements is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 neiso_dynamic_reserve_requirements=neiso_dynamic_reserve_requirements
@@ -3945,6 +3951,7 @@ def solve_and_persist(
             nyiso_synchronised_reserve=nyiso_synchronised_reserve,
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
             nyiso_dynamic_reserve_requirements=nyiso_dynamic_reserve_requirements,
+            nyiso_hydro_reserve_eligible=nyiso_hydro_reserve_eligible,
             neiso_dynamic_reserve_requirements=neiso_dynamic_reserve_requirements,
             miso_firm_imports=miso_firm_imports,
             miso_seam_flow_limit=miso_seam_flow_limit,
@@ -4426,6 +4433,7 @@ def solve_and_persist(
         "nyiso_synchronised_reserve": nyiso_synchronised_reserve,
         "nyiso_spin_headroom_frac": nyiso_spin_headroom_frac,
         "nyiso_dynamic_reserve_requirements": nyiso_dynamic_reserve_requirements,
+        "nyiso_hydro_reserve_eligible": nyiso_hydro_reserve_eligible,
         "neiso_dynamic_reserve_requirements": neiso_dynamic_reserve_requirements,
         "miso_firm_imports": miso_firm_imports,
         "miso_seam_flow_limit": miso_seam_flow_limit,
@@ -8827,6 +8835,22 @@ def main() -> None:
         "NYISO-only. Default (unset) keeps the base config value (off).",
     )
     parser.add_argument(
+        "--nyiso-hydro-reserve-eligible",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NYISO conventional-hydro reserve-SUPPLY eligibility (issue #1344, "
+        "lever 3): the in-fleet conventional hydro (~4.6 GW — NYPA "
+        "Niagara/St-Lawrence + Capital) joins the co-opt reserve-eligible set "
+        "alongside thermal in both the full (30-min) and quick-start (10-min) "
+        "classes, so it supplies the operating reserve the thermal+storage-only "
+        "co-opt lacks in tight summer hours (the East-10min/NYCA-30min ORDC "
+        "over-spike that over-prices 2023 under dynamic requirements). Held "
+        "reserve spends no water (budget bounds dispatched energy only); the "
+        "CAISO_HYDRO_RAMP10_FRAC hydro-reserve basis. A structural mechanism "
+        "(rule 1), not a residual tune. Requires --energy-reserve-coopt; "
+        "NYISO-only. Default (unset) keeps the base config value (off).",
+    )
+    parser.add_argument(
         "--neiso-dynamic-reserve-requirements",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -9543,6 +9567,7 @@ def main() -> None:
         nyiso_synchronised_reserve=args.nyiso_synchronised_reserve,
         nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,
         nyiso_dynamic_reserve_requirements=args.nyiso_dynamic_reserve_requirements,
+        nyiso_hydro_reserve_eligible=args.nyiso_hydro_reserve_eligible,
         neiso_dynamic_reserve_requirements=args.neiso_dynamic_reserve_requirements,
         miso_firm_imports=miso_firm_imports,
         miso_seam_flow_limit=args.miso_seam_flow_limit,
