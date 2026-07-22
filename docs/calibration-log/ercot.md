@@ -385,3 +385,79 @@ environment to assemble); this log entry is the durable record until then. Also 
 for the owner: pre-existing registry/payload parity failures on `2026-07-13-nyiso-64`
 and `2026-07-21-nyiso-69-dr-reserve` (sidecars with no `runs/<id>.js` payload → invisible
 in the Run Explorer; the latter is the NYISO keeper).
+
+## 2026-07-22 — ERCOT-96 (Lane A of the ERCOT-95 hand-off, measured-grain build round): the class-day-FLAT DAM availability overlay is refined to class-HOUR grain — the measured afternoon phantom (+216 MW mean on the 181 actual 2023 tail hours) removed at its own grain; every 2023 gate moves the right way (C3c 40→51 h, C3a −32.5%→−27.8%, NRMSE 0.631→0.539, summer hod-corr 0.885→0.908, C7/C8 PASS), LOYO clean; full-span candidate `2026-07-22-ercot96-dam-hourly-grain` registered NOT-YET (2024/2025 tail rows unledgered); keeper UNCHANGED (ercot91) pending owner adjudication
+
+**Charter.** Close the 2023-summer C3c miss on its MEASURED owner (ERCOT-95 Finding 6): the
+`ercot_thermal_dam_availability` overlay collapses the per-resource×per-hour 60-Day DAM
+disclosure to `(date, class)` and applies a flat 24-h block, discarding the hourly
+ambient-derate shape and the per-plant concentration. NOT the reserve-side ORDC lane
+(ERCOT-95 refuted it three ways).
+
+**A-1 MEASURE (solve-free, `scripts/probes/_ercot96_phantom_measure.py`).** On the 181
+actual 2023 RT tail hours (56 days; 169/181 in hod 13-19; PRC median 5,648 / min 2,697 MW):
+hod-shape phantom (day-mean − hour, CC+CT, under the derive's own rating-clip semantics —
+the model-relevant measure; Finding 6's +668/+1,147 were unclipped raw) = **+216 MW mean,
++433 p90, +578 max**; per-plant misallocation a class-grain overlay cannot place = 259 MW
+mean — but it is net-zero REDISTRIBUTION (merit-mix/zonal placement, not tightness), spread
+wide (top-10 sites = 25% of the 6.7 GW mean tail-hour derate). ST_GAS tail-hour phantom ≈ 0.
+
+**A-2 BUILD (zero fitted parameters).** `ercot_thermal_dam_availability_hourly`
+(ScenarioConfig, default off; ERCOT+backcast, refines the armed day mechanism — rule 19 one
+mechanism, finer grain): derive extended to emit `--hourly-out`
+`data/raw/ercot-thermal-dam-availability-hourly.csv` (per-HE class fraction from the SAME
+site-hour intermediate; day CSV byte-identical under the refactor; per-HE present-site
+denominator so DST/partial coverage cannot bias; uncovered HE → NaN → statistical stack,
+hour by hour), loader `outages.ercot_thermal_dam_availability_hourly_series`, and the fleet
+water-fill applied per HOUR (restore a′=a+λ(1−a), remove a′=a·(t/cur) — cap-weighted
+class-hour mean lands exactly on the measured fraction). Rules 13/23: same measured source,
+finer grain/schema; nothing touched a residual. Plant×hour deferred: no DAM-site→EIA-plant
+crosswalk exists (~290 mnemonic sites — DDPEC/CBECII/WHCCS2…), the measured per-plant
+residual is redistribution-only, and an unreviewed auto-map risks silently corrupting a
+plant's availability (CAISO reviewed-crosswalk pattern is the follow-up, ERCOT-97).
+
+**A-3 A/B (2023 rule-16 throwaways, never registered).** Base = byte-recipe ercot91 replay
+on the 4ff3118 tip tree — reproduces the keeper's committed 2023 EXACTLY (tail 40 h, mean
+$36.94), so tree drift since b8cada7 is solve-neutral and the A/B reads against the keeper
+itself. Probe (+hourly grain): C3c tail 40→51 h (in-actual 38→46; 5 spurious, ALL Jun-18/19
+near-misses on the known June over-formation days, 3 of 5 within 1-2 h of an actual tail
+hour), C3a mean-px gap −26.0%→−22.1%, Aug afternoon mean 271→327, summer hod-profile corr
+0.885→0.908, trough (hod 0-8) untouched — the overnight restore is non-binding, exactly the
+C7 risk that did not materialize. CC_REGULAR −22 GWh (the phantom), ST_GAS +24 GWh backfill.
+
+**Full span + LOYO.** `2026-07-22-ercot96-dam-hourly-grain` (2023 byte-reused from the
+probe, recorded in meta.reuse; 2024/2025 fresh): 2024 tail 13→13, C3a −7.3%→−6.6%; 2025
+tail 1→0 — the removed hour was SPURIOUS (correctly absent now), C3a −4.5%→−4.8%
+(negligible). Zero fitted parameters → LOYO reduces to no-held-out-degradation: clean.
+Verdict on the registered artifacts: C1 16/16, C2/C4/C5a/C6 PASS, **C7 PASS, C8 PASS**,
+C3a/C3b ledgered CAVEATs (magnitudes improved), C3c 2023 CAVEAT (0.28×) + 2024/2025 FAIL
+(unledgered) → **NOT-YET**, driver unchanged in kind, reduced in size.
+
+**Where this leaves C3c.** The measured phantom was 0.2-0.6 GW against afternoon slack
+measured in GW; the grain fix recovered what the measurement said it owed (+11 h, +8
+in-actual). The remaining ~130-h miss is the chartered supply-mix/conduct frontier:
+plant-grain crosswalk (concentration + zonal placement), measured RUC held-out capacity
+(SCED telemetered `ONRUC` status — corpus already in-repo), West/Panhandle split (own
+charter), and Lane B (published seasonal ORDC LOLP table into the co-opt curve —
+correctness item, ~28 h on the measured envelope; deliberately NOT probed this session,
+moved to ERCOT-97 by owner direction). If ERCOT-97 exhausts these without band entry, the
+disposition designed by ERCOT-95 stands: LEDGER C3c 2024/2025 (3/3 MAX_LEDGERED_CAVEATS →
+CALIBRATED-WITH-CAVEATS via `calibration_verdict.determine`) — owner sign-off, never
+unilateral.
+
+**Transport (rule 27).** git push 413s in this environment; the 7-file core change shipped
+as ONE atomic verified patch (`docs/handoffs/ercot96-lane-a-core.patch`, blob 8c9331f3 —
+the per-blob verification caught and fixed two real transcription defects this session) +
+manifest (`docs/handoffs/ercot96-thermal-dam-grain-2026-07.md`). The 1.48 MB runs payload +
+bundle hourly parquets + the 594 KB hourly CSV cannot transit a model response; delivered
+to the owner as a placement tar.gz (sha256-manifested) via the session file channel.
+Keeper UNCHANGED (ercot91); promotion + C3c ledgering are the owner's calls.
+
+**Addendum (2026-07-22, same session) — OWNER-PROMOTED to keeper.** Owner directive
+"Promote this to keeper": `2026-07-22-ercot96-dam-hourly-grain` is the ERCOT keeper,
+superseding `2026-07-20-ercot91-seasonal-drag-fullspan`. Attestation updated
+(OWNER-PROMOTED), `keepers/ERCOT.json` re-pointed, `status/ERCOT.js` rebuilt
+[ERCOT:NOT-YET], `audit_keepers.py --iso ERCOT` PASS (0 failures). C3c ledgering
+was NOT taken with this promotion — determination stays NOT-YET on the unledgered
+2024/2025 tail rows; that remains a separate owner action (with the ERCOT-97 lanes
+as the alternative close-out). ERCOT-97 baselines on THIS keeper.
