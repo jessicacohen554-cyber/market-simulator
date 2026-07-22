@@ -100,10 +100,11 @@ trough untouched. Full span `2026-07-22-ercot96-dam-hourly-grain`: 2024 tail
 13→13 (C3a −7.3%→−6.6%), 2025 tail 1→0 (removed hour was spurious). Verdict:
 C7 PASS, C8 PASS, C3a −27.8% / C3b NRMSE 0.539 ledgered CAVEATs (improved
 from −32.5% / 0.631), C3c NOT-YET driver (2024/2025 unledgered). LOYO clean
-(zero fitted parameters). Keeper UNCHANGED (ercot91) — promotion + C3c
-ledgering are owner calls. Lane B moved to ERCOT-97 by owner direction
-(2026-07-22, this session), joined by the plant-grain crosswalk and the
-measured RUC-conduct lanes — see
+(zero fitted parameters). **OWNER-PROMOTED to ERCOT keeper 2026-07-22**
+(directive this session: 'Promote this to keeper'; supersedes ercot91;
+C3c ledgering NOT taken — a separate owner action). Lane B moved to ERCOT-97
+by owner direction (2026-07-22, this session), joined by the plant-grain
+crosswalk and the measured RUC-conduct lanes — see
 `docs/handoffs/ercot97-plant-grain-ruc-laneb-2026-07.md`.
 
 Full log entry: `docs/calibration-log/ercot.md` § 2026-07-22 — ERCOT-96.
@@ -111,11 +112,14 @@ Full log entry: `docs/calibration-log/ercot.md` § 2026-07-22 — ERCOT-96.
 ## Oversized-artifact placement (owner step)
 
 The registered run's `runs/<id>.js` payload (1.48 MB), the bundle's hourly
-parquets + slims, the appended `docs/calibration-log/ercot.md`, the registry
-SIDECAR (pulled back off the branch so it lands atomically WITH the payload —
-the calibration-report hard rule), and the hourly CSV travel to the owner as
-`ercot96-oversized-artifacts.tar.gz` (sha256
-`f867dffa1649e51e0f4138f15c615f3f0dd576f2fda83c84c764d8b7b06e7ea1`) via the
-session file channel, with `PLACEMENT-MANIFEST.md` carrying per-file git blob
-SHAs and the one-command placement. Until that tar is extracted + pushed, the
-run is registered in-session but INVISIBLE on the live dashboard.
+parquets + slims (attestation now OWNER-PROMOTED), the appended
+`docs/calibration-log/ercot.md`, the registry SIDECAR with its keeper
+`market_story` (held off the branch so it lands atomically WITH the payload —
+the calibration-report hard rule), the promotion files (`keepers/ERCOT.json`
+re-pointed + rebuilt `status/ERCOT.js`, `audit_keepers.py --iso ERCOT` PASS),
+and the hourly CSV travel to the owner as `ercot96-oversized-artifacts.tar.gz`
+via the session file channel; the accompanying `PLACEMENT-MANIFEST.md` +
+`tar.sha256` carry the authoritative archive sha256 and per-file git blob
+SHAs with the one-command placement. Until that tar is extracted + pushed,
+the run (and the keeper promotion) is registered in-session but INVISIBLE on
+the live dashboard.
