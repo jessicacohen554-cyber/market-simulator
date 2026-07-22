@@ -128,6 +128,44 @@ cleared. That is the chartered supply-mix depth (ERCOT-66 storage dead-end,
 West/Panhandle topology charter, the CAMPD-invisible partial-derate tail) — none
 of it reserve-side.
 
+## Finding 6 — the DAM outage data IS used, but the class-day-flat GRAIN leaves ~0.7-1.1 GW phantom on summer afternoons
+
+Outages ARE sourced from ERCOT DAM: `ercot_thermal_dam_availability=True`
+(keeper) reads `data/raw/ercot-thermal-dam-availability.csv`, derived by
+`scripts/derive_ercot_thermal_dam_availability.py` from the 60-Day DAM
+disclosure live-HSL/rating. **But the derive collapses it to `(date, class,
+avail)` — one daily number per class (CC_REGULAR, CT_PEAKER only)** — and
+`fleet.py:1914` applies it as a **flat 24-hour block** rescaling the class-day
+MEAN availability. The underlying disclosure (`60_DAY_DAM_..._Gen_Resource_Data`)
+is per-resource × per-hour (`Resource Name, Hour Ending 1-24, HSL, LSL`;
+RESTYPE_TO_CLASS: CCGT90/CCLE90→CC_REGULAR, SCGT90/SCLE90→CT_PEAKER). So the
+overlay discards the two dimensions that own the summer tail: the **hourly**
+ambient-derate shape and the **per-plant** outage concentration.
+
+Measure-first, solve-free (the hourly DAM HSL, 2023 Jun-Sep). The flat overlay
+gives the model `day_mean_HSL` every hour; reality's afternoon HSL is lower, so
+phantom(h) = `day_mean_HSL − HSL(h)`:
+
+| hour-of-day | phantom CC+CT (MW) |
+|---|---|
+| overnight 0-6 | −240 to −1,015 (model under-credits) |
+| afternoon 13-19 | **+668 avg, +805 at hod 15** |
+| tightest single days | **up to +1,147 MW** |
+
+A textbook ambient-derate sinusoid (real HSL highest overnight, lowest hod
+15-17). The overlay hands the model **~0.7 GW average (up to ~1.1 GW on the
+tightest afternoons) of phantom CC+CT capacity** in exactly the hod 13-19 window
+where the 143 missing tail hours sit — a direct, measured cause of "model
+reserves stay loose → prices ~$56 instead of scarcity." This is the hourly-shape
+component only; the per-plant-smearing component (a class-mean hides Hidalgo-type
+concentrated outages) is additive and needs unit grain.
+
+**The rule-13 fix (Lane A owner):** re-derive `ercot-thermal-dam-availability` at
+**plant×hour** (or at minimum class×hour) grain from the SAME 60-Day DAM Gen
+Resource Data, so the afternoon dip and concentrated outages survive into the LP
+generator bounds. Same measured source, finer resolution — not a new parameter,
+not a price fit.
+
 ## Disposition
 
 1. **Close the reserve-side lane.** The ERCOT-95 reserve-side / ORDC-LOLP
@@ -138,14 +176,13 @@ of it reserve-side.
    seasonal LOLP table into the co-opt curve (Finding 4). Adopt only if C7 /
    zero-spurious hold — a rule-11 measured-over-synthetic improvement, not a
    scarcity fix.
-3. **C3c disposition:** it is a *supporting*-tier criterion; its miss is the
-   documented supply-mix / CAMPD-blindness limitation, exhaustively adjudicated
-   and with its named owner already deployed. Recommend **ledgering C3c as a
-   documented measured-input caveat** (with C3a/C3b already ledgered, that is 3/3
-   of `MAX_LEDGERED_CAVEATS`), which flips the determination NOT-YET →
-   CALIBRATED-WITH-CAVEATS via `calibration_verdict.determine`. Owner sign-off
-   required (governance action). The alternative is to keep it as the open
-   chartered supply-mix lane (ERCOT-70 successor), unchanged.
+3. **The real C3c owner (Lane A, Finding 6):** re-derive the DAM thermal
+   availability at plant×hour grain so the ~0.7-1.1 GW afternoon phantom is
+   removed; measure-first sizes it but the close is a solve. If Lane A is
+   exhausted without closing C3c, LEDGER it as a documented supply-mix caveat
+   (supporting-tier; with C3a/C3b that is 3/3 of `MAX_LEDGERED_CAVEATS`) →
+   flips NOT-YET → CALIBRATED-WITH-CAVEATS via `calibration_verdict.determine`.
+   Owner sign-off required (governance action).
 
 ## Data-integrity carry-over (from ERCOT-94, unresolved)
 
