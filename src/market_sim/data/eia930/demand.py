@@ -392,6 +392,58 @@ def _load_nyiso_hourly_demand(year: int) -> np.ndarray | None:
     return demand
 
 
+# Multiple of the annual median above which an hourly demand reading is treated
+# as a metering artifact rather than a real system peak. The EIA-930 wide
+# extracts carry sentinel / integer-overflow spikes in some pre-2022
+# out-of-sample years (PJM 2019 417,669 MW ~ 4.7x median; 2021 2,147,483,648 ~
+# 2^31 overflow; 2020 five sub-300 GW hours) -- none within 2x of a genuine
+# system peak. 2.5x clears every real 2023-2025 training-year peak untouched
+# (max observed ratio ~ 1.7x), so the screen is a byte-identical no-op on the
+# tuned years; only physically-impossible readings are repaired.
+_DEMAND_SPIKE_THRESHOLD: float = 2.5
+
+
+def _screen_demand_spikes(demand: np.ndarray, *, ba_code: str, year: int) -> np.ndarray:
+    """Repair physically-impossible spikes in an hourly demand series.
+
+    Hours whose demand exceeds :data:`_DEMAND_SPIKE_THRESHOLD` * the annual
+    median are metering artifacts (sentinels, integer overflow, unit slips) in
+    the raw EIA-930 wide extract, not real load -- no ISO's demand more than
+    doubles the yearly median for an isolated hour. Each flagged hour is dropped
+    and linearly interpolated from its neighbours (end hours held from the
+    nearest valid value), the same repair the loaders apply to missing meter
+    hours. The annual median is robust to the handful of spike hours, so it is
+    computed on the raw series without a bootstrap.
+
+    A no-op on any year whose peak stays under the threshold -- every 2023-2025
+    training year does, so the screen never perturbs a keeper (rule 22). Returns
+    the array unchanged (same object) when nothing is flagged.
+    """
+    finite = demand[np.isfinite(demand)]
+    if finite.size == 0:
+        return demand
+    median = float(np.median(finite))
+    if median <= 0.0:
+        return demand
+    spike = np.isfinite(demand) & (demand > _DEMAND_SPIKE_THRESHOLD * median)
+    n_spike = int(spike.sum())
+    if n_spike == 0:
+        return demand
+    logger.warning(
+        "%s %d: repairing %d demand-spike hour(s) > %.1fx median (%.0f MW); "
+        "max raw %.0f MW -- EIA-930 metering artifact(s)",
+        ba_code,
+        year,
+        n_spike,
+        _DEMAND_SPIKE_THRESHOLD,
+        median,
+        float(np.nanmax(demand)),
+    )
+    repaired = demand.copy()
+    repaired[spike] = np.nan
+    return pd.Series(repaired).interpolate().bfill().ffill().to_numpy(dtype=float)
+
+
 def _load_neiso_hourly_demand(year: int) -> np.ndarray | None:
     """Return NEISO hourly metered demand (MW) for a year, or ``None``.
 
@@ -415,7 +467,7 @@ def _load_neiso_hourly_demand(year: int) -> np.ndarray | None:
     demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
     if np.isnan(demand).any():
         return None
-    return demand
+    return _screen_demand_spikes(demand, ba_code="ISNE", year=year)
 
 
 def _load_miso_hourly_demand(year: int) -> np.ndarray | None:
@@ -445,7 +497,7 @@ def _load_miso_hourly_demand(year: int) -> np.ndarray | None:
     demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
     if np.isnan(demand).any():
         return None
-    return demand
+    return _screen_demand_spikes(demand, ba_code="MISO", year=year)
 
 
 def _load_pjm_hourly_demand(year: int) -> np.ndarray | None:
@@ -487,7 +539,7 @@ def _load_pjm_hourly_demand(year: int) -> np.ndarray | None:
     demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
     if np.isnan(demand).any():
         return None
-    return demand
+    return _screen_demand_spikes(demand, ba_code="PJM", year=year)
 
 
 def _ercot_demand_source(
