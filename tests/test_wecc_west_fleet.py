@@ -10,7 +10,9 @@ import pytest
 from market_sim.data.wecc_west_fleet import (
     WECC_WEST_ZONE,
     build_wecc_west_fleet,
+    build_wecc_west_thermal_mc,
     is_wecc_west_unit,
+    west_delivered_hub_blend,
 )
 
 pytestmark = pytest.mark.skipif(
@@ -77,3 +79,42 @@ def test_supply_covers_demand_every_hour():
         f"West infeasible in {(supply < demand).sum()} hours "
         f"(worst shortfall {(demand - supply).max():.0f} MW)"
     )
+
+
+# --- caiso-114: measured-hub West-thermal re-pricing (THE caiso-110 fix) ---
+
+
+def test_hub_blend_shape_and_finite():
+    # The tie-weighted delivered West hub is a full-year finite series (the
+    # 2023 Jan-Feb OASIS gap is reference-filled inside measured_import_hub_prices).
+    blend = west_delivered_hub_blend(2024, 8760)
+    assert blend is not None
+    assert blend.shape == (8760,)
+    assert np.isfinite(blend).all()
+    # Mean sits in the measured desert-SW / PNW blended range (~$30-45), well
+    # ABOVE bare Henry-Hub gas MC (~$18-20) — the whole point of the re-pricing.
+    assert 20.0 < np.mean(blend) < 60.0
+
+
+def test_thermal_mc_reprices_gas_above_henry_hub():
+    # The override raises the West GAS units well above their bare Henry-Hub vom
+    # (the flood fix): mean gas_cc offer clears the diagnostic's ~$30-56 target.
+    hh, carbon = 2.5, 35.2
+    mc = build_wecc_west_thermal_mc(2024, hh, carbon, 8760)
+    assert set(mc) == {"WECCW_gas_cc", "WECCW_gas_ct"}  # coal NOT overridden
+    cc, ct = mc["WECCW_gas_cc"], mc["WECCW_gas_ct"]
+    assert cc.shape == (8760,) and ct.shape == (8760,)
+    assert np.isfinite(cc).all() and np.isfinite(ct).all()
+    # gas_ct (higher HR + higher import EF) stays above gas_cc every hour.
+    assert (ct >= cc).all()
+    # Mean gas_cc offer is materially above the bare Henry-Hub gas_cc MC.
+    from market_sim.data.wecc_west_fleet import _thermal_mc
+
+    assert np.mean(cc) > _thermal_mc("gas_cc", hh) + 15.0
+    # Hour-varying (belly low, evening/scarcity high) — not a flat scalar.
+    assert np.std(cc) > 5.0
+
+
+def test_thermal_mc_empty_when_hub_missing():
+    # A year with no measured intertie parquet -> empty dict (caller keeps vom).
+    assert build_wecc_west_thermal_mc(1999, 2.5, 30.0, 8760) == {}
