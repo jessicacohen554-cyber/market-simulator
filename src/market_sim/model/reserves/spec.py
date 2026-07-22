@@ -2353,6 +2353,19 @@ def _nyiso_design(
 
     full_elig = _reserve_eligible(fleet_arrays)
     quick_elig = _quick_start_eligible(fleet_arrays)
+    if bool(getattr(config, "nyiso_hydro_reserve_eligible", False)):
+        # Lever 3 (issue #1344): NYISO conventional hydro supplies operating
+        # reserve. Union hydro into BOTH the full (30-min) and quick-start
+        # (10-min) eligibility classes — hydro governors deliver full headroom
+        # inside the 10-minute window (the CAISO_HYDRO_RAMP10_FRAC basis in
+        # _caiso_reserve_eligible; NYPA Niagara/St-Lawrence + Capital hydro are
+        # certified NYISO reserve providers). Held reserve spends no water — the
+        # monthly energy budget bounds only dispatched energy, so budget and
+        # reserve headroom compose correctly. Config-gated (default off).
+        fuel_names = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
+        hydro_mask = fuel_names == "hydro"
+        full_elig = full_elig | hydro_mask
+        quick_elig = quick_elig | hydro_mask
     if synch and not commit_gated:
         eligible = np.vstack([full_elig, quick_elig, quick_elig])
         online_gated = np.array([False, False, True], dtype=bool)
