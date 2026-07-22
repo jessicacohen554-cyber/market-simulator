@@ -1,0 +1,16 @@
+{
+  "id": "2026-07-22-ercot96-dam-hourly-grain",
+  "label": "ercot96 dam hourly grain",
+  "date": "2026-07-22",
+  "shorthand": "ercot96-dam-hourly-grain",
+  "definition": "ERCOT-96 candidate: ercot91 keeper recipe + ercot_thermal_dam_availability_hourly (class-HOUR DAM availability grain, rule-13 measured re-derive at finer grain, zero fitted parameters), full 2023-2025 span in one bundle (rule 16). 2023 byte-reused from the ercot96_hourly2023_probe A/B (same recipe).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-22-ercot96-dam-hourly-grain.js",
+  "bundle": "results/calibration/ercot96_hourly_grain_fullspan",
+  "market_story": "CC_REGULAR: real combined-cycle capability ambient-derates through summer afternoons \u2014 the 60-Day DAM live HSL dips ~0.7% below its own day mean exactly in hod 13-19 \u2014 so the market clears those hours on measurably less CC than a day-flat availability credits; the class-HOUR grain removes that phantom (\u221222 GWh, \u221264 MW mean on the 181 actual tail hours) and the afternoon supply curve climbs into the $60-100+ belt reality priced. CT_PEAKER: the same ambient physics on the peaker fleet (\u221218 MW mean tail); overnight both classes gain back the real above-day-mean capability the flat block withheld, which the market never prices (non-binding \u2014 trough unchanged, the C7 guard). ST_GAS: with honest CC/CT afternoon capability the steam fleet backfills +24 GWh at its drag-floored positions \u2014 the same committed-steam conduct the ercot91 seasonal drag already carries. Zero fitted parameters: the only change is the measured grain of an already-deployed published input."
+}
