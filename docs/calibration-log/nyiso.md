@@ -107,3 +107,59 @@ Scorecard (nyiso-68): C1 PASS · C2 PASS · **C3a FAIL (2023 +17.8%)** · **C3b 
 PASS · C7 shape PASS · C8 forced-share PASS. Also registered the isolation probe
 `2026-07-21-nyiso-67-outage-resync` (corrected outages, NO DR) which shows the outage lever
 alone closes C1 and exposes the same 2023 reserve tail.
+
+## 2026-07-22 — lever 3 step 1: conventional-hydro reserve-supply eligibility (correct, marginal, insufficient); outage-source determination (keep CAMPD)
+
+Two deliverables this session; nyiso-68 stays the keeper.
+
+**Outage source — determination, no change.** Checked whether NYISO publishes a
+native DAM/outage instrument to replace the CAMPD/CEMS proxy (the CAISO/PJM/MISO
+pattern — `fetch_caiso_dam_outages.py` etc.). It does **not**: NYISO keeps
+unit-level generator outages **confidential**, its DAM bid/award data is
+**masked** (no unit identities), and the only public generator-outage product is
+a non-archived system-aggregate forecast (MIS P-15). CAMPD/CEMS + NERC GADS + EIA
++ NRC remains the correct and only public stack. Recorded in
+`docs/handoffs/nyiso-outage-source-determination-2026-07.md`.
+
+**Confirmed the nyiso-68 baseline.** nyiso-68 already runs
+`nyiso_dynamic_reserve_requirements=True` + SCR/EDRP + corrected outages (the
+2026-07-10 Ask-B plan was executed by the 2026-07-21 session, not a pending
+step). Its sole load-bearing miss is 2023 C3 (mean +17.1% by the demand-wt DA
+recompute here, matching the logged +17.8%); 2024/2025 C3a/b/c all PASS. The
+2023 tail is downstate, summer, reserve-price-driven — the co-opt's reserve
+**supply** is thermal+storage-only.
+
+**Lever 3 step 1 — hydro reserve-supply eligibility (nyiso-69, CANDIDATE).**
+Added `nyiso_hydro_reserve_eligible` (GATED, default-off): NYISO's in-fleet
+conventional hydro (154 units, ~4.6 GW — Capital_Hudson 554 MW East, Upstate_West
+4,093 MW NYCA; no downstate hydro) joins the co-opt reserve-eligible set in both
+the full (30-min) and quick-start (10-min) classes, the CAISO
+`_caiso_reserve_eligible` precedent (NYPA Niagara/St-Lawrence + Capital hydro are
+certified NYISO reserve providers; held reserve spends no water — the monthly
+energy budget bounds only dispatched energy). A/B replay of the nyiso-68 recipe:
+
+| year | C3a %err (68→69) | C3b NRMSE | C1 fuel-mix |
+|---|---|---|---|
+| 2023 | +17.1% → **+16.4%** | 0.630 → 0.632 | unchanged (PASS) |
+| 2024 | +0.5% → **−0.0%** | 0.498 → 0.502 | unchanged (PASS) |
+| 2025 | +6.4% → **+6.1%** | 0.359 → 0.353 | unchanged (PASS) |
+
+Structurally correct (rule 1) and nudges every over-priced year toward actual
+with **no fit regression** (dispatch essentially identical — ST_GAS −63 GWh /
+CC +35 GWh in 2023, <0.1% of load), but the effect is **marginal** and the
+determination stays **NOT-YET**: the hydro I made eligible sits in East/NYCA,
+whereas the dominant 2023 residual is the **downstate SENY/NYC-30min** reserve
+tail, which has no hydro. This closes the "East-10min" half of the named gap
+(nyiso-68 root cause) but not the SENY-30min half. Registered
+`2026-07-22-nyiso-69-hydro-reserve` as a candidate (kept default-off + nyiso-68
+as keeper — a marginal, verdict-unchanged gain is better staged than promoted
+into keeper churn; the flag is validated-correct and stays for the combined run).
+
+**Named step 2 (the dominant 2023 lever):** SCR/EDRP 30-min operating-reserve
+**supply** eligibility — the downstate DR already in the fleet (nyiso_scr_edrp,
+$500 strike, energy-only today) made eligible for the SENY/NYC-30min reserve
+families it can actually locate into. Then re-solve hydro+DR reserve together and
+re-gate 2023 (leave-one-year-out within 2023–2025 before promoting a combined
+keeper). Blenheim-Gilboa PS (Capital → East-10min, prime-mover PS, excluded from
+`build_hydro_fleet`) is the remaining East-side piece, lower priority than the
+SENY-30min DR lever.
