@@ -1,0 +1,16 @@
+# Regenerable backcast dashboard bundles — do not track.
+# Added by the repo clone-bloat audit, 2026-07-22
+# (docs/handoffs/repo-clone-bloat-audit-2026-07.md). The Deploy-Pages workflow
+# runs with permissions: contents:read and assembles these three files into the
+# _site artifact from the committed registry/<id>.json + bench/ sidecars at
+# deploy time (`scripts/build_manifest.py --site-dir _site`); it never commits
+# them back to main. The tracked copies were pure derived-file churn
+# (benchmark.js is ~0.6 MB, re-written on every dashboard change) and a
+# concurrent-session merge hazard. A local file:// preview refreshes them with
+# `python3 scripts/build_manifest.py`. This SUPERSEDES the now-stale "These ARE
+# committed / the Deploy workflow is the single writer" note in the root
+# .gitignore. The registry/, runs/<id>.js and bench/ keeper sidecars these are
+# built FROM stay tracked — those are the committed deliverables.
+manifest.js
+benchmark.js
+completeness.js

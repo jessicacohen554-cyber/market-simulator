@@ -1,0 +1,9 @@
+# Push-staging scaffolding must never be tracked.
+# Added by the repo clone-bloat audit, 2026-07-22
+# (docs/handoffs/repo-clone-bloat-audit-2026-07.md). scripts/_rule27_push_staging/
+# held a base64-chunked tar.gz of oversized source files staged for a push that
+# git push (413) / a single push_files call could not carry; the five staged
+# files were assembled onto main long ago, so the chunks are orphaned clutter.
+# Ignore the whole convention so it can never recur.
+_rule27_push_staging/
+*_push_staging/
