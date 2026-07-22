@@ -302,3 +302,20 @@ docs/handoffs/_battery_metrics/
 # carry meta.per_year_perf for FF-3E).
 /results/ces-poc/
 /scratchpad-local/
+
+# -----------------------------------------------------------------------------
+# 11. Push-staging scaffolding & stray probes (repo-clone-bloat-fix 2026-07).
+#     One-off relay workarounds and scratch binaries must never re-enter the
+#     pack — they are the "manual upload / push-scaffolding" clutter that bloats
+#     the clone. Move real work onto its real path and push the bytes directly;
+#     never commit a base64-chunked archive or a *_push_staging/ tarball again.
+# -----------------------------------------------------------------------------
+scripts/_rule27_push_staging/
+**/_*_push_staging/
+**/_push_staging/
+*.tar.gz.b64.part*.txt
+# Stray binary / scratch probes dropped at the repo root or in-tree.
+/tmp_bin_probe.bin
+/*.bin
+tmp_*.bin
+*_probe.bin
