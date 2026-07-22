@@ -376,7 +376,6 @@ index 753b7b99..69c65b9d 100644
              _idx = np.array(
                  [gi for gi, g in enumerate(generators) if g.plant_group == _cls],
                  dtype=int,
-@@ -1941,8 +2002,8 @@ def generators_to_fleet_arrays(
 diff --git a/src/market_sim/data/outages.py b/src/market_sim/data/outages.py
 index 517b933d..637bf554 100644
 --- a/src/market_sim/data/outages.py
