@@ -2366,6 +2366,31 @@ def _nyiso_design(
         hydro_mask = fuel_names == "hydro"
         full_elig = full_elig | hydro_mask
         quick_elig = quick_elig | hydro_mask
+    if bool(getattr(config, "nyiso_scr_edrp_reserve_eligible", False)):
+        # Lever 3 step 2 (issue #1344): NYISO SCR/EDRP demand response supplies
+        # 30-min operating reserve in the downstate (SENY) zones it locates into.
+        # Special Case Resources are NYISO-certified 30-minute operating-reserve
+        # providers (Ancillary Services Manual §4 / MST §15) — union the
+        # demand_response block into the FULL (30-min) class ONLY (never the
+        # 10-min quick-start class: SCR responds on a 30-min activation, it is not
+        # spinning), scoped to the downstate zones NYC + Long_Island +
+        # Lower_Hudson where the SENY/NYC 30-min locational families and the
+        # unclosed 2023 downstate tail live. The hydro union above is East/NYCA
+        # and cannot reach the SENY tail (no downstate hydro). Held reserve on a
+        # DR block is un-dispatched avoided-load capability — the per-zone
+        # reserve-headroom row (sum P + R <= cap) already trades it off against
+        # the block's $500 energy strike, so it prices the SENY-30 ORDC shadow
+        # without forcing energy. Config-gated (default off).
+        fuel_names_dr = np.array(
+            [FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx]
+        )
+        dr_mask = fuel_names_dr == "demand_response"
+        downstate = {"NYC", "Long_Island", "Lower_Hudson"}
+        downstate_idx = {i for i, z in enumerate(zone_names) if z in downstate}
+        gen_downstate = np.array(
+            [int(z) in downstate_idx for z in fleet_arrays.zone_idx], dtype=bool
+        )
+        full_elig = full_elig | (dr_mask & gen_downstate)
     if synch and not commit_gated:
         eligible = np.vstack([full_elig, quick_elig, quick_elig])
         online_gated = np.array([False, False, True], dtype=bool)

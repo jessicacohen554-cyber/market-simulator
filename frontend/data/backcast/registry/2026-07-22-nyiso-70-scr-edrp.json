@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-22-nyiso-70-scr-edrp",
+  "label": "nyiso 70 scr edrp reserve",
+  "date": "2026-07-22",
+  "shorthand": "nyiso-70-scr-edrp",
+  "definition": "nyiso-70 (CANDIDATE): nyiso-68 recipe + BOTH lever-3 reserve-supply unions on the energy+reserve co-opt — nyiso_hydro_reserve_eligible (step 1, conventional hydro into full 30-min + quick 10-min, East/NYCA) and the new nyiso_scr_edrp_reserve_eligible (step 2, the SENY tail): the downstate SCR/EDRP demand response already in the fleet ($500 strike, energy-only) is made eligible to SUPPLY the 30-min operating reserve, scoped to NYC + Long_Island + Lower_Hudson. SCR is a NYISO-certified 30-min operating-reserve provider (Ancillary Services Manual §4 / MST §15), so both unions are grounded market-design inputs (rule 1/13), ZERO new tunable (n_residual stays 5). The added downstate reserve headroom absorbs the SENY/NYC-30min ORDC over-spike that leaked into the 2023 LBMP: downstate reserve-shortage zone-hours collapse (2023 915->177, 2024 696->114, 2025 1215->255) and the >$300 downstate tail drops every year, while energy dispatch is essentially unchanged (|dTWh| < 0.09 per class, C1 fuel-mix PASS unchanged - reserve is held, not dispatched). Scorecard vs nyiso-68 (calibration_verdict RT-basis): C3b 2023 0.215->0.198 CLOSES (C3b now PASS all years); C3a 2023 +17.8%->+15.9% and C3c 2023 3.10x->2.20x both IMPROVE but stay just over the band; 2024/2025 hold every criterion (C3a 2024 +0.9%->-0.7%, 2025 +2.8%->+1.6%; LOYO holds - no cross-fold regression). Determination NOT-YET: the residual 2023 C3a mean-level gap (+15.9%) is NOT reserve-driven (the full reserve over-spike is only ~1.6% of the mean) - a broad 2023 energy-price level issue (offer curve / gas basis / import pricing) that is a separate lever. Registered as a candidate, kept default-off; nyiso-68 remains the keeper. Both flags are validated-correct and stay for that follow-up.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-22-nyiso-70-scr-edrp.js",
+  "bundle": "results/calibration/nyiso70_scr_edrp_reserve"
+}
