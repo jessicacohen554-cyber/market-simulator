@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-22-ercot96-dam-hourly-grain",
+  "label": "ercot96 dam hourly grain",
+  "date": "2026-07-22",
+  "shorthand": "ercot96-dam-hourly-grain",
+  "definition": "ERCOT-96 candidate: ercot91 keeper recipe + ercot_thermal_dam_availability_hourly (class-HOUR DAM availability grain, rule-13 measured re-derive at finer grain, zero fitted parameters), full 2023-2025 span in one bundle (rule 16). 2023 byte-reused from the ercot96_hourly2023_probe A/B (same recipe).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-22-ercot96-dam-hourly-grain.js",
+  "bundle": "results/calibration/ercot96_hourly_grain_fullspan"
+}
