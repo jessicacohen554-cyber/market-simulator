@@ -40,6 +40,15 @@ build/
 #    instead; scratch scripts belong in scripts/probes/, logs are transient.
 # -----------------------------------------------------------------------------
 /*.zip
+# Stray root-level data dumps belong under data/raw/, never the repo root — this
+# is how ~195 MB of *_LMP_GRP_* ERCOT/CAISO archives leaked in (see the clone-bloat
+# audit). Generalizes the /*.zip guard above; confirmed no legitimate root-level
+# file uses any of these types.
+/*.parquet
+/*.xlsx
+/*.csv
+/*.tar.gz
+/*.pkl
 /*.log
 /scratchpad_*.py
 /probe_run*.log
@@ -232,6 +241,7 @@ results/calibration/*/_shared/
 results/calibration/_shared/
 results/calibration/logs/
 # ISO-scoped (two-level) bundle internals — the single-* rules above miss them.
+results/calibration/*/*/model_changes.diff
 results/calibration/*/*/dispatch/
 results/calibration/*/*/floors/
 results/calibration/*/*/system.parquet
