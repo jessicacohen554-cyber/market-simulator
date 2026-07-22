@@ -35,18 +35,19 @@ grounding facts the ERCOT-96 session verified for each lane.
    co-opt curve center mu 0→~915, σ 1400→1343. Predicted ~28 tail hours on
    the measured envelope — a rule-11 correctness item, NOT a C3c closer.
 4. **Baseline for all A/Bs.** `2026-07-22-ercot96-dam-hourly-grain`
-   (candidate, NOT-YET, keeper still ercot91): 2023 tail 51/181 (0.28×), C3a
-   −27.8%, NRMSE 0.539, C7/C8 PASS. The byte-recipe base replay reproduces
-   the ercot91 keeper exactly on the 4ff3118 tip tree.
+   (the ERCOT KEEPER, owner-promoted 2026-07-22; NOT-YET on the unledgered
+   2024/2025 tail rows): 2023 tail 51/181 (0.28×), C3a −27.8%, NRMSE 0.539,
+   C7/C8 PASS. Its byte-recipe 2023 base replay reproduced the prior ercot91
+   keeper exactly on the 4ff3118 tip tree.
 
 ## The prompt (paste as the ERCOT-97 session charter)
 
 ```
 ERCOT-97: three lanes on the 2023-summer C3c frontier, in order — (A) PLANT-GRAIN
 crosswalk + plant×hour DAM availability, (B) MEASURED RUC-CONDUCT commitment state,
-(C) Lane B published ORDC LOLP table. Baseline everything on the ERCOT-96 candidate
-(2026-07-22-ercot96-dam-hourly-grain: 2023 tail 51/181 h, C3a -27.8%, C7/C8 PASS;
-keeper ercot91 unchanged) — NOT on stale main.
+(C) Lane B published ORDC LOLP table. Baseline everything on the ERCOT-96 KEEPER
+(2026-07-22-ercot96-dam-hourly-grain, OWNER-PROMOTED 2026-07-22, supersedes ercot91:
+2023 tail 51/181 h, C3a -27.8%, C7/C8 PASS) — NOT on stale main.
 
 READ FIRST (in order): CLAUDE.md in full (rule 26: this lane writes core infra →
 Opus/Fable ONLY). docs/handoffs/ercot97-plant-grain-ruc-laneb-2026-07.md (this
@@ -56,11 +57,13 @@ how). docs/handoffs/ercot95-scarcity-tail-diagnosis-2026-07.md (Findings 4-6).
 Use .venv/bin/python (bare python has no numpy).
 
 WHERE WE ARE
-- Keeper 2026-07-20-ercot91-seasonal-drag-fullspan, NOT-YET on C3c (2023 51 h vs RT
-  181 after ERCOT-96's hourly grain; 2024 13/53; 2025 0/31). C3a/C3b ledgered; C3c
-  2023 ledgered, 2024/2025 unledgered = the NOT-YET driver.
-- ERCOT-96 candidate carries the class-HOUR DAM availability grain (zero fitted
-  params, LOYO clean). Its bundle is the A/B base for every lane here; replay via
+- KEEPER = 2026-07-22-ercot96-dam-hourly-grain (owner-promoted 2026-07-22,
+  supersedes ercot91), NOT-YET on C3c (2023 51 h vs RT 181; 2024 13/53; 2025 0/31).
+  C3a/C3b ledgered; C3c 2023 ledgered, 2024/2025 unledgered = the NOT-YET driver.
+  C3c ledgering was NOT taken with the promotion — it stays the owner's close-out
+  option if these lanes exhaust.
+- The keeper carries the class-HOUR DAM availability grain (zero fitted params,
+  LOYO clean). Its bundle is the A/B base for every lane here; replay via
   scripts/replay_keeper.py on results/calibration/ercot96_hourly_grain_fullspan
   (--set routes dual-channel, kwarg + prb_overrides).
 - ERCOT NOT in calibration-complete.json → rule 22: solve/score ONLY 2023-2025.
@@ -90,7 +93,7 @@ LANE A (PRIMARY) — DAM-site → EIA-plant crosswalk, then plant×hour availabi
    measured payoff is redistribution (~259 MW mean on tail hours) — expect
    merit-mix/zonal movement more than tail-count movement; judge by structure
    (rule 1), gates by C7/C8/zero-spurious/C3a as always.
-3. A/B: 2023 rule-16 throwaway vs the ercot96 candidate base; then full-span
+3. A/B: 2023 rule-16 throwaway vs the ercot96 KEEPER base; then full-span
    2023-2025 ONE bundle if guards hold; LOYO before any promotion talk.
 
 LANE B (SECOND) — measured RUC-conduct commitment state ("fix reality RUC")
@@ -100,7 +103,7 @@ LANE B (SECOND) — measured RUC-conduct commitment state ("fix reality RUC")
    types). Size: how much RUC-committed capacity sits in the hod 13-19 window
    on the 56 tail days, which classes, which plants (composes with the Lane A
    crosswalk for plant grain). Compare against the model's committed state in
-   the ercot96 candidate (its gas bridge floors ~50k unit-hours).
+   the ercot96 keeper (its gas bridge floors ~50k unit-hours).
 2. If material: derive a measured RUC commitment-state input (per class-hour,
    plant-hour where crosswalked) and thread it as min-gen/held-out commitment
    scaffolding through the EXISTING bridge/floor machinery — rule 12 (window +
@@ -114,7 +117,7 @@ LANE B (SECOND) — measured RUC-conduct commitment state ("fix reality RUC")
    down where measured state exists (measured-over-derived, rule 14).
 
 LANE C (LAST, quick) — the ERCOT-95 Finding-4 LOLP swap
-replay ercot96 candidate meta 2023-only with
+replay the ercot96 keeper meta 2023-only with
 --set ordc_lolp_params_path='"data/raw/_validation-source/ercot_ordc_lolp_params.csv"'.
 Adopt ONLY on correctness grounds if C7 + zero-spurious hold (predicted ~28 tail
 hours at measured envelope, fewer at model reserves; NOT a C3c closer). Full-span
