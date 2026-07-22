@@ -569,3 +569,85 @@ curtail the measured 2.5–3.5 TWh. NO-GO: zone granularity. KILLED: CA-price /
 west-surplus-quantity depth gates (caiso-107/109).
 
 Next number: caiso-112.
+
+## caiso-112 (2026-07-21) — export-floor ROOT-CAUSED to a P1-bridge min_gen clamp (a genuine bug, not a missing sink); fix wired behind `caiso_wecc_export_floor` (default off, byte-identical off); un-clamp A/B UNBOUNDED → L1a′ chartered; keeper UNCHANGED
+
+**Keeper `2026-07-19-caiso-102-hourfix` UNCHANGED.** The caiso-111 "export-floor"
+(model min net import = 0, the tie can never reverse) was ROOT-CAUSED to a genuine
+bug, NOT a missing export sink: the per-hub keeper already builds two priced
+measured-hub export legs (`WECC_PNW_export_MALIN` / `WECC_DSW_export_PALOVRDE`,
+`pmin = -corridor TTC`) that clear correctly in P0 (−1103 MW belly export), but the
+scored P1 pass runs on the RA must-offer bridge, whose shared floor tail
+`pipeline.commitment._bridge_floored_fleet` did `new_min_gen = np.maximum(base_min_gen,
+bridge_floor)`; for the export legs `base = -TTC`, `bridge_floor = 0`, so
+`np.maximum(-TTC, 0) = 0` clamped the export bound to zero in every scored hour →
+min net import = 0 (proven by P0 primal, LP col-lower dump −4800 in P0 vs 0.000 in
+P1, and HiGHS reduced-cost). Fix: new `ScenarioConfig.caiso_wecc_export_floor`
+(default False) threads `preserve_negative_min_gen` into `_bridge_floored_fleet` —
+raise `min_gen` only where `bridge_floor > 0`, else keep the base (negative export)
+bound, so the legs net-export in P1 as they already do in P0. Byte-identical off the
+flag (verified). The minimal un-clamp A/B (different machine, handoff) recovers the
+export-floor but is UNBOUNDED: the legs also wheel the caiso-77 must-flow firm
+imports back out, so net link flow never reverses, the corridor export ENVELOPE
+never binds, and the legs over-export ~16 TWh gross vs the measured ~1.5 → 2024 gas
++7.6 % (trips the +7 % guard) and mean λ 29.9→38.7. Chartered L1a′ (bound the leg
+dispatch at the measured p95 net-export envelope) as the single-delta successor.
+Full record: `docs/handoffs/caiso-112-export-floor-handoff-2026-07-21.md`.
+
+Next number: caiso-113.
+
+## caiso-113 (2026-07-22) — export-floor L1a′: bound the un-clamped export legs at the measured p95 net-export envelope; single-delta A/B (3yr, same-machine, in-session); B RECOVERS the export-floor + fixes the over-correction but BREAKS the C3a guard (over-price) and leaves C5a failing → REJECTED, keeper UNCHANGED, escalate to L1b
+
+**Keeper `2026-07-19-caiso-102-hourfix` UNCHANGED (NOT-YET, fail {C3c, C4, C5a}).**
+Continuation of caiso-112: the minimal un-clamp over-exports (~16 TWh gross) because
+the corridor `caiso_corridor_flow_limit` export cap is a LINK-level (net-flow) bound
+that never binds while the firm imports keep net flow positive. **L1a′ bound (single
+delta vs the un-clamp):** new injector
+`model.interchange.caiso.inject_caiso_wecc_export_leg_envelope` (in
+`apply_caiso_seam_injections`, gated by the SAME `caiso_wecc_export_floor`) tightens
+EACH export leg's own hourly `min_gen` from `-TTC` up to `-(measured p95 net-export
+envelope)` — the SAME `measured_corridor_flow_envelope(direction="export")` ceiling
+the corridor groups use — so the leg net-exports at most the measured surplus per
+hour and collapses to ~0 in the evening ramp. No fitted value (rule 13/25); composes
+with the P1 bridge `preserve_negative_min_gen`; byte-identical off the flag. 7 tests
+(`tests/test_caiso_export_leg_envelope.py`); the bug fix + the bound stay in the tree
+regardless of the keeper decision. Confirmed active in the scored solve (per-year
+"export legs capped" log). A = `_caiso102_repro_A` (flag off) reproduces the keeper
+digit-for-digit (2024 net 42.03 / gas 54.4). Registered B =
+`2026-07-22-caiso-112-export-floor`.
+
+**A/B (same-machine, in-session, 3yr one bundle — rule 16):**
+
+| year | actual net | A net | B net | gas tgt | A gas | B gas | B gas% | B net-exp TWh | B belly-exp hrs |
+|---|---|---|---|---|---|---|---|---|---|
+| 2023 | 28.9 | 37.2 | 32.9 | 74.2 | 60.6 | 63.5 | −14.5% | 0.89 | 355 |
+| 2024 | 32.4 | 42.0 | 37.3 | 61.0 | 54.4 | 56.7 | −7.0% | 0.30 | 165 |
+| 2025 | 36.2 | 42.5 | 40.6 | 51.6 | 46.2 | 46.7 | −9.4% | ~0.2 | 127 |
+
+**What the bound ACHIEVES:** recovers the export-floor (belly export present; NET
+export 0.3–0.9 TWh, the measured order of magnitude, NOT the un-clamp's ~16 TWh
+gross), FIXES the over-correction (2024 gas +7.6 %→ −7.0 %, NO year over the +7 %
+guard), and moves net import + gas toward actual/target every year. C5a CO2 improves
+(2023 −11.1 %→ −7.0 % CAVEAT, 2024 −9.1 % CAVEAT→ PASS, 2025 −12.1 %→ −11.2 %).
+
+**What KILLS it — the C3a guard.** Official scores (`calibration_verdict`):
+A fail set {C3c, C4, C5a} (C3a PASS); **B fail set {C3a, C3c, C4, C5a}** — B ADDS a
+C3a failure (mean LMP over-price +11.5 % 2024 / +12.7 % 2025). The pre-registered
+gate GUARD C3a stays PASS is VIOLATED. Root: the export legs price at the FIXED
+measured West hub, so exporting the belly surplus pulls CA λ UP to the hub — the same
+fixed-hub pricing that under-prices imports over-prices exports. C5a still fails 2025
+(−11.2 %): the import-hours DEPTH half is untouched by an export bound (net import
+stays ~4–5 TWh over actual). C4 marginally better (NRMSE 0.333→0.328, still >0.30).
+
+**Decision (owner direction 2026-07-21): REJECTED.** B does not clear (C3a guard
+broken; C5a import-depth remains) → keeper stays `2026-07-19-caiso-102-hourfix`;
+B is a rejected probe on the dashboard (`2026-07-22-caiso-112-export-floor`). Per the
+pre-registered KILL, **escalate to L1b — the endogenous WECC West node
+(caiso-110 West-MC fix)** — which addresses BOTH open halves at once: it clears the
+West price ENDOGENOUSLY (collapsing in surplus) instead of pinning to the fixed hub,
+so the belly export no longer over-prices (fixes C3a) AND the import depth
+co-evolves with the West fleet (the C5a import-hours half). The caiso-112 bug fix +
+the L1a′ bound remain in the tree (default off, byte-identical off) as the
+bidirectional-tie foundation L1b builds on.
+
+Next number: caiso-114.

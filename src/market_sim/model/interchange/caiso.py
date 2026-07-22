@@ -751,6 +751,77 @@ def inject_caiso_firm_import_selfschedule(fleet_arrays, iso: str, year: int) -> 
     return applied
 
 
+def inject_caiso_wecc_export_leg_envelope(fleet_arrays, iso: str, year: int) -> bool:
+    """Cap each per-hub WECC export leg's hourly dispatch at the measured
+    net-export envelope (caiso-112 L1a′, ``config.caiso_wecc_export_floor``).
+
+    The per-hub export legs (:func:`build_caiso_per_hub_intertie` —
+    ``WECC_PNW_export_MALIN`` / ``WECC_DSW_export_PALOVRDE``) carry a STATIC
+    lower bound ``pmin = -corridor TTC`` (the physical line rating,
+    :func:`_caiso_corridor_export_cap_mw`; COI ≈ 4.8 GW, WOR ≈ 10.6 GW). The
+    ``caiso_corridor_flow_limit`` export side caps only each corridor LINK's NET
+    flow at the measured p95 net-export ceiling — but while the import tranches
+    bring in the caiso-77 must-flow firm base, the net link flow stays positive
+    (net import), so the export ENVELOPE never binds and the un-clamped leg (the
+    ``caiso_wecc_export_floor`` preserve-negative-min_gen fix on its own) wheels
+    its full physical TTC back out (~16 TWh gross vs the measured ~1.5), over-
+    burning CA gas in the smaller-under years (2024/2025, gas +7.6 %).
+
+    This tightens each export leg's OWN hourly ``min_gen`` from ``-TTC`` up to
+    ``-envelope`` — the SAME measured
+    :func:`~market_sim.data.eia_loader.measured_corridor_flow_envelope`
+    (``direction="export"``) per-(month × hod) p95 ceiling the corridor flow
+    groups already use — so the leg can net-export at most the measured surplus
+    each hour and collapses to ~0 in the evening-ramp buckets where the corridor
+    reliably net-imports. No fitted value: the bound IS the measured envelope
+    (rule 13/25), and it regenerates hour-for-hour in any covered year. Composes
+    with the P1 bridge's ``preserve_negative_min_gen`` (the tightened negative
+    bound is preserved into the scored fleet, exactly as the ``-TTC`` bound was).
+    The mechanism array is left untouched — a negative export bound is a
+    deliverability cap, not a must-run floor, so it carries no ``MECH_*`` tag.
+
+    Modifies ``fleet_arrays`` in place. Returns ``True`` when at least one export
+    leg was capped, ``False`` (byte-identical) when the fleet has no export legs
+    or the measured envelope is unavailable (a forecast / uncovered year — the
+    leg keeps its physical TTC bound).
+    """
+    from market_sim.data.eia_loader import measured_corridor_flow_envelope
+
+    hours = int(fleet_arrays.availability.shape[1])
+    env = measured_corridor_flow_envelope(iso, year, hours, direction="export")
+    if not env:
+        return False
+    per_hub_zones = set(CAISO_PER_HUB_IMPORT_ZONES.values())
+    export_name = f"{_CAISO_PER_HUB_EXPORT_PREFIX}_"
+    applied = False
+    for r, uid in enumerate(fleet_arrays.unit_ids):
+        zone = next((z for z in per_hub_zones if uid.startswith(f"{z}_")), None)
+        if zone is None:
+            continue
+        if not uid[len(zone) + 1 :].startswith(export_name):
+            continue
+        cap = env.get(zone)
+        if cap is None:
+            continue
+        if fleet_arrays.min_gen is None:
+            fleet_arrays.min_gen = np.broadcast_to(
+                fleet_arrays.pmin[:, np.newaxis],
+                (fleet_arrays.pmin.size, hours),
+            ).copy()
+        # Raise the (negative) export lower bound from -TTC toward -envelope, so
+        # the leg's gross export magnitude is bounded by the measured p95 ceiling
+        # (max(base, -env): tightens where -env > -TTC, i.e. always, since the
+        # measured surplus is far below the line rating; a 0-export bucket pins
+        # the leg to 0). np.maximum is a no-op wherever the base already binds.
+        np.maximum(
+            fleet_arrays.min_gen[r, :],
+            -np.asarray(cap, dtype=float),
+            out=fleet_arrays.min_gen[r, :],
+        )
+        applied = True
+    return applied
+
+
 def inject_caiso_dsw_surplus_clean(fleet_arrays, iso: str, year: int) -> bool:
     """Arm the south-corridor surplus-clean import depth (caiso-87).
 
@@ -2138,4 +2209,23 @@ def apply_caiso_seam_injections(
                 CAISO_DAYTIME_CLEAN_TRIM_HOD_MAX
                 if _day_trim
                 else CAISO_DAYTIME_CLEAN_HOD_MAX,
+            )
+    # CAISO per-hub WECC export-leg envelope cap (caiso_wecc_export_floor,
+    # caiso-112 L1a′): bound EACH export leg's own hourly dispatch at the
+    # measured p95 net-export envelope so the un-clamped leg (the
+    # preserve-negative-min_gen fix above) exports only the measured surplus
+    # (~1.5 TWh/yr) instead of wheeling its full physical corridor TTC out
+    # (~16 TWh) whenever the firm imports keep net link flow positive and the
+    # corridor_flow_limit's link-level export cap never binds. The measured
+    # envelope IS the bound (no fitted value); composes with the P1 bridge's
+    # preserve_negative_min_gen. Requires the per-hub node; byte-identical off
+    # the flag (the injector self-no-ops with no export legs / no envelope).
+    if per_hub_intertie and getattr(config, "caiso_wecc_export_floor", False):
+        if inject_caiso_wecc_export_leg_envelope(fleet_arrays, iso, year):
+            _logger.info(
+                "%s %d: per-hub WECC export legs capped at the measured p95 "
+                "net-export envelope (caiso-112 L1a′ — each leg's gross export "
+                "bounded to the measured surplus, not the physical corridor TTC)",
+                iso,
+                year,
             )
