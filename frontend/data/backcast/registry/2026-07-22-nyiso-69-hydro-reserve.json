@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-22-nyiso-69-hydro-reserve",
+  "label": "nyiso 69 hydro reserve",
+  "date": "2026-07-22",
+  "shorthand": "nyiso-69-hydro-reserve",
+  "definition": "nyiso-69 (CANDIDATE): nyiso-68 recipe + conventional-hydro reserve-supply eligibility (nyiso_hydro_reserve_eligible, issue #1344 lever 3 step 1). NYISO in-fleet hydro (~4.6 GW; Capital_Hudson 554 MW East + Upstate_West 4093 MW NYCA) joins the energy+reserve co-opt in both the full 30-min and quick-start 10-min classes (the CAISO _caiso_reserve_eligible precedent; NYPA hydro is a certified NYISO reserve provider). Structurally correct (rule 1) and nudges every over-priced year toward actual with no fit regression (C3a 2023 +17.1%->+16.4%, 2024 +0.5%->-0.0%, 2025 +6.4%->+6.1%; C1 fuel-mix unchanged), but the effect is marginal: the dominant 2023 residual is the DOWNSTATE SENY/NYC-30min reserve tail, which has no hydro, so it stays FAIL. Determination NOT-YET (same C3 2023 miss as nyiso-68). Named step 2: SCR/EDRP 30-min operating-reserve eligibility for the SENY tail. nyiso-68 remains the keeper pending the combined hydro+DR reserve-supply run.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-22-nyiso-69-hydro-reserve.js",
+  "bundle": "results/calibration/nyiso69_hydro_reserve"
+}
