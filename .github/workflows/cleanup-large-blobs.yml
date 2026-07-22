@@ -6,9 +6,14 @@ name: Cleanup Large File Blobs from History (Protected)
 # Scope: EVERYTHING under data/raw/ and results/calibration/, recursively,
 # regardless of file extension. Nothing outside those two trees is touched.
 #
+# Runs against a --mirror (bare) clone. There is NO working tree at any point:
+# actions/checkout would materialize thousands of parquet files and exhaust the
+# runner disk ("unable to write file"). Every operation here — ls-tree,
+# rev-list, cat-file, filter-repo, push — reads the object database directly.
+#
 # How it works:
-#   1. Fetch ALL remote branches and create local tracking branches
-#   2. Snapshot all blob SHAs live in ANY local branch HEAD or tag (the "protected set")
+#   1. Reclaim runner disk space, then mirror-clone (all refs, no checkout)
+#   2. Snapshot all blob SHAs live in ANY branch HEAD or tag (the "protected set")
 #   3. Record per-branch file manifests (mode+sha+path) for integrity verification
 #   4. Walk all history to find blobs under data/raw/ or results/calibration/
 #   5. Only blobs NOT in the protected set are candidates for removal
@@ -42,74 +47,66 @@ on:
 env:
   # The only two trees in scope. Extended-regex alternation, no trailing slash.
   SCOPE_REGEX: '(data/raw|results/calibration)/'
+  # Default branch, used for summary output and the post-cleanup file count.
+  DEFAULT_BRANCH: main
 
 jobs:
   cleanup:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    defaults:
+      run:
+        # Every step below runs inside the bare mirror clone unless it says otherwise.
+        working-directory: repo.git
     steps:
       - name: Validate confirmation
+        working-directory: ${{ github.workspace }}
         if: ${{ inputs.dry_run == false && inputs.confirm != 'REWRITE-HISTORY' }}
         run: |
           echo "::error::You must type 'REWRITE-HISTORY' to confirm. Aborting."
           exit 1
 
-      - name: Checkout full history
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Free runner disk space
+        working-directory: /
+        run: |
+          echo "=== Disk BEFORE reclaim ==="
+          df -h /
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
+                      /opt/hostedtoolcache/CodeQL /usr/local/.ghcup \
+                      /usr/local/share/boost /usr/local/graalvm 2>/dev/null || true
+          sudo docker image prune --all --force >/dev/null 2>&1 || true
+          echo "=== Disk AFTER reclaim ==="
+          df -h /
 
-      - name: Fetch all branches and create local tracking branches
+      - name: Mirror-clone repository (no working tree)
+        working-directory: ${{ github.workspace }}
         run: |
           set -euo pipefail
 
-          # Fetch everything including all remote branches and tags
-          git fetch origin --force --tags --prune
+          # --mirror maps refs/* to refs/*, so every remote branch lands directly
+          # in refs/heads/* and every tag in refs/tags/*. This replaces the old
+          # "create local tracking branch for each remote branch" loop entirely.
+          git clone --mirror \
+            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
+            repo.git
 
-          # Create a local branch for EVERY remote branch.
-          # Critical: git filter-repo rewrites refs/heads/* (local branches).
-          # git push --force --all pushes refs/heads/* only.
-          # Without local branches, remote-only branches keep old bloated history
-          # and the cleanup is pointless — cloners still pull the big blobs.
-          created=0
-          skipped=0
-          failed=0
-          # Filter only the symbolic HEAD pointer line (origin/HEAD -> origin/xxx),
-          # NOT branches that happen to contain "HEAD" in their name.
-          for remote_branch in $(git branch -r | grep -v ' -> ' | sed 's|^ *origin/||'); do
-            if git show-ref --verify --quiet "refs/heads/$remote_branch"; then
-              skipped=$((skipped + 1))
-            else
-              if git branch "$remote_branch" "origin/$remote_branch" 2>/dev/null; then
-                created=$((created + 1))
-              else
-                echo "::warning::Failed to create local branch for: $remote_branch"
-                failed=$((failed + 1))
-              fi
-            fi
-          done
+          cd repo.git
+          branch_count=$(git for-each-ref --format='%(refname:short)' refs/heads/ | wc -l)
+          tag_count=$(git for-each-ref --format='%(refname)' refs/tags/ | wc -l)
+          echo "Branches: $branch_count"
+          echo "Tags:     $tag_count"
 
-          if [ "$failed" -gt 0 ]; then
-            echo "::error::Failed to create $failed local tracking branch(es). Cannot guarantee full protection. Aborting."
+          if ! git show-ref --verify --quiet "refs/heads/${DEFAULT_BRANCH}"; then
+            echo "::error::Branch '${DEFAULT_BRANCH}' not found in mirror. Aborting."
+            git for-each-ref --format='  %(refname:short)' refs/heads/
             exit 1
           fi
+          echo "${DEFAULT_BRANCH} HEAD: $(git log -1 --oneline "refs/heads/${DEFAULT_BRANCH}")"
 
-          # Ensure main is at the absolute latest remote tip
-          git checkout main
-          git reset --hard origin/main
-
-          total=$(git for-each-ref --format='%(refname:short)' refs/heads/ | wc -l)
-          echo "Local branches: $total ($created newly created, $skipped already existed)"
-          echo "Main HEAD: $(git log -1 --oneline)"
-
-          # Sanity check
-          if ! git diff --quiet; then
-            echo "::error::Working tree dirty after reset. Aborting."
-            exit 1
-          fi
+          echo "Object store size:"
+          du -sh objects
+          df -h /
 
       - name: Install git-filter-repo
         run: pip install git-filter-repo
@@ -130,7 +127,6 @@ jobs:
 
           echo "=== Recording per-branch manifests ==="
 
-          # Build manifest + protected set for EVERY local branch
           branch_count=0
           for branch in $(git for-each-ref --format='%(refname:short)' refs/heads/); do
             # Sanitize branch name for filename (replace / with __)
@@ -162,10 +158,10 @@ jobs:
           echo ""
           echo "Protected: $protected_count unique blob SHAs from $branch_count branches + $tag_count tags"
 
-          # Main-specific values for summary
-          main_manifest="$MANIFEST_DIR/main.manifest"
-          head_file_count=$(wc -l < "$main_manifest")
-          head_manifest_hash=$(sha256sum "$main_manifest" | awk '{print $1}')
+          # Default-branch values for summary
+          default_manifest="$MANIFEST_DIR/${DEFAULT_BRANCH//\//__}.manifest"
+          head_file_count=$(wc -l < "$default_manifest")
+          head_manifest_hash=$(sha256sum "$default_manifest" | awk '{print $1}')
 
           echo "manifest_dir=$MANIFEST_DIR" >> "$GITHUB_OUTPUT"
           echo "protected_blobs=$PROTECTED_BLOBS" >> "$GITHUB_OUTPUT"
@@ -175,9 +171,9 @@ jobs:
 
           # Live file counts for the two in-scope trees (recursive)
           echo ""
-          echo "--- Live files in scope (main HEAD) ---"
+          echo "--- Live files in scope (${DEFAULT_BRANCH}) ---"
           for dir in data/raw results/calibration; do
-            count=$(git ls-tree -r HEAD -- "$dir" 2>/dev/null | wc -l)
+            count=$(git ls-tree -r "refs/heads/${DEFAULT_BRANCH}" -- "$dir" 2>/dev/null | wc -l)
             echo "  ${dir}/  →  ${count} live files"
           done
 
@@ -342,16 +338,22 @@ jobs:
           REMOVABLE_SHAS="${{ steps.enumerate.outputs.removable_shas }}"
           count=$(wc -l < "$REMOVABLE_SHAS")
           echo "Stripping $count dead blobs from data/raw/ and results/calibration/..."
-          echo "(All live HEAD blobs across all branches are protected and untouched)"
+          echo "(All live blobs across all branches and tags are protected and untouched)"
+          # --force is required because this is a mirror clone rather than a
+          # fresh non-bare clone. No working tree means no checkout to reset.
           git filter-repo --strip-blobs-with-ids "$REMOVABLE_SHAS" --force
+          df -h /
 
       - name: Repack and garbage collect
         if: ${{ inputs.dry_run == false && steps.check.outputs.skip != 'true' }}
         run: |
           echo "=== Repacking to reclaim space ==="
-          git reflog expire --expire=now --all
-          git gc --aggressive --prune=now
+          git reflog expire --expire=now --all || true
+          # Plain gc, not --aggressive: aggressive repack briefly holds both the
+          # old and new packs, which is what put this runner over the edge before.
+          git gc --prune=now
           echo "Repack complete."
+          df -h /
 
       - name: Verify ALL branch integrity
         if: ${{ inputs.dry_run == false && steps.check.outputs.skip != 'true' }}
@@ -415,10 +417,10 @@ jobs:
           git count-objects -vH
           echo ""
 
-          file_count=$(git ls-tree -r HEAD | wc -l)
-          echo "Files in HEAD after cleanup: $file_count"
+          file_count=$(git ls-tree -r "refs/heads/${DEFAULT_BRANCH}" | wc -l)
+          echo "Files in ${DEFAULT_BRANCH} after cleanup: $file_count"
           for dir in data/raw results/calibration; do
-            count=$(git ls-tree -r HEAD -- "$dir" 2>/dev/null | wc -l)
+            count=$(git ls-tree -r "refs/heads/${DEFAULT_BRANCH}" -- "$dir" 2>/dev/null | wc -l)
             echo "  ${dir}/  →  ${count} live files"
           done
           echo ""
@@ -436,9 +438,13 @@ jobs:
         run: |
           set -euo pipefail
 
-          # git-filter-repo removes the origin remote. Re-add it.
+          # git-filter-repo removes the origin remote. Re-add it as a plain
+          # (non-mirror) remote so the pushes below are explicit rather than
+          # an implicit mirror push of every ref namespace.
           REPO_URL="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
-          git remote add origin "$REPO_URL" 2>/dev/null || git remote set-url origin "$REPO_URL"
+          git remote remove origin 2>/dev/null || true
+          git remote add origin "$REPO_URL"
+          git config --unset remote.origin.mirror 2>/dev/null || true
 
           echo "=== Force pushing ALL branches ==="
           branch_count=$(git for-each-ref --format='%(refname:short)' refs/heads/ | wc -l)
@@ -455,7 +461,7 @@ jobs:
           echo "============================================================"
           echo "  - All $branch_count branches force-pushed with cleaned history"
           echo "  - All tags force-pushed"
-          echo "  - Live HEAD content is UNCHANGED on every branch"
+          echo "  - Live content is UNCHANGED on every branch"
           echo "  - Only dead/overwritten blobs under data/raw/ and"
           echo "    results/calibration/ were stripped"
           echo ""
