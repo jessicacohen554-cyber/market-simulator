@@ -366,5 +366,22 @@ scarcity.py`; full diagnosis + ERCOT-95 handoff in
 present; the ercot91 keeper should be re-solved on them in the ERCOT-95 lane).
 Corpus defect surfaced + quarantined: `data/raw/ercot/2026-02.part0001-0009.parquet`
 (Dec 3–9 2025 delivery, "Add files via upload") lack the HASL column and crash the
-2025 derive — owner to re-intake or remove. Keeper UNCHANGED; nothing registered
-(no solve). Next number: ercot-95.
+2025 derive — owner to re-intake or remove. Keeper UNCHANGED. Next number: ercot-95.
+
+**Follow-up (same session) — keeper re-solved on the refreshed walls + registered
+(owner directive).** The ercot91 keeper config was re-solved on the full-year
+refreshed offer walls (single 3-year `replay_keeper` invocation) and registered as
+`2026-07-22-ercot91-refreshed-walls` — a NOT-YET, governance-unattested **non-keeper
+documentation run** (keeper pointer UNCHANGED). Finding: the full-year 2023 CC/CT RT
+wall (ABSENT on the old sample-day basis) lifts 2023 P1 mean $36.9 → $40.0 and tail
+hours >$200 **40 → 69** (toward the 181 actual) via energy-side pricing, while the
+ORDC adder still fires only 3 h — so the refreshed 2023 wall closes ~1/3 of the tail
+gap and the ORDC/reserve scarcity collapse (ERCOT-95) remains the dominant remaining
+lever. 2024 ~flat ($26.7 → $26.0, tail 13 → 12), 2025 flat. Transport note: the run's
+sidecar + 1.3 MB payload + binary bench/bundle are committed locally (dc60fa9a) but the
+LIVE-dashboard push is blocked from this container (the documented 413 + push_files
+response-budget wall — the rule27 base64-staging path needs a working-`git push`
+environment to assemble); this log entry is the durable record until then. Also flagged
+for the owner: pre-existing registry/payload parity failures on `2026-07-13-nyiso-64`
+and `2026-07-21-nyiso-69-dr-reserve` (sidecars with no `runs/<id>.js` payload → invisible
+in the Run Explorer; the latter is the NYISO keeper).
