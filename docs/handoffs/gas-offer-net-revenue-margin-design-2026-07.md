@@ -166,6 +166,29 @@ cross-check, never a tuning channel.
   offer form — re-open the gas daily→monthly fallback / import-pricing lanes
   before any further offer work.
 
+## Adoption status (per ISO)
+
+* **NEISO — ADOPTED, keeper on** (`neiso-61`, 2026-07-23). Anchor 4.0763.
+* **CAISO — ADOPTED as the go-forward offer form** (owner directive, rule #1,
+  2026-07-23; `docs/handoffs/caiso-netrev-adoption-log-entry.md`). Anchor 4.7964.
+  caiso-112's in-sample replay tripped refutation criterion 1 (C3b duration fit
+  degrades 0.390→0.411 / 0.429→0.445 in the two high-gas years) — but per that
+  same criterion's rule-1 clause the structure is the correct one and the level
+  miss is a *root-cause* problem, not an offer-form one: the band table shows
+  CAISO's 80–480 $/MWh mid/upper-tail is under-priced in BOTH forms (the
+  import/scarcity residual, caiso-107/109/111/116), and the net-rev form merely
+  stops the HR multiplier's fuel-scaled markup from partially masking it at high
+  gas. Owner packaging: the CAISO keeper is **not** re-promoted standalone (would
+  regress C3b in isolation); the next keeper solve carries `--gas-offer-margin`
+  **jointly** with the import/scarcity (C3c) lane so the tail is priced correctly
+  before the compression applies. No code default flipped (would break the current
+  keeper's byte-identity replay); the flag stays off in the registered keeper until
+  the joint re-keeper. This resolves criterion 2's "re-open the import-pricing
+  lanes before any further offer work" as: keep the correct offer form, move the
+  import lane, then re-keeper.
+* **ERCOT / PJM / MISO / NYISO — identification landed** (`379a9b3`), flag
+  default-off; adoption pending each ISO's own A/B.
+
 ## DOF ledger delta
 
 New free parameters: NONE fitted. `P_anchor` (measured, derive script),
