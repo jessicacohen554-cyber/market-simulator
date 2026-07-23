@@ -667,3 +667,17 @@ more-faithful run — registered as the honest-inputs successor candidate; promo
 owner's call. (Housekeeping note, other lane: parity check flags a pre-existing CAISO
 orphan sidecar `2026-07-22-caiso-112-export-floor` with no payload — invisible in the Run
 Explorer; needs its session's bundle to regenerate.)
+
+## 2026-07-23 — ERCOT-98 KEEPER TRACK (owner sign-off "if so promote", same session): ERCOT keeper → `2026-07-23-ercot98-np6-hsl-fullspan`
+
+Promotion executed on the ERCOT-98 recommendation: same structure as ercot97
+(byte-faithful config replay, zero knob deltas) on strictly more accurate measured
+inputs (2023 NP6 GEO HSL; AS plan on the correct CST clock), and ercot97 is no longer
+reproducible from the committed tree — the keeper now designates the run main can
+regenerate. Determination remains **NOT-YET** (C6 governance unattested, keeper-parity);
+honest-inputs price cost carried in the frontier note (C3a 2023 −27.9 → −33.5 %, C3b
+0.545 → 0.647, C3c 51 → 42 h vs RT 181 — the stale-input compensation, rule 11). Keeper
+sidecar carries a market_story (ercot97's had none); status shard rebuilt;
+`audit_keepers --iso ERCOT` + calibration-keeper-auditor both PASS with zero repairs.
+ercot97 stays registered as the prior-keeper comparison. The offer-formation successor
+lane (ERCOT-98 §Successor) now works against this honest baseline.
