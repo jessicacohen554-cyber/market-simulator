@@ -180,3 +180,56 @@ default would trade the single-thread marginal-tie determinism for nothing. Sing
 the **golden/repro pin** — the golden capture (`scripts/capture_keeper_goldens.py`) and any
 reproducibility baseline keep threads at 1. (The env knob remains available for a future
 large-ISO LP that *does* parallelize, but no current capture justifies flipping it.)
+
+## H2 — Persisted year-1 basis cache (refactor-consolidation plan §7)
+
+The recurring cold P0 the P-4 experiments could not move is the **first year of every
+calibrate-iterate run**: cross-year warm-start already makes years ≥2 warm, but year-1 has no
+prior-year basis in-process, so it always solves cold. H2 persists each solved year's exported
+optimal basis to a disposable NPZ (`results/basis-cache/<ISO>_<year>_T<hours>.npz`, gitignored;
+int8 status vectors + `unit_ids` + a layout fingerprint, never pickle — compat clause 4) and, at
+the top of a fresh year with no in-run basis, seeds `xyear_cache` from it so the P0 warm-starts.
+
+Wired in `pipeline/solve.py::run_energy_solve` (the shared P0/P1 core both calibration CLIs reach;
+the key is `config.iso/weather_year/hours`, which `backcast_config` pins to the solved ISO-year-T).
+Gated by `basis_cache_enabled()` (= the cross-year gate): default ON for the calibration CLIs,
+**hard-OFF under the goldens/replay determinism env** (`MARKET_SIM_WARMSTART_XYEAR=0`), where seed
+and persist return before touching the LP so the solve is byte-identical.
+
+**Timing — year-1 cold vs warm-from-persisted-basis** (host: 4 vCPU / 15 GB, `HIGHS_THREADS=1`,
+`MALLOC_ARENA_MAX=2`; throwaway `--out-dir`, not dashboard-registered). Each ISO run twice for
+2023: a first run with an empty cache (cold year-1 P0, persists the basis), then a second run that
+seeds year-1 from that basis:
+
+| ISO | year | P0 cold | P0 warm (seeded) | **P0×** | total cold | total warm |
+|-----|-----:|--------:|-----------------:|--------:|-----------:|-----------:|
+| ERCOT (plant-level, 7 zones) | 2023 | 211.5 s | **38.0 s** | **5.6×** | 339.7 s | 174.7 s |
+| MISO (zonal + reserve co-opt) | 2023 | 352.8 s | **92.9 s** | **3.8×** | 571.0 s | 334.1 s |
+
+The persisted basis is a same-ISO-year, near-identical LP, so year-1 P0 converges in far fewer
+iterations than a cold start — a bigger win than the ~2.3× the adjacent-year cross-year warm-start
+buys on years ≥2. A stale basis (config changed by a tuned knob) still applies: `apply_cross_year_
+basis` remaps/repairs and falls back cold, so it costs iterations, never correctness.
+
+**Neutrality (cold vs warm-from-persisted, per year — `scripts/diff_warmstart_bundles` +
+`system.parquet`).** Same standard the shipped cross-year warm-start was promoted under
+(`docs/cross-year-warmstart.md`): objective and total generation bit-identical; price and per-unit
+dispatch differences confined to marginal ties (primal) and their dual analogue (degeneracy).
+
+| ISO | objective / total gen | max \|Δ zonal price\| | dual-degenerate hours | per-unit dispatch reshuffle |
+|-----|-----------------------|-----------------------|-----------------------|-----------------------------|
+| ERCOT 2023 | total gen Δ = **0.000000 TWh** (446.1579 both); mean price identical | 6.77e-2 $/MWh | 30 / 61,320 (0.05 %) | ≤ 1,022 MWh/unit, `total gen Δ = 0` |
+| MISO 2023 | total gen Δ = **-6.4e-5 TWh** on 641.71 TWh (~1e-7, display rounding); mean price identical | **1.4e-14 $/MWh** | 0 | ≤ 52 MWh/unit |
+
+MISO 2023 prices are bit-identical (1.4e-14, floating-point noise). ERCOT 2023 shows the same dual
+degeneracy the shipped feature accepted at promotion (MISO-2025 there: 0.1495 $/MWh over 182
+zone-hours) — here **smaller** (0.068 $/MWh over 30 hours) and via the same channel: year-1's warm
+P0 lands on a different-but-equally-optimal degenerate vertex, feeding `compute_monthly_markup` a
+marginally different run pattern; the primal (served load, total gen, objective) is untouched. This
+is the neutrality class the calibration path already lives in, negligible for scoring.
+
+Byte-identity under the determinism env is additionally confirmed empirically: an ERCOT 2023 solve
+with the feature **OFF** (`MARKET_SIM_WARMSTART_XYEAR=0`) reproduces the empty-cache cold run,
+i.e. the seed/persist machinery does not perturb the solve. (The full keeper goldens gate is not
+re-run because the change is provably inert under that env — the gate's own pin — and the unit
+suite pins the gate behavior.)
