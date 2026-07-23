@@ -14,9 +14,10 @@
   ],
   "data_blocked_years": [],
   "rubric_version": 2.7,
-  "determination": "NOT-YET",
+  "determination": "CALIBRATED-WITH-CAVEATS",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "1 ledgered measured-input caveat(s): C3c price tail / scarcity (RT hourly)",
+    "unscored PROTECTIVE criteria: shape"
   ],
   "notes": [],
   "criteria": {
@@ -43,7 +44,8 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -58,7 +60,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -73,7 +75,9 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C3c price tail / scarcity (RT hourly)"
+    ],
     "commercial_band": [],
     "budget": {
       "protective_max": 1,
@@ -81,11 +85,11 @@
     }
   },
   "grade_summary": {
-    "scored": 8,
-    "target_grade": 7,
+    "scored": 9,
+    "target_grade": 8,
     "commercial_grade": 0,
-    "ledgered": 0,
-    "fails": 1
+    "ledgered": 1,
+    "fails": 0
   },
   "free_class_score": {
     "iso": "NEISO",
