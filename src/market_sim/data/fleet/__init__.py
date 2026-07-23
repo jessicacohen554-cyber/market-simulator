@@ -856,6 +856,10 @@ from market_sim.data.fleet.campd_bins import (  # noqa: F401
 )
 from market_sim.data.fleet.arrays import (  # noqa: F401
     CAISO_CHP_CC_STEAM_CREDIT_FACTOR,
+    _apply_outage_overlays,
+    _availability_matrix,
+    _compose_min_gen_floors,
+    _nuclear_monthly,
     CAISO_CHP_CC_STEAM_CREDIT_HR_FLOOR,
     CAISO_CHP_CC_STEAM_CREDIT_HR_THRESHOLD,
     CAISO_CHP_CT_STEAM_CREDIT_HR_THRESHOLD,
