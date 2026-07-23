@@ -10,6 +10,8 @@ the full pre-split surface; patch semantics are preserved via
 
 from __future__ import annotations
 
+from typing import NamedTuple
+
 import json
 import logging
 import numpy as np
@@ -153,6 +155,150 @@ def _load_condbinned_surface(path: str) -> dict:
     return json.loads(Path(path).read_text())
 
 
+class _CondSurfaceSpec(NamedTuple):
+    """Per-ISO wiring of the shared conditional-surface kernel.
+
+    One row per ISO in :data:`_CONDITIONAL_SURFACE_SPECS`; every field is that
+    ISO's own frozen wiring transplanted byte-for-byte from its pre-collapse
+    wrapper (rules 23/25 — per-ISO values stay per-ISO, no generic merge):
+    the enable flag / path / percentile-edges / min-bin / price-cap-fraction
+    ScenarioConfig field names, the default surface JSON filename under
+    ``CALIBRATION_DIR``, the priced class tuple, and the exact error wording
+    of the edges-mismatch guard.
+    """
+
+    flag: str
+    path_field: str
+    default_filename: str
+    pcts_field: str
+    min_bin_field: str
+    cap_frac_field: str
+    groups: tuple[str, ...]
+    err_name: str
+    rederive_hint: str
+
+
+#: Per-ISO conditional-surface wiring (see :class:`_CondSurfaceSpec`).
+_CONDITIONAL_SURFACE_SPECS: dict[str, _CondSurfaceSpec] = {
+    "ERCOT": _CondSurfaceSpec(
+        flag="ercot_offer_surface_conditional",
+        path_field="ercot_offer_surface_binned_path",
+        default_filename="offer_curve_dam_hrmults_condbinned.json",
+        pcts_field="ercot_offer_surface_netload_pcts",
+        min_bin_field="ercot_offer_surface_min_bin",
+        cap_frac_field="ercot_offer_surface_price_cap_frac",
+        groups=CONDITIONAL_SURFACE_GROUPS,
+        err_name="ercot_offer_surface",
+        rederive_hint=(
+            "re-derive with matching --condition-binned edges, or fix the config"
+        ),
+    ),
+    "NEISO": _CondSurfaceSpec(
+        flag="neiso_offer_surface_conditional",
+        path_field="neiso_offer_surface_binned_path",
+        default_filename="neiso_offer_surface_condbinned.json",
+        pcts_field="neiso_offer_surface_netload_pcts",
+        min_bin_field="neiso_offer_surface_min_bin",
+        cap_frac_field="neiso_offer_surface_price_cap_frac",
+        groups=("CT_PEAKER",),
+        err_name="neiso_offer_surface",
+        rederive_hint=(
+            "re-derive scripts/data/derive_neiso_offer_surface.py with matching "
+            "--edges, or fix the config"
+        ),
+    ),
+    "PJM": _CondSurfaceSpec(
+        flag="pjm_offer_surface_conditional",
+        path_field="pjm_offer_surface_binned_path",
+        default_filename="pjm_offer_surface_condbinned.json",
+        pcts_field="pjm_offer_surface_netload_pcts",
+        min_bin_field="pjm_offer_surface_min_bin",
+        cap_frac_field="pjm_offer_surface_price_cap_frac",
+        groups=("CC_REGULAR", "CT_PEAKER"),
+        err_name="pjm_offer_surface",
+        rederive_hint=(
+            "re-derive scripts/data/derive_pjm_offer_surface.py with matching "
+            "--edges, or fix the config"
+        ),
+    ),
+    "CAISO": _CondSurfaceSpec(
+        flag="caiso_offer_surface_conditional",
+        path_field="caiso_offer_surface_binned_path",
+        default_filename="caiso_offer_surface_condbinned.json",
+        pcts_field="caiso_offer_surface_netload_pcts",
+        min_bin_field="caiso_offer_surface_min_bin",
+        cap_frac_field="caiso_offer_surface_price_cap_frac",
+        groups=("CC_REGULAR", "CT_PEAKER"),
+        err_name="caiso_offer_surface",
+        rederive_hint=(
+            "re-derive scripts/data/derive_caiso_offer_surface.py with matching "
+            "--edges, or fix the config"
+        ),
+    ),
+}
+
+
+def build_offer_surface_conditional_markup(
+    iso: str,
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    fuel_prices: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+) -> "np.ndarray | None":
+    """Build ``iso``'s conditional offer-surface markup from its spec-registry row.
+
+    The single body behind the four per-ISO
+    ``build_<iso>_offer_surface_conditional_markup`` aliases (fleet-package
+    split sub-task (b)): gate on the spec's enable flag and the config ISO,
+    resolve the frozen surface JSON (explicit path field, else the spec's
+    default under ``CALIBRATION_DIR``), enforce the config-vs-derive
+    percentile-edge agreement, and hand the spec's class tuple / min-bin /
+    price-cap wiring to :func:`_conditional_surface_markup`. Behavior is the
+    pre-collapse wrappers' byte-for-byte; see each alias's docstring for the
+    ISO-specific provenance and mechanism history.
+    """
+    spec = _CONDITIONAL_SURFACE_SPECS[iso]
+    if not getattr(config, spec.flag, False):
+        return None
+    if config.iso != iso:
+        return None
+    path = getattr(config, spec.path_field, None)
+    if not path:
+        from market_sim.config import paths as _paths
+
+        default = _paths.CALIBRATION_DIR / spec.default_filename
+        if not default.exists():
+            return None
+        path = str(default)
+    surface = _load_condbinned_surface(str(path))
+
+    edges = tuple(float(x) for x in getattr(config, spec.pcts_field))
+    json_edges = tuple(
+        float(x) for x in surface.get("_provenance", {}).get("netload_pct_edges", ())
+    )
+    if json_edges and json_edges != edges:
+        raise ValueError(
+            f"{spec.err_name}: config netload_pcts "
+            f"{edges} disagree with the derived surface's edges {json_edges} "
+            f"({spec.rederive_hint})."
+        )
+    return _conditional_surface_markup(
+        fleet_arrays,
+        generators,
+        fuel_prices,
+        net_load_mw,
+        config,
+        surface=surface,
+        edges=edges,
+        groups=spec.groups,
+        min_bin=int(getattr(config, spec.min_bin_field, 0) or 0),
+        price_cap=float(getattr(config, spec.cap_frac_field, 0.95))
+        * float(getattr(config, "voll", 5000.0)),
+        label=iso,
+    )
+
+
 def build_ercot_offer_surface_conditional_markup(
     fleet_arrays: "FleetArrays",
     generators: list[Generator],
@@ -209,43 +355,8 @@ def build_ercot_offer_surface_conditional_markup(
         config: Scenario config supplying the enable flag, ISO, surface path, bin
             edges and price cap.
     """
-    if not getattr(config, "ercot_offer_surface_conditional", False):
-        return None
-    if config.iso != "ERCOT":
-        return None
-    path = getattr(config, "ercot_offer_surface_binned_path", None)
-    if not path:
-        from market_sim.config import paths as _paths
-
-        default = _paths.CALIBRATION_DIR / "offer_curve_dam_hrmults_condbinned.json"
-        if not default.exists():
-            return None
-        path = str(default)
-    surface = _load_condbinned_surface(str(path))
-
-    edges = tuple(float(x) for x in config.ercot_offer_surface_netload_pcts)
-    json_edges = tuple(
-        float(x) for x in surface.get("_provenance", {}).get("netload_pct_edges", ())
-    )
-    if json_edges and json_edges != edges:
-        raise ValueError(
-            "ercot_offer_surface: config netload_pcts "
-            f"{edges} disagree with the derived surface's edges {json_edges} "
-            "(re-derive with matching --condition-binned edges, or fix the config)."
-        )
-    return _conditional_surface_markup(
-        fleet_arrays,
-        generators,
-        fuel_prices,
-        net_load_mw,
-        config,
-        surface=surface,
-        edges=edges,
-        groups=CONDITIONAL_SURFACE_GROUPS,
-        min_bin=int(getattr(config, "ercot_offer_surface_min_bin", 0) or 0),
-        price_cap=float(getattr(config, "ercot_offer_surface_price_cap_frac", 0.95))
-        * float(getattr(config, "voll", 5000.0)),
-        label="ERCOT",
+    return build_offer_surface_conditional_markup(
+        "ERCOT", fleet_arrays, generators, fuel_prices, net_load_mw, config
     )
 
 
@@ -269,44 +380,8 @@ def build_neiso_offer_surface_conditional_markup(
     :func:`_conditional_surface_markup` core); NEISO-only, its own frozen
     surface JSON, no cross-ISO fallback (rule 25).
     """
-    if not getattr(config, "neiso_offer_surface_conditional", False):
-        return None
-    if config.iso != "NEISO":
-        return None
-    path = getattr(config, "neiso_offer_surface_binned_path", None)
-    if not path:
-        from market_sim.config import paths as _paths
-
-        default = _paths.CALIBRATION_DIR / "neiso_offer_surface_condbinned.json"
-        if not default.exists():
-            return None
-        path = str(default)
-    surface = _load_condbinned_surface(str(path))
-
-    edges = tuple(float(x) for x in config.neiso_offer_surface_netload_pcts)
-    json_edges = tuple(
-        float(x) for x in surface.get("_provenance", {}).get("netload_pct_edges", ())
-    )
-    if json_edges and json_edges != edges:
-        raise ValueError(
-            "neiso_offer_surface: config netload_pcts "
-            f"{edges} disagree with the derived surface's edges {json_edges} "
-            "(re-derive scripts/data/derive_neiso_offer_surface.py with matching "
-            "--edges, or fix the config)."
-        )
-    return _conditional_surface_markup(
-        fleet_arrays,
-        generators,
-        fuel_prices,
-        net_load_mw,
-        config,
-        surface=surface,
-        edges=edges,
-        groups=("CT_PEAKER",),
-        min_bin=int(getattr(config, "neiso_offer_surface_min_bin", 0) or 0),
-        price_cap=float(getattr(config, "neiso_offer_surface_price_cap_frac", 0.95))
-        * float(getattr(config, "voll", 5000.0)),
-        label="NEISO",
+    return build_offer_surface_conditional_markup(
+        "NEISO", fleet_arrays, generators, fuel_prices, net_load_mw, config
     )
 
 
@@ -332,44 +407,8 @@ def build_pjm_offer_surface_conditional_markup(
     surfaces (the shared :func:`_conditional_surface_markup` core); PJM-only,
     its own frozen surface JSON, no cross-ISO fallback (rule 25).
     """
-    if not getattr(config, "pjm_offer_surface_conditional", False):
-        return None
-    if config.iso != "PJM":
-        return None
-    path = getattr(config, "pjm_offer_surface_binned_path", None)
-    if not path:
-        from market_sim.config import paths as _paths
-
-        default = _paths.CALIBRATION_DIR / "pjm_offer_surface_condbinned.json"
-        if not default.exists():
-            return None
-        path = str(default)
-    surface = _load_condbinned_surface(str(path))
-
-    edges = tuple(float(x) for x in config.pjm_offer_surface_netload_pcts)
-    json_edges = tuple(
-        float(x) for x in surface.get("_provenance", {}).get("netload_pct_edges", ())
-    )
-    if json_edges and json_edges != edges:
-        raise ValueError(
-            "pjm_offer_surface: config netload_pcts "
-            f"{edges} disagree with the derived surface's edges {json_edges} "
-            "(re-derive scripts/data/derive_pjm_offer_surface.py with matching "
-            "--edges, or fix the config)."
-        )
-    return _conditional_surface_markup(
-        fleet_arrays,
-        generators,
-        fuel_prices,
-        net_load_mw,
-        config,
-        surface=surface,
-        edges=edges,
-        groups=("CC_REGULAR", "CT_PEAKER"),
-        min_bin=int(getattr(config, "pjm_offer_surface_min_bin", 0) or 0),
-        price_cap=float(getattr(config, "pjm_offer_surface_price_cap_frac", 0.95))
-        * float(getattr(config, "voll", 5000.0)),
-        label="PJM",
+    return build_offer_surface_conditional_markup(
+        "PJM", fleet_arrays, generators, fuel_prices, net_load_mw, config
     )
 
 
@@ -396,44 +435,8 @@ def build_caiso_offer_surface_conditional_markup(
     CAISO-only, its own frozen surface JSON, no cross-ISO fallback
     (rule 25).
     """
-    if not getattr(config, "caiso_offer_surface_conditional", False):
-        return None
-    if config.iso != "CAISO":
-        return None
-    path = getattr(config, "caiso_offer_surface_binned_path", None)
-    if not path:
-        from market_sim.config import paths as _paths
-
-        default = _paths.CALIBRATION_DIR / "caiso_offer_surface_condbinned.json"
-        if not default.exists():
-            return None
-        path = str(default)
-    surface = _load_condbinned_surface(str(path))
-
-    edges = tuple(float(x) for x in config.caiso_offer_surface_netload_pcts)
-    json_edges = tuple(
-        float(x) for x in surface.get("_provenance", {}).get("netload_pct_edges", ())
-    )
-    if json_edges and json_edges != edges:
-        raise ValueError(
-            "caiso_offer_surface: config netload_pcts "
-            f"{edges} disagree with the derived surface's edges {json_edges} "
-            "(re-derive scripts/data/derive_caiso_offer_surface.py with matching "
-            "--edges, or fix the config)."
-        )
-    return _conditional_surface_markup(
-        fleet_arrays,
-        generators,
-        fuel_prices,
-        net_load_mw,
-        config,
-        surface=surface,
-        edges=edges,
-        groups=("CC_REGULAR", "CT_PEAKER"),
-        min_bin=int(getattr(config, "caiso_offer_surface_min_bin", 0) or 0),
-        price_cap=float(getattr(config, "caiso_offer_surface_price_cap_frac", 0.95))
-        * float(getattr(config, "voll", 5000.0)),
-        label="CAISO",
+    return build_offer_surface_conditional_markup(
+        "CAISO", fleet_arrays, generators, fuel_prices, net_load_mw, config
     )
 
 
