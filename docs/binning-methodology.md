@@ -183,6 +183,27 @@ convention above still describes the flag-off form. Design + NEISO
 identification table:
 `docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md`.
 
+*Per-ISO grounding (2026-07-23 rollout).* The `phys_*` keys are registered
+for all six ISOs from each ISO's own
+`data/raw/reference/<iso>_campd_marginal_hr_summary.csv`
+(`derive_campd_marginal_hr.py --iso <ISO>`): `phys_committed =
+avg_committed_p50` (the min-load block-average burn), `phys_econ_low /
+phys_econ_high = marg_econ_{low,high}_p50` (incremental burn at the econ
+ramp endpoints, interpolated across the N smoothing slices), and
+`phys_peak` the **physical** bound — `2.25` (the F-class duct-burner ratio)
+for CC classes and `1.0` (full-output) for CT/ST classes. For a CC class a
+registered peak above 2.25 (e.g. PJM CC_REGULAR 5.0) keeps the physical
+duct tranche fuel-scaled and turns the excess into a fixed scarcity margin;
+for a CT/ST class the whole `$`-denominated offer-cap wall above base burn
+(peaker 4.0, ERCOT ORDC 13.15) becomes the scarcity margin. A committed bid
+below its measured block average clips to zero markup (price-taker
+cogen/steam); a class with `n ≤ 1` measured units (NYISO/NEISO CT_CHP) is
+left neutral. Anchors (`GAS_OFFER_MARGIN_ANCHOR_BY_ISO`, $/MMBtu): ERCOT
+2.2494, PJM 3.3483, CAISO 4.7964, MISO 3.0492, NYISO 3.9046, NEISO 4.0763.
+ERCOT alone merges phys-only keys (`_ERCOT_OFFER_CURVE`) onto the shared
+base curve rather than a full per-ISO replacement, and its ORDC-wall +
+conditional-surface composition is A/B-solve-gated before keeper judgement.
+
 Emission rates are derived directly from the plant's **physical** heat rate
 (`base_hr` = `Plant_Avg_HR`), **not** the bid-tranche heat rate:
 `emission_rate = base_hr * FUEL_CO2_FACTOR_PER_MMBTU[fuel]`, uniform across a
