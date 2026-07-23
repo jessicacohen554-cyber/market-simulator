@@ -5906,7 +5906,48 @@ class ScenarioConfig:
     #                    econ_low/econ_high = residual x econ_low_share/(1-share))
     # ST_GAS peaker plants (fleet.ST_GAS_PEAKER_PLANTS) are excluded (CSV heat
     # rates). Empty (the default) leaves the legacy override / CSV path intact.
+    #
+    # OPTIONAL per-band physical-basis keys (consumed ONLY by the
+    # gas_offer_net_revenue_margin mechanism below):
+    #   phys_committed / phys_econ_low / phys_econ_high / phys_peak — the
+    #   band's MEASURED physical heat-rate basis (ratio to base HR): the
+    #   part-load block-average burn for the committed band, the incremental
+    #   (marginal) burn for the econ ramp endpoints, the physical
+    #   duct-burner/full-output ratio for the peak band. Identification source
+    #   per ISO: the CAMPD marginal-HR derive artifact (rule 23 — e.g.
+    #   data/raw/reference/neiso_campd_marginal_hr_summary.csv). A band
+    #   WITHOUT its phys_* key is neutral (phys = its own multiplier → zero
+    #   markup → offers byte-identical at every gas price), which is the
+    #   rule-24 generic fallback for ISOs whose curves carry no phys keys.
     offer_curve_by_group: dict[str, dict[str, float]] = field(default_factory=dict)
+
+    # Gas-offer NET-REVENUE MARGIN form (markup compression) — default OFF.
+    # When set, every CAMPD gas tranche whose offer-curve band declares a
+    # measured physical basis (phys_* keys above) is repriced from the fully
+    # fuel-scaled multiplier form to
+    #   phys × HR_base × fuel(t)  +  (mult − phys) × HR_base × anchor
+    # i.e. the band's above-physical markup becomes a fuel-INVARIANT $/MWh
+    # net-revenue margin identified at ``gas_offer_margin_anchor``, while the
+    # physical burn keeps full fuel (and dual-fuel oil-parity) tracking. At
+    # fuel == anchor the offer reduces exactly to the registered multiplier.
+    # Grounding: the multiplicative form's markup scales linearly with the
+    # fuel bill — unidentified inside the homogeneous 2023–25 training gas
+    # window, rejected by the 2022 NEISO validation rotation (bulk 40–80
+    # overshoot +57.7 $/MWh at ~2.9× anchor gas) and by the within-window
+    # winter-over/summer-under signature (neiso-45/46/47). Real bidders
+    # express start/no-load hurdles, competitive reach and the scarcity wall
+    # in $ terms (net-revenue targets), not heat-rate multiples. Design +
+    # identification table:
+    # docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md.
+    # Implemented as a post-assemble_mc adjustment on BOTH passes
+    # (data.offer_curves.apply_gas_offer_margin); coal keeps its own gas-keyed
+    # supply sigmoid (rule 19), the legacy non-CAMPD tranche path is inert.
+    gas_offer_net_revenue_margin: bool = False
+    # The mechanism's delivered-gas identification anchor ($/MMBtu). None +
+    # flag armed is a hard error (no silent fallback — rule 25); the backcast
+    # harness resolves it from constants.GAS_OFFER_MARGIN_ANCHOR_BY_ISO so the
+    # bundle's run_config.json records the resolved value.
+    gas_offer_margin_anchor: float | None = None
 
     # N-slice smoothing of the economic offer curve. When
     # offer_curve_smoothing_n > 0, each plant's flat econ blocks (econ-low /
