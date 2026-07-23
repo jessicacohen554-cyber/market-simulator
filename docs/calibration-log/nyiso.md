@@ -239,3 +239,48 @@ them explicitly (the standard keeper-lever pattern, as nyiso-68 does for
 `nyiso_scr_edrp`). Named follow-up: the 2023 energy-price-level lever (closes C3a
 and the ST_GAS C7 shape together); secondary, Blenheim-Gilboa PS into the dispatch
 fleet for East-10min reserve.
+
+## 2026-07-23 — nyiso-70 C3a 2023 residual RE-SCOPED: off-peak downstate-thermal price floor; handoff hypotheses (gas-basis, offer-markup) + 3 more levers ALL refuted; keeper unchanged
+
+Picked up the nyiso-70 handoff (close 2023 C3a +15.9%). **No keeper change** —
+this is a diagnostic-only session that conclusively re-scopes the residual. Full
+write-up: `results/calibration/FINDING-nyiso-2023-c3a-offpeak-diagnosis-2026-07-23.md`.
+
+**The residual is OFF-PEAK, not broadband.** Shoulder off-peak (hod 0–6) actual RT
+$19.62 vs keeper $30.02 (+53%); on-peak +24%; the +15.9% C3a is the overnight
+trough. Off-peak price is **uniform across all five zones** → not congestion.
+
+**Five 2023-only A/Bs (`replay_keeper --set`), every one refuting a candidate:**
+
+| lever | off-peak $ | Δ vs keeper | verdict |
+|---|--:|--:|---|
+| `energy_reserve_coopt=false` | 30.02 | 0.00 | reserve not the driver (confirms the 1.6% note) |
+| `cc_intermediate_split=true` | 30.41 | **+0.39** | worse — NYISO `CC_REGULAR` already `econ_high=1.0` < MISO `CC_INTERMEDIATE` 1.08 |
+| `gas_plant_monthly_fuel_pricing=false` | 30.02 | 0.00 | per-plant F923 gas not the driver |
+| `nyiso_zonal_gas_basis=false` | 33.59 | **+3.57** | worse — zonal basis is net price-*lowering* |
+| `reliability_floor=false` | 31.81 | **+1.79** | worse — downstate ST/CT floors supply *cheap* forced energy |
+
+P0-vs-P1 decomposition: the startup markup adds only **+$0.55/MWh** (P0 already
++14.3%) → **not offer-markup** either. Both handoff hypotheses dead.
+
+**What it actually is.** Off-peak price-setter = a **mid-efficiency downstate
+CC** (`hr 8.24`, mc ≈ $29.2) because the efficient CC band (HR < 7.5) is
+**outage-exhausted** (4,493 MW avail, 90% utilized off-peak — Ravenswood/Athens
+etc. on CEMS-verified, settled outage windows). Reliability-floored ST_GAS
+(HR 11.5) runs forced but sits *above* clearing. The model already imports MORE
+off-peak (2,909 MW) than the measured schedule (2,324 MW) and still floors at
+$30, so imports aren't the gap. Reality troughs ~$10 lower on *less* import → its
+domestic off-peak marginal is genuinely cheaper.
+
+**Surviving interpretation (labelled hypothesis, not a keeper lever).** With every
+input measured/grounded and the efficient fleet legitimately exhausted, the gap is
+most consistent with a **price-formation limit of the full-SRMC LP**: real
+overnight LBMP is depressed by committed thermal bidding *below* SRMC to avoid
+shutdown, which the LP cannot represent. That is a **cross-ISO methodology change**
+(a below-SRMC overnight commitment-bid), not a NYISO knob, and would move every
+ISO's trough — validate model-wide before any keeper use. It would address C3a and
+the C7 ST_GAS off-peak shape together (as the handoff anticipated), but via
+commitment bidding, not the named levers. Absent it, the 2023 off-peak residual is
+a structural limit; **nyiso-70 holds as the most structurally-faithful NOT-YET
+keeper (rule 1).** Do NOT re-chase reserve / CC-econ-ramp / gas-basis / reliability
+floor for C3a 2023.
