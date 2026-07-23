@@ -999,9 +999,19 @@ def ercot_as_plan_requirement_mw(year: int, hours: int, as_type: str) -> np.ndar
     ``year`` (e.g. ECRS before 2023-06-10) simply has no rows → all-zero, so the
     onset is carried by the data with no hard-coded start date.
 
-    Mapped onto the fleet's non-leap 8760-hour calendar clock (Feb-29 dropped);
-    DST fall-back duplicate hours are averaged. Returns ``(hours,)`` MW,
-    **all-zero when the file or the product is absent** (no-op).
+    Mapped onto the fleet's non-leap 8760-hour calendar clock (Feb-29 dropped).
+    The report stamps hours in Central *Prevailing* Time (HE 1-24 with a
+    ``DSTFlag`` marking the repeated fall-back hour), while the fleet clock is
+    fixed CST (UTC-6, no DST) — the CPT labels are converted before placement.
+    Unconverted they land one hour late for the entire mid-Mar/early-Nov DST
+    window, misplacing the evening reserve step-down by an hour through every
+    summer scarcity season (the same defect class the NP6 HSL builder fixed —
+    see ``build_ercot_hsl._prevailing_to_standard``; found ERCOT-98,
+    2026-07-23). The repeated fall-back hour is disambiguated by the report's
+    own flag and duplicate postings of the same operating hour are averaged;
+    the spring-forward CST 02:00 arrives from the CPT HE-4 row, so the CST
+    clock is covered gapless through both transitions. Returns ``(hours,)``
+    MW, **all-zero when the file or the product is absent** (no-op).
     """
     path = _ERCOT_ASPLAN_DIR / f"ASPLANNP433_{year}.parquet"
     if not path.exists():
@@ -1017,8 +1027,23 @@ def ercot_as_plan_requirement_mw(year: int, hours: int, as_type: str) -> np.ndar
     if df.empty:
         return np.zeros(int(hours), dtype=float)
     dt = pd.to_datetime(df["DeliveryDate"])
-    hod = df["HourEnding"].str.slice(0, 2).astype(int) - 1  # HE 01:00→0 … 24:00→23
-    key = df.groupby([dt.dt.month, dt.dt.day, hod])["Quantity"].mean().to_dict()
+    he = df["HourEnding"].str.slice(0, 2).astype(int)
+    ts_cpt = dt + pd.to_timedelta(he - 1, unit="h")  # hour-beginning, CPT
+    if "DSTFlag" in df.columns:
+        # True = first occurrence (DST still in effect) of the repeated hour.
+        ambiguous = df["DSTFlag"].astype(str).str.strip().str.upper().ne("Y").to_numpy()
+    else:
+        ambiguous = "NaT"  # an unflagged fall-back repeat cannot be placed
+    local = ts_cpt.dt.tz_localize("US/Central", ambiguous=ambiguous, nonexistent="NaT")
+    # Etc/GMT+6 is fixed UTC-6 (POSIX sign convention) == CST year-round.
+    ts = local.dt.tz_convert("Etc/GMT+6").dt.tz_localize(None)
+    ok = ts.notna() & (ts.dt.year == int(year))
+    key = (
+        df.loc[ok, "Quantity"]
+        .groupby([ts[ok].dt.month, ts[ok].dt.day, ts[ok].dt.hour])
+        .mean()
+        .to_dict()
+    )
     out = np.zeros(int(hours), dtype=float)
     i = 0
     for day in pd.date_range(f"{year}-01-01", f"{year}-12-31", freq="D"):
