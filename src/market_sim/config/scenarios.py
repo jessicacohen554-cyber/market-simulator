@@ -119,6 +119,18 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the hash so every pre-existing cache key is byte-stable; True enters the
     # key (a distinct scenario — WECC_import becomes a real co-optimized zone).
     "caiso_endogenous_wecc_node",
+    # NYISO hydro/DR reserve-supply eligibility (lever 3, commits 60cb8aa/7581c0a)
+    # and ERCOT-97 measured DAM-availability grain flags (commit 19d6538). All four
+    # are GATED / default-off and were intended byte-identical for every existing
+    # config, but they reach asdict() and were not registered here, so they leaked
+    # into the hash and moved the pinned default cache_key off edbc1b1 (same class
+    # of miss the nyiso_scr_edrp fields had above). Dropped from the hash at their
+    # defaults so every pre-existing cache key is byte-stable again; an armed run
+    # (any of them True) enters the key as a distinct scenario.
+    "nyiso_hydro_reserve_eligible",
+    "nyiso_scr_edrp_reserve_eligible",
+    "ercot_thermal_dam_availability_hourly",
+    "ercot_thermal_dam_availability_plant",
 )
 
 
