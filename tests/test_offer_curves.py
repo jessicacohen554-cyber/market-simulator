@@ -391,5 +391,96 @@ class TestNeisoPhysRegistryProvenance(unittest.TestCase):
         self.assertAlmostEqual(GAS_OFFER_MARGIN_ANCHOR_BY_ISO["NEISO"], 4.0763)
 
 
+class TestPerIsoPhysRegistryProvenance(unittest.TestCase):
+    """Every ISO's registered phys_* keys tie to its measured CAMPD artifact.
+
+    The rollout invariant (rule 20/23): each phys_* key is a MEASURED DOF-ledger
+    entry, cited to the ISO's own ``<iso>_campd_marginal_hr_summary.csv`` p50s
+    (committed→avg_committed_p50, econ→marg_econ_{low,high}_p50), and the peak
+    basis is the physical bound (CC classes → the 2.25 F-class duct ratio; CT/ST
+    classes → the 1.0 full-output bound whose $-cap wall becomes a scarcity
+    margin). A class left neutral (no phys_* keys) is n≤1 / not identifiable.
+    """
+
+    # CC classes carry the physical F-class duct ratio; CT/ST classes the
+    # full-output bound (the $-denominated offer-cap wall above it is a margin).
+    _CC = {"CC_REGULAR", "CC_CHP"}
+
+    def _curve(self, iso: str) -> dict:
+        import importlib
+
+        bc = importlib.import_module("market_sim.pipeline.backcast_config")
+        return {
+            "ERCOT": bc._ERCOT_OFFER_CURVE,
+            "PJM": bc._PJM_OFFER_CURVE,
+            "CAISO": bc._CAISO_OFFER_CURVE,
+            "MISO": bc._MISO_OFFER_CURVE,
+            "NYISO": bc._NYISO_OFFER_CURVE,
+            "NEISO": bc._NEISO_OFFER_CURVE,
+        }[iso]
+
+    def _csv(self, iso: str) -> dict:
+        path = (
+            Path(__file__).resolve().parents[1]
+            / "data/raw/reference"
+            / f"{iso.lower()}_campd_marginal_hr_summary.csv"
+        )
+        return {r["class"]: r for r in csv.DictReader(open(path))}
+
+    def test_phys_keys_match_marginal_hr_summary(self):
+        from market_sim.config.constants import GAS_OFFER_MARGIN_ANCHOR_BY_ISO
+
+        for iso in ("ERCOT", "PJM", "CAISO", "MISO", "NYISO"):
+            curve = self._curve(iso)
+            rows = self._csv(iso)
+            phys_classes = [
+                c for c, b in curve.items() if any(k.startswith("phys_") for k in b)
+            ]
+            # Every phys-keyed gas class must be measurable in the CSV, and its
+            # keys must equal that class's measured p50s (rule 23 — frozen tie).
+            self.assertTrue(phys_classes, msg=f"{iso}: no phys-keyed class")
+            for cls in phys_classes:
+                src = rows[cls]
+                bands = curve[cls]
+                with self.subTest(iso=iso, cls=cls):
+                    self.assertAlmostEqual(
+                        bands["phys_committed"],
+                        float(src["avg_committed_p50"]),
+                        places=3,
+                    )
+                    self.assertAlmostEqual(
+                        bands["phys_econ_low"],
+                        float(src["marg_econ_low_p50"]),
+                        places=3,
+                    )
+                    self.assertAlmostEqual(
+                        bands["phys_econ_high"],
+                        float(src["marg_econ_high_p50"]),
+                        places=3,
+                    )
+                    expected_peak = 2.25 if cls in self._CC else 1.0
+                    self.assertEqual(bands["phys_peak"], expected_peak)
+            # Anchor registered and positive (rule 25 — no silent fallback).
+            self.assertGreater(GAS_OFFER_MARGIN_ANCHOR_BY_ISO[iso], 0.0)
+
+    def test_nyiso_ct_chp_neutral_n1(self):
+        # NYISO CT_CHP is a single measured unit (n=1) — not identifiable, left
+        # neutral with no phys_* keys, exactly like NEISO CT_CHP.
+        ctchp = self._curve("NYISO")["CT_CHP"]
+        self.assertFalse(any(k.startswith("phys_") for k in ctchp))
+
+    def test_ercot_phys_survive_conditional_split(self):
+        # ERCOT's phys keys live in a phys-only _ERCOT_OFFER_CURVE deep-merged
+        # onto the shared base; the resolved default curve must carry them on
+        # every gas class (proves the merge ordering vs the neutralize/recipe/
+        # conditional-split path preserves the physical basis, rule 24).
+        from market_sim.config.constants import HOURS_PER_YEAR
+        from market_sim.pipeline.backcast_config import backcast_config
+
+        oc = backcast_config(2024, "ERCOT", HOURS_PER_YEAR, 3.0).offer_curve_by_group
+        for cls in ("CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS"):
+            self.assertIn("phys_committed", oc[cls], msg=cls)
+
+
 if __name__ == "__main__":
     unittest.main()
