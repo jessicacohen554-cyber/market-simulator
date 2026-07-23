@@ -147,6 +147,18 @@ _PJM_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 5.0,  # raised from 1.62: duct-firing scarcity (pjm-61)
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,
+        # phys_* (2026-07-23, gas-offer net-revenue margin — docs/handoffs/
+        # gas-offer-net-revenue-margin-design-2026-07.md): PJM's own measured
+        # CAMPD marginal-HR artifact pjm_campd_marginal_hr_summary.csv p50s
+        # (committed→avg_committed_p50; econ→marg_econ_{low,high}_p50). Consumed
+        # ONLY under --gas-offer-margin. peak → 2.25 = the physical F-class
+        # duct-burner ratio; the registered 5.0 pjm-61 scarcity wall sits ABOVE
+        # it, so 5.0−2.25 = 2.75 becomes a fixed ~$67/MWh scarcity margin (the
+        # physical duct tranche keeps full fuel scaling; the wall does not).
+        "phys_committed": 1.015,  # avg_committed_p50 > 0.87 bid → markup clips 0
+        "phys_econ_low": 0.870,  # marg_econ_low_p50
+        "phys_econ_high": 1.052,  # marg_econ_high_p50
+        "phys_peak": 2.25,  # physical F-class duct ratio (< registered 5.0 wall)
     },
     "CC_CHP": {
         "committed": 0.6624,
@@ -155,6 +167,14 @@ _PJM_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 1.62,
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,
+        # phys_* (pjm_campd_marginal_hr_summary.csv, n=16): every registered
+        # band sits at/below its measured basis (avg_committed 1.359 > 0.662;
+        # marg 0.820/0.911 > 0.684/0.821; peak 1.62 < 2.25 duct) → markup 0 on
+        # ALL bands (price-taker cogen). Inert even with the flag armed.
+        "phys_committed": 1.359,  # avg_committed_p50 > bid → markup clips 0
+        "phys_econ_low": 0.820,  # marg_econ_low_p50 > bid → markup 0
+        "phys_econ_high": 0.911,  # marg_econ_high_p50 > bid → markup 0
+        "phys_peak": 2.25,  # physical duct ratio > registered 1.62 → markup 0
     },
     "CT_CHP": {
         "committed": 0.864,
@@ -162,6 +182,10 @@ _PJM_OFFER_CURVE: dict[str, dict[str, float]] = {
         "econ_high": 0.864,
         "peak": 1.008,
         "econ_low_share": 0.50,
+        "phys_committed": 1.163,  # avg_committed_p50 > bid → markup clips 0
+        "phys_econ_low": 0.796,  # marg_econ_low_p50 (n=5)
+        "phys_econ_high": 0.820,  # marg_econ_high_p50
+        "phys_peak": 1.0,  # full-output bound (registered peak 1.008 → mk ~0)
     },
     "CT_PEAKER": {
         "committed": 1.25,  # raised from 0.8784: peaker part-load penalty (pjm-59/61)
@@ -170,6 +194,14 @@ _PJM_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 4.0,
         "econ_low_share": 0.50,
         "pct_peaking": 15.0,  # pjm-61: wider peaking band
+        # phys_* (pjm_campd_marginal_hr_summary.csv, n=271): committed 1.049 (the
+        # part-load penalty above it becomes a fixed ~$8/MWh commitment margin);
+        # measured flat-to-falling marginal 0.721/0.700; peak 1.0 = full-output
+        # bound (the 4.0 $-cap wall above → ~$119/MWh $ scarcity margin).
+        "phys_committed": 1.049,  # avg_committed_p50
+        "phys_econ_low": 0.721,  # marg_econ_low_p50 (flat-to-falling CT curve)
+        "phys_econ_high": 0.700,  # marg_econ_high_p50
+        "phys_peak": 1.0,  # full-output bound; 4.0 wall above → $ scarcity margin
     },
     "ST_GAS": {
         "committed": 0.4752,
@@ -178,6 +210,14 @@ _PJM_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 3.024,
         "econ_low_share": 0.50,
         "pct_peaking": 15.0,
+        # phys_* (pjm_campd_marginal_hr_summary.csv, n=24): committed/econ_low
+        # bids sit below the measured basis (1.006 / 0.719) → markup 0; only
+        # econ_high (0.90 > 0.739) and the 3.024 $-cap wall (peak 1.0 bound)
+        # carry a fixed margin.
+        "phys_committed": 1.006,  # avg_committed_p50 > bid → markup clips 0
+        "phys_econ_low": 0.719,  # marg_econ_low_p50 > bid → markup 0
+        "phys_econ_high": 0.739,  # marg_econ_high_p50
+        "phys_peak": 1.0,  # full-output bound; 3.024 wall above → $ scarcity margin
     },
     "COAL_LIGNITE": {
         "committed": 0.684,
@@ -346,6 +386,15 @@ _NYISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 2.25,  # physical F-class duct-burner ratio (not ERCOT-fitted)
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,
+        # phys_* (2026-07-23, gas-offer net-revenue margin — docs/handoffs/
+        # gas-offer-net-revenue-margin-design-2026-07.md): NYISO's own measured
+        # CAMPD marginal-HR artifact nyiso_campd_marginal_hr_summary.csv p50s
+        # (committed→avg_committed_p50; econ→marg_econ_{low,high}_p50; peak→2.25
+        # physical F-class duct ratio). Consumed ONLY under --gas-offer-margin.
+        "phys_committed": 0.964,  # avg_committed_p50, n=35
+        "phys_econ_low": 0.784,  # marg_econ_low_p50
+        "phys_econ_high": 0.925,  # marg_econ_high_p50
+        "phys_peak": 2.25,  # physical F-class duct ratio == registered peak → mk 0
     },
     "CC_CHP": {
         # NYISO's own run-27 CHP curve (+0.03 over CC_REGULAR to trim CHP
@@ -358,6 +407,12 @@ _NYISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 2.25,  # physical F-class duct-burner ratio
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,
+        # phys_* (nyiso_campd_marginal_hr_summary.csv, n=31): avg_committed_p50
+        # 1.210 > 0.90 bid → committed markup clips 0; econ marginals 0.989/1.103.
+        "phys_committed": 1.210,  # avg_committed_p50 > bid 0.90 → markup clips 0
+        "phys_econ_low": 0.989,  # marg_econ_low_p50
+        "phys_econ_high": 1.103,  # marg_econ_high_p50 > 1.24? no → small markup
+        "phys_peak": 2.25,  # physical F-class duct ratio == registered peak → mk 0
     },
     "CT_PEAKER": {
         "committed": 1.35,  # NYISO/CAISO-grounded evening-ramp start hurdle
@@ -377,10 +432,21 @@ _NYISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 4.0,
         "econ_low_share": 0.526,
         "pct_peaking": 7.0,
+        # phys_* (nyiso_campd_marginal_hr_summary.csv, n=70): committed ≈
+        # avg_committed_p50 0.843 (< 1.35 → the start hurdle above it becomes a
+        # ~$25/MWh fixed commitment margin); neutral 1.0 econ bands decompose to
+        # the measured flat marginal (0.661/0.658) + a fixed margin; peak 1.0 =
+        # full-output bound (the 4.0 $-cap wall above → $ scarcity margin).
+        "phys_committed": 0.843,  # avg_committed_p50
+        "phys_econ_low": 0.661,  # marg_econ_low_p50 (flat CT curve)
+        "phys_econ_high": 0.658,  # marg_econ_high_p50
+        "phys_peak": 1.0,  # full-output bound; 4.0 wall above → $ scarcity margin
     },
     # CT_CHP: DE-LEAKED from the generic ERCOT-lineage `else` branch (was
     # 1.10/1.20/1.20/1.40) to neutral 1.0 — NYISO carries no independent CT_CHP
-    # heat-rate spread yet (later disciplined-calibration item, rule #1).
+    # heat-rate spread yet (later disciplined-calibration item, rule #1). Stays
+    # NEUTRAL for the margin mechanism too: the NYISO CAMPD sample is a SINGLE
+    # unit (n=1, not identifiable) — no phys_* keys, like NEISO CT_CHP.
     "CT_CHP": {
         "committed": 1.0,
         "econ_low": 1.0,
@@ -412,6 +478,14 @@ _NYISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 4.20,
         "econ_low_share": 0.50,
         "pct_peaking": 15.0,
+        # phys_* (nyiso_campd_marginal_hr_summary.csv, n=25): avg_committed_p50
+        # 1.104 > 1.05 bid → committed markup clips 0; the flat measured steam
+        # marginal (0.830/0.828) + the registered competitive reach decompose to
+        # a fixed margin; peak 1.0 (the 4.20 $-cap wall above → $ scarcity).
+        "phys_committed": 1.104,  # avg_committed_p50 > bid 1.05 → markup clips 0
+        "phys_econ_low": 0.830,  # marg_econ_low_p50 (flat steam ramp)
+        "phys_econ_high": 0.828,  # marg_econ_high_p50
+        "phys_peak": 1.0,  # full-output bound; 4.20 wall above → $ scarcity margin
     },
 }
 
@@ -498,6 +572,15 @@ _CAISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 2.25,  # physical F-class duct-burner band, unchanged.
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,
+        # phys_* (2026-07-23, gas-offer net-revenue margin — docs/handoffs/
+        # gas-offer-net-revenue-margin-design-2026-07.md): CAISO's own measured
+        # CAMPD marginal-HR artifact caiso_campd_marginal_hr_summary.csv p50s
+        # (committed→avg_committed_p50; econ→marg_econ_{low,high}_p50; peak→2.25
+        # physical F-class duct ratio). Consumed ONLY under --gas-offer-margin.
+        "phys_committed": 1.103,  # avg_committed_p50, n=51
+        "phys_econ_low": 0.836,  # marg_econ_low_p50
+        "phys_econ_high": 0.968,  # marg_econ_high_p50
+        "phys_peak": 2.25,  # physical F-class duct ratio == registered peak → mk 0
     },
     "CT_PEAKER": {
         "committed": 1.35,  # NYISO-grounded start hurdle; CAISO CTs serve the
@@ -508,6 +591,15 @@ _CAISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         #   the ERCOT $5,000-ORDC 13.15x wall (PJM's reasoning/value).
         "econ_low_share": 0.526,
         "pct_peaking": 7.0,
+        # phys_* (caiso_campd_marginal_hr_summary.csv, n=75): committed ≈
+        # avg_committed_p50 (0.991) — near-zero markup; the DEB econ ramp
+        # decomposes to the measured flat-to-falling marginal (0.686/0.710) +
+        # a fixed margin; peak 1.0 = full-output bound (the 4.0 soft-cap wall
+        # above it is the $ scarcity margin, ~$163/MWh at the anchor).
+        "phys_committed": 0.991,  # avg_committed_p50
+        "phys_econ_low": 0.686,  # marg_econ_low_p50 (flat-to-falling CT curve)
+        "phys_econ_high": 0.710,  # marg_econ_high_p50
+        "phys_peak": 1.0,  # full-output bound; 4.0 wall above → $ scarcity margin
     },
     # CC_CHP / CT_CHP / ST_GAS below are PINNED to the values CAISO previously
     # inherited from the generic ERCOT-lineage `else` branch. They are NOT
@@ -518,6 +610,13 @@ _CAISO_OFFER_CURVE: dict[str, dict[str, float]] = {
     # is a separate, out-of-scope CAISO item (audit §5.1 lists CAISO's tuned
     # surface elsewhere). Making the inheritance explicit here is what lets the
     # shared fallback go neutral without touching CAISO's dispatch.
+    # phys_* on CC_CHP / CT_CHP / ST_GAS (caiso_campd_marginal_hr_summary.csv
+    # p50s) are MEASURED, but their registered MULTIPLIERS are the ungrounded
+    # ERCOT-inherited placeholders above — so under --gas-offer-margin these
+    # decompose a not-CAISO-grounded offer into measured-phys + a fixed margin
+    # (a solve-validation item, NOT a grounded level calibration; flag-off keeps
+    # them byte-identical). CT_CHP's inherited 1.20 econ vs the measured 0.59
+    # marginal is the largest such margin — surfaced for A/B, not asserted good.
     "CC_CHP": {
         # LEVER A (2026-07-04): committed 0.92 -> 1.00, same min-load-block
         #   physics as CC_REGULAR above (the borrowed sub-cost committed offer
@@ -530,6 +629,10 @@ _CAISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 2.25,
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,
+        "phys_committed": 1.028,  # avg_committed_p50, n=9
+        "phys_econ_low": 0.880,  # marg_econ_low_p50
+        "phys_econ_high": 0.942,  # marg_econ_high_p50
+        "phys_peak": 2.25,  # physical F-class duct ratio == registered peak → mk 0
     },
     "CT_CHP": {
         "committed": 1.10,
@@ -537,6 +640,10 @@ _CAISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "econ_high": 1.20,
         "peak": 1.40,
         "econ_low_share": 0.50,
+        "phys_committed": 1.073,  # avg_committed_p50, n=6
+        "phys_econ_low": 0.594,  # marg_econ_low_p50 (efficient cogen CT)
+        "phys_econ_high": 0.598,  # marg_econ_high_p50
+        "phys_peak": 1.0,  # full-output bound; 1.40 wall above → small $ margin
     },
     "ST_GAS": {
         "committed": 0.81,
@@ -545,6 +652,10 @@ _CAISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 4.20,
         "econ_low_share": 0.50,
         "pct_peaking": 15.0,
+        "phys_committed": 1.683,  # avg_committed_p50 > 0.81 bid → markup clips 0
+        "phys_econ_low": 0.725,  # marg_econ_low_p50
+        "phys_econ_high": 0.755,  # marg_econ_high_p50
+        "phys_peak": 1.0,  # full-output bound; 4.20 wall above → $ scarcity margin
     },
 }
 
@@ -652,6 +763,17 @@ _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 2.25,  # physically-real F-class duct-burner scarcity band (kept)
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,
+        # phys_* (2026-07-23, gas-offer net-revenue margin — docs/handoffs/
+        # gas-offer-net-revenue-margin-design-2026-07.md): MISO's own measured
+        # CAMPD marginal-HR artifact miso_campd_marginal_hr_summary.csv p50s
+        # (committed→avg_committed_p50 block-average burn; econ→marg_econ_{low,
+        # high}_p50 incremental burn; peak→2.25 physical F-class duct ratio).
+        # Consumed ONLY under --gas-offer-margin: markup=max(0,mult−phys) is
+        # repriced from fuel-scaled to a fixed $/MWh margin at the ISO anchor.
+        "phys_committed": 1.005,  # avg_committed_p50, n=103
+        "phys_econ_low": 0.887,  # marg_econ_low_p50
+        "phys_econ_high": 1.008,  # marg_econ_high_p50
+        "phys_peak": 2.25,  # physical F-class duct ratio == registered peak → mk 0
     },
     "CT_PEAKER": {
         # MISO-measured bands (closes the open root cause the 2026-07 de-leak
@@ -683,6 +805,15 @@ _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 4.00,  # MISO offer cap ~$1-2k/MWh -> caps the 13.15x ERCOT-ORDC wall
         "econ_low_share": 0.526,
         "pct_peaking": 7.0,
+        # phys_* (miso_campd_marginal_hr_summary.csv, n=249): committed grounded
+        # ON avg_committed_p50 (1.025) → markup 0; the neutral 1.0 econ bands
+        # decompose to the measured flat-to-falling marginal (0.687/0.691) + a
+        # fixed margin; peak 1.0 = full-output bound (the 4.0 $-cap wall above
+        # it is the scarcity margin). CT part-load premium is $-natured.
+        "phys_committed": 1.025,  # avg_committed_p50 == registered committed → mk 0
+        "phys_econ_low": 0.687,  # marg_econ_low_p50 (flat-to-falling CT curve)
+        "phys_econ_high": 0.691,  # marg_econ_high_p50
+        "phys_peak": 1.0,  # full-output bound; 4.0 wall above → $ scarcity margin
     },
     # CC_CHP / CT_CHP / ST_GAS: DE-LEAKED from the generic ERCOT-lineage `else`
     # branch to neutral 1.0 multipliers (offer at each unit's own base heat rate),
@@ -692,6 +823,11 @@ _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
     # ST_GAS ~11.27) is a later disciplined-calibration item (rule #1), not
     # re-tuned here. Base ST_GAS prices only true-peaker steam (baseload steam
     # routes to ST_GAS_INTERMEDIATE, untouched).
+    # The neutral 1.0 MULTIPLIERS stay (no CAMPD-grounded MISO offer spread for
+    # these yet, rule #1); the phys_* keys below are the MEASURED marginal-HR
+    # basis consumed ONLY by --gas-offer-margin (miso_campd_marginal_hr_summary.
+    # csv p50s). Decomposing the neutral offer against its measured marginal
+    # gives the fixed-margin form; at flag-off the classes are byte-identical.
     "CC_CHP": {
         "committed": 1.0,
         "econ_low": 1.0,
@@ -699,6 +835,10 @@ _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 2.25,  # physical F-class duct-burner ratio (not ERCOT-fitted)
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,
+        "phys_committed": 1.508,  # avg_committed_p50 > 1.0 bid → markup clips 0
+        "phys_econ_low": 0.995,  # marg_econ_low_p50 (near-neutral → tiny markup)
+        "phys_econ_high": 1.017,  # marg_econ_high_p50 > 1.0 bid → markup 0
+        "phys_peak": 2.25,  # physical duct ratio == registered peak → mk 0
     },
     "CT_CHP": {
         "committed": 1.0,
@@ -706,6 +846,10 @@ _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "econ_high": 1.0,
         "peak": 1.0,
         "econ_low_share": 0.50,
+        "phys_committed": 0.857,  # avg_committed_p50, n=10
+        "phys_econ_low": 0.785,  # marg_econ_low_p50
+        "phys_econ_high": 0.825,  # marg_econ_high_p50
+        "phys_peak": 1.0,  # full-output bound (registered peak 1.0 → markup 0)
     },
     "ST_GAS": {
         "committed": 1.0,
@@ -714,6 +858,10 @@ _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 1.0,
         "econ_low_share": 0.50,
         "pct_peaking": 15.0,
+        "phys_committed": 1.079,  # avg_committed_p50 > 1.0 bid → markup clips 0
+        "phys_econ_low": 0.812,  # marg_econ_low_p50
+        "phys_econ_high": 0.849,  # marg_econ_high_p50
+        "phys_peak": 1.0,  # full-output bound (registered peak 1.0 → markup 0)
     },
     # MISO COAL bands, grounded in the MISO IMM's measured conduct statistics
     # (Potomac Economics SOM; datatype som-competitive-conduct, freeze test
@@ -941,6 +1089,59 @@ _NEISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "phys_econ_low": 0.692,  # marg_econ_low_p50 (Montville native ramp)
         "phys_econ_high": 0.731,  # marg_econ_high_p50
         "phys_peak": 1.0,  # registered peak 1.0 == full-output bound → markup 0
+    },
+}
+
+
+# ERCOT gas-offer net-revenue margin phys_* keys (2026-07-23, docs/handoffs/
+# gas-offer-net-revenue-margin-design-2026-07.md). ERCOT is the ONE ISO whose
+# gas offer MULTIPLIERS live in the shared base offer_curve_by_group (with
+# `iso == "ERCOT"` ternaries) plus its recipe's --offer-curve overrides and the
+# ercot_offer_surface_conditional peak_ladder split — NOT a full replacement
+# curve. So this dict carries ONLY the measured physical basis keys (the mults
+# stay where they are); it is deep-merged onto the resolved ERCOT curve BEFORE
+# the recipe overrides / conditional split, both of which preserve unspecified
+# keys (dict-copy + setdefault().update()), so the phys_* keys survive onto
+# every gas band (incl. the peak_ladder rungs) and the markup auto-computes from
+# whatever mult the recipe resolves. Values are ERCOT's own measured CAMPD
+# marginal-HR artifact ercot_campd_marginal_hr_summary.csv p50s
+# (committed→avg_committed_p50; econ→marg_econ_{low,high}_p50; peak→2.25 F-class
+# duct ratio for CC / 1.0 full-output bound for CT,ST). Consumed ONLY under
+# --gas-offer-margin. COMPOSITION CAVEAT (charter): ERCOT's peak carries the
+# $5,000-ORDC 13.15x scarcity wall AND the hour-triggered conditional surface;
+# converting the wall to a fixed margin composes with both and MUST be verified
+# by an A/B solve (tight vs loose hours) before ERCOT is judged a keeper — the
+# heaviest, highest-risk ISO for this mechanism.
+_ERCOT_OFFER_CURVE: dict[str, dict[str, float]] = {
+    "CC_REGULAR": {
+        "phys_committed": 1.006,  # avg_committed_p50, n=120
+        "phys_econ_low": 0.825,  # marg_econ_low_p50
+        "phys_econ_high": 0.950,  # marg_econ_high_p50
+        "phys_peak": 2.25,  # physical F-class duct ratio (recipe peak wall above)
+    },
+    "CC_CHP": {
+        "phys_committed": 0.982,  # avg_committed_p50, n=32
+        "phys_econ_low": 0.793,  # marg_econ_low_p50
+        "phys_econ_high": 0.941,  # marg_econ_high_p50
+        "phys_peak": 2.25,  # physical F-class duct ratio
+    },
+    "CT_PEAKER": {
+        "phys_committed": 1.022,  # avg_committed_p50, n=117
+        "phys_econ_low": 0.723,  # marg_econ_low_p50 (flat-to-falling CT curve)
+        "phys_econ_high": 0.727,  # marg_econ_high_p50
+        "phys_peak": 1.0,  # full-output bound; the 13.15 ORDC wall → $ margin
+    },
+    "CT_CHP": {
+        "phys_committed": 1.556,  # avg_committed_p50 > bid → committed markup 0
+        "phys_econ_low": 0.948,  # marg_econ_low_p50, n=9
+        "phys_econ_high": 0.921,  # marg_econ_high_p50
+        "phys_peak": 1.0,  # full-output bound
+    },
+    "ST_GAS": {
+        "phys_committed": 1.360,  # avg_committed_p50 > bid → committed markup 0
+        "phys_econ_low": 0.815,  # marg_econ_low_p50, n=41
+        "phys_econ_high": 0.871,  # marg_econ_high_p50
+        "phys_peak": 1.0,  # full-output bound; the 4.20 wall above → $ margin
     },
 }
 
@@ -1837,6 +2038,19 @@ def backcast_config(
         config = config.with_overrides(
             offer_curve_by_group=_neutralize_generic_gas_bands(
                 config.offer_curve_by_group
+            )
+        )
+    # ERCOT gas-offer net-revenue margin physical basis (see _ERCOT_OFFER_CURVE):
+    # phys_* keys ONLY, deep-merged onto the base curve so the ERCOT gas MULTS
+    # (base ternaries + recipe --offer-curve overrides + conditional peak_ladder,
+    # all applied below) are untouched and every unspecified band keeps its
+    # value. Inert unless --gas-offer-margin arms the mechanism (rule 24). Merged
+    # here, before the recipe overrides / conditional split, both of which
+    # preserve the phys_* keys they don't name.
+    if iso.upper() == "ERCOT":
+        config = config.with_overrides(
+            offer_curve_by_group=_deep_merge_offer_curve(
+                config.offer_curve_by_group, _ERCOT_OFFER_CURVE
             )
         )
     # NYISO gas offer curves (SOM-grounded; see _NYISO_OFFER_CURVE). Merged on
