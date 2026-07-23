@@ -884,7 +884,10 @@ from market_sim.data.fleet.floors import (  # noqa: F401
     apply_netload_reliability_floor,
 )
 from market_sim.data.fleet.offer_surfaces import (  # noqa: F401
+    _CONDITIONAL_SURFACE_SPECS,
+    _CondSurfaceSpec,
     _ERCOT_CLEARED_SHARE_CLASS_OF,
+    build_offer_surface_conditional_markup,
     _ERCOT_CLEARED_SHARE_STEAM_CLASS_OF,
     _ERCOT_MIDCURVE_CLASS_OF,
     _LOWCURVE_ECON_SUFFIXES,
