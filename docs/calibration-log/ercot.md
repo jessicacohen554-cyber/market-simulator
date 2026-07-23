@@ -681,3 +681,60 @@ sidecar carries a market_story (ercot97's had none); status shard rebuilt;
 `audit_keepers --iso ERCOT` + calibration-keeper-auditor both PASS with zero repairs.
 ercot97 stays registered as the prior-keeper comparison. The offer-formation successor
 lane (ERCOT-98 §Successor) now works against this honest baseline.
+
+## 2026-07-23 — ERCOT-99 (offer formation at high net load, the 2023-2025 C3c tail): the cleared-share commitment-loading STATE weight prices loaded-at-scarcity gas at COST — a premise the measured DA/RT prices falsify. Turning it off (structural correction, single flag) lifts the 2023 econ offer wall at the scarcity hours ONLY (>=p97 bin): C3a 2023 −33.5→−26.3%, C3b 0.647→0.520, C3c 42→70/181; 2024/2025 byte-identical (RT-ladder years, unweighted). Candidate `2026-07-23-ercot99-state-off-fullspan` registered NOT-YET; keeper UNCHANGED pending owner adjudication
+
+**Charter (ERCOT-98 successor).** Make the measured offer wall the keeper already carries
+reachable where it was marginal in reality — with measurements, no residual tuning.
+Full forensics: `docs/DIAGNOSIS-ercot-99-offer-formation-high-netload-2026-07.md`; no-LP
+probes `scripts/probes/ercot99_{intrahour_bound,reach_gap,model_offer_curve,reanalyze_offer,real_dam_wall,as_contamination,score_probe}.py`.
+
+**Honest denominator (intra-hour).** Splitting the 2023 missed hours by 15-min HB_HUBAVG
+hotness (reconstructed on the committed CST clock, reproduces 181): 83 sustained
+(>=3/4 intervals >$200), 14 transient (<=1/4). Reach ceiling (caught + sustained-missed)
+= 123/181; transients are only 10%. 2024 ceiling 37/53, 2025 25/31 (2025's 0/31 collapse
+is NOT transients — 25 of 31 sustained). C3c PASS needs 90 — inside the ceiling.
+
+**Reach gap = DEPTH.** 92/141 missed hours are already in the >=p97 bin where the surface
+fires, yet the model clears $56 median (max $128). The reconstructed P1 offer curve (no-LP
+monkeypatch capture; marginal cross-checks the sidecar hub within $2) is a flat cheap block
+— 58 GW < $50 — with a 4.5 GW cushion of cheap gas ($50-200) above the margin. The
+conditional PEAK surface reprices peak rungs +$1076 (to $200-5000) but they sit ABOVE the
+cushion; the cleared-share ECON floor adds only +$5.4 — inert.
+
+**Root cause = the state weight.** `ercot_offer_surface_cleared_share_state`'s CC series is
+w=0.00 (median) at the missed hours — it stands the econ wall down, on the premise that
+RUC/self-committed capacity prices near cost. But the measured actuals at those hours are
+DA p50 $327 (93/141 > $200) and RT p50 $488 — loaded-at-scarcity gas clears at the wall,
+not cost. The cost-pricing is the wrong sign (falsified premise, like the ercot98 clock).
+
+**Suspects refuted (recorded).** AS-contamination of the ladder — re-deriving above
+(energy+AS)-award LOWERS the CC p90 ($93→$54); the DAM CC offers are genuinely cheap, not
+AS-held. A 2023 RT ladder — no 2023 SCED energy-offer disclosure exists (only DAM; the
+60-Day SCED disclosure is 2024/2025 sample-days). Cross-applying the 2024/25 RT ladder —
+the measured CC RT ladder is itself cheap (p50 $57). Residual-tuned adder / RTOLCAP
+room-pin — rule 13 / ERCOT-79 pre-registered forbidden. So the wall level cannot be raised
+beyond the measured DAM offer quantiles.
+
+**Mechanism (structural, rule 1).** `ercot_offer_surface_cleared_share_state=false`: price
+the above-boundary capacity at the measured DAM offer wall (base + (wall−base)) instead of
+cost. Effect is ENTIRELY in the >=p97 bin (reach-gap: bins 0-2 byte-unchanged, bin-3
+catches 38→61, missed-hour mean hub $70→$133) — no moderate-day over-lift. Adds NO fitted
+DOF (removes a derived input's application; DOF ledger 9/8 == keeper).
+
+**Run.** `2026-07-23-ercot99-state-off-fullspan` (full-span 2023-2025, single-flag replay
+of the ercot98 keeper). Official `calibration_verdict` vs keeper: C3a 2023 −33.5→−26.3%,
+C3b 0.647→0.520, C3c 2023 42→70/181 (0.39×), 2024 12/53 & 2025 0/31 byte-identical (only
+2023 lacks the RT ladder and so carries the state-weighted DAM wall). C1 16/16, C2, C4,
+C5a, C7 (D-1), C8 (D-2) all PASS; C6 governance UNATTESTED (owner lane). Determination
+NOT-YET (C6), structurally more faithful than the keeper. Does NOT reach C3c PASS — the
+residual is the unmeasured 2023 RT re-offer wall + the depth of the cheap merit stack,
+bounded by what the measured DAM offers contain, not tuned (rule 1).
+
+**LOYO.** Degenerate by construction: the flip reprices 2023 alone (2024/2025 byte-identical),
+adds no year-specific parameter (DOF unchanged), and the 2023 correction is justified by
+2023's own measured DA/RT prices — no in-sample-gain/held-out-degradation trade to overfit.
+
+**Disposition.** Keeper UNCHANGED (`2026-07-23-ercot98-np6-hsl-fullspan`, NOT-YET). The
+candidate is registered as the structurally-more-faithful successor; promotion is the
+owner's call.
