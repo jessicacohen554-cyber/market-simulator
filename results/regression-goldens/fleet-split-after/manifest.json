@@ -1,0 +1,126 @@
+{
+  "env": {
+    "MARKET_SIM_HIGHS_THREADS": "1",
+    "MARKET_SIM_WARMSTART": "1",
+    "MARKET_SIM_WARMSTART_XYEAR": "0"
+  },
+  "git_dirty": true,
+  "git_sha": "d7b6f51",
+  "hash_scheme": "sha256-of-canonical-column-float64-bytes",
+  "highspy_version": "unknown",
+  "keepers": {
+    "ERCOT": {
+      "bundle": "results/calibration/ercot97_plant_grain_fullspan",
+      "content_hashes": {
+        "btm.parquet": "8acf053bb5aa6bcb2a38a4081ee9030ed5ef6afc967c7892f6b7bff8d50fd376",
+        "dispatch/2023_P1.parquet": "a2f66c00714cc2bdc75d2186e51b94d72f19c398a6cd29bee5147e55d5de8449",
+        "dispatch/2024_P1.parquet": "a9d5a7241a773c73037103bfd27c3bc16c4a7a723f8dbc8238b42b99bc914054",
+        "dispatch/2025_P1.parquet": "c17aec58c133bc780e95363ff4611ba732eae317ba2f70a8181ec747047b8cb2",
+        "flows.parquet": "1f8860736988df31e344af9af8bf09bf77e0ab6c69c77af36005435fff7ac773",
+        "storage.parquet": "84c2c8f9e57d7e709438b68f982dabf7afbd8ffd811f9cb84963dd5ae05c96f6",
+        "system.parquet": "1f083a4f69338bb6bac9c2bbd217a1263414b719ffbb2ae9fa81a48a779caca1"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_takeorpay_from_data",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "nyiso_scr_edrp_reserve_eligible",
+        "plant_tranche_config",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "nyiso_scr_edrp_reserve_eligible"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 213,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [
+          "caiso_endogenous_wecc_node",
+          "nyiso_scr_edrp_reserve_eligible"
+        ],
+        "scenario_config_matched": 593
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-22-ercot97-plant-grain-fullspan",
+      "recorded_flag_count": 204,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
+    "NEISO": {
+      "bundle": "results/calibration/neiso59_reaudit_corrected_outages",
+      "content_hashes": {
+        "btm.parquet": "30e617f6492cc201e0cfc976b286e76484548e4d3203dc81f6709d8f55a207fe",
+        "dispatch/2023_P1.parquet": "5466b7d661bb0a45b44b9eba94f3f6d75fce91ab79443d2c4e5a38f177bf71ea",
+        "dispatch/2023_P2.parquet": "f408b37f4c36c53475a12630c858eb5d1b7400649bc07c08620049395f63b7bf",
+        "dispatch/2024_P1.parquet": "2ddcf739becddc1002a3acbb03b0ee55c664836d4f07738806a6e58e26f200ea",
+        "dispatch/2024_P2.parquet": "56cc070ff31ff0461b884260da5ad28d25ffc9f593e0096b3283fe444345f625",
+        "dispatch/2025_P1.parquet": "70e5d830d66a85e1fb5c39f858282bb97114971abc647f52bef47a199fe85b31",
+        "dispatch/2025_P2.parquet": "b2ac32791a00862d58fedd5e3b968227aac7eb1f6cc340c2699de7e283fc9ade",
+        "flows.parquet": "ed3960ef0c23b13450b66d6a7a6c401609f9a5d327d64a4d6a44f04ee2ac0c6d",
+        "storage.parquet": "97bbfbde0964f244a2a68177ba4200491632aef0032d2dd03eb2b4911fd67b42",
+        "system.parquet": "0b8135c7c75f5e44c748be9d3357c412eee85a63856dac4de42cc3f0a25f1ef1"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_takeorpay_from_data",
+        "ercot_thermal_dam_availability_hourly",
+        "ercot_thermal_dam_availability_plant",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "nyiso_hydro_reserve_eligible",
+        "nyiso_scr_edrp",
+        "nyiso_scr_edrp_reserve_eligible",
+        "nyiso_scr_edrp_strike",
+        "plant_tranche_config",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "ercot_thermal_dam_availability_hourly",
+          "ercot_thermal_dam_availability_plant",
+          "nyiso_hydro_reserve_eligible",
+          "nyiso_scr_edrp",
+          "nyiso_scr_edrp_reserve_eligible",
+          "nyiso_scr_edrp_strike"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 208,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [
+          "caiso_endogenous_wecc_node",
+          "ercot_thermal_dam_availability_hourly",
+          "ercot_thermal_dam_availability_plant",
+          "net_cone_forward_escalation",
+          "nyiso_hydro_reserve_eligible",
+          "nyiso_scr_edrp",
+          "nyiso_scr_edrp_reserve_eligible",
+          "nyiso_scr_edrp_strike"
+        ],
+        "scenario_config_matched": 587
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-13-neiso-60-phantom-outage",
+      "recorded_flag_count": 199,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    }
+  },
+  "note": "Current-HEAD regression baselines (Stage-0). NOT byte-reproductions of the registered July-3 keeper bundles. Multi-GB bundles are gitignored; only this manifest is committed.",
+  "stage_tag": "fleet-split-after"
+}
