@@ -131,6 +131,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "nyiso_scr_edrp_reserve_eligible",
     "ercot_thermal_dam_availability_hourly",
     "ercot_thermal_dam_availability_plant",
+    # Gas-offer net-revenue margin mechanism (commit d536e7d): the flag plus its
+    # identification anchor. Both are default-off (False / None) and were intended
+    # byte-identical for every config that does not arm the mechanism, but they
+    # reach asdict() and were not registered here, so they leaked into the hash and
+    # moved the pinned default cache_key off edbc1b1 (same class of miss the fields
+    # above had). Dropped from the hash at their defaults so every pre-existing
+    # cache key is byte-stable again; an armed run (gas_offer_net_revenue_margin
+    # True, or a set gas_offer_margin_anchor) enters the key as a distinct scenario.
+    "gas_offer_net_revenue_margin",
+    "gas_offer_margin_anchor",
 )
 
 
