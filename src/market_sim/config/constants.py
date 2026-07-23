@@ -486,14 +486,31 @@ GAS_TRANCHE_SHARES_BY_GROUP: dict[str, tuple[float, float, float]] = {
 # identification constant, not a tunable: it re-derives ONLY when the gas
 # source workbooks change (rule 23), via
 # ``scripts/data/derive_gas_offer_margin_anchor.py``.
-#   NEISO: 4.0763 = mean(2.9365, 3.0304, 6.2621) — 2023/2024/2025 year means
-#   of the AGT-hub-basis delivered series at the keeper Henry Hub prices
-#   (2.54 / 2.19 / 3.52); derive script output 2026-07-23, design doc
-#   docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md.
+# Each value is the derive script's output 2026-07-23 (each ISO's keeper gas
+# overlay; TRAIN_WINDOW_HH Henry Hub 2.54 / 2.19 / 3.52), design doc
+# docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md:
+#   ERCOT: 2.2494 = mean(2.0394, 1.6895, 3.0192) — annual-HH + seasonality
+#     delivered series (ercot99: no monthly actuals / hub overlay; Waha-ish
+#     discount to HH).
+#   PJM:   3.3483 = mean(3.2551, 2.8556, 3.9341) — monthly-actuals delivered
+#     (keeper --gas-monthly-actuals; +GAS_BASIS_DIFFERENTIAL PJM).
+#   CAISO: 4.7964 = mean(6.9524, 3.3721, 4.0646) — SoCal/PG&E Citygate
+#     hub-basis overlay (the 2023 western-gas-crisis year lifts the mean).
+#   MISO:  3.0492 = mean(2.8392, 2.4893, 3.8190) — per-plant EIA-923 monthly
+#     level + mean-preserving daily shape.
+#   NYISO: 3.9046 = mean(3.3566, 2.7969, 5.5602) — monthly actuals + zonal
+#     pipeline-hub basis + Transco Z6 daily overlay.
+#   NEISO: 4.0763 = mean(2.9365, 3.0304, 6.2621) — Algonquin (AGT) hub-basis
+#     delivered series.
 # ISOs absent from this registry hard-fail when the flag is armed (never a
 # silent fallback — rule 25); tuned per-ISO anchors never cross ISO
 # boundaries (rule 24).
 GAS_OFFER_MARGIN_ANCHOR_BY_ISO: dict[str, float] = {
+    "ERCOT": 2.2494,
+    "PJM": 3.3483,
+    "CAISO": 4.7964,
+    "MISO": 3.0492,
+    "NYISO": 3.9046,
     "NEISO": 4.0763,
 }
 

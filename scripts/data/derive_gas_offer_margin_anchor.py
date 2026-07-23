@@ -59,11 +59,53 @@ from market_sim.data.fuel.trajectories import _gas_series  # noqa: E402
 TRAIN_WINDOW_HH: dict[int, float] = {2023: 2.54, 2024: 2.19, 2025: 3.52}
 
 # Per-ISO gas flag recipe for the delivered series — mirrors the calibration
-# harness (backcast_config): monthly EIA-923 actuals + the ISO's measured hub
-# basis overlay. The daily within-month shape is mean-preserved to the
-# monthly hub level by construction, so the ANNUAL mean is identical with or
-# without the daily leg.
+# harness (each ISO's KEEPER backcast_config gas overlay): monthly EIA-923
+# actuals + the ISO's measured hub/basis overlay. The daily within-month shape
+# (gas_daily_shape / gas_hub_basis_daily) is mean-preserved to the monthly hub
+# level by construction, so the ANNUAL mean — hence the anchor — is identical
+# with or without the daily leg; the daily flags are carried only to mirror the
+# keeper exactly. Each entry is the True gas-flag set of the ISO's keeper
+# run_config.json (2026-07-23 keepers: ercot99 / pjm-gasshape-interpfix /
+# caiso-102 / miso-81 / nyiso-70 / neiso-61), so the anchor is derived on the
+# exact delivered-gas series the registered offer_curve_by_group multipliers
+# were calibrated against (rule 24 — anchors never cross ISO boundaries).
 GAS_SERIES_FLAGS: dict[str, dict[str, bool]] = {
+    # ERCOT keeper (ercot99): annual Henry Hub + seasonality only — no monthly
+    # actuals, no hub-basis overlay (E1: ERCOT stays on annual + shape).
+    "ERCOT": {
+        "gas_seasonality": True,
+    },
+    # PJM keeper: --gas-monthly-actuals (its keeper passes it explicitly) +
+    # the mean-preserving daily HH shape. No citygate/basin hub overlay.
+    "PJM": {
+        "gas_seasonality": True,
+        "gas_monthly_actuals": True,
+        "gas_daily_shape": True,
+    },
+    # CAISO keeper: monthly actuals + the SoCal/PG&E Citygate hub-basis overlay
+    # (the measured CA trading hub the marginal CC prices off) + daily shape.
+    "CAISO": {
+        "gas_seasonality": True,
+        "gas_monthly_actuals": True,
+        "gas_hub_basis_overlay": True,
+        "gas_daily_shape": True,
+    },
+    # MISO keeper: per-plant EIA-923 monthly level with the mean-preserving
+    # daily HH swing on top (no ISO-month actuals flag, no hub overlay).
+    "MISO": {
+        "gas_seasonality": True,
+        "gas_daily_shape": True,
+    },
+    # NYISO keeper: monthly actuals + the (mean-zero) zonal pipeline-hub basis +
+    # the Transco Z6 daily hub overlay + daily shape.
+    "NYISO": {
+        "gas_seasonality": True,
+        "gas_monthly_actuals": True,
+        "gas_hub_basis_overlay": True,
+        "gas_hub_basis_daily": True,
+        "gas_daily_shape": True,
+        "nyiso_zonal_gas_basis": True,
+    },
     "NEISO": {
         "gas_seasonality": True,
         "gas_monthly_actuals": True,
@@ -98,10 +140,16 @@ def derive_anchor(iso: str) -> tuple[dict[int, float], float]:
 def _net_revenue_check(iso: str, anchor: float) -> None:
     """Print the fixed margins the anchor implies + the SOM-style cross-check."""
     from market_sim.data.offer_curves import gas_offer_margin_markup_mult
-    from market_sim.pipeline.backcast_config import _NEISO_OFFER_CURVE
+    from market_sim.pipeline.backcast_config import backcast_config
 
-    curves = {"NEISO": _NEISO_OFFER_CURVE}
-    if iso not in curves:
+    # Resolve the ISO's DEFAULT backcast offer curve (base ternaries + per-ISO
+    # merge + the phys_* keys), so this works uniformly — including ERCOT, whose
+    # phys keys live in a phys-only _ERCOT_OFFER_CURVE deep-merged onto the
+    # shared base (the recipe's --offer-curve overrides are NOT applied here;
+    # this is the base-curve documentation cross-check, not the keeper's live
+    # peak wall).
+    curve = backcast_config(2024, iso, HOURS_PER_YEAR, anchor).offer_curve_by_group
+    if not any(any(k.startswith("phys_") for k in bands) for bands in curve.values()):
         print(f"[net-revenue-check] no phys-keyed curve registered for {iso}")
         return
     # Class base heat rates from the ISO's CAMPD marginal-HR artifact (the
@@ -118,9 +166,11 @@ def _net_revenue_check(iso: str, anchor: float) -> None:
         for row in csv.DictReader(open(base_hr_path))
     }
     print(f"\nFixed margins at anchor {anchor:.4f} $/MMBtu (markup x HR x anchor):")
-    for cls, bands in sorted(curves[iso].items()):
+    for cls, bands in sorted(curve.items()):
         hr = base_hr.get(cls)
-        if hr is None:
+        # Only the phys-keyed gas classes carry the mechanism (coal / neutral
+        # classes have no phys_* keys → markup 0, skipped to keep the table tight).
+        if hr is None or not any(k.startswith("phys_") for k in bands):
             continue
         margins = {}
         for suffix, mult_key in (
@@ -129,14 +179,16 @@ def _net_revenue_check(iso: str, anchor: float) -> None:
             ("econhi", "econ_high"),
             ("peak", "peak"),
         ):
-            mult = float(bands[mult_key])
-            mk = gas_offer_margin_markup_mult(suffix, mult, bands)
+            mult = bands.get(mult_key)
+            if mult is None:
+                continue
+            mk = gas_offer_margin_markup_mult(suffix, float(mult), bands)
             margins[mult_key] = mk * hr * anchor
         print(f"  {cls:12s} " + "  ".join(f"{k}={v:7.2f}" for k, v in margins.items()))
     # Offer-side Potomac-SOM cross-check (retirements.py net-revenue logic
     # inverted): the CT scarcity margin's implied cost-recovery run-hours
     # against a FOM-only going-forward cost.
-    ct = curves[iso].get("CT_PEAKER")
+    ct = curve.get("CT_PEAKER")
     if ct and "phys_peak" in ct:
         hr = base_hr["CT_PEAKER"]
         margin = gas_offer_margin_markup_mult("peak", float(ct["peak"]), ct) * hr
