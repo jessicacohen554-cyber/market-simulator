@@ -1,0 +1,299 @@
+"""Leaf of the :mod:`market_sim.data.fleet` package (absorbs 3E ``fleet_models``).
+
+Physically holds the pre-split module-level constants and clean-seam helpers
+every submodule shares (fuel-type codes, EIA-860 artifact names, BA/ISO maps,
+the clean-read gate, the non-leap month index), so submodules can import them
+WITHOUT a module-level edge back to the package (`the ``data/fuel``
+``_shared`` pattern; tests/test_persisted_identity.py
+``test_no_module_level_import_cycles``).
+
+:class:`Generator` and :class:`FleetArrays` are NOT defined here: the
+committed ``p2_state`` pickles resolve both classes by
+``__module__ == "market_sim.data.fleet"`` (pinned by
+``tests/test_persisted_identity.py``), so they are defined physically in the
+package ``__init__`` and this leaf resolves them lazily via PEP-562
+``__getattr__`` — a from-import of either name through this module works at
+call/import time with no import-time cycle. :func:`_pkg_ns` is the call-time
+package-namespace resolver that keeps historical monkeypatch / ``mock.patch``
+targets on ``market_sim.data.fleet`` intercepting package internals.
+"""
+
+from __future__ import annotations
+
+import calendar
+import os
+from pathlib import Path
+
+import numpy as np
+
+
+# ---------------------------------------------------------------------------
+# data/clean consumption seam (opt-in)
+# ---------------------------------------------------------------------------
+# Opt-in switch that routes the fleet + AS-withholding reads through the curated
+# ``data/clean`` tree (the frozen ``scripts.lib.clean_io.read_clean`` seam)
+# instead of ``data/raw``. Default OFF: with the variable unset the model reads
+# raw byte-for-byte as before. The clean tree is gitignored/derived, so
+# regenerate it first:
+#   python scripts/regenerate_clean.py fleet ancillary-services
+# This is a parity/migration seam, not a behavior change — see
+# ``tests/test_consume_fleet.py`` for the raw<->clean parity checks.
+USE_CLEAN_ENV: str = "MARKET_SIM_USE_CLEAN"
+_USE_CLEAN_TRUTHY: frozenset[str] = frozenset({"1", "true", "yes", "on"})
+
+
+def _use_clean() -> bool:
+    """Whether reads should be sourced from ``data/clean`` (opt-in).
+
+    Controlled by the :data:`USE_CLEAN_ENV` environment variable; any of
+    ``1/true/yes/on`` (case-insensitive) turns the clean seam on. Unset/anything
+    else keeps the default raw read path.
+    """
+    return os.environ.get(USE_CLEAN_ENV, "").strip().lower() in _USE_CLEAN_TRUTHY
+
+
+def _read_clean(*args, **kwargs):
+    """Lazy proxy to :func:`scripts.lib.clean_io.read_clean`.
+
+    Imported lazily (and only on the opt-in clean path) because ``scripts`` is a
+    repo-root package, not part of the installed ``market_sim`` distribution, so
+    it must not be required for a normal raw-path import.
+    """
+    from scripts.lib import clean_io
+
+    return clean_io.read_clean(*args, **kwargs)
+
+
+def _clean_fleet_year(data_dir: Path) -> int:
+    """Map an active EIA-860 vintage directory to its clean ``fleet`` partition.
+
+    The clean ``fleet`` datatype is partitioned by EIA-860 vintage year
+    (``data/clean/fleet/fleet_<year>.parquet``): a ``vintage_<year>/`` directory
+    curates to ``year`` and the top-level snapshot curates to
+    :data:`EIA860_OPERABLE_VINTAGE`. Resolving the active dir
+    (:func:`paths.active_eia860_dir`, which honors a
+    ``ScenarioConfig.eia860_vintage_year`` switch) to that year is what lets the
+    clean fleet read preserve the EIA-860 vintage behavior of the raw loaders —
+    selecting ``vintage_2023`` routes the clean read to ``fleet_2023``.
+    """
+    name = Path(data_dir).name
+    if name.startswith("vintage_"):
+        try:
+            return int(name.split("_", 1)[1])
+        except ValueError:
+            pass
+    return EIA860_OPERABLE_VINTAGE
+
+
+# Vintage year of the operable EIA-860 snapshot behind the committed
+# generators parquet: units online through this year are in the operable
+# schedule. Proposed rows whose Effective Year is at or before it are
+# stale (slipped projects with a past-dated COD), so the planned-additions
+# loader and the renewables proposed-capacity augmentation both skip them
+# rather than trust an effective date the snapshot has already overtaken.
+# Bump this whenever process_eia860.py regenerates the parquets from a
+# newer release. Source: EIA-860 2025 Early Release (eia8602025ER.zip,
+# operating years through 2025).
+EIA860_OPERABLE_VINTAGE: int = 2025
+
+
+# Location of the EIA-860 / eGRID CSV extracts. Re-exported from the central
+# path registry (other data modules import EIA_860_DIR from fleet).
+
+# Committed parquet of real EIA-860 generators for the seven wholesale
+# markets, produced by ``scripts/data/process_eia860.py`` from the raw release.
+EIA_860_PARQUET_NAME: str = "eia860_generators.parquet"
+
+# Committed parquet of within-window plant exits (whole plants that retired
+# mid-backcast and so are absent from the single recent operable vintage —
+# e.g. Mystic, plant 1588, a ~1.4 GW CC retired mid-2024). Built by
+# ``scripts/data/process_eia860.py --retired-window-from`` in the canonical fleet
+# schema (plus month-precise online/retirement columns), with ``status`` = OP
+# and the actual retirement carried in ``planned_retirement_*``. Injected into
+# the BACKCAST fleet so the COD ramp can dispatch each through its real
+# retirement month — the mirror of :func:`load_planned_additions` (forecast).
+EIA_860_RETIRED_WINDOW_PARQUET_NAME: str = (
+    "eia860_generator_retired_within_window.parquet"
+)
+
+# Committed parquet of the EIA-860 Multifuel schedule (operable units),
+# produced by ``scripts/data/process_eia860.py``. Carries the multiple-energy-
+# source fields ("Energy Source 2", "Multiple Fuels?", "Switch Between Oil
+# and Natural Gas?", oil/gas capacity splits) that flag dual-fuel units.
+EIA_860_MULTIFUEL_PARQUET_NAME: str = "eia860_multifuel_operable.parquet"
+
+# Directory for derived, inspectable fleet outputs (the binned-fleet cache).
+# Re-exported from the central path registry.
+
+# Columns of the cached plant-level binned-fleet parquet, one row per
+# physical generator with its loader-assigned efficiency bin and attributes.
+BINNED_FLEET_COLUMNS: list[str] = [
+    "plant_id",
+    "plant_name",
+    "fuel_type",
+    "efficiency_bin",
+    "zone",
+    "pmax_mw",
+    "pmin_mw",
+    "heat_rate",
+    "vom",
+    "emission_rate_co2",
+    "nox_rate",
+    "eford",
+    "online_year",
+    "retirement_year",
+]
+
+# Canonical column order of the EIA-860 generator extract consumed by the
+# fleet loader, produced by ``scripts/data/process_eia860.py``.
+EIA_860_CSV_COLUMNS: list[str] = [
+    "plant_id",
+    "generator_id",
+    "plant_name",
+    "state",
+    "balancing_authority_code",
+    "technology",
+    "energy_source",
+    "prime_mover",
+    "nameplate_capacity_mw",
+    "net_summer_capacity_mw",
+    "operating_year",
+    "planned_retirement_year",
+    "planned_retirement_month",
+    "status",
+    "heat_rate",
+]
+
+# EIA-930 balancing-authority code → ISO name, for the seven wholesale
+# markets that have EIA-930 demand data.
+BA_CODE_TO_ISO: dict[str, str] = {
+    "ERCO": "ERCOT",
+    "CISO": "CAISO",
+    "PJM": "PJM",
+    "MISO": "MISO",
+    "NYIS": "NYISO",
+    "ISNE": "NEISO",
+}
+
+# Inverse of BA_CODE_TO_ISO: EIA balancing-authority code keyed by ISO name.
+ISO_TO_BA_CODE: dict[str, str] = {iso: ba for ba, iso in BA_CODE_TO_ISO.items()}
+
+# Integer codes for fuel types, used to index into fuel-keyed arrays.
+# Code 11 (previously reserved as a gap) is now oil; biomass takes the next
+# free integer (15) after the prior maximum (gas_st = 14).
+FUEL_TYPE_MAP: dict[str, int] = {
+    "gas_cc": 0,
+    "gas_ct": 1,
+    "coal": 2,
+    "nuclear": 3,
+    "wind": 4,
+    "solar": 5,
+    "hydro": 6,
+    "import": 7,
+    "hydrogen_ct": 8,  # simple-cycle H2 turbine (peaker)
+    "hydrogen_ccgt": 9,  # combined-cycle H2 turbine (mid-merit/baseload)
+    "gas_cc_ccs": 10,  # gas CCGT with 90% post-combustion carbon capture
+    "oil": 11,  # oil-fired peaker/steam (distillate + residual fuel oil)
+    "geothermal": 12,  # enhanced geothermal systems (EGS)
+    "offshore_wind": 13,  # offshore wind (fixed-bottom and floating)
+    "gas_st": 14,  # legacy natural-gas steam boiler (conventional ST)
+    "biomass": 15,  # biomass / wood / MSW / landfill-gas thermal steam
+    "demand_response": 16,  # price-responsive DR supply block (NYISO SCR/EDRP):
+    # a pseudo-generator that clears the energy balance at its strike price with
+    # heat_rate=0 / emission_rate=0, so it carries no fuel/emission cost and is
+    # excluded from generation-mix scoring (it is avoided load, not generation —
+    # see results.export). Falls outside every reserve/AS/renewable/RPS fuel set,
+    # so it is dispatch-only and never evolves. data.nyiso_demand_response.
+}
+
+# Inverse of FUEL_TYPE_MAP: fuel type name indexed by its integer code.
+# Sized to the largest code so any gap in the code space yields an empty
+# string rather than a misaligned name.
+FUEL_TYPE_NAMES: list[str] = [""] * (max(FUEL_TYPE_MAP.values()) + 1)
+for _name, _code in FUEL_TYPE_MAP.items():
+    FUEL_TYPE_NAMES[_code] = _name
+
+
+def _hour_to_month_index(hours: int) -> np.ndarray:
+    """Return an ``(hours,)`` array mapping each hour to a 0-based month.
+
+    Uses a representative non-leap year (2023) so the 8760-hour horizon
+    maps cleanly onto the twelve calendar months.
+    """
+    month_hours: list[int] = []
+    for month in range(1, 13):
+        days = calendar.monthrange(2023, month)[1]
+        month_hours.extend([month - 1] * (days * 24))
+    return np.array(month_hours[:hours], dtype=int)
+
+
+# Mixed CC+ST facility steam heat-rate corrections (MMBtu/MWh), keyed by EIA
+# plant code. A facility that runs BOTH an efficient combined cycle and a legacy
+# steam turbine reports ONE plant-level EIA-923 heat rate (fuel / net-gen
+# blended across both prime movers); applied uniformly to every unit, that blend
+# hands the inefficient steam units the CC's efficiency. Ravenswood (plant 2500,
+# NYC, "CC+ST") is the material NYISO case: its ~1.7 GW steam units inherited the
+# 8.8 plant blend, so 0.97x8.8 = 8.5 eff HR put the big NYC steam unit BELOW the
+# top of an efficient CC's economic ramp (1.12x7.76 = 8.7) and it cleared AHEAD
+# of idle NYC combined cycle on merit (the 2023 CC_REGULAR -4 TWh / ST_GAS
+# +3.5 TWh merit inversion; nyiso 25).
+#
+# The corrected value (9.5) is the steam units' OWN heat rate recovered from the
+# plant blend, not a free parameter: the 8.8 plant figure is generation-weighted
+# across the efficient combined cycle (~7.5) and the steam turbine, so backing the
+# CC out at plausible 2023 capacity factors (CC ~0.6, steam ~0.15) leaves the steam
+# at ~9.5 MMBtu/MWh — modestly above the blend (steam is less efficient than the
+# CC) yet below the smaller, older NYC peers (Arthur Kill 11.27, Astoria 11.95),
+# as fits Ravenswood Unit 30 being a large, relatively efficient unit. 0.97x9.5 =
+# 9.2 eff HR also clears the top of CC's economic ramp (8.7), so the merit order
+# is restored (CC ahead of steam). A measured-data correction (CLAUDE.md rule #11
+# — the plant blend was silently masking the inversion), forward-reproducible (it
+# reflects unit physics, not a calendar/residual fit) and applied to the steam
+# (ST_GAS) units ONLY, leaving the CC rows on their measured blend.
+# CAISO AES Southland coastal once-through-cooling (OTC) steamers carry the SAME
+# pathology via a different path: a colocated CCGT reports under the steam plant's
+# ORIS code, so the EIA-923 plant-level heat rate blends the efficient CC into the
+# legacy boiler even though CAMPD remaps the CCGT to its own EIA code (315 -> 62115,
+# 335 -> 62116; see ST_GAS_PEAKER_PLANTS / campd.CAMPD_UNIT_PLANT_REMAP). The blend
+# hands the steam units CC-like heat rates (Alamitos 315 -> 8.49, Huntington Beach
+# 335 -> 7.33, both BELOW the CT_PEAKER fleet median ~10.07), so the model clears
+# ~1.3 GW of OTC steam ahead of CA's simple-cycle peakers (the model ST_GAS over /
+# CT_PEAKER under merit inversion). The recovered value is the measured heat rate of
+# the IDENTICAL pure-steam sister plant Ormond Beach (350: 11.85 MMBtu/MWh, same AES
+# Southland 1958-73 OTC boiler fleet, no colocated CC so its 923 blend is clean) —
+# a measured physical analog (CLAUDE.md rule #11), not a residual fit. _correct_
+# mixed_facility_steam_hr lifts ST_GAS units only and never lowers a clean unit, so
+# Ormond itself is untouched. With HR ~11.85 these boilers sit above the peakers and
+# clear only at scarcity, matching their ~0.2-0.6 TWh measured 2023 dispatch.
+MIXED_FACILITY_STEAM_HR: dict[int, float] = {2500: 9.5, 315: 11.85, 335: 11.85}
+
+
+def _pkg_ns():
+    """Return the package namespace (:mod:`market_sim.data.fleet`) at call time.
+
+    The package holds the exact import path of the pre-split module, so every
+    historical ``monkeypatch.setattr("market_sim.data.fleet.<name>", ...)``,
+    ``mock.patch("market_sim.data.fleet.<name>")`` and direct
+    ``fleet.<name> = ...`` attribute write lands on the package namespace.
+    Package internals resolve the historically patched names through it AT
+    CALL TIME so those patches keep intercepting the lookups — the pre-split
+    module-global semantics. Routed names (2026-07 census union):
+    ``load_cod_map``, ``mixed_fossil_plants``, ``cc_summer_derate_ratio``,
+    ``coal_summer_derate_ratio``, ``thermal_tranche_p25_level``,
+    ``thermal_tranche_online_frac``, ``load_campd_bins``,
+    ``load_fleet_from_csv``, ``fleet_to_bins``, ``bins_to_fleet``,
+    ``aggregate_fleet``, ``campd_tranche_fuel_frac``, ``split_coal_tranches``,
+    ``apply_plant_emission_rates``, ``_cache_binned_fleet``, ``EIA_860_DIR``,
+    ``_cc_demonstrated_peaks``, ``COAL_MUSTRUN_BY_PLANT``,
+    ``apply_plant_emission_rates_v2``.
+    """
+    import market_sim.data.fleet as fleet
+
+    return fleet
+
+
+def __getattr__(name: str):
+    """PEP 562 lazy re-export of the package-defined data-model types."""
+    if name in ("Generator", "FleetArrays"):
+        return getattr(_pkg_ns(), name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
