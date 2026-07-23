@@ -285,7 +285,7 @@ index b2fc076..1acf4a6 100644
 +                _dispf = _dispf[~_dispf["zone"].isin(_WECC_ENDOGENOUS_EXTERNAL_ZONES)]
 +                _imp = _wecc_net_import_row(
 +                    year, label, res, p2_state.get("links"), zone_names, hours
-+                )
+                 )
 +                if _imp is not None:
 +                    _dispf = pd.concat([_dispf, _imp], ignore_index=True)
 +                _sysf = _sysf[~_sysf["zone"].isin(_WECC_ENDOGENOUS_EXTERNAL_ZONES)]
