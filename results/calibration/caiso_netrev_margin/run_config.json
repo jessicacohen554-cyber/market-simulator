@@ -1,19 +1,19 @@
 {
-  "timestamp": "2026-07-23T21:28:15",
+  "timestamp": "2026-07-23T22:29:35",
   "git": {
-    "sha": "379a9b3",
+    "sha": "abb0fcd",
     "branch": "claude/gas-offer-net-revenue-isos-1px5vg",
-    "dirty": true,
-    "changed_files": [
-      "scripts/probes/netrev_margin_ab.py"
-    ],
+    "dirty": false,
+    "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "gas-offer net-revenue margin A/B \u2014 MARGIN arm (gas_offer_margin=true)",
+  "model_changes_note": "CAISO net-revenue margin KEEPER: structurally-correct fuel-invariant gas offer form (rule 1/11 \u2014 replaces the multiplicative markup form; single delta gas_offer_margin=true, anchor 4.7964). C3b dip is the removal of the multiplicative form's masking of the ledgered scarcity/import mid-tail (caiso-107/109/111), not an offer-form defect.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "CAISO",
     "years": [
+      2023,
+      2024,
       2025
     ],
     "hours": 8760,
@@ -23,6 +23,8 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
+      "2023": 2.54,
+      "2024": 2.19,
       "2025": 3.52
     },
     "outage_source": "historic",
@@ -71,10 +73,10 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "379a9b3"
+    "git_sha": "abb0fcd"
   },
   "scenario_config": {
-    "weather_year": 2025,
+    "weather_year": 2023,
     "iso": "CAISO",
     "mode": "backcast",
     "voll": 5000.0,
@@ -861,11 +863,11 @@
     "unit_partial_outage_windows": false,
     "unit_outage_maxgen_events": false,
     "maxgen_emergency_tier_pricing": false,
-    "gas_price_override": 3.52
+    "gas_price_override": 2.54
   },
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.5-fc-v15-x86_64-with-glibc2.39",
     "packages": {
       "highspy": "1.14.0",
       "numpy": "2.4.6",

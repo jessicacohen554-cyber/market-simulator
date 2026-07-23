@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-16-caiso-91-reserve-coopt",
+  "run_id": "2026-07-23-caiso-netrev-margin-keeper",
   "iso": "CAISO",
-  "label": "caiso 91 reserve coopt",
+  "label": "caiso netrev margin keeper",
   "target_years": [
     2023,
     2024,
@@ -13,17 +13,17 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.6,
+  "rubric_version": 2.7,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_tail, dispatch_corr"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
   "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -33,7 +33,7 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
@@ -41,7 +41,7 @@
       "status": "PASS"
     },
     "price_tail": {
-      "label": "C3c price tail / scarcity (hourly-expressible)",
+      "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
       "status": "FAIL"
     },
@@ -53,32 +53,22 @@
     "co2": {
       "label": "C5a CO2 vs eGRID",
       "tier": "load-bearing",
-      "status": "PASS"
-    },
-    "storage": {
-      "label": "C5b storage throughput",
-      "tier": "supporting",
-      "status": "SKIPPED"
-    },
-    "storage_shape": {
-      "label": "C5c storage dispatch shape",
-      "tier": "supporting",
-      "status": "SKIPPED"
+      "status": "FAIL"
     },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "PASS"
+      "status": "UNATTESTED"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     }
   },
   "caveats": {
@@ -91,11 +81,11 @@
     }
   },
   "grade_summary": {
-    "scored": 10,
-    "target_grade": 6,
+    "scored": 7,
+    "target_grade": 4,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 4
+    "fails": 3
   },
   "free_class_score": {
     "iso": "CAISO",
@@ -113,13 +103,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 11,
+      "pass": 12,
       "total": 12
     },
     "free": {
-      "pass": 7,
+      "pass": 8,
       "total": 8
     },
-    "headline": "C1 all 11/12 \u00b7 free 7/8"
+    "headline": "C1 all 12/12 \u00b7 free 8/8"
   }
 }
