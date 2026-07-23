@@ -988,10 +988,9 @@ def ercot_thermal_dam_availability_plant_series(
     sh["plant_code"] = sh["site"].map(site2plant).astype(int)
     # One crosswalked plant may aggregate several DAM sites (physical trains):
     # sum live + rating over its mapped sites at each (date, HE) before dividing.
-    agg = (
-        sh.groupby(["plant_code", "date", "he"], as_index=False)[["live_mw", "rating_mw"]]
-        .sum()
-    )
+    agg = sh.groupby(["plant_code", "date", "he"], as_index=False)[
+        ["live_mw", "rating_mw"]
+    ].sum()
     agg["frac"] = np.where(
         agg["rating_mw"] > 0.0,
         np.clip(agg["live_mw"] / agg["rating_mw"], 0.0, 1.0),

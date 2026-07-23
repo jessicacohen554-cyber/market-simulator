@@ -98,10 +98,40 @@ _STRONG = 0.85
 
 # Corporate suffixes + generic plant nouns dropped before name tokenizing.
 _STOP = {
-    "energy", "center", "centre", "power", "station", "facility", "facilities",
-    "plant", "project", "generating", "generation", "the", "of", "and", "co",
-    "corp", "company", "llc", "lp", "llp", "inc", "unit", "units", "site",
-    "ii", "iii", "iv", "i", "1", "2", "3", "4", "st", "county",
+    "energy",
+    "center",
+    "centre",
+    "power",
+    "station",
+    "facility",
+    "facilities",
+    "plant",
+    "project",
+    "generating",
+    "generation",
+    "the",
+    "of",
+    "and",
+    "co",
+    "corp",
+    "company",
+    "llc",
+    "lp",
+    "llp",
+    "inc",
+    "unit",
+    "units",
+    "site",
+    "ii",
+    "iii",
+    "iv",
+    "i",
+    "1",
+    "2",
+    "3",
+    "4",
+    "st",
+    "county",
 }
 _TOKEN_RE = re.compile(r"[a-z0-9]+")
 # Config / turbine suffixes stripped from a mnemonic to expose the substation
@@ -155,12 +185,18 @@ def corroboration(site: str, plant_name: str) -> tuple[float, str]:
     # >=4-char token prefix either direction: FRNY <-> FREESTONE / FORNEY
     for t in toks:
         tu = t.upper()
-        if len(stem) >= 4 and len(tu) >= 4 and (tu.startswith(stem) or stem.startswith(tu[:4])):
+        if (
+            len(stem) >= 4
+            and len(tu) >= 4
+            and (tu.startswith(stem) or stem.startswith(tu[:4]))
+        ):
             return 0.90, "token_prefix"
     # Consonant skeleton of any token equals the stem (distinctive, >= 3):
     for t in toks:
         cons = _consonants(t)
-        if len(cons) >= 3 and (stem == cons or stem == cons[: len(stem)] and len(stem) >= 4):
+        if len(cons) >= 3 and (
+            stem == cons or stem == cons[: len(stem)] and len(stem) >= 4
+        ):
             return 0.88, "consonant_skeleton"
     # Whole-name letter prefix (joined tokens): distinctive when >= 4.
     if len(stem) >= 4 and joined.startswith(stem):
@@ -181,8 +217,14 @@ def corroboration(site: str, plant_name: str) -> tuple[float, str]:
 def load_dam_sites(years: list[int]) -> pd.DataFrame:
     """Per (class, site): p98 rating, settlement points, QSE from the DAM disclosure."""
     cols = [
-        "Delivery Date", "Hour Ending", "QSE", "Resource Name", "Resource Type",
-        "HSL", "Resource Status", "Settlement Point Name",
+        "Delivery Date",
+        "Hour Ending",
+        "QSE",
+        "Resource Name",
+        "Resource Type",
+        "HSL",
+        "Resource Status",
+        "Settlement Point Name",
     ]
     frames: list[pd.DataFrame] = []
     for y in years:
@@ -208,7 +250,11 @@ def load_dam_sites(years: list[int]) -> pd.DataFrame:
     def _join(s: pd.Series) -> str:
         return ";".join(sorted({str(x) for x in s if pd.notna(x)}))
 
-    sp = ok.groupby(["cls", "site"])["Settlement Point Name"].agg(_join).rename("settlement_points")
+    sp = (
+        ok.groupby(["cls", "site"])["Settlement Point Name"]
+        .agg(_join)
+        .rename("settlement_points")
+    )
     qse = ok.groupby(["cls", "site"])["QSE"].agg(_join).rename("qse")
     meta = pd.concat([rating, sp, qse], axis=1).reset_index()
     meta = meta[meta["p98_rating_mw"] > 0.0].copy()
@@ -287,7 +333,9 @@ def build(years: list[int]) -> pd.DataFrame:
         stem = _mnem_stem(s["site"])
         if stem in seeds:
             seed_code = seeds[stem]
-            srow = plants[(plants["cls"] == s["cls"]) & (plants["plant_code"] == seed_code)]
+            srow = plants[
+                (plants["cls"] == s["cls"]) & (plants["plant_code"] == seed_code)
+            ]
             if not srow.empty:
                 top = srow.iloc[0]
                 top = top.copy()
