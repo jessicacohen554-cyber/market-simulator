@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-23T06:25:50",
+  "timestamp": "2026-07-23T06:38:58",
   "iso": "NEISO",
   "years": [
     2023,
@@ -37,7 +37,7 @@
   "tranche_startup_amortization": true,
   "tranche_startup_measured_runs": false,
   "tranche_startup_conditional_runs": false,
-  "gas_offer_margin": false,
+  "gas_offer_margin": true,
   "nysdec_peaker_rule_availability": false,
   "oil_primary_bin_fuel": false,
   "st_gas_intermediate": false,
@@ -241,7 +241,7 @@
     "eia923": "../_shared/NEISO/eia923-cf643de4cbf0.parquet",
     "campd": "../_shared/NEISO/campd-c0007c06a2b4.parquet"
   },
-  "git_sha": "97404a5",
+  "git_sha": "eede1c4",
   "highspy_version": "1.15.1",
   "environment": {
     "python_version": "3.11.15",
