@@ -43,10 +43,12 @@ from market_sim.data.coal import (
     coal_takeorpay_share,
 )
 from market_sim.data.offer_curves import (
+    GAS_OFFER_MARGIN_FUELS,
     _econ_curve_steps,
     _econ_split_for_group,
     _hr_override,
     _offer_curve_for_group,
+    gas_offer_margin_markup_mult,
     split_gas_tranches,
 )
 from market_sim.data.outages import ST_GAS_PEAKER_PLANTS
@@ -936,6 +938,25 @@ def bins_to_fleet(
         for suffix, cap, tr_hr, vom_mult, min_run, min_down, tr_startup in tranches:
             if cap <= 0.5:
                 continue
+            # Gas-offer net-revenue margin (config.gas_offer_net_revenue_margin):
+            # the tranche's markup heat rate ABOVE its measured physical basis
+            # (the offer band's phys_* keys), base_HR × max(0, mult − phys).
+            # apply_gas_offer_margin later converts it to a fuel-invariant
+            # $/MWh margin at the ISO anchor. Scope: CAMPD gas tranches priced
+            # by a resolved offer-curve band (the per-plant tranche sheet `ov`
+            # bypasses the band decomposition → neutral); bands without phys_*
+            # keys resolve to markup 0 (rule 24 neutral fallback).
+            _margin_markup_hr = 0.0
+            if (
+                getattr(config, "gas_offer_net_revenue_margin", False)
+                and offer is not None
+                and ov is None
+                and fuel in GAS_OFFER_MARGIN_FUELS
+                and base_hr > 0.0
+            ):
+                _margin_markup_hr = base_hr * gas_offer_margin_markup_mult(
+                    suffix, tr_hr / base_hr, offer
+                )
             # Step-3a synchronization forcing: the _mustrun (contracted, fuel-
             # free) and _sync (spot, SRMC) coal min-load tranches are held on at
             # their full capacity via min_gen, so the unit stays synchronized at
@@ -1001,6 +1022,7 @@ def bins_to_fleet(
                         if (tr_startup > 0.0 and suffix.startswith(("econ", "peak")))
                         else 0.0
                     ),
+                    offer_markup_hr=_margin_markup_hr,
                 )
             )
 

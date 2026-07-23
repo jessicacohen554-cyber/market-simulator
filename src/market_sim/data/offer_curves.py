@@ -8,7 +8,10 @@ visualization for the calibration dashboard.
 
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
+
+import numpy as np
 
 from market_sim.config.constants import (
     CC_ECON_HR_OVERRIDE_DEFAULT,
@@ -23,6 +26,8 @@ from market_sim.config.scenarios import ScenarioConfig
 
 if TYPE_CHECKING:
     import pandas as pd
+
+logger = logging.getLogger(__name__)
 
 # Gas peak-band classes the ERCOT condition-responsive offer surface prices
 # (ScenarioConfig.ercot_offer_surface_conditional). Must match the groups the
@@ -360,6 +365,155 @@ def _econ_curve_steps(
         mult = lo_mult + (pk_mult - lo_mult) * f
         steps.append((f"econc{k:02d}", slice_cap, base_hr * mult, 1.0, 0, 0, 0.0))
     return steps
+
+
+# ---------------------------------------------------------------------------
+# Gas-offer net-revenue margin (markup compression)
+# ---------------------------------------------------------------------------
+
+# Gas fuel types in scope for the net-revenue margin form (CAMPD tranche
+# path). Coal keeps its own gas-keyed supply sigmoid (rule 19 — one mechanism
+# per phenomenon); oil/other fuels never carry gas-band markups.
+GAS_OFFER_MARGIN_FUELS: frozenset[str] = frozenset(
+    {"gas_cc", "gas_cc_ccs", "gas_ct", "gas_st"}
+)
+
+
+def gas_offer_margin_markup_mult(
+    suffix: str, tranche_mult: float, offer: dict[str, float]
+) -> float:
+    """Return one tranche's markup multiplier above its physical basis.
+
+    The ``gas_offer_net_revenue_margin`` decomposition (design doc
+    ``docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md``): the
+    tranche's offer multiplier ``tranche_mult`` (its heat rate over the
+    plant's base HR) splits into the band's MEASURED physical basis — the
+    ``phys_*`` keys carried on the resolved offer-curve band dict — plus a
+    markup, ``max(0, tranche_mult − phys)``, which
+    :func:`apply_gas_offer_margin` converts to a fuel-invariant $/MWh margin
+    at the ISO's delivered-gas anchor.
+
+    Band resolution by tranche suffix (the ``bins_to_fleet`` vocabulary):
+
+    * ``mustrun`` / ``sync`` — never marked up (0.0).
+    * ``committed*`` (incl. ``committed_ramp_spread`` slices) —
+      ``phys_committed``, the measured min-load block-average burn. A
+      registered committed bid at or below the block average (price-taker
+      cogen/steam bands) clips to 0 — no compression, no negative margin.
+    * ``econlo`` / ``econhi`` / ``econcNN`` — ``phys_econ_low`` /
+      ``phys_econ_high`` (measured incremental burn at the ramp endpoints);
+      smoothing slices interpolate the physical basis at the slice's own
+      position along the registered ``econ_low → econ_high`` ramp, so the
+      markup fraction is consistent across the whole ramp.
+    * ``peak*`` (incl. measured ``peak_ladder`` rungs) — ``phys_peak``.
+
+    A band whose ``phys_*`` key is absent is NEUTRAL: ``phys = tranche_mult``
+    ⇒ markup 0 ⇒ the tranche's offer is byte-identical at every gas price.
+    That identity default is the rule-24 generic fallback (ISOs without a
+    measured phys registry are untouched even with the flag armed), not a
+    tunable literal.
+    """
+    if suffix.startswith("committed"):
+        phys = offer.get("phys_committed")
+        return max(0.0, tranche_mult - float(phys)) if phys is not None else 0.0
+    if suffix.startswith("econ"):
+        phys_lo = offer.get("phys_econ_low")
+        phys_hi = offer.get("phys_econ_high")
+        if phys_lo is None or phys_hi is None:
+            return 0.0
+        lo_m = float(offer["econ_low"])
+        hi_m = float(offer["econ_high"])
+        if suffix == "econlo":
+            phys = float(phys_lo)
+        elif suffix == "econhi":
+            phys = float(phys_hi)
+        else:
+            # Smoothing slice (econcNN) or single flat econ tranche: place the
+            # slice on the registered lo→hi ramp by its own multiplier and
+            # interpolate the physical basis at the same position (f in [0,1]).
+            if hi_m > lo_m:
+                f = min(1.0, max(0.0, (tranche_mult - lo_m) / (hi_m - lo_m)))
+            else:
+                f = 0.5  # degenerate flat ramp: midpoint basis
+            phys = float(phys_lo) + (float(phys_hi) - float(phys_lo)) * f
+        return max(0.0, tranche_mult - phys)
+    if suffix.startswith("peak"):
+        phys = offer.get("phys_peak")
+        return max(0.0, tranche_mult - float(phys)) if phys is not None else 0.0
+    return 0.0
+
+
+def apply_gas_offer_margin(
+    mc: "np.ndarray",
+    generators: list,
+    fuel_prices: "np.ndarray",
+    config: ScenarioConfig,
+) -> None:
+    """Compress gas-band markups to fuel-invariant net-revenue margins.
+
+    The mc-side half of ``gas_offer_net_revenue_margin`` (the tranche-side
+    half is the ``offer_markup_hr`` computed in ``bins_to_fleet``): for every
+    tranche carrying a positive markup heat rate, shift the assembled
+    marginal cost from the fully fuel-scaled multiplier form to the
+    anchored-margin form::
+
+        mc[g, t] += offer_markup_hr[g] × (anchor − fuel_price[g, t])
+
+    which is algebraically ``phys × HR_base × fuel(t) + markup_hr × anchor``
+    — the physical burn keeps full delivered-fuel (and dual-fuel oil-parity
+    switch) tracking while the markup becomes a fixed $/MWh margin identified
+    at the training-window anchor. At ``fuel == anchor`` the adjustment is
+    exactly zero (the registered multiplier form). Vectorized over the full
+    ``(n_gen, T)`` block — no per-hour loop (rule 2). Applies to the BASE
+    marginal cost, so P0 run discovery and the P1 bid see the same offer
+    curve, exactly like the multiplier form it reprices.
+
+    Must run AFTER ``apply_dual_fuel_pricing`` has finalized ``fuel_prices``
+    (the compression keys on the post-switch delivered price) and after
+    ``assemble_mc``. Mutates ``mc`` in place; no-op when the flag is off or
+    no tranche carries a markup.
+
+    Args:
+        mc: ``(n_gen, T)`` marginal-cost array, modified in place.
+        generators: Generator list aligned row-for-row with ``mc``
+            (``offer_markup_hr`` per tranche, 0.0 outside the mechanism).
+        fuel_prices: ``(n_gen, T)`` delivered fuel prices ($/MMBtu),
+            post-overlay / post-dual-fuel.
+        config: Scenario configuration supplying the gate
+            (``gas_offer_net_revenue_margin``) and the anchor
+            (``gas_offer_margin_anchor``).
+
+    Raises:
+        ValueError: flag armed without an anchor (rule 25 — the anchor must
+            be resolved into the recorded config, never silently defaulted).
+    """
+    if not getattr(config, "gas_offer_net_revenue_margin", False):
+        return
+    anchor = getattr(config, "gas_offer_margin_anchor", None)
+    if anchor is None:
+        raise ValueError(
+            "gas_offer_net_revenue_margin is armed but gas_offer_margin_anchor "
+            "is unset; resolve it from constants.GAS_OFFER_MARGIN_ANCHOR_BY_ISO "
+            "at config build (rule 25 — no silent fallback in the offer path)"
+        )
+    markup_hr = np.fromiter(
+        (float(getattr(g, "offer_markup_hr", 0.0)) for g in generators),
+        dtype=float,
+        count=len(generators),
+    )
+    rows = np.nonzero(markup_hr > 0.0)[0]
+    if rows.size == 0:
+        return
+    fp = np.asarray(fuel_prices, dtype=float)
+    mc[rows, :] += markup_hr[rows, None] * (float(anchor) - fp[rows, :])
+    logger.info(
+        "gas offer net-revenue margin: %d tranches compressed at anchor "
+        "%.4f $/MMBtu (median fixed margin %.2f $/MWh, max %.2f)",
+        rows.size,
+        float(anchor),
+        float(np.median(markup_hr[rows]) * float(anchor)),
+        float(markup_hr[rows].max() * float(anchor)),
+    )
 
 
 # ---------------------------------------------------------------------------

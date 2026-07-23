@@ -84,6 +84,7 @@ from market_sim.data.fleet import (  # noqa: E402
     load_retired_within_window,
     thermal_tranche_overrides,
 )
+from market_sim.data.offer_curves import apply_gas_offer_margin  # noqa: E402
 from market_sim.data.fuel import (  # noqa: E402
     apply_caiso_zonal_gas_basis,
     apply_coal_supply_pricing,
@@ -462,6 +463,7 @@ def run_year(
     tranche_startup_amortization: bool = False,
     tranche_startup_measured_runs: bool = False,
     tranche_startup_conditional_runs: bool = False,
+    gas_offer_margin: bool = False,
     nysdec_peaker_rule_availability: bool = False,
     oil_primary_bin_fuel: bool = False,
     plant_tranche_config: str | None = None,
@@ -955,6 +957,31 @@ def run_year(
         # element). Measured shape (campd_ct_run_bands_<ISO>.csv), forward-
         # native trigger (within-year net-load percentile); rules 13/23/25.
         config = config.with_overrides(tranche_startup_conditional_runs=True)
+    if gas_offer_margin:
+        # Gas-offer NET-REVENUE MARGIN form (markup compression): each gas
+        # band's above-physical markup is repriced from the fuel-scaled
+        # multiplier to a fixed $/MWh margin identified at the ISO's
+        # training-window delivered-gas anchor — offers reduce exactly to the
+        # registered multipliers at anchor gas and compress toward true MC as
+        # gas rises (the 2022 NEISO holdout rotation + the neiso-45 winter-
+        # over/summer-under signature). The anchor resolves HERE from the
+        # registry so the bundle's run_config.json records the value
+        # (rule 25); an ISO without a derived anchor is a hard error, never a
+        # fallback (rule 24). Design: docs/handoffs/
+        # gas-offer-net-revenue-margin-design-2026-07.md.
+        from market_sim.config.constants import GAS_OFFER_MARGIN_ANCHOR_BY_ISO
+
+        if iso not in GAS_OFFER_MARGIN_ANCHOR_BY_ISO:
+            raise SystemExit(
+                f"--gas-offer-margin: no derived delivered-gas anchor for {iso} "
+                "in constants.GAS_OFFER_MARGIN_ANCHOR_BY_ISO — run "
+                "scripts/data/derive_gas_offer_margin_anchor.py and register "
+                "the value (rule 24: anchors never cross ISO boundaries)"
+            )
+        config = config.with_overrides(
+            gas_offer_net_revenue_margin=True,
+            gas_offer_margin_anchor=GAS_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
+        )
     if nysdec_peaker_rule_availability:
         # NYSDEC 6 NYCRR 227-3 peaker-rule availability overlay: curated
         # unit-level ozone-season compliance windows (Gold Book IV-3..IV-6),
@@ -2922,6 +2949,14 @@ def run_year(
     mc_base = assemble_mc(fleet_arrays, fuel_prices, carbon_price, config.nox_price)
     apply_eac_to_mc(mc_base, fleet_arrays, config)
     apply_coal_tranches(mc_base, fleet, fleet_arrays, fuel_fracs, fuel_prices)
+    # Gas-offer net-revenue margin (gas_offer_net_revenue_margin, default
+    # off): compress each gas tranche's above-physical markup to a fixed
+    # $/MWh margin at the ISO's delivered-gas anchor. Runs after
+    # apply_dual_fuel_pricing has finalized fuel_prices (the compression keys
+    # on the post-switch delivered price) and on the BASE cost, so P0 run
+    # discovery and the P1 bid see the same offer curve — exactly like the
+    # multiplier form it reprices. Byte-identical when off (no-op return).
+    apply_gas_offer_margin(mc_base, fleet, fuel_prices, config)
     # ERCOT G-22 condition-responsive CT/peaker offer surface (default off,
     # ERCOT-gated): raise the CT/peaker econ+peak tranche bid to the MEASURED
     # self-withholding level (60-Day DAM disclosure) in the top-net-load hours

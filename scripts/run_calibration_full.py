@@ -2607,6 +2607,7 @@ def solve_and_persist(
     tranche_startup_amortization: bool = False,
     tranche_startup_measured_runs: bool = False,
     tranche_startup_conditional_runs: bool = False,
+    gas_offer_margin: bool = False,
     nysdec_peaker_rule_availability: bool = False,
     oil_primary_bin_fuel: bool = False,
     st_gas_intermediate: bool = False,
@@ -3633,6 +3634,16 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 tranche_startup_conditional_runs=True
             )
+        if gas_offer_margin:
+            # Net-revenue margin form: record the gate AND the resolved
+            # delivered-gas anchor (rule 25 — run_config carries the value the
+            # solve used, never a lookup indirection).
+            from market_sim.config.constants import GAS_OFFER_MARGIN_ANCHOR_BY_ISO
+
+            recorded_cfg = recorded_cfg.with_overrides(
+                gas_offer_net_revenue_margin=True,
+                gas_offer_margin_anchor=GAS_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
+            )
         if nysdec_peaker_rule_availability:
             recorded_cfg = recorded_cfg.with_overrides(
                 nysdec_peaker_rule_availability=True
@@ -3867,6 +3878,7 @@ def solve_and_persist(
             tranche_startup_amortization=tranche_startup_amortization,
             tranche_startup_measured_runs=tranche_startup_measured_runs,
             tranche_startup_conditional_runs=tranche_startup_conditional_runs,
+            gas_offer_margin=gas_offer_margin,
             nysdec_peaker_rule_availability=nysdec_peaker_rule_availability,
             oil_primary_bin_fuel=oil_primary_bin_fuel,
             st_gas_intermediate=st_gas_intermediate,
@@ -4325,6 +4337,7 @@ def solve_and_persist(
         "tranche_startup_amortization": tranche_startup_amortization,
         "tranche_startup_measured_runs": tranche_startup_measured_runs,
         "tranche_startup_conditional_runs": tranche_startup_conditional_runs,
+        "gas_offer_margin": gas_offer_margin,
         "nysdec_peaker_rule_availability": nysdec_peaker_rule_availability,
         "oil_primary_bin_fuel": oil_primary_bin_fuel,
         "st_gas_intermediate": st_gas_intermediate,
@@ -6902,6 +6915,25 @@ def main() -> None:
         "top-band vs 10 h pooled). Forward-native trigger (within-year "
         "net-load percentile); per-ISO artifact, no cross-ISO fallback; "
         "no-op without the artifact. Default OFF.",
+    )
+    parser.add_argument(
+        "--gas-offer-margin",
+        dest="gas_offer_margin",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Gas-offer NET-REVENUE MARGIN form (markup compression, "
+        "ScenarioConfig.gas_offer_net_revenue_margin): each CAMPD gas band's "
+        "markup ABOVE its measured physical heat-rate basis (the offer "
+        "curve's phys_* keys, CAMPD marginal-HR artifact) is repriced from "
+        "the fuel-scaled multiplier to a fixed $/MWh margin identified at "
+        "the ISO's training-window delivered-gas anchor "
+        "(constants.GAS_OFFER_MARGIN_ANCHOR_BY_ISO, "
+        "derive_gas_offer_margin_anchor.py). Offers reduce EXACTLY to the "
+        "registered multipliers at anchor gas and compress toward true MC "
+        "off-distribution (the 2022 NEISO holdout rotation). ISOs without a "
+        "derived anchor hard-fail; ISOs without phys_* keys are inert. "
+        "Design: docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md. "
+        "Default OFF -> prior keepers byte-identical.",
     )
     parser.add_argument(
         "--nysdec-peaker-rule",
@@ -9559,6 +9591,7 @@ def main() -> None:
         tranche_startup_amortization=args.tranche_startup_amortization,
         tranche_startup_measured_runs=args.tranche_startup_measured_runs,
         tranche_startup_conditional_runs=args.tranche_startup_conditional_runs,
+        gas_offer_margin=args.gas_offer_margin,
         nysdec_peaker_rule_availability=args.nysdec_peaker_rule_availability,
         oil_primary_bin_fuel=args.oil_primary_bin_fuel,
         cc_intermediate_cf_threshold=args.cc_intermediate_cf_threshold,
