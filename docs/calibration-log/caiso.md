@@ -568,4 +568,42 @@ the import-hours depth keeps C5a failing. Supporting: L2 re-derive Lever-D k to
 curtail the measured 2.5–3.5 TWh. NO-GO: zone granularity. KILLED: CA-price /
 west-surplus-quantity depth gates (caiso-107/109).
 
-Next number: caiso-112.
+## 2026-07-23 — caiso-112: gas-offer net-revenue margin A/B — REJECTED (C3b degrades 2/3 years), margin stays default-off
+
+Charter rollout of the `gas_offer_net_revenue_margin` mechanism (NEISO keeper
+`neiso-61`) to CAISO. **Identification landed** (branch
+`claude/gas-offer-net-revenue-isos-1px5vg`): CAISO `phys_*` keys on all five gas
+classes (`_CAISO_OFFER_CURVE`, cited to the measured
+`caiso_campd_marginal_hr_summary.csv` p50s) + anchor **4.7964 $/MMBtu**
+(`GAS_OFFER_MARGIN_ANCHOR_BY_ISO`, mean of the keeper delivered-gas overlay
+2023–2025 = 6.95/3.37/4.06). Default-OFF and byte-inert at the fleet level
+(947 gas tranches marked up flag-on, heat rates identical / markups zero
+flag-off).
+
+A/B: same-HEAD `replay_keeper` of the `caiso-102-hourfix` recipe — BASE arm
+(flag off) vs MARGIN arm (single delta `gas_offer_margin=true`), full 2023–2025,
+RT-scored (`scripts/probes/netrev_margin_ab.py`; bundles `caiso_netrev_base` /
+`caiso_netrev_margin`):
+
+| year | gas vs anchor | C3a base→margin | C3b dur-NRMSE base→margin |
+|---|---|---|---|
+| 2023 | 6.95 (≫, compress) | −6.8 → −7.2 % | 0.390 → **0.411** (worse) |
+| 2024 | 3.37 (<, firm)     | −9.4 → −6.9 % | 0.429 → **0.445** (worse) |
+| 2025 | 4.06 (≈, neutral)  | −3.9 → −2.7 % | 0.292 → 0.288 (better)    |
+
+**Verdict: NOT a keeper candidate — margin stays default-off, finding ledgered
+(rule 1 + the design's pre-registered refutation criteria).** C3a stays inside
+±10 % every year (mean firms in 2 of 3), but the mechanism FAILS the keeper bar
+"≥ C3b every year": the duration shape degrades in both high-gas years. Root
+cause (structural, not a fit miss): CAISO's mid/upper price bands are already
+UNDER-priced (C3c FAILs; the ledgered scarcity/import tail), so the margin form's
+compression at above-anchor gas pulls the 80–300 bands DOWN — widening the gap —
+the opposite of the NEISO winter-overshoot the mechanism was designed to fix.
+The two-sided behaviour is confirmed working (firms below anchor in 2024, compresses
+above anchor in 2023); it is simply the wrong direction for CAISO's residual.
+The structure is KEPT as a registered, default-off option (identification
+committed); closing CAISO's mid-tail is the separate ledgered import/scarcity
+lane (caiso-107/109/111), not an offer-form change. 2022 holdout NOT touched
+(only keeper candidates re-check it).
+
+Next number: caiso-113.
