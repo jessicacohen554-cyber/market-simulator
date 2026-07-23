@@ -99,22 +99,23 @@ def test_hub_blend_shape_and_finite():
 def test_thermal_mc_reprices_gas_above_henry_hub():
     # The override raises the West GAS units well above their bare Henry-Hub vom
     # (the flood fix): mean gas_cc offer clears the diagnostic's ~$30-56 target.
-    hh, carbon = 2.5, 35.2
-    mc = build_wecc_west_thermal_mc(2024, hh, carbon, 8760)
+    hh = 2.5
+    mc = build_wecc_west_thermal_mc(2024, hh, 8760)
     assert set(mc) == {"WECCW_gas_cc", "WECCW_gas_ct"}  # coal NOT overridden
     cc, ct = mc["WECCW_gas_cc"], mc["WECCW_gas_ct"]
     assert cc.shape == (8760,) and ct.shape == (8760,)
     assert np.isfinite(cc).all() and np.isfinite(ct).all()
-    # gas_ct (higher HR + higher import EF) stays above gas_cc every hour.
+    # gas_ct (higher HR) stays above gas_cc every hour (physical merit premium).
     assert (ct >= cc).all()
-    # Mean gas_cc offer is materially above the bare Henry-Hub gas_cc MC.
+    # Mean gas_cc offer (the measured hub) is materially above the bare Henry-Hub
+    # gas_cc MC — the whole point of the re-pricing (the flood fix).
     from market_sim.data.wecc_west_fleet import _thermal_mc
 
-    assert np.mean(cc) > _thermal_mc("gas_cc", hh) + 15.0
+    assert np.mean(cc) > _thermal_mc("gas_cc", hh) + 10.0
     # Hour-varying (belly low, evening/scarcity high) — not a flat scalar.
     assert np.std(cc) > 5.0
 
 
 def test_thermal_mc_empty_when_hub_missing():
     # A year with no measured intertie parquet -> empty dict (caller keeps vom).
-    assert build_wecc_west_thermal_mc(1999, 2.5, 30.0, 8760) == {}
+    assert build_wecc_west_thermal_mc(1999, 2.5, 8760) == {}
