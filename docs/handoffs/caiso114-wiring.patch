@@ -1,0 +1,371 @@
+diff --git a/scripts/run_calibration.py b/scripts/run_calibration.py
+index 9e603cd..2043165 100644
+--- a/scripts/run_calibration.py
++++ b/scripts/run_calibration.py
+@@ -1625,7 +1625,28 @@ def run_year(
+     # the priced-interchange block below (CAISO-only), so a non-priced or
+     # non-CAISO run keeps it False.
+     caiso_corridors = False
+-    if priced_interchange:
++    # caiso-110 Option A: when the endogenous WECC-West node is on (CAISO only),
++    # the WECC_import node becomes a REAL co-optimized neighbor ZONE — its own
++    # measured demand + a reduced import-priced fleet built from the
++    # wecc-west-supply frame — instead of the static import tranches. It
++    # SUPERSEDES the tranche fleet, the per-hub topology split, and the CAISO
++    # import injectors (firm/clean/spot) — one mechanism per phenomenon (rule 18;
++    # docs/handoffs/caiso-endogenous-wecc-node-design-2026-07-21.md). The base
++    # _caiso_config already carries the single WECC_import zone, its two corridor
++    # ties, and the 7,500 MW simultaneous cap, so no apply_interchange_topology
++    # runs (no split); the tie flow carries the West's endogenous net export.
++    _endogenous_wecc = (
++        getattr(config, "caiso_endogenous_wecc_node", False) and iso == "CAISO"
++    )
++    _wecc_west_avail: dict[str, np.ndarray] = {}
++    _wecc_west_demand: np.ndarray | None = None
++    if _endogenous_wecc:
++        from market_sim.data.wecc_west_fleet import build_wecc_west_fleet
++
++        import_generators, _wecc_west_avail, _wecc_west_demand = build_wecc_west_fleet(
++            year, gas_price, hours
++        )
++    elif priced_interchange:
+         # CARB levies its cap-and-trade allowance on unspecified WECC imports
+         # (border carbon adjustment, EF 0.428 t/MWh x allowance), so every
+         # CAISO import tranche carries it in its delivered cost — the same
+@@ -1684,6 +1705,16 @@ def run_year(
+         wind_cf = wind_cf[:, : config.hours]
+         solar_cf = solar_cf[:, : config.hours]
+ 
++    # caiso-110: give the WECC_import zone its OWN measured West demand (EIA-930
++    # Region NW+SW aggregate) — the neighbor's energy balance. load_demand left
++    # this row at 0 (load_share 0.0); the West fleet built above serves it and
++    # exports the surplus over the ties. The West zone stays out of CAISO's
++    # scored load/gen/CO2 via the results zone-exclusion (run_calibration_full).
++    if _endogenous_wecc and _wecc_west_demand is not None:
++        _wecc_idx = zone_names.index("WECC_import")
++        demand = demand.copy()
++        demand[_wecc_idx, : config.hours] = _wecc_west_demand[: config.hours]
++
+     # CAISO Lever-D: re-curtail the uncurtailed HSL solar potential the dispatch
+     # is handed. The reduced 3-zone topology cannot see the sub-area / local
+     # congestion that drives ~70% of CAISO solar curtailment, so the LP runs the
+@@ -2279,6 +2310,17 @@ def run_year(
+         from market_sim.data.nyiso_demand_response import inject_nyiso_dr_availability
+ 
+         inject_nyiso_dr_availability(fleet_arrays, config, iso, year, list(zone_names))
++    # caiso-110: shape the endogenous WECC-West VRE / hydro / nuclear pseudo-gens
++    # to their MEASURED hourly output (availability = measured MW / nameplate),
++    # the mirror of the NYISO-DR / offshore-wind availability overlays above.
++    # Dispatchable West thermal (coal/gas) keeps its flat 1.0 (economic to
++    # nameplate). No-op unless the endogenous node is on (rows absent otherwise).
++    if _endogenous_wecc and _wecc_west_avail:
++        _uid_to_row = {uid: i for i, uid in enumerate(fleet_arrays.unit_ids)}
++        for _uid, _series in _wecc_west_avail.items():
++            _r = _uid_to_row.get(_uid)
++            if _r is not None:
++                fleet_arrays.availability[_r, : config.hours] = _series[: config.hours]
+     # Net-load-indexed ST_GAS + CT_PEAKER reliability-drag min-gen floors —
+     # the single shared gate-and-log wrapper both orchestrators call
+     # (fleet.apply_netload_drag_floors, orchestrator-unification Stage 6).
+@@ -3366,17 +3408,42 @@ def run_year(
+             - (solar_cap[:, None] * solar_cf).sum(axis=0)
+             - (wind_cap[:, None] * wind_cf).sum(axis=0)
+         )
+-    apply_interchange_injections(
+-        fleet_arrays,
+-        mc_base,
+-        config,
+-        iso,
+-        year,
+-        carbon_price=carbon_price,
+-        gas_scenario=config.gas_price_path,
+-        net_load=_interchange_net_load,
+-        measured_overlay=_backcast_measured_interchange_prices,
+-    )
++    # caiso-110: the endogenous WECC-West fleet REPLACES the import tranches, so
++    # the CAISO import injectors (firm-shape/self-schedule, clean-depth surplus/
++    # overnight/daytime, per-hub hub pricing, gas coupling) have nothing to price
++    # and MUST NOT run — the West units are fuel_type="import" and would be
++    # repriced away from their measured vom. One mechanism per phenomenon
++    # (rule 18); the mutual exclusion is enforced here.
++    if not _endogenous_wecc:
++        apply_interchange_injections(
++            fleet_arrays,
++            mc_base,
++            config,
++            iso,
++            year,
++            carbon_price=carbon_price,
++            gas_scenario=config.gas_price_path,
++            net_load=_interchange_net_load,
++            measured_overlay=_backcast_measured_interchange_prices,
++        )
++    else:
++        # caiso-114: re-price the endogenous WECC-West GAS export units at the
++        # MEASURED delivered West hub (+ CARB border carbon), hour-varying, via
++        # an mc_base override — the import-price-injection pattern. Bare Henry-Hub
++        # gas MC under-prices the West and floods the tie (caiso-110 diagnostic);
++        # the measured hub sets the West's export price so the tie clears
++        # interior. No-op (West stays on its Henry-Hub vom) when the measured hub
++        # is unavailable or the endogenous node built no fleet.
++        if _wecc_west_avail:
++            from market_sim.data.wecc_west_fleet import build_wecc_west_thermal_mc
++
++            _wecc_thermal_mc = build_wecc_west_thermal_mc(year, gas_price, config.hours)
++            if _wecc_thermal_mc:
++                _uid_to_row = {uid: i for i, uid in enumerate(fleet_arrays.unit_ids)}
++                for _uid, _mc in _wecc_thermal_mc.items():
++                    _r = _uid_to_row.get(_uid)
++                    if _r is not None:
++                        mc_base[_r, : config.hours] = _mc[: config.hours]
+ 
+     wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
+     wind_mc -= wind_eac
+diff --git a/scripts/run_calibration_full.py b/scripts/run_calibration_full.py
+index b2fc076..1acf4a6 100644
+--- a/scripts/run_calibration_full.py
++++ b/scripts/run_calibration_full.py
+@@ -575,6 +575,53 @@ def _flows_frame(year: int, pass_label: str, result, links) -> "pd.DataFrame | N
+     )
+ 
+ 
++# caiso-110: the external WECC-West zone(s) whose real fleet + demand must be
++# excluded from CAISO's scored metrics (the results pipeline is zone-blind). The
++# endogenous node keeps the single WECC_import zone (no per-hub split).
++_WECC_ENDOGENOUS_EXTERNAL_ZONES: frozenset[str] = frozenset({"WECC_import"})
++
++
++def _wecc_net_import_row(
++    year: int, pass_label: str, result, links, zone_names: list[str], hours: int
++) -> "pd.DataFrame | None":
++    """Synthetic ``klass='import'`` row carrying the endogenous WECC net import.
++
++    With the endogenous WECC-West node (caiso-110), CAISO's net import is the
++    tie FLOW into the CAISO zones (WECC_import->NP15 + WECC_import->SP15_rest,
++    positive = West->CA = import), NOT the West fleet's total dispatch. The West
++    fleet rows are zone-excluded from the dispatch frame; this single pseudo-unit
++    re-injects the net import so the interchange fuelRow + the net-import metric
++    (vs actual 28.9/32.4/36.2 TWh) and the C7/C8 total-load denominator stay
++    correct. Priced at the NP15 LMP (a CAISO trading zone). Returns ``None`` when
++    the solve carried no flows.
++    """
++    flows = getattr(result, "flows", None)
++    if flows is None or not links:
++        return None
++    net = np.zeros(hours, dtype=np.float32)
++    for i, ln in enumerate(links):
++        if ln.from_zone == "WECC_import" and ln.to_zone in ("NP15", "SP15_rest"):
++            net += np.asarray(flows[i, :hours], dtype=np.float32)
++    zidx = {z: i for i, z in enumerate(zone_names)}
++    np15 = zidx.get("NP15", 0)
++    lmp = np.asarray(result.prices, dtype=np.float32)[np15, :hours]
++    return pd.DataFrame(
++        {
++            "year": np.int16(year),
++            "pass": pass_label,
++            "unit_id": "WECC_WEST_NET_IMPORT",
++            "plant_code": np.int32(0),
++            "klass": "import",
++            "fuel": "import",
++            "supply": "",
++            "zone": "NP15",
++            "hour": np.arange(hours, dtype=np.int32),
++            "mw": net,
++            "lmp": lmp,
++        }
++    )
++
++
+ def _system_frame(
+     year: int,
+     pass_label: str,
+@@ -2773,13 +2820,24 @@ def solve_and_persist(
+         k: v for k, v in locals().items() if k not in _REUSE_KWARG_EXEMPT
+     }
+     iso_config = get_iso_config(iso)
++    # caiso-110: the endogenous WECC-West node keeps the SINGLE WECC_import zone
++    # (no per-hub split — run_year does not split it either), so this caller's
++    # zone_names / report frames must match. Read from the generic prb_overrides
++    # channel (the same way run_year receives it).
++    _endog_wecc = iso == "CAISO" and bool(
++        (prb_overrides or {}).get("caiso_endogenous_wecc_node", False)
++    )
+     if priced_interchange:
+         # Interchange served by the priced import/export node (external zone
+         # + import tranches + export sinks) instead of the measured schedule;
+         # the bundle's zone set and demand frames follow the extended
+         # topology so they match run_year's solve.
+         iso_config = extend_with_import_node(iso_config)
+-        if (caiso_per_hub_intertie or caiso_reference_price_seam) and iso == "CAISO":
++        if (
++            (caiso_per_hub_intertie or caiso_reference_price_seam)
++            and iso == "CAISO"
++            and not _endog_wecc
++        ):
+             # Split WECC_import into the two per-hub corridors so this caller's
+             # zone_names / must-run / report frames match run_year's solve
+             # (run_year applies the same split idempotently). Both the measured
+@@ -3899,9 +3957,7 @@ def solve_and_persist(
+             ercot_thermal_dam_availability_hourly=(
+                 ercot_thermal_dam_availability_hourly
+             ),
+-            ercot_thermal_dam_availability_plant=(
+-                ercot_thermal_dam_availability_plant
+-            ),
++            ercot_thermal_dam_availability_plant=(ercot_thermal_dam_availability_plant),
+             ercot_noncampd_plant_availability=ercot_noncampd_plant_availability,
+             ercot_storage_capability_measured=ercot_storage_capability_measured,
+             ercot_online_capacity_envelope_measured=(
+@@ -4028,7 +4084,7 @@ def solve_and_persist(
+ 
+         for label, res in labelled:
+             passes_seen.add(label)
+-            _dispatch_frame(
++            _dispf = _dispatch_frame(
+                 year,
+                 label,
+                 res,
+@@ -4037,32 +4093,46 @@ def solve_and_persist(
+                 iso=iso,
+                 must_run=must_run,
+                 oil_switch_mask=p2_state.get("dual_fuel_oil_mask"),
+-            ).to_parquet(run_dir / "dispatch" / f"{year}_{label}.parquet", index=False)
+-            system_frames.append(
+-                _system_frame(
+-                    year,
+-                    label,
+-                    res,
+-                    demand,
+-                    zone_names,
+-                    iso=iso,
+-                    ercot_rtordpa_overlay=ercot_rtordpa_overlay,
+-                    ercot_dam_as_overlay=ercot_dam_as_overlay,
+-                    ercot_dam_as_overlay_from_year=ercot_dam_as_overlay_from_year,
+-                    ercot_dam_as_scarcity_threshold=ercot_dam_as_scarcity_threshold,
+-                    ercot_reserve_supply_cap=ercot_reserve_supply_cap,
+-                    ercot_storage_as_endogenous=ercot_storage_as_endogenous,
+-                    ercot_ordc_total_reserve=ercot_ordc_total_reserve,
+-                    ercot_ordc_cap_dual_adder=ercot_ordc_cap_dual_adder,
+-                    # ORDC-only realized-room RTORPA: computed on the P1
+-                    # result in run_year; None for other passes/configs.
+-                    ercot_ordc_realized_adder=(
+-                        p2_state.get("ercot_ordc_realized_adder")
+-                        if label == "P1"
+-                        else None
+-                    ),
++            )
++            _sysf = _system_frame(
++                year,
++                label,
++                res,
++                demand,
++                zone_names,
++                iso=iso,
++                ercot_rtordpa_overlay=ercot_rtordpa_overlay,
++                ercot_dam_as_overlay=ercot_dam_as_overlay,
++                ercot_dam_as_overlay_from_year=ercot_dam_as_overlay_from_year,
++                ercot_dam_as_scarcity_threshold=ercot_dam_as_scarcity_threshold,
++                ercot_reserve_supply_cap=ercot_reserve_supply_cap,
++                ercot_storage_as_endogenous=ercot_storage_as_endogenous,
++                ercot_ordc_total_reserve=ercot_ordc_total_reserve,
++                ercot_ordc_cap_dual_adder=ercot_ordc_cap_dual_adder,
++                # ORDC-only realized-room RTORPA: computed on the P1
++                # result in run_year; None for other passes/configs.
++                ercot_ordc_realized_adder=(
++                    p2_state.get("ercot_ordc_realized_adder") if label == "P1" else None
++                ),
++            )
++            if _endog_wecc:
++                # caiso-110: the results pipeline is zone-blind, so the
++                # endogenous WECC-West fleet + demand must be excluded from
++                # CAISO's dispatch/system frames (every downstream metric
++                # inherits it), and CAISO's net import re-injected from the tie
++                # flow (a synthetic klass="import" row) since the West units are
++                # no longer klass="import" dispatch. See _wecc_net_import_row.
++                _dispf = _dispf[~_dispf["zone"].isin(_WECC_ENDOGENOUS_EXTERNAL_ZONES)]
++                _imp = _wecc_net_import_row(
++                    year, label, res, p2_state.get("links"), zone_names, hours
+                 )
++                if _imp is not None:
++                    _dispf = pd.concat([_dispf, _imp], ignore_index=True)
++                _sysf = _sysf[~_sysf["zone"].isin(_WECC_ENDOGENOUS_EXTERNAL_ZONES)]
++            _dispf.to_parquet(
++                run_dir / "dispatch" / f"{year}_{label}.parquet", index=False
+             )
++            system_frames.append(_sysf)
+             # Reserve-dual diagnostic sidecar (MARKET_SIM_RESERVE_DUAL_DUMP,
+             # default OFF): the per-family reserve balance-row duals
+             # (reserve_price_by_family, (T, n_fam)) and the per-zone reserve MW
+@@ -4377,9 +4447,7 @@ def solve_and_persist(
+         "ercot_thermal_dam_availability_hourly": (
+             ercot_thermal_dam_availability_hourly
+         ),
+-        "ercot_thermal_dam_availability_plant": (
+-            ercot_thermal_dam_availability_plant
+-        ),
++        "ercot_thermal_dam_availability_plant": (ercot_thermal_dam_availability_plant),
+         "ercot_noncampd_plant_availability": ercot_noncampd_plant_availability,
+         "ercot_storage_capability_measured": ercot_storage_capability_measured,
+         "ercot_online_capacity_envelope_measured": (
+diff --git a/src/market_sim/config/scenarios.py b/src/market_sim/config/scenarios.py
+index 7647d93..38ffcc6 100644
+--- a/src/market_sim/config/scenarios.py
++++ b/src/market_sim/config/scenarios.py
+@@ -115,6 +115,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
+     # key (a distinct forward-capacity-price scenario). Backcast-coerced to
+     # "hold_last" in __post_init__.
+     "net_cone_forward_escalation",
++    # Endogenous WECC-West neighbor zone (caiso-110): default False dropped from
++    # the hash so every pre-existing cache key is byte-stable; True enters the
++    # key (a distinct scenario — WECC_import becomes a real co-optimized zone).
++    "caiso_endogenous_wecc_node",
+ )
+ 
+ 
+@@ -2721,6 +2725,46 @@ class ScenarioConfig:
+     # population it caps). No-op unless caiso_dsw_daytime_clean is on. Default
+     # off (byte-identical — the caiso-94 keeper recipe is unchanged);
+     # CAISO-only.
++    caiso_endogenous_wecc_node: bool = False  # Make the WECC_import node a REAL
++    # co-optimized WECC-West neighbor ZONE instead of a set of static import
++    # tranches (caiso-110; Option A of
++    # docs/handoffs/caiso-endogenous-wecc-node-design-2026-07-21.md). The two
++    # prior belly-import fixes were killed by derive-first measurement — the
++    # belly clean-import DEPTH is not year-stable on any CA PRICE observable
++    # (caiso-107) NOR any WEST-WIDE surplus QUANTITY (caiso-109 P1-A): the belly
++    # transfer is genuinely ENDOGENOUS to the co-evolving CA + West fleets (CA
++    # belly solar +1.5 GW/yr, storage ~2x), so no conditioned static tranche can
++    # be forward-stable. When on (CAISO only), run_year gives the single
++    # WECC_import zone its OWN measured hourly demand (~54-57 GW, EIA-930 Region
++    # NW+SW aggregate), renewable/hydro/nuclear availability shaped to measured
++    # output, and a reduced thermal fleet (coal / gas-CC / gas-CT) priced at
++    # the measured WECC intertie hub (caiso-114 — the delivered West energy price
++    # at the CA border; Henry-Hub gas-MC alone under-prices the West and floods
++    # the tie) — all as fuel_type="import" pseudo-gens whose DISTINCT marginal
++    # costs live in the vom field / an hourly mc_base override (so the LP
++    # co-optimizes a real West merit order while the results pipeline keeps the
++    # whole zone external — imports, not CAISO gen/CO2/load). The one
++    # ISO-agnostic LP then co-dispatches CA + West and the WECC->CAISO tie flow
++    # (Path-66/COI + Path-46/WOR, the 7,500 MW simultaneous cap) becomes a pure
++    # congestion outcome that co-evolves with both fleets: because the West is
++    # thermal-marginal in ~100% of hours (its own solar+wind+hydro never exceed
++    # its own demand), the West's export price tracks the measured hub — LOW in
++    # the belly (self-limiting the belly over-import) and HIGH in the evening
++    # (CA runs its own gas) — instead of flooding a flat clean capability.
++    # SUPERSEDES caiso_dsw_surplus_clean / _overnight_clean / _daytime_clean at
++    # WECC_import (mutually exclusive — one mechanism per phenomenon, rule 18):
++    # when on, run_year skips the import-tranche fleet, the per-hub split, and
++    # the apply_interchange_injections import path for CAISO, and keeps the ISO's
++    # measured interchange out of CAISO demand (no double count). DOF ledger:
++    # every West-fleet parameter is a MEASURED input (EIA-930 balance,
++    # EIA-860-West nameplate, the measured WECC intertie hub LMP, COAL_PRICE_BASE,
++    # HEAT_RATE_BINS / VOM constants) — 0 fitted params, nothing new enters
++    # run_config.json but this bool. Forward story: the West demand + renewable
++    # availability regenerate for a forward year from forward West solar/load
++    # drivers exactly like CAISO's own; the thermal caps/HRs and the delivered
++    # hub price are the published fleet + the forward-native corridor reference
++    # price. Default off (byte-identical — the flag is in
++    # _CACHE_KEY_OPTIONAL_FIELDS so an off run keeps its cache key); CAISO-only.
+     caiso_storage_as_reservation: bool = False  # Reserve the MEASURED hourly
+     # CAISO battery AS-award MW out of the battery fleet's dispatch headroom
+     # (caiso-74; FINDING-caiso72 STEP-0 channel #1 / FINDING-caiso73 live lead

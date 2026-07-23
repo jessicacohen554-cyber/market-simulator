@@ -291,33 +291,38 @@ def west_delivered_hub_blend(year: int, hours: int) -> np.ndarray | None:
 def build_wecc_west_thermal_mc(
     year: int,
     henry_hub_price: float,
-    carbon_price: float,
     hours: int = HOURS_PER_YEAR,
 ) -> dict[str, np.ndarray]:
     """Hour-varying delivered-cost override for the West GAS export units (caiso-114).
 
     THE caiso-110 diagnostic fix: pricing the West thermal on bare Henry-Hub gas
-    MC ($17-20 in 2024) under-prices the West by ~$15-25 vs its measured
-    wholesale hub, so the tie floods (net import 57 TWh vs actual 32, pinned at
-    the +7.5 GW export limit in 83% of hours). Re-anchor the West's GAS units to
-    the MEASURED delivered West energy cost at the CA border, hour-varying:
+    MC ($17-20 in 2024) under-prices the West by ~$15 vs its measured wholesale
+    hub, so the tie floods (net import 57 TWh vs actual 32, pinned at the +7.5 GW
+    export limit in 83% of hours). Re-anchor the West's GAS units to the MEASURED
+    delivered West energy price at the CA border, hour-varying:
 
-        offer_f[t] = hub_blend[t]                      # delivered West energy
-                     + (f_nominal - gas_cc_nominal)    # physical HR/VOM premium
-                     + border_adder x (EF_f / EF_unspec)   # CARB border carbon
+        offer_f[t] = hub_blend[t]                    # measured intertie clearing price
+                     + (f_nominal - gas_cc_nominal)  # physical HR/VOM merit premium
 
     where ``hub_blend`` is the tie-weighted measured intertie LMP
-    (:func:`west_delivered_hub_blend`, GHG-excluded), the physical premium keeps
-    the West gas merit order (gas_cc marginal, gas_ct the peaker above it), and
-    the CARB border adder is the SAME statutory import wedge the static DSW_CCGT /
-    DSW_CT tranches pay (``IMPORT_TRANCHE_EF`` 0.37 / 0.55 over the unspecified
-    0.428, x ``wecc_border_carbon_adder``). The all-in result is the true
-    delivered cost CA pays for a marginal West gas import — LOW in the belly
-    (self-limiting the belly over-import) and HIGH in the evening ramp (CA runs
-    its own gas). Every term is a MEASURED / statutory input that regenerates for
-    a forward year (the forward corridor reference price is the hub's forward
-    analogue; the EFs + allowance are policy inputs) — 0 params fitted to the
-    CAISO residual (rule 1 / rule 13 / rule 25).
+    (:func:`west_delivered_hub_blend`) and the physical premium keeps the West gas
+    merit order (gas_cc marginal, gas_ct the peaker above it).
+
+    Why the hub *is* the delivered price (no separate CARB adder). The measured
+    intertie LMP is the price at which imports actually CLEARED into CAISO — the
+    marginal importer's all-in willingness — and CA's own gas is already priced
+    fuel+VOM+CARB (~$33/MWh in 2024), so pricing the West at the hub (~$33) makes
+    the two compete on an even footing, which is what the belly/evening import
+    tradeoff needs. Stacking the statutory border-carbon wedge on TOP of the
+    clearing price double-charges the carbon and prices the West ~$15 above CA
+    gas in every hour, which the caiso-114 diagnostic confirmed empirically: the
+    tie flips to a net EXPORT (net import -3 TWh, CA gas +58%). The hub alone
+    (caiso-110 THE-FIX option (a)) is both the physically-correct delivered
+    clearing price and the empirically-interior one. LOW in the belly
+    (self-limiting the belly over-import), HIGH in the evening ramp (CA runs its
+    own gas). Every term is a MEASURED input that regenerates for a forward year
+    (the forward corridor reference price is the hub's forward analogue) — 0
+    params fitted to the CAISO residual (rule 1 / rule 13 / rule 25).
 
     Coal is deliberately NOT overridden: it is West baseload, ~never the marginal
     export unit (the West is gas-marginal in ~100% of export hours), so it keeps
@@ -325,36 +330,21 @@ def build_wecc_west_thermal_mc(
 
     Args:
         year: backcast year (2023-2025).
-        henry_hub_price: the run's Henry Hub gas price ($/MMBtu).
-        carbon_price: the CA allowance price ($/t) for the border adder.
+        henry_hub_price: the run's Henry Hub gas price ($/MMBtu) for the merit spread.
         hours: LP horizon (8760).
 
     Returns:
         ``{unit_id: (hours,) $/MWh}`` for the two West GAS units, or ``{}`` when
         the measured hub is unavailable (caller keeps the Henry-Hub ``vom``).
     """
-    from market_sim.config.constants import CARB_UNSPECIFIED_IMPORT_EF
-    from market_sim.model.interchange import wecc_border_carbon_adder
-    from market_sim.model.interchange.spec import IMPORT_TRANCHE_EF
-
     hub = west_delivered_hub_blend(year, hours)
     if hub is None:
         return {}
-    border = wecc_border_carbon_adder(carbon_price)
-    ef_map = IMPORT_TRANCHE_EF.get("CAISO", {})
     gas_cc_nom = _thermal_mc("gas_cc", henry_hub_price)
     gas_ct_nom = _thermal_mc("gas_ct", henry_hub_price)
-    # CARB border carbon per unit (the West gas export pays the CA import wedge,
-    # matching the static DSW_CCGT / DSW_CT tranches; EF over the unspecified base).
-    carb_cc = border * (
-        ef_map.get("DSW_CCGT", CARB_UNSPECIFIED_IMPORT_EF) / CARB_UNSPECIFIED_IMPORT_EF
-    )
-    carb_ct = border * (
-        ef_map.get("DSW_CT", CARB_UNSPECIFIED_IMPORT_EF) / CARB_UNSPECIFIED_IMPORT_EF
-    )
     return {
-        f"{WECC_WEST_PREFIX}gas_cc": hub + carb_cc,
-        f"{WECC_WEST_PREFIX}gas_ct": hub + (gas_ct_nom - gas_cc_nom) + carb_ct,
+        f"{WECC_WEST_PREFIX}gas_cc": hub,
+        f"{WECC_WEST_PREFIX}gas_ct": hub + (gas_ct_nom - gas_cc_nom),
     }
 
 
