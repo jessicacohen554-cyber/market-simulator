@@ -284,3 +284,61 @@ commitment bidding, not the named levers. Absent it, the 2023 off-peak residual 
 a structural limit; **nyiso-70 holds as the most structurally-faithful NOT-YET
 keeper (rule 1).** Do NOT re-chase reserve / CC-econ-ramp / gas-basis / reliability
 floor for C3a 2023.
+
+## 2026-07-23 — nyiso-72 KEEPER (owner override): gas-offer net-revenue margin — pre-registered refutation NOT met (C3b degrades all 3 years), promoted on rule-1 structural fidelity
+
+Charter rollout of the `gas_offer_net_revenue_margin` mechanism (NEISO keeper
+`neiso-61`) to NYISO. **Identification already landed** (branch
+`claude/gas-offer-net-revenue-isos-1px5vg`, merged): NYISO `phys_*` keys on the
+identifiable gas classes of `_NYISO_OFFER_CURVE` (cited to the measured
+`nyiso_campd_marginal_hr_summary.csv` p50s) + anchor **3.9046 $/MMBtu**
+(`GAS_OFFER_MARGIN_ANCHOR_BY_ISO`, mean of the 2023–2025 delivered-gas overlay
+3.36/2.80/5.56). Default-OFF and byte-inert flag-off.
+
+A/B: same-HEAD `replay_keeper` of the `nyiso-70-scr-edrp` recipe — BASE arm
+(flag off) vs MARGIN arm (single delta `gas_offer_margin=true`), full 2023–2025,
+RT-scored (`scripts/probes/netrev_margin_ab.py`; bundles `nyiso72_netrev_base` /
+`nyiso72_netrev_margin`). **Structural check confirmed:** offers reduce EXACTLY
+to the registered multipliers at anchor gas (`mc += markup_hr × (anchor −
+fuel(t))`, zero at `fuel==anchor`); the only change is the markup gas-elasticity
+1→0. Zero fitted scalars (markup LEVELS = registered surface; anchor = measured
+delivered-gas mean; **n_residual UNCHANGED at 5**). 404–412 gas tranches
+compressed (median fixed margin 6.04 $/MWh). BASE reproduces the nyiso-70 keeper
+**byte-identically** (system-price maxΔ 0.0000 all years — drift control +
+flag-off inertness confirmed).
+
+| year | gas vs anchor | C3a base→margin | C3b dur-NRMSE base→margin |
+|---|---|---|---|
+| 2023 | 3.36 (< anchor, firm)     | +18.1 → +20.6 % | 0.5086 → **0.5260 (worse)** |
+| 2024 | 2.80 (≪ anchor, firm)     | +1.0 → +3.6 %   | 0.3573 → **0.3781 (worse)** |
+| 2025 | 5.56 (≫ anchor, compress) | +5.5 → +1.7 %   | 0.6155 → **0.6385 (worse)** |
+
+**Verdict: by the pre-registered charter criteria this is a REJECT** — the bar is
+"MARGIN C3b ≤ BASE C3b EVERY year" and C3b degrades in **all three** years (more
+decisively than CAISO `caiso-112`, rejected the same day on 2/3). C3a leaves the
+±10 % band further in the already-failing 2023 (below-anchor firm on top of the
+known 2023 downstate-thermal energy-LEVEL residual); 2024 worsens in band; only
+2025 improves (above-anchor compression). The two-sided mechanism works exactly
+as designed — it is simply the wrong direction for NYISO's in-sample residual,
+whose dominant miss is the 2023 energy LEVEL, not the offer form.
+
+**Promoted anyway as the NYISO keeper on EXPLICIT OWNER OVERRIDE (2026-07-23),
+rule 1 (most structurally faithful offer form).** The margin form is the real
+market's offer construction ($ net-revenue start/no-load/scarcity hurdles held
+across gas moves; the multiplicative markup scales with the fuel bill,
+unidentified in the homogeneous 2023–25 window and refuted by the 2022 NEISO
+rotation). **Consistent with the final CAISO decision:** CAISO's A/B `caiso-112`
+also degraded, yet CAISO was ADOPTED the same day on the same owner directive /
+rule 1 (`origin/main` 681c6de; keeper `2026-07-23-caiso-netrev-margin-keeper`) —
+the net-revenue margin is now the go-forward offer form across ISOs. The owner
+accepted the in-sample shape cost on the mechanism's expected **out-of-sample**
+generalization advantage — which is **UNTESTED for NYISO** (2022 holdout NOT
+touched: no calibration-complete marker) and is the open validation item.
+Determination **NOT-YET** (as was nyiso-70), deciding criteria the unchanged
+2023 C3a/C3b/C3c energy-LEVEL misses; DOF ledger +1 grounded (non-residual)
+entry, n_residual still 5; C6 governance PASS; fuel-mix/volume unchanged.
+**NO residual tuning taken (rule 1 / pre-registered refutation — the mechanism
+was not adjusted to rescue the shape).** Both A/B arms registered on the
+dashboard; keeper = `2026-07-23-nyiso-72-netrev-margin`.
+
+Next number: nyiso-73.
