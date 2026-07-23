@@ -738,3 +738,80 @@ adds no year-specific parameter (DOF unchanged), and the 2023 correction is just
 **Disposition.** Keeper UNCHANGED (`2026-07-23-ercot98-np6-hsl-fullspan`, NOT-YET). The
 candidate is registered as the structurally-more-faithful successor; promotion is the
 owner's call.
+
+## 2026-07-23 — ERCOT-100: gas-offer net-revenue margin ADOPTED as ERCOT's go-forward offer form + PROMOTED to keeper (owner directive, rule 1/11) — structurally-correct fuel-invariant markup supersedes the fuel-scaled HR multiplier; gate profile byte-identical to ercot99, determination NOT-YET
+
+**Owner directive** ("no matter what this should become the keeper it is more
+structurally sound"), on the standing "structurally more accurate = new keeper"
+standard and the cross-ISO net-revenue-margin adoption (NEISO keeper `neiso-61`;
+CAISO `2026-07-23-caiso-netrev-margin-keeper`, owner directive same day, rule
+1/11). Charter rollout of the `gas_offer_net_revenue_margin` mechanism to ERCOT —
+the heaviest, highest-risk ISO, which the design charter pre-flagged as "quite
+possibly NOT a keeper" because of the ORDC-wall composition.
+
+**Identification** (branch `claude/gas-offer-net-revenue-isos-1px5vg`, merged):
+ERCOT `phys_*` keys on all five gas classes (`_ERCOT_OFFER_CURVE`, cited to the
+measured `ercot_campd_marginal_hr_summary.csv` p50s;
+`committed→avg_committed_p50`, `econ→marg_econ_{low,high}_p50`, `peak→2.25`
+F-class duct ratio for CC / `1.0` full-output bound for CT,ST) + anchor
+**2.2494 $/MMBtu** (`GAS_OFFER_MARGIN_ANCHOR_BY_ISO`). Flag-on the solve compresses
+**1132 tranches at anchor 2.2494** (median fixed margin $18.23/MWh, max
+$392.46/MWh — the `CT_PEAKER` peak is the $5,000-ORDC 13.15× wall, which
+`phys_peak=1.0` converts to a ~$298/MWh fixed margin on the p50 unit).
+
+**Structural result (the lead — the mechanism does exactly what it claims, zero
+fitted scalars).** The offer decomposition is exact: `mc_margin = mc_base +
+markup_hr·(anchor − fuel)`, so at `fuel == anchor` the offer reduces
+*algebraically* to the registered multiplier form, and only the markup's
+fuel-elasticity changes 1→0 (physical burn `phys·HR·fuel` keeps full delivered-fuel
+tracking; the markup piece becomes the fixed `markup_hr·anchor`). The markup LEVELS
+are the already-registered `offer_curve_by_group` surface (rule 24/25); zero DOF
+delta (DOF ledger 9/8 == ercot99; the anchor is a derived measured input, not a
+free parameter). Two-sided behaviour confirmed: firms offers below anchor (2024),
+compresses above anchor (2023, 2025).
+
+**A/B** (same-HEAD `replay_keeper` of the `ercot99_state_off_fullspan` recipe,
+single delta `gas_offer_margin=true`, full 2023–2025, RT-scored
+`scripts/probes/netrev_margin_ab.py` + full rubric `scripts/calibration_verdict.py`;
+bundles `ercot_netrev_base` / `ercot_netrev_margin`). BASE reproduces the keeper
+**byte-exactly** (hourly demand-weighted price MAE 0.000 all three years —
+solver-lib env pinned to the recorded highspy 1.14.0 / pandas 3.0.3 / pyarrow
+24.0.0):
+
+| year | gas vs anchor | C3a (probe) base→margin | C3b dur-NRMSE base→margin | tight top-1% Δ |
+|---|---|---|---|---|
+| 2023 | above (compress) | −22.8 → −23.5 % | 2.1518 → 2.1600 | −5.58 |
+| 2024 | below (firm)     | −10.0 →  −9.5 % | 1.5276 → 1.5298 | +0.80 |
+| 2025 | ≫ (compress)     |  −7.8 → −10.2 % | 0.8352 → 0.8517 | −0.78 |
+
+**Rubric gate profile — BYTE-IDENTICAL to the ercot99 keeper** (the actual
+promotion test, per the CAISO `92db03c` precedent): C1 16/16 PASS, C2 PASS,
+`dispatch_corr` PASS, `co2` PASS, C7 shape (D-1) PASS, C8 forced_share (D-2) PASS;
+**C3a/C3b/C3c FAIL** (ERCOT's ledgered scarcity/tail frontier, ERCOT-94/99 — FAIL
+in BOTH arms, not introduced here); C6 governance UNATTESTED (owner lane).
+**DETERMINATION: NOT-YET**, identical to ercot99.
+
+**Verdict: KEEPER (`2026-07-23-ercot100-netrev-margin-keeper`).** The strict A/B
+refutation bar ("C3b dur-NRMSE ≤ base every year") trips — the duration shape
+dips slightly in all three years — but per that criterion's own **rule-1 clause**
+(and the CAISO caiso-112→adoption precedent) the structure is the correct one and
+the level miss is a *root-cause* problem, not an offer-form one: the >$300 scarcity
+tail is under-priced by 600–1300 $/MWh in **both** forms (model tail 660/473/75 vs
+actual 1322/1058/724), and the net-rev form merely stops the HR multiplier's
+fuel-scaled markup from partially masking it at above-anchor gas (rule 11, exposing
+not causing). ERCOT's ORDC scarcity price is itself administrative and
+fuel-invariant (set off VOLL/LOLP, not the gas bill), so a fixed-margin peak wall
+is the structurally-faithful form — the initial "the margin form is the wrong
+direction for ERCOT" read (this session, pre-CAISO-precedent) is **withdrawn**: it
+conflated the offer form with the separate scarcity-formation lane. No rubric gate
+regresses; the board does not regress in isolation (keeper NOT-YET before and
+after). Closing ERCOT's scarcity tail stays the ledgered ORDC/reserve lane
+(ERCOT-94/99), not an offer-form change.
+
+**No tuning attempted** (rule 1). 2022 holdout NOT touched (ERCOT carries no
+calibration-complete marker; and NOT-YET keepers do not re-check it). A/B bundles
+committed (slim meta/run_config/metrics/attestation/legitimacy + hourly sidecars):
+MARGIN promoted to keeper, BASE registered as the drift-control diagnostic
+(`2026-07-23-ercot100-netrev-base-drift`). Design-doc adoption status updated
+(ERCOT → ADOPTED). This entry committed on
+`claude/ercot-gas-offer-netrev-margin-9rhqf9`. Next number: ercot-101.
