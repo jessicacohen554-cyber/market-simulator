@@ -218,54 +218,26 @@ def _thermal_outage(category: str, age: float) -> tuple[float, float, float]:
     return pof, wefor, derate
 
 
-def generators_to_fleet_arrays(
+def _nuclear_monthly(
     generators: list[Generator],
-    zone_names: list[str],
-    hours: int = 8760,
-    iso: str | None = None,
-    config: ScenarioConfig | None = None,
-    load_shape: np.ndarray | None = None,
-    ct_campd_shape: dict[int, np.ndarray] | None = None,
-    year: int | None = None,
-) -> FleetArrays:
-    """Convert a list of generators into vectorized ``FleetArrays``.
+    availability: np.ndarray,
+    hours: int,
+    _iso: str | None,
+    _yr: int | None,
+    config: ScenarioConfig | None,
+) -> None:
+    """Apply nuclear monthly / unit-level / dormant availability in place.
 
-    Availability is set to ``1 - eford`` for every hour. When ``iso`` is
-    given and has :data:`NUCLEAR_MONTHLY_CF` factors, nuclear generators get
-    a month-varying availability instead, capturing refueling outages and
-    planned maintenance. Other seasonal derates are applied later.
-
-    Coal carries no Pmin floor: each coal bin is split into take-or-pay
-    tranches (see :func:`split_coal_tranches`), each with ``pmin_mw = 0``,
-    so coal's baseload behavior emerges from tranche economics rather than a
-    hard minimum.
+    Pure array helper extracted verbatim from
+    ``generators_to_fleet_arrays`` (fleet-package split sub-task (a));
+    mutates ``availability`` rows of nuclear units only.
     """
-    zone_to_idx = {name: i for i, name in enumerate(zone_names)}
-
-    n_gen = len(generators)
-    pmax = np.array([g.pmax_mw for g in generators], dtype=float)
-    pmin = np.array([g.pmin_mw for g in generators], dtype=float)
-    heat_rate = np.array([g.heat_rate for g in generators], dtype=float)
-    vom = np.array([g.vom for g in generators], dtype=float)
-    emission_rate = np.array([g.emission_rate_co2 for g in generators], dtype=float)
-    nox_rate = np.array([g.nox_rate for g in generators], dtype=float)
-    so2_rate = np.array([g.so2_rate for g in generators], dtype=float)
-    zone_idx = np.array([zone_to_idx[g.zone] for g in generators], dtype=int)
-    fuel_type_idx = np.array(
-        [FUEL_TYPE_MAP[g.fuel_type] for g in generators], dtype=int
-    )
-
-    eford = np.array([g.eford for g in generators], dtype=float)
-    availability = np.broadcast_to((1.0 - eford)[:, np.newaxis], (n_gen, hours)).copy()
-
     # Apply nuclear monthly availability factors (refueling outages, planned
     # maintenance). NUCLEAR_MONTHLY_CF holds 12 monthly capacity-factor caps
     # from NRC PRIS data; they multiply the EFORD derate to give the final
     # hourly availability. Non-nuclear units keep the flat 1 - eford derate.
     # Prefer the per-year 923-derived refueling pattern for the backcast;
     # fall back to the fixed seasonal average for forecast years.
-    _iso = iso.upper() if iso else None
-    _yr = getattr(config, "weather_year", None) if config is not None else None
     monthly_cf = NUCLEAR_MONTHLY_CF_BY_YEAR.get(_iso, {}).get(_yr) if _iso else None
     # The 923-derived per-year CF is realized availability (it already embeds
     # refueling + forced outages + derate), so it is used directly. The static
@@ -372,6 +344,24 @@ def generators_to_fleet_arrays(
             ):
                 availability[g_idx, :] = 0.0
 
+
+def _availability_matrix(
+    generators: list[Generator],
+    availability: np.ndarray,
+    hours: int,
+    config: ScenarioConfig | None,
+    _iso: str | None,
+    year: int | None,
+    ct_floor_plants: set[int],
+) -> None:
+    """Apply the statistical thermal availability model in place.
+
+    Age-based WEFOR/POF with the seasonal summer/shoulder split, the
+    per-class/per-plant summer derates, and the ambient-temperature
+    derate curves. Pure array helper extracted verbatim from
+    ``generators_to_fleet_arrays`` (fleet-package split sub-task (a));
+    mutates ``availability`` in place.
+    """
     # Summer peak, spring/autumn shoulder, and winter — a 3-way partition of
     # the year. The shoulder absorbs the outage shifted out of summer; winter
     # is left at base availability so the winter peak is not derated.
@@ -394,69 +384,6 @@ def generators_to_fleet_arrays(
     # seasonal shape moves. Non-thermal units (nuclear, hydro, ...) keep the
     # 1 - EFORD derate. Age is the run year minus the unit's commission year.
     #
-    # Per-plant CT_PEAKER reliability must-run floor (config.ct_mustrun_per_plant,
-    # backcast only). The observed EIA-923 net generation is forced on these
-    # peakers as a minimum below; because that floor already nets out every real
-    # outage, WEFOR and the planned-outage (maintenance) derate must NOT apply to
-    # the floor units (they would double-count and clip it). The table is keyed
-    # by plant code; an empty table (flag off, or forecast/missing 923) leaves
-    # every code path byte-identical.
-    ct_floor_mwh: dict[int, np.ndarray] = {}
-    ct_floor_frac = 0.0
-    if (
-        config is not None
-        and getattr(config, "ct_mustrun_per_plant", False)
-        and getattr(config, "mode", "forecast") == "backcast"
-        and _yr is not None
-    ):
-        ct_floor_frac = float(getattr(config, "ct_mustrun_floor_frac", 1.0) or 0.0)
-        if ct_floor_frac > 0.0:
-            ct_floor_mwh = ct_mustrun_floor_mwh_by_plant(int(_yr))
-    ct_floor_plants = set(ct_floor_mwh)
-    # Per-plant CT_PEAKER AS/RUC-deployment hourly floor (config
-    # .ct_deployment_overlay, backcast only): the measured out-of-merit CEMS
-    # energy, applied below as a sparse per-hour min-gen bound. Unlike the
-    # must-run floor above, the deployment units keep the statistical WEFOR/POF
-    # model (the floor is well below pmax in its hours), so they are NOT added
-    # to ct_floor_plants — only availability-capped where they coincide.
-    ct_deploy_floor: dict[int, np.ndarray] = {}
-    ct_deploy_frac = 0.0
-    if (
-        config is not None
-        and getattr(config, "ct_deployment_overlay", False)
-        and getattr(config, "mode", "forecast") == "backcast"
-        and _yr is not None
-    ):
-        ct_deploy_frac = float(getattr(config, "ct_deployment_floor_frac", 1.0) or 0.0)
-        if ct_deploy_frac > 0.0:
-            ct_deploy_floor = ct_deployment_floor_for_year(
-                int(_yr), hours, _iso or "ERCOT"
-            )
-    ct_deploy_plants = set(ct_deploy_floor)
-    # Spatial reliability-deployment hourly floor (config
-    # .reliability_deployment_overlay, backcast only): the load-pocket thermal
-    # fleet's measured congestion-subset CEMS energy (CC_REGULAR/COAL/ST_GAS/
-    # CC_CHP in South_Central/West/Northeast). Applied below as a sparse per-hour
-    # min-gen bound keyed by plant code, distributed cheapest-first over the
-    # plant's tranches. Like the CT deployment floor, these units keep the
-    # statistical WEFOR/POF model (the floor is sparse and below pmax), so they
-    # are only availability-capped where they coincide.
-    rd_deploy_floor: dict[int, np.ndarray] = {}
-    rd_deploy_frac = 0.0
-    if (
-        config is not None
-        and getattr(config, "reliability_deployment_overlay", False)
-        and getattr(config, "mode", "forecast") == "backcast"
-        and _yr is not None
-    ):
-        rd_deploy_frac = float(
-            getattr(config, "reliability_deployment_floor_frac", 1.0) or 0.0
-        )
-        if rd_deploy_frac > 0.0:
-            rd_deploy_floor = reliability_deployment_floor_for_year(
-                int(_yr), hours, _iso or "ERCOT"
-            )
-    rd_deploy_plants = set(rd_deploy_floor)
     if config is not None and shoulder_hours > 0:
         run_year = config.weather_year
         summer_to_shoulder = summer_hours / shoulder_hours
@@ -818,6 +745,26 @@ def generators_to_fleet_arrays(
                 availability[g_idx, :] *= np.clip(raw, 0.0, 1.0)
             np.clip(availability, 0.0, 1.0, out=availability)
 
+
+def _apply_outage_overlays(
+    generators: list[Generator],
+    availability: np.ndarray,
+    pmax: np.ndarray,
+    heat_rate: np.ndarray,
+    hours: int,
+    config: ScenarioConfig | None,
+    _iso: str | None,
+    _yr: int | None,
+) -> None:
+    """Apply measured availability overlays in place (backcast layers).
+
+    Historic CAMPD unit/partial/maxgen outage windows, retiree and
+    CAMPD-blind caps, the NYSDEC peaker-rule windows, the ERCOT
+    measured DAM class/hour/plant availability rescale, and the
+    CC top-of-stack outage reallocation. Pure array helper extracted
+    verbatim from ``generators_to_fleet_arrays`` (fleet-package split
+    sub-task (a)); mutates ``availability`` in place.
+    """
     # Historic-outage overlay (backcast only). When config.outage_source is
     # "historic", derate coal/CC/gas-steam availability during measured CAMPD
     # unit-outage windows, a hard override of the statistical WEFOR/POF model in
@@ -1370,6 +1317,42 @@ def generators_to_fleet_arrays(
                 realloc_plants,
             )
 
+
+def _compose_min_gen_floors(
+    generators: list[Generator],
+    availability: np.ndarray,
+    pmax: np.ndarray,
+    pmin: np.ndarray,
+    heat_rate: np.ndarray,
+    hours: int,
+    config: ScenarioConfig | None,
+    _iso: str | None,
+    _yr: int | None,
+    load_shape: np.ndarray | None,
+    ct_campd_shape: dict[int, np.ndarray] | None,
+    ct_floor_mwh: dict[int, np.ndarray],
+    ct_floor_frac: float,
+    ct_floor_plants: set[int],
+    ct_deploy_floor: dict[int, np.ndarray],
+    ct_deploy_frac: float,
+    ct_deploy_plants: set[int],
+    rd_deploy_floor: dict[int, np.ndarray],
+    rd_deploy_frac: float,
+    rd_deploy_plants: set[int],
+) -> tuple[np.ndarray | None, np.ndarray | None]:
+    """Compose the hard minimum-generation floors (min_gen / mechanism ids).
+
+    Nuclear flat must-run, CHP steam floors, coal synchronization,
+    per-plant CC/ST_GAS committed floors, the ST_GAS p25 level swap,
+    and the CT/reliability deployment overlays, clipped to available
+    capacity. Pure array helper extracted verbatim from
+    ``generators_to_fleet_arrays`` (fleet-package split sub-task (a)).
+
+    Returns:
+        ``(min_gen, min_gen_mechanism)`` — both ``None`` when no floor
+        mechanism is active for this fleet.
+    """
+    n_gen = len(generators)
     # Hard minimum-generation bounds composed below: CHP grid-steam floors,
     # coal synchronization Pmin, nuclear flat must-run, and the per-plant
     # CT/reliability deployment overlays. Temperature-driven ST_GAS commitment is
@@ -1789,6 +1772,146 @@ def generators_to_fleet_arrays(
         np.minimum(min_gen, pmax[:, np.newaxis] * availability, out=min_gen)
         # An outage hour that collapsed the floor is no longer forced.
         clear_where_unfloored(min_gen_mech, min_gen)
+    return min_gen, min_gen_mech
+
+
+def generators_to_fleet_arrays(
+    generators: list[Generator],
+    zone_names: list[str],
+    hours: int = 8760,
+    iso: str | None = None,
+    config: ScenarioConfig | None = None,
+    load_shape: np.ndarray | None = None,
+    ct_campd_shape: dict[int, np.ndarray] | None = None,
+    year: int | None = None,
+) -> FleetArrays:
+    """Convert a list of generators into vectorized ``FleetArrays``.
+
+    Availability is set to ``1 - eford`` for every hour. When ``iso`` is
+    given and has :data:`NUCLEAR_MONTHLY_CF` factors, nuclear generators get
+    a month-varying availability instead, capturing refueling outages and
+    planned maintenance. Other seasonal derates are applied later.
+
+    Coal carries no Pmin floor: each coal bin is split into take-or-pay
+    tranches (see :func:`split_coal_tranches`), each with ``pmin_mw = 0``,
+    so coal's baseload behavior emerges from tranche economics rather than a
+    hard minimum.
+    """
+    zone_to_idx = {name: i for i, name in enumerate(zone_names)}
+
+    n_gen = len(generators)
+    pmax = np.array([g.pmax_mw for g in generators], dtype=float)
+    pmin = np.array([g.pmin_mw for g in generators], dtype=float)
+    heat_rate = np.array([g.heat_rate for g in generators], dtype=float)
+    vom = np.array([g.vom for g in generators], dtype=float)
+    emission_rate = np.array([g.emission_rate_co2 for g in generators], dtype=float)
+    nox_rate = np.array([g.nox_rate for g in generators], dtype=float)
+    so2_rate = np.array([g.so2_rate for g in generators], dtype=float)
+    zone_idx = np.array([zone_to_idx[g.zone] for g in generators], dtype=int)
+    fuel_type_idx = np.array(
+        [FUEL_TYPE_MAP[g.fuel_type] for g in generators], dtype=int
+    )
+
+    eford = np.array([g.eford for g in generators], dtype=float)
+    availability = np.broadcast_to((1.0 - eford)[:, np.newaxis], (n_gen, hours)).copy()
+
+    _iso = iso.upper() if iso else None
+    _yr = getattr(config, "weather_year", None) if config is not None else None
+    _nuclear_monthly(generators, availability, hours, _iso, _yr, config)
+
+    # Per-plant CT_PEAKER reliability must-run floor (config.ct_mustrun_per_plant,
+    # backcast only). The observed EIA-923 net generation is forced on these
+    # peakers as a minimum below; because that floor already nets out every real
+    # outage, WEFOR and the planned-outage (maintenance) derate must NOT apply to
+    # the floor units (they would double-count and clip it). The table is keyed
+    # by plant code; an empty table (flag off, or forecast/missing 923) leaves
+    # every code path byte-identical.
+    ct_floor_mwh: dict[int, np.ndarray] = {}
+    ct_floor_frac = 0.0
+    if (
+        config is not None
+        and getattr(config, "ct_mustrun_per_plant", False)
+        and getattr(config, "mode", "forecast") == "backcast"
+        and _yr is not None
+    ):
+        ct_floor_frac = float(getattr(config, "ct_mustrun_floor_frac", 1.0) or 0.0)
+        if ct_floor_frac > 0.0:
+            ct_floor_mwh = ct_mustrun_floor_mwh_by_plant(int(_yr))
+    ct_floor_plants = set(ct_floor_mwh)
+    # Per-plant CT_PEAKER AS/RUC-deployment hourly floor (config
+    # .ct_deployment_overlay, backcast only): the measured out-of-merit CEMS
+    # energy, applied below as a sparse per-hour min-gen bound. Unlike the
+    # must-run floor above, the deployment units keep the statistical WEFOR/POF
+    # model (the floor is well below pmax in its hours), so they are NOT added
+    # to ct_floor_plants — only availability-capped where they coincide.
+    ct_deploy_floor: dict[int, np.ndarray] = {}
+    ct_deploy_frac = 0.0
+    if (
+        config is not None
+        and getattr(config, "ct_deployment_overlay", False)
+        and getattr(config, "mode", "forecast") == "backcast"
+        and _yr is not None
+    ):
+        ct_deploy_frac = float(getattr(config, "ct_deployment_floor_frac", 1.0) or 0.0)
+        if ct_deploy_frac > 0.0:
+            ct_deploy_floor = ct_deployment_floor_for_year(
+                int(_yr), hours, _iso or "ERCOT"
+            )
+    ct_deploy_plants = set(ct_deploy_floor)
+    # Spatial reliability-deployment hourly floor (config
+    # .reliability_deployment_overlay, backcast only): the load-pocket thermal
+    # fleet's measured congestion-subset CEMS energy (CC_REGULAR/COAL/ST_GAS/
+    # CC_CHP in South_Central/West/Northeast). Applied below as a sparse per-hour
+    # min-gen bound keyed by plant code, distributed cheapest-first over the
+    # plant's tranches. Like the CT deployment floor, these units keep the
+    # statistical WEFOR/POF model (the floor is sparse and below pmax), so they
+    # are only availability-capped where they coincide.
+    rd_deploy_floor: dict[int, np.ndarray] = {}
+    rd_deploy_frac = 0.0
+    if (
+        config is not None
+        and getattr(config, "reliability_deployment_overlay", False)
+        and getattr(config, "mode", "forecast") == "backcast"
+        and _yr is not None
+    ):
+        rd_deploy_frac = float(
+            getattr(config, "reliability_deployment_floor_frac", 1.0) or 0.0
+        )
+        if rd_deploy_frac > 0.0:
+            rd_deploy_floor = reliability_deployment_floor_for_year(
+                int(_yr), hours, _iso or "ERCOT"
+            )
+    rd_deploy_plants = set(rd_deploy_floor)
+    _availability_matrix(
+        generators, availability, hours, config, _iso, year, ct_floor_plants
+    )
+
+    _apply_outage_overlays(
+        generators, availability, pmax, heat_rate, hours, config, _iso, _yr
+    )
+
+    min_gen, min_gen_mech = _compose_min_gen_floors(
+        generators,
+        availability,
+        pmax,
+        pmin,
+        heat_rate,
+        hours,
+        config,
+        _iso,
+        _yr,
+        load_shape,
+        ct_campd_shape,
+        ct_floor_mwh,
+        ct_floor_frac,
+        ct_floor_plants,
+        ct_deploy_floor,
+        ct_deploy_frac,
+        ct_deploy_plants,
+        rd_deploy_floor,
+        rd_deploy_frac,
+        rd_deploy_plants,
+    )
 
     # Ancillary-service reserve withholding (backcast). Capacity the market
     # holds out of energy as upward reserve is withdrawn from the gas/flexible-
