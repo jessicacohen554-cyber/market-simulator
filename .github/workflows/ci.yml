@@ -129,3 +129,20 @@ jobs:
       # deleted script that leaves a live code/config invocation dangling).
       - name: import-walk + script-reference lint
         run: uv run python scripts/ci_refactor_guards.py
+      # Facade re-export + persisted-identity pins (BLOCKING, unlike the
+      # advisory fast tier): every split package must keep its full pre-split
+      # surface, and the pickle-borne classes their frozen module paths.
+      # (test_pipeline_facade_shims.py joins this list once its pre-existing
+      # failures — part of the advisory-tier backlog — are triaged green.)
+      - name: facade re-export + persisted-identity tests
+        run: >-
+          uv run python -m pytest -q
+          tests/test_persisted_identity.py
+          tests/test_constants_facade.py
+          tests/test_dispatch_facade.py
+          tests/test_eia930_facade.py
+          tests/test_fuel_facade.py
+          tests/test_fleet_facade.py
+          tests/test_capacity_evolution_facade.py
+          tests/test_transmission_facade.py
+          tests/test_scenarios_facade.py

@@ -130,7 +130,9 @@ def slim_file(path: Path, keep: list[str], dry: bool) -> tuple[int, int]:
     missing = [c for c in keep if c not in pf.schema_arrow.names]
     already = set(pf.schema_arrow.names) == set(present)
     if missing:
-        print(f"    (schema gap — {len(missing)} KEEP col(s) absent: {missing[:4]}{'…' if len(missing) > 4 else ''})")
+        print(
+            f"    (schema gap — {len(missing)} KEEP col(s) absent: {missing[:4]}{'…' if len(missing) > 4 else ''})"
+        )
     if dry:
         return before, before
     table = pq.read_table(path, columns=present)
@@ -146,7 +148,9 @@ def slim_file(path: Path, keep: list[str], dry: bool) -> tuple[int, int]:
     # paranoia: row count must survive the projection exactly
     if pq.ParquetFile(tmp).metadata.num_rows != pf.metadata.num_rows:
         tmp.unlink()
-        raise SystemExit(f"row-count mismatch rewriting {path} — aborted, original untouched")
+        raise SystemExit(
+            f"row-count mismatch rewriting {path} — aborted, original untouched"
+        )
     del pf
     os.replace(tmp, path)
     return before, path.stat().st_size
@@ -155,7 +159,11 @@ def slim_file(path: Path, keep: list[str], dry: bool) -> tuple[int, int]:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--sced", action="store_true", help="also slim the SCED corpus (SCED/ + monthly parts)")
+    ap.add_argument(
+        "--sced",
+        action="store_true",
+        help="also slim the SCED corpus (SCED/ + monthly parts)",
+    )
     ap.add_argument("--list-unconsumed", action="store_true")
     ap.add_argument("--delete-unconsumed", action="store_true")
     args = ap.parse_args()
@@ -176,19 +184,21 @@ def main() -> None:
         b, a = slim_file(p, keep, args.dry_run)
         total_b += b
         total_a += a
-        print(f"{b/1048576:7.1f} -> {a/1048576:7.1f} MB  {p.name}")
+        print(f"{b / 1048576:7.1f} -> {a / 1048576:7.1f} MB  {p.name}")
     if targets:
         print(
-            f"TOTAL {total_b/1048576:.1f} -> {total_a/1048576:.1f} MB "
-            f"({(1 - total_a/max(total_b, 1)) * 100:.0f}% saved"
+            f"TOTAL {total_b / 1048576:.1f} -> {total_a / 1048576:.1f} MB "
+            f"({(1 - total_a / max(total_b, 1)) * 100:.0f}% saved"
             f"{', DRY RUN — nothing written' if args.dry_run else ''})"
         )
 
     if args.list_unconsumed or args.delete_unconsumed:
-        print("\nno-consumer disclosure members (zero references in scripts/src/tests):")
+        print(
+            "\nno-consumer disclosure members (zero references in scripts/src/tests):"
+        )
         for p in sorted(DAM_DIR.glob("*.parquet")):
             if any(m in p.name for m in UNCONSUMED_MARKERS):
-                print(f"{p.stat().st_size/1048576:7.1f} MB  {p.name}")
+                print(f"{p.stat().st_size / 1048576:7.1f} MB  {p.name}")
                 if args.delete_unconsumed:
                     p.unlink()
                     print("         deleted")

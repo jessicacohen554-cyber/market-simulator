@@ -225,8 +225,7 @@ def _print_ladder(label: str, net: np.ndarray, da: np.ndarray) -> None:
     rungs = derive(net, da)
     print(f"\n=== {label} ===")
     print(
-        f"  net import mean {np.nanmean(net):.0f} MW, "
-        f"DA LMP mean ${np.nanmean(da):.2f}"
+        f"  net import mean {np.nanmean(net):.0f} MW, DA LMP mean ${np.nanmean(da):.2f}"
     )
     cum = 0.0
     for name, cap, price in rungs:

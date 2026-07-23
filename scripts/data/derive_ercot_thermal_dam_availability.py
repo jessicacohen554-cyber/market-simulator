@@ -270,16 +270,20 @@ def derive_year(year: int) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     # still reconcile to the class-hour total. Emitted as parquet (one delivery
     # year is ~2.5 M rows; CSV would be ~150 MB/yr).
     site_frame = sh.rename(
-        columns={"cls": "class", "Hour Ending": "he", "rating_site": "rating_mw",
-                 "live": "live_mw"}
+        columns={
+            "cls": "class",
+            "Hour Ending": "he",
+            "rating_site": "rating_mw",
+            "live": "live_mw",
+        }
     ).copy()
     site_frame["date"] = site_frame["date"].dt.strftime("%Y-%m-%d")
     site_frame["he"] = site_frame["he"].astype(int)
     site_frame["live_mw"] = site_frame["live_mw"].round(2)
     site_frame["rating_mw"] = site_frame["rating_mw"].round(2)
-    site_frame = site_frame[
-        (site_frame["he"] >= 1) & (site_frame["he"] <= 24)
-    ][["date", "class", "site", "he", "live_mw", "rating_mw"]].reset_index(drop=True)
+    site_frame = site_frame[(site_frame["he"] >= 1) & (site_frame["he"] <= 24)][
+        ["date", "class", "site", "he", "live_mw", "rating_mw"]
+    ].reset_index(drop=True)
     return day_frame, hour_frame, site_frame
 
 

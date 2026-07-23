@@ -18,7 +18,14 @@ src/market_sim/
 │   ├── paths.py         # central on-disk path registry + EIA-860 vintage seam
 │   └── plant_taxonomy.py# canonical fuel/class/coal-rank taxonomy
 ├── data/                # loaders: Pydantic objects + numpy arrays from disk
-│   ├── fleet.py         # Generator, FleetArrays, CAMPD binning, tranche curves
+│   ├── fleet/           # fleet package (2026-07-23 split of the 11.2k-ln fleet.py; same import path):
+│   │                    #   __init__ (Generator/FleetArrays + full pre-split re-export surface),
+│   │                    #   models (types leaf + _pkg_ns patch resolver), withholding (AS reserve
+│   │                    #   withholding), eia860 (EIA-860/eGRID loaders + registries), campd_bins
+│   │                    #   (per-plant binning), arrays (generators_to_fleet_arrays), floors
+│   │                    #   (netload/drag floors), offer_surfaces (measured offer markups),
+│   │                    #   legacy_bins (equal-width bins + assemble_mc), assembly (bins_to_fleet /
+│   │                    #   build_base_fleet / build_dispatch_fleet)
 │   ├── eia930/          # EIA-930 loaders package (frames/demand/zonal_shares/envelopes/weather/actuals)
 │   ├── eia_loader.py    # facade → eia930 (aliases the historical import path; W-D2 split)
 │   ├── fuel.py          # gas/coal/oil/H2 delivered prices
