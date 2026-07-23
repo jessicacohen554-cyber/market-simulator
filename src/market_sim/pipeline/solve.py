@@ -47,6 +47,10 @@ import numpy as np
 
 from market_sim.model.commitment import compute_monthly_markup
 from market_sim.model.dispatch import DispatchModel, solve_dispatch
+from market_sim.model.lp.inplace_floor import (
+    availability_feeds_rows,
+    refloor_thermal_inplace,
+)
 
 if TYPE_CHECKING:
     from market_sim.data.fleet import FleetArrays
@@ -119,8 +123,13 @@ def run_energy_solve(
             after P0 solves. When it returns a ``FleetArrays`` the P1 solve uses
             that (floored) fleet instead of the input one — the P1-native CAISO RA
             must-offer bridge injects its ``min_gen`` floor here, detected from the
-            P0 dispatch. Changing the P1 bounds precludes the warm-start basis
-            reuse, so that year's P1 is a cold solve; every other path (hook
+            P0 dispatch. The floor is only a P-block column-bound change: with
+            ``MARKET_SIM_P1_FLOOR_INPLACE=1`` P1 mutates those bounds on the live
+            P0 model (``lp.inplace_floor.refloor_thermal_inplace``) and warm-solves
+            from the P0 basis; by default (or when the model declines the in-place
+            edit) P1 cold-rebuilds on the floored fleet. Either way P1 clears the
+            same floored LP — the two differ only by marginal-tie reshuffle (the
+            shipped warm-start neutrality standard). Every other path (hook
             ``None`` or returning ``None``) is byte-identical, warm start included.
         startup_run_ratio_t: Optional ``(T,)`` condition-keyed amortization
             horizon ratio (``tranche_startup_conditional_runs`` v4), passed
@@ -183,11 +192,30 @@ def run_energy_solve(
         _extra_bid_adjust = p1_bid_adjust_prep(r0)
         if _extra_bid_adjust is not None:
             mc_bid = mc_bid + _extra_bid_adjust
-    # P1-native floor injection (CAISO RA must-offer bridge): the hook reads the
-    # P0 solution and returns a floored fleet for the P1 clearing solve. Changing
-    # the column bounds means the warm-start basis no longer applies, so P1 is a
-    # cold solve on the floored fleet; the ordinary path (hook None / no floor)
-    # keeps the warm start and is byte-identical.
+    # P1-native floor injection (CAISO RA must-offer bridge, ERCOT gas
+    # commitment bridge): the hook reads the P0 solution and returns a floored
+    # fleet for the P1 clearing solve. The floor enters the LP only as the
+    # thermal P-block column bounds (min_gen -> lower, pmax*availability ->
+    # upper), so it can ride into P1 one of two ways:
+    #   * IN-PLACE (opt-in: MARKET_SIM_P1_FLOOR_INPLACE=1) —
+    #     ``lp.inplace_floor.refloor_thermal_inplace`` mutates the P[g,t] bounds on
+    #     the LIVE P0 model (``changeColsBounds``) and P1 re-solves from the P0
+    #     basis: the exact analogue of the ``changeColsCost`` P0->P1 re-cost.
+    #     No second matrix build, so peak RSS stays ~one model. It DECLINES
+    #     (falls back to cold) when the floored availability also feeds a
+    #     ramp/co-opt row that a P-column edit can't reproduce.
+    #   * COLD REBUILD (default; MARKET_SIM_P1_FLOOR_INPLACE unset/0) — build a
+    #     second DispatchModel on the floored fleet and solve it cold. The
+    #     pre-2026-07 behaviour, kept as the default so the byte-identity gate
+    #     sees an unchanged default solve path (refactor-consolidation plan
+    #     §7 H-1: the in-place path is a warm-start-class change validated by
+    #     scripts/diff_warmstart_bundles.py, not by --mode byte; flipping the
+    #     default is an owner cache-epoch decision on that tie-only evidence).
+    # Either way P1 clears the SAME floored LP; the two paths differ only by
+    # marginal-tie reshuffle (the shipped warm-start neutrality standard). The
+    # ordinary path (hook None / no floor) keeps the warm start and is
+    # byte-identical to before. The env toggle is a solve-path perf knob, not a
+    # ScenarioConfig field, so it never enters ``cache_key``.
     p1_fleet_arrays = fleet_arrays
     if p1_fleet_prep is not None:
         replaced = p1_fleet_prep(r0)
@@ -206,15 +234,35 @@ def run_energy_solve(
         and p1_fleet_arrays is fleet_arrays
         and p1_dispatch_kwargs is dispatch_kwargs
     )
-    if _warm_p1:
+    # In-place floor re-solve: applies only when the P1 change is a pure
+    # floored-fleet swap (a live warm model, a replaced fleet, no kwargs
+    # override). Mutate the P-block bounds on the live model and warm-solve;
+    # if the toggle is off or the model declines the edit, fall through to the
+    # cold rebuild below.
+    _inplace_floored = False
+    if (
+        _warm
+        and not _warm_p1
+        and p1_fleet_arrays is not fleet_arrays
+        and p1_dispatch_kwargs is dispatch_kwargs
+        and os.environ.get("MARKET_SIM_P1_FLOOR_INPLACE", "0") != "0"
+    ):
+        _rgi = dispatch_kwargs.get("ramp_gen_idx")
+        _avail_in_rows = availability_feeds_rows(
+            model, _rgi is not None and np.asarray(_rgi).size > 0
+        )
+        _inplace_floored = refloor_thermal_inplace(
+            model, p1_fleet_arrays, _avail_in_rows
+        )
+    if _warm_p1 or _inplace_floored:
         p1 = model.solve(mc=mc_bid)
     else:
-        # Cold P1 on a replaced fleet / overridden kwargs: export the cross-year
-        # basis from the P0 model FIRST (same value as the post-P1 export below —
-        # the model last solved P0 either way), then release the P0 LP + HiGHS
-        # workspace before building the second DispatchModel, so peak RSS stays
-        # ~one model (the PJM zone-aggregate co-opt alone peaks ~14.5 GB on the
-        # 15 GB calibration box).
+        # Cold P1 on a replaced fleet / overridden kwargs / declined in-place
+        # edit: export the cross-year basis from the P0 model FIRST (same value
+        # as the post-P1 export below — the model last solved P0 either way),
+        # then release the P0 LP + HiGHS workspace before building the second
+        # DispatchModel, so peak RSS stays ~one model (the PJM zone-aggregate
+        # co-opt alone peaks ~14.5 GB on the 15 GB calibration box).
         if _warm and xyear_cache is not None:
             basis = model.export_cross_year_basis()
             if basis is not None:
