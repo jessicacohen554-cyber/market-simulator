@@ -1,0 +1,16 @@
+{
+  "id": "2026-07-23-ercot100-netrev-margin-keeper",
+  "label": "ercot100 netrev margin keeper",
+  "date": "2026-07-23",
+  "shorthand": "ercot100-netrev-margin-keeper",
+  "definition": "ERCOT net-revenue margin KEEPER (ERCOT-100, owner directive 2026-07-23, rule 1/11): the structurally-correct fuel-invariant gas-offer form supersedes the fuel-scaled heat-rate-multiplier markup. Single delta gas_offer_margin=true on the ercot99-state-off-fullspan recipe (anchor 2.2494 $/MMBtu, phys_* basis = measured ercot_campd_marginal_hr_summary.csv p50s); zero DOF delta, zero fitted scalars. Gate profile BYTE-IDENTICAL to the ercot99 keeper (C1/C2 PASS, C3a/b/c FAIL = ERCOT's ledgered scarcity/tail frontier ERCOT-94/99, dispatch/co2 PASS, C7/C8 PASS, C6 governance UNATTESTED owner-lane); determination NOT-YET, unchanged. The small C3b dur-NRMSE dip in the above-anchor years is the removal of the multiplicative form's fuel-scaled masking of that already-failing tail (rule 11, exposing not causing), not an offer-form defect. The keeper designates the most structurally faithful run; NOT a calibration claim.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-23-ercot100-netrev-margin-keeper.js",
+  "bundle": "results/calibration/ercot_netrev_margin",
+  "market_story": "gas_cc / gas_ct / gas_st: real ERCOT gas bidders express their above-cost offer as a net-revenue TARGET in $/MWh (start/no-load recovery, competitive reach, and — at the top of the CT stack — the ORDC scarcity wall, which ERCOT sets ADMINISTRATIVELY off VOLL/LOLP, not off the gas bill), NOT as a fixed multiple of the fuel cost. The net-revenue margin form encodes exactly this: each band's physical burn (the measured CAMPD marginal heat rate) tracks delivered gas, while the above-physical markup — including the CT_PEAKER 13.15x $5,000-ORDC wall (phys_peak 1.0) — becomes a gas-INVARIANT $/MWh margin anchored at the 2023-25 delivered-gas mean (median fixed margin ~$18/MWh across the fleet, ~$298-392/MWh on the peak wall). So a committed CC's offer compresses toward its physical cost as gas rises (the $-margin is a shrinking fraction of a bigger fuel bill) and firms at cheap gas — the observed fuel-invariant bidding the old multiplicative form could not reproduce (it ballooned the scarcity offer at high gas, which ERCOT's administrative ORDC price does not do). Class energy and merit order are unchanged at the anchor; only the gas-elasticity of the offer above cost changes, 1 -> 0, which is the structurally-correct behavior. The scarcity-TAIL LEVEL (C3c) remains under-priced in BOTH offer forms — that is ERCOT's ledgered ORDC/reserve scarcity-formation lane (ERCOT-94/99), not an offer-form issue; the margin form merely stops the multiplicative markup from partially masking it at above-anchor gas."
+}

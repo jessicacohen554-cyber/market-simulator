@@ -186,8 +186,20 @@ cross-check, never a tuning channel.
   the joint re-keeper. This resolves criterion 2's "re-open the import-pricing
   lanes before any further offer work" as: keep the correct offer form, move the
   import lane, then re-keeper.
-* **ERCOT / PJM / MISO / NYISO — identification landed** (`379a9b3`), flag
-  default-off; adoption pending each ISO's own A/B.
+* **ERCOT — ADOPTED, keeper on** (owner directive, rule #1, 2026-07-23, ERCOT-100;
+  keeper `2026-07-23-ercot100-netrev-margin-keeper`; `docs/calibration-log/ercot.md`).
+  Anchor 2.2494. Same story as CAISO: the A/B tripped refutation criterion 1 (C3b
+  dur-NRMSE dips 2.152→2.160 / 1.528→1.530 / 0.835→0.852) but the full rubric gate
+  profile is BYTE-IDENTICAL to the ercot99 keeper (C1/C2/dispatch/co2/C7/C8 PASS,
+  C3a/b/c FAIL = the ledgered scarcity/tail frontier ERCOT-94/99 in both forms,
+  determination NOT-YET) — no gate regresses, so the keeper was promoted standalone
+  (the CAISO `92db03c` final state). The CT_PEAKER 13.15× ORDC peak wall is
+  administrative/fuel-invariant scarcity (VOLL/LOLP, not the gas bill), so its
+  conversion to a fixed $/MWh margin (`phys_peak=1.0`) is the structurally-faithful
+  form; the C3b dip is the removal of the multiplicative markup's fuel-scaled
+  masking of the already-failing tail (rule 11). Zero DOF delta, zero fitted scalars.
+* **PJM / MISO / NYISO — identification landed** (`379a9b3`), flag default-off;
+  adoption pending each ISO's own A/B.
 
 ## DOF ledger delta
 
