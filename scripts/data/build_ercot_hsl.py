@@ -43,6 +43,28 @@ Two source paths, by year:
 For any year with neither source the year is skipped with a data-needed
 message — curtailment is never fabricated.
 
+Alongside the system-wide parquet, any NP6 upload carrying per-region columns
+also yields a **zonal sidecar**
+``data/raw/ercot-hsl/ercot_<year>_hsl_zonal_hourly.parquet`` (long format:
+``hour``, ``fuel``, ``region``, ``gen_mw``, ``hsl_mw``). Region-resolved
+report families:
+
+* NP4-742-CD / NP4-745-CD "... by Geographical Region" (GEO) — wind regions
+  PANHANDLE/COASTAL/SOUTH/WEST/NORTH, solar regions CenterWest/NorthWest/
+  FarWest/FarEast/SouthEast/CenterEast;
+* the plain NP4-732-CD wind report's load-zone columns —
+  LZ_SOUTH_HOUSTON/LZ_WEST/LZ_NORTH.
+
+Per-region delivered GEN is the report's actual; the per-region potential is
+the report's **COP HSL** (aggregated operating-plan HSLs of On-Line
+resources) — no report family publishes a per-region *telemetered* actual
+HSL, so zonal ``hsl_mw`` is COP-based (the same series the system-wide 2023
+``hsl_mw`` uses, the GEO uploads carrying no actual-HSL column). A region
+vocabulary posted for only part of the year (e.g. the lone 2024-09 wind GEO
+upload) keeps NaN outside its covered span — month-scale holes are never
+interpolated. ``--zonal-only`` refreshes the zonal sidecar without rewriting
+the committed system-wide parquet.
+
 The output series sit on the model's fixed non-leap 8760-hour clock keyed to
 ERCOT-local **standard** time (CST, UTC-6, no DST) — matching the ``ERCO
 hourly`` demand clock (see eia_loader). ERCOT report timestamps are Central
@@ -55,6 +77,7 @@ of a leap year is dropped.
 Run:
     python scripts/data/build_ercot_hsl.py                 # all buildable years
     python scripts/data/build_ercot_hsl.py --year 2024 2025
+    python scripts/data/build_ercot_hsl.py --year 2024 2025 --zonal-only
 """
 
 from __future__ import annotations
@@ -165,6 +188,11 @@ REFERENCE_PATH = CALIBRATION_DIR / "calibration_reference.json"
 def out_file(year: int) -> Path:
     """Return the output parquet path for ``year``."""
     return OUT_DIR / f"ercot_{year}_hsl_hourly.parquet"
+
+
+def zonal_out_file(year: int) -> Path:
+    """Return the zonal (per-region) sidecar parquet path for ``year``."""
+    return OUT_DIR / f"ercot_{year}_hsl_zonal_hourly.parquet"
 
 
 def clone_dataset(dest: Path) -> Path:
@@ -389,6 +417,43 @@ def _prevailing_to_standard(ts: pd.Series, dst_flag: pd.Series | None) -> pd.Ser
     return local.dt.tz_convert("Etc/GMT+6").dt.tz_localize(None)
 
 
+def _report_timestamps(name: str, df: pd.DataFrame) -> pd.Series:
+    """Return a report frame's hourly stamps on the model's fixed CST clock.
+
+    ``df`` must already carry stripped/upper-cased column names. Handles both
+    report layouts: hourly ``DELIVERY_DATE`` + ``HOUR_ENDING`` (with a DST
+    flag for the repeated fall-back hour) and the 5-minute single
+    interval-timestamp column. Timestamps are Central Prevailing Time in both
+    and are converted via :func:`_prevailing_to_standard`.
+
+    Raises:
+        ValueError: when no timestamp column can be found.
+    """
+    columns = list(df.columns)
+    dst_flag = df["DSTFLAG"] if "DSTFLAG" in columns else None
+
+    if "DELIVERY_DATE" in columns and "HOUR_ENDING" in columns:
+        date = pd.to_datetime(df["DELIVERY_DATE"])
+        # HOUR_ENDING is 1-24 (sometimes "HH:00"); hour-beginning = HE - 1.
+        he = df["HOUR_ENDING"].astype(str).str.split(":").str[0].astype(int)
+        return _prevailing_to_standard(
+            date + pd.to_timedelta(he - 1, unit="h"), dst_flag
+        )
+    ts_col = next((c for c in _TIMESTAMP_COLUMNS if c in columns), None)
+    if ts_col is None:
+        raise ValueError(
+            f"{name}: no DELIVERY_DATE/HOUR_ENDING pair and none of "
+            f"{_TIMESTAMP_COLUMNS} present (columns: {columns[:8]}...)"
+        )
+    ts = pd.to_datetime(df[ts_col])
+    # 5-minute stamps are interval-ending when the year's first stamp
+    # does not sit on an hour boundary; shift by one second before
+    # flooring so the interval lands in the hour it covers.
+    if (ts.dt.minute != 0).any():
+        ts = ts - pd.Timedelta(seconds=1)
+    return _prevailing_to_standard(ts.dt.floor("h"), dst_flag)
+
+
 def _parse_report(name: str, df: pd.DataFrame) -> pd.DataFrame:
     """Reduce one report frame to ``(ts, gen_mw, hsl_mw)`` rows on the CST clock.
 
@@ -397,7 +462,7 @@ def _parse_report(name: str, df: pd.DataFrame) -> pd.DataFrame:
     fall-back hour) and the 5-minute NP4-733/738 layout (a single interval
     timestamp column). Timestamps are Central Prevailing Time in both
     families and are converted to the model's fixed CST clock
-    (:func:`_prevailing_to_standard`). The GEN column is the system-wide
+    (:func:`_report_timestamps`). The GEN column is the system-wide
     actual; the HSL column is the system-wide actual HSL, preferred over the
     COP HSL when both are present (COP HSLs aggregate only On-Line resources'
     operating plans; the actual HSL is the telemetered potential).
@@ -407,27 +472,7 @@ def _parse_report(name: str, df: pd.DataFrame) -> pd.DataFrame:
     """
     df = df.rename(columns=lambda c: str(c).strip().upper())
     columns = list(df.columns)
-    dst_flag = df["DSTFLAG"] if "DSTFLAG" in columns else None
-
-    if "DELIVERY_DATE" in columns and "HOUR_ENDING" in columns:
-        date = pd.to_datetime(df["DELIVERY_DATE"])
-        # HOUR_ENDING is 1-24 (sometimes "HH:00"); hour-beginning = HE - 1.
-        he = df["HOUR_ENDING"].astype(str).str.split(":").str[0].astype(int)
-        ts = _prevailing_to_standard(date + pd.to_timedelta(he - 1, unit="h"), dst_flag)
-    else:
-        ts_col = next((c for c in _TIMESTAMP_COLUMNS if c in columns), None)
-        if ts_col is None:
-            raise ValueError(
-                f"{name}: no DELIVERY_DATE/HOUR_ENDING pair and none of "
-                f"{_TIMESTAMP_COLUMNS} present (columns: {columns[:8]}...)"
-            )
-        ts = pd.to_datetime(df[ts_col])
-        # 5-minute stamps are interval-ending when the year's first stamp
-        # does not sit on an hour boundary; shift by one second before
-        # flooring so the interval lands in the hour it covers.
-        if (ts.dt.minute != 0).any():
-            ts = ts - pd.Timedelta(seconds=1)
-        ts = _prevailing_to_standard(ts.dt.floor("h"), dst_flag)
+    ts = _report_timestamps(name, df)
 
     gen_col = _pick_column(
         columns, ("ACTUAL", "SYSTEM"), exclude=("HSL",)
@@ -456,6 +501,64 @@ def _parse_report(name: str, df: pd.DataFrame) -> pd.DataFrame:
     # unflagged fall-back repeat / malformed spring-forward row) — dropped,
     # then covered by the overlapping rolling-window postings or interpolated.
     return out.dropna(subset=["ts", "gen_mw", "hsl_mw"])
+
+
+# Per-region column prefix shared by every region-resolved NP6 report family
+# (wind GEO NP4-742, solar GEO NP4-745, and the plain NP4-732 wind report's
+# load-zone columns): the region vocabulary is the set of COP_HSL_<REGION>
+# suffixes other than SYSTEM_WIDE.
+_GEO_REGION_HSL_PREFIX = "COP_HSL_"
+
+
+def _parse_report_regions(name: str, df: pd.DataFrame) -> pd.DataFrame | None:
+    """Reduce one region-resolved report to long ``(ts, region, gen_mw, hsl_mw)``.
+
+    Returns ``None`` when the report carries no per-region columns (the
+    system-wide-only report families). Regions are the ``COP_HSL_<REGION>``
+    suffixes other than ``SYSTEM_WIDE``; the delivered column is
+    ``ACTUAL_<REGION>`` (wind GEO, 2024 load-zone wind) or ``GEN_<REGION>``
+    (solar GEO, 2025 load-zone wind). The per-region potential is the
+    report's COP HSL — the aggregated operating-plan HSLs of On-Line
+    resources — because no NP6 family publishes a per-region *telemetered*
+    actual HSL (the same limitation the system-wide series has for GEO-only
+    years). Region names are emitted lower-cased, preserving the source
+    vocabulary (``panhandle``/``coastal``/... for wind GEO,
+    ``centerwest``/... for solar GEO, ``lz_west``/... for load-zone wind).
+    """
+    df = df.rename(columns=lambda c: str(c).strip().upper())
+    columns = list(df.columns)
+    regions = [
+        c[len(_GEO_REGION_HSL_PREFIX) :]
+        for c in columns
+        if c.startswith(_GEO_REGION_HSL_PREFIX) and not c.endswith("SYSTEM_WIDE")
+    ]
+    if not regions:
+        return None
+    ts = _report_timestamps(name, df)
+    parts: list[pd.DataFrame] = []
+    for region in regions:
+        gen_col = next(
+            (c for c in (f"ACTUAL_{region}", f"GEN_{region}") if c in columns),
+            None,
+        )
+        if gen_col is None:
+            continue
+        part = pd.DataFrame(
+            {
+                "ts": ts,
+                "region": region.lower(),
+                "gen_mw": pd.to_numeric(df[gen_col], errors="coerce"),
+                "hsl_mw": pd.to_numeric(
+                    df[f"{_GEO_REGION_HSL_PREFIX}{region}"], errors="coerce"
+                ),
+            }
+        )
+        # Same drop rules as _parse_report: forecast-only rows and
+        # unplaceable CPT stamps carry no telemetry.
+        parts.append(part.dropna(subset=["ts", "gen_mw", "hsl_mw"]))
+    if not parts:
+        return None
+    return pd.concat(parts, ignore_index=True)
 
 
 def _to_model_clock(rows: pd.DataFrame, year: int, fuel: str) -> pd.DataFrame:
@@ -526,31 +629,128 @@ def _to_model_clock(rows: pd.DataFrame, year: int, fuel: str) -> pd.DataFrame:
     return aligned.reset_index(drop=True)
 
 
-def aggregate_np6_hourly(year: int) -> pd.DataFrame | None:
-    """Aggregate the year's NP6 report uploads into the hourly output frame.
+def _interpolate_short_gaps(values: pd.Series, max_gap: int) -> pd.Series:
+    """Linearly fill NaN runs of at most ``max_gap`` hours interior to coverage.
 
-    Returns ``None`` (with a data-needed message) when no usable wind+solar
-    report files for ``year`` are found under ``data/raw/ercot-hsl/np6/``.
+    Longer holes and the uncovered edges of a partial-year series stay NaN —
+    interpolating across a month-scale hole would fabricate telemetry (a
+    night-bounded hole interpolates solar to identically zero; see
+    :func:`_to_model_clock`'s known-bad-window rationale).
+    """
+    missing = values.isna()
+    if not missing.any():
+        return values
+    # Run length of each NaN run: consecutive NaNs after a non-NaN share a
+    # group id under the cumulative count of non-NaN values.
+    run_id = (~missing).cumsum()
+    run_len = missing.groupby(run_id).transform("sum")
+    fill = values.interpolate(limit_area="inside")
+    out = values.copy()
+    short = missing & (run_len <= max_gap)
+    out[short] = fill[short]
+    return out
+
+
+def _region_to_model_clock(rows: pd.DataFrame, year: int) -> pd.DataFrame:
+    """Place one region's ``(ts, gen_mw, hsl_mw)`` rows on the 8760-hour clock.
+
+    Same ``(month, day, hour)`` averaging and non-leap reindex as
+    :func:`_to_model_clock`, with two differences for the region-resolved
+    report families: coverage may be partial (a vocabulary posted for only
+    some months — e.g. the lone 2024-09 wind GEO upload — keeps NaN outside
+    its covered span; only interior gaps of at most ``_MAX_GAP_HOURS`` are
+    interpolated, never month-scale holes or uncovered edges), and cited
+    known-bad source windows (``_KNOWN_BAD_NP6_WINDOWS``) are nulled without
+    the system-wide EIA-930 fill — EIA-930 publishes no per-region series,
+    so those hours simply stay missing.
+    """
+    ts = rows["ts"]
+    keep = (ts.dt.year == year) & ~((ts.dt.month == 2) & (ts.dt.day == 29))
+    rows = rows[keep]
+    grouped = rows.groupby([ts[keep].dt.month, ts[keep].dt.day, ts[keep].dt.hour])[
+        ["gen_mw", "hsl_mw"]
+    ].mean()
+    grouped.index.names = ["month", "day", "hour"]
+
+    calendar = pd.date_range("2023-01-01", periods=HOURS_PER_YEAR, freq="h")
+    full_index = pd.MultiIndex.from_arrays(
+        [calendar.month, calendar.day, calendar.hour],
+        names=["month", "day", "hour"],
+    )
+    aligned = grouped.reindex(full_index)
+    known_bad = _known_bad_mask(full_index, year)
+    aligned.loc[known_bad, ["gen_mw", "hsl_mw"]] = np.nan
+    for column in ("gen_mw", "hsl_mw"):
+        aligned[column] = _interpolate_short_gaps(aligned[column], _MAX_GAP_HOURS)
+    return aligned.reset_index(drop=True)
+
+
+# Zonal-only extra roots: region-resolved GEO uploads parked as redundant for
+# the SYSTEM-wide series (their months are already covered by the primary
+# uploads, so they must not perturb the committed system-wide parquets) still
+# contribute per-region rows the primary files lack.
+_ZONAL_EXTRA_DIRS: tuple[Path, ...] = (NP6_DIR / "unused-redundant",)
+
+
+def _zonal_extra_files() -> list[Path]:
+    """Return candidate zonal-only upload files (csv or zip) from the
+    redundant-for-system-wide drop zones (``_ZONAL_EXTRA_DIRS``)."""
+    files: list[Path] = []
+    for root in _ZONAL_EXTRA_DIRS:
+        if not root.is_dir():
+            continue
+        for path in sorted(root.iterdir()):
+            if path.suffix.lower() in (".csv", ".zip") and path.is_file():
+                files.append(path)
+    return files
+
+
+def aggregate_np6_hourly(
+    year: int,
+) -> tuple[pd.DataFrame | None, pd.DataFrame | None]:
+    """Aggregate the year's NP6 uploads into ``(system, zonal)`` hourly frames.
+
+    ``system`` is the system-wide 8760-hour output frame (``None``, with a
+    data-needed message, when no usable wind+solar report files for ``year``
+    are found under ``data/raw/ercot-hsl/np6/``). ``zonal`` is the long
+    per-region frame (``hour``, ``fuel``, ``region``, ``gen_mw``,
+    ``hsl_mw``; ``None`` when no upload carries per-region columns) built in
+    the same pass from the region-resolved report families
+    (:func:`_parse_report_regions`), plus any GEO uploads parked under the
+    zonal-only extra roots (``_ZONAL_EXTRA_DIRS``) — those are redundant for
+    the system-wide series and contribute region rows only.
 
     GEN is floored at zero, and HSL is floored at GEN: the reports'
     telemetry occasionally shows actual output a shade above the recorded
     potential, and flooring HSL (rather than capping GEN) preserves the
     delivered totals the EIA-930 cross-check validates while keeping
-    reported curtailment ``HSL - GEN`` non-negative.
+    reported curtailment ``HSL - GEN`` non-negative. The same flooring is
+    applied per region (over covered hours) in the zonal frame.
     """
-    files = _np6_files(year)
     per_fuel: dict[str, list[pd.DataFrame]] = {"wind": [], "solar": []}
-    for path in files:
+    region_rows: dict[str, list[pd.DataFrame]] = {"wind": [], "solar": []}
+
+    def _collect(path: Path, regions_only: bool) -> None:
         for name, raw in _read_csvs(path):
             fuel = _fuel_of(name, list(raw.columns.astype(str).str.upper()))
             if fuel is None:
                 print(f"  skipping {name}: cannot identify wind vs solar")
                 continue
-            parsed = _parse_report(name, raw)
-            in_year = parsed[parsed["ts"].dt.year == year]
-            if in_year.empty:
-                continue
-            per_fuel[fuel].append(in_year)
+            if not regions_only:
+                parsed = _parse_report(name, raw)
+                in_year = parsed[parsed["ts"].dt.year == year]
+                if not in_year.empty:
+                    per_fuel[fuel].append(in_year)
+            regions = _parse_report_regions(name, raw)
+            if regions is not None:
+                r_in_year = regions[regions["ts"].dt.year == year]
+                if not r_in_year.empty:
+                    region_rows[fuel].append(r_in_year)
+
+    for path in _np6_files(year):
+        _collect(path, regions_only=False)
+    for path in _zonal_extra_files():
+        _collect(path, regions_only=True)
 
     missing = [f for f, frames in per_fuel.items() if not frames]
     if missing:
@@ -570,7 +770,7 @@ def aggregate_np6_hourly(year: int) -> pd.DataFrame | None:
             "fabricated from\n"
             "  delivered-generation data."
         )
-        return None
+        return None, None
 
     fuels: dict[str, dict[str, np.ndarray]] = {}
     for fuel, frames in per_fuel.items():
@@ -578,7 +778,51 @@ def aggregate_np6_hourly(year: int) -> pd.DataFrame | None:
         gen = np.clip(hourly["gen_mw"].to_numpy(dtype=float), 0.0, None)
         hsl = np.maximum(hourly["hsl_mw"].to_numpy(dtype=float), gen)
         fuels[fuel] = {"gen": gen, "hsl": hsl}
-    return _assemble_frame(fuels)
+    return _assemble_frame(fuels), _assemble_zonal_frame(region_rows, year)
+
+
+def _assemble_zonal_frame(
+    region_rows: dict[str, list[pd.DataFrame]], year: int
+) -> pd.DataFrame | None:
+    """Return the long zonal frame (``hour``, ``fuel``, ``region``, ``gen_mw``,
+    ``hsl_mw``) from collected per-region report rows, or ``None`` when no
+    report carried per-region columns.
+
+    Each ``(fuel, region)`` series is placed on the fixed 8760-hour clock
+    with partial-year coverage preserved as NaN
+    (:func:`_region_to_model_clock`); over covered hours GEN is floored at
+    zero and HSL floored at GEN, matching the system-wide convention.
+    """
+    parts: list[pd.DataFrame] = []
+    hours = np.arange(HOURS_PER_YEAR, dtype="int64")
+    for fuel in ("wind", "solar"):
+        frames = region_rows[fuel]
+        if not frames:
+            continue
+        rows = pd.concat(frames, ignore_index=True)
+        for region, sub in rows.groupby("region", sort=True):
+            hourly = _region_to_model_clock(sub, year)
+            gen = hourly["gen_mw"].to_numpy(dtype=float, copy=True)
+            hsl = hourly["hsl_mw"].to_numpy(dtype=float, copy=True)
+            covered = ~np.isnan(gen)
+            if not covered.any():
+                continue
+            gen[covered] = np.clip(gen[covered], 0.0, None)
+            hsl[covered] = np.maximum(hsl[covered], gen[covered])
+            parts.append(
+                pd.DataFrame(
+                    {
+                        "hour": hours,
+                        "fuel": fuel,
+                        "region": str(region),
+                        "gen_mw": gen,
+                        "hsl_mw": hsl,
+                    }
+                )
+            )
+    if not parts:
+        return None
+    return pd.concat(parts, ignore_index=True)
 
 
 # ---------------------------------------------------------------------------
@@ -670,8 +914,121 @@ def print_validation(df: pd.DataFrame, year: int) -> None:
         )
 
 
-def build_year(year: int) -> bool:
-    """Build and write one year's HSL parquet. Returns True on success.
+# Complete region vocabularies per report family, for the sum-of-regions
+# cross-check: when every region of a vocabulary has (near-)full coverage,
+# the regions' delivered generation must reproduce the system-wide total.
+_REGION_VOCABULARIES: dict[str, tuple[str, tuple[str, ...]]] = {
+    "NP4-742 wind GEO": (
+        "wind",
+        ("panhandle", "coastal", "south", "west", "north"),
+    ),
+    "NP4-732 wind LZ": ("wind", ("lz_south_houston", "lz_west", "lz_north")),
+    "NP4-745 solar GEO": (
+        "solar",
+        (
+            "centerwest",
+            "northwest",
+            "farwest",
+            "fareast",
+            "southeast",
+            "centereast",
+        ),
+    ),
+}
+
+
+def print_zonal_validation(
+    zonal: pd.DataFrame, system: pd.DataFrame | None, year: int
+) -> None:
+    """Print per-region coverage/totals and the sum-of-regions cross-check.
+
+    Args:
+        zonal: The long zonal frame from :func:`_assemble_zonal_frame`.
+        system: The system-wide frame from the same pass (``None`` skips the
+            sum-of-regions vs system-wide comparison).
+        year: The calendar year the frames cover.
+    """
+    print(f"\n=== ERCOT {year} per-region (zonal) HSL sidecar ===")
+    print(
+        f"  {'fuel':>5} {'region':>18} {'coverage':>9} {'GEN TWh':>9} "
+        f"{'HSL TWh':>9} {'curt %':>7}"
+    )
+    for (fuel, region), sub in zonal.groupby(["fuel", "region"], sort=True):
+        covered = sub["gen_mw"].notna()
+        cov_pct = 100.0 * covered.mean()
+        gen_twh = sub["gen_mw"].sum() / 1e6
+        hsl_twh = sub["hsl_mw"].sum() / 1e6
+        curt = 100.0 * (1.0 - gen_twh / hsl_twh) if hsl_twh > 0 else float("nan")
+        print(
+            f"  {fuel:>5} {region:>18} {cov_pct:>8.1f}% {gen_twh:>9.2f} "
+            f"{hsl_twh:>9.2f} {curt:>7.2f}"
+        )
+
+    if system is None:
+        return
+    for family, (fuel, regions) in _REGION_VOCABULARIES.items():
+        pivot = zonal[zonal["fuel"] == fuel].pivot(
+            index="hour", columns="region", values="gen_mw"
+        )
+        if not set(regions).issubset(pivot.columns):
+            continue
+        block = pivot[list(regions)]
+        full = block.notna().all(axis=1)
+        if full.mean() < 0.99:
+            continue
+        region_sum = block.loc[full].sum().sum()
+        system_sum = system.loc[full.to_numpy(), f"{fuel}_gen_mw"].sum()
+        if system_sum > 0:
+            ratio = region_sum / system_sum
+            print(
+                f"  {family}: sum-of-regions / system-wide delivered = "
+                f"{ratio:.4f} (over {int(full.sum())} covered hours)"
+            )
+
+
+_NP6_SOURCE = (
+    "ERCOT MIS wind/solar power production reports "
+    "(NP4-732/733-CD wind, NP4-737/738-CD solar), uploaded to "
+    "data/raw/ercot-hsl/np6/"
+)
+
+
+def _write_zonal(zonal: pd.DataFrame, year: int) -> None:
+    """Write the zonal sidecar parquet for ``year``."""
+    table = pa.Table.from_pandas(
+        zonal[["hour", "fuel", "region", "gen_mw", "hsl_mw"]],
+        preserve_index=False,
+    )
+    table = table.replace_schema_metadata(
+        {
+            "source": _NP6_SOURCE
+            + " (region-resolved families: NP4-742/745-CD GEO reports and "
+            "the NP4-732-CD load-zone columns)",
+            "description": (
+                f"ERCOT {year} per-region hourly wind/solar delivered "
+                "generation (report actual) and COP-HSL potential "
+                "(aggregated operating-plan HSLs of On-Line resources — no "
+                "NP6 family publishes a per-region telemetered actual HSL), "
+                "long format by (fuel, region). Region names preserve the "
+                "source vocabulary: NP4-742 wind geographical regions "
+                "(panhandle/coastal/south/west/north), NP4-745 solar "
+                "geographical regions (centerwest/northwest/farwest/fareast/"
+                "southeast/centereast), NP4-732 wind load zones "
+                "(lz_south_houston/lz_west/lz_north). Hours outside a "
+                "region's posted coverage are NaN — never interpolated "
+                "across month-scale holes."
+            ),
+            "units": "MW (hourly-average; numerically equal to MWh per hour)",
+            "year": str(year),
+        }
+    )
+    path = zonal_out_file(year)
+    pq.write_table(table, path)
+    print(f"Wrote {path.relative_to(REPO_ROOT)} ({path.stat().st_size / 1024:.1f} KiB)")
+
+
+def build_year(year: int, zonal_only: bool = False) -> bool:
+    """Build and write one year's HSL parquet(s). Returns True on success.
 
     Any year prefers the authoritative ERCOT NP4-732/737 power-production
     reports (full-footprint published HSL) when an upload is present under
@@ -680,20 +1037,22 @@ def build_year(year: int) -> bool:
     loader reconciles up to the EIA-930 delivered level (see
     ``renewables.hsl_potential_mw``); drop the published 2023 reports into
     ``np6/`` to supersede it and retire the reconciliation entirely.
+
+    NP6 uploads carrying per-region columns additionally yield the zonal
+    sidecar (:func:`zonal_out_file`); with ``zonal_only`` the system-wide
+    parquet is left untouched and only the sidecar is (re)written — the
+    UMass fallback carries no per-region data, so NP6 uploads are required
+    and a region-less year returns ``False``.
     """
-    df = aggregate_np6_hourly(year)
+    df, zonal = aggregate_np6_hourly(year)
     if df is not None:
-        source = (
-            "ERCOT MIS wind/solar power production reports "
-            "(NP4-732/733-CD wind, NP4-737/738-CD solar), uploaded to "
-            "data/raw/ercot-hsl/np6/"
-        )
+        source = _NP6_SOURCE
         description = (
             f"ERCOT {year} system-wide hourly wind/solar HSL (uncurtailed "
             "potential) and delivered generation, aggregated from ERCOT "
             "MIS power-production reports (system-wide actual GEN and HSL)."
         )
-    elif year == UMASS_YEAR:
+    elif year == UMASS_YEAR and not zonal_only:
         with tempfile.TemporaryDirectory() as tmp:
             data_dir = clone_dataset(Path(tmp) / "nodal-curtailment-analysis")
             df = aggregate_umass_hourly(data_dir)
@@ -707,36 +1066,38 @@ def build_year(year: int) -> bool:
         )
     else:
         return False
-        source = (
-            "ERCOT MIS wind/solar power production reports "
-            "(NP4-732/733-CD wind, NP4-737/738-CD solar), uploaded to "
-            "data/raw/ercot-hsl/np6/"
+
+    if not zonal_only:
+        print_validation(df, year)
+
+        table = pa.Table.from_pandas(
+            df[["hour", "wind_gen_mw", "wind_hsl_mw", "solar_gen_mw", "solar_hsl_mw"]],
+            preserve_index=False,
         )
-        description = (
-            f"ERCOT {year} system-wide hourly wind/solar HSL (uncurtailed "
-            "potential) and delivered generation, aggregated from ERCOT "
-            "MIS power-production reports (system-wide actual GEN and HSL)."
+        table = table.replace_schema_metadata(
+            {
+                "source": source,
+                "description": description,
+                "units": "MW (hourly-average; numerically equal to MWh per hour)",
+                "year": str(year),
+            }
+        )
+        path = out_file(year)
+        pq.write_table(table, path)
+        print(
+            f"\nWrote {path.relative_to(REPO_ROOT)} "
+            f"({path.stat().st_size / 1024:.1f} KiB)"
         )
 
-    print_validation(df, year)
-
-    table = pa.Table.from_pandas(
-        df[["hour", "wind_gen_mw", "wind_hsl_mw", "solar_gen_mw", "solar_hsl_mw"]],
-        preserve_index=False,
-    )
-    table = table.replace_schema_metadata(
-        {
-            "source": source,
-            "description": description,
-            "units": "MW (hourly-average; numerically equal to MWh per hour)",
-            "year": str(year),
-        }
-    )
-    path = out_file(year)
-    pq.write_table(table, path)
-    print(
-        f"\nWrote {path.relative_to(REPO_ROOT)} ({path.stat().st_size / 1024:.1f} KiB)"
-    )
+    if zonal is not None:
+        print_zonal_validation(zonal, df, year)
+        _write_zonal(zonal, year)
+    elif zonal_only:
+        print(
+            f"\n{year}: NP6 uploads carry no per-region columns — no zonal "
+            "sidecar written."
+        )
+        return False
     return True
 
 
@@ -756,10 +1117,17 @@ def main(argv: list[str] | None = None) -> int:
         "UMass dataset; later years need NP6 report uploads under "
         "data/raw/ercot-hsl/np6/.",
     )
+    parser.add_argument(
+        "--zonal-only",
+        action="store_true",
+        help="(Re)write only the per-region zonal sidecar parquet, leaving "
+        "the committed system-wide parquet untouched. Requires NP6 uploads "
+        "with per-region columns (the UMass fallback has none).",
+    )
     args = parser.parse_args(argv)
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    built = [year for year in args.year if build_year(year)]
+    built = [year for year in args.year if build_year(year, zonal_only=args.zonal_only)]
     skipped = sorted(set(args.year) - set(built))
     if skipped:
         print(f"\nSkipped (no source data): {skipped}")

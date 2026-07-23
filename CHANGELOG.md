@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026-07-23 — ERCOT-98: 2023 HSL → published NP6 GEO, zonal HSL sidecars, AS-plan CST clock fix
+
+Two measured-input alignment fixes + one new data capability (the 2023
+summer scarcity-tail attribution lane —
+`docs/DIAGNOSIS-ercot-2023-summer-tail-attribution-2026-07.md`):
+
+- **2023 ERCOT HSL now builds from ERCOT's own NP4-742/745 GEO reports**
+  (owner upload, `data/raw/ercot-hsl/np6/2023/`), superseding the UMass
+  partial-footprint reconstruction. Delivered totals match EIA-930 directly
+  (wind 108.01 vs 107.99 TWh, solar 31.88 vs 31.87), so
+  `renewables.hsl_potential_mw`'s footprint reconciliation is now a **no-op
+  for every year** (tests updated to assert the no-op path). Solar's +13.7 %
+  vs EIA-923 is a 930-vs-923 scope difference, not an NP6 over-count.
+- **`build_ercot_hsl.py` emits per-region zonal sidecars**
+  (`ercot_<year>_hsl_zonal_hourly.parquet`, long format
+  `hour/fuel/region/gen_mw/hsl_mw`) from every region-resolved upload —
+  GEO wind (panhandle/coastal/south/west/north), GEO solar
+  (centerwest/…/centereast), NP4-732 wind load zones (lz_*) — with COP-HSL
+  semantics documented, partial coverage kept NaN (never interpolated across
+  month-scale holes), `--zonal-only` refresh mode, and a sum-of-regions
+  cross-check (2023: 1.0000 for both fuels). Diagnostics input; not yet a
+  dispatch input.
+- **`scarcity.ercot_as_plan_requirement_mw` CPT→CST clock fix**: ASPLANNP433
+  stamps are Central Prevailing Time; unconverted they landed one hour late
+  through every DST season, misplacing the evening reserve step-down at the
+  scarcity-formation hours (same defect class as the NP6 HSL builder's fixed
+  lag). DSTFlag-disambiguated conversion; winter placement and levels
+  unchanged. Feeds all four `ercot_multiproduct_as_coopt` families.
+- Probe `scripts/probes/ercot98_tail_attribution_measure.py` reproduces the
+  attribution: all three chartered suspects (RE over-credit, AS under-hold,
+  West/Panhandle deliverability) REFUTED against measured data; the 135
+  missed 2023 tail hours are offer-driven SCED λ (RTORPA p50 $1, PRC p50
+  5,765 MW) — the offer-formation successor lane.
+
 ## 2026-07-20 — FF-G3: forward net-CONE evolution (design + grounding, default-inert)
 
 Forecast-only capacity-price surface; **no default flip, no LP solve, pricing

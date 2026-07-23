@@ -64,27 +64,29 @@ def test_load_ercot_hsl_missing_year_returns_none():
     assert load_ercot_hsl_hourly(2199) is None
 
 
-def test_hsl_potential_reconciles_2023_coverage():
-    """ERCOT 2023 wind potential is reconciled to the EIA-930 footprint.
+def test_hsl_potential_2023_np6_consumed_as_is():
+    """ERCOT 2023 wind potential is the published NP6 series, unreconciled.
 
-    The UMass-derived 2023 series undercounts the system footprint (its
-    delivered GEN sums below the EIA-930 delivered total), so the potential is
-    scaled up to the EIA-930 level *preserving the dataset's own delivered/HSL
-    curtailment ratio* — never a tune to model output. The reconciled total is
-    EIA-930 delivered / (GEN/HSL), and the curtailment ratio is unchanged.
+    Since the published NP4-742 GEO upload superseded the UMass partial-
+    footprint reconstruction (2026-07), the 2023 parquet's delivered GEN
+    matches the EIA-930 system total within the coverage tolerance, so the
+    footprint reconciliation (:data:`renewables._HSL_COVERAGE_RECONCILE_TOL`)
+    is a no-op and the dispatch consumes the raw published HSL exactly.
     """
     df = renewables.load_hsl_hourly("ERCOT", 2023)
     src_gen = float(df["wind_gen_mw"].sum())
     src_hsl = float(df["wind_hsl_mw"].sum())
     delivered = renewables._eia930_delivered_mwh("ERCOT", 2023, "wind")
 
+    # Full-footprint published source: delivered matches EIA-930 within 2%.
+    assert src_gen >= renewables._HSL_COVERAGE_RECONCILE_TOL * delivered
+
     pot = hsl_potential_mw("ERCOT", 2023, "wind")
     assert pot is not None
     assert pot.shape == (HOURS_PER_YEAR,)
-    # Reconciled to the EIA-930 footprint at the dataset's own curtailment ratio.
-    np.testing.assert_allclose(pot.sum(), delivered / (src_gen / src_hsl), rtol=1e-9)
-    # Curtailment ratio (delivered/HSL) preserved by the level-only scaling.
-    np.testing.assert_allclose(delivered / pot.sum(), src_gen / src_hsl, rtol=1e-9)
+    # No reconciliation: the consumed potential IS the published HSL series.
+    np.testing.assert_allclose(pot.sum(), src_hsl, rtol=1e-9)
+    np.testing.assert_allclose(pot, df["wind_hsl_mw"].to_numpy(dtype=float))
 
 
 def test_hsl_potential_unmapped_iso_returns_none():
@@ -408,8 +410,10 @@ def test_aggregate_np6_hourly_end_to_end(tmp_path, monkeypatch):
         ).to_csv(tmp_path / f"{fuel}_{year}.csv", index=False)
     monkeypatch.setattr(hsl_script, "NP6_DIR", tmp_path)
 
-    df = hsl_script.aggregate_np6_hourly(year)
+    df, zonal = hsl_script.aggregate_np6_hourly(year)
     assert df is not None
+    # System-wide-only uploads carry no per-region columns.
+    assert zonal is None
     assert len(df) == HOURS_PER_YEAR
     for fuel in ("wind", "solar"):
         assert (df[f"{fuel}_hsl_mw"] >= df[f"{fuel}_gen_mw"]).all()
@@ -423,10 +427,137 @@ def test_aggregate_np6_hourly_missing_uploads_returns_none(
 ):
     """No uploads -> None with a data-needed message, never fabricated."""
     monkeypatch.setattr(hsl_script, "NP6_DIR", tmp_path / "absent")
-    assert hsl_script.aggregate_np6_hourly(2024) is None
+    assert hsl_script.aggregate_np6_hourly(2024) == (None, None)
     out = capsys.readouterr().out
     assert "no NP6" in out
     assert "never" in out  # "Curtailment is never fabricated..."
+
+
+# ---------------------------------------------------------------------------
+# build_ercot_hsl.py zonal (per-region) sidecar
+# ---------------------------------------------------------------------------
+
+
+def _geo_wind_frame(dates: pd.DatetimeIndex) -> pd.DataFrame:
+    """Return an NP4-742-style wind GEO frame (ACTUAL_/COP_HSL_ per region)."""
+    frame = pd.DataFrame(
+        {
+            "DELIVERY_DATE": dates.strftime("%m/%d/%Y"),
+            "HOUR_ENDING": [f"{h + 1}:00" for h in dates.hour],
+            "DSTFLAG": "N",
+            "ACTUAL_SYSTEM_WIDE": 3000.0,
+            "COP_HSL_SYSTEM_WIDE": 3600.0,
+            "STWPF_SYSTEM_WIDE": 3300.0,
+        }
+    )
+    for region, gen in (("PANHANDLE", 1000.0), ("WEST", 2000.0)):
+        frame[f"ACTUAL_{region}"] = gen
+        frame[f"COP_HSL_{region}"] = gen * 1.2
+        frame[f"STWPF_{region}"] = gen * 1.1
+    return frame
+
+
+def test_parse_report_regions_geo_and_lz_layouts():
+    """GEO (ACTUAL_<R>) and 2025 load-zone (GEN_<R>) layouts both parse;
+    system-wide columns are never emitted as a region."""
+    dates = pd.date_range("2023-06-01", periods=24, freq="h")
+    parsed = hsl_script._parse_report_regions("wind.csv", _geo_wind_frame(dates))
+    assert sorted(parsed["region"].unique()) == ["panhandle", "west"]
+    assert len(parsed) == 48  # 24 hours x 2 regions
+    pan = parsed[parsed["region"] == "panhandle"]
+    assert (pan["gen_mw"] == 1000.0).all()
+    assert (pan["hsl_mw"] == 1200.0).all()
+    # June CPT labels are CDT -> CST stamps one hour earlier.
+    assert pan["ts"].iloc[0] == pd.Timestamp("2023-05-31 23:00")
+
+    lz = pd.DataFrame(
+        {
+            "DELIVERY_DATE": dates.strftime("%m/%d/%Y"),
+            "HOUR_ENDING": [f"{h + 1}:00" for h in dates.hour],
+            "SYSTEM_WIDE_GEN": 900.0,
+            "COP_HSL_SYSTEM_WIDE": 1000.0,
+            "GEN_LZ_WEST": 600.0,
+            "COP_HSL_LZ_WEST": 700.0,
+        }
+    )
+    parsed = hsl_script._parse_report_regions("wind.csv", lz)
+    assert sorted(parsed["region"].unique()) == ["lz_west"]
+    assert (parsed["gen_mw"] == 600.0).all()
+
+
+def test_parse_report_regions_returns_none_without_region_columns():
+    """A system-wide-only report yields None, not an empty frame."""
+    dates = pd.date_range("2024-06-01", periods=24, freq="h")
+    assert (
+        hsl_script._parse_report_regions("wind.csv", _hourly_report_frame(dates))
+        is None
+    )
+
+
+def test_region_to_model_clock_partial_coverage_stays_nan():
+    """A single posted month keeps NaN outside its span: month-scale holes
+    and uncovered edges are never interpolated; sub-day interior gaps are."""
+    ts = pd.date_range("2024-09-01", "2024-09-30 23:00", freq="h")
+    rows = pd.DataFrame({"ts": ts, "gen_mw": 500.0, "hsl_mw": 600.0})
+    # Knock out a 3-hour interior gap (interpolated) — the rest of the year
+    # is a month-scale hole that must stay NaN.
+    gap = (ts >= pd.Timestamp("2024-09-10 06:00")) & (
+        ts < pd.Timestamp("2024-09-10 09:00")
+    )
+    rows = rows[~gap]
+    rows["region"] = "panhandle"
+
+    out = hsl_script._region_to_model_clock(rows, 2024)
+    assert len(out) == HOURS_PER_YEAR
+    calendar = pd.date_range("2023-01-01", periods=HOURS_PER_YEAR, freq="h")
+    september = calendar.month == 9
+    assert not out.loc[september, "gen_mw"].isna().any()  # gap interpolated
+    np.testing.assert_allclose(out.loc[september, "gen_mw"], 500.0)
+    assert out.loc[~september, "gen_mw"].isna().all()  # rest of year NaN
+
+
+def test_interpolate_short_gaps_leaves_long_holes():
+    """Gaps <= max_gap fill; longer runs and edges stay NaN entirely (no
+    partial edge-fill of a long hole)."""
+    values = pd.Series([np.nan, 1.0, np.nan, np.nan, 4.0] + [np.nan] * 5 + [10.0])
+    out = hsl_script._interpolate_short_gaps(values, max_gap=3)
+    assert np.isnan(out.iloc[0])  # leading edge
+    np.testing.assert_allclose(out.iloc[1:5], [1.0, 2.0, 3.0, 4.0])
+    assert out.iloc[5:10].isna().all()  # 5-hour hole > max_gap: untouched
+    assert out.iloc[10] == 10.0
+
+
+def test_aggregate_np6_zonal_end_to_end(tmp_path, monkeypatch):
+    """A GEO upload yields the zonal frame alongside the system frame, with
+    per-region HSL floored at GEN over covered hours."""
+    year = 2025
+    ts = pd.date_range(f"{year}-01-01", f"{year}-12-31 23:00", freq="h")
+    frame = _geo_wind_frame(ts)
+    # Regional GEN a shade above COP HSL exercises the per-region floor.
+    frame["COP_HSL_PANHANDLE"] = 990.0
+    frame.to_csv(tmp_path / f"wind_{year}.csv", index=False)
+    pd.DataFrame(
+        {
+            "DELIVERY_DATE": ts.strftime("%m/%d/%Y"),
+            "HOUR_ENDING": [f"{h + 1}:00" for h in ts.hour],
+            "ACTUAL_SYSTEM_WIDE": 800.0,
+            "ACTUAL_SYSTEM_WIDE_HSL": 900.0,
+            "STPPF_SYSTEM_WIDE": 850.0,
+        }
+    ).to_csv(tmp_path / f"solar_{year}.csv", index=False)
+    monkeypatch.setattr(hsl_script, "NP6_DIR", tmp_path)
+    monkeypatch.setattr(hsl_script, "_ZONAL_EXTRA_DIRS", (tmp_path / "absent",))
+
+    df, zonal = hsl_script.aggregate_np6_hourly(year)
+    assert df is not None and zonal is not None
+    assert sorted(zonal["region"].unique()) == ["panhandle", "west"]
+    assert set(zonal["fuel"]) == {"wind"}  # solar upload had no regions
+    pan = zonal[zonal["region"] == "panhandle"]
+    assert len(pan) == HOURS_PER_YEAR
+    np.testing.assert_allclose(pan["gen_mw"], 1000.0)
+    np.testing.assert_allclose(pan["hsl_mw"], 1000.0)  # floored up to GEN
+    west = zonal[zonal["region"] == "west"]
+    np.testing.assert_allclose(west["hsl_mw"], 2400.0)  # reported headroom kept
 
 
 # ---------------------------------------------------------------------------
@@ -447,13 +578,14 @@ def _flat_dispatch_frame(mw: float) -> pd.DataFrame:
 
 
 def test_curtailment_table_uses_consumed_potential(capsys):
-    """The model side measures against the reconciled (consumed) potential.
+    """The model side measures against the consumed potential.
 
-    ERCOT 2023's wind HSL is reconciled 104 -> 113.28 TWh (the EIA-930
-    footprint at the dataset's curtailment ratio) before the dispatch consumes
-    it; measuring model curtailment against the raw HSL would understate it by
-    the whole reconciliation margin (reading ~0 for a run that delivered more
-    than the raw series).
+    The consumed potential is whatever ``hsl_potential_mw`` hands the
+    dispatch — for the published 2023 NP6 upload that is the raw HSL series
+    itself (114.04 TWh; the footprint reconciliation is a no-op for a
+    full-footprint source), and for a partial-footprint source it would be
+    the reconciled series. Measuring model curtailment against anything else
+    would misstate it by the difference.
     """
     from scripts.run_calibration_full import _print_curtailment_vs_reported
 
@@ -463,8 +595,9 @@ def test_curtailment_table_uses_consumed_potential(capsys):
     wind_row = next(
         line for line in out.splitlines() if line.strip().startswith("wind")
     )
-    # The potential column reads the reconciled 113.28 TWh, not the raw 104.05.
-    assert "113.28" in wind_row
+    # The potential column reads the consumed NP6 potential (= raw HSL).
+    expected = hsl_potential_mw("ERCOT", 2023, "wind").sum() / 1e6
+    assert f"{expected:.2f}" in wind_row
 
 
 def test_curtailment_table_data_needed_note(capsys):
