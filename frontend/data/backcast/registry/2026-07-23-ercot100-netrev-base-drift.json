@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-23-ercot100-netrev-base-drift",
+  "label": "ercot100 netrev base drift",
+  "date": "2026-07-23",
+  "shorthand": "ercot100-netrev-base-drift",
+  "definition": "ERCOT-100 net-revenue margin A/B — BASE arm (DRIFT CONTROL, gas_offer_margin flag OFF). Byte-faithful replay of the ercot99-state-off-fullspan keeper: reproduces it exactly (hourly demand-weighted price MAE 0.000 all three years, solver-lib env pinned to the recorded highspy 1.14.0 / pandas 3.0.3 / pyarrow 24.0.0). The A/B comparator for the promoted MARGIN keeper 2026-07-23-ercot100-netrev-margin-keeper; diagnostic run record, not a keeper.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-23-ercot100-netrev-base-drift.js",
+  "bundle": "results/calibration/ercot_netrev_base"
+}
