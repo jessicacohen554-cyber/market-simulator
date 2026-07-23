@@ -11,5 +11,6 @@
   ],
   "iso": "ERCOT",
   "file": "frontend/data/backcast/runs/2026-07-23-ercot98-np6-hsl-fullspan.js",
-  "bundle": "results/calibration/ercot98_np6_hsl_fullspan"
+  "bundle": "results/calibration/ercot98_np6_hsl_fullspan",
+  "market_story": "Wind/solar dispatch against ERCOT's own published NP6 uncurtailed potential (measured HSL bound; delivered basis matches EIA-930, endogenous curtailment ~5.6 vs reported 6.0 TWh in 2023). Merchant gas CCs run as committed units: the P1-native commitment bridge holds them at the measured 0.574 LSL through evening gaps shorter than a DA operating day because a restart costs more than riding the trough \u2014 commitment physics, not residual-buying. ST_GAS steamers carry the season-resolved net-load reliability drag that keeps aging steam online into summer peaks the way ERCOT reliability practice does. Coal PRB/lignite ride shoulder troughs on the take-or-pay fuel-passthrough sigmoid. CT peakers clear on the measured DAM cleared-share offer boundary in tight net-load bins (1.5-1.7% of load, under the C8 materiality floor). Batteries follow the measured AS-award reservation with the AS-to-energy deployment floor at the evening net-load ramp. Reserve holdout is the measured AS plan \u2014 now on the correct CST clock \u2014 minus the measured Load-Resource RRS and battery AS credits, priced through the pre-RTC+B non-releasable withholding design (rigid ECRS through 2024-07-31, the IMM-documented no-price-release design)."
 }
