@@ -811,9 +811,30 @@ _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
 #    cold-snap reliability, per ISO-NE IMM 2023/2024 SOM). The econ ramp
 #    (1.27 → 1.98) is left at the generic shape (not the ERCOT-specific artifact;
 #    only the $5,000-ORDC peak and idle-park committed are).
+# phys_* keys (2026-07-23, gas-offer net-revenue margin design — docs/handoffs/
+# gas-offer-net-revenue-margin-design-2026-07.md): each gas band's MEASURED
+# physical heat-rate basis from NEISO's own CAMPD artifact
+# data/raw/reference/neiso_campd_marginal_hr_summary.csv
+# (derive_campd_marginal_hr.py --iso NEISO, rule-23 frozen — the same artifact
+# the 2026-07-06 econ-band grounding used): committed → avg_committed_p50 (the
+# min-load block's average burn), econ endpoints → marg_econ_{low,high}_p50
+# (incremental burn), peak → the physical duct-burner ratio for CC classes
+# (2.25, F-class measured — the whole registered peak is physical) and the
+# full-output bound 1.0 for CT/ST (the 4.0 CT wall was set against the
+# $-denominated ISO-NE offer cap, so everything above base burn is a $
+# scarcity margin). Consumed ONLY when gas_offer_net_revenue_margin is armed:
+# markup = max(0, mult − phys) is repriced from fuel-scaled to a fixed $/MWh
+# margin at GAS_OFFER_MARGIN_ANCHOR_BY_ISO. Bands whose registered bid sits
+# below the measured basis (CC_CHP/ST_GAS committed price-taker bands) clip
+# to zero markup; CT_CHP carries no keys (n=1 measurement, not identifiable —
+# neutral, like every ISO without a phys registry).
 _NEISO_OFFER_CURVE: dict[str, dict[str, float]] = {
     "CC_REGULAR": {
         "committed": 1.27,
+        "phys_committed": 1.107,  # avg_committed_p50, n=51
+        "phys_econ_low": 0.854,  # marg_econ_low_p50
+        "phys_econ_high": 0.940,  # marg_econ_high_p50
+        "phys_peak": 2.25,  # physical F-class duct ratio == registered peak
         # econ band re-anchored (2026-07-03, neiso-45/46/47 probe chain). The
         # generic 1.06->1.27 band was inherited from the ERCOT-shaped curve and
         # expresses the above-SRMC offer component as a HEAT-RATE MULTIPLIER,
@@ -861,6 +882,10 @@ _NEISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 2.25,  # physical F-class duct-burner ratio (not ERCOT-fitted)
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,
+        "phys_committed": 1.399,  # avg_committed_p50 > bid 1.15 → markup clips 0
+        "phys_econ_low": 0.973,  # marg_econ_low_p50
+        "phys_econ_high": 0.940,  # marg_econ_high_p50
+        "phys_peak": 2.25,  # physical duct ratio == registered peak
     },
     # CT_CHP: stays neutral — the NEISO CAMPD sample is a SINGLE unit (n=1;
     # marginal 1.32/1.41/1.49), not identifiable as a class spread. Open item.
@@ -886,6 +911,13 @@ _NEISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 4.0,  # ISO-NE offer cap $1,000-2,000 (not ERCOT $5,000 ORDC)
         "econ_low_share": 0.526,
         "pct_peaking": 7.0,
+        "phys_committed": 0.985,  # avg_committed_p50, n=18 (start hurdle above
+        #   it is $-natured — the NYISO/CAISO-grounded 1.35 converts to a fixed
+        #   ~$15.8/MWh commitment margin at the anchor)
+        "phys_econ_low": 0.745,  # marg_econ_low_p50 (flat-to-falling CT curve)
+        "phys_econ_high": 0.700,  # marg_econ_high_p50
+        "phys_peak": 1.0,  # full-output physical bound; the 4.0 wall above it
+        #   is the $-denominated scarcity margin (~$129.7/MWh at the anchor)
     },
     "ST_GAS": {
         # Native steam marginal HR (Montville, base_HR 12.755): committed 0.642
@@ -905,6 +937,10 @@ _NEISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 1.0,
         "econ_low_share": 0.500,
         "pct_peaking": 15.0,
+        "phys_committed": 2.394,  # avg_committed_p50 > bid 0.79 → markup clips 0
+        "phys_econ_low": 0.692,  # marg_econ_low_p50 (Montville native ramp)
+        "phys_econ_high": 0.731,  # marg_econ_high_p50
+        "phys_peak": 1.0,  # registered peak 1.0 == full-output bound → markup 0
     },
 }
 

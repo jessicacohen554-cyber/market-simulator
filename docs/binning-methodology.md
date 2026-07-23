@@ -153,6 +153,36 @@ columns (`hr_mc = Plant_Avg_HR × HR_Mult_Committed`, etc.) set the band
 heat rates. Under the ERCOT calibration they are dormant — do not read the
 CSV `HR_Mult_*` values as the dispatched band heat rates.
 
+**Gas-offer net-revenue margin form (`gas_offer_net_revenue_margin`,
+default off).** The multiplier pricing above makes every band's $/MWh markup
+over true marginal cost scale linearly with the fuel bill
+(`markup = base_hr × (mult − 1) × gas`). When this flag is armed, a gas
+band whose offer-curve dict carries the measured physical-basis keys
+(`phys_committed` / `phys_econ_low` / `phys_econ_high` / `phys_peak`, from
+the ISO's CAMPD marginal-HR artifact — e.g.
+`data/raw/reference/neiso_campd_marginal_hr_summary.csv`) splits its
+multiplier into physical burn + markup, and the markup is repriced as a
+fuel-invariant $/MWh **net-revenue margin** identified at the ISO's
+training-window delivered-gas anchor
+(`constants.GAS_OFFER_MARGIN_ANCHOR_BY_ISO`):
+
+```
+offer(t) = phys × base_hr × fuel(t)                 # physical burn — keeps fuel tracking
+         + max(0, mult − phys) × base_hr × anchor   # fixed $/MWh margin
+         + VOM + emissions(t)
+```
+
+`bins_to_fleet` stamps each tranche's `offer_markup_hr`
+(`base_hr × max(0, mult − phys)`, econ smoothing slices interpolate the
+physical basis along the ramp) and
+`data/offer_curves.py::apply_gas_offer_margin` applies the compression on
+the assembled marginal cost (both passes). At `fuel = anchor` the offer
+reduces exactly to the multiplier form; bands/ISOs without `phys_*` keys
+are byte-identical. Tranche `heat_rate` fields are unchanged — the bid-HR
+convention above still describes the flag-off form. Design + NEISO
+identification table:
+`docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md`.
+
 Emission rates are derived directly from the plant's **physical** heat rate
 (`base_hr` = `Plant_Avg_HR`), **not** the bid-tranche heat rate:
 `emission_rate = base_hr * FUEL_CO2_FACTOR_PER_MMBTU[fuel]`, uniform across a

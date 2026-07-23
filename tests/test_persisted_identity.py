@@ -62,7 +62,13 @@ FROZEN_PICKLE_PATHS: dict[str, list[str]] = {
 #     field's default changed). It is not in _CACHE_KEY_OPTIONAL_FIELDS and the
 #     default config is mode="forecast" (no __post_init__ backcast coercion), so
 #     the dict enters the hash and is the dominant contributor to this change.
-PINNED_DEFAULT_CACHE_KEY = "edbc1b103207170a"
+#
+# 2026-07-23 advance edbc1b103207170a -> 199e1e4d081594f2. Gas-offer net-revenue
+# margin mechanism (docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md):
+# +gas_offer_net_revenue_margin (=False), +gas_offer_margin_anchor (=None) — two
+# new default-off fields; no removed/renamed field, no pre-existing default
+# changed.
+PINNED_DEFAULT_CACHE_KEY = "199e1e4d081594f2"
 
 
 @pytest.mark.parametrize(
