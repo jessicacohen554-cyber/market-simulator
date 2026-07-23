@@ -597,3 +597,73 @@ failures). The keeper designates the most structurally-faithful run; the DETERMI
 REMAINS **NOT-YET** — C6 governance intentionally left UNATTESTED and C3a/C3b intentionally
 NOT ledgered, so the verdict stays NOT-YET (not calibrated). Supersedes
 `2026-07-22-ercot96-dam-hourly-grain`.
+
+## 2026-07-23 — ERCOT-98 (owner charter: RE / AS-ECRS / zonal-deliverability attribution of the 2023 summer tail, on the owner-uploaded NP6 GEO data): all three suspects REFUTED against measured data — the 135 missed tail hours are OFFER-driven SCED λ (RTORPA p50 $1, PRC p50 5.8 GW); two measured-input alignment fixes landed (2023 HSL UMass→NP6; AS-plan CPT→CST clock) and the keeper config re-solved full-span on the honest inputs → `2026-07-23-ercot98-np6-hsl-fullspan` registered NOT-YET (C3a 2023 −27.9→−33.5 %, C3c 51→42 h — the stale inputs were compensating); keeper UNCHANGED (ercot97) — owner adjudication
+
+**Charter.** Owner handoff (supersedes prior): with 2023 ERCOT NP6 HSL landed in-repo
+(`np6/2023/`, NP4-742 wind / NP4-745 solar GEO variants), test the three named suspects for
+the 2023 summer scarcity miss — system-wide RE over-credit, AS/ECRS holdout, West/Panhandle
+deliverability — measured-comparison first, then re-solve the keeper on the accurate input.
+Full forensics: `docs/DIAGNOSIS-ercot-2023-summer-tail-attribution-2026-07.md`; probe
+`scripts/probes/ercot98_tail_attribution_measure.py` (no-LP, committed inputs only).
+
+**Attribution (keeper ercot97 baseline, 2023).** Actual RT tail 181 h; model 51 (46 caught /
+135 missed / 5 phantom). At the missed hours, measured reality: RTORPA p50 **$1.0** (max
+$262), PRC p50 **5,765 MW**, SCED λ > 0.8×RT in **92 %** — no reserve scarcity; the market
+cleared $500–5,000 on the August heat-wave offer wall (Aug 71 of the 135; Aug 4–13 alone
+carry 42, incl. the 8/10 peak-load day at 8/8 missed). Model physical balance at the same
+hours is faithful (gas −305 MW, coal +432, nuclear −13, RE **−1,683** model-UNDER, demand
+−704 vs EIA-930/native). The three suspects:
+* **RE over-credit — REFUTED.** NP6 GEO delivered matches EIA-930 (−0.3 % wind / +0.03 %
+  solar); the model runs RE *under* actual at the missed hours, and the accurate input
+  RAISES model RE there (+1.7 GW mean at the missed hours; +1.13 TWh annual dispatch).
+  Solar's +13.7 % vs EIA-923 is 930-vs-923 scope, not an over-count.
+* **AS/ECRS under-hold — REFUTED as tail owner** (requirement level measured-faithful,
+  ercot57 §2b re-confirmed incl. the 9/6 duplicate-posting artifact); found + FIXED the
+  loader placing CPT stamps unconverted on the CST clock — 1 h late through every DST
+  season, ±600 MW at individual evening hours, −174 MW mean summer-evening all-product
+  holdout, 5,639 hours touched (`scarcity.ercot_as_plan_requirement_mw`).
+* **W/P deliverability — REFUTED at the event evenings** by two independent measurements:
+  actual RT zonal spreads ≈ 0 (8/30 HE20 uniform $4,843 at every LZ+hub; LZ_WEST ≥
+  LZ_HOUSTON on 8/17 and 9/6), and the NEW zonal HSL sidecar shows W+P wind curtailment
+  ≈ 0 MW at the event peaks (8/17: exactly 0 all evening; 9/6 ≤ 488 MW). Jul–Sep evening
+  W+P share of ERCOT wind is 57.9 % — the zonal series stays load-bearing for the West
+  topology / WP-B curtailment lanes, just not for this tail.
+
+**Fixes landed (rule 11 — measured-input alignment, no knobs).**
+1. 2023 HSL rebuilt from the published NP6 GEO reports (delivered ≡ EIA-930 → the loader's
+   footprint reconciliation is now a no-op for every year; UMass fallback retained).
+2. NEW zonal HSL sidecars `ercot_<year>_hsl_zonal_hourly.parquet` (2023 full-year both GEO
+   vocabularies, sum-of-regions = 1.0000; 2024/25 wind LZ) — `--zonal-only` builder mode.
+3. `scarcity.ercot_as_plan_requirement_mw` CPT→CST conversion (DSTFlag-disambiguated;
+   winter byte-identical, levels unchanged; feeds all four multiproduct AS families).
+4. `actual_tail.json` deriver-path note fix + ERCOT status shard S1 refresh (keeper C3c
+   rows now score vs the committed tail: 51/181, 13/53, 0/31 — out of band low all years).
+
+**Run.** `2026-07-23-ercot98-np6-hsl-fullspan` — full-span 2023–2025 re-solve of the
+byte-faithful ercot97 keeper config (replay_keeper, no config deltas) on the corrected
+inputs. **NOT-YET** (C6 governance unattested — keeper-parity). Scores vs keeper: C3a 2023
+**−27.9 → −33.5 %**, C3b NRMSE **0.545 → 0.647**, C3c **51 → 42 h** (2024: 13 → 12; 2025:
+0 → 0, clock-only deltas); C1 16/16, C2, C4, C5a, C7, C8 all PASS (structure holds). The
+worse 2023 price fit is the rule-11 EXPECTED outcome and quantifies the compensation the
+stale inputs were providing (~5.6 pp of C3a, ~9 tail hours of artificial tightness): the
+residual now belongs entirely to its real owner. Input-alignment fixes, not structural
+mechanism changes → no LOYO (rule 22 scopes LOYO to mechanism changes; precedent: ercot56
+nuclear windows, ercot57 DAM availability). 2024/25 inputs differ only by the AS-plan
+clock, so the year deltas isolate: 2023 = NP6+clock, 2024/25 = clock only.
+
+**Successor lane (pre-registered).** The tail residual's owner is offer formation at high
+net load (ercot57 §4's named channel): the conditional offer surface's repriced peak band
+is never marginal at the missed hours because the model's cheap mid-stack is deeper than
+reality's cleared stack. Candidates (measured, rule-13): widen the measured cleared-share
+repricing below the peak rungs in the top net-load bins; the G-22 DA-boundary family.
+Forbidden (pre-registered): room-pin to RTOLCAP (ERCOT-79), any residual-tuned
+adder/offset. Honest bound: an hourly perfect-foresight LP smooths the intra-hour 5-min
+SCED dynamics contributing to some of these hourly means.
+
+**Disposition.** Keeper UNCHANGED (`2026-07-22-ercot97-plant-grain-fullspan`, NOT-YET).
+ercot98 is the same structure on strictly more accurate inputs — by rules 1/11 the
+more-faithful run — registered as the honest-inputs successor candidate; promotion is the
+owner's call. (Housekeeping note, other lane: parity check flags a pre-existing CAISO
+orphan sidecar `2026-07-22-caiso-112-export-floor` with no payload — invisible in the Run
+Explorer; needs its session's bundle to regenerate.)
