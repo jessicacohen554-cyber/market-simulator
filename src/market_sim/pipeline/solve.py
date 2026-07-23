@@ -51,7 +51,6 @@ from market_sim.model.lp.inplace_floor import (
     availability_feeds_rows,
     refloor_thermal_inplace,
 )
-from market_sim.pipeline.basis_cache import persist_year_basis, seed_year1_basis
 
 if TYPE_CHECKING:
     from market_sim.data.fleet import FleetArrays
@@ -154,21 +153,6 @@ def run_energy_solve(
     _warm = os.environ.get("MARKET_SIM_WARMSTART", "1") != "0"
     model = DispatchModel(fleet_arrays, demand, **dispatch_kwargs) if _warm else None
     _xwarm = _warm and os.environ.get("MARKET_SIM_WARMSTART_XYEAR", "0") != "0"
-    # Persisted year-1 basis cache key (plan §7 H2). backcast_config pins
-    # config.iso/weather_year/hours to the solved (ISO, year, T); the forecast
-    # never activates the cache (it passes xyear_cache=None).
-    _basis_key = (
-        getattr(config, "iso", ""),
-        getattr(config, "weather_year", 0),
-        getattr(config, "hours", 0),
-    )
-    # Seed an empty cross-year cache from the newest basis persisted for this
-    # ISO-year so the P0 below warm-starts instead of solving cold (year-1, or
-    # the first fresh year after a --reuse-solved gap). A no-op when the holder
-    # is None (forecast) / non-empty (in-run warm) / the gate is off
-    # (goldens/replay); opportunistic and basis-neutral — apply_cross_year_basis
-    # remaps/repairs and falls back cold, so a stale seed costs iterations only.
-    seed_year1_basis(xyear_cache, *_basis_key)
     if _xwarm and xyear_cache is not None and xyear_cache:
         model.apply_cross_year_basis(xyear_cache[0])
     # P0: solve with base MC to extract per-month run lengths.
@@ -293,14 +277,6 @@ def run_energy_solve(
         basis = model.export_cross_year_basis()
         if basis is not None:
             xyear_cache[:] = [basis]
-
-    # Persist this year's optimal basis to the disposable NPZ cache (plan §7 H2)
-    # so the next calibrate-iterate run for this (iso, year, T) seeds a warm
-    # year-1 P0. xyear_cache now holds this year's basis (both the warm-P1 and
-    # cold-P1 paths above refresh it); persisting per-year is crash-safe. A
-    # gate-OFF / None-holder is handled inside persist_year_basis, so the
-    # goldens/replay env retains nothing and the solve stays byte-identical.
-    persist_year_basis(xyear_cache, *_basis_key)
 
     return EnergySolveResult(
         r0=r0, p1=p1, mc_bid=mc_bid, markup=markup, p1_fleet_arrays=p1_fleet_arrays
