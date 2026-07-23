@@ -474,6 +474,29 @@ GAS_TRANCHE_SHARES_BY_GROUP: dict[str, tuple[float, float, float]] = {
     "CT_CHP": (0.0, 0.88, 0.12),
 }
 
+# Gas-offer net-revenue margin ANCHOR ($/MMBtu) by ISO — the delivered-gas
+# identification point of the ``gas_offer_net_revenue_margin`` mechanism
+# (:func:`market_sim.data.offer_curves.apply_gas_offer_margin`). Each value is
+# the mean of the model's own merit-order delivered-gas series
+# (``data.fuel.trajectories._gas_series`` — measured EIA Henry Hub monthly ×
+# the ISO's measured hub basis, the exact series the registered
+# ``offer_curve_by_group`` band multipliers were calibrated against) over the
+# training window 2023–2025. At ``fuel == anchor`` the reformed offer reduces
+# EXACTLY to the registered band multiplier, so the anchor is an
+# identification constant, not a tunable: it re-derives ONLY when the gas
+# source workbooks change (rule 23), via
+# ``scripts/data/derive_gas_offer_margin_anchor.py``.
+#   NEISO: 4.0763 = mean(2.9365, 3.0304, 6.2621) — 2023/2024/2025 year means
+#   of the AGT-hub-basis delivered series at the keeper Henry Hub prices
+#   (2.54 / 2.19 / 3.52); derive script output 2026-07-23, design doc
+#   docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md.
+# ISOs absent from this registry hard-fail when the flag is armed (never a
+# silent fallback — rule 25); tuned per-ISO anchors never cross ISO
+# boundaries (rule 24).
+GAS_OFFER_MARGIN_ANCHOR_BY_ISO: dict[str, float] = {
+    "NEISO": 4.0763,
+}
+
 # CO2 emission rates (tCO2/MWh), derived from heat rate × fuel emission factor.
 # Keyed by fuel class and efficiency bin, mirroring HEAT_RATE_BINS.
 # Source: EPA eGRID 2022.
