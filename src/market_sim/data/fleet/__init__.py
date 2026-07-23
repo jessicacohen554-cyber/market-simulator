@@ -235,6 +235,19 @@ class Generator(BaseModel):
     #                                 amortization horizon at this measured value
     #                                 (P0 runs may only shorten it). 0 = v2
     #                                 behaviour (P0 run lengths only).
+    offer_markup_hr: float = 0.0  # markup heat rate (MMBtu/MWh) ABOVE the
+
+    #                                 tranche's measured physical basis —
+    #                                 base_HR × max(0, band_mult − phys_mult),
+    #                                 set by bins_to_fleet when
+    #                                 config.gas_offer_net_revenue_margin is
+    #                                 armed and the resolved offer band carries
+    #                                 phys_* keys. Consumed by
+    #                                 data.offer_curves.apply_gas_offer_margin
+    #                                 (markup → fuel-invariant $/MWh margin at
+    #                                 the ISO anchor). 0 = outside the
+    #                                 mechanism (flag off / neutral band /
+    #                                 non-gas tranche).
 
 
 @dataclass
@@ -560,6 +573,18 @@ class Generator(BaseModel):
     #                                 amortization horizon at this measured value
     #                                 (P0 runs may only shorten it). 0 = v2
     #                                 behaviour (P0 run lengths only).
+    offer_markup_hr: float = 0.0  # markup heat rate (MMBtu/MWh) ABOVE the
+    #                                 tranche's measured physical basis —
+    #                                 base_HR × max(0, band_mult − phys_mult),
+    #                                 set by bins_to_fleet when
+    #                                 config.gas_offer_net_revenue_margin is
+    #                                 armed and the resolved offer band carries
+    #                                 phys_* keys. Consumed by
+    #                                 data.offer_curves.apply_gas_offer_margin
+    #                                 (markup → fuel-invariant $/MWh margin at
+    #                                 the ISO anchor). 0 = outside the
+    #                                 mechanism (flag off / neutral band /
+    #                                 non-gas tranche).
 
 
 @dataclass
