@@ -1,0 +1,13 @@
+{
+  "id": "2026-07-23-neiso-2022-holdout-validation",
+  "label": "neiso 2022 holdout validation",
+  "date": "2026-07-23",
+  "shorthand": "neiso-2022-holdout-validation",
+  "definition": "NEISO 2022 validation-holdout solve (CLAUDE.md rule 22 validation tier). Frozen neiso-60 keeper recipe (phantom-outage corrected 1,425-row unit-outage envelope + 2022 windows regenerated at the same per-unit detector vintage) replayed on the 2022 iterable validation year. In-sample 2023 parity byte-identical at HEAD 6e9daf2 (mean 37.40=37.40). Marker-authorized (calibration-complete.json NEISO 2026-07-07); owner-instructed. Validation = model-selection evidence, NOT a certified out-of-sample skill number (rule 22).",
+  "years": [
+    2022
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-07-23-neiso-2022-holdout-validation.js",
+  "bundle": "results/calibration/neiso_2022_holdout_validation"
+}
