@@ -859,9 +859,7 @@ class ErcotThermalDamAvailabilityTest(unittest.TestCase):
         )
         # Hourly flag WITHOUT the base flag: the mechanism is unarmed — the
         # whole overlay (either grain) must not apply.
-        cfg_orphan = ScenarioConfig(
-            **base, ercot_thermal_dam_availability_hourly=True
-        )
+        cfg_orphan = ScenarioConfig(**base, ercot_thermal_dam_availability_hourly=True)
         cfg_off = ScenarioConfig(**base)
         fa_orphan = generators_to_fleet_arrays(
             gens, zones, hours=HOURS_PER_YEAR, iso="ERCOT", config=cfg_orphan, year=2023
@@ -935,9 +933,7 @@ class ErcotThermalDamAvailabilityTest(unittest.TestCase):
         try:
             _o.ercot_thermal_dam_availability_plant_series.cache_clear()
             _o.ERCOT_DAM_PLANT_CROSSWALK_CSV = real_xw.parent / "does-not-exist.csv"
-            self.assertEqual(
-                _o.ercot_thermal_dam_availability_plant_series(2023), {}
-            )
+            self.assertEqual(_o.ercot_thermal_dam_availability_plant_series(2023), {})
         finally:
             _o.ERCOT_DAM_PLANT_CROSSWALK_CSV = real_xw
             _o.ercot_thermal_dam_availability_plant_series.cache_clear()
