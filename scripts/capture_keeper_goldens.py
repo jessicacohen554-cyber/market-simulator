@@ -138,6 +138,12 @@ FIDELITY_IGNORE_KEYS = {
     "gas_prices",  # derived from the reference; compared informationally
     "coal_plant_monthly_pricing",  # re-derived from _calibration_config
     "td_loss_factor",  # re-derived from _calibration_config
+    # A6 environment stamp (python/platform/package versions): definitionally
+    # the capture host's, not a solve flag — same class as git_sha /
+    # highspy_version above. replay_keeper.py owns the mismatch WARNING; the
+    # oracle must not fail a golden because the keeper was frozen on an older
+    # dependency set.
+    "environment",
 }
 
 

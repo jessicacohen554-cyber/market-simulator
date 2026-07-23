@@ -1,0 +1,1703 @@
+"""CAMPD per-plant binning: registries, ramp groups, emission rates, tranche tables.
+
+Split out of ``data/fleet.py`` (11,199 ln) into the ``data/fleet`` package
+(refactor-consolidation plan §5 item 8, 2026-07-23) as pure code motion:
+every moved body is byte-identical; only this header and the census'd
+``_pkg_ns()`` call-site routings are new. The package ``__init__`` re-exports
+the full pre-split surface; patch semantics are preserved via
+:func:`market_sim.data.fleet.models._pkg_ns`.
+"""
+
+from __future__ import annotations
+
+import logging
+import numpy as np
+import pandas as pd
+
+from functools import lru_cache
+from market_sim.config.paths import (
+    PROCESSED_DIR,
+    active_eia860_dir,
+)
+from market_sim.config.plant_taxonomy import COAL_SUPPLY_TO_CLASS
+from market_sim.config.scenarios import ScenarioConfig
+from pathlib import Path
+from market_sim.data.fleet.models import (
+    FleetArrays,
+    Generator,
+    ISO_TO_BA_CODE,
+)
+from market_sim.data.fleet.eia860 import (
+    BIN_GROUP_HR_DEFAULT,
+    BIN_GROUP_TO_FUEL,
+    _GAS_BIN_GROUPS,
+    eia923_dominant_class_by_plant,
+)
+from market_sim.data.fleet.models import _pkg_ns
+
+# Pre-split logger name: records keep the historical module path.
+logger = logging.getLogger("market_sim.data.fleet")
+
+
+@lru_cache(maxsize=4)
+def _load_plant_registry_cached(csv_path: str) -> pd.DataFrame:
+    """Cached read of one master-plant-registry CSV path.
+
+    Keyed on the path string so the (identical) registry is parsed once per
+    fleet build instead of once per :func:`bins_to_fleet` call. Callers receive
+    a defensive ``.copy()`` via :func:`load_plant_registry`, so this shared
+    frame is never handed out directly.
+    """
+    return pd.read_csv(csv_path)
+
+
+def load_plant_registry(csv_path: str | Path) -> pd.DataFrame:
+    """Load the master plant registry CSV.
+
+    The registry has one row per ERCOT thermal plant with EIA-860 / CAMPD
+    attributes. It is not consumed by dispatch directly — the dispatch fleet
+    comes from :func:`load_campd_bins` — but it is the reference for plant
+    metadata and the "OTHER" (non-dispatchable) plant set.
+
+    Args:
+        csv_path: Path to ``master-plant-registry.csv``.
+
+    Returns:
+        The registry as a DataFrame (a fresh copy of the cached read, so the
+        caller may mutate it freely).
+    """
+    return _load_plant_registry_cached(str(csv_path)).copy()
+
+
+# EIA-860 "Technology" string that marks an oil/distillate-fired unit. The
+# energy-source codes that back it (distillate / residual fuel oil) — used to
+# keep the match robust if the technology label is blank but the fuel code is
+# present.
+_OIL_PRIMARY_TECHNOLOGY: str = "petroleum liquids"
+_OIL_PRIMARY_FUEL_CODES: frozenset[str] = frozenset({"DFO", "RFO"})
+
+
+@lru_cache(maxsize=4)
+def _oil_primary_bin_plants(registry_path: str) -> frozenset[int]:
+    """Cached oil-primary plant-code set from one registry CSV path."""
+    reg = pd.read_csv(
+        registry_path, usecols=lambda c: c in ("plantid", "fuel_type", "technology")
+    )
+    tech = reg["technology"].astype(str).str.strip().str.lower()
+    fuel = reg["fuel_type"].astype(str).str.strip().str.upper()
+    is_oil = tech.eq(_OIL_PRIMARY_TECHNOLOGY) | fuel.isin(_OIL_PRIMARY_FUEL_CODES)
+    return frozenset(int(p) for p in reg.loc[is_oil, "plantid"])
+
+
+def oil_primary_bin_plants(registry_path: str | Path) -> frozenset[int]:
+    """Return EIA plant codes whose EIA-860 primary fuel is oil/distillate.
+
+    A plant is oil-primary when its master-registry row (EIA-860 derived)
+    is technology ``Petroleum Liquids`` or its primary energy source
+    (``fuel_type``) is a distillate / residual fuel-oil code
+    (:data:`_OIL_PRIMARY_FUEL_CODES`). These are the combustion-turbine /
+    reciprocating peakers the CAMPD bin sheet routes through the gas
+    ``CT_PEAKER`` class even though they physically burn distillate — e.g.
+    Morgan Creek (3492). :func:`bins_to_fleet` reprices the gas-CT tranches
+    of these plants on oil when ``config.oil_primary_bin_fuel`` is set, the
+    structural counterpart of the oil-primary exclusion in
+    :func:`dual_fuel_plant_groups`.
+
+    The signal is a measured EIA-860 attribute that regenerates for any
+    forward year, so the correction is forward-defensible rather than a
+    fitted per-unit adder.
+    """
+    return _oil_primary_bin_plants(str(registry_path))
+
+
+# Generator-level EIA-860 energy-source codes that mark an oil/kerosene-primary
+# unit (Energy Source 1). Adds kerosene / jet fuel to the plant-registry DFO/RFO
+# codes — the LI/NYC legacy frames are KER-listed at the generator level.
+_OIL_PRIMARY_UNIT_FUEL_CODES: frozenset[str] = frozenset({"DFO", "RFO", "KER", "JF"})
+
+# Simple-cycle prime movers for the generator-level oil-primary screen (GT/IC;
+# EIA "CT" is a combined-cycle turbine part, never a simple-cycle peaker).
+_OIL_PRIMARY_PRIME_MOVERS: frozenset[str] = frozenset({"GT", "IC"})
+
+
+@lru_cache(maxsize=8)
+def oil_primary_ct_plants_from_eia860(iso: str) -> frozenset[int]:
+    """Return plant codes whose *generator-level* EIA-860 CT fleet is oil-primary.
+
+    The generator-level companion to :func:`oil_primary_bin_plants`, which keys
+    on the (ERCOT-only) master plant registry's PLANT primary fuel and so
+    catches zero plants for the per-plant non-ERCOT ISOs. This reads the raw
+    EIA-860 operable generator sheet directly: a plant is oil-primary when the
+    majority (by nameplate capacity) of its operating simple-cycle units
+    (GT/IC) carry an oil / kerosene Energy Source 1
+    (:data:`_OIL_PRIMARY_UNIT_FUEL_CODES`), restricted to the ISO's balancing
+    authority. Same measured-attribute admissibility as the registry screen
+    (rule #12): the EIA-860 field regenerates for any forward vintage.
+
+    Verification note (NYISO, 2026-07-04 session): the per-plant non-ERCOT
+    fleet path already maps each unit's own EIA-860 energy source
+    (:func:`_map_fuel_type`), so KER/DFO-primary units (Holtsville, Wading
+    River, Glenwood 2514, Shoreham 2518, ...) load as raw ``oil`` units and
+    never enter a gas CT bin — every NYISO gas-CT bin was confirmed
+    NG-primary at the generator level. This screen therefore catches plants
+    only where a minority NG unit creates a gas bin at a majority-oil plant,
+    and its NYISO yield is empty; it is kept because it grounds the flag's
+    semantics in the generator-level record for every ISO.
+    """
+    path = _pkg_ns().EIA_860_DIR / "eia860_generator_operable.parquet"
+    if not path.exists():
+        return frozenset()
+    df = pd.read_parquet(
+        path,
+        columns=[
+            "Plant Code",
+            "Prime Mover",
+            "Energy Source 1",
+            "Nameplate Capacity (MW)",
+            "Status",
+        ],
+    )
+    ba_map = pd.read_parquet(
+        _pkg_ns().EIA_860_DIR / "eia860_generators.parquet",
+        columns=["plant_id", "balancing_authority_code"],
+    ).drop_duplicates("plant_id")
+    ba_code = ISO_TO_BA_CODE.get(iso.upper())
+    if ba_code:
+        keep = set(
+            ba_map.loc[
+                ba_map["balancing_authority_code"].astype(str).str.strip() == ba_code,
+                "plant_id",
+            ].astype(int)
+        )
+        df = df[df["Plant Code"].astype("Int64").isin(keep)]
+    df = df[
+        (df["Status"].astype(str).str.strip().str.upper() == "OP")
+        & df["Prime Mover"].astype(str).str.strip().isin(_OIL_PRIMARY_PRIME_MOVERS)
+    ]
+    if df.empty:
+        return frozenset()
+    df = df.assign(
+        _oil=df["Energy Source 1"]
+        .astype(str)
+        .str.strip()
+        .str.upper()
+        .isin(_OIL_PRIMARY_UNIT_FUEL_CODES),
+        _mw=pd.to_numeric(df["Nameplate Capacity (MW)"], errors="coerce").fillna(0.0),
+    )
+    by_plant = df.groupby(df["Plant Code"].astype(int)).apply(
+        lambda g: float(g.loc[g["_oil"], "_mw"].sum()) > 0.5 * float(g["_mw"].sum()),
+        include_groups=False,
+    )
+    return frozenset(int(p) for p, is_oil in by_plant.items() if is_oil)
+
+
+@lru_cache(maxsize=8)
+def campd_ct_run_band_ratios(
+    iso: str,
+) -> "tuple[tuple[float, ...], tuple[float, ...]] | None":
+    """Return the measured (band_edges, run-length ratios) for an ISO, or None.
+
+    Reads the committed condition-banded CT run-length artifact
+    (``scripts/data/derive_campd_ct_run_lengths.py --condition-bands`` →
+    ``data/raw/_processed-legacy/campd_ct_run_bands_<ISO>.csv``): per
+    net-load-percentile band, the class-pooled median start-to-stop run
+    length as a RATIO to the all-runs pooled median — the v4
+    condition-keyed amortization's shape factor
+    (``ScenarioConfig.tranche_startup_conditional_runs``). ``edges`` are the
+    interior percentile boundaries (``pct_hi`` of every band but the last),
+    for ``np.searchsorted`` banding of model hours. ``None`` when the ISO
+    has no artifact (the v4 flag is then a documented no-op — never a
+    silent hand number, rule #23; per-ISO artifact, rule #25).
+    """
+    path = PROCESSED_DIR / f"campd_ct_run_bands_{iso.upper()}.csv"
+    if not path.exists():
+        return None
+    df = pd.read_csv(path).sort_values("band")
+    edges = tuple(float(x) for x in df["pct_hi"].to_numpy()[:-1])
+    ratios = tuple(float(x) for x in df["ratio"].to_numpy())
+    return edges, ratios
+
+
+@lru_cache(maxsize=8)
+def campd_ct_run_lengths(iso: str) -> dict[int, float]:
+    """Return ``{plant_code: median CT run hours}`` for an ISO, ``0`` = fallback.
+
+    Reads the committed CAMPD-measured simple-cycle CT run-length artifact
+    (``scripts/data/derive_campd_ct_run_lengths.py`` →
+    ``data/raw/_processed-legacy/campd_ct_run_lengths_<ISO>.csv``): per-plant
+    median start-to-stop run lengths pooled 2023-2025, with the ISO-class
+    pooled median under key ``0`` for CT plants without CEMS coverage. Empty
+    dict when the ISO has no artifact (the v3 amortization then leaves every
+    tranche on the v2 P0 basis — never a silent hand number, rule #23).
+    """
+    path = PROCESSED_DIR / f"campd_ct_run_lengths_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path, usecols=["plant_code", "median_run_hours"])
+    return {
+        int(r.plant_code): float(r.median_run_hours)
+        for r in df.itertuples(index=False)
+        if float(r.median_run_hours) > 0.0
+    }
+
+
+# Model plant_group -> CAMPD ramp-envelope family bucket. Mirrors the derive
+# script's unitType bucketing (scripts/data/derive_campd_ramp_envelopes.py) so a
+# mixed facility (CC block + standalone peakers) is enveloped per family.
+_RAMP_BUCKET_BY_GROUP: dict[str, str] = {
+    "CC_REGULAR": "CC",
+    "CC_CHP": "CC",
+    "ST_GAS": "ST",
+    "ST_CHP": "ST",
+    "COAL": "ST",
+    "CT_PEAKER": "CT",
+    "CT_CHP": "CT",
+}
+
+
+@lru_cache(maxsize=8)
+def load_campd_ramp_envelopes(iso: str) -> "pd.DataFrame | None":
+    """Return the ISO's CAMPD plant-level hourly ramp-envelope table, or None.
+
+    Reads the committed measured artifact
+    (``scripts/data/derive_campd_ramp_envelopes.py`` →
+    ``data/raw/_processed-legacy/campd_ramp_envelopes_<ISO>.csv``): per
+    (plant, CC/CT/ST bucket) max observed 1-h up/down gross-load deltas
+    pooled 2023-2025 (``basis == "plant"``), sparse-coverage rows
+    (``basis == "sparse"``, informational only) and the capacity-weighted
+    class-median envelope FRACTIONS under ``plant_code == 0``
+    (``basis == "class_fraction"``). ``None`` when the ISO has no artifact —
+    the ramp rows are then simply absent (never a silent hand number,
+    rule #23). Cached per ISO; treat the returned frame as read-only.
+    """
+    path = PROCESSED_DIR / f"campd_ramp_envelopes_{iso.upper()}.csv"
+    if not path.exists():
+        return None
+    return pd.read_csv(path)
+
+
+def build_ramp_groups(
+    fleet: FleetArrays, iso: str
+) -> "tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray] | None":
+    """Group thermal columns into ramp-enveloped plant groups for the LP.
+
+    Members are grouped by ``(plant_code, family bucket)`` where the bucket
+    collapses the model plant groups onto the CAMPD envelope families
+    (CC_REGULAR/CC_CHP → CC; ST_GAS/ST_CHP/COAL → ST; CT_PEAKER/CT_CHP →
+    CT) — the envelope is a plant property, tranche switching inside a plant
+    stays free (design doc §1.2). Each group's envelope resolves from its
+    measured ``basis == "plant"`` row (MW, used directly); groups without one
+    fall back to the CC/ST class-median fraction × group pmax. CT groups get
+    NO fallback — a CT without a well-observed CEMS trace simply has no row
+    (bang-bang is the measured norm for the class).
+
+    Pruning (rule 18 — physics by parameters, not class names): a group
+    whose envelope can never bind (``RU >= cap`` AND ``RD >= cap``, with
+    ``cap`` the group's summed pmax) gets no row — bang-bang CTs drop out
+    naturally, as do import pseudo-generators (``plant_code == 0``, never
+    grouped).
+
+    Args:
+        fleet: Vectorized fleet arrays (needs ``plant_code``, ``plant_group``
+            and ``pmax``).
+        iso: ISO identifier keying the committed envelope artifact.
+
+    Returns:
+        ``(gen_idx, group_col, ramp_up_mw, ramp_dn_mw)`` for
+        :func:`market_sim.model.dispatch.build_constraints` — member thermal
+        column indices, each member's group index, and the per-group
+        envelopes — or ``None`` when the artifact is absent, the fleet
+        carries no plant groups, or every group pruned out.
+    """
+    env = load_campd_ramp_envelopes(iso)
+    if env is None or fleet.plant_group is None:
+        return None
+    plant_code = np.asarray(fleet.plant_code, dtype=int)
+    pmax = np.asarray(fleet.pmax, dtype=float)
+    buckets = np.array(
+        [
+            _RAMP_BUCKET_BY_GROUP.get(str(g), "")
+            for g in np.asarray(fleet.plant_group, dtype=object)
+        ],
+        dtype=object,
+    )
+
+    measured = {
+        (int(r.plant_code), str(r.bucket)): (
+            float(r.ramp_up_mw),
+            float(r.ramp_dn_mw),
+        )
+        for r in env[env.basis == "plant"].itertuples(index=False)
+    }
+    class_frac = {
+        str(r.bucket): (float(r.ramp_up_mw), float(r.ramp_dn_mw))
+        for r in env[env.basis == "class_fraction"].itertuples(index=False)
+        # CT gets NO class fallback: only a measured plant row can envelope it.
+        if str(r.bucket) in ("CC", "ST")
+    }
+
+    # Group member columns by (plant, bucket); insertion order is stable.
+    members: dict[tuple[int, str], list[int]] = {}
+    for i in np.flatnonzero((plant_code > 0) & (buckets != "")):
+        members.setdefault((int(plant_code[i]), str(buckets[i])), []).append(int(i))
+
+    gen_idx: list[int] = []
+    group_col: list[int] = []
+    ramp_up: list[float] = []
+    ramp_dn: list[float] = []
+    for (pk, bucket), m in members.items():
+        cap = float(pmax[m].sum())
+        if (pk, bucket) in measured:
+            ru, rd = measured[(pk, bucket)]
+        elif bucket in class_frac:
+            fu, fd = class_frac[bucket]
+            ru, rd = fu * cap, fd * cap
+        else:
+            continue
+        if ru >= cap and rd >= cap:
+            continue  # envelope can never bind (bang-bang) — prune, no row
+        g = len(ramp_up)
+        gen_idx.extend(m)
+        group_col.extend([g] * len(m))
+        ramp_up.append(ru)
+        ramp_dn.append(rd)
+    if not ramp_up:
+        return None
+    return (
+        np.asarray(gen_idx, dtype=int),
+        np.asarray(group_col, dtype=int),
+        np.asarray(ramp_up, dtype=float),
+        np.asarray(ramp_dn, dtype=float),
+    )
+
+
+# Default location of the CAMPD-derived per-plant emission-rate artifact
+# (scripts/data/derive_plant_emissions.py), resolved relative to the repo root.
+PLANT_EMISSION_RATES_PATH: Path = PROCESSED_DIR / "plant_emission_rates.parquet"
+
+# kg -> metric tonnes, the model's internal emission-rate mass unit.
+_KG_PER_TONNE: float = 1000.0
+
+
+@lru_cache(maxsize=4)
+def _plant_emission_rate_map(
+    path: str,
+) -> dict[int, tuple[float, float, float]]:
+    """Return ``{plant_id: (co2, nox, so2)}`` rates in tonnes/MWh net.
+
+    Reads the pooled (``year == 0``) rows of the CAMPD emission-rate
+    artifact and converts the per-MWh-net kg figures to the model's
+    tonnes/MWh unit. Plants flagged ``mixed`` (coal and gas units sharing one
+    facility CEMS record) are omitted — a single facility rate cannot be
+    assigned to their separate coal and gas dispatch bins, so those bins keep
+    fuel-class defaults. Cached by path so repeated yearly fleet builds in one
+    run parse the parquet once.
+    """
+    df = pd.read_parquet(path)
+    pooled = df[df["year"] == 0]
+    if "mixed" in pooled.columns:
+        pooled = pooled[~pooled["mixed"].astype(bool)]
+    out: dict[int, tuple[float, float, float]] = {}
+    for _, r in pooled.iterrows():
+        out[int(r["plant_id"])] = (
+            float(r["co2_kg_per_mwh_net"]) / _KG_PER_TONNE,
+            float(r["nox_kg_per_mwh_net"]) / _KG_PER_TONNE,
+            float(r["so2_kg_per_mwh_net"]) / _KG_PER_TONNE,
+        )
+    return out
+
+
+@lru_cache(maxsize=8)
+def _measured_plant_rate_map_v2(
+    path: str, iso: str, year: int, mode: str
+) -> dict[tuple[int, str], tuple[float, float, float]]:
+    """Cache the mode-aware ``{(plant_id, fuel_class): (tCO2, tNOx, tSO2)/MWh}`` map.
+
+    All three pollutants share the identical mode/window/composition-mask policy
+    (:func:`market_sim.data.emission_rates.measured_plant_rates`); NOx/SO2 simply
+    read their own mass column (plan §5 R7). A plant/class missing a pollutant's
+    measured mass gets 0.0 for that pollutant, so the caller can preserve the
+    fuel-class default (CO2/NOx) rather than overwrite it with a spurious zero.
+    """
+    from market_sim.data.emission_rates import measured_plant_rates
+
+    df = pd.read_parquet(path)
+    co2 = measured_plant_rates(df, iso, year, mode, pollutant="co2")
+    nox = measured_plant_rates(df, iso, year, mode, pollutant="nox")
+    so2 = measured_plant_rates(df, iso, year, mode, pollutant="so2")
+    keys = set(co2) | set(nox) | set(so2)
+    return {k: (co2.get(k, 0.0), nox.get(k, 0.0), so2.get(k, 0.0)) for k in keys}
+
+
+def _apply_forward_control_retrofits(
+    rates: dict[tuple[int, str], tuple[float, float, float]],
+    config: object,
+    year: int,
+) -> dict[tuple[int, str], tuple[float, float, float]]:
+    """Step measured ``(co2, nox, so2)`` rates for announced EIA-860 controls.
+
+    The forward control-retrofit channel
+    (``docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md``):
+    splits the triple map into per-pollutant float maps, applies
+    :func:`market_sim.data.emission_rates.apply_control_retrofits` to each with
+    the forecast-year announced-control schedule (a control online by ``year``
+    steps the covered plant's rate down), and recombines. Returns the input map
+    unchanged when no control is announced. Forecast-only; the caller gates on
+    the mode and the ``control_retrofit_forward`` flag.
+    """
+    from market_sim.config import constants
+    from market_sim.data.emission_rates import (
+        apply_control_retrofits,
+        load_announced_controls,
+    )
+
+    controls = load_announced_controls(
+        getattr(config, "control_retrofit_path", ""),
+        min_install_year=constants.CONTROL_RETROFIT_HISTORY_END_YEAR + 1,
+    )
+    if not controls:
+        return rates
+    # One stepped float map per pollutant (index 0=co2, 1=nox, 2=so2), then zip
+    # back into triples. Fresh dicts throughout — the cached input is untouched.
+    stepped = [
+        apply_control_retrofits(
+            {k: v[i] for k, v in rates.items()}, controls, year, pollutant
+        )
+        for i, pollutant in enumerate(("co2", "nox", "so2"))
+    ]
+    return {k: (stepped[0][k], stepped[1][k], stepped[2][k]) for k in rates}
+
+
+def apply_plant_emission_rates_v2(
+    generators: list[Generator],
+    path: str | Path,
+    *,
+    iso: str,
+    year: int,
+    mode: str,
+    config: object | None = None,
+) -> int:
+    """Override per-generator CO2 rates from the v2 artifact (mode-aware).
+
+    Uses :func:`market_sim.data.emission_rates.measured_plant_rates`: a backcast
+    year books each plant's own measured rate, a forecast year books the
+    gen-weighted trailing-average estimator base. Rates are matched to each
+    generator by ``(plant_code, coarse fuel class)`` — the composition mask — so
+    a Parish-style coal+gas facility's coal and gas bins get separate measured
+    rates (this replaces the old ``mixed`` exclusion). Returns the override count.
+
+    CO2, NOx and SO2 are all booked at the plant's measured tonnes/MWh-net rate
+    (plan §5 R7 full-wiring wave). CO2/NOx are overridden only when the measured
+    rate is positive (a zero means "no measured mass" — keep the fuel default);
+    SO2 is always set, mirroring :func:`apply_plant_emission_rates`, because zero
+    is a legitimate SO2 value for gas units. NOx/SO2 are secondary: this changes
+    no CO2 rate and no merit order.
+
+    When ``config.control_retrofit_forward`` is set and this is a **forecast**
+    year, each pollutant's measured map is stepped by any announced EIA-860
+    control online by ``year`` (SCR/SNCR → NOx, FGD/DSI → SO2, from the
+    committed-install pipeline; CO2 carries no default control — carbon capture
+    is owned by the CCS retrofit screen, rule 15), via
+    :func:`_apply_forward_control_retrofits`. OFF or backcast leaves the maps
+    byte-identical.
+    docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md
+    """
+    from market_sim.data.emission_rates import fuel_class
+
+    resolved = Path(path)
+    if not resolved.exists():
+        return 0
+    rates = _measured_plant_rate_map_v2(str(resolved), str(iso), int(year), str(mode))
+    if (
+        str(mode).lower() != "backcast"
+        and config is not None
+        and getattr(config, "control_retrofit_forward", False)
+    ):
+        rates = _apply_forward_control_retrofits(rates, config, int(year))
+    n = 0
+    for gen in generators:
+        triple = rates.get((int(gen.plant_code), fuel_class(gen.fuel_type)))
+        if triple is None:
+            continue
+        co2, nox, so2 = triple
+        touched = False
+        if co2 > 0.0:
+            gen.emission_rate_co2 = co2
+            touched = True
+        if nox > 0.0:
+            gen.nox_rate = nox
+            touched = True
+        gen.so2_rate = so2
+        if touched or so2 > 0.0:
+            n += 1
+    return n
+
+
+def apply_plant_emission_rates(
+    generators: list[Generator],
+    path: str | Path | None = None,
+) -> int:
+    """Override per-generator CO2/NOx/SO2 rates with CAMPD plant-specific ones.
+
+    Each generator pinned to a single physical plant (``plant_code > 0``)
+    that the CAMPD emission-rate artifact covers takes that plant's measured
+    intensity per MWh **net** generation, so carbon / NOx / SO2 prices in the
+    dispatch LP bite at the real plant rather than a fuel-class average.
+    Generators without a plant code, or whose plant is absent from the
+    artifact (multi-plant peaker bins, the legacy aggregated fleet), keep
+    their fuel-default rates. CO2 and NOx are overridden only when the
+    measured rate is positive; SO2 is always set (zero is a valid value for
+    gas units, and the default is zero anyway).
+
+    Args:
+        generators: The fleet to mutate in place.
+        path: Override for the artifact location; ``None`` uses
+            :data:`PLANT_EMISSION_RATES_PATH`.
+
+    Returns:
+        The number of generators whose rates were overridden.
+    """
+    resolved = Path(path) if path is not None else PLANT_EMISSION_RATES_PATH
+    if not resolved.exists():
+        return 0
+    rates = _plant_emission_rate_map(str(resolved))
+    n = 0
+    for gen in generators:
+        plant_rate = rates.get(int(gen.plant_code))
+        if plant_rate is None:
+            continue
+        co2, nox, so2 = plant_rate
+        if co2 > 0.0:
+            gen.emission_rate_co2 = co2
+        if nox > 0.0:
+            gen.nox_rate = nox
+        gen.so2_rate = so2
+        n += 1
+    return n
+
+
+def _fill_plant_hr(hr: float | None, plant_group: str) -> float:
+    """Return a plant's heat rate, falling back to the plant-group default.
+
+    Plants without a measured ``Plant_Avg_HR_MMBtu_MWh`` (typically tiny
+    unmetered backup CTs in CT_unassigned) inherit the per-group default
+    so the LP never sees a NaN heat rate.
+    """
+    if hr is not None and hr == hr and hr > 0.0:
+        return float(hr)
+    return BIN_GROUP_HR_DEFAULT.get(plant_group, 10.0)
+
+
+def _fill_hr_multiplier(value: float | None, default: float) -> float:
+    """Return a tranche HR multiplier, falling back to ``default`` if blank.
+
+    Plants whose tranche capacity is zero leave the corresponding
+    ``HR_Mult_<tranche>`` column blank; the per-fuel default keeps the
+    arithmetic well-defined even when the resulting tranche is skipped.
+    """
+    if value is not None and value == value and value > 0.0:
+        return float(value)
+    return float(default)
+
+
+# Per-plant-group default tranche HR multipliers, used when the CSV's
+# ``HR_Mult_<tranche>`` cell is blank (a tranche with zero capacity for
+# that plant). The values match the typical multipliers seen in the CSV
+# for each group so a sensitivity run that turns on a zero-share tranche
+# still produces a reasonable heat rate.
+_DEFAULT_HR_MULT_BY_GROUP: dict[str, dict[str, float]] = {
+    "CC_CHP": {"mr": 1.05, "mc": 1.05, "econ": 1.00, "peak": 1.45},
+    "CC_REGULAR": {"mr": 1.10, "mc": 1.08, "econ": 1.00, "peak": 1.55},
+    "CT_CHP": {"mr": 1.05, "mc": 1.10, "econ": 1.00, "peak": 1.15},
+    "CT_PEAKER": {"mr": 1.05, "mc": 1.12, "econ": 1.00, "peak": 1.10},
+    "ST_GAS": {"mr": 1.10, "mc": 1.15, "econ": 1.00, "peak": 1.10},
+    "ST_CHP": {"mr": 1.05, "mc": 1.10, "econ": 1.00, "peak": 1.10},
+    "COAL": {"mr": 1.00, "mc": 1.15, "econ": 1.00, "peak": 1.05},
+}
+
+
+def _override_bin_class_from_eia923(bins: pd.DataFrame, year: int) -> pd.DataFrame:
+    """Override each gas bin's ``Plant_Group`` with its EIA-923 dominant class.
+
+    For every bin whose curated class is one of the gas classes, replace it with
+    the EIA-923 dominant class for that plant code when EIA-923 covers the year
+    and resolves to a (different) gas class. The bin's ``fuel`` is re-derived
+    from the new class; all other columns are preserved. Coal bins and plants
+    EIA-923 doesn't cover keep their curated class — the durable single source
+    of truth for ERCOT class assignment.
+    """
+    dominant = eia923_dominant_class_by_plant(year)
+    if not dominant:
+        return bins
+
+    new_groups = bins["Plant_Group"].astype(str).tolist()
+    changed: list[tuple[str, str, str]] = []
+    for i, (code, curated) in enumerate(zip(bins["Plant_Code"], new_groups)):
+        if curated not in _GAS_BIN_GROUPS:
+            continue  # coal (and any non-gas bin) keeps its curated class
+        derived = dominant.get(int(code))
+        if derived and derived in _GAS_BIN_GROUPS and derived != curated:
+            new_groups[i] = derived
+            changed.append((str(bins["Plant_Name"].iloc[i]), curated, derived))
+
+    if not changed:
+        return bins
+
+    bins = bins.copy()
+    bins["Plant_Group"] = new_groups
+    bins["fuel"] = bins["Plant_Group"].map(BIN_GROUP_TO_FUEL)
+    for name, was, now in changed:
+        logger.info(
+            "EIA-923 %d: reclassified %s  %s -> %s (curated bin drifted)",
+            year,
+            name,
+            was,
+            now,
+        )
+    return bins
+
+
+def _reconcile_cc_capacity(
+    bins: pd.DataFrame, reconcile_path: str | Path
+) -> pd.DataFrame:
+    """Reconcile listed CC plants' ``capacity_mw`` to their demonstrated value.
+
+    Reads the per-plant reconciliation table
+    (``scripts/data/derive_cc_capacity_reconcile.py``) and applies each row per its
+    ``mode`` column:
+
+    * ``raise`` (or no ``mode`` column — the original ERCOT table, unchanged
+      behaviour): lift ``capacity_mw`` to ``reconciled_mw`` where it exceeds
+      the current value — the demonstrated CAMPD peak above nameplate (the
+      cold-weather over-rating). A reconciled value at or below the current
+      capacity is ignored, so a raise row can never shrink a plant.
+    * ``cap``: lower ``capacity_mw`` to ``reconciled_mw`` where the current
+      value exceeds it — the demonstrated-peak CAP for plants whose model
+      nameplate exceeds anything the plant ever sustained in the CEMS record
+      (measured capability, CLAUDE.md #13: the plant should not carry LP
+      headroom above what it has ever delivered). A cap row at or above the
+      current capacity is ignored, so a cap row can never grow a plant.
+
+    A missing file is a no-op (the flag is on but the artifact was not
+    generated). See :attr:`ScenarioConfig.cc_capacity_reconcile`.
+    """
+    path = Path(reconcile_path)
+    if not path.exists():
+        logger.warning(
+            "cc_capacity_reconcile on but %s missing — no capacity change", path
+        )
+        return bins
+    table = pd.read_csv(path)
+    mode = (
+        table["mode"].astype(str)
+        if "mode" in table.columns
+        else pd.Series("raise", index=table.index)
+    )
+    codes = table["plant_code"].astype(int)
+    mw = table["reconciled_mw"].astype(float)
+    recon_raise = dict(zip(codes[mode != "cap"], mw[mode != "cap"]))
+    recon_cap = dict(zip(codes[mode == "cap"], mw[mode == "cap"]))
+    old_cap = bins["capacity_mw"].astype(float).to_numpy()
+    new_cap = np.array(
+        [
+            min(
+                max(float(cur), recon_raise.get(int(code), 0.0)),
+                recon_cap.get(int(code), np.inf),
+            )
+            for code, cur in zip(bins["Plant_Code"].astype(int), old_cap)
+        ]
+    )
+    raised = int((new_cap > old_cap + 1e-6).sum())
+    capped = int((new_cap < old_cap - 1e-6).sum())
+    bins = bins.copy()
+    bins["capacity_mw"] = new_cap
+    logger.info(
+        "CC capacity reconcile: raised %d / capped %d plant(s) to demonstrated "
+        "peak (%+.0f MW total) from %s",
+        raised,
+        capped,
+        float((new_cap - old_cap).sum()),
+        path.name,
+    )
+    return bins
+
+
+# Memoized per-(path, year, reconcile-path) bin frames. ``load_campd_bins`` is
+# invoked repeatedly per fleet build (the dispatch path plus every outage
+# overlay), and the CSV read + tranche arithmetic is pure w.r.t. its args, so
+# the frame is computed once per key and callers receive a defensive copy.
+_CAMPD_BINS_CACHE: dict[tuple[str, int | None, str | None], pd.DataFrame] = {}
+
+
+def load_campd_bins(
+    csv_path: str | Path,
+    year: int | None = None,
+    capacity_reconcile_path: str | Path | None = None,
+) -> pd.DataFrame:
+    """Load the CAMPD bin assignments, one row per plant.
+
+    The detail CSV has one row per plant; this normalises it into the
+    one-bin-per-plant LP fleet schema. Every plant becomes its own
+    operational bin: tranche percentages, commitment hours and the
+    per-tranche HR multipliers come directly from the plant's CSV row,
+    and per-tranche heat rates are derived from the plant's own
+    ``Plant_Avg_HR_MMBtu_MWh`` rather than a zone-weighted average.
+
+    When ``year`` is given, each bin's gas class (``Plant_Group``) is
+    overridden with the EIA-923 dominant class for that plant code
+    (:func:`eia923_dominant_class_by_plant`), so the curated bin can't drift
+    from what the plant actually burned — e.g. a CC_CHP bin whose EIA-923
+    netgen is dominated by merchant CC output is corrected to CC_REGULAR. Only
+    the class (and the fuel it implies) changes; every other curated column
+    (tranche %, HR multipliers, turbine class, config) is preserved, and the
+    override only moves a plant among the gas classes. Plants EIA-923 doesn't
+    cover for the year (or coal bins) keep their curated class. ``year=None``
+    (the default, for tooling and forward scenarios) applies no override.
+
+    Per-plant binning is the model spine for plant-specific monthly
+    EIA-923 fuel costs and asset-level financial reporting — each LP bin
+    is one EIA plant code, so dispatch and downstream P&L disaggregation
+    share the same row identity.
+
+    The ``Bin_Label`` / ``Bin_Number`` columns are a human-readable
+    grouping only — they do NOT collapse plants into a shared LP generator
+    and no bin-weighted heat rate is ever used in dispatch (each plant
+    dispatches on its own ``Plant_Avg_HR_MMBtu_MWh``). Two CSV columns are
+    read here but then commonly *overridden* downstream, so do not treat
+    them as the dispatched values:
+
+    * ``Pct_Committed`` / ``Pct_Peaking`` — replaced per-plant by the
+      CAMPD-derived ``CC_REGULAR_COMMITTED_PCT_BY_PLANT`` (``config.
+      cc_committed_per_plant``, the ERCOT calibration default) /
+      :func:`thermal_tranche_peaking` or the EIA-860 ``cc_duct_peaking_pct``
+      (``config.cc_peaking_per_plant`` / ``cc_duct_peaking`` — ERCOT's default
+      is ``cc_duct_peaking``, since it carries no CAMPD thermal-tranche
+      artifact of its own).
+    * ``HR_Mult_Committed`` / ``HR_Mult_Economic`` / ``HR_Mult_Peaking`` —
+      used only when no ``offer_curve_by_group`` covers the group. With an
+      offer curve configured (the ERCOT default) the committed band uses
+      ``base_hr × offer["committed"]``, the economic band is rendered as an
+      N-slice rising ramp (``_econ_curve_steps``), and the CC peak band uses
+      the turbine-class duct-burner multiplier — so the CSV ``HR_Mult_*``
+      values are not the dispatched band heat rates. See ``bins_to_fleet``
+      and ``docs/binning-methodology.md``.
+
+    Args:
+        csv_path: Path to ``custom-bin-assignments.csv``.
+
+    Returns:
+        One row per plant with columns: the original bin key columns,
+        ``Plant_Code``, ``Plant_Name``, ``capacity_mw``, ``hr_weighted``
+        (the plant's own HR), ``hr_mr`` / ``hr_mc`` / ``hr_econ`` /
+        ``hr_peak`` (= ``Plant_Avg_HR × HR_Mult_<tranche>``),
+        ``pct_mr`` / ``pct_mc`` / ``pct_econ`` / ``pct_peak``,
+        ``min_run``, ``min_down``, ``plant_count`` (always 1),
+        ``plant_codes`` (a one-element list with the plant code),
+        ``fuel``.
+    """
+    cache_key = (
+        str(csv_path),
+        year,
+        None if capacity_reconcile_path is None else str(capacity_reconcile_path),
+    )
+    cached = _CAMPD_BINS_CACHE.get(cache_key)
+    if cached is not None:
+        return cached.copy()
+
+    detail = pd.read_csv(csv_path)
+    fuel_series = detail["Plant_Group"].map(BIN_GROUP_TO_FUEL)
+    unmapped = detail[fuel_series.isna()]
+    if not unmapped.empty:
+        groups = sorted(unmapped["Plant_Group"].unique())
+        raise ValueError(
+            f"CAMPD bins reference unknown plant groups: {groups}. "
+            f"Add them to BIN_GROUP_TO_FUEL."
+        )
+
+    # Multi-tech CT correction: at mixed-facility plants (CC+CT, COAL+CT)
+    # the plant-average HR is dominated by the efficient dominant technology,
+    # making the CT bin 25-40% cheaper than a standalone CT. Clip multi-tech
+    # CT heat rates to the standalone CT median for the ISO.
+    if "Mixed_Facility" in detail.columns:
+        ct_mask = detail["Plant_Group"] == "CT_PEAKER"
+        mixed_mask = detail["Mixed_Facility"].notna() & (
+            detail["Mixed_Facility"].astype(str).str.strip() != ""
+        )
+        multi_ct = ct_mask & mixed_mask
+        if multi_ct.any():
+            standalone_ct = ct_mask & ~mixed_mask
+            median_ct_hr = (
+                float(detail.loc[standalone_ct, "Plant_Avg_HR_MMBtu_MWh"].median())
+                if standalone_ct.any()
+                else 11.5
+            )
+            before = detail.loc[multi_ct, "Plant_Avg_HR_MMBtu_MWh"].copy()
+            detail.loc[multi_ct, "Plant_Avg_HR_MMBtu_MWh"] = detail.loc[
+                multi_ct, "Plant_Avg_HR_MMBtu_MWh"
+            ].clip(lower=median_ct_hr)
+            raised = (
+                detail.loc[multi_ct, "Plant_Avg_HR_MMBtu_MWh"] > before + 1e-6
+            ).sum()
+            if raised:
+                logger.info(
+                    "Multi-tech CT HR correction: raised %d/%d CT(s) to "
+                    "standalone median %.2f MMBtu/MWh",
+                    int(raised),
+                    int(multi_ct.sum()),
+                    median_ct_hr,
+                )
+
+    # Each plant's tranche HR = Plant_Avg_HR × HR_Mult_<tranche>. We fill
+    # missing plant heat rates with the per-group default and missing
+    # multipliers with the group-typical value so the tranche arithmetic
+    # is well-defined; tranches whose capacity is zero are skipped by
+    # ``bins_to_fleet`` regardless of the resulting HR.
+    plant_hr = [
+        _fill_plant_hr(hr, grp)
+        for hr, grp in zip(detail["Plant_Avg_HR_MMBtu_MWh"], detail["Plant_Group"])
+    ]
+    defaults_by_idx = [
+        _DEFAULT_HR_MULT_BY_GROUP.get(grp, _DEFAULT_HR_MULT_BY_GROUP["CC_REGULAR"])
+        for grp in detail["Plant_Group"]
+    ]
+    mult_columns = {
+        "mr": "HR_Mult_Must_Run",
+        "mc": "HR_Mult_Committed",
+        "econ": "HR_Mult_Economic",
+        "peak": "HR_Mult_Peaking",
+    }
+    bins = pd.DataFrame(
+        {
+            "Plant_Group": detail["Plant_Group"].astype(str),
+            "ERCOT_Zone": detail["ERCOT_Zone"].astype(str),
+            "Bin_Number": detail["Bin_Number"].astype(int),
+            "Bin_Label": detail["Bin_Label"].astype(str),
+            "Plant_Code": detail["Plant_Code"].astype(int),
+            "Plant_Name": detail["Plant_Name"].astype(str),
+            "Turbine_Class": detail["Turbine_Class"].astype(str),
+            "capacity_mw": detail["Nameplate_MW"].astype(float),
+            "hr_weighted": plant_hr,
+            "pct_mr": detail["Pct_Must_Run"].astype(float),
+            "pct_mc": detail["Pct_Committed"].astype(float),
+            "pct_econ": detail["Pct_Economic"].astype(float),
+            "pct_peak": detail["Pct_Peaking"].astype(float),
+            "min_run": detail["Min_Run_Hours"].astype(int),
+            "min_down": detail["Min_Down_Hours"].astype(int),
+        }
+    )
+    for short, col in mult_columns.items():
+        bins[f"hr_{short}"] = [
+            hr * _fill_hr_multiplier(mult, defaults[short])
+            for hr, mult, defaults in zip(plant_hr, detail[col], defaults_by_idx)
+        ]
+    bins["plant_count"] = 1
+    bins["plant_codes"] = [[int(c)] for c in detail["Plant_Code"]]
+    bins["fuel"] = fuel_series.values
+
+    if year is not None:
+        bins = _override_bin_class_from_eia923(bins, year)
+
+    if capacity_reconcile_path is not None:
+        bins = _reconcile_cc_capacity(bins, capacity_reconcile_path)
+
+    bad = bins["pct_mr"] + bins["pct_mc"] + bins["pct_econ"] + bins["pct_peak"]
+    if not (bad == 100).all():
+        offending = bins.loc[bad != 100, "Plant_Name"].tolist()
+        raise ValueError(
+            f"CAMPD bin tranches must sum to 100%; offending plants: {offending}"
+        )
+
+    logger.info(
+        "Loaded %d per-plant CAMPD bins from %s (%.1f GW)",
+        len(bins),
+        csv_path,
+        bins["capacity_mw"].sum() / 1000.0,
+    )
+    _CAMPD_BINS_CACHE[cache_key] = bins
+    return bins.copy()
+
+
+# Default tranche split (% of nameplate) per group for the synthetic per-plant
+# bins an ISO builds when it has no CAMPD bin sheet (see
+# :func:`fleet_to_bins`): used only for plants absent from the CAMPD-derived
+# thermal-tranche artifact (rarely-online units with no reliable observed
+# floor). ``(must_run, committed, peaking)``; the economic band is the
+# residual. Peakers carry no committed band; coal carries a baseload floor.
+_DEFAULT_TRANCHE_PCT_BY_GROUP: dict[str, tuple[float, float, float]] = {
+    "CC_REGULAR": (0.0, 45.0, 8.0),
+    "CC_CHP": (0.0, 45.0, 8.0),  # must-run set to host steam in bins_to_fleet
+    "CT_PEAKER": (0.0, 0.0, 7.0),
+    "CT_CHP": (0.0, 30.0, 7.0),
+    "ST_GAS": (0.0, 30.0, 15.0),
+    "ST_CHP": (0.0, 30.0, 15.0),
+    "COAL": (45.0, 5.0, 2.0),
+}
+
+
+@lru_cache(maxsize=16)
+def thermal_tranche_overrides(
+    iso: str,
+    coal_online_pmin: bool = False,
+) -> dict[tuple[int, str], tuple[float, float]]:
+    """Return ``{(plant_code, group): (committed_pct, mustrun_pct)}`` for an ISO.
+
+    Loads the per-plant CAMPD-derived committed and must-run tranche shares
+    from ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`` (written by
+    ``scripts/data/derive_thermal_tranches.py``). Empty when the ISO has no
+    artifact, so the caller falls back to the group default. This is the
+    general, ISO-agnostic replacement for the hardcoded ERCOT
+    ``CC_REGULAR_COMMITTED_PCT_BY_PLANT`` / ``COAL_MUSTRUN_BY_PLANT`` maps.
+
+    When ``coal_online_pmin`` is set (``ScenarioConfig.coal_mustrun_online_pmin``,
+    rebuild step 2) a **coal** row's must-run is taken from the artifact's
+    ``mustrun_online_pct`` column — the measured online-net-MW synchronization
+    Pmin (~20-30% of nameplate) — instead of the all-hours available-CF
+    ``mustrun_pct`` (which reads ~2x high for an always-online unit). Coal rows
+    in an artifact that predates the column (or with a blank/NaN value) keep
+    ``mustrun_pct``; non-coal rows are unaffected.
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    has_online = "mustrun_online_pct" in df.columns
+    out: dict[tuple[int, str], tuple[float, float]] = {}
+    for r in df.itertuples(index=False):
+        if str(getattr(r, "status", "ok")) != "ok":
+            continue
+        mustrun = float(r.mustrun_pct)
+        if coal_online_pmin and has_online and str(r.plant_group) == "COAL":
+            online_v = getattr(r, "mustrun_online_pct", float("nan"))
+            if online_v == online_v:  # not NaN
+                mustrun = float(online_v)
+        out[(int(r.plant_code), str(r.plant_group))] = (
+            float(r.committed_pct),
+            mustrun,
+        )
+    return out
+
+
+@lru_cache(maxsize=8)
+def thermal_tranche_peaking(iso: str) -> dict[tuple[int, str], float]:
+    """Return ``{(plant_code, group): peaking_pct}`` for an ISO's CC plants.
+
+    The CAMPD-derived duct-firing / scarcity share from
+    ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`` (``peaking_pct``, written
+    by ``scripts/data/derive_thermal_tranches.py`` for CC_REGULAR / CC_CHP): the
+    share of the plant's demonstrated sustained maximum it clears in fewer
+    than 5% of its online hours. Empty when the ISO has no artifact or it
+    predates the column (ERCOT has none — its own per-plant binning path
+    never produced one). Applied per plant in :func:`bins_to_fleet` under
+    ``config.cc_peaking_per_plant`` (CAISO/PJM/NYISO/NEISO/MISO default) —
+    supersedes the offer curve's class-wide ``pct_peaking``. (The prior
+    ERCOT hand-set ``CC_REGULAR_PEAKING_PCT_BY_PLANT`` four-plant override
+    was deleted 2026-07, rule 26/G-26/C-12: dead in every current keeper.
+    ERCOT's default — and every current ERCOT keeper — instead runs
+    ``cc_peaking_per_plant=False`` + ``cc_duct_peaking=True``: the measured
+    EIA-860 mechanism below, generalized to every ERCOT CC plant rather than
+    the four the deleted dict named, since ERCOT has no thermal-tranche
+    artifact of its own to fall back to.)
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if "peaking_pct" not in df.columns:
+        return {}
+    out: dict[tuple[int, str], float] = {}
+    for r in df.itertuples(index=False):
+        if str(getattr(r, "status", "ok")) != "ok" or pd.isna(r.peaking_pct):
+            continue
+        out[(int(r.plant_code), str(r.plant_group))] = float(r.peaking_pct)
+    return out
+
+
+@lru_cache(maxsize=8)
+def thermal_tranche_online_frac(iso: str) -> dict[tuple[int, str], float]:
+    """Return ``{(plant_code, group): online_frac}`` for an ISO's gas plants.
+
+    The CEMS-measured synchronization fraction from
+    ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`` (``online_frac``,
+    written by ``scripts/data/derive_thermal_tranches.py`` for the
+    ``_ONLINE_FRAC_GROUPS``: COAL plus the merchant gas committed groups
+    CC_REGULAR / CT_PEAKER): the share of the pooled window the plant has any
+    unit synchronized (net MW > 1% of nameplate). Consumed by the per-plant
+    gas local-reliability commitment floor (``config.cc_mustrun_per_plant``)
+    to size each plant's committed window — the top ``online_frac`` fraction
+    of hours ranked by system load in which its committed tranche is forced
+    on. Empty when the ISO has no artifact or it predates the gas
+    ``online_frac`` extension (coal rows are returned too, but their forcing
+    rides ``coal_sync_online_frac``, not this map). Rows with a blank/NaN
+    fraction are absent (no floor).
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if "online_frac" not in df.columns:
+        return {}
+    out: dict[tuple[int, str], float] = {}
+    for r in df.itertuples(index=False):
+        v = getattr(r, "online_frac", float("nan"))
+        try:
+            frac = float(v)
+        except (TypeError, ValueError):
+            continue
+        if str(getattr(r, "status", "ok")) != "ok" or not frac == frac:
+            continue
+        out[(int(r.plant_code), str(r.plant_group))] = min(1.0, max(0.0, frac))
+    return out
+
+
+def thermal_tranche_p25_level(iso: str) -> dict[tuple[int, str], float]:
+    """Return ``{(plant_code, group): p25_level_mw}`` for an ISO's gas plants.
+
+    The measured 25th-percentile-of-online available-CF from
+    ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`` (``p25_cf``, a
+    percent, written by the SAME frozen ``scripts/data/derive_thermal_tranches.py``
+    estimator that produces ``committed_pct`` = P5-of-online and ``online_frac``
+    — rule 23, no deriver touch) times the plant's ``nameplate_mw``, i.e. the
+    plant's 25th-percentile dispatch level when synchronized. Because ``p25_cf``
+    is a fraction of *available* capacity (``series / (nameplate x avail_mult)``
+    in the deriver), ``p25_cf x nameplate`` reconstructs the measured p25 output
+    level; the runtime ``availability`` derate then enters only through the
+    per-tranche ``pmax x availability`` clip in the application block, matching
+    the committed floor's "clipped to pmax*availability as today". Consumed by
+    the per-plant ST_GAS local-reliability commitment floor when
+    ``config.st_gas_mustrun_p25_level`` is armed (miso-67): the p25 level
+    REPLACES the committed-tranche level (P5-of-online = LSL) for gate-armed
+    ST_GAS plants, distributed cheapest-first across the plant's tranches. Empty
+    when the ISO has no artifact or it predates the ``p25_cf`` column. Rows with
+    a blank/NaN ``p25_cf`` or ``nameplate_mw`` are absent (no floor).
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if "p25_cf" not in df.columns or "nameplate_mw" not in df.columns:
+        return {}
+    out: dict[tuple[int, str], float] = {}
+    for r in df.itertuples(index=False):
+        try:
+            p25 = float(getattr(r, "p25_cf", float("nan")))
+            nameplate = float(getattr(r, "nameplate_mw", float("nan")))
+        except (TypeError, ValueError):
+            continue
+        if str(getattr(r, "status", "ok")) != "ok":
+            continue
+        if not (p25 == p25) or not (nameplate == nameplate):
+            continue  # NaN guard (blank cell)
+        level = max(0.0, p25 / 100.0) * max(0.0, nameplate)
+        if level > 0.0:
+            out[(int(r.plant_code), str(r.plant_group))] = level
+    return out
+
+
+def thermal_tranche_chp_steam_level(iso: str) -> dict[tuple[int, str], float]:
+    """Return ``{(plant_code, group): steam_level_cf_pct}`` for an ISO's CHP cogens.
+
+    The measured multi-year steam-host operating LEVEL (percent of nameplate)
+    from ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv``
+    (``steam_level_cf``, WP-3 rule-23 re-derivation, owner-ruled 2026-07-19 —
+    `docs/handoffs/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md`). Two lenses
+    emit the one statistic family:
+
+    - ``status == "ok"`` (CAMPD-visible): the loading-when-on construction —
+      on-hour frequency x p50 available-CF conditional on online, same sample
+      and masks as the p2 ``chp_pmin_cf`` floor. Replaces the pre-WP-3
+      p25-of-all-hours statistic, which mixed economic/host-driven offline
+      zeros into the level and under-measured a high-baseload host that takes
+      offline stretches (FINDING-caiso95 §5: measured >=70 % loading in
+      79-88 % of on-hours vs the p25's 12-14 % trickle).
+    - ``status == "eia923_cf"`` (CEMS-invisible, below the Part 75 reporting
+      threshold): the pooled EIA-923 delivery-implied level — measured class
+      net generation over nameplate-hours of the reported window (WP-3 scope
+      (b); these plants never enter the CAMPD sample, so no CEMS percentile
+      can reach them).
+
+    Both self-target with no threshold parameter (a cycler's on-frequency or
+    delivered energy collapses its level). Consumed by the CHP grid
+    steam-floor level swap when ``config.chp_steam_floor_p25`` is armed (field
+    name kept for run-config lineage; same formula
+    ``pmin_cf x (1 - btm_share)`` and the same MECH_CHP_STEAM attribution as
+    the p2 floor — a level source swap, rule 19). Rows with a blank/NaN level
+    are absent; explicit 0.0 rows are carried (measured-and-collapsed, still
+    no floor). Pre-WP-3 artifacts that only carry ``p25_allhr_cf`` fall back
+    to it (their committed derivation, rule 23 — re-derive moves with the
+    artifact, not the loader). Empty when the ISO has no artifact or it
+    predates both columns.
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    col = "steam_level_cf" if "steam_level_cf" in df.columns else "p25_allhr_cf"
+    if col not in df.columns:
+        return {}
+    # The eia923_cf lens exists only in the WP-3 column; pre-WP-3 artifacts
+    # carry a level for CAMPD-visible ("ok") rows only.
+    statuses = {"ok", "eia923_cf"} if col == "steam_level_cf" else {"ok"}
+    out: dict[tuple[int, str], float] = {}
+    for r in df.itertuples(index=False):
+        try:
+            level = float(getattr(r, col, float("nan")))
+        except (TypeError, ValueError):
+            continue
+        if str(getattr(r, "status", "ok")) not in statuses:
+            continue
+        if not (level == level):
+            continue  # NaN guard (blank cell — no measured level)
+        out[(int(r.plant_code), str(r.plant_group))] = max(0.0, level)
+    return out
+
+
+@lru_cache(maxsize=1)
+def cc_duct_peaking_pct() -> dict[int, float]:
+    """Return ``{plant_code: peaking_pct}`` for every EIA-860 CC plant.
+
+    Built from the raw EIA-860 Generator_Y Operable sheet parquet
+    (``eia860_generator_operable.parquet``): a plant is duct-fired when any
+    of its combined-cycle generators carries the "Duct Burners" = Y flag
+    (reported on the steam/CA rows). Duct-fired plants get the
+    nameplate-vs-net-summer capability gap as their peaking share,
+    ``100 x max(0, nameplate - net_summer) / nameplate`` summed over the
+    plant's CC generators; non-duct CC plants get 0.0 — they have no
+    duct-firing increment, so a class-uniform peak band hands them phantom
+    scarcity capacity. (The EIA-860 release carries no separate duct-burner
+    MW increment, so the capability gap is the proxy; for non-duct plants
+    that same gap is ambient derate, already modeled by
+    ``_SUMMER_CLASS_DERATE``.) Applied per plant under
+    ``config.cc_duct_peaking``, superseding the offer curve's class-wide
+    ``pct_peaking``. Plants absent from the sheet are absent from the map
+    (callers keep their class default).
+    """
+    path = active_eia860_dir() / "eia860_generator_operable.parquet"
+    if not path.exists():
+        return {}
+    df = pd.read_parquet(
+        path,
+        columns=[
+            "Plant Code",
+            "Technology",
+            "Duct Burners",
+            "Nameplate Capacity (MW)",
+            "Summer Capacity (MW)",
+        ],
+    )
+    df = df[pd.to_numeric(df["Plant Code"], errors="coerce").notna()]
+    cc = df[df["Technology"] == "Natural Gas Fired Combined Cycle"].copy()
+    if cc.empty:
+        return {}
+    cc["plant_code"] = cc["Plant Code"].astype(float).astype(int)
+    cc["np"] = pd.to_numeric(cc["Nameplate Capacity (MW)"], errors="coerce")
+    cc["ns"] = pd.to_numeric(cc["Summer Capacity (MW)"], errors="coerce")
+    out: dict[int, float] = {}
+    for code, grp in cc.groupby("plant_code"):
+        np_sum = float(grp["np"].sum())
+        if np_sum <= 0.0:
+            continue
+        if (grp["Duct Burners"].astype(str).str.strip() == "Y").any():
+            ns_sum = float(grp["ns"].sum())
+            out[int(code)] = round(100.0 * max(0.0, np_sum - ns_sum) / np_sum, 1)
+        else:
+            out[int(code)] = 0.0
+    return out
+
+
+@lru_cache(maxsize=1)
+def cc_summer_capacity() -> dict[int, tuple[float, float]]:
+    """Return ``{plant_code: (nameplate_mw, net_summer_mw)}`` for every CC plant.
+
+    Summed over each plant's combined-cycle generators from the EIA-860
+    Generator_Y Operable sheet. Consumed under
+    ``config.cc_nameplate_summer_derate`` to (a) raise a CC plant's LP capacity
+    from its net-summer rating to full nameplate and (b) derive the per-plant
+    MEASURED summer derate ``net_summer / nameplate`` applied in the summer
+    months — the correct seasonal capacity shape (full nameplate in winter,
+    ambient-derated to net-summer in summer). Plants absent from the sheet are
+    absent from the map (callers keep net-summer / the flat class derate).
+    """
+    path = active_eia860_dir() / "eia860_generator_operable.parquet"
+    if not path.exists():
+        return {}
+    df = pd.read_parquet(
+        path,
+        columns=[
+            "Plant Code",
+            "Technology",
+            "Nameplate Capacity (MW)",
+            "Summer Capacity (MW)",
+        ],
+    )
+    df = df[pd.to_numeric(df["Plant Code"], errors="coerce").notna()]
+    cc = df[df["Technology"] == "Natural Gas Fired Combined Cycle"].copy()
+    if cc.empty:
+        return {}
+    cc["plant_code"] = cc["Plant Code"].astype(float).astype(int)
+    cc["np"] = pd.to_numeric(cc["Nameplate Capacity (MW)"], errors="coerce")
+    cc["ns"] = pd.to_numeric(cc["Summer Capacity (MW)"], errors="coerce")
+    out: dict[int, tuple[float, float]] = {}
+    for code, grp in cc.groupby("plant_code"):
+        np_sum = float(grp["np"].sum())
+        ns_sum = float(grp["ns"].sum())
+        # Consistency guard (EIA-860 schema: summer capability <= nameplate).
+        # A summed net-summer above the summed nameplate is component/total
+        # double-filing; clamp it to nameplate so the derived summer-derate
+        # ratio and any nameplate rescale never carry the phantom. The
+        # derate ratio min(1, ns/np) already clamped these plants to 1.0, so
+        # this is inert to that consumer but corrects the returned figure for
+        # every other reader (diagnosis §3b, probe block 3).
+        ns_sum = min(ns_sum, np_sum)
+        if np_sum > 0.0 and ns_sum > 0.0:
+            out[int(code)] = (np_sum, ns_sum)
+    return out
+
+
+def cc_summer_derate_ratio(plant_code: int) -> float | None:
+    """Return a CC plant's measured summer availability multiplier.
+
+    ``net_summer / nameplate`` from :func:`cc_summer_capacity`, clamped to
+    ``(0, 1]`` (a plant whose summer rating meets or exceeds nameplate gets no
+    derate). ``None`` when the plant is absent from the EIA-860 CC sheet.
+    """
+    cap = cc_summer_capacity().get(int(plant_code))
+    if cap is None:
+        return None
+    nameplate, net_summer = cap
+    if nameplate <= 0.0:
+        return None
+    return min(1.0, net_summer / nameplate)
+
+
+# EIA-860 Operable technology strings for a coal steam unit (the coal analogue
+# of the CC "Natural Gas Fired Combined Cycle" filter above).
+_COAL_SUMMER_TECH: frozenset[str] = frozenset(
+    {"Conventional Steam Coal", "Coal Integrated Gasification Combined Cycle"}
+)
+
+
+@lru_cache(maxsize=1)
+def coal_summer_capacity() -> dict[int, tuple[float, float]]:
+    """Return ``{plant_code: (nameplate_mw, net_summer_mw)}`` for every coal plant.
+
+    Summed over each plant's coal-steam generators from the EIA-860 Generator_Y
+    Operable sheet (:data:`_COAL_SUMMER_TECH`). The coal analogue of
+    :func:`cc_summer_capacity`, consumed under
+    ``config.coal_nameplate_summer_derate`` to derive the per-plant MEASURED
+    summer derate ``net_summer / nameplate`` applied to coal in the summer
+    months. Unlike CC, coal already carries its nameplate capacity in the LP
+    (the CAMPD-bin / EIA-860 pmax), so this only supplies the summer multiplier;
+    no capacity is raised. Plants absent from the sheet are absent from the map
+    (callers keep full nameplate, as today).
+    """
+    path = active_eia860_dir() / "eia860_generator_operable.parquet"
+    if not path.exists():
+        return {}
+    df = pd.read_parquet(
+        path,
+        columns=[
+            "Plant Code",
+            "Technology",
+            "Nameplate Capacity (MW)",
+            "Summer Capacity (MW)",
+        ],
+    )
+    df = df[pd.to_numeric(df["Plant Code"], errors="coerce").notna()]
+    coal = df[df["Technology"].isin(_COAL_SUMMER_TECH)].copy()
+    if coal.empty:
+        return {}
+    coal["plant_code"] = coal["Plant Code"].astype(float).astype(int)
+    coal["np"] = pd.to_numeric(coal["Nameplate Capacity (MW)"], errors="coerce")
+    coal["ns"] = pd.to_numeric(coal["Summer Capacity (MW)"], errors="coerce")
+    out: dict[int, tuple[float, float]] = {}
+    for code, grp in coal.groupby("plant_code"):
+        np_sum = float(grp["np"].sum())
+        ns_sum = float(grp["ns"].sum())
+        if np_sum > 0.0 and ns_sum > 0.0:
+            out[int(code)] = (np_sum, ns_sum)
+    return out
+
+
+def coal_summer_derate_ratio(plant_code: int) -> float | None:
+    """Return a coal plant's measured summer availability multiplier.
+
+    ``net_summer / nameplate`` from :func:`coal_summer_capacity`, clamped to
+    ``(0, 1]`` (a plant whose summer rating meets or exceeds nameplate gets no
+    derate). ``None`` when the plant is absent from the EIA-860 coal sheet.
+    """
+    cap = coal_summer_capacity().get(int(plant_code))
+    if cap is None:
+        return None
+    nameplate, net_summer = cap
+    if nameplate <= 0.0:
+        return None
+    return min(1.0, net_summer / nameplate)
+
+
+def fleet_to_bins(
+    generators: list[Generator], iso: str, config: ScenarioConfig
+) -> pd.DataFrame:
+    """Build a per-plant CAMPD-style bins frame from an ISO's EIA-860 fleet.
+
+    The non-ERCOT analogue of the CAMPD bin sheet: each thermal
+    ``(plant_code, plant_group)`` becomes one bin row in the schema
+    :func:`bins_to_fleet` consumes, so a per-plant ISO (PJM, MISO, ...) gets
+    the *same* smoothed rising offer curve and per-plant committed / must-run
+    tranches ERCOT gets from its bins. Committed % and (coal) must-run % come
+    from the CAMPD-derived artifact (:func:`thermal_tranche_overrides`; under
+    ``config.coal_mustrun_online_pmin`` the coal must-run uses the artifact's
+    online-Pmin floor, rebuild step 2); plants absent from it fall back to
+    :data:`_DEFAULT_TRANCHE_PCT_BY_GROUP`. Per-band
+    heat rates are the plant's capacity-weighted heat rate times the group
+    default multipliers (the offer curve overrides these in ``bins_to_fleet``).
+    Non-thermal generators (nuclear, oil, biomass, ...) are not binned — the
+    caller keeps them as raw LP units.
+
+    Returns one row per thermal ``(plant_code, plant_group)``; empty frame when
+    the fleet has no thermal plants.
+    """
+    overrides = thermal_tranche_overrides(
+        iso, getattr(config, "coal_mustrun_online_pmin", False)
+    )
+    peaking = thermal_tranche_peaking(iso)
+    # Aggregate the per-generator fleet to one row per (plant, group): capacity
+    # sums, heat rate is capacity-weighted.
+    agg: dict[tuple[int, str], dict] = {}
+    for g in generators:
+        if g.plant_group not in BIN_GROUP_TO_FUEL:
+            continue  # non-thermal (nuclear / oil / biomass) stays a raw unit
+        code = int(g.plant_code)
+        if code <= 0:
+            continue
+        key = (code, g.plant_group)
+        a = agg.setdefault(
+            key,
+            {
+                "cap": 0.0,
+                "hr_cap": 0.0,
+                "name": g.name,
+                "zone": g.zone,
+            },
+        )
+        a["cap"] += float(g.pmax_mw)
+        a["hr_cap"] += float(g.pmax_mw) * float(g.heat_rate)
+
+    rows: list[dict] = []
+    for (code, group), a in agg.items():
+        cap = a["cap"]
+        if cap <= 0.0:
+            continue
+        # Heat rate is an intensive property: divide the accumulated
+        # capacity-weighted sum by the SAME capacity basis the weights were
+        # accumulated on (the net-summer ratings above), BEFORE any nameplate
+        # rescale. Dividing by the rescaled capacity deflated every CC plant's
+        # base heat rate — and every offer band built on it — by its own
+        # net-summer/nameplate ratio (differentially, up to −27 % for Moss
+        # Landing), scrambling the within-class merit order
+        # (FINDING-caiso78-cc-hr-basis-2026-07-12.md §3).
+        base_hr = a["hr_cap"] / cap
+        # CC nameplate capacity (config.cc_nameplate_summer_derate): the fleet
+        # carries each unit's net-summer rating, so a CC plant's summed cap is
+        # net-summer. Rescale it up to full nameplate (cap / (net_summer /
+        # nameplate)); the availability builder reapplies the per-plant summer
+        # derate seasonally. Robust to fleet-vs-EIA membership differences (uses
+        # the ratio, not the absolute nameplate). ERCOT/other groups unchanged.
+        if group in ("CC_REGULAR", "CC_CHP") and getattr(
+            config, "cc_nameplate_summer_derate", False
+        ):
+            _ratio = _pkg_ns().cc_summer_derate_ratio(code)
+            if _ratio is not None and _ratio > 0.0:
+                cap = cap / _ratio
+        d_mr, d_mc, d_peak = _DEFAULT_TRANCHE_PCT_BY_GROUP.get(group, (0.0, 30.0, 8.0))
+        committed, mustrun = overrides.get((code, group), (d_mc, d_mr))
+        pct_mc = committed
+        pct_mr = mustrun if group == "COAL" else d_mr
+        pct_peak = peaking.get((code, group), d_peak)
+        # Keep the split feasible: clip committed + peaking to leave room for an
+        # economic band above the must-run floor.
+        room = max(0.0, 100.0 - pct_mr)
+        if pct_mc + pct_peak > room:
+            pct_mc = max(0.0, min(pct_mc, room - pct_peak))
+        pct_econ = max(0.0, 100.0 - pct_mr - pct_mc - pct_peak)
+        mults = _DEFAULT_HR_MULT_BY_GROUP.get(
+            group, _DEFAULT_HR_MULT_BY_GROUP["CC_REGULAR"]
+        )
+        rows.append(
+            {
+                "Plant_Group": group,
+                "ERCOT_Zone": a["zone"],
+                "Bin_Number": 1,
+                "Bin_Label": a["name"],
+                "Plant_Code": code,
+                "Plant_Name": a["name"],
+                "Turbine_Class": "",
+                "capacity_mw": cap,
+                "hr_weighted": base_hr,
+                "pct_mr": pct_mr,
+                "pct_mc": pct_mc,
+                "pct_econ": pct_econ,
+                "pct_peak": pct_peak,
+                "min_run": 0,
+                "min_down": 0,
+                "hr_mr": base_hr * mults["mr"],
+                "hr_mc": base_hr * mults["mc"],
+                "hr_econ": base_hr * mults["econ"],
+                "hr_peak": base_hr * mults["peak"],
+                "plant_count": 1,
+                "plant_codes": [code],
+                "fuel": BIN_GROUP_TO_FUEL[group],
+            }
+        )
+    bins = pd.DataFrame(
+        rows,
+        columns=[
+            "Plant_Group",
+            "ERCOT_Zone",
+            "Bin_Number",
+            "Bin_Label",
+            "Plant_Code",
+            "Plant_Name",
+            "Turbine_Class",
+            "capacity_mw",
+            "hr_weighted",
+            "pct_mr",
+            "pct_mc",
+            "pct_econ",
+            "pct_peak",
+            "min_run",
+            "min_down",
+            "hr_mr",
+            "hr_mc",
+            "hr_econ",
+            "hr_peak",
+            "plant_count",
+            "plant_codes",
+            "fuel",
+        ],
+    )
+    # Per-plant CC capacity reconciliation (ScenarioConfig.cc_capacity_reconcile)
+    # for the synthesized-bins ISOs — the same hook the ERCOT curated-CSV path
+    # gets via load_campd_bins. Applied after the summer-derate nameplate
+    # rescale above, so a demonstrated-peak CAP row (mode="cap",
+    # scripts/data/derive_cc_capacity_reconcile.py --mode cap) bounds the final LP
+    # capacity at the plant's measured CAMPD sustained maximum.
+    if not bins.empty and getattr(config, "cc_capacity_reconcile", False):
+        bins = _reconcile_cc_capacity(
+            bins, getattr(config, "cc_capacity_reconcile_path", "")
+        )
+    return bins
+
+
+# Combined-cycle duct-burner (peaking) heat-rate multiplier by turbine class,
+# on (AHR x fuel_price). Operator ranges: advanced G/H-class 2.3-2.5, F-class
+# 2.0-2.3, older E-class / legacy 1.8-2.0 — a lower base AHR makes the
+# duct-fire/base ratio steeper, so the most efficient classes carry the highest
+# multiplier. Set 0.1 below the range midpoints per the operator's CC peaking
+# tune.
+CC_DUCT_BURNER_PEAK_MULT: dict[str, float] = {
+    "advanced": 2.50,  # G/H-class
+    "f": 2.25,  # F-class incl. E/F
+    "older": 2.00,  # E-class, legacy
+}
+
+
+def cc_duct_burner_peak_mult(turbine_class: object) -> float:
+    """Return the CC duct-burner peaking HR multiplier for a turbine class.
+
+    Maps the CSV ``Turbine_Class`` string onto the operator's three duct-burner
+    buckets (see :data:`CC_DUCT_BURNER_PEAK_MULT`). Unknown / blank classes
+    fall back to the F-class midpoint (the modal CC class).
+    """
+    s = str(turbine_class)
+    if "G-class" in s or "H-class" in s:
+        return CC_DUCT_BURNER_PEAK_MULT["advanced"]
+    if "F-class" in s:  # also catches "E/F-class"
+        return CC_DUCT_BURNER_PEAK_MULT["f"]
+    if "E-class" in s or "Legacy" in s:
+        return CC_DUCT_BURNER_PEAK_MULT["older"]
+    return CC_DUCT_BURNER_PEAK_MULT["f"]
+
+
+# Coal supply class -> offer_curve_by_group key (COAL_LIGNITE / COAL_PRB /
+# COAL_BIT / COAL_WC; sub-bituminous routes to COAL_PRB), from the canonical
+# taxonomy; unclassified coal uses the generic COAL curve. Kept under the
+# local name for back-compat.
+_COAL_SUPPLY_TO_CURVE = COAL_SUPPLY_TO_CLASS
+
+
+@lru_cache(maxsize=8)
+def ct_intermediate_plants(iso: str, threshold: float) -> frozenset[int]:
+    """EIA plant codes of intermediate-duty ``CT_PEAKER`` units for an ISO.
+
+    A simple-cycle combustion turbine whose measured CAMPD median capacity
+    factor (``thermal_tranches_<ISO>.csv`` ``median_cf``) is at or above
+    ``threshold`` runs intermediate / near-baseload duty, not as a true
+    peaker. EIA-860 confirms these are genuine GT / IC simple-cycle units (not
+    mislabeled combined cycle or cogen), so their prime-mover *classification*
+    is correct — what differs is their *duty cycle*. The single steep
+    ``CT_PEAKER`` offer curve (a committed-band start-cost hurdle that holds
+    true peakers idle) mis-prices these always-on units above the CC fleet, so
+    they never clear and CC over-runs. The cohort is routed to the flatter
+    ``CT_INTERMEDIATE`` offer curve instead.
+
+    The median CF is a durable, forward-reproducible duty-role signal — it
+    regenerates per unit and year from CAMPD and responds to changed
+    conditions (a unit that stops running intermediate falls out of the
+    cohort) — and assigns an offer *shape*, never pins measured output, so it
+    is admissible under CLAUDE.md #11/#12 on the same basis as
+    :data:`market_sim.data.outages.ST_GAS_PEAKER_PLANTS`. Returns an empty set
+    when the ISO has no tranche file (e.g. ERCOT's hand-set bins).
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if not path.exists():
+        return frozenset()
+    df = pd.read_csv(path)
+    if "median_cf" not in df.columns or "plant_group" not in df.columns:
+        return frozenset()
+    ct = df[(df["plant_group"] == "CT_PEAKER") & (df["median_cf"] >= threshold)]
+    codes = set(int(c) for c in ct["plant_code"].dropna())
+
+    # Exclude CTs at multi-technology sites (COAL+CT, CC+CT, etc.): the CT
+    # at such a plant is a supplemental peaker, not an intermediate-duty
+    # unit, so it keeps the steep CT_PEAKER curve.
+    bin_path = PROCESSED_DIR / f"bin_assignments_{iso.upper()}.csv"
+    if bin_path.exists() and codes:
+        bins_df = pd.read_csv(
+            bin_path, usecols=["Plant_Code", "Plant_Group", "Mixed_Facility"]
+        )
+        ct_bins = bins_df[bins_df["Plant_Group"] == "CT_PEAKER"]
+        mixed = set(
+            int(c)
+            for c in ct_bins.loc[
+                ct_bins["Mixed_Facility"].notna()
+                & (ct_bins["Mixed_Facility"].astype(str).str.strip() != ""),
+                "Plant_Code",
+            ].dropna()
+        )
+        codes -= mixed
+
+    return frozenset(codes)
+
+
+@lru_cache(maxsize=8)
+def st_gas_intermediate_plants(iso: str, threshold: float) -> frozenset[int]:
+    """EIA plant codes of intermediate-duty ``ST_GAS`` units for an ISO.
+
+    The gas-steam analogue of :func:`ct_intermediate_plants`. A legacy gas-steam
+    plant whose measured CAMPD median capacity factor
+    (``thermal_tranches_<ISO>.csv`` ``median_cf``) is at or above ``threshold``
+    runs intermediate / near-baseload duty (MISO's Harding Street, Ames, Nine
+    Mile Point, Lewis Creek, Sabine, ...), not as a peaker. The ERCOT-fitted
+    ST_GAS offer curve (steep econ_high ramp + a 15% peaking band) prices most of
+    each such unit above the CC fleet, so it never clears and the model
+    under-runs it (the Moselle / Lewis Creek under-run). The cohort is routed to
+    the flatter ``ST_GAS_INTERMEDIATE`` offer curve instead.
+
+    The median CF is a durable, forward-reproducible duty-role signal — it
+    regenerates per unit and year from CAMPD and responds to changed conditions
+    — and assigns an offer *shape*, never pins measured output, so it is
+    admissible under CLAUDE.md #11/#12 on the same basis as
+    :func:`ct_intermediate_plants` and :data:`outages.ST_GAS_PEAKER_PLANTS`.
+    Returns an empty set when the ISO has no tranche file (e.g. ERCOT's hand-set
+    bins).
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if not path.exists():
+        return frozenset()
+    df = pd.read_csv(path)
+    if "median_cf" not in df.columns or "plant_group" not in df.columns:
+        return frozenset()
+    st = df[(df["plant_group"] == "ST_GAS") & (df["median_cf"] >= threshold)]
+    return frozenset(int(c) for c in st["plant_code"].dropna())
+
+
+@lru_cache(maxsize=8)
+def cc_intermediate_plants(iso: str, threshold: float) -> frozenset[int]:
+    """EIA plant codes of intermediate-duty ``CC_REGULAR`` units for an ISO.
+
+    The combined-cycle analogue of :func:`ct_intermediate_plants` /
+    :func:`st_gas_intermediate_plants`. A combined-cycle plant whose measured
+    CAMPD median capacity factor (``thermal_tranches_<ISO>.csv`` ``median_cf``)
+    is at or above ``threshold`` runs intermediate / baseload duty, not as a
+    flexible mid-merit peaker. The ``CC_REGULAR`` offer curve was fit to ERCOT's
+    duct-fire-heavy 2x1 CCs (Colorado Bend II / Wolf Hollow II): a rising econ
+    ramp (start-cost-amortized) topped by a duct-burner peak band. For a fleet of
+    already-committed, high-CF baseload CCs (MISO's entire CC fleet measures a
+    median CF of 50-150 %, mean ~90 %) that rising ramp over-prices the upper
+    operating range — the incremental energy of a committed CC is near its
+    full-load heat rate (~0.93x its own average), flat across load, not a
+    start-cost-amortized peaker bid — so the upper econ tranches sit above the
+    clearing price and the model under-runs the CC fleet (the MISO gas under-run).
+    The cohort is routed to the flatter ``CC_INTERMEDIATE`` offer curve, which
+    flattens the econ ramp to the measured near-baseload incremental cost while
+    **keeping** the physically-real duct-burner peak band (the duct-fire reach is
+    still priced at its true ~2.25x heat rate — only the operating-range ramp is
+    corrected, never the peak).
+
+    The median CF is a durable, forward-reproducible duty-role signal — it
+    regenerates per unit and year from CAMPD and responds to changed conditions
+    (a CC that stops running baseload falls out of the cohort) — and assigns an
+    offer *shape*, never pins measured output, so it is admissible under
+    CLAUDE.md #11/#12 on the same basis as :func:`ct_intermediate_plants` and
+    :func:`st_gas_intermediate_plants`. Returns an empty set when the ISO has no
+    tranche file (e.g. ERCOT's hand-set bins).
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if not path.exists():
+        return frozenset()
+    df = pd.read_csv(path)
+    if "median_cf" not in df.columns or "plant_group" not in df.columns:
+        return frozenset()
+    cc = df[(df["plant_group"] == "CC_REGULAR") & (df["median_cf"] >= threshold)]
+    return frozenset(int(c) for c in cc["plant_code"].dropna())
+
+
+# five ``HR_Mult_*`` are per-tranche multipliers on the plant's base HR. Other
+# columns in the sheet (names, group, config, turbine class …) are reference
+# only and ignored by the loader.
+PLANT_TRANCHE_OVERRIDE_FIELDS: dict[str, str] = {
+    "pct_mr": "Pct_Must_Run",
+    "pct_mc": "Pct_Committed",
+    "pct_lo": "Pct_Econ_Low",
+    "pct_hi": "Pct_Econ_High",
+    "pct_pk": "Pct_Peaking",
+    "hr_mr": "HR_Mult_Must_Run",
+    "hr_mc": "HR_Mult_Committed",
+    "hr_lo": "HR_Mult_Econ_Low",
+    "hr_hi": "HR_Mult_Econ_High",
+    "hr_pk": "HR_Mult_Peaking",
+}
+
+
+@lru_cache(maxsize=8)
+def load_plant_tranche_config(path: str | Path) -> dict[int, dict[str, float]]:
+    """Load the per-plant tranche-config override sheet, keyed by plant code.
+
+    Each row gives one plant's five tranche shares of nameplate and five
+    per-tranche heat-rate multipliers (see :data:`PLANT_TRANCHE_OVERRIDE_FIELDS`).
+    Returned as ``{plant_code: {pct_mr, pct_mc, pct_lo, pct_hi, pct_pk, hr_mr,
+    hr_mc, hr_lo, hr_hi, hr_pk}}`` for :func:`bins_to_fleet` to apply in place of
+    the offer curve / per-plant dicts. Rows with a blank or non-numeric value in
+    any required column are skipped (so a partially edited sheet still loads).
+    """
+    df = pd.read_csv(path)
+    missing = [c for c in PLANT_TRANCHE_OVERRIDE_FIELDS.values() if c not in df.columns]
+    if "Plant_Code" not in df.columns or missing:
+        raise ValueError(
+            f"tranche-config sheet {path} missing columns: "
+            f"{(['Plant_Code'] if 'Plant_Code' not in df.columns else []) + missing}"
+        )
+    out: dict[int, dict[str, float]] = {}
+    for _, row in df.iterrows():
+        try:
+            rec = {
+                key: float(row[col])
+                for key, col in PLANT_TRANCHE_OVERRIDE_FIELDS.items()
+            }
+            code = int(row["Plant_Code"])
+        except (TypeError, ValueError):
+            continue
+        if any(v != v for v in rec.values()):  # NaN in a required cell
+            continue
+        out[code] = rec
+    return out
