@@ -1,7 +1,9 @@
 {
-  "timestamp": "2026-07-23T21:28:15",
+  "timestamp": "2026-07-23T22:29:35",
   "iso": "CAISO",
   "years": [
+    2023,
+    2024,
     2025
   ],
   "hours": 8760,
@@ -11,6 +13,8 @@
   "commitment": false,
   "commitment_screen_coal": true,
   "gas_prices": {
+    "2023": 2.54,
+    "2024": 2.19,
     "2025": 3.52
   },
   "coal_lignite_mustrun": null,
@@ -248,15 +252,15 @@
   "mass_cap_program": null,
   "btm_backfill_year": null,
   "shared_inputs": {
-    "eia930": "../_shared/CAISO/eia930-ff06744f1280.parquet",
-    "eia923": "../_shared/CAISO/eia923-68a4e389afc5.parquet",
-    "campd": "../_shared/CAISO/campd-bb382b0327de.parquet"
+    "eia930": "../_shared/CAISO/eia930-3697b3115384.parquet",
+    "eia923": "../_shared/CAISO/eia923-cd564d46cbf9.parquet",
+    "campd": "../_shared/CAISO/campd-cceb6c13d8f9.parquet"
   },
-  "git_sha": "379a9b3",
+  "git_sha": "abb0fcd",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.5-fc-v15-x86_64-with-glibc2.39",
     "packages": {
       "highspy": "1.14.0",
       "numpy": "2.4.6",
