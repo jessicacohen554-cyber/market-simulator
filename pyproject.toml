@@ -86,6 +86,13 @@ ignore = [
 # surface, asserted by tests/test_constants_facade.py), so unused-import is
 # expected and intentional here.
 "src/market_sim/config/constants.py" = ["F401"]
+# data/fleet/__init__.py is the facade of the 2026-07 fleet-package split: the
+# pre-split module's header imports are kept verbatim as re-exports (the
+# imports ARE the public surface, asserted by tests/test_fleet_facade.py), and
+# the submodule re-export block must run AFTER the constants/classes the
+# submodules import back from the partially-initialized package, so
+# unused-import and import-not-at-top are expected and intentional here.
+"src/market_sim/data/fleet/__init__.py" = ["F401", "E402"]
 
 # Single dev dependency group (consolidated from the former
 # [project.optional-dependencies].dev + [dependency-groups].dev duplication).
