@@ -29,10 +29,16 @@ Hourly cap construction (per link, all quantities measured):
 
 This reconstruction is formulaic over the published series — nothing is
 scaled to a price or volume residual (rules #13/#14). Callers gate on
-``ScenarioConfig.pjm_measured_interface_limits`` (backcast overlay, default
-off) and degrade to the static ratings when the year's clean partition is
-absent. Forecast years never call this: the static seeds (2024 means of the
-same feed) are the forward story.
+``ScenarioConfig.pjm_measured_interface_limits`` / ``pjm_east_interface_cut``
+(backcast overlays, default off). A wholly missing partition RAISES rather than
+degrading to the static ratings (pjm-119): the clean tree is gitignored and
+disposable, so a fresh container starts without it, and the previous silent
+fallback let the pjm-118 PJM keeper solve with these overlays off while its
+recorded config and attestation still claimed them — see
+``docs/FINDING-pjm119-silent-overlay-degradation-2026-07.md``. An individual
+series absent from a PRESENT partition still rides that link's static rating.
+Forecast years never call this: the static seeds (2024 means of the same feed)
+are the forward story.
 """
 
 from __future__ import annotations
@@ -97,7 +103,7 @@ def _series_hourly(frame: pd.DataFrame, name: str, hours: int) -> np.ndarray | N
 PJM_EASTERN_INTERFACE_SERIES = "Average Eastern"
 
 
-def pjm_eastern_interface_hourly(year: int, hours: int) -> np.ndarray | None:
+def pjm_eastern_interface_hourly(year: int, hours: int) -> np.ndarray:
     """The measured EMAAC-import-cut hourly limit (``pjm_east_interface_cut``).
 
     Returns the ``(hours,)`` "Average Eastern" published limit — the joint
@@ -105,22 +111,42 @@ def pjm_eastern_interface_hourly(year: int, hours: int) -> np.ndarray | None:
     network's EMAAC import cut; see the ScenarioConfig field docstring and
     diagnosis §10.5). Uncovered hours (never the case for the committed dense
     2023–25 partitions) ride ``+inf`` so the group row is simply non-binding
-    there rather than inventing a static joint rating. Returns ``None`` when
-    the year has no clean partition or the series is absent — callers skip
-    the group (byte-identical to the flag being off) and warn.
+    there rather than inventing a static joint rating.
+
+    RAISES rather than returning ``None`` when the input is missing (pjm-119).
+    This function is only ever reached from a site already gated on
+    ``ScenarioConfig.pjm_east_interface_cut``, so an absent partition is a
+    misconfiguration, not a modelling choice — and its input lives in the
+    CURATED ``data/clean`` tree, which is gitignored and disposable, so a fresh
+    container starts without it. The previous ``None``-and-warn contract let the
+    caller skip the cut while the run's recorded config, and the keeper
+    attestation's DOF ledger, still claimed it as a live measured input: the
+    pjm-118 keeper was solved and scored with this cut silently off, worth 17→40
+    C3c tail hours (diagnosis §10.7), and its residual written up as a
+    summer-scarcity structural miss. Guarding here rather than at the call site
+    protects every present and future caller — the guard must not depend on the
+    analyst remembering. Same posture as ``pjm_da_virtual_bids``. See
+    ``docs/FINDING-pjm119-silent-overlay-degradation-2026-07.md``.
+
+    Raises:
+        FileNotFoundError: No clean partition for ``year``, or the partition
+            carries no "Average Eastern" series.
     """
     frame = load_interface_hourly("PJM", year)
     if frame is None or frame.empty:
-        return None
+        raise FileNotFoundError(
+            f"pjm_east_interface_cut {year}: no transfer-interface-limits clean "
+            "partition — run scripts/regenerate_clean.py "
+            "transfer-interface-limits (the mechanism never silently no-ops)"
+        )
     measured = _series_hourly(frame, PJM_EASTERN_INTERFACE_SERIES, hours)
     if measured is None:
-        logger.warning(
-            "pjm_east_interface_cut %d: series %r absent from the clean "
-            "partition — joint EMAAC cut skipped",
-            year,
-            PJM_EASTERN_INTERFACE_SERIES,
+        raise FileNotFoundError(
+            f"pjm_east_interface_cut {year}: the transfer-interface-limits "
+            f"clean partition carries no {PJM_EASTERN_INTERFACE_SERIES!r} "
+            "series — run scripts/regenerate_clean.py "
+            "transfer-interface-limits (the mechanism never silently no-ops)"
         )
-        return None
     out = np.where(np.isnan(measured), np.inf, measured)
     # Non-positive published limits clamp to 0 (no secure transfer that
     # hour), matching the per-link overlay's convention.
@@ -129,7 +155,7 @@ def pjm_eastern_interface_hourly(year: int, hours: int) -> np.ndarray | None:
 
 def pjm_interface_ttc_hourly(
     ttc: np.ndarray, iso_config, year: int, hours: int
-) -> tuple[np.ndarray, np.ndarray] | None:
+) -> tuple[np.ndarray, np.ndarray]:
     """Expand static TTC to measured hourly forward caps on the mapped links.
 
     Args:
@@ -143,12 +169,24 @@ def pjm_interface_ttc_hourly(
     Returns:
         ``(ttc_hourly, ttc_import)`` — the ``(hours, n_links)`` forward-
         direction cap matrix and the static ``(n_links,)`` array kept as the
-        reverse-direction bound — or ``None`` when the year has no clean
-        partition (caller keeps the static symmetric path).
+        reverse-direction bound.
+
+    Raises:
+        FileNotFoundError: No clean partition for ``year``, or the partition
+            carries none of the mapped series. Callers are gated on
+            ``ScenarioConfig.pjm_measured_interface_limits``, so silently
+            keeping the static TTC would leave the run claiming a measured
+            input it never read (pjm-119 — see
+            :func:`pjm_eastern_interface_hourly` and
+            ``docs/FINDING-pjm119-silent-overlay-degradation-2026-07.md``).
     """
     frame = load_interface_hourly("PJM", year)
     if frame is None or frame.empty:
-        return None
+        raise FileNotFoundError(
+            f"pjm_measured_interface_limits {year}: no transfer-interface-limits "
+            "clean partition — run scripts/regenerate_clean.py "
+            "transfer-interface-limits (the mechanism never silently no-ops)"
+        )
 
     ttc = np.asarray(ttc, dtype=float)
     ttc_hourly = np.broadcast_to(ttc, (hours, len(ttc))).copy()
@@ -207,10 +245,10 @@ def pjm_interface_ttc_hourly(
             ttc[i],
         )
     if n_mapped == 0:
-        logger.warning(
-            "transfer-interface-limits %d: partition present but no mapped "
-            "series found — static TTC kept",
-            year,
+        raise FileNotFoundError(
+            f"pjm_measured_interface_limits {year}: partition present but none "
+            "of the mapped interface series were found — re-pull the raw drop "
+            "and run scripts/regenerate_clean.py transfer-interface-limits "
+            "(the mechanism never silently no-ops)"
         )
-        return None
     return ttc_hourly, ttc
