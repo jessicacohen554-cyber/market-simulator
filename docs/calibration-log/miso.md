@@ -209,3 +209,117 @@ holdout ladder + 2022 one-shot remain a future owner-authorized session, G-19
 HOLD in force regardless). MISO out-of-training intake still at zero; the
 equivalency-register MISO section stays open (no intake this session). Quarantine
 untouched (no out-of-training year read/derived/solved). Next number: miso-83.
+
+## 2026-07-24 — miso-83: gas-offer net-revenue margin — A/B refutes the C3b bar, but OWNER OVERRIDE (rule 1) PROMOTES it as the MISO keeper for structural fidelity; determination downgrades to NOT-YET
+
+**Owner override (2026-07-24).** The A/B below refuted the charter's C3b bar
+(the original session verdict was REJECT). The owner then directed, on rule 1
+(right market structure first; a structurally-faithful mechanism stays even if
+the backcast fit worsens): *"no matter what this should become the keeper, it is
+more structurally sound."* The net-revenue margin — a fuel-invariant $/MWh gas
+bid with full delivered-fuel tracking on the physical burn — is the more faithful
+bid structure than the fuel-scaled multiplier, so the C3b tuning bar does not
+veto it. Same cross-ISO decision as ERCOT-100 / CAISO / NYISO-72 the same week
+(the net-revenue margin is the go-forward offer form). **Keeper SWAPPED to
+`2026-07-24-miso-83-netrev-margin`** (`results/calibration/miso_netrev_margin`);
+determination **NOT-YET** (see disposition). The A/B evidence and its refutation
+stand exactly as recorded below — the promotion is a rule-1 structural call over
+the fit, not a reversal of the finding, and NOTHING was tuned to rescue it
+(rule 1/10; the two new FAILs are left unledgered as MODEL MISSes).
+
+Charter rollout of the `gas_offer_net_revenue_margin` mechanism (NEISO keeper
+`neiso-61`) to MISO. **Identification already landed** (branch
+`claude/gas-offer-net-revenue-isos-1px5vg`, merged to main): MISO `phys_*` keys
+on every identifiable gas class of `offer_curve_by_group`
+(`pipeline/backcast_config.py`, cited to the measured
+`data/raw/reference/miso_campd_marginal_hr_summary.csv` p50s) + anchor **3.0492
+$/MMBtu** (`GAS_OFFER_MARGIN_ANCHOR_BY_ISO` = mean of the keeper delivered-gas
+overlay 2023–2025 = 2.8392 / 2.4893 / 3.8190; per-plant EIA-923 monthly level +
+mean-preserving daily shape). Default-OFF and byte-inert at the fleet level; the
+BASE arm (flag off) reproduces the `miso-81-phantom-outage` keeper up to
+environmental alternate-optimal drift only (Δmean −0.33/−0.36/−0.42 $/MWh ≈ −1 %,
+this box's kernel-string differs from the keeper's solve host — the A/B is
+BASE-vs-MARGIN on the *same* box so the drift is common-mode and cancels).
+
+**Structural confirmation (flag-on).** The reform reduces EXACTLY to the
+registered band multipliers at anchor gas: the mc-side compression fires on
+591 / 597 / 595 gas tranches (2023 / 2024 / 2025) at anchor 3.0492 $/MMBtu
+(median fixed margin ≈ 9.7 $/MWh, max 260.4), the markup gas-elasticity going
+1 → 0 (fuel-scaled multiplier → fixed $/MWh margin). Two-sided as designed:
+below anchor (2023, 2024) the margin FIRMS the offer up; above anchor (2025) it
+COMPRESSES it down.
+
+A/B: same-HEAD `replay_keeper` of the `miso81_phantom_outage` recipe — BASE arm
+(flag off) vs MARGIN arm (single delta `gas_offer_margin=true`), full 2023–2025,
+RT-scored (`scripts/probes/netrev_margin_ab.py`; bundles `miso_netrev_base` /
+`miso_netrev_margin`; per-year `--reuse-solved` legs on this 15 GB box, one
+fresh year per process — rule 12):
+
+| year | gas vs anchor | C3a base→margin | C3b dur-NRMSE base→margin |
+|---|---|---|---|
+| 2023 | 2.84 (<, firm)     | −1.8 → −1.3 % | 0.6009 → **0.6033** (worse) |
+| 2024 | 2.49 (≪, firm)     | −7.6 → −6.6 % | 0.6243 → **0.6293** (worse) |
+| 2025 | 3.82 (>, compress) | −13.0 → −13.4 % | 1.0634 → **1.0737** (worse) |
+
+**A/B verdict (pre-registered refutation): the charter's C3b bar is NOT met.**
+The mechanism FAILS "≥ C3b every year" in ALL THREE years (CAISO `caiso-112`
+failed 2/3; MISO is worse). Root cause (structural, not a fit miss): MISO's
+residual is the *opposite* shape to the NEISO winter-overshoot the mechanism was
+built for. MISO's cheap bulk (<$40, ~7.6 k h/yr) is already OVER-priced (BASE
+gap +3 to +5 $/MWh) while the mid/upper bands and scarcity tail are UNDER-priced
+(the ledgered {C3a-2025, C3c} frontier — `miso-82`; >$300 gap −336/−438/−485).
+In the two below-anchor years the margin firms the offer, lifting the
+already-too-high trough further; in the above-anchor year it compresses,
+pulling the mid bands (80–300, already under actual) further down and NOT filling
+the tail (>300 gap unchanged at −335.8/−437.6/−486.5). Either direction moves the
+duration curve the wrong way — the two-sided form is confirmed working, it is
+simply the wrong lever for MISO's in-sample residual.
+
+**Disposition — OWNER OVERRIDE promotes it to keeper anyway (rule 1); no tuning
+(rule 1/10).** Per the owner directive (top of entry), the margin is adopted as
+`2026-07-24-miso-83-netrev-margin` for structural fidelity, not fit. A clean
+scored keeper bundle was produced (`replay_keeper` of `miso81_phantom_outage` +
+`gas_offer_margin=true`, full span, per-year chained; registered via
+`dashboard_add_run.py`; attestation adds one **grounded** DOF entry for the
+anchor — zero fitted scalars, zero DOF delta otherwise — and inherits miso-81's
+{C3a-2025, C3c} + storage caveats; `legitimacy_diagnostics.json` regenerated;
+`calibration-keeper-auditor` PASS 0 failures). **Determination NOT-YET — a
+downgrade from miso-81's calibrated-with-caveats status.** Two load-bearing gates
+flip PASS→FAIL, both MARGINAL single-threshold crossings and both real margin
+effects, left **UNLEDGERED as MODEL MISSes** (rule 1/10 forbid rescuing a
+determination with caveats): **C1 fuelmix CC_REGULAR 2023** −7.76 → **−8.62 TWh**
+(over ±8.0; the below-anchor firming sheds ~0.86 TWh of CC dispatch) and **C3b
+price_shape 2025** monthly-NRMSE 0.194 → **0.204** (over the ≤0.20 veto). Part of
+each crossing is this slow box's ~1 % alternate-optimal drift vs the keeper's
+solve host, but the margin's own effect is real and fit-degrading — kept anyway
+per rule 1, NOT tuned. The inherited {C3a-2025 price_mean −16.2 %, C3c price_tail
+0/6/0} + storage caveats still apply. The miso-82 scarcity-tail representation-
+frontier finding stands in the docs/attestation but is **no longer surfaced as a
+keeper headline** while the determination is NOT-YET (the FRONTIER·CALIBRATED
+block was removed from `keepers/MISO.json`). The `gas_offer_net_revenue_margin`
+flag stays globally default-OFF (armed per-run in this keeper's recipe). 2022
+holdout NOT touched (MISO carries no calibration-complete marker; quarantine
+untouched).
+
+**Push status (environment limitation — action needed).** The full promotion is
+DONE and VERIFIED locally (bundle solved+scored, run `2026-07-24-miso-83-netrev-margin`
+registered, attestation + `legitimacy_diagnostics.json` written, `keepers/MISO.json`
+swapped, `status/MISO.js` rebuilt to MISO:NOT-YET, `calibration-keeper-auditor`
+PASS 0 failures). But the DASHBOARD artifacts could NOT be pushed from this
+session: this container's git relay rejects `git push` with HTTP 413 (even at
+108 KB), and the API path (`push_files`) can only carry small hand-authored text
+— not the generated `runs/<id>.js` payload (~968 KB gzip-base64), `status/MISO.js`
+(~49 KB), or the binary bundle/bench. A partial push breaks CI (S1
+`build_status --check` needs the bundle to verify status is in sync; parity /
+`audit_keepers` need the payload). So ONLY this log entry is pushed from here.
+To land the keeper swap on the dashboard, from a git-capable environment commit +
+push: `results/calibration/miso_netrev_margin/` (bundle),
+`frontend/data/backcast/registry/2026-07-24-miso-83-netrev-margin.json`,
+`frontend/data/backcast/runs/2026-07-24-miso-83-netrev-margin.js`,
+`frontend/data/backcast/keepers/MISO.json`, `frontend/data/backcast/status/MISO.js`
+(+ any changed `bench/MISO/`) — or re-run the promotion in that environment
+(`replay_keeper miso81_phantom_outage --set gas_offer_margin=true` full span →
+`dashboard_add_run.py` → `keeper_store.py --set MISO <id>` → `build_status.py
+--iso MISO`).
+
+Next number: miso-84.
