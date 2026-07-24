@@ -50,24 +50,47 @@ distribution. Forecast years keep the statistical stack — the expected-value
 analogue that regenerates from forward drivers (the G4 mode-aware seam).
 
 **Class scope (rule 14 alignment).** The covered classes are the grid-registered
-gas fleet DAM resolves cleanly by ``Resource Type``: CC (CCGT90/CCLE90),
-CT_PEAKER (SCGT90/SCLE90) and — added 2026-07-18, the measured-availability
-backcast re-architecture — ST_GAS (the gas-steam types GSREH/GSSUP/GSNONR). The
-DAM disclosure carries no CHP flag, and the private-use-network cogens are
+thermal fleet DAM resolves cleanly by ``Resource Type``: CC (CCGT90/CCLE90),
+CT_PEAKER (SCGT90/SCLE90), ST_GAS (the gas-steam types GSREH/GSSUP/GSNONR —
+added 2026-07-18, the measured-availability backcast re-architecture) and —
+added 2026-07-24, ERCOT-110 — COAL (the single coal/lignite type ``CLLIG``).
+The DAM disclosure carries no CHP flag, and the private-use-network cogens are
 partly behind-the-meter / absent from the disclosure, so a DAM class fraction
 would MISSTATE the CHP classes (CC_CHP/CT_CHP/ST_CHP) — those keep the measured
 CAMPD unit-outage windows + the ``wefor_residual`` short-outage residual instead
 (the mode-aware measured stack, no statistical WEFOR, but not a DAM smear).
-COAL is likewise excluded: its few large lignite units are already carried at
-unit grain by the CAMPD windows, where a class-day smear would misplace which
-unit is out. So this file covers exactly {CC_REGULAR, CT_PEAKER, ST_GAS}.
+
+**Coal (ERCOT-110).** ``CLLIG`` is the ONE coal Resource Type the disclosure
+publishes and it carries no fuel-BASIN attribute — and the ERCOT LP has no
+basin-level coal class either: ``custom-bin-assignments.csv`` assigns the whole
+coal fleet ``Plant_Group = COAL``, and ``bins_to_fleet`` puts that verbatim on
+each ``Generator.plant_group`` (the COAL_PRB / COAL_LIGNITE split is applied
+only at REPORTING time, from ``coal_supply_class``, in
+``run_calibration_full._dispatch_frame``). Source grain and model grain
+therefore agree exactly, and this file emits the single class ``COAL``. Emitting
+the supply-rank split would be strictly worse than useless: the apply seam
+matches ``g.plant_group == cls``, so a ``COAL_PRB`` key would match no
+generator and the overlay would be SILENTLY INERT.
+
+WHICH coal unit is derated is carried by the PLANT grain instead, keyed by EIA
+plant code through the reviewed DAM-site -> EIA-plant crosswalk
+(``ercot-dam-coal-site-seeds.csv`` -> ``ercot-dam-plant-crosswalk.csv``). All
+26 coal sites (13.5 GW p98, 97 % of the model's 14.0 GW ERCOT coal nameplate)
+crosswalk onto all 10 modelled coal plants, so the plant grain covers the coal
+fleet with no unmapped residual — full allocation, zero smear.
+
+The earlier exclusion rationale ("carried at unit grain by the CAMPD windows")
+did not survive contact with the data: CAMPD windows are a >=5-day full-stop
+detector and miss both the partial summer HSL derate and long single-unit
+mothballs (W A Parish G8 reads OUT/zero for ~96 % of 2023 while the model
+carries its 610 MW as fully available all year).
 
 FROZEN AGAINST RESIDUALS (rule 23): re-derive only when the disclosure source
 files update; never because a residual moved. Re-derivation commits must cite
-the data change. (The 2026-07-18 ST_GAS addition is a CLASS-SCOPE change, not a
-residual re-fit — the source files are unchanged; it widens coverage to the
-gas-steam class the measured-availability backcast re-architecture now sources
-from DAM.)
+the data change. (The 2026-07-18 ST_GAS addition and the 2026-07-24 COAL
+addition are CLASS-SCOPE changes, not residual re-fits — the source files are
+unchanged; each widens coverage to a class previously left on the statistical /
+CAMPD stack.)
 
 * SITE-hour (``--site-hourly-out``, added ERCOT-97 2026-07-22): the same
   config-collapsed live/rating intermediate emitted per (class, site, date,
@@ -115,10 +138,11 @@ DEFAULT_SITE_HOURLY_OUT = (
 # rule 19 one-mechanism-per-phenomenon is preserved). Deliberately excludes the
 # CHP classes (the disclosure carries no CHP flag and its private-use-network
 # cogens are partly behind-the-meter, so a DAM class fraction would misstate
-# them — they keep CAMPD windows + wefor_residual; rule 14), coal (its few large
-# lignite units are carried at unit grain by the CAMPD windows, where a class
-# smear would misplace which unit is out), oil/DSL (trivial MW), and nuclear
-# (its own measured overlay, ercot_nuclear_unit_availability).
+# them — they keep CAMPD windows + wefor_residual; rule 14) and coal (CLLIG,
+# added ERCOT-110 2026-07-24: the disclosure's single coal/lignite type mapped
+# onto the model's single COAL plant_group — same grain on both sides; see the
+# module docstring). Still excludes oil/DSL (trivial MW) and nuclear (its own
+# measured overlay, ercot_nuclear_unit_availability).
 RESTYPE_TO_CLASS: dict[str, str] = {
     "CCGT90": "CC_REGULAR",
     "CCLE90": "CC_REGULAR",
@@ -127,6 +151,11 @@ RESTYPE_TO_CLASS: dict[str, str] = {
     "GSREH": "ST_GAS",
     "GSSUP": "ST_GAS",
     "GSNONR": "ST_GAS",
+    # The disclosure's ONE coal/lignite type, onto the model's ONE coal
+    # plant_group. Neither side carries a fuel basin at dispatch grain (the
+    # COAL_PRB / COAL_LIGNITE split is reporting-only), so the mapping is
+    # exact; the plant grain places WHICH coal unit is derated.
+    "CLLIG": "COAL",
 }
 
 # CC configuration suffixes: a resource name up to the config tag names the

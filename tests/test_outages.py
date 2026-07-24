@@ -678,8 +678,13 @@ class ErcotThermalDamAvailabilityTest(unittest.TestCase):
 
         s = ercot_thermal_dam_availability_series(2023)
         # ST_GAS joined the covered scope 2026-07-18 (the measured-availability
-        # backcast re-architecture — see the derive script's class-scope note).
-        self.assertEqual(set(s), {"CC_REGULAR", "CT_PEAKER", "ST_GAS"})
+        # backcast re-architecture) and COAL 2026-07-24 (ERCOT-110) — see the
+        # derive script's class-scope note. COAL is ONE class because the ERCOT
+        # LP has one coal plant_group (the COAL_PRB / COAL_LIGNITE split is
+        # reporting-only). The loader is scope-blind: the
+        # ercot_thermal_dam_availability_coal gate drops COAL at the APPLY
+        # seam, not here.
+        self.assertEqual(set(s), {"CC_REGULAR", "CT_PEAKER", "ST_GAS", "COAL"})
         cc = s["CC_REGULAR"]
         self.assertEqual(cc.shape, (HOURS_PER_YEAR,))
         # Jun 14 2023 (a June over-formation day): measured CC fraction ~0.834
@@ -771,7 +776,8 @@ class ErcotThermalDamAvailabilityTest(unittest.TestCase):
         )
 
         s = ercot_thermal_dam_availability_hourly_series(2023)
-        self.assertEqual(set(s), {"CC_REGULAR", "CT_PEAKER", "ST_GAS"})
+        # Same class scope as the day grain (ERCOT-110 added COAL).
+        self.assertEqual(set(s), {"CC_REGULAR", "CT_PEAKER", "ST_GAS", "COAL"})
         cc = s["CC_REGULAR"]
         self.assertEqual(cc.shape, (HOURS_PER_YEAR,))
         finite = np.isfinite(cc)
@@ -868,6 +874,102 @@ class ErcotThermalDamAvailabilityTest(unittest.TestCase):
             gens, zones, hours=HOURS_PER_YEAR, iso="ERCOT", config=cfg_off, year=2023
         )
         np.testing.assert_array_equal(fa_orphan.availability, fa_off.availability)
+
+    def test_coal_scope_gate(self):
+        """ERCOT-110 coal class-SCOPE gate: with the gate OFF the coal classes
+        are untouched even though the derived artifacts now carry them (so the
+        re-derive cannot move a keeper); with it ON the coal class-HOUR
+        cap-weighted availability lands on the measured DAM fraction."""
+        from market_sim.config.scenarios import ScenarioConfig
+        from market_sim.data.fleet import Generator, generators_to_fleet_arrays
+        from market_sim.data.outages import (
+            ercot_thermal_dam_availability_hourly_series,
+        )
+
+        def coal(i: int, mw: float) -> Generator:
+            # Martin Lake (6146) — a crosswalked DAM coal site
+            # (MLSES_UNIT1/2/3). plant_group is the bare "COAL" the ERCOT bin
+            # file assigns the whole coal fleet; the supply-rank split is
+            # applied only at reporting time, so the overlay must key on COAL.
+            return Generator(
+                unit_id=f"6146_{i}",
+                name=f"coal {i}",
+                zone="Northeast",
+                fuel_type="coal",
+                pmax_mw=mw,
+                pmin_mw=0.0,
+                heat_rate=10.3,
+                vom=4.0,
+                emission_rate_co2=1.0,
+                nox_rate=0.0,
+                eford=0.07,
+                online_year=1978,
+                plant_code=6146,
+                is_campd_bin=True,
+                plant_group="COAL",
+            )
+
+        gens = [coal(1, 800.0), coal(2, 800.0), coal(3, 780.0)]
+        zones = ["Northeast"]
+        pmax = np.array([800.0, 800.0, 780.0])
+        base = dict(
+            weather_year=2023,
+            iso="ERCOT",
+            mode="backcast",
+            ercot_thermal_dam_availability=True,
+            ercot_thermal_dam_availability_hourly=True,
+        )
+        cfg_off = ScenarioConfig(**base)
+        cfg_on = ScenarioConfig(**base, ercot_thermal_dam_availability_coal=True)
+        cfg_bare = ScenarioConfig(weather_year=2023, iso="ERCOT", mode="backcast")
+        kw = dict(hours=HOURS_PER_YEAR, iso="ERCOT", config=None, year=2023)
+        fa_off = generators_to_fleet_arrays(gens, zones, **{**kw, "config": cfg_off})
+        fa_on = generators_to_fleet_arrays(gens, zones, **{**kw, "config": cfg_on})
+        fa_bare = generators_to_fleet_arrays(gens, zones, **{**kw, "config": cfg_bare})
+
+        # Gate OFF: coal is byte-identical to the run with the whole measured
+        # overlay unarmed — the gas-armed keeper is unmoved by the re-derive.
+        np.testing.assert_array_equal(fa_off.availability, fa_bare.availability)
+
+        # Gate ON: the cap-weighted class-HOUR mean equals the measured
+        # fraction on a covered summer-tail hour, and it BINDS (moves off the
+        # statistical stack).
+        t_h = ercot_thermal_dam_availability_hourly_series(2023)["COAL"]
+        h = _hour_of_year(8, 25, 14)
+        got = float((fa_on.availability[:, h] * pmax).sum() / pmax.sum())
+        self.assertAlmostEqual(got, float(t_h[h]), places=3)
+        self.assertNotAlmostEqual(
+            got, float((fa_off.availability[:, h] * pmax).sum() / pmax.sum()), places=3
+        )
+        # Uncovered day (Oct-2023 publication hole): the pre-overlay stack is
+        # kept even with the gate armed.
+        o0 = _hour_of_year(10, 15, 0)
+        np.testing.assert_array_equal(
+            fa_on.availability[:, o0 : o0 + 24],
+            fa_off.availability[:, o0 : o0 + 24],
+        )
+        # Forecast mode is untouched (the statistical stack is the forward
+        # analogue — the G4 mode-aware seam).
+        cfg_fc = ScenarioConfig(
+            weather_year=2023,
+            iso="ERCOT",
+            mode="forecast",
+            ercot_thermal_dam_availability=True,
+            ercot_thermal_dam_availability_hourly=True,
+            ercot_thermal_dam_availability_coal=True,
+        )
+        fa_fc = generators_to_fleet_arrays(gens, zones, **{**kw, "config": cfg_fc})
+        fa_fc_off = generators_to_fleet_arrays(
+            gens,
+            zones,
+            **{
+                **kw,
+                "config": ScenarioConfig(
+                    weather_year=2023, iso="ERCOT", mode="forecast"
+                ),
+            },
+        )
+        np.testing.assert_array_equal(fa_fc.availability, fa_fc_off.availability)
 
     def test_plant_grain_preserves_class_total_and_pins_plants(self):
         """ERCOT-97 plant grain: a crosswalked plant is pinned to its own
