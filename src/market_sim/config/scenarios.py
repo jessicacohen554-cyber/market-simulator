@@ -137,6 +137,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # seam when it is off), so it is dropped from the hash at its default; an
     # armed run enters the key as a distinct scenario.
     "ercot_thermal_dam_availability_coal",
+    # ERCOT-111 measured incremental-heat-rate floor on the COAL econ ramp.
+    # Default-off and byte-identical for every existing config (with the gate
+    # off no offer-curve band is touched), so it is dropped from the hash at its
+    # default; an armed run enters the key as a distinct scenario.
+    "coal_econ_marginal_hr_bound",
     # Gas-offer net-revenue margin mechanism (commit d536e7d): the flag plus its
     # identification anchor. Both are default-off (False / None) and were intended
     # byte-identical for every config that does not arm the mechanism, but they
@@ -4532,6 +4537,37 @@ class ScenarioConfig:
     # 2026-07.md Evidence 2). Default off (all existing keepers unchanged).
     coal_econ_srmc_bound: bool = False
 
+    # Physical floor on the COAL offer curve's ECONOMIC ramp (ERCOT-111).
+    # ``offer_curve_by_group`` band multipliers are price-calibrated, not
+    # literal heat rates, so a band may legitimately carry a MARKUP above its
+    # physical basis. It may not sit BELOW it: an already-committed coal unit's
+    # next MWh physically costs at least its own measured incremental burn x
+    # delivered fuel, and the real fleet never offers incremental energy under
+    # that (ERCOT 2023 60-Day DAM: the price-taker block stops at LSL and every
+    # submitted incremental coal offer above it prices >= ~$16.3/MWh, median
+    # top-of-curve $21). With this on, each coal class's ``econ_low`` /
+    # ``econ_high`` multiplier is clamped UP to the ISO's own measured CAMPD
+    # marginal (incremental) heat rate for COAL --
+    # ``data/raw/reference/<iso>_campd_marginal_hr_summary.csv``,
+    # ``marg_econ_{low,high}_p50``, written by
+    # ``scripts/data/derive_campd_marginal_hr.py`` (ERCOT COAL: 0.886 / 0.898).
+    # Markups above the measured basis pass through unchanged; ``committed`` /
+    # ``mustrun`` (take-or-pay sunk contract) and ``peak`` (scarcity wall) are
+    # out of scope (rule 19).
+    #
+    # REMOVES a fitted degree of freedom rather than adding one, and adds no
+    # tunable: the floor is a measured artifact this repo already derives and
+    # commits, and it regenerates for a forward year from the same CEMS
+    # input-output curves (rule 13). Evidence: the ERCOT keeper's resolved
+    # COAL_PRB ``econ_low`` is 0.400 (base 0.70 plus a fitted -0.30 run delta)
+    # -- 2.2x BELOW the measured 0.886 -- putting ~1.5 GW of coal below the real
+    # fleet's incremental offer floor; with ERCOT-110's measured coal
+    # availability restored, 99% of the model's +11.7 TWh coal over-run is
+    # economic dispatch INSIDE the real fleet's own committed HSL envelope
+    # (results/calibration/FINDING-ercot111-coal-dispatch-economics-2026-07-24.md).
+    # Default off (every existing keeper unchanged).
+    coal_econ_marginal_hr_bound: bool = False
+
     # Bituminous committed-band take-or-pay bid discount. The `_committed`
     # CAMPD coal tranche is the plant's baseload stay-online band; its fuel is
     # covered by the same take-or-pay contract as the `_mustrun` band (MISO
@@ -8192,6 +8228,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_bit_passthrough_gas_mid": 3,
     "coal_bit_passthrough_gas_slope": 3,
     "coal_econ_srmc_bound": 3,
+    "coal_econ_marginal_hr_bound": 3,
     "coal_bit_committed_takeorpay": 3,
     "coal_committed_takeorpay_all": 3,
     "coal_committed_takeorpay_regulated": 3,
