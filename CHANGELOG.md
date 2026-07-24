@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-07-24 — CAMPD outage backfill 2018-2026 (all six ISOs) + EIA-923 non-CAMPD fallback (backup data)
+
+Out-of-training DATA-INTAKE session (owner-authorized, logged in
+`frontend/data/backcast/calibration-complete.json` `intake_log`). No dispatch
+solve, no scoring, no dashboard registration; validated no-LP only.
+
+- **Standard CAMPD unit-outage extracts backfilled to the full 2018-2026 span
+  for every ISO** — `data/raw/campd-unit-outages.csv` (ERCOT) and
+  `campd-unit-outages-{CAISO,PJM,MISO,NYISO,NEISO}.csv`. Previously most ISOs
+  carried only 2023-2025 (ERCOT/PJM 2022+2026), so an out-of-training backcast
+  ran with zero outages. Re-derived via
+  `scripts/data/derive_campd_unit_outages.py --iso <ISO> --years 2018..2026`
+  (default flags; the detector is per-year-independent). Every file's
+  already-committed in-sample rows (2023-2025, plus 2022+2026 for ERCOT/PJM)
+  asserted **byte-identical** before write. CAISO's committed 2023-2025 windows
+  predate the 2026-07-19 phantom-outage detector fix (its regenerate-lane is
+  still open), so they were **preserved verbatim** via a line-level merge —
+  only 2018-2022+2026 were spliced in; no keeper input changed. 2026 is Q1-only
+  (CAMPD Q2-2026 unposted).
+- **New default-OFF EIA-923 fallback** (`--eia923-noncampd-fallback`) for fleet
+  plants ABSENT from CAMPD (non-CEMS units the gross detector is blind to). A
+  month at or below `EIA923_FALLBACK_OUTAGE_RATIO` (0.10) × the plant's own
+  median positive-month net generation becomes a full-stop availability window
+  (a measured physical quantity, per-plant, no residual tuning — rules 13/14).
+  Written to SEPARATE companion files `campd-unit-outages-e923-{ISO}.csv` tagged
+  `capacity_source="eia923"` that the outage loader does **not** read by default
+  (backup only; wiring is a later scored session). 2025/2026 EIA-923 filings lag
+  (2025: 3,427 plants; 2026: Jan-Apr), so many candidates get no window —
+  counts logged per year, never silently dropped.
+
 ## 2026-07-23 — ERCOT-98: 2023 HSL → published NP6 GEO, zonal HSL sidecars, AS-plan CST clock fix
 
 Two measured-input alignment fixes + one new data capability (the 2023
