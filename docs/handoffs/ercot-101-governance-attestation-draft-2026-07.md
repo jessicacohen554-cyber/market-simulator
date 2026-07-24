@@ -8,6 +8,17 @@ the block below:** CALIBRATED-WITH-CAVEATS (verified by
 attestation swapped in — 8 gates PASS, C3a/C3b/C3c ledgered 3/3 within budget, C6
 PASS).
 
+> **Amended 2026-07-24 (ERCOT-107/108).** The 2023 `price_mean` / `price_tail`
+> exception texts below were corrected: their original reasoning rested on "no 2023
+> SCED/RT re-offer disclosure exists", which is **no longer true** — the 2023 RT SCED
+> offer wall was recovered and is on main. The conclusion is unchanged and now rests on
+> stronger evidence: the wall is in the stack and **fit-neutral**, so the bound is
+> **depth, not height**, and ERCOT-107/108's completed 2×2 shows the envelope/ORDC
+> reserve family is bistable with no configuration that recovers the depth without
+> repricing the whole year. See
+> `results/calibration/FINDING-ercot107-108-scarcity-tail-bistable-2026-07-24.md`.
+> No other change; the four governance assertions and the DOF ledger are untouched.
+
 This is a governance sign-off, not a model change. It asserts the four
 machine-cross-checked governance claims and ledgers the three price gates as
 **accepted measured-input limitations** (attributed scarcity-tail bound, evidence
@@ -50,11 +61,11 @@ four attestations below being true and owner-signed.
   },
   "exceptions": [
     {"criterion": "price_mean", "year": 2023,
-     "reason": "C3a -27.1% is ONE residual with C3c-2023: an exact load-weighted band decomposition (ercot101_price_decomp) attributes 97% of the mean-price gap to the >$300 scarcity tail. That tail is set by real-time re-offer conduct (marginal ST_GAS/CT_PEAKER re-offering $500-5000 in RT vs their measured DAM/merit basis; model clears within ~480 MW of $200 at the Aug missed hours). The only 2023 offer corpus on disk is the DAM disclosure, whose energy offers are measured-cheap (wall p50 $327, model tail already $211-1244) - no 2023 SCED/RT re-offer disclosure exists. Unfixable with measured constructions; rule 13 forbids a residual adder."},
+     "reason": "C3a -27.1% is ONE residual with C3c-2023: an exact load-weighted band decomposition (ercot101_price_decomp) attributes 97% of the mean-price gap to the >$300 scarcity tail. The bound is DEPTH, not height. The 2023 RT SCED offer wall is now RECOVERED and IS in the stack (ercot_sced_offer_wall_condbinned.json carries 2022-2025; the prior 'no 2023 SCED corpus' reading was a missing-data bug), and it is FIT-NEUTRAL: keeper $46.76 -> $46.50 zonal model_lw with it (ercot105), ercot103 $41.46 -> $41.21 (ercot107). The model carries ~1.5 GW too much cheap supply at the spike hours, so the real high RT offers never become marginal. ERCOT-107/108 then closed the reserve-side family on a completed 2x2: the on-line-capacity envelope is BISTABLE (in-LP -> 963/181 tail hours with the 1948-h [30,80) band repriced $921-954; not-in-LP -> 69-76/181), and the ORDC total-reserve span is NOT the confound (span off moves +699.7% -> +680.6%, 2.7% of the over-fire, tail count identical). No reachable configuration recovers the depth without repricing the whole year. Attributed measured-input limitation; rule 13 forbids a residual adder."},
     {"criterion": "price_shape", "year": 2023,
      "reason": "C3b 0.531 is the monthly image of the same 2023 >$300 tail (the Aug/Sep heat-wave months carry the miss). Same attributed RT-re-offer-conduct root as C3a-2023; no separate mechanism and no residual tuning."},
     {"criterion": "price_tail", "year": 2023,
-     "reason": "Model reaches 70/181 tail hours, inside the 123/181 intra-hour reach ceiling (ercot99_intrahour_bound; the rest are 15-min transients an hourly LP smooths). Tail is hub-level scarcity (LZ-hub congestion only +$15 at tail), not a zonal-congestion artifact. Residual = the unmeasured 2023 RT re-offer wall; attributed measured-input limitation."},
+     "reason": "Model reaches 70/181 tail hours, inside the 123/181 intra-hour reach ceiling (ercot99_intrahour_bound; the rest are 15-min transients an hourly LP smooths). Tail is hub-level scarcity (LZ-hub congestion only +$15 at tail), not a zonal-congestion artifact. Residual is the offer-DEPTH bound above (the recovered 2023 RT wall is in the stack and fit-neutral - the model's ~1.5 GW of surplus cheap supply at the spike hours keeps the real high offers off the margin), and ERCOT-102/107/108 show the reserve side cannot close it: the MISSED tail hours carry a SLACK reserve dual (~$0.9) under every non-capped variant, and forcing the cap to bind reprices the entire year. Attributed measured-input limitation."},
     {"criterion": "price_tail", "year": 2024,
      "reason": "Measured 2024 SCED online-spare wall (60-Day SCED disclosure) is cheap up to p90 (CC top-net-load-bin p50 $41, p90 $115) - below the model's own repriced wall; only the p95-p99 band ($150-VOLL) is expensive, and it is (i) sample-day-selection-biased (tail-days corpus) and (ii) VOLL-adjacent scarcity re-offers that are the ORDC overlay's domain (double-count if put in energy merit). The wall is already repriced ABOVE the model marginal (depth, not height), and ~1/3 of missed tail hours sit at moderate net load (below the net-load surface's firing bins). Actual tail $1058 is ORDC/conduct-set beyond any merit wall. Attributed bound; extending the ladder is residual-motivated (rules 1/23)."},
     {"criterion": "price_tail", "year": 2025,
