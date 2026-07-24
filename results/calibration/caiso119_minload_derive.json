@@ -1,0 +1,53 @@
+{
+ "2023": {
+  "CC_REGULAR|p05_capwtd_p50": 0.56502620976821,
+  "CC_REGULAR|p10_capwtd_p50": 0.6319282068426734,
+  "CC_REGULAR|n_units": 50,
+  "CC_REGULAR|pmax_gw": 11.50648,
+  "all gas|p05_capwtd_p50": 0.497488075438634,
+  "all gas|p10_capwtd_p50": 0.5418055740048195,
+  "all gas|n_units": 84,
+  "all gas|pmax_gw": 17.799155,
+  "belly_committed_cap_mw_mean": 6871.253118106617,
+  "belly_committed_cap_mw_p50": 6592.389999999999,
+  "belly_gross_output_mw_mean": 4255.440182648402,
+  "belly_load_factor_of_committed": 0.6193106423972042,
+  "published_ra_obligation_mw": 19130.0,
+  "committed_share_of_obligation": 0.3591873036124734,
+  "fleet_pmax_gw": 22.392025
+ },
+ "2024": {
+  "CC_REGULAR|p05_capwtd_p50": 0.5702338778164775,
+  "CC_REGULAR|p10_capwtd_p50": 0.6154322787767519,
+  "CC_REGULAR|n_units": 48,
+  "CC_REGULAR|pmax_gw": 11.613545,
+  "all gas|p05_capwtd_p50": 0.5507406602050056,
+  "all gas|p10_capwtd_p50": 0.6511485209400287,
+  "all gas|n_units": 74,
+  "all gas|pmax_gw": 14.936235,
+  "belly_committed_cap_mw_mean": 5551.918073770492,
+  "belly_committed_cap_mw_p50": 4519.0,
+  "belly_gross_output_mw_mean": 3773.1798724954465,
+  "belly_load_factor_of_committed": 0.679617354283644,
+  "published_ra_obligation_mw": 15566.0,
+  "committed_share_of_obligation": 0.35666954090777925,
+  "fleet_pmax_gw": 21.585949999999997
+ },
+ "2025": {
+  "CC_REGULAR|p05_capwtd_p50": 0.5695784954056111,
+  "CC_REGULAR|p10_capwtd_p50": 0.6261804423666969,
+  "CC_REGULAR|n_units": 48,
+  "CC_REGULAR|pmax_gw": 11.549785,
+  "all gas|p05_capwtd_p50": 0.5601081379372065,
+  "all gas|p10_capwtd_p50": 0.6190935445476407,
+  "all gas|n_units": 60,
+  "all gas|pmax_gw": 13.549785,
+  "belly_committed_cap_mw_mean": 4178.20652283105,
+  "belly_committed_cap_mw_p50": 3514.1025,
+  "belly_gross_output_mw_mean": 2867.0940639269406,
+  "belly_load_factor_of_committed": 0.6862020937117939,
+  "published_ra_obligation_mw": 15566.0,
+  "committed_share_of_obligation": 0.26841876672433834,
+  "fleet_pmax_gw": 21.484965
+ }
+}
