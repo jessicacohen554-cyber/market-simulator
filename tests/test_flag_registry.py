@@ -43,6 +43,8 @@ COAL_EXPECTED_DEFAULTS = {
     "coal_sync_srmc_tranche": False,
     "coal_bit_sigmoid": False,
     "coal_econ_srmc_bound": False,
+    # ERCOT-111 measured coal econ-ramp incremental-HR floor.
+    "coal_econ_marginal_hr_bound": False,
     "coal_lignite_sigmoid": False,
     "coal_sub_sigmoid": False,
     "coal_waste_sigmoid": False,
@@ -62,6 +64,7 @@ COAL_EXPECTED_SOLVE_PARAMS = {
     "coal_sync_srmc_tranche",
     "coal_bit_sigmoid",
     "coal_econ_srmc_bound",
+    "coal_econ_marginal_hr_bound",
 }
 
 
