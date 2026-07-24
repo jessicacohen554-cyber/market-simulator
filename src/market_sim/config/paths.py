@@ -201,6 +201,18 @@ RAW_DIR: Path = RAW_DATA_DIR
 CLEAN_DIR: Path = DATA_ROOT / "data" / "clean"
 DICTIONARY_DIR: Path = DATA_ROOT / "data" / "dictionary"
 
+# ---------------------------------------------------------------------------
+# Results tree (derived, disposable) and its ensemble subtree. Both were
+# previously reached with cwd-relative literals (``Path("results")`` in
+# ``results/cache.py``, ``Path("results/ensemble")`` in ``matrix.py``), which
+# silently forks the results tree when the process runs from a directory other
+# than the repo root. Rooting them here (under DATA_ROOT, = REPO_ROOT by
+# default, so byte-identical for the normal invocation) removes that fork and
+# gives one place to redirect the whole tree. Not input data — disposable
+# solve/ensemble output — but co-located with DATA_ROOT for a single override.
+RESULTS_ROOT: Path = DATA_ROOT / "results"
+ENSEMBLE_DIR: Path = RESULTS_ROOT / "ensemble"
+
 # Committed backcast-dashboard payloads (the measured, reproducible source the
 # structural-error prior fits on): per-run gzip+base64 run payloads under
 # ``runs/`` and per-ISO/per-year actual "bench" totals under ``bench/``.
@@ -209,9 +221,7 @@ FRONTEND_BACKCAST_DIR: Path = DATA_ROOT / "frontend" / "data" / "backcast"
 # Committed fitted structural-prior artifacts (one JSON per prior version):
 # the auditable record of each PB-3 fit, so a re-fit (e.g. W3-P1 swapping the
 # stale carbon-priced statmode inputs) lands as a new versioned file.
-STRUCTURAL_PRIOR_ARTIFACT_DIR: Path = (
-    DATA_ROOT / "results" / "ensemble" / "structural-prior"
-)
+STRUCTURAL_PRIOR_ARTIFACT_DIR: Path = ENSEMBLE_DIR / "structural-prior"
 
 
 def clean_path(
