@@ -1,0 +1,13 @@
+{
+  "id": "2026-07-24-ercot108-envelope-in-lp",
+  "label": "ercot108 envelope in lp",
+  "date": "2026-07-24",
+  "shorthand": "ercot108-envelope-in-lp",
+  "definition": "ERCOT-108: envelope as IN-LP supply cap + ORDC total-reserve span OFF (measured AS plan is the only reserve demand) + recovered RT wall, 2023",
+  "years": [
+    2023
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-24-ercot108-envelope-in-lp.js",
+  "bundle": "results/calibration/ercot108_envlp_spanoff_rtwall"
+}
