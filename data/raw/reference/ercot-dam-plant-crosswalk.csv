@@ -11,6 +11,32 @@ DUKE,CC_REGULAR,520.0,DUKE_CC1,QCALP,55545,Hidalgo Energy Center,Unknown,551.3,0
 BRAUNIG,CC_REGULAR,518.0,BRAUNIG_CC1,QCPSE,7512,Arthur Von Rosenberg,Unknown,575.0,0.901,forensic_seed,,0,1
 SANDHSYD,CC_REGULAR,300.0,SANDHSYD_CC1,QAEN,7900,Sand Hill,South_Central,696.4,0.431,token_prefix,0.736,1,1
 VICTORIA,CC_REGULAR,288.0,VICTORIA_CC1,QTENS4,3443,Victoria,South,376.9,0.764,token_prefix,0.852,1,1
+LEG_LEG_G2,COAL,857.0,LEG_LEG_G2,QNRGTX,298,Limestone,North,1849.8,0.463,forensic_seed,,0,1
+OGSES_UNIT1A,COAL,855.0,OGSES_1,QLUMN,6180,Oak Grove (TX),North,1795.4,0.476,forensic_seed,,0,1
+OGSES_UNIT2,COAL,855.0,OGSES_2,QLUMN,6180,Oak Grove (TX),North,1795.4,0.476,forensic_seed,,0,1
+MLSES_UNIT1,COAL,835.0,MLSES_UNIT1,QLUMN,6146,Martin Lake,Northeast,2379.6,0.351,forensic_seed,,0,1
+MLSES_UNIT2,COAL,820.0,MLSES_UNIT2,QLUMN,6146,Martin Lake,Northeast,2379.6,0.345,forensic_seed,,0,1
+MLSES_UNIT3,COAL,820.0,MLSES_UNIT3,QLUMN,6146,Martin Lake,Northeast,2379.6,0.345,forensic_seed,,0,1
+LEG_LEG_G1,COAL,803.0,LEG_LEG_G1,QNRGTX,298,Limestone,North,1849.8,0.434,forensic_seed,,0,1
+CALAVERS_JKS2,COAL,769.0,CALAVER_JKS2,QCPSE,7097,J K Spruce,South_Central,1488.5,0.517,forensic_seed,,0,1
+WAP_WAP_G5,COAL,667.0,WAP_WAP_G5,QNRGTX,3470,W A Parish [COAL],Houston,2443.0,0.273,forensic_seed,,0,1
+WAP_WAP_G6,COAL,663.0,WAP_WAP_G6,QNRGTX,3470,W A Parish [COAL],Houston,2443.0,0.271,forensic_seed,,0,1
+COLETO_COLETOG1,COAL,655.0,COL_COLETOG1,QLUMN,6178,Coleto Creek,South,622.4,1.052,forensic_seed,,1,1
+WAP_WAP_G8,COAL,610.0,WAP_WAP_G8,QNRGTX,3470,W A Parish [COAL],Houston,2443.0,0.25,forensic_seed,,0,1
+WAP_WAP_G7,COAL,572.0,WAP_WAP_G7,QNRGTX,3470,W A Parish [COAL],Houston,2443.0,0.234,forensic_seed,,0,1
+CALAVERS_JKS1,COAL,510.0,CALAVER_JKS1,QCPSE,7097,J K Spruce,South_Central,1488.5,0.343,forensic_seed,,0,1
+SCES_UNIT1_J01,COAL,439.8,SCES_UNIT1,QSANDY,56611,Sandy Creek Energy Station,South_Central,936.0,0.47,forensic_seed,,0,1
+FPPYD2_FPP_G3,COAL,429.0,FPPYD_FPP_G3,QLCRA,6179,Fayette Power Project,South_Central,1690.0,0.254,forensic_seed,,0,1
+SANMIGL_G1,COAL,388.0,SAN_SANMIGG1,QSTEC,6183,San Miguel,South,410.0,0.946,forensic_seed,,0,1
+FPPYD1_FPP_G1_J02,COAL,298.0,FPPYD_FPP_G1,QAEN,6179,Fayette Power Project,South_Central,1690.0,0.176,forensic_seed,,0,1
+FPPYD1_FPP_G2_J02,COAL,298.0,FPPYD_FPP_G2,QAEN,6179,Fayette Power Project,South_Central,1690.0,0.176,forensic_seed,,0,1
+FPPYD1_FPP_G1_J01,COAL,297.0,FPPYD_FPP_G1,QLCRA,6179,Fayette Power Project,South_Central,1690.0,0.176,forensic_seed,,0,1
+FPPYD1_FPP_G2_J01,COAL,297.0,FPPYD_FPP_G2,QLCRA,6179,Fayette Power Project,South_Central,1690.0,0.176,forensic_seed,,0,1
+SCES_UNIT1_J02,COAL,233.2,SCES_UNIT1,QBRZSC;QRIESE,56611,Sandy Creek Energy Station,South_Central,936.0,0.249,forensic_seed,,0,1
+SCES_UNIT1_J03,COAL,155.8,SCES_UNIT1,QSANDY,56611,Sandy Creek Energy Station,South_Central,936.0,0.166,forensic_seed,,0,1
+TNP_ONE_TNP_O_1,COAL,155.0,TNP_TNP_O_1,QLONE2,7030,Major Oak Power,North,349.2,0.444,forensic_seed,,0,1
+TNP_ONE_TNP_O_2,COAL,155.0,TNP_TNP_O_2,QLONE2,7030,Major Oak Power,North,349.2,0.444,forensic_seed,,0,1
+SCES_UNIT1_J04,COAL,104.0,SCES_UNIT1,QLCRA,56611,Sandy Creek Energy Station,South_Central,936.0,0.111,forensic_seed,,0,1
 VICTPORT_CTG01,CT_PEAKER,47.0,VICTPORT_RN,QTENSK,61966,Victoria Port Power II LLC,South,100.0,0.47,token_prefix,0.75,1,1
 VICTPORT_CTG02,CT_PEAKER,47.0,VICTPORT_RN,QTENSK,61966,Victoria Port Power II LLC,South,100.0,0.47,token_prefix,0.75,1,1
 VICTPRT2_UNIT1,CT_PEAKER,46.0,VICTPORT_RN,QSHEL2,61966,Victoria Port Power II LLC,South,100.0,0.46,token_prefix,0.746,1,1
