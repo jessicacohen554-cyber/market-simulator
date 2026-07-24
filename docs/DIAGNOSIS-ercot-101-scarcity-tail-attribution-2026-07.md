@@ -1,5 +1,15 @@
 # ERCOT-101 — the 2023–2025 scarcity-tail residual is an attributed measured-input bound, not a fixable miss
 
+> **ERCOT-102 update (2026-07-24):** the owner reopened this to test whether the
+> tail is a structural **AS-holdout** miss (measured AS under-held out of the
+> energy stack) rather than an RT-conduct bound. It is not — the attributed bound
+> **stands, sharpened**. The keeper co-opt already requires the **full measured
+> ASPLANNP433 plan** (RegUp+RRS+ECRS+NonSpin) and holds RegUp/RRS/ECRS **rigidly
+> at VOLL**; at the 2023 missed tail hours that holdout is **SLACK (reserve dual
+> ≈ $0)**, so holding more AS out cannot reprice it, and forcing it to bind
+> (headroom cap) over-fires (ercot41/43). See
+> `docs/DIAGNOSIS-ercot-102-as-holdout-refutation-2026-07.md`.
+
 **Session 2026-07-24. Keeper: `2026-07-23-ercot100-netrev-margin-keeper`
 (NOT-YET, C6 unattested). Successor to ERCOT-100 (net-revenue-margin offer form
 promoted to keeper).** This lane closes the measurable 2024 tail question,
