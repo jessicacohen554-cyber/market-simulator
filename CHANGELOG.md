@@ -14,11 +14,14 @@ solve, no scoring, no dashboard registration; validated no-LP only.
   `scripts/data/derive_campd_unit_outages.py --iso <ISO> --years 2018..2026`
   (default flags; the detector is per-year-independent). Every file's
   already-committed in-sample rows (2023-2025, plus 2022+2026 for ERCOT/PJM)
-  asserted **byte-identical** before write. CAISO's committed 2023-2025 windows
-  predate the 2026-07-19 phantom-outage detector fix (its regenerate-lane is
-  still open), so they were **preserved verbatim** via a line-level merge —
-  only 2018-2022+2026 were spliced in; no keeper input changed. 2026 is Q1-only
-  (CAMPD Q2-2026 unposted).
+  asserted **byte-identical** before write, for every ISO except CAISO. CAISO's
+  committed 2023-2025 windows were on the pre-2026-07-19 phantom-outage detector
+  (its regenerate-lane was still open); on explicit owner instruction CAISO was
+  **re-derived in full** with the current detector like the other five ISOs, so
+  its 2023-2025 rows changed (2023 439→640, 2024 405→622, 2025 509→733). This
+  updates the CAISO keeper's in-sample outage input and closes the regenerate-
+  lane — flagged for a CAISO re-audit/re-solve (not solved or scored here). 2026
+  is Q1-only (CAMPD Q2-2026 unposted).
 - **New default-OFF EIA-923 fallback** (`--eia923-noncampd-fallback`) for fleet
   plants ABSENT from CAMPD (non-CEMS units the gross detector is blind to). A
   month at or below `EIA923_FALLBACK_OUTAGE_RATIO` (0.10) × the plant's own
