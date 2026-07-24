@@ -209,3 +209,61 @@ holdout ladder + 2022 one-shot remain a future owner-authorized session, G-19
 HOLD in force regardless). MISO out-of-training intake still at zero; the
 equivalency-register MISO section stays open (no intake this session). Quarantine
 untouched (no out-of-training year read/derived/solved). Next number: miso-83.
+
+## 2026-07-23 — miso-83: gas-offer net-revenue margin A/B — REJECTED (C3b degrades all 3 years), margin stays default-off
+
+Charter rollout of the `gas_offer_net_revenue_margin` mechanism (NEISO keeper
+`neiso-61`) to MISO. **Identification already landed** (branch
+`claude/gas-offer-net-revenue-isos-1px5vg`, merged to main): MISO `phys_*` keys
+on every identifiable gas class of `offer_curve_by_group`
+(`pipeline/backcast_config.py`, cited to the measured
+`data/raw/reference/miso_campd_marginal_hr_summary.csv` p50s) + anchor **3.0492
+$/MMBtu** (`GAS_OFFER_MARGIN_ANCHOR_BY_ISO` = mean of the keeper delivered-gas
+overlay 2023–2025 = 2.8392 / 2.4893 / 3.8190; per-plant EIA-923 monthly level +
+mean-preserving daily shape). Default-OFF and byte-inert at the fleet level; the
+BASE arm (flag off) reproduces the `miso-81-phantom-outage` keeper up to
+environmental alternate-optimal drift only (Δmean −0.33/−0.36/−0.42 $/MWh ≈ −1 %,
+this box's kernel-string differs from the keeper's solve host — the A/B is
+BASE-vs-MARGIN on the *same* box so the drift is common-mode and cancels).
+
+**Structural confirmation (flag-on).** The reform reduces EXACTLY to the
+registered band multipliers at anchor gas: the mc-side compression fires on
+591 / 597 / 595 gas tranches (2023 / 2024 / 2025) at anchor 3.0492 $/MMBtu
+(median fixed margin ≈ 9.7 $/MWh, max 260.4), the markup gas-elasticity going
+1 → 0 (fuel-scaled multiplier → fixed $/MWh margin). Two-sided as designed:
+below anchor (2023, 2024) the margin FIRMS the offer up; above anchor (2025) it
+COMPRESSES it down.
+
+A/B: same-HEAD `replay_keeper` of the `miso81_phantom_outage` recipe — BASE arm
+(flag off) vs MARGIN arm (single delta `gas_offer_margin=true`), full 2023–2025,
+RT-scored (`scripts/probes/netrev_margin_ab.py`; bundles `miso_netrev_base` /
+`miso_netrev_margin`; per-year `--reuse-solved` legs on this 15 GB box, one
+fresh year per process — rule 12):
+
+| year | gas vs anchor | C3a base→margin | C3b dur-NRMSE base→margin |
+|---|---|---|---|
+| 2023 | 2.84 (<, firm)     | −1.8 → −1.3 % | 0.6009 → **0.6033** (worse) |
+| 2024 | 2.49 (≪, firm)     | −7.6 → −6.6 % | 0.6243 → **0.6293** (worse) |
+| 2025 | 3.82 (>, compress) | −13.0 → −13.4 % | 1.0634 → **1.0737** (worse) |
+
+**Verdict: NOT a keeper candidate — margin stays default-off, finding ledgered
+(rule 1 + the design's pre-registered refutation criteria).** The mechanism
+FAILS the keeper bar "≥ C3b every year" in ALL THREE years (CAISO `caiso-112`
+failed 2/3; MISO is worse). Root cause (structural, not a fit miss): MISO's
+residual is the *opposite* shape to the NEISO winter-overshoot the mechanism was
+built for. MISO's cheap bulk (<$40, ~7.6 k h/yr) is already OVER-priced (BASE
+gap +3 to +5 $/MWh) while the mid/upper bands and scarcity tail are UNDER-priced
+(the ledgered {C3a-2025, C3c} frontier — `miso-82`; >$300 gap −336/−438/−485).
+In the two below-anchor years the margin firms the offer, lifting the
+already-too-high trough further; in the above-anchor year it compresses,
+pulling the mid bands (80–300, already under actual) further down and NOT filling
+the tail (>300 gap unchanged at −335.8/−437.6/−486.5). Either direction moves the
+duration curve the wrong way — the two-sided form is confirmed working, it is
+simply the wrong lever for MISO's residual. No tuning attempted (pre-registered
+refutation, rule 1). The identification structure is KEPT as a registered,
+default-off option (already on main); closing MISO's mid/scarcity tail is the
+separate ledgered frontier lane (`miso-82`), not an offer-form change. 2022
+holdout NOT touched (only keeper candidates re-check it, and MISO carries no
+calibration-complete marker — owner declined at `miso-82`; quarantine untouched).
+
+Next number: miso-84.
