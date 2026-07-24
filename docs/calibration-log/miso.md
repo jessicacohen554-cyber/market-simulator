@@ -487,3 +487,128 @@ marker; only 2023/2024/2025 were solved, scored or read. The margin's effect is
 scored in every one of the three training years (the miso-83 A/B table), so the
 LOO check has no in-sample-gain/held-out-degradation asymmetry to hide. Next
 number: miso-87.
+
+## 2026-07-24 — miso-87: root-cause session (no solve). C1 localized to TWO per-plant input defects; C3b localized to the 2025 summer BODY (only ~38 % ledgered); the cross-fuel outage-attribution lever is REFUTED AT CHARTER. Keeper unchanged.
+
+**Owner call (2026-07-24).** Lane B (root-cause the two NOT-YET crossings,
+structural only) **plus** the Lane A charter, after the like-for-like level check
+below showed Lane A's premise was an artifact. No LP was solved this session, so
+nothing is registered and the keeper stays
+**`2026-07-24-miso-86-netrev-margin`**, determination **NOT-YET**, unchanged.
+Everything below is read off committed artifacts (the keeper's `hourly/`
+sidecars, run payload, `bench/MISO/*.json.gz`) plus the measured source records.
+
+**C1 `CC_REGULAR` 2023 −8.62 TWh — NOT the offer bands, NOT the tranche split,
+NOT availability.** The miss is per-plant and two plants carry it, plant-matched
+on both sides of the scorecard:
+
+| plant (ORIS) | zone | MW | CFm/CFa 2023 | 2024 | 2025 | 3-yr ΔTWh |
+|---|---|---|---|---|---|---|
+| Riverside Energy Center (55641) | MISO-East | 675 | **0.01**/0.60 | **0.05**/0.57 | **0.01**/0.56 | **−9.87** |
+| Cottonwood Energy Co LP (55358) | MISO-South | 1434 | 0.32/0.47 | 0.27/0.48 | **0.05**/0.37 | **−8.42** |
+
+Together **−18.30 TWh / 3 yr (−6.10 TWh/yr)** against a ±8.0 TWh band, while the
+rest of the CC fleet brackets the actuals in both directions (Montgomery County
++4.07, Union Power +3.97, Holland +2.61) — not the signature of a class-wide
+offer error. Availability is ruled out directly: Riverside's CAMPD unit-outage
+derate is **mean 0.687**, so the LP can offer it two-thirds of the year and
+declines. Both defects live in one derived table,
+`data/raw/_processed-legacy/bin_assignments_MISO.csv`:
+
+1. **Riverside `Plant_Avg_HR_MMBtu_MWh = 14.964`** (solve fleet: 8 tranches,
+   HR 13.77→15.68) against a rest-of-fleet min/median/max of **6.25 / 7.41 /
+   8.89**, on a plant EIA-860 records as three NGCC generators in service
+   **2004**. Physically unattainable for any CC; it prices Riverside near
+   $45/MWh where comparable MISO CCs offer ~$20/MWh — above most MISO coal.
+2. **Cottonwood `Nameplate_MW = 580.4`** against an EIA-860 operable nameplate of
+   **1433.6 MW** (ratio 0.405; the only MISO CC >400 MW below 75 %). Self-refuting
+   inside the model's own inputs: 580.4 MW × 8760 h = **5.084 TWh/yr** while the
+   benchmark's CAMPD series for that plant records **5.866 TWh in 2023**.
+
+Neither claim appeals to a residual (rules 1/10 not engaged); each is refuted by
+a measured record independent of model output, so **rule 11 applies in the
+forward direction** — the accurate data should replace these estimates whatever
+it does to the fit. Expected direction is in fact *against* C3b (restoring
+~1.4 GW of under-offered CC pushes prices down, and C3b-2025 is already a
+low-price miss), so the two crossings are **not** jointly closable by this fix
+and it must not be adopted on the expectation that it improves the determination.
+
+**Systemic gap.** `cc_capacity_reconcile_<ISO>.csv` guards CC capacity in ONE
+direction only — it trims plants whose CAMPD-derived pmax *exceeds* the EIA-860
+trusted bound (seven MISO plants trip it every fleet build; 1.03 GW removed from
+55380 alone) with no counterpart for capacity far *below* nameplate, and there is
+**no plausibility guard on the derived heat rate at all**. Both guards are
+data-quality checks against primary sources, not residual-tuned parameters, so
+they are rule-23 admissible.
+
+**Provenance still OPEN.** Neither 55641 nor 55358 appears in any
+`data/raw/campd-unit-level/*.parquet` in the repo, yet both carry
+`Committed_Source = campd` in the bin table and both have a committed benchmark
+CAMPD series — Riverside's itself impossible (7.989 TWh on 674.9 MW = CF
+**1.35**). The derive script that wrote `bin_assignments_MISO.csv` read a CAMPD
+source this session could not locate; that source is where both errors
+originate. Auditing it, re-deriving the table citing the source-data correction
+(rule 23), adding the two symmetric guards, and a full 2023–2025 re-solve is the
+next session's work. Finding:
+`results/calibration/FINDING-miso87-c1-per-plant-input-defects-2026-07.md`;
+probe `scripts/probes/_miso87_c1_plant_defects.py`.
+
+**C3b 2025 NRMSE 0.204 — a monthly LEVEL miss, and the ledger covers only part
+of it.** C3b is a 12-point monthly load-weighted metric (not the hourly duration
+curve). 2025 decomposes to **June −$17.7 (31 % of Σ Δ²) + July −$18.5 (34 %)** =
+**65 %**; with Jan and Sep, 85 %. Every month but May is negative. The passing
+years are diffuse by comparison (2023 no month >27 %, both signs; 2024 peaks 28 %).
+
+The C3a-2025 ledger asserts the annual-mean miss is "the arithmetic tail of the
+C3c residual, NOT an independent level error". At monthly resolution that is only
+**partly** true. Indiana-Hub RT 2025's 88 hours >$200 do cluster where C3b hurts
+(Jun 21, Jul 13, Sep 8, Jan 16) but contribute only **+$7.0 of the −$17.7** June
+gap and **+$5.5 of the −$18.5** July gap (≈38 % / ≈30 %). Censor the actual at
+$200 and June still reads $50.4 vs the model's $39.7. So **$11–13/MWh per summer
+month sits in the BODY, below $200 — outside the C3c ledger's scope, and
+currently unledgered.**
+
+Ruled out as causes: the gas anchor (2025 summer citygate Jun $2.72 / Jul $2.95 /
+Aug $2.62 is *below* the 3.0492 anchor, so the margin's below-anchor firming
+raises summer CC offers — it cannot produce a low-price miss) and the C1 defects
+above (they push the same months further down). **Do not close this by widening
+the C3c ledger, with a summer multiplier, or with an offer adder** (rules 1/10).
+Needs its own charter on 2025 summer body price formation, LOO-scored within
+2023–2025. Finding:
+`results/calibration/FINDING-miso87-c3b-summer-2025-body-2026-07.md`.
+
+**Cross-fuel outage attribution (the miso-85/86 open lever) — REFUTED AT
+CHARTER, before any solve.** Two independent grounds
+(`scripts/probes/_miso87_outage_attribution_feasibility.py`):
+
+1. *The motivating residual is a category mismatch.* CAMPD's 27.9 GW is
+   all-cause and thermal-only; the record's 21.8 GW is unplanned-only and
+   whole-fleet. On a like-for-like all-cause footing, against MISO's actual
+   thermal share (**129.7–136.8 GW of 212.6 GW registered = 0.610–0.644**,
+   EIA-860 operable BA=MISO), the reconciling share is **0.655 / 0.650 / 0.518**
+   for 2023/24/25 — the two records agree to **~1–2 GW** in 2023–2024, and the
+   discrepancy **flips sign** in 2025 (published implies 4.5–6 GW *more* thermal
+   offline than CAMPD measures). A quantity that is ~zero in two years and
+   reverses in the third is the aggregate record's resolution limit, not a
+   forward-reproducible signal (rule 13).
+2. *No admissible key.* MISO publishes region × cause only — no fuel identity and
+   no thermal share. The only per-fuel key in evidence is CAMPD itself, which
+   makes the mechanism reduce algebraically to
+   `CAMPD_shape × (assumed thermal share ÷ actual share)` — a **scalar level
+   knob on an unmeasured assumption** (rule 10; rule 20 would force it into
+   `ScenarioConfig` as exactly that). A non-CAMPD key (GADS/EIA-860 class rates)
+   fixes the key but then does not need MISO's total at all — a different
+   mechanism, different charter.
+
+Lever **closed**. `miso_native_outage_source` posture is unchanged: wired,
+default-off, cause set settled at the UNPLANNED components, all-cause still
+refuted on physical feasibility (miso-85). What remains genuinely open and is
+*not* this mechanism: the **CT coverage hole** — 25.0 GW of MISO peaking capacity
+(CT_PEAKER 22.4 + CT_CHP 2.6) carrying CAMPD unavailability of exactly 0.000,
+modelled today only by the statistical WEFOR/POF layer. Own charter, own
+evidence. Finding:
+`results/calibration/FINDING-miso87-cross-fuel-attribution-refuted-2026-07.md`.
+
+**Rule-22 posture.** Holdouts untouched — MISO carries no calibration-complete
+marker; only 2023/2024/2025 were solved, scored or read this session, and in fact
+no solve was run at all. Next number: miso-88.
