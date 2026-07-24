@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-24-pjm-119-overlay-restore",
+  "label": "pjm 119 overlay restore",
+  "date": "2026-07-24",
+  "shorthand": "pjm-119-overlay-restore",
+  "definition": "pjm-119: the pjm-118 keeper recipe replayed VERBATIM with the data/clean transfer-interface-limits + ramp-capability partitions PRESENT, so the recipe's own pjm_east_interface_cut / pjm_measured_interface_limits / measured_ramp_capability actually apply. Only delta vs the registered keeper is the availability of those derived inputs (finding docs/FINDING-pjm119-silent-overlay-degradation-2026-07.md).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-24-pjm-119-overlay-restore.js",
+  "bundle": "results/calibration/pjm119_overlay_restore"
+}
