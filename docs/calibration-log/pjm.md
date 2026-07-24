@@ -103,3 +103,66 @@ measured p50, the repricing is structural). 2022 holdout NOT touched (PJM has no
 calibration-complete marker). Both arms registered on the dashboard.
 
 Next number: pjm-118.
+
+## 2026-07-24 — pjm-118: offer-level retune around the net-revenue-margin structure — C1 CLOSED, C3a 2025 found STRUCTURAL (NOT-YET)
+
+Level-tuning phase promised by the pjm-117 keeper note ("open model misses to
+close by re-tuning the offer-curve multiplier LEVELS around the fixed-margin
+structure — the active next phase"). Continues session
+`claude/pjm-gas-offer-netrev-ab-i9k1cz`. Structure decision UNCHANGED (owner,
+rule 1): `gas_offer_net_revenue_margin=True`, anchor 3.3483 $/MMBtu, NOT reverted.
+
+**What moved (rule 24, on-registry `offer_curve_by_group`; zero NEW free params).**
+Three band LEVELS re-tuned around the fixed-margin structure:
+- `CC_REGULAR` econ_low **1.0 → 0.96** — the fixed margin firmed CC's efficient
+  low-load offer ~$1/MWh too high at below-anchor gas, pricing CC out of merit.
+- `CT_PEAKER` econ_low **1.05 → 1.25**, econ_high **1.27 → 1.65** — firms the CT
+  part-load offer to curb the high-gas 2025 CT over-run.
+
+No price adder, no pinning, no off-registry channel; the anchor is the unchanged
+measured delivered-gas p50.
+
+**Result — C1 fuel-mix CLOSED, honestly scored (rebuilt `system.parquet` so C3a
+scores all years):**
+
+| year | CC_REGULAR (was) | CT_PEAKER (was) | C3a mean LMP |
+|---|---|---|---|
+| 2023 | 319.1 PASS (316.8 **FAIL**) | 22.9 PASS | +5.0% PASS |
+| 2024 | 333.3 PASS | 23.2 PASS | −3.3% PASS |
+| 2025 | 333.3 PASS | 30.6 PASS (32.0 **FAIL**) | **−10.5% FAIL** |
+
+C1 8/8 PASS (both the CC-2023 and the CT-2025 over-run closed); C2/C3b/C4/C5a/C7/C8
+PASS. **Determination NOT-YET** — load-bearing C3a 2025 (−10.5%) and supporting
+C3c scarcity-tail (2024/2025) remain.
+
+**KEY FINDING — the 2025 price miss is STRUCTURAL, not offer-level (rule 1).**
+A four-run offer-level sweep (baseline + candidates A/B/C/D) proves the offer
+surface cannot close C3a 2025:
+- The undershoot is entirely SUMMER scarcity — monthly model-vs-actual LMP: Jan
+  −1.0 / Feb −2.1 (fine) but **Jun −19.9 / Jul −9.8 / Sep −8.1 / Oct −6.5 $/MWh**.
+- The model's 2025 price tail caps at **$324 (48 h > $100)** vs real summer
+  scarcity (**59 h > $200**).
+- Levers tested: raising CC `econ_high` lifts 2025 price but BREAKS C1 CC-2023
+  (firms CC in low-gas hours, −7.5 TWh); lowering CC `econ_low` fixes C1 but
+  FLOODS 2025 CC and lowers price (−11.0%); raising CC-`peak` + CT offers is
+  **INERT** on 2025 (+0.02 $/MWh; tail p99 82.6→84.6 unchanged) because the
+  marginal unit in the undershooting hours is not a peaker.
+- Root cause: too much cheap supply (margin-compressed high-gas gas offers +
+  imports, 34% import-hours vs 1.7% actual) meets summer peaks, so scarcity never
+  forms → a **structural supply-adequacy / scarcity-formation** issue. Found, not
+  faked with an adder.
+
+**Consequence.** Offer-level tuning for PJM is AT FRONTIER: C1 is closeable, C3a
+2025 is not. Finishing PJM to CALIBRATED needs a **structural** session on the
+summer-scarcity / import-seam supply-adequacy lane (why cheap supply clears the
+June/July 2025 peaks instead of forming scarcity), NOT more offer tuning. Opened
+as the standing PJM open root cause.
+
+Promoted as the PJM keeper (supersedes pjm-117): same structure + closed C1,
+strictly more dispatch-faithful; C3a 2025 / C3c reclassified from "close by level
+tuning" to "structural, needs a structural session." 2022 holdout NOT touched
+(PJM has no calibration-complete marker). Both control (pjm-118 replaces the
+inherited pjm-115 levels; the margin baseline reproduced pjm-117 exactly:
+CC_REGULAR 2023 316.8, C3a 2025 −10.6%).
+
+Next number: pjm-119.
