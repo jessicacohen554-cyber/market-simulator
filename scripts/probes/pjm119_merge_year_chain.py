@@ -19,6 +19,8 @@ This restores the aggregates without re-solving:
   inputs (EIA-923 class totals x measured host shares, never this solve's
   dispatch — see its docstring), so the rebuild is byte-identical to what a
   single 3-year process would have written.
+* ``run_config.json``'s ``calibration_flags["years"]`` -> the same full span (the
+  invocation echo the chain also leaves single-year; keeper-audit E3).
 
 Then run ``run_calibration_full.py --rebuild-benchmark <bundle>`` (which reads
 ``meta["years"]``, hence the ordering) so the shared EIA-923/930/CAMPD
@@ -101,9 +103,23 @@ def merge(bundle: Path) -> list[int]:
             bundle / "btm.parquet", index=False
         )
 
-    # 3. meta years last — --rebuild-benchmark reads them.
+    # 3. run_config.json's calibration_flags["years"] — the invocation echo the
+    # chain also leaves showing only its LAST year. audit_keepers E3 warns on the
+    # meta/flags mismatch, and legitimacy_diagnostics merges these flags, so a
+    # stale echo can misread a merged chain as single-year. indent=2 and no
+    # trailing newline match what the solver writes.
+    rc_path = bundle / "run_config.json"
+    if rc_path.exists():
+        rc = json.loads(rc_path.read_text())
+        flags = rc.get("calibration_flags")
+        if isinstance(flags, dict) and sorted(flags.get("years") or []) != years:
+            flags["years"] = years
+            rc_path.write_text(json.dumps(rc, indent=2))
+
+    # 4. meta years last — --rebuild-benchmark reads them. indent=2 matches
+    # what the solver writes, so a re-merge never churns formatting.
     meta["years"] = years
-    meta_path.write_text(json.dumps(meta, indent=1) + "\n")
+    meta_path.write_text(json.dumps(meta, indent=2) + "\n")
     return years
 
 
