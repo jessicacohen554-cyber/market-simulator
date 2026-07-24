@@ -1,0 +1,27 @@
+site,plant_code,plant_name,qse,settlement_point,eia860_county,p98_rating_mw,confidence,note
+LEG_LEG_G1,298,Limestone,QNRGTX,LEG_LEG_G1,Limestone Co TX,803.0,unambiguous,LEG = Limestone Electric Generating (NRG/Texas Genco); units 1-2 p98 803+857 = 1660 MW vs model 1849.8 nameplate
+LEG_LEG_G2,298,Limestone,QNRGTX,LEG_LEG_G2,Limestone Co TX,857.0,unambiguous,LEG = Limestone Electric Generating (NRG/Texas Genco); units 1-2 p98 803+857 = 1660 MW vs model 1849.8 nameplate
+OGSES_UNIT1A,6180,Oak Grove (TX),QLUMN,OGSES_1,Robertson Co TX,855.0,unambiguous,OGSES = Oak Grove Steam Electric Station (Vistra/Luminant QSE QLUMN); units p98 855+855 = 1710 MW vs model 1795.4
+OGSES_UNIT2,6180,Oak Grove (TX),QLUMN,OGSES_2,Robertson Co TX,855.0,unambiguous,OGSES = Oak Grove Steam Electric Station (Vistra/Luminant QSE QLUMN); units p98 855+855 = 1710 MW vs model 1795.4
+MLSES_UNIT1,6146,Martin Lake,QLUMN,MLSES_UNIT1,Rusk Co TX,835.0,unambiguous,MLSES = Martin Lake Steam Electric Station (Luminant); units 1-3 p98 835+820+820 = 2475 MW vs model 2379.6
+MLSES_UNIT2,6146,Martin Lake,QLUMN,MLSES_UNIT2,Rusk Co TX,820.0,unambiguous,MLSES = Martin Lake Steam Electric Station (Luminant); units 1-3 p98 835+820+820 = 2475 MW vs model 2379.6
+MLSES_UNIT3,6146,Martin Lake,QLUMN,MLSES_UNIT3,Rusk Co TX,820.0,unambiguous,MLSES = Martin Lake Steam Electric Station (Luminant); units 1-3 p98 835+820+820 = 2475 MW vs model 2379.6
+CALAVERS_JKS1,7097,J K Spruce,QCPSE,CALAVER_JKS1,Bexar Co TX,510.0,unambiguous,CPS Energy J K Spruce 1-2 at the Calaveras Lake site; JKS resource tag; p98 510+769 = 1279 MW vs model 1488.5
+CALAVERS_JKS2,7097,J K Spruce,QCPSE,CALAVER_JKS2,Bexar Co TX,769.0,unambiguous,CPS Energy J K Spruce 1-2 at the Calaveras Lake site; JKS resource tag; p98 510+769 = 1279 MW vs model 1488.5
+WAP_WAP_G5,3470,W A Parish [COAL],QNRGTX,WAP_WAP_G5,Fort Bend Co TX,667.0,unambiguous,WAP = W A Parish; units 5-8 are the coal block (NRG QSE QNRGTX) and register CLLIG; the gas units 1-4 register separately as gas-steam types; coal p98 sum 2512 MW vs model 2443
+WAP_WAP_G6,3470,W A Parish [COAL],QNRGTX,WAP_WAP_G6,Fort Bend Co TX,663.0,unambiguous,WAP = W A Parish coal block; see WAP_WAP_G5
+WAP_WAP_G7,3470,W A Parish [COAL],QNRGTX,WAP_WAP_G7,Fort Bend Co TX,572.0,unambiguous,WAP = W A Parish coal block; see WAP_WAP_G5
+WAP_WAP_G8,3470,W A Parish [COAL],QNRGTX,WAP_WAP_G8,Fort Bend Co TX,610.0,unambiguous,WAP = W A Parish coal block; unit 8 reads OUT or zero HSL for ~96 pct of 2023 (852 live resource-hours) while the model carries its 610 MW available all year
+COLETO_COLETOG1,6178,Coleto Creek,QLUMN,COL_COLETOG1,Goliad Co TX,655.0,unambiguous,single-unit plant (Vistra/Luminant); p98 655 MW vs model 622.4
+SCES_UNIT1_J01,56611,Sandy Creek Energy Station,QSANDY,SCES_UNIT1,McLennan Co TX,439.8,unambiguous,ONE physical unit registered as four ADDITIVE joint-owner QSE shares (J01-J04) on settlement point SCES_UNIT1; share p98 sum 932.8 MW vs model 936 nameplate confirms additivity
+SCES_UNIT1_J02,56611,Sandy Creek Energy Station,QBRZSC,SCES_UNIT1,McLennan Co TX,233.2,unambiguous,Sandy Creek joint-owner share; see SCES_UNIT1_J01
+SCES_UNIT1_J03,56611,Sandy Creek Energy Station,QSANDY,SCES_UNIT1,McLennan Co TX,155.8,unambiguous,Sandy Creek joint-owner share; see SCES_UNIT1_J01
+SCES_UNIT1_J04,56611,Sandy Creek Energy Station,QLCRA,SCES_UNIT1,McLennan Co TX,104.0,unambiguous,Sandy Creek joint-owner share; see SCES_UNIT1_J01
+FPPYD1_FPP_G1_J01,6179,Fayette Power Project,QLCRA,FPPYD_FPP_G1,Fayette Co TX,297.0,unambiguous,Fayette units 1-2 register as ADDITIVE LCRA/Austin-Energy 50-50 shares (J01/J02) on yard FPPYD1; unit 3 is LCRA-only on FPPYD2; plant p98 sum 1619 MW vs model 1690
+FPPYD1_FPP_G1_J02,6179,Fayette Power Project,QAEN,FPPYD_FPP_G1,Fayette Co TX,298.0,unambiguous,Fayette joint-owner share; see FPPYD1_FPP_G1_J01
+FPPYD1_FPP_G2_J01,6179,Fayette Power Project,QLCRA,FPPYD_FPP_G2,Fayette Co TX,297.0,unambiguous,Fayette joint-owner share; see FPPYD1_FPP_G1_J01
+FPPYD1_FPP_G2_J02,6179,Fayette Power Project,QAEN,FPPYD_FPP_G2,Fayette Co TX,298.0,unambiguous,Fayette joint-owner share; see FPPYD1_FPP_G1_J01
+FPPYD2_FPP_G3,6179,Fayette Power Project,QLCRA,FPPYD_FPP_G3,Fayette Co TX,429.0,unambiguous,Fayette unit 3 (LCRA sole owner); see FPPYD1_FPP_G1_J01
+SANMIGL_G1,6183,San Miguel,QSTEC,SAN_SANMIGG1,Atascosa Co TX,388.0,unambiguous,San Miguel Electric Cooperative lignite single unit; p98 388 MW vs model 410
+TNP_ONE_TNP_O_1,7030,Major Oak Power,QLONE2,TNP_TNP_O_1,Robertson Co TX,155.0,unambiguous,Major Oak Power is the renamed TNP One / Twin Oaks lignite plant and keeps the TNP_ONE resource mnemonic; units p98 155+155 = 310 MW vs model 349.2
+TNP_ONE_TNP_O_2,7030,Major Oak Power,QLONE2,TNP_TNP_O_2,Robertson Co TX,155.0,unambiguous,Major Oak Power = renamed TNP One / Twin Oaks; see TNP_ONE_TNP_O_1
