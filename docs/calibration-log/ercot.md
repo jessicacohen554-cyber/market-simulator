@@ -1073,3 +1073,37 @@ real high RT offers never become marginal, and ERCOT-107/108 now show no reserve
 mechanism recovers the depth without repricing the year. Suggested replacement text is
 in the draft (updated this session). Branch
 `claude/ercot-107-scarcity-tail-u9lopq`. Next number: ercot-109.
+
+**SCOPE CORRECTION (same session, after owner challenge).** The disposition above was
+initially written as "the 2023 tail is structurally bounded → STOP tuning → close via
+C6". That is **too broad** and has been corrected in place. What ERCOT-107/108 closed is
+the **reserve-side (cap/ORDC) family only**. The ERCOT-89 charter §3(ii) had already
+predicted this exact failure *and* named the admissible alternative before either run:
+"a **cap** that compresses the co-opt's shared headroom re-opens the rejected family …
+the admissible shape is a **re-pricing of the offline increment** (capability stays
+available, at its true start-inclusive offer), which creates no phantom reserve
+shortage." ERCOT-107/108 therefore re-confirmed a marked dead end rather than testing
+the live successor.
+
+Of the phantom's three documented causes (ERCOT-89 §2), two are already fixed and ON in
+the keeper — day grain (ERCOT-96 `_hourly`) and plant grain (ERCOT-97 `_plant`). The
+third, **only-OUT-is-out**, is OPEN: the overlay counts OFF/OFFQS/OFFNS capability as
+available (correct — startability is physical, rule 13) but the **LP prices it at base
+offers with no start cost and no min-run**. Measured this session from the
+config-collapsed 60-Day DAM Gen_Resource disclosure at the 146 actual 2023 >$300 tail
+hours: **16.94 GW** of CC+CT startable-but-OFF (CC 8.58 / CT 8.36) against 17.48 GW ON.
+The model clears within ~480 MW of $200 at the Aug missed hours — it needs only a few
+hundred MW of that mispriced block to cap the price. This is a **pricing error on a
+correctly-measured quantity**, which is precisely why a reserve-side *cap* is the wrong
+instrument (it deletes capability the market really had → bistability) and re-pricing is
+the right one (capability stays, cost becomes honest, no phantom reserve shortage, no
+rule-26 ORDC re-opening).
+
+`ercot_faststart_pool_offer` (ERCOT-88, merged default-off, REPLACE-BY-MASK) already
+implements this shape but covers only the **fast-start CT slice**, and ERCOT-88 found
+the LP "cleared around it" because the cheap **CC** offline block was never repriced.
+Widening the repriced slice to CC at its own measured start economics — the charter's
+named successor — has **never been run**, and never with the recovered 2023 RT wall in
+the stack. **OWNER-GATED** (ERCOT-89 §7 step 2); not run this session. The C6 attestation
+draft was amended so its 2023 exception is scoped to the reserve-side family and names
+this open lane — it must not be signed as a finding that the tail is unimprovable.

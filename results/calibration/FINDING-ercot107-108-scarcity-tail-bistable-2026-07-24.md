@@ -6,7 +6,10 @@ config change).
 **Runs registered:** `2026-07-24-ercot107-envelope-pricing-basis`,
 `2026-07-24-ercot108-envelope-in-lp` (both PROBE, both NOT-YET).
 **Disposition:** the ERCOT-107 charter's hypothesis is **REFUTED**. The decision fork
-lands on **STOP tuning → close via the C6 governance attestation** (owner lane).
+lands on **STOP tuning the reserve-side (cap/ORDC) family**. This is a scoped result,
+**not** a finding that the phantom depth is unaddressable — the quantity-side successor
+(re-price the startable-but-OFF increment at start-inclusive offers) is measured,
+chartered, unbuilt and owner-gated. **See §6 before signing anything.**
 
 ---
 
@@ -99,7 +102,8 @@ this family.
 The fork's UNDER-fire branch is met, now on complete rather than partially-inert
 evidence: **the 2023 scarcity tail is structurally bounded within the
 envelope/ORDC mechanism family.** Every reachable configuration is either ~$41–47
-(under, tail slack) or ~$502–514 (over, whole year repriced). **STOP tuning.**
+(under, tail slack) or ~$502–514 (over, whole year repriced). **STOP tuning *this
+family*** — see §6 for the lane that remains open.
 
 Per rule 1/11 no residual-motivated variant is attempted, and per rule 13 no measured
 *outcome* is fed back. Closure is the honest governance route: the C6 attestation in
@@ -132,3 +136,68 @@ replacement text is in §5 of the log entry for this session.
 **Files.** Bundles `results/calibration/ercot107_env_ordconly_rtwall`,
 `results/calibration/ercot108_envlp_spanoff_rtwall`. No `src/` changes (flag-composition
 replays only). Keeper untouched.
+
+---
+
+## 6. SCOPE CORRECTION — what is NOT closed (added 2026-07-24, same session)
+
+The §4 disposition above is scoped to the **reserve-side (cap/ORDC) family**. It must
+not be read as "the phantom depth is unaddressable" — that would be wrong, and the
+ERCOT-89 charter had already predicted this session's result *and* named the
+admissible alternative before it was run (§3(ii)):
+
+> a **cap** that compresses the co-opt's shared headroom re-opens the rejected family
+> and the rule-26-frozen ORDC design — the admissible shape is a **re-pricing of the
+> offline increment** (capability stays available, at its true start-inclusive offer),
+> which creates no phantom reserve shortage
+
+So ERCOT-107/108 re-confirmed a dead end the charter had already marked, rather than
+testing the live successor.
+
+**The phantom's three documented causes (ERCOT-89 §2), and their status:**
+
+| cause | status |
+|---|---|
+| Day grain (class-DAY mean flat over 24 h) | **FIXED** — ERCOT-96 `_hourly`, ON in keeper |
+| Plant grain (which plant carries the derate) | **FIXED** — ERCOT-97 `_plant`, ON in keeper |
+| **Only-OUT-is-out** (OFF/OFFQS/OFFNS priced as online at base offers) | **OPEN** |
+
+**Measured this session — the size of the open cause at the tail hours.** Config-collapsed
+60-Day DAM Gen_Resource disclosure (the derive's own `_site` collapse), 2023, at the
+146 actual >$300 mean-zonal tail hours:
+
+| class | ON | startable-but-OFF | OFF share of available |
+|---|---|---|---|
+| CC | 16.25 GW | **8.58 GW** | 34.6 % |
+| CT | 1.23 GW | **8.36 GW** | 87.2 % |
+| **CC+CT** | 17.48 GW | **16.94 GW** | — |
+
+The availability overlay counts all 16.9 GW as available — **correctly**, it *is*
+available (rule 13: startability is a physical fact, and the derive says so explicitly:
+"an `OFF` (uncommitted but startable) resource contributes its reported HSL —
+commitment state is not an availability event"). The defect is that the **LP then prices
+it at base offers with no start cost and no min-run**. Per the attestation the model
+clears within **~480 MW** of $200 at the Aug missed hours — i.e. it needs only a few
+hundred MW of that 16.9 GW mispriced block to cap the price below scarcity.
+
+This is a **pricing error on a correctly-measured quantity**, not an availability error
+— which is exactly why a reserve-side *cap* is the wrong instrument for it (it removes
+capability the market genuinely had, hence the bistability) and why re-pricing is the
+right one (capability stays, cost becomes honest, no phantom reserve shortage, no
+rule-26 ORDC re-opening).
+
+**The untested experiment.** `ercot_faststart_pool_offer` (ERCOT-88, merged
+**default-off**, REPLACE-BY-MASK, one owner per row-hour) already implements this shape
+— but only for the **fast-start CT slice**, and ERCOT-88 found "the LP simply cleared
+around it" because the cheap **CC** offline block (8.58 GW at tail hours) was never
+repriced. The charter names the successor explicitly: *"a quantity-side successor that
+widens the re-priced slice (larger measured offline share; CC at its own measured start
+economics) would EXTEND this machinery, never stack a second markup on the same rows
+(rule 19)."* That has never been run — and never with the recovered 2023 RT wall in the
+stack, which changes what the LP clears *into* once the cheap offline increment stops
+being the cheapest thing on the curve.
+
+**Status: OWNER-GATED** (ERCOT-89 §7 step 2 — never authorized, never started). Not run
+this session. Cadence if authorized: single-year rule-16 probe with the C3a level guard,
+the zero-spurious gate, and the ercot41/43 failure-signature guard (2023 tail + C3b/C3c
+must not degrade), then full-span + LOYO (rule 24) before any promotion.
