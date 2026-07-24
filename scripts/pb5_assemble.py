@@ -13,12 +13,14 @@ Modes (``--mode``):
   with ``workers=1``. With ``--prior-artifact`` the committed PB-3 structural
   prior is convolved in (the ``parametric_plus_structural`` layer). The prior
   is loaded from its committed fit artifact
-  (``results/ensemble/structural-prior/<version>.json``) rather than re-fitted:
-  ``default_prior()`` re-reads the D-7 statmode run payloads, which the
-  dashboard's top-15-per-ISO retention (CLAUDE.md rule 15) has since pruned
-  from ``frontend/data/backcast/runs/`` — the committed artifact IS the
-  durable record of that fit (rule 23: it re-derives only when the probes are
-  re-run, never here).
+  (``results/ensemble/structural-prior/<version>.json``) rather than re-fitted.
+  Since the item-8 inversion ``default_prior()`` reads that committed artifact
+  directly (``structural_prior.load_prior_artifact``) instead of re-decoding
+  the D-7 statmode run payloads — several of which the dashboard's
+  top-15-per-ISO retention (CLAUDE.md rule 15) has pruned from
+  ``frontend/data/backcast/runs/``. The committed artifact IS the durable
+  record of that fit (rule 23: it re-derives only when the probes are re-run,
+  never here); the payload decode survives only as a consistency check.
 * ``limitations`` — inject an honest-limitations block (a committed JSON list
   of ``{id, title, detail}``) into ``ensemble_meta.json``, where the PB-4
   exporter and fan-chart page surface it verbatim.

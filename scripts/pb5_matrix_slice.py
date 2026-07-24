@@ -21,7 +21,7 @@ import time
 
 from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
 from market_sim.matrix import matrix_configs
-from market_sim.pipeline.api import run_pair
+from market_sim.pipeline.members import run_pair
 
 logger = logging.getLogger("pb5_matrix_slice")
 
