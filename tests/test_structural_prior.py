@@ -38,6 +38,7 @@ from market_sim.structural_prior import (
     convolve,
     default_prior,
     fit_prior,
+    load_prior_artifact,
     load_statmode_residuals,
     rescore_carbon_zero,
     write_prior_artifact,
@@ -295,6 +296,61 @@ class CommittedSourceTests(_RestoresPrunedStatmodeRun, unittest.TestCase):
         self.assertEqual(sorted(statmode["ERCOT"]), list(YEARS))
         self.assertEqual(sorted(actual["ERCOT"]), list(YEARS))
         self.assertEqual(run_ids["ERCOT"], STATMODE_PROBE_RUNS["ERCOT"])
+
+
+class ArtifactCanonicalTests(_RestoresPrunedStatmodeRun, unittest.TestCase):
+    """The committed artifact is the canonical prior source (item 8 inversion).
+
+    ``default_prior`` reads the committed versioned JSON, never the
+    retention-pruned dashboard payloads; the payload regex-decode survives only
+    as a consistency check that the artifact still matches the payloads.
+    """
+
+    def test_default_prior_does_not_read_payloads(self):
+        """default_prior is artifact-canonical: it must not touch the payload dir."""
+        import market_sim.structural_prior as sp
+
+        with mock.patch.object(
+            sp,
+            "load_statmode_residuals",
+            side_effect=AssertionError("default_prior must not decode payloads"),
+        ):
+            prior = default_prior()
+        self.assertEqual(set(prior.per_iso), set(STATMODE_PROBE_RUNS))
+        # And it reproduces the committed artifact exactly.
+        self.assertEqual(prior.as_dict(), load_prior_artifact().as_dict())
+
+    def test_payload_decode_reproduces_artifact_model_co2(self):
+        """Consistency check: the payload regex-decode reproduces the artifact.
+
+        This is the demoted role of the dashboard-payload decode — no longer a
+        production read, but a guard that the committed artifact's per-ISO model
+        CO2 still matches what decoding the frozen ``STATMODE_PROBE_RUNS``
+        payloads yields (so a silent payload/artifact drift is caught).
+
+        Retention has already deleted several probe payloads outright (only
+        ercot/nyiso/neiso survive as fixtures — the very reason for the
+        inversion), so the check covers whichever payloads still resolve and
+        asserts it covered at least one.
+        """
+        prior = load_prior_artifact()
+        checked = 0
+        for iso, resid in prior.per_iso.items():
+            try:
+                bundles, _actuals, run_ids = load_statmode_residuals(isos=[iso])
+            except FileNotFoundError:
+                continue  # payload pruned with no fixture — artifact is canonical
+            self.assertEqual(run_ids[iso], STATMODE_PROBE_RUNS[iso])
+            decoded = [bundles[iso][y] for y in resid.years]
+            for got, exp in zip(decoded, resid.model_co2):
+                self.assertAlmostEqual(
+                    got,
+                    exp,
+                    places=6,
+                    msg=f"{iso}: payload-decoded model CO2 drifted from artifact",
+                )
+            checked += 1
+        self.assertGreater(checked, 0, "no statmode payload resolved to check")
 
 
 class BasisStalenessTests(_RestoresPrunedStatmodeRun, unittest.TestCase):
