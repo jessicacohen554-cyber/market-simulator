@@ -1,0 +1,17 @@
+facility_name,facility_id,unit_id,unit_capacity_mw,plant_capacity_mw,unit_pct_of_plant,plant_group,capacity_source,outage_start,outage_end,duration_days,peer_units_online,total_units_at_plant
+Hampton Facility,10108,E923,5.0,5.0,100.0,CT_CHP,eia923,2024-06-01,2024-06-30,30.0,0,1
+Clark University,10408,E923,2.0,2.0,100.0,CT_CHP,eia923,2018-01-01,2018-12-31,365.0,0,1
+Indian Orchard Plant 1,10417,E923,5.7,5.7,100.0,ST_CHP,eia923,2019-06-01,2019-06-30,30.0,0,1
+Indian Orchard Plant 1,10417,E923,5.7,5.7,100.0,ST_CHP,eia923,2020-04-01,2020-04-30,30.0,0,1
+Indian Orchard Plant 1,10417,E923,5.7,5.7,100.0,ST_CHP,eia923,2020-06-01,2020-07-31,61.0,0,1
+Indian Orchard Plant 1,10417,E923,5.7,5.7,100.0,ST_CHP,eia923,2022-10-01,2022-12-31,92.0,0,1
+Indian Orchard Plant 1,10417,E923,5.7,5.7,100.0,ST_CHP,eia923,2023-01-01,2023-12-31,365.0,0,1
+Indian Orchard Plant 1,10417,E923,5.7,5.7,100.0,ST_CHP,eia923,2024-01-01,2024-12-31,366.0,0,1
+Indian Orchard Plant 1,10417,E923,5.7,5.7,100.0,ST_CHP,eia923,2025-01-01,2025-10-31,304.0,0,1
+Rhode Island Hospital,52024,E923,10.4,10.4,100.0,ST_CHP,eia923,2025-04-01,2025-04-30,30.0,0,1
+Rhode Island Hospital,52024,E923,10.4,10.4,100.0,ST_CHP,eia923,2026-03-01,2026-03-31,31.0,0,1
+Wellesley College Central Utility Plant,54937,E923,13.9,13.9,100.0,CT_CHP,eia923,2020-01-01,2020-12-31,366.0,0,1
+Wellesley College Central Utility Plant,54937,E923,13.9,13.9,100.0,CT_CHP,eia923,2021-01-01,2021-12-31,365.0,0,1
+Wellesley College Central Utility Plant,54937,E923,13.9,13.9,100.0,CT_CHP,eia923,2022-01-01,2022-12-31,365.0,0,1
+Wellesley College Central Utility Plant,54937,E923,13.9,13.9,100.0,CT_CHP,eia923,2023-03-01,2023-03-31,31.0,0,1
+Amherst College Co Gen,58185,E923,1.2,1.2,100.0,CT_CHP,eia923,2022-10-01,2022-10-31,31.0,0,1
