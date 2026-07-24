@@ -993,3 +993,83 @@ now confirmed FOUR independent ways (offer side ERCOT-101, reserve-holdout side
 ERCOT-102, settlement decomposition ERCOT-103, congestion resolution ERCOT-104).
 C6 governance route unchanged (owner sign-off pending). Branch
 `claude/ercot-102-as-holdout-repricing-aq6o1e`. Next number: ercot-105.
+
+## 2026-07-24 — ERCOT-107/108 (owner charter: "last structural shot at the 2023 scarcity tail"): hypothesis REFUTED on the completed 2×2 — the on-line-capacity envelope is BISTABLE (in-LP → 963/181 tail hours, whole year repriced; not-in-LP → 69–76/181) and the ORDC total-reserve span is NOT the over-fire confound (span off moves +699.7 % → +680.6 %, 2.7 % of the over-fire, tail count identical); tail confirmed STRUCTURALLY BOUNDED → STOP tuning, close via C6. Keeper UNCHANGED (ercot100)
+
+**Task.** The charter proposed the "one untested combination" for the 2023 scarcity
+tail: cap phantom headroom (extreme on-line-capacity envelope) + remove the ORDC-span
+over-fire confound (realized-adder RTORPA right-sized to the ~5.5 GW measured hold) +
+the recovered 2023 RT SCED offer wall. Decision fork was pre-committed: land in
+`model_lw` ≈ $55–90 → keeper candidate (full-span + LOYO before promotion); over- or
+under-fire → tail is structurally bounded, stop tuning and close via the C6 governance
+attestation.
+
+**Two charter premises were false, and both are load-bearing.** (1) The prescribed
+`--set` block is flag-for-flag the already-solved `ercot103_realized_adder` — ERCOT-107
+reproduces it ($41.46 → $41.21 zonal `model_lw`), so the only new ingredient was the
+wall, which is fit-neutral in this composition exactly as in the keeper composition
+(`ercot105` $46.76 → $46.50). (2) The "cap phantom headroom" leg **never entered the
+LP**: under `ercot_ordc_only_scarcity`, `model/reserves/spec.py` sets
+`online_capacity_pricing_mw = online_capacity_cap; online_capacity_cap = None` — the
+envelope becomes a pricing-only basis and the LP row is not installed. Legs 1 and 2 are
+mutually exclusive by construction, so the charter's run tested legs 2+3 with leg 1
+inert. **ERCOT-108** was solved to fill the genuinely-missing cell (envelope as a real
+in-LP cap, ORDC span OFF, reserve demand = measured AS plan) — the charter's *intent*,
+which existed in no prior run.
+
+**The completed 2×2 (2023, zonal C3a, actual $64.32; C3c settle /181).**
+
+| run | envelope | span | `model_lw` | C3a | C3c |
+|---|---|---|---|---|---|
+| keeper `ercot100` | off | in-LP | $46.76 | −27.3 % | 76 |
+| `ercot105` (+wall) | off | in-LP | $46.50 | −27.7 % | 72 |
+| `ercot103` | pricing-only | off | $41.46 | −35.5 % | 71 |
+| **`ercot107`** (+wall) | pricing-only | off | $41.21 | **−35.9 %** | 69 |
+| `ercot106` (+wall) | IN-LP | in-LP | $514.31 | +699.7 % | 963 |
+| **`ercot108`** (+wall) | IN-LP | **off** | $502.07 | **+680.6 %** | 963 |
+
+**F1 — the envelope is bistable.** In-LP it prices 963 hours above $200 against an
+actual 181 (5.32×), with the 1,948-hour `[30,80)` band (actual mean $44.7) clearing at
+$921–954; not-in-LP it prices 69–76. No calibrated middle exists. The over-fire is not
+an overshooting tail — it is the whole year repriced (48.7 % of `ercot108`'s gap sits
+in `[30,80)` alone).
+
+**F2 — the span is not the confound (the charter's core diagnostic claim, refuted).**
+Holding the in-LP envelope fixed, turning the ORDC total-reserve span off moves the
+result $12.24/MWh — +699.7 % → +680.6 %, **2.7 % of a 700 % over-fire** — with the tail
+count *identical* at 963. Once reserve supply is capped at the envelope, the measured
+~5.5 GW AS plan alone binds the reserve rows at VOLL across ~11 % of the year. The
+over-fire is owned by the envelope cap's granularity, not by what it competes against.
+
+**Corollary — the realized adder is inert and costs more than it restores.**
+ERCOT-107's RTORPA is `mean $0.06/MWh, >$10 in 11 h` year-wide and `$0.1` at the MISSED
+tail hours, while switching the span off removes the model's own working
+scarcity-price-former (hours priced >tail 42 → 24; reserve dual binds in 79 % of
+scarcity hours vs 98 %). Hence ERCOT-107 is a *regression*, not a flat result
+(−27.3 % → −35.9 %). MISSED hours stay slack (reserve dual $0.9) in every non-capped
+variant — the ERCOT-102 phantom-headroom diagnosis reconfirmed, and unaddressable by
+any reserve-side mechanism in this family.
+
+**Disposition.** Fork lands on the UNDER-fire branch, now on complete rather than
+partially-inert evidence: **the 2023 tail is structurally bounded within the
+envelope/ORDC family** — every reachable configuration is ~$41–47 (under, tail slack)
+or ~$502–514 (over, year repriced). **STOP tuning.** No residual-motivated variant
+attempted (rule 1/11); no measured outcome fed back (rule 13). Keeper **UNCHANGED**
+(`2026-07-23-ercot100-netrev-margin-keeper`, NOT-YET); neither probe is a promotion
+candidate, so the charter's rule-26 concern (span-off re-opens the ORDC-family design)
+is moot. Both runs registered PROBE:
+`2026-07-24-ercot107-envelope-pricing-basis`, `2026-07-24-ercot108-envelope-in-lp`.
+Full evidence: `results/calibration/FINDING-ercot107-108-scarcity-tail-bistable-2026-07-24.md`.
+No `src/` changes (flag-composition replays only).
+
+**Correction required to the C6 attestation draft (blocks signature-as-written).** The
+draft's 2023 `price_mean` exception argues the tail is unfixable because "**no 2023
+SCED/RT re-offer disclosure exists**". That premise is now **false** — the 2023 RT wall
+was recovered and is on main. The *conclusion* survives but must be restated on the
+stronger evidence: the 2023 RT wall exists, is in the stack, and is **fit-neutral**
+(keeper $46.76 → $46.50; `ercot103` $41.46 → $41.21). The bound is **depth, not
+height** — the model carries ~1.5 GW too much cheap supply at the spike hours, so the
+real high RT offers never become marginal, and ERCOT-107/108 now show no reserve-side
+mechanism recovers the depth without repricing the year. Suggested replacement text is
+in the draft (updated this session). Branch
+`claude/ercot-107-scarcity-tail-u9lopq`. Next number: ercot-109.
