@@ -10,7 +10,8 @@
 **Why 0.570 (rule 13/18 — measured, not fitted).** CEMS unit-level, CAISO bench
 fleet: among hours a unit is FULLY online (`opTime == 1.0`), the per-unit 5th
 percentile of `grossLoad / pmax`, capacity-weighted p50 across CC units with
-≥500 operating hours = **0.570 in 2023, 0.570 in 2024, 0.570 in 2025**.
+≥500 operating hours = **0.565 in 2023, 0.570 in 2024, 0.570 in 2025** — stable
+to within 1 % across the three years; the delta uses 0.570.
 ERCOT's independently-derived analogue (60-Day DAM disclosure committed
 LSL/HSL cap-weighted p50, `ercot_gas_bridge_min_load_frac`) is **0.574**. The
 keeper's 0.26 is below any physical CC turn-down and below the code default
