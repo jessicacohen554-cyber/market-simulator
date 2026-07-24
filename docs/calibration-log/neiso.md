@@ -113,3 +113,102 @@ unchanged, already at frontier per 2026-07-11. (4) ISO-agnostic rollout:
 other ISOs need their own measured phys registries + anchors (rule 24) —
 PJM/MISO/NYISO curves already carry measured marginal-HR artifacts. Next
 shorthand: neiso-62.
+
+## 2026-07-24 — neiso-62: ISO-NE operable-capacity availability A/B'd — the source RESTORES (not removes) capacity, C3a improves in every year, but it is NOT adopted (fleet-wide denominator on a thermal-only application); the real finding is that the NEISO CAMPD outage extract over-counts thermal outages by ~15 pp
+
+**Charter.** Evaluate and, if warranted, adopt the ISO-NE "DAM-equivalent"
+operable-capacity availability overlay
+(`neiso_operable_capacity_availability`, wired 2026-07-19, never armed by any
+run) for the NEISO keeper. Model Opus.
+
+**STEP 0 — the gate was off-registry.** The gate existed in `ScenarioConfig`
+and was applied in `data/fleet/arrays.py`, but no calibration entry point
+exposed it, so no run could arm it or record it in `run_config.json`
+(rule 24). Threaded through `solve_and_persist` → `run_year` →
+`ScenarioConfig` exactly like `neiso_winter_fuel_mustrun` (tri-state
+`bool | None`), plus the `--neiso-operable-capacity-availability` flag and the
+`meta.json` entry. Ships as `docs/handoffs/patches/neiso-operable-capacity-cli-flag.patch`
+(both files are in the size class the push API cannot carry inline —
+`run_calibration_full.py` 464 KB, `run_calibration.py` 233 KB — and rule 27
+forbids a regenerated full-file push); verified to apply onto pristine
+`origin/main` and reproduce both files byte-for-byte.
+
+**A0 — inert when off (`2026-07-24-neiso-62-opcap-a0`).** Verbatim
+`--replay-bundle` of the `neiso-61-netrev-margin` keeper recipe at HEAD with
+the gate absent: **max hourly LMP diff 0.0000000000 in all three years**,
+zone-mean LMP identical to 4 dp (38.9364 / 44.0783 / 71.3163). The STEP-0
+plumbing is provably inert at its default, so every A1 delta is the gate alone.
+
+**A1 — the gate on (`2026-07-24-neiso-62-opcap-a1`). Direction is RESTORE, not
+remove.** The overlay fires **restore-364 / remove-0** (2023): ISO-NE's own
+published outage rate is far BELOW the model's CAMPD-derived one, so it *adds*
+thermal capacity rather than stripping phantom capacity. Pooled cap-weighted
+thermal availability **0.584 → 0.840 annual, 0.567 → 0.898 DJF** — ~4,458 MW
+annual / ~5,779 MW winter restored on a 17,438 MW thermal fleet. Mechanism
+attribution (fleet-only rebuilds): the winter gas cold-snap derate is NOT
+involved (−0.02 pp); with the CAMPD extract alone disabled the model sits at
+0.862/0.893, i.e. **the entire 28-pp gap is the CAMPD unit-outage derate.**
+
+| criterion | A0 / keeper | A1 |
+|---|---|---|
+| C1 fuel-mix | PASS, 12/12 (free 8/8) | PASS, 12/12 (free 8/8) |
+| C2 system volume (gas) | PASS (2025 +2.6%) | PASS (2025 +2.6%) |
+| **C3a mean LMP (vs RT, LW)** | +5.2 / +7.1 / +5.2 % | **−5.2 / −1.0 / −2.9 %** |
+| C3b duration NRMSE | 0.102 / 0.164 / 0.071 | 0.103 / **0.143** / 0.079 |
+| C3c tail (>$300, RT) | 0h vs 15/8/20h — ledgered | 0h — unchanged, ledgered |
+| C4 gas dispatch r | 0.910 / 0.916 / 0.863 | 0.911 / 0.917 / **0.885** |
+| C5a CO2 vs eGRID | −2.5 / −2.3 / +4.9 % | −3.1 / −2.8 / +4.2 % |
+| C8 forced share (CC_REGULAR) | 0.4 / 0.7 / 0.5 % | 0.9 / 1.6 / 1.3 % |
+| determination | CALIBRATED-WITH-CAVEATS | CALIBRATED-WITH-CAVEATS |
+
+So the fit **improves**: mean |C3a| deviation 5.8 % → 3.0 %, better in every
+year; C3b/C4/C5a roughly neutral (2024 shape and 2025 dispatch-r improve).
+The one cost is the upper tail thinning — h>$200 **70→26** (2023) and
+**102→42** (2025) — though the $300 C3c gate reads 0h either way.
+
+**NOT ADOPTED — and the reason is structural, never the residual (rule 1).**
+The consumed fraction is `1 − C/(A+B)` where the numerator (Section 3 line C)
+is **generation** outages but the denominator (A+B = CSO + EcoMax-above-CSO,
+~30,264 MW in 2023) spans the **whole obligated fleet** — nuclear, hydro,
+renewables, DR and import obligations — while the fraction is applied to the
+**thermal subset alone** (17,438 MW). The PJM analogue in this repo divides its
+measured outage MW by *fossil-thermal capacity*, not the full fleet. Re-basing
+the published outage MW onto the model's thermal denominator gives
+**0.737 / 0.761 / 0.777** (2023/24/25) against the as-implemented
+0.849 / 0.858 / 0.863 — the implementation **over-restores by ~11 pp**.
+Adopting it as-built would be reaching a better number through a mechanism
+that is not (yet) the real one; rule 14's boundary-mismatch clause prescribes a
+**reconciled** version of the real data instead. Note the reconciliation has an
+irreducible ambiguity — line C is published as a single figure, so the
+non-thermal (notably nuclear-refuel) share cannot be split out, and the honest
+thermal-availability band is **[0.737, 0.849]**. Picking a point inside that
+band is a free parameter and needs an owner call, not a session default
+(rules 20/24).
+
+**HEADLINE FINDING — the probe's real deliverable.** Even the *most
+conservative* reconciliation (0.737, attributing 100 % of published generation
+outages to thermal) sits **~15 pp / ~2,700 MW above the model's 0.584**. The
+NEISO CAMPD unit-outage extract derates **40 % of the thermal capacity-year**
+(2023: CC_REGULAR alone 5,804 MW-yr on a 15,534 MW fleet = 37 % unavailable);
+window durations are median 13 d / mean 22 d with none under 2 d — the
+**economic-layup** signature, *not* the ERCOT-79 daily-cycling one the
+2026-07-19 re-audit screened for. So the extract still over-counts thermal
+outages after that re-audit, and the keeper's offer curves are **co-dependent**
+on the over-count: relieving it moves LMP −7 to −9 % and halves the h>$200
+tail. That is the **ERCOT-79 / nyiso-63 condition** (rule 11: the estimate was
+silently compensating for something else), and it puts a question over the
+NEISO frontier (2026-07-11) and calibration-complete marker (2026-07-07) that
+this probe does not itself resolve.
+
+**Open / next.** (1) **Reconcile the denominator** — re-base
+`neiso_thermal_availability_series` onto a thermal capacity basis (the PJM
+construction), owner to settle the [0.737, 0.849] band, then re-A/B; that is
+the version that could be adopted. (2) **Re-audit the NEISO CAMPD extract for
+economic layup**, the root cause under rule 11 — the detector cannot currently
+distinguish a laid-up CC from an outaged one. (3) Keeper unchanged:
+`2026-07-23-neiso-61-netrev-margin` stands; no parameter in this session
+responded to any residual. (4) STEP C (2022 validation re-solve with outage
+data) **NOT run** — no owner authorization for an out-of-training solve was
+given this session; the stale zero-outage `2026-07-23-neiso-61-margin-2022`
+therefore still stands un-superseded and should not be trusted. Locked test
+(2019 + H1-2026) untouched. Next shorthand: neiso-63.
