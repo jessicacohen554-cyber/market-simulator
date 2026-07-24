@@ -520,6 +520,236 @@ def _resolve_unit_group(
     return str(fac_group or "")
 
 
+# ---------------------------------------------------------------------------
+# EIA-923 non-CAMPD fallback (default-OFF; separate companion file)
+# ---------------------------------------------------------------------------
+# A fleet plant with NO CAMPD unit-level record (a non-CEMS unit — below the
+# CEMS reporting threshold, or otherwise unmonitored) is invisible to the
+# gross-based detector above, so the outage layer is blind to it in every year.
+# The --eia923-noncampd-fallback mode infers monthly availability for exactly
+# those plants from EIA-923 monthly net generation: a month whose net gen is at
+# or below EIA923_FALLBACK_OUTAGE_RATIO x the plant's OWN normal monthly output
+# (the median of its positive-output months across every filed EIA-923 year) is
+# treated as a full-stop availability window. This is a measured PHYSICAL
+# quantity — the plant produced essentially nothing that month — that would
+# regenerate for a forward year and respond to changed conditions (rules 13/14):
+# a fixed per-plant ratio against the plant's OWN history, never an ISO-crossing
+# scalar and never tuned to a price/volume residual. The rows are tagged
+# capacity_source="eia923" (distinct from the pre-existing plant-grain
+# "eia923_netzero" full-year hook) and written to a SEPARATE companion file the
+# loader does NOT read by default — landed as backup only. 0.10 = "ran at <= 10%
+# of its own normal month".
+EIA923_FALLBACK_OUTAGE_RATIO: float = 0.10
+
+# EIA-923 monthly net-generation columns, January..December in calendar order.
+_EIA923_MONTH_COLS: list[str] = [
+    "netgen_january_mwh",
+    "netgen_february_mwh",
+    "netgen_march_mwh",
+    "netgen_april_mwh",
+    "netgen_may_mwh",
+    "netgen_june_mwh",
+    "netgen_july_mwh",
+    "netgen_august_mwh",
+    "netgen_september_mwh",
+    "netgen_october_mwh",
+    "netgen_november_mwh",
+    "netgen_december_mwh",
+]
+
+
+def campd_plant_codes(states: tuple[str, ...], years: list[int]) -> set[int]:
+    """Return the plant (facility) codes present in the CAMPD unit-level extracts.
+
+    Scans only the ``facilityId`` column of each state-year extract for the ISO's
+    states over ``years`` — the CEMS fleet the standard detector already covers.
+    A fleet plant absent from this set has no CAMPD series (non-CEMS) and is a
+    candidate for the EIA-923 fallback.
+    """
+    codes: set[int] = set()
+    for state in states:
+        for year in years:
+            path = UNIT_LEVEL_DIR / f"{state}_{year}.parquet"
+            if not path.exists():
+                continue
+            fid = pd.to_numeric(
+                pd.read_parquet(path, columns=["facilityId"])["facilityId"],
+                errors="coerce",
+            ).dropna()
+            codes.update(int(c) for c in fid.unique())
+    return codes
+
+
+def _eia923_month_windows(
+    monthly: dict[int, float], reference: float, year: int, ratio: float
+) -> list[tuple[pd.Timestamp, pd.Timestamp, float]]:
+    """Merge a plant-year's contiguous near-zero months into full-stop windows.
+
+    ``monthly`` maps month number (1-12) -> net gen MWh for months that were
+    FILED (a NaN/absent month is not a signal and is never treated as zero). A
+    month is 'out' when its net gen <= ``ratio`` x ``reference``. Contiguous
+    out-months merge into one window; each is clipped to the calendar year (no
+    Dec->Jan carry), matching the CAMPD detector convention. Returns
+    ``[(start_ts, end_ts, duration_days), ...]``.
+    """
+    out_months = sorted(m for m, v in monthly.items() if v <= ratio * reference)
+    runs: list[list[int]] = []
+    for m in out_months:
+        if runs and m == runs[-1][-1] + 1:
+            runs[-1].append(m)
+        else:
+            runs.append([m])
+    result: list[tuple[pd.Timestamp, pd.Timestamp, float]] = []
+    for run in runs:
+        start = pd.Timestamp(year=year, month=run[0], day=1)
+        end = pd.Timestamp(year=year, month=run[-1], day=1) + pd.offsets.MonthEnd(0)
+        duration = float((end - start).days + 1)
+        result.append((start, end, duration))
+    return result
+
+
+def derive_eia923_noncampd_fallback(
+    iso: str,
+    years: list[int],
+    group_by_code: dict[int, str],
+    npl_by_plant: dict[int, float],
+    campd_codes: set[int],
+    out_path: str,
+    ratio: float,
+) -> None:
+    """Write the EIA-923 monthly-availability fallback for non-CAMPD fleet plants.
+
+    Only plants in a :data:`QUALIFYING_PLANT_GROUPS` bin (peakers excluded,
+    matching the overlay) that are ABSENT from ``campd_codes`` are considered —
+    the overlay routes derates by ``plant_group``, so a non-qualifying group
+    would be ignored anyway. One row per (plant, contiguous outage-month run) in
+    the standard 13-column schema, tagged ``capacity_source="eia923"``.
+    """
+    e923 = pd.read_parquet(
+        PROCESSED_DIR / "eia923_monthly_generation.parquet",
+        columns=["plant_id", "plant_name", "year"] + _EIA923_MONTH_COLS,
+    )
+    years_in_923 = sorted(int(y) for y in e923["year"].unique())
+    # plant -> year -> {month: summed net gen over the plant's prime-mover rows}
+    by_plant: dict[int, dict[int, dict[int, float]]] = {}
+    name_by_plant: dict[int, str] = {}
+    for row in e923.itertuples(index=False):
+        code = int(row.plant_id)
+        name_by_plant.setdefault(code, str(row.plant_name))
+        months = by_plant.setdefault(code, {}).setdefault(int(row.year), {})
+        for i, col in enumerate(_EIA923_MONTH_COLS, start=1):
+            v = getattr(row, col)
+            if pd.notna(v):
+                months[i] = months.get(i, 0.0) + float(v)
+
+    # Candidate fleet plants: qualifying group, non-peaker, NOT in CAMPD.
+    candidates = sorted(
+        code
+        for code, group in group_by_code.items()
+        if group in QUALIFYING_PLANT_GROUPS
+        and int(code) not in ST_GAS_PEAKER_PLANTS
+        and int(code) not in campd_codes
+    )
+    rows: list[dict] = []
+    summary: list[tuple] = []
+    n_no_npl = 0
+    n_no_923 = 0  # plants with no 923 history at all (no reference derivable)
+    # Per requested year: plants that had no 923 filing that year (no window ->
+    # assumed available). Logged, never silently dropped (rule: no silent caps).
+    no_filing_by_year: dict[int, int] = {y: 0 for y in years}
+    for code in candidates:
+        npl = npl_by_plant.get(int(code), 0.0)
+        if npl <= 0.0:
+            n_no_npl += 1
+            continue
+        plant_years = by_plant.get(int(code))
+        if not plant_years:
+            n_no_923 += 1
+            continue
+        # The plant's OWN normal monthly output: median of its positive-output
+        # months across every filed year. No positive month -> no reference.
+        pos = [v for yr in plant_years.values() for v in yr.values() if v > 0.0]
+        if not pos:
+            n_no_923 += 1
+            continue
+        reference = float(np.median(pos))
+        group = group_by_code[int(code)]
+        name = name_by_plant.get(int(code), "")
+        out_days = 0.0
+        n_win = 0
+        for year in years:
+            if year not in years_in_923:
+                continue
+            months = plant_years.get(year)
+            if not months:
+                # No 923 filing for this plant-year (e.g. the 2025/2026 filing
+                # lag): no availability signal -> assume available, count it.
+                no_filing_by_year[year] += 1
+                continue
+            for start, end, duration in _eia923_month_windows(
+                months, reference, year, ratio
+            ):
+                rows.append(
+                    {
+                        "facility_name": name,
+                        "facility_id": int(code),
+                        "unit_id": "E923",
+                        "unit_capacity_mw": round(npl, 1),
+                        "plant_capacity_mw": round(npl, 1),
+                        "unit_pct_of_plant": 100.0,
+                        "plant_group": group,
+                        "capacity_source": "eia923",
+                        "outage_start": start.strftime("%Y-%m-%d"),
+                        "outage_end": end.strftime("%Y-%m-%d"),
+                        "duration_days": round(duration, 1),
+                        "peer_units_online": 0,
+                        "total_units_at_plant": 1,
+                    }
+                )
+                out_days += duration
+                n_win += 1
+        if n_win:
+            summary.append((int(code), name, group, n_win, out_days))
+
+    cols = [
+        "facility_name",
+        "facility_id",
+        "unit_id",
+        "unit_capacity_mw",
+        "plant_capacity_mw",
+        "unit_pct_of_plant",
+        "plant_group",
+        "capacity_source",
+        "outage_start",
+        "outage_end",
+        "duration_days",
+        "peer_units_online",
+        "total_units_at_plant",
+    ]
+    out = pd.DataFrame(rows, columns=cols).sort_values(
+        ["facility_id", "unit_id", "outage_start"]
+    )
+    out.to_csv(out_path, index=False)
+
+    print(
+        f"\nEIA-923 non-CAMPD fallback [{iso}] ratio={ratio}: "
+        f"wrote {len(out)} windows for {len(summary)} plants to {out_path}"
+    )
+    print(
+        f"  candidates (qualifying non-CAMPD fleet plants): {len(candidates)}; "
+        f"skipped {n_no_npl} (no EIA-860 nameplate), {n_no_923} (no EIA-923 "
+        f"history / no positive month)"
+    )
+    for year in years:
+        print(
+            f"  {year}: {no_filing_by_year.get(year, 0)} candidate plants had NO "
+            f"EIA-923 filing -> no window (assumed available)"
+        )
+    print(f"{'code':>6} {'plant':<28}{'group':<11}{'#win':>5}{'out d':>8}")
+    for code, nm, g, n, td in sorted(summary):
+        print(f"{code:>6} {str(nm)[:27]:<28}{g:<11}{n:>5}{td:>8.0f}")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
@@ -617,6 +847,27 @@ def main() -> None:
         default=None,
         help="Output CSV; defaults to data/raw/campd-unit-outages.csv "
         "(ERCOT) or campd-unit-outages-{ISO}.csv.",
+    )
+    ap.add_argument(
+        "--eia923-noncampd-fallback",
+        action="store_true",
+        help="DEFAULT-OFF alternate mode: instead of the CAMPD detector, infer "
+        "monthly availability windows from EIA-923 monthly net generation for "
+        "fleet plants that have NO CAMPD unit-level record (non-CEMS units the "
+        "gross-based detector is blind to). Writes a SEPARATE companion file "
+        "campd-unit-outages-e923-{ISO}.csv (all ISOs suffixed) tagged "
+        'capacity_source="eia923" that the outage loader does NOT read by '
+        "default — landed as backup only. The standard extract is byte-unchanged "
+        "when this flag is absent.",
+    )
+    ap.add_argument(
+        "--eia923-outage-ratio",
+        type=float,
+        default=EIA923_FALLBACK_OUTAGE_RATIO,
+        help="EIA-923 fallback: a month at or below this fraction of the plant's "
+        "own normal monthly output (median of its positive months across all "
+        "filed years) is a full-stop window (default "
+        f"{EIA923_FALLBACK_OUTAGE_RATIO}).",
     )
     args = ap.parse_args()
     if args.short_windows and args.partial_windows:
@@ -726,6 +977,24 @@ def main() -> None:
 
     exact, by_digits = build_capacity_index(Path(args.eia860))
     npl_by_plant = plant_nameplate_index(Path(args.eia860))
+
+    # EIA-923 non-CAMPD fallback: a SEPARATE default-off layer written to its own
+    # companion file (never merged into the default-read extract), so it returns
+    # before the CAMPD detector runs and the standard output path is untouched.
+    if args.eia923_noncampd_fallback:
+        states = campd.states_for_iso(iso)
+        campd_codes = campd_plant_codes(states, args.years)
+        e923_out = str(RAW_DATA_DIR / f"campd-unit-outages-e923-{iso}.csv")
+        derive_eia923_noncampd_fallback(
+            iso=iso,
+            years=args.years,
+            group_by_code=group_by_code,
+            npl_by_plant=npl_by_plant,
+            campd_codes=campd_codes,
+            out_path=e923_out,
+            ratio=args.eia923_outage_ratio,
+        )
+        return
 
     # When-operable baseload guard (short + partial modes): load the ISO's
     # >= 5-day standard extract so a unit's CF is measured over the hours it is
