@@ -82,15 +82,11 @@ def export_all(results_root: Path, output_dir: Path, index_path: Path) -> list[d
     """
     scenarios: list[dict] = []
     for iso, cache_key in find_completed_scenarios(results_root):
-        prior_root = cache.CACHE_ROOT
-        cache.CACHE_ROOT = results_root
-        try:
+        with cache.cache_root(results_root):
             json_path = export_scenario_json(cache_key, iso, output_dir)
             config = ScenarioConfig.from_yaml(
                 cache.get_config_path(iso, cache_key, START_YEAR)
             )
-        finally:
-            cache.CACHE_ROOT = prior_root
 
         scenarios.append(
             {
