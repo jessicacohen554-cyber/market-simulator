@@ -42,6 +42,7 @@
         { label: 'Run Explorer',        href: 'backcast-runs.html',     num: '&#9881;' },
         { label: 'Calibration Status',   href: 'calibration-status.html', num: '&#9678;' },
         { label: 'Calibration Rubric',   href: 'calibration-rubric.html', num: '&#9878;' },
+        { label: 'Scarcity Deep Dive',   href: 'scarcity-deep-dive.html', num: '&#9889;' },
         { label: 'Model Validity',       href: 'model-validity.html',     num: '&#8982;' },
         { label: 'Data Completeness',    href: 'data-completeness.html',  num: '&#9745;' },
       ],

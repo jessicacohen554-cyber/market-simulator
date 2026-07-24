@@ -186,6 +186,23 @@ def run(bundle: Path, year: int, months: list[int], threshold: float) -> dict:
     print(f"  corr(cheap surplus, gas deficit) = {corr:.3f}  "
           f"(near -1 => one-for-one merit-order displacement)")
 
+    month_of = pd.date_range(f"{year}-01-01", periods=8760, freq="h").month.to_numpy()
+    monthly = []
+    for m in months:
+        sel = scar & (month_of == m)
+        if not sel.any():
+            monthly.append({"month": m, "n": 0, "actual": 0.0, "model": 0.0})
+            continue
+        monthly.append({"month": m, "n": int(sel.sum()),
+                        "actual": float(actual_lw[sel].mean()),
+                        "model": float(model_lw[sel].mean()),
+                        "gas_actual": float(actual["gas"][sel].mean()),
+                        "gas_model": float(model["gas"][sel].mean())})
+    print("\n  by month")
+    for r in monthly:
+        nm = pd.Timestamp(f"{year}-{r['month']:02d}-01").strftime("%b")
+        print(f"    {nm}: {r['n']:3d} h | actual ${r['actual']:7,.0f} | model ${r['model']:6,.0f}")
+
     gas_sub = {k: float(wide[k].to_numpy()[scar].mean()) for k in GAS_SUBCLASSES
                if k in wide.columns}
     print("\n  model gas composition at those hours (MODEL-SIDE ONLY — EIA-930 reports "
@@ -216,6 +233,7 @@ def run(bundle: Path, year: int, months: list[int], threshold: float) -> dict:
                   "n500": int((cheap > 500).sum()), "n1000": int((cheap > 1000).sum()),
                   "n1500": int((cheap > 1500).sum()), "corr": corr},
         "gas_sub": gas_sub,
+        "monthly": monthly,
     }
 
 
