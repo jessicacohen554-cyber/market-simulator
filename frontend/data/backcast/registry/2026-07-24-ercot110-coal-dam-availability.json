@@ -1,0 +1,13 @@
+{
+  "id": "2026-07-24-ercot110-coal-dam-availability",
+  "label": "ercot110 coal dam availability",
+  "date": "2026-07-24",
+  "shorthand": "ercot110-coal-dam-availability",
+  "definition": "ERCOT-110: measured DAM availability extended to coal (class-hour + plant-hour), 2023",
+  "years": [
+    2023
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-24-ercot110-coal-dam-availability.js",
+  "bundle": "results/calibration/ercot110_coal_dam_avail"
+}
