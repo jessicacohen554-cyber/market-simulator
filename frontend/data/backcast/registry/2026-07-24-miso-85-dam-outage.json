@@ -3,7 +3,7 @@
  "label": "miso 85 dam outage",
  "date": "2026-07-24",
  "shorthand": "miso-85-dam-outage",
- "definition": "MISO-native published outage overlay + net-revenue gas margin (KEEPER, determination NOT-YET). Two deltas on the 2026-07-20-miso-81-phantom-outage recipe: gas_offer_margin=true (the go-forward fuel-invariant $/MWh gas offer form, anchor 3.0492 $/MMBtu) and miso_native_outage_source=true - MISO's own published Multiday Operating Margin outage record (region x cause daily offline MW, UNPLANNED components) REPLACING the CAMPD unit-level outage derate. Full span 2023-2025, per-year chained, zero fitted scalars. The measured overlay is kept per rule 1 though it degrades the fit: its published grain carries no unit/fuel identity, so a uniform envelope hands coal back ~5 GW and derates a peaking fleet the per-unit record never says was out.",
+ "definition": "(PROBE \u2014 REJECTED, superseded by 2026-07-24-miso-86-netrev-margin) MISO-native published outage overlay + net-revenue gas margin (determination NOT-YET). Two deltas on the 2026-07-20-miso-81-phantom-outage recipe: gas_offer_margin=true (the go-forward fuel-invariant $/MWh gas offer form, anchor 3.0492 $/MMBtu) and miso_native_outage_source=true - MISO's own published Multiday Operating Margin outage record (region x cause daily offline MW, UNPLANNED components) REPLACING the CAMPD unit-level outage derate. Full span 2023-2025, per-year chained, zero fitted scalars. The measured overlay is kept per rule 1 though it degrades the fit: its published grain carries no unit/fuel identity, so a uniform envelope hands coal back ~5 GW and derates a peaking fleet the per-unit record never says was out.",
  "years": [
   2023,
   2024,
