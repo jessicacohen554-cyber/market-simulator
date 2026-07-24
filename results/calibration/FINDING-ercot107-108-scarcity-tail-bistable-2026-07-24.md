@@ -201,3 +201,63 @@ being the cheapest thing on the curve.
 this session. Cadence if authorized: single-year rule-16 probe with the C3a level guard,
 the zero-spurious gate, and the ercot41/43 failure-signature guard (2023 tail + C3b/C3c
 must not degrade), then full-span + LOYO (rule 24) before any promotion.
+
+---
+
+## 7. ERCOT-109 — the mix at the true scarcity hours (added 2026-07-24, owner question)
+
+Probe `scripts/probes/ercot109_scarcity_mix.py` (no LP; keeper hourlies + committed
+zonal actuals + EIA-930 `ERCO hourly`). Visual companion:
+`results/calibration/ercot109-scarcity-mix-julsep-2023.html`
+(published artifact: <https://claude.ai/code/artifact/5b067fa6-eed9-4f4c-9712-fd2d4b931d3e>).
+
+**122 true scarcity hours** in Jul–Sep 2023 (actual load-weighted zonal ≥ $300 — hours
+selected from the ACTUALS only), 83 % of the year's 147. Actual $1,349 vs model $578;
+the model reaches $300 in 31 and falls under $200 in 69.
+
+The model serves the same load — total generation matches within **679 MW** (and load is
+a measured input, so the level matches by construction). The composition does not:
+
+| fuel | actual | model | Δ | hours model over by >250 MW | max |
+|---|---|---|---|---|---|
+| gas | 47,090 | 45,379 | **−1,711** | 0 (0 %) | — |
+| coal | 11,271 | 11,695 | +424 | **71 (58 %)** | +1,943 |
+| wind | 8,183 | 8,559 | +377 | **59 (48 %)** | +2,233 |
+| hydro | 174 | 350 | +176 | 54 (44 %) | +470 |
+
+The mean understates it: wind's median is only +139 MW but its p90 is +1,078 — the
+over-run is skewed, not uniform. Taken together the **cheap stack**
+(wind+coal+solar+hydro) runs a surplus in **118 of 122** hours (median +871 MW, max
++3,470; >1 GW in 48 hours), gas is under in **121 of 122**, and
+**corr(cheap surplus, gas deficit) = −0.77** — near one-for-one merit-order
+displacement. This is the "~1.5 GW too much cheap supply" of the ERCOT-101 diagnosis,
+now measured hour-by-hour at the scarcity hours themselves.
+
+**Storage is the one leg this cannot test.** EIA-930 publishes no battery series for
+ERCOT 2023 and the committed artifacts carry model storage only as an annual total
+(0.77 TWh throughput; Aug 116 GWh ≈ 156 MW monthly mean). That bounds the model's
+battery contribution at these hours to a few hundred MW against a 1.7 GW gas gap but
+does not resolve it — whether the model over-discharges batteries into scarcity hours
+is **OPEN** and needs an hourly series on both sides.
+
+### Correction to §6's proposed next step
+
+§6 proposed "widen the re-priced slice to CC" via `ercot_faststart_pool_offer`. **That is
+wrong on the mechanism** and is withdrawn:
+
+1. **CC cannot ride this flag.** Eligibility is unit physics —
+   `min_down_hours ≤ FASTSTART_POOL_MIN_DOWN_HOURS` (= 2.0) — so CC (4–8 h) fails by
+   construction, as does ST_GAS (8–12 h). Widening to CC is a NEW leg, not this knob.
+2. **The flag is inert for 2023.** `ercot_faststart_pool_condbinned.json` is YEAR-SCOPED
+   with no pooled fallback (rule 13) and carries **2024/2025 only**; the 2023 SCED
+   Gen_Resource corpus is **not on disk** (only 2024/2025 sample-day parquets are). The
+   2023 RT *wall* entry was added by ERCOT-105 from a re-uploaded corpus that was not
+   retained — note the wall's `_provenance.source` still reads "delivery years 2024-2025"
+   and is stale relative to its own `ercot105_added` field.
+
+So the available single-knob test is `ercot_faststart_pool_offer=true` on **2024/2025**,
+where the artifact is live — worth running because ERCOT-88 judged that flag on the
+**ercot86** keeper, before netrev-margin (ERCOT-100), state-off (ERCOT-99), the NP6 HSL
++ AS-clock fixes (ERCOT-98), the gas commitment bridge, and hourly/plant availability
+grain (ERCOT-96/97) all landed. Testing it on 2023 first requires re-uploading the 2023
+SCED corpus — an owner-authorized data intake, not a model change.
