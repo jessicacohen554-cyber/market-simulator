@@ -161,14 +161,64 @@ Then re-enable the gate assertions in `tests/test_miso_outages.py` (the
 `test_gate_default_off_and_forks_cache_key` case, dropped from the intake commit
 because the field was not yet present) and run the full suite.
 
-## Composition to settle in calibration (not decided here)
+## Composition — SETTLED in calibration (miso-85, 2026-07-24)
 
-The default derate sums all four cause types (total capacity offline) and
-divides by the model's MISO thermal fleet (`_THERMAL_GROUPS`, ~118 GW). The
-calibration session should decide: (a) whether to exclude `Planned` (to avoid
-double-counting the statistical planned-outage model) or instead drop the
-statistical POF for the covered classes the way ERCOT's DAM path does; (b)
-replace-vs-multiply against the statistical availability; and score any verdict
-flip leave-one-year-out within 2023–2025 before promotion (rule 22). Coverage is
-2023–2026 only — MISO publishes no `_mom.xlsx` before 2023, so a pre-2023
-backcast keeps the CAMPD/​statistical path regardless.
+**Status update.** The wiring above landed on main independently
+(`infra/dam-outage-wiring-4iso`, 2026-07-24) as part of the four-ISO
+published-availability batch, in its as-authored form: all four cause types,
+thermal denominator, replacing the CAMPD derate in the `ufac` seam. The miso-85
+calibration session then settled the two open composition questions below. Only
+the cause set changed (`data.miso_outages.UNPLANNED_CAUSE_TYPES`); the gate, the
+seam, and the default-off posture are unchanged.
+
+**(a) Cause set — `Planned` EXCLUDED; the derate sums Derated + Forced +
+Unplanned.** Two independent reasons, neither of them a fit argument:
+
+1. *Double count.* The model already carries a planned-outage layer for the
+   covered classes (statistical POF / CAMPD maintenance windows, plus the
+   separate nuclear refuel-availability overlay). This is the same call the
+   sibling PJM instrument made independently
+   (`data.pjm_outages.PJM_OUTAGE_DEFAULT_TYPES = ("forced", "maintenance")`).
+2. *Non-thermal contamination, refuted by measured data.* The report's MW is a
+   whole-registered-fleet total with no fuel identity, while the derate applies
+   it to fossil-thermal bins against a fossil-thermal denominator. `Planned`
+   dominates the total (annual mean 17.6–20.6 GW of 41.8–48.7 GW; 36.4 GW in
+   April vs 7.9 GW in July) and is where the record's non-thermal scheduled work
+   sits. Summing all four leaves **less available thermal capacity than MISO's
+   own metered thermal output**: EIA-930 daily-max coal+gas generation exceeds the
+   all-cause envelope's available capacity on **12 / 15 / 61 days** of
+   2023 / 2024 / 2025 (worst excess 12.7 GW), and July-2025 mean headroom is
+   0.3 GW on a 118 GW fleet — before reserves. Under it the model could not
+   reproduce its own C1-validated dispatch. The unplanned set is feasible on
+   every day but one (2025-05, 1.6 GW).
+
+   Seasonality confirms the bucket semantics: `Derated` peaks in **July–August**
+   (10.5 GW vs 6.0 GW in March) — the ambient summer capability derate GADS
+   EFORd counts, not scheduled work — while `Forced` / `Unplanned` are flat
+   year-round. Evidence is reproducible:
+   `python scripts/probes/_miso85_outage_composition.py`.
+
+**(b) Replace vs multiply — unchanged: the envelope REPLACES the CAMPD unit
+derate in the same seam, multiplying the statistical stack exactly as CAMPD
+did.** The two records are like-for-like in level — the unplanned envelope's
+fleet-average availability (0.816 / 0.795 / 0.763) sits within a few points of
+the CAMPD per-unit derate it replaces (0.763 / 0.768 / 0.782) — so the swap is
+**level-neutral and changes the availability *shape*, not its magnitude**, and no
+other availability flag (`coal_drop_pof`, `wefor_residual`) needs to move. That
+is the point of the overlay: it substitutes MISO's own published unavailability
+bookkeeping for a CEMS-inferred detector that reads economic idleness as outage
+(`results/calibration/FINDING-ercot79-phantom-outage-2026-07.md`, the finding the
+miso-81 keeper is named for). The ERCOT/PJM water-fill *rescale* was considered
+and not adopted: it sets **total** class-day availability to an unplanned-only
+target, which would erase the model's spring maintenance dip for classes whose
+POF is dropped (`coal_drop_pof=True` in the MISO keeper recipe).
+
+**Residual approximation (documented, not tuned).** The uniform envelope still
+distributes the measured offline MW proportionally across the thermal fleet
+rather than onto the units that were actually out, and its numerator still
+carries whatever unplanned non-thermal outages the report includes. That is the
+aggregate grain of the public record; it is a real structural tradeoff against
+CAMPD's per-unit grain, not a strict upgrade.
+
+Coverage is 2023–2026 only — MISO publishes no `_mom.xlsx` before 2023, so a
+pre-2023 backcast keeps the CAMPD/statistical path regardless.

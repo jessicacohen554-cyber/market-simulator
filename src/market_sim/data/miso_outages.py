@@ -68,6 +68,41 @@ MISO_OUTAGES_DIR = RAW_DATA_DIR / "miso-generation-outages"
 CAUSE_TYPES: tuple[str, ...] = ("Derated", "Forced", "Planned", "Unplanned")
 REGIONS: tuple[str, ...] = ("North", "Central", "South", "MISO")
 
+# Cause types the AVAILABILITY DERATE sums (miso-85 composition decision; the
+# open question left by docs/handoffs/miso-native-outage-wiring-2026-07.md
+# "Composition to settle in calibration"). The UNPLANNED components only —
+# "Planned" is excluded, exactly as the sibling PJM instrument excludes its
+# "planned" bucket (data.pjm_outages.PJM_OUTAGE_DEFAULT_TYPES = forced +
+# maintenance), for two independent reasons:
+#
+#   1. Double count. The model already carries a planned-outage layer for the
+#      covered classes (the statistical POF / CAMPD maintenance windows, plus
+#      the separate nuclear refuel-availability overlay), so re-applying the
+#      report's Planned MW on top counts the same maintenance twice.
+#   2. Non-thermal contamination + provable infeasibility. The report's MW is a
+#      WHOLE-REGISTERED-FLEET total (no fuel identity), while this derate applies
+#      it to the fossil-thermal bins against a fossil-thermal denominator. The
+#      Planned bucket is where the non-thermal scheduled work lives (nuclear
+#      refuel, hydro/renewable maintenance) and it dominates the total (2023-25
+#      annual mean 17.6-20.6 GW of a 41.8-48.7 GW total, peaking at 36.4 GW in
+#      April vs 7.9 GW in July). Summing all four leaves LESS available thermal
+#      capacity than MISO's own metered thermal output: measured EIA-930 daily-max
+#      coal+gas generation exceeds the all-cause envelope's available capacity on
+#      12 / 15 / 61 days of 2023 / 2024 / 2025 (worst excess 12.7 GW), and July
+#      2025 mean headroom is 0.3 GW on a 118 GW fleet — before reserves. The
+#      unplanned-only set is feasible on every day but one (2025-05, 1.6 GW).
+#
+# The retained buckets are the measured analogue of the model's forced-outage /
+# derate layer: "Forced" and "Unplanned" are flat year-round (no shoulder peak),
+# and "Derated" peaks in JULY-AUGUST (10.5 GW vs 6.0 GW in March) — the ambient
+# summer capability derate GADS EFORd counts, not scheduled work. The resulting
+# fleet-average availability (0.816 / 0.795 / 0.763) is within a few points of
+# the independent CAMPD per-unit measured derate it replaces (0.763 / 0.768 /
+# 0.782), so the swap is level-neutral and changes the availability *shape*, not
+# its magnitude — the point of the overlay (the CAMPD detector reads economic
+# idleness as outage; see results/calibration/FINDING-ercot79-phantom-outage-2026-07.md).
+UNPLANNED_CAUSE_TYPES: tuple[str, ...] = ("Derated", "Forced", "Unplanned")
+
 # Committed in-repo form: compact wide CSV, one file per calendar year
 # (``miso_outages_estimated_<year>.csv``: an ``interval_date`` column + one
 # ``<Region>_<CauseType>`` column per region×cause, integer MW). CSV rather than
@@ -216,7 +251,7 @@ def miso_native_outage_derate_factors(
     year: int,
     hours: int = HOURS_PER_YEAR,
     iso: str = "MISO",
-    cause_types: tuple[str, ...] = CAUSE_TYPES,
+    cause_types: tuple[str, ...] = UNPLANNED_CAUSE_TYPES,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
 
@@ -231,7 +266,11 @@ def miso_native_outage_derate_factors(
 
     applied to every fossil-thermal ``(plant_code, plant_group)`` bin
     (:data:`_THERMAL_GROUPS`). ``system_offline_MW`` is the ``MISO`` system-total
-    of the requested ``cause_types`` (default all four) from
+    of the requested ``cause_types`` — default :data:`UNPLANNED_CAUSE_TYPES`, the
+    unplanned components (Derated + Forced + Unplanned), NOT all four: see that
+    constant for the miso-85 composition decision (Planned is the model's own
+    layer, is where the report's non-thermal scheduled work lives, and summing it
+    here is refuted by MISO's own metered thermal output) — from
     :func:`miso_outage_mw_series`. The denominator is the model's own MISO
     fossil-thermal nameplate, so the derate is self-consistent with the
     dispatched fleet.
