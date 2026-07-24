@@ -800,6 +800,70 @@ def _apply_outage_overlays(
             getattr(config, "campd_bins_path", str(CAMPD_BINS_CSV)),
             iso=_iso or "ERCOT",
         )
+        # DAM-first outage precedence (backcast overlay, gated per ISO). Where an
+        # ISO publishes its own availability instrument, use it IN PLACE OF the
+        # CAMPD unit-outage derate for the scope it covers, keeping the CAMPD
+        # window as the fallback everywhere it does not reach. Both loaders below
+        # match unit_outage_derate_factors' {(plant_code, plant_group): (hours,)
+        # multiplier} interface, so precedence is a per-key merge into ``ufac`` —
+        # no double-count (exactly one factor per key), grain-preserving, and a
+        # clean no-op when off (``ufac`` stays the CAMPD derate above, untouched).
+        # The uniform ISO-neutral loaders are keyed to their ISO, so the wrong-ISO
+        # branch never fires. Backcast-only (this block already gates on
+        # outage_source == "historic"; the explicit mode guard mirrors ERCOT).
+        if (
+            _iso == "CAISO"
+            and getattr(config, "caiso_dam_outages", False)
+            and getattr(config, "mode", "forecast") == "backcast"
+        ):
+            # Per-PLANT grain: CAISO's measured DAM curtailment reports cover only
+            # the thermal plants they name (crosswalked); those plants take the
+            # measured schedule, while every other plant — and any pre-2021-06-18
+            # year with no series — keeps its CAMPD window. DAM wins per covered
+            # (plant_code, plant_group); the rest fall back, never silently zeroed.
+            from market_sim.data.caiso_outages import (
+                caiso_dam_outage_derate_factors,
+                has_dam_coverage,
+            )
+
+            if has_dam_coverage(config.weather_year):
+                _dam = caiso_dam_outage_derate_factors(
+                    config.weather_year, hours, iso="CAISO"
+                )
+                if _dam:
+                    ufac = {**ufac, **_dam}  # DAM wins for covered plants
+                    logger.info(
+                        "CAISO DAM-outage precedence (%d): %d plant-tranche(s) "
+                        "from measured curtailment reports override CAMPD",
+                        config.weather_year,
+                        len(_dam),
+                    )
+        elif (
+            _iso == "MISO"
+            and getattr(config, "miso_native_outage_source", False)
+            and getattr(config, "mode", "forecast") == "backcast"
+        ):
+            # AGGREGATE grain: MISO's published region/cause offline-MW envelope
+            # covers the WHOLE fossil-thermal fleet uniformly (one measured
+            # availability fraction on every thermal bin), so a covered year
+            # REPLACES the CAMPD derate outright. A year the record does not cover
+            # (pre-2023) returns an empty dict and keeps CAMPD (the fallback).
+            from market_sim.data.miso_outages import (
+                miso_native_outage_derate_factors,
+            )
+
+            _dam = miso_native_outage_derate_factors(
+                config.weather_year, hours, iso=_iso
+            )
+            if _dam:
+                ufac = _dam  # native envelope replaces CAMPD for covered years
+                logger.info(
+                    "MISO native-outage precedence (%d): measured Multiday "
+                    "Operating Margin envelope replaces CAMPD on %d thermal "
+                    "bin(s)",
+                    config.weather_year,
+                    len(_dam),
+                )
         if ufac:
             # NEISO temperature-reliability-floor exemption (CLAUDE.md #11). The
             # lone Merrimack-class COAL unit and lone ST_GAS unit are winter
@@ -1273,6 +1337,162 @@ def _apply_outage_overlays(
                 "ERCOT measured thermal DAM availability (%d): %s set to measured "
                 "class-day level on %d day(s) (restore %d / remove %d), median "
                 "target %.3f",
+                _yr,
+                _cls,
+                int(_covered.sum()),
+                int(_restore.sum()),
+                int(_remove.sum()),
+                float(np.median(_t[_covered])),
+            )
+        np.clip(availability, 0.0, 1.0, out=availability)
+
+    # NEISO measured FLEET operable-capacity availability (backcast overlay,
+    # config.neiso_operable_capacity_availability): the ISO-NE analogue of the
+    # ERCOT class-day DAM block above. ISO-NE publishes availability only at
+    # FLEET grain (Morning Report Section 3; no per-unit / per-fuel series), so a
+    # SINGLE measured day availability fraction is imposed on the covered
+    # dispatchable-thermal classes TOGETHER: set their cap-weighted day-mean
+    # availability to the measured 1 - outages/(CSO + EcoMax-above-CSO) level,
+    # superseding the CAMPD unit-outage derate applied above ("instead of the
+    # campd unit outage fallback"). Same bidirectional cap-1.0 water-fill as the
+    # ERCOT block (RESTORE toward the ceiling where measured > model, REMOVE
+    # toward zero where measured < model), here over one pooled group. Uncovered
+    # dates (pre-2018-07 archive start, publication gaps) keep the pre-overlay
+    # availability; forecast mode is untouched (the mode-aware seam). Provenance
+    # + admissibility: data.neiso_operable_capacity.
+    if (
+        config is not None
+        and _iso == "NEISO"
+        and getattr(config, "neiso_operable_capacity_availability", False)
+        and getattr(config, "mode", "forecast") == "backcast"
+        and _yr is not None
+    ):
+        from market_sim.data.neiso_operable_capacity import (
+            neiso_thermal_availability_series,
+        )
+
+        _meas = neiso_thermal_availability_series(int(_yr), hours)
+        _idx = np.array(
+            [
+                gi
+                for gi, g in enumerate(generators)
+                if g.plant_group in THERMAL_AVAILABILITY
+            ],
+            dtype=int,
+        )
+        _n_days = hours // 24
+        _t = (
+            _meas[: _n_days * 24].reshape(_n_days, 24).mean(axis=1)
+            if _idx.size
+            else np.array([])
+        )
+        _covered = np.isfinite(_t)
+        _cap = pmax[_idx] if _idx.size else np.array([])
+        _cap_sum = float(_cap.sum()) if _idx.size else 0.0
+        if _idx.size and _cap_sum > 0.0 and _covered.any():
+            _a = availability[_idx, : _n_days * 24].reshape(_idx.size, _n_days, 24)
+            _ad = _a.mean(axis=2)  # (n, days) per-unit day-mean availability
+            # Cap-weighted current pooled-thermal day-mean availability.
+            _cur = (_ad * _cap[:, None]).sum(axis=0) / _cap_sum  # (days,)
+            _restore = _covered & (_t >= _cur)
+            _remove = _covered & (_t < _cur)
+            _lam = np.clip((_t - _cur) / np.maximum(1.0 - _cur, 1e-9), 0.0, 1.0)
+            _new = _ad.copy()
+            _new[:, _restore] = _ad[:, _restore] + _lam[None, _restore] * (
+                1.0 - _ad[:, _restore]
+            )
+            _mu = np.where(_remove, _t / np.maximum(_cur, 1e-9), 1.0)
+            _new[:, _remove] = _ad[:, _remove] * _mu[None, _remove]
+            # Preserve each unit's intra-day shape by the per-unit day ratio; a
+            # unit revived from a zeroed day is set flat (no shape to scale).
+            _ratio = np.divide(_new, _ad, out=np.zeros_like(_ad), where=_ad > 1e-9)
+            _scaled = _a * _ratio[:, :, None]
+            _flat = (_ad <= 1e-9) & (_new > 1e-9)
+            if _flat.any():
+                _scaled[_flat, :] = _new[_flat][:, None]
+            _scaled = np.minimum(_scaled, 1.0)
+            _scaled[:, ~_covered, :] = _a[:, ~_covered, :]  # uncovered untouched
+            availability[_idx, : _n_days * 24] = _scaled.reshape(_idx.size, -1)
+            np.clip(availability, 0.0, 1.0, out=availability)
+            logger.info(
+                "NEISO measured operable-capacity availability (%d): pooled "
+                "thermal fleet set to measured fleet level on %d day(s) "
+                "(restore %d / remove %d), median target %.3f",
+                _yr,
+                int(_covered.sum()),
+                int(_restore.sum()),
+                int(_remove.sum()),
+                float(np.median(_t[_covered])),
+            )
+
+    # PJM measured generation-outage availability (backcast overlay,
+    # config.pjm_dam_availability): the PJM analogue of the ERCOT class-day DAM
+    # block above. PJM publishes outages only at the RTO/sub-region aggregate
+    # (never per fuel class), so pjm_dam_availability_series converts the measured
+    # unplanned-outage MW to ONE fleet-wide availability fraction and returns it
+    # for every covered fossil-thermal class — a UNIFORM derate. Each covered
+    # class is water-filled to that same measured day-mean fraction by the SAME
+    # bidirectional cap-1.0 rule as the ERCOT block (RESTORE toward the ceiling
+    # where measured > model, REMOVE toward zero where measured < model),
+    # superseding the CAMPD unit-outage derate on covered days ("in place of the
+    # campd unit outage fallback"). Uncovered days (NaN — outside the feed) keep
+    # the pre-overlay availability; forecast mode is untouched (the mode-aware
+    # seam). Kept a SEPARATE block from ERCOT (rather than generalizing that
+    # overlay's now ERCOT-96/97-branched guard) so the ERCOT path stays
+    # byte-identical. Provenance + admissibility: data.pjm_outages.
+    if (
+        config is not None
+        and _iso == "PJM"
+        and getattr(config, "pjm_dam_availability", False)
+        and getattr(config, "mode", "forecast") == "backcast"
+        and _yr is not None
+    ):
+        from market_sim.data.pjm_outages import pjm_dam_availability_series
+
+        _meas_pjm = pjm_dam_availability_series(int(_yr), hours)
+        _n_days = hours // 24
+        for _cls, _target_h in _meas_pjm.items():
+            _idx = np.array(
+                [gi for gi, g in enumerate(generators) if g.plant_group == _cls],
+                dtype=int,
+            )
+            if _idx.size == 0:
+                continue
+            _cap = pmax[_idx]  # (n,)
+            _cap_sum = float(_cap.sum())
+            if _cap_sum <= 0.0:
+                continue
+            _a = availability[_idx, : _n_days * 24].reshape(_idx.size, _n_days, 24)
+            _ad = _a.mean(axis=2)  # (n, days) per-unit day-mean availability
+            _t = _target_h[: _n_days * 24].reshape(_n_days, 24).mean(axis=1)  # (days,)
+            _covered = np.isfinite(_t)
+            if not _covered.any():
+                continue
+            # Cap-weighted current class-day mean availability.
+            _cur = (_ad * _cap[:, None]).sum(axis=0) / _cap_sum  # (days,)
+            _restore = _covered & (_t >= _cur)
+            _remove = _covered & (_t < _cur)
+            _lam = np.clip((_t - _cur) / np.maximum(1.0 - _cur, 1e-9), 0.0, 1.0)
+            _new = _ad.copy()
+            _new[:, _restore] = _ad[:, _restore] + _lam[None, _restore] * (
+                1.0 - _ad[:, _restore]
+            )
+            _mu = np.where(_remove, _t / np.maximum(_cur, 1e-9), 1.0)
+            _new[:, _remove] = _ad[:, _remove] * _mu[None, _remove]
+            # Preserve each unit's intra-day shape by the per-unit day ratio; a
+            # unit revived from a zeroed day is set flat (no shape to scale).
+            _ratio = np.divide(_new, _ad, out=np.zeros_like(_ad), where=_ad > 1e-9)
+            _scaled = _a * _ratio[:, :, None]
+            _flat = (_ad <= 1e-9) & (_new > 1e-9)
+            if _flat.any():
+                _scaled[_flat, :] = _new[_flat][:, None]
+            _scaled = np.minimum(_scaled, 1.0)
+            _scaled[:, ~_covered, :] = _a[:, ~_covered, :]  # uncovered untouched
+            availability[_idx, : _n_days * 24] = _scaled.reshape(_idx.size, -1)
+            logger.info(
+                "PJM measured generation-outage availability (%d): %s set to "
+                "measured fleet level on %d day(s) (restore %d / remove %d), "
+                "median target %.3f",
                 _yr,
                 _cls,
                 int(_covered.sum()),
