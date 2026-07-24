@@ -32,7 +32,7 @@ import time
 from dataclasses import replace
 
 from market_sim.config.scenarios import ScenarioConfig
-from market_sim.pipeline.api import run_pair
+from market_sim.pipeline.members import run_pair
 from market_sim.uncertainty import UncertaintySpec, draw_to_config, sample_draws
 
 logger = logging.getLogger("pb5_member_slice")

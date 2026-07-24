@@ -16,6 +16,7 @@ from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
 from market_sim.results import cache
 from tests.test_runner import _FakeDispatchModel, _fake_solve
 from market_sim.pipeline import commitment as pipeline_commitment
+from market_sim.pipeline import members as pipeline_members
 from market_sim.pipeline import solve as pipeline_solve
 
 
@@ -87,7 +88,7 @@ class TestRunMatrix(MatrixTestBase):
             patch.object(
                 pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
             ),
-            patch.object(matrix, "ProcessPoolExecutor") as mock_pool,
+            patch.object(pipeline_members, "ProcessPoolExecutor") as mock_pool,
         ):
             matrix.run_matrix(configs, "ERCOT", workers=8)
             mock_pool.assert_called_once_with(max_workers=matrix.MAX_CONCURRENT_CASES)
