@@ -1184,6 +1184,18 @@ def _apply_outage_overlays(
         from market_sim.data.outages import ercot_thermal_dam_availability_series
 
         _meas = ercot_thermal_dam_availability_series(int(_yr), hours)
+        # ERCOT-110 coal class-SCOPE gate
+        # (config.ercot_thermal_dam_availability_coal). The deriver now emits
+        # COAL_PRB / COAL_LIGNITE rows alongside the gas classes, so the coal
+        # classes are dropped from EVERY measured dict here unless the gate is
+        # armed — a re-derive can widen the artifacts without moving a keeper,
+        # and an armed-gas run stays byte-identical to its pre-ERCOT-110 self.
+        # Filtering the class dicts is sufficient and complete: both the
+        # class-day and class-HOUR loops iterate them, and the plant grain only
+        # forms mapped_plants for units of a class already in _meas_h, so a
+        # coal plant in the crosswalk is unreachable while the gate is off.
+        if not getattr(config, "ercot_thermal_dam_availability_coal", False):
+            _meas = {k: v for k, v in _meas.items() if not k.startswith("COAL")}
         # ERCOT-96 grain switch (config.ercot_thermal_dam_availability_hourly):
         # apply the SAME measured mechanism at class-HOUR grain — the measured
         # per-Hour-Ending fraction replaces the day-flat block, keeping the
@@ -1202,6 +1214,9 @@ def _apply_outage_overlays(
             )
 
             _meas_h = ercot_thermal_dam_availability_hourly_series(int(_yr), hours)
+            if not getattr(config, "ercot_thermal_dam_availability_coal", False):
+                # ERCOT-110 gate, class-HOUR grain (see the class-day filter).
+                _meas_h = {k: v for k, v in _meas_h.items() if not k.startswith("COAL")}
             # ERCOT-97 plant grain (config.ercot_thermal_dam_availability_plant,
             # requires _hourly): pin each accepted-crosswalked plant to its own
             # measured site-hour fraction and water-fill the unmapped remainder
