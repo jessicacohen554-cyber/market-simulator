@@ -150,6 +150,39 @@ _EIA930_BENCHMARK_COLUMNS: tuple[tuple[str, str], ...] = (
 _STORAGE_BENCHMARK_SERIES: frozenset[str] = frozenset({"battery", "pumped_storage"})
 _STORAGE_MIN_COVERAGE_FRAC: float = 0.5
 
+# EIA-930 per-fuel filing gaps that arrive as an exact 0.0 rather than a blank.
+# The loader's gap machinery below only guards NaN, so a zero-coded gap reads as
+# a measured "the fleet produced nothing this hour" and silently DEFLATES the
+# annual benchmark — which then reads as the model over-running that class.
+#
+# Registry keyed by EIA-930 BA code -> the columns whose exact zeros are filing
+# gaps. An entry belongs here ONLY when a fleet-wide zero is physically
+# impossible for that BA's fleet AND an independent ISO posting shows material
+# generation in the very hours the 930 series reads 0. It is a data-quality
+# statement about the source extract (rule 14 — prefer the accurate measurement),
+# not a tunable: nothing here responds to a residual, and the repaired series is
+# validated against the independent posting, not against any model output.
+#
+# NYIS ``NG: NUC`` (measured 2026-07-24, this file's only entry):
+#   New York's nuclear fleet is four baseload units at three sites (Ginna,
+#   Nine Mile Point 1 & 2, FitzPatrick; ~3.4 GW). The NYIS extract reads exactly
+#   0 MW for 1,275 h (2023, across 56 distinct days incl. one 1,179-h block),
+#   390 h (2024) and 118 h (2025). NYISO's own hourly fuel-mix posting
+#   (data/raw/NYISO/fuel-mix/) reports a MINIMUM of 1,989 MW of nuclear over
+#   2023 and never once reads 0 — so every one of those hours is a filing gap,
+#   worth 3.46 / 1.12 / 0.37 TWh of benchmark deflation. Masking them and
+#   letting the existing interpolation bridge them lands the annual total within
+#   -0.4 % / -0.4 % / -0.7 % of the NYISO posting (from -13.0 % / -4.5 % / -2.0 %
+#   raw).
+#
+# Deliberately NOT registered — their zeros are physically real, so masking them
+# would fabricate generation: ERCO ``NG: WAT`` (a ~0.05-0.24 TWh/yr conventional
+# hydro fleet that genuinely sits at 0) and ISNE ``NG: COL`` (ISO-NE coal is all
+# but retired and runs only seasonally).
+_ZERO_CODED_GAP_SERIES: dict[str, frozenset[str]] = {
+    "NYIS": frozenset({"NG: NUC"}),
+}
+
 
 def _pad_to_year(series: np.ndarray) -> np.ndarray:
     """Return ``series`` coerced to exactly ``HOURS_PER_YEAR`` samples.
@@ -177,6 +210,11 @@ def load_eia_hourly_benchmark(iso: str, year: int) -> dict[str, np.ndarray] | No
     short of 8760 (e.g. PJM 2023) is padded to a full year rather than
     rejected, so the delivered fuel-mix and interchange benchmark is still
     available for the calibration report.
+
+    Per-fuel series listed in :data:`_ZERO_CODED_GAP_SERIES` have their exact
+    zeros masked to NaN before that gap-fill, because for those (BA, fuel) pairs
+    a zero is a filing gap rather than an observation — see that registry for
+    the per-entry evidence.
 
     EIA's interchange sign convention is positive = net export.
 
@@ -209,7 +247,13 @@ def load_eia_hourly_benchmark(iso: str, year: int) -> dict[str, np.ndarray] | No
             coverage = 1.0 - float(df[column].isna().mean())
             if coverage < _STORAGE_MIN_COVERAGE_FRAC:
                 continue
-        series = df[column].interpolate().bfill().ffill()
+        raw = df[column]
+        # Zero-coded filing gaps become NaN so the interpolation below bridges
+        # them like any other hole, instead of averaging a phantom zero into the
+        # benchmark (see _ZERO_CODED_GAP_SERIES for the per-BA evidence).
+        if column in _ZERO_CODED_GAP_SERIES.get(ba_code, frozenset()):
+            raw = raw.mask(raw == 0.0)
+        series = raw.interpolate().bfill().ffill()
         if series.isna().any():
             continue
         out[name] = _pad_to_year(series.to_numpy(dtype=float))
