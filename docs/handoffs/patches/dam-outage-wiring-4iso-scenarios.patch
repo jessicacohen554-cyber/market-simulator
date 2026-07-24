@@ -1,0 +1,129 @@
+diff --git a/src/market_sim/config/scenarios.py b/src/market_sim/config/scenarios.py
+index 5bb724f..9a4754a 100644
+--- a/src/market_sim/config/scenarios.py
++++ b/src/market_sim/config/scenarios.py
+@@ -141,6 +141,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
+     # True, or a set gas_offer_margin_anchor) enters the key as a distinct scenario.
+     "gas_offer_net_revenue_margin",
+     "gas_offer_margin_anchor",
++    # DAM-first outage overlay gates for the four ISOs with a native
++    # availability instrument (CAISO / MISO / NEISO / PJM), wired 2026-07-24
++    # (infra/dam-outage-wiring-4iso). All default False and back a backcast-only,
++    # per-ISO availability overlay; dropped from the hash at their defaults so
++    # every pre-existing cache key (and the pinned default) is byte-stable, an
++    # armed run (any of them True) enters the key as a distinct scenario.
++    "caiso_dam_outages",
++    "miso_native_outage_source",
++    "neiso_operable_capacity_availability",
++    "pjm_dam_availability",
+ )
+ 
+ 
+@@ -5327,6 +5337,60 @@ class ScenarioConfig:
+     # data.fleet.generators_to_fleet_arrays.
+     ercot_thermal_dam_availability: bool = False
+ 
++    # NEISO measured FLEET operable-capacity availability (default off, NEISO
++    # backcast-gated). The ISO-NE analogue of ercot_thermal_dam_availability: use
++    # the ISO-NE Morning Report Section 3 "Operable Capacity Analysis" measured
++    # daily generation-outage / operable-capacity figures IN PLACE OF the
++    # CAMPD-derived unit-outage fallback (campd-unit-outages-NEISO.csv).
++    # data/raw/neiso-operable-capacity/neiso_operable_capacity_<YYYY>.csv,
++    # built by scripts/data/build_neiso_operable_capacity.py from the daily CSVs
++    # scripts/data/fetch_neiso_morning_report.py downloads.
++    #
++    # SEMANTICS: ISO-NE publishes this only at FLEET grain (it does not publish
++    # per-unit / per-fuel availability, only masked-asset DA offers), so the
++    # measured daily availability fraction -- 1 - outages / (CSO + EcoMax-above-
++    # CSO), a transparent ratio of published MW, never a price (rule 13) -- is
++    # imposed on the covered dispatchable-thermal classes TOGETHER by the same
++    # bidirectional cap-1.0 water-fill the ERCOT class-day overlay uses (RESTORE
++    # where the measured fleet availability exceeds the model's, REMOVE where it
++    # is below), setting the covered thermal fleet's cap-weighted day-mean
++    # availability to the measured level and superseding the CAMPD unit-outage
++    # derate there. The model's own within-fleet shape is preserved below the
++    # measured level. Uncovered dates (before the 2018-07-01 archive start, any
++    # publication gap) keep the statistical/CAMPD availability. Backcast-only;
++    # forecast keeps the statistical WEFOR/POF stack (the mode-aware seam). See
++    # data.neiso_operable_capacity.neiso_thermal_availability_series and the
++    # application in data.fleet.generators_to_fleet_arrays. Default off; GATED
++    # CHANGE (alters availability). No keeper uses it yet.
++    neiso_operable_capacity_availability: bool = False
++
++    # PJM measured generation-outage availability (default off, PJM backcast-gated).
++    # The PJM analogue of ercot_thermal_dam_availability: rescales the covered
++    # PJM fossil-thermal classes' (COAL, CC_REGULAR, CT_PEAKER, ST_GAS + the three
++    # CHP classes) class-day MEAN availability to the measured value derived from
++    # PJM Data Miner 2's "Generation Outage for Seven Days by Type"
++    # (gen_outages_by_type). PJM publishes outages only at RTO/sub-region
++    # aggregate (never per fuel class), so the measured UNPLANNED-outage MW
++    # (forced + maintenance; planned is excluded to avoid double-counting nuclear
++    # refuel which the nuclear overlay carries) is converted to a single
++    # fleet-wide availability fraction = 1 - outage_mw / fossil_thermal_capacity
++    # and applied UNIFORMLY across the covered classes (each class water-filled to
++    # the same measured fleet fraction) — the honest first-order transform the
++    # public aggregate supports; a zone/class-resolved allocation is a documented
++    # future refinement (the parquet keeps the sub-regional detail).
++    # data/raw/pjm-outages/by-year/*.csv (+ gitignored
++    # data/raw/pjm-dam-availability.parquet), scripts/data/derive_pjm_dam_availability.py
++    # (raw fetch: scripts/data/fetch_pjm_outages.py). The published outage forecast
++    # is a forward-looking, operator-published capacity-availability quantity that
++    # regenerates for a future day (rule 13); forecast years keep the statistical
++    # stack (the G4 mode-aware seam). Uncovered dates keep the pre-overlay
++    # availability. Applied by the same bidirectional cap-1.0 water-fill as the
++    # ERCOT overlay (data.fleet). See data.pjm_outages.pjm_dam_availability_series.
++    # NOTE: intake-ready but NOT yet calibration-validated — turning it on and
++    # choosing the final allocation/denominator is a keeper session's job
++    # (subject to the holdout discipline), not the data-intake session's.
++    pjm_dam_availability: bool = False
++
+     # ERCOT measured class-HOUR thermal availability (default off, ERCOT
+     # backcast-gated — ERCOT-96, 2026-07-22). The GRAIN switch of the mechanism
+     # above, not a second overlay (rule 19): when armed on top of
+@@ -6820,6 +6884,46 @@ class ScenarioConfig:
+     # market_sim.data.outages and generators_to_fleet_arrays.
+     outage_source: str = "statistical"
+ 
++    # Tier 3 (calibration, CAISO only) — use CAISO's measured DAM outage
++    # disclosure for the availability overlay with DAM-before-CAMPD precedence,
++    # instead of the CAMPD zero-generation derivation (the "CAMPD unit outage
++    # fallback"). When set (and ``outage_source == "historic"``), each CAISO
++    # thermal plant the DAM reports cover is derated by the measured curtailment
++    # episodes from the daily Curtailed & Non-Operational Generator
++    # prior-trade-date reports (owner-directed intake caiso-104:
++    # data/raw/caiso-dam-outages/caiso-dam-outage-windows.parquet, crosswalked to
++    # model plants via data/raw/reference/caiso-resource-eia-crosswalk.csv; loader
++    # market_sim.data.caiso_outages.caiso_dam_outage_derate_factors); every
++    # plant/period the DAM reports do NOT cover keeps its CAMPD window (a
++    # per-(plant_code, plant_group) merge, so covered plants use the measured
++    # schedule while the rest fall back — never silently zeroed).
++    # Driver (rule 13/14): a measured physical availability event (an outage
++    # window with a curtailed-MW level and a real FORCED/PLANNED label) whose
++    # forecast analogue is the statistical WEFOR/POF draw — prefer-measured over
++    # the emissions-gap inference, not a fitted overlay. CAISO's series begins
++    # 2021-06-18; earlier years and any resource without an accepted crosswalk
++    # row fall back to CAMPD. Default off; GATED CHANGE (alters availability).
++    caiso_dam_outages: bool = False
++
++    # Tier 3 (calibration) — MISO-native published-outage overlay (MISO-only,
++    # backcast). When set (and outage_source == "historic" and iso == MISO),
++    # the MISO Multiday Operating Margin measured region×cause offline-MW record
++    # (data/raw/miso-generation-outages, built by
++    # scripts/data/fetch_miso_outages.py) REPLACES the CAMPD unit-outage derate
++    # as MISO's availability overlay — the MISO analog of ERCOT's measured DAM
++    # class-day availability (outage_source's ERCOT path). Driver (rule 12):
++    # MISO's own published generation-outage bookkeeping (Derated/Forced/
++    # Planned/Unplanned MW by region). Forward story (rule 13): a measured
++    # physical availability quantity whose forecast analogue is the statistical
++    # outage-rate model; backcast overlay only. The public report is AGGREGATE
++    # grain (no unit/fuel-class identity), so the overlay applies a uniform
++    # region availability envelope to the thermal fleet — an approximation whose
++    # exact composition is a calibration decision (see market_sim.data
++    # .miso_outages). Coverage starts 2023-01-01 (MISO publishes no earlier); a
++    # year the record does not cover falls back to the CAMPD unit-outage derate.
++    # Default off; GATED CHANGE (alters availability). No keeper uses it yet.
++    miso_native_outage_source: bool = False
++
+     # Tier 3 (calibration) — short (1-5 day) unit-outage windows for baseload
+     # coal, the sub-floor companion of the >= 5-day unit-outage overlay.
+     # Driver (rule 12): discrete forced-outage events measured in per-unit
