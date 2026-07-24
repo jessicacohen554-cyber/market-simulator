@@ -950,3 +950,46 @@ AS-holdout thesis is refuted (already held & non-binding); the ERCOT-101
 attributed bound stands, sharpened. C6 governance route unchanged (owner sign-off
 pending). Branch `claude/ercot-102-as-holdout-repricing-aq6o1e`. Next number:
 ercot-103.
+
+## 2026-07-24 — ERCOT-103/104: owner-authorized reserve-demand right-sizing (rule-26 round) and West/Panhandle split BOTH bounded by measured data — neither closes the 2023 tail, no keeper. ERCOT's own settlement data: the 2023 scarcity tail is 97% ENERGY DUAL, 3% reserve adder (RTORPA $42); the faithful realized-room RTORPA UNDER-fires (probe regressed C3a −16.8→−24.4%), the in-LP envelope OVER-fires (ercot41/43); the §3 West congestion is NODAL (station lines $3,387 shadow) not zonal (interfaces $15) → no measured zonal import limit (rule 11). Keeper UNCHANGED
+
+**Task.** After ERCOT-102 the owner authorized (2) the rule-26 ORDC-family
+reserve-demand right-sizing round and (3) the West/Panhandle topology split.
+Both pursued to a decisive result. Forensics:
+`docs/DIAGNOSIS-ercot-103-104-reserve-demand-and-wp-split-2026-07.md`. New probe
+`scripts/probes/ercot104_west_congestion_nodal.py`; registered solve probe
+`2026-07-24-ercot103-realized-adder-rtorpa` (one-year 2023 diagnostic, REJECTED).
+
+**ERCOT-103 (reserve-demand right-sizing) — REFUTED.** ERCOT publishes the settled
+RT scarcity components (`ercot_2023_ordc_reserves_hourly.parquet`): at the 2023
+tail (settled >$300, 146 h) the price is **97% system λ (energy) $1,307 / 3%
+RTORPA (reserve adder) $42**, with the market holding only ~5.5 GW PRC. So a
+reserve-side mechanism has a ~3% ceiling on the tail. The faithful realized-room
+RTORPA (`ercot_ordc_only_scarcity` + extreme envelope pricing-basis, in-LP span
+off) **regressed**: C3a −16.8→−24.4% (hub) / −27.3→−35.5% (zonal), C3c 76→71,
+model priced >$300 in 20 h (keeper 42) — because `ordc_only` drops the RegUp/RRS
+withheld families to the plan-hold epsilon (removing the keeper's reserve-VOLL
+tail-formation, ERCOT-102 §2), and the realized RTORPA is only $18 (< measured
+$42, phantom-headroom-diluted). The in-LP envelope OVER-fires (ercot41/43). The
+keeper's reserve-VOLL co-opt is the least-bad proxy. Frozen ORDC constants
+untouched (rule 26); nothing swept to a price.
+
+**ERCOT-104 (West/Panhandle split) — BLOCKED (rule 11).** Panhandle is already a
+distinct zone; the wind-corridor export interfaces (WESTEX/PNHNDL/NE_LOB) are
+already `TransferLink`s at measured GTC limits. The §3 residual is an
+import-direction premium, but `ercot104_west_congestion_nodal` on the measured
+NP6-86 SCED archive shows the congestion rent is **NODAL** (station-to-station
+60–518 MW lines, mean shadow **$3,387**: KINGNW $5251, VERN_69T1 $3294, …) not
+zonal (interfaces mean shadow **$15**). A 7-zone reduced network cannot form nodal
+congestion, and no measured *zonal* import limit exists because the phenomenon
+isn't zonal. Prior art (Far_West REVERTED, WP-A DEFERRED) confirms the
+copper-plate no-op. It is also 2025-only (2023 congestion +$15) and Tier-0 —
+would not touch the load-bearing year. Not built.
+
+**Disposition.** Keeper UNCHANGED (`2026-07-23-ercot100-netrev-margin-keeper`,
+NOT-YET). Both authorized lanes closed as bounded/blocked by measured data; the
+2023 tail residual is the energy-offer / RT-conduct bound (no 2023 SCED source),
+now confirmed FOUR independent ways (offer side ERCOT-101, reserve-holdout side
+ERCOT-102, settlement decomposition ERCOT-103, congestion resolution ERCOT-104).
+C6 governance route unchanged (owner sign-off pending). Branch
+`claude/ercot-102-as-holdout-repricing-aq6o1e`. Next number: ercot-105.
