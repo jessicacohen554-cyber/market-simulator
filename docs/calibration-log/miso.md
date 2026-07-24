@@ -323,3 +323,104 @@ push: `results/calibration/miso_netrev_margin/` (bundle),
 --iso MISO`).
 
 Next number: miso-84.
+
+## 2026-07-24 — miso-85: MISO-native published outage overlay REPLACES the CAMPD unit-level derate on the net-revenue-margin keeper — PROMOTED per owner instruction (rule 1), determination NOT-YET; the measured record's fuel-blind grain is the diagnosed, unfixed root cause
+
+**Owner instruction.** *"Re-solve net-revenue-margin with the MISO-native DAM
+outage overlay, promote as keeper, run the calibration report, prune the run
+explorer to just the new run."* Delivered: keeper **`2026-07-24-miso-85-dam-outage`**
+(`results/calibration/miso_dam_outage_margin`), determination **NOT-YET**, MISO
+run explorer pruned to this run alone (15 prior runs' registry+payload removed;
+the `miso81_phantom_outage` bundle dir is kept on disk as the replay base).
+
+**What was solved.** Two deltas on the `2026-07-20-miso-81-phantom-outage`
+recipe via `replay_keeper` (`prb_overrides` channel), full span 2023–2025 in ONE
+bundle (rule 16), per-year chained on this 15 GB box (rule 12; ~17.5 min/year):
+`gas_offer_margin=true` (the go-forward fuel-invariant $/MWh gas offer form —
+miso-83 / ERCOT-100 / CAISO / NYISO-72; anchor 3.0492 $/MMBtu, a measured
+constant, untouched) and `miso_native_outage_source=true` (MISO's own published
+Multiday Operating Margin OUTAGE record replacing the CAMPD unit-level derate).
+**Zero fitted scalars**; the two new DOF entries are both measured-physical.
+
+**The composition decision (the open question the wiring doc left to
+calibration) — settled on physical feasibility, never on a residual (rule 10).**
+The gate + seam had already landed on main (`infra/dam-outage-wiring-4iso`) in
+its as-authored form: all four cause buckets against a fossil-thermal
+denominator. That form is **refuted by MISO's own metered output**: EIA-930
+daily-max coal+gas generation exceeds the all-cause envelope's implied available
+thermal capacity on **12 / 15 / 61 days** of 2023 / 2024 / 2025 (worst +12.7 GW;
+July-2025 mean headroom 0.3 GW on a 118 GW fleet, before reserves) — under it the
+model cannot reproduce its own C1-validated dispatch. The record is a
+whole-registered-fleet total with no fuel identity, and `Planned` (17.6–20.6 GW
+mean; 36.4 GW April vs 7.9 GW July) is both the model's own layer (statistical
+POF / CAMPD windows / nuclear overlay) and where the non-thermal scheduled work
+sits. So the derate now defaults to the **UNPLANNED components** (Derated +
+Forced + Unplanned) — the same call the sibling PJM instrument made independently
+(`PJM_OUTAGE_DEFAULT_TYPES`). `Derated` peaks in **July–August** (10.5 vs 6.0 GW
+in March): an ambient capability derate, what GADS EFORd counts, so it stays in.
+Evidence: `scripts/probes/_miso85_outage_composition.py`; doc updated at
+`docs/handoffs/miso-native-outage-wiring-2026-07.md` §Composition.
+
+**Determination NOT-YET — a further downgrade from miso-81's
+CALIBRATED-WITH-CAVEATS.** C6/C7/C8 PASS (attestation + regenerated
+`legitimacy_diagnostics.json`), C2/C3c/C4/C5a PASS. Three FAILs, all left
+**UNLEDGERED as MODEL MISSes** (rules 1/10 forbid rescuing a determination with
+caveats):
+
+| criterion | miso-81 keeper | miso-85 |
+|---|---|---|
+| C1 fuel-mix | PASS | **FAIL** — 2023 COAL_PRB **+28.3 TWh** (+5.1pp) / CC_REGULAR **−22.7 TWh**; 2024 +21.1 / −14.8 TWh |
+| C3a mean LMP | CAVEAT (ledgered, −16.2 % 2025) | **FAIL** — 2025 **+43.5 %** (opposite direction; not covered by the inherited caveat, so not inherited) |
+| C3b duration/shape | PASS | **FAIL** — NRMSE 0.284 / 0.306 / 1.072 |
+
+Dispatch shift vs the miso-81 keeper (2023, TWh): COAL_PRB +27.2, COAL_BIT +3.0,
+ST_GAS +3.2, CC_REGULAR −14.4, CC_CHP −5.7, CT_PEAKER −6.9, CT_CHP −2.3,
+imports −7.6.
+
+**ROOT CAUSE — measured, price-independent, and OPEN (rule 11).** MISO publishes
+outages at region × cause grain with **no unit or fuel identity**, so the only
+admissible transform is a **uniform** availability envelope: 0.184 / 0.205 /
+0.237 unavailable. The per-unit CAMPD record it replaces measures unavailability
+that is emphatically **not** uniform:
+
+| class (GW) | CAMPD measured unavailability 2023 / 2024 / 2025 |
+|---|---|
+| COAL (44.4) | 0.332 / 0.325 / 0.264 |
+| ST_GAS (11.6) | 0.589 / 0.529 / 0.508 |
+| CC_REGULAR (28.3) | 0.200 / 0.210 / 0.251 |
+| CC_CHP (7.0) | 0.073 / 0.093 / 0.075 |
+| CT_PEAKER (22.4) / CT_CHP (2.6) | 0.000 — outside the instrument's coverage |
+| *uniform envelope* | *0.184 / 0.205 / 0.237* |
+
+MISO's coal fleet carries far more outage than the fleet average, so a
+fleet-uniform rate returns ~5 GW of coal to the merit order that was actually
+out; being the cheapest steel in MISO it immediately displaces combined-cycle
+gas (the C1 miss). The same uniformity removes ~4–5 GW from a 22.4 GW peaking
+fleet the per-unit record never says was out, which is what manufactures the 2025
+tail (C3a +43.5 %; model 138 h > $200 vs 38 h actual). This is the
+aggregate-grain tradeoff the wiring doc flagged — now measured, not asserted.
+
+**The overlay is KEPT (rule 1) and was NOT tuned (rules 1/10).** No parameter was
+moved to rescue the fit, no cause set was picked to improve a residual, and the
+CAMPD path was not reinstated. What the published record *does* validate is the
+**level and timing**: its unplanned unavailability (0.18–0.24) brackets the CAMPD
+stack's own (0.236 fleet-average, 2023), and both of its seasonal signatures
+(summer `Derated`, shoulder `Planned`) are exactly what the physics predicts.
+
+**Note for the next session — the two named composition alternatives are both
+closed at this grain.** *Residual composition* (measured envelope over what the
+per-unit windows already account for) is **inert**: CAMPD already accounts for
+27.9 GW mean offline in 2023 vs the record's 21.8 GW unplanned total, so the
+residual is zero. *All-cause residual* is **infeasible** (the 12/15/61-day
+refutation above). The open lever is therefore **fuel attribution** — a
+cross-fuel split of the published total (e.g. CAMPD-derived class outage shares
+as the attribution key, with MISO's record setting the total), which is a new
+mechanism needing its own charter, not a parameter.
+
+**Rule-22 posture.** LOO within 2023–2025 is degenerate-but-satisfied: the
+mechanism has zero free parameters and degrades in **every** year (C1 2023+2024,
+C3b all three), so there is no in-sample gain with held-out degradation. The
+composition test itself is year-independent (all-cause refuted in each of the
+three years separately; unplanned feasible in each). **Holdouts untouched** —
+MISO carries no calibration-complete marker; only 2023/2024/2025 were solved,
+scored, or read. Next number: miso-86.
