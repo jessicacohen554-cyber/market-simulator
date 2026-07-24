@@ -46,9 +46,12 @@ the class fraction unchanged. Everything regenerates for a forecast year
 new entrants take the class fraction) and nothing reads a price or volume
 residual — rule 13 admissible, rule 24 frozen against residuals.
 
-Only the reader lives here. The clean tree is derived/gitignored, so a
-missing partition yields an empty dict with a warning rather than an error —
-the caller degrades to the class-fraction estimate.
+Only the reader lives here. The clean tree is derived/gitignored, so a wholly
+missing partition RAISES rather than degrading (pjm-119 — the caller is already
+gated on the flag, so silence would leave a run claiming a measured input it
+never read; see :func:`load_measured_ramp_capability` and
+``docs/FINDING-pjm119-silent-overlay-degradation-2026-07.md``). Individual plants
+absent from a PRESENT partition still fall back to the class fraction.
 """
 
 from __future__ import annotations
@@ -82,22 +85,34 @@ class PlantRampCapability:
 def load_measured_ramp_capability(iso: str) -> dict[int, PlantRampCapability]:
     """Load the ISO's measured ramp-capability rows keyed by plant code.
 
-    Returns an empty dict (with a warning) when the clean partition is
-    absent — callers gate on ``ScenarioConfig.measured_ramp_capability`` and
-    degrade to the class-fraction estimate.
+    RAISES when the ISO has no clean partition at all (pjm-119). Callers are
+    gated on ``ScenarioConfig.measured_ramp_capability``, so an absent partition
+    is a misconfiguration — and the partition lives in the CURATED
+    ``data/clean`` tree, which is gitignored and disposable, so a fresh
+    container starts without it. The previous empty-dict-and-warn contract
+    silently reverted the whole mechanism to the class-fraction estimate while
+    the run's recorded config still claimed the measured input; because these
+    rows feed the reserve co-opt's deliverable ramp, that moves reserve prices.
+    It is one of the three overlays that degraded under the pjm-118 PJM keeper —
+    see ``docs/FINDING-pjm119-silent-overlay-degradation-2026-07.md``.
+
+    Individual plants absent from a PRESENT partition still fall back to the
+    class ramp fraction: that is the documented per-plant behaviour, and only
+    a wholly-missing ISO raises.
+
+    Raises:
+        FileNotFoundError: No ramp-capability clean partition covers ``iso``.
     """
     try:
         from scripts.lib.clean_io import read_clean
 
         df = read_clean(DATATYPE, iso=str(iso).upper())
-    except FileNotFoundError:
-        logger.warning(
-            "measured_ramp_capability: no clean ramp-capability partition for "
-            "%s (run scripts/regenerate_clean.py ramp-capability); falling "
-            "back to class ramp fractions",
-            iso,
-        )
-        return {}
+    except FileNotFoundError as exc:
+        raise FileNotFoundError(
+            "measured_ramp_capability is on but no clean ramp-capability "
+            f"partition covers {iso} — run scripts/regenerate_clean.py "
+            "ramp-capability (the mechanism never silently no-ops)"
+        ) from exc
     out: dict[int, PlantRampCapability] = {}
     for row in df.itertuples(index=False):
         out[int(row.plant_code)] = PlantRampCapability(
