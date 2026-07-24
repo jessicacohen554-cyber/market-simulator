@@ -213,6 +213,21 @@ _COAL_FLAGS: tuple[FlagSpec, ...] = (
         config_field="coal_econ_srmc_bound",
     ),
     FlagSpec(
+        cli=("--coal-econ-marginal-hr-bound",),
+        dest="coal_econ_marginal_hr_bound",
+        kind="bool_opt",
+        default=False,
+        help="Floor each coal class's econ_low/econ_high offer-curve band at "
+        "the ISO's own MEASURED CAMPD marginal (incremental) heat rate for "
+        "COAL (data/raw/reference/<iso>_campd_marginal_hr_summary.csv), so no "
+        "coal econ tranche bids below the physical cost of its next MWh. "
+        "Markups above the measured basis, the committed/must-run take-or-pay "
+        "bands and the peak scarcity wall are untouched.",
+        family="coal",
+        solve_param="coal_econ_marginal_hr_bound",
+        config_field="coal_econ_marginal_hr_bound",
+    ),
+    FlagSpec(
         cli=("--coal-lignite-sigmoid",),
         dest="coal_lignite_sigmoid",
         kind="bool_opt",

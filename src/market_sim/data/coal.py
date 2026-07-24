@@ -14,7 +14,7 @@ from functools import lru_cache
 import numpy as np
 import pandas as pd
 
-from market_sim.config.paths import EIA_860_DIR, PROCESSED_DIR
+from market_sim.config.paths import EIA_860_DIR, PROCESSED_DIR, REFERENCE_DIR
 from market_sim.config.plant_taxonomy import (
     COAL_CODE_TO_SUPPLY,
     COAL_SUPPLY_TO_CLASS,
@@ -342,3 +342,100 @@ def coal_sync_online_frac(iso: str) -> dict[int, float]:
             continue
         out[int(r.plant_code)] = float(r.online_frac)
     return out
+
+
+# ---------------------------------------------------------------------------
+# Measured CAMPD marginal (incremental) heat rate — coal econ-ramp floor
+# ---------------------------------------------------------------------------
+
+# The coal offer-curve bands whose heat-rate multiplier is bounded below by the
+# measured incremental burn, and the summary-table column each reads. Only the
+# ECONOMIC ramp endpoints are in scope: ``committed`` / ``mustrun`` carry the
+# take-or-pay sunk-contract discount (a real contractual driver, not a physical
+# burn claim) and ``peak`` is a scarcity wall ABOVE the physical basis, so
+# neither is floored here (rule 19 — one mechanism per phenomenon).
+COAL_ECON_MARGINAL_HR_BANDS: dict[str, str] = {
+    "econ_low": "marg_econ_low_p50",
+    "econ_high": "marg_econ_high_p50",
+}
+
+
+@lru_cache(maxsize=None)
+def coal_marginal_hr_bounds(iso: str) -> dict[str, float]:
+    """Return the ISO's measured coal incremental-heat-rate band floors.
+
+    Reads the committed CAMPD marginal-heat-rate summary
+    (``data/raw/reference/<iso>_campd_marginal_hr_summary.csv``, written by
+    ``scripts/data/derive_campd_marginal_hr.py``) and returns
+    ``{band: multiple_of_base_hr}`` for the bands in
+    :data:`COAL_ECON_MARGINAL_HR_BANDS`, taken from the ``COAL`` row.
+
+    The artifact's ``marg_*`` columns are the **incremental** heat rate — the
+    slope ``d(heatInput)/d(grossLoad)`` of each unit's own CEMS input-output
+    curve at the band-representative load, capacity-weighted across units and
+    pooled over the available years — expressed as a multiple of the same class
+    ``base_HR`` the offer curve multiplies against. That is the physical short-run
+    marginal energy basis of an already-committed unit's next MWh, so it is the
+    natural LOWER bound on that band's offer multiplier.
+
+    Returns an empty dict when the ISO has no artifact or no ``COAL`` row, so
+    the caller leaves the registered curve untouched.
+    """
+    path = REFERENCE_DIR / f"{iso.lower()}_campd_marginal_hr_summary.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    row = df[df["class"].astype(str).str.upper() == "COAL"]
+    if row.empty:
+        return {}
+    r = row.iloc[0]
+    out: dict[str, float] = {}
+    for band, column in COAL_ECON_MARGINAL_HR_BANDS.items():
+        if column not in row.columns or pd.isna(r[column]):
+            continue
+        out[band] = float(r[column])
+    return out
+
+
+def apply_coal_econ_marginal_hr_floor(
+    offer_curve_by_group: dict[str, dict], iso: str
+) -> tuple[dict[str, dict], list[tuple[str, str, float, float]]]:
+    """Floor every coal class's econ-ramp band at the measured incremental HR.
+
+    Applies :func:`coal_marginal_hr_bounds` to the RESOLVED offer curve — after
+    the base registry, any ``--offer-curve-json`` absolute override and any
+    ``--offer-curve-delta-json`` relative nudge — so the floor bounds whatever
+    the calibration path produced, not the registry default.
+
+    Only ``COAL*`` classes and only the bands in
+    :data:`COAL_ECON_MARGINAL_HR_BANDS` are touched; a band already at or above
+    its measured basis (a genuine markup) passes through unchanged, as does a
+    class whose band is missing or non-numeric. ``ScenarioConfig.offer_curve_by_group``
+    values may be lists (the ``peak_ladder`` rungs), so non-float bands are skipped.
+
+    Args:
+        offer_curve_by_group: The resolved ``{class: {band: multiplier}}`` curve.
+        iso: ISO whose measured artifact supplies the floors.
+
+    Returns:
+        ``(curve, lifted)`` — a new curve dict, and the list of
+        ``(class, band, before, after)`` tuples that were actually raised (empty
+        when the ISO has no artifact or every band already clears its basis), for
+        the caller to log.
+    """
+    floors = coal_marginal_hr_bounds(iso)
+    if not floors:
+        return offer_curve_by_group, []
+    merged = {cls: dict(bands) for cls, bands in offer_curve_by_group.items()}
+    lifted: list[tuple[str, str, float, float]] = []
+    for cls, bands in merged.items():
+        if not cls.upper().startswith("COAL"):
+            continue
+        for band, floor in floors.items():
+            cur = bands.get(band)
+            if not isinstance(cur, (int, float)) or isinstance(cur, bool):
+                continue
+            if float(cur) < floor:
+                lifted.append((cls, band, float(cur), floor))
+                bands[band] = floor
+    return merged, lifted
