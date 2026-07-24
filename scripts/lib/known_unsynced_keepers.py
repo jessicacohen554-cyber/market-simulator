@@ -39,14 +39,12 @@ from __future__ import annotations
 UNSYNCED_RUN_PAYLOADS: frozenset[str] = frozenset(
     {
         "2026-07-13-neiso-60-phantom-outage",  # NEISO keeper; bundle metrics-only
-        # MISO keeper (miso-83, owner override 2026-07-24): the scored bundle +
-        # payload were produced and committed LOCALLY (commit b249903) but could
-        # not be pushed from the source container — its git relay 413s and the
-        # GitHub API push path cannot carry the ~968 KB gzip-base64 payload / the
-        # binary bundle. Re-sync from a git-capable env (push the local commit's
-        # results/calibration/miso_netrev_margin/ + runs/<id>.js + status/MISO.js)
-        # and delete this id. See docs/calibration-log/miso.md miso-83.
-        "2026-07-24-miso-83-netrev-margin",
+        # 2026-07-24-miso-83-netrev-margin retired 2026-07-24 (miso-85): the MISO
+        # keeper is now 2026-07-24-miso-85-dam-outage — the same net-revenue margin
+        # form re-solved in a push-capable session with MISO's published outage
+        # overlay, its bundle + payload + status committed. miso-83 never had a
+        # registry sidecar on the tree, so there is nothing left for the parity /
+        # keeper gates to tolerate. See docs/calibration-log/miso.md miso-85.
         "2026-07-13-nyiso-63-phantom-outage",  # probe; bundle absent
         "2026-07-13-nyiso-64-outage-refix",  # probe; bundle metrics/attestation only
         # 2026-07-19-nyiso-65-scr-edrp retired 2026-07-20: keeper re-pointed to
@@ -61,6 +59,5 @@ UNSYNCED_RUN_PAYLOADS: frozenset[str] = frozenset(
 UNSYNCED_KEEPERS: frozenset[str] = frozenset(
     {
         "2026-07-13-neiso-60-phantom-outage",
-        "2026-07-24-miso-83-netrev-margin",
     }
 )
