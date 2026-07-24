@@ -210,6 +210,47 @@ def _summarize_year(result, context, config=None) -> dict:
     }
 
 
+def summarize_cached_run(
+    iso: str,
+    cache_key: str,
+    year: int,
+    config: "ScenarioConfig | None" = None,
+    pass_label: str | None = None,
+) -> dict:
+    """Load a cached scenario-year and return its annual summary dict.
+
+    The public loader-and-summarize seam shared by the parallel-runner
+    aggregation loops (``matrix.build_matrix_frame``,
+    ``ensemble.summarize_ensemble`` / ``_member_metric_values``), which each
+    repeated ``cache.load_result`` + ``cache.load_fleet_context`` +
+    :func:`_summarize_year`. Folding the two cache reads in here gives one place
+    to evolve the read path and keeps the callers thin.
+
+    The summary is byte-identical to calling :func:`_summarize_year` on the
+    loaded ``result``/``context`` — this only owns the load.
+
+    Args:
+        iso: ISO identifier the run was solved for.
+        cache_key: The run's deterministic ``ScenarioConfig.cache_key``.
+        year: Weather/simulation year to summarize.
+        config: Optional run config supplying the CES crediting rule (see
+            :func:`_summarize_year`).
+        pass_label: Solve-pass tag (see
+            :func:`market_sim.results.cache.get_cache_path`).
+
+    Returns:
+        The annual summary dict from :func:`_summarize_year`.
+
+    Raises:
+        FileNotFoundError: When no cached result exists for this scenario-year
+            (guard the call with ``cache.is_cached`` for partial/narrowed
+            horizons).
+    """
+    result = cache.load_result(iso, cache_key, year, pass_label)
+    context = cache.load_fleet_context(iso, cache_key, year, pass_label)
+    return _summarize_year(result, context, config)
+
+
 def export_scenario_json(cache_key: str, iso: str, output_dir) -> Path:
     """Export one cached scenario to a compact annual-summary JSON file.
 
