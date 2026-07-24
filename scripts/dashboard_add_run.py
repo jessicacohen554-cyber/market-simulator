@@ -44,6 +44,8 @@ sys.path.insert(0, str(REPO / "src"))
 from scripts import render_backcast as rb  # noqa: E402  (after sys.path insert)
 from scripts.lib import keeper_store  # noqa: E402
 
+from market_sim.config.constants import STATMODE_PROBE_RUNS  # noqa: E402
+
 
 DATA_DIR = REPO / "frontend" / "data" / "backcast"
 REGISTRY_DIR = DATA_DIR / "registry"
@@ -68,8 +70,17 @@ def _protected_run_ids() -> set[str]:
     * Any run referenced by a surviving sidecar's ``ablation_twin`` /
       ``ablation_of`` link — pruning it would dangle the cross-reference that
       ``check_registry_payload_parity.py`` enforces.
+    * Every D-7 statmode probe run named in ``STATMODE_PROBE_RUNS`` — the
+      structural-error prior's committed source (``structural_prior``). A
+      prior prune already deleted several of these ``runs/<id>.js`` payloads as
+      collateral damage (ercot32/nyiso/neiso), which is exactly why the prior
+      was inverted onto a committed artifact (item 8); protecting them here
+      keeps the payload-vs-artifact consistency check runnable and stops the
+      frozen ``STATMODE_PROBE_RUNS`` provenance from dangling again.
     """
     protected: set[str] = set(keeper_store.keeper_list())
+    # Structural-prior source payloads (frozen provenance) are never pruned.
+    protected.update(STATMODE_PROBE_RUNS.values())
     for path in REGISTRY_DIR.glob("*.json"):
         try:
             rec = json.loads(path.read_text())
