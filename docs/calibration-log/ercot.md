@@ -815,3 +815,63 @@ MARGIN promoted to keeper, BASE registered as the drift-control diagnostic
 (`2026-07-23-ercot100-netrev-base-drift`). Design-doc adoption status updated
 (ERCOT → ADOPTED). This entry committed on
 `claude/ercot-gas-offer-netrev-margin-9rhqf9`. Next number: ercot-101.
+
+## 2026-07-24 — ERCOT-101: the 2023–2025 scarcity-tail residual is an ATTRIBUTED measured-input bound (no fix), C6 governance attestation DRAFTED + proven to certify → CALIBRATED-WITH-CAVEATS pending owner sign-off. All-no-LP: closed the measurable 2024 tail (cheap up to p90 → attributed), decomposed 2023 (97% is the >$300 tail, one residual with C3a/C3b), bounded 2025 (RT-only scarcity + largest congestion). Keeper UNCHANGED (ercot100 margin keeper); NO solve, NO tuning (rule 1/11/13)
+
+**Task.** Successor to ERCOT-100 (net-revenue-margin keeper). The realistic route
+off NOT-YET is CALIBRATED-WITH-CAVEATS via attribution + the owner C6 gate, not a
+forced C3c PASS. All lanes no-LP on the committed margin-keeper sidecars +
+committed measured corpora. Forensics:
+`docs/DIAGNOSIS-ercot-101-scarcity-tail-attribution-2026-07.md`; draft attestation
+`docs/handoffs/ercot-101-governance-attestation-draft-2026-07.md`. New probes
+`scripts/probes/ercot101_{price_decomp,sced_wall_quantiles}.py`; ERCOT-99 toolkit
+re-baselined on the margin keeper.
+
+**Lane B (2023, load-bearing).** Exact load-weighted band decomposition
+(`ercot101_price_decomp`, reproduces official C3a −27.1% / rt_lw $64.12):
+**97% of the mean-price gap is the >$300 tail** ([300,1000) 27.9% + [1000,∞)
+69.4%); the mid-merit [80,200) under-prediction (12.8%) is offset by the cheap-band
+[0,30) OVER-prediction (−20.5%). So C3a, C3b (its monthly image) and C3c-2023 are
+ONE residual. Hub-level scarcity (LZ−hub congestion only +$15 p50 at the tail), not
+a network artifact. `ercot99_model_offer_curve` on the margin keeper: at the Aug
+missed hours the model clears $93–184 with a ~480 MW cushion below $200 while
+actual RT is $318–2100 — marginal ST_GAS/CT_PEAKER re-offering $500–5000 in RT vs
+their measured DAM/merit basis. The only 2023 offer corpus on disk is the DAM
+disclosure (wall p50 $327; model tail already forms $211–1244, i.e. above it); **no
+2023 SCED/RT re-offer disclosure exists.** Attributed; rule 13 forbids the adder.
+Reach ceiling 123/181.
+
+**Lane A (2024, measurable — resolved to an attributed bound).**
+`ercot101_sced_wall_quantiles` re-reads the exact 60-Day SCED corpus the frozen
+ladder is built from, at extended quantiles: the CC top-net-load-bin wall is
+**cheap up to p90** (p50 $41, p90 $115); only p95–p99 ($150–VOLL) is expensive, and
+it is (i) sample-day-selection-biased (tail-days corpus) and (ii) VOLL-adjacent
+scarcity re-offers = the ORDC overlay's domain (double-count in energy merit). Per
+the handoff's own Lane A3 criterion, that is an attributed bound.
+`ercot99_model_offer_curve`: the surface reprices ~8 GW but ABOVE the model
+marginal (~$70, 706 MW cushion to $200) — depth, not height. `ercot99_reach_gap`:
+only ~10/45 missed hours are top-bin; 15/45 are below p80 (moderate net load —
+structurally unreachable by a net-load surface). NO ladder-quantile extension: the
+apply asserts `rt_q == ladder_q` (couples the load-bearing 2023 DAM wall), it is
+residual-motivated (rules 1/23), and it blurs the merit/ORDC boundary.
+
+**Lane C (2025).** RT-only scarcity: DA merit cheap at the tail (DA p50 $91), model
+catches 0/31, **largest LZ−hub congestion of the three years (+$64 mean)** above
+system lambda a copperplate/reduced-network LP cannot form (network-representation
+bound; West/Panhandle split is its own charter). Same attributed family. NB the
+margin form left 2025 C3a −8.3% / C3b 0.106 (PASS but nearer thresholds) — another
+reason a 2025 RT-ladder re-derive is not pursued (would risk C3a past −10%).
+
+**Lane D (governance — DRAFTED, proven, surfaced for owner).** C6 machine check is
+already clean (`outage_source=historic` exogenous; no forbidden flags). Drafted the
+four governance assertions + a 5-entry exceptions ledger (collapsing to the three
+ledgered criteria C3a/C3b/C3c, 3/3 within the ledger budget). Swapping the draft
+attestation onto the registered keeper and re-running `calibration_verdict` yields
+**CALIBRATED-WITH-CAVEATS** — 8 gates PASS, C3a/C3b/C3c ledgered as ACCEPTED
+MEASURED-INPUT LIMITATIONS, C6 PASS. DOF ledger unchanged (9/8, zero delta). NOT
+self-attested — surfaced for owner sign-off; until signed the keeper stays NOT-YET
+and the draft handoff is the standing artifact.
+
+**Disposition.** Keeper UNCHANGED (`2026-07-23-ercot100-netrev-margin-keeper`,
+NOT-YET). No solve, no dashboard run (all diagnostics no-LP), no tuning. The tail
+stays attributed, not tuned (rule 1). Next number: ercot-102.
