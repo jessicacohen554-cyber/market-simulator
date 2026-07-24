@@ -453,6 +453,7 @@ def run_year(
     coal_bit_sigmoid: bool = False,
     bit_overrides: dict | None = None,
     coal_econ_srmc_bound: bool = False,
+    coal_econ_marginal_hr_bound: bool = False,
     coal_takeorpay_from_data: bool = False,
     coal_mustrun_online_pmin: bool = False,
     coal_sync_srmc_tranche: bool = False,
@@ -1322,6 +1323,42 @@ def run_year(
     # (fleet.campd_tranche_fuel_frac; ScenarioConfig.coal_econ_srmc_bound).
     if coal_econ_srmc_bound:
         config = config.with_overrides(coal_econ_srmc_bound=True)
+    # Measured incremental-heat-rate floor on the COAL econ ramp
+    # (run_calibration_full --coal-econ-marginal-hr-bound;
+    # ScenarioConfig.coal_econ_marginal_hr_bound, ERCOT-111). Runs AFTER the
+    # offer-curve overrides/deltas resolved in backcast_config and after the
+    # prb_overrides ScenarioConfig application above, so it bounds the curve the
+    # calibration path actually produced: each coal class's econ_low/econ_high
+    # is clamped UP to the ISO's own measured CAMPD marginal (incremental) heat
+    # rate for COAL. Markups above the measured basis are untouched; the
+    # committed/must-run take-or-pay bands and the peak scarcity wall are out of
+    # scope (rule 19). Adds no tunable — the floor is the already-committed
+    # derive_campd_marginal_hr artifact (rule 13).
+    if coal_econ_marginal_hr_bound or config.coal_econ_marginal_hr_bound:
+        from market_sim.data.coal import apply_coal_econ_marginal_hr_floor
+
+        _curve, _lifted = apply_coal_econ_marginal_hr_floor(
+            config.offer_curve_by_group, iso
+        )
+        config = config.with_overrides(
+            coal_econ_marginal_hr_bound=True, offer_curve_by_group=_curve
+        )
+        if _lifted:
+            logger.info(
+                "%s coal econ marginal-HR floor (%d): %s",
+                iso,
+                len(_lifted),
+                "; ".join(
+                    f"{c}.{b} {before:.3f} -> {after:.3f}"
+                    for c, b, before, after in _lifted
+                ),
+            )
+        else:
+            logger.info(
+                "%s coal econ marginal-HR floor: no band below its measured "
+                "basis — offer curve unchanged",
+                iso,
+            )
     # Per-plant tranche-config override sheet (run_calibration_full
     # --plant-tranche-config): each listed plant's tranche shares + band HR
     # multipliers come straight from the CSV, bypassing the offer curve.

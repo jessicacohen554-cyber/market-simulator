@@ -2597,6 +2597,7 @@ def solve_and_persist(
     coal_bit_sigmoid: bool = False,
     bit_overrides: dict | None = None,
     coal_econ_srmc_bound: bool = False,
+    coal_econ_marginal_hr_bound: bool = False,
     coal_takeorpay_from_data: bool = False,
     coal_mustrun_online_pmin: bool = False,
     coal_sync_srmc_tranche: bool = False,
@@ -3014,6 +3015,8 @@ def solve_and_persist(
             )
         if coal_econ_srmc_bound:
             recorded_cfg = recorded_cfg.with_overrides(coal_econ_srmc_bound=True)
+        if coal_econ_marginal_hr_bound:
+            recorded_cfg = recorded_cfg.with_overrides(coal_econ_marginal_hr_bound=True)
         if plant_tranche_config:
             recorded_cfg = recorded_cfg.with_overrides(
                 plant_tranche_config_path=plant_tranche_config
@@ -3868,6 +3871,7 @@ def solve_and_persist(
             coal_bit_sigmoid=coal_bit_sigmoid,
             bit_overrides=bit_overrides,
             coal_econ_srmc_bound=coal_econ_srmc_bound,
+            coal_econ_marginal_hr_bound=coal_econ_marginal_hr_bound,
             coal_takeorpay_from_data=coal_takeorpay_from_data,
             coal_mustrun_online_pmin=coal_mustrun_online_pmin,
             coal_sync_srmc_tranche=coal_sync_srmc_tranche,
@@ -4351,6 +4355,7 @@ def solve_and_persist(
             k: v for k, v in (bit_overrides or {}).items() if v is not None
         },
         "coal_econ_srmc_bound": coal_econ_srmc_bound,
+        "coal_econ_marginal_hr_bound": coal_econ_marginal_hr_bound,
         "coal_plant_monthly_pricing": first_year_cfg.coal_plant_monthly_pricing,
         "td_loss_factor": first_year_cfg.td_loss_factor,
         # ERCOT gas-basis mechanisms: env-var-gated inside backcast_config
@@ -7135,6 +7140,22 @@ def main() -> None:
         "incremental delivered SRMC. Committed/must-run bands keep their "
         "take-or-pay discount.",
     )
+    # ERCOT-111 measured incremental-heat-rate floor on the COAL econ ramp: a
+    # coal econ band may carry a MARKUP above its physical basis but never a bid
+    # BELOW it, so econ_low/econ_high are clamped up to the ISO's own measured
+    # CAMPD marginal heat rate for COAL (derive_campd_marginal_hr artifact).
+    # Removes a fitted degree of freedom; adds no tunable. Off by default.
+    parser.add_argument(
+        "--coal-econ-marginal-hr-bound",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Floor each coal class's econ_low/econ_high offer-curve band at "
+        "the ISO's own MEASURED CAMPD marginal (incremental) heat rate for "
+        "COAL (data/raw/reference/<iso>_campd_marginal_hr_summary.csv), so no "
+        "coal econ tranche bids below the physical cost of its next MWh. "
+        "Markups above the measured basis, the committed/must-run take-or-pay "
+        "bands and the peak scarcity wall are untouched.",
+    )
     parser.add_argument(
         "--bit-floor", type=float, default=None, help="Bit sigmoid cheap-gas floor."
     )
@@ -9599,6 +9620,7 @@ def main() -> None:
         st_gas_intermediate_cf_threshold=args.st_gas_intermediate_cf_threshold,
         coal_bit_sigmoid=args.coal_bit_sigmoid,
         coal_econ_srmc_bound=args.coal_econ_srmc_bound,
+        coal_econ_marginal_hr_bound=args.coal_econ_marginal_hr_bound,
         bit_overrides={
             "coal_bit_passthrough_floor": args.bit_floor,
             "coal_bit_passthrough_ceil": args.bit_ceil,
