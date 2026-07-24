@@ -423,4 +423,67 @@ C3b all three), so there is no in-sample gain with held-out degradation. The
 composition test itself is year-independent (all-cause refuted in each of the
 three years separately; unplanned feasible in each). **Holdouts untouched** —
 MISO carries no calibration-complete marker; only 2023/2024/2025 were solved,
-scored, or read. Next number: miso-86.
+scored, or read. Next number: miso-86 (used below).
+
+## 2026-07-24 — miso-86: net-revenue gas offer margin on the CAMPD unit-level outage derate — PROMOTED as the MISO keeper; the miso-85 published-outage overlay is REVERTED on grain (owner call), determination NOT-YET
+
+**Owner call (2026-07-24, after the miso-85 result).** *"Okay so miso DAM data we
+have is not actually a per plant breakdown? Ok then let's use campd unit layer
+for miso outages but net rev margin for offer curves."* Confirmed: MISO's public
+Multiday Operating Margin OUTAGE sheet is **region × cause daily MW only** — no
+unit, plant, or fuel identity is published, so the overlay can only ever enter as
+a uniform fleet envelope. That grain (not the record's accuracy) is what broke
+miso-85. Keeper is therefore **`2026-07-24-miso-86-netrev-margin`**
+(`results/calibration/miso86_netrev_margin`): the net-revenue margin **kept**,
+outages **back on the CAMPD unit-level derate**.
+
+**What was solved.** SINGLE delta on the `2026-07-20-miso-81-phantom-outage`
+recipe via `replay_keeper` — `gas_offer_margin=true` — full span 2023–2025 in ONE
+bundle (rule 16), per-year chained (rule 12; ~16–17 min/year). No
+`miso_native_outage_source`. Zero fitted scalars; the one new DOF entry (the
+3.0492 $/MMBtu anchor) is measured-physical and untouched (rule 23).
+
+**Determination NOT-YET — reproduces the miso-83 verdict exactly**, on the same
+two marginal crossings, both left **UNLEDGERED as MODEL MISSes** (rules 1/10):
+**C1 fuel-mix CC_REGULAR 2023 −8.62 TWh** (band ±8.0; the below-anchor firming
+sheds ~0.86 TWh of CC dispatch) and **C3b price_shape 2025 NRMSE 0.204** (veto
+≤0.20). C3a-2025 (−16.2 %) and C3c (0 h / 6 h / 0 h > $200 vs 30/37/88 actual)
+stay **ledgered caveats**, inherited unchanged from the miso-81 attestation —
+same criteria, same direction, same magnitude they were adjudicated on (the
+miso-82 externally-validated scarcity-representation frontier). C2/C4/C5a/C6/C7/C8
+PASS. `calibration-keeper-auditor` PASS, 0 failures.
+
+**Why the overlay was reverted — and why that is NOT a fit-driven revert (rule 11).**
+The published record is *misaligned to our representation*, which is the one
+exception rule 11 allows: it is defined on the whole registered fleet with no
+fuel identity, while the model needs per-class availability. Its level and timing
+are sound (unplanned unavailability 0.184/0.205/0.237 brackets the CAMPD stack's
+own 0.236; `Derated` peaks July–August as an ambient derate must; `Planned` peaks
+36.4 GW in April). Its **attribution** is not: the per-unit CAMPD record measures
+COAL 0.332/0.325/0.264, ST_GAS 0.589/0.529/0.508, CC_REGULAR 0.200/0.210/0.251,
+CT 0.000, so the uniform envelope returns ~5 GW of out-of-service coal to the
+merit order (C1 COAL_PRB +28.3 TWh / CC_REGULAR −22.7 TWh in 2023) and strips
+~4–5 GW off 22.4 GW of peakers nothing says were out (C3a-2025 +43.5 %, 138 model
+tail hours vs 38 actual). Full write-up:
+`results/calibration/FINDING-miso85-published-outage-grain-2026-07.md`.
+
+**What survives from miso-85** (nothing is un-done that was measured): the
+`miso_native_outage_source` gate stays wired and **default-off**; its cause-set
+composition stays settled at the UNPLANNED components with the feasibility
+evidence (`scripts/probes/_miso85_outage_composition.py`, wiring doc §Composition
+— the all-cause form is refuted on 12/15/61 days in 2023/2024/2025 and must not
+be re-armed); the miso-85 bundle stays registered on the explorer marked
+**(PROBE — REJECTED)** per rule 15, since it is the evidence for this decision.
+The open lever is unchanged: a cross-fuel **attribution** split (MISO's record for
+*how much*, a measured key for *where*), which needs its own charter.
+
+**Dashboard.** MISO run explorer pruned from 16 runs to **2** — the keeper
+`2026-07-24-miso-86-netrev-margin` and the rejected `2026-07-24-miso-85-dam-outage`
+probe. All 15 pre-existing MISO runs' registry+payload were removed; the
+`miso81_phantom_outage` bundle dir is kept on disk as the replay base.
+
+**Rule-22 posture.** Holdouts untouched — MISO carries no calibration-complete
+marker; only 2023/2024/2025 were solved, scored or read. The margin's effect is
+scored in every one of the three training years (the miso-83 A/B table), so the
+LOO check has no in-sample-gain/held-out-degradation asymmetry to hide. Next
+number: miso-87.
