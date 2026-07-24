@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-24-pjm-118-netrev-level",
+  "label": "pjm 118 netrev level",
+  "date": "2026-07-24",
+  "shorthand": "pjm-118-netrev-level",
+  "definition": "KEEPER (2026-07-24). Offer-level retune around the pjm-117 net-revenue-margin STRUCTURE (gas_offer_net_revenue_margin=True, anchor 3.3483): CC_REGULAR econ_low 1.0->0.96 + CT_PEAKER econ_low 1.05->1.25 / econ_high 1.27->1.65 (zero NEW free params). CLOSES C1 fuel-mix (CC_REGULAR 2023 316.8->319.1; CT_PEAKER 2025 32.0->30.6; C1 8/8 PASS). Determination NOT-YET: C3a mean LMP 2025 -10.5% + C3c tail remain -- proven STRUCTURAL summer-scarcity (not offer-level) by the A/B/C/D sweep. Supersedes pjm-117.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-24-pjm-118-netrev-level.js",
+  "bundle": "results/calibration/pjm_netrev_retune"
+}
