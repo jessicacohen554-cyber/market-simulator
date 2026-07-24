@@ -875,3 +875,78 @@ and the draft handoff is the standing artifact.
 **Disposition.** Keeper UNCHANGED (`2026-07-23-ercot100-netrev-margin-keeper`,
 NOT-YET). No solve, no dashboard run (all diagnostics no-LP), no tuning. The tail
 stays attributed, not tuned (rule 1). Next number: ercot-102.
+
+## 2026-07-24 — ERCOT-102: the "AS-holdout" reopening is REFUTED — the measured ASPLANNP433 plan is ALREADY held out of the energy stack (rigidly at VOLL) and is NON-BINDING at the missed 2023 tail (reserve dual ≈ $0), so holding more AS out cannot reprice it; forcing it to bind over-fires (ercot41/43). The ERCOT-101 attributed bound STANDS, sharpened. Keeper UNCHANGED; NO solve, NO tuning (rule 1/11/13)
+
+**Task.** Successor to ERCOT-101; owner reopened the "attributed bound" to test
+whether the 2023–2025 scarcity under-pricing is a structural AS-holdout
+(energy-supply) miss — hold the measured ERCOT AS plan out of the energy stack
+and re-price scarcity. All no-LP on the committed `ercot100` margin-keeper
+sidecars + measured corpora + code. Forensics:
+`docs/DIAGNOSIS-ercot-102-as-holdout-refutation-2026-07.md`. New probes
+`scripts/probes/ercot102_{reserve_slack,as_holdout_attribution}.py`.
+
+**Lane A (the premise is factually wrong).** The keeper is
+`ercot_multiproduct_as_coopt=True`, so `get_reserve_design` uses
+`_ercot_multiproduct_design` (spec.py:483). There, with
+`ercot_as_forward_requirement=False` (the keeper/backcast value), each product's
+requirement falls to `ercot_as_plan_requirement_mw` — the **measured ASPLANNP433
+plan** — NOT the forward formula (`ERCOT_AS_ECRS_BASE_MW`, which is the forecast
+path only, never evaluated in the keeper). The demanded ONLINE plan (RegUp+RRS
++ECRS, Jun–Sep mean) = **4936 / 4837 / 4378 MW** for 2023/24/25 — *exactly* the
+charter's "measured ONLINE AS held out" figures. RegUp/RRS/ECRS are held rigidly
+at VOLL via the `ercot_nonreleasable_as_withholding` + `ercot_ecrs_conservative_
+deployment` withheld families. The charter's "co-opt holds RegUp 177 + RRS 859 +
+ECRS 504 ≈ 1,540 MW" are the **net-of-credit THERMAL residuals** (measured
+battery award 1.5/2.2/3.1 GW + Load-Resource RRS credit net the requirement,
+correctly — those resources supply that AS in reality), not the total held.
+
+**Lane A1 (no-op proof).** `ercot_ecrs_requirement` is read ONLY in the
+single-product `_ercot_design` (spec.py:904), NEVER in the multiproduct builder,
+so on the keeper it is byte-identical (CLI path only records it in run_config).
+The `ercot101_ecrs_req_probe` bundle (lost with the bare container) did not need
+re-running — a ~30-min per-plant solve to reproduce the keeper exactly.
+
+**Lane A (decisive — reserve slack).** `ercot102_reserve_slack` splits the actual
+>$300 tail into HIT (model also priced scarcity) and MISSED (model priced
+sub-scarcity) and reads the reserve dual (sum of every co-opt family's balance
+dual, incl. the rigid VOLL families) from the committed sidecar. 2023: MISSED 88 h
+(model $104 / act $862) reserve binds **2/88, mean $0.1**; HIT 59 h (model $1443)
+reserve binds 52/59, mean **$4,088**. When the model DOES price >$300, the reserve
+binds 41/42 (98%). Same pattern 2024 (MISSED 3/23; HIT 4/5 mean $6,616) and 2025
+(0/18, model forms no tail). So the reserve co-opt is the model's own
+scarcity-price-former and it works **when the headroom is scarce enough to bind**;
+at the MISSED hours it is SLACK — the measured AS is fully held but the model
+carries phantom responsive headroom (the ~8–9 GW P1 wedge) where the real 2023
+grid retained ~5.7 GW (PRC). Holding *more* AS out cannot lift a dual that is
+already slack.
+
+**Lane B (no double-count).** Composition is sound: NonSpin held via the normal
+ramp not VOLL (correct — largely offline); battery/LR credits net the requirement
+(the measured AS→thermal relationship); `ercot_storage_as_deployment` is the
+holdout's ramp mirror; `ercot_ordc_total_reserve` explicitly does not re-add ECRS
+(spec.py:1351). Nothing to add without double-counting.
+
+**Lane C/D (moot).** No mechanism change → no LOYO, no new keeper, no dashboard
+run. The bind-forcing path (on-line-capacity envelope) is already built,
+identified, and REJECTED — ercot41 (2023 hub $46→$347, C3a +797%) and ercot43
+(2023 $455, C3a +708%; lifts 2024 +61%) — `docs/handoffs/ercot-online-capacity-
+envelope-2026-07.md`. Its §7.4 root cause (energy forced to compete with the full
+~10.7 GW ORDC span while the real market ran ~5 GW below it, pricing via ENERGY
+offers not the reserve adder) is the same wall from the reserve side.
+
+**Frontier (filed, NOT built).** The genuine untested lever is reserve-DEMAND
+right-sizing: cap the headroom at measured RTOLCAP **and** reduce the demand from
+the ~10.7 GW ORDC span toward the measured AS plan, so the holdout binds at the
+measured level. This re-opens the rule-26-frozen ORDC-family design → owner-
+sanctioned round only. First-order caveat: after correct battery+LR credits the
+thermal AS demand is ~1.5 GW (< the envelope's ~5.4 GW collapsed room), so a naive
+composition likely lands inert, not on target — the demand-side redesign must be
+done carefully.
+
+**Disposition.** Keeper UNCHANGED (`2026-07-23-ercot100-netrev-margin-keeper`,
+NOT-YET). No solve, no dashboard run (all diagnostics no-LP), no tuning. The
+AS-holdout thesis is refuted (already held & non-binding); the ERCOT-101
+attributed bound stands, sharpened. C6 governance route unchanged (owner sign-off
+pending). Branch `claude/ercot-102-as-holdout-repricing-aq6o1e`. Next number:
+ercot-103.
