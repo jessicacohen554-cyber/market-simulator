@@ -76,11 +76,20 @@ DAM_DIR = REPO / "data" / "raw" / "ercot"
 REFERENCE_DIR = REPO / "data" / "raw" / "reference"
 BIN_ASSIGN = REFERENCE_DIR / "custom-bin-assignments.csv"
 FORENSIC = REFERENCE_DIR / "ercot_noncampd_dam_crosswalk.csv"
+# ERCOT-110: the reviewed coal site -> EIA plant adjudication. Its own file
+# (not appended to FORENSIC) so the frozen ERCOT-71 non-CAMPD availability
+# derive, which reads every row of FORENSIC, keeps its exact plant scope.
+COAL_SEEDS = REFERENCE_DIR / "ercot-dam-coal-site-seeds.csv"
 DEFAULT_OUT = REFERENCE_DIR / "ercot-dam-plant-crosswalk.csv"
 
-# Covered classes (the DAM-availability scope; CHP/coal/nuclear excluded — see
+# Covered classes (the DAM-availability scope; CHP/nuclear excluded — see
 # derive_ercot_thermal_dam_availability). CC first: the coverage priority.
-COVERED_CLASSES = ("CC_REGULAR", "CT_PEAKER", "ST_GAS")
+# COAL added ERCOT-110 2026-07-24 with the coal scope extension: its 26 DAM
+# sites are matched against the ``COAL`` Plant_Group of custom-bin-assignments
+# (the bin file does not carry the supply-rank split — the crosswalk resolves
+# site -> plant_code and the deriver composes that with the model's own
+# plant -> COAL_PRB/COAL_LIGNITE map).
+COVERED_CLASSES = ("CC_REGULAR", "CT_PEAKER", "ST_GAS", "COAL")
 
 # Capacity plausibility band for auto-accept. Auto-accept is gated primarily on
 # a *unique, distinctive* abbreviation corroboration (n_strong == 1); capacity is
@@ -280,31 +289,55 @@ def load_model_plants() -> pd.DataFrame:
     )
 
 
-def _forensic_seeds() -> dict[str, int]:
-    """Substation-token -> plant_code from the hand-forensic non-CAMPD crosswalk.
+def _forensic_seeds() -> tuple[dict[str, int], dict[str, int]]:
+    """Hand-adjudicated ``(exact-site, stem)`` seed maps -> plant_code.
 
-    Those rows were adjudicated unambiguous by hand (switchable / behind-fence
-    units the automated capacity+abbrev path cannot see); seed them accepted.
-    Keyed by the DAM settlement-point substation token.
+    Two reviewed sources, both "unambiguous by hand" rows the automated
+    capacity+abbreviation path cannot reach:
+
+    * ``ercot_noncampd_dam_crosswalk.csv`` — the original switchable /
+      behind-fence CC seeds (Kiamichi, Hidalgo, AVR), keyed by DAM settlement
+      point. Indexed by STEM: ``_mnem_stem(_site(token, "CCGT90"))`` collapses
+      a settlement point like ``KMCHI_CC1`` onto the train stem ``KMCHI``,
+      which is the site key a CC resource carries.
+    * ``ercot-dam-coal-site-seeds.csv`` — the ERCOT-110 coal fleet, keyed by
+      DAM **site** (= Resource Name: ``_site`` returns the name unchanged for
+      every non-CC type, so a coal site key needs no config-collapse). ERCOT
+      coal mnemonics are substation codes with no lexical bridge to the EIA
+      plant name — ``LEG`` for Limestone, ``OGSES`` for Oak Grove, ``MLSES``
+      for Martin Lake, ``CALAVERS`` for J K Spruce, ``TNP_ONE`` for Major Oak
+      — so every one of the 26 coal sites is adjudicated by hand there rather
+      than scored.
+
+    The EXACT index is consulted first. Stems are unchanged and the coal file
+    is a separate artifact, so the pre-existing CC seeds — and the ERCOT-71
+    non-CAMPD availability derive that shares the forensic CSV — behave
+    identically.
     """
-    seeds: dict[str, int] = {}
-    if not FORENSIC.exists():
-        return seeds
-    fdf = pd.read_csv(FORENSIC)
-    for _, r in fdf.iterrows():
-        code = int(r["plant_code"])
-        for sp in str(r["dam_settlement_points"]).split(";"):
-            stem = _mnem_stem(_site(sp.strip(), "CCGT90"))
-            if stem:
-                seeds[stem] = code
-    return seeds
+    exact: dict[str, int] = {}
+    stems: dict[str, int] = {}
+    if FORENSIC.exists():
+        fdf = pd.read_csv(FORENSIC)
+        for _, r in fdf.iterrows():
+            code = int(r["plant_code"])
+            for sp in str(r["dam_settlement_points"]).split(";"):
+                stem = _mnem_stem(_site(sp.strip(), "CCGT90"))
+                if stem:
+                    stems[stem] = code
+    if COAL_SEEDS.exists():
+        cdf = pd.read_csv(COAL_SEEDS)
+        for _, r in cdf.iterrows():
+            site = str(r["site"]).strip()
+            if site:
+                exact[site] = int(r["plant_code"])
+    return exact, stems
 
 
 def build(years: list[int]) -> pd.DataFrame:
     """Propose the DAM-site -> EIA-plant crosswalk with evidence + accept gate."""
     sites = load_dam_sites(years)
     plants = load_model_plants()
-    seeds = _forensic_seeds()
+    seeds_exact, seeds = _forensic_seeds()
 
     rows: list[dict] = []
     for _, s in sites.iterrows():
@@ -329,10 +362,12 @@ def build(years: list[int]) -> pd.DataFrame:
         accepted = int(strong and cap_ok and n_strong == 1)
         method = top["method"]
 
-        # Forensic seed override (hand-adjudicated): accept onto the seeded plant.
+        # Forensic seed override (hand-adjudicated): accept onto the seeded
+        # plant. The exact site key wins over the CC-collapsed stem, so a
+        # non-CC (steam / simple-cycle / coal) resource name seeds directly.
         stem = _mnem_stem(s["site"])
-        if stem in seeds:
-            seed_code = seeds[stem]
+        seed_code = seeds_exact.get(str(s["site"]), seeds.get(stem))
+        if seed_code is not None:
             srow = plants[
                 (plants["cls"] == s["cls"]) & (plants["plant_code"] == seed_code)
             ]

@@ -131,6 +131,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "nyiso_scr_edrp_reserve_eligible",
     "ercot_thermal_dam_availability_hourly",
     "ercot_thermal_dam_availability_plant",
+    # ERCOT-110 coal class-SCOPE switch of the same measured-DAM mechanism.
+    # Default-off and intended byte-identical for every existing config (the
+    # coal rows the re-derive added to the artifacts are dropped at the apply
+    # seam when it is off), so it is dropped from the hash at its default; an
+    # armed run enters the key as a distinct scenario.
+    "ercot_thermal_dam_availability_coal",
     # Gas-offer net-revenue margin mechanism (commit d536e7d): the flag plus its
     # identification anchor. Both are default-off (False / None) and were intended
     # byte-identical for every config that does not arm the mechanism, but they
@@ -5329,10 +5335,12 @@ class ScenarioConfig:
     # is a published MW capability quantity, never a price (rule 13); forecast
     # years keep the statistical stack (the expected-value forward analogue — the
     # G4 mode-aware seam). Uncovered dates (Oct-2023 publication hole; Nov-Dec
-    # 2025 until the 2026 files land) keep the pre-overlay availability. CHP and
-    # coal are deliberately NOT DAM-covered (rule 14: no CHP flag / partly
-    # behind-the-meter; coal is better at CAMPD unit grain) — they rely on the
-    # CAMPD windows + wefor_residual instead. See
+    # 2025 until the 2026 files land) keep the pre-overlay availability. CHP is
+    # deliberately NOT DAM-covered (rule 14: no CHP flag, and the private-use
+    # cogens are partly behind-the-meter) — it relies on the CAMPD windows +
+    # wefor_residual instead. Coal is covered from ERCOT-110 (2026-07-24) but
+    # behind its OWN class-scope gate, ercot_thermal_dam_availability_coal
+    # below: with that gate off this flag still means the gas classes only. See
     # data.outages.ercot_thermal_dam_availability_series and the application in
     # data.fleet.generators_to_fleet_arrays.
     ercot_thermal_dam_availability: bool = False
@@ -5436,6 +5444,54 @@ class ScenarioConfig:
     # unless ercot_thermal_dam_availability + _hourly are also on; forecast mode
     # untouched (the statistical stack is the forward analogue — G4 seam).
     ercot_thermal_dam_availability_plant: bool = False
+
+    # ERCOT measured DAM availability extended to COAL (default off, ERCOT
+    # backcast-gated — ERCOT-110, 2026-07-24). A CLASS-SCOPE switch of the same
+    # mechanism (rule 19), not a new overlay: when armed on top of
+    # ercot_thermal_dam_availability + _hourly it lets the COAL_PRB /
+    # COAL_LIGNITE classes consume the measured 60-Day DAM fraction the same way
+    # the gas classes already do (class-HOUR water-fill, plus the plant grain
+    # when _plant is also on). Off, the coal rows in the derived artifacts are
+    # dropped at the apply seam, so an armed-gas run is byte-identical to its
+    # pre-ERCOT-110 self even though the CSVs/parquet now carry coal — the
+    # re-derive cannot silently move a keeper.
+    #
+    # WHY COAL (ERCOT-109 -> ERCOT-110). At the 122 true scarcity hours of
+    # Jul-Sep 2023 the model serves the same load with 1.7 GW LESS GAS,
+    # backfilled by cheap resource — coal +424 MW among it — and coal is 0.0 %
+    # forced (D-2), so the error is merit-order elasticity against a capability
+    # ceiling the model does not have. The disclosure measures ERCOT coal at
+    # 0.86-0.88 of ratings in Jun-Sep 2023 (11.7-11.9 GW of the 13.6 GW p98
+    # rated fleet) while the model runs coal to 12.5 GW in Aug/Sep — ~834 MW of
+    # phantom coal precisely in the tail hours. The statistical/CAMPD stack
+    # cannot see it: CAMPD windows are a >=5-day FULL-STOP detector, blind to a
+    # partial summer HSL derate, and blind to a long single-unit mothball
+    # (W A Parish G8 reads OUT/zero for ~96 % of 2023 while the model carries
+    # its 610 MW available all year).
+    #
+    # GRAIN. The overlay keys the single class COAL, because that is the grain
+    # BOTH sides carry: the disclosure publishes one coal Resource Type (CLLIG)
+    # with no fuel basin, and the ERCOT LP assigns the whole coal fleet
+    # Plant_Group = COAL (the COAL_PRB / COAL_LIGNITE split is applied only at
+    # REPORTING time, in run_calibration_full._dispatch_frame). Keying the
+    # supply-rank split would match no generator at the apply seam and leave
+    # the overlay silently inert. WHICH coal unit is derated is carried by the
+    # PLANT grain instead (ercot_thermal_dam_availability_plant), keyed by EIA
+    # plant code through the reviewed crosswalk
+    # (data/raw/reference/ercot-dam-coal-site-seeds.csv ->
+    # ercot-dam-plant-crosswalk.csv — all 26 coal sites hand-adjudicated,
+    # because ERCOT coal mnemonics are substation codes with no lexical bridge
+    # to the EIA plant name). All 26 sites map onto all 10 modelled coal
+    # plants, so the plant grain covers coal with no unmapped residual.
+    #
+    # Rule-13 admissible identically to the gas scope: published unit-resolved
+    # MW capability, regenerates for any delivery year, responds to changed
+    # conditions — never a price, never an outcome. Rule 23: a class-SCOPE
+    # extension of the frozen derive (the same argument ERCOT-96/97 used for
+    # the hour and plant grains), source files unchanged. Backcast only;
+    # forecast keeps the statistical stack (the G4 mode-aware seam). No effect
+    # unless ercot_thermal_dam_availability + _hourly are also on.
+    ercot_thermal_dam_availability_coal: bool = False
 
     # ERCOT CAMPD-blind per-plant availability (default off, ERCOT backcast-gated
     # — ERCOT-71). Restores measured availability for the ERCOT gas plants ABSENT
