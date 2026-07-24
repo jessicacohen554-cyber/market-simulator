@@ -1,0 +1,7 @@
+facility_name,facility_id,unit_id,unit_capacity_mw,plant_capacity_mw,unit_pct_of_plant,plant_group,capacity_source,outage_start,outage_end,duration_days,peer_units_online,total_units_at_plant
+US Gypsum Oakfield,50203,E923,5.8,5.8,100.0,CT_CHP,eia923,2024-01-01,2024-06-30,182.0,0,1
+US Gypsum Oakfield,50203,E923,5.8,5.8,100.0,CT_CHP,eia923,2024-08-01,2024-12-31,153.0,0,1
+Astoria Energy II,57664,E923,650.0,650.0,100.0,CC_REGULAR,eia923,2021-10-01,2021-11-30,61.0,0,1
+Peak Power 1 Cogen,57789,E923,6.3,6.3,100.0,CT_CHP,eia923,2018-01-01,2018-12-31,365.0,0,1
+OBP Cogen,57798,E923,4.6,4.6,100.0,CT_CHP,eia923,2024-01-01,2024-12-31,366.0,0,1
+William Floyd School District,58167,E923,3.9,3.9,100.0,CT_CHP,eia923,2024-01-01,2024-12-31,366.0,0,1

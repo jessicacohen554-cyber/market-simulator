@@ -24,7 +24,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from scripts.data.derive_campd_unit_outages import (  # noqa: E402
+    EIA923_FALLBACK_OUTAGE_RATIO,
     SHORT_BASELOAD_CF,
+    _eia923_month_windows,
     _operable_mask,
     _partial_plateau_windows,
     _when_operable_cf,
@@ -128,6 +130,50 @@ class PartialPlateauModeTest(unittest.TestCase):
         windows, factors = _partial_plateau_windows(_base_gross(0.9), CAP)
         self.assertEqual(windows, [])
         self.assertEqual(factors, {})
+
+
+class TestEia923MonthWindows(unittest.TestCase):
+    """The EIA-923 non-CAMPD fallback's month-run merger (pure, no I/O).
+
+    A month at or below ``ratio`` x the plant's own normal monthly output is a
+    full-stop window; contiguous out-months merge; NaN/absent months are never a
+    signal (only FILED months appear in the input dict).
+    """
+
+    RATIO = EIA923_FALLBACK_OUTAGE_RATIO  # 0.10
+    REF = 1000.0  # normal monthly output MWh
+
+    def test_contiguous_out_months_merge_into_one_window(self):
+        # Feb+Mar near-zero, everything else normal -> one Feb 1 .. Mar 31 window.
+        monthly = {m: self.REF for m in range(1, 13)}
+        monthly[2] = 10.0
+        monthly[3] = 0.0
+        wins = _eia923_month_windows(monthly, self.REF, 2021, self.RATIO)
+        self.assertEqual(len(wins), 1)
+        start, end, dur = wins[0]
+        self.assertEqual(start.strftime("%Y-%m-%d"), "2021-02-01")
+        self.assertEqual(end.strftime("%Y-%m-%d"), "2021-03-31")
+        self.assertEqual(dur, 28.0 + 31.0)  # Feb(28)+Mar(31), 2021 non-leap
+
+    def test_separated_out_months_are_distinct_windows(self):
+        monthly = {m: self.REF for m in range(1, 13)}
+        monthly[1] = 0.0
+        monthly[8] = 0.0
+        wins = _eia923_month_windows(monthly, self.REF, 2022, self.RATIO)
+        self.assertEqual(len(wins), 2)
+        self.assertEqual(wins[0][0].strftime("%m"), "01")
+        self.assertEqual(wins[1][0].strftime("%m"), "08")
+
+    def test_at_ratio_boundary_is_out_above_is_available(self):
+        # exactly ratio*ref -> out; just above -> available.
+        monthly = {1: self.RATIO * self.REF, 2: self.RATIO * self.REF + 1.0}
+        wins = _eia923_month_windows(monthly, self.REF, 2020, self.RATIO)
+        self.assertEqual([w[0].strftime("%m") for w in wins], ["01"])
+
+    def test_absent_months_are_not_flagged(self):
+        # Only Jan+Feb filed (partial year like 2026 Q1); both normal -> no window.
+        monthly = {1: self.REF, 2: self.REF}
+        self.assertEqual(_eia923_month_windows(monthly, self.REF, 2026, self.RATIO), [])
 
 
 if __name__ == "__main__":
