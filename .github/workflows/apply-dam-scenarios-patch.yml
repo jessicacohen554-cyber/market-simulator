@@ -4,6 +4,8 @@ name: apply-dam-scenarios-patch
 # to main and commit. scenarios.py (8138 lines) exceeds the API-only push path's
 # single-call emission limit, so the 4 DAM-outage gate fields could not be pushed
 # as a whole file; this lands them server-side. Idempotent; delete after it runs.
+# Sparse checkout (only the two files it touches) keeps this repo's large
+# committed-data working tree from materializing.
 on:
   workflow_dispatch: {}
 
@@ -19,6 +21,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
+          sparse-checkout: |
+            src/market_sim/config/scenarios.py
+            docs/handoffs/patches/dam-outage-wiring-4iso-scenarios.patch
+          sparse-checkout-cone-mode: false
       - name: Apply DAM-outage gate patch to scenarios.py
         run: |
           set -euo pipefail
