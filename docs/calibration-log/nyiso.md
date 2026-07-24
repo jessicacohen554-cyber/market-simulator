@@ -342,3 +342,70 @@ was not adjusted to rescue the shape).** Both A/B arms registered on the
 dashboard; keeper = `2026-07-23-nyiso-72-netrev-margin`.
 
 Next number: nyiso-73.
+
+## 2026-07-24 — nyiso-73 REJECTED probe: the ISO-neutral gas commitment bridge (ERCOT-63) is near-inert on the C3a 2023 off-peak trough; the prior findings' "only forward lever" is BUILT, TESTED, closed; keeper unchanged
+
+Picked up the `claude/nyiso-backcast-c3a-2023` handoff (close the dominant open
+miss, the 2023 C3a OFF-PEAK trough +58.7% on nyiso-72, model floors overnight
+LBMP at ~$31 where reality troughs ~$19.6). **No keeper change** — diagnostic-only.
+Full write-up: `results/calibration/FINDING-nyiso-2023-c3a-gas-bridge-2026-07-24.md`.
+
+**Independently re-verified the miss on nyiso-72** (committed hourlies vs actuals,
+shoulder load-weighted): off-peak (hod 0–6) +58.7%, on-peak +27.8%, full-year
++21.4% — off-peak-specific and wider than nyiso-70 (the margin form made 2023
+marginally worse). Structural sharpening of the two prior 2026-07-23 findings: an
+off-peak-SPECIFIC gap cannot be produced by any hour-symmetric input (gas basis,
+HR, offer level, import price all shift every hour ~symmetrically) — so those
+handoff-named levers are refuted *structurally*, not just empirically.
+
+**Resolved the prior findings' open lever.** They named a below-SRMC overnight
+commitment mechanism as the sole honest forward lever but called it an *unbuilt*
+cross-ISO methodology change. It EXISTS: `ercot_gas_commitment_bridge` (ERCOT-63,
+`docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §7) — the ISO-neutral
+CAISO RA bridge internals (`caiso_ra_mustoffer_min_gen`, P0-pattern + startup
+economics, physics-gated rule 18) scoped to merchant gas-CC. Routed onto NYISO
+2023 as a rule-16 throwaway (`scripts/probes/_nyiso73_gas_bridge_probe.py`,
+`min_load_frac` 0.574 = ERCOT-measured LSL/HSL p50 physical proxy; nyiso-72 recipe
+byte-faithful via `build_kwargs(meta)`). NEVER registered.
+
+**The bridge fires but is near-inert on the trough.** Floored 6,492 unit-hours /
+**0.573 TWh** / 895 bridged gaps (mostly 4–16h) — so NYISO CC *does* cycle off
+overnight (the "baseload CC never idles" null is disproved). But the A/B vs the
+committed nyiso-72 base:
+
+| 2023 shoulder (lw) | actual | base | bridge | Δ |
+|---|--:|--:|--:|--:|
+| off-peak trough (hod 0–6) | 19.62 | 31.12 | 30.92 | **−0.20** |
+| on-peak (hod 14–19) | 32.12 | 41.03 | 40.26 | −0.78 |
+| full year | 30.28 | 36.78 | 36.34 | −0.44 |
+| median daily spread | 26.39 | 8.72 | 8.08 | **−0.63 (worse)** |
+
+C1 unchanged (CC_REGULAR +0.23 TWh, imports 0.00 annual — PASS-band); C7 ST_GAS
+inert (−0.07 TWh). The trough moves −0.20 against an $11.5 gap (+57.6% remains)
+and the spread compresses −0.63 — the SAME signature that refuted ERCOT's
+price-side markdown.
+
+**Mechanism (why inert here, worked on ERCOT).** In bridged off-peak hours the
+floor raises CC_REGULAR +115 MW and displaces **imports** −142 MW (already
+repriced to neighbor DA LMPs near the CC band), not a dearer domestic unit — so
+the marginal price-setter stays a mid-CC ~$29–31 and the trough LMP holds. A STATE
+mechanism (more units online at min-load) cannot fix a PRICE gap: the model's
+cheapest available overnight marginal (mid-CC) is genuinely dearer than reality's
+(which bids below SRMC). Fraction-independent — 0.35 TWh of non-CC was displaced
+yet the marginal held. On ERCOT the bridged CC displaced a *more-expensive*
+marginal (trough deepened); NYISO's overnight marginal is already a CC, so
+flooring CC exposes nothing cheaper.
+
+**Verdict — REJECT the bridge for NYISO; keeper stays nyiso-72 (rule 1).** The
+dominant C3a miss is a **full-SRMC LP price-formation limit**, now confirmed on
+both sides: STATE bridge near-inert + spread-compressing (this session), PRICE
+markdown cross-ISO refuted. The "only forward lever" is BUILT, TESTED, and does
+not close it — the residual is an instance of the cross-ISO overnight-trough
+price-formation frontier problem (ERCOT's own trough still open at frontier), a
+methodology-lane item requiring a below-SRMC *offer* form that lowers the marginal
+bid WITHOUT compressing the spread (unfound across ERCOT + now NYISO), validated
+model-wide — NOT a NYISO calibration task. NO residual tuning taken. The ST_GAS/C7
+half remains a data-intake blocker (published NYC/LI in-city min-gen requirement),
+per `FINDING-nyiso-stgas-underrun-diagnosis-2026-07-23.md`.
+
+Next number: nyiso-74.
