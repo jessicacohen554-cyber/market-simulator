@@ -22,16 +22,16 @@ from __future__ import annotations
 
 import json
 import logging
-from concurrent.futures import ProcessPoolExecutor
 from dataclasses import asdict
 from pathlib import Path
 
 import pandas as pd
 
+from market_sim.config import paths
 from market_sim.config.constants import END_YEAR, START_YEAR
 from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
 from market_sim.results import cache
-from market_sim.results.export import _summarize_year
+from market_sim.results.export import summarize_cached_run
 
 logger = logging.getLogger(__name__)
 
@@ -89,10 +89,12 @@ def run_matrix(
     Returns:
         A dict mapping each case name to the ``cache_key`` of its run.
     """
-    # Public picklable worker entry point; local import mirrors ensemble.py
-    # (runner.py imports this module for its CLI subcommand — api delegates
-    # to runner lazily, so there is no module-load cycle).
-    from market_sim.pipeline.api import run_pair
+    # Shared, rule-12-capped member fan-out. The matrix HARD-caps an explicit
+    # workers at MAX_CONCURRENT_CASES (a 25-year forecast member is GB-scale;
+    # rule 12/16), unlike the ensemble's honour-explicit policy — so clamp here
+    # before delegating. Lazy import mirrors the api-facade pattern (members
+    # module-imports the pipeline api, whose runner import is lazy).
+    from market_sim.pipeline.members import run_member_configs
 
     iso = iso.upper()
     if not configs:
@@ -102,18 +104,10 @@ def run_matrix(
         MAX_CONCURRENT_CASES if workers is None else min(workers, MAX_CONCURRENT_CASES)
     )
 
-    names = list(configs.keys())
-    pairs = [(configs[name], iso) for name in names]
-
-    logger.info("run_matrix start: iso=%s cases=%s workers=%d", iso, names, workers)
-
-    if workers == 1:
-        keys = [run_pair(pair) for pair in pairs]
-    else:
-        with ProcessPoolExecutor(max_workers=workers) as executor:
-            keys = list(executor.map(run_pair, pairs))
-
-    return dict(zip(names, keys))
+    logger.info(
+        "run_matrix start: iso=%s cases=%s workers=%d", iso, list(configs), workers
+    )
+    return run_member_configs(configs, iso, workers=workers, cap=MAX_CONCURRENT_CASES)
 
 
 def build_matrix_frame(iso: str, members: dict[str, str]) -> pd.DataFrame:
@@ -136,9 +130,7 @@ def build_matrix_frame(iso: str, members: dict[str, str]) -> pd.DataFrame:
         for year in range(START_YEAR, END_YEAR + 1):
             if not cache.is_cached(iso, key, year):
                 continue
-            result = cache.load_result(iso, key, year)
-            context = cache.load_fleet_context(iso, key, year)
-            summary = _summarize_year(result, context)
+            summary = summarize_cached_run(iso, key, year)
             rows.append(
                 {
                     "case": case,
@@ -282,9 +274,7 @@ def write_matrix_outputs(
     """
     iso = iso.upper()
     matrix_id = matrix_id_for(iso, base_config, matrix_path)
-    out_dir = (
-        Path(out_dir) if out_dir is not None else Path("results/ensemble") / matrix_id
-    )
+    out_dir = Path(out_dir) if out_dir is not None else paths.ENSEMBLE_DIR / matrix_id
     out_dir.mkdir(parents=True, exist_ok=True)
 
     matrix_df = build_matrix_frame(iso, members)
