@@ -1,0 +1,101 @@
+diff --git a/scripts/run_calibration.py b/scripts/run_calibration.py
+index 2dfc061..dacd12a 100644
+--- a/scripts/run_calibration.py
++++ b/scripts/run_calibration.py
+@@ -591,6 +591,7 @@ def run_year(
+     neiso_winter_fuel_inventory: bool | None = None,
+     neiso_winter_fuel_start_fill_bbl: float | None = None,
+     neiso_winter_fuel_mustrun: bool | None = None,
++    neiso_operable_capacity_availability: bool | None = None,
+     caiso_import_hub_prices: bool | None = None,
+     caiso_import_gas_coupling: bool | None = None,
+     caiso_import_solar_shape: bool | None = None,
+@@ -1135,6 +1136,10 @@ def run_year(
+         config = config.with_overrides(
+             neiso_winter_fuel_mustrun=neiso_winter_fuel_mustrun
+         )
++    if neiso_operable_capacity_availability is not None:
++        config = config.with_overrides(
++            neiso_operable_capacity_availability=(neiso_operable_capacity_availability)
++        )
+     if caiso_import_hub_prices is not None:
+         config = config.with_overrides(caiso_import_hub_prices=caiso_import_hub_prices)
+     if caiso_import_gas_coupling is not None:
+diff --git a/scripts/run_calibration_full.py b/scripts/run_calibration_full.py
+index 31ad13e..37cf0d5 100644
+--- a/scripts/run_calibration_full.py
++++ b/scripts/run_calibration_full.py
+@@ -2740,6 +2740,7 @@ def solve_and_persist(
+     neiso_winter_fuel_inventory: bool | None = None,
+     neiso_winter_fuel_start_fill_bbl: float | None = None,
+     neiso_winter_fuel_mustrun: bool | None = None,
++    neiso_operable_capacity_availability: bool | None = None,
+     caiso_import_hub_prices: bool | None = None,
+     caiso_import_gas_coupling: bool | None = None,
+     caiso_import_solar_shape: bool | None = None,
+@@ -3479,6 +3480,12 @@ def solve_and_persist(
+             recorded_cfg = recorded_cfg.with_overrides(
+                 neiso_winter_fuel_mustrun=neiso_winter_fuel_mustrun
+             )
++        if neiso_operable_capacity_availability is not None:
++            recorded_cfg = recorded_cfg.with_overrides(
++                neiso_operable_capacity_availability=(
++                    neiso_operable_capacity_availability
++                )
++            )
+         if caiso_import_hub_prices is not None:
+             recorded_cfg = recorded_cfg.with_overrides(
+                 caiso_import_hub_prices=caiso_import_hub_prices
+@@ -4022,6 +4029,7 @@ def solve_and_persist(
+             neiso_winter_fuel_inventory=neiso_winter_fuel_inventory,
+             neiso_winter_fuel_start_fill_bbl=neiso_winter_fuel_start_fill_bbl,
+             neiso_winter_fuel_mustrun=neiso_winter_fuel_mustrun,
++            neiso_operable_capacity_availability=(neiso_operable_capacity_availability),
+             caiso_import_hub_prices=caiso_import_hub_prices,
+             caiso_import_gas_coupling=caiso_import_gas_coupling,
+             caiso_import_solar_shape=caiso_import_solar_shape,
+@@ -4524,6 +4532,7 @@ def solve_and_persist(
+         "neiso_winter_fuel_inventory": neiso_winter_fuel_inventory,
+         "neiso_winter_fuel_start_fill_bbl": neiso_winter_fuel_start_fill_bbl,
+         "neiso_winter_fuel_mustrun": neiso_winter_fuel_mustrun,
++        "neiso_operable_capacity_availability": (neiso_operable_capacity_availability),
+         "caiso_import_hub_prices": caiso_import_hub_prices,
+         "caiso_import_gas_coupling": caiso_import_gas_coupling,
+         "caiso_import_solar_shape": caiso_import_solar_shape,
+@@ -8626,6 +8635,26 @@ def main() -> None:
+         "tuned to the residual (rule 24). Tags MECH_WINTER_FUELSEC for D-2. "
+         "NEISO-only, backcast-only, default off.",
+     )
++    parser.add_argument(
++        "--neiso-operable-capacity-availability",
++        action=argparse.BooleanOptionalAction,
++        default=None,
++        help="NEISO measured operable-capacity thermal availability: derate "
++        "the dispatchable-thermal fleet to ISO-NE's OWN published "
++        "availability instrument -- the Morning Report Section 3 "
++        "'Operable Capacity Analysis' daily generation outages and "
++        "reductions (planned + forced) as a share of the obligated + "
++        "additionally-offered operable capacity, 1 - outages / (CSO + "
++        "EcoMax-above-CSO) -- IN PLACE OF the CAMPD unit-outage derate on "
++        "covered days. ISO-NE publishes this only at FLEET grain (no "
++        "per-unit / per-fuel series), so the measured daily fraction is "
++        "imposed on the covered thermal classes TOGETHER by the same "
++        "bidirectional cap-1.0 water-fill the ERCOT class-day DAM overlay "
++        "uses; uncovered dates (pre-2018-07 archive start, publication "
++        "gaps) keep the CAMPD/statistical availability. A published "
++        "physical availability measurement, never a price or a residual-"
++        "fitted quantity (rule 13). NEISO-only, backcast-only, default off.",
++    )
+     parser.add_argument(
+         "--caiso-import-hub-prices",
+         action=argparse.BooleanOptionalAction,
+@@ -9726,6 +9755,9 @@ def main() -> None:
+         neiso_winter_fuel_inventory=args.neiso_winter_fuel_inventory,
+         neiso_winter_fuel_start_fill_bbl=args.neiso_winter_fuel_start_fill_bbl,
+         neiso_winter_fuel_mustrun=args.neiso_winter_fuel_mustrun,
++        neiso_operable_capacity_availability=(
++            args.neiso_operable_capacity_availability
++        ),
+         caiso_import_hub_prices=args.caiso_import_hub_prices,
+         caiso_import_gas_coupling=args.caiso_import_gas_coupling,
+         caiso_import_solar_shape=args.caiso_import_solar_shape,

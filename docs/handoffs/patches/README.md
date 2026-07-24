@@ -65,3 +65,42 @@ before it applies — no committed test asserts the gate (the committed
 git apply docs/handoffs/patches/neiso-operable-capacity-wiring.patch
 ```
 `git apply --3way` if a hunk is stale.
+
+## neiso-operable-capacity-cli-flag.patch (2026-07-24)
+
+NEISO operable-capacity availability — the **CLI/registry plumbing** for the
+gate the sibling `neiso-operable-capacity-wiring.patch` installed. That patch
+added `ScenarioConfig.neiso_operable_capacity_availability` and its fleet
+application, but no calibration entry point exposed it, so no run could arm it
+on-registry or record it in `run_config.json` (CLAUDE.md rule 24 — every
+tunable that can change a solve appears in the run's recorded config, never a
+`prb_overrides` passthrough). Two additive edits the API cannot carry inline
+(`run_calibration_full.py` 464 KB, `run_calibration.py` 233 KB — the
+`scenarios.py` size class; rule 27 forbids a regenerated full-file push):
+
+- `scripts/run_calibration_full.py` (+30): the `solve_and_persist` parameter,
+  the `_recorded_config` override, the `run_year` kwarg, the `meta.json` entry,
+  the `--neiso-operable-capacity-availability` BooleanOptionalAction flag, and
+  the `main()` forwarding — each beside its `neiso_winter_fuel_mustrun` peer.
+- `scripts/run_calibration.py` (+5): the `run_year` parameter and its
+  `config.with_overrides` application, likewise beside the peer.
+
+All six sites are tri-state (`bool | None`, `None` = leave the per-ISO default),
+so every existing recipe and cache key is byte-stable; the gate is in
+`scenarios.py`'s default-dropped hash-exempt set already.
+
+**Generated as** `git diff origin/main` with the edits applied. Purely additive
+and textually disjoint from any concurrent main change.
+
+**Verified 2026-07-24:** applies cleanly onto a pristine `origin/main` checkout
+and reproduces both files byte-for-byte (sha256 `c2a996f7…` /
+`6bf1dfb6…`); `ruff check` + `ruff format --check` clean; the flag appears in
+`run_calibration_full.py --help`. Does **not** turn CI red before it applies —
+no committed test asserts the flag. Exercised end-to-end by the neiso-62 A/B
+(`--replay-bundle` with the key set in `meta.json`).
+
+**Apply (after this branch is on `main`, from the repo root):**
+```
+git apply docs/handoffs/patches/neiso-operable-capacity-cli-flag.patch
+```
+`git apply --3way` if a hunk is stale.
