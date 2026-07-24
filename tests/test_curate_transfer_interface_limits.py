@@ -201,8 +201,10 @@ class PjmInterfaceTtcHourlyTest(unittest.TestCase):
         unmapped = idx[("PJM_SWMAAC", "PJM_EMAAC")]
         self.assertTrue(np.allclose(ttc_hourly[:, unmapped], ttc[unmapped]))
 
-    def test_missing_partition_returns_none(self):
-        """No clean partition -> None, so callers keep the static path."""
+    def test_missing_partition_raises(self):
+        """No clean partition -> RAISE (pjm-119): the caller is already gated on
+        pjm_measured_interface_limits, so silently keeping the static TTC would
+        leave the run claiming a measured input it never read."""
         from market_sim.config.iso_configs import get_iso_config
         from market_sim.data.transfer_interface_limits import (
             pjm_interface_ttc_hourly,
@@ -210,7 +212,9 @@ class PjmInterfaceTtcHourlyTest(unittest.TestCase):
 
         cfg = get_iso_config("PJM")
         ttc = np.array([link.ttc_mw for link in cfg.links])
-        self.assertIsNone(pjm_interface_ttc_hourly(ttc, cfg, 2023, 8760))
+        with self.assertRaises(FileNotFoundError) as ctx:
+            pjm_interface_ttc_hourly(ttc, cfg, 2023, 8760)
+        self.assertIn("never silently no-ops", str(ctx.exception))
 
 
 class PjmEastInterfaceCutTest(unittest.TestCase):
@@ -260,8 +264,9 @@ class PjmEastInterfaceCutTest(unittest.TestCase):
         self.assertIsNotNone(lim)
         self.assertTrue(np.allclose(lim, 0.0))
 
-    def test_missing_series_returns_none(self):
-        """A partition without Average Eastern -> None (group skipped)."""
+    def test_missing_series_raises(self):
+        """A partition without Average Eastern -> RAISE, and no partition at all
+        -> RAISE (pjm-119: the joint EMAAC cut never silently disappears)."""
         from market_sim.data.transfer_interface_limits import (
             pjm_eastern_interface_hourly,
         )
@@ -274,10 +279,12 @@ class PjmEastInterfaceCutTest(unittest.TestCase):
         )
         path.write_text(_csv(rows))
         cur.curate(raw_root=self.raw_root, isos=["PJM"])
-        self.assertIsNone(pjm_eastern_interface_hourly(2023, 8760))
-        # No partition at all -> also None.
+        with self.assertRaises(FileNotFoundError):
+            pjm_eastern_interface_hourly(2023, 8760)
+        # No partition at all -> also raises.
         clean_io.paths.CLEAN_DIR = Path(self._tmp.name) / "empty-clean"
-        self.assertIsNone(pjm_eastern_interface_hourly(2023, 8760))
+        with self.assertRaises(FileNotFoundError):
+            pjm_eastern_interface_hourly(2023, 8760)
 
     def test_group_builder_indices_signs_one_sided(self):
         """One one-sided group over exactly the two EMAAC import links."""
