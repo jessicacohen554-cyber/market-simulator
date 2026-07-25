@@ -409,3 +409,95 @@ half remains a data-intake blocker (published NYC/LI in-city min-gen requirement
 per `FINDING-nyiso-stgas-underrun-diagnosis-2026-07-23.md`.
 
 Next number: nyiso-74.
+
+---
+
+## 2026-07-24 — Lanes 1 & 2 reopened (owner order): import hour-assignment adjudicated, nuclear "over-run" refuted as a benchmark defect
+
+**No solves run.** Everything below is measured from the nyiso-72 keeper's
+committed `hourly/` sidecars and raw source data. Full write-up:
+`docs/FINDING-nyiso-import-hour-assignment-and-nuclear-benchmark-2026-07-24.md`.
+Next number still **nyiso-74** (none consumed).
+
+**1. `interchange_shaping` — rule-13 FORBIDDEN as a keeper mechanism.**
+`run_calibration.py:2402` → `import_nodes.py:746 inject_interchange_shape` →
+`envelopes.py:223 measured_interchange_envelope`, which reads the **same-year**
+EIA-930 `Total interchange` for the ISO itself, buckets (month × hod), and scales
+import-tranche availability by it. It is a measured **outcome** (realized net
+flow), not a capability envelope — the capability envelope is the published SIL,
+which the model already carries. It returns `None` for a forecast year *by
+construction*: there is no forward analogue. Diagnostic-only, never a keeper.
+Also moot — see (3), the model already over-imports overnight.
+
+**2. Overnight marginal setter = domestic thermal, NOT an import rung.** hod 0-6,
+2023, n=2,555: the import node is pinned **exactly at** a rung cumulative
+boundary in **69.7 %** of hours (import not marginal); in the 30.3 % interior
+hours the price equals the partially-loaded rung's MC in only 6.3 % of them and
+the median price sits **$2.23 BELOW** it (the rung runs on the firm-import floor,
+not economics). Per-zone, the price equals *any* rung price in 0.4-0.8 % of
+overnight hours. **Rung PRICES are not the C3a lever.**
+
+**3. Cheap-overnight-depth hypothesis REFUTED on measured data.** Measured net
+external import (four "SCH -" seams) overnight/evening-peak ratio = **0.806**
+(2023) / **0.815** (2024); the model's = **1.278 / 1.334**. The model
+**over**-imports overnight by **+523 / +531 MW** and under-imports at evening peak
+by −717 / −548 MW. Reality imports *less* overnight, not more. Adding cheap
+overnight depth moves away from the measurement — sub-lane closed on evidence.
+
+*But the duration coupling IS defective, on method-correctness grounds (rule 21,
+never the residual):* `pi_k = Quantile_DA(1 − P[net_import > L_k])` imposes rank
+correlation ~1.0 between depth and price, where measured
+`r(net import, DA LBMP)` = **+0.158 / +0.383 / +0.432**; and a distribution-match
+carries no hour assignment — the signature is exactly the keeper's ~2 % annual
+volume accuracy against 0.474 / 0.488 / 0.395 hourly r. Model overnight/peak
+ratio is near-constant (1.28/1.33/1.36) while measurement swings 0.81→0.81→1.18:
+the shape is insensitive to the year. Admissible replacement specified
+(hour-conditioned/diurnal-block Q-Q, or coupling on the neighbour's own hourly
+conditions). **Rule-1 warning: correcting it reduces overnight imports and makes
+C3a 2023 WORSE. Build it anyway if built; do not revert on the residual.**
+
+**4. Nuclear refuel outages are NOT missing — the BENCHMARK was wrong.** The
+model carries outage structure (6-8 discrete MW levels, min 2,461 / max 3,326 MW,
+24.9 % of 2023 hours below 90 % of max). Against **NYISO's own hourly fuel-mix
+posting** the model is within **0.3 %** every year: 27.49 vs 27.57 / 26.96 vs
+27.05 / 28.38 vs 28.48 TWh. Cause: NYIS EIA-930 codes `NG: NUC` filing gaps as
+exact `0.0` — **1,275 h in 2023** (56 days, one 1,179-h block), 390 h 2024, 118 h
+2025, worth 3.46 / 1.12 / 0.37 TWh. A 4-unit 3.4 GW baseload fleet cannot be at
+0 MW; the NYISO posting never reads 0 and never drops below 1,989 MW. The
+reported r-collapse is the same artifact — true r is **0.801 / 0.832 / 0.617**,
+not 0.831 / 0.498 / 0.505.
+
+*Gas under-run is REAL* (both benchmarks agree: −5.35 / −4.19 / −1.44 TWh vs the
+posting). *Hydro is a real open defect* (+1.20 / +0.96 / **−3.20** TWh, r
+0.62/0.58/0.41). *Wind is excellent* (r 0.993+).
+
+**FIX APPLIED (rule 14).** `data/eia930/actuals.py`: new `_ZERO_CODED_GAP_SERIES`
+registry (BA → columns whose exact zeros are filing gaps), masked to NaN in
+`load_eia_hourly_benchmark` so existing interpolation bridges them. Repaired
+totals land within −0.4 / −0.4 / −0.7 % of the NYISO posting (from −13.0 / −4.5 /
+−2.0 % raw). Registry holds **NYIS `NG: NUC` only** — audited all BAs; ERCO
+`NG: WAT` and ISNE `NG: COL` zeros are physically real and deliberately excluded.
+Verified every other ISO byte-identical. **Scoring/reporting only — the LP is
+untouched** (the LP-feeding envelope functions were not modified), so **no
+re-solve is needed but a RE-SCORE of the nyiso-72 bundle IS owed** (C1/C4);
+this session did not re-score. Tests:
+`tests/test_eia930_zero_gap.py`, 61/61 file pass.
+*Known limit:* the 1,179-h 2023 block interpolates energy correctly but not
+shape (r 0.715 vs 0.801 against the posting); curating the NYISO fuel-mix posting
+into the clean seam would fix shape — a data-intake task needing authorization.
+
+**5. Where C3a 2023 actually lives.** It is a **trough miss, not a level miss**:
+model − DA = **+1.62** $/MWh at evening peak (16-19) but **+7.62** overnight
+(0-6), worst +9.66 at hod 2. At the model's own $3.09/MMBtu gas the implied
+marginal HR is **13.38 model vs 12.86 actual at peak (4 % — calibrated)** but
+**9.97 model vs 7.51 actual overnight (33 %)**. Reality's overnight marginal is
+an efficient ~7.5 HR CCGT; the model's is a ~10 HR steam-band unit. This explains
+why every refuted A/B failed — markup / per-plant gas / zonal basis / netrev
+offer form all shift the *whole* curve, and the peak is already right. **New
+named lane (untested, not in the refuted set): the heat-rate basis of the
+marginal offer at low load** — incremental vs tranche-average HR for a committed
+CC. Couples to C8 (ST_GAS 31.0 %/41.2 % forced, ~658 MW overnight): a forced unit
+that is also price-setting is the first thing to check, via D-2 (rule 19 —
+reconcile, never stack). Pinned reliability floor NOT touched.
+
+**Keeper unchanged — nyiso-72.** Nothing registered on the dashboard.
