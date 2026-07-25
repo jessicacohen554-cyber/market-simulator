@@ -163,6 +163,29 @@ MISO_HSL_DIR: Path = RAW_DATA_DIR / "miso-hsl"
 # seasonal shapes (the upper-plains nocturnal-jet north vs the lower-Midwest
 # central/south) while preserving the EIA-930 MISO-wide aggregate.
 MISO_WIND_SHAPE_DIR: Path = RAW_DATA_DIR / "miso-wind-shape"
+# ERCOT analogue (ERCOT-112): the West/Panhandle CREZ corridor rides the
+# Great-Plains nocturnal low-level jet while the South/Coastal fleet rides the
+# Gulf sea breeze, and those two peak at different hours — so one ISO-wide
+# hourly profile averages them together. Same builder, same parquet schema.
+ERCOT_WIND_SHAPE_DIR: Path = RAW_DATA_DIR / "ercot-wind-shape"
+
+# Per-ISO wind-shape directory registry (no ``if iso ==`` ladder at the call
+# sites). An ISO absent here has no per-zone wind SHAPE, which the renewable
+# loader treats as a no-op — it keeps the legacy single-ISO-wide profile.
+WIND_SHAPE_DIRS: dict[str, Path] = {
+    "MISO": MISO_WIND_SHAPE_DIR,
+    "ERCOT": ERCOT_WIND_SHAPE_DIR,
+}
+
+
+def wind_shape_dir(iso: str) -> Path | None:
+    """Return the per-zone wind-shape directory for ``iso``, or ``None``.
+
+    ``None`` means the ISO has no per-zone wind SHAPE registered, and the
+    renewable loader keeps its legacy single-ISO-wide wind profile.
+    """
+    return WIND_SHAPE_DIRS.get(iso.upper())
+
 
 # Legacy data/ tree, folded into data/raw/ (W1). The directory names were
 # disambiguated on the way in so they don't collide with existing data/raw
