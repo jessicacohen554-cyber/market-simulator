@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-24-caiso-119-minload-measured",
+  "label": "caiso 119 minload measured",
+  "date": "2026-07-24",
+  "shorthand": "caiso-119-minload-measured",
+  "definition": "(PROBE \u2014 rejected as sized; keeper UNCHANGED.) caiso-119 single delta on the 2026-07-23-caiso-netrev-margin-keeper recipe: caiso_ra_min_load_frac 0.26 -> 0.570, the MEASURED physical min-stable-load of a fully-online CAISO CC (CEMS per-unit p05 of grossLoad/pmax over opTime==1.0 hours, cap-weighted p50 = 0.565/0.570/0.570 across 2023-25; ERCOT's independent 60-Day-DAM analogue is 0.574). The keeper's 0.26 sits below any physical CC turn-down and below the 0.40 code default. RESULT: near-inert \u2014 belly (hod 10-15) gas moves -28/+59/+52 MW, closing 8-10% of the gap at best. 11 of 15 pre-registered gates pass, NO KILL gate tripped (no overshoot, no volume breach, evening not worsened), but PRIMARY (belly gap closed >=40%) FAILS all three years. WHY, from the arms' own floors/*.npz: the RA must-offer bridge \u2014 the only mechanism this parameter governs \u2014 owns just 24,463 of 1,324,067 floored cells (1.8%) and ~0.4 GW; the 1.27M-cell bulk is structural, D-2-exempt chp_steam, and the bridge's level is capped, so +119% on the fraction gave +0.7% floored MW per cell. DISPOSITION (pre-registered): the measured 0.570 is KEPT (rule 14 \u2014 accurate input stays even when the fit doesn't improve; demonstrably safe over three years) but NOT promoted. Never tuned back toward 0.26 (rules 13/18/25). Control arm caiso119_base_A (same-HEAD replay, no delta) is not registered \u2014 a container restart cost it its meta.json. Findings: results/calibration/FINDING-caiso119-minload-ab-result-2026-07-24.md and FINDING-caiso119-gas-basis-adjudication-2026-07-24.md (the latter refutes the caiso-118/118b belly headline: its 'actual' was the EIA-930 CISO NG:NG cell caiso-109 had already condemned).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-24-caiso-119-minload-measured.js",
+  "bundle": "results/calibration/caiso119_minload_B"
+}

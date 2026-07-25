@@ -611,4 +611,110 @@ Closing the mid-tail stays the separate ledgered import/scarcity lane
 same-box multiplicative-form comparison; 2022 holdout not touched (NOT-YET, not a
 CALIBRATED promotion). Bundle `caiso_netrev_margin`.
 
-Next number: caiso-116.
+## 2026-07-24 — caiso-119: the caiso-118/118b headline REFUTED on the bytes (corrupted EIA-930 `NG: NG` re-used after caiso-109 condemned it); lane re-scoped to the measured min-load, SOLVED and found near-inert; new attributed defect CT_PEAKER PRICED OUT; keeper UNCHANGED
+
+**Keeper `2026-07-23-caiso-netrev-margin-keeper` UNCHANGED** (NOT-YET, fail
+{C3c, C4, C5a}). One three-year single-delta A/B solved; nothing promoted.
+Records: `results/calibration/FINDING-caiso119-gas-basis-adjudication-2026-07-24.md`
+and `FINDING-caiso119-minload-ab-result-2026-07-24.md`. Gates pre-registered
+before either arm finished: `results/calibration/caiso119_ab_pregistered_gates.md`.
+
+**R1 — the caiso-118/118b chain is void on magnitude.** Its entire redirect
+(floor the belly-committed fleet toward reality's ~8-10 GW) rested on one
+comparison: "actual belly gas 8,461 / 9,633 / 10,537 MW vs model 4,260 / 3,721 /
+2,947" (2.0x / 2.6x / 3.6x). The MODEL side reproduces; the ACTUAL side is
+**EIA-930 CISO `NG: NG` at local hod 10-15** — the same raw 930 gas cell
+caiso-109 had already condemned ("the caiso-108 -13.66 was the corrupted 930 NG
+cell") and replaced with the CEMS basis. Three independent tests kill it:
+T1 LEVEL 1.28 / 1.40 / 1.53x metered CEMS grid gas, the excess drifting upward
+every year; T2 SHAPE belly/evening 0.71 -> 0.93 -> **1.20 (INVERTED by 2025** —
+claiming CAISO burns more gas in the solar belly than on the evening ramp),
+against a rock-stable CEMS 0.52 / 0.53 / 0.53; T3 BALANCE the 2025 claim
+(10,537 MW) **overfills** the belly residual (9,838 MW) before a single MW of
+battery charging. On the CEMS basis the model's ANNUAL gas is within 1-3 %
+(1.03 / 1.03 / 0.99) and the defect is a ~1 GW **diurnal redistribution** —
+short 0.5-1.3 GW over hod 8-17, long 0.5-1.2 GW over hod 18-23, duck 0.40 vs
+measured 0.53. caiso-118b's DIRECTION survives; its size was ~5x overstated, and
+the chartered floor would have forced 5-6 GW of phantom generation (rule 1/13).
+
+**R2 — the honest single delta, solved: `caiso_ra_min_load_frac` 0.26 -> 0.570.**
+The keeper's 0.26 is below any physical CC turn-down and below the code default
+0.40. MEASURED from CEMS (per-unit p05 of `grossLoad/pmax` over fully-online
+`opTime == 1.0` hours, cap-weighted p50 across CC units with >=500 op hours):
+**0.565 / 0.570 / 0.570** across 2023-25 — stable to 1 %, and ERCOT's
+independently-derived 60-Day-DAM analogue is **0.574**. Arms
+`caiso119_base_A` (same-HEAD replay, no delta) vs `caiso119_minload_B`.
+**11 of 15 pre-registered gates pass; NO KILL gate tripped in any year; PRIMARY
+P1 (belly gap closed >=40 %) FAILS all three.** Belly gas moves -28 / +59 /
++52 MW (8-10 % of the gap at best), direction right in 2024/25.
+
+**R3 — WHY it is inert, from the arms' own `floors/<year>_P1.npz` records.**
+Floored MW by mechanism (2024, annual / belly): `firm_import` 3,304 / 1,220;
+`nuclear_mustrun` 2,077 / 2,077; `chp_steam` 924 / 924 (1,266,096 cells);
+**`ra_mustoffer_bridge` 387 -> 424 / 951 -> 1,046 (24,463 cells)**. The RA bridge
+— the ONLY mechanism this parameter governs — owns **24,463 of 1,324,067 floored
+cells (1.8 %)** and ~0.4 GW annual-average; the 1.27 M-cell bulk is structural,
+D-2-exempt `chp_steam`. Its level is also CAPPED, so +119 % on the fraction gave
+**+0.7 %** floored MW per cell, and belly floored MW moved +95 MW — almost
+exactly the +59 MW of gas observed. Nothing unexplained. Merchant forced share is
+~7 %, far inside the C8 30 % cap: there was never a C8 risk, because there was
+never 10 GW of forcing to add.
+
+**Disposition (pre-registered, honoured).** The measured **0.570 is KEPT**
+(rule 14 — the accurate input stays even when the fit does not improve; now
+demonstrably safe across three years with no KILL) but **NOT promoted** (fails
+its primary gate). It is never tuned back toward 0.26 (rules 13/18/25 — that is
+how 0.26 got there). The belly-commitment lane is **downgraded, not redirected**:
+the true hole is ~250-600 MW grid-delivered, too small to drive C5a/C4.
+
+**R4 — NEW attributed defect: CT_PEAKER is PRICED OUT (cause C).** Model 0.436
+TWh vs 4.33 TWh actual (2024) — 10 %. Attributed against all three candidates
+from `caiso119_base_A/dispatch/2024_P1.parquet`: all 44 bench peaker facilities
+present (80 plants / 834 tranches) so NOT absent; fleet peak 3,542 MW with
+588/834 tranches producing so NOT derated; therefore **priced out**. Per plant
+model/actual TWh: Panoche 0.019 / 1.42, Sentinel 0.077 / 0.48, Walnut Creek
+0.082 / 0.32. Invisible to C1 because its band is absolute (min(2 % of gen,
+8 TWh) ~ 5 TWh), so a -4 TWh miss on a 4.3 TWh class passes at a 12.7x relative
+error. ~4 TWh of missing energy vs ~250-600 MW for the whole belly hole, and the
+most plausible live explanation for the standing **C3c tail FAIL** (a model that
+never starts its peakers cannot form a peaker-set tail). **This rescues the
+caiso-118b commitment thesis aimed at the right class** — CAISO's RA must-offer
+covers peakers, and Panoche is exactly the out-of-market-committed capacity that
+obligation exists to hold. GUARDRAIL: only a real obligation-keyed mechanism with
+a cited D-4 window is admissible; marking peaker offers down until 4 TWh appears
+is rule-1/13 forbidden.
+
+**R5 — the other two chartered threads are settled, no work needed.** RA/LSE
+must-offer: NOTHING TO WIRE — `CAISO_RA_MUSTOFFER_GAS_MW` (19,130 / 15,566 /
+15,566 MW, DMM) is already in `constants.py` and the quantity gate is a measured
+NO-OP (bridged CC fleet 13.7-13.8 GW pmax, inside the published obligation every
+year). DAM outages: intaken and wired (`caiso_dam_outages`, default off,
+DAM-first/CAMPD-fallback), but the crosswalk is 34 of 90 rows accepted -> 29
+plants / 9.78 GW, all CC, **zero peakers**; worth its own rule-14 single-delta
+arm, but outage episodes are multi-day and the defect is diurnal, so it cannot
+touch R4.
+
+**DO-NOT-REDO (new).** (a) **EIA-930 CISO `NG: NG` as a CAISO gas actual, in any
+window** — refuted on level, shape and balance; the actual is the CEMS basis.
+(b) Any belly-gas floor sized to 8-10 GW — the target is fabricated. (c)
+`caiso_ra_min_load_frac` as a belly-volume lever — 1.8 % of floored cells, level
+capped. (d) Quoting the ~99 % floor-binding rate as evidence about commitment —
+it is `chp_steam` + `nuclear_mustrun`, both structural and D-2 exempt. (e)
+Per-class CAISO work keyed on `bench.plants[].group` — stale for repowered units
+(AES Alamitos 315 / Huntington Beach 335 are labelled ST_GAS but their CEMS units
+are post-2020 CCGT repowers; the scored `classFull` puts them in CC_REGULAR,
+ST_GAS actual is 0.12 TWh in 2024). Use `classFull`.
+
+**Operational note.** HEAD drift is NOT inert for CAISO: replaying the keeper
+recipe at current HEAD vs the committed keeper sidecars gives max hourly class
+diff 3.2 GW (total energy 0.01 %) — marginal-tie reshuffling. Always solve a
+fresh same-HEAD control arm; never A/B against the committed keeper.
+
+**Method note.** caiso-118 and caiso-118b were both derive-first, no-solve
+sessions that read as fully evidenced, and the whole chain — headline, mechanism
+diagnosis, redirect charter, guardrails — inherited one unvalidated series.
+Before a measured "actual" is allowed to SIZE a mechanism: check its level
+against an independent meter, its shape against the physics, and its fit against
+the energy balance. All three took minutes here and all three failed.
+
+Next number: caiso-120.
