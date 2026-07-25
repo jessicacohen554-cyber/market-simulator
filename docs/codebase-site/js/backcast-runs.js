@@ -203,6 +203,73 @@
       return a;
     }
 
+    /* Decode a base64 uint8 AFFINE-coded hourly MW series (nonfossilHr panels).
+       The encoder (render_calibration_html._b64_affine) writes
+       byte = round(250 * (mw - lo) / (hi - lo)) over a [lo, hi] MW window that
+       the panel's model and actual series SHARE, so decoding both with the same
+       lo/hi makes their difference a true MW-space delta — never a CF%-minus-CF%
+       between two different maxima. Length-exact (the encoder does not pad), and
+       the offset carries signed panels (net interchange) with no second codec. */
+    const B64_AFFINE_SCALE = 250;
+    function decAffine(b, lo, hi) {
+      const s = atob(b), a = new Float32Array(s.length);
+      const step = (hi - lo) / B64_AFFINE_SCALE;
+      for (let i = 0; i < s.length; i++) a[i] = lo + s.charCodeAt(i) * step;
+      return a;
+    }
+
+    /* ----------------------------------------------------------------
+       NON-FOSSIL & IMPORTS PANELS (EIA-930)
+       The Charts tab's hourly actuals are CAMPD-backed and therefore
+       fossil-only. RUN(yr).nonfossilHr carries the EIA-930 hourly record for
+       nuclear / hydro / wind / solar / oil / other / storage / net imports
+       (render_calibration_html.build_nonfossil_hourly). It is ABSENT on runs
+       registered before the field existed — every accessor below returns empty
+       for those, so the optgroup, the class entries and the delta map all
+       disappear together and an old run renders exactly as it used to.
+       ---------------------------------------------------------------- */
+    const NF_PREFIX = 'nf:';
+    function nfPanels(yr) { return RUN(yr).nonfossilHr || {}; }
+    function isNF(grp) { return typeof grp === 'string' && grp.startsWith(NF_PREFIX); }
+    function nfKey(grp) { return grp.slice(NF_PREFIX.length); }
+
+    /* The run's non-fossil panels as class entries, PAYLOAD-DRIVEN: both the
+       panel set and its labels come from the run itself, never from a list
+       hardcoded here (a class added to plant_taxonomy flows through). Unioned
+       across the run's years so the selector stays stable when the year changes
+       — a panel missing in one year renders its own note instead of vanishing. */
+    function nfGroups() {
+      const seen = new Map();
+      for (const yr of (META().years || [])) {
+        for (const k of Object.keys(nfPanels(yr))) {
+          if (!seen.has(k)) seen.set(k, nfPanels(yr)[k].label || k);
+        }
+      }
+      return [...seen].map(([key, label]) => ({ id: NF_PREFIX + key, key, label }));
+    }
+
+    /* Display name of the actual-side source for a series. The payload's `src`
+       is the provenance KEY ("eia930", calibration.EIA930_SOURCE), not a label —
+       print it raw and the heatmap reads "Delta (Model − eia930)". */
+    const SRC_LABEL = { eia930: 'EIA-930', campd: 'CAMPD', eia923: 'EIA-923' };
+    function actualSrcLabel(d) {
+      if (!d.nonfossil) return 'CAMPD';
+      return SRC_LABEL[d.src] || d.src || 'EIA-930';
+    }
+
+    /* Display label for any class id (fossil from the ISO meta, non-fossil from
+       the payload panel). */
+    function grpLabel(grp) {
+      if (isNF(grp)) {
+        for (const yr of (META().years || [])) {
+          const e = nfPanels(yr)[nfKey(grp)];
+          if (e) return e.label || nfKey(grp);
+        }
+        return nfKey(grp);
+      }
+      return (META().groupLabel || {})[grp] || grp;
+    }
+
     /* Plants of a class in the selected zones. */
     function plantsOf(yr, grp) {
       const M = RUN(yr), B = BENCH(yr);
@@ -283,6 +350,7 @@
        r/nrmse/cap (never recomputed in JS); the aggregate carries the class
        mt.r/mt.nr and grid-delivered mFull/bench923 volume totals. */
     function singleSeries(yr, grp, plantCode) {
+      if (isNF(grp)) return nfSeries(yr, grp);
       const M = RUN(yr), B = BENCH(yr);
       const ps = plantsOf(yr, grp);
       if (plantCode && plantCode !== 'agg' && B.plants?.[plantCode] && M.plants?.[plantCode]) {
@@ -307,6 +375,44 @@
         mm: a.mm, cc: a.cc,
         m_ann: mt ? mt.mFull : a.mA, c_ann: a.cA, e_ann: (mt && mt.bench923 > 0) ? mt.bench923 : a.eA,
         r: mt ? mt.r : null, nr: mt ? mt.nr : null, cap: mt ? mt.m1 : null
+      };
+    }
+
+    /* Non-fossil / imports series in the SAME shape singleSeries returns for a
+       fossil class, so every downstream chart consumes it unchanged. Model
+       (`mm`) and EIA-930 actual (`cc`) are both MW, decoded over the panel's
+       SHARED [lo, hi] window — that is what makes mm - cc a true MW delta.
+       r/nrmse come from the payload (Python-computed; the frontend never
+       recomputes class fit, matching the existing contract). `nodata` marks a
+       bucket the BA files no series for (payload `a: null` — e.g. NYISO solar),
+       which suppresses the actual map and the delta map exactly as a missing
+       CAMPD record does for a fossil plant. */
+    function nfSeries(yr, grp) {
+      const key = nfKey(grp);
+      const e = nfPanels(yr)[key];
+      const mm = new Float32Array(T), cc = new Float32Array(T);
+      if (!e) {
+        return {
+          name: grpLabel(grp), agg: true, nodata: true, nonfossil: true,
+          mm, cc, m_ann: 0, c_ann: 0, e_ann: 0, r: null, nr: null, cap: null,
+          src: 'EIA-930', classes: [],
+          note: `This run carries no ${grpLabel(grp)} hourly panel for ${yr}.`
+        };
+      }
+      const m = decAffine(e.m, e.lo, e.hi);
+      for (let i = 0, n = Math.min(T, m.length); i < n; i++) mm[i] = m[i];
+      if (e.a) {
+        const a = decAffine(e.a, e.lo, e.hi);
+        for (let i = 0, n = Math.min(T, a.length); i < n; i++) cc[i] = a[i];
+      }
+      return {
+        name: (e.label || key) + ' · ' + (SRC_LABEL[e.src] || e.src || 'EIA-930'),
+        agg: true, nodata: !e.a, nonfossil: true,
+        mm, cc,
+        m_ann: e.mTwh ?? 0, c_ann: e.aTwh ?? 0, e_ann: e.aTwh ?? 0,
+        r: e.r ?? null, nr: e.nrmse ?? null, nrBasis: e.nrmseBasis || null,
+        cap: null, src: e.src || 'EIA-930', note: e.note || null,
+        classes: e.classes || []
       };
     }
 
@@ -718,8 +824,22 @@
       const sel = $('#classSel');
       const groups = META().groups || [];
       const labels = META().groupLabel || {};
-      if (!st.klass || !groups.includes(st.klass)) st.klass = groups[0] || null;
-      sel.innerHTML = groups.map(g => `<option value="${g}">${esc(labels[g] || g)}</option>`).join('');
+      // Two payload-driven optgroups: the ISO's CAMPD-backed fossil classes,
+      // then the run's own EIA-930 non-fossil / imports panels when it carries
+      // them. A run registered before nonfossilHr existed yields nf = [] and
+      // the second group is simply not emitted — no per-ISO branch anywhere.
+      const nf = nfGroups();
+      const valid = [...groups, ...nf.map(g => g.id)];
+      if (!st.klass || !valid.includes(st.klass)) st.klass = valid[0] || null;
+      let html = `<optgroup label="Fossil (CAMPD)">` +
+        groups.map(g => `<option value="${g}">${esc(labels[g] || g)}</option>`).join('') +
+        `</optgroup>`;
+      if (nf.length) {
+        html += `<optgroup label="Non-fossil &amp; imports (EIA-930)">` +
+          nf.map(g => `<option value="${esc(g.id)}">${esc(g.label)}</option>`).join('') +
+          `</optgroup>`;
+      }
+      sel.innerHTML = html;
       sel.value = st.klass;
       sel.onchange = () => { st.klass = sel.value; st.plant = 'agg'; clearAggCache(); render(); };
     }
@@ -1138,7 +1258,6 @@
     function renderCharts(el) {
       const yr = Number(st.year);
       const grp = st.klass;
-      const labels = META().groupLabel || {};
       const ps = plantsOf(yr, grp);
       const mt = classMetrics(yr, grp);
       const d = singleSeries(yr, grp, st.plant);
@@ -1151,14 +1270,24 @@
       const lmp = avgLMP(yr);
       let html = '';
 
-      // Plant selector + stats cards
-      html += `<div class="bc-panel">
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+      // Plant selector + stats cards. The plant selector is CAMPD-per-plant and
+      // is therefore hidden for a non-fossil panel: EIA-930 publishes one BA-level
+      // series per fuel bucket, so there is no per-plant drill-down to offer and
+      // an empty "Aggregate (0 plants)" dropdown would only mislead.
+      html += `<div class="bc-panel">`;
+      if (!d.nonfossil) {
+        html += `<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
           <span class="ctl-label">Plant</span>
           <select id="plantSel" class="iso-select" style="min-width:180px;max-width:400px;padding:8px 12px"></select>
         </div>`;
+      } else {
+        html += `<p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:12px">EIA-930 hourly net generation for the whole BA${d.classes?.length ? ` — model classes summed into this panel: <b>${esc(d.classes.join(', '))}</b>` : ''}. No per-plant record exists for this bucket.</p>`;
+        if (d.note) {
+          html += `<p style="color:#9a6700;font-size:0.82rem;margin-bottom:12px">${esc(d.note)}</p>`;
+        }
+      }
 
-      if (d.nodata && st.plant !== 'agg') {
+      if (d.nodata && !d.nonfossil && st.plant !== 'agg') {
         html += `<p style="color:#9a6700;font-size:0.82rem;margin-bottom:12px">No CAMPD hourly data for this plant — model shown without an hourly comparison.</p>`;
       }
       if (d.ctOnly && st.plant !== 'agg') {
@@ -1168,35 +1297,40 @@
       html += `<div class="year-grid" style="margin-bottom:0">
         <div class="year-card">
           <div class="year-head"><span>${esc(d.name)}</span></div>
-          <div class="kpi-row"><span class="k">Class capture</span><span class="v">${classCap != null ? classCap.toFixed(0) + '%' : '—'}</span></div>
-          <div class="kpi-row"><span class="k">Plant capture</span><span class="v">${plantCap != null ? plantCap.toFixed(0) + '%' : '—'}</span></div>
+          ${d.nonfossil
+            ? `<div class="kpi-row"><span class="k">Actual source</span><span class="v">${esc(actualSrcLabel(d))}</span></div>
+          <div class="kpi-row"><span class="k">Capture score</span><span class="v">— <span style="font-size:0.68rem;color:var(--text-muted)">(CAMPD/923 only)</span></span></div>`
+            : `<div class="kpi-row"><span class="k">Class capture</span><span class="v">${classCap != null ? classCap.toFixed(0) + '%' : '—'}</span></div>
+          <div class="kpi-row"><span class="k">Plant capture</span><span class="v">${plantCap != null ? plantCap.toFixed(0) + '%' : '—'}</span></div>`}
         </div>
         <div class="year-card">
-          <div class="year-head"><span>Generation${d.agg ? ' <span style="font-size:0.72rem;color:var(--text-muted)">(class total)</span>' : ''}</span></div>
+          <div class="year-head"><span>Generation${d.agg ? ` <span style="font-size:0.72rem;color:var(--text-muted)">(${d.nonfossil ? 'BA total' : 'class total'})</span>` : ''}</span></div>
           <div class="kpi-row"><span class="k">Model</span><span class="v">${d.m_ann.toFixed(2)} TWh</span></div>
-          <div class="kpi-row"><span class="k">CAMPD${d.agg ? ' (CEMS)' : ''}</span><span class="v">${d.c_ann.toFixed(2)} TWh</span></div>
-          <div class="kpi-row"><span class="k">EIA-923${d.agg ? ' (grid)' : ''}</span><span class="v">${d.e_ann.toFixed(2)} TWh</span></div>
+          ${d.nonfossil
+            ? `<div class="kpi-row"><span class="k">EIA-930 (hourly)</span><span class="v">${d.nodata ? '—' : d.c_ann.toFixed(2) + ' TWh'}</span></div>`
+            : `<div class="kpi-row"><span class="k">CAMPD${d.agg ? ' (CEMS)' : ''}</span><span class="v">${d.c_ann.toFixed(2)} TWh</span></div>
+          <div class="kpi-row"><span class="k">EIA-923${d.agg ? ' (grid)' : ''}</span><span class="v">${d.e_ann.toFixed(2)} TWh</span></div>`}
         </div>
         <div class="year-card">
           <div class="year-head"><span>Fit</span></div>
-          <div class="kpi-row"><span class="k">Δ vs 923</span><span class="v ${d923 == null ? '' : dcls(d923)}">${d923 == null ? '—' : fmtPctSigned(d923)}</span></div>
+          <div class="kpi-row"><span class="k">Δ vs ${d.nonfossil ? '930' : '923'}</span><span class="v ${d923 == null ? '' : dcls(d923)}">${d923 == null ? '—' : fmtPctSigned(d923)}</span></div>
           <div class="kpi-row"><span class="k">Hourly r</span><span class="v ${d.r != null ? rcls(d.r) : ''}">${d.r != null ? d.r.toFixed(3) : '—'}</span></div>
-          <div class="kpi-row"><span class="k">NRMSE</span><span class="v">${d.nr != null ? d.nr.toFixed(3) : '—'}</span></div>
+          <div class="kpi-row"><span class="k">NRMSE${d.nrBasis ? ` <span style="font-size:0.68rem;color:var(--text-muted)">(${esc(d.nrBasis)})</span>` : ''}</span><span class="v">${d.nr != null ? d.nr.toFixed(3) : '—'}</span></div>
           <div class="kpi-row"><span class="k">Avg LMP (zones)</span><span class="v">${lmp == null ? '—' : '$' + lmp.toFixed(1) + '/MWh'}</span></div>
         </div>
       </div></div>`;
 
-      // CF Heatmap for selected class
+      // CF Heatmap + hot/cold delta for the selected class
       html += `<div class="bc-panel">
-        <h2>Capacity Factor — ${esc(labels[grp] || grp)}</h2>
-        <p class="panel-sub">${yr} — 365x24 hourly CF</p>
+        <h2>Capacity Factor — ${esc(grpLabel(grp))}</h2>
+        <p class="panel-sub">${yr} — 365x24 hourly CF, and the model−actual delta in MW</p>
         <div id="cfHeatSection"></div>
       </div>`;
 
       // CF distribution
       html += `<div class="bc-panel">
-        <h2>CF Distribution — ${esc(labels[grp] || grp)}</h2>
-        <p class="panel-sub">${yr} — hours by CF band (model vs CAMPD)</p>
+        <h2>CF Distribution — ${esc(grpLabel(grp))}</h2>
+        <p class="panel-sub">${yr} — hours by CF band (model vs ${esc(actualSrcLabel(d))})</p>
         <div id="cfDistChart" style="width:100%;height:260px"></div>
       </div>`;
 
@@ -1342,18 +1476,21 @@
       // CT-only CEMS reporters submit an incomplete record (only the CC block's
       // combustion turbines), so their CAMPD series understates the plant —
       // suppress the misleading CAMPD heatmap and score on EIA-923 (see the
-      // per-plant panel note).
+      // per-plant panel note). A non-fossil panel whose BA files no series for
+      // the bucket (payload `a: null`) is suppressed by the same `nodata` leg.
       const hasC = !d.nodata && !d.ctOnly && d.cc && d.cc.length >= T;
+      const actualLabel = actualSrcLabel(d);
 
       section.innerHTML = '';
 
-      // CAMPD actual heatmap (on top)
+      // Actual heatmap (on top) — CAMPD for a fossil class, EIA-930 for a
+      // non-fossil / imports panel.
       if (hasC) {
         const maxCC = Math.max(...d.cc);
         cfC = new Float32Array(T);
         if (maxCC > 0) for (let i = 0; i < T; i++) cfC[i] = d.cc[i] / maxCC * 100;
 
-        section.innerHTML = '<p style="font-weight:700;font-size:0.82rem;margin-bottom:4px">CAMPD Actual</p>';
+        section.innerHTML = `<p style="font-weight:700;font-size:0.82rem;margin-bottom:4px">${esc(actualLabel)} Actual</p>`;
         const cv1 = document.createElement('canvas');
         cv1.className = 'heat'; cv1.width = 365; cv1.height = 24;
         section.appendChild(cv1);
@@ -1364,7 +1501,7 @@
         section.appendChild(axis1);
       }
 
-      // Model heatmap (on bottom)
+      // Model heatmap (in the middle)
       const div2 = document.createElement('div');
       if (hasC) div2.style.marginTop = '12px';
       div2.innerHTML = '<p style="font-weight:700;font-size:0.82rem;margin-bottom:4px">Model</p>';
@@ -1378,23 +1515,89 @@
       axis2.innerHTML = '<span>Jan</span><span>Jul</span><span>Dec</span>';
       div2.appendChild(axis2);
 
-      // Ramp
+      // CF ramp — labels the two maps ABOVE it, not the delta map below.
       const ramp = document.createElement('div');
       ramp.innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:0.68rem;color:var(--text-muted)">0%</span><div class="color-ramp"></div><span style="font-size:0.68rem;color:var(--text-muted)">100%</span></div>';
       section.appendChild(ramp);
 
-      // Hover tip on canvases
+      // ---- Delta map (model − actual), in MW -----------------------------
+      // MW, NOT CF% minus CF%: drawHeat normalizes EACH series to its OWN max,
+      // so subtracting the two CF fields above would compare a model at 90% of
+      // the model's max against an actual at 90% of a DIFFERENT max and report
+      // "on target" for two dispatches that differ by gigawatts. The delta is
+      // therefore taken on the raw MW arrays, which for a non-fossil panel share
+      // one decode window by construction (see decAffine / _b64_affine).
+      let delta = null, dCap = null;
+      if (hasC) {
+        delta = new Float32Array(T);
+        for (let i = 0; i < T; i++) delta[i] = d.mm[i] - d.cc[i];
+        dCap = deltaCap(delta);
+
+        const div3 = document.createElement('div');
+        div3.style.marginTop = '16px';
+        div3.innerHTML = `<p style="font-weight:700;font-size:0.82rem;margin-bottom:4px">Delta (Model − ${esc(actualLabel)})</p>`;
+        section.appendChild(div3);
+        const cv3 = document.createElement('canvas');
+        cv3.className = 'heat'; cv3.width = 365; cv3.height = 24;
+        cv3.dataset.delta = '1';
+        div3.appendChild(cv3);
+        drawDeltaHeat(cv3, delta, dCap);
+        const axis3 = document.createElement('div');
+        axis3.className = 'heat-axis';
+        axis3.innerHTML = '<span>Jan</span><span>Jul</span><span>Dec</span>';
+        div3.appendChild(axis3);
+
+        // Diverging legend. The centre label is explicit because a white cell on
+        // a diverging ramp is otherwise read as "no data" — here it means the
+        // model is ON TARGET for that hour.
+        const dl = document.createElement('div');
+        dl.innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap">
+          <span style="font-size:0.68rem;color:var(--text-muted);white-space:nowrap">−${dCap} MW · model under</span>
+          <div style="flex:1 1 150px;min-width:150px">
+            <div class="delta-ramp" style="width:100%"></div>
+            <div style="text-align:center;font-size:0.68rem;color:var(--text-muted);margin-top:3px">white = 0 MW (on target), not missing</div>
+          </div>
+          <span style="font-size:0.68rem;color:var(--text-muted);white-space:nowrap">+${dCap} MW · model over</span>
+        </div>`;
+        div3.appendChild(dl);
+      } else {
+        // Same suppression as the actual map above, with the reason NAMED —
+        // a silently absent delta map is indistinguishable from a perfect one.
+        const why = d.ctOnly
+          ? `CT-only CEMS record: the CAMPD series covers only this plant's combustion turbines, so a model−actual delta would be a reporting artifact, not a dispatch error.`
+          : (d.note || `No ${actualLabel} hourly record for this selection, so there is no actual to difference against.`);
+        const div3 = document.createElement('div');
+        div3.style.marginTop = '16px';
+        div3.innerHTML = `<p style="font-weight:700;font-size:0.82rem;margin-bottom:4px">Delta (Model − ${esc(actualLabel)})</p>
+          <p style="color:#9a6700;font-size:0.82rem;margin:0">Not shown — ${esc(why)}</p>`;
+        section.appendChild(div3);
+      }
+
+      // Hover tip on canvases: CF% on the two CF maps, MW on the delta map.
       const canvases = section.querySelectorAll('canvas.heat');
       canvases.forEach((cv, idx) => {
-        const isCampd = hasC && idx === 0;
-        const cfArr = isCampd ? cfC : cf;
+        const isDelta = cv.dataset.delta === '1';
+        const isActual = hasC && idx === 0;
+        const cfArr = isActual ? cfC : cf;
         cv.addEventListener('mousemove', e => {
           const r = cv.getBoundingClientRect();
           const day = Math.floor((e.clientX - r.left) / r.width * 365);
           const hod = Math.floor((e.clientY - r.top) / r.height * 24);
           if (day < 0 || day > 364 || hod < 0 || hod > 23) { hideTip(); return; }
+          const h = day * 24 + hod;
           const dt = new Date(2023, 0, 1); dt.setDate(day + 1);
-          showTip(`<b>${isCampd ? 'CAMPD' : 'Model'}</b><br>${MONTHS[dt.getMonth()]} ${dt.getDate()}, ${String(hod).padStart(2, '0')}:00 &middot; CF ${Math.round(cfArr[day * 24 + hod])}%`, e.clientX, e.clientY);
+          const when = `${MONTHS[dt.getMonth()]} ${dt.getDate()}, ${String(hod).padStart(2, '0')}:00`;
+          if (isDelta) {
+            const v = delta[h];
+            const sign = v >= 0 ? '+' : '−';
+            showTip(`<b>Delta (Model − ${esc(actualLabel)})</b><br>${when}<br>` +
+              `<b>${sign}${Math.abs(v).toFixed(0)} MW</b> · model ${v >= 0 ? 'over' : 'under'}<br>` +
+              `model ${d.mm[h].toFixed(0)} MW &middot; actual ${d.cc[h].toFixed(0)} MW`,
+              e.clientX, e.clientY);
+          } else {
+            showTip(`<b>${isActual ? esc(actualLabel) : 'Model'}</b><br>${when} &middot; CF ${Math.round(cfArr[h])}%` +
+              `<br>${(isActual ? d.cc[h] : d.mm[h]).toFixed(0)} MW`, e.clientX, e.clientY);
+          }
         });
         cv.addEventListener('mouseleave', hideTip);
       });
@@ -1426,7 +1629,9 @@
       const h = 260;
       const L = 52, R = 14, Tp = 18, B = 40;
       const pw = w - L - R, ph = h - Tp - B;
-      const ymax = Math.max(1, ...mBins, ...cBins) * 1.12;
+      // Scale off the model alone when there is no actual, so the all-zero
+      // actual's 8760-hour spike in the 0% bin cannot flatten the model bars.
+      const ymax = Math.max(1, ...mBins, ...(d.nodata ? [] : cBins)) * 1.12;
 
       const svg = d3.select(container).append('svg')
         .attr('width', w).attr('height', h).attr('class', 'chart');
@@ -1446,14 +1651,19 @@
       }
       svg.append('text').attr('x', L + pw / 2).attr('y', h - 1).attr('text-anchor', 'middle').attr('font-size', 11).attr('fill', '#6b7480').text('capacity factor (%)');
 
-      // Bars
+      // Bars. With no actual (`nodata` — no CAMPD record, or a bucket the BA
+      // files no EIA-930 series for) the actual array is all zeros, which would
+      // otherwise draw a full-height bar in the 0% bin and read as "the actual
+      // never ran". Draw the model alone instead.
       const slot = pw * binW / 100, bw = Math.max(2, slot * 0.40);
       const cx = i => X((i + 0.5) * binW);
       for (let i = 0; i < nBins; i++) {
         const c = cx(i);
-        // CAMPD
-        svg.append('rect').attr('x', c - bw).attr('y', Y(cBins[i])).attr('width', bw).attr('height', Tp + ph - Y(cBins[i]))
-          .attr('fill', '#647184');
+        // Actual (CAMPD, or EIA-930 for a non-fossil panel)
+        if (!d.nodata) {
+          svg.append('rect').attr('x', c - bw).attr('y', Y(cBins[i])).attr('width', bw).attr('height', Tp + ph - Y(cBins[i]))
+            .attr('fill', '#647184');
+        }
         // Model
         svg.append('rect').attr('x', c).attr('y', Y(mBins[i])).attr('width', bw).attr('height', Tp + ph - Y(mBins[i]))
           .attr('fill', '#4A90D9');
@@ -1462,8 +1672,11 @@
       // Legend
       svg.append('rect').attr('x', L + 10).attr('y', Tp + 2).attr('width', 12).attr('height', 10).attr('fill', '#4A90D9');
       svg.append('text').attr('x', L + 26).attr('y', Tp + 11).attr('font-size', 10).attr('fill', '#666').text('Model');
-      svg.append('rect').attr('x', L + 80).attr('y', Tp + 2).attr('width', 12).attr('height', 10).attr('fill', '#647184');
-      svg.append('text').attr('x', L + 96).attr('y', Tp + 11).attr('font-size', 10).attr('fill', '#666').text('CAMPD');
+      if (!d.nodata) {
+        svg.append('rect').attr('x', L + 80).attr('y', Tp + 2).attr('width', 12).attr('height', 10).attr('fill', '#647184');
+        svg.append('text').attr('x', L + 96).attr('y', Tp + 11).attr('font-size', 10).attr('fill', '#666')
+          .text(actualSrcLabel(d));
+      }
     }
 
     /* ================================================================
