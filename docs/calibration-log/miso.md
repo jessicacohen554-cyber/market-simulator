@@ -612,3 +612,165 @@ evidence. Finding:
 **Rule-22 posture.** Holdouts untouched — MISO carries no calibration-complete
 marker; only 2023/2024/2025 were solved, scored or read this session, and in fact
 no solve was run at all. Next number: miso-88.
+
+## 2026-07-25 — miso-88: C1 CLOSED at its source — the CC_REGULAR volume miss was an eGRID heat-rate boundary contamination (Riverside 55641), not a market-structure problem; keeper PROMOTED on structural fidelity; NOT-YET now on ONE fail (C3b-2025)
+
+**Lane:** LANE 1 of the miso-87 handoff. **Keeper → `2026-07-25-miso-88-egrid-hr`**
+(bundle `results/calibration/miso88_egrid_hr`), superseding
+`2026-07-24-miso-86-netrev-margin`. **Determination: NOT-YET**, on ONE
+load-bearing FAIL instead of two. Charter (written before the solve):
+`docs/handoffs/miso-88-egrid-hr-boundary-plan-2026-07.md`.
+
+### The charter revised the handoff on three points before any code changed
+
+1. **`bin_assignments_MISO.csv` is an EXPORT, not a solve input.** Written by
+   `scripts/export_iso_bin_assignments.py`; the only column any solve path reads
+   is `Mixed_Facility` (`campd_bins.ct_intermediate_plants`).
+   `Plant_Avg_HR_MMBtu_MWh` and `Nameplate_MW` are written, never read — the
+   handoff's "re-derive that table" step would have changed no LP coefficient.
+   The live values come from `eia860_generators.parquet` via
+   `fleet/eia860.py::load_fleet_from_csv`.
+2. **There was no mystery CAMPD source.** Both plants are in the committed
+   extracts (`WI_*.parquet` facility 55641 = 35,040 rows = 4 units × 8760;
+   `TX_*.parquet` 55358). The "impossible" Riverside CAMPD series (7.989 TWh on a
+   674.9 MW plant) is not corrupt — CEMS facility 55641 covers TWO EIA plants.
+3. **Defect 2 (Cottonwood 55358) was NOT LIVE — already fixed.**
+   `carry_operating_mothballs` is `True` in the miso-86 keeper, and the live
+   fleet carries 55358 at **1153.0 MW (2023) / 1149.1 MW (2024)**, the whole
+   plant. Only 2025 under-carries (580.4 MW) and that is the *documented,
+   owner-defaulted* accepted gap (no `vintage_2025/`; undercarry plan §10).
+   miso-87 read the export table (built with no `year`, so the re-carry never
+   applies) and compared net-summer-of-OP against nameplate-of-all-8 — two
+   different bases. **No below-nameplate capacity guard was added:** the defect
+   does not exist, and such a guard would inflate capacity for genuinely
+   mothballed units, which is exactly the judgment the vintage-status oracle
+   exists to make on measured evidence.
+
+### Defect 1 (LIVE) — eGRID double-counts West Riverside's heat input
+
+eGRID keys PLNT23 on ORISPL, but CEMS reports co-located plants sharing a stack
+under ONE facilityId. **Riverside Energy Center** (EIA 55641, 3 × NGCC, 2004,
+534.8 MW net summer) and **West Riverside** (EIA 64020, 2020, 684.2 MW) sit
+**454 m apart** and share CEMS facility 55641. So:
+
+| | ORISPL | NAMEPCAP | CAPFAC | PLHTIAN (MMBtu) | PLNGENAN (MWh) | PLHTRT |
+|---|---|---|---|---|---|---|
+| Riverside | 55641 | 674.9 | 0.599 | **53,017,211** | 3,543,044 | **14,963.7** |
+| West Riverside | 64020 | 727.6 | 0.668 | 28,265,611 | 4,259,326 | 6,644.9 |
+
+`PLHTIAN` 53,017,211 is **byte-identical** to the sum of `heatInput` over all
+four units of CEMS facility 55641 (both blocks), while `PLNGENAN` covers only
+the 674.9 MW EIA plant (eGRID's own `CAPFAC × NAMEPCAP × 8760` = 3.543 TWh
+confirms). West Riverside's fuel is counted twice. eGRID's UNT23 sheet says so
+outright — 55641 carries CT-01/CT-02 at `UNTYRONL` **2004** and CT-03/CT-04 at
+**2019**, while plant 55641 has *no* generator of 2019/2020 vintage, and 64020
+reports the same two machines independently from a different source
+(`HTIANSRC` = EIA Unit-level Data vs EPA/CAPD). eGRID also flags it in metadata:
+55641 has `NUMUNT = 4` against `NUMGEN = 3`.
+
+**Market consequence:** at ~$3/MMBtu the plant offered near **$45/MWh** against
+~$20/MWh for comparable MISO CCs — above most MISO coal — so the LP never
+committed it. Model CF **0.01 / 0.05 / 0.01** vs actual **0.60 / 0.57 / 0.56**.
+Availability was not the cause (CAMPD derate mean 0.687 in 2023). *This is what
+the previous two keepers were chasing through offer bands, tranche splits and
+availability — none of which were the cause.*
+
+**Boundary-consistent value: 6.880 MMBtu/MWh** (own units CT-01 + CT-02 =
+24,376,259 MMBtu over `PLNGENAN` 3,543,044). Cross-validated three independent
+ways: sibling subtraction **6.986**; CEMS gross-basis CT-01+CT-02
+**6.624/6.642/6.646**; eGRID's own `PLHTRT` for 64020 **6.645**. Rule 11's named
+boundary-mismatch exception, reconciled rather than guessed; no appeal to any
+model output, so rules 1/10 are not engaged.
+
+### Scope established BEFORE writing the fix — and a general rule REFUSED
+
+A raw envelope screen flags 19 plants / 10.7 GW across six ISOs, but over-selects
+badly: most are low-utilisation idle-heat artifacts (Goose Creek CF 0.0001 → HR
+102.6; Calumet 0.0008 → 20.6). Adding a `CAPFAC ≥ 0.25` discriminator leaves 5,
+of which Riverside is the only one materially over its band (**1.58×**; the rest
+1.01–1.09×). A **general** vintage-attribution repair — drop every UNT23 unit
+whose vintage matches no EIA-860 generator at its plant — was designed, sized and
+**REFUSED**: it touches **47 plants and destroys 25** (French Island → HR 0.011,
+Ivanpah 3 → 0.873, V H Braunig → 0.502), because EIA-860's operable snapshot
+omits retired units CEMS still reports, so removing their heat input guts the
+numerator while `PLNGENAN` stays the whole-plant total.
+
+### The fix — four conditions, the last self-validating, zero tuned parameters
+
+In `fleet/eia860.py::_egrid_boundary_hr_repairs`, applied at the single seam
+(`_rows_to_generators`) every read path passes through — canonical snapshot,
+per-year vintages, mothball re-carry. Curation keeps writing eGRID's value
+verbatim (and cannot be re-run here: its `eia8602024.zip` input is not
+committed). Repair only when: (1) `PLHTRT` exceeds
+`HEAT_RATE_BINS["gas_ct"]["older"]` = 11.5 — a CC raises steam from its own
+topping turbine's exhaust so it cannot be less efficient than a bare
+simple-cycle GT of its era, a physics bound off an existing cited constant, not
+a fitted multiple; (2) a co-located sibling within 1.0 km reports its own
+`PLHTIAN > 0`; (3) the plant carries UNT23 units whose vintage is within 1 yr of
+a *sibling* EIA-860 generator vintage and of **none** of its own, leaving ≥1 unit
+with positive heat input; (4) **the recomputed rate lands back at or below the
+same ceiling** — the repair is accepted only because it resolves an
+impossibility.
+
+Condition 4 is what makes it safe. Without it the detector also fires on
+**Devon 544** (876.6 → 340.1, garbage either way, already dropped by the
+pre-existing 3,000–30,000 Btu/kWh window) and **King City 10294**
+(7.855 → 8.998, a *degradation* of an already-plausible value). Both are
+correctly rejected — Devon by (4), King City by (1). **Across all six ISOs the
+accepted set is exactly `{55641: 6.880}`.** Verified blast radius by diffing the
+built fleet with and without: **3 rows, 1 plant, MISO only**; ERCOT/CAISO/PJM/
+NYISO/NEISO byte-unchanged, no rows added or removed. 11 new tests; full suite
+identical failure set to clean `origin/main` (107 pre-existing failures both
+ways, +11 passes = exactly the new tests).
+
+### Result — C1 closed, on ONE fail instead of two
+
+| criterion | miso-86 keeper | **miso-88** |
+|---|---|---|
+| C1 fuel-mix | **FAIL** | **PASS** ✅ |
+| C2 system volume | PASS | PASS |
+| C3a mean LMP | CAVEAT (ledgered) | CAVEAT (ledgered, widened) |
+| C3b price shape | **FAIL** 0.204 | **FAIL** 0.208 |
+| C3c price tail | CAVEAT (ledgered) | CAVEAT (ledgered, unchanged) |
+| C4 / C5a / C6 / C7 / C8 | PASS | PASS |
+
+`CC_REGULAR` model−actual improves in **all three years**: 2023 **−6.71 → −4.99**
+TWh, 2024 **−2.09 → −0.42**, 2025 **−6.14 → −4.19** (displacement lands on
+COAL_PRB, which stays inside its band). Determination **NOT-YET** on
+`price_shape` alone.
+
+**Both worsened price crossings were PRE-REGISTERED in the charter §5 before the
+solve** as the arithmetic consequence of returning 534.8 MW of cheap CC to the
+merit order: C3b-2025 0.204 → 0.208, and the ledgered C3a-2025 caveat widening
+−14.8% → −16.6%. They are **KEPT per rules 1/11** — the accurate input stays in
+even though it worsens the fit, and the worse fit is a discovered-bug signal to
+root-cause separately, **never** to be offset with a tuned adder. The residual is
+now a *price-formation* question about 2025 summer body hours
+(`FINDING-miso87-c3b-summer-2025-body-2026-07.md`, the miso-87 LANE-2 charter),
+not a volume question.
+
+**Promoted on structural fidelity** (rule 1: the keeper is the most faithful run,
+not the lowest MAE) — the superseded keeper carries a provably wrong measured
+heat rate, and rule 11 forbids reverting to it. **Rule 22 LOO:** the correction
+has **zero degrees of freedom** and one value identical in every year, so nothing
+is year-specific to overfit, and the C1 gain is uniform across 2023/2024/2025.
+Full span in ONE bundle (rule 16). keeper-auditor `--iso MISO`: **PASS, 0
+failures**. Registry/payload parity: **MISO clean** (the CAISO/NEISO/PJM entries
+in that report are pre-existing).
+
+### Two operational notes for the next session
+
+* **A 3-year single-process solve OOM-kills this container** (15.95 GB RSS on a
+  15 GB box, killed mid-2024). The handoff's "one fresh year per process" is
+  load-bearing: use the staged `--reuse-solved` recipe, and note the reuse gate
+  needs a *completed* prior bundle (it reads `meta.json` + `run_config.json` +
+  `system.parquet`), so leg 1 must be a full single-year run. Per-year cost here:
+  708 / 749 / 800 s.
+* **`scripts/render_calibration_html.py` was committed corrupt on `origin/main`**
+  — commit `2668ae0` ("Add per-class model-minus-actual delta heatmap…", PR
+  #2866) clobbered it from 1,911 lines to a single stray tool-argument line
+  (`1 insertion, 1911 deletions`, nothing else in the commit), breaking pytest
+  collection for six test modules. Restored byte-identical to the last-good blob
+  at `5499181` (sha256 `49196d4d5811f58a`) per rule 27. The intended feature work
+  in that commit never landed and is still missing. `file-integrity-guard.yml`
+  did not block it — worth a look.

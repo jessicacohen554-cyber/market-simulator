@@ -1,0 +1,16 @@
+{
+  "id": "2026-07-25-miso-88-egrid-hr",
+  "label": "miso 88 egrid hr",
+  "date": "2026-07-25",
+  "shorthand": "miso-88-egrid-hr",
+  "definition": "miso-88: the 2026-07-24-miso-86-netrev-margin keeper replayed byte-faithfully with a SINGLE delta that is a data correction, not a flag \u2014 the eGRID plant-heat-rate boundary reconciliation. Riverside Energy Center (55641) carried 14.964 MMBtu/MWh because eGRID divided the whole CEMS facility's heat input (which also covers co-located West Riverside, EIA 64020) by only the Riverside plant's net generation; reconciled from eGRID's own unit rows to 6.880. Zero degrees of freedom, verified blast radius 3 rows / 1 plant / MISO only. Closes the keeper's sole load-bearing volume fail: C1 fuel-mix FAIL \u2192 PASS in all three years. Determination NOT-YET on C3b-2025 (0.208) alone, down from two fails.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-25-miso-88-egrid-hr.js",
+  "bundle": "results/calibration/miso88_egrid_hr",
+  "market_story": "This is a measurement fix, not a market lever \u2014 and it shows how a single bad input can masquerade as a market-structure problem. A 675 MW combined cycle was carrying a heat rate of 14.96 MMBtu/MWh, roughly twice what any combined cycle can physically achieve, because eGRID keys its plant sheet on ORISPL while CEMS reports co-located plants under one facilityId: Riverside Energy Center and the newer West Riverside block 454 m away share CEMS facility 55641, so eGRID's heat-rate numerator spanned both blocks while its denominator counted only one. The consequence in the market was concrete \u2014 at ~$3/MMBtu gas the plant offered near $45/MWh against ~$20/MWh for comparable MISO CCs, which is above most of the MISO coal fleet, so the LP simply never committed it: model capacity factor 0.01 against an actual 0.60. That one plant was most of the CC_REGULAR volume miss the previous two keepers had been chasing through offer bands, tranche splits and availability, none of which were the cause. Restoring the measured 6.88 puts 535 MW back into the merit order below coal and closes C1 in all three years. It also pushes prices slightly DOWN, which widens the two price crossings \u2014 that was pre-registered in the charter before the solve, and the accurate input stays in regardless (rules 1/11): the residual is now a price-formation question about 2025 summer body hours, not a volume question, and it is a cleaner question than the one it replaced."
+}
