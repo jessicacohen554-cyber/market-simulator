@@ -45,6 +45,45 @@ _GAS_TOKENS = ("CC_", "CT_", "ST_GAS", "ST_CHP", "CC_CHP", "CT_CHP")
 # P2/P3 thresholds — fixed in the pre-commit doc, never re-tuned here.
 _OVERFIRE_FLOOR = 0.90
 _LOYO_MAX_DEGRADE = 0.05
+_C3A_MAX_DEGRADE_PP = 2.0  # percentage points
+_C3C_MAX_DEGRADE_HOURS = 5
+
+# Scarcity-settle threshold for C3c. Pinned by reproducing the ERCOT-111
+# finding's published "C3c settle 50/181" for the 2023 arm: at $200/MWh the
+# treatment arm settles 50 hours against 181 actual RT hours.
+_C3C_THRESHOLD = 200.0
+
+# The scored system price is the load-weighted zonal clearing price PLUS the
+# post-solve ORDC scarcity adder and the RTORPA overlay — the LP dual alone
+# structurally misses the scarcity rent (CLAUDE.md, economic-retirement note).
+# Pinned by reproducing ERCOT-111's published C3a of -25.2 % -> -24.3 %.
+_PRICE_PARTS = ("price", "ordc_adder", "rtordpa_overlay")
+
+
+def _system_price(bundle: Path, year: int) -> np.ndarray | None:
+    """Load-weighted ORDC-inclusive system price per hour, or ``None``."""
+    path = bundle / "hourly" / f"system_{year}.parquet"
+    if not path.exists():
+        return None
+    df = pd.read_parquet(path)
+    df = df[df["pass"] == "P1"].copy()
+    if df.empty:
+        return None
+    df["_p"] = sum(df[c] for c in _PRICE_PARTS)
+    lw = df.groupby("hour").apply(
+        lambda d: np.average(d["_p"], weights=d["demand"]), include_groups=False
+    )
+    return lw.reindex(range(8760)).to_numpy(dtype=float)
+
+
+def _actual_price(year: int) -> np.ndarray | None:
+    """Actual ERCOT RT settlement price per hour, or ``None``."""
+    path = REPO / "data/raw/_validation-source/actual_lmp_hourly_ERCOT.parquet"
+    if not path.exists():
+        return None
+    df = pd.read_parquet(path)
+    df = df[df["year"] == year].sort_values("hour")
+    return df["rt"].to_numpy(dtype=float) if not df.empty else None
 
 
 def _model_series(bundle: Path, year: int) -> tuple[np.ndarray, np.ndarray] | None:
@@ -94,8 +133,17 @@ def year_row(bundle: Path, year: int) -> dict | None:
         int(m): float(coal[mo == m].sum() / max(a_coal[mo == m].sum(), 1e-9))
         for m in range(1, 13)
     }
+    price, a_price = _system_price(bundle, year), _actual_price(year)
+    c3a = c3c = c3c_act = None
+    if price is not None and a_price is not None:
+        c3a = float((np.nanmean(price) / a_price.mean() - 1.0) * 100.0)
+        c3c = int((price >= _C3C_THRESHOLD).sum())
+        c3c_act = int((a_price >= _C3C_THRESHOLD).sum())
     return {
         "year": year,
+        "c3a": c3a,
+        "c3c": c3c,
+        "c3c_act": c3c_act,
         "coal_twh": coal.sum() / 1e6,
         "act_coal_twh": a_coal.sum() / 1e6,
         "gas_twh": gas.sum() / 1e6,
@@ -117,16 +165,22 @@ def main() -> None:
     arm = {y: year_row(args.arm, y) for y in YEARS}
 
     print(f"{'yr':<6}{'arm':<10}{'coal':>8}{'actual':>8}{'ratio':>8}"
-          f"{'JAS':>8}{'gas':>9}{'act gas':>9}")
+          f"{'JAS':>8}{'gas':>9}{'act gas':>9}{'C3a%':>8}{'C3c':>10}")
     for y in YEARS:
         for name, tbl in (("baseline", base), ("floor", arm)):
             r = tbl[y]
             if r is None:
                 print(f"{y:<6}{name:<10}  -- not solved --")
                 continue
+            c3a = f"{r['c3a']:8.1f}" if r["c3a"] is not None else f"{'--':>8}"
+            c3c = (
+                f"{r['c3c']:6d}/{r['c3c_act']:<4d}"
+                if r["c3c"] is not None
+                else f"{'--':>10}"
+            )
             print(f"{y:<6}{name:<10}{r['coal_twh']:8.2f}{r['act_coal_twh']:8.2f}"
                   f"{r['ratio']:8.3f}{r['ratio_jas']:8.3f}"
-                  f"{r['gas_twh']:9.2f}{r['act_gas_twh']:9.2f}")
+                  f"{r['gas_twh']:9.2f}{r['act_gas_twh']:9.2f}{c3a}{c3c}")
 
     print("\n--- monthly coal ratio (treatment arm) ---")
     for y in YEARS:
@@ -153,11 +207,25 @@ def main() -> None:
         print(f"  {y}: |ratio-1| {db:.3f} -> {da:.3f}  "
               f"{'TOWARD 1.0' if ok else 'AWAY from 1.0'}")
 
+    # P2 second leg: the scarcity criteria must not degrade beyond noise.
+    c3_bad = []
+    for y in YEARS:
+        b, a = base[y], arm[y]
+        if b is None or a is None or b["c3a"] is None or a["c3a"] is None:
+            continue
+        if a["c3a"] < b["c3a"] - _C3A_MAX_DEGRADE_PP:
+            c3_bad.append(f"{y} C3a {b['c3a']:.1f}->{a['c3a']:.1f}")
+        if a["c3c"] < b["c3c"] - _C3C_MAX_DEGRADE_HOURS:
+            c3_bad.append(f"{y} C3c {b['c3c']}->{a['c3c']}")
+
     n_ok = sum(improved)
     print(f"\n  P1 direction (both 2024 & 2025 toward 1.0): "
           f"{'PASS' if all(improved[1:]) and len(improved) == 3 else 'FAIL'}")
-    print(f"  P2 no over-fire (ratio >= {_OVERFIRE_FLOOR} every year): "
+    print(f"  P2a no over-fire (ratio >= {_OVERFIRE_FLOOR} every year): "
           f"{'PASS' if not overfire else f'FAIL {overfire}'}")
+    print(f"  P2b scarcity not degraded (C3a <= {_C3A_MAX_DEGRADE_PP} pp, "
+          f"C3c <= {_C3C_MAX_DEGRADE_HOURS} h): "
+          f"{'PASS' if not c3_bad else f'FAIL {c3_bad}'}")
     print(f"  P3 LOYO (>=2/3 improve, none degrade > {_LOYO_MAX_DEGRADE}): "
           f"{'PASS' if n_ok >= 2 and not degraded else f'FAIL (ok={n_ok}/3, degraded={degraded})'}")
 
