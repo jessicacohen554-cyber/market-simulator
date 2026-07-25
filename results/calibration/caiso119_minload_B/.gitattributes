@@ -1,0 +1,14 @@
+# caiso-119 probe bundle. The solve outputs in this directory —
+# dispatch/*.parquet, floors/*.npz, hourly/*.parquet, and the benchmark
+# parquets (campd/eia923/eia930) — are binary and are NOT committed: the
+# GitHub API push path this repo uses carries text only, and `git push` is
+# disabled (HTTP 413). Per CLAUDE.md rule 15, hourly/ sidecars are committed
+# for KEEPER bundles only; this bundle is a rejected PROBE (the measured
+# min-load delta failed its primary gate — see
+# results/calibration/FINDING-caiso119-minload-ab-result-2026-07-24.md).
+#
+# The committed, reviewable artifacts for this run are its slim recipe files
+# (meta.json, run_config.json), its dashboard sidecar + payload under
+# frontend/data/backcast/, and the two FINDING documents.
+*.parquet binary
+*.npz binary
