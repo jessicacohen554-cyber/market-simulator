@@ -88,8 +88,15 @@ jobs:
           }
 
           git diff --name-status -M "${BASE_SHA}" "${HEAD_SHA}" > /tmp/diff.tsv
+          # `if ... then ... fi`, NOT `is_core "$p" && echo x`. GitHub runs this
+          # step under `bash -e`, so with `pipefail` the `&&` form leaves the
+          # LOOP's exit status at 1 whenever the final path read is not a core
+          # path — which poisons the whole pipeline and kills the script before
+          # a single file is checked. The `if` form always leaves status 0.
+          # (This failed exactly that way on PR #2893; a plain-`bash` local
+          # replay could not see it, so replay this step with `bash -e`.)
           expected=$(cut -f1,2 /tmp/diff.tsv | while IFS=$'\t' read -r st p; do
-            is_core "$p" && echo x
+            if is_core "$p"; then echo x; fi
           done | wc -l | tr -cd '0-9')
 
           fail=0
