@@ -1937,6 +1937,26 @@ def _environment_block() -> dict:
     }
 
 
+def _proc_mem_kb() -> tuple[int, int]:
+    """Return ``(VmRSS, VmHWM)`` in kB from ``/proc/self/status``, or ``(0, 0)``.
+
+    Stdlib-only (no psutil dependency). ``VmHWM`` is the process's peak RSS
+    since start, so a year-over-year rise in HWM is the signature of state
+    retained across the sequential year loop rather than transient solve
+    memory. Returns zeros on any platform without ``/proc``.
+    """
+    try:
+        vals: dict[str, int] = {}
+        with open("/proc/self/status", encoding="ascii") as fh:
+            for line in fh:
+                if line.startswith(("VmRSS:", "VmHWM:")):
+                    key, rest = line.split(":", 1)
+                    vals[key] = int(rest.split()[0])
+        return vals.get("VmRSS", 0), vals.get("VmHWM", 0)
+    except OSError:
+        return 0, 0
+
+
 def _json_default(obj: object) -> object:
     """JSON encoder fallback for bundle metadata.
 
@@ -4272,6 +4292,20 @@ def solve_and_persist(
         del result, context, result_p1, p2_state, demand, must_run
         del must_run_total, labelled, res
         gc.collect()
+        # Post-release memory telemetry. ``resident`` is what this year actually
+        # handed on to the next one; ``peak`` is the process high-water mark. A
+        # resident figure that climbs year over year is retained state (an
+        # unbounded per-year cache, an accumulating frame), which is what pushes
+        # a multi-year invocation into the OOM killer even though the year loop
+        # is strictly sequential. Logged, never enforced.
+        _rss_kb, _hwm_kb = _proc_mem_kb()
+        if _rss_kb:
+            logger.info(
+                "year %d memory after release: resident=%.2f GB peak=%.2f GB",
+                year,
+                _rss_kb / 1048576.0,
+                _hwm_kb / 1048576.0,
+            )
 
     system_all = pd.concat(system_frames, ignore_index=True)
     system_all.to_parquet(run_dir / "system.parquet", index=False)
