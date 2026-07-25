@@ -44,7 +44,7 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
         run: |
-          set -euo pipefail
+          set -uo pipefail
           if [[ ",${PR_LABELS}," == *",intentional-shrink,"* ]]; then
             echo "PR carries the 'intentional-shrink' label — guard skipped."
             exit 0
@@ -55,16 +55,57 @@ jobs:
             BASE_SHA=$(git rev-parse "${HEAD_SHA}^")
           fi
           echo "Comparing ${BASE_SHA}..${HEAD_SHA}"
+
+          # Line count of a blob at a rev; prints nothing and returns 1 when the
+          # path does not exist there.
+          #
+          # NEVER write this as `$(git show ... | wc -l || echo 0)`. `wc -l`
+          # prints its own "0" even when the upstream git fails, so the `|| echo
+          # 0` appends a SECOND zero and the variable becomes the two-line string
+          # "0\n0". Feeding that to `(( ))` raises "syntax error in expression",
+          # and in bash 5.2 an arithmetic-expansion error inside a loop body
+          # ABANDONS THE WHOLE LOOP and resumes after it — so the scan stopped at
+          # the first ADDED file (which by definition has no base blob) and every
+          # later path went unexamined, while the job still exited 0.
+          #
+          # That is not hypothetical: it is exactly how PR #2866 truncated
+          # scripts/render_calibration_html.py 1,911 -> 1 lines with this guard
+          # reporting SUCCESS. The added scripts/backfill_nonfossil_hourly.py
+          # sorts before it in the diff, killed the loop, and the truncation was
+          # never checked. An integrity guard that fails OPEN is worse than none,
+          # so this step now also verifies it examined every candidate path.
+          blob_lines() {
+            local rev="$1" path="$2"
+            git cat-file -e "${rev}:${path}" 2>/dev/null || return 1
+            git cat-file blob "${rev}:${path}" 2>/dev/null | wc -l | tr -cd '0-9'
+          }
+
+          is_core() {
+            case "$1" in
+              src/*|scripts/*|CLAUDE.md|model-methodology-spec.md|.github/workflows/*) return 0 ;;
+              *) return 1 ;;
+            esac
+          }
+
+          git diff --name-status -M "${BASE_SHA}" "${HEAD_SHA}" > /tmp/diff.tsv
+          expected=$(cut -f1,2 /tmp/diff.tsv | while IFS=$'\t' read -r st p; do
+            is_core "$p" && echo x
+          done | wc -l | tr -cd '0-9')
+
           fail=0
+          scanned=0
           while IFS=$'\t' read -r status path renamed; do
             [[ -z "${status:-}" ]] && continue
-            case "$path" in
-              src/*|scripts/*|CLAUDE.md|model-methodology-spec.md|.github/workflows/*) ;;
-              *) continue ;;
-            esac
-            base_lines=$(git show "${BASE_SHA}:${path}" 2>/dev/null | wc -l || echo 0)
+            is_core "$path" || continue
+            scanned=$(( scanned + 1 ))
+            # An ADDED path has no base content and cannot have shrunk.
+            if [[ "$status" == A* ]]; then continue; fi
+            if ! base_lines=$(blob_lines "${BASE_SHA}" "${path}"); then
+              echo "::warning file=${path}::no blob at base ${BASE_SHA} for status '${status}' — skipped."
+              continue
+            fi
             # Only guard files that were substantial at base (>=300 lines).
-            if (( base_lines < 300 )); then continue; fi
+            if [[ -z "$base_lines" ]] || (( base_lines < 300 )); then continue; fi
             if [[ "$status" == D* ]]; then
               echo "::error file=${path}::core file DELETED (was ${base_lines} lines). Add the 'intentional-shrink' label if deliberate (CLAUDE.md rule 27)."
               fail=1
@@ -76,13 +117,24 @@ jobs:
             if [[ "$status" == R* ]]; then
               head_path="$renamed"
             fi
-            head_lines=$(git show "${HEAD_SHA}:${head_path}" 2>/dev/null | wc -l || echo 0)
+            head_lines=$(blob_lines "${HEAD_SHA}" "${head_path}") || head_lines=0
+            [[ -z "$head_lines" ]] && head_lines=0
             min_lines=$(( base_lines * 70 / 100 ))
             if (( head_lines < min_lines )); then
               echo "::error file=${head_path}::shrank ${base_lines} -> ${head_lines} lines (>30%). Likely a truncated API push (CLAUDE.md rule 27). Restore the full content or add the 'intentional-shrink' label if deliberate."
               fail=1
             fi
-          done < <(git diff --name-status -M "${BASE_SHA}" "${HEAD_SHA}")
+          done < /tmp/diff.tsv
+
+          # Fail CLOSED on an incomplete scan: if the loop ever exits early again
+          # (for this reason or another), that must be a red job, not a green one.
+          if (( scanned != expected )); then
+            echo "::error::file-integrity-guard scanned ${scanned} of ${expected} core paths — the scan aborted early and its result is NOT trustworthy."
+            fail=1
+          else
+            echo "Scanned ${scanned}/${expected} core paths."
+          fi
+
           if (( fail )); then
             echo "file-integrity-guard FAILED — see errors above."
             exit 1
