@@ -8,18 +8,24 @@ committed `hourly/` sidecars and from raw sources — **no solve**. §5 reports 
 
 All hourly work is on the repo's non-leap 8760 model clock (Feb 29 dropped).
 
-> **Base note (2026-07-25).** `main` was rolled back to `cf92181` (pre-PR #2860),
-> which removed PR #2864 — the `_ZERO_CODED_GAP_SERIES` nuclear zero-gap fix in
-> `data/eia930/actuals.py` and both 2026-07-24 NYISO findings. The `nyiso-72`
-> keeper bundle and `keepers/NYISO.json` survived the rollback, so **every
-> measurement in this document still reproduces on the current main** — none of
-> it depends on the reverted fix. Two items from the reverted work are still
-> owed and are NOT re-landed here: (a) the zero-gap fix itself, and (b) the
-> NYISO `bench.e930.nuclear` repair it enables (committed bench parts still read
-> 23.998 / 25.858 / 27.953 TWh against NYISO's own posting of 27.57 / 27.05 /
-> 28.48). Neither affects any rubric gate — C1 takes nuclear from `classFull`
-> on the EIA-923 basis and C4 scores only the gas and coal families — so this is
-> a display defect, not a scoring one.
+> **Base note (2026-07-25, corrected).** An earlier revision of this file
+> recorded `main` as rolled back to `cf92181` with PR #2864 removed. That was a
+> **transient mid-merge state**; `main` has since recovered and both the
+> `_ZERO_CODED_GAP_SERIES` nuclear zero-gap fix in `data/eia930/actuals.py` and
+> the 2026-07-24 NYISO findings are present. Nothing in this document ever
+> depended on that fix — every measurement here comes from the `nyiso-72`
+> keeper's committed `hourly/` sidecars, which were never affected.
+>
+> One follow-through from that fix remains outstanding and is tracked here: the
+> NYISO `bench.e930.nuclear` cells still read **23.998 / 25.858 / 27.953 TWh**
+> against NYISO's own fuel-mix posting of 27.57 / 27.05 / 28.48. Repair with
+> `scripts/regen_nyiso_bench_nuclear.py` (no solve). This is a **display**
+> defect, never a scoring one: `calibration_verdict` reads `bench.e930` only for
+> `coal_cems` / `gas` / `coal` / `gas_cems_grid` / `gas_cogen_grid`; C1 takes
+> nuclear from `classFull` on the EIA-923 basis and C4 scores only the gas and
+> coal families. It is also self-healing — `render_calibration_html.build_payload`
+> is the sole writer of that cell and now computes it from the fixed loader, so
+> the next NYISO registration regenerates the correct value automatically.
 
 ---
 
