@@ -168,10 +168,31 @@ and `.github/workflows/**`, guards only files that were ≥300 lines at the base
 commit, and follows renames to their destination so content must survive a move
 intact. Its own header cites this incident.
 
+**The ≥300-line deadlock, and the 2026-07-25 owner waiver.** Rule 27 forbids
+pushing an existing ≥300-line file as regenerated response content, and Git &
+Pushing bans `git push` outright — so for any file at or above that threshold the
+two rules together left **no compliant push path**. Wave 4C hit it directly:
+`retirements.py` (1,804 lines / 88,612 B) sat un-applied on `main` as a verified
+patch file for exactly this reason, and the same deadlock blocks `scenarios.py`
+and `runner.py`. Asked to adjudicate, the owner **waived the API-only rule for
+that commit** and authorized `git push`. It succeeded — no HTTP 413 — and the
+pushed blob verified byte-exact (`3a0b919e`, 1,804 lines / 88,612 B).
+
+The waiver's reasoning, for future sessions to weigh rather than copy: rule 27
+exists to prevent *truncation*, and truncation is impossible over git's
+integrity-checked transport, so `git push` does not implicate the hazard rule 27
+guards. The 413 that motivated the API-only rule is a function of **pack size**,
+not file size — this delta was ~5 KB. That said, **the waiver was per-commit and
+is not a standing exception**: the API-only rule stands as written, and a session
+facing the same deadlock should surface the choice to the owner rather than
+assume this precedent. What the incident establishes is that the deadlock is
+real and needs a general owner decision, not that `git push` is now permitted.
+
 ---
 
 ## 6. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-07-25 | §5: recorded the ≥300-line push deadlock (rule 27 + API-only leaving no compliant path) and the owner's per-commit `git push` waiver that landed wave 4C. Per-commit, not a standing exception. |
 | 2026-07-25 | Created (refactor-consolidation Wave 5B, owner decision D-6). Takes the rule-27 incident writeup and the audit N↔N+1 mapping paragraph out of `CLAUDE.md`, and indexes the rule-20 / rule-22 amendment narratives at their canonical homes. No norm was moved, reworded, or dropped. |
