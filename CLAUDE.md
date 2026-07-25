@@ -85,28 +85,29 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     unexplained residual of an old one.
 1. `[R-FORCED-BUDGET]` **Forced energy is budgeted.** A keeper fails if any merchant class dispatches > 30 %
     (peakers: > 15 %) of its energy at binding floors. Floors are commitment scaffolding, not the
-    dispatch model. *Owner amendment 2026-07-06 (rubric v2.1):* peaker cap raised 10 → 15 %, and
-    this budget — plus the C7 diurnal-shape gate — applies only to classes whose annual energy
-    (max of model and actual, so forcing can't hide a class below the line) is ≥ 2 % of total ISO
-    load; smaller classes are reported by the D-1/D-2 diagnostics but never gated — trivial-class
-    shape/forcing is not worth structural work. *Owner amendment 2026-07-07 (rubric v2.2 —
-    grounded-above-budget escalation):* the 15 %/30 % caps and the 2 % floor are unchanged, but a
-    material class **above** its cap is no longer an automatic fail. It escalates to a conditional
-    pass on **provenance + shape**: it passes iff (a) every binding non-exempt mechanism forcing it
-    clears **D-4 off-window binding** (binds only in its driver-justified window — a mechanism with
-    no declared window fails, per rule 12), **and** (b) its **D-1** diurnal profile clears the gates
-    (`profile_r`/`cv_ratio`). Rationale: forcing can be legitimate past the budget when it is a real
-    grid/RA/AS driver that reproduces the observed dispatch — *as much as needed* may be forced on a
-    class if it is structurally grounded and shape-faithful; what the gate now targets is forcing
-    whose **shape or window doesn't match reality** (the "forcing variables are wrong" signal). A
-    grounded pass is a **clean PASS surfaced as a report note, never a caveat**; a miss FAILs as a
-    forcing shape/provenance mismatch. This is scored entirely from the committed
-    `legitimacy_diagnostics.json` (D1/D2/D4 rows + gates), so it is scorer-only — no re-solve, no
-    bundle regen, and existing keepers re-score in place (the change only *relaxes* C8: below-cap is
-    unchanged, above-cap gains a pass-path). **To actually ground a specific keeper's over-budget
-    class**, its mechanism needs a cited `D4_WINDOWS` entry in `scripts/legitimacy_diagnostics.py`
-    and that bundle re-generated so the D-4 row exists; and any mechanism-change-driven verdict flip
-    is scored leave-one-year-out within 2023–2025 before the keeper is promoted.
+    dispatch model. This budget — plus the C7 diurnal-shape gate — applies only to classes whose
+    annual energy (max of model and actual, so forcing can't hide a class below the line) is ≥ 2 %
+    of total ISO load; smaller classes are reported by the D-1/D-2 diagnostics but never gated —
+    trivial-class shape/forcing is not worth structural work. A material class **above** its cap is
+    not an automatic fail. It escalates to a conditional pass on **provenance + shape**: it passes
+    iff (a) every binding non-exempt mechanism forcing it clears **D-4 off-window binding** (binds
+    only in its driver-justified window — a mechanism with no declared window fails, per rule 12),
+    **and** (b) its **D-1** diurnal profile clears the gates (`profile_r`/`cv_ratio`). Rationale:
+    forcing can be legitimate past the budget when it is a real grid/RA/AS driver that reproduces
+    the observed dispatch — *as much as needed* may be forced on a class if it is structurally
+    grounded and shape-faithful; what the gate targets is forcing whose **shape or window doesn't
+    match reality** (the "forcing variables are wrong" signal). A grounded pass is a **clean PASS
+    surfaced as a report note, never a caveat**; a miss FAILs as a forcing shape/provenance
+    mismatch. This is scored entirely from the committed `legitimacy_diagnostics.json` (D1/D2/D4
+    rows + gates), so it is scorer-only — no re-solve, no bundle regen, and existing keepers
+    re-score in place. **To actually ground a specific keeper's over-budget class**, its mechanism
+    needs a cited `D4_WINDOWS` entry in `scripts/legitimacy_diagnostics.py` and that bundle
+    re-generated so the D-4 row exists; and any mechanism-change-driven verdict flip is scored
+    leave-one-year-out within 2023–2025 before the keeper is promoted. *(Amendment narratives —
+    rubric v2.1 peaker cap 10 → 15 % + the 2 % materiality floor, v2.2 grounded-above-budget
+    escalation — live in `docs/calibration-determination-rubric.md` §C8 + §9, indexed in
+    `docs/governance/rule-history.md` §3. "rule 12" above is this file's rule 17
+    `[R-FLOOR-WINDOW]` under its earlier numbering; see rule-history §2.)*
 1. `[R-DOF]` **Every keeper carries a DOF ledger.** The attestation lists each free parameter with its
     identification source. A residual that can only be closed by a tuned value is an open
     root-cause issue, not a parameter. *Amended 2026-07-14 (owner): the zero-forcing ablation
@@ -116,10 +117,10 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     Already-registered twins may remain on the dashboard as historical artifacts; no new twin is
     produced (probe, candidate, or keeper).*
 1. `[R-HOLDOUT]` **Hold out data across three tiers — train, validation, locked test — and never let a
-    locked-test result re-enter tuning.** *Amended 2026-07-07 (owner) — supersedes the earlier
-    two-window "holdouts are 2022 + H1-2026, score once" wording with an explicit
-    train/validation/test split (`docs/handoffs/holdout-policy-memo-2026-07.md`); the quarantine
-    machinery in the standing clauses below is unchanged.* The tiers:
+    locked-test result re-enter tuning.** *(Amendment genealogy — the audit's D-6/rule-21 wording,
+    the 2026-07-06 G-17 Option 2 intake-vs-solve/score split, and the 2026-07-07 replacement of the
+    two-window text with these three tiers — lives in
+    `docs/handoffs/holdout-policy-memo-2026-07.md` §(e)–(f).)* The tiers:
     - **Train / calibration = 2023–2025.** The ONLY years tuned against. Every keeper is built and
       scored here, all three in one bundle (rule 16).
     - **Validation holdout = 2022**, extensible backward as a staged ladder (2022 → 2020–2022 →
@@ -139,8 +140,7 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       input gap. Diagnostic, not a locked test; its forecast side uses no measured actuals so it is
       unrestricted (see the 2026 clause below).
 
-    Standing quarantine clauses (from the 2026-07-06 amendment — G-17 Option 2,
-    `docs/handoffs/holdout-policy-memo-2026-07.md` §(e) — unchanged except tier wording):
+    Standing quarantine clauses (carried over unchanged by the tier amendment):
     - **Data intake is permitted** for any out-of-training period (validation or locked), but ONLY
       under explicit, session-logged owner authorization, and validation of intaken data is no-LP
       only (byte-identity / loader-resolvability checks — never a dispatch solve). Codifies the
@@ -176,9 +176,9 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     parameter that still parses is a re-armable answer key (the ORDC offset was re-swept *after*
     deprecation).
 1. `[R-PUSH]` **Core files are never bulk-rewritten over the API, and Sonnet never edits infrastructure.**
-    *(Owner order 2026-07-15, after a Sonnet session truncated `constants.py` 6,368 → 33 lines
-    via a response-budget-clipped `push_files` full-file rewrite, and five follow-up "restore"
-    commits merged fragments — 0 / 500 / 1,020 / 1,000 lines — onto main.)* Two binding halves:
+    *(Owner order 2026-07-15; the incident that produced it — the `constants.py` 6,368 → 33-line
+    truncation and its five fragment "restores" — is recorded in
+    `docs/governance/rule-history.md` §5.)* Two binding halves:
     - **Push-integrity protocol (all models, every session).** Never rewrite an existing source
       file ≥300 lines by pushing regenerated full content from the model's response — edit
       locally (Edit tool) and push the exact on-disk bytes. After ANY `push_files` call touching
@@ -202,12 +202,9 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       remaining sessions are Opus/Fable regardless of scope** (owner order, this rule's
       incident).
 
-Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8 (numbered
-**16–25 there** — this file gained rule 16, all-years-one-bundle, after the audit was written; a
-doc reference to "audit rule N" maps to rule N+1 here). Rule 22 (holdouts) carries the owner's
-strict-quarantine amendment, further amended 2026-07-07 into the three-tier
-train(2023–2025)/validation(2022)/locked-test(2019 + H1-2026) split, superseding the audit's
-original D-6/rule-21 wording.
+Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8, numbered
+**16–25 there** — a doc reference to "audit rule N" maps to rule N+1 here. Mapping table, per-rule
+amendment genealogy and the incident record: `docs/governance/rule-history.md`.
 
 ## LP Variable Layout (per ISO-year)
 
@@ -234,25 +231,25 @@ dump_cost = max(ε, -min(wind_mc, solar_mc) + ε) — prevents gaming of negativ
 
 0. Confirmed exits (`apply_confirmed_exits`, GATED `confirmed_exits_enabled` default-on) → 1. Announced retirements (`apply_announced_retirements`) → 2. CCS retrofit screen (existing gas-CC — BEFORE economic retirements since W2-C: steps 2+3 are the joint retrofit-or-retire choice) → 3. Economic retirements (fuel-type-aware thresholds + reliability floor; this-year retrofits exempt) → 4. Known additions → 5. Economic new entry → 6. Reserve-margin adequacy backstop (GATED `reserve_margin_build_enabled`, default off) → 7. dispatch with RPS as an LP constraint (shadow price feeds next year's entry screen). Same step numbering as `model-methodology-spec.md` §5.1.
 
-**Confirmed vs announced retirements.** *Confirmed* exits — units bound by an enforceable public instrument (RTO deactivation acceptance, consent decree, statute, regulatory order, RMR end) — are the ONLY exogenous fossil exit channel: step 0 force-retires (or derates a plant-binned tranche by the exiting unit's MW) at the instrument date, any fuel, bypassing the reliability floor. Read forecast-forward from the `confirmed-retirements` registry (`data/raw/confirmed-retirements`, `data.confirmed_retirements.load_confirmed_exits`); GATED `confirmed_exits_enabled` (default **on**, flipped 2026-07-05 — owner sign-off once the registry covered all six ISOs and its two open primary-document caveats were resolved; `docs/handoffs/confirmed-retirement-plan-2026-07.md` §7), forecast-mode only; superseded rows (a counter-instrument suspends the exit) revert to the economic screen. **Hindcast information gate (rule 27 lane, RC-1B 2026-07-15):** in hindcast mode confirmed rows and reversal suppressions apply only when `instrument_date` ≤ the vintage cutoff. *Announced* retirements (`apply_announced_retirements`, RC-3 rename of the old `apply_known_retirements`) honor an EIA-860 planned date: **for fossil this step is a default no-op** (`forecast_fossil_retirement_economic=True` — an announced fossil date is not a certainty; the economic screen governs its phaseout and the confirmed registry is its exogenous channel); non-fossil dates are honored only within the EIA-860 data horizon (`EIA860_OPERABLE_VINTAGE + NONFOSSIL_ANNOUNCED_HORIZON_YEARS`, default 5), and beyond it only when the unit is in the confirmed registry — so speculative 2040-2072 EOL placeholders stop force-retiring (the horizon gate activates with the confirmed channel, which is now on by default; setting `confirmed_exits_enabled=False` reverts to honoring all non-fossil dates, byte-identical to the pre-flip behavior). See `docs/handoffs/confirmed-retirement-plan-2026-07.md`.
+Mechanism detail is the spec's job (§5.2–§5.9) and the code's; what CLAUDE.md pins is which gate owns which step:
 
-Economic retirement screens the **attainable (pro-forma) inframarginal margin** — `Σ_t max(0, price − full variable cost, reserve price) × pmax × availability`, the Potomac-SOM net-revenue construction (`mc_cost` threaded via `prior_results`; never gross revenue, never realized dispatch — realized dispatch structurally misses the post-solve ORDC adder's scarcity rent) — against FOM-only going-forward cost, with per-fuel thresholds, now `ScenarioConfig` fields (not hardcoded): coal=1yr, gas_ct=2yr, gas_cc=3yr; coal FOM multiplier 1.3× for regulatory/ESG risk. The hourly reserve-price signal (`screen_reserve_value_enabled`, default on) is the co-opt's own reserve duals under `ercot_thermal_as_endogenous`, else the ORDC scarcity adder (RTORPA/RTOFFPA pay reserves the same ORDC price — Nodal Protocols §6.5.7.5); when present it is the SOLE thermal AS pricing (rule 19). Accredited reliability floor: `accredited_firm_capacity_mw` (UCAP/ELCC, incl. wind/solar pools + storage ELCC) vs `peak × (1 + PLANNING_RESERVE_MARGIN_BY_ISO)` — one requirement shared with the build backstop; cheapest-firm-adequacy retention (CO₂ tie-break), `floor_retention_log` attribution. Announced dates reversed outright by a public counter-instrument (registry rows ALL superseded — Byron/Dresden vs IL CEJA) are ignored by the announced channel regardless of `confirmed_exits_enabled` (`load_announced_reversal_plants`). Known additions are the EIA-860 proposed pipeline (`load_planned_additions`, construction-committed statuses, forecast mode only). RPS is **not** a force-build step — it's an annual LP constraint whose dual is the REC price (see methodology spec §1.4, §5).
-
-CCS retrofit (§5.6, redesigned W2-C — national-ces plan §11): gas-CC units with ≥15 yr life left are screened jointly with retirement (step 2 runs first, so a distressed CCGT whose retrofit continuation clears converts instead of exiting; retire only when both continuations fail). The screen values the retrofit as the **incremental uplift over the best unabated state** — attainable inframarginal margins at the post-retrofit cost basis (HR penalty + VOM adder + transport, residual carbon; utilization endogenous, no fixed CF) with the certificate (`max(eac_price_gas_cc_ccs, premium × capture-fraction credit)`, cesa_ci nets the unabated partial credit) and §45Q (stacks — separate instrument) as bid offsets. §45Q is eligibility-gated on `ira_ccus_45q_last_year` at the commit year and paid for `min(ira_45q_credit_window_years, remaining life)` years (statutory 12; `None` = indefinite-extension scenario) via a two-segment payback; the same window levelizes the new-build CCS LCOE's 45Q term. Capped at 3 GW/yr/ISO (cap-displaced units fall back to the unabated loss counter), gated on `ccs_retrofit_available_year`, annual re-screen.
-
-Storage grows via an economics-based **value stack** (not compound growth): duration-sized arbitrage windows (net of cycling degradation) **plus** resource-adequacy capacity value, paid only in capacity markets via the per-ISO `MARKET_DESIGN` registry (energy-only ERCOT pays none; PJM/NYISO/ISO-NE/CAISO pay net-CONE × ELCC × saturation derate). ELCC rises with duration → tilts entry toward long-duration at high penetration. Build budget diversifies across techs (`STORAGE_TECH_BUILD_SHARE_CAP`); base-year fleet from `storage_deployment`, all later growth endogenous, capped per ISO. Toggles: `storage_capacity_value`, `storage_degradation`. (Methodology spec §5.5.)
-
-Locational deliverability gate (`capacity_deliverability_limits`, GATED default off): reads each ISO's published capacity-deliverability parameters (PJM CETO/CETL, MISO LRR/LCR/CIL, NYISO LCR/TSL, ISO-NE LSR/MCL, CAISO LCR/MIC), crosswalks areas onto model zones, and (a) replaces the calibrated simultaneous-import scalar with the measured seam import limit where published (CAISO MIC → WECC_import), and (b) collapses the marginal capacity payment in RA-saturated zones across the retirement, new-entry, and storage-entry screens. Structural mechanism (rule #1). In a backcast only part (a) fires (no capacity evolution); the CAISO keeper enables it (`--capacity-deliverability-limits`, caiso-51, 2026-07-03) so the published MIC replaces the audit-flagged fitted 7,500 MW WECC cap. Part (b) remains unvalidated in any keeper. (Methodology spec §5.8; worked example `docs/capacity-deliverability-wiring.md`.)
+- **Step 0, confirmed exits** — `data.confirmed_retirements.load_confirmed_exits` over `data/raw/confirmed-retirements`, GATED `confirmed_exits_enabled` (default on), forecast-mode only. A row needs an enforceable public instrument (RTO deactivation acceptance, consent decree, statute, regulatory order, RMR end); this is **the ONLY exogenous fossil exit channel** and it **bypasses the reliability floor**. Hindcast information gate: a row applies only when `instrument_date` ≤ the vintage cutoff. (Spec §5.2; `docs/handoffs/confirmed-retirement-plan-2026-07.md`.)
+- **Step 1, announced retirements** — `apply_announced_retirements`, `load_announced_reversal_plants`, `forecast_fossil_retirement_economic` (default True ⇒ **for fossil this step is a default no-op**: an announced fossil date is not a certainty, the economic screen governs its phaseout), `EIA860_OPERABLE_VINTAGE + NONFOSSIL_ANNOUNCED_HORIZON_YEARS` (default 5) bounds honored non-fossil dates.
+- **Step 3, economic retirement** — screens the **attainable (pro-forma) inframarginal margin**, `Σ_t max(0, price − full variable cost, reserve price) × pmax × availability` (Potomac-SOM net revenue, `mc_cost` via `prior_results`): **never gross revenue, never realized dispatch** — realized dispatch structurally misses the post-solve ORDC adder's scarcity rent. Against FOM-only going-forward cost. Per-fuel thresholds are `ScenarioConfig` fields, not hardcoded: coal=1yr, gas_ct=2yr, gas_cc=3yr; coal FOM multiplier 1.3×. `screen_reserve_value_enabled` (default on) — the co-opt's own reserve duals under `ercot_thermal_as_endogenous`, else the ORDC scarcity adder; when present it is the **SOLE** thermal AS pricing (rule 19 `[R-ONE-MECH]`). Floor: `accredited_firm_capacity_mw` vs `peak × (1 + PLANNING_RESERVE_MARGIN_BY_ISO)`, one requirement shared with the build backstop, `floor_retention_log` attribution. (Spec §5.2.)
+- **Step 2, CCS retrofit** — `ccs_retrofit_available_year`, `eac_price_gas_cc_ccs`, `ira_ccus_45q_last_year`, `ira_45q_credit_window_years`; ≥15 yr remaining life, 3 GW/yr/ISO cap, valued as the **incremental uplift over the best unabated state**, screened jointly with retirement. (Spec §5.6.)
+- **Steps 4–5, additions and entry** — `load_planned_additions` (EIA-860 proposed pipeline, construction-committed statuses, forecast mode only). **RPS is not a force-build step** — it is an annual LP constraint whose dual is the REC price. (Spec §5.3–§5.4, §1.4.)
+- **Storage entry** — an economics-based **value stack, not compound growth**: arbitrage net of cycling degradation **plus** RA capacity value, paid only where the per-ISO `MARKET_DESIGN` registry has a capacity market (energy-only ERCOT pays none). `STORAGE_TECH_BUILD_SHARE_CAP`, base-year fleet `storage_deployment` with all later growth endogenous; toggles `storage_capacity_value`, `storage_degradation`. (Spec §5.5.)
+- **Locational deliverability** — `capacity_deliverability_limits`, GATED default off; published PJM CETO/CETL, MISO LRR/LCR/CIL, NYISO LCR/TSL, ISO-NE LSR/MCL, CAISO LCR/MIC crosswalked onto model zones. Structural mechanism (rule 1 `[R-STRUCT]`). In a backcast only the measured-seam-import half fires (CAISO MIC → WECC_import; the CAISO keeper enables it via `--capacity-deliverability-limits`, caiso-51, replacing the audit-flagged fitted 7,500 MW WECC cap); **the RA-saturation half remains unvalidated in any keeper**. (Spec §5.8; `docs/capacity-deliverability-wiring.md`.)
 
 ## Dispatch & Commitment (per year)
 
-**P0 and P1 are the only two passes** (`runner.py`, `model/commitment.py`): **P0** base-cost (discover run lengths) → **P1** bid-cost (base + amortized startup markup, sets clearing prices). **P1 is THE main run**: the production/forecast path and what **every run is scored on**. Pure LP — no MIP.
+**P0 and P1 are the only two passes** (`runner.py`, `model/commitment.py`): **P0** base-cost (discover run lengths) → **P1** bid-cost (base + amortized startup markup, sets clearing prices). **P1 is THE main run**: the production/forecast path and what **every run is scored on**. Pure LP — no MIP. (Spec §1.6.)
 
-**P2 is ARCHIVED — a legacy artifact kept intact as a last resort, never a calibration option.** The former third solve (`commitment_enabled` / `ercot_as_aware_commitment`, the economic commitment screen that decommits unprofitable CC/CT runs via an IRR hurdle + min-run/min-down + adequacy backstop) is hidden from the calibration CLI and gated: its flags (`--commitment`, `--ercot-as-aware-commitment`, `--run-p2`, `--no-coal-p2`, `--persist-p2-state`, `--class-commitment-overrides`) error unless `--enable-legacy-p2` is passed (both `scripts/run_calibration_full.py` and `scripts/run_calibration.py`). No keeper uses it; it is not part of any default or recommended configuration (the ercot27 probe showed the AS-aware P2 adds broad price elevation and no scarcity-month signal — 2026-07-03 calibration-log entry). The machinery (`pipeline/commitment.py::run_commitment_pass`) stays in place for the `--enable-legacy-p2` path.
+**P2 is ARCHIVED — a legacy artifact kept intact as a last resort, never a calibration option.** The former third solve (`commitment_enabled` / `ercot_as_aware_commitment`) is hidden from the calibration CLI: its flags (`--commitment`, `--ercot-as-aware-commitment`, `--run-p2`, `--no-coal-p2`, `--persist-p2-state`, `--class-commitment-overrides`) error unless `--enable-legacy-p2` is passed (both `scripts/run_calibration_full.py` and `scripts/run_calibration.py`). **No keeper uses it; it is not part of any default or recommended configuration.** The machinery (`pipeline/commitment.py::run_commitment_pass`) stays in place for that path only.
 
-**CAISO RA must-offer bridge is P1-native** (`caiso_ra_mustoffer`, CAISO default-on). It used to run *through* P2; since P2 is archived and P1 scores better, the bridge is now applied as a `min_gen` floor **before** the single P1 solve — detected from the base-cost **P0** run pattern (`pipeline/commitment.py::caiso_ra_p1_floor_fleet` / `build_caiso_ra_p1_prep`, injected at the P0→P1 seam in `pipeline/solve.py::run_energy_solve`, reusing `model/commitment.py::caiso_ra_mustoffer_min_gen`). So CAISO keeps its RA structure and is scored on P1. It no longer triggers a P2 pass.
+**Two P1-native commitment bridges**, both applied as a `min_gen` floor detected from the base-cost **P0** run pattern and injected at the P0→P1 seam (`pipeline/solve.py::run_energy_solve`) — so the ISO keeps its commitment structure and is still scored on P1, and **neither triggers a P2 pass**: `caiso_ra_mustoffer` (RA must-offer, CAISO default-on) and `ercot_gas_commitment_bridge` (default off, ERCOT-only, merchant gas-CC only — CT is physics-inert for the economic leg and ST_GAS is owned by its own drag mechanism, rule 19 `[R-ONE-MECH]`; `min_load_frac` = the measured committed-CC LSL/HSL cap-weighted p50, 0.574; D-2 id `gas_commitment_bridge`).
 
-**ERCOT gas commitment bridge is the same P1-native construction behind its own gate** (`ercot_gas_commitment_bridge`, default off, ERCOT-only — ERCOT-63, 2026-07-12). The ISO-neutral detector scoped to merchant gas-CC only (CT is physics-inert for the economic leg, ST_GAS is owned by its own drag mechanism — rule 19), `min_load_frac` = the measured committed-CC LSL/HSL cap-weighted p50 (0.574, 60-Day DAM disclosure 2023-2025), economic ≥ min-down bridging on the startup-restart inequality at the model's own P0 duals, bounded to one DA operating day; the CAISO startup-aware screen is deliberately not exposed (dropped with cause — `docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §7). D-2 id `gas_commitment_bridge` (17). Supplies the committed-STATE half of the ERCOT trough/spread circle; `ercot_offer_surface_lowcurve` stays default-off (the tranche-wide LSL markdown is probe-refuted even in composition with the state), and the FLOOR-SCOPED variant `ercot_offer_surface_lowcurve_floorscoped` (ERCOT-64 — the measured LSL bid only in the bridge's own floored plant-hours, sharing ONE floor computation with the fleet hook via `pipeline/commitment.py::build_ercot_gas_bridge_p1_preps`) is probe-adjudicated **provably inert** (the bridge floor clips at the committed-tranche bound, so the markdown's whole window is pinned — diagnosis §8) and also stays default-off. The LSL price-side enumeration is closed, and ERCOT-65 (2026-07-13) closed the negative-price-epoch pair too: ERCOT wind already bids the flat −$26 PTC on every MW (`compute_dispatch_credits` — never a $0 floor), the honest EIA-860 vintage scoping (`wind_ptc_vintage_offers`, default off) is probe-adjudicated dispatch-byte-inert (only the Panhandle epoch dual moves, −26 → −27), arming `negative_renewable_offers` with the CAISO $20 REC value is rule-25 refused, and the WP-B `ercot_wtx_curtailment_driver` turned out to be LIVE in the keeper all along (the `prb_overrides` channel stomps the explicit kwarg; run_config recorder defect fixed + keeper records corrected 2026-07-13) — and a ceiling-clipped variable can never price an epoch. The trough/spread lane is AT FRONTIER (draft block in the 2026-07-13 log entry, owner sign-off pending); the remaining named lever is the West/Panhandle topology split (its own charter). See diagnosis §9.
+The ERCOT offer-surface and negative-price variants (`ercot_offer_surface_lowcurve`, `ercot_offer_surface_lowcurve_floorscoped`, `wind_ptc_vintage_offers`, `negative_renewable_offers`) all stay **default-off** — probe-refuted, probe-adjudicated provably inert, or rule-25 `[R-ISO-SCOPE]`-refused. Adjudications, the trough/spread lane's frontier status and the remaining named lever (West/Panhandle topology split) are in `docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §§7–9.
 
 ## Fleet Representation
 
@@ -324,8 +321,12 @@ Always test with trivial cases first: 1 gen, 1 zone, 24 hours. Then scale up.
 
 ## Reference Docs (in repo)
 
+- `docs/README.md` — the docs index; start here when you don't know which doc owns a topic
 - `model-methodology-spec.md` — LP formulation, commitment, fleet/offer curves, capacity evolution, outage modelling, scenario architecture (THE SPEC)
+- `docs/codebase/` — the living per-area code reference (01-architecture … 08-config-reference); the current per-module inventory behind this file's elevator-view tree
+- `docs/governance/rule-history.md` — rule numbering (stable `[R-*]` IDs, the audit N↔N+1 map), per-rule amendment genealogy, and the incident record behind rule 27
 - `market-sim-build-plan.md` — phase plan, extraction manifest, directory structure
+- `docs/refactor-consolidation-plan-2026-07.md` + `docs/refactor-consolidation-prompt-pack-2026-07.md` — the refactor/organization program: binding constraints (§1), workstreams, the byte-identity verification protocol (§8), owner-decision register (§9), and the per-wave session prompts
 - `docs/binning-methodology.md` — CAMPD per-plant binning & tranche offer curves (ERCOT default)
 - `docs/parameter-citations.md` — every numeric input traced to a primary source
 - `docs/multi-iso/` — protocol & status for adding ISOs beyond ERCOT
