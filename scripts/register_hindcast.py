@@ -91,10 +91,31 @@ def _load_all_sidecars() -> list[dict]:
 
 
 def render_page(sidecars: list[dict]) -> str:
-    """Return the self-contained forecast-validation.html source."""
+    """Return the self-contained forecast-validation page source.
+
+    The output carries an explicit GENERATED banner as its first lines so the
+    bytes announce their own provenance wherever they land — a reader opening
+    the file, or a grep, sees at once that hand-edits are lost on the next
+    render (Wave 5C, refactor-consolidation plan §7-G).
+
+    NOTE (FF-5A): this helper is no longer wired to
+    ``docs/codebase-site/forecast-validation.html``. That page was retired in
+    favour of the Forecast Run Explorer + Program Status, and the committed
+    file is now a HAND-WRITTEN static redirect stub — so it is deliberately not
+    marked generated in ``.gitattributes``. ``main()`` delegates to
+    ``register_forecast_run.reindex``; this renderer is kept for external
+    callers that still want the self-contained page.
+    """
     data_json = json.dumps(sidecars, indent=2)
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     return f"""<!DOCTYPE html>
+<!--
+  GENERATED FILE — do not edit.
+  Written by scripts/register_hindcast.py::render_page from the committed
+  hindcast sidecars in frontend/data/hindcast/*.json. Any hand edit is
+  overwritten the next time the page is rendered; change the renderer or the
+  sidecars instead. Rendered {stamp}.
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
