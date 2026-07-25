@@ -66,6 +66,151 @@ guards `ST_GAS_CF_PEAK` and `SHORT_BASELOAD_CF`):
    fitted on one ISO's residual leaking into another's.
 4. What happens where fuel-price data is thin (pre-2020, non-gas classes)?
 
+## 3a. FROZEN DESIGN (neiso-64, 2026-07-25) — owner sign-off 2026-07-25
+
+Answers to all four questions, with the no-solve evidence each rests on. Probes
+read committed artifacts only (`campd-unit-outages-<ISO>.csv`,
+`campd-unit-level/<ST>_<YYYY>.parquet`, `gas_basis_by_iso_month.csv`,
+`gas-prices/henry_hub_{daily,monthly}.csv`,
+`_processed-legacy/eia923_monthly_fuel_costs.parquet`, and each ISO's published
+outage instrument). No LP solve was run and no keeper was touched.
+
+### D1 — the out-of-merit test: SRMC vs the *revealed marginal cost* (Q1 option 1)
+
+Per unit `u`, hour `t`:
+
+* **Measured heat rate** `HR_u = Σ heatInput / Σ grossLoad` over the unit's
+  running hours (`CF ≥ REAL_RUN_CF`), pooled over the years of the derive
+  invocation. CAMPD-measured; clipped to `[4, 20]` MMBtu/MWh against meter noise.
+  A unit with fewer than `MIN_REAL_RUN_HOURS` (24) running hours has no
+  identified heat rate and is excluded (see D4).
+* **Delivered fuel price** `px(u, t)`, by the unit's own fuel:
+  * *gas* — the ISO's delivered hub: measured Henry Hub **daily** re-centred on
+    the measured Henry Hub **month**, plus the ISO's measured monthly basis
+    (`gas_basis_by_iso_month.csv`; all six ISOs, 2015–2026). Mean-preserving at
+    the monthly hub level, so only the within-month shape is added.
+  * *coal* — F923 delivered, plant-month → state-month (volume-weighted) →
+    ISO-month (volume-weighted).
+  * *anything else* (oil, other) — no series; unit excluded (D4).
+* `SRMC_u(t) = HR_u × px(u, t)`. **No VOM adder**: a per-class additive would be
+  a free parameter (rule 20) with no discriminating power, since every unit is
+  ranked through the identical construction.
+* **`RCC(t)` — the revealed clearing cost** — the capacity-weighted
+  `RCC_PCTL = 0.90` quantile of `SRMC` over the units **measured running** at
+  `t` (`CF ≥ REAL_RUN_CF`), **excluding cogeneration** (measured non-zero CAMPD
+  `steamLoad` — heat-driven, not economically dispatched, so it carries no merit
+  information; keyed on the measured quantity, not a class name, per rule 17).
+  p90 rather than the max so a single reliability-committed unit cannot set the
+  band.
+* A window's **out-of-merit share** = the fraction of its hours with
+  `SRMC_u(t) > RCC(t)`.
+* **A window is ECONOMIC LAYUP iff its out-of-merit share ≥ `OOM_FRAC = 0.90`**
+  — "for essentially the whole window, cheaper capacity than this unit was
+  setting the revealed margin."
+
+Every input is measured CEMS operation or a delivered fuel price. There is no
+LMP, no cleared price, no cleared quantity and no residual anywhere in the
+construction (rules 11/13/26).
+
+**Why this and not the alternatives.** The self-referential variant (compare the
+window's fuel price to a percentile of the unit's *own* running-hour price
+distribution) was probed first and is **rejected**: the unit's heat rate cancels
+out of a within-unit percentile comparison, so it can only see the
+*fuel-cost-blowout* half of out-of-merit. It fixed NEISO DJF but left JJA
+untouched (1.93× → 1.93×) and, in the mild 2024 winter, its NEISO gain sat
+**inside the placebo band** (r +0.55 vs placebo p95 +0.56). Cross-unit ranking
+against `RCC` is what puts the heat rate back in, and it is the only variant
+that moves all four seasons.
+
+**Evidence — NEISO 2023/24/25, detector ÷ published ISO-NE Section 3 line C:**
+
+| | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| baseline level / monthly r | 1.52× / +0.53 | 1.57× / +0.47 | 1.22× / +0.70 |
+| guard on, level / monthly r | **1.36× / +0.71** | **1.29× / +0.61** | **0.92× / +0.78** |
+| placebo p95 (same GW-days dropped at random, 30 draws) | +0.63 | +0.55 | +0.78 |
+
+Level and shape improve **together** — unlike unit-frequency filtering (shape
++0.84 but level collapsed to 410 MW) and unlike common-mode (shape worse than no
+filter). The guard beats the placebo p95 in 2023 and 2024 and sits exactly at it
+in 2025 (the year whose baseline shape was already good), so the gain is
+discrimination, not the mere removal of MW.
+
+**Positive control — the two populations land in the two buckets ISO-NE itself
+publishes.** ISO-NE's Morning Report Section 3 reports mechanically unavailable
+capacity (`gen_outages_reductions_mw`) *separately* from available-but-not-
+committed capacity (`uncommitted_available_gen_nonfast_mw`) — i.e. the published
+instrument measures the layup population directly. Monthly correlation, 2023 /
+2024 / 2025:
+
+| window set | vs published OUTAGES | vs published UNCOMMITTED |
+|---|---|---|
+| baseline (all windows) | +0.53 / +0.47 / +0.70 | +0.34 / +0.45 / +0.48 |
+| **KEPT** (guard: mechanical) | **+0.71 / +0.61 / +0.78** | +0.08 / +0.28 / +0.31 |
+| **VETOED** (guard: layup) | −0.26 / +0.01 / +0.24 | **+0.77 / +0.71 / +0.67** |
+
+The vetoed windows are anti-correlated (or uncorrelated) with published outages
+and strongly correlated with published uncommitted-available capacity. That is
+the charter's identification requirement met against a published instrument, not
+a residual.
+
+### D2 — RECLASSIFY, not drop and not shorten
+
+The vetoed windows are a real, separately-measured population (D1 positive
+control), so the information is preserved rather than discarded:
+
+* the mechanical extract `campd-unit-outages-<ISO>.csv` keeps only the
+  non-vetoed windows — an economically laid-up unit **is available**, and the LP
+  must decide not to run it on its own economics;
+* the vetoed windows are written to a labelled companion
+  `campd-unit-outages-layup-<ISO>.csv`, same schema plus the measured
+  `out_of_merit_share` that carried the call, which **no loader reads by
+  default** — an audit artifact and the validation series, following the
+  existing `-e923-` / `-maxgen-` / `-short-` companion convention.
+
+**Not shortened.** There is no evidence of a "genuinely-down core" inside a
+layup window; a sub-window classifier would be a fitted answer key with nothing
+to identify it against. **No new LP mechanism** (rule 18): mechanical
+unavailability stays in the outage overlay, and economic non-commitment stays
+where it already lives — the dispatch economics.
+
+### D3 — one ISO-agnostic, class-agnostic rule
+
+Both knobs (`RCC_PCTL`, `OOM_FRAC`) are structural percentiles over per-ISO
+self-referential distributions; **no scalar fitted on one ISO's residual is
+carried into another** (rule 24). Class enters only through two *physical*
+facts, not tuning: cogeneration is excluded from the `RCC` panel (measured
+`steamLoad`), and the unit's fuel selects its price series. The knobs are
+identified **jointly across the ISOs with published instruments**, never per
+ISO, and only against those published outage series — rule 14 reconciliation of
+an input to its own measurement, never rule 13 fitting to a dispatch outcome.
+They re-derive only on a source-data change (rule 23). The window-grain
+out-of-merit share is close to binary (NEISO: p25 = 0.00, p75 = 1.00), so
+`OOM_FRAC` is not load-bearing — 0.70 → 1.00 moves the NEISO veto count only
+560 → 412.
+
+### D4 — thin fuel data: INERT, fail-safe, no fabricated basis
+
+The guard can only ever **remove** windows, so every gap degrades to
+current behaviour:
+
+* no measured heat rate (< `MIN_REAL_RUN_HOURS` running hours) → unit excluded
+  from the `RCC` panel **and** from the guard; its windows are kept.
+* no delivered price for the unit's fuel (oil, "other", a coal plant outside
+  every F923 ladder rung, a year outside the basis table) → same exclusion.
+* an ISO-year with no `RCC` hours at all → extract byte-identical.
+* **Henry Hub is never substituted for a missing ISO basis.** For NEISO the
+  basis *is* the signal; a Henry-Hub fallback would silently switch the test off
+  while appearing to run.
+
+### Gate
+
+`MERIT_ORDER_GUARD_ENABLED = False` in `scripts/lib/outage_detect.py`, surfaced
+as `--merit-order-guard` on `scripts/data/derive_campd_unit_outages.py`.
+Byte-inert when off, **proven at full extract scale**: a full 2018–2026
+re-derive without the flag reproduces every committed extract blob exactly
+(NEISO `a95c0928`, CAISO `3dc01fae`, NYISO `181fefb9`, ERCOT `b4b48f5a`).
+
 ## 4. Validation protocol — binding
 
 - **Anchor: the published instrument, never the price residual.** The four
@@ -76,6 +221,13 @@ guards `ST_GAS_CF_PEAK` and `SHORT_BASELOAD_CF`):
   on both level and seasonal shape, at **no solve cost**. ERCOT and NYISO have
   no native gate and need a separately-identified cross-check before their
   extracts can be declared fixed.
+  **Amended 2026-07-25 (owner):** ERCOT *does* carry a published anchor —
+  `data/raw/ercot-thermal-dam-availability.csv` (60-day DAM disclosure, daily
+  class `rating_mw − live_mw`), already consumed by the ERCOT overlay. It is
+  adopted as ERCOT's validation series **with the caveat** that DAM
+  offered-capacity conflates mechanical unavailability with a unit that simply
+  did not offer, so it carries some layup itself. **NYISO alone remains
+  unverified.**
 - **Explicitly inadmissible:** trimming, scaling, or thresholding the extract
   until model *prices* match actuals. Rule 14 permits reconciling an input to
   its own published measurement; rule 13 forbids reconciling it to a dispatch
@@ -85,6 +237,13 @@ guards `ST_GAS_CF_PEAK` and `SHORT_BASELOAD_CF`):
 - **Rule 15:** both arms registered whatever the verdict.
 - **Rule 23:** any re-derived constant cites the source-data change, not a
   residual.
+
+**Scope caveat on level ratios (2026-07-25).** The CAMPD extract covers only the
+CEMS-reporting fossil fleet (coal / CC / gas-steam); several published series
+are whole-fleet (MISO, PJM, CAISO). A level *ratio* is therefore only
+interpretable where the thermal-only extract **exceeds** a whole-fleet published
+total — an unambiguous over-count, as in NEISO. The robust cross-ISO axis is the
+**monthly correlation** against the published series, plus the placebo test.
 
 ## 5. Blast radius — every keeper is implicated
 
