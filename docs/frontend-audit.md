@@ -1,6 +1,97 @@
 # Frontend audit — web trees, build paths, overlap & orphans
 
 > Status: SUPERSEDED — investigation record (2026-06-19); frontend/site organization now governed by docs/refactor-consolidation-plan-2026-07.md §7-G.
+>
+> **The §4 "Decide" items were executed on 2026-07-25 (Wave 5C). See
+> [§0 Executed](#0-executed--wave-5c-2026-07-25) immediately below for what was
+> actually done and what the audit got wrong; the body from §1 on is the
+> unmodified 2026-06-19 record and is now stale in several places.**
+
+## 0. Executed — Wave 5C (2026-07-25)
+
+The recommendations this document left open have been decided and carried out.
+The body below was **not** rewritten, so read it as a dated snapshot.
+
+### D-7 — dormant `frontend/` scenario app: **ARCHIVED**
+
+Owner decision D-7 (`docs/refactor-consolidation-plan-2026-07.md` §9), approved
+and executed 2026-07-25. §3 orphan 3 and the §4 "keep, but hide/label the card"
+recommendation are **superseded**: the app is archived rather than relabelled.
+
+Moved to `docs/archive/frontend-scenario-app/` (see its README for the revival
+recipe): `index.html`, `decisions.html`, `parameters.html`, and
+`js/{app,charts,data-loader,decisions}.js`. **Pages and JS only.**
+
+Deliberately NOT moved:
+
+- **`frontend/data/**`** — the live dashboard data path. `frontend/data/backcast/`
+  is a CLAUDE.md rule-15 frozen surface that concurrent calibration sessions
+  register into; `frontend/data/parameters.json` is still written by
+  `scripts/generate_parameter_registry.py` and checked by
+  `scripts/validate_parameters.py`.
+- **`frontend/css/style.css`** — still the live design system for the root
+  `index.html` and `model-updates.html` (§1 was right about this).
+- **`scripts/export_results.py`** — untouched; reviving the app is a matter of
+  running it.
+
+Dead links removed in the same change: the "Results Dashboard" card on the root
+`index.html` and the "Dashboard" nav entry on `model-updates.html` (the latter
+now points at Calibration Status). `docs/archive/` is outside the deploy's
+sparse checkout, so the archived pages are no longer staged into `_site`.
+
+### Vendored libraries — pinned, not vendored (with a live defect fixed)
+
+Not an audit recommendation, but discovered in the same lane and worth
+recording here because this is the frontend record.
+
+The 21 codebase-site pages loaded d3 from **three** sources (cdnjs 7.9.0,
+jsdelivr `d3@7`, `d3js.org/d3.v7`) and gsap from **three** (cdnjs 3.12.2, cdnjs
+3.12.5, jsdelivr `gsap@3`) — floating majors included. Worse, six pages carried
+an `integrity` attribute whose hash did **not** match the file it guarded (two
+different fabricated sha384 values for the same `d3js.org` URL, plus wrong
+sha512 for gsap/ScrollTrigger 3.12.2). A wrong SRI hash makes the browser
+refuse to execute the script, so d3 was blocked outright on `config-reference`,
+`data-pipeline`, `fleet-offer-curves`, `lp-core`, `mental-model` and
+`results-calibration`, and gsap on five of those.
+
+Every page now loads one build of each, from cdnjs, with an integrity hash
+computed from the bytes the CDN actually serves and cross-checked against the
+cdnjs-published SRI:
+
+| Library | URL | Verified SRI |
+|---|---|---|
+| d3 7.9.0 | `https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js` | `sha512-vc58qvvBdrDR4etbxMdlTt4GBQk1qjvyORR2nrsPsFPyrs+/u5c3+1Ct6upOgdZoIl7eq6k3a1UPDSNAQi/32A==` |
+| gsap 3.12.5 | `https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js` | `sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==` |
+| ScrollTrigger 3.12.5 | `https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js` | `sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==` |
+
+**Vendoring into `docs/codebase-site/js/vendor/` remains the preferred
+end-state** — it matches the site's self-contained data design and survives a
+CDN outage — and is deliberately deferred, not rejected. The blocker is the push
+path: the sanctioned `mcp__github__push_files` carries file content through the
+model response, and d3 alone is 280 KB, which is exactly the response-budget
+truncation hazard CLAUDE.md rule 27 exists to prevent. A session with a
+byte-carrying push path can finish it in minutes — download the three URLs
+above, check them against those hashes, drop them in `js/vendor/`, and swap the
+33 `src=` attributes to the local paths. The deploy already copies
+`docs/codebase-site` wholesale, so no workflow change is needed.
+
+Still split, reported not fixed (outside the d3/gsap scope): **KaTeX** —
+jsdelivr `0.16.8` on `lp-core.html`, cdnjs `0.16.9` on `policy-scarcity.html`,
+neither pinned.
+
+### Other body claims that have since gone stale
+
+- **`offer-curve-grounding.html` no longer exists** on the tree; §1/§3/§4's
+  keep-or-link recommendation for it is moot.
+- **`backcast-results.html` is a static redirect stub**, not the generated
+  dashboard. The live surfaces are `docs/codebase-site/backcast-runs.html` and
+  `calibration-status.html`, and `build_manifest.py` now writes only the shared
+  data files (`manifest.js`, `benchmark.js`, `completeness.js`, and since Wave
+  5C `rubric-consts.js`) — it no longer renders a shell.
+- **`scripts/probes/_backcast_shell.py` was deleted**; §2's description of the
+  shell text coming from it is historical.
+- The deploy's sparse checkout is now `frontend`, `learning-hub`,
+  `docs/codebase-site`, `scripts` — §2 predates the codebase-site entry.
 
 **Date:** 2026-06-19 · **Scope:** investigation only — nothing is moved, merged, or
 deleted by this document. Every "orphan" and "build path" claim below was verified
