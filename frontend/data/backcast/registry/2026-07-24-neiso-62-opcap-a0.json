@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-24-neiso-62-opcap-a0",
+  "label": "neiso 62 opcap a0 control",
+  "date": "2026-07-24",
+  "shorthand": "neiso-62-opcap-a0",
+  "definition": "(PROBE - CONTROL ARM) neiso-62 STEP A0: verbatim --replay-bundle of the 2026-07-23-neiso-61-netrev-margin keeper recipe at HEAD, with the newly-exposed on-registry gate neiso_operable_capacity_availability ABSENT (default False). INERT-WHEN-OFF PROOF: byte parity with the keeper - max hourly LMP diff 0.0000000000 in all three years, zone-mean LMP identical to 4 dp (38.9364 / 44.0783 / 71.3163). Establishes that the STEP-0 CLI/registry plumbing (solve_and_persist -> run_year -> ScenarioConfig, meta.json + recorded config) changes nothing at its default, so every delta in the A1 arm (2026-07-24-neiso-62-opcap-a1) is attributable to the gate alone. Determination CALIBRATED-WITH-CAVEATS, identical to the keeper (C3a +5.2/+7.1/+5.2%, C3b NRMSE 0.102/0.164/0.071, C3c ledgered 0h, C1 12/12, C5a -2.5/-2.3/+4.9%).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-07-24-neiso-62-opcap-a0.js",
+  "bundle": "results/calibration/neiso_opcap_a0"
+}
