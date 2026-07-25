@@ -97,6 +97,82 @@ from market_sim.results.calibration import (  # noqa: E402
 _group_label = class_label  # known canonical name, else humanized
 GROUP_LABEL = dict(LABELS)
 _NONFOSSIL_KLASS = nonfossil_classes()
+
+# --- Non-fossil + interchange hourly panels (Charts-tab heatmaps) -----------
+# The Charts tab's hourly coverage is CAMPD-backed and therefore FOSSIL-ONLY:
+# CEMS meters combustion units, so nuclear / hydro / the renewables / net
+# interchange had no hourly actual anywhere in the payload (only the annual
+# ``nonfossil`` scalars). ``build_nonfossil_hourly`` closes that blind spot from
+# EIA-930, whose hourly per-fuel net-generation series ARE the measured record
+# for those classes.
+#
+# The panel key is the EIA-930 FUEL BUCKET (``PlantClass.fuel930``), not a model
+# class name: the model side sums every non-fossil class that rolls up to the
+# bucket, so a bucket comparison is valid by construction and no split is ever
+# fabricated. Two consequences worth stating, both deliberate:
+#   * ``wind`` sums {wind, offshore_wind} against NG: WND — an ISO with both
+#     compares the total, never one leg against the aggregate meter.
+#   * ``other`` sums {biomass, geothermal, OTHER} against NG: OTH — EIA-930's
+#     "Other Fuel Sources" cell is itself that aggregate, so the bucket is the
+#     only honest unit of comparison for it (a per-class actual does not exist).
+# Adding a class to plant_taxonomy.PLANT_CLASSES routes it into its bucket here
+# automatically; there is no per-ISO branch anywhere in this path.
+#
+# Values are the ``name`` keys of eia_loader._EIA930_BENCHMARK_COLUMNS (the
+# series names in the bundle's eia930 extract), NOT the raw "NG: XXX" columns.
+# Citations are the EIA-930 net-generation-by-energy-source column each name
+# reads (src/market_sim/data/eia930/actuals.py::_EIA930_BENCHMARK_COLUMNS).
+NONFOSSIL_930_SERIES: dict[str, tuple[str, ...]] = {
+    "nuclear": ("nuclear",),  # EIA-930 "NG: NUC" — nuclear net generation
+    "hydro": ("hydro",),  # EIA-930 "NG: WAT" — conventional hydro
+    "wind": ("wind",),  # EIA-930 "NG: WND" — wind (on + offshore)
+    "solar": ("solar",),  # EIA-930 "NG: SUN" — utility-scale solar
+    "oil": ("oil",),  # EIA-930 "NG: OIL" — petroleum-fired
+    "other": ("other",),  # EIA-930 "NG: OTH" — geothermal + biomass + process
+    # Storage is reported as two separate net series (positive = discharging);
+    # the model's single ``storage`` class is their sum. Both are optional —
+    # a BA that has not begun reporting the BAT/PS breakout supplies neither,
+    # and the panel then shows the model with no hourly actual.
+    "storage": ("battery", "pumped_storage"),  # EIA-930 "NG: BAT" / "NG: PS"
+}
+
+# Net interchange is not a fuel bucket — it is the priced import/export node, so
+# it carries its own panel key and its own series. SIGN CONVENTION (assert-backed
+# in tests/test_nonfossil_hourly.py): the model's ``import`` klass is positive
+# INTO the ISO, while EIA-930 "Total interchange" is positive EXPORT (NYIS 2023
+# reads -23.45 TWh for ~23.4 TWh of net imports). This panel publishes the
+# IMPORT-POSITIVE convention — the natural reading of a panel labelled "Imports"
+# — so the model side is used as-is and the 930 series is NEGATED. Get this
+# backwards and the heatmap is exactly inverted, which is why the reconciliation
+# against the ``interchange`` fuelRows row (which publishes the OPPOSITE,
+# export-positive convention) is asserted at build time.
+IMPORT_KLASS = "import"
+IMPORT_PANEL = "import"
+IMPORT_930_SERIES = "interchange"
+
+# Affine uint8 codec resolution: hourly values are encoded as
+# ``round(_B64_SCALE * (mw - lo) / (hi - lo))`` over a per-panel [lo, hi] MW
+# window SHARED by the model and actual series, so the browser's subtraction is
+# a true MW-space delta (see build_nonfossil_hourly). 250 matches the ceiling the
+# sibling ``_b64`` CF codec clips to (so the two stay visually comparable) and
+# gives 1/250 = 0.4% of the panel's MW span per byte — ~20 MW on a 5 GW nuclear
+# fleet, far below any delta the heatmap's 98th-percentile cap resolves. int16
+# (_b64_i16) would give exact 1-MW steps at 2x the payload; measured on the NYISO
+# keeper that is +245 KB vs +127 KB gzipped for three years, and the extra
+# resolution buys nothing a 365x24 canvas can display.
+_B64_SCALE = 250.0
+# Display labels for the panels (the model classes' own labels come from the
+# taxonomy; a bucket that sums several classes needs its own name).
+NONFOSSIL_PANEL_LABEL: dict[str, str] = {
+    "nuclear": "Nuclear",
+    "hydro": "Hydro",
+    "wind": "Wind",
+    "solar": "Solar",
+    "oil": "Oil",
+    "other": "Other (biomass/geo)",
+    "storage": "Storage",
+    IMPORT_PANEL: "Imports (net)",
+}
 # OTHER_FOSSIL: the scoring bucket for genuinely-mixed gas-thermal plants
 # (apply_other_fossil_scoring). Added to the fossil groups so the model side's
 # `klass.isin(FOSSIL_GROUPS)` filter keeps it, matching the EIA-923 side.
@@ -320,6 +396,255 @@ def _b64_i16(x: np.ndarray) -> str:
     if out.shape[0] < _T:
         out = np.concatenate([out, np.full(_T - out.shape[0], -32768, dtype="<i2")])
     return base64.b64encode(out[:_T].astype("<i2").tobytes()).decode()
+
+
+def _b64_affine(mw: np.ndarray, lo: float, hi: float) -> str:
+    """Encode an hourly MW series as base64 uint8 over the window ``[lo, hi]``.
+
+    ``byte = round(_B64_SCALE * (mw - lo) / (hi - lo))``, so the browser rebuilds
+    MW as ``lo + byte / _B64_SCALE * (hi - lo)``. Signed series (net interchange,
+    a net storage series, a hydro meter that dips negative) are handled by the
+    offset — no separate signed codec is needed — and because the model and
+    actual series of a panel share ONE ``[lo, hi]``, their decoded difference is
+    a true MW-space delta.
+
+    Same byte layout as the frozen :func:`_b64` (uint8, base64), so the browser's
+    existing ``dec()`` reader decodes it unchanged — but LENGTH-EXACT rather than
+    padded to 8760. ``_b64`` zero-pads a short series, and a zero byte here
+    decodes to ``lo`` (not 0 MW), which for a signed panel like net interchange
+    would silently append thousands of hours pinned at the series minimum. Every
+    production panel is a full 8760, so this only matters for the ``hours``
+    parameter's shorter cases (tests, a partial-year bundle) — but a codec that
+    is wrong at one length is a codec waiting to be reused at that length.
+    """
+    v = np.nan_to_num(np.asarray(mw, dtype=float))
+    span = float(hi) - float(lo)
+    if not np.isfinite(span) or span <= 0.0:
+        # Degenerate (flat) panel: every byte 0, decoding to exactly lo.
+        return base64.b64encode(np.zeros(v.shape[0], np.uint8).tobytes()).decode()
+    scaled = np.clip(np.round(_B64_SCALE * (v - float(lo)) / span), 0, _B64_SCALE)
+    return base64.b64encode(scaled.astype(np.uint8).tobytes()).decode()
+
+
+def _hourly_series(arr: np.ndarray | None, hours: int) -> np.ndarray | None:
+    """Coerce a benchmark/model hourly array to exactly ``hours`` samples.
+
+    Shorter series are zero-extended and longer ones truncated, so a BA-year a
+    few hours short of 8760 still yields a full-length panel. ``None`` in,
+    ``None`` out.
+    """
+    if arr is None:
+        return None
+    a = np.asarray(arr, dtype=float)
+    if a.shape[0] >= hours:
+        return a[:hours]
+    return np.concatenate([a, np.zeros(hours - a.shape[0])])
+
+
+def _actual_is_absent(arr: np.ndarray | None) -> bool:
+    """Whether an EIA-930 series carries no usable observation for the year.
+
+    A series that is missing, all-NaN, or identically zero is NOT an actual of
+    zero — it is a fuel the BA does not report (NYISO files no utility-scale
+    solar series, so its ``NG: SUN`` cell reads 0.0 TWh against ~2 TWh of
+    modelled solar). Comparing a model series against it would manufacture a
+    -100% class error and a fully-saturated delta map, so such a panel publishes
+    the model side only, with a labelled reason and no delta (see the frontend's
+    "no hourly actual" note).
+    """
+    if arr is None:
+        return True
+    a = np.asarray(arr, dtype=float)
+    return bool(a.size == 0 or not np.isfinite(a).any() or not np.any(a != 0.0))
+
+
+def build_nonfossil_hourly(
+    model_hourly: dict[str, np.ndarray],
+    actual_930: dict[str, np.ndarray],
+    *,
+    hours: int = _T,
+) -> dict[str, dict]:
+    """Build the ``nonfossilHr`` payload: hourly model vs EIA-930 by fuel bucket.
+
+    Closes the Charts tab's fossil-only blind spot. ``model_hourly`` is
+    ``{klass: (T,) MW}`` (``run_calibration_full._class_hourly``, or the
+    equivalent read off a bundle's committed ``hourly/class_hourly_<year>``
+    sidecar) and ``actual_930`` is ``{series: (T,) MW}`` (the bundle's eia930
+    extract, or ``eia930.actuals.load_eia_hourly_benchmark``). Both are on the
+    model's chronological fixed-standard-time 8760 clock, so hour ``k`` pairs
+    hour ``k`` with no DST correction — verified by cross-correlating model
+    against actual demand (lag 0 must dominate; see
+    docs/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md and
+    tests/test_nonfossil_hourly.py::test_clock_alignment_lag_zero_dominates).
+
+    Returns ``{panel: {...}}`` over :data:`NONFOSSIL_930_SERIES` (the non-fossil
+    EIA-930 fuel buckets) plus :data:`IMPORT_PANEL`, keeping only panels the run
+    actually dispatches. Each entry carries:
+
+      ``m``/``a``   base64 uint8 model / actual MW over the shared ``[lo, hi]``
+                    window (:func:`_b64_affine`); ``a`` is ``None`` when the BA
+                    reports no usable series for the bucket.
+      ``lo``/``hi`` the shared MW decode window — the SAME for both series, so
+                    the browser's ``m - a`` is a true MW delta, never a
+                    CF%-minus-CF% difference between two different maxima.
+      ``mTwh``/``aTwh``  annual totals (``aTwh`` ``None`` with no actual).
+      ``r``/``nrmse``    hourly fit, computed HERE (Python) — the frontend never
+                    recomputes class fit, matching the existing contract.
+      ``src``       provenance label for the actual map ("EIA-930").
+      ``note``      why the actual is absent, when it is.
+      ``classes``   the model classes summed into this panel.
+      ``label``     display label.
+
+    Imports publish the IMPORT-POSITIVE convention (positive = into the ISO):
+    the model's ``import`` klass is used as-is and EIA-930's export-positive
+    "Total interchange" is negated. See :data:`IMPORT_930_SERIES`.
+    """
+    out: dict[str, dict] = {}
+    # Panel -> the model classes that roll up to it. Non-fossil buckets take
+    # every non-fossil class of the bucket (taxonomy-driven, no string matching);
+    # imports are their own single-class panel.
+    panels: list[tuple[str, tuple[str, ...], tuple[str, ...], bool]] = [
+        (
+            panel,
+            tuple(c for c in classes_for_fuel930(panel) if c in _NONFOSSIL_KLASS),
+            series,
+            False,
+        )
+        for panel, series in NONFOSSIL_930_SERIES.items()
+    ]
+    panels.append((IMPORT_PANEL, (IMPORT_KLASS,), (IMPORT_930_SERIES,), True))
+
+    for panel, classes, series_names, negate_actual in panels:
+        present = [c for c in classes if c in model_hourly]
+        if not present:
+            continue  # the run does not dispatch this panel at all
+        model = np.zeros(hours)
+        for c in present:
+            s = _hourly_series(model_hourly[c], hours)
+            if s is not None:
+                model = model + np.nan_to_num(s)
+        # Actual: sum the bucket's series (storage has two); a bucket whose
+        # series are all missing/blank yields None, never an implied zero.
+        parts = [
+            _hourly_series(actual_930.get(name), hours)
+            for name in series_names
+            if not _actual_is_absent(actual_930.get(name))
+        ]
+        actual = None
+        if parts:
+            actual = np.zeros(hours)
+            for p in parts:
+                actual = actual + np.nan_to_num(p)
+            if negate_actual:
+                # 930 interchange is export-positive; publish import-positive.
+                actual = -actual
+        note = None
+        if actual is None:
+            note = (
+                f"EIA-930 reports no {panel} series for this BA-year — "
+                "model shown without an hourly actual."
+            )
+        # ONE decode window shared by both series (the MW-space guarantee).
+        stack = model if actual is None else np.concatenate([model, actual])
+        lo = float(np.nanmin(stack))
+        hi = float(np.nanmax(stack))
+        if hi <= lo:
+            hi = lo + 1.0
+        entry: dict = {
+            "m": _b64_affine(model, lo, hi),
+            "a": None if actual is None else _b64_affine(actual, lo, hi),
+            "lo": round(lo, 3),
+            "hi": round(hi, 3),
+            "mTwh": round(float(model.sum()) / 1e6, 4),
+            "aTwh": None if actual is None else round(float(actual.sum()) / 1e6, 4),
+            "r": None,
+            "nrmse": None,
+            "src": EIA930_SOURCE,
+            "note": note,
+            "classes": list(present),
+            "label": NONFOSSIL_PANEL_LABEL.get(panel, class_label(panel)),
+        }
+        if actual is not None:
+            if actual.std() > 0 and model.std() > 0:
+                entry["r"] = round(_pearson(model, actual), 3)
+            # _nrmse normalizes by the actual's MEAN, which is meaningless for a
+            # signed series that straddles zero (net interchange): use the MW
+            # SPAN there instead, and label it so the frontend can say which.
+            if negate_actual or float(actual.mean()) <= 0.0:
+                rng = float(actual.max() - actual.min())
+                if rng > 0:
+                    entry["nrmse"] = round(
+                        float(np.sqrt(((model - actual) ** 2).mean()) / rng), 3
+                    )
+                    entry["nrmseBasis"] = "range"
+            else:
+                entry["nrmse"] = round(_nrmse(model, actual), 3)
+                entry["nrmseBasis"] = "mean"
+        out[panel] = entry
+    return out
+
+
+def _assert_nonfossil_hourly_reconciles(
+    nfhr: dict[str, dict],
+    model_hourly: dict[str, np.ndarray],
+    fuel_rows: list[dict],
+    *,
+    iso: str,
+    year: int,
+    hours: int = _T,
+    tol_twh: float = 0.01,
+) -> None:
+    """Cross-check the ``nonfossilHr`` panels against the payload's own tables.
+
+    Two independent reconciliations, both cheap and both catching a real class of
+    silent error before a single pixel is trusted:
+
+    1. **Volume** — each panel's ``mTwh`` must equal the sum of its classes in
+       ``model_hourly``. Catches a bucket that dropped or double-counted a class.
+    2. **Imports sign** — the ``import`` panel is IMPORT-positive while the
+       ``interchange`` row of ``fuelRows`` is EXPORT-positive, so the two must be
+       exact negatives. This is the assertion that catches an inverted
+       interchange map, which is otherwise invisible (the magnitudes are right
+       and only the color is flipped).
+
+    Raises:
+        AssertionError: on a mismatch — a render-time stop, not a warning: a
+            wrong-signed or mis-summed panel would be published as a diagnostic
+            people then reason from.
+    """
+    for panel, entry in nfhr.items():
+        # Summed over the SAME length-coerced series the panel encoded, so this
+        # tests the bucket membership (did we sum the right classes?) and never
+        # trips over the 8760 truncate/extend policy the panel already applied.
+        want = (
+            sum(
+                float(np.nan_to_num(_hourly_series(model_hourly[c], hours)).sum())
+                for c in entry["classes"]
+            )
+            / 1e6
+        )
+        got = float(entry["mTwh"])
+        assert abs(got - want) <= tol_twh, (
+            f"{iso} {year}: nonfossilHr[{panel!r}] model volume {got:.4f} TWh "
+            f"does not reconcile to its classes {entry['classes']} "
+            f"({want:.4f} TWh)"
+        )
+    imp = nfhr.get(IMPORT_PANEL)
+    ix_row = next((r for r in fuel_rows if r.get("fuel") == "interchange"), None)
+    if imp is not None and ix_row is not None and ix_row.get("m") is not None:
+        # fuelRows publishes export-positive; this panel publishes
+        # import-positive. Exact negatives (to the rows' 2-dp rounding).
+        assert abs(float(imp["mTwh"]) + float(ix_row["m"])) <= 0.02, (
+            f"{iso} {year}: import panel {imp['mTwh']:+.4f} TWh (import-positive) "
+            f"is not the negative of the interchange fuelRow {ix_row['m']:+.2f} "
+            "TWh (export-positive) — the interchange sign convention is wrong"
+        )
+        if imp.get("aTwh") is not None and ix_row.get("b") is not None:
+            assert abs(float(imp["aTwh"]) + float(ix_row["b"])) <= 0.02, (
+                f"{iso} {year}: import panel actual {imp['aTwh']:+.4f} TWh is not "
+                f"the negative of the interchange fuelRow benchmark "
+                f"{ix_row['b']:+.2f} TWh — EIA-930 interchange sign is wrong"
+            )
 
 
 def _monthly_gwh(mw: np.ndarray) -> list[float]:
@@ -1736,6 +2061,21 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                     "basis": "full-plant",
                 },
             }
+            # ---- Non-fossil + interchange hourly panels (Charts-tab maps) ----
+            # POPULATE-ON-NEXT-RENDER, exactly like ``lmpDeltaHr`` below: only
+            # runs rendered after this field was added carry it, and the Charts
+            # tab lists the non-fossil classes off the payload's own keys, so
+            # every already-registered run stays valid and simply shows the
+            # fossil panels. ``mh`` (model hourly by class) and ``e`` (the EIA-930
+            # hourly series) are both already materialized above for the fuel
+            # table — this keeps them instead of collapsing them to annual
+            # scalars, which is why the field costs no new data read.
+            nfhr = build_nonfossil_hourly(mh, e, hours=_T)
+            if nfhr:
+                run_years[int(year)]["nonfossilHr"] = nfhr
+            _assert_nonfossil_hourly_reconciles(
+                nfhr, mh, fuel_rows, iso=meta.get("iso", "?"), year=int(year)
+            )
             # Model storage discharge throughput (TWh) for the run-page
             # storage diagnostic (ex-C5b, removed from the rubric v2.7) —
             # li-ion + pumped storage from this run's storage.parquet P1

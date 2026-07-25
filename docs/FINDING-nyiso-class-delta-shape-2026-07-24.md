@@ -10,6 +10,45 @@ read of an instrument. Everything below is a *named hypothesis with evidence*,
 not an applied fix (rules 1 / 11 / 21 / 23–25). No probe number consumed —
 `nyiso-74` stays free for the next SOLVE.
 
+> ### ⚠ CORRECTION 2026-07-25 — the nuclear row (rank 4 / §2 / action 3) is WITHDRAWN
+>
+> This document was written against a **defective EIA-930 nuclear benchmark**.
+> NYIS `NG: NUC` coded its filing gaps as an exact `0.0`: 1,275 h of 2023,
+> including one contiguous **1,179-hour Mar–Apr block** that this document's
+> derate detector read as an "actual Mar 13 + 50 d refuel outage". It never
+> happened. A parallel session diagnosed it the same afternoon and landed the fix
+> (`_ZERO_CODED_GAP_SERIES`, commit `d13a3f2`, ~27 min before this doc was
+> committed and therefore not reflected in it) — see
+> `docs/FINDING-nyiso-import-hour-assignment-and-nuclear-benchmark-2026-07-24.md`
+> §4, which reaches the opposite conclusion against NYISO's own hourly fuel-mix
+> posting.
+>
+> Regenerating this instrument's payload on 2026-07-25 against the repaired
+> benchmark gives, for nuclear:
+>
+> | year | model TWh | actual TWh (repaired) | net Δ | actual TWh (as published here) |
+> |---|---|---|---|---|
+> | 2023 | 27.489 | **27.457** | **+0.03** | 23.998 |
+> | 2024 | 26.958 | **26.955** | **+0.00** | 25.83 |
+> | 2025 | 28.381 | **28.273** | **+0.11** | 27.90 |
+>
+> The 3-year net over-run is **+0.14 TWh, not +5.02 TWh**. **NYISO nuclear is not
+> a refuel-calendar defect and action 3 below is closed** — the outage structure
+> is present in the model (§4 of the sibling finding measures 6–8 discrete MW
+> levels and a 74 % minimum). The residual hourly r (0.715) is what is left after
+> interpolation bridges a 1,179-hour block: it recovers the *energy* but not the
+> *shape*, so the map's nuclear signature is an artifact of the repair, not a
+> model error. Curating the NYISO fuel-mix posting into the clean seam would fix
+> the shape; that is a data-intake task needing owner authorization.
+>
+> **Everything else in this document reproduces exactly** against the repaired
+> benchmark and is unaffected — hydro r 0.638/0.582/0.428 (mean 0.55), imports
+> 0.474/0.488/0.395 (mean 0.45), other −0.622/0.189/−0.003 (mean −0.15), oil
+> 0.073/−0.012/0.084 (mean 0.05), and the solar flat-block defect of §3. The
+> ranked actions of §7 stand with nuclear struck. The canary that caught this is
+> `tests/test_nonfossil_hourly.py::test_known_nyiso_signatures`, whose pins were
+> repaired in the same commit as this correction.
+
 Dashboard: `docs/codebase-site/backcast-runs.html#iso=NYISO&run=2026-07-23-nyiso-72-netrev-margin`
 → **Charts** tab → CLASS selector → *Non-fossil & imports (EIA-930)*.
 
@@ -27,7 +66,7 @@ labels below are measured, not eyeballed.
 | 1 | **hydro** | **25.97** | −0.43 | 0.55 | 9 % / 50 % / **0.7 %** | **bang-bang day blocks** (not seasonal) | no hourly modulation band / energy budget on conventional hydro | **(b)** |
 | 2 | **imports** | **21.53** | +1.19 | 0.45 | **12 %** / 36 % / 0.0 % | **stable diurnal dipole** (over overnight, under at evening peak) | import ladder has no time-of-day schedule or evening ramp | **(b)** |
 | 3 | other (biomass+geo) | 7.74 | −2.66 | **−0.15** | 5 % / 87 % / 39 % | seasonal blocks, **anti-correlated** | must-run block vs a seasonally-dispatched real fleet | (b) |
-| 4 | **nuclear** | 7.46 | **+5.02** | 0.61 | **0.4 %** / **95 %** / 36 % | **multi-week vertical blocks, zero diurnal** | **refuel-outage windows misplaced / missing** | **(a)** |
+| 4 | ~~nuclear~~ **WITHDRAWN** | ~~7.46~~ | ~~+5.02~~ → **+0.14** | ~~0.61~~ → 0.70 | ~~0.4 % / 95 % / 36 %~~ | ~~multi-week vertical blocks~~ — a **zero-coded benchmark filing gap** | **nothing — the benchmark was wrong** (see the correction above) | — |
 | 5 | oil | 4.16 | −0.98 | 0.05 | 0.1 % / 95 % / 19 % | event blocks, uncorrelated | oil peakers dispatch on the wrong days | (b) |
 | 6 | solar | — | — | — | — | **no hourly actual; model is a FLAT block** | flat fallback CF (see §3) | **(c)+(a)** |
 | 7 | wind | 0.06 | −0.00 | **1.000** | — | **none — pinned** | nothing (see §6) | — |
@@ -40,7 +79,16 @@ until this session nothing on the dashboard could display it.
 
 ---
 
-## 2. Rank 4 — nuclear: the refuel outages are in the wrong place (and 2025 has none)
+## 2. Rank 4 — nuclear: ~~the refuel outages are in the wrong place~~ **WITHDRAWN 2026-07-25**
+
+> **This entire section is withdrawn.** Its "actual" column is a zero-coded
+> EIA-930 filing gap, not an outage — see the correction box at the top. The
+> 2023 "actual Mar 13 + 50 d" window does not exist in the repaired benchmark
+> (which shows exactly one sustained derate that year, Sep 02 + 6 d — the row
+> below that *was* real), and 2025's "model NONE" was never an error: the
+> repaired 2025 net Δ is +0.11 TWh. The section is kept unedited below as the
+> record of what the instrument showed on the defective input.
+
 
 The clearest single result, and it confirms the predicted signature exactly:
 h-o-d share **0.4 %** (no diurnal structure at all), d-o-y share **95 %**
@@ -172,17 +220,38 @@ map with a ±4 MW cap). Contrast ERCOT, where wind r = 0.992 with real structure
 
 ## 7. Ranked next actions (biggest first)
 
+*(Renumbered 2026-07-25: nuclear struck, see the correction box.)*
+
 1. **Hydro modulation band** — 25.97 TWh Σ|Δ|. Design an hourly energy-budget /
    release-bound mechanism for conventional hydro. Structural (b); own charter.
-2. **Import hourly schedule / evening ramp** — 21.53 TWh. First check for a
-   measured hourly seam schedule (would make it (a)); else a diurnal ladder.
-3. **Nuclear refuel calendar** — 7.46 TWh, +5.02 TWh net, and the cleanest fix
-   of the set: measured per-unit refuel windows, 2025 most urgent (none modelled).
+   Corroborated independently against NYISO's own fuel-mix posting (+1.20 / +0.96
+   / **−3.20** TWh, r 0.62 / 0.58 / 0.41) — both benchmarks agree it is real.
+2. **Import hour assignment** — 21.53 TWh. **Now specified**: the sibling
+   finding's §3 traces it to `derive_nyiso_import_tranches.py`'s Q-Q construction
+   `pi_k = Quantile_DA(1 − P[net_import > L_k])`, which imposes rank-1 coupling
+   between import depth and internal price where the measured joint correlation
+   is only +0.16 / +0.38 / +0.43, and which carries **no hour assignment at all**.
+   Measured hourly seam schedules DO exist in-repo
+   (`data/raw/NYISO/interface-flows/`, four "SCH -" external seams). Note the
+   sign: the model imports MORE overnight than the real system, so adding cheap
+   overnight depth moves the wrong way (that sub-lane is refuted). Rule 21: the
+   re-derivation commit cites method incorrectness, never the residual. Rule 1
+   warning: correcting it will make C3a 2023 *worse* and must not be reverted for
+   that. Also read that finding's §1 first — `interchange_shaping` is adjudicated
+   **rule-13 FORBIDDEN** as a keeper mechanism, so it is not the shortcut here.
+3. ~~**Nuclear refuel calendar**~~ — **CLOSED, not a defect.** The apparent
+   +5.02 TWh was a zero-coded benchmark filing gap, fixed in `d13a3f2`; the
+   repaired 3-year net Δ is +0.14 TWh.
 4. **Solar flat-CF fallback** — small TWh, but a *definite physical impossibility*
    and cheap to fix; likely affects other ISO-fuels with absent 930 series.
 5. **`other` anti-correlation (r = −0.15)** — 7.74 TWh; biomass/geothermal
    modelled as a flat must-run against a seasonally-dispatched real fleet.
 6. **Oil day-placement** — 4.16 TWh, r ≈ 0.05; lowest priority of the six.
+
+**Owed, unrelated to the ranking:** the keeper's committed `metrics.json`
+predates `d13a3f2`, so its NYISO C1/C4 nuclear numbers are scored against the
+defective benchmark. A **re-score from the existing bundle** (no re-solve) is
+owed — flagged in the sibling finding's §6 and still not done.
 
 ## 8. Cross-ISO note (not NYISO)
 

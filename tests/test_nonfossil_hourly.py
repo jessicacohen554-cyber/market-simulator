@@ -382,12 +382,28 @@ class TestAgainstCommittedKeeper(unittest.TestCase):
         Not a tuning target — a canary: if the keeper bundle or the 930 extract
         is ever swapped underneath, these move and the finding doc's numbers
         (docs/FINDING-nyiso-class-delta-shape-2026-07-24.md) go stale silently.
+
+        The nuclear pins were REPAIRED on 2026-07-25 and the canary is the reason
+        they were caught. They were first written against a pre-fix EIA-930
+        benchmark in which NYIS ``NG: NUC`` coded 1,275 h of 2023 filing gaps as
+        an exact 0.0 — including one 1,179-hour Mar-Apr block that read as a
+        50-day refuel outage that never happened. A parallel session landed
+        ``_ZERO_CODED_GAP_SERIES`` (commit d13a3f2) hours after these pins were
+        written, bridging those zeros and moving the 2023 benchmark
+        24.00 -> 27.46 TWh. Post-fix the model is within 0.03 TWh of the actual,
+        so nuclear is NOT a refuel-calendar defect — see
+        docs/FINDING-nyiso-import-hour-assignment-and-nuclear-benchmark-2026-07-24.md
+        §4. r stays modest (0.715) only because interpolation across a
+        1,179-hour block recovers the energy but not the shape.
         """
         mh = self._model_hourly(2023)
         panels = rch.build_nonfossil_hourly(mh, self._load930("NYISO", 2023))
         self.assertAlmostEqual(panels["nuclear"]["mTwh"], 27.489, places=2)
-        self.assertAlmostEqual(panels["nuclear"]["aTwh"], 23.998, places=2)
-        self.assertAlmostEqual(panels["nuclear"]["r"], 0.831, places=2)
+        self.assertAlmostEqual(panels["nuclear"]["aTwh"], 27.457, places=2)
+        self.assertAlmostEqual(panels["nuclear"]["r"], 0.715, places=2)
+        # Volume agreement post-repair: the delta map's nuclear signature is a
+        # SHAPE artifact of the bridged gap, not a missing outage window.
+        self.assertLess(abs(panels["nuclear"]["mTwh"] - panels["nuclear"]["aTwh"]), 0.1)
         # Imports: right on annual volume (~2%), wrong in every hour (r ~0.47).
         self.assertAlmostEqual(panels[rch.IMPORT_PANEL]["mTwh"], 23.923, places=2)
         self.assertAlmostEqual(panels[rch.IMPORT_PANEL]["aTwh"], 23.454, places=2)
