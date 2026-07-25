@@ -307,3 +307,28 @@ to depend only on the basis-independent quantities (prices, system totals) rathe
 than per-unit marginal-tie dispatch — a separate change to the economics that
 needs its own validation, not a warm-start change. Until then the forecast loop
 stays on intra-year warm-start (`MARKET_SIM_WARMSTART`, bit-neutral) only.
+
+**Status update (wave 4C, 2026-07-25): the screen-side blocker is closed; the
+flag is unchanged.** The "separate change to the economics" named above has now
+landed in two parts, so the two `Σ_t …·dispatch[i]` terms quoted at the top of
+this section are both stale:
+
+* the **energy margin** became the basis-independent attainable (pro-forma)
+  margin `max(0, price − mc, reserve) × pmax × availability` (earlier work, the
+  Potomac SOM net-revenue construction); and
+* the **attribute-revenue term** (EAC / RPS / §45U) — the last remaining
+  realized-dispatch reader — is now credited on attainable in-merit generation
+  `cap_mw × 1[price > mc]`, with §45U's gross-receipts phase-down taken on that
+  same attainable basis on both sides of its ratio
+  (`capacity_evolution/retirements.apply_economic_retirements`).
+
+The retire/keep decision is therefore a function of prices, `mc` and capacity
+only, and is invariant to any marginal-tie reshuffle — pinned by
+`tests/test_forecast_warmstart_tie_invariance.py`.
+
+This does **not** flip anything: `ScenarioConfig.xyear_cache` was not added,
+`runner.py` still passes `xyear_cache=None`, and the forecast path remains
+cold-only. Removing the mechanism that made warm start *non-neutral* is a
+precondition for the D-9 default flip, not the flip itself — that still needs
+its own full-horizon warm-vs-cold identical-trajectory A/B and owner sign-off,
+and no such A/B has been run.
