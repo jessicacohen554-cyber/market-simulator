@@ -8,6 +8,10 @@ via ``js/bc-data.js``):
   * ``frontend/data/backcast/manifest.js``     — ``window.BC.meta`` + ``window.BC.manifest``
   * ``frontend/data/backcast/benchmark.js``    — ``window.BC.benchGz`` (per-ISO gzip+base64)
   * ``frontend/data/backcast/completeness.js`` — ``window.BC.completeness``
+  * ``frontend/data/backcast/rubric-consts.js`` — ``window.BC.rubricConsts``, the C1
+    tolerance bands + gas/coal gate membership read straight out of
+    ``scripts/calibration_verdict.py`` (see ``scripts/lib/rubric_consts.py``).
+    The pages used to hand-mirror those numbers in JS; they no longer do.
 
 The old root dashboard shell (``backcast-results.html``) is retired — the file
 at repo root is now a static redirect stub to the codebase-site pages and is
@@ -39,6 +43,7 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
 from scripts.lib import backcast_artifacts as ba  # noqa: E402  (after sys.path insert)
+from scripts.lib import rubric_consts  # noqa: E402  (stdlib-only; lazy cv import)
 
 DATA = ba.DATA
 REGISTRY_DIR = ba.REGISTRY
@@ -230,6 +235,10 @@ def main() -> None:
     (out_data / "completeness.js").write_text(
         "window.BC=window.BC||{};window.BC.completeness=" + completeness_js + ";"
     )
+    # Scorer constants, generated from calibration_verdict's own module
+    # namespace so the pages can never re-acquire a hand-mirrored copy.
+    # Deterministic: identical bytes for unchanged scorer constants.
+    rubric_consts.write_rubric_consts_js(out_data)
     print(
         f"assembled backcast data at {out_data}: {len(entries)} runs, ISOs "
         f"{sorted(meta_by_iso)} (years per ISO: "
