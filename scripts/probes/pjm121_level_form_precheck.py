@@ -24,7 +24,7 @@ Pure diagnostic, no LP (rule 16). Falsification: if C only ever LOWERS bids, it
 is a level lever and cannot close a dispersion gap — the candidate dies here.
 
 Usage:
-    python scripts/probes/pjm121_level_form_precheck.py \\
+    python scripts/probes/pjm121_level_form_precheck.py \
         results/calibration/pjm119_overlay_restore --year 2025
 """
 
