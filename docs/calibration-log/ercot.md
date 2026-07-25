@@ -1074,6 +1074,21 @@ mechanism recovers the depth without repricing the year. Suggested replacement t
 in the draft (updated this session). Branch
 `claude/ercot-107-scarcity-tail-u9lopq`. Next number: ercot-109.
 
+> **Navigational note (added 2026-07-25) — rounds 109–111 have no entry in this file.**
+> The next entry below is ERCOT-112, so "next number: ercot-109" above reads as the
+> frontier when it is several rounds behind. A session that anchors on this file will
+> re-open closed lanes — that happened on 2026-07-25, when the **West/Panhandle topology
+> split** was chased despite having been refuted at **ERCOT-104** (2026-07-24): the
+> congestion rent is NODAL (station-to-station lines, mean shadow $3,387) not zonal
+> (interfaces $15), Panhandle is already its own zone, and no measured *zonal* import
+> limit exists, so there is nothing admissible to build (rule 11). Re-verified by
+> `scripts/probes/ercot104_west_congestion_nodal.py`; prior art agrees (Far_West split
+> REVERTED 2026-06, `docs/ercot-far-west-zone-split-2026-06.md`). Where 109–111 actually
+> live: `results/calibration/FINDING-ercot110-coal-dam-availability-2026-07-24.md`,
+> `FINDING-ercot111-coal-dispatch-economics-2026-07-24.md`, and the ercot109 scarcity-mix
+> HTML under `results/calibration/`. The frontier moved off the scarcity-tail family onto
+> the **coal** lane 110 → 111 → 112.
+
 **SCOPE CORRECTION (same session, after owner challenge).** The disposition above was
 initially written as "the 2023 tail is structurally bounded → STOP tuning → close via
 C6". That is **too broad** and has been corrected in place. What ERCOT-107/108 closed is
@@ -1159,3 +1174,17 @@ so the keeper is byte-unchanged; arming ERCOT is keeper-affecting and belongs to
 
 Keeper remains `2026-07-23-ercot100-netrev-margin-keeper`; `coal_econ_marginal_hr_bound`
 stays default-off. Branch `claude/ercot-112-coal-wind-hcowh2`. Next number: ercot-113.
+
+**Independent reproduction (2026-07-25, `claude/wave-4c-ercot-calibration-ocsm4m`).** A
+parallel session solved the baseline arm again from scratch — `replay_keeper.py` off arm
+T's `meta.json` with a single `--set coal_econ_marginal_hr_bound=false`, routed through
+both the explicit-kwarg and `prb_overrides` channels (`run_year` applies `prb_overrides`
+last — the ERCOT-65 stomp) — and reached **byte-identical** `hourly/` sidecars: all six
+files, all three years, matching SHA-256. The gate's numbers are reproducible, not a
+one-solve artifact. One caveat worth carrying forward: the replay guard flagged
+`highspy 1.14.0 → 1.15.1` / `pandas 3.0.3 → 3.0.5` in the fresh container, and the
+byte-identity holds only because the run was killed and re-solved on the bundle's pinned
+versions. Solver-version drift moves alternate optima among units tied at the marginal
+price, and this gate reads coal ratios to 3 dp and C3c to ±5 h — **pin the recorded
+versions before any A/B re-solve.** The duplicate bundle and its second registration were
+discarded rather than landed; this entry and its registered runs remain canonical.
