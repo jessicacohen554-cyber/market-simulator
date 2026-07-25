@@ -1,0 +1,463 @@
+diff --git a/scripts/lib/outage_detect.py b/scripts/lib/outage_detect.py
+index 4bde31e..0989464 100644
+--- a/scripts/lib/outage_detect.py
++++ b/scripts/lib/outage_detect.py
+@@ -23,6 +23,7 @@ and re-derive only on a source-data change.
+ 
+ from __future__ import annotations
+ 
++from dataclasses import dataclass
+ from pathlib import Path
+ 
+ import numpy as np
+@@ -30,8 +31,9 @@ import pandas as pd
+ 
+ # Repository root: this module lives at scripts/lib/outage_detect.py, so the
+ # repo is two directories up. Used only to resolve the EIA-930 net-load file for
+-# the revealed-availability mask (no market_sim import, so the lib stays usable
+-# regardless of the importing script's sys.path setup).
++# the revealed-availability mask and the merit-order guard's measured fuel-price
++# series (no market_sim import, so the lib stays usable regardless of the
++# importing script's sys.path setup).
+ _REPO = Path(__file__).resolve().parents[2]
+ 
+ # A sustained CF above this is a "real run"; below it (off, or low-output
+@@ -388,3 +390,438 @@ def _detect(cf: np.ndarray) -> list[tuple[int, int, float]]:
+         else:
+             i += 1
+     return out
++
++
++# ---------------------------------------------------------------------------
++# Merit-order guard: economic layup vs mechanical outage (neiso-64)
++# ---------------------------------------------------------------------------
++# `filter_revealed_outages` above keeps a down span when EITHER it is down
++# through >= MIN_INMERIT_HOURS local high-net-load hours OR it is a >= 5-day
++# full stop. Both branches were written on the premise the full-stop override
++# states outright — "economic idling backs down but does not fully stop for
++# weeks" — which is FALSE for a unit priced out of merit for weeks: a New
++# England gas CC in a high-basis winter simply does not start. A sustained
++# economic LAYUP satisfies both surviving branches, so it is booked as a
++# mechanical outage and its capacity is deleted from the availability envelope.
++# Measured consequence (results/calibration/FINDING-neiso63-campd-economic-
++# layup-2026-07.md): every ISO books 23-46% of its CC capacity-year as outage
++# against a real EFOR + planned-maintenance norm of ~10-15%.
++#
++# The guard is the fix frozen in docs/handoffs/campd-economic-layup-fix-
++# charter-2026-07.md section 3a. The phenomenon is fuel-economic, so the
++# discriminator is: a window is ECONOMIC LAYUP when the unit's own measured
++# short-run marginal cost sat ABOVE the revealed marginal cost of the capacity
++# that WAS running, for essentially the whole window.
++#
++#   SRMC_u(t) = HR_u x delivered_fuel_price(u, t)
++#   RCC(t)    = capacity-weighted MERIT_RCC_PCTL quantile of SRMC over the
++#               units MEASURED RUNNING at t (CEMS CF >= REAL_RUN_CF)
++#   layup     <=> #{t in window : SRMC_u(t) > RCC(t)} / #window >= MERIT_OOM_FRAC
++#
++# Every input is a measured physical/market quantity — CAMPD operation and heat
++# input, and delivered fuel prices (an explicitly admissible backcast input,
++# CLAUDE.md rule 13). There is no LMP, no cleared price, no cleared quantity and
++# no MWh/price residual anywhere in the construction (rules 11/26): the guard
++# reconciles the outage extract to its own measurement basis (rule 14), never to
++# a dispatch outcome (rule 13).
++#
++# Why not the self-referential variant (compare the window's fuel price to a
++# percentile of the unit's OWN running-hour price distribution): the unit's heat
++# rate cancels out of a within-unit percentile comparison, so it can only see
++# the fuel-cost-blowout half of out-of-merit. Probed and REJECTED — it fixed
++# NEISO winter but left summer untouched (1.93x -> 1.93x) and, in the mild 2024
++# winter, its gain sat inside the same-GW-days placebo band. Ranking against RCC
++# is what puts the heat rate back in; it is the only variant that moves all four
++# seasons. Common-mode / class-simultaneity discrimination and unit-frequency
++# filtering were ruled out earlier (FINDING doc); do not rebuild them.
++#
++# Identification (rule 23 — these re-derive only on a SOURCE-DATA change, never
++# because a residual moved): MERIT_RCC_PCTL and MERIT_OOM_FRAC are identified
++# JOINTLY across the ISOs that carry a published outage instrument, against that
++# published series alone. They are structural percentiles over per-ISO
++# self-referential distributions, so no scalar fitted on one ISO's residual is
++# carried into another (rule 24). The window-grain out-of-merit share is close
++# to binary (NEISO: p25 = 0.00, p75 = 1.00), so MERIT_OOM_FRAC is not
++# load-bearing: 0.70 -> 1.00 moves the NEISO veto count only 560 -> 412.
++MERIT_ORDER_GUARD_ENABLED: bool = False
++# Capacity-weighted quantile of running-unit SRMC that stands for the revealed
++# clearing cost. p90 rather than the max so a single reliability-committed or
++# ramping unit cannot set the band.
++MERIT_RCC_PCTL: float = 0.90
++# Share of a window's hours that must be out of merit for it to be layup.
++MERIT_OOM_FRAC: float = 0.90
++# Measured heat rates are clipped to this band against CEMS meter noise (a unit
++# metering heat input during a start with near-zero gross load prints an
++# absurd ratio). 4 MMBtu/MWh is below any real thermal unit; 20 is above any
++# unit that would ever be economic.
++MERIT_HR_MIN: float = 4.0
++MERIT_HR_MAX: float = 20.0
++
++# CAMPD primaryFuelInfo values treated as solid fuel (priced off the F923
++# delivered COAL ladder) and as pipeline gas (priced off the ISO delivered gas
++# hub). Anything else — oil, wood, process gas, "other" — has no admissible
++# delivered series here, so the unit is excluded from BOTH the RCC panel and the
++# guard and its windows are kept unchanged (charter D4, fail-safe).
++_MERIT_COAL_FUELS: frozenset[str] = frozenset({"coal", "coal refuse"})
++_MERIT_GAS_FUELS: frozenset[str] = frozenset(
++    {"pipeline natural gas", "natural gas", "other gas"}
++)
++
++_MERIT_GAS_BASIS_CSV = _REPO / "data" / "raw" / "gas_basis_by_iso_month.csv"
++_MERIT_HH_DAILY_CSV = _REPO / "data" / "raw" / "gas-prices" / "henry_hub_daily.csv"
++_MERIT_HH_MONTHLY_CSV = _REPO / "data" / "raw" / "gas-prices" / "henry_hub_monthly.csv"
++_MERIT_F923_COSTS = (
++    _REPO / "data" / "raw" / "_processed-legacy" / "eia923_monthly_fuel_costs.parquet"
++)
++_MERIT_UNIT_LEVEL_DIR = _REPO / "data" / "raw" / "campd-unit-level"
++
++
++def delivered_gas_price_hourly(iso: str, year: int, n_hours: int) -> np.ndarray | None:
++    """Measured delivered gas hub price ($/MMBtu) on the year clock, or ``None``.
++
++    ``Henry Hub daily``, re-centred within each month onto the measured
++    ``Henry Hub monthly`` mean, plus the ISO's measured monthly basis
++    (``data/raw/gas_basis_by_iso_month.csv`` — all six ISOs, 2015-2026). The
++    re-centring makes the daily leg mean-preserving at the monthly hub level, so
++    only the within-month *shape* is added and the monthly delivered level is
++    exactly the measured one. Both legs are measured EIA gas-market series.
++
++    Returns ``None`` when either file is missing or the ISO-year carries no
++    basis rows — the guard is then INERT for that ISO-year (charter D4). Henry
++    Hub is deliberately NEVER substituted for a missing basis: for NEISO the
++    basis IS the signal, and a Henry-Hub fallback would silently switch the test
++    off while appearing to run.
++    """
++    if not (_MERIT_HH_DAILY_CSV.exists() and _MERIT_HH_MONTHLY_CSV.exists()):
++        return None
++    if not _MERIT_GAS_BASIS_CSV.exists():
++        return None
++    basis_f = pd.read_csv(_MERIT_GAS_BASIS_CSV)
++    basis_f = basis_f[
++        (basis_f["iso"] == iso.upper()) & (basis_f["year"].astype(int) == int(year))
++    ]
++    if basis_f.empty:
++        return None
++    basis = {
++        int(r.month): float(r.basis_usd_mmbtu)
++        for r in basis_f.itertuples(index=False)
++        if np.isfinite(r.basis_usd_mmbtu)
++    }
++    hhm_f = pd.read_csv(_MERIT_HH_MONTHLY_CSV)
++    hhm_f = hhm_f[hhm_f["year"].astype(int) == int(year)]
++    hh_month = {
++        int(r.year_month): float(r.price)
++        for r in hhm_f.rename(
++            columns={"month": "year_month", "price_usd_mmbtu": "price"}
++        ).itertuples(index=False)
++    }
++    hhd = pd.read_csv(_MERIT_HH_DAILY_CSV, parse_dates=["date"])
++    hhd = hhd[hhd["date"].dt.year == int(year)]
++    if hhd.empty or not hh_month:
++        return None
++    clock = pd.date_range(f"{year}-01-01", periods=n_hours, freq="h")
++    days = pd.date_range(f"{year}-01-01", f"{year}-12-31", freq="D")
++    daily = (
++        hhd.set_index("date")["price_usd_mmbtu"]
++        .reindex(days)
++        .ffill()
++        .bfill()
++        .to_numpy(dtype=float)
++    )
++    out_day = np.full(len(days), np.nan)
++    for m in range(1, 13):
++        sel = days.month == m
++        hm, bm = hh_month.get(m), basis.get(m)
++        if hm is None or bm is None or not sel.any():
++            continue
++        dm = float(np.nanmean(daily[sel]))
++        # Mean-preserving re-centring: the daily leg contributes exactly hm to
++        # the month's mean, so the delivered monthly level is the measured one.
++        leg = daily[sel] * (hm / dm) if dm > 0 else np.full(int(sel.sum()), hm)
++        out_day[sel] = leg + bm
++    if not np.isfinite(out_day).any():
++        return None
++    day_idx = (clock.normalize() - pd.Timestamp(f"{year}-01-01")).days.to_numpy()
++    day_idx = np.clip(day_idx, 0, len(days) - 1)
++    return out_day[day_idx]
++
++
++def _delivered_coal_price_tables(
++    iso_states: frozenset[str], year: int
++) -> tuple[dict, dict, dict] | None:
++    """F923 delivered COAL price ladder: ``(plant-month, state-month, iso-month)``.
++
++    Each rung is the measured EIA-923 delivered cost ($/MMBtu); the state and
++    ISO rungs are volume-weighted over the reporting plants. Consumed
++    plant → state → ISO, so a plant that does not itself file still prices off
++    real regional delivered coal. ``None`` when the F923 cache is absent.
++    """
++    if not _MERIT_F923_COSTS.exists():
++        return None
++    d = pd.read_parquet(_MERIT_F923_COSTS)
++    d = d[(d["fuel_group"] == "Coal") & (d["year"].astype(int) == int(year))]
++    if d.empty:
++        return None
++    plant = {
++        (int(r.plant_id), int(r.month)): float(r.price_per_mmbtu)
++        for r in d.itertuples(index=False)
++        if np.isfinite(r.price_per_mmbtu)
++    }
++
++    def _vw(frame: pd.DataFrame, keys: list[str]) -> dict:
++        g = frame.assign(num=frame["price_per_mmbtu"] * frame["quantity"]).groupby(keys)
++        s = g["num"].sum() / g["quantity"].sum().replace(0, np.nan)
++        return {
++            (k if len(keys) == 1 else tuple(k)): float(v)
++            for k, v in s.items()
++            if np.isfinite(v)
++        }
++
++    state = {(str(k[0]), int(k[1])): v for k, v in _vw(d, ["state", "month"]).items()}
++    in_iso = d[d["state"].isin(iso_states)]
++    iso_m = (
++        {int(k): v for k, v in _vw(in_iso, ["month"]).items()}
++        if not in_iso.empty
++        else {}
++    )
++    return plant, state, iso_m
++
++
++@dataclass(frozen=True)
++class MeritOrderPanel:
++    """Measured merit-order state for one ISO-year (the guard's whole input).
++
++    ``rcc`` is the revealed clearing cost on the year clock — the
++    capacity-weighted :data:`MERIT_RCC_PCTL` quantile of ``SRMC`` over the units
++    MEASURED RUNNING that hour, ``NaN`` where no running unit could be priced.
++    ``srmc`` holds each identified unit's own ``HR x delivered price`` series on
++    the same clock. Both are built only from CAMPD operation/heat input and
++    delivered fuel prices.
++
++    A unit absent from ``srmc`` is unidentified — no measured heat rate, no
++    delivered price for its fuel, or cogeneration (measured non-zero CAMPD
++    ``steamLoad``: heat-driven, so it is not economically dispatched and carries
++    no merit information). Unidentified units are excluded from the RCC panel
++    AND from the guard, so their windows are always kept (charter D4).
++    """
++
++    iso: str
++    year: int
++    rcc: np.ndarray
++    srmc: dict[tuple[int, str], np.ndarray]
++
++    def out_of_merit_share(
++        self, key: tuple[int, str], start: int, stop: int
++    ) -> float | None:
++        """Share of hours in ``[start, stop)`` where the unit was out of merit.
++
++        ``None`` when the unit is unidentified or the span carries no hour with
++        both a priced unit SRMC and a defined RCC.
++        """
++        s = self.srmc.get((int(key[0]), str(key[1])))
++        if s is None:
++            return None
++        lo, hi = max(0, int(start)), min(len(self.rcc), int(stop))
++        if hi <= lo:
++            return None
++        unit, ref = s[lo:hi], self.rcc[lo:hi]
++        ok = np.isfinite(unit) & np.isfinite(ref)
++        n = int(ok.sum())
++        if n == 0:
++            return None
++        return float((unit[ok] > ref[ok]).sum()) / n
++
++    def is_economic_layup(
++        self, key: tuple[int, str], start: int, stop: int, frac: float = MERIT_OOM_FRAC
++    ) -> bool:
++        """True when the span is ECONOMIC LAYUP rather than a mechanical outage.
++
++        Fail-safe: an unidentified unit or an unpriceable span returns ``False``
++        (the window is kept), so the guard can only ever REMOVE windows it has
++        positive measured evidence against.
++        """
++        share = self.out_of_merit_share(key, start, stop)
++        return share is not None and share >= float(frac)
++
++
++def build_merit_order_panel(
++    iso: str,
++    year: int,
++    n_hours: int,
++    states: tuple[str, ...] | list[str],
++    rcc_pctl: float = MERIT_RCC_PCTL,
++) -> MeritOrderPanel | None:
++    """Build the ISO-year :class:`MeritOrderPanel` from measured CAMPD + fuel.
++
++    Self-contained by design: it re-reads the CAMPD unit-level parquets for
++    ``states`` rather than taking the caller's frames, so the guard never
++    depends on how a particular deriver assembled its fleet, and it needs no
++    EIA-860 join. Per unit, entirely from CAMPD:
++
++    * **capacity basis** — the unit's own measured peak ``grossLoad`` for the
++      year. Used only for the running test and for capacity-weighting the RCC
++      quantile, both rank statistics, so the measured peak is a sufficient
++      denominator and no nameplate join is required.
++    * **running** — ``grossLoad / peak >= REAL_RUN_CF``, the same revealed-run
++      threshold the detectors above use.
++    * **heat rate** — ``sum(heatInput) / sum(grossLoad)`` over the unit's
++      running hours, clipped to ``[MERIT_HR_MIN, MERIT_HR_MAX]``. A unit with
++      fewer than :data:`MIN_REAL_RUN_HOURS` running hours has no identified heat
++      rate and is dropped (charter D4).
++    * **fuel** — ``primaryFuelInfo``: solid fuel prices off the F923 delivered
++      coal ladder, pipeline gas off the ISO delivered gas hub, anything else is
++      dropped.
++    * **cogeneration** — any non-zero measured ``steamLoad`` in the year. Keyed
++      on the measured physical quantity, not on a class name (CLAUDE.md rule 17).
++
++    Returns ``None`` when the ISO-year cannot be identified at all (no CEMS
++    files, no priceable unit, or no hour with a defined RCC) — the caller then
++    leaves every window untouched and the extract is byte-identical.
++    """
++    frames = []
++    for st in states:
++        path = _MERIT_UNIT_LEVEL_DIR / f"{st}_{year}.parquet"
++        if not path.exists():
++            continue
++        frames.append(
++            pd.read_parquet(
++                path,
++                columns=[
++                    "stateCode",
++                    "facilityId",
++                    "unitId",
++                    "date",
++                    "hour",
++                    "grossLoad",
++                    "steamLoad",
++                    "heatInput",
++                    "primaryFuelInfo",
++                ],
++            )
++        )
++    if not frames:
++        return None
++    c = pd.concat(frames, ignore_index=True)
++    c["facilityId"] = pd.to_numeric(c["facilityId"], errors="coerce")
++    c = c.dropna(subset=["facilityId"])
++    c["facilityId"] = c["facilityId"].astype(int)
++    c["unitId"] = c["unitId"].astype(str)
++    c["date"] = pd.to_datetime(c["date"])
++    c["hour"] = pd.to_numeric(c["hour"], errors="coerce")
++    c = c.dropna(subset=["hour"])
++    for col in ("grossLoad", "steamLoad", "heatInput"):
++        c[col] = pd.to_numeric(c[col], errors="coerce").fillna(0.0)
++    c["_h"] = (
++        (c["date"] - pd.Timestamp(f"{year}-01-01")).dt.days * 24 + c["hour"].astype(int)
++    ).to_numpy()
++    c = c[(c["_h"] >= 0) & (c["_h"] < n_hours)]
++    if c.empty:
++        return None
++
++    gas_px = delivered_gas_price_hourly(iso, year, n_hours)
++    coal_tables = _delivered_coal_price_tables(frozenset(str(s) for s in states), year)
++    month_of = pd.date_range(
++        f"{year}-01-01", periods=n_hours, freq="h"
++    ).month.to_numpy()
++
++    srmc: dict[tuple[int, str], np.ndarray] = {}
++    cap: dict[tuple[int, str], float] = {}
++    running: dict[tuple[int, str], np.ndarray] = {}
++    for (fid, uid), g in c.groupby(["facilityId", "unitId"], observed=True):
++        gross = np.zeros(n_hours, dtype=float)
++        heat = np.zeros(n_hours, dtype=float)
++        steam = np.zeros(n_hours, dtype=float)
++        hi = g["_h"].to_numpy(dtype=int)
++        np.add.at(gross, hi, g["grossLoad"].to_numpy(dtype=float))
++        np.add.at(heat, hi, g["heatInput"].to_numpy(dtype=float))
++        np.add.at(steam, hi, g["steamLoad"].to_numpy(dtype=float))
++        if steam.any():
++            continue  # cogeneration: heat-driven, carries no merit information
++        peak = float(gross.max())
++        if peak <= 0.0:
++            continue
++        run = (gross / peak) >= REAL_RUN_CF
++        if int(run.sum()) < MIN_REAL_RUN_HOURS:
++            continue
++        gl = float(gross[run].sum())
++        if gl <= 0.0:
++            continue
++        hr = float(np.clip(heat[run].sum() / gl, MERIT_HR_MIN, MERIT_HR_MAX))
++        fuel = str(g["primaryFuelInfo"].iloc[0]).strip().lower()
++        if fuel in _MERIT_COAL_FUELS:
++            if coal_tables is None:
++                continue
++            plant_t, state_t, iso_t = coal_tables
++            st = str(g["stateCode"].iloc[0])
++            px = np.array(
++                [
++                    plant_t.get((int(fid), int(m)))
++                    or state_t.get((st, int(m)))
++                    or iso_t.get(int(m))
++                    or np.nan
++                    for m in month_of
++                ],
++                dtype=float,
++            )
++        elif fuel in _MERIT_GAS_FUELS:
++            if gas_px is None:
++                continue
++            px = gas_px
++        else:
++            continue
++        if not np.isfinite(px).any():
++            continue
++        srmc[(int(fid), str(uid))] = hr * px
++        cap[(int(fid), str(uid))] = peak
++        running[(int(fid), str(uid))] = run
++    if not srmc:
++        return None
++
++    keys = sorted(srmc)
++    s_mat = np.vstack([srmc[k] for k in keys])  # (n_units, n_hours)
++    r_mat = np.vstack([running[k] for k in keys])
++    w_vec = np.array([cap[k] for k in keys], dtype=float)
++    # Capacity-weighted rcc_pctl quantile of SRMC over the RUNNING units, every
++    # hour at once. Units that are off (or unpriced) that hour are pushed to the
++    # top of the sort with +inf and carry zero weight, so they can never be
++    # selected. Vectorised over hours: the per-hour Python loop this replaces is
++    # a 3-order-of-magnitude cost on a six-ISO three-year re-derive.
++    on = r_mat & np.isfinite(s_mat)
++    s_sort = np.where(on, s_mat, np.inf)
++    order = np.argsort(s_sort, axis=0, kind="stable")
++    s_sorted = np.take_along_axis(s_sort, order, axis=0)
++    w_sorted = np.take_along_axis(np.where(on, w_vec[:, None], 0.0), order, axis=0)
++    total = w_sorted.sum(axis=0)
++    live = total > 0.0
++    cum = np.cumsum(w_sorted, axis=0)
++    # First row whose cumulative weight share reaches the quantile. argmax on a
++    # boolean picks the first True; an all-False column can only occur where
++    # total == 0, which `live` already masks out.
++    hit = np.argmax(cum >= rcc_pctl * np.where(live, total, 1.0), axis=0)
++    rcc = np.where(live, np.take_along_axis(s_sorted, hit[None, :], axis=0)[0], np.nan)
++    rcc = np.where(np.isfinite(rcc), rcc, np.nan)
++    if not np.isfinite(rcc).any():
++        return None
++    return MeritOrderPanel(iso=iso.upper(), year=int(year), rcc=rcc, srmc=srmc)
++
++
++def filter_merit_order_layup(
++    windows: list[tuple[int, int]],
++    panel: MeritOrderPanel | None,
++    facility_id: int,
++    unit_id: object,
++    frac: float = MERIT_OOM_FRAC,
++) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
++    """Split ``windows`` into ``(mechanical, economic_layup)``.
++
++    ``panel`` ``None`` (guard off, or an ISO-year the guard could not identify)
++    returns every window as mechanical and an empty layup list — byte-inert.
++    """
++    if panel is None:
++        return list(windows), []
++    key = (int(facility_id), str(unit_id))
++    mech: list[tuple[int, int]] = []
++    layup: list[tuple[int, int]] = []
++    for s, e in windows:
++        (layup if panel.is_economic_layup(key, s, e, frac) else mech).append((s, e))
++    return mech, layup
