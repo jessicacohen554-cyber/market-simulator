@@ -1,0 +1,193 @@
+diff --git a/scripts/data/derive_campd_unit_outages.py b/scripts/data/derive_campd_unit_outages.py
+index b93b1d7..c74b65e 100644
+--- a/scripts/data/derive_campd_unit_outages.py
++++ b/scripts/data/derive_campd_unit_outages.py
+@@ -98,11 +98,15 @@ from scripts.lib.outage_detect import (  # noqa: E402
+     FULL_STOP_OVERRIDE_CF,
+     FULL_STOP_OVERRIDE_DAYS,
+     HIGH_LOAD_PCTL,
++    MERIT_OOM_FRAC,
++    MERIT_RCC_PCTL,
+     MIN_INMERIT_HOURS,
+     ST_GAS_CF_PEAK,
+     WINDOW_DAYS,
++    build_merit_order_panel,
+     detect_outages,
+     detect_outages_eventbased,
++    filter_merit_order_layup,
+     filter_revealed_outages,
+     high_load_mask,
+ )
+@@ -860,6 +864,37 @@ def main() -> None:
+         "default — landed as backup only. The standard extract is byte-unchanged "
+         "when this flag is absent.",
+     )
++    ap.add_argument(
++        "--merit-order-guard",
++        action="store_true",
++        help="DEFAULT-OFF: apply the merit-order guard, which reclassifies a "
++        "detected window as ECONOMIC LAYUP (not a mechanical outage) when the "
++        "unit's measured SRMC — CAMPD heat rate x delivered fuel price — sat "
++        "above the revealed marginal cost of the capacity that WAS running for "
++        "at least --merit-oom-frac of the window. Layup windows leave the "
++        "availability envelope (an economically idle unit is AVAILABLE; the LP "
++        "declines it on its own economics) and are written to the labelled "
++        "companion campd-unit-outages-layup[-{ISO}].csv, which no loader reads "
++        "by default. Fixes the detector booking 23-46%% of every ISO's CC "
++        "capacity-year as outage against a real EFOR+planned norm of ~10-15%% "
++        "(docs/handoffs/campd-economic-layup-fix-charter-2026-07.md). The "
++        "standard extract is byte-identical when this flag is absent.",
++    )
++    ap.add_argument(
++        "--merit-oom-frac",
++        type=float,
++        default=MERIT_OOM_FRAC,
++        help="Merit-order guard: share of a window's hours that must be out of "
++        f"merit for it to be reclassified as layup (default {MERIT_OOM_FRAC}).",
++    )
++    ap.add_argument(
++        "--merit-rcc-pctl",
++        type=float,
++        default=MERIT_RCC_PCTL,
++        help="Merit-order guard: capacity-weighted quantile of running-unit "
++        "SRMC that stands for the revealed clearing cost (default "
++        f"{MERIT_RCC_PCTL}).",
++    )
+     ap.add_argument(
+         "--eia923-outage-ratio",
+         type=float,
+@@ -1012,6 +1047,14 @@ def main() -> None:
+ 
+     states = campd.states_for_iso(iso)
+     rows: list[dict] = []
++    # Windows the merit-order guard reclassifies as economic layup. Always
++    # defined so the row sink below is unconditional; stays empty (and no
++    # companion file is written) unless --merit-order-guard is passed.
++    layup_rows: list[dict] = []
++    # year -> MeritOrderPanel. Built once per year from the measured CAMPD
++    # operation of the WHOLE ISO fleet (not just the units with windows), so the
++    # revealed marginal cost is set by the capacity that was actually running.
++    merit_panels: dict[int, object] = {}
+     summary: list[tuple] = []
+     # (year, clock length) -> in-merit (system-tight) hour mask.
+     inmerit_cache: dict[tuple[int, int], np.ndarray | None] = {}
+@@ -1023,6 +1066,30 @@ def main() -> None:
+             df = _load_unit_year(state, year)
+             if df.empty:
+                 continue
++            # Merit-order panel for the ISO-year, built once and shared across
++            # every state pass. Indexed from Jan 1 on the FULL calendar year, so
++            # it stays aligned under a state's clipped in-progress-year clock
++            # (hour i means the same wall-clock hour in both).
++            merit_panel = None
++            if args.merit_order_guard and not (
++                args.short_windows or args.partial_windows
++            ):
++                if year not in merit_panels:
++                    n_full = len(
++                        pd.date_range(f"{year}-01-01", f"{year}-12-31 23:00", freq="h")
++                    )
++                    merit_panels[year] = build_merit_order_panel(
++                        iso, year, n_full, states, args.merit_rcc_pctl
++                    )
++                    print(
++                        f"  merit-order panel {iso} {year}: "
++                        + (
++                            "UNIDENTIFIED (guard inert this year)"
++                            if merit_panels[year] is None
++                            else f"{len(merit_panels[year].srmc)} priced units"
++                        )
++                    )
++                merit_panel = merit_panels[year]
+             # Publication horizon: last date this state-year extract covers.
+             # A completed year runs to Dec 31 (clock unchanged); an
+             # in-progress year (CAMPD posts quarterly) is clipped here so the
+@@ -1325,12 +1392,33 @@ def main() -> None:
+                         )
+                         if not windows:
+                             continue
++                    # Merit-order guard (charter campd-economic-layup-fix,
++                    # section 3a): split off the spans the unit spent OUT OF
++                    # MERIT — measured SRMC (CAMPD heat rate x delivered fuel
++                    # price) above the revealed marginal cost of the capacity
++                    # that WAS running, for >= MERIT_OOM_FRAC of the span. Those
++                    # are economic LAYUP, not mechanical unavailability: the unit
++                    # is available and the LP must decline it on its own
++                    # economics, so they leave the availability envelope and are
++                    # written to the labelled companion file instead. No-op (and
++                    # byte-inert) without --merit-order-guard, and fail-safe for
++                    # any unit the panel could not identify.
++                    layup_windows: list[tuple[int, int]] = []
++                    if merit_panel is not None:
++                        windows, layup_windows = filter_merit_order_layup(
++                            windows, merit_panel, int(fac_id), uid, args.merit_oom_frac
++                        )
++                        if not windows and not layup_windows:
++                            continue
+                     out_days = 0.0
+-                    for s, e in windows:
++                    for s, e, sink in [(s, e, rows) for s, e in windows] + [
++                        (s, e, layup_rows) for s, e in layup_windows
++                    ]:
+                         start = clock[s]
+                         last = clock[e - 1]
+                         duration_days = round((e - s) / 24.0, 1)
+-                        out_days += duration_days
++                        if sink is rows:
++                            out_days += duration_days
+                         peers = sum(1 for o in ran if o != uid)
+                         row = {
+                             "facility_name": fac_name,
+@@ -1358,7 +1446,15 @@ def main() -> None:
+                             # bin over the window (partial derate, not a full
+                             # stop).
+                             row["derate_factor"] = round(plateau_factors[(s, e)], 3)
+-                        rows.append(row)
++                        if sink is layup_rows:
++                            # The measured evidence for the reclassification, so
++                            # the companion file is auditable on its own.
++                            row["out_of_merit_share"] = round(
++                                merit_panel.out_of_merit_share((int(fac_id), uid), s, e)
++                                or 0.0,
++                                3,
++                            )
++                        sink.append(row)
+                     if out_days > 0:
+                         summary.append(
+                             (
+@@ -1468,6 +1564,35 @@ def main() -> None:
+     )
+     out.to_csv(args.out, index=False)
+ 
++    if args.merit_order_guard:
++        # Labelled companion: the windows the guard reclassified as economic
++        # layup, same schema plus the measured out-of-merit share that carried
++        # the call. No loader reads it — it is the audit trail and the
++        # validation series (charter D2), so the reclassification is never a
++        # silent deletion.
++        out_p = Path(str(args.out))
++        # Canonical name -> campd-unit-outages-layup[-{ISO}].csv; any other
++        # --out (a probe path) just gets a "-layup" suffix. Never the same file
++        # as the extract: a collision would silently overwrite the deliverable.
++        layup_name = (
++            out_p.name.replace("campd-unit-outages", "campd-unit-outages-layup", 1)
++            if "campd-unit-outages" in out_p.name
++            else f"{out_p.stem}-layup{out_p.suffix}"
++        )
++        layup_path = out_p.with_name(layup_name)
++        if layup_path.resolve() == out_p.resolve():
++            raise SystemExit(
++                f"merit-order guard: layup companion path collides with --out "
++                f"({out_p}); refusing to overwrite the extract"
++            )
++        lay = pd.DataFrame(layup_rows, columns=[*cols, "out_of_merit_share"])
++        lay = lay.sort_values(["facility_id", "unit_id", "outage_start"])
++        lay.to_csv(layup_path, index=False)
++        print(
++            f"\nmerit-order guard: reclassified {len(lay)} windows as economic "
++            f"layup -> {layup_path}"
++        )
++
+     label = "partial-derate plateau" if args.partial_windows else "unit-outage"
+     print(f"\nwrote {len(out)} {label} windows to {args.out}\n")
+     print(
