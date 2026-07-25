@@ -1,0 +1,177 @@
+# CLAUDE.md rule history — numbering, amendment genealogy, incident record
+
+**Status: RECORD (living).** This file is the canonical home for the *stories*
+behind `CLAUDE.md`'s Non-Negotiable Rules: how the rules are numbered and cited,
+which owner amendments changed which rule and when, and the incidents that
+produced a rule.
+
+**It is not a source of norms.** Every binding sentence — every cap, gate name,
+flag name, enforcement pointer and admissibility test — lives in `CLAUDE.md`.
+If this file and `CLAUDE.md` ever disagree about what is *required*, `CLAUDE.md`
+governs and this file is the one that is wrong.
+
+---
+
+## 1. How to cite a rule
+
+Each rule carries a **stable inline ID** at its head (`[R-STRUCT]`,
+`[R-VECTOR]`, … `[R-HOLDOUT]` for rule 22, `[R-PUSH]` for rule 27) *alongside*
+its ordinal. Both are valid citations:
+
+- **Prefer the ID** in new code comments, docs and handoffs — it survives any
+  future insertion.
+- **Ordinals are never renumbered.** Hundreds of existing citations across the
+  repo say "rule N", and renumbering would silently repoint every one of them.
+  A new rule is appended; a retired rule keeps its ordinal.
+
+The IDs were added 2026-07-25 (Wave 5B of the refactor-consolidation lane) in an
+additive-only commit, before any text was moved, precisely so that the slimming
+commit had stable anchors to point at.
+
+## 2. Audit numbering — "audit rule N" maps to CLAUDE.md rule N+1
+
+`CLAUDE.md` rules **17–26** are the protective rules from
+`docs/model-legitimacy-audit-2026-07.md` §8, where they are numbered **16–25**.
+The offset exists because `CLAUDE.md` gained rule 16 (all-years-one-bundle,
+`[R-ALLYEARS]`) *after* the audit was written. So a doc or code comment that
+cites "audit rule N" maps to **rule N+1** in `CLAUDE.md`:
+
+| audit §8 | CLAUDE.md | ID |
+|---|---|---|
+| rule 16 | rule 17 | `[R-FLOOR-WINDOW]` |
+| rule 17 | rule 18 | `[R-PHYSICS]` |
+| rule 18 | rule 19 | `[R-ONE-MECH]` |
+| rule 19 | rule 20 | `[R-FORCED-BUDGET]` |
+| rule 20 | rule 21 | `[R-DOF]` |
+| rule 21 | rule 22 | `[R-HOLDOUT]` |
+| rule 22 | rule 23 | `[R-FROZEN-DERIVE]` |
+| rule 23 | rule 24 | `[R-REGISTRY]` |
+| rule 24 | rule 25 | `[R-ISO-SCOPE]` |
+| rule 25 | rule 26 | `[R-DELETE]` |
+
+Older code comments predate the offset and can cite either scheme — e.g. the
+rubric's C8 provenance clause refers to the no-floor-without-a-window rule as
+"rule 12" (its number in a still-earlier revision) where the current file calls
+it rule 17 / `[R-FLOOR-WINDOW]`. When a citation is ambiguous, resolve it by the
+rule's *text*, not its number, and prefer the stable ID going forward.
+
+Rule 22 (`[R-HOLDOUT]`) additionally supersedes the audit's original
+D-6/rule-21 wording — see §4 below.
+
+---
+
+## 3. Rule 20 `[R-FORCED-BUDGET]` — forced-energy budget
+
+The rule's normative text (the 15 % peaker / 30 % merchant caps, the 2 %
+materiality floor, and the grounded-above-budget escalation on D-4 provenance +
+D-1 shape) is in `CLAUDE.md`. Its **amendment narratives are owned by the
+calibration rubric**, which is where the scorer-side definitions live:
+`docs/calibration-determination-rubric.md` §C8 and §9 (version history).
+
+- **Rubric v2.1 — owner amendments 2026-07-06.** Two changes touching this rule.
+  (a) The **C8 peaker cap was raised 10 % → 15 %**, amending CLAUDE.md rule 20
+  in place; the rubric records explicitly that *no external anchor exists for
+  either value* — it is an owner risk-tolerance setting, logged as such.
+  (b) A **materiality floor** was added to C7 *and* C8: the protective
+  shape/forced-share gates score only classes whose annual energy — taken as
+  `max(model, actual)` so forcing cannot self-exempt a class — is **≥ 2 % of
+  total ISO load**. Smaller classes are still reported by the D-1/D-2
+  diagnostics but never gated; the owner's rationale was that no structural work
+  should be spent making a trivial class hit an r/CV or unforced target. This
+  superseded the same-day C7-only 2.5 % cut landed by the L-15 lane
+  (`f68ffed`/`29eafdf`): scope widened to C7+C8, X held at 2 % (owner-confirmed)
+  so CAISO CT (2.1–2.3 % of load) and every PJM/MISO ST_GAS year stay gated.
+  Effects at amendment are itemized in the rubric's v2.1 entry (ERCOT and PJM C8
+  clear; NYISO CT and NEISO C7 become immaterial-skips; the caiso-42 flagship
+  CAISO C7/C8 CT fails stand).
+
+- **Rubric v2.2 — owner amendment 2026-07-07, grounded-above-budget
+  escalation.** The caps and the materiality floor were left **unchanged**; what
+  changed is that a material class *above* its cap is no longer an automatic
+  FAIL but escalates to a conditional pass on provenance (D-4 off-window
+  binding) + shape (D-1 diurnal profile). The reasoning the owner recorded:
+  forcing can be legitimate past the budget when it is a real grid/RA/AS driver
+  that reproduces the observed dispatch — *as much as needed* may be forced on a
+  class that is structurally grounded and shape-faithful — so what the gate
+  should target is forcing whose **window or shape doesn't match reality** (the
+  "forcing variables are wrong" signal), not the raw share. Because every signal
+  is read from the committed `legitimacy_diagnostics.json`, the change is
+  scorer-only: no re-solve, no bundle regen, and existing keepers re-score in
+  place, with C8 only ever *relaxing* (below-cap unchanged, above-cap gains a
+  pass-path). Effect at amendment: no keeper flipped — CAISO-58's CT_PEAKER
+  (`ra_mustoffer_bridge`, ~60 % forced) and NYISO-53's `reliability_floor ×
+  ST_GAS` (~60 %) now FAIL with an explicit *"no declared D-4 window"* diagnosis
+  instead of a flat over-cap fail, which names exactly what would ground them.
+
+## 4. Rule 22 `[R-HOLDOUT]` — holdout tiers
+
+The rule's normative text (the three tiers and their year assignments, the
+touch-once discipline, the crossover window, the standing quarantine clauses and
+the CI/`--holdout-authorized` enforcement) is in `CLAUDE.md`. Its **amendment
+genealogy is owned by** `docs/handoffs/holdout-policy-memo-2026-07.md` §(e)–(f):
+
+- **2026-07-06 — G-17 Option 2** (memo §(e)): the intake-vs-solve/score split.
+  Data intake for an out-of-training period became permissible under explicit,
+  session-logged owner authorization with no-LP validation, while *solve* and
+  *score* stayed fully quarantined behind the calibration-complete marker. Both
+  enforcement legs were already in place, so the decision cost only the rule-text
+  edit.
+- **2026-07-07 — three-tier split** (memo §(f)): the earlier two-window wording
+  ("holdouts are 2022 + H1-2026, score once") was replaced by an explicit
+  train (2023–2025) / validation (2022, iterable) / locked-test (2019 + H1-2026,
+  touch-once) split, with the quarantine machinery carried over unchanged. This
+  is also what supersedes the audit's original D-6/rule-21 wording.
+
+## 5. Rule 27 `[R-PUSH]` — the 2026-07-15 `constants.py` truncation incident
+
+Rule 27 exists because of one incident, and both of its halves — the
+push-integrity protocol and the model-assignment restriction — are the owner's
+response to it. The norms are in `CLAUDE.md`; this is the record of what
+happened.
+
+**What happened (2026-07-15).** A Sonnet session rewrote
+`src/market_sim/config/constants.py` by pushing regenerated full-file content
+through `mcp__github__push_files`. The model's response was clipped by its output
+budget partway through the file, so the pushed blob was the *prefix* of the
+intended content: the file went from **6,368 lines to 33**, and the push
+succeeded — nothing in the path compares what was sent against what was on disk,
+so a truncated file is indistinguishable from an intentional deletion.
+
+**How the recovery made it worse.** Five follow-up "restore" commits tried to
+rebuild the file incrementally and merged **fragments** to `main` — successively
+0 / 500 / 1,020 / 1,000 lines — each one a partial file that parsed, imported,
+and therefore looked plausible while silently missing thousands of lines of
+constants. The failure mode is that a partial restore is *not* obviously broken;
+it is a working file with missing values.
+
+**What the owner ordered as a result.**
+
+1. **Push-integrity protocol (all models, every session).** No bulk rewrite of an
+   existing ≥300-line file from regenerated response content; edit locally and
+   push the exact on-disk bytes; blob-verify (line count + content hash) after
+   any `push_files` call touching a ≥300-line file, *before* doing anything else;
+   never commit a placeholder, stub or partial "stage N" version of an existing
+   source file, not even as a temporary restore step; a session that finds a core
+   file truncated stops its own task and restores from the last good commit
+   first. The binding wording is CLAUDE.md rule 27 and Git & Pushing §4.
+2. **Model assignment.** Core-infrastructure scope (anything under
+   `src/market_sim/`, `scripts/run_*.py` / `scripts/score_*.py`, `CLAUDE.md`,
+   `model-methodology-spec.md`, `.github/workflows/`) is Opus or Fable, never
+   Sonnet; and for the retirement-calibration lane specifically, *all* remaining
+   sessions are Opus/Fable regardless of scope.
+
+**Mechanical enforcement.** `.github/workflows/file-integrity-guard.yml` fails
+any PR — and flags any push to `main` — that shrinks a core file by more than
+30 % or deletes it, unless the PR carries the `intentional-shrink` label. It is
+path-filtered to `src/**`, `scripts/**`, `CLAUDE.md`, `model-methodology-spec.md`
+and `.github/workflows/**`, guards only files that were ≥300 lines at the base
+commit, and follows renames to their destination so content must survive a move
+intact. Its own header cites this incident.
+
+---
+
+## 6. Changes to this file
+
+| date | change |
+|---|---|
+| 2026-07-25 | Created (refactor-consolidation Wave 5B, owner decision D-6). Takes the rule-27 incident writeup and the audit N↔N+1 mapping paragraph out of `CLAUDE.md`, and indexes the rule-20 / rule-22 amendment narratives at their canonical homes. No norm was moved, reworded, or dropped. |

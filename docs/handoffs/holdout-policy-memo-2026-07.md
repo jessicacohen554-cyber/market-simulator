@@ -285,3 +285,71 @@ quarantined, 2026 forecast-mode runs left unrestricted, enforcement citing
 available as a future superset if the residual "direct-loader-call,
 bypass-the-CLI" risk is later judged unacceptable, but is not required by
 this decision.
+
+## (f) Amendment genealogy — how rule 22 reached its three-tier form
+
+This section is the canonical record of *how* CLAUDE.md rule 22
+(`[R-HOLDOUT]`) got its current wording. The **binding text is in CLAUDE.md**;
+this is the history behind it, not a restatement of it. Added 2026-07-25
+(refactor-consolidation Wave 5B) so the rule itself can carry a one-line
+pointer instead of its own genealogy.
+
+**Stage 1 — the audit's original wording (D-6 / audit rule 21).** The
+`docs/model-legitimacy-audit-2026-07.md` §8 protective rule that became rule 22
+designated a holdout set and required it be scored once. Its enforcement
+counterpart is the D-6 quarantine check that `legitimacy_diagnostics.py
+--keepers` runs from `ci.yml`'s `quarantine-gates` job.
+
+**Stage 2 — 2026-07-06, G-17 Option 2 (this memo, §(e)).** The rule as written
+quarantined *data intake* alongside solve and score, and the intake clause had
+already been breached twice under explicit, repeated owner instruction (PRs
+#1298/#1300/#1304, recorded in `docs/out-of-sample-results-2026-07.md` §1.1).
+§(a)–(d) above trace whether that breach opened a path to an unauthorized solve
+or score; it had not. The owner decided **Option 2**: split the rule text into
+two clauses — *intake* (owner-authorized, reproducible, no-LP-validated,
+permitted any time) vs *solve and score* (fully quarantined until the ISO's
+`calibration-complete` marker exists) — rather than physically re-quarantining
+the intaken files. Both enforcement legs the decision relies on were already
+landed (the D-6 CI check; this lane's `enforce_holdout_year_gate` `--year`
+guard), so Option 2 cost only the rule-text edit. Option 1's loader-side opt-in
+gate stays available as a future superset.
+
+**Stage 3 — 2026-07-07, the three-tier split (owner amendment).** The
+post-Option-2 rule still described the holdouts as a **two-window** set — "2022
++ H1-2026, score once" — which conflated two jobs that need different
+discipline: *model selection* (you must be allowed to iterate against it, or it
+cannot select anything) and *honest out-of-sample reporting* (you must never
+iterate against it, or the number stops meaning anything). The owner replaced
+that single window with three explicit tiers:
+
+- **Train / calibration = 2023–2025** — the only years tuned against.
+- **Validation holdout = 2022**, extensible backward as a staged ladder
+  (2022 → 2020–2022 → earlier as data lands and is authorized). Deliberately
+  **iterable**: a miss may send the lane back to re-tune 2023–2025 and re-solve,
+  because that is what model selection *is*. The consequence the owner attached
+  to that permission is the reason the tier exists at all — because it is
+  iterated against, a validation number is **selection evidence, not a certified
+  out-of-sample skill number**, and may never be quoted as one.
+- **Locked test = 2019 and H1-2026** — **touch-once, ever**, scored exactly once
+  per ISO against the frozen keeper config, the result recorded whatever it is,
+  and no calibration change may respond to it without designating a
+  never-touched replacement year. 2019 is the clean-regime test and H1-2026 the
+  forward-edge test; pre-2020 years exercise a structurally different fleet, so
+  they are graded against regime drift rather than raw MAE.
+- **Crossover window = 2024–H1 2026** — scored in both backcast and forecast
+  mode against the same actuals to measure the backcast→forecast input gap.
+  Diagnostic, not a locked test.
+
+The **quarantine machinery was carried over unchanged** by this amendment: the
+intake/solve/score split from stage 2, the no-solve-before-marker clause, the
+2026-forecast-runs carve-out, the leave-one-year-out requirement for structural
+mechanism changes, and both enforcement pointers (`ci.yml`'s `quarantine-gates`
+job; `run_calibration_full.py`'s `--holdout-authorized` gate). Only the tier
+wording changed. Note the deliberate asymmetry that survives: the **CI gate is
+tier-agnostic** — it enforces the marker, not the validation/locked distinction
+— so re-solving a locked-test year after its one-shot is a *governance breach*,
+caught by review and this record, not a CI failure.
+
+Stage 3 is also what supersedes the audit's original D-6/rule-21 wording. The
+cross-repo numbering note ("audit rule N" ↔ CLAUDE.md rule N+1) lives in
+`docs/governance/rule-history.md` §2.
