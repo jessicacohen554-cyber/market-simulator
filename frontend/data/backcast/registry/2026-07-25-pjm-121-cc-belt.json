@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-25-pjm-121-cc-belt",
+ "label": "pjm 121 cc belt",
+ "date": "2026-07-25",
+ "shorthand": "pjm-121-cc-belt",
+ "definition": "PJM CANDIDATE KEEPER (pjm-121, 2026-07-25) -- CALIBRATED, 10/10 criteria PASS, closing PJM's sole open gate. EXACTLY ONE config delta vs the pjm-119 keeper: pjm_offer_midcurve_segments ('LONG_RUN',) -> ('LONG_RUN','CC_LIKE'), i.e. the CC_REGULAR econ tranches are handed to the ALREADY-FROZEN measured mid-curve offer surface (pjm_offer_midcurve_condbinned.json; 36 months of PJM DataMiner2 energy_market_offers, 25.95M unit-hours, within-unit capacity-share ladders keyed by net-load percentile) at the same P1-only mc_bid_adjust seam, same floor-only semantics, same VOLL cap as the LONG_RUN scope live since pjm-104. Zero new free parameters; no band, sigmoid, floor, derive value or surface JSON touched. Mechanism engaged 264 -> 461 priced rows (197 CC_LIKE). RESULT: C3a mean LMP FAIL -> PASS -- 2023 +5.6% (keeper +4.7%), 2024 -2.5% (keeper -3.8%), 2025 -9.3% (keeper -10.7% FAIL, band +/-10%). C1 16/16 (free 12/12), C2/C3b/C3c/C4/C5a/C7/C8 PASS and unchanged. This retires the last mid-merit segment on a fitted basis (DOF diagnosis sec.A.1); the identical lever failed C1 at pjm-108 (-8.52 TWh CC displaced, 2023) on a base predating the symmetric-net virtuals + restored east cut, and that blocker is now gone. HONEST SCOPE: the pjm-120 dispersion guard is NOT satisfied. Of the +$0.35/MWh 2025 gain, +$0.254 comes from the two cheap strata that were already over-priced and only +$0.087 from the four tight strata (-8.896 -> -8.809) -- ~73% is a level lift, and the monotone dispersion compression is essentially untouched. The gate closes on a legitimate MEASURED mechanism, not a fitted adder, but it is not the dispersion repair; that root cause stays the reserve/LP supply-side tightness class (G-20b). Also refuted this session and left DEFAULT-OFF: the LEVEL-form measured ladder (pjm_offer_midcurve_level_segments) -- a no-LP pre-check measures it lowering CC econ bids -$8.76/MWh and NARROWING the offer spread in every net-load bin. docs/FINDING-pjm121-ccbelt-c3a-close-2026-07.md.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "PJM",
+ "file": "frontend/data/backcast/runs/2026-07-25-pjm-121-cc-belt.js",
+ "bundle": "results/calibration/pjm121_ccbelt"
+}
