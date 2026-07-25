@@ -1107,3 +1107,55 @@ named successor — has **never been run**, and never with the recovered 2023 RT
 the stack. **OWNER-GATED** (ERCOT-89 §7 step 2); not run this session. The C6 attestation
 draft was amended so its 2023 exception is scoped to the reserve-side family and names
 this open lane — it must not be signed as a finding that the tail is unimprovable.
+
+## 2026-07-25 — ERCOT-112: the coal econ marginal-HR floor GATED across the full span — 4/4 pre-committed criteria PASS (3/3 years improve, LOYO clean); keeper unchanged, gate stays default-off pending owner promotion
+
+**Task.** Rule-24 promotion precondition for `ScenarioConfig.coal_econ_marginal_hr_bound`
+(landed default-off in ERCOT-111, probed on 2023 only). Full-span re-solve plus the
+like-for-like baseline arm ERCOT-110 never produced.
+
+**Arms** (both ERCOT 2023/2024/2025, one invocation each, years sequential — rules 12+16):
+baseline `2026-07-25-ercot112-coal-dam-availability` (coal DAM availability only);
+treatment `2026-07-25-ercot112-coal-marginal-hr` (+ the marginal-HR floor). Serialized
+rather than run concurrently — two per-plant ERCOT LPs put this 15 GB box at 1 GB
+available, so the second arm was queued behind the first.
+
+**Trap cleared.** Both arming lines verified in the solve log for all three years before
+scoring (`COAL_PRB.econ_low 0.400 -> 0.886` and the COAL plant-grain redistribution,
+10 crosswalked plants / 0 unmapped). An overlay keyed on COAL_PRB matches no generator —
+the LP assigns the whole coal fleet `plant_group "COAL"` — and would otherwise run
+silently inert.
+
+**Result** (coal ratio model/actual, baseline -> floor): 2023 1.161 -> 1.053,
+2024 1.213 -> 1.122, 2025 1.207 -> 1.151. Displaced energy lands in gas, which also moves
+toward actual every year. C3a improves every year (-25.2->-24.3, -7.1->-5.8, -5.2->-4.2);
+C3c identical every year. 2023 replicates the ERCOT-111 probe exactly.
+
+**Verdict** against criteria fixed and pushed BEFORE any 2024/2025 result was read
+(`results/calibration/PRECOMMIT-ercot112-coal-marginal-hr-fullspan-2026-07-25.md`):
+P1 direction PASS (all three years), P2a no over-fire PASS, P2b scarcity not degraded
+PASS, P3 leave-one-year-out PASS (3/3 improve, zero degradations).
+
+**Not closed.** The residual is reduced, not closed — coal remains +5.3/+12.2/+15.1 % and
+the summer leg is barely touched (Jun-Sep 1.169/1.292/1.256, the same signature all three
+years). Scarcity hours are inert by construction (ERCOT-111: arms byte-identical in 140 of
+144 actual >=$300 hours; the floor bites where coal is marginal, not where it is capped).
+The summer over-run is the live successor lane.
+
+**Task B (wind) prerequisites, both closed clean** —
+`results/calibration/FINDING-ercot112-wind-prereqs-2026-07-25.md`. (a) No double-count:
+all three ERCOT backcast years take the HSL branch, so the LP's wind bound is uncurtailed
+potential, not EIA-930 delivered output; `ercot_wtx_curtailment_driver` is correct as-is.
+(b) No vintage bug: the MW->CF->MW round trip has scale factor 1.000000 in all three years.
+Reframing: annual wind is already within +0.4/+0.7/+1.5 %; the error is a monotone
+curtailment TILT (+7.0 % at the lowest actual-wind quintile to -2.1 % at the highest, 2023).
+Because `_redistribute_preserving_total` preserves the ISO aggregate exactly every hour, a
+per-zone shape CANNOT move annual wind energy — only retime curtailment — so that lane must
+be scored on the tilt, never on annual TWh. ERCOT per-zone wind shape data built and
+committed INERT (`data/raw/ercot-wind-shape/`, NASA POWER WS50M via the builder now
+generalized to `--iso`); measured night/afternoon ratio West 1.13-1.16 and North 1.08-1.17
+against South 0.84-0.89, stable across years. `_WIND_ZONE_SHAPE_ISOS` is still `{"MISO"}`,
+so the keeper is byte-unchanged; arming ERCOT is keeper-affecting and belongs to ercot-113.
+
+Keeper remains `2026-07-23-ercot100-netrev-margin-keeper`; `coal_econ_marginal_hr_bound`
+stays default-off. Branch `claude/ercot-112-coal-wind-hcowh2`. Next number: ercot-113.
