@@ -129,9 +129,55 @@ Written before any A/B result was read (`--set` arms the ERCOT-110 coal availabi
 > risk: coal may fall below actual.
 > **FAIL SIGNATURE** — the ercot41/43 over-fire: model tail hours priced > $200 blow past ~181.
 
-## 6. Result
+## 6. Result — **PRIMARY PASSES, both legs**
 
-*(pending — filled in from the completed solve)*
+Solve log verified for BOTH mechanisms' INFO lines before scoring (the ERCOT-110 silent-inert trap):
+`coal econ marginal-HR floor (1): COAL_PRB.econ_low 0.400 -> 0.886` and
+`COAL plant-grain redistribution — 10 crosswalked plant(s), 0 unmapped tranche(s)`.
+
+Model/actual coal by month:
+
+| | Jan | Feb | Mar | Apr | May | Jun | Jul | Aug | Sep | Oct | Nov | Dec | **yr** |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| keeper | 0.84 | 0.83 | 0.73 | 0.82 | 1.06 | 1.15 | 1.18 | 1.17 | 1.18 | 1.05 | 1.01 | 0.92 | **1.028** |
+| ercot110 | 1.27 | 1.24 | 1.05 | 1.08 | 1.16 | 1.21 | 1.22 | 1.20 | 1.21 | 1.04 | 1.12 | 1.08 | **1.161** |
+| **ercot111** | 1.00 | 1.00 | 0.85 | 0.91 | 1.09 | 1.16 | 1.18 | 1.18 | 1.16 | 0.95 | 1.03 | 0.87 | **1.053** |
+
+**PRIMARY:** Jun–Sep **1.207 → 1.169** and annual **1.161 → 1.053** — both move toward 1.0. PASS.
+Coal 72.32 → **65.57 TWh** (actual 62.29); gas 189.46 → **196.20 TWh** (actual 201.46), so the
+displaced coal returns to gas, closing the ERCOT-109 gas deficit from −12.0 to −5.3 TWh annually.
+
+Secondary (reported, not optimised):
+
+| metric | keeper | ercot110 | **ercot111** |
+|---|---|---|---|
+| C3a 2023 | −27.3 % | −25.2 % | **−24.3 %** |
+| C3c settle | 76/181 | 50/181 | **50/181** |
+| coal @ 122 scarcity h | +424 MW | +922 MW | **+922 MW** |
+| cheap-stack surplus | 118/122, +871 | 122/122, +1,399 | **122/122, +1,399** |
+| gas deficit @ scarcity | −1.7 GW | −2.2 GW | **−2.2 GW** |
+
+**FAIL SIGNATURE ABSENT** — the model's >$200 tail is 50 hours against 181 actual, i.e. it still
+*under*-fires; nothing resembling the ercot41/43 over-fire.
+
+### The limitation this exposes, stated plainly
+
+The two arms are **byte-identical in 140 of the 144 actual ≥$300 hours** (1,877 of 8,760 hours
+overall). That is not a defect — at scarcity the model already runs coal at 99.5 % of its measured
+live envelope, so no offer-level change can move it. The floor bites exactly where coal is
+*marginal* (the $10–25/MWh band that holds most hours) and is inert where coal is *capped*.
+
+The consequence: **this mechanism fixes the annual coal LEVEL and does not touch the summer
+scarcity-hour COMPOSITION.** The residual +922 MW of scarcity-hour coal, and the 122/122 cheap-stack
+surplus with it, are an availability-basis and wind question, not an offer question — the model's
+coal deliverable is 1.026× the measured live HSL there, and wind is +377 MW at hours that are
+measurably low-wind. That is the open WIND-compression charter, not this lane.
+
+### Rule 16 / promotion status
+
+Only 2023 was solved, so this is a **PROBE**, not a keeper candidate. A full-span
+`--years 2023 2024 2025` single-invocation re-solve plus leave-one-year-out (rule 24) is the
+precondition for any promotion. Keeper remains `2026-07-23-ercot100-netrev-margin-keeper`.
 
 ## 7. What lands regardless of the verdict
 
