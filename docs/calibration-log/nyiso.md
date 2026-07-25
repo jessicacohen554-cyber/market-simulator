@@ -607,3 +607,101 @@ FINDING). It reproduces exactly from:
 `scripts/replay_keeper.py results/calibration/nyiso72_netrev_margin --out-dir
 results/calibration/nyiso74_hydro_envelope --years 2023 --set
 hydro_dispatch_envelope=true` (~6 min).
+
+---
+
+## 2026-07-25 — delta-heatmap instrument landed end-to-end; the delta-shape finding's nuclear row WITHDRAWN; file-integrity guard repaired
+
+**No solves run. No scorer, rubric-criterion or keeper change. No probe number
+consumed** (the entry above holds nyiso-74; next is **nyiso-75**). Keeper
+unchanged — **nyiso-72**. This session ran concurrently with the nyiso-74
+hydro-water-value session above and is written after it; where the two overlap,
+that entry governs and this one defers.
+
+**1. The instrument is complete and verified in a real browser.** The 2026-07-24
+session truncated `scripts/render_calibration_html.py` on main (1,911 → 1 lines,
+PR #2866) and never pushed the frontend half at all. Restored the renderer from
+the committed patch (`docs/handoffs/restore-render-calibration-html-nonfossilhr.patch`
+→ blob `cc5d9ea`, 2,251 lines, exact match) and rebuilt the lost frontend — which
+now lives in `docs/codebase-site/js/backcast-runs.js` after the Wave-5C inline-JS
+extraction (`c17bad3`); all 13 hunks ported with zero fuzz. Added: a
+`decAffine(b,lo,hi)` decoder, payload-driven `nfGroups()`/`nfPanels()`, a
+non-fossil branch in `singleSeries()`, a two-optgroup class selector, the
+plant selector hidden for non-fossil panels, and a **third canvas** in
+`drawCfHeatmap` — *Delta (Model − actual)* — computed in **MW**, never CF%−CF%
+(`drawHeat` normalizes each series to its OWN max, so a CF-space difference would
+call two dispatches that differ by gigawatts "on target"). Suppressed exactly
+where the actual map already is, with the reason NAMED, and a diverging legend
+whose centre label says explicitly that white is 0 MW, not missing data.
+
+Verified in Chromium over http on **two ISOs**, 7 cases: delta present and
+painted for NYISO hydro / imports, ERCOT nuclear and a fossil class; correctly
+suppressed-with-reason for NYISO solar and ERCOT hydro (no 930 leg); and an
+**old pre-`nonfossilHr` PJM run still renders its fossil CAMPD delta and shows no
+non-fossil optgroup**. Payloads regenerated for `nyiso-72` (2023-2025 only,
+rule 22) and `ercot-110` — deterministic and idempotent (re-run, hash-compared).
+
+**2. The delta-shape finding's NUCLEAR row is WITHDRAWN — same defect the
+nyiso-74 session repaired in the bench.** `docs/FINDING-nyiso-class-delta-shape-2026-07-24.md`
+ranked nuclear #4 at Σ|Δ| 7.46 TWh / **+5.02 TWh net**, citing a 2023 "actual
+**Mar 13 + 50 d**" refuel outage the model missed. That window is the
+**1,179-hour zero-coded `NG: NUC` filing gap**; the fix (`d13a3f2`) landed 27
+minutes before that doc was committed, on a parallel branch, and so was not in
+its tree. Regenerating against the repaired benchmark:
+
+| year | model TWh | actual TWh (repaired) | net Δ | as published in the finding |
+|---|---|---|---|---|
+| 2023 | 27.489 | 27.457 | **+0.03** | 23.998 |
+| 2024 | 26.958 | 26.955 | **+0.00** | 25.83 |
+| 2025 | 28.381 | 28.273 | **+0.11** | 27.90 |
+
+3-year net is **+0.14 TWh, not +5.02**. Re-running the finding's own ≥5-day
+derate detector on the repaired series returns 2023: **Sep 02 + 6 d only** (the
+"Mar 13 + 50 d" is gone); 2024 and 2025 reproduce its table unchanged. Nuclear is
+closed as a calibration lever — now three independent lines of evidence agree
+(NYISO's own fuel-mix posting, the repaired 930, and the derate detector). The
+residual hourly r (0.715) is the interpolation's shape loss across the bridged
+block, not a model error.
+
+Corrected the doc in place (correction box, struck rank-4 row, §2 withdrawal,
+renumbered §7) and repaired the canary that caught it,
+`tests/test_nonfossil_hourly.py::test_known_nyiso_signatures` — its nuclear pins
+were written against the pre-fix benchmark and were **failing on main** until
+now. This is exactly the failure its own docstring predicted. 18/18 pass.
+
+*Not re-done here:* the owed nyiso-72 re-score is **CLOSED by the nyiso-74 entry
+above** (verdict unchanged, and structurally it could not have changed — C1 takes
+nuclear from `classFull` on the EIA-923 basis and C4 scores only gas/coal). The
+values this session derived independently match that session's bench repair
+exactly (23.998 → 27.457 / 25.858 → 26.955 / 27.953 → 28.273 TWh).
+
+**3. `file-integrity-guard` was failing OPEN — repaired (`0ea0da4`, on main).**
+It reported **SUCCESS** on PR #2866, the very truncation it exists to block. Two
+compounding defects, both reproduced locally against the real SHAs:
+`base_lines=$(git show … | wc -l || echo 0)` yields the two-line string `"0\n0"`
+for any path absent at base (because `wc -l` prints its own `0` even when git
+fails, and `|| echo 0` appends a second); and feeding that to `(( ))` raises a
+syntax error which, in bash 5.2, **abandons the whole loop** and resumes after it.
+The scan therefore stopped at the first ADDED file — `backfill_nonfossil_hourly.py`
+sorts before `render_calibration_html.py` — and the 1,911 → 1 shrink was never
+examined, while the job exited 0. Fixed with a `git cat-file` helper that returns
+a failure rather than a malformed number, explicit ADDED-path skipping,
+empty-value guards before every `(( ))`, and a **scanned-vs-expected count so any
+future early exit fails CLOSED**. Replaying PR #2866 through the fixed script now
+emits `shrank 1911 -> 0 lines` and exits 1.
+
+*Second, unfixed hole (not a code problem):* #2866 was **merged at 03:08:15 while
+three other checks were still running** and later reported failure. No workflow
+change can prevent that — it needs required-status-checks branch protection.
+Flagged for the owner.
+
+**4. Still open from the delta-shape finding (nuclear struck, hydro now owned by
+the nyiso-74 lane):** the **solar flat-CF fallback** — NYISO model solar is a flat
+block (12 distinct values in 8,760 h, midday/night ratio **1.00**) because
+`NYIS NG: SUN` is all zeros → `_eia_hourly_cf_profile` returns `None` → the
+`_eia930_cf` fallback reads a NYISO solar row in `eia_generation_profiles.parquet`
+that is *itself* flat (1 distinct value; wind on the same path has 428). A flat
+24-hour solar CF is physically impossible, so any shaped fallback is strictly more
+faithful (rule 1), and it needs no new intake. **Fallback-path defect — wants an
+all-six-ISO sweep for other degenerate rows.** Also still open: `other`
+anti-correlation (r = −0.15) and oil day-placement.
