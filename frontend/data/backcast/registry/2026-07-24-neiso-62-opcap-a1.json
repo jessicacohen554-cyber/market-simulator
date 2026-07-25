@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-24-neiso-62-opcap-a1",
+  "label": "neiso 62 opcap a1",
+  "date": "2026-07-24",
+  "shorthand": "neiso-62-opcap-a1",
+  "definition": "(PROBE - NOT ADOPTED, determination NOT-YET as a keeper candidate) neiso-62 STEP A1: the neiso-61-netrev-margin keeper recipe + ONE delta, neiso_operable_capacity_availability=true - ISO-NE's own published availability instrument (Morning Report Section 3 'Operable Capacity Analysis', 1 - gen_outages_reductions / (CSO + EcoMax-above-CSO)) water-filled onto the pooled dispatchable-thermal fleet in place of the CAMPD unit-outage derate on covered days. DIRECTION IS RESTORE, NOT REMOVE: it fires restore-364 / remove-0 (2023), lifting pooled cap-weighted thermal availability 0.584 -> 0.840 annual and 0.567 -> 0.898 DJF (+4,458 MW annual / +5,779 MW winter on a 17,438 MW thermal fleet) - ISO-NE's measured outage rate is far BELOW the model's CAMPD-derived one. FIT: every gate still PASSes and C3a IMPROVES in every year (-5.2/-1.0/-2.9% vs the keeper's +5.2/+7.1/+5.2%; mean |dev| 5.8% -> 3.0%); C3b NRMSE 0.103/0.143/0.079 vs 0.102/0.164/0.071 (mixed); C4 gas r 0.911/0.917/0.885 vs 0.910/0.916/0.863; C5a -3.1/-2.8/+4.2%; C8 CC_REGULAR forced 0.9/1.6/1.3% (far under cap). COST: the upper tail thins - h>$200 70->26 (2023) and 102->42 (2025); the $300 C3c gate is 0h either way. NOT ADOPTED for a STRUCTURAL reason, never the residual (rule 1): the consumed fraction's numerator (line C) is GENERATION outages while its denominator (A+B, ~30,264 MW in 2023) spans the whole obligated fleet - nuclear, hydro, renewables, DR, import obligations - yet the fraction is applied to the THERMAL subset alone (17,438 MW). The PJM analogue in this repo divides its outage MW by fossil-thermal capacity instead. Re-basing onto the thermal denominator gives 0.737/0.761/0.777 rather than the as-implemented 0.849/0.858/0.863, so this implementation over-restores by ~11 pp; rule 14 prescribes a RECONCILED version of the real data, which is the follow-on charter. HEADLINE FINDING (the probe's real deliverable): even the fully thermal-reconciled figure (0.737) sits ~15 pp / ~2,700 MW above the model's 0.584, so the NEISO CAMPD unit-outage extract over-counts thermal outages even after the 2026-07-19 phantom re-audit (it derates 40% of the thermal capacity-year; CC_REGULAR alone 5,804 MW-yr on a 15,534 MW fleet = 37% unavailable, windows median 13 d / mean 22 d - the economic-layup signature, not the ERCOT-79 daily-cycling one), and the keeper's offer curves are co-dependent on that over-count (relieving it moves LMP -7 to -9%). That is the ERCOT-79 / nyiso-63 condition.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-07-24-neiso-62-opcap-a1.js",
+  "bundle": "results/calibration/neiso_opcap_a1"
+}
