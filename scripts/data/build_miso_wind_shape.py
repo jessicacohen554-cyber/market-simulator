@@ -64,10 +64,11 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 from market_sim.config.constants import HOURS_PER_YEAR  # noqa: E402
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.paths import (  # noqa: E402
-    MISO_WIND_SHAPE_DIR,
     active_eia860_dir,
+    wind_shape_dir,
 )
 from market_sim.data.eia_loader import _eia_hourly_frame_filled  # noqa: E402
+from market_sim.data.fleet import ISO_TO_BA_CODE  # noqa: E402
 from market_sim.data.zone_assignment import build_zone_lookup  # noqa: E402
 
 ISO = "MISO"
@@ -144,24 +145,27 @@ def hub_height_speed(speed_50m: np.ndarray, hub_height_m: float) -> np.ndarray:
     return np.asarray(speed_50m, dtype=float) * factor
 
 
-def model_utc_index(year: int) -> pd.DatetimeIndex | None:
+def model_utc_index(year: int, iso: str = ISO) -> pd.DatetimeIndex | None:
     """Return the UTC timestamp of each model hour for ``year``.
 
     Reuses the renewable loader's clock (``_eia_hourly_frame_filled`` for the
-    MISO BA): row ``k`` of the returned index is the UTC time of model hour
+    ISO's BA): row ``k`` of the returned index is the UTC time of model hour
     ``k`` on the fixed non-leap 8760-hour clock, so a wind shape keyed on these
-    timestamps lines up hour-for-hour with the EIA-930 MISO ``cf_profile``.
+    timestamps lines up hour-for-hour with the EIA-930 ``cf_profile``.
 
-    Returns ``None`` when the MISO hourly extract for the year is unavailable.
+    Returns ``None`` when the ISO's hourly extract for the year is unavailable.
     """
-    frame = _eia_hourly_frame_filled(ISO, year)
+    # The extract is keyed by EIA-930 BA code, not ISO name. They coincide for
+    # MISO/PJM but not elsewhere (ERCOT -> ERCO, CAISO -> CISO), so resolve
+    # through the shared crosswalk rather than passing the ISO name through.
+    frame = _eia_hourly_frame_filled(ISO_TO_BA_CODE.get(iso.upper(), iso), year)
     if frame is None or "UTC time" not in frame.columns or len(frame) != HOURS_PER_YEAR:
         return None
     return pd.DatetimeIndex(pd.to_datetime(frame["UTC time"]))
 
 
 def load_wind_sample_points(
-    year: int, zone_names: list[str]
+    year: int, zone_names: list[str], iso: str = ISO
 ) -> dict[str, list[tuple[float, float, float, float]]]:
     """Return representative wind sample points per model zone.
 
@@ -175,6 +179,7 @@ def load_wind_sample_points(
     Args:
         year: Calibration year; only plants online by its end are kept.
         zone_names: Ordered model-zone names.
+        iso: ISO whose zone lookup assigns each plant.
 
     Returns:
         ``{zone_name: [(lat, lon, cap_mw, hub_m), ...]}``.
@@ -202,7 +207,7 @@ def load_wind_sample_points(
     hub_ft = pd.to_numeric(wind["Turbine Hub Height (Feet)"], errors="coerce")
     wind["hub_m"] = (hub_ft * _FEET_TO_M).fillna(_DEFAULT_HUB_HEIGHT_M)
 
-    zone_lookup = build_zone_lookup(ISO)
+    zone_lookup = build_zone_lookup(iso)
     wind["zone"] = wind["Plant Code"].map(lambda c: zone_lookup.get(int(c)))
     wind = wind.dropna(subset=["lat", "lon", "cap", "zone"])
     wind = wind[wind["cap"] > 0.0]
@@ -307,13 +312,13 @@ def build_zone_shape(
     return acc / wsum if wsum > 0.0 else None
 
 
-def build_year(year: int, zone_names: list[str]) -> pd.DataFrame | None:
+def build_year(year: int, zone_names: list[str], iso: str = ISO) -> pd.DataFrame | None:
     """Assemble the per-zone wind-shape frame for one year, or ``None``."""
-    utc_index = model_utc_index(year)
+    utc_index = model_utc_index(year, iso)
     if utc_index is None:
-        print(f"SKIP {year}: no MISO hourly UTC clock (EIA-930 extract missing).")
+        print(f"SKIP {year}: no {iso} hourly UTC clock (EIA-930 extract missing).")
         return None
-    points = load_wind_sample_points(year, zone_names)
+    points = load_wind_sample_points(year, zone_names, iso)
     data: dict[str, np.ndarray] = {
         _WIND_SHAPE_HOUR_COLUMN: np.arange(HOURS_PER_YEAR, dtype="int64")
     }
@@ -334,7 +339,7 @@ def build_year(year: int, zone_names: list[str]) -> pd.DataFrame | None:
         data[zone] = shape
     populated = [z for z in zone_names if z not in empty_zones]
     if not populated:
-        print(f"SKIP {year}: no MISO zone has operable wind plants.")
+        print(f"SKIP {year}: no {iso} zone has operable wind plants.")
         return None
     mean_shape = np.mean([data[z] for z in populated], axis=0)
     for zone in empty_zones:
@@ -342,9 +347,11 @@ def build_year(year: int, zone_names: list[str]) -> pd.DataFrame | None:
     return pd.DataFrame(data)
 
 
-def print_validation(year: int, df: pd.DataFrame, zone_names: list[str]) -> None:
+def print_validation(
+    year: int, df: pd.DataFrame, zone_names: list[str], iso: str = ISO
+) -> None:
     """Print the mean CF and a coarse diurnal signature per zone."""
-    print(f"\n=== MISO {year} per-zone wind SHAPE (relative CF) ===")
+    print(f"\n=== {iso} {year} per-zone wind SHAPE (relative CF) ===")
     hour_of_day = np.arange(HOURS_PER_YEAR) % 24
     for zone in zone_names:
         cf = df[zone].to_numpy()
@@ -358,37 +365,50 @@ def print_validation(year: int, df: pd.DataFrame, zone_names: list[str]) -> None
 
 
 def main() -> None:
-    """Build every requested year's MISO per-zone wind-shape parquet."""
+    """Build every requested year's per-zone wind-shape parquet for an ISO."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--years", type=int, nargs="+", default=list(DEFAULT_YEARS))
+    parser.add_argument(
+        "--iso",
+        default=ISO,
+        help="ISO to build (default MISO). Must be registered in "
+        "market_sim.config.paths.WIND_SHAPE_DIRS.",
+    )
     args = parser.parse_args()
+    iso = args.iso.upper()
 
-    zone_names = get_iso_config(ISO).zone_names
-    MISO_WIND_SHAPE_DIR.mkdir(parents=True, exist_ok=True)
+    out_dir = wind_shape_dir(iso)
+    if out_dir is None:
+        parser.error(
+            f"{iso} has no wind-shape directory registered "
+            f"(market_sim.config.paths.WIND_SHAPE_DIRS)"
+        )
+    zone_names = get_iso_config(iso).zone_names
+    out_dir.mkdir(parents=True, exist_ok=True)
     for year in args.years:
-        print(f"\nBuilding MISO wind shape for {year}...")
-        df = build_year(year, zone_names)
+        print(f"\nBuilding {iso} wind shape for {year}...")
+        df = build_year(year, zone_names, iso)
         if df is None:
             continue
-        print_validation(year, df, zone_names)
+        print_validation(year, df, zone_names, iso)
         table = pa.Table.from_pandas(df, preserve_index=False)
         table = table.replace_schema_metadata(
             {
                 "source": (
                     "NASA POWER hourly WS50M (MERRA-2 reanalysis) at EIA-860 "
-                    "MISO wind-plant locations, hub-height-extrapolated through "
-                    "a generic IEC-class onshore turbine power curve"
+                    f"{iso} wind-plant locations, hub-height-extrapolated "
+                    "through a generic IEC-class onshore turbine power curve"
                 ),
                 "description": (
                     "Per-zone relative hourly wind capacity-factor SHAPE for "
-                    "MISO's three model zones on the fixed non-leap 8760-hour "
+                    f"{iso}'s model zones on the fixed non-leap 8760-hour "
                     "clock. Used only for the inter-zone split; reconciled to "
-                    "the EIA-930 MISO-wide series (level not pinned to actuals)."
+                    f"the EIA-930 {iso}-wide series (level not pinned to actuals)."
                 ),
                 "year": str(year),
             }
         )
-        out_file = MISO_WIND_SHAPE_DIR / f"{ISO.lower()}_{year}_wind_zone_shape.parquet"
+        out_file = out_dir / f"{iso.lower()}_{year}_wind_zone_shape.parquet"
         pq.write_table(table, out_file)
         print(
             f"Wrote {out_file.relative_to(REPO_ROOT)} "
