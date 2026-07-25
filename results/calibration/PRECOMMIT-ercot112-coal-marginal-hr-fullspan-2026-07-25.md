@@ -65,4 +65,25 @@ even if the 3-year mean improves.
 
 ## Verdict recorded after the fact
 
-_(filled in below once both arms complete — see the FINDING doc for the full write-up)_
+**ALL FOUR CRITERIA PASS.** Scored 2026-07-25 with
+`scripts/probes/ercot112_score_coal_arms.py`; full write-up in
+`FINDING-ercot112-coal-marginal-hr-fullspan-2026-07-25.md`.
+
+| criterion | result |
+|---|---|
+| P1 direction (2024 & 2025 toward 1.0) | **PASS** — all three years |
+| P2 no over-fire (`ratio >= 0.90`) | **PASS** — min 1.053 |
+| P2 scarcity not degraded (C3a ≤ 2 pp, C3c ≤ 5 h) | **PASS** — C3a improves every year, C3c identical |
+| P3 leave-one-year-out (≥2/3, none degrade > 0.05) | **PASS** — 3/3 improve, zero degradations |
+
+`|ratio − 1|`: 2023 0.161 → 0.053 · 2024 0.213 → 0.122 · 2025 0.207 → 0.151.
+
+Arms as registered: baseline `2026-07-25-ercot112-coal-dam-availability`,
+treatment `2026-07-25-ercot112-coal-marginal-hr`. Keeper unchanged
+(`2026-07-23-ercot100-netrev-margin-keeper`); the gate stays default-off pending
+owner promotion.
+
+Declared-not-counted, honoured: no price-MAE argument was made for the
+mechanism, and the ≥$300 scarcity set was not read as evidence (the arms are
+byte-identical there by construction — C3c is identical in all three years,
+which is that prediction confirmed, not a null result).
