@@ -1,15 +1,17 @@
-# FINDING (miso-89, 2026-07-25) — C3b is diurnal-spread compression, and MISO's scarcity apparatus is already built but starved by a 25 GW CT availability hole
+# FINDING (miso-89, 2026-07-25) — C3b-2025 is diurnal-spread compression driven by a ~10 GW summer-peak under-derate, and every enumerated instrument for it is refuted or provably inert
 
 **Context.** The one load-bearing FAIL holding `2026-07-25-miso-88-egrid-hr` at
 NOT-YET: **C3b price shape, 2025 NRMSE 0.208** against a ≤0.20 veto. Scored from
-committed artifacts only — keeper `hourly/` sidecars, the run payload's
-`lmpDeltaHr`, `frontend/data/backcast/bench/MISO/`, and direct calls into the
-model's own data path. **No LP re-solve.**
+committed artifacts and the model's own data path only — keeper `hourly/`
+sidecars, the run payload's `lmpDeltaHr`, `bench/MISO/`,
+`data/raw/_validation-source/actual_lmp_hourly_zonal_MISO.parquet`, and direct
+calls into `data.outages` / `data.miso_outages` / `data.eia930.weather`.
+**No LP re-solve.**
 
-The miso-87 finding framed this as a *2025 summer body level* miss. That framing
-is incomplete in a way that changes the lane: the miss is **shape**, it is
-present in **every year and every season**, and its enabling cause is an
-availability-coverage hole, not a price-formation gap.
+**Bottom line: this is a NO-BUILD finding.** The miss is real, located, and
+sized. Every mechanism that could close it is already refuted, already
+adjudicated data-blocked, or is measured here to be inert. The deliverable is a
+determination question for the owner, not another probe.
 
 ---
 
@@ -23,182 +25,207 @@ Peak (HE16–18) minus night (HE01–03), body-censored at $200, model vs actual
 | shoulder | 6.0 / 18.2 / **0.33** | 5.5 / 15.9 / **0.35** | 5.8 / 16.2 / **0.36** |
 | summer   | 11.7 / 26.3 / **0.45** | 14.2 / 30.1 / **0.47** | 12.2 / 32.7 / **0.37** |
 
-The model reproduces **29–47 %** of the observed diurnal price spread — in every
-season, in every year. This is a standing structural property of the MISO build,
-not a 2025 event.
+The model reproduces **29–47 %** of the observed diurnal spread — every season,
+every year. A standing structural property, not a 2025 event.
 
-What makes 2025 fail the veto is that the **actual** summer spread widened
+2025 fails the veto only because the **actual** summer spread widened
 (26.3 → 30.1 → **32.7**) while the **model's stayed flat** (11.7 → 14.2 → 12.2).
-The model cannot follow a tightening market.
 
-Both ends of the day miss, in opposite directions (Jun+Jul, body ≤ $200):
+Both ends miss, in opposite directions (Jun+Jul, body ≤ $200):
 
 | | 2023 | 2024 | 2025 |
 |---|---|---|---|
 | night HE01–03, model − actual | **+8.1** | **+5.6** | **+7.5** |
 | peak HE16–18, model − actual | **−5.9** | **−11.9** | **−16.3** |
 
-In 2023 the two errors roughly cancel in the monthly mean (June Δ = +0.4). By
-2025 the peak-side error dominates, because C3b is **load-weighted** and summer
-load weights the afternoon. **The metric changed; the model's error did not.**
+In 2023 the two errors nearly cancel in the monthly mean (June Δ = +0.4). By 2025
+the peak-side error dominates, because C3b is **load-weighted**. The metric
+changed; the model's error did not.
 
 ## 2. The model's supply stack is nearly flat
 
-Empirical stack from the model's own 2025 summer hours — median price by
-thermal-dispatch ventile:
+Median model price by thermal-dispatch ventile, 2025 summer:
 
 | thermal dispatch | 33.8 GW | 48.1 | 56.1 | 65.3 | 72.9 |
 |---|---|---|---|---|---|
 | median model price | $28.6 | $33.3 | $36.2 | $41.8 | **$52.4** |
 
-**$24 of price across 39 GW of dispatch — ~0.6 $/GW average, 2.0 $/GW at the
-steepest ventile.** There is no convexity at the top of the stack. This is the
-proximate reason the diurnal spread cannot widen: the marginal unit barely
-changes price as the system tightens.
+**$24 across 39 GW — ~0.6 $/GW average, 2.0 $/GW at the steepest ventile.** No
+convexity at the top of the stack. This is why the spread cannot widen.
 
-## 3. MISO's scarcity apparatus is ALREADY BUILT, ALREADY ON, and never prices
+## 3. The real peak price is not a merit-order number
 
-This is the load-bearing discovery, and it contradicts the standing assumption in
-`pipeline/backcast_config.py` (~line 720) that "RDC/ELMP co-optimization is a
-separate future lever." It is not future. It is wired, and it is live in the
-keeper:
-
-* `energy_reserve_coopt = True`
-* `miso_measured_reserve_requirements = True` — measured hourly requirement,
-  market-wide **mean 2.64 GW / max 3.30 GW** (2025)
-* `miso_zonal_reserves = True`, `miso_midwest_subregional_reserves = True`,
-  `miso_reserve_pergen = True`
-* `model/reserves/spec.py::_miso_design` — market-wide reserve demand curve
-  ramping to `MISO_RESERVE_DEMAND_CURVE_MAX = $3,500/MWh`
-
-Reserve shadow price in the committed keeper hourlies:
-
-| year | hours with reserve_price > 0 | max |
-|---|---|---|
-| 2023 | **0** / 8760 | $0.00 |
-| 2024 | **6** / 8760 | $480.52 |
-| 2025 | **2** / 8760 | $35.55 |
-
-The demand curve is never on its sloped segment. **The mechanism is not missing —
-it is starved.** Adding another price-formation mechanism on top would be a
-second mechanism for a phenomenon that already has one (rule 17).
-
-## 4. What starves it: 25.02 GW of CT with zero measured-outage coverage
-
-CAMPD unit-level derate coverage for MISO 2025, computed directly from
-`data.outages.unit_outage_derate_factors` + `_iso_plant_capacity` (the same maps
-the LP consumes):
-
-| group | covered GW | total GW | coverage | mean measured availability (covered) |
-|---|---|---|---|---|
-| COAL | 42.35 | 44.39 | 95.4 % | 0.723 |
-| CC_REGULAR | 25.52 | 28.31 | 90.1 % | 0.722 |
-| ST_GAS | 9.46 | 11.61 | 81.5 % | 0.377 |
-| CC_CHP | 4.88 | 7.04 | 69.3 % | 0.891 |
-| ST_CHP | 0.81 | 1.94 | 41.7 % | 0.295 |
-| **CT_PEAKER** | **0.00** | **22.39** | **0.0 %** | — |
-| **CT_CHP** | **0.00** | **2.63** | **0.0 %** | — |
-
-CTs are outside CEMS coverage **by construction** — a peaker's economic idleness
-is indistinguishable from an outage in a generation-derived derate — so they fall
-through to the statistical WEFOR/POF layer. `data/fleet/arrays.py` says so
-explicitly: *"CTs have no overlay coverage and keep the full statistical model."*
-
-That fallback is **anti-conservative exactly where it matters**. Per
-`_availability_matrix` + `THERMAL_AVAILABILITY["CT_PEAKER"] =
-(POF 0.03, WEFOR 0.07 +0.003/yr past 20, DERATE 0.05 +0.002/yr past 20)`:
-
-* **POF applies in shoulder months only — zero planned outage in summer.**
-* **Only `_SUMMER_WEFOR_SHARE = 0.30` of WEFOR applies in summer**; the rest is
-  redistributed into the shoulder.
-
-So summer CT availability is **0.929 (age < 20)** to **0.871 (age 40)** — the
-*highest* it is all year, by design. Meanwhile the measured classes carry their
-real outages wherever those outages actually fell, summer included (coal 0.72,
-CC 0.72).
-
-**The asymmetry is the defect**: measured classes are derated in summer, the 25 GW
-CT fleet is deliberately un-derated in summer, and the reserve requirement it has
-to clear is only 2.6 GW.
-
-Consistent with that, the model never runs out of peakers. 2025 Jun/Jul HE16–18:
-`CT_PEAKER` averages **7.0 GW dispatched of ~20.2 GW available**, peaking at
-15.0 GW — **≥5 GW idle at the single tightest hour of the year**, and ~13 GW idle
-on average across summer afternoons.
-
-## 5. Why the peak price is not a merit-order number at all
-
-Implied marginal heat rate at summer peak (HE16–18 price ÷ the model's own MISO
-delivered gas), body-censored:
+Implied marginal heat rate at summer peak (price ÷ the model's own MISO delivered
+gas), body-censored:
 
 | | 2023 | 2024 | 2025 |
 |---|---|---|---|
-| gas $/MMBtu (Jun/Jul mean) | 4.20 | 3.03 | 3.43 |
+| gas $/MMBtu (Jun/Jul) | 4.20 | 3.03 | 3.43 |
 | model implied HR | 9.0 | 11.4 | 13.4 |
 | **actual implied HR** | **10.4** | **15.3** | **18.1** |
 
 At **18.1 MMBtu/MWh** the 2025 actual summer body peak sits far above the
-marginal cost of the *worst physical unit in MISO's fleet* (legacy CT 11.5,
-ST_GAS ~13). The real summer-peak body price is **not** a fuel-and-heat-rate
-number — it is reserve/opportunity-cost rent. The model tops out at 13.4 because
-its P1 start-up amortization is the only thing it has above physical cost, and
-its reserve leg contributes exactly $0.
+marginal cost of the worst physical unit in MISO's fleet (legacy CT 11.5, ST_GAS
+~13). The real summer-peak body price is **rent, not fuel × heat rate.** The
+model tops out at 13.4 because P1 start-up amortization is the only thing it has
+above physical cost.
 
----
+## 4. MISO's scarcity apparatus is already built, already on, and never prices
 
-## 6. Conclusion — Lane B is the precondition for Lane A, not a parallel lane
+Live in the keeper: `energy_reserve_coopt`, `miso_measured_reserve_requirements`
+(market-wide **mean 2.64 / max 3.30 GW**, 2025), `miso_zonal_reserves`,
+`miso_midwest_subregional_reserves`, `miso_reserve_pergen`, and
+`_miso_design`'s demand curve ramping to `MISO_RESERVE_DEMAND_CURVE_MAX =
+$3,500/MWh`.
 
-The handoff listed the CT coverage hole (LANE B) as a separate lane that
-"plausibly interacts" with the price lane (LANE A). The evidence is stronger than
-that: **they are one causal chain.**
+Reserve shadow price in the committed hourlies: **0 / 6 / 2 hours out of 8760**
+(2023 / 2024 / 2025). The curve never leaves its flat segment. **The mechanism is
+starved, not missing** — so adding another price-formation mechanism would be a
+second mechanism for a phenomenon that already has one (rule 17).
 
-> 25 GW of CT carries no measured outage signal, and its statistical substitute
-> empties summer of outages → the model never runs short of peaking capacity in
-> summer afternoons → a 2.6 GW reserve requirement never binds → the
-> already-built $3,500 reserve demand curve never leaves its flat segment → the
-> stack stays at 0.6 $/GW → the diurnal spread reproduces at 37–47 % → C3b fails.
+## 5. Why it is starved — and why no availability fix of plausible size arms it
 
-The correct next mechanism is therefore **a measured, non-CAMPD availability
-instrument for the CT classes** (rule 13: reproducible physical input, forward
-story intact — it regenerates for any year from a published class rate and
-responds to fleet age/mix). Not a new pricing mechanism, not a summer multiplier,
-not a widened C3c ledger.
+Model fossil capability at Jun/Jul HE16–18, 2025 (from
+`unit_outage_derate_factors` + `_iso_plant_capacity`, the maps the LP consumes):
 
-### Pre-registered expectation, and the honest limit of it
+| group | nameplate GW | available @ summer peak GW |
+|---|---|---|
+| COAL | 44.39 | 35.33 |
+| CC_REGULAR | 28.31 | 24.38 |
+| CT_PEAKER | 22.39 | 20.15 |
+| ST_GAS | 11.61 | 7.65 |
+| CC_CHP | 7.04 | 6.24 |
+| CT_CHP | 2.63 | 2.36 |
+| ST_CHP | 1.94 | 1.36 |
+| **total fossil** | **118.29** | **97.46** |
 
-At the model's own measured local stack slope (~2 $/GW at the top ventile),
-removing 2–3 GW of CT capacity buys only **~$4–6** of the **$16.3** peak-hour
-body gap *through merit order alone*. The remainder has to come from the reserve
-shadow price switching on — a **step**, not a slope. That step is exactly what
-this mechanism is meant to arm, and it is **not proven here**.
+Model fossil dispatch in those hours: **65.57 GW**. So the model carries
+**31.9 GW of idle fossil headroom — 49 % above what it dispatches** — against a
+**2.6 GW** reserve requirement. The solve's own log confirms the supply side:
+*"availability-scaled 10-min deliverable ramp cap mean 37088 / min 32322 MW."*
+**Reserve supply exceeds requirement by more than 12×.**
 
-So the pre-registered bar is deliberately two-part:
+**This refutes the CT-availability hypothesis as a C3b remedy.** CT_PEAKER +
+CT_CHP do carry a real coverage hole — **25.02 GW at 0.0 % CAMPD derate
+coverage**, against 42–95 % for every other fossil class, with the statistical
+fallback deliberately emptying summer of outages (`_availability_matrix`: POF in
+shoulder months only, and only `_SUMMER_WEFOR_SHARE = 0.30` of WEFOR in summer,
+so CT summer availability is 0.87–0.93 — its *highest* of the year). But even a
+generous 15 % additional CT derate removes ~3.4 GW from 31.9 GW of headroom. The
+reserve constraint stays slack by ~10×, the RDC still never prices, and at the
+measured local stack slope (~2 $/GW) the merit-order effect is **~$4–6 of the
+$16.3 gap**. The handoff's LANE B is a real representation defect and should be
+fixed on its own merits (rule 11) — **it is not a C3b mechanism.**
 
-1. **Primary (mechanism):** MISO reserve shadow price becomes non-zero in a
-   material, summer-afternoon-concentrated set of hours (target: ≥ 200 h/yr with
-   `reserve_price > 0`, ≥ 60 % of them in HE12–20). This is the structural claim
-   and it is what the run is judged on (rule 1).
-2. **Secondary (fit):** C3b-2025 NRMSE falls below 0.20. **If (1) lands and (2)
-   does not, the mechanism still stays** — an accurate measured input is kept
-   even when the fit does not close (rules 1/11), and the residual becomes the
-   next root-cause charter.
+## 6. Congestion cannot drive C3b, and is already adjudicated NO-BUILD
 
-**Failure mode that would reject it:** the derate binds outside its declared
-window (rule 12/D-4) — e.g. it removes CT capacity in shoulder months where the
-model is already short — or it re-breaks C1 by pushing CT_PEAKER volume below its
-band. Both are checked before promotion, and any verdict flip is scored
-leave-one-year-out within 2023–2025 (rule 22).
+The model has essentially no binding internal congestion at summer peak. Zonal
+means, Jun/Jul HE16–18, actual censored at $200:
 
-## 7. What this finding does NOT license
+| year | model spread (max−min) | actual spread |
+|---|---|---|
+| 2023 | **0.4** | 20.6 |
+| 2024 | **2.3** | 26.6 |
+| 2025 | **1.6** | 32.5 |
+
+All four Midwest zones clear at an identical dual; only MISO-South separates. In
+2025 MISO-South is nearly right (**−1.9**) while every Midwest zone misses by
+**−18.8 to −24.3**.
+
+**But congestion cannot be the C3b driver.** C3b scores the *load-weighted* ISO
+mean, and a load-weighted-zero deviation pattern cannot move a load-weighted
+mean. Verified as a diagnostic decomposition (not a proposed input): imposing the
+**actual** hourly zonal deviation-from-ISO-mean on the model's own level leaves
+NRMSE **identical to three decimals** — 0.081 / 0.129 / 0.206. The zonal-spread
+defect is real and worth its own ledger entry; it is **not** this failure.
+
+Independently, the congestion component is already adjudicated **NO-BUILD /
+data-blocked-at-representation** (miso-78), with RO-3 zone refinement killed
+empirically by the miso-79 probe (intra-LBA mass 88–99.7 %; even a ~12-zone model
+converts only ~1.9–3.8 %). Not reopened here.
+
+## 7. What the miss actually is: a ~10 GW summer-peak under-derate in 2025
+
+Model fossil derate vs MISO's own published offline record, Jun/Jul HE16–18:
+
+| year | model fossil derate | published MISO offline (all fuels, all causes) | gap |
+|---|---|---|---|
+| 2023 | 20.07 GW | 35.10 GW | 15.03 |
+| 2024 | 19.07 GW | 33.27 GW | 14.21 |
+| **2025** | **20.83 GW** | **45.59 GW** | **24.76** |
+| YoY 24→25 | **+1.76** | **+12.32** | |
+
+The offset is stable at ~14.6 GW in 2023/2024 — the expected non-fossil share
+plus CT blindness — and then **breaks by ~10 GW in 2025**. This is a
+difference-in-differences argument, so it does **not** require attributing the
+published total across fuels (the miso-87 refutation is respected): it requires
+only that the non-fossil share did not itself jump ~10 GW.
+
+**And 2025 was not a hot year.** MISO zone-mean daily TMAX at summer peak:
+**29.6 / 29.2 / 29.8 °C** (2023/24/25). So 2025's price spike occurred at normal
+summer temperatures with cheap gas ($3.33–3.52) — it was a **supply-side**
+tightening of roughly 12 GW that the model does not see. That is the whole of the
+C3b failure, and it is consistent with every other measurement above.
+
+## 8. Instrument enumeration — all closed
+
+| candidate instrument | status |
+|---|---|
+| Published MISO total, uniform attribution | **REJECTED** — miso-85: over-derates CTs (manufactures a 138 h > $200 tail), under-derates coal (C1 COAL_PRB +28.3 TWh) |
+| Cross-fuel attribution of that total | **REFUTED at charter** — miso-87, two independent grounds |
+| Zone refinement / congestion representation | **NO-BUILD, data-blocked** — miso-78 §3, RO-3 empirically dead (miso-79) |
+| `temp_dependent_derate` | **REJECTED** — refuted for the ERCOT gas fleet, 2026-07-09 |
+| `gt_ambient_derate` | **PROVABLY INERT for MISO** — measured here: zone-mean TMAX exceeds the 35 °C reference in **24 h of 2023 and 0 h of 2024/2025**, and **0 h at summer peak in any year**. Removes **0 MW** in the failing window. Physically admissible, but cannot fire on this fleet |
+| CT-specific measured availability | **NO SOURCE at CT grain** — CTs are CEMS-blind by construction; MISO publishes region × cause only |
+| `unit_partial_outage_windows` (CAMPD ceiling plateaus) | **Premise does not hold** — the detector targets plants *without* unit-level data; MISO already carries 95.4 % coal / 90.1 % CC unit-level coverage |
+
+**No enumerated instrument remains.** Continuing to probe would be searching for
+a mechanism to hit a number, which is what rules 1/10 forbid.
+
+## 9. Recommendation — a determination question, not a build
+
+C3b-2025 is a **measurement gap of the same family as the already-ledgered C3c
+tail**: the model cannot see ~10 GW of 2025 summer-peak unavailability, because
+the only record of it is published at a grain (region × cause, fuel-blind) that
+two prior charters proved cannot be attributed onto units without inventing the
+attribution.
+
+Three honest paths, all owner calls:
+
+1. **Ledger it and take the determination.** Treat C3b-2025 as a documented,
+   sized, instrument-blocked miss on the C3c template — with §7's
+   difference-in-differences as its evidence — and re-gate MISO. This is the only
+   path that does not require new external data.
+2. **Charter a data ask.** The unblocking datum is MISO outage data at
+   **unit or fuel grain** (a GADS-derived class series, or the IMM's unit-level
+   outage appendix if obtainable). Rule 22 permits intake for training years
+   under session-logged owner authorization. Until such a source exists this
+   lane cannot be built honestly.
+3. **Accept the miso-78 RO-2 program** (physics-derived reduced network). Note
+   this addresses §6's zonal-spread defect, **not** §7 — per §6 it would not move
+   C3b at all.
+
+**Recommended: (1), with (2) opened as a standing data ask.** Path 3 should not
+be chartered in the belief that it closes C3b; the decomposition in §6 shows it
+does not.
+
+## 10. What this finding does not license
 
 * **Not** an offer adder, summer multiplier, or residual-tuned band (rules 1/10).
-* **Not** widening the C3c ledger — §5 shows the miss is a body phenomenon and
-  §3 shows the tail apparatus is present, not absent.
-* **Not** re-importing MISO's published aggregate outage total to attribute
-  outages across fuels — refuted at charter on two independent grounds
-  (`FINDING-miso87-cross-fuel-attribution-refuted-2026-07.md`). The instrument
-  must be a **class-level measured rate keyed to the CT fleet itself**, not a
-  residual carved out of an ISO-wide total.
-* **Not** a fitted CT availability number. If no measured non-CAMPD source
-  resolves at CT class grain, the correct outcome is to report that and stop —
-  a tuned availability is an answer key (rule 24).
+* **Not** widening the C3c ledger to absorb it — §3 shows the miss is a body
+  phenomenon and §4 shows the tail apparatus is present, not absent. It needs its
+  **own** ledger entry with its own evidence, or none.
+* **Not** re-opening any of the §8 refutations without new external facts of the
+  class their own charters specify.
+* **Not** a fitted availability number. If no measured source resolves at the
+  needed grain, the correct outcome is to report that and stop (rule 24).
+
+## 11. Separately actionable, on their own merits (not C3b fixes)
+
+* **CT measured-availability coverage hole** (§5): 25.02 GW at 0.0 % coverage
+  while the statistical substitute is at its most generous in summer. A
+  representation defect worth fixing under rule 11 — but pre-register that it
+  moves C3b by ~$4–6 at most, and expect it to *worsen* C1 CT_PEAKER volume.
+* **Zonal price separation** (§6): model spread $1.6 vs actual $32.5 at summer
+  peak. Real, and currently unledgered; blocked by miso-78 unless RO-2 is
+  chartered.
