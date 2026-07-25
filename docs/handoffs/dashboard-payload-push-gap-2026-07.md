@@ -57,6 +57,23 @@ This also means rule 15 ("a run is not done until its bundle and dashboard files
 are committed and pushed") is currently unsatisfiable for any new run by an
 agent following the API-only rule.
 
+## RESOLVED for caiso-119 — `git push` works at this size (measured 2026-07-25)
+
+**Owner authorized `git push` for this case, and it succeeded with no 413.** The
+434,784-byte payload pushed cleanly; the remote blob sha matches the local one
+byte-for-byte (`be4ed6a318b8ab9c1576149508e4126e28d94fc9`), and
+`2026-07-24-caiso-119-minload-measured` renders in the Run Explorer.
+
+So **option 1 below is confirmed, not merely plausible**: the HTTP 413 applies to
+large *packs*, not to a single ~400 KB blob. A dashboard registration pushed as
+its own small commit on an up-to-date base is well inside the limit.
+
+Caveat on what was actually measured: one ~434 KB payload in a commit whose other
+files are small text, pushed onto a freshly-fetched base so the pack carried only
+this session's objects. It does NOT license `git push` for a bundle directory
+(`caiso119_base_A` alone is 120 MB of parquet/npz) or for a divergent branch that
+would pack hundreds of megabytes. The rule's original rationale still holds there.
+
 ## caiso-119 status (why this note exists)
 
 The caiso-119 probe `2026-07-24-caiso-119-minload-measured` is registered and
@@ -67,9 +84,11 @@ chosen below.
 
 ## Options for the owner
 
-1. **Carve out `git push` for `frontend/data/backcast/runs/`.** The 413 rationale
-   is about large *packs*; a single ~400 KB blob is not a large pack. Cheapest
-   fix if it holds — worth measuring before adopting.
+1. **Carve out `git push` for `frontend/data/backcast/runs/`.** ✅ **MEASURED AND
+   WORKING** (see above) — a 434 KB payload pushed with no 413. The cheapest fix,
+   and now the recommended one: amend the CLAUDE.md "API-only" rule to permit
+   `git push` for dashboard registration commits specifically, keeping the API
+   path for everything else.
 2. **Let the Pages deploy regenerate payloads**, as it already regenerates
    `manifest.js`/`benchmark.js`/`completeness.js` from the sidecars. Payloads are
    a pure function of the bundle (`scripts/render_backcast.py`), so this is
