@@ -1,1 +1,61 @@
-PLACEHOLDER
+{
+  "env": {
+    "MARKET_SIM_HIGHS_THREADS": "1",
+    "MARKET_SIM_WARMSTART": "1",
+    "MARKET_SIM_WARMSTART_XYEAR": "0"
+  },
+  "git_dirty": false,
+  "git_sha": "ebb206f",
+  "hash_scheme": "sha256-of-canonical-column-float64-bytes",
+  "highspy_version": "unknown",
+  "keepers": {
+    "ERCOT": {
+      "bundle": "results/calibration/ercot_netrev_margin",
+      "content_hashes": {
+        "btm.parquet": "8acf053bb5aa6bcb2a38a4081ee9030ed5ef6afc967c7892f6b7bff8d50fd376",
+        "dispatch/2023_P1.parquet": "7b24355bdc71e74b534550032924dd76759e655e9f18df38d0a5485eb84032eb",
+        "dispatch/2024_P1.parquet": "0b3761a9f5ced0a99c2913d3efc4d8b99ba42c6886641d42ce2c8befd4443cef",
+        "dispatch/2025_P1.parquet": "e3e8dca258e10a091790469bf1b6dafc6b2f7a4cfaf562755f3cb4e71b564d0c",
+        "flows.parquet": "bf66395617176380e0b54c8667e12e79e06066dd01b6c537d9e6cc0112b4fd47",
+        "storage.parquet": "4c14ccfc2d0b69ba50d8b6f8b688b7057bd46b842acfc4655ae497386e735d9d",
+        "system.parquet": "05fd2eb080faad7bd1d6d822b64d89289a7a4ece5209444e4bebb81a04d94958"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_takeorpay_from_data",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "plant_tranche_config",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [],
+        "meta_keeper_only": [],
+        "meta_matched": 215,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [
+          "caiso_dam_outages",
+          "ercot_thermal_dam_availability_coal",
+          "miso_native_outage_source",
+          "neiso_operable_capacity_availability",
+          "pjm_dam_availability"
+        ],
+        "scenario_config_matched": 597
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-23-ercot100-netrev-margin-keeper",
+      "recorded_flag_count": 206,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    }
+  },
+  "note": "Current-HEAD regression baselines (Stage-0). NOT byte-reproductions of the registered July-3 keeper bundles. Multi-GB bundles are gitignored; only this manifest is committed.",
+  "stage_tag": "wave4c-before"
+}
