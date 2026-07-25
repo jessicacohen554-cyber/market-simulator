@@ -71,7 +71,16 @@ def main() -> None:
     # Copy shared data files. keepers/ + status/ are the per-ISO sharded
     # stores (2026-07-19); the monolithic status.js / keepers.json are retired
     # but still copied when present so a historical checkout previews cleanly.
-    for name in ("benchmark.js", "completeness.js", "status.js", "keepers.json"):
+    # rubric-consts.js is the generated scorer-constants part (build_manifest.py
+    # writes it from calibration_verdict); the Run Explorer reads it through
+    # bc-data.js, so it has to travel with the rest of the data subset.
+    for name in (
+        "benchmark.js",
+        "completeness.js",
+        "rubric-consts.js",
+        "status.js",
+        "keepers.json",
+    ):
         src = src_data / name
         if src.exists():
             shutil.copy2(src, dst_data / name)

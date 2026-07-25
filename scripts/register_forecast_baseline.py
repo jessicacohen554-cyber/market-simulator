@@ -15,9 +15,10 @@ The sidecar mirrors the hindcast sidecar shape - ``run_id`` / ``meta`` /
 (a t1f run has no retirement/addition-band score.json; the capacity-hindcast
 scorer does not apply) and ``kind="t1f"`` / ``label`` recorded in ``meta``. The
 existing self-contained page renderer tolerates ``score=null`` (it shows the
-invariant chips), and the richer forecast run explorer (FF-5A) will read these
-sidecars by ``kind``. The page is regenerated exactly as hindcast registration
-does, via ``register_hindcast.render_page`` over every committed sidecar.
+invariant chips), and the richer forecast run explorer (FF-5A) reads these
+sidecars by ``kind``. The dashboard is regenerated exactly as hindcast
+registration does — since FF-5A that means ``register_forecast_run.reindex``
+over every committed sidecar, not the retired ``register_hindcast.render_page``.
 
 Usage::
 
