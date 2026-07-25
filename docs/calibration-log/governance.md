@@ -125,3 +125,53 @@ Fresh-checkout restorations: `transfer-interface-limits`/`ramp-capability`/
 `capacity-deliverability`/`winter-fuel-inventory`(+NYISO) clean partitions
 rebuilt, `pjm-da-virtuals` re-fetched (fail-loud caught it). Retention sweep
 pruned pjm-102/102b, caiso-84-gas-spot, miso-70-tier-base.
+
+## 2026-07-24 — CROSS-ISO: the CAMPD unit-outage detector books economic layup as outage in ALL SIX ISO extracts
+
+Escalated from the NEISO lane (`neiso-63`, 2026-07-24; evidence
+`results/calibration/FINDING-neiso63-campd-economic-layup-2026-07.md`). Data-layer
+audit only — no solve, no keeper change, no parameter touched, any ISO.
+
+**Finding.** `scripts/lib/outage_detect.py::filter_revealed_outages` keeps a down
+span when it is down through ≥24 local high-net-load hours, or when it is a
+≥5-day full stop below `FULL_STOP_OVERRIDE_CF`. Its override docstring states the
+governing premise — *"economic idling backs down but does not fully stop for
+weeks"* — which is **false for a gas CC priced out of merit for weeks**. Both
+surviving branches therefore keep exactly the windows a sustained economic layup
+produces. Validated against ISO-NE's published Section 3 outage series for NEISO:
+the detector reproduces the published series in autumn (0.86–1.06×), when real
+maintenance dominates, and diverges 1.76–2.76× in winter, when New England CCs
+are priced out by basis.
+
+**Scope — every ISO.** CC capacity-year booked as outage, 2023–2025: ERCOT 24 %,
+MISO 23 %, PJM 23 %, CAISO 37 %, NEISO 39 %, **NYISO 46 %**; PJM COAL 42 %,
+MISO COAL 30 %. Real CC EFOR + planned maintenance is ~10–15 % combined. Median
+repeat-event count is 3–7 separate "outages" per unit-year (max 26, ERCOT).
+
+**Why 2026-07-19 missed it.** That re-audit screened the ERCOT-79 *daily-cycling*
+phantom (overnight gaps folded into one summer-long window). This is a different
+fingerprint — multi-week full stops, seasonally anti-correlated with the
+published maintenance profile — and passes the daily-cycling screen cleanly.
+
+**Consequence.** Where a keeper's offer curves were calibrated against the
+over-counted envelope they are co-dependent on it (rule 11). Demonstrated for
+NEISO: relieving the over-count moved mean LMP −7 to −9 % and halved h>$200.
+Each ISO needs the same published-vs-detector check before its keeper is trusted
+on availability; the four DAM-first gates wired 2026-07-24 (`caiso_dam_outages`,
+`miso_native_outage_source`, `neiso_operable_capacity_availability`,
+`pjm_dam_availability`) supply the instrument for CAISO/MISO/NEISO/PJM at no
+solve cost. ERCOT and NYISO have no native gate and need another cross-check.
+
+**Ruled out as fixes** (tested on NEISO, recorded so they are not rebuilt):
+unit-level frequency filtering (fixes shape, destroys level — the contamination
+is **window-level**) and common-mode/class-simultaneity discrimination (seasonal
+correlation worse than no filter at every threshold, because genuine shoulder
+maintenance is itself clustered). Leading candidate is a **merit-order guard**
+(delivered fuel price × heat rate; rule-13 admissible), which is a mechanism
+change requiring its own charter, a frozen design, and LOYO scoring (rule 22).
+
+**Recommended governance posture.** No marker or frontier withdrawn on this
+finding alone — unlike nyiso-63 the NEISO determination held and the fit
+improved. But holdout spending should be frozen across ISOs until the detector
+settles, since validation/locked years scored against an availability envelope
+that is about to change are wasted signal.
