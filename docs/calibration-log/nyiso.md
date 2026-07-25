@@ -501,3 +501,109 @@ that is also price-setting is the first thing to check, via D-2 (rule 19 —
 reconcile, never stack). Pinned reliability floor NOT touched.
 
 **Keeper unchanged — nyiso-72.** Nothing registered on the dashboard.
+
+---
+
+## 2026-07-25 — the overnight price-setter identified: the hydro monthly-budget dual (nyiso-74)
+
+Full write-up: `docs/FINDING-nyiso-overnight-marginal-is-hydro-water-value-2026-07-25.md`.
+**Keeper unchanged — nyiso-72.** Nothing registered on the dashboard (scoping
+probe). Next number: **nyiso-75**.
+
+**Task 0 (owed re-score) — CLOSED, verdict UNCHANGED, and structurally it could
+not have changed.** The nuclear zero-gap fix does not touch any gate:
+`calibration_verdict` reads `bench.e930` only for `coal_cems` / `gas` / `coal` /
+`gas_cems_grid` / `gas_cogen_grid`; **C1 takes nuclear from `classFull` on the
+EIA-923 basis** (27.525 / 27.073 / 28.408 TWh — already within 0.05-0.07 of
+NYISO's own posting), and **C4 scores only the gas and coal families**. Re-scored
+the committed bundle before and after: byte-identical criteria. Determination
+**NOT-YET**; C1/C2/C4/C6/C7/C8 PASS, C3a/C3b/C3c FAIL 2023, C5a commercial-band
+CAVEAT. The corrupt value was DISPLAY-only; `bench.e930.nuclear` repaired
+23.998 → 27.457 / 25.858 → 26.955 / 27.953 → 28.273 TWh via the guard-railed
+`scripts/regen_nyiso_bench_nuclear.py` (no solve; an input-parity guard proves
+every other raw 930 cell already reproduces exactly, so nuclear is the only cell
+moved; direction guard forbids removing energy; deterministic gzip, idempotent).
+
+**Lane A as chartered (low-load marginal heat rate) — REFUTED as the dominant
+overnight mechanism, with the reason.** Measured from the keeper's `hourly/`
+sidecars, `d(class MW)/d(demand)` over hod 0-6 demeaned within (month × hod):
+**hydro +0.776 / +0.804 / +0.576** (2023/24/25) against CC_REGULAR +0.21 and
+ST_GAS +0.14. Hydro absorbs 58-80 % of the marginal overnight MW. `data/hydro.py`
+represents it as a **monthly energy budget** with month-long perfect foresight,
+so when interior its optimality condition is `price = λ` — a per-month constant.
+The keeper's prices show exactly that: Upstate_West overnight pins to one
+cent-exact modal value for 32-86 % of each month's hours (p25=p50=p75 in five
+months). The discriminator: the implied marginal heat rate of those modal prices
+spans **3.58 → 18.49 (5.2×)** across 2023 while the price stays inside $26-38 and
+gas moves 5.7× ($1.77 → $10.02). **A price invariant to a 5.7× move in its
+supposed marginal fuel is not set by that fuel.** (The 2026-07-24 "overnight HR
+9.97 → a ~10 HR steam unit" reading used the *annual* $3.09 gas price; 9.97 is
+just where the middle of a 3.6-18.5 monthly range lands — an averaging artifact.)
+
+This also explains every earlier refuted A/B on this residual — markup, per-plant
+gas, zonal basis, the netrev offer form and the ERCOT-63 gas bridge all move the
+**thermal** stack, and the trough is not on the thermal stack.
+
+**Why the water value is too high — measured.** Model vs EIA-930 hydro
+overnight/evening-peak ratio: **0.464 vs 0.682** (2023), 0.516 vs 0.664 (2024),
+0.566 vs 0.569 (2025). The model withholds 462 MW overnight and over-runs the
+evening peak by 683 MW in 2023. Real NYISO hydro is Niagara (~2.4 GW) +
+St. Lawrence (~0.9 GW) — licensed, largely run-of-river, limited pondage; it
+cannot move a month's energy from nights into evening peaks. **The one year whose
+hydro shape matches (2025, 0.566 vs 0.569) is the one year C3a passes cleanly.**
+Hydro carries no D-2 floor (0.0 % forced, all years), so this is pure LP
+economics. Rule-19 enumeration: ST_GAS is floored by exactly ONE mechanism
+(`reliability_floor`, 31.0/41.2/27.7 %); hydro by none — an unoccupied slot, not
+a second floor.
+
+**nyiso-74 (2023 scoping probe): `hydro_dispatch_envelope=True`, single delta.**
+Flag confirmed bound from the LP output (`hydro deliverability envelope on 154
+units (evening p95 4394 MW)`), not from run_config.
+
+* hydro overnight 1,970 → **2,269 MW** (measured 2,432); evening peak 4,248 →
+  **4,018** (measured 3,565); ratio 0.464 → **0.565**; **hourly r 0.638 → 0.717**.
+* **The water value fell in ALL TWELVE months** (−$0.78 to −$5.21, mean −$3.1)
+  with hydro deliverability as the only changed input. The trough's price-setter
+  is established **experimentally**, not by inference.
+* Trough −$0.79, peak +$3.61, **peak-trough spread 12.63 → 17.03 (+$4.40)**.
+* Mean LMP 38.23 → 39.47, so **C3a 2023 +18.3 % → +22.2 % — worse**.
+
+**NOT promoted; keeper stays nyiso-72 — and NOT rejected on the residual
+(rule 1).** It is not a keeper candidate because it is a single-year scoping
+probe (rule 16) and because the *instrument* is the wrong one: a p95 hourly
+ceiling bounds the hoarding but leaves the monthly optimization intact (the modal
+share collapses 72.4 % → 18.0 % in Jan, so the freed hours hand the margin back
+to thermal at a higher price, nearly cancelling the −$3.1 water-value drop). The
+mechanism is right, the instrument is loose. It is also the **first NYISO lever
+to EXPAND the peak-trough spread** (+$4.40; the gas bridge compressed it −$0.63)
+— that signature should be preserved by any successor.
+
+**Named successor lane (needs a charter + owner sign-off):** shorten the hydro
+budget period from monthly to **daily / pondage-duration** for run-of-river-
+dominated fleets. Pondage volume is a licensed physical parameter, so it
+regenerates forward and responds to changed conditions. Under rule 19 it must
+**replace or reconcile with** `hydro_dispatch_envelope`, never stack.
+
+**Consequence: the thermal lane is reinstated but demoted.** With hydro capped,
+more overnight hours become thermal-set and the trough still does not fall — so
+the C3a-2023 overnight residual has TWO components (over-high water value in
+hydro-set hours; over-high thermal offer in the rest). The low-load incremental-
+HR question is identifiable from measured data — `nyiso_campd_marginal_hr_summary.csv`
+carries both bases, and the registered curve uses a deliberate MIXED basis
+(`phys_committed = avg_committed_p50` 0.964 for CC_REGULAR, while
+`phys_econ_low/high = marg_*_p50` 0.784/0.925; `marg_committed_p50` is 0.632) —
+and now has a cleaner test bed.
+
+**Governance note (not adjudicated):** `interchange_shaping` is confirmed
+**False** in the keeper, so the 2026-07-24 rule-13 finding has no live exposure.
+But `nyiso_import_reconciliation=True` logs "priced import node reconciled to
+measured EIA-930 net interchange — annual band [22.98, 23.92] TWh". That is an
+annual-level reconcile to a measured realized outcome and is flagged for owner
+review; it was not re-adjudicated in this session.
+
+**Probe bundle not retained.** `nyiso-74`'s slim bundle was lost to a branch
+reset and was not re-solved (its numbers are all recorded above and in the
+FINDING). It reproduces exactly from:
+`scripts/replay_keeper.py results/calibration/nyiso72_netrev_margin --out-dir
+results/calibration/nyiso74_hydro_envelope --years 2023 --set
+hydro_dispatch_envelope=true` (~6 min).
