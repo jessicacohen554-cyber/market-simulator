@@ -19,6 +19,9 @@ from functools import lru_cache
 from market_sim.config.constants import (
     CO2_RATES,
     EFORD,
+    EGRID_CC_HR_PHYSICAL_CEILING,
+    EGRID_COLOCATION_RADIUS_KM,
+    EGRID_UNIT_VINTAGE_TOL_YEARS,
     FUEL_CO2_FACTOR_PER_MMBTU,
     HEAT_RATE_BINS,
     NOX_RATES,
@@ -519,6 +522,234 @@ def _cc_demonstrated_peaks(iso: str) -> dict[int, float]:
     }
 
 
+def _egrid_boundary_hr_repairs() -> dict[int, float]:
+    """Boundary-reconciled plant heat rates (MMBtu/MWh) for eGRID double-counts.
+
+    eGRID keys its plant sheet (PLNT23) on ORISPL, but CEMS reports co-located
+    plants sharing a stack under ONE facilityId. Where that happens the plant
+    row's heat input ``PLHTIAN`` covers the whole CEMS facility while its net
+    generation ``PLNGENAN`` covers only the one EIA plant, so ``PLHTRT`` is a
+    ratio of two different boundaries and the co-located sibling's fuel is
+    double-counted. **Riverside Energy Center (55641)** is the live instance:
+    ``PLHTIAN`` = 53,017,211 MMBtu is byte-identical to the sum of ``heatInput``
+    over all four units of CEMS facility 55641 (both the 2004 Riverside block
+    and the 2020 West Riverside block, EIA plant 64020, 454 m away), while
+    ``PLNGENAN`` = 3,543,044 MWh is the 674.9 MW Riverside plant alone. The
+    published 14,963.7 Btu/kWh is ~2x any combined cycle, pricing the plant near
+    $45/MWh against ~$20/MWh for its class — above most MISO coal — so the LP
+    never commits it (model CF 0.01 against an actual 0.60).
+
+    Returns ``{plant_id: reconciled_heat_rate}``, empty when the eGRID workbook
+    is absent. A plant is repaired only when ALL FOUR hold:
+
+    1. ``PLHTRT`` exceeds :data:`EGRID_CC_HR_PHYSICAL_CEILING` — a combined cycle
+       raises steam from its own topping turbine's exhaust, so it cannot be less
+       efficient than a bare simple-cycle GT of the same era. A physics bound off
+       an existing cited constant, not a fitted multiple of the class mean.
+    2. A co-located sibling plant (within :data:`EGRID_COLOCATION_RADIUS_KM`)
+       independently reports its own ``PLHTIAN`` > 0, so excluding the duplicated
+       units loses no fuel from the system.
+    3. The plant carries UNT23 units whose commissioning vintage is within
+       :data:`EGRID_UNIT_VINTAGE_TOL_YEARS` of a *sibling* EIA-860 generator
+       vintage and of NONE of its own — eGRID dates 55641's CT-03/CT-04 to 2019
+       while all three of its EIA-860 generators are 2004. Excluding them must
+       leave at least one unit with positive heat input.
+    4. The recomputed rate lands at or below the same ceiling. Self-validating:
+       the repair is accepted only because it resolves an impossibility.
+
+    Condition 4 is what makes this safe. Without it the detector also fires on
+    Devon 544 (876.6 -> 340.1 MMBtu/MWh, garbage either way and already dropped
+    by the curation script's 3,000-30,000 Btu/kWh window) and King City 10294
+    (7.855 -> 8.998, a *degradation* of an already-plausible value). Both are
+    correctly rejected — Devon by condition 4, King City by condition 1. Across
+    all six ISOs the accepted set is exactly ``{55641: 6.880}``.
+
+    A *general* form of this repair — drop every UNT23 unit whose vintage matches
+    no EIA-860 generator at its plant — was sized and refused: it touches 47
+    plants and destroys 25 (French Island -> 0.011, Ivanpah 3 -> 0.873), because
+    EIA-860's operable snapshot omits retired units CEMS still reports, so
+    removing their heat input guts the numerator while ``PLNGENAN`` stays the
+    whole-plant total.
+
+    Rule posture: rule 11's named exception — measured data drawn on a different
+    boundary than our representation, reconciled rather than replaced by a guess.
+    Zero free parameters (the value is arithmetic on eGRID's own fields, never
+    chosen) and no appeal to any model output, so rules 1/10 are not engaged.
+    Rule 13/23 forward story: recomputed from whichever eGRID vintage is on disk,
+    so a later release that fixes the 55641 attribution makes condition 1 stop
+    firing and this a silent no-op.
+
+    Thin resolver over :func:`_egrid_boundary_hr_repairs_for`, which carries the
+    cache keyed on the two resolved source paths — so an ``eia860_vintage_year``
+    switch (which repoints :func:`active_eia860_dir`) recomputes against that
+    vintage's own generator table instead of serving a stale set.
+    """
+    from market_sim.config.paths import FLEET_DIR
+
+    egrid_path = FLEET_DIR / "egrid2023_data_rev2.xlsx"
+    eia_path = active_eia860_dir() / EIA_860_PARQUET_NAME
+    if not egrid_path.exists() or not eia_path.exists():
+        return {}
+    return _egrid_boundary_hr_repairs_for(egrid_path, eia_path)
+
+
+@lru_cache(maxsize=4)
+def _egrid_boundary_hr_repairs_for(
+    egrid_path: Path, eia_path: Path
+) -> dict[int, float]:
+    """Compute the accepted repair set for one (eGRID, EIA-860) source pair.
+
+    Cache-bearing core of :func:`_egrid_boundary_hr_repairs`; see that function
+    for the four acceptance conditions and the rule posture. Keyed on the
+    resolved paths so each EIA-860 vintage gets its own entry. Returns ``{}``
+    when either workbook/parquet does not carry the expected columns.
+    """
+    try:
+        plants = pd.read_excel(
+            egrid_path,
+            sheet_name="PLNT23",
+            skiprows=1,
+            usecols=["ORISPL", "LAT", "LON", "PLHTIAN", "PLNGENAN", "PLHTRT"],
+        )
+        units = pd.read_excel(
+            egrid_path,
+            sheet_name="UNT23",
+            skiprows=1,
+            usecols=["ORISPL", "HTIAN", "UNTYRONL"],
+        )
+        gens = pd.read_parquet(
+            eia_path, columns=["plant_id", "technology", "operating_year", "status"]
+        )
+    except (ValueError, KeyError, OSError):  # unexpected workbook/parquet schema
+        logger.warning(
+            "eGRID boundary heat-rate reconciliation skipped: unreadable source"
+        )
+        return {}
+
+    gens = gens[gens["status"].astype(str).str.strip().str.upper() == "OP"]
+    vintages: dict[int, set[int]] = {
+        int(code): {int(y) for y in grp.dropna()}
+        for code, grp in gens.groupby("plant_id")["operating_year"]
+        if pd.notna(code)
+    }
+    # Scoped to gas_cc, the one class with an airtight physical ceiling.
+    cc_codes = {
+        int(c)
+        for c in gens.loc[
+            gens["technology"].astype(str) == "Natural Gas Fired Combined Cycle",
+            "plant_id",
+        ].dropna()
+    }
+    plants = plants.dropna(subset=["ORISPL", "LAT", "LON"]).drop_duplicates("ORISPL")
+    lat = plants["LAT"].to_numpy(dtype=float)
+    lon = plants["LON"].to_numpy(dtype=float)
+    oris = plants["ORISPL"].to_numpy(dtype="int64")
+    htian = pd.to_numeric(plants["PLHTIAN"], errors="coerce").to_numpy(dtype=float)
+    ngen = pd.to_numeric(plants["PLNGENAN"], errors="coerce").to_numpy(dtype=float)
+    # eGRID publishes PLHTRT in Btu/kWh; the model works in MMBtu/MWh.
+    phtrt = pd.to_numeric(plants["PLHTRT"], errors="coerce").to_numpy(dtype=float) / 1e3
+    units = units.dropna(subset=["ORISPL"])
+    units_by_plant = {int(c): grp for c, grp in units.groupby("ORISPL")}
+
+    repairs: dict[int, float] = {}
+    for i, code in enumerate(oris):
+        code = int(code)
+        own_vint = vintages.get(code)
+        # (1) impossible for a combined cycle
+        if (
+            code not in cc_codes
+            or not own_vint
+            or not np.isfinite(phtrt[i])
+            or phtrt[i] <= EGRID_CC_HR_PHYSICAL_CEILING
+            or not np.isfinite(ngen[i])
+            or ngen[i] <= 0.0
+        ):
+            continue
+        own_units = units_by_plant.get(code)
+        if own_units is None or own_units.empty:
+            continue
+        # Equirectangular separation is exact enough at 1 km / mid-latitudes.
+        km = np.hypot(
+            (lat - lat[i]) * 111.0,
+            (lon - lon[i]) * 111.0 * np.cos(np.radians(lat[i])),
+        )
+        for j in np.nonzero(km < EGRID_COLOCATION_RADIUS_KM)[0]:
+            sib = int(oris[j])
+            sib_vint = vintages.get(sib)
+            # (2) a co-located sibling that reports its own heat input
+            if (
+                sib == code
+                or not sib_vint
+                or not np.isfinite(htian[j])
+                or htian[j] <= 0.0
+            ):
+                continue
+
+            def _is_siblings(year: object) -> bool:
+                if pd.isna(year):
+                    return False
+                y = int(year)  # type: ignore[arg-type]
+                tol = EGRID_UNIT_VINTAGE_TOL_YEARS
+                return any(abs(y - v) <= tol for v in sib_vint) and not any(
+                    abs(y - v) <= tol for v in own_vint
+                )
+
+            dup = own_units["UNTYRONL"].map(_is_siblings)
+            # (3) the plant carries units that are demonstrably the sibling's
+            if not dup.any() or bool(dup.all()):
+                continue
+            kept = (
+                pd.to_numeric(own_units.loc[~dup, "HTIAN"], errors="coerce")
+                .fillna(0.0)
+                .sum()
+            )
+            if kept <= 0.0:
+                continue
+            reconciled = float(kept) / float(ngen[i])
+            # (4) the repair must resolve the impossibility
+            if reconciled <= 0.0 or reconciled > EGRID_CC_HR_PHYSICAL_CEILING:
+                continue
+            repairs[code] = reconciled
+            logger.warning(
+                "eGRID plant %d heat rate %.3f MMBtu/MWh exceeds the combined-cycle "
+                "physical ceiling %.3f (PLHTIAN spans co-located plant %d, %.0f m "
+                "away, whose %d unit(s) eGRID double-counts) — reconciled to %.3f",
+                code,
+                phtrt[i],
+                EGRID_CC_HR_PHYSICAL_CEILING,
+                sib,
+                km[j] * 1000.0,
+                int(dup.sum()),
+                reconciled,
+            )
+            break
+    return repairs
+
+
+def _apply_egrid_boundary_hr_repairs(df: pd.DataFrame) -> pd.DataFrame:
+    """Overwrite ``heat_rate`` for plants with a boundary-reconciled eGRID rate.
+
+    Applied to the normalized generator frame before it becomes
+    :class:`Generator` objects, so every read path — the canonical snapshot, the
+    per-year vintages and the mothball re-carry — picks the correction up from
+    the one seam. A frame with no ``heat_rate``/``plant_id`` column, or no
+    repaired plant in it, is returned unchanged. See
+    :func:`_egrid_boundary_hr_repairs` for the four acceptance conditions.
+    """
+    if "heat_rate" not in df.columns or "plant_id" not in df.columns:
+        return df
+    repairs = _egrid_boundary_hr_repairs()
+    if not repairs:
+        return df
+    codes = pd.to_numeric(df["plant_id"], errors="coerce")
+    hit = codes.isin(repairs)
+    if not hit.any():
+        return df
+    df = df.copy()
+    df.loc[hit, "heat_rate"] = codes[hit].map(repairs).astype(float)
+    return df
+
+
 def _reconcile_cc_pmax_to_nameplate(
     records: list[dict], cc_nameplate_sum: dict[int, float], iso: str
 ) -> None:
@@ -628,6 +859,11 @@ def _rows_to_generators(
     if "status" in df.columns:
         status = df["status"].astype(str).str.strip().str.upper()
         df = df[status == "OP"]
+
+    # Boundary-reconcile eGRID plant heat rates double-counted across co-located
+    # CEMS facilities (Riverside 55641). Single seam: every fleet read path — the
+    # canonical snapshot, the per-year vintages, the mothball re-carry — lands here.
+    df = _apply_egrid_boundary_hr_repairs(df)
 
     records: list[dict] = []
     # Per-plant EIA-860 nameplate sum over merchant-CC generators, for the

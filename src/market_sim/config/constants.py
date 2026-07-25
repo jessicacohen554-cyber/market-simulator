@@ -178,6 +178,36 @@ HEAT_RATE_BINS: dict[str, dict[str, float]] = {
     },
 }
 
+# eGRID plant-heat-rate boundary reconciliation (see
+# docs/handoffs/miso-88-egrid-hr-boundary-plan-2026-07.md).
+#
+# eGRID keys its plant sheet on ORISPL, but CEMS reports co-located plants that
+# share a stack/facility under ONE facilityId. Where that happens the plant row's
+# heat input (PLHTIAN) covers the whole CEMS facility while its net generation
+# (PLNGENAN) covers only the one EIA plant, so PLHTRT is a ratio of two different
+# boundaries and the co-located sibling's fuel is double-counted. Riverside
+# Energy Center (55641) / West Riverside (64020) is the live instance: PLHTRT
+# 14,963.7 Btu/kWh against a boundary-consistent 6,880.
+#
+# Site identity: co-located plants share a fence line. 1.0 km comfortably spans
+# a multi-block generating station (Riverside/West Riverside are 454 m apart)
+# while never reaching an unrelated station.
+EGRID_COLOCATION_RADIUS_KM: float = 1.0
+# CEMS unit commissioning date vs the EIA-860 generator in-service year differ by
+# up to a year for the same machine (CEMS certifies at first fire, EIA-860 records
+# commercial operation): eGRID UNT23 dates West Riverside's turbines 2019, EIA-860
+# dates the generators 2020. A one-year window matches a unit to its own plant's
+# vintages without reaching an adjacent build.
+EGRID_UNIT_VINTAGE_TOL_YEARS: int = 1
+# Physical ceiling for a combined-cycle plant heat rate. A combined cycle raises
+# steam from its own topping turbine's exhaust, so it cannot be LESS efficient
+# than a bare simple-cycle GT of the same era — HEAT_RATE_BINS["gas_ct"]["older"]
+# (EIA Table 8 legacy combustion turbine). A gas_cc plant rate above this is
+# arithmetic on mismatched boundaries, not measured inefficiency. Scoped to
+# gas_cc: this is the one class where the bound is airtight (a CT has no
+# less-efficient sibling technology to bound it against).
+EGRID_CC_HR_PHYSICAL_CEILING: float = HEAT_RATE_BINS["gas_ct"]["older"]
+
 # CCS retrofit heat rate penalty: parasitic load from amine scrubbing + CO2 compression.
 # NETL Cost & Performance Baseline Rev 4 (2021): 10-14% for supercritical PC, 12-16% for NGCC.
 # Default 12% reflects modern NGCC with optimized heat integration.
