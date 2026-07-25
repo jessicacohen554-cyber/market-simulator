@@ -165,4 +165,77 @@ tuning" to "structural, needs a structural session." 2022 holdout NOT touched
 inherited pjm-115 levels; the margin baseline reproduced pjm-117 exactly:
 CC_REGULAR 2023 316.8, C3a 2025 −10.6%).
 
+
 Next number: pjm-119.
+
+## 2026-07-25 — pjm-120: C3a-2025 diagnosed as a monotone price-DISPERSION compression; the anchor lead REFUTED and reserve-product coverage MEASURED INERT (no keeper change)
+
+**Task.** Close PJM's last open gate — C3a mean LMP 2025, −10.7% against a ±10%
+band, the single NOT-YET criterion on keeper `2026-07-24-pjm-119-overlay-restore`
+(9/10 scored PASS). **Outcome: diagnosis + two refutations, no lever promoted,
+keeper unchanged.** Full write-up:
+`docs/FINDING-pjm120-c3a-extreme-tail-depth-2026-07.md`.
+
+**1. The handoff's leading lead is REFUTED on sign.** It proposed that 2025 fails
+because gas ($3.52 HH) exceeds the `gas_offer_margin_anchor` ($3.3483), so
+`gas_offer_net_revenue_margin` compresses offers in the failing year. The sign of
+`mc += markup_hr × (anchor − fuel)` is set by the DELIVERED series, not the annual
+HH scalar. PJM 2025 delivered $/MMBtu: Jan 6.79, Feb 4.99, Mar 4.07, Apr 4.03,
+May 3.41, **Jun 2.99, Jul 3.26, Aug 2.89, Sep 2.66, Oct 3.12**, Nov 3.94, Dec 5.09.
+Every failing month is BELOW the anchor, so the mechanism RAISES those offers; it
+compresses only in Jan/Feb/Dec, the best-scoring months. Lowering the anchor (e.g.
+to the pooled p50, 2.9449) would make 2025 worse. Independent of the owner's
+2026-07-24 decision to keep the mechanism — it simply is not the C3a driver.
+(Incidental: the pjm-117/pjm-118 entries above describe the anchor as "a measured
+p50"; it is the MEAN of annual delivered means — 3.3483 = mean(3.2551, 2.8556,
+3.9341), pooled p50 is 2.9449. Code is self-consistent; only the prose is wrong.
+Flagged for `/sync-docs`, not edited — rule 23.)
+
+**2. The residual is a dispersion compression, not a level miss or a tail
+truncation.** 2025-only byte-faithful replay of the keeper (`replay_keeper`, east
+cut confirmed live at `2 link(s) … mean 8149 MW`; probe
+`results/probes/pjm120_c3a_2025`, rule-16 diagnostic, never registerable). Model
+$41.19 vs actual $46.07 load-weighted, gap −$4.89. By ACTUAL-price stratum
+(contribution to gap): 0-25 **+1.965**, 25-50 **+2.045**, 50-100 −3.736, 100-200
+−2.499, 200-376 −1.127, >376 −1.534. Per-hour error: **+10.4 / +3.7 / −17.5 /
+−64.8 / −166.5 / −634.5**. The model is too EXPENSIVE when slack and too CHEAP
+when tight, monotonically. **This corrected an earlier draft of the same finding**
+(pushed as `6b3dc33`) which had argued the gate was lost in ~14 extreme hours; the
+>$376 stratum is only 31% of the negative side, less than the 50-100 band. The
+refutation is recorded in the doc rather than silently rewritten.
+**Guard: no level knob can fix this** — the cheap 77% of hours are already
+$4-10/MWh too high, and 2023 already runs +4.7%.
+
+**3. Reserve-product coverage cannot be the lever — measured, not inferred.** The
+keeper prices 1 of PJM's 3 nested reserve products (`pjm_primary` + `pjm_primary_mad`;
+`pjm_reserve_pergen_sync` off, Secondary/30-Min not in the LP at all), while PJM at
+2025-06-24 18:50 was short on ALL THREE with every ORDC curve at its $850 Step-1
+penalty (SR $2,550 = 3×850, PR $1,700, 30MIN $850) — that cascade set the $1,722
+LMP. But the model's balance never binds: `hourly/system_2025.parquet::reserve_price`
+is nonzero in **22 of 8,759 hours**, reaches **$300 in ZERO hours** and $850 in zero,
+max **$210.99**, mean $0.151. At the worst hour (h4193, actual $1,722) the dual is
+$210.99. Cause: **38.1 GW of deliverable 10-min ramp against a ~3.7 GW requirement**
+(~10× slack) vs PJM's actual 1.6 GW cleared against 2.5 GW. A second demand curve
+over that slack clears in the same sub-shortage regime.
+The A/B arm (`--set pjm_reserve_pergen_sync=true`) built correctly (78 R columns /
+4 balance families vs 39/2) and cleared P0 in 561 s but was **OOM-killed in the P1
+warm-start** (exit 137) — the documented failure mode for PJM's finer reserve tiers
+(`model/reserves/spec.py`), so it returned no C3a number; the reserve dual settles
+the question directly and more strongly. This **reproduces the pjm-87 result
+("never crosses $300") on the current east-cut-restored model**, so the owner's
+2026-07-11 G-20b hold was not an artifact of the degraded-overlay era — it is
+re-derived here from a different criterion (C3a, not C3c) and stands strengthened.
+
+**Forward.** The live lane is reserve/LP tightness (G-20b / ERCOT-G-22 class): the
+perfect-foresight all-online dispatch carries an order of magnitude more deliverable
+ramp than PJM holds, so no demand curve can price scarcity and the upper strata stay
+compressed. Caution for scoping: closing only the >$376 stratum would pass C3a-2025
+(≈ −7.3%) while leaving −$7.4 of compression and the over-priced cheap hours intact —
+per rule 1 that is a partial repair, not a closure.
+
+**Reproducibility note.** `regenerate_clean.py transfer-interface-limits
+ramp-capability` suffices (seconds; the full 46-datatype sweep is not needed), and
+`fetch_pjm_da_virtuals.py --years 2025` is REQUIRED — the keeper's
+`pjm_da_virtual_bids` hard-fails on a fresh container without the gitignored raw feed.
+
+Next number: pjm-121.
