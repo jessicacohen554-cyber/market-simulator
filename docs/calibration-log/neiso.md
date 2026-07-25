@@ -212,3 +212,65 @@ data) **NOT run** — no owner authorization for an out-of-training solve was
 given this session; the stale zero-outage `2026-07-23-neiso-61-margin-2022`
 therefore still stands un-superseded and should not be trusted. Locked test
 (2019 + H1-2026) untouched. Next shorthand: neiso-63.
+
+## 2026-07-24 — neiso-63: CAMPD extract re-audit — the over-count is ECONOMIC LAYUP booked as outage, and it is a DETECTOR-WIDE systematic (all six ISOs), not a NEISO bug
+
+**Charter.** Owner-authorized root-cause re-audit opened by `neiso-62`: the
+ISO-NE operable-capacity A/B showed the model deleting ~4,458 MW annual /
+~5,779 MW winter of thermal capacity that ISO-NE's own accounting says is
+operable, with LMP moving −7 to −9 % when relieved — the rule-11 condition. No
+solve, no keeper change, no parameter touched. Model Opus. Full evidence:
+`results/calibration/FINDING-neiso63-campd-economic-layup-2026-07.md`.
+
+**Verdict: the detector books sustained economic layup as mechanical outage.**
+Four independent signatures, all from committed artifacts, no LP:
+
+1. **Seasonal anti-correlation.** Detector ÷ ISO-NE published (Section 3 line C):
+   autumn **1.06 / 0.96 / 0.86×** (2023/24/25) but winter **2.58 / 2.76 / 1.76×**.
+   ISO-NE's profile is the textbook maintenance shape — low in both peak seasons,
+   high in the shoulders; the detector matches it exactly where real maintenance
+   dominates and diverges hardest where New England CCs are priced out by winter
+   basis.
+2. **Simultaneity.** Jan 2023: **31 of 58 `CC_REGULAR` units (53 %, 6,645 MW)**
+   flagged out at once, against 2,929 MW published across *all* generation. July
+   carries the fewest (11 units). Common-mode, not idiosyncratic.
+3. **Repeat events.** Median **7 separate "outages" per unit-year** (max 15),
+   **mean 153 d out = 42 % of the year**. No CC breaks fifteen times a year.
+4. **The filter's own premise.** `filter_revealed_outages` keeps a span that is
+   down through ≥24 local high-load hours, and separately any ≥5-day full stop —
+   whose docstring states the assumption *"economic idling backs down but does
+   not fully stop for weeks"*. That is false for a NEISO CC in a high-basis
+   winter, so **both** surviving branches keep exactly the wrong windows.
+
+**Two candidate fixes TESTED and RULED OUT** (recorded so they are not rebuilt).
+*Unit-level frequency filtering*: keeping only units with ≤3 windows/yr fixes the
+shape (monthly r +0.53→+0.84, +0.47→+0.75, +0.70→+0.96) but destroys the level
+(410 vs 4,575 MW) — **the contamination is window-level, not unit-level**, which
+is the binding constraint on any repair. *Common-mode discrimination*: at every
+τ ∈ [0.30, 0.50] the seasonal correlation is **worse than no filter at all**;
+genuine shoulder maintenance is itself clustered. Leading remaining candidate is
+a **merit-order guard** (delivered fuel price × heat rate — rule-13 admissible,
+and the detector already carries class economic guards) — a mechanism change
+needing its own charter, frozen design, and LOYO (rule 22); deliberately not
+attempted here.
+
+**Cross-ISO: every extract carries it.** CC capacity-year booked as outage —
+ERCOT 24 %, MISO 23 %, PJM 23 %, CAISO 37 %, NEISO 39 %, **NYISO 46 %** (PJM COAL
+42 %) against a real CC EFOR + planned norm of ~10–15 %. The 2026-07-19
+phantom-outage re-audit missed this because it screened the ERCOT-79
+*daily-cycling* fingerprint, a different failure mode. Escalated to
+`governance.md` — this is a cross-ISO item, and the four DAM-first gates wired
+2026-07-24 give CAISO/MISO/NEISO/PJM a published instrument to run the same
+check against at no solve cost.
+
+**Open / next.** (1) The merit-order guard is the fix charter. (2) The neiso-62
+denominator band [0.737, 0.849] is now **secondary** — fix the detector first and
+let the operable-capacity series serve as the validation instrument it suits
+(fleet-grain cannot carry per-unit availability). (3) Keeper unchanged:
+`2026-07-23-neiso-61-netrev-margin`. (4) Frontier (2026-07-11) and
+calibration-complete marker (2026-07-07) are **open questions, not withdrawn** —
+unlike nyiso-63 the determination held and the fit improved; recommend freezing
+further holdout spending until the extract settles. (5) STEP C (2022 validation)
+still **not run** and now explicitly deferred behind the extract fix; the stale
+zero-outage `2026-07-23-neiso-61-margin-2022` remains un-superseded and should
+not be trusted. Locked test untouched. Next shorthand: neiso-64.
