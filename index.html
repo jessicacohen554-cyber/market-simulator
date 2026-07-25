@@ -32,17 +32,13 @@
 
     <section class="grid grid-2col">
 
-        <a class="card link-card" href="frontend/index.html" style="--card-accent: var(--gas-cc);">
-            <div class="card-title">Results Dashboard</div>
-            <div class="card-subtitle">Explore the model output</div>
-            <p class="text-muted">
-                Scenario results explorer &mdash; generation mix, emissions
-                trajectories, price duration curves and storage utilization
-                across every model year. Browse design decisions and the full
-                parameter citation registry.
-            </p>
-            <span class="link-card-cta">Open the dashboard &rarr;</span>
-        </a>
+        <!-- The "Results Dashboard" card pointed at frontend/index.html, the
+             scenario results explorer. That app shipped without data for its
+             whole life (scripts/export_results.py was never run, so it rendered
+             "No scenarios exported yet") and was archived 2026-07-25 under owner
+             decision D-7 to docs/archive/frontend-scenario-app/. Removed rather
+             than relabelled: the landing page should not sell a destination the
+             site no longer serves. -->
 
         <a class="card link-card" href="learning-hub/index.html" style="--card-accent: var(--wind);">
             <div class="card-title">Learning Hub</div>
