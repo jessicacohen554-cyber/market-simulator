@@ -31973,6 +31973,102 @@
         "auto-generated",
         "needs-citation"
       ]
+    },
+    {
+      "param_id": "summer_wefor_share",
+      "display_name": "Summer WEFOR Share",
+      "value": 0.3,
+      "unit": "fraction of annual WEFOR",
+      "domain": "Reliability",
+      "tier": 3,
+      "source": "UNCITED A-PRIORI HEURISTIC - declared, not sourced. Fraction of a unit's WEFOR (forced-outage rate, THERMAL_AVAILABILITY) applied during the summer peak (Jun-Sep); the remaining (1 - share) is redistributed into the shoulder months, conserving annual outage energy. Winter keeps flat WEFOR. No primary source, derivation, sweep or calibration lineage exists for the 0.30: market-sim-build-plan.md records it as the 'flat per-plant-group POF heuristic' awaiting a data-derived replacement. It was NOT fitted to a residual. Note the WEFOR MAGNITUDE is GADS-cited (see thermal_availability.*); only this SEASONAL REALLOCATION of it is uncited. PHYSICS TENSION: for PLANNED outages, shifting maintenance off the peak is well-founded (the POF side is separately grounded by the measured MAINTENANCE_MONTHLY_SHAPE); for FORCED outages the reallocation runs OPPOSITE to the physics, since forced outages correlate POSITIVELY with heat and high load. Unverified directional argument, not a citation. MATERIALITY: governs all six non-coal thermal classes (COAL is exempt under coal_drop_pof) - ~3.9-5.8 GW of MISO summer-peak capability depending on fleet age, the same order as the ~10 GW under-derate ledgered as the MISO C3b caveat. DO NOT re-tune against a residual (rule 24): a hand-set value here would be an answer key for an already-ledgered miss. Replaceable ONLY by a measured seasonal forced-outage shape clearing docs/handoffs/miso-outage-grain-data-ask-2026-07.md, and per rule 23 that commit must cite the data change. Declared in the MISO keeper DOF ledger (miso-91, 2026-07-26).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Registered by miso-91 (2026-07-26) when the constant was re-homed from data/fleet/arrays.py to config/fuel_trajectories.py so scripts/validate_parameters.py covers it (that gate scans only vars(constants) + ScenarioConfig defaults and skips private/non-uppercase names, so the prior private literal was invisible to it three ways over - CLAUDE.md rule 20 [R-REGISTRY]). Value unchanged by the move.",
+      "old_repo_location": "src/market_sim/data/fleet/arrays.py::_SUMMER_WEFOR_SHARE",
+      "last_verified": "",
+      "flags": [
+        "needs-citation",
+        "modeled",
+        "residual-identified"
+      ]
+    },
+    {
+      "param_id": "summer_class_derate.CC_REGULAR",
+      "display_name": "Summer Class Derate / Cc Regular",
+      "value": 0.1,
+      "unit": "fraction of capacity",
+      "domain": "Reliability",
+      "tier": 3,
+      "source": "UNCITED FLAT APPROXIMATION of a real, well-established physical effect. Additional summer (Jun-Sep) capacity derate modeling the ambient-temperature output loss gas turbines suffer in heat (gas-turbine mass flow falls as inlet air temperature rises; simple-cycle CTs lose more than combined-cycle, whose steam bottoming cycle partially compensates). The EFFECT is sound; the specific magnitudes 0.10 (CC) / 0.125 (CT) are not derived from a primary source - they are consistent with, but not fitted to, the 10-30% typical CT summer derate the repo's own capacity audit records against EIA-860 net-summer ratings (docs/capacity-audit-860-923-campd.md). A MEASURED per-class dry-bulb alternative exists as scenario.temp_dependent_derate (default-off, probe-refuted for the ERCOT gas fleet 2026-07-09); its MISO sibling scenario.gt_ambient_derate is measured PROVABLY INERT (MISO zone-mean TMAX clears its 35 C reference in 0 h at summer peak in 2023-2025). So rule 11 'prefer the measured input' is not engaged - the measured alternatives were tried and adjudicated, not skipped. Re-homed from data/fleet/arrays.py to config/fuel_trajectories.py (miso-91, 2026-07-26) for registry coverage; values unchanged.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Registered by miso-91 (2026-07-26) when the constant was re-homed from data/fleet/arrays.py to config/fuel_trajectories.py so scripts/validate_parameters.py covers it (that gate scans only vars(constants) + ScenarioConfig defaults and skips private/non-uppercase names, so the prior private literal was invisible to it three ways over - CLAUDE.md rule 20 [R-REGISTRY]). Value unchanged by the move.",
+      "old_repo_location": "src/market_sim/data/fleet/arrays.py::_SUMMER_CLASS_DERATE",
+      "last_verified": "",
+      "flags": [
+        "needs-citation",
+        "modeled"
+      ]
+    },
+    {
+      "param_id": "summer_class_derate.CC_CHP",
+      "display_name": "Summer Class Derate / Cc Chp",
+      "value": 0.1,
+      "unit": "fraction of capacity",
+      "domain": "Reliability",
+      "tier": 3,
+      "source": "UNCITED FLAT APPROXIMATION of a real, well-established physical effect. Additional summer (Jun-Sep) capacity derate modeling the ambient-temperature output loss gas turbines suffer in heat (gas-turbine mass flow falls as inlet air temperature rises; simple-cycle CTs lose more than combined-cycle, whose steam bottoming cycle partially compensates). The EFFECT is sound; the specific magnitudes 0.10 (CC) / 0.125 (CT) are not derived from a primary source - they are consistent with, but not fitted to, the 10-30% typical CT summer derate the repo's own capacity audit records against EIA-860 net-summer ratings (docs/capacity-audit-860-923-campd.md). A MEASURED per-class dry-bulb alternative exists as scenario.temp_dependent_derate (default-off, probe-refuted for the ERCOT gas fleet 2026-07-09); its MISO sibling scenario.gt_ambient_derate is measured PROVABLY INERT (MISO zone-mean TMAX clears its 35 C reference in 0 h at summer peak in 2023-2025). So rule 11 'prefer the measured input' is not engaged - the measured alternatives were tried and adjudicated, not skipped. Re-homed from data/fleet/arrays.py to config/fuel_trajectories.py (miso-91, 2026-07-26) for registry coverage; values unchanged.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Registered by miso-91 (2026-07-26) when the constant was re-homed from data/fleet/arrays.py to config/fuel_trajectories.py so scripts/validate_parameters.py covers it (that gate scans only vars(constants) + ScenarioConfig defaults and skips private/non-uppercase names, so the prior private literal was invisible to it three ways over - CLAUDE.md rule 20 [R-REGISTRY]). Value unchanged by the move.",
+      "old_repo_location": "src/market_sim/data/fleet/arrays.py::_SUMMER_CLASS_DERATE",
+      "last_verified": "",
+      "flags": [
+        "needs-citation",
+        "modeled"
+      ]
+    },
+    {
+      "param_id": "summer_class_derate.CT_PEAKER",
+      "display_name": "Summer Class Derate / Ct Peaker",
+      "value": 0.125,
+      "unit": "fraction of capacity",
+      "domain": "Reliability",
+      "tier": 3,
+      "source": "UNCITED FLAT APPROXIMATION of a real, well-established physical effect. Additional summer (Jun-Sep) capacity derate modeling the ambient-temperature output loss gas turbines suffer in heat (gas-turbine mass flow falls as inlet air temperature rises; simple-cycle CTs lose more than combined-cycle, whose steam bottoming cycle partially compensates). The EFFECT is sound; the specific magnitudes 0.10 (CC) / 0.125 (CT) are not derived from a primary source - they are consistent with, but not fitted to, the 10-30% typical CT summer derate the repo's own capacity audit records against EIA-860 net-summer ratings (docs/capacity-audit-860-923-campd.md). A MEASURED per-class dry-bulb alternative exists as scenario.temp_dependent_derate (default-off, probe-refuted for the ERCOT gas fleet 2026-07-09); its MISO sibling scenario.gt_ambient_derate is measured PROVABLY INERT (MISO zone-mean TMAX clears its 35 C reference in 0 h at summer peak in 2023-2025). So rule 11 'prefer the measured input' is not engaged - the measured alternatives were tried and adjudicated, not skipped. Re-homed from data/fleet/arrays.py to config/fuel_trajectories.py (miso-91, 2026-07-26) for registry coverage; values unchanged.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Registered by miso-91 (2026-07-26) when the constant was re-homed from data/fleet/arrays.py to config/fuel_trajectories.py so scripts/validate_parameters.py covers it (that gate scans only vars(constants) + ScenarioConfig defaults and skips private/non-uppercase names, so the prior private literal was invisible to it three ways over - CLAUDE.md rule 20 [R-REGISTRY]). Value unchanged by the move.",
+      "old_repo_location": "src/market_sim/data/fleet/arrays.py::_SUMMER_CLASS_DERATE",
+      "last_verified": "",
+      "flags": [
+        "needs-citation",
+        "modeled"
+      ]
+    },
+    {
+      "param_id": "summer_class_derate.CT_CHP",
+      "display_name": "Summer Class Derate / Ct Chp",
+      "value": 0.125,
+      "unit": "fraction of capacity",
+      "domain": "Reliability",
+      "tier": 3,
+      "source": "UNCITED FLAT APPROXIMATION of a real, well-established physical effect. Additional summer (Jun-Sep) capacity derate modeling the ambient-temperature output loss gas turbines suffer in heat (gas-turbine mass flow falls as inlet air temperature rises; simple-cycle CTs lose more than combined-cycle, whose steam bottoming cycle partially compensates). The EFFECT is sound; the specific magnitudes 0.10 (CC) / 0.125 (CT) are not derived from a primary source - they are consistent with, but not fitted to, the 10-30% typical CT summer derate the repo's own capacity audit records against EIA-860 net-summer ratings (docs/capacity-audit-860-923-campd.md). A MEASURED per-class dry-bulb alternative exists as scenario.temp_dependent_derate (default-off, probe-refuted for the ERCOT gas fleet 2026-07-09); its MISO sibling scenario.gt_ambient_derate is measured PROVABLY INERT (MISO zone-mean TMAX clears its 35 C reference in 0 h at summer peak in 2023-2025). So rule 11 'prefer the measured input' is not engaged - the measured alternatives were tried and adjudicated, not skipped. Re-homed from data/fleet/arrays.py to config/fuel_trajectories.py (miso-91, 2026-07-26) for registry coverage; values unchanged.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Registered by miso-91 (2026-07-26) when the constant was re-homed from data/fleet/arrays.py to config/fuel_trajectories.py so scripts/validate_parameters.py covers it (that gate scans only vars(constants) + ScenarioConfig defaults and skips private/non-uppercase names, so the prior private literal was invisible to it three ways over - CLAUDE.md rule 20 [R-REGISTRY]). Value unchanged by the move.",
+      "old_repo_location": "src/market_sim/data/fleet/arrays.py::_SUMMER_CLASS_DERATE",
+      "last_verified": "",
+      "flags": [
+        "needs-citation",
+        "modeled"
+      ]
     }
   ]
 }

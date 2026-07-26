@@ -1,6 +1,6 @@
 # Parameter Citation Registry
 
-_Generated 2026-07-20. Every numeric input to the model traces to a primary source
+_Generated 2026-07-26. Every numeric input to the model traces to a primary source
 here. This file is rendered from `frontend/data/parameters.json` by
 `scripts/generate_parameter_registry.py`; edit citations in the JSON (or the
 constant's comment, then re-run the generator), not here._
@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1499 parameters registered** (804 flagged `needs-citation`).
+**1504 parameters registered** (809 flagged `needs-citation`).
 
 
 ## Calibration
@@ -787,6 +787,11 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.wefor_multiplier` | 1.0 | 3 | Global scale on every thermal class's |  | auto-generated, needs-citation |
 | `scenario.wefor_residual` | None | 3 | Historic-backcast WEFOR floor for |  | auto-generated, needs-citation |
 | `scenario.wefor_residual_groups` | None | 2 | Restrict the WEFOR residual cap (wefor_residual) to a chosen set of… | 2024 | auto-generated |
+| `summer_class_derate.CC_CHP` | 0.1 | 3 | UNCITED FLAT APPROXIMATION of a real, well-established physical eff… |  | needs-citation, modeled |
+| `summer_class_derate.CC_REGULAR` | 0.1 | 3 | UNCITED FLAT APPROXIMATION of a real, well-established physical eff… |  | needs-citation, modeled |
+| `summer_class_derate.CT_CHP` | 0.125 | 3 | UNCITED FLAT APPROXIMATION of a real, well-established physical eff… |  | needs-citation, modeled |
+| `summer_class_derate.CT_PEAKER` | 0.125 | 3 | UNCITED FLAT APPROXIMATION of a real, well-established physical eff… |  | needs-citation, modeled |
+| `summer_wefor_share` | 0.3 | 3 | UNCITED A-PRIORI HEURISTIC - declared, not sourced. Fraction of a u… |  | needs-citation, modeled, residual-identified |
 | `thermal_availability.BIOMASS` | [0.07, 0.1, 0.002, 25, 0.04, 0.0015, 25] | 2 | Thermal-fleet availability model by plant-group category. Three add… |  | auto-generated, needs-citation |
 | `thermal_availability.CC_CHP` | [0.05, 0.04, 0.002, 20, 0.02, 0.001, 25] | 2 | Thermal-fleet availability model by plant-group category. Three add… |  | auto-generated, needs-citation |
 | `thermal_availability.CC_REGULAR` | [0.05, 0.05, 0.002, 20, 0.02, 0.001, 25] | 2 | Thermal-fleet availability model by plant-group category. Three add… |  | auto-generated, needs-citation |

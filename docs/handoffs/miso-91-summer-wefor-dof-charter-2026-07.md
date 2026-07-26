@@ -36,7 +36,7 @@ leading underscore, not uppercase.
   fails CI if any constant ... lacks an entry". **It is not wired into CI at all** —
   `grep -rn validate_parameters .github/workflows/` returns nothing. The documented
   enforcement does not exist.
-* The check **already fails on `main`**, with **48** parameters missing a citation entry.
+* The check **already fails on `main`**, with **48** parameters missing a citation entry (and rising: 49 a few hours later, 51 by end of session, purely from other lanes landing new uncited constants — nothing gates the backlog).
   So even a correctly-homed constant would have landed in an existing red backlog.
 
 Neither is repaired here (wiring a check that is already red would just break CI, and the
