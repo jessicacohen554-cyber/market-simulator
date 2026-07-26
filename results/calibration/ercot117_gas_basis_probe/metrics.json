@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-23-ercot99-state-off-fullspan",
+  "run_id": "2026-07-26-ercot117-gas-basis-probe",
   "iso": "ERCOT",
-  "label": "ercot99 state off fullspan",
+  "label": "ercot117 gas basis probe",
   "target_years": [
     2023,
     2024,

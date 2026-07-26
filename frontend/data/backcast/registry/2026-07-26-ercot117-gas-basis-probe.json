@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-26-ercot117-gas-basis-probe",
+ "label": "ercot117 gas basis probe",
+ "date": "2026-07-26",
+ "shorthand": "ercot117-gas-basis-probe",
+ "definition": "(PROBE \u2014 rejected, by design) ERCOT-117 gas-basis causal probe: the ercot115 keeper + ercot_thermal_dam_availability_coal (measured coal envelope armed, ERCOT-116 gate protocol) + ercot_zonal_gas_basis=false \u2014 a diagnostic ablation restoring consistency between the gas series the offer multipliers were DERIVED against (HH daily \u2212 0.50) and the one dispatch prices them at (EP-anchored, +0.50/+0.41/+0.04 $/MMBtu in 2023/24/25). Never a keeper candidate (it disarms a measured input; rule 14). Result vs the pre-commit (PRECOMMIT-ercot117-gas-basis-probe-2026-07-26): the ranking bias owns the LEVEL, not the season \u2014 crossing-band price elevation (+$5.0/+$4.4/+$7.0 in actual-$15\u201325 hours) drops $3.4/$3.5/$2.0 and coal falls \u22123.7/\u22127.3/\u22122.6 TWh vs the envelope arm (annual ratio 1.06/1.13/1.15 \u2192 1.00/1.01/1.11; C1 16/16), but the matched-band SEASONAL excess does NOT improve vs the envelope arm (10.0\u219211.2, 12.9\u219213.8, 13.4\u219213.7 pp) \u2014 P1 refuted: the post-envelope seasonal residual is price-FLAT (+13\u201319 pp in every band $15\u2192$60+, summer only) and is not a merit-order term. C3a collapses (\u221240.5/\u221223.6/\u221215.7% energy-only) \u2014 the EP-anchored gas level is required for price formation; the admissible fix is re-deriving the offer surface ON it (ERCOT-118), not reverting it. Gates: G1 FAIL (2024 \u22124.7 pp vs \u22125.0), G2 PASS, G3 FAIL, BITE PASS. Keeper unchanged.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-07-26-ercot117-gas-basis-probe.js",
+ "bundle": "results/calibration/ercot117_gas_basis_probe"
+}
