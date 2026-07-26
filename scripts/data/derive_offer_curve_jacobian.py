@@ -942,7 +942,14 @@ def block_scales(baseline: Bundle, cache: dict) -> dict[str, float]:
 
 
 def _git_pair_dirty(sha0: str, sha1: str) -> bool | None:
-    """True if src/inputs/data differ between the shas; None if unresolvable."""
+    """True if src/inputs/data differ between the shas; None if unresolvable.
+
+    ``inputs/`` stays in the pathspec deliberately and is NOT a dead path: this
+    diffs two *historical* shas, and the pair can straddle the W1 relocation,
+    where the tree really did have an ``inputs/`` root. A git pathspec matching
+    nothing is a no-op for post-W1 pairs, so keeping it costs nothing and
+    dropping it would silently blind the detector to pre-W1 input changes.
+    """
     if not sha0 or not sha1:
         return None
     if sha0 == sha1:
