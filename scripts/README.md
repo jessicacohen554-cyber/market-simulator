@@ -14,7 +14,7 @@ only the directory moved.
 | `scripts/archive/`  | Retired one-offs that are no longer part of the backcast, hindcast, or forecast paths: superseded per-run drivers (`run_pjm51`–`98`, `run_ercot_21`–`46`, `run_159`–`166`, …), per-run attestation generators, one-shot diagnostics/probes/analyses, completed intake/landing scripts, dead CI-upload tooling. Kept for the historical record; **not maintained**. See `scripts/archive/README.md`. |
 | `scripts/lib/`      | Shared helpers imported by scripts (`clean_io.py`, `bundle_io.py`, per-datatype registries). |
 | `scripts/probes/`   | Per-run probe scripts and repro artifacts, named `_<iso><run>_*` — the historical record of calibration probes. |
-| `scripts/diagnostics/` | Scratch diagnostics. |
+| `scripts/diagnostics/` | Standing measurement harnesses that profile or diff the engine rather than run the programs: `bench_highs_parallel.py` (HiGHS thread-scaling bench), `profile_lp_memory.py` (LP build-vs-solve peak-RSS split), `diff_warmstart_bundles.py` (per-plant cold-vs-warm bundle diff; invoked by `regression_gate.py`) — plus scratch diagnostics. |
 
 Classification rule used (and to use going forward): a script stays at top
 level if it is part of a *standing* workflow — invoked by CI, a skill, tests,

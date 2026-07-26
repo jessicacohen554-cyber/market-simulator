@@ -390,7 +390,7 @@ iso-model-unification's Phase 6 (file decomposition) can safely run.
    before and after the stage; diff with:
    - `scripts/regression_check.py <before> <after>` — column-wise, `--atol 0 --rtol 0`
      for Stages 1-4/7 (byte-identity), `--atol 1e-9 --rtol 1e-9` for Stages 5-6.
-   - `scripts/diff_warmstart_bundles.py <before> <after> <year>` — per-`plant_code`
+   - `scripts/diagnostics/diff_warmstart_bundles.py <before> <after> <year>` — per-`plant_code`
      annual/hourly MW, to localize any reshuffle and confirm it is marginal-tie-only.
 2. **Trivial cases** (CLAUDE.md testing pattern): 1-gen / 1-zone / 24-hour LP per ISO,
    asserting solve success, non-negative prices, and — for Stages 2-4 — that the shared
@@ -419,7 +419,7 @@ dispatch).
 ### 7.3 What Stage 0 must build (extending existing tooling)
 
 `scripts/regression_check.py`, `scripts/capture_baseline.py`,
-`scripts/diff_warmstart_bundles.py` already exist. Stage 0 adds:
+`scripts/diagnostics/diff_warmstart_bundles.py` already exist. Stage 0 adds:
 - `scripts/capture_keeper_goldens.py` — re-solve all six keepers from their frozen
   `run_config.json`, write the P1 dispatch/price/flow/system frames to a golden dir
   (parallelize per ISO, ≤2 concurrent for per-plant multi-zone LPs per CLAUDE.md rule 8;
@@ -1313,7 +1313,7 @@ re-executed to conserve the box's remaining budget).
 **G-40 update (2026-07-06, branch `claude/reserve-coldbuild-memory-opt`) — the
 PJM/MISO OOM is a *construction-peak in the builder*, not the solve, and is
 partly recoverable without a ≥24 GB host.** Profiled with the new
-`scripts/profile_lp_memory.py` (peak anon-RSS, construction-vs-solve split,
+`scripts/diagnostics/profile_lp_memory.py` (peak anon-RSS, construction-vs-solve split,
 per-block nnz). Findings:
 - The OOM-killer's "during reserve-column construction" is confirmed: the peak
   is sparse-matrix *assembly*, not HiGHS. Two drivers — (a) the reserve block's
@@ -1338,7 +1338,7 @@ per-block nnz). Findings:
   suite (457) stays green, so the Stage-6 builder-swap byte gate is untouched.
 - **Not yet confirmed end-to-end:** this container has no `data/clean` MISO/PJM
   partitions and a 16 GB ceiling, so the *keeper* peak can't be measured here —
-  run `MARKET_SIM_MEM_DEBUG=1 scripts/profile_lp_memory.py --keeper …` (or the
+  run `MARKET_SIM_MEM_DEBUG=1 scripts/diagnostics/profile_lp_memory.py --keeper …` (or the
   real solve) on a data-provisioned box to confirm miso-41/pjm-77 now build+solve
   under 16 GB. If the free-concat alone clears it, **the G-40 ≥24 GB host is not
   required** and PJM/MISO can be gated on the standard box. If it does not, the

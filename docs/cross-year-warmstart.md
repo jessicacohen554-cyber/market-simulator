@@ -163,7 +163,7 @@ Objective, every zonal price and total generation are bit-identical end to end;
 the markup is unmoved. The only residual is 0.0033%-of-generation reshuffling
 among units tied at the margin — the intra-year standard. (The bundle-level
 equivalent is `run_calibration --year 2023 2024 2025` flag off vs on, diffed by
-`scripts/diff_warmstart_bundles.py`; the in-process A/B above measures the same
+`scripts/diagnostics/diff_warmstart_bundles.py`; the in-process A/B above measures the same
 quantities without writing six multi-GB dispatch bundles.)
 <!-- RESULTS:END -->
 
@@ -203,7 +203,7 @@ baselines pin it off.
 
 The pre-flip gate: full 3-year backcast (2023→2024→2025, 8760 h, one-thread so
 cold-vs-cold is deterministic) solved cold (`--no-xyear-warmstart`) and warm
-(default), then diffed with `scripts/diff_warmstart_bundles.py` and a price /
+(default), then diffed with `scripts/diagnostics/diff_warmstart_bundles.py` and a price /
 served-load check on `system.parquet`.
 
 **Speedup — the warm-year P0 (the solve cross-year warm-start changes):**
