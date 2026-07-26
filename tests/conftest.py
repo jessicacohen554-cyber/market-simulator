@@ -34,6 +34,39 @@ def pytest_collection_modifyitems(config, items):
             item.add_marker(slow)
 
 
+@pytest.fixture(autouse=True)
+def _reset_eia860_vintage():
+    """Restore the EIA-860 vintage PROCESS GLOBAL after every test.
+
+    ``paths.set_eia860_vintage`` flips a module-level global that re-points every
+    EIA-860-derived loader (fleet operable/retired/proposed snapshots, storage,
+    COD map, the derive artifacts keyed on them) at
+    ``data/raw/eia-860/vintage_<year>/``. ``runner.run_scenario_iso`` sets it
+    once per solve from ``ScenarioConfig.eia860_vintage_year``, and NOTHING
+    resets it when the solve returns — so any test that drives a backcast or a
+    vintage-seeded hindcast through the runner silently re-points the loaders
+    for the REST OF THE SESSION.
+
+    That is the fast tier's order-dependent failure family (triage §6.2):
+    ``tests/test_crossover_harness.py`` runs a 2023-vintage ERCOT crossover
+    through ``run_scenario_iso``, and five later tests — the three
+    ``test_fleet`` planned-additions / retired-within-window cases,
+    ``test_derive_coal_sigmoid``'s MISO provenance freeze, and
+    ``test_outages``'s NEISO floor-exemption case — then read the 2023 snapshot
+    instead of the canonical one and fail. Every one passes in isolation, which
+    is exactly why they read as flakes rather than as one leaked global.
+    Bisected to the polluter 2026-07-26; this resets it at the source rather
+    than adapting any victim.
+
+    ``tests/test_cod_ramp.py::TestEia860VintageSelection`` already carried this
+    teardown by hand ("never leak a vintage into other tests") — this generalizes
+    that convention to the whole suite so a new runner-driving test cannot
+    reintroduce the class.
+    """
+    yield
+    paths.set_eia860_vintage(None)
+
+
 @pytest.fixture
 def repo_root() -> Path:
     """The repository root (directory holding ``pyproject.toml``)."""
