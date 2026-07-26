@@ -262,7 +262,20 @@ parallel by the 2026-07-26 payload-backfill session while this one ran.)
    reached the same envelope conclusion from the other end
    (`FINDING-caiso122-c3a-head-regression-2026-07-26.md`: the C3a-2025 breach is
    the *arrival* of the measured CAISO extract against a keeper that solved with
-   it silently absent — correct behaviour, stale keeper). NYISO's re-tune is
+   it silently absent — correct behaviour, stale keeper).
+   *[Correction 2026-07-26, caiso-123: the parenthetical cites caiso-122's
+   FIRST revision, which caiso-122 itself refuted (its §3: the keeper's overlay
+   WAS present, CC_CHP r=0.99343). The settled attribution —
+   `FINDING-caiso123-c3a-drift-attribution-2026-07-26.md` — is that the keeper
+   solved on a session-local PARTIAL derivation (the extracts were
+   derived-not-committed until 07-24) and the breach is the committed FULL
+   re-derivation being heavier in-window (CC_REGULAR +618/+688 MW avg,
+   2024/25); the guard's own isolated effect is −0.18 %, favourable. The §3b
+   CAISO RE-TUNE verdict's A0-vs-A1 was therefore confounded by the
+   extract-content change; the trigger is withdrawn as stated and re-derived
+   onto that change. "Correct behaviour, stale keeper" survives in
+   substance — but the stale input is the partial derivation, not an absent
+   file.]* NYISO's re-tune is
    **still open**: the parallel nyiso-76 promotion (PR #2916) made
    `2026-07-26-nyiso-75-solar-shape` the keeper, but its `meta.git_sha`
    `af74927` does not contain the corrected-extract commit `6a8f285`, so it
