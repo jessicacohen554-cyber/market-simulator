@@ -684,14 +684,24 @@ def _miso_wind_reference_curtailment_rate() -> tuple[float, int] | None:
         return None
     rates: list[float] = []
     latest_year = 0
-    for _, row in table.iterrows():
-        year = _as_int(row.get("year"))
+    # itertuples (positional, name=None) instead of iterrows: the per-column
+    # positions are resolved once here, which also preserves the ``.get``
+    # semantics the loop relied on -- a column absent from the table reads as
+    # ``None`` (or ``""`` for ``is_estimate``) exactly as before, rather than
+    # raising.
+    _pos = {name: i for i, name in enumerate(table.columns)}
+    _i_year = _pos.get("year")
+    _i_est = _pos.get("is_estimate")
+    _i_curt = _pos.get("avg_wind_curtailed_mw")
+    _i_out = _pos.get("avg_wind_output_rt_gw")
+    for row in table.itertuples(index=False, name=None):
+        year = _as_int(row[_i_year] if _i_year is not None else None)
         if year is None or year not in _MISO_REFERENCE_RATE_YEARS:
             continue
-        if str(row.get("is_estimate", "")).strip().upper() == "TRUE":
+        if str(row[_i_est] if _i_est is not None else "").strip().upper() == "TRUE":
             continue
-        curtailed = _as_float(row.get("avg_wind_curtailed_mw"))
-        delivered_gw = _as_float(row.get("avg_wind_output_rt_gw"))
+        curtailed = _as_float(row[_i_curt] if _i_curt is not None else None)
+        delivered_gw = _as_float(row[_i_out] if _i_out is not None else None)
         if curtailed is None or curtailed < 0.0 or delivered_gw is None:
             continue
         potential_mw = delivered_gw * 1_000.0 + curtailed  # RT output is GW
@@ -976,12 +986,25 @@ def _add_proposed_capacity(
     ].drop_duplicates("Plant Code")
     df = df.merge(plants, on="Plant Code", how="left")
 
-    for _, row in df.iterrows():
-        cap = _as_float(row["Nameplate Capacity (MW)"])
+    # itertuples over the five columns read, positionally (name=None): the
+    # EIA-860 headers carry spaces and parentheses, so named tuples would
+    # mangle them; positional access sidesteps that and the values still go
+    # through _as_float/_as_int, which coerce identically.
+    _cols = [
+        "Nameplate Capacity (MW)",
+        "Latitude",
+        "Longitude",
+        "Effective Year",
+        "Effective Month",
+    ]
+    for cap_v, lat_v, lon_v, e_year_v, e_month_v in df[_cols].itertuples(
+        index=False, name=None
+    ):
+        cap = _as_float(cap_v)
         if cap is None or cap <= 0.0:
             continue
-        lat = _as_float(row["Latitude"])
-        lon = _as_float(row["Longitude"])
+        lat = _as_float(lat_v)
+        lon = _as_float(lon_v)
         if lat is None or lon is None:
             continue
         zone = assign_zone_by_coords(lat, lon, "ERCOT")
@@ -991,11 +1014,11 @@ def _add_proposed_capacity(
         # Effective Year already filtered to (vintage, cal_year]. For an
         # earlier year, the plant is online all 12 months of cal_year;
         # for ``cal_year`` itself, online from Effective Month onward.
-        e_year = _as_int(row["Effective Year"])
+        e_year = _as_int(e_year_v)
         if e_year is not None and e_year < cal_year:
             monthly[z_idx, :] += cap
             continue
-        month = _as_int(row["Effective Month"]) or 1
+        month = _as_int(e_month_v) or 1
         start = min(max(month, 1), _MONTHS_PER_YEAR)
         monthly[z_idx, start - 1 :] += cap
 
