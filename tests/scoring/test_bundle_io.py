@@ -73,6 +73,115 @@ class TestSharedInputStore(unittest.TestCase):
         self.assertNotEqual(content_hash(df), content_hash(df[["b", "a"]]))
 
 
+class TestDerivedSolveInputs(unittest.TestCase):
+    """write_derived_solve_inputs pins outage extracts + the capdel partition."""
+
+    def _bundle(self, root: Path) -> Path:
+        d = root / "results" / "calibration" / "caiso_run"
+        d.mkdir(parents=True)
+        return d
+
+    def test_captures_existing_inputs_and_skips_missing(self):
+        from unittest import mock
+
+        from market_sim.data import outages
+
+        with TemporaryDirectory() as t:
+            run = self._bundle(Path(t))
+            raw = Path(t) / "raw"
+            raw.mkdir()
+            main_csv = raw / "campd-unit-outages-CAISO.csv"
+            pd.DataFrame(
+                {"facility_id": [1], "unit_id": ["a"], "outage_start": ["2025-01-01"]}
+            ).to_csv(main_csv, index=False)
+            layup_csv = raw / "campd-unit-outages-layup-CAISO.csv"
+            pd.DataFrame({"facility_id": [2]}).to_csv(layup_csv, index=False)
+            capdel = pd.DataFrame({"area": ["MIC"], "limit_mw": [16055.0]})
+
+            with (
+                mock.patch.object(
+                    outages,
+                    "unit_outage_csv_for_iso",
+                    side_effect=lambda iso: main_csv,
+                ),
+                mock.patch.object(
+                    outages,
+                    "unit_outage_short_csv_for_iso",
+                    side_effect=lambda iso: raw / "absent-short.csv",
+                ),
+                mock.patch.object(
+                    outages,
+                    "unit_partial_outage_csv_for_iso",
+                    side_effect=lambda iso: raw / "absent-partial.csv",
+                ),
+                mock.patch.object(
+                    outages,
+                    "unit_outage_maxgen_csv_for_iso",
+                    side_effect=lambda iso: raw / "absent-maxgen.csv",
+                ),
+                mock.patch(
+                    "market_sim.data.capacity_deliverability._read",
+                    return_value=capdel,
+                ),
+            ):
+                refs = bundle_io.write_derived_solve_inputs("CAISO", run)
+
+            # Present inputs captured; absent variants skipped silently.
+            self.assertIn("unit_outages", refs)
+            self.assertIn("unit_outages_layup", refs)
+            self.assertIn("capacity_deliverability", refs)
+            self.assertNotIn("unit_outages_short", refs)
+            self.assertNotIn("unit_outages_e923", refs)
+            # Refs land in the shared store and round-trip through meta.json.
+            (run / "meta.json").write_text(
+                json.dumps({"iso": "CAISO", "shared_inputs": refs})
+            )
+            for name in ("unit_outages", "capacity_deliverability"):
+                resolved = bundle_input_path(run, name)
+                self.assertIsNotNone(resolved, name)
+                self.assertTrue(resolved.exists(), name)
+            pd.testing.assert_frame_equal(
+                read_bundle_input(run, "capacity_deliverability"), capdel
+            )
+            # Every captured name is in the declared derived-input namespace.
+            self.assertTrue(set(refs) <= set(bundle_io.DERIVED_INPUT_NAMES))
+
+    def test_capdel_absence_records_nothing(self):
+        from unittest import mock
+
+        from market_sim.data import outages
+
+        with TemporaryDirectory() as t:
+            run = self._bundle(Path(t))
+            missing = Path(t) / "nope.csv"
+            with (
+                mock.patch.object(
+                    outages, "unit_outage_csv_for_iso", side_effect=lambda iso: missing
+                ),
+                mock.patch.object(
+                    outages,
+                    "unit_outage_short_csv_for_iso",
+                    side_effect=lambda iso: missing,
+                ),
+                mock.patch.object(
+                    outages,
+                    "unit_partial_outage_csv_for_iso",
+                    side_effect=lambda iso: missing,
+                ),
+                mock.patch.object(
+                    outages,
+                    "unit_outage_maxgen_csv_for_iso",
+                    side_effect=lambda iso: missing,
+                ),
+                mock.patch(
+                    "market_sim.data.capacity_deliverability._read",
+                    return_value=None,
+                ),
+            ):
+                refs = bundle_io.write_derived_solve_inputs("CAISO", run)
+            self.assertEqual(refs, {})
+
+
 class TestBundlePathHelpers(unittest.TestCase):
     def test_bundles_root_under_repo(self):
         self.assertEqual(bundle_io.bundles_root(), bundle_io.BUNDLES_ROOT)
