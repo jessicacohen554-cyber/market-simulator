@@ -17,7 +17,6 @@ synchronization floor that the dispatch must respect instead of cycling them off
 """
 
 import unittest
-from pathlib import Path
 
 import pandas as pd
 
@@ -31,8 +30,9 @@ from market_sim.data.fleet import (
     thermal_tranche_overrides,
     thermal_tranche_peaking,
 )
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parent.parent
+REPO = REPO_ROOT
 TRANCHES = PROCESSED_DIR / "thermal_tranches_MISO.csv"
 
 

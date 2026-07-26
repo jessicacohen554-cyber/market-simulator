@@ -27,6 +27,7 @@ from market_sim.data.miso_reserve_requirements import (
     OR_PRODUCTS,
     load_miso_reserve_requirements,
 )
+from tests.helpers import REPO_ROOT
 
 
 def _write_cleared_parquet(
@@ -211,7 +212,11 @@ class TestConditionalRunMarkup(unittest.TestCase):
     def _ct(self, hours):
         import sys
 
-        sys.path.insert(0, str(Path(__file__).parent))
+        # The single cross-test import in the suite: the CT builder lives with
+        # the commitment unit tests, which the Wave-5A migration moved to
+        # tests/unit/model/. Anchored on REPO_ROOT so it survives future moves
+        # of THIS file; it still has to name the owner's directory.
+        sys.path.insert(0, str(REPO_ROOT / "tests" / "unit" / "model"))
         from test_commitment import _single_ct
 
         return _single_ct(heat_rate=10.5, hours=hours)

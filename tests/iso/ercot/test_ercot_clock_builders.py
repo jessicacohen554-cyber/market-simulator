@@ -5,20 +5,19 @@ rebuilds) fixed the shared placement defect where Central-*Prevailing*-Time
 report labels were placed on the model's fixed CST clock unconverted, leaving
 the whole mid-Mar-early-Nov series one hour late (Jan best lag 0 / Jul best
 lag +1 vs EIA-930; ``docs/handoffs/ercot-g22-demand-side-design-2026-07.md``
-§6-§7). These tests mirror ``tests/test_ercot_hsl.py`` for the remaining
+§6-§7). These tests mirror ``tests/iso/ercot/test_ercot_hsl.py`` for the remaining
 prevailing-stamped builders: winter identity (CST labels unshifted), summer
 -1 h (CDT labels), and gapless duplicate-free coverage through both DST
 transitions.
 """
 
 import sys
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(REPO))
+REPO = REPO_ROOT
 sys.path.insert(0, str(REPO / "scripts"))
 
 sys.path.insert(0, str(REPO / "scripts" / "data"))

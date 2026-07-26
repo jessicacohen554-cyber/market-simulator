@@ -6,7 +6,7 @@ nyiso.csv`` (already canonical unified form) into a tmp raw tree, runs
 NYISO-specific shape holds: locality requirement rows carry both ``value_mw``
 (ICAP requirement) and ``value_pu`` (LCR%), and the statewide NYCA row is an
 ``rto``-area-type ``system_requirement`` (IRM) with ``value_pu`` only. CLEAN_DIR
-is redirected to a tmp dir (as in ``tests/test_curate_capacity_deliverability.py``)
+is redirected to a tmp dir (as in ``tests/curation/test_curate_capacity_deliverability.py``)
 so it never touches the real tree.
 """
 

@@ -6,7 +6,6 @@ the emitted bin-assignment artifact, and the CHP BTM capacity removal.
 """
 
 import unittest
-from pathlib import Path
 
 import pandas as pd
 import pytest
@@ -24,8 +23,9 @@ from market_sim.data.fleet import (
 )
 from market_sim.config.paths import PROCESSED_DIR, RAW_DATA_DIR
 from market_sim.data.outages import ST_GAS_PEAKER_PLANTS
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parent.parent
+REPO = REPO_ROOT
 BIN_ASSIGNMENTS = PROCESSED_DIR / "bin_assignments_CAISO.csv"
 UNIT_OUTAGES = RAW_DATA_DIR / "campd-unit-outages-CAISO.csv"
 ZONES = get_iso_config("CAISO").zone_names

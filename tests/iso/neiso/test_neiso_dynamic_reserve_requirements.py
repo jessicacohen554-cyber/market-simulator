@@ -5,9 +5,9 @@ Covers the ``_neiso_design`` hourly-requirement path behind
 byte-identical, hard-error without the intake), and the rule-19
 mutual-exclusion guard between the in-LP co-opt families and the post-solve
 RCPF overlay (``neiso_rcpf_enabled``). The measured-series loader itself is
-covered by ``tests/test_curate_reserve_requirements.py`` (the clean-datatype
+covered by ``tests/curation/test_curate_reserve_requirements.py`` (the clean-datatype
 round trip); here it is monkeypatched, mirroring
-``tests/test_nyiso_dynamic_reserve_requirements.py``.
+``tests/iso/nyiso/test_nyiso_dynamic_reserve_requirements.py``.
 """
 
 from types import SimpleNamespace

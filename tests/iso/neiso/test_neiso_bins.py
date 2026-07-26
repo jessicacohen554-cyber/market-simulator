@@ -22,7 +22,6 @@ when winter gas spikes past distillate parity — with no must-run pin.
 """
 
 import unittest
-from pathlib import Path
 
 import pandas as pd
 
@@ -39,8 +38,9 @@ from market_sim.data.fleet import (
 )
 from market_sim.config.paths import PROCESSED_DIR
 from scripts.export_iso_bin_assignments import build_bin_assignments
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parent.parent
+REPO = REPO_ROOT
 TRANCHES = PROCESSED_DIR / "thermal_tranches_NEISO.csv"
 BIN_ASSIGNMENTS = PROCESSED_DIR / "bin_assignments_NEISO.csv"
 ZONES = get_iso_config("NEISO").zone_names

@@ -6,15 +6,14 @@ class map, the thermal-class filter, the ``committed`` status tag, and graceful
 handling of a missing optional column (ECRS, absent in pre-mid-2023 files).
 """
 
-import sys
 import unittest
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(REPO))
+REPO = REPO_ROOT
 
 from scripts.data import parse_ercot_dam_offers as parser  # noqa: E402
 

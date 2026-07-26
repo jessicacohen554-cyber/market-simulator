@@ -11,7 +11,6 @@ here is fitted to a price residual.
 
 from __future__ import annotations
 
-from pathlib import Path
 
 import numpy as np
 import pytest
@@ -25,8 +24,9 @@ from market_sim.results.scarcity import (
 )
 
 from market_sim.config.paths import CALIBRATION_DIR
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parent.parent
+REPO = REPO_ROOT
 CURVE_CSV = CALIBRATION_DIR / "pjm_ordc_curve.csv"
 
 # The published two-step curve (offset_mw from requirement, penalty $/MWh).
