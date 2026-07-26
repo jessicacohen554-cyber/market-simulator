@@ -44,6 +44,7 @@ REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "scripts"))
 
+from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data.fleet import FUEL_TYPE_NAMES  # noqa: E402
 from market_sim.results.scarcity import (  # noqa: E402
@@ -54,9 +55,11 @@ from market_sim.results.scarcity import (  # noqa: E402
 )
 
 # Validation-source dir (actual_lmp_hourly_ERCOT.parquet). W1 relocated the old
-# inputs/calibration tree to data/raw/_validation-source (paths.CALIBRATION_DIR);
-# the stale inputs/ path silently produced an empty actual RT series.
-CAL_DIR = REPO / "data" / "raw" / "_validation-source"
+# inputs/calibration tree to data/raw/_validation-source; the stale inputs/ path
+# silently produced an empty actual RT series. Resolved through the registry
+# rather than re-spelled here (CLAUDE.md: every path resolves through
+# config/paths.py), so a future data-root move lands in one place.
+CAL_DIR = CALIBRATION_DIR
 
 _DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 _MONTH_START_HOUR = np.cumsum([0] + [d * 24 for d in _DAYS_IN_MONTH])

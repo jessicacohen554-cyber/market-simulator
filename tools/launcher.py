@@ -276,7 +276,7 @@ const $=s=>document.querySelector(s);
 let polling=null;
 async function loadConfigs(){
  const r=await fetch('/api/configs');const d=await r.json();
- const sel=$('#cfg');sel.innerHTML=d.configs.map(c=>`<option value="${c.path}">${c.name} (${c.size_kb} KB)</option>`).join('')||'<option value="">— no tranche CSVs in inputs/ —</option>';
+ const sel=$('#cfg');sel.innerHTML=d.configs.map(c=>`<option value="${c.path}">${c.name} (${c.size_kb} KB)</option>`).join('')||'<option value="">— no tranche CSVs in data/raw/reference/ or configs/ —</option>';
  if(!d.baseline)$('#warn').textContent='Warning: results/calibration/run10_peak85 baseline bundle not found — the report will only show your run.';
  updHint();
 }
