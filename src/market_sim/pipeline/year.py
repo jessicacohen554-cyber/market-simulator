@@ -122,6 +122,7 @@ def run_year_solve(
     floorscoped_markdown_fn=None,
     mc_bid_adjust: Optional[np.ndarray] = None,
     lowcurve_bid_adjust_prep=None,
+    p1_bid_max_target: Optional[np.ndarray] = None,
     startup_run_ratio_t: Optional[np.ndarray] = None,
 ) -> YearSolveOutput:
     """Run the shared per-year body: gated kwargs add-ons → reserve co-opt →
@@ -163,6 +164,9 @@ def run_year_solve(
         lowcurve_bid_adjust_prep: Backcast v2 lowcurve bid hook (mutually
             exclusive with the ERCOT bridge bid hook — rule 19, enforced at
             ``build_ercot_gas_bridge_p1_preps``).
+        p1_bid_max_target: Measured bid LEVEL applied as ``max(bid, target)``
+            after the markup and every additive adjustment (the PJM CT_FAST
+            measured reprice). ``None`` is byte-identical.
         startup_run_ratio_t: Backcast startup-run-ratio series for the markup.
 
     Returns:
@@ -350,6 +354,7 @@ def run_year_solve(
         # exclusive (rule 19, enforced at build_ercot_gas_bridge_p1_preps), so
         # at most one is non-None here.
         p1_bid_adjust_prep=lowcurve_bid_adjust_prep or ercot_bridge_bid_prep,
+        p1_bid_max_target=p1_bid_max_target,
         startup_run_ratio_t=startup_run_ratio_t,
     )
     t_solve_end = time.perf_counter()

@@ -84,6 +84,34 @@ class EnergySolveResult:
     p1_fleet_arrays: "FleetArrays"
 
 
+def apply_bid_max_target(mc_bid: np.ndarray, target: np.ndarray) -> np.ndarray:
+    """Reconcile a P1 bid with a measured bid LEVEL — ``max``, never ``+``.
+
+    The one arithmetic the P1 bid-max seam performs, factored out so the
+    "never additive" contract is a testable property rather than an inline
+    expression. A row-hour carrying a positive ``target`` clears at whichever
+    of the two is higher; a non-positive (or non-finite) target is a no-op, so
+    an uncovered row-hour keeps the bid the rest of the stack produced.
+
+    This is the rule-19 reconciliation the PJM CT_FAST reprice needs: the
+    pjm-103 start-cost amortization keeps ownership wherever it already prices
+    the row above the measured corpus, and the measured level binds only where
+    the model is cheaper. Adding the two instead is the pjm-101/102 stacking
+    that over-expressed (CT -12 TWh).
+
+    Args:
+        mc_bid: ``(n_gen, T)`` P1 bid after the markup and every additive
+            adjustment.
+        target: ``(n_gen, T)`` measured bid level; ``<= 0`` / non-finite
+            entries are no-ops.
+
+    Returns:
+        A new ``(n_gen, T)`` bid array; ``mc_bid`` is not mutated.
+    """
+    binding = np.isfinite(target) & (target > 0.0)
+    return np.where(binding, np.maximum(mc_bid, target), mc_bid)
+
+
 def run_energy_solve(
     fleet,
     fleet_arrays: "FleetArrays",
@@ -97,6 +125,7 @@ def run_energy_solve(
     p1_kwargs_prep=None,
     mc_bid_adjust: Optional[np.ndarray] = None,
     p1_bid_adjust_prep=None,
+    p1_bid_max_target: Optional[np.ndarray] = None,
     startup_run_ratio_t: Optional[np.ndarray] = None,
 ) -> EnergySolveResult:
     """Run the shared P0 → markup → P1 energy solve (both orchestrators).
@@ -132,6 +161,13 @@ def run_energy_solve(
             same floored LP — the two differ only by marginal-tie reshuffle (the
             shipped warm-start neutrality standard). Every other path (hook
             ``None`` or returning ``None``) is byte-identical, warm start included.
+        p1_bid_max_target: Optional ``(n_gen, T)`` measured bid LEVEL applied
+            as ``mc_bid = max(mc_bid, target)`` AFTER the startup markup and
+            every additive bid adjustment — the PJM CT_FAST measured reprice
+            (``pjm_ct_measured_max_reprice``), a rule-19 reconciliation with
+            the start-cost amortization rather than a second additive
+            mechanism. Entries <= 0 are no-ops; ``None`` (every flag-off
+            path) is byte-identical.
         startup_run_ratio_t: Optional ``(T,)`` condition-keyed amortization
             horizon ratio (``tranche_startup_conditional_runs`` v4), passed
             through to ``compute_monthly_markup`` — the fast-start measured
@@ -208,6 +244,17 @@ def run_energy_solve(
         _extra_bid_adjust = p1_bid_adjust_prep(r0)
         if _extra_bid_adjust is not None:
             mc_bid = mc_bid + _extra_bid_adjust
+    # P1-only bid MAX seam (PJM CT_FAST measured reprice): an (n_gen, T) measured
+    # bid LEVEL that RECONCILES with — never adds to — everything above it. The
+    # bid becomes max(bid, target), so a row already priced above the measured
+    # corpus by its startup amortization keeps that price and the measured level
+    # binds only where the model is cheaper (rule 19: replacement, not stacking —
+    # the pjm-101/102 failure was exactly this level applied additively against
+    # mc_base alone). Deliberately LAST, after the markup and both additive
+    # adjustments, so "the full P1 bid" is what the max() is taken against.
+    # Zero/absent entries are no-ops; None (every flag-off path) is byte-identical.
+    if p1_bid_max_target is not None:
+        mc_bid = apply_bid_max_target(mc_bid, p1_bid_max_target)
     # P1-native floor injection (CAISO RA must-offer bridge, ERCOT gas
     # commitment bridge): the hook reads the P0 solution and returns a floored
     # fleet for the P1 clearing solve. The floor enters the LP only as the
@@ -307,4 +354,4 @@ def run_energy_solve(
     )
 
 
-__all__ = ["EnergySolveResult", "run_energy_solve"]
+__all__ = ["EnergySolveResult", "apply_bid_max_target", "run_energy_solve"]
