@@ -22,6 +22,7 @@ from market_sim.pipeline.timing import (
     log_year_cached_timing,
     log_year_phase_timing,
 )
+from tests.helpers import REPO_ROOT
 
 # The frozen six-field prefix, as a wall-clock capture parses it.
 FROZEN_RE = re.compile(
@@ -155,9 +156,8 @@ class TestOrchestratorsUseTheHelper(unittest.TestCase):
         self.assertIs(runner.log_year_cached_timing, log_year_cached_timing)
 
     def test_no_inline_format_string_remains(self):
-        from pathlib import Path
 
-        repo = Path(__file__).resolve().parent.parent
+        repo = REPO_ROOT
         needle = "phase timing: data_prep="
         for rel in ("src/market_sim/runner.py", "scripts/run_calibration_full.py"):
             text = (repo / rel).read_text()

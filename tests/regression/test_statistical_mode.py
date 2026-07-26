@@ -9,12 +9,12 @@ structural levers alone.
 
 import argparse
 import importlib.util
-from pathlib import Path
 from types import SimpleNamespace
+from tests.helpers import REPO_ROOT
 
 _SPEC = importlib.util.spec_from_file_location(
     "run_calibration_full",
-    Path(__file__).resolve().parents[1] / "scripts" / "run_calibration_full.py",
+    REPO_ROOT / "scripts" / "run_calibration_full.py",
 )
 _RCF = importlib.util.module_from_spec(_SPEC)
 _SPEC.loader.exec_module(_RCF)
@@ -59,11 +59,10 @@ def test_no_op_when_flag_unset():
 def test_ercot_calibration_enables_storage_vintage_ramp():
     """ERCOT (and CAISO) backcast configs ramp storage by COD; PJM stays flat."""
     import importlib.util
-    from pathlib import Path
 
     spec = importlib.util.spec_from_file_location(
         "run_calibration",
-        Path(__file__).resolve().parents[1] / "scripts" / "run_calibration.py",
+        REPO_ROOT / "scripts" / "run_calibration.py",
     )
     rc = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(rc)

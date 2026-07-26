@@ -141,15 +141,21 @@ jobs:
       # surface, and the pickle-borne classes their frozen module paths.
       # (test_pipeline_facade_shims.py joins this list once its pre-existing
       # failures — part of the advisory-tier backlog — are triaged green.)
+      #
+      # These nine live in tests/regression/ since the Wave-5A tests/ migration
+      # (they are frozen-surface guards, not unit tests). This list is one of
+      # the two path inventories that migration has to keep in step — moving
+      # any of them without editing this block silently disarms the only
+      # BLOCKING test gate in CI.
       - name: facade re-export + persisted-identity tests
         run: >-
           uv run python -m pytest -q
-          tests/test_persisted_identity.py
-          tests/test_constants_facade.py
-          tests/test_dispatch_facade.py
-          tests/test_eia930_facade.py
-          tests/test_fuel_facade.py
-          tests/test_fleet_facade.py
-          tests/test_capacity_evolution_facade.py
-          tests/test_transmission_facade.py
-          tests/test_scenarios_facade.py
+          tests/regression/test_persisted_identity.py
+          tests/regression/test_constants_facade.py
+          tests/regression/test_dispatch_facade.py
+          tests/regression/test_eia930_facade.py
+          tests/regression/test_fuel_facade.py
+          tests/regression/test_fleet_facade.py
+          tests/regression/test_capacity_evolution_facade.py
+          tests/regression/test_transmission_facade.py
+          tests/regression/test_scenarios_facade.py

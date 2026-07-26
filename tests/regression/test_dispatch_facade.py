@@ -110,7 +110,7 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
 }
 
 # The three names defined PHYSICALLY in lp/__init__ with __module__ pinned to
-# the frozen pickle path (plan §1). tests/test_persisted_identity.py owns the
+# the frozen pickle path (plan §1). tests/regression/test_persisted_identity.py owns the
 # DispatchResult assertion; this pins all three against regression.
 PHYSICAL_INIT_NAMES = ("CrossYearBasis", "DispatchResult", "solve_dispatch")
 FROZEN_MODULE_PATH = "market_sim.model.dispatch"

@@ -26,7 +26,6 @@ generic — basis implementation).
 
 from __future__ import annotations
 
-import sys
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
@@ -34,7 +33,6 @@ from unittest import mock
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 # Every top-level name defined by the pre-split fuel.py ...
 _DEFINED = (
@@ -490,7 +488,7 @@ class TestPatchSemantics(unittest.TestCase):
             self.assertIs(_shared._pkg_ns()._load_monthly_cache, p)
 
     def test_attribute_write_reaches_internals(self):
-        # tests/test_fuel.py writes fuel.ercot_gas_spot_share_by_plant directly.
+        # tests/unit/data/test_fuel.py writes fuel.ercot_gas_spot_share_by_plant directly.
         import market_sim.data.fuel as fuel
         from market_sim.data.fuel import _shared
 
@@ -506,7 +504,7 @@ class TestPatchSemantics(unittest.TestCase):
     def test_patched_daily_dated_reaches_gas_daily_shape(self):
         # Behavioral: gas_daily_shape_factors resolves _henry_hub_daily_dated
         # and _trade_date_staircase through the shared namespace at call time
-        # (both are monkeypatched by tests/test_fuel.py).
+        # (both are monkeypatched by tests/unit/data/test_fuel.py).
         from market_sim.data.fuel import gas_daily_shape_factors
 
         jan = {1: 2.0, 2: 4.0}

@@ -319,7 +319,7 @@ class TestMovedSurface:
 
 class TestPatchTransparency:
     def test_string_patch_intercepts_call_time_import(self):
-        """The tests/test_fleet_unification.py contract: a mock.patch through
+        """The tests/regression/test_fleet_unification.py contract: a mock.patch through
         the historical dotted path must intercept production code that
         resolves the name at call time via the same path (data/fleet.py's
         function-local ``from market_sim.model.transmission import ...``)."""
