@@ -808,6 +808,77 @@ THERMAL_AVAILABILITY: dict[str, tuple[float, ...]] = {
     "BIOMASS": (0.07, 0.10, 0.002, 25, 0.04, 0.0015, 25),
 }
 
+# Fraction of a unit's WEFOR (forced-outage rate, from THERMAL_AVAILABILITY
+# above) that applies during the summer peak; the remaining (1 - share) is
+# redistributed into the shoulder months, conserving the annual outage energy.
+# Winter keeps the flat WEFOR. Applied in
+# ``data.fleet.arrays._apply_thermal_availability``.
+#
+# SOURCE: NONE — this is an UNCITED A-PRIORI HEURISTIC, declared as such rather
+# than given a false provenance (CLAUDE.md rule 5 [R-NO-MAGIC]). It is the
+# "flat per-plant-group POF heuristic" market-sim-build-plan.md records as
+# awaiting a data-derived replacement. It was NOT fitted to any residual; no
+# derivation, sweep or calibration lineage exists for the 0.30. It is declared
+# in the MISO keeper's DOF ledger under identification ``residual`` — the
+# strictest existing enforcement category, which forces an open root cause
+# (audit_keepers.py E8) — NOT because it was tuned.
+#
+# It is re-homed here from ``data/fleet/arrays.py`` (miso-91, 2026-07-26) so
+# that ``scripts/validate_parameters.py`` covers it: that gate scans only
+# ``vars(constants)`` + ``ScenarioConfig`` defaults and skips private/
+# non-uppercase names, so a private literal in a ``data/`` module was invisible
+# to it three ways over — which is why it went uncited for so long
+# (CLAUDE.md rule 20 [R-REGISTRY]).
+#
+# PHYSICS TENSION, recorded deliberately: for PLANNED outages, shifting
+# maintenance away from the peak is well-founded (and the POF side is separately
+# grounded by the measured MAINTENANCE_MONTHLY_SHAPE). For FORCED outages this
+# reallocation runs OPPOSITE to the physics — forced outages correlate
+# POSITIVELY with heat and high load. A share < 1 therefore encodes a
+# forced-outage seasonality whose sign is the reverse of the expected physical
+# one. Stated as an unverified directional argument, not a citation.
+#
+# DO NOT re-tune this value against a residual (rule 24 [R-ANSWER-KEY]): it
+# governs ~3.9-5.8 GW of MISO summer-peak capability across all six non-coal
+# thermal classes, the same order as the ~10 GW under-derate ledgered as the
+# C3b caveat, so a hand-set value here would be an answer key for an
+# already-ledgered miss. It may be REPLACED ONLY by a measured seasonal
+# forced-outage shape clearing the acceptance test in
+# docs/handoffs/miso-outage-grain-data-ask-2026-07.md, and per rule 23
+# [R-FROZEN-DERIVE] that commit must cite the data change, never a residual.
+SUMMER_WEFOR_SHARE: float = 0.30
+
+# Additional summer (Jun-Sep) capacity derate by plant group, modeling the
+# ambient-temperature output loss gas turbines suffer in the heat (worse for
+# simple-cycle CTs than combined-cycle). Applied on top of the age-based
+# THERMAL_AVAILABILITY model for these classes only; coal and gas steam are
+# unaffected.
+#
+# SOURCE: the physical effect is real and well-established (gas-turbine mass
+# flow falls with rising inlet air temperature, and simple-cycle units lose
+# more than combined-cycle). The SPECIFIC magnitudes 0.10 / 0.125 are an
+# UNCITED FLAT APPROXIMATION of it — consistent with, but not derived from, the
+# 10-30% typical CT summer derate the repo's own capacity audit records against
+# EIA-860 net-summer ratings (docs/capacity-audit-860-923-campd.md).
+#
+# A MEASURED per-class dry-bulb temperature curve exists as the
+# ``temp_dependent_derate`` alternative to this flat treatment; it is
+# default-off, having been probe-refuted for the ERCOT gas fleet (2026-07-09).
+# Its MISO sibling ``gt_ambient_derate`` is measured PROVABLY INERT — MISO
+# zone-mean TMAX clears its 35 C reference in 0 h at summer peak in any of
+# 2023-2025 (FINDING-miso89 §8). So the flat approximation stands as the live
+# treatment, and rule 11 [R-ACCURATE]'s "prefer the measured input" is not
+# engaged: the measured alternatives were tried and adjudicated, not skipped.
+#
+# Re-homed here from ``data/fleet/arrays.py`` with SUMMER_WEFOR_SHARE above
+# (miso-91), same registry-coverage reason. Values unchanged.
+SUMMER_CLASS_DERATE: dict[str, float] = {
+    "CC_REGULAR": 0.10,
+    "CC_CHP": 0.10,
+    "CT_PEAKER": 0.125,
+    "CT_CHP": 0.125,
+}
+
 # Per-plant ERCOT coal sustained-output ceilings (fraction of capacity_mw):
 # the demonstrated physical maximum a unit's CEMS record shows it can sustain
 # (boiler/turbine derates below nameplate), applied as an availability ceiling
