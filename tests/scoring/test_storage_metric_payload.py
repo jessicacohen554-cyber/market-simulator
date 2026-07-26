@@ -17,7 +17,6 @@ import importlib.util
 import unittest
 
 import pandas as pd
-import pytest
 from tests.helpers import REPO_ROOT
 
 REPO = REPO_ROOT
@@ -73,18 +72,29 @@ class ModelThroughputTests(unittest.TestCase):
         )
         self.assertAlmostEqual(rch._model_storage_twh(df, 2024), 1.0)
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason="pre-existing failure on main as of 2026-07-05 (found wiring PR CI "
-        "in W1-P1): a P2 storage pass now leaks into the P1-only throughput "
-        "metric; unrelated to this change, tracked for follow-up",
-    )
-    def test_uses_only_p1_pass(self):
-        # A P2 row must not inflate the P1 throughput the price metrics score.
-        df = _storage_frame(
+    def test_uses_the_bundles_primary_pass(self):
+        """A bundle carrying a P2 frame is scored on P2, not the pre-commit P1.
+
+        Re-adjudicated 2026-07-26 (fast-tier §6.3). This was xfailed as "a P2
+        storage pass now leaks into the P1-only throughput metric" — a real
+        failure, but a stale PREMISE, not a leak: ``rch._primary_pass`` was
+        introduced deliberately and documents the rule it implements. A normal
+        bundle is P1-only and scores byte-identically; a bundle carries a P2
+        frame only when the run explicitly opted into the archived commitment
+        screen, and for those the solver labels P2 the primary result, so the
+        dashboard reports the mechanism the run actually proposes rather than
+        the pre-commitment P1. The guard worth keeping is that the metric
+        follows ONE pass — never the sum of both — so the test now pins the
+        primary-pass rule in both directions.
+        """
+        # P1-only bundle (every keeper): P1 is the primary pass.
+        p1_only = _storage_frame(2024, [("P1", "li_ion", 100.0, 1000)])
+        self.assertAlmostEqual(rch._model_storage_twh(p1_only, 2024), 0.1)
+        # Opt-in commitment bundle: P2 wins, and P1 is NOT added to it.
+        both = _storage_frame(
             2024, [("P1", "li_ion", 100.0, 1000), ("P2", "li_ion", 100.0, 8000)]
         )
-        self.assertAlmostEqual(rch._model_storage_twh(df, 2024), 0.1)
+        self.assertAlmostEqual(rch._model_storage_twh(both, 2024), 0.8)
 
 
 class ActualThroughputTests(unittest.TestCase):
