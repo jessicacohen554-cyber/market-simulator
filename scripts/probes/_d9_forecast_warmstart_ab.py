@@ -77,7 +77,13 @@ _CAPACITY_KEYS = (
     "builds_storage_mw",
     "retire_mw",
 )
-_OUTCOME_KEYS = ("lw_price", "max_hourly_price", "co2_mt", "reserve_margin")
+_OUTCOME_KEYS = (
+    "lw_price",
+    "max_hourly_price",
+    "co2_mt",
+    "reserve_margin",
+    "peak_demand_mw",
+)
 
 
 def run_arm(
@@ -87,6 +93,7 @@ def run_arm(
     end_year: int,
     out_dir: Path,
     hours: int = 8760,
+    golden_posture: bool = False,
 ) -> dict:
     """Solve one arm's horizon and return its summary dict.
 
@@ -95,25 +102,39 @@ def run_arm(
     originally refuted the forecast wiring, so the same experiment can be
     re-run cheaply against the post-4C screen). The D-9 verdict itself is taken
     on the full 8760 h horizon — rule 8 [R-8760].
+
+    ``golden_posture`` layers the §2.1a decision (a) per-ISO capacity-market
+    clearing onto the reference config. The ERCOT D-9 A/B did not need it —
+    energy-only ERCOT has no capacity market, so the flag is inert there. For
+    the five capacity-market ISOs it is the whole point of the multi-ISO
+    extension: the CR-1 sloped demand curve prices capacity off the accredited
+    reserve position, which reaches all three capacity screens, and that path
+    is exactly what the ERCOT guardrail never exercised. Both arms carry the
+    same posture, so the A/B still isolates the warm start.
     """
     warm = arm == "warm"
     overrides = {"forecast_xyear_warmstart": warm}
     if hours != 8760:
         overrides["hours"] = hours
-    config = reference_config(iso, start_year, end_year, cmc=False).with_overrides(
-        **overrides
-    )
+    config = reference_config(
+        iso, start_year, end_year, cmc=False, golden_posture=golden_posture
+    ).with_overrides(**overrides)
     assert config.forecast_xyear_warmstart is warm
     print(
         f"[d9-ab] arm={arm} iso={iso} {start_year}-{end_year} "
-        f"forecast_xyear_warmstart={warm} cache_key={config.cache_key()}"
+        f"forecast_xyear_warmstart={warm} golden_posture={golden_posture} "
+        f"cache_key={config.cache_key()}"
     )
     return solve_and_summarize(
         config,
         iso,
         out_dir,
         redirect_cache=True,
-        extra_summary={"d9_arm": arm, "forecast_xyear_warmstart": warm},
+        extra_summary={
+            "d9_arm": arm,
+            "forecast_xyear_warmstart": warm,
+            "golden_posture": golden_posture,
+        },
     )
 
 
@@ -203,6 +224,15 @@ def main(argv: list[str] | None = None) -> int:
         default=8760,
         help="Reduced-horizon PRE-SCREEN only; the D-9 verdict runs at 8760.",
     )
+    ap.add_argument(
+        "--golden-posture",
+        action="store_true",
+        help=(
+            "Layer the §2.1a per-ISO capacity-market clearing onto the arm "
+            "(inert for energy-only ERCOT; the exercised path for the five "
+            "capacity-market ISOs)."
+        ),
+    )
     ap.add_argument("--compare", action="store_true")
     ap.add_argument("--cold", type=Path, help="cold arm full_horizon_summary.json")
     ap.add_argument("--warm", type=Path, help="warm arm full_horizon_summary.json")
@@ -239,6 +269,7 @@ def main(argv: list[str] | None = None) -> int:
         args.end_year,
         args.out_dir,
         hours=args.hours,
+        golden_posture=args.golden_posture,
     )
     return 1 if summary.get("error") else 0
 
