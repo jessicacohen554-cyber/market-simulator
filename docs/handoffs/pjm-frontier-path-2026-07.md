@@ -51,7 +51,8 @@ Reserve/scarcity lanes (`docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §B.3)
 | SYNC product / size split | duals in the correct regime but $0–10 vs the $75–200 need | **owner-CLOSED 2026-07-11** |
 | Commitment posture (Phase 1) | G-P1 FAIL all years, model online headroom 2.66–3.14× the measured target; tail unchanged | REJECTED — root cause is **LP-vs-MIP**, a representation boundary under the no-MIP mandate |
 | DA demand depth + measured offer levels (G-22) | moved 2025 C3c 0 → 17 h, fixed C1/C3a/C3b/C7 | **in the keeper** |
-| **`ramp10` scoped to committed-and-online (Lane 1 framing 2)** | **no-LP pre-check, all 3 years: rigorous lower bound stays 9.7–10.5× the requirement; reduction only 13.6–15.9 %, and smallest (8–10 %) in the TIGHTEST net-load quartile** | **CLOSED pjm-124 — no solve spent** (`docs/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md`) |
+| **`ramp10` scoped to committed-and-online (Lane 1 framing 2)** | **no-LP pre-check, all 3 years: rigorous lower bound stays 9.7–10.5× the requirement; reduction only 13.6–15.9 %, and smallest (8–10 %) in the TIGHTEST net-load quartile** | **CLOSED pjm-124 — INERT, no solve spent** (`docs/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md`) |
+| **constrained commitment before the reserve bound (Lane 1 framing 1)** | **no-LP pre-check, all 3 years: DOES bite — 51–53 % reduction, and hardest (40–43 pp) in the TIGHTEST quartile — but the commitment-invariant floor stays 5.0–5.6× the requirement** | **CLOSED pjm-125 — PARTIAL (effective but insufficient), no solve spent** (`docs/FINDING-pjm125-commitment-constraint-precheck-2026-07.md`) |
 
 Offer/energy-stack lanes:
 
@@ -83,6 +84,38 @@ measured online reserve. That is a structural boundary, not a tuning gap.
 
 ### Lane 1 (primary) — G-20b reserve SUPPLY side, the two unvalidated framings
 
+> ## LANE 1 IS COMPLETE (2026-07-26). Both framings tried on record, neither solved.
+>
+> | framing | mechanism | result |
+> |---|---|---|
+> | 2 (pjm-124) | scope `ramp10` to committed-and-online | **INERT** — 13.6–15.9 % reduction, *least* bite in tight hours, floor ~10×R |
+> | 1 (pjm-125) | constrain commitment before the reserve bound | **PARTIAL** — 51–53 % reduction, *most* bite in tight hours (40–43 pp), floor ~5×R |
+>
+> **The floor they share is not a modelling choice.** 17.5 GW — 45 % of the
+> deliverable ramp — is offline fast-start iron, which is Non-Synchronized
+> **Primary** reserve by Manual 11 §4.2 and therefore untouchable by any
+> commitment mechanism. That floor alone is **5.0–5.6× the requirement**, so even
+> a maximally aggressive, perfectly-informed commitment constraint leaves the
+> balance five times oversupplied and no ORDC step can fire.
+>
+> **This sharpens and partly qualifies pjm-82's LP-vs-MIP attribution.** pjm-82 is
+> right that commitment is where the surplus comes from (framing 1's 51–53 % bite
+> confirms it), but **a MIP would not close this gate either** — the 5×R floor
+> survives any commitment representation. The binding fact is that PJM's ~3.4 GW
+> requirement is small relative to the fast-ramping fleet that serves it (30.6 GW
+> nameplate / 17.5 GW of 10-min deliverable ramp). That is a real system property.
+>
+> **Consequence: the remaining >$200 residual is not on the reserve supply side.**
+> Whatever set PJM's $1,722 at h4193 (model dual $210.99, model any-zone energy
+> $675.3) is not a Primary-reserve shortage the model could reproduce by
+> tightening supply. Lane 1 has no admissible mechanism left.
+>
+> New ledger measurement (pjm-125 §2): the **ramp** family binds 81 % / 70 % /
+> 60 % of hours in 2023 / 2024 / 2025 — the joint capacity row is progressively
+> becoming the binding family. Framing 1 was aimed at a live constraint.
+>
+> ---
+>
 > **UPDATE 2026-07-26 (pjm-124): framing 2 is CLOSED, no solve spent.**
 > `docs/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md`. Three results the
 > rest of this section should be read against:
@@ -200,13 +233,18 @@ and this lane closes — **either outcome is ledger progress.**
    `docs/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md`. The §5 housekeeping
    item is also done: `scripts/lib/bundle_fleet.py` is the shared widened
    reconstruction helper.
-2. **pjm-125 — Lane 1, framing 1** (constrained commitment before the reserve
-   bound). Run only after 124, so the two are separably attributable (rule 19 —
-   do not arm both and read one number).
+2. ~~**pjm-125 — Lane 1, framing 1**~~ — **DONE 2026-07-26, PARTIAL on the no-LP
+   pre-check, no solve spent.** See the Lane 1 completion block above and
+   `docs/FINDING-pjm125-commitment-constraint-precheck-2026-07.md`. Run after
+   124 as prescribed; separability held trivially, since **neither framing was
+   ever armed in a solve** (rule 19's concern is arming both and reading one
+   number, which did not occur).
 3. **pjm-126 — Lane 2**, owner-authorized, as a derive review with its own
    admissibility memo. Independent of 1–2; can run in parallel by a separate
    session (rule 12: separate invocations concurrent, years sequential within).
+   **This is now the only open lane.**
 4. **Then, and only then, the owner decides frontier** on the completed ledger.
+   Lane 1 is complete; Lane 2 is the remaining input.
 
 Rule 16 binds throughout: any registered bundle is `--year 2023 2024 2025` in
 one invocation. Rule 22: PJM has **no calibration-complete marker**, so no
