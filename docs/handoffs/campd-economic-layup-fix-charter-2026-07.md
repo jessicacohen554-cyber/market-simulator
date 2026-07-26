@@ -316,6 +316,22 @@ adopt-and-lift and over close-with-cause:
   to the residual-over-count investigation. The charter stays open on that
   single item plus the outstanding re-audits.
 
+**Amendment to the CAISO re-audit cell (2026-07-26, caiso-123).** The CAISO
+"RE-TUNE REQUIRED" verdict (`2026-07-26-caiso120-meritguard-a1`, C3a-2025
++10.0 → +11.1 %) was measured against a confounded A0: the CAISO extract was
+derived-not-committed until 07-24, the keeper's committed bytes carry a
+session-local PARTIAL derivation, and the 07-24 backfill (#2842/#2844)
+committed a heavier FULL derivation independent of — and two days before —
+the guard. Same-HEAD isolation puts the guard's own effect at **−0.18 %
+(favourable)** and the extract-content change at **+1.24 % λ / CC_REGULAR
+−0.49 TWh / import +0.42 TWh**. The re-tune trigger is accordingly
+**withdrawn as stated and re-derived**: the keeper's C3a-2025 PASS was
+calibrated against a non-reproducible partial envelope (rule-11 class), and
+on any honest full derivation C3a-2025 fails by ~+1.1 pp. Sequencing of the
+CAISO re-tune against the §8 residual-over-count investigation (the
+extract's absolute level, freeze lift condition) is an owner call. Full
+record: `results/calibration/FINDING-caiso123-c3a-drift-attribution-2026-07-26.md`.
+
 ## 9. Residual-over-count investigation — CLOSED on evidence; the freeze-lift decision is now the owner's
 
 The single item §8 deferred the freeze to. Three ordered steps were set by
