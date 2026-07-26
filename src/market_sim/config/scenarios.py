@@ -193,12 +193,18 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinct scenario.
     "pjm_offer_midcurve_peak_segments",
     "pjm_ct_measured_max_reprice",
-    # Forecast-path cross-year LP warm start (plan §7 H-3, owner decision D-9).
-    # A pure solve-PATH knob — the LP optimum is basis-independent — and
-    # default-off, so it is dropped from the hash at its default and the pinned
-    # default cache_key stays byte-stable (edbc1b1); an armed run enters the key
-    # so a warm-started forecast never collides with a cold one in the on-disk
-    # results cache (which is what makes the D-9 A/B's two arms independent).
+    # Forecast-path cross-year LP warm start (plan §7 H-3, owner decision D-9;
+    # default flipped ON 2026-07-26 on the full-horizon A/B). A pure solve-PATH
+    # knob — the LP optimum is basis-independent — so it is dropped from the
+    # hash at whatever its default is and the pinned default cache_key stays
+    # byte-stable (edbc1b1) across the flip. A run that OPTS OUT
+    # (forecast_xyear_warmstart=False) enters the key as a distinct scenario, so
+    # a strictly-cold forecast never collides with a warm one in the on-disk
+    # results cache (which is what made the D-9 A/B's two arms independent).
+    # Cache epoch (compat clause 2): forecast runs cached BEFORE the flip were
+    # solved cold under this same key and stay valid — the A/B measured the
+    # capacity trajectory bit-identical, so a cold-cached year and a warm-solved
+    # year are the same result.
     "forecast_xyear_warmstart",
 )
 
@@ -7310,8 +7316,19 @@ class ScenarioConfig:
     # reaches ``run_energy_solve`` explicitly and is recorded in
     # ``run_config.json``. Registered in ``_CACHE_KEY_OPTIONAL_FIELDS`` so it is
     # cache-neutral at its default (the pinned default ``cache_key`` stays
-    # ``edbc1b1``); an armed run enters the key as a distinct scenario.
-    forecast_xyear_warmstart: bool = False
+    # ``edbc1b1``); a run that OPTS OUT (``False``) enters the key as a distinct
+    # scenario, which is the escape hatch for a strictly cold forecast.
+    #
+    # DEFAULT FLIPPED ON 2026-07-26 under owner decision D-9's guardrail: the
+    # full-horizon ERCOT 2026-2050 A/B (8760 h, threads=1, two concurrent
+    # invocations) showed the CAPACITY TRAJECTORY EXACTLY UNCHANGED — every
+    # per-fuel capacity, build, retirement, reserve margin, peak demand and max
+    # hourly price bit-identical in all 25 years — while total wall fell 51.1 ->
+    # 25.1 min (2.04x overall, 2.20x on the warm-startable years 2027-2050).
+    # The only residuals are marginal-tie / dual-degeneracy noise: load-weighted
+    # price max 2.5e-5 relative, CO2 max 6.6e-6 relative. Recorded as Exp 5 in
+    # docs/handoffs/wallclock-baseline-2026-07.md.
+    forecast_xyear_warmstart: bool = True
 
     gas_price_override: float | None = None  # When set, pins the annual
     # Henry Hub price ($/MMBtu) to a measured value instead of the AEO

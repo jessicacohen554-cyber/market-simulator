@@ -326,11 +326,13 @@ array setBasis):
    cold P0 across calibrate-iterate loops; wrong basis costs iterations, never
    correctness; OFF for goldens/replay. Store as npz with a layout fingerprint, never
    pickle (compat clause 4).
-3. **Forecast-path warm-start unblock** (25 sequential years, 24 would be warm at
-   ~1.9×/yr): audit which `evolve_fleet`/storage-screen inputs read realized per-unit
-   dispatch vs the basis-independent price construction; make them tie-invariant;
-   thread `xyear_cache` behind a default-off flag; flip only after a full-horizon A/B
-   shows an identical capacity trajectory (owner decision D-9).
+3. ~~**Forecast-path warm-start unblock**~~ **— SHIPPED 2026-07-26 (D-9).** The realized-dispatch
+   readers in the retirement screen were removed (wave 4C), `xyear_cache` is threaded through
+   `runner.py` behind `ScenarioConfig.forecast_xyear_warmstart`, and the full-horizon ERCOT
+   2026-2050 A/B showed an **identical capacity trajectory** (every capacity/build/retirement
+   quantity 0.000e+00), so the default is now **ON**: 51.1 → 25.1 min (2.04× overall, 2.20× on the
+   24 warm-startable years, rising to 2.6× late-horizon), +7 % peak RSS. Record:
+   `docs/handoffs/wallclock-baseline-2026-07.md` §H3/Exp 5.
 4. **Operational:** `scripts/run_isos_concurrent.py` (rule-12 cap, ISO memory classes,
    env pins, log tee); pytest-xdist fast lane; `results_write` sub-instrumentation then
    a compression bench only if parquet dominates (bytes change ⇒ check golden hashing
@@ -370,7 +372,7 @@ array setBasis):
 | D-6 | CLAUDE.md slim-down (>30% shrink) | Approve with `intentional-shrink`; normative content provably preserved |
 | D-7 | Dormant `frontend/` scenario app: revive or archive | Archive pages/JS; data store stays (frozen path) |
 | D-8 | Data-in-git long-term (4 GiB pack; LFS/side-channel) | Defer; document status quo |
-| D-9 | Forecast warm-start default flip after A/B | Flip only on identical-capacity-trajectory evidence |
+| D-9 | Forecast warm-start default flip after A/B | **DONE 2026-07-26 — FLIPPED.** Guardrail passed: full-horizon ERCOT 2026-2050 (8760 h, threads=1, two concurrent arms) capacity trajectory **bit-identical in all 25 years** (per-fuel capacity, builds, retirements, reserve margin, peak demand, max hourly price all 0.000e+00); wall 51.1 → 25.1 min (2.04× overall, 2.20× on years 2027-2050). Residuals are marginal-tie/dual noise only (lw price 2.5e-5, CO2 6.6e-6 relative). Switch is `ScenarioConfig.forecast_xyear_warmstart`, default `True`, cache-key-neutral (pin `edbc1b1` unmoved); opt out with `False`. Record: `docs/handoffs/wallclock-baseline-2026-07.md` §H3/Exp 5 |
 | D-10 | `egrid2023_data_rev2 2.xlsx` rename + 5 refs | Approve (one PR, atomic) |
 
 ## 10. Verify-first appendix (critic-flagged, re-measure before building)

@@ -42,20 +42,23 @@ _PINNED_DEFAULT_CACHE_KEY = "edbc1b103207170a"
 
 
 class TestFieldRegistration:
-    """The field exists, is default-off, and is cache-neutral at its default."""
+    """The field is default-ON (post-D-9 flip) and cache-neutral at its default."""
 
-    def test_default_is_off(self):
-        assert ScenarioConfig().forecast_xyear_warmstart is False
+    def test_default_is_on(self):
+        """Flipped ON 2026-07-26 under D-9's identical-trajectory guardrail."""
+        assert ScenarioConfig().forecast_xyear_warmstart is True
 
     def test_registered_cache_key_optional(self):
         assert "forecast_xyear_warmstart" in _CACHE_KEY_OPTIONAL_FIELDS
 
     def test_default_cache_key_unmoved(self):
+        """The pin survives the flip: the field drops at whatever the default is."""
         assert ScenarioConfig().cache_key() == _PINNED_DEFAULT_CACHE_KEY
 
-    def test_armed_run_gets_a_distinct_cache_key(self):
-        armed = ScenarioConfig(forecast_xyear_warmstart=True)
-        assert armed.cache_key() != _PINNED_DEFAULT_CACHE_KEY
+    def test_opt_out_run_gets_a_distinct_cache_key(self):
+        """A strictly-cold forecast is a distinct scenario, not a cache collision."""
+        cold = ScenarioConfig(forecast_xyear_warmstart=False)
+        assert cold.cache_key() != _PINNED_DEFAULT_CACHE_KEY
 
 
 class TestSolveCoreGate:
