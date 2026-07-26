@@ -1358,3 +1358,30 @@ The lane's remaining named route is the topology scope doc's **WP-B nodal layer*
 on a station → area crosswalk the repo does not have (a `data-intake` job) — and, being a bound on
 the wind variable, inherits §9's caveat that a ceiling-clipped variable is never marginal. Keeper
 `2026-07-26-ercot115-coal-marginal-hr` untouched; no solve, so no dashboard registration.
+## 2026-07-26 — CAMPD charter LANE B (cross-ISO, **no ERCOT lane number claimed**): the day-grain `R < 0` cut does not replace the guard's window-grain cut
+
+Charter/cross-ISO session — measurement only: no guard change, no extract
+re-derive, no LP solve, **no ERCOT keeper touched**, no dashboard registration.
+Full record: `results/calibration/FINDING-campd-daygrain-crossiso-2026-07-26.md`;
+cross-ISO entry in `docs/calibration-log/governance.md`.
+
+ERCOT's cell of the 180-cell sweep (`--rcc-pctl {0.50, 0.75, 0.90, 0.99}` × `--horizon {24, 48, 72}` ×
+2023–2025), scored against **the 60-day DAM disclosure (`rating_mw − live_mw`), with its standing offered-vs-available caveat — DAM offered capacity conflates mechanical unavailability with a unit that simply did not offer, so it carries some layup itself**:
+
+* **KEPT-extract monthly `r` at the default p90 / h24**, window-grain → day-grain:
+  2023 **+0.79 → +0.78** (Δ −0.010), 2024 **+0.82 → +0.81** (Δ −0.004), 2025
+  **+0.92 → +0.91** (Δ −0.012). ERCOT is the candidate's **worst** ISO: better in
+  only **7/36** cells, median Δ **−0.004**, negative in all three years at the
+  default. Both cuts clear the placebo in the same 30/36 cells.
+* **The two cuts pick the same windows**: Jaccard 0.97 / 0.95 / 0.97 — the
+  tightest overlap in the sweep; day-only vetoes 7 / 6 / 2 out of ~1,100 windows
+  a year.
+* **Control passed**: the re-implemented incumbent reproduces ERCOT's committed
+  kept/layup split on 1,088/1,091, 1,173/1,181, 1,068/1,070 windows
+  (`campd-unit-outages.csv` ∪ `campd-unit-outages-layup.csv`).
+
+**Nothing in ERCOT changes.** The merit-order guard stands as the charter §8
+verdict adopted it, ERCOT's committed extract and layup companion are
+untouched, and no rule-22 obligation arises because no mechanism change is
+proposed. The ERCOT-116/117 coal-availability lane is untouched by this session. Next
+number unchanged: **ercot-113** (per this log's running counter).
