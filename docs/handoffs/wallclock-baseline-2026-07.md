@@ -233,3 +233,43 @@ with the feature **OFF** (`MARKET_SIM_WARMSTART_XYEAR=0`) reproduces the empty-c
 i.e. the seed/persist machinery does not perturb the solve. (The full keeper goldens gate is not
 re-run because the change is provably inert under that env — the gate's own pin — and the unit
 suite pins the gate behavior.)
+
+## H4 — `results_write` sub-instrumentation (refactor-consolidation plan §7-H4)
+
+`results_write` was a single merged window in both orchestrators, so the tables above could say
+the phase costs ~12 s on ERCOT and ~32 s on MISO but **not what it is spending that on** — which
+is the precondition the plan sets for the parquet-compression lever ("only if parquet dominates").
+It is now split, in one shared helper (`src/market_sim/pipeline/timing.py`, which both
+orchestrators finally call — it had shipped with zero consumers):
+
+| Orchestrator | Components reported |
+|---|---|
+| backcast (`run_calibration_full.solve_and_persist`) | `state` (p2_state pickle + per-pass min-gen floor arrays) · `frames` (per-pass dispatch/system/storage/posture/flows/BTM construction) · `parquet` (the per-pass dispatch parquet writes) · `bench` (CAMPD hourly + EIA-923/930 benchmark-scoring frames) |
+| forecast (`runner.run_scenario_iso`) | `legacy_p2` (the archived P2 screen, inert by default) · `parquet` (`save_result`) |
+
+The components are measured on **disjoint, exhaustive** segments of the window, so they sum to
+`results_write` exactly. **The parsed format is unchanged**: `data_prep / solve_p0 / markup /
+solve_p1 / results_write / total` keep their exact spelling, order and position, and the breakdown
+is appended as a trailing `(results_write: …)` clause, so every capture parsed against the tables
+above still parses. `tests/test_pipeline_timing.py` pins that the no-breakdown line is
+byte-identical to the recorded lines here.
+
+### Parquet-compression pre-check — the gates do NOT hash bundle bytes (finding, nothing adopted)
+
+The plan gates a compression change (lz4 / dictionary-off) on "bytes change ⇒ check golden hashing
+first". Checked, and the answer is **no gate is byte-sensitive** — every bundle-adjacent hash in the
+tree hashes the **decoded frame**, never the file:
+
+- `scripts/capture_keeper_goldens.py::_content_hash` reads the parquet with `pd.read_parquet` and
+  hashes sorted-column float64 bytes plus the shape. Its own docstring gives the reason: a raw-file
+  hash "picks up parquet's embedded creation metadata" and is not reproducible.
+  `manifest.json` records this as `hash_scheme: sha256-of-canonical-column-float64-bytes`.
+- `scripts/regression_gate.py --mode byte` delegates to `regression_check.compare_parquet`, which
+  `pd.read_parquet`s both sides and compares **numeric columns** at `atol=rtol=0`.
+- `scripts/lib/bundle_io.py::content_hash` (the shared-input store's dedupe key) hashes
+  `pd.util.hash_pandas_object` + column names and documents itself as "independent of parquet
+  encoding/metadata".
+
+So a codec swap would be hash-transparent — it is *not* blocked by the gates. **Nothing was adopted
+here regardless**: the codec stays at the pandas/pyarrow default. Adoption needs its own bench
+against the measured split above, and this session did not run one.
