@@ -36,7 +36,6 @@ from __future__ import annotations
 
 import argparse
 import base64
-import importlib.util
 import json
 import re
 import sys
@@ -50,20 +49,20 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
-_spec = importlib.util.spec_from_file_location(
-    "rcf", str(REPO / "scripts" / "run_calibration_full.py")
-)
-rcf = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(rcf)
+# Package imports, not ``spec_from_file_location`` file-loads (refactor plan
+# §6-E). The old form executed each module a SECOND time under a synthetic name
+# ("rcf" / "ordc_overlay"), so this file held private copies whose module-level
+# state could drift from the canonical ``scripts.*`` entries any co-running
+# importer sees. The canonical bootstrap above (REPO on sys.path) is what makes
+# the PEP-420 ``scripts`` / ``scripts.data`` namespace packages resolvable —
+# there is deliberately no ``__init__.py`` under ``scripts/``.
+from scripts import run_calibration_full as rcf  # noqa: E402
+
 # The ORDC scarcity overlay deriver supplies the reference monthly-MAE /
 # actual-RT / demand-weight implementations; the dashboard's display-only
 # overlay series reuses them verbatim so its numbers match the deriver's
 # stdout report (docs/ordc-overlay.md, "Reliability-deployment overlay").
-_spec_ordc = importlib.util.spec_from_file_location(
-    "ordc_overlay", str(REPO / "scripts" / "data" / "derive_ordc_overlay.py")
-)
-ordc = importlib.util.module_from_spec(_spec_ordc)
-_spec_ordc.loader.exec_module(ordc)
+from scripts.data import derive_ordc_overlay as ordc  # noqa: E402
 
 from scripts.lib import benchmark_semantics as bs  # noqa: E402
 from scripts.lib.bundle_io import bundle_input_path  # noqa: E402
@@ -873,9 +872,10 @@ def _actual_rt_padded(iso: str, year: int, hours: int) -> np.ndarray | None:
     column into a fixed ``hours``-length array so it aligns positionally with the
     model's per-hour series for the C3c scarcity-tail count and the demand-weighted
     monthly-MAE. This is the ISO-agnostic replacement for ``derive_ordc_overlay``'s
-    ERCOT-only ``_actual_rt`` (whose CAL_DIR still points at the pre-W1
-    ``inputs/calibration`` tree) — it lets the settlement-price overlay block
-    (below) score every ISO from its own actuals, not just ERCOT.
+    ERCOT-only ``_actual_rt`` — it lets the settlement-price overlay block (below)
+    score every ISO from its own actuals, not just ERCOT. (That function's CAL_DIR
+    was repaired to the post-W1 root long ago; the claim here that it "still points
+    at the pre-W1 ``inputs/calibration`` tree" was stale and is dropped.)
     """
     from market_sim.config.paths import CALIBRATION_DIR
 
@@ -911,20 +911,17 @@ def _actual_lmp_table() -> dict:
     Returns an empty dict when the reference is absent, so the dashboard renders
     a model-only price card rather than failing.
 
-    The reference lives under the canonical validation-source dir
-    (``data/raw/_validation-source``, ``paths.CALIBRATION_DIR``) since the W1
-    data relocation; the pre-relocation ``inputs/calibration`` path is kept as a
-    fallback so an older checkout still resolves.
+    The reference resolves through ``paths.CALIBRATION_DIR``
+    (``data/raw/_validation-source``) — the single post-W1 home. The former
+    second candidate ``REPO / "inputs" / "calibration"`` was dropped: W1 was a
+    pure ``git mv``, so no post-W1 checkout has an ``inputs/`` root at all and
+    the branch was unreachable (every other ``actual_lmp.json`` reader already
+    resolved to ``CALIBRATION_DIR`` alone). Rule 26 [R-DELETE].
     """
     from market_sim.config.paths import CALIBRATION_DIR
 
-    for p in (
-        CALIBRATION_DIR / "actual_lmp.json",
-        REPO / "inputs" / "calibration" / "actual_lmp.json",
-    ):
-        if p.exists():
-            return json.loads(p.read_text())
-    return {}
+    p = CALIBRATION_DIR / "actual_lmp.json"
+    return json.loads(p.read_text()) if p.exists() else {}
 
 
 def _actual_avg_lmp(iso: str, year: int) -> dict | None:

@@ -12,7 +12,7 @@ only the directory moved.
 | `scripts/` (top)    | Core entry points and standing tooling: calibration/backcast (`run_calibration_full.py`, `run_calibration.py`, `replay_keeper.py`), hindcast (`run_capacity_hindcast.py`, `register_hindcast.py`), the forecast program (`run_full_horizon.py`, `forecast_verdict.py`, `export_forecast_bands.py`, PB-5 assembly), scoring/verdicts (`calibration_verdict.py`, `score_*.py`, `legitimacy_diagnostics.py`), dashboard/site (`dashboard_add_run.py`, `build_manifest.py`, `build_status.py`, `render_*.py`, `check_site_sri.py`), governance (`build_dof_ledger.py`, `regression_gate.py`, `capture_*_goldens.py`, `verify_holdout_intake.py`, `generate_parameter_registry.py`), and per-ISO gate reporters. |
 | `scripts/data/`     | Data fetching and processing — everything between an external source and the model's inputs: `fetch_*` (raw downloads), `curate_*`/`process_*`/`convert_*`/`parse_*` (raw → `data/clean` per the schema contract), `derive_*` (measured-behaviour parameter derivation; CLAUDE.md rule 23 — frozen against residuals), and per-source builders (`build_*_hsl.py`, LMP references, AS withholding, …). Not core engine. |
 | `scripts/archive/`  | Retired one-offs that are no longer part of the backcast, hindcast, or forecast paths: superseded per-run drivers (`run_pjm51`–`98`, `run_ercot_21`–`46`, `run_159`–`166`, …), per-run attestation generators, one-shot diagnostics/probes/analyses, completed intake/landing scripts, dead CI-upload tooling. Kept for the historical record; **not maintained**. See `scripts/archive/README.md`. |
-| `scripts/lib/`      | Shared helpers imported by scripts (`clean_io.py`, `bundle_io.py`, per-datatype registries). |
+| `scripts/lib/`      | Shared helpers imported by scripts (`clean_io.py`, `bundle_io.py`, per-datatype registries). One deliberate exception carries an argparse main — see "`keeper_store.py`'s CLI" below. |
 | `scripts/probes/`   | Per-run probe scripts, named `_<iso><run>_*` — the historical record of calibration probes (frozen). |
 | `scripts/probes/artifacts/` | The probes' non-Python repro artifacts (`.patch` / `.xz.b64` chunks, `_<iso><run>_chain.sh` drivers, chunked-patch land dirs), segregated 2026-07-26 so the probe scripts stand alone — same frozen record, content untouched; paths quoted in pre-move records refer to the old flat `probes/` layout. |
 | `scripts/diagnostics/` | Standing measurement harnesses that profile or diff the engine rather than run the programs: `bench_highs_parallel.py` (HiGHS thread-scaling bench), `profile_lp_memory.py` (LP build-vs-solve peak-RSS split), `diff_warmstart_bundles.py` (per-plant cold-vs-warm bundle diff; invoked by `regression_gate.py`) — plus scratch diagnostics. |
@@ -60,6 +60,48 @@ Exception: the stdlib-only dashboard-deploy trio (`build_manifest.py`,
 `build_codebase_site_backcast.py`, `register_hindcast.py`) runs on a bare
 `python3` with no installed deps and keeps its own stdlib bootstrap — it must
 not import `scripts.lib.cli` (which imports `market_sim`).
+
+**Never reach a sibling script with `importlib.util.spec_from_file_location`.**
+That form executes the target a *second* time under a synthetic module name, so
+the caller gets a private copy whose module-level state can drift from the
+canonical `scripts.*` entry every other importer shares. Import the package
+instead — `from scripts.data import derive_ordc_overlay as ordc`. The remaining
+file-load chains (`regression_gate.py`, `export_tranche_config.py`,
+`bench_warmstart_xyear.py`, `scripts/data/build_offer_curve_overrides.py`,
+`scripts/data/derive_caiso_supply_consistent_demand.py`) are the open tail of
+this conversion, not a sanctioned pattern.
+
+### `keeper_store.py`'s CLI — the sanctioned exception (adjudicated 2026-07-26)
+
+`scripts/lib/keeper_store.py` is the only module under `lib/` with an argparse
+main (`--list` / `--set <ISO> <RUN_ID>` / `--note`). The refactor plan's
+"move the argparse mains out of `lib/`" does **not** apply to it, and the
+recommendation is that it stays put:
+
+* Keeper promotion is a governance-critical write, and
+  `python scripts/lib/keeper_store.py --set <ISO> <run-id>` is the invocation
+  quoted by the keeper governance doc (`frontend/data/backcast/keepers/README.md`).
+* A separate `scripts/` entry point would create a **second** documented way to
+  perform one governance operation, which is the failure mode rule 19
+  `[R-ONE-MECH]` exists to prevent. The CLI here *is* the reference
+  implementation of the shard write that ~10 importers share.
+* The cost of keeping it is one stdlib `import argparse` in an otherwise
+  stdlib-only module — nil. The module stays fully importable
+  (`from scripts.lib import keeper_store`); the main is guarded by
+  `if __name__ == "__main__"`.
+
+If a future owner does want it moved, the move is a coordinated change: a thin
+`scripts/set_keeper.py` that imports `keeper_store` and re-exposes the same
+three flags, **plus** the same-PR update of `keepers/README.md` and any session
+prompt quoting the old path. Do not move it without that.
+
+Bare `from lib import …` is likewise retired: the canonical spelling is
+`from scripts.lib import …` on top of the bootstrap above. As of 2026-07-26 no
+live script uses the bare form; the only five remaining users
+(`_ercot84_outage_override_audit.py`, `_neiso65_overcount_rootcause.py`,
+`_pjm_aswh_merge.py`, `_pjm_coalbit_shape_cmp.py`, `_reldeploy_compare.py`) all
+live under `scripts/probes/`, which is frozen calibration history and is left
+exactly as-is.
 
 ## Dashboard retention (top-15 per ISO, all three stores)
 
