@@ -647,6 +647,13 @@ def build_pjm_offer_midcurve_conditional_markup(
         if seg_scope is None
         else {str(s) for s in seg_scope}
     )
+    # LEVEL-form scope (ScenarioConfig.pjm_offer_midcurve_level_segments,
+    # default off): segments here are SET to the measured level rather than
+    # floored at it — the signed markup may LOWER a fitted band that sits
+    # above the measured ladder. Always intersected with the floor scope so a
+    # segment outside ``scoped`` is never priced by either form (rule 19).
+    lvl_cfg = getattr(config, "pjm_offer_midcurve_level_segments", None)
+    level_scope = {str(s) for s in lvl_cfg} & scoped if lvl_cfg else set()
 
     # Per-segment (n_bins, n_shares) mult tables for this delivery year
     # (pooled fallback for an unmapped year, e.g. a forward year).
@@ -708,12 +715,25 @@ def build_pjm_offer_midcurve_conditional_markup(
             )
             target = mult_b[hour_bin] * gas_day  # (T,)
             target = np.minimum(target, voll_cap)
-            row = np.maximum(0.0, np.nan_to_num(target, nan=0.0) - mc_base[g, :])
+            if seg in level_scope:
+                # LEVEL form: the bid IS the measured target (clamped >= 0,
+                # VOLL-capped above) — a signed markup that may lower the
+                # fitted band. Hours with no measured coverage (NaN target)
+                # stay unpriced, matching the floor form's no-op there.
+                row = np.where(
+                    np.isfinite(target),
+                    np.maximum(target, 0.0) - mc_base[g, :],
+                    0.0,
+                )
+            else:
+                row = np.maximum(0.0, np.nan_to_num(target, nan=0.0) - mc_base[g, :])
             if row.any():
                 markup[g, :] = row
                 n_priced += 1
 
-    if n_priced == 0 or not np.any(markup > 0.0):
+    # != (not >) so an all-lowering LEVEL-only scope is not discarded; for the
+    # floor form the two tests are equivalent (markup >= 0 by construction).
+    if n_priced == 0 or not np.any(markup != 0.0):
         return None
     tight = int((hour_bin >= n_bins - 1).sum())
     logger.info(
