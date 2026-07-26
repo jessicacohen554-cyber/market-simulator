@@ -441,7 +441,6 @@ method requires; same RAM class (the delta is an offer surface, not LP size).
 (This entry deliberately claims no lane number: pjm-122 was concurrently
 taken by the artifacts-landing session above.)
 
-<<<<<<< HEAD
 ## 2026-07-26 — pjm-124: `ramp10` deliverability scoping (frontier Lane 1, framing 2) — REFUTED on a no-LP pre-check, NO SOLVE SPENT
 
 Full adjudication: `docs/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md`.
@@ -513,8 +512,7 @@ Fidelity of this session's reconstruction confirmed against the committed keeper
 hourlies: `pjm120_c3a_stratum_readout` reads model_lw 41.53 / actual 46.07 /
 gap −4.54. No dashboard registration: no solve was run, so there is no bundle to
 register (the pjm-123 precedent). **Frontier readiness flagged, never declared.**
-=======
-## 2026-07-26 — pjm-124: the neiso-65 keeper re-audit is RE-ATTEMPTED on `pjm121_ccbelt` and RE-BLOCKED at the same point; the block is the container, not the recipe
+## 2026-07-26 — the neiso-65 keeper re-audit is RE-ATTEMPTED on `pjm121_ccbelt` and RE-BLOCKED at the same point; the block is the container, not the recipe
 
 Replayed `--replay-bundle results/calibration/pjm121_ccbelt --year 2023 2024
 2025` in a fresh 15 GB / 4-core container, with every clean partition the recipe
@@ -548,6 +546,10 @@ itself is the ceiling.
 The partial bundle was deleted, not registered (rule 16 — no single-year
 keepers, and no partial-year bundle on the dashboard). No numbers from the
 completed 2023 are quoted anywhere.
->>>>>>> 8933732 (neiso-66: record the follow-up status — PJM re-blocked at the same point, NYISO re-tune still open)
+
+(This entry deliberately claims no lane number, following the neiso-65
+precedent: this is charter/cross-ISO work, not a PJM calibration lane, and
+`pjm-124` was concurrently taken by the ramp10-deliverability pre-check session
+above. The PJM lane's own numbering is untouched.)
 
 Next number: pjm-125.
