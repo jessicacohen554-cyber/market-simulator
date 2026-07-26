@@ -807,25 +807,34 @@ class DispatchCorrTests(unittest.TestCase):
         return ypay, ybench
 
     def test_dispatch_corr_cems_recompute_caiso_post_onset(self):
-        # CAISO ≥ 2024: the gas fit is recomputed from the committed hourly
-        # series (payload m vs bench campd + flat cogen block) — the 930-based
-        # payload values (r=0.10) score the corrupted benchmark, not the model.
+        # CAISO from the onset vintage on: the gas fit is recomputed from the
+        # committed hourly series (payload m vs bench campd + flat cogen block)
+        # — the 930-based payload values (r=0.10) score the corrupted
+        # benchmark, not the model. The year is derived from the registry so
+        # the boundary test survives an onset move (it went 2024 -> 2023 on the
+        # 2026-07-26 owner ruling); the onset VALUE is pinned by
+        # tests/test_benchmark_semantics.py.
         ypay, ybench = self._cems_fixture()
         gas = [
             r
-            for r in cv.score_dispatch_corr(2024, ypay, ybench, "CAISO")
+            for r in cv.score_dispatch_corr(
+                cv.CEMS_GAS_ANCHOR_ONSET["CAISO"], ypay, ybench, "CAISO"
+            )
             if r["key"] == "gas"
         ][0]
         self.assertIn("r=1.0", gas["model"])  # identical shapes -> r ~ 1.0
         self.assertIn("CEMS", gas["metric"])
 
     def test_dispatch_corr_cems_pre_onset_keeps_930(self):
-        # 2023 predates the corruption onset: the committed 930-based fit
-        # stands (the two bases agree there — continuity).
+        # The vintage below the onset keeps the committed 930-based fit — the
+        # anchor is applied from the onset forward, never retroactively to
+        # every year. Derived from the registry for the same reason as above.
         ypay, ybench = self._cems_fixture()
         gas = [
             r
-            for r in cv.score_dispatch_corr(2023, ypay, ybench, "CAISO")
+            for r in cv.score_dispatch_corr(
+                cv.CEMS_GAS_ANCHOR_ONSET["CAISO"] - 1, ypay, ybench, "CAISO"
+            )
             if r["key"] == "gas"
         ][0]
         self.assertIn("r=0.1 ", gas["model"])

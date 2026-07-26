@@ -1787,7 +1787,10 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                     # supply removed) plus the flat non-CEMS cogen block — not
                     # the 930 NG cell (FINDING-caiso-c2c4-bench-basis-930ng-
                     # 2026-07-12.md §5.2; flat adjustments preserve pearson r).
-                    # Pre-onset years keep 930 for continuity (the two agree).
+                    # Pre-onset years keep 930. The CAISO onset moved 2024 ->
+                    # 2023 (owner ruling 2026-07-26, caiso-121) once the
+                    # "pre-onset years agree" premise was tested and failed for
+                    # 2023 — benchmark_semantics.EIA930_NG_CORRUPT_ONSET.
                     _btm_gas_flat = (
                         sum(
                             float(p["btm"])

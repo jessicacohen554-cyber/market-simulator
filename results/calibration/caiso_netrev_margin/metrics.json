@@ -16,7 +16,7 @@
   "rubric_version": 2.7,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: price_tail, dispatch_corr, co2"
+    "undocumented out-of-tolerance (FAIL) criteria: price_tail, co2"
   ],
   "notes": [],
   "criteria": {
@@ -48,7 +48,7 @@
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "co2": {
       "label": "C5a CO2 vs eGRID",
@@ -82,10 +82,10 @@
   },
   "grade_summary": {
     "scored": 10,
-    "target_grade": 7,
+    "target_grade": 8,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 3
+    "fails": 2
   },
   "free_class_score": {
     "iso": "CAISO",
