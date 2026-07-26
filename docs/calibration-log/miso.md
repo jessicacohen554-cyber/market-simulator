@@ -1183,3 +1183,113 @@ CAMPD change is a sufficient, already-documented explanation.
   specific live object at a specific line and the result was *verified* by
   re-running the same telemetry, not argued. Recorded rather than rationalised.
 * Next number: **miso-93.**
+
+## 2026-07-26 — miso-93: the keeper does NOT hold on the guard-corrected CAMPD envelope — RE-TUNE REQUIRED, and the drift is 100 % the extract
+
+**Lane:** A of the miso-93 handoff (top-ranked ready item), executing the
+`campd-economic-layup-fix-charter-2026-07.md` §5/§8 blast radius for MISO.
+miso-89 attempted this and was RAM-blocked; miso-92's 35 % floor reduction is
+what made the staged recipe fit. Charter, pre-registered before any result was
+read: `docs/handoffs/miso-93-keeper-reaudit-charter-2026-07.md`. Full evidence:
+`results/calibration/FINDING-miso93-keeper-reaudit-meritguard-2026-07.md`.
+
+**Registered arm:** `2026-07-26-miso-93-meritguard-a1` (MISO 2023/2024/2025,
+one bundle, rule 16; rule 15 — registered whatever the verdict).
+
+### Verdict
+
+**DETERMINATION `CALIBRATED-WITH-CAVEATS` → `NOT-YET`. RE-TUNE REQUIRED**, on a
+single newly-failing gate: **C3a-2024 −8.7 % → −10.1 %**, crossing the ±10 %
+veto by **0.1 pp**. C1 (free 12/12), C2, C4, C5a, C6, C7, C8 all still PASS;
+C3b/C3c stay ledgered (C3b-2025 NRMSE 0.208 → 0.214). **Nothing was tuned and
+nothing is licensed to be** — the ledger budget is 3/3 and this lane consumed
+and freed none of it.
+
+**The keeper designation was NOT changed.** miso-88 remains designated, now
+carrying a measured re-tune trigger; promoting or demoting on a NOT-YET arm is
+an owner call, not a session's.
+
+### The isolation — the code is provably inert, the extract is the whole story
+
+The charter flagged that miso-92's attribution of the HEAD drift to CAMPD was an
+attribution, not an isolation (`3babe5f..HEAD` touches `offer_surfaces.py` +391,
+`renewables.py` +342, `scenarios.py` +220, `runner.py` +129, six more), and
+caiso-123 is the precedent for why that matters. One single-year throwaway probe
+closed it — 2024 solved at HEAD with the extract reverted to the keeper's blob
+`f2b3ec8`:
+
+| arm | 2024 LW price | C3a |
+|---|---|---|
+| KEEPER (`3babe5f`, pre-guard extract) | $29.470 | −8.68 % |
+| A0′ (HEAD, pre-guard extract) | **$29.470** | −8.68 % |
+| A1 (HEAD, guard-corrected extract) | $29.024 | −10.06 % |
+
+**Code drift with the extract held fixed: $+0.000 — exactly zero**; A0′
+reproduces the keeper's committed sidecar to three decimals. The post-keeper
+code surface is **measured MISO-inert**. The guard/extract accounts for 100 % of
+the drift (−$0.445, −1.38 pp). Stable across years: −$0.467 / −$0.445 / −$0.396
+(2023/24/25). 2024 fails only because it started closest to the veto. MISO does
+**not** carry the confounded-A0 defect — the extract axis was verified
+single-delta before solving (blob byte-identical across the keeper's own
+`git_sha`, changing exactly once, at the guard commit).
+
+### Why prices fall (measured from the two committed blobs, no solve)
+
+The guard **removes 2,424 windows / 11,614 GW-days and adds zero** (−12.8 % of
+the envelope), of which **ST_GAS is 8,541 GW-days (73.5 %)** and CC_REGULAR
+1,522 (13.1 %). The 2023–2025 slice is **755 windows / 3,630 GW-days**,
+reproducing the figure committed with the guard exactly. Gas *steam* priced out
+of merit for weeks was being booked as mechanically unavailable; returning it
+adds supply and lowers the clearing price. Corroborated in-run: C8 ST_GAS forced
+share rises 35.7→39.9 / 36.9→41.1 / 51.1→53.8 %, all still **grounded** (D-4
+clean) so C8 PASSes.
+
+Per **rule 11** this is a discovered bug, not a reason to revert: the keeper's
+offer curves were silently compensating for an inflated outage envelope — the
+NEISO / ERCOT-79 / nyiso-63 condition, milder here (−1.4 pp vs NEISO's −7…−9 %).
+
+### A clean-partition dependency that was silently contaminating MISO replays
+
+**neiso-65 §2's partition table has no MISO row** (MISO never solved there), and
+that omission contaminated this session's first launch.
+`model/interchange/miso.py::_miso_cil_cel_groups` builds per-zone seasonal
+CIL/CEL interface groups from the `capacity-deliverability` partition and, when
+it is absent, falls back to **static PY2025-26 summer caps** —
+**independently of the `capacity_deliverability_limits` flag, which is `false`
+in this keeper.** Reading the flag is not sufficient to conclude the partition
+is unneeded. The degraded launch was killed, its bundle deleted, and no number
+from it is quoted; every arm here solved with `capacity-deliverability`,
+`ramp-capability`, `transfer-interface-limits`, `winter-fuel-inventory`
+regenerated first and every log audited (clean). The neiso-65 table is corrected
+in this commit.
+
+**Consequence:** miso-92's replay *levels* ($31.224 → $30.770) were measured on
+the degraded network and **should not be quoted**; its *delta* (−$0.454) agrees
+with this session's 2023 delta (−$0.467) to within $0.02, so its conclusion
+stands. The authoritative keeper baseline is its committed `hourly/` sidecar.
+
+### Pre-registration honesty
+
+The charter named C3a-2024 as the single exposure before solving and got the
+gate, year, direction, and the C1/C2 hold right. It got the **magnitude wrong**
+— estimated ≈−9.4 % and called it inside the band; it landed at −10.1 %,
+outside. Recorded rather than narrated afterwards as predicted.
+
+### Verification / ops
+
+* Determination scored from the committed bundle; `audit_keepers.py --iso MISO`
+  re-run after registration.
+* Memory: miso-92's fix confirmed live on main — floor `resident` 1.04–1.09 GB,
+  `in_use` 0.15 GB, peak 14.41–14.54 GB. The staged one-year-per-process
+  `--reuse-solved` recipe remains required.
+* Four solve-years total (2023, 2024, 2025 + one 2024 isolation probe). The
+  probe bundle was **deleted**, per rule 16 — its numbers live in the finding.
+* Rule 22 honoured: 2023–2025 only. No marker, freeze active.
+
+### Notes for the next session
+
+* **MISO needs a re-tune charter** scoped to C3a level under a ~1.4 pp
+  structural price reduction, with the ledger at 3/3 — so it must close by
+  structure, not a ledger slot, and the corrected extract stays in (rule 1).
+* Code churn `3babe5f..HEAD` is measured MISO-inert; don't re-establish it.
+* Next number: **miso-94.**

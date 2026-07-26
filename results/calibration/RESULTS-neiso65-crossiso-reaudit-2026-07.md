@@ -51,14 +51,28 @@ BEFORE solving:
 |---|---|---|
 | `transfer-interface-limits` | `curate_transfer_interface_limits.py` | PJM (`pjm_measured_interface_limits`, hard-fails) |
 | `ramp-capability` | `curate_ramp_capability.py` | PJM (`measured_ramp_capability`) |
-| `capacity-deliverability` | `curate_capacity_deliverability.py` | NYISO (`nyiso_li_lcr_tsl`, hard-fails), CAISO (`capacity_deliverability_limits`, **degrades silently**) |
+| `capacity-deliverability` | `curate_capacity_deliverability.py` | NYISO (`nyiso_li_lcr_tsl`, hard-fails), CAISO (`capacity_deliverability_limits`, **degrades silently**), **MISO (per-zone seasonal CIL/CEL interface groups, `model/interchange/miso.py::_miso_cil_cel_groups`, degrades silently to static PY2025-26 summer caps — and does so INDEPENDENTLY of the `capacity_deliverability_limits` flag, which is `false` in the MISO keeper; added by miso-93)** |
+| `ramp-capability` (MISO row) | `curate_ramp_capability.py` | **MISO (991-row partition; added by miso-93)** |
 | `gtc-limits` | `curate_gtc_limits.py` | ERCOT (`ercot_gtc_limits_measured`, **degrades silently** to static TTC) |
 | PJM DA virtuals (gitignored raw) | `fetch_pjm_da_virtuals.py` | PJM (`pjm_da_virtual_bids`, hard-fails) |
 
 The two silent degradations (ERCOT static-TTC fallback, CAISO "returning no
 limits") produced structurally unfaithful first solves of the ercot-113 and
 caiso-120 arms; both were re-solved with the partitions present and only the
-faithful solves are registered/quoted. Every log was then audited for
+faithful solves are registered/quoted.
+
+**Amendment 2026-07-26 (miso-93): this table originally had NO MISO row**,
+because MISO never solved in this session (§3e, RAM-blocked), so its
+dependencies were never audited. That omission contaminated the first launch of
+the miso-93 re-audit. Two rows are added above. The MISO
+`capacity-deliverability` case is the sharper trap of the two catalogued here:
+unlike CAISO's, it is **not** gated by `capacity_deliverability_limits` — that
+flag is `false` in the MISO keeper, so checking the flag and concluding the
+partition is unneeded is exactly wrong. The tell in the log is the presence of
+`seasonal CIL/CEL interface caps on 5 zone group(s) … static summer fallbacks
+replaced` (healthy) versus `capacity-deliverability clean partition absent`
+(degraded). See
+`results/calibration/FINDING-miso93-keeper-reaudit-meritguard-2026-07.md` §5. Every log was then audited for
 missing-input warnings. NEISO's "zonal load file not found" is NOT a
 degradation: `data/raw/zone-specific-demand/` has never carried a NEISO
 subdirectory, so the keeper itself solved on the identical fallback (and the
