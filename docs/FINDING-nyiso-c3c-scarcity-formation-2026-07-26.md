@@ -179,7 +179,44 @@ reliability commitments "unverified"). So:
   now been tested and failed;
 - the **published LI ladder is a separate question** (a rule-14 omission fix
   that stands on its own) and is isolated by the `nyiso83_probe_lionly_2024`
-  arm rather than being judged through the substitution's failure.
+  arm rather than being judged through the substitution's failure — see §4b.
+
+## 4b. The published LI ladder ALONE is provably inert — and that is the proof
+
+Third arm, `nyiso_li_locational_reserve=true` with the obligation **off** (so
+the floor limbs stay), 2024 vs the same control:
+
+| quantity (2024) | control | LI-only | obligation |
+|---|--:|--:|--:|
+| Long_Island reserve-dual hours > \$0 | 6 | **6** | 7,003 |
+| Long_Island reserve-dual max | \$28.1 | **\$28.1** | \$43.8 |
+| ST_GAS TWh | 8.710 | **8.710** | 5.810 |
+| C3c hours > \$300 | 0 | **0** | 0 |
+
+Adding the published Zone-K ladder changes **nothing**: every class lands within
+solver noise (≤0.004 TWh), the price series is unchanged, and the LI reserve dual
+is bit-identical to the control's. The reason is exactly the §3 mechanism, now
+demonstrated rather than hypothesised: **without the online gate the LI families
+are idle-allowed** (`sum_g P + R <= sum_g cap`), so Zone K's idle capacity
+satisfies 120 MW of 10-minute and 270/540 MW of 30-minute requirement at zero
+cost, in every hour of the year. A published requirement that any idle unit can
+meet for free is not a constraint.
+
+This is the clean decomposition of the mechanism:
+
+- **published ladder alone → inert** (families never bind);
+- **+ online gate → binds in ~80 % of hours** (6 → 7,003), which is the entire
+  effect, and is what makes the load-pocket requirement a real constraint;
+- **but the gate's reachable price is capped at the published \$25/MW**, so the
+  binding never becomes a tail (§4);
+- **and the obligation's eligible set is the pocket, not steam**, so the binding
+  never becomes steam commitment (§4a).
+
+So `nyiso_li_locational_reserve` is a **correct but provably inert** rule-14
+accuracy fix — the model should carry the published Zone-K requirement (it is a
+real published cell that was simply missing), but carrying it changes no result
+on its own. It stays default-off and is recorded here as probe-adjudicated
+inert, so no successor re-runs it expecting movement.
 
 ## 5. Standing note for whoever picks this up
 
