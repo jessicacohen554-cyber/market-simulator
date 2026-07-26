@@ -173,6 +173,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the hash at its default; an armed run enters the key as a distinct
     # scenario.
     "pjm_offer_midcurve_level_segments",
+    # PJM mid-curve PEAK-row scope + the CT_FAST measured max()-seam reprice
+    # (pjm-123 dispersion composite legs 2 and 3, both default-off). Neither
+    # branch is reachable at its default — an empty peak scope targets no extra
+    # row, and the max() seam is skipped when the flag is off — so both are
+    # byte-identical for every config that does not arm them and are dropped
+    # from the hash at their defaults; an armed run enters the key as a
+    # distinct scenario.
+    "pjm_offer_midcurve_peak_segments",
+    "pjm_ct_measured_max_reprice",
 )
 
 
@@ -5763,6 +5772,39 @@ class ScenarioConfig:
     # measured. Exercised by scripts/probes/pjm121_level_form_precheck.py;
     # regression contract in tests/test_pjm_offer_midcurve_level_form.py.
     pjm_offer_midcurve_level_segments: tuple[str, ...] | None = None
+    # PEAK-row scope for the mid-curve surface (default OFF, PJM-gated). The
+    # mid-curve targeting excludes the CC/CT ``peak`` rungs by design (only the
+    # LONG_RUN peak rung is in scope), so the measured STEEP top belt — the
+    # CC_LIKE s0.95-0.99 rungs at 11.1-18.8 x delivered gas ($49-83 at 2025
+    # tight-strata gas) — has no row to land on: the model's CC econ tops at
+    # ~9.6 x and its CC peak starts at ~31.9 x, leaving the $49-83 region
+    # unowned by ANY row (docs/FINDING-pjm122-marginal-ownership-2026-07.md §3).
+    # A segment listed here extends the targeting to that segment's ``peak*``
+    # rungs, priced in LEVEL form (the measured belt REPLACES the fitted band —
+    # a floor cannot pull a fitted rung sitting above measured down onto it).
+    # Always intersected with pjm_offer_midcurve_segments, so a segment absent
+    # from the floor scope is never priced by either form (rule 19). This is
+    # NOT the refuted pjm-121 §5 arm: that measured the CC ECON rows, which sit
+    # where the ladder is flat and cheap; the steep belt lands on the PEAK rows
+    # the arm excluded. Mutually exclusive with pjm_offer_surface_conditional
+    # (the pjm-99 top-of-curve surface owns the same rungs — one mechanism per
+    # row, rule 19); the pair is rejected in __post_init__.
+    pjm_offer_midcurve_peak_segments: tuple[str, ...] | None = None
+    # CT_FAST measured max()-seam reprice (default OFF, PJM-gated). The measured
+    # CT_FAST corpus prices the fast-start ladder at 22.5-39.6 x delivered gas
+    # ($96-174 at 2025 tight-strata gas) against a model marginal CT bid of
+    # $47-80 — a thick, too-cheap idle mid-merit shelf that pins the dual at
+    # $48.5 in hours the market cleared $66 (FINDING-pjm121 §3). pjm-101/102
+    # armed this as a floor computed against ``mc_base`` ALONE and it
+    # over-expressed (CT -12 TWh, C3a +12 %) because the CT stack is already
+    # owned by the pjm-103 startup amortization and the two SUMMED. This is the
+    # rule-19 reconciliation instead of a second mechanism: the measured level
+    # enters as a max() against the FULL P1 bid (mc_base + startup markup +
+    # every other bid adjustment), applied at the pipeline's own
+    # ``p1_bid_max_target`` seam, so the amortization keeps ownership wherever
+    # it already prices the row above measured and the measured level binds
+    # only where the model is cheaper than the corpus. Never additive.
+    pjm_ct_measured_max_reprice: bool = False
 
     # Combined-cycle tranche heat-rate OVERRIDES (relative to the plant's base
     # HR). When set, every CC bin's committed / economic / peaking tranche heat
@@ -7272,6 +7314,22 @@ class ScenarioConfig:
             raise ValueError(
                 "correlated_outage_sigma_scale must be positive, got "
                 f"{self.correlated_outage_sigma_scale!r}"
+            )
+
+        # PJM mid-curve PEAK-row scope vs the pjm-99 top-of-curve surface: both
+        # price the same ``peak*`` rungs, and the two markups SUM at the shared
+        # mc_bid_adjust seam. Arming both double-prices every peak row of the
+        # scoped segments — the pjm-101/102 stacking failure mode. One
+        # mechanism per row (rule 19): reject the pair rather than silently
+        # stack it.
+        if self.pjm_offer_midcurve_peak_segments and self.pjm_offer_surface_conditional:
+            raise ValueError(
+                "pjm_offer_midcurve_peak_segments and pjm_offer_surface_conditional "
+                "both price the peak rungs and their markups SUM at the "
+                "mc_bid_adjust seam — arming both double-prices those rows "
+                "(rule 19, one mechanism per row). Got peak scope "
+                f"{self.pjm_offer_midcurve_peak_segments!r} with the top-of-curve "
+                "surface on."
             )
 
         # §45Q credit window (W2-C): a set window must be a positive year

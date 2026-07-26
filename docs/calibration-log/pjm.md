@@ -352,4 +352,70 @@ CC spread must not narrow; CT leg must be max(), never a sum). Scope split:
 offers can plausibly reach the 50-100/100-200 strata (−$3.66/−$2.49 of the
 −$4.54 gap); the >$200 scarcity tail stays with G-20b reserve/LP tightness.
 
-Next number: pjm-123.
+## 2026-07-26 — pjm-123: the dispersion composite is REFUTED at the no-LP pre-check, and the reason retires the measured offer surface as a dispersion lever
+
+**No solve was spent. The CALIBRATED keeper `2026-07-25-pjm-121-cc-belt` is
+untouched** — no config change, no re-solve, no dashboard change (nothing to
+register: rule 14 covers completed solves, and none was run). Full write-up:
+`docs/FINDING-pjm123-composite-precheck-2026-07.md`.
+
+**The pre-check.** `scripts/probes/pjm123_composite_precheck.py` builds all
+three pjm-122 §4 legs on the real fleet and offer arrays (fleet reconstruction
+only, ~4 min/yr) and diffs each arm against the keeper, with the kill criteria
+written into its docstring before the first run. Leg 1 needed no code; legs 2
+and 3 are new default-off mechanisms:
+`ScenarioConfig.pjm_offer_midcurve_peak_segments` (measured top belt on the
+`peak*` rungs, LEVEL form, rejected at config construction alongside the
+top-of-curve surface — rule 19) and `pjm_ct_measured_max_reprice` + the new
+`p1_bid_max_target` seam / `pipeline.solve.apply_bid_max_target`. Ten
+regression tests; zero free parameters; surface JSON untouched; 2023–2025 only.
+
+**Verdict — refuted in all three years at both endpoints of the startup-markup
+bracket.** The decisive statistic is the K1 **gradient** (composite bid delta
+in the tightest bin minus the slackest — weighting-robust, unlike the two sign
+tests): **2023 −1.32/−0.89 · 2024 −1.79/−1.52 · 2025 −4.79/−4.63** (lo/hi),
+where it must be positive. The composite raises SLACK-hour bids more than
+TIGHT-hour bids everywhere. Legs 1 and 2 are near-flat level reductions
+(coal/ST_GAS/CC-peak down $4–85 with almost no bin gradient); leg 3 dominates
+and carries the wrong shape (+$23 in bin2, only +$12 in bin3).
+
+**Root cause, and why it generalizes.** Reading the frozen surface directly:
+in the TIGHTEST net-load bin the corpus prices **CT_FAST** at 22.5–25.2 × gas
+against 32.7–34.5 × in bin2, **CC_LIKE** at 4.83–4.92 against 5.17–5.53, and
+**LONG_RUN**'s top at 8.07–8.47 against bin0's 8.57–8.97. Every segment is
+cheapest (or near-cheapest) in bin3 — and it is not a gas artifact, since
+bin3's delivered gas is itself the lowest of the four. **Any mechanism that
+hands a class its measured conditional level inherits that inversion and
+compresses top-end dispersion rather than widening it.** That closes legs 1/2/3
+and any recombination — the surface is retired as the dispersion lever, not
+just this composite. The live question it leaves is a DERIVE question under
+rule 20 (is the inversion real, or an artifact of within-year net-load
+conditioning that mixes winter/summer tight hours and samples already-committed
+fast-start units?), owner-gated, never a residual-driven re-derive.
+
+**K3 passed on its merits and is the reusable result.** The measured CT level
+enters as `max(bid, target)` against the FULL P1 bid — after the startup
+amortization and every additive adjustment — with **zero additive row-hours in
+all three years**. That is the rule-19 reconciliation pjm-101/102 lacked when
+the same level was floored against `mc_base` alone and stacked with the pjm-103
+start-cost pricing (CT −12 TWh). The seam is now a tested primitive.
+
+**Defect found (FINDING §6).** `derive_pjm_ordc_overlay._run_year_kwargs` — the
+helper every PJM no-LP probe rebuilds a bundle's fleet with — drops **38
+non-default `run_year` flags** the pjm-121 keeper records, including all three
+`tranche_startup_*` gates (the CT stack's own pricing), `ct_netload_drag` /
+`gas_st_netload_drag` and their overrides, and the `pjm_offer_midcurve_conditional`
+master gate. The first pass of this pre-check measured leg 3 against a CT stack
+with no start-cost markup at all; the symptom was the startup bracket
+collapsing to `lo == hi`, now a hard error. The probe uses a widened
+`full_run_year_kwargs` plus fidelity guards. Consequence: pjm-121 §5's
+level-form magnitudes were measured on the partial reconstruction — its
+conclusion is unaffected and is independently reconfirmed here, but those
+specific numbers should not be quoted as the keeper fleet's.
+
+**Verification.** The refactor letting the mid-curve builder and the CT target
+share one surface/share context is **bit-identical** on the real 2025 keeper
+fleet — the keeper-scope markup array (3,325 × 8,760) is byte-equal before and
+after, 431 priced rows both ways.
+
+Next number: pjm-124.
