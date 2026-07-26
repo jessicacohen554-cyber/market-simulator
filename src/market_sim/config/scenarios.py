@@ -2284,6 +2284,46 @@ class ScenarioConfig:
     # model output; forward years regenerate it from the forward basis
     # seasonality. Requires nyiso_zonal_gas_basis + gas_hub_basis_overlay.
     # Default off (byte-identical); NYISO-only.
+    nyiso_li_locational_reserve: bool = False  # NYISO Long Island (Zone K)
+    # published locational reserve ladder. The model carried NO Zone-K family:
+    # model.reserves.spec.NYISO_RCPF_LOCATIONAL stops at NYC and the measured
+    # as-enforced #1344 intake has no LI region either, so a PUBLISHED
+    # locational requirement was simply missing — a rule 14 [R-ACCURATE]
+    # omission, not a new modelling assumption. Adds the two printed LI cells of
+    # the same "Locational Reserve Requirements" posting that grounds the NYC
+    # families (data/raw/NYISO-AS/requirements/
+    # nyiso_locational_reserve_requirements.csv, rows region=LI; the v2021
+    # regime spans ALL of 2023-2025): LI 10-minute total 120 MW all hours, and
+    # LI 30-minute total 270 MW OFF-peak / 540 MW ON-peak — the ONE diurnal
+    # in-pocket instrument the Zone-J/K survey found (docs/handoffs/
+    # nyiso-incity-instrument-survey-2026-07.md §2). Demand-curve value $25/MW
+    # for both, per NYISO Ancillary Services Manual §6.8 items 10 and 15. The
+    # on/off-peak boundary the LRR posting leaves undefined resolves to the
+    # tariff's own MST §2.15 On-Peak definition (7 a.m.-11 p.m. EPT, Mon-Fri,
+    # excluding NERC holidays) — a published CALENDAR rule that regenerates for
+    # any forward year, so rule 13 [R-MEASURED] admissible. Default off
+    # (byte-identical); NYISO-only; requires --energy-reserve-coopt.
+    nyiso_incity_commitment_obligation: bool = False  # NYISO in-city (Zone J/K)
+    # load-pocket COMMITMENT OBLIGATION — the mechanism of the in-city must-run
+    # lane charter (docs/handoffs/nyiso-incity-mustrun-charter-2026-07.md),
+    # armed by the owner's 2026-07-26 adjudication reopening the closed C3a
+    # "reserve" lever: it was closed as a *pricing* lever (measured Δ$0.00 on
+    # the 2023 trough, nyiso-71) and this is a COMMITMENT driver, a different
+    # phenomenon. Re-classes the published NYC + LI 10-minute families onto an
+    # ONLINE-GATED in-pocket obligation class (steam ∪ fast-start GT): the
+    # headroom row becomes R[2,z] <= rho * sum_g P[g] over that fleet, so idle
+    # capacity backs nothing and meeting the published requirement forces
+    # in-pocket units to be DISPATCHED rather than merely present. That is the
+    # physics of a 10-minute product in a load pocket (a steam boiler carrying
+    # 10-minute reserve is necessarily synchronised), corroborated by the Con
+    # Edison in-city local rule; the CURRENT Applications-of-Reliability-Rules
+    # table is MyNYISO login-walled, so that rule is cited as corroboration and
+    # is NOT the basis (survey §3). Mutually exclusive with
+    # nyiso_synchronised_reserve (hard error — same phenomenon, rule 19
+    # [R-ONE-MECH]); per the charter's rule-19 substitution requirement it is
+    # meant to be run with the NYC/LI ST_GAS reliability_floor limbs DISABLED
+    # via reliability_floor_overrides, never stacked on them. Default off
+    # (byte-identical); NYISO-only; requires --energy-reserve-coopt.
     nyiso_synchronised_reserve: bool = False  # NYISO online-gated SPINNING
     # reserve (path A of the downstate-reserve frontier, docs/handoffs/
     # nyiso-downstate-reserve-incidence-2026-06.md). Adds a NYC locational
@@ -8318,6 +8358,8 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_import_hub_prices": 1,
     "nyiso_iroquois_winter_spread": 1,
     "nyiso_synchronised_reserve": 1,
+    "nyiso_li_locational_reserve": 1,
+    "nyiso_incity_commitment_obligation": 1,
     "nyiso_forward_net_import_twh": 2,
     "nyiso_spin_headroom_frac": 2,
     "miso_firm_imports": 1,
