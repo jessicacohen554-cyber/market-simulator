@@ -141,8 +141,8 @@ from market_sim.config.paths import (
     CAISO_HSL_DIR,
     ERCOT_HSL_DIR,
     MISO_HSL_DIR,
-    MISO_WIND_SHAPE_DIR,
     NYISO_HSL_DIR,
+    wind_shape_dir,
 )
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.cod_ramp import COD_FALLBACK_MONTH, monthly_online_mask
@@ -317,6 +317,43 @@ _SOLAR_ZONE_SHAPE_ISOS: frozenset[str] = frozenset({"CAISO"})
 # the redistribution cannot touch any other ISO's outputs; ISOs not listed keep
 # the legacy single-shape behaviour.
 _WIND_ZONE_SHAPE_ISOS: frozenset[str] = frozenset({"MISO"})
+
+# ISOs whose per-zone wind SHAPE is available but KEEPER-AFFECTING, so it is
+# armed by a named ScenarioConfig gate instead of unconditionally. ERCOT is the
+# case (ERCOT-113): the West/Panhandle CREZ corridor rides the Great-Plains
+# nocturnal low-level jet (measured night/afternoon ratio 1.16/1.15/1.13 for
+# West, 1.04/1.13/1.06 for Panhandle) while the South/Coastal fleet rides the
+# Gulf sea breeze and peaks in the afternoon (0.89/0.84/0.84) — one ISO-wide
+# profile averages the two together, so the model holds wind in the wrong zone
+# at the wrong hour and the West/Panhandle curtailment ceiling and the zonal
+# links bind at the wrong times. Because
+# :func:`_redistribute_preserving_total` preserves the ISO aggregate EXACTLY in
+# every hour, arming this can never move annual wind energy or the ISO-wide
+# bound — only WHICH ZONE holds the wind. Mapping is field name, not a bool, so
+# every armed ISO's gate is visible in ``run_config.json`` (rule 20).
+_WIND_ZONE_SHAPE_GATES: dict[str, str] = {"ERCOT": "ercot_wind_zone_shape"}
+
+
+def _wind_zone_shape_enabled(iso: str, config: ScenarioConfig | None) -> bool:
+    """Return whether ``iso`` gets a per-zone wind SHAPE for this config.
+
+    An ISO in :data:`_WIND_ZONE_SHAPE_ISOS` is unconditional; an ISO in
+    :data:`_WIND_ZONE_SHAPE_GATES` is armed only when its named
+    ``ScenarioConfig`` field is true, so a keeper-affecting ISO stays off by
+    default and an unarmed run is byte-identical to its pre-gate self.
+
+    Args:
+        iso: ISO identifier.
+        config: Scenario config carrying the per-ISO gate, or ``None``.
+
+    Returns:
+        ``True`` when the per-zone wind SHAPE should be applied.
+    """
+    if iso in _WIND_ZONE_SHAPE_ISOS:
+        return True
+    field = _WIND_ZONE_SHAPE_GATES.get(iso)
+    return bool(field) and bool(getattr(config, field, False))
+
 
 # EIA-860 solar tracking-technology flag columns (Generator_Operable solar
 # schedule), each a ``Y``/``N`` indicator. A plant's nameplate capacity is
@@ -1869,6 +1906,7 @@ def _wind_zone_reanalysis_shapes(
     zone_names: list[str],
     cal_year: int | None,
     data_dir: Path | None = None,
+    config: ScenarioConfig | None = None,
 ) -> np.ndarray | None:
     """Return a per-zone reanalysis wind SHAPE matrix, or ``None`` (no-op).
 
@@ -1892,15 +1930,24 @@ def _wind_zone_reanalysis_shapes(
         fuel: Renewable fuel; only ``"wind"`` is shaped here.
         zone_names: Ordered model-zone names of the ISO.
         cal_year: Calibration year selecting the per-year parquet.
-        data_dir: Wind-shape directory; resolved from config when ``None``.
+        data_dir: Wind-shape directory; resolved from the per-ISO path registry
+            (:func:`market_sim.config.paths.wind_shape_dir`) when ``None``.
+        config: Scenario config carrying the per-ISO gate for the
+            keeper-affecting ISOs (see :data:`_WIND_ZONE_SHAPE_GATES`).
 
     Returns:
         A ``(n_zones, HOURS_PER_YEAR)`` relative wind SHAPE array, or ``None``.
     """
-    if fuel != "wind" or iso not in _WIND_ZONE_SHAPE_ISOS or cal_year is None:
+    if fuel != "wind" or cal_year is None:
+        return None
+    if not _wind_zone_shape_enabled(iso, config):
         return None
     if data_dir is None:
-        data_dir = MISO_WIND_SHAPE_DIR
+        # Per-ISO registry, not a hardcoded MISO default — an ISO with no
+        # registered directory resolves to None and no-ops below.
+        data_dir = wind_shape_dir(iso)
+    if data_dir is None:
+        return None
     path = Path(data_dir) / f"{iso.lower()}_{cal_year}_wind_zone_shape.parquet"
     if not path.exists():
         return None
@@ -1914,7 +1961,42 @@ def _wind_zone_reanalysis_shapes(
     shapes = np.clip(shapes, 0.0, None)
     if not shapes.any():
         return None
+    # Arming proof: an overlay that silently no-ops through a full solve is the
+    # ERCOT-113 silent-inertness trap, so every fired per-zone wind SHAPE
+    # announces itself with the ISO, year and the measured night/afternoon
+    # ratio per zone — the same statistic the gate's provenance cites, so the
+    # log line is directly checkable against the source data.
+    night = shapes[:, _wind_shape_hour_mask(0, 6)].mean(axis=1)
+    aft = shapes[:, _wind_shape_hour_mask(12, 18)].mean(axis=1)
+    ratio = np.divide(night, aft, out=np.ones_like(night), where=aft > 0)
+    logger.info(
+        "%s per-zone wind SHAPE (%d): %d zone(s) from %s, "
+        "measured night/afternoon ratio %s",
+        iso,
+        cal_year,
+        shapes.shape[0],
+        path.name,
+        ", ".join(f"{z}={r:.2f}" for z, r in zip(zone_names, ratio)),
+    )
     return shapes
+
+
+def _wind_shape_hour_mask(start_hour: int, end_hour: int) -> np.ndarray:
+    """Boolean mask over the 8760 clock for a daily hour-of-day window.
+
+    Used only for the per-zone wind SHAPE's arming-proof log line, which
+    reports each zone's night(00-06) vs afternoon(12-18) mean so an armed run
+    can be checked against the measured ratios without a re-solve.
+
+    Args:
+        start_hour: Inclusive hour-of-day the window opens.
+        end_hour: Exclusive hour-of-day the window closes.
+
+    Returns:
+        A ``(HOURS_PER_YEAR,)`` boolean mask.
+    """
+    hod = np.arange(HOURS_PER_YEAR) % 24
+    return (hod >= start_hour) & (hod < end_hour)
 
 
 def _zone_renewable_shapes(
@@ -1922,6 +2004,7 @@ def _zone_renewable_shapes(
     fuel: str,
     zone_names: list[str],
     cal_year: int | None,
+    config: ScenarioConfig | None = None,
 ) -> np.ndarray | None:
     """Return the per-zone relative SHAPE for a fuel, or ``None`` (no-op).
 
@@ -1938,6 +2021,7 @@ def _zone_renewable_shapes(
         fuel: Renewable fuel (``"wind"`` or ``"solar"``).
         zone_names: Ordered model-zone names of the ISO.
         cal_year: Calibration year for the per-zone snapshot.
+        config: Scenario config carrying the per-ISO wind-shape gate.
 
     Returns:
         A ``(n_zones, HOURS_PER_YEAR)`` relative SHAPE array, or ``None``.
@@ -1945,7 +2029,9 @@ def _zone_renewable_shapes(
     if fuel == "solar":
         return _solar_zone_clearsky_shapes(iso, fuel, zone_names, cal_year)
     if fuel == "wind":
-        return _wind_zone_reanalysis_shapes(iso, fuel, zone_names, cal_year)
+        return _wind_zone_reanalysis_shapes(
+            iso, fuel, zone_names, cal_year, config=config
+        )
     return None
 
 
@@ -2287,7 +2373,9 @@ def load_renewable_profiles(
             # so the validated system shape and annual energy are unchanged —
             # only the inter-zone split moves, which matters as renewables grow
             # and congestion/entry signals bite under the transmission limits.
-            zone_shapes = _zone_renewable_shapes(iso, fuel, zone_names, year)
+            zone_shapes = _zone_renewable_shapes(
+                iso, fuel, zone_names, year, config=config
+            )
             allocated[fuel] = _distribute_by_eia860(
                 cf_profile, installed_mw, monthly, vintage_ramp, zone_shapes
             )

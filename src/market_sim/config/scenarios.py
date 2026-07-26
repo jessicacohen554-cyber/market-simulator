@@ -142,6 +142,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # off no offer-curve band is touched), so it is dropped from the hash at its
     # default; an armed run enters the key as a distinct scenario.
     "coal_econ_marginal_hr_bound",
+    # ERCOT-113 per-zone wind SHAPE gate. Default-off and byte-identical for
+    # every existing config (with the gate off the ERCOT wind path keeps its
+    # single ISO-wide profile), so it is dropped from the hash at its default;
+    # an armed run enters the key as a distinct scenario.
+    "ercot_wind_zone_shape",
     # Gas-offer net-revenue margin mechanism (commit d536e7d): the flag plus its
     # identification anchor. Both are default-off (False / None) and were intended
     # byte-identical for every config that does not arm the mechanism, but they
@@ -6354,6 +6359,21 @@ class ScenarioConfig:
     ercot_wtx_curtail_depth_wind: float = 0.1004
     ercot_wtx_curtail_depth_solar: float = 0.1637
 
+    # ERCOT-113 per-zone wind SHAPE gate (data.renewables._WIND_ZONE_SHAPE_GATES).
+    # Give each ERCOT zone its own MERRA-2 reanalysis wind shape (NASA POWER
+    # WS50M at the zone's EIA-860 wind-plant locations through a turbine power
+    # curve, data/raw/ercot-wind-shape/) instead of one ISO-wide hourly profile
+    # applied to every zone. The measured night(00-06)/afternoon(12-18) ratio
+    # separates the nocturnal-jet West/North/Panhandle (1.04-1.17) from the
+    # Gulf-sea-breeze South (0.84-0.89), stable across 2023-2025; one ISO-wide
+    # profile averages them. Purely SPATIAL: _redistribute_preserving_total
+    # holds the ISO aggregate exactly in every hour, so annual wind energy and
+    # the ISO-wide bound cannot move — only WHICH ZONE holds the wind, hence
+    # when the West/Panhandle curtailment ceiling and the zonal links bind.
+    # Keeper-affecting, so default-off. Same builder/schema as MISO's
+    # unconditional shape (scripts/data/build_miso_wind_shape.py --iso ERCOT).
+    ercot_wind_zone_shape: bool = False
+
     # When True (default), coal generators are repriced to the flat annual
     # lignite/PRB delivered-cost trajectory (apply_coal_supply_pricing),
     # overwriting any EIA-923 monthly per-plant cost. Set False to keep the
@@ -8311,6 +8331,7 @@ TIER_TAGS: dict[str, int] = {
     "pjm_measured_interface_limits": 3,
     "pjm_east_interface_cut": 3,
     "ercot_wtx_curtailment_driver": 3,
+    "ercot_wind_zone_shape": 3,
     "ercot_wtx_curtail_depth_wind": 3,
     "ercot_wtx_curtail_depth_solar": 3,
     "coal_supply_repricing": 3,
