@@ -912,3 +912,50 @@ rebuild drops, + a new measured zero-scalar entry for the armed oil cap:
 17 entries / 6 residual. C6 PASS. No out-of-training year touched (NYISO has
 no calibration-complete marker). Keeper shard + status part rebuilt
 (`build_status.py --iso NYISO`), `audit_keepers.py --iso NYISO` PASS.
+
+## 2026-07-26 — nyiso-82: WINTER-SPREAD re-measured against the reconciled keeper — decisive winter fix, exported summer cost, PROBE (no keeper swap)
+
+The nyiso-76 mechanism `nyiso_iroquois_winter_spread` — built and deliberately
+NOT exercised because its documented value (winter −16.0 → −4.4) was measured
+against a pre-drift baseline (FINDING-nyiso-ordc-span-reliability-floor §4) —
+re-measured as the single-delta A/B the FINDING called for, now that the
+reconciled keeper exists: `replay_keeper.py results/calibration/
+nyiso81_floor_rederive --set nyiso_iroquois_winter_spread=true`, all three
+years, one bundle. Registered `2026-07-26-nyiso-82-winter-spread`
+(bundle `results/calibration/nyiso82_winter_spread`). Binding verified from
+the LP, not run_config (the prb-stomp trap): max |ΔLBMP| $30–53/MWh, ~99 % of
+zone-hours move, mean ΔP DJF +2.3/+6.2/+8.6 $/MWh by year against JJA
+−0.3/−1.5/−3.9 — the annual-mean-preserving reallocation working as designed.
+
+**Winter tail (the target): decisively toward actual** (monthly LW vs DA):
+Feb-23 −24.1 → **−7.6 %**, Dec-24 −27.1 → **−6.3 %**, Feb-25 −16.8 →
+**−5.1 %**. Jan-25 (the polar-vortex month; Transco Z6 NY $97.9/MMBtu
+2025-01-17) moves only −18.7 → −15.1 % — same stubbornness as the pre-drift
+measurement (−18.4 → −14.0): the Algonquin-citygate ceiling caps the Z2
+allocation, so the vortex peak still cannot fully form. C7/C8 HOLD and
+improve: D-1 ST_GAS cv_ratio 0.835/0.948/0.826 → **0.884/1.005/1.016** (all
+PASS), D-2 forced share 28.9/36.2/25.8 → 28.9/35.9/24.6 % (2024 still
+grounded-above-budget v2.2). C1 13/14 free 9/10 unchanged; the sole scored
+fail improves 2023 CC_REGULAR −4.11 → −3.67 TWh (band ±2.94, still FAIL).
+C3a all-PASS +2.2/−4.6/−7.1 %; C3b all-PASS; C3c 3/0/8 vs 10/12/42
+(unchanged — the tail is a current-main property, not this lever's).
+Determination NOT-YET (C1 + C3c + C6 unattested-probe), same class as keeper.
+
+**No keeper swap — the session's swap bar (winter gain WITHOUT a
+summer/shoulder cost) is not met.** The construction preserves the measured
+SOM annual spread exactly, so what winter gains, other months surrender, and
+on the reconciled keeper that cost lands on months that are already low:
+2024 Jun/Jul/Aug worsen 3–5 pp (Jul −10.2 → −15.0 %) and Feb-24 overshoots
++6.1 → +14.0 %; 2025 Jun/Jul/Aug/Sep/Oct worsen 5–9 pp on the already-low
+summer (Jul-25 −15.7 → −20.6 %, Aug-25 −8.9 → −17.6 %) and Dec-25 flips
+−3.0 → **+7.5 %** (the same Dec-25 over-raise the pre-drift measurement
+documented). 2023 improves nearly across the board (monthly-pct MAE
+10.9 → 7.0; 2024 8.2 → 7.9; 2025 8.6 → 8.9). Rule-1 reading for the record:
+the winter-concentrated Iroquois premium is real physics and the mechanism is
+rule-13-clean (three measured series, no fitted constant); the exported
+summer miss is the pre-existing summer under-price (the open C3c
+scarcity-formation / NYCA reserve-supply lane) that the flat construction was
+silently compensating (rule 14's exact signature). Disposition: PROBE on the
+dashboard; **re-exercise this flag as a candidate keeper arm when the summer
+scarcity lane moves** — the two mechanisms are complementary, and arming
+winter-spread alone just trades a winter miss for a summer one.
