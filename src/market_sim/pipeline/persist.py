@@ -15,6 +15,15 @@ carries the ``intentional-shrink`` label.
 ``run_config.json`` / ``meta.json`` key sets are FROZEN surfaces (replay,
 goldens, and ``--reuse-solved`` all reconstruct from them) — this move
 relocates the writers without touching a key.
+
+Drift note (2026-07-26, fast-tier escalation D4): the increment above landed
+the copies but never converted the script to alias them, so the two bodies
+diverged for a fortnight — ``run_calibration_full`` gained ``basis_sha`` (the
+caiso-122/123 origin-durable anchor) inside ``git_state`` and the two
+``nyiso_*_reserve_eligible`` ``calibration_flags`` keys, and this module did
+not. Both were FORWARD-PORTED here before the alias conversion, so the
+run_config.json/meta.json key sets are unchanged by that conversion; without
+the port, aliasing would have silently DROPPED three recorded keys.
 """
 
 from __future__ import annotations
@@ -36,6 +45,7 @@ __all__ = [
     "environment_block",
     "json_default",
     "git_sha",
+    "basis_sha",
     "git_cmd",
     "git_state",
     "parse_offer_curve_json",
@@ -125,6 +135,25 @@ def git_cmd(*args: str) -> str:
         return ""
 
 
+def basis_sha() -> str:
+    """Return the full SHA of the nearest origin-durable basis of this solve.
+
+    ``git_sha`` records the exact commit the solve ran at, but session-local
+    branch commits are routinely destroyed after merge, leaving that anchor
+    unresolvable (the caiso-122 §1 defect: keeper ``git_sha`` ``abb0fcd``
+    reachable from nothing, so the drift window had to be re-derived from
+    other bundles' sidecars). The basis is ``merge-base(HEAD, origin/main)``
+    — the newest ancestor of this solve that main history retains — falling
+    back to full ``HEAD`` when no ``origin/main`` is visible (then it equals
+    a full-length ``git_sha``, still strictly more resolvable than the short
+    form). Written fresh at every bundle write, INCLUDING replays:
+    ``replay_keeper`` restores only the display *date* of ``timestamp`` and
+    must never restore this field, so a bundle's ``basis_sha`` always dates
+    the bytes actually on disk (caiso-123).
+    """
+    return git_cmd("merge-base", "HEAD", "origin/main") or git_cmd("rev-parse", "HEAD")
+
+
 # Paths excluded from the manifest's git state: a run's own outputs (and other
 # bundles) are not "model changes" and would just be noise.
 GIT_STATE_EXCLUDE = (":(exclude)results", ":(exclude)outputs")
@@ -142,6 +171,9 @@ def git_state() -> dict:
     changed = [ln[3:] for ln in porcelain.splitlines()] if porcelain else []
     return {
         "sha": git_cmd("rev-parse", "--short", "HEAD"),
+        # Origin-durable basis anchor mirrored from meta.json's basis_sha —
+        # sha above may become unresolvable with its session branch.
+        "basis_sha": basis_sha(),
         "branch": git_cmd("rev-parse", "--abbrev-ref", "HEAD"),
         "dirty": bool(porcelain),
         "changed_files": changed,
@@ -291,6 +323,8 @@ def write_run_config(
                 "ercot_dam_as_scarcity_threshold",
                 "temp_dependent_derate",
                 "nyiso_dynamic_reserve_requirements",
+                "nyiso_hydro_reserve_eligible",
+                "nyiso_scr_edrp_reserve_eligible",
                 "git_sha",
             )
         },

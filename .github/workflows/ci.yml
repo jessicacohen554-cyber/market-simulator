@@ -139,10 +139,12 @@ jobs:
       # Facade re-export + persisted-identity pins (BLOCKING, unlike the
       # advisory fast tier): every split package must keep its full pre-split
       # surface, and the pickle-borne classes their frozen module paths.
-      # (test_pipeline_facade_shims.py joins this list once its pre-existing
-      # failures — part of the advisory-tier backlog — are triaged green.)
+      # test_pipeline_facade_shims.py joined this list on 2026-07-26, when the
+      # orchestrator-extraction alias conversion it pins finally landed
+      # (fast-tier escalation D4) — the shims are now the guard that a later
+      # cleanup cannot silently drop one.
       #
-      # These nine live in tests/regression/ since the Wave-5A tests/ migration
+      # These ten live in tests/regression/ since the Wave-5A tests/ migration
       # (they are frozen-surface guards, not unit tests). This list is one of
       # the two path inventories that migration has to keep in step — moving
       # any of them without editing this block silently disarms the only
@@ -151,6 +153,7 @@ jobs:
         run: >-
           uv run python -m pytest -q
           tests/regression/test_persisted_identity.py
+          tests/regression/test_pipeline_facade_shims.py
           tests/regression/test_constants_facade.py
           tests/regression/test_dispatch_facade.py
           tests/regression/test_eia930_facade.py
