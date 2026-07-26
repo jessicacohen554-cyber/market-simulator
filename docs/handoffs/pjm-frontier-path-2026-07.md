@@ -67,11 +67,14 @@ Offer/energy-stack lanes:
   now **live in the keeper** (leg B is the pjm-121 promotion itself).
 * **`gas_offer_margin_anchor`** — refuted, pjm-120 §1.
 * **The entire measured-offer-surface family as a dispersion lever** — refuted
-  pjm-123 (`docs/FINDING-pjm123-composite-precheck-2026-07.md`). Not just the
-  three-leg composite: the frozen surface prices `CT_FAST`, `CC_LIKE` **and**
-  `LONG_RUN` cheapest in the tightest net-load bin, so *any* mechanism handing
-  a class its measured conditional level compresses top-end dispersion instead
-  of widening it. Legs 1/2/3 and every recombination are closed.
+  pjm-123 (`docs/FINDING-pjm123-composite-precheck-2026-07.md`), **but that
+  generalization is NARROWED by pjm-126 (2026-07-26) and the family is a live
+  lever again.** pjm-123's legs 1/2/3 A/B results stand. What does not stand is
+  the basis for generalizing them: the "every segment cheapest in the tightest
+  bin" inversion is a **conditioning artifact**, reversing sign under
+  within-season net-load ranking (CT_FAST +10.00 → −0.85, CC_LIKE +0.35 →
+  −0.20). See `docs/FINDING-pjm126-midcurve-conditioning-artifact-2026-07.md`
+  and the Lane 2 update in §3.
 
 **Read that list against the bar.** PJM's remaining residual is already
 characterized the way NEISO's and NYISO's are: the >$200 tail is owned by the
@@ -196,6 +199,45 @@ just as much as a positive one.** Do not chase the number.
 
 ### Lane 2 (secondary) — the pjm-123 derive-conditioning question
 
+> **UPDATE 2026-07-26 (pjm-126): ANSWERED — the inversion is an ARTIFACT.
+> Lane 2 STAYS OPEN; a frontier declaration would be premature.**
+> `docs/FINDING-pjm126-midcurve-conditioning-artifact-2026-07.md` (2025,
+> fidelity-exact: arm A reproduces the committed surface to 8.5e-13).
+>
+> Under within-**season** net-load ranking the inversion **reverses sign** in the
+> two segments that carry it — CT_FAST **+10.00 → −0.85**, CC_LIKE **+0.35 →
+> −0.20** (LONG_RUN holds, but at +0.10 on a base of ~8.1, a 1 % effect).
+>
+> **The mechanism is the OPPOSITE of the hypothesis below.** It is not
+> co-mingling — it is **segregation**. PJM is summer-peaking, so winter's own
+> tight hours never reach the annual top-3 % of net load: bin3 is **87 % summer
+> (229 of 263 h, only 34 winter)** while bins 1–2 are winter-enriched (477 / 249
+> winter hours). Winter is when CT offers are most expensive (oil parity, gas
+> basis, cold snaps), so the middle bins are inflated and the tightest bin is a
+> summer-only sample. The lower bin3 gas ($4.03 vs $4.53) is a *symptom* of the
+> same segregation, not an independent check.
+>
+> **Consequence.** pjm-123 §3 narrows to "the surface **as conditioned in the
+> 2026-07 vintage**" — its legs 1/2/3 A/B results stand, the generalization to
+> the whole measured-offer-surface family does not. The measured surface is a
+> **live candidate dispersion lever again**, aimed at exactly the residual
+> pjm-125 left standing (pjm-121's caveat: the dispersion compression is
+> untouched). The open lane and the un-repaired residual are the same object.
+>
+> **Limitation, stated:** arm C (fixed population) is **vacuous** — 711 of 711
+> units offer in all four bins, since PJM units submit offers regardless of
+> commitment. So the **commitment-status** half of the hypothesis below is NOT
+> tested; it needs the DA *awards* side, which the offer corpus does not carry.
+> Still open.
+>
+> **This is not authority to re-derive.** Rule 20: a season-conditioned surface
+> IS a definitional change and admissible on that basis, but adopting it is a
+> separate owner-authorized step with its own admissibility memo — and the edges
+> are **shared with the frozen pjm-99 top-of-curve surface**, so re-conditioning
+> one raises the scope question for the other.
+>
+> Scope: 2025 only; 2023/2024 corpus fetching for confirmation.
+
 Is the tightest-bin inversion in `pjm_offer_midcurve_condbinned.json` a real
 property of PJM offers, or an artifact of the derive's conditioning? Evidence
 (2025 tables, × delivered gas, surface's own edges `[0.80, 0.90, 0.97]`):
@@ -239,12 +281,24 @@ and this lane closes — **either outcome is ledger progress.**
    124 as prescribed; separability held trivially, since **neither framing was
    ever armed in a solve** (rule 19's concern is arming both and reading one
    number, which did not occur).
-3. **pjm-126 — Lane 2**, owner-authorized, as a derive review with its own
-   admissibility memo. Independent of 1–2; can run in parallel by a separate
-   session (rule 12: separate invocations concurrent, years sequential within).
-   **This is now the only open lane.**
-4. **Then, and only then, the owner decides frontier** on the completed ledger.
-   Lane 1 is complete; Lane 2 is the remaining input.
+3. **pjm-126 — Lane 2 diagnostic: DONE 2026-07-26, verdict ARTIFACT** (see the
+   Lane 2 update above). The conditioning question is answered; the *lane* is
+   NOT closed by answering it — the opposite. The measured surface is a live
+   dispersion lever again, so the remaining work is:
+   a. **pjm-127 — multi-year confirmation** of the ARTIFACT verdict on
+      2023/2024 (corpus fetching; 2025 is fidelity-exact and the CT_FAST flip is
+      +10.00 → −0.85, so a reversal is implausible but owed).
+   b. **pjm-128 — the commitment-status half**, untested here because arm C was
+      vacuous (711/711 units offer in all four bins). Needs the DA *awards*
+      side, not the offer corpus.
+   c. **The re-derive decision itself — owner-gated.** A season-conditioned
+      surface is a definitional change and admissible on that basis (rule 20),
+      but it needs its own admissibility memo, and the edges are shared with the
+      frozen pjm-99 top-of-curve surface, so the memo must settle scope for both.
+4. **Frontier is NOT ready.** Lane 1 is complete, but Lane 2 has re-opened a
+   named admissible mechanism that has not been tried — precisely what the bar
+   excludes. The ledger is closer to a *repair* than it was, and further from a
+   declaration.
 
 Rule 16 binds throughout: any registered bundle is `--year 2023 2024 2025` in
 one invocation. Rule 22: PJM has **no calibration-complete marker**, so no

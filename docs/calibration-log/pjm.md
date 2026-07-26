@@ -586,3 +586,68 @@ owner-gated pjm-123 derive-conditioning review) is the only open lane.
 Frontier readiness flagged, never declared.**
 
 Next number: pjm-126.
+
+## 2026-07-26 — pjm-126: the mid-curve surface's tightest-bin inversion is a CONDITIONING ARTIFACT (frontier Lane 2) — Lane 2 STAYS OPEN, frontier NOT ready
+
+Full adjudication: `docs/FINDING-pjm126-midcurve-conditioning-artifact-2026-07.md`.
+Probe: `scripts/probes/pjm126_midcurve_conditioning_precheck.py`, criteria
+committed (`9409f7f`) **before** the run; JSON in
+`results/calibration/pjm126_conditioning_precheck_2025.json`. No LP, no surface
+written, no derive re-run.
+
+**The inversion does not survive re-conditioning.** Inversion gap =
+median(bin2) − median(bin3); positive = tightest bin cheaper:
+
+| segment | A_frozen (within-year) | B_season (within-season) | flag |
+|---|---|---|---|
+| CT_FAST | **+10.000** | **−0.850** | **FLIP** |
+| CC_LIKE | **+0.350** | **−0.200** | **FLIP** |
+| LONG_RUN | +0.100 | +0.250 | HOLDS (1 % of base) |
+
+2 of 3 segments flip → **ARTIFACT** on the pre-registered criteria. **Fidelity
+guard passed at full strength**: arm A reproduces the committed
+`pjm_offer_midcurve_condbinned.json` 2025 ladders to **8.5e-13** (tol 0.05).
+
+**Mechanism named — and it is the OPPOSITE of the handoff's hypothesis.** Not
+co-mingling: **segregation**. PJM is summer-peaking, so winter's own tight hours
+never reach the annual top-3 % of net load. Bin3 is **87 % summer (229 of 263 h,
+only 34 winter)**; bins 1–2 are winter-enriched (477 / 249 winter hours). Winter
+is when CT offers are most expensive (oil parity, gas basis, cold snaps), so the
+middle bins are inflated and the tightest bin is a summer-only sample. Under
+within-season ranking each bin is balanced (88/88/88) and the inversion vanishes.
+The lower bin3 gas ($4.03 vs $4.53) is a *symptom* of the same segregation, not
+an independent check — which is why the earlier gas test did not catch it.
+
+**Limitation, stated plainly.** Arm C (fixed population) is **VACUOUS** — 711 of
+711 units offer in all four bins, because PJM units submit offers regardless of
+commitment — so its HOLDS flags are not evidence and the **commitment-status**
+half of the hypothesis is **NOT tested**. That needs the DA *awards* side, which
+the offer corpus does not carry. The verdict rests entirely on arm B, which is
+decisive on its own for the two segments carrying the effect.
+
+**Consequences.** pjm-123 §3 narrows to "the surface **as conditioned in the
+2026-07 vintage**" — its legs 1/2/3 A/B results stand; the generalization to the
+whole measured-offer-surface family does not. The measured surface is a **live
+candidate dispersion lever again**, aimed at exactly the residual pjm-125 left
+standing (pjm-121's caveat: the dispersion compression is untouched). **PJM has a
+named admissible mechanism NOT tried — which is what the frontier bar excludes.
+Frontier is NOT ready.**
+
+**Not authority to re-derive.** Rule 20: a season-conditioned surface IS a
+definitional change and admissible on that basis, but adopting it is a separate
+**owner-authorized** step with its own admissibility memo — and the edges are
+**shared with the frozen pjm-99 top-of-curve surface**, so the memo must settle
+scope for both. Never because a residual moved.
+
+**Conflict of interest, disclosed.** This probe was run by a session with an
+interest in the REAL outcome (it would have closed Lane 2 and completed the
+ledger). Criteria were made symmetric and quantitative and committed before any
+arm was computed, with the ARTIFACT branch spelled out as specifically as the
+REAL branch. The result went against that interest and is reported as measured.
+
+**Scope: 2025 only** (fidelity-exact). 2023/2024 corpus fetching for
+confirmation — the CT_FAST flip is far too large to be plausibly reversed, but
+the multi-year check is owed (pjm-127). Keeper unchanged; no dashboard
+registration (no solve).
+
+Next number: pjm-127.
