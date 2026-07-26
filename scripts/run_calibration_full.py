@@ -4576,6 +4576,22 @@ def solve_and_persist(
                         else ""
                     ),
                 )
+                # Name the holding SITE, not just the class. miso-92 measured
+                # 0.68 GB across only 17 frames here, of which the accumulators
+                # explain 0.07 and the module caches ~0.02 — so ~0.59 GB sat in
+                # large frames nobody could point at. A frame's column list
+                # identifies its producer on sight.
+                for _mb, _rows, _ncol, _cols in largest_retained_frames(
+                    6, *_acc.values()
+                ):
+                    logger.info(
+                        "year %d retained frame: %.1f MB  %d x %d  cols=%s",
+                        year,
+                        _mb,
+                        _rows,
+                        _ncol,
+                        ",".join(_cols),
+                    )
             except Exception:  # never let telemetry break a calibration run
                 logger.debug("retained-heap telemetry unavailable", exc_info=True)
 
