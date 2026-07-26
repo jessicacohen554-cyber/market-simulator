@@ -154,6 +154,129 @@ class TestDesignChannel:
         )
 
 
+class TestMeasuredStepSpan:
+    """``nyiso_ordc_measured_step_span`` — the ORDC width construction fix."""
+
+    @staticmethod
+    def _series():
+        # SENY is the family whose measured requirement (1,800 MW) exceeds its
+        # published base (1,300 MW); NYC's measured == published, so it is the
+        # in-file no-op control.
+        return {
+            "seny_30min_total": np.full(T, 1800.0),
+            "nyc_10min_total": np.full(T, 500.0),
+        }
+
+    def _designs(self, monkeypatch):
+        monkeypatch.setattr(
+            "market_sim.data.nyiso_reserve_requirements."
+            "load_nyiso_reserve_requirements",
+            lambda year, hours, path=None: self._series(),
+        )
+        off = _nyiso_design(
+            _config(nyiso_dynamic_reserve_requirements=True), _fa(), T, ZONES
+        )
+        on = _nyiso_design(
+            _config(
+                nyiso_dynamic_reserve_requirements=True,
+                nyiso_ordc_measured_step_span=True,
+            ),
+            _fa(),
+            T,
+            ZONES,
+        )
+        return {f.name: f for f in off.families}, {f.name: f for f in on.families}
+
+    def test_default_off_is_byte_identical(self, monkeypatch):
+        """Absent the flag the design is unchanged, widths still static 1-D."""
+        off, _ = self._designs(monkeypatch)
+        seny = off["seny_30min_total"]
+        assert seny.ordc_step_widths.ndim == 1
+        # The defect: RHS enforces 1,800 MW while the curve spans only 1,300.
+        assert seny.requirement[0] == 1800.0
+        assert seny.ordc_step_widths.sum() == pytest.approx(1300.0)
+
+    def test_widths_span_the_measured_requirement(self, monkeypatch):
+        off, on = self._designs(monkeypatch)
+        seny_on = on["seny_30min_total"]
+        # Hourly (n_steps, T), total width == the hour's measured requirement,
+        # so the curve reaches its max penalty exactly at zero reserve.
+        assert seny_on.ordc_step_widths.shape == (
+            off["seny_30min_total"].ordc_step_widths.shape[0],
+            T,
+        )
+        np.testing.assert_allclose(
+            seny_on.ordc_step_widths.sum(axis=0), seny_on.requirement
+        )
+
+    def test_penalties_and_shape_are_untouched(self, monkeypatch):
+        """Published RCPF penalties are requirement-independent — only widths move."""
+        off, on = self._designs(monkeypatch)
+        for name in ("seny_30min_total", "nyc_10min_total", "nyca_30min_total"):
+            np.testing.assert_allclose(
+                on[name].ordc_penalties, off[name].ordc_penalties
+            )
+            np.testing.assert_allclose(on[name].requirement, off[name].requirement)
+        # Shape preserved: every width scales by the same requirement ratio.
+        w_off = off["seny_30min_total"].ordc_step_widths
+        w_on = on["seny_30min_total"].ordc_step_widths
+        np.testing.assert_allclose(
+            w_on, np.tile(w_off[:, None] * (1800.0 / 1300.0), (1, T))
+        )
+
+    def test_noop_where_measured_equals_static(self, monkeypatch):
+        """NYC measured == published, so its curve must not move."""
+        off, on = self._designs(monkeypatch)
+        np.testing.assert_allclose(
+            on["nyc_10min_total"].ordc_step_widths,
+            off["nyc_10min_total"].ordc_step_widths[:, None] * np.ones(T),
+        )
+
+    def test_untouched_without_measured_series(self, monkeypatch):
+        """A family with no measured series keeps its static 1-D widths."""
+        _, on = self._designs(monkeypatch)
+        assert on["nyca_30min_total"].ordc_step_widths.ndim == 1
+
+    def test_inert_without_dynamic_requirements(self):
+        """No measured series ⇒ nothing to translate to; design is unchanged."""
+        base = _nyiso_design(_config(), _fa(), T, ZONES)
+        armed = _nyiso_design(
+            _config(nyiso_ordc_measured_step_span=True), _fa(), T, ZONES
+        )
+        for a, b in zip(armed.families, base.families):
+            np.testing.assert_array_equal(a.ordc_step_widths, b.ordc_step_widths)
+
+    def test_dispatch_kwargs_promote_to_hourly(self, monkeypatch):
+        """Mixed static/hourly families stack into one (n_ordc_steps, T) bound."""
+        from market_sim.model.reserves.spec import build_reserve_dispatch_kwargs
+
+        monkeypatch.setattr(
+            "market_sim.data.nyiso_reserve_requirements."
+            "load_nyiso_reserve_requirements",
+            lambda year, hours, path=None: self._series(),
+        )
+        design = _nyiso_design(
+            _config(
+                nyiso_dynamic_reserve_requirements=True,
+                nyiso_ordc_measured_step_span=True,
+            ),
+            _fa(),
+            T,
+            ZONES,
+        )
+        kw = build_reserve_dispatch_kwargs(design)
+        w = kw["ordc_step_widths"]
+        assert w.shape == (kw["ordc_penalties"].shape[0], T)
+        # A static family broadcasts its constant width across the horizon.
+        n_dyn = sum(
+            f.ordc_penalties.shape[0]
+            for f in design.families
+            if f.ordc_step_widths.ndim == 2
+        )
+        assert n_dyn > 0 and w.shape[0] > n_dyn
+        assert np.all(w > 0)
+
+
 class TestRule19Guard:
     def test_overlay_plus_coopt_raises(self):
         cfg = _config(nyiso_rcpf_enabled=True)

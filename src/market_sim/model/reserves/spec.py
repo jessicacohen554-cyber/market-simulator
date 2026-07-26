@@ -551,6 +551,18 @@ def build_reserve_dispatch_kwargs(
         counts[f] = fam.ordc_penalties.shape[0]
 
     ordc_penalties = np.concatenate(pen_list) if pen_list else np.zeros(0)
+    # Widths are static (n_steps,) per family on every published-curve design.
+    # A family whose demand curve translates with an hour-varying requirement
+    # (NYISO nyiso_ordc_measured_step_span) carries HOURLY (n_steps, T) widths
+    # instead; when ANY family is hourly the stacked array is promoted to
+    # (n_ordc_steps, T) so the LP bound stays one well-typed object (static
+    # families broadcast their constant width across the horizon, which is
+    # numerically identical to the (n_ordc_steps,) path).
+    if any(np.ndim(w) == 2 for w in wid_list):
+        wid_list = [
+            w if np.ndim(w) == 2 else np.repeat(np.asarray(w)[:, None], T, axis=1)
+            for w in wid_list
+        ]
     ordc_step_widths = np.concatenate(wid_list) if wid_list else np.zeros(0)
 
     # Squeeze to (T,) / (n_gen,) for single-family ISOs with one class, to
@@ -2257,6 +2269,16 @@ def _nyiso_design(
     translate with the hourly requirement (the published RCPF is itself a
     stepped curve; translating preserves its penalties and widths).
 
+    That translation is what ``config.nyiso_ordc_measured_step_span`` (default
+    off) actually performs. Without it the steps are built off the STATIC
+    published MW while the balance RHS enforces the measured one, so a family
+    whose measured requirement exceeds its published base (SENY: 1,800 vs
+    1,300 MW) prices its shortfall on a curve that is too steep and saturates
+    above zero reserve. With it on, each dynamic family's width vector is
+    scaled by ``requirement[t] / requirement_static`` into an hourly
+    ``(n_steps, T)`` array; the RCPF penalties are requirement-independent and
+    are untouched. No-op wherever measured == static (NYCA, East, NYC).
+
     Rule-19 reconciliation: the post-solve RCPF overlay (``results.rcpf``,
     ``config.nyiso_rcpf_enabled``) prices the same phenomenon these in-LP
     families do. Enabling both is a hard error — the overlay is the
@@ -2277,6 +2299,7 @@ def _nyiso_design(
             "overlay as the co-opt-off comparator, or disable the co-opt."
         )
 
+    measured_step_span = bool(getattr(config, "nyiso_ordc_measured_step_span", False))
     dynamic_req: dict[str, np.ndarray] = {}
     if bool(getattr(config, "nyiso_dynamic_reserve_requirements", False)):
         from market_sim.data.nyiso_reserve_requirements import (
@@ -2340,6 +2363,31 @@ def _nyiso_design(
         else:
             requirement_arr = np.full(T, req, dtype=float)
         p, w = nyiso_rcpf_product_shortfall_steps(req, crit, pen, n_ramp=n_ramp)
+        if name in dynamic_req and measured_step_span:
+            # Construction-consistency fix (nyiso_ordc_measured_step_span):
+            # the balance RHS above enforces the MEASURED requirement, so the
+            # demand curve priced against it must span the measured MW too.
+            # Building the widths off the STATIC published MW while the RHS
+            # carries the larger measured one leaves the curve too STEEP —
+            # SENY's measured 1,800 MW vs its published 1,300 makes the ramp
+            # ~38% steeper and saturates it at 500 MW of reserve instead of 0,
+            # over-pricing downstate shortfalls. This is the behaviour this
+            # function's own docstring already claims ("translate with the
+            # hourly requirement"), not a new mechanism (rule 19) and not a
+            # tuned level (rule 5): the published RCPF penalties are
+            # requirement-INDEPENDENT (pen[k] = max_pen*(k+1)/n_ramp for an
+            # n_ramp-step linear ramp, whatever the span), so the widths are
+            # the only part of the curve that carries the requirement. Scaling
+            # the published width VECTOR by requirement[t]/requirement_static
+            # translates the whole curve — ramp bands and the flat sub-critical
+            # tail alike — preserving its published shape exactly while keeping
+            # the total step width equal to the hour's requirement, which is
+            # what keeps the balance row feasible at zero reserve.
+            # Rule 14 [R-ACCURATE]: the measured requirement is the accurate
+            # input already in use; this stops the estimate leaking back in
+            # through the curve's span.
+            scale = np.asarray(requirement_arr, dtype=float) / float(req)
+            w = w[:, None] * scale[None, :]  # (n_steps, T)
         families.append(
             ReserveFamily(
                 name=name,
