@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-26-ercot116-coal-avail-probe",
+  "label": "ercot116 coal avail probe",
+  "date": "2026-07-26",
+  "shorthand": "ercot116-coal-avail-probe",
+  "definition": "(PROBE — rejected) ERCOT-116: ercot_thermal_dam_availability_coal armed as the single delta on the ercot115 keeper, answering what the statistical coal-availability model is silently compensating for. The pre-committed SHAPE gates PASS in every year: the matched-price-band excess seasonal lift falls 19.2/18.6/20.6 -> 10.0/12.9/13.4 pp and the Jun-Sep-minus-Feb-Apr monthly-ratio spread narrows +0.435/+0.591/+0.333 -> +0.233/+0.400/+0.230 — roughly half the ~19 pp coal seasonal term IS the statistical availability model's seasonal profile (it misses the measured 10-13 pp summer-vs-shoulder committed-capability asymmetry; real coal takes outages in spring/fall). REJECTED on the level: coal +6.8/+9.2/+12.9 TWh vs the keeper (annual ratio 1.06/1.13/1.15), C3a degrades 5.6-7.6 pp beyond the 2.0 pp gate, C1 COAL_PRB 2025 out of band. The estimate's tight shoulder envelope was masking a within-envelope coal-vs-gas merit-order bias — the successor lane. Gates + scorer: PRECOMMIT-ercot116-coal-avail-on-keeper-2026-07-26.md, scripts/probes/ercot116_seasonal_shape.py. Finding: FINDING-ercot116-coal-seasonal-availability-2026-07-26.md.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-26-ercot116-coal-avail-probe.js",
+  "bundle": "results/calibration/ercot116_coal_avail_on_keeper"
+}
