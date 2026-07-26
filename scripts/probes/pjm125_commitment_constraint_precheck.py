@@ -51,8 +51,11 @@ framing 1 is REFUTED if K1 fails, and no solve is spent).
        * PARTIAL — ``S_floor`` falls >= 50% below the keeper's effective supply
          bound but stays above 2 x R in the tight bin. Frontier evidence; NO
          solve.
-       * KILL — ``S_floor`` stays above 3 x R. No commitment constraint can make
-         the balance bind. NO solve.
+       * KILL — ``S_floor`` stays above 3 x R without that 50% narrowing. No
+         commitment constraint can make the balance bind. NO solve.
+     PARTIAL and KILL as worded overlap; PARTIAL is the more specific band and
+     takes precedence. Both carry the same consequence (NO solve), so the
+     precedence changes only how much the label reports, never the decision.
 
   K2 TIGHT-BIN BITE — a mechanism that cannot bite where the residual lives is
      inert whatever its annual mean does. The maximally-constrained effective
@@ -265,11 +268,18 @@ def main() -> int:
         mean_multiple <= K1_PASS_MEAN_REQ_MULTIPLE
         and tight_under >= K1_PASS_TIGHT_MIN_HOURS
     )
-    k1 = (
-        "PASS"
-        if k1_pass
-        else ("KILL" if mean_multiple > K1_PASS_MEAN_REQ_MULTIPLE else "PARTIAL")
-    )
+    # Band precedence. The pre-registered PARTIAL and KILL descriptions overlap
+    # (a floor can both "stay above 3 x R" and "fall >= 50% below the keeper's
+    # effective bound"). PARTIAL is the MORE SPECIFIC band, so it takes
+    # precedence when its condition holds. This cannot flatter the mechanism:
+    # PARTIAL and KILL carry the SAME operational consequence (NO solve), so the
+    # precedence changes only how much the label reports, never the decision.
+    if k1_pass:
+        k1 = "PASS"
+    elif reduction >= K1_PARTIAL_MIN_REDUCTION_FRAC:
+        k1 = "PARTIAL"
+    else:
+        k1 = "KILL"
 
     # ---- K2 ---------------------------------------------------------------
     bite_pp = {}
