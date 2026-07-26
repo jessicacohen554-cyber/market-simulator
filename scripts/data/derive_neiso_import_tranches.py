@@ -69,13 +69,18 @@ with this script cited as the derivation.
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
-RAW = REPO / "data" / "raw"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import RAW_DATA_DIR  # noqa: E402
+
+RAW = RAW_DATA_DIR
 INTERCHANGE_PARQUET = RAW / "eia-930-interchange" / "ISNE interchange hourly.parquet"
 PROXY_PARQUET = RAW / "_validation-source" / "nyiso_proxy_lmp_hourly_NEISO.parquet"
 ACTUAL_LMP_PARQUET = RAW / "_validation-source" / "actual_lmp_hourly_NEISO.parquet"

@@ -43,10 +43,13 @@ from pathlib import Path
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO / "src"))
 
-WEEKLY_PATH = REPO / "data" / "raw" / "gas-prices" / "pge_socal_citygate_weekly.csv"
-COMPOSITE_PATH = REPO / "data" / "raw" / "gas-prices" / "caiso_citygate_daily.csv"
-OUT_PATH = REPO / "data" / "raw" / "caiso_zonal_gas_hub.csv"
+from market_sim.config.paths import GAS_PRICES_DIR, RAW_DATA_DIR  # noqa: E402
+
+WEEKLY_PATH = GAS_PRICES_DIR / "pge_socal_citygate_weekly.csv"
+COMPOSITE_PATH = GAS_PRICES_DIR / "caiso_citygate_daily.csv"
+OUT_PATH = RAW_DATA_DIR / "caiso_zonal_gas_hub.csv"
 
 # Model zone -> (weekly-CSV column, hub label) mapping.
 ZONE_HUBS: dict[str, tuple[str, str]] = {

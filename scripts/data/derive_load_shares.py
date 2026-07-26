@@ -54,15 +54,17 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 
+from market_sim.config.paths import REFERENCE_DIR, ZONE_DEMAND_DIR  # noqa: E402
+
 from market_sim.data.eia_loader import (  # noqa: E402
     _CAISO_TAC_ZONE_WEIGHTS,
     _NYISO_LOAD_ZONE_GROUPS,
 )
 
-REF = REPO / "data" / "raw" / "reference"
-CAISO_TAC_DIR = REPO / "data" / "raw" / "zone-specific-demand" / "CAISO"
-NYISO_DIR = REPO / "data" / "raw" / "zone-specific-demand" / "NYISO"
-NEISO_DIR = REPO / "data" / "raw" / "zone-specific-demand" / "NEISO"
+REF = REFERENCE_DIR
+CAISO_TAC_DIR = ZONE_DEMAND_DIR / "CAISO"
+NYISO_DIR = ZONE_DEMAND_DIR / "NYISO"
+NEISO_DIR = ZONE_DEMAND_DIR / "NEISO"
 
 WZ = ["COAST", "EAST", "FAR_WEST", "NORTH", "NORTH_C", "SOUTHERN", "SOUTH_C", "WEST"]
 

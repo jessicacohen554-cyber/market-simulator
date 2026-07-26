@@ -35,13 +35,16 @@ from pathlib import Path
 from urllib.request import urlopen
 
 REPO = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import GAS_PRICES_DIR, RAW_DATA_DIR  # noqa: E402
 
 sys.path.insert(0, str(REPO))
 from scripts.lib.env_keys import get_api_key  # noqa: E402
 
-ERCOT_EP_PATH = REPO / "data" / "raw" / "ercot_electric_power_gas_price.csv"
-PJM_ZONAL_PATH = REPO / "data" / "raw" / "pjm_zonal_gas_hub.csv"
-HH_MONTHLY_PATH = REPO / "data" / "raw" / "gas-prices" / "henry_hub_monthly.csv"
+ERCOT_EP_PATH = RAW_DATA_DIR / "ercot_electric_power_gas_price.csv"
+PJM_ZONAL_PATH = RAW_DATA_DIR / "pjm_zonal_gas_hub.csv"
+HH_MONTHLY_PATH = GAS_PRICES_DIR / "henry_hub_monthly.csv"
 
 BASE = "https://api.eia.gov/v2/natural-gas/pri/sum/data/"
 # 1 Mcf of pipeline-quality gas ~ 1.036 MMBtu (EIA average heat content).

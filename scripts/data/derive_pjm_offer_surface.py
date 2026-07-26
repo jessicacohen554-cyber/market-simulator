@@ -89,12 +89,12 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "scripts"))
 
+from market_sim.config.paths import CALIBRATION_DIR, PJM_ENERGY_OFFERS_DIR  # noqa: E402
+
 sys.path.insert(0, str(REPO / "scripts" / "data"))
-RAW_DIR = REPO / "data" / "raw" / "pjm-energy-offers"
-OUT_JSON = (
-    REPO / "data" / "raw" / "_validation-source" / "pjm_offer_surface_condbinned.json"
-)
-OUT_CSV = REPO / "data" / "raw" / "_validation-source" / "pjm_offer_surface_summary.csv"
+RAW_DIR = PJM_ENERGY_OFFERS_DIR
+OUT_JSON = CALIBRATION_DIR / "pjm_offer_surface_condbinned.json"
+OUT_CSV = CALIBRATION_DIR / "pjm_offer_surface_summary.csv"
 
 #: Fast-start selection: per-unit median min_runtime at or under this (hours).
 #: Physics, not a tuned value (the G-22 §2 segmentation).

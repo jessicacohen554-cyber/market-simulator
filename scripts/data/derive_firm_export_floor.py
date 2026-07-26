@@ -41,12 +41,17 @@ and paste the emitted ``firm_export_floor_by_year`` blocks into constants.py.
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
-DATA_DIR = REPO / "data" / "raw" / "iso-specific-transmission"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import ISO_TRANSMISSION_DIR  # noqa: E402
+
+DATA_DIR = ISO_TRANSMISSION_DIR
 YEARS = (2023, 2024, 2025)
 # Robust low quantile defining the firm (always-scheduled) export base.
 FIRM_PCTL = 0.10

@@ -75,18 +75,12 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "scripts"))
 
+from market_sim.config.paths import CALIBRATION_DIR, PJM_DA_VIRTUALS_DIR  # noqa: E402
+
 sys.path.insert(0, str(REPO / "scripts" / "data"))
-RAW_DIR = REPO / "data" / "raw" / "pjm-da-virtuals"
-OUT_JSON = (
-    REPO
-    / "data"
-    / "raw"
-    / "_validation-source"
-    / "pjm_da_virtual_surface_condbinned.json"
-)
-OUT_CSV = (
-    REPO / "data" / "raw" / "_validation-source" / "pjm_da_virtual_surface_summary.csv"
-)
+RAW_DIR = PJM_DA_VIRTUALS_DIR
+OUT_JSON = CALIBRATION_DIR / "pjm_da_virtual_surface_condbinned.json"
+OUT_CSV = CALIBRATION_DIR / "pjm_da_virtual_surface_summary.csv"
 
 #: INC steps below this median implied price ($/MWh) are dropped (method §5).
 INC_PRICE_FLOOR_USD = 0.0

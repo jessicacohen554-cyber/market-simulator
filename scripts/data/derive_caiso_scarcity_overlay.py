@@ -41,6 +41,8 @@ REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "scripts"))
 
+from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
+
 sys.path.insert(0, str(REPO / "scripts" / "data"))
 from market_sim.results.scarcity import (  # noqa: E402
     CAISO_SCARCITY_MCL_MW,
@@ -61,7 +63,7 @@ from derive_ordc_overlay import (  # noqa: E402
     build_availability,
 )
 
-CAL_DIR = REPO / "data" / "raw" / "_validation-source"
+CAL_DIR = CALIBRATION_DIR
 
 
 def _actual_rt_caiso(year: int, hours: int) -> np.ndarray:

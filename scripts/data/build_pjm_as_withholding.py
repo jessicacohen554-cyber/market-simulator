@@ -83,9 +83,13 @@ import pyarrow.parquet as pq
 
 HOURS_PER_YEAR = 8760
 REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from market_sim.config.paths import PJM_AS_DIR  # noqa: E402
+
 # W1 collapsed inputs/raw-data into data/raw (CLAUDE.md directory map); the
 # source and output parquets both live under data/raw/PJM-AS.
-AS_DIR = REPO_ROOT / "data" / "raw" / "PJM-AS"
+AS_DIR = PJM_AS_DIR
 
 # 2018-2022 land via scripts/data/fetch_pjm_as.py's rule-22 holdout intake (RT
 # reserve-market retention runs back to 2013-06-14, so these are full calendar

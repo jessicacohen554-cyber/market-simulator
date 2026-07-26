@@ -59,10 +59,15 @@ from __future__ import annotations
 import argparse
 import re
 import urllib.request
+import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent.parent
-OUT = REPO / "data" / "raw" / "gas-prices" / "nyiso_downstate_ldc_transport_monthly.csv"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import GAS_PRICES_DIR  # noqa: E402
+
+OUT = GAS_PRICES_DIR / "nyiso_downstate_ldc_transport_monthly.csv"
 
 THERM_TO_MMBTU = 10.0  # 1 therm = 0.1 MMBtu -> $/therm * 10 = $/MMBtu
 

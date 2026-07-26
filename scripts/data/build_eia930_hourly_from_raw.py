@@ -30,8 +30,12 @@ sys.path.insert(0, str(Path(__file__).parent))
 from convert_eia930 import _build_time_columns, _ordered_fuel_columns
 
 REPO = Path(__file__).resolve().parent.parent.parent
-RAW_DIR = REPO / "data" / "raw" / "eia-930"
-OUT_DIR = REPO / "data" / "raw" / "eia-930-hourly"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import EIA_930_DIR, EIA_HOURLY_DIR  # noqa: E402
+
+RAW_DIR = EIA_930_DIR
+OUT_DIR = EIA_HOURLY_DIR
 
 BA_TIMEZONE: dict[str, str] = {
     "NYIS": "America/New_York",
