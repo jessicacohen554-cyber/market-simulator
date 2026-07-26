@@ -98,16 +98,24 @@ class TestSampleEnsembleConfigs(unittest.TestCase):
 
 
 class TestDefaultWorkers(unittest.TestCase):
+    """The ensemble's rule-12 worker policy, asserted at its own seam.
+
+    ``ensemble._default_workers`` delegates to the shared member fan-out
+    (``pipeline.members.resolve_workers``), which is where ``cpu_count`` is now
+    read — so the host-size patch targets that module. The contract asserted is
+    unchanged: default caps at two, never below one, explicit honoured.
+    """
+
     def test_default_capped_at_two(self):
-        with mock.patch("market_sim.ensemble.cpu_count", return_value=32):
+        with mock.patch("market_sim.pipeline.members.cpu_count", return_value=32):
             self.assertEqual(_default_workers(None), 2)
 
     def test_default_never_below_one(self):
-        with mock.patch("market_sim.ensemble.cpu_count", return_value=1):
+        with mock.patch("market_sim.pipeline.members.cpu_count", return_value=1):
             self.assertEqual(_default_workers(None), 1)
 
     def test_explicit_workers_honoured(self):
-        with mock.patch("market_sim.ensemble.cpu_count", return_value=32):
+        with mock.patch("market_sim.pipeline.members.cpu_count", return_value=32):
             self.assertEqual(_default_workers(8), 8)
 
 

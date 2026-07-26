@@ -12,6 +12,16 @@ This module owns the one format string both call, so a future field addition or
 rename happens in exactly one place. The helpers only format and log — each
 orchestrator still computes its own phase durations (from ``energy_solve`` vs.
 ``p2_state['_timing']``) and passes them in.
+
+**Sub-instrumentation (refactor plan §7-H4).** ``results_write`` was one merged
+window, which could not say whether the phase is parquet-bound or
+frame/scoring-bound. Callers may now pass ``results_write_parts`` — an *ordered*
+``{component: seconds}`` mapping summing to ``results_write`` — which is
+appended as a trailing ``(results_write: a=…s b=…s)`` clause. The six original
+fields keep their exact spelling, order and position, and ``results_write``
+remains their sum, so every existing parse of the line is unaffected; the
+component names are each orchestrator's own (the two write very different
+things), while the *line* stays a single owned format.
 """
 
 from __future__ import annotations
@@ -19,12 +29,32 @@ from __future__ import annotations
 import logging
 
 # The frozen format string the baseline doc parses. Defined once so the two
-# orchestrators cannot drift; changing it changes a parsed wire format.
+# orchestrators cannot drift; changing it changes a parsed wire format. The
+# optional %s tail carries the results_write breakdown (empty string when the
+# caller passes no parts), so the six frozen fields never move.
 _PHASE_TIMING_FMT = (
     "year %d phase timing: data_prep=%.1fs solve_p0=%.1fs "
-    "markup=%.1fs solve_p1=%.1fs results_write=%.1fs total=%.1fs"
+    "markup=%.1fs solve_p1=%.1fs results_write=%.1fs total=%.1fs%s"
 )
 _CACHED_TIMING_FMT = "year %d phase timing: data_prep=%.1fs cached=True total=%.1fs"
+
+
+def format_results_write_parts(parts: "dict[str, float] | None") -> str:
+    """Return the trailing ``(results_write: a=…s b=…s)`` clause, or ``""``.
+
+    Args:
+        parts: Ordered ``{component: seconds}`` breakdown of ``results_write``
+            (the components must sum to it), or ``None`` for no breakdown.
+
+    Returns:
+        The formatted clause with a leading space, or the empty string when
+        ``parts`` is empty/``None`` — in which case the emitted line is
+        byte-identical to the pre-sub-instrumentation format.
+    """
+    if not parts:
+        return ""
+    body = " ".join(f"{name}={seconds:.1f}s" for name, seconds in parts.items())
+    return f" (results_write: {body})"
 
 
 def log_year_phase_timing(
@@ -37,12 +67,14 @@ def log_year_phase_timing(
     solve_p1: float,
     results_write: float,
     total: float,
+    results_write_parts: "dict[str, float] | None" = None,
 ) -> None:
     """Emit the frozen per-year phase-timing line for a solved (non-cached) year.
 
-    Byte-identical to the inline ``logger.info(...)`` both orchestrators
-    previously carried. Logs through the caller's ``logger`` so the module name
-    prefix is unchanged.
+    The six leading fields are byte-identical to the inline ``logger.info(...)``
+    both orchestrators previously carried; a ``results_write_parts`` breakdown
+    is appended after them (see the module docstring). Logs through the caller's
+    ``logger`` so the module name prefix is unchanged.
 
     Args:
         logger: The orchestrator's module logger (so the name prefix matches).
@@ -54,6 +86,9 @@ def log_year_phase_timing(
         solve_p1: Bid-cost P1 solve seconds.
         results_write: Post-solve results-write seconds.
         total: Whole-year wall seconds.
+        results_write_parts: Optional ordered ``{component: seconds}``
+            breakdown of ``results_write``; the components are the caller's own
+            and must sum to ``results_write``.
     """
     logger.info(
         _PHASE_TIMING_FMT,
@@ -64,6 +99,7 @@ def log_year_phase_timing(
         solve_p1,
         results_write,
         total,
+        format_results_write_parts(results_write_parts),
     )
 
 
