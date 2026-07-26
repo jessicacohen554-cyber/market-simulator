@@ -4526,6 +4526,7 @@ def solve_and_persist(
             try:
                 from market_sim.data.cache_control import (
                     cache_report,
+                    largest_retained_frames,
                     retained_footprint,
                 )
 
