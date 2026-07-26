@@ -285,6 +285,7 @@ results/calibration/*_repro_A/
 results/calibration/caiso122_control_A/
 results/calibration/caiso122_headctl_2025/
 results/calibration/caiso122_nooutage_2025/
+results/calibration/caiso122_prelayup_2025/
 results/calibration/caiso106_binding_*/
 results/calibration/*_y20[0-9][0-9]/
 # Per-year probe accumulator scaffolding (e.g. results/calibration/_miso70_acc/
