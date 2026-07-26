@@ -1,0 +1,231 @@
+"""ERCOT-118 EP-basis rebasis of the measured CC DAM band multipliers.
+
+Pins the mechanism seams the ercot-115 promotion taught us to pin
+(``tests/test_coal_econ_marginal_hr_bound.py`` conventions): the committed
+artifact's structure, the apply function's replace+delta composition (and its
+peak_ladder / margin_anchor side-writes), the default-off byte-identity, the
+ERCOT-only scoping, the tri-state CLI default, the cache-key neutrality at
+default, and the per-tranche anchor override inside
+``apply_gas_offer_margin``.
+"""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import numpy as np
+import pytest
+
+from market_sim.config import paths
+from market_sim.config.scenarios import ScenarioConfig
+from market_sim.data.offer_curves import (
+    apply_ercot_dam_hrmult_ep_rebasis,
+    apply_gas_offer_margin,
+)
+
+ARTIFACT = paths.CALIBRATION_DIR / "offer_curve_dam_hrmults_ep_yearly.json"
+YEARS = ("2023", "2024", "2025")
+CLASSES = ("CC_REGULAR", "CC_CHP")
+# The measured energy-curve bands; committed is deliberately ABSENT (its Min
+# Gen Cost source rows were dropped by the owner-ordered 2026-07-22 raw
+# slimming and 2023 is unreachable on the free MIS path — see the artifact's
+# _provenance.committed_band).
+BANDS = ("econ_low", "econ_high", "peak")
+
+
+class TestArtifact:
+    def test_structure(self):
+        doc = json.loads(ARTIFACT.read_text())
+        assert doc["_provenance"]["iso"] == "ERCOT"
+        assert "rule23_citation" in doc["_provenance"]
+        assert "committed_band" in doc["_provenance"]
+        for y in YEARS:
+            table = doc[y]
+            assert table["anchor_usd_mmbtu"] > 0
+            for cls in CLASSES:
+                bands = table[cls]
+                assert set(bands) == set(BANDS)
+                for v in bands.values():
+                    assert 0.3 < v < 8.0
+                assert "committed" not in bands
+
+    def test_anchor_is_ep_delivered_mean(self):
+        # anchor = mean(HH_monthly) + ep_basis — the EP series annual mean on
+        # the model's own HH table (the identification fuel of the year's
+        # multipliers).
+        from market_sim.data.fuel._shared import _pkg_ns
+        from market_sim.data.fuel.basis.ercot import (
+            ercot_electric_power_gas_basis,
+        )
+
+        doc = json.loads(ARTIFACT.read_text())
+        hh = _pkg_ns()._henry_hub_monthly(None)
+        for y in YEARS:
+            year = int(y)
+            hh_mean = float(
+                np.mean([hh[(year, m)] for m in range(1, 13) if (year, m) in hh])
+            )
+            expected = hh_mean + ercot_electric_power_gas_basis(year)
+            assert doc[y]["anchor_usd_mmbtu"] == pytest.approx(expected, abs=1e-3)
+
+
+class TestApply:
+    CURVE = {
+        "CC_REGULAR": {
+            "committed": 0.998,
+            "econ_low": 0.723,
+            "econ_high": 1.324,
+            "peak": 4.576,
+            "phys_committed": 1.006,
+            "peak_ladder": [[0.2, 4.576]] * 5,
+        },
+        "CC_CHP": {"econ_low": 0.946, "econ_high": 1.857, "peak": 3.748},
+        "CT_PEAKER": {"committed": 1.1, "peak": 13.15},
+    }
+    DELTAS = {
+        "CC_REGULAR": {
+            "committed": -0.05,
+            "econ_low": -0.24,
+            "econ_high": -0.13,
+            "peak": 0.25,
+        },
+        "CC_CHP": {"econ_high": 0.43, "peak": -0.5, "pct_peaking": -4.0},
+    }
+
+    def test_replace_plus_delta_composition(self):
+        doc = json.loads(ARTIFACT.read_text())
+        curve, replaced, anchor = apply_ercot_dam_hrmult_ep_rebasis(
+            self.CURVE, 2024, self.DELTAS
+        )
+        t = doc["2024"]
+        assert anchor == pytest.approx(t["anchor_usd_mmbtu"])
+        # Rebased band = artifact value + the run's delta for that band.
+        assert curve["CC_REGULAR"]["econ_high"] == pytest.approx(
+            t["CC_REGULAR"]["econ_high"] - 0.13
+        )
+        assert curve["CC_REGULAR"]["econ_low"] == pytest.approx(
+            t["CC_REGULAR"]["econ_low"] - 0.24
+        )
+        assert curve["CC_REGULAR"]["peak"] == pytest.approx(
+            t["CC_REGULAR"]["peak"] + 0.25
+        )
+        assert curve["CC_CHP"]["econ_high"] == pytest.approx(
+            t["CC_CHP"]["econ_high"] + 0.43
+        )
+        # committed is not in the artifact -> untouched keeper value.
+        assert curve["CC_REGULAR"]["committed"] == 0.998
+        # phys_* keys survive; non-rebased classes byte-identical.
+        assert curve["CC_REGULAR"]["phys_committed"] == 1.006
+        assert curve["CT_PEAKER"] == self.CURVE["CT_PEAKER"]
+        # 3 bands x 2 classes audited.
+        assert len(replaced) == 6
+
+    def test_peak_ladder_restamped_and_anchor_threaded(self):
+        doc = json.loads(ARTIFACT.read_text())
+        curve, _, anchor = apply_ercot_dam_hrmult_ep_rebasis(
+            self.CURVE, 2023, self.DELTAS
+        )
+        new_pk = doc["2023"]["CC_REGULAR"]["peak"] + 0.25
+        assert curve["CC_REGULAR"]["peak_ladder"] == [[0.2, pytest.approx(new_pk)]] * 5
+        for cls in CLASSES:
+            assert curve[cls]["margin_anchor"] == pytest.approx(anchor)
+        assert "margin_anchor" not in curve["CT_PEAKER"]
+
+    def test_missing_year_hard_fails(self):
+        with pytest.raises(KeyError):
+            apply_ercot_dam_hrmult_ep_rebasis(self.CURVE, 1999, None)
+
+    def test_input_curve_not_mutated(self):
+        before = json.dumps(self.CURVE, sort_keys=True)
+        apply_ercot_dam_hrmult_ep_rebasis(self.CURVE, 2025, self.DELTAS)
+        assert json.dumps(self.CURVE, sort_keys=True) == before
+
+
+class TestScoping:
+    def test_default_off_and_cache_neutral(self):
+        cfg = ScenarioConfig()
+        assert cfg.ercot_offer_hrmult_ep_rebasis is False
+        base_key = cfg.cache_key()
+        # Registered in _CACHE_KEY_OPTIONAL_FIELDS: default drops from the
+        # hash; an armed run enters as a distinct scenario.
+        armed = cfg.with_overrides(ercot_offer_hrmult_ep_rebasis=True)
+        assert armed.cache_key() != base_key
+        from market_sim.config.scenarios import _CACHE_KEY_OPTIONAL_FIELDS
+
+        assert "ercot_offer_hrmult_ep_rebasis" in _CACHE_KEY_OPTIONAL_FIELDS
+
+    def test_run_year_kwarg_is_tristate(self):
+        import inspect
+        import sys
+
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+        import run_calibration as rc
+        import run_calibration_full as rcf
+
+        for fn in (rc.run_year, rcf.solve_and_persist):
+            p = inspect.signature(fn).parameters["ercot_offer_hrmult_ep_rebasis"]
+            assert p.default is None, (
+                "tri-state None default (the ercot-115 seam lesson: a False "
+                "default would pass an explicit scrub on every invocation)"
+            )
+
+    def test_cli_default_is_none(self):
+        # The hand-written run_calibration_full argparse must carry default
+        # None for the flag (tri-state; the --no- form still forces it off).
+        import ast
+
+        src = (
+            Path(__file__).resolve().parents[1] / "scripts/run_calibration_full.py"
+        ).read_text()
+        tree = ast.parse(src)
+        found = False
+        for node in ast.walk(tree):
+            if (
+                isinstance(node, ast.Call)
+                and getattr(node.func, "attr", "") == "add_argument"
+                and node.args
+                and isinstance(node.args[0], ast.Constant)
+                and node.args[0].value == "--ercot-offer-hrmult-ep-rebasis"
+            ):
+                for kw in node.keywords:
+                    if kw.arg == "default":
+                        assert (
+                            isinstance(kw.value, ast.Constant)
+                            and kw.value.value is None
+                        )
+                        found = True
+        assert found
+
+
+class _Gen:
+    def __init__(self, markup_hr, anchor=None):
+        self.offer_markup_hr = markup_hr
+        self.offer_margin_anchor = anchor
+
+
+class TestPerTrancheAnchor:
+    def test_override_prices_at_per_class_anchor(self):
+        cfg = ScenarioConfig().with_overrides(
+            gas_offer_net_revenue_margin=True, gas_offer_margin_anchor=2.2494
+        )
+        gens = [_Gen(0.0), _Gen(2.0), _Gen(2.0, anchor=3.0655)]
+        mc = np.zeros((3, 4))
+        fp = np.full((3, 4), 2.0)
+        apply_gas_offer_margin(mc, gens, fp, cfg)
+        assert np.allclose(mc[0], 0.0)
+        assert np.allclose(mc[1], 2.0 * (2.2494 - 2.0))
+        assert np.allclose(mc[2], 2.0 * (3.0655 - 2.0))
+
+    def test_no_override_is_bit_identical_to_scalar_form(self):
+        cfg = ScenarioConfig().with_overrides(
+            gas_offer_net_revenue_margin=True, gas_offer_margin_anchor=2.2494
+        )
+        gens = [_Gen(1.7), _Gen(0.3)]
+        rng = np.random.default_rng(7)
+        fp = rng.uniform(1.0, 6.0, (2, 8))
+        mc_new = np.zeros((2, 8))
+        apply_gas_offer_margin(mc_new, gens, fp, cfg)
+        markup = np.array([1.7, 0.3])
+        mc_ref = markup[:, None] * (2.2494 - fp)
+        assert (mc_new == mc_ref).all()
