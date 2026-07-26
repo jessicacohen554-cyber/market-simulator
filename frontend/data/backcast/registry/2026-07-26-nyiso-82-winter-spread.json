@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-26-nyiso-82-winter-spread",
+  "label": "nyiso 82 winter spread",
+  "date": "2026-07-26",
+  "shorthand": "nyiso-82-winter-spread",
+  "definition": "nyiso-82 WINTER-SPREAD A/B: single-delta replay of the nyiso-81 keeper with nyiso_iroquois_winter_spread=true. Re-measure of the nyiso-76 mechanism against the reconciled (post floor-rederive) keeper per FINDING-nyiso-ordc-span-reliability-floor sec 4; winter residuals on keeper: 2024 Dec ~-31pct, 2025 Jan ~-18pct.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-26-nyiso-82-winter-spread.js",
+  "bundle": "results/calibration/nyiso82_winter_spread"
+}
