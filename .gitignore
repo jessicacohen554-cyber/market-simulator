@@ -204,6 +204,11 @@ frontend/data/forecast/program-status.js
 # loose top-level run logs (e.g. results/probe-pjm-rps.log).
 /results/full-horizon/
 /results/ff-t1f-baseline/
+# D-9 forecast warm-start A/B arms (scripts/probes/_d9_forecast_warmstart_ab.py
+# --out-dir). Same class as /results/full-horizon/ — it IS a full-horizon
+# forecast solve, one per arm, and nothing here is dashboard-registered. The
+# measured readout lives in docs/handoffs/wallclock-baseline-2026-07.md.
+/results/d9-ab/
 /results/probe-*/
 /results/verify-*/
 /results/*.log

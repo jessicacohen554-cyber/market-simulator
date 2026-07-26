@@ -57,18 +57,20 @@ class TestResolveDefault:
 
 
 class TestForecastStaysColdOnly:
-    """runner.py must pass xyear_cache=None — the forecast can't warm-start."""
+    """The forecast's cross-year gate is the config field, never the env var."""
 
-    def test_runner_passes_xyear_cache_none_literal(self):
-        """Static guard: the runner's per-year solve call pins the cache None.
+    def test_runner_gates_xyear_on_the_config_field(self):
+        """Static guard: the runner's per-year solve call pins BOTH keywords.
 
         The forecast's energy solve now goes through the shared per-year body
         (``pipeline.year.run_year_solve``, which forwards ``xyear_cache``
         verbatim into ``run_energy_solve``). Parses runner.py and asserts every
         ``run_year_solve(...)`` (or residual ``run_energy_solve(...)``) call
-        passes ``xyear_cache`` as a literal ``None`` keyword — so the
-        calibration default-ON gate can never reach the forecast loop,
-        whatever the env var.
+        passes an explicit ``xyear_warmstart=config.forecast_xyear_warmstart``
+        alongside its ``xyear_cache`` — so the forecast's cross-year behavior is
+        the registry field (rule 24 [R-REGISTRY], owner decision D-9) and the
+        calibration CLIs' default-ON ``MARKET_SIM_WARMSTART_XYEAR`` can never
+        reach the forecast loop.
         """
         src = (REPO / "src" / "market_sim" / "runner.py").read_text()
         tree = ast.parse(src)
@@ -83,11 +85,50 @@ class TestForecastStaysColdOnly:
         for call in calls:
             kw = {k.arg: k.value for k in call.keywords}
             assert "xyear_cache" in kw, "runner must pin xyear_cache explicitly"
-            val = kw["xyear_cache"]
-            assert isinstance(val, ast.Constant) and val.value is None, (
-                "runner.py must pass xyear_cache=None so the forecast path stays "
-                "cold-only (docs/cross-year-warmstart.md)"
+            gate = kw.get("xyear_warmstart")
+            assert (
+                isinstance(gate, ast.Attribute)
+                and gate.attr == "forecast_xyear_warmstart"
+            ), (
+                "runner.py must pass xyear_warmstart=config.forecast_xyear_"
+                "warmstart so the forecast's cross-year gate is the config "
+                "field, not MARKET_SIM_WARMSTART_XYEAR "
+                "(docs/cross-year-warmstart.md)"
             )
+
+    def test_forecast_cache_holder_is_none_unless_flag_armed(self):
+        """Static guard: the year-loop holder is None at the default.
+
+        ``forecast_xyear_cache`` must be initialized as a conditional on
+        ``config.forecast_xyear_warmstart`` — ``None`` at the default field
+        value, so an un-armed forecast neither applies nor exports a basis and
+        stays byte-identical to the pre-D-9 tree.
+        """
+        src = (REPO / "src" / "market_sim" / "runner.py").read_text()
+        tree = ast.parse(src)
+        holders = [
+            node
+            for node in ast.walk(tree)
+            if isinstance(node, (ast.Assign, ast.AnnAssign))
+            for tgt in (node.targets if isinstance(node, ast.Assign) else [node.target])
+            if isinstance(tgt, ast.Name) and tgt.id == "forecast_xyear_cache"
+        ]
+        assert len(holders) == 1, "expected exactly one forecast_xyear_cache binding"
+        value = holders[0].value
+        assert isinstance(value, ast.IfExp), (
+            "forecast_xyear_cache must be a conditional on the config flag"
+        )
+        assert isinstance(value.test, ast.Attribute)
+        assert value.test.attr == "forecast_xyear_warmstart"
+        assert isinstance(value.orelse, ast.Constant) and value.orelse.value is None, (
+            "the un-armed branch must be a literal None (cold-only default)"
+        )
+
+    def test_default_config_leaves_forecast_cold(self):
+        """Behavioural guard: the shipped default keeps the forecast cold."""
+        from market_sim.config.scenarios import ScenarioConfig
+
+        assert ScenarioConfig().forecast_xyear_warmstart is False
 
     def test_year_body_forwards_xyear_cache_verbatim(self):
         """Static guard: pipeline/year.py forwards its ``xyear_cache`` param.

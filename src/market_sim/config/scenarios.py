@@ -193,6 +193,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinct scenario.
     "pjm_offer_midcurve_peak_segments",
     "pjm_ct_measured_max_reprice",
+    # Forecast-path cross-year LP warm start (plan §7 H-3, owner decision D-9).
+    # A pure solve-PATH knob — the LP optimum is basis-independent — and
+    # default-off, so it is dropped from the hash at its default and the pinned
+    # default cache_key stays byte-stable (edbc1b1); an armed run enters the key
+    # so a warm-started forecast never collides with a cold one in the on-disk
+    # results cache (which is what makes the D-9 A/B's two arms independent).
+    "forecast_xyear_warmstart",
 )
 
 
@@ -7279,6 +7286,32 @@ class ScenarioConfig:
     # fitted. Default off; MISO backcast arms it. GATED CHANGE (alters the
     # LP objective inside declared windows).
     maxgen_emergency_tier_pricing: bool = False
+
+    # Cross-year LP warm-start on the FORECAST path (refactor-consolidation
+    # plan §7 H-3, owner decision D-9). The backcast already carries its
+    # year-loop basis forward (``MARKET_SIM_WARMSTART_XYEAR``, default ON in
+    # the calibration CLIs); the forecast has always passed ``xyear_cache=None``
+    # because the prior year's basis reshuffles dispatch among units tied at
+    # the marginal price, and that per-unit realized dispatch used to be read
+    # by the economic retirement screen — so a pure wall-clock lever could tip
+    # a retire/keep decision and move the NEXT year's fleet
+    # (``docs/cross-year-warmstart.md`` "Why the forecast path is not wired").
+    #
+    # Wave 4C closed the last realized-dispatch reader: the screen now prices
+    # the attainable pro-forma margin and credits attribute revenue (EAC / RPS
+    # / §45U) on attainable in-merit generation, both functions of prices, mc
+    # and capacity only (``model/capacity_evolution/retirements.py``, pinned by
+    # ``tests/test_forecast_warmstart_tie_invariance.py``). This flag threads
+    # the year-loop basis through ``runner.run_scenario_iso``; it is a SOLVE-
+    # PATH knob only — the LP optimum is basis-independent, so it may change
+    # how fast a year converges and never what it converges to.
+    #
+    # This is a registry field (rule 24 [R-REGISTRY]), not an env-var knob: it
+    # reaches ``run_energy_solve`` explicitly and is recorded in
+    # ``run_config.json``. Registered in ``_CACHE_KEY_OPTIONAL_FIELDS`` so it is
+    # cache-neutral at its default (the pinned default ``cache_key`` stays
+    # ``edbc1b1``); an armed run enters the key as a distinct scenario.
+    forecast_xyear_warmstart: bool = False
 
     gas_price_override: float | None = None  # When set, pins the annual
     # Henry Hub price ($/MMBtu) to a measured value instead of the AEO
