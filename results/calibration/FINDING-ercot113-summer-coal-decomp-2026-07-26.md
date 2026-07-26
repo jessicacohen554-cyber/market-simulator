@@ -129,12 +129,26 @@ building, whether real ERCOT coal is held off its ceiling by an energy/rate budg
 have a real driver, a window and a forward story (rule 18), and both are measurable with data
 already in the repo:
 
-* **Ozone-season NOx allowance budget.** Texas coal is in the CSAPR Group 3 ozone-season NOx
-  program, whose window is **May 1 – Sep 30** — which matches the over-run window in all three
-  years (the elevation starts in May: 1.085 / 1.136 / 1.181, and falls back in October). The
-  objective already carries a `nox_rate × nox_price` term and `policy/cap_and_trade.py` already
-  resolves carbon-style programs, so the mechanism has somewhere to land. Measure first: per-unit
-  CAMPD ozone-season NOx mass against the published Texas Group 3 budget, by year.
+* **Ozone-season NOx allowance budget.** Texas coal is in the CSAPR NOx ozone-season program, whose
+  window is **May 1 – Sep 30** — which matches the over-run window in all three years (the
+  elevation starts in May: 1.085 / 1.136 / 1.181, and falls back in October). The objective already
+  carries a `nox_rate × nox_price` term and `policy/cap_and_trade.py` already resolves carbon-style
+  programs, so the mechanism has somewhere to land.
+
+  **Correction and first measurement (added 2026-07-26, after this section was first written).**
+  The program is **Group 2 (`CSOSG2`), not Group 3** — every TX coal unit in
+  `data/raw/campd-unit-level/TX_*.parquet` carries `programCodeInfo` of `ARP, CSOSG2, MATS`
+  (± `TXSO2`). The Good Neighbor Plan's move of Texas to Group 3 was stayed, so Group 2 is the
+  operative budget; an earlier draft of this section said Group 3 and was wrong.
+
+  The same file gives a first read, and it **tempers the hypothesis**: the TX coal ozone-season NOx
+  *rate* is only 4–6 % below the rest of the year (1.1473 vs 1.1905 lb/MWh in 2023; 1.1708 vs
+  1.2461 in 2024; 1.2251 vs 1.2796 in 2025 — ratios 0.964 / 0.940 / 0.957), and ozone-season mass is
+  46.0 / 40.9 / 43.2 M lb. So the fleet is *not* visibly scrubbing harder in the season. A binding
+  allowance budget would therefore have to act through **output**, which is precisely what is being
+  tested — but the flat rate means the signature is not yet evidence *for* the mechanism. The
+  outstanding measurement is ozone-season mass against the **published Texas Group 2 budget** by
+  year; only a budget the fleet actually approaches supports building anything.
 * **Coal fuel supply / delivery-rate limit.** A stockpile drawn down against a roughly constant
   rail/mine delivery rate produces exactly a flat utilization ceiling that does not respond to
   price — the observed signature. Measure first: EIA-923 monthly coal receipts vs consumption and
