@@ -1961,7 +1961,42 @@ def _wind_zone_reanalysis_shapes(
     shapes = np.clip(shapes, 0.0, None)
     if not shapes.any():
         return None
+    # Arming proof: an overlay that silently no-ops through a full solve is the
+    # ERCOT-113 silent-inertness trap, so every fired per-zone wind SHAPE
+    # announces itself with the ISO, year and the measured night/afternoon
+    # ratio per zone — the same statistic the gate's provenance cites, so the
+    # log line is directly checkable against the source data.
+    night = shapes[:, _wind_shape_hour_mask(0, 6)].mean(axis=1)
+    aft = shapes[:, _wind_shape_hour_mask(12, 18)].mean(axis=1)
+    ratio = np.divide(night, aft, out=np.ones_like(night), where=aft > 0)
+    logger.info(
+        "%s per-zone wind SHAPE (%d): %d zone(s) from %s, "
+        "measured night/afternoon ratio %s",
+        iso,
+        cal_year,
+        shapes.shape[0],
+        path.name,
+        ", ".join(f"{z}={r:.2f}" for z, r in zip(zone_names, ratio)),
+    )
     return shapes
+
+
+def _wind_shape_hour_mask(start_hour: int, end_hour: int) -> np.ndarray:
+    """Boolean mask over the 8760 clock for a daily hour-of-day window.
+
+    Used only for the per-zone wind SHAPE's arming-proof log line, which
+    reports each zone's night(00-06) vs afternoon(12-18) mean so an armed run
+    can be checked against the measured ratios without a re-solve.
+
+    Args:
+        start_hour: Inclusive hour-of-day the window opens.
+        end_hour: Exclusive hour-of-day the window closes.
+
+    Returns:
+        A ``(HOURS_PER_YEAR,)`` boolean mask.
+    """
+    hod = np.arange(HOURS_PER_YEAR) % 24
+    return (hod >= start_hour) & (hod < end_hour)
 
 
 def _zone_renewable_shapes(
