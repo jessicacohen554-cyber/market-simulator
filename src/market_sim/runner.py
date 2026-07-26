@@ -59,6 +59,12 @@ from market_sim.data.confirmed_retirements import (
     load_confirmed_exits,
 )
 from market_sim.data.outages import apply_correlated_outage_derate
+from market_sim.data.transmission_expansion import (
+    TransmissionExpansion,
+    apply_transmission_expansion,
+    cumulative_deltas,
+    load_transmission_expansions,
+)
 from market_sim.data.fuel import (
     apply_coal_supply_pricing,
     resolve_annual_gas_price,
@@ -552,6 +558,27 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 iso,
                 len(_corridor_groups),
             )
+
+    # Forward transmission-expansion channel (FF-G1, GATED
+    # transmission_expansion_enabled, default off): committed-instrument
+    # registry rows loaded once here, applied per solve year at the year_ttc
+    # seam below. Forecast-forward only — __post_init__ coerces the flag off
+    # in backcast/hindcast, and the mode gate here is belt-and-braces.
+    # required=True is the fail-loud condition (W2-E / G12 convention): with
+    # the flag on, a never-curated checkout raises with the regeneration
+    # command instead of silently running the frozen-topology forecast.
+    _txexp_expansions: list[TransmissionExpansion] = []
+    if (
+        config.mode == "forecast"
+        and not config.hindcast
+        and getattr(config, "transmission_expansion_enabled", False)
+    ):
+        _txexp_expansions = load_transmission_expansions(iso, required=True)
+    # Base (pre-corridor) interface-group count: a per-year expansion rebuild
+    # regenerates exactly the declared-limit groups and re-appends any
+    # corridor extension groups verbatim (one group per InterfaceLimit, so the
+    # declared count is len(iso_config.interface_limits)).
+    _txexp_base_group_count = len(iso_config.interface_limits)
 
     fleet = None
     loss_tracker: dict[str, int] = {}
@@ -1400,12 +1427,58 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # array needs recomputing per year; incidence and
             # link_bidirectional are topology-only and unaffected.
             year_ttc = ttc
+            _year_iso_config = iso_config
             if iso == "CAISO" and getattr(config, "caiso_per_year_import_caps", False):
                 _caiso_year_iso_config = apply_caiso_local_import_limits(
                     iso_config, iso, year
                 )
                 if _caiso_year_iso_config is not iso_config:
+                    _year_iso_config = _caiso_year_iso_config
                     year_ttc = get_ttc_array(_caiso_year_iso_config.links)
+            # Forward transmission-expansion channel (FF-G1): add the
+            # cumulative in-service committed deltas to this solve year's link
+            # TTCs / interface caps. apply_transmission_expansion returns the
+            # SAME object when nothing applies (pre-COD years, zero-row
+            # registry, flag off => _txexp_expansions empty and this block is
+            # skipped), so the default path is byte-identical. Only the TTC
+            # array — and, when an interface cap moved, the declared-limit
+            # groups (corridor extension groups re-appended verbatim) — are
+            # recomputed per year; incidence and link_bidirectional are
+            # topology-order-only and unaffected.
+            year_interface_groups = interface_groups
+            if _txexp_expansions:
+                _txexp_year_config = apply_transmission_expansion(
+                    _year_iso_config, iso, year, _txexp_expansions
+                )
+                if _txexp_year_config is not _year_iso_config:
+                    year_ttc = get_ttc_array(_txexp_year_config.links)
+                    if (
+                        _txexp_year_config.interface_limits
+                        is not _year_iso_config.interface_limits
+                    ):
+                        year_interface_groups = (
+                            build_interface_groups(
+                                _txexp_year_config.links,
+                                _txexp_year_config.interface_limits,
+                            )
+                            + interface_groups[_txexp_base_group_count:]
+                        )
+                    _txexp_links, _txexp_ifaces = cumulative_deltas(
+                        _txexp_expansions, year
+                    )
+                    logger.info(
+                        "%s %d: transmission-expansion deltas applied "
+                        "(links %s; interfaces %s)",
+                        iso,
+                        year,
+                        {f"{a}->{b}": round(v, 1) for (a, b), v in _txexp_links.items()}
+                        or "none",
+                        {
+                            k: (round(f, 1), round(r, 1))
+                            for k, (f, r) in _txexp_ifaces.items()
+                        }
+                        or "none",
+                    )
             # Base dispatch kwargs + priced import-node band: the shared
             # pipeline assembly (orchestrator-unification Stage 2) -- the same
             # key set the inline dict carried, byte-identical values.
@@ -1423,7 +1496,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 voll=iso_config.voll,
                 incidence=incidence,
                 ttc=year_ttc,
-                interface_groups=interface_groups or None,
+                interface_groups=year_interface_groups or None,
                 # One-way links (MISO's RDT directional pair) floor their flow
                 # at 0; all-True for every other ISO (byte-identical bounds).
                 link_bidirectional=get_link_bidirectional_array(iso_config.links),

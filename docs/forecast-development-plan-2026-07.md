@@ -144,6 +144,20 @@ config freezes, never inside this program's iterations (§2.3).
    now; FF-3E projects the full-horizon cost, FF-3C on a measured breach (T2 itself
    deferred — §2.1b).
 10. **MISO forecast path unverified** since the storage-registry fix landed. → FF-0B.
+11. **Forward-input provenance gaps (deep-research audit 2026-07-19)** — five forward
+    inputs with WEAK/MEDIUM provenance × HIGH sensitivity that no lane chartered,
+    ranked: (1) transmission/TTC frozen at base-year statics for all 25 forecast years
+    (**FF-G1 — data half LANDED 2026-07-19, ENGINE HALF 2026-07-26**: committed-instrument
+    registry + gated per-year channel, `docs/transmission-expansion-methodology-2026-07.md`,
+    default off. The gate + runner seam shipped as an unapplied patch and was
+    applied under fast-tier escalation D2 — see the WAVE FI row);
+    (2) fuel forward curves one AEO vintage stale + ~$1/MMBtu low near-term vs STEO,
+    NYMEX strip unused (audit §7.2-P1 orphaned by FF-1E) → FF-G2; (3) net-CONE
+    vintages hold-last 25 years (the capacity-price-validation "CR-2 follow-up",
+    chartered nowhere) → FF-G3; (4) load-shape evolution absent — peak-CAGR ≡
+    energy-CAGR by construction, no electrification reshaping, ISO-NE winter-flip
+    unexpressible → FF-G4 (memo-first); (5) nuclear license/uprate/restart lifetimes
+    ungrounded past ~2030 (only Diablo Canyon in the confirmed registry; BLK-9
 
 ### 1.3 Absorbed workstreams (state + what remains)
 
@@ -1004,6 +1018,25 @@ list moved into the active phase as part of FF-3E's close-out), and FF-4C (PB-5
 probability band, G-35, owner call) — are **withdrawn**: do not execute, restore, or
 paraphrase them from git history. At gate-open the owner re-authors them against
 then-current HEAD; until then nothing in this wave is schedulable.
+
+### WAVE FI — forward-input deep-research grounding (parallel-anytime; owner-dispatched)
+
+Registered 2026-07-19 from the §1.2-11 provenance audit. These are file-disjoint
+data-intake/grounding sessions in the capacity-cost-grounding template
+(`docs/new-build-cost-methodology-2026-07.md` + its handoff), independent of Waves 0–5:
+no solve beyond T0 (G2–G5 need ≈ zero LP), §7 binds, findings-first (no default
+flips), and `constants.py` collisions serialize with any in-flight L-INP session
+(rebase-don't-race, the FF-1E convention). Full standalone prompts were delivered in
+the FF-G1 session (2026-07-19); the owner dispatches each in its own session.
+
+| ID | Model | Scope | Lane | Status |
+|---|---|---|---|---|
+| **FF-G1** | FABLE | transmission-expansion registry + forward TTC channel | L-INP | **DATA HALF LANDED 2026-07-19; ENGINE HALF 2026-07-26.** The gate + coercion + cache-key entry and the runner per-year seam shipped as `docs/handoffs/patches/ff-g1-core-wiring.patch` and were never applied — everything data-side was inert until the fast-tier escalation D2 apply (`docs/handoffs/fast-tier-triage-2026-07-26.md` §4-D2). Gate default-off; `cache_key(ScenarioConfig())` re-verified at `edbc1b103207170a`; T1-F A/B still pending before any flip. |
+| **FF-G2** | OPUS | fuel forward trajectories: AEO2026 re-derive + STEO/strip triangulation + methodology doc (executes audit §7.2-P1) | L-INP | prompt issued |
+| **FF-G3** | OPUS | forward net-CONE vintages + beyond-published evolution methodology (CR-2 follow-up; NO flip execution — FF-2C owns flips) | L-CAP | prompt issued |
+| **FF-G4** | FABLE/OPUS | load-shape evolution design memo (FF-0C memo pattern, NO code; reuses audit M3–M7/M11–M13) | L-INP | prompt issued |
+| **FF-G5** | OPUS | nuclear license/uprate/restart registry + forward-channel design memo (coordinates BLK-9 / R-NEW; rule 19 — no second exit mechanism) | L-INP | prompt issued |
+
 
 ### Wave 5 — FF-5A dashboard: BUILT 2026-07-20 (see §8 — run explorer + status board + forecast namespace).
 
