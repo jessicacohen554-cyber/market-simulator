@@ -45,10 +45,12 @@ for the market split.
 | datatype | ERCOT | CAISO | PJM | MISO | NYISO | NEISO |
 |---|---|---|---|---|---|---|
 | lmp | — | — | — | — | — | — |
+| lmp-components | — | — | — | — | — | — |
 | load | — | — | — | — | — | — |
 | demand-profile | — | — | — | — | — | — |
 | ancillary-services | — | — | — | — | — | — |
 | energy-offers | — | — | — | — | — | — |
+| dam-public-bids | — | — | — | — | — | — |
 | generation | — | — | — | — | — | — |
 | renewables | — | — | — | — | — | — |
 | validation | — | — | — | — | — | — |
@@ -58,8 +60,10 @@ for the market split.
 | partial-outages | — | — | — | — | — | — |
 | capacity-deliverability | — | — | — | — | — | — |
 | confirmed-retirements | — | — | — | — | — | — |
+| nuclear-license-status | — | — | — | — | — | — |
 | gtc-limits | — | — | — | — | — | — |
 | transfer-interface-limits | — | — | — | — | — | — |
+| transmission-expansion | — | — | — | — | — | — |
 | ramp-capability | — | — | — | — | — | — |
 | winter-fuel-inventory | — | — | — | — | — | — |
 | chp-btm-share | — | — | — | — | — | — |
@@ -100,9 +104,11 @@ snapshot).
 | fuel-takeorpay | ERCOT plants (EIA-923 Schedule-5) | n/a |
 | reference | crosswalks / lookups (ISO-agnostic) | n/a |
 | border-lmp | neighbor-border hubs (WECC intertie, PJM_WEST) | n/a |
+| wecc-west-supply | — | n/a |
 | zonal-shares | per-ISO via directory partitioning | n/a |
 | weather | per-ISO via directory partitioning | n/a |
 | egrid | national (EPA eGRID, by vintage year) | n/a |
+| pjm-outages | — | n/a |
 | rggi-co2-budgets | — | n/a |
 | carb-cap-schedule | — | n/a |
 | coal-basin-price | national/regional (EIA Annual Coal Report, by producing region) | n/a |
@@ -139,6 +145,33 @@ Locational marginal prices and components. Schema:
 | `congestion_usd_per_mwh` | `float64` | `usd_per_mwh` | yes | Marginal congestion component — CAISO MCC, NYISO MCC. |
 | `loss_usd_per_mwh` | `float64` | `usd_per_mwh` | yes | Marginal loss component — CAISO MCL, NYISO MCL. |
 | `ghg_usd_per_mwh` | `float64` | `usd_per_mwh` | yes | Greenhouse-gas adder component — CAISO MGHG (other ISOs null). |
+
+## lmp-components
+
+Per-node LMP component decomposition (energy / congestion / loss) from an ISO's
+published ex-post price reports — kept separate from `lmp` (the cross-ISO
+benchmark contract): this is the derive source for the MISO marginal
+delivery-factor (loss) surface and for congestion-vs-loss decomposition
+validation. Schema:
+[`schema/lmp-components.schema.yaml`](schema/lmp-components.schema.yaml).
+
+- **Keys:** `iso`, `market`, `node`, `interval_start_utc`
+- **Reconciles:** MISO daily all-node market reports
+  (`YYYYMMDD_da_expost_lmp.csv` / RT equivalents) onto one tidy row per (node,
+  market, interval) carrying the lmp/mec/mcc/mlc split; first (and so far only)
+  registered ISO: MISO.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO code (MISO; other ISOs register their own modules). |
+| `market` | `string` | `none` | no | Market run — "da" (day-ahead ex-post) or "rt" (real-time final), matching the sibling MISO market-report datatype vocabulary (transfer-constraint-binding). |
+| `node` | `string` | `none` | no | Pricing node exactly as posted (e.g. "MINN.HUB"). Current MISO holding covers the eight named trading hubs (scope decision D6). |
+| `node_type` | `string` | `none` | yes | Source node-type column as posted ("Hub" for the hub set). |
+| `interval_start_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | tz-aware UTC start of the hour (hour-beginning). Source hours are hour-ending 1-24 in EST year-round (UTC-5 fixed, no DST), so UTC = market date + (HE-1) hours + 5 hours. |
+| `interval_start_est` | `datetime64[ns]` | `local_timestamp` | yes | EST hour-beginning wall clock as posted (informational; UTC is authoritative for joins). MISO market time is EST year-round. |
+| `lmp_usd_per_mwh` | `float64` | `usd_per_mwh` | yes | Total locational marginal price as posted (blank source cells stay null — values are verbatim, never imputed). |
+| `mcc_usd_per_mwh` | `float64` | `usd_per_mwh` | yes | Marginal congestion component (MCC) as posted. |
+| `mlc_usd_per_mwh` | `float64` | `usd_per_mwh` | yes | Marginal loss component (MLC) as posted. |
 
 ## load
 
@@ -242,6 +275,35 @@ PJM Real-Time effective energy offer curves (long step form). Schema:
 | `inter_start_cost_usd` | `float64` | `usd` | yes | Intermediate start cost ($) — between hot and cold. DataMiner2 ``inter_start_cost``. |
 | `max_daily_starts` | `float64` | `none` | yes | Maximum number of starts the unit can make in a day. DataMiner2 ``max_daily_starts``. |
 | `min_runtime_h` | `float64` | `h` | yes | Minimum continuous runtime (hours) once the unit is committed. DataMiner2 ``min_runtime``. |
+
+## dam-public-bids
+
+ISO day-ahead-market public bid data (as-submitted energy bid curves per
+scheduling resource), published with the ISO's own masking/lag policy — the
+measured offer-surface source. Schema:
+[`schema/dam-public-bids.schema.yaml`](schema/dam-public-bids.schema.yaml).
+
+- **Keys:** `iso`, `trade_date`, `resource_seq`, `product`,
+  `interval_start_utc`, `row_kind`, `step_idx`
+- **Reconciles:** CAISO OASIS Public Bid Data GroupZip archives (one zip per
+  DAM trade date, 90-day publication lag) onto one tidy row per (resource,
+  trade date, bid segment); first (and so far only) registered ISO: CAISO.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO whose DAM produced the bid ("CAISO"). |
+| `trade_date` | `datetime64[ns]` | `local_date` | no | DAM trade date (= operating date) as a tz-naive local calendar day (midnight-normalized). Maps to the OASIS STARTDATE field. |
+| `interval_start_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | tz-aware UTC start of the operating hour the bid row applies to. Curve rows: SCH_BID_TIMEINTERVALSTART_GMT; self-schedule rows: TIMEINTERVALSTART_GMT. |
+| `resource_type` | `string` | `none` | no | OASIS RESOURCE_TYPE — GENERATOR, LOAD (participating load), or INTERTIE (import/export bid at a scheduling point). |
+| `sc_seq` | `int64` | `none` | yes | Masked scheduling-coordinator sequence id (SCHEDULINGCOORDINATOR_SEQ). Informational; persistent. |
+| `resource_seq` | `int64` | `none` | no | Masked resource sequence id (RESOURCEBID_SEQ). Persistent across days and years — the longitudinal join key for per-resource statistics. |
+| `product` | `string` | `none` | no | OASIS MARKETPRODUCTTYPE — EN (energy), SR (spinning reserve), NR (non-spinning reserve), RU/RD (regulation up/down), RMU/RMD (regulation mileage up/down), RC (RUC availability), LFU/LFD (load-following up/down). |
+| `row_kind` | `string` | `none` | no | "segment" for a priced bid-curve breakpoint; "self_sched" for a price-taker self-schedule quantity. |
+| `step_idx` | `int64` | `none` | no | 1-based breakpoint index within the (resource_seq, product, interval_start_utc) bid curve, ordered by ascending segment_mw (file order for ties and for self-schedule rows). |
+| `self_sched_mw` | `float64` | `mw` | yes | Self-scheduled (price-taker) MW for row_kind="self_sched" rows (OASIS SELFSCHEDMW); null on curve rows. |
+| `segment_mw` | `float64` | `mw` | yes | Cumulative MW level (bid-curve x-axis, OASIS SCH_BID_XAXISDATA) at which segment_price_usd_per_mwh starts to apply; may be negative for withdrawal-capable resources. Null on self-schedule rows. |
+| `segment_price_usd_per_mwh` | `float64` | `usd_per_mwh` | yes | Bid price for this breakpoint in $/MWh (OASIS SCH_BID_Y1AXISDATA). CAISO energy bid caps apply (-$150 floor / +$1,000 soft cap / +$2,000 hard cap). Null on self-schedule rows. |
+| `curve_type` | `string` | `none` | yes | OASIS SCH_BID_CURVETYPE for curve rows (observed: BIDPRICE); null on self-schedule rows. |
 
 ## generation
 
@@ -544,6 +606,32 @@ Measured neighbor-border hourly Day-Ahead LMP. Schema:
 | `hub` | `string` | `none` | no | Border hub identifier. CAISO: MALIN (COI/PDCI PNW scheduling point), PALOVRDE (Path-46 desert-SW scheduling point). MISO: PJM_WEST (equal-weight mean of CHICAGO GEN / AEP GEN / ATSI GEN hubs). NEISO: NYISO_HQ (NYISO "H Q" proxy bus — HQ's measured alternative- market price), NYISO_NPX (NYISO "NPX" proxy bus — the NY-side price at the NY-NE interface). |
 | `price` | `float64` | `usd_per_mwh` | yes | Day-Ahead total LMP ($/MWh). CAISO: energy + congestion + loss (MCE+MCC+MCL), GHG excluded (re-added per-tranche by the injector). MISO/PJM: total_lmp_da (energy + congestion + loss). NEISO: NYISO zonal "LBMP ($/MWHr)" at the proxy buses. NaN for hours with no data (OASIS retention gap, missing source). |
 
+## wecc-west-supply
+
+WECC-West neighbor hourly balance (EIA-930 BALANCE Region NW + SW aggregate):
+the measured hourly net position of the western interconnect outside CAISO —
+demand, per-fuel generation and `net_export_mw` on the UTC clock — the
+foundation of the co-optimized WECC_import node (caiso-110 lane). Schema:
+[`schema/wecc-west-supply.schema.yaml`](schema/wecc-west-supply.schema.yaml).
+
+- **Keys:** `interval_start_utc`
+- **Reconciles:** EIA-930 BALANCE Region NW + SW hourly files onto one
+  clock-neutral UTC-keyed row per hour; the LP wiring aligns UTC onto the CAISO
+  model clock via the same map the corridor loaders use.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `interval_start_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | tz-aware UTC start of the hour. |
+| `demand_mw` | `float64` | `mw` | no | WECC-West aggregate demand (adjusted) over the hour. |
+| `solar_mw` | `float64` | `mw` | no | WECC-West aggregate solar net generation (adjusted, all solar sub-types). |
+| `wind_mw` | `float64` | `mw` | no | WECC-West aggregate wind net generation (adjusted, all wind sub-types). |
+| `hydro_mw` | `float64` | `mw` | no | WECC-West aggregate hydro net generation (adjusted; incl. pumped storage where the source aggregates it). |
+| `gas_mw` | `float64` | `mw` | yes | WECC-West aggregate natural-gas net generation (adjusted). |
+| `coal_mw` | `float64` | `mw` | yes | WECC-West aggregate coal net generation (adjusted). |
+| `nuclear_mw` | `float64` | `mw` | yes | WECC-West aggregate nuclear net generation (adjusted). |
+| `net_generation_mw` | `float64` | `mw` | no | WECC-West aggregate total net generation (adjusted). |
+| `net_export_mw` | `float64` | `mw` | no | Derived West net export = net_generation - demand (may be negative). The West's measured net interchange position — the quantity the co-optimized WECC_import zone (Option A) must reproduce. NOTE: renewables alone never exceed West demand (solar ~3-5 GW vs demand ~70 GW), so a "clean surplus over demand" is degenerately zero — the West's export to CAISO is a price/congestion outcome, not a renewable-surplus threshold (design §3). |
+
 ## zonal-shares
 
 Hourly zonal load share fractions (per ISO, per year). Schema:
@@ -654,6 +742,30 @@ Per-plant CAMPD CF-ceiling partial-outage derate windows. Schema:
 | `outage_stop` | `datetime64[ns]` | `local_timestamp` | no | Derate window end (tz-naive, CAMPD local reporting clock). |
 | `derate_factor` | `float64` | `frac` | no | Multiplicative availability factor during the window (0-1). |
 
+## pjm-outages
+
+PJM generation-outage forecast by type and region (Data Miner 2
+`gen_outages_by_type`): the daily-posted active/approved MW on outage for the
+operating day + six days, split forced / maintenance / planned — PJM's
+published DAM-horizon capacity-availability quantity. Schema:
+[`schema/pjm-outages.schema.yaml`](schema/pjm-outages.schema.yaml).
+
+- **Keys:** `forecast_execution_date`, `forecast_date`, `region`
+- **Reconciles:** Data Miner 2 seven-day outage-by-type feeds onto one tidy row
+  per (forecast_execution_date, forecast_date, region) — Mid Atlantic–Dominion,
+  Western, and the PJM RTO total.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `forecast_execution_date` | `string` | `date` | no | Calendar date (EPT, YYYY-MM-DD) the outage forecast was posted by PJM. |
+| `forecast_date` | `string` | `date` | no | Delivery date (EPT, YYYY-MM-DD) the outage MW pertains to. Equals forecast_execution_date on the current-day actual row (lead_days == 0). |
+| `lead_days` | `int64` | `days` | no | forecast_date - forecast_execution_date, an integer 0..6. lead_days == 0 is the current-day actual outage; 1..6 are the forward scheduled-outage forecast for the seven-day horizon. |
+| `region` | `string` | `none` | no | PJM outage region, closed vocabulary: "Mid Atlantic - Dominion", "Western", or "PJM RTO". The RTO total equals the two sub-regions summed (verified to <= 1 MW residual by the deriver). |
+| `total_outages_mw` | `float64` | `mw` | no | Total active/approved MW on outage = planned + maintenance + forced (verified to sum by the deriver). Always >= 0. |
+| `planned_outages_mw` | `float64` | `mw` | no | Scheduled (planned) outage MW -- dominated by scheduled nuclear refuel and fossil maintenance. Always >= 0. Excluded from the default availability transform to avoid double-counting the nuclear refuel the nuclear overlay already carries. |
+| `maintenance_outages_mw` | `float64` | `mw` | yes | Maintenance outage MW. Carries occasional small negatives (a PJM reconciliation artifact where MW is reclassified between categories); preserved verbatim (rule 11) since the three components still sum to total. |
+| `forced_outages_mw` | `float64` | `mw` | no | Forced (unplanned) outage MW. Always >= 0. With maintenance, the UNPLANNED component the default availability transform uses (the measured analogue of the statistical forced-outage / EFOR rate). |
+
 ## capacity-deliverability
 
 Per-capacity-area locational capacity requirements and import/export transfer
@@ -728,6 +840,48 @@ Schema:
 | `accessed` | `datetime64[ns]` | `none` | no | Date the source was last re-queried (the intake vintage stamp). |
 | `notes` | `string` | `none` | yes | Free-text context (e.g. partial-plant scope |
 
+## nuclear-license-status
+
+Nuclear fleet forward-lifetime registry: one row per operating (or
+restart-pathway) reactor unit in the six modeled ISOs — NRC license expiration
+and stage, SLR status/docket, announced uprates, restart pathways — the
+forward-lifetime grounding for clean-firm supply. Schema:
+[`schema/nuclear-license-status.schema.yaml`](schema/nuclear-license-status.schema.yaml).
+
+- **Keys:** `iso`, `eia_plant_id`, `unit`
+- **Reconciles:** NRC license/SLR dockets, licensee announcements and state
+  instruments onto one unit-level registry; rows with a binding exit instrument
+  live in `confirmed-retirements` and are cross-referenced, never duplicated.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO the unit belongs to (ERCOT/CAISO/PJM/MISO/NYISO/NEISO). |
+| `plant_name` | `string` | `none` | no | EIA-860 plant name (human-readable; not the join key). |
+| `unit` | `string` | `none` | no | EIA-860 generator ID within the plant (also the NRC unit number for nuclear; joins the fleet spine's generator_id). |
+| `eia_plant_id` | `int64` | `none` | no | EIA plant code (joins the EIA-860 fleet spine and data/raw/reference/master-plant-registry.csv `plantid`). |
+| `capacity_mw` | `float64` | `mw` | yes | Nameplate MW cross-check against EIA-860 (mismatch >5% fails curation) |
+| `nrc_docket` | `string` | `none` | yes | NRC docket number (50-xxx) for the unit's operating license. |
+| `license_issued_date` | `datetime64[ns]` | `none` | yes | Date the current (renewed |
+| `current_license_expiry` | `datetime64[ns]` | `none` | yes | Current NRC operating-license EXPIRATION date (reflects any initial renewal or SLR already granted). The federal license ceiling — a state ceiling (e.g. CA SB 846 for Diablo Canyon) is captured in retirement_announcement / the confirmed-retirements registry |
+| `license_stage` | `string` | `none` | no | One of original \| renewed_60 \| slr_granted_80. Closed vocabulary. `original` = still on the initial 40-yr license; `renewed_60` = initial license renewal granted (to 60 yr); `slr_granted_80` = Subsequent License Renewal granted (to 80 yr). |
+| `license_instrument` | `string` | `none` | yes | Citation of the operating-license / renewal instrument (NRC renewed license number |
+| `slr_status` | `string` | `none` | no | One of granted \| under_review \| announced_intent \| none. Closed vocabulary. `granted` implies license_stage slr_granted_80; `under_review` = SLR application docketed/accepted; `announced_intent` = licensee has publicly stated intent to file; `none` = no SLR pathway (the case closest to a confirmed license-expiry exit — see the design memo). |
+| `slr_docket` | `string` | `none` | yes | NRC SLR application docket / ADAMS accession |
+| `slr_instrument` | `string` | `none` | yes | Citation of the SLR instrument (application |
+| `slr_instrument_date` | `datetime64[ns]` | `none` | yes | Date of the SLR instrument (application-accepted date for under_review; issuance date for granted). |
+| `announced_uprate_mw` | `float64` | `mw` | yes | ANNOUNCED (not-yet-implemented / not-yet-in-nameplate) power uprate in MW-electric. Historical uprates already baked into `capacity_mw` are NOT recorded here (they are context in the methodology doc). Null when no forward uprate is announced. |
+| `uprate_status` | `string` | `none` | yes | One of approved \| under_review \| announced_intent \| none |
+| `uprate_instrument` | `string` | `none` | yes | Citation of the forward-uprate instrument (NRC amendment / application docket |
+| `restart_status` | `string` | `none` | yes | One of returned \| in_progress \| planned \| none |
+| `restart_target_year` | `int64` | `year` | yes | Target calendar year of return to service for a restart-pathway unit. Null when not a restart case or already returned. |
+| `restart_instrument` | `string` | `none` | yes | Citation of the restart instrument (NRC reauthorization / power ascension approval |
+| `retirement_announcement` | `string` | `none` | yes | Free-text note of any retirement announcement affecting this unit. If a BINDING exit instrument exists it lives in the confirmed-retirements registry — reference it via confirmed_retirement_ref; do NOT duplicate the row here. |
+| `confirmed_retirement_ref` | `string` | `none` | yes | The `instrument_id` of the confirmed-retirements row that governs this unit's binding exit |
+| `source_url` | `string` | `none` | no | Authoritative primary-source URL (NRC info-finder / license / SLR / uprate page |
+| `source_doc` | `string` | `none` | yes | Document title / page reference within source_url. |
+| `accessed` | `datetime64[ns]` | `none` | no | Date the sources were last re-queried (the intake vintage stamp). |
+| `notes` | `string` | `none` | yes | Free-text context (restart detail |
+
 ## gtc-limits
 
 Measured ERCOT Generic Transmission Constraint hourly limits (stability-limited
@@ -781,6 +935,51 @@ Schema:
 | `limit_mw` | `float64` | `mw` | no | Enforced transfer limit (MW) for the interface over the local clock hour (mean of the source rows merged into the hour — one normally, two at the DST fall-back). Kept faithful to the source, including the rare zero/negative published values; the model-side consumer documents how those are reconciled onto link bounds. |
 | `transfer_mw` | `float64` | `mw` | yes | Measured actual transfer (MW) across the interface over the hour (mean of merged source rows); null on the filled spring-forward hour. Diagnostic column for crosswalk sanity checks only — never a model input or target. |
 | `n_source_rows` | `int64` | `count` | no | Source rows merged into the clock hour: 1 normally, 2 at the DST fall-back repeat, 0 for the spring-forward hour that never occurs locally (limit_mw filled from the neighbouring hours). |
+
+## transmission-expansion
+
+Committed transmission-expansion projects (binding-instrument registry): one
+row per (project, affected model element), each bound by an enforceable public
+instrument and mapped onto the reduced zonal topology as an ADDITIVE
+transfer-capability delta (FF-G1; consumed by the gated forecast per-year apply
+seam). Schema:
+[`schema/transmission-expansion.schema.yaml`](schema/transmission-expansion.schema.yaml).
+
+- **Keys:** `iso`, `row_id`
+- **Reconciles:** ISO board / RTO plan approvals with cost allocation (MISO
+  LRTP, CAISO TPP, PJM RTEP), state-regulator orders, signed contracts (NY Tier
+  4, MA 83D) and energized projects onto per-ISO registry CSVs; roadmap/study
+  projects stay watchlist-only in the raw README.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | Model ISO the affected element belongs to (ERCOT/CAISO/PJM/MISO/NYISO/NEISO). |
+| `row_id` | `string` | `none` | no | Stable slug "<project_id>--<element>" unique per (project |
+| `project_id` | `string` | `none` | no | Stable project slug shared by all of a project's rows (e.g. necec |
+| `project_name` | `string` | `none` | no | Human-readable project name for review. |
+| `sponsor` | `string` | `none` | yes | Developer / transmission owner(s). |
+| `status_tier` | `string` | `none` | no | One of energized \| under_construction \| approved_funded. Vocabulary is closed; roadmap/planned is deliberately NOT a member. |
+| `instrument` | `string` | `none` | no | Full citation of the binding instrument — approving body |
+| `instrument_id` | `string` | `none` | yes | Short stable docket / plan-id slug where one exists (e.g. puct-55718 |
+| `instrument_date` | `datetime64[ns]` | `none` | yes | Date the instrument became binding (board vote |
+| `in_service_year` | `int64` | `year` | no | Calendar year the element's capability change is expected in service (projected COD; actual year for energized rows). |
+| `in_service_month` | `int64` | `month` | yes | Month (1-12) within in_service_year where published. |
+| `target_kind` | `string` | `none` | no | One of link \| interface \| import_tranche \| intra_zonal. link = a model TransferLink TTC delta; interface = a named InterfaceLimit cap delta; import_tranche = external supply-side capability into a zone (recorded |
+| `from_zone` | `string` | `none` | yes | Model zone name — the link's from side (link rows); the containing zone (intra_zonal rows); null for interface/import_tranche. |
+| `to_zone` | `string` | `none` | yes | Model zone name — the link's to side (link rows); the receiving zone (import_tranche rows); null otherwise. |
+| `interface_name` | `string` | `none` | yes | InterfaceLimit.name the delta applies to (interface rows only |
+| `delta_mw` | `float64` | `mw` | no | Transfer-capability increase in MW |
+| `delta_mw_reverse` | `float64` | `mw` | yes | Reverse-direction delta where a source quantifies an asymmetric change (interface rows with reverse_cap_mw; one-way link pairs carry separate rows instead). Null = symmetric (link rows apply delta_mw to the link's symmetric ttc_mw). |
+| `capacity_basis` | `string` | `none` | yes | What the published MW measures — one of thermal_rating \| interface_uplift \| converter_rating. A thermal_rating basis must carry a mapping_note reconciling line rating to interface-TTC uplift. |
+| `mapping_confidence` | `string` | `none` | no | One of exact \| reconciled \| ambiguous — how directly the physical project maps onto the model element. |
+| `mapping_note` | `string` | `none` | no | REQUIRED reconciliation note (CLAUDE.md rule 14) — which physical facilities |
+| `superseded` | `bool` | `none` | no | True when a counter-instrument (cancellation |
+| `superseding_instrument` | `string` | `none` | yes | Citation of the counter-instrument when superseded. |
+| `superseding_instrument_date` | `datetime64[ns]` | `none` | yes | Date the counter-instrument became binding |
+| `source_url` | `string` | `none` | no | Authoritative URL of the instrument |
+| `source_doc` | `string` | `none` | yes | Document title / table / page reference within source_url. |
+| `accessed` | `datetime64[ns]` | `none` | no | Date the source was last re-queried (the intake vintage stamp). |
+| `notes` | `string` | `none` | yes | Free-text context (phasing |
 
 ## ramp-capability
 

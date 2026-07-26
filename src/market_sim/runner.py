@@ -142,6 +142,10 @@ from market_sim.pipeline import (
     run_commitment_pass,
     run_energy_solve,
 )
+from market_sim.pipeline.api import (  # noqa: F401 — re-exported facade surface
+    run_pair,
+    run_scenario,
+)
 from market_sim.pipeline.timing import (
     log_year_cached_timing,
     log_year_phase_timing,

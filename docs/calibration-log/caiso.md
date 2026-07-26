@@ -954,6 +954,17 @@ CALIBRATED promotion). Bundle `caiso_netrev_margin`.
 `results/calibration/FINDING-caiso117-belly-cap-c3a-coupling-2026-07-24.md` —
 this session's entry was never appended to the log.)*
 
+*(Correction 2026-07-26, fast-tier triage: "mechanism stays built default-OFF"
+below is FALSE for main — the caiso-117 session pushed only LEG 1 (probe +
+unit tests + FINDING, PRs #2828/#2835); the mechanism source
+(`caiso_belly_import_cap`, `CAISO_BELLY_HOURS`/`CAISO_BELLY_EXPORT_PERCENTILE`,
+`build_caiso_belly_import_cap_group`, `measured_west_belly_export_cap`) was
+never pushed and the session branch is deleted, so it is unrecoverable from
+git. `tests/test_caiso_belly_import_cap.py` fails collection on main as an
+orphan. Escalation D1 in `docs/handoffs/fast-tier-triage-2026-07-26.md`:
+rebuild from the FINDING's Inv-2 spec when the joint belly delta goes live, or
+explicitly drop the tests as rejected-probe residue.)*
+
 Executed the caiso-116 redirect #3: `caiso_belly_import_cap` (ScenarioConfig,
 default False) — a belly-scoped (hod 10-15, `np.inf` outside) simultaneous
 interface group over both per-hub corridor links, capped hour-by-hour at the
