@@ -327,3 +327,33 @@ class TestRuleNineteenFloorSubstitution:
         assert any(
             s.zone == "Long_Island" and s.plant_class == "CT_PEAKER" for s in kept
         )
+
+
+class TestObligationRhoFallback:
+    """rho is a live fleet computation, with a documented neutral fallback.
+
+    The real NYISO solve logs ``rho=1.00``. That is NOT the computation
+    failing — it is the documented fallback for a fleet whose tranches carry
+    ``pmin == 0`` (no unit satisfies ``pmin > 0 and pmax > pmin``), which is
+    the case for the legacy equal-width bins NYISO uses. The gate is still a
+    real constraint at rho = 1 (``R <= sum_g P``: idle capacity backs nothing);
+    only the headroom multiplier is neutral rather than fleet-derived.
+    Pinned here so a later reader does not mistake 1.00 for a broken average.
+    """
+
+    def test_rho_is_computed_from_the_fleet_when_pmin_is_positive(self):
+        design = _nyiso_design(
+            _config(nyiso_incity_commitment_obligation=True), _fa(), T, ZONES
+        )
+        # fixture: pmin 250, pmax 1000 -> (1000-250)/250 = 3.0
+        assert design.online_rho == pytest.approx(3.0)
+
+    def test_rho_falls_back_to_neutral_when_no_unit_has_positive_pmin(self):
+        fa = _fa()
+        fa.pmin = np.zeros_like(fa.pmin)  # the real NYISO legacy-bin case
+        design = _nyiso_design(
+            _config(nyiso_incity_commitment_obligation=True), fa, T, ZONES
+        )
+        assert design.online_rho == pytest.approx(1.0)
+        # The gate is still installed and still online-gated.
+        assert list(design.online_gated) == [False, False, True]
