@@ -88,29 +88,15 @@ ARMS: dict[str, tuple[tuple[str, ...], tuple[str, ...], bool]] = {
     "COMPOSITE": (("LONG_RUN",), ("CC_LIKE",), True),
 }
 
-#: ``run_year`` takes these four positionally — never re-passed from meta.
-_POSITIONAL = frozenset({"year", "iso", "hours", "gas_price"})
-
-
 def full_run_year_kwargs(meta: dict) -> dict:
     """Rebuild the bundle's fleet from EVERY flag its meta.json records.
 
-    ``derive_pjm_ordc_overlay._run_year_kwargs`` forwards a hand-curated subset
-    (the keys the ORDC overlay needed). On the pjm-121 keeper that subset drops
-    **38 non-default flags** that are ``run_year`` parameters — among them
-    ``tranche_startup_amortization`` / ``_measured_runs`` / ``_conditional_runs``
-    (the pjm-103 start-cost pricing that OWNS the CT stack),
-    ``ct_netload_drag`` + ``ct_drag_overrides`` and ``gas_st_netload_drag`` +
-    ``gas_st_drag_overrides`` (the drag mechanisms that own CT and ST_GAS
-    offers), ``ct_intermediate_split``, ``coal_sync_srmc_tranche`` and
-    ``coal_mustrun_online_pmin``. A pre-check run on that reconstruction would
-    diff its arms against a fleet whose CT rows carry no start-cost markup at
-    all — precisely the term leg 3 is supposed to reconcile with — and would
-    over-state every leg's effect.
-
-    This keeps the proven base mapping (it carries the renamed keys, e.g.
-    ``prb_overrides`` <- ``coal_prb_sigmoid_overrides``) and then overlays every
-    remaining meta key that ``run_year`` actually accepts.
+    Thin delegation to the shared
+    :func:`scripts.lib.bundle_fleet.full_run_year_kwargs` — this probe is where
+    the widened reconstruction was first written; pjm-124 promoted it to
+    ``scripts/lib`` (frontier handoff §5) so every no-LP pre-check measures the
+    same fleet. Kept as a name here so this probe's calibration record still
+    runs unchanged.
 
     Args:
         meta: The bundle's ``meta.json``.
@@ -118,18 +104,9 @@ def full_run_year_kwargs(meta: dict) -> dict:
     Returns:
         The ``run_year`` kwargs, ``fleet_only=True``.
     """
-    import inspect
+    from scripts.lib.bundle_fleet import full_run_year_kwargs as _shared
 
-    from derive_pjm_ordc_overlay import _run_year_kwargs
-    from run_calibration import run_year
-
-    kwargs = _run_year_kwargs(meta)
-    params = set(inspect.signature(run_year).parameters)
-    for key, value in meta.items():
-        if key in params and key not in kwargs and key not in _POSITIONAL:
-            kwargs[key] = value
-    kwargs["fleet_only"] = True
-    return kwargs
+    return _shared(meta)
 
 
 def _startup_markup_bracket(state, config, net_load):
