@@ -72,11 +72,12 @@ CAISO crosswalked active-plant scope, guard-on extract:
 So the charter's headline was inflated, but **the over-count is real and
 survives the correction**. Every number below uses the revision-aware build.
 
-*(Consequence for the record: the §4 CAISO table and the neiso-64 NEISO
-whole-fleet levels are both built on `tail(1)` and are overstated by roughly
-this factor. NEISO's published instrument is a different report and was not
-re-measured here — its 1.29-1.36x needs the same audit before it is quoted
-again.)*
+*(Consequence for the record: the §4 CAISO table is built on `tail(1)` and is
+overstated by roughly this factor. **NEISO is NOT affected** — corrected
+2026-07-26, see §5b: its published instrument is the ISO-NE Morning Report
+Section 3 daily CSV, one row per `report_date`, with no `mrid` and no segment
+structure, so nothing is collapsed and its 1.29-1.36x levels stand as measured.
+The defect is CAISO-specific, because only CNOG is segment-structured.)*
 
 ## §2 — the residual is entirely extra DAYS, at correct magnitude
 
@@ -182,6 +183,38 @@ CC start has to amortize against — stated as consistency, **not** as a
 demonstrated cause: this finding does not measure start-cost recovery, and
 that is exactly the open work in §6.
 
+## §5b — NEISO CONFIRMS IT, against ISO-NE's own published column
+
+§5 is inferred from CAISO, where no instrument for the seam population exists.
+NEISO can test it directly, and this is the positive control the neiso-64 scorer
+docstring anticipated: ISO-NE's Morning Report Section 3 publishes **both** sides
+on one daily clock — `gen_outages_reductions_mw` (the outage series the extract
+is scored against) **and `uncommitted_available_gen_nonfast_mw`, which is
+available-but-not-committed capacity — the seam population itself.**
+
+Predictions stated before the read: if the residual is the seam it correlates
+with the UNCOMMITTED column; if it is unbooked outage it correlates with the
+OUTAGE column. Probe:
+`scripts/probes/_neiso66_neiso_uncommitted_control.py`.
+
+| year | model | published outages | level | residual | monthly r(residual, **OUTAGES**) | monthly r(residual, **UNCOMMITTED**) |
+|---|---|---|---|---|---|---|
+| 2023 | 6,243 MW | 4,583 MW | 1.36x | 1,660 MW | **−0.86** | **+0.85** |
+| 2024 | 5,373 MW | 4,174 MW | 1.29x | 1,199 MW | **−0.86** | **+0.84** |
+| 2025 | 3,558 MW | 3,888 MW | 0.92x | −330 MW | **−0.85** | **+0.70** |
+
+The residual **tracks ISO-NE's published available-but-not-committed series**
+(+0.70 to +0.85) and is strongly **anti**-correlated with published outages
+(−0.85 to −0.86). It is therefore not unbooked outage — it is the uncommitted
+population, measured by the publisher itself. §5's conclusion is confirmed on the
+ISO that owns this charter, with a published instrument, at no solve cost.
+
+(Scope caveat unchanged from neiso-64: the extract is CEMS-thermal while the
+published columns are whole-fleet, so the level ratio is one-directional and the
+monthly correlation is the robust axis. Note 2025 is 0.92x — NEISO's over-count
+is a 2023-24 phenomenon, and the seam correlation holds in all three years
+regardless of the sign of the level.)
+
 **Why this matters beyond bookkeeping (rule 1 `[R-STRUCT]`, rule 13
 `[R-MEASURED]`).** These units belong in the availability envelope as
 **available**, and the LP should decline to start them **on its own commitment
@@ -200,9 +233,9 @@ is no longer unexplained; it is **explained but not yet fixed**, and the fix is
 a mechanism change, not a threshold change. What is required before the
 residual can stop being an open root-cause item:
 
-1. **Re-measure NEISO on a corrected published-side build.** NEISO's 1.29-1.36x
-   is a `tail(1)` number against a different report; §1 invalidates the
-   comparison as built. Whether NEISO's residual is the same seam is unknown.
+1. ~~**Re-measure NEISO on a corrected published-side build.**~~ **DONE, and it
+   PASSED — see §5b.** NEISO's instrument is unaffected by the §1 defect, and
+   ISO-NE's published uncommitted-available column confirms the seam directly.
 2. **Test the commitment-economics mechanism directly** — does the observed
    idle/run split track start-cost recovery over the expected run (start cost
    vs spread × expected run hours), per unit? §4 shows the marginal test is
