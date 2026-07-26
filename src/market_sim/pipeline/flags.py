@@ -216,7 +216,14 @@ _COAL_FLAGS: tuple[FlagSpec, ...] = (
         cli=("--coal-econ-marginal-hr-bound",),
         dest="coal_econ_marginal_hr_bound",
         kind="bool_opt",
-        default=False,
+        # TRI-STATE (default None, not False): the floor became the ERCOT
+        # backcast default-ON at the ercot-115 promotion. A False default would
+        # make every CLI run pass an explicit False and silently SCRUB that
+        # per-ISO default, so the promotion would never take effect on the
+        # calibration path. None = keep the per-ISO backcast_config default;
+        # --coal-econ-marginal-hr-bound / --no-coal-econ-marginal-hr-bound force
+        # it on/off (BooleanOptionalAction).
+        default=None,
         help="Floor each coal class's econ_low/econ_high offer-curve band at "
         "the ISO's own MEASURED CAMPD marginal (incremental) heat rate for "
         "COAL (data/raw/reference/<iso>_campd_marginal_hr_summary.csv), so no "

@@ -453,7 +453,7 @@ def run_year(
     coal_bit_sigmoid: bool = False,
     bit_overrides: dict | None = None,
     coal_econ_srmc_bound: bool = False,
-    coal_econ_marginal_hr_bound: bool = False,
+    coal_econ_marginal_hr_bound: bool | None = None,
     coal_takeorpay_from_data: bool = False,
     coal_mustrun_online_pmin: bool = False,
     coal_sync_srmc_tranche: bool = False,
@@ -1342,7 +1342,18 @@ def run_year(
     # committed/must-run take-or-pay bands and the peak scarcity wall are out of
     # scope (rule 19). Adds no tunable — the floor is the already-committed
     # derive_campd_marginal_hr artifact (rule 13).
-    if coal_econ_marginal_hr_bound or config.coal_econ_marginal_hr_bound:
+    # Tri-state (ercot_wtx_curtailment_driver pattern): None keeps the
+    # backcast_config per-ISO default (ERCOT keeper default-ON since the
+    # ercot-115 promotion); True/False force it on/off so an A/B arm can scrub
+    # the floor, and so replay_keeper can pin a pre-promotion bundle to the
+    # behaviour it was actually solved with. A bare `or` here would make an
+    # explicit False unscrubbable once the per-ISO default turned on.
+    _marginal_hr_on = (
+        bool(config.coal_econ_marginal_hr_bound)
+        if coal_econ_marginal_hr_bound is None
+        else bool(coal_econ_marginal_hr_bound)
+    )
+    if _marginal_hr_on:
         from market_sim.data.coal import apply_coal_econ_marginal_hr_floor
 
         _curve, _lifted = apply_coal_econ_marginal_hr_floor(
@@ -1367,6 +1378,16 @@ def run_year(
                 "basis — offer curve unchanged",
                 iso,
             )
+    elif config.coal_econ_marginal_hr_bound:
+        # Explicit scrub of a per-ISO default-ON: the LP must solve WITHOUT the
+        # floor, so the recorded config must say so too (rule 25 — run_config
+        # records what was solved, never what was defaulted).
+        config = config.with_overrides(coal_econ_marginal_hr_bound=False)
+        logger.info(
+            "%s coal econ marginal-HR floor: SCRUBBED by explicit False "
+            "(per-ISO default was on) — offer curve unchanged",
+            iso,
+        )
     # Per-plant tranche-config override sheet (run_calibration_full
     # --plant-tranche-config): each listed plant's tranche shares + band HR
     # multipliers come straight from the CSV, bypassing the offer curve.
