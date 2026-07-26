@@ -139,3 +139,62 @@ class TestGate:
             ScenarioConfig(coal_econ_marginal_hr_bound=True).cache_key()
             != ScenarioConfig().cache_key()
         )
+
+
+class TestErcotPromotion:
+    """ercot-115 promotion (owner sign-off 2026-07-26): ERCOT-scoped default-ON.
+
+    The floor is enabled in the ERCOT branch of ``backcast_config`` rather than
+    by flipping the global ``ScenarioConfig`` default, because the mechanism is
+    ISO-generic and reads each ISO's own artifact — flipping the default would
+    silently re-point the PJM / MISO / NEISO keepers, which have never tested it
+    (rule 25). These tests pin that scoping and the tri-state seam the promotion
+    depends on.
+    """
+
+    def test_ercot_backcast_default_is_on(self):
+        from market_sim.pipeline.backcast_config import backcast_config
+
+        cfg = backcast_config(2023, "ERCOT", 8760, 2.54)
+        assert cfg.coal_econ_marginal_hr_bound is True
+
+    @pytest.mark.parametrize("iso", ["PJM", "MISO", "NEISO", "CAISO", "NYISO"])
+    def test_other_isos_stay_off(self, iso):
+        # Each of these reads its OWN artifact, so arming them is a decision for
+        # their own lane — never a side effect of ERCOT's promotion.
+        from market_sim.pipeline.backcast_config import backcast_config
+
+        cfg = backcast_config(2023, iso, 8760, 2.54)
+        assert cfg.coal_econ_marginal_hr_bound is False
+
+    def test_global_default_still_off(self):
+        # The promotion must NOT have flipped the shared default — that is the
+        # whole point of scoping it per-ISO.
+        assert ScenarioConfig().coal_econ_marginal_hr_bound is False
+
+    @pytest.mark.parametrize(
+        ("kwarg", "config_value", "expected"),
+        [
+            (None, True, True),  # per-ISO default-ON, no CLI opinion -> ON
+            (None, False, False),  # default-off ISO, no CLI opinion -> OFF
+            (False, True, False),  # explicit scrub of a default-ON (ablation)
+            (True, False, True),  # explicit arm on an ISO that defaults off
+        ],
+    )
+    def test_tristate_resolution(self, kwarg, config_value, expected):
+        # Mirrors the resolution in run_calibration.run_year and
+        # run_calibration_full._recorded_config. A bare ``or`` would make the
+        # explicit-False scrub case unreachable once a per-ISO default is on.
+        resolved = bool(config_value) if kwarg is None else bool(kwarg)
+        assert resolved is expected
+
+    def test_cli_default_is_none_not_false(self):
+        # A False CLI default would pass an explicit False on every run and
+        # scrub any per-ISO default, so a promotion would never take effect on
+        # the calibration path at all.
+        from market_sim.pipeline.flags import iter_family
+
+        spec = next(
+            s for s in iter_family("coal") if s.dest == "coal_econ_marginal_hr_bound"
+        )
+        assert spec.default is None

@@ -147,6 +147,17 @@ def build_kwargs(meta: dict) -> dict:
         and "ercot_wtx_curtailment_driver" not in meta
     ):
         kwargs["ercot_wtx_curtailment_driver"] = False
+    # Same backstop for the coal econ marginal-HR floor, which became the ERCOT
+    # backcast default-ON at the ercot-115 promotion (2026-07-26) and whose
+    # solve kwarg is likewise tri-state. A bundle solved before the promotion
+    # carries no key in meta.json; replaying it byte-faithfully means the floor
+    # OFF, not today's default. Post-promotion bundles record their resolved
+    # value and are unaffected.
+    if (
+        meta.get("iso", "").upper() == "ERCOT"
+        and "coal_econ_marginal_hr_bound" not in meta
+    ):
+        kwargs["coal_econ_marginal_hr_bound"] = False
     return kwargs
 
 
