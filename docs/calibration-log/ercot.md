@@ -346,6 +346,22 @@ tests fail on main as orphans. Escalation D3 in
 `docs/handoffs/fast-tier-triage-2026-07-26.md`: owner decision between a hand
 port into `data/fleet/offer_surfaces.py` or recording the drop.)*
 
+*(**Resolution 2026-07-26 (owner decision, fast-tier escalation follow-through):
+the machinery is DROPPED — it never existed on main and is not being ported.**
+The mechanism is a REJECTED, default-off probe: hand-porting ~197 lines of
+engine wiring into `data/fleet/offer_surfaces.py` plus regenerating the missing
+`data/raw/reference/ercot_shoulder_online_span_steam_condbinned.json` would buy
+no live behaviour. `tests/test_ercot_offer_surface_cleared_share_steam_rt.py`
+is C-DELETED as unlanded-mechanism residue (the test file only ever guarded
+source that main never carried). What SURVIVES as the canonical record of the
+probe: this log entry, `docs/handoffs/ercot93-session-handoff.md` (its §"To
+reconstruct" step 1 is now dead — flagged in place), the rotted
+`docs/handoffs/ercot93-core-mechanism.patch` bytes, and the landed derive
+`scripts/data/derive_ercot_shoulder_online_span_steam.py`. ERCOT-94/95 must
+stop citing the wiring as "recorded machinery on main": the season-conditioned
+offer-wall follow-up starts from the patch text + this entry, not from a
+`git apply`.)*
+
 ## 2026-07-21 — ERCOT-94 (season-offer-wall charter → measure + diagnose): the season-conditioned offer wall is REJECTED as the 2023-summer-LMP lever — it is a WINTER fix (fixes the ERCOT-93 cold-snap trip) but orthogonal to the blocker, which is an ORDC/reserve scarcity-pricing COLLAPSE (C3c tail); keeper UNCHANGED, no solve, no registration
 
 **Charter (owner reframe).** The lane goal was sharpened to "fix 2023 summer LMP".
