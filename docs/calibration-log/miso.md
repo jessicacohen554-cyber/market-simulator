@@ -1293,3 +1293,30 @@ outside. Recorded rather than narrated afterwards as predicted.
   structure, not a ledger slot, and the corrected extract stays in (rule 1).
 * Code churn `3babe5f..HEAD` is measured MISO-inert; don't re-establish it.
 * Next number: **miso-94.**
+## 2026-07-26 — CAMPD charter LANE B (cross-ISO, **no MISO lane number claimed**): the day-grain `R < 0` cut does not replace the guard's window-grain cut
+
+Charter/cross-ISO session — measurement only: no guard change, no extract
+re-derive, no LP solve, **no MISO keeper touched**, no dashboard registration.
+Full record: `results/calibration/FINDING-campd-daygrain-crossiso-2026-07-26.md`;
+cross-ISO entry in `docs/calibration-log/governance.md`.
+
+MISO's cell of the 180-cell sweep (`--rcc-pctl {0.50, 0.75, 0.90, 0.99}` × `--horizon {24, 48, 72}` ×
+2023–2025), scored against **the MISO native outage source (`MISO_Forced + MISO_Planned + MISO_Unplanned`)**:
+
+* **KEPT-extract monthly `r` at the default p90 / h24**, window-grain → day-grain:
+  2023 **+0.87 → +0.88** (Δ +0.002), 2024 **+0.80 → +0.81** (Δ +0.005), 2025
+  **+0.95 → +0.95** (Δ +0.003). MISO is the candidate's best ISO and it is still
+  a coin flip: better in **23/36** cells, median Δ **+0.001** — an order of
+  magnitude inside the placebo band. Both cuts clear the placebo in the same
+  24/36 cells.
+* **The two cuts pick the same windows**: Jaccard 0.93 / 0.89 / 0.94; day-only
+  vetoes 11 / 13 / 11 against window-only 7 / 15 / 6, out of ~1,450 windows a
+  year.
+* **Control passed**: the re-implemented incumbent reproduces MISO's committed
+  kept/layup split on 1,445/1,451, 1,502/1,509, 1,448/1,454 windows.
+
+**Nothing in MISO changes.** The merit-order guard stands as the charter §8
+verdict adopted it, MISO's committed extract and layup companion are
+untouched, and no rule-22 obligation arises because no mechanism change is
+proposed. The 3/3 solve budget is untouched (no solve was run). Next number unchanged:
+**miso-94**.

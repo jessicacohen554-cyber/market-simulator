@@ -480,3 +480,41 @@ the *explained* branch, but only the owner lifts it. (3) The Lane B observation
 (day-grain best-block `R < 0` as a possible *replacement* for the guard's
 window-grain cut) remains flagged, unvalidated cross-ISO, and untouched by this
 session. Next shorthand: neiso-69.
+
+## 2026-07-26 — CAMPD charter LANE B (cross-ISO, **no NEISO lane number claimed**): the day-grain `R < 0` cut does not replace the guard's window-grain cut
+
+Charter/cross-ISO session — measurement only: no guard change, no extract
+re-derive, no LP solve, **no NEISO keeper touched**, no dashboard registration.
+Full record: `results/calibration/FINDING-campd-daygrain-crossiso-2026-07-26.md`;
+cross-ISO entry in `docs/calibration-log/governance.md`.
+
+NEISO's cell of the 180-cell sweep (`--rcc-pctl {0.50, 0.75, 0.90, 0.99}` × `--horizon {24, 48, 72}` ×
+2023–2025), scored against **ISO-NE Morning Report Section 3 `gen_outages_reductions_mw`**:
+
+* **KEPT-extract monthly `r` at the default p90 / h24**, window-grain → day-grain:
+  2023 **+0.69 → +0.65** (Δ −0.038), 2024 **+0.61 → +0.61** (Δ −0.007), 2025
+  **+0.78 → +0.73** (Δ −0.047). Over NEISO's 36 cells the day cut is better in
+  **14/36**, median Δ **−0.006**; the sweep's largest deltas anywhere (−0.09 to
+  −0.14, p50/p90 at h48–h72) are NEISO's and run **against** the candidate.
+  Lengthening the horizon degrades it monotonically (+0.662 → +0.616 → +0.604
+  mean kept-`r` at p90, vs the incumbent's flat +0.693).
+* **The flagged observation restated on NEISO's own instrument.** Against
+  published `uncommitted_available_gen_nonfast_mw`, the guard's **VETOED** side
+  reads **+0.77 / +0.73 / +0.66** and the candidate's **+0.70 / +0.74 / +0.53**.
+  neiso-67 §6 item 2's `+0.63…+0.79` vs `+0.08…+0.31` had compared an
+  identified-layup series against the guard's **KEPT** series — the two opposite
+  sides of one split, not two cuts.
+* **The two cuts pick the same windows**: Jaccard 0.92 / 0.97 / 0.94, and the
+  candidate's veto set is a strict **subset** of the incumbent's in all three
+  years (day-only vetoes 0 / 0 / 0).
+* **Controls passed**: the re-implemented incumbent reproduces NEISO's committed
+  kept/layup split on 468/471, 466/470, 480/484 windows; the ported machinery
+  reproduces neiso-67's idle `R < 0` band (812 MW/+0.70, 1,104/+0.80, 1,071/+0.64)
+  and the charter D1 anchors (baseline 1.52×/+0.53, guard-on 1.37×/+0.69,
+  vetoed-vs-UNCOMMITTED +0.77).
+
+**Nothing in NEISO changes.** The merit-order guard stands as the charter §8
+verdict adopted it, NEISO's committed extract and layup companion are
+untouched, and no rule-22 obligation arises because no mechanism change is
+proposed. **The freeze stays ACTIVE** — Lane B was never one of its conditions.
+Next shorthand is unchanged: **neiso-69**.

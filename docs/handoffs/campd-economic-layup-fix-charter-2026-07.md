@@ -415,3 +415,38 @@ states the falsification bar any future LP-side proposal must meet). This
 closes the last open lane of the residual-over-count investigation; the §7
 "Closed with cause" leg fits, and the freeze-lift decision — unchanged — is
 the owner's alone.
+
+**LANE B is also closed, on a negative (2026-07-26, cross-ISO).** neiso-67 §6
+item 2 flagged the day-grain best-block `R < 0` cut as a possible
+**replacement** for the guard's window-grain out-of-merit cut, in its existing
+marginal lane (rule 19 `[R-ONE-MECH]` — never an addition). It is now validated
+on every ISO with a published anchor — CAISO (CNOG revision-aware build only),
+MISO, PJM, ERCOT, NEISO; **NYISO excluded, it has no anchor and none was
+improvised** — across `--rcc-pctl {0.50, 0.75, 0.90, 0.99} × --horizon
+{24, 48, 72}` × 2023–2025, **180 cells**, each carrying the full D1 standard
+(vetoed-by-cut capacity vs the published series, kept-vs-vetoed separation,
+proportion-matched placebo p95, no-split reference, monthly-`r`-is-the-robust-axis
+caveat). Probe: `scripts/probes/_campd_daygrain_crossiso.py` (no LP solve; the
+re-implemented incumbent reproduces each ISO's committed kept/layup split on
+99.1–99.8 % of windows, and the ported machinery reproduces neiso-67's own
+published band numbers). **Result: the candidate beats the incumbent in 82 of
+180 cells — a coin flip — at a median gain of −0.0003, with |Δ| < 0.02 in
+159/180; it is sign-stable across all three years in only 9 of 60
+configurations, and it clears the placebo in 101/180 cells against the
+incumbent's 105/180 (the 14 disagreements favour the incumbent 9–5).** Two
+things explain it. First, the flagged observation's headline gap
+(`+0.63…+0.79` vs `+0.08…+0.31`) compared the **two opposite sides of the
+guard's own split** — an identified-layup series against the guard's KEPT
+/ mechanical series; against the correct comparator, the guard's own VETOED
+series, D1 already stood at +0.77 / +0.71 / +0.67 and the candidate measures
++0.70 / +0.74 / +0.53. Second, the two cuts **select the same windows**
+(Jaccard 0.77–0.97, median 0.92): over 15,782 scored windows the day-grain cut
+vetoes 127 the incumbent does not and the incumbent vetoes 144 the day-grain
+cut does not, and on NEISO and CAISO the candidate's veto set is a strict
+**subset** of the incumbent's in every year. **No guard change is proposed, so
+no blast radius is reopened and no rule-22 leave-one-year-out obligation
+arises**; the guard stands exactly as §8 adopted it. Record:
+`results/calibration/FINDING-campd-daygrain-crossiso-2026-07-26.md` (its §5
+states what would falsify the null: a block-integral construction whose veto
+set is *materially disjoint* from the window-grain cut's, which then clears D1
+on the disjoint part).

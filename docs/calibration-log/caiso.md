@@ -1726,3 +1726,35 @@ ASK); the caiso-124 shape-gate disposition (item 3); the overnight over-supply
 lane (item 5); the charter-lane re-tune-vs-freeze sequencing decision.
 
 Next number: caiso-125.
+## 2026-07-26 — CAMPD charter LANE B (cross-ISO, **no CAISO lane number claimed**): the day-grain `R < 0` cut does not replace the guard's window-grain cut
+
+Charter/cross-ISO session — measurement only: no guard change, no extract
+re-derive, no LP solve, **no CAISO keeper touched**, no dashboard registration.
+Full record: `results/calibration/FINDING-campd-daygrain-crossiso-2026-07-26.md`;
+cross-ISO entry in `docs/calibration-log/governance.md`.
+
+CAISO's cell of the 180-cell sweep (`--rcc-pctl {0.50, 0.75, 0.90, 0.99}` × `--horizon {24, 48, 72}` ×
+2023–2025), scored against CNOG on the reviewed resource→plant crosswalk, **revision-aware build only** (neiso-66 §1 — `tail(1)` and raw-sum are both wrong):
+
+* **KEPT-extract monthly `r` at the default p90 / h24**, window-grain → day-grain:
+  2023 **+0.78 → +0.78** (Δ −0.001), 2024 **+0.77 → +0.77** (Δ +0.003), 2025
+  **+0.85 → +0.85** (Δ +0.005). Over CAISO's 36 cells the day cut is better in
+  **19/36**, median Δ **+0.000** — a coin flip at zero effect size.
+* **Neither cut clears the placebo on CAISO** (6/36 cells each): at p90/h24 the
+  kept-`r` sits below the proportion-matched p95 in all three years
+  (+0.78 vs +0.81, +0.77 vs +0.81, +0.85 vs +0.85). That is a property of the
+  CAISO instrument/scope, unchanged by the grain of the cut, and it is the same
+  reading the charter already carries.
+* **The two cuts pick the same windows**: Jaccard 0.77 / 0.91 / 0.86, with the
+  candidate a strict **subset** of the incumbent in all three years (day-only
+  vetoes 0 / 0 / 0).
+* **Control passed**: the re-implemented incumbent reproduces CAISO's committed
+  kept/layup split on 529/530, 531/533, 626/628 windows on the crosswalked
+  active-plant scope (34 plants, published mean 2,963 MW — consistent with
+  neiso-66 §1's revision-aware 2,925 MW).
+
+**Nothing in CAISO changes.** The merit-order guard stands as the charter §8
+verdict adopted it, CAISO's committed extract and layup companion are
+untouched, and no rule-22 obligation arises because no mechanism change is
+proposed. Open CAISO items (min-load 0.570, the belly delta, the charter-lane
+re-tune-vs-freeze sequencing) are untouched. Next number unchanged: **caiso-125**.
