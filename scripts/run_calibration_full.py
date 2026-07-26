@@ -4332,6 +4332,19 @@ def solve_and_persist(
                 run_dir / "dispatch" / f"{year}_{label}.parquet", index=False
             )
             _parquet_s += time.perf_counter() - _t_pq
+            # Free the unit-hour frame the moment it is on disk. It is the
+            # single largest object this loop builds — MISO 2023 measures
+            # 588.9 MB (24,694,440 gen-hours x 11 cols) — and nothing reads it
+            # again after this write. Without the del it stays bound to the
+            # loop variable, survives the year-release block (whose del list
+            # never named it) and sits under the NEXT year's fleet build and
+            # LP, which is 38% of the 1.53 GB cross-year floor that makes a
+            # multi-year MISO invocation OOM. Found by the release-seam frame
+            # telemetry, not by inspection: miso-92, see
+            # results/calibration/FINDING-miso92-solve-memory-attribution-2026-07.md.
+            # `_sysf` and `campd_year` are deliberately NOT freed here — both
+            # are appended to cross-year accumulators and are still live.
+            del _dispf
             system_frames.append(_sysf)
             # Reserve-dual diagnostic sidecar (MARKET_SIM_RESERVE_DUAL_DUMP,
             # default OFF): the per-family reserve balance-row duals
