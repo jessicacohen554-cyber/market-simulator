@@ -1348,8 +1348,6 @@ required); the joint belly delta (family now selected, gates pre-registered,
 owner-gate required); `caiso_ra_min_load_frac` 0.570 still not in the keeper
 recipe — blocked by the C3a regression above, not by its own merits.
 
-Next number: caiso-122.
-Next number: caiso-121.
 ## 2026-07-26 — caiso-120: keeper re-audit on the guard-corrected CAMPD envelope — RE-TUNE REQUIRED (2025 C3a flips); keeper UNCHANGED. Plus: the resource crosswalk lands, and the instrument reading transforms
 
 Charter execution (campd-economic-layup-fix-charter §8: ADOPTED-AS-IMPROVEMENT,
@@ -1382,3 +1380,100 @@ mothball/RMR states the model owns via fleet status, not the outage overlay —
 excluded from the active-plant scope by construction. Placebo stays inside p95
 (shape null); the substance is the level axis. Full numbers:
 `results/calibration/RESULTS-neiso65-crossiso-reaudit-2026-07.md` §4.
+
+## caiso-122 (2026-07-26) — the C3a-2025 HEAD regression is **NOT attributed**: `src/market_sim/` is EXHAUSTED and **every state of the CAISO outage extract is REFUTED by solve** (absent / pre-layup / HEAD); the keeper's recorded provenance is **unusable as a bisect anchor** (`git_sha` unreachable, `timestamp` keeps only the original DATE across a replay); STEP 2's measured min-load 0.570 arm scored against a same-HEAD control — **registered, NOT promoted**; keeper UNCHANGED, lane STILL BLOCKED
+
+**(1) The prescribed bisect could not be run, and why that matters.** caiso-121
+asked for `abb0fcd..HEAD` over `src/market_sim/`. `abb0fcd` resolves to no
+object even after `git fetch --unshallow` (8,839 commits, all origin refs) — a
+session-local commit on a branch that did not survive to main. The timestamp
+fallback is also unsound: `replay_keeper.py:324` writes
+`orig_ts[:10] + new_ts[10:]`, restoring the original **date** and keeping the
+**replay's time-of-day**, so a keeper replayed days later still reads
+`2026-07-23T22:29:35`. **A committed keeper carries no field that identifies
+the basis of its own bytes.** This is a governance defect beyond this lane —
+every future "why did this keeper move?" hits the same wall. Recommend a
+`basis_sha` written at bundle-write time and never restored by replay.
+
+**(2) The drift is real, reproducible and monotone in year.** Fresh 3-year
+same-HEAD control vs the committed keeper (CA demand-weighted λ):
+
+| year | keeper | control | Δ |
+|---|---|---|---|
+| 2023 | 55.6158 | 55.8950 | +0.502 % |
+| 2024 | 37.5464 | 37.9179 | +0.989 % |
+| 2025 | 38.0221 | 38.5585 | **+1.411 %** |
+
+caiso-121 measured +0.47/+0.88/+1.35 %; this reproduces it independently. Class
+signature: CC_REGULAR −0.456 TWh, import +0.395 TWh — less gas, more imports,
+higher λ.
+
+**(3) What was eliminated, by measurement not argument.** `src/market_sim/` is
+exhausted: every commit in the window is ISO-scoped elsewhere or gated off, the
+one naming CAISO (`31035427f`) reads `caiso_dam_outages` which is
+`bool = False`, and `42747a969` (the CAISO resource→EIA crosswalk, 34→58 rows /
+~20.9 GW) is consumed **only** by that same default-off path. The outage-extract
+family is exhausted by four 2025 solves:
+
+| arm | extract | CA λ 2025 |
+|---|---|---|
+| committed keeper | — | 38.0221 |
+| extract hidden | 0 rows | 36.4778 |
+| pre-layup (`6a8f285c5^`) | 5,139 rows | 38.6290 |
+| HEAD control | 4,329 rows | 38.5585 |
+
+**No outage state reproduces the keeper**; it sits 0.54–0.61 below all of them.
+
+⚠ **This contradicts the parallel caiso-120 entry above, and the disagreement
+should be settled before either is relied on.** That session attributes the
+2025 C3a move (+10.0 → +11.1 %) to adopting the guard-corrected extract, from
+an A0-vs-A1 pair in which **A0 is the committed keeper's bytes**. Measured here
+with a *same-HEAD control* on both sides, swapping HEAD's extract for its
+pre-guard content is worth only **−0.07 /MWh (−0.18 %)** — nowhere near the
++1.4 % drift. The two are reconcilable if A0-vs-A1 is picking up the same
+unattributed basis drift documented in item (2) *on top of* the guard change,
+which is precisely the trap the caiso-119/121 standing note warns about (never
+A/B against the committed keeper). If that is right, the charter-§5 "re-tune
+required" trigger rests on a confounded comparison and should be re-measured
+against a same-HEAD control before any re-tune is undertaken.
+A mid-session hypothesis that the keeper had solved with the extract *absent*
+was **refuted** on the keeper's own committed sidecar: CC_CHP hourly correlates
+**r=0.99343** with the overlay-ON arm and only **r=0.575** with the overlay-OFF
+arm (6,742 of ~6,950 derated hours shared). The extract's own sensitivity is
+nonetheless large and worth recording: **λ 2.08 /MWh, CC_CHP 2.12 TWh**.
+
+**(4) STEP 2 — min-load 0.570, rule-14 execution. REGISTERED, NOT PROMOTED.**
+Single delta `caiso_ra_min_load_frac` 0.26 → 0.570; zero fitted parameters
+added, one removed. Both arms at one pinned basis; control NOT registered
+(FINDING-caiso92b).
+
+| C3a mean LMP | 2023 | 2024 | 2025 | fail set |
+|---|---|---|---|---|
+| control A (no delta) | +4.0 % PASS | +9.4 % PASS | **+11.5 % FAIL** | {C3a, C3c, C5a} |
+| arm B (0.570) | +4.3 % PASS | +9.1 % PASS | **+11.3 % FAIL** | {C3a, C3c, C5a} |
+
+Identical fail sets; C3b PASS all years and **improves** in 2025 (0.155 →
+0.152). Class deltas reproduce caiso-121 to three decimals (CC_REGULAR
+−0.2088/+0.0483/+0.0313 TWh). **Third independent measurement that this delta is
+inert-to-slightly-favourable.** Not promoted: C3a-2025 fails in the control too
+and by *more*, so that failure is the drift and not the delta — but with the
+drift unattributed, banking an unexplained regression into the lane's reference
+run is an owner call. 0.570 stays **KEPT** and is still the value the next
+keeper must carry (rules 13/14/18) — never tuned back toward 0.26.
+
+**(5) Where the next session should cut.** Not another blind solve. Both
+`src/market_sim/` and the outage extract are closed. Diff the *constructed LP
+inputs* (FleetArrays, CF profiles, fuel series, floors, interchange/hub series)
+between HEAD and a pre-drift basis, find the array that moved, then solve once
+to confirm. The pre-drift basis must be established by measurement — the
+keeper's recorded metadata cannot supply it (item 1).
+
+**Operational notes.** `git push` returned **HTTP 413** on a pack of 5 objects;
+the API transport (`push_files`) was used for the text deliverable and
+blob-verified byte-identical. The drift-test wrapper deadlocked on a
+self-matching `pgrep -f "chain.sh"` — guard against self-match in chained
+watchers. CAISO stayed single-solve-only throughout (rule 12 + the caiso-121
+note); five LP solves ran strictly sequentially.
+
+
+Next number: caiso-123.
