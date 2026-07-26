@@ -239,3 +239,73 @@ ramp-capability` suffices (seconds; the full 46-datatype sweep is not needed), a
 `pjm_da_virtual_bids` hard-fails on a fresh container without the gitignored raw feed.
 
 Next number: pjm-121.
+
+## 2026-07-25 — pjm-121: the measured CC_LIKE mid-curve belt closes C3a — first all-pass PJM determination (CALIBRATED, 10/10); level-form arm REFUTED without a solve; dispersion lane unchanged
+
+**Task.** Close C3a-2025 (−10.7%, the sole open gate on keeper
+`2026-07-24-pjm-119-overlay-restore`). **Outcome: candidate keeper
+`2026-07-25-pjm-121-cc-belt` (bundle `results/calibration/pjm121_ccbelt`) scores
+CALIBRATED, 10/10 criteria PASS** — PJM's first all-pass determination.
+`keepers.json` is owner-only and untouched; the promotion is flagged, not made.
+Full write-up: `docs/FINDING-pjm121-ccbelt-c3a-close-2026-07.md`.
+
+**1. The lever — one rule-19 scope flag, zero new free parameters.**
+`pjm_offer_midcurve_segments: ("LONG_RUN",) → ("LONG_RUN", "CC_LIKE")`, handing
+the CC_REGULAR econ tranches to the already-frozen measured mid-curve surface
+(`pjm_offer_midcurve_condbinned.json`) at the same P1-only `mc_bid_adjust` seam,
+same floor-only semantics, same VOLL cap as the LONG_RUN scope live since
+pjm-104 (264 → 461 priced rows). This is the pjm-108 lever, rejected then on C1
+(8.52 TWh CC displacement) — re-tested because the base changed: the pjm-105
+symmetric-net virtuals removed the one-sided phantom demand, pjm-119 restored
+the east cut/measured limits, pjm-118 added the net-revenue margin. On the
+current base C1 is clean: 16/16 gated rows, free 12/12. C3a: 2023 +5.6 / 2024
+−2.5 / **2025 −9.3** (model $41.53 vs actual $45.80 rt_lw). All three mid-merit
+segments are now measured-owned (CT_FAST pjm-103, LONG_RUN pjm-104, CC_LIKE
+here); CC peak rungs stay fitted-owned (rule 19 by replacement).
+
+**2. HONEST SCOPE — a level effect, not the dispersion repair.** Stratified on
+the pjm-120 bins, +$0.254 of the +$0.35 2025 gain (73%) comes from the two
+CHEAP strata the model already over-priced (0-25 +1.965→+2.015, 25-50
++2.045→+2.249); the four tight strata contribute +$0.087 combined. The pjm-120
+dispersion compression is intact. The gate closed on a legitimate measured
+mechanism — not a fitted adder — but it must never be reported as the
+dispersion fix (rule 1).
+
+**3. Level-form arm REFUTED without spending a solve.** The measured-ladder
+LEVEL form (bid SET to the measured level, signed markup — the
+`docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §A.1 step-3 construction) is
+implemented default-off behind `ScenarioConfig.pjm_offer_midcurve_level_segments`
+(six regression tests, `tests/test_pjm_offer_midcurve_level_form.py`).
+`scripts/probes/pjm121_level_form_precheck.py` ran the real builder on the real
+fleet/offer arrays with a pre-registered kill criterion: level CC_LIKE LOWERS
+the CC econ bids −$8.76/MWh MW-weighted (87.5% of row-hours cheaper) and
+NARROWS the offer spread in every net-load bin (p90−p10: 23.21→19.65,
+33.70→24.27, 33.45→24.57, 20.84→18.23), where the floor form widens all four.
+A level-lowering lever cannot close a dispersion gap — killed pre-LP. Cause:
+the model's CC econ rows sit at within-plant shares where the measured ladder
+is flat/cheap; the measured steep belt (s0.95–0.99) lands on the CC PEAK rows
+the mechanism excludes by design. Kept in the codebase default-off as the
+correct construction for a fleet whose fitted bands sit BELOW measured.
+
+**4. New probe — who sets the price.** `scripts/probes/pjm121_marginal_decomp.py`:
+on the 2025 keeper baseline **COAL sets 38–80% of the price in EVERY actual-price
+stratum** (the measured LONG_RUN corpus caps coal at ~8.6× gas ≈ $36, yet coal is
+marginal in strata clearing $66–252) and **CC_REGULAR is essentially never
+marginal (0–1%)** despite 33–50 GW dispatched. In the 50-100 stratum the model
+carries 15.6 GW idle CT_PEAKER with only 1.8 GW within $10 of the dual. The open
+root cause stays where pjm-120 put it: reserve/LP supply-side tightness (G-20b /
+ERCOT-G-22), 38.1 GW deliverable 10-min ramp vs a ~3.7 GW requirement.
+
+**Not re-opened** (closed by measurement): the level-form CC ladder (§3), a
+CT_FAST HR-multiplier reprice (pjm-101/102 over-expression; CT_FAST is rule-19
+owned by the pjm-103 start-cost amortization and a `mc_base`-anchored floor
+would STACK with the startup markup), `gas_offer_margin_anchor` (pjm-120 §1),
+reserve-product coverage (pjm-120 §3 — the dual never reaches $300).
+
+**Provenance note.** The pjm-121 container was archived before its artifacts
+landed; the scored verdict evidence (metrics.json + registry sidecar + the
+pre-check probe) merged as PR #2897, and the remaining artifacts — the
+level-form mechanism + tests, this entry, and the byte-faithful bundle re-solve
+per the FINDING doc's recipe — were recreated and landed by pjm-122.
+
+Next number: pjm-122.
