@@ -135,6 +135,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # reserve-eligibility flags above); an armed run enters the key as a
     # distinct scenario.
     "nyiso_ordc_measured_step_span",
+    # Daily-resolution dual-fuel oil-parity cap (nyiso-76 P2). GATED /
+    # default-off and byte-identical for every existing config, so it is
+    # dropped from the hash at its default; an armed run enters the key as a
+    # distinct scenario.
+    "dual_fuel_oil_daily_parity",
     "ercot_thermal_dam_availability_hourly",
     "ercot_thermal_dam_availability_plant",
     # ERCOT-110 coal class-SCOPE switch of the same measured-DAM mechanism.
@@ -7088,6 +7093,34 @@ class ScenarioConfig:
     # marginal gas). See docs/multi-iso/nyiso-data-audit.md (P13).
     dual_fuel_switching: bool = False
 
+    dual_fuel_oil_daily_parity: bool = False  # GATED, default-OFF
+    # Tier 3 (calibration) — DAILY resolution for the dual-fuel oil-parity cap
+    # (nyiso-76 P2). A GRANULARITY fix, not a level change (rule 1 [R-STRUCT],
+    # rule 14 [R-ACCURATE]): the cap above is the measured EIA-923 Petroleum
+    # receipt, which is MONTHLY, so it is a flat plateau across every day of
+    # the month — while the gas side of the same min() comparison is already
+    # DAILY (the hub-basis overlay, gas_daily_shape_factors). On a NYISO cold
+    # day the delivered gas price spikes into a monthly-flat oil cap and the
+    # ~16.5 GW of downstate dual-fuel capacity pins there: 120 of the 744
+    # Jan-2025 hours clear on that flat cap, so the polar-vortex peak cannot
+    # form (docs/handoffs/nyiso-overrun-underrun-2026-07.md §2/§6). When on,
+    # data.fuel.oil_daily_shape_factors shapes the monthly series with the
+    # measured EIA daily New York Harbor ULSD spot
+    # (data/raw/oil-prices/ny_harbor_ulsd_daily.csv,
+    # scripts/data/fetch_ny_harbor_distillate_daily.py) — the free daily
+    # benchmark for the exact product a NY dual-fuel tank holds (NYSDEC 6 NYCRR
+    # Part 225-1 / ECL §19-0325 cap NY distillate at 15 ppm sulfur).
+    # MEAN-PRESERVING within every month by construction (each day's factor is
+    # the trade-date staircase divided by the month's own calendar-day
+    # staircase mean), so the delivered LEVEL stays the EIA-923 receipt — which
+    # alone carries transport, storage and distributor margin that a FOB cargo
+    # quote does not — and only the within-month profile moves. Adds no
+    # mechanism (rule 19: it re-grains the cap dual_fuel_switching already
+    # applies) and no tuned value (rule 5). Rule-13 admissible: forward monthly
+    # level x daily shape is exactly the forecast construction. Requires
+    # dual_fuel_switching; inert without it. Default off, byte-identical when
+    # off (and when the daily series is absent, which resolves to all-ones).
+
     # Tier 3 (calibration) — thermal availability source. "statistical"
     # (default) builds coal/CC availability from the seasonal WEFOR/POF model;
     # "historic" additionally overlays actual ERCOT outages (coal/CC plants,
@@ -8460,6 +8493,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_west_gas_delivered_floor": 3,
     "gas_hub_basis_daily": 3,
     "dual_fuel_switching": 3,
+    "dual_fuel_oil_daily_parity": 3,
     "dual_fuel_oil_reattribution": 3,
     "outage_source": 3,
     "unit_outage_short_windows": 3,

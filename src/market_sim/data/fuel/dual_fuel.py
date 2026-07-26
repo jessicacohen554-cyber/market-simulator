@@ -11,13 +11,105 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 
 from market_sim.config.constants import OIL_PRICE_PER_MMBTU
+from market_sim.config.paths import OIL_PRICES_DIR
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FleetArrays
 
-from ._shared import _GAS_FUEL_IDX, _expand_monthly_to_hourly, _pkg_ns, logger
+from ._shared import (
+    _DAYS_IN_MONTH,
+    _GAS_FUEL_IDX,
+    _expand_monthly_to_hourly,
+    _pkg_ns,
+    logger,
+)
 from .trajectories import resolve_annual_oil_price
+
+#: Measured EIA daily New York Harbor ULSD spot ($/gal), fetched by
+#: ``scripts/data/fetch_ny_harbor_distillate_daily.py``. Used ONLY for its
+#: within-month shape (see :func:`oil_daily_shape_factors`); the delivered
+#: level stays the monthly EIA-923 receipt, which alone carries transport,
+#: storage and distributor margin that a FOB cargo quote does not.
+NY_HARBOR_ULSD_DAILY_PATH: Path = OIL_PRICES_DIR / "ny_harbor_ulsd_daily.csv"
+
+_ULSD_DAILY_DATED_CACHE: dict[Path, dict[int, dict[int, dict[int, float]]]] = {}
+
+
+def _ny_harbor_ulsd_daily_dated(
+    path: Path | None = None,
+) -> dict[int, dict[int, dict[int, float]]]:
+    """Return ``{year: {month: {day-of-month: $/gal}}}`` NY Harbor ULSD spot.
+
+    The petroleum sibling of
+    :func:`~market_sim.data.fuel.hubs._transco_z6_daily_dated`: each EIA
+    trading-day quote keyed by its true calendar date, so the daily overlay
+    places every print where it actually occurred. Missing file → ``{}``
+    (the consumer then resolves to a flat, no-shape series). Cached per path.
+    """
+    resolved = Path(path) if path else NY_HARBOR_ULSD_DAILY_PATH
+    if resolved in _ULSD_DAILY_DATED_CACHE:
+        return _ULSD_DAILY_DATED_CACHE[resolved]
+    out: dict[int, dict[int, dict[int, float]]] = {}
+    if resolved.exists():
+        frame = pd.read_csv(resolved, parse_dates=["date"]).sort_values("date")
+        for r in frame.itertuples():
+            out.setdefault(r.date.year, {}).setdefault(r.date.month, {})[r.date.day] = (
+                float(r.ny_harbor_ulsd_usd_gal)
+            )
+    _ULSD_DAILY_DATED_CACHE[resolved] = out
+    return out
+
+
+def oil_daily_shape_factors(
+    year: int, hours: int, path: Path | None = None
+) -> np.ndarray:
+    """Return ``(hours,)`` within-month daily distillate-price shape factors.
+
+    The petroleum analogue of
+    :func:`~market_sim.data.fuel.hubs.gas_daily_shape_factors`, and built by
+    the identical construction: each measured NY Harbor ULSD spot quote sits on
+    its true trade date, non-trading days (weekends / holidays) carry the last
+    trading day's value forward as a staircase (never an interpolation across
+    the gap), and each calendar day's factor is that staircase value divided by
+    the month's own calendar-day staircase mean. Multiplying the correctly
+    levelled monthly oil series by these factors therefore adds the real
+    intra-month distillate swing while leaving every monthly mean EXACTLY
+    unchanged — mean preservation holds by construction, not by a post-hoc
+    renormalization. A month with no quotes resolves to all-ones (no shape).
+
+    Why the delivered level must stay monthly (rule 14 [R-ACCURATE]): the
+    EIA-923 receipt is a *delivered* price — it carries transport, storage and
+    the distributor's margin — while the EIA spot is a FOB New York Harbor
+    cargo quote. Their levels are not interchangeable and the spot must never
+    replace the receipt; what the spot uniquely supplies, and the monthly
+    receipt structurally cannot, is which days of the month were dear. This is
+    also exactly the construction a forecast would use (a forward monthly level
+    times a daily shape), so it is rule-13 admissible rather than
+    backcast-only.
+    """
+    factors = np.ones(hours, dtype=float)
+    dated = _pkg_ns()._ny_harbor_ulsd_daily_dated(path).get(year)
+    if not dated:
+        return factors
+    daily = _pkg_ns()._trade_date_staircase(dated, year)  # (365,) true-date staircase
+    if daily is None:
+        return factors
+    hour = 0
+    day0 = 0  # cumulative day-of-year offset of the month on the non-leap clock
+    for month_idx, n_days in enumerate(_DAYS_IN_MONTH):
+        month_hours = n_days * 24
+        if dated.get(month_idx + 1) and hour < hours:
+            seg = daily[day0 : day0 + n_days]
+            mean = float(seg.mean())
+            if mean > 0:
+                day_factor = seg / mean
+                shaped = np.repeat(day_factor, 24)[: max(0, hours - hour)]
+                factors[hour : hour + len(shaped)] = shaped
+        hour += month_hours
+        day0 += n_days
+    return factors
 
 
 def dual_fuel_oil_price_series(
@@ -35,6 +127,17 @@ def dual_fuel_oil_price_series(
     default (:data:`~market_sim.config.constants.OIL_PRICE_PER_MMBTU`) in
     backcast mode / years with no F923 data at all — keeping the dual-fuel
     parity price consistent with a plain oil unit's price in the same year.
+
+    With ``config.dual_fuel_oil_daily_parity`` on, the resulting monthly
+    plateau is shaped to DAILY resolution by :func:`oil_daily_shape_factors` —
+    mean-preservingly, so every monthly delivered level is untouched and only
+    the within-month profile changes. This is a granularity fix, not a level
+    change: the gas side of the same min() comparison is already daily (the
+    hub-basis overlay), so a monthly-FLAT oil cap pins ~16.5 GW of downstate
+    NYISO dual-fuel capacity at one constant price on exactly the cold days
+    the daily gas price spikes, truncating the winter peak (120 of 744
+    Jan-2025 hours cleared on that flat cap). Default off, byte-identical when
+    off. See docs/handoffs/nyiso-overrun-underrun-2026-07.md §2/§6.
     """
     fallback = (
         resolve_annual_oil_price(config, year)
@@ -43,9 +146,13 @@ def dual_fuel_oil_price_series(
     )
     monthly = _pkg_ns().iso_monthly_oil_prices(config, year, monthly_costs_path)
     if monthly is None:
-        return np.full(config.hours, fallback, dtype=float)
-    filled = np.where(np.isnan(monthly), fallback, np.asarray(monthly, dtype=float))
-    return _expand_monthly_to_hourly(filled, config.hours)
+        hourly = np.full(config.hours, fallback, dtype=float)
+    else:
+        filled = np.where(np.isnan(monthly), fallback, np.asarray(monthly, dtype=float))
+        hourly = _expand_monthly_to_hourly(filled, config.hours)
+    if getattr(config, "dual_fuel_oil_daily_parity", False):
+        hourly = hourly * _pkg_ns().oil_daily_shape_factors(year, config.hours)
+    return hourly
 
 
 def apply_dual_fuel_pricing(
