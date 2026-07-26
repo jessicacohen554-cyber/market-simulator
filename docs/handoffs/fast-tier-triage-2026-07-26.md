@@ -330,6 +330,32 @@ the mark (with the dictionary regeneration from §2 keeping the file green).
    design); flipping to blocking with open escalations would break every
    lane's PRs.
 
-## 8. Final numbers (filled after the fix commits)
+## 8. Final numbers (after the fix commits, rebased onto main `64d06c4`)
 
-<<FILLED-AFTER-RERUN>>
+```
+26 failed, 5153 passed, 16 skipped, 44 deselected, 8 xfailed, 60 xpassed -> 0,
+1 collection error, 228 subtests passed, 11m56s
+```
+
+Baseline → final: **141 + 2 + 60 → 26 + 1 + 0.** Every remaining red is an
+open escalation from §4 or a §6 observation — nothing unclassified:
+
+| Cluster | Count |
+|---|---|
+| D1 caiso-117 belly cap (collection error) | 1 error |
+| D2 ff-g1 `transmission_expansion_enabled` (unapplied patch) | 4 |
+| D3 ercot-93 steam-RT (rotted patch) | 8 |
+| D4 orchestrator shim conversion (7 shims + flag-registry seam) | 8 |
+| D5 NEISO bin-artifact drift (`4fb54b53` basis) | 1 |
+| §6.2 order-dependent pollution family (test_fleet ×3, derive_coal_sigmoid, and — new on the rebased tree — `test_outages::NEISOFloorOutageExemptTest`, which also passes in isolation) | 5 |
+
+The §6.1 perf test (`test_full_year`, 30 s budget) PASSED on the final run —
+consistent with slow-host noise at the margin, kept as an observation. The 8
+xfailed = the 7 legacy 2026-07-05 marks (§6.3) + this session's one cited B
+(the W3-P1 basis-drift guard). The 44 deselected = the 40 baseline + the 4
+`integration`-marked ff-battery walker tests.
+
+**Flag decision: `continue-on-error` STAYS** — the tier is not green (27 red,
+all owner-decision escalations). Flipping to blocking now would break every
+lane's PRs on failures no lane session is allowed to fix unilaterally. The
+ci.yml comment is corrected to these measured numbers.

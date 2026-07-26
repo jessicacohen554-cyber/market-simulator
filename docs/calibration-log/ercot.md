@@ -336,6 +336,16 @@ high-bin ladder. Machinery MERGED default-OFF (`git apply`
 `docs/handoffs/ercot93-core-mechanism.patch`; 11 steam-RT tests pass), keeper
 UNCHANGED (`2026-07-20-ercot91-seasonal-drag-fullspan`). Next number: ercot-94.
 
+*(Correction 2026-07-26, fast-tier triage: the "Machinery MERGED" sentence
+above is FALSE for main — the `git apply` step was never run on main (no apply
+commit exists in the scenarios.py history; the fields are absent at HEAD), the
+ercot-94 handoff §"applies cleanly" note is obsolete, and the patch has since
+ROTTED (its `src/market_sim/data/fleet.py` target became the `data/fleet/`
+package in wave 3H; the scenarios.py hunk context drifted). The 11 steam-RT
+tests fail on main as orphans. Escalation D3 in
+`docs/handoffs/fast-tier-triage-2026-07-26.md`: owner decision between a hand
+port into `data/fleet/offer_surfaces.py` or recording the drop.)*
+
 ## 2026-07-21 — ERCOT-94 (season-offer-wall charter → measure + diagnose): the season-conditioned offer wall is REJECTED as the 2023-summer-LMP lever — it is a WINTER fix (fixes the ERCOT-93 cold-snap trip) but orthogonal to the blocker, which is an ORDC/reserve scarcity-pricing COLLAPSE (C3c tail); keeper UNCHANGED, no solve, no registration
 
 **Charter (owner reframe).** The lane goal was sharpened to "fix 2023 summer LMP".
