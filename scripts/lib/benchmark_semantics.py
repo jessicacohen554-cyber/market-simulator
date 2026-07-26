@@ -92,10 +92,24 @@ EIA930_GAS_FOLDS_GEO_BIOMASS: frozenset[str] = frozenset({"CAISO"})
 # anchor and are unchanged. (calibration_verdict names these CEMS_GAS_ANCHOR_*.)
 EIA930_NG_CELL_CORRUPT: frozenset[str] = frozenset({"CAISO"})
 
-# First VINTAGE year the corruption contaminates (CISO onset ~2024-05): the
-# hourly gas actual (fuelRows / C4) switches to the CEMS+cogen basis from this
-# vintage; earlier years keep 930 for continuity — the two agree pre-onset.
-EIA930_NG_CORRUPT_ONSET: dict[str, int] = {"CAISO": 2024}
+# First VINTAGE year the corruption contaminates: the hourly gas actual
+# (fuelRows / C4) switches to the CEMS+cogen basis from this vintage; earlier
+# years keep 930.
+#
+# CAISO 2024 -> 2023 (owner ruling 2026-07-26, caiso-121; evidence
+# results/calibration/FINDING-caiso115-c4-freshlook-and-separability-2026-07-23.md
+# §"2023 fail is a BENCHMARK-BASIS artifact" + the caiso-121 three-source level
+# test). The original 2024 onset kept 2023 on the 930 cell "for continuity — the
+# two agree pre-onset"; they do not. On the SAME two independent measured
+# sources that condemned the cell for 2024+ (FINDING-caiso-c2c4-bench-basis-
+# 930ng-2026-07-12.md §5.2), CAISO 2023 grid gas is EIA-923 67.20 TWh and CAMPD
+# CEMS + non-CEMS cogen 68.74 TWh — agreeing within 2.3% — while the
+# fold-in-deflated 930 NG cell reads 74.23 TWh: +10.5% over 923, +8.0% over
+# CEMS, far outside the 3% VINTAGE_RECONCILE_FRAC deadband. Deflated-930 over
+# EIA-923 runs +10.5% (2023) -> +21.1% (2024) -> +32.8% (2025), so the
+# contamination is a monotone ramp and any onset year is a threshold on a
+# continuum, not a step at 2024-05.
+EIA930_NG_CORRUPT_ONSET: dict[str, int] = {"CAISO": 2023}
 
 
 def gas_foldin_deflation(classfull: dict, e930: dict, iso: str) -> float:
