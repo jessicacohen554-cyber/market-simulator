@@ -5,6 +5,15 @@
 **Diagnosis it implements:** `results/calibration/FINDING-nyiso-stgas-underrun-diagnosis-2026-07-23.md` ·
 **Status:** CHARTER ONLY — no mechanism code, no config flag, no intake performed in this
 session. Nothing here is authorized to run until the data question in §3 is answered.
+**§3 UPDATE (2026-07-26, nyiso-82 session):** the Step-1 search is DONE — see
+`docs/handoffs/nyiso-incity-instrument-survey-2026-07.md`. Zone J: documented-NO supported
+(operative Con Ed procedure parameters are non-public, invisible even to the MMU) UNLESS
+the owner adjudicates that the closed "reserve" C3a lever — closed as a *pricing* lever —
+may be reopened as a *commitment obligation* driver on the published J/K locational
+reserve ladders (the one instrument that passes rule 13 outright). Zone K: one live
+thread — retrieve the current login-walled ARR table (the 2008 vintage's ARR 22 proves
+the units-in-service genre for Northport/Port Jefferson) — before the same NO is recorded.
+Mechanism work remains UNAUTHORIZED pending those two items.
 
 ## 0. Owner intent in one paragraph
 
