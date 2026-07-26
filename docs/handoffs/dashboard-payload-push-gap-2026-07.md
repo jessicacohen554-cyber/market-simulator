@@ -185,6 +185,24 @@ superseded by the all-pass pjm-121 keeper), prune the sidecar via
 validation run carries governance weight (rule 22 validation tier); if
 re-solved it needs `--holdout-authorized` and a session log entry.
 
+### Owner decisions (2026-07-26, same session)
+
+- **PRUNED (8):** the pjm netrev lineage (pjm-116, pjm-117, pjm-118,
+  pjm-119 — superseded by pjm-121) and the four probes (caiso-112,
+  caiso-114, neiso-62-opcap-a0, neiso-62-opcap-a1). Sidecars deleted plus
+  their four surviving bundle dirs (`caiso112_export_floor_B`,
+  `caiso110_endog_B`, `pjm_netrev_retune`, `pjm119_overlay_restore`),
+  mirroring the three-store retention semantics — verified first that no
+  payload ever existed, no bundle is shared by another registration, and
+  none of the ids is in `_protected_run_ids()`. Their adjudications remain
+  in the FINDING docs and per-ISO calibration logs.
+- **AUTHORIZED:** a NEISO 2022 re-solve of
+  `2026-07-23-neiso-2022-holdout-validation` (`--holdout-authorized`,
+  rule 22 validation tier — this entry is the session log of that
+  authorization). It stays the SINGLE tracked id in
+  `known_unsynced_keepers.py` until its payload lands; parity now reads
+  "OK (70 runs checked, 1 known-unsynced tolerated)".
+
 ### Pack-size measurements (2026-07-26)
 
 No 413 was hit and no ceiling was found this session — its pushes were
