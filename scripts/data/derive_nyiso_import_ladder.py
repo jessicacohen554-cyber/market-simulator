@@ -50,7 +50,13 @@ Usage:
 
 import json
 
-ACTUAL = json.load(open("data/raw/_validation-source/actual_lmp.json"))
+from market_sim.config.paths import CALIBRATION_DIR
+
+# Resolved through the registry (config/paths.py), not a CWD-relative literal:
+# the old string form only worked when the process ran from the repo root, and
+# it failed at MODULE IMPORT time (this load is deliberately import-time — the
+# whole derivation reads from it).
+ACTUAL = json.load(open(CALIBRATION_DIR / "actual_lmp.json"))
 
 YEARS = [2023, 2024, 2025]
 
