@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-20-nyiso-66-resync-base",
+  "run_id": "2026-07-26-nyiso-81-floor-rederive",
   "iso": "NYISO",
-  "label": "nyiso 66 resync base",
+  "label": "nyiso 81 floor rederive",
   "target_years": [
     2023,
     2024,
@@ -16,12 +16,10 @@
   "rubric_version": 2.7,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_shape, price_tail"
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_tail"
   ],
   "notes": [
-    "C8 2023 ST_GAS: grounded above budget \u2014 41.4% forced (4.9792 of 12.0138 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.95 (\u22650.8) & off-peak CV ratio 0.524 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
-    "C8 2024 ST_GAS: grounded above budget \u2014 50.5% forced (6.7331 of 13.3265 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.95 (\u22650.8) & off-peak CV ratio 0.72 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
-    "C8 2025 ST_GAS: grounded above budget \u2014 40.6% forced (6.5707 of 16.1941 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.961 (\u22650.8) & off-peak CV ratio 0.641 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+    "C8 2024 ST_GAS: grounded above budget \u2014 36.2% forced (3.9291 of 10.8646 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.948 (\u22650.8) & off-peak CV ratio 0.948 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
   ],
   "criteria": {
     "fuelmix": {
@@ -42,7 +40,7 @@
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
@@ -89,10 +87,10 @@
   },
   "grade_summary": {
     "scored": 10,
-    "target_grade": 6,
+    "target_grade": 7,
     "commercial_grade": 1,
     "ledgered": 0,
-    "fails": 3
+    "fails": 2
   },
   "free_class_score": {
     "iso": "NYISO",
