@@ -507,6 +507,7 @@ def run_year(
     ercot_thermal_dam_availability: bool = False,
     ercot_thermal_dam_availability_hourly: bool = False,
     ercot_thermal_dam_availability_plant: bool = False,
+    ercot_wind_zone_shape: bool = False,
     ercot_noncampd_plant_availability: bool = False,
     ercot_storage_capability_measured: bool = False,
     ercot_online_capacity_envelope_measured: bool = False,
@@ -810,6 +811,13 @@ def run_year(
         # the class-HOUR total is unchanged (redistribution; ScenarioConfig
         # field docstring has the full note). Requires the class-HOUR flag.
         config = config.with_overrides(ercot_thermal_dam_availability_plant=True)
+    if ercot_wind_zone_shape:
+        # ERCOT-113 per-zone wind SHAPE: each ERCOT zone gets its own MERRA-2
+        # reanalysis wind shape instead of one ISO-wide profile (ScenarioConfig
+        # field docstring has the full provenance note). Purely spatial — the
+        # ISO aggregate is preserved exactly every hour, so only WHICH ZONE
+        # holds the wind moves. ERCOT-gated in the renewable loader.
+        config = config.with_overrides(ercot_wind_zone_shape=True)
     if ercot_noncampd_plant_availability:
         # Measured CAMPD-blind per-plant availability (60-Day DAM disclosure
         # live HSL + EIA-923 zero months; ScenarioConfig field docstring has the
