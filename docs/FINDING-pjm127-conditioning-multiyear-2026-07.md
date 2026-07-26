@@ -83,7 +83,25 @@ Two honest wrinkles, stated rather than smoothed:
 
 ## 3. The pooled three-year run (the hard-guard run)
 
-<!-- PENDING: filled from pjm127_conditioning_precheck_3yr.json -->
+One pass over the full 36-month corpus, per-year within-year vs within-season
+ranking, gaps evaluated on the year-pooled histograms, `--skip-fidelity` NOT
+passed — the guard ran at full strength and passed (worst arm-A deviation
+**9.2e-13** at CT_FAST/2024/bin0/s0.99, tol 0.05; segmentation 1,064 CT_FAST /
+883 CC_LIKE / 216 LONG_RUN units).
+`results/calibration/pjm127_conditioning_precheck_3yr.json`:
+
+| segment | A_frozen | B_season | flag | C_fixedpop |
+|---|---|---|---|---|
+| CT_FAST | +5.850 | **−0.600** | **FLIP** | +5.850 (HOLDS) |
+| CC_LIKE | +0.200 | **−0.300** | **FLIP** | +0.200 (HOLDS) |
+| LONG_RUN | +0.250 | **−0.050** | **FLIP** | +0.250 (HOLDS) |
+
+**Pooled verdict: ARTIFACT, 3/3 segments FLIP** — on the corpus the frozen
+surface was actually derived from, every physics segment's tightest-bin
+inversion reverses sign under within-season ranking. The pooled result is
+stronger than any single year because the year-pooled middle bins accumulate
+three winters of expensive offers while the pooled bin3 stays ~97% summer
+(§2), so the segregation arithmetic compounds.
 
 ## 4. Consequences
 
@@ -114,9 +132,9 @@ Unchanged from pjm-126, now standing on the full training window:
   (`cee35d5`) while the probes were still running.
 * **Scope limit** — the commitment-status half of the Lane 2 hypothesis
   remains untested. Arm C stays effectively vacuous in every year — 731 of
-  737 units (2023), 712 of 715 (2024) and 711 of 711 (2025) offer in all
-  four bins, so arm C reproduces arm A's gap table to three decimals in all
-  nine rows. Testing commitment status needs the DA *awards* side, which
+  737 units (2023), 712 of 715 (2024), 711 of 711 (2025) and 2,154 of 2,163
+  pooled offer in all four bins, so arm C reproduces arm A's gap table to
+  three decimals in every row. Testing commitment status needs the DA *awards* side, which
   the offer corpus does not carry — that is pjm-128, not this probe.
 
 ## 6. Reproduction

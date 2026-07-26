@@ -74,7 +74,10 @@ Offer/energy-stack lanes:
   bin" inversion is a **conditioning artifact**, reversing sign under
   within-season net-load ranking (CT_FAST +10.00 → −0.85, CC_LIKE +0.35 →
   −0.20). See `docs/FINDING-pjm126-midcurve-conditioning-artifact-2026-07.md`
-  and the Lane 2 update in §3.
+  and the Lane 2 update in §3. **CONFIRMED multi-year by pjm-127 (2026-07-26):
+  ARTIFACT in 2023 (3/3 segments flip), 2024 (2/3), 2025 (reproduced
+  identically), and pooled 3-yr with the fidelity hard-guard (3/3 flip,
+  9.2e-13)** — `docs/FINDING-pjm127-conditioning-multiyear-2026-07.md`.
 
 **Read that list against the bar.** PJM's remaining residual is already
 characterized the way NEISO's and NYISO's are: the >$200 tail is owned by the
@@ -236,7 +239,26 @@ just as much as a positive one.** Do not chase the number.
 > are **shared with the frozen pjm-99 top-of-curve surface**, so re-conditioning
 > one raises the scope question for the other.
 >
-> Scope: 2025 only; 2023/2024 corpus fetching for confirmation.
+> ~~Scope: 2025 only; 2023/2024 corpus fetching for confirmation.~~
+>
+> **UPDATE 2026-07-26 (pjm-127): the multi-year confirmation is DONE and the
+> owner memo is WRITTEN — the lane now waits on the owner.**
+> `docs/FINDING-pjm127-conditioning-multiyear-2026-07.md`: ARTIFACT in 2023
+> (**3/3 segments flip**), 2024 (2/3 — CC_LIKE flips, CT_FAST narrows 77%),
+> 2025 (pjm-126's run reproduced **identically** on the re-fetched corpus),
+> and the pooled 3-year hard-guard run (**3/3 flip**, worst fidelity
+> deviation 9.2e-13). The mechanism is starker in the confirmation years:
+> the annual top-3% bin holds 3 winter hours in 2023 and **1** in 2024.
+> The admissibility memo
+> (`docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md`) was
+> pre-registered in git before the 2023/2024 numbers were seen; it argues
+> the definitional case from market structure only, settles scope for BOTH
+> surfaces (one definitional vintage, coherent solve-time seam change,
+> vintage guard), keeps the pjm-126 season boundaries verbatim, and
+> pre-registers the staged A/B (no-LP K1-gradient pre-check before any
+> solve) with the level-shift refutation signature that would close the
+> family for good. Arm C stayed vacuous in every year (≥99.2% of units
+> offer in all four bins) — the commitment-status half is still pjm-128.
 
 Is the tightest-bin inversion in `pjm_offer_midcurve_condbinned.json` a real
 property of PJM offers, or an artifact of the derive's conditioning? Evidence
@@ -285,16 +307,22 @@ and this lane closes — **either outcome is ledger progress.**
    Lane 2 update above). The conditioning question is answered; the *lane* is
    NOT closed by answering it — the opposite. The measured surface is a live
    dispersion lever again, so the remaining work is:
-   a. **pjm-127 — multi-year confirmation** of the ARTIFACT verdict on
-      2023/2024 (corpus fetching; 2025 is fidelity-exact and the CT_FAST flip is
-      +10.00 → −0.85, so a reversal is implausible but owed).
-   b. **pjm-128 — the commitment-status half**, untested here because arm C was
-      vacuous (711/711 units offer in all four bins). Needs the DA *awards*
-      side, not the offer corpus.
-   c. **The re-derive decision itself — owner-gated.** A season-conditioned
-      surface is a definitional change and admissible on that basis (rule 20),
-      but it needs its own admissibility memo, and the edges are shared with the
-      frozen pjm-99 top-of-curve surface, so the memo must settle scope for both.
+   a. ~~**pjm-127 — multi-year confirmation**~~ — **DONE 2026-07-26, ARTIFACT
+      confirmed in all three years and pooled (no solve spent).** See the Lane
+      2 update above and
+      `docs/FINDING-pjm127-conditioning-multiyear-2026-07.md`.
+   b. **pjm-128 — the commitment-status half**, untested because arm C is
+      vacuous in every year (≥99.2% of units offer in all four bins). Needs
+      the DA *awards* side, not the offer corpus.
+   c. **The re-derive decision itself — owner-gated, and the memo now exists:**
+      `docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md` (pjm-127b,
+      pre-registered before the confirmation numbers landed). It settles the
+      definitional case, scope for BOTH surfaces, the fixed season
+      definition, the staged pre-registered A/B, and the refutation
+      signature. **The lane waits on this decision.** If authorized, the
+      staged sequence in memo §4 runs (no-LP pre-check first, then the A/B
+      chain, rules 12/14/16); if declined, the lever is formally blocked on
+      an owner decision and the ledger records it as such.
 4. **Frontier is NOT ready.** Lane 1 is complete, but Lane 2 has re-opened a
    named admissible mechanism that has not been tried — precisely what the bar
    excludes. The ledger is closer to a *repair* than it was, and further from a

@@ -19,16 +19,16 @@ three-year gap table lives in the pjm-127 finding. Findings:
 `docs/FINDING-pjm126-midcurve-conditioning-artifact-2026-07.md`,
 `docs/FINDING-pjm127-conditioning-multiyear-2026-07.md`.
 
-> **Status at first commit (pre-registration).** This memo is committed while
-> the pjm-127a 2023/2024 probes are still running, so that §3 (the season
-> definition) and §4 (the A/B expectations and refutation signature) are in
-> git BEFORE any multi-year result is seen — the lane's standing
-> pre-registration discipline. **The memo is conditional:** if either 2023 or
-> 2024 contradicts the 2025 ARTIFACT verdict, the charter stops this lane at
-> the finding and this memo is withdrawn, not acted on. A follow-up commit
-> will replace this banner with the measured three-year confirmation (or the
-> withdrawal). Nothing in §1–§6 changes in response to the probe numbers —
-> that is the point of committing it now.
+> **Status (confirmation landed).** This memo was first committed (`cee35d5`,
+> merged to main) while the pjm-127a probes were still running, so §3 and §4
+> entered git before any multi-year result was seen. The confirmation has
+> since landed and is unambiguous: **ARTIFACT in 2023 (3/3 segments FLIP),
+> 2024 (2/3), 2025 (2/3, reproduced identically on the re-fetched corpus),
+> and on the pooled three-year corpus with the fidelity hard-guard (3/3
+> FLIP, worst deviation 9.2e-13)** —
+> `docs/FINDING-pjm127-conditioning-multiyear-2026-07.md`. Nothing in §1–§6
+> was changed in response to those numbers; this banner is the only edit.
+> The memo is live and awaits the owner's decision.
 
 ---
 
