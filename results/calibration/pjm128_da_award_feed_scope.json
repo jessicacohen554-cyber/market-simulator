@@ -1,0 +1,516 @@
+{
+  "probe": "pjm-128",
+  "step": "1 \u2014 data availability scope",
+  "question": "Does a PUBLIC unit-level PJM day-ahead award/commitment feed exist, such that the committed share of the offer population can be measured per net-load tightness bin?",
+  "admissibility_test": {
+    "A1_identity": "resolves an individual generating unit",
+    "A2_hourly_time": "hourly-or-finer time key",
+    "A3_award": "cleared/awarded/committed quantity or commitment status",
+    "rule": "all three required; 2-of-3 is a NEAR MISS"
+  },
+  "catalog_feed_count": 119,
+  "keyword_screened_feeds": [
+    {
+      "name": "act_sch_interchange",
+      "display_name": "Actual/Schedule Summary Report",
+      "category": "Imports and Exports",
+      "first_available": "2014-01-01T00:00:00",
+      "posting_frequency": "Weekly"
+    },
+    {
+      "name": "area_control_error",
+      "display_name": "Area Control Error",
+      "category": "System Information",
+      "first_available": null,
+      "posting_frequency": "Every 15 seconds"
+    },
+    {
+      "name": "day_inc_dec_utc",
+      "display_name": "Daily Cleared INCs, DECs and UTCs",
+      "category": "Bid and Offer Data",
+      "first_available": "2011-10-01T00:00:00",
+      "posting_frequency": "Daily"
+    },
+    {
+      "name": "day_gen_capacity",
+      "display_name": "Daily Generation Capacity",
+      "category": "Generation",
+      "first_available": "2012-01-01T00:00:00",
+      "posting_frequency": "Daily"
+    },
+    {
+      "name": "dasr_results",
+      "display_name": "Day-Ahead Scheduling Reserve",
+      "category": "Retired",
+      "first_available": "2008-06-01T00:00:00",
+      "posting_frequency": "Daily"
+    },
+    {
+      "name": "dispatched_reserves",
+      "display_name": "Dispatched Reserves",
+      "category": "Ancillary Services",
+      "first_available": null,
+      "posting_frequency": "Every 5 minutes"
+    },
+    {
+      "name": "energy_market_offers",
+      "display_name": "Energy Market Generation Offers",
+      "category": "Bid and Offer Data",
+      "first_available": "2017-11-01T00:00:00",
+      "posting_frequency": "Monthly"
+    },
+    {
+      "name": "mnt_efor",
+      "display_name": "Equivalent Forced Outage Rates - Monthly",
+      "category": "Generation",
+      "first_available": "2006-01-01T00:00:00",
+      "posting_frequency": "Monthly"
+    },
+    {
+      "name": "fivemin_marginal_emissions",
+      "display_name": "Five Minute Marginal Emission Rates",
+      "category": "Generation",
+      "first_available": null,
+      "posting_frequency": "Every 5 minutes"
+    },
+    {
+      "name": "gen_by_fuel",
+      "display_name": "Generation by Fuel Type",
+      "category": "Generation",
+      "first_available": "2016-01-01T00:00:00",
+      "posting_frequency": "Hourly"
+    },
+    {
+      "name": "gen_outages_by_type",
+      "display_name": "Generation Outage for Seven Days by Type",
+      "category": "Generation",
+      "first_available": "2015-05-26T00:00:00",
+      "posting_frequency": "Daily"
+    },
+    {
+      "name": "gen_specific_uplift_credit",
+      "display_name": "Generator Specific Uplift Credits",
+      "category": "Uplift",
+      "first_available": null,
+      "posting_frequency": "Monthly"
+    },
+    {
+      "name": "hourly_marginal_emissions",
+      "display_name": "Hourly Marginal Emission Rates",
+      "category": "Generation",
+      "first_available": "2023-01-01T00:00:00",
+      "posting_frequency": "Hourly"
+    },
+    {
+      "name": "hourly_emission_rates",
+      "display_name": "Hourly Total Emissions",
+      "category": "Generation",
+      "first_available": "2023-01-01T00:00:00",
+      "posting_frequency": "Hourly"
+    },
+    {
+      "name": "inst_dispatch_rates",
+      "display_name": "Instantaneous Dispatch Rates",
+      "category": "System Information",
+      "first_available": null,
+      "posting_frequency": "Every 15 seconds"
+    },
+    {
+      "name": "demand_response_uplift_credit",
+      "display_name": "Load Response Uplift Credits",
+      "category": "Uplift",
+      "first_available": null,
+      "posting_frequency": "Monthly"
+    },
+    {
+      "name": "ops_sum_prjctd_tie_flow",
+      "display_name": "Operations Summary - Projected Scheduled Tie Flow",
+      "category": "System Information",
+      "first_available": "2011-08-24T00:00:00",
+      "posting_frequency": "Daily"
+    },
+    {
+      "name": "ops_init_commit",
+      "display_name": "Operator Initiated Commitments",
+      "category": "Generation",
+      "first_available": "2019-10-01T00:00:00",
+      "posting_frequency": "Monthly"
+    },
+    {
+      "name": "rt_dispatch_reserves",
+      "display_name": "Real-Time Dispatched Reserves",
+      "category": "Ancillary Services",
+      "first_available": "2018-01-01T00:00:00",
+      "posting_frequency": "Daily On Business Days"
+    },
+    {
+      "name": "rt_scheduled_interchange",
+      "display_name": "Real-Time Scheduled Interchange",
+      "category": "Imports and Exports",
+      "first_available": "2011-08-17T00:00:00",
+      "posting_frequency": "Daily"
+    },
+    {
+      "name": "reg_prices",
+      "display_name": "Regulation Prices",
+      "category": "Ancillary Services",
+      "first_available": null,
+      "posting_frequency": "Every 5 minutes"
+    },
+    {
+      "name": "sync_pri_reserves_resources_list",
+      "display_name": "Reserve Subzone Resources",
+      "category": "Reference Data",
+      "first_available": "2022-10-01T00:00:00",
+      "posting_frequency": "Daily on Business Days"
+    },
+    {
+      "name": "sched_9_10_rates",
+      "display_name": "Schedule 9 rates",
+      "category": "Settlements",
+      "first_available": "2022-01-01T00:00:00",
+      "posting_frequency": "Monthly"
+    },
+    {
+      "name": "rt_and_self_ecomax",
+      "display_name": "Scheduled Generation",
+      "category": "Generation",
+      "first_available": "2017-10-01T00:00:00",
+      "posting_frequency": "Daily"
+    },
+    {
+      "name": "solar_gen",
+      "display_name": "Solar Generation",
+      "category": "Generation",
+      "first_available": "2019-01-01T00:00:00",
+      "posting_frequency": "Daily"
+    },
+    {
+      "name": "wind_gen",
+      "display_name": "Wind Generation",
+      "category": "Generation",
+      "first_available": "2011-01-01T00:00:00",
+      "posting_frequency": "Daily"
+    }
+  ],
+  "sampled_feeds": [
+    {
+      "feed": "ops_init_commit",
+      "total_rows_in_feed": 5855,
+      "rows_sampled": 5855,
+      "columns": [
+        "datetime_beginning_utc",
+        "datetime_beginning_ept",
+        "zone",
+        "economic_max_mw",
+        "reason"
+      ],
+      "criteria": {
+        "A1_identity": false,
+        "A1_columns": [],
+        "A2_hourly_time": true,
+        "A2_columns": [
+          "datetime_beginning_ept",
+          "datetime_beginning_utc"
+        ],
+        "A3_award": false,
+        "A3_columns": [],
+        "admits": false
+      },
+      "distinct_zone": 20,
+      "distinct_reason": [
+        "Constraint Management",
+        "System Wide Capacity",
+        "Voltage Support"
+      ]
+    },
+    {
+      "feed": "rt_and_self_ecomax",
+      "total_rows_in_feed": 744,
+      "rows_sampled": 744,
+      "columns": [
+        "datetime_beginning_utc",
+        "datetime_beginning_ept",
+        "rt_ecomax",
+        "conf_disclaimer",
+        "self_ecomax"
+      ],
+      "criteria": {
+        "A1_identity": false,
+        "A1_columns": [],
+        "A2_hourly_time": true,
+        "A2_columns": [
+          "datetime_beginning_ept",
+          "datetime_beginning_utc"
+        ],
+        "A3_award": false,
+        "A3_columns": [],
+        "admits": false
+      },
+      "conf_disclaimer_values": [
+        "Confidentiality Rules Prohibit Display",
+        "None"
+      ],
+      "rt_ecomax_disclosed_rows": 477,
+      "rt_ecomax_suppressed_frac": 0.3589
+    },
+    {
+      "feed": "rt_and_self_ecomax@2023-01",
+      "total_rows_in_feed": 720,
+      "rows_sampled": 720,
+      "columns": [
+        "datetime_beginning_utc",
+        "datetime_beginning_ept",
+        "rt_ecomax",
+        "conf_disclaimer",
+        "self_ecomax"
+      ],
+      "criteria": {
+        "A1_identity": false,
+        "A1_columns": [],
+        "A2_hourly_time": true,
+        "A2_columns": [
+          "datetime_beginning_ept",
+          "datetime_beginning_utc"
+        ],
+        "A3_award": false,
+        "A3_columns": [],
+        "admits": false
+      },
+      "conf_disclaimer_values": [
+        "Confidentiality Rules Prohibit Display",
+        "None"
+      ],
+      "rt_ecomax_disclosed_rows": 362,
+      "rt_ecomax_suppressed_frac": 0.4972
+    },
+    {
+      "feed": "day_gen_capacity",
+      "total_rows_in_feed": 744,
+      "rows_sampled": 744,
+      "columns": [
+        "bid_datetime_beginning_utc",
+        "bid_datetime_beginning_ept",
+        "eco_max",
+        "emerg_max",
+        "total_committed"
+      ],
+      "criteria": {
+        "A1_identity": false,
+        "A1_columns": [],
+        "A2_hourly_time": true,
+        "A2_columns": [
+          "bid_datetime_beginning_ept",
+          "bid_datetime_beginning_utc"
+        ],
+        "A3_award": true,
+        "A3_columns": [
+          "total_committed"
+        ],
+        "admits": false
+      }
+    },
+    {
+      "feed": "gen_specific_uplift_credit",
+      "total_rows_in_feed": 112181,
+      "rows_sampled": 50,
+      "columns": [
+        "uplift_credit_date",
+        "generator",
+        "zone",
+        "pnode_id",
+        "credit_category",
+        "uplift_credit",
+        "run_date_ept"
+      ],
+      "criteria": {
+        "A1_identity": true,
+        "A1_columns": [
+          "generator"
+        ],
+        "A2_hourly_time": false,
+        "A2_columns": [],
+        "A3_award": false,
+        "A3_columns": [],
+        "admits": false
+      },
+      "distinct_zone": 13,
+      "distinct_generator": 46
+    },
+    {
+      "feed": "da_reserve_market_results",
+      "total_rows_in_feed": 167400,
+      "rows_sampled": 50,
+      "columns": [
+        "datetime_beginning_utc",
+        "datetime_beginning_ept",
+        "locale",
+        "service",
+        "mcp",
+        "mcp_capped",
+        "as_req_mw",
+        "total_mw",
+        "as_mw",
+        "ss_mw",
+        "ircmwt2",
+        "dsr_as_mw",
+        "nsr_mw"
+      ],
+      "criteria": {
+        "A1_identity": false,
+        "A1_columns": [],
+        "A2_hourly_time": true,
+        "A2_columns": [
+          "datetime_beginning_ept",
+          "datetime_beginning_utc"
+        ],
+        "A3_award": false,
+        "A3_columns": [],
+        "admits": false
+      },
+      "distinct_locale": 2,
+      "distinct_service": 3
+    },
+    {
+      "feed": "sync_pri_reserves_resources_list",
+      "total_rows_in_feed": 881,
+      "rows_sampled": 50,
+      "columns": [
+        "subzone",
+        "resource_id",
+        "resource_name",
+        "resource_type",
+        "zone",
+        "effective_date",
+        "terminate_date"
+      ],
+      "criteria": {
+        "A1_identity": true,
+        "A1_columns": [
+          "resource_id",
+          "resource_name"
+        ],
+        "A2_hourly_time": false,
+        "A2_columns": [],
+        "A3_award": false,
+        "A3_columns": [],
+        "admits": false
+      },
+      "distinct_zone": 8,
+      "distinct_resource_name": 50
+    },
+    {
+      "feed": "day_inc_dec_utc",
+      "total_rows_in_feed": 5409,
+      "rows_sampled": 50,
+      "columns": [
+        "day_ahead_market_date",
+        "dec_mw",
+        "inc_mw",
+        "utc_mw"
+      ],
+      "criteria": {
+        "A1_identity": false,
+        "A1_columns": [],
+        "A2_hourly_time": false,
+        "A2_columns": [],
+        "A3_award": false,
+        "A3_columns": [],
+        "admits": false
+      }
+    },
+    {
+      "feed": "energy_market_offers",
+      "total_rows_in_feed": 2618,
+      "rows_sampled": 50,
+      "columns": [
+        "bid_datetime_beginning_utc",
+        "bid_datetime_beginning_ept",
+        "unit_code",
+        "bid_slope_flag",
+        "mw1",
+        "mw2",
+        "mw3",
+        "mw4",
+        "mw5",
+        "mw6",
+        "mw7",
+        "mw8",
+        "mw9",
+        "mw10",
+        "mw11",
+        "mw12",
+        "mw13",
+        "mw14",
+        "mw15",
+        "mw16",
+        "mw17",
+        "mw18",
+        "mw19",
+        "mw20",
+        "bid1",
+        "bid2",
+        "bid3",
+        "bid4",
+        "bid5",
+        "bid6",
+        "bid7",
+        "bid8",
+        "bid9",
+        "bid10",
+        "bid11",
+        "bid12",
+        "bid13",
+        "bid14",
+        "bid15",
+        "bid16",
+        "bid17",
+        "bid18",
+        "bid19",
+        "bid20",
+        "no_load_cost",
+        "cold_start_cost",
+        "inter_start_cost",
+        "hot_start_cost",
+        "max_daily_starts",
+        "min_runtime",
+        "max_ecomax",
+        "min_ecomax",
+        "avg_ecomax",
+        "max_ecomin",
+        "min_ecomin",
+        "avg_ecomin"
+      ],
+      "criteria": {
+        "A1_identity": true,
+        "A1_columns": [
+          "unit_code"
+        ],
+        "A2_hourly_time": true,
+        "A2_columns": [
+          "bid_datetime_beginning_ept",
+          "bid_datetime_beginning_utc"
+        ],
+        "A3_award": false,
+        "A3_columns": [],
+        "admits": false
+      },
+      "distinct_unit_code": 50
+    }
+  ],
+  "admitting_feeds": [],
+  "verdict": "NO_PUBLIC_FEED",
+  "joinability_blocker": {
+    "years": [
+      2023,
+      2024
+    ],
+    "distinct_unit_codes_2023": 1219,
+    "distinct_unit_codes_2024": 1252,
+    "codes_present_in_both": 0,
+    "jaccard": 0.0,
+    "published_crosswalk_exists": false,
+    "note": "PJM: 'Generator identification is masked to prevent revealing of confidential information, and the masked codes are changed annually.' No crosswalk from masked code to a real unit is published, so the offer corpus cannot be joined to ANY external unit-level award source, inside DataMiner2 or outside it."
+  },
+  "consequence": "the commitment-status half of the Lane 2 hypothesis is CLOSED as blocked on non-public data \u2014 untested, not refuted; no aggregate proxy"
+}
