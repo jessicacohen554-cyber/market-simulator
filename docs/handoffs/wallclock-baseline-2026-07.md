@@ -81,6 +81,7 @@ recorded here so it is not re-run. Feasibility tolerances were **never** touched
 | 1 | IPM + crossover for cold P0 | P0 136 s → **>300 s cap, unconverged** | P0 234 s → **>400 s cap, unconverged** | **REJECT** — no default change |
 | 2 | numpy/array `setBasis` in `apply_cross_year_basis` | array API unavailable; list build 10.6 s → **0.59 s** (memoized enum), byte-identical | (column-count driven; same hot path) | **No default change here** — records the negative array result + a byte-identical follow-on for P-2 |
 | 3 | `MARKET_SIM_HIGHS_THREADS` {1, 4, unset} | P0 135/142/141 s, RSS flat | P0 234/239/233 s, RSS flat | **No default change** — no thread scaling; single-thread stays golden |
+| 4 | HiGHS `parallel` {choose, on, off} (PAMI simplex) | P0 175.1/175.3/170.6 s; **RSS 5.83 → 7.13 GB on `on`** | see Exp 4 | **REJECT** — no default change; `on` costs RAM and buys no wall |
 
 ### Exp 1 — IPM (`solver=ipm`, `run_crossover=on`) for the cold P0 — REJECT
 
@@ -181,6 +182,49 @@ the **golden/repro pin** — the golden capture (`scripts/capture_keeper_goldens
 reproducibility baseline keep threads at 1. (The env knob remains available for a future
 large-ISO LP that *does* parallelize, but no current capture justifies flipping it.)
 
+### Exp 4 — HiGHS `parallel` {choose, on, off} (PAMI parallel simplex) — REJECT
+
+The one un-run HiGHS bench from the refactor-consolidation plan (§7-H4). **This is not Exp 3
+re-run.** `threads` (Exp 3) bounds how many threads HiGHS *may* use; `parallel` selects whether the
+**parallel simplex variant is engaged at all** (`simplex_strategy` dual-tasks / dual-multi "PAMI").
+A thread count with no parallel algorithm engaged cannot show scaling — which is precisely what
+Exp 3 measured — so this is a genuinely different lever and gets its own numbered slot.
+
+Run with `scripts/diagnostics/bench_highs_parallel.py` on the same archived-capture seam Exp 1–3
+used (`scripts/archive/bench_cold_solve.py capture`), one **isolated subprocess per arm** so peak
+RSS is clean, threads left **unset** (the production default, so the parallel path is not starved
+of threads). Baseline is `choose` — the production default, since the model builder
+(`src/market_sim/model/lp/model.py`) sets only `threads` and `presolve`, never `parallel`.
+`off` is included to show whether `choose` was already picking a parallel path.
+
+**ERCOT 2023 (plant-level, n_gen 1458, 7 zones, 13.23 M columns):**
+
+| `parallel` | resolved | `simplex_strategy` | build | P0 cold | P0 simplex it | P1 warm | peak RSS | objective |
+|---|---|---|---|---|---|---|---|---|
+| `choose` (default) | choose | 1 | 4.78 s | **175.14 s** | 191,986 | 50.33 s | **5.83 GB** | 2.08683147e+09 |
+| `on` | on | 1 | 2.76 s | **175.31 s** | 194,115 | 55.85 s | **7.13 GB** | 2.08683147e+09 |
+| `off` | off | 1 | 3.55 s | 170.56 s | 191,986 | 34.43 s | 5.83 GB | 2.08683147e+09 |
+
+**Verdict: REJECT — no default change.** Three things, in order of what they settle:
+
+1. **PAMI never engages.** With `parallel=on` accepted by HiGHS (the option reads back as `on`),
+   `simplex_strategy` stays at **1** — plain dual simplex. The iteration count barely moves
+   (191,986 → 194,115), which is what a *serial* dual simplex on a marginally different path looks
+   like, not a parallel one. On this LP family HiGHS declines the parallel variant even when asked.
+2. **No wall to buy.** P0 cold is **−0.1 %** vs the default (175.14 → 175.31 s) — inside noise, and
+   nowhere near the ≥10 % adoption bar. `off` is 2.6 % *faster* than `choose`, also noise-level.
+3. **It costs RAM.** `on` raises peak RSS **5.83 → 7.13 GB (+22 %)** for that zero wall gain. On a
+   16 GB host this is the opposite of free: rule 12 already caps concurrency on memory, so a
+   default that inflates the per-solve peak by a fifth would tighten the concurrency budget while
+   buying nothing.
+
+Outputs are unaffected either way — objective agrees to **3.43e-16 relative** and the full price
+vector to **1.42e-14 $/MWh** (`off` is bit-identical to `choose`, 0.00e+00 on both). So this is a
+clean negative on cost, not a correctness question. Feasibility tolerances were **never** touched.
+
+**Recommendation: leave `parallel` unset (HiGHS `choose`) for all ISOs, and do not re-run this
+bench.** It is recorded here precisely so the "we never tried PAMI" thread is closed.
+
 ## H2 — Persisted year-1 basis cache (refactor-consolidation plan §7)
 
 The recurring cold P0 the P-4 experiments could not move is the **first year of every
@@ -233,3 +277,65 @@ with the feature **OFF** (`MARKET_SIM_WARMSTART_XYEAR=0`) reproduces the empty-c
 i.e. the seed/persist machinery does not perturb the solve. (The full keeper goldens gate is not
 re-run because the change is provably inert under that env — the gate's own pin — and the unit
 suite pins the gate behavior.)
+
+## H4 — `results_write` sub-instrumentation (refactor-consolidation plan §7-H4)
+
+`results_write` was a single merged window in both orchestrators, so the tables above could say
+the phase costs ~12 s on ERCOT and ~32 s on MISO but **not what it is spending that on** — which
+is the precondition the plan sets for the parquet-compression lever ("only if parquet dominates").
+It is now split, in one shared helper (`src/market_sim/pipeline/timing.py`, which both
+orchestrators finally call — it had shipped with zero consumers):
+
+| Orchestrator | Components reported |
+|---|---|
+| backcast (`run_calibration_full.solve_and_persist`) | `state` (p2_state pickle + per-pass min-gen floor arrays) · `frames` (per-pass dispatch/system/storage/posture/flows/BTM construction) · `parquet` (the per-pass dispatch parquet writes) · `bench` (CAMPD hourly + EIA-923/930 benchmark-scoring frames) |
+| forecast (`runner.run_scenario_iso`) | `legacy_p2` (the archived P2 screen, inert by default) · `parquet` (`save_result`) |
+
+The components are measured on **disjoint, exhaustive** segments of the window, so they sum to
+`results_write` exactly. **The parsed format is unchanged**: `data_prep / solve_p0 / markup /
+solve_p1 / results_write / total` keep their exact spelling, order and position, and the breakdown
+is appended as a trailing `(results_write: …)` clause, so every capture parsed against the tables
+above still parses. `tests/test_pipeline_timing.py` pins that the no-breakdown line is
+byte-identical to the recorded lines here.
+
+### Measured — ERCOT keeper replay (`2026-07-23-ercot100-netrev-margin-keeper`, 8760 h, threads=1)
+
+Captured by `scripts/capture_keeper_goldens.py` under the determinism pin, so this is the real
+production write path, not a microbench:
+
+| Year | `results_write` | `state` | `frames` | `parquet` | `bench` | year `total` |
+|------|----------------:|--------:|---------:|----------:|--------:|-------------:|
+| 2023 | 16.8 s | 0.8 s | **10.8 s** | 3.4 s | 1.7 s | 615.8 s |
+| 2024 | 16.1 s | 0.7 s | **10.3 s** | 3.3 s | 1.8 s | 622.8 s |
+| 2025 | 15.8 s | 0.6 s | **10.3 s** | 3.4 s | 1.6 s | 704.3 s |
+
+**Parquet does not dominate — frame construction does.** The parquet write is **~21 %** of
+`results_write` and **~0.5 %** of the year; building the per-pass dispatch/system/storage/posture/
+flows/BTM frames is **~65 %** of it. `results_write` as a whole is **~2.5 %** of a year
+(solve is ~85 % on this keeper), so the phase is a minor lever however it is split.
+
+### Parquet-compression pre-check — the gates do NOT hash bundle bytes (finding, nothing adopted)
+
+The plan gates a compression change (lz4 / dictionary-off) on "bytes change ⇒ check golden hashing
+first". Checked, and the answer is **no gate is byte-sensitive** — every bundle-adjacent hash in the
+tree hashes the **decoded frame**, never the file:
+
+- `scripts/capture_keeper_goldens.py::_content_hash` reads the parquet with `pd.read_parquet` and
+  hashes sorted-column float64 bytes plus the shape. Its own docstring gives the reason: a raw-file
+  hash "picks up parquet's embedded creation metadata" and is not reproducible.
+  `manifest.json` records this as `hash_scheme: sha256-of-canonical-column-float64-bytes`.
+- `scripts/regression_gate.py --mode byte` delegates to `regression_check.compare_parquet`, which
+  `pd.read_parquet`s both sides and compares **numeric columns** at `atol=rtol=0`.
+- `scripts/lib/bundle_io.py::content_hash` (the shared-input store's dedupe key) hashes
+  `pd.util.hash_pandas_object` + column names and documents itself as "independent of parquet
+  encoding/metadata".
+
+So a codec swap would be hash-transparent — it is *not* blocked by the gates.
+
+**It was not adopted, and on the measured split it is not worth pursuing.** The plan makes the
+compression bench conditional on parquet dominating `results_write`; it does not. At ~3.4 s of a
+~620 s year, a codec change could not buy more than **~0.5 % of wall** even if it made the write
+free — well under the ≥10 % adoption bar every other experiment here is scored against, and
+`frames` (10.3–10.8 s) is the larger target if this phase is ever worth attacking. The codec stays
+at the pandas/pyarrow default; no bench was run, because the pre-check that gates it came back
+negative.

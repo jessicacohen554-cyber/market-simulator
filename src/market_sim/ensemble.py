@@ -34,9 +34,7 @@ from __future__ import annotations
 
 import json
 import logging
-from concurrent.futures import ProcessPoolExecutor
 from dataclasses import asdict
-from multiprocessing import cpu_count
 from pathlib import Path
 
 import numpy as np
@@ -131,10 +129,14 @@ def _default_workers(workers: int | None) -> int:
     per-plant ISO, so the ensemble default is ``min(2, cpu_count - 1)`` (never
     below 1) -- more than two concurrent members OOMs. An explicit ``workers``
     is honoured as given (the caller owns that risk).
+
+    Thin wrapper over :func:`market_sim.pipeline.members.resolve_workers` with
+    this module's cap, so the ensemble and the shared member fan-out resolve
+    identically. Kept as a named function because it is the tested seam.
     """
-    if workers is not None:
-        return workers
-    return max(1, min(_MAX_FORECAST_WORKERS, cpu_count() - 1))
+    from market_sim.pipeline.members import resolve_workers
+
+    return resolve_workers(workers, _MAX_FORECAST_WORKERS)
 
 
 def _run_configs(configs: dict, iso: str, workers: int | None) -> dict:
@@ -143,7 +145,10 @@ def _run_configs(configs: dict, iso: str, workers: int | None) -> dict:
     Shared core of the weather-year and sampler ensembles: members are
     independent and run in parallel across worker processes (rule 16), or
     in-process when ``workers == 1``. A member already cached is loaded inside
-    ``run_scenario_iso`` and not re-solved.
+    ``run_scenario_iso`` and not re-solved. The pool itself is
+    :func:`market_sim.pipeline.members.run_member_configs`, the one shared home
+    for the member fan-out (the ensembles, the scenario matrix and
+    ``runner.run_sweep`` all reach it).
 
     Args:
         configs: Map of member id (weather-year int or draw-id str) to its
@@ -154,29 +159,28 @@ def _run_configs(configs: dict, iso: str, workers: int | None) -> dict:
     Returns:
         A dict mapping each member id to the ``cache_key`` of its run, in the
         input order.
+
+    Raises:
+        ValueError: When ``configs`` is empty (raised by the shared helper;
+            both callers already reject an empty member set upstream).
     """
-    # Public picklable worker entry point (delegates to runner lazily, so no
-    # module-load cycle: runner imports this module for its CLI subcommand).
-    from market_sim.pipeline.api import run_pair
+    # Shared, worker-capped member fan-out (delegates to runner lazily via the
+    # pipeline api facade, so no module-load cycle: runner imports this module
+    # for its CLI subcommand).
+    from market_sim.pipeline.members import run_member_configs
 
     workers = _default_workers(workers)
-    member_ids = list(configs)
-    pairs = [(configs[m], iso) for m in member_ids]
 
     logger.info(
         "ensemble run start: iso=%s members=%d workers=%d",
         iso,
-        len(pairs),
+        len(configs),
         workers,
     )
 
-    if workers == 1:
-        keys = [run_pair(pair) for pair in pairs]
-    else:
-        with ProcessPoolExecutor(max_workers=workers) as executor:
-            keys = list(executor.map(run_pair, pairs))
-
-    return dict(zip(member_ids, keys))
+    # ``workers`` is already resolved, so it is passed explicitly (an explicit
+    # value is honoured as given by the helper) -- the cap is applied here.
+    return run_member_configs(configs, iso, workers=workers, cap=_MAX_FORECAST_WORKERS)
 
 
 def run_weather_ensemble(
