@@ -66,6 +66,49 @@ consumes NERC-GADS class averages (`constants.py:986-994`: gas_cc 0.05, gas_ct
 another static class average would satisfy B and D but **fail C** and would move
 nothing. The ask is specifically for a *time-varying, year-specific* series.
 
+### 2a. The named parameter this ask must replace (added by miso-91)
+
+The concrete deliverable a clearing source buys is a **measured seasonal
+forced-outage shape** to replace `SUMMER_WEFOR_SHARE = 0.30`
+(`config/fuel_trajectories.py`; re-homed there by miso-91 from
+`data/fleet/arrays.py::_SUMMER_WEFOR_SHARE`, now declared in the MISO keeper's
+DOF ledger with an open root cause). It sets the fraction of a unit's WEFOR
+applied in the summer peak, redistributing the rest into the shoulder months.
+
+**Why it is the right target.** It is the single largest undeclared free
+parameter on the availability path, and it is material at the scale of the defect
+this ask exists to close. Measured by miso-91 (no LP), under the keeper's flags it
+governs **all six non-coal thermal classes** — COAL is exempt, since
+`coal_drop_pof=True` drops summer WEFOR outright — adding, versus a
+no-reallocation baseline: ST_GAS +14.70 pp, ST_CHP +5.60, CT_PEAKER +4.29,
+CC_REGULAR +3.15, CT_CHP +3.06, CC_CHP +2.52 of summer availability. Against the
+committed per-class nameplates that is **≈3.9 GW of MISO summer-peak capability
+at a uniform fleet age of 18 y, ≈4.6 GW at 28 y, ≈5.8 GW at 38 y** — the same
+order as the ~10 GW under-derate ledgered as C3b. (This corrects the miso-90
+finding, which scoped the parameter to CT_PEAKER alone.)
+
+**What a clearing source must additionally deliver to retire it.** On top of A–D:
+
+| | requirement | why |
+|---|---|---|
+| **E** | **Seasonal split of FORCED outages specifically** — planned and forced separated, not a combined unavailability rate. | The parameter reallocates WEFOR only; POF is separately grounded by the measured `MAINTENANCE_MONTHLY_SHAPE`. A combined rate cannot identify it. |
+| **F** | **Enough class coverage to span the six governed groups**, or an explicit statement of which it covers. Partial coverage is usable — it narrows the DOF — but must not be silently generalised to the uncovered classes. | Per-class deltas differ by ~6× (ST_GAS vs CC_CHP); one class's shape is not the fleet's. |
+
+**And the sign is the live question, not a formality.** For *planned* outages,
+shifting maintenance away from the peak is well-founded. For *forced* outages the
+reallocation runs **opposite** to the physics — forced outages correlate
+*positively* with heat and high load, so a share below 1.0 encodes the reverse of
+the expected physical sign. A clearing source should therefore be read as
+**testing whether the mechanism has the right sign at all**, not merely as
+recalibrating its magnitude. A source showing summer forced-outage rates at or
+above the annual mean would mean the current treatment is directionally wrong for
+the forced component — a structural finding, and per rule 1 `[R-STRUCT]` one that
+stands whatever it does to the fit.
+
+**Reminder on acceptance-test part 4.** As with the rest of this ask, a source
+that clears the grain but shows **no** 2025 summer step has *refuted* the miso-89
+finding rather than enabled it. Report that outcome; do not discard the source.
+
 ## 3. Candidate sources — to be assessed, none yet cleared
 
 Ranked by prior plausibility. **Every entry is a hypothesis for an intake
