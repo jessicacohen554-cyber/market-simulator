@@ -51,6 +51,7 @@ Reserve/scarcity lanes (`docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §B.3)
 | SYNC product / size split | duals in the correct regime but $0–10 vs the $75–200 need | **owner-CLOSED 2026-07-11** |
 | Commitment posture (Phase 1) | G-P1 FAIL all years, model online headroom 2.66–3.14× the measured target; tail unchanged | REJECTED — root cause is **LP-vs-MIP**, a representation boundary under the no-MIP mandate |
 | DA demand depth + measured offer levels (G-22) | moved 2025 C3c 0 → 17 h, fixed C1/C3a/C3b/C7 | **in the keeper** |
+| **`ramp10` scoped to committed-and-online (Lane 1 framing 2)** | **no-LP pre-check, all 3 years: rigorous lower bound stays 9.7–10.5× the requirement; reduction only 13.6–15.9 %, and smallest (8–10 %) in the TIGHTEST net-load quartile** | **CLOSED pjm-124 — no solve spent** (`docs/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md`) |
 
 Offer/energy-stack lanes:
 
@@ -81,6 +82,39 @@ measured online reserve. That is a structural boundary, not a tuning gap.
 ## 3. What still blocks the declaration — two lanes, both admissible, neither tried
 
 ### Lane 1 (primary) — G-20b reserve SUPPLY side, the two unvalidated framings
+
+> **UPDATE 2026-07-26 (pjm-124): framing 2 is CLOSED, no solve spent.**
+> `docs/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md`. Three results the
+> rest of this section should be read against:
+>
+> 1. **45 % of the deliverable ramp is tariff-protected.** The keeper's balance
+>    families are **Primary** = Synchronized + **Non-Synchronized**, and
+>    Non-Sync reserve *is* offline 10-min-startable iron (Manual 11 §4.2). The
+>    fast-start term — 1,411 members, 30.6 GW nameplate, **F = 17.6 GW mean, 45 %
+>    of the 38.9 GW cap** — counts in either commitment state, so no
+>    commitment-state scoping may remove it. F alone is **5.2× the requirement**.
+> 2. **The rigorous lower bound stays 9.7–10.5× the requirement** in 2023/2024/
+>    2025 (`F + max(MG, DISP)` = 32.6 / 33.2 / 33.6 GW). The mechanism does not
+>    reach even the PARTIAL band. Its bite is *smallest* (8–10 %) in the tightest
+>    net-load quartile — where the residual lives.
+> 3. **The strict online-only variant is closed too**, on both grounds: it prices
+>    Synchronized while calling it Primary (a product mismatch, rule 1), and its
+>    own lower bound is still **4.6–4.9× the requirement**.
+>
+> **Consequence for the ledger — this qualifies pjm-82's LP-vs-MIP attribution.**
+> Even with commitment state read exactly, and counting only iron the tariff
+> permits, the balance stays ~10× slack. **A MIP would not close this gate
+> either.** The slack is the size of PJM's reserve-eligible fast-ramping fleet
+> against a ~3.4 GW requirement — a real fleet property, not a representation
+> artifact. That is a strong prior that **framing 1 (pjm-125) will land the same
+> way**, since it addresses the same online/offline distinction just measured to
+> be worth 13.6–15.9 % of a 10× surplus. Framing 1 is still worth running for
+> the record; it should not be expected to move the tail.
+>
+> Corroboration, free of any solve: the keeper's persisted reserve dual is now
+> read across **all three** years — **0 hours ≥ $300 in 26,280**, and in 2023 and
+> 2024 the dual is *identically zero all year* (2025's 22 nonzero hours, max
+> $210.99, is the tightest of the three, not a representative one).
 
 `docs/FINDING-pjm120-c3a-extreme-tail-depth-2026-07.md` §7 names two candidate
 framings and explicitly marks them **"none validated here"**:
@@ -161,10 +195,11 @@ and this lane closes — **either outcome is ledger progress.**
 
 ## 4. Suggested sequence
 
-1. **pjm-124 — Lane 1, framing 2** (`ramp10` deliverability scoped to
-   committed-and-online). The cheaper of the two, and the existing path-B prep
-   is the wiring precedent. Pre-check the deliverable-ramp aggregate with no LP
-   first; solve only if the aggregate moves materially.
+1. ~~**pjm-124 — Lane 1, framing 2**~~ — **DONE 2026-07-26, CLOSED on the no-LP
+   pre-check, no solve spent.** See the Lane 1 update above and
+   `docs/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md`. The §5 housekeeping
+   item is also done: `scripts/lib/bundle_fleet.py` is the shared widened
+   reconstruction helper.
 2. **pjm-125 — Lane 1, framing 1** (constrained commitment before the reserve
    bound). Run only after 124, so the two are separably attributable (rule 19 —
    do not arm both and read one number).
@@ -181,7 +216,14 @@ no marker.
 
 ## 5. Two housekeeping items this session surfaced
 
-* **`derive_pjm_ordc_overlay._run_year_kwargs` drops 38 non-default `run_year`
+* ~~**`derive_pjm_ordc_overlay._run_year_kwargs` drops 38 non-default `run_year`
+  flags**~~ — **DONE (pjm-124)**: promoted to `scripts/lib/bundle_fleet.py`
+  (`full_run_year_kwargs`, `reconstruct_bundle_fleet`, the year-chain gas-price
+  fallback and a generalized fidelity guard covering the offer-path *and*
+  reserve gates). `pjm123_composite_precheck.full_run_year_kwargs` now delegates
+  to it. Original description follows.
+
+  **`derive_pjm_ordc_overlay._run_year_kwargs` drops 38 non-default `run_year`
   flags** the pjm-121 keeper records — including all three `tranche_startup_*`
   gates, `ct_netload_drag` / `gas_st_netload_drag` and their overrides, and the
   `pjm_offer_midcurve_conditional` master gate. Every PJM no-LP probe that uses
