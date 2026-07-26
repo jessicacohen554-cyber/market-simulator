@@ -332,6 +332,28 @@ CAISO re-tune against the §8 residual-over-count investigation (the
 extract's absolute level, freeze lift condition) is an owner call. Full
 record: `results/calibration/FINDING-caiso123-c3a-drift-attribution-2026-07-26.md`.
 
+**MISO re-audit cell RESOLVED (2026-07-26, miso-93): RE-TUNE REQUIRED.** Arm
+`2026-07-26-miso-93-meritguard-a1` (2023/2024/2025, one bundle) takes the
+`2026-07-25-miso-88-egrid-hr` keeper from `CALIBRATED-WITH-CAVEATS` to
+**`NOT-YET`** on one newly-failing gate: **C3a-2024 −8.7 % → −10.1 %**, past the
+±10 % veto by 0.1 pp. C1/C2/C4/C5a/C6/C7/C8 hold; C3b/C3c stay ledgered
+(C3b-2025 0.208 → 0.214). Unlike the CAISO cell this verdict is **not**
+confounded: the MISO extract blob is byte-identical across the keeper's own
+`git_sha`, changes exactly once (at `6a8f285`) and not since, and a same-HEAD
+isolation probe on the failing year puts the post-keeper **code** drift at
+**exactly $0.000** — A0′ reproduces the keeper's committed sidecar to three
+decimals — so the guard/extract accounts for **100 %** of the −$0.445
+(−1.38 pp) move. Direction and mechanism are as this charter predicted: the
+guard removes **11,614 GW-days and adds zero**, **73.5 % of it ST_GAS**, and the
+added supply lowers the clearing price (C8 ST_GAS forced share rises in step,
+still grounded). A rule-11 discovered-bug signal — the keeper's offer curves
+were compensating for the inflated envelope, as at NEISO but milder (−1.4 pp vs
+−7…−9 %). **No tuning applied; MISO's ledger is 3/3 saturated, so the re-tune
+must close by structure.** Keeper designation unchanged (owner call). Evidence:
+`results/calibration/FINDING-miso93-keeper-reaudit-meritguard-2026-07.md`;
+charter `docs/handoffs/miso-93-keeper-reaudit-charter-2026-07.md`. Remaining
+open re-audit cells: **ERCOT, NYISO** (PJM targets `pjm121_ccbelt` per §3e).
+
 ## 9. Residual-over-count investigation — CLOSED on evidence; the freeze-lift decision is now the owner's
 
 The single item §8 deferred the freeze to. Three ordered steps were set by
