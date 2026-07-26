@@ -112,6 +112,15 @@ belly delta goes live, or (ii) explicitly decide the tests are rejected-probe
 residue (which would then make a C-delete legitimate). The caiso.md entry's
 "stays built" wording needs a correction note either way.
 
+**RESOLVED 2026-07-26 (owner): (ii) RECORD THE DROP.**
+`tests/test_caiso_belly_import_cap.py` C-deleted (clears the collection error).
+The FINDING's **§Inv-2 is now labelled the rebuild recipe** and carries the
+"never pushed / unrecoverable" correction, its DO-NOT-REDO "stays built" clause
+is superseded on the factual half only, and the caiso-118 redirect #2 now says
+"re-arm" means re-implement (that lane owning the unit tests). Matching
+resolution note in `docs/calibration-log/caiso.md`. The landed derive half
+`scripts/probes/_caiso117_belly_cap_derive.py` stays on disk.
+
 ### D2 — `tests/test_transmission_expansion.py::TestScenarioGate` (4): the
 `transmission_expansion_enabled` gate ships in an UNAPPLIED patch
 
@@ -160,6 +169,15 @@ ERCOT-93 machinery never merged; its delivery patch has ROTTED
 derive script) — the `43d6d37` server-side patch-apply precedent is the
 sanctioned transport — or (ii) recording the drop, which would reclassify the
 8 tests C. The ercot.md "MERGED" line needs a correction note either way.
+
+**RESOLVED 2026-07-26 (owner): (ii) RECORD THE DROP.** The mechanism is a
+rejected, default-off probe, so porting ~197 lines of engine wiring plus
+regenerating a missing artifact buys no live behaviour.
+`tests/test_ercot_offer_surface_cleared_share_steam_rt.py` C-deleted;
+correction/resolution notes added to `docs/calibration-log/ercot.md`,
+`docs/handoffs/ercot93-session-handoff.md` (its `git apply` step marked dead)
+and `docs/handoffs/ercot94-scarcity-tail-diagnosis-2026-07.md`. The patch bytes
+and the landed derive script stay as the wiring's only surviving record.
 
 ### D4 — orchestrator-extraction conversion half unlanded:
 `tests/test_pipeline_facade_shims.py` (7) + `tests/test_flag_registry.py::
