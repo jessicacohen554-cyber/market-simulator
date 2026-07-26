@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-26-ercot113-per-zone-wind",
+  "label": "ercot113 per zone wind",
+  "date": "2026-07-26",
+  "shorthand": "ercot113-per-zone-wind",
+  "definition": "ERCOT-113 Task B: per-zone MERRA-2 wind SHAPE (probe, default-off gate)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-26-ercot113-per-zone-wind.js",
+  "bundle": "results/calibration/ercot113_wind_zone_shape"
+}

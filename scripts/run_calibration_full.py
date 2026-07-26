@@ -2748,6 +2748,7 @@ def solve_and_persist(
     ercot_thermal_dam_availability: bool = False,
     ercot_thermal_dam_availability_hourly: bool = False,
     ercot_thermal_dam_availability_plant: bool = False,
+    ercot_wind_zone_shape: bool = False,
     ercot_noncampd_plant_availability: bool = False,
     ercot_storage_capability_measured: bool = False,
     ercot_online_capacity_envelope_measured: bool = False,
@@ -3312,6 +3313,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 ercot_thermal_dam_availability_plant=True
             )
+        if ercot_wind_zone_shape:
+            # Mirror run_year's with_overrides so run_config.json records the
+            # ERCOT-113 per-zone wind SHAPE the LP solved with.
+            recorded_cfg = recorded_cfg.with_overrides(ercot_wind_zone_shape=True)
         if ercot_thermal_dam_availability_hourly:
             # Mirror run_year's with_overrides so run_config.json records the
             # ERCOT-96 class-HOUR grain switch the LP solved with.
@@ -4026,6 +4031,7 @@ def solve_and_persist(
                 ercot_thermal_dam_availability_hourly
             ),
             ercot_thermal_dam_availability_plant=(ercot_thermal_dam_availability_plant),
+            ercot_wind_zone_shape=ercot_wind_zone_shape,
             ercot_noncampd_plant_availability=ercot_noncampd_plant_availability,
             ercot_storage_capability_measured=ercot_storage_capability_measured,
             ercot_online_capacity_envelope_measured=(
@@ -4614,6 +4620,7 @@ def solve_and_persist(
             ercot_thermal_dam_availability_hourly
         ),
         "ercot_thermal_dam_availability_plant": (ercot_thermal_dam_availability_plant),
+        "ercot_wind_zone_shape": ercot_wind_zone_shape,
         "ercot_noncampd_plant_availability": ercot_noncampd_plant_availability,
         "ercot_storage_capability_measured": ercot_storage_capability_measured,
         "ercot_online_capacity_envelope_measured": (
@@ -7731,6 +7738,21 @@ def main() -> None:
         "keeper-reproducing).",
     )
     parser.add_argument(
+        "--ercot-wind-zone-shape",
+        action="store_true",
+        help="ERCOT: give each zone its own MERRA-2 reanalysis wind SHAPE "
+        "(NASA POWER WS50M at the zone's EIA-860 wind-plant locations through "
+        "a turbine power curve, data/raw/ercot-wind-shape/) instead of one "
+        "ISO-wide hourly profile on every zone — the ERCOT-113 analogue of "
+        "MISO's per-zone wind shape. The measured night/afternoon ratio "
+        "separates the nocturnal-jet West/North/Panhandle from the "
+        "Gulf-sea-breeze South, which one ISO-wide profile averages together. "
+        "Purely SPATIAL: the ISO aggregate is preserved exactly every hour, so "
+        "annual wind energy and the ISO-wide bound cannot move — only WHICH "
+        "ZONE holds the wind, hence when the West/Panhandle curtailment "
+        "ceiling and the zonal links bind. Off (default, keeper-reproducing).",
+    )
+    parser.add_argument(
         "--ercot-storage-capability-measured",
         action="store_true",
         help="ERCOT backcast: re-base the battery fleet's hourly power cap on "
@@ -9824,6 +9846,7 @@ def main() -> None:
         ercot_thermal_dam_availability_plant=(
             args.ercot_thermal_dam_availability_plant
         ),
+        ercot_wind_zone_shape=args.ercot_wind_zone_shape,
         ercot_storage_capability_measured=args.ercot_storage_capability_measured,
         ercot_online_capacity_envelope_measured=(
             args.ercot_online_capacity_envelope_measured
