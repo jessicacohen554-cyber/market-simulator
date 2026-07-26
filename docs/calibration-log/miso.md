@@ -774,3 +774,112 @@ in that report are pre-existing).
   at `5499181` (sha256 `49196d4d5811f58a`) per rule 27. The intended feature work
   in that commit never landed and is still missing. `file-integrity-guard.yml`
   did not block it — worth a look.
+
+## 2026-07-26 — miso-90: OWNER DECISION taken — C3b-2025 LEDGERED as instrument-blocked and MISO RE-GATED to CALIBRATED-WITH-CAVEATS; three side lanes resolved, two of them by refuting their own premise
+
+**Lane:** the miso-89 three-way owner decision, plus all three ready side lanes.
+**Keeper UNCHANGED — `2026-07-25-miso-88-egrid-hr`.** No solve was run this
+session; nothing about the run, its bundle, its config or any solved artifact
+changed. **Determination: NOT-YET → CALIBRATED-WITH-CAVEATS**, by scoring alone.
+
+### The decision
+
+The owner chose **options 1 AND 2** (ledger + re-gate, and open the data ask),
+and directed all three side lanes.
+
+**C3b-2025 is now ledgered.** The one load-bearing FAIL (monthly load-weighted
+price NRMSE 0.208 vs a ≤0.20 veto; 2023 0.081 and 2024 0.129 both PASS) is
+documented on the C3c template as an **instrument-blocked measurement gap**, with
+miso-89's difference-in-differences as its evidence: model fossil derate at
+Jun/Jul HE16–18 is flat across years (+1.76 GW into 2025) while MISO's published
+offline record jumps +12.32 GW, breaking a stable ~14.6 GW offset to 24.76 GW —
+a ~10 GW under-derate, at normal summer temperatures (zone-mean TMAX 29.6 / 29.2
+/ 29.8 °C) with cheap gas. Ledgered per **rule 24** rather than tuned: no
+measured source resolves at the needed grain, so the honest outcome is to
+document, size and stop. The entry explicitly does **not** license an offer
+adder, a summer multiplier, or widening the C3c ledger to absorb it.
+
+**Governance consequence — the budget is now saturated.** Ledgered
+non-protective caveats go 2 → **3/3** (C3a, C3b, C3c; `MAX_LEDGERED_CAVEATS = 3`,
+the check is `> 3`). **No further load-bearing MISO criterion can be ledgered**
+without forcing the determination back to NOT-YET. The next load-bearing miss
+must be BUILT, not documented — which is what makes the data ask load-bearing.
+
+keeper-auditor `--iso MISO`: **PASS, 0 failures**. Note MISO still carries **no
+calibration-complete marker**, and this re-gate does not create one — declaring
+an ISO complete is a separate explicit owner instruction, and the holdout
+quarantine stays fully in force.
+
+### Data ask opened (option 2)
+
+`docs/handoffs/miso-outage-grain-data-ask-2026-07.md` — a standing, blocking ask
+for MISO outage data at unit or fuel grain. Its acceptance test has four parts,
+and the **first is the one that matters**: the source must declare **capability**,
+not output. That single criterion rejects CAMPD, EIA-923 and every derivative of
+either, which is why the ask is genuinely blocking rather than merely unattempted.
+
+### LANE B' — the CT "coverage hole" is an IDENTIFICATION exclusion, not a data gap
+
+`results/calibration/FINDING-miso90-ct-availability-identification-2026-07.md`.
+Taken on its own merits (rule 11), **NO-BUILD**. The 0 % CT measured-derate
+coverage is deliberate and documented: *"a CT down-window cannot be certified a
+forced outage vs out-of-merit-at-peak"* (`data/outages.py`, enforced at
+`_unit_outage_target`). For a peaker, not running is the default state, so
+absence of output carries no information about availability — **every
+output-derived instrument inherits the defect**. Verified rather than assumed:
+the EIA-923 fallback landed 2026-07-24 has **zero CT_PEAKER rows in nine years**
+and excludes peakers by the same rule.
+
+Two corrections to the inbound framing: the handoff's "CT_PEAKER + CT_CHP =
+25.02 GW at 0.0 % coverage" conflates two classes at two different stages —
+CT_PEAKER is never detected (0 rows), while CT_CHP **is** detected (115 rows /
+27 plants) and then dropped one stage later. And the live defect that *is*
+actionable is separate: `_SUMMER_WEFOR_SHARE = 0.30`, which governs summer
+availability for all 22.39 GW of CT_PEAKER, **carries no citation, appears in
+neither `docs/parameter-citations.md` nor the keeper's 26-entry DOF ledger**.
+Deliberately NOT re-tuned here (that is the rule-24 answer-key move, and doing it
+in the session that ledgered C3b would be indistinguishable from tuning to the
+ledgered miss). It should be DOF-declared and named as a target of the data ask.
+
+### LANE C' — the memory lever is refuted by measurement
+
+`results/calibration/FINDING-miso90-solve-memory-attribution-2026-07.md`. The
+handoff's lead lever — the ~26 unbounded module `lru_cache`s — holds **0.019 GB**
+on the MISO path, and a *second* year adds **0.000 GB**, so they cannot be the
+mechanism by which the floor rises. The second lever (release fleet objects) is
+already done. Attribution of the 1.56 GB floor: ~0.12 imports, ~0.02 caches,
+~0.07 accumulators, **~1.35 GB unattributed** — 86 % that no hypothesis on record
+covered. Rather than propose a fourth story, this session shipped the
+measurement: `src/market_sim/data/cache_control.py` plus per-year retained-heap
+telemetry in the runner. `clear_all_caches()` exists but is deliberately **NOT**
+wired into the year loop — 0.02 GB against a 1.35 GB gap is not worth the
+correctness risk (rule 1: don't add a mechanism that doesn't address the cause).
+**The 14.4 GB single-year peak is untouched; the staged `--reuse-solved` recipe
+remains necessary.**
+
+### HYGIENE — the integrity guard was already fixed; the gap was a regression test
+
+`file-integrity-guard.yml` was added 2026-07-23, the `2668ae0` truncation landed
+2026-07-24, and **two fixes landed 2026-07-25** — after the miso-89 handoff
+flagged it. Verified by replaying the current guard against the real `2668ae0`:
+exit 1, correct error. What was missing was cover, so the guard had been fixed
+twice in one day for bash failure modes invisible to a plain replay. Added
+`tests/test_file_integrity_guard.py` (7 cases), which extracts the guard's own
+`run:` body from the workflow YAML and replays it under `bash -e`. Validated in
+both directions: all pass on the current guard, and the PR #2866 case was
+confirmed to **FAIL** against the pre-fix version (exit 0 on a 1,911 → 1 line
+truncation, with the documented `((: 0\n0: syntax error`).
+
+### Notes for the next session
+
+* **Test baseline discrepancy, unresolved.** The handoff records 108 pre-existing
+  full-suite failures; this branch measures **90** (with the same two collection-
+  error modules ignored). Not chased down — the targeted baseline the handoff
+  gave for the touched area (`run_calibration_full` importers: **8 failed / 186
+  passed**) reproduced exactly, and no failure is in a file this session touched.
+  Someone should re-establish the real number.
+* **Two cheap follow-ups named, neither taken:** DOF-declare
+  `_SUMMER_WEFOR_SHARE` (and audit the `_SUMMER_CLASS_DERATE` literals for
+  citations); and run one MISO year to read the new retained-heap telemetry,
+  which will say whether the ~1.35 GB is live Python payload or allocator/HiGHS
+  side — a different fix entirely. Next number: miso-91.
