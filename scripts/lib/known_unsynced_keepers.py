@@ -11,13 +11,17 @@ build_payload`` needs (the bundle's gitignored ``dispatch/<year>_P*.parquet``
 nowhere, so the payload cannot be regenerated in-session: that needs a
 re-solve, which the CI-cost policy and rule 12 keep out of this lane.
 
-All nine ids are the 2026-07-22 → 2026-07-24 casualties of the API-only push
-rule (see ``docs/handoffs/dashboard-payload-push-gap-2026-07.md``): their
-sessions could push the small sidecar via ``push_files`` but not the
-400 KB–1 MB payload (over the ~457 KB per-payload cap), and the local commits
-died with the ephemeral containers. The rule was amended 2026-07-26 (CLAUDE.md
+The tracked id is the surviving casualty of the API-only push rule (see
+``docs/handoffs/dashboard-payload-push-gap-2026-07.md``): its session could
+push the small sidecar via ``push_files`` but not the 400 KB–1 MB payload
+(over the ~457 KB per-payload cap), and the local commit died with the
+ephemeral container. The rule was amended 2026-07-26 (CLAUDE.md
 "Git & Pushing": payloads now go over small-pack ``git push``), so this class
-of stranding is closed going forward.
+of stranding is closed going forward. The other eight casualties of the same
+window (caiso-112, caiso-114, pjm-116, pjm-117, pjm-118, pjm-119,
+neiso-62-opcap-a0/a1 — all superseded probes or a lineage superseded by the
+pjm-121 keeper) were PRUNED 2026-07-26 on owner decision via the three-store
+retention semantics (sidecar + bundle; no payload ever existed).
 
 The three quarantine gates (``check_registry_payload_parity``,
 ``audit_keepers``, ``legitimacy_diagnostics --keepers``) consult this set so
@@ -27,13 +31,12 @@ tree while EVERY OTHER parity/keeper break still fails loudly. This is
 deliberately NOT a blanket ignore: only these exact ids are tolerated, and only
 for the artifact-absent failure class they cause.
 
-RESOLUTION (owner follow-up, tracked in
-``docs/handoffs/dashboard-payload-push-gap-2026-07.md``): per id, either
-re-solve its full rule-16 year span in a solve-capable session, re-register via
-the ``calibration-report`` skill and push the payload over ``git push``; or,
-for superseded probes, prune the sidecar under retention
-(``dashboard_add_run.py``'s three-store prune). Delete each id from this set
-the moment its payload lands or its sidecar is pruned — a stale entry here is
+RESOLUTION (owner decision 2026-07-26, recorded in
+``docs/handoffs/dashboard-payload-push-gap-2026-07.md``): the NEISO 2022
+holdout validation run is AUTHORIZED for a re-solve in a solve-capable
+session (``--holdout-authorized``, rule 22 validation tier, session-logged);
+re-register via the ``calibration-report`` skill, push the payload over
+``git push``, and delete the id here the moment it lands — a stale entry is
 a re-armable hole in the gate.
 
 Prior entries, all resolved: ``2026-07-13-neiso-60-phantom-outage`` (payload
@@ -49,20 +52,12 @@ from __future__ import annotations
 
 # runs/<id>.js payloads that are absent from git (sidecar-only registrations).
 # Bundle state verified 2026-07-26 at main 19b0b91 (see module docstring for
-# why none of these can render without a re-solve).
+# why this cannot render without a re-solve).
 UNSYNCED_RUN_PAYLOADS: frozenset[str] = frozenset(
     {
-        "2026-07-22-caiso-112-export-floor",  # bundle metrics-only
-        "2026-07-23-caiso-114-endogenous-west",  # bundle metrics-only
-        "2026-07-23-neiso-2022-holdout-validation",  # bundle metrics-only
-        "2026-07-23-pjm-116-netrev-base",  # bundle absent (0 commits)
-        "2026-07-23-pjm-117-netrev-margin",  # bundle absent (0 commits)
-        "2026-07-24-neiso-62-opcap-a0",  # bundle absent (0 commits)
-        "2026-07-24-neiso-62-opcap-a1",  # bundle absent (0 commits)
-        "2026-07-24-pjm-118-netrev-level",  # slim bundle; no dispatch/system parquet
-        "2026-07-24-pjm-119-overlay-restore",  # slim bundle; no dispatch/system
-        # parquet. Ex-PJM-keeper: superseded 2026-07-25 by pjm-121-cc-belt
-        # (payload committed), so no keeper is payload-less today.
+        # Bundle metrics-only; NEISO validation-tier (2022 holdout) record.
+        # Re-solve authorized 2026-07-26 (owner) — see module docstring.
+        "2026-07-23-neiso-2022-holdout-validation",
     }
 )
 
