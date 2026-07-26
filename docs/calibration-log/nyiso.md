@@ -705,3 +705,89 @@ that is *itself* flat (1 distinct value; wind on the same path has 428). A flat
 faithful (rule 1), and it needs no new intake. **Fallback-path defect — wants an
 all-six-ISO sweep for other degenerate rows.** Also still open: `other`
 anti-correlation (r = −0.15) and oil day-placement.
+
+## 2026-07-26 — nyiso-75: shaped solar fallback (STRUCTURAL FIX, rule 1) — flat NYISO solar repaired from the NEISO donor; all-six-ISO sweep done
+
+Closes rank 4 of `docs/FINDING-nyiso-class-delta-shape-2026-07-24.md` — the last
+open, unowned item of that finding. Dashboard:
+`2026-07-26-nyiso-75-solar-shape`; bundle `results/calibration/nyiso75_solar_shape`.
+
+**The defect.** EIA-930 NYIS files `NG: SUN` as all zeros, so
+`_eia_hourly_cf_profile` returns `None` and NYISO solar falls through to the
+EIA-930 generation-distribution parquet — whose NYISO solar row is a **single
+repeated value across all 8760 hours**. Flat CF × the 12-step EIA-860 monthly
+capacity ramp produced the observed 12-distinct-value block: the model generated
+as much solar at 03:00 as at noon (midday/night 1.00).
+
+**The all-six-ISO sweep the finding asked for — one live instance, two latent.**
+Across six ISOs × {wind, solar} × 2023–2025, **NYISO solar is the ONLY cell that
+both reaches this fallback and is degenerate**; everything else takes an HSL or
+per-BA hourly path. Byte-identity confirmed for the other 30 ISO-year-mode cells.
+Two *latent, unfixed* defects in the same parquet (unconsumed today, so no keeper
+is affected): **MISO and SPP solar rows are UTC-stamped** (diurnal centroid h18.5
+/ h19.4 vs h12.6–13.9 for the correctly-clocked ISOs, ~+6 h rotated) — a year
+losing its hourly extract would silently inherit a rotated solar day — and
+`solar_proxy` is **dead data**, zero code references, itself rotated (h17.3). The
+new guard detects *flatness, not rotation*. The NEISO donor is verified
+local-clock (h13.1), so the repair does not inherit the rotation.
+
+**The mechanism** (`renewables._donor_shaped_distribution`, gated on a
+distinct-value degeneracy test — keyed on the defect, not on NYISO, since this is
+a fallback-path defect): rebuild the row from an adjacent same-clock BA (NEISO —
+interconnected, both `America/New_York`, EIA-860 solar-fleet latitude 42.5 N vs
+42.6 N, and the same 0.15 `RENEWABLE_AVG_CF`), which carries measured diurnal
+timing, cloud variability and seasonality on the same weather year; then correct
+for the fleets' different EIA-860 tracking mixes (NYISO 30.5 % single-axis vs
+NEISO 13.3 %) by the clear-sky POA **ratio** `POA_iso / POA_donor`. The ratio form
+is required, not cosmetic: `_clearsky_geometry` omits the longitude/EoT term and
+its docstring sanctions only *relative* use, so the offset cancels between the two
+ISOs. A phase-aligned roll (geometry used absolutely) was built, tested and
+**rejected** — it mis-times the shoulders (zero at h05–06, inflated at h19).
+
+**Level untouched; no residual consulted (rules 1, 13).** The distribution is
+renormalized to sum to 1.0, so `derive_cf_profile` still sets the annual mean CF
+from `RENEWABLE_AVG_CF` exactly as before — 0.1500 in all three years, zero
+clipped hours. Forward-valid: the donor series and the EIA-860 tracking mix both
+regenerate for any future year and respond to a changed fleet and weather year.
+
+**Independent validation** against EIA-923 NYIS utility-scale solar monthly
+netgen — data never used to build the shape. 2023 monthly-energy share:
+
+| profile | MAE vs EIA-923 | r |
+|---|---|---|
+| flat (before) | 0.0304 | **−0.043** |
+| donor shape only | 0.0076 | 0.977 |
+| **shipped fix** | **0.0050** | **0.983** |
+
+NYISO solar 2023 now resolves **4,576 distinct values (was 12)**, peaks **h13
+(was h00)**, midday/night **83.9 (was 1.00)**. Browser-verified on the Run
+Explorer: the Capacity Factor — Solar heatmap went from a uniform block to a real
+solar day (summer-widening daylight band, weather streaks), and the CF
+distribution from "every hour in the 80–100 % bin" to a night spike at 0–5 %
+(~5,659 h) plus a full tail.
+
+**Scoring — and why C1 is NOT a regression.** C7/C8 PASS, C2/C4 PASS,
+C3a/C3b/C3c unchanged-FAIL (the known 2023 energy-LEVEL residual; C3a 2023
++17.9 %, C3b NRMSE 0.216). C1 flips PASS→FAIL on **one knife-edge cell**: 2024
+ST_GAS −3.02 TWh against the ±3.0 TWh absolute band. But the fix moved model
+ST_GAS by only **−0.056 TWh** (8.1060 → 8.0498, 0.7 % of the class), and the
+`nyiso-72` keeper was **already at −2.964** — 0.036 TWh, 1.2 % of the band, inside
+the edge. So this is a **pre-existing marginal ST_GAS level miss crossing a hard
+threshold, not a regression introduced by the solar shape**. Per rule 1 the
+mechanism stays in and the ST_GAS 2024 level residual is the root cause to chase.
+(Attribution is measured, not asserted: both bundles resolve the *same* benchmark
+hash `eia923-465c3e2cf4a5`, and the per-class 2024 energy delta is
+ST_GAS −0.056 / CC_REGULAR +0.079 / import −0.047 TWh — total |Δ| well under
+0.2 TWh.)
+
+Determination **NOT-YET** on C6 UNATTESTED (probe bundle carries no governance
+attestation; the deciding modelling criteria are unchanged from nyiso-72).
+
+**Open for the owner — keeper/code mismatch.** This fix also changes NYISO solar
+in **forecast** mode, and the standing keeper `nyiso-72` was solved on the flat
+row, so its dispatch no longer matches what the code now produces. Whether
+nyiso-75 supersedes it is a promotion decision left to the owner — nyiso-72 was
+itself promoted on an explicit owner override, so `keepers/NYISO.json` was **not**
+touched here.
+
+Next number: nyiso-76.
