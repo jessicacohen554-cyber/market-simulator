@@ -425,11 +425,13 @@ Next number: pjm-123.
 Charter execution (campd-economic-layup-fix-charter §8). Attempted on the
 then-keeper pjm-119-overlay-restore recipe (per-gen reserve co-opt, 2,403
 members): completed 2023 running alone, then OOM-killed at 15.9 GB during
-2024's build in this session's 15 GB container. The 2023 partial bundle is
-retained on disk but NOT registered (rule 16 — no partial-year bundles) and
-no numbers from it are quoted. Replay needs a ≥24 GB environment; clean
-partition prerequisites (`transfer-interface-limits`, `ramp-capability`,
-gitignored `pjm-da-virtuals` re-fetch) in
+2024's build in this session's 15 GB container. The 2023 partial bundle was
+NOT registered (rule 16 — no partial-year bundles), no numbers from it are
+quoted, and it was deleted before session end (regenerable whole by the
+future replay). Replay
+needs a ≥24 GB environment; clean partition prerequisites
+(`transfer-interface-limits`, `ramp-capability`, gitignored
+`pjm-da-virtuals` re-fetch) in
 `results/calibration/RESULTS-neiso65-crossiso-reaudit-2026-07.md` §2/§3e.
 Mid-session the parallel lane promoted `2026-07-25-pjm-121-cc-belt` (keeper)
 and pruned the pjm-116…119 lineage incl. the attempted bundle, so the future
