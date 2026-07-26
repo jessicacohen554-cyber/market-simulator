@@ -43,8 +43,9 @@ class TestMembership:
 
     def test_caiso_excludes_wecc_import_node(self):
         res = resolve_carbon_program(ScenarioConfig(iso="CAISO", mode="backcast"), 2024)
-        # NP15, ZP26, SP15 in-state (1.0); WECC_import external (0.0).
-        np.testing.assert_array_equal(res.membership, [1.0, 1.0, 1.0, 0.0])
+        # NP15, ZP26, LA_BASIN, SDGE, SP15_rest in-state (1.0); WECC_import
+        # external (0.0). Post-SP15-split topology (c28d57b1, 2026-07-09).
+        np.testing.assert_array_equal(res.membership, [1.0, 1.0, 1.0, 1.0, 1.0, 0.0])
 
     def test_nyiso_all_zones_member(self):
         res = resolve_carbon_program(ScenarioConfig(iso="NYISO", mode="backcast"), 2024)
@@ -154,7 +155,10 @@ class TestCapPath:
         assert res.cap_spec is not None
         assert res.price_adder is None
         assert res.cap_spec.cap_tons == 1.0e6
-        np.testing.assert_array_equal(res.cap_spec.membership, [1.0, 1.0, 1.0, 0.0])
+        # Post-SP15-split 6-zone membership (c28d57b1, 2026-07-09).
+        np.testing.assert_array_equal(
+            res.cap_spec.membership, [1.0, 1.0, 1.0, 1.0, 1.0, 0.0]
+        )
 
     def test_mass_cap_enabled_uses_published_budget(self):
         # With the CARB/RGGI schedules landed, enabling the row with no explicit

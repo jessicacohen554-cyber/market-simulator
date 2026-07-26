@@ -265,13 +265,16 @@ touched. Two adjacent singles in the same files, also A:
   test config — the exact precedent is `e0a2e20` pinning
   `datacenter_load_path="off"` in the same file for the FF-1F flip, which
   missed this twin. Assertion unchanged.
-- ff-battery resolution trio (`test_walk_inputs_trivial_single_year`,
+- ff-battery walker tests (`test_walk_inputs_trivial_single_year`,
   `test_resolve_report_no_hard_fail_full_horizon`,
-  `test_ercot_confirmed_horizon_is_reported_not_failed`) — these exercise the
-  real input-resolution walker against the real tree, i.e. the definition of
-  the `integration` marker ("exercises real data inputs", pyproject:41; the
+  `test_ercot_confirmed_horizon_is_reported_not_failed`, and
+  `test_build_registration_scorecard_no_iso_gate_open`, whose gate-c half
+  walks the same input resolution) — these exercise the real
+  input-resolution walker against the real tree, i.e. the definition of the
+  `integration` marker ("exercises real data inputs", pyproject:41; the
   test_consume_* precedent). Mark `integration`; they run in the full
-  pre-push lane where curation exists.
+  pre-push lane where curation exists. (The scorecard test ALSO needed the
+  D6 restore for its marker assertions — both causes were real.)
 
 ## 5. Bucket E — the 60 xpasses are ONE stale mark
 

@@ -179,14 +179,19 @@ class TestSpecCompliance(unittest.TestCase):
         self.assertNotIn("BaseModel", mro)
 
     def test_topology_matches_spec(self):
-        """ERCOT=7 zones, CAISO=4 zones (3 trading + import). Import share=0."""
+        """ERCOT=7 zones, CAISO=6 zones (5 trading + import). Import share=0.
+
+        CAISO 4 -> 6: the SP15 local-capacity-area split (c28d57b1, 2026-07-09)
+        replaced SP15 with LA_BASIN / SDGE / SP15_rest and is the operative
+        default topology under every CAISO keeper since.
+        """
         ercot = get_iso_config("ERCOT")
         self.assertEqual(len(ercot.zones), 7)
         shares = [z.load_share for z in ercot.zones]
         self.assertAlmostEqual(sum(shares), 1.0, places=6)
 
         caiso = get_iso_config("CAISO")
-        self.assertEqual(len(caiso.zones), 4)
+        self.assertEqual(len(caiso.zones), 6)
         self.assertAlmostEqual(sum(z.load_share for z in caiso.zones), 1.0, places=6)
         wecc = [z for z in caiso.zones if "WECC" in z.name][0]
         self.assertEqual(wecc.load_share, 0.0)

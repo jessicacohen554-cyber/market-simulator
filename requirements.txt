@@ -56,7 +56,8 @@ typing-extensions==4.15.0
     #   typing-inspection
 typing-inspection==0.4.2
     # via pydantic
-tzdata==2026.2 ; sys_platform == 'emscripten' or sys_platform == 'win32'
-    # via pandas
+tzdata==2026.2
+    # via market-sim (pyproject pins it unconditionally — the IANA zone db on
+    # minimal containers; pandas' emscripten/win32 marker must not narrow it)
 urllib3==2.7.0
     # via requests

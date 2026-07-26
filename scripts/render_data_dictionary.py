@@ -55,10 +55,12 @@ ISO_ORDER: tuple[str, ...] = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO")
 # (enforced by tests/test_data_dictionary_sync.py).
 DATATYPE_ORDER: tuple[str, ...] = (
     "lmp",
+    "lmp-components",
     "load",
     "demand-profile",
     "ancillary-services",
     "energy-offers",
+    "dam-public-bids",
     "generation",
     "renewables",
     "emissions",
@@ -74,15 +76,19 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "fuel-takeorpay",
     "reference",
     "border-lmp",
+    "wecc-west-supply",
     "zonal-shares",
     "weather",
     "egrid",
     "unit-outage-events",
     "partial-outages",
+    "pjm-outages",
     "capacity-deliverability",
     "confirmed-retirements",
+    "nuclear-license-status",
     "gtc-limits",
     "transfer-interface-limits",
+    "transmission-expansion",
     "ramp-capability",
     "winter-fuel-inventory",
     "rggi-co2-budgets",
@@ -915,6 +921,93 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "CAISO/CPUC NQC + E3-authored incremental-ELCC studies — onto one "
             "canonical frame keyed on `(iso, resource_class, study_vintage, "
             "penetration_pct)`. ERCOT excluded."
+        ),
+    },
+    "lmp-components": {
+        "summary": (
+            "Per-node LMP component decomposition (energy / congestion / "
+            "loss) from an ISO's published ex-post price reports — kept "
+            "separate from `lmp` (the cross-ISO benchmark contract): this is "
+            "the derive source for the MISO marginal delivery-factor (loss) "
+            "surface and for congestion-vs-loss decomposition validation."
+        ),
+        "reconciles": (
+            "MISO daily all-node market reports "
+            "(`YYYYMMDD_da_expost_lmp.csv` / RT equivalents) onto one tidy "
+            "row per (node, market, interval) carrying the lmp/mec/mcc/mlc "
+            "split; first (and so far only) registered ISO: MISO."
+        ),
+    },
+    "dam-public-bids": {
+        "summary": (
+            "ISO day-ahead-market public bid data (as-submitted energy bid "
+            "curves per scheduling resource), published with the ISO's own "
+            "masking/lag policy — the measured offer-surface source."
+        ),
+        "reconciles": (
+            "CAISO OASIS Public Bid Data GroupZip archives (one zip per DAM "
+            "trade date, 90-day publication lag) onto one tidy row per "
+            "(resource, trade date, bid segment); first (and so far only) "
+            "registered ISO: CAISO."
+        ),
+    },
+    "wecc-west-supply": {
+        "summary": (
+            "WECC-West neighbor hourly balance (EIA-930 BALANCE Region NW + "
+            "SW aggregate): the measured hourly net position of the western "
+            "interconnect outside CAISO — demand, per-fuel generation and "
+            "`net_export_mw` on the UTC clock — the foundation of the "
+            "co-optimized WECC_import node (caiso-110 lane)."
+        ),
+        "reconciles": (
+            "EIA-930 BALANCE Region NW + SW hourly files onto one clock-"
+            "neutral UTC-keyed row per hour; the LP wiring aligns UTC onto "
+            "the CAISO model clock via the same map the corridor loaders use."
+        ),
+    },
+    "pjm-outages": {
+        "summary": (
+            "PJM generation-outage forecast by type and region (Data Miner 2 "
+            "`gen_outages_by_type`): the daily-posted active/approved MW on "
+            "outage for the operating day + six days, split forced / "
+            "maintenance / planned — PJM's published DAM-horizon capacity-"
+            "availability quantity."
+        ),
+        "reconciles": (
+            "Data Miner 2 seven-day outage-by-type feeds onto one tidy row "
+            "per (forecast_execution_date, forecast_date, region) — "
+            "Mid Atlantic–Dominion, Western, and the PJM RTO total."
+        ),
+    },
+    "nuclear-license-status": {
+        "summary": (
+            "Nuclear fleet forward-lifetime registry: one row per operating "
+            "(or restart-pathway) reactor unit in the six modeled ISOs — NRC "
+            "license expiration and stage, SLR status/docket, announced "
+            "uprates, restart pathways — the forward-lifetime grounding for "
+            "clean-firm supply."
+        ),
+        "reconciles": (
+            "NRC license/SLR dockets, licensee announcements and state "
+            "instruments onto one unit-level registry; rows with a binding "
+            "exit instrument live in `confirmed-retirements` and are cross-"
+            "referenced, never duplicated."
+        ),
+    },
+    "transmission-expansion": {
+        "summary": (
+            "Committed transmission-expansion projects (binding-instrument "
+            "registry): one row per (project, affected model element), each "
+            "bound by an enforceable public instrument and mapped onto the "
+            "reduced zonal topology as an ADDITIVE transfer-capability delta "
+            "(FF-G1; consumed by the gated forecast per-year apply seam)."
+        ),
+        "reconciles": (
+            "ISO board / RTO plan approvals with cost allocation (MISO LRTP, "
+            "CAISO TPP, PJM RTEP), state-regulator orders, signed contracts "
+            "(NY Tier 4, MA 83D) and energized projects onto per-ISO "
+            "registry CSVs; roadmap/study projects stay watchlist-only in "
+            "the raw README."
         ),
     },
 }

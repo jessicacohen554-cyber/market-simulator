@@ -705,14 +705,20 @@ def load_statmode_residuals(
     return statmode_bundles, actuals, run_ids
 
 
-def default_prior(isos: list[str] | None = None) -> StructuralPrior:
-    """Fit the structural prior from the committed D-7 statmode probes.
+def _fit_prior_from_payloads(isos: list[str] | None = None) -> StructuralPrior:
+    """Fit the structural prior from the committed D-7 statmode probe payloads.
 
-    Convenience composition of :func:`load_statmode_residuals` and
-    :func:`fit_prior` using the frozen provenance and constants -- the prior a
-    production band run folds in. Pooling the noise across ISOs, it fits every
-    registered ISO by default even when a single-ISO band is being convolved
-    (the pooled scale is stronger with all six).
+    Composition of :func:`load_statmode_residuals` and :func:`fit_prior` using
+    the frozen provenance and constants. Under the item-8 inversion
+    (refactor-consolidation prompt pack, Wave 4D) this is NO LONGER the
+    production read — :func:`default_prior` reads the committed artifact — but
+    it remains the re-fit entry that regenerates the artifact
+    (``write_prior_artifact(_fit_prior_from_payloads())``) when the statmode
+    probes are re-solved, e.g. the W3-P1 basis-refresh (rule 23
+    ``[R-FROZEN-DERIVE]``: re-derives only when the source runs update).
+    Pooling the noise across ISOs, it fits every registered ISO by default
+    even when a single-ISO band is being convolved (the pooled scale is
+    stronger with all six).
 
     Basis handling (module docstring, W0-P4 §3.2): carbon-zero ISOs are
     re-scored under the current CO2 basis (:func:`rescore_carbon_zero`, no
@@ -775,3 +781,94 @@ def write_prior_artifact(prior: StructuralPrior, path: Path | None = None) -> Pa
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(prior.as_dict(), indent=1, sort_keys=True))
     return path
+
+
+def load_prior_artifact(path: Path | None = None) -> StructuralPrior:
+    """Read the committed versioned prior artifact back into a prior.
+
+    Inverse of :func:`write_prior_artifact` (the item-8 inversion's read
+    half). The artifact carries the full per-ISO residual record, so the
+    reconstruction is exact; the derived fields ``as_dict`` also stores
+    (``pooled_scale``, ``plugin_normal_scale``, …) are recomputed and the
+    stored ``pooled_scale`` is asserted against the reconstruction, so a
+    corrupted or hand-edited artifact can never silently drive a published
+    band.
+
+    Args:
+        path: Artifact JSON path; defaults to the committed
+            ``results/ensemble/structural-prior/<STRUCTURAL_PRIOR_VERSION>.json``.
+
+    Returns:
+        The reconstructed :class:`StructuralPrior`.
+
+    Raises:
+        ValueError: When the reconstructed scale does not reproduce the
+            artifact's stored ``pooled_scale``.
+    """
+    if path is None:
+        path = paths.STRUCTURAL_PRIOR_ARTIFACT_DIR / f"{STRUCTURAL_PRIOR_VERSION}.json"
+    art = json.loads(Path(path).read_text())
+    per_iso = {
+        iso: IsoResidual(
+            iso=rec["iso"],
+            years=tuple(rec["years"]),
+            model_co2=tuple(rec["model_co2"]),
+            actual_co2=tuple(rec["actual_co2"]),
+            eps=tuple(rec["eps"]),
+            bias=rec["bias"],
+            noise_sd=rec["noise_sd"],
+            statmode_run_id=rec["statmode_run_id"],
+            basis_stale=rec["basis_stale"],
+            rescore=rec["rescore"],
+        )
+        for iso, rec in art["per_iso"].items()
+    }
+    prior = StructuralPrior(
+        version=art["version"],
+        nu=float(art["nu"]),
+        fit_years=tuple(art["fit_years"]),
+        small_sample_inflation=float(art["small_sample_inflation"]),
+        pooled_noise_var=float(art["pooled_noise_var"]),
+        horizon_lambda=float(art["horizon_lambda"]),
+        per_iso=per_iso,
+        emissions_basis=dict(art.get("emissions_basis", {})),
+    )
+    if abs(prior.scale(0) - float(art["pooled_scale"])) > 1e-12:
+        raise ValueError(
+            f"prior artifact {path}: reconstructed scale {prior.scale(0)!r} != "
+            f"stored pooled_scale {art['pooled_scale']!r}"
+        )
+    return prior
+
+
+def default_prior(isos: list[str] | None = None) -> StructuralPrior:
+    """Return the canonical structural prior from its committed fit artifact.
+
+    The item-8 inversion (refactor-consolidation prompt pack, Wave 4D): the
+    committed versioned JSON written by :func:`write_prior_artifact` is the
+    canonical prior source. The dashboard-payload regex decode
+    (:func:`load_statmode_residuals`) is no longer a production read — several
+    ``STATMODE_PROBE_RUNS`` payloads have been deleted by top-15-per-ISO
+    retention pruning — and survives only as a consistency check plus the
+    :func:`_fit_prior_from_payloads` re-fit entry that regenerates the
+    artifact when the probes are re-solved (W3-P1).
+
+    The pooled fit is global by design — a single-ISO band still convolves
+    the all-ISO pooled scale (plan §3.2) — so ``isos`` never subsets the fit;
+    it is validated so a caller asking for an unfitted ISO fails loud.
+
+    Args:
+        isos: When given, assert every requested ISO is fitted in the
+            artifact; the returned prior always carries the full fitted set.
+
+    Returns:
+        The committed :class:`StructuralPrior`.
+    """
+    prior = load_prior_artifact()
+    if isos is not None:
+        missing = sorted({i.upper() for i in isos} - set(prior.per_iso))
+        if missing:
+            raise KeyError(
+                f"ISOs not fitted in the committed prior artifact: {missing}"
+            )
+    return prior
