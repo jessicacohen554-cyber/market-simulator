@@ -2475,7 +2475,13 @@ def plan_reuse_solved(
     if prior_sha != cur_sha:
         if not _git("rev-parse", "--verify", f"{prior_sha}^{{commit}}"):
             return _refuse_all(
-                f"prior bundle's commit {prior_sha} is not resolvable here"
+                f"prior bundle's commit {prior_sha} is not resolvable here — "
+                "expected for bundles recorded before the 2026-07-22 history "
+                "rewrite, which orphaned pre-rewrite SHAs (no mapping was "
+                "saved; those bundles are re-solve-only). Refusing is the "
+                "gate working correctly — an unresolvable commit cannot "
+                "prove src/scripts/data unchanged; see "
+                "docs/governance/rule-history.md §6"
             )
         changed = _git(
             "diff", "--name-only", prior_sha, "HEAD", "--", "src", "scripts", "data"
