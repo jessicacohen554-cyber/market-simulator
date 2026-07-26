@@ -239,8 +239,7 @@ def dispatch_implied_online_mw(fleet_arrays, gen_idx, ramp_t, nonfast, klass_mw)
         # First index whose cumulative capacity covers `need`, per hour.
         idx = (cum_cap < need[np.newaxis, :]).sum(axis=0)
         idx = np.minimum(idx, order.size - 1)
-        hours = np.arange(T)
-        contrib = np.where(need > 0.0, cum_ramp[idx, hours], 0.0)
+        contrib = np.where(need > 0.0, cum_ramp[idx, np.arange(T)], 0.0)
         # Never credit more than the class's own total non-fast ramp.
         out += np.minimum(contrib, cum_ramp[-1])
     return out
@@ -249,9 +248,12 @@ def dispatch_implied_online_mw(fleet_arrays, gen_idx, ramp_t, nonfast, klass_mw)
 def member_klass(fleet_arrays):
     """Return the ``(n_gen,)`` class label matching the ``class_hourly`` sidecar.
 
-    Thermal per-plant rows carry ``plant_group`` (COAL_BIT, CC_REGULAR,
-    CT_PEAKER, ...); everything else falls back to its fuel-type name, which is
-    how the dispatch frame labels hydro/nuclear/oil/biomass.
+    The same classification ``run_calibration_full._dispatch_frame`` writes into
+    the dispatch frame the sidecar aggregates: a non-ERCOT per-plant row carries
+    its real ``plant_group`` (CC_REGULAR, CT_PEAKER, ST_GAS, ...); everything
+    else falls back to ``_model_class_for_unit``; a COAL row is split into its
+    EIA-923 supply class (COAL_BIT / COAL_PRB / COAL_WC). Reusing the writer's
+    own helpers keeps the label sets identical by construction.
 
     Args:
         fleet_arrays: The reconstructed keeper ``FleetArrays``.
@@ -259,16 +261,30 @@ def member_klass(fleet_arrays):
     Returns:
         ``(n_gen,)`` object array of labels.
     """
-    from market_sim.config.constants import FUEL_TYPES
+    from market_sim.data.fleet import FUEL_TYPE_NAMES
+    from run_calibration_full import (
+        _coal_supply_class,
+        _model_class_for_unit,
+        _plant_codes_from_unit_ids,
+    )
 
-    fuels = np.asarray(FUEL_TYPES, dtype=object)[
-        np.asarray(fleet_arrays.fuel_type_idx, dtype=int)
-    ]
+    unit_ids = list(fleet_arrays.unit_ids)
+    fuels = [FUEL_TYPE_NAMES[i] for i in np.asarray(fleet_arrays.fuel_type_idx, int)]
+    bins = list(np.asarray(fleet_arrays.efficiency_bin, dtype=object))
     groups = getattr(fleet_arrays, "plant_group", None)
-    if groups is None:
-        return fuels
-    groups = np.asarray(groups, dtype=object)
-    return np.where((groups != None) & (groups != ""), groups, fuels)  # noqa: E711
+    groups = (
+        list(np.asarray(groups, dtype=object))
+        if groups is not None
+        else [""] * len(unit_ids)
+    )
+    codes = _plant_codes_from_unit_ids(unit_ids, numeric_head=True)
+    out = []
+    for g, uid in enumerate(unit_ids):
+        k = groups[g] or _model_class_for_unit(uid, fuels[g], bins[g])
+        if k == "COAL":
+            k = _coal_supply_class(int(codes[g]))
+        out.append(k)
+    return np.asarray(out, dtype=object)
 
 
 def class_hourly_mw(bundle: Path, year: int, hours: int) -> dict:
@@ -374,7 +390,8 @@ def main() -> int:
         if klass_mw
         else np.zeros(hours)
     )
-    scoped_lower = F + np.maximum(MG, DISP)
+    online_only_lower = np.maximum(MG, DISP)
+    scoped_lower = F + online_only_lower
     scoped_upper = keeper
 
     print(
@@ -384,20 +401,39 @@ def main() -> int:
     )
     print(f"  measured Primary requirement (RTO): mean {R / 1e3:.2f} GW")
     if req_mad is not None:
-        print(f"  measured Primary requirement (MAD): mean {req_mad.mean() / 1e3:.2f} GW")
+        print(
+            f"  measured Primary requirement (MAD): mean {req_mad.mean() / 1e3:.2f} GW"
+        )
     print(f"  A keeper cap             mean {keeper.mean() / 1e3:7.2f} GW")
-    print(f"  F fast-start floor       mean {F.mean() / 1e3:7.2f} GW  "
-          f"({100 * F.mean() / keeper.mean():.1f}% of the keeper cap)")
+    print(
+        f"  F fast-start floor       mean {F.mean() / 1e3:7.2f} GW  "
+        f"({100 * F.mean() / keeper.mean():.1f}% of the keeper cap)"
+    )
     print(f"  MG min-gen online        mean {MG.mean() / 1e3:7.2f} GW")
     print(f"  DISP dispatch-implied    mean {DISP.mean() / 1e3:7.2f} GW")
-    print(f"  S_lower = F + max(MG,DISP) mean {scoped_lower.mean() / 1e3:5.2f} GW  "
-          f"= {scoped_lower.mean() / R:.1f}x the requirement")
+    print(
+        f"  S_lower = F + max(MG,DISP) mean {scoped_lower.mean() / 1e3:5.2f} GW  "
+        f"= {scoped_lower.mean() / R:.1f}x the requirement"
+    )
     print(f"  S_upper (all online)     mean {scoped_upper.mean() / 1e3:7.2f} GW")
+    # The STRICT variant, reported for the record and NOT a candidate: deleting
+    # offline fast-start ramp from a PRIMARY balance prices Synchronized reserve
+    # while calling it Primary (Manual 11 sec 4.2), i.e. it makes reserve
+    # artificially scarce by a product mismatch (rule 1). Its own lower bound is
+    # max(MG, DISP) — if even that stays well above the requirement, the whole
+    # framing-2 family is closed in its admissible AND inadmissible forms.
+    print(
+        f"  [strict online-only, INADMISSIBLE] lower bound mean "
+        f"{online_only_lower.mean() / 1e3:.2f} GW = "
+        f"{online_only_lower.mean() / R:.1f}x the requirement"
+    )
 
     # ---- K1 ---------------------------------------------------------------
     hour_bin, net = net_load_bins(state, hours)
     tight = hour_bin == hour_bin.max()
-    tight_hours_under = int((scoped_lower[tight] <= K1_PASS_TIGHT_REQ_MULTIPLE * R).sum())
+    tight_hours_under = int(
+        (scoped_lower[tight] <= K1_PASS_TIGHT_REQ_MULTIPLE * R).sum()
+    )
     mean_multiple = float(scoped_lower.mean() / R)
     reduction = 1.0 - float(scoped_lower.mean() / keeper.mean())
     k1_pass = (
@@ -413,9 +449,7 @@ def main() -> int:
     frac = {}
     for b in range(int(hour_bin.max()) + 1):
         sel = hour_bin == b
-        frac[b] = 100.0 * (
-            1.0 - float(scoped_lower[sel].mean() / keeper[sel].mean())
-        )
+        frac[b] = 100.0 * (1.0 - float(scoped_lower[sel].mean() / keeper[sel].mean()))
     spread = abs(frac[max(frac)] - frac[min(frac)])
     k2 = "PASS" if spread >= K2_MIN_BIN_SPREAD_PP else "KILL (uniform haircut)"
 
@@ -427,12 +461,18 @@ def main() -> int:
     # read only for the REQUIREMENT (Manual 13, already the keeper's input).
     k3 = "PASS (fleet physics + model dispatch only)"
 
-    print(f"\n  net-load-bin reduction fraction (slack -> tight): "
-          + ", ".join(f"bin{b} {frac[b]:.1f}%" for b in sorted(frac)))
-    print(f"  tight-bin hours with S_lower <= {K1_PASS_TIGHT_REQ_MULTIPLE:.0f}x R: "
-          f"{tight_hours_under} of {int(tight.sum())}")
-    print(f"\n  K1 MAGNITUDE      {k1}   (mean S_lower = {mean_multiple:.1f}x R; "
-          f"reduction {100 * reduction:.1f}%)")
+    print(
+        "\n  net-load-bin reduction fraction (slack -> tight): "
+        + ", ".join(f"bin{b} {frac[b]:.1f}%" for b in sorted(frac))
+    )
+    print(
+        f"  tight-bin hours with S_lower <= {K1_PASS_TIGHT_REQ_MULTIPLE:.0f}x R: "
+        f"{tight_hours_under} of {int(tight.sum())}"
+    )
+    print(
+        f"\n  K1 MAGNITUDE      {k1}   (mean S_lower = {mean_multiple:.1f}x R; "
+        f"reduction {100 * reduction:.1f}%)"
+    )
     print(f"  K2 STATE-DEP      {k2}   (bin spread {spread:.1f} pp)")
     print(f"  K3 ADMISSIBILITY  {k3}")
     verdict = "SOLVE" if (k1 == "PASS" and k2 == "PASS") else "NO SOLVE"
@@ -457,8 +497,10 @@ def main() -> int:
             "DISP_dispatch_implied": float(DISP.mean()),
             "S_lower": float(scoped_lower.mean()),
             "S_upper": float(scoped_upper.mean()),
+            "S_strict_online_only_lower": float(online_only_lower.mean()),
         },
         "s_lower_over_req_mean": mean_multiple,
+        "s_strict_online_only_over_req_mean": float(online_only_lower.mean() / R),
         "reduction_frac": reduction,
         "reduction_frac_by_bin_pp": {str(b): frac[b] for b in sorted(frac)},
         "tight_bin_hours_under_2x_req": tight_hours_under,
@@ -469,7 +511,11 @@ def main() -> int:
         "verdict": verdict,
         "config_gates": {
             k: bool(getattr(config, k, False))
-            for k in ("energy_reserve_coopt", "pjm_reserve_pergen", "pjm_reserve_supply_cap")
+            for k in (
+                "energy_reserve_coopt",
+                "pjm_reserve_pergen",
+                "pjm_reserve_supply_cap",
+            )
         },
     }
     if args.json_out:
