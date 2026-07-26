@@ -298,6 +298,22 @@ is appended as a trailing `(results_write: …)` clause, so every capture parsed
 above still parses. `tests/test_pipeline_timing.py` pins that the no-breakdown line is
 byte-identical to the recorded lines here.
 
+### Measured — ERCOT keeper replay (`2026-07-23-ercot100-netrev-margin-keeper`, 8760 h, threads=1)
+
+Captured by `scripts/capture_keeper_goldens.py` under the determinism pin, so this is the real
+production write path, not a microbench:
+
+| Year | `results_write` | `state` | `frames` | `parquet` | `bench` | year `total` |
+|------|----------------:|--------:|---------:|----------:|--------:|-------------:|
+| 2023 | 16.8 s | 0.8 s | **10.8 s** | 3.4 s | 1.7 s | 615.8 s |
+| 2024 | 16.1 s | 0.7 s | **10.3 s** | 3.3 s | 1.8 s | 622.8 s |
+| 2025 | 15.8 s | 0.6 s | **10.3 s** | 3.4 s | 1.6 s | 704.3 s |
+
+**Parquet does not dominate — frame construction does.** The parquet write is **~21 %** of
+`results_write` and **~0.5 %** of the year; building the per-pass dispatch/system/storage/posture/
+flows/BTM frames is **~65 %** of it. `results_write` as a whole is **~2.5 %** of a year
+(solve is ~85 % on this keeper), so the phase is a minor lever however it is split.
+
 ### Parquet-compression pre-check — the gates do NOT hash bundle bytes (finding, nothing adopted)
 
 The plan gates a compression change (lz4 / dictionary-off) on "bytes change ⇒ check golden hashing
@@ -314,6 +330,12 @@ tree hashes the **decoded frame**, never the file:
   `pd.util.hash_pandas_object` + column names and documents itself as "independent of parquet
   encoding/metadata".
 
-So a codec swap would be hash-transparent — it is *not* blocked by the gates. **Nothing was adopted
-here regardless**: the codec stays at the pandas/pyarrow default. Adoption needs its own bench
-against the measured split above, and this session did not run one.
+So a codec swap would be hash-transparent — it is *not* blocked by the gates.
+
+**It was not adopted, and on the measured split it is not worth pursuing.** The plan makes the
+compression bench conditional on parquet dominating `results_write`; it does not. At ~3.4 s of a
+~620 s year, a codec change could not buy more than **~0.5 % of wall** even if it made the write
+free — well under the ≥10 % adoption bar every other experiment here is scored against, and
+`frames` (10.3–10.8 s) is the larger target if this phase is ever worth attacking. The codec stays
+at the pandas/pyarrow default; no bench was run, because the pre-check that gates it came back
+negative.
