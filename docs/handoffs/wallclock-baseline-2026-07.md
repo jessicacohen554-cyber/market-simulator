@@ -395,6 +395,79 @@ distinct scenario, which is the escape hatch for a strictly cold forecast. Cache
 clause 2): forecast years cached before the flip were solved cold under this same key and stay
 valid, because the A/B measured the trajectory bit-identical.
 
+## H3b — D-9 multi-ISO follow-through: the same A/B on the five capacity-market ISOs
+
+The flip above is default-ON for **every** ISO, but its evidence was ERCOT-only, and ERCOT is the
+one ISO that exercises none of the paths the gap is about. ERCOT is energy-only — no capacity
+market, so no CR-1 sloped demand curve and no locational-deliverability leg — and PJM/MISO add
+reserve co-optimization on top, i.e. more duals and therefore more degeneracy surface. That matters
+because the residual channel D-9 leaves open is explicitly the **dual** one: wave 4C removed the
+realized-dispatch reader, but `runner.py` still hands the retirement screen `price_signal =
+econ_prices`, and prices are LP duals that can land on a different optimal vertex under degeneracy.
+ERCOT showed that noise at ~1e-5 tipping nothing; that is not evidence for a co-opt ISO. This
+section runs the same A/B per ISO and records each verdict either way.
+
+**Capture conditions.** Identical to §H3 — 2026-2050, 8760 h, every `ScenarioConfig` field at its
+default except mode/iso/horizon, `MARKET_SIM_HIGHS_THREADS=1 MALLOC_ARENA_MAX=2 OMP_NUM_THREADS=1`,
+years sequential inside each invocation (rule 12). Two deliberate differences from the ERCOT run:
+
+* **Both arms carry the §2.1a golden posture** (`--golden-posture`, per-ISO capacity-market
+  clearing ON — resolved True for all five, and inert for ERCOT). Running these ISOs at `cmc=False`
+  would have left the sloped-curve path — the whole reason to extend the A/B — unexercised. The
+  posture is the same in both arms, so the comparison still isolates the warm start.
+* **PJM and MISO run their two arms sequentially, not side by side.** Two full-scale co-opt LPs at
+  once is the pairing the memory note below records an OOM from, and this box has 15 GB against a
+  measured ~4-6 GB per arm. The cost is wall-clock; the benefit is that their speedups carry no
+  contention caveat at all.
+
+**The mechanism is live in every ISO, not silently inert.** An identical trajectory proves nothing
+if the warm arm never installed a basis, so `scripts/probes/_d9_warmstart_spy.py` counts
+`DispatchModel.apply_cross_year_basis` per arm. All five ISOs report `attempts=3 installed=3` warm
+against `attempts=0` cold on a 4-year run — the check the ERCOT record made by hand.
+
+### Reduced-horizon pre-screen (168 h, 2026-2032, all five)
+
+| ISO | capacity trajectory | price / CO2 / reserve-margin delta | cold → warm |
+|---|---|---|---|
+| CAISO | identical | none | 34.5 s → 34.6 s (1.00×) |
+| PJM   | identical | none | 34.7 s → 34.2 s (1.02×) |
+| NYISO | identical | none | 32.3 s → 31.4 s (1.03×) |
+| MISO  | identical | none | 32.8 s → 33.4 s (0.98×) |
+| NEISO | identical | none | 29.8 s → 29.6 s (1.01×) |
+
+No ISO moves at 168 h, so all five went on to the full horizon (a mover would have gone straight to
+identification instead). The ~1.0× is expected and is not a finding: at 168 h the LP is small enough
+that the basis remap costs about what it saves — ERCOT's own 168 h pre-screen was 1.14×.
+
+### Full horizon (2026-2050, 8760 h)
+
+| ISO | verdict | capacity trajectory | largest non-capacity residual | wall cold → warm | concurrent-window × | peak RSS |
+|---|---|---|---|---|---|---|
+| NEISO | **FLIP-CLEAR** | identical, all 25 years | `lw_price` 1.5e-05 (2035) | 2,473.3 s → 1,350.6 s (**1.83×**) | 1.72× (2026-2043) | 4.02 → 4.20 GB |
+| NYISO | **FLIP-CLEAR** | identical, all 25 years | none — every quantity 0.000e+00 | 2,083.8 s → 1,110.5 s (**1.88×**) | 1.54× (2026-2036) | 3.24 → 4.23 GB |
+
+Per ISO, every quantity in the guardrail set — `total_cap_mw`, `thermal_mw`, `firm_clean_mw`,
+`vre_mw`, `storage_mw`, `builds_thermal_mw`, `builds_renew_mw`, `builds_storage_mw`, `retire_mw`,
+per-fuel `capacity_by_fuel_mw`, plus `peak_demand_mw`, `reserve_margin` and `max_hourly_price` — is
+**0.000e+00** in all 25 years. I1-I14 invariant statuses are identical between the arms in both
+ISOs (NEISO 3 FAIL / 2 WARN, NYISO 2 FAIL / 3 WARN, same ids, same years); the detail strings differ
+only where they embed a figure that moves in its last digit, and on I1, whose text carries the LP
+feasibility residual (NEISO 8.6e-10 cold vs 4.7e-10 warm, against a tolerance of 1.0).
+
+NYISO is the stronger of the two: it is identical on `lw_price` and `co2_mt` as well, i.e. not even
+the dual-noise residual ERCOT and NEISO show. NEISO's 1.5e-05 on the annual load-weighted price is
+the same marginal-tie / dual-degeneracy channel §H3 describes, three orders of magnitude inside the
+5 % load-weighted-price band `scripts/golden_forecast_bands.py` checks the forecast golden against.
+
+**On the two wall-clock columns.** The arms are launched together but do not finish together — the
+warm arm ends first and the cold arm's remaining years then run on a free box, which biases the cold
+total *downward* and makes the headline speedup conservative. The concurrent-window column restricts
+the comparison to the leading years during which both arms were genuinely competing
+(`scripts/probes/_d9_relative_deltas.py`). For NEISO the two numbers are close (1.83× vs 1.72×), so
+contention is not what produces the result; NYISO's window is shorter and its restricted number
+correspondingly softer (1.54×), which is a property of where the arms happened to cross, not of the
+warm start.
+
 ## H4 — `results_write` sub-instrumentation (refactor-consolidation plan §7-H4)
 
 `results_write` was a single merged window in both orchestrators, so the tables above could say
