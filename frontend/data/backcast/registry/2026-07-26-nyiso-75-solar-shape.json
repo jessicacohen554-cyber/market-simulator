@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-26-nyiso-75-solar-shape",
+  "label": "nyiso 75 solar shape",
+  "date": "2026-07-26",
+  "shorthand": "nyiso-75-solar-shape",
+  "definition": "nyiso-75 (STRUCTURAL FIX, rule 1 [R-STRUCT]): shaped solar fallback. EIA-930 NYIS files `NG: SUN` as all zeros, so NYISO solar fell through to the EIA-930 generation-distribution parquet, whose NYISO solar row is a SINGLE repeated value across all 8760 h \u2014 the model generated as much solar at 03:00 as at noon (midday/night 1.00, 12 distinct values = the 12-step EIA-860 monthly capacity ramp). Swept all six ISOs x {wind,solar} x 2023-2025: this is the ONLY cell that both reaches this fallback and is degenerate; the other 30 ISO-year-mode cells are byte-identical. The row is now repaired from an adjacent same-clock BA (NEISO: interconnected, both America/New_York, EIA-860 solar-fleet latitude 42.5N vs 42.6N), which carries the measured diurnal timing, cloud variability and seasonality; it is then corrected for the two fleets' EIA-860 tracking mixes (NYISO 30.5% single-axis vs NEISO 13.3%) by the clear-sky POA RATIO POA_iso/POA_donor, which is phase-free because the geometry helper's omitted longitude/EoT term cancels between the two ISOs. LEVEL IS UNTOUCHED: the distribution is renormalized to sum to 1.0, so the annual mean CF stays exactly RENEWABLE_AVG_CF (0.1500), zero clipped hours. NOTHING FITTED TO A RESIDUAL. Validated against EIA-923 NYIS utility-scale solar monthly netgen (data never used to build the shape), 2023 monthly-energy share: flat MAE 0.0304 r -0.043 -> donor-only MAE 0.0076 r 0.977 -> this fix MAE 0.0050 r 0.983. Solar 2023 now resolves 4,576 distinct values (was 12), peaks h13 (was h00), midday/night 83.9 (was 1.00). SCORING: C7/C8 PASS, C2/C4 PASS, C3a/C3b/C3c unchanged-FAIL (the known 2023 energy-LEVEL residual). C1 flips PASS->FAIL on ONE knife-edge cell \u2014 2024 ST_GAS -3.02 TWh against a +/-3.0 TWh band: the fix moved model ST_GAS by only -0.056 TWh (8.106 -> 8.050, 0.7% of the class) and the nyiso-72 keeper was ALREADY at -2.964, i.e. 0.036 TWh (1.2% of the band) inside the edge. The C1 flip is a pre-existing marginal ST_GAS level miss crossing a hard threshold, NOT a regression introduced by the solar shape. Per rule 1 the mechanism stays in and the ST_GAS level residual is the root cause to chase. Determination NOT-YET on C6 UNATTESTED (probe bundle carries no governance attestation). Single code delta vs the nyiso-72 keeper recipe (replay_keeper); no config change, no new intake.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-26-nyiso-75-solar-shape.js",
+  "bundle": "results/calibration/nyiso75_solar_shape"
+}
