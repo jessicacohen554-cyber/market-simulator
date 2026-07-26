@@ -2,7 +2,8 @@
 
 **Opened** 2026-07-25 by owner instruction, out of `neiso-63`
 (`results/calibration/FINDING-neiso63-campd-economic-layup-2026-07.md`).
-**Status:** OPEN — design NOT yet frozen. **Scope:** all six ISOs.
+**Status:** ADOPTED-AS-IMPROVEMENT (owner verdict 2026-07-26, §8) — freeze HELD.
+**Scope:** all six ISOs.
 **Model assignment:** Opus or Fable (writes `scripts/lib/outage_detect.py`, a
 core-infrastructure path — CLAUDE.md rule 27).
 
@@ -288,3 +289,29 @@ Either:
 
 A charter that stalls without either outcome leaves the freeze in place. That is
 the intended failure mode, not an accident.
+
+## 8. VERDICT — ADOPTED-AS-IMPROVEMENT, freeze HELD (owner, 2026-07-26)
+
+The owner adopted the merit-order guard as a **genuine measured improvement,
+not a closure of the neiso-63 finding**, choosing adopt-and-hold over
+adopt-and-lift and over close-with-cause:
+
+- **Adopted.** The guard patches merge (still default-off,
+  `MERIT_ORDER_GUARD_ENABLED = False`); each ISO's committed extract is
+  re-derived guard-on and committed together with its
+  `campd-unit-outages-layup-<ISO>.csv` companion — the availability envelope
+  every keeper reads now excludes the reclassified economic-layup windows.
+- **Freeze HELD.** `frontend/data/backcast/holdout-freeze.json` stays
+  `active=true`. The residual over-count survives the guard — NEISO 2023–24
+  still runs 1.29–1.36× a whole-fleet published total on a thermal-only
+  extract — so out-of-training years remain preserved until that residual is
+  either explained (scope) or fixed. Only the owner lifts the freeze; §6's
+  clause that no session lifts it by inference stands.
+- **Keeper re-audits proceed** (§5 blast radius): NEISO is done
+  (fix-in-place, `2026-07-25-neiso-64-meritguard-a1`); ERCOT / PJM / MISO /
+  CAISO / NYISO replay their keepers in-sample (2023–2025, one bundle,
+  rule 16) on the corrected envelope, both arms registered (rule 15).
+- **Definition-of-done status:** the §7 "Adopted" leg is satisfied except its
+  final clause ("freeze lifted by the owner"), which is deliberately deferred
+  to the residual-over-count investigation. The charter stays open on that
+  single item plus the outstanding re-audits.

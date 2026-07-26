@@ -274,3 +274,80 @@ further holdout spending until the extract settles. (5) STEP C (2022 validation)
 still **not run** and now explicitly deferred behind the extract fix; the stale
 zero-outage `2026-07-23-neiso-61-margin-2022` remains un-superseded and should
 not be trusted. Locked test untouched. Next shorthand: neiso-64.
+
+## 2026-07-25 — neiso-64: CAMPD merit-order guard — built, validated cross-ISO, keeper re-audited (fix-in-place)
+
+STEPS 1–4 of `docs/handoffs/campd-economic-layup-fix-charter-2026-07.md`.
+Model Opus. Keeper **unchanged** (`2026-07-23-neiso-61-netrev-margin`).
+
+**Design frozen first (charter §3a, owner sign-off).** The out-of-merit test is
+the unit's measured **SRMC** (CAMPD heat rate × delivered fuel price) against
+**RCC(t)** — the capacity-weighted p90 SRMC of the units *measured running* that
+hour; a window is economic layup when it is out of merit for ≥90 % of its hours.
+The self-referential variant (window fuel price vs a percentile of the unit's
+own running-hour prices) was probed and **rejected with cause**: the heat rate
+cancels out of a within-unit percentile, so it sees only the fuel-blowout half of
+out-of-merit — it left NEISO JJA at 1.93× and its 2024 gain sat *inside* the
+placebo band. Cross-unit ranking is what puts the heat rate back. D2 reclassify
+(labelled `campd-unit-outages-layup-<ISO>.csv`, no loader reads it), D3 one
+ISO-agnostic rule (class enters only as physics — cogeneration excluded via
+measured `steamLoad`, fuel selects the price series), D4 thin data is inert and
+fail-safe (Henry Hub never substitutes for a missing ISO basis).
+
+**Built default-OFF and proven byte-inert at full extract scale.** A complete
+2018–2026 re-derive with `--merit-order-guard` absent reproduces **every**
+committed extract blob exactly (NEISO `a95c0928`, CAISO `3dc01fae`, NYISO
+`181fefb9`, ERCOT `b4b48f5a`, PJM `5283f5c6`, MISO `f2b3ec8e`). Ships as
+`docs/handoffs/patches/campd-merit-order-guard-{lib,deriver}.patch` (rule 27 —
+both files clear the 300-line bar); apply lib first.
+
+**Validated against the published instruments, no solve** (full tables:
+`results/calibration/RESULTS-neiso64-merit-order-guard-2026-07.md`). Graded on a
+same-GW-days placebo, so a guard that merely subtracts capacity cannot pass:
+ERCOT **3/3**, NEISO 2/3 (2025 exactly at p95), MISO 2/3, PJM 1/3 (its baseline
+r is already +0.90 — no room), CAISO **0/3**, NYISO no instrument. NEISO level
+1.52/1.57/1.22× → **1.36/1.29/0.92×**, monthly r +0.53/+0.47/+0.70 → **+0.71/
++0.61/+0.78**. **Positive control**: ISO-NE publishes the layup population
+separately (`uncommitted_available_gen_nonfast_mw`), and the guard sorts the two
+window sets into exactly those two buckets — KEPT tracks published outages
+(+0.71/+0.61/+0.78) and is near-orthogonal to uncommitted (+0.08/+0.28/+0.31);
+VETOED does the reverse (−0.26/+0.01/+0.24 vs **+0.77/+0.71/+0.67**).
+**2024 is the hardest year in every ISO** — mild winter, low basis, so the
+fuel-cost signal is weakest exactly where the over-count is worst. **ERCOT gains
+an anchor** (owner, this session): `ercot-thermal-dam-availability.csv`
+(`rating − live`), with the caveat that DAM offered capacity itself conflates
+outage with non-offering. **NYISO alone stays unverified.**
+
+**STEP 4 — keeper re-audit, `2026-07-25-neiso-64-meritguard-a1`.** The keeper
+recipe replayed verbatim on the corrected envelope, 2023–2025 one bundle. A0 is
+the keeper itself (the guard is byte-inert off, so an A0 re-solve is the keeper
+by construction). **C3a +5.2/+7.1/+5.2 % → +3.4/+6.0/+3.2 %; C3b NRMSE
+0.102/0.164/0.071 → 0.085/0.157/0.057** — both load-bearing price criteria
+improve in **every** year, nothing regresses, C3c tail unchanged at 0 model
+h>$300. LOYO is met by construction: no year traded against another. C1/C2/C4/
+C5a/C8 all PASS. **Verdict: fix-in-place, not re-tune** — the anticipated
+ERCOT-79/nyiso-63 co-dependency does *not* bite here; relieving the over-count
+improves the offer curves rather than breaking them. Bundle determination
+NOT-YET on C6 governance UNATTESTED only (a candidate arm carries no DOF-ledger
+attestation; C3c reads FAIL rather than the keeper's ledgered CAVEAT for the
+same reason, on an identical underlying 0 h).
+
+**Push limits, stated rather than papered over.** The corrected extracts, their
+`-layup` companions, the run payload `runs/<id>.js` (372 KB) and the bundle's
+parquet sidecars **could not be pushed** — the API-only path carries content
+inline and cannot round-trip files that size or binary at all. Committed here:
+the registry sidecar, `metrics.json`, the two patches, the scorer, the results
+doc. Everything else is deterministic from committed inputs and regenerates
+with the two commands in the results doc §5. **The run is
+registered-by-sidecar but will not render on the dashboard until `runs/<id>.js`
+lands via a git-push path.**
+
+**Open / next.** (1) Charter verdict is the owner's: the guard is a genuine
+measured improvement, **not a closure** — NEISO 2023–24 still runs 1.29–1.36× a
+*whole-fleet* published total on a thermal-only extract, so a residual
+over-count survives. (2) **Highest-value follow-up: a CAMPD↔CAISO resource
+crosswalk.** CAISO's report is per-resource, so a crosswalk turns the weakest
+instrument into per-unit ground truth — the strongest validation available
+anywhere in this charter. (3) 2024's weak fuel-cost signal is the mechanism's
+known limit. (4) Holdout freeze **remains in force** — no validation or
+locked-test year was solved, scored or registered. Next shorthand: neiso-65.
