@@ -106,7 +106,7 @@ NOTE_MAIN = (
     "veto (tight but PASS — the disclosed caveat). B1 (net-interchange volume, "
     "the deliverable) STRICTLY closed every year: total net err "
     "-5.46/-7.38/-7.27 -> -0.58/-1.21/-2.40 TWh. B2: every priced seam improves "
-    "every year (scripts/miso73_perseam_validate.py vs measured EIA-930) — PJM "
+    "every year (scripts/archive/miso73_perseam_validate.py vs measured EIA-930) — PJM "
     "-5.36/-9.56/-11.19 -> -0.42/-1.69/-3.13, South +3.41/+3.42/+4.06 -> "
     "+0.59/+0.65/+1.47, Manitoba -2.79/-1.64/+0.61 -> -0.81/-0.67/-0.58 (the "
     "merit cap un-suppresses Manitoba's own deep import rungs, FIXING the "

@@ -272,7 +272,7 @@ def run_energy_solve(
     #     pre-2026-07 behaviour, kept as the default so the byte-identity gate
     #     sees an unchanged default solve path (refactor-consolidation plan
     #     §7 H-1: the in-place path is a warm-start-class change validated by
-    #     scripts/diff_warmstart_bundles.py, not by --mode byte; flipping the
+    #     scripts/diagnostics/diff_warmstart_bundles.py, not by --mode byte; flipping the
     #     default is an owner cache-epoch decision on that tie-only evidence).
     # Either way P1 clears the SAME floored LP; the two paths differ only by
     # marginal-tie reshuffle (the shipped warm-start neutrality standard). The

@@ -47,7 +47,7 @@ import json
 import sys
 from pathlib import Path
 
-_REPO = Path(__file__).resolve().parents[1]
+_REPO = Path(__file__).resolve().parents[2]
 for _p in (_REPO / "src", _REPO, _REPO / "scripts"):
     sys.path.insert(0, str(_p))
 
