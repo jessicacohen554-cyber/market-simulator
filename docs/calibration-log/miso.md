@@ -1063,3 +1063,123 @@ corrected extract (755 windows / 3,630 GW-days reclassified 2023–25) is
 committed and IS the envelope MISO now solves against, so until this re-audit
 runs, the miso-88 keeper's registered numbers describe the pre-adoption
 envelope and will not reproduce at HEAD.
+
+## 2026-07-26 — miso-92: the cross-year memory floor is ATTRIBUTED and 35 % of it REMOVED — one 588.9 MB unit-hour frame the year-release `del` never named
+
+**Lane:** 2 of the miso-92 handoff ("read the memory telemetry"; *"do NOT propose
+a fourth story — TAKE THE MEASUREMENT"*).
+**Keeper UNCHANGED — `2026-07-25-miso-88-egrid-hr`. Determination UNCHANGED:
+CALIBRATED-WITH-CAVEATS**, 3/3 ledgered caveats. No scoring criterion moved, so
+no ledger slot was consumed or freed. Charter, written before any telemetry line
+existed to read: `docs/handoffs/miso-92-memory-attribution-charter-2026-07.md`.
+Full evidence: `results/calibration/FINDING-miso92-solve-memory-attribution-2026-07.md`.
+
+### The answer
+
+miso-90's pre-registered decision rule fired on the **LARGE** branch:
+`ndarray_gb = 0.69` against its ≥0.50 threshold, so the floor is live Python
+payload. The frame-level telemetry added this session then named the site, which
+is a single object:
+
+**588.9 MB — 24,694,440 gen-hours × 11 cols** (`year,pass,unit_id,plant_code,
+klass,fuel,supply,zone,hour,mw,lmp`) — still bound to the `_dispf` loop variable
+*after* being written to `dispatch/<year>_<pass>.parquet`, with nothing left to
+read it. The year-release `del` list names nine locals; `_dispf` is not one of
+them, so it survived `gc.collect()` and `malloc_trim(0)` — both of which
+correctly decline to free a **live** object — and sat underneath the next year's
+fleet build and LP. That is why miso-89's `malloc_trim` helped (2.98 → 1.56 GB)
+but could not finish: 589 MB of the remainder was live.
+
+The top six retained objects sum to ≈687 MB ≈ the whole 0.68 GB pandas payload —
+**fully attributed, no remainder**. The other five are legitimate (three declared
+cross-year accumulators at 0.07 GB, two loader frames).
+
+**One `del` at the write site:** cross-year floor **1.53 → 1.00 GB (−35 %)**,
+live `in_use` 0.73 → 0.15 GB, retained payload 0.69 → 0.11 GB. **Dispatch
+bit-identical** — `max|diff| = 0` on every column of both sidecars and the
+unit-hour parquet sha256-identical (73,683,342 bytes both), since the frame is
+already on disk and never read again.
+
+**The 14.4 GB single-year peak is UNCHANGED and was never going to change** (the
+frame is built after the LP solves). **The staged one-year-per-process
+`--reuse-solved` recipe REMAINS REQUIRED.** It does make miso-89's blocked
+re-audit cheaper: that OOM was reported at 15.9 GB ≈ the 14.4 GB peak + the
+1.53 GB floor, and the same arithmetic now gives ~15.4 GB — a real reduction
+toward, but still above, a 15 GB box.
+
+### Two corrections to the record, both by measurement
+
+1. **The `lru_cache` hypothesis is refuted AGAIN, harder.** miso-90 measured it
+   on the data-load path (9 caches / 14 entries); a real solve populates **30 /
+   38**, including `_eia_hourly_frame` ×4 — plausible suspects by name. Measured
+   directly, **all 9 BA extracts × both caches = 0.015 GB**. High entry count,
+   negligible payload. So the suspicion that miso-90 had measured the wrong set
+   was itself wrong. `clear_all_caches()` stays unwired.
+2. **HiGHS is exonerated.** Pre-fix live malloc = `in_use` 0.73 + `mmapped` 0.37
+   = 1.10 GB against a 0.69 GB array payload, bounding C-side retention at
+   ~0.29 GB — not the ~1.35 GB the hypothesis needed. Post-fix `in_use` collapses
+   to **0.15 GB**: essentially all of it was the one Python frame. No
+   "destroy the HiGHS model" work is warranted. Settled by the `mallinfo2` line
+   added *before* the first read, precisely so the small-ndarray branch would not
+   cost a second solve-year.
+
+### The keeper's non-reproduction at HEAD is EXPECTED — a correction to my own draft
+
+Replaying the keeper's 2023 at HEAD does not reproduce it (mean LWP $31.224 →
+$30.770; ST_GAS +2.05 TWh, CT_PEAKER −1.16, COAL_BIT +1.10, COAL_PRB −1.08,
+import −1.34; 86.7 % of zone-hours differ). This finding's first draft framed
+that as a new defect. **It is not** — the miso-89 entry already records that the
+guard-corrected CAMPD economic-layup extract (755 windows / 3,630 GW-days
+reclassified, PR #2919) is committed and is the envelope MISO now solves against,
+so the keeper's registered numbers describe the pre-adoption envelope. What this
+lane adds is the **magnitude** of that pending re-audit's change plus a control:
+two identical invocations at HEAD give `max|diff| = 0` everywhere, so it is
+**input drift, not nondeterminism**. No link to `wefor_residual` is claimed — the
+CAMPD change is a sufficient, already-documented explanation.
+
+### Instrument changes (diagnostic only; none can change dispatch)
+
+* `_glibc_arena_gb()` — `mallinfo2` accounting at the release seam, splitting
+  non-Python resident into *glibc holding free* vs *C-side still allocated*.
+* `cache_control.largest_retained_frames()` — top retained pandas objects with
+  shape and column list (a column list identifies a frame's producer on sight).
+  Counts `Series` as well as `DataFrame`, for parity with `retained_footprint`.
+* Recorded a coverage fact found by a **failing test**, not assumed: DataFrames
+  and Series are **GC-tracked**, so `gc.get_objects()` enumerates them directly
+  and this reporter has **no running-locals blind spot** — which is exactly why
+  `_dispf`, a function local, was visible at all. Pinned by test.
+* The telemetry's blanket `except` logged at **debug** (invisible in a normal
+  run). Raised to `warning` with `exc_info`, plus a warning when the frame list
+  is empty while `retained_footprint` counted pandas objects.
+
+### Verification
+
+* Determination **CALIBRATED-WITH-CAVEATS**, 3 ledgered caveats — unchanged.
+* Dispatch bit-identical pre/post fix (§4 of the finding).
+* Memory result reproduced across **four** single-year solves.
+* `run_calibration_full` importer modules: **8 failed / 186 passed** — the
+  inherited baseline. Composition correction: it is **7 `test_pipeline_facade_
+  shims` + 1 `test_flag_registry`**, not "all 8 shims" as the handoff states; all
+  8 reproduce on a clean `origin/main` worktree, so none is this session's.
+* `tests/test_cache_control.py`: **16 passed** (11 inherited + 5 new).
+* `ruff format --check` clean on all touched files.
+
+### Notes for the next session
+
+* **Nothing was registered on the dashboard, deliberately.** All four bundles are
+  single-year probes; rule 16 permits a one-year solve only as a throwaway
+  diagnostic and forbids registering it. No calibration result was produced — the
+  keeper's dispatch was reproduced, not re-scored.
+* **A governance finding, same shape as miso-91's.** A one-line `NameError` cost
+  a full solve-year: the new import was reverted by a post-edit reformat and the
+  debug-level `except` hid it. `ruff check --select F821` reproduces it on the
+  broken tree and passes on the fixed one — **the repo applies `ruff format` to
+  committed Python but does not run `ruff check`**, so an undefined name reaches
+  a solve. Not wired here (same reasoning as miso-91: wiring an ungated check is
+  its own triage job). **Owner call.**
+* **The 3/3 budget still binds.** Untouched by this session.
+* **Charter deviation, declared:** the charter fenced this lane from proposing a
+  fix. The `del` overran that fence deliberately — the measurement named a
+  specific live object at a specific line and the result was *verified* by
+  re-running the same telemetry, not argued. Recorded rather than rationalised.
+* Next number: **miso-93.**
