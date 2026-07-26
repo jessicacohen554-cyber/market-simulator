@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-26-nyiso-80-old-outages",
+  "label": "nyiso 80 old outages",
+  "date": "2026-07-26",
+  "shorthand": "nyiso-80-old-outages",
+  "definition": "(DIAGNOSTIC \u2014 not a keeper candidate) The BISECT RESULT for the NYISO keeper drift. The former keeper's config on current main with EXACTLY ONE file reverted \u2014 data/raw/campd-unit-outages-NYISO.csv restored to its pre-6a8f285 bytes (7,460 rows vs 4,423) \u2014 and everything else at HEAD. It reproduces the de-designated keeper 2026-07-26-nyiso-75-solar-shape TO EVERY DIGIT: C3b 0.216/0.176/0.170, C3a +17.8/+1.2/-3.2%, hours>$300 19/6/17, p1/p50/p99 25.2/35.0/69.0, and the protective gates back to PASS (D-1 ST_GAS cv_ratio 0.542/0.658/0.606; D-2 forced share 31.4/41.7/28.2%). So commit 6a8f285 ('neiso-65: adopt guard-corrected CAMPD extracts') is the SOLE and COMPLETE drift source \u2014 nothing else in the 81 commits between the keeper's git af74927 and main affects NYISO. The extract change is CORRECT (the layup charter established the detector was booking economic layup as mechanical outage, deleting 23-46% of CC capacity-year against a ~10-15% EFOR norm) and is KEPT under rule 14. What it exposed is a COUPLING: model/interchange/core.py:154 sizes the reliability floor as frac x AVAILABLE capacity, so un-deleting 787 ST_GAS outage windows (55.8 GW of unit capacity) mechanically inflated the downstate steam floor \u2014 forcing ST_GAS up 8.2 TWh, displacing CC_REGULAR 5.7 TWh, flattening the diurnal profile (C7) and breaching the forced-energy budget (C8). This run exists to pin that attribution; it must NEVER be promoted, since it runs on a superseded extract. See docs/FINDING-nyiso-ordc-span-reliability-floor-2026-07-26.md section 3.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-26-nyiso-80-old-outages.js",
+  "bundle": "results/calibration/nyiso76_oldoutages"
+}
