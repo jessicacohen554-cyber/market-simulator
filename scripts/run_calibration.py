@@ -3231,6 +3231,24 @@ def run_year(
                 if offer_surface_mc_bid_adjust is None
                 else offer_surface_mc_bid_adjust + _midcurve
             )
+    # PJM CT_FAST measured max()-seam reprice (pjm-123 composite leg 3): a bid
+    # LEVEL, not a markup — run_energy_solve applies it as max(bid, target)
+    # AFTER the startup amortization, so the measured CT corpus and the pjm-103
+    # start-cost pricing reconcile instead of stacking (rule 19; the additive
+    # pjm-101/102 form over-expressed at CT -12 TWh). None for every
+    # non-PJM / gate-off run (byte-identical).
+    pjm_ct_max_target = None
+    if getattr(config, "pjm_ct_measured_max_reprice", False) and iso == "PJM":
+        from market_sim.data.fleet import build_pjm_ct_measured_max_target
+
+        _ct_net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        pjm_ct_max_target = build_pjm_ct_measured_max_target(
+            fleet_arrays, fleet, mc_base, _ct_net_load, config, year
+        )
     # v4 condition-keyed fast-start amortization horizon
     # (tranche_startup_conditional_runs): the hour's within-year net-load
     # percentile band scales the v3 CAMPD-measured run-length ceiling by the
@@ -4163,6 +4181,7 @@ def run_year(
         # exclusive (rule 19, enforced at build_ercot_gas_bridge_p1_preps), so
         # at most one is non-None here.
         p1_bid_adjust_prep=lowcurve_bid_adjust_prep or ercot_bridge_bid_prep,
+        p1_bid_max_target=pjm_ct_max_target,
         startup_run_ratio_t=startup_run_ratio_t,
     )
     _t_solve_end = time.perf_counter()
