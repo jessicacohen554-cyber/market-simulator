@@ -2668,6 +2668,21 @@ def run_year(
                 year,
                 _n_before - len(_floor_specs),
             )
+        # Rule 19, same shape: when the NYISO in-city commitment obligation is
+        # armed, the published NYC/LI 10-minute requirement owns downstate
+        # steam commitment, so those zones' ST_GAS floor limbs are SUPERSEDED
+        # rather than stacked on (in-city must-run charter §2).
+        _n_pre_obligation = len(_floor_specs)
+        _floor_specs = drop_obligation_owned_reliability_specs(_floor_specs, config)
+        if len(_floor_specs) < _n_pre_obligation:
+            logger.info(
+                "%s %d: reliability floor — dropped %d NYC/LI ST_GAS limb(s) "
+                "superseded by the in-city commitment obligation "
+                "(CLAUDE.md rule 19: published J/K requirement owns the class)",
+                iso,
+                year,
+                _n_pre_obligation - len(_floor_specs),
+            )
         if _floor_specs and inject_reliability_floor(
             fleet_arrays,
             iso,
