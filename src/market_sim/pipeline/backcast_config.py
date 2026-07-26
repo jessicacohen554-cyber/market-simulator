@@ -1545,6 +1545,35 @@ def backcast_config(
         #   orchestrator seam: explicit False scrubs it (ablation arms);
         #   pre-driver bundle replays are backstopped to False in
         #   replay_keeper.build_kwargs. Non-ERCOT ISOs default off (rule 25).
+        coal_econ_marginal_hr_bound=(iso.upper() == "ERCOT"),  # ERCOT keeper
+        #   default-ON (ercot-115 promotion, owner sign-off 2026-07-26): floor each
+        #   coal class's ECONOMIC band (econ_low/econ_high) at the ISO's own
+        #   measured CAMPD marginal (incremental) heat rate — the slope
+        #   d(heatInput)/d(grossLoad) of each unit's CEMS input-output curve,
+        #   capacity-weighted over 25 units and pooled over the available years
+        #   (data/raw/reference/ercot_campd_marginal_hr_summary.csv,
+        #   marg_econ_low_p50 = 0.886 / marg_econ_high_p50 = 0.898;
+        #   scripts/data/derive_campd_marginal_hr.py). On the ERCOT curve this
+        #   lifts exactly ONE band, COAL_PRB.econ_low 0.400 -> 0.886, retiring a
+        #   FITTED value with no measurement behind it (rules 13/26): an
+        #   already-committed unit's next MWh cannot cost less than its own
+        #   measured incremental burn, so that is the physical LOWER bound on the
+        #   band's offer multiplier. Markups ABOVE the measured basis pass through
+        #   untouched, and the committed/must-run take-or-pay bands and the peak
+        #   scarcity wall are out of scope (rule 19). REMOVES a free parameter
+        #   rather than adding one — DOF ledger offer_curve_by_group 112 -> 111
+        #   residual-identified scalars; the floor IS the frozen derive artifact
+        #   (rule 23), so it adds no tunable.
+        #   Gated per-ISO here rather than by flipping the global ScenarioConfig
+        #   default, because the mechanism is ISO-generic and reads each ISO's own
+        #   artifact (PJM 0.803/0.809, MISO 0.838/0.838, NEISO 0.933/0.631 — a
+        #   large floor; CAISO/NYISO have no COAL row and no-op). Those ISOs adopt
+        #   it in their own lanes; flipping the global default would silently
+        #   re-point three keepers that have never tested it (rule 25).
+        #   Applied in run_calibration.run_year AFTER the offer-curve overrides
+        #   and deltas resolve, so it bounds the curve the calibration path
+        #   actually produced. Evidence: results/calibration/
+        #   FINDING-ercot115-coal-floor-promotion-2026-07-26.md.
         ct_netload_drag=(iso.upper() == "CAISO"),  # CAISO keeper default-ON: the
         #   forward-native CT_PEAKER reliability-drag floor that REPLACES the flat
         #   TMAX floor above (audit Lever B). Same mechanism validated on ERCOT —

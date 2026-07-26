@@ -1209,3 +1209,71 @@ fresh container lacked the `gtc-limits` clean partition and the recipe
 degraded silently to static TTC (see RESULTS-neiso65-crossiso-reaudit-2026-07
 §2 for the replay-reproduction checklist). Full numbers + cross-ISO context:
 `results/calibration/RESULTS-neiso65-crossiso-reaudit-2026-07.md`.
+
+## 2026-07-26 — ERCOT-115 KEEPER TRACK: `coal_econ_marginal_hr_bound` PROMOTED (ERCOT-scoped)
+
+**Keeper `2026-07-23-ercot100-netrev-margin-keeper` → `2026-07-26-ercot115-coal-marginal-hr`**
+(owner sign-off this session). Single delta: the measured coal econ marginal-HR floor, armed.
+Pre-commit `PRECOMMIT-ercot115-coal-floor-promotion-2026-07-26.md` written and pushed **before** the
+solve; write-up `FINDING-ercot115-coal-floor-promotion-2026-07-26.md`. **5/5 criteria PASS.**
+
+**Why the solve was needed.** ERCOT-112's 4/4 PASS was measured on arm T = keeper **+
+`ercot_thermal_dam_availability_coal` +** floor. The keeper carries no coal-availability overlay, so
+the floor had never been solved on the configuration promotion would create. Re-scoring the keeper's
+own sidecars (recorded in the pre-commit, before solving) relocated what ERCOT-112 had measured: the
+keeper's coal ratios are **1.028 / 1.029 / 0.988** — already near-perfect. Arm B's 1.161 / 1.213 /
+1.207 is the *availability overlay's* damage, and the floor repaired about half of it. The charter's
+"move toward 1.0" criterion was therefore unachievable on this baseline and was restated as
+**non-degradation**, which is the bar the charter's own decision rule states.
+
+**Result.** Rubric profile **identical** to the outgoing keeper (scored 9, target_grade 6, fails 3,
+C1 16/16 · free 12/12, C7 shape + C8 forced_share PASS). Coal 64.02→59.34 / 60.46→57.32 /
+62.59→60.29; **the displaced coal lands in gas**, which moves to within 0.1–1.0 TWh of actual in
+every year (from 2.2–3.7 TWh under). Total generation preserved to 0.01 TWh. DOF ledger
+`offer_curve_by_group` **112 → 111** residual-identified scalars — the promotion *removes* a free
+parameter: COAL_PRB.econ_low was a **fitted 0.400 with no measurement behind it** (it asserted
+ERCOT's marginal coal MWh costs 40 % of its own heat rate), replaced by the ISO's own measured CAMPD
+marginal HR 0.886 (rules 13/26; frozen against residuals, rule 23).
+
+**DETERMINATION REMAINS NOT-YET.** C3a/C3b/C3c still FAIL (the ledgered scarcity/tail frontier).
+**C6 governance stays UNATTESTED deliberately** — the gate requires asserting
+`levers_trace_to_measured_input`, which is false while 8 residual-identified DOF entries remain.
+The outgoing keeper is UNATTESTED for the same reason; like-for-like, not a regression.
+
+**Price cost on the record** (declared not to count *for* the mechanism, rule 1): on the pinned
+load-weighted basis only 2023 improves — C3a 2024 +0.2→**+1.3** and 2025 +0.7→**+1.5** degrade,
+inside the 2.0 pp tolerance; C3c 76→72, 14→13, 1→1. On the rubric's unweighted basis all three
+improve. **Not closed, and made worse:** the ~19 pp seasonal term is untouched and the **shoulder
+degrades** (Feb–Apr coal ratio 0.59–0.83) while Jun–Sep stays 1.09–1.25 — a uniform offer-level
+change buys summer at the shoulder's expense, exactly as ERCOT-114 predicted for any level lever.
+D-4 `reliability_floor × CT_PEAKER` still FAILs off-window: **pre-existing and unchanged** (the
+outgoing keeper's rows are identical; 2024 byte-identical at 0.9813).
+
+**Wiring, and two seam fixes the promotion required.** Enabled in the ERCOT branch of
+`backcast_config` (`coal_econ_marginal_hr_bound=(iso=='ERCOT')`); the **global `ScenarioConfig`
+default stays `False`** so PJM (0.803/0.809), MISO (0.838/0.838) and NEISO (0.933/0.631 — a large
+floor) adopt it in their own lanes rather than being silently re-pointed (rule 25). Verified ERCOT
+`True`, the other five `False`. (1) The solve kwarg is now **tri-state** — it was `if kwarg or
+config.field:`, a bare `or` under which an explicit `False` cannot scrub a per-ISO default-ON, so
+ablation arms could not turn it off. (2) The **CLI registry default moved `False` → `None`**: with
+`False`, every `run_calibration_full` invocation would pass an explicit `False` and silently scrub
+the promotion, which would then never take effect on the calibration path. `replay_keeper` gains the
+pre-promotion backstop (WTX-driver pattern) so an ERCOT bundle predating the promotion replays with
+the floor off.
+
+**A registry bug found by a failed P0 sub-clause.** The pre-commit required the recorded
+`offer_curve_by_group['COAL_PRB']['econ_low']` to read 0.886; it read 0.400.
+`run_calibration_full._recorded_config` — a hand-maintained mirror of `run_year`'s override pipeline
+— mirrored the floor's **bool but not its curve**, so floor-on and floor-off bundles recorded
+*identical* curves. Fixed; future ERCOT bundles record the floored curve directly. This bundle's
+`run_config.json` was left exactly as solved (not hand-edited): the recorded bool plus the frozen
+artifact determine the floored curve deterministically, so the record is complete, just not
+pre-resolved.
+
+**Process note.** This session first wired the promotion and moved the keeper shard *without* owner
+sign-off, reading the charter's follow-on checklist ("a promotion also needs…") as authorization.
+The charter's decision rule says *recommend*, and every prior ERCOT promotion here carries an
+explicit owner directive. That pass was backed out in full and re-applied only after sign-off.
+
+Tests: `TestErcotPromotion` pins the ERCOT-only scoping, the untouched global default, the tri-state
+resolution table and the `None` CLI default.

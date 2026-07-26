@@ -153,3 +153,34 @@ the exact single band the floor lifts; the 80.4 % COAL_PRB capacity exposure.
 
 **Not known:** any ERCOT-115 floor-alone result. No year of arm F had been solved when this
 document was written and pushed.
+
+---
+
+## Verdict recorded after the fact
+
+**ALL FIVE CRITERIA PASS → PROMOTION RECOMMENDED, ERCOT-SCOPED — and PROMOTED on owner sign-off
+2026-07-26.** Keeper `2026-07-23-ercot100-netrev-margin-keeper` →
+`2026-07-26-ercot115-coal-marginal-hr`; the gate is ERCOT backcast default-ON with the global
+`ScenarioConfig` default left at `False`. Scored 2026-07-26; full write-up in
+`FINDING-ercot115-coal-floor-promotion-2026-07-26.md`. Run id
+`2026-07-26-ercot115-coal-marginal-hr`.
+
+| criterion | result |
+|---|---|
+| **P0** arming + bite | **PASS** — 3/3 arming lines with `ercot_thermal_dam_availability_coal=False`; coal −4.68 / −3.14 / −2.30 TWh |
+| **P1** C1 holds 16/16 · free 12/12 | **PASS** — identical to the keeper |
+| **P2** scarcity/dispatch not degraded | **PASS** — dispatch_corr/sysvol/co2 PASS, fails 3 (not increased), C3a worst drift 1.1 pp (≤2.0), C3c 76→72 / 14→13 / 1→1 (≤5) |
+| **P3** coal in band, \|err\| increase ≤ 4.0 TWh | **PASS** — every coal class PASSes every year; Δ +1.22 / −0.24 / +2.30 |
+| **P4** LOYO, all three years | **PASS** — 3/3 |
+
+**One P0 sub-clause failed and is reported as a failure, not reinterpreted:** the recorded
+`offer_curve_by_group['COAL_PRB']['econ_low']` reads `0.400`, not `0.886`. Root cause was a
+`_recorded_config` mirror that recorded the floor's bool but not its curve — a real registry bug,
+fixed in this session. It is not evidence the floor was inert: the arming line fired 3/3 and
+dispatch moved 4.7 TWh.
+
+Declared-not-counted, honoured: **no price-MAE argument was made for the mechanism.** C3 is
+reported on both bases (§4 of the finding) precisely so the promotion's price cost is on the
+record — on the pinned load-weighted basis 2024/2025 *degrade* by 1.1 and 0.8 pp, inside tolerance.
+The ≥$300 scarcity set was not read as evidence. The summer over-run was reported, not gated —
+and the finding records that the shoulder months get **worse** (Feb–Apr 0.59–0.83).

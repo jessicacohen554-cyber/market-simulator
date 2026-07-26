@@ -43,8 +43,15 @@ COAL_EXPECTED_DEFAULTS = {
     "coal_sync_srmc_tranche": False,
     "coal_bit_sigmoid": False,
     "coal_econ_srmc_bound": False,
-    # ERCOT-111 measured coal econ-ramp incremental-HR floor.
-    "coal_econ_marginal_hr_bound": False,
+    # ERCOT-111 measured coal econ-ramp incremental-HR floor. Deliberately
+    # DIVERGES from the 2026-07-21 pre-migration literal (False -> None) at the
+    # ercot-115 promotion (2026-07-26): the floor became the ERCOT backcast
+    # default-ON in backcast_config, so the flag had to go TRI-STATE. Kept at
+    # False, every CLI run would pass an explicit False and silently scrub that
+    # per-ISO default, and the promotion would never take effect on the
+    # calibration path. None = keep the per-ISO default; the --no- form still
+    # forces it off.
+    "coal_econ_marginal_hr_bound": None,
     "coal_lignite_sigmoid": False,
     "coal_sub_sigmoid": False,
     "coal_waste_sigmoid": False,

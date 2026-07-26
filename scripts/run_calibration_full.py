@@ -2644,7 +2644,7 @@ def solve_and_persist(
     coal_bit_sigmoid: bool = False,
     bit_overrides: dict | None = None,
     coal_econ_srmc_bound: bool = False,
-    coal_econ_marginal_hr_bound: bool = False,
+    coal_econ_marginal_hr_bound: bool | None = None,
     coal_takeorpay_from_data: bool = False,
     coal_mustrun_online_pmin: bool = False,
     coal_sync_srmc_tranche: bool = False,
@@ -3063,8 +3063,32 @@ def solve_and_persist(
             )
         if coal_econ_srmc_bound:
             recorded_cfg = recorded_cfg.with_overrides(coal_econ_srmc_bound=True)
-        if coal_econ_marginal_hr_bound:
-            recorded_cfg = recorded_cfg.with_overrides(coal_econ_marginal_hr_bound=True)
+        # Mirror run_year's marginal-HR floor EXACTLY — bool AND curve. Recording
+        # only the bool left run_config.json's offer_curve_by_group showing the
+        # PRE-floor band (ERCOT COAL_PRB.econ_low 0.400) while the LP solved on
+        # 0.886, so a floor-on and a floor-off bundle recorded identical curves
+        # and a verifier could not tell them apart from run_config alone
+        # (rule 25 — the registry must record what was solved). Tri-state
+        # resolution matches run_year: None keeps the per-ISO backcast_config
+        # default, True/False force it.
+        _rec_marginal_hr_on = (
+            bool(recorded_cfg.coal_econ_marginal_hr_bound)
+            if coal_econ_marginal_hr_bound is None
+            else bool(coal_econ_marginal_hr_bound)
+        )
+        if _rec_marginal_hr_on:
+            from market_sim.data.coal import apply_coal_econ_marginal_hr_floor
+
+            _rec_curve, _ = apply_coal_econ_marginal_hr_floor(
+                recorded_cfg.offer_curve_by_group, iso
+            )
+            recorded_cfg = recorded_cfg.with_overrides(
+                coal_econ_marginal_hr_bound=True, offer_curve_by_group=_rec_curve
+            )
+        elif recorded_cfg.coal_econ_marginal_hr_bound:
+            recorded_cfg = recorded_cfg.with_overrides(
+                coal_econ_marginal_hr_bound=False
+            )
         if plant_tranche_config:
             recorded_cfg = recorded_cfg.with_overrides(
                 plant_tranche_config_path=plant_tranche_config
