@@ -278,6 +278,13 @@ results/calibration/_diag_*
 results/calibration/caiso_diag_*/
 results/calibration/miso_diag_*
 results/calibration/*_repro_A/
+# caiso-122 attribution arms: the same-HEAD control (no delta), its single-year
+# leg, and the keeper-era counterfactual (outage extract hidden). All three are
+# repro/control arms under the FINDING-caiso92b protocol — never registered,
+# never committed; only the registered delta bundle is a deliverable.
+results/calibration/caiso122_control_A/
+results/calibration/caiso122_headctl_2025/
+results/calibration/caiso122_nooutage_2025/
 results/calibration/caiso106_binding_*/
 results/calibration/*_y20[0-9][0-9]/
 # Per-year probe accumulator scaffolding (e.g. results/calibration/_miso70_acc/
