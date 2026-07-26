@@ -250,10 +250,14 @@ parallel by the 2026-07-26 payload-backfill session while this one ran.)
    discards 72 % of segments / 23 % of published MW-days. On the corrected
    revision-aware build the CAISO active-plant levels are **1.40x / 1.69x /
    1.90x**, not 1.85/2.19/2.28 baseline → 1.52/2.02/2.13 guard-on. The
-   over-count is real and survives; the ratios were inflated ~1.3x. NEISO's
-   1.29-1.36x is a `tail(1)` number against a different report and needs the
-   same audit before it is quoted again. The **freeze stays ACTIVE** — the
-   finding explains the residual, it does not fix it.
+   over-count is real and survives; the CAISO ratios were inflated ~1.3x.
+   **NEISO is unaffected by that defect** (its instrument is a daily one-row-per-
+   report_date CSV, nothing to collapse) and its 1.29-1.36x stands — and NEISO
+   then **confirms the seam directly** against ISO-NE's published
+   `uncommitted_available_gen_nonfast_mw`: monthly r(residual, uncommitted)
+   **+0.85 / +0.84 / +0.70**, r(residual, published outages) **−0.86 / −0.86 /
+   −0.85**. The **freeze stays ACTIVE** — the finding explains the residual, it
+   does not fix it.
 2. **CAISO + NYISO re-tunes.** CAISO's lane is LIVE and has independently
    reached the same envelope conclusion from the other end
    (`FINDING-caiso122-c3a-head-regression-2026-07-26.md`: the C3a-2025 breach is
