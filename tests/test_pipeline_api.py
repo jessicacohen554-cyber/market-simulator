@@ -42,6 +42,7 @@ from market_sim.model.dispatch import DispatchResult
 from market_sim.pipeline import commitment as pipeline_commitment
 from market_sim.pipeline import solve as pipeline_solve
 from market_sim.results import cache
+from tests.test_runner import _HermeticCleanDir
 
 
 def _fake_solve(fleet, demand, *args, **kwargs):
@@ -139,15 +140,19 @@ class TestReExports(unittest.TestCase):
         self.assertIn("run_pair", market_sim.pipeline.__all__)
 
 
-class TestCacheLayoutContract(unittest.TestCase):
+class TestCacheLayoutContract(_HermeticCleanDir):
     """A completed run produces the frozen on-disk layout.
 
     ``results/{iso}/{cache_key}/year_{year}.parquet`` + ``config.yaml`` +
     ``evolution_{year}.json`` — the layout every downstream reader
     (export, scoring, hindcast ledgers, PB-5 assembly) binds to.
+    (Inherits the hermetic CLEAN_DIR so the W2-E confirmed-retirements loader
+    degrades instead of requiring the gitignored data/clean tree — CI parity;
+    see tests/test_runner.py::_HermeticCleanDir.)
     """
 
     def setUp(self):
+        super().setUp()
         self._tmp = tempfile.TemporaryDirectory()
         self._original_root = cache.CACHE_ROOT
         cache.CACHE_ROOT = Path(self._tmp.name)
@@ -155,6 +160,7 @@ class TestCacheLayoutContract(unittest.TestCase):
     def tearDown(self):
         cache.CACHE_ROOT = self._original_root
         self._tmp.cleanup()
+        super().tearDown()
 
     def test_layout_via_facade(self):
         config = ScenarioConfig(iso="ERCOT")

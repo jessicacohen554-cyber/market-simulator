@@ -14,16 +14,22 @@ from unittest.mock import patch
 from market_sim import matrix, runner
 from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
 from market_sim.results import cache
-from tests.test_runner import _FakeDispatchModel, _fake_solve
+from tests.test_runner import _FakeDispatchModel, _HermeticCleanDir, _fake_solve
 from market_sim.pipeline import commitment as pipeline_commitment
 from market_sim.pipeline import members as pipeline_members
 from market_sim.pipeline import solve as pipeline_solve
 
 
-class MatrixTestBase(unittest.TestCase):
-    """Base fixture redirecting the cache root to a temp directory."""
+class MatrixTestBase(_HermeticCleanDir):
+    """Base fixture: temp cache root + hermetic CLEAN_DIR (CI parity).
+
+    Inherits test_runner's ``_HermeticCleanDir`` so the W2-E fail-loud
+    confirmed-retirements loader takes its curated-root/zero-row degrade path
+    on a fresh checkout (data/clean is gitignored) — see RunnerTestBase.
+    """
 
     def setUp(self):
+        super().setUp()
         self._tmp = tempfile.TemporaryDirectory()
         self._original_root = cache.CACHE_ROOT
         cache.CACHE_ROOT = Path(self._tmp.name) / "results"
@@ -32,6 +38,7 @@ class MatrixTestBase(unittest.TestCase):
     def tearDown(self):
         cache.CACHE_ROOT = self._original_root
         self._tmp.cleanup()
+        super().tearDown()
 
 
 class TestMatrixConfigs(unittest.TestCase):

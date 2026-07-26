@@ -19,7 +19,6 @@ Two different guarantees, deliberately:
 
 import unittest
 
-import pytest
 
 from scripts import render_data_dictionary as render
 from scripts.lib import clean_io
@@ -30,15 +29,10 @@ class DataDictionarySyncTest(unittest.TestCase):
         """The committed data dictionary is present."""
         self.assertTrue(render.DOC_PATH.is_file(), f"missing {render.DOC_PATH}")
 
-    # strict=False: pytest-subtests reports each passing self.subTest() as its
-    # own XPASS, which strict xfail treats as a failure even though only the
-    # capacity-deliverability datatype actually drifts (the other 28 pass).
-    @pytest.mark.xfail(
-        strict=False,
-        reason="pre-existing failure on main as of 2026-07-05 (found wiring PR CI "
-        "in W1-P1): capacity-deliverability datatype dictionary/schema drift; "
-        "unrelated to this change, tracked for follow-up",
-    )
+    # Stale xfail removed 2026-07-26 (fast-tier triage, bucket E): the
+    # capacity-deliverability dictionary/schema drift it cited was fixed long
+    # ago and the strict=False mark was silently emitting one XPASS per
+    # passing subtest — all 60 of the tier's xpasses came from this one mark.
     def test_per_column_tables_match_schemas(self):
         """Every datatype's per-column table matches a fresh schema render.
 

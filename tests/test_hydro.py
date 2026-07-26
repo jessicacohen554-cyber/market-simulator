@@ -430,8 +430,12 @@ class TestCAISOHydroBudget(unittest.TestCase):
         self.assertLess(ratio, 1.25)
 
     def test_zones_resolve_to_caiso_topology(self):
+        # Post-SP15-split load zones (c28d57b1, 2026-07-09: SP15 ->
+        # LA_BASIN / SDGE / SP15_rest; 0f14b757 re-pointed the literals).
         hb = load_hydro_budget("CAISO", 2023)
-        self.assertTrue(set(hb.zones) <= {"NP15", "ZP26", "SP15"})
+        self.assertTrue(
+            set(hb.zones) <= {"NP15", "ZP26", "LA_BASIN", "SDGE", "SP15_rest"}
+        )
         # Sierra/Cascade hydro concentrates north of Path 26: NP15 carries
         # the bulk of the nameplate.
         np15_mw = hb.max_mw[np.array(hb.zones) == "NP15"].sum()

@@ -20,6 +20,7 @@ from market_sim.pipeline import solve as pipeline_solve
 from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
 from market_sim.model.dispatch import DispatchResult
 from market_sim.results import cache
+from tests.helpers.base import CleanDirTestCase
 
 
 def _fake_solve(fleet, demand, *args, **kwargs):
@@ -66,10 +67,29 @@ class _FakeDispatchModel:
         return _fake_solve(self._fleet, self._demand)
 
 
-class RunnerTestBase(unittest.TestCase):
+class _HermeticCleanDir(CleanDirTestCase):
+    """CLEAN_DIR redirect + an empty confirmed-retirements datatype root.
+
+    CI parity: data/clean is derived and gitignored, so on a fresh checkout
+    (and on every CI run) it does not exist. Since the W2-E fail-loud wiring
+    (8aa7e14 + 652c2a8, 2026-07-17) the default forecast path calls
+    ``load_confirmed_exits(iso, required=True)``, which raises on a
+    never-curated checkout. Carrying the empty datatype ROOT selects the
+    loader's documented curated-root/zero-row degrade path instead, so these
+    tests exercise the orchestrator hermetically — exactly what they did
+    before the wiring — rather than requiring a local curation run.
+    """
+
+    def setUp(self):
+        super().setUp()
+        (self.clean_dir / "confirmed-retirements").mkdir(parents=True)
+
+
+class RunnerTestBase(_HermeticCleanDir):
     """Base fixture redirecting the cache root to a temp directory."""
 
     def setUp(self):
+        super().setUp()
         self._tmp = tempfile.TemporaryDirectory()
         self._original_root = cache.CACHE_ROOT
         cache.CACHE_ROOT = Path(self._tmp.name)
@@ -78,6 +98,7 @@ class RunnerTestBase(unittest.TestCase):
     def tearDown(self):
         cache.CACHE_ROOT = self._original_root
         self._tmp.cleanup()
+        super().tearDown()
 
 
 class TestRunScenarioIso(RunnerTestBase):
@@ -205,7 +226,14 @@ class TestKnownYearPeakForesight(RunnerTestBase):
 
 
 class TestPriceSignalByteIdentity(RunnerTestBase):
-    """Defaults (alpha=1.0, lookahead off) pass econ_prices through unchanged."""
+    """With lookahead pinned off, econ_prices pass through unchanged.
+
+    ``entry_lookahead_reprice`` defaulted OFF when this test was written; the
+    FF-2A owner sign-off (2026-07-18) flipped the forecast default ON, so the
+    pass-through premise now needs the flag pinned — the same treatment
+    e0a2e20 gave ``datacenter_load_path`` in this file for the FF-1F flip.
+    The assertion itself is unchanged.
+    """
 
     def test_price_signal_is_econ_prices_object_at_defaults(self):
         captured = []
@@ -215,7 +243,7 @@ class TestPriceSignalByteIdentity(RunnerTestBase):
             captured.append(kwargs)
             return original(**kwargs)
 
-        config = ScenarioConfig(iso="ERCOT")
+        config = ScenarioConfig(iso="ERCOT", entry_lookahead_reprice=False)
         with (
             patch.object(runner, "END_YEAR", 2027),
             patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
@@ -464,7 +492,7 @@ def _trace_fleet_build(iso: str, *, historic_overlay: bool = True) -> dict:
     return rec
 
 
-class TestCampdBinningGate(unittest.TestCase):
+class TestCampdBinningGate(_HermeticCleanDir):
     """The per-plant CAMPD binning path unlocks per-ISO by bin artifact."""
 
     def test_ercot_takes_campd_path(self):
@@ -490,7 +518,7 @@ class TestCampdBinningGate(unittest.TestCase):
             self.assertIn(iso, CAMPD_BINNING_ISOS)
 
 
-class TestHistoricOutageOverlayDefault(unittest.TestCase):
+class TestHistoricOutageOverlayDefault(_HermeticCleanDir):
     """The historic-outage overlay default is resolved per ISO."""
 
     def test_ercot_overlay_true(self):
