@@ -409,6 +409,11 @@ to the C3c scarcity tail (separately open, G-22 ledger).
 
 ## 9. ERCOT-65: the negative-price epoch pair adjudicated — BOTH §8 premises measured wrong; the vintage scoping built and probe-inert; the wtx driver discovered ALREADY LIVE in the keeper (recorder defect, fixed); the trough/spread lane is AT FRONTIER pending the West topology split
 
+> **SUPERSEDED IN PART by §10 (2026-07-26).** This section's closing
+> paragraph names the **West/Panhandle topology split** as the one remaining
+> forward-admissible lever. That lever is **refuted** — §10 has the closure.
+> Everything else in §9 stands.
+
 Probes (rule-16 2023-only throwaways vs the byte-faithful ercot63-gas-bridge
 reconstruction — C3a +3.1 %, C3b 0.131, C3c 171 h, spread $14.9, storage
 0.74 TWh reproduced exactly; `_ercot65_ladder_probe.py`, scored with
@@ -498,3 +503,81 @@ ERCOT-64 pinned-variable anatomy, mirrored). Frontier block drafted in
 the 2026-07-13 calibration-log entry for owner sign-off; keeper
 `2026-07-12-ercot63-gas-bridge` unchanged. The C3c scarcity tail stays
 the separate open G-22 item (rule 13).
+
+## 10. ERCOT-117: the West/Panhandle topology split is CLOSED — no admissible split exists (§9's frontier lever is refuted; the lane's remaining route is sub-zonal, not zonal)
+
+§9 left the lane "AT FRONTIER pending the West topology split" and named that
+split as the one forward-admissible mechanism remaining. **It is refuted.** No
+LP was run and no mechanism was built: the closure is a read of the committed
+NP6-86 archive plus two in-repo adjudications that already covered it, and this
+section exists because §9's frontier block outlived them.
+
+**The two prior adjudications.** (a)
+`docs/handoffs/ercot-vre-curtailment-topology-scope-2026-07.md` §WP-A
+(2026-07-07) scoped exactly this split — the five coordinated touch-points,
+`iso_configs` through the gas basis — measured its expected yield as **~zero**,
+and recommended **defer**. (b)
+`results/calibration/FINDING-ercot115-wtx-topology-premise-2026-07-26.md`
+(commit `b5449c0`) re-tested WP-A's 2024-only evidence across all three
+training years and it held. §9 predates neither conclusion in substance but
+predates (b) in the record, and its frontier block was never amended.
+
+**Why it is refuted, on the measured archive.** ERCOT-115 §1: the corridor
+interfaces are *already at their measured limit-at-bind* — WESTEX 10,038 /
+10,275 / 10,109 MW vs the model's 10,000 (7,300 + 2,700), PNHNDL 2,524 / 2,670 /
+2,397 vs 2,680. There is no corridor limit for a split to adopt that the
+topology does not already carry. ERCOT-115 §3: the only *intra*-corridor
+aggregate interfaces in the archive are the Far West GTCs (MCCAMY, CULBSN,
+I_FW_N, I_FW_S), and the most any of them binds in any year is **2.8 %** — so a
+`Far_West` split relocates load and generation behind a near-copper-plate
+interface, which is the same no-op that reverted the original Far_West node
+(`docs/ercot-far-west-zone-split-2026-06.md`).
+
+**The second reading of the lever — a CREZ wind sub-zone (WP-A's "and/or
+`Zone(name="West_CREZ")`") — closes harder, and this session measured it
+because ERCOT-115 was written for the wind/shape lane and did not name it.**
+The complete 2023–2025 aggregate-GTC vocabulary is BEARKT, CULBSN, EASTEX,
+E_PASP, E_PATA, HMLTN, I_FW_N, I_FW_S, I_KALO, I_PASP, KINNEY, MCCAMY, NELRIO,
+NE_LOB, N_TO_H, PNHNDL, REDTAP, RV_RH, SAMSW, TRDWEL, VALEXP, VALIMP, WESTEX,
+WHARTN, WILBRN, ZAPSTR. **There is no Sweetwater / Abilene / CREZ interface in
+it at all** — not a loose one, none. A CREZ sub-zone's link TTC would therefore
+have to be *invented*, and the only signal available to set it by is the
+trough/spread residual the split is meant to close. That is a fitted limit under
+rules 5 `[R-NO-MAGIC]` / 13 `[R-MEASURED]` / 14 `[R-ACCURATE]`, and it is
+refused on that ground, not on yield.
+
+**Where the missing epochs actually live.** ERCOT-115 §4 measured NODAL-ONLY
+binding — a station-to-station element binds while *no* aggregate GTC binds —
+at **36.4 / 47.2 / 38.1 %** of all SCED intervals. Decomposing that tail by
+voltage class (this session, same archive):
+
+| year | 69 kV | 115 kV | **138 kV** | 345 kV |
+|---|---|---|---|---|
+| 2023 | 18.1 % | 5.2 % | **66.0 %** | 30.1 % |
+| 2024 | 18.5 % | 5.7 % | **76.8 %** | 30.4 % |
+| 2025 | 21.1 % | 5.2 % | **83.1 %** | 43.5 % |
+
+(share of the year's SCED intervals in which a binding nodal constraint of that
+class appears; median limit 36 / 217 / ~207 / ~1,250 MW respectively.) The
+congestion is **138 kV single elements at ~205–210 MW**, binding in 66–83 % of
+intervals — which is the signature of the step-2 handoff's "chronic, active in
+66–90 % of ALL hours" curtailment, and the West-Texas names are all in it
+(6437__F SCRCV–KNAPP, 15060__B VEALMOOR–KOCHTAP, 6520__E ODEHV–YARBR, 6144__A
+BSPRW–STASW). Reproducing that zonally needs hundreds of zones and each new zone
+would cap one line, not an interface. **The trough lane's missing negative epochs
+are formed sub-zonally, and no zone split at any granularity reaches them.**
+
+**Lane adjudication — the offer side and the zonal-topology side are BOTH
+closed.** §8 closed the LSL/lower-tail price side; §9 closed the negative-band
+offer side; this section closes the zonal-topology side. The remaining named
+route is the topology scope doc's **WP-B nodal layer**: aggregate the
+station-to-station binding rows (today dropped by `curate_gtc_limits._gtc_only`)
+whose stations sit in West/Panhandle/CREZ geography into a measured
+curtailment-pressure frequency on the net-load × hour × season axis
+`ercot_wtx_curtailment_driver` already uses. It needs a **station → area
+crosswalk the repo does not have**, so it is a `data-intake` job before it is a
+model change — and, as a bound on the wind variable rather than a price-setter,
+it inherits §9's caveat that a ceiling-clipped variable is never marginal. A
+mechanism that *prices* these epochs has no identified candidate on this
+evidence. Keeper `2026-07-26-ercot115-coal-marginal-hr` untouched; no run, no
+dashboard registration (nothing was solved).
