@@ -38,7 +38,6 @@ Usage:
 from __future__ import annotations
 
 import gzip
-import importlib.util
 import json
 import sys
 from pathlib import Path
@@ -56,14 +55,6 @@ from market_sim.config.paths import (  # noqa: E402
 from market_sim.data.eia_loader import _eia_hourly_frame_filled  # noqa: E402
 
 import scripts.legitimacy_diagnostics as L  # noqa: E402
-
-
-def _load_module(name: str, rel: str):
-    spec = importlib.util.spec_from_file_location(name, str(_REPO / rel))
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
-
 
 ISO = "CAISO"
 YEARS = (2023, 2024, 2025)
@@ -91,7 +82,13 @@ def _year_frame(year: int) -> pd.DataFrame:
 
 
 def main() -> int:
-    rch = _load_module("rch", "scripts/render_calibration_html.py")
+    # Package import, not a ``spec_from_file_location`` file-load (refactor
+    # plan §6-E): the old form executed the renderer a second time under the
+    # synthetic name "rch" — a private copy that could drift from the
+    # canonical ``scripts.render_calibration_html``. Kept lazy: the renderer
+    # imports run_calibration_full at module level.
+    from scripts import render_calibration_html as rch
+
     gas_groups = set(rch._GAS_GROUPS)
     out_dir = CAISO_SUPPLY_CONSISTENT_DEMAND_DIR
     out_dir.mkdir(parents=True, exist_ok=True)

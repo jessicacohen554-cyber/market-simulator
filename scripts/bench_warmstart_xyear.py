@@ -22,14 +22,18 @@ Usage:
     (the env var only affects the capture run; the bench builds models directly)
 """
 
-import importlib.util
 import os
 import pickle
 import resource
+import sys
 import time
 from pathlib import Path
 
 import numpy as np
+
+from market_sim.config.paths import REPO_ROOT
+
+sys.path.insert(0, str(REPO_ROOT))
 
 ROOT = Path(__file__).resolve().parent.parent
 RESULTS = ROOT / "results"
@@ -48,12 +52,25 @@ def say(*a):
 
 
 def _load_rc():
-    spec = importlib.util.spec_from_file_location(
-        "run_calibration", ROOT / "scripts" / "run_calibration.py"
-    )
-    rc = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(rc)
-    return rc
+    """Import the calibration runner lazily (heavy module).
+
+    Package import, not a ``spec_from_file_location`` file-load (refactor plan
+    §6-E): the old form executed run_calibration a second time under a
+    synthetic name, so this bench held a private copy that could drift from
+    the canonical ``scripts.run_calibration`` every other importer shares.
+
+    NOTE (recorded, not repaired here): ``capture()``'s spy seam has rotted —
+    ``run_calibration`` no longer holds a module-level ``solve_dispatch``
+    (the solve moved into ``market_sim.pipeline.solve`` at the orchestrator
+    extraction), so ``rc.solve_dispatch`` raises AttributeError on BOTH import
+    forms. Verified equally absent on both paths before this conversion; a
+    capture rerun needs the spy re-pointed at the pipeline seam first. The
+    committed capture pickle (``results/warmstart_xyear_capture.pkl``) and the
+    recorded bench numbers are unaffected.
+    """
+    from scripts import run_calibration
+
+    return run_calibration
 
 
 def capture():
