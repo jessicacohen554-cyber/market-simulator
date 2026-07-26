@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-25-neiso-64-meritguard-a1",
-  "iso": "NEISO",
-  "label": "neiso 64 meritguard a1",
+  "run_id": "2026-07-26-ercot113-meritguard-a1",
+  "iso": "ERCOT",
+  "label": "ercot113 meritguard a1",
   "target_years": [
     2023,
     2024,
@@ -33,12 +33,12 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
@@ -63,7 +63,7 @@
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
@@ -81,14 +81,14 @@
     }
   },
   "grade_summary": {
-    "scored": 8,
-    "target_grade": 7,
+    "scored": 9,
+    "target_grade": 6,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 1
+    "fails": 3
   },
   "free_class_score": {
-    "iso": "NEISO",
+    "iso": "ERCOT",
     "pinned_classes": [
       "CC_CHP",
       "CT_CHP",
@@ -103,13 +103,13 @@
       "ST_CHP"
     ],
     "all": {
+      "pass": 16,
+      "total": 16
+    },
+    "free": {
       "pass": 12,
       "total": 12
     },
-    "free": {
-      "pass": 8,
-      "total": 8
-    },
-    "headline": "C1 all 12/12 · free 8/8"
+    "headline": "C1 all 16/16 · free 12/12"
   }
 }

@@ -175,3 +175,39 @@ finding alone — unlike nyiso-63 the NEISO determination held and the fit
 improved. But holdout spending should be frozen across ISOs until the detector
 settles, since validation/locked years scored against an availability envelope
 that is about to change are wasted signal.
+
+## 2026-07-26 — CROSS-ISO VERDICT: merit-order guard ADOPTED-AS-IMPROVEMENT; holdout freeze HELD
+
+**Owner charter verdict** (campd-economic-layup-fix-charter-2026-07.md §8, out of
+the three options on record — adopt+lift, adopt+hold, close-with-cause): **adopt
++ hold the freeze.**
+
+**Adopted.** The neiso-64 merit-order guard (charter §3a frozen design: a window
+is economic layup when the unit's measured `SRMC = HR × delivered fuel price`
+exceeded `RCC(t)` — the capacity-weighted p90 SRMC of the units measured running
+that hour — for ≥90 % of its hours) merges into `scripts/lib/outage_detect.py` /
+`scripts/data/derive_campd_unit_outages.py`, default-off
+(`MERIT_ORDER_GUARD_ENABLED = False`, `--merit-order-guard`). Every ISO's
+committed `campd-unit-outages[-<ISO>].csv` is re-derived guard-on; the vetoed
+windows move to `campd-unit-outages-layup-<ISO>.csv` companions no loader reads
+by default. Evidence basis: placebo-graded validation against each ISO's
+published instrument (ERCOT 3/3, NEISO 2/3, MISO 2/3, PJM 1/3 with baseline r
+already +0.90, CAISO 0/3 honest null, NYISO no instrument), the ISO-NE
+outage/uncommitted positive control, and the NEISO keeper re-audit
+(`2026-07-25-neiso-64-meritguard-a1`: C3a and C3b improve in all three years,
+nothing regresses — fix-in-place, keeper unchanged).
+
+**Not a closure.** NEISO 2023–24 still runs 1.29–1.36× a whole-fleet published
+total on a thermal-only extract, so a residual over-count survives the guard.
+The neiso-63 finding stays open on that residual.
+
+**Freeze HELD.** `holdout-freeze.json` stays `active=true` (history entry
+2026-07-26). No out-of-training year is solved, scored, or registered anywhere
+until the owner lifts it explicitly.
+
+**Follow-ons this session:** cross-ISO keeper re-audits on the corrected
+envelope (ERCOT first — 3/3 placebo, largest reclassification share — then PJM,
+MISO, CAISO, NYISO; 2023–2025 one bundle each, rule 16; both arms registered,
+rule 15, with A0 = the keeper itself since the guard is byte-inert off), and the
+CAMPD↔CAISO resource crosswalk (turns the weakest instrument into per-resource
+ground truth; dedupe the raw parquet to one row per outage mrid first).

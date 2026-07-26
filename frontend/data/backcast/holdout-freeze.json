@@ -18,6 +18,12 @@
       "action": "declared",
       "by": "owner",
       "reason": "neiso-63 cross-ISO CAMPD economic-layup finding; see `reason` above."
+    },
+    {
+      "date": "2026-07-26",
+      "action": "held",
+      "by": "owner (charter verdict, campd-economic-layup-fix-charter-2026-07.md §8)",
+      "reason": "Merit-order guard ADOPTED-AS-IMPROVEMENT (adopt + hold freeze, not adopt + lift): corrected extracts commit and keeper re-audits proceed, but a residual over-count survives the guard (NEISO 2023-24 still 1.29-1.36x a whole-fleet published total on a thermal-only extract), so out-of-training years stay preserved until that residual is explained or fixed. Freeze remains active; only the owner lifts it."
     }
   ]
 }
