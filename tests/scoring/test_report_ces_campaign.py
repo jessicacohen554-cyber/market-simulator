@@ -26,8 +26,9 @@ from market_sim.results import cache
 from market_sim.results.evolution_ledger import ledger_path, write_ledger
 from market_sim.results.outputs import FleetContext
 from scripts import report_ces_campaign as R
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parent.parent
+REPO = REPO_ROOT
 MATRIX_YAML = REPO / "configs" / "ces_premium_matrix.yaml"
 MATRIX_CI_YAML = REPO / "configs" / "ces_premium_matrix_ci.yaml"
 

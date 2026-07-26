@@ -8,14 +8,14 @@ READ from the scorer's pre-registered module constants (which transcribe
 ``docs/forecast-determination-rubric.md`` §2), never re-derived and never fit to
 a real run's numbers (rubric §4 — bands never widen). The scorer is loaded by
 path (it lives under scripts/, not an importable package), mirroring
-tests/test_calibration_verdict.py.
+tests/scoring/test_calibration_verdict.py.
 """
 
 import importlib.util
 import unittest
-from pathlib import Path
+from tests.helpers import REPO_ROOT
 
-_REPO = Path(__file__).resolve().parent.parent
+_REPO = REPO_ROOT
 _spec = importlib.util.spec_from_file_location(
     "forecast_verdict", str(_REPO / "scripts" / "forecast_verdict.py")
 )

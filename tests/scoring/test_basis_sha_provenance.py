@@ -26,8 +26,9 @@ from tempfile import TemporaryDirectory
 
 from scripts.replay_keeper import _restore_display_date, build_kwargs
 from scripts.run_calibration_full import _basis_sha
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = REPO_ROOT
 
 
 def _git_ok(*args: str) -> bool:

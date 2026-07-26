@@ -41,7 +41,7 @@ from market_sim.pipeline import commitment as pipeline_commitment
 from market_sim.pipeline import solve as pipeline_solve
 from market_sim.results import cache
 from scripts import run_capacity_hindcast as H
-from tests.test_runner import _fake_solve, _FakeDispatchModel
+from tests.unit.pipeline.test_runner import _fake_solve, _FakeDispatchModel
 
 
 def _crossover_config(**overrides) -> ScenarioConfig:

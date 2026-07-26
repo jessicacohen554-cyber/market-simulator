@@ -11,11 +11,11 @@ behaviour against the committed data.
 
 import importlib.util
 import unittest
-from pathlib import Path
 
 import pandas as pd
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = REPO_ROOT
 _spec = importlib.util.spec_from_file_location(
     "bcr", str(REPO / "scripts" / "data" / "build_calibration_reference.py")
 )

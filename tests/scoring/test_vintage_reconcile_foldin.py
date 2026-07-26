@@ -18,13 +18,10 @@ the offsetting-in-band case the combined reconcile now correctly leaves alone.
 """
 
 import importlib.util
-import sys
 import unittest
-from pathlib import Path
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(REPO))
-sys.path.insert(0, str(REPO / "src"))
+REPO = REPO_ROOT
 _spec = importlib.util.spec_from_file_location(
     "rch_foldin", str(REPO / "scripts" / "render_calibration_html.py")
 )

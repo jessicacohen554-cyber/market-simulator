@@ -9,21 +9,18 @@ the C5b/C5c scorers that used to read them (``calibration_verdict.score_storage`
 / ``score_storage_shape``) were removed with their criteria by the rubric v2.7
 owner amendment (410811a2, 2026-07-16 — EIA-930 storage-dispatch data is not
 reliable enough to be a calibration gate); their wiring tests were deleted with
-them (the v2.7 commit updated tests/test_calibration_verdict.py but missed this
+them (the v2.7 commit updated tests/scoring/test_calibration_verdict.py but missed this
 file — corrected by the 2026-07-26 fast-tier triage).
 """
 
 import importlib.util
-import sys
 import unittest
-from pathlib import Path
 
 import pandas as pd
 import pytest
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(REPO))
-sys.path.insert(0, str(REPO / "src"))
+REPO = REPO_ROOT
 _spec = importlib.util.spec_from_file_location(
     "rch_storage", str(REPO / "scripts" / "render_calibration_html.py")
 )

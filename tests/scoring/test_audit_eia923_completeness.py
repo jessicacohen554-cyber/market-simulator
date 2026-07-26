@@ -9,12 +9,12 @@ so it is loaded by path.
 
 import importlib.util
 import unittest
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from tests.helpers import REPO_ROOT
 
-_REPO = Path(__file__).resolve().parent.parent
+_REPO = REPO_ROOT
 _spec = importlib.util.spec_from_file_location(
     "audit_eia923_completeness",
     str(_REPO / "scripts" / "audit_eia923_completeness.py"),

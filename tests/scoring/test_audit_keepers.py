@@ -13,8 +13,9 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from tests.helpers import REPO_ROOT
 
-_REPO = Path(__file__).resolve().parent.parent
+_REPO = REPO_ROOT
 _spec = importlib.util.spec_from_file_location(
     "audit_keepers_h1", str(_REPO / "scripts" / "audit_keepers.py")
 )

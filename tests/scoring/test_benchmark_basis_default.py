@@ -5,9 +5,9 @@ This test is the CI backstop for the owner directive of **2026-07-12**
 fuel-family totals is the repo default for **every ISO**, unconditional, with no
 flag or env knob able to re-arm the old basis. Three mechanisms make up that
 basis; the unit-level tests pin each one in isolation
-(``tests/test_vintage_reconcile_foldin.py`` and
-``tests/test_campd_backfill_bucketing.py`` cover fixes 1 and 2, and the
-``test_g21b_*`` cases in ``tests/test_calibration_verdict.py`` cover fix 3). This
+(``tests/scoring/test_vintage_reconcile_foldin.py`` and
+``tests/curation/test_campd_backfill_bucketing.py`` cover fixes 1 and 2, and the
+``test_g21b_*`` cases in ``tests/scoring/test_calibration_verdict.py`` cover fix 3). This
 file instead pins the *system-level invariant* the directive settled — **no raw
 EIA-930 per-fuel cell gates a scored class or family number** — so that a future
 edit which reintroduces any of the three deprecated behaviors fails CI here with a
@@ -38,12 +38,12 @@ property behaviorally and structurally, not merely that the mechanisms exist.
 import ast
 import importlib.util
 import unittest
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from tests.helpers import REPO_ROOT
 
-_REPO = Path(__file__).resolve().parents[1]
+_REPO = REPO_ROOT
 
 
 def _load(mod_name: str, filename: str):
@@ -70,7 +70,7 @@ _CITE = (
 
 
 # ---------------------------------------------------------------------------
-# Completeness-map injection (mirrors tests/test_calibration_verdict.py so the
+# Completeness-map injection (mirrors tests/scoring/test_calibration_verdict.py so the
 # family-fallback path is exercised hermetically, no committed parts read).
 # ---------------------------------------------------------------------------
 def _incomplete(iso: str):

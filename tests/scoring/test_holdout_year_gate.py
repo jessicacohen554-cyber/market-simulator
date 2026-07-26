@@ -14,10 +14,11 @@ import json
 from pathlib import Path
 
 import pytest
+from tests.helpers import REPO_ROOT
 
 _SPEC = importlib.util.spec_from_file_location(
     "run_calibration_full",
-    Path(__file__).resolve().parents[1] / "scripts" / "run_calibration_full.py",
+    REPO_ROOT / "scripts" / "run_calibration_full.py",
 )
 _RCF = importlib.util.module_from_spec(_SPEC)
 _SPEC.loader.exec_module(_RCF)

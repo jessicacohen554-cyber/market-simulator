@@ -36,9 +36,9 @@ Two checks:
 from __future__ import annotations
 
 import ast
-from pathlib import Path
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parent.parent
+REPO = REPO_ROOT
 
 # (module path relative to REPO, function name) -> the function whose AST must
 # never reference a dispatch-output path/name. Add an entry here whenever a

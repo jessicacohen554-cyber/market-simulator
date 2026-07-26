@@ -8,7 +8,7 @@ the §2.1b-gated instruments (FC-3/FC-4/FC-5/FC-6, FC-2 row5 position), the
 upstream delivery of the rubric §3 I12 stability escalation, and the t3
 UNATTESTED path. See docs/handoffs/ff-t2-scorer-shakeout-2026-07.md.
 
-This lives in a sibling file (not appended to tests/test_forecast_verdict.py) so
+This lives in a sibling file (not appended to tests/scoring/test_forecast_verdict.py) so
 the 866-line base test file is not rewritten wholesale over the push API
 (CLAUDE.md rule 27 — never regenerate a ≥300-line source file). The base module
 is loaded by path and its fixture builders are reused verbatim, so every
@@ -18,15 +18,16 @@ never re-derived (rubric §4).
 
 import importlib.util
 import unittest
-from pathlib import Path
+from tests.helpers import REPO_ROOT
 
-_REPO = Path(__file__).resolve().parent.parent
+_REPO = REPO_ROOT
 # Reuse the base test module's fv loader + fixture builders (loaded by path, the
 # same way it loads the scorer — no package-import assumptions). This does NOT
 # collect the base module's tests (unittest discovers those under their own
 # dotted name); it only borrows the helpers.
 _spec = importlib.util.spec_from_file_location(
-    "_forecast_verdict_base", str(_REPO / "tests" / "test_forecast_verdict.py")
+    "_forecast_verdict_base",
+    str(_REPO / "tests" / "scoring" / "test_forecast_verdict.py"),
 )
 _base = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_base)
