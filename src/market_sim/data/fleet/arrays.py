@@ -37,6 +37,7 @@ from market_sim.data.floor_mechanisms import (
     MECH_COAL_MUSTRUN,
     MECH_CT_DEPLOYMENT_OVERLAY,
     MECH_CT_MUSTRUN_PER_PLANT,
+    MECH_HYDRO_MIN_FLOW,
     MECH_NUCLEAR,
     MECH_RELIABILITY_DEPLOYMENT_OVERLAY,
     MECH_ST_GAS_MUSTRUN_PER_PLANT,
@@ -1601,6 +1602,12 @@ def _compose_min_gen_floors(
     cc_mustrun_any = any(
         getattr(g, "cc_mustrun_pmin_mw", 0.0) > 0.0 for g in generators
     )
+    # Hydro min-flow floor: presence is read off the units themselves (the
+    # config gate was already applied when data.hydro.build_hydro_fleet stamped
+    # them), so an unfloored fleet is byte-identical to before.
+    hydro_min_flow_any = any(
+        getattr(g, "hydro_min_flow_monthly_mw", None) for g in generators
+    )
     # ST_GAS p25-level floor (config.st_gas_mustrun_p25_level, the miso-67
     # LEVEL SWAP for st_gas_mustrun_per_plant): gather the gate-armed ST_GAS
     # plants with their measured p25 level (p25_cf x nameplate) and measured
@@ -1653,6 +1660,7 @@ def _compose_min_gen_floors(
         or coal_sync_any
         or cc_mustrun_any
         or st_gas_p25_tranches
+        or hydro_min_flow_any
     ):
         min_gen = np.zeros((n_gen, hours), dtype=float)
         # Parallel mechanism-id array (D-2 forced-energy attribution): each
@@ -2004,6 +2012,30 @@ def _compose_min_gen_floors(
                 rd_mwh / 1e6,
                 rd_deploy_frac,
             )
+        # Conventional-hydro minimum-flow floor (config.hydro_min_flow_floor,
+        # stamped per unit by data.hydro.build_hydro_fleet as a 12-entry
+        # month-constant MW vector): run-of-river inflow that cannot be stored
+        # plus the environmental / FERC-licence minimum releases the fleet must
+        # pass. The hydro budget rows cap a plant's monthly ENERGY but impose no
+        # lower bound, so the purely-economic LP parks the fleet at 0 MW in the
+        # solar belly, which the measured fleet never does. The level is
+        # MONTH-constant by design — a diurnal floor would pin the measured
+        # shape (rule 13) — and the allocator already clipped the fleet level to
+        # the month's average power, so the two-sided budget row stays feasible.
+        # ``np.maximum`` composes with any floor already placed (none today: no
+        # other mechanism floors hydro, rule 19).
+        if hydro_min_flow_any:
+            month_of_hour = _hour_to_month_index(hours)  # 0-based month per hour
+            for g_idx, gen in enumerate(generators):
+                monthly = getattr(gen, "hydro_min_flow_monthly_mw", None)
+                if not monthly:
+                    continue
+                floor_t = np.asarray(monthly, dtype=float)[month_of_hour]
+                if not np.any(floor_t > 0.0):
+                    continue
+                raised = min_gen[g_idx, :] < floor_t
+                np.maximum(min_gen[g_idx, :], floor_t, out=min_gen[g_idx, :])
+                min_gen_mech[g_idx, raised] = MECH_HYDRO_MIN_FLOW
         # Never demand more than the (outage/derate-adjusted) availability.
         np.minimum(min_gen, pmax[:, np.newaxis] * availability, out=min_gen)
         # An outage hour that collapsed the floor is no longer forced.

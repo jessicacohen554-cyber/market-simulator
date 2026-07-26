@@ -526,6 +526,64 @@ def load_hydro_budget(
     )
 
 
+def allocate_min_flow_floor(
+    monthly_level_mw: np.ndarray,
+    monthly_energy: np.ndarray,
+    hours_per_month_arr: np.ndarray,
+) -> np.ndarray:
+    """Allocate a fleet monthly min-flow level onto plants, pro-rata by budget.
+
+    The measured minimum-flow evidence exists only at fleet resolution (EIA-930
+    ``NG: WAT`` is a balancing-authority aggregate; there is no per-plant hourly
+    hydro series), so the per-plant split must not invent structure. Each plant
+    carries the share of the fleet floor equal to **its own share of that
+    month's energy budget** — a measured quantity already in the LP, no free
+    parameter::
+
+        floor[g, m] = level[m] * monthly_energy[g, m] / sum_g monthly_energy[g, m]
+
+    Two properties follow. (a) *Feasibility is exact*: summed over the month the
+    per-plant floor energy is ``level[m] * hours[m] * share[g, m]``, so it fits
+    inside the plant's own budget row iff the fleet level fits inside the fleet
+    budget — which the level is clipped to here (never above the month's average
+    power), making the two-sided hydro budget row feasible per plant by
+    construction. (b) The floor keeps the *geography* of the water: a zone's
+    share of the floor is its share of the month's inflow, so the floor cannot
+    silently relocate hydro between CAISO zones the way a fleet-aggregate LP row
+    would (which would also add LP degeneracy across equal-cost hydro units).
+
+    Args:
+        monthly_level_mw: Fleet minimum-flow level per calendar month, shape
+            ``(12,)`` MW.
+        monthly_energy: Per-plant monthly energy budget, shape ``(n, 12)`` MWh,
+            for the plants that are actually in the LP.
+        hours_per_month_arr: Hours in each calendar month, shape ``(12,)``.
+
+    Returns:
+        The ``(n, 12)`` per-plant per-month minimum-flow floor in MW.
+    """
+    level = np.asarray(monthly_level_mw, dtype=float).copy()
+    energy = np.asarray(monthly_energy, dtype=float)
+    hpm = np.asarray(hours_per_month_arr, dtype=float)
+    fleet_energy = energy.sum(axis=0)  # (12,)
+    # Feasibility clip: the floor's monthly energy can never exceed the month's
+    # budget, else the two-sided hydro row (min <= sum <= cap) is infeasible.
+    # Measured CAISO 2023-25 sits at 0.47-0.59 of this bound, so the clip is a
+    # guard, not a tuning surface.
+    with np.errstate(divide="ignore", invalid="ignore"):
+        cap = np.divide(
+            fleet_energy, hpm, out=np.zeros_like(fleet_energy), where=hpm > 0.0
+        )
+    level = np.minimum(level, cap)
+    share = np.divide(
+        energy,
+        fleet_energy[np.newaxis, :],
+        out=np.zeros_like(energy),
+        where=fleet_energy[np.newaxis, :] > 0.0,
+    )
+    return share * level[np.newaxis, :]
+
+
 def build_hydro_fleet(
     iso: str,
     year: int,
@@ -534,6 +592,7 @@ def build_hydro_fleet(
     eia930_monthly: bool = False,
     forecast_budget: bool = False,
     hydro_year: str = "normal",
+    min_flow_floor: bool = False,
 ) -> tuple[list[Generator], np.ndarray | None]:
     """Return the ISO's conventional-hydro LP units and their monthly budgets.
 
@@ -585,6 +644,26 @@ def build_hydro_fleet(
     or a forecast). No-op when no climatology exists for the ISO. ``False``
     (default) changes no existing run. This is the forecast-path entry point.
 
+    ``min_flow_floor`` adds the **lower** half of the measured hydro capability
+    envelope (``config.hydro_min_flow_floor``): each plant carries a
+    month-constant minimum-generation floor, allocated from the fleet's measured
+    monthly Q95 sustained level
+    (:func:`market_sim.data.eia_loader.measured_hydro_min_flow_level`) pro-rata
+    by its own share of the month's energy budget
+    (:func:`allocate_min_flow_floor`). Driver: run-of-river inflow that cannot be
+    stored plus environmental / FERC-licence minimum releases — the pure energy-
+    budget LP has no representation of either, so it is free to park the fleet at
+    0 MW (CAISO keeper: 268/688/592 hours below 10 MW in 2023/24/25) where the
+    measured fleet never goes near zero. Window: ALL hours (inflow is
+    around-the-clock), binding where the economic solution would otherwise go
+    below the sustained level — the off-peak/solar-belly hours. Forward story:
+    the level re-derives from the same EIA-930 history the ceiling uses, falling
+    back to the pooled climatology for a year the extract does not cover, and
+    scales with the water year through the budget it is clipped against. Applied
+    via ``FleetArrays.min_gen`` (mechanism id ``MECH_HYDRO_MIN_FLOW``), so the
+    floor is visible to the D-2/D-4 forced-energy diagnostics. ``False``
+    (default) changes no existing run.
+
     Args:
         iso: ISO identifier, e.g. ``"NEISO"``.
         year: Calendar year of the EIA-923 monthly generation to load (the
@@ -601,6 +680,8 @@ def build_hydro_fleet(
         hydro_year: Wet/dry water-year scenario lever applied when
             ``forecast_budget`` is set; ``"normal"`` (default) leaves the
             climatology unscaled.
+        min_flow_floor: Stamp the measured monthly minimum-flow floor onto the
+            units (see above). ``False`` (default) leaves every unit unfloored.
 
     Returns:
         Tuple ``(units, monthly_energy)`` where ``units`` is the list of
@@ -678,4 +759,42 @@ def build_hydro_fleet(
         monthly.append(energy)
     if not units:
         return [], None
-    return units, np.vstack(monthly)
+    monthly_energy = np.vstack(monthly)
+
+    # Lower half of the measured hydro capability envelope: the month-constant
+    # minimum-flow floor, allocated pro-rata by each plant's share of the
+    # month's budget. Computed on the units that are actually IN the LP (the
+    # zone/capacity filter above already ran), so the allocated floor sums to
+    # the fleet level over exactly the plants that can serve it.
+    if min_flow_floor:
+        from market_sim.data.eia_loader import measured_hydro_min_flow_level
+
+        level = measured_hydro_min_flow_level(iso, year)
+        if level is None:
+            logger.info(
+                "%s %d: no measured hydro min-flow level available — hydro "
+                "fleet left unfloored",
+                iso,
+                year,
+            )
+        else:
+            hpm = hours_per_month().astype(float)
+            floors = allocate_min_flow_floor(level, monthly_energy, hpm)
+            for i, unit in enumerate(units):
+                unit.hydro_min_flow_monthly_mw = tuple(float(v) for v in floors[i])
+            logger.info(
+                "%s %d: hydro min-flow floor on %d units — fleet level "
+                "%.0f-%.0f MW by month (%.2f TWh, %.0f%% of the %.2f TWh "
+                "budget)",
+                iso,
+                year,
+                len(units),
+                floors.sum(axis=0).min(),
+                floors.sum(axis=0).max(),
+                float((floors.sum(axis=0) * hpm).sum()) / 1e6,
+                100.0
+                * float((floors.sum(axis=0) * hpm).sum())
+                / max(monthly_energy.sum(), 1.0),
+                monthly_energy.sum() / 1e6,
+            )
+    return units, monthly_energy
