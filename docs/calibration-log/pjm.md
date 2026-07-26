@@ -441,6 +441,7 @@ method requires; same RAM class (the delta is an offer surface, not LP size).
 (This entry deliberately claims no lane number: pjm-122 was concurrently
 taken by the artifacts-landing session above.)
 
+<<<<<<< HEAD
 ## 2026-07-26 — pjm-124: `ramp10` deliverability scoping (frontier Lane 1, framing 2) — REFUTED on a no-LP pre-check, NO SOLVE SPENT
 
 Full adjudication: `docs/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md`.
@@ -512,5 +513,41 @@ Fidelity of this session's reconstruction confirmed against the committed keeper
 hourlies: `pjm120_c3a_stratum_readout` reads model_lw 41.53 / actual 46.07 /
 gap −4.54. No dashboard registration: no solve was run, so there is no bundle to
 register (the pjm-123 precedent). **Frontier readiness flagged, never declared.**
+=======
+## 2026-07-26 — pjm-124: the neiso-65 keeper re-audit is RE-ATTEMPTED on `pjm121_ccbelt` and RE-BLOCKED at the same point; the block is the container, not the recipe
+
+Replayed `--replay-bundle results/calibration/pjm121_ccbelt --year 2023 2024
+2025` in a fresh 15 GB / 4-core container, with every clean partition the recipe
+needs regenerated first (`transfer-interface-limits`, `ramp-capability`,
+`capacity-deliverability`, plus the gitignored PJM DA-virtual raw). pjm-121 does
+require all three measured overlays (`pjm_measured_interface_limits`,
+`measured_ramp_capability`, `pjm_da_virtual_bids`), so the §2 checklist applies
+to it in full.
+
+**Checklist addition (cost: one silent no-op each).** Two curate scripts abort
+with `ModuleNotFoundError: No module named 'scripts'` when invoked plainly —
+`curate_ramp_capability.py` and `curate_capacity_deliverability.py` must be run
+as `PYTHONPATH=. uv run python scripts/data/curate_<...>.py`. In a `set -x`
+prereq block the tracebacks scroll past and the solve then runs degraded; the
+`data/clean/` listing is the check that catches it.
+
+**Result: OOM again, same place.** The solve log carries no missing-input
+warning (only the known eGRID/pmax reconciliations), so the replay was faithful.
+Year 2023 completed; the process was SIGKILLed (`RC=137`) building 2024 — the
+identical failure point the neiso-65 attempt hit on `pjm119_overlay_restore`.
+Sampled peak RSS 13.8 GB at 20 s granularity, so the killing spike is not in the
+trace. Since the recipe changed (pjm-119 → pjm-121) and the prereqs are now
+present, the remaining variable is the container: the replay needs ≥24 GB, as
+§3e said.
+
+**Lead for that run.** 2023 fits alone and 2024 does not, on both attempts. That
+is consistent with the year loop retaining the prior year's arrays rather than
+with any single year being too large — worth measuring before assuming the LP
+itself is the ceiling.
+
+The partial bundle was deleted, not registered (rule 16 — no single-year
+keepers, and no partial-year bundle on the dashboard). No numbers from the
+completed 2023 are quoted anywhere.
+>>>>>>> 8933732 (neiso-66: record the follow-up status — PJM re-blocked at the same point, NYISO re-tune still open)
 
 Next number: pjm-125.

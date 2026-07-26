@@ -808,3 +808,36 @@ Standing caveat: NYISO has no published outage instrument, so the corrected
 extract itself remains UNVERIFIED — this arm measures keeper sensitivity, not
 extract correctness. Full numbers:
 `results/calibration/RESULTS-neiso65-crossiso-reaudit-2026-07.md`.
+
+## 2026-07-26 — nyiso-75 is a PRE-ADOPTION keeper: the §3c RE-TUNE verdict stands against it
+
+Checked whether the parallel nyiso-76 promotion (PR #2916, merged 2026-07-26)
+had already absorbed the guard-corrected CAMPD envelope, which would have closed
+the neiso-65 §3c re-tune item. **It had not.** The promoted keeper
+`2026-07-26-nyiso-75-solar-shape` records `meta.git_sha af74927`, which does
+**not** contain the corrected-extract commit `6a8f285` (2026-07-26 00:36:26 UTC)
+— so the bytes were produced against a tree carrying the **pre-adoption**
+extracts, and the bundle carries A0 semantics.
+
+**The evidence is `git_sha`, deliberately not `timestamp`.** The parallel
+caiso-122 finding (`FINDING-caiso122-c3a-head-regression-2026-07-26.md` §1,
+revised) establishes that `meta.timestamp` is a hybrid after any replay:
+`scripts/replay_keeper.py` restores the ORIGINAL date and keeps the replay's
+time-of-day, so a recorded date can predate the bytes by days. `git_sha` is not
+subject to that — `replay_keeper` reads the freshly-written `meta.json` and
+overwrites only `timestamp`, leaving `git_sha` as the solve's real basis (it is
+in the `_IGNORE` provenance set, never a solve kwarg). caiso-122's other caveat
+— that a recorded `git_sha` may resolve to nothing, having been a session-local
+commit — does not bite here: `af74927` resolves ("Repair degenerate EIA-930
+solar distribution rows from an adjacent BA", 2026-07-26 00:17:47 UTC) and is
+reachable from `main`. nyiso-75's `timestamp` (`2026-07-26T00:24:27`) happens to
+agree, but is not load-bearing for this conclusion.
+
+Consequence: the §3c verdict is unchanged and still open against the current
+keeper — NYISO showed the largest sensitivity of the six ISOs (mean LMP −10 to
+−16 %; 2023 flips to PASS on all three price criteria, 2024–25 over-relieve).
+The standing caveat also still holds: NYISO has no published outage instrument,
+so its corrected extract remains UNVERIFIED, and the re-tune is being driven by
+a keeper-sensitivity result rather than by a validated extract.
+
+No solve was run in this session; this entry claims no lane number.

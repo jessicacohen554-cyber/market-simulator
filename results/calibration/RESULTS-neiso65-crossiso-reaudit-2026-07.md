@@ -236,3 +236,51 @@ neither is resolved here.
 
 (A fourth item — the `pjm-121-cc-belt` payload gap — was resolved in
 parallel by the 2026-07-26 payload-backfill session while this one ran.)
+
+## 6. Status of these follow-ups (neiso-66 session, 2026-07-26, later same day)
+
+1. **Residual over-count — ADJUDICATED.** See
+   `FINDING-neiso66-overcount-rootcause-2026-07-26.md`. Both directions §4 left
+   open are refuted by measurement; the residual is **available-but-not-committed
+   capacity**, a definitional seam between what CNOG publishes (unavailability)
+   and what the CEMS detector measures (non-operation). **§4's own headline is
+   also corrected**: the `tail(1)` CNOG collapse used by this document and by
+   `_neiso64_meritguard_score.py` rests on a false premise (the parquet carries
+   zero duplicate rows — the fetcher already collapsed trade-date repeats), and
+   discards 72 % of segments / 23 % of published MW-days. On the corrected
+   revision-aware build the CAISO active-plant levels are **1.40x / 1.69x /
+   1.90x**, not 1.85/2.19/2.28 baseline → 1.52/2.02/2.13 guard-on. The
+   over-count is real and survives; the ratios were inflated ~1.3x. NEISO's
+   1.29-1.36x is a `tail(1)` number against a different report and needs the
+   same audit before it is quoted again. The **freeze stays ACTIVE** — the
+   finding explains the residual, it does not fix it.
+2. **CAISO + NYISO re-tunes.** CAISO's lane is LIVE and has independently
+   reached the same envelope conclusion from the other end
+   (`FINDING-caiso122-c3a-head-regression-2026-07-26.md`: the C3a-2025 breach is
+   the *arrival* of the measured CAISO extract against a keeper that solved with
+   it silently absent — correct behaviour, stale keeper). NYISO's re-tune is
+   **still open**: the parallel nyiso-76 promotion (PR #2916) made
+   `2026-07-26-nyiso-75-solar-shape` the keeper, but its `meta.git_sha`
+   `af74927` does not contain the corrected-extract commit `6a8f285`, so it
+   carries pre-adoption A0 semantics and the §3c RE-TUNE verdict stands against
+   it unchanged. (Evidence is `git_sha`, not `timestamp`: per caiso-122 §1 a
+   replayed bundle's `timestamp` restores the ORIGINAL date, so it cannot date
+   the bytes; `git_sha` is written fresh by the solve and is reachable here.)
+3. **PJM + MISO re-audits — STILL BLOCKED, and PJM's block is now reproduced on
+   the superseded target.** `pjm121_ccbelt` was replayed in a fresh 15 GB / 4-core
+   container with every §2 clean partition regenerated first (two of them —
+   `curate_ramp_capability.py`, `curate_capacity_deliverability.py` — fail with
+   `ModuleNotFoundError: No module named 'scripts'` unless run with
+   `PYTHONPATH=.`, a trap worth adding to the §2 checklist). The solve log
+   carries no missing-input warning, so the replay was faithful: **year 2023
+   completed, then the process was OOM-killed (`RC=137`) building 2024** —
+   the identical failure point the §3e attempt hit on `pjm119_overlay_restore`,
+   so the block is the container, not the recipe or the prereqs. Sampled peak
+   RSS 13.8 GB (20 s sampling, so the killing spike is not in the trace). That
+   2023 fits alone and 2024 does not is evidence the year loop does not release
+   the prior year's arrays — a concrete lead for whoever takes the ≥24 GB run.
+   The partial bundle was deleted, not registered (rule 16). **MISO was not
+   re-attempted** this session: §3e already recorded two OOMs including a solo
+   run, and PJM's exact reproduction here makes a third burn uninformative.
+   Lane numbers claimed/free: PJM's next free number is **pjm-124** (122 and 123
+   were both taken 2026-07-26); MISO's is **miso-92**.
