@@ -137,12 +137,32 @@ is not the seasonal actor, the seasonal term has to enter through **what coal is
 against** — consistent with ERCOT-113's confirmed displacement (corr(dCoal, dGas) = −0.97 / −0.98 /
 −0.95, the coal surplus *is* the gas deficit, month for month). The reading this probe supports for
 ERCOT-115 is that the **asymmetry in how the two fleets get their availability** is the place to
-look: coal is pinned to the measured 60-Day DAM live-HSL at plant-hour grain
-(`ercot_thermal_dam_availability_coal` + `_hourly` + `_plant`), while gas is not. Under rule 14 that
-asymmetry is exactly the shape of a defect — the accurate input on one side and an estimate on the
-other, with the estimate free to absorb the difference. **Measure the gas envelope against the same
-disclosure before building anything**, which is the discipline that has now closed eight candidates
-across ERCOT-111/112/113/114 without a line of mechanism code.
+look. Under rule 14 that asymmetry is exactly the shape of a defect — the accurate input on one
+side and an estimate on the other, with the estimate free to absorb the difference.
+
+> **Correction (2026-07-26, same session).** An earlier revision of this paragraph stated the
+> asymmetry as "coal is pinned … while gas is not." **That is backwards for the bundle these
+> numbers come from.** The measurements above are taken against the keeper
+> `ercot_netrev_margin`, whose `run_config.json` carries
+> `ercot_thermal_dam_availability_hourly=True` and `_plant=True` but **no
+> `ercot_thermal_dam_availability_coal`** (default `False`). Its solve log pins exactly three
+> classes — `CC_REGULAR`, `CT_PEAKER`, `ST_GAS` — and **no COAL line**. So in the keeper it is
+> **gas that is pinned to the measured 60-Day DAM envelope, and coal that runs on the statistical
+> availability model.** (The ERCOT-112 arms are the ones that arm `_coal`; ERCOT-113's decomposition
+> read those bundles, which is where the inverted description came from.)
+
+The corrected asymmetry points the same way but more sharply: **coal — the class that over-runs — is
+the one whose availability is *not* measured-pinned, while the class it displaces is.** A
+statistical coal availability model that is too generous in summer, competing against a gas fleet
+held to its measured envelope, reproduces the observed signature directly.
+
+The obvious candidate, `ercot_thermal_dam_availability_coal`, has already been solved full-span as
+ERCOT-112 arm B — and it makes the raw fit **worse** (C1 fuel-mix 16/16 → 12/16, target grade
+6 → 2). Per rule 14 that is a *discovered bug elsewhere*, not grounds to reject the accurate input;
+what it means is that pinning coal cannot be adopted on its own. **Measure the coal envelope
+against the same disclosure, and identify what the statistical model was silently compensating for,
+before building anything** — the discipline that has now closed eight candidates across
+ERCOT-111/112/113/114 without a line of mechanism code.
 
 ---
 
