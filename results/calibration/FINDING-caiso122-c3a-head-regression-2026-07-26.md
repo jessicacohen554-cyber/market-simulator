@@ -1,8 +1,15 @@
-# FINDING — caiso-122 STEP 1: the C3a-2025 HEAD drift is **NOT the arrival of the CAISO CAMPD outage extract** (measured and REFUTED), and the keeper's recorded provenance **cannot anchor a bisect at all** — `meta.git_sha` is unreachable and `meta.timestamp` preserves only the original *date* across a replay. The outage overlay's own sensitivity is large and now quantified (**λ +2.08 /MWh, +5.7 % on 2025**), but it is not the drift. **The drift source remains OPEN** (2026-07-26)
+# FINDING — caiso-122 STEP 1: the C3a-2025 HEAD drift is **NOT in the CAISO outage extract in ANY of its states** (absent / pre-layup / HEAD — all three solved and REFUTED, §5) and **NOT in `src/market_sim/`** (§4, exhausted); and the keeper's recorded provenance **cannot anchor a bisect at all** — `meta.git_sha` is unreachable and `meta.timestamp` preserves only the original *date* across a replay (§1). The outage overlay's own sensitivity is large and now quantified (**λ 2.08 /MWh, 5.7 % on 2025**), but it is not the drift. **The drift source remains OPEN**; STEP 2's rule-14 min-load arm is measured, registered and NOT promoted (§6) (2026-07-26)
 
-**Status: STEP 1 PARTIALLY resolved. The CAISO lane is NOT yet unblocked.** Keeper
-`2026-07-23-caiso-netrev-margin-keeper` UNCHANGED. Nothing armed, nothing
-promoted, no revert proposed.
+**Status: STEP 1 NOT resolved — but the search space is now sharply narrowed and
+the whole outage-extract family is eliminated by measurement (§5). The CAISO
+lane remains blocked.** Keeper `2026-07-23-caiso-netrev-margin-keeper`
+UNCHANGED. Nothing armed, nothing promoted, no revert proposed. STEP 2 (the
+rule-14 min-load arm) was measured and is recorded in §6 — registered, NOT
+promoted.
+
+**Four 2025 arms and one 3-year pair were solved to establish this.** The
+negative results are the deliverable: `src/market_sim/` is exhausted (§4), and
+so is every CAISO outage-extract state (§5). Neither is the drift.
 
 > **Correction notice.** The first revision of this finding (commit `e688275d9`)
 > concluded that the drift *was* the outage extract arriving, and that the keeper
@@ -106,23 +113,56 @@ The drift is **+1.411 % λ on 2025**, with the class signature CC_REGULAR
 −0.013. Less gas, more imports, higher λ. No candidate above survives as its
 cause, and the outage extract is refuted.
 
-The one candidate that remains live and was **not** eliminated is `6a8f285c5`
-(neiso-65 guard-corrected CAMPD extracts, 2026-07-26 00:36 UTC), which moved
-**810 rows out of the CAISO outage file** into a `layup` companion (economic
-layup ≠ forced outage). It is a genuine change to CAISO outage *windows* that
-would leave CC_CHP largely intact while shifting CC_REGULAR and imports. Its
-naive direction is wrong (fewer outages ⇒ more gas, not less), so it is a
-hypothesis, not a conclusion — the interaction with the layup split's
-*replacement* rows has not been measured.
+The last live candidate was `6a8f285c5` (neiso-65 guard-corrected CAMPD
+extracts, 2026-07-26 00:36 UTC), which moved **810 rows out of the CAISO outage
+file** into a `layup` companion (economic layup ≠ forced outage). **It was
+tested and is REFUTED.** Replaying 2025 at HEAD with the extract restored to its
+`6a8f285c5^` content (5,139 rows against HEAD's 4,329):
 
-**Recommended next step (one 15-minute solve, no LP guesswork):** replay 2025
-at HEAD with `data/raw/campd-unit-outages-CAISO.csv` restored to its
-`6a8f285c5^` content (`git show 6a8f285c5^:… > …`). If CA λ returns to ≈38.02,
-the guard-corrected extract is the drift and the rule-1/rule-14 question is
-whether the layup split is the more accurate representation (it is presented as
-such by neiso-65, and was adopted ISO-wide). If λ does not move, the drift is
-elsewhere and the next cut should be the `data/` tree rather than
-`src/market_sim/`, which §4 has now largely exhausted.
+| CAISO 2025 arm | extract | CA λ | vs keeper |
+|---|---|---|---|
+| committed keeper | — | 38.0221 | — |
+| extract **hidden** | 0 rows | 36.4778 | −4.06 % |
+| **pre-layup** (`6a8f285c5^`) | 5,139 rows | **38.6290** | **+1.60 %** |
+| HEAD control | 4,329 rows | 38.5585 | +1.41 % |
+
+The layup split is worth only **−0.07 /MWh (−0.18 %)** and moves λ in the
+*wrong* direction — restoring the pre-layup extract lands **further** from the
+keeper, not closer. **The entire CAISO outage-extract family is now exhausted:
+no variant of it reproduces the keeper**, which sits 0.54–0.61 /MWh below every
+HEAD outage state tested.
+
+**Where the next session should cut.** `src/market_sim/` is exhausted (§4) and
+the outage extract is exhausted (this section). The drift is therefore in some
+other `data/` input or in the benchmark-independent solve inputs — the untested
+surface is fuel prices, demand/BTM, hydro budgets, renewable CF, and the
+interchange/hub price series. The cheapest next probe is **not** another solve:
+diff the constructed LP inputs (`FleetArrays`, CF profiles, fuel series, floors)
+between HEAD and a pre-drift basis and find the array that moved, then solve
+once to confirm. Note that a pre-drift basis must be established by
+*measurement*, not by the keeper's recorded metadata (§1).
+
+## §6 — STEP 2 result (rule-14 min-load execution), carried here for the record
+
+Both arms solved at the one pinned basis, control NOT registered
+(FINDING-caiso92b):
+
+| C3a mean LMP | 2023 | 2024 | 2025 | fail set |
+|---|---|---|---|---|
+| control A (no delta) | +4.0 % PASS | +9.4 % PASS | **+11.5 % FAIL** | {C3a, C3c, C5a} |
+| arm B (`caiso_ra_min_load_frac` 0.570) | +4.3 % PASS | +9.1 % PASS | **+11.3 % FAIL** | {C3a, C3c, C5a} |
+
+Identical fail sets; C3b PASS all years in both and **improves** in 2025
+(0.155 → 0.152). Class deltas reproduce caiso-121 to three decimals —
+CC_REGULAR **−0.2088 / +0.0483 / +0.0313** TWh against its −0.209/+0.048/+0.031.
+Third independent measurement that the delta is inert-to-slightly-favourable.
+
+**NOT PROMOTED**; the keeper shard is untouched. C3a-2025 fails in the control
+too, and by *more*, so that failure is the drift and not the delta — but with
+the drift still unattributed, banking an unexplained regression into the lane's
+reference run is an owner decision, not a session one. The measured 0.570 stays
+**KEPT** and is still the value the next keeper must carry (rules 13/14/18) —
+never tuned back toward 0.26.
 
 **Standing instruction for the lane, unchanged and reinforced:** every CAISO
 C3a-2025 comparison is basis-sensitive; always carry a same-HEAD control arm and
