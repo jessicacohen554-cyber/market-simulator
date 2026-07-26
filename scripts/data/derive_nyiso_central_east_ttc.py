@@ -20,11 +20,19 @@ from __future__ import annotations
 import csv
 import io
 import statistics
+import sys
 import zipfile
 from collections import defaultdict
 from pathlib import Path
 
-ZIP_PATH = Path("data/raw/NYISO/ATC_TTC.zip")
+REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import NYISO_DIR  # noqa: E402
+
+# Resolved through the registry (config/paths.py) — the old Path("data/raw/…")
+# literal here was CWD-relative and only worked from the repo root.
+ZIP_PATH = NYISO_DIR / "ATC_TTC.zip"
 INTERFACE = "CENT EAST"
 YEARS = (2023, 2024, 2025)
 ROUND_TO = 25  # MW — postings are 5 MW granular; 25 MW avoids false precision.

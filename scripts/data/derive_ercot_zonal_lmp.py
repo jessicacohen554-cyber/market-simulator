@@ -19,11 +19,17 @@ Schema note: RTM uses columns ``Settlement Point Name`` + ``Delivery Hour``
 
 import io
 import glob
+import sys
 import zipfile
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import CALIBRATION_DIR, LMP_DATA_DIR  # noqa: E402
 
 # Cumulative hours before the first of each 1-based month on the model's
 # fixed non-leap 8760-hour clock (same construction as derive_actual_lmp.py).
@@ -49,7 +55,9 @@ KEEP = {
     "LZ_LCRA",
     "LZ_RAYBN",
 }
-LMP_DIR = Path("data/raw/lmp-data")
+# Resolved through the registry (config/paths.py) — the old Path("data/raw/…")
+# literals here were CWD-relative and only worked from the repo root.
+LMP_DIR = LMP_DATA_DIR
 
 
 def _parse(pattern: str, market: str) -> pd.DataFrame:
@@ -103,7 +111,7 @@ def main() -> None:
         df = rt.merge(da, on=["year", "hour", "settlement_point"], how="outer")
     else:
         df = rt
-    out = Path("data/raw/_validation-source/actual_lmp_zonal_ERCOT.parquet")
+    out = CALIBRATION_DIR / "actual_lmp_zonal_ERCOT.parquet"
     df.sort_values(["year", "settlement_point", "hour"]).to_parquet(out, index=False)
     print(
         f"wrote {out}: {len(df)} rows, years {sorted(df.year.dropna().unique())}, "

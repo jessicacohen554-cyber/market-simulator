@@ -37,6 +37,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
+from market_sim.config.paths import CAMPD_BINS_CSV  # noqa: E402
 from market_sim.data import campd  # noqa: E402
 from market_sim.data.fleet import load_campd_bins  # noqa: E402
 
@@ -63,7 +64,7 @@ YEARS: tuple[int, ...] = (2023, 2024, 2025)
 
 def derive() -> dict[int, float]:
     """Return ``{plant_code: ceiling}`` for plants with a sub-1.0 finding."""
-    bins = load_campd_bins("data/raw/reference/custom-bin-assignments.csv")
+    bins = load_campd_bins(CAMPD_BINS_CSV)
     cap = dict(zip(bins["Plant_Code"].astype(int), bins["capacity_mw"]))
     df = campd.load_campd_hourly(campd.states_for_iso("ERCOT"), list(YEARS))
 

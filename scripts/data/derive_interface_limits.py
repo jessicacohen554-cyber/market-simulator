@@ -38,11 +38,19 @@ Run from the repo root::
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
 import pandas as pd
 
-DATA_DIR = Path("data/raw/iso-specific-transmission")
+REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import ISO_TRANSMISSION_DIR  # noqa: E402
+
+# Resolved through the registry (config/paths.py) — the old Path("data/raw/…")
+# literal here was CWD-relative and only worked from the repo root.
+DATA_DIR = ISO_TRANSMISSION_DIR
 YEARS = (2023, 2024, 2025)
 PCTL = 0.995  # firm-continuous upper envelope (trims top ~0.5% transient hours)
 
