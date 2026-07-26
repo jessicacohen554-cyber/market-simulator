@@ -33,7 +33,11 @@ import urllib.request
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent.parent
-DEFAULT_OUT = REPO / "data" / "raw" / "new-build-cost-benchmarks" / "pdf"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import NEW_BUILD_COST_BENCHMARKS_DIR  # noqa: E402
+
+DEFAULT_OUT = NEW_BUILD_COST_BENCHMARKS_DIR / "pdf"
 
 # (filename, url, sha256-at-intake). A hash mismatch means the publisher
 # replaced the document — record the new hash in a NEW intake commit alongside

@@ -58,7 +58,11 @@ import pyarrow.parquet as pq
 
 HOURS_PER_YEAR = 8760
 REPO_ROOT = Path(__file__).resolve().parents[2]
-AS_DIR = REPO_ROOT / "data" / "raw" / "ercot-AS"
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from market_sim.config.paths import ERCOT_AS_DIR  # noqa: E402
+
+AS_DIR = ERCOT_AS_DIR
 
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 

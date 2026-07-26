@@ -31,7 +31,11 @@ from pathlib import Path
 import requests
 
 _ROOT = Path(__file__).resolve().parents[2]
-RAW_DIR = _ROOT / "data" / "raw" / "transmission-expansion"
+sys.path.insert(0, str(_ROOT / "src"))
+
+from market_sim.config.paths import TRANSMISSION_EXPANSION_DIR  # noqa: E402
+
+RAW_DIR = TRANSMISSION_EXPANSION_DIR
 MD_DIR = RAW_DIR / "md"
 
 # (slug, url, what it grounds). Every APPLIED (nonzero-delta) registry row's

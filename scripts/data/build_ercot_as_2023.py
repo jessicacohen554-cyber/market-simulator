@@ -62,8 +62,12 @@ from build_ercot_as_withholding import (  # noqa: E402
 from build_ercot_hsl import _prevailing_to_standard  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-ERCOT_DIR = REPO_ROOT / "data" / "raw" / "ercot"
-AS_DIR = REPO_ROOT / "data" / "raw" / "ercot-AS"
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from market_sim.config.paths import ERCOT_AS_DIR, ERCOT_MIS_DIR  # noqa: E402
+
+ERCOT_DIR = ERCOT_MIS_DIR
+AS_DIR = ERCOT_AS_DIR
 
 # Generator award columns read from the Gen Resource Data (Reg-Down excluded).
 # ECRSSD appears only from the June-2023 ECRS go-live, so it is read when present.

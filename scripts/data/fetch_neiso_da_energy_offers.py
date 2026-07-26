@@ -41,7 +41,11 @@ from http.cookiejar import CookieJar
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-RAW_DIR = REPO_ROOT / "data" / "raw" / "NEISO-AS" / "da-energy-offers"
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from market_sim.config.paths import NEISO_AS_DIR  # noqa: E402
+
+RAW_DIR = NEISO_AS_DIR / "da-energy-offers"
 
 #: Any ISO Express report page works for the isox_token bootstrap; use the
 #: DA hourly-offers tree (the report this endpoint backs).

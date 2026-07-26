@@ -66,12 +66,14 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
+from market_sim.config.paths import NRC_REACTOR_STATUS_DIR, RAW_DATA_DIR  # noqa: E402
+
 from market_sim.config.constants import (  # noqa: E402
     NUCLEAR_DORMANT_UNTIL,
     NUCLEAR_MONTHLY_CF_BY_YEAR,
 )
 
-NRC_DIR = REPO / "data" / "raw" / "nrc-reactor-status"
+NRC_DIR = NRC_REACTOR_STATUS_DIR
 YEARS = (2023, 2024, 2025)
 
 # Frozen constants inherited verbatim from derive_ercot_nuclear_availability
@@ -282,7 +284,7 @@ def main() -> int:
         help="verify the committed CSV reproduces from the raw NRC files",
     )
     args = ap.parse_args()
-    out_csv = REPO / "data" / "raw" / f"nuclear-availability-{args.iso}.csv"
+    out_csv = RAW_DATA_DIR / f"nuclear-availability-{args.iso}.csv"
 
     day = load_daily_raw(args.iso)
     day = reconcile_monthly(day, args.iso)

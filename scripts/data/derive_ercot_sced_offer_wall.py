@@ -70,6 +70,8 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "scripts"))
 sys.path.insert(0, str(REPO / "scripts" / "data"))
 
+from market_sim.config.paths import CALIBRATION_DIR, ERCOT_MIS_DIR  # noqa: E402
+
 from derive_ercot_dam_cleared_share import (  # noqa: E402
     HCAP_USD_MWH,
     HOURS,
@@ -81,14 +83,8 @@ from derive_ercot_dam_cleared_share import (  # noqa: E402
     _weighted_quantiles,
 )
 
-SCED_DIR = REPO / "data" / "raw" / "ercot"
-DEFAULT_OUT = (
-    REPO
-    / "data"
-    / "raw"
-    / "_validation-source"
-    / "ercot_sced_offer_wall_condbinned.json"
-)
+SCED_DIR = ERCOT_MIS_DIR
+DEFAULT_OUT = CALIBRATION_DIR / "ercot_sced_offer_wall_condbinned.json"
 
 _STD_TZ = "Etc/GMT+6"  # ERCOT fixed standard-time clock (derive_actual_lmp)
 

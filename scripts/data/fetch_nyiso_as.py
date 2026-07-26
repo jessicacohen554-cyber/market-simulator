@@ -55,12 +55,17 @@ from __future__ import annotations
 
 import argparse
 import urllib.request
+import sys
 from pathlib import Path
 
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-AS_DIR = REPO_ROOT / "data" / "raw" / "NYISO-AS"
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from market_sim.config.paths import NYISO_AS_DIR  # noqa: E402
+
+AS_DIR = NYISO_AS_DIR
 # Gitignored raw staging dir (data/raw/NYISO-AS/raw/, see .gitignore) — the
 # exact RAW_DIR process_nyiso_as.py folds into the committed per-year CSVs.
 RAW_DIR = AS_DIR / "raw"
