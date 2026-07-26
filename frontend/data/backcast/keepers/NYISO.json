@@ -1,4 +1,11 @@
 {
  "iso": "NYISO",
- "keeper": "2026-07-26-nyiso-75-solar-shape"
+ "note": "NO CURRENT KEEPER — de-designated 2026-07-26 (owner instruction, nyiso-76 session). The former keeper 2026-07-26-nyiso-75-solar-shape was solved at git af74927 and NO LONGER REPRODUCES on main: replaying its own configuration on current code (registered control 2026-07-26-nyiso-79-control) moves 2023 C3a +17.8% -> -0.9%, 2024 +1.2% -> -9.1%, 2025 -3.2% -> -12.2%; 2025 C3b 0.170 -> 0.208 (FAIL); model hours >$300 19/6/17 -> 3/0/9; and 2023 ST_GAS 9.33 -> 17.21 TWh against CC_REGULAR 31.32 -> 25.75 TWh, a downstate merit inversion at constant total energy. Decisively, the three PROTECTIVE gates the keeper passed now FAIL on its own config: C7 diurnal D-1 (ST_GAS off-peak cv_ratio 0.542/0.658 -> 0.439/0.489 against a 0.50 gate) and C8 forced-energy D-2 (ST_GAS 31.4/41.7/28.2% -> 43.0/53.8/40.5% forced, and no longer grounded under rubric v2.2 because the D-1 shape gate fails), with D-2 reliability_floor forcing rising 2.93 -> 7.39 TWh. Keeping the designation would have advertised a Calibration Status scorecard the model can no longer produce. NEITHER nyiso-76 flag causes any of it (control vs the nyiso_ordc_measured_step_span arm is byte-identical in every class and year); the leading suspect is commit 6a8f285 'neiso-65: adopt guard-corrected CAMPD extracts, all six ISOs + layup companions', which wholesale replaced data/raw/campd-unit-outages-NYISO.csv (3,037 rows out) after the keeper was solved — the availability overlay this ISO's outage_source='historic' reads. A parallel session (caiso-122) is chasing the same class of HEAD regression on CAISO and has REFUTED the outage-extract hypothesis there, so the NYISO attribution is being tested, not assumed. NO replacement is designated until the drift is root-caused and a keeper is re-solved on reconciled code: the four registered nyiso-76 runs all fail C7/C8 and are UNATTESTED on C6, so none is promotable (see docs/FINDING-nyiso-ordc-span-reliability-floor-2026-07-26.md). Re-designating is an owner action.",
+ "de_designated": {
+  "date": "2026-07-26",
+  "former_keeper": "2026-07-26-nyiso-75-solar-shape",
+  "reason": "former keeper no longer reproduces on main; protective gates C7/C8 fail on its own config when re-solved",
+  "control_run": "2026-07-26-nyiso-79-control",
+  "finding": "docs/FINDING-nyiso-ordc-span-reliability-floor-2026-07-26.md"
+ }
 }

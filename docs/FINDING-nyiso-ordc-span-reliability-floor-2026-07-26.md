@@ -170,35 +170,64 @@ part of the drift. An earlier reading in this session attributed the ST_GAS/CC
 swap and the C1/C7/C8 regressions to S2; the control refutes that, and the
 attribution above supersedes it.
 
-### 3.3 What is
+### 3.3 What is — ISOLATED, single file
 
-Not isolated in this session — it needs a bisect, which is its own task. The
-engine files touched between `af74927` and `main` are:
+`2026-07-26-nyiso-80-old-outages` is the keeper's config on current `main` with
+**exactly one file reverted** — `data/raw/campd-unit-outages-NYISO.csv` restored
+to its pre-`6a8f285` bytes (7,460 rows vs 4,423) — and everything else at HEAD.
+It reproduces the de-designated keeper **to every digit**:
 
+| metric | keeper | control (HEAD) | HEAD + old extract |
+|---|---|---|---|
+| C3a 2023 / 2024 / 2025 | +17.8 / +1.2 / −3.2 % | −0.9 / −9.1 / −12.2 % | **+17.8 / +1.2 / −3.2 %** |
+| C3b 2023 / 2024 / 2025 | 0.216 / 0.176 / 0.170 | 0.120 / 0.196 / 0.208 | **0.216 / 0.176 / 0.170** |
+| hours > $300 | 19 / 6 / 17 | 3 / 0 / 9 | **19 / 6 / 17** |
+| D-1 ST_GAS cv_ratio | 0.542 / 0.658 / 0.606 | 0.439 / 0.489 / 0.547 | **0.542 / 0.658 / 0.606** |
+| D-2 ST_GAS forced share | 31.4 / 41.7 / 28.2 % | 43.0 / 53.8 / 40.5 % | **31.4 / 41.7 / 28.2 %** |
+
+**Commit `6a8f285` ("neiso-65: adopt guard-corrected CAMPD extracts, all six
+ISOs + layup companions") is the sole and complete drift source.** Nothing else
+in the 81 commits touches NYISO. No further bisect is needed.
+
+### 3.4 The extract change is CORRECT — the defect is a coupling
+
+`6a8f285` is not a regression to revert. The economic-layup charter
+(`docs/handoffs/campd-economic-layup-fix-charter-2026-07.md`) established that
+`filter_revealed_outages` was booking sustained economic layup as mechanical
+outage, so every ISO booked **23–46 % of its CC capacity-year as outage against
+a real EFOR + planned-maintenance norm of ~10–15 %**. The owner adopted the fix.
+Under rule 14 [R-ACCURATE] the corrected extract **stays**.
+
+What it exposed is a coupling in `model/interchange/core.py:154`:
+
+```python
+avail_cap = fleet_arrays.pmax[rows, np.newaxis] * fleet_arrays.availability[rows, :]
+target = frac * avail_cap.sum(axis=0)
 ```
-src/market_sim/config/constants.py
-src/market_sim/config/fuel_trajectories.py
-src/market_sim/config/scenarios.py
-src/market_sim/data/cache_control.py
-src/market_sim/data/fleet/__init__.py
-src/market_sim/data/fleet/arrays.py
-src/market_sim/data/fleet/offer_surfaces.py
-src/market_sim/data/renewables.py
-```
 
-The signature — a downstate CC↔ST_GAS merit inversion at constant total energy,
-with the `reliability_floor` binding 2.5× harder — points at the offer-surface /
-fleet-array or floor-sizing side rather than the renewables side (solar and wind
-energy each move < 0.15 TWh between the two runs, so the
-`driver="netload"` reliability limbs are not being re-flagged by a VRE change).
-`eb5326e` ("nyiso-75: close the solar flat-CF fallback finding") landed 30
-minutes after the keeper's own commit and is the nearest NYISO-scoped suspect,
-but it is not confirmed.
+The reliability floor is sized as a fraction of **available** capacity. The
+removed windows are overwhelmingly the class that moved — of the ≥5-day events
+starting 2023-2025 that the guard reclassified:
 
-**This is the binding issue for NYISO, ahead of any price-formation lever.** The
-keeper on the dashboard is not what the model now produces; until that is
-reconciled, no NYISO calibration claim measured against it is safe, and neither
-promoting nor rejecting a price-formation change can be scored honestly.
+| class | events removed | unit MW |
+|---|---|---|
+| **ST_GAS** | **787** | **55,810** |
+| CC_REGULAR | 214 | 30,394 |
+| CC_CHP | 131 | 6,222 |
+| ST_CHP | 14 | 2,520 |
+
+So un-deleting 55.8 GW of ST_GAS availability **mechanically inflated the
+downstate steam floor's MW target**, with no change to any coefficient. That is
+the whole causal chain: floor target up → ST_GAS forced up 8.2 TWh → CC_REGULAR
+displaced 5.7 TWh at constant total energy → diurnal profile flattened (C7) →
+forced-energy budget breached (C8) → marginal price down ~$5/MWh.
+
+This is the textbook rule-14 signature, in CLAUDE.md's own words: *"If swapping
+a hand estimate for real data makes the backcast worse, that is a signal that
+something else in the model is miscalibrated and the estimate was silently
+compensating for it."* The phantom outages were silently holding the floor down.
+
+**This is the binding issue for NYISO, ahead of any price-formation lever.**
 
 ## 4. Disposition
 
@@ -215,12 +244,75 @@ promoting nor rejecting a price-formation change can be scored honestly.
   different quantity (2024 Dec −30.9 %, 2025 Jan −18.5 %, Jun −38.0 %). Running
   it now would produce another number attributable to nothing. It should be
   re-measured against a reconciled keeper.
-- **Next task, in order:** (1) bisect `af74927..main` for the NYISO downstate
-  CC→ST_GAS inversion; (2) re-solve and re-register the NYISO keeper on the
-  reconciled code; (3) only then re-open the price-formation lane, where the
-  first question is the `reliability_floor` sizing that now forces 40-54 % of
-  ST_GAS (rule 23 [R-FROZEN-DERIVE] — it re-derives only when its source data
-  changes, never against this residual).
+- **NYISO keeper DE-DESIGNATED 2026-07-26** (owner instruction).
+  `keepers/NYISO.json` carries no `keeper` key and records the reason;
+  `status/NYISO.js` is deleted so the Calibration Status page drops the lane
+  rather than rendering a scorecard the model can no longer produce. Verified
+  CI-safe: the unscoped `build_status.py --check` and `audit_keepers.py --check`
+  that `ci.yml` runs both exit 0 (5 keepers in sync, NYISO skipped).
+
+### 4.1 The replacement path
+
+The bisect is done (§3.3) and the extract stays (§3.4), so the replacement is a
+**rule-23 [R-FROZEN-DERIVE] sanctioned re-derivation**: those coefficients are
+frozen against *residuals*, but re-derive when their **source data** updates and
+the commit cites the data change. The precedent is in the CSV itself — the live
+NYC/LI ST_GAS rows read *"re-derived 2026-07-19 on the corrected
+campd-unit-outages-NYISO.csv (1598→2641 rows; stale extract overstated the
+availability denominator)"*. That extract has since changed again, in the
+opposite direction, and the coefficients have not followed.
+
+The live floors now over-forcing are:
+
+| limb | floor_pct | note |
+|---|---|---|
+| NYC ST_GAS persistent 24 h base | **0.496** | `threshold = −50.0` — always on |
+| NYC ST_GAS evening ramp (`NYC_ST_ev`, h14-21) | 0.533 → 1.0 | |
+| Long_Island ST_GAS persistent 24 h base | **0.436** | `threshold = −50.0` — always on |
+| Long_Island ST_GAS evening ramp (`LI_ST_ev`) | 0.572 → 0.815 | |
+
+**Do NOT re-derive by running `scripts/data/derive_reliability_coeffs.py --iso
+NYISO`.** Measured this session: a blind run is destructive. It emits 40 limbs /
+8 enabled and **drops every curated limb** — both persistent 24 h bases, all
+four ramp families (`NYC_ST_ev`, `LI_ST_ev`, `CH_ST_ev`, `NYC_CT_ev`), and the
+`distribution` / `ramp_group` columns entirely — and it **re-enables the
+`r1_disabled` NYC CT_PEAKER limb** that rule 17 permanently disabled (it came
+back `r1_disabled=False, enabled=True`). The script predates the curated rows
+and cannot regenerate them. The CSV was restored byte-identical after the test.
+
+So the re-derivation must be either:
+1. **extend the derive script** to emit the ramp-family and persistent-base
+   limbs and to honour `R1_DISABLED_LIMBS` on output (core-infrastructure work,
+   rule 27 — Opus/Fable only), or
+2. **re-derive the four curated coefficients directly** against the corrected
+   extract, reproducing the bespoke calculation the 2026-07-19 entry describes
+   (*"when-available cool-day CF p25"* / *"avail cool-day evening p25"*), and
+   record the new `threshold_basis` citing `6a8f285`.
+
+Option 2 is the smaller, better-scoped change and matches how these rows were
+last updated.
+
+**Open design question to settle before re-deriving (owner call).** The two
+persistent bases carry `threshold = −50.0` — an always-true gate, not a driver.
+Under rule 17 [R-FLOOR-WINDOW] a floor needs a driver and a window; an
+always-on floor has neither, and D-4 only passes it because its declared window
+is all 24 hours. It may well be legitimate — NYC in-city must-run is a genuine
+around-the-clock requirement (the nyiso-75 in-city must-run charter, PR #2916) —
+but re-deriving its *level* does not answer whether an always-on reliability
+floor should be sized off **available** capacity at all, when "available" now
+includes economically-laid-up steam, which is precisely the capacity that is
+*not* reliability-committed. An `installed`-based (or layup-netted) base is the
+alternative. Decide this deliberately rather than inheriting it.
+
+### 4.2 Then
+
+- Re-solve 2023-2025 in ONE bundle (rule 16) with `dual_fuel_oil_daily_parity`
+  armed — the one genuine improvement this lane produced.
+- Score C1 / C7 / C8. If the floor is what flattened ST_GAS, D-1 `cv_ratio`
+  should recover and the D-2 forced share fall back toward the 30 % budget.
+- Build the attestation + DOF ledger (rule 20 — union with the prior keeper's
+  curated entries; a blind `build_dof_ledger.py` rebuild drops 9 of them), then
+  promote as the replacement keeper.
 - **Closed, do not re-chase:** the flat oil-parity cap as the winter root cause
   (§2), and the SENY ORDC over-fire as a live price lever (§1 — already relieved
   by the SCR/EDRP + hydro reserve-supply levers).
