@@ -8,12 +8,12 @@ can pass on TWh while missing its CF distribution).
 
 import importlib.util
 import json
-from pathlib import Path
 
 import pandas as pd
 import pytest
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = REPO_ROOT
 _SPEC = importlib.util.spec_from_file_location(
     "run_calibration_full", REPO / "scripts" / "run_calibration_full.py"
 )

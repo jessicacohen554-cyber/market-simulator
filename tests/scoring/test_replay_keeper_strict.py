@@ -10,11 +10,11 @@ islanded MISO (see ``results/calibration/FINDING-miso-august-scarcity-2026-07.md
 
 import json
 import unittest
-from pathlib import Path
 
 from scripts.replay_keeper import build_kwargs
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = REPO_ROOT
 
 _BASE = {"iso": "MISO", "years": [2023], "commitment": False}
 

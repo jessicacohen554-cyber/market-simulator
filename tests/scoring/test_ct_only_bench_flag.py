@@ -10,11 +10,11 @@ on the EIA-923 monthly row, not the understated CAMPD series
 
 import importlib.util
 import unittest
-from pathlib import Path
 
 import numpy as np
+from tests.helpers import REPO_ROOT
 
-_REPO = Path(__file__).resolve().parents[1]
+_REPO = REPO_ROOT
 
 
 def _load(mod_name: str, filename: str):

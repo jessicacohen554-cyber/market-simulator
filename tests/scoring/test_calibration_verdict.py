@@ -10,9 +10,9 @@ importable package).
 import importlib.util
 import itertools
 import unittest
-from pathlib import Path
+from tests.helpers import REPO_ROOT
 
-_REPO = Path(__file__).resolve().parent.parent
+_REPO = REPO_ROOT
 _spec = importlib.util.spec_from_file_location(
     "calibration_verdict", str(_REPO / "scripts" / "calibration_verdict.py")
 )
@@ -813,7 +813,7 @@ class DispatchCorrTests(unittest.TestCase):
         # benchmark, not the model. The year is derived from the registry so
         # the boundary test survives an onset move (it went 2024 -> 2023 on the
         # 2026-07-26 owner ruling); the onset VALUE is pinned by
-        # tests/test_benchmark_semantics.py.
+        # tests/scoring/test_benchmark_semantics.py.
         ypay, ybench = self._cems_fixture()
         gas = [
             r

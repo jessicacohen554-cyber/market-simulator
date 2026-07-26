@@ -6,7 +6,7 @@ rung resolver (T1.2), and the per-ISO expectation split (T1.7) — WITHOUT solvi
 any LP (that is the minutes-scale job of the harness itself, and is smoked once
 in the build session / run in full by P-1A). They are the per-PR guard that the
 ladder table and scorer stay well-formed; the real solve path is covered by
-``tests/test_driver_directionality.py``'s analytic LPs.
+``tests/scoring/test_driver_directionality.py``'s analytic LPs.
 """
 
 from __future__ import annotations
