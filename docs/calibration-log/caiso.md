@@ -1590,3 +1590,139 @@ caiso-120 regime-conditional gates, rule-22 LOYO); the §5 residual; the
 charter-lane re-tune-vs-freeze sequencing decision.
 
 Next number: caiso-124.
+
+## caiso-124 (2026-07-26) — HYDRO MIN-FLOW FLOOR lane BUILT (owner-flagged) and A/B'd against gates pre-registered before the solve: the mechanism eliminates the parks-at-zero pathology outright (h<10 MW 270/692/604 → 0), closes 83–91 % of the belly hydro deficit, halves the diurnal MAE and corrects the amplitude error (cv_model/cv_meas 1.44 → 0.98) — and is **KILLED AS WRITTEN by its own K3 shape gate in 2025** (profile r 0.985 → 0.977) plus a P1-2025 miss (172 h < 100 MW vs < 150). Registered as a rejected probe; keeper UNCHANGED. TASK 2: the caiso-123 §5 residual's `src/market_sim/` window is now CLOSED BY MEASUREMENT — only container/partition state and vertex wander survive
+
+**Full record: `results/calibration/FINDING-caiso124-hydro-min-flow-floor-2026-07-26.md`;
+gates: `results/calibration/PREREG-caiso124-hydro-min-flow-floor-2026-07-26.md`
+(committed BEFORE arm B solved, commit `353d88e`).**
+**Runs:** `2026-07-26-caiso-124-hydro-minflow` (arm B) registered — a REJECTED
+probe, registered per rule 15. Arm A `caiso124_control_A` (same-HEAD control,
+FINDING-caiso92b protocol) NOT registered. Both 3-year (rule 16), one
+invocation, sequential, `basis_sha 4094bbe`, seam import cap 16,055 MW
+affirmatively logged in both.
+
+**(1) The mechanism.** ONE registered switch `ScenarioConfig.hydro_min_flow_floor`
+(default off) adds the **lower half of the measured two-sided hydro capability
+envelope** whose upper half — the caiso-72 p95 (month × hod) `hydro_dispatch_envelope`
+ceiling — the keeper already carries. The budget family caps monthly *energy*
+with no lower bound, so the economic LP parks the fleet at 0 MW: the keeper does
+so for **270/692/604 h** and sits under 100 MW for ~0.9–1.3 k h/yr, against a
+measured fleet whose hourly p5 is **954/876/738 MW** and which never approaches
+zero (run-of-river inflow + FERC-licence minimum releases). Level = the per-month
+exceedance percentile of measured EIA-930 `NG: WAT`, `HYDRO_MIN_FLOW_PERCENTILE
+= 100 − HYDRO_ENVELOPE_PERCENTILE = 5` — the **exact mirror of the ceiling's**,
+so **ZERO new free parameters** (Q95, the standard hydrological low-flow index
+licence conditions are written against). Bucket = the **MONTH ALONE**,
+deliberately not (month × hod): a diurnal floor pins the measured outcome
+(rule 13) and measures out at ~75 % of the annual budget vs 36–46 %
+month-constant. Allocated per plant pro-rata by its own share of the month's
+budget — exact per-plant feasibility, faithful zonal geography of the water, no
+added LP degeneracy. `MECH_HYDRO_MIN_FLOW`, non-thermal, ablated in D-3, D-4
+window `h0-23` cited.
+
+**(2) What it fixed, every year.** h<10 MW 270/692/604 → **0**; belly (hod 9–15)
+gap **−587/−610/−548 → −98/−54/−84 MW**; hod-profile MAE **366/348/343 →
+168/148/169**; diurnal amplitude cv_model/cv_meas **1.44 → 0.98** (2024) and
+**1.42 → 1.05** (2025); measured-budget utilisation 98.7/94.5/97.0 % →
+**99.2/96.8/99.1 %** (arm A was *declining* up to 5.5 % of the measured water).
+D-2 `hydro × hydro_min_flow` forces 5.42/4.92/4.18 TWh = **22.4/22.4/19.8 %** of
+class, D-4 off-window share **0.0000**, C7 + C8 PASS.
+
+**(3) Why it is KILLED anyway.** K3 (profile r ≥ control's) tripped in 2025:
+**0.985 → 0.977**. Measured cause: with the monthly budget a hard cap the belly
+lift must be paid for, and the LP paid partly out of the evening peak — arm A's
+2025 evening was already right (+7 MW), so B's peak lands 250–390 MW *below*
+measured and its max shifts hod 20 → 21. A 24-point correlation is dominated
+jointly by amplitude and peak placement, so **the gate penalised the amplitude
+correction it should have rewarded** (r −0.008 against cv_ratio 1.42 → 1.05).
+That is a finding about the gate, NOT a licence to ignore it: K3 was written
+before the solve, it tripped, the delta is KILLED as scored, and no gate was
+moved or re-scored against a substitute. Choosing a corrected shape gate (the
+natural pair being the rubric's own D-1 `cv_ratio` + `profile_r`, as C7 scores
+them — C7 PASSES in arm B) is an OWNER decision; the bundles support a re-score
+with no re-solve via `scripts/probes/_caiso124_minflow_ab.py`.
+
+**(4) Rubric, reported not gated (rule 1).** Arm B: C1/C2/C3b/C4/C7/C8 PASS,
+C3a **FAIL on 2025 only (+10.9 %)**, C3c FAIL, C5a FAIL −11.0/−10.2/−13.5 %,
+C6 UNATTESTED (a replay carries no attestation). **C3a-2025 is the attributed
+extract basis, not the delta** — arm A's own λ reads **+1.035 %** above the
+keeper (55.7159/37.8424/38.4156 vs 55.6158/37.5464/38.0221), reproducing
+caiso-123's ≈+11.1 % control class; the floor is neither credited nor debited
+for it. The floor's own λ effect is **−0.31/−0.85/−0.19 %** (toward the actual).
+**C5a moves the wrong way** (−0.3/−0.1/−1.7 pp vs keeper), part of it the
+delta's own +0.11/+0.52/+0.46 TWh of zero-carbon hydro displacing gas — reported
+as a cost, never as a rejection ground (rule 1). **S3 REFUTED:** removing
+0.3 GW from the evening peak creates **zero** h>$200 scarcity hours (0 in both
+arms) — the "over-saved evening water suppresses the tail" story does not
+survive.
+
+**(5) Disposition.** Keeper `2026-07-23-caiso-netrev-margin-keeper` UNCHANGED;
+nothing armed; promotion an owner call regardless (PREREG §6) and still behind
+the neiso-66 extract over-count freeze and the caiso-123 §6 re-tune-vs-wait
+question. The mechanism stays in the tree default-off (byte-identical when off;
+11 tests pin the derivation, mirror identity, shape-freedom, allocation,
+feasibility, `min_gen` wiring, off-path inertness and the rule-12 window). **The
+question the numbers actually pose** is the side-effect, not the level: both arms
+are 150–310 MW **too high overnight** (arm A hod 0: 3354 vs 3044 measured, 2025)
+— a pre-existing defect the floor cannot touch and the only place the belly lift
+could have come from without cutting the peak. A caiso-125 lane should attack the
+overnight over-supply (the p95 ceiling does not bind overnight; hydro carries no
+water-value term), then re-test the floor on top.
+
+**(6) TASK 2 — the caiso-123 §5 residual: the `src/market_sim/` window is CLOSED
+BY MEASUREMENT.** Every one of the 18 files in `de62eb1..HEAD` is now eliminated
+by execution or by the keeper's own recorded config, not by inspection:
+`lp/bounds.py` ORDC widths evaluate to the identical array on the static branch;
+the miso-91 `SUMMER_*` re-home literals verified identical; `_plant_emission_rate_map`
+`iterrows`→`itertuples` **measured equal** on both live artifacts (130 / 0 pooled
+rows, all four columns int64/float64); `load_plant_tranche_config` **unreached**
+(the keeper's `plant_tranche_config_path` is `null`, and no on-disk artifact
+carries its schema); `_add_proposed_capacity` — the one renewables hunk on a
+nominally ISO-generic wind/solar capacity path, which caiso-123 scoped as
+"MISO/forecast" — is **CAISO-unreached by measurement** (`_ISO_HOME_STATES`
+contains only ERCOT, so it returns before the loop; executed for CAISO
+solar+wind 2025, contribution **0.000 MW-months**), its extraction also measured
+identical; `pipeline/solve.py`'s cross-year gate takes the identical env-var
+branch at `xyear_warmstart=None` and `replay_keeper` pins the env var to 0 in
+every arm; `backcast_config.py` is one ERCOT-only line; `data/cache_control.py`
+is read-only diagnostics (`clear_all_caches` never called implicitly). **Only
+container/partition state and alternate-optimal vertex wander survive.** Arm A
+additionally bounds the newest sub-window: same recipe, `3253345` → `4094bbe`
+moves λ-2025 by ≈ **+0.04 pp** (arm C +1.00 % vs arm A +1.035 %, each against
+its own formula's keeper) — the residual is NOT accumulating from main's churn.
+Recommendation carried: extend `shared_inputs` content-hashing to the derived
+outage extracts **and the clean `capacity-deliverability` partition** — the one
+solve input a bundle currently records nothing about, and the only surviving
+code-external candidate a future session could still close.
+
+**(7) Incidental, NOT this lane's to fix.**
+`tests/test_fleet_arrays_golden.py::test_generators_to_fleet_arrays_ercot_2023_golden`
+fails at pristine HEAD on the `availability` + `min_gen` hashes: the golden was
+captured at `2f4cbc3` (07-24) and `6a8f285` (neiso-65 guard-corrected CAMPD
+extracts) then changed `data/raw/campd-unit-outages.csv`, which sets ERCOT
+availability — and `min_gen`, clipped to `pmax × availability`. Needs
+re-capturing under that owner-authorized data change, by whoever owns it (never
+to silence a gate). Also pre-existing:
+`test_hydro.py::TestCAISOHydroBudget::test_zones_resolve_to_caiso_topology`
+(asserts CAISO hydro zones ⊆ {NP15, ZP26, SP15}; the topology now carries
+LA_BASIN/SDGE/SP15_rest), plus the 8 known `test_pipeline_facade_shims` /
+`test_flag_registry` failures. Latent hazard noticed, untouched:
+`src/market_sim/data/fleet/__init__.py` defines `Generator` **and**
+`FleetArrays` **twice** (157/254 and 496/591, differing only in blank lines);
+the later win at runtime and the new field was added to both, but the
+duplication is exactly the class of file damage rule 27 exists for.
+
+**DO-NOT-REDO (new):** re-deriving the min-flow level (frozen, rule 21 — the
+percentile is the ceiling's mirror; re-derive only when the EIA-930 source
+extends); re-running the (month × hod) floor variant (measured at ~75 % of the
+annual budget = a measured-outcome pin, rule 13); re-scoring caiso-124 against a
+substitute shape gate without owner authorization; re-eliminating any
+`de62eb1..HEAD` src candidate in item (6).
+
+**Open items carried:** min-load 0.570 promotion (owner call, caiso-122 §6); the
+belly delta family (export-path/corridor, selected caiso-121, ARMING IS AN OWNER
+ASK); the caiso-124 shape-gate disposition (item 3); the overnight over-supply
+lane (item 5); the charter-lane re-tune-vs-freeze sequencing decision.
+
+Next number: caiso-125.

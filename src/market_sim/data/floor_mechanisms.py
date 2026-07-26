@@ -84,6 +84,18 @@ MECH_ST_GAS_MUSTRUN_PER_PLANT: int = 16
 # precedent). A merchant commitment floor — subject to the D-2 forced-share
 # gate; ablated in the zero-forcing twin.
 MECH_GAS_COMMITMENT_BRIDGE: int = 17
+# Conventional-hydro minimum-flow floor (ScenarioConfig.hydro_min_flow_floor):
+# the month-constant sustained level below which the measured hydro fleet never
+# runs — run-of-river inflow that cannot be stored plus the environmental /
+# FERC-licence minimum releases the fleet must pass. The energy-budget LP has an
+# energy CAP but no lower bound, so it is free to park the fleet at 0 MW; this is
+# the lower half of the same measured two-sided capability envelope whose upper
+# half is config.hydro_dispatch_envelope. NON-THERMAL forcing (water, not a
+# commitment decision): it is reported by D-2 but excluded from the merchant
+# thermal forced-share arithmetic, like the interchange pseudo-unit floors.
+# Level: data.eia_loader.measured_hydro_min_flow_level (EIA-930 NG:WAT monthly
+# Q95), allocated per plant by data.hydro.allocate_min_flow_floor.
+MECH_HYDRO_MIN_FLOW: int = 18
 
 MECH_NAMES: dict[int, str] = {
     MECH_NONE: "none",
@@ -104,6 +116,7 @@ MECH_NAMES: dict[int, str] = {
     MECH_CC_MUSTRUN_PER_PLANT: "cc_mustrun_per_plant",
     MECH_ST_GAS_MUSTRUN_PER_PLANT: "st_gas_mustrun_per_plant",
     MECH_GAS_COMMITMENT_BRIDGE: "gas_commitment_bridge",
+    MECH_HYDRO_MIN_FLOW: "hydro_min_flow",
 }
 
 # Mechanisms whose forced energy is exempt from the D-2 merchant-class gates
@@ -113,7 +126,13 @@ MECH_NAMES: dict[int, str] = {
 D2_EXEMPT_MECHS: frozenset[int] = frozenset(
     {MECH_NUCLEAR, MECH_CHP_STEAM, MECH_COAL_MUSTRUN}
 )
-NON_THERMAL_MECHS: frozenset[int] = frozenset({MECH_FIRM_IMPORT, MECH_NYISO_SELFSUPPLY})
+# Non-thermal floors: reported by D-2 but excluded from the merchant thermal
+# forced-share arithmetic. Interchange pseudo-units are a network boundary
+# condition; the hydro min-flow floor is a hydrological/licence obligation on
+# water, not a commitment decision on a thermal merchant unit.
+NON_THERMAL_MECHS: frozenset[int] = frozenset(
+    {MECH_FIRM_IMPORT, MECH_NYISO_SELFSUPPLY, MECH_HYDRO_MIN_FLOW}
+)
 
 
 # ---------------------------------------------------------------------------
@@ -151,6 +170,10 @@ MECH_ABLATION_FIELDS: dict[int, dict[str, object]] = {
     MECH_CC_MUSTRUN_PER_PLANT: {"cc_mustrun_per_plant": False},
     MECH_ST_GAS_MUSTRUN_PER_PLANT: {"st_gas_mustrun_per_plant": False},
     MECH_GAS_COMMITMENT_BRIDGE: {"ercot_gas_commitment_bridge": False},
+    # Classified ABLATED, not kept: the min-flow floor is a real physical
+    # obligation, but it is a NEW mechanism whose forcing must stay visible and
+    # switchable rather than joining the protected structural must-run set.
+    MECH_HYDRO_MIN_FLOW: {"hydro_min_flow_floor": False},
 }
 
 # Mechanisms KEPT in the ablation twin (carry NO ablation entry): the structural
