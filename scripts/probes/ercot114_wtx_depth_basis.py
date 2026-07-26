@@ -194,6 +194,18 @@ def main() -> None:
         type=float,
         default=ScenarioConfig().ercot_wtx_curtail_depth_solar,
     )
+    ap.add_argument(
+        "--baseline",
+        type=Path,
+        default=REPO / "results/calibration/ercot_netrev_margin",
+        help="baseline bundle for the W1b curtailment-quantity check",
+    )
+    ap.add_argument(
+        "--arm",
+        type=Path,
+        default=REPO / "results/calibration/ercot113_wind_zone_shape",
+        help="treatment bundle for the W1b curtailment-quantity check",
+    )
     args = ap.parse_args()
 
     table = load_share_table(paths.RAW_DIR / "reference")
@@ -291,14 +303,21 @@ def main() -> None:
     print("=" * 88)
     print("CALIBRATION TARGET: is the driver the model's only curtailment?")
     print("=" * 88)
-    chk = total_curtailment_check(
-        REPO / "results/calibration/ercot_netrev_margin",
-        REPO / "results/calibration/ercot113_wind_zone_shape",
-    )
+    chk = total_curtailment_check(args.baseline, args.arm)
     if chk is None:
         print("  bundles unavailable")
     else:
+        print(f"  baseline={args.baseline.name}  arm={args.arm.name}")
         print(chk.round(3).to_string())
+        if "shape_curt_twh" in chk and "baseline_curt_twh" in chk:
+            # W1b as pre-committed: the arm's total curtailment must stay within
+            # +/-0.5 TWh of the BASELINE's, which is what says the depth
+            # re-derivation isolated the shape from the level.
+            delta = chk["shape_curt_twh"] - chk["baseline_curt_twh"]
+            print()
+            print("  W1b curtailment-quantity preservation (|arm - baseline| <= 0.5 TWh):")
+            for year, d in delta.items():
+                print(f"    {year}: {d:+.3f} TWh  {'PASS' if abs(d) <= 0.5 else 'FAIL'}")
 
     print()
     print("=" * 88)
