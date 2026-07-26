@@ -95,6 +95,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
     MECH_CHP_STEAM,
     MECH_CT_NETLOAD_DRAG,
     MECH_GAS_COMMITMENT_BRIDGE,
+    MECH_HYDRO_MIN_FLOW,
     MECH_NAMES,
     MECH_RA_MUSTOFFER,
     MECH_RELIABILITY_FLOOR,
@@ -317,6 +318,39 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     #   own P0 run pattern + physical constants; no measured series enters
     #   (the CAISO RA bridge convention, rules 13/18).
     (MECH_GAS_COMMITMENT_BRIDGE, "CC_REGULAR"): (0, 24),
+    # hydro_min_flow (caiso-124, MECH_HYDRO_MIN_FLOW — data.hydro.
+    # build_hydro_fleet / allocate_min_flow_floor -> FleetArrays.min_gen): the
+    # conventional-hydro minimum-flow floor. Rule-12/17 declaration:
+    # * WINDOW — ALL 24 hours BY PHYSICS. River inflow and the environmental /
+    #   FERC-licence minimum releases a licensed project must pass are
+    #   around-the-clock obligations; there is no hour the driver evidence says
+    #   the class is off, which the measured series states directly (CISO
+    #   EIA-930 NG:WAT 2023-25 never approaches zero in ANY hour-of-day bucket —
+    #   the diurnal minimum-of-means is 1.7/1.4/1.2 GW at hod 11-13, and the
+    #   hourly p5 over the whole year is 954/876/738 MW). Contrast the CT
+    #   overnight-offline signature that rule 12 exists to catch. The floor
+    #   therefore cannot bind off-window, and this row makes that scorable
+    #   rather than a missing declaration.
+    # * DRIVER — run-of-river inflow that physically cannot be stored plus
+    #   licence minimum flows. The hydro budget family caps monthly ENERGY with
+    #   no lower bound, so the economic LP parks the fleet at 0 MW (CAISO keeper:
+    #   268/688/592 h below 10 MW in 2023/24/25) where reality does not.
+    # * LEVEL — the fleet's measured monthly exceedance level (Q95;
+    #   constants.HYDRO_MIN_FLOW_PERCENTILE is the MIRROR of the ceiling's
+    #   HYDRO_ENVELOPE_PERCENTILE, so no new free parameter enters), allocated
+    #   per plant pro-rata by its own share of the month's energy budget. The
+    #   level is MONTH-CONSTANT by design: a (month x hour-of-day) floor would
+    #   pin the measured diurnal shape (rule 13) and measures out at ~75 % of
+    #   the annual budget, against 36-46 % for the month-constant form.
+    # * FORWARD STORY — re-derives from the same EIA-930 history the ceiling
+    #   uses (own year in a backcast, pooled HYDRO_CLIMATOLOGY_YEARS otherwise)
+    #   and scales with the water year through the budget it is clipped to.
+    # Non-thermal forcing (NON_THERMAL_MECHS): reported by D-2, excluded from
+    # the merchant thermal forced-share arithmetic — hydro units also carry no
+    # CAMPD plant_group, so they sit in the unclassified '' bucket the D-2
+    # summary never gates. Row exists for the rule-12/17 declaration, not for a
+    # C8 escalation path.
+    (MECH_HYDRO_MIN_FLOW, None): (0, 24),
     # unit_outage_maxgen_events (M-2 declared-event-window revealed derates)
     # carries NO row here BY CONSTRUCTION, and this note is its rule-12
     # window declaration (the design's "D4_WINDOWS entry for the maxgen
@@ -851,6 +885,22 @@ D5_REGISTRY: tuple[MechanismSpec, ...] = (
         "backcast_only",
         True,
         note="EIA-930 monthly hydro budgets (L6)",
+    ),
+    MechanismSpec(
+        "hydro_min_flow_floor",
+        "hydro_min_flow_floor",
+        "both",
+        True,
+        note="conventional-hydro minimum-flow floor (caiso-124): the LOWER "
+        "half of the measured two-sided hydro capability envelope whose "
+        "upper half is hydro_dispatch_envelope. Mode PARITY by "
+        "construction — data.eia_loader.measured_hydro_min_flow_level "
+        "reads the solve year's own EIA-930 NG:WAT in a backcast and falls "
+        "back to the pooled HYDRO_CLIMATOLOGY_YEARS per-month percentile "
+        "for any year the extract does not cover, so a forecast year gets "
+        "the same mechanism off a normal-water-year level (the "
+        "measured_hydro_hourly_envelope pattern). Adds no free parameter: "
+        "HYDRO_MIN_FLOW_PERCENTILE is the mirror of the ceiling's",
     ),
     MechanismSpec(
         "gas_monthly_actuals",

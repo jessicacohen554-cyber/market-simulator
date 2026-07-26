@@ -1296,6 +1296,10 @@ def build_dispatch_fleet(
     either path -- flat full-cost passthrough at the field defaults.
 
     Args:
+        (The conventional-hydro min-flow floor is NOT a kwarg here: it rides the
+        registered ``config.hydro_min_flow_floor`` gate, read at the
+        ``build_hydro_fleet`` call below so both orchestrators share one switch.)
+
         hydro_backfill_year / hydro_eia930_monthly / hydro_forecast_budget:
             threaded to :func:`market_sim.data.hydro.build_hydro_fleet`. The
             defaults (no backfill, climatology forecast budget) reproduce the
@@ -1459,6 +1463,10 @@ def build_dispatch_fleet(
         backfill_year=hydro_backfill_year,
         eia930_monthly=hydro_eia930_monthly,
         forecast_budget=hydro_forecast_budget,
+        # Registered ScenarioConfig gate (rule 24), default off — read from the
+        # config rather than threaded as a kwarg so BOTH orchestrators pick the
+        # floor up from the same single switch.
+        min_flow_floor=bool(getattr(config, "hydro_min_flow_floor", False)),
         hydro_year=config.hydro_year if hydro_year is None else hydro_year,
     )
     hydro_gen_idx = None

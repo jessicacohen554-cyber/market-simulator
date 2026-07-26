@@ -821,6 +821,30 @@ HYDRO_CLIMATOLOGY_YEARS: tuple[int, ...] = (2021, 2022, 2023, 2024, 2025)
 # extends). Source: EIA-930 hourly NG:WAT per BA extract.
 HYDRO_ENVELOPE_PERCENTILE: float = 95.0
 
+# --- Hydro minimum-flow floor (caiso-124) ------------------------------------
+# The LOWER half of the same measured two-sided hydro capability envelope: the
+# percentile of the measured EIA-930 NG:WAT hourly output, per CALENDAR MONTH,
+# used as the hydro fleet's sustained minimum-flow level when
+# ScenarioConfig.hydro_min_flow_floor is on. Two properties are load-bearing:
+#   * It is the exact MIRROR of HYDRO_ENVELOPE_PERCENTILE (95 -> 5), so the
+#     floor adds NO new free parameter — the two-sided envelope is identified by
+#     the one percentile the ceiling already carries (DOF ledger: 0 new DOF).
+#     Read as an exceedance level it is Q95, the standard hydrological low-flow
+#     index that environmental / FERC-license minimum-flow conditions are
+#     themselves written against (the level the fleet exceeds 95 % of the hours).
+#   * The bucket is the MONTH ALONE — deliberately NOT (month x hour-of-day) as
+#     the ceiling's is. A floor carrying the measured diurnal shape would pin
+#     dispatch to the measured outcome (rule 13 violation, and it measures out
+#     at ~75 % of the annual budget); a month-constant level is the physical
+#     quantity a minimum-flow condition actually is (inflow / licence releases
+#     vary seasonally, not by hour-of-day) and leaves the LP free to choose WHEN
+#     to generate above it (CAISO 2023-25: the floor's energy is 36-46 % of the
+#     monthly budget, so 54-64 % stays economically shaped).
+# Identification: measured (rule 21 — re-derive only when the EIA-930 source
+# extends, never against a residual). Source: EIA-930 hourly NG:WAT per BA
+# extract; built by data.eia_loader.measured_hydro_min_flow_level.
+HYDRO_MIN_FLOW_PERCENTILE: float = 100.0 - HYDRO_ENVELOPE_PERCENTILE
+
 # Hydro-year scenario lever: a multiplier on the normal-water-year hydro budget
 # selected by ScenarioConfig.hydro_year, the forecast wet/dry-water-year knob.
 # A wet or dry water year shifts annual conventional-hydro energy by roughly

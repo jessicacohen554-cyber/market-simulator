@@ -220,6 +220,82 @@ def measured_hydro_hourly_envelope(
     return np.clip(tab[rm, rh], 0.0, None)
 
 
+def measured_hydro_min_flow_level(
+    iso: str,
+    year: int,
+    percentile: float | None = None,
+) -> np.ndarray | None:
+    """Return the hydro fleet's measured monthly minimum-flow level (MW).
+
+    Twelve entries (index 0 = January): the ``percentile`` (default
+    :data:`market_sim.config.constants.HYDRO_MIN_FLOW_PERCENTILE`, the mirror of
+    the ceiling's 95) of the measured EIA-930 ``NG: WAT`` hourly output over all
+    hours of that calendar month — read as an exceedance level, the fleet's Q95
+    sustained minimum flow. This is the LOWER half of the same two-sided
+    measured capability envelope whose upper half is
+    :func:`measured_hydro_hourly_envelope`: run-of-river inflow that cannot be
+    stored plus the environmental / FERC-licence minimum releases the fleet is
+    obliged to pass, which the purely-economic budget LP (energy cap only)
+    ignores — it is free to park the whole fleet at 0 MW, which the measured
+    fleet never does (CISO 2023-25 measured hourly p5 = 954 / 876 / 738 MW).
+
+    The bucket is the MONTH ALONE, unlike the ceiling's (month x hour-of-day):
+    a floor carrying the measured diurnal shape would pin dispatch to the
+    measured outcome (rule 13), while a month-constant level is what a
+    minimum-flow condition physically is and leaves the within-month
+    when-to-generate choice to the LP. See the constant's derivation note.
+
+    A backcast year uses its own measured series (the same admissibility class
+    as the ceiling and as same-year CAMPD outage windows — a physical
+    availability input); a year the extract does not cover (a forecast year)
+    falls back to the pooled per-month percentile across
+    :data:`~market_sim.config.constants.HYDRO_CLIMATOLOGY_YEARS`, so the
+    mechanism regenerates forward from climatology and responds to the water
+    year through the same budget level the ceiling does. (Month keys come from
+    the frames' row order — the model clock — not the extracts' fixed-offset
+    ``Local time`` labels; see :func:`_hydro_wat_month_hod`.)
+
+    Note: for BAs with no separate pumped-storage series (CISO), ``NG: WAT``
+    nets pumped-storage load, so a pumping hour *lowers* the measured series and
+    the derived level is a LOWER bound on the conventional fleet's own minimum
+    flow — a documented, conservative misalignment (rule 14): it can only
+    under-state the floor, never over-state it. Levels are clipped at zero for
+    the same reason (CISO 2025 has pumping hours at −463 MW).
+
+    Returns ``(12,)`` MW, or ``None`` when the ISO has no BA extract or no year
+    (measured or climatology) yields usable data — the caller leaves the fleet
+    unfloored (byte-identical).
+    """
+    from market_sim.config.constants import (
+        HYDRO_CLIMATOLOGY_YEARS,
+        HYDRO_MIN_FLOW_PERCENTILE,
+    )
+
+    pct = HYDRO_MIN_FLOW_PERCENTILE if percentile is None else float(percentile)
+    own = _hydro_wat_month_hod(iso, year)
+    if own is not None and np.isfinite(own["mw"]).any() and own["mw"].max() > 0:
+        frames = [own]
+    else:
+        pooled = [_hydro_wat_month_hod(iso, int(y)) for y in HYDRO_CLIMATOLOGY_YEARS]
+        frames = [
+            f
+            for f in pooled
+            if f is not None and np.isfinite(f["mw"]).any() and f["mw"].max() > 0
+        ]
+    if not frames:
+        return None
+    work = pd.concat(frames, ignore_index=True).dropna(subset=["mw"])
+    if work.empty:
+        return None
+
+    level = np.zeros(12, dtype=float)
+    for m, grp in work.groupby("month", observed=True):
+        level[int(m) - 1] = np.percentile(grp["mw"].to_numpy(dtype=float), pct)
+    # A month with no rows keeps 0.0 (no floor) and pumping-dominated months are
+    # clipped up to 0 — the floor never turns into a forced *export* of water.
+    return np.clip(level, 0.0, None)
+
+
 def measured_interchange_envelope(
     iso: str, year: int, hours: int, percentile: float = 90.0
 ) -> tuple[np.ndarray, np.ndarray] | None:

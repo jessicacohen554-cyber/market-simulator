@@ -168,6 +168,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # True, or a set gas_offer_margin_anchor) enters the key as a distinct scenario.
     "gas_offer_net_revenue_margin",
     "gas_offer_margin_anchor",
+    # Conventional-hydro minimum-flow floor (caiso-124): default-off gate for
+    # the lower half of the measured hydro capability envelope. Dropped from the
+    # hash at its default so every pre-existing cache key (and the pinned
+    # default) is byte-stable; an armed run enters the key as a distinct
+    # scenario.
+    "hydro_min_flow_floor",
     # DAM-first outage overlay gates for the four ISOs with a native
     # availability instrument (CAISO / MISO / NEISO / PJM), wired 2026-07-24
     # (infra/dam-outage-wiring-4iso). All default False and back a backcast-only,
@@ -446,6 +452,42 @@ class ScenarioConfig:
     # year's own measured envelope; a forecast year falls back to the pooled
     # HYDRO_CLIMATOLOGY_YEARS envelope. See
     # results/calibration/FINDING-caiso72-step0-evening-displacement-2026-07-10.md.
+    hydro_min_flow_floor: bool = False  # GATED default off (caiso-124). The
+    # LOWER half of the same measured two-sided hydro capability envelope
+    # hydro_dispatch_envelope caps from above: hold each conventional-hydro
+    # plant at a MONTH-CONSTANT minimum-generation floor, its pro-rata share
+    # (by that month's energy budget) of the fleet's measured monthly
+    # exceedance level (constants.HYDRO_MIN_FLOW_PERCENTILE = the mirror of the
+    # ceiling's 95, i.e. the hydrological Q95 low-flow index;
+    # data.eia_loader.measured_hydro_min_flow_level →
+    # data.hydro.allocate_min_flow_floor → FleetArrays.min_gen, mechanism id
+    # MECH_HYDRO_MIN_FLOW).
+    #   DRIVER (rule 17a): run-of-river inflow that physically cannot be stored
+    #     plus the environmental / FERC-licence minimum releases every licensed
+    #     project must pass. The hydro budget family caps monthly ENERGY and
+    #     imposes no lower bound, so the purely-economic LP may park the whole
+    #     fleet at 0 MW — the CAISO keeper does exactly that for 268/688/592 h
+    #     (2023/24/25), and sits under 100 MW for ~0.9-1.3 k h/yr, against a
+    #     measured fleet whose hourly p5 is 954/876/738 MW and which never
+    #     approaches zero.
+    #   WINDOW (rule 17b): ALL 24 hours — inflow and licence releases are
+    #     around-the-clock, so there is no hour the driver evidence says the
+    #     class is off (the opposite of the CT overnight-offline signature).
+    #     It BINDS where the economic solution would otherwise sink below the
+    #     sustained level: the solar belly and the overnight shoulder.
+    #   FORWARD STORY (rule 17c): the level re-derives from the same EIA-930
+    #     NG:WAT history the ceiling uses — the solve year's own series in a
+    #     backcast, the pooled HYDRO_CLIMATOLOGY_YEARS per-month percentile for
+    #     a year the extract does not cover — and responds to the water year
+    #     through the budget it is clipped against (a dry year lowers both the
+    #     climatology level and the feasibility cap).
+    # Adds NO free parameter (the percentile is the ceiling's, mirrored) and no
+    # measured OUTCOME is pinned: the floor is month-constant, so the LP still
+    # chooses when to generate above it (CAISO 2023-25: 54-64 % of the monthly
+    # budget stays economically shaped). Rule 19 — no other mechanism floors
+    # conventional hydro today (min_flow_fraction / per_plant_min_flow are 0 for
+    # every ISO but NYISO's treaty plants, which are a load_hydro_budget input,
+    # not a min_gen floor).
     eac_price_nuclear: float = 0.0  # $/MWh, e.g. NY/IL Zero Emission Credit ~$17
     eac_price_wind: float = 0.0  # $/MWh, onshore wind REC
     eac_price_solar: float = 0.0  # $/MWh
