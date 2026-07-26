@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-26-caiso120-meritguard-a1",
+  "label": "caiso120 meritguard a1",
+  "date": "2026-07-26",
+  "shorthand": "caiso120-meritguard-a1",
+  "definition": "caiso-120 A1: caiso-netrev-margin keeper recipe re-solved on the merit-order-guard-corrected CAMPD unit-outage envelope (economic layup reclassified out of the mechanical extract; charter verdict ADOPTED 2026-07-26)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-26-caiso120-meritguard-a1.js",
+  "bundle": "results/calibration/caiso120_meritguard_a1"
+}

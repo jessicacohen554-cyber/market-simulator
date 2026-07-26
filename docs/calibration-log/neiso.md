@@ -351,3 +351,16 @@ instrument into per-unit ground truth — the strongest validation available
 anywhere in this charter. (3) 2024's weak fuel-cost signal is the mechanism's
 known limit. (4) Holdout freeze **remains in force** — no validation or
 locked-test year was solved, scored or registered. Next shorthand: neiso-65.
+
+## 2026-07-26 — neiso-65: charter verdict executed — guard ADOPTED, extracts committed, freeze HELD; a1 payload landed
+
+Owner verdict (charter §8): ADOPT-AS-IMPROVEMENT + hold the freeze. All six
+guard-corrected extracts + layup companions committed (NEISO: 444 windows /
+1,083 GW-days reclassified 2023–25, reproduced exactly). The
+`2026-07-25-neiso-64-meritguard-a1` bundle regenerated deterministically and
+its dashboard payload landed (sidecar byte-identical, all scored criteria
+reproduce). NEISO verdict stays FIX-IN-PLACE (neiso-64); keeper unchanged
+(neiso-61). Cross-ISO re-audits + the CAISO crosswalk:
+`results/calibration/RESULTS-neiso65-crossiso-reaudit-2026-07.md`. The
+neiso-63 residual over-count stays open — now corroborated per-resource at
+CAISO (1.5–2.3× on the crosswalked active-plant scope).
