@@ -614,6 +614,8 @@ def run_year(
     nyiso_import_hub_prices: bool | None = None,
     nyiso_iroquois_winter_spread: bool | None = None,
     nyiso_synchronised_reserve: bool | None = None,
+    nyiso_li_locational_reserve: bool | None = None,
+    nyiso_incity_commitment_obligation: bool | None = None,
     nyiso_spin_headroom_frac: float | None = None,
     nyiso_dynamic_reserve_requirements: bool | None = None,
     nyiso_hydro_reserve_eligible: bool | None = None,
@@ -1207,6 +1209,14 @@ def run_year(
     if nyiso_synchronised_reserve is not None:
         config = config.with_overrides(
             nyiso_synchronised_reserve=nyiso_synchronised_reserve
+        )
+    if nyiso_li_locational_reserve is not None:
+        config = config.with_overrides(
+            nyiso_li_locational_reserve=nyiso_li_locational_reserve
+        )
+    if nyiso_incity_commitment_obligation is not None:
+        config = config.with_overrides(
+            nyiso_incity_commitment_obligation=nyiso_incity_commitment_obligation
         )
     if nyiso_spin_headroom_frac is not None:
         config = config.with_overrides(
@@ -2646,6 +2656,7 @@ def run_year(
             RELIABILITY_FLOOR_REGISTRY,
             apply_reliability_floor_overrides,
             drop_drag_owned_reliability_specs,
+            drop_obligation_owned_reliability_specs,
         )
         from market_sim.model.transmission import inject_reliability_floor
 
