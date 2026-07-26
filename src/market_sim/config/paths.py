@@ -55,9 +55,11 @@ DATA_ROOT: Path = Path(os.environ.get("MARKET_SIM_DATA_ROOT", REPO_ROOT))
 # subdirectories (see below). Relocation was a pure ``git mv`` — file contents
 # are byte-identical, only their location (and these constants) changed.
 #
-# ``INPUTS_DIR`` is retained for backward compatibility but the model no longer
-# reads anything under it; everything now resolves under ``data/raw``.
-INPUTS_DIR: Path = DATA_ROOT / "inputs"
+# There is no ``INPUTS_DIR``. The former ``DATA_ROOT / "inputs"`` export was
+# kept "for backward compatibility" after W1 but had zero consumers repo-wide,
+# so it was removed rather than zeroed — a dead path constant that still
+# resolves is a re-armable dead path (rule 26 [R-DELETE]). Everything resolves
+# under ``data/raw``.
 RAW_DATA_DIR: Path = DATA_ROOT / "data" / "raw"
 # inputs/processed and inputs/calibration were relocated under data/raw with
 # leading-underscore names that sort them apart from the raw downloads and flag
