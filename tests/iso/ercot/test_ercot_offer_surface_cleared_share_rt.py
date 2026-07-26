@@ -14,7 +14,6 @@ the CT class that carries the $150-800 surface.
 """
 
 import json
-from pathlib import Path
 
 import numpy as np
 import pytest
@@ -24,9 +23,10 @@ from market_sim.data.fleet import (
     Generator,
     build_ercot_offer_surface_cleared_share_markup,
 )
+from tests.helpers import REPO_ROOT
 
 T = 48
-REPO = Path(__file__).resolve().parents[1]
+REPO = REPO_ROOT
 
 
 class _FA:

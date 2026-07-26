@@ -5,7 +5,6 @@ and the NP6 report ingestion in ``scripts/data/build_ercot_hsl.py`` that extends
 HSL coverage beyond the 2023 UMass dataset.
 """
 
-import sys
 from pathlib import Path
 from unittest import mock
 
@@ -20,9 +19,9 @@ from market_sim.data.renewables import (
     hsl_potential_mw,
     load_ercot_hsl_hourly,
 )
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(REPO))
+REPO = REPO_ROOT
 
 from scripts.data import build_ercot_hsl as hsl_script  # noqa: E402
 

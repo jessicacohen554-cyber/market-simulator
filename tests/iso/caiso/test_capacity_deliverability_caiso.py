@@ -1,6 +1,6 @@
 """Tests for the CAISO capacity-deliverability intake on the real raw CSV.
 
-Unlike the PJM fixture test (``tests/test_curate_capacity_deliverability.py``),
+Unlike the PJM fixture test (``tests/curation/test_curate_capacity_deliverability.py``),
 this copies the actual canonical
 ``data/raw/capacity-deliverability/caiso/caiso.csv`` into a tmp raw tree (the
 retrieval CSV already carries canonical column values, so no synthetic

@@ -1,6 +1,6 @@
 """Tests for the CAISO measured DAM offer surface (C1 lane WP-A).
 
-Mirrors ``tests/test_neiso_offer_surface_conditional.py`` for the CAISO
+Mirrors ``tests/iso/neiso/test_neiso_offer_surface_conditional.py`` for the CAISO
 wrapper (``data.fleet.build_caiso_offer_surface_conditional_markup``): flag
 off / wrong ISO → None; the measured binned ladder reprices CC_REGULAR and
 CT_PEAKER peak rungs ONLY in tight net-load bins; edges mismatch

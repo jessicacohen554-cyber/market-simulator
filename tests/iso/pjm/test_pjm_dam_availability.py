@@ -16,8 +16,9 @@ import pandas as pd
 
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.data import outages, pjm_outages
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).parents[1]
+REPO = REPO_ROOT
 DERIVE = importlib.import_module("scripts.data.derive_pjm_dam_availability")
 
 

@@ -13,9 +13,9 @@ The CLI flags are tri-state (``None`` = keep the base default; explicit
 
 import importlib.util
 import unittest
-from pathlib import Path
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = REPO_ROOT
 _spec = importlib.util.spec_from_file_location(
     "run_calibration", str(REPO / "scripts" / "run_calibration.py")
 )

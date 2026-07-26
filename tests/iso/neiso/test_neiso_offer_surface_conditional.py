@@ -1,6 +1,6 @@
 """Tests for the NEISO condition-responsive fast-start offer surface (Limb B).
 
-Mirrors ``tests/test_ercot_offer_surface_conditional.py`` for the NEISO
+Mirrors ``tests/iso/ercot/test_ercot_offer_surface_conditional.py`` for the NEISO
 wrapper (``data.fleet.build_neiso_offer_surface_conditional_markup``): flag
 off / wrong ISO → None; the measured binned ladder reprices ONLY CT_PEAKER
 peak rungs, ONLY in tight net-load bins (loose bins clamp to ratio 1, i.e.

@@ -14,7 +14,6 @@ economic CT peakers and carry no must-run floor.
 """
 
 import unittest
-from pathlib import Path
 
 import pandas as pd
 
@@ -29,8 +28,9 @@ from market_sim.data.fleet import (
     thermal_tranche_peaking,
 )
 from market_sim.config.paths import PROCESSED_DIR
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parent.parent
+REPO = REPO_ROOT
 TRANCHES = PROCESSED_DIR / "thermal_tranches_NYISO.csv"
 BIN_ASSIGNMENTS = PROCESSED_DIR / "bin_assignments_NYISO.csv"
 ZONES = get_iso_config("NYISO").zone_names

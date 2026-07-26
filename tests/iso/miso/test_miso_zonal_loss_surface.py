@@ -5,7 +5,7 @@ Charter-mandated unit tests (docs/handoffs/miso-nc-price-separation-design-
 factor, and the loss-fraction construction (formula, reverse-direction
 clamp, fail-loud on a signed lossy link). Trivial cases first (2 zones /
 24 hours), per the repo testing pattern; derive determinism is covered in
-tests/test_derive_miso_loss_surface.py.
+tests/curation/test_derive_miso_loss_surface.py.
 """
 
 import csv

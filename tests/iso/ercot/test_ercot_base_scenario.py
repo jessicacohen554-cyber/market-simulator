@@ -7,13 +7,11 @@ Does not run the forecast; parse-verification only.
 """
 
 import unittest
-from pathlib import Path
 
 from market_sim.config.scenarios import ScenarioConfig
+from tests.helpers import REPO_ROOT
 
-_ERCOT_BASE_YAML = (
-    Path(__file__).resolve().parents[1] / "configs" / "scenarios" / "ercot_base.yaml"
-)
+_ERCOT_BASE_YAML = REPO_ROOT / "configs" / "scenarios" / "ercot_base.yaml"
 
 
 class TestErcotBaseScenarioYaml(unittest.TestCase):

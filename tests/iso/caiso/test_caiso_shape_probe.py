@@ -17,11 +17,9 @@ import pandas as pd
 # ---------------------------------------------------------------------------
 # Minimal import path setup (mirrors other scripts/ smoke tests)
 # ---------------------------------------------------------------------------
-import sys
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(REPO / "src"))
-sys.path.insert(0, str(REPO))
+REPO = REPO_ROOT
 
 import scripts.caiso_shape_probe as probe  # noqa: E402
 

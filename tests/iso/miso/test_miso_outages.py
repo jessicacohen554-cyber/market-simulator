@@ -20,8 +20,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = REPO_ROOT
 sys.path.insert(0, str(REPO / "scripts" / "data"))
 
 import fetch_miso_outages as fetch  # noqa: E402
