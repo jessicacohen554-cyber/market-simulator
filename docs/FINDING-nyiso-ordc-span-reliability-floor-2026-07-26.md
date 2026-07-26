@@ -314,6 +314,39 @@ includes economically-laid-up steam, which is precisely the capacity that is
 *not* reliability-committed. An `installed`-based (or layup-netted) base is the
 alternative. Decide this deliberately rather than inheriting it.
 
+**RESOLVED (nyiso-81, 2026-07-26): the AVAILABLE-capacity basis stays.** Decided
+deliberately, not inherited:
+
+1. *The basis is extract-invariant to first order — the desync was the bug, not
+   the basis.* `floor_pct` is derived as a when-available CF (`gross / avail`)
+   and applied as `frac × avail`, so the availability definition cancels: the
+   floor's MW target tracks the measured committed MW (cool-day gross p25)
+   under ANY outage-extract vintage, *provided derive and apply read the same
+   extract*. The nyiso-80 drift was exactly a derive/apply desync (coefficients
+   from the 2,641-row extract applied against 4,423-row availability). The
+   re-derivation (NYC 0.496→0.175, LI 0.436→0.262) restores the sync; the
+   laid-up capacity now in the denominator is absorbed symmetrically.
+2. *An installed basis breaks the response to real outages.* The injector caps
+   each unit's take at its available capacity, so an installed-sized target
+   would be silently under-placed during a genuine multi-unit outage — or force
+   surviving units toward MW NYISO could not have committed. Available-basis
+   scales the requirement to the fleet physically present, which is how in-city
+   commitment actually operates.
+3. *Forward story (rule 17c).* Forecast-year availability comes from modeled
+   outage/maintenance draws, so `frac × avail` regenerates mechanically and
+   responds to changed conditions; no measured-outcome dependence.
+4. *Residual limitation, accepted.* Under `pro_rata` distribution the floor
+   spreads over laid-up units at unit level; a layup-netted basis would need a
+   layup signal distinct from outages, which the guard-corrected extract by
+   design no longer books. Class-level gates (D-1/D-2/C7/C8) are unaffected.
+5. *Coupling mitigation.* The `threshold_basis` rows now name the extract and
+   commit (`6a8f285`); any future change to `campd-unit-outages-NYISO.csv`
+   re-triggers the rule-23 re-derivation — precedented twice (2026-07-19,
+   2026-07-26).
+
+Keeping the basis is *not* a mechanism change, so no A/B is owed; only the
+levels moved, under rule 23's source-data trigger.
+
 ### 4.2 Then
 
 - Re-solve 2023-2025 in ONE bundle (rule 16) with `dual_fuel_oil_daily_parity`
