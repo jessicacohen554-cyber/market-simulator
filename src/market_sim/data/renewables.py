@@ -1783,7 +1783,7 @@ def _iso_clearsky_poa(
 
 
 def _donor_shaped_distribution(
-    iso: str, year: int, fuel: str, data_dir: Path | None = None
+    iso: str, year: int, fuel: str, data_dir: Path = DATA_DIR
 ) -> np.ndarray | None:
     """Rebuild a degenerate distribution row from an adjacent BA's shape.
 
@@ -1811,7 +1811,7 @@ def _donor_shaped_distribution(
         iso: ISO whose distribution row is degenerate.
         year: Calendar year of the row.
         fuel: Fuel identifier, e.g. ``"solar"``.
-        data_dir: EIA-930 directory; resolved from config when ``None``.
+        data_dir: EIA-930 directory holding the generation-profiles parquet.
 
     Returns:
         A ``(HOURS_PER_YEAR,)`` normalized distribution summing to 1.0, or
