@@ -1,25 +1,14 @@
 {
-  "timestamp": "2026-07-21T01:59:30",
+  "timestamp": "2026-07-26T23:18:07",
   "git": {
-    "sha": "855d473",
-    "branch": "claude/nyiso-calibration-calibrated-6fy236",
-    "dirty": true,
-    "changed_files": [
-      "ata/raw/campd-unit-outages-NYISO.csv",
-      "frontend/data/backcast/benchmark.js",
-      "frontend/data/backcast/manifest.js",
-      "scripts/run_calibration.py",
-      "scripts/run_calibration_full.py",
-      "src/market_sim/config/scenarios.py",
-      "src/market_sim/data/fleet.py",
-      "src/market_sim/results/export.py",
-      "frontend/data/backcast/registry/2026-07-21-nyiso-67-outage-resync.json",
-      "frontend/data/backcast/runs/2026-07-21-nyiso-67-outage-resync.js",
-      "scripts/data/build_nyiso_scr_edrp.py"
-    ],
-    "diffstat": "data/raw/campd-unit-outages-NYISO.csv | 1069 ++++++++++++++++++++++++++++++++-\n frontend/data/backcast/benchmark.js   |    2 +-\n frontend/data/backcast/manifest.js    |    2 +-\n scripts/run_calibration.py            |   30 +\n scripts/run_calibration_full.py       |   36 ++\n src/market_sim/config/scenarios.py    |   23 +\n src/market_sim/data/fleet.py          |    6 +\n src/market_sim/results/export.py      |    8 +\n 8 files changed, 1161 insertions(+), 15 deletions(-)"
+    "sha": "978d307",
+    "basis_sha": "9efdd38c13715c737695daa520dbc14d8f619c31",
+    "branch": "claude/nyiso-incity-commitment-adjudication-r9f5dp",
+    "dirty": false,
+    "changed_files": [],
+    "diffstat": ""
   },
-  "model_changes_note": "nyiso-68: nyiso-62 base recipe + restored 2,641-row corrected campd-unit-outages-NYISO.csv + SCR/EDRP emergency demand response (nyiso_scr_edrp, published $500/MWh EDRP strike) as endogenous per-zone price-responsive supply blocks. Restores both un-synced nyiso-64/65 ingredients: the corrected outage extract makes solve-time availability consistent with the re-derived ST reliability floors (closes C1 fuel-mix), and the DR blocks cap the downstate scarcity tail those outages tighten (Gold-Book-registered capability, market-design strike, endogenous trigger \u2014 rule 13/17). No residual tuning.",
+  "model_changes_note": "nyiso-83 PROBE (rejected): in-city J/K commitment obligation + published Zone-K ladder, all three training years. Gate binds (NYC reserve-dual 6->7003 h) but C3c is ceiling-blocked at the published $25/MW J/K curve and the rule-19 substitution costs 2.9 TWh of ST_GAS. Registered as the record of a refuted substitution, never a keeper.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "NYISO",
@@ -58,7 +47,12 @@
       "use_plant_emission_rates_v2": true,
       "nyiso_downstate_ct_gas_daily": true,
       "nyiso_nyc_lcr_tsl": true,
-      "nyiso_scr_edrp": true
+      "nyiso_scr_edrp": true,
+      "nyiso_hydro_reserve_eligible": true,
+      "nyiso_scr_edrp_reserve_eligible": true,
+      "dual_fuel_oil_daily_parity": true,
+      "nyiso_li_locational_reserve": true,
+      "nyiso_incity_commitment_obligation": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -73,7 +67,9 @@
     "ercot_dam_as_scarcity_threshold": 150.0,
     "temp_dependent_derate": false,
     "nyiso_dynamic_reserve_requirements": true,
-    "git_sha": "855d473"
+    "nyiso_hydro_reserve_eligible": true,
+    "nyiso_scr_edrp_reserve_eligible": true,
+    "git_sha": "978d307"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -102,6 +98,7 @@
     "mass_cap_program": null,
     "mass_cap_tons": null,
     "carbon_program_price_path": null,
+    "net_cone_forward_escalation": "hold_last",
     "demand_growth_rate": 0.01,
     "demand_growth_path": "mid",
     "demand_growth_percentile": 0.5,
@@ -115,6 +112,7 @@
     "retirement_aggressiveness": "mid",
     "hydro_year": "normal",
     "hydro_dispatch_envelope": false,
+    "hydro_min_flow_floor": false,
     "eac_price_nuclear": 0.0,
     "eac_price_wind": 0.0,
     "eac_price_solar": 0.0,
@@ -267,6 +265,9 @@
     "nyiso_rcpf_products": null,
     "nyiso_rcpf_locational": null,
     "nyiso_dynamic_reserve_requirements": true,
+    "nyiso_ordc_measured_step_span": false,
+    "nyiso_hydro_reserve_eligible": true,
+    "nyiso_scr_edrp_reserve_eligible": true,
     "neiso_rcpf_enabled": false,
     "neiso_rcpf_products": null,
     "neiso_dynamic_reserve_requirements": false,
@@ -328,6 +329,8 @@
     "nyiso_import_reconciliation": true,
     "nyiso_import_hub_prices": true,
     "nyiso_iroquois_winter_spread": false,
+    "nyiso_li_locational_reserve": true,
+    "nyiso_incity_commitment_obligation": true,
     "nyiso_synchronised_reserve": false,
     "nyiso_spin_headroom_frac": 1.0,
     "nyiso_forward_net_import_twh": null,
@@ -361,6 +364,7 @@
     "caiso_dsw_overnight_clean": false,
     "caiso_dsw_daytime_clean": false,
     "caiso_dsw_daytime_evening_trim": false,
+    "caiso_endogenous_wecc_node": false,
     "caiso_storage_as_reservation": false,
     "caiso_storage_shape_anchor": false,
     "caiso_charge_allocation_schedule": false,
@@ -488,6 +492,7 @@
     "gas_st_wefor_base_override": null,
     "coal_sync_srmc_tranche": false,
     "coal_econ_srmc_bound": false,
+    "coal_econ_marginal_hr_bound": false,
     "coal_bit_committed_takeorpay": false,
     "coal_committed_takeorpay_all": false,
     "coal_committed_takeorpay_regulated": false,
@@ -565,6 +570,11 @@
     "ercot_nuclear_unit_availability": false,
     "nuclear_unit_availability": false,
     "ercot_thermal_dam_availability": false,
+    "neiso_operable_capacity_availability": false,
+    "pjm_dam_availability": false,
+    "ercot_thermal_dam_availability_hourly": false,
+    "ercot_thermal_dam_availability_plant": false,
+    "ercot_thermal_dam_availability_coal": false,
     "ercot_noncampd_plant_availability": false,
     "ercot_storage_capability_measured": false,
     "neiso_offer_surface_conditional": false,
@@ -600,6 +610,9 @@
     "pjm_offer_midcurve_conditional": false,
     "pjm_offer_midcurve_path": null,
     "pjm_offer_midcurve_segments": null,
+    "pjm_offer_midcurve_level_segments": null,
+    "pjm_offer_midcurve_peak_segments": null,
+    "pjm_ct_measured_max_reprice": false,
     "cc_committed_hr_override": null,
     "cc_econ_hr_override": null,
     "cc_peak_hr_override": null,
@@ -639,7 +652,11 @@
         "econ_high": 1.0,
         "peak": 2.25,
         "econ_low_share": 0.5,
-        "pct_peaking": 8.0
+        "pct_peaking": 8.0,
+        "phys_committed": 0.964,
+        "phys_econ_low": 0.784,
+        "phys_econ_high": 0.925,
+        "phys_peak": 2.25
       },
       "CC_INTERMEDIATE": {
         "committed": 0.92,
@@ -655,7 +672,11 @@
         "econ_high": 1.24,
         "peak": 2.25,
         "econ_low_share": 0.5,
-        "pct_peaking": 8.0
+        "pct_peaking": 8.0,
+        "phys_committed": 1.21,
+        "phys_econ_low": 0.989,
+        "phys_econ_high": 1.103,
+        "phys_peak": 2.25
       },
       "CT_CHP": {
         "committed": 1.0,
@@ -670,7 +691,11 @@
         "econ_high": 1.0,
         "peak": 4.0,
         "econ_low_share": 0.526,
-        "pct_peaking": 7.0
+        "pct_peaking": 7.0,
+        "phys_committed": 0.843,
+        "phys_econ_low": 0.661,
+        "phys_econ_high": 0.658,
+        "phys_peak": 1.0
       },
       "CT_INTERMEDIATE": {
         "committed": 1.0,
@@ -686,7 +711,11 @@
         "econ_high": 1.13,
         "peak": 4.2,
         "econ_low_share": 0.5,
-        "pct_peaking": 15.0
+        "pct_peaking": 15.0,
+        "phys_committed": 1.104,
+        "phys_econ_low": 0.83,
+        "phys_econ_high": 0.828,
+        "phys_peak": 1.0
       },
       "ST_GAS_INTERMEDIATE": {
         "committed": 1.0,
@@ -732,6 +761,8 @@
         "econ_low_share": 0.55
       }
     },
+    "gas_offer_net_revenue_margin": true,
+    "gas_offer_margin_anchor": 3.9046,
     "offer_curve_smoothing_n": 6,
     "offer_curve_smoothing_exp": 1.0,
     "offer_curve_smoothing_mid": null,
@@ -746,6 +777,7 @@
     "ercot_wtx_curtailment_driver": false,
     "ercot_wtx_curtail_depth_wind": 0.1004,
     "ercot_wtx_curtail_depth_solar": 0.1637,
+    "ercot_wind_zone_shape": false,
     "coal_supply_repricing": true,
     "coal_plant_monthly_pricing": true,
     "gas_plant_monthly_fuel_pricing": true,
@@ -786,11 +818,15 @@
     "gas_hub_basis_daily": true,
     "dual_fuel_oil_reattribution": true,
     "dual_fuel_switching": true,
+    "dual_fuel_oil_daily_parity": true,
     "outage_source": "historic",
+    "caiso_dam_outages": false,
+    "miso_native_outage_source": false,
     "unit_outage_short_windows": false,
     "unit_partial_outage_windows": false,
     "unit_outage_maxgen_events": false,
     "maxgen_emergency_tier_pricing": false,
+    "forecast_xyear_warmstart": true,
     "gas_price_override": 2.54
   },
   "environment": {
