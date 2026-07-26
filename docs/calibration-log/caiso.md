@@ -568,6 +568,343 @@ the import-hours depth keeps C5a failing. Supporting: L2 re-derive Lever-D k to
 curtail the measured 2.5–3.5 TWh. NO-GO: zone granularity. KILLED: CA-price /
 west-surplus-quantity depth gates (caiso-107/109).
 
+Next number: caiso-112.
+
+## caiso-112 (2026-07-21) — export-floor ROOT-CAUSED to a P1-bridge min_gen clamp (a genuine bug, not a missing sink); fix wired behind `caiso_wecc_export_floor` (default off, byte-identical off); un-clamp A/B UNBOUNDED → L1a′ chartered; keeper UNCHANGED
+
+*(Housekeeping 2026-07-26: this entry and caiso-113 below were merged to main
+by PR #2792 on 2026-07-22 and then lost to a later full-file overwrite of this
+log — the "phantom merge" the caiso-114/116 handoff notes flagged. Restored
+verbatim from the PR head blob, `13ccbc6b`.)*
+
+**Keeper `2026-07-19-caiso-102-hourfix` UNCHANGED.** The caiso-111 "export-floor"
+(model min net import = 0, the tie can never reverse) was ROOT-CAUSED to a genuine
+bug, NOT a missing export sink: the per-hub keeper already builds two priced
+measured-hub export legs (`WECC_PNW_export_MALIN` / `WECC_DSW_export_PALOVRDE`,
+`pmin = -corridor TTC`) that clear correctly in P0 (−1103 MW belly export), but the
+scored P1 pass runs on the RA must-offer bridge, whose shared floor tail
+`pipeline.commitment._bridge_floored_fleet` did `new_min_gen = np.maximum(base_min_gen,
+bridge_floor)`; for the export legs `base = -TTC`, `bridge_floor = 0`, so
+`np.maximum(-TTC, 0) = 0` clamped the export bound to zero in every scored hour →
+min net import = 0 (proven by P0 primal, LP col-lower dump −4800 in P0 vs 0.000 in
+P1, and HiGHS reduced-cost). Fix: new `ScenarioConfig.caiso_wecc_export_floor`
+(default False) threads `preserve_negative_min_gen` into `_bridge_floored_fleet` —
+raise `min_gen` only where `bridge_floor > 0`, else keep the base (negative export)
+bound, so the legs net-export in P1 as they already do in P0. Byte-identical off the
+flag (verified). The minimal un-clamp A/B (different machine, handoff) recovers the
+export-floor but is UNBOUNDED: the legs also wheel the caiso-77 must-flow firm
+imports back out, so net link flow never reverses, the corridor export ENVELOPE
+never binds, and the legs over-export ~16 TWh gross vs the measured ~1.5 → 2024 gas
++7.6 % (trips the +7 % guard) and mean λ 29.9→38.7. Chartered L1a′ (bound the leg
+dispatch at the measured p95 net-export envelope) as the single-delta successor.
+Full record: `docs/handoffs/caiso-112-export-floor-handoff-2026-07-21.md`.
+
+Next number: caiso-113.
+
+## caiso-113 (2026-07-22) — export-floor L1a′: bound the un-clamped export legs at the measured p95 net-export envelope; single-delta A/B (3yr, same-machine, in-session); B RECOVERS the export-floor + fixes the over-correction but BREAKS the C3a guard (over-price) and leaves C5a failing → REJECTED, keeper UNCHANGED, escalate to L1b
+
+**Keeper `2026-07-19-caiso-102-hourfix` UNCHANGED (NOT-YET, fail {C3c, C4, C5a}).**
+Continuation of caiso-112: the minimal un-clamp over-exports (~16 TWh gross) because
+the corridor `caiso_corridor_flow_limit` export cap is a LINK-level (net-flow) bound
+that never binds while the firm imports keep net flow positive. **L1a′ bound (single
+delta vs the un-clamp):** new injector
+`model.interchange.caiso.inject_caiso_wecc_export_leg_envelope` (in
+`apply_caiso_seam_injections`, gated by the SAME `caiso_wecc_export_floor`) tightens
+EACH export leg's own hourly `min_gen` from `-TTC` up to `-(measured p95 net-export
+envelope)` — the SAME `measured_corridor_flow_envelope(direction="export")` ceiling
+the corridor groups use — so the leg net-exports at most the measured surplus per
+hour and collapses to ~0 in the evening ramp. No fitted value (rule 13/25); composes
+with the P1 bridge `preserve_negative_min_gen`; byte-identical off the flag. 7 tests
+(`tests/test_caiso_export_leg_envelope.py`); the bug fix + the bound stay in the tree
+regardless of the keeper decision. Confirmed active in the scored solve (per-year
+"export legs capped" log). A = `_caiso102_repro_A` (flag off) reproduces the keeper
+digit-for-digit (2024 net 42.03 / gas 54.4). Registered B =
+`2026-07-22-caiso-112-export-floor`.
+
+**A/B (same-machine, in-session, 3yr one bundle — rule 16):**
+
+| year | actual net | A net | B net | gas tgt | A gas | B gas | B gas% | B net-exp TWh | B belly-exp hrs |
+|---|---|---|---|---|---|---|---|---|---|
+| 2023 | 28.9 | 37.2 | 32.9 | 74.2 | 60.6 | 63.5 | −14.5% | 0.89 | 355 |
+| 2024 | 32.4 | 42.0 | 37.3 | 61.0 | 54.4 | 56.7 | −7.0% | 0.30 | 165 |
+| 2025 | 36.2 | 42.5 | 40.6 | 51.6 | 46.2 | 46.7 | −9.4% | ~0.2 | 127 |
+
+**What the bound ACHIEVES:** recovers the export-floor (belly export present; NET
+export 0.3–0.9 TWh, the measured order of magnitude, NOT the un-clamp's ~16 TWh
+gross), FIXES the over-correction (2024 gas +7.6 %→ −7.0 %, NO year over the +7 %
+guard), and moves net import + gas toward actual/target every year. C5a CO2 improves
+(2023 −11.1 %→ −7.0 % CAVEAT, 2024 −9.1 % CAVEAT→ PASS, 2025 −12.1 %→ −11.2 %).
+
+**What KILLS it — the C3a guard.** Official scores (`calibration_verdict`):
+A fail set {C3c, C4, C5a} (C3a PASS); **B fail set {C3a, C3c, C4, C5a}** — B ADDS a
+C3a failure (mean LMP over-price +11.5 % 2024 / +12.7 % 2025). The pre-registered
+gate GUARD C3a stays PASS is VIOLATED. Root: the export legs price at the FIXED
+measured West hub, so exporting the belly surplus pulls CA λ UP to the hub — the same
+fixed-hub pricing that under-prices imports over-prices exports. C5a still fails 2025
+(−11.2 %): the import-hours DEPTH half is untouched by an export bound (net import
+stays ~4–5 TWh over actual). C4 marginally better (NRMSE 0.333→0.328, still >0.30).
+
+**Decision (owner direction 2026-07-21): REJECTED.** B does not clear (C3a guard
+broken; C5a import-depth remains) → keeper stays `2026-07-19-caiso-102-hourfix`;
+B is a rejected probe on the dashboard (`2026-07-22-caiso-112-export-floor`). Per the
+pre-registered KILL, **escalate to L1b — the endogenous WECC West node
+(caiso-110 West-MC fix)** — which addresses BOTH open halves at once: it clears the
+West price ENDOGENOUSLY (collapsing in surplus) instead of pinning to the fixed hub,
+so the belly export no longer over-prices (fixes C3a) AND the import depth
+co-evolves with the West fleet (the C5a import-hours half). The caiso-112 bug fix +
+the L1a′ bound remain in the tree (default off, byte-identical off) as the
+bidirectional-tie foundation L1b builds on.
+
+Next number: caiso-114.
+
+## caiso-114 (2026-07-23) — L1b endogenous WECC-West node (Option A), West gas priced at the MEASURED intertie hub (hub-alone): fixes C5a + C3c and the tie clears INTERIOR (caiso-110 flood/degeneracy resolved), but BREAKS the C3a guard via an EVENING over-price → REJECTED probe; keeper 2026-07-19-caiso-102-hourfix UNCHANGED
+
+*(Housekeeping 2026-07-26: merged from
+`docs/handoffs/caiso114-calibration-log-entry.md`.)*
+
+**The build.** Wired caiso-110 Option A: `WECC_import` becomes a real co-optimized
+WECC-West neighbor zone (own measured demand + a reduced import-priced fleet from
+the `wecc-west-supply` frame), superseding the static import tranches / per-hub
+split / clean-depth injectors (rule 18). Gate `caiso_endogenous_wecc_node`
+(default off, byte-identical off). THE caiso-110 fix (`build_wecc_west_thermal_mc`):
+the West GAS units (gas_cc/gas_ct) are re-priced hour-varying at the MEASURED
+delivered West intertie hub — the tie-capacity-weighted MALIN(4800)+PALOVRDE(10623)
+blend — via an `mc_base` override; coal keeps its physical PRB vom. HUB-ALONE, no
+CARB adder: hub+CARB over-corrected the 2024 diagnostic (net import -3.1 TWh, gas
+96.4 — tie flipped to net export) because the measured intertie LMP is the price
+imports actually CLEARED at and CA gas is already CARB-priced, so hub-alone
+competes evenly. 0 fitted params (rule 1/13/25); 7 tests.
+
+**A/B (single delta, 3 yr one bundle, same-machine).** A = caiso102_repro_A
+(flag off). B = caiso110_endog_B (registered 2026-07-23-caiso-114-endogenous-west).
+
+| year | net import B (actual) | gas A→B (actual) | tie interior |
+|------|----------------------|-------------------|--------------|
+| 2023 | 32.3 (28.9) | 60.6→64.4 (74.2) | 63.8 % |
+| 2024 | 31.7 (32.4) | 54.4→62.6 (61.0) | 73.2 % |
+| 2025 | 37.1 (36.2) | 46.2→50.3 (51.6) | 68.3 % |
+
+The tie clears INTERIOR every year (no flood / no tie-pinned degeneracy — the
+caiso-110 84-min KILL is RESOLVED; solves ~9-10 min/yr).
+
+**Verdict (NOT-YET, fail {C1, C3a, C4}) vs keeper NOT-YET {C3c, C4, C5a}:**
+- FIXES C5a (CO2, the keeper's load-bearing fail → PASS) — the PRIMARY goal.
+- FIXES C3c (scarcity tail → PASS).
+- still fails C4 (gas hourly NRMSE 0.35-0.45, r 0.78-0.87 — both keeper and B).
+- BREAKS C3a (mean LMP +11.0/+15.6/+10.5 %, the must-stay-PASS guard).
+- BREAKS C1 (2023 CC_REGULAR -4.7 TWh — the high-hub-year under-gas).
+
+**C3a diagnosis (no re-solve) — the over-price is ENTIRELY EVENING; belly IMPROVES.**
+Zonal-mean LMP by hour, A→B: evening (18-21) **+18/+12/+4** $/MWh (2023/24/25);
+belly (10-14) **-5/-2/-1** $/MWh. The design's self-limiting belly thesis HELD
+(belly not over-imported/over-priced, unlike L1a''s fixed-hub belly over-price).
+The regression: the measured intertie hub over-states the marginal EVENING export
+price to CA — in interior-tie evening hours the West sets CA's import-zone LMP at
+its own internal evening-scarcity hub ($56+), above where West energy actually
+cleared to CA on the margin.
+
+**Determination: REJECTED probe** (pre-registered gate: promote iff C3a STAYS PASS
+and C5a→0; C3a did not). Keeper stays 2026-07-19-caiso-102-hourfix. But L1b is the
+first mechanism to fix C5a via a forward-stable ENDOGENOUS structure (not a fitted
+depth — caiso-107/109 killed those) with the tie interior, so the STRUCTURE is
+right; only the West-node EVENING clearing is wrong.
+
+**Next (caiso-115): refine the West-node evening clearing, do NOT fall back to a
+fixed hub (charter KILL).** The belly/overnight are correct; the evening West offer
+is too high as CA's marginal setter. Candidates (derive-first, single delta each):
+(a) the evening hub embeds a WECC-wide scarcity CA's own ORDC should price, not the
+import — test decoupling the West evening offer from the internal hub scarcity tail;
+(b) the tie should BIND in the evening (West at export limit, CA gas marginal)
+rather than the West setting an interior price — test an ε flow_cost / evening TTC;
+(c) revisit the MALIN/PALOVRDE evening blend. Also close C1 2023 + C4. rule-22 LOYO
+before any promotion.
+
+## caiso-115 (2026-07-23) — FRESH-LOOK DIAGNOSIS: C4 is NOT the intractable frontier — decomposed, it is ~75 % sub-ceiling day-to-day scatter (a mild reduced-network limit) + ~25 % fixable diurnal structure that is the SAME belly-import (C5a) + evening-displacement (C3c) defect; the keeper already PASSES C4 in 2/3 years on the clean CEMS basis and its sole fail (2023) is a benchmark-basis artifact; C5a-fix and C3a-guard ARE separable; keeper UNCHANGED
+
+*(Housekeeping 2026-07-26: merged from
+`docs/handoffs/caiso115-calibration-log-entry.md`. NUMBER COLLISION: two
+parallel 2026-07-23 sessions both took caiso-115 — this fresh-look diagnosis
+and the netrev-margin keeper promotion further below. Both entries kept
+verbatim; ordinals are never renumbered.)*
+
+**Measurement-only, NO SOLVE, nothing registered.** Keeper
+`2026-07-19-caiso-102-hourfix` UNCHANGED (NOT-YET, fail {C3c, C4, C5a}). The
+caiso-114 handoff's fresh-look charter: answer (A) can C5a-fix + C3a-guard
+coexist, and (B) what is C4, with measurement not another tweak. All from
+committed artifacts + raw EIA-930 via `scripts/probes/_caiso115_c4_freshlook.py`
+(no LP; keeper-proxy `caiso104_m1_B` for the model hourly, reproduces the keeper
+C4 gas digit-for-digit). Full record:
+`results/calibration/FINDING-caiso115-c4-freshlook-and-separability-2026-07-23.md`.
+
+**Inv 1a — cross-ISO C4 benchmark: the gate is NOT mis-specified, CAISO is a
+marginal-NRMSE outlier, not a broken one.** Scoring every ISO keeper's gas
+`dispatch_corr` (r≥0.70, NRMSE≤0.30): ERCOT 0.07–0.08, PJM 0.10–0.11,
+MISO 0.15–0.20, NEISO 0.12–0.17, NYISO 0.17–0.21 — all PASS comfortably;
+**CAISO 0.26–0.33 is the sole outlier**, FAIL 2023 only. But CAISO's gas **r
+(0.836–0.908) is in-family** with the import/hydro peers (NYISO 0.804–0.888) —
+the *shape* is fine, the *magnitude* is high. The handoff's "maybe the gate is
+mis-specified for a reduced-network model" is REFUTED: nobody hovers near the
+line, including import-heavy NYISO/NEISO.
+
+**Inv 1b — C4 is TIMING, not volume; ~75 % is irreducible scatter.** Reproducing
+the gate's CEMS-basis gas series and decomposing the residual: the flat annual
+volume bias (the −8/−7/−5 TWh gas deficit that *is* C5a) is only **13–18 %** of
+the C4 SSE — so **fixing C5a barely moves C4** (refutes caiso-108's "C4 moves
+once C1/C5a are fixed"; explains the caiso-114 paradox where L1b fixed the volume
+yet C4 stayed bad). A *perfect* hour-of-day fix leaves NRMSE 0.221–0.251; a
+perfect hod×month fix leaves 0.202–0.225 — **~75 % of C4 is day-to-day scatter**,
+the reduced-model floor (invariant to the cogen/fill approximations; sits right
+at the peer-worst NYISO 0.207). The removable ~25 % is two real signatures:
+**CC_REGULAR under-dispatch belly+overnight** (−1.0 to −1.3 GW belly; imports
+substitute = C5a) and **CT_PEAKER evening under-run** (0.2–0.9 vs 1.7–3.3 TWh, a
+3.3–6.8× under-run = C3c).
+
+**2023 fail is a BENCHMARK-BASIS artifact (escalation).** CEMS-anchor onset is
+2024, so 2023 — the only C4-failing year — is scored on the EIA-930 NG cell
+(0.333 FAIL). On the *same CEMS basis as 2024/25* it is **0.271 → PASS**. The two
+bases differ ~0.06 NRMSE > the 0.033 fail margin; 2023 was kept on 930 "for
+continuity — the two agree there" (bench-basis FINDING 2026-07-12 §5.2), true at
+the annual level but NOT at the hourly grain. Moving 2023 to CEMS (scorer-only,
+no re-solve) would make the keeper pass C4 all three years.
+
+**Inv 1c + Inv 3 — the evening circle.** The model fills the evening ramp (17–21)
+with maxed CC + over-hydro + over-import, capping the CA price at $43–65 (below
+the scarcity tail → C3c FAIL) so the CT peaker fleet stays idle despite available
+capacity (model annual max 3.4–4.6 GW) — the under-run is ECONOMIC. Against raw
+EIA-930: hydro annual matches but the model **over-concentrates it into the
+evening (+0.5–0.65 GW)** and under-runs the belly; the **belly over-import
+(+1.9–2.5 GW)** is the dominant C5a/C4-belly driver (confirms caiso-109). The
+keeper's `hydro_dispatch_envelope` (p95) is **already ON** — it cut the
+over-hydro from ~1.5 GW (caiso-72 STEP-0) to ~0.5 GW, but p95 is a loose ceiling
+the perfect-foresight LP saturates every evening; `caiso_firm_import_shape`
+(caiso-72 #2) is off. Storage is NOT the current driver (keeper runs
+`storage_vintage_ramp` + `caiso_storage_shape_anchor`; the caiso-98 flat-8-GW
+oversizing is already corrected). Network granularity is not the systematic lever
+(caiso-111; dump=0 in every CA zone) — it may underlie the scatter floor but that
+part is sub-ceiling and untestable without a nodal build.
+
+**DECISION FRAMING (the handoff's ask).** C5a (belly over-import) = **(i) fixable
+mechanism** — belly-scoped import-volume correction, separable from the evening.
+C3c + C4-evening-CT = **(i) fixable mechanism, hard multi-lever refinement** —
+tighten `hydro_dispatch_envelope` and/or arm `caiso_firm_import_shape`; disclosed
+risk = over-tightening over-prices the evening (exactly L1b's C3a break, which
+raised the evening with *expensive imports* instead of *domestic peakers*).
+C4 bulk (day-to-day scatter) = **(iii) mild representational limitation** (~0.22
+floor, sub-ceiling; a belly+evening fix moves C4 ~0.27 → ~0.23, passing).
+2023 C4 fail = **(ii) benchmark-basis artifact** — escalate the CEMS-vs-930 2023
+basis. **Question A: YES, separable** — belly-volume (hod 10–15) and evening-price
+(hod 17–21) are different hours/mechanisms; L1b broke C3a only because the
+endogenous West coupled them (fixed belly volume AND re-set the evening price to
+the West hub). **Question B: C4 is not the ballgame** — ~75 % a mild reduced-net
+limit + ~25 % the same import/evening defect as C5a/C3c; keeper passes 2/3 years
+on the clean basis.
+
+**Recommended next single-delta (owner to select; derive-first).** Two separable
+forward-stable A/B deltas vs a fresh `caiso102_repro_A`, 3 yr one bundle, LOYO:
+(1) **belly** — endogenous West or physical belly-import cap, gated C5a→0 with
+**C3a STAYS PASS**; (2) **evening** — tighten the hydro envelope / arm the shaped
+firm-import base, gated C3c-tail-up + CT-evening-up with **C3a STAYS PASS** (2023
+tail watched, rule 1). DO-NOT-REDO carried: firm-rung reprice (pinned, caiso-109);
+belly-depth on CA-price/west-surplus observables (caiso-107/109); fixed-hub West
+fallback (caiso-114 KILL); gating the evening on the ±5 $/MWh ladder inside
+passing C3a/C3b (caiso-108).
+
+Next number: caiso-116.
+
+## caiso-116 (2026-07-23) — EXECUTE-THE-BELLY-LANE, DERIVE-GATED: candidate (a) (the endogenous WECC-West node) CANNOT be evening-scoped to keep C3a while fixing C5a — the modeled West (EIA-930 NW+SW) net-exports only ~19 TWh/yr but CAISO imports 29-36, and L1b matched CA's import VOLUME only by over-generating that ~9-17 TWh/yr gap as gas exported at the intertie hub (the marginal unit that breaks C3a); C5a-fix and C3a-guard are COUPLED through that proxy over-export, so BOTH scopings fail by derivation; the fleet-bound delta was built + tested then reverted (over-corrects C5a + infeasible); keeper UNCHANGED
+
+*(Housekeeping 2026-07-26: merged from
+`docs/handoffs/caiso116-calibration-log-entry.md`.)*
+
+**Derive-first gate, mechanism built-then-refuted, NO SOLVE, nothing registered.**
+Keeper `2026-07-19-caiso-102-hourfix` UNCHANGED (NOT-YET, fail {C3c, C4, C5a}).
+The caiso-115 handoff chartered this session to EXECUTE the belly (C5a) lane by
+building one pre-registered single delta — candidate (a), the caiso-114
+endogenous WECC-West node, evening-scoped so the West does not set CA's evening
+LMP. A derive-first pass (rule #1, before committing a mechanism) uncovered a
+DATA-SCOPE gap the caiso-114/115 handoffs did not anticipate. Full record +
+reproduction: `results/calibration/FINDING-caiso116-endogenous-datascope-2026-07-23.md`
+/ `scripts/probes/_caiso116_endogenous_datascope_derive.py` (no LP).
+
+**Inv 1 — the data-scope gap (load-bearing).** Modeled West net-export capability
+(`wecc-west-supply` net_export_mw = EIA-930 NW+SW net gen − demand) vs CAISO net
+import (raw EIA-930 CISO): **19.4/18.9/19.2 TWh** West vs **28.8/31.9/36.0 TWh**
+CA → GAP **9.3/13.0/16.9 TWh**, WIDENING as CA's import demand grows. L1b
+(`caiso110_endog_B`) matched CA's volume (32/32/37 TWh) ONLY by having the West
+over-generate that gap as gas exported at the measured intertie hub — LOW in the
+belly (the C5a fix worked) but HIGH in the evening where it is the marginal unit
+and SETS CA's import-zone LMP (+$4-18, the C3a break). The over-export is a proxy
+for CA's true out-of-region imports; pricing it at the hub (marginal) breaks C3a.
+
+**Inv 2 — the West cannot supply CA in any block.** West exportable-gas surplus
+(gas_mw − own-load gas need) vs CA net import, GW: belly 0.5-1.2 vs 0.7-1.9;
+evening 0.7-1.8 vs 3.3-3.9; night 3.3-3.5 vs 5.3-6.2. The West's surplus is
+almost all gas, tracks the tie shape (~0 belly / +2 evening / +4 night) but is
+far below CA's actual import everywhere.
+
+**Inv 3 — bounding the West is INFEASIBLE.** The modeled West itself net-imports
+**22/23/24 % of hours** (net_gen < demand, worst shortfall ~7.3 GW) from WECC
+regions outside the modeled NW+SW aggregate and the single CA tie. So the
+fleet-bound scoping (cap West thermal at measured output — which WOULD force CA
+gas marginal and preserve C3a) cannot be solved cleanly: no CA-connected backstop
+represents the West's real (eastern) imports without either under-pricing (cheap
+export) or over-inflating CA gas (CA→West in the West's own peak). The gap bites
+both directions.
+
+**Inv 4 — empirical anchor.** Committed `caiso110_endog_B/metrics.json`: C5a
+**PASS**, C3c **PASS**, C3a **FAIL** (C3b PASS, C4 FAIL) — the coupling, measured.
+
+**Inv 5 — min-hub under-fixes C3a.** The price-temper scoping (offer West gas at
+min(MALIN,PALOVRDE) vs the tie-weighted blend; caiso-114 note c) shaves only
+**$7.1/$2.5/$1.2** off the evening offer vs the +$4-18 break — the break is the
+West gas BECOMING MARGINAL at the hub, not the hub's level. Refuted.
+
+**Determination.** C5a-fix and C3a-guard are **coupled** through the West's
+~13-18 TWh proxy over-export; candidate (a) is **NOT viable for the belly lane**
+as built. This SHARPENS caiso-115: the belly-volume (hod 10-15) and evening-price
+(hod 17-21) lanes separate in HOURS, but the endogenous node re-couples them
+through the volume gap (L1b broke C3a because it HAD to over-export gas at the
+hub to hit CA's volume, not merely because it re-priced the evening).
+
+**Mechanism built then reverted.** `caiso_wecc_west_thermal_shaped` (cap West
+coal/gas availability at measured `coal_mw`/`gas_mw` — the fleet-bound scoping,
+the cleanest rule-13-admissible knob, same measured-availability class as the
+node's VRE/hydro shaping) was implemented in `wecc_west_fleet.py` + wired +
+unit-tested (2 tests), then **reverted**: the derive shows it over-corrects C5a
+(bounding the West to 19 TWh under-supplies CA's 29-36 → +9-17 TWh more CA gas,
+past the +7 % gate) and is infeasible (Inv 3). Rule #1 forbids solving through a
+mechanism that isn't real; the design is preserved in the FINDING (re-buildable
+in minutes once the scope is reconciled). Keeper stays `2026-07-19-caiso-102-hourfix`.
+
+**Next (caiso-117), redirect — reconcile the West import scope, or hand the
+evening to CA's own scarcity (in preference order):**
+1. **Close the data-scope gap:** broaden the modeled West beyond NW+SW (or add
+   the West's own eastern/Baja import as an inframarginal price-taker to
+   `wecc-west-supply`) so its net-export capability matches CA's 29-36 TWh. Then
+   L1b's over-export becomes REAL and inframarginal → CA gas sets the evening →
+   `_thermal_shaped` becomes feasible and C3a-preserving.
+2. **Do the EVENING lane first/jointly** (the caiso-115-named lane): tighten CA's
+   OWN evening scarcity (`hydro_dispatch_envelope` lower percentile / daily
+   budget; arm `caiso_firm_import_shape`) so CA's domestic peakers set the evening
+   price and the West import becomes inframarginal by comparison. The belly and
+   evening lanes are COUPLED — work them together, not separately.
+3. **Fall back to candidate (b), belly-HOUR-scoped and West-physically grounded:**
+   a belly-only cap at the West's measured belly deliverability (~1-2 GW, a
+   West-side physical quantity — Inv 2 — NOT CA's residual flow) fixes the belly
+   over-import while leaving the evening untouched (C3a preserved). Must be
+   belly-scoped (an all-hours net-export cap hits the same gap → over-corrects
+   C5a) and level-tied to physical capability, not the residual (rule 13 /
+   caiso-107/109).
+
+**DO-NOT-REDO (added):** endogenous-node fleet-bound scoping (thermal-shaping) on
+the NW+SW frame — over-corrects C5a + infeasible until scope reconciled;
+min-hub / MALIN-PALOVRDE re-weight — under-fixes C3a (marginality, not level).
+Carried: fixed-hub West fallback (caiso-114 KILL); belly-depth on CA-price /
+west-surplus-quantity observables (caiso-107/109); firm-rung reprice (pinned,
+caiso-104/109).
+
+Next number: caiso-117.
+
 ## 2026-07-23 — caiso-115: gas-offer net-revenue margin → PROMOTED CAISO KEEPER (owner directive, rule 1/11)
 
 Charter rollout of the `gas_offer_net_revenue_margin` mechanism (NEISO keeper
@@ -610,6 +947,105 @@ Closing the mid-tail stays the separate ledgered import/scarcity lane
 (caiso-107/109/111). caiso-102 stays on the dashboard as the prior keeper /
 same-box multiplicative-form comparison; 2022 holdout not touched (NOT-YET, not a
 CALIBRATED promotion). Bundle `caiso_netrev_margin`.
+
+## caiso-117 (2026-07-24) — belly-hour West-physical import cap BUILT + 3-yr A/B: fixes the belly VOLUME (import → toward measured, gas +1.9/+2.9/+2.3 TWh, C5a improves, evening untouched by construction) but BREAKS C3a in 2025 (+8.6 % → +13.2 %) by worsening the pre-existing belly PRICE over-pricing — belly-volume and belly-PRICE lanes are COUPLED; mechanism stays built default-OFF; keeper UNCHANGED
+
+*(Housekeeping 2026-07-26: compact entry added from
+`results/calibration/FINDING-caiso117-belly-cap-c3a-coupling-2026-07-24.md` —
+this session's entry was never appended to the log.)*
+
+Executed the caiso-116 redirect #3: `caiso_belly_import_cap` (ScenarioConfig,
+default False) — a belly-scoped (hod 10-15, `np.inf` outside) simultaneous
+interface group over both per-hub corridor links, capped hour-by-hour at the
+per-(month × belly-hod) **p90 of the West's measured net export**
+(`wecc-west-supply`, a West-side physical quantity, rule 13; p90 is the
+tightest percentile that never under-cuts CA's measured belly import — GATE-B).
+6/6 unit tests; byte-identical off. Full 3-yr A/B vs a fresh keeper replay:
+belly import 3.07/3.88/3.74 → 2.05/2.44/2.22 GW (measured 0.65/1.34/1.77),
+never below measured; gas +1.9/+2.9/+2.3 TWh; evening import +0.02 GW / price
++$0.8 (the caiso-114 L1b evening leak does NOT recur); C3b/C3c intact. KILL:
+C3a rises +2 to +4.6 pp every year (all from the belly) — 2023/24 absorb it,
+2025 (+8.6 % base) goes to **+13.2 % FAIL**. Root (Inv 4): the model belly is
+PRICE-over-priced even before the cap (2024 belly $26.3 vs actual DAM $14.9;
+marginal = hub-priced import ~$26, not reality's curtailed-solar ~$0-15);
+capping imports promotes gas (~$28) to the margin and worsens it. Rule-1
+signature: a structurally-correct mechanism surfacing a different root cause.
+**Redirect: the belly PRICE-FORMATION fix is the new load-bearing lane; the cap
+re-arms only JOINTLY with it.** DO-NOT-REDO: the belly cap as a standalone
+single delta; tightening the CA-side corridor p95 envelope (CA-side flow
+observable, rule 13).
+
+## 2026-07-24 — caiso-118 BELLY PRICE-FORMATION derive: both suspects REFUTED; the belly over-price + over-import are ONE defect (the model UNDER-COMMITS belly gas). NO SOLVE, nothing registered. Keeper `2026-07-19-caiso-102-hourfix` UNCHANGED (NOT-YET, fail {C3c, C4, C5a})
+
+*(Housekeeping 2026-07-26: merged from
+`docs/handoffs/caiso-118-belly-price-log-entry.md`. NOTE: this entry's
+"actual belly gas 8.5/9.6/10.5 GW" headline and the ~8-10 GW floor charter it
+redirects to were REFUTED the same day by caiso-119 R1 — the "actual" was the
+corrupted EIA-930 `NG: NG` cell caiso-109 had condemned; the honest hole is
+~0.5-1.3 GW (CEMS basis). The DIRECTION (under-committed belly gas) survives.
+Kept verbatim as the historical record; see the caiso-119 entry below.)*
+
+**Derive-first (rule #1), measurement-only, register nothing** (the caiso-115/116/117
+precedent). Full finding: `results/calibration/FINDING-caiso118-belly-price-undercommit-2026-07-24.md`.
+Reproduction: `scripts/probes/_caiso118_belly_price_derive.py` (no LP; keeper-proxy
+`caiso104_m1_B` hourlies + raw EIA-930 CISO + `load_renewable_profiles` +
+`measured_import_hub_prices` + `measured_corridor_flow_envelope`).
+
+**Charter:** the caiso-117 redirect — make the model belly clear near actual ~$15
+(from ~$26) before re-arming the belly VOLUME cap, testing one of two named
+suspects: (1) a curtailable-solar $0 marginal rung, or (2) pricing belly imports
+at the measured (low) belly hub.
+
+**Both suspects refuted; a third, unifying mechanism identified.**
+
+- **Suspect 1 (solar rung) — REFUTED.** `caiso_solar_endogenous_spill` is ON, so
+  the deliverability derate is already SKIPPED and the LP gets full solar
+  potential. Measured belly solar spill is only **0.5–2.0%** — solar is already at
+  its bound (inframarginal). No suppressed pool; a $0 rung is inert; re-enabling
+  the derate would REMOVE solar and RAISE the belly. The model even dispatches MORE
+  utility solar than reality generates (47.2 vs 44.6 TWh).
+- **Suspect 2 (belly-hub import reprice) — REFUTED/COUPLED.** The model's OWN
+  solved WECC border duals are already low in the belly (PNW $2.6–6.3, DSW
+  $14.6–28.7) and the belly hub series it reads is already DSW $10.5 (2024). The
+  cheap border is corridor-CAPPED (import at/near the corridor belly cap) and the
+  next economic import tranche ($36 ladder) is above CA's domestic gas, so CA
+  clears at gas. Repricing the remaining tranches down is a VOLUME lever (worse
+  C5a) — not a C5a-neutral price lever.
+- **The lever — the committed-gas belly STATE.** Killer comparison (model vs
+  actual belly gas): 2023 4.3 / **8.5 GW**, 2024 3.7 / **9.6 GW**, 2025 2.9 /
+  **10.5 GW**. Reality runs **2–3.6× MORE** belly gas than the model yet clears
+  LOWER ($15 vs $26) — its committed gas bids min-load DOWN (must-take, never
+  marginal), so the belly clears at curtailed solar / the min-load block. The
+  model economically backs gas off to a ~2 GW duck trough and OVER-IMPORTS (3.1–3.9
+  vs actual 0.7–1.8 GW), so full-MC gas/import sets $26. **C3a-belly-overprice and
+  C5a-belly-overimport are the SAME defect** (the missing committed STATE), not two
+  coupled-and-opposed lanes. The keeper's `caiso_ra_mustoffer` bridge floors only
+  3.2–3.7 TWh/yr (~1.5 GW belly) vs reality's ~10 GW — under-committed by ~5–6 GW.
+  This is the ERCOT-63 result ("the model needs the STATE, not the PRICE").
+
+**Why this explains the caiso-117 coupling.** The belly VOLUME cap fixes C5a but
+breaks C3a (2025 +8.6 → +13.2%) because it cuts imports and lets **full-MC** gas
+fill (raising the belly). With the committed min-load bid-down STATE in place,
+cutting imports and running committed gas at its bid-down min-load fixes BOTH — the
+volume cap and the price lane stop fighting.
+
+**Redirect (caiso-119).** Single physics-grounded C5a-neutral-or-better delta:
+raise the CAISO committed-gas belly floor to the MEASURED committed level (CEMS /
+CAISO 60-Day DAM disclosures — the ERCOT-63 template: measured committed-CC min-load
+p50 × the P0-committed belly fleet), extending `caiso_ra_mustoffer` /
+`caiso_ra_p1_floor_fleet` toward reality's ~8–10 GW. Gate: belly LMP → ~$15, belly
+gas → 8–10 GW, belly import → ~1.3 GW (C5a↑), C3a STAYS PASS all years incl 2025,
+C3b↑, evening untouched. Guardrails: cited D-4 window + C8 forced-energy budget (at
+~10 GW commitment CC_REGULAR exceeds the 30% merchant cap → needs the rule-14 v2.2
+grounded-above-budget escalation, D-4 off-window clean + D-1 shape faithful; score
+it, don't assert it). KILL if the level is residual-fitted (rule 13), forces gas in
+hours the disclosures say the fleet is off (rule 12), or breaks the evening. THEN
+re-arm `caiso_belly_import_cap` jointly; LOYO within 2023–2025 before promotion.
+
+**DO-NOT-REDO (added):** curtailable-solar $0 belly rung / re-enabling the solar
+deliverability derate (solar 98% absorbed; inert / raises price); repricing belly
+imports to the border hub as a belly-PRICE lever (border already cheap +
+corridor-capped; pulls volume, worse C5a).
 
 ## 2026-07-24 — caiso-119: the caiso-118/118b headline REFUTED on the bytes (corrupted EIA-930 `NG: NG` re-used after caiso-109 condemned it); lane re-scoped to the measured min-load, SOLVED and found near-inert; new attributed defect CT_PEAKER PRICED OUT; keeper UNCHANGED
 
@@ -718,3 +1154,71 @@ against an independent meter, its shape against the physics, and its fit against
 the energy balance. All three took minutes here and all three failed.
 
 Next number: caiso-120.
+
+## caiso-120 (2026-07-26) — FRESH-EYES REGIME SPLIT on the netrev keeper's own committed sidecars: the belly defect is CONCENTRATED in the actual market's SURPLUS regime (RT ≤ $20, ~half of belly hours) where reality is a hub-priced NET EXPORTER and the model is a 2.6–3.5 GW importer priced $7–14 ABOVE the hub; the firm-regime half is a pure ~2 GW VOLUME error with NO price signature; log restored (112→118 recovered); keeper UNCHANGED
+
+**Measurement-only, NO SOLVE, nothing registered, no mechanism armed.** Keeper
+`2026-07-23-caiso-netrev-margin-keeper` UNCHANGED — fresh re-score at HEAD:
+NOT-YET, fail **{C3c, C4 (2023 ONLY), C5a}**, C6/C7/C8 PASS (the bundle's
+committed `metrics.json` predated its own attestation/diagnostics files and
+said C6 UNATTESTED; refreshed via `--write-metrics`, the live status shard was
+already correct). Instrument (committed):
+`scripts/probes/_caiso120_price_regime.py` — keeper hourly sidecars + measured
+RT LMP + measured MALIN/PALOVRDE hub + raw EIA-930 CISO; no gitignored input.
+Full record:
+`results/calibration/FINDING-caiso120-belly-regime-split-2026-07-26.md`.
+
+**The new fact — split belly hours (hod 10-15) by the ACTUAL price regime.**
+In the SURPLUS half (measured RT ≤ $20; n = 810/1116/1077): actual RT
+$2.8/−5.2/−0.1 **≈ the raw min-hub** ($5.3/−6.7/−0.8 — reality is
+hub-equalized, net-EXPORTING in 57/51/40 % of these hours, mean interchange
+≈ 0 to −0.4 GW), while the model imports **2.14/3.35/3.13 GW** (a 2.6–3.5 GW
+signed error — it never net-exports one hour in any year; the caiso-112
+`caiso_wecc_export_floor` fix is in the tree but default-off and ABSENT from
+the keeper recipe) and clears **$4–14 ABOVE the min-hub** (+$11.5/+12.2/+7.3
+vs actual). In the FIRM half (RT > $20): the model's price is nearly RIGHT
+(+$3.8/+2.0/+1.5) but it still imports 3.6/4.5/4.4 GW vs measured
+0.9/2.3/2.4 — a ~2 GW volume error with no price signature, the SILENT half
+of C5a (displacing the gas reality runs at approximately the right price).
+Distribution grain: the model DOES now form a negative belly tail (2024
+belly ≤$0 18.7 % vs actual 27.4 %; all-hours 525 vs 868 h); the compression's
+mass error is the >$35 share (35–65 % vs actual 20–39 %).
+
+**What this reframes.** (1) The caiso-117 C3a break was not "volume vs price
+opposed" — it was the missing surplus-regime price behaviour (export at the
+hub / curtailment-marginal): cap imports without it and full-MC gas sets λ
+where reality prints hub-negative. (2) The caiso-113 L1a′ C3a break was the
+same lesson from the export side (fixed-hub export pricing in ALL hours;
+the regime split says export conduct is a SURPLUS-regime behaviour, where the
+hub is low/negative and prints the RIGHT price by construction). (3) The
+firm-regime ~2 GW over-import is the caiso-118b committed-state lever at its
+HONEST size (caiso-119: ~0.5–1.3 GW diurnal + CT_PEAKER 4 TWh evening) — no
+price-side mechanism can see it. **Gate implication for the joint belly
+delta: score REGIME-CONDITIONAL quantities** — (i) surplus regime: signed
+interchange goes long (net-export hours appear toward the measured 40–57 %),
+λ − min-hub → ~0; (ii) firm regime: import → measured 0.9–2.4 GW with gas
+filling; C3a then holds by construction instead of two errors cancelling. A
+belly delta gated on aggregate import volume alone will reproduce the
+caiso-113/117 breaks. **Attribution limit:** WHICH unit sets the model's
+surplus-regime λ (min-hub + $8–14; candidates: the carbon-paying import rung
+— border adder ≈ $13–16 ≈ the wedge —, gas at a floor, storage-charge
+opportunity cost) needs the dispatch parquet → a keeper replay is justified
+for that question (rule-15 clause) and is the FIRST step of the joint-delta
+session.
+
+**Housekeeping executed.** (a) THIS LOG RESTORED: caiso-112/113 entries
+(merged to main by PR #2792 2026-07-22, then lost to a full-file overwrite —
+the "phantom merge") recovered verbatim from the PR head blob; caiso-114 /
+caiso-115(fresh-look, NUMBER COLLISION with the netrev promotion noted) /
+caiso-116 merged from their handoff docs; compact caiso-117 + verbatim
+caiso-118 entries added. The log now runs 103→120 unbroken. (b) Keeper bundle
+`metrics.json` refreshed (stale-snapshot repair, verdict unchanged).
+
+**Open items carried (unchanged priority):** C4-2023 CEMS-basis escalation
+(scorer-only, would clear C4 — caiso-115 fresh-look, still unactioned);
+`caiso_ra_min_load_frac` 0.26 still in the keeper recipe (measured 0.570 is
+"KEPT" by the caiso-119 disposition but lives only in the rejected probe —
+the next keeper candidate must carry it, rule 14/18); CT_PEAKER priced out
+(caiso-119 R4, the C3c lane's live lever, obligation-keyed + D-4 window).
+
+Next number: caiso-121.
