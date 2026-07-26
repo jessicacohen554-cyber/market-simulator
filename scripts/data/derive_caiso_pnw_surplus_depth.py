@@ -45,13 +45,16 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "scripts"))
 sys.path.insert(0, str(REPO / "scripts" / "data"))
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import GAS_PRICES_DIR  # noqa: E402
 from derive_caiso_import_tranches import (  # noqa: E402
     YEARS,
     corridor_net_import,
     hub_prices,
 )
 
-SUMAS = REPO / "data" / "raw" / "gas-prices" / "sumas_weekly.csv"
+SUMAS = GAS_PRICES_DIR / "sumas_weekly.csv"
 # Same coupling constants as the south trigger (interchange_config /
 # transmission._CAISO_IMPORT_COUPLE_HR["DSW_CCGT"] and
 # CAISO_DSW_SURPLUS_REMOTE_VOM) — the remote-CCGT floor construction.

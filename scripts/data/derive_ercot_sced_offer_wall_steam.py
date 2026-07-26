@@ -77,6 +77,8 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "scripts"))
 sys.path.insert(0, str(REPO / "scripts" / "data"))
 
+from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
+
 from derive_ercot_dam_cleared_share import (  # noqa: E402
     HCAP_USD_MWH,
     HOURS,
@@ -97,13 +99,7 @@ from derive_ercot_sced_offer_wall import (  # noqa: E402
     _spare_segments,
 )
 
-DEFAULT_OUT = (
-    REPO
-    / "data"
-    / "raw"
-    / "_validation-source"
-    / "ercot_sced_offer_wall_steam_condbinned.json"
-)
+DEFAULT_OUT = CALIBRATION_DIR / "ercot_sced_offer_wall_steam_condbinned.json"
 
 # ERCOT gas-steam resource types (Nodal Protocols resource registration):
 # reheat / non-reheat / supercritical boiler steam turbines.

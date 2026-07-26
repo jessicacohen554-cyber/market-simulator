@@ -57,13 +57,18 @@ from __future__ import annotations
 import argparse
 import json
 import urllib.request
+import sys
 from pathlib import Path
 
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
-OUT = REPO / "data" / "raw" / "gas-prices" / "nyiso_downstate_ct_gas_basis_monthly.csv"
-TRANSCO = REPO / "data" / "raw" / "gas-prices" / "transco_z6_iroquois_monthly.csv"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import GAS_PRICES_DIR  # noqa: E402
+
+OUT = GAS_PRICES_DIR / "nyiso_downstate_ct_gas_basis_monthly.csv"
+TRANSCO = GAS_PRICES_DIR / "transco_z6_iroquois_monthly.csv"
 
 MCF_TO_MMBTU = 1.037  # EIA NY heat content (constants.py MISO citygate note)
 CITYGATE = "N3050NY3"

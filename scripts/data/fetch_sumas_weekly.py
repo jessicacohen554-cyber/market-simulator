@@ -69,6 +69,9 @@ from urllib.error import HTTPError, URLError
 
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO))
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import GAS_PRICES_DIR  # noqa: E402
 
 from scripts.data.fetch_caiso_citygate_daily import (  # noqa: E402
     PAGE_TMPL,
@@ -76,7 +79,7 @@ from scripts.data.fetch_caiso_citygate_daily import (  # noqa: E402
     archive_pages,
 )
 
-OUT_PATH = REPO / "data" / "raw" / "gas-prices" / "sumas_weekly.csv"
+OUT_PATH = GAS_PRICES_DIR / "sumas_weekly.csv"
 
 # Sentence openers that scope a hub quote: "The price at <hub>" and the
 # alternate "At <hub> ..., the price ..." construction. Windows are cut at the

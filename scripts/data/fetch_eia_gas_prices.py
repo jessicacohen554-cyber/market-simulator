@@ -50,8 +50,12 @@ from urllib.request import urlopen
 from urllib.error import HTTPError, URLError
 
 REPO = Path(__file__).resolve().parent.parent.parent
-GAS_DIR = REPO / "data" / "raw" / "gas-prices"
-BASIS_PATH = REPO / "data" / "raw" / "gas_basis_by_iso_month.csv"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import GAS_PRICES_DIR, RAW_DATA_DIR  # noqa: E402
+
+GAS_DIR = GAS_PRICES_DIR
+BASIS_PATH = RAW_DATA_DIR / "gas_basis_by_iso_month.csv"
 
 BASE = "https://api.eia.gov/v2"
 

@@ -33,6 +33,8 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
+from market_sim.config.paths import PLANT_REGISTRY_CSV, PROCESSED_DIR  # noqa: E402
+
 from market_sim.data import campd  # noqa: E402
 from market_sim.data.eia923 import load_monthly_generation  # noqa: E402
 
@@ -47,8 +49,8 @@ logger = logging.getLogger("derive_plant_emissions")
 
 # W1 collapsed the old inputs/ tree into data/raw/ — these are the live
 # locations the model reads (config/paths.py PROCESSED_DIR, REFERENCE_DIR).
-PROCESSED_DIR = REPO / "data" / "raw" / "_processed-legacy"
-REGISTRY_PATH = REPO / "data" / "raw" / "reference" / "master-plant-registry.csv"
+PROCESSED_DIR = PROCESSED_DIR
+REGISTRY_PATH = PLANT_REGISTRY_CSV
 PARASITIC_PATH = PROCESSED_DIR / "parasitic_load_factors.parquet"
 
 # Per-MWh-net rate columns mirrored into the registry.

@@ -53,6 +53,9 @@ from urllib.error import HTTPError, URLError
 
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO))
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import GAS_PRICES_DIR  # noqa: E402
 
 from scripts.data.fetch_caiso_citygate_daily import (  # noqa: E402
     PAGE_TMPL,
@@ -60,7 +63,7 @@ from scripts.data.fetch_caiso_citygate_daily import (  # noqa: E402
     archive_pages,
 )
 
-OUT_PATH = REPO / "data" / "raw" / "gas-prices" / "pge_socal_citygate_weekly.csv"
+OUT_PATH = GAS_PRICES_DIR / "pge_socal_citygate_weekly.csv"
 
 # One narrative price sentence: "The price at <hub> ... [from $A/MMBtu last
 # Wednesday] to/at $B/MMBtu yesterday." Windows are cut at the NEXT "price at"

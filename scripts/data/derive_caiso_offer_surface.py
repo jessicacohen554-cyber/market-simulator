@@ -134,21 +134,19 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
+from market_sim.config.paths import (  # noqa: E402
+    CALIBRATION_DIR,
+    GAS_PRICES_DIR,
+    PROCESSED_DIR,
+)
+
 from scripts.lib import clean_io  # noqa: E402
 
-OUT_STATIC = (
-    REPO / "data" / "raw" / "_validation-source" / "caiso_offer_curve_measured.json"
-)
-OUT_COND = (
-    REPO / "data" / "raw" / "_validation-source" / "caiso_offer_surface_condbinned.json"
-)
-OUT_CSV = (
-    REPO / "data" / "raw" / "_validation-source" / "caiso_offer_surface_summary.csv"
-)
-BIN_ASSIGNMENTS = (
-    REPO / "data" / "raw" / "_processed-legacy" / "bin_assignments_CAISO.csv"
-)
-CITYGATE_DAILY = REPO / "data" / "raw" / "gas-prices" / "caiso_citygate_daily.csv"
+OUT_STATIC = CALIBRATION_DIR / "caiso_offer_curve_measured.json"
+OUT_COND = CALIBRATION_DIR / "caiso_offer_surface_condbinned.json"
+OUT_CSV = CALIBRATION_DIR / "caiso_offer_surface_summary.csv"
+BIN_ASSIGNMENTS = PROCESSED_DIR / "bin_assignments_CAISO.csv"
+CITYGATE_DAILY = GAS_PRICES_DIR / "caiso_citygate_daily.csv"
 
 #: Minimum resource capacity (MW): micro/QF resources are not the priced
 #: merit surface the model's class multipliers represent.
