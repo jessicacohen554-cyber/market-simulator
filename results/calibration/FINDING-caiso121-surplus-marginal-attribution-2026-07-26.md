@@ -1,4 +1,4 @@
-# FINDING — caiso-121 SURPLUS-REGIME MARGINAL-UNIT ATTRIBUTION: the belly λ is set by the **EF-0 `DSW_surplus_clean` import tranche** (interior in 53/62/84 % of surplus hours), and **59–101 % of the λ−min-hub wedge is DSW→CA corridor congestion rent, not the tranche's price**; the border-carbon candidate is REFUTED (the marginal rung pays no border carbon), the committed-gas candidate is REFUTED (CC_REGULAR interior 1.3–4.9 %); the delta family selected is **corridor/export-path in surplus**, NOT clean-tranche depth and NOT committed-state (2026-07-26)
+# FINDING — caiso-121 SURPLUS-REGIME MARGINAL-UNIT ATTRIBUTION (+ a stop-and-report side finding: **re-solving the keeper's OWN recipe at 2026-07-26 HEAD FAILS C3a-2025 at +11.49 % — the committed keeper passes it by 0.03 pp**, §0a): the belly λ is set by the **EF-0 `DSW_surplus_clean` import tranche** (interior in 53/62/84 % of surplus hours), and **59–101 % of the λ−min-hub wedge is DSW→CA corridor congestion rent, not the tranche's price**; the border-carbon candidate is REFUTED (the marginal rung pays no border carbon), the committed-gas candidate is REFUTED (CC_REGULAR interior 1.3–4.9 %); the delta family selected is **corridor/export-path in surplus**, NOT clean-tranche depth and NOT committed-state (2026-07-26)
 
 **Derive-first: NO mechanism armed, nothing promoted.** Keeper
 `2026-07-23-caiso-netrev-margin-keeper` UNCHANGED. Attribution runs on a
@@ -30,11 +30,35 @@ slightly worse than the committed keeper snapshot** — gas down, imports up,
 a standing rule, and it is why every number below is read off arm A rather
 than the keeper's committed bytes.
 
-The **verdict** is nonetheless preserved: C3a's band is ±10 % mean and the
-largest λ drift is 1.35 %; C4's ceiling is 0.30 NRMSE against a keeper at
-0.263–0.292 with a 0.996+ inter-arm hourly correlation. Neither can flip on a
-drift this size. (Arm A is not scored directly — a repro arm is never
-registered.)
+### §0a — and the drift BREAKS C3a-2025: the keeper's PASS is not reproducible at HEAD
+
+Scored (arm A registered locally, scored, then reverted — a repro arm is never
+committed), the unchanged recipe **fails a gate the committed keeper passes**:
+
+| C3a mean LMP | 2023 | 2024 | **2025** |
+|---|---|---|---|
+| committed keeper | +3.49 % PASS | +8.44 % PASS | **+9.97 % PASS** |
+| arm A (same recipe, HEAD) | +4.01 % PASS | +9.36 % PASS | **+11.49 % FAIL** |
+
+The keeper clears C3a-2025 by **0.03 percentage points**. The +1.35 % λ drift
+consumes that margin four times over. **Re-solving the keeper's own recipe today
+yields NOT-YET with C3a in the fail set** — i.e. the CAISO keeper's headline
+C3a PASS is a property of its committed 2026-07-23 bytes, not of its recipe.
+This is an unrelated, pre-existing HEAD-drift defect (it reproduces with NO
+delta applied), and it is the reason the arm-B disposition below turns on the
+A-vs-B contrast rather than on B's verdict alone.
+
+Arm A's other criteria are unchanged from the keeper: C1/C2/C3b/C4 PASS,
+C3c/C5a FAIL (C6 UNATTESTED and C7/C8 SKIPPED are expected — a repro arm
+carries no attestation or diagnostics artifact).
+
+The cause is code drift between the keeper's recorded `git.sha = abb0fcd`
+(2026-07-23) and HEAD, not the environment (the numerics stack matches
+exactly). **Recommended follow-up, out of scope here:** bisect that range for
+the commit that moved CAISO λ, since the affected quantity is the keeper's
+own headline gate. Until it is identified, treat *every* CAISO C3a-2025
+comparison as basis-sensitive and always carry a same-HEAD control arm — the
+caiso-119 note, now with a gate flip behind it rather than a metric wobble.
 
 ## §1 — the marginal rung, named (Inv 4 answered)
 
