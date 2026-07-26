@@ -1051,3 +1051,15 @@ must be stated and never silently generalised (per-class deltas differ ~6×).
   whether the ~1.35 GB unattributed floor is live Python payload or
   allocator/HiGHS-side. Untouched by this session.
 * Next number: **miso-92**.
+## 2026-07-26 — miso-89 (attempted): keeper re-audit on the guard-corrected CAMPD envelope — BLOCKED on container RAM; keeper UNCHANGED (miso-88)
+
+Charter execution (campd-economic-layup-fix-charter §8). The miso-88-egrid-hr
+recipe (per-asset reserve columns, 2,550 members) was OOM-killed at 15.9 GB
+RSS / 31 GB VM in this session's 15 GB container — twice, including running
+alone. Not skipped: the replay needs a ≥24 GB environment; command and clean
+partition prerequisites are recorded in
+`results/calibration/RESULTS-neiso65-crossiso-reaudit-2026-07.md` §3e. The
+corrected extract (755 windows / 3,630 GW-days reclassified 2023–25) is
+committed and IS the envelope MISO now solves against, so until this re-audit
+runs, the miso-88 keeper's registered numbers describe the pre-adoption
+envelope and will not reproduce at HEAD.

@@ -791,3 +791,20 @@ itself promoted on an explicit owner override, so `keepers/NYISO.json` was **not
 touched here.
 
 Next number: nyiso-76.
+## 2026-07-26 — nyiso-73: keeper re-audit on the guard-corrected CAMPD envelope — RE-TUNE REQUIRED (largest sensitivity of the six); keeper UNCHANGED (nyiso-72)
+
+Charter execution (campd-economic-layup-fix-charter §8). The
+nyiso-72-netrev-margin keeper recipe replayed verbatim on the adopted
+guard-corrected extract (`2026-07-26-nyiso73-meritguard-a1`, 2023–2025 one
+bundle; A0 = the keeper). NYISO booked 46 % of its CC capacity-year as outage —
+the worst over-count of the six (neiso-63) — and shows the largest correction:
+mean LMP −10 to −16 %. The keeper's worst year flips clean: 2023 C3a +18.3 %
+FAIL → −0.4 % PASS, C3b 0.223 FAIL → 0.120 PASS, C3c 21/10 FAIL → 5/10 PASS —
+the 2023 over-pricing WAS the phantom outage envelope. 2024–25 over-relieve
+(C3a 2025 −11.2 % FAIL; tails 0.25×/0.31× FAIL): the offer margins were
+calibrated against the inflated envelope throughout (rule 11). Re-tune in this
+lane against the corrected envelope before any further NYISO structural work.
+Standing caveat: NYISO has no published outage instrument, so the corrected
+extract itself remains UNVERIFIED — this arm measures keeper sensitivity, not
+extract correctness. Full numbers:
+`results/calibration/RESULTS-neiso65-crossiso-reaudit-2026-07.md`.

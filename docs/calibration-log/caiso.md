@@ -1349,3 +1349,36 @@ owner-gate required); `caiso_ra_min_load_frac` 0.570 still not in the keeper
 recipe — blocked by the C3a regression above, not by its own merits.
 
 Next number: caiso-122.
+Next number: caiso-121.
+## 2026-07-26 — caiso-120: keeper re-audit on the guard-corrected CAMPD envelope — RE-TUNE REQUIRED (2025 C3a flips); keeper UNCHANGED. Plus: the resource crosswalk lands, and the instrument reading transforms
+
+Charter execution (campd-economic-layup-fix-charter §8: ADOPTED-AS-IMPROVEMENT,
+freeze HELD). Two results this session:
+
+**Keeper re-audit** (`2026-07-26-caiso120-meritguard-a1`, the
+caiso-netrev-margin keeper recipe replayed verbatim on the adopted
+guard-corrected extract, 2023–2025 one bundle; A0 = the keeper). Restoring
+laid-up capacity RAISES CAISO model prices slightly (RA must-offer commitment
+interaction, not a scarcity margin): C3a +3.5→+3.6 %, +8.4→+9.2 %, and 2025
++10.0→+11.1 % — a PASS→FAIL flip on a load-bearing criterion. Uniform-direction
+drift, LOYO clean, but the flip is the charter-§5 rule-11 condition: re-tune in
+this lane. First solve of this arm was discarded and re-run — the fresh
+container lacked the `capacity-deliverability` clean partition and
+`capacity_deliverability_limits=True` degraded silently to "no limits"
+(replay-reproduction checklist: RESULTS-neiso65-crossiso-reaudit §2).
+
+**Resource crosswalk (charter STEP D).** The reviewed
+`caiso-resource-eia-crosswalk.csv` goes 34 accepted rows / 29 plants → 58 / 44
+of 55 (~20.9 GW), incl. 3 wrong-plant remaps (Alamitos EC→62115, Huntington
+Beach EP→62116, Harbor Cogen→50541) and 8 generator-missed rows (Alamitos
+steam, Redondo, El Segundo EC). New probe
+`_neiso65_caiso_crosswalk_score.py` scores CAMPD-vs-CNOG per-plant on the
+crosswalked scope (mrid-deduped — the raw parquet repeats 5.23×). Headline: on
+the 34 active plants the extract runs **1.85–2.28× published, 1.52–2.13× after
+the guard** — the residual over-count is now measured per-resource at a second
+ISO and the whole-fleet-scope excuse is gone. CNOG's big non-operational
+blocks (Ormond 1,194 MW, Alamitos steam 927 MW published means) are
+mothball/RMR states the model owns via fleet status, not the outage overlay —
+excluded from the active-plant scope by construction. Placebo stays inside p95
+(shape null); the substance is the level axis. Full numbers:
+`results/calibration/RESULTS-neiso65-crossiso-reaudit-2026-07.md` §4.

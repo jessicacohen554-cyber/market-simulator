@@ -1188,3 +1188,24 @@ versions. Solver-version drift moves alternate optima among units tied at the ma
 price, and this gate reads coal ratios to 3 dp and C3c to ±5 h — **pin the recorded
 versions before any A/B re-solve.** The duplicate bundle and its second registration were
 discarded rather than landed; this entry and its registered runs remain canonical.
+## 2026-07-26 — ercot113-meritguard-a1: keeper re-audit on the guard-corrected CAMPD envelope — INSENSITIVE, fix-in-place; keeper UNCHANGED (ercot100)
+
+*(Lane-number note: "ercot-113" was concurrently claimed by the coal-wind
+NOx-program session merged the same day — this entry's work is identified by
+its registered run id `2026-07-26-ercot113-meritguard-a1`; the next ERCOT
+session should take ercot-115 to resync the lane.)*
+
+Charter execution (campd-economic-layup-fix-charter §8: ADOPTED-AS-IMPROVEMENT,
+freeze HELD). The ercot100-netrev-margin keeper recipe replayed verbatim
+(`--replay-bundle`, 2023–2025 one bundle, rule 16) on the adopted guard-corrected
+extract (`2026-07-26-ercot113-meritguard-a1`; A0 = the keeper itself, guard
+byte-inert off). ERCOT carries the largest reclassification share of any ISO
+(1,352 windows / 3,986 GW-days, 28 % of window GW-days) yet every criterion
+status is unchanged and mean LMP moves ≤0.2 $/MWh: the keeper's availability
+envelope is owned by the measured thermal DAM availability class-target
+redistribution, with the CAMPD extract only shaping plant grain beneath it.
+LOYO trivially clean. First solve of this arm was discarded and re-run: the
+fresh container lacked the `gtc-limits` clean partition and the recipe
+degraded silently to static TTC (see RESULTS-neiso65-crossiso-reaudit-2026-07
+§2 for the replay-reproduction checklist). Full numbers + cross-ISO context:
+`results/calibration/RESULTS-neiso65-crossiso-reaudit-2026-07.md`.
