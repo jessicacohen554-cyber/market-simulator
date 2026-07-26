@@ -199,6 +199,12 @@ _COAL_FLAGS: tuple[FlagSpec, ...] = (
         config_field="coal_bit_passthrough_sigmoid",
         recorded_name="coal_bit_passthrough_sigmoid",
     ),
+    # Marginal-coal measured-SRMC offer bound: the econ*/peak coal tranches
+    # buy fuel at market, so their offers are clamped to >= full measured
+    # delivered fuel cost (passthrough >= 1.0); the committed/must-run bands
+    # keep the contracted take-or-pay discount. Removes the sigmoid's fitted
+    # discount from the marginal tranches (FINDING-miso-burndown-2026-07.md
+    # Evidence 2). Off by default (existing keepers unchanged).
     FlagSpec(
         cli=("--coal-econ-srmc-bound",),
         dest="coal_econ_srmc_bound",
@@ -212,6 +218,11 @@ _COAL_FLAGS: tuple[FlagSpec, ...] = (
         solve_param="coal_econ_srmc_bound",
         config_field="coal_econ_srmc_bound",
     ),
+    # ERCOT-111 measured incremental-heat-rate floor on the COAL econ ramp: a
+    # coal econ band may carry a MARKUP above its physical basis but never a bid
+    # BELOW it, so econ_low/econ_high are clamped up to the ISO's own measured
+    # CAMPD marginal heat rate for COAL (derive_campd_marginal_hr artifact).
+    # Removes a fitted degree of freedom; adds no tunable.
     FlagSpec(
         cli=("--coal-econ-marginal-hr-bound",),
         dest="coal_econ_marginal_hr_bound",

@@ -50,7 +50,6 @@ import logging
 import os
 import pickle
 import shutil
-import subprocess
 import sys
 import time
 from datetime import datetime
@@ -76,7 +75,6 @@ from market_sim.config.plant_taxonomy import (  # noqa: E402
     classes_for_fuel930,
     classify_plant,
     coal_code_to_class,
-    fossil_classes,
 )
 from market_sim.data import campd  # noqa: E402
 from market_sim.data.eia923 import (  # noqa: E402
@@ -103,6 +101,12 @@ from market_sim.data.fleet import (  # noqa: E402
     OTHER_FOSSIL_CLASS,
     apply_other_fossil_scoring,
 )
+import market_sim.pipeline.persist as _pipeline_persist  # noqa: E402
+import market_sim.pipeline.report as _pipeline_report  # noqa: E402
+from market_sim.pipeline.flags import (  # noqa: E402
+    add_flag_arguments,
+    solve_kwargs_from_args,
+)
 from market_sim.pipeline.backcast_config import backcast_config  # noqa: E402
 from market_sim.pipeline.timing import log_year_phase_timing  # noqa: E402
 from market_sim.results.calibration import check_cf_band_occupancy  # noqa: E402
@@ -124,34 +128,19 @@ logger = logging.getLogger("calibration_full")
 
 _MWH_PER_TWH: float = 1.0e6
 _HOURS_PER_YEAR: int = 8760
-_DAYS_IN_MONTH: tuple[int, ...] = (
-    31,
-    28,
-    31,
-    30,
-    31,
-    30,
-    31,
-    31,
-    30,
-    31,
-    30,
-    31,
-)
-_MONTH_NAMES: tuple[str, ...] = (
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-)
+# Report/persist halves: PERMANENT same-name aliases of their canonical pipeline
+# homes (orchestrator-unification lane, refactor-consolidation plan §5). The
+# bodies live in ``market_sim.pipeline.{report,persist}``; this module's
+# exported symbol names are a frozen surface (``replay_keeper`` reads
+# ``rcf._environment_block`` / ``rcf._parse_offer_curve_json``, probe scripts
+# and tests import the rest), so every moved name keeps its ``_``-prefixed
+# spelling here and resolves to the SAME object. Verified equivalent before
+# conversion by ``inspect.getsource`` diff and constant equality; the two
+# genuine drifts found (``basis_sha`` inside ``git_state``, and the two
+# ``nyiso_*_reserve_eligible`` calibration_flags keys) were FORWARD-PORTED into
+# ``pipeline.persist`` first, so no recorded run_config.json/meta.json key moves.
+_DAYS_IN_MONTH: tuple[int, ...] = _pipeline_report.DAYS_IN_MONTH
+_MONTH_NAMES: tuple[str, ...] = _pipeline_report.MONTH_NAMES
 
 # Fuel codes that EIA-923 reports for coal-class units.
 # All class groupings derive from the canonical taxonomy
@@ -293,46 +282,11 @@ def _plant_codes_from_unit_ids(
     return out
 
 
-def _hour_to_month(hours: int) -> np.ndarray:
-    """Return ``(hours,)`` mapping each hour to a 1-based month."""
-    month = np.empty(hours, dtype=int)
-    h = 0
-    for m, days in enumerate(_DAYS_IN_MONTH, start=1):
-        end = min(h + days * 24, hours)
-        month[h:end] = m
-        h = end
-        if h >= hours:
-            break
-    return month
-
-
-def _hourly_to_monthly(hourly_mw: np.ndarray) -> np.ndarray:
-    """Return ``(12,) MWh`` for a length-8760 hourly MW array."""
-    months = _hour_to_month(hourly_mw.shape[0])
-    return np.array([hourly_mw[months == m].sum() for m in range(1, 13)], dtype=float)
-
-
-def _pearson_r(model: np.ndarray, observed: np.ndarray) -> float:
-    """Return the Pearson correlation of two equal-length series."""
-    m = model - model.mean()
-    o = observed - observed.mean()
-    denom = float(np.sqrt((m * m).sum() * (o * o).sum()))
-    return float((m * o).sum() / denom) if denom > 0.0 else float("nan")
-
-
-def _nrmse(model: np.ndarray, observed: np.ndarray) -> float:
-    """Return RMSE divided by mean observed."""
-    rmse = float(np.sqrt(((model - observed) ** 2).mean()))
-    denom = float(observed.mean())
-    return rmse / denom if denom > 0.0 else float("nan")
-
-
-def _print_table(rows: list[tuple]) -> None:
-    """Print a column-aligned text table from a header + rows tuple list."""
-    widths = [max(len(str(r[c])) for r in rows) for c in range(len(rows[0]))]
-    for row in rows:
-        cells = [str(row[c]).rjust(widths[c]) for c in range(len(row))]
-        print("    " + "  ".join(cells))
+_hour_to_month = _pipeline_report.hour_to_month
+_hourly_to_monthly = _pipeline_report.hourly_to_monthly
+_pearson_r = _pipeline_report.pearson_r
+_nrmse = _pipeline_report.nrmse
+_print_table = _pipeline_report.print_table
 
 
 # ---------------------------------------------------------------------------
@@ -2022,46 +1976,15 @@ def _btm_frame(
     )
 
 
-def _highspy_version() -> str:
-    """Return the installed highspy version, or '' if unavailable."""
-    try:
-        from importlib.metadata import version
-
-        return version("highspy")
-    except Exception:
-        return ""
+_highspy_version = _pipeline_persist.highspy_version
 
 
 # Packages whose versions can move alternate-optimal vertices (and thus a
 # bundle's per-class TWh at an identical objective). Recorded so a byte-identity
 # claim is checkable across environments.
-_ENVIRONMENT_PACKAGES = ("highspy", "numpy", "scipy", "pandas", "pyarrow", "pydantic")
+_ENVIRONMENT_PACKAGES = _pipeline_persist.ENVIRONMENT_PACKAGES
 
-
-def _environment_block() -> dict:
-    """Capture the runtime environment for cross-environment reproducibility.
-
-    Records the Python version, platform string, and the installed versions of
-    the solver/numerics stack in :data:`_ENVIRONMENT_PACKAGES`. Stamped into
-    both ``meta.json`` and ``run_config.json``. ``replay_keeper`` warns (never
-    fails) on a mismatch; the ``--reuse-solved`` gate ignores this block (reuse
-    is pinned by the persisted ``scenario_config`` plus the dedicated highspy
-    version gate), so adding it does not change any reuse decision.
-    """
-    import platform
-    from importlib.metadata import PackageNotFoundError, version
-
-    versions: dict[str, str] = {}
-    for name in _ENVIRONMENT_PACKAGES:
-        try:
-            versions[name] = version(name)
-        except PackageNotFoundError:
-            versions[name] = ""
-    return {
-        "python_version": platform.python_version(),
-        "platform": platform.platform(),
-        "packages": versions,
-    }
+_environment_block = _pipeline_persist.environment_block
 
 
 def _malloc_trim() -> bool:
@@ -2172,257 +2095,19 @@ def _proc_mem_kb() -> tuple[int, int]:
         return 0, 0
 
 
-def _json_default(obj: object) -> object:
-    """JSON encoder fallback for bundle metadata.
-
-    ``set``/``frozenset`` (e.g. ``ScenarioConfig.wefor_residual_groups``,
-    carried through the generic prb_overrides channel) serialize as a sorted
-    list; anything else falls back to ``str`` so the dump never crashes
-    mid-bundle (the run-104..106 failure mode: a frozenset in the override
-    record aborted meta.json after the parquets were already written).
-    """
-    if isinstance(obj, (set, frozenset)):
-        return sorted(obj)
-    return str(obj)
-
-
-def _git_sha() -> str:
-    """Return the current git short SHA, or '' if unavailable."""
-    try:
-        return subprocess.check_output(
-            ["git", "rev-parse", "--short", "HEAD"],
-            cwd=REPO,
-            text=True,
-            stderr=subprocess.DEVNULL,
-        ).strip()
-    except Exception:
-        return ""
-
-
-def _git(*args: str) -> str:
-    """Run a git command in REPO and return stripped stdout (or '')."""
-    try:
-        return subprocess.check_output(
-            ["git", *args],
-            cwd=REPO,
-            text=True,
-            stderr=subprocess.DEVNULL,
-        ).strip()
-    except Exception:
-        return ""
-
-
-def _basis_sha() -> str:
-    """Return the full SHA of the nearest origin-durable basis of this solve.
-
-    ``git_sha`` records the exact commit the solve ran at, but session-local
-    branch commits are routinely destroyed after merge, leaving that anchor
-    unresolvable (the caiso-122 §1 defect: keeper ``git_sha`` ``abb0fcd``
-    reachable from nothing, so the drift window had to be re-derived from
-    other bundles' sidecars). The basis is ``merge-base(HEAD, origin/main)``
-    — the newest ancestor of this solve that main history retains — falling
-    back to full ``HEAD`` when no ``origin/main`` is visible (then it equals
-    a full-length ``git_sha``, still strictly more resolvable than the short
-    form). Written fresh at every bundle write, INCLUDING replays:
-    ``replay_keeper`` restores only the display *date* of ``timestamp`` and
-    must never restore this field, so a bundle's ``basis_sha`` always dates
-    the bytes actually on disk (caiso-123).
-    """
-    return _git("merge-base", "HEAD", "origin/main") or _git("rev-parse", "HEAD")
+_json_default = _pipeline_persist.json_default
+_git_sha = _pipeline_persist.git_sha
+_git = _pipeline_persist.git_cmd
+_basis_sha = _pipeline_persist.basis_sha
 
 
 # Paths excluded from the manifest's git state: a run's own outputs (and other
 # bundles) are not "model changes" and would just be noise.
-_GIT_STATE_EXCLUDE = (":(exclude)results", ":(exclude)outputs")
+_GIT_STATE_EXCLUDE = _pipeline_persist.GIT_STATE_EXCLUDE
 
-
-def _git_state() -> dict:
-    """Capture git provenance so a bundle records exactly which code ran.
-
-    Returns the short SHA, branch, a ``dirty`` flag, the list of changed model
-    files, and a diffstat. ``results/`` and ``outputs/`` are excluded so the
-    state reflects model/source edits, not the run's own artifacts. When dirty
-    the run included uncommitted model changes; the caller snapshots the diff.
-    """
-    porcelain = _git("status", "--porcelain", "--", *_GIT_STATE_EXCLUDE)
-    changed = [ln[3:] for ln in porcelain.splitlines()] if porcelain else []
-    return {
-        "sha": _git("rev-parse", "--short", "HEAD"),
-        # Origin-durable basis anchor mirrored from meta.json's basis_sha —
-        # sha above may become unresolvable with its session branch.
-        "basis_sha": _basis_sha(),
-        "branch": _git("rev-parse", "--abbrev-ref", "HEAD"),
-        "dirty": bool(porcelain),
-        "changed_files": changed,
-        "diffstat": _git("diff", "--stat", "HEAD", "--", *_GIT_STATE_EXCLUDE),
-    }
-
-
-def _parse_offer_curve_json(
-    raw: str | None, flag: str = "--offer-curve-json"
-) -> dict | None:
-    """Parse an offer-curve JSON argument, failing fast on bad input.
-
-    Accepts an inline JSON object, a path to a ``.json`` file, or ``None``.
-    Returns the parsed ``{class: {band: number}}`` mapping, or ``None`` when
-    nothing was given. Used for both the absolute ``--offer-curve-json`` and
-    the relative ``--offer-curve-delta-json`` (same shape: class -> band ->
-    number). Raises ``SystemExit`` with a clear, ``flag``-tagged message on
-    malformed JSON or the wrong shape so a CI run fails loudly rather than
-    silently solving against the wrong curve.
-    """
-    if raw is None or not str(raw).strip():
-        return None
-    text = raw
-    candidate = Path(raw)
-    if not raw.lstrip().startswith("{") and candidate.exists():
-        text = candidate.read_text()
-    try:
-        parsed = json.loads(text)
-    except json.JSONDecodeError as exc:
-        raise SystemExit(
-            f"{flag}: invalid JSON ({exc}). Expected an object "
-            'like {"CT_PEAKER":{"committed":1.40,"econ_low":1.27}}.'
-        )
-    if not isinstance(parsed, dict):
-        raise SystemExit(
-            f"{flag}: top level must be a JSON object keyed by "
-            f"fleet class, got {type(parsed).__name__}."
-        )
-    valid_classes = set(fossil_classes())
-    for cls, bands in parsed.items():
-        # Fail loudly on a class key the offer-curve router will never read
-        # (e.g. COAL_SUB after the SUB -> COAL_PRB taxonomy rename): a dead
-        # knob silently tunes nothing, which is worse than an error.
-        if cls not in valid_classes:
-            raise SystemExit(
-                f"{flag}: unknown fleet class {cls!r} — the offer-curve "
-                f"router only reads {sorted(valid_classes)}. (Sub-bituminous "
-                "coal is COAL_PRB; COAL_SUB no longer exists.)"
-            )
-        if not isinstance(bands, dict):
-            raise SystemExit(
-                f"{flag}: value for {cls!r} must be an object of "
-                f"band->number, got {type(bands).__name__}."
-            )
-        for band, val in bands.items():
-            if band == "peak_ladder":
-                # Measured peak-band quantile ladder: a list of
-                # [capacity_share, multiplier] rungs (derive_dam_offer_hrmults
-                # --peak-ladder). Shares must be positive and sum to ~1 so the
-                # rungs exactly re-partition the peak tranche's capacity.
-                if not (
-                    isinstance(val, list)
-                    and val
-                    and all(
-                        isinstance(r, (list, tuple))
-                        and len(r) == 2
-                        and all(
-                            isinstance(x, (int, float)) and not isinstance(x, bool)
-                            for x in r
-                        )
-                        and r[0] > 0
-                        for r in val
-                    )
-                ):
-                    raise SystemExit(
-                        f"{flag}: {cls}.peak_ladder must be a non-empty list of "
-                        f"[capacity_share, multiplier] pairs, got {val!r}."
-                    )
-                total = sum(float(r[0]) for r in val)
-                if not 0.99 <= total <= 1.01:
-                    raise SystemExit(
-                        f"{flag}: {cls}.peak_ladder capacity shares must sum to "
-                        f"1.0 (±0.01), got {total:.3f}."
-                    )
-                continue
-            if not isinstance(val, (int, float)) or isinstance(val, bool):
-                raise SystemExit(f"{flag}: {cls}.{band} must be a number, got {val!r}.")
-    return parsed
-
-
-def write_run_config(
-    run_dir: Path, cfg, meta: dict, note: str = "", ablation_of: str | None = None
-) -> None:
-    """Write ``run_config.json`` (and ``model_changes.diff`` if dirty).
-
-    A discrete, self-contained record of what was run: the full resolved
-    ``ScenarioConfig`` (every knob), the calibration flags, git provenance,
-    and any free-text note describing pre-run model changes. The companion
-    ``model_changes.diff`` snapshots uncommitted edits so the exact code is
-    reproducible from the bundle alone.
-
-    ``ablation_of`` (D-3, CLAUDE.md rule 20): when this bundle is a zero-forcing
-    ablation twin, the base keeper bundle name it ablates is recorded at the top
-    level so the twin is self-identifying and the calibration-report skill can
-    link it from the keeper's sidecar ``ablation_twin`` field.
-    """
-    import dataclasses
-
-    git = _git_state()
-    payload = {
-        "timestamp": meta.get("timestamp"),
-        "git": git,
-        "model_changes_note": note,
-        "ablation_of": ablation_of,
-        "calibration_flags": {
-            k: meta.get(k)
-            for k in (
-                "iso",
-                "years",
-                "hours",
-                "passes",
-                "commitment",
-                "commitment_screen_coal",
-                "gas_prices",
-                "outage_source",
-                "coal_lignite_mustrun",
-                "coal_prb_mustrun",
-                "coal_prb_passthrough",
-                "coal_prb_passthrough_sigmoid",
-                "coal_mustrun_per_plant",
-                "retiree_cems_cap",
-                "ct_mustrun_per_plant",
-                "ct_mustrun_floor_frac",
-                "coal_drop_pof",
-                "coal_prb_passthrough_tiered",
-                "coal_prb_sigmoid_overrides",
-                "coal_bit_passthrough_sigmoid",
-                "coal_bit_sigmoid_overrides",
-                "coal_plant_monthly_pricing",
-                "td_loss_factor",
-                "offer_curve_overrides",
-                "offer_curve_deltas",
-                "priced_interchange",
-                "ercot_rtordpa_overlay",
-                "ercot_dam_as_overlay",
-                "ercot_dam_as_overlay_from_year",
-                "ercot_dam_as_scarcity_threshold",
-                "temp_dependent_derate",
-                "nyiso_dynamic_reserve_requirements",
-                "nyiso_hydro_reserve_eligible",
-                "nyiso_scr_edrp_reserve_eligible",
-                "git_sha",
-            )
-        },
-        "scenario_config": dataclasses.asdict(cfg),
-        # Runtime environment mirror (same block stamped into meta.json). Kept
-        # OUTSIDE scenario_config so the --reuse-solved comparator — which only
-        # diffs scenario_config — is unaffected.
-        "environment": meta.get("environment") or _environment_block(),
-    }
-    if "reuse" in meta:
-        # Mixed --reuse-solved bundle: mirror the reuse labeling into the
-        # self-contained run record. Absent the flag this key never exists
-        # and the payload is byte-identical to before the flag was added.
-        payload["reuse"] = meta["reuse"]
-    (run_dir / "run_config.json").write_text(
-        json.dumps(payload, indent=2, default=_json_default)
-    )
-    if git["dirty"]:
-        diff = _git("diff", "HEAD", "--", *_GIT_STATE_EXCLUDE)
-        if diff:
-            (run_dir / "model_changes.diff").write_text(diff)
+_git_state = _pipeline_persist.git_state
+_parse_offer_curve_json = _pipeline_persist.parse_offer_curve_json
+write_run_config = _pipeline_persist.write_run_config
 
 
 # ---------------------------------------------------------------------------
@@ -7275,54 +6960,24 @@ def main() -> None:
         # ARCHIVED P2 knob — hidden; only meaningful under --enable-legacy-p2.
         help=argparse.SUPPRESS,
     )
-    parser.add_argument(
-        "--coal-lignite-mustrun",
-        type=float,
-        default=None,
-        help="Override mine-mouth lignite coal must-run %% (sweep knob).",
-    )
-    parser.add_argument(
-        "--coal-prb-mustrun",
-        type=float,
-        default=None,
-        help="Override PRB coal must-run %% (sweep knob).",
-    )
-    parser.add_argument(
-        "--coal-prb-passthrough",
-        type=float,
-        default=1.0,
-        help="PRB above-must-run fuel passthrough (1.0 = off).",
-    )
+    # Locked calibration config ("tier pass 2"): per-plant CAMPD coal must-run,
+    # gas-keyed PRB passthrough sigmoid (tiered baseload/follower), POF dropped
+    # on coal. All on by default; use the --no-* form to disable.
+    #
+    # Coal flag family: generated from the declarative registry
+    # (market_sim.pipeline.flags.FLAG_REGISTRY['coal']) instead of 15
+    # hand-written add_argument calls — the single encoding that closes the
+    # ERCOT-65 drift class (CLI spelling / solve kwarg / recorded name).
+    # Option strings, dests, actions and help text are byte-equivalent to
+    # the definitions this replaced; only their position in --help moves
+    # (the family now renders as one contiguous run).
+    add_flag_arguments(parser, "coal")
     parser.add_argument(
         "--outage-source",
         choices=["historic", "statistical"],
         default="historic",
         help="Coal/CC availability: 'historic' overlays actual >10-day ERCOT "
         "outages (default backcast); 'statistical' uses WEFOR/POF only.",
-    )
-    # Locked calibration config ("tier pass 2"): per-plant CAMPD coal must-run,
-    # gas-keyed PRB passthrough sigmoid (tiered baseload/follower), POF dropped
-    # on coal. All on by default; use the --no-* form to disable.
-    parser.add_argument(
-        "--coal-prb-sigmoid",
-        "--prb-passthrough-sigmoid",
-        action=argparse.BooleanOptionalAction,
-        default=True,
-        dest="coal_prb_sigmoid",
-        help="Gas-key the PRB passthrough: a logistic of the monthly gas "
-        "price replaces the flat --coal-prb-passthrough (deep discount "
-        "when gas is cheap, none/markup when dear). Params resolve "
-        "from the per-ISO COAL_SIGMOID_DEFAULTS curve; no curve for "
-        "the ISO = flat passthrough. (--prb-passthrough-sigmoid is "
-        "the legacy spelling.)",
-    )
-    parser.add_argument(
-        "--coal-mustrun-per-plant",
-        action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Use per-plant CAMPD-derived coal must-run floors "
-        "(fleet.COAL_MUSTRUN_BY_PLANT) instead of uniform lignite/PRB "
-        "must-run overrides.",
     )
     parser.add_argument(
         "--ct-mustrun-per-plant",
@@ -7420,34 +7075,6 @@ def main() -> None:
         "(coal_plant_monthly_pricing) so every coal plant falls back to "
         "its supply-class trajectory. A single-overlay ablation knob "
         "(implied by --statistical-mode).",
-    )
-    parser.add_argument(
-        "--coal-drop-pof",
-        action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Drop the statistical planned-outage (POF) derate on coal "
-        "(planned maintenance comes from the historic outage overlay); "
-        "keep WEFOR in non-summer months and the derate all year.",
-    )
-    parser.add_argument(
-        "--coal-mustrun-online-pmin",
-        action=argparse.BooleanOptionalAction,
-        default=False,
-        help="Size the coal must-run band to the measured online-net-MW "
-        "synchronization Pmin (thermal_tranches mustrun_online_pct) instead "
-        "of the take-or-pay contract floor. Pairs with "
-        "--coal-sync-srmc-tranche to hold units synchronized at their "
-        "measured online minimum.",
-    )
-    parser.add_argument(
-        "--coal-sync-srmc-tranche",
-        action=argparse.BooleanOptionalAction,
-        default=False,
-        help="Split the coal online-Pmin band into a fuel-free contracted "
-        "_mustrun tranche and a full-SRMC _sync tranche, and force both on "
-        "(scaled by the measured online fraction) so coal holds at its "
-        "measured synchronization floor instead of price-following to zero. "
-        "Requires --coal-mustrun-online-pmin.",
     )
     parser.add_argument(
         "--ct-intermediate-split",
@@ -7727,58 +7354,10 @@ def main() -> None:
         default=None,
         help="Baseload PRB sigmoid dear-gas ceiling.",
     )
-    # Gas-keyed bituminous passthrough sigmoid (PJM coal fleet). Off by
-    # default — turning it on replaces full fuel cost on bituminous
-    # above-must-run tranches with a logistic of the monthly delivered gas
-    # price (the measured EIA-923 series when --gas-monthly-actuals is on).
-    parser.add_argument(
-        "--coal-bit-sigmoid",
-        action=argparse.BooleanOptionalAction,
-        default=False,
-        help="Gas-key the bituminous coal passthrough: above-must-run bit "
-        "tranches get a fuel discount when gas is cheap and a markup "
-        "when dear (coal_bit_passthrough_* params), tracking the "
-        "bit-vs-gas-CC merit-order crossover. Off = full fuel cost.",
-    )
-    # Marginal-coal measured-SRMC offer bound: the econ*/peak coal tranches
-    # buy fuel at market, so their offers are clamped to >= full measured
-    # delivered fuel cost (passthrough >= 1.0); the committed/must-run bands
-    # keep the contracted take-or-pay discount. Removes the sigmoid's fitted
-    # discount from the marginal tranches (FINDING-miso-burndown-2026-07.md
-    # Evidence 2). Off by default (existing keepers unchanged).
-    parser.add_argument(
-        "--coal-econ-srmc-bound",
-        action=argparse.BooleanOptionalAction,
-        default=False,
-        help="Clamp marginal (econ*/peak) coal tranche fuel passthrough to "
-        ">= 1.0 so no marginal coal offer sits below the plant's measured "
-        "incremental delivered SRMC. Committed/must-run bands keep their "
-        "take-or-pay discount.",
-    )
-    # ERCOT-111 measured incremental-heat-rate floor on the COAL econ ramp: a
-    # coal econ band may carry a MARKUP above its physical basis but never a bid
-    # BELOW it, so econ_low/econ_high are clamped up to the ISO's own measured
-    # CAMPD marginal heat rate for COAL (derive_campd_marginal_hr artifact).
-    # Removes a fitted degree of freedom; adds no tunable.
-    # TRI-STATE default None (ercot-118 session fix): the ercot-115 promotion
-    # made the floor the ERCOT backcast default-ON and moved the pipeline/flags
-    # registry default False -> None, but this hand-written parser (the one
-    # main() actually consumes) kept False — so every direct CLI invocation
-    # passed an explicit False and silently SCRUBBED the promoted per-ISO
-    # default (run_year logs "SCRUBBED by explicit False"; replay_keeper was
-    # unaffected because it calls solve_and_persist directly). None = keep the
-    # per-ISO backcast_config default; the --no- form still forces it off.
-    parser.add_argument(
-        "--coal-econ-marginal-hr-bound",
-        action=argparse.BooleanOptionalAction,
-        default=None,
-        help="Floor each coal class's econ_low/econ_high offer-curve band at "
-        "the ISO's own MEASURED CAMPD marginal (incremental) heat rate for "
-        "COAL (data/raw/reference/<iso>_campd_marginal_hr_summary.csv), so no "
-        "coal econ tranche bids below the physical cost of its next MWh. "
-        "Markups above the measured basis, the committed/must-run take-or-pay "
-        "bands and the peak scarcity wall are untouched.",
-    )
+    # Coal flag family: generated from the declarative registry
+    # (market_sim.pipeline.flags.FLAG_REGISTRY['coal']) further up — the three
+    # coal add_argument calls that used to sit here (--coal-bit-sigmoid,
+    # --coal-econ-srmc-bound, --coal-econ-marginal-hr-bound) moved into it.
     # ERCOT-118 EP-basis rebasis of the measured CC DAM band multipliers:
     # replace the pooled HH-0.50-derived CC_REGULAR/CC_CHP override bands with
     # the committed PER-YEAR tables normalized on the EP-anchored delivered-gas
@@ -7833,16 +7412,6 @@ def main() -> None:
     # price (the bid discounts; the measured ~$1.45/MMBtu delivered price
     # stays the full-cost anchor).
     parser.add_argument(
-        "--coal-lignite-sigmoid",
-        action=argparse.BooleanOptionalAction,
-        default=False,
-        help="Gas-key the lignite coal passthrough: above-must-run lignite "
-        "tranches get a fuel discount when gas is cheap (mine-mouth "
-        "take-or-pay fixed costs are sunk) rising to full cost when "
-        "dear (coal_lignite_passthrough_* params), tracking the "
-        "lignite-vs-gas-CC merit-order crossover. Off = full fuel cost.",
-    )
-    parser.add_argument(
         "--lignite-floor",
         type=float,
         default=None,
@@ -7871,14 +7440,6 @@ def main() -> None:
     # conditions) — a separate supply chain from the curated ERCOT "prb"
     # tag, with its own per-ISO curve. Off by default = full fuel cost.
     parser.add_argument(
-        "--coal-sub-sigmoid",
-        action=argparse.BooleanOptionalAction,
-        default=False,
-        help="Gas-key the subbituminous coal passthrough on its own curve "
-        "(coal_sub_passthrough_* params / per-ISO defaults). "
-        "Off = full fuel cost.",
-    )
-    parser.add_argument(
         "--sub-floor",
         type=float,
         default=None,
@@ -7906,14 +7467,6 @@ def main() -> None:
     # Near-free reclamation fuel: no cheap-gas discount, only a dear-gas
     # bid markup to suppress high-gas-year over-run. Off by default =
     # full fuel cost.
-    parser.add_argument(
-        "--coal-waste-sigmoid",
-        action=argparse.BooleanOptionalAction,
-        default=False,
-        help="Gas-key the waste-coal passthrough on its own curve "
-        "(coal_waste_passthrough_* params / per-ISO defaults). "
-        "Off = full fuel cost.",
-    )
     parser.add_argument(
         "--waste-floor",
         type=float,
@@ -8002,16 +7555,6 @@ def main() -> None:
         "committed share in one hour. Targets the under-populated "
         "mid-CF-band (bimodal dispatch). Mean bid unchanged. Unset = "
         "flat block (no change).",
-    )
-    parser.add_argument(
-        "--coal-warm-committed",
-        action="store_true",
-        help="Exempt CAMPD coal committed tranches from the P1 startup"
-        "-amortization markup when the plant has a must-run floor: the "
-        "mustrun tranche keeps the boiler online, so committed-band "
-        "dispatch is a hot-unit ramp, not a cold start. Off (default) "
-        "keeps the legacy $100/MW coal start markup, which prices the "
-        "committed band above the econ ramp (the run-97b inversion).",
     )
     parser.add_argument(
         "--storage-daily-cycling",
@@ -10228,24 +9771,25 @@ def main() -> None:
     # Forecast (runner.py) is unaffected (xyear_cache=None).
     _xwarm = resolve_xyear_warmstart_default(args.no_xyear_warmstart)
     logger.info("cross-year LP warm-start: %s", "ON" if _xwarm else "OFF")
+    # Coal family solve kwargs, generated from the same registry rows that
+    # generated the parser above (rows riding the prb_overrides channel are
+    # excluded there and keep their hand-written plumbing below). One encoding
+    # of the CLI dest -> solve kwarg journey, so a rename cannot drift them
+    # apart — the ERCOT-65 defect class.
+    _coal_kwargs = solve_kwargs_from_args(args, "coal")
     run_dir = solve_and_persist(
         args.year,
         iso,
         args.hours,
         reference,
+        **_coal_kwargs,
         commitment=args.commitment,
         screen_coal=not args.no_coal_p2,
         run_dir=run_dir,
-        coal_lignite_mustrun=args.coal_lignite_mustrun,
-        coal_prb_mustrun=args.coal_prb_mustrun,
-        coal_prb_passthrough=args.coal_prb_passthrough,
         persist_p2_state=args.persist_p2_state,
         outage_source=args.outage_source,
-        coal_prb_passthrough_sigmoid=args.coal_prb_sigmoid,
-        coal_mustrun_per_plant=args.coal_mustrun_per_plant,
         ct_mustrun_per_plant=args.ct_mustrun_per_plant,
         ct_mustrun_floor_frac=args.ct_mustrun_floor_frac,
-        coal_drop_pof=args.coal_drop_pof,
         coal_prb_passthrough_tiered=args.prb_sigmoid_tiered,
         prb_overrides={
             "coal_prb_passthrough_floor": args.prb_floor,
@@ -10340,8 +9884,6 @@ def main() -> None:
                 else None
             ),
         },
-        coal_mustrun_online_pmin=args.coal_mustrun_online_pmin,
-        coal_sync_srmc_tranche=args.coal_sync_srmc_tranche,
         ct_intermediate_split=args.ct_intermediate_split,
         ct_intermediate_cf_threshold=args.ct_intermediate_cf_threshold,
         cc_intermediate_split=args.cc_intermediate_split,
@@ -10354,9 +9896,6 @@ def main() -> None:
         cc_intermediate_cf_threshold=args.cc_intermediate_cf_threshold,
         st_gas_intermediate=args.st_gas_intermediate,
         st_gas_intermediate_cf_threshold=args.st_gas_intermediate_cf_threshold,
-        coal_bit_sigmoid=args.coal_bit_sigmoid,
-        coal_econ_srmc_bound=args.coal_econ_srmc_bound,
-        coal_econ_marginal_hr_bound=args.coal_econ_marginal_hr_bound,
         ercot_offer_hrmult_ep_rebasis=args.ercot_offer_hrmult_ep_rebasis,
         ercot_offer_hrmult_ep_rebasis_bands=(args.ercot_offer_hrmult_ep_rebasis_bands),
         bit_overrides={
