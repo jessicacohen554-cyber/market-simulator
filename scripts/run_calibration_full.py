@@ -1964,6 +1964,68 @@ def _malloc_trim() -> bool:
         return False
 
 
+def _glibc_arena_gb() -> dict[str, float]:
+    """Return glibc allocator accounting in GB, or ``{}`` where unavailable.
+
+    Diagnostic companion to :func:`_malloc_trim` and
+    :func:`market_sim.data.cache_control.retained_footprint`. Those two answer
+    "how much live *Python* payload is retained"; this answers the complementary
+    question the miso-90 attribution could not — of the resident bytes that are
+    **not** live Python objects, how many are memory glibc is *holding free*
+    versus memory that is genuinely still allocated by C-side code (HiGHS).
+
+    Keys, straight from ``mallinfo2`` (glibc 2.33+):
+
+    * ``arena`` — total non-mmapped bytes obtained from the system.
+    * ``in_use`` (``uordblks``) — non-mmapped bytes currently **allocated**. A
+      large value with a small ndarray payload means a C++ allocator (HiGHS)
+      still owns live memory that Python-side ``del`` never released.
+    * ``free_in_arena`` (``fordblks``) — bytes already freed but **retained** by
+      glibc rather than returned to the kernel. A large value is allocator
+      fragmentation: the fix is arena tuning (``M_ARENA_MAX``/``mallopt``), not
+      anything in the model.
+    * ``mmapped`` (``hblkhd``) — bytes in mmapped blocks, which glibc returns
+      directly on free and ``malloc_trim`` never sees.
+    * ``trim_top`` (``keepcost``) — releasable bytes at the top of the heap.
+
+    Read-only accounting: it allocates nothing the solve depends on and can
+    never change dispatch. Returns ``{}`` on musl/macOS or pre-2.33 glibc.
+    """
+    try:
+        import ctypes
+
+        class _MallInfo2(ctypes.Structure):
+            _fields_ = [
+                (name, ctypes.c_size_t)
+                for name in (
+                    "arena",
+                    "ordblks",
+                    "smblks",
+                    "hblks",
+                    "hblkhd",
+                    "usmblks",
+                    "fsmblks",
+                    "uordblks",
+                    "fordblks",
+                    "keepcost",
+                )
+            ]
+
+        libc = ctypes.CDLL("libc.so.6")
+        libc.mallinfo2.restype = _MallInfo2
+        info = libc.mallinfo2()
+        gb = 1073741824.0
+        return {
+            "arena": info.arena / gb,
+            "in_use": info.uordblks / gb,
+            "free_in_arena": info.fordblks / gb,
+            "mmapped": info.hblkhd / gb,
+            "trim_top": info.keepcost / gb,
+        }
+    except (OSError, AttributeError, ValueError):
+        return {}
+
+
 def _proc_mem_kb() -> tuple[int, int]:
     """Return ``(VmRSS, VmHWM)`` in kB from ``/proc/self/status``, or ``(0, 0)``.
 
@@ -4270,6 +4332,19 @@ def solve_and_persist(
                 run_dir / "dispatch" / f"{year}_{label}.parquet", index=False
             )
             _parquet_s += time.perf_counter() - _t_pq
+            # Free the unit-hour frame the moment it is on disk. It is the
+            # single largest object this loop builds — MISO 2023 measures
+            # 588.9 MB (24,694,440 gen-hours x 11 cols) — and nothing reads it
+            # again after this write. Without the del it stays bound to the
+            # loop variable, survives the year-release block (whose del list
+            # never named it) and sits under the NEXT year's fleet build and
+            # LP, which is 38% of the 1.53 GB cross-year floor that makes a
+            # multi-year MISO invocation OOM. Found by the release-seam frame
+            # telemetry, not by inspection: miso-92, see
+            # results/calibration/FINDING-miso92-solve-memory-attribution-2026-07.md.
+            # `_sysf` and `campd_year` are deliberately NOT freed here — both
+            # are appended to cross-year accumulators and are still live.
+            del _dispf
             system_frames.append(_sysf)
             # Reserve-dual diagnostic sidecar (MARKET_SIM_RESERVE_DUAL_DUMP,
             # default OFF): the per-family reserve balance-row duals
@@ -4464,6 +4539,7 @@ def solve_and_persist(
             try:
                 from market_sim.data.cache_control import (
                     cache_report,
+                    largest_retained_frames,
                     retained_footprint,
                 )
 
@@ -4472,6 +4548,25 @@ def solve_and_persist(
                 # so they must be passed as explicit roots.
                 _fp = retained_footprint(*_acc.values())
                 _caches = cache_report()
+                # Complementary half of the attribution: whatever resident is
+                # NOT live Python payload is either memory glibc is holding
+                # free (fragmentation — an arena-tuning fix) or memory a C++
+                # allocator still owns (HiGHS surviving the Python-side del —
+                # a destroy-the-model fix). Those two need opposite responses,
+                # so logging only the Python side would leave the next session
+                # guessing again. Read-only; cannot change dispatch.
+                _arena = _glibc_arena_gb()
+                if _arena:
+                    logger.info(
+                        "year %d glibc arena: total=%.2f GB in_use=%.2f GB "
+                        "free_retained=%.2f GB mmapped=%.2f GB trim_top=%.2f GB",
+                        year,
+                        _arena["arena"],
+                        _arena["in_use"],
+                        _arena["free_in_arena"],
+                        _arena["mmapped"],
+                        _arena["trim_top"],
+                    )
                 logger.info(
                     "year %d retained heap: ndarray=%.2f GB (n=%d) "
                     "[pandas=%.2f GB n=%d, sparse=%.2f GB n=%d — slices, not "
@@ -4495,8 +4590,40 @@ def solve_and_persist(
                         else ""
                     ),
                 )
+                # Name the holding SITE, not just the class. miso-92 measured
+                # 0.68 GB across only 17 frames here, of which the accumulators
+                # explain 0.07 and the module caches ~0.02 — so ~0.59 GB sat in
+                # large frames nobody could point at. A frame's column list
+                # identifies its producer on sight.
+                _frames = largest_retained_frames(6, *_acc.values())
+                for _mb, _rows, _ncol, _cols in _frames:
+                    logger.info(
+                        "year %d retained frame: %.1f MB  %d x %d  cols=%s",
+                        year,
+                        _mb,
+                        _rows,
+                        _ncol,
+                        ",".join(_cols),
+                    )
+                # A quiet reporter and a broken one look identical in a log, and
+                # this one WAS broken once (DataFrame-only, so it printed nothing
+                # against 17 live pandas objects). Make the disagreement loud
+                # rather than let a later reader mistake silence for "nothing
+                # retained".
+                if not _frames and int(_fp.get("n_pandas", 0)) > 0:
+                    logger.warning(
+                        "year %d retained-frame telemetry returned NOTHING while "
+                        "retained_footprint counted %d pandas object(s) / %.2f GB "
+                        "— the two reporters disagree; treat the frame list as "
+                        "unreliable for this run",
+                        year,
+                        int(_fp.get("n_pandas", 0)),
+                        _fp.get("pandas_gb", 0.0),
+                    )
             except Exception:  # never let telemetry break a calibration run
-                logger.debug("retained-heap telemetry unavailable", exc_info=True)
+                logger.warning(
+                    "year %d retained-heap telemetry unavailable", year, exc_info=True
+                )
 
     system_all = pd.concat(system_frames, ignore_index=True)
     system_all.to_parquet(run_dir / "system.parquet", index=False)

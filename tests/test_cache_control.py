@@ -154,3 +154,78 @@ def test_ignores_unrelated_packages():
 def test_package_filter_scopes_the_walk(pkg):
     names = {e.qualname for e in cache_control.iter_cached_functions(pkg)}
     assert all(n.startswith(pkg + ".") or n == pkg for n in names)
+
+
+def test_largest_retained_frames_identifies_the_holding_site():
+    """The frame reporter must name a frame well enough to recognise its producer.
+
+    ``retained_footprint`` answers "how much pandas payload is retained"; this
+    answers "which frame", which is the question a memory lane has to close.
+    Size alone is not an identifier, so the column list is part of the contract.
+    """
+    frame = pd.DataFrame(
+        {"unit_id": np.zeros(1_500_000), "gross_load_mw": np.zeros(1_500_000)}
+    )
+    rows = cache_control.largest_retained_frames(5, frame)
+    assert rows, "a 24 MB rooted frame must be reported"
+    mb, nrows, ncols, cols = rows[0]
+    assert mb > 20.0, f"payload under-reported ({mb:.1f} MB)"
+    assert (nrows, ncols) == (1_500_000, 2)
+    assert cols == ["unit_id", "gross_load_mw"]
+
+
+def test_largest_retained_frames_is_sorted_and_limited():
+    """Callers log only the top N, so ordering and the limit are load-bearing."""
+    small = pd.DataFrame({"a": np.zeros(200_000)})
+    big = pd.DataFrame({"a": np.zeros(2_000_000)})
+    rows = cache_control.largest_retained_frames(1, small, big)
+    assert len(rows) == 1, "limit not honoured"
+    assert rows[0][1] == 2_000_000, "not sorted by payload descending"
+
+
+def test_largest_retained_frames_sees_frames_without_a_root():
+    """Frames are GC-TRACKED, so this reporter has no running-locals blind spot.
+
+    ``retained_footprint`` under-reports a bare ndarray held only in a running
+    function's local, which is why its callers must pass roots. A DataFrame is
+    different: it is a tracked object, so ``gc.get_objects()`` enumerates it
+    directly. Pinned because the telemetry's claim to list the COMPLETE set of
+    live frames rests on it — if this ever regresses, the logged frame list
+    silently becomes a subset and the next memory read draws a wrong conclusion.
+    """
+    frame = pd.DataFrame({"a": np.zeros(3_000_000)})  # local-only, never rooted
+    unrooted = cache_control.largest_retained_frames(50)
+    assert any(r[1] == 3_000_000 for r in unrooted), (
+        "a live frame was invisible without being passed as a root"
+    )
+    assert len(frame) == 3_000_000
+
+
+def test_largest_retained_frames_does_not_double_count_a_root():
+    """A frame that is both graph-reachable and passed as a root appears once."""
+    frame = pd.DataFrame({"a": np.zeros(1_000_000)})
+    rows = cache_control.largest_retained_frames(50, frame)
+    assert sum(1 for r in rows if r[1] == 1_000_000) == 1
+
+
+def test_largest_retained_frames_counts_series_like_retained_footprint():
+    """Series must be reported, because ``retained_footprint`` counts them.
+
+    Regression test for a real miss: the first version of the walk matched only
+    ``DataFrame``, so against a solve whose retained pandas payload was mostly
+    Series it returned an EMPTY list while ``retained_footprint`` reported 17
+    objects / 0.68 GB — the telemetry printed nothing and looked merely quiet
+    rather than broken. The two reporters must agree on what "pandas" means.
+    """
+    series = pd.Series(np.zeros(2_000_000), name="gross_load_mw")
+    rows = cache_control.largest_retained_frames(50, series)
+    hit = [r for r in rows if r[1] == 2_000_000]
+    assert hit, "a 16 MB Series was invisible to the frame reporter"
+    mb, nrows, ncols, cols = hit[0]
+    assert mb > 12.0
+    assert ncols == 1
+    assert cols == ["Series:gross_load_mw"], cols
+
+    # And the pair must not disagree about whether that payload exists.
+    fp = cache_control.retained_footprint(series)
+    assert fp["n_pandas"] >= 1

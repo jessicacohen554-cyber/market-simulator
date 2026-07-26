@@ -234,3 +234,86 @@ def retained_footprint(*roots: object) -> dict[str, float]:
         "sparse_gb": sparse_bytes / gb,
         "n_sparse": float(sparse_n),
     }
+
+
+def largest_retained_frames(limit: int = 8, *roots: object) -> list[tuple]:
+    """Identify the biggest retained pandas objects: ``(MB, rows, cols, columns)``.
+
+    Companion to :func:`retained_footprint`, which reports the retained payload
+    by *class* (ndarray / pandas / sparse). That names what the resident heap is
+    made of but not **where it is held**, which is the question a memory lane
+    actually has to answer: miso-92 measured 0.68 GB across only 17 frames at the
+    year-release seam, of which the runner's own accumulators explain 0.07 GB and
+    the module ``lru_cache`` memoizations ~0.02 GB — leaving ~0.59 GB in a named
+    class but an unnamed site.
+
+    A frame's column list is a far better fingerprint than its size, so this
+    returns enough to recognise the producer on sight (a CAMPD unit-hour frame,
+    an EIA-930 BA-hour frame and an LP result frame look nothing alike).
+
+    **Counts ``Series`` as well as ``DataFrame``, and must**: ``retained_footprint``
+    reports the two together, so a DataFrame-only reporter cannot account for its
+    ``n_pandas``. Found the hard way — the first version of this walk matched only
+    ``DataFrame`` and returned an *empty list* against a measured 17 pandas
+    objects / 0.68 GB, printing nothing at all. For a ``Series`` the ``cols``
+    slot carries its ``name`` (or ``<unnamed>``) and the column count is 1, so a
+    row is still self-identifying.
+
+    Coverage differs from :func:`retained_footprint`'s in one way worth stating,
+    because it makes this reporter *stronger* than that one. A ``DataFrame`` is a
+    GC-**tracked** object, so ``gc.get_objects()`` enumerates every live frame
+    directly — reachability from a root is not required, and the running-locals
+    blind spot that forces ``retained_footprint``'s callers to pass their
+    accumulators does **not** apply to the frames listed here. (That blind spot
+    is real for bare numeric ndarrays, which are untracked.) ``roots`` are still
+    accepted and deduplicated, so passing them is harmless and keeps the two
+    calls symmetrical; they simply are not needed for frames. Pinned by test, so
+    a future reader can trust this list to be the complete live-frame set.
+
+    Diagnostic only — allocates no solve state and can never change dispatch.
+    """
+    import gc
+
+    try:
+        import numpy as np  # noqa: F401  (parity with retained_footprint)
+        import pandas as pd
+    except Exception:  # pragma: no cover - both are hard dependencies
+        return []
+
+    found: list[tuple] = []
+    stack = gc.get_objects()
+    visited: set[int] = {id(stack)}
+    stack.extend(roots)
+    seen_frames: set[int] = set()
+    while stack:
+        obj = stack.pop()
+        oid = id(obj)
+        if oid in visited:
+            continue
+        visited.add(oid)
+        try:
+            if isinstance(obj, (pd.DataFrame, pd.Series)):
+                if oid not in seen_frames:
+                    seen_frames.add(oid)
+                    usage = obj.memory_usage(deep=False)
+                    mb = float(getattr(usage, "sum", lambda: usage)()) / 1048576.0
+                    if isinstance(obj, pd.DataFrame):
+                        cols = [str(c) for c in obj.columns[:12]]
+                        ncol = int(obj.shape[1])
+                    else:
+                        cols = [
+                            f"Series:{obj.name if obj.name is not None else '<unnamed>'}"
+                        ]
+                        ncol = 1
+                    found.append((mb, int(obj.shape[0]), ncol, cols))
+                continue
+            if isinstance(obj, type):
+                continue
+            for ref in gc.get_referents(obj):
+                if id(ref) not in visited:
+                    stack.append(ref)
+        except Exception:  # pragma: no cover - never let telemetry break a run
+            continue
+
+    found.sort(key=lambda r: -r[0])
+    return found[:limit]
