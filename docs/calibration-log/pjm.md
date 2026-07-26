@@ -440,3 +440,77 @@ re-audit replays `results/calibration/pjm121_ccbelt` instead — solved
 method requires; same RAM class (the delta is an offer surface, not LP size).
 (This entry deliberately claims no lane number: pjm-122 was concurrently
 taken by the artifacts-landing session above.)
+
+## 2026-07-26 — pjm-124: `ramp10` deliverability scoping (frontier Lane 1, framing 2) — REFUTED on a no-LP pre-check, NO SOLVE SPENT
+
+Full adjudication: `docs/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md`.
+Probe: `scripts/probes/pjm124_ramp10_scope_precheck.py`, kill criteria K1/K2/K3
+committed to git (`84288c3`) **before** the probe was run; per-year JSON in
+`results/calibration/pjm124_precheck_{2023,2024,2025}.json`.
+
+**The mechanism cannot remove the capacity that creates the slack.** The
+keeper's balance families are **Primary** Reserve, and Primary = Synchronized +
+**Non-Synchronized** (Manual 11 §4.2) — Non-Sync reserve *is* offline
+10-min-startable iron. So a commitment-state scoping may drop offline
+non-fast-start capacity (a cold CC/ST backs nothing) but may **not** drop
+offline fast-start capacity, which counts either way. Measured on the
+reconstructed keeper fleet: **1,411 fast-start members, 30.6 GW nameplate,
+F = 17.6 GW mean — 45 % of the 38.9 GW deliverable-ramp cap, and 5.2× the
+3.35 GW requirement by itself.**
+
+Adding the two other dispatch-free online terms (`MG`, min-gen-floored units
+online by construction; `DISP`, the greedy online capacity implied by the
+keeper's own committed P1 class-hourly dispatch) gives a **rigorous lower
+bound** on the scoped supply — the most generous case for the mechanism:
+
+| GW mean | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| requirement R | 3.09 | 3.42 | 3.35 |
+| keeper cap | 38.74 | 38.67 | 38.95 |
+| **S_lower** | **32.56 (10.5×R)** | **33.17 (9.7×R)** | **33.64 (10.0×R)** |
+| reduction | 15.9 % | 14.2 % | 13.6 % |
+| tight-bin hours ≤ 2×R | 0/2,191 | 0/2,190 | 0/2,190 |
+
+**K1 KILLs unanimously in all three years**, by ~3× the PASS band, and does not
+reach even the PARTIAL band (which needed a ≥50 % reduction). K2 is reported as
+split and marginal (10.8 / 10.6 / 9.8 pp against a 10 pp threshold) and is moot;
+what matters in that row is the **sign** — the scoping shaves 18–21 % in the
+slackest net-load quartile but only 8–10 % in the tightest, i.e. least where the
+residual lives. K3 passes: the scoping is fleet-physics + own-dispatch derivable,
+no measured outcome enters. Framing 2 was never inadmissible — it is **inert**.
+
+**The strict online-only variant is closed too**, on two independent grounds:
+deleting non-synchronized supply from a *Primary* balance prices Synchronized
+while calling it Primary (a product mismatch — rule 1's "never reach the right
+number through a mechanism that isn't real"), and its own lower bound is still
+**4.9× / 4.6× / 4.8× the requirement**. The whole framing-2 family is closed in
+its admissible and inadmissible forms.
+
+**Ledger consequence — this qualifies pjm-82's LP-vs-MIP attribution.** Even
+with commitment state read exactly, and counting only iron the tariff permits,
+the balance stays ~10× slack: **a MIP would not close this gate either.** The
+slack is the size of PJM's reserve-eligible fast-ramping fleet against a ~3.4 GW
+requirement — a real fleet property, not a representation artifact. Strong prior
+that framing 1 (pjm-125) lands the same way; still worth running for the record.
+
+**Free corroboration, no re-solve** — the keeper's persisted reserve dual
+extended from pjm-120's 2025-only reading to all three years:
+**0 hours ≥ $300 in 26,280**; 2023 and 2024 are *identically zero all year*;
+2025's 22 nonzero hours (max $210.99, mean $0.151) are the tightest of the
+three, not representative.
+
+**Housekeeping done (frontier handoff §5).** `scripts/lib/bundle_fleet.py` now
+owns the widened bundle-fleet reconstruction (`full_run_year_kwargs`,
+`reconstruct_bundle_fleet`, year-chain gas-price fallback, generalized fidelity
+guard over the offer-path *and* reserve gates);
+`pjm123_composite_precheck.full_run_year_kwargs` delegates to it.
+
+**Keeper unchanged** — `2026-07-25-pjm-121-cc-belt` stands, with its honest-scope
+caveat intact (73 % of the 2025 C3a gain is a level lift; the dispersion
+compression is untouched, and pjm-123 closed the offer-surface route to it).
+Fidelity of this session's reconstruction confirmed against the committed keeper
+hourlies: `pjm120_c3a_stratum_readout` reads model_lw 41.53 / actual 46.07 /
+gap −4.54. No dashboard registration: no solve was run, so there is no bundle to
+register (the pjm-123 precedent). **Frontier readiness flagged, never declared.**
+
+Next number: pjm-125.
