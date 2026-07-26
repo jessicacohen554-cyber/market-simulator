@@ -148,6 +148,11 @@ PJM_DA_VIRTUALS_DIR: Path = RAW_DATA_DIR / "pjm-da-virtuals"
 PJM_AS_DIR: Path = RAW_DATA_DIR / "PJM-AS"
 ISO_TRANSMISSION_DIR: Path = RAW_DATA_DIR / "iso-specific-transmission"
 GAS_PRICES_DIR: Path = RAW_DATA_DIR / "gas-prices"
+# Measured petroleum-product spot series. Today: the EIA daily New York Harbor
+# ULSD spot (scripts/data/fetch_ny_harbor_distillate_daily.py), which supplies
+# the within-month SHAPE of the dual-fuel oil-parity cap — the delivered LEVEL
+# stays the monthly EIA-923 receipt (data.fuel.oil_daily_shape_factors).
+OIL_PRICES_DIR: Path = RAW_DATA_DIR / "oil-prices"
 COAL_PRICES_DIR: Path = RAW_DATA_DIR / "coal-prices"
 ERCOT_HSL_DIR: Path = RAW_DATA_DIR / "ercot-hsl"
 CAISO_HSL_DIR: Path = RAW_DATA_DIR / "caiso-hsl"

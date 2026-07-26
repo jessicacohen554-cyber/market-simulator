@@ -129,6 +129,17 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # (any of them True) enters the key as a distinct scenario.
     "nyiso_hydro_reserve_eligible",
     "nyiso_scr_edrp_reserve_eligible",
+    # NYISO ORDC measured-step-span construction fix (nyiso-76). GATED /
+    # default-off and byte-identical for every existing config, so it is
+    # dropped from the hash at its default (same treatment as the two
+    # reserve-eligibility flags above); an armed run enters the key as a
+    # distinct scenario.
+    "nyiso_ordc_measured_step_span",
+    # Daily-resolution dual-fuel oil-parity cap (nyiso-76 P2). GATED /
+    # default-off and byte-identical for every existing config, so it is
+    # dropped from the hash at its default; an armed run enters the key as a
+    # distinct scenario.
+    "dual_fuel_oil_daily_parity",
     "ercot_thermal_dam_availability_hourly",
     "ercot_thermal_dam_availability_plant",
     # ERCOT-110 coal class-SCOPE switch of the same measured-DAM mechanism.
@@ -1159,13 +1170,44 @@ class ScenarioConfig:
     # flag HARD-ERRORS when the series is absent (no silent static fallback, so
     # a run_config claiming dynamic requirements cannot quietly solve without
     # them). Families without a measured series (e.g. the synchronised-reserve
-    # scaffold families) keep their static values. ORDC shortfall steps stay
-    # anchored to the published static (req, crit, penalty) shape and TRANSLATE
-    # with the hourly requirement (documented approximation — the published
-    # RCPF is itself a stepped curve). Promotion gate: leave-one-year-out
-    # scoring within 2023-2025 (CLAUDE.md rule 22). Default off
-    # (byte-identical); NYISO-only. Mutually exclusive with nyiso_rcpf_enabled
-    # under energy_reserve_coopt (rule 19 — see reserve_config._nyiso_design).
+    # scaffold families) keep their static values. ORDC shortfall steps keep
+    # the published static (req, crit, penalty) SHAPE; whether they also
+    # TRANSLATE with the hourly requirement is nyiso_ordc_measured_step_span
+    # below (this flag alone leaves them spanning the static MW). Promotion
+    # gate: leave-one-year-out scoring within 2023-2025 (CLAUDE.md rule 22).
+    # Default off (byte-identical); NYISO-only. Mutually exclusive with
+    # nyiso_rcpf_enabled under energy_reserve_coopt (rule 19 — see
+    # model.reserves.spec._nyiso_design).
+
+    nyiso_ordc_measured_step_span: bool = False  # GATED, default-OFF
+    # NYISO ORDC construction-consistency fix: build each dynamic family's
+    # shortfall-step WIDTHS from the MEASURED as-enforced requirement the
+    # balance row actually enforces, instead of the static published MW.
+    # A CONSTRUCTION DEFECT, not a knob (rule 1 [R-STRUCT] / rule 14
+    # [R-ACCURATE]): with nyiso_dynamic_reserve_requirements on, the balance
+    # RHS carries the measured requirement while the demand curve priced
+    # against it still spans the published base, so any family whose measured
+    # requirement exceeds its published one prices shortfall on a curve that is
+    # too steep and saturates above zero reserve. SENY (downstate, ⊃ NYC) is
+    # measured 1,800 MW (2023-2025, data/raw/NYISO-AS/requirements/) against a
+    # published 1,300 MW base — a ~38% over-steep ramp that saturates at 500 MW
+    # of reserve rather than 0, over-pricing downstate summer reserve
+    # shortfalls. NYCA / East / NYC are measured == static and are unaffected.
+    # Mechanism: the published RCPF penalties are requirement-INDEPENDENT
+    # (pen[k] = max_pen*(k+1)/n_ramp for an n_ramp-step linear ramp, whatever
+    # the span — scarcity.nyiso_rcpf_product_shortfall_steps), so the widths
+    # alone carry the requirement; scaling the published width vector by
+    # requirement[t]/requirement_static translates the whole curve into hourly
+    # (n_steps, T) widths, preserving its published shape and keeping the total
+    # step width equal to the hour's requirement (which is what keeps the
+    # balance row feasible at zero reserve). Adds NO new mechanism (rule 19 —
+    # it corrects the span of the curve nyiso_dynamic_reserve_requirements
+    # already installs) and NO tuned value (rule 5 — every number is the
+    # measured series or the published curve). Requires
+    # nyiso_dynamic_reserve_requirements; inert without it (no family carries a
+    # measured series to translate to). Default off, byte-identical when off;
+    # NYISO-only. Promotion gate: leave-one-year-out within 2023-2025
+    # (rule 22). See docs/handoffs/nyiso-overrun-underrun-2026-07.md §4.
 
     nyiso_hydro_reserve_eligible: bool = False  # GATED, default-OFF
     # NYISO conventional-hydro reserve-SUPPLY eligibility (issue #1344, lever 3).
@@ -7051,6 +7093,34 @@ class ScenarioConfig:
     # marginal gas). See docs/multi-iso/nyiso-data-audit.md (P13).
     dual_fuel_switching: bool = False
 
+    dual_fuel_oil_daily_parity: bool = False  # GATED, default-OFF
+    # Tier 3 (calibration) — DAILY resolution for the dual-fuel oil-parity cap
+    # (nyiso-76 P2). A GRANULARITY fix, not a level change (rule 1 [R-STRUCT],
+    # rule 14 [R-ACCURATE]): the cap above is the measured EIA-923 Petroleum
+    # receipt, which is MONTHLY, so it is a flat plateau across every day of
+    # the month — while the gas side of the same min() comparison is already
+    # DAILY (the hub-basis overlay, gas_daily_shape_factors). On a NYISO cold
+    # day the delivered gas price spikes into a monthly-flat oil cap and the
+    # ~16.5 GW of downstate dual-fuel capacity pins there: 120 of the 744
+    # Jan-2025 hours clear on that flat cap, so the polar-vortex peak cannot
+    # form (docs/handoffs/nyiso-overrun-underrun-2026-07.md §2/§6). When on,
+    # data.fuel.oil_daily_shape_factors shapes the monthly series with the
+    # measured EIA daily New York Harbor ULSD spot
+    # (data/raw/oil-prices/ny_harbor_ulsd_daily.csv,
+    # scripts/data/fetch_ny_harbor_distillate_daily.py) — the free daily
+    # benchmark for the exact product a NY dual-fuel tank holds (NYSDEC 6 NYCRR
+    # Part 225-1 / ECL §19-0325 cap NY distillate at 15 ppm sulfur).
+    # MEAN-PRESERVING within every month by construction (each day's factor is
+    # the trade-date staircase divided by the month's own calendar-day
+    # staircase mean), so the delivered LEVEL stays the EIA-923 receipt — which
+    # alone carries transport, storage and distributor margin that a FOB cargo
+    # quote does not — and only the within-month profile moves. Adds no
+    # mechanism (rule 19: it re-grains the cap dual_fuel_switching already
+    # applies) and no tuned value (rule 5). Rule-13 admissible: forward monthly
+    # level x daily shape is exactly the forecast construction. Requires
+    # dual_fuel_switching; inert without it. Default off, byte-identical when
+    # off (and when the daily series is absent, which resolves to all-ones).
+
     # Tier 3 (calibration) — thermal availability source. "statistical"
     # (default) builds coal/CC availability from the seasonal WEFOR/POF model;
     # "historic" additionally overlays actual ERCOT outages (coal/CC plants,
@@ -8268,6 +8338,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_rcpf_products": 2,
     "nyiso_rcpf_locational": 2,
     "nyiso_dynamic_reserve_requirements": 1,
+    "nyiso_ordc_measured_step_span": 1,
     "nyiso_li_lcr_tsl": 1,
     "nyiso_nyc_lcr_tsl": 1,
     "neiso_rcpf_enabled": 1,
@@ -8422,6 +8493,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_west_gas_delivered_floor": 3,
     "gas_hub_basis_daily": 3,
     "dual_fuel_switching": 3,
+    "dual_fuel_oil_daily_parity": 3,
     "dual_fuel_oil_reattribution": 3,
     "outage_source": 3,
     "unit_outage_short_windows": 3,

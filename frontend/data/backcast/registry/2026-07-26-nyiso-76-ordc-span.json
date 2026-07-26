@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-26-nyiso-76-ordc-span",
+  "label": "nyiso 76 ordc span",
+  "date": "2026-07-26",
+  "shorthand": "nyiso-76-ordc-span",
+  "definition": "(PROBE \u2014 correctness fix, INERT, not promoted) nyiso-76 S2: the NYISO ORDC shortfall-step WIDTHS are built from the MEASURED as-enforced reserve requirement the balance row actually enforces, instead of the static published MW. The defect is arithmetic: SENY's measured requirement is 1,800 MW against a static width sum of 1,300, so `R + SUM(S) >= 1800` cannot be met by shortfall alone and the LP is forced to hold >=500 MW of REAL downstate 30-min reserve in 6,061 of 8,760 hours, pricing any shortfall on a ~38%-too-steep ramp \u2014 while NYISO's published RCPF prices that product down to zero reserve. Penalties are requirement-independent and untouched; widths become hourly (n_steps,T). RESULT: measured against the same-code control (2026-07-26-nyiso-79-control) this arm is IDENTICAL in every class, every year and every price statistic \u2014 the fix is inert on the current keeper config, because nyiso_scr_edrp_reserve_eligible + nyiso_hydro_reserve_eligible already relieve the same SENY tightness from the supply side (a rule-19 overlap resolved after the original S2 probe was measured on nyiso62). Kept in the codebase default-off under rule 1: the curve's span contradicts its own balance row regardless of the fit, and the defect bites again if downstate reserve supply tightens. See docs/FINDING-nyiso-ordc-span-reliability-floor-2026-07-26.md section 1.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-26-nyiso-76-ordc-span.js",
+  "bundle": "results/calibration/nyiso76_ordc_span"
+}
