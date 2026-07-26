@@ -80,11 +80,28 @@ _CAPACITY_KEYS = (
 _OUTCOME_KEYS = ("lw_price", "max_hourly_price", "co2_mt", "reserve_margin")
 
 
-def run_arm(arm: str, iso: str, start_year: int, end_year: int, out_dir: Path) -> dict:
-    """Solve one arm's full horizon and return its summary dict."""
+def run_arm(
+    arm: str,
+    iso: str,
+    start_year: int,
+    end_year: int,
+    out_dir: Path,
+    hours: int = 8760,
+) -> dict:
+    """Solve one arm's horizon and return its summary dict.
+
+    ``hours`` < 8760 is a REDUCED-horizon pre-screen only (it reproduces the
+    168 h ERCOT 2026-2032 measurement in ``docs/cross-year-warmstart.md`` that
+    originally refuted the forecast wiring, so the same experiment can be
+    re-run cheaply against the post-4C screen). The D-9 verdict itself is taken
+    on the full 8760 h horizon — rule 8 [R-8760].
+    """
     warm = arm == "warm"
+    overrides = {"forecast_xyear_warmstart": warm}
+    if hours != 8760:
+        overrides["hours"] = hours
     config = reference_config(iso, start_year, end_year, cmc=False).with_overrides(
-        forecast_xyear_warmstart=warm
+        **overrides
     )
     assert config.forecast_xyear_warmstart is warm
     print(
@@ -126,8 +143,7 @@ def compare(cold: dict, warm: dict) -> dict:
                     "warm": wv,
                     "delta": (
                         (wv - cv)
-                        if isinstance(cv, (int, float))
-                        and isinstance(wv, (int, float))
+                        if isinstance(cv, (int, float)) and isinstance(wv, (int, float))
                         else None
                     ),
                 }
@@ -181,6 +197,12 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--start-year", type=int, default=2026)
     ap.add_argument("--end-year", type=int, default=2050)
     ap.add_argument("--out-dir", type=Path)
+    ap.add_argument(
+        "--hours",
+        type=int,
+        default=8760,
+        help="Reduced-horizon PRE-SCREEN only; the D-9 verdict runs at 8760.",
+    )
     ap.add_argument("--compare", action="store_true")
     ap.add_argument("--cold", type=Path, help="cold arm full_horizon_summary.json")
     ap.add_argument("--warm", type=Path, help="warm arm full_horizon_summary.json")
@@ -211,7 +233,12 @@ def main(argv: list[str] | None = None) -> int:
     if not (args.arm and args.out_dir):
         ap.error("an arm run needs --arm and --out-dir")
     summary = run_arm(
-        args.arm, args.iso.upper(), args.start_year, args.end_year, args.out_dir
+        args.arm,
+        args.iso.upper(),
+        args.start_year,
+        args.end_year,
+        args.out_dir,
+        hours=args.hours,
     )
     return 1 if summary.get("error") else 0
 
