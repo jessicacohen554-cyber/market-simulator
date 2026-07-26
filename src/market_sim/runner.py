@@ -715,6 +715,21 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # of worldwide deployment (plus this ISO's local builds) every year.
     cumulative = CumulativeDeployment.initial()
 
+    # Cross-year LP warm-start holder for the forecast horizon (plan §7 H-3,
+    # owner decision D-9). Each solved year hands its optimal basis to the next
+    # year's P0 through this single-element list. ``None`` — the default, and
+    # every run that does not arm ``forecast_xyear_warmstart`` — keeps the
+    # forecast cold-only and byte-identical: the shared solve core neither
+    # applies nor exports a basis when the holder is None.
+    #
+    # The flag is threaded to ``run_energy_solve`` as BOTH the holder and the
+    # explicit ``xyear_warmstart`` gate, so the forecast never reads
+    # ``MARKET_SIM_WARMSTART_XYEAR`` (rule 24 [R-REGISTRY]: the calibration
+    # CLIs default that env var ON, and it must not silently reach the forecast
+    # trajectory). Safe only because wave 4C made the economic retirement screen
+    # basis-independent — see docs/cross-year-warmstart.md.
+    forecast_xyear_cache: list | None = [] if config.forecast_xyear_warmstart else None
+
     # Last year whose LP actually solved. In a capacity hindcast the 2022
     # bridge (plan §1.1) is evolved but never solved, so the year after it
     # keeps consuming the last solved year's prior_results and drivers.
@@ -1615,18 +1630,24 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # P0 → monthly startup markup → P1 via the shared pipeline solve
             # core (orchestrator-unification Stage 3) -- intra-year warm start
             # included, statement-for-statement the former inline sequence.
-            # Cross-year warm-start stays OFF on the forecast path
-            # (xyear_cache=None): its marginal-tie reshuffle is read by
-            # capacity.evolve_fleet's per-unit retirement screen and can tip a
-            # retire/keep decision, changing the next year's fleet (plan §8,
-            # docs/cross-year-warmstart.md). Wiring it forecast-side is
-            # blocked on a basis-independent capacity screen (warm-start
-            # backlog #4) -- do not thread a cache here before that lands.
-            # NOTE: the calibration CLIs now default MARKET_SIM_WARMSTART_XYEAR
-            # ON, but that gate is inert here -- a None cache means the shared
-            # solve core never applies OR exports a basis, whatever the env var
-            # says. Keep this literal None (tests/test_xyear_warmstart_default.py
-            # statically asserts it) so the forecast stays cold-only.
+            # Cross-year warm-start on the forecast path is gated ENTIRELY by
+            # config.forecast_xyear_warmstart (plan §7 H-3, owner decision D-9):
+            # forecast_xyear_cache is None unless the flag is armed, and a None
+            # holder means the shared solve core neither applies nor exports a
+            # basis -- so the default forecast stays cold-only and byte-identical
+            # to the pre-D-9 tree. The same flag is passed as the explicit
+            # xyear_warmstart gate so the calibration CLIs' default-ON
+            # MARKET_SIM_WARMSTART_XYEAR can never reach the forecast trajectory
+            # (rule 24 [R-REGISTRY]). tests/test_xyear_warmstart_default.py
+            # statically asserts that pairing.
+            # The historical blocker -- the marginal-tie reshuffle being read by
+            # capacity.evolve_fleet's per-unit retirement screen, which could tip
+            # a retire/keep decision and change the next year's fleet -- was
+            # closed by wave 4C: the screen prices the attainable pro-forma
+            # margin and credits attribute revenue on attainable in-merit
+            # generation, so it depends on prices/mc/capacity only
+            # (tests/test_forecast_warmstart_tie_invariance.py,
+            # docs/cross-year-warmstart.md).
             # P1-native CAISO RA must-offer bridge (P2 archived -- CLAUDE.md:
             # P0/P1 only): floor the merchant gas CC/CT fleet from the P0 run
             # pattern before P1, so the scored P1 carries the RA structure. None
@@ -1702,7 +1723,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 mc_base,
                 dispatch_kwargs,
                 config,
-                xyear_cache=None,
+                xyear_cache=forecast_xyear_cache,
+                xyear_warmstart=config.forecast_xyear_warmstart,
                 p1_fleet_prep=ra_p1_prep or ercot_bridge_prep or pjm_fleet_prep,
                 p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
                 p1_bid_adjust_prep=ercot_bridge_bid_prep,

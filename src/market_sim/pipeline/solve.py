@@ -29,12 +29,21 @@ Solve semantics (unchanged, statement-for-statement):
 Cross-year cache policy (plan §8): the backcast front-end threads its
 ``xyear_cache`` through (preserving today's behavior — the basis is exported
 even when the flag is off, so a downstream A/B does not depend on call
-ordering). The forecast front-end passes ``xyear_cache=None`` — cross-year
-warm-start stays OFF on the forecast path because its ≤0.0033% marginal-tie
-reshuffle is read by ``capacity.evolve_fleet``'s per-unit retirement screen and
-can tip a retire/keep decision, changing the *next* year's fleet (measured in
-``docs/cross-year-warmstart.md``). Wiring it forecast-side is blocked on making
-the capacity screen basis-independent — see plan §8.
+ordering) and leaves ``xyear_warmstart=None``, so its gate stays the
+``MARKET_SIM_WARMSTART_XYEAR`` env var the calibration CLIs default ON.
+
+The forecast front-end (``runner.run_scenario_iso``) threads a cache only when
+``ScenarioConfig.forecast_xyear_warmstart`` is armed, and passes that same flag
+as ``xyear_warmstart`` so the forecast's cross-year behavior is a registry field
+rather than an env-var knob (rule 24 [R-REGISTRY]). It is default-OFF, so the
+forecast path is cold-only unless a config arms it. The historical blocker — the
+≤0.0033% marginal-tie reshuffle being read by the per-unit economic retirement
+screen, which could tip a retire/keep decision and change the *next* year's
+fleet — was closed by wave 4C: the screen now prices the attainable pro-forma
+margin and credits attribute revenue on attainable in-merit generation, so it is
+a function of prices, ``mc`` and capacity only
+(``tests/test_forecast_warmstart_tie_invariance.py``,
+``docs/cross-year-warmstart.md``).
 """
 
 from __future__ import annotations
@@ -121,6 +130,7 @@ def run_energy_solve(
     config,
     *,
     xyear_cache: Optional[list] = None,
+    xyear_warmstart: Optional[bool] = None,
     p1_fleet_prep=None,
     p1_kwargs_prep=None,
     mc_bid_adjust: Optional[np.ndarray] = None,
@@ -147,8 +157,23 @@ def run_energy_solve(
             fields, so the forecast path — which never set them before — is
             unchanged at defaults and now honors them when a config sets them).
         xyear_cache: Optional single-element list carrying the prior year's
-            exported basis (backcast year loop). ``None`` (forecast) disables
-            both the cross-year apply and the export — see module docstring.
+            exported basis (backcast year loop; the forecast year loop when
+            ``ScenarioConfig.forecast_xyear_warmstart`` is armed). ``None``
+            disables both the cross-year apply and the export — see module
+            docstring.
+        xyear_warmstart: Optional explicit cross-year warm-start gate. ``None``
+            (every backcast caller) defers to ``MARKET_SIM_WARMSTART_XYEAR``,
+            exactly as before. A bool is the CALLER's authoritative decision and
+            overrides the env var — the forecast front-end passes
+            ``ScenarioConfig.forecast_xyear_warmstart`` so the forecast's
+            cross-year behavior is a registry field (rule 24 [R-REGISTRY]) and
+            never an env-var knob. Passing a bool also bypasses the persisted
+            year-1 basis NPZ cache (``pipeline.basis_cache``): that cache is
+            keyed ``(iso, weather_year, hours)``, which does not distinguish a
+            forecast's sim-years, so seeding a forecast horizon from it would
+            make a run depend on what solved before it. An explicitly-gated
+            caller therefore warm-starts only from bases produced INSIDE its own
+            run.
         p1_fleet_prep: Optional callable ``(r0) -> Optional[FleetArrays]`` invoked
             after P0 solves. When it returns a ``FleetArrays`` the P1 solve uses
             that (floored) fleet instead of the input one — the P1-native CAISO RA
@@ -189,10 +214,21 @@ def run_energy_solve(
     """
     _warm = os.environ.get("MARKET_SIM_WARMSTART", "1") != "0"
     model = DispatchModel(fleet_arrays, demand, **dispatch_kwargs) if _warm else None
-    _xwarm = _warm and os.environ.get("MARKET_SIM_WARMSTART_XYEAR", "0") != "0"
+    # Cross-year gate: an explicit ``xyear_warmstart`` bool is the caller's own
+    # decision and wins; ``None`` (every backcast caller) keeps the env default,
+    # so the backcast path is byte-identical to before.
+    if xyear_warmstart is None:
+        _xwarm = _warm and os.environ.get("MARKET_SIM_WARMSTART_XYEAR", "0") != "0"
+    else:
+        _xwarm = _warm and bool(xyear_warmstart)
     # Persisted year-1 basis cache key (plan §7 H2). backcast_config pins
-    # config.iso/weather_year/hours to the solved (ISO, year, T); the forecast
-    # never activates the cache (it passes xyear_cache=None).
+    # config.iso/weather_year/hours to the solved (ISO, year, T). An
+    # explicitly-gated caller (the forecast) opts OUT of the disk cache: its
+    # key carries no sim-year, so a 25-year forecast horizon would seed every
+    # year from whatever solved last for that (iso, weather_year, T) and one
+    # run's basis would leak into the next. In-run cross-year warm start is
+    # unaffected; only the cross-INVOCATION seed/persist is skipped.
+    _disk_basis_cache = xyear_warmstart is None
     _basis_key = (
         getattr(config, "iso", ""),
         getattr(config, "weather_year", 0),
@@ -204,7 +240,8 @@ def run_energy_solve(
     # is None (forecast) / non-empty (in-run warm) / the gate is off
     # (goldens/replay); opportunistic and basis-neutral — apply_cross_year_basis
     # remaps/repairs and falls back cold, so a stale seed costs iterations only.
-    seed_year1_basis(xyear_cache, *_basis_key)
+    if _disk_basis_cache:
+        seed_year1_basis(xyear_cache, *_basis_key)
     if _xwarm and xyear_cache is not None and xyear_cache:
         model.apply_cross_year_basis(xyear_cache[0])
     # P0: solve with base MC to extract per-month run lengths.
@@ -347,7 +384,8 @@ def run_energy_solve(
     # cold-P1 paths above refresh it); persisting per-year is crash-safe. A
     # gate-OFF / None-holder is handled inside persist_year_basis, so the
     # goldens/replay env retains nothing and the solve stays byte-identical.
-    persist_year_basis(xyear_cache, *_basis_key)
+    if _disk_basis_cache:
+        persist_year_basis(xyear_cache, *_basis_key)
 
     return EnergySolveResult(
         r0=r0, p1=p1, mc_bid=mc_bid, markup=markup, p1_fleet_arrays=p1_fleet_arrays
