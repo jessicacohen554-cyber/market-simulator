@@ -65,6 +65,22 @@ class _FakeDispatchModel:
         type(self).n_solves += 1
         return _fake_solve(self._fleet, self._demand)
 
+    def export_cross_year_basis(self):
+        """No basis to hand forward — the fake has no LP.
+
+        Reached since the D-9 flip (``forecast_xyear_warmstart`` default ON):
+        the forecast year loop now threads a real ``xyear_cache``, so the shared
+        solve core asks each year's model for its optimal basis. ``None`` means
+        "nothing to carry", which the core already handles — the next year then
+        starts cold, which is exactly right for a model that never solved an LP.
+        """
+        return None
+
+    def apply_cross_year_basis(self, prev):
+        """Decline any prior basis (nothing to install into). Mirrors the real
+        ``DispatchModel``'s ``False`` return for a skipped warm start."""
+        return False
+
 
 class RunnerTestBase(unittest.TestCase):
     """Base fixture redirecting the cache root to a temp directory."""

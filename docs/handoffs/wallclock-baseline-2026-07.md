@@ -278,6 +278,123 @@ i.e. the seed/persist machinery does not perturb the solve. (The full keeper gol
 re-run because the change is provably inert under that env — the gate's own pin — and the unit
 suite pins the gate behavior.)
 
+## H3 / Exp 5 — Forecast-path cross-year warm-start, default flipped ON (owner decision D-9)
+
+The third wall-clock lever in plan §7-H: the forecast solves 25 sequential years and every one of
+them was cold, because `runner.py` passed `xyear_cache=None`. The blocker was never the LP — it was
+that the marginal-tie reshuffle a warm start produces used to be read by the economic retirement
+screen through per-unit **realized** dispatch, so a pure wall-clock lever could tip a retire/keep
+decision and change the *next* year's fleet (`docs/cross-year-warmstart.md` "Why the forecast path
+is not wired", where the original 168 h A/B diverged at 2028: objective 8.3e-4, 0.19 $/MWh).
+
+Wave 4C closed that reader (attainable pro-forma margin + attribute revenue on attainable in-merit
+generation). D-9 authorized the flip **conditional on a full-horizon A/B showing the capacity
+trajectory unchanged**. This is that A/B.
+
+**Wiring.** `ScenarioConfig.forecast_xyear_warmstart` (registry field, rule 24 [R-REGISTRY] — not
+an env knob) gates `runner.py`'s year-loop basis holder, and is passed to `run_energy_solve` as an
+explicit `xyear_warmstart` override so the calibration CLIs' default-ON `MARKET_SIM_WARMSTART_XYEAR`
+can never reach the forecast trajectory. An explicitly-gated caller also bypasses the H2 persisted
+year-1 NPZ cache: that cache is keyed `(iso, weather_year, hours)` with no sim-year, so seeding a
+25-year horizon from it would make a run depend on whatever solved before it. The backcast passes
+no override (gate `None`) and is unchanged.
+
+**Capture conditions.** ERCOT 2026-2050, 8760 h, per-plant CAMPD bins (every ScenarioConfig field
+at its default except mode/iso/horizon), `MARKET_SIM_HIGHS_THREADS=1 MALLOC_ARENA_MAX=2
+OMP_NUM_THREADS=1`. Single-thread is mandatory here, not a preference: multi-threaded dual simplex
+breaks marginal ties nondeterministically, so at the default thread setting even a cold-vs-cold
+control drifts and the comparison would measure the solver rather than the warm start. Two arms as
+two concurrent invocations, each `--out-dir` isolated and each a distinct `cache_key`, years
+sequential within each (rule 12). Driver: `scripts/probes/_d9_forecast_warmstart_ab.py`.
+
+### Wall clock — per year (s)
+
+| year | cold | warm | × | | year | cold | warm | × |
+|-----:|-----:|-----:|--:|-|-----:|-----:|-----:|--:|
+| 2026 | 171.3 | 190.3 | 0.90× | | 2039 | 114.7 | 50.6 | 2.27× |
+| 2027 | 150.7 | 79.9 | 1.89× | | 2040 | 118.9 | 53.4 | 2.23× |
+| 2028 | 152.9 | 81.3 | 1.88× | | 2041 | 117.2 | 50.0 | 2.34× |
+| 2029 | 152.5 | 75.2 | 2.03× | | 2042 | 107.0 | 44.7 | 2.39× |
+| 2030 | 135.9 | 69.1 | 1.97× | | 2043 | 106.8 | 41.7 | 2.56× |
+| 2031 | 136.4 | 74.5 | 1.83× | | 2044 | 101.3 | 40.7 | 2.49× |
+| 2032 | 131.0 | 59.8 | 2.19× | | 2045 | 107.7 | 41.2 | 2.61× |
+| 2033 | 140.9 | 64.7 | 2.18× | | 2046 | 102.5 | 39.7 | 2.58× |
+| 2034 | 129.5 | 61.1 | 2.12× | | 2047 | 100.9 | 38.4 | 2.63× |
+| 2035 | 130.2 | 64.0 | 2.03× | | 2048 |  95.9 | 37.8 | 2.54× |
+| 2036 | 135.3 | 60.2 | 2.25× | | 2049 |  96.2 | 37.1 | 2.59× |
+| 2037 | 119.6 | 60.0 | 1.99× | | 2050 |  96.3 | 36.8 | 2.62× |
+| 2038 | 114.6 | 54.0 | 2.12× | |      |       |      |       |
+
+- **Total: 3,066.3 s (51.1 min) cold → 1,506.3 s (25.1 min) warm = 2.04×.**
+- **Years 2027-2050** (the warm-startable ones): 2,894.9 s → 1,315.9 s = **2.20×**.
+- **2026 is cold in BOTH arms** (nothing carries a basis into the first solve of a process) — the
+  0.90× is noise from the two arms contending, not a warm-start cost.
+- Speedup **grows down the horizon** (1.9× early → 2.6× by 2050) because the fleet's year-over-year
+  churn shrinks as the build-out settles, so the remapped basis is a progressively better guess.
+- Peak RSS 3.76 GB cold → 4.02 GB warm (**+7 %**, one retained `CrossYearBasis`) — the same order as
+  the +4 % the backcast flip paid.
+
+**Contention caveat (read before quoting the 2.04×).** The arms were launched together, but the
+warm arm finished in 25.1 min and the cold arm ran on to 51.1, so cold years **2037-2050 ran
+uncontended** on a free box while every warm year ran contended. That biases the cold total
+*downward*, i.e. **2.04× is conservative**. Restricting to 2027-2036, where both arms were
+genuinely running side by side: cold 1,395.3 s vs warm 689.8 s = **2.02×** — statistically the same
+number, so contention is not what produces the result.
+
+### D-9 guardrail — capacity trajectory
+
+**PASS. The capacity trajectory is bit-identical in all 25 years.** Max relative delta, warm vs
+cold, over the whole horizon:
+
+| quantity | max relative Δ |
+|---|---|
+| `total_cap_mw`, `thermal_mw`, `firm_clean_mw`, `vre_mw`, `storage_mw` | **0.000e+00** |
+| `builds_thermal_mw`, `builds_renew_mw`, `builds_storage_mw`, `retire_mw` | **0.000e+00** |
+| per-fuel `capacity_by_fuel_mw` (every fuel, every year) | **0.000e+00** |
+| `peak_demand_mw`, `reserve_margin`, `max_hourly_price` | **0.000e+00** |
+| `annual lw_price` | 2.5e-05 (2031) |
+| `co2_mt` | 6.6e-06 (2028) |
+
+I1-I14 invariant **statuses are identical** in both arms (3 FAIL / 1 WARN, same ids, same years);
+the detail strings differ only where they embed a price or CO2 figure that moves in its last digit.
+
+The two residuals are the marginal-tie / dual-degeneracy channel, not a capacity decision. Worth
+stating precisely, because wave 4C did **not** make the screen strictly basis-invariant: it removed
+the realized-*dispatch* reader, but the screen still reads **prices**, and prices are LP duals — a
+warm start can land on a different optimal *dual* vertex under degeneracy (H2 above measured exactly
+that on ERCOT 2023: max |Δ zonal price| 6.8e-2 over 30/61,320 hours). So the guardrail was a real
+test, not a formality. What it establishes is that at ERCOT full-horizon scale that dual noise is
+~1e-5 and lands nowhere near a retire/keep threshold: no unit changes state in any year.
+
+For scale, both residuals are **three orders of magnitude inside** every band the forecast golden
+is checked against (`scripts/golden_forecast_bands.py`: CO2 2 %, load-weighted price 5 %, system
+cost 2 %, end-year capacity 1,000 MW absolute), so the flip cannot move
+`tests/golden/ercot_2026_2040.json` off its bands. Nothing was regenerated.
+
+### Reduced-horizon pre-screen (the experiment that originally refuted the wiring)
+
+ERCOT 2026-2032 at **168 h**, the exact setup of the `docs/cross-year-warmstart.md` table where the
+2028 fleet diverged, re-run against the post-4C screen: **capacity trajectory identical, and no
+price / CO2 / reserve-margin delta at all** (cold 38.9 s → warm 34.1 s, 1.14×). The mechanism is
+confirmed live rather than silently inert — spying `DispatchModel.apply_cross_year_basis` on a
+4-year warm run gives `attempts=3 installed=3` versus `attempts=0` cold.
+
+### Default-off byte-identity (pre-flip)
+
+Before the flip, the branch at its default was checked against main (`b054dfe`) by running main's
+`src/market_sim` from a shadow tree extracted with `git archive` — the package `__path__` is bound
+before anything manipulates `sys.path`, so every `market_sim.*` submodule resolves from the shadow.
+ERCOT 2026-2032 forecast: `full_horizon_summary` **trajectory and invariants byte-equal**. (Incidental
+finding for anyone repeating this: `ScenarioConfig` carries absolute paths, so `cache_key` is
+location-dependent and the shadow's keys legitimately differ from the working tree's.)
+
+**Verdict: FLIP.** `ScenarioConfig.forecast_xyear_warmstart` default `False → True` (2026-07-26).
+The pinned default `cache_key` is unmoved at `edbc1b103207170a` across the flip — the field drops
+out of the hash at whatever its default is — and a run that opts out (`False`) enters the key as a
+distinct scenario, which is the escape hatch for a strictly cold forecast. Cache epoch (compat
+clause 2): forecast years cached before the flip were solved cold under this same key and stay
+valid, because the A/B measured the trajectory bit-identical.
+
 ## H4 — `results_write` sub-instrumentation (refactor-consolidation plan §7-H4)
 
 `results_write` was a single merged window in both orchestrators, so the tables above could say
