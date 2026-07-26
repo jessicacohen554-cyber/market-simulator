@@ -131,7 +131,7 @@ warm-year apply.
 (`MARKET_SIM_WARMSTART_XYEAR` unset) and only becomes live once **P-2** flips xyear default-on for
 the backcast. So P-4 changes no defaults, and the optimization is handed to P-2 as a ready,
 byte-identical two-line change to fold in with the flag flip (verify with
-`scripts/diff_warmstart_bundles.py` alongside P-2's existing diff-gate):
+`scripts/diagnostics/diff_warmstart_bundles.py` alongside P-2's existing diff-gate):
 
 ```python
 # module level, near _BASIS_LOWER/_BASIS_BASIC (dispatch.py:3205):
@@ -255,7 +255,7 @@ iterations than a cold start — a bigger win than the ~2.3× the adjacent-year 
 buys on years ≥2. A stale basis (config changed by a tuned knob) still applies: `apply_cross_year_
 basis` remaps/repairs and falls back cold, so it costs iterations, never correctness.
 
-**Neutrality (cold vs warm-from-persisted, per year — `scripts/diff_warmstart_bundles` +
+**Neutrality (cold vs warm-from-persisted, per year — `scripts/diagnostics/diff_warmstart_bundles` +
 `system.parquet`).** Same standard the shipped cross-year warm-start was promoted under
 (`docs/cross-year-warmstart.md`): objective and total generation bit-identical; price and per-unit
 dispatch differences confined to marginal ties (primal) and their dual analogue (degeneracy).

@@ -19,7 +19,7 @@ It runs four checks and prints a single PASS/FAIL with exit code 0/1:
    stage tolerance. Byte-identity (``--mode byte``) is the pure-code-motion
    standard from plan §7.2; ``--mode builder`` permits ≤1e-9 float
    reassociation for the interchange/fleet builder swaps.
-2. **Reshuffle localization** — ``scripts/diff_warmstart_bundles.py`` per year,
+2. **Reshuffle localization** — ``scripts/diagnostics/diff_warmstart_bundles.py`` per year,
    to show any marginal-tie reshuffle per ``plant_code`` (informational; helps
    confirm a builder-stage diff is tie-only).
 3. **Trivial-case smoke tests** — ``pytest tests/test_regression_smoke.py``
@@ -137,7 +137,7 @@ def diff_goldens(
 def localize_reshuffle(before: Path, after: Path) -> list[str]:
     """Run diff_warmstart_bundles.py per year for each common ISO (informational)."""
     log: list[str] = []
-    script = REPO / "scripts" / "diff_warmstart_bundles.py"
+    script = REPO / "scripts" / "diagnostics" / "diff_warmstart_bundles.py"
     isos = sorted(
         {p.name for p in before.iterdir() if p.is_dir() and not p.name.startswith("_")}
         & {p.name for p in after.iterdir() if p.is_dir() and not p.name.startswith("_")}
