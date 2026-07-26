@@ -690,3 +690,52 @@ the multi-year check is owed (pjm-127). Keeper unchanged; no dashboard
 registration (no solve).
 
 Next number: pjm-127.
+
+## 2026-07-26 — pjm-127: the conditioning artifact CONFIRMS in all three years (no-LP); the re-derive decision memo goes to the owner
+
+**Task.** Frontier Lane 2 follow-through: (a) the multi-year confirmation
+pjm-126 §5 owed, (b) the owner admissibility memo for the season-conditioned
+re-derive. Both no-LP; **no solve spent, keeper unchanged, no dashboard
+registration (no bundle exists).** Full write-up:
+`docs/FINDING-pjm127-conditioning-multiyear-2026-07.md`; the decision memo:
+`docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md`.
+
+**1. pjm-127a — ARTIFACT in every year, and pooled.** The identical pjm-126
+probe (one NA-safety fix for the 2023 fall-back day's NaT row — mechanical,
+committed before the 2023 run) on the freshly fetched 36-month corpus:
+**2023 ARTIFACT 3/3 segments FLIP** (CT_FAST +3.00→−3.00, CC_LIKE
++0.20→−0.30, LONG_RUN +0.25→−0.30), **2024 ARTIFACT 2/3** (CC_LIKE FLIP
++0.40→−0.30; CT_FAST NARROW 77%, +5.10→+1.15), **2025 reproduced
+identically** from pjm-126 on the re-fetched corpus, and the **pooled
+three-year hard-guard run: ARTIFACT 3/3 FLIP** (CT_FAST +5.85→−0.60,
+CC_LIKE +0.20→−0.30, LONG_RUN +0.25→−0.05; worst fidelity deviation
+9.2e-13, `--skip-fidelity` never used). Mechanism evidence is starker in
+the confirmation years: the annual top-3% net-load bin holds **3 winter
+hours in 2023 and 1 in 2024** (34 in 2025) — winter scarcity is
+unrepresentable under within-year ranking by construction. Arm C stays
+vacuous every year (≥99.2% of units offer in all four bins), so the
+commitment-status half is still untested (pjm-128, DA awards side).
+
+**2. pjm-127b — the owner memo, pre-registered before the numbers.** The
+memo's definitional case (within-season rank as the better tightness-state
+definition, argued from PJM's seasonal market structure only — no residual),
+its scope decision (BOTH surfaces re-condition as one definitional vintage —
+the mid-curve and the frozen pjm-99 top-of-curve share one tightness
+definition by design — plus coherent solve-time seam change and a vintage
+guard), the pjm-126 season boundaries kept verbatim, a staged pre-registered
+A/B (no-LP K1-gradient pre-check before any solve; tight-strata-gradient
+PASS vs level-shift REFUTATION signatures), and the forward-regeneration
+consequences (rule 13 passes identically; forecast winters see the measured
+tight state for the first time) were **committed while the probes were still
+running** (`cee35d5`) and only the status banner changed after. Rule 20 is
+satisfied on its face: the re-derive, if authorized, cites a
+conditioning-definition change, never a residual.
+
+**Lane state.** Lane 2 remains open pending the owner's call on the memo.
+If authorized: staged re-derive per memo §4 (pre-check first, then the A/B
+chain, rules 12/14/16). If declined: the lever is formally blocked on an
+owner decision — a legitimate ledger entry, not a frontier completion.
+Frontier stays NOT ready either way until the lever is tried or formally
+blocked.
+
+Next number: pjm-128.
