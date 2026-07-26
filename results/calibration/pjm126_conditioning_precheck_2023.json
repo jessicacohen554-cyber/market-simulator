@@ -1,0 +1,129 @@
+{
+  "probe": "pjm126_midcurve_conditioning_precheck",
+  "years": [
+    2023
+  ],
+  "edges": [
+    0.8,
+    0.9,
+    0.97
+  ],
+  "coverage": {
+    "2023": {
+      "months_expected": 12,
+      "files": 12
+    }
+  },
+  "segment_units": {
+    "CC_LIKE": 279,
+    "CT_FAST": 378,
+    "LONG_RUN": 80
+  },
+  "fixed_pop_units": 731,
+  "presence_units": 737,
+  "fidelity_worst_dev": 7.887024366937112e-13,
+  "fidelity_worst_where": "CT_FAST/2023/bin1/s0.05",
+  "gap_table": [
+    {
+      "segment": "CC_LIKE",
+      "arm": "A_frozen",
+      "bin2": 4.575,
+      "bin3": 4.375,
+      "gap": 0.2
+    },
+    {
+      "segment": "CC_LIKE",
+      "arm": "B_season",
+      "bin2": 4.925,
+      "bin3": 5.225,
+      "gap": -0.3
+    },
+    {
+      "segment": "CC_LIKE",
+      "arm": "C_fixedpop",
+      "bin2": 4.575,
+      "bin3": 4.375,
+      "gap": 0.2
+    },
+    {
+      "segment": "CT_FAST",
+      "arm": "A_frozen",
+      "bin2": 21.275,
+      "bin3": 18.275,
+      "gap": 3.0
+    },
+    {
+      "segment": "CT_FAST",
+      "arm": "B_season",
+      "bin2": 24.975,
+      "bin3": 27.975,
+      "gap": -3.0
+    },
+    {
+      "segment": "CT_FAST",
+      "arm": "C_fixedpop",
+      "bin2": 21.275,
+      "bin3": 18.275,
+      "gap": 3.0
+    },
+    {
+      "segment": "LONG_RUN",
+      "arm": "A_frozen",
+      "bin2": 10.125,
+      "bin3": 9.875,
+      "gap": 0.25
+    },
+    {
+      "segment": "LONG_RUN",
+      "arm": "B_season",
+      "bin2": 10.225,
+      "bin3": 10.525,
+      "gap": -0.3
+    },
+    {
+      "segment": "LONG_RUN",
+      "arm": "C_fixedpop",
+      "bin2": 10.125,
+      "bin3": 9.875,
+      "gap": 0.25
+    }
+  ],
+  "per_segment": {
+    "CC_LIKE": {
+      "gaps": {
+        "A_frozen": 0.20000000000000284,
+        "B_season": -0.30000000000000426,
+        "C_fixedpop": 0.20000000000000284
+      },
+      "flags": {
+        "B_season": "FLIP",
+        "C_fixedpop": "HOLDS"
+      }
+    },
+    "CT_FAST": {
+      "gaps": {
+        "A_frozen": 3.0000000000000426,
+        "B_season": -3.0000000000000426,
+        "C_fixedpop": 3.0000000000000426
+      },
+      "flags": {
+        "B_season": "FLIP",
+        "C_fixedpop": "HOLDS"
+      }
+    },
+    "LONG_RUN": {
+      "gaps": {
+        "A_frozen": 0.25000000000000355,
+        "B_season": -0.30000000000000426,
+        "C_fixedpop": 0.25000000000000355
+      },
+      "flags": {
+        "B_season": "FLIP",
+        "C_fixedpop": "HOLDS"
+      }
+    }
+  },
+  "n_artifact_segments": 3,
+  "n_real_segments": 0,
+  "verdict": "ARTIFACT"
+}
