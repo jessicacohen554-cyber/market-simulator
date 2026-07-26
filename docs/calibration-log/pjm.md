@@ -551,3 +551,75 @@ completed 2023 are quoted anywhere.
 >>>>>>> 8933732 (neiso-66: record the follow-up status — PJM re-blocked at the same point, NYISO re-tune still open)
 
 Next number: pjm-125.
+
+## 2026-07-26 — pjm-125: constrained commitment (frontier Lane 1, framing 1) — PARTIAL on a no-LP pre-check, NO SOLVE SPENT; **Lane 1 is now COMPLETE**
+
+Full adjudication: `docs/FINDING-pjm125-commitment-constraint-precheck-2026-07.md`.
+Probe: `scripts/probes/pjm125_commitment_constraint_precheck.py`, criteria
+committed (`4860cf7`) **before** the run; JSON in
+`results/calibration/pjm125_precheck_{2023,2024,2025}.json`. Run in the same
+session as pjm-124 at the owner's explicit direction, after 124 closed.
+
+**Framing 1 is NOT inert — and still cannot make the balance bind.** Where
+framing 2 (pjm-124) attacked the per-pool ramp bound, framing 1 attacks the
+other constraint family: the joint `Σ P + R ≤ Σ cap` row, which counts every
+member's capacity committed or not. It works: a maximal commitment constraint
+cuts the effective reserve supply bound by **51–53 %**, and — unlike framing 2 —
+bites **hardest in the tightest net-load quartile** (40–43 pp, vs framing 2's
+8–10 pp). K2 passes decisively.
+
+| GW mean | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| requirement R | 3.09 | 3.42 | 3.35 |
+| keeper effective bound = min(ramp, joint headroom) | 37.12 (12.0×R) | 35.78 (10.5×R) | 34.80 (10.4×R) |
+| hours where the RAMP family binds | 81 % | 70 % | 60 % |
+| **S_floor** (commitment-invariant) | **17.34 (5.6×R)** | **17.18 (5.0×R)** | **16.99 (5.1×R)** |
+| reduction vs keeper effective | 53.3 % | 52.0 % | 51.2 % |
+| tight-quartile hours ≤ 2×R | 5/2,191 | 52/2,190 | 69/2,190 |
+
+**K1 lands PARTIAL in all three years** (≥50 % narrowing, but the floor stays
+5.0–5.6×R and the annual mean never reaches the ≤3×R PASS band). Verdict NO
+SOLVE — which is what PARTIAL prescribes.
+
+**Why the floor cannot go lower — and why this ends Lane 1.** Offline fast-start
+capacity is **Non-Synchronized Primary reserve** (Manual 11 §4.2), so no
+commitment mechanism may remove it: 17.5 GW, 45 % of the deliverable ramp. That
+floor alone is 5.0–5.6× the requirement. Both framings pjm-120 §7 named are now
+on record — 2 inert, 1 effective-but-insufficient — and they bound the entire
+reserve **supply** side between them.
+
+**This sharpens and partly qualifies pjm-82's LP-vs-MIP attribution.** pjm-82 is
+right that commitment is where the surplus comes from (framing 1's 51–53 % bite
+confirms it), but **a MIP would not close this gate either**: the 5×R floor
+survives any commitment representation. The binding fact is that PJM's ~3.4 GW
+requirement is small relative to the fast-ramping fleet serving it (30.6 GW
+nameplate / 17.5 GW of 10-min deliverable ramp) — a real system property.
+**Consequence: the remaining >$200 residual is not on the reserve supply side.**
+
+**New ledger measurement (§2).** On the keeper today the **ramp** family binds
+81 % / 70 % / 60 % of hours across 2023/2024/2025 — the joint capacity row is
+progressively becoming the binding family, so framing 1 was aimed at a live
+constraint, not a slack one. Separately: on the quantity that actually bounds
+the co-opt, the surplus is 10.4–12.0×R (10.5–12.4× the measured SR+REG target),
+*larger* than the 2.7–3.1× premise figure — **not the same quantity** pjm-82
+measured (unloaded headroom on committed units under a posture-constrained arm),
+so no claim is made about pjm-82's number; it only means framing 1's task was
+harder, not easier.
+
+**Disclosure (rule-1 honesty).** The pre-registered PARTIAL and KILL bands as
+worded overlap. The first implementation checked only the "above 3×R" clause and
+printed KILL; the measured 51–53 % reduction means the PARTIAL band applies. The
+**code was corrected to match the pre-registered prose, not the reverse**, with
+PARTIAL taking precedence as the more specific band; the NO-SOLVE decision is
+identical either way. pjm-124 carries the same overlap but its reduction
+(13.6–15.9 %) is far below the 50 % threshold, so **its reported KILL stands
+unchanged** and was not revisited.
+
+**Keeper unchanged** — `2026-07-25-pjm-121-cc-belt`, honest-scope caveat intact
+(73 % of the 2025 C3a gain is a level lift; the dispersion compression is
+untouched and pjm-123 closed the offer-surface route to it). No dashboard
+registration: no solve was run. **Lane 1 complete; Lane 2 (pjm-126, the
+owner-gated pjm-123 derive-conditioning review) is the only open lane.
+Frontier readiness flagged, never declared.**
+
+Next number: pjm-126.
