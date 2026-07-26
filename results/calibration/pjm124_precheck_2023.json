@@ -1,0 +1,40 @@
+{
+  "probe": "pjm124_ramp10_scope_precheck",
+  "bundle": "results/calibration/pjm121_ccbelt",
+  "year": 2023,
+  "pools": 39,
+  "members": 2396,
+  "fast_members": 1407,
+  "fast_nameplate_gw": 30.582015855,
+  "requirement_rto_mean_mw": 3094.2261087328766,
+  "requirement_mad_mean_mw": 2552.1129694634706,
+  "arms_mean_mw": {
+    "A_keeper_cap": 38735.84882566261,
+    "F_fast_floor": 17541.632172118196,
+    "MG_mingen_online": 9441.287177217528,
+    "DISP_dispatch_implied": 15017.081786218125,
+    "S_lower": 32558.743890070004,
+    "S_upper": 38735.84882566261,
+    "S_strict_online_only_lower": 15017.111717951815
+  },
+  "s_lower_over_req_mean": 10.522419094771069,
+  "s_strict_online_only_over_req_mean": 4.853269021151627,
+  "reduction_frac": 0.15946739578094016,
+  "reduction_frac_by_bin_pp": {
+    "0": 20.952018265997697,
+    "1": 17.514567604056264,
+    "2": 15.90001359131843,
+    "3": 10.144910871521539
+  },
+  "tight_bin_hours_under_2x_req": 0,
+  "tight_bin_hours": 2191,
+  "k1": "KILL",
+  "k2": "PASS",
+  "k3": "PASS (fleet physics + model dispatch only)",
+  "verdict": "NO SOLVE",
+  "config_gates": {
+    "energy_reserve_coopt": true,
+    "pjm_reserve_pergen": true,
+    "pjm_reserve_supply_cap": true
+  }
+}
