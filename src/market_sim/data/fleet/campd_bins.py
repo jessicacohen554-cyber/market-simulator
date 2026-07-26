@@ -398,11 +398,21 @@ def _plant_emission_rate_map(
     if "mixed" in pooled.columns:
         pooled = pooled[~pooled["mixed"].astype(bool)]
     out: dict[int, tuple[float, float, float]] = {}
-    for _, r in pooled.iterrows():
-        out[int(r["plant_id"])] = (
-            float(r["co2_kg_per_mwh_net"]) / _KG_PER_TONNE,
-            float(r["nox_kg_per_mwh_net"]) / _KG_PER_TONNE,
-            float(r["so2_kg_per_mwh_net"]) / _KG_PER_TONNE,
+    # itertuples over the four columns actually read (name=None => positional,
+    # so no attribute-name mangling): ~an order of magnitude cheaper than
+    # iterrows, which materializes a dtype-upcast Series per row. Every value
+    # still goes through int()/float(), so the result is identical.
+    cols = [
+        "plant_id",
+        "co2_kg_per_mwh_net",
+        "nox_kg_per_mwh_net",
+        "so2_kg_per_mwh_net",
+    ]
+    for plant_id, co2, nox, so2 in pooled[cols].itertuples(index=False, name=None):
+        out[int(plant_id)] = (
+            float(co2) / _KG_PER_TONNE,
+            float(nox) / _KG_PER_TONNE,
+            float(so2) / _KG_PER_TONNE,
         )
     return out
 
@@ -1688,13 +1698,19 @@ def load_plant_tranche_config(path: str | Path) -> dict[int, dict[str, float]]:
             f"{(['Plant_Code'] if 'Plant_Code' not in df.columns else []) + missing}"
         )
     out: dict[int, dict[str, float]] = {}
-    for _, row in df.iterrows():
+    # itertuples over the read columns only, positionally (name=None): the
+    # sheet's headers are not all valid Python identifiers-by-construction, and
+    # positional tuples sidestep itertuples' name mangling entirely. Values
+    # arrive as the column's own scalars rather than a dtype-upcast Series
+    # element, and still pass through float()/int(), so a blank cell (NaN), a
+    # non-numeric cell (ValueError) and a clean row all resolve exactly as
+    # before.
+    keys = list(PLANT_TRANCHE_OVERRIDE_FIELDS)
+    cols = ["Plant_Code"] + [PLANT_TRANCHE_OVERRIDE_FIELDS[k] for k in keys]
+    for row in df[cols].itertuples(index=False, name=None):
         try:
-            rec = {
-                key: float(row[col])
-                for key, col in PLANT_TRANCHE_OVERRIDE_FIELDS.items()
-            }
-            code = int(row["Plant_Code"])
+            rec = {key: float(value) for key, value in zip(keys, row[1:])}
+            code = int(row[0])
         except (TypeError, ValueError):
             continue
         if any(v != v for v in rec.values()):  # NaN in a required cell
