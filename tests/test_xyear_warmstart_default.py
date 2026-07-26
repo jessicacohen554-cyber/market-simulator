@@ -96,13 +96,13 @@ class TestForecastStaysColdOnly:
                 "(docs/cross-year-warmstart.md)"
             )
 
-    def test_forecast_cache_holder_is_none_unless_flag_armed(self):
-        """Static guard: the year-loop holder is None at the default.
+    def test_forecast_cache_holder_is_gated_on_the_flag(self):
+        """Static guard: the year-loop holder is conditional on the flag.
 
         ``forecast_xyear_cache`` must be initialized as a conditional on
-        ``config.forecast_xyear_warmstart`` — ``None`` at the default field
-        value, so an un-armed forecast neither applies nor exports a basis and
-        stays byte-identical to the pre-D-9 tree.
+        ``config.forecast_xyear_warmstart``, with a literal ``None`` on the
+        opt-out branch — so a run that sets the field ``False`` neither applies
+        nor exports a basis and reproduces the pre-D-9 cold forecast exactly.
         """
         src = (REPO / "src" / "market_sim" / "runner.py").read_text()
         tree = ast.parse(src)
@@ -121,14 +121,23 @@ class TestForecastStaysColdOnly:
         assert isinstance(value.test, ast.Attribute)
         assert value.test.attr == "forecast_xyear_warmstart"
         assert isinstance(value.orelse, ast.Constant) and value.orelse.value is None, (
-            "the un-armed branch must be a literal None (cold-only default)"
+            "the opt-out branch must be a literal None (strictly cold forecast)"
         )
 
-    def test_default_config_leaves_forecast_cold(self):
-        """Behavioural guard: the shipped default keeps the forecast cold."""
+    def test_opt_out_config_leaves_forecast_cold(self):
+        """Behavioural guard: the field is the ONLY forecast cross-year switch.
+
+        The shipped default is ON (D-9 flip); a config that opts out reproduces
+        the pre-flip cold forecast. What must stay true either way is that the
+        env var does not decide it — pinned by the static guard above.
+        """
         from market_sim.config.scenarios import ScenarioConfig
 
-        assert ScenarioConfig().forecast_xyear_warmstart is False
+        assert ScenarioConfig().forecast_xyear_warmstart is True
+        assert (
+            ScenarioConfig(forecast_xyear_warmstart=False).forecast_xyear_warmstart
+            is False
+        )
 
     def test_year_body_forwards_xyear_cache_verbatim(self):
         """Static guard: pipeline/year.py forwards its ``xyear_cache`` param.
