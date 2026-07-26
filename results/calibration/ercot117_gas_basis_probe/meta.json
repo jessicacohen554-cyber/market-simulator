@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-23T03:29:57",
+  "timestamp": "2026-07-26T21:28:31",
   "iso": "ERCOT",
   "years": [
     2023,
@@ -36,6 +36,7 @@
   "tranche_startup_amortization": false,
   "tranche_startup_measured_runs": false,
   "tranche_startup_conditional_runs": false,
+  "gas_offer_margin": true,
   "nysdec_peaker_rule_availability": false,
   "oil_primary_bin_fuel": false,
   "st_gas_intermediate": false,
@@ -55,7 +56,7 @@
     "coal_lignite_passthrough_floor": 0.675,
     "coal_lignite_passthrough_ceil": 1.0,
     "ercot_reserve_supply_forward": false,
-    "ercot_zonal_gas_basis": true,
+    "ercot_zonal_gas_basis": false,
     "ercot_west_netload_gas_shape": true,
     "ercot_west_gas_delivered_floor": 0.4,
     "oil_primary_bin_fuel": true,
@@ -67,11 +68,14 @@
     "gas_st_drag_seasonal": true,
     "ercot_thermal_dam_availability_hourly": true,
     "ercot_thermal_dam_availability_plant": true,
-    "ercot_offer_surface_cleared_share_state": false
+    "ercot_offer_surface_cleared_share_state": false,
+    "coal_econ_marginal_hr_bound": true,
+    "ercot_thermal_dam_availability_coal": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
   "coal_econ_srmc_bound": false,
+  "coal_econ_marginal_hr_bound": true,
   "coal_plant_monthly_pricing": true,
   "td_loss_factor": 0.0,
   "ercot_zonal_gas_basis": false,
@@ -215,6 +219,7 @@
   "ercot_thermal_dam_availability": true,
   "ercot_thermal_dam_availability_hourly": true,
   "ercot_thermal_dam_availability_plant": true,
+  "ercot_wind_zone_shape": false,
   "ercot_noncampd_plant_availability": true,
   "ercot_storage_capability_measured": true,
   "ercot_online_capacity_envelope_measured": false,
@@ -313,7 +318,8 @@
     "eia923": "../_shared/ERCOT/eia923-c9af23c26b01.parquet",
     "campd": "../_shared/ERCOT/campd-e42e97159860.parquet"
   },
-  "git_sha": "a6909f5",
+  "git_sha": "39b3a0f",
+  "basis_sha": "64d06c47e397f1ffb7bcd33ce0f68a4b5d86e265",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",

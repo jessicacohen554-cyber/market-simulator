@@ -1,29 +1,14 @@
 {
-  "timestamp": "2026-07-23T03:29:57",
+  "timestamp": "2026-07-26T21:28:31",
   "git": {
-    "sha": "a6909f5",
-    "branch": "claude/ercot-99-offer-formation-9v9lta",
-    "dirty": true,
-    "changed_files": [
-      "cripts/data/build_ercot_dam_resource_crosswalk.py",
-      "scripts/data/derive_ercot_thermal_dam_availability.py",
-      "scripts/data/derive_nyiso_import_tranches.py",
-      "scripts/data/slim_ercot_dam_disclosure.py",
-      "src/market_sim/data/fleet.py",
-      "src/market_sim/data/outages.py",
-      "tests/test_outages.py",
-      "docs/DIAGNOSIS-ercot-99-offer-formation-high-netload-2026-07.md",
-      "scripts/probes/ercot99_as_contamination.py",
-      "scripts/probes/ercot99_intrahour_bound.py",
-      "scripts/probes/ercot99_model_offer_curve.py",
-      "scripts/probes/ercot99_reach_gap.py",
-      "scripts/probes/ercot99_real_dam_wall.py",
-      "scripts/probes/ercot99_reanalyze_offer.py",
-      "scripts/probes/ercot99_score_probe.py"
-    ],
-    "diffstat": "scripts/data/build_ercot_dam_resource_crosswalk.py | 68 ++++++++++++++++++----\n .../data/derive_ercot_thermal_dam_availability.py  | 14 +++--\n scripts/data/derive_nyiso_import_tranches.py       |  3 +-\n scripts/data/slim_ercot_dam_disclosure.py          | 26 ++++++---\n src/market_sim/data/fleet.py                       |  4 +-\n src/market_sim/data/outages.py                     |  7 +--\n tests/test_outages.py                              |  8 +--\n 7 files changed, 92 insertions(+), 38 deletions(-)"
+    "sha": "39b3a0f",
+    "basis_sha": "64d06c47e397f1ffb7bcd33ce0f68a4b5d86e265",
+    "branch": "claude/ercot-117-coal-gas-bias-c7kekw",
+    "dirty": false,
+    "changed_files": [],
+    "diffstat": ""
   },
-  "model_changes_note": "ERCOT-99: cleared-share commitment-loading STATE weight OFF. Structural correction \u2014 the state weight prices loaded-at-scarcity gas at cost (CC w=0 median at the 2023 missed hours), but the measured DA ($327 p50) and RT ($488 p50) prices at those hours show loaded capacity clears at the offer wall; standing the wall down there suppressed real scarcity offer formation. Effect is entirely in the >=p97 bin (reach-gap verified). Full-span 2023-2025.",
+  "model_changes_note": "ERCOT-117 gas-basis causal probe: measured coal envelope armed + zonal-gas-basis ablation (diagnostic probe, never a keeper candidate; PRECOMMIT-ercot117-gas-basis-probe-2026-07-26)",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "ERCOT",
@@ -68,7 +53,7 @@
       "coal_lignite_passthrough_floor": 0.675,
       "coal_lignite_passthrough_ceil": 1.0,
       "ercot_reserve_supply_forward": false,
-      "ercot_zonal_gas_basis": true,
+      "ercot_zonal_gas_basis": false,
       "ercot_west_netload_gas_shape": true,
       "ercot_west_gas_delivered_floor": 0.4,
       "oil_primary_bin_fuel": true,
@@ -80,7 +65,9 @@
       "gas_st_drag_seasonal": true,
       "ercot_thermal_dam_availability_hourly": true,
       "ercot_thermal_dam_availability_plant": true,
-      "ercot_offer_surface_cleared_share_state": false
+      "ercot_offer_surface_cleared_share_state": false,
+      "coal_econ_marginal_hr_bound": true,
+      "ercot_thermal_dam_availability_coal": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -149,7 +136,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "a6909f5"
+    "git_sha": "39b3a0f"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -344,6 +331,7 @@
     "nyiso_rcpf_products": null,
     "nyiso_rcpf_locational": null,
     "nyiso_dynamic_reserve_requirements": false,
+    "nyiso_ordc_measured_step_span": false,
     "nyiso_hydro_reserve_eligible": false,
     "nyiso_scr_edrp_reserve_eligible": false,
     "neiso_rcpf_enabled": false,
@@ -568,6 +556,7 @@
     "gas_st_wefor_base_override": null,
     "coal_sync_srmc_tranche": false,
     "coal_econ_srmc_bound": false,
+    "coal_econ_marginal_hr_bound": true,
     "coal_bit_committed_takeorpay": false,
     "coal_committed_takeorpay_all": false,
     "coal_committed_takeorpay_regulated": false,
@@ -648,8 +637,11 @@
     "ercot_nuclear_unit_availability": true,
     "nuclear_unit_availability": false,
     "ercot_thermal_dam_availability": true,
+    "neiso_operable_capacity_availability": false,
+    "pjm_dam_availability": false,
     "ercot_thermal_dam_availability_hourly": true,
     "ercot_thermal_dam_availability_plant": true,
+    "ercot_thermal_dam_availability_coal": true,
     "ercot_noncampd_plant_availability": true,
     "ercot_storage_capability_measured": true,
     "neiso_offer_surface_conditional": false,
@@ -685,6 +677,9 @@
     "pjm_offer_midcurve_conditional": false,
     "pjm_offer_midcurve_path": null,
     "pjm_offer_midcurve_segments": null,
+    "pjm_offer_midcurve_level_segments": null,
+    "pjm_offer_midcurve_peak_segments": null,
+    "pjm_ct_measured_max_reprice": false,
     "cc_committed_hr_override": null,
     "cc_econ_hr_override": null,
     "cc_peak_hr_override": null,
@@ -725,6 +720,10 @@
         "peak": 4.576,
         "econ_low_share": 0.5,
         "pct_peaking": 8.0,
+        "phys_committed": 1.006,
+        "phys_econ_low": 0.825,
+        "phys_econ_high": 0.95,
+        "phys_peak": 2.25,
         "peak_ladder": [
           [
             0.2,
@@ -763,6 +762,10 @@
         "peak": 3.748,
         "econ_low_share": 0.5,
         "pct_peaking": 4.0,
+        "phys_committed": 0.982,
+        "phys_econ_low": 0.793,
+        "phys_econ_high": 0.941,
+        "phys_peak": 2.25,
         "peak_ladder": [
           [
             0.2,
@@ -791,7 +794,11 @@
         "econ_low": 1.1199999999999999,
         "econ_high": 1.3,
         "peak": 1.3199999999999998,
-        "econ_low_share": 0.5
+        "econ_low_share": 0.5,
+        "phys_committed": 1.556,
+        "phys_econ_low": 0.948,
+        "phys_econ_high": 0.921,
+        "phys_peak": 1.0
       },
       "CT_PEAKER": {
         "committed": 1.14,
@@ -800,6 +807,10 @@
         "peak": 13.15,
         "econ_low_share": 0.526,
         "pct_peaking": 7.0,
+        "phys_committed": 1.022,
+        "phys_econ_low": 0.723,
+        "phys_econ_high": 0.727,
+        "phys_peak": 1.0,
         "peak_ladder": [
           [
             0.2,
@@ -838,6 +849,10 @@
         "peak": 3.2,
         "econ_low_share": 0.5,
         "pct_peaking": 15.0,
+        "phys_committed": 1.36,
+        "phys_econ_low": 0.815,
+        "phys_econ_high": 0.871,
+        "phys_peak": 1.0,
         "peak_ladder": [
           [
             0.2,
@@ -878,7 +893,7 @@
       },
       "COAL_PRB": {
         "committed": 0.9099999999999999,
-        "econ_low": 0.39999999999999997,
+        "econ_low": 0.886,
         "econ_high": 1.38,
         "peak": 1.562,
         "econ_low_share": 0.556
@@ -905,6 +920,8 @@
         "econ_low_share": 0.55
       }
     },
+    "gas_offer_net_revenue_margin": true,
+    "gas_offer_margin_anchor": 2.2494,
     "offer_curve_smoothing_n": 6,
     "offer_curve_smoothing_exp": 1.0,
     "offer_curve_smoothing_mid": 0.35,
@@ -919,6 +936,7 @@
     "ercot_wtx_curtailment_driver": true,
     "ercot_wtx_curtail_depth_wind": 0.1004,
     "ercot_wtx_curtail_depth_solar": 0.1637,
+    "ercot_wind_zone_shape": false,
     "coal_supply_repricing": true,
     "coal_plant_monthly_pricing": true,
     "gas_plant_monthly_fuel_pricing": false,
@@ -947,7 +965,7 @@
     "pjm_seam_flow_percentile": null,
     "pjm_seam_export_limit": false,
     "pjm_seam_measured_ladder": false,
-    "ercot_zonal_gas_basis": true,
+    "ercot_zonal_gas_basis": false,
     "ercot_gas_delivered_floor_basis": null,
     "ercot_gas_contract_haircut": false,
     "oil_primary_bin_fuel": true,
@@ -959,11 +977,15 @@
     "gas_hub_basis_daily": false,
     "dual_fuel_oil_reattribution": false,
     "dual_fuel_switching": false,
+    "dual_fuel_oil_daily_parity": false,
     "outage_source": "historic",
+    "caiso_dam_outages": false,
+    "miso_native_outage_source": false,
     "unit_outage_short_windows": false,
     "unit_partial_outage_windows": false,
     "unit_outage_maxgen_events": false,
     "maxgen_emergency_tier_pricing": false,
+    "forecast_xyear_warmstart": false,
     "gas_price_override": 2.54
   },
   "environment": {
