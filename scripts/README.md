@@ -22,6 +22,16 @@ the calibration/forecast/hindcast programs, or governance rules. A script tied
 to one specific superseded run belongs in `archive/`; anything that fetches or
 transforms data belongs in `data/`.
 
+**Keeper rotation:** a superseded keeper's per-run scripts — its
+`gen_<run>_attestation.py`, its `run_<run>_*` driver, and any
+`<run>_*validate` helper — move to `archive/` when the ISO's next keeper
+registers (`git mv` + mechanical reference rewrite, the PR #2486 discipline;
+repo-root path math re-anchored for the extra directory level). The current
+keeper's and any in-flight run's scripts stay at top level; a rejected
+probe's scripts rotate as soon as the rejection is adjudicated. (First
+applied 2026-07-26: the miso-73 rejected-probe trio rotated; miso-72 — the
+standing keeper — and the in-flight miso-74 stayed.)
+
 ## Bootstrap & shared CLI helpers
 
 `market_sim` is always importable (editable install), but the `scripts`

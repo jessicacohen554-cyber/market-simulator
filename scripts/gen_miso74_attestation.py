@@ -120,7 +120,7 @@ NOTE_MAIN = (
     "EXPORT (Manitoba −0.38 vs block +1.96; measured −0.99), R2 passed; "
     "per-seam duration RMSE improves EVERY year (Manitoba 827/853/737 → "
     "631/636/563 MW) and hourly correlation is restored (flat block nan → "
-    "+0.67/+0.63/+0.52; scripts/miso73_perseam_validate.py vs measured "
+    "+0.67/+0.63/+0.52; scripts/archive/miso73_perseam_validate.py vs measured "
     "EIA-930). R1 held (2025 Manitoba net moved 2.34 TWh, not inert); R3 held "
     "(no import overshoot); R5 held (max LMP $214.42 < base $247.99, no "
     "fabricated scarcity). The 2 remaining fails {C3a-2025 −13.3%, C3c 0/6/1 "
