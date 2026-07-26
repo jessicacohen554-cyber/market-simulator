@@ -1476,4 +1476,106 @@ watchers. CAISO stayed single-solve-only throughout (rule 12 + the caiso-121
 note); five LP solves ran strictly sequentially.
 
 
-Next number: caiso-123.
+## caiso-123 (2026-07-26) — C3a-2025 BASIS DRIFT ATTRIBUTED (derive-first, two probe solves): it IS the CAISO outage extract, in the states caiso-122 never tested — the extract was **derived-not-committed until 07-24**, the keeper solved on a session-local **partial** derivation no full derivation regenerates, and the 07-24 backfill committed a heavier full derivation (CC_REGULAR +618/+688 MW avg removed 2024/25) that every later solve reads; same-HEAD extract A/B isolates **+1.24 % λ / CC_REGULAR −0.49 TWh / import +0.42 TWh**; the caiso-120 "guard-corrected extract" re-tune trigger is **WITHDRAWN-AS-STATED** (guard's own isolated effect −0.18 %, favourable) and re-derived onto the extract-content change; `basis_sha` governance fix landed; keeper UNCHANGED, nothing registered
+
+**Full record: `results/calibration/FINDING-caiso123-c3a-drift-attribution-2026-07-26.md`.**
+Instrument (committed): `scripts/probes/_caiso123_extract_repro.py`. Two
+single-year throwaway probe solves (rule-16 diagnostic clause, gitignored
+`results/probes/`, NOT registered — FINDING-caiso92b protocol): arm K = keeper
+recipe at HEAD with the extract pinned to the pre-backfill blob `e40847c`;
+arm C = same-HEAD control on the HEAD extract. Capacity-deliverability clean
+partition regenerated first and its load verified in both logs (the
+RESULTS-neiso65 §2 silent-degrade trap).
+
+**(1) Basis established by measurement, not metadata.** `caiso119_base_A`'s
+committed hourlies (keeper recipe, no delta, at f28340b = 2026-07-24) already
+carry the full drift (λ-2025 +1.55 %, CC_REGULAR −0.44 TWh, import
++0.41 TWh) — one day after the keeper solved. Config surface clean
+(run_config deep-diff), shared-input hashes identical. The only
+CAISO-solve-relevant data change in the window: `campd-unit-outages-CAISO.csv`,
+**created 07-24** (PR #2842, light partial 4,497 rows, blob `e40847c`) then
+**"re-derived in full" on owner instruction** (PR #2844, +642 rows — ALL
+2023–25 windows, 504 CC_REGULAR, 1 % overlap = genuinely new detections;
+5,139 rows, blob `3dc01fae`), then guard-split 07-26 (4,329 rows).
+
+**(2) The load-bearing discovery.** Before 07-24 the unit-outage extracts
+were DERIVED-NOT-COMMITTED — no `campd-unit-outages*.csv` main extract exists
+anywhere in the keeper's merged tree (`2895bbe75`), for any ISO. The keeper's
+overlay (caiso-122's r=0.99343 refutation stands — it was present) came from
+its own container's derivation, whose bytes died with the container. That
+derivation was PARTIAL: the keeper-era script re-run on byte-identical raw
+reproduces the FULL detection (in-window mass = `3dc01fae` to 0.1 MW), which
+the keeper's λ sits +1.60 % away from. The keeper's envelope is
+e40847c-class (CC_CHP hourly MAD **2.4 MW** vs arm K, 16.4 MW vs the heavy
+arm) — and **no full derivation, old script or new, guard on or off,
+regenerates an envelope that light**. The keeper's C3a-2025 PASS rests on a
+non-reproducible input state (rule 13 `[R-MEASURED]` reproducibility
+failure baked into the committed keeper).
+
+**(3) The ladder and the confirm.** λ-2025 strictly monotone in in-window
+derate mass across seven solved states: absent 36.48 < arm K (e40847c)
+37.73 (−0.24 % vs keeper, ≈C3a +9.7 pass-class) < **keeper 37.82** < arm C
+(HEAD guard) 38.20 (+1.00 %, ≈C3a +11.1 FAIL) < base_A/full 38.41–38.63
+(+1.4…+1.6 %). Same-HEAD extract isolation (C − K): **+1.24 % λ,
+CC_REGULAR −0.49 TWh, import +0.42 TWh** — the drift's signature, from the
+extract content alone.
+
+**(4) TASK-1 SETTLEMENT — the caiso-120 ⇄ caiso-122 contradiction.** Both
+sessions measured correctly and attributed wrongly: caiso-120's A0/A1
+(+10.0→+11.1 %) compared the keeper's light-partial-envelope bytes against
+the committed FULL envelope — the "A0 = keeper by construction" method note
+held for the guard *flag*, not the extract *file*, which #2842/#2844 had
+replaced two days before the guard landed. caiso-122's −0.18 % correctly
+isolated the guard step alone. **The charter-§5 CAISO "RE-TUNE REQUIRED"
+trigger is WITHDRAWN AS STATED** (the guard adoption per se moved CAISO
+*toward* passing) **and RE-DERIVED**: the keeper's C3a-2025 PASS was
+calibrated against a non-reproducible partial envelope; on any honest full
+derivation it fails by ~+1.1 pp (rule-11 class: the light envelope was
+silently compensating). Charter lane notified (governance.md 2026-07-26
+entry; RESULTS-neiso65 §6.2 corrected in place — it cited caiso-122's
+refuted first revision). NYISO's re-audit cell is unaffected (#2842/#2844
+touched only the CAISO extract). **Do NOT re-tune on the confounded
+A0-vs-A1 number.**
+
+**(5) Residual flagged, not chased.** A second, smaller basis motion since
+de62eb1 (~−0.2…−0.5 pp λ, CC_REGULAR ≈ −0.8 / import ≈ +0.8 TWh common to
+both arms; direction helps C3a, worsens C5a-volumes). Candidates: the
+de62eb1..HEAD 16-file src window (miso-91 SUMMER_* re-home verified
+value-identical; renewables itertuples refactor MISO/forecast-scoped;
+scenarios/bounds/runner diffs nominally other-ISO), earlier sessions'
+container/partition state (their arms are uncommitted and gone), vertex
+wander. Open, with `basis_sha` anchors now available.
+
+**(6) Rules 1/13/14 guardrail, stated for the record.** Restoring a light
+extract to recover the keeper's C3a PASS is forbidden — the light envelope
+is an accident of an incomplete derivation, not a derivable state of the
+measured input. The honest envelope is the full derivation; its absolute
+level is the open over-count question (freeze ACTIVE, neiso-66). Whether
+CAISO re-tunes offers against a disputed input or waits on the freeze lane
+is an owner/charter sequencing call. Nothing armed this session.
+
+**(7) Governance closure (the reason task 2 was hard).** `basis_sha` —
+`merge-base(HEAD, origin/main)`, the newest origin-durable ancestor of the
+solving tree — is now stamped fresh at every bundle write
+(`run_calibration_full.solve_and_persist` meta + `run_config.git`);
+`replay_keeper` ignores it on input (STRICT mapper) and never restores it
+(factored `_restore_display_date` rewrites only the timestamp's date
+prefix, preserving the dashboard run id). `tests/test_basis_sha_provenance.py`
+pins the contract (8/8 pass; the 8 pre-existing HEAD failures in
+`test_pipeline_facade_shims`/`test_flag_registry` reproduce at pristine
+HEAD and are unrelated). RECOMMENDED next: extend `shared_inputs`
+content-hashing to the derived outage extracts so a bundle pins the exact
+extract bytes it solved on.
+
+**DO-NOT-REDO (new):** re-solving the extract states (the seven-state
+ladder is complete: absent / e40847c / keeper / guard / full, plus the two
+de62eb1 arms); recovering the keeper's exact extract bytes (unrecoverable —
+derived-not-committed, session-local, bracketed by measurement); any
+light-extract restoration as a fix path.
+
+**Open items carried:** min-load 0.570 promotion (owner call, caiso-122
+§6); belly delta (family selected caiso-121, ARMING IS AN OWNER ASK,
+caiso-120 regime-conditional gates, rule-22 LOYO); the §5 residual; the
+charter-lane re-tune-vs-freeze sequencing decision.
+
+Next number: caiso-124.
