@@ -107,4 +107,10 @@ dev = [
     "tzdata>=2024.1",
     # Parallel test lane: `pytest -n auto` (fast tier). See docs test lanes.
     "pytest-xdist>=3.5",
+    # scripts/data/fetch_ny_harbor_distillate_daily.py reads the EIA dnav daily
+    # petroleum series, which EIA serves ONLY as a legacy .xls workbook (the
+    # .csv sibling 404s, the HTML LeafHandler redirects). openpyxl cannot read
+    # BIFF; xlrd 2.x reads .xls exclusively. Tooling-only — the model runtime
+    # never touches it.
+    "xlrd>=2.0",
 ]

@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-26-nyiso-78-oil-daily",
+  "label": "nyiso 78 oil daily",
+  "date": "2026-07-26",
+  "shorthand": "nyiso-78-oil-daily",
+  "definition": "(PROBE \u2014 attribution arm, not promoted) nyiso-76 P2 ALONE: the daily-resolution dual-fuel oil-parity cap. The measured EIA-923 monthly delivered petroleum receipt is shaped mean-preservingly by the measured EIA daily NY Harbor ULSD spot (data/raw/oil-prices/ny_harbor_ulsd_daily.csv), so the cap is no longer a flat monthly plateau while the gas side of the same min() is already daily. Mechanism fires as designed \u2014 320 gas tranches / 16.5 GW capped, Jan-2025 polar-vortex days lift the cap +5.8% and the mild first week falls -5.1%, per-month means preserved to 1e-12. This is the ONLY live effect this lane produced, and it is small: against the control, 2025 C3a -12.2% -> -12.0%, C3b 0.208 -> 0.206, p99 $165 -> $169, Jan-2025 -18.5% -> -17.4%, and the >$300 tail stays 9h against an actual 42h. NEGATIVE RESULT: distillate is a globally-traded commodity whose intra-month swing is only +/-5%, so the flat oil-parity cap is NOT the winter root cause the overrun/underrun handoff proposed \u2014 that candidate is closed. See docs/FINDING-nyiso-ordc-span-reliability-floor-2026-07-26.md section 2.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-26-nyiso-78-oil-daily.js",
+  "bundle": "results/calibration/nyiso76_oildaily"
+}

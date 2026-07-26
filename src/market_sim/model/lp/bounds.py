@@ -237,18 +237,29 @@ def build_variable_bounds(
 
     # ORDC shortfall steps S_k[t]: 0 <= S_k <= step width (MW). Each step's
     # width is the MW span the published demand curve prices at that penalty.
+    # Widths are static ``(n_ordc_steps,)`` on every published-curve design, or
+    # HOURLY ``(n_ordc_steps, T)`` where the demand curve translates with an
+    # hour-varying requirement (NYISO nyiso_ordc_measured_step_span: the curve
+    # keeps its published shape but spans the measured as-enforced requirement
+    # of the hour, so the widths — the only part of the curve that carries the
+    # level, the RCPF penalties being requirement-independent — vary by hour).
     if layout.n_ordc_steps > 0:
         if ordc_step_widths is None:
             raise ValueError(
                 "build_variable_bounds: n_ordc_steps > 0 requires ordc_step_widths"
             )
         widths = np.asarray(ordc_step_widths, dtype=float)
-        if widths.shape != (layout.n_ordc_steps,):
+        if widths.shape == (layout.n_ordc_steps,):
+            wid_hourly = widths[np.newaxis, :]
+        elif widths.shape == (layout.n_ordc_steps, layout.T):
+            wid_hourly = widths.T
+        else:
             raise ValueError(
-                f"ordc_step_widths shape {widths.shape} != ({layout.n_ordc_steps},)"
+                f"ordc_step_widths shape {widths.shape} != "
+                f"({layout.n_ordc_steps},) or ({layout.n_ordc_steps}, {layout.T})"
             )
         col_upper[:, layout._ordc_off : layout._ordc_off + layout.n_ordc_steps] = (
-            widths[np.newaxis, :]
+            wid_hourly
         )
 
     # Commitment-posture columns: 0 ≤ U[p,t] ≤ pool available capacity (the

@@ -293,9 +293,12 @@ from .plant_prices import (
     load_oil_burn_budget,
 )
 from .dual_fuel import (
+    NY_HARBOR_ULSD_DAILY_PATH,
+    _ny_harbor_ulsd_daily_dated as _ny_harbor_ulsd_daily_dated,
     apply_dual_fuel_pricing,
     dual_fuel_oil_price_series,
     dual_fuel_switch_mask,
+    oil_daily_shape_factors,
 )
 from .coal import (
     COAL_PRICE_LIGNITE_BY_YEAR,
@@ -415,9 +418,11 @@ __all__ = [
     "iso_monthly_oil_prices",
     "load_oil_burn_budget",
     # dual_fuel
+    "NY_HARBOR_ULSD_DAILY_PATH",
     "apply_dual_fuel_pricing",
     "dual_fuel_oil_price_series",
     "dual_fuel_switch_mask",
+    "oil_daily_shape_factors",
     # coal
     "COAL_PRICE_LIGNITE_BY_YEAR",
     "COAL_PRICE_PRB_BY_YEAR",
