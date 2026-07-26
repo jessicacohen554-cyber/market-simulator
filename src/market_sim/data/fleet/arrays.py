@@ -19,6 +19,8 @@ from market_sim.config.constants import (
     NUCLEAR_DORMANT_UNTIL,
     NUCLEAR_MONTHLY_CF,
     NUCLEAR_MONTHLY_CF_BY_YEAR,
+    SUMMER_CLASS_DERATE,
+    SUMMER_WEFOR_SHARE,
     THERMAL_AVAILABILITY,
 )
 from market_sim.config.paths import CAMPD_BINS_CSV
@@ -161,21 +163,20 @@ CAISO_CHP_CC_STEAM_CREDIT_HR_FLOOR: float = 6.3
 # root cause is) and the physics correction is left off until that is addressed.
 CHP_STEAM_CREDIT_HR_CORRECTION_ISOS: frozenset[str] = frozenset({"CAISO", "PJM"})
 
-# Fraction of a unit's WEFOR (forced-outage rate) that applies during the
-# summer peak; the remaining (1 - share) is redistributed into the shoulder
-# months. Winter keeps the flat WEFOR.
-_SUMMER_WEFOR_SHARE: float = 0.30
-
-# Additional summer (Jun-Sep) capacity derate by plant group, modeling the
-# ambient-temperature output loss gas turbines suffer in the heat (worse for
-# simple-cycle CTs than combined-cycle). Applied on top of the age-based
-# availability for these classes only; coal and gas steam are unaffected.
-_SUMMER_CLASS_DERATE: dict[str, float] = {
-    "CC_REGULAR": 0.10,
-    "CC_CHP": 0.10,
-    "CT_PEAKER": 0.125,
-    "CT_CHP": 0.125,
-}
+# The summer WEFOR reallocation share and the per-class summer ambient derate
+# were RE-HOMED to config/fuel_trajectories.py (miso-91, 2026-07-26), beside
+# the THERMAL_AVAILABILITY table they modify, so that
+# scripts/validate_parameters.py covers them (it scans only vars(constants) +
+# ScenarioConfig defaults, skipping private/non-uppercase names, so private
+# literals here were invisible to it — CLAUDE.md rule 20 [R-REGISTRY]).
+# Values are unchanged; see those definitions for provenance, the recorded
+# physics tension, and the standing prohibition on re-tuning them.
+#
+# The private aliases below are the module-local names the availability builder
+# and its tests use; keeping them means the seasonal-availability code and the
+# fleet package's re-export contract are untouched by the move.
+_SUMMER_WEFOR_SHARE: float = SUMMER_WEFOR_SHARE
+_SUMMER_CLASS_DERATE: dict[str, float] = SUMMER_CLASS_DERATE
 
 # Non-coal thermal classes whose statistical planned-outage factor (POF) is
 # dropped in the historic backcast (gated on config.coal_drop_pof): their

@@ -145,6 +145,8 @@ from market_sim.config.fuel_trajectories import (
     PRB_RAIL_DIESEL_SHARE,
     PRB_RAIL_NONDIESEL_SHARE,
     STATE_CARBON_PRICE_BY_ISO,
+    SUMMER_CLASS_DERATE,
+    SUMMER_WEFOR_SHARE,
     THERMAL_AVAILABILITY,
 )
 
