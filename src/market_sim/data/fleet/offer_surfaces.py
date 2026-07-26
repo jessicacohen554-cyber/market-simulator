@@ -554,55 +554,67 @@ _PJM_MIDCURVE_SEGMENT_OF = {
 }
 
 
-def build_pjm_offer_midcurve_conditional_markup(
+class _PjmMidcurveContext(NamedTuple):
+    """Everything the PJM mid-curve surface needs to price one row.
+
+    Built once by :func:`_pjm_midcurve_context` and shared by the mid-curve
+    floor/level markup and the CT_FAST max()-seam target, so the two read the
+    SAME frozen surface, the SAME net-load binning and the SAME within-plant
+    capacity-share ladder (a divergence between them would be an invisible
+    second mechanism, rule 19).
+
+    Attributes:
+        hour_bin: ``(T,)`` within-year net-load percentile bin of each hour.
+        gas_day: ``(T,)`` delivered-gas day series (HH daily + PJM basis).
+        shares: ``(n_shares,)`` capacity-share grid the ladders are keyed on.
+        n_bins: Number of net-load bins the surface carries.
+        tables: ``segment -> (n_bins, n_shares)`` multiplier tables.
+        rows: One ``(g, share, suffix, segment)`` per mapped fleet row, the
+            share being the row's within-plant cumulative-capacity midpoint.
+        voll_cap: The absolute price ceiling any target is clamped to.
+        year_tables: The loaded segments whose ladders came from the delivery
+            year's own table rather than the pooled fallback (log provenance).
+    """
+
+    hour_bin: np.ndarray
+    gas_day: np.ndarray
+    shares: np.ndarray
+    n_bins: int
+    tables: dict[str, np.ndarray]
+    rows: list[tuple[int, float, str, str]]
+    voll_cap: float
+    year_tables: frozenset[str]
+
+
+def _pjm_midcurve_context(
     fleet_arrays: "FleetArrays",
     generators: list[Generator],
     mc_base: np.ndarray,
     net_load_mw: np.ndarray,
     config: ScenarioConfig,
     year: int,
-) -> "np.ndarray | None":
-    """Build the PJM P1-only MID-CURVE offer-floor markup ``(n_gen, T)``.
+    segments: set[str],
+) -> "_PjmMidcurveContext":
+    """Load the frozen PJM mid-curve surface and place every fleet row on it.
 
-    G-22 lever A' (``ScenarioConfig.pjm_offer_midcurve_conditional``): the
-    pjm-99 probe proved the measured TOP-of-curve surface is inert in PJM —
-    the dual is capped by the ~21 GW idle mid-curve (COAL / CT_PEAKER /
-    ST_GAS / CC econ bands) offered at $28-45 where the measured fleet
-    prices the same curve region $35-83+, and the depth sweep showed +10 GW
-    of procurement depth buys only +$2-4/MWh on that too-cheap body. This
-    mechanism floors each targeted econ-tranche row's P1 bid at the
-    MEASURED capacity-share-matched offer level of its physics segment
-    (``scripts/data/derive_pjm_offer_midcurve.py``):
+    Args:
+        fleet_arrays: The vectorized fleet (``pmax`` sizes the share ladder).
+        generators: The dispatch fleet, aligned row-for-row with ``mc_base``.
+        mc_base: ``(n_gen, T)`` base marginal cost — its annual mean orders
+            each plant's tranches into the rising curve the share reads off.
+        net_load_mw: ``(T,)`` LP-served net load, the surface's conditioning
+            driver.
+        config: ScenarioConfig — supplies ``pjm_offer_midcurve_path``/``voll``.
+        year: Delivery year (selects the surface's year table, pooled
+            fallback for an unmapped/forward year).
+        segments: Which measured segments' multiplier tables to load.
 
-        target[g, t] = mult(segment, year, bin(t), share_g) x gas_day(t)
-        markup[g, t] = max(0, min(target, 0.95 x VOLL) - mc_base[g, t])
+    Returns:
+        The populated :class:`_PjmMidcurveContext`.
 
-    * ``share_g`` is the row's WITHIN-PLANT cumulative-capacity midpoint
-      (scale-free — immune to the model-fleet vs measured-segment capacity
-      mismatch), read off the model's own tranche structure ordered by
-      base cost.
-    * Targeted rows: the econ tranches (``econ*`` suffixes) of the mapped
-      classes, plus the LONG_RUN classes' ``peak`` tranche (CC/CT peak
-      rungs stay owned by the pjm-99 top-of-curve surface — one mechanism
-      per row, rule 19). Committed / must-run / sync tranches are never
-      touched (their pricing is owned by the coal take-or-pay/passthrough
-      sigmoids and the commitment scaffolding).
-    * P1-only (the ``mc_bid_adjust`` seam): P0 run lengths and the startup
-      amortization coupling are unperturbed — the pjm-99 finding's explicit
-      caution for econ-band repricing (the rejected ERCOT flat-CT
-      precedent).
-    * The floor only ever RAISES a bid to the measured level (max(0, .)),
-      mirroring the top-of-curve surface's ratio >= 1 clamp, and is capped
-      below VOLL so no tranche ties the load-shed slack.
-
-    Measured OFFER prices are the input; clearing prices stay
-    validation-only (rule 13); the surface JSON is frozen against
-    residuals (rule 20). PJM-only, no cross-ISO fallback (rule 25).
+    Raises:
+        ValueError: The surface JSON carries no bin edges / share grid.
     """
-    if not getattr(config, "pjm_offer_midcurve_conditional", False):
-        return None
-    if config.iso != "PJM":
-        return None
     path = getattr(config, "pjm_offer_midcurve_path", None)
     if not path:
         from market_sim.config import paths as _paths
@@ -636,6 +648,142 @@ def build_pjm_offer_midcurve_conditional_markup(
     hour_days = pd.date_range(f"{year}-01-01", periods=hours, freq="h").normalize()
     gas_day = daily.reindex(hour_days).ffill().bfill().to_numpy(dtype=float)  # (T,)
 
+    # Per-segment (n_bins, n_shares) mult tables for this delivery year
+    # (pooled fallback for an unmapped year, e.g. a forward year).
+    tables: dict[str, np.ndarray] = {}
+    year_tables: set[str] = set()
+    for seg in set(_PJM_MIDCURVE_SEGMENT_OF.values()) & segments:
+        entry = surface.get(seg)
+        if not entry:
+            continue
+        own_year = entry.get("years", {}).get(str(year))
+        ladders = own_year or entry.get("pooled")
+        if not ladders or len(ladders) != n_bins:
+            continue
+        tables[seg] = np.array(
+            [[float(pt[1]) for pt in lad] for lad in ladders], dtype=float
+        )  # (n_bins, n_shares)
+        if own_year:
+            year_tables.add(seg)
+
+    # Target rows + within-plant shares. A plant key is the unit_id prefix
+    # (everything before the tranche suffix); the share base is EVERY
+    # tranche of the plant ordered by its annual-mean base cost, so the
+    # model's own rising tranche curve defines each row's curve position.
+    prefixes: dict[str, list[int]] = {}
+    row_cls: dict[int, str] = {}
+    for g, gen in enumerate(generators):
+        cls = getattr(gen, "plant_group", None) or ""
+        if cls not in _PJM_MIDCURVE_SEGMENT_OF:
+            continue
+        prefixes.setdefault(gen.unit_id.rpartition("_")[0], []).append(g)
+        row_cls[g] = cls
+
+    pmax = fleet_arrays.pmax
+    mean_mc = mc_base.mean(axis=1)
+    rows: list[tuple[int, float, str, str]] = []
+    for plant_rows in prefixes.values():
+        rows_arr = np.asarray(plant_rows, dtype=int)
+        order = rows_arr[np.argsort(mean_mc[rows_arr], kind="stable")]
+        caps = pmax[order]
+        total = caps.sum()
+        if total <= 0.0:
+            continue
+        cum = np.cumsum(caps)
+        mids = (cum - 0.5 * caps) / total  # within-plant share midpoints
+        for g, s_g in zip(order, mids):
+            sfx = generators[g].unit_id.rpartition("_")[2]
+            rows.append((int(g), float(s_g), sfx, _PJM_MIDCURVE_SEGMENT_OF[row_cls[g]]))
+
+    return _PjmMidcurveContext(
+        hour_bin=hour_bin,
+        gas_day=gas_day,
+        shares=shares,
+        n_bins=n_bins,
+        tables=tables,
+        rows=rows,
+        voll_cap=0.95 * float(getattr(config, "voll", 5000.0)),
+        year_tables=frozenset(year_tables),
+    )
+
+
+def _pjm_midcurve_row_target(
+    ctx: "_PjmMidcurveContext", segment: str, share: float
+) -> np.ndarray:
+    """Return the ``(T,)`` measured offer level for one row of ``segment``.
+
+    The row's within-plant capacity ``share`` is interpolated on the measured
+    ladder of each net-load bin, mapped onto the hour's bin and multiplied by
+    that hour's delivered gas price, then clamped below VOLL. Hours whose bin
+    ladder carries a non-finite entry come back NaN (no measured coverage).
+    """
+    table = ctx.tables[segment]  # (n_bins, n_shares)
+    mult_b = np.array(
+        [
+            np.interp(share, ctx.shares, table[b])
+            if np.isfinite(table[b]).all()
+            else np.nan
+            for b in range(ctx.n_bins)
+        ]
+    )
+    return np.minimum(mult_b[ctx.hour_bin] * ctx.gas_day, ctx.voll_cap)
+
+
+def build_pjm_offer_midcurve_conditional_markup(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    mc_base: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+    year: int,
+) -> "np.ndarray | None":
+    """Build the PJM P1-only MID-CURVE offer-floor markup ``(n_gen, T)``.
+
+    G-22 lever A' (``ScenarioConfig.pjm_offer_midcurve_conditional``): the
+    pjm-99 probe proved the measured TOP-of-curve surface is inert in PJM —
+    the dual is capped by the ~21 GW idle mid-curve (COAL / CT_PEAKER /
+    ST_GAS / CC econ bands) offered at $28-45 where the measured fleet
+    prices the same curve region $35-83+, and the depth sweep showed +10 GW
+    of procurement depth buys only +$2-4/MWh on that too-cheap body. This
+    mechanism floors each targeted econ-tranche row's P1 bid at the
+    MEASURED capacity-share-matched offer level of its physics segment
+    (``scripts/data/derive_pjm_offer_midcurve.py``):
+
+        target[g, t] = mult(segment, year, bin(t), share_g) x gas_day(t)
+        markup[g, t] = max(0, min(target, 0.95 x VOLL) - mc_base[g, t])
+
+    * ``share_g`` is the row's WITHIN-PLANT cumulative-capacity midpoint
+      (scale-free — immune to the model-fleet vs measured-segment capacity
+      mismatch), read off the model's own tranche structure ordered by
+      base cost.
+    * Targeted rows: the econ tranches (``econ*`` suffixes) of the mapped
+      classes, plus the LONG_RUN classes' ``peak`` tranche (CC/CT peak
+      rungs stay owned by the pjm-99 top-of-curve surface — one mechanism
+      per row, rule 19). Committed / must-run / sync tranches are never
+      touched (their pricing is owned by the coal take-or-pay/passthrough
+      sigmoids and the commitment scaffolding).
+      ``ScenarioConfig.pjm_offer_midcurve_peak_segments`` (default off)
+      extends the targeting to a listed segment's own ``peak*`` rungs, in
+      LEVEL form — the measured top belt REPLACES the fitted rung there,
+      which a raise-only floor cannot do. Config validation rejects arming
+      it together with the top-of-curve surface (same rows, summed markups).
+    * P1-only (the ``mc_bid_adjust`` seam): P0 run lengths and the startup
+      amortization coupling are unperturbed — the pjm-99 finding's explicit
+      caution for econ-band repricing (the rejected ERCOT flat-CT
+      precedent).
+    * The floor only ever RAISES a bid to the measured level (max(0, .)),
+      mirroring the top-of-curve surface's ratio >= 1 clamp, and is capped
+      below VOLL so no tranche ties the load-shed slack.
+
+    Measured OFFER prices are the input; clearing prices stay
+    validation-only (rule 13); the surface JSON is frozen against
+    residuals (rule 20). PJM-only, no cross-ISO fallback (rule 25).
+    """
+    if not getattr(config, "pjm_offer_midcurve_conditional", False):
+        return None
+    if config.iso != "PJM":
+        return None
+
     # Optional measured-segment scope (ScenarioConfig.pjm_offer_midcurve_segments):
     # None floors every mapped segment (pjm-101/102, byte-identical); a tuple
     # restricts the floor to those segments so another mechanism can own the
@@ -654,82 +802,46 @@ def build_pjm_offer_midcurve_conditional_markup(
     # segment outside ``scoped`` is never priced by either form (rule 19).
     lvl_cfg = getattr(config, "pjm_offer_midcurve_level_segments", None)
     level_scope = {str(s) for s in lvl_cfg} & scoped if lvl_cfg else set()
+    # PEAK-row scope (ScenarioConfig.pjm_offer_midcurve_peak_segments, default
+    # off): extends the targeting to the segment's ``peak*`` rungs, which the
+    # base predicate excludes for every segment but LONG_RUN. Those rows are
+    # ALWAYS priced in level form — the measured top belt exists precisely to
+    # replace a fitted rung sitting above it, which a floor can never do
+    # (pjm-122 §3). Intersected with the floor scope like the level scope.
+    peak_cfg = getattr(config, "pjm_offer_midcurve_peak_segments", None)
+    peak_scope = {str(s) for s in peak_cfg} & scoped if peak_cfg else set()
 
-    # Per-segment (n_bins, n_shares) mult tables for this delivery year
-    # (pooled fallback for an unmapped year, e.g. a forward year).
-    tables: dict[str, np.ndarray] = {}
-    for seg in set(_PJM_MIDCURVE_SEGMENT_OF.values()) & scoped:
-        entry = surface.get(seg)
-        if not entry:
-            continue
-        ladders = entry.get("years", {}).get(str(year)) or entry.get("pooled")
-        if not ladders or len(ladders) != n_bins:
-            continue
-        tables[seg] = np.array(
-            [[float(pt[1]) for pt in lad] for lad in ladders], dtype=float
-        )  # (n_bins, n_shares)
+    ctx = _pjm_midcurve_context(
+        fleet_arrays, generators, mc_base, net_load_mw, config, year, scoped
+    )
+    hour_bin, n_bins, tables = ctx.hour_bin, ctx.n_bins, ctx.tables
 
-    # Target rows + within-plant shares. A plant key is the unit_id prefix
-    # (everything before the tranche suffix); the share base is EVERY
-    # tranche of the plant ordered by its annual-mean base cost, so the
-    # model's own rising tranche curve defines each row's curve position.
-    prefixes: dict[str, list[int]] = {}
-    row_cls: dict[int, str] = {}
-    for g, gen in enumerate(generators):
-        cls = getattr(gen, "plant_group", None) or ""
-        if cls not in _PJM_MIDCURVE_SEGMENT_OF:
-            continue
-        prefixes.setdefault(gen.unit_id.rpartition("_")[0], []).append(g)
-        row_cls[g] = cls
-
-    pmax = fleet_arrays.pmax
-    voll_cap = 0.95 * float(getattr(config, "voll", 5000.0))
     markup = np.zeros_like(mc_base)
     n_priced = 0
-    mean_mc = mc_base.mean(axis=1)
-    for rows in prefixes.values():
-        rows_arr = np.asarray(rows, dtype=int)
-        order = rows_arr[np.argsort(mean_mc[rows_arr], kind="stable")]
-        caps = pmax[order]
-        total = caps.sum()
-        if total <= 0.0:
+    for g, s_g, sfx, seg in ctx.rows:
+        is_peak_row = sfx.startswith("peak")
+        peak_targeted = is_peak_row and seg in peak_scope
+        is_target = (
+            sfx.startswith("econ") or (sfx == "peak" and seg == "LONG_RUN")
+        ) or peak_targeted
+        if not is_target or seg not in tables:
             continue
-        cum = np.cumsum(caps)
-        mids = (cum - 0.5 * caps) / total  # within-plant share midpoints
-        for g, s_g in zip(order, mids):
-            gen = generators[g]
-            sfx = gen.unit_id.rpartition("_")[2]
-            seg = _PJM_MIDCURVE_SEGMENT_OF[row_cls[g]]
-            is_target = sfx.startswith("econ") or (sfx == "peak" and seg == "LONG_RUN")
-            if not is_target or seg not in tables:
-                continue
-            # mult per bin at this row's share (linear interp on the grid).
-            table = tables[seg]  # (n_bins, n_shares)
-            mult_b = np.array(
-                [
-                    np.interp(s_g, shares, table[b])
-                    if np.isfinite(table[b]).all()
-                    else np.nan
-                    for b in range(n_bins)
-                ]
+        target = _pjm_midcurve_row_target(ctx, seg, s_g)  # (T,)
+        if seg in level_scope or peak_targeted:
+            # LEVEL form: the bid IS the measured target (clamped >= 0,
+            # VOLL-capped above) — a signed markup that may lower the
+            # fitted band. Hours with no measured coverage (NaN target)
+            # stay unpriced, matching the floor form's no-op there.
+            row = np.where(
+                np.isfinite(target),
+                np.maximum(target, 0.0) - mc_base[g, :],
+                0.0,
             )
-            target = mult_b[hour_bin] * gas_day  # (T,)
-            target = np.minimum(target, voll_cap)
-            if seg in level_scope:
-                # LEVEL form: the bid IS the measured target (clamped >= 0,
-                # VOLL-capped above) — a signed markup that may lower the
-                # fitted band. Hours with no measured coverage (NaN target)
-                # stay unpriced, matching the floor form's no-op there.
-                row = np.where(
-                    np.isfinite(target),
-                    np.maximum(target, 0.0) - mc_base[g, :],
-                    0.0,
-                )
-            else:
-                row = np.maximum(0.0, np.nan_to_num(target, nan=0.0) - mc_base[g, :])
-            if row.any():
-                markup[g, :] = row
-                n_priced += 1
+        else:
+            row = np.maximum(0.0, np.nan_to_num(target, nan=0.0) - mc_base[g, :])
+        if row.any():
+            markup[g, :] = row
+            n_priced += 1
 
     # != (not >) so an all-lowering LEVEL-only scope is not discarded; for the
     # floor form the two tests are equivalent (markup >= 0 by construction).
@@ -737,18 +849,103 @@ def build_pjm_offer_midcurve_conditional_markup(
         return None
     tight = int((hour_bin >= n_bins - 1).sum())
     logger.info(
-        "PJM mid-curve offer surface: floored %d econ/long-run tranche rows "
+        "PJM mid-curve offer surface: priced %d econ/long-run tranche rows "
         "at the measured capacity-share offer level (%d net-load bins, "
-        "tightest bin %d/%d hours, year table %s); P1-only",
+        "tightest bin %d/%d hours, year table %s, level scope %s, peak scope "
+        "%s); P1-only",
         n_priced,
         n_bins,
         tight,
-        hours,
-        str(year)
-        if any(str(year) in (surface.get(s, {}).get("years", {})) for s in tables)
-        else "pooled",
+        int(mc_base.shape[1]),
+        str(year) if ctx.year_tables else "pooled",
+        sorted(level_scope) or "-",
+        sorted(peak_scope) or "-",
     )
     return markup
+
+
+def build_pjm_ct_measured_max_target(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    mc_base: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+    year: int,
+) -> "np.ndarray | None":
+    """Build the PJM CT_FAST measured max()-seam bid TARGET ``(n_gen, T)``.
+
+    ``ScenarioConfig.pjm_ct_measured_max_reprice`` (default off, PJM-gated).
+    The measured CT_FAST corpus prices the fast-start ladder at 22.5-39.6 x
+    delivered gas — $96-174 at 2025 tight-strata gas — against a model
+    marginal CT bid of $47-80, a too-cheap idle mid-merit shelf that pins the
+    dual where the market cleared far higher (pjm-121 §3, pjm-122 §3).
+
+    The returned array is a bid **LEVEL**, not a markup: the pipeline applies
+    it as ``mc_bid = max(mc_bid, target)`` at the ``p1_bid_max_target`` seam,
+    AFTER the startup amortization and every additive bid adjustment. That is
+    the whole point of the mechanism. pjm-101/102 armed the same measured
+    level as a FLOOR against ``mc_base`` alone and it over-expressed (CT -12
+    TWh, C3a +12 %) because the CT stack is already owned by the pjm-103
+    start-cost amortization and the two markups SUMMED. Here the measured
+    level and the amortization are reconciled rather than stacked (rule 19):
+    whichever prices the row higher owns it, and the measured level binds only
+    where the model is cheaper than the corpus.
+
+    Targeted rows are the CT_FAST-mapped classes' ``econ*`` and ``peak*``
+    tranches — the idle shelf plus the top of the CT curve. Committed /
+    must-run / sync rungs are never touched (commitment scaffolding, rule 19).
+    Rows and hours with no measured coverage come back 0.0 (no-op under the
+    max()). Measured OFFER prices are the input; clearing prices stay
+    validation-only (rule 13); the surface JSON is frozen against residuals
+    (rule 20). PJM-only, no cross-ISO fallback (rule 25).
+
+    Args:
+        fleet_arrays: The vectorized fleet the LP consumes.
+        generators: The dispatch fleet, aligned row-for-row with ``mc_base``.
+        mc_base: ``(n_gen, T)`` base marginal cost (shape + curve ordering).
+        net_load_mw: ``(T,)`` LP-served net load, the conditioning driver.
+        config: ScenarioConfig carrying the gate and the surface path.
+        year: Delivery year (selects the surface's year table).
+
+    Returns:
+        The ``(n_gen, T)`` target level array, or ``None`` when the gate is
+        off, the ISO is not PJM, or no row resolved a measured level.
+    """
+    if not getattr(config, "pjm_ct_measured_max_reprice", False):
+        return None
+    if config.iso != "PJM":
+        return None
+
+    ctx = _pjm_midcurve_context(
+        fleet_arrays, generators, mc_base, net_load_mw, config, year, {"CT_FAST"}
+    )
+    if "CT_FAST" not in ctx.tables:
+        return None
+
+    target = np.zeros_like(mc_base)
+    n_priced = 0
+    for g, s_g, sfx, seg in ctx.rows:
+        if seg != "CT_FAST" or not (sfx.startswith("econ") or sfx.startswith("peak")):
+            continue
+        row = _pjm_midcurve_row_target(ctx, "CT_FAST", s_g)  # (T,)
+        # An uncovered hour must be a max() no-op, so NaN -> 0.0 (never a
+        # negative level, which would clamp the bid downward).
+        row = np.maximum(0.0, np.nan_to_num(row, nan=0.0))
+        if row.any():
+            target[g, :] = row
+            n_priced += 1
+
+    if n_priced == 0:
+        return None
+    logger.info(
+        "PJM CT_FAST measured max()-seam reprice: %d CT econ/peak tranche rows "
+        "carry a measured target level (%d net-load bins, year table %s); "
+        "P1-only, applied as max(bid, target) after the startup amortization",
+        n_priced,
+        ctx.n_bins,
+        str(year) if ctx.year_tables else "pooled",
+    )
+    return target
 
 
 #: Model plant_group -> measured class key of the ERCOT mid-curve surface

@@ -68,7 +68,11 @@ from market_sim.pipeline.persist import write_run_config
 from market_sim.pipeline.prior import PriorYearResults
 from market_sim.pipeline.reference import henry_hub_actual, load_reference
 from market_sim.pipeline.result import YearSolveResult
-from market_sim.pipeline.solve import EnergySolveResult, run_energy_solve
+from market_sim.pipeline.solve import (
+    EnergySolveResult,
+    apply_bid_max_target,
+    run_energy_solve,
+)
 from market_sim.pipeline.spec import UNSET, DispatchSpec, ReserveSpec
 from market_sim.pipeline.ttc import (
     apply_iso_monthly_ttc,
@@ -90,6 +94,7 @@ __all__ = [
     "build_base_dispatch_kwargs",
     "apply_reserve_coopt",
     "apply_ercot_commitment_posture",
+    "apply_bid_max_target",
     "run_energy_solve",
     "run_commitment_pass",
     "build_caiso_ra_p1_prep",

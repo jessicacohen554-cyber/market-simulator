@@ -1,0 +1,266 @@
+{
+ "bundle": "results/calibration/pjm121_ccbelt",
+ "year": 2024,
+ "rows_touchable": 1577,
+ "gw_touchable": 78.92911621887565,
+ "endpoints": {
+  "lo": {
+   "arms": {
+    "A_keeper": {
+     "mw_wtd_delta_touched": {
+      "bin0": 0.0,
+      "bin1": 0.0,
+      "bin2": 0.0,
+      "bin3": 0.0
+     },
+     "mw_wtd_delta_cc_econ": {
+      "bin0": 0.0,
+      "bin1": 0.0,
+      "bin2": 0.0,
+      "bin3": 0.0
+     },
+     "cc_econ_spread": {
+      "bin0": 20.99444294787895,
+      "bin1": 22.507330887278936,
+      "bin2": 22.08252185642267,
+      "bin3": 15.246658927802343
+     },
+     "midcurve_rows_priced": 444,
+     "ct_rows_targeted": 0
+    },
+    "L1_coal_level": {
+     "mw_wtd_delta_touched": {
+      "bin0": -4.813351172488576,
+      "bin1": -5.629229898785846,
+      "bin2": -5.095862991883657,
+      "bin3": -4.177294097774315
+     },
+     "mw_wtd_delta_cc_econ": {
+      "bin0": 0.0,
+      "bin1": 0.0,
+      "bin2": 0.0,
+      "bin3": 0.0
+     },
+     "cc_econ_spread": {
+      "bin0": 20.99444294787895,
+      "bin1": 22.507330887278936,
+      "bin2": 22.08252185642267,
+      "bin3": 15.246658927802343
+     },
+     "midcurve_rows_priced": 496,
+     "ct_rows_targeted": 0
+    },
+    "L2_cc_peak_belt": {
+     "mw_wtd_delta_touched": {
+      "bin0": -3.615057025809677,
+      "bin1": -3.5215424016270367,
+      "bin2": -3.418797308186824,
+      "bin3": -3.532529738396832
+     },
+     "mw_wtd_delta_cc_econ": {
+      "bin0": 0.0,
+      "bin1": 0.0,
+      "bin2": 0.0,
+      "bin3": 0.0
+     },
+     "cc_econ_spread": {
+      "bin0": 20.99444294787895,
+      "bin1": 22.507330887278936,
+      "bin2": 22.08252185642267,
+      "bin3": 15.246658927802343
+     },
+     "midcurve_rows_priced": 497,
+     "ct_rows_targeted": 0
+    },
+    "L3_ct_max": {
+     "mw_wtd_delta_touched": {
+      "bin0": 8.133586127877924,
+      "bin1": 10.71779535119836,
+      "bin2": 10.410075724223345,
+      "bin3": 5.629497846713122
+     },
+     "mw_wtd_delta_cc_econ": {
+      "bin0": 0.0,
+      "bin1": 0.0,
+      "bin2": 0.0,
+      "bin3": 0.0
+     },
+     "cc_econ_spread": {
+      "bin0": 20.99444294787895,
+      "bin1": 22.507330887278936,
+      "bin2": 22.08252185642267,
+      "bin3": 15.246658927802343
+     },
+     "midcurve_rows_priced": 444,
+     "ct_rows_targeted": 775
+    },
+    "COMPOSITE": {
+     "mw_wtd_delta_touched": {
+      "bin0": -0.2948220704203288,
+      "bin1": 1.5670230507854772,
+      "bin2": 1.895415424152865,
+      "bin3": -2.080325989458025
+     },
+     "mw_wtd_delta_cc_econ": {
+      "bin0": 0.0,
+      "bin1": 0.0,
+      "bin2": 0.0,
+      "bin3": 0.0
+     },
+     "cc_econ_spread": {
+      "bin0": 20.99444294787895,
+      "bin1": 22.507330887278936,
+      "bin2": 22.08252185642267,
+      "bin3": 15.246658927802343
+     },
+     "midcurve_rows_priced": 549,
+     "ct_rows_targeted": 775
+    }
+   },
+   "criteria": {
+    "K1_falls_low_bins": false,
+    "K1_rises_bin3": false,
+    "K1_gradient_bin3_minus_bin0": -1.7855039190376962,
+    "K1_gradient_positive": false,
+    "K2_spread_not_narrowed": true,
+    "K3_ct_strict_max": true,
+    "K3_additive_row_hours": 0
+   }
+  },
+  "hi": {
+   "arms": {
+    "A_keeper": {
+     "mw_wtd_delta_touched": {
+      "bin0": 0.0,
+      "bin1": 0.0,
+      "bin2": 0.0,
+      "bin3": 0.0
+     },
+     "mw_wtd_delta_cc_econ": {
+      "bin0": 0.0,
+      "bin1": 0.0,
+      "bin2": 0.0,
+      "bin3": 0.0
+     },
+     "cc_econ_spread": {
+      "bin0": 20.99444294787895,
+      "bin1": 22.507330887278936,
+      "bin2": 22.08252185642267,
+      "bin3": 15.246658927802343
+     },
+     "midcurve_rows_priced": 444,
+     "ct_rows_targeted": 0
+    },
+    "L1_coal_level": {
+     "mw_wtd_delta_touched": {
+      "bin0": -4.813351172488576,
+      "bin1": -5.629229898785846,
+      "bin2": -5.095862991883657,
+      "bin3": -4.177294097774315
+     },
+     "mw_wtd_delta_cc_econ": {
+      "bin0": 0.0,
+      "bin1": 0.0,
+      "bin2": 0.0,
+      "bin3": 0.0
+     },
+     "cc_econ_spread": {
+      "bin0": 20.99444294787895,
+      "bin1": 22.507330887278936,
+      "bin2": 22.08252185642267,
+      "bin3": 15.246658927802343
+     },
+     "midcurve_rows_priced": 496,
+     "ct_rows_targeted": 0
+    },
+    "L2_cc_peak_belt": {
+     "mw_wtd_delta_touched": {
+      "bin0": -3.615057025809677,
+      "bin1": -3.5215424016270367,
+      "bin2": -3.418797308186824,
+      "bin3": -3.532529738396832
+     },
+     "mw_wtd_delta_cc_econ": {
+      "bin0": 0.0,
+      "bin1": 0.0,
+      "bin2": 0.0,
+      "bin3": 0.0
+     },
+     "cc_econ_spread": {
+      "bin0": 20.99444294787895,
+      "bin1": 22.507330887278936,
+      "bin2": 22.08252185642267,
+      "bin3": 15.246658927802343
+     },
+     "midcurve_rows_priced": 497,
+     "ct_rows_targeted": 0
+    },
+    "L3_ct_max": {
+     "mw_wtd_delta_touched": {
+      "bin0": 4.34775437062828,
+      "bin1": 6.402106318470167,
+      "bin2": 6.132213484495529,
+      "bin3": 2.108477787380033
+     },
+     "mw_wtd_delta_cc_econ": {
+      "bin0": 0.0,
+      "bin1": 0.0,
+      "bin2": 0.0,
+      "bin3": 0.0
+     },
+     "cc_econ_spread": {
+      "bin0": 20.99444294787895,
+      "bin1": 22.507330887278936,
+      "bin2": 22.08252185642267,
+      "bin3": 15.246658927802343
+     },
+     "midcurve_rows_priced": 444,
+     "ct_rows_targeted": 775
+    },
+    "COMPOSITE": {
+     "mw_wtd_delta_touched": {
+      "bin0": -4.080653827669972,
+      "bin1": -2.748665981942717,
+      "bin2": -2.3824468155749523,
+      "bin3": -5.601346048791115
+     },
+     "mw_wtd_delta_cc_econ": {
+      "bin0": 0.0,
+      "bin1": 0.0,
+      "bin2": 0.0,
+      "bin3": 0.0
+     },
+     "cc_econ_spread": {
+      "bin0": 20.99444294787895,
+      "bin1": 22.507330887278936,
+      "bin2": 22.08252185642267,
+      "bin3": 15.246658927802343
+     },
+     "midcurve_rows_priced": 549,
+     "ct_rows_targeted": 775
+    }
+   },
+   "criteria": {
+    "K1_falls_low_bins": true,
+    "K1_rises_bin3": false,
+    "K1_gradient_bin3_minus_bin0": -1.5206922211211422,
+    "K1_gradient_positive": false,
+    "K2_spread_not_narrowed": true,
+    "K3_ct_strict_max": true,
+    "K3_additive_row_hours": 0
+   }
+  }
+ },
+ "verdict": {
+  "K1_falls_low_bins": "INDETERMINATE",
+  "K1_rises_bin3": "FAIL",
+  "K1_gradient_positive": "FAIL",
+  "K2_spread_not_narrowed": "PASS",
+  "K3_ct_strict_max": "PASS"
+ },
+ "k1_gradient": {
+  "lo": -1.7855039190376962,
+  "hi": -1.5206922211211422
+ },
+ "composite_survives": false
+}
