@@ -243,3 +243,56 @@ place; full record `results/calibration/FINDING-caiso123-c3a-drift-attribution-2
   inputs violate that silently. `basis_sha` (landed, caiso-123) plus the
   recommended derived-input content-hashing in `shared_inputs` close this
   class.
+
+## 2026-07-26 — CAMPD economic-layup charter, LANE B: the day-grain `R < 0` cut does NOT replace the guard's window-grain cut (cross-ISO, no lane number)
+
+Charter/cross-ISO session; **no per-ISO lane number claimed**. Measurement only —
+no guard change, no extract re-derive, no LP solve, no keeper touched, no
+dashboard registration.
+
+`FINDING-neiso67-...` §6 item 2 flagged the day-grain best-block `R < 0` cut
+(out of merit across the best feasible ≥ min-run block in the DA horizon) as a
+possible **replacement** for the merit-order guard's window-grain out-of-merit
+cut, in its existing marginal lane (rule 19 `[R-ONE-MECH]` — never an addition).
+Validated on every ISO carrying a published anchor (charter §4): **CAISO** (CNOG
+revision-aware build only, neiso-66 §1), **MISO**, **PJM**, **ERCOT** (with its
+offered-vs-available caveat), **NEISO**. **NYISO excluded — no anchor, and none
+improvised.** Sweep `--rcc-pctl {0.50, 0.75, 0.90, 0.99} × --horizon
+{24, 48, 72}` × 2023–2025 = **180 cells**, each on the full D1 standard.
+Probe: `scripts/probes/_campd_daygrain_crossiso.py`.
+
+**NEGATIVE on all three legs of the stated bar.** The candidate beats the
+incumbent in **82/180** cells (median Δ **−0.0003**, |Δ| < 0.02 in 159/180); it
+is sign-stable across all three years in **9/60** configurations, every one of
+those gaining +0.002 to +0.017; and it clears the proportion-matched placebo in
+**101/180** cells against the incumbent's **105/180**, the 14 disagreements
+favouring the incumbent 9–5. No reference-price level and no horizon rescues it
+— lengthening the horizon makes it monotonically worse on NEISO and moves
+nothing elsewhere.
+
+**Why the flagged observation looked strong.** Its `+0.63…+0.79` vs
+`+0.08…+0.31` compared the **two opposite sides of the guard's own split** —
+an identified-layup series against the guard's KEPT/mechanical series. Against
+the correct comparator, the guard's own VETOED series, D1 already stood at
++0.77 / +0.71 / +0.67 vs the candidate's +0.70 / +0.74 / +0.53 (NEISO,
+p90/h24, vs published `uncommitted_available_gen_nonfast_mw`).
+
+**Why the head-to-head is flat.** The two cuts select the same windows —
+Jaccard 0.77–0.97 (median 0.92); over 15,782 scored windows the day-grain cut
+vetoes **127** the incumbent does not (0.8 %) and the incumbent vetoes **144**
+the day-grain cut does not (0.9 %), and on NEISO and CAISO the candidate's veto
+set is a strict **subset** of the incumbent's in every year. The block integral
+changes the verdict on ~1 window in 60.
+
+**Controls.** The re-implemented incumbent reproduces each ISO's **committed**
+kept/layup split on **99.1–99.8 %** of windows; the ported machinery reproduces
+neiso-67's own idle-capacity band (812 MW/+0.70, 1,104/+0.80, 1,071/+0.64 vs
+812/+0.70, 1,114/+0.79, 1,074/+0.63) and the charter D1 anchors (NEISO 2023
+baseline 1.52×/+0.53, guard-on 1.37×/+0.69, vetoed-vs-UNCOMMITTED +0.77).
+
+**Consequences.** No guard change is proposed, so the charter §5 blast radius is
+not reopened and no rule-22 leave-one-year-out obligation arises. `MERIT_OOM_FRAC`
+was held at 0.90 for both cuts throughout (rule 23 — re-tuning it to flatter one
+cut would be fitting to a residual). **The freeze stays ACTIVE**; Lane B was
+never one of its conditions, and only the owner lifts it. Charter §9 updated.
+Record: `results/calibration/FINDING-campd-daygrain-crossiso-2026-07-26.md`.
