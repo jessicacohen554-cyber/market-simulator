@@ -66,10 +66,10 @@ the committed share OF THE OFFER POPULATION per tightness bin. PJM masks
 generator identity in `energy_market_offers` and states the masked codes "are
 changed annually". This module MEASURES that rotation directly rather than
 citing it: it samples one day of offers from two adjacent years and reports the
-`unit_code` set overlap and, for codes present in both, the rank correlation of
-`max_ecomax`. Under an annual re-masking, a code shared across years does not
-denote the same unit, so the ecomax relationship across years is uninformative
-— which is what makes ANY cross-source unit join impossible.
+`unit_code` set overlap (and, for any code present in both, whether its
+`max_ecomax` even agrees across the two years). Under an annual re-masking a
+shared code need not denote the same unit and there is no published crosswalk,
+which is what makes ANY cross-source unit join impossible.
 
 Route deliberately NOT taken: fingerprinting masked units against the EIA-860 /
 CAMPD fleet by their ecomax/ecomin/start-cost signature to reconstruct identity.
@@ -121,9 +121,15 @@ NEAR_MISS_SAMPLES: dict[str, dict] = {
         "datetime_beginning_ept": "2025-01-01T00:00:00.0 to 2025-12-31T23:59:00.0",
         "rowCount": "20000",
     },
-    # system-level RT-committed + self-scheduled EcoMax ("Scheduled Generation")
+    # system-level RT-committed + self-scheduled EcoMax ("Scheduled Generation").
+    # Sampled in two windows: PJM's confidentiality suppression of the committed
+    # column is the §3 measurement, and it varies by window.
     "rt_and_self_ecomax": {
         "datetime_beginning_ept": "2025-07-01T00:00:00.0 to 2025-07-31T23:00:00.0",
+        "rowCount": "5000",
+    },
+    "rt_and_self_ecomax@2023-01": {
+        "datetime_beginning_ept": "2023-01-01T00:00:00.0 to 2023-01-31T23:00:00.0",
         "rowCount": "5000",
     },
     # system-level offered/committed capacity totals
@@ -211,18 +217,23 @@ def classify_schema(columns: list[str]) -> dict:
     }
 
 
-def sample_feed(feed: str, params: dict) -> dict:
-    """Sample one feed and report its MEASURED schema, grain and A1/A2/A3 score."""
+def sample_feed(label: str, params: dict) -> dict:
+    """Sample one feed and report its MEASURED schema, grain and A1/A2/A3 score.
+
+    ``label`` is the feed name, optionally suffixed ``@<tag>`` to sample the same
+    feed in a second window (the tag is carried into the result, not the URL).
+    """
+    feed = label.split("@", 1)[0]
     body = _get(feed, params)
     if "_http_error" in body:
-        return {"feed": feed, "error": f"HTTP {body['_http_error']}", "url": body["_url"]}
+        return {"feed": label, "error": f"HTTP {body['_http_error']}", "url": body["_url"]}
     rows = body.get("items", [])
     if not rows:
-        return {"feed": feed, "error": "no rows returned", "total_rows": body.get("totalRows")}
+        return {"feed": label, "error": "no rows returned", "total_rows": body.get("totalRows")}
 
     columns = list(rows[0].keys())
     out: dict = {
-        "feed": feed,
+        "feed": label,
         "total_rows_in_feed": body.get("totalRows"),
         "rows_sampled": len(rows),
         "columns": columns,
@@ -342,9 +353,9 @@ def main() -> int:
     print(f"feeds tripping the commitment/award keyword net: {len(screened)}")
 
     samples = []
-    for feed, params in NEAR_MISS_SAMPLES.items():
-        print(f"  sampling {feed} …", end=" ", flush=True)
-        s = sample_feed(feed, params)
+    for label, params in NEAR_MISS_SAMPLES.items():
+        print(f"  sampling {label} …", end=" ", flush=True)
+        s = sample_feed(label, params)
         samples.append(s)
         if "error" in s:
             print(s["error"])
