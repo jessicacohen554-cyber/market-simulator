@@ -34,6 +34,7 @@ Walter Scott Jr Energy Center,1082,3,COAL,MISO-Plains,footprint,maxgen_event_ste
 Walter Scott Jr Energy Center,1082,4,COAL,MISO-Plains,footprint,maxgen_event_step2,2023-08-24 12:00,2023-08-25 00:00,871.0,855.0,pm45d,853.0,18.0,2.0,922.5,eia_exact,1511.7
 George Neal North,1091,3,COAL,MISO-Plains,footprint,maxgen_event_step2,2023-08-24 12:00,2023-08-25 00:00,545.0,528.0,pm45d,525.0,20.0,3.0,584.1,eia_exact,510.0
 Burlington (IA),1104,1,ST_GAS,MISO-Plains,footprint,maxgen_event_step2,2023-08-24 12:00,2023-08-25 00:00,141.0,114.0,pm45d,70.0,71.0,44.0,212.0,eia_exact,170.3
+Ames Electric Services Power Plant,1122,7,ST_GAS,MISO-Plains,footprint,maxgen_event_step2,2023-08-24 12:00,2023-08-25 00:00,41.0,0.0,pm45d,0.0,41.0,0.0,37.5,eia_exact,108.7
 Ames Electric Services Power Plant,1122,8,ST_GAS,MISO-Plains,footprint,maxgen_event_step2,2023-08-24 12:00,2023-08-25 00:00,72.0,72.0,pm45d,62.0,10.0,10.0,71.3,eia_exact,108.7
 Streeter Station,1131,7,ST_GAS,MISO-Plains,footprint,maxgen_event_step2,2023-08-24 12:00,2023-08-25 00:00,38.0,38.0,pm45d,35.0,3.0,3.0,35.0,eia_exact,54.6
 Robert A Reid,1383,RT,CT_PEAKER,MISO-Indiana,footprint,maxgen_event_step2,2023-08-24 12:00,2023-08-25 00:00,68.0,68.0,pm45d,0.0,68.0,68.0,68.0,observed_peak,58.0
@@ -506,7 +507,9 @@ Marshalltown,1068,3A,CT_PEAKER,MISO-Plains,footprint,maxgen_warning,2024-08-26 1
 Walter Scott Jr Energy Center,1082,3,COAL,MISO-Plains,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,750.0,750.0,pm45d,734.0,16.0,16.0,725.8,eia_exact,1511.7
 Walter Scott Jr Energy Center,1082,4,COAL,MISO-Plains,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,856.0,854.0,pm45d,817.0,39.0,37.0,922.5,eia_exact,1511.7
 George Neal North,1091,3,COAL,MISO-Plains,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,549.0,549.0,pm45d,542.0,7.0,7.0,584.1,eia_exact,510.0
+Ames Electric Services Power Plant,1122,7,ST_GAS,MISO-Plains,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,38.0,38.0,pm45d,0.0,38.0,38.0,37.5,eia_exact,108.7
 Ames Electric Services Power Plant,1122,8,ST_GAS,MISO-Plains,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,71.0,60.0,pm45d,51.0,20.0,9.0,71.3,eia_exact,108.7
+Streeter Station,1131,7,ST_GAS,MISO-Plains,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,38.0,38.0,pm45d,37.0,1.0,1.0,35.0,eia_exact,54.6
 Muscatine Plant #1,1167,9,COAL,MISO-Plains,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,174.0,174.0,pm45d,162.0,12.0,12.0,175.5,eia_exact,248.9
 Summit Lake,1206,1G,CT_PEAKER,MISO-Plains,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,23.0,23.0,pm45d,19.0,4.0,4.0,27.0,observed_peak,111.8
 Robert A Reid,1383,RT,CT_PEAKER,MISO-Indiana,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,68.0,68.0,pm45d,0.0,68.0,68.0,68.0,observed_peak,58.0
@@ -519,6 +522,7 @@ Coughlin Power Station,1396,7-1,CC_REGULAR,MISO-South,footprint,maxgen_warning,2
 Coughlin Power Station,1396,7-2,CC_REGULAR,MISO-South,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,229.0,224.0,pm45d,221.0,8.0,3.0,188.7,eia_digits_cc,727.0
 Teche,1400,4,CT_PEAKER,MISO-South,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,27.0,0.0,pm45d,0.0,27.0,0.0,42.2,eia_exact,33.6
 Little Gypsy,1402,2,ST_GAS,MISO-South,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,385.0,351.0,pm45d,351.0,34.0,0.0,420.7,eia_exact,916.5
+Little Gypsy,1402,3,ST_GAS,MISO-South,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,513.0,501.0,pm45d,292.0,221.0,209.0,582.2,eia_exact,916.5
 Nine Mile Point,1403,4,CC_REGULAR,MISO-South,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,746.0,746.0,pm45d,706.0,40.0,40.0,765.0,observed_peak,649.5
 Nine Mile Point,1403,6A,CC_REGULAR,MISO-South,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,291.0,289.0,pm45d,287.0,4.0,2.0,194.7,eia_exact_cc,649.5
 Nine Mile Point,1403,6B,CC_REGULAR,MISO-South,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,303.0,289.0,pm45d,288.0,15.0,1.0,194.7,eia_exact_cc,649.5
@@ -591,7 +595,6 @@ West Marinette,4076,**33,CT_PEAKER,MISO-East,footprint,maxgen_warning,2024-08-26
 West Marinette,4076,**34,CT_PEAKER,MISO-East,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,76.0,75.0,pm45d,71.0,5.0,4.0,93.0,observed_peak,153.0
 West Marinette,4076,32A,CT_PEAKER,MISO-East,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,19.0,19.0,pm45d,17.0,2.0,2.0,41.8,eia_digits,153.0
 West Marinette,4076,32B,CT_PEAKER,MISO-East,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,18.0,18.0,pm45d,17.0,1.0,1.0,41.8,eia_digits,153.0
-Weston,4078,3,COAL,MISO-East,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,369.0,369.0,pm45d,1.0,368.0,368.0,350.5,eia_exact,887.9
 Weston,4078,4,COAL,MISO-East,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,607.0,603.0,pm45d,590.0,17.0,13.0,595.0,eia_exact,887.9
 John P Madgett,4271,B1,COAL,MISO-East,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,426.0,426.0,pm45d,405.0,21.0,21.0,387.0,eia_digits,389.8
 White Bluff,6009,1,COAL,MISO-South,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,460.0,460.0,pm45d,442.0,18.0,18.0,900.0,eia_exact,1252.9
@@ -618,7 +621,6 @@ Electrifarm,6063,3,CT_PEAKER,MISO-Plains,footprint,maxgen_warning,2024-08-26 13:
 R M Schahfer,6085,16B,CT_PEAKER,MISO-Indiana,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,81.0,81.0,pm45d,0.0,81.0,81.0,129.0,eia_exact,155.0
 R M Schahfer,6085,17,COAL,MISO-Indiana,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,384.0,384.0,pm45d,283.0,101.0,101.0,423.5,eia_exact,722.0
 R M Schahfer,6085,18,COAL,MISO-Indiana,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,360.0,358.0,pm45d,356.0,4.0,2.0,423.5,eia_exact,722.0
-Sherburne County,6090,1,COAL,MISO-West,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,729.0,729.0,pm45d,0.0,729.0,729.0,765.3,eia_exact,1556.0
 Sherburne County,6090,3,COAL,MISO-West,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,932.0,930.0,pm45d,620.0,312.0,310.0,938.7,eia_exact,1556.0
 Big Stone,6098,1,COAL,MISO-West,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,496.0,495.0,pm45d,316.0,180.0,179.0,450.0,eia_exact,477.6
 Gibson,6113,1,COAL,MISO-Indiana,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,685.0,685.0,pm45d,675.0,10.0,10.0,667.9,eia_exact,3132.0
@@ -717,6 +719,7 @@ Sycamore (IA),8029,1,CT_PEAKER,MISO-Plains,footprint,maxgen_warning,2024-08-26 1
 Sycamore (IA),8029,2,CT_PEAKER,MISO-Plains,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,74.0,74.0,pm45d,59.0,15.0,15.0,78.8,eia_exact,140.6
 Emery Station,8031,11,CC_REGULAR,MISO-Plains,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,289.0,284.0,pm45d,260.0,29.0,24.0,173.4,eia_exact_cc,539.4
 Emery Station,8031,12,CC_REGULAR,MISO-Plains,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,295.0,288.0,pm45d,264.0,31.0,24.0,173.4,eia_exact_cc,539.4
+Gerald Andrus,8054,1,ST_GAS,MISO-South,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,721.0,713.0,pm45d,497.0,224.0,216.0,781.4,eia_exact,701.1
 Coyote,8222,B1,COAL,MISO-West,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,455.0,454.0,pm45d,416.0,39.0,38.0,450.0,eia_digits,425.5
 Midland Cogeneration Venture,10745,003,CC_CHP,MISO-East,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,103.0,100.0,pm45d,94.0,9.0,6.0,103.0,observed_peak,1479.4
 Midland Cogeneration Venture,10745,004,CC_CHP,MISO-East,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,100.0,95.0,pm45d,87.0,13.0,8.0,104.0,observed_peak,1479.4
@@ -724,6 +727,7 @@ Midland Cogeneration Venture,10745,005,CC_CHP,MISO-East,footprint,maxgen_warning
 Midland Cogeneration Venture,10745,006,CC_CHP,MISO-East,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,101.0,97.0,pm45d,92.0,9.0,5.0,105.0,observed_peak,1479.4
 Midland Cogeneration Venture,10745,007,CC_CHP,MISO-East,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,101.0,100.0,pm45d,97.0,4.0,3.0,104.0,observed_peak,1479.4
 Midland Cogeneration Venture,10745,008,CC_CHP,MISO-East,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,103.0,103.0,pm45d,97.0,6.0,6.0,103.0,observed_peak,1479.4
+Midland Cogeneration Venture,10745,009,CC_CHP,MISO-East,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,103.0,98.0,pm45d,0.0,103.0,98.0,103.0,observed_peak,1479.4
 Midland Cogeneration Venture,10745,010,CC_CHP,MISO-East,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,102.0,97.0,pm45d,91.0,11.0,6.0,105.0,observed_peak,1479.4
 Midland Cogeneration Venture,10745,011,CC_CHP,MISO-East,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,96.0,93.0,pm45d,87.0,9.0,6.0,104.0,observed_peak,1479.4
 Midland Cogeneration Venture,10745,012,CC_CHP,MISO-East,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,86.0,83.0,pm45d,74.0,12.0,9.0,98.0,observed_peak,1479.4
@@ -756,6 +760,7 @@ Vermillion Energy Facility,55111,3,CT_PEAKER,MISO-Indiana,footprint,maxgen_warni
 Vermillion Energy Facility,55111,4,CT_PEAKER,MISO-Indiana,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,72.0,72.0,pm45d,65.0,7.0,7.0,86.5,eia_digits,576.0
 Vermillion Energy Facility,55111,7,CT_PEAKER,MISO-Indiana,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,72.0,72.0,pm45d,69.0,3.0,3.0,86.5,eia_digits,576.0
 RS Cogen,55117,RS-5,CC_CHP,MISO-South,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,221.0,218.0,pm45d,162.0,59.0,56.0,195.0,eia_exact_cc,415.4
+RS Cogen,55117,RS-6,CC_CHP,MISO-South,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,148.0,148.0,pm45d,0.0,148.0,148.0,195.0,eia_exact_cc,415.4
 Alliant Energy Neenah,55135,CT01,CT_PEAKER,MISO-East,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,151.0,150.0,pm45d,142.0,9.0,8.0,185.5,eia_exact,351.1
 Alliant Energy Neenah,55135,CT02,CT_PEAKER,MISO-East,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,164.0,151.0,pm45d,145.0,19.0,6.0,185.5,eia_exact,351.1
 Worthington Generation LLC,55148,1,CT_PEAKER,MISO-Indiana,footprint,maxgen_warning,2024-08-26 13:00,2024-08-26 20:00,44.0,43.0,pm45d,43.0,1.0,0.0,60.5,eia_exact,169.5
@@ -966,6 +971,8 @@ Marshalltown,1068,2B,CT_PEAKER,MISO-Plains,midwest,maxgen_event_step1+maxgen_war
 Walter Scott Jr Energy Center,1082,3,COAL,MISO-Plains,midwest,maxgen_event_step1+maxgen_warning,2025-06-23 00:00,2025-06-25 00:00,747.0,745.0,pm45d,734.0,13.0,11.0,725.8,eia_exact,1511.7
 Walter Scott Jr Energy Center,1082,4,COAL,MISO-Plains,midwest,maxgen_event_step1+maxgen_warning,2025-06-23 00:00,2025-06-25 00:00,854.0,847.0,pm45d,777.0,77.0,70.0,922.5,eia_exact,1511.7
 George Neal North,1091,3,COAL,MISO-Plains,midwest,maxgen_event_step1+maxgen_warning,2025-06-23 00:00,2025-06-25 00:00,551.0,551.0,pm45d,549.0,2.0,2.0,584.1,eia_exact,510.0
+Burlington (IA),1104,1,ST_GAS,MISO-Plains,midwest,maxgen_event_step1+maxgen_warning,2025-06-23 00:00,2025-06-25 00:00,166.0,125.0,pm45d,125.0,41.0,0.0,212.0,eia_exact,170.3
+Ames Electric Services Power Plant,1122,7,ST_GAS,MISO-Plains,midwest,maxgen_event_step1+maxgen_warning,2025-06-23 00:00,2025-06-25 00:00,33.0,0.0,pm45d,0.0,33.0,0.0,37.5,eia_exact,108.7
 Ames Electric Services Power Plant,1122,8,ST_GAS,MISO-Plains,midwest,maxgen_event_step1+maxgen_warning,2025-06-23 00:00,2025-06-25 00:00,71.0,71.0,pm45d,65.0,6.0,6.0,71.3,eia_exact,108.7
 Muscatine Plant #1,1167,8,COAL,MISO-Plains,midwest,maxgen_event_step1+maxgen_warning,2025-06-23 00:00,2025-06-25 00:00,83.0,78.0,pm45d,78.0,5.0,0.0,75.0,eia_exact,248.9
 Summit Lake,1206,2G,CT_PEAKER,MISO-Plains,midwest,maxgen_event_step1+maxgen_warning,2025-06-23 00:00,2025-06-25 00:00,27.0,27.0,pm45d,15.0,12.0,12.0,27.0,observed_peak,111.8
@@ -1265,6 +1272,9 @@ Marshalltown,1068,2B,CT_PEAKER,MISO-Plains,footprint,capacity_advisory,2025-07-2
 Walter Scott Jr Energy Center,1082,3,COAL,MISO-Plains,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,747.0,747.0,pm45d,737.0,10.0,10.0,725.8,eia_exact,1511.7
 Walter Scott Jr Energy Center,1082,4,COAL,MISO-Plains,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,854.0,854.0,pm45d,850.0,4.0,4.0,922.5,eia_exact,1511.7
 George Neal North,1091,3,COAL,MISO-Plains,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,551.0,547.0,pm45d,537.0,14.0,10.0,584.1,eia_exact,510.0
+Burlington (IA),1104,1,ST_GAS,MISO-Plains,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,183.0,166.0,pm45d,103.0,80.0,63.0,212.0,eia_exact,170.3
+Ames Electric Services Power Plant,1122,7,ST_GAS,MISO-Plains,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,35.0,33.0,pm45d,33.0,2.0,0.0,37.5,eia_exact,108.7
+Ames Electric Services Power Plant,1122,8,ST_GAS,MISO-Plains,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,65.0,65.0,pm45d,0.0,65.0,65.0,71.3,eia_exact,108.7
 Streeter Station,1131,7,ST_GAS,MISO-Plains,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,38.0,37.0,pm45d,37.0,1.0,0.0,35.0,eia_exact,54.6
 Muscatine Plant #1,1167,8,COAL,MISO-Plains,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,83.0,83.0,pm45d,71.0,12.0,12.0,75.0,eia_exact,248.9
 Summit Lake,1206,2G,CT_PEAKER,MISO-Plains,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,27.0,21.0,pm45d,0.0,27.0,21.0,27.0,observed_peak,111.8
@@ -1281,6 +1291,7 @@ Nine Mile Point,1403,4,CC_REGULAR,MISO-South,footprint,capacity_advisory,2025-07
 Nine Mile Point,1403,5,CC_REGULAR,MISO-South,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,758.0,758.0,pm45d,697.0,61.0,61.0,895.1,eia_exact,649.5
 Nine Mile Point,1403,6A,CC_REGULAR,MISO-South,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,292.0,288.0,pm45d,284.0,8.0,4.0,194.7,eia_exact_cc,649.5
 Nine Mile Point,1403,6B,CC_REGULAR,MISO-South,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,293.0,289.0,pm45d,285.0,8.0,4.0,194.7,eia_exact_cc,649.5
+Big Cajun 1,1464,1B1,ST_GAS,MISO-South,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,78.0,66.0,pm45d,0.0,78.0,66.0,91.0,observed_peak,174.5
 Big Cajun 1,1464,1B2,ST_GAS,MISO-South,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,90.0,90.0,pm45d,37.0,53.0,53.0,90.0,observed_peak,174.5
 Big Cajun 1,1464,CTG1,CT_PEAKER,MISO-South,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,100.0,96.0,pm45d,75.0,25.0,21.0,113.6,eia_digits,199.5
 Big Cajun 1,1464,CTG2,CT_PEAKER,MISO-South,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,95.0,93.0,pm45d,72.0,23.0,21.0,113.6,eia_digits,199.5
@@ -1310,6 +1321,7 @@ Cambridge CT Hybrid,2038,2,CT_PEAKER,MISO-West,footprint,capacity_advisory,2025-
 Elk River,2039,ERPS11,CT_PEAKER,MISO-West,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,212.0,178.0,pm45d,158.0,54.0,20.0,212.0,observed_peak,208.0
 Moselle,2070,**4,CC_REGULAR,MISO-South,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,76.0,76.0,pm45d,75.0,1.0,1.0,83.0,eia_exact,268.0
 Moselle,2070,3,CC_REGULAR,MISO-South,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,56.0,56.0,pm45d,45.0,11.0,11.0,59.0,eia_exact,268.0
+Moselle,2070,5,CC_REGULAR,MISO-South,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,80.0,78.0,pm45d,0.0,80.0,78.0,83.5,eia_exact,268.0
 Moselle,2070,6,CC_REGULAR,MISO-South,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,148.0,146.0,pm45d,134.0,14.0,12.0,163.0,observed_peak,268.0
 Moselle,2070,7,CC_REGULAR,MISO-South,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,149.0,146.0,pm45d,146.0,3.0,0.0,163.0,observed_peak,268.0
 Labadie,2103,1,COAL,MISO-Plains,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,634.0,613.0,pm45d,453.0,181.0,160.0,573.7,eia_exact,2372.0
@@ -1658,6 +1670,7 @@ Otsego Mill Power Plant,55799,0024,CT_CHP,MISO-East,footprint,capacity_advisory,
 Otsego Mill Power Plant,55799,0025,CT_CHP,MISO-East,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,18.0,18.0,pm45d,11.0,7.0,7.0,18.0,observed_peak,17.6
 Island Street Peaking Plant,55836,1A,CT_PEAKER,MISO-East,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,27.0,27.0,pm45d,0.0,27.0,27.0,28.0,observed_peak,54.6
 Island Street Peaking Plant,55836,1B,CT_PEAKER,MISO-East,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,27.0,27.0,pm45d,0.0,27.0,27.0,27.0,observed_peak,54.6
+Prairie State Generating Station,55856,01,COAL,MISO-Illinois,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,888.0,882.0,pm45d,877.0,11.0,5.0,888.0,observed_peak,1630.0
 Prairie State Generating Station,55856,02,COAL,MISO-Illinois,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,882.0,878.0,pm45d,872.0,10.0,6.0,885.0,observed_peak,1630.0
 Fox Energy Center,56031,CTG-1,CC_REGULAR,MISO-East,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,331.0,309.0,pm45d,296.0,35.0,13.0,198.9,eia_exact_cc,577.5
 Fox Energy Center,56031,CTG-2,CC_REGULAR,MISO-East,footprint,capacity_advisory,2025-07-24 00:00,2025-07-25 00:00,335.0,324.0,pm45d,296.0,39.0,28.0,198.9,eia_exact_cc,577.5
@@ -1733,7 +1746,6 @@ Noblesville,1007,CT3,CC_REGULAR,MISO-Indiana,footprint,capacity_advisory+maxgen_
 Noblesville,1007,CT4,CC_REGULAR,MISO-Indiana,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,68.0,65.0,pm45d,62.0,6.0,3.0,61.0,eia_digits_cc,264.0
 Noblesville,1007,CT5,CC_REGULAR,MISO-Indiana,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,68.0,64.0,pm45d,62.0,6.0,2.0,61.0,eia_digits_cc,264.0
 F B Culley,1012,2,COAL,MISO-Indiana,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,90.0,83.0,pm45d,83.0,7.0,0.0,103.7,eia_exact,360.0
-F B Culley,1012,3,COAL,MISO-Indiana,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,287.0,287.0,pm45d,117.0,170.0,170.0,265.2,eia_exact,360.0
 Marshalltown,1068,1B,CT_PEAKER,MISO-Plains,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,29.0,19.0,pm45d,0.0,29.0,19.0,63.0,eia_digits,156.5
 Marshalltown,1068,2A,CT_PEAKER,MISO-Plains,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,28.0,0.0,pm45d,0.0,28.0,0.0,63.0,eia_digits,156.5
 Marshalltown,1068,2B,CT_PEAKER,MISO-Plains,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,30.0,29.0,pm45d,20.0,10.0,9.0,63.0,eia_digits,156.5
@@ -1741,6 +1753,8 @@ Walter Scott Jr Energy Center,1082,3,COAL,MISO-Plains,footprint,capacity_advisor
 Walter Scott Jr Energy Center,1082,4,COAL,MISO-Plains,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,854.0,854.0,pm45d,827.0,27.0,27.0,922.5,eia_exact,1511.7
 George Neal North,1091,3,COAL,MISO-Plains,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,551.0,547.0,pm45d,533.0,18.0,14.0,584.1,eia_exact,510.0
 Burlington (IA),1104,1,ST_GAS,MISO-Plains,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,183.0,166.0,pm45d,153.0,30.0,13.0,212.0,eia_exact,170.3
+Ames Electric Services Power Plant,1122,7,ST_GAS,MISO-Plains,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,35.0,33.0,pm45d,0.0,35.0,33.0,37.5,eia_exact,108.7
+Ames Electric Services Power Plant,1122,8,ST_GAS,MISO-Plains,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,65.0,65.0,pm45d,0.0,65.0,65.0,71.3,eia_exact,108.7
 Streeter Station,1131,7,ST_GAS,MISO-Plains,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,38.0,37.0,pm45d,36.0,2.0,1.0,35.0,eia_exact,54.6
 Muscatine Plant #1,1167,8,COAL,MISO-Plains,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,83.0,83.0,pm45d,76.0,7.0,7.0,75.0,eia_exact,248.9
 Summit Lake,1206,2G,CT_PEAKER,MISO-Plains,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,27.0,21.0,pm45d,21.0,6.0,0.0,27.0,observed_peak,111.8
@@ -1757,6 +1771,7 @@ Nine Mile Point,1403,4,CC_REGULAR,MISO-South,footprint,capacity_advisory+maxgen_
 Nine Mile Point,1403,5,CC_REGULAR,MISO-South,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,758.0,758.0,pm45d,696.0,62.0,62.0,895.1,eia_exact,649.5
 Nine Mile Point,1403,6A,CC_REGULAR,MISO-South,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,295.0,288.0,pm45d,285.0,10.0,3.0,194.7,eia_exact_cc,649.5
 Nine Mile Point,1403,6B,CC_REGULAR,MISO-South,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,295.0,289.0,pm45d,286.0,9.0,3.0,194.7,eia_exact_cc,649.5
+Big Cajun 1,1464,1B1,ST_GAS,MISO-South,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,78.0,66.0,pm45d,0.0,78.0,66.0,91.0,observed_peak,174.5
 Big Cajun 1,1464,1B2,ST_GAS,MISO-South,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,90.0,90.0,pm45d,80.0,10.0,10.0,90.0,observed_peak,174.5
 Big Cajun 1,1464,CTG1,CT_PEAKER,MISO-South,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,100.0,96.0,pm45d,94.0,6.0,2.0,113.6,eia_digits,199.5
 Big Cajun 1,1464,CTG2,CT_PEAKER,MISO-South,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,95.0,93.0,pm45d,92.0,3.0,1.0,113.6,eia_digits,199.5
@@ -1784,6 +1799,7 @@ Cambridge CT Hybrid,2038,1,CT_PEAKER,MISO-West,footprint,capacity_advisory+maxge
 Cambridge CT Hybrid,2038,2,CT_PEAKER,MISO-West,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,159.0,157.0,pm45d,155.0,4.0,2.0,169.2,eia_digits,152.7
 Elk River,2039,ERPS11,CT_PEAKER,MISO-West,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,184.0,178.0,pm45d,178.0,6.0,0.0,212.0,observed_peak,208.0
 Moselle,2070,**4,CC_REGULAR,MISO-South,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,76.0,76.0,pm45d,75.0,1.0,1.0,83.0,eia_exact,268.0
+Moselle,2070,5,CC_REGULAR,MISO-South,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,80.0,78.0,pm45d,75.0,5.0,3.0,83.5,eia_exact,268.0
 Moselle,2070,6,CC_REGULAR,MISO-South,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,148.0,146.0,pm45d,139.0,9.0,7.0,163.0,observed_peak,268.0
 Moselle,2070,7,CC_REGULAR,MISO-South,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,149.0,146.0,pm45d,145.0,4.0,1.0,163.0,observed_peak,268.0
 Labadie,2103,2,COAL,MISO-Plains,footprint,capacity_advisory+maxgen_alert+maxgen_warning,2025-07-28 12:00,2025-07-30 00:00,633.0,631.0,pm45d,472.0,161.0,159.0,573.7,eia_exact,2372.0
