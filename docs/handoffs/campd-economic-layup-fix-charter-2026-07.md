@@ -369,10 +369,27 @@ stacking on the guard that already owns the `R < 0` half.
   that its stated condition — "the residual is explained or fixed" — is now met
   on the *explained* branch, with the measurement committed and re-runnable.
 
-**Not settled, and deliberately left open:** whether the seam should be closed
-on the LP side rather than the detector side (neiso-66 §5b argues on rule-1
-grounds that these units belong in the envelope as *available*, with the LP
-declining them on its own commitment economics; CAISO's `caiso_ra_mustoffer`
-already owns that capacity's commitment, so rule 19 makes it a replace-or-
-reconcile question, never a stack). That is a separate lane on a different
-instrument and is **not** a freeze-lift blocker.
+**The LP-side lane is now also measured, and closed on a negative
+(2026-07-26, neiso-68).** The remaining open question — whether the seam
+should be closed on the LP side, with the units restored to the envelope as
+*available* and the LP declining them on its own commitment economics
+(neiso-66 §5b) — was answered against the keeper's own solved clearing prices
+(`neiso64_meritguard_a1` committed hourly sidecars; no LP solve): the seam
+population is in merit on essentially every seam day at every offer level up
+to the keeper's committed multiplier (median in-merit share 100 %, 87.7–97.6 %
+of seam days repay the start at LP prices), seam days are indistinguishable
+from the same units' running days (AUC 0.48–0.52), the LP's strict decline
+predictor fails the D1 placebo in all three years, and restoring the envelope
+would inject a first-order 15–38 TWh of phantom dispatch against seam-day
+spreads (+$15–21/MWh) no plausible price feedback (≈ −$3–4/MWh measured) can
+close. The envelope deletion is definitionally impure but **operationally
+load-bearing** — the only mechanism in the system producing the observed
+non-operation. An LP-side closure would be a NEW *decline* mechanism (the
+existing bridges are min-gen floors that force capacity ON) with no
+identifiable driver on any instrument this program admits — which rules
+1/12/19 forbid building. Record:
+`results/calibration/FINDING-neiso68-lp-seam-screen-2026-07-26.md` (its §6
+states the falsification bar any future LP-side proposal must meet). This
+closes the last open lane of the residual-over-count investigation; the §7
+"Closed with cause" leg fits, and the freeze-lift decision — unchanged — is
+the owner's alone.

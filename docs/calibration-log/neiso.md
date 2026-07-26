@@ -434,3 +434,49 @@ published UNCOMMITTED at +0.63 to +0.79 where the guard's window-grain
 out-of-merit share reaches +0.08 to +0.31 — a possible *replacement* for the
 guard's cut, in its existing marginal lane, unvalidated cross-ISO. Next
 shorthand: neiso-68.
+
+## 2026-07-26 — neiso-68: LANE A (the LP-side seam question) measured and closed — the keeper LP would NOT decline the seam population
+
+**neiso-68 — the LP-side seam screen, and it is a second NEGATIVE.** The open
+item neiso-66 §5b left (do these units belong in the envelope as *available*,
+with the LP declining them on its own commitment economics?) is now measured on
+the LP's own instrument — the `neiso64_meritguard_a1` keeper replay's committed
+hourly price sidecars, scored pass, every panel unit priced at its own zone's
+dual. No LP solve; probe `scripts/probes/_neiso68_lp_seam_screen.py`.
+
+- **the seam is in merit against the model's own prices, essentially always** —
+  median seam-day in-merit share 100 % at every offer level up to the keeper's
+  committed 1.27×; zero-clear days only 1–15 %; 87.7 / 97.6 / 91.9 % of seam
+  days repay the published start cost at LP prices (2023/24/25).
+- **seam days are indistinguishable from the same units' running days** — AUC
+  0.508 / 0.478 / 0.495; the LP's strict decline predictor fires as often on
+  days the units actually ran.
+- **the LP-decline split fails the D1 identification standard** — r vs
+  published UNCOMMITTED +0.58 / +0.51 / +0.65 against placebo p95 +0.73 /
+  +0.52 / +0.66 (clears none), identifying only 0.7–1.4 GW of the 5.7–7.9 GW
+  idle population.
+- **restoration breaks the solution either way** — first-order 15–38 TWh of
+  phantom dispatch at fixed keeper prices, against median seam-day spreads of
+  +$15–21/MWh that no plausible price feedback (measured restoration effect
+  ≈ −$3–4/MWh) can close.
+- **the LP price sits ABOVE the detector's RCC on seam days** (+3.8 / +13.9 /
+  +10.7 $/MWh) — whatever declines these units in reality is not a price level
+  the model fails to see.
+
+The population's behaviour is now measured irreproducible from every allowed
+instrument: marginal economics (neiso-66 §4), start-cost recovery (neiso-67),
+and the model's own price surface (neiso-68). The envelope deletion is
+definitionally impure but **operationally load-bearing** — the only mechanism
+in the system producing the observed non-operation. An LP-side closure would be
+a new *decline* mechanism (the existing bridges force capacity ON) with no
+identified driver, which rules 1/12/19 forbid reaching for.
+Finding: `results/calibration/FINDING-neiso68-lp-seam-screen-2026-07-26.md`.
+
+**Open / next.** (1) **STEP 3 disposition remains the owner's decision**, now
+with both halves measured: recommendation unchanged and strengthened —
+disposition (b), carry the seam explicitly; the charter §7 "Closed with cause"
+leg fits. (2) **The freeze stays ACTIVE**; its `lifts_when` condition is met on
+the *explained* branch, but only the owner lifts it. (3) The Lane B observation
+(day-grain best-block `R < 0` as a possible *replacement* for the guard's
+window-grain cut) remains flagged, unvalidated cross-ISO, and untouched by this
+session. Next shorthand: neiso-69.
