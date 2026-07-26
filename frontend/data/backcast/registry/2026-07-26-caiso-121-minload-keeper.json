@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-26-caiso-121-minload-keeper",
+  "label": "caiso 121 minload keeper candidate",
+  "date": "2026-07-26",
+  "shorthand": "caiso-121-minload-keeper",
+  "definition": "(KEEPER CANDIDATE - NOT PROMOTED; keeper 2026-07-23-caiso-netrev-margin-keeper UNCHANGED.) caiso-121 rule-14 execution of the caiso-119 KEPT disposition: single delta on the netrev keeper recipe, caiso_ra_min_load_frac 0.26 (fitted, below any physical CC turn-down and below the 0.40 code default) -> 0.570 (MEASURED: CAMPD CEMS per-unit p05 of grossLoad/pmax over opTime==1.0 hours, cap-weighted p50, stable 0.565/0.570/0.570 across 2023-25; ERCOT's independent 60-Day-DAM analogue 0.574). Zero fitted parameters added; one is removed. VERDICT: NOT-YET, fail {C3a (2025 only, +11.3%), C3c, C5a}; C1/C2/C3b/C4/C6/C7/C8 PASS. DISPOSITION (pre-registered before scores existed): promote iff same-or-smaller fail set vs the keeper and no new FAIL. C3a is a NEW fail vs the committed keeper -> NOT PROMOTED. BUT THE CAUSE IS NOT THIS DELTA. The same-HEAD control arm caiso121_repro_A (identical recipe, NO delta, gitignored per FINDING-caiso92b) ALSO fails C3a-2025, at +11.49% - WORSE than this run's +11.3%. The committed keeper passes C3a-2025 at +9.97%, a 0.03 pp margin that HEAD drift since the keeper's recorded sha abb0fcd consumes four times over (CA lambda +0.47/+0.88/+1.35%, CC_REGULAR to -1.24%, import to +0.93%). Isolated against its own control, this delta is near-inert and its C3a effect is a small IMPROVEMENT (-0.19 pp): CC_REGULAR -0.209/+0.048/+0.031 TWh, CA lambda +0.31/-0.25/-0.11%, belly-surplus gas -102/+24/-32 MW - reproducing caiso-119's near-inert result at current HEAD. The measured 0.570 therefore stays KEPT (rules 13/14/18: an accurate input is never tuned back toward a fitted one, whatever the residual does) and remains the value the NEXT keeper must carry - promotion is blocked by the HEAD-drift C3a regression, not by this parameter. BLOCKING ITEM RAISED: no CAISO delta can be promoted until that regression is bisected and fixed, since any re-solve at HEAD fails C3a-2025. Findings: results/calibration/FINDING-caiso121-surplus-marginal-attribution-2026-07-26.md (S0a) and FINDING-caiso119-minload-ab-result-2026-07-24.md.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-26-caiso-121-minload-keeper.js",
+  "bundle": "results/calibration/caiso121_minload_keeper_B"
+}
