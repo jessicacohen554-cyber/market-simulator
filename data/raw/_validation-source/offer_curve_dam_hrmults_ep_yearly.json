@@ -1,0 +1,175 @@
+{
+ "_provenance": {
+  "source": "ERCOT 60-Day DAM Disclosure Gen Resource Data raw parquets (slimmed 2026-07-22), delivery years 2023-2025, CC (CCGT90/CCLE90) energy-curve points, any Resource Status \u2014 the ercot_dam_offers.parquet row universe for these bands",
+  "method": "per-point mult = curve_price / (fuel x base_HR); econ_low rel<=0.33 / econ_high rel>=0.67 competitive body (< $1000), per-resource median then capacity(HSL)-weighted p50; peak = mode-B per-resource top-of-curve incl. near-cap bids \u2014 the cconly derivation per delivery YEAR",
+  "basis": "HH_daily(delivery_date) + ercot_electric_power_gas_basis(year) (EIA N3045TX3 measured TX electric-power delivered level \u2014 the series apply_ercot_zonal_gas_basis re-levels dispatch gas to), replacing HH_daily - 0.50",
+  "rule23_citation": "ercot_zonal_gas_basis adoption changed the dispatch delivered-gas series (+0.50/+0.41/+0.04 $/MMBtu over HH-0.50 in 2023/24/25) under the band-multiplier artifacts; derivation-consistency re-derive per ERCOT-117 FINDING \u00a74.3 (FINDING-ercot117-gas-basis-ranking-2026-07-26.md), not a residual chase",
+  "committed_band": "ABSENT by data destruction, not by choice: Min Gen Cost was dropped by the owner-ordered 2026-07-22 raw slimming (slim_ercot_dam_disclosure.py), the parsed ercot_dam_offers.parquet was never committed, the free MIS path retains only ~2.3 years (2023 publications gone), and the credentialed archive was owner-declined. The committed band keeps the run's resolved (pooled HH-0.50-derived) value.",
+  "peak_mode": "B",
+  "ep_basis_vs_hh": {
+   "2023": 0.0045,
+   "2024": -0.0858,
+   "2025": -0.4634
+  },
+  "iso": "ERCOT"
+ },
+ "2023": {
+  "anchor_usd_mmbtu": 2.5402,
+  "CC_REGULAR": {
+   "econ_low": 0.812,
+   "econ_high": 1.235,
+   "peak": 2.546
+  },
+  "_CC_REGULAR_detail": {
+   "base_hr": 7.741,
+   "n_resources": 132,
+   "n_points": 3123090,
+   "econ_low": {
+    "p25": 0.689,
+    "p50": 0.812,
+    "p75": 0.912
+   },
+   "econ_high": {
+    "p25": 1.003,
+    "p50": 1.235,
+    "p75": 1.962
+   },
+   "peak_full": {
+    "p25": 1.483,
+    "p50": 2.546,
+    "p75": 54.944
+   }
+  },
+  "CC_CHP": {
+   "econ_low": 0.797,
+   "econ_high": 1.212,
+   "peak": 2.5
+  },
+  "_CC_CHP_detail": {
+   "base_hr": 7.884,
+   "n_resources": 132,
+   "n_points": 3123090,
+   "econ_low": {
+    "p25": 0.676,
+    "p50": 0.797,
+    "p75": 0.895
+   },
+   "econ_high": {
+    "p25": 0.984,
+    "p50": 1.212,
+    "p75": 1.927
+   },
+   "peak_full": {
+    "p25": 1.456,
+    "p50": 2.5,
+    "p75": 53.948
+   }
+  }
+ },
+ "2024": {
+  "anchor_usd_mmbtu": 2.1067,
+  "CC_REGULAR": {
+   "econ_low": 0.792,
+   "econ_high": 1.265,
+   "peak": 3.501
+  },
+  "_CC_REGULAR_detail": {
+   "base_hr": 7.741,
+   "n_resources": 141,
+   "n_points": 2926725,
+   "econ_low": {
+    "p25": 0.685,
+    "p50": 0.792,
+    "p75": 0.939
+   },
+   "econ_high": {
+    "p25": 1.011,
+    "p50": 1.265,
+    "p75": 1.881
+   },
+   "peak_full": {
+    "p25": 1.817,
+    "p50": 3.501,
+    "p75": 44.457
+   }
+  },
+  "CC_CHP": {
+   "econ_low": 0.778,
+   "econ_high": 1.242,
+   "peak": 3.437
+  },
+  "_CC_CHP_detail": {
+   "base_hr": 7.884,
+   "n_resources": 141,
+   "n_points": 2926725,
+   "econ_low": {
+    "p25": 0.672,
+    "p50": 0.778,
+    "p75": 0.922
+   },
+   "econ_high": {
+    "p25": 0.992,
+    "p50": 1.242,
+    "p75": 1.847
+   },
+   "peak_full": {
+    "p25": 1.784,
+    "p50": 3.437,
+    "p75": 43.652
+   }
+  }
+ },
+ "2025": {
+  "anchor_usd_mmbtu": 3.0655,
+  "CC_REGULAR": {
+   "econ_low": 0.85,
+   "econ_high": 1.332,
+   "peak": 2.629
+  },
+  "_CC_REGULAR_detail": {
+   "base_hr": 7.741,
+   "n_resources": 153,
+   "n_points": 3127389,
+   "econ_low": {
+    "p25": 0.728,
+    "p50": 0.85,
+    "p75": 0.979
+   },
+   "econ_high": {
+    "p25": 1.13,
+    "p50": 1.332,
+    "p75": 1.736
+   },
+   "peak_full": {
+    "p25": 1.478,
+    "p50": 2.629,
+    "p75": 6.112
+   }
+  },
+  "CC_CHP": {
+   "econ_low": 0.835,
+   "econ_high": 1.308,
+   "peak": 2.581
+  },
+  "_CC_CHP_detail": {
+   "base_hr": 7.884,
+   "n_resources": 153,
+   "n_points": 3127389,
+   "econ_low": {
+    "p25": 0.715,
+    "p50": 0.835,
+    "p75": 0.962
+   },
+   "econ_high": {
+    "p25": 1.11,
+    "p50": 1.308,
+    "p75": 1.705
+   },
+   "peak_full": {
+    "p25": 1.452,
+    "p50": 2.581,
+    "p75": 6.001
+   }
+  }
+ }
+}

@@ -947,6 +947,7 @@ def bins_to_fleet(
             # bypasses the band decomposition → neutral); bands without phys_*
             # keys resolve to markup 0 (rule 24 neutral fallback).
             _margin_markup_hr = 0.0
+            _margin_anchor = None
             if (
                 getattr(config, "gas_offer_net_revenue_margin", False)
                 and offer is not None
@@ -957,6 +958,14 @@ def bins_to_fleet(
                 _margin_markup_hr = base_hr * gas_offer_margin_markup_mult(
                     suffix, tr_hr / base_hr, offer
                 )
+                # ERCOT-118 EP rebasis: a rebased class's band dict carries
+                # ``margin_anchor`` (the year's EP-anchored delivered mean its
+                # per-year multipliers were identified at); thread it onto the
+                # tranche so apply_gas_offer_margin prices THIS markup at that
+                # basis. Absent key -> None -> the ISO window anchor.
+                if _margin_markup_hr > 0.0:
+                    _ma = offer.get("margin_anchor")
+                    _margin_anchor = float(_ma) if _ma is not None else None
             # Step-3a synchronization forcing: the _mustrun (contracted, fuel-
             # free) and _sync (spot, SRMC) coal min-load tranches are held on at
             # their full capacity via min_gen, so the unit stays synchronized at
@@ -1023,6 +1032,7 @@ def bins_to_fleet(
                         else 0.0
                     ),
                     offer_markup_hr=_margin_markup_hr,
+                    offer_margin_anchor=_margin_anchor,
                 )
             )
 
