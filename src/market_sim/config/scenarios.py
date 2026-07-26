@@ -101,6 +101,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # every pre-existing cache key is byte-stable; True enters the key (a
     # distinct financing scenario).
     "per_tech_wacc_enabled",
+    # Forward transmission-expansion channel (FF-G1): default False dropped
+    # from the hash so every pre-existing cache key is byte-stable; True
+    # enters the key (a distinct topology scenario).
+    "transmission_expansion_enabled",
     # NYISO SCR/EDRP demand-response axis (commit 62aac3b). Both fields are
     # default-off / a market-design constant and were intended "byte-identical
     # for every other config", but they reach asdict() and were not registered
@@ -6979,6 +6983,25 @@ class ScenarioConfig:
     # market_sim.model.transmission.build_pjm_external_flow_groups.
     pjm_congestion: bool = False
 
+    # Forward transmission-expansion channel (FF-G1, GATED default off). When
+    # on in forecast mode, the committed-instrument registry
+    # (data/raw/transmission-expansion via data.transmission_expansion) adds
+    # each in-service project's transfer-capability delta to the matching
+    # TransferLink TTC / InterfaceLimit cap per solve year — cumulative from
+    # each row's in_service_year, additive to the ISO's base-static vintage
+    # (data.transmission_expansion.TRANSMISSION_BASE_STATIC_VINTAGE), so the 2026-2050 topology
+    # evolves with board/regulator-committed builds (NECEC, Permian plan,
+    # LRTP) instead of staying frozen at the base year. Registry rows are
+    # binding-instrument only (energized / under_construction /
+    # approved_funded — the confirmed-retirements admissibility convention,
+    # rule 13); measured backcast overlays are untouched (backcast coerces
+    # this off in __post_init__; hindcast is excluded in V1 pending an RC-1B
+    # style instrument_date information gate). Off by default: every existing
+    # forecast and backcast is byte-identical (the flag is also in
+    # _CACHE_KEY_OPTIONAL_FIELDS, so default-off cache keys are unchanged).
+    # See docs/transmission-expansion-methodology-2026-07.md.
+    transmission_expansion_enabled: bool = False
+
     pjm_seam_flow_limit: bool = False  # PJM reference-price seam: the PJM
     # analogue of miso_seam_flow_limit. Cap each of PJM's 5 reference-price
     # seams' (MISO/NYISO/Carolinas/TVA/LGEE) import-band availability at the
@@ -7758,6 +7781,17 @@ class ScenarioConfig:
         # screen, so probe legs stay armable and existing legs byte-identical.
         if self.mode == "backcast":
             self.entry_lookahead_reprice = False
+
+        # Forward transmission-expansion channel (FF-G1): forecast-forward
+        # only. A backcast's transmission is the measured overlays
+        # (NYISO_INTERFACE_TTC_BY_YEAR, measured GTC/interface series), and
+        # the hindcast harness is excluded in V1 (no RC-1B instrument_date
+        # information gate yet — a 2021-vintage hindcast must not know about
+        # a 2024 board approval). Coercing keeps every backcast keeper and
+        # hindcast leg byte-identical regardless of the flag (the FF-1F
+        # datacenter_load_path coercion pattern above).
+        if self.mode == "backcast" or self.hindcast:
+            self.transmission_expansion_enabled = False
 
         # capacity_market_clearing_by_iso is the FF-2C per-ISO capacity-clearing
         # flip (default-ON for PJM/MISO/CAISO/NEISO, owner sign-off 2026-07-19).
