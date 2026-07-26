@@ -88,14 +88,98 @@ replay environment's solver/pandas versions differ from the keeper's recorded
 ones) is the test. **Its outcome — including a null result — belongs in this
 document's §4 before the hypothesis is treated as settled.**
 
-## 4. Result
+## 4. Result — the idle-headroom framing is REFUTED, and the reason is a ceiling
 
-*(To be completed by the probe. If the tail does not move, the idle-headroom
-framing is refuted for the J/K families and the lane's next lead is the
-NYCA-tier reserve-supply tightness noted in
-`nyiso-overrun-underrun-2026-07.md` §3 plus the 2025 LI steam OOM commitment
-growth — SOM 2025 +68 %, light-load VOLTAGE-driven, 73 days — which is a
-commitment driver rather than a reserve-pricing one.)*
+The nyiso-83 obligation probe (2024, vs the same-HEAD zero-delta control) settles
+it. **The gate works exactly as designed — and it still cannot move C3c.**
+
+| quantity (NYC zone, 2024) | control | probe | 
+|---|--:|--:|
+| reserve-dual hours > \$0 | 6 | **7,003** |
+| reserve-dual mean | \$0.010 | **\$10.96** |
+| reserve-dual max | \$28.1 | **\$43.8** |
+| C3c hours > \$300 (any zone) | 0 | **0** |
+
+Online-gating the published NYC + LI 10-minute families takes the locational
+reserve constraint from *essentially never binding* (6 hours) to **binding in
+~80 % of all hours**. So the idle-headroom diagnosis of §3 was **correct about
+the binding** — idle capacity really was satisfying the load-pocket requirement
+for free — and **wrong about the consequence**. The tail did not move by a
+single hour.
+
+**Why: the J/K locational demand curves are capped at \$25/MW.** The published
+NYC and Long Island 10-minute and 30-minute reserve demand curves are
+**\$25/MW** (Ancillary Services Manual §6.8 items 9, 10, 14, 15 — the same value
+carried in `NYISO_RCPF_LOCATIONAL` and in the new LI family). A family whose
+maximum penalty is \$25/MW can contribute at most ~\$25/MW of scarcity rent to
+the LBMP no matter how deeply short the pocket is. The observed dual peaks at
+\$43.8 precisely because the *nested* tiers ($40 SENY/NYC/LI, \$500, \$775) sit
+above it — but nothing in the J/K stack approaches the \$300 gate.
+
+**Therefore the J/K ladders are structurally incapable of producing the C3c
+tail, and no further work on them can close it.** This is a ceiling, not a
+calibration gap. The tail has to come from the tiers whose published penalties
+are large enough to reach it — **NYCA 10-min/30-min (\$750) and 10-min spin
+(\$775), and East 10-min (\$775)** — i.e. from **system- and East-tier**
+reserve-supply tightness, not from load-pocket formation.
+
+That redirects the lane. The remaining leads are the ones that act on those
+tiers: the NYCA-tier reserve-supply tightness in
+`nyiso-overrun-underrun-2026-07.md` §3, and the 2025 LI steam OOM commitment
+growth (SOM 2025 +68 %, light-load VOLTAGE-driven, 73 days) — which is a
+**commitment** driver, not a reserve-pricing one, and so would reach C3c only
+indirectly by changing what is online when the NYCA/East tiers bind. Note also
+that **2024 is the weakest year to test C3c on** (the keeper's own model tail is
+0 there); the 2025 arm (keeper 9 h vs actual 42 h) is the informative one and is
+where any successor should measure.
+
+## 4a. Collateral result — the obligation is NOT a substitute for the floor
+
+The same probe answers the charter's rule-19 substitution question, negatively:
+
+| 2024 | control | probe | Δ |
+|---|--:|--:|--:|
+| ST_GAS TWh | 8.710 | 5.810 | **−2.900** |
+| ST_GAS evening mean MW | 1,392 | 1,001 | −391 |
+| ST_GAS overnight mean MW | 731 | 409 | −322 |
+| ST_GAS evening/overnight ratio | 1.905 | **2.449** | +0.544 |
+
+Dropping the eight NYC/LI `ST_GAS` floor limbs and replacing them with the
+published in-pocket obligation **costs 2.9 TWh of downstate steam** — against a
+2024 gap that was already −3.02 TWh, roughly doubling it. The displaced energy
+goes to `CC_REGULAR` (+1.47), `CT_CHP` (+0.68), `CC_CHP` (+0.45) and
+`CT_PEAKER` (+0.11), summing to +2.90 — an exact downstate ST→CC/CT merit
+substitution at constant total energy.
+
+The cause is not that the mechanism fails to bind (it binds in 80 % of hours).
+It is that the obligation is written on the *pocket*, not on *steam*: its
+eligible set is in-pocket steam **∪** fast-start GT (faithfully, per the
+instrument), so the LP satisfies 620 MW of published requirement with the
+**cheapest** in-pocket online capacity — the CTs and CCs — and lets the
+expensive boilers go. The p25-derived floor forced steam *specifically*; the
+published reserve requirement does not.
+
+**Shape, however, improves**: the obligation's steam is *more*
+evening-concentrated than the floor's (ev/ng 1.905 → 2.449), which is the
+direction the charter's acceptance criterion #3 asks for. The mechanism is
+shape-faithful and level-insufficient.
+
+**Disposition.** This is the outcome the instrument survey flagged as most
+likely: the published reserve ladder is **not** the instrument that drives
+in-city steam. The real driver is the non-public Con Edison load-pocket
+procedure — the one the MMU itself reports it cannot see (41–42 % of NYC
+reliability commitments "unverified"). So:
+
+- the **rule-19 substitution is refuted** — the obligation cannot replace the
+  NYC/LI `ST_GAS` floor limbs, and the floor stays;
+- this is **not** a rule-1 [R-STRUCT] violation. The mechanism is not being
+  rejected because a residual moved the wrong way; it is being rejected as a
+  *substitute* because it provably does not act on the class it was required to
+  replace. Rule 19 asked for replacement-or-reconciliation, and replacement has
+  now been tested and failed;
+- the **published LI ladder is a separate question** (a rule-14 omission fix
+  that stands on its own) and is isolated by the `nyiso83_probe_lionly_2024`
+  arm rather than being judged through the substitution's failure.
 
 ## 5. Standing note for whoever picks this up
 

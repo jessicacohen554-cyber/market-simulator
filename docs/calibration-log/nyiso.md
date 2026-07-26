@@ -959,3 +959,82 @@ silently compensating (rule 14's exact signature). Disposition: PROBE on the
 dashboard; **re-exercise this flag as a candidate keeper arm when the summer
 scarcity lane moves** — the two mechanisms are complementary, and arming
 winter-spread alone just trades a winter miss for a summer one.
+
+## 2026-07-26 — nyiso-83: owner ADJUDICATES the in-city lane open; J/K obligation built, binds hard, and is REFUTED as a floor substitute; C3c closed off the J/K route by a $25/MW ceiling
+
+**Owner adjudication (charter §3 / survey §2): YES, full J/K reopen.** The closed
+NYISO C3a "reserve" lever was closed as a *pricing* lever (measured Δ$0.00 on the
+2023 trough, nyiso-71); it does not extend to a commitment-obligation reading,
+which addresses a different phenomenon. Zone-K ARR retrieval was authorized,
+attempted, and **exhausted** → documented-NO.
+
+**Two survey questions closed on primary sources.** (a) The vintage pin needed
+**no change**: the three dated LRR versions already on disk show the **v2021
+regime spans all of 2023–2025**, in which NYC is 500/1,000 — the values already
+modelled; the 625/1,250 raise is a 2026 event. (b) What was actually missing was
+**Zone K entirely** — no LI family in `NYISO_RCPF_LOCATIONAL` and none in the
+measured #1344 intake — a rule-14 omission of a *published* requirement. (c) The
+LI on/off-peak `DATA NEEDED` is closed from the tariff itself, **MST §2.15
+Definitions-O** (7 a.m.–11 p.m. EPT, Mon–Fri, ex-NERC holidays) — a calendar
+rule, hence rule-13 admissible and forward-regenerating. (d) The ARR table is
+**login-walled**: current Manual 12 replaced Tables B.1–B.5 with links and its
+Table B.5 now points at `nyiso.com/reports-information`, which reads "Log into
+MyNYISO to view the Application of Reliability Rules".
+
+**Built** (`fa9fc78`, default-off, byte-inert, 25 new tests):
+`nyiso_li_locational_reserve` (published LI 10-min 120 MW; 30-min 270/540
+diurnal; $25/MW curve per ASM §6.8 items 10/15) and
+`nyiso_incity_commitment_obligation` (published NYC+LI 10-minute families
+re-classed onto an online-gated in-pocket class, steam ∪ fast-start GT).
+Rule 19 both ways: hard error against `nyiso_synchronised_reserve`, and the
+NYC/LI `ST_GAS` floor limbs are dropped **automatically**
+(`drop_obligation_owned_reliability_specs`, 8 limbs) rather than by a
+hand-written override that could be forgotten into a stack.
+
+**A/B (2024, probe vs same-HEAD zero-delta control — the environment's
+solver/pandas differ from the keeper's recorded ones, so the registered keeper
+metrics are not a valid baseline).**
+
+*The gate works.* NYC reserve-dual hours >$0 **6 → 7,003**, mean $0.010 →
+$10.96: online-gating takes the locational constraint from essentially never
+binding to binding in ~80 % of hours. Idle capacity really had been satisfying
+the load-pocket requirement for free.
+
+*C3c does not move — and cannot.* Tail hours >$300: **0 → 0**; dual max only
+$43.8. **The published NYC/LI demand curves are $25/MW** (ASM §6.8 items
+9/10/14/15), so a J/K family can contribute at most ~$25/MW of scarcity rent
+however short the pocket is. **The J/K ladders are structurally incapable of
+producing the C3c tail** — a ceiling, not a calibration gap. The tail must come
+from the tiers whose published penalties can reach it: NYCA ($750/$775) and East
+($775). This CLOSES the load-pocket route to C3c and redirects the lane to
+system/East-tier reserve-supply tightness. (2024 is also the weakest C3c test
+year — the keeper's own tail is 0 there; 2025, 9 vs 42, is the informative one.)
+
+*The obligation is NOT a substitute for the floor.* ST_GAS **8.710 → 5.810 TWh
+(−2.90)** against a 2024 gap already at −3.02, with the displaced energy landing
+exactly on `CC_REGULAR` +1.47 / `CT_CHP` +0.68 / `CC_CHP` +0.45 / `CT_PEAKER`
++0.11 (sum +2.90, a clean downstate ST→CC/CT merit substitution). Cause: the
+obligation is written on the **pocket**, not on **steam** — its eligible set is
+in-pocket steam ∪ fast-start GT (faithful to the instrument), so the LP meets
+620 MW of published requirement with the cheapest in-pocket online capacity and
+lets the boilers go. Shape nonetheless **improves** (evening/overnight 1.905 →
+2.449, the direction acceptance criterion #3 asks for): shape-faithful,
+level-insufficient.
+
+**Disposition.** Exactly what the survey flagged as most likely — the published
+reserve ladder is not the instrument that drives in-city steam; the real driver
+is the non-public Con Edison load-pocket procedure the MMU itself cannot see.
+The **rule-19 substitution is refuted** and the floor stays. This is **not** a
+rule-1 [R-STRUCT] violation: the mechanism is not rejected because a residual
+moved, but because it provably does not act on the class it was required to
+replace — replacement was the charter's condition, and it has now been tested.
+The published **LI ladder is a separate question** (a standalone rule-14 fix)
+and is isolated by its own arm rather than judged through the substitution's
+failure.
+
+**Note for any promoter:** the obligation forces energy through a *reserve row*,
+not a min-gen floor, so **D-2 does not stamp it**. C8 forced-share falls (the
+floor limbs are gone) while real forcing continues un-attributed. Defensible —
+co-optimized reserve is not a floor — but it must not be read as a forcing
+reduction. Evidence:
+`docs/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md` §§4, 4a.
