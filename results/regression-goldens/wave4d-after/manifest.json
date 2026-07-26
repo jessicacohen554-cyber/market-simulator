@@ -1,0 +1,73 @@
+{
+  "env": {
+    "MARKET_SIM_HIGHS_THREADS": "1",
+    "MARKET_SIM_WARMSTART": "1",
+    "MARKET_SIM_WARMSTART_XYEAR": "0"
+  },
+  "git_dirty": false,
+  "git_sha": "89d7ca2",
+  "hash_scheme": "sha256-of-canonical-column-float64-bytes",
+  "highspy_version": "unknown",
+  "keepers": {
+    "ERCOT": {
+      "bundle": "results/calibration/ercot_netrev_margin",
+      "content_hashes": {
+        "btm.parquet": "8acf053bb5aa6bcb2a38a4081ee9030ed5ef6afc967c7892f6b7bff8d50fd376",
+        "dispatch/2023_P1.parquet": "34542d0fd351feeb601bf938fae44edbaa1d62f0c86d7646e456e58cc58633ef",
+        "dispatch/2024_P1.parquet": "a6ff6ab4d94d9dc2847c094689fd528b4d579536bd9e471ab1ba2f8f1a113d84",
+        "dispatch/2025_P1.parquet": "119b049dd46e53aee1ee482ad37a9652142e951d7eedc4bae9b1259c1ca5e52f",
+        "flows.parquet": "c8436c384d6415ff5eed106a009821ef33ee65d2b3f695d706de82fb3965a485",
+        "storage.parquet": "7d2fe6d7fa2f471dfdd16d800d8c750de5fdb408f8381158d062919afff08e8b",
+        "system.parquet": "162475cbafc346be7a9118b095787b5a7a7acc10a93e8c9cb4a7eb090ca3a7bd"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_econ_marginal_hr_bound",
+        "coal_takeorpay_from_data",
+        "ercot_wind_zone_shape",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "plant_tranche_config",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "coal_econ_marginal_hr_bound",
+          "ercot_wind_zone_shape"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 215,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [
+          "caiso_dam_outages",
+          "coal_econ_marginal_hr_bound",
+          "dual_fuel_oil_daily_parity",
+          "ercot_thermal_dam_availability_coal",
+          "ercot_wind_zone_shape",
+          "miso_native_outage_source",
+          "neiso_operable_capacity_availability",
+          "nyiso_ordc_measured_step_span",
+          "pjm_ct_measured_max_reprice",
+          "pjm_dam_availability",
+          "pjm_offer_midcurve_level_segments",
+          "pjm_offer_midcurve_peak_segments"
+        ],
+        "scenario_config_matched": 597
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-23-ercot100-netrev-margin-keeper",
+      "recorded_flag_count": 206,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    }
+  },
+  "note": "Current-HEAD regression baselines (Stage-0). NOT byte-reproductions of the registered July-3 keeper bundles. Multi-GB bundles are gitignored; only this manifest is committed.",
+  "stage_tag": "wave4d-after"
+}
