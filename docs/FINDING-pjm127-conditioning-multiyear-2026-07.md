@@ -37,9 +37,12 @@ arm C the frozen conditioning on the all-four-bins population.
 | 2025 | LONG_RUN | +0.100 | +0.250 | HOLDS | +0.100 | HOLDS |
 
 Per-year verdicts on the pre-registered 2-of-3 criterion: **2023 ARTIFACT
-(3/3 segments), 2024 ARTIFACT (2/3), 2025 ARTIFACT (2/3)** (2025 rows from
-`results/calibration/pjm126_conditioning_precheck_2025.json`, pjm-126's
-committed run). Pooled three-year run: see §3.
+(3/3 segments), 2024 ARTIFACT (2/3), 2025 ARTIFACT (2/3)**. The 2025 rows
+are pjm-126's committed run, which this session **re-ran on the freshly
+fetched corpus and reproduced with an identical gap table** (all nine rows,
+same 8.5e-13 fidelity deviation;
+`pjm126_conditioning_precheck_2025_rerun.json`) — the re-download and the
+NA-safety patch change nothing. Pooled three-year run: see §3.
 
 **Fidelity guard, full strength, every run.** Worst arm-A deviation vs the
 committed `pjm_offer_midcurve_condbinned.json` ladders: **7.9e-13 (2023),
