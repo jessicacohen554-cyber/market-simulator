@@ -14,9 +14,9 @@
   ],
   "data_blocked_years": [],
   "rubric_version": 2.7,
-  "determination": "NOT-YET",
+  "determination": "CALIBRATED-WITH-CAVEATS",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: price_shape"
+    "3 ledgered measured-input caveat(s): C3a mean LMP, C3b price duration/shape, C3c price tail / scarcity (RT hourly)"
   ],
   "notes": [
     "C8 2023 ST_GAS: grounded above budget \u2014 35.7% forced (7.7202 of 21.6347 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.979 (\u22650.8) & off-peak CV ratio 1.313 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
@@ -43,7 +43,8 @@
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
@@ -81,6 +82,7 @@
     "protective": [],
     "ledgered": [
       "C3a mean LMP",
+      "C3b price duration/shape",
       "C3c price tail / scarcity (RT hourly)"
     ],
     "commercial_band": [],
@@ -93,8 +95,8 @@
     "scored": 10,
     "target_grade": 7,
     "commercial_grade": 0,
-    "ledgered": 2,
-    "fails": 1
+    "ledgered": 3,
+    "fails": 0
   },
   "free_class_score": {
     "iso": "MISO",
