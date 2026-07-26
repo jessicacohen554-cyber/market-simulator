@@ -68,7 +68,7 @@ labels below are measured, not eyeballed.
 | 3 | other (biomass+geo) | 7.74 | −2.66 | **−0.15** | 5 % / 87 % / 39 % | seasonal blocks, **anti-correlated** | must-run block vs a seasonally-dispatched real fleet | (b) |
 | 4 | ~~nuclear~~ **WITHDRAWN** | ~~7.46~~ | ~~+5.02~~ → **+0.14** | ~~0.61~~ → 0.70 | ~~0.4 % / 95 % / 36 %~~ | ~~multi-week vertical blocks~~ — a **zero-coded benchmark filing gap** | **nothing — the benchmark was wrong** (see the correction above) | — |
 | 5 | oil | 4.16 | −0.98 | 0.05 | 0.1 % / 95 % / 19 % | event blocks, uncorrelated | oil peakers dispatch on the wrong days | (b) |
-| 6 | solar | — | — | — | — | **no hourly actual; model is a FLAT block** | flat fallback CF (see §3) | **(c)+(a)** |
+| 6 | solar | — | — | — | — | ~~**no hourly actual; model is a FLAT block**~~ → **FIXED 2026-07-26** (`nyiso-75`) | ~~flat fallback CF~~ — shaped from the NEISO donor + clear-sky tracking-mix ratio (see §3) | **(a) — closed** |
 | 7 | wind | 0.06 | −0.00 | **1.000** | — | **none — pinned** | nothing (see §6) | — |
 
 Category: **(a)** fixable model input · **(b)** missing structural mechanism ·
@@ -118,6 +118,66 @@ the model's Mar/Sep blocks are a hard-coded generic assumption; if so, replacing
 them with the measured per-unit windows is the fix.
 
 ## 3. Rank 6 — solar: the model's NYISO solar is a flat block (a definite defect)
+
+> ### ✅ FIXED 2026-07-26 — shaped solar fallback landed (`nyiso-75`)
+>
+> The all-ISO sweep this section asked for was run, the fix is in, and the run
+> is on the dashboard (`2026-07-26-nyiso-75-solar-shape`).
+>
+> **Sweep result — one live instance, two latent ones.** Across all six ISOs ×
+> {wind, solar} × 2023–2025, **NYISO solar is the ONLY cell that both reaches
+> the EIA-930 distribution fallback and is degenerate.** Every other cell takes
+> an HSL or per-BA hourly path. CF arrays for the other 30 ISO-year-mode cells
+> are byte-identical before/after. Two *latent* defects were found in the same
+> parquet and are NOT fixed (they are currently unconsumed, so no keeper is
+> affected): **MISO and SPP solar rows are UTC-stamped** — diurnal centroid
+> h18.5 / h19.4 against h12.6–13.9 for the correctly-clocked ISOs, i.e. ~+6 h
+> rotated — so any year that lost its hourly extract would silently inherit a
+> six-hour-rotated solar day; and `solar_proxy` (NYISO) is **dead data** with
+> zero code references, itself rotated (centroid h17.3). The degeneracy guard
+> catches flatness, **not rotation**. The NEISO donor chosen below is verified
+> local-clock (centroid h13.1), so the repair does not inherit the rotation.
+>
+> **The fix** (`renewables._donor_shaped_distribution`, keyed on a
+> distinct-value degeneracy test rather than on NYISO): rebuild the row from an
+> adjacent same-clock BA — NEISO, interconnected, both `America/New_York`,
+> EIA-860 solar-fleet latitude 42.5 N vs 42.6 N — which supplies the measured
+> diurnal timing, day-to-day cloud variability and seasonality on the same
+> weather year. Then correct for the two fleets' different EIA-860 tracking
+> mixes (NYISO 30.5 % single-axis vs NEISO 13.3 %) by the clear-sky POA **ratio**
+> `POA_iso / POA_donor`. The ratio form is deliberate: `_clearsky_geometry`
+> omits the longitude/equation-of-time term and its docstring sanctions only
+> *relative* use, so the offset cancels between the two ISOs. A phase-aligned
+> roll — which uses the geometry absolutely — was tested and rejected: it
+> mis-times the shoulders (zero at h05–06, inflated at h19).
+>
+> **Level untouched, nothing fitted.** The distribution is renormalized to sum
+> to 1.0, so `derive_cf_profile` still sets the annual mean CF from
+> `RENEWABLE_AVG_CF` exactly as before (0.1500, zero clipped hours). No residual
+> was consulted (rules 1, 13).
+>
+> **Independent validation** against EIA-923 NYIS utility-scale solar monthly
+> netgen — data never used to build the shape. 2023 monthly-energy share:
+>
+> | profile | MAE vs EIA-923 | r |
+> |---|---|---|
+> | flat (before) | 0.0304 | **−0.043** |
+> | donor shape only | 0.0076 | 0.977 |
+> | **shipped fix** | **0.0050** | **0.983** |
+>
+> NYISO solar 2023 now resolves **4,576 distinct values (was 12)**, peaks at
+> **h13 (was h00)**, midday/night **83.9 (was 1.00)**.
+>
+> **Scoring impact — read before reacting.** C7/C8 PASS, C2/C4 PASS,
+> C3a/C3b/C3c unchanged-FAIL (the known 2023 energy-LEVEL residual). C1 flips
+> PASS→FAIL on **one knife-edge cell**: 2024 ST_GAS −3.02 TWh against a ±3.0 TWh
+> band. The fix moved model ST_GAS by only **−0.056 TWh** (8.106 → 8.050, 0.7 %
+> of the class); the `nyiso-72` keeper was **already at −2.964**, i.e. 0.036 TWh
+> — 1.2 % of the band — inside the edge. This is a pre-existing marginal ST_GAS
+> level miss crossing a hard threshold, **not** a regression the solar shape
+> introduced. Per rule 1 the mechanism stays in and the ST_GAS level residual is
+> the root cause to chase.
+
 
 Found only because the panel exists. NYISO model solar dispatch, 2023:
 
@@ -242,8 +302,12 @@ map with a ±4 MW cap). Contrast ERCOT, where wind r = 0.992 with real structure
 3. ~~**Nuclear refuel calendar**~~ — **CLOSED, not a defect.** The apparent
    +5.02 TWh was a zero-coded benchmark filing gap, fixed in `d13a3f2`; the
    repaired 3-year net Δ is +0.14 TWh.
-4. **Solar flat-CF fallback** — small TWh, but a *definite physical impossibility*
-   and cheap to fix; likely affects other ISO-fuels with absent 930 series.
+4. ~~**Solar flat-CF fallback**~~ — **CLOSED 2026-07-26, fixed** (`nyiso-75`,
+   dashboard `2026-07-26-nyiso-75-solar-shape`). Shaped from the NEISO donor +
+   clear-sky tracking-mix ratio; validated against EIA-923 monthly netgen
+   (r −0.043 → 0.983). The all-ISO sweep found NYISO solar to be the only LIVE
+   instance; MISO/SPP carry a *latent* UTC-rotation defect in the same parquet
+   (unconsumed today, not fixed — see the box in §3).
 5. **`other` anti-correlation (r = −0.15)** — 7.74 TWh; biomass/geothermal
    modelled as a flat must-run against a seasonally-dispatched real fleet.
 6. **Oil day-placement** — 4.16 TWh, r ≈ 0.05; lowest priority of the six.
