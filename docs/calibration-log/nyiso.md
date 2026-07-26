@@ -1038,3 +1038,18 @@ floor limbs are gone) while real forcing continues un-attributed. Defensible —
 co-optimized reserve is not a floor — but it must not be read as a forcing
 reduction. Evidence:
 `docs/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md` §§4, 4a.
+
+**Third arm — the published LI ladder ALONE is provably inert, and that is the
+proof of the mechanism.** With `nyiso_li_locational_reserve=true` and the
+obligation OFF (floor limbs retained), 2024 is unchanged to solver noise: every
+class within 0.004 TWh, prices identical, and the Long Island reserve dual
+**bit-identical** to control (6 h >$0, max $28.1, vs the obligation arm's
+7,003 h). Reason, now demonstrated rather than hypothesised: without the online
+gate the LI families are **idle-allowed**, so Zone K's idle capacity meets 120 MW
+of 10-min and 270/540 MW of 30-min requirement free, every hour. The clean
+decomposition: published ladder alone → inert; + online gate → binds ~80 % of
+hours (the entire effect); but reachable price capped at the published $25/MW so
+binding never becomes a tail; and the eligible set is the pocket not steam, so
+binding never becomes steam commitment. `nyiso_li_locational_reserve` is
+therefore a **correct but probe-adjudicated INERT** rule-14 fix — carried
+default-off so no successor re-runs it expecting movement.
