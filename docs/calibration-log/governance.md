@@ -211,3 +211,35 @@ MISO, CAISO, NYISO; 2023–2025 one bundle each, rule 16; both arms registered,
 rule 15, with A0 = the keeper itself since the guard is byte-inert off), and the
 CAMPD↔CAISO resource crosswalk (turns the weakest instrument into per-resource
 ground truth; dedupe the raw parquet to one row per outage mrid first).
+
+## 2026-07-26 — caiso-123: the CAISO "RE-TUNE REQUIRED" cell of the guard re-audit rests on a CONFOUNDED A0 — trigger withdrawn as stated, re-derived onto the 07-24 extract-content change; guard's own isolated effect is −0.18 % (favourable)
+
+**Notification to the campd-economic-layup charter lane** (charter §8 amended in
+place; full record `results/calibration/FINDING-caiso123-c3a-drift-attribution-2026-07-26.md`):
+
+- The CAMPD unit-outage extracts were **derived-not-committed until 07-24**
+  (no `campd-unit-outages*.csv` main extract exists in any pre-07-24 tree, any
+  ISO); every session derived its own. The CAISO keeper
+  (`2026-07-23-caiso-netrev-margin-keeper`) solved on a session-local
+  **partial** derivation whose bytes are unrecoverable and which **no full
+  derivation regenerates** (keeper-era script re-run reproduces today's full
+  in-window mass to 0.1 MW).
+- PR #2842 committed a light partial CAISO extract; PR #2844's owner-ordered
+  "re-derive in full" added 642 genuinely-new 2023–25 windows (504
+  CC_REGULAR). Every post-07-24 solve reads the full envelope. Same-HEAD
+  isolation: extract content **+1.24 % λ-2025 / CC_REGULAR −0.49 TWh /
+  import +0.42 TWh**; the guard step alone **−0.18 %** (caiso-122, confirmed
+  directionally at today's HEAD).
+- The caiso-120 A0/A1 (+10.0 → +11.1 % C3a-2025) therefore conflated the
+  extract-content change with the guard: "A0 = the keeper by construction"
+  held for the guard *flag*, not the extract *file*. **Do not re-tune on that
+  number.** The re-derived predicate: the keeper's C3a-2025 PASS leaned on the
+  non-reproducible light envelope (rule-11 class); any honest full derivation
+  fails C3a-2025 by ~+1.1 pp. CAISO re-tune vs. the residual-over-count
+  investigation (freeze lift condition) sequencing is an owner call.
+- NYISO's cell is unaffected by this confound (#2842/#2844 touched only the
+  CAISO extract). The A0-validity lesson generalizes: a re-audit's "A0 = the
+  keeper" holds only if EVERY input byte is unchanged, and derived-not-committed
+  inputs violate that silently. `basis_sha` (landed, caiso-123) plus the
+  recommended derived-input content-hashing in `shared_inputs` close this
+  class.
