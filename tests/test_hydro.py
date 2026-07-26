@@ -1144,5 +1144,189 @@ class TestNYISOTreatyMinFlows(unittest.TestCase):
         )
 
 
+class TestHydroMinFlowFloor(unittest.TestCase):
+    """The measured monthly minimum-flow floor (caiso-124).
+
+    The lower half of the two-sided measured hydro capability envelope:
+    :func:`~market_sim.data.eia_loader.measured_hydro_min_flow_level` derives
+    the fleet's monthly Q95 sustained level and
+    :func:`~market_sim.data.hydro.allocate_min_flow_floor` splits it across
+    plants pro-rata by each plant's share of that month's energy budget.
+    """
+
+    def test_percentile_is_the_ceiling_mirror(self):
+        # The floor introduces NO new free parameter: its percentile is the
+        # exact complement of the ceiling's (DOF ledger — 0 new DOF).
+        from market_sim.config.constants import (
+            HYDRO_ENVELOPE_PERCENTILE,
+            HYDRO_MIN_FLOW_PERCENTILE,
+        )
+
+        self.assertAlmostEqual(
+            HYDRO_MIN_FLOW_PERCENTILE, 100.0 - HYDRO_ENVELOPE_PERCENTILE
+        )
+
+    def test_measured_level_is_monthly_and_nonnegative(self):
+        from market_sim.data.eia_loader import measured_hydro_min_flow_level
+
+        lev = measured_hydro_min_flow_level("CAISO", 2023)
+        self.assertIsNotNone(lev)
+        self.assertEqual(lev.shape, (12,))
+        self.assertTrue(np.all(lev >= 0.0))
+        # A large reservoir system never runs its whole fleet dry: every month
+        # carries a real sustained level, and it sits far below the fleet's
+        # measured mean output (~2.8 GW) — a floor, not a shape pin.
+        self.assertTrue(np.all(lev > 100.0))
+        self.assertLess(lev.max(), 2800.0)
+
+    def test_measured_level_is_shape_free(self):
+        # The level is one number per month, so expanding it over the hour
+        # horizon cannot carry a diurnal profile (rule 13: a floor following
+        # the measured hour-of-day shape would pin the measured outcome).
+        from market_sim.data.eia_loader import measured_hydro_min_flow_level
+        from market_sim.data.fleet import _hour_to_month_index
+
+        lev = measured_hydro_min_flow_level("CAISO", 2024)
+        hourly = lev[_hour_to_month_index(8760)]
+        by_hod = np.array([hourly[np.arange(8760) % 24 == h].mean() for h in range(24)])
+        self.assertLess(by_hod.max() - by_hod.min(), 1e-9)
+
+    def test_allocation_sums_to_the_fleet_level(self):
+        from market_sim.data.hydro import allocate_min_flow_floor
+
+        level = np.full(12, 300.0)
+        energy = np.array([[200_000.0] * 12, [100_000.0] * 12, [0.0] * 12])
+        hpm = hours_per_month().astype(float)
+        floors = allocate_min_flow_floor(level, energy, hpm)
+        np.testing.assert_allclose(floors.sum(axis=0), level)
+        # Pro-rata by budget share: 2:1:0.
+        np.testing.assert_allclose(floors[0], 200.0)
+        np.testing.assert_allclose(floors[1], 100.0)
+        np.testing.assert_allclose(floors[2], 0.0)
+
+    def test_allocation_clips_to_monthly_feasibility(self):
+        # A level above the month's average power would make the two-sided
+        # budget row infeasible; the allocator clips it to that exact bound.
+        from market_sim.data.hydro import allocate_min_flow_floor
+
+        hpm = hours_per_month().astype(float)
+        energy = np.array([[100.0 * h for h in hpm]])  # 100 MW average power
+        floors = allocate_min_flow_floor(np.full(12, 500.0), energy, hpm)
+        np.testing.assert_allclose(floors[0], 100.0)
+        self.assertTrue(np.all(floors * hpm[np.newaxis, :] <= energy + 1e-6))
+
+    def test_build_hydro_fleet_off_is_inert(self):
+        from market_sim.data.hydro import build_hydro_fleet
+
+        zones = ["NP15", "ZP26", "LA_BASIN", "SDGE", "SP15_rest"]
+        off_units, off_energy = build_hydro_fleet("CAISO", 2023, zones)
+        on_units, on_energy = build_hydro_fleet(
+            "CAISO", 2023, zones, min_flow_floor=True
+        )
+        # The floor never touches the energy budget or the unit set.
+        np.testing.assert_array_equal(off_energy, on_energy)
+        self.assertEqual(len(off_units), len(on_units))
+        self.assertTrue(
+            all(u.hydro_min_flow_monthly_mw is None for u in off_units),
+            msg="default-off path must leave every unit unfloored",
+        )
+        self.assertTrue(all(u.hydro_min_flow_monthly_mw is not None for u in on_units))
+
+    def test_build_hydro_fleet_floor_fits_every_plant_budget(self):
+        from market_sim.data.hydro import build_hydro_fleet
+
+        zones = ["NP15", "ZP26", "LA_BASIN", "SDGE", "SP15_rest"]
+        units, energy = build_hydro_fleet("CAISO", 2023, zones, min_flow_floor=True)
+        hpm = hours_per_month().astype(float)
+        floors = np.array([u.hydro_min_flow_monthly_mw for u in units], dtype=float)
+        self.assertTrue(
+            np.all(floors * hpm[np.newaxis, :] <= energy + 1e-6),
+            msg="a plant-month floor exceeds its own budget row (infeasible LP)",
+        )
+        # The floor leaves the LP real room to shape the rest of the month —
+        # it is commitment scaffolding, not the dispatch model.
+        forced = float((floors.sum(axis=0) * hpm).sum())
+        self.assertLess(forced / energy.sum(), 0.6)
+        self.assertGreater(forced / energy.sum(), 0.2)
+        # And it never asks a plant for more than its nameplate.
+        self.assertTrue(
+            all(floors[i].max() <= units[i].pmax_mw + 1e-6 for i in range(len(units)))
+        )
+
+    @staticmethod
+    def _gens(monthly=None):
+        """One hydro unit (50 MW, no EFORD) plus a thermal unit."""
+        hydro = Generator(
+            unit_id="H0",
+            name="H0",
+            zone="Z",
+            fuel_type="hydro",
+            pmax_mw=50.0,
+            eford=0.0,
+        )
+        if monthly is not None:
+            hydro.hydro_min_flow_monthly_mw = monthly
+        return [
+            hydro,
+            Generator(
+                unit_id="C0",
+                name="C0",
+                zone="Z",
+                fuel_type="gas_cc",
+                pmax_mw=50.0,
+                eford=0.0,
+            ),
+        ]
+
+    def test_min_gen_carries_the_floor_with_its_mechanism_id(self):
+        from market_sim.data.fleet import _hour_to_month_index
+        from market_sim.data.floor_mechanisms import MECH_HYDRO_MIN_FLOW
+
+        hours = 8760
+        # 40 MW in January only: month-constant within the month, zero outside,
+        # and below the 50 MW pmax so the availability clip cannot mask it.
+        gens = self._gens(tuple([40.0] + [0.0] * 11))
+        fa = generators_to_fleet_arrays(gens, ["Z"], hours=hours)
+        self.assertIsNotNone(fa.min_gen)
+        jan = _hour_to_month_index(hours) == 0
+        np.testing.assert_allclose(fa.min_gen[0, jan], 40.0)
+        np.testing.assert_allclose(fa.min_gen[0, ~jan], 0.0)
+        self.assertTrue(np.all(fa.min_gen_mechanism[0, jan] == MECH_HYDRO_MIN_FLOW))
+        # Thermal units are untouched.
+        np.testing.assert_allclose(fa.min_gen[1:], 0.0)
+
+    def test_min_gen_absent_when_no_unit_is_floored(self):
+        # The gate is read off the units themselves, so an unfloored fleet
+        # allocates no min_gen at all (byte-identical to before the mechanism).
+        fa = generators_to_fleet_arrays(self._gens(), ["Z"], hours=744)
+        self.assertIsNone(fa.min_gen)
+
+    def test_d4_window_declared_all_hours(self):
+        # Rule 12/17: the mechanism must carry a declared window. Inflow and
+        # licence releases are around-the-clock, so the window is all 24 hours.
+        import sys
+        from pathlib import Path
+
+        sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+        import legitimacy_diagnostics as ld
+        from market_sim.data.floor_mechanisms import MECH_HYDRO_MIN_FLOW
+
+        self.assertEqual(ld.D4_WINDOWS[(MECH_HYDRO_MIN_FLOW, None)], (0, 24))
+
+    def test_ablation_registry_classifies_the_mechanism(self):
+        from market_sim.data.floor_mechanisms import (
+            MECH_HYDRO_MIN_FLOW,
+            MECH_NAMES,
+            NON_THERMAL_MECHS,
+            assert_ablation_coverage,
+        )
+
+        assert_ablation_coverage()
+        self.assertIn(MECH_HYDRO_MIN_FLOW, MECH_NAMES)
+        # Non-thermal forcing: reported by D-2, never counted against a
+        # merchant thermal class's forced-share budget.
+        self.assertIn(MECH_HYDRO_MIN_FLOW, NON_THERMAL_MECHS)
+
+
 if __name__ == "__main__":
     unittest.main()

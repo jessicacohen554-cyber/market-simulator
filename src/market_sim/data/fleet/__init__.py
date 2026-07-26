@@ -227,6 +227,19 @@ class Generator(BaseModel):
     #                                 online_frac fraction of hours ranked by
     #                                 system load (its measured committed
     #                                 window); 0 disables the floor.
+    hydro_min_flow_monthly_mw: tuple[float, ...] | None = None
+    #                                 Conventional-hydro minimum-flow floor (MW)
+    #                                 per calendar month (12 entries, index 0 =
+    #                                 January), forced on via FleetArrays.min_gen
+    #                                 under config.hydro_min_flow_floor: the
+    #                                 plant's pro-rata share of the fleet's
+    #                                 measured monthly Q95 sustained level
+    #                                 (run-of-river inflow + FERC-licence minimum
+    #                                 releases, which the energy-budget LP cannot
+    #                                 represent). Month-constant BY DESIGN — a
+    #                                 diurnal floor would pin the measured shape.
+    #                                 None = no floor (data.hydro.
+    #                                 build_hydro_fleet stamps it).
     fast_start_run_hours: float = 0.0  # CAMPD-measured median start-to-stop run
 
     #                                 length (h) for fast-start CT tranches under
@@ -566,6 +579,19 @@ class Generator(BaseModel):
     #                                 online_frac fraction of hours ranked by
     #                                 system load (its measured committed
     #                                 window); 0 disables the floor.
+    hydro_min_flow_monthly_mw: tuple[float, ...] | None = None
+    #                                 Conventional-hydro minimum-flow floor (MW)
+    #                                 per calendar month (12 entries, index 0 =
+    #                                 January), forced on via FleetArrays.min_gen
+    #                                 under config.hydro_min_flow_floor: the
+    #                                 plant's pro-rata share of the fleet's
+    #                                 measured monthly Q95 sustained level
+    #                                 (run-of-river inflow + FERC-licence minimum
+    #                                 releases, which the energy-budget LP cannot
+    #                                 represent). Month-constant BY DESIGN — a
+    #                                 diurnal floor would pin the measured shape.
+    #                                 None = no floor (data.hydro.
+    #                                 build_hydro_fleet stamps it).
     fast_start_run_hours: float = 0.0  # CAMPD-measured median start-to-stop run
     #                                 length (h) for fast-start CT tranches under
     #                                 config.tranche_startup_measured_runs (v3):
