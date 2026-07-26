@@ -45,10 +45,16 @@ nothing to sync.
 ## Step-by-step
 
 ### 1. Determine the changed code surface
-List the changed files under `src/market_sim/`, `config/`, `scripts/`,
-`data/`. Group them by subsystem (dispatch, commitment, capacity, fleet/
-binning, outages, fuel, emissions/policy, transmission, storage, calibration,
-config/ISO topology, pipeline/solve-core, results schema, frontend).
+List the changed files under `src/market_sim/` (its `config/`, `data/`,
+`model/`, `policy/`, `results/`, `pipeline/` packages), `scripts/`, the
+top-level `configs/` YAML scenarios, and `data/` (raw sources + the
+`data/dictionary/` contract). Group them by subsystem (dispatch, commitment,
+capacity, fleet/binning, outages, fuel, emissions/policy, transmission,
+storage, calibration, config/ISO topology, pipeline/solve-core, results
+schema, dashboard/site).
+
+Paths in this skill are written as they appear in imports — `data/fleet/`
+means `src/market_sim/data/fleet/`.
 
 ### 2. Map each changed subsystem to its docs
 Use the **code→doc map** below to find every doc that makes claims about the
@@ -102,20 +108,21 @@ items parked for later. Do not commit/push unless the user asks.
 | `model/capacity.py` (retire / new entry / CCS retrofit) | `model-methodology-spec.md` §5; `CLAUDE.md` (Capacity Evolution) |
 | `model/transmission.py`, `config/iso_configs.py` (topology/TTC) | `model-methodology-spec.md` Scope & §1.3; `CLAUDE.md` (What This Is); `docs/multi-iso/00…`, `04…` |
 | `model/storage.py` | `model-methodology-spec.md` §1.3, §1.5.5, §5.5; `CLAUDE.md` |
-| `data/fleet.py`, `data/raw/reference/custom-bin-assignments.csv` (CAMPD bins, tranches, offer curves) | `docs/binning-methodology.md`; `model-methodology-spec.md` (Fleet representation); `CLAUDE.md` |
-| `data/outages.py` (backcast overlay) + `data/fleet.py` seasonal POF/WEFOR (forecast) | `model-methodology-spec.md` (Outage modelling) & §7.2; `results/calibration/SUMMARY-outage-overlay.md` |
-| `data/fuel.py`, `data/eia923.py`, `data/hydrogen.py` | `model-methodology-spec.md` §1.5.1; `docs/parameter-citations.md`; `docs/binning-methodology.md` (fuel pricing) |
+| `data/fleet/` package (models, arrays, campd_bins, offer_surfaces, floors, withholding, eia860, legacy_bins, assembly) + `data/raw/reference/custom-bin-assignments.csv` (CAMPD bins, tranches, offer curves) | `docs/binning-methodology.md`; `model-methodology-spec.md` (Fleet representation); `CLAUDE.md` |
+| `data/outages.py` (backcast overlay) + `data/fleet/` seasonal POF/WEFOR (forecast) | `model-methodology-spec.md` (Outage modelling) & §7.2; `results/calibration/SUMMARY-outage-overlay.md` |
+| `data/fuel/` package (trajectories, hubs, `basis/<iso>.py`, coal, dual_fuel, plant_prices, resolve), `data/eia923.py`, `data/hydrogen.py` | `model-methodology-spec.md` §1.5.1; `docs/parameter-citations.md`; `docs/binning-methodology.md` (fuel pricing) |
 | `results/emissions.py`, `policy/carbon.py`, `policy/rps.py`, `policy/ira.py`, `policy/eac.py` | `model-methodology-spec.md` §1.4, §1.5, §5.3 |
 | `config/scenarios.py` (`ScenarioConfig`), `config/constants.py` | `model-methodology-spec.md` §4; `docs/parameter-citations.md`; `docs/thermal-cycling-adders.md` |
-| `results/calibration.py`, `scripts/run_calibration*.py` | `docs/calibration-log.md`, `docs/calibration-session-log.md`, `docs/calibration-report.md`, `docs/calibration-best-so-far.md`, `results/calibration/SUMMARY-*.md` |
+| `results/calibration.py`, `scripts/run_calibration*.py` | `docs/calibration-log/<iso>.md` (per-ISO continuations; `governance.md` for cross-ISO) — `docs/calibration-log.md` is a FROZEN archive (≤2026-07-19), never appended to; `docs/calibration-session-log.md`, `docs/calibration-report.md`, `results/calibration/SUMMARY-*.md`. **Not** `docs/calibration-best-so-far*.md` — those are SUPERSEDED snapshots; current keeper truth is `frontend/data/backcast/keepers/<ISO>.json` + the Calibration Status page |
 | `results/cache.py`, `results/export.py`, `results/outputs.py` | `docs/data-dictionary.md` |
 | `data/ownership.py`, `data/ownership_config.py` | `us-gen-ownership.md` |
-| `frontend/`, `*.html` (color palettes) | `docs/DESIGN_SYSTEM.md` |
+| root `*.html`, `frontend/css/style.css` (color palettes) | `docs/DESIGN_SYSTEM.md`. The `frontend/` scenario app was archived to `docs/archive/frontend-scenario-app/` (D-7); `frontend/data/` is live and frozen |
 | `pipeline/*.py` (spec, kwargs, prior, result, backcast_config, commitment, solve — shared per-year solve core) | `model-methodology-spec.md` §5.1; `CLAUDE.md` (Architecture; Dispatch & Commitment) |
 | `scripts/legitimacy_diagnostics.py` (D-1/D-2/D-4 legitimacy diagnostics + gates) | `docs/calibration-determination-rubric.md`; `docs/forecast-determination-rubric.md`; `docs/model-legitimacy-audit-2026-07.md`; `CLAUDE.md` (rules 17–26) |
 | `scripts/` layout & standing tooling (keeper-rotation rule) | `scripts/README.md` |
 | the forecast program (tier ladder, lanes/waves, entry/exit) | `docs/forecast-development-plan-2026-07.md`; `docs/forecast-determination-rubric.md` |
-| the codebase-site / dashboard (`docs/codebase-site/*.html`) | `docs/codebase-site/PLAN.md`, `docs/codebase-site/UPDATE-PLAN-2026-07.md`; `docs/verifying-dashboard-numbers.md` (generated at deploy — `.github/workflows/deploy-pages.yml`) |
+| the codebase-site / dashboard (`docs/codebase-site/*.html` + `js/*.js` page modules) | `docs/codebase-site/PLAN.md`, `docs/codebase-site/UPDATE-PLAN-2026-07.md`; `docs/verifying-dashboard-numbers.md` (generated at deploy — `.github/workflows/deploy-pages.yml`); `docs/frontend-audit.md` §0 for executed site decisions |
+| the dashboard artifact chain (`scripts/render_backcast.py`, `build_manifest.py`, `build_status.py`, `dashboard_add_run.py`, `lib/rubric_consts.py`) | `docs/backcast-artifact-contract.md` — the field tables, byte codecs and FROZEN list. A wire-format or bundle-key change syncs HERE first |
 | any `src/market_sim/` subsystem — "what does the code do here?" | `docs/codebase/` (code-derived engineering pages + `codebase/README.md`) |
 | repo-wide conventions (naming, layout, workflow) | `CONVENTIONS.md`; `CLAUDE.md`; docs IA index `docs/README.md` |
 | anything | `CHANGELOG.md` (always append), `README.md` (only if the elevator pitch changed) |
@@ -132,6 +139,21 @@ here as part of the same sync.
 - **Reviewable diffs.** Surgical edits over wholesale rewrites; preserve voice
   and still-true content.
 - **Date-stamped snapshots stay put.** Run-specific files
-  (`calibration-best-so-far.md`, `SUMMARY-*.md`) are point-in-time records —
-  don't rewrite history; if they're stale-as-current, add a dated banner
-  instead.
+  (`calibration-best-so-far*.md`, `SUMMARY-*.md`) are point-in-time records —
+  don't rewrite history; if they're stale-as-current, add a banner instead.
+  The banner is the canonical first-line blockquote from `docs/README.md`:
+  `> Status: ACTIVE | RECORD (frozen <date>) | SUPERSEDED-BY <path> | ARCHIVED`.
+  A `SUPERSEDED-BY` pointer must resolve on the tree — repoint it if the
+  successor moved (the four `calibration-best-so-far*` banners pointed at a
+  `keepers.json` that had since become the sharded `keepers/<ISO>.json`).
+  Only assert a status you verified; an un-bannered dated doc already reads as
+  `RECORD` by default, so a wrong banner is worse than none.
+- **Never hand-edit a generated file, and never re-type a generated value.**
+  `frontend/data/backcast/{manifest,benchmark,completeness,rubric-consts}.js`,
+  `runs/*.js` and `status/*.js` are machine output (marked
+  `linguist-generated=true` in `.gitattributes`) — regenerate and compare bytes.
+  In particular the dashboard's rubric constants are read out of
+  `scripts/calibration_verdict.py` by `scripts/lib/rubric_consts.py`: a scorer
+  constant is **added there and regenerated**, never typed into a `.js` page.
+  Copying one into JS behind a "mirrors the scorer" comment is the exact drift
+  trap Wave 5C removed.
