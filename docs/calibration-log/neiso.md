@@ -364,3 +364,73 @@ reproduce). NEISO verdict stays FIX-IN-PLACE (neiso-64); keeper unchanged
 `results/calibration/RESULTS-neiso65-crossiso-reaudit-2026-07.md`. The
 neiso-63 residual over-count stays open — now corroborated per-resource at
 CAISO (1.5–2.3× on the crosswalked active-plant scope).
+
+## 2026-07-26 — neiso-66 / neiso-67: the residual over-count is a DEFINITIONAL SEAM, and it is NOT closable by a detector discriminator — charter's deferred item closed on evidence; freeze-lift now the owner's call
+
+No LP solve, no keeper touched, no out-of-training year touched. NEISO remains
+calibration-complete (2026-07-07) and at frontier (2026-07-11); the keeper is
+unchanged (neiso-61). Nothing here is calibration work and nothing is
+registrable on the dashboard — this lane produced findings, not runs.
+
+**neiso-66 (recorded here retrospectively; the finding was committed 2026-07-26
+without a log entry).** The residual CAMPD outage over-count that held the
+holdout freeze is neither a detector error nor a publisher reporting gap. It is
+a definitional seam: CNOG/ISO-NE publish *unavailability*, the CEMS detector
+measures *non-operation*, and the difference is available-but-not-committed
+capacity. Both of the re-audit's candidate directions are refuted by
+measurement — interior-day CEMS inside the excess windows is 99.8 %
+zero-generation and 97 % of windows are complete stops (so no cycling is being
+booked as outage), and the excess windows run ~10 days (so they are not missed
+intraday forced outages). Confirmed directly against ISO-NE's own published
+`uncommitted_available_gen_nonfast_mw`: the residual tracks it at +0.70 to
++0.85 and is anti-correlated with published outages at −0.85 to −0.86. A
+CAISO-only defect was corrected on the way (the CNOG `tail(1)` collapse
+inflated every published-side ratio ~1.3×; NEISO's daily instrument is
+unaffected, so its 1.29–1.36× levels stand).
+`results/calibration/FINDING-neiso66-overcount-rootcause-2026-07-26.md`.
+
+**neiso-67 — STEP 2, and it is a NEGATIVE result.** The one remaining
+mechanism the finding left untested was commitment economics: does the observed
+idle/run split track start-cost recovery over the expected run, per unit? It
+does not. Built on measured CAMPD operation + delivered fuel + published
+NREL/SR-5500-55433 start costs, with the charter D1 revealed-clearing-cost
+reference recomputed **leave-one-out** and the expected run taken as the
+best contiguous ≥ min-run block in a day-ahead horizon:
+
+- **per unit it is a coin flip** — median AUC 0.502 / 0.546 / 0.530 (2023/24/25),
+  and 0.47–0.57 across all 18 configuration-years swept (RCC p50/p75/p90/p99 ×
+  horizon 24/48/72 h). In every one of the 18 it scores **at or below the plain
+  marginal spread** it was meant to replace; dividing by the published start
+  cost *subtracts* AUC.
+- **on the seam population the sign inverts** — booked-out days carry *higher*
+  recovery than the same units' running days (×0.81 / ×0.89 / ×0.90, AUC
+  0.405 / 0.391 / 0.405), and **89–93 % of seam days already repay the published
+  start cost** while the unit stays off for a median ~10 days.
+- **the commitment band identifies nothing** — `0 ≤ R < 1`, the only band that
+  is new information (the `R < 0` half is the merit guard's own marginal cut),
+  scores −0.51 / +0.26 / +0.05 against the published uncommitted series, and in
+  all three years correlates *better with published OUTAGES* than with
+  UNCOMMITTED. Against the D1 positive control's +0.77 / +0.71 / +0.67, that is
+  no signal at all.
+- **the instrument is proven live**, so the null is a property of the
+  hypothesis: the `R < 0` band tracks published UNCOMMITTED at +0.48 to +0.79 in
+  18 of 18 cells.
+
+Probe: `scripts/probes/_neiso67_startcost_recovery.py` (re-runnable, no solve).
+Finding: `results/calibration/FINDING-neiso67-commitment-test-2026-07-26.md`.
+
+**Open / next.** (1) **STEP 3 disposition is the owner's decision.** The
+recommendation is (b) carry the seam explicitly — option (a), a
+commitment-aware second discriminator in the detector, is not buildable on the
+evidence and rule 19 `[R-ONE-MECH]` forbids stacking it on the guard.
+(2) **The freeze stays ACTIVE.** Its `lifts_when` condition ("the residual is
+explained or fixed") is now met on the *explained* branch, but only the owner
+lifts it and no session lifts it by inference — see charter §9. (3) Separately
+open, and NOT a freeze blocker: whether the seam is better closed on the LP side
+(neiso-66 §5b, rule 1) — a different lane on a different instrument, where
+`caiso_ra_mustoffer` already owns this capacity's commitment. (4) A live
+observation flagged not proposed: the day-grain best-block `R < 0` cut tracks
+published UNCOMMITTED at +0.63 to +0.79 where the guard's window-grain
+out-of-merit share reaches +0.08 to +0.31 — a possible *replacement* for the
+guard's cut, in its existing marginal lane, unvalidated cross-ISO. Next
+shorthand: neiso-68.
