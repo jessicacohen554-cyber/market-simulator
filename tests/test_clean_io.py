@@ -24,7 +24,10 @@ from scripts.lib.clean_io import (
     write_clean,
 )
 
-# Datatypes that must each have a parseable schema (the standardization contract).
+# Datatypes that must each have a parseable schema (the standardization
+# contract). Frozen snapshot of scripts/regenerate_clean.DATATYPES — extend it
+# when an intake registers a new regenerable datatype (last refreshed
+# 2026-07-26 for the 16 intakes landed since the previous snapshot).
 ALL_DATATYPES = [
     "lmp",
     "load",
@@ -38,24 +41,40 @@ ALL_DATATYPES = [
     "validation",
     "fleet",
     "fuel-prices",
-    "nyiso-downstate-gas",
     "reference",
     "egrid",
     "unit-outage-events",
     "partial-outages",
     "capacity-deliverability",
     "confirmed-retirements",
+    "nuclear-license-status",
     "gtc-limits",
-    "ramp-capability",
+    "transfer-interface-limits",
     "winter-fuel-inventory",
     "rggi-co2-budgets",
     "carb-cap-schedule",
     "chp-btm-share",
+    "ramp-capability",
+    "nyiso-downstate-gas",
     "ercot-wtx-congestion",
     "nyiso-renewable-curtailment",
     "coal-basin-price",
     "coal-mining-ppi",
+    "nyiso-reserve-requirements",
+    "nyiso-interface-flows",
+    "nyiso-som-hub-fuel-annual",
+    "reserve-requirements",
+    "som-competitive-conduct",
+    "storage-as-awards",
+    "capacity-market-demand-curve",
+    "capacity-market-auction-price",
+    "capacity-market-elcc",
     "capacity-market-avoidable-cost-rate",
+    "transfer-constraint-binding",
+    "lmp-components",
+    "maxgen-events",
+    "dam-public-bids",
+    "benchmark-corridor",
 ]
 
 

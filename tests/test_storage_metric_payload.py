@@ -1,11 +1,16 @@
-"""Calibration-page storage metrics: payload helpers + C5b/C5c wiring.
+"""Calibration-page storage metrics: the payload/bench diagnostic helpers.
 
 The render payload carries a ``storage`` block on both the benchmark side
 (``bench[year].storage.throughput_twh``, from the EIA-930 battery + pumped-storage
 discharge half) and the model side (``run.years[year].storage.throughput_twh``,
-from the bundle's ``storage.parquet`` discharge), keyed exactly as
-``calibration_verdict.score_storage`` (C5b) reads them. The ``monthly_net_gwh``
-key carries 12 monthly net-discharge GWh totals for C5c dispatch shape scoring.
+from the bundle's ``storage.parquet`` discharge), plus ``monthly_net_gwh``
+(12 monthly net-discharge GWh totals). These are run-page diagnostics only:
+the C5b/C5c scorers that used to read them (``calibration_verdict.score_storage``
+/ ``score_storage_shape``) were removed with their criteria by the rubric v2.7
+owner amendment (410811a2, 2026-07-16 — EIA-930 storage-dispatch data is not
+reliable enough to be a calibration gate); their wiring tests were deleted with
+them (the v2.7 commit updated tests/test_calibration_verdict.py but missed this
+file — corrected by the 2026-07-26 fast-tier triage).
 """
 
 import importlib.util
@@ -24,8 +29,6 @@ _spec = importlib.util.spec_from_file_location(
 )
 rch = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(rch)
-
-from scripts import calibration_verdict as cv  # noqa: E402
 
 
 def _storage_frame(year, rows):
@@ -110,45 +113,10 @@ class ActualThroughputTests(unittest.TestCase):
         self.assertIsNone(rch._actual_storage_twh(e[e["year"] == 2024]))
 
 
-class StorageVerdictWiringTests(unittest.TestCase):
-    def test_c5b_reports_off_payload(self):
-        # v2.6(c): RETIRED — the error is computed off the payload keys and
-        # reported, never PASS/FAIL.
-        ypay = {"storage": {"throughput_twh": 1.1}}
-        ybench = {"storage": {"throughput_twh": 1.0}}
-        r = cv.score_storage(2024, ypay, ybench)
-        self.assertEqual(r["status"], cv.SKIPPED)
-        self.assertIn("+10.0%", r["magnitude"])
-        self.assertIn("report-only", r["magnitude"])
-
-    def test_c5b_reports_outside_band(self):
-        # +47% over-cycling: reported with its magnitude, never gated (v2.6(c)).
-        r = cv.score_storage(
-            2024,
-            {"storage": {"throughput_twh": 0.46}},
-            {"storage": {"throughput_twh": 0.31}},
-        )
-        self.assertEqual(r["status"], cv.SKIPPED)
-        self.assertIsNone(r["classification"])
-        self.assertIn("report-only", r["magnitude"])
-
-    def test_c5b_skips_without_actual(self):
-        r = cv.score_storage(2024, {"storage": {"throughput_twh": 0.34}}, {})
-        self.assertEqual(r["status"], cv.SKIPPED)
-
-    def test_c5b_skips_with_null_actual(self):
-        r = cv.score_storage(
-            2024,
-            {"storage": {"throughput_twh": 0.34}},
-            {"storage": {"throughput_twh": None}},
-        )
-        self.assertEqual(r["status"], cv.SKIPPED)
-        self.assertIn("EIA-930", r["magnitude"])
-
-    def test_c5b_skips_with_null_model(self):
-        r = cv.score_storage(2024, {}, {"storage": {"throughput_twh": 1.0}})
-        self.assertEqual(r["status"], cv.SKIPPED)
-        self.assertIn("legacy bundle", r["magnitude"])
+# (StorageVerdictWiringTests — the C5b score_storage wiring tests — were
+# removed with the scorer by the v2.7 owner amendment 2026-07-16 (410811a2);
+# the storage payload/bench diagnostics they read stay committed and are
+# covered by the helper tests in this file.)
 
 
 class ModelMonthlyTests(unittest.TestCase):
@@ -208,57 +176,13 @@ class ActualMonthlyTests(unittest.TestCase):
         e = _e930(2023, [("battery_discharge", [float("nan")] * 8760)])
         self.assertIsNone(rch._actual_storage_monthly(e[e["year"] == 2023]))
 
-    def test_null_month_year_skips_c5c(self):
-        # End-to-end with the scorer: the null-month vector produced above
-        # holds the YEAR out of C5c (skip), instead of correlating against
-        # nine invented zeros (the pre-v2.6 ERCO 2024 FAIL).
-        mws = [float("nan")] * 6552 + [100.0] * (8760 - 6552)
-        e = _e930(2024, [("battery_discharge", mws)])
-        actual_mon = rch._actual_storage_monthly(e[e["year"] == 2024])
-        r = cv.score_storage_shape(
-            2024,
-            {"storage": {"monthly_net_gwh": [1.0] * 12}},
-            {"storage": {"monthly_net_gwh": actual_mon}},
-        )
-        self.assertEqual(r["status"], cv.SKIPPED)
-        self.assertIn("missing (null) months", r["magnitude"])
+    # (test_null_month_year_skips_c5c's scorer half died with score_storage_shape
+    # — v2.7 owner amendment, 410811a2; the null-month helper contract it
+    # exercised is covered by test_prebreakout_nan_months_are_null_not_zero.)
 
 
-class StorageShapeVerdictTests(unittest.TestCase):
-    def test_c5c_reports_correlated_monthly(self):
-        # v2.6(c): RETIRED — r is computed and reported, never PASS/FAIL.
-        mon = [10.0, 8.0, 12.0, 15.0, 20.0, 25.0, 30.0, 28.0, 22.0, 18.0, 12.0, 9.0]
-        ypay = {"storage": {"monthly_net_gwh": mon}}
-        ybench = {"storage": {"monthly_net_gwh": mon}}
-        r = cv.score_storage_shape(2024, ypay, ybench)
-        self.assertEqual(r["status"], cv.SKIPPED)
-        self.assertIn("r=1.000", r["magnitude"])
-        self.assertIn("report-only", r["magnitude"])
-
-    def test_c5c_reports_anticorrelated(self):
-        # v2.6(c): r=-1 is reported (visible) but never a FAIL (v2.6(c)).
-        mon_m = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0]
-        mon_a = [12.0, 11.0, 10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0]
-        r = cv.score_storage_shape(
-            2024,
-            {"storage": {"monthly_net_gwh": mon_m}},
-            {"storage": {"monthly_net_gwh": mon_a}},
-        )
-        self.assertEqual(r["status"], cv.SKIPPED)
-        self.assertIsNone(r["classification"])
-        self.assertIn("r=-1.000", r["magnitude"])
-
-    def test_c5c_skips_without_actual(self):
-        r = cv.score_storage_shape(
-            2024, {"storage": {"monthly_net_gwh": [1.0] * 12}}, {}
-        )
-        self.assertEqual(r["status"], cv.SKIPPED)
-
-    def test_c5c_skips_without_model(self):
-        r = cv.score_storage_shape(
-            2024, {}, {"storage": {"monthly_net_gwh": [1.0] * 12}}
-        )
-        self.assertEqual(r["status"], cv.SKIPPED)
+# (StorageShapeVerdictTests — the C5c score_storage_shape wiring tests — were
+# removed with the scorer by the v2.7 owner amendment 2026-07-16 (410811a2).)
 
 
 if __name__ == "__main__":

@@ -70,6 +70,12 @@ def test_golden_cmc_covers_the_five_non_ercot_isos():
 # --------------------------------------------------------------------------- #
 # Part a — input-resolution walk (no LP)
 # --------------------------------------------------------------------------- #
+# The three walker tests below resolve the REAL input tree, including the
+# derived data/clean/confirmed-retirements partition (gitignored; built by
+# scripts/data/curate_confirmed_retirements.py) — pyproject's `integration`
+# marker definition exactly ("exercises real data inputs, not a hermetic unit
+# test"; the test_consume_* precedent). They run in the full pre-push lane.
+@pytest.mark.integration
 def test_walk_inputs_trivial_single_year():
     # 1 ISO, a 1-year window: the trivial-first case (rule "test trivial first").
     rows = B.walk_inputs("ERCOT", start_year=2026, end_year=2026)
@@ -95,6 +101,7 @@ def test_walk_inputs_trivial_single_year():
     assert not [r for r in rows if r.status in B._HARD_STATUSES]
 
 
+@pytest.mark.integration
 def test_resolve_report_no_hard_fail_full_horizon():
     # The load-bearing assertion: every exogenous forward input resolves for
     # every ISO across the full 2026-2050 horizon with no MISSING/ERROR.
@@ -103,6 +110,7 @@ def test_resolve_report_no_hard_fail_full_horizon():
     assert rep["green"] is True
 
 
+@pytest.mark.integration
 def test_ercot_confirmed_horizon_is_reported_not_failed():
     # ERCOT's confirmed-retirement registry runs out mid-window (near-term
     # instruments only); that is an INFO horizon note, never a hard fail.
@@ -201,6 +209,7 @@ def test_t1f_verdict_reads_ff2d_hold():
         assert B._t1f_verdict(iso)["determination"] == "HOLD", iso
 
 
+@pytest.mark.integration  # gate_c input-resolution walks the real data tree
 def test_build_registration_scorecard_no_iso_gate_open():
     art = B.build_registration(drill_result=None)
     assert art["meta"]["kind"] == "readiness"

@@ -214,14 +214,20 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
         )
 
     def test_coal_target_is_merrimack_only_all_years(self):
-        # Merrimack (2364, NH) is the single NEISO coal facility.
+        # Merrimack (2364, NH) is the single NEISO coal facility ACROSS THE
+        # BACKCAST YEARS. The owner-authorized 2018-2026 backfill (59f8bc30,
+        # 2026-07-24) legitimately added Bridgeport Harbor 3 (568, CT coal,
+        # retired 2021-06) windows for 2018-2021, so the exclusivity claim is
+        # scoped to 2022+ where it remains a fleet fact.
         df = self._df()
-        coal = df[df["plant_group"] == "COAL"]
+        coal = df[
+            (df["plant_group"] == "COAL") & (df["outage_start"].str[:4] >= "2022")
+        ]
         self.assertFalse(coal.empty, "Merrimack coal rows must be present")
         self.assertEqual(
             set(coal["facility_id"].unique()),
             {2364},
-            "COAL group must be exclusively Merrimack (2364)",
+            "COAL group must be exclusively Merrimack (2364) in 2022+",
         )
         # Coal rows span the three backcast years plus 2022 — the NEISO
         # calibration-complete marker (2026-07-07) authorized the one-shot
