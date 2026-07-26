@@ -1758,3 +1758,103 @@ verdict adopted it, CAISO's committed extract and layup companion are
 untouched, and no rule-22 obligation arises because no mechanism change is
 proposed. Open CAISO items (min-load 0.570, the belly delta, the charter-lane
 re-tune-vs-freeze sequencing) are untouched. Next number unchanged: **caiso-125**.
+
+## caiso-125 (2026-07-26) — OVERNIGHT HYDRO OVER-SUPPLY attributed by measurement, charter premise INVERTED (the p95 ceiling BINDS overnight, 83–85 % of hours — the overnight level IS the envelope level); every chartered lever REFUTED derive-first; the honest driver = fleet SHAPEABILITY HETEROGENEITY (RoR split — greedy proxy fixes overnight AND belly AND evening at once, ARMING IS AN OWNER ASK) + the evening–overnight spread compression; diagnostic probe: the overnight excess displaces GAS (C5a-aligned); keeper UNCHANGED, nothing armed, nothing registered. Plus: derived solve inputs (outage extracts + capacity-deliverability partition) now content-pinned into shared_inputs (caiso-123 §5 closed)
+
+**Full record:
+`results/calibration/FINDING-caiso125-overnight-hydro-attribution-2026-07-26.md`.
+Instruments (committed): `scripts/probes/_caiso125_overnight_attribution.py`
+(sections A–I on the two committed caiso-124 bundles + raw EIA-930/923 — no
+solve), `scripts/probes/_caiso125_nightcap_probe.py` (rule-16 diagnostic
+runner + pair analyzer). Keeper `2026-07-23-caiso-netrev-margin-keeper`
+UNCHANGED; charter Task 2 (re-score caiso-124's shape gate) NOT executed — no
+owner authorization exists, so caiso-124 stays KILLED as scored.**
+
+**(1) Premise inversion.** caiso-124 §5 carried "the p95 ceiling does not bind
+overnight". Measured on `caiso124_control_A`: overnight bind share
+**0.830/0.824/0.849** (highest of any window with `late`), 0 hours above cap in
+26,280, model mean percentile-rank **0.80–0.82** inside the measured
+(month × hod) bucket distribution. The LP rides any overnight cap it is given
+(overnight λ 40–58 $ > the month's marginal water value in ~83 % of overnight
+hours); under bang-bang budget dispatch the envelope percentile IS the dispatch
+level in every ridden window. The measured overnight distribution is
+water-year-invariant (mean 2758–2810 / p95 3334–3382 MW across 24.4→21.3 TWh),
+so no admissible re-derivation narrows it (rule 21).
+
+**(2) Refutations, all by measurement or structure, no solve spent on any.**
+(ii) water-value adder: budget BOUND 7/5/8 of 12 months (allocation-inert
+there — the objective shifts by c×E); slack months are the negative-λ spring
+where an adder declines belly water first — it cannot touch overnight before
+emptying the belly (λ ordering: overnight 40–58 vs belly 22–40). Weekly budget
+grain: greedy proxy (validated on arm A to 29–61 MW) moves overnight only
+−20…−41 MW — scarcity is paid from the belly, overnight stays cap-pinned
+(nightly tracking r 0.69–0.78 → 0.78–0.82 is its real, different, effect).
+(iii) import/storage displacement: overnight the model also over-imports
++0.7–1.3 GW and its storage nets +148/+165/+421 MW *discharging* where the
+real stack pumps/charges — co-symptoms; the hydro component itself is
+cap-pinned (an input property, not displacement). PS boundary pollution of
+`NG: WAT` (EIA-923 CISO PS net −529/−139/+102 GWh): monthly regression slope
+−1.31/−2.51/+0.09, r −0.48/−0.44/+0.06 — modulates the 2023–24 pump months,
+but the intercept **+215/+233/+307 MW** persists at zero PS activity; the LP's
+envelope row is already like-for-like (hydro + PS net ≤ cap), and no on-disk
+or cleanly-fetchable source resolves the PS hod shape.
+
+**(3) The two real drivers.** (a) **Spread compression** (the caiso-103→108
+evening λ lane): model evening−overnight spread +9.0/+5.0/+2.8 $/MWh vs
+implied real ≈ +15.6/+9.9/+5.3 — water and battery discharge prefer overnight
+at half the real premium; this is why arm B paid the belly floor from the
+evening (the K3 kill). Not fixable hydro-side (rule 1). (b) **Shapeability
+heterogeneity**: all 160–171 model hydro units shape freely (degenerate water
+values, the fleet moves as one bang-bang block); reality is ~half
+run-of-river/canal. Greedy RoR-split proxy (CF ≥ 0.45): overnight
+3099/3061/3066 → 2596/2502/2590 (bias-corrected ≈ 2750–2950 ≈ measured
+2758–2815), belly 1306/926/744 → **1877/1302/1156** (measured 1893/1536/1292 —
+near-measured with NO floor), evening ≈ measured. One structure, all three
+windows. **NOT armable in-repo:** ORNL EHA 2024 `Mode` is NaN on 100/201 CISO
+plants (4.66 of ~6.7 GW, all the large reservoirs) and a CF threshold is a
+free parameter (rule 24/13); rule 19 requires reconciling with the min-flow
+floor (same driver — the floor's Q95 is the fleet-aggregate shadow of the RoR
+base, 35.7–46.3 % vs the split's 42.7–60.7 % of budget). **Owner ask:
+per-plant operational-mode intake + floor-reconciled RoR-split design, LOYO
+per rule 22.** The caiso-124 floor was NOT re-tested on top — with no
+overnight delta armed that would be a caiso-124 redo; its re-test belongs
+inside the reconciled RoR family.
+
+**(4) Diagnostic probe (rule-16 single-year 2025 pair, gitignored, never
+registered; clamp = overnight hod0-6 envelope p95 → bucket mean, an
+explicitly-labelled rule-13 outcome pin for attribution only).** Fresh HEAD
+control reproduces the committed `caiso124_control_A` 2025 **digit-for-digit**
+(hydro 20.68 TWh / overnight 3066 / λ 36.5750) — the `4094bbe..HEAD` window is
+CAISO-inert, no basis caveat. Clamped − control: overnight hydro **−422 MW**,
+filled by **gas +254** (60 %), import +116, storage +53; the freed water
+spreads near-uniformly (morning +181 / belly +121 / shoulder +125 / evening
++129 — §3a's indifference, confirmed); annual gas **+0.322 TWh** (the C5a
+direction), CA λ −0.49 % (toward actual), overnight λ +0.41 $. An honest
+overnight fix is C5a-, C3a- and shape-aligned at once — the rubric case for
+the §3b owner ask.
+
+**(5) Task 3 delivered — derived-input provenance closed.** Bundles now pin
+the per-ISO CAMPD unit-outage extract family AND the clean
+`capacity-deliverability` partition into the content-addressed `shared_inputs`
+store at solve time (`scripts/lib/bundle_io.write_derived_solve_inputs`,
+wired in `run_calibration_full.solve_and_persist`; replay ignores the block —
+`_IGNORE` — so the STRICT mapper is untouched; 2 new tests in
+`tests/test_bundle_io.py`, 12/12 pass). Closes the caiso-123 §5 / caiso-124
+§7 recommendation: of the residual's surviving candidates only
+alternate-optimal vertex wander now lacks a pin. Recommended (not built,
+parallel-lane blast radius): a per-tech storage hourly sidecar so instruments
+can score the like-for-like `hydro + PS net` aggregate the LP constrains.
+
+**DO-NOT-REDO (new):** re-measuring the overnight bind share/percentile-rank
+(instrument committed); any hydro discharge water-value adder, constant or
+budget-scoped; the weekly/finer hydro budget grain as an overnight lever; the
+envelope/floor percentile re-derivation against this residual; a CF-threshold
+RoR split without the external classifier intake; re-solving the nightcap
+clamp (attribution complete — it is an outcome pin, never a mechanism).
+
+**Open items carried:** min-load 0.570 promotion (owner call); the belly delta
+family (export-path/corridor, caiso-121); the caiso-124 shape-gate disposition
+(owner); the RoR-split owner ask (this session, item 3b); the charter-lane
+re-tune-vs-freeze sequencing decision.
+
+Next number: caiso-126.

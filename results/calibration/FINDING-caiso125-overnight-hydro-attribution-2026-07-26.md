@@ -164,10 +164,39 @@ weighting) — the 12-file `4094bbe..HEAD` src window is CAISO-inert, so every
 committed-bundle measurement in §1–§4 transfers to this basis exactly, and the
 caiso-121/122 basis-drift caveat does not apply to this pair.
 
-*(Probe pair solving at the time of this commit — the scored displacement
-table lands in the follow-up commit that finalizes this section. The clamp is
-confirmed armed in the probe log: "nightcap clamp ACTIVE CAISO 2025: hod 0-6
-ceiling p95 -> bucket mean on 2555 hours (mean cap 2758 MW, was 3337)".)*
+The clamp armed as designed ("nightcap clamp ACTIVE CAISO 2025: hod 0-6
+ceiling p95 -> bucket mean on 2555 hours (mean cap 2758 MW, was 3337)").
+Result (clamped − control, window-mean MW; analyzer in the probe runner):
+
+| window | Δ hydro | Δ gas | Δ import | Δ storage-net | λ ctrl → clamped |
+|---|---|---|---|---|---|
+| overnight | **−422** | **+254** | +116 | +53 | 42.76 → 43.17 |
+| morning | +181 | −82 | −99 | +0 | 33.46 → 32.99 |
+| belly | +121 | −57 | −87 | +21 | 22.58 → 21.91 |
+| shoulder | +125 | −67 | −68 | +11 | 31.54 → 31.11 |
+| evening | +129 | −39 | −9 | −82 | 45.54 → 45.38 |
+| late | +63 | −36 | −0 | −27 | 47.10 → 47.00 |
+
+Annual: hydro −0.310 TWh (the clamp partially *declines* the freed water —
+a clamp artifact the RoR-split would not share, since its RoR base holds the
+belly instead of declining), gas **+0.322 TWh**, import −0.041 TWh, CA λ
+36.575 → 36.396 (**−0.49 %**, toward the actual).
+
+Three answers, all in the direction that matters:
+
+1. **The displaced class is GAS** (60 % of the overnight hole; imports 28 %,
+   storage 12 %) — the overnight hydro over-supply is a live contributor to
+   the C5a gas-volume deficit, the keeper's one load-bearing FAIL. An honest
+   overnight fix is worth ≈ +0.3 TWh/yr of gas at 2025 water.
+2. **The freed water spreads almost uniformly** over morning / belly /
+   shoulder / evening (+121…+181 MW each) rather than concentrating in the
+   evening — direct confirmation of §4b: at the model's compressed spread the
+   LP is near-indifferent among the day windows, exactly why arm B's floor
+   was paid out of the evening peak.
+3. **λ moves toward the actual** annually (−0.49 % against a +10.9 %
+   C3a-2025 over-price) with only a +0.41 $/MWh overnight rise — an overnight
+   fix is C3a-aligned, C5a-aligned and shape-aligned at once, which makes the
+   §4c owner ask cheap to justify on rubric grounds.
 
 ## §6 — disposition
 
