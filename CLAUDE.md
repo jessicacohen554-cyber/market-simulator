@@ -261,21 +261,43 @@ ERCOT default is **CAMPD per-plant binning** (`use_campd_bins=True`): one LP uni
 - Single-letter vars only in LP construction: t=hour, g=generator, z=zone, s=storage, with comment.
 - Feature branches: phase-N/description. Commits: imperative present tense.
 
-## Git & Pushing (API-only — never `git push`)
+## Git & Pushing (transport by PACK size — `git push` permitted for small packs)
 
-**Rule: always push via the GitHub MCP API (`mcp__github__push_files`), never
-`git push`.** `git push` over this remote rejects large packs with **HTTP 413**
-and retries just re-fail — do **not** attempt `git push` at all, not even for
-small source-only commits. `push_files` commits server-side and bypasses git's
-pack negotiation, so it never 413s regardless of payload size. Workflow:
+**Rule: choose the push transport by the size of the PACK the push would send —
+never by single-file size.** The remote rejects large **packs** with HTTP 413;
+it is a pack-size limit, not a blob limit. Measured 2026-07-25 (PR #2878, the
+caiso-119 registration): a **434,784-byte single-blob** dashboard-payload
+commit pushed over `git push` with **no 413**, the remote blob sha
+byte-identical to local. Both transports are live:
 
-1. **Start fresh on main.** `git fetch origin main` then branch/rebase the work
-   onto the latest `origin/main` so your commits carry *only* your own new
-   objects, not a divergent base.
-2. **Push every commit via `mcp__github__push_files`** — one call per logical
-   change, **small commits** (a bundle's slim files + sidecar + run payload +
-   bench in one call, docs/code in another). This is the only push path; do not
-   fall back to `git push`.
+- **`git push` is PERMITTED** and is the correct transport for a commit whose
+  pack is small — in particular the one class of file `push_files` cannot
+  carry: a dashboard run payload (`frontend/data/backcast/runs/<id>.js`,
+  ~400 KB–1 MB). It remains **NOT licensed** for a full bundle directory
+  (`caiso119_base_A` alone is ~120 MB of parquet/npz) or for a divergent
+  branch that would pack hundreds of MB — the original 413 rationale still
+  holds there, and no measurement covers it.
+- **`mcp__github__push_files` stays fully available and stays preferred for
+  small multi-file commits** (atomic, server-side, no local git state, no
+  pack negotiation at all). Its **~457 KB per-payload cap** is the hard
+  reason it cannot carry a run payload — which is exactly when to use
+  `git push` instead. A sidecar pushed without its payload is silently
+  invisible in the Run Explorer; that cap is what stranded runs sidecar-only
+  (see `docs/handoffs/dashboard-payload-push-gap-2026-07.md`).
+
+Workflow:
+
+1. **Start fresh on main — this is what keeps a pack small.** `git fetch
+   origin main` then branch/rebase the work onto the latest `origin/main` so
+   your commits carry *only* your own new objects, not a divergent base. A
+   freshly-fetched base means the pack `git push` sends holds nothing but this
+   session's objects — that, not any per-file property, is what keeps a push
+   under the limit.
+2. **Push every commit via one of the two transports** — one commit per
+   logical change, **small commits** (a bundle's slim files + sidecar + run
+   payload + bench in one commit, docs/code in another). A commit carrying a
+   run payload goes over `git push`; small text-only commits may use either
+   path.
 3. **The generated data files are rebuilt by the Pages deploy — committing them
    is preview-only.** The Pages deploy workflow
    (`.github/workflows/deploy-pages.yml`, restored 2026-07-14) regenerates
@@ -288,9 +310,10 @@ pack negotiation, so it never 413s regardless of payload size. Workflow:
    run `scripts/build_manifest.py` and commit them if you want that preview
    current — optional. Only the gitignored `docs/codebase-site/data/backcast/`
    stays generated-not-committed (built into the artifact at deploy).
-4. **Verify after push (rule 27).** Any `push_files` call that touches a source file ≥300
-   lines is followed immediately by a blob verification (fetch the pushed file, compare line
-   count + hash to local) before the next commit. Full-file rewrites of large existing files
+4. **Verify after push (rule 27) — on BOTH transports.** Any push (`git push` or
+   `push_files`) that touches a source file ≥300 lines is followed immediately by a blob
+   verification (fetch the pushed file, compare line count + hash to local) before the next
+   commit. Full-file rewrites of large existing files
    from regenerated response content are forbidden — push the exact local on-disk bytes, and
    for unavoidable piecewise moves append verified chunks, never placeholder overwrites.
 
@@ -311,7 +334,8 @@ workflow per calibration run cost real money and is banned.
   as durable, reusable infrastructure (CI/lint on PRs, the Pages deploy, a
   parameterized data-fetch pipeline) — never as a one-off keyed to the branch
   you happen to be on. When in doubt, do the work in-session and push the result
-  via `mcp__github__push_files` (the API-only path above) — not a CI job.
+  via `mcp__github__push_files` or a small-pack `git push` (per Git & Pushing
+  above) — not a CI job.
 - **Scheduled (`cron`) workflows spend money with nobody watching.** Do not add
   one without explicit owner sign-off, and prefer `workflow_dispatch`-only.
 
