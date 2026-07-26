@@ -1,0 +1,38 @@
+{
+  "probe": "pjm125_commitment_constraint_precheck",
+  "bundle": "results/calibration/pjm121_ccbelt",
+  "year": 2024,
+  "pools": 39,
+  "members": 2403,
+  "fast_members": 1411,
+  "requirement_rto_mean_mw": 3422.385377187976,
+  "arms_mean_mw": {
+    "ramp_bound": 38670.511181289934,
+    "joint_headroom": 42530.34076370924,
+    "keeper_effective": 35783.996276375176,
+    "F_ramp_fast": 17574.595054684687,
+    "F_head_fast": 22909.821570076176,
+    "S_floor": 17176.549570815736,
+    "constrained_effective": 22909.267724777565
+  },
+  "ramp_binds_frac_hours": 0.6974885844748858,
+  "keeper_effective_over_req": 10.455864063379478,
+  "s_floor_over_req_mean": 5.018882351855113,
+  "reduction_vs_keeper_effective": 0.5199935345914452,
+  "tight_bite_pp_by_bin": {
+    "0": 31.68403454367459,
+    "1": 34.93126119115757,
+    "2": 37.22603045798032,
+    "3": 40.59892155541138
+  },
+  "tight_bin_hours_under_2x_req": 52,
+  "tight_bin_hours": 2190,
+  "pjm82_reproduction_multiple_range": [
+    10.843635235265205,
+    11.927998758791725
+  ],
+  "k1": "PARTIAL",
+  "k2": "PASS",
+  "k3": "PASS (fleet physics + model dispatch only)",
+  "verdict": "NO SOLVE"
+}
