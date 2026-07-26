@@ -14,9 +14,7 @@ import datetime as _dt
 import json
 import logging
 import time
-from concurrent.futures import ProcessPoolExecutor
 from dataclasses import asdict, replace
-from multiprocessing import cpu_count
 
 import numpy as np
 
@@ -143,6 +141,10 @@ from market_sim.pipeline import (
     build_pjm_reserve_p1_prep,
     run_commitment_pass,
     run_energy_solve,
+)
+from market_sim.pipeline.timing import (
+    log_year_cached_timing,
+    log_year_phase_timing,
 )
 from market_sim.results.outputs import FleetContext
 from market_sim.results.scarcity import (
@@ -1158,12 +1160,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             result = load_result(iso, cache_key, year)
             _t_cached = time.perf_counter()
             _total = _t_cached - year_start
-            logger.info(
-                "year %d phase timing: data_prep=%.1fs cached=True total=%.1fs",
-                year,
-                _total,
-                _total,
-            )
+            log_year_cached_timing(logger, year, total=_total)
         else:
             wind_mc, solar_mc = compute_dispatch_credits(config, year)
             if getattr(config, "wind_ptc_vintage_offers", False):
@@ -1775,6 +1772,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     }
                 )
             # === END LEGACY: P2 Commitment Screen ===
+            # results_write sub-instrumentation (refactor plan §7-H4): on the
+            # forecast path the window is the archived P2 screen (inert by
+            # default) plus save_result's parquet + config write. The two
+            # segments are disjoint and exhaustive, so they sum to
+            # results_write exactly.
+            _t_pre_save = time.perf_counter()
             save_result(result, config, iso, year, context=context, demand=year_demand)
             _t_end = time.perf_counter()
             _solve_p0 = energy_solve.r0.solve_time
@@ -1785,16 +1788,19 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             _results_write = _t_end - _t_post_solve
             _total = _t_end - year_start
             _data_prep = _total - _solve_p0 - _markup_s - _solve_p1 - _results_write
-            logger.info(
-                "year %d phase timing: data_prep=%.1fs solve_p0=%.1fs "
-                "markup=%.1fs solve_p1=%.1fs results_write=%.1fs total=%.1fs",
+            log_year_phase_timing(
+                logger,
                 year,
-                _data_prep,
-                _solve_p0,
-                _markup_s,
-                _solve_p1,
-                _results_write,
-                _total,
+                data_prep=_data_prep,
+                solve_p0=_solve_p0,
+                markup=_markup_s,
+                solve_p1=_solve_p1,
+                results_write=_results_write,
+                total=_total,
+                results_write_parts={
+                    "legacy_p2": _t_pre_save - _t_post_solve,
+                    "parquet": _t_end - _t_pre_save,
+                },
             )
 
         # CHP must-run post-processing: non-coal must-run capacity is
@@ -2252,41 +2258,38 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     return cache_key
 
 
-def _run_pair(pair: tuple[ScenarioConfig, str]) -> str:
-    """Run one ``(config, iso)`` pair; the worker entry point for sweeps."""
-    config, iso = pair
-    return run_scenario_iso(config, iso)
-
-
 def run_sweep(sweep_def: SweepDefinition, workers: int | None = None) -> list[str]:
     """Expand a sweep into configs and run every ``(config, iso)`` pair.
 
+    Delegates the fan-out to :func:`market_sim.pipeline.members.run_pairs`, the
+    single shared home for the member pool (the same helper the ensembles and
+    the scenario matrix reach). That is also the rule-12 fix: this function's
+    former private copy defaulted to an **uncapped** ``cpu_count - 1`` workers,
+    and a forecast member on a per-plant ISO is several GB, so more than ~2
+    concurrent members OOMs. The default is now ``min(2, cpu_count - 1)``.
+
     Args:
         sweep_def: The sweep definition to expand.
-        workers: Number of worker processes. Defaults to ``cpu_count - 1``.
+        workers: Number of worker processes. Defaults to ``min(2, cpu_count -
+            1)`` (CLAUDE.md rule 12); an explicit value is honoured as given.
             With a single worker the pairs run in-process (no subprocess
             overhead).
 
     Returns:
-        The list of cache keys, one per ``(config, iso)`` pair.
+        The list of cache keys, one per ``(config, iso)`` pair, in expansion
+        order.
     """
+    # Lazy import, mirroring matrix.run_matrix: ``members`` module-imports the
+    # pipeline api facade, whose ``runner`` import is itself lazy, so nothing
+    # here can close a module-level import cycle.
+    from market_sim.pipeline.members import run_pairs
+
     configs = sweep_def.generate()
     pairs = [(config, config.iso) for config in configs]
 
-    if workers is None:
-        workers = max(1, cpu_count() - 1)
+    logger.info("run_sweep start: %d (config, iso) pair(s)", len(pairs))
 
-    logger.info(
-        "run_sweep start: %d (config, iso) pairs across %d worker(s)",
-        len(pairs),
-        workers,
-    )
-
-    if workers == 1:
-        return [_run_pair(pair) for pair in pairs]
-
-    with ProcessPoolExecutor(max_workers=workers) as executor:
-        return list(executor.map(_run_pair, pairs))
+    return run_pairs(pairs, workers=workers)
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -2315,7 +2318,7 @@ def _build_parser() -> argparse.ArgumentParser:
         "--workers",
         type=int,
         default=None,
-        help="Worker processes; defaults to cpu_count - 1.",
+        help="Worker processes; defaults to min(2, cpu_count - 1) (rule 12).",
     )
 
     ensemble_parser = subparsers.add_parser(

@@ -104,6 +104,7 @@ from market_sim.data.fleet import (  # noqa: E402
     apply_other_fossil_scoring,
 )
 from market_sim.pipeline.backcast_config import backcast_config  # noqa: E402
+from market_sim.pipeline.timing import log_year_phase_timing  # noqa: E402
 from market_sim.results.calibration import check_cf_band_occupancy  # noqa: E402
 from scripts.lib.bundle_io import (  # noqa: E402
     bundle_input_path,
@@ -4143,6 +4144,13 @@ def solve_and_persist(
             labelled.insert(0, ("P1", result_p1))
         # Per-pass min-gen floors + mechanism ids (D-2/D-4 attribution).
         _save_floor_arrays(run_dir, year, p2_state, result_p1 is not None)
+        # results_write sub-instrumentation (refactor plan §7-H4): the merged
+        # window is split into state sidecars / frame construction / the parquet
+        # write / benchmark-scoring frames. The four components are measured on
+        # disjoint, exhaustive segments of [_t_post_solve, _t_end], so they sum
+        # to results_write exactly — the reported field itself is unchanged.
+        _t_state_done = time.perf_counter()
+        _parquet_s = 0.0
 
         # CAMPD hourly is built before the per-pass frames so the BTM 923
         # backfill can gate on "did the plant actually run this year" —
@@ -4156,6 +4164,7 @@ def solve_and_persist(
         if campd_year is not None:
             _by_plant = campd_year.groupby("plant_id")["net_mw"].sum()
             campd_active = set(_by_plant[_by_plant > 0.0].index.astype(int))
+        _t_campd_done = time.perf_counter()
 
         for label, res in labelled:
             passes_seen.add(label)
@@ -4204,9 +4213,11 @@ def solve_and_persist(
                 if _imp is not None:
                     _dispf = pd.concat([_dispf, _imp], ignore_index=True)
                 _sysf = _sysf[~_sysf["zone"].isin(_WECC_ENDOGENOUS_EXTERNAL_ZONES)]
+            _t_pq = time.perf_counter()
             _dispf.to_parquet(
                 run_dir / "dispatch" / f"{year}_{label}.parquet", index=False
             )
+            _parquet_s += time.perf_counter() - _t_pq
             system_frames.append(_sysf)
             # Reserve-dual diagnostic sidecar (MARKET_SIM_RESERVE_DUAL_DUMP,
             # default OFF): the per-family reserve balance-row duals
@@ -4276,6 +4287,8 @@ def solve_and_persist(
                 )
             )
 
+        _t_frames_done = time.perf_counter()
+
         e930 = e930_year
         if e930 is not None:
             eia930_frames.append(e930)
@@ -4303,16 +4316,29 @@ def solve_and_persist(
         _results_write = _t_end - _t_post_solve
         _total = _t_end - _t_year
         _data_prep = _total - _solve_p0 - _markup - _solve_p1 - _results_write
-        logger.info(
-            "year %d phase timing: data_prep=%.1fs solve_p0=%.1fs "
-            "markup=%.1fs solve_p1=%.1fs results_write=%.1fs total=%.1fs",
+        # Disjoint, exhaustive segments of the results_write window, so
+        # state + frames + parquet + bench == _results_write exactly:
+        #   state  — p2_state pickle + per-pass min-gen floor arrays
+        #   bench  — CAMPD hourly + the EIA-923/930 benchmark frames (scoring)
+        #   parquet— the per-pass dispatch parquet writes (accumulated in-loop)
+        #   frames — everything else in the per-pass loop (frame construction)
+        _bench_s = (_t_campd_done - _t_state_done) + (_t_end - _t_frames_done)
+        _frames_s = (_t_frames_done - _t_campd_done) - _parquet_s
+        log_year_phase_timing(
+            logger,
             year,
-            _data_prep,
-            _solve_p0,
-            _markup,
-            _solve_p1,
-            _results_write,
-            _total,
+            data_prep=_data_prep,
+            solve_p0=_solve_p0,
+            markup=_markup,
+            solve_p1=_solve_p1,
+            results_write=_results_write,
+            total=_total,
+            results_write_parts={
+                "state": _t_state_done - _t_post_solve,
+                "frames": _frames_s,
+                "parquet": _parquet_s,
+                "bench": _bench_s,
+            },
         )
 
         # Release this year's solve state before the next year allocates its
