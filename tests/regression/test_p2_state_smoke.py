@@ -18,8 +18,9 @@ import pickle
 from pathlib import Path
 
 import pytest
+from tests.helpers import REPO_ROOT
 
-_REPO = Path(__file__).resolve().parent.parent
+_REPO = REPO_ROOT
 
 # The bundles carrying committed p2_state pickles (retention sweep, current
 # main). Any one proves the round-trip; we load the smallest available.

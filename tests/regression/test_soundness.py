@@ -52,6 +52,7 @@ from market_sim.model.transmission import (
     get_ttc_array,
 )
 from market_sim.results import cache
+from tests.helpers import REPO_ROOT
 
 
 # ---------------------------------------------------------------------------
@@ -122,7 +123,7 @@ class TestSpecCompliance(unittest.TestCase):
 
     def test_no_forbidden_imports(self):
         """No pyomo, pulp, scipy.optimize, or numba anywhere in src/."""
-        src_root = Path(__file__).parent.parent / "src"
+        src_root = REPO_ROOT / "src"
         forbidden = {"pyomo", "pulp", "numba"}
         for py in src_root.rglob("*.py"):
             source = py.read_text()
@@ -140,13 +141,7 @@ class TestSpecCompliance(unittest.TestCase):
 
     def test_no_hour_loops_in_dispatch_builder(self):
         """dispatch.py must not loop over hours in constraint/bound/cost assembly."""
-        dispatch_path = (
-            Path(__file__).parent.parent
-            / "src"
-            / "market_sim"
-            / "model"
-            / "dispatch.py"
-        )
+        dispatch_path = REPO_ROOT / "src" / "market_sim" / "model" / "dispatch.py"
         source = dispatch_path.read_text()
         tree = ast.parse(source)
         builder_funcs = {
@@ -207,7 +202,7 @@ class TestSpecCompliance(unittest.TestCase):
 
     def test_no_pickle_or_csv_in_results(self):
         """Result storage must use Parquet only."""
-        results_root = Path(__file__).parent.parent / "src" / "market_sim" / "results"
+        results_root = REPO_ROOT / "src" / "market_sim" / "results"
         for py in results_root.rglob("*.py"):
             source = py.read_text()
             self.assertNotIn("pickle.dump", source, f"pickle.dump found in {py.name}")

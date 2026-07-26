@@ -10,17 +10,14 @@ are part of the surface too (``data/datacenter.py`` imports
 
 ``ScenarioConfig`` itself is pickle-borne and its ``__module__`` is frozen at
 ``market_sim.config.scenarios`` — that is asserted by
-``tests/test_persisted_identity.py``; here we only assert the extraction left
+``tests/regression/test_persisted_identity.py``; here we only assert the extraction left
 it DEFINED (not re-exported) at the frozen path.
 """
 
 from __future__ import annotations
 
-import sys
 import unittest
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 # Every name the extraction moved out of scenarios.py, keyed by its new
 # defining module. Removing a re-export is a breaking change for the

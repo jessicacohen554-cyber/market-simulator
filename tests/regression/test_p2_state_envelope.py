@@ -23,6 +23,7 @@ import pytest
 
 from market_sim.config.scenarios import ScenarioConfig
 from scripts import run_calibration_full as rcf
+from tests.helpers import REPO_ROOT
 
 
 def _stale_config() -> ScenarioConfig:
@@ -99,7 +100,7 @@ def test_rebuild_from_committed_pickle_if_present() -> None:
         "ctharcut_pp_3yr",
         "coalprb_foll078_3yr",
     )
-    repo = Path(__file__).resolve().parent.parent
+    repo = REPO_ROOT
     candidates = [
         p
         for b in bundles

@@ -10,7 +10,7 @@ Two things this module guards:
   years, 2026-2040) stays within every banded quantity's tolerance from
   plan §2.3.
   Weekly CI tier, never per-PR -- mirrors
-  ``tests/test_forecast_invariants.py``'s ``RUN_SLOW_FORECAST`` gate.
+  ``tests/regression/test_forecast_invariants.py``'s ``RUN_SLOW_FORECAST`` gate.
 
 A FAIL here is a finding, never grounds to auto-regenerate -- see
 ``scripts/golden_forecast_bands.py``'s ``REGEN_POLICY`` and plan §2.3.

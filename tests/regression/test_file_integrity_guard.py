@@ -20,8 +20,9 @@ from pathlib import Path
 
 import pytest
 import yaml
+from tests.helpers import REPO_ROOT
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = REPO_ROOT
 WORKFLOW = REPO / ".github" / "workflows" / "file-integrity-guard.yml"
 
 

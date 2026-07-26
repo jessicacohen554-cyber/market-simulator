@@ -27,16 +27,16 @@ Pinned contracts:
 * **Leaf identity** — ``data.fleet_models`` re-exports the very class
   objects defined in ``data.fleet`` (``__module__`` unchanged; the
   committed p2_state pickles depend on it — see
-  ``tests/test_persisted_identity.py``).
+  ``tests/regression/test_persisted_identity.py``).
 """
 
 from __future__ import annotations
 
 import ast
 import unittest
-from pathlib import Path
+from tests.helpers import REPO_ROOT
 
-_SRC = Path(__file__).resolve().parent.parent / "src"
+_SRC = REPO_ROOT / "src"
 
 # Every meaningful top-level name of the pre-move config/reserve_config.py
 # (2,932 ln, main @ 3cbf5b1).
@@ -324,7 +324,7 @@ class TestFleetModelsLeaf(unittest.TestCase):
         self.assertIs(leaf_fa, fleet_fa)
 
     def test_pickle_module_paths_unchanged(self):
-        # Redundant with tests/test_persisted_identity.py by design: the leaf
+        # Redundant with tests/regression/test_persisted_identity.py by design: the leaf
         # must never become the DEFINING module before session 3H.
         from market_sim.data.fleet_models import FleetArrays, Generator
 

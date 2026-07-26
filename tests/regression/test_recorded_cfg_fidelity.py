@@ -42,6 +42,7 @@ from __future__ import annotations
 import unittest
 
 from market_sim.pipeline.backcast_config import backcast_config
+from tests.helpers import REPO_ROOT
 
 
 class TestRecordedCfgFidelity(unittest.TestCase):
@@ -153,9 +154,8 @@ class TestRunCalibrationFullRecordedCfgSourceCoversFixedFields(unittest.TestCase
 
     @classmethod
     def setUpClass(cls):
-        from pathlib import Path
 
-        repo = Path(__file__).resolve().parents[1]
+        repo = REPO_ROOT
         path = repo / "scripts" / "run_calibration_full.py"
         cls.source = path.read_text()
         rc_start = cls.source.index("recorded_cfg = backcast_config(")

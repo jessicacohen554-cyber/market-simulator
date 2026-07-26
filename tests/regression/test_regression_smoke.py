@@ -12,7 +12,7 @@ the core dispatch LP accepts each ISO's topology and returns a feasible
 solution with sane prices. Total runtime target: <10 seconds.
 
 Usage:
-    pytest tests/test_regression_smoke.py -v
+    pytest tests/regression/test_regression_smoke.py -v
 """
 
 from __future__ import annotations

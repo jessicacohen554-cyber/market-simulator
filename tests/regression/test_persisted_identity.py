@@ -29,6 +29,7 @@ from pathlib import Path
 import pytest
 
 from market_sim.config.scenarios import ScenarioConfig
+from tests.helpers import REPO_ROOT
 
 # The classes bound by the committed p2_state pickles to their exact module
 # paths (refactor-consolidation plan §1 "Pickle identity is frozen"). Kept in
@@ -109,7 +110,7 @@ def test_default_scenario_config_cache_key_is_pinned() -> None:
 # Module-level import-cycle guard
 # --------------------------------------------------------------------------
 
-_SRC = Path(__file__).resolve().parent.parent / "src"
+_SRC = REPO_ROOT / "src"
 _PKG_ROOT = _SRC / "market_sim"
 
 

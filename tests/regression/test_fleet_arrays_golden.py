@@ -11,7 +11,7 @@ the decomposition is byte-neutral without an LP solve (the keeper LP byte gate
 — ``capture_keeper_goldens.py`` / ``regression_gate.py --mode byte`` — covers
 the full solve path separately).
 
-Regenerating the golden (``python tests/test_fleet_arrays_golden.py
+Regenerating the golden (``python tests/regression/test_fleet_arrays_golden.py
 --capture``) is governed like every golden in this repo: never to make a
 failing gate pass — only under an owner-authorized behavior change, with the
 reason recorded in the commit.
@@ -28,7 +28,6 @@ import dataclasses
 import hashlib
 import json
 import sys
-from pathlib import Path
 
 import numpy as np
 import pytest
@@ -42,8 +41,9 @@ from market_sim.data.fleet import (
     load_or_synthesize_bins,
 )
 from market_sim.pipeline.backcast_config import backcast_config
+from tests.helpers import REPO_ROOT
 
-GOLDEN_PATH = Path(__file__).parent / "golden" / "fleet_arrays_ercot_2023.json"
+GOLDEN_PATH = REPO_ROOT / "tests" / "golden" / "fleet_arrays_ercot_2023.json"
 
 # Frozen fixture parameters. The gas price is a fixture constant (it enters
 # marginal-cost assembly downstream, not the arrays), pinned so the driver is
@@ -124,7 +124,9 @@ def test_generators_to_fleet_arrays_ercot_2023_golden() -> None:
 
 if __name__ == "__main__":
     if "--capture" not in sys.argv:
-        raise SystemExit("usage: python tests/test_fleet_arrays_golden.py --capture")
+        raise SystemExit(
+            "usage: python tests/regression/test_fleet_arrays_golden.py --capture"
+        )
     arrays = _build_fixture_arrays()
     payload = {
         "fixture": {

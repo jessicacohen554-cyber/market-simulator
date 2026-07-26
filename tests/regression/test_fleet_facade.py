@@ -18,7 +18,7 @@ Pinned contracts:
 * **Pickle identity** — ``Generator`` and ``FleetArrays`` are defined
   PHYSICALLY in the package ``__init__`` so ``__module__`` stays
   ``market_sim.data.fleet`` (plan §1: the committed ``p2_state`` pickles
-  resolve both classes by that path). tests/test_persisted_identity.py owns
+  resolve both classes by that path). tests/regression/test_persisted_identity.py owns
   the primary assertion; this pins it against facade regressions.
 * **Patch transparency** — ``mock.patch("market_sim.data.fleet.X")``
   intercepts package internals that resolve historically-patched names at
