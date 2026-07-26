@@ -17,6 +17,11 @@ scripts, and dead CI-upload tooling from before the runner-minutes policy.
   those records are frozen and intentionally not rewritten. `git log --follow`
   connects the history.
 - Nothing here should be deleted casually: per CLAUDE.md, probe/run scripts are
-  part of the calibration record. But nothing new should be added either — a
-  new one-off probe belongs in `scripts/probes/`, and a script that earns a
-  standing role belongs at `scripts/` top level.
+  part of the calibration record. Nothing new should be *written* here
+  directly either — a new one-off probe belongs in `scripts/probes/`, and a
+  script that earns a standing role belongs at `scripts/` top level. The one
+  sanctioned intake is **keeper rotation** (`scripts/README.md`): when an
+  ISO's next keeper registers — or a probe's rejection is adjudicated — the
+  superseded run's per-run attestation/driver/validate scripts rotate here,
+  imports and repo-root path math mechanically fixed, content otherwise
+  unchanged.

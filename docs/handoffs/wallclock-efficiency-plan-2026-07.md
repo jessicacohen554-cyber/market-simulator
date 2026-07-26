@@ -145,7 +145,7 @@ both orchestrators so every later change is quantified against a real baseline.
 1. **Byte-identity gate**: capture goldens before the change with
    `scripts/capture_keeper_goldens.py` (runs `MARKET_SIM_WARMSTART_XYEAR=0`, single thread),
    re-run after, diff. Tier-2 changes must be **bit-identical**. Warm-start changes use
-   `scripts/diff_warmstart_bundles.py` (objective/prices/total-gen identical; per-unit diffs
+   `scripts/diagnostics/diff_warmstart_bundles.py` (objective/prices/total-gen identical; per-unit diffs
    confined to documented marginal ties).
 2. **Timing evidence**: report before/after per-phase timings from the P-0 instrumentation on
    at least ERCOT + one big co-opt ISO (PJM or MISO), all three backcast years.
@@ -230,7 +230,7 @@ In market-simulator, flip the already-validated cross-year warm-start to default
 
 1. Make the calibration scripts (scripts/run_calibration.py, scripts/run_calibration_full.py) enable cross-year warm-start by default, with an explicit --no-xyear-warmstart opt-out and the env var still honored. The forecast path (runner.py) must remain COLD-only — the capacity-evolution tie-flip rejection stands; assert/verify runner.py cannot pick up the new default.
 2. Keep golden/repro paths cold: scripts/capture_keeper_goldens.py already pins MARKET_SIM_WARMSTART_XYEAR=0 (line ~83) — confirm replay_keeper.py / bench-repro.yml likewise pin it, and pin where missing, so reproducibility baselines stay basis-independent.
-3. Gate: for ERCOT and one big co-opt ISO (PJM or MISO), run the full 3-year backcast cold vs warm and diff with scripts/diff_warmstart_bundles.py — objective, prices, total generation identical; per-unit diffs confined to documented marginal ties. Include the diff summary and before/after wall-clock per year in the PR body.
+3. Gate: for ERCOT and one big co-opt ISO (PJM or MISO), run the full 3-year backcast cold vs warm and diff with scripts/diagnostics/diff_warmstart_bundles.py — objective, prices, total generation identical; per-unit diffs confined to documented marginal ties. Include the diff summary and before/after wall-clock per year in the PR body.
 4. Do NOT register these probe runs on the dashboard. Update docs/cross-year-warmstart.md's "default" wording and CHANGELOG.
 ```
 

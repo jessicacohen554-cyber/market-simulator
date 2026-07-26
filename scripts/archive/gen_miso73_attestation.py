@@ -43,7 +43,7 @@ import json
 import shutil
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parent.parent
+REPO = Path(__file__).resolve().parent.parent.parent
 SRC72 = REPO / "results/calibration/miso72_winter_citygate/calibration_attestation.json"
 MAIN = REPO / "results/calibration/miso73_seam_meritcap"
 BASE = REPO / "results/calibration/miso73_seam_meritcap-base"

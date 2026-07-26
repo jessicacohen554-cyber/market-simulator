@@ -68,6 +68,17 @@ KNOWN_DANGLING: dict[str, str] = {
     # nyiso_demand_response.py's docstring + a build-hint error string. Tracked
     # with the nyiso-65 re-sync follow-up.
     "scripts/data/build_nyiso_scr_edrp.py": "un-synced nyiso-65 SCR/EDRP lane; re-sync owed",
+    # Synthetic paths tests/test_file_integrity_guard.py (f05f5b0, 2026-07-26)
+    # writes into its throwaway tmp-repo fixtures to exercise the rule-27
+    # shrink guard. They must LOOK like guarded scripts/ files for the test to
+    # mean anything, so the scanner necessarily sees them; none is a reference
+    # to a script of this repo.
+    "scripts/backfill.py": "file-integrity-guard test fixture path, not a reference",
+    "scripts/big.py": "file-integrity-guard test fixture path, not a reference",
+    "scripts/new_name.py": "file-integrity-guard test fixture path, not a reference",
+    "scripts/old_name.py": "file-integrity-guard test fixture path, not a reference",
+    "scripts/render.py": "file-integrity-guard test fixture path, not a reference",
+    "scripts/small.py": "file-integrity-guard test fixture path, not a reference",
 }
 
 

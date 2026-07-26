@@ -25,9 +25,9 @@ the process is later OOM-killed mid-phase) and ``resource.getrusage`` ``VmHWM``
 high-water mark. Numbers are anon-RSS in GiB.
 
 Usage:
-    python scripts/profile_lp_memory.py --synthetic-reserve --iso MISO
-    python scripts/profile_lp_memory.py --synthetic-reserve --iso PJM
-    python scripts/profile_lp_memory.py --keeper miso-41-ct-evening   # big box
+    python scripts/diagnostics/profile_lp_memory.py --synthetic-reserve --iso MISO
+    python scripts/diagnostics/profile_lp_memory.py --synthetic-reserve --iso PJM
+    python scripts/diagnostics/profile_lp_memory.py --keeper miso-41-ct-evening   # big box
 """
 
 from __future__ import annotations

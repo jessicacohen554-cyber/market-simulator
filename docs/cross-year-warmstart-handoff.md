@@ -94,7 +94,7 @@ plus a neutrality A/B. Scope into this branch or a fresh one off it.
 
 Backlog (do as separate, smaller PRs):
 - **#2 Promotion gate**: bundle-level `run_calibration` flag off vs on →
-  `scripts/diff_warmstart_bundles.py` per `plant_code` + re-score, then flip
+  `scripts/diagnostics/diff_warmstart_bundles.py` per `plant_code` + re-score, then flip
   `MARKET_SIM_WARMSTART_XYEAR` on by default. (Only when ready to ship the
   default.)
 - **#3 Serialize `CrossYearBasis`** into the bundle dir so per-year parallel runs

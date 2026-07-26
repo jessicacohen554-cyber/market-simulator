@@ -13,14 +13,25 @@ only the directory moved.
 | `scripts/data/`     | Data fetching and processing — everything between an external source and the model's inputs: `fetch_*` (raw downloads), `curate_*`/`process_*`/`convert_*`/`parse_*` (raw → `data/clean` per the schema contract), `derive_*` (measured-behaviour parameter derivation; CLAUDE.md rule 23 — frozen against residuals), and per-source builders (`build_*_hsl.py`, LMP references, AS withholding, …). Not core engine. |
 | `scripts/archive/`  | Retired one-offs that are no longer part of the backcast, hindcast, or forecast paths: superseded per-run drivers (`run_pjm51`–`98`, `run_ercot_21`–`46`, `run_159`–`166`, …), per-run attestation generators, one-shot diagnostics/probes/analyses, completed intake/landing scripts, dead CI-upload tooling. Kept for the historical record; **not maintained**. See `scripts/archive/README.md`. |
 | `scripts/lib/`      | Shared helpers imported by scripts (`clean_io.py`, `bundle_io.py`, per-datatype registries). |
-| `scripts/probes/`   | Per-run probe scripts and repro artifacts, named `_<iso><run>_*` — the historical record of calibration probes. |
-| `scripts/diagnostics/` | Scratch diagnostics. |
+| `scripts/probes/`   | Per-run probe scripts, named `_<iso><run>_*` — the historical record of calibration probes (frozen). |
+| `scripts/probes/artifacts/` | The probes' non-Python repro artifacts (`.patch` / `.xz.b64` chunks, `_<iso><run>_chain.sh` drivers, chunked-patch land dirs), segregated 2026-07-26 so the probe scripts stand alone — same frozen record, content untouched; paths quoted in pre-move records refer to the old flat `probes/` layout. |
+| `scripts/diagnostics/` | Standing measurement harnesses that profile or diff the engine rather than run the programs: `bench_highs_parallel.py` (HiGHS thread-scaling bench), `profile_lp_memory.py` (LP build-vs-solve peak-RSS split), `diff_warmstart_bundles.py` (per-plant cold-vs-warm bundle diff; invoked by `regression_gate.py`) — plus scratch diagnostics. |
 
 Classification rule used (and to use going forward): a script stays at top
 level if it is part of a *standing* workflow — invoked by CI, a skill, tests,
 the calibration/forecast/hindcast programs, or governance rules. A script tied
 to one specific superseded run belongs in `archive/`; anything that fetches or
 transforms data belongs in `data/`.
+
+**Keeper rotation:** a superseded keeper's per-run scripts — its
+`gen_<run>_attestation.py`, its `run_<run>_*` driver, and any
+`<run>_*validate` helper — move to `archive/` when the ISO's next keeper
+registers (`git mv` + mechanical reference rewrite, the PR #2486 discipline;
+repo-root path math re-anchored for the extra directory level). The current
+keeper's and any in-flight run's scripts stay at top level; a rejected
+probe's scripts rotate as soon as the rejection is adjudicated. (First
+applied 2026-07-26: the miso-73 rejected-probe trio rotated; miso-72 — the
+standing keeper — and the in-flight miso-74 stayed.)
 
 ## Bootstrap & shared CLI helpers
 
