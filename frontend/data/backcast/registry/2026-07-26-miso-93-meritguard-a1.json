@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-26-miso-93-meritguard-a1",
+  "label": "miso 93 meritguard a1",
+  "date": "2026-07-26",
+  "shorthand": "miso-93-meritguard-a1",
+  "definition": "miso-93 LANE A: keeper re-audit of 2026-07-25-miso-88-egrid-hr on the guard-corrected CAMPD economic-layup envelope (campd-economic-layup-fix-charter \u00a78 blast radius). Recipe unchanged from the keeper; the only intended delta is the committed extract (blob f2b3ec8 -> c298c68, PR #2919). Clean partitions capacity-deliverability / ramp-capability / transfer-interface-limits / winter-fuel-inventory regenerated BEFORE solving (neiso-65 \u00a72 lesson; MISO's per-zone seasonal CIL/CEL interface groups degrade silently to static PY2025-26 summer caps without the capacity-deliverability partition, independently of the capacity_deliverability_limits flag).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-26-miso-93-meritguard-a1.js",
+  "bundle": "results/calibration/miso93_meritguard_a1"
+}
