@@ -302,6 +302,27 @@ the mark (with the dictionary regeneration from §2 keeping the file green).
    (the fleet loaders are heavily `lru_cache`d; a monkeypatched-path fit is
    the likely mechanism). Needs a dedicated pollution bisect; not fixable
    blind, not honestly xfailable (they are not deterministic failures).
+
+   **Membership shifted on 2026-07-26 with the Wave-5A `tests/` migration**,
+   exactly as predicted for a pollution family: moving files between
+   directories changes collection order, so which members lose the coin toss
+   changes with no edit to any test's content. Measured across two full serial
+   runs (`uv run python -m pytest --continue-on-collection-errors`, before =
+   flat `tests/`, after = the migrated tree), the aggregate counts were
+   **identical** — 39 failed, 5183 passed, 28 skipped, 8 xfailed, 234 subtests
+   passed, 1 collection error — but four rows swapped:
+
+   | Direction | Test |
+   |---|---|
+   | started failing | `tests/unit/data/test_cache_control.py::test_largest_retained_frames_is_sorted_and_limited` |
+   | started failing | `tests/unit/data/test_coal_sync_tranche.py::TestCommittedTakeorpayRegulated::test_scope_set_membership_freeze` |
+   | stopped failing | `tests/curation/test_consume_phase3d.py::EgridZoneAssignmentParity::test_zone_lookup_matches_raw` |
+   | stopped failing | `tests/curation/test_derive_coal_sigmoid.py::TestProvenanceFreeze::test_miso_defaults_match_derive` |
+
+   All four pass in isolation on the migrated tree, so all four are this
+   family, not migration defects. They were left exactly as they are: editing
+   an order-shift victim masks the shared-state leak rather than fixing it.
+   The bisect this item asks for now has two more known members to work with.
 3. The 7 remaining `xfailed` marks (all "pre-existing failure … tracked for
    follow-up", 2026-07-05) are still genuinely failing, so they are outside
    this triage's failure/xpass mandate — but none carries a real citation and
@@ -348,6 +369,10 @@ open escalation from §4 or a §6 observation — nothing unclassified:
 | D4 orchestrator shim conversion (7 shims + flag-registry seam) | 8 |
 | D5 NEISO bin-artifact drift (`4fb54b53` basis) | 1 |
 | §6.2 order-dependent pollution family (test_fleet ×3, derive_coal_sigmoid, and — new on the rebased tree — `test_outages::NEISOFloorOutageExemptTest`, which also passes in isolation) | 5 |
+
+Membership of that last row is order-dependent by construction and shifted
+again when the Wave-5A `tests/` migration changed collection order; the swap
+(same totals, four rows exchanged) is tabulated in §6.2.
 
 The §6.1 perf test (`test_full_year`, 30 s budget) PASSED on the final run —
 consistent with slow-host noise at the margin, kept as an observation. The 8
