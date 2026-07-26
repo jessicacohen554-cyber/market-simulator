@@ -61,6 +61,12 @@ _IGNORE = {
     "td_loss_factor",
     "shared_inputs",
     "git_sha",
+    # Origin-durable basis anchor (run_calibration_full._basis_sha). Pure
+    # provenance, written fresh by every solve_and_persist — a replay must
+    # carry the REPLAY's basis, never the original's, so this is ignored on
+    # the way in and (unlike the timestamp date) never restored on the way
+    # out; see _restore_display_date (caiso-122 §1 / caiso-123).
+    "basis_sha",
     "highspy_version",
     # Runtime environment block (python/platform + numerics stack versions).
     # Provenance only — never a solve kwarg. main() surfaces a mismatch as a
@@ -193,6 +199,27 @@ def _warn_on_environment_mismatch(meta: dict) -> None:
             "environment — byte-identity is not guaranteed:\n  " + "\n  ".join(diffs),
             file=sys.stderr,
         )
+
+
+def _restore_display_date(run_dir: Path, orig_ts: str) -> str:
+    """Restore ONLY the original date prefix of the replayed meta timestamp.
+
+    The dashboard run id is ``<date>-<shorthand>``, so a byte-faithful
+    in-place replay keeps the original DATE (id stability) while the
+    time-of-day stays the replay's. Every other meta.json field —
+    ``basis_sha`` and ``git_sha`` above all — is left as solve_and_persist
+    freshly wrote it: a replayed bundle's provenance must date the bytes on
+    disk, not the destroyed original session (caiso-122 §1: the hybrid
+    timestamp plus a dead ``git_sha`` left the keeper with no usable basis
+    anchor; ``basis_sha`` is that anchor and restoring it here would re-open
+    the defect). Returns the timestamp written back.
+    """
+    meta_path = run_dir / "meta.json"
+    new_meta = json.loads(meta_path.read_text())
+    new_ts = new_meta.get("timestamp", "")
+    new_meta["timestamp"] = orig_ts[:10] + new_ts[10:] if new_ts else orig_ts
+    meta_path.write_text(json.dumps(new_meta, indent=2) + "\n")
+    return new_meta["timestamp"]
 
 
 def main() -> None:
@@ -330,10 +357,7 @@ def main() -> None:
         and args.offer_curve_json is None
         and args.years is None
     ):
-        new_meta = json.loads((run_dir / "meta.json").read_text())
-        new_ts = new_meta.get("timestamp", "")
-        new_meta["timestamp"] = orig_ts[:10] + new_ts[10:] if new_ts else orig_ts
-        (run_dir / "meta.json").write_text(json.dumps(new_meta, indent=2) + "\n")
+        _restore_display_date(run_dir, orig_ts)
         print(f"restored meta timestamp date -> {orig_ts[:10]}")
 
 

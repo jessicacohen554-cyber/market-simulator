@@ -2024,6 +2024,25 @@ def _git(*args: str) -> str:
         return ""
 
 
+def _basis_sha() -> str:
+    """Return the full SHA of the nearest origin-durable basis of this solve.
+
+    ``git_sha`` records the exact commit the solve ran at, but session-local
+    branch commits are routinely destroyed after merge, leaving that anchor
+    unresolvable (the caiso-122 §1 defect: keeper ``git_sha`` ``abb0fcd``
+    reachable from nothing, so the drift window had to be re-derived from
+    other bundles' sidecars). The basis is ``merge-base(HEAD, origin/main)``
+    — the newest ancestor of this solve that main history retains — falling
+    back to full ``HEAD`` when no ``origin/main`` is visible (then it equals
+    a full-length ``git_sha``, still strictly more resolvable than the short
+    form). Written fresh at every bundle write, INCLUDING replays:
+    ``replay_keeper`` restores only the display *date* of ``timestamp`` and
+    must never restore this field, so a bundle's ``basis_sha`` always dates
+    the bytes actually on disk (caiso-123).
+    """
+    return _git("merge-base", "HEAD", "origin/main") or _git("rev-parse", "HEAD")
+
+
 # Paths excluded from the manifest's git state: a run's own outputs (and other
 # bundles) are not "model changes" and would just be noise.
 _GIT_STATE_EXCLUDE = (":(exclude)results", ":(exclude)outputs")
@@ -2041,6 +2060,9 @@ def _git_state() -> dict:
     changed = [ln[3:] for ln in porcelain.splitlines()] if porcelain else []
     return {
         "sha": _git("rev-parse", "--short", "HEAD"),
+        # Origin-durable basis anchor mirrored from meta.json's basis_sha —
+        # sha above may become unresolvable with its session branch.
+        "basis_sha": _basis_sha(),
         "branch": _git("rev-parse", "--abbrev-ref", "HEAD"),
         "dirty": bool(porcelain),
         "changed_files": changed,
@@ -4779,6 +4801,11 @@ def solve_and_persist(
         "btm_backfill_year": btm_backfill_year,
         "shared_inputs": shared_inputs,
         "git_sha": _git_sha(),
+        # Basis anchor for "why did this bundle's bytes move?" forensics:
+        # the newest origin/main-durable ancestor of the solving tree.
+        # git_sha above may die with its session branch (caiso-122 §1);
+        # this field survives. replay_keeper NEVER restores it (caiso-123).
+        "basis_sha": _basis_sha(),
         # Solver provenance: near-tied offer-curve plateaus (e.g. cheap-gas
         # years putting PRB committed bids on top of gas committed bids)
         # admit alternate optimal vertices, and different HiGHS releases
