@@ -1313,3 +1313,38 @@ submitted DAM coal offer ~$21, so the bias sits in the low/mid tranches or the g
 the ERCOT-116 metrics WITH the measured envelope armed; when the compensator is fixed, re-arm the
 envelope and expect it to pass. Full write-up:
 `FINDING-ercot116-coal-seasonal-availability-2026-07-26.md`.
+
+## 2026-07-26 — ERCOT-117: the West/Panhandle TOPOLOGY SPLIT is CLOSED (charter STOP; no LP, no run, keeper unchanged)
+
+Chartered to build the split as real structure and register a 2023–2025 bundle. **Stopped at the
+charter's own re-verification gate: the lever was already refuted at the commit the charter cites as
+verifying it open.** `results/calibration/FINDING-ercot115-wtx-topology-premise-2026-07-26.md`
+(`b5449c0`) **is an ancestor of `4094bbe`**; the earlier
+`docs/handoffs/ercot-vre-curtailment-topology-scope-2026-07.md` §WP-A (2026-07-07) had already
+scoped the split, measured its yield as ~zero and recommended defer. Nothing on `main` after
+`4094bbe` touches ERCOT. The charter was written against
+`DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §9, whose frontier block still named the split
+and had never been amended — that stale pointer is the whole story of how this was re-chartered.
+
+**Why refuted** (ERCOT-115 §§1/3, measured NP6-86): the corridor interfaces already carry their
+measured limit-at-bind — WESTEX 10,038/10,275/10,109 MW vs the model's 10,000, PNHNDL
+2,524/2,670/2,397 vs 2,680 — so there is no corridor limit to adopt; and the only intra-corridor
+aggregate interfaces (MCCAMY, CULBSN, I_FW_N, I_FW_S) bind at most **2.8 %** in one year of three,
+which is the copper-plate no-op that reverted the original Far_West node in 2026-06.
+
+**One thing ERCOT-115 did not cover, measured here** (no LP; the committed archive): WP-A's second
+reading, a **CREZ wind sub-zone**. The complete 2023–2025 aggregate-GTC vocabulary contains **no
+Sweetwater/Abilene/CREZ interface at all**, so its link TTC could only be set from the trough/spread
+residual it is meant to close — a fitted limit, refused under rules 5/13/14 rather than on yield.
+Decomposing ERCOT-115 §4's 36–47 % nodal-only tail by voltage class: **138 kV elements at ~205–210
+MW median limit bind in 66.0/76.8/83.1 % of SCED intervals** (69 kV 18–21 %, 345 kV 30–44 %) — the
+signature of the step-2 handoff's chronic 66–90 %-of-hours curtailment, with the West-Texas names in
+it (6437__F SCRCV–KNAPP, 15060__B VEALMOOR–KOCHTAP, 6520__E ODEHV–YARBR, 6144__A BSPRW–STASW). No
+zone split at any granularity reaches that congestion.
+
+**Docs reconciled so this does not recur:** DIAGNOSIS §10 records the closure, §9's heading carries a
+superseded-in-part banner, and the CLAUDE.md pointer moves to §§7–10 and states the lever is closed.
+The lane's remaining named route is the topology scope doc's **WP-B nodal layer**, which is blocked
+on a station → area crosswalk the repo does not have (a `data-intake` job) — and, being a bound on
+the wind variable, inherits §9's caveat that a ceiling-clipped variable is never marginal. Keeper
+`2026-07-26-ercot115-coal-marginal-hr` untouched; no solve, so no dashboard registration.
