@@ -237,7 +237,7 @@ def retained_footprint(*roots: object) -> dict[str, float]:
 
 
 def largest_retained_frames(limit: int = 8, *roots: object) -> list[tuple]:
-    """Identify the biggest retained pandas frames: ``(MB, rows, cols, columns)``.
+    """Identify the biggest retained pandas objects: ``(MB, rows, cols, columns)``.
 
     Companion to :func:`retained_footprint`, which reports the retained payload
     by *class* (ndarray / pandas / sparse). That names what the resident heap is
@@ -250,6 +250,14 @@ def largest_retained_frames(limit: int = 8, *roots: object) -> list[tuple]:
     A frame's column list is a far better fingerprint than its size, so this
     returns enough to recognise the producer on sight (a CAMPD unit-hour frame,
     an EIA-930 BA-hour frame and an LP result frame look nothing alike).
+
+    **Counts ``Series`` as well as ``DataFrame``, and must**: ``retained_footprint``
+    reports the two together, so a DataFrame-only reporter cannot account for its
+    ``n_pandas``. Found the hard way — the first version of this walk matched only
+    ``DataFrame`` and returned an *empty list* against a measured 17 pandas
+    objects / 0.68 GB, printing nothing at all. For a ``Series`` the ``cols``
+    slot carries its ``name`` (or ``<unnamed>``) and the column count is 1, so a
+    row is still self-identifying.
 
     Coverage differs from :func:`retained_footprint`'s in one way worth stating,
     because it makes this reporter *stronger* than that one. A ``DataFrame`` is a
@@ -284,12 +292,20 @@ def largest_retained_frames(limit: int = 8, *roots: object) -> list[tuple]:
             continue
         visited.add(oid)
         try:
-            if isinstance(obj, pd.DataFrame):
+            if isinstance(obj, (pd.DataFrame, pd.Series)):
                 if oid not in seen_frames:
                     seen_frames.add(oid)
-                    mb = float(obj.memory_usage(deep=False).sum()) / 1048576.0
-                    cols = [str(c) for c in obj.columns[:12]]
-                    found.append((mb, int(obj.shape[0]), int(obj.shape[1]), cols))
+                    usage = obj.memory_usage(deep=False)
+                    mb = float(getattr(usage, "sum", lambda: usage)()) / 1048576.0
+                    if isinstance(obj, pd.DataFrame):
+                        cols = [str(c) for c in obj.columns[:12]]
+                        ncol = int(obj.shape[1])
+                    else:
+                        cols = [
+                            f"Series:{obj.name if obj.name is not None else '<unnamed>'}"
+                        ]
+                        ncol = 1
+                    found.append((mb, int(obj.shape[0]), ncol, cols))
                 continue
             if isinstance(obj, type):
                 continue

@@ -206,3 +206,26 @@ def test_largest_retained_frames_does_not_double_count_a_root():
     frame = pd.DataFrame({"a": np.zeros(1_000_000)})
     rows = cache_control.largest_retained_frames(50, frame)
     assert sum(1 for r in rows if r[1] == 1_000_000) == 1
+
+
+def test_largest_retained_frames_counts_series_like_retained_footprint():
+    """Series must be reported, because ``retained_footprint`` counts them.
+
+    Regression test for a real miss: the first version of the walk matched only
+    ``DataFrame``, so against a solve whose retained pandas payload was mostly
+    Series it returned an EMPTY list while ``retained_footprint`` reported 17
+    objects / 0.68 GB — the telemetry printed nothing and looked merely quiet
+    rather than broken. The two reporters must agree on what "pandas" means.
+    """
+    series = pd.Series(np.zeros(2_000_000), name="gross_load_mw")
+    rows = cache_control.largest_retained_frames(50, series)
+    hit = [r for r in rows if r[1] == 2_000_000]
+    assert hit, "a 16 MB Series was invisible to the frame reporter"
+    mb, nrows, ncols, cols = hit[0]
+    assert mb > 12.0
+    assert ncols == 1
+    assert cols == ["Series:gross_load_mw"], cols
+
+    # And the pair must not disagree about whether that payload exists.
+    fp = cache_control.retained_footprint(series)
+    assert fp["n_pandas"] >= 1
