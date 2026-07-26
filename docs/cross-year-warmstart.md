@@ -326,9 +326,39 @@ The retire/keep decision is therefore a function of prices, `mc` and capacity
 only, and is invariant to any marginal-tie reshuffle — pinned by
 `tests/test_forecast_warmstart_tie_invariance.py`.
 
-This does **not** flip anything: `ScenarioConfig.xyear_cache` was not added,
-`runner.py` still passes `xyear_cache=None`, and the forecast path remains
-cold-only. Removing the mechanism that made warm start *non-neutral* is a
-precondition for the D-9 default flip, not the flip itself — that still needs
-its own full-horizon warm-vs-cold identical-trajectory A/B and owner sign-off,
-and no such A/B has been run.
+Wave 4C itself did **not** flip anything — it removed the mechanism that made
+warm start non-neutral, which is a *precondition* for the D-9 default flip, not
+the flip.
+
+**Status update (D-9, 2026-07-26): the A/B has now been run and the forecast
+path IS wired, default ON.** The measured table at the top of this section is
+therefore historical — it records the pre-4C behaviour and must not be quoted as
+current.
+
+* The switch is `ScenarioConfig.forecast_xyear_warmstart` (default **True**), a
+  registry field rather than an env knob (rule 24 [R-REGISTRY]). `runner.py`
+  gates its year-loop basis holder on it and passes it to `run_energy_solve` as
+  an explicit `xyear_warmstart` override, so the calibration CLIs' default-ON
+  `MARKET_SIM_WARMSTART_XYEAR` can never decide the forecast's behaviour. Set
+  the field `False` for a strictly cold forecast; that value enters the
+  `cache_key` as a distinct scenario.
+* An explicitly-gated caller also bypasses the persisted year-1 basis NPZ cache
+  (`pipeline.basis_cache`), which is keyed `(iso, weather_year, hours)` with no
+  sim-year — seeding a 25-year horizon from it would make a run depend on
+  whatever solved before it.
+* **The guardrail passed.** Full-horizon ERCOT 2026-2050, 8760 h, threads=1:
+  every capacity quantity — per-fuel capacity, builds, retirements, reserve
+  margin, peak demand, max hourly price — **bit-identical in all 25 years**,
+  against 51.1 min → 25.1 min wall (2.04× overall, 2.20× on the warm-startable
+  years). Residuals are marginal-tie/dual noise only: load-weighted price
+  2.5e-5, CO2 6.6e-6 relative. The same 168 h 2026→2032 experiment tabulated
+  above, re-run post-4C, now shows **no divergence at all**.
+* Note the honest limit: 4C removed the realized-*dispatch* reader, but the
+  screen still reads **prices**, which are duals and can pick a different
+  optimal vertex under degeneracy. So the guardrail was a genuine test; what it
+  shows is that the residual dual noise is ~1e-5 and tips no retire/keep
+  decision at ERCOT full-horizon scale — not that invariance is proven by
+  construction.
+
+Full experiment record, including the wall-clock table and the contention
+caveat: `docs/handoffs/wallclock-baseline-2026-07.md` §H3/Exp 5.

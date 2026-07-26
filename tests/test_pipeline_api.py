@@ -77,6 +77,15 @@ class _FakeDispatchModel:
     def solve(self, mc=None, **kwargs):
         return _fake_solve(self._fleet, self._demand)
 
+    def export_cross_year_basis(self):
+        """No basis to hand forward — the fake has no LP. Reached since the D-9
+        flip wired a real ``xyear_cache`` into the forecast year loop."""
+        return None
+
+    def apply_cross_year_basis(self, prev):
+        """Decline any prior basis, like the real model's skipped-warm-start path."""
+        return False
+
 
 class TestFacadeSignature(unittest.TestCase):
     """The public surface keeps its exact signatures."""
