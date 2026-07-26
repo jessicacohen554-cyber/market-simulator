@@ -765,3 +765,71 @@ verdict adopted it, PJM's committed extract and layup companion are
 untouched, and no rule-22 obligation arises because no mechanism change is
 proposed. The PJM keeper re-audit still blocks on a ≥ 24 GB environment (OOM at 15.9 GB);
 Lane B needed no solve and is unaffected by it. Next number unchanged: **pjm-128**.
+
+## 2026-07-26 — pjm-128: the commitment-status half of Lane 2 is BLOCKED ON NON-PUBLIC DATA — no public unit-level DA award feed exists
+
+Full write-up: `docs/FINDING-pjm128-da-award-feed-scope-2026-07.md`. Census:
+`scripts/probes/pjm128_da_award_feed_scope.py` (admissibility test committed
+`d52740b` **before** the census ran); result JSON
+`results/calibration/pjm128_da_award_feed_scope.json`. **No LP, no solve, no
+surface written, no derive re-run, keeper unchanged, no dashboard registration
+(no bundle exists).** No bulk intake — every request is a sample.
+
+**0. The owner memo is still undecided, so nothing was re-derived.** The
+session checked for a decision on
+`docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md` first, found none,
+and fell through to pjm-128 per the charter — no nudge, no re-derive. Rule 20
+leaves the season-conditioned surface inadmissible until the owner decides.
+
+**1. Verdict: NO_PUBLIC_FEED.** pjm-126 arm C was vacuous in all three years
+(≥99.2 % of units offer in all four bins), so the commitment-status half of the
+conditioning hypothesis — the tight-bin offer population being disproportionately
+*already committed* — was never tested. It needs the DA **awards** side. The
+admissibility test committed before the census: a feed qualifies only if it
+resolves **an individual unit (A1)** × **an hourly-or-finer time key (A2)** ×
+**a cleared/awarded/committed quantity (A3)**. PJM's public DataMiner2 catalog
+was enumerated from the API itself — **119 feeds**, 26 tripping a
+commitment/award keyword net — and every plausible candidate sampled live so the
+verdict rests on measured schemas, not catalog prose. **None satisfies A1+A2+A3.**
+The only unit-resolved hourly feed is the offer corpus we already hold
+(`energy_market_offers`, 90.6 M rows) and it fails A3: offers, never awards.
+The near misses fail on grain — `ops_init_commit` is **zone**-level (20 zones,
+out-of-market commitments only), `rt_and_self_ecomax` and `day_gen_capacity`
+are **system** totals, `gen_specific_uplift_credit` is per-generator but
+**monthly dollars**. PJM's own posting page states it: no cleared/awarded MW, no
+day-ahead schedule or commitment status, no unit online/offline status.
+
+**2. PJM withholds the committed quantity by rule — measured, not inferred.**
+`rt_and_self_ecomax` is the closest published committed-capacity series and is a
+**system hourly total**; even there the RT-committed column is redacted under
+PJM's own `"Confidentiality Rules Prohibit Display"` flag in **35.9 %** of hours
+(Jul 2025) and **49.7 %** (Jan 2023). A quantity redacted at *system* level is
+not one published per unit — that is the mechanism behind the absence.
+
+**3. A second, independent blocker: the offer corpus cannot be joined to
+anything.** The question is the committed share *of the offer population*, so any
+external award source would have to join to the offers. Measured on one mid-July
+day per year: **1,219 distinct `unit_code` in 2023, 1,252 in 2024, and 0 codes in
+common — Jaccard 0.0000.** PJM re-draws the masked codes annually and publishes
+no crosswalk, so the two code spaces are completely disjoint. Even a perfect
+external unit-hour award series could not be attached. **Route refused, not
+untried:** fingerprinting masked units against EIA-860/CAMPD by their
+ecomax/ecomin/start-cost signature would de-anonymise data PJM masks under its
+confidentiality rules; recorded as refused so no later session treats it as
+unexplored.
+
+**4. No aggregate proxy, deliberately.** `ops_init_commit` (zone) and
+`day_gen_capacity` (system `total_committed`) could each be regressed against the
+tightness bins to manufacture a committed-share number. The charter forbids it and
+rule 1 forbids it independently. The half stays **untested, not refuted**.
+
+**Ledger.** Lane 2's commitment-status half is **CLOSED, terminal — blocked on
+data that does not exist publicly**, which is the frontier bar's own second
+clause (the state NYISO's remaining lever occupies). The season half is
+unaffected: pjm-126/127's ARTIFACT verdict never rested on arm C. **Frontier
+remains NOT ready, and now for exactly one reason** — the owner decision on the
+re-conditioning memo is the last named admissible mechanism that is neither tried
+nor formally blocked. Authorize-and-run or decline-and-record; the ledger is
+whole either way.
+
+Next number: pjm-129.

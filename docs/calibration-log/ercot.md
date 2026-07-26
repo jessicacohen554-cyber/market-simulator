@@ -1385,3 +1385,39 @@ verdict adopted it, ERCOT's committed extract and layup companion are
 untouched, and no rule-22 obligation arises because no mechanism change is
 proposed. The ERCOT-116/117 coal-availability lane is untouched by this session. Next
 number unchanged: **ercot-113** (per this log's running counter).
+## 2026-07-26 — ERCOT-117: ranking bias owns the coal LEVEL, not the season; coal curve exonerated; gas offer-basis inconsistency proven causal (rejected-by-design probe)
+
+**Session** `claude/ercot-117-coal-gas-bias-c7kekw` · **No-LP probe**
+`scripts/probes/ercot117_coal_gas_ranking.py` (measured DAM + RT/SCED-TPO supply curves, F923
+price basis, crossing-band price formation) · **Pre-commit**
+`PRECOMMIT-ercot117-gas-basis-probe-2026-07-26.md` pushed at `39b3a0f` before any solve.
+
+**Measured first (no LP).** (1) The model's coal supply curve matches the real fleet's RT (SCED
+TPO) curve — 0.66 vs 0.65–0.71 of capability at ≤$20, 0.91 vs 0.91–0.92 at ≤$25, HASL ≈ 0.99×HSL
+— the coal side of the crossing is EXONERATED. (2) The F923 lead confirms the PRB basis (both
+reporters within ±$0.06/MMBtu of the model's $1.75). (3) The model's CC supply is displaced dear:
+1.8/4.6/0.4 GW at ≤$15 (2023/24/25 summer) vs measured committed DAM 12.5/14.3/15.1 GW. (4) In
+actual-$15–25 hours the keeper's price runs +$5.0/+$4.4/+$7.0 above actual, both seasons, all
+years — the offer multipliers are derived at HH−0.50 but repriced at the EP-anchored zonal gas
+level (+0.50/+0.41/+0.04 by year).
+
+**The probe.** `replay_keeper ercot115_coal_floor_only --set
+ercot_thermal_dam_availability_coal=true --set ercot_zonal_gas_basis=false` — the
+basis-consistency ablation under the armed envelope, declared never-a-keeper (it disarms a
+measured input; rule 14). Run `2026-07-26-ercot117-gas-basis-probe`, NOT-YET, keeper unchanged.
+**The ranking bias owns the LEVEL**: crossing-band elevation drops $3.4/$3.5/$2.0, coal falls
+−3.7/−7.3/−2.6 TWh vs the envelope arm (ratio 1.061/1.132/1.154 → 1.001/1.008/1.114), C1 16/16.
+**It does NOT own the seasonal term** (P1 refuted): matched-band excess vs the envelope arm moves
++1.1/+1.0/+0.3 pp — the post-envelope residual is price-FLAT (+13–19 pp in every band $15→$60+,
+summer only; shoulder sub-$15 bands UNDER-run −5 to −13 pp). C3a collapses without the EP gas
+level (−40.5/−23.6/−15.7 % energy-only) — the measured input is vindicated; the admissible fix is
+re-deriving the offer surface ON it. Gates: G1 FAIL (−8.0/−4.7/−6.9; 2024 misses −5.0), G2 PASS,
+G3 FAIL (predicted P3), BITE PASS.
+
+**Successors.** ERCOT-118: re-ground the ERCOT gas offer-surface artifacts on the EP-anchored
+dispatch gas series (per-year tables, retire the pooled HH−0.50 p50s) and re-fit the offer deltas
+— the level fix that keeps the measured gas input. Then: the summer price-flat coal utilization
+offset (real summer coal delivers 13–19 pp under its own RT offered supply at every price — a
+duty/operations driver, not price), and the coal price-taking base (model 0.28 vs measured RT
+0.49–0.52 of capability, the shoulder-trough side). Full write-up:
+`FINDING-ercot117-gas-basis-ranking-2026-07-26.md`.

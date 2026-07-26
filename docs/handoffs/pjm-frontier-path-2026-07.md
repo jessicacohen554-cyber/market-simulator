@@ -77,7 +77,12 @@ Offer/energy-stack lanes:
   and the Lane 2 update in §3. **CONFIRMED multi-year by pjm-127 (2026-07-26):
   ARTIFACT in 2023 (3/3 segments flip), 2024 (2/3), 2025 (reproduced
   identically), and pooled 3-yr with the fidelity hard-guard (3/3 flip,
-  9.2e-13)** — `docs/FINDING-pjm127-conditioning-multiyear-2026-07.md`.
+  9.2e-13)** — `docs/FINDING-pjm127-conditioning-multiyear-2026-07.md`. The
+  hypothesis's other half — the tight-bin offer population being
+  disproportionately already-committed — is **CLOSED terminal by pjm-128
+  (2026-07-26): no public unit-level DA award/commitment feed exists**, and
+  the masked offer corpus cannot be joined to any external one
+  (`docs/FINDING-pjm128-da-award-feed-scope-2026-07.md`).
 
 **Read that list against the bar.** PJM's remaining residual is already
 characterized the way NEISO's and NYISO's are: the >$200 tail is owned by the
@@ -259,6 +264,39 @@ just as much as a positive one.** Do not chase the number.
 > solve) with the level-shift refutation signature that would close the
 > family for good. Arm C stayed vacuous in every year (≥99.2% of units
 > offer in all four bins) — the commitment-status half is still pjm-128.
+>
+> **UPDATE 2026-07-26 (pjm-128): the commitment-status half is CLOSED —
+> TERMINAL, blocked on data that does not exist publicly.**
+> `docs/FINDING-pjm128-da-award-feed-scope-2026-07.md`; census
+> `scripts/probes/pjm128_da_award_feed_scope.py` +
+> `results/calibration/pjm128_da_award_feed_scope.json` (no LP, no solve, no
+> intake). PJM's public DataMiner2 catalog was enumerated from the API itself
+> — **119 feeds**, 26 tripping a commitment/award keyword net — against an
+> admissibility test committed before the census: **unit identity (A1) ×
+> hourly time key (A2) × cleared/awarded/committed quantity (A3)**, all three
+> required. **No feed satisfies all three.** The only unit-resolved hourly
+> feed is the offer corpus itself (`energy_market_offers`, 90.6 M rows),
+> which fails A3 — offers, never awards. The near misses fail on grain:
+> `ops_init_commit` is **zone**-level (20 zones, out-of-market commitments
+> only), `rt_and_self_ecomax` and `day_gen_capacity` are **system** totals,
+> `gen_specific_uplift_credit` is per-generator but **monthly dollars**.
+>
+> Two supporting measurements, both from the committed JSON:
+> (a) even the *system* RT-committed series is redacted under PJM's own
+> `"Confidentiality Rules Prohibit Display"` flag in **35.9 %** of hours
+> (Jul 2025) and **49.7 %** (Jan 2023) — a quantity withheld at system level
+> is not published per unit; (b) an **independent** blocker — the offer
+> corpus's masked `unit_code` space is **completely disjoint across years**
+> (1,219 codes on 2023-07-15, 1,252 on 2024-07-15, **0 in common, Jaccard
+> 0.0000**, no published crosswalk), so *no* external award source could be
+> joined to the offer population even if one existed. De-anonymising the
+> masked units by ecomax/start-cost fingerprinting is recorded as **refused,
+> not untried**.
+>
+> **Untested, not refuted, and no aggregate proxy** — `ops_init_commit` /
+> `day_gen_capacity` could manufacture a committed-share number and the
+> charter and rule 1 both forbid it. The season half is unaffected:
+> pjm-126/127's ARTIFACT verdict never rested on arm C.
 
 Is the tightest-bin inversion in `pjm_offer_midcurve_condbinned.json` a real
 property of PJM offers, or an artifact of the derive's conditioning? Evidence
@@ -311,9 +349,16 @@ and this lane closes — **either outcome is ledger progress.**
       confirmed in all three years and pooled (no solve spent).** See the Lane
       2 update above and
       `docs/FINDING-pjm127-conditioning-multiyear-2026-07.md`.
-   b. **pjm-128 — the commitment-status half**, untested because arm C is
-      vacuous in every year (≥99.2% of units offer in all four bins). Needs
-      the DA *awards* side, not the offer corpus.
+   b. ~~**pjm-128 — the commitment-status half**~~ — **DONE 2026-07-26,
+      CLOSED as blocked on non-public data (no solve, no intake).** PJM
+      publishes no unit-level DA award/commitment feed: the whole 119-feed
+      DataMiner2 catalog was censused against a pre-committed
+      identity × hourly × award test and nothing satisfies it, and the offer
+      corpus's masked unit codes are fully disjoint across years (Jaccard
+      0.0000) so no external award source could be joined to it either. The
+      half is **untested, not refuted**, and no aggregate proxy was taken.
+      See the Lane 2 update above and
+      `docs/FINDING-pjm128-da-award-feed-scope-2026-07.md`.
    c. **The re-derive decision itself — owner-gated, and the memo now exists:**
       `docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md` (pjm-127b,
       pre-registered before the confirmation numbers landed). It settles the
@@ -323,10 +368,14 @@ and this lane closes — **either outcome is ledger progress.**
       staged sequence in memo §4 runs (no-LP pre-check first, then the A/B
       chain, rules 12/14/16); if declined, the lever is formally blocked on
       an owner decision and the ledger records it as such.
-4. **Frontier is NOT ready.** Lane 1 is complete, but Lane 2 has re-opened a
-   named admissible mechanism that has not been tried — precisely what the bar
-   excludes. The ledger is closer to a *repair* than it was, and further from a
-   declaration.
+4. **Frontier is NOT ready — and as of 2026-07-26 for exactly one reason.**
+   Lane 1 is complete (pjm-124/125), Lane 2's commitment-status half is
+   terminal (pjm-128, blocked on non-public data — the bar's own second
+   clause), and the season half is measured and settled (pjm-126/127). What
+   remains is **the owner's decision on the re-conditioning memo** (3c): the
+   last named admissible mechanism that is neither tried nor formally blocked.
+   Authorize-and-run memo §4, or decline and record the block — the ledger is
+   whole either way, and no session may proceed without that decision.
 
 Rule 16 binds throughout: any registered bundle is `--year 2023 2024 2025` in
 one invocation. Rule 22: PJM has **no calibration-complete marker**, so no
