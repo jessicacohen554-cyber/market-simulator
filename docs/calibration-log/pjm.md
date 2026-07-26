@@ -739,3 +739,29 @@ Frontier stays NOT ready either way until the lever is tried or formally
 blocked.
 
 Next number: pjm-128.
+## 2026-07-26 — CAMPD charter LANE B (cross-ISO, **no PJM lane number claimed**): the day-grain `R < 0` cut does not replace the guard's window-grain cut
+
+Charter/cross-ISO session — measurement only: no guard change, no extract
+re-derive, no LP solve, **no PJM keeper touched**, no dashboard registration.
+Full record: `results/calibration/FINDING-campd-daygrain-crossiso-2026-07-26.md`;
+cross-ISO entry in `docs/calibration-log/governance.md`.
+
+PJM's cell of the 180-cell sweep (`--rcc-pctl {0.50, 0.75, 0.90, 0.99}` × `--horizon {24, 48, 72}` ×
+2023–2025), scored against **PJM Data Miner 2 `gen_outages_by_type`, region `PJM RTO`, `lead_days = 0`**:
+
+* **KEPT-extract monthly `r` at the default p90 / h24**, window-grain → day-grain:
+  2023 **+0.90 → +0.90** (Δ +0.001), 2024 **+0.91 → +0.90** (Δ −0.006), 2025
+  **+0.95 → +0.95** (Δ +0.002). Over PJM's 36 cells the day cut is better in
+  **19/36**, median Δ **+0.000**; both cuts clear the placebo in the same 21/36
+  cells.
+* **The two cuts pick the same windows**: Jaccard 0.88 / 0.88 / 0.92. PJM carries
+  the sweep's largest day-only veto counts (29 / 26 / 22) and they buy nothing —
+  out of ~1,600 windows a year they move the kept-`r` by ≤ 0.006.
+* **Control passed**: the re-implemented incumbent reproduces PJM's committed
+  kept/layup split on 1,676/1,684, 1,624/1,635, 1,583/1,591 windows.
+
+**Nothing in PJM changes.** The merit-order guard stands as the charter §8
+verdict adopted it, PJM's committed extract and layup companion are
+untouched, and no rule-22 obligation arises because no mechanism change is
+proposed. The PJM keeper re-audit still blocks on a ≥ 24 GB environment (OOM at 15.9 GB);
+Lane B needed no solve and is unaffected by it. Next number unchanged: **pjm-128**.
