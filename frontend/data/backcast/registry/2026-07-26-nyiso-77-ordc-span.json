@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-26-nyiso-77-ordc-span",
+  "label": "nyiso 77 ordc span",
+  "date": "2026-07-26",
+  "shorthand": "nyiso-77-ordc-span",
+  "definition": "(PROBE \u2014 structural fix, NOT promoted) nyiso-76 S2+P2: the ORDC measured-step-span fix above PLUS a daily-resolution dual-fuel oil-parity cap (the monthly EIA-923 delivered petroleum receipt shaped mean-preservingly by the measured EIA daily NY Harbor ULSD spot, so the cap is no longer a flat monthly plateau while the gas side of the same min() is already daily). NEGATIVE RESULT for the oil leg: against the S2 arm it moves essentially nothing \u2014 Jan-2025 -18.5% -> -17.4%, 2025 C3b 0.208 -> 0.206, the >$300 tail stays 9h vs an actual 42h. The measured intra-month distillate swing is only +/-5% around the monthly mean, far too small to be the winter root cause the overrun/underrun handoff proposed. The fix is a genuine granularity correction and stays in (default-off), but it does NOT close the winter under-pricing.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-26-nyiso-77-ordc-span.js",
+  "bundle": "results/calibration/nyiso76_ordc_oildaily"
+}

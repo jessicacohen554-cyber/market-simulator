@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-26-nyiso-76-ordc-span",
+  "label": "nyiso 76 ordc span",
+  "date": "2026-07-26",
+  "shorthand": "nyiso-76-ordc-span",
+  "definition": "(PROBE \u2014 structural fix, NOT promoted) nyiso-76 S2: the NYISO ORDC shortfall-step WIDTHS are built from the MEASURED as-enforced reserve requirement the balance row actually enforces, instead of the static published MW. A construction defect, not a knob: SENY is measured 1,800 MW against a published 1,300 MW base, so the step widths summed to 1,300 while the RHS demanded 1,800 \u2014 arithmetically forcing >=500 MW of REAL downstate 30-min reserve in EVERY hour and pricing the remainder on a ~38%-too-steep ramp. Penalties are requirement-independent and untouched; widths become hourly (n_steps,T). RESULT: fixes 2023 outright (C3b 0.216->0.120, C3a +17.8%->-0.9%) but REGRESSES 2024/2025 (C3a -9.1%/-12.2%, C3b 2025 0.208) and, decisively, C1/C7/C8 \u2014 removing the artificial reserve forcing releases ~900 MW of downstate ST_GAS into energy in 96% of hours (ST_GAS 9.3->17.2 TWh in 2023, CC_REGULAR -5.7 TWh), D-2 floor-attributed ST_GAS energy rises 2.9->7.4 TWh, and the D-1 off-peak cv_ratio falls to 0.44/0.49 (gate 0.50). The fix is correct and stays in the codebase (default-off); what it exposes is the real binding constraint \u2014 the downstate ST_GAS reliability_floor is over-sized and was being masked by this defect (rule 14: the estimate was silently compensating). See docs/FINDING-nyiso-ordc-span-reliability-floor-2026-07-26.md.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-26-nyiso-76-ordc-span.js",
+  "bundle": "results/calibration/nyiso76_ordc_span"
+}
