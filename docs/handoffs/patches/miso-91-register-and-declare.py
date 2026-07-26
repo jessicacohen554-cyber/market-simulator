@@ -176,7 +176,9 @@ def do_registry():
     added = [e for e in registry_entries() if e["param_id"] not in have]
     if added:
         registry["parameters"].extend(added)
-        REGISTRY_PATH.write_text(json.dumps(registry, indent=2, ensure_ascii=False) + "\n")
+        REGISTRY_PATH.write_text(
+            json.dumps(registry, indent=2, ensure_ascii=False) + "\n"
+        )
         CITATIONS_MD.write_text(render_markdown(registry))
     print(
         f"[1] registry: added {len(added)} entries "

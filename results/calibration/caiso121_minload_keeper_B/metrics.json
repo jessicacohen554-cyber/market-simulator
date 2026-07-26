@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-23-caiso-netrev-margin-keeper",
+  "run_id": "2026-07-26-caiso-121-minload-keeper",
   "iso": "CAISO",
-  "label": "caiso netrev margin keeper",
+  "label": "caiso 121 minload keeper",
   "target_years": [
     2023,
     2024,
@@ -16,7 +16,7 @@
   "rubric_version": 2.7,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: price_tail, co2"
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_tail, co2"
   ],
   "notes": [],
   "criteria": {
@@ -33,7 +33,7 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
@@ -82,10 +82,10 @@
   },
   "grade_summary": {
     "scored": 10,
-    "target_grade": 8,
+    "target_grade": 7,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 2
+    "fails": 3
   },
   "free_class_score": {
     "iso": "CAISO",
