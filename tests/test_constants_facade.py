@@ -50,6 +50,11 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "PRB_RAIL_DIESEL_SHARE",
         "PRB_RAIL_NONDIESEL_SHARE",
         "STATE_CARBON_PRICE_BY_ISO",
+        # Re-homed from data/fleet/arrays.py by miso-91 (4732235) to put them
+        # under parameter-registry coverage; constants.py already re-exports
+        # both, so they join the frozen surface rather than break it.
+        "SUMMER_CLASS_DERATE",
+        "SUMMER_WEFOR_SHARE",
         "THERMAL_AVAILABILITY",
     ),
     "market_sim.config.capacity_market": (
