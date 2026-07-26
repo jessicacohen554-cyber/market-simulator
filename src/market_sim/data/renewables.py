@@ -121,6 +121,7 @@ series and keeps the delivered profile.
 
 from __future__ import annotations
 
+import logging
 import os
 from pathlib import Path
 
@@ -155,6 +156,8 @@ from market_sim.data.fleet import (
     FleetArrays,
     _hour_to_month_index,
 )
+
+logger = logging.getLogger(__name__)
 
 # Capacity factors are physically bounded to the closed interval [0, 1].
 _CF_MIN: float = 0.0
@@ -1672,6 +1675,186 @@ def _solar_zone_clearsky_shapes(
     return shapes
 
 
+# --- Degenerate EIA-930 distribution repair --------------------------------
+# The EIA-930 generation-distribution parquet
+# (data/raw/eia-930/eia_generation_profiles.parquet) is the last-resort profile
+# source, taken only when a BA publishes no usable per-fuel hourly series (see
+# :func:`_eia_hourly_cf_profile`). For one cell of the six-ISO grid that row is
+# itself unusable: EIA-930 NYIS files `NG: SUN` as all zeros, so the NYISO solar
+# distribution is a single repeated value over all 8760 hours — a CF that
+# generates as much at 03:00 as at noon. Multiplied by the 12-step EIA-860
+# monthly capacity ramp it yields the observed 12-distinct-value block.
+#
+# A flat 24-hour solar CF is physically impossible, so the row is repaired
+# rather than consumed. The repair is applied to whichever ISO/fuel row is
+# degenerate — this is a fallback-path defect, not a NYISO one — and is an exact
+# no-op for every non-degenerate row (verified across all six ISOs x
+# {wind, solar} x 2023-2025: NYISO solar is the only cell that both reaches this
+# fallback and fails the test).
+#
+# A genuine measured 8760-hour series resolves hundreds to thousands of distinct
+# values (the smallest observed in this parquet is 226). A year that resolves
+# fewer distinct values than there are hours in a day carries no usable
+# intra-day structure at all, which makes this an unambiguous defect test with a
+# ~9x margin to the nearest real row.
+_DEGENERATE_DISTINCT_VALUES: int = 24
+
+# Donor ISO supplying the replacement SHAPE for a degenerate row. The donor must
+# be an adjacent BA on the same local clock (so the measured diurnal timing
+# transfers without a rotation) publishing a usable series for the same weather
+# year. NEISO for NYISO: directly interconnected, both America/New_York, and
+# capacity-weighted EIA-860 solar-fleet latitudes of 42.5 N (NYISO) vs 42.6 N
+# (NEISO) — the same solar geometry to within a tenth of a degree.
+_DEGENERATE_SHAPE_DONOR_ISO: dict[str, str] = {"NYISO": "NEISO"}
+
+# Fraction of the donor's peak clear-sky POA below which the inter-ISO
+# tracking-mix ratio is held at a neutral 1.0. Guards the ratio against a
+# vanishing denominator in the deep-night hours where both fleets produce
+# nothing, so the correction cannot amplify numerical dust into energy.
+_POA_RATIO_FLOOR_FRACTION: float = 0.01
+
+
+def _is_diurnally_degenerate(values: np.ndarray) -> bool:
+    """Whether an EIA-930 distribution row carries no intra-day structure.
+
+    Args:
+        values: A ``(HOURS_PER_YEAR,)`` normalized EIA generation distribution.
+
+    Returns:
+        ``True`` when the row resolves fewer than
+        :data:`_DEGENERATE_DISTINCT_VALUES` distinct values (a reporting gap
+        filed as a constant), ``False`` for any genuine measured series.
+    """
+    if values.size == 0 or not np.isfinite(values).all() or values.sum() <= 0.0:
+        return False
+    return len(np.unique(values)) < _DEGENERATE_DISTINCT_VALUES
+
+
+def _iso_clearsky_poa(
+    iso: str, cal_year: int | None, data_dir: Path | None = None
+) -> np.ndarray | None:
+    """Return an ISO-wide capacity-weighted clear-sky solar POA series.
+
+    Collapses :func:`_eia860_zone_solar_geometry`'s per-zone tracking mix and
+    latitude centroids into one ISO-level clear-sky plane-of-array profile,
+    weighting each zone by its year-end EIA-860 solar capacity. Used only as
+    the numerator/denominator of a *ratio* between two ISOs (see
+    :func:`_donor_shaped_distribution`), which is the sole contract
+    :func:`_clearsky_geometry` supports — its omitted longitude/equation-of-time
+    term is a constant offset shared by both ISOs and cancels in the ratio.
+
+    Args:
+        iso: ISO identifier.
+        cal_year: Calibration year; only plants online by its end are counted.
+        data_dir: EIA-860 directory; resolved from config when ``None``.
+
+    Returns:
+        A ``(HOURS_PER_YEAR,)`` POA array, or ``None`` when the ISO has no
+        usable EIA-860 solar geometry or capacity.
+    """
+    zone_names = get_iso_config(iso).zone_names
+    geometry = _eia860_zone_solar_geometry(iso, zone_names, cal_year, data_dir)
+    if geometry is None:
+        return None
+    mix, centroid = geometry
+    monthly = _eia860_monthly_capacity(iso, "solar", zone_names, cal_year)
+    if monthly is None:
+        return None
+    weights = monthly[:, -1]  # year-end installed capacity per zone
+    tech_order = ("single_axis", "fixed", "dual_axis")
+    poa = np.zeros(HOURS_PER_YEAR, dtype=float)
+    total = 0.0
+    poa_cache: dict[float, dict[str, np.ndarray]] = {}
+    for z in range(len(zone_names)):
+        if weights[z] <= 0.0 or mix[z].sum() <= 0.0 or centroid[z, 0] == 0.0:
+            continue
+        lat_key = round(float(centroid[z, 0]), 2)
+        by_tech = poa_cache.get(lat_key)
+        if by_tech is None:
+            by_tech = _clearsky_poa_by_tech(lat_key)
+            poa_cache[lat_key] = by_tech
+        poa += weights[z] * sum(
+            mix[z, k] * by_tech[tech_order[k]] for k in range(len(tech_order))
+        )
+        total += weights[z]
+    if total <= 0.0 or not poa.any():
+        return None
+    return poa / total
+
+
+def _donor_shaped_distribution(
+    iso: str, year: int, fuel: str, data_dir: Path | None = None
+) -> np.ndarray | None:
+    """Rebuild a degenerate distribution row from an adjacent BA's shape.
+
+    Replaces the *shape* of an unusable EIA-930 distribution row while leaving
+    its *level* untouched: the result is renormalized to sum to 1.0, so the
+    downstream :func:`derive_cf_profile` still sets the annual mean CF from
+    :data:`RENEWABLE_AVG_CF` exactly as before. Nothing here is fitted to a
+    price or volume residual (CLAUDE.md rule 1 ``[R-STRUCT]``, rule 13
+    ``[R-MEASURED]``).
+
+    The donor's measured series supplies the diurnal timing, the day-to-day
+    cloud variability and the seasonality, all on the same weather year and the
+    same local clock. For solar it is additionally corrected for the two
+    fleets' different EIA-860 tracking mixes by the clear-sky POA ratio
+    ``POA_iso / POA_donor`` — NYISO is 30.5% single-axis tracking against
+    NEISO's 13.3%, and a tracker genuinely delivers more shoulder-hour energy
+    per nameplate MW than a fixed panel. Both POAs sit on one clock, so the
+    ratio is phase-free (see :func:`_iso_clearsky_poa`).
+
+    Forward-valid (rule 13): the donor series and the EIA-860 tracking mix both
+    regenerate for any future year and respond to a changed fleet and a changed
+    weather year.
+
+    Args:
+        iso: ISO whose distribution row is degenerate.
+        year: Calendar year of the row.
+        fuel: Fuel identifier, e.g. ``"solar"``.
+        data_dir: EIA-930 directory; resolved from config when ``None``.
+
+    Returns:
+        A ``(HOURS_PER_YEAR,)`` normalized distribution summing to 1.0, or
+        ``None`` when no donor is registered or the donor is itself unusable —
+        in which case the caller keeps the original row.
+    """
+    donor = _DEGENERATE_SHAPE_DONOR_ISO.get(iso)
+    if donor is None:
+        return None
+    try:
+        donor_rows = load_generation_profiles(donor, year, data_dir)
+        shape = _extract_fuel_values(donor_rows, fuel)
+    except (AssertionError, FileNotFoundError, KeyError, ValueError):
+        logger.warning(
+            "No usable %s donor row (%s %d) to repair degenerate %s %s profile",
+            fuel,
+            donor,
+            year,
+            iso,
+            fuel,
+        )
+        return None
+    if _is_diurnally_degenerate(shape) or shape.sum() <= 0.0:
+        return None
+
+    shape = shape.astype(float).copy()
+    if fuel == "solar":
+        poa_iso = _iso_clearsky_poa(iso, year)
+        poa_donor = _iso_clearsky_poa(donor, year)
+        if poa_iso is not None and poa_donor is not None:
+            # The ratio is only meaningful where the donor's clear-sky envelope
+            # is materially above zero; night hours keep a neutral 1.0 (both
+            # series are ~0 there, so the choice cannot move energy).
+            ratio = np.ones(HOURS_PER_YEAR, dtype=float)
+            lit = poa_donor > _POA_RATIO_FLOOR_FRACTION * poa_donor.max()
+            ratio[lit] = poa_iso[lit] / poa_donor[lit]
+            shape = shape * ratio
+    total = shape.sum()
+    if total <= 0.0:
+        return None
+    return shape / total
+
+
 # Columns of a per-year MISO wind-shape parquet: the hour index plus one
 # relative-SHAPE column per model zone (the zone's MERRA-2-derived turbine CF on
 # the model's 8760 clock). Absolute level is irrelevant — the caller reconciles
@@ -2002,6 +2185,20 @@ def load_renewable_profiles(
         if profiles is None:
             profiles = load_generation_profiles(iso, year, data_dir)
         values = _extract_fuel_values(profiles, fuel)
+        if _is_diurnally_degenerate(values):
+            # The BA filed this fuel as a constant (a reporting gap, not a
+            # measurement): rebuild the SHAPE from an adjacent BA on the same
+            # clock, keeping the annual level. No-op for every genuine row.
+            repaired = _donor_shaped_distribution(iso, year, fuel, data_dir)
+            if repaired is not None:
+                logger.info(
+                    "Repaired degenerate %s %d %s distribution from donor %s",
+                    iso,
+                    year,
+                    fuel,
+                    _DEGENERATE_SHAPE_DONOR_ISO[iso],
+                )
+                values = repaired
         cf = derive_cf_profile(values, RENEWABLE_AVG_CF[iso][fuel])
         return np.clip(cf * config.renewable_cf_adjustment, _CF_MIN, _CF_MAX)
 

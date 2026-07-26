@@ -842,3 +842,39 @@ def test_2026_07_06_balance_backfill_renewables_resolve_end_to_end(iso, year):
     assert solar_cap.sum() > 0.0
     assert np.all(wind_cf >= 0.0) and np.all(wind_cf <= 1.0)
     assert np.all(solar_cf >= 0.0) and np.all(solar_cf <= 1.0)
+
+
+@pytest.mark.parametrize("year", [2023, 2024, 2025])
+def test_2026_07_25_nyiso_solar_fallback_is_shaped_not_flat(year):
+    """NYISO solar is a real diurnal shape, not the flat EIA-930 SUN row.
+
+    EIA-930 NYIS files ``NG: SUN`` as all zeros, so NYISO solar is the one
+    cell of the six-ISO grid that falls through to the EIA-930
+    generation-distribution parquet -- whose NYISO solar row is itself a
+    single repeated value over all 8760 hours. Flat x the 12-step EIA-860
+    monthly capacity ramp produced a 12-distinct-value block that generated
+    as much at 03:00 as at noon.
+
+    The distribution row is now repaired from an adjacent same-clock BA
+    (NEISO), corrected for the two fleets' EIA-860 tracking mixes by the
+    clear-sky POA ratio. Asserts the properties a solar profile cannot fail:
+    a daytime peak, a night floor far below it, and real hour-to-hour
+    resolution. See docs/FINDING-nyiso-class-delta-shape-2026-07-24.md rank 4.
+    """
+    iso_config = get_iso_config("NYISO")
+    config = ScenarioConfig(iso="NYISO", mode="backcast", weather_year=year)
+    _, _, solar_cf, solar_cap = load_renewable_profiles(
+        "NYISO", year, iso_config, config
+    )
+    system = (solar_cf * solar_cap[:, None]).sum(axis=0) / solar_cap.sum()
+    hour_of_day = np.arange(HOURS_PER_YEAR) % 24
+    diurnal = np.array([system[hour_of_day == h].mean() for h in range(24)])
+
+    # Peaks in the daylight window, not at midnight (the flat row peaked at h00).
+    assert 9 <= int(diurnal.argmax()) <= 16
+    # Night output is a small fraction of midday (the flat row's ratio was 1.00).
+    midday = diurnal[10:15].mean()
+    night = np.concatenate([diurnal[:4], diurnal[22:]]).mean()
+    assert midday > 10.0 * night
+    # A measured-shaped series resolves far more than the 12-value block.
+    assert len(np.unique(system)) > 1000
