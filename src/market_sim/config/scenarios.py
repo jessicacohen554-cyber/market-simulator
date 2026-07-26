@@ -162,6 +162,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "miso_native_outage_source",
     "neiso_operable_capacity_availability",
     "pjm_dam_availability",
+    # PJM mid-curve LEVEL-form scope (pjm-121 §5, default None = floor-only).
+    # Default-off and byte-identical for every config that does not arm it (the
+    # level branch is unreachable with an empty scope), so it is dropped from
+    # the hash at its default; an armed run enters the key as a distinct
+    # scenario.
+    "pjm_offer_midcurve_level_segments",
 )
 
 
@@ -5736,6 +5742,22 @@ class ScenarioConfig:
     # are then owned by tranche_startup_amortization, never double-priced by
     # this floor (the pjm-101/102 combo's CT over-correction).
     pjm_offer_midcurve_segments: tuple[str, ...] | None = None
+    # LEVEL-form scope for the mid-curve surface (default OFF = floor-only).
+    # Segments listed here — always intersected with the floor scope above, a
+    # segment absent from pjm_offer_midcurve_segments is never priced at all —
+    # have their targeted rows SET to the measured capacity-share offer level
+    # instead of floored at it: the markup is signed (target - mc_base), so
+    # the measured ladder can LOWER a fitted band that sits above it; the
+    # resulting bid is the target itself, clamped >= 0 and capped below VOLL
+    # exactly like the floor form. REFUTED as the C3a-2025 dispersion lever by
+    # the pjm-121 no-LP pre-check (level CC_LIKE lowers the CC econ bids
+    # -8.76 $/MWh MW-weighted and NARROWS the offer spread in every net-load
+    # bin — a level-lowering lever cannot close a dispersion gap;
+    # docs/FINDING-pjm121-ccbelt-c3a-close-2026-07.md §5) and kept default-off
+    # as the correct construction for a fleet whose fitted bands sit BELOW
+    # measured. Exercised by scripts/probes/pjm121_level_form_precheck.py;
+    # regression contract in tests/test_pjm_offer_midcurve_level_form.py.
+    pjm_offer_midcurve_level_segments: tuple[str, ...] | None = None
 
     # Combined-cycle tranche heat-rate OVERRIDES (relative to the plant's base
     # HR). When set, every CC bin's committed / economic / peaking tranche heat

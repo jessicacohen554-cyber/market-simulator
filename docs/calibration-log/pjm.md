@@ -309,3 +309,47 @@ level-form mechanism + tests, this entry, and the byte-faithful bundle re-solve
 per the FINDING doc's recipe — were recreated and landed by pjm-122.
 
 Next number: pjm-122.
+
+## 2026-07-26 — pjm-122: pjm-121 artifacts landed (bundle re-solved to the cent); dispersion lane reframed as measured marginal-ownership misallocation
+
+**Task 1 — landing (PR #2900).** The pjm-121 verdict evidence had merged as PR
+#2897; everything else was recreated: the level-form mechanism
+(`pjm_offer_midcurve_level_segments` default-off + the `offer_surfaces.py`
+level branch, registered in `_CACHE_KEY_OPTIONAL_FIELDS` so the pinned default
+cache key is unchanged), its six regression tests, the pjm-121 log entry, and
+the full bundle re-solve per the FINDING recipe (rule-12 chain, ~15 min/yr,
+peak 14.8 GB; mechanism engagement 410/444/461 rows — the FINDING's "264→461"
+is the 2025 pair). **Fidelity: the 2025 stratum readout reproduces the scored
+run to the cent** (model_lw 41.53 / actual 46.07 / gap −4.54, all six stratum
+contributions identical) and `calibration_verdict.py` re-scores CALIBRATED
+10/10 with metrics.json byte-equal to the committed copy. Registered
+(`dashboard_add_run`, id preserved as `2026-07-25-pjm-121-cc-belt` via the
+meta-timestamp pin; pjm-107 pruned per top-15 retention). Slim bundle JSONs +
+log pushed via API and fetch-verified byte-identical; the payload / bench gz /
+hourly parquets / `scenarios.py` + tests sit in a ready local commit **awaiting
+an owner-authorized `git push`** (~7.6 MB; the API content path cannot carry
+them — no append, binary, and rule-27 emission limits). Transport note for
+future sessions: the current `push_files` is **byte-literal** (verified by
+experiment — literal UTF-8 and real newlines land exactly; no JSON-decode of
+content), so text files of any composition push safely with fetch-back
+verification.
+
+**Task 2 — the lane.** Full write-up:
+`docs/FINDING-pjm122-marginal-ownership-2026-07.md`. The decomp reproduces on
+the CALIBRATED bundle (COAL sets 79/76/55/49/44% of the price by stratum;
+CC_REGULAR 0–1%). NEW measurement: in the four tight strata the model dual
+exceeds the **measured coal ceiling** (LONG_RUN ladder top 8.62× that hour's
+delivered gas) in **93–100% of hours while coal is the price setter in 44–55%
+of them** — the price-setting rungs are fitted `econ_high`/sigmoid tops the
+36-month offer corpus says coal does not submit, and the raise-only floor can
+never touch them. The corpus assigns $40–150 to the CC top belt (s0.95–0.99 =
+11.1–18.8× gas ≈ $49–83 — exactly the model's CC econ→peak hole, 9.6×→31.9×)
+and CT_FAST (33–40× ≈ $96–174 vs the model's $47–80 idle shelf). Candidate for
+pjm-123 (NOT armed): the three-leg measured re-ownership — coal econ LEVEL
+form, CC PEAK rows measured belt, CT_FAST max()-seam reprice — with
+pre-registered no-LP kill criteria (cheap bins must fall AND bin3 must rise;
+CC spread must not narrow; CT leg must be max(), never a sum). Scope split:
+offers can plausibly reach the 50-100/100-200 strata (−$3.66/−$2.49 of the
+−$4.54 gap); the >$200 scarcity tail stays with G-20b reserve/LP tightness.
+
+Next number: pjm-123.

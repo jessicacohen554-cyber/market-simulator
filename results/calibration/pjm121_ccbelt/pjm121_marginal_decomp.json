@@ -1,0 +1,611 @@
+[
+ {
+  "year": 2025,
+  "strata": [
+   {
+    "bin": "0-25",
+    "hours": 1922,
+    "model_lw": 31.105294142871237,
+    "actual_lw": 20.405101989336156,
+    "load_gw": 83.52606504611569,
+    "marginal_share": {
+     "CC_CHP": 0.0326,
+     "CC_REGULAR": 0.0125,
+     "COAL": 0.794,
+     "CT_CHP": 0.0005,
+     "CT_PEAKER": 0.0047,
+     "ST_CHP": 0.0479,
+     "ST_GAS": 0.0675,
+     "VIRTUAL_INC": 0.0393,
+     "hydro": 0.001
+    },
+    "interior_gw": {
+     "CC_CHP": 0.003,
+     "CC_REGULAR": 0.008,
+     "COAL": 0.797,
+     "CT_PEAKER": 0.001,
+     "ST_GAS": 0.063,
+     "VIRTUAL_INC": 0.007,
+     "hydro": 0.001
+    },
+    "shelf": {
+     "CC_CHP": {
+      "idle_within_10_gw": 0.21407502883835916,
+      "idle_within_25_gw": 0.2458250491274036,
+      "idle_within_50_gw": 0.251245086377474,
+      "idle_gw": 0.528681272060154,
+      "disp_gw": 0.6254792809486389
+     },
+     "CC_REGULAR": {
+      "idle_within_10_gw": 6.280364534685701,
+      "idle_within_25_gw": 7.135997449452023,
+      "idle_within_50_gw": 7.306644418563138,
+      "idle_gw": 12.372972843443485,
+      "disp_gw": 32.67607116699219
+     },
+     "COAL": {
+      "idle_within_10_gw": 2.6709117678549714,
+      "idle_within_25_gw": 3.865269493362934,
+      "idle_within_50_gw": 4.128841494525983,
+      "idle_gw": 7.117147250491473,
+      "disp_gw": 10.358711242675781
+     },
+     "CT_CHP": {
+      "idle_within_10_gw": 0.09672988398175014,
+      "idle_within_25_gw": 0.11862943886124495,
+      "idle_within_50_gw": 0.12052688136132485,
+      "idle_gw": 0.16005953432143896,
+      "disp_gw": 0.10999292880296707
+     },
+     "CT_PEAKER": {
+      "idle_within_10_gw": 1.2861501167614078,
+      "idle_within_25_gw": 8.038048317109729,
+      "idle_within_50_gw": 14.984242545499889,
+      "idle_gw": 20.62598095690157,
+      "disp_gw": 0.9159876704216003
+     },
+     "ST_CHP": {
+      "idle_within_10_gw": 0.004561361191508159,
+      "idle_within_25_gw": 0.005112214992996579,
+      "idle_within_50_gw": 0.005698776663594193,
+      "idle_gw": 0.014686041799389609,
+      "disp_gw": 0.10022254288196564
+     },
+     "ST_GAS": {
+      "idle_within_10_gw": 0.740449885625318,
+      "idle_within_25_gw": 2.4272892948663163,
+      "idle_within_50_gw": 2.513352058378844,
+      "idle_gw": 3.0784084903302027,
+      "disp_gw": 0.3919817805290222
+     },
+     "VIRTUAL_DEC": {
+      "idle_within_10_gw": 0.34251278206858005,
+      "idle_within_25_gw": 0.445921971568704,
+      "idle_within_50_gw": 0.46480742283492626,
+      "idle_gw": 0.46689691944350564,
+      "disp_gw": -0.4668969213962555
+     },
+     "VIRTUAL_INC": {
+      "idle_within_10_gw": 2.037697662309314,
+      "idle_within_25_gw": 3.91572682464022,
+      "idle_within_50_gw": 5.315861306950313,
+      "idle_gw": 7.831223447013052,
+      "disp_gw": 3.55161714553833
+     },
+     "hydro": {
+      "idle_within_10_gw": 0.0,
+      "idle_within_25_gw": 0.0,
+      "idle_within_50_gw": 0.0,
+      "idle_gw": 2.4045240156127385,
+      "disp_gw": 0.8961759805679321
+     }
+    },
+    "floored_gw": {
+     "cc_mustrun_per_plant": 16.647,
+     "chp_steam": 0.474,
+     "nuclear_mustrun": 30.505
+    }
+   },
+   {
+    "bin": "25-50",
+    "hours": 4849,
+    "model_lw": 39.459781627708495,
+    "actual_lw": 35.37713758437992,
+    "load_gw": 97.4439299585877,
+    "marginal_share": {
+     "CC_CHP": 0.0205,
+     "CC_REGULAR": 0.0061,
+     "COAL": 0.7555,
+     "CT_PEAKER": 0.1064,
+     "ST_CHP": 0.0071,
+     "ST_GAS": 0.0698,
+     "VIRTUAL_INC": 0.0339,
+     "hydro": 0.0007
+    },
+    "interior_gw": {
+     "CC_CHP": 0.001,
+     "CC_REGULAR": 0.004,
+     "COAL": 0.907,
+     "CT_PEAKER": 0.014,
+     "ST_GAS": 0.106,
+     "VIRTUAL_INC": 0.007,
+     "hydro": 0.002
+    },
+    "shelf": {
+     "CC_CHP": {
+      "idle_within_10_gw": 0.10380763941302304,
+      "idle_within_25_gw": 0.1662487955232665,
+      "idle_within_50_gw": 0.17261737203027766,
+      "idle_gw": 0.4276807681672107,
+      "disp_gw": 0.7655737400054932
+     },
+     "CC_REGULAR": {
+      "idle_within_10_gw": 3.0909732262697847,
+      "idle_within_25_gw": 3.7425622801602483,
+      "idle_within_50_gw": 3.9107211762258345,
+      "idle_gw": 8.53753491426202,
+      "disp_gw": 37.4807014465332
+     },
+     "COAL": {
+      "idle_within_10_gw": 1.9741594860157856,
+      "idle_within_25_gw": 2.8454352488699683,
+      "idle_within_50_gw": 3.138192921262863,
+      "idle_gw": 6.4417975318631395,
+      "disp_gw": 13.812972068786621
+     },
+     "CT_CHP": {
+      "idle_within_10_gw": 0.06160974026062866,
+      "idle_within_25_gw": 0.07982421542894573,
+      "idle_within_50_gw": 0.08225634095445242,
+      "idle_gw": 0.14415352008846502,
+      "disp_gw": 0.13080821931362152
+     },
+     "CT_PEAKER": {
+      "idle_within_10_gw": 1.662446042494621,
+      "idle_within_25_gw": 8.35788298628811,
+      "idle_within_50_gw": 13.278715654832004,
+      "idle_gw": 19.132478658727937,
+      "disp_gw": 3.029193162918091
+     },
+     "ST_CHP": {
+      "idle_within_10_gw": 0.002073572742386838,
+      "idle_within_25_gw": 0.0025803503112190747,
+      "idle_within_50_gw": 0.0030994478680976536,
+      "idle_gw": 0.006098358211422716,
+      "disp_gw": 0.10492432117462158
+     },
+     "ST_GAS": {
+      "idle_within_10_gw": 0.8122520682754437,
+      "idle_within_25_gw": 1.5823874148456123,
+      "idle_within_50_gw": 1.669741094144777,
+      "idle_gw": 2.2564738188357025,
+      "disp_gw": 1.3375663757324219
+     },
+     "VIRTUAL_DEC": {
+      "idle_within_10_gw": 1.04091795892921,
+      "idle_within_25_gw": 1.6027556322053624,
+      "idle_within_50_gw": 1.7935350643184216,
+      "idle_gw": 1.828540025589859,
+      "disp_gw": -1.8285399675369263
+     },
+     "VIRTUAL_INC": {
+      "idle_within_10_gw": 1.6841109074589182,
+      "idle_within_25_gw": 3.930474397353742,
+      "idle_within_50_gw": 6.107162722266095,
+      "idle_gw": 10.050221871398591,
+      "disp_gw": 1.9095442295074463
+     },
+     "hydro": {
+      "idle_within_10_gw": 0.0,
+      "idle_within_25_gw": 0.0,
+      "idle_within_50_gw": 0.0,
+      "idle_gw": 1.7064374511262521,
+      "disp_gw": 1.5942625999450684
+     }
+    },
+    "floored_gw": {
+     "cc_mustrun_per_plant": 22.618,
+     "chp_steam": 0.48,
+     "nuclear_mustrun": 30.706
+    }
+   },
+   {
+    "bin": "50-100",
+    "hours": 1655,
+    "model_lw": 48.855220791112785,
+    "actual_lw": 66.04733189037883,
+    "load_gw": 111.43565757143658,
+    "marginal_share": {
+     "CC_CHP": 0.0056,
+     "CC_REGULAR": 0.0024,
+     "COAL": 0.5545,
+     "CT_PEAKER": 0.332,
+     "ST_CHP": 0.0003,
+     "ST_GAS": 0.0899,
+     "VIRTUAL_INC": 0.0148,
+     "hydro": 0.0004
+    },
+    "interior_gw": {
+     "CC_REGULAR": 0.002,
+     "COAL": 1.267,
+     "CT_PEAKER": 0.08,
+     "ST_GAS": 0.158,
+     "VIRTUAL_INC": 0.004,
+     "hydro": 0.001
+    },
+    "shelf": {
+     "CC_CHP": {
+      "idle_within_10_gw": 0.076614433842177,
+      "idle_within_25_gw": 0.11603850831953247,
+      "idle_within_50_gw": 0.12160505789999286,
+      "idle_gw": 0.3214505329950323,
+      "disp_gw": 0.921261191368103
+     },
+     "CC_REGULAR": {
+      "idle_within_10_gw": 1.3896621175490431,
+      "idle_within_25_gw": 1.71509355911985,
+      "idle_within_50_gw": 1.8083957942774476,
+      "idle_gw": 5.422970377795015,
+      "disp_gw": 41.90647888183594
+     },
+     "COAL": {
+      "idle_within_10_gw": 1.0630774333764994,
+      "idle_within_25_gw": 1.532995472708023,
+      "idle_within_50_gw": 1.713016599305685,
+      "idle_gw": 5.357768194035566,
+      "disp_gw": 17.112838745117188
+     },
+     "CT_CHP": {
+      "idle_within_10_gw": 0.03400675810495514,
+      "idle_within_25_gw": 0.044910304623388464,
+      "idle_within_50_gw": 0.047398741756336044,
+      "idle_gw": 0.10254534888700807,
+      "disp_gw": 0.17152953147888184
+     },
+     "CT_PEAKER": {
+      "idle_within_10_gw": 1.8237003859917473,
+      "idle_within_25_gw": 6.792233134767857,
+      "idle_within_50_gw": 9.87707075754813,
+      "idle_gw": 15.48534651175206,
+      "disp_gw": 7.129879951477051
+     },
+     "ST_CHP": {
+      "idle_within_10_gw": 0.000497226395944152,
+      "idle_within_25_gw": 0.0008439987439670066,
+      "idle_within_50_gw": 0.0009153967136346801,
+      "idle_gw": 0.0017511712441274617,
+      "disp_gw": 0.11112699657678604
+     },
+     "ST_GAS": {
+      "idle_within_10_gw": 0.5018286262804788,
+      "idle_within_25_gw": 0.8785925054460434,
+      "idle_within_50_gw": 0.9850013899892164,
+      "idle_gw": 1.713297328787549,
+      "disp_gw": 2.589165210723877
+     },
+     "VIRTUAL_DEC": {
+      "idle_within_10_gw": 1.6207686903120888,
+      "idle_within_25_gw": 3.155560785563259,
+      "idle_within_50_gw": 4.0598017901221795,
+      "idle_gw": 4.4864947245836975,
+      "disp_gw": -4.486494541168213
+     },
+     "VIRTUAL_INC": {
+      "idle_within_10_gw": 0.922901852086527,
+      "idle_within_25_gw": 2.4594905076756506,
+      "idle_within_50_gw": 4.878142133662652,
+      "idle_gw": 11.382118042493056,
+      "disp_gw": 0.6496736407279968
+     },
+     "hydro": {
+      "idle_within_10_gw": 0.0,
+      "idle_within_25_gw": 0.0,
+      "idle_within_50_gw": 0.0,
+      "idle_gw": 0.8463353260284552,
+      "disp_gw": 2.45436429977417
+     }
+    },
+    "floored_gw": {
+     "cc_mustrun_per_plant": 24.224,
+     "chp_steam": 0.497,
+     "nuclear_mustrun": 30.994
+    }
+   },
+   {
+    "bin": "100-200",
+    "hours": 274,
+    "model_lw": 64.91993129347105,
+    "actual_lw": 129.44595927332733,
+    "load_gw": 121.96109709275436,
+    "marginal_share": {
+     "CC_CHP": 0.0031,
+     "CC_REGULAR": 0.0014,
+     "COAL": 0.488,
+     "CT_PEAKER": 0.3919,
+     "ST_GAS": 0.1096,
+     "VIRTUAL_INC": 0.0054,
+     "hydro": 0.0005
+    },
+    "interior_gw": {
+     "CC_REGULAR": 0.002,
+     "COAL": 2.151,
+     "CT_PEAKER": 0.081,
+     "ST_GAS": 0.274,
+     "VIRTUAL_INC": 0.004,
+     "hydro": 0.003
+    },
+    "shelf": {
+     "CC_CHP": {
+      "idle_within_10_gw": 0.06987544341779205,
+      "idle_within_25_gw": 0.09060623789033272,
+      "idle_within_50_gw": 0.10785057685877888,
+      "idle_gw": 0.2944508076551407,
+      "disp_gw": 1.0002193450927734
+     },
+     "CC_REGULAR": {
+      "idle_within_10_gw": 0.7336902085047019,
+      "idle_within_25_gw": 0.9028500904420079,
+      "idle_within_50_gw": 1.1485637838332083,
+      "idle_gw": 4.4822227132570625,
+      "disp_gw": 45.30974578857422
+     },
+     "COAL": {
+      "idle_within_10_gw": 0.6708860005550329,
+      "idle_within_25_gw": 1.037603393523011,
+      "idle_within_50_gw": 1.1805628013475533,
+      "idle_gw": 5.294759480107674,
+      "disp_gw": 19.773454666137695
+     },
+     "CT_CHP": {
+      "idle_within_10_gw": 0.02208648060577505,
+      "idle_within_25_gw": 0.029602830804934192,
+      "idle_within_50_gw": 0.03111991292835955,
+      "idle_gw": 0.08074818719198786,
+      "disp_gw": 0.19619426131248474
+     },
+     "CT_PEAKER": {
+      "idle_within_10_gw": 1.9730708829194548,
+      "idle_within_25_gw": 5.766027340042954,
+      "idle_within_50_gw": 8.046766467280255,
+      "idle_gw": 13.571012197013165,
+      "disp_gw": 9.535523414611816
+     },
+     "ST_CHP": {
+      "idle_within_10_gw": 0.00011000224692194149,
+      "idle_within_25_gw": 0.0003290382487570029,
+      "idle_within_50_gw": 0.0005223059582558552,
+      "idle_gw": 0.0009798673547276196,
+      "disp_gw": 0.11351240426301956
+     },
+     "ST_GAS": {
+      "idle_within_10_gw": 0.47310250592144737,
+      "idle_within_25_gw": 0.8153913646692268,
+      "idle_within_50_gw": 0.9776439060586477,
+      "idle_gw": 1.9154030374851103,
+      "disp_gw": 3.3589649200439453
+     },
+     "VIRTUAL_DEC": {
+      "idle_within_10_gw": 1.452213295644217,
+      "idle_within_25_gw": 3.0604124787880553,
+      "idle_within_50_gw": 4.377201231072418,
+      "idle_gw": 6.029790308959293,
+      "disp_gw": -6.029789924621582
+     },
+     "VIRTUAL_INC": {
+      "idle_within_10_gw": 0.5237263628159078,
+      "idle_within_25_gw": 1.3844912107313385,
+      "idle_within_50_gw": 3.055213747227689,
+      "idle_gw": 10.99201874866281,
+      "disp_gw": 0.32336127758026123
+     },
+     "hydro": {
+      "idle_within_10_gw": 0.0,
+      "idle_within_25_gw": 0.0,
+      "idle_within_50_gw": 0.0,
+      "idle_gw": 0.5031960834244632,
+      "disp_gw": 2.797503709793091
+     }
+    },
+    "floored_gw": {
+     "cc_mustrun_per_plant": 25.498,
+     "chp_steam": 0.505,
+     "nuclear_mustrun": 31.412
+    }
+   },
+   {
+    "bin": "200-376",
+    "hours": 45,
+    "model_lw": 86.05428736604605,
+    "actual_lw": 252.48739692070734,
+    "load_gw": 130.28542931829628,
+    "marginal_share": {
+     "CC_REGULAR": 0.0004,
+     "COAL": 0.4393,
+     "CT_PEAKER": 0.4998,
+     "ST_GAS": 0.0597,
+     "VIRTUAL_INC": 0.0002,
+     "hydro": 0.0004
+    },
+    "interior_gw": {
+     "COAL": 2.058,
+     "CT_PEAKER": 0.141,
+     "ST_GAS": 0.07,
+     "VIRTUAL_INC": 0.002
+    },
+    "shelf": {
+     "CC_CHP": {
+      "idle_within_10_gw": 0.05087988310010489,
+      "idle_within_25_gw": 0.052041496883438225,
+      "idle_within_50_gw": 0.07463915536539474,
+      "idle_gw": 0.21330358682827902,
+      "disp_gw": 1.1345298290252686
+     },
+     "CC_REGULAR": {
+      "idle_within_10_gw": 0.21698440627807006,
+      "idle_within_25_gw": 0.2761922974687649,
+      "idle_within_50_gw": 0.5851527298456093,
+      "idle_gw": 2.8503589429351557,
+      "disp_gw": 47.824275970458984
+     },
+     "COAL": {
+      "idle_within_10_gw": 0.4324666843806234,
+      "idle_within_25_gw": 0.657698061626646,
+      "idle_within_50_gw": 0.7586286781822016,
+      "idle_gw": 4.983719799907225,
+      "disp_gw": 21.04690933227539
+     },
+     "CT_CHP": {
+      "idle_within_10_gw": 0.007262550975092909,
+      "idle_within_25_gw": 0.008969673191106876,
+      "idle_within_50_gw": 0.009336428495676062,
+      "idle_gw": 0.044149282917552324,
+      "disp_gw": 0.230398029088974
+     },
+     "CT_PEAKER": {
+      "idle_within_10_gw": 1.4639626761829905,
+      "idle_within_25_gw": 3.77498825304286,
+      "idle_within_50_gw": 5.184186783135444,
+      "idle_gw": 10.11217061549336,
+      "disp_gw": 13.359489440917969
+     },
+     "ST_CHP": {
+      "idle_within_10_gw": 2.6575829420479298e-05,
+      "idle_within_25_gw": 2.6575829420479298e-05,
+      "idle_within_50_gw": 0.00010700847608714596,
+      "idle_gw": 0.0002678175329146306,
+      "disp_gw": 0.11310629546642303
+     },
+     "ST_GAS": {
+      "idle_within_10_gw": 0.32571567489888886,
+      "idle_within_25_gw": 0.4750067493194981,
+      "idle_within_50_gw": 0.5940827554815824,
+      "idle_gw": 1.5262322184745243,
+      "disp_gw": 4.212494850158691
+     },
+     "VIRTUAL_DEC": {
+      "idle_within_10_gw": 1.8736673344930013,
+      "idle_within_25_gw": 3.524058675977919,
+      "idle_within_50_gw": 5.389890783860948,
+      "idle_gw": 8.226604949018691,
+      "disp_gw": -8.226604461669922
+     },
+     "VIRTUAL_INC": {
+      "idle_within_10_gw": 0.1529572222222222,
+      "idle_within_25_gw": 0.7223300000000001,
+      "idle_within_50_gw": 1.9293397222222224,
+      "idle_gw": 10.82823586009564,
+      "disp_gw": 0.04165060445666313
+     },
+     "hydro": {
+      "idle_within_10_gw": 0.0,
+      "idle_within_25_gw": 0.0,
+      "idle_within_50_gw": 0.0,
+      "idle_gw": 0.28546470711125255,
+      "disp_gw": 3.0152347087860107
+     }
+    },
+    "floored_gw": {
+     "cc_mustrun_per_plant": 26.076,
+     "chp_steam": 0.528,
+     "nuclear_mustrun": 31.81
+    }
+   },
+   {
+    "bin": ">376",
+    "hours": 14,
+    "model_lw": 181.20969880508315,
+    "actual_lw": 815.7254132210751,
+    "load_gw": 148.10199248056105,
+    "marginal_share": {
+     "COAL": 0.3784,
+     "CT_PEAKER": 0.5982,
+     "ST_GAS": 0.0147,
+     "VIRTUAL_INC": 0.0027
+    },
+    "interior_gw": {
+     "COAL": 4.784,
+     "CT_PEAKER": 0.484,
+     "ST_GAS": 0.042,
+     "VIRTUAL_INC": 0.034
+    },
+    "shelf": {
+     "CC_CHP": {
+      "idle_within_10_gw": 0.0005170388124999999,
+      "idle_within_25_gw": 0.0005170388124999999,
+      "idle_within_50_gw": 0.0005170388124999999,
+      "idle_gw": 0.021224068100833344,
+      "disp_gw": 1.2926214933395386
+     },
+     "CC_REGULAR": {
+      "idle_within_10_gw": 0.006259320936639119,
+      "idle_within_25_gw": 0.008096165682802046,
+      "idle_within_50_gw": 0.008096165682802046,
+      "idle_gw": 0.36881840402793115,
+      "disp_gw": 49.589698791503906
+     },
+     "COAL": {
+      "idle_within_10_gw": 0.06937069947619048,
+      "idle_within_25_gw": 0.08855998778571429,
+      "idle_within_50_gw": 0.090769769,
+      "idle_gw": 4.887272307062851,
+      "disp_gw": 24.635208129882812
+     },
+     "CT_CHP": {
+      "idle_within_10_gw": 0.00045571074125253663,
+      "idle_within_25_gw": 0.0005477831908323686,
+      "idle_within_50_gw": 0.0005477831908323686,
+      "idle_gw": 0.008399973140466447,
+      "disp_gw": 0.2541221082210541
+     },
+     "CT_PEAKER": {
+      "idle_within_10_gw": 0.5413140594383521,
+      "idle_within_25_gw": 1.1717439222480173,
+      "idle_within_50_gw": 1.7230399118674544,
+      "idle_gw": 5.082886257585802,
+      "disp_gw": 18.080533981323242
+     },
+     "ST_CHP": {
+      "idle_within_10_gw": 0.0,
+      "idle_within_25_gw": 0.0,
+      "idle_within_50_gw": 0.0,
+      "idle_gw": 1.7356365162105037e-09,
+      "disp_gw": 0.1219603642821312
+     },
+     "ST_GAS": {
+      "idle_within_10_gw": 0.05295215982823241,
+      "idle_within_25_gw": 0.14383316939795388,
+      "idle_within_50_gw": 0.21317595366265973,
+      "idle_gw": 0.9943940589127754,
+      "disp_gw": 6.304627418518066
+     },
+     "VIRTUAL_DEC": {
+      "idle_within_10_gw": 0.4472694604056222,
+      "idle_within_25_gw": 1.9892335750034877,
+      "idle_within_50_gw": 3.4211850662231447,
+      "idle_gw": 7.877948234558105,
+      "disp_gw": -7.877948760986328
+     },
+     "VIRTUAL_INC": {
+      "idle_within_10_gw": 0.23875535714285706,
+      "idle_within_25_gw": 0.3581330357142857,
+      "idle_within_50_gw": 0.8119259757686618,
+      "idle_gw": 8.207619261313898,
+      "disp_gw": 0.3874185383319855
+     },
+     "hydro": {
+      "idle_within_10_gw": 0.0,
+      "idle_within_25_gw": 0.0,
+      "idle_within_50_gw": 0.0,
+      "idle_gw": 0.04399231359703189,
+      "disp_gw": 3.256706953048706
+     }
+    },
+    "floored_gw": {
+     "cc_mustrun_per_plant": 26.22,
+     "chp_steam": 0.539,
+     "nuclear_mustrun": 31.638
+    }
+   }
+  ]
+ }
+]
