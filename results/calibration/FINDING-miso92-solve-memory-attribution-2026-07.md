@@ -62,14 +62,17 @@ the floor; the split names the owner; the fix is in the model."* Measured
   4.4 MB      68,919 x  7  year,month,plant_id,state,fuel_group,...      <- F923 fuel prices
 ```
 
-The top six sum to ≈687 MB ≈ the full 0.68 GB pandas payload: **fully
-attributed, no remainder.** Five of the six are legitimate — three are the
-runner's own declared cross-year accumulators (0.07 GB total, matching the
-existing telemetry) and two are loader state. The 588.9 MB frame is the only
-object with no reason to be alive.
+The top six sum to **687.2 MB of the 0.68 GB (696 MB) pandas payload — 98.7 %**,
+the remaining ~9 MB spread across the other 11 objects. Five of the six are
+legitimate: three are the runner's own declared cross-year accumulators
+(56.7 + 9.2 + 5.1 = 71 MB, matching the existing `accumulators 0.07 GB` line) and
+two are loader state. **The 588.9 MB frame is the only object with no reason to
+be alive.**
 
 24,694,440 = 2,819 LP generators (incl. the pseudo wind/solar/must-run rows) ×
-8,760 hours, i.e. **one pass's** complete unit-hour dispatch.
+8,760 hours — **one pass's** complete unit-hour dispatch. One pass, not two: with
+P2 archived, `labelled` carries a single `("P1", result)` entry and `dispatch/`
+holds exactly `2023_P1.parquet`.
 
 ## 2. Root cause
 
