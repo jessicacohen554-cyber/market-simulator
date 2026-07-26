@@ -148,9 +148,10 @@ than offloading to CI. The two replays need a ≥24 GB environment; the
 commands are one-liners (`--replay-bundle results/calibration/miso88_egrid_hr
 --year 2023 2024 2025 --out-dir results/calibration/miso89_meritguard_a1`,
 same shape for PJM into `pjm122_meritguard_a1`), with the §2 clean partitions
-regenerated first. PJM's completed-2023 partial bundle is retained on disk
-but NOT registered (rule 16 — no partial-year bundles) and no numbers from it
-are quoted.
+regenerated first. PJM's completed-2023 partial bundle was NOT registered
+(rule 16 — no partial-year bundles), no numbers from it are quoted, and the
+partial dirs were deleted rather than committed — the future replay
+regenerates them whole.
 
 **PJM keeper superseded mid-session (2026-07-26, parallel lane):** while this
 session ran, the owner promoted `2026-07-25-pjm-121-cc-belt` (10/10 PASS,
