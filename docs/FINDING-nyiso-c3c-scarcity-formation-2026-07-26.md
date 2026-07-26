@@ -218,6 +218,24 @@ real published cell that was simply missing), but carrying it changes no result
 on its own. It stays default-off and is recorded here as probe-adjudicated
 inert, so no successor re-runs it expecting movement.
 
+## 4c. Resolved side question — the obligation's `rho = 1.00` is a fallback
+
+The solve logs `rho=1.00` for the obligation class. That is **not** the fleet
+average and **not** a broken computation: on a synthetic fleet with
+`pmin = 250, pmax = 1000` the same code returns exactly `3.0`. `1.00` is the
+documented neutral fallback taken when **no** unit satisfies
+`pmin > 0 and pmax > pmin` — the case for the legacy equal-width bins NYISO
+uses (`use_campd_bins` is an ERCOT default), whose tranches carry `pmin = 0`.
+
+Consequence: the gate is still a real constraint (`R <= sum_g P` — idle capacity
+backs nothing, which is the whole effect measured in §4/§4b); only the headroom
+*multiplier* is neutral rather than fleet-derived. It does not affect the \$25/MW
+ceiling conclusion, which is a property of the published demand curve and not of
+`rho`. Both branches are pinned by `tests/test_nyiso_incity_obligation.py::
+TestObligationRhoFallback` so no later reader re-diagnoses it. The same fallback
+applies to the pre-existing `nyiso_synchronised_reserve` path-A family, which
+shares this construction — this is inherited behaviour, not new.
+
 ## 5. Standing note for whoever picks this up
 
 - The `reserve_price` sidecar column is **not** per-zone. Any future locational
