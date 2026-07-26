@@ -240,7 +240,13 @@ def main() -> int:
     if not args.skip_smoke:
         print("\n[3] Trivial-case smoke tests")
         ok, line = _run(
-            [sys.executable, "-m", "pytest", "tests/regression/test_regression_smoke.py", "-q"],
+            [
+                sys.executable,
+                "-m",
+                "pytest",
+                "tests/regression/test_regression_smoke.py",
+                "-q",
+            ],
             "smoke",
         )
         print("   ", line)
