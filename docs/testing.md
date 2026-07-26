@@ -1,8 +1,40 @@
 # Testing
 
-The test suite lives in `tests/` (one file per module, ~300 files). This page
-documents the **two lanes** you run it in, the **marker taxonomy** that
-separates them, the **shared helper layer**, and the **two golden systems**.
+The test suite lives in `tests/` (one file per module, ~355 files). This page
+documents the **directory layout**, the **two lanes** you run it in, the
+**marker taxonomy** that separates them, the **shared helper layer**, and the
+**two golden systems**.
+
+## Directory layout
+
+The flat 355-file `tests/` directory was reorganized by Wave 5A of the
+refactor-consolidation plan. `testpaths = ["tests"]` in `pyproject.toml` is
+unchanged and still resolves every subdirectory (it exists to keep root
+`pytest` out of `scope2-lce-portfolio/tests`, whose conftest imports a
+non-dependency — G-47). There is exactly one `conftest.py` under `tests/`; the
+subdirectories deliberately add none, so the fixtures and the `slow` autotag
+apply everywhere.
+
+| Directory | Holds |
+|---|---|
+| `tests/unit/{config,data,model,pipeline,policy,results}/` | Mirrors `src/market_sim/`: the hermetic unit tests for each subpackage. |
+| `tests/curation/` | The `data/raw` → `data/clean` pipeline: `test_curate_*`, `test_consume_*`, `test_derive_*`, `test_fetch_*`, `test_build_*`, plus the `clean_io`/registry/data-dictionary contract tests. |
+| `tests/iso/{ercot,caiso,miso,nyiso,neiso,pjm}/` | Per-ISO mechanism, bin, seam and offer-surface tests. |
+| `tests/scoring/` | Verdict, keeper, benchmark/basis, dashboard-payload and legitimacy-diagnostic tests. |
+| `tests/regression/` | Smoke, golden, byte-identity and frozen-surface guards — including the nine facade / persisted-identity tests that CI's **blocking** `refactor-guards` job names by exact path. |
+| `tests/helpers/` | Shared builders, mixins and `REPO_ROOT` (below). Stays put. |
+| `tests/golden/`, `tests/fixtures/` | Committed artifacts. Stay put — `tests/fixtures/backcast_runs/` holds the three statmode run payloads `test_structural_prior.py` symlinks back in after the dashboard prune, so none of them is stale. |
+
+Two conventions the layout depends on:
+
+* **Never derive the repo root by counting `__file__` parents.** Import
+  `REPO_ROOT` from `tests.helpers` — it is depth-independent, so a test keeps
+  working wherever it lands. Committed artifacts under `tests/` are addressed
+  as `REPO_ROOT / "tests" / "golden" / ...`.
+* **No per-file `sys.path` bootstrap for the repo root or `src/`.** The root
+  `conftest.py` already puts both on `sys.path`. Only the handful of tests that
+  import a loose `scripts/` or `scripts/data/` module still insert a path, and
+  they build it from `REPO_ROOT`.
 
 ## The two lanes
 
@@ -77,7 +109,7 @@ so `market_sim.*` and `scripts.*` resolve however pytest is invoked;
 ## The two golden systems
 
 1. **Forecast band goldens** (`tests/golden/ercot_2026_2040.json` +
-   `.run_config.json`, guarded by `tests/test_golden_forecast_bands.py`). The
+   `.run_config.json`, guarded by `tests/regression/test_golden_forecast_bands.py`). The
    fixture-presence check runs every PR; the real 15-year ERCOT solve is gated
    behind `RUN_GOLDEN_FORECAST=1` (weekly tier). A band FAIL is a finding —
    never auto-regenerate; reseeding requires
