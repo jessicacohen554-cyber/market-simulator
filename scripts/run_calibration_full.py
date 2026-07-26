@@ -4581,9 +4581,8 @@ def solve_and_persist(
                 # explain 0.07 and the module caches ~0.02 — so ~0.59 GB sat in
                 # large frames nobody could point at. A frame's column list
                 # identifies its producer on sight.
-                for _mb, _rows, _ncol, _cols in largest_retained_frames(
-                    6, *_acc.values()
-                ):
+                _frames = largest_retained_frames(6, *_acc.values())
+                for _mb, _rows, _ncol, _cols in _frames:
                     logger.info(
                         "year %d retained frame: %.1f MB  %d x %d  cols=%s",
                         year,
@@ -4592,8 +4591,25 @@ def solve_and_persist(
                         _ncol,
                         ",".join(_cols),
                     )
+                # A quiet reporter and a broken one look identical in a log, and
+                # this one WAS broken once (DataFrame-only, so it printed nothing
+                # against 17 live pandas objects). Make the disagreement loud
+                # rather than let a later reader mistake silence for "nothing
+                # retained".
+                if not _frames and int(_fp.get("n_pandas", 0)) > 0:
+                    logger.warning(
+                        "year %d retained-frame telemetry returned NOTHING while "
+                        "retained_footprint counted %d pandas object(s) / %.2f GB "
+                        "— the two reporters disagree; treat the frame list as "
+                        "unreliable for this run",
+                        year,
+                        int(_fp.get("n_pandas", 0)),
+                        _fp.get("pandas_gb", 0.0),
+                    )
             except Exception:  # never let telemetry break a calibration run
-                logger.debug("retained-heap telemetry unavailable", exc_info=True)
+                logger.warning(
+                    "year %d retained-heap telemetry unavailable", year, exc_info=True
+                )
 
     system_all = pd.concat(system_frames, ignore_index=True)
     system_all.to_parquet(run_dir / "system.parquet", index=False)
