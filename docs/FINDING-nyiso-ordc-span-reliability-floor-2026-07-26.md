@@ -7,6 +7,13 @@ All arms solved in-session, 3 years / bundle (rule 16), scored on P1.
 
 ## 0. Headline
 
+> **Naming.** The charter labelled its work items P1/P2/P3 by priority. Those
+> labels are NOT used here: in this codebase `P0`/`P1`/`P2` are the solve
+> passes, and `P2` is archived. **Every run in this lane is P1-only** —
+> `passes=['P1']`, `commitment=False`, and the persisted dispatch carries P1
+> rows exclusively in all five bundles. The lane's arms are named ORDC-SPAN,
+> OIL-DAILY and WINTER-SPREAD throughout.
+
 Both chartered defect fixes were built, tested and committed **default-off and
 byte-identical when off**. Neither closes the NYISO price-formation gap, and the
 lane's most consequential result is neither fix — it is that **the committed
@@ -20,15 +27,16 @@ dominated by that drift.
 
 | deliverable | status |
 |---|---|
-| P1 / S2 `nyiso_ordc_measured_step_span` | **built, committed, default-off.** A real construction defect (§1) — but **exactly inert** on the current keeper config (§3.2). |
-| P2 `dual_fuel_oil_daily_parity` + NY Harbor ULSD daily intake | **built, committed, default-off.** A real granularity defect — but a **negative result** on the winter hypothesis (§2). |
-| P3 / W1 `nyiso_iroquois_winter_spread` | **not exercised** — deliberately, see §4. |
+| ORDC-SPAN — `nyiso_ordc_measured_step_span` | **built, committed, default-off.** A real construction defect (§1) — but **exactly inert** on the current keeper config (§3.2). |
+| OIL-DAILY — `dual_fuel_oil_daily_parity` + NY Harbor ULSD daily intake | **built, committed, default-off.** A real granularity defect — but a **negative result** on the winter hypothesis (§2). |
+| WINTER-SPREAD — `nyiso_iroquois_winter_spread` | **not exercised** — deliberately, see §4. |
 | NYISO determination | **unchanged (NOT-YET).** No keeper promoted, no keeper shard edited. |
 
-Runs registered: `2026-07-26-nyiso-76-ordc-span` (S2), `-77-ordc-span` (S2+P2),
-`-78-oil-daily` (P2 alone), `-79-control` (both off, current main).
+Runs registered: `2026-07-26-nyiso-76-ordc-span` (ORDC-span alone),
+`-77-ordc-span` (combined), `-78-oil-daily` (oil cap alone), `-79-control`
+(both off, current main), `-80-old-outages` (the bisect).
 
-## 1. S2 — the ORDC measured-step-span defect is real, and quantified
+## 1. ORDC-SPAN — the measured-step-span defect is real, and quantified
 
 With `nyiso_dynamic_reserve_requirements` on, each dynamic family's reserve
 balance row enforces the MEASURED as-enforced requirement while its ORDC
@@ -66,10 +74,11 @@ is preserved exactly; total step width equals the hour's requirement, which is
 what keeps the balance row feasible at zero reserve. No new mechanism (rule 19),
 no tuned value (rule 5).
 
-**It is nevertheless inert today.** Control vs S2 arm is *identical* in every
+**It is nevertheless inert today.** Control vs the ORDC-span arm is *identical* in every
 class, every year, and every price statistic (§3.2). The reason is a rule-19
 [R-ONE-MECH] overlap that has already been resolved from the supply side: the
-original S2 probe (`docs/handoffs/nyiso-overrun-underrun-2026-07.md` §3: summer
+original probe (the arm that handoff calls "S2" —
+`docs/handoffs/nyiso-overrun-underrun-2026-07.md` §3: summer
 +10.9 → +9.2, 36-mo MAE 4.33 → 4.22) was measured on keeper
 `nyiso62_cc_hr_regate`, **before** `nyiso_scr_edrp_reserve_eligible` and
 `nyiso_hydro_reserve_eligible` were added to the downstate reserve supply. Those
@@ -81,7 +90,7 @@ whose span contradicts its own balance row is wrong whatever it does to the fit,
 and the defect would bite again the moment downstate reserve supply tightens
 (a retirement, a deliverability limit, a colder year).
 
-## 2. P2 — the daily oil-parity cap works, and refutes its own hypothesis
+## 2. OIL-DAILY — the daily oil-parity cap works, and refutes its own hypothesis
 
 The dual-fuel cap prices a switch-capable gas unit at delivered oil parity, and
 that parity is the measured EIA-923 Petroleum receipt — **monthly**, a flat
@@ -107,10 +116,10 @@ The mechanism fires as designed: 320 gas tranches / 16.5 GW capped, and the
 Jan-2025 polar-vortex days lift the cap **+5.8 %** while the mild first week
 falls −5.1 %.
 
-**And that is the whole size of it.** Control → P2 alone, the only live effect
-this session produced:
+**And that is the whole size of it.** Control → the oil-daily arm, the only
+live effect this session produced:
 
-| metric | control | P2 | actual |
+| metric | control | oil-daily | actual |
 |---|---|---|---|
 | 2025 C3a mean | −12.2 % | −12.0 % | — |
 | 2025 C3b NRMSE | 0.208 | 0.206 | gate 0.20 |
@@ -156,18 +165,18 @@ merit-order inversion, so it is forcing, not economics: the D-2
 
 ### 3.2 What is NOT causing it
 
-Control → S2 arm is **identical** in every class and year:
+Control → the ORDC-span arm is **identical** in every class and year:
 
 ```
-2023  control -> S2:  IDENTICAL
-2024  control -> S2:  IDENTICAL
-2025  control -> S2:  IDENTICAL
+2023  control -> ordc-span:  IDENTICAL
+2024  control -> ordc-span:  IDENTICAL
+2025  control -> ordc-span:  IDENTICAL
 ```
 
 and identical in every price statistic (C3b 0.120/0.196/0.208, C3a
 −0.9/−9.1/−12.2, p1/p50/p99, tail counts). Neither nyiso-76 fix contributes any
 part of the drift. An earlier reading in this session attributed the ST_GAS/CC
-swap and the C1/C7/C8 regressions to S2; the control refutes that, and the
+swap and the C1/C7/C8 regressions to the ORDC-span fix; the control refutes that, and the
 attribution above supersedes it.
 
 ### 3.3 What is — ISOLATED, single file
@@ -231,16 +240,17 @@ compensating for it."* The phantom outages were silently holding the floor down.
 
 ## 4. Disposition
 
-- **S2 and P2 stay in the codebase**, both `GATED` and default-off, both
+- **Both fixes stay in the codebase**, both `GATED` and default-off, both
   byte-identical when off (default `cache_key` verified unchanged at
   `b3c4f0a6985cc683`; an armed run enters the key as a distinct scenario), both
-  covered by new tests (7 for S2, 5 for P2; 408 tests green across the touched
+  covered by new tests (7 for the ORDC span, 5 for the oil cap; 408 tests green
+  across the touched
   modules).
 - **No keeper promotion, no keeper-shard edit, no attestation.** The lane cannot
   produce a defensible determination while §3 stands.
-- **P3 / W1 (`nyiso_iroquois_winter_spread`) was deliberately not exercised.**
+- **WINTER-SPREAD (`nyiso_iroquois_winter_spread`) was deliberately not exercised.**
   Its documented value (winter −16.0 → −4.4) was measured against the same
-  pre-drift baseline as S2's, and on current `main` the winter residual is a
+  pre-drift baseline as the ORDC span's, and on current `main` the winter residual is a
   different quantity (2024 Dec −30.9 %, 2025 Jan −18.5 %, Jun −38.0 %). Running
   it now would produce another number attributable to nothing. It should be
   re-measured against a reconciled keeper.
