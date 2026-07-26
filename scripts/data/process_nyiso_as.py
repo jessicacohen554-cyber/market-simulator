@@ -40,12 +40,17 @@ import argparse
 import io
 import re
 import zipfile
+import sys
 from pathlib import Path
 
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
-AS_DIR = REPO / "data" / "raw" / "NYISO-AS"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import CALIBRATION_DIR, NYISO_AS_DIR  # noqa: E402
+
+AS_DIR = NYISO_AS_DIR
 RAW_DIR = AS_DIR / "raw"
 # RAW_DIR (gitignored) is normally populated directly by
 # scripts/data/fetch_nyiso_as.py, one monthly rtasp/damasp zip per file — that is
@@ -212,7 +217,7 @@ _MODEL_ZONE_REF = {
     "reserve_Long_Island": "LONGIL",
 }
 
-CAL_DIR = REPO / "data" / "raw" / "_validation-source"
+CAL_DIR = CALIBRATION_DIR
 
 
 def build_reference(years: list[int]) -> Path | None:

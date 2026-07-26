@@ -73,16 +73,21 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 
+from market_sim.config.paths import (  # noqa: E402
+    ERCOT_MIS_DIR,
+    PROCESSED_DIR,
+    RAW_DATA_DIR,
+    REFERENCE_DIR,
+)
+
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.data import campd  # noqa: E402
 from market_sim.data.fleet import load_fleet_from_csv  # noqa: E402
 
-EIA923_MONTHLY = (
-    REPO / "data" / "raw" / "_processed-legacy" / "eia923_monthly_generation.parquet"
-)
-CROSSWALK_CSV = REPO / "data" / "raw" / "reference" / "ercot_noncampd_dam_crosswalk.csv"
-DAM_DIR = REPO / "data" / "raw" / "ercot"
-DEFAULT_OUT = REPO / "data" / "raw" / "ercot-noncampd-availability.csv"
+EIA923_MONTHLY = PROCESSED_DIR / "eia923_monthly_generation.parquet"
+CROSSWALK_CSV = REFERENCE_DIR / "ercot_noncampd_dam_crosswalk.csv"
+DAM_DIR = ERCOT_MIS_DIR
+DEFAULT_OUT = RAW_DATA_DIR / "ercot-noncampd-availability.csv"
 
 _MONTH_COLS = [
     f"netgen_{m}_mwh"
