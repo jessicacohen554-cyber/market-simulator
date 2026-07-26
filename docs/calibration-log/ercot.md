@@ -1277,3 +1277,39 @@ explicit owner directive. That pass was backed out in full and re-applied only a
 
 Tests: `TestErcotPromotion` pins the ERCOT-only scoping, the untouched global default, the tri-state
 resolution table and the `None` CLI default.
+
+## 2026-07-26 — ERCOT-116: the ~19 pp coal seasonal term DECOMPOSED — half of it IS the statistical coal-availability model (shape gates 3/3 years PASS with the measured envelope armed), the other half a within-envelope coal-vs-gas merit-order bias the estimate was silently masking at the LEVEL (C3a −5.6 to −7.6 pp → G3 FAIL); rejected probe, keeper UNCHANGED (ercot115)
+
+**The charter question answered before any LP ran.** The no-LP monthly decomposition of the two
+committed bundles (`ercot112_coal_avail_only_fullspan`, `ercot115_coal_floor_only`) against measured
+data settled the decisive question: the measured coal DAM envelope FIXES the seasonal shape
+(matched-price-band excess seasonal lift 19.2/18.6/20.6 → 7.4/10.6/11.5 pp on the old code) and
+breaks only the LEVEL, uniformly across price bands and seasons (+2.9 to +18.0 pp in every band,
+both seasons, all years). The measured driver: real coal's live/rating committed fraction is
+0.10–0.13 HIGHER in Jun–Sep (outages in spring/fall); the statistical estimate misses the asymmetry.
+Nobody had looked at arm B monthly — annual numbers hid the whole story, exactly as the charter
+suspected.
+
+**The joint arm on the new keeper (single delta, pre-committed, then solved).**
+`PRECOMMIT-ercot116-coal-avail-on-keeper-2026-07-26.md` + the mechanical scorer
+`scripts/probes/ercot116_seasonal_shape.py` pushed at `b144573` before solving;
+`replay_keeper ercot115_coal_floor_only --set ercot_thermal_dam_availability_coal=true`, full span,
+years sequential. G0 armed+bit (both overlay lines 3/3; coal +6.8/+9.2/+12.9 TWh). **G1 PASS**
+(excess 19.18/18.57/20.59 → 10.04/12.87/13.38 pp, every drop ≥5.0), **G2 PASS** (Jun-Sep-minus-
+Feb-Apr ratio spread +0.435/+0.591/+0.333 → +0.233/+0.400/+0.230), **G4 LOYO PASS** (3/3 years),
+**G3 FAIL** (C3a degrades 7.6/7.0/5.6 pp vs the 2.0 pp tolerance; annual ratio 1.061/1.132/1.154;
+C1 COAL_PRB 2025 +8.66 TWh out of band). Run `2026-07-26-ercot116-coal-avail-probe`, NOT-YET,
+rejected; keeper unchanged.
+
+**What stands.** (1) Half the seasonal term is the availability estimate's seasonal profile — a
+measured, rule-13 input removes 5.7–9.1 pp of excess in every training year on the current base.
+(2) The estimate's too-tight shoulder envelope was compensating a real mid-merit ranking bias:
+with the true envelope, the surplus coal is exactly the missing gas (ERCOT-113 displacement,
+corr −0.93 to −0.97), concentrated in the $15–25 bands where coal and CC cross; a season-invariant
+merit-order bias expresses seasonally because summer has more mid-merit hours. (3) Rule 14 exit
+criterion for the successor lane (ERCOT-117 candidate): fix the coal-vs-gas ranking bias (F923
+delivered-price receipts are the named measured lead — model coal SRMC tops ~$28 vs real top
+submitted DAM coal offer ~$21, so the bias sits in the low/mid tranches or the gas side), gated on
+the ERCOT-116 metrics WITH the measured envelope armed; when the compensator is fixed, re-arm the
+envelope and expect it to pass. Full write-up:
+`FINDING-ercot116-coal-seasonal-availability-2026-07-26.md`.

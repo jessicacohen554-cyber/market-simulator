@@ -132,3 +132,31 @@ keeper's grade (C1 16/16, fails 3); the arming-line grep patterns.
 **Not known:** any result of the joint config on the current (`ff0109c`-corrected) base.
 No year of `ercot116_coal_avail_on_keeper` had been solved when this document was
 written and pushed.
+
+---
+
+## Verdict recorded after the fact
+
+**G0/G1/G2/G4 PASS · G3 FAIL → rejected probe, keeper unchanged, finding stands.**
+Solved at `b144573` (this doc's own commit), scored by the pre-committed
+`ercot116_seasonal_shape.py`. Full write-up:
+`FINDING-ercot116-coal-seasonal-availability-2026-07-26.md`. Run id
+`2026-07-26-ercot116-coal-avail-probe` (registered NOT-YET).
+
+| gate | result |
+|---|---|
+| **G0** arming + bite | **PASS** — floor line 3/3, COAL redistribution line 3/3 (targets 0.827/0.787/0.757); coal +6.8/+9.2/+12.9 TWh |
+| **G1** excess falls ≥ 5.0 pp every year | **PASS** — 19.18/18.57/20.59 → 10.04/12.87/13.38 (−9.1/−5.7/−7.2) |
+| **G2** spread narrows every year, mean ≥ 0.10 | **PASS** — +0.435/+0.591/+0.333 → +0.233/+0.400/+0.230 (mean −0.165) |
+| **G3** C3a ≤ 2.0 pp, C3c ≤ 5 h | **FAIL** — C3a degrades 7.6/7.0/5.6 pp (C3c moves −23/−6/0 h, within 5 h only in 2025) |
+| **G4** LOYO on G1+G2 | **PASS** — 3/3 |
+
+The predictions registered above verified: excess landed in the predicted 10–14 pp band,
+spread in +0.23–0.40, annual ratio 1.061/1.132/1.154 (predicted 1.00–1.12; 2024/2025
+slightly above the predicted top). The decision rule's pass branch required G1–G4; with
+G3 failed the arm is NOT a keeper candidate and no promotion recommendation is made. The
+shape claim itself (G1+G2+G4) passed in full, so the FINDING branch's substance — the
+seasonal term is at least half the statistical availability model's seasonal-profile
+error, and the estimate is compensating for a level error elsewhere — is established.
+The C1 outcome for the record: 15/16, free 11/12 (COAL_PRB 2025 +8.66 TWh out of band),
+so the "C1 also holds" promotion sub-branch did not fire either.
