@@ -1,0 +1,144 @@
+diff --git a/src/market_sim/config/constants.py b/src/market_sim/config/constants.py
+index 58ce2bb..67d6881 100644
+--- a/src/market_sim/config/constants.py
++++ b/src/market_sim/config/constants.py
+@@ -145,6 +145,8 @@ from market_sim.config.fuel_trajectories import (
+     PRB_RAIL_DIESEL_SHARE,
+     PRB_RAIL_NONDIESEL_SHARE,
+     STATE_CARBON_PRICE_BY_ISO,
++    SUMMER_CLASS_DERATE,
++    SUMMER_WEFOR_SHARE,
+     THERMAL_AVAILABILITY,
+ )
+ 
+diff --git a/src/market_sim/config/fuel_trajectories.py b/src/market_sim/config/fuel_trajectories.py
+index 3fb5e8a..3464b23 100644
+--- a/src/market_sim/config/fuel_trajectories.py
++++ b/src/market_sim/config/fuel_trajectories.py
+@@ -808,6 +808,77 @@ THERMAL_AVAILABILITY: dict[str, tuple[float, ...]] = {
+     "BIOMASS": (0.07, 0.10, 0.002, 25, 0.04, 0.0015, 25),
+ }
+ 
++# Fraction of a unit's WEFOR (forced-outage rate, from THERMAL_AVAILABILITY
++# above) that applies during the summer peak; the remaining (1 - share) is
++# redistributed into the shoulder months, conserving the annual outage energy.
++# Winter keeps the flat WEFOR. Applied in
++# ``data.fleet.arrays._apply_thermal_availability``.
++#
++# SOURCE: NONE — this is an UNCITED A-PRIORI HEURISTIC, declared as such rather
++# than given a false provenance (CLAUDE.md rule 5 [R-NO-MAGIC]). It is the
++# "flat per-plant-group POF heuristic" market-sim-build-plan.md records as
++# awaiting a data-derived replacement. It was NOT fitted to any residual; no
++# derivation, sweep or calibration lineage exists for the 0.30. It is declared
++# in the MISO keeper's DOF ledger under identification ``residual`` — the
++# strictest existing enforcement category, which forces an open root cause
++# (audit_keepers.py E8) — NOT because it was tuned.
++#
++# It is re-homed here from ``data/fleet/arrays.py`` (miso-91, 2026-07-26) so
++# that ``scripts/validate_parameters.py`` covers it: that gate scans only
++# ``vars(constants)`` + ``ScenarioConfig`` defaults and skips private/
++# non-uppercase names, so a private literal in a ``data/`` module was invisible
++# to it three ways over — which is why it went uncited for so long
++# (CLAUDE.md rule 20 [R-REGISTRY]).
++#
++# PHYSICS TENSION, recorded deliberately: for PLANNED outages, shifting
++# maintenance away from the peak is well-founded (and the POF side is separately
++# grounded by the measured MAINTENANCE_MONTHLY_SHAPE). For FORCED outages this
++# reallocation runs OPPOSITE to the physics — forced outages correlate
++# POSITIVELY with heat and high load. A share < 1 therefore encodes a
++# forced-outage seasonality whose sign is the reverse of the expected physical
++# one. Stated as an unverified directional argument, not a citation.
++#
++# DO NOT re-tune this value against a residual (rule 24 [R-ANSWER-KEY]): it
++# governs ~3.9-5.8 GW of MISO summer-peak capability across all six non-coal
++# thermal classes, the same order as the ~10 GW under-derate ledgered as the
++# C3b caveat, so a hand-set value here would be an answer key for an
++# already-ledgered miss. It may be REPLACED ONLY by a measured seasonal
++# forced-outage shape clearing the acceptance test in
++# docs/handoffs/miso-outage-grain-data-ask-2026-07.md, and per rule 23
++# [R-FROZEN-DERIVE] that commit must cite the data change, never a residual.
++SUMMER_WEFOR_SHARE: float = 0.30
++
++# Additional summer (Jun-Sep) capacity derate by plant group, modeling the
++# ambient-temperature output loss gas turbines suffer in the heat (worse for
++# simple-cycle CTs than combined-cycle). Applied on top of the age-based
++# THERMAL_AVAILABILITY model for these classes only; coal and gas steam are
++# unaffected.
++#
++# SOURCE: the physical effect is real and well-established (gas-turbine mass
++# flow falls with rising inlet air temperature, and simple-cycle units lose
++# more than combined-cycle). The SPECIFIC magnitudes 0.10 / 0.125 are an
++# UNCITED FLAT APPROXIMATION of it — consistent with, but not derived from, the
++# 10-30% typical CT summer derate the repo's own capacity audit records against
++# EIA-860 net-summer ratings (docs/capacity-audit-860-923-campd.md).
++#
++# A MEASURED per-class dry-bulb temperature curve exists as the
++# ``temp_dependent_derate`` alternative to this flat treatment; it is
++# default-off, having been probe-refuted for the ERCOT gas fleet (2026-07-09).
++# Its MISO sibling ``gt_ambient_derate`` is measured PROVABLY INERT — MISO
++# zone-mean TMAX clears its 35 C reference in 0 h at summer peak in any of
++# 2023-2025 (FINDING-miso89 §8). So the flat approximation stands as the live
++# treatment, and rule 11 [R-ACCURATE]'s "prefer the measured input" is not
++# engaged: the measured alternatives were tried and adjudicated, not skipped.
++#
++# Re-homed here from ``data/fleet/arrays.py`` with SUMMER_WEFOR_SHARE above
++# (miso-91), same registry-coverage reason. Values unchanged.
++SUMMER_CLASS_DERATE: dict[str, float] = {
++    "CC_REGULAR": 0.10,
++    "CC_CHP": 0.10,
++    "CT_PEAKER": 0.125,
++    "CT_CHP": 0.125,
++}
++
+ # Per-plant ERCOT coal sustained-output ceilings (fraction of capacity_mw):
+ # the demonstrated physical maximum a unit's CEMS record shows it can sustain
+ # (boiler/turbine derates below nameplate), applied as an availability ceiling
+diff --git a/src/market_sim/data/fleet/arrays.py b/src/market_sim/data/fleet/arrays.py
+index b68fbc7..0ccb3c8 100644
+--- a/src/market_sim/data/fleet/arrays.py
++++ b/src/market_sim/data/fleet/arrays.py
+@@ -19,6 +19,8 @@ from market_sim.config.constants import (
+     NUCLEAR_DORMANT_UNTIL,
+     NUCLEAR_MONTHLY_CF,
+     NUCLEAR_MONTHLY_CF_BY_YEAR,
++    SUMMER_CLASS_DERATE,
++    SUMMER_WEFOR_SHARE,
+     THERMAL_AVAILABILITY,
+ )
+ from market_sim.config.paths import CAMPD_BINS_CSV
+@@ -161,21 +163,20 @@ CAISO_CHP_CC_STEAM_CREDIT_HR_FLOOR: float = 6.3
+ # root cause is) and the physics correction is left off until that is addressed.
+ CHP_STEAM_CREDIT_HR_CORRECTION_ISOS: frozenset[str] = frozenset({"CAISO", "PJM"})
+ 
+-# Fraction of a unit's WEFOR (forced-outage rate) that applies during the
+-# summer peak; the remaining (1 - share) is redistributed into the shoulder
+-# months. Winter keeps the flat WEFOR.
+-_SUMMER_WEFOR_SHARE: float = 0.30
+-
+-# Additional summer (Jun-Sep) capacity derate by plant group, modeling the
+-# ambient-temperature output loss gas turbines suffer in the heat (worse for
+-# simple-cycle CTs than combined-cycle). Applied on top of the age-based
+-# availability for these classes only; coal and gas steam are unaffected.
+-_SUMMER_CLASS_DERATE: dict[str, float] = {
+-    "CC_REGULAR": 0.10,
+-    "CC_CHP": 0.10,
+-    "CT_PEAKER": 0.125,
+-    "CT_CHP": 0.125,
+-}
++# The summer WEFOR reallocation share and the per-class summer ambient derate
++# were RE-HOMED to config/fuel_trajectories.py (miso-91, 2026-07-26), beside
++# the THERMAL_AVAILABILITY table they modify, so that
++# scripts/validate_parameters.py covers them (it scans only vars(constants) +
++# ScenarioConfig defaults, skipping private/non-uppercase names, so private
++# literals here were invisible to it — CLAUDE.md rule 20 [R-REGISTRY]).
++# Values are unchanged; see those definitions for provenance, the recorded
++# physics tension, and the standing prohibition on re-tuning them.
++#
++# The private aliases below are the module-local names the availability builder
++# and its tests use; keeping them means the seasonal-availability code and the
++# fleet package's re-export contract are untouched by the move.
++_SUMMER_WEFOR_SHARE: float = SUMMER_WEFOR_SHARE
++_SUMMER_CLASS_DERATE: dict[str, float] = SUMMER_CLASS_DERATE
+ 
+ # Non-coal thermal classes whose statistical planned-outage factor (POF) is
+ # dropped in the historic backcast (gated on config.coal_drop_pof): their
