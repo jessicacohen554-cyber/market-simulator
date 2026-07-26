@@ -190,9 +190,44 @@ real and needs a general owner decision, not that `git push` is now permitted.
 
 ---
 
-## 6. Changes to this file
+## 6. The 2026-07-22 history rewrite — orphaned bundle `git.sha` provenance (owner decision B)
+
+**What happened (2026-07-22).** The owner ran the `cleanup-large-blobs.yml`
+workflow (run `29961034978`), which force-pushed a filtered history to every
+branch: superseded `data/raw/` and `results/calibration/` blob versions were
+stripped, `main`'s file manifest was machine-verified byte-identical before and
+after, and **every pre-rewrite commit SHA changed**. The `git.sha` recorded in
+bundle `run_config.json` / `meta.json` therefore no longer resolves for any
+bundle solved before the rewrite — measured 2026-07-26 against main `10c239bf`:
+**67 of 94 registered bundles**. No old-to-new SHA mapping was saved (owner
+confirmed), so no remap is possible, and none is wanted.
+
+**What is NOT affected.** Keeper replay and golden capture never resolve the
+recorded SHA: `replay_keeper.py` excludes `git_sha` via `_IGNORE`, and
+`capture_keeper_goldens.py` excludes it via `FIDELITY_IGNORE_KEYS` — both treat
+it as provenance labeling, never a recipe input. (An earlier handoff claimed
+these paths "compare against" the recorded SHA; that claim was checked at
+source and is wrong.)
+
+**What IS affected — intentionally.** The one consumer that resolves the SHA is
+the `--reuse-solved` gate (`plan_reuse_solved` in
+`scripts/run_calibration_full.py`), which proves code identity by running
+`git diff <prior_sha> HEAD` over `src/`, `scripts/` and `data/`. An
+unresolvable SHA means that proof cannot be produced, so the gate refuses reuse
+and the year solves fresh. **The refusal is load-bearing and stays strict** —
+no warning downgrade, no bypass flag, no timestamp or heuristic fallback: any
+of those would let a bundle be reused across a genuine source change,
+silently. The cost is wall-clock only (pre-rewrite bundles are re-solve-only)
+and self-heals as new bundles land with resolvable SHAs. The refusal message
+names this cause, and `tests/test_reuse_unresolvable_sha.py` pins
+refuse-not-warn.
+
+---
+
+## 7. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-07-26 | Added §6: the 2026-07-22 history rewrite orphaning pre-rewrite bundle `git.sha` provenance (owner decision B close-out) — no SHA mapping saved, replay/goldens unaffected (`git_sha` in both ignore sets), the `--reuse-solved` unresolvable-SHA refusal intentional and load-bearing. "Changes to this file" renumbered §6 → §7 (no external references cited §6). |
 | 2026-07-25 | §5: recorded the ≥300-line push deadlock (rule 27 + API-only leaving no compliant path) and the owner's per-commit `git push` waiver that landed wave 4C. Per-commit, not a standing exception. |
 | 2026-07-25 | Created (refactor-consolidation Wave 5B, owner decision D-6). Takes the rule-27 incident writeup and the audit N↔N+1 mapping paragraph out of `CLAUDE.md`, and indexes the rule-20 / rule-22 amendment narratives at their canonical homes. No norm was moved, reworded, or dropped. |
