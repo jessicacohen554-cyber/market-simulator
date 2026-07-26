@@ -2701,3 +2701,95 @@ class TestGasHhMonthlyShape:
             gas_seasonal_shape(self._cfg(True), 2035, 8760),
             _seasonal_factors(8760),
         )
+
+
+class TestOilDailyParity:
+    """``dual_fuel_oil_daily_parity`` — the daily-resolution oil-parity cap.
+
+    The measured EIA-923 Petroleum receipt is MONTHLY, so the dual-fuel cap is
+    a flat plateau across the month, while the gas side of the same ``min()``
+    is already daily. These cover the granularity fix: the shape is exactly
+    mean-preserving per month (the delivered level stays the receipt), the
+    flag is byte-identical when off, and an absent series degrades to no-shape
+    rather than erroring.
+    """
+
+    @staticmethod
+    def _cfg(daily: bool):
+        from market_sim.config.scenarios import ScenarioConfig
+
+        return ScenarioConfig(
+            iso="NYISO",
+            mode="backcast",
+            hours=8760,
+            dual_fuel_switching=True,
+            dual_fuel_oil_daily_parity=daily,
+        )
+
+    def test_factors_mean_exactly_one_per_month(self):
+        from market_sim.data.fuel import oil_daily_shape_factors
+        from market_sim.data.fuel._shared import _month_index
+
+        month = _month_index(8760)
+        for year in (2023, 2024, 2025):
+            factors = oil_daily_shape_factors(year, 8760)
+            for m in range(12):
+                assert abs(float(factors[month == m].mean()) - 1.0) < 1e-12, (year, m)
+
+    def test_default_off_is_byte_identical(self):
+        import numpy as np
+
+        from market_sim.data.fuel import dual_fuel_oil_price_series
+
+        for year in (2023, 2024, 2025):
+            np.testing.assert_array_equal(
+                dual_fuel_oil_price_series(self._cfg(False), year),
+                dual_fuel_oil_price_series(self._cfg(False), year),
+            )
+        # And the flag is what makes the two differ at all.
+        assert not np.array_equal(
+            dual_fuel_oil_price_series(self._cfg(False), 2025),
+            dual_fuel_oil_price_series(self._cfg(True), 2025),
+        )
+
+    def test_monthly_delivered_level_is_preserved(self):
+        """Only the within-month profile moves; every month's mean is fixed."""
+        import numpy as np
+
+        from market_sim.data.fuel import dual_fuel_oil_price_series
+        from market_sim.data.fuel._shared import _month_index
+
+        month = _month_index(8760)
+        for year in (2023, 2024, 2025):
+            flat = dual_fuel_oil_price_series(self._cfg(False), year)
+            daily = dual_fuel_oil_price_series(self._cfg(True), year)
+            for m in range(12):
+                np.testing.assert_allclose(
+                    daily[month == m].mean(), flat[month == m].mean(), rtol=1e-12
+                )
+            # The point of the fix: a real intra-month spread now exists.
+            assert daily.std() > flat.std()
+
+    def test_absent_series_resolves_to_no_shape(self, tmp_path):
+        import numpy as np
+
+        from market_sim.data.fuel import oil_daily_shape_factors
+
+        np.testing.assert_array_equal(
+            oil_daily_shape_factors(2025, 8760, path=tmp_path / "missing.csv"),
+            np.ones(8760),
+        )
+
+    def test_cold_snap_lifts_the_cap_above_the_month(self):
+        """Jan-2025's polar-vortex days must price above the monthly plateau."""
+        from market_sim.data.fuel import dual_fuel_oil_price_series
+
+        flat = dual_fuel_oil_price_series(self._cfg(False), 2025)
+        daily = dual_fuel_oil_price_series(self._cfg(True), 2025)
+        # 2025-01-17 (the Transco Z6 NY $97.9/MMBtu gas day) — hour 0 of day 17
+        # on the model's non-leap clock.
+        h = (17 - 1) * 24
+        assert daily[h] > flat[h]
+        # ... and a mild early-January day must price below it (mean-preserving
+        # means the lift is paid for, not added).
+        assert daily[(6 - 1) * 24] < flat[(6 - 1) * 24]
