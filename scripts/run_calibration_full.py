@@ -4369,6 +4369,50 @@ def solve_and_persist(
                     if v >= 0.01
                 ),
             )
+            # Attribute the resident figure instead of leaving it a mystery.
+            # Successive sessions guessed at what the cross-year floor was made
+            # of — the ~26 module lru_cache memoizations were the standing
+            # hypothesis until miso-90 measured them at ~0.02 GB on the MISO
+            # path, i.e. near-inert. This logs the live array/frame payload and
+            # the populated-cache census every year so the next attempt starts
+            # from a measurement. Diagnostic only: it allocates nothing the
+            # solve depends on and can never change dispatch.
+            try:
+                from market_sim.data.cache_control import (
+                    cache_report,
+                    retained_footprint,
+                )
+
+                # The accumulators live in THIS function's locals, which are
+                # not reachable from the GC graph (CPython 3.11 lazy frames),
+                # so they must be passed as explicit roots.
+                _fp = retained_footprint(*_acc.values())
+                _caches = cache_report()
+                logger.info(
+                    "year %d retained heap: ndarray=%.2f GB (n=%d) "
+                    "[pandas=%.2f GB n=%d, sparse=%.2f GB n=%d — slices, not "
+                    "additions] | %d populated cache(s), %d entries%s",
+                    year,
+                    _fp.get("ndarray_gb", 0.0),
+                    int(_fp.get("n_ndarray", 0)),
+                    _fp.get("pandas_gb", 0.0),
+                    int(_fp.get("n_pandas", 0)),
+                    _fp.get("sparse_gb", 0.0),
+                    int(_fp.get("n_sparse", 0)),
+                    len(_caches),
+                    sum(c.currsize for c in _caches),
+                    (
+                        " | top: "
+                        + ", ".join(
+                            f"{c.qualname.rsplit('.', 1)[-1]}={c.currsize}"
+                            for c in _caches[:5]
+                        )
+                        if _caches
+                        else ""
+                    ),
+                )
+            except Exception:  # never let telemetry break a calibration run
+                logger.debug("retained-heap telemetry unavailable", exc_info=True)
 
     system_all = pd.concat(system_frames, ignore_index=True)
     system_all.to_parquet(run_dir / "system.parquet", index=False)
