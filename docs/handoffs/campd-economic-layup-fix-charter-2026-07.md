@@ -315,3 +315,48 @@ adopt-and-lift and over close-with-cause:
   final clause ("freeze lifted by the owner"), which is deliberately deferred
   to the residual-over-count investigation. The charter stays open on that
   single item plus the outstanding re-audits.
+
+## 9. Residual-over-count investigation — CLOSED on evidence; the freeze-lift decision is now the owner's
+
+The single item §8 deferred the freeze to. Three ordered steps were set by
+`results/calibration/FINDING-neiso66-overcount-rootcause-2026-07-26.md` §6; all
+of the *measurement* is now done, and no LP solve was run for any of it.
+
+| step | status | evidence |
+|---|---|---|
+| 1 — re-measure NEISO on a sound published-side build | **DONE, PASSED** | neiso-66 §5b — the residual tracks ISO-NE's published `uncommitted_available_gen_nonfast_mw` at +0.70 to +0.85 and is **anti**-correlated with published outages (−0.85 to −0.86) |
+| 2 — test the commitment-economics mechanism directly | **DONE, NEGATIVE** | `FINDING-neiso67-commitment-test-2026-07-26.md` — per-unit AUC 0.47–0.57 across 18 configuration-years, **below** the marginal test in every one; on the seam population the sign inverts (AUC 0.39–0.41, and 89–93 % of seam days already repay the published start cost); the commitment band identifies nothing against the published series (−0.51 / +0.26 / +0.05) |
+| 3 — disposition | **OWNER DECISION, recommendation below** | — |
+
+**What is now settled.** The residual over-count is a **definitional seam**
+(CNOG/ISO-NE publish *unavailability*; the CEMS detector measures
+*non-operation*), confirmed against a published instrument — and it is **not
+recoverable by any discriminator the admissible inputs support**. Both of the
+re-audit's original candidate directions were refuted by measurement
+(neiso-66 §3, §4); the marginal test has no power on this population (§4); and
+the commitment test now has none either, with its only novel band
+(`0 ≤ R < 1`) carrying no signal and rule 19 `[R-ONE-MECH]` forbidding it
+stacking on the guard that already owns the `R < 0` half.
+
+**Recommendation to the owner — carry the seam explicitly, then lift.**
+
+- Take **disposition (b)**: leave the availability envelope alone. Option (a),
+  a commitment-aware second discriminator in the detector, is not buildable on
+  the evidence (neiso-67 §6) and would be a mechanism with no measured
+  discriminating power — what rule 1 `[R-STRUCT]` forbids reaching for.
+- The §7 **"Closed with cause"** leg is the one that now fits the residual: the
+  over-count is explained, quantified, bounded to a definitional scope
+  difference, and shown not to be closable by a detector change. That is a
+  cause, not a stall.
+- **The freeze-lift is still the owner's act and no session takes it by
+  inference** (§6, and `holdout-freeze.json` `lifts_when`). What has changed is
+  that its stated condition — "the residual is explained or fixed" — is now met
+  on the *explained* branch, with the measurement committed and re-runnable.
+
+**Not settled, and deliberately left open:** whether the seam should be closed
+on the LP side rather than the detector side (neiso-66 §5b argues on rule-1
+grounds that these units belong in the envelope as *available*, with the LP
+declining them on its own commitment economics; CAISO's `caiso_ra_mustoffer`
+already owns that capacity's commitment, so rule 19 makes it a replace-or-
+reconcile question, never a stack). That is a separate lane on a different
+instrument and is **not** a freeze-lift blocker.
