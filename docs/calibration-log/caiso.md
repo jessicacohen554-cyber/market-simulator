@@ -1221,4 +1221,131 @@ caiso-118 entries added. The log now runs 103→120 unbroken. (b) Keeper bundle
 the next keeper candidate must carry it, rule 14/18); CT_PEAKER priced out
 (caiso-119 R4, the C3c lane's live lever, obligation-keyed + D-4 window).
 
-Next number: caiso-121.
+## caiso-121 (2026-07-26) — EXECUTED the three standing cheap wins: (1) OWNER RULING moves CAISO 2023 C4 to the CEMS basis → **C4 PASSES all three years, keeper fail set {C3c, C4, C5a} → {C3c, C5a}**; (2) the surplus-regime belly λ is ATTRIBUTED — set by the EF-0 `DSW_surplus_clean` tranche, and **59–101 % of the wedge is DSW→CA corridor congestion, not the rung's price** (border-carbon and committed-gas candidates both REFUTED; family selected = corridor/export-path); (3) the measured min-load 0.570 solved as a keeper candidate and registered — **NOT promoted**, blocked by a STOP-AND-REPORT side finding: re-solving the keeper's OWN recipe at HEAD **FAILS C3a-2025 (+11.49 % vs the committed keeper's +9.97 %)**
+
+Keeper `2026-07-23-caiso-netrev-margin-keeper` UNCHANGED (shard untouched).
+Two 3-year solves this session: `caiso121_repro_A` (control replay, keeper
+recipe exactly — gitignored, NOT registered, FINDING-caiso92b protocol) and
+`caiso121_minload_keeper_B` (single delta, registered as
+`2026-07-26-caiso-121-minload-keeper`). Full record:
+`results/calibration/FINDING-caiso121-surplus-marginal-attribution-2026-07-26.md`.
+Instrument (committed): `scripts/probes/_caiso121_surplus_marginal.py`.
+
+**(1) C4-2023 benchmark basis — ESCALATED AND GRANTED (owner ruling, this
+session).** `EIA930_NG_CORRUPT_ONSET["CAISO"]` 2024 → 2023. The original onset
+kept 2023 on the EIA-930 NG cell "for continuity — the two agree pre-onset";
+they do not. Three-source level test on the keeper's committed bytes for 2023:
+**EIA-923 67.20 TWh** and **CAMPD CEMS + non-CEMS cogen 68.74 TWh** — two
+independent measured sources agreeing within **2.3 %** — against the
+fold-in-deflated **930 cell at 74.23 TWh, +10.5 % over 923 and +8.0 % over
+CEMS**, far outside the 3 % `VINTAGE_RECONCILE_FRAC` deadband and the same
+standard that condemned the cell for 2024+. Deflated-930 over EIA-923 runs
+**+10.5 % (2023) → +21.1 % (2024) → +32.8 % (2025)**: a monotone ramp, so any
+onset is a threshold on a continuum, not a step at 2024-05. Scorer-only (no
+re-solve; C2's gas anchor path was never year-gated, so only C4's gas hourly
+fit changes basis) and every CAISO bundle re-scores in place — the rule-20 C8
+precedent. Effect: C4 gas 2023 **r 0.838 / NRMSE 0.329 FAIL → r 0.881 / 0.263
+PASS**, the best of its three years. Keeper metrics + `status/CAISO.js`
+rebuilt; determination still NOT-YET. Closes the caiso-115 fresh-look
+escalation, carried unactioned since 2026-07-23.
+
+**(2) Surplus-regime marginal-unit attribution — caiso-120 Inv 4 ANSWERED.**
+caiso-105's pin-aware method (bounds = `floors/<y>_P1.npz` `min_gen` +
+`run_year(fleet_only=True)` caps; a pinned/at-bound unit cannot set λ, a
+strictly interior one's offer EQUALS its zone's λ) re-pointed at the caiso-120
+regime split. **The setter is `DSW_surplus_clean`** — the caiso-87 WEIM clean
+surplus-depth tranche — strictly interior in **52.8 / 61.6 / 84.1 %** of
+surplus-regime belly hours carrying **1.2 / 2.1 / 2.1 GW**.
+- **Border-carbon rung REFUTED:** the winning tranche is **EF 0 and pays no
+  border carbon at all**; the carbon-paying rungs are interior 0.9–6.3 % and
+  the cheapest offers $78–81/MWh, ~10× the surplus λ. The adder-≈-wedge match
+  was coincidence and does not even track sign across years.
+- **Committed gas REFUTED as the price-setter:** CC_REGULAR interior
+  **4.9 / 4.8 / 1.3 %** carrying 1–4 MW, and **62–72 % PINNED** — a volume
+  mechanism, not a price-setter. Hydro is co-marginal at 14–22 MW.
+- **THE LOAD-BEARING RESULT (all terms on one mask, so they sum exactly):**
+
+  | yr | min-hub | model WECC_DSW λ | model CA λ | wedge | = node−hub | + congestion | congestion share |
+  |---|---|---|---|---|---|---|---|
+  | 2023 | $5.26 | $5.20 | $9.65 | +$4.39 | −$0.06 | **+$4.45** | **101 %** |
+  | 2024 | −$6.65 | −$1.52 | $6.88 | +$13.53 | +$5.13 | **+$8.40** | **62 %** |
+  | 2025 | −$0.80 | $2.51 | $7.20 | +$8.00 | +$3.31 | **+$4.68** | **59 %** |
+
+  The model's own southern node is priced approximately RIGHT (−$0.06/+$5.13/
+  +$3.31 from the measured min-hub; the marginal tranche's offer goes negative
+  in 2024 exactly as the hub does). **59–101 % of the belly over-price is
+  DSW→CA corridor congestion rent — CA cannot reach its own correctly-priced
+  import node.** The northern node is stranded and drowning (WECC_PNW λ
+  −$2.22/−$3.12/−$7.80, negative in 31/52/59 % of surplus hours, 2025 median
+  −$20.00, its firm `PNW_hydro_base` block self-scheduled at-cap 47–65 %), and
+  **both export sinks dispatch exactly 0.00 MW in all 26,280 hours of
+  2023–2025**.
+- Physical stack corroboration (model − actual, surplus belly): imports
+  **+2578/+3461/+2606 MW**, solar **+1596/+1233/+1563** (the model curtails too
+  little — 11/43/41 % of hours), hydro **−1114/−948/−856**, gas
+  **−859/−784/−636**, storage charging **+1967/+2049/+2244**.
+- **Family SELECTED for the later joint belly delta: corridor / export-path in
+  surplus** (owns the majority of the wedge and is the only candidate that also
+  explains the missing net-export sign) — the corridor's export-direction
+  deliverability envelope (measured p95 net-export, median ~0 GW on the DSW
+  leg, derived from *evening* net-import behaviour then applied to midday) and
+  a *surplus-scoped* `caiso_wecc_export_floor` (the caiso-113 L1a′ rejection
+  was a fixed hub in ALL hours). **Clean-tranche depth demoted to second
+  order** (priced near-correctly; at-cap only 0.7/20.8/3.5 % of surplus hours).
+  **Committed-state dropped.** NOTHING ARMED — arming either sub-lever is a
+  separate owner ask, LOYO-scored before promotion. Pre-registered gates stay
+  the caiso-120 REGIME-CONDITIONAL ones, now with **CA λ − WECC_DSW λ → ~0**
+  named explicitly as the term carrying the majority of the error.
+
+**(3) Min-load 0.570 (rule-14 execution of the caiso-119 KEPT disposition) —
+REGISTERED, NOT PROMOTED.** Single delta `caiso_ra_min_load_frac` 0.26 →
+0.570; zero fitted parameters added, one removed. Verdict **NOT-YET, fail
+{C3a (2025 only, +11.3 %), C3c, C5a}**; C1/C2/C3b/C4/C6/C7/C8 PASS. The
+disposition was pre-registered before any score existed — promote iff
+same-or-smaller fail set and no new FAIL — and C3a is a new fail, so: **not
+promoted.** The attestation also corrects the netrev keeper's inaccurate
+description of 0.26 as "CEMS-measured min-load"; the DOF ledger is unchanged
+in count and strictly improved in quality.
+
+**THE BLOCKING SIDE FINDING (§0a of the finding) — the C3a failure is NOT the
+delta.** The same-HEAD control arm — identical recipe, **no delta** — also
+fails C3a-2025, and *worse*:
+
+| C3a mean LMP | 2023 | 2024 | **2025** |
+|---|---|---|---|
+| committed keeper | +3.49 % PASS | +8.44 % PASS | **+9.97 % PASS** |
+| control arm A (no delta, HEAD) | +4.01 % PASS | +9.36 % PASS | **+11.49 % FAIL** |
+| arm B (min-load 0.570, HEAD) | — | — | **+11.30 % FAIL** |
+
+The keeper clears C3a-2025 by **0.03 pp**; HEAD drift since its recorded sha
+`abb0fcd` consumes that four times over (CA λ **+0.47/+0.88/+1.35 %**,
+CC_REGULAR to −1.24 %, import to +0.93 % — uniformly in the direction that
+worsens C5a). Isolated against its own control the min-load delta is
+near-inert and its C3a effect is a **0.19 pp IMPROVEMENT** (CC_REGULAR
+−0.209/+0.048/+0.031 TWh, CA λ +0.31/−0.25/−0.11 %, belly-surplus gas
+−102/+24/−32 MW), reproducing caiso-119's measurement at current HEAD. So the
+measured 0.570 stays **KEPT** and is still the value the next keeper must
+carry (rules 13/14/18 — never tuned back toward 0.26, whatever the residual
+does).
+
+**⚠ CAISO LANE BLOCKED UNTIL THIS IS FIXED: no CAISO delta can be promoted,
+because ANY re-solve at HEAD fails C3a-2025.** The keeper's headline C3a PASS
+is a property of its committed 2026-07-23 bytes, not of its recipe. Next
+CAISO session's FIRST task: bisect `abb0fcd..HEAD` for the commit that moved
+CAISO λ. Until then every CAISO C3a-2025 comparison is basis-sensitive and
+must carry a same-HEAD control arm — the caiso-119 note, now with a gate flip
+behind it rather than a metric wobble.
+
+**Operational note (rule 12).** Two concurrent CAISO per-plant 3-year solves
+OOM-killed on the **2025** year (15.2 GW storage fleet; 7.8 GB RSS each on a
+15 GB box). Arm B was re-run solo. For CAISO, treat 2025 as single-solve-only
+on a 15 GB box — rule 12's "cap at ~2 simultaneous" is the ceiling, and 2025
+is over it.
+
+**Open items carried.** CT_PEAKER priced out (caiso-119 R4, the C3c lane's
+live lever — obligation-keyed RA must-offer commitment for peakers, D-4 window
+required); the joint belly delta (family now selected, gates pre-registered,
+owner-gate required); `caiso_ra_min_load_frac` 0.570 still not in the keeper
+recipe — blocked by the C3a regression above, not by its own merits.
+
+Next number: caiso-122.

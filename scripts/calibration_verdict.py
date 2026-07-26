@@ -249,7 +249,11 @@ VINTAGE_RECONCILE_FRAC = (
 #  * C4 gas hourly r/NRMSE is recomputed from the committed hourly series
 #    (payload ``plants[].m`` vs bench ``plants[].campd`` + flat cogen block)
 #    from the onset VINTAGE onward; pre-onset years keep the payload's 930-based
-#    fit for continuity (the two agree there).
+#    fit. The CAISO onset moved 2024 -> 2023 (owner ruling 2026-07-26,
+#    caiso-121): the original "pre-onset years agree" premise is false for 2023,
+#    where the deflated 930 cell reads +10.5% over EIA-923 and +8.0% over
+#    CEMS+cogen (which agree within 2.3%) — see benchmark_semantics
+#    .EIA930_NG_CORRUPT_ONSET for the three-source level test.
 # Mirrors render_calibration_html.EIA930_NG_CELL_CORRUPT / _ONSET; membership
 # is CEMS-evidence-gated per ISO, never generic (the other ISOs' NG cells show
 # no corruption and keep G-21/G-21b unchanged).

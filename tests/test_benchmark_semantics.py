@@ -32,7 +32,12 @@ def test_groups_are_families_plus_other_fossil():
 def test_reconcile_frac_and_corruption_registries():
     assert bs.VINTAGE_RECONCILE_FRAC == 0.97
     assert bs.EIA930_NG_CELL_CORRUPT == frozenset({"CAISO"})
-    assert bs.EIA930_NG_CORRUPT_ONSET == {"CAISO": 2024}
+    # 2024 -> 2023: owner ruling 2026-07-26 (caiso-121). The pre-onset
+    # "the two agree" premise fails at the level too — 2023 deflated-930 gas is
+    # +10.5% over EIA-923 and +8.0% over CEMS+cogen, which themselves agree
+    # within 2.3%; the contamination is a monotone ramp (+10.5/+21.1/+32.8%
+    # over 923 across 2023/24/25), not a step at 2024-05.
+    assert bs.EIA930_NG_CORRUPT_ONSET == {"CAISO": 2023}
     assert bs.EIA930_GAS_FOLDS_GEO_BIOMASS == frozenset({"CAISO"})
 
 
