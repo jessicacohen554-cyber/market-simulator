@@ -194,7 +194,12 @@ def season_netload_pct(years: list[int]) -> pd.DataFrame:
             .to_numpy(float)
         )
         local = pd.DatetimeIndex(df["Local time"])
-        season = pd.Series(local.month, dtype=int).map(SEASON_OF_MONTH)
+        # NA-safe month map: a NaT "Local time" row (the 2023 fall-back day)
+        # carries no (day, he) merge key and is dropped from every arm at the
+        # finite-q filter; mapping its month through NaN reproduces arm A's
+        # behaviour instead of crashing on an int cast. Mechanical fix only —
+        # the season definition is untouched.
+        season = pd.Series(local.month).map(SEASON_OF_MONTH)
         q = pd.Series(net).groupby(season.to_numpy()).rank(pct=True).to_numpy()
         frames.append(
             pd.DataFrame({"day": local.normalize(), "he": local.hour + 1, "q": q})
