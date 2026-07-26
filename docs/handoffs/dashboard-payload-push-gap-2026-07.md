@@ -1,5 +1,10 @@
 # Infrastructure gap — dashboard run payloads cannot traverse the API-only push path, and six runs are already silently stranded
 
+> **STATUS 2026-07-26: option 1 ADOPTED — rule amended, policy gap closed;
+> the stranded set is NOT backfillable and is now tracked.** See the
+> "2026-07-26 resolution" section at the bottom. The text above it is the
+> 2026-07-25 record, kept as written.
+
 **Found 2026-07-25 during the caiso-119 session, while registering a probe run.**
 Not a modelling issue; an infrastructure/governance one. Needs an owner decision.
 
@@ -80,7 +85,8 @@ The caiso-119 probe `2026-07-24-caiso-119-minload-measured` is registered and
 committed **locally** (sidecar + 434 KB payload + refreshed manifest + the
 automatic top-15 CAISO prune). It was deliberately **not** pushed sidecar-only —
 that would have made it a seventh invisible run. It awaits whichever remedy is
-chosen below.
+chosen below. *(2026-07-26: resolved — the 434,784 B payload is on main and
+the run renders.)*
 
 ## Options for the owner
 
@@ -110,4 +116,93 @@ commit. A payload-less sidecar is worse than an unregistered run: it looks
 registered, passes every gate that reads the registry, and is invisible to the
 only surface that matters. Run
 `python scripts/check_registry_payload_parity.py` before every dashboard push —
-the CI gate that used to enforce this was removed 2026-07-14.
+the CI gate that used to enforce this was removed 2026-07-14. *(2026-07-26:
+the gate was in fact restored 2026-07-20 inside the durable `ci.yml`
+quarantine-gates job and is verified wired at HEAD — see the resolution
+section below.)*
+
+## 2026-07-26 resolution — option 1 ADOPTED; backfill blocked; stranded set tracked
+
+**Option 1 is ADOPTED** (owner approval relayed in the session brief).
+CLAUDE.md's "Git & Pushing" section was rewritten in this lane (branch
+`claude/market-sim-payload-backfill-edl64j`, commit `5bcc59d`, base
+`origin/main` @ `19b0b91`): the API-only mandate is lifted, the transport is
+chosen by **pack** size, `git push` is the required transport for run
+payloads, `push_files` stays preferred for small multi-file commits with its
+~457 KB per-payload cap documented, and rule 27 blob verification explicitly
+covers both transports. `git push` remains not licensed for bundle
+directories or divergent hundreds-of-MB packs.
+
+### The gap grew while the rule stood
+
+Six stranded runs above (2026-07-25) → **nine** at main `19b0b91`
+(2026-07-26): the three new casualties are `2026-07-24-neiso-62-opcap-a0`,
+`2026-07-24-neiso-62-opcap-a1`, and `2026-07-24-pjm-119-overlay-restore` —
+the last was the PJM keeper from its 2026-07-24 promotion until the
+2026-07-25 `pjm-121-cc-belt` promotion, i.e. the live PJM keeper's report was
+invisible for a day. (The session brief put the count at 11; the measured
+value at both `6a65339` and `19b0b91` is 9 — the parity checker's output is
+the authority.) No current keeper is payload-less: PJM's keeper is now
+`2026-07-25-pjm-121-cc-belt`, whose payload is committed.
+
+### Backfill result: 0 of 9 regenerable — every stranded payload needs a re-solve
+
+The backfill option 1 anticipated ("they regenerate from their bundles
+without a re-solve via `scripts/regen_dashboard.py`") is NOT available for
+any of the nine. `render_calibration_html.build_payload` (what
+`regen_dashboard.py` / `render_backcast.py` run) reads each bundle's
+`dispatch/<year>_P*.parquet` + `system.parquet` at render time — gitignored
+heavy intermediates (`.gitignore` §8; dispatch alone is ~80 MB/year) that
+exist only on the machine that ran the solve. Every originating container is
+gone and the remote has no other branches carrying them. Per-run state at
+`19b0b91`, verified 2026-07-26:
+
+| run | bundle on main | blocker |
+|---|---|---|
+| `2026-07-22-caiso-112-export-floor` | `caiso112_export_floor_B` — metrics-only | no `meta.json`, no dispatch/system parquet |
+| `2026-07-23-caiso-114-endogenous-west` | `caiso110_endog_B` — metrics-only | same |
+| `2026-07-23-neiso-2022-holdout-validation` | `neiso_2022_holdout_validation` — metrics-only | same |
+| `2026-07-23-pjm-116-netrev-base` | `pjm_netrev_base` — ABSENT, 0 commits | bundle never pushed |
+| `2026-07-23-pjm-117-netrev-margin` | `pjm_netrev_margin` — ABSENT, 0 commits | bundle never pushed |
+| `2026-07-24-neiso-62-opcap-a0` | `neiso_opcap_a0` — ABSENT, 0 commits | bundle never pushed |
+| `2026-07-24-neiso-62-opcap-a1` | `neiso_opcap_a1` — ABSENT, 0 commits | bundle never pushed |
+| `2026-07-24-pjm-118-netrev-level` | `pjm_netrev_retune` — slim | no dispatch/system parquet |
+| `2026-07-24-pjm-119-overlay-restore` | `pjm119_overlay_restore` — slim | no dispatch/system parquet |
+
+Re-solves are out of scope for the no-solve session that closed this note, so
+the nine ids are tracked in
+`scripts/lib/known_unsynced_keepers.py::UNSYNCED_RUN_PAYLOADS` (the
+CI-restoration precedent): `check_registry_payload_parity.py` reports them as
+explicit warnings and exits 0, and any NEW sidecar-without-payload still
+fails loudly.
+
+Per-id resolution, owner's choice per run: **(a)** re-solve the full rule-16
+year span in a solve-capable session, re-register via `calibration-report`,
+push the payload over `git push`, and delete the id from the tracked set; or
+**(b)** for superseded probes (the pjm-116/117/118/119 netrev lineage is
+superseded by the all-pass pjm-121 keeper), prune the sidecar via
+`dashboard_add_run.py`'s three-store retention. The NEISO 2022 holdout
+validation run carries governance weight (rule 22 validation tier); if
+re-solved it needs `--holdout-authorized` and a session log entry.
+
+### Pack-size measurements (2026-07-26)
+
+No 413 was hit and no ceiling was found this session — its pushes were
+KB-scale packs on freshly-fetched bases. Two size facts extend the original
+434,784 B measurement:
+
+- The largest single-blob payload on main is now **1,993,945 B**
+  (`runs/2026-07-25-pjm-121-cc-belt.js`, commit `e19ed03`, PR #2905, in the
+  same commit as a ~607 KB bench part) — ~4.6× this note's original
+  measurement. `push_files`' per-payload cap cannot have carried that file,
+  and no 413 is on record for it.
+- The full-bundle / divergent-branch negative case remains unmeasured and
+  unlicensed; nothing here tests it.
+
+### CI gate — verified re-armed, nothing to wire
+
+`check_registry_payload_parity` runs in `.github/workflows/ci.yml`
+(quarantine-gates job) on every PR touching the gated paths, tolerating only
+the tracked known-unsynced ids. The gate was restored 2026-07-20 with ci.yml
+itself (the 2026-07-14 removal was the wholesale workflow sweep); verified
+wired at `19b0b91` — no change needed.
