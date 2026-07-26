@@ -841,3 +841,74 @@ so its corrected extract remains UNVERIFIED, and the re-tune is being driven by
 a keeper-sensitivity result rather than by a validated extract.
 
 No solve was run in this session; this entry claims no lane number.
+
+## 2026-07-26 — nyiso-81 KEEPER REINSTATED: reliability-floor re-derivation on the guard-corrected outage extract closes the nyiso-80 drift at its root
+
+The keeper-reinstatement charter executed end-to-end. Branch
+`claude/nyiso-floor-rederive-2olvql`; bundle
+`results/calibration/nyiso81_floor_rederive`; registered
+`2026-07-26-nyiso-81-floor-rederive` and PROMOTED to keeper (the lane had NO
+keeper since the 2026-07-26 de-designation).
+
+**Step 1 — the rule-23 re-derivation (source-data trigger, commit cites
+`6a8f285`).** The four curated NYC/LI ST_GAS limbs re-derived via
+`scripts/data/derive_nyiso_st_reliability_floor.py --no-fetch` — the bespoke
+when-available construction those rows cite, NOT the generic
+`derive_reliability_coeffs.py`, which the nyiso-76 session measured as
+destructive (drops every curated limb, re-arms the R1-disabled NYC CT step).
+New levels: NYC persistent 24 h base 0.496→**0.175**, evening-ramp base
+0.533→**0.185** (cap still clamped at the 1.0 physical bound ≈38 °C, slope
+0.0628/°C); LI persistent base 0.436→**0.262**, ramp base 0.572→**0.350**, cap
+knot 37.51 °C/0.815→**37.55 °C/0.882** (the re-derived p97 is now reachable
+below the LI max tmax 38.3 °C). Capital_Hudson's legacy `CH_ST_ev` knots left
+as-is (evening Pearson r 0.041 on the corrected extract — unidentified; matches
+the 2026-07-19 precedent's scope). NYC's own evening r weakened to 0.186 (LI
+0.547) — recorded as an open item: if a future re-derivation still shows
+r < 0.3, re-adjudicate the `NYC_ST_ev` family's enablement as its own mechanism
+decision.
+
+**The basis judgement call (charter §"decide deliberately") — AVAILABLE basis
+KEPT**, reasoning in the FINDING doc §4.1 RESOLVED block: derive-on-avail /
+apply-on-avail makes the floor's MW target extract-invariant to first order
+(the availability definition cancels), so the nyiso-80 drift was a
+derive/apply DESYNC, not a basis defect; an installed basis would break the
+floor's response to real outages and silently under-place during multi-unit
+events. Not a mechanism change — no A/B owed.
+
+**LOYO (rule 22), two levels.** (a) Derivation folds: all three
+leave-one-year-out re-derivations reproduce the correction (NYC base_24h folds
+0.150–0.231 vs pooled 0.175; LI 0.247–0.291 vs 0.262; slopes/caps stable — no
+fold reverses it). (b) Per-year gates vs the same-code control (nyiso-79):
+D-1 and D-2 improve in EVERY year; C3b 2025 flips FAIL→PASS with no year
+flipping the other way.
+
+**Scorecard (vs the de-designated keeper nyiso-75 / the drifted control
+nyiso-79):**
+
+| gate | nyiso-81 | keeper-75 | control-79 |
+|---|---|---|---|
+| C7 D-1 ST_GAS cv_ratio | **0.835/0.948/0.826** all PASS | 0.542/0.658/0.606 | 0.439/0.489 FAIL /0.547 |
+| C8 D-2 ST_GAS forced | **28.9/36.2/25.8 %** (2024 GROUNDED v2.2) | 31.4/41.7/28.2 | 43.0/53.8/40.5 |
+| C1 | 13/14, free 9/10 (2023 CC_REGULAR −4.11 FAIL) | 13/14 (2024 ST_GAS −3.02 FAIL) | (2023 CC −9.5, ST +7.9 — far out) |
+| C3a | **+4.7/−4.1/−8.4 % all PASS** | +17.8 FAIL/+1.2/−3.2 | −0.9/−9.1/−12.2 |
+| C3b | **0.128/0.176/0.185 all PASS** | 0.216 FAIL/0.176/0.170 | 0.120/0.196/0.208 FAIL |
+| C3c h>$300 (actual 10/12/42) | 3/0/9 FAIL | 19/6/17 | 3/0/9 FAIL |
+| C5a CO₂ | +1.3/+2.0/+8.1 CAVEAT | ≈ same | ≈ same |
+| determination | **NOT-YET** | NOT-YET | NOT-YET |
+
+The keeper's sole C1 fail (2024 ST_GAS −3.02) is FIXED (−2.36 PASS); 2023
+CC_REGULAR slipped −1.98→−4.11 vs ±2.94 — the known downstate ST/CC mix
+boundary (open item 1, the in-city must-run gap), now the lane's dominant C1
+item. C3c: the tail is thinner than the keeper's because the corrected extract
+removed phantom outage-driven scarcity — nyiso-81's tail is IDENTICAL to the
+control's (3/0/9), i.e. a current-main property, not a cost of the
+re-derivation; scarcity formation remains the open supporting-tier lane.
+`dual_fuel_oil_daily_parity` armed (the one genuine nyiso-76 improvement;
+measured, mean-preserving, ~+$0.10/MWh on the 2025 mean).
+
+**Governance.** Attestation seeded from nyiso-75, `build_dof_ledger.py` auto
+entries (7) UNION'd with the 9 curated measured/published entries a blind
+rebuild drops, + a new measured zero-scalar entry for the armed oil cap:
+17 entries / 6 residual. C6 PASS. No out-of-training year touched (NYISO has
+no calibration-complete marker). Keeper shard + status part rebuilt
+(`build_status.py --iso NYISO`), `audit_keepers.py --iso NYISO` PASS.
