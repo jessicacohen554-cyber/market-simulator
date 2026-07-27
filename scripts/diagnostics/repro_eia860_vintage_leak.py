@@ -31,10 +31,14 @@ was bisected to ONE mechanism:
   (``test_cache_control``'s largest-retained-frames flap did NOT reproduce
   with this polluter — GC-graph ambient state, a separate open observation.)
 
-The fix (landed with this script) is at the leak, not the schedule:
-``tests/conftest.py::_restore_eia860_vintage`` snapshots and restores the
-global around every test, and the polluting test also resets it via
-``addCleanup`` so the file stays hermetic under bare ``unittest``.
+The fix is at the leak, not the schedule:
+``tests/conftest.py::_reset_eia860_vintage`` resets the global after every
+test (landed independently by the fast-tier-escalation lane, PR #2970, whose
+own bisect converged on the same polluter), and the polluting test also
+resets it via ``addCleanup`` (landed with this script) so the file stays
+hermetic under bare ``unittest``. The same lane closed the
+``test_cache_control`` flap noted above — a legitimately cached frame plus an
+assertion that assumed process-global frame state; fixed at the assertion.
 
 What this script does
 ---------------------
@@ -147,7 +151,7 @@ def main() -> int:
         return 0
     print(
         "\nLEAK LIVE: victims fail behind the polluter — the "
-        "_restore_eia860_vintage guard (tests/conftest.py) is missing or "
+        "_reset_eia860_vintage guard (tests/conftest.py) is missing or "
         "broken, or a new unguarded vintage mutation exists."
     )
     return 1

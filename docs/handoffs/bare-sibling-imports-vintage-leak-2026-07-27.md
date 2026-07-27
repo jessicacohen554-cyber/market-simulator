@@ -135,15 +135,23 @@ Deterministic reproduction (single process, no xdist, no randomness):
 Fix at the leak, not the schedule (commit `30298c8`; no xfail, no reorder,
 no isolation):
 
-1. `tests/conftest.py::_restore_eia860_vintage` — autouse snapshot/restore of
-   the vintage global around every test (closes the class for any future
-   polluter; snapshot semantics, not forced `None`).
+1. An autouse conftest guard closing the class for any future polluter.
+   **Convergent fix:** the fast-tier-escalation lane (PR #2970, merged to
+   main mid-session) independently bisected the same family to the same
+   polluter and landed `tests/conftest.py::_reset_eia860_vintage`
+   (force-`None` teardown); on the second rebase this branch's equivalent
+   snapshot/restore fixture was dropped in its favor (rule 19 — one
+   mechanism per phenomenon) and its docstring now cross-references the
+   surviving pieces below. That lane also closed the `test_cache_control`
+   flap recorded as a non-member here: its polluter is a *legitimately*
+   cached 22.9 MB EIA-923 frame, so the defect was the assertion (fixed at
+   the victim — the one member where that is the correct fix).
 2. The polluting test resets via `addCleanup` (hermetic under bare
-   `unittest` too).
+   `unittest`, where conftest fixtures do not run) — this branch.
 3. `scripts/diagnostics/repro_eia860_vintage_leak.py` — the bisect record +
-   standing regression detector (exit 1 if the leak returns). Post-fix: fast
-   pair 2 passed; `--full` 34 passed where the identical pairing failed 10+
-   pre-fix.
+   standing regression detector (exit 1 if the leak returns) — this branch.
+   Post-fix: fast pair 2 passed; `--full` 34 passed where the identical
+   pairing failed 10+ pre-fix.
 
 ## 5. Verification record (before → after, both measured this session)
 
@@ -189,6 +197,28 @@ repeated:
   `test_coal_sync_tranche::test_scope_set_membership_freeze` green (the
   vintage-leak fix) — zero additions. Ruff 22 errors on both sides; pin
   `edbc1b103207170a` green on both sides.
+
+### 5.3 Second rebase (main moved again, to `e9d3a40`)
+
+Main then merged PR #2970 (fast-tier-escalation follow-through), which
+cleared most of the advisory backlog, landed its own convergent vintage-leak
+fix (§4 item 1), fixed the `test_cache_control` flap, and completed the D4
+orchestrator alias conversion in `run_calibration_full.py` — while keeping
+that file's two bare `import replay_keeper` sites, so this branch's
+conversion remained necessary and replayed cleanly. Conflict: only
+`tests/conftest.py` (two autouse vintage fixtures); resolved by keeping
+main's `_reset_eia860_vintage` and folding a cross-reference to this
+branch's detector + `addCleanup` into its docstring.
+
+Fresh two-runs-per-side verification against the new base: bare `e9d3a40`
+**2 failed** (`test_clean_io` datatype-list snapshot,
+`test_calibration_verdict` forced-exempt mech names — both upstream backlog),
+sets byte-identical across runs; rebased branch **2 failed, sets
+byte-identical to the baseline and within-side** — this branch contributes
+ZERO test delta on the new base, exactly as expected now that the leak fix
+itself is upstream and every surviving change here is behavior-neutral. The
+controlled comparisons in §5.1/§5.2 remain the causal evidence for this
+branch's fixes.
 
 ## 6. Deliberately NOT done
 
