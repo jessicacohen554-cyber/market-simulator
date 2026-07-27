@@ -218,6 +218,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # its default; an armed run enters the key as a distinct scenario (and its
     # rebased offer_curve_by_group values enter the hash regardless).
     "ercot_offer_hrmult_ep_rebasis",
+    # ERCOT-119 band scope for the EP rebasis (None = all artifact bands, the
+    # ERCOT-118 behaviour). Byte-identical at its default — with the scope
+    # unset the rebasis path is unchanged, and with the rebasis gate off the
+    # scope is inert — so it is dropped from the hash at None; a scoped run
+    # enters the key as a distinct scenario.
+    "ercot_offer_hrmult_ep_rebasis_bands",
 )
 
 
@@ -7455,6 +7461,29 @@ class ScenarioConfig:
     # byte-identical for every existing config at its default; an armed run
     # enters the cache key as a distinct scenario.
     ercot_offer_hrmult_ep_rebasis: bool = False
+
+    # ERCOT-119 leg-split of the EP rebasis: restrict the rebasis to the named
+    # artifact bands (e.g. ["econ_low", "econ_high"]), leaving every other
+    # band — above all the peak standing wall and its conditional-surface
+    # peak_ladder rungs — at the run's resolved (pooled HH−0.50-derived)
+    # values. None (the default) rebases every band the artifact carries, the
+    # ERCOT-118 behaviour. Grounding (FINDING-ercot118-gas-rebasis-2026-07-27
+    # §4.2): the per-year peak(B) p50 (2.546/3.501/2.629) is structurally
+    # smaller than the pooled 4.326 — a within-year top-of-curve max is NOT
+    # the 3-year always-posted standing wall — so repricing the CC peak band
+    # to it deflates the sub-$200 scarcity wall (C3c 72→49, 13→3); the econ
+    # bands' per-year rebasis is the measured fix, the peak leg is the breach.
+    # With a scope set, the per-class ``margin_anchor`` threading becomes
+    # band-scoped too (``margin_anchor_<band>`` keys, resolved per tranche by
+    # ``offer_curves.band_margin_anchor``): each REBASED band's markup is
+    # priced at the year's EP identification anchor while every un-rebased
+    # band keeps the ISO window anchor its multiplier was identified at —
+    # every band's (mult, anchor) pair stays on one basis (the ERCOT-118
+    # pre-commit §3 principle, now per band). Unknown band names hard-fail in
+    # ``apply_ercot_dam_hrmult_ep_rebasis`` (rule 25 — never a silent no-op).
+    # Registered in ``_CACHE_KEY_OPTIONAL_FIELDS`` — byte-identical at its
+    # default; a scoped run enters the cache key as a distinct scenario.
+    ercot_offer_hrmult_ep_rebasis_bands: list[str] | None = None
 
     def __post_init__(self) -> None:
         if self.mode not in ("forecast", "backcast"):

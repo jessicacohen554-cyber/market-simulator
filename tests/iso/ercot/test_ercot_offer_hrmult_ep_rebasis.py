@@ -22,6 +22,7 @@ from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.offer_curves import (
     apply_ercot_dam_hrmult_ep_rebasis,
     apply_gas_offer_margin,
+    band_margin_anchor,
 )
 
 ARTIFACT = paths.CALIBRATION_DIR / "offer_curve_dam_hrmults_ep_yearly.json"
@@ -142,6 +143,119 @@ class TestApply:
         assert json.dumps(self.CURVE, sort_keys=True) == before
 
 
+class TestBandScope:
+    """ERCOT-119 leg-split: the ``bands`` scope on the apply function."""
+
+    ECON = ["econ_low", "econ_high"]
+
+    def test_econ_scope_keeps_peak_wall(self):
+        doc = json.loads(ARTIFACT.read_text())
+        curve, replaced, anchor = apply_ercot_dam_hrmult_ep_rebasis(
+            TestApply.CURVE, 2024, TestApply.DELTAS, bands=self.ECON
+        )
+        t = doc["2024"]
+        # Econ bands rebased (artifact + delta), exactly as unscoped.
+        assert curve["CC_REGULAR"]["econ_low"] == pytest.approx(
+            t["CC_REGULAR"]["econ_low"] - 0.24
+        )
+        assert curve["CC_REGULAR"]["econ_high"] == pytest.approx(
+            t["CC_REGULAR"]["econ_high"] - 0.13
+        )
+        # Peak (and its delta) untouched: the run's resolved standing wall.
+        assert curve["CC_REGULAR"]["peak"] == TestApply.CURVE["CC_REGULAR"]["peak"]
+        assert curve["CC_CHP"]["peak"] == TestApply.CURVE["CC_CHP"]["peak"]
+        # peak_ladder rungs NOT re-stamped (peak out of scope).
+        assert (
+            curve["CC_REGULAR"]["peak_ladder"]
+            == TestApply.CURVE["CC_REGULAR"]["peak_ladder"]
+        )
+        # committed keeps the keeper's resolved value; non-rebased classes
+        # byte-identical.
+        assert curve["CC_REGULAR"]["committed"] == 0.998
+        assert curve["CT_PEAKER"] == TestApply.CURVE["CT_PEAKER"]
+        # 2 bands x 2 classes audited.
+        assert len(replaced) == 4
+        assert {b for _, b, _, _ in replaced} == set(self.ECON)
+        # Anchor threading is band-scoped: no class-wide margin_anchor, no
+        # peak anchor — the un-rebased peak markup stays on the window anchor.
+        for cls in CLASSES:
+            assert "margin_anchor" not in curve[cls]
+            assert "margin_anchor_peak" not in curve[cls]
+            assert curve[cls]["margin_anchor_econ_low"] == pytest.approx(anchor)
+            assert curve[cls]["margin_anchor_econ_high"] == pytest.approx(anchor)
+
+    def test_peak_scope_restamps_ladder(self):
+        doc = json.loads(ARTIFACT.read_text())
+        curve, replaced, _ = apply_ercot_dam_hrmult_ep_rebasis(
+            TestApply.CURVE, 2023, TestApply.DELTAS, bands=["peak"]
+        )
+        new_pk = doc["2023"]["CC_REGULAR"]["peak"] + 0.25
+        assert curve["CC_REGULAR"]["peak"] == pytest.approx(new_pk)
+        assert curve["CC_REGULAR"]["peak_ladder"] == [[0.2, pytest.approx(new_pk)]] * 5
+        # Econ bands untouched.
+        assert (
+            curve["CC_REGULAR"]["econ_low"] == TestApply.CURVE["CC_REGULAR"]["econ_low"]
+        )
+        assert len(replaced) == 2
+        assert "margin_anchor" not in curve["CC_REGULAR"]
+        assert "margin_anchor_peak" in curve["CC_REGULAR"]
+
+    def test_unknown_band_hard_fails(self):
+        with pytest.raises(ValueError, match="not in the 2024 artifact"):
+            apply_ercot_dam_hrmult_ep_rebasis(
+                TestApply.CURVE, 2024, None, bands=["econ_low", "commited"]
+            )
+
+    def test_none_scope_is_ercot118_byte_identical(self):
+        unscoped, r1, a1 = apply_ercot_dam_hrmult_ep_rebasis(
+            TestApply.CURVE, 2025, TestApply.DELTAS
+        )
+        explicit, r2, a2 = apply_ercot_dam_hrmult_ep_rebasis(
+            TestApply.CURVE, 2025, TestApply.DELTAS, bands=None
+        )
+        assert json.dumps(unscoped, sort_keys=True) == json.dumps(
+            explicit, sort_keys=True
+        )
+        assert r1 == r2 and a1 == a2
+
+
+class TestBandMarginAnchor:
+    """Per-tranche anchor resolution against band-scoped and class-wide keys."""
+
+    SCOPED = {
+        "margin_anchor_econ_low": 2.1067,
+        "margin_anchor_econ_high": 2.1067,
+    }
+    CLASSWIDE = {"margin_anchor": 3.0655}
+
+    def test_scoped_keys_resolve_by_suffix(self):
+        assert band_margin_anchor("econlo", self.SCOPED) == pytest.approx(2.1067)
+        assert band_margin_anchor("econhi", self.SCOPED) == pytest.approx(2.1067)
+        # Smoothing slices interpolate along the lo->hi ramp: both endpoint
+        # anchors present -> the shared anchor.
+        assert band_margin_anchor("econc50", self.SCOPED) == pytest.approx(2.1067)
+        # Out-of-scope bands fall through to the window anchor (None).
+        assert band_margin_anchor("peak", self.SCOPED) is None
+        assert band_margin_anchor("peak_l3", self.SCOPED) is None
+        assert band_margin_anchor("committed", self.SCOPED) is None
+
+    def test_econ_slice_requires_both_endpoints(self):
+        only_hi = {"margin_anchor_econ_high": 2.1067}
+        assert band_margin_anchor("econc50", only_hi) is None
+        assert band_margin_anchor("econhi", only_hi) == pytest.approx(2.1067)
+
+    def test_classwide_fallback_and_absence(self):
+        for sfx in ("econlo", "econhi", "econc25", "peak", "peak_l1", "committed"):
+            assert band_margin_anchor(sfx, self.CLASSWIDE) == pytest.approx(3.0655)
+            assert band_margin_anchor(sfx, {}) is None
+
+    def test_scoped_key_precedes_classwide(self):
+        offer = {**self.CLASSWIDE, **self.SCOPED}
+        assert band_margin_anchor("econhi", offer) == pytest.approx(2.1067)
+        # peak has no scoped key -> class-wide fallback.
+        assert band_margin_anchor("peak", offer) == pytest.approx(3.0655)
+
+
 class TestScoping:
     def test_default_off_and_cache_neutral(self):
         cfg = ScenarioConfig()
@@ -155,6 +269,28 @@ class TestScoping:
 
         assert "ercot_offer_hrmult_ep_rebasis" in _CACHE_KEY_OPTIONAL_FIELDS
 
+    def test_bands_default_none_and_cache_neutral(self):
+        # ERCOT-119: the band scope defaults to None (all artifact bands) and
+        # is cache-neutral at that default; a scoped run — and a scoped run
+        # vs the unscoped armed run — enters as a distinct scenario.
+        cfg = ScenarioConfig()
+        assert cfg.ercot_offer_hrmult_ep_rebasis_bands is None
+        base_key = cfg.cache_key()
+        assert (
+            cfg.with_overrides(
+                ercot_offer_hrmult_ep_rebasis_bands=["econ_low", "econ_high"]
+            ).cache_key()
+            != base_key
+        )
+        armed = cfg.with_overrides(ercot_offer_hrmult_ep_rebasis=True)
+        scoped = armed.with_overrides(
+            ercot_offer_hrmult_ep_rebasis_bands=["econ_low", "econ_high"]
+        )
+        assert scoped.cache_key() != armed.cache_key()
+        from market_sim.config.scenarios import _CACHE_KEY_OPTIONAL_FIELDS
+
+        assert "ercot_offer_hrmult_ep_rebasis_bands" in _CACHE_KEY_OPTIONAL_FIELDS
+
     def test_run_year_kwarg_is_tristate(self):
         import inspect
         import sys
@@ -164,29 +300,39 @@ class TestScoping:
         import run_calibration_full as rcf
 
         for fn in (rc.run_year, rcf.solve_and_persist):
-            p = inspect.signature(fn).parameters["ercot_offer_hrmult_ep_rebasis"]
-            assert p.default is None, (
-                "tri-state None default (the ercot-115 seam lesson: a False "
-                "default would pass an explicit scrub on every invocation)"
-            )
+            for name in (
+                "ercot_offer_hrmult_ep_rebasis",
+                "ercot_offer_hrmult_ep_rebasis_bands",
+            ):
+                p = inspect.signature(fn).parameters[name]
+                assert p.default is None, (
+                    "tri-state None default (the ercot-115 seam lesson: a "
+                    "non-None default would pass an explicit scrub on every "
+                    "invocation)"
+                )
 
     def test_cli_default_is_none(self):
         # The hand-written run_calibration_full argparse must carry default
-        # None for the flag (tri-state; the --no- form still forces it off).
+        # None for the flag (tri-state; the --no- form still forces it off)
+        # and for the ERCOT-119 band-scope flag.
         import ast
 
         src = (
             Path(__file__).resolve().parents[3] / "scripts/run_calibration_full.py"
         ).read_text()
         tree = ast.parse(src)
-        found = False
+        found = set()
+        flags = {
+            "--ercot-offer-hrmult-ep-rebasis",
+            "--ercot-offer-hrmult-ep-rebasis-bands",
+        }
         for node in ast.walk(tree):
             if (
                 isinstance(node, ast.Call)
                 and getattr(node.func, "attr", "") == "add_argument"
                 and node.args
                 and isinstance(node.args[0], ast.Constant)
-                and node.args[0].value == "--ercot-offer-hrmult-ep-rebasis"
+                and node.args[0].value in flags
             ):
                 for kw in node.keywords:
                     if kw.arg == "default":
@@ -194,8 +340,8 @@ class TestScoping:
                             isinstance(kw.value, ast.Constant)
                             and kw.value.value is None
                         )
-                        found = True
-        assert found
+                        found.add(node.args[0].value)
+        assert found == flags
 
 
 class _Gen:
