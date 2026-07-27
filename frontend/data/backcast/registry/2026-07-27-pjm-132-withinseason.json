@@ -1,0 +1,13 @@
+{
+  "id": "2026-07-27-pjm-132-withinseason",
+  "label": "pjm 132 withinseason",
+  "date": "2026-07-27",
+  "shorthand": "pjm-132-withinseason",
+  "definition": "(PROBE \u2014 REJECTED, pre-registered refutation) Keeper recipe + WITHIN-SEASON mid-curve tightness conditioning (owner-authorized 2026-07-27 re-conditioning memo; ScenarioConfig.pjm_offer_surface_within_season, default-off). Stage-1 K1 gradient PASSED 3/3 years on bids (+0.997 / +0.437 / +0.125), but the price effect is inert: vs the pjm-132 control, C3a-2025 moves -0.011 $/MWh against a -4.54 gap, and hourly dispersion (p90-p10) NARROWS in 2023 (-0.045) and 2024 (-0.144). Memo section 4's PASS signature required the 2025 gain to be carried by the tight strata with dispersion widening toward actual; neither holds. Lane 2's measured-offer-surface family has now been tried as a dispersion lever under BOTH conditioning definitions.",
+  "years": [
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-27-pjm-132-withinseason.js",
+  "bundle": "results/calibration/pjm132_withinseason_B"
+}
