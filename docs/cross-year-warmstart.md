@@ -360,5 +360,27 @@ current.
   decision at ERCOT full-horizon scale — not that invariance is proven by
   construction.
 
+**Multi-ISO follow-through (2026-07-27).** The flip is default-ON for every ISO,
+so the ERCOT-only evidence was extended to the ISOs that exercise the paths
+ERCOT does not have — the CR-1 sloped capacity demand curve and reserve
+co-optimization, i.e. a wider degeneracy surface on exactly the dual channel the
+bullet above leaves open. Result, in full: **all six ISOs pass the 168 h
+pre-screen** (capacity trajectory identical, no price/CO2/reserve-margin delta),
+and **three pass at full horizon 2026-2050** — ERCOT above, plus NEISO
+(`lw_price` 1.5e-05 the only residual) and NYISO (every quantity 0.000e+00),
+both with the §2.1a capacity-market clearing ON in both arms. The warm start was
+verified to actually install a basis in every ISO rather than assumed
+(`attempts=3 installed=3` warm vs `attempts=0` cold,
+`scripts/probes/_d9_warmstart_spy.py`).
+
+CAISO/PJM/MISO were **not** completed at full horizon — stopped by owner call at
+three ISOs. The default is unchanged. The reasoning behind stopping matters more
+than the missing runs: horizon length is not the informative variable for this
+question — warm start reaches the forecast only by tipping a discrete
+retire/keep threshold, so what bounds it is the dual noise measured against each
+unit's distance to its threshold, not the number of years solved. Full record,
+including the margin analysis that would actually bound it:
+`docs/handoffs/wallclock-baseline-2026-07.md` §H3b.
+
 Full experiment record, including the wall-clock table and the contention
 caveat: `docs/handoffs/wallclock-baseline-2026-07.md` §H3/Exp 5.

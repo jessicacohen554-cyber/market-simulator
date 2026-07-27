@@ -445,19 +445,29 @@ that the basis remap costs about what it saves — ERCOT's own 168 h pre-screen 
 |---|---|---|---|---|---|---|
 | NEISO | **FLIP-CLEAR** | identical, all 25 years | `lw_price` 1.5e-05 (2035) | 2,473.3 s → 1,350.6 s (**1.83×**) | 1.72× (2026-2043) | 4.02 → 4.20 GB |
 | NYISO | **FLIP-CLEAR** | identical, all 25 years | none — every quantity 0.000e+00 | 2,083.8 s → 1,110.5 s (**1.88×**) | 1.54× (2026-2036) | 3.24 → 4.23 GB |
+| CAISO | **no verdict** — cold arm stopped at 22/25 years (below) | — | — | warm arm 7,346.6 s (122.4 min), 25 years | — | warm 8.71 GB |
+| PJM | **not run** (below) | — | — | — | — | — |
+| MISO | **not run** (below) | — | — | — | — | — |
 
-Per ISO, every quantity in the guardrail set — `total_cap_mw`, `thermal_mw`, `firm_clean_mw`,
-`vre_mw`, `storage_mw`, `builds_thermal_mw`, `builds_renew_mw`, `builds_storage_mw`, `retire_mw`,
-per-fuel `capacity_by_fuel_mw`, plus `peak_demand_mw`, `reserve_margin` and `max_hourly_price` — is
-**0.000e+00** in all 25 years. I1-I14 invariant statuses are identical between the arms in both
-ISOs (NEISO 3 FAIL / 2 WARN, NYISO 2 FAIL / 3 WARN, same ids, same years); the detail strings differ
-only where they embed a figure that moves in its last digit, and on I1, whose text carries the LP
-feasibility residual (NEISO 8.6e-10 cold vs 4.7e-10 warm, against a tolerance of 1.0).
+For the two ISOs that completed, every quantity in the guardrail set — `total_cap_mw`,
+`thermal_mw`, `firm_clean_mw`, `vre_mw`, `storage_mw`, `builds_thermal_mw`, `builds_renew_mw`,
+`builds_storage_mw`, `retire_mw`, per-fuel `capacity_by_fuel_mw`, plus `peak_demand_mw`,
+`reserve_margin` and `max_hourly_price` — is **0.000e+00** in all 25 years. I1-I14 invariant
+statuses are identical between the arms in both ISOs (NEISO 3 FAIL / 2 WARN, NYISO 2 FAIL / 3 WARN,
+same ids, same years); the detail strings differ only where they embed a figure that moves in its
+last digit, and on I1, whose text carries the LP feasibility residual (NEISO 8.6e-10 cold vs
+4.7e-10 warm, against a tolerance of 1.0).
 
-NYISO is the stronger of the two: it is identical on `lw_price` and `co2_mt` as well, i.e. not even
-the dual-noise residual ERCOT and NEISO show. NEISO's 1.5e-05 on the annual load-weighted price is
-the same marginal-tie / dual-degeneracy channel §H3 describes, three orders of magnitude inside the
-5 % load-weighted-price band `scripts/golden_forecast_bands.py` checks the forecast golden against.
+Note what those FAIL counts mean for the reading: these ISOs' forecasts do **not** pass their own
+invariants. That does not invalidate the guardrail — it is a *neutrality* test, and a
+wrong-but-identical trajectory answers it exactly as well as a right one; the invariants failing
+**identically in both arms** is itself part of the evidence. But nothing here should be read as
+saying these ISOs' forecasts are good.
+
+NYISO is the stronger of the two: identical on `lw_price` and `co2_mt` as well, i.e. not even the
+dual-noise residual ERCOT and NEISO show. NEISO's 1.5e-05 on the annual load-weighted price is the
+same marginal-tie / dual-degeneracy channel §H3 describes, three orders of magnitude inside the 5 %
+load-weighted-price band `scripts/golden_forecast_bands.py` checks the forecast golden against.
 
 **On the two wall-clock columns.** The arms are launched together but do not finish together — the
 warm arm ends first and the cold arm's remaining years then run on a free box, which biases the cold
@@ -467,6 +477,42 @@ the comparison to the leading years during which both arms were genuinely compet
 contention is not what produces the result; NYISO's window is shorter and its restricted number
 correspondingly softer (1.54×), which is a property of where the arms happened to cross, not of the
 warm start.
+
+**Operational note (memory).** CAISO's warm arm peaked at **8.71 GB** — roughly double NEISO/NYISO,
+and enough that two CAISO arms side by side would not fit the 15 GB box. Anyone repeating this for
+PJM or MISO should assume the same and run the arms sequentially; the "Operational note — memory"
+section's OOM warning applies to same-ISO arm pairs, not just to two different co-opt ISOs.
+
+### Stopped at three ISOs — owner call, 2026-07-27
+
+**CAISO's cold arm was stopped at 22/25 years and PJM/MISO were never launched** (owner:
+"3 ISOs is enough evidence for now"). The default is **unchanged** —
+`ScenarioConfig.forecast_xyear_warmstart` stays `True`, `cache_key` unmoved at
+`edbc1b103207170a`. The evidence base for it is now **three ISOs at full horizon**
+(ERCOT §H3, NEISO, NYISO) plus **all six at the 168 h pre-screen**, rather than the five-of-five
+this session set out to produce.
+
+Recorded so it is not re-run, and because the methodological objection behind the stop is correct
+and should govern any resumption:
+
+* **Horizon length is the wrong lever for this question.** An LP's optimum is basis-independent by
+  construction, so warm start cannot change the objective. Its only route into the forecast is
+  degenerate alternate optima → the screen reads a dual that differs → a discrete retire/keep flips
+  → the next year's fleet differs. Whether that fires is a property of how close a unit sits to its
+  threshold relative to the dual noise — **not** of how many years are solved. A 25-year run buys
+  more draws at the lottery, bounds nothing, and says nothing about year 26. Two full-horizon ISOs
+  and their own 168 h pre-screens agreed exactly, which is the expected result if the horizon is
+  not the informative variable.
+* **The measurement that would actually bound it** — not run, and the natural resumption point —
+  is a margin analysis rather than another solve: (1) the dual noise warm start injects (already
+  known: ~1e-5 relative on annual load-weighted price; H2 measured 6.8e-2 $/MWh on 30 of 61,320
+  zone-hours at the hourly level), against (2) the distribution of each unit's distance to its
+  retire/keep threshold in $/MW-yr, read out of years already solved. If the nearest unit sits
+  orders of magnitude outside the noise band, the verdict holds at any horizon; if any unit sits
+  inside it, that is the finding, and it would surface in year 2 as readily as year 24. (2) is the
+  half nobody has measured, on ERCOT either.
+* Probe arms live in the gitignored `results/d9-ab/`; the CAISO partial (22 cold years, 25 warm) is
+  there but carries no verdict and must not be quoted as one.
 
 ## H4 — `results_write` sub-instrumentation (refactor-consolidation plan §7-H4)
 
