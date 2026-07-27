@@ -153,6 +153,72 @@ def pjm_eastern_interface_hourly(year: int, hours: int) -> np.ndarray:
     return np.maximum(out, 0.0)
 
 
+#: The Manual-03 AP SOUTH reactive transfer interface series. PJM posts it as
+#: pre- AND post-contingency limits; both are simultaneously-enforced security
+#: limits, so the operative hourly capability is their elementwise MIN — the
+#: same convention :func:`pjm_interface_ttc_hourly` applies to the per-link
+#: overlay (``constants.PJM_INTERFACE_LINK_MAP`` maps West_APS→SWMAAC to this
+#: same pair).
+PJM_APSOUTH_INTERFACE_SERIES: tuple[str, ...] = (
+    "AP-South Pre-Contingency",
+    "AP-South Post-Contingency",
+)
+
+
+def pjm_apsouth_interface_hourly(year: int, hours: int) -> np.ndarray:
+    """The measured western→MAD joint cut hourly limit (``pjm_apsouth_interface_cut``).
+
+    Returns the ``(hours,)`` AP-South published limit — the elementwise min of
+    the pre- and post-contingency postings — as the joint cap for the
+    West_APS→SWMAAC + West_APS→Dominion link pair. ``constants.py``'s own
+    ``PJM_INTERFACE_LINK_MAP`` note records why the pair, not one link, is the
+    faithful reading: *"AP-South is the aggregate western→MAD 500 kV flowgate,
+    one of several parallel paths this 8-zone mesh splits across
+    West_APS→SWMAAC and West_APS→Dominion"*. Applying it per-link to the seeded
+    link alone leaves the parallel path on a 3,000 MW static, so the LP's
+    west→MAD capability is ``AP-South(t) + 3,000`` — roughly 1.8× the published
+    flowgate, all of the excess Dominion-facing
+    (``FINDING-pjm134-dominion-zonal-inversion-2026-07-27.md`` §4).
+
+    Uncovered hours ride ``+inf`` so the group row is simply non-binding there
+    rather than inventing a static joint rating; non-positive published limits
+    clamp to 0 (no secure transfer), never a negative bound that would FORCE
+    counterflow. Same contract as :func:`pjm_eastern_interface_hourly`.
+
+    RAISES rather than returning ``None`` when the input is missing (pjm-119):
+    this function is only reached from a site already gated on
+    ``ScenarioConfig.pjm_apsouth_interface_cut``, so an absent partition is a
+    misconfiguration, not a modelling choice — and a mechanism the recorded
+    config and the DOF ledger both claim must never silently no-op.
+
+    Raises:
+        FileNotFoundError: No clean partition for ``year``, or the partition
+            carries neither AP-South series.
+    """
+    frame = load_interface_hourly("PJM", year)
+    if frame is None or frame.empty:
+        raise FileNotFoundError(
+            f"pjm_apsouth_interface_cut {year}: no transfer-interface-limits "
+            "clean partition — run scripts/regenerate_clean.py "
+            "transfer-interface-limits (the mechanism never silently no-ops)"
+        )
+    stack = [
+        series
+        for name in PJM_APSOUTH_INTERFACE_SERIES
+        if (series := _series_hourly(frame, name, hours)) is not None
+    ]
+    if not stack:
+        raise FileNotFoundError(
+            f"pjm_apsouth_interface_cut {year}: the transfer-interface-limits "
+            f"clean partition carries none of {PJM_APSOUTH_INTERFACE_SERIES} "
+            "— run scripts/regenerate_clean.py transfer-interface-limits "
+            "(the mechanism never silently no-ops)"
+        )
+    measured = np.nanmin(np.vstack(stack), axis=0)
+    out = np.where(np.isnan(measured), np.inf, measured)
+    return np.maximum(out, 0.0)
+
+
 def pjm_interface_ttc_hourly(
     ttc: np.ndarray, iso_config, year: int, hours: int
 ) -> tuple[np.ndarray, np.ndarray]:

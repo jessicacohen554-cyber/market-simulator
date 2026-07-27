@@ -6975,6 +6975,38 @@ class ScenarioConfig:
     # seeds). Off by default; byte-identical off.
     pjm_east_interface_cut: bool = False
 
+    # PJM measured AP-SOUTH interface cut (backcast/calibration overlay,
+    # pjm-134 — results/calibration/FINDING-pjm134-dominion-zonal-inversion-
+    # 2026-07-27.md §4). The western→MAD twin of pjm_east_interface_cut, and
+    # the same construction: ONE one-sided aggregate interface-group row per
+    # hour caps the JOINT eastward flow
+    # Flow(West_APS->SWMAAC) + Flow(West_APS->Dominion) at the hour's measured
+    # AP-South transfer limit (elementwise min of the pre- and post-contingency
+    # postings, both simultaneously-enforced security limits).
+    #
+    # Rule 19 [R-ONE-MECH] — this REPLACES a misalignment constants.py already
+    # flags in its own PJM_INTERFACE_LINK_MAP note, it does not stack on it:
+    # "AP-South is the aggregate western→MAD 500 kV flowgate, one of several
+    # parallel paths this 8-zone mesh splits across West_APS->SWMAAC and
+    # West_APS->Dominion", yet the per-link overlay applies it to
+    # West_APS->SWMAAC alone while the parallel West_APS->Dominion path rides a
+    # 3,000 MW static. The LP's west→MAD capability is therefore
+    # AP-South(t) + 3,000 MW ≈ 6,900 against a published ~3,900 flowgate, and
+    # every megawatt of the excess is Dominion-facing. The joint cap dominates
+    # the surviving per-link bound (a sum under the limit implies each term is),
+    # so the per-link overlay becomes redundant rather than additive.
+    #
+    # Measured (pjm-134 §2): the keeper's PJM clears as a copper-plate —
+    # Dominion sits at its neighbours' dual in 100.0 % of 26,280 hours, while
+    # PJM's own DA congestion separates DOM from AEP-DAYTON by >$1 in ~50-63 %
+    # of hours. Reverse (westward) flow keeps the per-link TTCs. Zero fitted
+    # scalars: the cap is the published hourly series verbatim, from the same
+    # transfer-interface-limits clean partition. Same rule #13/#14
+    # admissibility and two-track construction as pjm_measured_interface_limits
+    # (forecast years keep the static seeds). Off by default; byte-identical
+    # off.
+    pjm_apsouth_interface_cut: bool = False
+
     # ERCOT West Texas Export corridor VRE curtailment-share driver
     # (backcast/calibration overlay; docs/handoffs/ercot-vre-curtailment-topology-
     # scope-2026-07.md, WP-B). When True in backcast mode for ERCOT, the West and
@@ -9166,6 +9198,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_gtc_limits_measured": 3,
     "pjm_measured_interface_limits": 3,
     "pjm_east_interface_cut": 3,
+    "pjm_apsouth_interface_cut": 3,
     "ercot_wtx_curtailment_driver": 3,
     "ercot_wind_zone_shape": 3,
     "ercot_wtx_curtail_depth_wind": 3,
