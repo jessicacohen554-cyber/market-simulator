@@ -1171,3 +1171,65 @@ the keeper runs `temp_dependent_derate=False` / `gt_ambient_derate=False` while
 `temp_dependent_derate` refutation is **ERCOT-scoped**, rule 24, and does not bind
 NYISO); (3) import behaviour on regional heat events. Items 2–3 narrow the
 headroom but cannot alone breach the roof.
+
+## 2026-07-27 — nyiso-86: calibration RECONCILED — C1 is a demand-basis wedge plus a CHP miscosting, the interchange shape shares C3c's root cause, and the determination path is two named lanes (no solve)
+
+**No LP was run and the keeper is unchanged** (`2026-07-26-nyiso-81-floor-rederive`,
+NOT-YET). Adjudication session: classify every known defect as gated-failing /
+ungated-but-wrong / by-construction, and state what a calibration-complete
+determination actually requires. Scoring-side only (committed sidecars, bench
+parts, EIA-930/pal/923 actuals, one `run_year(fleet_only=True)` fleet rebuild
+for a heat-rate audit). Full write-up:
+`docs/FINDING-nyiso-calibration-reconciliation-2026-07-27.md`.
+
+**C1 2023 CC_REGULAR −4.11 TWh is NOT a vintage artifact and mostly NOT a
+dispatch defect.** The model serves the EIA-930 NYIS Demand basis — verified
+identical to NYISO's own pal zonal metered load (147.05 vs 147.04 TWh, monthly
+±0.01) — with a lossless LP, while C1 scores against plant-metered EIA-923 +
+tie-metered imports (150.11 TWh in 2023). The **+2.1–2.9 %-of-load basis wedge
+(+3.06/+4.43 TWh in 2023/24) exceeds C1's entire ±2.0 %-of-load band** and is
+absorbed ~100 % by the only free family (gas: −3.16/−4.53), landing on the
+marginal class. 2024 passed only because the wedge split across two classes.
+The registered instrument exists and is off: `td_loss_factor`
+(scenarios.py:4412, keeper 0.0). The residual ~1 TWh of the 2023 cell is
+within-gas misallocation: CC_CHP +1.87 over on steam-credited heat rates —
+the fleet audit finds **27.8 % of NYISO CHP capacity at physically impossible
+power-only HRs** (min 3.82; 209 MW @ 4.84, 325 MW @ 5.16) with NYISO absent
+from `CHP_STEAM_CREDIT_HR_CORRECTION_ISOS` — while CT/ST_CHP under-run with
+no steam-host floor (`thermal_tranches_NYISO.csv` predates WP-3; most
+`chp_pmin_cf` are 0; `chp_steam_floor_p25` unarmed).
+
+**Interchange r ≈ 0.40 decomposed: the monthly pin supplies ALL of it.**
+Within-month hourly r is 0.01/0.13/0.21 (mean of 12 monthly r's); the 2023
+diurnal profile is INVERTED (r −0.43: model imports 3,400–3,500 MW overnight,
+2,090–2,140 at the evening peak; actual is mildly load-following). Cause is
+the C3c root cause seen from the seam: the model's internal diurnal price
+swing is **$7.4/$8.2/$16.5** hod-max-to-min against the real NYISO DA's
+**$22.5/$25.1/$43.3** (PJM: $23.5/$27.9/$41.2), so the hub-priced seam spread
+inverts at the peak (−$2…−$3) and the LP buys its pinned monthly quota
+overnight — the real NYISO−PJM DA spread never inverts. Secondary: the
+4,350 MW `NYISO_simultaneous_import` planning cap is exceeded by the measured
+schedule in 287/314/145 h/yr (max 5,929 MW) — a rule-14 reconcile item.
+**Coupling recorded:** fixing import shape before the §7g-1 roof is
+rule-14-backwards (peak imports depress peak duals; the current peak-starved
+allocation silently flatters C3c).
+
+**Small classes adjudicated:** CT_PEAKER = correctly-windowed floor with
+boxcar edges (model ~0 MW off-window vs a real 58→659 MW smooth ramp) —
+cosmetic, ungated, would score grounded even if material. CT_CHP/ST_CHP
+profile_r (0.13–0.73) is a DEGENERATE statistic on near-flat host-driven
+actual profiles (off-peak CV 0.006–0.114) — do not chase r; the level defects
+are the §4.2 pair above. Nuclear hourly r (0.56–0.82), wind/solar r = 1.0,
+hydro and import levels: by construction (pinned), never quotable as skill.
+2025 hydro −3.06 TWh is a preliminary-vintage artifact in the budget input,
+self-healing at the final vintage.
+
+**Determination:** still NOT-YET; no ledger path exists around either FAIL
+(C3c is a proven model gap per nyiso-85 §7b; C1 is fixable and should be
+fixed, not ledgered). Realistic target = CALIBRATED-WITH-CAVEATS (2025 SKIPs
+cap it), blocked by exactly two lanes: **nyiso-87** (C1 closure:
+td_loss_factor + CHP HR/floor pair, joint probes, LOYO, full-years keeper;
+watch C5a 2025 +8.1 % → +10 % edge) and **§7g-1** (summer-peak offer
+formation above oil parity — the long pole, now also carrying the interchange
+shape payoff; the internal price swing must ~triple before the roof matters).
+SIL reconcile rides along small. Nothing registered on the dashboard (no run).
