@@ -123,6 +123,10 @@ class TestDerivedSolveInputs(unittest.TestCase):
                     "market_sim.data.capacity_deliverability._read",
                     return_value=capdel,
                 ),
+                mock.patch(
+                    "market_sim.data.hydro_modes.load_hydro_shapeable",
+                    return_value={100: True, 200: False},
+                ),
             ):
                 refs = bundle_io.write_derived_solve_inputs("CAISO", run)
 
@@ -130,6 +134,7 @@ class TestDerivedSolveInputs(unittest.TestCase):
             self.assertIn("unit_outages", refs)
             self.assertIn("unit_outages_layup", refs)
             self.assertIn("capacity_deliverability", refs)
+            self.assertIn("hydro_plant_modes", refs)
             self.assertNotIn("unit_outages_short", refs)
             self.assertNotIn("unit_outages_e923", refs)
             # Refs land in the shared store and round-trip through meta.json.
@@ -175,6 +180,10 @@ class TestDerivedSolveInputs(unittest.TestCase):
                 ),
                 mock.patch(
                     "market_sim.data.capacity_deliverability._read",
+                    return_value=None,
+                ),
+                mock.patch(
+                    "market_sim.data.hydro_modes.load_hydro_shapeable",
                     return_value=None,
                 ),
             ):

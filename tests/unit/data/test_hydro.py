@@ -23,6 +23,7 @@ from market_sim.model.dispatch import (
     solve_dispatch,
 )
 from tests.helpers import REPO_ROOT
+from tests.helpers.base import CleanDirTestCase
 
 
 def _hydro_fleet(hours, hydro_pmax=50.0, hydro_pmin=0.0):
@@ -1330,6 +1331,196 @@ class TestHydroMinFlowFloor(unittest.TestCase):
         # Non-thermal forcing: reported by D-2, never counted against a
         # merchant thermal class's forced-share budget.
         self.assertIn(MECH_HYDRO_MIN_FLOW, NON_THERMAL_MECHS)
+
+
+class TestHydroRoRSplit(CleanDirTestCase):
+    """The per-plant run-of-river split (caiso-126, config.hydro_ror_split).
+
+    Plants the external hydro-plant-modes classifier marks non-shapeable
+    dispatch flat at their own monthly water (budget[g,m]/hours[m], min ==
+    availability cap == the flat level, MECH_HYDRO_ROR_FLAT); the min-flow
+    floor reconciles onto the reservoir class only (rule 19 — one family,
+    never stacked).
+    """
+
+    ZONES = ["NP15", "ZP26", "LA_BASIN", "SDGE", "SP15_rest"]
+
+    def setUp(self):
+        # Curate the classifier from the committed raw EHA/HILARRI files into
+        # the redirected (per-test) CLEAN_DIR, so build_hydro_fleet resolves
+        # it without touching the real data/clean tree.
+        super().setUp()
+        from scripts.data.curate_hydro_plant_modes import curate
+
+        curate(isos=["CAISO"])
+
+    def test_split_off_is_inert(self):
+        from market_sim.data.hydro import build_hydro_fleet
+
+        off_units, off_energy = build_hydro_fleet("CAISO", 2023, self.ZONES)
+        on_units, on_energy = build_hydro_fleet(
+            "CAISO", 2023, self.ZONES, ror_split=True
+        )
+        np.testing.assert_array_equal(off_energy, on_energy)
+        self.assertEqual(len(off_units), len(on_units))
+        self.assertTrue(
+            all(u.hydro_ror_flat_monthly_mw is None for u in off_units),
+            msg="default-off path must stamp no unit",
+        )
+        self.assertTrue(any(u.hydro_ror_flat_monthly_mw is not None for u in on_units))
+
+    def test_split_stamps_ror_at_its_own_flat_budget(self):
+        from market_sim.data.hydro import build_hydro_fleet
+        from market_sim.data.hydro_modes import load_hydro_shapeable
+
+        units, energy = build_hydro_fleet("CAISO", 2023, self.ZONES, ror_split=True)
+        modes = load_hydro_shapeable("CAISO")
+        hpm = hours_per_month().astype(float)
+        n_ror = 0
+        for i, u in enumerate(units):
+            flat = u.hydro_ror_flat_monthly_mw
+            if modes.get(int(u.plant_code)) is False:
+                n_ror += 1
+                self.assertIsNotNone(flat)
+                # The level is the plant's OWN budget spread flat, clipped
+                # only by nameplate (a few small wet-year plant-months trip
+                # the clip when the EIA-930-pinned budget exceeds
+                # nameplate-hours — a source-data inconsistency, logged).
+                np.testing.assert_allclose(
+                    np.asarray(flat),
+                    np.minimum(energy[i] / hpm, u.pmax_mw),
+                    rtol=1e-12,
+                )
+                self.assertLessEqual(max(flat), u.pmax_mw + 1e-6)
+            else:
+                self.assertIsNone(flat)
+        self.assertGreater(n_ror, 0)
+        # Energy-weighted, the CAISO RoR class is a minority of the budget
+        # (the caiso-126 finding: ~9-13 %, count-weighted ~40 %).
+        ror_share = (
+            sum(
+                energy[i].sum()
+                for i, u in enumerate(units)
+                if u.hydro_ror_flat_monthly_mw is not None
+            )
+            / energy.sum()
+        )
+        self.assertGreater(ror_share, 0.02)
+        self.assertLess(ror_share, 0.5)
+
+    def test_reconciled_floor_never_stacks_and_preserves_the_q95_total(self):
+        from market_sim.data.eia_loader import measured_hydro_min_flow_level
+        from market_sim.data.hydro import build_hydro_fleet
+
+        units, energy = build_hydro_fleet(
+            "CAISO", 2023, self.ZONES, min_flow_floor=True, ror_split=True
+        )
+        hpm = hours_per_month().astype(float)
+        level = measured_hydro_min_flow_level("CAISO", 2023)
+        ror = np.array([u.hydro_ror_flat_monthly_mw is not None for u in units])
+        # Rule 19: no unit carries both stamps.
+        for u in units:
+            self.assertFalse(
+                u.hydro_ror_flat_monthly_mw is not None
+                and u.hydro_min_flow_monthly_mw is not None,
+                msg=f"{u.unit_id} carries both the RoR flat and the floor",
+            )
+        # The reservoir-class floor plus the RoR flat base reproduces the
+        # frozen fleet Q95 level exactly wherever the level exceeds the base
+        # (the allocator feasibility clip can only lower it further).
+        ror_base = np.array(
+            [u.hydro_ror_flat_monthly_mw for u in np.array(units)[ror]], dtype=float
+        ).sum(axis=0)
+        floors = np.array(
+            [
+                u.hydro_min_flow_monthly_mw
+                for u in np.array(units)[~ror]
+                if u.hydro_min_flow_monthly_mw is not None
+            ],
+            dtype=float,
+        ).sum(axis=0)
+        fleet_cap = energy[~ror].sum(axis=0) / hpm  # allocator clip bound
+        expect = np.minimum(np.clip(level - ror_base, 0.0, None), fleet_cap)
+        np.testing.assert_allclose(floors, expect, rtol=1e-9, atol=1e-6)
+        # And each reservoir plant-month floor stays inside its own budget.
+        for i, u in enumerate(units):
+            if u.hydro_min_flow_monthly_mw is not None:
+                self.assertTrue(
+                    np.all(
+                        np.asarray(u.hydro_min_flow_monthly_mw) * hpm
+                        <= energy[i] + 1e-6
+                    )
+                )
+
+    def test_min_gen_and_availability_fix_dispatch_at_the_flat_level(self):
+        from market_sim.data.fleet import _hour_to_month_index
+        from market_sim.data.floor_mechanisms import MECH_HYDRO_ROR_FLAT
+
+        hours = 8760
+        hydro = Generator(
+            unit_id="H0",
+            name="H0",
+            zone="Z",
+            fuel_type="hydro",
+            pmax_mw=50.0,
+            eford=0.0,
+        )
+        # 30 MW flat in January, off the rest of the year (zero budget).
+        hydro.hydro_ror_flat_monthly_mw = tuple([30.0] + [0.0] * 11)
+        thermal = Generator(
+            unit_id="C0",
+            name="C0",
+            zone="Z",
+            fuel_type="gas_cc",
+            pmax_mw=50.0,
+            eford=0.0,
+        )
+        fa = generators_to_fleet_arrays([hydro, thermal], ["Z"], hours=hours)
+        jan = _hour_to_month_index(hours) == 0
+        # min == pmax x availability == the flat level: dispatch is FIXED.
+        np.testing.assert_allclose(fa.min_gen[0, jan], 30.0)
+        np.testing.assert_allclose(fa.availability[0, jan] * 50.0, 30.0)
+        np.testing.assert_allclose(fa.availability[0, ~jan], 0.0)
+        self.assertTrue(np.all(fa.min_gen_mechanism[0, jan] == MECH_HYDRO_ROR_FLAT))
+        # Thermal untouched.
+        np.testing.assert_allclose(fa.min_gen[1:], 0.0)
+        np.testing.assert_allclose(fa.availability[1], 1.0)
+
+    def test_missing_classifier_leaves_fleet_shapeable(self):
+        # Point CLEAN_DIR at an empty tree: the gate arms but no partition
+        # exists — the loader returns None and the fleet stays shapeable.
+        import shutil
+
+        from market_sim.data.hydro import build_hydro_fleet
+
+        shutil.rmtree(self.clean_dir / "hydro-plant-modes")
+        units, _ = build_hydro_fleet("CAISO", 2023, self.ZONES, ror_split=True)
+        self.assertTrue(all(u.hydro_ror_flat_monthly_mw is None for u in units))
+
+    def test_d4_window_declared_all_hours(self):
+        import sys
+
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        import legitimacy_diagnostics as ld
+        from market_sim.data.floor_mechanisms import MECH_HYDRO_ROR_FLAT
+
+        self.assertEqual(ld.D4_WINDOWS[(MECH_HYDRO_ROR_FLAT, None)], (0, 24))
+
+    def test_ablation_registry_classifies_the_mechanism(self):
+        from market_sim.data.floor_mechanisms import (
+            MECH_ABLATION_FIELDS,
+            MECH_HYDRO_ROR_FLAT,
+            MECH_NAMES,
+            NON_THERMAL_MECHS,
+            assert_ablation_coverage,
+        )
+
+        assert_ablation_coverage()
+        self.assertIn(MECH_HYDRO_ROR_FLAT, MECH_NAMES)
+        self.assertIn(MECH_HYDRO_ROR_FLAT, NON_THERMAL_MECHS)
+        self.assertEqual(
+            MECH_ABLATION_FIELDS[MECH_HYDRO_ROR_FLAT], {"hydro_ror_split": False}
+        )
 
 
 if __name__ == "__main__":

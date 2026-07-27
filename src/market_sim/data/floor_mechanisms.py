@@ -96,6 +96,19 @@ MECH_GAS_COMMITMENT_BRIDGE: int = 17
 # Level: data.eia_loader.measured_hydro_min_flow_level (EIA-930 NG:WAT monthly
 # Q95), allocated per plant by data.hydro.allocate_min_flow_floor.
 MECH_HYDRO_MIN_FLOW: int = 18
+# Conventional-hydro run-of-river flat dispatch (ScenarioConfig.hydro_ror_split,
+# caiso-126): plants the external hydro-plant-modes classifier (ORNL EHA Mode +
+# the documented HILARRI/Corps-dam completion — data/clean/hydro-plant-modes)
+# marks NON-shapeable dispatch flat at their own measured monthly water,
+# budget[g,m]/hours[m] — run-of-river/canal output follows inflow and cannot
+# chase price. Implemented as min_gen == pmax x availability == the flat level,
+# so the forced energy is fully visible to D-2/D-4 under this id. NON-THERMAL
+# forcing (water physics, not a commitment decision), same class as
+# MECH_HYDRO_MIN_FLOW. Rule 19: when hydro_min_flow_floor is also on, the
+# reservoir class carries the fleet Q95 level MINUS the RoR flat base (the RoR
+# base subsumes its own share of the floor's driver) — the two mechanisms are
+# one reconciled family, never stacked on the same MWh.
+MECH_HYDRO_ROR_FLAT: int = 19
 
 MECH_NAMES: dict[int, str] = {
     MECH_NONE: "none",
@@ -117,6 +130,7 @@ MECH_NAMES: dict[int, str] = {
     MECH_ST_GAS_MUSTRUN_PER_PLANT: "st_gas_mustrun_per_plant",
     MECH_GAS_COMMITMENT_BRIDGE: "gas_commitment_bridge",
     MECH_HYDRO_MIN_FLOW: "hydro_min_flow",
+    MECH_HYDRO_ROR_FLAT: "hydro_ror_flat",
 }
 
 # Mechanisms whose forced energy is exempt from the D-2 merchant-class gates
@@ -131,7 +145,7 @@ D2_EXEMPT_MECHS: frozenset[int] = frozenset(
 # condition; the hydro min-flow floor is a hydrological/licence obligation on
 # water, not a commitment decision on a thermal merchant unit.
 NON_THERMAL_MECHS: frozenset[int] = frozenset(
-    {MECH_FIRM_IMPORT, MECH_NYISO_SELFSUPPLY, MECH_HYDRO_MIN_FLOW}
+    {MECH_FIRM_IMPORT, MECH_NYISO_SELFSUPPLY, MECH_HYDRO_MIN_FLOW, MECH_HYDRO_ROR_FLAT}
 )
 
 
@@ -174,6 +188,9 @@ MECH_ABLATION_FIELDS: dict[int, dict[str, object]] = {
     # obligation, but it is a NEW mechanism whose forcing must stay visible and
     # switchable rather than joining the protected structural must-run set.
     MECH_HYDRO_MIN_FLOW: {"hydro_min_flow_floor": False},
+    # Same classification and rationale as MECH_HYDRO_MIN_FLOW (the reconciled
+    # family's other half): real water physics, but new and switchable.
+    MECH_HYDRO_ROR_FLAT: {"hydro_ror_split": False},
 }
 
 # Mechanisms KEPT in the ablation twin (carry NO ablation entry): the structural
