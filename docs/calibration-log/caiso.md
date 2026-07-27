@@ -2248,3 +2248,87 @@ and remains the funded next delta; the recommended order's item (a) is now
 closed as refuted, so S1 moves to the front.
 
 Next number: caiso-129.
+
+---
+
+## caiso-129 (2026-07-27) — S1 (DA/RT allocation, DISCHARGE side): **KILLED AT THE DERIVE GATES**, no LP solved
+
+**Keeper `2026-07-27-caiso-126-ror-split` UNCHANGED. NO SOLVE, no mechanism
+built, nothing registered.** This is the owner grant executing as written: D3
+was granted as a **hard kill-before-solve** gate and it fired (the caiso-74
+lesson held — the arithmetic refuted the mechanism before any LP was built).
+Full evidence:
+`results/calibration/FINDING-caiso129-s1-discharge-allocation-gates-2026-07-27.md`.
+Instrument (committed): `scripts/probes/_caiso129_s1_gates.py`. The live
+rule-23 derive `scripts/data/derive_caiso_charge_allocation.py` is UNTOUCHED
+and no artifact was regenerated.
+
+### D1 — the statistic exists (PASS)
+
+Discharge side of the same LESR `EN` rows, sign flipped: `da_frac_dis`
+0.7957 / 0.8015 / 0.7782; evening(17-21) share 0.807 / 0.780 / 0.734;
+belly(10-14) exactly 0.000; **overnight(0-6) 0.090 / 0.100 / 0.108**.
+
+### D2 — stability FAILS (kill)
+
+Min pairwise `r` on `alloc_share_dis` = **0.9726** against the ≥ 0.99 gate
+(r(2023,2025) is the miss). The **charge-side control through the identical
+code path passes: 0.9919** (share basis) / **0.9935** (fleet-normalized basis,
+matching FINDING-caiso103 §1A's "≥ 0.994" to rounding) — so the failure is the
+measurement, not the probe's basis. Stated honestly: the **CV limb is
+non-discriminating** (the charge side also exceeds 0.20, at 0.392), so the
+verdict rests on the r limb alone. The instability is a monotone
+fleet-growth drift, not noise: hod 22 share 0.032→0.049→0.071, hod 23
+0.014→0.018→0.040, evening block 0.807→0.780→0.734 — which also removes the
+latest-year-carry forward story on this side.
+
+### D3 — the binding pre-check FAILS structurally (the load-bearing result)
+
+Against the keeper's own committed `hourly/storage_<year>.parquet` li_ion P1
+surface (no replay). Three independent refutations:
+
+1. **Scale-invariant slackness.** Residual overnight allowance =
+   `(1 − da_frac_dis × s_non_overnight) × D[d]` = **0.271 / 0.274 / 0.302 ×
+   D** vs a keeper overnight position of **0.094 / 0.053 / 0.088 × D** — i.e.
+   **2.87× / 5.15× / 3.45× free for ANY day total**, so the refutation does
+   not depend on the keeper's volume. `da_frac_dis` would have to be
+   **0.989 / 1.045 / 1.018** to make the allowance merely *equal* the keeper's
+   own overnight (impossible in two of three years; measured 0.778–0.802).
+2. **Wrong sign.** The measured shape's 9–11 % overnight share makes the floor
+   *force* overnight discharge — binding on **59–77 % of days at hod 0/5/6**,
+   adding **+65 / +146 / +192 MW/h** against a defect needing **151 / 99 /
+   98 MW REMOVED**.
+3. **General form.** A floor can only ADD volume to an hour; the defect is an
+   over-position. This kills the allocation-floor family for this defect, not
+   just this shape — **including an evening-only-scoped variant**, since the
+   allowance in (1) counts only non-overnight floors and is unchanged by
+   dropping the overnight limb.
+
+### What survives
+
+The defect is unchanged and still load-bearing (FINDING-caiso127 §2's pin on
+192/197/276 of 365 days is still the whole compression). Every *shaped*
+instrument in the space is now refuted from one side or the other: floors
+cannot remove (this session), the AS power/SOC upper bounds are slack
+(caiso-74), the p95 cap is 89–95 % slack where the defect lives (caiso-99),
+and the price instruments move volume not position (caiso-100/101). The
+honest remaining diagnosis is the ask's own fallback — **candidate S2, the
+DA/RT two-settlement separation** (the LP's single-market perfect-foresight
+arbitrage itself), which per the memo is a structural change of a different
+size and must be **chartered separately**, not approximated by a shaped floor.
+
+### DO-NOT-REDO (new)
+
+Re-filing S1 in any shaped-floor form (re-derived shape, altered support
+threshold, evening-only scoping, raised `da_frac_dis`); re-measuring the
+discharge allocation statistic or its stability; re-checking whether a floor
+can reduce an over-position (it cannot, by form); treating the D2 CV limb as
+discriminating; regenerating the charge-allocation artifact with discharge
+columns.
+
+The rest of the caiso-127 grant is untouched: the caiso-114 refinement stays
+unfunded as a first delta, `hydro_budget_nameplate_aware` still arms in its
+OWN single-delta A/B, pumped storage stays flagged-not-built. Promotion was
+not granted and the keeper is unchanged.
+
+Next number: caiso-130.
