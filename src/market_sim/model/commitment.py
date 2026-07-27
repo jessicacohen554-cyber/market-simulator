@@ -708,6 +708,7 @@ def caiso_ra_mustoffer_min_gen(
     fuel_types: tuple[str, ...] = ("gas_cc", "gas_ct"),
     max_econ_gap_hours: float | None = None,
     startup_lead_hours: np.ndarray | None = None,
+    min_run_hours: np.ndarray | None = None,
 ) -> np.ndarray:
     """Return the ``(n_gen, T)`` CAISO RA must-offer minimum-load floor.
 
@@ -884,6 +885,28 @@ def caiso_ra_mustoffer_min_gen(
             gap-bridge floors and shares their D-2 attribution
             (``ra_mustoffer_bridge`` — same mechanism, wider physics, rule
             19). ``None`` (default) is byte-identical.
+        min_run_hours: Optional ``(n_gen,)`` integer MINIMUM RUN DURATION —
+            the commitment-drag extension (nyiso-87,
+            ``ScenarioConfig.nyiso_gas_bridge_min_run``). A real unit
+            commitment that starts a unit holds it online for at least its
+            minimum run; the continuous-variable LP honours no run window at
+            all and manufactures runs shorter than any committable block, so
+            it under-runs the belly and peak and buys the difference from the
+            seam. For every detected (and, under ``startup_aware``,
+            commitment-real) run ``[s, e)`` with ``e - s < min_run``, the
+            hours ``[e, s + min_run)`` that the unit was OFF are floored at
+            minimum stable load, and the extended blocks REPLACE the detected
+            runs for the gap-bridge scan below — so an extension reaching the
+            next run closes that gap instead of it being bridged a second time
+            (rule 19). Driver: unit minimum-run physics (the
+            ``COMMITMENT_PARAMS_BY_FUEL`` class tables, NREL/SR-5500-55433, or
+            a measured per-class run-length identification); window: the hours
+            immediately following the detector's own run-starts; forward
+            story: regenerates from the model's own P0 run pattern and a
+            physical constant (rule 12 [R-FLOOR-WINDOW]). Composes by maximum
+            with the gap-bridge and startup-trajectory floors and shares their
+            D-2 attribution — same mechanism, wider physics. ``None``
+            (default) is byte-identical.
 
     Returns:
         The ``(n_gen, T)`` min-load floor; all-zero (a no-op) when
@@ -980,6 +1003,35 @@ def caiso_ra_mustoffer_min_gen(
         )
         target_mw = min(min_load_frac * floor_pmax, pmax[g])
         zone = int(zone_idx[g])
+        # MINIMUM-RUN EXTENSION (nyiso-87, ``min_run_hours``): a started unit
+        # must stay online for at least its minimum run duration. The LP,
+        # ramping a continuous variable, pays no startup and honours no run
+        # window, so it manufactures runs far shorter than any real commitment.
+        # For every detected run [s, e) shorter than the unit's min-run, the
+        # hours [e, s + min_run) are floored at minimum stable load — the unit
+        # is still committed there — and the extended blocks then become the
+        # run pattern the gap bridges below are computed from, so an extension
+        # that reaches the next run legitimately CLOSES that gap rather than
+        # bridging it twice (rule 19 [R-ONE-MECH]).
+        if min_run_hours is not None:
+            mr = int(min_run_hours[g])
+            if mr > 0:
+                run_mask = np.zeros(T, dtype=bool)
+                for s, e in runs:
+                    run_mask[s:e] = True
+                ext_mask = np.zeros(T, dtype=bool)
+                for s, e in runs:
+                    e_ext = min(max(e, s + mr), T)
+                    if e_ext > e:
+                        ext_mask[e:e_ext] = True
+                # Only hours the unit was OFF are extension hours; an overlap
+                # with a later detected run is that run's own dispatch.
+                ext_mask &= ~run_mask
+                if ext_mask.any():
+                    floor[g, ext_mask] = np.maximum(
+                        floor[g, ext_mask], target_mw * avail[g, ext_mask]
+                    )
+                    runs = find_runs(run_mask | ext_mask)
         # Startup-trajectory lead (caiso-96 WP-1): a unit with a measured
         # start-to-load duration L ramps in over the L hours BEFORE each
         # detected run-start — floor them at the linear ramp-in toward
