@@ -1,0 +1,1398 @@
+{
+ "probe": "guard_falseneg_audit",
+ "seed": 20260727,
+ "placebo_draws": 30,
+ "tight_quartile": 0.75,
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "results": [
+  {
+   "iso": "ERCOT",
+   "anchor": "ERCOT 60-day DAM disclosure rating_mw - live_mw",
+   "anchor_caveat": "DAM offered capacity conflates mechanical unavailability with not-offered (carries some layup itself); a D2 fire here is over-called by construction",
+   "years": {
+    "2023": {
+     "d1_baseline_gwdays": 5494.2,
+     "d1_dropped_gwdays": 1744.9,
+     "d1_dropped_share": 0.3176,
+     "d1_by_class": {
+      "CC_CHP": {
+       "baseline_gwd": 423.3,
+       "dropped_gwd": 48.7,
+       "dropped_share": 0.115
+      },
+      "CC_REGULAR": {
+       "baseline_gwd": 2327.2,
+       "dropped_gwd": 482.6,
+       "dropped_share": 0.2074
+      },
+      "COAL": {
+       "baseline_gwd": 1293.2,
+       "dropped_gwd": 241.3,
+       "dropped_share": 0.1866
+      },
+      "CT_CHP": {
+       "baseline_gwd": 44.3,
+       "dropped_gwd": 44.3,
+       "dropped_share": 1.0
+      },
+      "ST_GAS": {
+       "baseline_gwd": 1406.2,
+       "dropped_gwd": 928.0,
+       "dropped_share": 0.66
+      }
+     },
+     "d1_dropped_gwd_by_month": {
+      "1": 284.4,
+      "2": 221.6,
+      "3": 181.6,
+      "4": 144.2,
+      "5": 130.6,
+      "6": 71.9,
+      "7": 44.8,
+      "8": 16.1,
+      "9": 57.5,
+      "10": 156.1,
+      "11": 164.5,
+      "12": 271.5
+     },
+     "d2_r_dropped_vs_outages": 0.073,
+     "d2_r_kept_vs_outages": 0.791,
+     "d2_placebo_p95": 0.722,
+     "d2_placebo_p50": 0.58,
+     "d2_rule": "degraded one-sided: r_out > placebo p95",
+     "d2_fire": false,
+     "d3_tight_share_dropped": 0.1059,
+     "d3_tight_share_kept": 0.0824,
+     "d3_placebo_p95": 0.1127,
+     "d3_placebo_p50": 0.096,
+     "d3_fire": false,
+     "posthoc_placement_null": {
+      "dropped": {
+       "actual": 0.1059,
+       "p5": 0.2496,
+       "p50": 0.2822,
+       "p95": 0.302,
+       "position": "below p5"
+      },
+      "kept": {
+       "actual": 0.0824,
+       "p5": 0.2562,
+       "p50": 0.2822,
+       "p95": 0.3019,
+       "position": "below p5"
+      }
+     }
+    },
+    "2024": {
+     "d1_baseline_gwdays": 5633.0,
+     "d1_dropped_gwdays": 1296.3,
+     "d1_dropped_share": 0.2301,
+     "d1_by_class": {
+      "CC_CHP": {
+       "baseline_gwd": 304.8,
+       "dropped_gwd": 46.1,
+       "dropped_share": 0.1513
+      },
+      "CC_REGULAR": {
+       "baseline_gwd": 2505.3,
+       "dropped_gwd": 566.7,
+       "dropped_share": 0.2262
+      },
+      "COAL": {
+       "baseline_gwd": 1409.9,
+       "dropped_gwd": 90.1,
+       "dropped_share": 0.0639
+      },
+      "CT_CHP": {
+       "baseline_gwd": 53.9,
+       "dropped_gwd": 48.4,
+       "dropped_share": 0.8971
+      },
+      "ST_GAS": {
+       "baseline_gwd": 1359.1,
+       "dropped_gwd": 545.0,
+       "dropped_share": 0.401
+      }
+     },
+     "d1_dropped_gwd_by_month": {
+      "1": 153.9,
+      "2": 210.9,
+      "3": 114.8,
+      "4": 90.3,
+      "5": 43.9,
+      "6": 52.4,
+      "7": 113.9,
+      "8": 40.5,
+      "9": 69.7,
+      "10": 109.7,
+      "11": 129.3,
+      "12": 166.9
+     },
+     "d2_r_dropped_vs_outages": -0.2,
+     "d2_r_kept_vs_outages": 0.815,
+     "d2_placebo_p95": 0.775,
+     "d2_placebo_p50": 0.618,
+     "d2_rule": "degraded one-sided: r_out > placebo p95",
+     "d2_fire": false,
+     "d3_tight_share_dropped": 0.1748,
+     "d3_tight_share_kept": 0.1206,
+     "d3_placebo_p95": 0.1428,
+     "d3_placebo_p50": 0.1311,
+     "d3_fire": true,
+     "posthoc_placement_null": {
+      "dropped": {
+       "actual": 0.1748,
+       "p5": 0.243,
+       "p50": 0.2647,
+       "p95": 0.2949,
+       "position": "below p5"
+      },
+      "kept": {
+       "actual": 0.1206,
+       "p5": 0.252,
+       "p50": 0.2695,
+       "p95": 0.2953,
+       "position": "below p5"
+      }
+     }
+    },
+    "2025": {
+     "d1_baseline_gwdays": 5524.4,
+     "d1_dropped_gwdays": 1173.4,
+     "d1_dropped_share": 0.2124,
+     "d1_by_class": {
+      "CC_CHP": {
+       "baseline_gwd": 334.0,
+       "dropped_gwd": 19.2,
+       "dropped_share": 0.0575
+      },
+      "CC_REGULAR": {
+       "baseline_gwd": 2413.1,
+       "dropped_gwd": 423.6,
+       "dropped_share": 0.1756
+      },
+      "COAL": {
+       "baseline_gwd": 1315.0,
+       "dropped_gwd": 170.3,
+       "dropped_share": 0.1295
+      },
+      "CT_CHP": {
+       "baseline_gwd": 35.5,
+       "dropped_gwd": 35.5,
+       "dropped_share": 1.0
+      },
+      "ST_GAS": {
+       "baseline_gwd": 1426.7,
+       "dropped_gwd": 524.7,
+       "dropped_share": 0.3678
+      }
+     },
+     "d1_dropped_gwd_by_month": {
+      "1": 157.7,
+      "2": 144.3,
+      "3": 110.5,
+      "4": 80.9,
+      "5": 98.0,
+      "6": 80.3,
+      "7": 71.4,
+      "8": 49.7,
+      "9": 66.5,
+      "10": 65.5,
+      "11": 93.1,
+      "12": 155.4
+     },
+     "d2_r_dropped_vs_outages": -0.296,
+     "d2_r_kept_vs_outages": 0.92,
+     "d2_placebo_p95": 0.895,
+     "d2_placebo_p50": 0.762,
+     "d2_rule": "degraded one-sided: r_out > placebo p95",
+     "d2_fire": false,
+     "d3_tight_share_dropped": 0.2025,
+     "d3_tight_share_kept": 0.1502,
+     "d3_placebo_p95": 0.1844,
+     "d3_placebo_p50": 0.1689,
+     "d3_fire": true,
+     "posthoc_placement_null": {
+      "dropped": {
+       "actual": 0.2025,
+       "p5": 0.2406,
+       "p50": 0.2544,
+       "p95": 0.2845,
+       "position": "below p5"
+      },
+      "kept": {
+       "actual": 0.1502,
+       "p5": 0.2411,
+       "p50": 0.2561,
+       "p95": 0.2683,
+       "position": "below p5"
+      }
+     }
+    }
+   },
+   "verdict": "SUSPECT",
+   "verdict_note": "D2 0/3 (clean), D3 2/3 (fires) \u2014 CAVEAT: DAM offered capacity conflates mechanical unavailability with not-offered (carries some layup itself); a D2 fire here is over-called by construction"
+  },
+  {
+   "iso": "CAISO",
+   "anchor": "CAISO CNOG, reviewed crosswalk, revision-aware, active-plant scope",
+   "anchor_caveat": "CNOG's non-operational bucket can itself include long-term economic states; active-plant scope mitigates, not eliminates",
+   "years": {
+    "2023": {
+     "d1_baseline_gwdays": 1771.5,
+     "d1_dropped_gwdays": 317.9,
+     "d1_dropped_share": 0.1794,
+     "d1_by_class": {
+      "CC_CHP": {
+       "baseline_gwd": 174.1,
+       "dropped_gwd": 12.9,
+       "dropped_share": 0.0738
+      },
+      "CC_REGULAR": {
+       "baseline_gwd": 1377.8,
+       "dropped_gwd": 85.5,
+       "dropped_share": 0.062
+      },
+      "ST_GAS": {
+       "baseline_gwd": 219.6,
+       "dropped_gwd": 219.6,
+       "dropped_share": 1.0
+      }
+     },
+     "d1_dropped_gwd_by_month": {
+      "1": 33.2,
+      "2": 30.9,
+      "3": 29.4,
+      "4": 32.9,
+      "5": 36.1,
+      "6": 33.5,
+      "7": 15.4,
+      "8": 15.3,
+      "9": 19.9,
+      "10": 20.2,
+      "11": 20.8,
+      "12": 30.1
+     },
+     "d2_r_dropped_vs_outages": 0.552,
+     "d2_r_kept_vs_outages": 0.783,
+     "d2_placebo_p95": 0.894,
+     "d2_placebo_p50": 0.72,
+     "d2_rule": "degraded one-sided: r_out > placebo p95",
+     "d2_fire": false,
+     "d3_tight_share_dropped": 0.2081,
+     "d3_tight_share_kept": 0.1681,
+     "d3_placebo_p95": 0.1903,
+     "d3_placebo_p50": 0.171,
+     "d3_fire": true,
+     "posthoc_placement_null": {
+      "dropped": {
+       "actual": 0.2081,
+       "p5": 0.2012,
+       "p50": 0.2466,
+       "p95": 0.3027,
+       "position": "inside band"
+      },
+      "kept": {
+       "actual": 0.1681,
+       "p5": 0.233,
+       "p50": 0.2476,
+       "p95": 0.2646,
+       "position": "below p5"
+      }
+     }
+    },
+    "2024": {
+     "d1_baseline_gwdays": 1910.2,
+     "d1_dropped_gwdays": 153.9,
+     "d1_dropped_share": 0.0806,
+     "d1_by_class": {
+      "CC_CHP": {
+       "baseline_gwd": 255.8,
+       "dropped_gwd": 47.7,
+       "dropped_share": 0.1863
+      },
+      "CC_REGULAR": {
+       "baseline_gwd": 1654.5,
+       "dropped_gwd": 106.3,
+       "dropped_share": 0.0642
+      }
+     },
+     "d1_dropped_gwd_by_month": {
+      "1": 13.8,
+      "2": 16.7,
+      "3": 29.6,
+      "4": 20.8,
+      "5": 3.8,
+      "6": 7.0,
+      "7": 5.4,
+      "8": 15.2,
+      "9": 16.4,
+      "10": 5.1,
+      "11": 8.8,
+      "12": 11.3
+     },
+     "d2_r_dropped_vs_outages": 0.575,
+     "d2_r_kept_vs_outages": 0.766,
+     "d2_placebo_p95": 0.874,
+     "d2_placebo_p50": 0.665,
+     "d2_rule": "degraded one-sided: r_out > placebo p95",
+     "d2_fire": false,
+     "d3_tight_share_dropped": 0.1967,
+     "d3_tight_share_kept": 0.1418,
+     "d3_placebo_p95": 0.179,
+     "d3_placebo_p50": 0.1519,
+     "d3_fire": true,
+     "posthoc_placement_null": {
+      "dropped": {
+       "actual": 0.1967,
+       "p5": 0.2243,
+       "p50": 0.2493,
+       "p95": 0.2888,
+       "position": "below p5"
+      },
+      "kept": {
+       "actual": 0.1418,
+       "p5": 0.2285,
+       "p50": 0.2465,
+       "p95": 0.2679,
+       "position": "below p5"
+      }
+     }
+    },
+    "2025": {
+     "d1_baseline_gwdays": 2304.9,
+     "d1_dropped_gwdays": 158.7,
+     "d1_dropped_share": 0.0688,
+     "d1_by_class": {
+      "CC_CHP": {
+       "baseline_gwd": 277.6,
+       "dropped_gwd": 25.9,
+       "dropped_share": 0.0932
+      },
+      "CC_REGULAR": {
+       "baseline_gwd": 2027.3,
+       "dropped_gwd": 132.8,
+       "dropped_share": 0.0655
+      }
+     },
+     "d1_dropped_gwd_by_month": {
+      "1": 8.7,
+      "2": 10.5,
+      "3": 7.5,
+      "4": 16.3,
+      "5": 15.9,
+      "6": 18.8,
+      "7": 20.6,
+      "8": 15.3,
+      "9": 9.7,
+      "10": 7.9,
+      "11": 9.5,
+      "12": 18.0
+     },
+     "d2_r_dropped_vs_outages": -0.142,
+     "d2_r_kept_vs_outages": 0.846,
+     "d2_placebo_p95": 0.877,
+     "d2_placebo_p50": 0.586,
+     "d2_rule": "degraded one-sided: r_out > placebo p95",
+     "d2_fire": false,
+     "d3_tight_share_dropped": 0.2419,
+     "d3_tight_share_kept": 0.1959,
+     "d3_placebo_p95": 0.2213,
+     "d3_placebo_p50": 0.1919,
+     "d3_fire": true,
+     "posthoc_placement_null": {
+      "dropped": {
+       "actual": 0.2419,
+       "p5": 0.2221,
+       "p50": 0.253,
+       "p95": 0.2829,
+       "position": "inside band"
+      },
+      "kept": {
+       "actual": 0.1959,
+       "p5": 0.2363,
+       "p50": 0.249,
+       "p95": 0.2597,
+       "position": "below p5"
+      }
+     }
+    }
+   },
+   "verdict": "SUSPECT",
+   "verdict_note": "D2 0/3 (clean), D3 3/3 (fires) \u2014 CAVEAT: CNOG's non-operational bucket can itself include long-term economic states; active-plant scope mitigates, not eliminates"
+  },
+  {
+   "iso": "MISO",
+   "anchor": "MISO native outage source (Forced+Planned+Unplanned)",
+   "anchor_caveat": null,
+   "years": {
+    "2023": {
+     "d1_baseline_gwdays": 11512.1,
+     "d1_dropped_gwdays": 1320.5,
+     "d1_dropped_share": 0.1147,
+     "d1_by_class": {
+      "CC_CHP": {
+       "baseline_gwd": 202.5,
+       "dropped_gwd": 50.7,
+       "dropped_share": 0.2503
+      },
+      "CC_REGULAR": {
+       "baseline_gwd": 2349.0,
+       "dropped_gwd": 132.9,
+       "dropped_share": 0.0566
+      },
+      "COAL": {
+       "baseline_gwd": 5996.0,
+       "dropped_gwd": 131.6,
+       "dropped_share": 0.0219
+      },
+      "CT_CHP": {
+       "baseline_gwd": 87.7,
+       "dropped_gwd": 7.1,
+       "dropped_share": 0.0813
+      },
+      "ST_CHP": {
+       "baseline_gwd": 105.5,
+       "dropped_gwd": 7.6,
+       "dropped_share": 0.0717
+      },
+      "ST_GAS": {
+       "baseline_gwd": 2771.4,
+       "dropped_gwd": 990.7,
+       "dropped_share": 0.3575
+      }
+     },
+     "d1_dropped_gwd_by_month": {
+      "1": 189.9,
+      "2": 146.1,
+      "3": 113.5,
+      "4": 96.2,
+      "5": 88.5,
+      "6": 70.7,
+      "7": 45.3,
+      "8": 24.0,
+      "9": 63.7,
+      "10": 131.4,
+      "11": 145.3,
+      "12": 205.9
+     },
+     "d2_r_dropped_vs_outages": 0.103,
+     "d2_r_kept_vs_outages": 0.875,
+     "d2_placebo_p95": 0.864,
+     "d2_placebo_p50": 0.659,
+     "d2_rule": "degraded one-sided: r_out > placebo p95",
+     "d2_fire": false,
+     "d3_tight_share_dropped": 0.1499,
+     "d3_tight_share_kept": 0.1631,
+     "d3_placebo_p95": 0.1874,
+     "d3_placebo_p50": 0.1693,
+     "d3_fire": false,
+     "posthoc_placement_null": {
+      "dropped": {
+       "actual": 0.1499,
+       "p5": 0.2468,
+       "p50": 0.2983,
+       "p95": 0.3291,
+       "position": "below p5"
+      },
+      "kept": {
+       "actual": 0.1631,
+       "p5": 0.2548,
+       "p50": 0.2745,
+       "p95": 0.2936,
+       "position": "below p5"
+      }
+     }
+    },
+    "2024": {
+     "d1_baseline_gwdays": 11260.0,
+     "d1_dropped_gwdays": 1217.6,
+     "d1_dropped_share": 0.1081,
+     "d1_by_class": {
+      "CC_CHP": {
+       "baseline_gwd": 251.6,
+       "dropped_gwd": 120.5,
+       "dropped_share": 0.4789
+      },
+      "CC_REGULAR": {
+       "baseline_gwd": 2434.5,
+       "dropped_gwd": 82.2,
+       "dropped_share": 0.0337
+      },
+      "COAL": {
+       "baseline_gwd": 5830.4,
+       "dropped_gwd": 91.2,
+       "dropped_share": 0.0156
+      },
+      "CT_CHP": {
+       "baseline_gwd": 89.9,
+       "dropped_gwd": 8.2,
+       "dropped_share": 0.091
+      },
+      "ST_CHP": {
+       "baseline_gwd": 102.5,
+       "dropped_gwd": 6.7,
+       "dropped_share": 0.0655
+      },
+      "ST_GAS": {
+       "baseline_gwd": 2551.2,
+       "dropped_gwd": 908.9,
+       "dropped_share": 0.3563
+      }
+     },
+     "d1_dropped_gwd_by_month": {
+      "1": 140.8,
+      "2": 146.6,
+      "3": 120.6,
+      "4": 111.4,
+      "5": 43.2,
+      "6": 48.6,
+      "7": 30.5,
+      "8": 57.8,
+      "9": 95.7,
+      "10": 142.8,
+      "11": 96.9,
+      "12": 182.7
+     },
+     "d2_r_dropped_vs_outages": 0.331,
+     "d2_r_kept_vs_outages": 0.803,
+     "d2_placebo_p95": 0.881,
+     "d2_placebo_p50": 0.648,
+     "d2_rule": "degraded one-sided: r_out > placebo p95",
+     "d2_fire": false,
+     "d3_tight_share_dropped": 0.1681,
+     "d3_tight_share_kept": 0.1543,
+     "d3_placebo_p95": 0.1773,
+     "d3_placebo_p50": 0.1513,
+     "d3_fire": false,
+     "posthoc_placement_null": {
+      "dropped": {
+       "actual": 0.1681,
+       "p5": 0.2154,
+       "p50": 0.2575,
+       "p95": 0.295,
+       "position": "below p5"
+      },
+      "kept": {
+       "actual": 0.1543,
+       "p5": 0.2408,
+       "p50": 0.2573,
+       "p95": 0.2724,
+       "position": "below p5"
+      }
+     }
+    },
+    "2025": {
+     "d1_baseline_gwdays": 11010.4,
+     "d1_dropped_gwdays": 1214.0,
+     "d1_dropped_share": 0.1103,
+     "d1_by_class": {
+      "CC_CHP": {
+       "baseline_gwd": 241.5,
+       "dropped_gwd": 27.6,
+       "dropped_share": 0.1144
+      },
+      "CC_REGULAR": {
+       "baseline_gwd": 2876.1,
+       "dropped_gwd": 90.7,
+       "dropped_share": 0.0315
+      },
+      "COAL": {
+       "baseline_gwd": 4538.9,
+       "dropped_gwd": 41.6,
+       "dropped_share": 0.0092
+      },
+      "CT_CHP": {
+       "baseline_gwd": 472.6,
+       "dropped_gwd": 7.6,
+       "dropped_share": 0.016
+      },
+      "ST_CHP": {
+       "baseline_gwd": 358.6,
+       "dropped_gwd": 7.0,
+       "dropped_share": 0.0196
+      },
+      "ST_GAS": {
+       "baseline_gwd": 2522.8,
+       "dropped_gwd": 1039.5,
+       "dropped_share": 0.412
+      }
+     },
+     "d1_dropped_gwd_by_month": {
+      "1": 175.4,
+      "2": 160.4,
+      "3": 130.5,
+      "4": 36.6,
+      "5": 51.4,
+      "6": 28.9,
+      "7": 28.7,
+      "8": 69.0,
+      "9": 94.0,
+      "10": 105.2,
+      "11": 144.6,
+      "12": 189.3
+     },
+     "d2_r_dropped_vs_outages": -0.392,
+     "d2_r_kept_vs_outages": 0.951,
+     "d2_placebo_p95": 0.897,
+     "d2_placebo_p50": 0.626,
+     "d2_rule": "degraded one-sided: r_out > placebo p95",
+     "d2_fire": false,
+     "d3_tight_share_dropped": 0.1793,
+     "d3_tight_share_kept": 0.1696,
+     "d3_placebo_p95": 0.2027,
+     "d3_placebo_p50": 0.1724,
+     "d3_fire": false,
+     "posthoc_placement_null": {
+      "dropped": {
+       "actual": 0.1793,
+       "p5": 0.2159,
+       "p50": 0.2457,
+       "p95": 0.2801,
+       "position": "below p5"
+      },
+      "kept": {
+       "actual": 0.1696,
+       "p5": 0.2442,
+       "p50": 0.2562,
+       "p95": 0.2683,
+       "position": "below p5"
+      }
+     }
+    }
+   },
+   "verdict": "CLEAN",
+   "verdict_note": "D2 0/3 (clean), D3 0/3 (clean)"
+  },
+  {
+   "iso": "NEISO",
+   "anchor": "ISO-NE Morning Report Section 3 (outages AND uncommitted)",
+   "anchor_caveat": null,
+   "years": {
+    "2023": {
+     "d1_baseline_gwdays": 2546.0,
+     "d1_dropped_gwdays": 267.1,
+     "d1_dropped_share": 0.1049,
+     "d1_by_class": {
+      "CC_CHP": {
+       "baseline_gwd": 82.3,
+       "dropped_gwd": 73.4,
+       "dropped_share": 0.8917
+      },
+      "CC_REGULAR": {
+       "baseline_gwd": 2118.6,
+       "dropped_gwd": 192.7,
+       "dropped_share": 0.091
+      },
+      "COAL": {
+       "baseline_gwd": 158.4,
+       "dropped_gwd": 0.0,
+       "dropped_share": 0.0
+      },
+      "CT_CHP": {
+       "baseline_gwd": 7.0,
+       "dropped_gwd": 1.0,
+       "dropped_share": 0.1473
+      },
+      "ST_CHP": {
+       "baseline_gwd": 2.1,
+       "dropped_gwd": 0.0,
+       "dropped_share": 0.0
+      },
+      "ST_GAS": {
+       "baseline_gwd": 177.6,
+       "dropped_gwd": 0.0,
+       "dropped_share": 0.0
+      }
+     },
+     "d1_dropped_gwd_by_month": {
+      "1": 46.6,
+      "2": 41.9,
+      "3": 41.8,
+      "4": 9.4,
+      "5": 8.9,
+      "6": 10.2,
+      "7": 4.8,
+      "8": 8.3,
+      "9": 13.8,
+      "10": 16.3,
+      "11": 29.3,
+      "12": 35.7
+     },
+     "d2_r_dropped_vs_outages": -0.26,
+     "d2_r_kept_vs_outages": 0.715,
+     "d2_r_dropped_vs_uncommitted": 0.772,
+     "d2_rule": "two-population: r_out > r_unc",
+     "port_check": {
+      "r_out": [
+       -0.26,
+       -0.26
+      ],
+      "r_unc": [
+       0.772,
+       0.77
+      ],
+      "ok": true
+     },
+     "d2_fire": false,
+     "d3_tight_share_dropped": 0.2476,
+     "d3_tight_share_kept": 0.2027,
+     "d3_placebo_p95": 0.2454,
+     "d3_placebo_p50": 0.2115,
+     "d3_fire": true,
+     "posthoc_placement_null": {
+      "dropped": {
+       "actual": 0.2476,
+       "p5": 0.2016,
+       "p50": 0.2476,
+       "p95": 0.283,
+       "position": "inside band"
+      },
+      "kept": {
+       "actual": 0.2027,
+       "p5": 0.2252,
+       "p50": 0.2421,
+       "p95": 0.2615,
+       "position": "below p5"
+      }
+     }
+    },
+    "2024": {
+     "d1_baseline_gwdays": 2396.5,
+     "d1_dropped_gwdays": 430.1,
+     "d1_dropped_share": 0.1794,
+     "d1_by_class": {
+      "CC_CHP": {
+       "baseline_gwd": 88.5,
+       "dropped_gwd": 76.5,
+       "dropped_share": 0.8643
+      },
+      "CC_REGULAR": {
+       "baseline_gwd": 1965.5,
+       "dropped_gwd": 352.8,
+       "dropped_share": 0.1795
+      },
+      "COAL": {
+       "baseline_gwd": 155.3,
+       "dropped_gwd": 0.0,
+       "dropped_share": 0.0
+      },
+      "CT_CHP": {
+       "baseline_gwd": 7.0,
+       "dropped_gwd": 0.8,
+       "dropped_share": 0.1115
+      },
+      "ST_CHP": {
+       "baseline_gwd": 2.1,
+       "dropped_gwd": 0.0,
+       "dropped_share": 0.0
+      },
+      "ST_GAS": {
+       "baseline_gwd": 178.1,
+       "dropped_gwd": 0.0,
+       "dropped_share": 0.0
+      }
+     },
+     "d1_dropped_gwd_by_month": {
+      "1": 40.9,
+      "2": 50.6,
+      "3": 64.7,
+      "4": 51.9,
+      "5": 37.1,
+      "6": 21.8,
+      "7": 11.3,
+      "8": 22.6,
+      "9": 18.9,
+      "10": 20.0,
+      "11": 43.3,
+      "12": 46.9
+     },
+     "d2_r_dropped_vs_outages": 0.006,
+     "d2_r_kept_vs_outages": 0.606,
+     "d2_r_dropped_vs_uncommitted": 0.709,
+     "d2_rule": "two-population: r_out > r_unc",
+     "port_check": {
+      "r_out": [
+       0.006,
+       0.01
+      ],
+      "r_unc": [
+       0.709,
+       0.71
+      ],
+      "ok": true
+     },
+     "d2_fire": false,
+     "d3_tight_share_dropped": 0.2018,
+     "d3_tight_share_kept": 0.2009,
+     "d3_placebo_p95": 0.2396,
+     "d3_placebo_p50": 0.202,
+     "d3_fire": false,
+     "posthoc_placement_null": {
+      "dropped": {
+       "actual": 0.2018,
+       "p5": 0.2068,
+       "p50": 0.2283,
+       "p95": 0.2716,
+       "position": "below p5"
+      },
+      "kept": {
+       "actual": 0.2009,
+       "p5": 0.2213,
+       "p50": 0.2327,
+       "p95": 0.2457,
+       "position": "below p5"
+      }
+     }
+    },
+    "2025": {
+     "d1_baseline_gwdays": 1738.0,
+     "d1_dropped_gwdays": 439.4,
+     "d1_dropped_share": 0.2528,
+     "d1_by_class": {
+      "CC_CHP": {
+       "baseline_gwd": 92.3,
+       "dropped_gwd": 62.4,
+       "dropped_share": 0.6763
+      },
+      "CC_REGULAR": {
+       "baseline_gwd": 1253.8,
+       "dropped_gwd": 371.9,
+       "dropped_share": 0.2966
+      },
+      "COAL": {
+       "baseline_gwd": 114.4,
+       "dropped_gwd": 0.0,
+       "dropped_share": 0.0
+      },
+      "CT_CHP": {
+       "baseline_gwd": 66.3,
+       "dropped_gwd": 5.1,
+       "dropped_share": 0.0764
+      },
+      "ST_CHP": {
+       "baseline_gwd": 42.0,
+       "dropped_gwd": 0.0,
+       "dropped_share": 0.0
+      },
+      "ST_GAS": {
+       "baseline_gwd": 169.0,
+       "dropped_gwd": 0.0,
+       "dropped_share": 0.0
+      }
+     },
+     "d1_dropped_gwd_by_month": {
+      "1": 50.1,
+      "2": 49.0,
+      "3": 54.9,
+      "4": 48.0,
+      "5": 48.4,
+      "6": 24.2,
+      "7": 7.4,
+      "8": 13.9,
+      "9": 25.9,
+      "10": 22.5,
+      "11": 43.7,
+      "12": 51.4
+     },
+     "d2_r_dropped_vs_outages": 0.24,
+     "d2_r_kept_vs_outages": 0.784,
+     "d2_r_dropped_vs_uncommitted": 0.673,
+     "d2_rule": "two-population: r_out > r_unc",
+     "port_check": {
+      "r_out": [
+       0.24,
+       0.24
+      ],
+      "r_unc": [
+       0.673,
+       0.67
+      ],
+      "ok": true
+     },
+     "d2_fire": false,
+     "d3_tight_share_dropped": 0.2235,
+     "d3_tight_share_kept": 0.1733,
+     "d3_placebo_p95": 0.2179,
+     "d3_placebo_p50": 0.1806,
+     "d3_fire": true,
+     "posthoc_placement_null": {
+      "dropped": {
+       "actual": 0.2235,
+       "p5": 0.1945,
+       "p50": 0.2236,
+       "p95": 0.2521,
+       "position": "inside band"
+      },
+      "kept": {
+       "actual": 0.1733,
+       "p5": 0.2124,
+       "p50": 0.2275,
+       "p95": 0.2508,
+       "position": "below p5"
+      }
+     }
+    }
+   },
+   "verdict": "SUSPECT",
+   "verdict_note": "D2 0/3 (clean), D3 2/3 (fires)"
+  },
+  {
+   "iso": "NYISO",
+   "anchor": null,
+   "anchor_caveat": null,
+   "years": {
+    "2023": {
+     "d1_baseline_gwdays": 4355.9,
+     "d1_dropped_gwdays": 1171.6,
+     "d1_dropped_share": 0.269,
+     "d1_by_class": {
+      "CC_CHP": {
+       "baseline_gwd": 613.5,
+       "dropped_gwd": 83.2,
+       "dropped_share": 0.1356
+      },
+      "CC_REGULAR": {
+       "baseline_gwd": 1402.3,
+       "dropped_gwd": 533.9,
+       "dropped_share": 0.3807
+      },
+      "CT_CHP": {
+       "baseline_gwd": 4.3,
+       "dropped_gwd": 0.0,
+       "dropped_share": 0.0
+      },
+      "ST_CHP": {
+       "baseline_gwd": 69.7,
+       "dropped_gwd": 11.9,
+       "dropped_share": 0.1705
+      },
+      "ST_GAS": {
+       "baseline_gwd": 2266.0,
+       "dropped_gwd": 542.6,
+       "dropped_share": 0.2394
+      }
+     },
+     "d1_dropped_gwd_by_month": {
+      "1": 110.1,
+      "2": 101.3,
+      "3": 118.7,
+      "4": 120.3,
+      "5": 121.1,
+      "6": 108.6,
+      "7": 62.5,
+      "8": 86.1,
+      "9": 37.2,
+      "10": 50.0,
+      "11": 110.5,
+      "12": 145.1
+     },
+     "d3_tight_share_dropped": 0.2163,
+     "d3_tight_share_kept": 0.1893,
+     "d3_placebo_p95": 0.2128,
+     "d3_placebo_p50": 0.1955,
+     "d3_fire": true,
+     "posthoc_placement_null": {
+      "dropped": {
+       "actual": 0.2163,
+       "p5": 0.2133,
+       "p50": 0.2635,
+       "p95": 0.311,
+       "position": "inside band"
+      },
+      "kept": {
+       "actual": 0.1893,
+       "p5": 0.2314,
+       "p50": 0.2545,
+       "p95": 0.2866,
+       "position": "below p5"
+      }
+     }
+    },
+    "2024": {
+     "d1_baseline_gwdays": 3980.6,
+     "d1_dropped_gwdays": 903.7,
+     "d1_dropped_share": 0.227,
+     "d1_by_class": {
+      "CC_CHP": {
+       "baseline_gwd": 508.2,
+       "dropped_gwd": 60.1,
+       "dropped_share": 0.1183
+      },
+      "CC_REGULAR": {
+       "baseline_gwd": 1374.4,
+       "dropped_gwd": 372.4,
+       "dropped_share": 0.2709
+      },
+      "CT_CHP": {
+       "baseline_gwd": 2.8,
+       "dropped_gwd": 0.0,
+       "dropped_share": 0.0
+      },
+      "ST_CHP": {
+       "baseline_gwd": 56.9,
+       "dropped_gwd": 16.7,
+       "dropped_share": 0.2942
+      },
+      "ST_GAS": {
+       "baseline_gwd": 2038.3,
+       "dropped_gwd": 454.5,
+       "dropped_share": 0.223
+      }
+     },
+     "d1_dropped_gwd_by_month": {
+      "1": 65.5,
+      "2": 62.1,
+      "3": 85.6,
+      "4": 109.1,
+      "5": 109.5,
+      "6": 58.5,
+      "7": 46.9,
+      "8": 53.4,
+      "9": 78.8,
+      "10": 92.2,
+      "11": 86.8,
+      "12": 55.5
+     },
+     "d3_tight_share_dropped": 0.1788,
+     "d3_tight_share_kept": 0.1864,
+     "d3_placebo_p95": 0.2052,
+     "d3_placebo_p50": 0.1803,
+     "d3_fire": false,
+     "posthoc_placement_null": {
+      "dropped": {
+       "actual": 0.1788,
+       "p5": 0.2044,
+       "p50": 0.2414,
+       "p95": 0.3164,
+       "position": "below p5"
+      },
+      "kept": {
+       "actual": 0.1864,
+       "p5": 0.2241,
+       "p50": 0.2505,
+       "p95": 0.2785,
+       "position": "below p5"
+      }
+     }
+    },
+    "2025": {
+     "d1_baseline_gwdays": 3848.8,
+     "d1_dropped_gwdays": 875.8,
+     "d1_dropped_share": 0.2276,
+     "d1_by_class": {
+      "CC_CHP": {
+       "baseline_gwd": 460.5,
+       "dropped_gwd": 52.8,
+       "dropped_share": 0.1146
+      },
+      "CC_REGULAR": {
+       "baseline_gwd": 1445.7,
+       "dropped_gwd": 227.1,
+       "dropped_share": 0.1571
+      },
+      "CT_CHP": {
+       "baseline_gwd": 45.2,
+       "dropped_gwd": 0.0,
+       "dropped_share": 0.0
+      },
+      "ST_CHP": {
+       "baseline_gwd": 64.4,
+       "dropped_gwd": 18.4,
+       "dropped_share": 0.2849
+      },
+      "ST_GAS": {
+       "baseline_gwd": 1833.0,
+       "dropped_gwd": 577.6,
+       "dropped_share": 0.3151
+      }
+     },
+     "d1_dropped_gwd_by_month": {
+      "1": 79.3,
+      "2": 61.1,
+      "3": 106.8,
+      "4": 132.1,
+      "5": 123.4,
+      "6": 83.2,
+      "7": 19.8,
+      "8": 74.0,
+      "9": 67.6,
+      "10": 36.1,
+      "11": 35.3,
+      "12": 57.1
+     },
+     "d3_tight_share_dropped": 0.1628,
+     "d3_tight_share_kept": 0.1775,
+     "d3_placebo_p95": 0.2043,
+     "d3_placebo_p50": 0.1727,
+     "d3_fire": false,
+     "posthoc_placement_null": {
+      "dropped": {
+       "actual": 0.1628,
+       "p5": 0.1951,
+       "p50": 0.2408,
+       "p95": 0.2786,
+       "position": "below p5"
+      },
+      "kept": {
+       "actual": 0.1775,
+       "p5": 0.2144,
+       "p50": 0.2388,
+       "p95": 0.2688,
+       "position": "below p5"
+      }
+     }
+    }
+   },
+   "verdict": "UNVERIFIABLE",
+   "verdict_note": "no published anchor; D3 clean (1/3) \u2014 recorded for when an anchor lands"
+  },
+  {
+   "iso": "PJM",
+   "anchor": "PJM Data Miner 2 gen_outages_by_type, PJM RTO lead_days=0",
+   "anchor_caveat": null,
+   "years": {
+    "2023": {
+     "d1_baseline_gwdays": 15539.9,
+     "d1_dropped_gwdays": 2064.6,
+     "d1_dropped_share": 0.1329,
+     "d1_by_class": {
+      "CC_CHP": {
+       "baseline_gwd": 152.4,
+       "dropped_gwd": 90.0,
+       "dropped_share": 0.5905
+      },
+      "CC_REGULAR": {
+       "baseline_gwd": 4587.1,
+       "dropped_gwd": 347.9,
+       "dropped_share": 0.0758
+      },
+      "COAL": {
+       "baseline_gwd": 8492.8,
+       "dropped_gwd": 644.2,
+       "dropped_share": 0.0759
+      },
+      "CT_CHP": {
+       "baseline_gwd": 62.4,
+       "dropped_gwd": 26.5,
+       "dropped_share": 0.4249
+      },
+      "ST_CHP": {
+       "baseline_gwd": 78.6,
+       "dropped_gwd": 0.0,
+       "dropped_share": 0.0
+      },
+      "ST_GAS": {
+       "baseline_gwd": 2166.6,
+       "dropped_gwd": 956.0,
+       "dropped_share": 0.4413
+      }
+     },
+     "d1_dropped_gwd_by_month": {
+      "1": 213.2,
+      "2": 162.6,
+      "3": 225.9,
+      "4": 181.5,
+      "5": 130.7,
+      "6": 125.0,
+      "7": 153.5,
+      "8": 134.2,
+      "9": 160.8,
+      "10": 227.5,
+      "11": 160.7,
+      "12": 188.9
+     },
+     "d2_r_dropped_vs_outages": 0.363,
+     "d2_r_kept_vs_outages": 0.899,
+     "d2_placebo_p95": 0.864,
+     "d2_placebo_p50": 0.764,
+     "d2_rule": "degraded one-sided: r_out > placebo p95",
+     "d2_fire": false,
+     "d3_tight_share_dropped": 0.2224,
+     "d3_tight_share_kept": 0.1626,
+     "d3_placebo_p95": 0.1905,
+     "d3_placebo_p50": 0.173,
+     "d3_fire": true,
+     "posthoc_placement_null": {
+      "dropped": {
+       "actual": 0.2224,
+       "p5": 0.2265,
+       "p50": 0.2577,
+       "p95": 0.2874,
+       "position": "below p5"
+      },
+      "kept": {
+       "actual": 0.1626,
+       "p5": 0.2315,
+       "p50": 0.2514,
+       "p95": 0.2668,
+       "position": "below p5"
+      }
+     }
+    },
+    "2024": {
+     "d1_baseline_gwdays": 12980.4,
+     "d1_dropped_gwdays": 1157.6,
+     "d1_dropped_share": 0.0892,
+     "d1_by_class": {
+      "CC_CHP": {
+       "baseline_gwd": 107.4,
+       "dropped_gwd": 55.4,
+       "dropped_share": 0.516
+      },
+      "CC_REGULAR": {
+       "baseline_gwd": 4019.6,
+       "dropped_gwd": 228.0,
+       "dropped_share": 0.0567
+      },
+      "COAL": {
+       "baseline_gwd": 6635.7,
+       "dropped_gwd": 257.3,
+       "dropped_share": 0.0388
+      },
+      "CT_CHP": {
+       "baseline_gwd": 78.3,
+       "dropped_gwd": 26.5,
+       "dropped_share": 0.3387
+      },
+      "ST_CHP": {
+       "baseline_gwd": 81.1,
+       "dropped_gwd": 0.0,
+       "dropped_share": 0.0
+      },
+      "ST_GAS": {
+       "baseline_gwd": 2058.2,
+       "dropped_gwd": 590.5,
+       "dropped_share": 0.2869
+      }
+     },
+     "d1_dropped_gwd_by_month": {
+      "1": 88.5,
+      "2": 79.4,
+      "3": 80.0,
+      "4": 61.4,
+      "5": 123.4,
+      "6": 105.2,
+      "7": 58.8,
+      "8": 109.4,
+      "9": 95.6,
+      "10": 91.9,
+      "11": 108.9,
+      "12": 155.1
+     },
+     "d2_r_dropped_vs_outages": -0.07,
+     "d2_r_kept_vs_outages": 0.907,
+     "d2_placebo_p95": 0.85,
+     "d2_placebo_p50": 0.722,
+     "d2_rule": "degraded one-sided: r_out > placebo p95",
+     "d2_fire": false,
+     "d3_tight_share_dropped": 0.2178,
+     "d3_tight_share_kept": 0.1384,
+     "d3_placebo_p95": 0.173,
+     "d3_placebo_p50": 0.144,
+     "d3_fire": true,
+     "posthoc_placement_null": {
+      "dropped": {
+       "actual": 0.2178,
+       "p5": 0.2207,
+       "p50": 0.2481,
+       "p95": 0.2891,
+       "position": "below p5"
+      },
+      "kept": {
+       "actual": 0.1384,
+       "p5": 0.2321,
+       "p50": 0.2457,
+       "p95": 0.2643,
+       "position": "below p5"
+      }
+     }
+    },
+    "2025": {
+     "d1_baseline_gwdays": 12565.6,
+     "d1_dropped_gwdays": 1576.0,
+     "d1_dropped_share": 0.1254,
+     "d1_by_class": {
+      "CC_CHP": {
+       "baseline_gwd": 173.6,
+       "dropped_gwd": 58.1,
+       "dropped_share": 0.3347
+      },
+      "CC_REGULAR": {
+       "baseline_gwd": 4239.2,
+       "dropped_gwd": 294.5,
+       "dropped_share": 0.0695
+      },
+      "COAL": {
+       "baseline_gwd": 6006.2,
+       "dropped_gwd": 115.5,
+       "dropped_share": 0.0192
+      },
+      "CT_CHP": {
+       "baseline_gwd": 117.7,
+       "dropped_gwd": 29.0,
+       "dropped_share": 0.2462
+      },
+      "ST_CHP": {
+       "baseline_gwd": 127.5,
+       "dropped_gwd": 0.0,
+       "dropped_share": 0.0
+      },
+      "ST_GAS": {
+       "baseline_gwd": 1901.5,
+       "dropped_gwd": 1078.9,
+       "dropped_share": 0.5674
+      }
+     },
+     "d1_dropped_gwd_by_month": {
+      "1": 113.3,
+      "2": 165.9,
+      "3": 201.1,
+      "4": 130.5,
+      "5": 140.8,
+      "6": 76.5,
+      "7": 68.0,
+      "8": 138.5,
+      "9": 103.3,
+      "10": 104.9,
+      "11": 150.4,
+      "12": 182.9
+     },
+     "d2_r_dropped_vs_outages": 0.138,
+     "d2_r_kept_vs_outages": 0.948,
+     "d2_placebo_p95": 0.92,
+     "d2_placebo_p50": 0.814,
+     "d2_rule": "degraded one-sided: r_out > placebo p95",
+     "d2_fire": false,
+     "d3_tight_share_dropped": 0.196,
+     "d3_tight_share_kept": 0.1229,
+     "d3_placebo_p95": 0.1529,
+     "d3_placebo_p50": 0.134,
+     "d3_fire": true,
+     "posthoc_placement_null": {
+      "dropped": {
+       "actual": 0.196,
+       "p5": 0.2126,
+       "p50": 0.236,
+       "p95": 0.255,
+       "position": "below p5"
+      },
+      "kept": {
+       "actual": 0.1229,
+       "p5": 0.2181,
+       "p50": 0.233,
+       "p95": 0.243,
+       "position": "below p5"
+      }
+     }
+    }
+   },
+   "verdict": "SUSPECT",
+   "verdict_note": "D2 0/3 (clean), D3 3/3 (fires)"
+  }
+ ]
+}
