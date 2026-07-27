@@ -428,3 +428,46 @@ losses, so each lane repeats the chain of custody (930 demand vs native load
 files vs 923+NI) before choosing a value. The fix is a gross-up to the
 generation basis, not a demand-source swap — where the BA reports its metered
 load to EIA-930, the native load files are the same series.
+
+## 2026-07-27 (cross-ISO) — merit-order guard FALSE-NEGATIVE audit: no CONFIRMED cell; 4× SUSPECT on tight-hour placement only, population test clean everywhere
+
+Owner-raised question, pre-registered no-LP probe over all six ISOs ×
+2023–2025 (`scripts/probes/guard_falseneg_audit.py`, verdict rules committed
+before the run). Full evidence:
+`results/calibration/FINDING-guard-falseneg-audit-2026-07-27.md`.
+
+**Verdicts (pre-registered, unmet-means-dead):** ERCOT / CAISO / NEISO / PJM
+**SUSPECT** (D3 tightness placement fires, D2 population test clean);
+MISO **CLEAN** (both discriminators clean, the guard's intended signature);
+NYISO **UNVERIFIABLE** (no published anchor; none improvised).
+
+**The strong form of the hypothesis is refuted:** in all 15 anchored
+ISO-years the DROPPED windows sit at or below the placebo p50 against the
+published mechanical-outage series (NEISO's two-population instrument shows
+them tracking published UNCOMMITTED at +0.67…+0.77 instead, reproducing the
+charter §3a D1 control exactly). The guard selects the layup population it
+was designed to select. Secondary: the guard-KEPT extracts track their
+published instruments at r +0.61…+0.95 in every anchored ISO-year — the
+NEISO positive control generalizes to all five anchored ISOs at no solve
+cost.
+
+**What survives is hour-grain:** D3 fires in 10/15 anchored cells — the
+returned capacity sits on the tightest net-load quartile at near-uniform
+rates (PJM worst: 3/3, ~2.8–5.0 GW per average tight hour, the C3c-relevant
+magnitude) — but the post-hoc length-preserving placement null (disclosed at
+the site, never a verdict input) attributes most of that to window-length
+composition: kept windows are strongly tight-avoiding (below null p5 in
+18/18 cells), dropped windows weakly so. Whether "weakly tight-avoiding" is
+just layup timing or dilution by a broken-while-uneconomic sub-population is
+unmeasurable on committed instruments — hence SUSPECT, not CONFIRMED or
+CLEAN.
+
+**PJM consequence:** no named root cause is handed to the PJM re-tune;
+FINDING-pjm132 §5's frontier assessment stands unchanged. The lane hands the
+G-20b/G-22 reserve-tightness question a quantified SUSPECT-grade lead, not a
+cause. **Recommendations:** NYISO anchor intake (converts UNVERIFIABLE to
+measurable); any within-window tight-hour treatment is a separate owner memo
+that must confront charter §3a D2's "not shortened" decision and neiso-68
+(rule 19 — replacement, never stacking). No guard parameter moves on this
+finding (rule 23); SUSPECT is not to be quoted as CONFIRMED downstream. No
+solve ⇒ nothing registered (rule 15).
