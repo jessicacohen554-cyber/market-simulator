@@ -1598,3 +1598,92 @@ converges with nyiso-88 §3's at-the-money measurement (margin within ±$6/MWh,
 decisions flipped by small errors while run durations, once started, stay right —
 exactly the asymmetry measured here. The below-SRMC half is the specific thing a
 merit-order LP structurally cannot produce, and it is about the size of the gap.
+
+---
+
+## 2026-07-27 — nyiso-91: the missing CT starts are NOT energy-economic — not hourly, and not as blocks; no arm built
+
+**Keeper: `2026-07-27-nyiso-89-ctmeas-hrloaded`, UNCHANGED.** Registered run:
+`2026-07-27-nyiso-91-ctstart-control` (PROBE, `results/calibration/nyiso91_ctrl_zerodelta`,
+`--year 2023 2024 2025`, one bundle, sequential). Full write-up:
+`docs/FINDING-nyiso91-ct-start-frequency-2026-07-27.md`. The control reproduces
+nyiso-90's control **exactly** (2023 CC_REGULAR 32.513 TWh, CT_PEAKER
+0.443/0.394/1.407, gas-bridge legs 16,698 / 3,242 unit-hours), so it is a
+faithful same-HEAD zero-delta baseline.
+
+**The start deficit IS the level gap.** 98/98/92 % of the class's measured energy
+sits inside runs the model never begins — **1.840 / 1.723 / 2.031 TWh** against
+nyiso-90's class gap of 1.817/1.740/1.604. `nyiso91_ct_start_economics.py`, 18/18/17
+pure-CT plants (nyiso-88 §3 convention), both sides on one common physical bar,
+measured side from the BENCH (the only measured series on the model's 8760 clock —
+every number here is hour-matched).
+
+**The charter's three-way split, measured.** Of the 3,625/3,689/3,128 missing
+starts, priced on the model's own P1 LMP against the plant's own model offer:
+**(a) in merit and declined anyway 8.6/10.5/5.8 %**, **(b) out of merit by < $5/MWh
+10.4/6.2/9.3 %**, **(c) deep 81.0/83.3/85.0 %** at a median of −$12.95/−$13.94/−$15.44
+per MWh. Repricing on the market's own realized DA price only moves (c) to
+79.4/71.4/73.4 %; adding the measured NYC/LI locational premium — the most generous
+defensible reading — leaves 66.0/57.3/68.7 %.
+
+**Two candidates fall out of the measurement itself.** (i) The model's cheapest CT
+tranche is *measured* to bid at bare SRMC — offer intercept recovered from the solve
+(a tranche loaded strictly interior is marginal, so its offer equals the zonal LMP)
+comes back as VOM to the cent, `median offer − direct = +0.00` in all three years —
+so there is **no offer-curve markup to repair**. (ii) The model's downstate zonal
+spread already tracks measured (model NYC−LI −2.81/−3.15/−1.80 vs measured
+−6.16/−2.83/−0.69), closing locational price formation.
+
+**THE BLOCK TEST refutes start-cost recovery.** Integrating each missed run *whole* —
+what a day-ahead commitment actually decides — only **21.7/30.0/36.1 %** are
+profitable as blocks at realized DA against bare SRMC (34.3/41.8/39.0 % with the
+locational premium), and the pooled margin over ~1.8–2.0 TWh is ≈ zero
+(−$6.4M/+$5.2M/−$1.9M = −$3.50/+$3.02/−$0.93 per MWh). The median margin is negative
+at **every** position h1–h7 inside the run (2023: −12.8 → −3.5), so there is no
+loss-leading-start-then-earn-it-back shape — only 12.6/13.8/18.9 % of blocks have it.
+This also reconciles nyiso-88 §3: the fleet's near-zero *annual energy-weighted*
+margin is a pooling artifact — a profitable minority of blocks carries a loss-making
+majority; at start-decision resolution the fleet is below the money, not at it.
+
+**NO ARM WAS REGISTERED, deliberately.** Every mechanism that would reproduce the
+start count is either refuted above (block commitment, start-cost recovery, offer
+markup, price formation, locational price) or forbidden by the lane's guardrails
+(windowed floor / CT `reliability_floor` limb, start subsidy, fitted start-cost
+haircut, residual-tuned adder — rules 13/17). A forecast-vs-realized-price commitment
+basis is refuted rather than permitted by the block test: it can change *which* hours
+are chosen, not make 2,800 unprofitable blocks profitable. And a cost-basis
+correction big enough to close band (c) would need **$1.3–1.5/MMBtu** at the median
+and $2.5–3.7/MMBtu at p90 — 53–82 % of the keeper's entire delivered downstate gas
+price (NYC $4.54/$4.91/$7.82, LI $3.70/$4.09/$7.25). Arming anything anyway would
+spend a mechanism, a D-2 row and parameters on a phenomenon the evidence says it does
+not model (rules 1/19/21).
+
+**Gates, re-scored on the control (identical to nyiso-90's).** C1 PASS — **the 2023
+CC_REGULAR knife edge is untouched at 32.513 TWh** (−2.784 of a ±2.94 band, 0.156 TWh
+headroom), since nothing was armed. C2/C3a/C3b/C4/C7/C8 PASS; C3c FAIL (2023/2024/2025
+MODEL MISS); **C5a CAVEAT 2025 +7.6 %** (unchanged — no CT volume was added, so there
+was nothing to sign); C6 UNATTESTED (correct for a probe). Determination **NOT-YET**.
+C7/C8 report but do not gate CT_PEAKER (1.5/1.4/2.0 % of ISO load, under the 2 % floor;
+D-1 profile r 0.878/0.914/0.947, D-2 0.0 % forced).
+
+**Caveat on 2025.** The offer-recovery self-test — the share of model on-hours whose
+recovered offer exceeds the LMP — is 0.8 %/6.5 %/**35.5 %**. 2023–24 validate the
+recovery cleanly; in 2025 a third of the model's CT on-hours are forced by the floors
+and the gas bridge rather than price-driven, so 2025's offer-based bands are
+indicative only. The conclusion does not rest on them.
+
+**Probe-layer defect fixed.** `_dispatch_frame` relabels dual-fuel oil-switched
+unit-hours as `klass == "oil"`, so filtering `klass == "CT_PEAKER"` silently returns a
+short series (8,736 h for plant 2494 in 2023) — which cut the analysable fleet from 18
+plants to 9 before it was caught. This probe resolves CT unit ids first and takes all
+their rows whatever the hour's fuel label, reindexed onto the full clock. The nyiso-90
+probes share the blind spot; harmless there (totals only), fatal here (hour-matched).
+
+**What is left.** One candidate survives: the fleet is committed for **local
+reliability, not for energy** — NYISO SCUC load-pocket security commitment inside
+NYC / Long Island with BPCG make-whole, which is how a unit rationally runs at an
+energy loss on two thirds of its runs. It is NOT the published reserve ladder
+(nyiso-83 measured that at +0.11 TWh). Representing it is a data-intake and topology
+question (sub-zonal load pockets) before it is a mechanism question, and it needs
+owner scoping. Until then CT_PEAKER's level gap is a **diagnosed, unclosed structural
+limitation of the five-zone representation**, not an open tuning target.

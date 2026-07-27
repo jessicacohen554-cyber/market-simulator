@@ -1,14 +1,16 @@
 {
-  "timestamp": "2026-07-27T05:54:11",
+  "timestamp": "2026-07-27T21:56:30",
   "git": {
-    "sha": "a1def15",
-    "basis_sha": "12d4afc9521aa96b81d51ca740961ab51f4e5cb0",
-    "branch": "claude/nyiso-gas-commitment-bridge-6n8p2h",
-    "dirty": false,
-    "changed_files": [],
+    "sha": "e4c65a4",
+    "basis_sha": "e4c65a4ea141d28605a1e99f12be4cdf7ad996e0",
+    "branch": "claude/nyiso-91-ct-start-frequency-5fozdp",
+    "dirty": true,
+    "changed_files": [
+      "scripts/probes/nyiso91_ct_start_economics.py"
+    ],
     "diffstat": ""
   },
-  "model_changes_note": "nyiso-87 CONTROL: same-HEAD zero-delta replay of the nyiso-81 keeper recipe. The comparator for arms A-D (never the registered keeper metrics).",
+  "model_changes_note": "nyiso-91 CT start-frequency lane: same-HEAD zero-delta control (keeper config, no override) for the start-frequency characterization and any arm.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "NYISO",
@@ -50,7 +52,30 @@
       "nyiso_scr_edrp": true,
       "nyiso_hydro_reserve_eligible": true,
       "nyiso_scr_edrp_reserve_eligible": true,
-      "dual_fuel_oil_daily_parity": true
+      "dual_fuel_oil_daily_parity": true,
+      "reliability_floor_overrides": {
+        "NYC:ST_GAS:tmax:NYC_ST_ev": {
+          "enabled": false
+        },
+        "NYC:CT_PEAKER:tmax:NYC_CT_ev": {
+          "enabled": false
+        },
+        "Long_Island:CT_PEAKER:tmax:LI_CT_ev": {
+          "enabled": false
+        },
+        "Long_Island:ST_GAS:tmax:LI_ST_ev": {
+          "enabled": false
+        },
+        "Capital_Hudson:ST_GAS:tmax:CH_ST_ev": {
+          "enabled": false
+        }
+      },
+      "nyiso_gas_commitment_bridge": true,
+      "nyiso_gas_bridge_startup": true,
+      "nyiso_gas_bridge_min_run": true,
+      "nyiso_gas_bridge_cc_min_run_hours": 21,
+      "nyiso_gas_bridge_st_min_run_hours": 13,
+      "measured_ct_heat_rates": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -67,7 +92,7 @@
     "nyiso_dynamic_reserve_requirements": true,
     "nyiso_hydro_reserve_eligible": true,
     "nyiso_scr_edrp_reserve_eligible": true,
-    "git_sha": "a1def15"
+    "git_sha": "e4c65a4"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -229,6 +254,7 @@
     "plant_emission_rates_path": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates.parquet",
     "use_plant_emission_rates_v2": true,
     "plant_emission_rates_v2_path": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
+    "measured_ct_heat_rates": true,
     "control_retrofit_forward": false,
     "control_retrofit_path": "/home/user/market-simulator/data/raw/eia-860/eia860_enviro_assoc_emissions_control_equipment.parquet",
     "cc_peak_hr_penalty": 1.15,
@@ -293,7 +319,23 @@
     "reference_price_interface": false,
     "neighbor_hr_forward_skill": null,
     "reliability_floor": true,
-    "reliability_floor_overrides": {},
+    "reliability_floor_overrides": {
+      "NYC:ST_GAS:tmax:NYC_ST_ev": {
+        "enabled": false
+      },
+      "NYC:CT_PEAKER:tmax:NYC_CT_ev": {
+        "enabled": false
+      },
+      "Long_Island:CT_PEAKER:tmax:LI_CT_ev": {
+        "enabled": false
+      },
+      "Long_Island:ST_GAS:tmax:LI_ST_ev": {
+        "enabled": false
+      },
+      "Capital_Hudson:ST_GAS:tmax:CH_ST_ev": {
+        "enabled": false
+      }
+    },
     "class_commitment_overrides": {},
     "caiso_gas_commitment_floor": false,
     "caiso_gas_floor_frac": 1.0,
@@ -332,14 +374,17 @@
     "nyiso_li_locational_reserve": false,
     "nyiso_incity_commitment_obligation": false,
     "nyiso_east_reserve_families": false,
-    "nyiso_gas_commitment_bridge": false,
+    "nyiso_gas_commitment_bridge": true,
     "nyiso_gas_bridge_cc_min_load_frac": 0.523,
     "nyiso_gas_bridge_st_min_load_frac": 0.239,
     "nyiso_gas_bridge_startup": true,
     "nyiso_gas_bridge_da_horizon": true,
-    "nyiso_gas_bridge_min_run": false,
-    "nyiso_gas_bridge_cc_min_run_hours": null,
-    "nyiso_gas_bridge_st_min_run_hours": null,
+    "nyiso_gas_bridge_min_run": true,
+    "nyiso_gas_bridge_cc_min_run_hours": 21,
+    "nyiso_gas_bridge_st_min_run_hours": 13,
+    "nyiso_gas_bridge_ct": false,
+    "nyiso_gas_bridge_ct_min_load_frac": 0.238,
+    "nyiso_gas_bridge_ct_min_run_hours": 2.0,
     "nyiso_spin_reserve_online": false,
     "nyiso_synchronised_reserve": false,
     "nyiso_spin_headroom_frac": 1.0,
@@ -506,6 +551,7 @@
     "coal_bit_committed_takeorpay": false,
     "coal_committed_takeorpay_all": false,
     "coal_committed_takeorpay_regulated": false,
+    "coal_committed_takeorpay_sunk_fixed": false,
     "coal_lignite_passthrough_sigmoid": false,
     "coal_lignite_passthrough_floor": null,
     "coal_lignite_passthrough_ceil": null,
