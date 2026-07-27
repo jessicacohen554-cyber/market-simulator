@@ -126,7 +126,7 @@ precedented construction from charge to discharge.
   `da_frac`; the dispatch mechanism floors each day's fleet discharge at
   `alloc_share_dis[hod] × da_frac_dis × (day total discharge)` — the same
   Fourier-Motzkin per-day construction as
-  `dispatch._build_storage_alloc_rows`. Since `Σ_hod alloc_share = 1`, this
+  `model.lp.rows._build_storage_alloc_rows`. Since `Σ_hod alloc_share = 1`, this
   forces `da_frac_dis` of the day's discharge onto the measured intra-day
   shape and leaves `1 − da_frac_dis` free at the RT margin. **The discharge
   VOLUME stays fully endogenous**; only its intra-day allocation is
