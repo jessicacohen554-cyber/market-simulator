@@ -2862,6 +2862,7 @@ def solve_and_persist(
     coal_econ_srmc_bound: bool = False,
     coal_econ_marginal_hr_bound: bool | None = None,
     ercot_offer_hrmult_ep_rebasis: bool | None = None,
+    ercot_offer_hrmult_ep_rebasis_bands: "list[str] | None" = None,
     coal_takeorpay_from_data: bool = False,
     coal_mustrun_online_pmin: bool = False,
     coal_sync_srmc_tranche: bool = False,
@@ -3310,15 +3311,22 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 coal_econ_marginal_hr_bound=False
             )
-        # Mirror run_year's ERCOT-118 EP rebasis EXACTLY — bool AND curve, per
-        # year (the rebased tables are per delivery year), with the same
-        # tri-state resolution. Recording only the bool would leave
-        # run_config.json showing the pooled HH-0.50 bands while the LP solved
-        # on the rebased ones (rule 25 — the ercot-115 recording-gap lesson).
+        # Mirror run_year's ERCOT-118 EP rebasis EXACTLY — bool AND curve AND
+        # band scope (ERCOT-119), per year (the rebased tables are per
+        # delivery year), with the same tri-state resolution. Recording only
+        # the bool would leave run_config.json showing the pooled HH-0.50
+        # bands while the LP solved on the rebased ones (rule 25 — the
+        # ercot-115 recording-gap lesson); recording the scope without the
+        # scoped curve would be the same gap one level down.
         _rec_ep_rebasis_on = (
             bool(recorded_cfg.ercot_offer_hrmult_ep_rebasis)
             if ercot_offer_hrmult_ep_rebasis is None
             else bool(ercot_offer_hrmult_ep_rebasis)
+        )
+        _rec_ep_bands = (
+            recorded_cfg.ercot_offer_hrmult_ep_rebasis_bands
+            if ercot_offer_hrmult_ep_rebasis_bands is None
+            else list(ercot_offer_hrmult_ep_rebasis_bands)
         )
         if _rec_ep_rebasis_on and iso.upper() == "ERCOT":
             from market_sim.data.offer_curves import (
@@ -3326,10 +3334,14 @@ def solve_and_persist(
             )
 
             _rec_ep_curve, _, _ = apply_ercot_dam_hrmult_ep_rebasis(
-                recorded_cfg.offer_curve_by_group, cfg_year, offer_curve_deltas
+                recorded_cfg.offer_curve_by_group,
+                cfg_year,
+                offer_curve_deltas,
+                bands=_rec_ep_bands,
             )
             recorded_cfg = recorded_cfg.with_overrides(
                 ercot_offer_hrmult_ep_rebasis=True,
+                ercot_offer_hrmult_ep_rebasis_bands=_rec_ep_bands,
                 offer_curve_by_group=_rec_ep_curve,
             )
         elif recorded_cfg.ercot_offer_hrmult_ep_rebasis:
@@ -4212,6 +4224,7 @@ def solve_and_persist(
             coal_econ_srmc_bound=coal_econ_srmc_bound,
             coal_econ_marginal_hr_bound=coal_econ_marginal_hr_bound,
             ercot_offer_hrmult_ep_rebasis=ercot_offer_hrmult_ep_rebasis,
+            ercot_offer_hrmult_ep_rebasis_bands=ercot_offer_hrmult_ep_rebasis_bands,
             coal_takeorpay_from_data=coal_takeorpay_from_data,
             coal_mustrun_online_pmin=coal_mustrun_online_pmin,
             coal_sync_srmc_tranche=coal_sync_srmc_tranche,
@@ -4903,6 +4916,7 @@ def solve_and_persist(
         "coal_econ_srmc_bound": coal_econ_srmc_bound,
         "coal_econ_marginal_hr_bound": coal_econ_marginal_hr_bound,
         "ercot_offer_hrmult_ep_rebasis": ercot_offer_hrmult_ep_rebasis,
+        "ercot_offer_hrmult_ep_rebasis_bands": ercot_offer_hrmult_ep_rebasis_bands,
         "coal_plant_monthly_pricing": first_year_cfg.coal_plant_monthly_pricing,
         "td_loss_factor": first_year_cfg.td_loss_factor,
         # ERCOT gas-basis mechanisms: env-var-gated inside backcast_config
@@ -7781,6 +7795,20 @@ def main() -> None:
         "econ_high/peak, CC_REGULAR+CC_CHP) onto the EP-anchored dispatch "
         "gas basis with per-year tables (ERCOT-118; ERCOT-only, rule 25).",
     )
+    # ERCOT-119 leg-split of the EP rebasis: restrict it to the named artifact
+    # bands (e.g. econ_low econ_high), keeping the peak standing wall (and its
+    # ladder rungs and window margin anchor) at the run's resolved values.
+    # TRI-STATE (default None): None = keep the ScenarioConfig/prb-resolved
+    # scope, whose own default None rebases every artifact band (ERCOT-118).
+    parser.add_argument(
+        "--ercot-offer-hrmult-ep-rebasis-bands",
+        nargs="+",
+        default=None,
+        metavar="BAND",
+        help="Band scope for --ercot-offer-hrmult-ep-rebasis (ERCOT-119 "
+        "leg-split), e.g. econ_low econ_high. Unknown band names hard-fail; "
+        "omit to rebase every artifact band.",
+    )
     parser.add_argument(
         "--bit-floor", type=float, default=None, help="Bit sigmoid cheap-gas floor."
     )
@@ -10330,6 +10358,7 @@ def main() -> None:
         coal_econ_srmc_bound=args.coal_econ_srmc_bound,
         coal_econ_marginal_hr_bound=args.coal_econ_marginal_hr_bound,
         ercot_offer_hrmult_ep_rebasis=args.ercot_offer_hrmult_ep_rebasis,
+        ercot_offer_hrmult_ep_rebasis_bands=(args.ercot_offer_hrmult_ep_rebasis_bands),
         bit_overrides={
             "coal_bit_passthrough_floor": args.bit_floor,
             "coal_bit_passthrough_ceil": args.bit_ceil,
