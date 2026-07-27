@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-27-ercot119-econ-rebasis-joint",
+  "label": "ercot119 econ rebasis joint",
+  "date": "2026-07-27",
+  "shorthand": "ercot119-econ-rebasis-joint",
+  "definition": "ERCOT-119 leg-split joint arm: ercot115 keeper + measured coal DAM envelope + EP rebasis scoped to econ_low/econ_high (peak kept as the pooled standing wall; PRECOMMIT-ercot119-econ-rebasis-2026-07-27.md pushed before this solve)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-27-ercot119-econ-rebasis-joint.js",
+  "bundle": "results/calibration/ercot119_econ_rebasis_joint"
+}
