@@ -199,6 +199,19 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinct scenario.
     "pjm_offer_midcurve_peak_segments",
     "pjm_ct_measured_max_reprice",
+    # NYISO in-city locational reserve levers (commit fa9fc78, nyiso-83) and
+    # the nyiso-84 EAST-tier successors. All four are default-off and
+    # byte-inert flag-off, but the two fa9fc78 fields were NOT registered here
+    # when they landed, so they leaked into the hash and moved the pinned
+    # default cache_key off edbc1b1 (the exact class of miss the nyiso_scr_edrp
+    # and gas-offer blocks above record). Registered together — the fa9fc78
+    # pair as the repair, the nyiso-84 pair on arrival — so every pre-existing
+    # cache key is byte-stable again; an armed run enters the key as a
+    # distinct scenario.
+    "nyiso_li_locational_reserve",
+    "nyiso_incity_commitment_obligation",
+    "nyiso_east_reserve_families",
+    "nyiso_spin_reserve_online",
     # Forecast-path cross-year LP warm start (plan §7 H-3, owner decision D-9;
     # default flipped ON 2026-07-26 on the full-horizon A/B). A pure solve-PATH
     # knob — the LP optimum is basis-independent — so it is dropped from the
@@ -2329,6 +2342,36 @@ class ScenarioConfig:
     # [R-ONE-MECH]); per the charter's rule-19 substitution requirement it is
     # meant to be run with the NYC/LI ST_GAS reliability_floor limbs DISABLED
     # via reliability_floor_overrides, never stacked on them. Default off
+    # (byte-identical); NYISO-only; requires --energy-reserve-coopt.
+    nyiso_east_reserve_families: bool = False  # NYISO published EAST spin_10
+    # (330 MW) + total_30 (1,200 MW) reserve families — the nyiso-84 rule-14
+    # [R-ACCURATE] omission fix, one tier up from the nyiso-83 Zone-K one: the
+    # model carried only the EAST 10-minute-total row (1,200 MW / $775) of the
+    # three printed EAST rows in the Locational Reserve Requirements posting
+    # (data/raw/NYISO-AS/requirements/nyiso_locational_reserve_requirements.csv,
+    # region=EAST; identical across v2020/v2021/v2026, so v2021 spans all of
+    # 2023-2025). Demand-curve values PINNED from the Ancillary Services Manual
+    # §6.8 items 2 and 12: BOTH $40/MW — NOT the $775 of item 7 (the 10-minute
+    # total). See model.reserves.spec.NYISO_RCPF_EAST_FAMILIES for the full
+    # vintage trail ($25 in the 2019 ASM; $40 from the July-2021 procurement
+    # enhancements, corroborated in-force 2022-2023 by the 2023 SOM p. A-132).
+    # Default off (byte-identical); NYISO-only; requires --energy-reserve-coopt.
+    nyiso_spin_reserve_online: bool = False  # NYISO online-gated PUBLISHED
+    # spinning families (nyiso-84, the mechanism arm): re-classes the published
+    # NYCA 10-minute spinning family (655 MW, $775) — and east_10min_spin (330
+    # MW, $40) when nyiso_east_reserve_families adds it — onto the ONLINE-gated
+    # reserve class (R[2,z] <= rho * sum online quick-start P), the SAME class-2
+    # machinery the in-city obligation and path A use, never a second gate
+    # (rule 19 [R-ONE-MECH]). Driver is the PRODUCT DEFINITION: spinning
+    # reserve is supplied by synchronized resources (ASM §2), so idle
+    # quick-start capacity backing a spinning requirement is the idle-allowed
+    # headroom misrepresentation nyiso-83 proved for the J/K families
+    # (FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md §4b), sitting in the
+    # $775 tier. Mutually exclusive with nyiso_synchronised_reserve (hard
+    # error — path A's hand-scoped NYC $500 spin family holds spin online too;
+    # same phenomenon). Composes with nyiso_incity_commitment_obligation (the
+    # spin families then share the obligation's steam-union class-2 row —
+    # online steam headroom is synchronized supply). Default off
     # (byte-identical); NYISO-only; requires --energy-reserve-coopt.
     nyiso_synchronised_reserve: bool = False  # NYISO online-gated SPINNING
     # reserve (path A of the downstate-reserve frontier, docs/handoffs/
@@ -8397,6 +8440,8 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_synchronised_reserve": 1,
     "nyiso_li_locational_reserve": 1,
     "nyiso_incity_commitment_obligation": 1,
+    "nyiso_east_reserve_families": 1,
+    "nyiso_spin_reserve_online": 1,
     "nyiso_forward_net_import_twh": 2,
     "nyiso_spin_headroom_frac": 2,
     "miso_firm_imports": 1,
