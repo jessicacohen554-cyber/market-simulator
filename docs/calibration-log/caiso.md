@@ -2437,3 +2437,44 @@ of it in the overnight instead. **Newly raised, not built: the PJM
 nameplate-clip ask** (3.6–6.7 % of its hydro budget, no CAISO-style evening pin).
 
 Next number: caiso-131.
+
+### ADDENDUM (same session, later) — OWNER PROMOTION of caiso-130
+
+The owner promoted arm B in-session on an explicitly stated criterion: *"if
+structural integrity improves but gates regress that may still be a keeper"*
+(rule 1 `[R-STRUCT]` / rule 14 `[R-ACCURATE]`). **CAISO keeper is now
+`2026-07-27-caiso-130-nameplate-aware`**, superseding
+`2026-07-27-caiso-126-ror-split`.
+
+The promotion rests on three facts, none of them a fit:
+
+1. **The rubric is IDENTICAL to the same-HEAD control** — C1/C2/C3b/C4/C7/C8
+   PASS, C3a/C3c/C5a FAIL, C6 UNATTESTED, determination NOT-YET in both arms.
+   **No scored criterion regresses.** What regressed is the overnight *window
+   diagnostic* and this session's own pre-registered A/B gates (K2/P1), not the
+   keeper scorecard.
+2. **It closes a real physical defect with zero DOF** — 130.2/352.7/26.3 GWh/yr
+   of monthly hydro budget that exceeded nameplate-hours and was silently
+   clipped by the LP's own `pmax` bound; 0 MWh remains above the bound.
+3. **Rule 14 in terms** — the accurate input made the overnight fit worse
+   *because* the uniform scale's silent clip had been compensating for the
+   model's own overnight hydro excess. Reverting would bury the error back
+   inside an inaccurate input.
+
+**The as-armed REJECTED verdict is recorded, not erased** (PREREG §4-§5,
+FINDING §3-§4): K2-2024 fired and P1 failed 2023/24. The exposed overnight
+regression is an **OPEN ROOT-CAUSE ITEM** — the caiso-127 evening λ-formation /
+storage-arbitrage pin — **never a ledgered exception and never bought by a
+tuned value** (exceptions ledger stays empty).
+
+Precedent is exact: the superseded keeper `caiso-126-ror-split` was itself
+promoted from a REJECTED probe on the same rule 1/14 grounds.
+
+Keeper hygiene complete: DOF ledger seeded (11 entries, `build_dof_ledger.py`),
+governance attestation re-attested carrying caiso-126's verbatim,
+`keepers/CAISO.json` + `status/CAISO.js` rebuilt, and
+`scripts/audit_keepers.py --iso CAISO` **PASSES clean** (0 failures, 0
+warnings). Determination unchanged at **NOT-YET** (C6 governance gate, C3a/C3c/
+C5a).
+
+Next number: caiso-131.

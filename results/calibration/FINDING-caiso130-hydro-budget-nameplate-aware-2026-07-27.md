@@ -1,10 +1,26 @@
 # FINDING — caiso-130: `hydro_budget_nameplate_aware` delivers exactly the energy it promises (P2 PASS, 93–98 % of it, all three years) and is **KILLED as armed** by K2-2024 — because the LP spreads the freed water almost FLAT and puts 26–47 % of it in the overnight against 11–32 % in the evening. This is a rule-14 result, not a rule-1 one: the accurate input made the fit worse, which localizes the real defect rather than condemning the input.
 
-**Keeper `2026-07-27-caiso-126-ror-split` UNCHANGED.** Arm B registered as a
+> **PROMOTED 2026-07-27 (owner, in-session).** The owner set the criterion
+> explicitly — *"if structural integrity improves but gates regress that may
+> still be a keeper"* — and arm B meets it: the **rubric is identical to the
+> same-HEAD control** (C1/C2/C3b/C4/C7/C8 PASS, C3a/C3c/C5a FAIL, NOT-YET in
+> both), so no scored criterion regresses, while the delta closes a real
+> physical defect with zero DOF. **CAISO keeper is now
+> `2026-07-27-caiso-130-nameplate-aware`.** The as-armed REJECTED verdict below
+> stands as recorded — it is not erased by the promotion, and §5's rule-14
+> reading is the promotion's basis: the exposed overnight regression is an OPEN
+> ROOT-CAUSE ITEM (the caiso-127 evening λ pin), never a ledgered exception and
+> never bought by a tuned value. Precedent is exact — the superseded keeper
+> `caiso-126-ror-split` was itself promoted from a REJECTED probe on the same
+> rule 1/14 grounds. DOF ledger (11 entries) + governance attestation carried
+> forward and re-attested; `audit_keepers.py --iso CAISO` PASSES clean.
+
+**Superseded keeper `2026-07-27-caiso-126-ror-split`.** Arm B registered as a
 REJECTED probe (`2026-07-27-caiso-130-nameplate-aware`) and arm A as its
-control (`2026-07-27-caiso-130-control`), both on the dashboard (rule 15).
-Promotion was never on the table (owner-gated) and one pre-registered kill
-fired.
+control (`2026-07-27-caiso-130-control`), both on the dashboard (rule 15). One
+pre-registered kill fired, so the delta is REJECTED **as armed**; promotion was
+not pre-granted and came later in-session as a separate owner act on the
+structural-integrity criterion (banner above).
 
 Gates: `results/calibration/PREREG-caiso130-hydro-budget-nameplate-aware-2026-07-27.md`,
 committed at `26259a2` **before arm B solved** (scorer read-key fix `ab44dcc`,
@@ -176,8 +192,12 @@ nameplate bound. Reverting to the uniform scale to "fix" the overnight would be
 burying the error back inside an inaccurate input, which rule 14 forbids in
 terms. Accordingly:
 
-1. **Keeper UNCHANGED.** Arm B is a registered REJECTED probe; the flag stays
-   in the tree **default-off**, unreverted and undeleted.
+1. **Keeper PROMOTED to arm B** (owner, in-session, on the stated
+   structural-integrity criterion). The as-armed REJECTED verdict stands as
+   recorded. The flag itself stays **default-off in `ScenarioConfig`** — the
+   keeper arms it explicitly through its own run config, exactly as
+   `hydro_ror_split` and `hydro_min_flow_floor` are armed; nothing about the
+   promotion changes another ISO's default (§1).
 2. **The flag is NOT refuted as physics.** It is refuted *as armed on this
    keeper, today*, by a kill whose cause is the evening λ-formation defect the
    caiso-126 K1 and caiso-127 diagnoses already identified as the blocker for
