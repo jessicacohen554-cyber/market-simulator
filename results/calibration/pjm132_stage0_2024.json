@@ -1,0 +1,32 @@
+{
+  "bundle": "results/calibration/pjm121_ccbelt",
+  "years": [
+    2024
+  ],
+  "rows": [
+    {
+      "year": 2024,
+      "n_touched_rows": 461,
+      "mw_wtd_delta_by_bin": {
+        "bin0": -0.067352136388408,
+        "bin1": 0.4014476966826847,
+        "bin2": 0.0902901100857899,
+        "bin3": 0.37005102422860087
+      },
+      "gradient_bin3_minus_bin0": 0.43740316061700885,
+      "gradient_positive": true,
+      "tight_bin_rise_usd": 0.37005102422860087
+    }
+  ],
+  "k1_gradient": {
+    "years_with_positive_gradient": 1,
+    "years_measured": 1,
+    "required": 2,
+    "verdict": "PARTIAL (1/1 measured year(s) positive; 2 of 3 required for the gate)"
+  },
+  "honesty_bound": {
+    "threshold_usd": 1.0,
+    "max_tight_bin_rise_usd": 0.37005102422860087,
+    "within_noise": true
+  }
+}
