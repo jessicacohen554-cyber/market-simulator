@@ -1741,3 +1741,79 @@ offer-level arm as a registered controlled refutation (this session's §5 indepe
 strengthens ERCOT-122's recommendation against it), and the committed-band data gap (the SCED
 raws DO carry `Min Gen Cost`, populated on 29–31 % of online coal intervals, but it is the RT
 instrument on 82 probe days, NOT the DAM committed band — flagged, not used).
+
+## 2026-07-27 — ERCOT-124: the coal offer-curve UPPER TAIL is real but 68–71 % of it is ONE jointly-owned plant's second-owner share; ex that block the model's coal curve is correct to 1.6 pp and no class mechanism is licensed (ercot124-coal-offer-uppertail)
+
+**Lane** ercot124-coal-offer-uppertail · keeper **unchanged**
+(`2026-07-26-ercot115-coal-marginal-hr`) · **Phase 1 only — no LP built, no year solved, no run
+registered, no keeper file touched.** Chartered by `DIAGNOSIS-ercot123-coal-sced-reach` §5/§7.2.
+
+**Derived (committed, nothing reads it):** `scripts/data/derive_sced_coal_uppertail.py` →
+`data/raw/_validation-source/offer_curve_sced_coal_uppertail.json` — per delivery year and price
+band, the share of telemetered `HASL` carrying a submitted RT offer at or below each edge
+(ERCOT-117 §1.1 convention), with per-band capacity `coverage` and top-1 concentration, on the
+delivered-coal basis (ERCOT-122 §2), plus an hour-of-day bound and a DAM cross-instrument block.
+Price edges fixed from the measured distribution's own plateaus/jump before any model quantity was
+read (rule 23). `derive_dam_offer_hrmults.py` imported but NOT modified — CC and coal artifacts
+byte-identical.
+
+**Result.** The tail reproduces ERCOT-123 §5 (above $35: 0.0504 in 2024, 0.0531 in 2025 — the only
+year-stable statistic here). Dropping two of twenty-six resources — `FPPYD1_FPP_G1_J02` /
+`FPPYD1_FPP_G2_J02`, the **second owner's registered share** of two jointly-owned Fayette units
+whose first owner's share of the same physical machines offers $18.41/$18.74 against their
+$150.10 — moves the measured saturation point from **$500 to $35** and cuts the tail to
+**0.0163 / 0.0159**. The $100+ layer is 3.48/3.75 pp of HASL on **4.5 % / 10.8 % of fleet
+capacity**; adopting it class-wide would repeat the ERCOT-122 pooled-`econ_high` error the charter
+forbade in its own text. The model fleet has no owner-share dimension (Fayette is ONE plant,
+code 6179, 1690 MW), so the conduct has nothing to re-shape.
+
+**Rule 19 enumeration — form PASSES, content FAILS.** D-2 shows **no COAL row in any year**: the
+keeper forces zero coal energy, so a peak-band re-shape would stack on nothing, and `peak_ladder`
+(`assembly.py:866-899`) is an existing capacity-preserving re-shape channel. Live coal peak
+heights are COAL_PRB **1.562** (base 1.48 + keeper delta 0.082) and COAL_LIGNITE **1.55** (no peak
+delta); the peak band's capacity is pinned at `Pct_Peaking` = 5.0 % (698 MW of 13,963.9 MW) by the
+bin sheet. The channel is available and legitimate; what cannot be put into it is a
+fleet-representative tail.
+
+**Identification fails both available tests.** Band-level LOYO across the only two measured years:
+($35,$60] 0.0065→0.0101 (1.55×), ($60,$100] 0.0098→0.0046 (2.13×) — only the total is stable
+(1.03×), and its composition is what a ladder must specify. Per-resource is worse (`LEG_LEG_G1`
+$78.00→$23.44, `WAP_WAP_G5` $76.50→$25.39, `CALAVERS_JKS1`/`JKS2` swap). The **2023 leg** — the
+charter's named central risk — has no instrument: the DAM cross-check, the only series covering
+2023, gives a tail above $35 of **3.87 → 1.14 → 0.13 pp**, a 31× collapse contradicting the RT
+tail's flatness. Two flagged risks came back CLEAN: hour-of-day (tail 0.0542 h11–22 vs 0.0583
+h23–h10 — larger overnight, so daytime sampling does not inflate it) and probe-day
+representativeness (ERCOT-123 §6(ii), ≤0.010).
+
+**Direction, checked ex ante (charter task 3):** dearer top ⇒ coal energy DOWN, C8 forced share
+holds (coal forces nothing), prices UP — the sign the lane wants, no ERCOT-122-style inversion.
+Sizing of the class-representative residual (hand calculation, labelled): 1.6–1.8 pp of online
+HASL ≈ 150–170 MW ≈ a quarter of the existing peak band ⇒ **0.18 / 0.36 TWh** = 0.31 % / 0.59 % of
+the keeper's modelled coal (57.3 / 60.3 TWh), and 1.4–5.3 % of the ERCOT-116 envelope's
++6.8/+9.2/+12.9 TWh.
+
+**Scope/environment.** Session diff vs `origin/main` is THREE new files (derive script, artifact,
+diagnosis) plus this entry — no `ScenarioConfig` field, cache-key surface, solve path or existing
+artifact touched, so no config pin moved and no existing run can change. Holdout years untouched
+(rule 22): SCED 2024–2025 and DAM 2023–2025, all in-window; no 2022-or-earlier data read, no LP
+ran. No GitHub Actions workflow added. The December-2025 SCED schema revision is inherited
+unchanged via the reused ERCOT-123 `load_sced()` (drops the no-HASL intervals explicitly, recorded
+in `_provenance.load_coverage`). Sampling bound carried throughout: 82 probe days, 2024–2025 only;
+nothing here is an annual statistic. `tests/regression/test_persisted_identity.py` **passes 11/11**
+in this container — the ERCOT-122/123 sessions' 2-failed state does not reproduce; either way this
+session touches no `src/` code.
+
+**Recommendation (recommend-and-STOP, owner decides):** (1) Phase 2 NOT run — three independent
+grounds (coverage, no model representation to re-shape, unidentified even in-sample); (2) record
+as a POSITIVE result that the model's coal offer curve is correct to within 1.6 pp of capability,
+and **close the coal offer-curve lane as a whole** — with ERCOT-122 (level) and ERCOT-123 (reach),
+every moment of coal's offer distribution is now measured on both instruments and none of them is
+where the ERCOT-116 over-run lives; (3) if the owner wants the owner-share conduct represented it
+is a NEW lane — a per-registered-share coal offer-height channel in the sanctioned per-plant
+style, ~0.4–0.8 TWh/yr, stable across three years and two instruments, inheriting a live rule-13
+forward-regeneration question; (4) THREE inherited owner decisions surfaced, not decided — the
+ERCOT-122 offer-level controlled refutation (this session strengthens the recommendation against
+it a third time: ex-owner-split the model matches over its WHOLE range, not just below $25), the
+committed-band data gap, and whether the Dec-2025 SCED schema revision warrants a re-fetch lane.
+ERCOT-120 and ERCOT-117 §5.3 remain separate, un-renumbered lanes. Full forensics:
+`docs/DIAGNOSIS-ercot124-coal-offer-uppertail-2026-07-27.md`.
