@@ -1410,3 +1410,98 @@ residuals, rule 24), wire it ahead of the eGRID plant-average, and register ONE
 arm vs a same-HEAD zero-delta control across 2023–2025 in one bundle. Re-score
 C1 **and** C5a: the C1 margin is thin (−2.78 of ±2.94 TWh) and 2025 CO2 is
 already +7.6 % against +10 %, and this arm adds gas volume.
+
+## 2026-07-27 — nyiso-89: measured CT loaded heat rates land; nyiso-88's bias was 2.5x overstated by a gross/net basis error; heat rate ELIMINATED as the peaker candidate
+
+Built the measured input nyiso-88 §7 called for, wired it ahead of the eGRID
+plant-average, and registered ONE arm against a same-HEAD zero-delta control
+across 2023–2025 (rules 16 + 12). Keeper **unchanged**
+(`2026-07-27-nyiso-87-cmeas-measured`); both new runs are PROBES, UNATTESTED on
+C6, determination NOT-YET. Write-up:
+`docs/FINDING-nyiso89-ct-heat-rate-2026-07-27.md`.
+
+Registered: `2026-07-27-nyiso-89-control-zerodelta`
+(`results/calibration/nyiso89_ctrl_zerodelta`) and
+`2026-07-27-nyiso-89-ctmeas-hrloaded` (`results/calibration/nyiso89_hrmeas_ctloaded`).
+The control reproduces the keeper exactly (CT_PEAKER 0.459/0.314/1.282 TWh vs
+the keeper's 0.46/0.31/1.28; D-1 `profile_r` 0.876/0.928/0.949).
+
+**THE INPUT.** `scripts/data/derive_campd_ct_heat_rates.py` →
+`data/raw/_processed-legacy/campd_ct_heat_rates_NYISO.csv` (19 plants,
+2,395/2,614 MW = 91.6 % of class capacity; + SOURCES sidecar). Per CAMPD unit,
+`heatInput/grossLoad` over hours ≥ 80 % of that unit's own p95 gross load
+(≥ 50 qualifying hours, pooled 2023–2025), restricted to `unitType ==
+"Combustion turbine"` so a mixed steam/CT facility contributes only its
+turbines instead of being dropped as unattributable, generation-weighted to the
+plant. Applied under `ScenarioConfig.measured_ct_heat_rates` (default OFF) in
+`fleet/eia860.py::_rows_to_generators` AFTER `plant_group` resolves, so only
+CT_PEAKER rows are repriced. Rule 13 admissible (a machine's loaded heat rate
+regenerates forward and responds to retrofits); rule 24 frozen (re-derives only
+on a CAMPD vintage change).
+
+**CORRECTION TO THE PREMISE — nyiso-88 §4 mixed bases.** CAMPD meters **gross**
+load; eGRID's heat rate (the model's), the LP's dispatched MW and the
+benchmark's own actual (`gross × parasitic_factor`) are all **net**. The dropped
+station-service fraction is 1 % on a bare CT but **10.2 % at Bayonne**, the
+largest plant in the class and 41 % of its energy (factor 0.898 audited this
+session against matching EIA-923/CAMPD unit sets, consistent 0.88–0.92 across
+2022–2025 — genuine, not a coverage artifact). Restated on a common net basis
+(`scripts/probes/nyiso89_ct_heat_rate_basis.py`): generation-weighted SRMC bias
+**+$1.37/+$1.49/+$2.50 per MWh**, not the published +$6.48/+$6.70/+$7.34.
+Capacity-weighted the model **undercharges** the class by $0.91–$1.66/MWh.
+nyiso-88's headline — "the cost error exceeds the margin the fleet actually
+earns, in every year" — **does not survive**: against the measured margin
+−$1.39/+$5.82/+$3.49 it is comparable only in 2023.
+
+**A WIRING DEFECT CAUGHT BY EXACT-EQUALITY CHECKING.** The first arm was
+**byte-identical** to its control (max abs diff exactly 0.0, every class and
+hour of 2023) for a change moving plant heat rates by up to 10.9 MMBtu/MWh.
+`scripts/run_calibration.py::run_year` does NOT call
+`fleet.assembly.load_or_synthesize_bins` — it inlines its own
+`fleet_to_bins(load_fleet_from_csv(...))` for the non-ERCOT per-plant ISOs, and
+that call did not forward the flag; since CT_PEAKER plants are binned, the solve
+ran on eGRID rates while `run_config.json` recorded the input as ON. This fails
+as **"the mechanism is inert"**, not as a crash — reported without the equality
+check it would have been a confident, wrong structural finding. Fixed, and
+pinned by a test that parses `run_calibration.py` and asserts EVERY
+`load_fleet_from_csv` call there forwards the flag. Re-solved arm's P0 pattern
+differs from the control's (2023: 20,077 → 19,940 unit-hours floored).
+
+**RESULT — nearly inert, and inconsistent in sign.** CT_PEAKER
+0.459→0.443 / 0.314→0.394 / 1.282→1.407 TWh, i.e. **−0.016/+0.080/+0.125**
+against gaps of 1.801/1.820/1.729 = **−0.9 % / +4.4 % / +7.2 %** of the gap.
+**2023 moves the WRONG WAY** — the capacity-weighted arithmetic showing up in
+dispatch: Barrett corrected UP (11.08→16.69 on 281 MW) removes more capacity
+from merit than Bayswater (21.68→10.74 on 56 MW) and the in-city fleet add back.
+Energy is a near-pure swap with ST_GAS (+0.025/−0.078/−0.087); system totals
+unchanged to 3 dp.
+
+**GATES — every criterion verdict IDENTICAL to the control.** C1 PASS (14/14,
+free 10/10) both. C2/C3a/C3b/C4/C7/C8 PASS both. C3c FAIL both (2025 6→7 h vs
+42). **C1's thin margin, as flagged:** 2023 CC_REGULAR −2.775 → **−2.784** TWh
+against ±2.94 — margin 0.165 → 0.156 TWh, ~5 % of remaining headroom, still
+PASS but marginally worse. **C5a measured, not assumed** (the brief warned CO2
+moves twice — more gas volume, lower CT heat rate): the net is slightly
+**POSITIVE**, 2025 system CO2 31.376 → 31.390 Mt vs 29.167 actual, **+7.57 % →
++7.62 %**, still inside the ±10 % commercial band; 2023/2024 nil. Mechanism: the
+energy CT_PEAKER gains comes from ST_GAS/CC_REGULAR, which burn at lower heat
+rates than a peaker, so volume dominates rate. Shape neutral: CT_PEAKER D-1
+`profile_r` 0.876/0.928/0.949 → 0.878/0.914/0.947, `cv_ratio` 1.38/1.07/1.15 →
+1.40/1.18/1.15; D-2 forced share 0.0 % throughout.
+
+**VERDICT: the input STAYS, and is NOT promoted as a fix.** It stays on rules 1
+and 14 — eGRID's value is a known-defective estimate (non-physical at Bayswater,
+wrong-technology at Barrett) and a 0.156 TWh C1 margin instead of 0.165 is a
+discovered root cause elsewhere, not grounds to restore a defective input. It is
+not a fix because it does not behave like one. **The heat rate is now ELIMINATED
+as CT_PEAKER's candidate rather than confirmed as one.**
+
+**Charter constraints honoured.** No floor re-armed; no windowed limb, boxcar or
+CT-scoped `reliability_floor` row. NYCA/East spin gate and J/K ladders untouched
+and default-off. Years 2023–2025 only; P1 only. The nyiso-88 §5 bench
+multi-class collapse is untouched and still needs its own cross-ISO lane.
+
+**Next.** Day-ahead **block commitment** is the remaining candidate, to be judged
+against the measured CT run-length distribution (median 4 h, mean 6.5–7.6 h, p90
+14 h — `campd_ct_run_lengths_NYISO.csv`) rather than against the volume gap. The
+input underneath it is now correct.

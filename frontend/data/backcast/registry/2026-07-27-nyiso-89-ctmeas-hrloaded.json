@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-27-nyiso-89-ctmeas-hrloaded",
+  "label": "nyiso 89 ctmeas hrloaded",
+  "date": "2026-07-27",
+  "shorthand": "nyiso-89-ctmeas-hrloaded",
+  "definition": "nyiso-89 ARM: single delta measured_ct_heat_rates=true on keeper 2026-07-27-nyiso-87-cmeas-measured. CT_PEAKER plants take their CAMPD-measured LOADED heat rate (MMBtu per NET MWh, pooled 2023-2025, unitType=='Combustion turbine', gross-to-net via the committed parasitic factor) ahead of the eGRID plant-average annual rate. Rule 14 [R-ACCURATE] accurate-input swap.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-27-nyiso-89-ctmeas-hrloaded.js",
+  "bundle": "results/calibration/nyiso89_hrmeas_ctloaded"
+}
