@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-27-nyiso-87-arm-c",
+  "label": "nyiso 87 arm C bridge-full",
+  "date": "2026-07-27",
+  "shorthand": "nyiso-87-arm-c",
+  "definition": "(PROBE) nyiso-87 ARM C \u2014 arm B plus the ECONOMIC bridging leg and the MINIMUM-RUN-DURATION extension at the published class-table values (CC 5-10 h, gas steam 24-48 h). **C1 PASSES** \u2014 the load-bearing FAIL that has blocked NYISO closes here, on commitment physics alone and with td_loss_factor still 0.0. The 2023 CC_REGULAR cell walks -4.11 (control) -> -3.32 (A) -> -3.20 (B) -> -2.89 TWh, just inside the +/-2.94 TWh band: a NARROW pass, ~0.05 TWh of margin, so it is not yet robust. The bridge floors 16.2k / 21.8k / 16.4k unit-hours (~1.2 TWh/yr), 4x arm B. Seam metrics continue monotone: imports hod01-03 3,048 -> 2,806 and hod16-18 2,381 -> 2,708 against an actual 2,596 / 2,857; within-month r +0.072 -> +0.107. CT_PEAKER still 0.0 % forced (rule 18 holds). ST_GAS 2024 forced 32.4 %, grounded. C5a 2025 +7.7 %. CAVEAT ON THE CONFIGURATION: the class-table min-runs disagree with NYISO's own measured conduct in OPPOSITE directions \u2014 CC's 5-10 h sits below the measured capacity-weighted p25 of 11 h while gas steam's 24-48 h sits well above its measured p50 of 13 h (campd_gas_commitment_params_NYISO.csv) \u2014 so this arm under-commits CC and over-commits steam, and its 46-105 segments >24 h/yr are that steam over-statement. The rule-23-clean identified variant is arm C-MEAS. C3c still FAILs (6h vs 42h in 2025; roof-blocked, rule 1 \u2014 recorded, not reverted), so determination remains NOT-YET.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-27-nyiso-87-arm-c.js",
+  "bundle": "results/calibration/nyiso87_c_bridge_full"
+}

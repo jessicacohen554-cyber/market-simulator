@@ -180,16 +180,157 @@ zero-delta control and never the registered keeper's metrics.
 | A | `nyiso87_a_floorsoff` | `NYISO_PEAK_WINDOW_FLOORS_OFF` |
 | B | `nyiso87_b_bridge_phys` | A + bridge, physical min-down leg only |
 | C | `nyiso87_c_bridge_full` | B + economic leg + min-run at class-table values |
-| C-sweep | `nyiso87_c*_minrun*` | C with longer min-run (probe arms) |
-| D | `nyiso87_d_*` | `td_loss_factor` — see §5, a labelled probe only |
+| C-MEAS | `nyiso87_cmeas_minrun` | C with min-run at the MEASURED p50 (CC 21 h, ST_GAS 13 h) |
+| D | `nyiso87_d_wedge_probe` | `td_loss_factor` = 0.0251 — see §5, a labelled probe only |
 
-*(Results table filled in below as arms complete.)*
+Registered run ids: `2026-07-26-nyiso-87-control`,
+`2026-07-27-nyiso-87-arm-floors`, `-arm-b`, `-arm-c`, `-cmeas-measured`,
+`-arm-d`.
 
 ---
 
 ## 4. Results
 
-*(pending — arms solving)*
+**Headline: the owner's hypothesis holds, and C1 — NYISO's load-bearing FAIL —
+closes on commitment physics with `td_loss_factor` still 0.0.** All six arms
+are registered on the dashboard.
+
+### 4.1 The gate board across the lane
+
+| arm | C1 2023 CC_REGULAR | C3a 2023 | C3c 2025 | C5a 2025 | determination |
+|---|---|---|---|---|---|
+| CONTROL | **−4.11 TWh** FAIL | +2.6 % | 9h / 42h | +8.1 % | NOT-YET |
+| A (windows off) | −3.32 FAIL | +4.9 % | 8h | +7.7 % | NOT-YET |
+| B (+ physical bar) | −3.20 FAIL | +4.3 % | 6h | +7.5 % | NOT-YET |
+| C (+ econ + min-run, tables) | **−2.89 PASS** | +3.3 % | 6h | +7.7 % | NOT-YET |
+| **C-MEAS (measured min-run)** | **−2.78 PASS** | +3.1 % | 6h | +7.6 % | NOT-YET |
+| D (`td_loss_factor`, probe) | PASS | +7.2 % | **18h** | **+14.2 % FAIL** | NOT-YET |
+
+C1's band is ±min(2 % load, 8) ≈ ±2.94 TWh, so arm C passes with ~0.05 TWh of
+margin and C-MEAS with ~0.16 TWh. C3c FAILs in every arm and is the *sole*
+remaining blocker — down from C1 + C3c at session start.
+
+### 4.2 The seam moved, under a mechanism with no seam wiring
+
+The nyiso-86 §3 defect (pinned monthly import volume bought in the wrong hours)
+improves monotonically across the whole ladder, converging on the measurement
+from **both** ends:
+
+| 2023 | CONTROL | A | B | C | C-MEAS | actual |
+|---|--:|--:|--:|--:|--:|--:|
+| imports hod01-03 (belly) | 3,048 | 2,959 | 2,841 | 2,806 | 2,797 | **2,596** |
+| imports hod16-18 (peak) | 2,381 | 2,508 | 2,683 | 2,708 | 2,713 | **2,857** |
+| within-month r | +0.072 | +0.086 | +0.106 | +0.107 | +0.108 | — |
+| internal diurnal price swing | $7.45 | $8.70 | $8.10 | $8.32 | $8.36 | — |
+
+Nothing in the bridge touches the interchange node. This is §3's causal claim
+confirmed by construction: the model bought its quota overnight because its
+internal price shape was too flat, and holding committed gas at min-load
+through the belly re-prices those hours. The swing is still far short of the
+real $22.5 (§3's target), which is why C3c stays open.
+
+### 4.3 CT_PEAKER: the boxcar was hurting the shape it was supposed to fix
+
+Per-year D-1, `profile_r` / `cv_ratio` (cv_ratio 1.0 = model volatility equals
+the CEMS actual):
+
+| arm | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| CONTROL | 0.82 / 5.12 | 0.85 / 4.24 | 0.92 / 2.37 |
+| A | 0.89 / 2.80 | 0.93 / 1.84 | 0.95 / 1.24 |
+| B | 0.88 / 2.84 | 0.93 / 1.85 | 0.95 / 1.34 |
+| C | 0.87 / 1.94 | 0.93 / 1.18 | 0.95 / 1.25 |
+| **C-MEAS** | **0.88 / 1.38** | **0.93 / 1.07** | **0.95 / 1.15** |
+| D (floors still on) | 0.83 / 4.52 | 0.85 / 3.51 | 0.94 / 1.80 |
+
+The h14-21 floor was CT_PEAKER's **only** forcing mechanism (D-2: 81.3 / 86.1 /
+48.3 % → 0.0 / 0.0 / 0.0 % once removed), and removing it improved the class's
+shape in every year on both statistics. C-MEAS lands cv_ratio within 7-38 % of
+the measured volatility — for a class **the bridge never floors**. That is the
+strongest single result of the lane: a boxcar was buying volume at the cost of
+shape, and replacing it with commitment physics elsewhere in the merit order
+fixes the shape of a class the replacement does not touch. Arm D, which keeps
+the floors on, stays bad (4.52 / 3.51 / 1.80) — the control on that claim.
+
+As predicted, CT_PEAKER's **volume** collapses 1.42 → 0.46 TWh against a 2.26
+TWh actual. Reported, not patched: whether a peaker AS/commitment story returns
+is a separate rule-17 charter for the owner (§6).
+
+### 4.4 D-2: substitution, and LESS total forcing
+
+2023 forced energy on the three merchant gas classes, by mechanism id:
+
+| arm | CT_PEAKER | ST_GAS | CC_REGULAR | total |
+|---|--:|--:|--:|--:|
+| CONTROL | 0.928 (`reliability_floor`, 81.3 %) | 3.525 (`reliability_floor`) | 0.010 | **4.463** |
+| A | — | 2.963 (`reliability_floor`) | — | 2.963 |
+| B | — | 2.971 + 0.033 (`bridge`) | 0.280 (`bridge`) | 3.284 |
+| C | — | 2.946 + 0.195 (`bridge`) | 1.043 (`bridge`) | 4.184 |
+
+The `reliability_floor` id gives up CT_PEAKER entirely and part of ST_GAS; the
+`nyiso_gas_commitment_bridge` id picks up CC_REGULAR and a little ST_GAS —
+attribution shift, not new forcing, exactly as the charter predicted. And the
+**total falls** (4.46 → 4.18 TWh) while C1 flips to PASS and every class's
+shape improves. Less forcing, better fit, better shape.
+
+### 4.5 Min-run: the measurement disagrees with the class tables in BOTH directions
+
+The floor-segment length distribution is where the identified values prove
+themselves:
+
+| segments > 24 h | 2023 | 2024 | 2025 | | 16-24 h band | 2023 | 2024 | 2025 |
+|---|--:|--:|--:|---|---|--:|--:|--:|
+| arm C (class tables) | 46 | 55 | 105 | | arm C | 256 | 392 | 196 |
+| **C-MEAS (measured)** | **8** | **8** | **0** | | **C-MEAS** | **532** | **569** | **412** |
+
+Arm C's long tail is gas steam's class-table 24-48 h min-run holding boilers
+online roughly twice as long as NYISO's fleet actually does. Replacing it with
+the measured 13 h removes the tail; raising CC from 5-10 h to the measured 21 h
+fills the 16-24 h band with genuine commitment blocks. Total floored volume
+goes *up* slightly (1.25-1.37 vs 1.18-1.21 TWh/yr) while the pathological holds
+disappear — the mechanism doing less of the wrong thing and more of the right
+one, which no volume metric would have surfaced.
+
+So the owner's "TRY INCREASING MIN RUN DURATION" is **supported by the
+measurement for CC and contradicted for gas steam**. C-MEAS moves them in
+opposite directions accordingly, and is better than arm C on every gate.
+
+### 4.6 LOYO (rule 22)
+
+The bridge carries **no parameter fitted to any year**: `min_load_frac` and the
+min-run hours are pooled 2023-2025 CAMPD statistics, and the three legs are
+physics (min-down, startup cost, the restart inequality on the model's own
+duals). Every arm scores all three years in one bundle, so the per-year tables
+above ARE the leave-one-year-out view, and the direction is consistent in every
+year for every arm:
+
+- CT_PEAKER `cv_ratio` improves in 2023, 2024 and 2025 (§4.3).
+- Import belly falls and peak rises in all three years.
+- C1's per-class cells stay in band in 2023 and 2024 (2025 is vintage-SKIPPED).
+
+No year carries the gain; there is no in-sample/held-out split to overfit.
+
+---
+
+## 4b. Verdict on the candidate
+
+**C-MEAS is the structurally-faithful run of the lane** and the rule-1 keeper
+candidate: it replaces an owner-adjudicated-inaccurate boxcar with commitment
+physics, closes the load-bearing C1 FAIL without touching demand, forces LESS
+in total than the run it would replace, improves every class's diurnal shape,
+and every parameter it adds is measured rather than fitted.
+
+Two things stand between it and promotion, and neither is discretionary:
+
+1. **No governance attestation.** C6 is UNATTESTED on every probe in this lane,
+   which caps the determination regardless of the other gates. A keeper needs
+   `calibration_attestation.json` with the DOF ledger (by UNION with the
+   existing keeper's) citing the two `min_load_frac` values and the two
+   min-run values to `campd_gas_commitment_params_NYISO.csv`.
+2. **C3c still FAILs**, so the determination is NOT-YET either way. Promoting
+   C-MEAS changes which run carries NYISO's NOT-YET, not the determination.
+
+The C1 margin is also thin (~0.16 TWh of ±2.94) and should be treated as such.
 
 ---
 
@@ -221,8 +362,28 @@ Consequences, stated plainly:
   it would be a fitted adder with no forward analogue — rule 1 [R-STRUCT] and
   rule 13 [R-MEASURED] both forbid reaching the C1 number that way.
 - Arm D is therefore run and registered as an explicitly labelled **diagnostic
-  probe**, to quantify the sensitivity and bound how much of the C1 cell is a
-  level effect. **It is not a keeper candidate on this evidence.**
+  probe**. **It is not a keeper candidate on this evidence** — and the run
+  produced INDEPENDENT physical corroboration of the refutation.
+
+**What arm D actually showed.** At `td_loss_factor` = 0.0251 demand rises
+147.05 → 150.74 TWh and the gate board moves further than any other arm: C1
+PASSES, and C3c improves more than anywhere else in the lane (2025 model tail
+9h → **18h** against 42h actual, 0.21× → 0.43×; 2023 clears entirely). On a
+fit-first reading it is the best run of the session.
+
+**But C5a breaks.** 2025 CO2 goes +8.1 % → **+14.2 %** vs eGRID — out of the
+commercial band, a MODEL MISS — with 2023/2024 also climbing to +7.4/+7.5 %.
+That failure is the informative result: if the extra 3.7 TWh were real load the
+NYISO fleet serves, burning it would not push measured-plant-rate CO2 four
+points past its band. The emissions check independently says what the Gold Book
+says from the other direction.
+
+Set against C-MEAS — which flips the same C1 cell on commitment physics with
+`td_loss_factor` at 0.0 and leaves C5a at +7.6 % — this is precisely the
+comparison rule 1 exists for: two runs both flip the load-bearing criterion,
+one through a structurally-grounded mechanism, one through an input the
+evidence says is already in the data. The better-fitting one is the wrong
+answer.
 - **Open item for the C1 lane:** decompose the wedge against the Gold Book
   NYCA energy line and the EIA-923 BTM/sector split, and name a
   correctly-identified instrument for whatever survives. Until then C1's
