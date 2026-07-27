@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-26-miso-94-outage-family",
+  "label": "miso 94 outage family",
+  "date": "2026-07-26",
+  "shorthand": "miso-94-outage-family",
+  "definition": "miso-94: re-derive short + maxgen outage extracts on the guard-corrected std extract (rule 23 source-data change, 6a8f285); also repairs a pre-existing guard-4 disjointness double-derate",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-26-miso-94-outage-family.js",
+  "bundle": "results/calibration/miso94_outage_family"
+}
