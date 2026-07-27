@@ -1505,3 +1505,22 @@ multi-class collapse is untouched and still needs its own cross-ISO lane.
 against the measured CT run-length distribution (median 4 h, mean 6.5–7.6 h, p90
 14 h — `campd_ct_run_lengths_NYISO.csv`) rather than against the volume gap. The
 input underneath it is now correct.
+
+**PROMOTED (owner instruction, same session).** The arm became the NYISO keeper:
+`2026-07-27-nyiso-89-ctmeas-hrloaded` replaces `2026-07-27-nyiso-87-cmeas-measured`,
+on the standing rule that improved structural integrity can carry a keeper even
+where gates regress. Determination **NOT-YET** — same determination class and
+same sole blocking criterion (C3c) as its predecessor. C6 PASSES on a UNION'd
+DOF ledger (19 entries, `n_residual` UNCHANGED at 6 — zero fitted scalars added;
+the entry REPLACES a defective estimate rather than adding a degree of freedom).
+`calibration-keeper-auditor --iso NYISO`: 0 failures, 0 repairs. **Promoted with
+two adverse movements on the record:** C1's thin cell 2023 CC_REGULAR
+−2.775 → −2.784 TWh of ±2.94 (margin 0.165 → 0.156), and CT_PEAKER's 2023 level
+moving the wrong way. **LOYO on the DERIVED INPUT** (re-derive leaving each year
+out, no LP): stable for 16/19 plants (<5 % spread), sign never reversed on any
+plant carrying weight (Bayonne 0.5 %, Bayswater 1.0 %, Port Jefferson 2.8 %,
+Barrett 6.1 % and never near the eGRID 11.08); NOT stable on the two thin-sampled
+barge plants Gowanus (16.5 %) and Narrows (12.8 %), where dropping 2025 reverses
+the sign — both sit far out of merit at every fold value so no gate moves. A
+minimum-energy screen is the named follow-up, deliberately NOT added post-hoc
+(rule 24).
