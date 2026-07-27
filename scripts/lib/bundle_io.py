@@ -47,6 +47,25 @@ REGISTRY_DIR: Path = REPO_ROOT / "frontend" / "data" / "backcast" / "registry"
 # solve outputs (dispatch/system/storage/btm) are per-run and never shared.
 SHARED_INPUT_NAMES: tuple[str, ...] = ("campd", "eia930", "eia923")
 
+# Derived (not raw, not benchmark) solve inputs a bundle additionally pins via
+# the shared store: the per-ISO CAMPD unit-outage extracts and the clean
+# capacity-deliverability partition. These are the inputs whose bytes are NOT
+# recoverable from the committed tree at an arbitrary later date (the extract
+# family is re-derived and has changed content at fixed raw bytes — the
+# caiso-123 basis-drift attribution; the clean partition is gitignored and
+# regenerated per container, and silently degrades to "no limits" when absent —
+# RESULTS-neiso65 §2), so a bundle records the exact frames it solved on
+# (FINDING-caiso124 §7 recommendation).
+DERIVED_INPUT_NAMES: tuple[str, ...] = (
+    "unit_outages",
+    "unit_outages_short",
+    "unit_outages_partial",
+    "unit_outages_maxgen",
+    "unit_outages_e923",
+    "unit_outages_layup",
+    "capacity_deliverability",
+)
+
 
 def bundles_root() -> Path:
     """Return the calibration bundles root (``results/calibration`` under repo)."""
@@ -140,6 +159,76 @@ def write_shared_input(df: pd.DataFrame, name: str, iso: str, run_dir: Path) -> 
     if not target.exists():
         df.to_parquet(target, index=False)
     return os.path.relpath(target, run_dir)
+
+
+def write_derived_solve_inputs(iso: str, run_dir: Path) -> dict[str, str]:
+    """Pin the ISO's derived solve inputs into the shared store; return the refs.
+
+    Captures, at bundle-write time, the content of every derived-not-committed
+    (or derived-then-mutable) input the solve read, so a later session can
+    byte-compare or recover the exact state a bundle solved on:
+
+    * the per-ISO CAMPD unit-outage extract family (main / short / partial /
+      maxgen via the :mod:`market_sim.data.outages` path resolvers — which any
+      probe-level pinning monkeypatch is honored through — plus the ``e923``
+      and ``layup`` companions by name), and
+    * the clean ``capacity-deliverability`` partition (via the same loader the
+      solve uses, so the ISO alias and a silently-absent partition read
+      identically to the solve's own view — an absent partition records
+      nothing, exactly the state the solve degraded to).
+
+    Files that do not exist for the ISO are skipped. Returns
+    ``{name: bundle-relative ref}`` for the captured inputs, to be merged into
+    the bundle's ``meta.json`` ``shared_inputs`` block (replay ignores the
+    whole block by design). Never raises past a single input: one unreadable
+    file is logged-and-skipped so provenance capture cannot fail a solve.
+    """
+    import logging
+
+    import pandas as pd
+
+    logger = logging.getLogger(__name__)
+    out: dict[str, str] = {}
+
+    from market_sim.data import outages
+
+    csv_paths: dict[str, Path] = {
+        "unit_outages": outages.unit_outage_csv_for_iso(iso),
+        "unit_outages_short": outages.unit_outage_short_csv_for_iso(iso),
+        "unit_outages_partial": outages.unit_partial_outage_csv_for_iso(iso),
+        "unit_outages_maxgen": outages.unit_outage_maxgen_csv_for_iso(iso),
+    }
+    main_csv = csv_paths["unit_outages"]
+    for tag in ("e923", "layup"):
+        suffix = "" if (iso or "").upper() == "ERCOT" else f"-{iso.upper()}"
+        csv_paths[f"unit_outages_{tag}"] = main_csv.with_name(
+            f"campd-unit-outages-{tag}{suffix}.csv"
+        )
+    for name, path in csv_paths.items():
+        if not path.is_file():
+            continue
+        try:
+            out[name] = write_shared_input(pd.read_csv(path), name, iso, run_dir)
+        except Exception:
+            logger.warning(
+                "derived-input capture failed for %s (%s)", name, path, exc_info=True
+            )
+
+    try:
+        from market_sim.data.capacity_deliverability import _read as _read_capdel
+
+        frame = _read_capdel(iso)
+        if frame is not None:
+            out["capacity_deliverability"] = write_shared_input(
+                frame, "capacity_deliverability", iso, run_dir
+            )
+    except Exception:
+        logger.warning(
+            "derived-input capture failed for capacity_deliverability (%s)",
+            iso,
+            exc_info=True,
+        )
+    return out
 
 
 def bundle_input_path(run_dir: Path, name: str) -> Path | None:
