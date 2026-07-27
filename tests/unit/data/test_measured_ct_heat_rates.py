@@ -290,3 +290,42 @@ class TestConfigPlumbing(unittest.TestCase):
         self.assertEqual(len(calls), 2)
         for kwargs in calls:
             self.assertIs(kwargs.get("measured_ct_heat_rates"), True)
+
+
+class TestBackcastFleetSourcing(unittest.TestCase):
+    """The BACKCAST solve path has its own copy of the bin synthesis.
+
+    ``scripts/run_calibration.py::run_year`` does not call
+    ``fleet.assembly.load_or_synthesize_bins`` — it inlines an equivalent
+    ``fleet_to_bins(load_fleet_from_csv(...))`` for the non-ERCOT per-plant
+    ISOs. A fleet-sourcing flag forwarded in ``assembly`` but not there is
+    silently ignored by every calibration solve while ``run_config.json``
+    still records it as on: the arm comes back byte-identical to its control
+    and reads as "the mechanism is inert" rather than "the mechanism was never
+    applied". That is what happened on the first nyiso-89 arm, so the call
+    site is pinned by source inspection here — a solve is far too expensive to
+    use as the regression test.
+    """
+
+    def test_backcast_synthesis_forwards_fleet_flags(self) -> None:
+        import ast
+
+        source = Path("scripts/run_calibration.py").read_text()
+        tree = ast.parse(source)
+        calls = [
+            node
+            for node in ast.walk(tree)
+            if isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and node.func.id == "load_fleet_from_csv"
+        ]
+        self.assertTrue(calls, "run_calibration.py no longer loads the fleet")
+        for call in calls:
+            kwargs = {kw.arg for kw in call.keywords}
+            self.assertIn(
+                "measured_ct_heat_rates",
+                kwargs,
+                "run_calibration.py:%d loads the fleet without forwarding "
+                "measured_ct_heat_rates — the backcast would silently solve "
+                "on eGRID heat rates" % call.lineno,
+            )
