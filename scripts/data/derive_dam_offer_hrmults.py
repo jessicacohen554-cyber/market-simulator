@@ -629,8 +629,24 @@ def main() -> None:
         "pooled p50s. Writes offer_curve_dam_hrmults_ep_yearly.json (its own "
         "artifact; the pooled HH-0.50 files are untouched, rule 23).",
     )
+    ap.add_argument(
+        "--coal-yearly",
+        action="store_true",
+        help="emit the ERCOT-122 per-year measured COAL band multipliers: the "
+        "ERCOT-118 econ_low/econ_high/peak(B) derivation applied to the CLLIG "
+        "fleet, divided by the delivered coal price the model dispatches on "
+        "(lignite / PRB trajectories, never Henry Hub). Records per-band "
+        "capacity COVERAGE and the offered-headroom REACH so the "
+        "non-fleet-representative bands (committed absent, econ_high 21-47 %% "
+        "coverage) cannot be adopted blind. Writes "
+        "offer_curve_dam_hrmults_coal_yearly.json (its own artifact; the "
+        "pooled files are untouched, rule 23).",
+    )
     args = ap.parse_args()
 
+    if args.coal_yearly:
+        derive_coal_yearly(args.out_json, args.body_cap)
+        return
     if args.condition_binned:
         derive_condition_binned(NETLOAD_PCT_EDGES, args.out_json)
         return
@@ -1031,11 +1047,37 @@ def derive_lowcurve_binned(edges: tuple[float, ...], out_json: str | None) -> No
 # values outside the measured band-multiplier family (ERCOT-118 charter scope).
 EP_YEARLY_GROUPS: tuple[str, ...] = ("CC_REGULAR", "CC_CHP")
 
+# ERCOT 60-day Resource Type codes per measured DAM class. CC is the
+# ERCOT-118/119 lineage (CCGT90 = combined cycle > 90 MW, CCLE90 = <= 90 MW);
+# CLLIG ("Coal and Lignite") is the ENTIRE ERCOT solid-fuel fleet — the 19
+# resources behind the pooled summary's COAL rows (ERCOT-122).
+CC_RESOURCE_TYPES: tuple[str, ...] = ("CCGT90", "CCLE90")
+COAL_RESOURCE_TYPES: tuple[str, ...] = ("CLLIG",)
 
-def _load_raw_cc_curve_points() -> pd.DataFrame:
-    """Long-form CC energy-curve points straight from the raw 60-day parquets.
+# Output groups of the per-year COAL tables: the two ERCOT solid-fuel offer
+# curve keys. Both read the SAME measured CLLIG offer distribution (the
+# disclosure carries no lignite/PRB split) and differ only by the delivered
+# coal price each is divided by — the pooled derivation's own convention.
+COAL_YEARLY_GROUPS: tuple[str, ...] = ("COAL_LIGNITE", "COAL_PRB")
 
-    Reproduces the ``ercot_dam_offers.parquet`` row universe for the CC energy
+OUT_JSON_COAL_YEARLY = (
+    paths.CALIBRATION_DIR / "offer_curve_dam_hrmults_coal_yearly.json"
+)
+
+
+def _load_raw_cc_curve_points(
+    resource_types: tuple[str, ...] = CC_RESOURCE_TYPES,
+    with_hour_status: bool = False,
+) -> pd.DataFrame:
+    """Long-form energy-curve points straight from the raw 60-day parquets.
+
+    ``resource_types`` selects the measured DAM class: :data:`CC_RESOURCE_TYPES`
+    (the ERCOT-118/119 CC lineage, the default) or :data:`COAL_RESOURCE_TYPES`
+    (the ERCOT-122 solid-fuel fleet). The row universe, column set and
+    delivery-year filter are otherwise identical, so the coal tables are the
+    same measurement as the CC ones on a different fleet.
+
+    Reproduces the ``ercot_dam_offers.parquet`` row universe for the energy
     curve (any Resource Status, every finite curve point) WITHOUT the parsed
     intermediate, which is not rebuildable on this container: the owner-ordered
     2026-07-22 disclosure slimming (``slim_ercot_dam_disclosure.py``) dropped
@@ -1051,6 +1093,11 @@ def _load_raw_cc_curve_points() -> pd.DataFrame:
     mw_cols = [f"QSE submitted Curve-MW{k}" for k in range(1, 11)]
     pr_cols = [f"QSE submitted Curve-Price{k}" for k in range(1, 11)]
     cols = ["Delivery Date", "Resource Type", "Resource Name", "HSL", "LSL"]
+    # The reach measurement needs a true resource-HOUR key and the commitment
+    # status; the CC lineage does not, and the CC load is 9.26 M rows, so the
+    # extra columns are opt-in and the default CC path is unchanged.
+    extra = ["Hour Ending", "Resource Status"] if with_hour_status else []
+    cols = cols + extra
     pat = str(
         paths.RAW_DIR
         / "ercot"
@@ -1061,7 +1108,7 @@ def _load_raw_cc_curve_points() -> pd.DataFrame:
     frames = []
     for f in sorted(_glob.glob(pat)):
         df = pd.read_parquet(f, columns=cols + mw_cols + pr_cols)
-        df = df[df["Resource Type"].isin(("CCGT90", "CCLE90"))]
+        df = df[df["Resource Type"].isin(resource_types)]
         if df.empty:
             continue
         dt = pd.to_datetime(df["Delivery Date"])
@@ -1071,7 +1118,7 @@ def _load_raw_cc_curve_points() -> pd.DataFrame:
             continue
         long = pd.concat(
             [
-                df[["_date", "year", "Resource Name", "HSL", "LSL"]].assign(
+                df[["_date", "year", "Resource Name", "HSL", "LSL"] + extra].assign(
                     curve_mw=df[mc].to_numpy(float),
                     curve_price=df[pc].to_numpy(float),
                 )
@@ -1263,6 +1310,291 @@ def derive_ep_basis_yearly(out_json: str | None, body_cap: float) -> None:
     out_path = Path(out_json) if out_json else OUT_JSON_EP_YEARLY
     out_path.write_text(json.dumps(payload, indent=1) + "\n")
     print(f"\nWrote {out_path}  (groups {sorted(EP_YEARLY_GROUPS)}, years {YEARS})")
+
+
+def _band_capacity_coverage(band_rows: pd.DataFrame, fleet_rows: pd.DataFrame) -> float:
+    """Share of fleet HSL carrying at least one submitted point in a band.
+
+    The ERCOT-122 selection-bias receipt. A band whose coverage is well below
+    1.0 is measured on a *subsample* of the fleet, so its capacity-weighted p50
+    describes those resources' offer behaviour and NOT the class's — the model
+    would apply it to 100 % of the class. Reported per band, per year, so an
+    adoption decision can see which bands are fleet-representative.
+    """
+    tot = fleet_rows.groupby("resource_name")["hsl"].max().sum()
+    if not np.isfinite(tot) or tot <= 0:
+        return float("nan")
+    cov = band_rows.groupby("resource_name")["hsl"].max().sum()
+    return float(cov / tot)
+
+
+def measure_offered_headroom_share(
+    resource_types: tuple[str, ...],
+) -> dict[int, float]:
+    """Per-year share of ONLINE operating headroom carrying an incremental offer.
+
+    The ERCOT-122 *reach* measurement, read straight from the raws rather than
+    from :func:`_load_raw_cc_curve_points` because it must count the
+    resource-hours that submit **no curve point at all** as zero offered — that
+    long-form loader drops them, which would bias the share upward (0.37 rather
+    than 0.17 on coal). Over half of ERCOT's online coal resource-hours are in
+    exactly that state, so the distinction is the measurement.
+
+    Aggregated as ``sum(reach - LSL) / sum(HSL - LSL)`` over online
+    (``Resource Status`` starting ``ON``) resource-hours: a capacity-weighted
+    fleet share, not a per-unit mean. An OFF/OUT unit has no incremental offer
+    to make, so including it would measure commitment, not offer behaviour.
+
+    Measured 2023/2024/2025: **coal 0.168 / 0.184 / 0.161** against
+    **CC 0.622 / 0.594 / 0.677** — the coal fleet exposes roughly a quarter as
+    much of its ramp range to the DAM energy merit order as the CC fleet does.
+    """
+    mw_cols = [f"QSE submitted Curve-MW{k}" for k in range(1, 11)]
+    cols = [
+        "Delivery Date",
+        "Hour Ending",
+        "Resource Type",
+        "Resource Name",
+        "HSL",
+        "LSL",
+        "Resource Status",
+    ]
+    pat = str(
+        paths.RAW_DIR
+        / "ercot"
+        / "60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_*.parquet"
+    )
+    import glob as _glob
+
+    num = {y: 0.0 for y in YEARS}
+    den = {y: 0.0 for y in YEARS}
+    for f in sorted(_glob.glob(pat)):
+        d = pd.read_parquet(f, columns=cols + mw_cols)
+        d = d[d["Resource Type"].isin(resource_types)]
+        if d.empty:
+            continue
+        year = pd.to_datetime(d["Delivery Date"]).dt.year
+        d = d.assign(year=year)
+        d = d[d["year"].isin(YEARS)]
+        d = d[d["Resource Status"].astype(str).str.startswith("ON")]
+        d = d[(d["HSL"] > d["LSL"]) & (d["HSL"] > 0)]
+        if d.empty:
+            continue
+        # No finite curve point at all -> the unit offered nothing above LSL.
+        reach = d[mw_cols].max(axis=1).fillna(d["LSL"])
+        head = (d["HSL"] - d["LSL"]).clip(lower=0.0)
+        inc = (reach - d["LSL"]).clip(lower=0.0)
+        for y in YEARS:
+            m = (d["year"] == y).to_numpy()
+            num[y] += float(inc[m].sum())
+            den[y] += float(head[m].sum())
+    return {y: (num[y] / den[y]) if den[y] > 0 else float("nan") for y in YEARS}
+
+
+def _typical_top_of_curve(
+    fleet_rows: pd.DataFrame, fuel: float, base_hr: float
+) -> dict[str, float]:
+    """Capacity-weighted p50 of each resource's TYPICAL daily top-of-curve.
+
+    The stable companion to the lineage's mode-B ``peak`` (which is each
+    resource's annual *maximum* top-of-curve and swings 46 -> 80 -> 61 $/MWh
+    across 2023-2025 on coal, the same per-year instability ERCOT-118 §4.2
+    found on CC). Here each resource's top-of-curve is reduced to its median
+    over delivery days FIRST, so the statistic describes what the fleet posts
+    on an ordinary day rather than its once-a-year extreme.
+
+    This is the quantity ``FINDING-ercot112 §6`` reported as "the real fleet's
+    ~$21 top submitted DAM coal offer", and it reproduces it to the cent.
+    """
+    d = fleet_rows[fleet_rows["curve_price"] > 0]
+    if d.empty:
+        return {"p25": float("nan"), "p50": float("nan"), "p75": float("nan")}
+    daily_top = d.groupby(["resource_name", "delivery_date"])["curve_price"].max()
+    per_res = daily_top.groupby("resource_name").median().rename("typ")
+    cap = d.groupby("resource_name")["hsl"].max().rename("cap")
+    j = pd.concat([per_res, cap], axis=1).dropna().reset_index()
+    j["typ"] = j["typ"] / (fuel * base_hr)
+    return _capwt_band(j, "typ")
+
+
+def derive_coal_yearly(out_json: str | None, body_cap: float) -> None:
+    """Derive and write the per-year measured COAL band multipliers (ERCOT-122).
+
+    The ERCOT-118 :func:`derive_ep_basis_yearly` measurement, applied to the
+    ``CLLIG`` (Coal and Lignite) fleet, with the one basis change coal requires:
+    the per-point divisor is the **delivered coal price the model dispatches
+    on** (``COAL_PRICE_LIGNITE_BY_YEAR`` / ``COAL_PRICE_PRB_BY_YEAR`` via
+    :func:`coal_fuel_price`), never Henry Hub. The EP gas basis is a *gas*
+    correction and has no coal analogue; what carries over from ERCOT-118 is the
+    principle — divide by the same fuel series the model later multiplies —
+    not the gas series itself.
+
+    Both output groups read the SAME measured distribution (the disclosure
+    carries no lignite/PRB split) and differ only by that divisor, exactly as
+    the pooled ``ercot_dam_offer_hrmult_summary.csv`` COAL rows do.
+
+    **Two bands are NOT fleet-representative and must not be adopted blind**
+    (both recorded as ``coverage`` in each year's detail block):
+
+    * ``committed`` — absent entirely, same data destruction as ERCOT-118: the
+      Min-Gen-Cost instrument was dropped by the owner-ordered 2026-07-22 raw
+      slimming, the parsed intermediate was never committed, the free MIS path
+      has lost all 2023 publications, and the credentialed archive was
+      owner-declined.
+    * ``econ_high`` — measured on only **21-47 % of fleet capacity** (8 of 18
+      resources in 2023; 3 of 16 and 3 of 12 in 2024/2025), because most ERCOT
+      coal resources submit no curve point above ``rel = 0.67`` at all. Its
+      capacity-weighted p50 is therefore the offer behaviour of the few
+      resources that DO reach that high — the expensive ones — and it is the
+      quantity behind the pooled summary's ``COAL_LIGNITE econ_high = 2.856``.
+      ``econ_low`` and ``peak`` carry 100 % coverage and are the
+      fleet-representative pair.
+
+    Each year's ``_reach`` field records the share of operating headroom the
+    submitted curve covers at all (coal 0.16-0.18 vs CC 0.59-0.68) — the
+    measurement that says the coal fleet offers only a thin incremental slice
+    into DAM energy, and the reason a band *level* rebasis alone cannot express
+    the class's real offer behaviour.
+    """
+    fleet_hr = class_base_hr()
+    df = _load_raw_cc_curve_points(COAL_RESOURCE_TYPES)
+    reach_by_year = measure_offered_headroom_share(COAL_RESOURCE_TYPES)
+    cc_reach_by_year = measure_offered_headroom_share(CC_RESOURCE_TYPES)
+    print(
+        f"Loaded {len(df):,} COAL curve-point rows "
+        f"({df['delivery_date'].min().date()} -> "
+        f"{df['delivery_date'].max().date()}); "
+        f"{df['resource_name'].nunique()} resources"
+    )
+
+    payload: dict = {
+        "_provenance": {
+            "source": "ERCOT 60-Day DAM Disclosure Gen Resource Data raw "
+            "parquets (slimmed 2026-07-22), delivery years 2023-2025, CLLIG "
+            "(Coal and Lignite) energy-curve points, any Resource Status",
+            "method": "per-point mult = curve_price / (delivered_coal x "
+            "base_HR(COAL)); econ_low rel<=0.33 / econ_high rel>=0.67 "
+            "competitive body (< body_cap), per-resource median then "
+            "capacity(HSL)-weighted p50; peak = mode-B per-resource "
+            "top-of-curve incl. near-cap bids — the ERCOT-118 derivation "
+            "per delivery YEAR on the coal fleet",
+            "basis": "delivered coal $/MMBtu the model dispatches on "
+            "(COAL_PRICE_LIGNITE_BY_YEAR / COAL_PRICE_PRB_BY_YEAR), NOT Henry "
+            "Hub: the EP gas-basis correction is gas-specific and has no coal "
+            "analogue; what carries over is the divide-by-what-you-multiply "
+            "principle (ERCOT-118 FINDING §1)",
+            "rule23_citation": "derived from the raw disclosure on the "
+            "ERCOT-122 charter's measurement question (reconciling "
+            "FINDING-ercot112 §6's ~$21 top submitted coal offer against the "
+            "pooled summary's COAL_LIGNITE econ_high 2.856); no residual "
+            "entered the derivation",
+            "committed_band": "ABSENT by data destruction, not by choice — "
+            "identical cause to the ERCOT-118 CC tables: Min Gen Cost was "
+            "dropped by the owner-ordered 2026-07-22 raw slimming, the parsed "
+            "ercot_dam_offers.parquet was never committed, the free MIS path "
+            "retains only ~2.3 years, and the credentialed archive was "
+            "owner-declined.",
+            "econ_high_band": "DERIVED BUT NOT FLEET-REPRESENTATIVE: see each "
+            "year's detail 'coverage' — only 21-47 % of fleet capacity submits "
+            "any point above rel=0.67, so this p50 describes that subsample, "
+            "not the class. econ_low and peak carry 100 % coverage.",
+            "peak_mode": "B",
+            "iso": "ERCOT",
+        }
+    }
+
+    for year in YEARS:
+        d_year = df[df["year"] == year]
+        table: dict = {}
+        e_base = d_year[
+            (d_year["hsl"] > d_year["lsl"]) & (d_year["curve_price"] > 0)
+        ].copy()
+        e_base["rel"] = (
+            (e_base["curve_mw"] - e_base["lsl"]) / (e_base["hsl"] - e_base["lsl"])
+        ).clip(0.0, 1.0)
+        e_base["cap"] = e_base["hsl"].astype(float)
+        table["_reach"] = {
+            "offered_share_of_headroom": round(float(reach_by_year[year]), 4),
+            "cc_offered_share_of_headroom": round(float(cc_reach_by_year[year]), 4),
+            "n_resources": int(d_year["resource_name"].nunique()),
+        }
+        for out_group in COAL_YEARLY_GROUPS:
+            bhr = output_base_hr(fleet_hr, ("COAL",))
+            fuel = coal_fuel_price(out_group)[year]
+            e = e_base.copy()
+            e["mult"] = e["curve_price"].to_numpy(float) / (fuel * bhr)
+            body = e[e["curve_price"] < body_cap]
+            lo_rows = body[body["rel"] <= 0.33]
+            hi_rows = body[body["rel"] >= 0.67]
+            lo_pr = (
+                lo_rows.groupby("resource_name")
+                .agg(econ_low=("mult", "median"), cap=("cap", "median"))
+                .reset_index()
+            )
+            hi_pr = (
+                hi_rows.groupby("resource_name")
+                .agg(econ_high=("mult", "median"), cap=("cap", "median"))
+                .reset_index()
+            )
+            topf = (
+                e.groupby("resource_name")
+                .agg(pk=("mult", "max"), cap=("cap", "median"))
+                .reset_index()
+            )
+            econ_low = _capwt_band(lo_pr, "econ_low")
+            econ_high = _capwt_band(hi_pr, "econ_high")
+            peak_full = _capwt_band(topf, "pk")
+            peak_typ = _typical_top_of_curve(e, float(fuel), bhr)
+            table[out_group] = {
+                "econ_low": econ_low["p50"],
+                "econ_high": econ_high["p50"],
+                "peak": peak_full["p50"],
+                "peak_typical": peak_typ["p50"],
+            }
+            table[f"_{out_group}_detail"] = {
+                "base_hr": round(bhr, 3),
+                "delivered_fuel_usd_mmbtu": round(float(fuel), 4),
+                "n_resources": int(e["resource_name"].nunique()),
+                "n_points": int(len(e)),
+                "coverage": {
+                    "econ_low": round(_band_capacity_coverage(lo_rows, e), 4),
+                    "econ_high": round(_band_capacity_coverage(hi_rows, e), 4),
+                    "peak": 1.0,
+                    "peak_typical": 1.0,
+                },
+                "usd_mwh_p50": {
+                    "econ_low": round(econ_low["p50"] * fuel * bhr, 2),
+                    "econ_high": round(econ_high["p50"] * fuel * bhr, 2),
+                    "peak": round(peak_full["p50"] * fuel * bhr, 2),
+                    "peak_typical": round(peak_typ["p50"] * fuel * bhr, 2),
+                },
+                "econ_low": econ_low,
+                "econ_high": econ_high,
+                "peak_full": peak_full,
+                "peak_typical": peak_typ,
+            }
+            det = table[f"_{out_group}_detail"]
+            print(
+                f"  {year} {out_group:12s} base_HR {bhr:5.2f} fuel {fuel:5.3f}  "
+                f"econ_low {econ_low['p50']:.3f} (${det['usd_mwh_p50']['econ_low']:.2f}, "
+                f"cov {det['coverage']['econ_low']:.2f})  "
+                f"econ_high {econ_high['p50']:.3f} (${det['usd_mwh_p50']['econ_high']:.2f}, "
+                f"cov {det['coverage']['econ_high']:.2f})  "
+                f"peak {peak_full['p50']:.3f} (${det['usd_mwh_p50']['peak']:.2f})  "
+                f"peak_typ {peak_typ['p50']:.3f} "
+                f"(${det['usd_mwh_p50']['peak_typical']:.2f})"
+            )
+        print(
+            f"  {year} reach: submitted curve covers "
+            f"{table['_reach']['offered_share_of_headroom']:.3f} of coal "
+            f"operating headroom (CC control "
+            f"{table['_reach']['cc_offered_share_of_headroom']:.3f})"
+        )
+        payload[str(year)] = table
+
+    out_path = Path(out_json) if out_json else OUT_JSON_COAL_YEARLY
+    out_path.write_text(json.dumps(payload, indent=1) + "\n")
+    print(f"\nWrote {out_path}  (groups {sorted(COAL_YEARLY_GROUPS)}, years {YEARS})")
 
 
 if __name__ == "__main__":

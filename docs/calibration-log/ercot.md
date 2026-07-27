@@ -1590,3 +1590,64 @@ confirmed at unit grain). **Recommendation (recommend-and-STOP, keeper untouched
 promote ercot116 alone; the promotion candidate for #1/#2 is envelope + measured coal offer
 top (F923 delivered cost / measured top-of-curve) as ONE pre-committed successor arm
 (ERCOT-122 candidate), behind ERCOT-120 in the owner's queue.**
+
+---
+
+## 2026-07-27 — ERCOT-122 coal offer-top × availability envelope: the reconciliation refutes the lever (Phase 1 only, NO SOLVE)
+
+**Lane** ercot122-coal-offer-envelope · keeper **unchanged**
+(`2026-07-26-ercot115-coal-marginal-hr`) · no year solved, no run registered, no
+keeper file touched. Full forensics: `docs/DIAGNOSIS-ercot122-coal-offer-envelope-2026-07-27.md`.
+
+**The charter's Phase-1 gate — settle the $21-vs-2.856 basis reconciliation BEFORE
+designing the mapping — was settled, and it refutes the mapping.** Both numbers are
+real measurements of different things, and the charter's arithmetic for the second was
+off: the pooled summary's COAL rows are already divided by the **delivered coal** price
+(`coal_fuel_price`), not Henry Hub, so `COAL_LIGNITE econ_high` 2.856 implies **$42.8/MWh**
+on lignite's $1.45/MMBtu, not the charter's $74. Derived raw-direct from the CLLIG fleet
+(1,365,309 curve points, 19 resources, 2023–2025): `econ_low` **$20.48/$20.75/$20.86** and
+typical top-of-curve **$21.07/$20.80/$21.82** both at **100 % capacity coverage**, while
+`econ_high` carries only **0.47/0.21/0.28** coverage (8 of 18, 3 of 16, 3 of 12 resources —
+most ERCOT coal submits no point above `rel=0.67` at all). Per-resource the bands are
+perfectly ordered; the $42.70-over-$21.07 inversion is pure subsample selection.
+**FINDING-ercot112 §6's "~$21 top submitted DAM coal offer" is reproduced to the cent as the
+fleet-wide typical top-of-curve; the pooled 2.856 is REFUTED as fleet-representative and must
+not be re-armed on any basis.**
+
+**Consequence — the chartered lever moves coal the WRONG way.** Model side
+(`ercot117_coal_gas_ranking.py` §D on the keeper, cap-weighted P1 bid): 2023 lignite peak
+$26.96, prb econ_ramp $23.99, prb peak $32.17; 2025 $27.96 / $22.32 / $29.81. Against the
+measured $20.5 econ_low / $21.1 top-of-curve the model's coal is already AT the measured level
+at the bottom and **$3–11 DEARER at the top over ~6.6 GW** — the measured curve is FLAT
+($20.5–21.8 across the whole range) where the model's RISES ($17→$32). A measured offer-level
+rebasis therefore LOWERS the model's coal top and makes coal run MORE, additive to ercot116's
++6.8/+9.2/+12.9 TWh over-run and its new C4 2024 FAIL. **The clawback the charter expected was
+an artifact of the biased `econ_high` statistic, not a property of the real coal offer curve.**
+
+**The coal-specific defect the measurement DOES support is offer REACH, not level.** Share of
+ONLINE coal operating headroom carrying any submitted incremental offer (no-curve resource-hours
+counted as zero; over half of online coal resource-hours are in that state):
+**coal 0.168/0.184/0.161 vs CC control 0.622/0.594/0.677** — coal exposes ~a quarter as much of
+its ramp range to the DAM merit order as CC, stable all three years, and not an artifact of
+ERCOT's small DAM awards (award share of HSL: CC/CT/nuclear 16–20 %, coal 9–10 %, same order).
+The model offers essentially 100 % of coal headroom — ERCOT-121 §1a's all-five-tranches-at-max.
+**It does not yet license a mechanism and none was built**: DAM reach alone cannot distinguish
+withheld from self-scheduled from RT-priced capacity, which is exactly the open
+`FINDING-ercot117` §E question; picking a price for the unoffered block without it would be a
+fitted wall (rule 13) stacked on the same phenomenon (rule 19).
+
+**Shipped:** `scripts/data/derive_dam_offer_hrmults.py --coal-yearly` →
+`data/raw/_validation-source/offer_curve_dam_hrmults_coal_yearly.json`, recording per-band
+`coverage`, a stable `peak_typical` beside the lineage's unstable mode-B `peak`
+($46.56/$80.49/$61.03 — the ERCOT-118 §4.2 per-year instability, reproduced on coal),
+the absent `committed` band (same ERCOT-118 data destruction), and `_reach` with its CC control.
+LOYO stability tracks coverage exactly. The CC artifact re-derives **byte-identical** after the
+shared-loader parameterization; no `ScenarioConfig`/cache-key surface touched.
+
+**Recommendation (recommend-and-STOP, owner decides):** (1) do NOT run the chartered paired arm
+as specified — its offer-level half is refuted ex ante, so the solve would confirm arithmetic,
+not test a hypothesis (one `replay_keeper` away if a registered controlled refutation is wanted
+for the record, on the ERCOT-118/119 precedent; this diagnosis is its pre-commit); (2) never
+re-arm pooled 2.856; (3) the coal artifact stands as the measured record, nothing reads it yet;
+(4) route the successor to the REACH question via the SCED TPO instrument (FINDING-ercot117 §E),
+not another offer-level probe; (5) ERCOT-120 stays a separate un-renumbered lane.
