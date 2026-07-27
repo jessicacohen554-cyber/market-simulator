@@ -1524,3 +1524,77 @@ barge plants Gowanus (16.5 %) and Narrows (12.8 %), where dropping 2025 reverses
 the sign — both sit far out of merit at every fold value so no gate moves. A
 minimum-energy screen is the named follow-up, deliberately NOT added post-hoc
 (rule 24).
+
+---
+
+## 2026-07-27 — nyiso-90: day-ahead BLOCK COMMITMENT eliminated — the model's CT runs are already the right LENGTH; what is missing is STARTS (2-5x too few)
+
+**Keeper: `2026-07-27-nyiso-89-ctmeas-hrloaded`, UNCHANGED.** Registered runs
+(all three years, one bundle each, same HEAD, one ScenarioConfig field apart):
+`2026-07-27-nyiso-90-{control-zerodelta,ctblock-minrun}`. Full write-up:
+`docs/FINDING-nyiso90-ct-block-commitment-2026-07-27.md`. Parameter choice
+pre-registered before derivation: `docs/handoffs/nyiso90-preregistration.md`.
+
+**The charter's premise does not survive the characterization.** The brief
+expected "the model's starts are single-hour-ish" and asked that block
+commitment be judged against the measured run-length distribution rather than
+the volume gap. Judged exactly that way, the model **already reproduces it**:
+mean plant-level run length **6.18 / 6.02 / 8.15 h** against a measured
+**6.61 / 6.31 / 7.92 h**, with p25 = 3 h and p50 = 5-6 h coinciding on both
+sides in every year — and the model's 2025 runs are *longer* than reality's.
+This holds at both defensible online thresholds (each plant's own observed
+maximum, and a common `max(1 MW, 0.05 x measured CAMPD HSL)` bar), so it is not
+a threshold artifact. `scripts/probes/nyiso90_ct_run_lengths.py`.
+
+**What is missing is starts.** Decomposing on `energy = online_hours x
+MW_when_on` at the common bar (`nyiso90_ct_gap_decomposition.py`, identity
+residual exactly 0): online-hour ratio **0.222 / 0.190 / 0.469**, loading ratio
+**0.700 / 0.740 / 0.771**. Since mean run length is right to within 7 %, the
+online shortfall is carried almost wholly by run COUNT — 1,138 / 937 / 2,061
+model starts against 4,790 / 4,694 / 4,521 measured.
+
+**The arm confirms it inside the solve.** `nyiso_gas_bridge_ct` (default off)
+admits CT_PEAKER to the existing bridge, where a 1 h min-down means it can reach
+the `min_run_hours` extension and NOTHING else — `RA_BRIDGE_ECON_MIN_DOWN_HOURS`
+stays 4.0, so nyiso-87's exclusion of CTs from being *held across a gap* is
+preserved (pinned by `test_long_idle_gap_is_never_bridged`). A new per-leg trace
+reports the CT leg flooring **12 / 28 / 74 unit-hours** (0.0001/0.0002/0.0007
+TWh) against the CC leg's 16,698 / 18,374 / 11,973 — live, with nothing to
+extend. Arm vs control: max hourly delta 346 MW (so NOT byte-identical — the
+nyiso-89 §4a check was run first), CT_PEAKER **+0.00011 / +0.00009 / +0.00051
+TWh = +0.01 / +0.01 / +0.03 % of the gap**, plant-level run lengths and online
+hours unchanged.
+
+**Every criterion is identical between arm and control**, both NOT-YET
+(UNATTESTED — probes). The two flagged guardrails were measured, not assumed:
+**C1's knife edge is untouched** (2023 CC_REGULAR 32.513 vs 35.297 = -2.784 TWh
+in both, the 0.156 TWh headroom unchanged; the arm moves CC_REGULAR by 0.00005
+TWh), and **C5a 2025 stays +7.6 %** (31.390 vs 29.167 Mt) because there is no
+volume to sign. The new `D4_WINDOWS` row for `nyiso_gas_commitment_bridge x
+CT_PEAKER` is exercised and PASSES (h0-23, off-window binding 0.0); C7/C8 report
+but do not gate the class (1.5/1.4/2.0 % of ISO load, under the 2 % floor).
+
+**Inputs.** `derive_campd_gas_commitment_params.py --ct` extends the frozen
+artifact to the CT class (`campd_ct_commitment_params_NYISO.csv`: 80 units,
+2,454 MW, 34,024 runs; min_load_frac 0.238 cap-wtd p50, run hours cap-wtd
+p25/p50/p75 = 2/4/8 h). Its equally-weighted p50 of 4.0 h reproduces the
+independently-derived `campd_ct_run_lengths_NYISO.csv` class fallback exactly.
+The default invocation is **byte-identical** (md5-verified) — adding CT to the
+default target set would have made mixed steam/turbine plants ambiguous and
+silently changed the CC/ST rows the keeper's own bridge reads. min_run = 2 h is
+the cap-weighted **p25**, because an observed run bounds a min-run *constraint*
+from above. *Recorded inconsistency, not folded in:* the CC/ST legs use
+p50_capwtd (21/13 h).
+
+**Verdict: PROBE, rejected as a mechanism, kept default-off.** Not rejected for
+worsening the fit — it does not move the fit. Rejected because the phenomenon is
+already in the model, so arming it would spend a mechanism, a D-2 row and two
+parameters on 0.01-0.03 % of the residual (rules 19/21).
+
+**The lane's question changes** from "why are the runs too short" (answered: they
+are not) to **"why does the model start the CT fleet 2-5x less often"**. That
+converges with nyiso-88 §3's at-the-money measurement (margin within ±$6/MWh,
+50-68 % of measured energy *below* its own SRMC): a marginal fleet has its START
+decisions flipped by small errors while run durations, once started, stay right —
+exactly the asymmetry measured here. The below-SRMC half is the specific thing a
+merit-order LP structurally cannot produce, and it is about the size of the gap.

@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-27-nyiso-90-ctblock-minrun",
+  "label": "nyiso 90 ctblock minrun",
+  "date": "2026-07-27",
+  "shorthand": "nyiso-90-ctblock-minrun",
+  "definition": "nyiso-90 ARM: single delta nyiso_gas_bridge_ct=true on keeper 2026-07-27-nyiso-89-ctmeas-hrloaded. CT_PEAKER day-ahead BLOCK COMMITMENT via the existing min_run_hours extension leg of the NYISO gas commitment bridge (min_load_frac 0.238, min_run 2h = cap-weighted p25 of 34,024 measured CAMPD CT runs). Economic/physical bridging remain unreachable on a 1h-min-down class; RA_BRIDGE_ECON_MIN_DOWN_HOURS untouched.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-27-nyiso-90-ctblock-minrun.js",
+  "bundle": "results/calibration/nyiso90_ctblock_minrun"
+}
