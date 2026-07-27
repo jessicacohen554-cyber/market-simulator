@@ -33,13 +33,15 @@ _SRC = Path(__file__).resolve().parent.parent.parent / "src"
 if _SRC.exists() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
+from market_sim.config.paths import CALIBRATION_DIR, EIA_860_DIR  # noqa: E402
 from market_sim.data.fleet import BA_CODE_TO_ISO, _map_fuel_type  # noqa: E402
 
 WINDOW = range(2021, 2026)  # 2021-2025 inclusive; never 2026 (rule 22).
 LARGE_UNIT_MW = 300.0  # flagged per plan §1.2.3
 
-EIA_860_DIR = Path("data/raw/eia-860")
-OUT_DIR = Path("data/raw/_validation-source")
+# Resolved through the registry (config/paths.py) — the old Path("data/raw/…")
+# literals here were CWD-relative and only worked from the repo root.
+OUT_DIR = CALIBRATION_DIR
 # Lives in OUT_DIR, not EIA_860_DIR: data/raw/eia-860/*.csv is gitignored
 # (override-CSV convention, source of truth there is parquet/json only), and
 # this file is a committed, citation-backed permanent fix, not a local

@@ -75,7 +75,11 @@ from pathlib import Path
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-OUT_DIR = REPO_ROOT / "data" / "raw" / "miso-generation-outages"
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from market_sim.config.paths import MISO_GENERATION_OUTAGES_DIR  # noqa: E402
+
+OUT_DIR = MISO_GENERATION_OUTAGES_DIR
 BASE_URL = "https://docs.misoenergy.org/marketreports"
 
 # MISO started publishing the mom report here; earlier dates 404.

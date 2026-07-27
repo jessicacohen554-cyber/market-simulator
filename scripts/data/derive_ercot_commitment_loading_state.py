@@ -80,6 +80,8 @@ from pathlib import Path
 import numpy as np
 
 REPO = Path(__file__).resolve().parents[2]
+
+from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
 import sys  # noqa: E402
 
 sys.path.insert(0, str(REPO / "src"))
@@ -96,9 +98,7 @@ from derive_ercot_dam_cleared_share import (  # noqa: E402
 from derive_ercot_rtolcap_forward import _class_hourly  # noqa: E402
 
 HOURS = 8760
-DEFAULT_OUT = (
-    REPO / "data" / "raw" / "_validation-source" / "ercot_commitment_loading_state.json"
-)
+DEFAULT_OUT = CALIBRATION_DIR / "ercot_commitment_loading_state.json"
 
 #: Model class -> artifact class key (the cleared-share wall's own scope).
 #: ST_GAS added by the ERCOT-77 steam-cliff extension (2026-07-17 charter):

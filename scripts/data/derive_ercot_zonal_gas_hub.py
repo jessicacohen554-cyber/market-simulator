@@ -47,8 +47,10 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
-HUB_PATH = REPO / "data" / "raw" / "ercot_zonal_gas_hub.csv"
-HH_MONTHLY_PATH = REPO / "data" / "raw" / "gas-prices" / "henry_hub_monthly.csv"
+from market_sim.config.paths import GAS_PRICES_DIR, RAW_DATA_DIR  # noqa: E402
+
+HUB_PATH = RAW_DATA_DIR / "ercot_zonal_gas_hub.csv"
+HH_MONTHLY_PATH = GAS_PRICES_DIR / "henry_hub_monthly.csv"
 
 _MONTH_ABBR = (
     "",

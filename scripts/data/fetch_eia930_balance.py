@@ -24,7 +24,11 @@ import pandas as pd
 import pyarrow.parquet as pq
 
 REPO = Path(__file__).resolve().parent.parent.parent
-OUT_DIR = REPO / "data" / "raw" / "eia-930"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import EIA_930_DIR  # noqa: E402
+
+OUT_DIR = EIA_930_DIR
 URL = "https://www.eia.gov/electricity/gridmonitor/sixMonthFiles/{name}.csv"
 
 _STRING_COLS = (

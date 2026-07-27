@@ -80,6 +80,8 @@ sys.path.insert(0, str(REPO / "scripts"))
 sys.path.insert(0, str(REPO / "scripts" / "data"))
 sys.path.insert(0, str(REPO / "scripts" / "probes"))
 
+from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
+
 from derive_ercot_dam_cleared_share import (  # noqa: E402
     EIA930_HOURLY,
     HOURS,
@@ -95,9 +97,7 @@ from ercot90_stgas_shoulder_measure import (  # noqa: E402
     _st_gas_plants,
 )
 
-DEFAULT_OUT = (
-    REPO / "data" / "raw" / "_validation-source" / "ercot_stgas_drag_seasonal.json"
-)
+DEFAULT_OUT = CALIBRATION_DIR / "ercot_stgas_drag_seasonal.json"
 
 SEASON_NAMES = {0: "DJF", 1: "MAM", 2: "JJA", 3: "SON"}
 

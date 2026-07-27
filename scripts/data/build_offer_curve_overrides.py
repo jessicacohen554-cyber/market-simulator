@@ -28,7 +28,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import json
 import re
 import sys
@@ -46,11 +45,12 @@ def _default_offer_curve(iso: str) -> dict[str, dict[str, float]]:
     offer curve is ISO-independent today but we pass the ISO through so this
     keeps working if that changes.
     """
-    spec = importlib.util.spec_from_file_location(
-        "rc", str(REPO / "scripts" / "run_calibration.py")
-    )
-    rc = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(rc)
+    # Package import, not a ``spec_from_file_location`` file-load (refactor
+    # plan §6-E): the old form executed run_calibration a second time under
+    # the synthetic name "rc" — a private copy that could drift from the
+    # canonical ``scripts.run_calibration``. Kept lazy: the module is heavy.
+    from scripts import run_calibration as rc
+
     return rc._calibration_config(2024, iso, 10, 3.0).offer_curve_by_group
 
 

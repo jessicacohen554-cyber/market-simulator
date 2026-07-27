@@ -50,6 +50,8 @@ sys.path.insert(0, str(REPO / "scripts"))
 sys.path.insert(0, str(REPO / "scripts" / "data"))
 sys.path.insert(0, str(REPO / "src"))
 
+from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
+
 from derive_caiso_import_tranches import YEARS, hub_prices  # noqa: E402
 from market_sim.config.constants import STATE_CARBON_PRICE_BY_ISO  # noqa: E402
 from market_sim.config.interchange_config import (  # noqa: E402
@@ -59,9 +61,7 @@ from market_sim.config.interchange_config import (  # noqa: E402
 )
 from market_sim.data.fuel import socal_citygate_weekly_hourly  # noqa: E402
 
-ACTUAL_LMP = (
-    REPO / "data" / "raw" / "_validation-source" / "actual_lmp_hourly_CAISO.parquet"
-)
+ACTUAL_LMP = CALIBRATION_DIR / "actual_lmp_hourly_CAISO.parquet"
 HOURS = 8760
 HR_CCGT = 0.37 / 0.0531
 _DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]

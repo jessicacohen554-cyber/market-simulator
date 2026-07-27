@@ -43,12 +43,17 @@ import io
 import re
 import urllib.request
 import zipfile
+import sys
 from pathlib import Path
 
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-OUT_ROOT = REPO_ROOT / "data" / "raw" / "NYISO-AS" / "requirements"
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from market_sim.config.paths import NYISO_AS_DIR  # noqa: E402
+
+OUT_ROOT = NYISO_AS_DIR / "requirements"
 
 MIS_BASE = "http://mis.nyiso.com/public/csv"
 

@@ -40,12 +40,12 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import CALIBRATION_DIR, LMP_DATA_DIR  # noqa: E402
 from market_sim.utils.hour_calendar import hour_index  # noqa: E402
 
-LMP_DIR = REPO / "data" / "raw" / "lmp-data"
-OUT_PARQUET = (
-    REPO / "data" / "raw" / "_validation-source" / "pjm_border_lmp_hourly_MISO.parquet"
-)
+LMP_DIR = LMP_DATA_DIR
+OUT_PARQUET = CALIBRATION_DIR / "pjm_border_lmp_hourly_MISO.parquet"
 
 BORDER_HUBS = ["CHICAGO GEN HUB", "AEP GEN HUB", "ATSI GEN HUB"]
 HUB_NAME = "PJM_WEST"

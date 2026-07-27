@@ -39,12 +39,17 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import sys
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 REPO = Path(__file__).resolve().parent.parent.parent
-OUT_PATH = REPO / "data" / "raw" / "coal-prices" / "bls_coal_ppi.csv"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import COAL_PRICES_DIR  # noqa: E402
+
+OUT_PATH = COAL_PRICES_DIR / "bls_coal_ppi.csv"
 
 BASE = "https://api.bls.gov/publicAPI/v2/timeseries/data/"
 

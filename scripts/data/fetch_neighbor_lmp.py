@@ -60,6 +60,9 @@ from urllib3.util.retry import Retry
 
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO))
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
 
 # Reuse the canonical chronological 8760-hour calendar mapping (row k = k-th
 # UTC hour after local standard midnight Jan 1, local-standard Feb 29 dropped)
@@ -78,7 +81,7 @@ from scripts.data.derive_actual_lmp import (  # noqa: E402
 # installs only pandas/numpy/etc. (not the market_sim package), so importing
 # market_sim.config.paths there fails (ModuleNotFoundError). Keep this in sync with
 # config.paths.CALIBRATION_DIR if that ever moves.
-OUT_DIR = REPO / "data" / "raw" / "_validation-source"
+OUT_DIR = CALIBRATION_DIR
 
 MISO_REPORTS = "https://docs.misoenergy.org/marketreports"
 MISO_HUB = "INDIANA.HUB"  # the PJM-border MISO hub (ComEd/AEP-Ohio/ATSI seam)

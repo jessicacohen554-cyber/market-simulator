@@ -65,6 +65,9 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts" / "data"))
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import ERCOT_MIS_DIR, REFERENCE_DIR  # noqa: E402
 
 from derive_ercot_thermal_dam_availability import (  # noqa: E402
     RESTYPE_TO_CLASS,
@@ -72,8 +75,8 @@ from derive_ercot_thermal_dam_availability import (  # noqa: E402
     _site,
 )
 
-DAM_DIR = REPO / "data" / "raw" / "ercot"
-REFERENCE_DIR = REPO / "data" / "raw" / "reference"
+DAM_DIR = ERCOT_MIS_DIR
+REFERENCE_DIR = REFERENCE_DIR
 BIN_ASSIGN = REFERENCE_DIR / "custom-bin-assignments.csv"
 FORENSIC = REFERENCE_DIR / "ercot_noncampd_dam_crosswalk.csv"
 # ERCOT-110: the reviewed coal site -> EIA plant adjudication. Its own file

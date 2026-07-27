@@ -65,11 +65,20 @@ not import `scripts.lib.cli` (which imports `market_sim`).
 That form executes the target a *second* time under a synthetic module name, so
 the caller gets a private copy whose module-level state can drift from the
 canonical `scripts.*` entry every other importer shares. Import the package
-instead — `from scripts.data import derive_ordc_overlay as ordc`. The remaining
-file-load chains (`regression_gate.py`, `export_tranche_config.py`,
-`bench_warmstart_xyear.py`, `scripts/data/build_offer_curve_overrides.py`,
-`scripts/data/derive_caiso_supply_consistent_demand.py`) are the open tail of
-this conversion, not a sanctioned pattern.
+instead — `from scripts.data import derive_ordc_overlay as ordc`. The
+conversion is COMPLETE as of 2026-07-26: zero live call sites remain outside
+the frozen `archive/`/`probes/` record (the former tail — `regression_gate.py`,
+`export_tranche_config.py`, `bench_warmstart_xyear.py`,
+`scripts/data/build_offer_curve_overrides.py`,
+`scripts/data/derive_caiso_supply_consistent_demand.py` — was converted with
+every consumed attribute verified identical across both import paths first).
+Do not add new ones. A related smell survives in a different form: ~10 live
+scripts still import siblings by bare top-level name (`import
+run_calibration_full as rcf`, `from run_calibration import run_year`), which
+creates the same second-copy hazard if the canonical `scripts.*` name is also
+loaded in-process; prefer `from scripts import run_calibration_full as rcf`
+in new code. (Recorded 2026-07-26; converting the existing ten is open work,
+not part of the closed spec_from_file_location tail.)
 
 ### `keeper_store.py`'s CLI — the sanctioned exception (adjudicated 2026-07-26)
 

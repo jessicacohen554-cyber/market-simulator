@@ -63,13 +63,18 @@ import argparse
 import io
 import zipfile
 from datetime import date, datetime, timedelta
+import sys
 from pathlib import Path
 
 import pandas as pd
 import requests
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_OUT_DIR = REPO_ROOT / "data" / "raw" / "ercot"
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from market_sim.config.paths import ERCOT_MIS_DIR  # noqa: E402
+
+DEFAULT_OUT_DIR = ERCOT_MIS_DIR
 
 # Same unauthenticated legacy MIS endpoints as scripts/data/fetch_ercot_as_reports.py.
 DOC_LIST_URL = "https://www.ercot.com/misapp/servlets/IceDocListJsonWS"
