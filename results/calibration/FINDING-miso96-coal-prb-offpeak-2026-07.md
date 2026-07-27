@@ -1,12 +1,16 @@
 # FINDING miso-96 — the C7 COAL_PRB off-peak failure is a dated offer-curve regression, not a floor
 
-**Determination: DIAGNOSED, ROOT-CAUSED, NOT FIXED.** No solve, no bundle, no
-registration. Keeper unchanged pending the owner's verdict-text decision.
+**Determination: DIAGNOSIS CONFIRMED BY SOLVE; THE CANDIDATE FIX IS REJECTED —
+it overshoots.** Registered arm `2026-07-27-miso-96-sunkfixed-takeorpay`
+(MISO 2023/2024/2025, one bundle, rule 16). **Keeper UNCHANGED**
+(`2026-07-25-miso-88-egrid-hr`). The mechanism attribution in §1–§5 is now
+proven by A/B; the remedy in §5 is proven insufficient in §7.
 
-Scored entirely from committed artifacts: the `miso88_egrid_hr` bundle
-(`legitimacy_diagnostics.json`, `hourly/`, `run_config.json`), the run payload,
-`bench/MISO/`, and `data/raw/_validation-source/actual_lmp_hourly_zonal_MISO.parquet`.
-**No LP re-solve.** Probes: `/tmp` throwaways, listed in §7.
+Sections §1–§6 are scored entirely from committed artifacts with **no LP
+re-solve**: the `miso88_egrid_hr` bundle (`legitimacy_diagnostics.json`,
+`hourly/`, `run_config.json`), the run payload, `bench/MISO/`, and
+`data/raw/_validation-source/actual_lmp_hourly_zonal_MISO.parquet`. §7 adds the
+one solved A/B arm. Probes listed in §8.
 
 ---
 
@@ -175,7 +179,99 @@ where the handoff expected it to the offer path where it actually lives.
   load-bearing miss must be **built**, not documented — and this one is
   protective, which is stricter still.
 
-## 7. Reproduction
+## 7. The A/B: the attribution is PROVEN, the remedy OVERSHOOTS
+
+Arm `2026-07-27-miso-96-sunkfixed-takeorpay` = the miso-93 control (the miso-88
+keeper recipe on the guard-corrected CAMPD extract) with the single delta
+`coal_committed_takeorpay_sunk_fixed=true`. Staged one-year-per-process
+`--reuse-solved` chain (14.34 GB single-year peak on a 15 GB box); `system_2023`
+/ `system_2024` verified byte-identical across the chain; hydro and wind
+identical to the control, confirming the blast radius is the coal/gas merit
+order alone.
+
+### What it proves
+
+**§5's attribution is correct.** Removing the committed-band discount restores
+the overnight cycling almost exactly as predicted:
+
+| C7 D-1 `COAL_PRB` | control | arm | gate |
+|---|---|---|---|
+| 2023 cv_ratio | 0.453 FAIL | **0.792 PASS** | ≥ 0.50 |
+| 2024 cv_ratio | 0.441 FAIL | **0.985 PASS** | ≥ 0.50 |
+| 2025 cv_ratio | 0.364 FAIL | 0.438 FAIL | ≥ 0.50 |
+
+Model off-peak CV rises 0.071 → 0.124 (2023) and 0.054 → 0.121 (2024) against
+measured 0.157 / 0.122. The price side moves the same way: C3a-2025 −16.6% →
+−15.9%, C3b-2025 NRMSE 0.208 → 0.203, and the DA diagnostics improve sharply
+(2023 −7.2% → −3.5%, 2024 −11.0% → −5.3%).
+
+### Why it is nevertheless REJECTED
+
+| criterion | control (keeper) | arm |
+|---|---|---|
+| C1 fuel-mix | PASS | **FAIL** — COAL_BIT −18.26 / −19.11 TWh, COAL_PRB −8.34 / −13.22 TWh (2023/2024) |
+| C5a CO2 vs eGRID | PASS | **FAIL** — −10.0% / −11.1% |
+| C7 shape | FAIL (3 yr) | FAIL (2025 only) |
+| **determination** | NOT-YET (1 fail) | **NOT-YET (3 fails)** |
+
+Trading one protective fail for two load-bearing fails plus a residual
+protective fail is strictly worse. **The deletion is too blunt, and the reason
+is informative:** the committed-band discount is currently doing *two* jobs at
+once, and only one of them is a category error.
+
+1. **Keeping the unit committed** — regulated coal self-commits and stays on.
+   This is MEASURED and real (SOM Table 7: regulated utilities self-commit
+   53–56% of coal starts, "running them regardless of the price").
+2. **Making the whole committed band price-insensitive in every hour** — the
+   category error of §5.
+
+Removing the discount removes *both*. Job 1 goes with it, 18–19 TWh of BIT coal
+is displaced wholesale, and system CO2 falls 10–11% with it. So the arm confirms
+the diagnosis and refutes its own remedy.
+
+### The lane this identifies (NOT built, needs a design)
+
+Separate the two jobs. The structurally-correct object is a **minimum-take
+constraint** over the contract's accounting period — the unit must take the
+contracted tonnage, so it stays committed (job 1), but it chooses *when* within
+the period, so it still de-loads overnight (job 2 fixed). The obligation is then
+priced **endogenously by the constraint's dual**, non-zero only in the hours it
+actually binds — which is precisely the "window" rule 17 `[R-FLOOR-WINDOW]`
+demands, and it carries zero fitted parameters (rule 24 `[R-DOF]`).
+
+Two hard constraints on building it, both of which make it a multi-session job
+rather than a follow-on edit:
+
+- It is an LP **constraint block** (per-plant, per-period energy rows over
+  8760 columns), not an offer-path scalar — it must be built vectorized under
+  rule 2 `[R-VECTOR]`.
+- **The tonnage must not come from the same year's measured receipts.** Setting
+  a minimum burn from `share × measured annual receipts` would pin the model's
+  annual coal energy to ≈85% of actual — a measured *outcome* fed back to force
+  the backcast, which rule 13 `[R-MEASURED]` forbids outright. It needs a
+  forward-regenerable contract quantity.
+
+### What the 2025 residual is, and what it is not
+
+2025 still fails at 0.438 with a model off-peak CV of 0.033 against a measured
+0.075 — the fleet barely cycles even with the subsidy gone. 2025 is the year
+the standing MISO evidence says the system is ~10 GW tighter at summer peak than
+the model can see (FINDING-miso89 §2), and a fleet with no headroom cannot cycle
+whatever its offer says. That is the **already-adjudicated, data-blocked**
+outage-grain gap (`docs/handoffs/miso-outage-grain-data-ask-2026-07.md`), not a
+new phenomenon. It is **not** re-attacked with a second mechanism (rule 19
+`[R-ONE-MECH]`) and it is **not** ledgered — C7 is protective and hard, and
+MISO's ledgered budget is 3/3 saturated regardless.
+
+### Disposition of the flag
+
+`coal_committed_takeorpay_sunk_fixed` stays in the codebase **default-off and
+probe-refuted-alone**, on the same footing as the other adjudicated default-off
+probes named in CLAUDE.md. It is not a fitted knob (it sizes nothing), so rule
+26 `[R-DELETE]` does not require its removal, and it is the control arm the
+minimum-take lane will need. It must never be armed on its own in a keeper.
+
+## 8. Reproduction
 
 Probes (throwaway, `/tmp`, no file under `data/` touched):
 `probe_prb.py` (profiles), `probe_prb2.py` (ceiling pin vs floor hold),
