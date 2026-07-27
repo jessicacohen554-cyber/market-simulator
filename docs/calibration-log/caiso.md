@@ -1868,3 +1868,86 @@ family (export-path/corridor, caiso-121); the caiso-124 shape-gate disposition
 re-tune-vs-freeze sequencing decision.
 
 Next number: caiso-126.
+
+## caiso-126 (2026-07-27) — RoR-SPLIT LANE EXECUTED (the caiso-125 §4c owner ask): external classifier intaken (EHA+HILARRI, energy-weighted RoR share is ~10-12 %, NOT the premise's ~half — that was plant-count), the floor-reconciled family BUILT (zero DOF, default off, byte-inert proven digit-for-digit) and A/B'd against gates pre-registered before the solve: every window moves toward measured — overnight 2-3× beyond the fixed-λ prediction (the reservoir-pool water-value feedback is REAL), belly −583/−611/−549 → −92/−58/−83 MW, parks-at-zero → 0, amplitude error −80…−87 % — and the family is KILLED as armed by pre-registered K1 EVENING STARVATION (2024 −376 MW; the caiso-125 §4b spread compression paying the belly from the evening peak) + the formal K4 nameplate-clip clause. Keeper UNCHANGED; B registered as a rejected probe
+
+**Full record: `results/calibration/FINDING-caiso126-ror-split-2026-07-27.md`;
+gates: `results/calibration/PREREG-caiso126-ror-split-2026-07-27.md` (committed
+`08d8113`, BEFORE arm B solved). Runs: `2026-07-27-caiso-126-ror-split` (arm B,
+PROBE/REJECTED, rule 15; retention pruned caiso-97-evening-trim). Arm A
+`caiso126_control_A` NOT registered (FINDING-caiso92b protocol) — it reproduces
+the committed `caiso124_control_A` DIGIT-FOR-DIGIT (max hourly hydro delta
+0.000 MW), proving the new default-off code byte-inert on the keeper recipe.**
+
+**(1) Task 1 — classifier intake.** New `hydro-plant-modes` clean datatype
+(schema-first, `scripts/data/curate_hydro_plant_modes.py`): ORNL EHA FY2024
+`Mode` (raw committed under `data/raw/ornl-eha/`) completed for the 100
+Mode-NaN CISO plants by categorical HILARRI v4 (`data/raw/hilarri/`)
+reservoir-association / canal-type / Corps-dam-ownership rules — NO numeric
+threshold (rule 13/24), frozen against residuals (rule 21), validated
+residual-blind at 86/97 plants / 84.7 % of labeled MW. FC_Dock propagation
+measured useless (0/100); EHA FY2023 carries the identical gap. CISO: 195
+plants, 84 RoR-class — but **energy-weighted only 12.5/11.1/10.3 % of the
+budget**: the caiso-125 "~half run-of-river" premise was plant-COUNT; the CF ≥
+0.45 proxy's 43-61 % had mostly flat-lined high-CF SHAPEABLE plants (wet-year
+headroom, which the LP already represents per-plant).
+
+**(2) Task 2 — the mechanism** (`hydro_ror_split`, default off, cache-key
+neutral): RoR-class plants fixed at their own monthly water
+budget[g,m]/hours[m] (min_gen == availability cap, `MECH_HYDRO_ROR_FLAT`,
+non-thermal, D-4 h0-23); rule-19 reconciliation makes it ONE family with the
+caiso-124 floor — the reservoir class carries exactly (Q95 − RoR base)+, total
+forced base = the frozen Q95, never stacked, no RoR unit carries both stamps
+(test-pinned; 7 mechanism + 4 intake tests). Bundles now pin the classifier
+partition into `shared_inputs`.
+
+**(3) Task 3 — the A/B** (PREREG-caiso124 format, same-HEAD arms, chained).
+B − A: overnight gap +311/+249/+308 → **+160/+92/+211** (P1 PASS 2024 only —
+but improved every year, 1.2-3× the fixed-λ greedy prediction recorded in
+PREREG §3: the split raises the reservoir pool's marginal water value into the
+overnight λ band, the channel caiso-125 §1-§3 proved no within-envelope lever
+reaches); belly → **−92/−58/−83** (P2 PASS); D-1 PAIR gate (profile_r ≥ 0.8 +
+amplitude, the corrected caiso-124 form) PASS all years incl. 2025 where raw r
+dips 0.985 → 0.977 — the trap the pair gate was built for; parks-at-zero
+270/692/604 → **0**; gas **+0.35/+0.36/+0.18 TWh** and λ
+**−0.50/−1.24/−0.22 %** (both toward actual — S1 confirms the caiso-125 §5
+probe's direction, at ~5 % of the C5a deficit: the overnight excess was a live
+but MINOR C5a contributor; import/gas substitution remains the main line).
+**KILLED as armed**: **K1** evening starvation (B −251/**−376**/−264 vs A
++126/−114/+5; 2024 breaches ±300) — the forced base holds belly+overnight near
+reality and the LP pays for it out of the evening peak because its
+evening−overnight premium is compressed ~2× (caiso-125 §4b); same channel as
+caiso-124's K3, now caught by an explicit window kill. NOT fixable hydro-side
+(rule 1/13). **K4** (formal): nameplate-clip 1.335/1.269 % > 1 % — fired
+pre-solve; the control shares the identical under-delivery (EIA-930 uniform
+scale factor inflating small-plant budgets past nameplate-hours); gate stands
+as scored per the caiso-124 discipline, fix = ISO-generic budget-scaling lane.
+D-4 off-window 0.0000 both mechanisms; C8 PASS; rubric (reported): NOT-YET,
+fail {C3a-2025 (attributed extract basis; the family's own λ is
+toward-actual), C3c, C5a}. LOYO (rule 22): zero fitted parameters ⇒ per-year
+consistency is the record — improvements hold in every year independently;
+the evening degradation is same-signed in all three (systematic, not
+single-year).
+
+**(4) Disposition.** Keeper UNCHANGED; mechanism + classifier stay in-tree
+default-off as the structurally-correct hydro representation awaiting its
+prerequisite; **the caiso-124 floor's re-test is COMPLETE inside this family**
+(belly fix survives reconciliation; its evening payment is attributed to the
+spread compression, not the floor's level). **Priority follow-up: the evening
+λ-formation lane (caiso-103→108 hub-separation/spread) — it now blocks the
+ENTIRE hydro family; once landed, this family re-tests with one flag.** Minor:
+the K4 budget-scaling data fix; the 4 pondage-peaker classifier FNs (~2 % of
+budget, rule-21 frozen until a new vintage).
+
+**DO-NOT-REDO (new):** CF/residual-derived RoR classification (the intake
+replaces it); re-running this A/B at the current spread compression; moving
+K1/P1 bounds post-hoc; a hydro-side evening floor to offset the starvation
+(rule-13 pin); re-measuring the clip loss.
+
+**Open items carried:** min-load 0.570 promotion (owner); the belly delta
+family (export-path/corridor, caiso-121); the caiso-124 shape-gate disposition
+(owner; note the pair-gate form is now field-tested here); the charter-lane
+re-tune-vs-freeze sequencing decision; the evening λ-formation re-charter
+(now this lane's blocker).
+
+Next number: caiso-127.
