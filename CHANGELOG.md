@@ -142,6 +142,59 @@ triangulation + owner-decision box: `docs/fuel-forward-methodology-2026-07.md`.
   recommended posture is pure AEO2026 paths (methodology doc §6). Nothing beyond
   the refresh implemented pending the owner's pick.
 
+## 2026-07-19 — Transmission expansion: committed-instrument registry + gated forward TTC channel (FF-G1, WAVE FI)
+
+The forecast's network topology was frozen at base-year statics for all 25
+forecast years; board/regulator-committed builds were invisible. Forecast-only
+channel, **GATED default-off** (`transmission_expansion_enabled`, in
+`_CACHE_KEY_OPTIONAL_FIELDS`; backcast/hindcast coerced off) — **every
+existing cache key, backcast keeper, and default forecast is unchanged**
+(verified: pre-change vs flag-off NEISO 2026 result frames + objective exactly
+equal). Standing methodology: `docs/transmission-expansion-methodology-2026-07.md`;
+session record: `docs/handoffs/transmission-expansion-grounding-2026-07.md`.
+
+- **New raw datatype** `data/raw/transmission-expansion/` (schema
+  `transmission-expansion.schema.yaml`, lib `scripts/lib/transmission_expansion/`,
+  curation `scripts/data/curate_transmission_expansion.py` with live
+  topology-resolvability validation, sha256-pinned sources + page-marked md
+  conversions via `scripts/data/fetch_transmission_expansion_sources.py`):
+  35 rows across all six ISOs, closed instrument vocabulary
+  (energized/under_construction/approved_funded — roadmap excluded), per-row
+  rule-14 `mapping_note`, deltas additive to each ISO's base-static vintage
+  (new `data.transmission_expansion.TRANSMISSION_BASE_STATIC_VINTAGE`, kept beside its sole consumer).
+- **Applied deltas (10 rows)**: NECEC +1,200 MW (NEISO HQ_import→North +
+  simultaneous cap, energized 2026-01); CAISO SWIP-North +1,117.5 MW ISO
+  entitlement on the WECC simultaneous cap (2028); MISO LRTP Tranche 1
+  published per-LRZ CIL uplifts (+658/+1,443/+492/+166/+2,327 on the five CIL
+  groups, 2030); ERCOT 765 kV STEP WTX-export re-rate +3,500 MW split 8:3
+  per the WESTEX convention (2032). Where an instrument publishes **no MW**
+  (all six PJM RTEP corridors, Propel NY, Gates–Los Banos No. 3, IV–NoSONGS),
+  rows carry delta 0.0 — documented, dispatch-inert, never guessed (rule 5).
+- **Consumption seam**: `src/market_sim/data/transmission_expansion.py`
+  (fail-loud W2-E/G12 loader cloned from confirmed-retirements;
+  `apply_transmission_expansion` returns the same object when nothing applies)
+  wired at the runner's per-year `year_ttc` seam with per-year interface-group
+  rebuild; `scripts/run_full_horizon.py --transmission-expansion`.
+- **T0 smoke (NEISO 2026–2028, ON)**: 2026 applies HQ_import→North 900→2,100
+  and simultaneous 3,850→5,050; flows re-route onto the new wires
+  (HQ→Boston mean 1,612→1,930, HQ→CT 1,118→1,430) while total HQ energy stays
+  tranche-depth-limited (1,987.6 MW mean both legs) — measured confirmation
+  that the import-tranche energy-depth seam is the named V1 follow-up
+  (methodology §6.1), alongside the ERCOT import-direction split, the
+  hindcast information gate, and the no-published-MW re-rates.
+- Registered as **WAVE FI** in the FF plan (§1.2-11 + §6) with the FF-G2…G5
+  companion prompts (fuel forwards, net-CONE vintages, load-shape memo,
+  nuclear registry) and gap-register §3.11 rows.
+
+*(Core-wiring correction, 2026-07-26: the DATA half above landed 2026-07-19,
+but the engine half — the `ScenarioConfig` gate + coercion + cache-key entry and
+the runner's per-year seam — shipped as the unapplied patch
+`docs/handoffs/patches/ff-g1-core-wiring.patch` and was applied only on
+2026-07-26, under fast-tier escalation D2. Until then the flag did not exist and
+everything data-side was inert, exactly as commit `221c5e10` warned. The
+default-off / cache-key-stable claims above hold as written and were re-verified
+at apply time: `cache_key(ScenarioConfig())` still pins `edbc1b103207170a`.)*
+
 ## 2026-07-19 — New-build capacity costs: cross-source grounding, literature-envelope ranges, storage/offshore/EGS/H2 derivation-lock
 
 Forecast-only cost-input grounding (capacity-expansion entry screens); **no LP

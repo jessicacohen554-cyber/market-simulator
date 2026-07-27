@@ -6,9 +6,11 @@ the emitted bin-assignment artifact, and the CHP BTM capacity removal.
 """
 
 import unittest
+import unittest.mock
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import pandas as pd
-import pytest
 
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
@@ -22,6 +24,7 @@ from market_sim.data.fleet import (
     thermal_tranche_peaking,
 )
 from market_sim.config.paths import PROCESSED_DIR, RAW_DATA_DIR
+from market_sim.data.fleet import campd_bins
 from market_sim.data.outages import ST_GAS_PEAKER_PLANTS
 from tests.helpers import REPO_ROOT
 
@@ -81,14 +84,34 @@ class TestCaisoTrancheArtifact(unittest.TestCase):
             self.assertIn(group, ("CC_REGULAR", "CC_CHP"))
             self.assertTrue(0.0 <= pct <= 25.0, f"{code} peaking {pct}")
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason="pre-existing failure on main as of 2026-07-05 (found wiring PR CI "
-        "in W1-P1); unrelated to this change, tracked for follow-up",
-    )
     def test_peaking_empty_for_artifacts_without_column(self):
-        """PJM's committed artifact predates the column — must stay inert."""
-        self.assertEqual(thermal_tranche_peaking("PJM"), {})
+        """An artifact that predates ``peaking_pct`` must stay inert.
+
+        Re-adjudicated 2026-07-26 (fast-tier §6.3): this was xfailed as a
+        "pre-existing failure" with no citation. The guard is still right, but
+        it named the wrong ISO — PJM's committed thermal-tranche artifact has
+        since been regenerated WITH the column (76 rows today), so pinning PJM
+        to ``{}`` asserted a fact about the artifact, not about the loader's
+        degrade path. Exercising that path hermetically also stops the test
+        breaking again the next time an ISO regenerates its artifact.
+        """
+        with TemporaryDirectory() as tmp:
+            path = Path(tmp) / "thermal_tranches_ZZZ.csv"
+            pd.DataFrame(
+                {"plant_code": [1], "plant_group": ["CC_REGULAR"], "status": ["x"]}
+            ).to_csv(path, index=False)
+            with unittest.mock.patch.object(campd_bins, "PROCESSED_DIR", Path(tmp)):
+                self.assertEqual(thermal_tranche_peaking("ZZZ"), {})
+
+    def test_peaking_empty_for_missing_artifact(self):
+        """An ISO with no thermal-tranche artifact at all resolves to ``{}``.
+
+        ERCOT is that ISO by construction — its per-plant binning path never
+        produced one (see ``thermal_tranche_peaking``'s docstring), and its
+        keepers run ``cc_peaking_per_plant=False`` + ``cc_duct_peaking=True``
+        instead.
+        """
+        self.assertEqual(thermal_tranche_peaking("ERCOT"), {})
 
 
 class TestCaisoBinAssignments(unittest.TestCase):

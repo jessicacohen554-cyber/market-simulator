@@ -965,6 +965,16 @@ orphan. Escalation D1 in `docs/handoffs/fast-tier-triage-2026-07-26.md`:
 rebuild from the FINDING's Inv-2 spec when the joint belly delta goes live, or
 explicitly drop the tests as rejected-probe residue.)*
 
+*(**Resolution 2026-07-26 (owner decision, fast-tier escalation follow-through):
+DROP.** `tests/test_caiso_belly_import_cap.py` is C-DELETED as rejected-probe
+residue — it guarded source that main never carried, and rebuilding the
+mechanism standalone is exactly what the FINDING's DO-NOT-REDO forbids. The
+FINDING's **Inv-2 section is the rebuild recipe** and now carries the matching
+correction; `scripts/probes/_caiso117_belly_cap_derive.py` (the derive half)
+did land and stays on disk. The belly price-formation lane (caiso-118 redirect
+#1) re-implements the flag, the two constants and both builders from that spec
+when the joint delta goes live, and owns its own unit tests.)*
+
 Executed the caiso-116 redirect #3: `caiso_belly_import_cap` (ScenarioConfig,
 default False) — a belly-scoped (hod 10-15, `np.inf` outside) simultaneous
 interface group over both per-hub corridor links, capped hour-by-hour at the

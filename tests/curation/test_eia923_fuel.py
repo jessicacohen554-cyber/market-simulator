@@ -16,7 +16,6 @@ from __future__ import annotations
 import unittest
 
 import numpy as np
-import pytest
 
 from market_sim.config.constants import (
     GAS_BASIS_DIFFERENTIAL,
@@ -986,22 +985,28 @@ class RegionDependentCoalSigmoidTest(unittest.TestCase):
         )
         self.assertEqual(coal_passthrough_series(cfg, 2024, 8760, "bituminous"), 1.0)
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason="pre-existing failure on main as of 2026-07-05 (found wiring PR CI "
-        "in W1-P1); unrelated to this change, tracked for follow-up",
-    )
     def test_pjm_subbit_resolves_from_table_not_prb(self):
-        # PJM subbituminous has its own first-cut curve (floor 1.0 — no
-        # cheap-gas discount), distinct from the ERCOT prb curve (floor .78).
+        """PJM subbituminous resolves from its OWN per-ISO curve, not ERCOT prb.
+
+        Re-adjudicated 2026-07-26 (fast-tier §6.3): xfailed as an uncited
+        "pre-existing failure". The cause was the test's frozen literal, not
+        the routing it exists to guard — PJM's first-cut floor 1.00 was
+        re-derived to 1.22 / ceil 2.10 / gas_mid 3.70 / slope 3.0 by the PJM
+        subbit round-2 calibration (COAL_SIGMOID_DEFAULTS["PJM",
+        "subbituminous"] carries the full derivation). Asserting the ROUTING
+        (PJM != ERCOT prb, and PJM's own table entry wins) is what this test is
+        for; the per-ISO levels belong to the PJM lane and must be free to move
+        without breaking it.
+        """
+        from market_sim.config.scenarios import COAL_SIGMOID_DEFAULTS
         from market_sim.data.fuel import coal_sigmoid_params
 
         pjm = ScenarioConfig(iso="PJM")
         ercot = ScenarioConfig(iso="ERCOT")
         sub = coal_sigmoid_params(pjm, "subbituminous")
         prb = coal_sigmoid_params(ercot, "prb")
-        self.assertEqual(sub["floor"], 1.00)
-        self.assertEqual(prb["floor"], 0.78)
+        self.assertEqual(sub, COAL_SIGMOID_DEFAULTS[("PJM", "subbituminous")])
+        self.assertEqual(prb, COAL_SIGMOID_DEFAULTS[("ERCOT", "prb")])
         self.assertNotEqual(sub["floor"], prb["floor"])
 
     def test_explicit_fields_override_table(self):

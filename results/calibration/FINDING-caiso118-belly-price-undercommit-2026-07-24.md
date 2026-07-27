@@ -225,7 +225,11 @@ touches the commitment path in core files, so mind rule 27 / the push gap):
      not asserted. **KILL** if the committed level is fitted to the price/volume
      residual rather than measured (rule 13), or if it forces gas in hours the
      disclosure evidence says the fleet is off (rule 12), or breaks the evening.
-2. **THEN re-arm `caiso_belly_import_cap` jointly.** With the belly committed and
+2. **THEN re-arm `caiso_belly_import_cap` jointly** — *note (2026-07-26): "re-arm"
+   means **RE-IMPLEMENT**. The caiso-117 mechanism never reached main (its
+   session branch is deleted); the spec in FINDING-caiso117 §Inv-2 is the
+   rebuild recipe, and `tests/test_caiso_belly_import_cap.py` was C-deleted as
+   an orphan, so this lane also owns the mechanism's unit tests.* With the belly committed and
    clearing ~$15, the volume cap no longer inflates C3a (gas is now bid-down
    committed, not full-MC marginal) → belly volume (C5a) + belly price (C3a) land
    together. LOYO within 2023–2025 before any promotion (rule 22).

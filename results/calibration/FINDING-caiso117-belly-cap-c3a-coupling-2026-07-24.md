@@ -55,6 +55,27 @@ capped 2023/24/25).
 
 ## Inv 2 — the mechanism (built, unit-tested, default-OFF)
 
+> **CORRECTION 2026-07-26 (fast-tier escalation follow-through): "built" is
+> TRUE FOR THIS SESSION'S WORKING TREE ONLY — the mechanism was NEVER PUSHED
+> and is UNRECOVERABLE FROM GIT.** Only LEG-1's probe, unit tests and this
+> FINDING reached a surviving ref (`07c2085a` / `36aef6a5` / `a0bebf56`, PRs
+> #2828/#2835 from branch `claude/caiso-117-import-scarcity-cudor6`, since
+> deleted). None of `caiso_belly_import_cap`, `CAISO_BELLY_HOURS`,
+> `CAISO_BELLY_EXPORT_PERCENTILE`, `build_caiso_belly_import_cap_group` or
+> `measured_west_belly_export_cap` exists anywhere under `src/` at HEAD, so the
+> `replay_keeper … --set caiso_belly_import_cap=true` reproduction below CANNOT
+> RUN, and `tests/test_caiso_belly_import_cap.py` was C-deleted as an orphan
+> (it failed collection). Owner decision, `docs/handoffs/fast-tier-triage-2026-07-26.md`
+> §4-D1: **record the drop.** The DO-NOT-REDO clause below ("stays built …
+> do not re-derive it") is therefore superseded on its factual half only —
+> its INTENT stands: the cap is still not re-armable as a standalone delta.
+> **The spec in this section IS the rebuild recipe.** When the belly
+> price-formation lane (redirect #1) goes live, that lane re-implements the
+> mechanism from this text — flag + two constants + the simultaneous
+> belly-scoped interface group + the West-side p90 cap loader — and owns its
+> own unit tests. `scripts/probes/_caiso117_belly_cap_derive.py` (the derive
+> half) DID land and is still on disk.
+
 `caiso_belly_import_cap` (ScenarioConfig, default False). A belly-scoped
 **simultaneous** interface group over BOTH per-hub corridor links, capped hour by
 hour at `measured_west_belly_export_cap` (`np.inf` outside the belly, so the
@@ -160,6 +181,10 @@ belly-cheap import rung) at the midday margin so the belly clears near its actua
 - **Tightening the CA-side corridor p95 envelope to fix the belly** — that is a
   CA-side flow observable (rule 13 / caiso-107/109 kills). The West-side p90 cap
   is the admissible form and is already built.
+  - *(2026-07-26: "already built" / "do not re-derive it" — see the Inv-2
+    correction. The mechanism is NOT on main and must be re-implemented from
+    the Inv-2 spec by the joint belly lane. What is not to be re-litigated is
+    the FORM, not the code.)*
 
 Full reproduction: `scripts/probes/_caiso117_belly_cap_derive.py` (derive) +
 `scripts/replay_keeper.py results/calibration/caiso102_hourfix_B --set

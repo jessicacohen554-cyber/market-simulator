@@ -2,7 +2,6 @@
 
 import unittest
 
-import pytest
 
 from market_sim.config.iso_configs import get_iso_config
 
@@ -486,20 +485,48 @@ class TestISOConfig(unittest.TestCase):
         ercot = get_iso_config("ERCOT")
         self.assertTrue(ercot.default_scenario_overrides.get("scarcity_price_overlay"))
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason="pre-existing failure on main as of 2026-07-05 (found wiring PR CI "
-        "in W1-P1): NEISO now defaults scarcity_price_overlay=True; unrelated to "
-        "this change, tracked for follow-up",
-    )
-    def test_other_isos_no_scarcity_overlay_default(self):
-        """Non-ERCOT ISOs do not default-enable the scarcity overlay."""
-        for iso in ("CAISO", "PJM", "MISO", "NYISO", "NEISO"):
+    def test_scarcity_overlay_default_requires_grounded_ordc_params(self):
+        """An ISO may default-enable the overlay ONLY with its own ORDC block.
+
+        Re-adjudicated 2026-07-26 (fast-tier §6.3). The original assertion —
+        "no non-ERCOT ISO default-enables the scarcity overlay" — was xfailed
+        as an uncited "pre-existing failure", but NEISO's default is a
+        deliberate, fully-cited structural mechanism: the ISO-NE winter
+        scarcity ORDC overlay, parameterized from ISO-NE's own filings (VOLL
+        $2,000 = Tariff III.1.10.1A offer cap; MCL 1,200 MW ~ Millstone 3
+        largest single contingency; sigma 900 MW = the PAF-study winter
+        reserve-error std dev; no PUCT curve shift; no ERCOT OBDRR048 floor).
+        Freezing the ERCOT-only list would have blocked exactly that, so the
+        invariant is re-cut to what actually matters (rule 5): an ISO that
+        default-enables the overlay must carry its OWN grounded ORDC
+        parameters rather than silently inheriting ERCOT's.
+        """
+        required = (
+            "ordc_voll",
+            "ordc_mcl_mw",
+            "ordc_lolp_sigma_mw",
+            "ordc_lolp_shift_sigma",
+            "ordc_multistep_floor",
+        )
+        enabled = []
+        for iso in ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"):
             overrides = get_iso_config(iso).default_scenario_overrides
-            self.assertFalse(
-                overrides.get("scarcity_price_overlay", False),
-                msg=f"{iso} should not default scarcity_price_overlay to True",
-            )
+            if not overrides.get("scarcity_price_overlay", False):
+                continue
+            enabled.append(iso)
+            if iso == "ERCOT":
+                # ERCOT IS the ScenarioConfig ORDC baseline (the curve was built
+                # against PUCT's), so it overrides nothing and needs no block.
+                continue
+            for key in required:
+                self.assertIn(
+                    key,
+                    overrides,
+                    msg=f"{iso} default-enables the overlay without {key}",
+                )
+        # ERCOT and NEISO are the two ISOs with a grounded overlay today; a new
+        # one is a deliberate lane decision, and this list is its checkpoint.
+        self.assertEqual(sorted(enabled), ["ERCOT", "NEISO"])
 
 
 if __name__ == "__main__":

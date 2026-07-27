@@ -1,5 +1,20 @@
 # ERCOT-93 session handoff (ST_GAS steam RT/SCED basis + telemetered online span)
 
+> **STATUS 2026-07-26 — THE RECONSTRUCTION BELOW IS DEAD. DO NOT RUN IT.**
+> The core wiring was never applied on main, and
+> `docs/handoffs/ercot93-core-mechanism.patch` has since ROTTED: its
+> `src/market_sim/data/fleet.py` target became the `data/fleet/` package
+> (wave 3H) and the `scenarios.py` hunk context drifted, so §"To reconstruct"
+> step 1 (`git apply`) fails. Owner decision (fast-tier escalation
+> follow-through, `docs/handoffs/fast-tier-triage-2026-07-26.md` §4-D3):
+> **the machinery is DROPPED, not ported** — it guards a rejected, default-off
+> probe. `tests/test_ercot_offer_surface_cleared_share_steam_rt.py` was
+> C-deleted with it. This document stays as the probe's canonical record (the
+> measurement, the root cause, and the frontier below are all still live);
+> the patch bytes stay as the wiring's only surviving text. Any future
+> season-conditioned-wall round re-derives from that text against the current
+> `data/fleet/offer_surfaces.py`, and owns its own tests.
+
 **Verdict: REJECTED PROBE.** The mechanism is structurally faithful but trips the
 pre-committed zero-spurious §6 gate on the Jan-14/15 winter cold-snap cluster.
 Keeper UNCHANGED (`2026-07-20-ercot91-seasonal-drag-fullspan`). Machinery is

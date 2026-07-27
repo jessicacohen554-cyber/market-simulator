@@ -11,7 +11,6 @@ import unittest
 
 import numpy as np
 import pandas as pd
-import pytest
 
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
@@ -190,33 +189,40 @@ class TestCommitmentCoupling(unittest.TestCase):
 class TestEmissionScaling(unittest.TestCase):
     """CO2 emission rate scales with each tranche's heat rate."""
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason="pre-existing failure on main as of 2026-07-05 (found wiring PR CI "
-        "in W1-P1): committed-tranche emission rate no longer exceeds the "
-        "bin-average rate; unrelated to this change, tracked for follow-up",
-    )
-    def test_emission_rate_ordering(self):
+    def test_emission_rate_is_invariant_across_tranches(self):
+        """Every tranche of a plant books CO2 at its PHYSICAL heat rate.
+
+        Re-adjudicated 2026-07-26 (fast-tier §6.3). This test previously
+        asserted the OPPOSITE — that the committed tranche's CO2/MWh exceeds
+        the bin average by ``cc_committed_hr_mult`` and the econ tranche's
+        falls below it by ``cc_econ_hr_mult`` — and was xfailed as an uncited
+        "pre-existing failure" when the assertion started failing. The
+        assertion was the defect: R2/EM-4 corrected ``bins_to_fleet`` to book
+        ``emission_rate_co2`` at ``base_hr`` (the plant's physical heat rate),
+        never at the bid-tranche heat rate ``tr_hr``, because ``tr_hr`` carries
+        the OFFER-CURVE pricing multipliers (peak x2.0-2.5, committed x0.92 —
+        docs/binning-methodology.md) that shape the bid stack. A plant's CO2
+        per MWh does not change because a block is offered at a scarcity price.
+        Keeping the old xfail preserved a physics error as the expected
+        behaviour; this inverts it into the guard the correction deserves.
+        (CEMS-covered plants are overwritten later with their measured rate by
+        ``apply_plant_emission_rates``; this base_hr value is the physical
+        default for uncovered plants and entrants.)
+        """
         config = ScenarioConfig()
         fleet, _ = bins_to_fleet(_bins(_bin_row()), ZONE_NAMES, config)
         committed = next(g for g in fleet if g.unit_id.endswith("_committed"))
         econ = next(g for g in fleet if g.unit_id.endswith("_econ"))
 
         base_rate = get_emission_rate("gas_cc", 7.0)
-        # committed (HR x 1.23) emits more per MWh than the bin average,
-        # econ (HR x 0.96) less -- CO2/MWh is proportional to fuel burned.
-        self.assertGreater(committed.emission_rate_co2, base_rate)
-        self.assertGreater(base_rate, econ.emission_rate_co2)
+        # The BID heat rates still diverge (that is the offer curve's job) ...
         self.assertAlmostEqual(
-            committed.emission_rate_co2 / base_rate,
-            config.cc_committed_hr_mult,
-            places=6,
+            committed.heat_rate / 7.0, config.cc_committed_hr_mult, places=6
         )
-        self.assertAlmostEqual(
-            econ.emission_rate_co2 / base_rate,
-            config.cc_econ_hr_mult,
-            places=6,
-        )
+        self.assertAlmostEqual(econ.heat_rate / 7.0, config.cc_econ_hr_mult, places=6)
+        # ... while CO2/MWh stays pinned to the plant's physical heat rate.
+        self.assertAlmostEqual(committed.emission_rate_co2, base_rate, places=9)
+        self.assertAlmostEqual(econ.emission_rate_co2, base_rate, places=9)
 
 
 class TestCoalPaths(unittest.TestCase):

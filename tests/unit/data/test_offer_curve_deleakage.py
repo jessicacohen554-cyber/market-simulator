@@ -138,17 +138,25 @@ def test_grounded_bands_survive_deleakage():
     assert _resolved("MISO")["CC_CHP"]["peak"] == pytest.approx(2.25)
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="pre-existing failure on main as of 2026-07-05 (found wiring PR CI in "
-    "W1-P1): CAISO CC_REGULAR committed band drifted 0.90 -> 1.0; unrelated to "
-    "this change, tracked for follow-up",
-)
 def test_caiso_core_gas_bands_preserved():
-    """CAISO (out of scrub scope) stays byte-identical on the 5 core gas classes."""
+    """CAISO (out of scrub scope) stays byte-identical on the 5 core gas classes.
+
+    Re-adjudicated 2026-07-26 (fast-tier §6.3): xfailed as an uncited
+    "pre-existing failure" over CC_REGULAR's committed band moving 0.90 -> 1.00
+    (CC_CHP moved 0.92 -> 1.00 under the same lever, for the same reason).
+    That move was NOT drift — it is CAISO LEVER A (2026-07-04,
+    FINDING-caiso-evening-merit): 0.90x the plant-average HR priced the
+    min-STABLE-load block BELOW econ_low (0.95), an inverted merit order in
+    which the min-load tranche was cheaper than the efficient incremental band,
+    flooding cheap CC around the clock (+3.2 GW overnight over-run, LMP pinned
+    ~$42, physically-backwards evening exports). 1.00 restores
+    committed >= econ_low and is still conservative against the true
+    (above-average) min-load heat rate. The scrub-scope guard is unchanged;
+    only the pinned CAISO literal is re-frozen at the post-LEVER-A value.
+    """
     expected = {
-        "CC_REGULAR": (0.90, 0.95, 1.21, 2.25),
-        "CC_CHP": (0.92, 0.96, 1.12, 2.25),
+        "CC_REGULAR": (1.00, 0.95, 1.21, 2.25),
+        "CC_CHP": (1.00, 0.96, 1.12, 2.25),
         "CT_CHP": (1.10, 1.20, 1.20, 1.40),
         "CT_PEAKER": (1.35, 1.10, 1.50, 4.0),
         "ST_GAS": (0.81, 1.05, 1.40, 4.20),
