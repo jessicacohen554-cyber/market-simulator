@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-26T17:09:37",
+  "timestamp": "2026-07-27T18:45:01",
   "iso": "NYISO",
   "years": [
     2023,
@@ -52,12 +52,37 @@
     "nyiso_nyc_lcr_tsl": true,
     "nyiso_scr_edrp": true,
     "nyiso_hydro_reserve_eligible": true,
-    "nyiso_scr_edrp_reserve_eligible": true
+    "nyiso_scr_edrp_reserve_eligible": true,
+    "dual_fuel_oil_daily_parity": true,
+    "reliability_floor_overrides": {
+      "NYC:ST_GAS:tmax:NYC_ST_ev": {
+        "enabled": false
+      },
+      "NYC:CT_PEAKER:tmax:NYC_CT_ev": {
+        "enabled": false
+      },
+      "Long_Island:CT_PEAKER:tmax:LI_CT_ev": {
+        "enabled": false
+      },
+      "Long_Island:ST_GAS:tmax:LI_ST_ev": {
+        "enabled": false
+      },
+      "Capital_Hudson:ST_GAS:tmax:CH_ST_ev": {
+        "enabled": false
+      }
+    },
+    "nyiso_gas_commitment_bridge": true,
+    "nyiso_gas_bridge_startup": true,
+    "nyiso_gas_bridge_min_run": true,
+    "nyiso_gas_bridge_cc_min_run_hours": 21,
+    "nyiso_gas_bridge_st_min_run_hours": 13
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
   "coal_econ_srmc_bound": false,
   "coal_econ_marginal_hr_bound": false,
+  "ercot_offer_hrmult_ep_rebasis": null,
+  "ercot_offer_hrmult_ep_rebasis_bands": null,
   "coal_plant_monthly_pricing": true,
   "td_loss_factor": 0.0,
   "ercot_zonal_gas_basis": false,
@@ -216,6 +241,35 @@
   "nyiso_import_hub_prices": true,
   "nyiso_iroquois_winter_spread": null,
   "nyiso_synchronised_reserve": null,
+  "nyiso_li_locational_reserve": null,
+  "nyiso_incity_commitment_obligation": null,
+  "nyiso_east_reserve_families": null,
+  "reliability_floor_overrides": {
+    "NYC:ST_GAS:tmax:NYC_ST_ev": {
+      "enabled": false
+    },
+    "NYC:CT_PEAKER:tmax:NYC_CT_ev": {
+      "enabled": false
+    },
+    "Long_Island:CT_PEAKER:tmax:LI_CT_ev": {
+      "enabled": false
+    },
+    "Long_Island:ST_GAS:tmax:LI_ST_ev": {
+      "enabled": false
+    },
+    "Capital_Hudson:ST_GAS:tmax:CH_ST_ev": {
+      "enabled": false
+    }
+  },
+  "nyiso_gas_commitment_bridge": true,
+  "nyiso_gas_bridge_cc_min_load_frac": null,
+  "nyiso_gas_bridge_st_min_load_frac": null,
+  "nyiso_gas_bridge_startup": true,
+  "nyiso_gas_bridge_da_horizon": null,
+  "nyiso_gas_bridge_min_run": true,
+  "nyiso_gas_bridge_cc_min_run_hours": 21,
+  "nyiso_gas_bridge_st_min_run_hours": 13,
+  "nyiso_spin_reserve_online": null,
   "nyiso_spin_headroom_frac": null,
   "nyiso_dynamic_reserve_requirements": true,
   "nyiso_hydro_reserve_eligible": true,
@@ -248,9 +302,14 @@
   "shared_inputs": {
     "eia930": "../_shared/NYISO/eia930-d866a7741788.parquet",
     "eia923": "../_shared/NYISO/eia923-465c3e2cf4a5.parquet",
-    "campd": "../_shared/NYISO/campd-bd2b1674776e.parquet"
+    "campd": "../_shared/NYISO/campd-bd2b1674776e.parquet",
+    "unit_outages": "../_shared/NYISO/unit_outages-c88468b270d6.parquet",
+    "unit_outages_e923": "../_shared/NYISO/unit_outages_e923-c801b5e6811e.parquet",
+    "unit_outages_layup": "../_shared/NYISO/unit_outages_layup-4f007d991881.parquet",
+    "capacity_deliverability": "../_shared/NYISO/capacity_deliverability-031d519d3bfa.parquet"
   },
-  "git_sha": "6682331",
+  "git_sha": "4b38e7a",
+  "basis_sha": "e14f7b45c237c135f5ad932289487adf510e1e4b",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",

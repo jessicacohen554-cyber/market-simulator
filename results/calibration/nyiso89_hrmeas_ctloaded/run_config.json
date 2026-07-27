@@ -1,15 +1,14 @@
 {
-  "timestamp": "2026-07-26T17:09:37",
+  "timestamp": "2026-07-27T19:09:15",
   "git": {
-    "sha": "6682331",
-    "branch": "claude/nyiso-price-formation-c3-v8x7ds",
-    "dirty": true,
-    "changed_files": [
-      "ata/raw/campd-unit-outages-NYISO.csv"
-    ],
-    "diffstat": "data/raw/campd-unit-outages-NYISO.csv | 3037 +++++++++++++++++++++++++++++++++\n 1 file changed, 3037 insertions(+)"
+    "sha": "29d0dc5",
+    "basis_sha": "e14f7b45c237c135f5ad932289487adf510e1e4b",
+    "branch": "claude/nyiso-ct-heat-rate-measured-0xo7i9",
+    "dirty": false,
+    "changed_files": [],
+    "diffstat": ""
   },
-  "model_changes_note": "DIAGNOSTIC (not a keeper candidate): keeper config on current main with ONLY data/raw/campd-unit-outages-NYISO.csv reverted to its pre-6a8f285 bytes, to test whether the guard-corrected CAMPD extract adoption is the drift source.",
+  "model_changes_note": "nyiso-89 ARM: single delta measured_ct_heat_rates=true on keeper 2026-07-27-nyiso-87-cmeas-measured. CT_PEAKER plants take their CAMPD-measured LOADED heat rate (MMBtu per NET MWh, pooled 2023-2025, unitType=='Combustion turbine', gross-to-net via the committed parasitic factor) ahead of the eGRID plant-average annual rate. Rule 14 [R-ACCURATE] accurate-input swap.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "NYISO",
@@ -50,7 +49,31 @@
       "nyiso_nyc_lcr_tsl": true,
       "nyiso_scr_edrp": true,
       "nyiso_hydro_reserve_eligible": true,
-      "nyiso_scr_edrp_reserve_eligible": true
+      "nyiso_scr_edrp_reserve_eligible": true,
+      "dual_fuel_oil_daily_parity": true,
+      "reliability_floor_overrides": {
+        "NYC:ST_GAS:tmax:NYC_ST_ev": {
+          "enabled": false
+        },
+        "NYC:CT_PEAKER:tmax:NYC_CT_ev": {
+          "enabled": false
+        },
+        "Long_Island:CT_PEAKER:tmax:LI_CT_ev": {
+          "enabled": false
+        },
+        "Long_Island:ST_GAS:tmax:LI_ST_ev": {
+          "enabled": false
+        },
+        "Capital_Hudson:ST_GAS:tmax:CH_ST_ev": {
+          "enabled": false
+        }
+      },
+      "nyiso_gas_commitment_bridge": true,
+      "nyiso_gas_bridge_startup": true,
+      "nyiso_gas_bridge_min_run": true,
+      "nyiso_gas_bridge_cc_min_run_hours": 21,
+      "nyiso_gas_bridge_st_min_run_hours": 13,
+      "measured_ct_heat_rates": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -67,7 +90,7 @@
     "nyiso_dynamic_reserve_requirements": true,
     "nyiso_hydro_reserve_eligible": true,
     "nyiso_scr_edrp_reserve_eligible": true,
-    "git_sha": "6682331"
+    "git_sha": "29d0dc5"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -110,6 +133,9 @@
     "retirement_aggressiveness": "mid",
     "hydro_year": "normal",
     "hydro_dispatch_envelope": false,
+    "hydro_min_flow_floor": false,
+    "hydro_ror_split": false,
+    "hydro_budget_nameplate_aware": false,
     "eac_price_nuclear": 0.0,
     "eac_price_wind": 0.0,
     "eac_price_solar": 0.0,
@@ -226,6 +252,7 @@
     "plant_emission_rates_path": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates.parquet",
     "use_plant_emission_rates_v2": true,
     "plant_emission_rates_v2_path": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
+    "measured_ct_heat_rates": true,
     "control_retrofit_forward": false,
     "control_retrofit_path": "/home/user/market-simulator/data/raw/eia-860/eia860_enviro_assoc_emissions_control_equipment.parquet",
     "cc_peak_hr_penalty": 1.15,
@@ -290,7 +317,23 @@
     "reference_price_interface": false,
     "neighbor_hr_forward_skill": null,
     "reliability_floor": true,
-    "reliability_floor_overrides": {},
+    "reliability_floor_overrides": {
+      "NYC:ST_GAS:tmax:NYC_ST_ev": {
+        "enabled": false
+      },
+      "NYC:CT_PEAKER:tmax:NYC_CT_ev": {
+        "enabled": false
+      },
+      "Long_Island:CT_PEAKER:tmax:LI_CT_ev": {
+        "enabled": false
+      },
+      "Long_Island:ST_GAS:tmax:LI_ST_ev": {
+        "enabled": false
+      },
+      "Capital_Hudson:ST_GAS:tmax:CH_ST_ev": {
+        "enabled": false
+      }
+    },
     "class_commitment_overrides": {},
     "caiso_gas_commitment_floor": false,
     "caiso_gas_floor_frac": 1.0,
@@ -326,6 +369,18 @@
     "nyiso_import_reconciliation": true,
     "nyiso_import_hub_prices": true,
     "nyiso_iroquois_winter_spread": false,
+    "nyiso_li_locational_reserve": false,
+    "nyiso_incity_commitment_obligation": false,
+    "nyiso_east_reserve_families": false,
+    "nyiso_gas_commitment_bridge": true,
+    "nyiso_gas_bridge_cc_min_load_frac": 0.523,
+    "nyiso_gas_bridge_st_min_load_frac": 0.239,
+    "nyiso_gas_bridge_startup": true,
+    "nyiso_gas_bridge_da_horizon": true,
+    "nyiso_gas_bridge_min_run": true,
+    "nyiso_gas_bridge_cc_min_run_hours": 21,
+    "nyiso_gas_bridge_st_min_run_hours": 13,
+    "nyiso_spin_reserve_online": false,
     "nyiso_synchronised_reserve": false,
     "nyiso_spin_headroom_frac": 1.0,
     "nyiso_forward_net_import_twh": null,
@@ -491,6 +546,7 @@
     "coal_bit_committed_takeorpay": false,
     "coal_committed_takeorpay_all": false,
     "coal_committed_takeorpay_regulated": false,
+    "coal_committed_takeorpay_sunk_fixed": false,
     "coal_lignite_passthrough_sigmoid": false,
     "coal_lignite_passthrough_floor": null,
     "coal_lignite_passthrough_ceil": null,
@@ -582,6 +638,7 @@
     "neiso_offer_surface_min_bin": 0,
     "neiso_offer_surface_price_cap_frac": 0.95,
     "pjm_offer_surface_conditional": false,
+    "pjm_offer_surface_within_season": false,
     "pjm_offer_surface_binned_path": null,
     "pjm_offer_surface_netload_pcts": [
       0.8,
@@ -797,6 +854,7 @@
     "caiso_asymmetric_path_ratings": false,
     "caiso_per_year_import_caps": false,
     "pjm_congestion": false,
+    "transmission_expansion_enabled": false,
     "pjm_seam_flow_limit": false,
     "pjm_seam_flow_percentile": null,
     "pjm_seam_export_limit": false,
@@ -813,7 +871,7 @@
     "gas_hub_basis_daily": true,
     "dual_fuel_oil_reattribution": true,
     "dual_fuel_switching": true,
-    "dual_fuel_oil_daily_parity": false,
+    "dual_fuel_oil_daily_parity": true,
     "outage_source": "historic",
     "caiso_dam_outages": false,
     "miso_native_outage_source": false,
@@ -821,7 +879,10 @@
     "unit_partial_outage_windows": false,
     "unit_outage_maxgen_events": false,
     "maxgen_emergency_tier_pricing": false,
-    "gas_price_override": 2.54
+    "forecast_xyear_warmstart": true,
+    "gas_price_override": 2.54,
+    "ercot_offer_hrmult_ep_rebasis": false,
+    "ercot_offer_hrmult_ep_rebasis_bands": null
   },
   "environment": {
     "python_version": "3.11.15",
