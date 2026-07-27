@@ -1109,3 +1109,65 @@ test on main was failing — fa9fc78's `nyiso_li_locational_reserve` /
 fields), default key restored to `edbc1b103207170a`. (2) `write_derived_solve_inputs`
 was called but never imported in `run_calibration_full.py` (a3eb7c0), so every
 solve since silently skipped derived-input provenance capture; import added.
+
+## 2026-07-27 — nyiso-85: C3c residual ATTRIBUTED — the tail is sustained, statewide, and blocked by an SRMC roof (no solve)
+
+**No LP was run and the keeper is unchanged** (`2026-07-26-nyiso-81-floor-rederive`).
+Scoring-side characterisation of committed actuals + the keeper's committed
+hourlies (rule 14), reproducible via `scripts/probes/nyiso85_{tail_anatomy,
+zonal_tail_basis,model_vs_tail}.py`. Full write-up:
+`docs/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md` §7.
+
+**The framing nyiso-84 handed forward is REFUTED.** All 64 actual tail hours
+decomposed at native 5-minute resolution (raw NYISO zonal RTD LBMP; the rebuilt
+11-zone hub reproduces `actual_lmp_hourly_NYISO.parquet` to MAE 0.0014–0.0055
+$/MWh, so the decomposition is of the scored quantity itself): **52 SUSTAINED
+(81 %) / 10 MIXED / 2 TRANSIENT (3 %)**. 2025 is 95 % sustained, with episodes up
+to 7 consecutive hours. There is **no RT-interval-transient ceiling** and
+therefore **no scorer-side C3c ceiling note to write** — the gap is reachable by
+an hourly LP and is a model gap.
+
+**The tail is statewide, not a load pocket:** median **11 of 11** internal zones
+above $300 within the hub-tail hours, top-zone share 10.7–11.6 % vs 9.1 % flat.
+
+**C3c's basis asymmetry flatters the model** (rubric note, no change proposed):
+model side = max zonal dual, actual side = 11-zone mean. Like-for-like max-zonal
+actual is **69/44/121 h**, not 10/12/42 — the true shortfall is 20–40×, not 3–5×.
+
+**Attribution (§7d).** The model's four mainland zones price *identically* in the
+tail hours (uncongested) and **never clear $258 in any of the 26,280 hours of
+2023–2025** — annual maxima $134/$174/$255, which is the dual-fuel oil-parity cap
+`model/lp/rows.py:211` documents. The mainland is structurally incapable of a
+single C3c hour; all of 3/0/9 is Zone K congestion rent. It is **not** load or
+timing (2025-06-24 19:00 EDT is the model's #1 load hour *and* an actual tail
+hour, priced $205 mainland vs $1,365 actual), **not** dispatch level (model 15.9 GW
+fossil vs actual 15.5 GW in the 2025 tail hours), and the LP is **not tight**
+(`oil` 0–4 %, `import` 46–49 %, `CT_PEAKER` 49–75 %, `ST_GAS` 54–74 % utilisation;
+zero slack ever). NYISO's tail forms *above* SRMC; the model prices *at* SRMC
+under a ~$258 roof. The oil-budget dual that can lift price past that roof is a
+cold-snap instrument and does not bind in June.
+
+**Task 2 (LI steam OOM) closed as a C3c route.** The tail is **77 % summer**,
+**89 % in hours 14–21**, **2 % in light-load hours 22–06**; the OOM driver is
+light-load voltage-driven, so it targets the 2 %. No instrument built.
+
+**Task 3 (spin supply widening) reframed, still unbuilt and unarmed.** The
+"breadth, never depth" pathology is consistent with the reserve *supply* side
+being too narrow — a family binds shallowly in thousands of hours because
+modelled synchronized supply sits just short almost always rather than deeply
+short occasionally. Widening class-2 to ramp-limited online CC/steam remains the
+prerequisite, needs its own charter, and cannot on its own clear a $258 roof.
+**Both nyiso-84 flags stay default-off; neither armed in any keeper.**
+
+**Clock bug recorded for reuse:** the committed hourly parquet drops
+local-standard Feb 29, so leap-year rows at/after index `(31+28)*24 = 1416` are 24
+real hours later than a naive mapping — getting it wrong shifts all of 2024 by a
+day (2024-04 corr 0.018 → 1.0000, MAE 9.77 → 0.00 once corrected).
+
+**Open lane (§7g), in priority order:** (1) what NYISO's real summer peak offer
+stack looks like above oil parity — the roof itself; (2) hot-hour capability —
+the keeper runs `temp_dependent_derate=False` / `gt_ambient_derate=False` while
+89 % of the tail is afternoon/evening on the hottest days (note the
+`temp_dependent_derate` refutation is **ERCOT-scoped**, rule 24, and does not bind
+NYISO); (3) import behaviour on regional heat events. Items 2–3 narrow the
+headroom but cannot alone breach the roof.
