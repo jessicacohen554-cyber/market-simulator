@@ -757,6 +757,23 @@ content survives; push with blob verification; file-integrity-guard passes via t
 label.
 ```
 
+**Outcome — DONE, and the size target is RETARGETED (owner, 2026-07-27).** Steps 1–4
+all landed (step 1 `eb4436e`, step 2 `afa2393` + `docs/governance/rule-history.md`,
+steps 3–4 `20a7c1a`). **The 22–25 KB figure was an overestimate of how much
+extractable narrative CLAUDE.md held and is withdrawn — do not re-open the file to
+chase it.** Measured: the four narratives this brief identified were worth ~5.0 KB
+total (44,755 → 41,432 B, net of the +1.6 KB that `5bcc59d`/`150b93a` legitimately
+added meanwhile), an 11 % cut, not the 45 % the target assumed. What remains is
+**21.1 KB of Non-Negotiable Rules that are near-pure norms** (largest: `[R-HOLDOUT]`
+3.9 KB, `[R-DASHBOARD]` 2.8 KB, `[R-PUSH]` 2.5 KB, `[R-FORCED-BUDGET]` 2.2 KB) plus
+**20.3 KB of gate names, file paths, formulas and pointers**. Reaching 25 KB would
+require deleting ~16 KB of that, i.e. relocating normative bodies out of CLAUDE.md —
+which this brief's own constraint forbids and which
+`docs/governance/rule-history.md`'s charter ("it is not a source of norms") rules
+out. ~41 KB is the floor under norm-preservation. Because the achieved shrink is
+1.2 %, **no `intentional-shrink` label was needed** and file-integrity-guard passes
+unaided.
+
 ### 5C · Dashboard frontend hardening — **Opus**
 
 ```text
