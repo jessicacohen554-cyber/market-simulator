@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-27-caiso-126-ror-split",
+  "label": "caiso 126 ror split",
+  "date": "2026-07-27",
+  "shorthand": "caiso-126-ror-split",
+  "definition": "(PROBE, REJECTED — pre-registered K1+K4) caiso-126 RoR-split family: plants the external EHA/HILARRI hydro-plant-modes classifier marks run-of-river dispatch flat at their own monthly water (10-12% of budget), with the caiso-124 Q95 floor reconciled onto the reservoir class (total forced base = frozen Q95; rule 19, zero DOF). vs same-HEAD control: overnight gap +311/+249/+308 -> +160/+92/+211 MW, belly -583/-611/-549 -> -92/-58/-83, parks-at-zero 270/692/604 h -> 0, cv_ratio 1.98/1.81/1.67 -> 1.19/1.11/1.17, gas +0.35/+0.36/+0.18 TWh (C5a-aligned), lambda -0.50/-1.24/-0.22% (C3a-aligned). KILLED as armed: K1 evening starvation 2024 (-376 MW vs -114 control; the caiso-125 §4b spread-compression defect — the LP pays the belly from the evening peak) + K4 nameplate-clip 1.34/1.27% > 1% (an EIA-930 scale-factor accounting artifact the control shares). D-4 off-window 0.0000 both mechanisms; C7/C8 PASS. Fail set {C3a-2025 (attributed extract basis), C3c, C5a}. See PREREG-caiso126-ror-split-2026-07-27.md + FINDING-caiso126.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-27-caiso-126-ror-split.js",
+  "bundle": "results/calibration/caiso126_rorsplit_B"
+}
