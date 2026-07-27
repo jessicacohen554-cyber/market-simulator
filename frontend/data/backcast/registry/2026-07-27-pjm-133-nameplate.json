@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-27-pjm-133-nameplate",
+  "label": "pjm 133 nameplate",
+  "date": "2026-07-27",
+  "shorthand": "pjm-133-nameplate",
+  "definition": "pjm-133 nameplate-aware hydro budget target (single delta)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-27-pjm-133-nameplate.js",
+  "bundle": "results/calibration/pjm133_nameplate_B"
+}
