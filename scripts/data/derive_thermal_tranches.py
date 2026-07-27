@@ -145,6 +145,48 @@ _EIA_SECTOR_CLASS: dict[int, str] = {
 }
 
 
+def _chp_sector_map_eia860() -> dict[int, str]:
+    """Return ``{plant_id: sector_class}`` from the committed EIA-860 plant sheet.
+
+    The EIA-860 ``Plant`` schedule publishes the SAME EIA sector attribute as
+    EIA-923 Page 1 — identical 1-7 taxonomy (1 Electric Utility, 2 IPP Non-CHP,
+    3 IPP CHP, 4 Commercial Non-CHP, 5 Commercial CHP, 6 Industrial Non-CHP,
+    7 Industrial CHP) — in the ``Sector`` column of the committed
+    ``eia860_plant.parquet``, so it maps through the same
+    :data:`_EIA_SECTOR_CLASS` table.
+
+    This is the fallback source for :func:`_chp_sector_map`, needed because the
+    raw ``f923_*.zip`` releases are NOT committed to the repo while this parquet
+    is. Without it the derive silently produced an all-NaN ``chp_sector`` column
+    on any checkout lacking those archives, and the preserve-prior guard in
+    :func:`main` then froze that emptiness forever for any ISO whose first
+    derive ran ZIP-less — which is exactly how MISO ended up as the only ISO
+    with no sector data at all, defaulting its entire CHP fleet onto the
+    unsourced ``CHP_BTM_PCT_BY_SECTOR["merchant"]`` value (miso-97).
+
+    Equivalence is measured, not assumed: replaying this map onto the four ISOs
+    whose committed ``chp_sector`` was derived from the EIA-923 workbooks agrees
+    on **232/232 plants (100 %, PJM/CAISO/NYISO/NEISO, none absent from
+    EIA-860)** — see ``scripts/probes/_miso97_chp_sector_btm.py --validate``.
+    The two releases carry the same measured attribute, so this is a rule-14
+    ``[R-ACCURATE]`` source swap and not a substitute estimator.
+    """
+    from market_sim.config.paths import EIA_860_DIR
+
+    path = EIA_860_DIR / "eia860_plant.parquet"
+    if not path.exists():
+        return {}
+    df = pd.read_parquet(path)
+    if "Sector" not in df.columns:
+        return {}
+    out: dict[int, str] = {}
+    for code, sector in df[["Plant Code", "Sector"]].dropna().itertuples(index=False):
+        klass = _EIA_SECTOR_CLASS.get(int(sector))
+        if klass is not None:
+            out[int(code)] = klass
+    return out
+
+
 def _chp_sector_map(years: list[int]) -> dict[int, str]:
     """Return ``{plant_id: sector_class}`` from the EIA-923 Page 1 workbooks.
 
@@ -153,6 +195,13 @@ def _chp_sector_map(years: list[int]) -> dict[int, str]:
     monthly-generation artifact is built from) and maps it through
     :data:`_EIA_SECTOR_CLASS`. When a plant's sector differs across rows or
     years (rare), the most frequent class wins.
+
+    Plants no EIA-923 archive covers — including EVERY plant when the raw ZIPs
+    are absent from the checkout, which is the committed state of this repo —
+    fall back to :func:`_chp_sector_map_eia860`, the same EIA sector attribute
+    read off the committed EIA-860 plant sheet. EIA-923 stays authoritative
+    wherever it is present, so a checkout that does carry the archives derives
+    exactly what it derived before.
     """
     import zipfile
     from collections import Counter
@@ -183,7 +232,16 @@ def _chp_sector_map(years: list[int]) -> dict[int, str]:
             klass = _EIA_SECTOR_CLASS.get(int(sector))
             if klass is not None:
                 votes.setdefault(int(pid), Counter())[klass] += 1
-    return {pid: c.most_common(1)[0][0] for pid, c in votes.items()}
+    out = {pid: c.most_common(1)[0][0] for pid, c in votes.items()}
+    fallback = _chp_sector_map_eia860()
+    added = 0
+    for pid, klass in fallback.items():
+        if pid not in out:
+            out[pid] = klass
+            added += 1
+    if added:
+        print(f"  (EIA-860 Sector fallback supplied {added} plant sector classes)")
+    return out
 
 
 # EIA-923-CF fallback floor for CHP plants without CAMPD coverage (small
