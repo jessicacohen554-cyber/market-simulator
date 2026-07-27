@@ -4995,6 +4995,32 @@ class ScenarioConfig:
     # byte-identical). See docs/handoffs/miso-coal-conduct-design-2026-07.md.
     coal_committed_takeorpay_regulated: bool = False
 
+    # Sunk-FIXED treatment of the take-or-pay contract: suppresses the
+    # COMMITTED-band discount of the three flags above while leaving the
+    # `_mustrun` band's `1 − contract_share` untouched. Driver (miso-96,
+    # results/calibration/FINDING-miso96-coal-prb-offpeak-2026-07.md): a
+    # take-or-pay contract is an obligation over an ACCOUNTING PERIOD (annual
+    # / monthly contracted tonnage), not a per-hour price. Over that period it
+    # is sunk in aggregate, so it does not enter the marginal cost of an
+    # incremental MWh unless the obligation would otherwise go unmet — a plant
+    # that over-fulfils its contract buys its marginal ton at SPOT. Applying
+    # `1 − share` as an unconditional per-hour multiplier on the committed
+    # band converts a sunk FIXED cost into a MARGINAL subsidy and makes that
+    # band inframarginal in all 8760 h. Measured consequence on MISO: arming
+    # the regulated scope moved RE PRB committed 9,403 MW from $28.09 to
+    # $5.07/MWh, and COAL_PRB stopped de-loading overnight — D-1 off-peak
+    # cv_ratio collapsed 0.88/1.04/0.47 (miso-65) to 0.45/0.44/0.36
+    # (miso-66 onward) against a fleet the CEMS record shows cycling 53.6% →
+    # 66.2% utilisation across the day. Rule 17 [R-FLOOR-WINDOW]: the discount
+    # has a driver and a forward story but NO WINDOW — it binds in every hour,
+    # including the hours its own driver evidence says the plant de-loads.
+    # Rule 19 [R-ONE-MECH]: the contract is already carried ONCE, on the band
+    # that is on regardless of price (`_mustrun`). The committed band then
+    # bids full delivered cost, still bounded by its supply passthrough.
+    # Zero fitted parameters (this REMOVES a discount, it does not size one).
+    # Default off — every existing keeper byte-identical.
+    coal_committed_takeorpay_sunk_fixed: bool = False
+
     # Lignite (mine-mouth): take-or-pay fixed costs are sunk, so in
     # cheap-gas months lignite discounts its BID (not its cost) to hold
     # baseload against cheap gas CC instead of being priced out.
@@ -8865,6 +8891,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_bit_committed_takeorpay": 3,
     "coal_committed_takeorpay_all": 3,
     "coal_committed_takeorpay_regulated": 3,
+    "coal_committed_takeorpay_sunk_fixed": 3,
     "coal_lignite_passthrough_sigmoid": 3,
     "coal_lignite_passthrough_floor": 3,
     "coal_lignite_passthrough_ceil": 3,

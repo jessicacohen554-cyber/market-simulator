@@ -347,6 +347,7 @@ def campd_tranche_fuel_frac(
     committed_takeorpay_all: bool = False,
     committed_takeorpay_regulated: bool = False,
     regulated_plants: "frozenset[int] | None" = None,
+    committed_takeorpay_sunk_fixed: bool = False,
 ) -> "float | np.ndarray":
     """Return the fuel-cost passthrough for one CAMPD tranche generator.
 
@@ -399,6 +400,21 @@ def campd_tranche_fuel_frac(
     Table 7: regulated utilities self-commit 53-56% of coal starts, merchants
     offer economically 74-93%). Union scope with the other two flags.
 
+    ``committed_takeorpay_sunk_fixed``
+    (``ScenarioConfig.coal_committed_takeorpay_sunk_fixed``): suppresses the
+    COMMITTED-band discount of all three flags above — the ``_mustrun`` band's
+    ``1 - share`` is untouched. A take-or-pay contract is an obligation over an
+    accounting period (contracted tonnage per year/month), not a per-hour
+    price: over that period it is sunk in aggregate and so does not enter the
+    marginal cost of an incremental MWh, because a plant that over-fulfils its
+    contract buys its marginal ton at spot. Discounting the committed band in
+    every hour converts that sunk FIXED cost into a MARGINAL subsidy and pins
+    the band inframarginal for all 8760 h, which is what stops MISO's regulated
+    PRB fleet de-loading overnight (miso-96; rules 17 ``[R-FLOOR-WINDOW]`` —
+    a discount with no window — and 19 ``[R-ONE-MECH]`` — the contract is
+    already carried once, on the band that runs regardless of price). The
+    committed band then bids full delivered cost under its supply passthrough.
+
     The ``_sync`` synchronization tranche (rebuild step 3a,
     ``ScenarioConfig.coal_sync_srmc_tranche``) bids its **full SRMC** — full
     delivered fuel + VOM + reagents — so it passes ``1.0`` (no discount). It is
@@ -430,6 +446,14 @@ def campd_tranche_fuel_frac(
         regulated_plants is not None and int(gen.plant_code) in regulated_plants
     )
     _scope = committed_takeorpay_all or (committed_takeorpay_bit and _bit) or _reg
+    # ScenarioConfig.coal_committed_takeorpay_sunk_fixed: the contract is an
+    # accounting-period tonnage obligation, sunk in aggregate, so it is a FIXED
+    # cost and never a marginal one for a plant that over-fulfils it. The
+    # `_mustrun` band above already carries it once, on the capacity that is on
+    # regardless of price; discounting the committed band as well subsidises
+    # the MARGINAL MWh in all 8760 h (rules 17/19, miso-96).
+    if committed_takeorpay_sunk_fixed:
+        _scope = False
     if (
         _scope
         and gen.unit_id.endswith("_committed")
