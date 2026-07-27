@@ -81,6 +81,12 @@ def rubric() -> list[dict]:
     """
     L = {cid: lab for cid, (lab, _t) in cv.CRITERIA.items()}
     T = {cid: tier for cid, (_l, tier) in cv.CRITERIA.items()}
+    # Criteria removed from the rubric but still computed and shown (v2.9: C5a
+    # co2). They keep a reference row on the "Tests conducted" section so the
+    # page explains what the reported number is and why it does not gate, but
+    # they carry no tier and never render as HARD.
+    L.update(cv.REPORTED_ONLY)
+    T.update({cid: cv.TIER_REPORT for cid in cv.REPORTED_ONLY})
 
     def row(cid, measures, source, tol):
         return {

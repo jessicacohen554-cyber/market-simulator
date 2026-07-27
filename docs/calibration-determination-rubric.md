@@ -1,6 +1,22 @@
 # Calibration Determination Rubric (v2)
 
-Status: **canonical, machine-enforced. RUBRIC VERSION 2.7** (2026-07-06
+Status: **canonical, machine-enforced. RUBRIC VERSION 2.9** (2026-07-27 owner
+amendment: **C5a CO2 vs eGRID REMOVED from the rubric and demoted to
+REPORTED-ONLY** — eGRID's latest released workbook is the 2024 vintage and
+`data.egrid.egrid_vintage_for_year` falls any later year back to it, so a 2025
+C5a "actual" is the 2024 intensities standing in rather than a measurement, and
+a criterion whose actual does not exist for a scored year cannot be
+load-bearing. Same grounds and same mechanism as the v2.7 C5b/C5c removal:
+`score_co2` still runs and its number stays on the payload and the dashboard run
+pages, but `co2` is no longer in `CRITERIA`, so it contributes no status to the
+determination and consumes no caveat budget. Restoration is an owner act and
+should be **year-scoped** — 2023 and 2024 DO have their own released vintages;
+only years past the latest vintage lack a measured actual. **Knock-on:** C5a was
+the last criterion with a distinct commercial band (C3a/C3b collapsed to
+single-band at v2.3; C2's band survives only on the preliminary-EIA-923 fallback
+path that v2.5 made SKIPPED-never-gated), so **no scored criterion can currently
+produce an auto COMMERCIAL_BAND caveat** — pinned by an invariant assertion in
+`tests/scoring/test_calibration_verdict.py`. Prior: 2026-07-06
 fitness-for-purpose re-anchor + 2026-07-07 C8 grounded-above-budget escalation
 + 2026-07-09 C3a/C3b single-band re-set, C5a full-plant CO2 re-base and
 like-for-like load-weighted actual basis
@@ -510,9 +526,18 @@ way FAILs C6 regardless.
   timing). A low r driven by a documented measured-input gap (e.g. an outage
   series known incomplete for one state-year) may be ledgered.
 
-### C5 — CO2  *(C5a LOAD-BEARING two-band; C5b/C5c REMOVED from the rubric, v2.7)*
+### C5 — CO2  *(C5a REPORTED-ONLY as of v2.9; C5b/C5c REMOVED from the rubric, v2.7)*
 
-- **C5a — CO2 vs eGRID.** *(LOAD-BEARING, two-band)*
+> **v2.9 (owner amendment 2026-07-27): C5a is REMOVED from the scored rubric.**
+> It is **REPORTED-ONLY** — computed, carried on the payload and rendered on the
+> dashboard run pages, but contributing no status to the determination and no
+> caveat budget. Reason: eGRID publishes no 2025 vintage, so C5a's 2025 "actual"
+> is the 2024 intensities standing in, not a measurement. The definition below
+> is retained verbatim as the reported metric's spec and as the restoration
+> text; restoring it to LOAD-BEARING is an owner act and should be year-scoped
+> to years with their own released eGRID workbook (2022-2024 today).
+
+- **C5a — CO2 vs eGRID.** *(REPORTED-ONLY since v2.9; was LOAD-BEARING two-band)*
   - *Metric:* annual system CO2, model vs the eGRID/CAMPD-rate actual, on the
     **full-plant CHP-inclusive basis** *(v2.3, owner amendment 2026-07-09)*:
     eGRID counts each cogen’s FULL net generation — behind-the-meter host
