@@ -217,9 +217,8 @@ def solve_year(
     channel — the same channel ``replay_keeper.py --set`` uses for single-
     delta A/B probes.
     """
-    sys.path.insert(0, str(REPO / "scripts"))
-    import replay_keeper  # noqa: PLC0415
-    import run_calibration_full as rcf  # noqa: PLC0415
+    from scripts import replay_keeper  # noqa: PLC0415
+    from scripts import run_calibration_full as rcf  # noqa: PLC0415
 
     meta = json.loads((bundle / "meta.json").read_text())
     kwargs = replay_keeper.build_kwargs(meta)

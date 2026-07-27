@@ -29,7 +29,7 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(REPO / "scripts"))
+sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
 # Reproducibility pin: a byte-faithful keeper replay must be basis-independent,
@@ -44,7 +44,7 @@ sys.path.insert(0, str(REPO / "src"))
 # never sees the calibration CLI's default-ON gate.
 os.environ["MARKET_SIM_WARMSTART_XYEAR"] = "0"
 
-import run_calibration_full as rcf  # noqa: E402
+from scripts import run_calibration_full as rcf  # noqa: E402
 
 # meta.json key -> solve_and_persist kwarg, where the names differ.
 _REMAP = {

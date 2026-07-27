@@ -2296,7 +2296,8 @@ def plan_reuse_solved(
         )
 
     # --- solve recipe: kwargs through the sanctioned replay channel --------
-    import replay_keeper as rk  # deferred: replay_keeper imports this module
+    # (deferred: replay_keeper imports this module)
+    from scripts import replay_keeper as rk
 
     try:
         prior_kwargs = rk.build_kwargs(prior_meta)
@@ -6868,7 +6869,7 @@ def run_replay_bundle(
         zero_forcing_ablation: Solve the recipe's D-3 zero-forcing ablation
             twin instead (composes exactly like the flag on a direct solve).
     """
-    import replay_keeper as rk
+    from scripts import replay_keeper as rk
 
     meta = json.loads((bundle / "meta.json").read_text())
     kwargs = rk.build_kwargs(meta)

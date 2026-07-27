@@ -140,8 +140,8 @@ def _class_base_hr(bundle: Path, year: int) -> dict[str, dict[str, float]]:
     resolved_peak``), so the divided-by HR here is exactly the HR the P1
     mechanism later multiplies (the round-trip convention).
     """
-    from derive_pjm_ordc_overlay import _run_year_kwargs
-    from run_calibration import run_year
+    from scripts.data.derive_pjm_ordc_overlay import _run_year_kwargs
+    from scripts.run_calibration import run_year
 
     meta = json.loads((bundle / "meta.json").read_text())
     state = run_year(
