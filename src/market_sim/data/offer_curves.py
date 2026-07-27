@@ -444,7 +444,10 @@ def gas_offer_margin_markup_mult(
 
 
 def apply_ercot_dam_hrmult_ep_rebasis(
-    curve: dict[str, dict], year: int, offer_curve_deltas: dict | None
+    curve: dict[str, dict],
+    year: int,
+    offer_curve_deltas: dict | None,
+    bands: "list[str] | None" = None,
 ) -> tuple[dict[str, dict], list[tuple[str, str, float, float]], float]:
     """Rebase the measured CC DAM band multipliers onto the EP dispatch basis.
 
@@ -469,12 +472,26 @@ def apply_ercot_dam_hrmult_ep_rebasis(
     anchor-consistency requirement; non-rebased classes keep the window
     anchor untouched).
 
+    The ERCOT-119 leg-split (``ercot_offer_hrmult_ep_rebasis_bands``): with
+    ``bands`` set, only the named artifact bands are rebased — every other
+    band (above all the peak standing wall) keeps the run's resolved value,
+    the ``peak_ladder`` re-stamp fires only when ``"peak"`` is in scope, and
+    the anchor threading becomes band-scoped: each rebased band writes
+    ``margin_anchor_<band>`` (resolved per tranche by
+    :func:`band_margin_anchor`) instead of the class-wide ``margin_anchor``,
+    so an un-rebased band's markup keeps the ISO window anchor its pooled
+    multiplier was identified at. ``bands=None`` rebases every artifact band
+    and writes the class-wide anchor — byte-identical to the ERCOT-118
+    behaviour.
+
     Args:
         curve: The resolved ``offer_curve_by_group`` (post overrides, deltas
             and conditional split).
         year: Delivery year — selects the artifact's per-year table.
         offer_curve_deltas: The run's delta dict (may be ``None``); only the
             rebased class/band entries are re-applied here.
+        bands: Band scope (``None`` = all artifact bands). Names must exist
+            in the year's artifact tables.
 
     Returns:
         ``(new_curve, replaced, anchor)`` — the rebased curve, the
@@ -484,6 +501,8 @@ def apply_ercot_dam_hrmult_ep_rebasis(
     Raises:
         FileNotFoundError / KeyError: artifact or year table missing while
             the flag is armed (rule 25 — never a silent fallback).
+        ValueError: a scoped band name absent from the year's artifact
+            tables (rule 25 — a typo must never be a silent no-op).
     """
     import json as _json
 
@@ -501,26 +520,94 @@ def apply_ercot_dam_hrmult_ep_rebasis(
             "silent fallback)"
         )
     anchor = float(table["anchor_usd_mmbtu"])
+    if bands is not None:
+        artifact_bands = {
+            b
+            for cls, cls_bands in table.items()
+            if not cls.startswith("_") and cls != "anchor_usd_mmbtu"
+            for b in cls_bands
+        }
+        unknown = sorted(set(bands) - artifact_bands)
+        if unknown:
+            raise ValueError(
+                f"ercot_offer_hrmult_ep_rebasis_bands names {unknown} not in "
+                f"the {year} artifact tables (have {sorted(artifact_bands)}) "
+                "— a scoped band that matches nothing is a silent no-op "
+                "(rule 25)"
+            )
     deltas = offer_curve_deltas or {}
-    merged = {cls: dict(bands) for cls, bands in curve.items()}
+    merged = {cls: dict(cls_bands) for cls, cls_bands in curve.items()}
     replaced: list[tuple[str, str, float, float]] = []
-    for cls, bands in table.items():
+    for cls, cls_bands in table.items():
         if cls.startswith("_") or cls == "anchor_usd_mmbtu":
+            continue
+        scoped = {b: v for b, v in cls_bands.items() if bands is None or b in bands}
+        if not scoped:
             continue
         tgt = merged.setdefault(cls, {})
         cls_deltas = deltas.get(cls, {}) or {}
-        for band, measured in bands.items():
+        for band, measured in scoped.items():
             before = float(tgt.get(band, float("nan")))
             after = float(measured) + float(cls_deltas.get(band, 0.0))
             tgt[band] = after
             replaced.append((cls, band, before, after))
         # The conditional split's uniform rungs carry the OLD resolved peak;
-        # re-stamp them at the rebased one (shares untouched).
-        if "peak_ladder" in tgt and "peak" in bands:
+        # re-stamp them at the rebased one (shares untouched) — only when the
+        # peak band itself is in scope (ERCOT-119: an out-of-scope peak keeps
+        # its resolved rungs).
+        if "peak_ladder" in tgt and "peak" in scoped:
             new_pk = float(tgt["peak"])
             tgt["peak_ladder"] = [[share, new_pk] for share, _ in tgt["peak_ladder"]]
-        tgt["margin_anchor"] = anchor
+        if bands is None:
+            tgt["margin_anchor"] = anchor
+        else:
+            for band in scoped:
+                tgt[f"margin_anchor_{band}"] = anchor
     return merged, replaced, anchor
+
+
+def band_margin_anchor(suffix: str, offer: dict) -> float | None:
+    """Resolve one tranche's margin anchor from its offer band dict.
+
+    The ``apply_gas_offer_margin`` anchor override, band-scoped (ERCOT-119):
+    a band rebased under a scope carries ``margin_anchor_<band>`` (its
+    per-year EP identification anchor); a class rebased whole (ERCOT-118,
+    ``bands=None``) carries the class-wide ``margin_anchor``. Band-scoped
+    keys take precedence; the class-wide key is the fallback; ``None`` means
+    the tranche prices its markup at the ISO window anchor (the un-rebased
+    band's identification basis — ``constants.GAS_OFFER_MARGIN_ANCHOR_BY_ISO``).
+
+    Suffix → band mapping mirrors :func:`gas_offer_margin_markup_mult`'s
+    vocabulary: ``committed*`` → committed, ``econlo``/``econhi`` → the ramp
+    endpoints, other ``econ*`` (smoothing slices / a flat econ tranche —
+    whose physical basis interpolates along the lo→hi ramp) require BOTH
+    endpoint anchors so the slice's (mult, anchor) pair never mixes bases,
+    ``peak*`` (incl. ladder rungs) → peak.
+
+    Args:
+        suffix: The tranche suffix (``bins_to_fleet`` vocabulary).
+        offer: The resolved offer-curve band dict for the tranche's class.
+
+    Returns:
+        The anchor ($/MMBtu) or ``None`` for the ISO window anchor.
+    """
+    if suffix.startswith("committed"):
+        keyed = offer.get("margin_anchor_committed")
+    elif suffix == "econlo":
+        keyed = offer.get("margin_anchor_econ_low")
+    elif suffix == "econhi":
+        keyed = offer.get("margin_anchor_econ_high")
+    elif suffix.startswith("econ"):
+        lo = offer.get("margin_anchor_econ_low")
+        hi = offer.get("margin_anchor_econ_high")
+        keyed = lo if (lo is not None and hi is not None) else None
+    elif suffix.startswith("peak"):
+        keyed = offer.get("margin_anchor_peak")
+    else:
+        keyed = None
+    if keyed is None:
+        keyed = offer.get("margin_anchor")
+    return float(keyed) if keyed is not None else None
 
 
 def apply_gas_offer_margin(
