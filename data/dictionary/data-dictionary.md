@@ -85,6 +85,7 @@ for the market split.
 | storage-as-awards | — | — | — | — | — | — |
 | capacity-market-avoidable-cost-rate | — | — | — | — | — | — |
 | benchmark-corridor | — | — | — | — | — | — |
+| hydro-plant-modes | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -1825,3 +1826,32 @@ check. Context only, never a fit target (rule 13). Schema:
 | `source_doc` | `string` | `none` | yes | Authoritative source document (URL or short citation) the value was read from. |
 | `source_page` | `string` | `none` | yes | Locator within source_doc — an AEO API series id, a table+page reference, or a figure number. |
 | `note` | `string` | `none` | yes | Boundary caveat or context note (e.g. the EMM-region-vs-ISO-footprint approximation, a case description, or a unit/aggregation reconciliation). |
+
+## hydro-plant-modes
+
+Per-plant conventional-hydro operational-mode classification (shapeable
+reservoir/peaking vs run-of-river/canal) — the external classifier the
+RoR-split dispatch mechanism (ScenarioConfig.hydro_ror_split, caiso-126)
+consumes. Schema:
+[`schema/hydro-plant-modes.schema.yaml`](schema/hydro-plant-modes.schema.yaml).
+
+- **Keys:** `iso`, `plant_id`
+- **Reconciles:** ORNL EHA FY2024 per-plant Mode labels (keyed to EIA plant id)
+  completed for Mode-NaN plants by the documented HILARRI v4
+  reservoir-association / canal-type / Corps-dam-ownership rules in
+  scripts/data/curate_hydro_plant_modes.py — all categorical, no numeric
+  threshold, frozen against residuals (rule 21). CAISO-only until another ISO's
+  lane reviews the completion against its own labeled subset.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | Model ISO the plant's balancing authority maps to (e.g. CAISO). |
+| `plant_id` | `int64` | `none` | no | EIA plant identification code (EHA EIA_PtID), the join key the hydro budget fleet (data.hydro.load_hydro_budget) is keyed by. |
+| `eha_ptid` | `string` | `none` | no | ORNL EHA plant id(s) aggregated into this row ("\|"-joined when several EHA plants share one EIA plant id). |
+| `plant_name` | `string` | `none` | no | EHA plant name (first, when several share the EIA id). |
+| `ch_mw` | `float64` | `MW` | no | EHA conventional-hydro capacity (CH_MW summed over the EHA plants in the row). Provenance/QA only — the LP uses EIA-860 nameplate. |
+| `mode` | `string` | `none` | yes | EHA operational Mode verbatim (Run-of-river, Canal/Conduit, Peaking, Intermediate Peaking, hybrids). Null when EHA leaves the plant unclassified and the completion rule decided the row. |
+| `shapeable` | `bool` | `none` | no | True = reservoir/peaking class (the plant can shape output within its monthly energy budget); False = run-of-river/canal class (output follows inflow — the RoR-split mechanism dispatches it flat at budget[g,m]/hours[m]). |
+| `method` | `string` | `none` | no | Which rule classified the row: eha_mode (EHA Mode present) \| hilarri_canal (HILARRI canal/conduit project type) \| corps_dam (dam owned/operated by the U.S. Army Corps of Engineers) \| hilarri_no_reservoir (no HILARRI reservoir association) \| hilarri_reservoir (reservoir-associated, operator-controlled). |
+| `fc_dock` | `string` | `none` | yes | FERC licence docket (EHA FC_Dock), provenance. |
+| `dam_own` | `string` | `none` | yes | Dam owner at the plant's site (EHA Dam_Own), provenance for the corps_dam completion rule. |

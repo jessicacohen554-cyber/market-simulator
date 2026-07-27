@@ -1,0 +1,92 @@
+# Canonical schema: hydro-plant-modes (per-plant conventional-hydro
+# operational-mode classification — shapeable reservoir/peaking vs
+# non-shapeable run-of-river/canal).
+#
+# One row per (iso, plant_id): the EIA plant id of a conventional-hydro plant
+# in the ISO's balancing authority, its ORNL EHA operational `Mode` where EHA
+# publishes one, and the binary `shapeable` classification the dispatch
+# mechanism consumes (`ScenarioConfig.hydro_ror_split`). For Mode-NaN plants
+# the classification comes from the documented HILARRI/dam-ownership
+# completion rule in scripts/data/curate_hydro_plant_modes.py; the `method`
+# column records which rule produced each row so every classification is
+# traceable to its external evidence. Frozen against residuals (rule 21
+# [R-FROZEN-DERIVE]): rows re-derive only when the EHA/HILARRI source files
+# update, never because a backcast residual moved.
+datatype: hydro-plant-modes
+schema_version: 1
+title: Conventional-hydro per-plant operational modes (RoR-split classifier)
+description: >-
+  Per-plant shapeable-vs-run-of-river classification of an ISO's
+  conventional-hydro fleet, from the ORNL EHA FY2024 operational Mode field
+  completed by the HILARRI v4 reservoir-association / canal-type /
+  dam-ownership evidence for plants EHA leaves unclassified.
+
+key_columns: [iso, plant_id]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: Model ISO the plant's balancing authority maps to (e.g. CAISO).
+  - name: plant_id
+    dtype: int64
+    unit: none
+    nullable: false
+    description: EIA plant identification code (EHA EIA_PtID), the join key
+      the hydro budget fleet (data.hydro.load_hydro_budget) is keyed by.
+  - name: eha_ptid
+    dtype: string
+    unit: none
+    nullable: false
+    description: ORNL EHA plant id(s) aggregated into this row ("|"-joined
+      when several EHA plants share one EIA plant id).
+  - name: plant_name
+    dtype: string
+    unit: none
+    nullable: false
+    description: EHA plant name (first, when several share the EIA id).
+  - name: ch_mw
+    dtype: float64
+    unit: MW
+    nullable: false
+    description: EHA conventional-hydro capacity (CH_MW summed over the EHA
+      plants in the row). Provenance/QA only — the LP uses EIA-860 nameplate.
+  - name: mode
+    dtype: string
+    unit: none
+    nullable: true
+    description: EHA operational Mode verbatim (Run-of-river, Canal/Conduit,
+      Peaking, Intermediate Peaking, hybrids). Null when EHA leaves the plant
+      unclassified and the completion rule decided the row.
+  - name: shapeable
+    dtype: bool
+    unit: none
+    nullable: false
+    description: >-
+      True = reservoir/peaking class (the plant can shape output within its
+      monthly energy budget); False = run-of-river/canal class (output follows
+      inflow — the RoR-split mechanism dispatches it flat at
+      budget[g,m]/hours[m]).
+  - name: method
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Which rule classified the row: eha_mode (EHA Mode present) |
+      hilarri_canal (HILARRI canal/conduit project type) | corps_dam (dam
+      owned/operated by the U.S. Army Corps of Engineers) |
+      hilarri_no_reservoir (no HILARRI reservoir association) |
+      hilarri_reservoir (reservoir-associated, operator-controlled).
+  - name: fc_dock
+    dtype: string
+    unit: none
+    nullable: true
+    description: FERC licence docket (EHA FC_Dock), provenance.
+  - name: dam_own
+    dtype: string
+    unit: none
+    nullable: true
+    description: Dam owner at the plant's site (EHA Dam_Own), provenance for
+      the corps_dam completion rule.

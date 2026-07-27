@@ -1477,10 +1477,11 @@ def build_dispatch_fleet(
         backfill_year=hydro_backfill_year,
         eia930_monthly=hydro_eia930_monthly,
         forecast_budget=hydro_forecast_budget,
-        # Registered ScenarioConfig gate (rule 24), default off — read from the
-        # config rather than threaded as a kwarg so BOTH orchestrators pick the
-        # floor up from the same single switch.
+        # Registered ScenarioConfig gates (rule 24), default off — read from the
+        # config rather than threaded as kwargs so BOTH orchestrators pick the
+        # floor / RoR split up from the same single switches.
         min_flow_floor=bool(getattr(config, "hydro_min_flow_floor", False)),
+        ror_split=bool(getattr(config, "hydro_ror_split", False)),
         hydro_year=config.hydro_year if hydro_year is None else hydro_year,
     )
     hydro_gen_idx = None

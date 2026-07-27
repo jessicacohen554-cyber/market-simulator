@@ -240,6 +240,19 @@ class Generator(BaseModel):
     #                                 diurnal floor would pin the measured shape.
     #                                 None = no floor (data.hydro.
     #                                 build_hydro_fleet stamps it).
+    hydro_ror_flat_monthly_mw: tuple[float, ...] | None = None
+    #                                 Run-of-river flat dispatch level (MW) per
+    #                                 calendar month (12 entries, index 0 =
+    #                                 January) under config.hydro_ror_split: the
+    #                                 plant's own measured monthly water spread
+    #                                 flat, budget[g,m]/hours[m]. Applied as BOTH
+    #                                 the availability cap and the min_gen floor
+    #                                 (mechanism id MECH_HYDRO_ROR_FLAT), so the
+    #                                 plant's dispatch is fixed — an RoR/canal
+    #                                 plant's output follows inflow and cannot
+    #                                 chase price. None = shapeable (data.hydro.
+    #                                 build_hydro_fleet stamps it from the
+    #                                 hydro-plant-modes classifier).
     fast_start_run_hours: float = 0.0  # CAMPD-measured median start-to-stop run
 
     #                                 length (h) for fast-start CT tranches under
@@ -600,6 +613,19 @@ class Generator(BaseModel):
     #                                 diurnal floor would pin the measured shape.
     #                                 None = no floor (data.hydro.
     #                                 build_hydro_fleet stamps it).
+    hydro_ror_flat_monthly_mw: tuple[float, ...] | None = None
+    #                                 Run-of-river flat dispatch level (MW) per
+    #                                 calendar month (12 entries, index 0 =
+    #                                 January) under config.hydro_ror_split: the
+    #                                 plant's own measured monthly water spread
+    #                                 flat, budget[g,m]/hours[m]. Applied as BOTH
+    #                                 the availability cap and the min_gen floor
+    #                                 (mechanism id MECH_HYDRO_ROR_FLAT), so the
+    #                                 plant's dispatch is fixed — an RoR/canal
+    #                                 plant's output follows inflow and cannot
+    #                                 chase price. None = shapeable (data.hydro.
+    #                                 build_hydro_fleet stamps it from the
+    #                                 hydro-plant-modes classifier).
     fast_start_run_hours: float = 0.0  # CAMPD-measured median start-to-stop run
     #                                 length (h) for fast-start CT tranches under
     #                                 config.tranche_startup_measured_runs (v3):

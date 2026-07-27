@@ -38,6 +38,7 @@ from market_sim.data.floor_mechanisms import (
     MECH_CT_DEPLOYMENT_OVERLAY,
     MECH_CT_MUSTRUN_PER_PLANT,
     MECH_HYDRO_MIN_FLOW,
+    MECH_HYDRO_ROR_FLAT,
     MECH_NUCLEAR,
     MECH_RELIABILITY_DEPLOYMENT_OVERLAY,
     MECH_ST_GAS_MUSTRUN_PER_PLANT,
@@ -1608,6 +1609,12 @@ def _compose_min_gen_floors(
     hydro_min_flow_any = any(
         getattr(g, "hydro_min_flow_monthly_mw", None) for g in generators
     )
+    # Hydro RoR flat dispatch (caiso-126): same stamped-attribute pattern. The
+    # availability cap was already applied in generators_to_fleet_arrays; the
+    # floor half here fixes dispatch at the flat level (min == max).
+    hydro_ror_any = any(
+        getattr(g, "hydro_ror_flat_monthly_mw", None) for g in generators
+    )
     # ST_GAS p25-level floor (config.st_gas_mustrun_p25_level, the miso-67
     # LEVEL SWAP for st_gas_mustrun_per_plant): gather the gate-armed ST_GAS
     # plants with their measured p25 level (p25_cf x nameplate) and measured
@@ -1661,6 +1668,7 @@ def _compose_min_gen_floors(
         or cc_mustrun_any
         or st_gas_p25_tranches
         or hydro_min_flow_any
+        or hydro_ror_any
     ):
         min_gen = np.zeros((n_gen, hours), dtype=float)
         # Parallel mechanism-id array (D-2 forced-energy attribution): each
@@ -2036,6 +2044,25 @@ def _compose_min_gen_floors(
                 raised = min_gen[g_idx, :] < floor_t
                 np.maximum(min_gen[g_idx, :], floor_t, out=min_gen[g_idx, :])
                 min_gen_mech[g_idx, raised] = MECH_HYDRO_MIN_FLOW
+        # Hydro RoR flat dispatch (config.hydro_ror_split, stamped by
+        # data.hydro.build_hydro_fleet): the floor half of min == max — the
+        # availability cap in generators_to_fleet_arrays already limits the
+        # unit to the same flat level, so together they FIX dispatch at the
+        # plant's own monthly water. Rule 19: an RoR unit never also carries
+        # a min-flow stamp (build_hydro_fleet allocates the floor over the
+        # reservoir class only), so the two ids never contend.
+        if hydro_ror_any:
+            month_of_hour = _hour_to_month_index(hours)
+            for g_idx, gen in enumerate(generators):
+                monthly = getattr(gen, "hydro_ror_flat_monthly_mw", None)
+                if not monthly:
+                    continue
+                flat_t = np.asarray(monthly, dtype=float)[month_of_hour]
+                if not np.any(flat_t > 0.0):
+                    continue
+                raised = min_gen[g_idx, :] < flat_t
+                np.maximum(min_gen[g_idx, :], flat_t, out=min_gen[g_idx, :])
+                min_gen_mech[g_idx, raised] = MECH_HYDRO_ROR_FLAT
         # Never demand more than the (outage/derate-adjusted) availability.
         np.minimum(min_gen, pmax[:, np.newaxis] * availability, out=min_gen)
         # An outage hour that collapsed the floor is no longer forced.
@@ -2157,6 +2184,27 @@ def generators_to_fleet_arrays(
     _apply_outage_overlays(
         generators, availability, pmax, heat_rate, hours, config, _iso, _yr
     )
+
+    # Hydro RoR flat dispatch, availability half (config.hydro_ror_split,
+    # stamped by data.hydro.build_hydro_fleet): cap the unit at its flat
+    # monthly level flat[g, m] / pmax so pmax x availability == the flat MW.
+    # The min_gen half in _compose_min_gen_floors floors it at the same level
+    # (MECH_HYDRO_ROR_FLAT), fixing the RoR plant's dispatch at its own
+    # measured monthly water — run-of-river output cannot chase price. Applied
+    # AFTER the outage overlays so nothing re-inflates the cap (no overlay
+    # touches hydro today; the order makes that a guarantee, not an accident).
+    if any(getattr(g, "hydro_ror_flat_monthly_mw", None) for g in generators):
+        _ror_month_of_hour = _hour_to_month_index(hours)
+        for _g_idx, _gen in enumerate(generators):
+            _monthly = getattr(_gen, "hydro_ror_flat_monthly_mw", None)
+            if not _monthly or pmax[_g_idx] <= 0.0:
+                continue
+            _flat_t = np.asarray(_monthly, dtype=float)[_ror_month_of_hour]
+            np.minimum(
+                availability[_g_idx, :],
+                _flat_t / pmax[_g_idx],
+                out=availability[_g_idx, :],
+            )
 
     min_gen, min_gen_mech = _compose_min_gen_floors(
         generators,
