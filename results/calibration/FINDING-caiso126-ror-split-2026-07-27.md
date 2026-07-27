@@ -154,3 +154,40 @@ artifact. No re-tuning against any year occurred (nothing to tune).
   pin by construction).
 - Re-measuring the nameplate-clip loss (quantified here; its fix is a data
   lane, not a gate amendment).
+
+## §8 — ADDENDUM (same session, later): OWNER PROMOTION
+
+After this finding was written, the owner authorized promotion on the
+"performs better or is more structurally sound" criterion (rule 1
+[R-STRUCT] / rule 14 [R-ACCURATE]). Decision facts, measured before
+promoting:
+
+1. **Structure**: B replaces falsified physics (a fully-shapeable hydro
+   fleet parking at 0 MW for 270-692 h/yr against a measured p5 of
+   738-954 MW) with an external, categorical, zero-DOF classification; all
+   forcing declared, D-4 clean, C6 attested.
+2. **Performance, honest same-basis comparison** (arm A at the same HEAD):
+   better on overnight, belly, amplitude, parks-at-zero, budget
+   utilisation, gas volume (C5a direction) and λ level (C3a direction);
+   worse only on the evening hydro volume window.
+3. **The evening starvation is λ-neutral** (evening λ +0.09/−0.01/+0.05
+   $/MWh; the hub-priced import rung sets the evening price, caiso-105) —
+   a volume-shape cost created by removing the unphysical compensator,
+   rule 14's exact "the estimate was silently compensating" case. The
+   spread-compression root cause is chartered (caiso-127) and this keeper
+   is the honest base to fix it on.
+4. **The prior keeper's C3a-2025 PASS was non-reproducible** (caiso-123:
+   partial-extract basis, a rule-13 reproducibility failure baked into the
+   committed bundle). This keeper scores FAIL +10.9 % on the honest
+   full-derivation basis — the paper regression is the removal of an
+   artifact, deliberately NOT ledgered as an attestation exception while
+   the neiso-66 freeze holds.
+
+**The as-armed prereg verdict (K1 + K4) stands recorded and unedited**; the
+promotion is a separate owner act on structural-fidelity grounds, exactly
+the rule-1 clause ("a run is a keeper because it is the most structurally
+faithful, not because it has the lowest MAE — a more-accurate run that is
+missing real structure is not a keeper"). Keeper set to
+`2026-07-27-caiso-126-ror-split` (keepers/CAISO.json), attestation written
+(zero-DOF ledger carry), status rebuilt (NOT-YET, fail {C3a-2025, C3c,
+C5a}), `audit_keepers --iso CAISO` PASS.
