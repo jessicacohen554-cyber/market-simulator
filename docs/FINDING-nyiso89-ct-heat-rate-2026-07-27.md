@@ -183,7 +183,111 @@ Rule 24 [R-FROZEN-DERIVE]: re-derives only on a CAMPD vintage change.
 
 ## 4. Arm vs control
 
-*(filled in below once the registered arm completes)*
+Two registered runs, same HEAD, same keeper recipe, differing in exactly one
+`ScenarioConfig` field:
+
+* `2026-07-27-nyiso-89-control-zerodelta` (`results/calibration/nyiso89_ctrl_zerodelta`)
+* `2026-07-27-nyiso-89-ctmeas-hrloaded` (`results/calibration/nyiso89_hrmeas_ctloaded`)
+
+The control reproduces the keeper exactly (CT_PEAKER 0.459 / 0.314 / 1.282 TWh
+against the keeper's published 0.46 / 0.31 / 1.28; D-1 `profile_r`
+0.876 / 0.928 / 0.949), so the deltas below are attributable to the input swap
+alone.
+
+### 4a. A wiring defect that had to be caught first
+
+**The first arm came back byte-identical to its control** — every class, every
+hour of 2023, max absolute difference exactly `0.0` — for a change that moves
+individual plant heat rates by up to 10.9 MMBtu/MWh.
+
+`scripts/run_calibration.py::run_year` does **not** call
+`fleet.assembly.load_or_synthesize_bins`. For the non-ERCOT per-plant ISOs it
+inlines its own `fleet_to_bins(load_fleet_from_csv(...))`, and that call did not
+forward the new flag. Since CT_PEAKER plants are binned, the bins are the *only*
+path their cost reaches the LP by — so the solve ran on eGRID rates while
+`run_config.json` recorded the measured input as on.
+
+This is worth recording because of how it fails: it does not look broken, it
+looks like **"the mechanism is inert."** Reported without an exact-equality
+check it would have become a confident and completely wrong structural finding.
+The fix forwards the flag, and the regression test parses
+`run_calibration.py` and asserts **every** `load_fleet_from_csv` call in it
+forwards it, so the next fleet-sourcing flag cannot repeat this silently.
+
+All numbers below are from the re-solved arm, whose P0 commitment pattern
+differs from the control's (2023: 20,077 → 19,940 unit-hours floored) — the
+mechanism is demonstrably live.
+
+### 4b. Result: the input is nearly inert, and inconsistent in sign
+
+| year | CT_PEAKER control | arm | delta | actual | gap closed |
+|---|--:|--:|--:|--:|--:|
+| 2023 | 0.459 | 0.443 | **−0.016** | 2.260 | **−0.9 %** (worse) |
+| 2024 | 0.314 | 0.394 | **+0.080** | 2.134 | +4.4 % |
+| 2025 | 1.282 | 1.407 | **+0.125** | 3.011 | +7.2 % |
+
+The energy is a near-pure swap with **ST_GAS** (+0.025 / −0.078 / −0.087),
+with CC_REGULAR and oil making up the remainder; system totals are unchanged to
+three decimals in all three years.
+
+**2023 moves the wrong way.** That is the capacity-weighted arithmetic of §1
+showing up in dispatch: correcting E F Barrett *upward* (11.08 → 16.69 on
+281 MW) removes more capacity from merit than Bayswater (21.68 → 10.74 on
+56 MW) and the in-city fleet add back. Which effect wins depends on where the
+year's prices sit relative to each plant's new SRMC, so the sign is not stable
+across years — exactly what "source noise in both directions" implies.
+
+### 4c. Gate re-score — C1 and C5a as instructed
+
+Every criterion verdict is **identical** between arm and control. Determination
+**NOT-YET** for both (governance UNATTESTED — these are probes, not keeper
+candidates).
+
+| criterion | control | arm |
+|---|---|---|
+| C1 fuel-mix | PASS (14/14, free 10/10) | PASS (14/14, free 10/10) |
+| C2 / C3a / C3b / C4 / C7 / C8 | PASS | PASS |
+| C3c price tail | FAIL 3 / 0 / 6 h vs 10 / 12 / 42 | FAIL 3 / 0 / **7** h vs 10 / 12 / 42 |
+| C5a CO2 | CAVEAT 2025 +7.6 % | CAVEAT 2025 +7.6 % |
+
+**C1's thin margin (the flagged risk).** 2023 CC_REGULAR — the keeper's binding
+cell — goes **−2.775 → −2.784 TWh** against a ±2.94 band. The margin thins from
+0.165 to 0.156 TWh, about 5 % of the remaining headroom. It still PASSES, but
+the cell is marginally *worse*, and it is worth stating plainly that this
+criterion is one small adverse change away from flipping.
+
+**C5a moves UP, and it was measured rather than assumed.** The brief noted CO2
+moves twice here — more gas volume, but a lower heat rate on the CT fleet — and
+warned not to assume the sign. Measured, the two do not cancel and the net is
+slightly **positive**: 2025 system CO2 **31.376 → 31.390 Mt** against a 29.167
+actual, i.e. **+7.57 % → +7.62 %**, still inside the ±10 % commercial band.
+2023 (+0.50 → +0.50 %) and 2024 (+1.14 → +1.14 %) are nil. The mechanism is
+that the energy CT_PEAKER gains comes from **ST_GAS and CC_REGULAR**, which
+burn at lower heat rates than a peaker — so the volume effect dominates the
+rate effect. The margin against the band is unchanged for practical purposes.
+
+**Shape is neutral.** CT_PEAKER D-1 `profile_r` 0.876 / 0.928 / 0.949 →
+0.878 / 0.914 / 0.947; `cv_ratio` 1.38 / 1.07 / 1.15 → 1.40 / 1.18 / 1.15. D-2
+forced share stays 0.0 % in every year (no mechanism floors this class). C8's
+2024 ST_GAS grounded-above-budget note is unchanged (31.9 % → 32.0 %).
+
+### 4d. Verdict on the arm
+
+**The input stays, and it is not promoted as a fix.**
+
+It stays because rule 14 [R-ACCURATE] and rule 1 [R-STRUCT] require it: the
+eGRID plant-average annual rate is a known-defective estimate — non-physical at
+Bayswater, wrong-technology at Barrett — and the measured loaded rate is the
+accurate replacement. A 0.156 TWh C1 margin instead of 0.165 is not a reason to
+put a defective input back; it is a discovered root cause elsewhere.
+
+It is not promoted as a fix because it does not act like one: −0.9 / +4.4 /
++7.2 % of the gap, with the sign reversing in 2023. That is consistent with §1
+(the true bias is +$1.37 / +$1.49 / +$2.50 per MWh, not +$6.48 / +$6.70 /
++$7.34) and with nyiso-88's own honest bound (in-merit hour-share 5.1 → 6.8 /
+8.1 → 11.2 / 12.6 → 15.4 % against the *actual* price). **Neither this session
+nor nyiso-88 has produced a mechanism that closes CT_PEAKER's level**, and the
+heat rate is now eliminated as the candidate rather than confirmed as one.
 
 ---
 

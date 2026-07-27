@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-27-nyiso-89-control-zerodelta",
+  "label": "nyiso 89 control zerodelta",
+  "date": "2026-07-27",
+  "shorthand": "nyiso-89-control-zerodelta",
+  "definition": "nyiso-89 CONTROL: same-HEAD zero-delta replay of keeper 2026-07-27-nyiso-87-cmeas-measured. The comparison basis for the measured-CT-heat-rate arm; no config delta.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-27-nyiso-89-control-zerodelta.js",
+  "bundle": "results/calibration/nyiso89_ctrl_zerodelta"
+}
