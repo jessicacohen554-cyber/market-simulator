@@ -282,7 +282,10 @@
 
     /* Aggregate model vs CAMPD MW arrays for a class + selected zones. */
     const _aggC = {};
-    function clearAggCache() { Object.keys(_aggC).forEach(k => delete _aggC[k]); }
+    function clearAggCache() {
+      Object.keys(_aggC).forEach(k => delete _aggC[k]);
+      Object.keys(_matchC).forEach(k => delete _matchC[k]);
+    }
     function aggMW(yr, grp) {
       const key = st.runId + '|' + yr + '|' + grp + '|' + [...st.zones].sort().join(',');
       if (_aggC[key]) return _aggC[key];
@@ -299,6 +302,37 @@
         eA += b?.e_ann || 0;
       }
       return _aggC[key] = { mm, cc, mA, cA, eA };
+    }
+
+    /* CAMPD-MATCHED class aggregate — the apples-to-apples pair for the delta map.
+       aggMW() sums the model over EVERY plant of the class in the selected zones,
+       but the CAMPD side can only sum the plants CEMS actually files a usable
+       hourly record for: a plant with no CEMS series (`nodata`) contributes model
+       MW against a flat zero, and a CT-only reporter contributes model MW for the
+       full 2x1 block against a CAMPD series covering only its combustion turbines.
+       Differencing those two totals reports a dispatch error that is really a
+       reporting-coverage gap. This sums BOTH sides over the intersection only —
+       plants present in the model run AND carrying a complete CAMPD record — and
+       returns the matched nameplate (`capMW`) that normalizes the delta, plus the
+       full-class counts so the panel can name what it dropped. */
+    const _matchC = {};
+    function matchedAggMW(yr, grp) {
+      const key = st.runId + '|' + yr + '|' + grp + '|' + [...st.zones].sort().join(',');
+      if (_matchC[key]) return _matchC[key];
+      const M = RUN(yr), B = BENCH(yr);
+      const all = plantsOf(yr, grp);
+      const mm = new Float32Array(T), cc = new Float32Array(T);
+      let capMW = 0, capAll = 0, n = 0;
+      for (const c of all) {
+        const b = B.plants[c], mp = M.plants[c];
+        const npl = b.npl || 1;
+        capAll += npl;
+        if (!b.campd || b.nodata || b.ct_only || !mp?.m) continue;
+        n++; capMW += npl;
+        const md = dec(mp.m), cd = dec(b.campd);
+        for (let i = 0; i < T; i++) { mm[i] += md[i] * npl / 100; cc[i] += cd[i] * npl / 100; }
+      }
+      return _matchC[key] = { mm, cc, capMW, capAll, n, nAll: all.length };
     }
 
     /* Full EIA-923 class total (classFull from benchmark), zone-allocated. */
@@ -681,18 +715,23 @@
       ctx.putImageData(im, 0, 0);
     }
 
-    // Robust symmetric color cap = 98th percentile of |delta| (min $10), so a
-    // handful of scarcity hours don't wash the whole map to one saturated tone.
-    function deltaCap(arr) {
+    // Robust symmetric color cap = 98th percentile of |delta|, so a handful of
+    // scarcity hours don't wash the whole map to one saturated tone. `min`/`step`
+    // are the floor and rounding grain of the returned cap: the defaults (10, 5)
+    // are the $/MWh grain the map was built with; a NORMALIZED (percent) series
+    // passes a finer grain, because a 5-point floor on a 0-100 % scale would
+    // flatten every sub-5 % map to a single tone.
+    function deltaCap(arr, min = 10, step = 5) {
       const a = [];
       for (let i = 0; i < arr.length; i++) if (!isNaN(arr[i])) a.push(Math.abs(arr[i]));
-      if (!a.length) return 10;
+      if (!a.length) return min;
       a.sort((x, y) => x - y);
       const p = a[Math.min(a.length - 1, Math.floor(a.length * 0.98))];
-      return Math.max(10, Math.ceil(p / 5) * 5);
+      return Math.max(min, Math.ceil(p / step) * step);
     }
 
-    // Mean signed delta over finite hours (annual price bias, $/MWh).
+    // Mean signed delta over finite hours (annual bias). Unit-agnostic — the
+    // caller passes either the raw $/MWh series or its normalized percentage.
     function deltaMean(arr) {
       let s = 0, n = 0;
       for (let i = 0; i < arr.length; i++) if (!isNaN(arr[i])) { s += arr[i]; n++; }
@@ -1024,7 +1063,7 @@
       const deltaYears = years.filter(yr => RUN(yr).lmpDeltaHr);
       if (deltaYears.length) {
         html += `<div class="bc-panel"><h2>LMP Delta Heatmap</h2>
-          <p class="panel-sub">Model minus actual LMP for every hour of the year — <span style="color:${`rgb(${DELTA_ORANGE.join(',')})`};font-weight:700">orange = model over</span> (runs hot), <span style="color:${`rgb(${DELTA_BLUE.join(',')})`};font-weight:700">blue = model under</span> (runs cold), white ≈ on top. Day-of-year across, hour-of-day down; color capped at the 98th percentile of |Δ| per year.</p>
+          <p class="panel-sub">Model minus actual LMP for every hour of the year, as a <b>% of that year's mean actual price</b> (the denominator is printed under each map; $/MWh only where no actual price is committed) — <span style="color:${`rgb(${DELTA_ORANGE.join(',')})`};font-weight:700">orange = model over</span> (runs hot), <span style="color:${`rgb(${DELTA_BLUE.join(',')})`};font-weight:700">blue = model under</span> (runs cold), white ≈ on top. Day-of-year across, hour-of-day down; color capped at the 98th percentile of |Δ| per year.</p>
           <div class="lmp-grid" id="deltaHeatGrid">`;
         for (const yr of deltaYears) {
           html += `<div class="year-card"><div class="svg-box" data-deltayr="${yr}"></div></div>`;
@@ -1066,23 +1105,58 @@
       drawDeltaHeatmaps();
     }
 
+    /* Reference price level the LMP delta heatmap normalizes by — the ANNUAL
+       MEAN ACTUAL price for the year, so a cell reads "the model is N % of the
+       market's price level hot/cold this hour" instead of "$N/MWh", which is
+       incomparable between a $25/MWh year and a $90/MWh one (and between ISOs).
+
+       Basis order is rt > da > rt_lw > da_lw, i.e. the EQUAL-HOUR mean first —
+       deliberately NOT actualLMPGated's load-weighted-first ladder. The delta's
+       own actual side is _actual_rt_padded, the unweighted hourly hub RT series
+       (DA-filled where RT is NaN), so its equal-hour mean is the level the
+       hourly deltas are actually differences against; the load-weighted mean is
+       a different statistic and only stands in when no equal-hour one is
+       committed. Returns null when the bench carries no actual price, and the
+       map falls back to $/MWh. */
+    function lmpDeltaRef(yr) {
+      const a = actualLMP(yr);
+      if (!a) return null;
+      for (const [k, basis] of [['rt', 'RT'], ['da', 'DA'], ['rt_lw', 'RT load-wtd'], ['da_lw', 'DA load-wtd']]) {
+        if (a[k] != null && Math.abs(a[k]) > 1) return { val: a[k], basis };
+      }
+      return null;
+    }
+
     /* Mount the per-year LMP delta heatmaps into their [data-deltayr] boxes.
        Each box gets a 365×24 canvas (day × hour), a Jan/Jul/Dec axis, an annual
        mean-bias caption, and a per-canvas hover tooltip. Reads the signed int16
-       hourly delta from RUN(yr).lmpDeltaHr. */
+       hourly delta from RUN(yr).lmpDeltaHr and renders it as a PERCENTAGE of the
+       year's mean actual price (lmpDeltaRef); $/MWh only when no actual price is
+       committed for the year. */
     function drawDeltaHeatmaps() {
       document.querySelectorAll('[data-deltayr]').forEach(box => {
         const yr = Number(box.dataset.deltayr);
         const enc = RUN(yr).lmpDeltaHr;
         if (!enc) { box.innerHTML = '<p style="font-size:0.82rem;color:var(--text-muted)">No hourly LMP delta.</p>'; return; }
-        const arr = decI16(enc);
-        const cap = deltaCap(arr);
+        const raw = decI16(enc);
+        const ref = lmpDeltaRef(yr);
+        const pct = !!ref;
+        // NaN (no model dual / no actual price) survives the scaling as NaN, so
+        // those hours stay neutral gray rather than becoming 0 % "on target".
+        const arr = pct ? raw.map(v => 100 * v / ref.val) : raw;
+        const cap = pct ? deltaCap(arr, 5, 5) : deltaCap(raw);
         const mean = deltaMean(arr);
+        const meanRaw = deltaMean(raw);
+        const u = pct ? '%' : '';
+        const pre = pct ? '' : '$';
 
         box.innerHTML = '';
         const head = document.createElement('div');
         head.className = 'year-head';
-        head.innerHTML = `<span>${yr}</span><span style="font-size:0.72rem;font-weight:600" class="${mean == null ? '' : (mean >= 0 ? 'clr-bad' : 'clr-ok')}">${mean == null ? '' : 'bias ' + (mean >= 0 ? '+' : '') + mean.toFixed(1) + ' $/MWh'}</span>`;
+        const biasTxt = mean == null ? ''
+          : 'bias ' + (mean >= 0 ? '+' : '−') + pre + Math.abs(mean).toFixed(1) + u +
+            (pct && meanRaw != null ? ` · ${meanRaw >= 0 ? '+' : '−'}$${Math.abs(meanRaw).toFixed(1)}` : '');
+        head.innerHTML = `<span>${yr}</span><span style="font-size:0.72rem;font-weight:600" class="${mean == null ? '' : (mean >= 0 ? 'clr-bad' : 'clr-ok')}">${biasTxt}</span>`;
         box.appendChild(head);
 
         const cv = document.createElement('canvas');
@@ -1095,12 +1169,14 @@
         axis.innerHTML = '<span>Jan</span><span>Jul</span><span>Dec</span>';
         box.appendChild(axis);
 
-        // Diverging legend: −cap (blue) … 0 (white) … +cap (orange)
+        // Diverging legend: −cap (blue) … 0 (white) … +cap (orange). The
+        // denominator is named so the percentage is never a bare ratio.
         const legend = document.createElement('div');
         legend.innerHTML = `<div style="display:flex;align-items:center;gap:8px;margin-top:8px">
-          <span style="font-size:0.68rem;color:var(--text-muted)">−$${cap} (cold)</span>
+          <span style="font-size:0.68rem;color:var(--text-muted)">−${pre}${cap}${u} (cold)</span>
           <div class="delta-ramp"></div>
-          <span style="font-size:0.68rem;color:var(--text-muted)">+$${cap} (hot)</span></div>`;
+          <span style="font-size:0.68rem;color:var(--text-muted)">+${pre}${cap}${u} (hot)</span></div>` +
+          (pct ? `<div style="font-size:0.68rem;color:var(--text-muted);margin-top:3px">% of ${yr} mean actual ${esc(ref.basis)} — $${ref.val.toFixed(2)}/MWh</div>` : '');
         box.appendChild(legend);
 
         cv.addEventListener('mousemove', e => {
@@ -1108,9 +1184,13 @@
           const day = Math.floor((e.clientX - r.left) / r.width * 365);
           const hod = Math.floor((e.clientY - r.top) / r.height * 24);
           if (day < 0 || day > 364 || hod < 0 || hod > 23) { hideTip(); return; }
-          const v = arr[day * 24 + hod];
+          const h = day * 24 + hod;
+          const v = arr[h], vr = raw[h];
           const dt = new Date(yr, 0, 1); dt.setDate(day + 1);
-          const vtxt = isNaN(v) ? 'no price' : (v >= 0 ? '+' : '') + Math.round(v) + ' $/MWh ' + (v >= 0 ? '(hot)' : '(cold)');
+          const vtxt = isNaN(v) ? 'no price'
+            : (v >= 0 ? '+' : '−') + pre + Math.abs(v).toFixed(pct ? 1 : 0) + (pct ? '% of mean LMP' : ' $/MWh') +
+              (pct ? ` (${vr >= 0 ? '+' : '−'}$${Math.abs(vr).toFixed(0)}/MWh)` : '') +
+              ' ' + (v >= 0 ? '(hot)' : '(cold)');
           showTip(`<b>${MONTHS[dt.getMonth()]} ${dt.getDate()}, ${String(hod).padStart(2, '0')}:00</b><br>Model − actual: ${vtxt}`, e.clientX, e.clientY);
         });
         cv.addEventListener('mouseleave', hideTip);
@@ -1323,7 +1403,7 @@
       // CF Heatmap + hot/cold delta for the selected class
       html += `<div class="bc-panel">
         <h2>Capacity Factor — ${esc(grpLabel(grp))}</h2>
-        <p class="panel-sub">${yr} — 365x24 hourly CF, and the model−actual delta in MW</p>
+        <p class="panel-sub">${yr} — 365x24 hourly CF, and the model−actual delta as % of available capacity (matched fleet only)</p>
         <div id="cfHeatSection"></div>
       </div>`;
 
@@ -1459,6 +1539,43 @@
       }
     }
 
+    /* The model/actual pair the delta map differences, plus the capacity it is
+       normalized by. Three cases, one shape:
+
+       - fossil aggregate: the CAMPD-MATCHED intersection (matchedAggMW) — model
+         and actual summed over the SAME plants — normalized by those plants'
+         summed nameplate. This is what makes "model − CAMPD" apples-to-apples.
+       - single fossil plant: the plant is its own intersection (the selector
+         already suppresses the map for a no-CAMPD / CT-only plant), normalized
+         by its nameplate.
+       - non-fossil / imports panel: both sides are the SAME BA-level aggregate
+         by construction, so there is no plant-matching question; the payload
+         carries no nameplate for these buckets, so the denominator is the
+         panel's peak observed output (model or EIA-930, whichever is higher) and
+         the legend says "peak", not "capacity".
+
+       `denom` is 0/absent when there is nothing to normalize by; callers fall
+       back to raw MW rather than dividing by zero. */
+    function deltaBasis(yr, grp, plantCode, d) {
+      if (d.nonfossil) {
+        let pk = 0;
+        for (let i = 0; i < T; i++) {
+          if (d.mm[i] > pk) pk = d.mm[i];
+          if (d.cc[i] > pk) pk = d.cc[i];
+        }
+        return { mm: d.mm, cc: d.cc, denom: pk, kind: 'peak', n: null, nAll: null, capAll: pk };
+      }
+      if (plantCode && plantCode !== 'agg') {
+        const npl = BENCH(yr).plants?.[plantCode]?.npl || 0;
+        return { mm: d.mm, cc: d.cc, denom: npl, kind: 'capacity', single: true, n: 1, nAll: 1, capAll: npl };
+      }
+      const m = matchedAggMW(yr, grp);
+      return {
+        mm: m.mm, cc: m.cc, denom: m.capMW, kind: 'capacity',
+        n: m.n, nAll: m.nAll, capAll: m.capAll
+      };
+    }
+
     function drawCfHeatmap(yr, grp) {
       const section = document.getElementById('cfHeatSection');
       if (!section) return;
@@ -1480,6 +1597,21 @@
       // the bucket (payload `a: null`) is suppressed by the same `nodata` leg.
       const hasC = !d.nodata && !d.ctOnly && d.cc && d.cc.length >= T;
       const actualLabel = actualSrcLabel(d);
+      // A class can pass `hasC` (some plant files a CAMPD series) and still have
+      // an EMPTY matched fleet — every reporter CT-only, say. Differencing then
+      // yields an all-zero map that reads as a perfect model, so the delta panel
+      // gates on the intersection being non-empty, not merely on the class having
+      // an actual. Resolved here (not at the delta block) so the two CF maps above
+      // can declare when they are drawn on a WIDER fleet than the delta below.
+      const db0 = hasC ? deltaBasis(yr, grp, st.plant, d) : null;
+      const canDelta = !!db0 && (db0.n == null || db0.n > 0);
+      const dropped = (db0 && db0.n != null) ? db0.nAll - db0.n : 0;
+      // The two CF maps are the FULL class; the delta is the matched subset. When
+      // those differ, say so on the map itself — an unannotated pair of maps on
+      // two different fleets is the mixed-basis reading this panel is fixing.
+      const fleetNote = dropped > 0
+        ? ` <span style="font-weight:400;font-size:0.72rem;color:var(--text-muted)">— full class, ${db0.nAll} plants (delta below: the ${db0.n} CAMPD-matched)</span>`
+        : '';
 
       section.innerHTML = '';
 
@@ -1490,7 +1622,7 @@
         cfC = new Float32Array(T);
         if (maxCC > 0) for (let i = 0; i < T; i++) cfC[i] = d.cc[i] / maxCC * 100;
 
-        section.innerHTML = `<p style="font-weight:700;font-size:0.82rem;margin-bottom:4px">${esc(actualLabel)} Actual</p>`;
+        section.innerHTML = `<p style="font-weight:700;font-size:0.82rem;margin-bottom:4px">${esc(actualLabel)} Actual${fleetNote}</p>`;
         const cv1 = document.createElement('canvas');
         cv1.className = 'heat'; cv1.width = 365; cv1.height = 24;
         section.appendChild(cv1);
@@ -1504,7 +1636,7 @@
       // Model heatmap (in the middle)
       const div2 = document.createElement('div');
       if (hasC) div2.style.marginTop = '12px';
-      div2.innerHTML = '<p style="font-weight:700;font-size:0.82rem;margin-bottom:4px">Model</p>';
+      div2.innerHTML = `<p style="font-weight:700;font-size:0.82rem;margin-bottom:4px">Model${fleetNote}</p>`;
       section.appendChild(div2);
       const cv2 = document.createElement('canvas');
       cv2.className = 'heat'; cv2.width = 365; cv2.height = 24;
@@ -1520,23 +1652,52 @@
       ramp.innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:0.68rem;color:var(--text-muted)">0%</span><div class="color-ramp"></div><span style="font-size:0.68rem;color:var(--text-muted)">100%</span></div>';
       section.appendChild(ramp);
 
-      // ---- Delta map (model − actual), in MW -----------------------------
-      // MW, NOT CF% minus CF%: drawHeat normalizes EACH series to its OWN max,
-      // so subtracting the two CF fields above would compare a model at 90% of
-      // the model's max against an actual at 90% of a DIFFERENT max and report
-      // "on target" for two dispatches that differ by gigawatts. The delta is
-      // therefore taken on the raw MW arrays, which for a non-fossil panel share
-      // one decode window by construction (see decAffine / _b64_affine).
-      let delta = null, dCap = null;
-      if (hasC) {
+      // ---- Delta map (model − actual), % of available capacity -------------
+      // NOT CF% minus CF%: drawHeat normalizes EACH series to its OWN max, so
+      // subtracting the two CF fields above would compare a model at 90% of the
+      // model's max against an actual at 90% of a DIFFERENT max and report "on
+      // target" for two dispatches that differ by gigawatts. The delta is taken
+      // on the raw MW arrays and THEN divided by ONE shared denominator — the
+      // matched fleet's nameplate — so a cell reads as "the model is N points of
+      // capacity hot/cold this hour", comparable across classes and ISOs instead
+      // of scaling with how big the class happens to be. The MW pair stays in the
+      // tooltip. Non-fossil panels share one decode window by construction (see
+      // decAffine / _b64_affine) and normalize by peak instead (deltaBasis).
+      // Falls back to raw MW when the payload gives us no denominator.
+      let delta = null, dCap = null, db = null, dPct = false;
+      if (canDelta) {
+        db = db0;
+        dPct = db.denom > 0;
         delta = new Float32Array(T);
-        for (let i = 0; i < T; i++) delta[i] = d.mm[i] - d.cc[i];
-        dCap = deltaCap(delta);
+        for (let i = 0; i < T; i++) {
+          const mw = db.mm[i] - db.cc[i];
+          delta[i] = dPct ? 100 * mw / db.denom : mw;
+        }
+        dCap = dPct ? deltaCap(delta, 2, 1) : deltaCap(delta);
+        const unit = dPct ? '%' : ' MW';
+        const denomTxt = db.kind === 'peak' ? 'peak output' : 'capacity';
 
         const div3 = document.createElement('div');
         div3.style.marginTop = '16px';
-        div3.innerHTML = `<p style="font-weight:700;font-size:0.82rem;margin-bottom:4px">Delta (Model − ${esc(actualLabel)})</p>`;
+        div3.innerHTML = `<p style="font-weight:700;font-size:0.82rem;margin-bottom:4px">Delta (Model − ${esc(actualLabel)})${dPct ? ` <span style="font-weight:400;color:var(--text-muted)">— % of ${denomTxt}</span>` : ''}</p>`;
         section.appendChild(div3);
+        // Name the comparison basis: which plants both sides cover, and what the
+        // percentage is a percentage OF. A dropped plant that goes unnamed is
+        // indistinguishable from a model that simply doesn't run it.
+        if (db.single) {
+          if (dPct) {
+            div3.innerHTML += `<p style="font-size:0.72rem;color:var(--text-muted);margin:0 0 6px">
+              Single plant — normalized by its ${db.denom.toFixed(0)} MW nameplate.</p>`;
+          }
+        } else if (db.n != null && db.nAll != null) {
+          div3.innerHTML += `<p style="font-size:0.72rem;color:var(--text-muted);margin:0 0 6px">
+            Matched fleet: <b>${db.n}</b> of ${db.nAll} plant${db.nAll === 1 ? '' : 's'} with a complete CAMPD record,
+            ${(db.denom / 1000).toFixed(2)} GW nameplate${dropped > 0 ? ` — ${dropped} plant${dropped === 1 ? '' : 's'} (${((db.capAll - db.denom) / 1000).toFixed(2)} GW) dropped from BOTH sides: no CEMS series or a CT-only record` : ' — every plant of the class is matched'}.
+            Model and ${esc(actualLabel)} are summed over the same plants${dPct ? ', and the delta is that sum divided by their nameplate' : ''}.</p>`;
+        } else if (dPct) {
+          div3.innerHTML += `<p style="font-size:0.72rem;color:var(--text-muted);margin:0 0 6px">
+            BA-level panel — model and ${esc(actualLabel)} are the same aggregate by construction. No nameplate in the payload for this bucket, so the delta is a % of the ${(db.denom / 1000).toFixed(2)} GW peak observed output.</p>`;
+        }
         const cv3 = document.createElement('canvas');
         cv3.className = 'heat'; cv3.width = 365; cv3.height = 24;
         cv3.dataset.delta = '1';
@@ -1552,12 +1713,12 @@
         // model is ON TARGET for that hour.
         const dl = document.createElement('div');
         dl.innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap">
-          <span style="font-size:0.68rem;color:var(--text-muted);white-space:nowrap">−${dCap} MW · model under</span>
+          <span style="font-size:0.68rem;color:var(--text-muted);white-space:nowrap">−${dCap}${unit} · model under</span>
           <div style="flex:1 1 150px;min-width:150px">
             <div class="delta-ramp" style="width:100%"></div>
-            <div style="text-align:center;font-size:0.68rem;color:var(--text-muted);margin-top:3px">white = 0 MW (on target), not missing</div>
+            <div style="text-align:center;font-size:0.68rem;color:var(--text-muted);margin-top:3px">white = 0${unit} (on target), not missing</div>
           </div>
-          <span style="font-size:0.68rem;color:var(--text-muted);white-space:nowrap">+${dCap} MW · model over</span>
+          <span style="font-size:0.68rem;color:var(--text-muted);white-space:nowrap">+${dCap}${unit} · model over</span>
         </div>`;
         div3.appendChild(dl);
       } else {
@@ -1565,7 +1726,9 @@
         // a silently absent delta map is indistinguishable from a perfect one.
         const why = d.ctOnly
           ? `CT-only CEMS record: the CAMPD series covers only this plant's combustion turbines, so a model−actual delta would be a reporting artifact, not a dispatch error.`
-          : (d.note || `No ${actualLabel} hourly record for this selection, so there is no actual to difference against.`);
+          : (db0 && db0.n === 0)
+            ? `No plant of this class in the selected zones carries a complete CAMPD record (all ${db0.nAll} are CEMS-absent or CT-only reporters), so there is no matched fleet to difference.`
+            : (d.note || `No ${actualLabel} hourly record for this selection, so there is no actual to difference against.`);
         const div3 = document.createElement('div');
         div3.style.marginTop = '16px';
         div3.innerHTML = `<p style="font-weight:700;font-size:0.82rem;margin-bottom:4px">Delta (Model − ${esc(actualLabel)})</p>
@@ -1573,7 +1736,10 @@
         section.appendChild(div3);
       }
 
-      // Hover tip on canvases: CF% on the two CF maps, MW on the delta map.
+      // Hover tip on canvases: CF% on the two CF maps, % of capacity + the
+      // underlying MW pair on the delta map. The MW pair is the MATCHED-fleet
+      // pair (db.mm/db.cc), not the full-class d.mm — the numbers under the
+      // cursor have to be the numbers the cell was computed from.
       const canvases = section.querySelectorAll('canvas.heat');
       canvases.forEach((cv, idx) => {
         const isDelta = cv.dataset.delta === '1';
@@ -1590,9 +1756,13 @@
           if (isDelta) {
             const v = delta[h];
             const sign = v >= 0 ? '+' : '−';
-            showTip(`<b>Delta (Model − ${esc(actualLabel)})</b><br>${when}<br>` +
-              `<b>${sign}${Math.abs(v).toFixed(0)} MW</b> · model ${v >= 0 ? 'over' : 'under'}<br>` +
-              `model ${d.mm[h].toFixed(0)} MW &middot; actual ${d.cc[h].toFixed(0)} MW`,
+            const mw = db.mm[h] - db.cc[h];
+            const head = dPct
+              ? `<b>${sign}${Math.abs(v).toFixed(1)}% of ${db.kind === 'peak' ? 'peak' : 'capacity'}</b> · model ${v >= 0 ? 'over' : 'under'}<br>` +
+                `${sign}${Math.abs(mw).toFixed(0)} MW of ${(db.denom).toFixed(0)} MW`
+              : `<b>${sign}${Math.abs(v).toFixed(0)} MW</b> · model ${v >= 0 ? 'over' : 'under'}`;
+            showTip(`<b>Delta (Model − ${esc(actualLabel)})</b><br>${when}<br>` + head +
+              `<br>model ${db.mm[h].toFixed(0)} MW &middot; actual ${db.cc[h].toFixed(0)} MW`,
               e.clientX, e.clientY);
           } else {
             showTip(`<b>${isActual ? esc(actualLabel) : 'Model'}</b><br>${when} &middot; CF ${Math.round(cfArr[h])}%` +
