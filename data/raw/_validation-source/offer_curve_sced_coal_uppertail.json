@@ -1,0 +1,437 @@
+{
+  "_provenance": {
+    "iso": "ERCOT",
+    "source": "ERCOT 60-Day SCED Disclosure 60d_SCED_Gen_Resource_Data raw parquets, CLLIG (Coal and Lignite) submitted TPO energy curves, online telemetered statuses only",
+    "method": "share of telemetered HASL carrying a submitted RT offer at or below each price edge (ERCOT-117 \u00a71.1 convention: supply(x) = clip(max{MW_k : price_k <= x}, LSL, HASL), curve-carrying units floored at LSL); MW-weighted fleet aggregate, per band capacity coverage and top-1 concentration recorded alongside",
+    "basis": "delivered coal $/MMBtu the model dispatches on (COAL_PRICE_LIGNITE_BY_YEAR / COAL_PRICE_PRB_BY_YEAR), NOT Henry Hub \u2014 the EP gas-basis correction is gas-specific and has no coal analogue (ERCOT-122 \u00a72)",
+    "rule23_citation": "derived from the raw SCED disclosure against the ERCOT-124 charter's measurement question (the coal offer-curve upper tail named by DIAGNOSIS-ercot123 \u00a75); price edges fixed from the measured distribution's own plateaus and jump BEFORE any model quantity was read; no residual entered the derivation and no edge was chosen because it moved one",
+    "sampling": "82 probe days, 2024-2025 ONLY \u2014 no 2023 SCED exists on disk and no full-span SCED exists at all. Three of four subsets sample hours 11-22 only; see _hour_of_day_bound. Nothing here is an annual statistic.",
+    "dec_2025_schema_drop": "ERCOT revised the disclosure schema in December 2025 \u2014 HASL/LASL and the AS award block are dropped and unrecoverable. Those intervals are excluded explicitly by the reused ERCOT-123 load_sced(), never silently NaN-skipped; see load_coverage.",
+    "coverage_warning": "A band's coverage is the share of fleet HSL held by resources that contribute ANY MW to it. A low-coverage band describes that subsample, NOT the class \u2014 applying one class-wide is exactly the error ERCOT-122 \u00a71 refuted in the pooled COAL_LIGNITE econ_high 2.856. Read coverage and top1_concentration before adopting.",
+    "price_edges": [
+      20.0,
+      25.0,
+      35.0,
+      60.0,
+      100.0,
+      150.0,
+      500.0,
+      5000.0
+    ],
+    "owner_split_resources": [
+      "FPPYD1_FPP_G1_J02",
+      "FPPYD1_FPP_G2_J02"
+    ],
+    "load_coverage": {
+      "2024_ercot74_tail_days": {
+        "rows_online": 82068,
+        "rows_kept": 82068,
+        "dropped_no_hasl": 0,
+        "dropped_days": []
+      },
+      "2024_ercot75_control_days": {
+        "rows_online": 70764,
+        "rows_kept": 70764,
+        "dropped_no_hasl": 0,
+        "dropped_days": []
+      },
+      "2025_ercot75_control_days": {
+        "rows_online": 85694,
+        "rows_kept": 70548,
+        "dropped_no_hasl": 15146,
+        "dropped_days": [
+          "2025-12-10",
+          "2025-12-20"
+        ]
+      },
+      "2025_ercot86_tail_days": {
+        "rows_online": 87792,
+        "rows_kept": 70405,
+        "dropped_no_hasl": 17387,
+        "dropped_days": [
+          "2025-12-15"
+        ]
+      }
+    }
+  },
+  "_hour_of_day_bound": {
+    "subset": "2025_ercot86_tail_days",
+    "note": "the only all-24-hour subset; if the tail were a daytime artifact the h11-22 share would exceed the h23-h10 share",
+    "h11_22": 0.0542,
+    "h23_h10": 0.05827
+  },
+  "_dam_cross_instrument": {
+    "note": "DAM instrument, denominated in HSL (no HASL in the DAM disclosure). The ONLY instrument covering 2023. Low-coverage (DAM reach 0.16-0.18) \u2014 do NOT read a level from it; read the year-trend against the RT tail.",
+    "years": {
+      "2023": {
+        "n_resource_hours": 81073,
+        "n_resources": 18,
+        "cumulative_supply_share_of_hsl": {
+          "<=20": 0.46936,
+          "<=25": 0.48872,
+          "<=35": 0.51634,
+          "<=60": 0.53852,
+          "<=100": 0.54327,
+          "<=150": 0.54969,
+          "<=500": 0.55499,
+          "<=5000": 0.555
+        },
+        "tail_share_above_35": 0.03866
+      },
+      "2024": {
+        "n_resource_hours": 87599,
+        "n_resources": 16,
+        "cumulative_supply_share_of_hsl": {
+          "<=20": 0.51547,
+          "<=25": 0.52793,
+          "<=35": 0.53654,
+          "<=60": 0.54692,
+          "<=100": 0.54699,
+          "<=150": 0.54797,
+          "<=500": 0.54798,
+          "<=5000": 0.54798
+        },
+        "tail_share_above_35": 0.01144
+      },
+      "2025": {
+        "n_resource_hours": 59146,
+        "n_resources": 12,
+        "cumulative_supply_share_of_hsl": {
+          "<=20": 0.56307,
+          "<=25": 0.56456,
+          "<=35": 0.56915,
+          "<=60": 0.56915,
+          "<=100": 0.56915,
+          "<=150": 0.5704,
+          "<=500": 0.5704,
+          "<=5000": 0.5704
+        },
+        "tail_share_above_35": 0.00125
+      }
+    }
+  },
+  "2024": {
+    "all": {
+      "n_intervals": 43828,
+      "n_resources": 26,
+      "hasl_mw_interval_mean": 476.6,
+      "cumulative_supply_share_of_hasl": {
+        "<=20": 0.68941,
+        "<=25": 0.91793,
+        "<=35": 0.94802,
+        "<=60": 0.95419,
+        "<=100": 0.96355,
+        "<=150": 0.98979,
+        "<=500": 0.99838,
+        "<=5000": 0.99838
+      },
+      "bands": {
+        "(0,20]": {
+          "share_of_hasl": 0.68941,
+          "coverage": 1.0,
+          "n_resources": 26,
+          "top1_concentration": 0.106
+        },
+        "(20,25]": {
+          "share_of_hasl": 0.22851,
+          "coverage": 0.7306,
+          "n_resources": 17,
+          "top1_concentration": 0.16
+        },
+        "(25,35]": {
+          "share_of_hasl": 0.03009,
+          "coverage": 0.2882,
+          "n_resources": 9,
+          "top1_concentration": 0.498
+        },
+        "(35,60]": {
+          "share_of_hasl": 0.00617,
+          "coverage": 0.1062,
+          "n_resources": 3,
+          "top1_concentration": 0.502
+        },
+        "(60,100]": {
+          "share_of_hasl": 0.00936,
+          "coverage": 0.6458,
+          "n_resources": 16,
+          "top1_concentration": 0.243
+        },
+        "(100,150]": {
+          "share_of_hasl": 0.02624,
+          "coverage": 0.0452,
+          "n_resources": 2,
+          "top1_concentration": 0.586
+        },
+        "(150,500]": {
+          "share_of_hasl": 0.00859,
+          "coverage": 0.0452,
+          "n_resources": 2,
+          "top1_concentration": 0.662
+        },
+        "(500,5000]": {
+          "share_of_hasl": 0.0,
+          "coverage": 0.0,
+          "n_resources": 0,
+          "top1_concentration": null
+        }
+      },
+      "tail_share_above_35": 0.05036
+    },
+    "ex_owner_split": {
+      "n_intervals": 40335,
+      "n_resources": 24,
+      "hasl_mw_interval_mean": 492.8,
+      "cumulative_supply_share_of_hasl": {
+        "<=20": 0.71029,
+        "<=25": 0.9504,
+        "<=35": 0.98202,
+        "<=60": 0.98851,
+        "<=100": 0.99834,
+        "<=150": 0.99834,
+        "<=500": 0.99834,
+        "<=5000": 0.99834
+      },
+      "bands": {
+        "(0,20]": {
+          "share_of_hasl": 0.71029,
+          "coverage": 1.0,
+          "n_resources": 24,
+          "top1_concentration": 0.108
+        },
+        "(20,25]": {
+          "share_of_hasl": 0.24011,
+          "coverage": 0.7651,
+          "n_resources": 17,
+          "top1_concentration": 0.16
+        },
+        "(25,35]": {
+          "share_of_hasl": 0.03162,
+          "coverage": 0.3018,
+          "n_resources": 9,
+          "top1_concentration": 0.498
+        },
+        "(35,60]": {
+          "share_of_hasl": 0.00649,
+          "coverage": 0.1112,
+          "n_resources": 3,
+          "top1_concentration": 0.502
+        },
+        "(60,100]": {
+          "share_of_hasl": 0.00984,
+          "coverage": 0.6763,
+          "n_resources": 16,
+          "top1_concentration": 0.243
+        },
+        "(100,150]": {
+          "share_of_hasl": 0.0,
+          "coverage": 0.0,
+          "n_resources": 0,
+          "top1_concentration": null
+        },
+        "(150,500]": {
+          "share_of_hasl": 0.0,
+          "coverage": 0.0,
+          "n_resources": 0,
+          "top1_concentration": null
+        },
+        "(500,5000]": {
+          "share_of_hasl": 0.0,
+          "coverage": 0.0,
+          "n_resources": 0,
+          "top1_concentration": null
+        }
+      },
+      "tail_share_above_35": 0.01633
+    },
+    "COAL_LIGNITE": {
+      "delivered_fuel_usd_mmbtu": 1.45,
+      "base_hr": 10.341,
+      "edge_multipliers": {
+        "20": 1.334,
+        "25": 1.667,
+        "35": 2.334,
+        "60": 4.001,
+        "100": 6.669,
+        "150": 10.004,
+        "500": 33.345,
+        "5000": 333.455
+      }
+    },
+    "COAL_PRB": {
+      "delivered_fuel_usd_mmbtu": 2.0,
+      "base_hr": 10.341,
+      "edge_multipliers": {
+        "20": 0.967,
+        "25": 1.209,
+        "35": 1.692,
+        "60": 2.901,
+        "100": 4.835,
+        "150": 7.253,
+        "500": 24.175,
+        "5000": 241.755
+      }
+    }
+  },
+  "2025": {
+    "all": {
+      "n_intervals": 37378,
+      "n_resources": 25,
+      "hasl_mw_interval_mean": 500.0,
+      "cumulative_supply_share_of_hasl": {
+        "<=20": 0.65056,
+        "<=25": 0.91378,
+        "<=35": 0.94541,
+        "<=60": 0.95498,
+        "<=100": 0.96097,
+        "<=150": 0.99724,
+        "<=500": 0.99847,
+        "<=5000": 0.99847
+      },
+      "bands": {
+        "(0,20]": {
+          "share_of_hasl": 0.65056,
+          "coverage": 1.0,
+          "n_resources": 25,
+          "top1_concentration": 0.109
+        },
+        "(20,25]": {
+          "share_of_hasl": 0.26322,
+          "coverage": 0.5443,
+          "n_resources": 11,
+          "top1_concentration": 0.148
+        },
+        "(25,35]": {
+          "share_of_hasl": 0.03164,
+          "coverage": 0.5319,
+          "n_resources": 12,
+          "top1_concentration": 0.351
+        },
+        "(35,60]": {
+          "share_of_hasl": 0.00956,
+          "coverage": 0.0549,
+          "n_resources": 3,
+          "top1_concentration": 0.827
+        },
+        "(60,100]": {
+          "share_of_hasl": 0.006,
+          "coverage": 0.6686,
+          "n_resources": 13,
+          "top1_concentration": 0.462
+        },
+        "(100,150]": {
+          "share_of_hasl": 0.03627,
+          "coverage": 0.1082,
+          "n_resources": 3,
+          "top1_concentration": 0.487
+        },
+        "(150,500]": {
+          "share_of_hasl": 0.00123,
+          "coverage": 0.0467,
+          "n_resources": 2,
+          "top1_concentration": 0.564
+        },
+        "(500,5000]": {
+          "share_of_hasl": 0.0,
+          "coverage": 0.0,
+          "n_resources": 0,
+          "top1_concentration": null
+        }
+      },
+      "tail_share_above_35": 0.05306
+    },
+    "ex_owner_split": {
+      "n_intervals": 33922,
+      "n_resources": 23,
+      "hasl_mw_interval_mean": 521.4,
+      "cumulative_supply_share_of_hasl": {
+        "<=20": 0.67094,
+        "<=25": 0.9491,
+        "<=35": 0.98254,
+        "<=60": 0.99264,
+        "<=100": 0.9972,
+        "<=150": 0.99842,
+        "<=500": 0.99842,
+        "<=5000": 0.99842
+      },
+      "bands": {
+        "(0,20]": {
+          "share_of_hasl": 0.67094,
+          "coverage": 1.0,
+          "n_resources": 23,
+          "top1_concentration": 0.112
+        },
+        "(20,25]": {
+          "share_of_hasl": 0.27816,
+          "coverage": 0.571,
+          "n_resources": 11,
+          "top1_concentration": 0.148
+        },
+        "(25,35]": {
+          "share_of_hasl": 0.03343,
+          "coverage": 0.558,
+          "n_resources": 12,
+          "top1_concentration": 0.351
+        },
+        "(35,60]": {
+          "share_of_hasl": 0.01011,
+          "coverage": 0.0576,
+          "n_resources": 3,
+          "top1_concentration": 0.827
+        },
+        "(60,100]": {
+          "share_of_hasl": 0.00456,
+          "coverage": 0.6769,
+          "n_resources": 12,
+          "top1_concentration": 0.642
+        },
+        "(100,150]": {
+          "share_of_hasl": 0.00121,
+          "coverage": 0.0645,
+          "n_resources": 1,
+          "top1_concentration": 1.0
+        },
+        "(150,500]": {
+          "share_of_hasl": 0.0,
+          "coverage": 0.0,
+          "n_resources": 0,
+          "top1_concentration": null
+        },
+        "(500,5000]": {
+          "share_of_hasl": 0.0,
+          "coverage": 0.0,
+          "n_resources": 0,
+          "top1_concentration": null
+        }
+      },
+      "tail_share_above_35": 0.01588
+    },
+    "COAL_LIGNITE": {
+      "delivered_fuel_usd_mmbtu": 1.45,
+      "base_hr": 10.341,
+      "edge_multipliers": {
+        "20": 1.334,
+        "25": 1.667,
+        "35": 2.334,
+        "60": 4.001,
+        "100": 6.669,
+        "150": 10.004,
+        "500": 33.345,
+        "5000": 333.455
+      }
+    },
+    "COAL_PRB": {
+      "delivered_fuel_usd_mmbtu": 2.0,
+      "base_hr": 10.341,
+      "edge_multipliers": {
+        "20": 0.967,
+        "25": 1.209,
+        "35": 1.692,
+        "60": 2.901,
+        "100": 4.835,
+        "150": 7.253,
+        "500": 24.175,
+        "5000": 241.755
+      }
+    }
+  }
+}
