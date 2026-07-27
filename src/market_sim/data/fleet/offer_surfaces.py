@@ -378,6 +378,24 @@ def build_offer_surface_conditional_markup(
 
         default = _paths.CALIBRATION_DIR / filename
         if not default.exists():
+            # An ARMED within-season gate whose vintage artifact is missing is
+            # a half-migrated family, not a no-op: silently falling back to
+            # "mechanism off" would let a future session think it had armed a
+            # season-conditioned top-of-curve surface when it had armed
+            # nothing. pjm-132 could not migrate this surface (its base-HR
+            # fleet basis, the pjm98_cc_mustrun bundle, is absent from disk
+            # AND from git, so re-deriving it would change the fleet basis as
+            # well as the ranking scope — memo §4 forbids that), so this path
+            # is reachable and must fail loudly.
+            if within_season:
+                raise FileNotFoundError(
+                    f"{spec.err_name}: pjm_offer_surface_within_season is armed "
+                    f"but {default.name} does not exist. The within-season "
+                    "vintage of THIS surface has not been derived — see "
+                    "docs/handoffs/pjm-132-midcurve-reconditioning-charter-"
+                    "2026-07.md §6. Derive it (on its ORIGINAL fleet basis) or "
+                    "leave the gate off."
+                )
             return None
         path = str(default)
     surface = _load_condbinned_surface(str(path))
