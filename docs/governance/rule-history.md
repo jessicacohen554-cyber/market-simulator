@@ -224,10 +224,29 @@ refuse-not-warn.
 
 ---
 
-## 7. Changes to this file
+## 7. Rule 28 `[R-MECH-MATRIX]` — the cross-ISO mechanism testing matrix
+
+Added 2026-07-27 (owner request: cross-ISO mechanism review). The trigger was a
+six-ISO audit showing the calibration lanes had no shared ledger of what had
+been tested where: mechanisms proven in one ISO (e.g. `pjm_da_virtual_bids`
+moving C3c, `hydro_budget_nameplate_aware` transferring CAISO→PJM) were
+invisible to sibling lanes, while adjudicated dead ends (the S1 shaped-floor
+family, the ERCOT coal enumeration, zonal topology splits) risked being
+re-tested from scratch. The rule's normative text — the matrix locations, the
+seven-state cell vocabulary, and duties (a)–(d) — is in `CLAUDE.md`; the
+working recipe, the ISO-similarity analysis, and the per-ISO lever queues are
+`docs/mechanism-testing-matrix.md`. The canonical data file is
+`docs/codebase-site/data/mechanism-matrix.js` (a `window.MECH_MATRIX` payload
+rendered by the Mechanism Matrix explorer page); it was seeded from a
+five-way audit of the `ScenarioConfig` inventory, the six keeper
+`run_config.json`s, the per-ISO calibration logs, and the forecast program
+board, against the 2026-07-27 keeper roster.
+
+## 8. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-07-27 | Added §7: rule 28 `[R-MECH-MATRIX]` (cross-ISO mechanism testing matrix) — origin and canonical file locations. "Changes to this file" renumbered §7 → §8 (no external references cited §7). |
 | 2026-07-26 | Added §6: the 2026-07-22 history rewrite orphaning pre-rewrite bundle `git.sha` provenance (owner decision B close-out) — no SHA mapping saved, replay/goldens unaffected (`git_sha` in both ignore sets), the `--reuse-solved` unresolvable-SHA refusal intentional and load-bearing. "Changes to this file" renumbered §6 → §7 (no external references cited §6). |
 | 2026-07-25 | §5: recorded the ≥300-line push deadlock (rule 27 + API-only leaving no compliant path) and the owner's per-commit `git push` waiver that landed wave 4C. Per-commit, not a standing exception. |
 | 2026-07-25 | Created (refactor-consolidation Wave 5B, owner decision D-6). Takes the rule-27 incident writeup and the audit N↔N+1 mapping paragraph out of `CLAUDE.md`, and indexes the rule-20 / rule-22 amendment narratives at their canonical homes. No norm was moved, reworded, or dropped. |
