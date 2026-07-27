@@ -351,3 +351,49 @@ miso-92/93 had already established it for MISO. Two lessons:
    bundle in this same container, *before* the second PJM attempt concluded ≥24 GB.
    The blocked-cell text in `RESULTS-neiso65-...` §3e and the PJM log should be
    read as superseded.
+
+---
+
+## 2026-07-27 (miso-95) — derived artifacts carry no vintage stamp, and all five `thermal_tranches_<ISO>.csv` are provenance-orphaned
+
+Cross-ISO, no-solve. Full evidence:
+`results/calibration/FINDING-miso95-thermal-tranches-provenance-2026-07.md`.
+
+**Finding.** None of the five committed `thermal_tranches_<ISO>.csv` artifacts
+reproduces from a HEAD re-derive on any constructible input vintage. Two of the
+staleness axes are cross-cutting and neither was caught by an existing gate:
+
+1. **The merchant-CC summer-capacity guard** (`fleet/eia860.py::_reconcile_cc_pmax_to_nameplate`).
+   Every artifact was derived with `apply_cc_summer_guard=False`; disabling it
+   reproduces `nameplate_mw` exactly on all 848 rows across MISO/PJM/CAISO/NYISO/NEISO.
+   Because the tranche percentages are ratios over that nameplate and the model
+   applies them to the **guarded** pmax, ~**1,090 MW** of CC min-stable floor is
+   understated one-sided across the five ISOs (MISO ~766 MW). This landed as a
+   **code** change, so rule 23 `[R-FROZEN-DERIVE]`'s source-data trigger never
+   fired and nothing downstream re-derived.
+2. **An upstream CAMPD-hourly / parasitic-factor vintage move**, visible as a
+   small two-signed ±10–400 h drift on ~84 of MISO's 198 `ok` rows. **Not
+   recoverable**: the repo is a shallow clone and `git log` on
+   `data/raw/campd-unit-level/` returns a single merge commit.
+
+**Two governance gaps, both owner calls.**
+
+* **(a) No derived artifact records the vintage of the raw data it was built
+  from.** A `campd_vintage` provenance header (fetch date + per-source file hash)
+  written by every `derive_*` / `curate_*` script would have answered this session
+  in one `head -1`, and would make "does this artifact reproduce?" a check rather
+  than a multi-arm investigation. Generalizes well past the tranche family.
+* **(b) Rule 23's trigger is data-only, so a code change to a deriver's *inputs*
+  silently orphans its outputs.** The CC guard is the worked example: correct
+  change, correctly landed, and five downstream artifacts quietly stopped
+  matching the fleet the LP runs on. Candidate: a CI check that re-derives the
+  cheap artifacts and fails on drift, or at minimum a registry of
+  `deriver → committed artifact` edges checked when a deriver's input path changes.
+
+**Also itemized (LANE 2 residue).** `6a8f285` stripped rows from all six ISOs'
+std unit-outage extracts (MISO −2,424, PJM −3,246, NYISO −3,037, NEISO −1,294,
+CAISO −810, ERCOT −3,484) and re-derived no downstream artifact.
+`campd-unit-outages-short-PJM.csv` is the one stale, un-actioned consumer with a
+live flag (`unit_outage_short_windows`) and a clean single-delta A/B available —
+its MISO twin's control passed in miso-94. Solve-side exposure is already covered
+by pjm-129 and miso-93/94 and should not be re-run.
