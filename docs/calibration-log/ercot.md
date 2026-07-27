@@ -2026,3 +2026,94 @@ test_ercot_offer_surface_cleared_share_rt.py` also pass. Pre-existing failures h
 session's diff is one probe script, three derived artifacts and two documents — no `src/` code,
 config surface or cache key — so no test outcome is attributable to it. Full forensics:
 `docs/DIAGNOSIS-ercot126-coal-availability-envelope-2026-07-27.md`.
+
+## 2026-07-27 — ERCOT-127: the coal dispatch band is a UNIT-COMMITMENT representation gap — the min-load parameter is MEASURED, full-span and forward-admissible but NOT expressible on the model's plant grain; no mechanism licensed (ercot127-coal-band)
+
+**Lane** ercot127-coal-band · keeper **unchanged** (`2026-07-26-ercot115-coal-marginal-hr`) ·
+**Phase 1 only, NO SOLVE — no LP built, no year solved, no arm registered, no keeper file
+touched.** Chartered by `DIAGNOSIS-ercot126` §5.3. Probe
+`scripts/probes/ercot127_coal_dispatch_band.py` (sections A–H, full span, no LP).
+
+**Scope fork resolved by the owner BEFORE any build work: (a) ERCOT-127 SUBSUMES ERCOT-117 §5.3** —
+the band is one phenomenon and one mechanism owns it (rule 19 `[R-ONE-MECH]`), so both halves were
+in scope. §5.3 is now closed into this finding and should not be re-opened as a standalone
+base-share lift.
+
+**Outcome: no mechanism licensed, Phase 2 not run — but for a sharper reason than the five
+preceding abstentions.** In ERCOT-122/123/124/125/126 the instrument was missing, empty, mis-shaped
+or already live. Here the instrument EXISTS and is fully admissible; what fails is GRAIN.
+
+**(1) The top half — the last registered candidate, refuted ex ante.** `ScenarioConfig.ramp_limits`
+(CAMPD measured per-plant hourly ramp envelopes; registered, cache-keyed, default-off, wired into
+both orchestrators, artifact for CAISO only — the ERCOT-126 §3.2 pattern) was derived for ERCOT with
+the frozen script: 115 rows, nine of ten coal plants with measured `basis == "plant"` rows,
+up-envelope 0.28–0.52 of pmax, so the rows would be built and not pruned. It still cannot touch the
+defect: the pin is **91.0–92.7 % SUSTAIN**, and pin energy entered by a move the envelope forbids is
+**0.02 / 0.09 / 0.13 %**. Total excess 9.0/23.0/37.1 GWh against a 23–30 TWh pin. Artifact committed
+at a probe path, NOT the loader path. **New defect found and routed:** the envelope is derived on
+CAMPD GROSS load and the loader applies its MW directly to NET columns — every ISO's ramp rows,
+including CAISO's live artifact, are ~10 % loose.
+
+**(2) The bottom half — the instrument is measured, full span and admissible.** The ERCOT-62 derive
+behind the accepted `ercot_gas_bridge_min_load_frac = 0.574` published CC/CT/ST_GAS but never a coal
+row. Reproduced verbatim for `Resource Type == CLLIG`: committed `LSL/HSL` capacity-weighted p50
+**0.3500 / 0.3729 / 0.3705, pooled 0.3636** over **627,641 resource-hours**; the fleet-aggregate
+column reproduces ERCOT-126 §3.1(b)'s 0.374/0.393/0.386 exactly. Registration parameter, not an
+outcome — forward-derivable, condition-responsive, all three years independently identified, so
+G6's 2023 LOYO leg is NOT the ERCOT-124/125 killer here. **Rule 19 clean**: D-2 shows coal forcing
+exactly zero and none of the four live floors (`chp_steam`, `reliability_floor`,
+`gas_commitment_bridge`, `st_netload_drag`) touches coal.
+
+**(3) Applying it at plant grain fails the charter's own gates, provably without a solve.** G1 on
+ERCOT-126 §1.5's fleet-aggregate basis (this lane reproduces that table exactly — 2024 `<$15` act
+0.542 / keeper 0.494, `≥$50` 0.720/0.767 — a cross-validation of the whole pipeline): the **keeper
+already passes 19 of 21 bands**, failing only `<$15` in 2023 (−0.064) and 2025 (−0.069). The floor
+at 0.364 repairs exactly those two and **breaks thirteen it already passes** (8/21). C1 level: the
+floor adds **+7.26 / +5.84 / +4.11 TWh**, taking coal from −1.07/−0.22/−1.88 (0.3–3 % of actual) to
+**+6.19 / +5.62 / +2.23 OVER**. C8 would pass (18.3/16.7/12.6 % vs the 30 % material-class budget)
+— declared ex ante as the charter required. **The ERCOT-123 §4 adverse-direction warning does not
+apply as written** (it assumed the model over-runs coal; ERCOT-126 §1.1 corrected that) and is
+superseded by this refutation.
+
+**(4) WHY — the finding that settles the lane.** The charter's representation hypothesis ("no shape
+between floor and ceiling") is REFUTED: the keeper's coal occupies 102/110/108 distinct loading
+levels at 1 % grain vs actual 135/134/128, interior share 0.776/0.785/0.747 vs 0.817/0.801/0.678
+(2025 the model is MORE interior), and cross-plant within-hour dispersion matches (0.238–0.250 vs
+0.232–0.275 at `≥$50`) — the model is not moving its plants together. What is wrong is the TAILS:
+p05 keeper 0.013–0.767 vs actual 0.106–0.585, and p95 above 1.0 on five of nine plants (the
+ERCOT-116 envelope defect). At UNIT grain, a real low-loading coal plant-hour (2–35 % of capability,
+19.2/20.3/10.8 % of online plant-hours) is **0.653/0.667/0.641 of its units ONLINE holding
+0.386/0.425/0.438** — §2's measured min-load, confirmed by conduct — **and the rest SHUT DOWN**. The
+model's pure LP has per-plant continuous tranches and no commitment integrality, so "three units at
+60 %" and "one unit at 20 % plus two off" are the same number; a plant-grain floor forces reality's
+offline units back on. That is the thirteen broken bands. **The band is CONDUCT; the model's failure
+to reproduce it is a unit-commitment REPRESENTATION gap — not an offer, availability, ramp or
+min-load-parameter gap.**
+
+**Recommendation (recommend-and-STOP).** No mechanism; keeper unchanged. The ERCOT-116 envelope's
+standing recommendation is UNCHANGED (measured-correct and premature), with one argument added: the
+keeper runs five of nine coal plants above their declared HSL at p95, which only the measured
+envelope fixes. **The pre-authorised joint arm is NOT recommended and was not built** — both legs
+push coal the same way (envelope +5.7/+8.9/+11.0, floor +7.3/+5.8/+4.1), so it fails C1/G1 harder
+than either alone. The successor is the **unit-grain commitment question** (tranches as units, each
+with its own commitment state and the §2 min-load floor) — a change to the fleet representation
+itself, colliding with the standing pure-LP/no-MIP rule, so it needs its own charter and owner
+sign-off; the existing P0-detected bridges cannot help, because the keeper's coal never reaches zero
+in P0 either and a detector would reproduce the same blanket floor. **The coal band lane as a whole
+should CLOSE**: with ERCOT-122/123/124/125/126 and this session, every instrument is closed or
+blocked on that one architectural question. Residual stays attributed, not tuned (rule 1).
+
+**Four inherited owner decisions surfaced, not decided:** (a) `BIN_FORCED_DERATE_BY_YEAR`
+(ERCOT-126 §4.1), untouched; (b) the ERCOT-122 offer-level controlled refutation, no new argument
+either way; (c) the committed-band data gap / Dec-2025 SCED re-fetch — stake further reduced, the
+coal min-load parameter now being measured full span on the DAM instrument; (d) **NEW** — the
+ramp-envelope gross/net basis error above, default-affecting for any ISO arming `ramp_limits`.
+ERCOT-120 remains a separate un-renumbered lane.
+
+**Test state (reported, not chased, pins untouched):** `tests/regression/test_persisted_identity.py`
+**11/11 pass** and `tests/unit/config/test_flag_registry.py` **12/12 pass**, matching
+ercot124/125/126. Pre-existing failures unchanged: **4** in `tests/unit/results/test_export.py`,
+**4** in `tests/scoring/test_ff_readiness_battery.py`. This session's diff is one probe script, two
+derived artifacts and two documents — no `src/` code, config surface or cache key — so no test
+outcome is attributable to it. Full forensics:
+`docs/DIAGNOSIS-ercot127-coal-dispatch-band-2026-07-27.md`.
