@@ -58,23 +58,33 @@ the overnight net position, not the evening level and not the annual
 throughput.** Any candidate that moves throughput instead is aimed at the
 wrong quantity (§4's refutations).
 
-## §3 — PREREQUISITE (blocking): which technology is doing it
+## §3 — the technology prerequisite: ANSWERED IN-SESSION, and it passes
 
-The committed slim bundle exposes only the ISO-aggregate storage net — battery
-and pumped storage inseparable (the gap FINDING-caiso125 §6.4 flagged). The
-CAISO LP carries **2 078 MW / 20 776 MWh of pumped storage** alongside the
-7.6–15.2 GW battery fleet, and the caiso-99 shape anchor **does not apply to
-pumped storage** (its power cap passes through unchanged) — so PS is the
-model's one entirely unrestrained arbitrageur, and the overnight net
-(+157/+188/+453 MW) is within its power range.
-
-This session added the per-tech sidecar the attribution needs
+The candidate family below is only admissible if the pin is a *battery*
+phenomenon: the caiso-99 shape anchor binds batteries only, so the LP's
+**2 078 MW / 20 776 MWh of pumped storage** is its one entirely unrestrained
+arbitrageur and the aggregate overnight net (+157/+188/+453 MW) sits inside PS's
+power range. The committed slim bundle could not separate them (the gap
+FINDING-caiso125 §6.4 flagged); this session added the per-tech sidecar
 (`hourly/storage_<year>.parquet`, `(year, pass, tech, hour, charge_mw,
-discharge_mw)`; write-only and solve-invariant) and a keeper replay to produce
-it. **The candidate ranking in §4 is conditional on that split**: if the
-overnight discharge is predominantly pumped storage, the admissible mechanism
-family is PS-specific (measured pond/licence cycling constraints) and none of
-§4's battery candidates applies.
+discharge_mw)`, write-only and solve-invariant) and replayed the keeper to
+produce it — the replay reproduces the committed bundle digit-for-digit, so the
+sidecars are the keeper's own and now ship in its `hourly/`.
+
+| | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| **pinned days — li_ion** | **0.384** | **0.479** | **0.668** |
+| pinned days — pumped storage | 0.074 | 0.132 | 0.077 |
+| overnight net — li_ion / PS | +98 / +58 MW | +104 / +85 | +365 / +89 |
+
+**The battery fleet carries the pin; pumped storage does not** — the battery
+share rises with the build-out on a gap tightening toward zero (+2.45 → +1.27
+$/MWh), PS's share has no trend and its gap does not converge (+5.71 / +0.48 /
+−5.18, small-n noise), and PS discharges overnight in only 5–8 % of hours
+against the battery's 28–41 %. **Gate D0 PASSES**: §4's battery-side candidate
+is aimed at the right resource. (Retained as a live caveat, not a blocker: PS
+still carries no shape restraint of any kind in the model and contributes
++58/+85/+89 MW of the overnight excess; that is a smaller, separate lane.)
 
 ## §4 — the candidate field, ranked, with what is already refuted
 
@@ -172,9 +182,8 @@ C5a / C1 composition lane, priced LAST per rule 1.
 Run in order; any failure stops the ask, no build (the caiso-106/107
 discipline — measure the conduct before proposing the LP form).
 
-- **D0 (blocking, §3).** The per-tech storage split on the keeper replay: what
-  share of the overnight net discharge and of the pinned days is battery vs
-  pumped storage. If PS-dominant, S1 does not apply and the ask is re-scoped.
+- **D0 — DONE, PASSES (§3).** The per-tech split is measured: the pin is the
+  battery fleet, PS is not the driver, S1 is aimed at the right resource.
 - **D1.** Derive `alloc_share_dis[hod]` and `da_frac_dis` from the LESR IFM/RTD
   `EN` rows (HYBD excluded — solar-contaminated, the caiso-98/99/100/102/104
   basis). Report the three-year shapes.
