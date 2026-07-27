@@ -60,12 +60,8 @@ def d4_offwindow(bundle: Path, mech: str) -> list[float]:
     if not path.exists():
         return []
     payload = json.loads(path.read_text())
-    rows = payload.get("D4", {}).get("rows", [])
-    return [
-        float(r.get("offwindow_share", r.get("off_window_share", 0.0)))
-        for r in rows
-        if r.get("mechanism") == mech
-    ]
+    rows = payload.get("diagnostics", {}).get("D4", {}).get("rows", [])
+    return [float(r.get("offwindow_share", 0.0)) for r in rows if r.get("floor") == mech]
 
 
 def d2_share(bundle: Path, mech: str) -> list[dict]:
@@ -74,11 +70,32 @@ def d2_share(bundle: Path, mech: str) -> list[dict]:
     if not path.exists():
         return []
     payload = json.loads(path.read_text())
-    return [
-        r
-        for r in payload.get("D2", {}).get("rows", [])
-        if r.get("mechanism") == mech
-    ]
+    rows = payload.get("diagnostics", {}).get("D2", {}).get("rows", [])
+    return [r for r in rows if r.get("mechanism") == mech]
+
+
+def d1_pair_nan_safe(model_mw: np.ndarray, meas_mw: np.ndarray) -> tuple[float, float]:
+    """Return (profile_r, cv_ratio) with d1_shape_metrics semantics, NaN-safe.
+
+    The measured EIA-930 series carries missing hours; ``d1_shape_metrics``
+    uses plain means, which propagate NaN through the profile. Same statistic,
+    NaN-masked: hour-of-day means via nanmean, profile r over the 24 points,
+    CVs over the off-peak points h0-14 (``D1_OFFPEAK_LAST_HOUR``).
+    """
+    from legitimacy_diagnostics import D1_OFFPEAK_LAST_HOUR
+
+    t = model_mw.size
+    prof_m = model_mw.reshape(-1, 24).mean(axis=0)
+    prof_a = np.nanmean(meas_mw[:t].reshape(-1, 24), axis=0)
+    r = float(np.corrcoef(prof_m, prof_a)[0, 1])
+    off = np.arange(24) <= D1_OFFPEAK_LAST_HOUR
+
+    def _cv(x: np.ndarray) -> float:
+        m = float(x.mean())
+        return float(x.std() / m) if m > 1e-9 else 0.0
+
+    cva = _cv(prof_a[off])
+    return r, (_cv(prof_m[off]) / cva if cva > 0 else float("nan"))
 
 
 def main() -> None:
@@ -116,11 +133,9 @@ def main() -> None:
         if abs(eb) > K1_EVENING_MW:
             kills.append(f"K1 {year}: evening gap B {eb:+.0f} (A {ea:+.0f})")
 
-        # P3 — the D-1 pair as C7 scores it
-        r_a, cvm_a, cva_a = d1_shape_metrics(ha, meas)
-        r_b, cvm_b, cva_b = d1_shape_metrics(hb, meas)
-        ratio_a = cvm_a / cva_a if cva_a > 0 else float("nan")
-        ratio_b = cvm_b / cva_b if cva_b > 0 else float("nan")
+        # P3 — the D-1 pair as C7 scores it (NaN-safe over the measured gaps)
+        r_a, ratio_a = d1_pair_nan_safe(ha, meas)
+        r_b, ratio_b = d1_pair_nan_safe(hb, meas)
         p3 = r_b >= P3_MIN_PROFILE_R and abs(ratio_b - 1.0) <= abs(ratio_a - 1.0)
         if not p3:
             fails.append(
