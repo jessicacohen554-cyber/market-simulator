@@ -350,7 +350,7 @@
   "btm_backfill_year": 2024,
   "shared_inputs": {
     "eia930": "../_shared/PJM/eia930-5d75f210361b.parquet",
-    "eia923": "../_shared/PJM/eia923-3edd3d042f05.parquet",
+    "eia923": "../_shared/PJM/eia923-0984676da1c3.parquet",
     "campd": "../_shared/PJM/campd-38837d7d575c.parquet",
     "unit_outages": "../_shared/PJM/unit_outages-efd694c287be.parquet",
     "unit_outages_short": "../_shared/PJM/unit_outages_short-3ba0897821ba.parquet",
