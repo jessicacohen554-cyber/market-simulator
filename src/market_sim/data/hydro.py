@@ -593,6 +593,7 @@ def build_hydro_fleet(
     forecast_budget: bool = False,
     hydro_year: str = "normal",
     min_flow_floor: bool = False,
+    ror_split: bool = False,
 ) -> tuple[list[Generator], np.ndarray | None]:
     """Return the ISO's conventional-hydro LP units and their monthly budgets.
 
@@ -643,6 +644,42 @@ def build_hydro_fleet(
     exclusive with ``eia930_monthly`` (a run is either a backcast realization
     or a forecast). No-op when no climatology exists for the ISO. ``False``
     (default) changes no existing run. This is the forecast-path entry point.
+
+    ``ror_split`` (``config.hydro_ror_split``, caiso-126) splits the fleet by
+    the external per-plant operational-mode classifier
+    (:func:`market_sim.data.hydro_modes.load_hydro_shapeable`, curated from
+    ORNL EHA FY2024 ``Mode`` + the documented HILARRI/Corps-dam completion):
+    plants classified NON-shapeable (run-of-river / canal-conduit / Corps-dam
+    release-takers / no inventoried reservoir) dispatch FLAT at their own
+    measured monthly water — ``budget[g, m] / hours[m]`` — while
+    reservoir-class plants keep the full envelope/budget shaping machinery.
+    Driver (rule 17a): a run-of-river or conduit plant's output follows
+    inflow/deliveries; it physically cannot chase price, but the budget LP
+    gives every plant full within-month shaping freedom, so the fleet moves
+    as one bang-bang block riding the envelope ceiling (caiso-125 §1/§4c).
+    Window (rule 17b): ALL 24 hours — inflow is around-the-clock; the flat
+    level is month-constant so no diurnal shape is pinned (rule 13). Forward
+    story (rule 17c): the classification is a static plant attribute
+    (re-curated when EHA/HILARRI update); the flat level re-derives from the
+    same per-plant monthly budget every path already loads, so it scales
+    with the water year automatically. Adds no free parameter: the
+    classifier is categorical-external and the level is the plant's own
+    budget. Implemented by stamping ``hydro_ror_flat_monthly_mw`` (consumed
+    by ``generators_to_fleet_arrays`` as BOTH the availability cap and the
+    ``min_gen`` floor, mechanism id ``MECH_HYDRO_ROR_FLAT``). Plants the
+    classifier does not cover stay shapeable (logged). ``False`` (default)
+    changes no existing run.
+
+    **Rule 19 reconciliation with ``min_flow_floor``** (the two mechanisms
+    share the run-of-river-inflow driver and are ONE family, never stacked):
+    with ``ror_split`` armed, the RoR class's flat base IS its floor
+    (subsumed — its dispatch is fixed at its own water), and the fleet Q95
+    floor level is reduced by the RoR flat base before being allocated over
+    the RESERVOIR class only, so the total forced sustained base equals the
+    frozen measured Q95 level exactly — the reservoir class carries the
+    licence-minimum-release share of the evidence the RoR base does not
+    already serve. With ``ror_split`` off the floor behaves exactly as
+    before (caiso-124).
 
     ``min_flow_floor`` adds the **lower** half of the measured hydro capability
     envelope (``config.hydro_min_flow_floor``): each plant carries a
@@ -760,12 +797,75 @@ def build_hydro_fleet(
     if not units:
         return [], None
     monthly_energy = np.vstack(monthly)
+    hpm = hours_per_month().astype(float)
+
+    # Run-of-river split (config.hydro_ror_split, caiso-126): stamp the flat
+    # dispatch level budget[g, m] / hours[m] on every unit the external
+    # classifier marks NON-shapeable. Clipped to nameplate (a monthly average
+    # above nameplate is a source-data inconsistency, logged loudly — the
+    # peak-monthly-average nameplate fallback can never trip it).
+    ror_rows = np.zeros(len(units), dtype=bool)
+    ror_flat_base = np.zeros(_MONTHS_PER_YEAR, dtype=float)  # stamped fleet base
+    if ror_split:
+        from market_sim.data.hydro_modes import load_hydro_shapeable
+
+        modes = load_hydro_shapeable(iso)
+        if modes is None:
+            logger.warning(
+                "%s %d: hydro_ror_split armed but no hydro-plant-modes "
+                "classifier partition — fleet left fully shapeable",
+                iso,
+                year,
+            )
+        else:
+            unclassified = 0
+            for i, unit in enumerate(units):
+                shapeable = modes.get(int(unit.plant_code))
+                if shapeable is None:
+                    unclassified += 1  # absent from the classifier: shapeable
+                elif not shapeable:
+                    ror_rows[i] = True
+            flat = monthly_energy[ror_rows] / hpm[np.newaxis, :]
+            caps = np.array([units[i].pmax_mw for i in np.where(ror_rows)[0]])
+            over = flat > caps[:, np.newaxis]
+            if np.any(over):
+                logger.warning(
+                    "%s %d: RoR flat level exceeds nameplate on %d "
+                    "plant-month(s) — clipped to nameplate (source-data "
+                    "inconsistency: monthly budget above nameplate-hours)",
+                    iso,
+                    year,
+                    int(over.sum()),
+                )
+                flat = np.minimum(flat, caps[:, np.newaxis])
+            for row, i in enumerate(np.where(ror_rows)[0]):
+                units[i].hydro_ror_flat_monthly_mw = tuple(float(v) for v in flat[row])
+            if ror_rows.any():
+                ror_flat_base = flat.sum(axis=0)
+            logger.info(
+                "%s %d: RoR split — %d/%d plants flat at their monthly water "
+                "(%.1f%% of the %.2f TWh budget; fleet flat base %.0f-%.0f MW "
+                "by month; %d plants unclassified -> shapeable)",
+                iso,
+                year,
+                int(ror_rows.sum()),
+                len(units),
+                100.0 * monthly_energy[ror_rows].sum() / max(monthly_energy.sum(), 1.0),
+                monthly_energy.sum() / 1e6,
+                flat.sum(axis=0).min() if ror_rows.any() else 0.0,
+                flat.sum(axis=0).max() if ror_rows.any() else 0.0,
+                unclassified,
+            )
 
     # Lower half of the measured hydro capability envelope: the month-constant
     # minimum-flow floor, allocated pro-rata by each plant's share of the
     # month's budget. Computed on the units that are actually IN the LP (the
     # zone/capacity filter above already ran), so the allocated floor sums to
-    # the fleet level over exactly the plants that can serve it.
+    # the fleet level over exactly the plants that can serve it. Rule-19
+    # reconciliation with the RoR split (see the docstring): the RoR class's
+    # flat base subsumes its share of the floor's driver, so the fleet level
+    # is reduced by that base and allocated over the RESERVOIR class only —
+    # the total forced sustained base stays exactly the frozen Q95 level.
     if min_flow_floor:
         from market_sim.data.eia_loader import measured_hydro_min_flow_level
 
@@ -778,17 +878,35 @@ def build_hydro_fleet(
                 year,
             )
         else:
-            hpm = hours_per_month().astype(float)
-            floors = allocate_min_flow_floor(level, monthly_energy, hpm)
-            for i, unit in enumerate(units):
-                unit.hydro_min_flow_monthly_mw = tuple(float(v) for v in floors[i])
+            if ror_rows.any():
+                # Subtract the STAMPED (nameplate-clipped) base — the level the
+                # RoR class actually delivers — so base + reservoir floor
+                # reproduces the frozen Q95 evidence exactly.
+                ror_base = ror_flat_base
+                level = np.clip(np.asarray(level, dtype=float) - ror_base, 0.0, None)
+                logger.info(
+                    "%s %d: min-flow floor reconciled with the RoR split — "
+                    "fleet Q95 level reduced by the RoR flat base "
+                    "(%.0f-%.0f MW by month) and allocated over the "
+                    "reservoir class only",
+                    iso,
+                    year,
+                    ror_base.min(),
+                    ror_base.max(),
+                )
+            floor_rows = ~ror_rows
+            floors = allocate_min_flow_floor(level, monthly_energy[floor_rows], hpm)
+            for row, i in enumerate(np.where(floor_rows)[0]):
+                units[i].hydro_min_flow_monthly_mw = tuple(
+                    float(v) for v in floors[row]
+                )
             logger.info(
                 "%s %d: hydro min-flow floor on %d units — fleet level "
                 "%.0f-%.0f MW by month (%.2f TWh, %.0f%% of the %.2f TWh "
                 "budget)",
                 iso,
                 year,
-                len(units),
+                int(floor_rows.sum()),
                 floors.sum(axis=0).min(),
                 floors.sum(axis=0).max(),
                 float((floors.sum(axis=0) * hpm).sum()) / 1e6,
