@@ -664,3 +664,64 @@ day** that a correct calibration-lane source change left a refactor-lane
 mirror stale (miso-91 → facade inventory, nyiso-83 → cache_key pin
 registration, caiso-126 → the two mirrors above) — that recurrence is the
 argument FOR the blocking flip once the pin portability is fixed.
+
+### 9.3 Flip CLOSED 2026-07-27 (PR #3004): cache key made path-invariant, tier now BLOCKING
+
+The §9.2 blocker is fixed at its root and the tier flipped to blocking in the
+same PR. No mark, no xfail, no loosened budget, no silenced pin.
+
+**Root cause, confirmed before any edit.** An exhaustive recursive sweep of
+`asdict(ScenarioConfig())` found exactly six repo-root-dependent strings — the
+six §9.2 named, no hidden seventh — and reproduced the split exactly:
+`/home/user/market-simulator` → `edbc1b103207170a`,
+`/home/runner/work/market-simulator/market-simulator` → `329093815fa58f5b`, the
+value CI had been failing on.
+
+**Fix (owner-authorized cache-epoch bump, sign-off logged in-session).**
+`cache_key()` folds repo-root- and `DATA_ROOT`-relative absolute paths to
+`<repo>` / `<data_root>` sentinels **in the hashed payload only**
+(`scenarios.py::_normalize_cache_key_paths`). No field value, name, default or
+the flat-dataclass shape changed, so every tunable still appears verbatim in
+`run_config.json` (rule 24 `[R-REGISTRY]`) and the solve path is untouched —
+`cache_key()` is only ever a cache-directory identifier (`results/cache.py`,
+`runner.py`, `matrix.py`), never LP input. Normalization walks the whole payload
+rather than a hand-listed tuple, so the seventh absolute-path field added later
+is folded automatically; that is deliberate, given this pin was moved twice
+before by exactly the "reaches `asdict()` but nobody registered it" miss
+(§9.1 nyiso-83, and the DAM-availability flags). The alternative of registering
+the six in `_CACHE_KEY_OPTIONAL_FIELDS` (key `11b580e48191ddc7`) was rejected: it
+fixes only the DEFAULT key — any run overriding one of those paths stays
+checkout-dependent — drops data-source identity from the key, and is not
+future-proof.
+
+**New default key `603c2498bf71d21d`** (was `edbc1b103207170a`). Both pin
+literals advanced in the same commit with the authorization cited on the pin.
+Two new regression tests pin the PROPERTY, not the literal:
+`test_default_cache_key_is_checkout_path_invariant` (simulates a relocated
+clone) and `test_cache_key_still_forks_on_a_genuinely_different_file`. The bump
+orphans every on-disk results cache — a re-key, not a behavior change.
+
+**Measured on PR #3004 (`fb8a34f`), GitHub-hosted ubuntu-latest:**
+
+| job | result |
+|---|---|
+| Structural refactor guards (incl. the BLOCKING `facade re-export + persisted-identity tests` step) | **success** — the step that had failed on every branch for this cause |
+| Rule-22 quarantine gates | success |
+| shrink-guard | success |
+| Fast test tier | **5284 passed, 16 skipped, 1 xfailed, 0 failed** in 490.79 s (8m10s) |
+| Ruff lint + format | failure — 22 errors, ALL pre-existing on main (F811 redefinitions in `src/market_sim/data/fleet/__init__.py`), none in the touched files; out of scope, reported not fixed |
+
+The fast-tier number is read from the JOB LOG, not the check conclusion: while
+`continue-on-error: true` was still set the check reported success regardless of
+test outcome, so the conclusion alone was never valid flip evidence.
+
+Perf: `TestFullYearPerformance::test_full_year` passed again here — 5 of 5
+observed hosted runs across §9.2 and this PR. The §6.1 budget's
+reference-hardware re-derivation remains a separate open task (rule 14 applied
+to tests — do not loosen it to fix a red).
+
+**The flip.** `continue-on-error: true` deleted, the step renamed back to
+`Fast pytest tier`, and the long advisory comment collapsed to a short dated
+note pointing here. `ci.yml` shrank 219 → 151 lines; the file-integrity guard
+only inspects core files that were ≥300 lines at base, so no `intentional-shrink`
+label was needed.
