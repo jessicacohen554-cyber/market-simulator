@@ -1,8 +1,10 @@
 {
-  "timestamp": "2026-07-24T04:29:05",
+  "timestamp": "2026-07-27T00:23:55",
   "iso": "ERCOT",
   "years": [
-    2023
+    2023,
+    2024,
+    2025
   ],
   "hours": 8760,
   "passes": [
@@ -11,7 +13,9 @@
   "commitment": false,
   "commitment_screen_coal": true,
   "gas_prices": {
-    "2023": 2.54
+    "2023": 2.54,
+    "2024": 2.19,
+    "2025": 3.52
   },
   "coal_lignite_mustrun": null,
   "coal_prb_mustrun": null,
@@ -65,14 +69,15 @@
     "ercot_thermal_dam_availability_hourly": true,
     "ercot_thermal_dam_availability_plant": true,
     "ercot_offer_surface_cleared_share_state": false,
-    "ercot_multiproduct_as_coopt": true,
-    "ercot_ordc_only_scarcity": true,
-    "ercot_ordc_total_reserve": false,
-    "ercot_online_capacity_envelope_extreme": true
+    "coal_econ_marginal_hr_bound": true,
+    "ercot_thermal_dam_availability_coal": true,
+    "ercot_offer_hrmult_ep_rebasis": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
   "coal_econ_srmc_bound": false,
+  "coal_econ_marginal_hr_bound": true,
+  "ercot_offer_hrmult_ep_rebasis": true,
   "coal_plant_monthly_pricing": true,
   "td_loss_factor": 0.0,
   "ercot_zonal_gas_basis": false,
@@ -95,7 +100,7 @@
   "ercot_multiproduct_as_coopt": true,
   "ercot_ecrs_conservative_deployment": true,
   "ercot_nonreleasable_as_withholding": true,
-  "ercot_ordc_total_reserve": false,
+  "ercot_ordc_total_reserve": true,
   "ercot_ordc_cap_dual_adder": true,
   "ercot_storage_as_product_credit": true,
   "gas_hh_monthly_shape": true,
@@ -216,10 +221,11 @@
   "ercot_thermal_dam_availability": true,
   "ercot_thermal_dam_availability_hourly": true,
   "ercot_thermal_dam_availability_plant": true,
+  "ercot_wind_zone_shape": false,
   "ercot_noncampd_plant_availability": true,
   "ercot_storage_capability_measured": true,
   "ercot_online_capacity_envelope_measured": false,
-  "ercot_ordc_only_scarcity": true,
+  "ercot_ordc_only_scarcity": false,
   "priced_interchange": false,
   "hydro_backfill_year": null,
   "hydro_eia930_monthly": false,
@@ -310,11 +316,12 @@
   "mass_cap_program": null,
   "btm_backfill_year": null,
   "shared_inputs": {
-    "eia930": "../_shared/ERCOT/eia930-aba4caff3283.parquet",
-    "eia923": "../_shared/ERCOT/eia923-4e3039759c22.parquet",
-    "campd": "../_shared/ERCOT/campd-9ac4ee9da248.parquet"
+    "eia930": "../_shared/ERCOT/eia930-746071bbb6ba.parquet",
+    "eia923": "../_shared/ERCOT/eia923-c9af23c26b01.parquet",
+    "campd": "../_shared/ERCOT/campd-e42e97159860.parquet"
   },
-  "git_sha": "0a0564a",
+  "git_sha": "a586dea",
+  "basis_sha": "396dc4ac35940f2028ee5fdc36e36fefb7c96c31",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
