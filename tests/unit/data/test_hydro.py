@@ -1523,5 +1523,65 @@ class TestHydroRoRSplit(CleanDirTestCase):
         )
 
 
+class NameplateAwareScaleTest(unittest.TestCase):
+    """The rule-14 water-filling monthly-target rescale (caiso-127 SECONDARY)."""
+
+    def setUp(self):
+        from market_sim.data.hydro import _nameplate_aware_scale
+
+        self.scale = _nameplate_aware_scale
+        self.hpm = hours_per_month().astype(float)
+
+    def test_byte_identical_to_the_uniform_scale_below_the_bound(self):
+        """No plant-month over its ceiling => exactly the uniform expression."""
+        energy = np.array([[100.0] * 12, [300.0] * 12])
+        bound = np.array([[1e9] * 12, [1e9] * 12])
+        target = np.full(12, 800.0)
+        out, stats = self.scale(energy, bound, target)
+        col_sums = energy.sum(axis=0)
+        uniform = energy * (target / col_sums)[np.newaxis, :]
+        np.testing.assert_array_equal(out, uniform)
+        self.assertEqual(stats["clipped"], 0.0)
+        self.assertEqual(stats["moved_mwh"], 0.0)
+
+    def test_clipped_plant_month_reallocates_and_hits_the_target(self):
+        """A capped small plant hands its excess to the plants with headroom."""
+        energy = np.array([[100.0] * 12, [100.0] * 12])
+        bound = np.array([[120.0] * 12, [1e9] * 12])
+        target = np.full(12, 400.0)  # uniform would put 200 on each
+        out, stats = self.scale(energy, bound, target)
+        np.testing.assert_allclose(out[0], 120.0)
+        np.testing.assert_allclose(out[1], 280.0)
+        np.testing.assert_allclose(out.sum(axis=0), target)
+        self.assertEqual(stats["clipped"], 12.0)
+        self.assertAlmostEqual(stats["moved_mwh"], 12 * 80.0)
+        self.assertEqual(stats["short_mwh"], 0.0)
+
+    def test_physically_unattainable_month_reports_the_shortfall(self):
+        """Target above the fleet ceiling: every plant at bound, shortfall logged."""
+        energy = np.array([[100.0] * 12, [100.0] * 12])
+        bound = np.array([[50.0] * 12, [50.0] * 12])
+        target = np.full(12, 400.0)
+        out, stats = self.scale(energy, bound, target)
+        np.testing.assert_allclose(out, 50.0)
+        self.assertAlmostEqual(stats["short_mwh"], 12 * 300.0)
+
+    def test_cascading_overflow_converges(self):
+        """Re-allocation that overflows a second plant keeps water-filling."""
+        energy = np.array([[10.0], [10.0], [10.0]])
+        bound = np.array([[12.0], [15.0], [1e9]])
+        target = np.array([90.0])
+        out, stats = self.scale(energy, bound, target)
+        np.testing.assert_allclose(out[:, 0], [12.0, 15.0, 63.0])
+        self.assertAlmostEqual(float(out.sum()), 90.0)
+        self.assertEqual(stats["clipped"], 2.0)
+
+    def test_loader_gate_is_off_by_default_and_registered(self):
+        """The gate exists on ScenarioConfig and defaults off (rule 24)."""
+        from market_sim.config.scenarios import ScenarioConfig
+
+        self.assertFalse(ScenarioConfig(iso="CAISO").hydro_budget_nameplate_aware)
+
+
 if __name__ == "__main__":
     unittest.main()
