@@ -54,6 +54,12 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
+
+from market_sim.config.paths import (  # noqa: E402
+    CALIBRATION_DIR,
+    EIA_HOURLY_DIR,
+    ERCOT_MIS_DIR,
+)
 import sys  # noqa: E402
 
 sys.path.insert(0, str(REPO / "src"))
@@ -66,15 +72,9 @@ from derive_ercot_thermal_dam_availability import _site  # noqa: E402
 from market_sim.config.constants import GAS_BASIS_DIFFERENTIAL  # noqa: E402
 from market_sim.data.fuel import HENRY_HUB_DAILY_PATH  # noqa: E402
 
-DAM_DIR = REPO / "data" / "raw" / "ercot"
-EIA930_HOURLY = REPO / "data" / "raw" / "eia-930-hourly" / "ERCO hourly.parquet"
-DEFAULT_OUT = (
-    REPO
-    / "data"
-    / "raw"
-    / "_validation-source"
-    / "ercot_dam_cleared_share_condbinned.json"
-)
+DAM_DIR = ERCOT_MIS_DIR
+EIA930_HOURLY = EIA_HOURLY_DIR / "ERCO hourly.parquet"
+DEFAULT_OUT = CALIBRATION_DIR / "ercot_dam_cleared_share_condbinned.json"
 
 HOURS = 8760
 _STD_TZ = "Etc/GMT+6"  # ERCOT fixed standard-time clock (derive_actual_lmp)

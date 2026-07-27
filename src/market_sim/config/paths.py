@@ -194,6 +194,47 @@ def wind_shape_dir(iso: str) -> Path | None:
     return WIND_SHAPE_DIRS.get(iso.upper())
 
 
+# ---------------------------------------------------------------------------
+# Remaining raw-download subdirectories (registered 2026-07-26, the scripts/
+# path-registry routing pass). One constant per ``data/raw`` subdirectory that
+# code resolves at runtime, so call sites compose on the registry instead of
+# re-deriving repo-root math (CLAUDE.md directory map: every path resolves
+# through config/paths.py). Loose single-consumer FILES under the data/raw
+# root compose as ``RAW_DATA_DIR / "<name>"`` at their call site — the same
+# idiom the data modules already use — rather than growing a one-line file
+# constant each.
+# ---------------------------------------------------------------------------
+# ERCOT MIS market-report disclosure exports (60/2-Day AS disclosure
+# aggregates, NP4-series report parquets) — the bulk ``data/raw/ercot`` tree.
+ERCOT_MIS_DIR: Path = RAW_DATA_DIR / "ercot"
+# Per-ISO ancillary-service market exports (awards/requirements/prices).
+ERCOT_AS_DIR: Path = RAW_DATA_DIR / "ercot-AS"
+NYISO_AS_DIR: Path = RAW_DATA_DIR / "NYISO-AS"
+NEISO_AS_DIR: Path = RAW_DATA_DIR / "NEISO-AS"
+# NYISO planning publications (Gold Books + NYCA generator workbooks, ATC/TTC).
+NYISO_DIR: Path = RAW_DATA_DIR / "NYISO"
+# Settlement-point LMP archives (per-ISO subdirs + ERCOT SPP zips at the root).
+LMP_DATA_DIR: Path = RAW_DATA_DIR / "lmp-data"
+CAISO_DAM_OUTAGES_DIR: Path = RAW_DATA_DIR / "caiso-dam-outages"
+# Parent of the by-year tree data.pjm_outages reads (PJM_OUTAGE_BYYEAR_DIR).
+PJM_OUTAGES_DIR: Path = RAW_DATA_DIR / "pjm-outages"
+MISO_GENERATION_OUTAGES_DIR: Path = RAW_DATA_DIR / "miso-generation-outages"
+NRC_REACTOR_STATUS_DIR: Path = RAW_DATA_DIR / "nrc-reactor-status"
+NUCLEAR_LICENSE_STATUS_DIR: Path = RAW_DATA_DIR / "nuclear-license-status"
+NEISO_OPERABLE_CAPACITY_DIR: Path = RAW_DATA_DIR / "neiso-operable-capacity"
+# CAMPD hourly emissions/operations extracts (unit- and facility-level).
+CAMPD_UNIT_LEVEL_DIR: Path = RAW_DATA_DIR / "campd-unit-level"
+CAMPD_FACILITY_LEVEL_DIR: Path = RAW_DATA_DIR / "campd-facility-level"
+STORAGE_AS_AWARDS_DIR: Path = RAW_DATA_DIR / "storage-as-awards"
+NEW_BUILD_COST_BENCHMARKS_DIR: Path = RAW_DATA_DIR / "new-build-cost-benchmarks"
+FUEL_FORWARD_BENCHMARKS_DIR: Path = RAW_DATA_DIR / "fuel-forward-benchmarks"
+EIA_AEO_DIR: Path = RAW_DATA_DIR / "eia-aeo"
+EIA_930_INTERCHANGE_DIR: Path = RAW_DATA_DIR / "eia-930-interchange"
+TRANSFER_CONSTRAINT_BINDING_DIR: Path = RAW_DATA_DIR / "transfer-constraint-binding"
+TRANSMISSION_EXPANSION_DIR: Path = RAW_DATA_DIR / "transmission-expansion"
+NREL_ATB_DIR: Path = RAW_DATA_DIR / "nrel-atb"
+ERCOT_WEATHER_DIR: Path = RAW_DATA_DIR / "ercot-weather"
+
 # Legacy data/ tree, folded into data/raw/ (W1). The directory names were
 # disambiguated on the way in so they don't collide with existing data/raw
 # subdirs: data/fleet -> data/raw/fleet-egrid (eGRID workbook),

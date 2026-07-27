@@ -53,7 +53,11 @@ import zipfile
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-RAW_DIR = REPO_ROOT / "data" / "raw" / "caiso-public-bids" / "zips"
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from market_sim.config.paths import CAISO_PUBLIC_BIDS_DIR  # noqa: E402
+
+RAW_DIR = CAISO_PUBLIC_BIDS_DIR / "zips"
 
 GROUPZIP_ENDPOINT = "https://oasis.caiso.com/oasisapi/GroupZip"
 

@@ -53,8 +53,12 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).parent))
 
 REPO = Path(__file__).resolve().parent.parent.parent
-BALANCE_DIR = REPO / "data" / "raw" / "eia-930"
-OUT_DIR = REPO / "data" / "raw" / "eia-930-hourly"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import EIA_930_DIR, EIA_HOURLY_DIR  # noqa: E402
+
+BALANCE_DIR = EIA_930_DIR
+OUT_DIR = EIA_HOURLY_DIR
 
 # Default years/halves -- the original 2019-2021 backfill pass. Override with
 # --year / --half to fold in a different span (e.g. 2018, or 2026 H1-only).

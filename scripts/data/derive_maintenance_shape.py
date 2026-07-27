@@ -49,12 +49,16 @@ from __future__ import annotations
 
 import argparse
 import glob
+import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import RAW_DATA_DIR  # noqa: E402
 
 # Hours per calendar month in a 365-day (non-leap) reference year; the weighting
 # basis for both the capacity-days denominator and the mean-1 normalization.
@@ -103,7 +107,7 @@ def _month_overlap_days(start: pd.Timestamp, end: pd.Timestamp) -> np.ndarray:
 
 def load_unit_outages() -> pd.DataFrame:
     """Concatenate every committed ``campd-unit-outages*.csv`` (all ISOs)."""
-    paths = sorted(glob.glob(str(REPO / "data" / "raw" / "campd-unit-outages*.csv")))
+    paths = sorted(glob.glob(str(RAW_DATA_DIR / "campd-unit-outages*.csv")))
     frames = []
     for p in paths:
         df = pd.read_csv(p)

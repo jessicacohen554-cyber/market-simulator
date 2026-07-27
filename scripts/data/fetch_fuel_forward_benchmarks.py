@@ -43,7 +43,11 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 REPO = Path(__file__).resolve().parent.parent.parent
-OUT_DIR = REPO / "data" / "raw" / "fuel-forward-benchmarks"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import FUEL_FORWARD_BENCHMARKS_DIR  # noqa: E402
+
+OUT_DIR = FUEL_FORWARD_BENCHMARKS_DIR
 BASE = "https://api.eia.gov/v2"
 _DEMO_KEY = "DEMO_KEY"
 

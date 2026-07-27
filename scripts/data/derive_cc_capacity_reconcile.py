@@ -58,6 +58,12 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 
+from market_sim.config.paths import (  # noqa: E402
+    CAMPD_BINS_CSV,
+    EIA_860_DIR,
+    PROCESSED_DIR,
+)
+
 # Minimum fractional change to bother writing a row (avoid float noise).
 _MIN_DELTA = 0.01
 # Cap mode: only cap when model capacity exceeds the demonstrated peak by this
@@ -226,14 +232,12 @@ def main() -> None:
     ap.add_argument("--out", type=Path, default=None)
     args = ap.parse_args()
     iso = args.iso.upper()
-    out_path = args.out or (
-        REPO / "data/raw/_processed-legacy" / f"cc_capacity_reconcile_{iso}.csv"
-    )
+    out_path = args.out or (PROCESSED_DIR / f"cc_capacity_reconcile_{iso}.csv")
 
     if args.mode == "raise":
         # Original ERCOT path, unchanged: curated bin nameplates vs a solved
         # bundle's campd.parquet.
-        csv = pd.read_csv(REPO / "data/raw/reference/custom-bin-assignments.csv")
+        csv = pd.read_csv(CAMPD_BINS_CSV)
         cc = csv[csv["Plant_Group"] == "CC_REGULAR"]
         plants = {
             int(r["Plant_Code"]): (str(r["Plant_Name"]), float(r["Nameplate_MW"]))
@@ -264,7 +268,7 @@ def main() -> None:
         e923_pooled = gen.groupby("plant_id")["netgen_annual_mwh"].sum()
         ct_only = _ct_only_codes(campd_annual, e923_pooled)
 
-    e860 = pd.read_parquet(REPO / "data/raw/eia-860/eia860_generator_operable.parquet")
+    e860 = pd.read_parquet(EIA_860_DIR / "eia860_generator_operable.parquet")
     e860["Winter Capacity (MW)"] = pd.to_numeric(
         e860["Winter Capacity (MW)"], errors="coerce"
     )

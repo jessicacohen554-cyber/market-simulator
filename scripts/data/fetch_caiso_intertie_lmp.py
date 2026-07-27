@@ -67,15 +67,11 @@ from scripts.data.fetch_caiso_oasis import _extract_csv, _fetch, _url
 
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
 from market_sim.utils.hour_calendar import hour_index  # noqa: E402
 
-OUT_PARQUET = (
-    REPO
-    / "data"
-    / "raw"
-    / "_validation-source"
-    / "wecc_intertie_lmp_hourly_CAISO.parquet"
-)
+OUT_PARQUET = CALIBRATION_DIR / "wecc_intertie_lmp_hourly_CAISO.parquet"
 
 PRC_LMP_DAM = {"queryname": "PRC_LMP", "market_run_id": "DAM", "version": "12"}
 

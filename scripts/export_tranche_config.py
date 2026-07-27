@@ -18,7 +18,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import sys
 from pathlib import Path
 
@@ -27,11 +26,12 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
-_spec = importlib.util.spec_from_file_location(
-    "rc", str(REPO / "scripts" / "run_calibration.py")
-)
-rc = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(rc)
+# Package import, not a ``spec_from_file_location`` file-load (refactor plan
+# §6-E): the old form executed run_calibration a second time under the
+# synthetic name "rc", so this exporter held a private copy whose module-level
+# state could drift from the canonical ``scripts.run_calibration`` every other
+# importer shares.
+from scripts import run_calibration as rc  # noqa: E402
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.paths import REFERENCE_DIR  # noqa: E402

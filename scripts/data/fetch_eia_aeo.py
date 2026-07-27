@@ -71,7 +71,11 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 REPO = Path(__file__).resolve().parent.parent.parent
-OUT_DIR = REPO / "data" / "raw" / "eia-aeo"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import EIA_AEO_DIR  # noqa: E402
+
+OUT_DIR = EIA_AEO_DIR
 
 sys.path.insert(0, str(REPO))
 from scripts.lib.env_keys import get_api_key  # noqa: E402

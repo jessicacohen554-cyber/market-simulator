@@ -42,7 +42,11 @@ import pandas as pd
 import pyarrow.parquet as pq
 
 REPO = Path(__file__).resolve().parent.parent.parent
-OUT_DIR = REPO / "data" / "raw" / "campd-unit-level"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import CAMPD_UNIT_LEVEL_DIR  # noqa: E402
+
+OUT_DIR = CAMPD_UNIT_LEVEL_DIR
 BULK_BASE = "https://api.epa.gov/easey/bulk-files"
 
 # Holdout years (CLAUDE.md rule 22, amended 2026-07-06 per

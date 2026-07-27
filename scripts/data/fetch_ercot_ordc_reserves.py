@@ -69,7 +69,11 @@ import pyarrow.parquet as pq
 import requests
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-OUT_DIR = REPO_ROOT / "data" / "raw" / "ercot"
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from market_sim.config.paths import ERCOT_MIS_DIR  # noqa: E402
+
+OUT_DIR = ERCOT_MIS_DIR
 
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 

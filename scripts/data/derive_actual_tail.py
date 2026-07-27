@@ -31,13 +31,18 @@ Usage:
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
-SRC_DIR = REPO / "data" / "raw" / "_validation-source"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
+
+SRC_DIR = CALIBRATION_DIR
 OUT = REPO / "frontend" / "data" / "backcast" / "tail" / "actual_tail.json"
 
 # Per-ISO scarcity-tail threshold ($/MWh) — MUST mirror rubric §5 /

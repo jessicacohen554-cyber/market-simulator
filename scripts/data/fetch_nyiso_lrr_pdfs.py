@@ -30,15 +30,12 @@ import urllib.request
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-LRR_DIR = (
-    REPO_ROOT
-    / "data"
-    / "raw"
-    / "NYISO-AS"
-    / "requirements"
-    / "locational-reserve-requirements"
-)
-NYISO_DIR = REPO_ROOT / "data" / "raw" / "NYISO"
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from market_sim.config.paths import NYISO_AS_DIR, NYISO_DIR  # noqa: E402
+
+LRR_DIR = NYISO_AS_DIR / "requirements" / "locational-reserve-requirements"
+NYISO_DIR = NYISO_DIR
 
 _WAYBACK = "https://web.archive.org/web"
 _NYISO_DOC = "https://www.nyiso.com/documents"

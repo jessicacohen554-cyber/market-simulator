@@ -1320,3 +1320,86 @@ verdict adopted it, MISO's committed extract and layup companion are
 untouched, and no rule-22 obligation arises because no mechanism change is
 proposed. The 3/3 solve budget is untouched (no solve was run). Next number unchanged:
 **miso-94**.
+
+## 2026-07-26 — miso-94: LANE A has no structural door for C3a-2024; the guard-corrected extract stales its own downstream outage family
+
+**Lane:** A of the miso-93 handoff (the MISO re-tune), executed through its own
+first question. Charter, pre-registered before any solve (magnitude included):
+`docs/handoffs/miso-94-outage-family-consistency-charter-2026-07.md`. Full
+evidence: `results/calibration/FINDING-miso94-outage-family-consistency-2026-07.md`.
+
+**Registered arm:** `2026-07-26-miso-94-outage-family` (MISO 2023/2024/2025, one
+bundle, rule 16; rule 15 — registered whatever the verdict).
+
+### Verdict
+
+**`NOT-YET`.** C3a-2024 **−10.06 % → −10.05 %**, still past the ±10 % veto. C1
+(free 12/12), C2, C4, C5a, C6, C7, C8 all PASS; C3b/C3c stay ledgered (C3b-2025
+NRMSE 0.214). Ledger budget untouched at 3/3. **The keeper designation was NOT
+changed** — miso-88 remains designated; promoting or demoting on a NOT-YET arm is
+an owner call.
+
+### The LANE A question, answered — the door does not open onto the offer curve
+
+Rule 23 permits a frozen-derive re-derivation on a source-data change, and the
+guard-corrected extract is one. Reading each derivation *before* solving:
+**`gas_offer_margin_anchor`** (delivered-gas series only), the **miso-88 `phys_*`
+eGRID-HR bands** (CEMS unit-hours with `grossLoad > 0`; outage hours self-exclude),
+**`SUMMER_WEFOR_SHARE` / `SUMMER_CLASS_DERATE`** (no derivation exists at all),
+**`reliability_floor_coeffs_MISO.csv`**, the CT run-length artifacts, the seam
+ladders and the measured reserve requirements — **none consume the std extract**.
+The only residual surface, `offer_curve_by_group`, is not a derive.
+
+What *does* consume it: **`campd-unit-outages-short-MISO.csv`**,
+**`campd-unit-outages-maxgen-MISO.csv`** and **`thermal_tranches_MISO.csv`** —
+all three live in this keeper, and `6a8f285` re-derived none of them.
+
+### What was corrected
+
+* **short** — control PASSES (committed file byte-identical to a HEAD re-derive on
+  the pre-guard blob). Guard delta −1 row (F B Culley 1012/2, 2023, 2.2 d, 103.7 MW).
+* **maxgen** — guard delta **+18 rows / +1,338 MW / 23.1 GWh** (ST_GAS 1,002,
+  CC_CHP 251, CC_REGULAR 85 — the classes the guard returned to merit). The
+  re-derive also repairs a **pre-existing rule-19 `[R-ONE-MECH]` violation**: Weston
+  4078/3 (369 MW), Sherburne County 6090/1 (729 MW) and F B Culley 1012/3 (287 MW)
+  each carried a maxgen derate while a short-extract full stop already covered the
+  same unit-hours — ~1,385 MW double-derated inside declared emergencies. The
+  committed extract predates the short leg of guard 4 and does not reproduce at HEAD.
+
+### Result and pre-registration honesty
+
+Near-inert on level: **2023 +$0.0001, 2024 +$0.0025, 2025 −$0.0007** vs the miso-93
+arm. The charter got the verdict right (it stated outright the arm does **not**
+close C3a-2024) and bounded 2024 at |ΔP| ≤ $0.03, but got the **sign wrong** — it
+predicted a decrease from the block's net −362 MW; the move is a small increase.
+Cause, measured afterwards: the overlays compose **multiplicatively** per
+`(plant_code, plant_group)`, so undoing a double-derate on a plant the short
+overlay already holds near zero buys back little, while the +735 MW of new
+ST_GAS/CC_CHP rows bite in full. The double-count was largely inert in *effect*
+while remaining a real correctness violation — corrected on that ground, not on
+the residual.
+
+### LANE A's verdict
+
+**No structural door of the required sign and size exists for C3a-2024, and none
+was manufactured.** The gap is ~$0.02/MWh (0.06 pp) on a $32 mean; the only surface
+that could move it is 72 residual-identified offer-curve scalars, which is not a
+derive and has no data change to cite. **Per rule 24 `[R-DOF]`, C3a-2024 is an open
+root-cause issue — reported, not tuned.**
+
+### Notes for the next session
+
+* **`thermal_tranches_MISO.csv` is the highest-value next lane** — the only stale
+  artifact touching offer-curve *shape* (must-run / committed tranche sizes) rather
+  than availability, hence the only remaining candidate with plausible C3a
+  magnitude. **Provenance-blocked first:** it does not reproduce at HEAD on its own
+  pre-guard input (`committed_pct` differs on 71 plants, max 53.3 pp;
+  `nameplate_mw` on 6, max 1,028.6 MW). Establish the reproducing input vintage
+  before any A/B — adopting it blind is a confounded arm (the caiso-123 defect).
+* **Cross-ISO exposure, flagged not audited:** `6a8f285` adopted the guard for all
+  six ISOs and re-derived no downstream artifact for any of them.
+* Solve hygiene: all four clean partitions regenerated first; all three logs audited
+  clean and every year logged "seasonal CIL/CEL interface caps on 5 zone group(s) …
+  static summer fallbacks replaced" (miso-93 correction 1 respected).
+* Rule 22 honoured: 2023–2025 only. No marker, freeze active.
+* Next number: **miso-95.**

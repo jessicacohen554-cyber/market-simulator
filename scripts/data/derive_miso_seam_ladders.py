@@ -106,7 +106,9 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
-RAW = REPO / "data" / "raw"
+from market_sim.config.paths import RAW_DATA_DIR  # noqa: E402
+
+RAW = RAW_DATA_DIR
 INTERCHANGE_PARQUET = RAW / "eia-930-interchange" / "MISO interchange hourly.parquet"
 ACTUAL_LMP_PARQUET = RAW / "_validation-source" / "actual_lmp_hourly_MISO.parquet"
 PJM_BORDER_PARQUET = RAW / "_validation-source" / "pjm_border_lmp_hourly_MISO.parquet"

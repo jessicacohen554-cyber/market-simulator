@@ -49,7 +49,11 @@ from urllib.request import urlretrieve
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
-OUT_DIR = REPO / "data" / "raw" / "nrel-atb"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import NREL_ATB_DIR  # noqa: E402
+
+OUT_DIR = NREL_ATB_DIR
 OUT_CSV = OUT_DIR / "atb_2024_electricity_filtered.csv"
 
 OEDI_BASE = "https://oedi-data-lake.s3.amazonaws.com/ATB/electricity/csv"

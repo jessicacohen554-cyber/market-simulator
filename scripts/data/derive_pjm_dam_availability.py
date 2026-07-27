@@ -58,14 +58,19 @@ Usage::
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-DEFAULT_RAW = REPO / "data" / "raw" / "pjm-outages" / "gen_outages_by_type.csv"
-DEFAULT_OUT = REPO / "data" / "raw" / "pjm-dam-availability.parquet"
-DEFAULT_BYYEAR_DIR = REPO / "data" / "raw" / "pjm-outages" / "by-year"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import PJM_OUTAGES_DIR, RAW_DATA_DIR  # noqa: E402
+
+DEFAULT_RAW = PJM_OUTAGES_DIR / "gen_outages_by_type.csv"
+DEFAULT_OUT = RAW_DATA_DIR / "pjm-dam-availability.parquet"
+DEFAULT_BYYEAR_DIR = PJM_OUTAGES_DIR / "by-year"
 
 _MW_COLS = [
     "total_outages_mw",

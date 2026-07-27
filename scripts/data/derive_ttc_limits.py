@@ -25,17 +25,27 @@ Run from the repo root: ``python scripts/data/derive_ttc_limits.py``
 from __future__ import annotations
 
 import io
+import sys
 import zipfile
 from collections import defaultdict
 from pathlib import Path
 
 import pandas as pd
 
+REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import ISO_TRANSMISSION_DIR, REFERENCE_DIR  # noqa: E402
+
 # Look for the NP6-86 monthly archives in the bulk upload dir first, then the
-# small curated reference dir.
+# small curated reference dir. Both resolve through the registry
+# (config/paths.py): the old Path("data/…") literals were CWD-relative, and
+# the second candidate still spelled the pre-W1 ``data/reference`` location —
+# dead since W1 git-mv'd that tree to data/raw/reference — so the curated-dir
+# fallback could never fire. REFERENCE_DIR is that tree's post-W1 home.
 SEARCH_DIRS = (
-    Path("data/raw/iso-specific-transmission"),
-    Path("data/reference"),
+    ISO_TRANSMISSION_DIR,
+    REFERENCE_DIR,
 )
 _USECOLS = ["SCEDTimeStamp", "ConstraintName", "ShadowPrice", "Limit", "FromStation"]
 

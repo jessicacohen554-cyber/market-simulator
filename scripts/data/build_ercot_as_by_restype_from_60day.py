@@ -79,8 +79,12 @@ from build_ercot_as_withholding import (  # noqa: E402
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-GEN_DIR = REPO_ROOT / "data" / "raw" / "ercot"
-OUT_DIR = REPO_ROOT / "data" / "raw" / "ercot-AS"
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from market_sim.config.paths import ERCOT_AS_DIR, ERCOT_MIS_DIR  # noqa: E402
+
+GEN_DIR = ERCOT_MIS_DIR
+OUT_DIR = ERCOT_AS_DIR
 
 # Upward AS award columns (Reg-Down excluded — it withholds no upward energy).
 # ECRS columns only exist from the 2023-06-10 launch; absent ones are skipped.

@@ -66,11 +66,13 @@ REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
+from market_sim.config.paths import REFERENCE_DIR  # noqa: E402
+
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.data.coal import coal_supply_class  # noqa: E402
 from market_sim.data.fleet import load_fleet_from_csv  # noqa: E402
 
-OUT_PATH = REPO / "data" / "raw" / "reference" / "coal_region_crosswalk.csv"
+OUT_PATH = REFERENCE_DIR / "coal_region_crosswalk.csv"
 
 # EIA coal/market-sales-price + coal/price-by-rank "stateRegionId" values that
 # are dedicated to a single state (vs. a multi-state Census-division

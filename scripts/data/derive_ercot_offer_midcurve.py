@@ -74,19 +74,13 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
+from market_sim.config.paths import CALIBRATION_DIR, ERCOT_MIS_DIR  # noqa: E402
+
 from market_sim.config.constants import GAS_BASIS_DIFFERENTIAL  # noqa: E402
 from market_sim.data.fuel import HENRY_HUB_DAILY_PATH  # noqa: E402
 
-OUT_JSON = (
-    REPO
-    / "data"
-    / "raw"
-    / "_validation-source"
-    / "ercot_offer_midcurve_condbinned.json"
-)
-OUT_CSV = (
-    REPO / "data" / "raw" / "_validation-source" / "ercot_offer_midcurve_summary.csv"
-)
+OUT_JSON = CALIBRATION_DIR / "ercot_offer_midcurve_condbinned.json"
+OUT_CSV = CALIBRATION_DIR / "ercot_offer_midcurve_summary.csv"
 
 _GENRES_GLOB = "60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_{year}_*.parquet"
 
@@ -147,11 +141,7 @@ def main(argv: list[str] | None = None) -> int:
     for y in args.years:
         files += [
             Path(f)
-            for f in sorted(
-                glob.glob(
-                    str(REPO / "data" / "raw" / "ercot" / _GENRES_GLOB.format(year=y))
-                )
-            )
+            for f in sorted(glob.glob(str(ERCOT_MIS_DIR / _GENRES_GLOB.format(year=y))))
         ]
     if not files:
         raise FileNotFoundError("no 60-Day DAM Gen Resource Data files for the years")

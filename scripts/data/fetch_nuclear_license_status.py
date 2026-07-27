@@ -35,7 +35,11 @@ import urllib.request
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent.parent
-DEFAULT_OUT = REPO / "data" / "raw" / "nuclear-license-status" / "_requery"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import NUCLEAR_LICENSE_STATUS_DIR  # noqa: E402
+
+DEFAULT_OUT = NUCLEAR_LICENSE_STATUS_DIR / "_requery"
 
 # Consolidated NRC re-query pages. (label, url). These are living pages — the
 # pinned audit artifacts are the md/ snapshots (README re-query table). A NEW

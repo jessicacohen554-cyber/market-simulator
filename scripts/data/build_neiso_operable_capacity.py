@@ -46,12 +46,17 @@ from __future__ import annotations
 import argparse
 import csv
 import datetime as dt
+import sys
 from pathlib import Path
 
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-RAW_DIR = REPO_ROOT / "data" / "raw" / "neiso-operable-capacity"
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from market_sim.config.paths import NEISO_OPERABLE_CAPACITY_DIR  # noqa: E402
+
+RAW_DIR = NEISO_OPERABLE_CAPACITY_DIR
 DEFAULT_DAILY_DIR = RAW_DIR / "daily"
 #: Committed output directory. One CSV per calendar year
 #: (``neiso_operable_capacity_<YYYY>.csv``) — the repo's per-year partition

@@ -63,12 +63,14 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
+from market_sim.config.paths import RAW_DATA_DIR  # noqa: E402
+
 from market_sim.config.constants import NUCLEAR_MONTHLY_CF_BY_YEAR  # noqa: E402
 
 DISCLOSURE_GLOB = (
     "data/raw/ercot/60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_*.parquet"
 )
-OUT_CSV = REPO / "data" / "raw" / "ercot-nuclear-availability.csv"
+OUT_CSV = RAW_DATA_DIR / "ercot-nuclear-availability.csv"
 
 # Disclosure resource -> (EIA plant code, model unit number). The model's four
 # EIA-860 nuclear generators are 6145_1/6145_2 (Comanche Peak 1/2, North zone)

@@ -38,11 +38,13 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
+from market_sim.config.paths import EIA_930_INTERCHANGE_DIR  # noqa: E402
+
 from market_sim.config.interchange_config import (  # noqa: E402
     MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR,
 )
 
-_PARQUET = REPO / "data/raw/eia-930-interchange/MISO interchange hourly.parquet"
+_PARQUET = EIA_930_INTERCHANGE_DIR / "MISO interchange hourly.parquet"
 _DIBA = "MHEB"
 _HOURS = 8760
 

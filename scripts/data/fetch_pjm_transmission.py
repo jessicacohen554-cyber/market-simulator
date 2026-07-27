@@ -47,10 +47,13 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO))
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import ISO_TRANSMISSION_DIR, LMP_DATA_DIR  # noqa: E402
 from scripts.lib import pjm_dataminer  # noqa: E402
 
-TRANS_DIR = REPO / "data" / "raw" / "iso-specific-transmission"
-LMP_DIR = REPO / "data" / "raw" / "lmp-data"
+TRANS_DIR = ISO_TRANSMISSION_DIR
+LMP_DIR = LMP_DATA_DIR
 
 # The API base / public subscription key / page size live in
 # scripts.lib.pjm_dataminer (shared across the fetch_pjm_* scripts).

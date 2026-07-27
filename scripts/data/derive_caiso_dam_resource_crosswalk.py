@@ -47,13 +47,21 @@ from pathlib import Path
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-WINDOWS = (
-    REPO / "data" / "raw" / "caiso-dam-outages" / "caiso-dam-outage-windows.parquet"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import (  # noqa: E402
+    CAISO_DAM_OUTAGES_DIR,
+    CAMPD_FACILITY_LEVEL_DIR,
+    EIA_860_DIR,
+    RAW_DATA_DIR,
+    REFERENCE_DIR,
 )
-CAMPD_FAC = REPO / "data" / "raw" / "campd-facility-level"
-CAMPD_OUT = REPO / "data" / "raw" / "campd-unit-outages-CAISO.csv"
-EIA_PLANT = REPO / "data" / "raw" / "eia-860" / "eia860_plant.parquet"
-OUT = REPO / "data" / "raw" / "reference" / "caiso-dam-resource-crosswalk.csv"
+
+WINDOWS = CAISO_DAM_OUTAGES_DIR / "caiso-dam-outage-windows.parquet"
+CAMPD_FAC = CAMPD_FACILITY_LEVEL_DIR
+CAMPD_OUT = RAW_DATA_DIR / "campd-unit-outages-CAISO.csv"
+EIA_PLANT = EIA_860_DIR / "eia860_plant.parquet"
+OUT = REFERENCE_DIR / "caiso-dam-resource-crosswalk.csv"
 YEARS = (2023, 2024, 2025)
 
 MATCH_MIN_SCORE = 0.5
