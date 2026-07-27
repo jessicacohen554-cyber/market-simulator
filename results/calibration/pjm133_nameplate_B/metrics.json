@@ -16,7 +16,7 @@
   "rubric_version": 2.8,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_tail"
   ],
   "notes": [
     "C8 2023 CT_PEAKER: grounded above budget \u2014 15.1% forced (3.4539 of 22.8117 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.928 (\u22650.8) & off-peak CV ratio 0.566 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
@@ -62,7 +62,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -85,8 +85,8 @@
     }
   },
   "grade_summary": {
-    "scored": 9,
-    "target_grade": 6,
+    "scored": 10,
+    "target_grade": 7,
     "commercial_grade": 0,
     "ledgered": 0,
     "fails": 3

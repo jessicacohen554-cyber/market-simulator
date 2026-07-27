@@ -8,9 +8,30 @@ the solve began. Scorer: `scripts/probes/_pjm133_nameplate_ab.py`. Pre-solve
 sizing: `scripts/probes/_pjm133_nameplate_precheck.py` (no LP). Machine output:
 `results/probes/pjm133_ab.json`, `results/probes/pjm133_precheck.json`.
 
-**PROMOTION IS NOT REQUESTED AND NOT GRANTED** — it remains a separate owner act
-(rule 1). §7 states the case and the one thing that blocks a clean promotion,
-which is **not** this delta.
+**PROMOTION was not requested by this document** and came later in-session as a
+separate owner act on the stated structural-integrity criterion (banner above).
+§7's as-written disposition stands as recorded.
+
+> **PROMOTED 2026-07-27 (owner, in-session).** The owner set the criterion
+> explicitly — *"if structural integrity improves but gates regress that may
+> still be a keeper"* — and arm B meets it **a fortiori: nothing regresses at
+> all.** **PJM keeper is now `2026-07-27-pjm-133-nameplate`**, superseding
+> `2026-07-26-pjm-129-meritguard-a1`.
+>
+> **§7's stated blocker is resolved, and not by this session.** While these arms
+> were solving, main designated `pjm-129-meritguard-a1` — the pjm-121 recipe
+> replayed VERBATIM on the guard-corrected envelope (NOT-YET 7/10) — as the PJM
+> keeper. So the corrected-envelope question was already decided by the owner,
+> and this A/B is like-for-like against the designated keeper after all.
+> **Verified, not assumed:** arm A reproduces `pjm129_meritguard_a1`
+> **byte-identically — 0.000000 MW on all 19 classes, every hour, all three
+> years.** The §2 caveat against the *pjm-121* bundle stands as recorded and is
+> now doubly explained; it was never a caveat against the current keeper.
+>
+> A `calibration_attestation.json` with a **14-entry DOF ledger** (rule 23) was
+> written for arm B; the new entry `hydro_budget_nameplate_aware` is
+> **measured-external, zero solves added to the tuning lineage**. C6 governance
+> now PASSES. `audit_keepers.py --iso PJM` PASSES clean.
 
 ---
 
