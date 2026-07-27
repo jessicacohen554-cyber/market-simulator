@@ -397,3 +397,34 @@ CAISO −810, ERCOT −3,484) and re-derived no downstream artifact.
 live flag (`unit_outage_short_windows`) and a clean single-delta A/B available —
 its MISO twin's control passed in miso-94. Solve-side exposure is already covered
 by pjm-129 and miso-93/94 and should not be re-run.
+
+## 2026-07-27 (nyiso-86) — the demand-basis wedge is a FLEET-WIDE property: screened across all six keepers, MISO carries the largest (+3.7 %/+3.1 % of load)
+
+The nyiso-86 reconciliation (`docs/FINDING-nyiso-calibration-reconciliation-2026-07-27.md`
+§2.1–§2.3) found NYISO's only load-bearing C1 fail is dominated by a
+**demand-basis wedge**: the model serves the BA-reported metered-load basis
+(EIA-930 Demand ≡ NYISO pal, verified identical) with a lossless LP, while C1
+scores plant-metered EIA-923 + tie-metered imports — a +2.1–2.9 %-of-load gap
+absorbed entirely by the free gas family. Since the wedge is a property of the
+scoring design, it was screened across ALL SIX current keepers from committed
+payloads + bench parts (no solves; balance closure over classFull keys verified;
+2025 excluded as preliminary-vintage):
+
+| ISO | 2023 / 2024 wedge (TWh) | % of load | disposition |
+|---|--:|--:|---|
+| ERCOT | −2.2 / +0.7 | ≈0 % | generation-referenced native load; nothing to do |
+| PJM | −0.3 / +5.9 | ≤0.7 % | no wedge; ~7 TWh internal export-accounting ambiguity noted for the PJM lane |
+| NEISO | +0.7 / +1.2 | ~1 % | real, under-band; record only |
+| **MISO** | **+23.8 / +19.7** | **+3.7 / +3.1 %** | largest in the fleet — 3× MISO's 8 TWh C1 band cap; MISO lane must run the NYISO chain of custody and identify its own factor |
+| CAISO | −4.8 / −7.4 | −2.3 / −3.5 % | NOT a loss wedge (wrong sign): model imports +8.0/+10.3 TWh over the measured net interchange — a seam-volume reconcile, no demand gross-up until that is resolved |
+| NYISO | +2.9 / +4.2 | +2.0 / +2.8 % | lane nyiso-87 (td_loss_factor + CHP pair) |
+
+Protocol (rule 25/23-clean): one existing field — `td_loss_factor`
+(scenarios.py:4412, default 0.0 everywhere) — identified per ISO from that
+ISO's own measured 923+NI-vs-served-load reconciliation, armed only in that
+ISO's keeper lane with LOYO, never bulk-applied. The screen is not an
+identification: a wedge can be seam accounting (CAISO's is) rather than
+losses, so each lane repeats the chain of custody (930 demand vs native load
+files vs 923+NI) before choosing a value. The fix is a gross-up to the
+generation basis, not a demand-source swap — where the BA reports its metered
+load to EIA-930, the native load files are the same series.
