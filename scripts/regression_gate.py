@@ -22,7 +22,7 @@ It runs four checks and prints a single PASS/FAIL with exit code 0/1:
 2. **Reshuffle localization** — ``scripts/diagnostics/diff_warmstart_bundles.py`` per year,
    to show any marginal-tie reshuffle per ``plant_code`` (informational; helps
    confirm a builder-stage diff is tie-only).
-3. **Trivial-case smoke tests** — ``pytest tests/test_regression_smoke.py``
+3. **Trivial-case smoke tests** — ``pytest tests/regression/test_regression_smoke.py``
    (fast, CI-able; the per-ISO 1-gen/1-zone/24-h LP guard).
 4. **Quarantine + registry gates** — ``scripts/legitimacy_diagnostics.py
    --keepers`` (holdout quarantine: no solve year outside 2023-2025) and
@@ -35,7 +35,6 @@ Checks 3-4 always run; check 1-2 run only when both golden dirs are supplied
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import subprocess
 import sys
 from pathlib import Path
@@ -46,13 +45,17 @@ sys.path.insert(0, str(REPO))
 
 
 def _load_regression_check():
-    """Import the existing column-diff engine without reinventing it."""
-    spec = importlib.util.spec_from_file_location(
-        "regression_check", REPO / "scripts" / "regression_check.py"
-    )
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
+    """Import the existing column-diff engine without reinventing it.
+
+    Package import, not a ``spec_from_file_location`` file-load (refactor plan
+    §6-E): the old form executed the module a second time under a synthetic
+    name, giving this gate a private copy that could drift from the canonical
+    ``scripts.regression_check`` every other importer shares. Kept lazy —
+    the diff engine (pandas/pyarrow) loads only when a gate actually runs.
+    """
+    from scripts import regression_check
+
+    return regression_check
 
 
 # Result parquet files a calibration bundle carries (relative to the bundle dir).
@@ -240,7 +243,13 @@ def main() -> int:
     if not args.skip_smoke:
         print("\n[3] Trivial-case smoke tests")
         ok, line = _run(
-            [sys.executable, "-m", "pytest", "tests/test_regression_smoke.py", "-q"],
+            [
+                sys.executable,
+                "-m",
+                "pytest",
+                "tests/regression/test_regression_smoke.py",
+                "-q",
+            ],
             "smoke",
         )
         print("   ", line)

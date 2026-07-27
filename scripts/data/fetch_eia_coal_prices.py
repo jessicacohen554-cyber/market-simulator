@@ -65,11 +65,14 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 REPO = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import COAL_PRICES_DIR  # noqa: E402
 
 sys.path.insert(0, str(REPO))
 from scripts.lib.env_keys import get_api_key  # noqa: E402
 
-OUT_DIR = REPO / "data" / "raw" / "coal-prices"
+OUT_DIR = COAL_PRICES_DIR
 MARKET_SALES_OUT = OUT_DIR / "eia_coal_market_sales_price.csv"
 PRICE_BY_RANK_OUT = OUT_DIR / "eia_coal_price_by_rank.csv"
 

@@ -71,6 +71,8 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "scripts"))
 
+from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
+
 sys.path.insert(0, str(REPO / "scripts" / "data"))
 from derive_pjm_offer_surface import (  # noqa: E402
     _BID_COLS,
@@ -86,12 +88,8 @@ from derive_pjm_offer_surface import (  # noqa: E402
     ZERO_TOP_FLOOR_USD,
 )
 
-OUT_JSON = (
-    REPO / "data" / "raw" / "_validation-source" / "pjm_offer_midcurve_condbinned.json"
-)
-OUT_CSV = (
-    REPO / "data" / "raw" / "_validation-source" / "pjm_offer_midcurve_summary.csv"
-)
+OUT_JSON = CALIBRATION_DIR / "pjm_offer_midcurve_condbinned.json"
+OUT_CSV = CALIBRATION_DIR / "pjm_offer_midcurve_summary.csv"
 
 #: Within-unit capacity shares the curve is sampled at (share-grid midpoints),
 #: plus the top-of-curve belt (0.975 / 0.995 — the "last-5% wall" the decile

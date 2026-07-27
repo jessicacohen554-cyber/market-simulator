@@ -34,7 +34,11 @@ from datetime import date, timedelta
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-OUT = REPO / "data" / "raw" / "caiso-dam-outages" / "daily"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import CAISO_DAM_OUTAGES_DIR  # noqa: E402
+
+OUT = CAISO_DAM_OUTAGES_DIR / "daily"
 # Two published filename conventions for the same daily report: the compact
 # YYYYMMDD suffix (2023 through ~May 2024, and again from ~mid-2025) and the
 # mon-DD-YYYY suffix (~Jun 2024 .. early 2025, e.g. ...report-jun-10-2024

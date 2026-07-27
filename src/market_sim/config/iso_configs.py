@@ -1201,6 +1201,52 @@ def drop_drag_owned_reliability_specs(
     return [s for s in specs if s.plant_class not in drop]
 
 
+# (zone, class) limbs the NYISO in-city commitment obligation SUPERSEDES. The
+# obligation re-classes the published NYC/LI 10-minute reserve families onto an
+# online-gated in-pocket class, making the published requirement the commitment
+# driver for downstate steam — the same phenomenon the p25-derived NYC/LI
+# ST_GAS reliability-floor limbs currently scaffold. The in-city must-run lane
+# charter (docs/handoffs/nyiso-incity-mustrun-charter-2026-07.md §2) makes
+# substitution a REQUIREMENT, not an option: "Any mechanism this lane produces
+# MUST REPLACE OR RECONCILE WITH the NYC/LI ST_GAS limbs of reliability_floor.
+# Stacking a second floor on the unexplained residual of the first is
+# forbidden" (CLAUDE.md rule 19 [R-ONE-MECH]), and would in any case breach the
+# C8 forced-energy budget. Zone-scoped: the Capital_Hudson ST_GAS limb is
+# outside the load pockets and is untouched.
+_INCITY_OBLIGATION_OWNED_LIMBS: frozenset[tuple[str, str]] = frozenset(
+    {("NYC", "ST_GAS"), ("Long_Island", "ST_GAS")}
+)
+
+
+def drop_obligation_owned_reliability_specs(
+    specs: list[ReliabilityFloorSpec],
+    config,
+) -> list[ReliabilityFloorSpec]:
+    """Drop the NYC/LI ``ST_GAS`` limbs the in-city obligation supersedes.
+
+    No-op unless ``config.nyiso_incity_commitment_obligation`` is set, so every
+    other ISO/run is byte-identical. When it IS set the substitution is
+    automatic rather than an operator-supplied override: the charter requires
+    replacement, and leaving it to a hand-written
+    ``reliability_floor_overrides`` entry makes silent STACKING (the forbidden
+    outcome) the default failure mode.
+
+    Args:
+        specs: Reliability-floor limbs for the ISO, post-overrides.
+        config: The run's ``ScenarioConfig``.
+
+    Returns:
+        *specs* with the superseded (zone, class) limbs removed.
+    """
+    if not getattr(config, "nyiso_incity_commitment_obligation", False):
+        return specs
+    return [
+        s
+        for s in specs
+        if (s.zone, s.plant_class) not in _INCITY_OBLIGATION_OWNED_LIMBS
+    ]
+
+
 def apply_reliability_floor_overrides(
     specs: list[ReliabilityFloorSpec],
     overrides: dict[str, dict] | None,

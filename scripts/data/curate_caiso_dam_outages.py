@@ -32,8 +32,12 @@ from pathlib import Path
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-DAILY = REPO / "data" / "raw" / "caiso-dam-outages" / "daily"
-OUT = REPO / "data" / "raw" / "caiso-dam-outages" / "caiso-dam-outage-windows.parquet"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import CAISO_DAM_OUTAGES_DIR  # noqa: E402
+
+DAILY = CAISO_DAM_OUTAGES_DIR / "daily"
+OUT = CAISO_DAM_OUTAGES_DIR / "caiso-dam-outage-windows.parquet"
 
 COLS = {
     "OUTAGE MRID": "mrid",

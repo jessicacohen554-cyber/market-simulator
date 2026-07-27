@@ -30,7 +30,11 @@ import urllib.request
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent.parent
-OUT_DIR = REPO / "data" / "raw" / "nrc-reactor-status"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import NRC_REACTOR_STATUS_DIR  # noqa: E402
+
+OUT_DIR = NRC_REACTOR_STATUS_DIR
 URL_TMPL = (
     "https://www.nrc.gov/reading-rm/doc-collections/event-status/"
     "reactor-status/{year}/{year}PowerStatus.txt"

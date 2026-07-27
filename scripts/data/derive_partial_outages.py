@@ -25,6 +25,8 @@ from pathlib import Path
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
+
+from market_sim.config.paths import RAW_DATA_DIR  # noqa: E402
 import sys
 
 sys.path.insert(0, str(REPO / "src"))
@@ -54,7 +56,7 @@ def main() -> None:
         # W1 collapsed inputs/raw-data into data/raw — this is the location
         # the historic-outage overlay actually reads (outages.py).
         "--out",
-        default=str(REPO / "data" / "raw" / "campd-partial-outages.csv"),
+        default=str(RAW_DATA_DIR / "campd-partial-outages.csv"),
     )
     args = ap.parse_args()
 

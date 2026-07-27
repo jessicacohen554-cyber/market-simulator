@@ -48,6 +48,8 @@ REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
+from market_sim.config.paths import RAW_DATA_DIR  # noqa: E402
+
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.data.fleet import load_fleet_from_csv  # noqa: E402
 from scripts.data.process_f923_fuel_costs import _find_zips, _load_receipts  # noqa: E402
@@ -87,9 +89,7 @@ def _takeorpay_table(
     # pre-W1 inputs/raw-data root no longer exists). The zips are immutable
     # EIA downloads (https://www.eia.gov/electricity/data/eia923/), not
     # committed to the repo — re-download the cited vintages to re-derive.
-    for zip_path in _find_zips(
-        raw_dir if raw_dir is not None else REPO / "data" / "raw"
-    ):
+    for zip_path in _find_zips(raw_dir if raw_dir is not None else RAW_DATA_DIR):
         m = re.search(r"f923[_-]?(\d{4})", zip_path.stem)
         yr = int(m.group(1)) if m else 0
         if years is not None and yr not in years:
