@@ -6763,14 +6763,30 @@ def rebuild_benchmark(bundle: Path) -> None:
     # rebuild has to reproduce it. Recovered from the bundle's own run_config
     # when it recorded one; absent, the repair is simply not applied, which is
     # the pre-flag behaviour.
-    _rc = bundle / "run_config.json"
+    # meta.json is checked FIRST and is the authoritative source: it is written
+    # from the solve kwargs, which is exactly where the BTM side reads the flag
+    # from. run_config.json does NOT record `btm_backfill_year` on any bundle in
+    # the tree (checked pjm-121 / pjm-129 / pjm-132), so a run_config-only
+    # lookup silently recovered None on an armed keeper and the benchmark mirror
+    # never fired — leaving precisely the ONE-SIDED repair pjm-130 diagnosed and
+    # believed it had closed (the subtrahend repaired, the minuend not), which
+    # is what kept `classFull.CT_CHP` at a NEGATIVE metered volume (-0.3726 TWh)
+    # in the committed PJM 2025 bench across every registration since. The fix
+    # was correct in substance and inert in practice because it looked for its
+    # trigger in the wrong file. run_config is kept as a fallback so a bundle
+    # that does record it there still works.
     _btm_backfill_year = None
-    if _rc.exists():
-        _cfg = json.loads(_rc.read_text())
-        for _blk in (_cfg, _cfg.get("calibration_flags") or {}):
-            if isinstance(_blk, dict) and _blk.get("btm_backfill_year") is not None:
-                _btm_backfill_year = int(_blk["btm_backfill_year"])
-                break
+    _meta_bf = meta.get("btm_backfill_year")
+    if _meta_bf is not None:
+        _btm_backfill_year = int(_meta_bf)
+    else:
+        _rc = bundle / "run_config.json"
+        if _rc.exists():
+            _cfg = json.loads(_rc.read_text())
+            for _blk in (_cfg, _cfg.get("calibration_flags") or {}):
+                if isinstance(_blk, dict) and _blk.get("btm_backfill_year") is not None:
+                    _btm_backfill_year = int(_blk["btm_backfill_year"])
+                    break
 
     e923f, e930f, campdf = [], [], []
     for year in years:
