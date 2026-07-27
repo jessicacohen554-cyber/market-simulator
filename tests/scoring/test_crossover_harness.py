@@ -314,7 +314,7 @@ class TestCrossoverRunnerPath(unittest.TestCase):
         # and deliberately leaves it active; without this reset the vintage
         # leaks into every later eia860-fed load in the process (the bisected
         # fast-tier pollution family — see tests/conftest.py's
-        # _restore_eia860_vintage, which guards pytest runs; this addCleanup
+        # _reset_eia860_vintage, which guards pytest runs; this addCleanup
         # keeps the file hermetic under bare unittest too).
         from market_sim.config.paths import set_eia860_vintage
 
