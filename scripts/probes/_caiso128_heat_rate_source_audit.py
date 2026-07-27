@@ -3,48 +3,57 @@ it sits from the plant's own measured CEMS rate — per class, per ISO.
 
 TASK 1 of the caiso-128 CT offer-accuracy lane. Measurement-only (NO solve,
 nothing armed). The owner lead nominated the ``HEAT_RATE_BINS`` fuel x vintage
-fallback as the suspect; this instrument tests that lead and reports the actual
-provenance split.
+fallback as the suspect; this instrument tests that lead, reports the actual
+provenance split, and — the load-bearing part — puts both sides of the
+comparison on the SAME basis.
 
 The chain under test (read off the code, then measured here):
 
 * ``data/raw/eia-860/eia860_generators.parquet`` carries a ``heat_rate`` column;
   the EIA-860 Generator_Y sheets themselves carry **no heat rate at all**.
 * ``scripts/data/process_eia860._join_egrid_heat_rate`` fills that column from
-  **eGRID PLNT23 ``PLHTRT``** — a plant-level, annual, all-fuel average
-  (PLHTIAN / PLNGENAN), mapped onto every generator at the plant.
+  **eGRID PLNT23 ``PLHTRT``** — a plant-level annual ``PLHTIAN / PLNGENAN``,
+  i.e. heat input per **NET** MWh — mapped onto every generator at the plant.
 * ``fleet/eia860._rows_to_generators`` prefers that value and falls back to
   ``HEAT_RATE_BINS[fuel_type][efficiency_bin]`` only when it is missing.
 * ``fleet/eia860._egrid_boundary_hr_repairs`` reconciles bad eGRID rates, but is
   scoped to ``Natural Gas Fired Combined Cycle`` — no simple-cycle plant is ever
   repaired.
 
-Three quantities are compared per plant-year, all from primary sources:
+THE BASIS TRAP (why this instrument reports a net column). The model dispatches
+NET MW (``pmax`` is net summer capability) and eGRID ``PLHTRT`` is already a NET
+rate, but CEMS reports GROSS load. Comparing the two directly understates the
+measured side by the whole auxiliary-load fraction and manufactures a spurious
+"the model is too high" error of +8..+20 % in every low-duty class — which is
+how this lane's "+27..54 %" headline was produced. Every measured rate here is
+therefore multiplied by ``g2n``, the plant's own SAME-YEAR CEMS-gross /
+eGRID-net ratio. That ratio is validated by two independent derivations off
+different field pairs which agree to three decimals (CAISO CT_PEAKER 2023:
+generation-based 1.193 vs heat-rate-based 1.195); the agreement additionally
+proves eGRID's heat input IS CEMS's heat input, so no plant-vs-facility
+boundary mismatch is inflating it.
 
-``egrid23`` / ``egrid24``
-    ``PLHTRT`` from the 2023 and 2024 eGRID vintages (Btu/kWh -> MMBtu/MWh).
-    ``egrid23`` is what the model actually offers on, in every modeled year.
-``hr_all``
-    CAMPD annual heat input / gross load over all generating hours — the
-    CEMS-basis analogue of eGRID's annual average (startup + part-load fuel in
-    the numerator, so it is NOT an energy-offer rate).
-``hr_load``
-    CAMPD heat input / gross load restricted to full-clock hours
-    (``opTime >= 0.99``) above half the plant's observed peak — the
-    **loading-conditional** rate an energy offer should carry. Startup fuel
-    belongs in the startup cost, not in the energy offer, so this is the basis
-    the offer curve wants.
+Quantities compared per plant-year, all from primary sources:
 
-Also reported: the gross->net boundary ratio implied by CEMS annual gross load
-against eGRID's own ``PLNGENAN`` net generation, because the model's ``pmax`` is
-net summer capability while CEMS ``grossLoad`` is gross — the one real basis
-mismatch between the incumbent and the candidate input.
+``model``
+    The offer heat rate the LP actually uses (eGRID PLNT23 ``PLHTRT``, or the
+    ``HEAT_RATE_BINS`` center where that join missed), cap-weighted to the
+    plant. Already a NET rate.
+``hr_all`` / ``hr_all_net``
+    CAMPD annual heat input / gross load over all generating hours; ``_net``
+    applies ``g2n``. The like-for-like counterpart of eGRID's annual average.
+``hr_load`` / ``hr_load_net``
+    CAMPD heat input / gross load restricted to full-clock unit-hours
+    (``opTime >= 0.99``) above half the UNIT's own observed peak — the
+    loading-conditional rate an energy offer would carry if startup fuel were
+    the concern (it belongs in the startup cost, not the energy offer).
 
 Usage:
     PYTHONPATH=.:src .venv/bin/python \\
         scripts/probes/_caiso128_heat_rate_source_audit.py --year 2024
     ... --iso CAISO ERCOT PJM MISO NYISO NEISO      # cross-ISO scope check
     ... --iso CAISO --plants                        # per-plant CT detail
+    ... --iso CAISO --stability 2023 2024 2025      # coverage + stability
 """
 
 from __future__ import annotations
@@ -230,6 +239,25 @@ def plant_table(iso: str, year: int) -> pd.DataFrame:
         .merge(e23[["plant_code", "egrid23", "net23"]], on="plant_code", how="left")
         .merge(e24[["plant_code", "egrid24", "net24"]], on="plant_code", how="left")
     )
+    # BASIS RECONCILIATION — the correction that decides this lane. eGRID
+    # PLHTRT is PLHTIAN / PLNGENAN, i.e. heat input per NET MWh, and the model
+    # dispatches NET MW (``pmax`` is net summer capability). CEMS reports GROSS
+    # load. Comparing the model's net-basis rate to a gross-basis CEMS rate
+    # understates the measured rate by the whole auxiliary-load fraction and
+    # manufactures a spurious "the model is too high" error.
+    #
+    # The ratio is measured SAME-YEAR per plant, and validated by two
+    # independent derivations that use different field pairs and agree to three
+    # decimals (CAISO CT_PEAKER 2023: generation-based 1.193 vs heat-rate-based
+    # 1.195). That agreement also proves eGRID's heat input IS CEMS's heat
+    # input, so no plant-vs-facility boundary mismatch is inflating it.
+    net_col = out[f"net{str(year)[2:]}"] if f"net{str(year)[2:]}" in out else None
+    if net_col is None:
+        net_col = out["net23"]
+    ratio = out["cems_mwh"] / net_col.where(net_col > 2e4)
+    out["g2n"] = ratio.clip(lower=1.0, upper=1.35)
+    out["hr_all_net"] = out["hr_all"] * out["g2n"]
+    out["hr_load_net"] = out["hr_load"] * out["g2n"]
     out["iso"] = iso
     return out
 
@@ -244,34 +272,35 @@ def report_class(tab: pd.DataFrame, year: int) -> None:
     """Print the per-ISO x class provenance and heat-rate error summary."""
     print(
         f"\n=== {year} offer heat rate vs measured, by ISO x class "
-        f"(cap-weighted) ===\n"
+        f"(cap-weighted, NET basis) ===\n"
         f"{'iso':<7} {'class':<11} {'GW':>6} {'%MW bin':>8} | {'model':>6} "
-        f"{'eG24':>6} {'hrAll':>6} {'hrLoad':>6} | {'vs hrLoad':>9} "
-        f"{'vs hrAll':>8} {'n':>4}"
+        f"{'annNET':>7} {'loadNET':>8} {'g2n':>5} | {'vs ann':>7} "
+        f"{'vs load':>8} {'n':>4}"
     )
     for (iso, klass), sub in tab.groupby(["iso", "plant_group"], observed=True):
-        cov = sub[sub["hr_load"].notna() & sub["model_hr"].notna()]
+        cov = sub[sub["hr_load_net"].notna() & sub["model_hr"].notna()]
         if cov.empty:
             continue
         w = cov["pmax"]
         m = _wavg(cov["model_hr"], w)
-        hl = _wavg(cov["hr_load"], w)
-        ha = _wavg(cov["hr_all"], w)
+        hl = _wavg(cov["hr_load_net"], w)
+        ha = _wavg(cov["hr_all_net"], w)
         print(
             f"{iso:<7} {klass:<11} {sub['pmax'].sum() / 1e3:>6.1f} "
             f"{100 * _wavg(sub['bin_share'], sub['pmax']):>7.0f}% | "
-            f"{m:>6.2f} {_wavg(cov['egrid24'], w):>6.2f} {ha:>6.2f} {hl:>6.2f} | "
-            f"{100 * (m / hl - 1):>8.0f}% {100 * (m / ha - 1):>7.0f}% {len(cov):>4}"
+            f"{m:>6.2f} {ha:>7.2f} {hl:>8.2f} {_wavg(cov['g2n'], w):>5.3f} | "
+            f"{100 * (m / ha - 1):>6.0f}% {100 * (m / hl - 1):>7.0f}% {len(cov):>4}"
         )
     print(
-        "\n  model  = the offer heat rate the LP actually uses (eGRID PLNT23 "
-        "PLHTRT,\n           or the HEAT_RATE_BINS fuel x vintage center where "
-        "that join missed).\n"
+        "\n  model   = the offer heat rate the LP uses (eGRID PLNT23 PLHTRT, net\n"
+        "            basis; or the HEAT_RATE_BINS center where that join missed).\n"
         "  %MW bin = share of the class's capacity on the bin fallback (the "
         "owner lead).\n"
-        "  hrAll  = CEMS annual heat input / gross load (all generating hours).\n"
-        "  hrLoad = CEMS loading-conditional (full-clock hours above half the "
-        "observed peak)."
+        "  annNET  = CEMS annual heat input / gross load, x g2n -> NET basis.\n"
+        "  loadNET = CEMS loading-conditional (full-clock, above half the unit's\n"
+        "            own peak), x g2n -> NET basis.\n"
+        "  g2n     = measured same-year CEMS-gross / eGRID-net. WITHOUT it the\n"
+        "            comparison is net-vs-gross and invents a spurious error."
     )
 
 
