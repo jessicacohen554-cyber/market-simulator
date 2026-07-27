@@ -1482,6 +1482,9 @@ def build_dispatch_fleet(
         # floor / RoR split up from the same single switches.
         min_flow_floor=bool(getattr(config, "hydro_min_flow_floor", False)),
         ror_split=bool(getattr(config, "hydro_ror_split", False)),
+        nameplate_aware_target=bool(
+            getattr(config, "hydro_budget_nameplate_aware", False)
+        ),
         hydro_year=config.hydro_year if hydro_year is None else hydro_year,
     )
     hydro_gen_idx = None

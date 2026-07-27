@@ -492,6 +492,40 @@ def _write_class_hourly_sidecar(run_dir: Path, year: int, labels: list[str]) -> 
     return out
 
 
+def _write_storage_hourly_sidecar(
+    run_dir: Path, year: int, frames: "list[pd.DataFrame]"
+) -> "Path | None":
+    """Write the committable per-tech storage-hour sidecar for one year.
+
+    Aggregates this year's (gitignored) ``storage.parquet`` frames to
+    ``(year, pass, tech, hour, charge_mw, discharge_mw)`` and writes
+    ``hourly/storage_<year>.parquet``. The class sidecar carries generator
+    classes only, so before this the sole storage series a committed slim
+    bundle exposed was the ISO-aggregate net recovered from the energy balance
+    — battery and pumped storage inseparable, which is exactly the band
+    FINDING-caiso125 §4a/§6.4 flagged as unobservable and FINDING-caiso127 §2
+    needs to attribute the evening-overnight price pin to a technology.
+    Write-only and solve-invariant. Returns the path written, or ``None`` when
+    the fleet is empty.
+    """
+    rows = [f for f in frames if f is not None and int(f["year"].iloc[0]) == year]
+    if not rows:
+        return None
+    hourly_dir = run_dir / "hourly"
+    hourly_dir.mkdir(parents=True, exist_ok=True)
+    out = hourly_dir / f"storage_{year}.parquet"
+    (
+        pd.concat(rows, ignore_index=True)
+        .groupby(["year", "pass", "tech", "hour"], observed=True)[
+            ["charge_mw", "discharge_mw"]
+        ]
+        .sum()
+        .reset_index()
+        .to_parquet(out, index=False)
+    )
+    return out
+
+
 def _write_system_year_sidecars(run_dir: Path, system_df: pd.DataFrame) -> None:
     """Write per-year committable slices of the system frame to ``hourly/``.
 
@@ -4357,6 +4391,7 @@ def solve_and_persist(
         # 3-year backcast past 16 GB and into the OOM killer. Only the compact
         # per-year frames accumulated above survive the loop.
         _write_class_hourly_sidecar(run_dir, year, [lbl for lbl, _ in labelled])
+        _write_storage_hourly_sidecar(run_dir, year, storage_frames)
         del result, context, result_p1, p2_state, demand, must_run
         del must_run_total, labelled, res
         gc.collect()

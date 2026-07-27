@@ -367,6 +367,81 @@ def _zone_lookup(iso: str) -> dict[int, str]:
         return {}
 
 
+def _nameplate_aware_scale(
+    monthly_energy: np.ndarray,
+    bound: np.ndarray,
+    target: np.ndarray,
+) -> tuple[np.ndarray, dict[str, float]]:
+    """Rescale each month's per-plant budget to ``target`` without exceeding ``bound``.
+
+    The uniform monthly scale factor (the pre-existing behaviour) multiplies
+    every plant's month by ``target / column_sum``, which can push a small
+    plant's monthly budget above ``nameplate x hours-in-month`` — energy the LP
+    can never deliver, because ``P[g,t] <= pmax x availability`` bounds it. The
+    clip is silent: the fleet simply under-delivers the target by the excess
+    (FINDING-caiso126 K4 measured 1.335/1.269/0.169 % of the CAISO RoR class
+    budget lost this way in 2023/24/25, over 30/28/15 plant-months).
+
+    This is the physical water-filling version: cap each plant-month at its own
+    ``bound`` and re-allocate the excess pro-rata over the plant-months that
+    still have headroom, repeating until nothing new overflows. The month total
+    is preserved exactly whenever it is physically attainable
+    (``target <= bound.sum()``); where it is not, every plant is left at its
+    bound and the shortfall is reported rather than hidden. Rule 14
+    ``[R-ACCURATE]``: the nameplate is the accurate datum and the uniform scale
+    was silently compensating against it.
+
+    **Byte-identical below the bound**: when the first pass overflows nothing,
+    the returned array is exactly ``monthly_energy * (target / column_sum)`` —
+    the same expression, same order of operations, as the uniform path.
+
+    Args:
+        monthly_energy: ``(n_plants, 12)`` per-plant monthly MWh shares.
+        bound: ``(n_plants, 12)`` per-plant-month deliverable MWh ceiling
+            (``max_mw x hours_in_month``).
+        target: ``(12,)`` monthly MWh totals to hit.
+
+    Returns:
+        ``(scaled, stats)`` — the rescaled ``(n_plants, 12)`` budget and a
+        summary dict with the number of clipped plant-months, the MWh
+        re-allocated and the residual shortfall.
+    """
+    out = np.array(monthly_energy, dtype=float)
+    clipped = 0
+    moved = 0.0
+    short = 0.0
+    for m in range(out.shape[1]):
+        col = out[:, m]
+        col_sum = col.sum()
+        if col_sum <= 0.0:
+            continue
+        want = float(target[m])
+        cap = bound[:, m]
+        if want > cap.sum():
+            # Physically unattainable this month: every plant at its ceiling.
+            short += want - float(cap.sum())
+            clipped += int((col > 0).sum())
+            out[:, m] = cap
+            continue
+        scaled = col * (want / col_sum)
+        free = np.ones(len(col), dtype=bool)
+        while True:
+            over = free & (scaled > cap)
+            if not over.any():
+                break
+            moved += float((scaled[over] - cap[over]).sum())
+            clipped += int(over.sum())
+            scaled[over] = cap[over]
+            free &= ~over
+            rest = float(want - scaled[~free].sum())
+            base = float(scaled[free].sum())
+            if not free.any() or base <= 0.0:
+                break
+            scaled[free] *= rest / base
+        out[:, m] = scaled
+    return out, {"clipped": float(clipped), "moved_mwh": moved, "short_mwh": short}
+
+
 def load_hydro_budget(
     iso: str,
     year: int,
@@ -374,6 +449,7 @@ def load_hydro_budget(
     backfill_year: int | None = None,
     per_plant_min_flow: dict[int, float] | None = None,
     monthly_target_mwh: np.ndarray | None = None,
+    nameplate_aware_target: bool = False,
 ) -> HydroBudget:
     """Load an ISO's hydro monthly energy budget and MW envelope.
 
@@ -417,6 +493,14 @@ def load_hydro_budget(
             (:func:`forecast_monthly_hydro`). The MW envelope is left at its
             physical (unscaled) capability; only the energy budget is repinned.
             ``None`` (default) changes no existing run.
+        nameplate_aware_target: When ``True``, apply ``monthly_target_mwh`` with
+            :func:`_nameplate_aware_scale` — each plant-month capped at its own
+            ``nameplate x hours-in-month`` and the excess re-allocated to the
+            plants that can still deliver it — instead of the uniform fleet-wide
+            monthly scale factor. Byte-identical to the uniform path whenever no
+            plant-month exceeds its bound; fixes the FINDING-caiso126 K4 silent
+            clip otherwise. Ignored when ``monthly_target_mwh`` is ``None``.
+            ``False`` (default) changes no existing run.
 
     Returns:
         A :class:`HydroBudget` keyed to the hydro generator subset, ordered
@@ -496,10 +580,28 @@ def load_hydro_budget(
                 f"got shape {target.shape}"
             )
         col_sums = monthly_energy.sum(axis=0)
-        scale = np.divide(
-            target, col_sums, out=np.ones_like(target), where=col_sums > 0.0
-        )
-        monthly_energy = monthly_energy * scale[np.newaxis, :]
+        if nameplate_aware_target:
+            # Rule 14: respect each plant-month's physical nameplate-hours
+            # ceiling instead of letting the LP silently clip the overflow.
+            monthly_energy, _stats = _nameplate_aware_scale(
+                monthly_energy, max_mw[:, np.newaxis] * hpm[np.newaxis, :], target
+            )
+            if _stats["clipped"] or _stats["short_mwh"]:
+                logger.info(
+                    "%s %d hydro budget: nameplate-aware rescale re-allocated "
+                    "%.1f GWh over %d clipped plant-months (%.1f GWh physically "
+                    "unattainable)",
+                    iso,
+                    year,
+                    _stats["moved_mwh"] / 1000.0,
+                    int(_stats["clipped"]),
+                    _stats["short_mwh"] / 1000.0,
+                )
+        else:
+            scale = np.divide(
+                target, col_sums, out=np.ones_like(target), where=col_sums > 0.0
+            )
+            monthly_energy = monthly_energy * scale[np.newaxis, :]
         logger.info(
             "%s %d hydro budget pinned to monthly target total %.1f GWh (was %.1f GWh)",
             iso,
@@ -594,6 +696,7 @@ def build_hydro_fleet(
     hydro_year: str = "normal",
     min_flow_floor: bool = False,
     ror_split: bool = False,
+    nameplate_aware_target: bool = False,
 ) -> tuple[list[Generator], np.ndarray | None]:
     """Return the ISO's conventional-hydro LP units and their monthly budgets.
 
@@ -719,6 +822,13 @@ def build_hydro_fleet(
             climatology unscaled.
         min_flow_floor: Stamp the measured monthly minimum-flow floor onto the
             units (see above). ``False`` (default) leaves every unit unfloored.
+        ror_split: Split the fleet into run-of-river and reservoir classes from
+            the external operational-mode classifier (see above).
+        nameplate_aware_target: Apply the monthly level target under each
+            plant-month's physical ``nameplate x hours`` ceiling rather than a
+            uniform fleet-wide scale factor (rule 14; FINDING-caiso126 K4).
+            Byte-identical below the bound. ``False`` (default) changes no
+            existing run.
 
     Returns:
         Tuple ``(units, monthly_energy)`` where ``units`` is the list of
@@ -760,7 +870,11 @@ def build_hydro_fleet(
         target = None
     try:
         budget = load_hydro_budget(
-            iso, shape_year, backfill_year=backfill_year, monthly_target_mwh=target
+            iso,
+            shape_year,
+            backfill_year=backfill_year,
+            monthly_target_mwh=target,
+            nameplate_aware_target=nameplate_aware_target,
         )
     except (FileNotFoundError, ValueError):
         if forecast_budget:
