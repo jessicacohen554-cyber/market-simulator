@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-26-pjm-129-meritguard-a1",
+  "label": "pjm 129 meritguard a1",
+  "date": "2026-07-26",
+  "shorthand": "pjm-129-meritguard-a1",
+  "definition": "pjm-128 A1: keeper 2026-07-25-pjm-121-cc-belt replayed verbatim on the guard-corrected CAMPD availability envelope (campd-economic-layup-fix charter 2026-07 SS5/SS8). Staged one-year-per-process; 2023+2024 byte-copied from the stage-2 bundle. Nothing tuned.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-26-pjm-129-meritguard-a1.js",
+  "bundle": "results/calibration/pjm129_meritguard_a1"
+}
