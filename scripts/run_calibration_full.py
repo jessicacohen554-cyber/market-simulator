@@ -108,6 +108,7 @@ from market_sim.pipeline.timing import log_year_phase_timing  # noqa: E402
 from market_sim.results.calibration import check_cf_band_occupancy  # noqa: E402
 from scripts.lib.bundle_io import (  # noqa: E402
     bundle_input_path,
+    write_derived_solve_inputs,
     write_shared_input,
 )
 from scripts.run_calibration import (  # noqa: E402
