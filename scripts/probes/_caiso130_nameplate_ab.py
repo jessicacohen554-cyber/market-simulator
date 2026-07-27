@@ -87,7 +87,7 @@ def d2_shares(bundle: Path, mech: str) -> dict[int, float]:
     out: dict[int, float] = {}
     for r in rows:
         if r.get("mechanism") == mech and r.get("year") is not None:
-            out[int(r["year"])] = float(r.get("share", 0.0))
+            out[int(r["year"])] = float(r.get("share_of_class", 0.0))
     return out
 
 
