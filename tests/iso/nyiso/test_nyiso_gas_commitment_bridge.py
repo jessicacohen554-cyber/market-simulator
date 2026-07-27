@@ -14,8 +14,13 @@ replacement for the h14-21 peak-window reliability floors (owner directive
   gap — never a second floor on the same hours (rule 19);
 * the two eligible classes carry their OWN measured min-load fraction
   (CC 0.523 / ST_GAS 0.239) — the reason the bridge runs the detector per class;
-* fast-start CT classes are NEVER bridged, and that exclusion comes from unit
-  PHYSICS (min-down 1 h, cheap starts), not a class-name tuple (rule 18);
+* fast-start CT classes are NEVER bridged BY DEFAULT, and that exclusion comes
+  from unit PHYSICS (min-down 1 h, cheap starts), not a class-name tuple
+  (rule 18). ``nyiso_gas_bridge_ct`` (nyiso-90) adds the CT class to the
+  detector for BLOCK COMMITMENT only: it can reach the ``min_run_hours``
+  extension and NOTHING else, because a 1 h min-down makes the physical bridge
+  unreachable and fails ``RA_BRIDGE_ECON_MIN_DOWN_HOURS`` for the economic one.
+  ``TestCTBlockCommitment`` pins that separation;
 * D-2 attribution: floored gen-hours tagged
   ``MECH_NYISO_GAS_COMMITMENT_BRIDGE``, separate from the ERCOT leg's id.
 """
@@ -312,6 +317,102 @@ class TestPrepGating(unittest.TestCase):
             "nyiso_gas_commitment_bridge",
         )
         assert_ablation_coverage()
+
+
+class TestCTBlockCommitment(unittest.TestCase):
+    """The ``nyiso_gas_bridge_ct`` leg (nyiso-90): min-run extension ONLY.
+
+    The physics claim this class pins is the whole justification for admitting
+    a fast-start class to the bridge: minimum-DOWN and minimum-RUN are
+    independent properties, so giving a CT a minimum run does NOT re-open
+    nyiso-87's exclusion of CTs from being HELD ACROSS an idle gap.
+    """
+
+    def _ct(self):
+        gens = [_gen("CT", "gas_ct", "CT_PEAKER", heat_rate=10.5)]
+        return gens, generators_to_fleet_arrays(gens, ["z"], hours=_HOURS)
+
+    def _armed(self, **over):
+        return _config(nyiso_gas_bridge_min_run=True, nyiso_gas_bridge_ct=True, **over)
+
+    def _floor(self, cfg, gens, fa, p0):
+        return _nyiso_gas_bridge_floor(
+            cfg,
+            gens,
+            fa,
+            p0,
+            np.full((1, _HOURS), 40.0),
+            np.full((1, _HOURS), 30.0),
+        )
+
+    def test_off_by_default(self):
+        """The gate is default-off, so every prior NYISO run is unchanged."""
+        self.assertFalse(ScenarioConfig(iso="NYISO").nyiso_gas_bridge_ct)
+
+    def test_short_run_is_extended_to_the_measured_min_run(self):
+        gens, fa = self._ct()
+        p0 = np.zeros((1, _HOURS))
+        p0[0, 10] = 300.0  # a single-hour run, shorter than the 2 h min-run
+        floor = self._floor(self._armed(), gens, fa, p0)
+        self.assertIsNotNone(floor)
+        # Hour 11 is the extension; it is floored at the CT min-load fraction.
+        self.assertAlmostEqual(floor[0, 11], 0.238 * 300.0, places=6)
+        # The run hour itself and everything else stay unfloored.
+        self.assertEqual(floor[0, 10], 0.0)
+        self.assertEqual(floor[0, 12], 0.0)
+        self.assertEqual(int((floor[0] > 0.0).sum()), 1)
+
+    def test_run_already_at_min_run_is_untouched(self):
+        """A 2 h run needs no extension — the leg must be exactly inert."""
+        gens, fa = self._ct()
+        p0 = np.zeros((1, _HOURS))
+        p0[0, 10:12] = 300.0
+        self.assertIsNone(self._floor(self._armed(), gens, fa, p0))
+
+    def test_long_idle_gap_is_never_bridged(self):
+        """The core physics claim: a CT is still never HELD ACROSS a gap.
+
+        Two runs already at/above the min-run, separated by a long idle gap that
+        a CC would be economically bridged across. The CT must come back with
+        NO floor at all — ``RA_BRIDGE_ECON_MIN_DOWN_HOURS`` still excludes it.
+        """
+        gens, fa = self._ct()
+        p0 = np.zeros((1, _HOURS))
+        p0[0, 10:14] = 300.0
+        p0[0, 30:36] = 300.0
+        self.assertIsNone(self._floor(self._armed(), gens, fa, p0))
+
+    def test_inert_without_the_min_run_leg(self):
+        """``nyiso_gas_bridge_ct`` alone has no reachable leg, so it must not arm."""
+        gens, fa = self._ct()
+        p0 = np.zeros((1, _HOURS))
+        p0[0, 10] = 300.0
+        self.assertIsNone(self._floor(_config(nyiso_gas_bridge_ct=True), gens, fa, p0))
+
+    def test_min_run_array_uses_the_measured_ct_horizon(self):
+        gens = [
+            _gen("CT", "gas_ct", "CT_PEAKER", heat_rate=10.5),
+            _gen("CC", "gas_cc", "CC_REGULAR", heat_rate=7.0),
+        ]
+        fa = generators_to_fleet_arrays(gens, ["z"], hours=_HOURS)
+        mr = _nyiso_bridge_min_run_hours(
+            self._armed(nyiso_gas_bridge_cc_min_run_hours=21.0), gens, fa
+        )
+        self.assertEqual(mr[0], 2.0)  # the CT measured p25_capwtd
+        self.assertEqual(mr[1], 21.0)
+        # Off, the CT row carries no horizon at all.
+        mr_off = _nyiso_bridge_min_run_hours(
+            _config(nyiso_gas_bridge_min_run=True), gens, fa
+        )
+        self.assertEqual(mr_off[0], 0.0)
+
+    def test_cogen_ct_is_still_excluded(self):
+        """CT_CHP follows its steam host, armed or not (rule 19)."""
+        gens = [_gen("CT", "gas_ct", "CT_CHP", heat_rate=10.5)]
+        fa = generators_to_fleet_arrays(gens, ["z"], hours=_HOURS)
+        p0 = np.zeros((1, _HOURS))
+        p0[0, 10] = 300.0
+        self.assertIsNone(self._floor(self._armed(), gens, fa, p0))
 
 
 if __name__ == "__main__":
