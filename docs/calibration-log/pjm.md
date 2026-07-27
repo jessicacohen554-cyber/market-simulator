@@ -1110,3 +1110,74 @@ results/calibration/pjm121_ccbelt --year 2025` → model_lw **41.53** / actual
 **46.07** / gap **−4.54**.
 
 **Next number: pjm-132.**
+
+---
+
+## pjm-132 (2026-07-27) — the authorized within-season re-conditioning is REFUTED; Lane 2 ends; PJM is NOT frontier, and the blocker is the keeper
+
+**Two solves registered** (rule 15, win or lose): `2026-07-27-pjm-132-control`
+and `2026-07-27-pjm-132-withinseason`, both 2023+2024+2025 in one bundle
+(rule 16), both **rejected probes**. `keepers.json` untouched.
+Charter: `docs/handoffs/pjm-132-midcurve-reconditioning-charter-2026-07.md`.
+Finding: `results/calibration/FINDING-pjm132-withinseason-refuted-2026-07.md`.
+
+**The memo was AUTHORIZED** (owner, 2026-07-27) with a *"keep the current config
+as default unless seasonal is new keeper"* amendment, which superseded memo §2's
+file-swap clause only: the within-year surfaces keep their filenames and stay
+live, the within-season vintage is a separate artifact, and one default-OFF
+`ScenarioConfig` gate switches the JSON vintage and the seasonal binning
+together behind a vintage guard.
+
+**Stage 1 PASSED, Stage 2 REFUTED.** K1 gradient 3/3 positive on bids (+0.997 /
++0.437 / +0.125) but the pre-registered honesty bound fired in every year,
+worst in the only failing year (2025 tight-bin rise **$0.152/MWh** vs a ~$1
+floor) — reported to the owner *before* the chain was spent. The A/B then
+measured the predicted nothing: C3a-2025 **−0.011 $/MWh** against a −4.54 gap,
+dispersion NARROWS in 2023 (−0.045) and 2024 (−0.144). The PASS signature
+required the 2025 gain carried by the tight strata AND dispersion widening
+toward actual; neither holds. **Lane 2 ends** — the measured-offer-surface
+family has now been tried as a dispersion lever under BOTH conditioning
+definitions.
+
+**The control validated itself:** 2025 at **40.932**, reproducing pjm-129's
+guard-corrected A1 (40.93), not the keeper's pre-guard 41.53.
+
+**The artifact is real and ISO-wide** (EIA-930 only, no LP): MISO and NYISO
+carry **zero winter hours** in their annual top-3% bin all three years; PJM is
+mid-pack at 95.2% summer. So the definitional case is not PJM-specific, but
+acting on it elsewhere needs each ISO's own memo (rules 23/25). The gate stays
+**default-off** — the owner's "default if it helps the forecast" condition is
+**unverified** (forecast skill is a different program) so it did not fire.
+Runtime cost measured: **2.85 ms/solve-year**, 0.0003% of a solve.
+
+**Shipped — pjm-130's bench fix was INERT and now actually lands.** The mirror
+`_backfill_chp_eia923_from_donor` recovered `btm_backfill_year` from
+`run_config.json`, but **no bundle records it there** — it lives in
+`meta.json`, which is where the BTM side reads it. So the one-sided repair
+persisted and PJM 2025 `classFull.CT_CHP` stayed at a **negative metered
+volume**. `rebuild_benchmark` now checks `meta.json` first: **−0.3726 →
++1.3724** (CC_CHP 6.2811 → 6.4446); 2023/2024 byte no-ops; invariant restored;
+6/6 symmetry tests pass. pjm-130 predicted +1.4653 — the live path gives
++1.3724 and the ~0.09 offset is left open, not quoted away. Found because the
+owner questioned why CHP BTM would not simply be measured from the backcast
+year's own EIA-923 (it is — the backfill only repairs plants missing entirely
+from the thin 2025 vintage).
+
+**FRONTIER: recommend NOT declaring.** The **mechanism-ledger half is complete**
+— no named admissible mechanism remains untried. But the **calibration half is
+not met**, and the frontier handoff's claim that "PJM clears the first half
+already (10/10)" is no longer true on corrected data: the keeper is CALIBRATED
+only on the pre-guard inflated outage envelope, while the same recipe on the
+corrected envelope is **NOT-YET (C1 FAIL 15/16, C3a FAIL, C3c FAIL)**. Frontier
+requires every hard **and volume** criterion in band with the residual confined
+to the C3c tail; PJM fails a volume criterion *and* a price-level one. The real
+open item is upstream and **owner-only** (miso-88 precedent): the keeper
+designation on the corrected envelope. Three routes in the finding §5.
+
+**Rules:** 22 — 2023–2025 only. 15/16 — both arms registered, one bundle each,
+parity clean, `audit_keepers.py --iso PJM` PASS. 25 — PJM only. 1/20/23/24/26 —
+ranking scope changed and nothing else; gate registered in
+`_CACHE_KEY_OPTIONAL_FIELDS` so the pinned default cache key stays
+`edbc1b103207170a`. 27 — every ≥300-line file edited in place and blob-verified.
+
+**Next number: pjm-133.**

@@ -423,7 +423,53 @@ and this lane closes — **either outcome is ledger progress.**
    `results/calibration/FINDING-pjm131-gate1-no-admissible-arm-2026-07.md`,
    `docs/handoffs/pjm-131-gate1-arm-charter-2026-07.md`.
 
-4. **Frontier is NOT ready — and as of 2026-07-27 for exactly one reason.**
+3f. **pjm-132 (2026-07-27) — the memo was AUTHORIZED, executed, and REFUTED.
+   Lane 2 ends.** The owner authorized the within-season re-conditioning with a
+   "keep the current config as default" amendment; memo §4 ran exactly as
+   pre-registered. **Stage 1 K1 PASSED 3/3** on bids (gradient +0.997 / +0.437 /
+   +0.125) but the honesty bound fired in every year, worst in 2025 (tight-bin
+   rise **$0.152/MWh** vs a ~$1 noise floor) — reported to the owner before the
+   chain was spent. **Stage 2 (6 solve-years, both arms registered) refutes it:**
+   C3a-2025 moves **−0.011 $/MWh** against a −4.54 gap and dispersion NARROWS in
+   2023 (−0.045) and 2024 (−0.144). The PASS signature needed the 2025 gain
+   carried by the tight strata AND dispersion widening toward actual; neither
+   holds. The measured-offer-surface family has now been tried as a dispersion
+   lever under **BOTH** conditioning definitions and fails on prices both times.
+   The control arm validates itself: 2025 at **40.932**, reproducing pjm-129's
+   guard-corrected A1 (40.93), not the keeper's pre-guard 41.53.
+   *Kept, at zero cost:* the seasonal vintage is real and **ISO-wide** — MISO and
+   NYISO carry **zero winter hours** in their annual tight bin (PJM 95.2 %
+   summer, mid-pack), so the definitional case is not PJM-specific; the gate
+   stays **default-off** (2.85 ms/solve-year) and the owner's "default if it
+   helps the forecast" condition is **unverified**, so it did not fire.
+   *Also shipped:* pjm-130's bench fix was **inert** — it recovered its trigger
+   from `run_config.json`, but `btm_backfill_year` lives in `meta.json` on every
+   bundle, so the one-sided repair persisted. Fixed; PJM 2025
+   `classFull.CT_CHP` **−0.3726 → +1.3724**.
+   `results/calibration/FINDING-pjm132-withinseason-refuted-2026-07.md`,
+   `docs/handoffs/pjm-132-midcurve-reconditioning-charter-2026-07.md`.
+
+4. **Frontier is NOT ready — and as of 2026-07-27 the blocking half has CHANGED.**
+   The **mechanism-ledger half is now essentially complete**: Lane 1 closed
+   (pjm-124/125), Lane 2's commitment half terminal (pjm-128), the season half
+   settled (pjm-126/127) and now tried-and-refuted (3f), gate 1 closed
+   (pjm-131), gate 3 ledgered. **No named admissible mechanism remains untried.**
+   What blocks frontier is now the **calibration half**, and §1's claim that
+   "PJM clears the first half of that bar already (10/10)" is **no longer true on
+   corrected data**. The keeper scores CALIBRATED only on the **pre-guard
+   inflated outage envelope**; the same recipe on the corrected envelope
+   (`pjm129_meritguard_a1`, reproduced by pjm-132's control) is **NOT-YET** with
+   **C1 FAIL (15/16, free 11/12), C3a FAIL, C3c FAIL**. Frontier requires every
+   hard **and volume** criterion in band with the residual confined to the C3c
+   tail; PJM fails a volume criterion AND a price-level one. **Recommendation:
+   do NOT declare frontier** — declaring on the committed 10/10 would be
+   declaring on an envelope the project has superseded. The real open item is
+   upstream and owner-only (miso-88 precedent): what to do about the keeper
+   designation on the corrected envelope. See the finding §5 for the three
+   routes.
+
+5. **(superseded numbering — the original §4 text follows for lineage)**
+   **Frontier is NOT ready — and as of 2026-07-27 for exactly one reason.**
    Lane 1 is complete (pjm-124/125), Lane 2's commitment-status half is
    terminal (pjm-128, blocked on non-public data — the bar's own second
    clause), and the season half is measured and settled (pjm-126/127). What
