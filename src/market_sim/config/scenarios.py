@@ -105,6 +105,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # from the hash so every pre-existing cache key is byte-stable; True
     # enters the key (a distinct topology scenario).
     "transmission_expansion_enabled",
+    # NYISO in-city commitment / Zone-K locational reserve gates (nyiso-83):
+    # both default False and dropped from the hash so every pre-existing cache
+    # key is byte-stable; True enters the key (a distinct commitment scenario).
+    "nyiso_li_locational_reserve",
+    "nyiso_incity_commitment_obligation",
     # NYISO SCR/EDRP demand-response axis (commit 62aac3b). Both fields are
     # default-off / a market-design constant and were intended "byte-identical
     # for every other config", but they reach asdict() and were not registered
