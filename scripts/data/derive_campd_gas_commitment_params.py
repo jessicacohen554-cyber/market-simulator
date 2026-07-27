@@ -93,6 +93,36 @@ UNIT_LEVEL_DIR = RAW_DIR / "campd-unit-level"
 # mis-wired onto them later (CLAUDE.md rule 18 [R-PHYSICS]).
 TARGET_CLASSES: tuple[str, ...] = ("CC_REGULAR", "ST_GAS")
 
+# ``--ct`` target: the fast-start peaker class. Kept OUT of the default
+# :data:`TARGET_CLASSES` above for two independent reasons, only one of which
+# the original exclusion note stated:
+#
+# 1. *Byte-safety.* Adding CT_PEAKER to the default set would make every mixed
+#    steam/turbine plant (E F Barrett, Gowanus, Narrows) span two target
+#    classes, so ``class_plant_codes`` would drop them as AMBIGUOUS — silently
+#    changing the committed CC_REGULAR/ST_GAS rows the keeper's bridge already
+#    reads. The ``--ct`` path therefore targets CT alone and writes its own
+#    artifact; the default invocation stays byte-identical.
+# 2. *Physics scoping.* The original note said CT classes "fail the bridge's
+#    own physics gate (min-down 1 h, $12-25/MW starts)". That is true of the
+#    ECONOMIC gap bridge and remains true: ``RA_BRIDGE_ECON_MIN_DOWN_HOURS``
+#    (4 h) is untouched, so a fast-start CT is still never HELD ACROSS an idle
+#    gap (rule 18 [R-PHYSICS], nyiso-87). It is NOT true of the ``min_run_hours``
+#    extension leg, which is gated on minimum-RUN physics — a distinct property.
+#    Minimum-down governs how fast a unit can come back; minimum-run governs how
+#    long a started unit must stay on. The NREL class tables already carry the
+#    two independently for every other fuel. Measuring the CT class's run
+#    horizon does not re-arm economic bridging on it.
+CT_TARGET_CLASSES: tuple[str, ...] = ("CT_PEAKER",)
+
+# CAMPD ``unitType`` the ``--ct`` path restricts to (casefolded compare). The
+# same device ``derive_campd_ct_heat_rates.py`` uses: CEMS unit ids carry no
+# model class, but CAMPD's own ``unitType`` says which units are simple-cycle
+# turbines, so a mixed facility contributes ONLY its turbines instead of being
+# dropped as unattributable. Without it the CT artifact would lose Barrett,
+# Gowanus and Narrows — 832 MW, the whole 1970s barge fleet.
+CT_UNIT_TYPE: str = "combustion turbine"
+
 # Robust maximum-sustained-load percentile: the HSL proxy. p99.5 rather than
 # the raw max so a single over-range meter sample cannot inflate the
 # denominator and depress every unit's measured lsl_frac.
@@ -153,18 +183,26 @@ def weighted_percentile(values: np.ndarray, weights: np.ndarray, pct: float) -> 
     return float(v[np.searchsorted(cum, pct / 100.0, side="left").clip(0, v.size - 1)])
 
 
-def class_plant_codes(iso: str) -> tuple[dict[int, str], list[int]]:
+def class_plant_codes(
+    iso: str, classes: tuple[str, ...] = TARGET_CLASSES
+) -> tuple[dict[int, str], list[int]]:
     """Return ``({plant_code: class}, ambiguous_codes)`` for the ISO's fleet.
 
     A CAMPD facility carries no model class, so the mapping is by plant code.
-    A plant whose model rows span more than one :data:`TARGET_CLASSES` entry
-    cannot be attributed at facility level and is returned as ambiguous (and
-    excluded) rather than folded into whichever class happened to appear first.
+    A plant whose model rows span more than one *classes* entry cannot be
+    attributed at facility level and is returned as ambiguous (and excluded)
+    rather than folded into whichever class happened to appear first.
+
+    Args:
+        iso: The ISO name.
+        classes: The model classes to target. Defaults to
+            :data:`TARGET_CLASSES`; the ``--ct`` path passes
+            :data:`CT_TARGET_CLASSES`.
     """
     fleet = load_fleet_from_csv(iso, get_iso_config(iso))
     by_code: dict[int, set[str]] = {}
     for gen in fleet:
-        if gen.plant_group not in TARGET_CLASSES:
+        if gen.plant_group not in classes:
             continue
         code = int(gen.plant_code or 0)
         if code:
@@ -174,7 +212,12 @@ def class_plant_codes(iso: str) -> tuple[dict[int, str], list[int]]:
     return mapping, ambiguous
 
 
-def unit_statistics(iso: str, years: list[int]) -> pd.DataFrame:
+def unit_statistics(
+    iso: str,
+    years: list[int],
+    classes: tuple[str, ...] = TARGET_CLASSES,
+    unit_type: str | None = None,
+) -> pd.DataFrame:
     """Return one row per CAMPD unit with its measured LSL fraction and runs.
 
     Loads each state-year extract once, restricts to the ISO's own target-class
@@ -182,10 +225,18 @@ def unit_statistics(iso: str, years: list[int]) -> pd.DataFrame:
     described in the module docstring. Run lengths are pooled across years but
     computed WITHIN each year, so a unit online at both year boundaries does not
     report one spurious multi-year run.
+
+    Args:
+        iso: The ISO name.
+        years: CAMPD vintages to pool.
+        classes: Model classes to target (default :data:`TARGET_CLASSES`).
+        unit_type: When given, keep only CAMPD rows whose ``unitType`` matches
+            (casefolded). The ``--ct`` path passes :data:`CT_UNIT_TYPE` so a
+            mixed steam/turbine facility contributes only its turbines.
     """
-    mapping, ambiguous = class_plant_codes(iso)
+    mapping, ambiguous = class_plant_codes(iso, classes)
     if not mapping:
-        raise SystemExit(f"{iso}: model fleet has no {TARGET_CLASSES} plants")
+        raise SystemExit(f"{iso}: model fleet has no {classes} plants")
     if ambiguous:
         print(
             f"  (dropping {len(ambiguous)} mixed-class plant code(s), "
@@ -203,19 +254,24 @@ def unit_statistics(iso: str, years: list[int]) -> pd.DataFrame:
             if not path.exists():
                 print(f"  (skip {path.name}: not on disk)")
                 continue
-            df = pd.read_parquet(
-                path,
-                columns=[
-                    "facilityId",
-                    "facilityName",
-                    "unitId",
-                    "date",
-                    "hour",
-                    "grossLoad",
-                ],
-            )
+            cols = [
+                "facilityId",
+                "facilityName",
+                "unitId",
+                "date",
+                "hour",
+                "grossLoad",
+            ]
+            if unit_type is not None:
+                cols.append("unitType")
+            df = pd.read_parquet(path, columns=cols)
             df["facilityId"] = pd.to_numeric(df["facilityId"], errors="coerce")
             df = df[df["facilityId"].isin(codes)]
+            if unit_type is not None and not df.empty:
+                df = df[
+                    df["unitType"].astype(str).str.strip().str.casefold()
+                    == unit_type.casefold()
+                ]
             if df.empty:
                 continue
             df = df.sort_values(["facilityId", "unitId", "date", "hour"])
@@ -226,14 +282,14 @@ def unit_statistics(iso: str, years: list[int]) -> pd.DataFrame:
                 names[key] = str(g["facilityName"].iloc[0])
 
     if not loads:
-        raise SystemExit(f"{iso}: no CAMPD hours found for {TARGET_CLASSES}")
+        raise SystemExit(f"{iso}: no CAMPD hours found for {classes}")
 
     rows = []
     # Every individual run, kept per class so the class summary can report the
     # EXACT pooled distribution rather than a reconstruction from per-unit
     # medians. Each entry is (run_hours, unit HSL) so the same array serves the
     # unweighted and capacity-weighted percentiles.
-    class_runs: dict[str, list[tuple[float, float]]] = {k: [] for k in TARGET_CLASSES}
+    class_runs: dict[str, list[tuple[float, float]]] = {k: [] for k in classes}
     for key, chunks in loads.items():
         fid, uid = key
         pooled = np.concatenate(chunks)
@@ -281,6 +337,8 @@ def class_summary(
     class_runs: dict[str, np.ndarray],
     iso: str,
     years: list[int],
+    classes: tuple[str, ...] = TARGET_CLASSES,
+    unit_type: str | None = None,
 ) -> pd.DataFrame:
     """Aggregate the per-unit conduct table to one row per class.
 
@@ -312,7 +370,7 @@ def class_summary(
     """
     years_tag = "-".join(str(y) for y in years)
     out = []
-    for klass in TARGET_CLASSES:
+    for klass in classes:
         sel = units[units["plant_class"] == klass]
         if sel.empty:
             continue
@@ -350,6 +408,8 @@ def class_summary(
             f"capacity-weighted p{_CLASS_PCTILE} across units; run hours "
             "reported equally-weighted and capacity-weighted (see docstring)"
         )
+        if unit_type is not None:
+            row["source"] += f"; restricted to CAMPD unitType == '{unit_type}'"
         out.append(row)
     return pd.DataFrame(out)
 
@@ -371,19 +431,28 @@ def main() -> None:
         action="store_true",
         help="ALSO write the per-unit conduct table alongside the class summary",
     )
+    parser.add_argument(
+        "--ct",
+        action="store_true",
+        help="measure the fast-start CT_PEAKER class instead of the slow-start "
+        "gas classes, restricted to CAMPD unitType 'Combustion turbine' so a "
+        "mixed steam/turbine facility contributes only its turbines. Writes "
+        "campd_ct_commitment_params_<ISO>.csv; the default invocation is "
+        "unaffected and byte-identical.",
+    )
     args = parser.parse_args()
     iso = args.iso.upper()
 
-    units, class_runs = unit_statistics(iso, args.years)
-    summary = class_summary(units, class_runs, iso, args.years)
+    classes = CT_TARGET_CLASSES if args.ct else TARGET_CLASSES
+    unit_type = CT_UNIT_TYPE if args.ct else None
+    stem = "campd_ct_commitment_params" if args.ct else "campd_gas_commitment_params"
+
+    units, class_runs = unit_statistics(iso, args.years, classes, unit_type)
+    summary = class_summary(units, class_runs, iso, args.years, classes, unit_type)
     if summary.empty:
         raise SystemExit(f"{iso}: no target-class units measured — nothing to write")
 
-    out_path = (
-        Path(args.out)
-        if args.out
-        else (PROCESSED_DIR / f"campd_gas_commitment_params_{iso}.csv")
-    )
+    out_path = Path(args.out) if args.out else (PROCESSED_DIR / f"{stem}_{iso}.csv")
     summary.to_csv(out_path, index=False)
     print(f"wrote {out_path} ({len(summary)} rows)")
     print(
