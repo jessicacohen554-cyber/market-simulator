@@ -175,12 +175,42 @@ def test_largest_retained_frames_identifies_the_holding_site():
 
 
 def test_largest_retained_frames_is_sorted_and_limited():
-    """Callers log only the top N, so ordering and the limit are load-bearing."""
+    """Callers log only the top N, so ordering and the limit are load-bearing.
+
+    Asserted WITHOUT assuming these two frames are the biggest alive in the
+    process. ``largest_retained_frames`` enumerates EVERY live frame by design —
+    the test right below pins exactly that — so "the top row is my frame" is a
+    property of the whole session, not of this function. It held only by luck of
+    collection order: bisected 2026-07-27, the fast tier's last order-dependent
+    failure was this assertion losing to a 22.9 MB / 126,342 x 20 EIA-923
+    plant-level frame that ``tests/scoring/test_calibration_reference_guard.py``
+    leaves memoized in an ``lru_cache`` — a legitimately cached loader frame,
+    not leaked mutable state, so there is nothing at the other end to reset.
+    (Contrast the EIA-860 vintage global fixed in tests/conftest.py, which WAS
+    a leak and was fixed at its polluter.)
+
+    The two real invariants are pinned directly instead: the limit is honoured,
+    the returned list is sorted by payload descending, and within it ``big``
+    outranks ``small``.
+    """
     small = pd.DataFrame({"a": np.zeros(200_000)})
     big = pd.DataFrame({"a": np.zeros(2_000_000)})
-    rows = cache_control.largest_retained_frames(1, small, big)
-    assert len(rows) == 1, "limit not honoured"
-    assert rows[0][1] == 2_000_000, "not sorted by payload descending"
+
+    assert len(cache_control.largest_retained_frames(1, small, big)) == 1, (
+        "limit not honoured"
+    )
+
+    rows = cache_control.largest_retained_frames(500, small, big)
+    payloads = [r[0] for r in rows]
+    assert payloads == sorted(payloads, reverse=True), (
+        "not sorted by payload descending"
+    )
+    ranks = {r[1]: i for i, r in enumerate(rows)}
+    assert 2_000_000 in ranks, "the 2M-row frame was not reported at all"
+    assert 200_000 in ranks, "the 200k-row frame was not reported at all"
+    assert ranks[2_000_000] < ranks[200_000], (
+        "the larger frame must outrank the smaller one"
+    )
 
 
 def test_largest_retained_frames_sees_frames_without_a_root():
