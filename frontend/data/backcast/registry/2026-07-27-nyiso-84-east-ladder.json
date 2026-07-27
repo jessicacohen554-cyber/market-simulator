@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-27-nyiso-84-east-ladder",
+ "label": "nyiso 84 east ladder",
+ "date": "2026-07-27",
+ "shorthand": "nyiso-84-east-ladder",
+ "definition": "nyiso-84 PROBE (adjudicated inert): published EAST spin_10 330MW + total_30 1200MW families added idle-allowed (nyiso_east_reserve_families). Demand-curve values PINNED from ASM 6.8 items 2/12: BOTH $40/MW, NOT the $775 the task premise assumed (only item 7, the 10-min total already in the model, is $775). Bit-identical to control on tail, reserve dual and class energy \u2014 the same idle-allowed inertness nyiso-83 4b proved for the LI ladder. Correct rule-14 accuracy fix, stays default-off.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-07-27-nyiso-84-east-ladder.js",
+ "bundle": "results/calibration/nyiso84_east_ladder"
+}
