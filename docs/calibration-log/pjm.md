@@ -1022,4 +1022,91 @@ Fidelity anchor re-verified this session (no solve): `pjm120_c3a_stratum_readout
 results/calibration/pjm121_ccbelt --year 2025` → model_lw **41.53** / actual
 **46.07** / gap **−4.54**.
 
-**Next number: pjm-131.**
+---
+
+## pjm-131 (2026-07-27) — gate 1 has no admissible arm: its CC_CHP half is an economic merit miss, its ST_GAS half is grounded, and the measured host-share artifact is globally degenerate
+
+**No LP solved.** Charter: `docs/handoffs/pjm-131-gate1-arm-charter-2026-07.md`
+(committed as `e454b87` **before** the probe ran). Finding:
+`results/calibration/FINDING-pjm131-gate1-no-admissible-arm-2026-07.md`.
+
+**Priority 1 — the re-conditioning memo is STILL UNDECIDED.** Verified: last
+commit `f1070d4`, live banner "awaits the owner's decision", no authorization
+anywhere in the tree. Not nudged, not re-derived, no proxy taken (rule 23).
+Gate 2 stays blocked, so the session proceeded to gate 1.
+
+**Gate 1, CC_CHP half — REFUTED as an arm, and re-classified.** The only
+structural lever pointing at CC_CHP is the behind-the-meter host share, which
+for the gas CHP classes is a **grid-capacity pull-out** (`grid_cap = nameplate ×
+(1 − pct_mr/100)`, `mustrun_cap = 0`) and is simultaneously the bench
+subtrahend. On the `pjm129_meritguard_a1` fleet reconstructed with **no LP**
+(`scripts/lib/bundle_fleet.py`), **κ = 0.0226** of CC_CHP's 2023 energy is
+produced at ≥99 % of its hour-varying available grid capacity, at **72.7 % mean
+utilization**. The pre-registered Q3 rule (`κ ≤ 0.20` ⇒ economic ⇒ refuted)
+fires with room to spare: the class **clears on price, it is not
+capacity-constrained**, so a capacity cut is absorbed while the bench actual
+falls in full and the overshoot *enlarges*. The probe reproduces pjm-130 §2
+exactly — model **8.653** / actual **6.1148** / overshoot **+2.538 TWh**.
+
+This **upgrades pjm-130's "gates 1 and 2 are one stratum" from an analogy to a
+measured dependency**: the +2.54 TWh is a merit-ownership miss, so it closes
+only via the re-ownership of the $40–150 region (pjm-122) — gate 2's
+owner-blocked route. Gate 1 is **not independently armable**; no separate CC_CHP
+lane should be opened.
+
+**Gate 1, ST_GAS half — GROUNDED, ledgered.** From the A1 bundle's committed
+`legitimacy_diagnostics.json` (no solve): `st_netload_drag` forces **54.6 %** of
+ST_GAS in 2023 (5.05 of 9.25 TWh), over the 30 % cap — but it carries a **cited
+`D4_WINDOWS` declaration** (all-24h, on measured CAMPD overnight-CF evidence)
+and scores **D-4 pass, 0.000 off-window** in all three years, with D-1 shape
+passing (`profile_r` 0.97 / 0.92 / 0.90). That is rule 18's over-budget
+escalation path satisfied — a clean pass, reported as a note. Per the
+pre-registered Q5 rule: **not a floor-window artifact ⇒ ledgered, not
+mechanised** (rules 1 / 19). Recorded but not acted on: ST_GAS `cv_ratio`
+1.9 / 2.8 / 2.2 — the model's off-peak ST_GAS is *more* variable than the
+measured fleet.
+
+**New defect — `chp-btm-share` is globally degenerate.** `btm_share ≡ 1.0` on
+**62 of 62 rows across 5 ISOs** (CAISO curates none). Root-caused upstream in
+`plant_emission_rates_v2`: the curation's cogen signature is
+`steam_load_klbh_sum > 0` and it sums `net_mwh` over exactly those rows, but at
+CEMS the steam load and the electrical output are reported on **different
+units** — **2,914 of 2,915** steam-reporting unit-years carry
+`gross_mwh = net_mwh = 0`, so the CAMPD term is zero by construction. A
+plant-level repair recovers only **24 of 134** cogen plants (a CEMS-visibility
+-biased sample), so **no repair was shipped**: this is rule 14's own
+"misaligned to our representation" exception and the sector-keyed estimate
+correctly stands, now documented. **Latent forecast exposure flagged:**
+`runner.py` resolves this artifact for forecast years, so any ISO with a curated
+partition would pull every covered CHP plant 100 % behind the meter.
+
+**Corrections disclosed (finding §4):** the charter's Q4 propagation had a sign
+slip (`1 − κ·delta_cap` should be `1 + κ·delta_cap`, `delta_cap` being the
+signed capacity change) and one verdict key was mis-named. Both corrected at the
+site with the correction commented; neither changes a verdict.
+
+**pjm-130 §6's test failure is NOT reproducible.**
+`test_persisted_identity.py::test_default_scenario_config_cache_key_is_pinned`
+**passes** at `origin/main` = `8e5053e`: `ScenarioConfig().cache_key()` returns
+the pinned **`edbc1b103207170a`**, the pin literal is unedited, it is not
+data-dependent (re-run with `data/clean/` moved aside), and `scenarios.py` has no
+live env-var knobs (all five hits are historical comments — rule 24 clean).
+Recorded as unreproduced, not silenced. **`--reuse-solved` is unaffected.**
+
+**Rules:** 22 — 2023–2025 only, freeze untouched and NOT lifted. 15 — no solve
+completed, so no bundle to register; nothing solved and dropped
+(pjm-124/125/126/127/128/130 precedent). 16 — no bundle produced. 1/19/20/23/24/26
+— nothing tuned, no mechanism invented for either half. 27 — no existing file
+≥300 lines modified; the only new code is two probes. Keeper
+`2026-07-25-pjm-121-cc-belt` untouched.
+
+**Still pending:** pjm-130's bench fix has **not** landed on the dashboard — the
+renderer writes `bench/` at registration and this session registered nothing, so
+`bench/PJM/2025.json.gz` `classFull.CT_CHP ≈ +1.4653` awaits the next PJM
+registration.
+
+Fidelity anchor re-verified this session (no solve): `pjm120_c3a_stratum_readout.py
+results/calibration/pjm121_ccbelt --year 2025` → model_lw **41.53** / actual
+**46.07** / gap **−4.54**.
+
+**Next number: pjm-132.**

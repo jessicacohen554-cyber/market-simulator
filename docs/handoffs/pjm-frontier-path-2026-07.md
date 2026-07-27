@@ -385,6 +385,43 @@ and this lane closes — **either outcome is ledger progress.**
    verdict change.
    `results/calibration/FINDING-pjm130-gate1-and-bench-symmetry-2026-07.md`,
    `docs/handoffs/pjm-130-retune-charter-2026-07.md`.
+3e. **pjm-131 (2026-07-27) — gate 1 has NO admissible arm; no solve spent.**
+   Memo re-checked and **still undecided** (`f1070d4`), so priority 1 stayed
+   blocked and gate 1 was attempted. Both halves close on pre-registered rules:
+   * **CC_CHP half — REFUTED, and re-classified.** On the `pjm129_meritguard_a1`
+     fleet reconstructed with no LP, **κ = 0.023** of CC_CHP's 2023 energy is
+     produced at its available grid-capacity ceiling (mean utilization 72.7 %),
+     so the class is **economically dispatched, not capacity-bound** and the
+     host-share capacity lever is inert — a capacity cut is absorbed while the
+     bench actual falls in full, which *enlarges* the overshoot. The probe
+     reproduces pjm-130 §2 exactly (8.653 / 6.1148 / **+2.538 TWh**). This
+     **upgrades 3d's "one stratum" from analogy to a measured dependency**: the
+     +2.54 TWh is a merit-ownership miss, so it is closed by whatever re-owns
+     the $40–150 region — gate 2's owner-blocked route. Do **not** open a
+     separate CC_CHP lane.
+   * **ST_GAS half — GROUNDED, ledgered.** `st_netload_drag` is over the D-2
+     budget (54.6 % of the class in 2023) but carries a cited `D4_WINDOWS`
+     declaration and scores **D-4 pass, 0.000 off-window** with D-1 shape
+     passing every year — rule 18's over-budget escalation satisfied, i.e. a
+     clean pass. Not a floor-window artifact, so no mechanism was invented
+     (rules 1 / 19).
+   * **New defect found — `chp-btm-share` is globally degenerate.**
+     `btm_share ≡ 1.0` on **62/62 rows across 5 ISOs** (CAISO curates none),
+     root-caused upstream: of 2,915 steam-reporting unit-years in
+     `plant_emission_rates_v2`, **2,914 carry `net_mwh = 0`** — at CEMS the
+     steam load and the electrical output sit on different units, so the cogen
+     filter removes the rows holding the electricity. A plant-level repair
+     recovers only **24 of 134** cogen plants, a CEMS-visibility-biased sample,
+     so **no repair was shipped** and the sector estimate correctly stands
+     (rule 14's misalignment exception). **Latent forecast exposure:**
+     `runner.py` resolves the artifact for forecast years, so a curated
+     partition would pull every covered CHP plant 100 % behind the meter.
+   * pjm-130 §6's `test_persisted_identity` failure is **not reproducible** at
+     `8e5053e` — `cache_key()` returns the pinned `edbc1b103207170a`, the pin is
+     unedited, it is not data-dependent, and there are no live env knobs.
+     `--reuse-solved` unaffected.
+   `results/calibration/FINDING-pjm131-gate1-no-admissible-arm-2026-07.md`,
+   `docs/handoffs/pjm-131-gate1-arm-charter-2026-07.md`.
 
 4. **Frontier is NOT ready — and as of 2026-07-27 for exactly one reason.**
    Lane 1 is complete (pjm-124/125), Lane 2's commitment-status half is
@@ -392,6 +429,9 @@ and this lane closes — **either outcome is ledger progress.**
    clause), and the season half is measured and settled (pjm-126/127). What
    remains is **the owner's decision on the re-conditioning memo** (3c): the
    last named admissible mechanism that is neither tried nor formally blocked.
+   pjm-131 (3e) **widened what that decision gates** — gate 1's CC_CHP half is
+   now measured to be the same merit-ownership question, so the memo blocks
+   gates 1 *and* 2, not gate 2 alone.
    Authorize-and-run memo §4, or decline and record the block — the ledger is
    whole either way, and no session may proceed without that decision.
 
