@@ -336,7 +336,56 @@ altered. No solve was run and no run was registered.
 
 ---
 
-## 5. DO-NOT-REDO
+## 5. TASK 4 — NOT RUN, and pre-registered so the successor cannot post-hoc it
+
+**No A/B was solved this session.** Four concrete reasons, stated so the next
+session can overturn any of them on evidence rather than inherit a vibe:
+
+1. **It is six year-solves, not three.** miso-92 §7 records that after the CAMPD
+   envelope correction *"any replay-based diagnosis of the MISO keeper measures
+   the post-correction envelope, not the keeper's registered numbers"* — so the
+   A arm cannot be the registered `miso88_egrid_hr` bundle and must be a
+   same-HEAD replay of the keeper recipe.
+2. **Measured cost against a hard ceiling.** miso-92 measured **14.40–14.41 GB**
+   peak per single-year MISO solve; this box has 15 GB, and miso-89 OOM'd at
+   15.9 GB in the unstaged form. The staged one-year-per-process
+   `--reuse-solved` chain is mandatory, and the margin is ~0.6 GB.
+3. **The keeper's exact CLI is not recorded in copy-pasteable form.** It has to
+   be reconstructed from ~30 `calibration_flags` entries in
+   `miso88_egrid_hr/run_config.json`. A mis-specified arm does not measure the
+   delta — it mis-attributes it, which is worse than no arm.
+4. **Registration is blocked by a red gate that is not this lane's to clear.**
+   `scripts/audit_keepers.py --check` fails on **S1: `status/PJM.js` stale**.
+   Verified pre-existing at clean HEAD (reproduced with this session's changes
+   stashed), and `frontend/data/backcast/keepers/README.md` forbids editing
+   another ISO's lane. MISO's own keeper passes every check. Rule 15
+   `[R-DASHBOARD]` requires both arms registered in-session, so the arm would
+   land on a red PR for a PJM reason.
+
+### 5.1 PRE-REGISTERED PREDICTION (write this down before solving)
+
+The TASK 1 arm is a **way-station, not a keeper candidate**, and its expected
+direction is stated now:
+
+* **CC_CHP will fit WORSE.** §2 measures it over-delivering by +8.1 % *at the
+  old default*, and §2.1 proves the corrected share can only move the ratio up
+  (toward +44 % at the ρ=1 bound). **A C1 degradation on CC_CHP is PREDICTED,
+  and under rules 1 `[R-STRUCT]` and 14 `[R-ACCURATE]` it is NOT grounds to
+  revert** — the accurate input stays and the worse fit is the discovered-bug
+  signal. The named root cause is the 33 % understated CHP heat rate (§3).
+* **CT_CHP should improve or be flat**, from −20.6 % toward zero.
+* **ST_CHP is immaterial** (0.4–0.8 TWh vs a 12.8 TWh line) and is reported,
+  not gated.
+* **No peer ISO may move at all** — §1.4 measures the peer delta at exactly
+  0.0 MW, so any peer movement in an arm is a bug in the arm, not a result.
+
+An arm that "improves the MAE" by reverting the sector data would be a rule-1
+violation. The honest sequence is: land TASK 1, measure, then judge TASK 3
+against the **post-TASK-1** residual — never bundle the two (rule 19).
+
+---
+
+## 6. DO-NOT-REDO
 
 * Re-deriving MISO `chp_sector` from the raw `f923_*.zip` archives — they are
   not committed; EIA-860 `Sector` is the same attribute, validated 232/232 (§1).
