@@ -15,7 +15,7 @@ only the directory moved.
 | `scripts/lib/`      | Shared helpers imported by scripts (`clean_io.py`, `bundle_io.py`, per-datatype registries). One deliberate exception carries an argparse main — see "`keeper_store.py`'s CLI" below. |
 | `scripts/probes/`   | Per-run probe scripts, named `_<iso><run>_*` — the historical record of calibration probes (frozen). |
 | `scripts/probes/artifacts/` | The probes' non-Python repro artifacts (`.patch` / `.xz.b64` chunks, `_<iso><run>_chain.sh` drivers, chunked-patch land dirs), segregated 2026-07-26 so the probe scripts stand alone — same frozen record, content untouched; paths quoted in pre-move records refer to the old flat `probes/` layout. |
-| `scripts/diagnostics/` | Standing measurement harnesses that profile or diff the engine rather than run the programs: `bench_highs_parallel.py` (HiGHS thread-scaling bench), `profile_lp_memory.py` (LP build-vs-solve peak-RSS split), `diff_warmstart_bundles.py` (per-plant cold-vs-warm bundle diff; invoked by `regression_gate.py`) — plus scratch diagnostics. |
+| `scripts/diagnostics/` | Standing measurement harnesses that profile or diff the engine rather than run the programs: `bench_highs_parallel.py` (HiGHS thread-scaling bench), `profile_lp_memory.py` (LP build-vs-solve peak-RSS split), `diff_warmstart_bundles.py` (per-plant cold-vs-warm bundle diff; invoked by `regression_gate.py`), `repro_eia860_vintage_leak.py` (the 2026-07-27 bisect record + standing regression detector for the EIA-860 vintage process-global leak that was the fast-tier order-dependent pollution family) — plus scratch diagnostics. |
 
 Classification rule used (and to use going forward): a script stays at top
 level if it is part of a *standing* workflow — invoked by CI, a skill, tests,
