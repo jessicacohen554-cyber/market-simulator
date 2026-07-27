@@ -1049,24 +1049,30 @@ class DeterminationTests(unittest.TestCase):
     def test_ledgered_caveat_budget_is_three(self):
         # Pins MAX_LEDGERED_CAVEATS = 3 (rubric v2, memo §3a): ledgered
         # (beyond-commercial-band, measured-input-documented) caveats are
-        # budgeted at 3; four of them (price_mean -13.8%, price_tail 0.25x,
-        # co2 +15%, dispatch_corr r=0.55) exceed the budget -> NOT-YET;
-        # with the gas fleet correlation back above the floor there are
-        # three -> CALIBRATED-WITH-CAVEATS. (The former 4th caveat, storage
-        # +50%, retired with C5b under v2.6(c) — storage can no longer form
-        # a caveat at all, so co2 carries the 4th slot.)
+        # budgeted at 3; four of them (price_mean -13.8%, price_shape NRMSE
+        # 0.241, price_tail 0.25x, dispatch_corr gas r=0.55) exceed the
+        # budget -> NOT-YET; with the gas fleet correlation back above the
+        # floor there are three -> CALIBRATED-WITH-CAVEATS. Caveats aggregate
+        # per CRITERION, not per record, so the four slots must come from four
+        # distinct criteria. (Caveat slot
+        # genealogy: storage +50% retired with C5b under v2.6(c), then co2
+        # +15% carried the 4th slot until C5a itself was removed from the
+        # rubric by the v2.9 owner amendment 2026-07-27 — eGRID publishes no
+        # 2025 vintage, so a scored year had no measured actual. C3b price
+        # shape now carries it; the budget being pinned is the rubric's, not
+        # any one criterion's.)
         def art_with(gas_r):
             ypay = self._clean_year_payload()
             ypay["lmp"]["Z"]["p"] = 25.0  # -13.8% vs rt 29.0: beyond ±10% comm.
             ypay["lmp"]["Z"]["pMon"] = [25] * 12  # NRMSE 0.138 <= 0.15 -> PASS
             ypay["ordc"] = {"hoursGt200": {"actual": 100, "model": 25}}  # 0.25x
-            ypay["co2"] = {"model": 115.0}  # +15% -> beyond ±10% commercial
+            ypay["lmp"]["Z"]["pMon"] = [22] * 12  # NRMSE 0.241 > 0.20 -> FAIL
             ypay["fuelRows"][0]["r"] = gas_r
             att = _clean_attestation(
                 exceptions=[
                     {"criterion": "price_mean", "year": 2024, "reason": "documented"},
+                    {"criterion": "price_shape", "year": 2024, "reason": "documented"},
                     {"criterion": "price_tail", "year": 2024, "reason": "documented"},
-                    {"criterion": "co2", "year": 2024, "reason": "documented"},
                     {
                         "criterion": "dispatch_corr",
                         "family": "gas",
@@ -1075,9 +1081,7 @@ class DeterminationTests(unittest.TestCase):
                     },
                 ]
             )
-            art = _artifacts(ypay, attestation=att, **self._clean_bench_args())
-            art["bench"][2024]["co2"] = {"egrid": 100.0}
-            return art
+            return _artifacts(ypay, attestation=att, **self._clean_bench_args())
 
         _tail({"PJM": {"2024": {"da_gt": 80, "rt_gt": 100, "rt_coverage": 1.0}}})
         try:
@@ -1092,23 +1096,41 @@ class DeterminationTests(unittest.TestCase):
 
     def test_commercial_band_caveats_unbudgeted(self):
         # Auto COMMERCIAL_BAND caveats (inside the evidence-anchored outer band,
-        # outside target) are listed but never consume the ledger budget. Under
-        # rubric v2.3 the price criteria are single-band (price_mean -6.9% and
-        # price_shape NRMSE 0.17 are clean PASSes), so only co2 +8% remains a
-        # commercial-band caveat -> CALIBRATED-WITH-CAVEATS, not NOT-YET.
-        ypay = self._clean_year_payload()
-        ypay["lmp"]["Z"]["p"] = 27.0  # -6.9% vs rt 29.0: clean PASS (v2.3)
-        ypay["lmp"]["Z"]["pMon"] = [33.93] * 12  # NRMSE 0.17: clean PASS (v2.3)
-        ypay["co2"] = {"model": 108.0}
-        art = _artifacts(
-            ypay, attestation=_clean_attestation(), **self._clean_bench_args()
+        # outside target) are listed but never consume the ledger budget.
+        #
+        # As of the v2.9 owner amendment (2026-07-27) NO SCORED CRITERION CAN
+        # PRODUCE ONE. The two-band criteria were price_mean/price_shape (both
+        # collapsed to single-band at v2.3: TOL == COMMERCIAL), C2 sysvol (its
+        # +/-2.5%//+/-5% band survives only on the preliminary-EIA-923 fallback
+        # path, which v2.5 made SKIPPED-never-gated), and C5a co2 -- which this
+        # amendment removed from the rubric because eGRID publishes no 2025
+        # vintage. So the end-to-end path this test used to drive no longer
+        # exists, and fabricating it would test nothing real.
+        #
+        # Rather than delete the coverage, pin the INVARIANT that makes it
+        # unreachable. This assertion fails the moment anyone re-introduces a
+        # criterion with a distinct commercial band -- which is exactly when
+        # the end-to-end test above must be restored from git history.
+        two_band = {
+            "price_mean": (cv.PRICE_MEAN_TOL, cv.PRICE_MEAN_COMMERCIAL),
+            "price_shape": (
+                cv.PRICE_SHAPE_NRMSE_MAX,
+                cv.PRICE_SHAPE_NRMSE_COMMERCIAL,
+            ),
+        }
+        for name, (tol, comm) in two_band.items():
+            self.assertEqual(
+                tol,
+                comm,
+                f"{name} regained a distinct commercial band -- restore the "
+                "end-to-end COMMERCIAL_BAND caveat test (git history, pre-v2.9)",
+            )
+        self.assertNotIn("co2", cv.CRITERIA)  # removed by v2.9
+        self.assertIn("co2", cv.REPORTED_ONLY)  # still scored, not aggregated
+        # The classification constant itself stays live for the restoration case.
+        self.assertEqual(
+            cv._band_result(0.07, 0.05, 0.10), (cv.CAVEAT, cv.COMMERCIAL_BAND)
         )
-        art["bench"][2024]["co2"] = {"egrid": 100.0}
-        v = cv.determine_from_artifacts("t", art)
-        self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
-        self.assertEqual(len(v["caveats"]["commercial_band"]), 1)  # co2 only
-        self.assertEqual(v["caveats"]["ledgered"], [])
-        self.assertTrue(any("commercial-grade band" in r for r in v["reasons"]))
 
     def test_protective_caveat_budget_is_one(self):
         # C7/C8 keep the v1 hard budget of 1 (CLAUDE.md rule 20 / audit D-1/D-2
