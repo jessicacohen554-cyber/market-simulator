@@ -1651,3 +1651,93 @@ for the record, on the ERCOT-118/119 precedent; this diagnosis is its pre-commit
 re-arm pooled 2.856; (3) the coal artifact stands as the measured record, nothing reads it yet;
 (4) route the successor to the REACH question via the SCED TPO instrument (FINDING-ercot117 §E),
 not another offer-level probe; (5) ERCOT-120 stays a separate un-renumbered lane.
+
+## 2026-07-27 — ERCOT-123 coal SCED TPO reach: the unoffered DAM headroom IS offered in real time; no mechanism licensed (Phase 1 only, NO SOLVE)
+
+**Lane** ercot123-coal-sced-reach · keeper **unchanged**
+(`2026-07-26-ercot115-coal-marginal-hr`) · no year solved, no run registered, no
+keeper file touched. Full forensics: `docs/DIAGNOSIS-ercot123-coal-sced-reach-2026-07-27.md`;
+probe `scripts/probes/ercot123_coal_sced_reach.py` (sections A–I, no LP built).
+
+**The charter (ERCOT-122 §4/§5.4) asked what the unoffered 83 % of coal DAM headroom does in
+real time, and required routing to exactly one of four buckets. The SCED TPO instrument refutes
+all four.** Decomposing online coal resource-interval headroom (`HASL − LSL`), MW-weighted,
+over 82 probe days:
+
+| bucket | COAL | CC control |
+|---|---|---|
+| **(a) TPO-offered** | **0.9945 / 0.9998 / 0.9979 / 0.9964** | 0.9570 / 0.9532 / 0.9810 / 0.9852 |
+| (b) self-scheduled | 0.0054 / 0.0000 / 0.0019 / 0.0035 | 0.0351 / 0.0321 / 0.0082 / 0.0083 |
+| **(e) genuine residual** | **0.0001 / 0.0002 / 0.0002 / 0.0001** | 0.0079 / 0.0146 / 0.0107 / 0.0065 |
+| (c) AS-held (of `HSL−LSL`) | 0.0197 / 0.0204 / 0.0181 / 0.0184 | 0.0153 / 0.0137 / 0.0062 / 0.0080 |
+
+(order: 2024 tail, 2024 control, 2025 control, 2025 tail.) **Coal offers 99.4–100.0 % of its
+RT-dispatchable headroom into SCED — a HIGHER reach than CC (95.3–98.5 %)**, with 98.8–100.0 %
+of online coal intervals carrying a TPO curve against a DAM picture where over half submit none.
+**(e) is measured-empty (0.0001–0.0002), so no offer-side withholding mechanism is licensed**;
+**(b) is refuted** on both the headroom test and the independent price-side test (share of coal's
+offered MW priced below $0 = 0.0000–0.0002 vs CC 0.0011–0.0344 — coal does not price-take in RT);
+**(c)** is the awarded up-AS block (3.3–5.2 % of range) which `ercot_thermal_as_endogenous`
+already prices (rule 19); **(d)** measured properly as a derate (`max HSL − HSL`) is 4.9–6.4 %
+for coal vs CC's 8.7–9.8 % — not coal-specific, and the availability envelope's lane anyway.
+The charter's (c) and (d) are also shown to be the SAME quantity as it defined them (`HASL` is
+`HSL` minus the up-AS responsibility, corr 0.62–0.77 with the awards), so a decomposition using
+both would have double-counted.
+
+**Named root cause: the DAM reach gap is an INSTRUMENT ARTIFACT, not coal offer behaviour.**
+ERCOT coal transacts its incremental energy in real time; the low DAM reach is QSE self-supply
+bypassing DAM transaction, exactly as `FINDING-ercot117` §1.1 suspected. **ERCOT-122 §4's "the
+error is in how much coal is offered" is REFUTED on the RT instrument, and the model's ~100 %
+coal offer reach is CORRECT** — ERCOT-121 §1a's all-five-tranches-at-max-744/744-h is not an
+offer-reach defect and must not be pursued as one. **The reach question is CLOSED.**
+
+**Cross-checks all pass.** Bench: SCED CLLIG telemetered output vs EIA-930 coal, ratio
+0.974–0.988, corr 0.956–0.971 (the ERCOT-121 §1a Parish-3470 caveat carried unfixed). Sampling:
+DAM reach recomputed on the SAME probe days reproduces ERCOT-122 within ≤0.010 every year and
+class (coal 0.1741 vs 0.1844, 0.1556 vs 0.1610). CC control run through every section. Added
+check — evaluating each unit's own TPO curve at the prevailing hourly RT price, **real coal
+delivers 96–98 % of what its own offer curve makes available**, no summer/non-summer split:
+real coal is not held back below its offers.
+
+**The one residual the RT instrument DOES expose — chartered, NOT built.** Measured RT supply
+(share of HASL) is 0.908–0.920 at ≤$25 — where the model already matches (ERCOT-117 §1.1: 0.91)
+— but needs **$500** to reach 1.00, while the model's coal stack is fully offered by **$32–34**
+(ERCOT-122 §3). The model over-offers coal by **5–7 pp of HASL in the $32–100 band and ~4 pp
+above $100**: a missing offer-curve **UPPER TAIL**, order 0.6–1.6 TWh/yr (hand sizing, labelled).
+This is NOT the closed offer-LEVEL lane — that was a rebasis of the level (which moves coal
+DOWN); this is the upper tail of the same distribution on a ~99 %-coverage instrument, and the
+two measurements agree. Phase 2 was not fired: the charter's trigger is bucket (e) or (b), this
+is neither; it is identified on 2024–2025 probe days with **no 2023 SCED in existence**, and it
+interacts with the COAL_PRB `peak` band and the ercot115 marginal-HR floor — an enumeration
+rule 19 requires before a mechanism. Successor pre-commit requirements in the diagnosis §7.2.
+
+**Also on the record.** ERCOT-117 §5.3 (coal price-taking base) stays its own lane, corroborated
+here (measured LSL/HSL 0.42–0.46 vs model 0.28) with its adverse direction now noted — raising
+the must-run base of an over-running class adds forced energy at the bottom. ERCOT-120 stays a
+separate un-renumbered lane. **New data-contract finding:** ERCOT revised the 60-Day SCED
+disclosure schema in **December 2025** — `HASL`/`LASL` and the `Ancillary Service <svc>` AWARD
+block are dropped and replaced by `AS Capability <svc>` + `Ramp Rate Up/Down`, and
+`Telemetered Net Output` loses its trailing space; AS capability is not AS award and `HASL` is
+not recoverable. The probe coalesces the net-output spellings and **explicitly drops** the
+Dec-2025 intervals (32,533 online rows across delivery days 2025-12-10/15/20) rather than letting
+them silently NaN out. Any future SCED loader must handle the revision.
+
+**Scope/environment.** Session diff vs `origin/main` is ONE new file (the probe) — no
+`ScenarioConfig` field, cache-key surface, solve path or existing artifact touched, so no config
+pin moved and no existing run can change; the CC and coal offer artifacts are untouched and
+byte-identical (rule 23). Holdout years untouched (rule 22): SCED subsets are 2024–2025, in-window;
+no 2022-or-earlier SCED read. No GitHub Actions workflow added. Sampling bound carried throughout:
+82 probe days, 2024–2025 only, three of four subsets hours 11–22 only — the hour-of-day bias is
+bounded directly on the all-24-hour subset (coal (a) 0.9929 h11–22 vs 0.9998 h23–h10), so the
+conclusion does not depend on the daytime sampling. Nothing here is an annual statistic.
+Pre-existing on clean main, reported not chased: `tests/regression/test_persisted_identity.py`
+cache-key pin (2 failed, 9 passed).
+
+**Recommendation (recommend-and-STOP, owner decides):** (1) reach question CLOSED, Phase 2 not
+run; (2) successor = the coal offer-curve UPPER TAIL, re-shaping the existing COAL_PRB `peak`
+band rather than adding a mechanism, with the 2023 extrapolation declared and LOYO-gated;
+(3) two inherited owner decisions surfaced, not decided — whether to run the ERCOT-122
+offer-level arm as a registered controlled refutation (this session's §5 independently
+strengthens ERCOT-122's recommendation against it), and the committed-band data gap (the SCED
+raws DO carry `Min Gen Cost`, populated on 29–31 % of online coal intervals, but it is the RT
+instrument on 82 probe days, NOT the DAM committed band — flagged, not used).
