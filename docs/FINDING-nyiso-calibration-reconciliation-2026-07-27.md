@@ -144,6 +144,37 @@ named cause (§4.2: sub-physical steam-credited heat rates on 27.8 % of CHP
 capacity). Note CT_CHP is C1-EXCLUDED, but its shortfall still redistributes
 into gated cells through the family total.
 
+**2.3 The same reconciliation, screened across the other five ISOs.** The
+wedge is a property of the scoring design (metered-load demand basis vs
+923-plant-metered actuals), not of NYISO — so the owner's question "what do
+we do for the other ISOs" was measured this session from each ISO's CURRENT
+keeper payload + bench parts (same formula: `(Σ classFull + measured NI) −
+(Σ gmModel over classFull keys + model NI)`; per-keeper balance closure over
+the classFull keys verified first; 2025 columns are preliminary-vintage
+contaminated and excluded from conclusions):
+
+| ISO | 2023 wedge | 2024 wedge | % of load | reading |
+|---|--:|--:|--:|---|
+| ERCOT | −2.2 | +0.7 | −0.5…+0.2 % | none — ERCOT native load is generation-referenced (losses + DC ties folded); nothing to do |
+| PJM | −0.3 | +5.9 | −0.03…+0.7 % | no material wedge; separately, PJM's model export accounting is internally ambiguous by ~7 TWh (gmModel export class −20.8 vs fuelRows interchange −27.8, 2023) — a note for the PJM lane, not a demand fix |
+| NEISO | +0.7 | +1.2 | +0.7…+1.2 % | real, but under C1's band at NEISO's scale; record and act only if a C1 cell grazes the band |
+| **MISO** | **+23.8** | **+19.7** | **+3.7 / +3.1 %** | the LARGEST wedge in the fleet — 3× MISO's 8 TWh band cap. The MISO lane must run this section's chain of custody (930 demand vs MISO native load vs 923+NI) and identify its own factor |
+| CAISO | −4.8 | −7.4 | −2.3 / −3.5 % | **not a loss wedge** (wrong sign): dominated by the model importing +8.0/+10.3 TWh MORE than the measured net interchange (36.9 vs 28.9; 42.7 vs 32.4). A seam-volume/basis reconcile for the CAISO lane — do NOT apply a demand gross-up there until the import volume is reconciled |
+| NYISO | +2.9 | +4.2 | +2.0 / +2.8 % | §2.1 — lane nyiso-87 |
+
+Protocol, stated once: the instrument is the ONE existing field
+(`td_loss_factor`), identified **per ISO** from that ISO's own measured
+reconciliation (rule 25 is satisfied — a measured physical loss/basis factor,
+not a tuned curve; rule 23 — re-derive only when the source vintages update),
+armed only in that ISO's own keeper lane with LOYO, never bulk-applied. A
+positive screen here is a *screen*, not an identification: each lane repeats
+the NYISO chain of custody (BA-reported 930 demand vs the ISO's native load
+files vs 923+NI) before choosing a value, because a wedge can also be a seam
+accounting artifact (CAISO's is) rather than losses. The fix is a gross-up to
+the generation basis, **not** a demand-source swap — NYISO's native pal load
+and its EIA-930 Demand are the same series (§2.1), and the same is expected
+wherever the BA reports its metered load to EIA-930.
+
 ---
 
 ## 3. Task 2 — interchange r ≈ 0.40: the monthly pin is fine; the within-month economics are inverted
