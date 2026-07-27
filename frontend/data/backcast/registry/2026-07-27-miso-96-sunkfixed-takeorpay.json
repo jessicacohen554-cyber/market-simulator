@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-27-miso-96-sunkfixed-takeorpay",
+  "label": "miso 96 sunkfixed takeorpay",
+  "date": "2026-07-27",
+  "shorthand": "miso-96-sunkfixed-takeorpay",
+  "definition": "miso-96 LANE 1 arm: coal_committed_takeorpay_sunk_fixed=true on the miso-93 HEAD-envelope control (= the 2026-07-25-miso-88-egrid-hr keeper recipe on the guard-corrected CAMPD extract). SINGLE DELTA. Driver: a take-or-pay contract is an accounting-period tonnage obligation (a sunk FIXED cost), but the committed-band discount prices it as a per-hour MARGINAL subsidy, pinning RE PRB inframarginal in all 8760 h and stopping it de-loading overnight. The contract stays carried once, on _mustrun (rules 17 [R-FLOOR-WINDOW] / 19 [R-ONE-MECH]). Evidence: results/calibration/FINDING-miso96-coal-prb-offpeak-2026-07.md",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-27-miso-96-sunkfixed-takeorpay.js",
+  "bundle": "results/calibration/miso96_sunkfixed"
+}
