@@ -162,3 +162,39 @@ memo §4 pre-registered.
 the `pjm98_cc_mustrun` basis restored (or an explicit authorization to re-derive
 the top-of-curve surface on a new basis, which is a *different* change needing
 its own case). Flagged here; not taken.
+
+## 7. Stage-0 early feasibility read on 2023 only — pre-registered before it ran
+
+The corpus fetch is ~1/3 complete (all 12 months of **2023**, a complete
+delivery year). The owner asked whether the lever's worth can be tested now
+rather than after the full fetch. It partly can, and this section fixes what
+that answer may and may not claim **before** the number exists.
+
+**Method.** Derive the mid-curve surface on `--years 2023` **twice** — once
+`--conditioning within-year`, once `within-season` — and run the Stage-1
+K1-gradient probe on the 2023 keeper fleet with the two as arm A and arm B.
+
+**Both arms are derived on the same 2023-only corpus.** Comparing a 2023-only
+seasonal surface against the *committed 3-year* within-year surface would
+confound the conditioning change with the year coverage; the arm-A baseline is
+therefore re-derived on 2023 alone, and the committed within-year JSON is
+restored from git untouched afterwards. Only the ranking scope differs between
+the arms — memo §4's binding clause.
+
+**What this read CANNOT do.** It is **not** the K1 verdict. K1 is pre-registered
+as gradient `bin3 − bin0 > 0` in **at least 2 of 3 years**, and one year cannot
+satisfy or refute a 2-of-3 rule. Nothing here relaxes, replaces or re-scopes
+that gate, and no promotion or Stage-2 decision rests on it alone.
+
+**What it CAN do, stated in advance:**
+* **Gradient POSITIVE in 2023** — K1 stays live (1 of the 2 required years
+  banked); continue the fetch and run the full three-year gate as pre-registered.
+* **Gradient NEGATIVE in 2023** — one of the three years has already failed, so
+  K1 now requires **both** 2024 and 2025 positive. That is a materially worse
+  prior and is reported as such; it does **not** by itself kill the lever.
+* Either way it yields 2023's **honesty-bound magnitude** (the armed tight-bin
+  MW-weighted rise vs the ~$1/MWh noise floor), which memo §4 requires be
+  reported to the owner *before* the chain is spent.
+
+**Cost:** one 12-month derive pass plus one no-LP fleet reconstruction. **No
+solve.** The result is a throwaway diagnostic — never registered (rule 15/16).
