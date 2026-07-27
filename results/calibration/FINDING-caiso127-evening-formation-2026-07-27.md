@@ -116,20 +116,37 @@ gain), and it makes the C3a guard a *predictable* consequence of any
 supply-side-only evening candidate rather than bad luck. **The storage conduct
 is the prerequisite, not a co-symptom.**
 
-**Prerequisite the aggregate cannot settle: battery or pumped storage?** The
-committed slim bundle exposes only the ISO-aggregate storage net recovered from
-the energy balance — the two technologies are inseparable in it (the gap
-FINDING-caiso125 §6.4 flagged and recommended closing). The CAISO LP carries
-**2 078 MW / 20 776 MWh of pumped storage** alongside the 7.6–15.2 GW battery
-fleet, the caiso-99 shape anchor does **not** apply to it (its power cap passes
-through unchanged, making PS the model's one entirely unrestrained
-arbitrageur), and the overnight net (+157/+188/+453 MW) sits inside its power
-range. The KKT argument is technology-blind — it holds for whichever storage is
-interior — so §2's mechanism stands either way, but **which technology to aim a
-mechanism at is not resolved here.** This session added the sidecar that
-resolves it (`hourly/storage_<year>.parquet`, per-tech charge/discharge,
-write-only and solve-invariant) and ran a keeper replay to produce it; the split
-is gate **D0** of the §6 ask and blocks its candidate ranking.
+**Which technology? RESOLVED — it is the BATTERY fleet (§B2, gate D0).** The
+KKT argument is technology-blind, but which technology is interior decides
+which mechanism family is admissible at all: the caiso-99 shape anchor binds
+batteries only, so the LP's **2 078 MW / 20 776 MWh of pumped storage** is its
+one entirely unrestrained arbitrageur, and the aggregate overnight net
+(+157/+188/+453 MW) sits inside PS's power range. The committed slim bundle
+could not separate them (the gap FINDING-caiso125 §6.4 flagged); this session
+added the sidecar that does (`hourly/storage_<year>.parquet`, per-tech
+charge/discharge, write-only and solve-invariant) and replayed the keeper to
+produce it — the replay reproduces the committed bundle **digit-for-digit**
+(class dispatch max |Δ| 0.000 MW over 122 640 rows and zonal price max |Δ|
+0.0000 $/MWh over 61 320 rows, every year), so the sidecars are the keeper's
+own and are committed into its `hourly/`.
+
+| | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| overnight net — **li_ion** | +98 MW (discharging 0.29 of h) | +104 (0.28) | +365 (0.41) |
+| overnight net — pumped storage | +58 MW (0.05) | +85 (0.08) | +89 (0.06) |
+| **pinned days — li_ion** | **140/365 (0.384)** | **175/365 (0.479)** | **244/365 (0.668)** |
+| pinned-day gap — li_ion | +2.45 | +1.62 | +1.27 $/MWh |
+| pinned days — pumped storage | 27/365 (0.074) | 48/365 (0.132) | 28/365 (0.077) |
+| pinned-day gap — pumped storage | +5.71 | +0.48 | −5.18 $/MWh |
+
+**The battery fleet carries the pin and pumped storage does not.** The battery
+pinned-day share rises 0.384 → 0.479 → 0.668 with the build-out, on a gap that
+tightens toward zero (+2.45 → +1.27); PS's share is 0.074–0.132 with no trend
+and a gap that does not converge (+5.71 / +0.48 / −5.18, small-n noise). PS
+discharges overnight in only 5–8 % of hours against the battery's 28–41 %, so
+the sustained interior-overnight-discharge *pattern* — the thing the KKT
+argument needs — is a battery phenomenon. Gate D0 therefore **passes for the §6
+ask as filed**: the battery-side candidate is aimed at the right resource.
 
 ## §3 — the storage conduct defect, measured (§B)
 
@@ -152,19 +169,24 @@ one-sided **p95 discharge CAP** (overnight 2 830 / 2 922 / 3 521 MW). A p95 cap
 cannot correct a mean-*sign* error: the model's overnight discharge is 5–11 %
 of that cap, so the anchor never binds there and never will.
 
-**What this table does NOT say — the basis, honestly.** It is a *position*
-comparison, not a throughput comparison, and both sides are impure: the model
-series is the ISO-aggregate net (battery **plus** pumped storage — see §2's
-prerequisite) and the measured series is EIA-930 `NG: OTH` (battery plus a
-small non-battery "other" residual, and a *net* cell that understates gross
-throughput). Any throughput reading off it would be wrong-signed against the
-better-sourced measurement already on record: the caiso-74 follow-up read the
-LESR RTD energy schedules directly and found the zero-adder LP **under**-cycles
-CAISO (model 5.33/7.60/10.48 vs actual 5.67/10.04/12.06 TWh), which is why
-`battery_dispatch_adder` stays 0.0 and why the caiso-100/101 positive adder was
-rejected on its throughput guard. **The defect this finding identifies is the
-overnight net POSITION, not the annual volume** — a distinction the §6 ask is
-built on.
+**Position, not throughput — and the two point opposite ways.** The table above
+is a *position* comparison on impure sides: the model series is the aggregate
+net (battery **plus** PS) and the measured series is EIA-930 `NG: OTH` (a *net*
+cell that understates gross battery throughput). On the clean battery-only
+basis now available from the D-0 sidecar, the annual comparison **inverts**:
+model li_ion discharge **4.06 / 7.62 / 11.46 TWh** against the measured LESR
+RTD schedules' **5.67 / 10.04 / 12.06 TWh** (the caiso-74 follow-up's basis) —
+the LP **under**-cycles the battery by 28 / 24 / 5 %, which is why
+`battery_dispatch_adder` stays 0.0 for CAISO and why the caiso-100/101 positive
+adder was rejected on its throughput guard.
+
+So the two readings are not in conflict; together they are the diagnosis: **the
+model's battery moves too little energy overall and places too much of what it
+does move in the overnight.** The defect is the overnight net POSITION, not the
+annual volume — the distinction the §6 ask is built on, and the reason every
+volume-priced instrument in §6's refuted list is aimed at the wrong quantity.
+On the battery-only basis the overnight over-discharge is
+**+151 / +99 / +98 MW** (model li_ion +98/+104/+365 vs measured −53/+5/+267).
 
 ## §4 — the supply side: the marginal rung, and what would have to steepen (§C/§D/§E)
 
