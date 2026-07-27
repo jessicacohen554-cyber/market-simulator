@@ -1474,3 +1474,47 @@ wall (or per-year QUANTILE LADDERS, not p50s); expected to keep the mid-merit ga
 C3c. Owner decision: the committed-band data gap (credentialed archive vs partial 2024/25
 intake vs accept the residual). Phase B (delta re-fit) stays gated behind a shape-clean
 Phase A. Full write-up: `FINDING-ercot118-gas-rebasis-2026-07-27.md`.
+
+## 2026-07-27 — ERCOT-119: leg-split rebasis — the econ legs own BOTH the gain and the C3c drain; peak-leg attribution refuted (rejected probe, mechanism keeper-grade) — slug ercot119-econ-rebasis
+
+**Charter.** The ERCOT-118 §5.1 successor: add a band scope to the EP rebasis so only
+econ_low/econ_high take their per-year EP values while the peak standing wall (and its ladder
+rungs and window margin anchor) keeps the keeper's resolved pooled level — the single-delta
+test of the §4.2 claim that the per-year peak(B) p50 owned the C3c breach. Pre-commit
+`PRECOMMIT-ercot119-econ-rebasis-2026-07-27.md` pushed at `aa80740` with the mechanism BEFORE
+any solve; decomposed gates (a) crossing retention ≥80 % of the ercot118 drop, (b) C3c ±5 h,
+(c) C1 held, (d) G1/G2; any C3c breach pre-declared an ordinary rejection.
+
+**Built (stays, default-off).** `ScenarioConfig.ercot_offer_hrmult_ep_rebasis_bands`
+(None = all bands = ercot118 byte-identical, test-pinned; cache-neutral at default) +
+band-scoped margin-anchor threading (`margin_anchor_<band>` keys,
+`offer_curves.band_margin_anchor`): every band's (mult, anchor) pair stays on one basis —
+rebased econ bands on the year's EP anchor, un-rebased peak/committed on the window 2.2494.
+Unknown scope names hard-fail (rule 25). The ep_yearly artifact untouched (rule 23).
+
+**The arm.** `replay_keeper ercot115 --set ercot_thermal_dam_availability_coal=true --set
+ercot_offer_hrmult_ep_rebasis=true --set
+'ercot_offer_hrmult_ep_rebasis_bands=["econ_low","econ_high"]'`, run
+`2026-07-27-ercot119-econ-rebasis-joint`, NOT-YET, keeper unchanged. G0 3/3 (scoped 4-band
+lines; margin anchors 192/192/190 < 337 — the peak rungs back on the window anchor; static-TTC
+parity). **Result:** gates (a)/(c)/(d) PASS, **(b) C3c FAILS with the IDENTICAL drain (72→49,
+13→3, 1→1) — the pre-declared ORDINARY REJECTION.** The arm reproduces ercot118 almost
+byte-for-byte with the peak wall fully restored: crossing elevation +3.34/+2.79/+5.27 (equal
+to the cent), C3a legs within 0.13 pp (mid-merit −3.10/−6.63/−4.31 TOWARD actual — P1
+confirmed; tail −7.03/−6.16/−2.92 UNCHANGED — P2 refuted), peak-leg footprint mean |Δprice|
+$0.02–0.07/h. **The §4.2 peak-p50 attribution is refuted: the econ legs own both the
+mid-merit gain and the tail drain — one mechanism, not two separable legs.** Dispatch channel
+measured (D-2): the gas commitment bridge's binding forced energy collapses identically in
+both arms (0.77/1.41/0.97 → 0.20/0.46/0.30 TWh) — the cheaper measured econ bands put the CC
+fleet in merit through the near-tail hours, and the model's sub-$200-adjacent price formation
+sits on the CC offer surface where the real market's sits on ORDC/reserve scarcity. The
+rebasis lane is CLOSED as a C3c fix; Phase 2 (peak quantile ladders) de-prioritized — the
+peak level barely reaches the tail at all.
+
+**Successors.** ERCOT-120: tail-hour mechanism decomposition (committed sidecars only, no
+solve) — for the 23/10 lost 2023/24 hours, what prices each hour in keeper vs arm (marginal
+class, co-opt/ORDC adder share) and which mechanism should carry them to ≥$200; routes the
+scarcity-formation lane (ERCOT-94/99), not another offer probe. Owner decisions unchanged:
+committed-band data gap; measured-coal-envelope re-arming stays gated on a shape-clean arm
+(its own legs passed a third consecutive time here). Full write-up:
+`FINDING-ercot119-econ-rebasis-2026-07-27.md`.
