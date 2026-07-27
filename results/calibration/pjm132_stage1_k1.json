@@ -1,0 +1,60 @@
+{
+  "bundle": "results/calibration/pjm121_ccbelt",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "rows": [
+    {
+      "year": 2023,
+      "n_touched_rows": 419,
+      "mw_wtd_delta_by_bin": {
+        "bin0": -0.08674356997869946,
+        "bin1": 0.27190942754775693,
+        "bin2": 0.5496250540829108,
+        "bin3": 0.9101879204495482
+      },
+      "gradient_bin3_minus_bin0": 0.9969314904282477,
+      "gradient_positive": true,
+      "tight_bin_rise_usd": 0.9101879204495482
+    },
+    {
+      "year": 2024,
+      "n_touched_rows": 461,
+      "mw_wtd_delta_by_bin": {
+        "bin0": -0.067352136388408,
+        "bin1": 0.4014476966826847,
+        "bin2": 0.0902901100857899,
+        "bin3": 0.37005102422860087
+      },
+      "gradient_bin3_minus_bin0": 0.43740316061700885,
+      "gradient_positive": true,
+      "tight_bin_rise_usd": 0.37005102422860087
+    },
+    {
+      "year": 2025,
+      "n_touched_rows": 475,
+      "mw_wtd_delta_by_bin": {
+        "bin0": 0.026511512609848444,
+        "bin1": 0.006382658102868926,
+        "bin2": -0.3544369855325348,
+        "bin3": 0.1515616425427783
+      },
+      "gradient_bin3_minus_bin0": 0.12505012993292985,
+      "gradient_positive": true,
+      "tight_bin_rise_usd": 0.1515616425427783
+    }
+  ],
+  "k1_gradient": {
+    "years_with_positive_gradient": 3,
+    "years_measured": 3,
+    "required": 2,
+    "verdict": "PASS"
+  },
+  "honesty_bound": {
+    "threshold_usd": 1.0,
+    "max_tight_bin_rise_usd": 0.9101879204495482,
+    "within_noise": true
+  }
+}
