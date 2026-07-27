@@ -95,26 +95,36 @@ jobs:
       # with Wave 2D); naming it in the -m expression is harmless (it simply
       # matches nothing today), so this line needs no edit when 2D adds it.
       #
-      # ADVISORY (continue-on-error) — TEMPORARY, TRIAGED 2026-07-26. The
-      # restoration-era estimate here ("72 pre-existing failures", the
-      # test_net_cone_forward archetype) went stale: a full tier run measured
-      # 141 failures + 2 collection errors + 60 xpasses, all classified in
-      # docs/handoffs/fast-tier-triage-2026-07-26.md (the classification
-      # landed BEFORE the fixes; 57 of the 141 were pip-fallback-venv tzdata
-      # artifacts that never failed under uv sync). After the triage's
-      # fix/delete/unmark commits the measured state is 26 failures + 1
-      # collection error + 0 xpasses — every one an OPEN OWNER-DECISION
-      # ESCALATION written up in that doc (§4/§6), not un-triaged drift:
-      # caiso-117 belly-cap orphans (never-landed mechanism, the collection
-      # error), ff-g1 transmission_expansion gate (unapplied core-wiring
-      # patch), ercot-93 steam-RT (rotted patch), the orchestrator
-      # shim-conversion half (goldens-gated), NEISO bin-artifact drift, and
-      # an order-dependent test-pollution family. Do NOT xfail them — each
-      # needs its named decision. Remove `continue-on-error` only when those
-      # land and the tier is genuinely green (zero failures, zero collection
-      # errors, zero xpasses).
-      - name: Fast pytest tier (advisory until the triage escalations land)
-        continue-on-error: true
+      # BLOCKING since 2026-07-26. This tier ran advisory
+      # (`continue-on-error: true`) from the workflow's restoration until the
+      # backlog behind it was actually cleared. The history, for anyone
+      # tempted to re-add the flag rather than fix a red:
+      #
+      #   * a full run measured 141 failures + 2 collection errors + 60
+      #     xpasses, every one classified in
+      #     docs/handoffs/fast-tier-triage-2026-07-26.md BEFORE any fix (57 of
+      #     the 141 were pip-fallback-venv tzdata artifacts that never failed
+      #     under `uv sync`);
+      #   * the triage's fix/delete/unmark commits took that to 26 failures +
+      #     1 collection error + 0 xpasses, all OWNER-DECISION escalations;
+      #   * the escalation follow-through then closed all of them — D1/D3
+      #     recorded as drops (never-landed mechanisms, tests C-deleted),
+      #     D2 ff-g1 core wiring applied, D4 orchestrator alias conversion +
+      #     flag-registry wiring landed under byte-identity goldens, D5 NEISO
+      #     bin artifact regenerated and the keeper re-gated (bit-identical
+      #     dispatch), the §6.2 order-dependent pollution family bisected to
+      #     one leaked EIA-860 vintage global, and the seven uncited
+      #     2026-07-05 xfails re-adjudicated (all bucket A, all marks removed).
+      #
+      # Measured at the flip: 5187 passed, 16 skipped, 44 deselected,
+      # 1 xfailed, 0 failed, 0 collection errors, 0 xpassed. The single
+      # remaining xfail is the triage's one cited bucket-B mark (the W3-P1
+      # structural-prior basis-drift guard, which carries its removal
+      # condition in the mark itself).
+      #
+      # A red here is now a real regression. Fix it or cite it in a mark —
+      # do NOT restore `continue-on-error`.
+      - name: Fast pytest tier
         run: uv run python -m pytest -n 2 -m "not slow and not integration and not fulldata"
 
   refactor-guards:
