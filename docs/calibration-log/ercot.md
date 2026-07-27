@@ -1421,3 +1421,40 @@ offset (real summer coal delivers 13–19 pp under its own RT offered supply at 
 duty/operations driver, not price), and the coal price-taking base (model 0.28 vs measured RT
 0.49–0.52 of capability, the shoulder-trough side). Full write-up:
 `FINDING-ercot117-gas-basis-ranking-2026-07-26.md`.
+
+## 2026-07-27 — ERCOT-118: EP-basis rebasis of the measured CC band multipliers (Phase A joint arm; rejected probe, mechanism keeper-grade) — slug ercot118-gas-rebasis
+
+**Charter.** Downstream of ERCOT-117's causal proof: re-derive the CC DAM band multipliers on the
+SAME EP-anchored delivered-gas series dispatch prices them at, per-year tables replacing the
+pooled HH−0.50 p50s. Pre-commit `PRECOMMIT-ercot118-gas-rebasis-2026-07-26.md` pushed at
+`a586dea` with the mechanism, the artifact and the scorer BEFORE any solve.
+
+**Built (stays, default-off).** `ScenarioConfig.ercot_offer_hrmult_ep_rebasis` + the rule-23
+artifact `offer_curve_dam_hrmults_ep_yearly.json` (econ_low/econ_high/peak(B) per year, EP basis;
+anchors 2.5402/2.1067/3.0655 = the years' EP delivered means, threaded as per-class margin
+anchors so the gas_offer_net_revenue_margin decomposition sits on one basis — the window anchor
+2.2494 is verified HH−0.50-based and stays for non-rebased classes). **The committed band is
+un-rebasable**: Min Gen Cost was dropped by the owner-ordered 2026-07-22 raw slimming, 2023
+publications are past the free MIS retention, the credentialed archive was owner-declined —
+declared ex ante (§2), escalated, never patched around. Also fixed: the hand-written
+run_calibration_full argparse still had `--coal-econ-marginal-hr-bound` default=False and was
+silently scrubbing the ercot-115 promoted floor on every direct CLI invocation (now tri-state
+None; replay_keeper was unaffected).
+
+**The arm.** `replay_keeper ercot115 --set ercot_thermal_dam_availability_coal=true --set
+ercot_offer_hrmult_ep_rebasis=true`, run `2026-07-27-ercot118-gas-rebasis-joint`, NOT-YET,
+keeper unchanged. G0 3/3 all lines; static-TTC parity with all three baselines. **Result:**
+G1/G2/BITE PASS (excess −10.9/−6.2/−6.4 pp; C1 16/16 · free 12/12 held); crossing-band [15,25)
+elevation +5.18/+5.03/+7.00 → +3.34/+2.79/+5.28 — real and TOWARD actual in every year
+(mid-merit C3a legs −3.1/−6.6/−4.3 pp) but ~half the ablation's drop and short of the
+pre-registered ≤$2.0; **G3 fails via C3a AND C3c (72→49, 13→3) — the pre-declared ORDINARY
+REJECTION**, not the C3a-only escalate mode. Root cause of the C3c breach, now measured: the
+per-year peak(B) p50 (2.55/3.50/2.63) is structurally smaller than the pooled 4.33 (a
+within-year top-of-curve max vs the 3-year always-posted wall) — repricing the standing
+scarcity wall to it deflates the sub-$200 tail (tail C3a legs −6.9/−6.2 pp).
+
+**Successors.** ERCOT-119: leg-split rebasis — econ bands per-year EP, peak kept as the pooled
+wall (or per-year QUANTILE LADDERS, not p50s); expected to keep the mid-merit gain and clear
+C3c. Owner decision: the committed-band data gap (credentialed archive vs partial 2024/25
+intake vs accept the residual). Phase B (delta re-fit) stays gated behind a shape-clean
+Phase A. Full write-up: `FINDING-ercot118-gas-rebasis-2026-07-27.md`.
