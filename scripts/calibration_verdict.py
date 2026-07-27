@@ -386,7 +386,14 @@ MAX_LEDGERED_CAVEATS = 3  # non-protective ledgered measured-input caveats
 # PJM/MISO CT (3.5-4.2%) and every material ST_GAS (2.1-10.6%) stay gated.
 PROTECTIVE_MIN_LOAD_FRAC = 0.02
 # Rubric-side C7 gate set (v2.8, 2026-07-27 — the ERCOT-121 coal
-# gate-blindness correction). The artifact's baked ``gated`` flag reflects
+# gate-blindness correction; RATIFIED as an OWNER AMENDMENT 2026-07-27 in
+# miso-96 — see the rubric §9 ratification note. It originally shipped
+# WITHOUT the ``owner amendment <date>`` marker that v2.1/v2.2/v2.3/v2.7 all
+# carry, while retroactively re-grading designated keepers in two lanes it
+# was not working in. Any future change to this tuple — or to
+# ``PROTECTIVE_MIN_LOAD_FRAC`` / the D-1 thresholds — is an owner amendment:
+# date and attribute it AT the point of change, not afterwards.)
+# The artifact's baked ``gated`` flag reflects
 # the D1_GATED_CLASSES vintage it was written under (peaker/intermediate
 # only, through 2026-07-27), so the scorer derives gatedness itself — a
 # committed artifact re-scores in place, exactly like C8's measured-share-

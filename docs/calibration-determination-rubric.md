@@ -952,11 +952,31 @@ in MISO/CAISO and the NYISO 2024 tail miss surfaced by the v2.7 RT re-basis),
 the verdict says `NOT-YET` — the benchmark table is never a curve to grade
 down to.
 
+> **Ratification note (owner decision 2026-07-27, miso-96).** v2.8 widened a
+> PROTECTIVE gate set — a change that retroactively re-graded designated
+> keepers in two lanes it was not itself working in (ERCOT-115 C7 PASS → FAIL,
+> MISO-88 → NOT-YET, both named in its own commit message) — but it shipped
+> WITHOUT the `owner amendment <date>` marker every prior tolerance change
+> carries (v2.1, v2.2, v2.3, v2.7). The owner reviewed it on 2026-07-27 and
+> **ratified it as written**: the widening is scope-only (which classes may
+> fail), the thresholds are unchanged at `profile_r ≥ 0.8` / `cv_ratio ≥ 0.5`,
+> and the failures it exposed are real — MISO COAL_PRB was independently
+> confirmed and root-caused by A/B in miso-96
+> (`results/calibration/FINDING-miso96-coal-prb-offpeak-2026-07.md`). The
+> ERCOT COAL_LIGNITE 2023 exposure (r 0.745, cv_ratio 0.294) is NOT yet
+> diagnosed and is an open item for that lane.
+>
+> **The precedent is the marker, not the outcome:** a change to a protective
+> gate set, a tolerance, or anything else that can flip a determination is an
+> owner amendment and must be dated and attributed as one at the point of
+> change. Ratifying this one after the fact does not license the next one.
+
 ## 9. Version history
 
 - **v2.8 (2026-07-27, coal gate-blindness correction — ERCOT-121 owner
   charter: "the fix … is a scorer/gate correction that RE-SCORES every
-  existing keeper in place (no re-solve), and it may flip verdicts")** — two
+  existing keeper in place (no re-solve), and it may flip verdicts";
+  RATIFIED as an owner amendment 2026-07-27, miso-96)** — two
   distinct blind spots that together hid the entire coal fleet from the
   C7/C8 protective gates, both corrected scorer-side so committed artifacts
   re-score without regeneration.
