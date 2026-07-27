@@ -116,30 +116,55 @@ gain), and it makes the C3a guard a *predictable* consequence of any
 supply-side-only evening candidate rather than bad luck. **The storage conduct
 is the prerequisite, not a co-symptom.**
 
+**Prerequisite the aggregate cannot settle: battery or pumped storage?** The
+committed slim bundle exposes only the ISO-aggregate storage net recovered from
+the energy balance — the two technologies are inseparable in it (the gap
+FINDING-caiso125 §6.4 flagged and recommended closing). The CAISO LP carries
+**2 078 MW / 20 776 MWh of pumped storage** alongside the 7.6–15.2 GW battery
+fleet, the caiso-99 shape anchor does **not** apply to it (its power cap passes
+through unchanged, making PS the model's one entirely unrestrained
+arbitrageur), and the overnight net (+157/+188/+453 MW) sits inside its power
+range. The KKT argument is technology-blind — it holds for whichever storage is
+interior — so §2's mechanism stands either way, but **which technology to aim a
+mechanism at is not resolved here.** This session added the sidecar that
+resolves it (`hourly/storage_<year>.parquet`, per-tech charge/discharge,
+write-only and solve-invariant) and ran a keeper replay to produce it; the split
+is gate **D0** of the §6 ask and blocks its candidate ranking.
+
 ## §3 — the storage conduct defect, measured (§B)
 
 Model vs measured (EIA-930 CISO `NG: OTH`; the OTH cell carries a small
 non-battery positive residual so the measured side is if anything *over*-stated
 — which only widens every gap below):
 
-| year | overnight net (model / meas) | evening net (model / meas) | daily discharge (model / meas) |
-|---|---|---|---|
-| 2023 | **+157 / −53** (+210) | +2 547 / +1 640 (+906) | 15 456 / 9 632 MWh (**1.60×**) |
-| 2024 | **+188 / +5** (+184) | +4 154 / +3 122 (+1 032) | 25 722 / 19 047 MWh (**1.35×**) |
-| 2025 | **+453 / +267** (+187) | +5 404 / +4 361 (+1 043) | 36 052 / 28 550 MWh (**1.26×**) |
+| year | overnight net (model / meas) | evening net (model / meas) |
+|---|---|---|
+| 2023 | **+157 / −53** (+210) | +2 547 / +1 640 (+906) |
+| 2024 | **+188 / +5** (+184) | +4 154 / +3 122 (+1 032) |
+| 2025 | **+453 / +267** (+187) | +5 404 / +4 361 (+1 043) |
 
-Two clean, year-stable signatures:
+**The model over-discharges the overnight by +210/+184/+187 MW** — a remarkably
+constant offset — which is what converts the overnight from a charge/idle
+window (reality: net −53/+5/+267, with a measured charging trough at hod 1–4 in
+every year) into a discharge window and arms the pin. The keeper's only
+battery-side restraint is the caiso-99 `caiso_storage_shape_anchor`, which is a
+one-sided **p95 discharge CAP** (overnight 2 830 / 2 922 / 3 521 MW). A p95 cap
+cannot correct a mean-*sign* error: the model's overnight discharge is 5–11 %
+of that cap, so the anchor never binds there and never will.
 
-1. **The model over-discharges the overnight by +210/+184/+187 MW** — a
-   remarkably constant offset — which is what converts the overnight from a
-   charge/idle window (reality: net −53/+5/+267, with a measured charging
-   trough at hod 1–4 in every year) into a discharge window and arms the pin.
-2. **The model over-cycles by 1.26–1.60×.** The real fleet leaves arbitrage on
-   the table; the LP does not. The keeper's only battery-side restraint is the
-   caiso-99 `caiso_storage_shape_anchor`, which is a one-sided **p95 discharge
-   CAP** (overnight 2 830 / 2 922 / 3 521 MW). A p95 cap cannot correct a
-   mean-*sign* error: the model's overnight discharge is 5–11 % of that cap, so
-   the anchor never binds there and never will.
+**What this table does NOT say — the basis, honestly.** It is a *position*
+comparison, not a throughput comparison, and both sides are impure: the model
+series is the ISO-aggregate net (battery **plus** pumped storage — see §2's
+prerequisite) and the measured series is EIA-930 `NG: OTH` (battery plus a
+small non-battery "other" residual, and a *net* cell that understates gross
+throughput). Any throughput reading off it would be wrong-signed against the
+better-sourced measurement already on record: the caiso-74 follow-up read the
+LESR RTD energy schedules directly and found the zero-adder LP **under**-cycles
+CAISO (model 5.33/7.60/10.48 vs actual 5.67/10.04/12.06 TWh), which is why
+`battery_dispatch_adder` stays 0.0 and why the caiso-100/101 positive adder was
+rejected on its throughput guard. **The defect this finding identifies is the
+overnight net POSITION, not the annual volume** — a distinction the §6 ask is
+built on.
 
 ## §4 — the supply side: the marginal rung, and what would have to steepen (§C/§D/§E)
 
@@ -197,24 +222,53 @@ alone changes the spread by construction ~0.
   hub level is then *propagated into the overnight* by the interior battery, so
   the import rung sets both windows and the premium collapses. The two findings
   are one mechanism, not two.
-- **Re-opened (new):** the CAISO battery conduct as a price-formation object.
-  The keeper's only restraint is a one-sided p95 discharge cap that cannot bind
-  where the defect lives (§3). This is the caiso-127 owner ask (§6).
+- **Re-opened (new):** the CAISO storage conduct as a price-formation object.
+  The keeper's only restraint on it is a one-sided p95 discharge cap that cannot
+  bind where the defect lives (§3), and pumped storage carries no restraint at
+  all. This is the caiso-127 owner ask (§6).
 
 ## §6 — the owner ask (TASK 2), filed not built
 
 Full design memo:
-`docs/handoffs/caiso-127-storage-arbitrage-ask-2026-07-27.md`. Headline: the
-admissible, rule-13-blessed identification is a **measured ancillary-service
-power reservation on the battery fleet** ("a measured ancillary-service power
-reservation" is named verbatim in rule 13 `[R-MEASURED]` as an admissible
-physical/market input) — CAISO publishes AS awards by resource type, so the
-share of battery power committed to Reg-Up/Reg-Down/Spin in each hour is a
-measured, forward-reproducible quantity that is unavailable for energy
-arbitrage. It is a *driver* where the caiso-99 anchor is an *outcome shape*, so
-rule 19 `[R-ONE-MECH]` requires reconcile-or-replace, not stacking; the memo
-specifies the reconciliation and the derive-first gates that must pass before
-any build. Two alternates and the reasons they rank below it are in memo §4.
+`docs/handoffs/caiso-127-storage-arbitrage-ask-2026-07-27.md`.
+
+**Surviving candidate: the DA/RT allocation on the DISCHARGE side** — the
+two-sided rule-19 `[R-ONE-MECH]` reconciliation of M1
+(`caiso_charge_allocation_schedule`, the owner-granted caiso-103 ask executed at
+caiso-104). Same committed source (the CAISO Daily Energy Storage Report
+`market_output` LESR rows), same Fourier-Motzkin per-day floor construction
+already in `model.lp.rows._build_storage_alloc_rows`, discharge VOLUME left fully
+endogenous, zero new free parameters. It targets §2's defect directly: floors
+that bind on the measured evening share leave less of the day's energy free to
+discharge overnight.
+
+Closed in the memo so the ask is not a redo — and the closures matter, because
+the obvious first guesses are all already refuted:
+
+- **The entire AS-award family.** `caiso_storage_as_reservation` was built and
+  A/B'd at **caiso-74** and measured *ex-ante inert* in both legs (the power
+  derate sits 0.9–3.7 GW above the LP's own maximum hour; the SOC sustain floor
+  is three orders of magnitude below the binding surface). The memo adds the
+  third form — the reg-down/directional one — and refutes it by arithmetic on
+  the curated award series (`data/clean/storage-as-awards`, re-curated this
+  session): the overnight upward award is 334–713 MW against 2.1–3.1 GW of
+  remaining discharge headroom, and a net-*discharging* battery satisfies a
+  reg-down award by backing off. Rule 13 names "a measured ancillary-service
+  power reservation" as an admissible input, and it is — it simply does not
+  bind this fleet.
+- **A positive `battery_dispatch_adder`** — derived at $14.25 and REJECTED at
+  **caiso-100/101** on the two-sided ±15 % throughput guard. It is the wrong
+  instrument regardless: §3's target is the overnight *position*, and a
+  throughput price moves *volume*.
+- **A cycle-count cap** — slack by arithmetic at 0.36–0.50 cycles/day.
+- **Loosening or re-deriving the caiso-99 envelope** — rule 21
+  `[R-FROZEN-DERIVE]`, and useless: the model uses 5–11 % of the overnight
+  discharge cap.
+
+Derive-first gates D0–D4 (D0 = the §2 battery/PS split, blocking) and the
+pre-registered A/B kills are memo §5/§6. The eventual A/B's PRIMARY is the
+charter's own test: the keeper's disclosed evening hydro starvation
+(−251/−376/−264 MW) heals to within ±150 MW with **no hydro-side change**.
 
 ## §7 — DO-NOT-REDO (this lane, additions)
 
