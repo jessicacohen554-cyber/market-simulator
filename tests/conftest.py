@@ -62,6 +62,13 @@ def _reset_eia860_vintage():
     teardown by hand ("never leak a vintage into other tests") — this generalizes
     that convention to the whole suite so a new runner-driving test cannot
     reintroduce the class.
+
+    An independent 2026-07-27 bisect of the same family (the ``test_storage``
+    EIA-860 members plus ``test_coal_sync_tranche``'s scope freeze) landed the
+    standing detector ``scripts/diagnostics/repro_eia860_vintage_leak.py``
+    (exit 1 if this leak ever returns) and an ``addCleanup`` reset in the
+    polluting crossover-harness test itself, which keeps that file hermetic
+    under bare ``unittest`` where this fixture does not run.
     """
     yield
     paths.set_eia860_vintage(None)
