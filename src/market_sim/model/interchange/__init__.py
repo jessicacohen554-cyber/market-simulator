@@ -199,6 +199,7 @@ from market_sim.model.interchange.miso import (  # noqa: F401
     split_miso_south_external_node,
 )
 from market_sim.model.interchange.pjm import (  # noqa: F401
+    build_pjm_apsouth_interface_cut_groups,
     build_pjm_east_interface_cut_groups,
     build_pjm_external_flow_groups,
     inject_pjm_seam_flow_limit,
@@ -378,6 +379,7 @@ __all__ = [
     "build_miso_deliverability_groups",
     "build_miso_firm_imports",
     "build_miso_link_loss",
+    "build_pjm_apsouth_interface_cut_groups",
     "build_pjm_east_interface_cut_groups",
     "build_pjm_external_flow_groups",
     "build_reference_price_node",
