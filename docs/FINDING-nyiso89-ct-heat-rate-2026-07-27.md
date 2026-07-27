@@ -271,7 +271,32 @@ rate effect. The margin against the band is unchanged for practical purposes.
 forced share stays 0.0 % in every year (no mechanism floors this class). C8's
 2024 ST_GAS grounded-above-budget note is unchanged (31.9 % → 32.0 %).
 
-### 4d. Verdict on the arm
+### 4d. Verdict on the arm — PROMOTED TO KEEPER 2026-07-27
+
+**Owner decision:** promoted to the NYISO keeper on the standing instruction
+that improved structural integrity can carry a keeper even where gates regress.
+`2026-07-27-nyiso-89-ctmeas-hrloaded` replaces `2026-07-27-nyiso-87-cmeas-measured`.
+
+Determination **NOT-YET** — the same determination class and the same sole
+blocking criterion (C3c) as the keeper it replaces. C6 governance PASSES on a
+UNION'd DOF ledger (19 entries, `n_residual` **unchanged** at 6: the entry adds
+zero fitted scalars and *replaces* a defective estimate rather than adding a
+degree of freedom). Audited clean by `calibration-keeper-auditor` (0 failures,
+0 repairs).
+
+**LOYO (rule 22).** The input carries no parameter fitted to any year — it is a
+pooled 2023–2025 measured statistic, and all three years are scored in this one
+bundle. Re-deriving the artifact leaving each year out is stable for **16 of 19
+plants** (< 5 % spread) and never reverses the correction's sign on any plant
+that carries its weight: Bayonne 0.5 %, Bayswater 1.0 %, Port Jefferson 2.8 %,
+Barrett 6.1 % (16.07–17.09, never approaching the eGRID 11.08). It is **not**
+stable on the two thin-sampled 1970s barge plants — Gowanus (16.5 % spread) and
+Narrows (12.8 %) — where dropping 2025 reverses the sign versus eGRID. Both
+carry only 0.09 and 0.22 TWh of measured energy across three years and sit far
+out of merit at *every* fold value (13.2–16.2 MMBtu/MWh against a class base
+near 10), so no gate moves. A minimum-energy screen for thin-sampled plants is
+the named follow-up and is deliberately **not** added here: choosing a screen
+after seeing the LOYO result would be a post-hoc parameter (rule 24).
 
 **The input stays, and it is not promoted as a fix.**
 
