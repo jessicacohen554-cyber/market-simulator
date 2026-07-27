@@ -1,6 +1,24 @@
 # caiso-127 owner ask — the evening–overnight premium is pinned by the model's own storage arbitrage; the surviving candidate is the DA/RT allocation on the DISCHARGE side
 
-**Status: GRANTED 2026-07-27 (owner, in-session), NOT YET BUILT.** This is the
+> **OUTCOME (caiso-129, 2026-07-27): S1 was executed and is KILLED AT THE
+> DERIVE GATES — no LP was solved, nothing was built, the keeper is
+> unchanged.** D2 fails (min pairwise `r` 0.9726 < 0.99; charge-side control
+> 0.9919/0.9935 passes through the identical code path) and D3 fails
+> structurally: the derived floor leaves the overnight **2.87×/5.15×/3.45×
+> free for any day total**, and its own overnight limb would **force**
+> +65/+146/+192 MW/h of *extra* overnight discharge against a defect needing
+> 151/99/98 MW removed. The general form of the refutation — **a floor can
+> only ADD volume, and the defect is an over-position** — closes the
+> allocation-floor family for this defect, including an evening-only-scoped
+> variant. §4's candidate **S2 (DA/RT two-settlement separation) is therefore
+> the remaining diagnosis** and per §4 must be chartered separately. Evidence:
+> `results/calibration/FINDING-caiso129-s1-discharge-allocation-gates-2026-07-27.md`;
+> instrument `scripts/probes/_caiso129_s1_gates.py`. Grant items 2–4 (the
+> caiso-114 refinement unfunded, `hydro_budget_nameplate_aware` in its own
+> single-delta A/B, pumped storage flagged-not-built) are untouched.
+
+**Status: GRANTED 2026-07-27 (owner, in-session), EXECUTED AND KILLED AT THE
+GATES 2026-07-27 (caiso-129) — see the outcome note above.** This is the
 TASK-2 design memo of
 `results/calibration/FINDING-caiso127-evening-formation-2026-07-27.md`. Nothing
 in it was armed in the caiso-127 session, no A/B was run, and the keeper
