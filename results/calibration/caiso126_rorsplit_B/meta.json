@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-18T17:45:22",
+  "timestamp": "2026-07-27T02:26:42",
   "iso": "CAISO",
   "years": [
     2023,
@@ -36,6 +36,7 @@
   "tranche_startup_amortization": false,
   "tranche_startup_measured_runs": false,
   "tranche_startup_conditional_runs": false,
+  "gas_offer_margin": true,
   "nysdec_peaker_rule_availability": false,
   "oil_primary_bin_fuel": false,
   "st_gas_intermediate": false,
@@ -58,11 +59,16 @@
     "caiso_dsw_overnight_clean": true,
     "caiso_dsw_daytime_clean": true,
     "caiso_ra_startup_trajectory": true,
-    "caiso_dsw_daytime_evening_trim": true
+    "caiso_dsw_daytime_evening_trim": true,
+    "caiso_storage_shape_anchor": true,
+    "hydro_ror_split": true,
+    "hydro_min_flow_floor": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
   "coal_econ_srmc_bound": false,
+  "coal_econ_marginal_hr_bound": null,
+  "ercot_offer_hrmult_ep_rebasis": null,
   "coal_plant_monthly_pricing": true,
   "td_loss_factor": 0.0,
   "ercot_zonal_gas_basis": false,
@@ -81,6 +87,7 @@
   "miso_measured_reserve_requirements": false,
   "miso_south_seam_split": false,
   "miso_rdt_tcdc": false,
+  "miso_zonal_loss_surface": false,
   "ercot_multiproduct_as_coopt": false,
   "ercot_ecrs_conservative_deployment": false,
   "ercot_nonreleasable_as_withholding": false,
@@ -153,6 +160,9 @@
   "pjm_offer_midcurve_segments": null,
   "ercot_nuclear_unit_availability": false,
   "ercot_thermal_dam_availability": false,
+  "ercot_thermal_dam_availability_hourly": false,
+  "ercot_thermal_dam_availability_plant": false,
+  "ercot_wind_zone_shape": false,
   "ercot_noncampd_plant_availability": false,
   "ercot_storage_capability_measured": false,
   "ercot_online_capacity_envelope_measured": false,
@@ -210,18 +220,25 @@
   "ramp_limits": null,
   "local_capacity_constraints": null,
   "nyiso_local_selfsupply": null,
+  "nyiso_scr_edrp": null,
+  "nyiso_scr_edrp_strike": null,
   "nyiso_firm_imports": null,
   "nyiso_import_reconciliation": null,
   "nyiso_import_hub_prices": null,
   "nyiso_iroquois_winter_spread": null,
   "nyiso_synchronised_reserve": null,
+  "nyiso_li_locational_reserve": null,
+  "nyiso_incity_commitment_obligation": null,
   "nyiso_spin_headroom_frac": null,
   "nyiso_dynamic_reserve_requirements": null,
+  "nyiso_hydro_reserve_eligible": null,
+  "nyiso_scr_edrp_reserve_eligible": null,
   "neiso_dynamic_reserve_requirements": null,
   "miso_firm_imports": null,
   "miso_seam_flow_limit": false,
   "miso_seam_flow_percentile": null,
   "miso_seam_export_limit": false,
+  "miso_seam_envelope_merit_cap": false,
   "miso_pjm_border_anchor": false,
   "miso_cc_coal_rebalance": false,
   "miso_firm_import_floor": false,
@@ -246,6 +263,19 @@
     "eia923": "../_shared/CAISO/eia923-cd564d46cbf9.parquet",
     "campd": "../_shared/CAISO/campd-cceb6c13d8f9.parquet"
   },
-  "git_sha": "0f99eb3",
-  "highspy_version": "1.14.0"
+  "git_sha": "2a01de8",
+  "basis_sha": "dc72d7b119c5c8db41182a75d667b2c19055e2c5",
+  "highspy_version": "1.14.0",
+  "environment": {
+    "python_version": "3.11.15",
+    "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+    "packages": {
+      "highspy": "1.14.0",
+      "numpy": "2.4.6",
+      "scipy": "1.17.1",
+      "pandas": "3.0.3",
+      "pyarrow": "24.0.0",
+      "pydantic": "2.13.4"
+    }
+  }
 }
