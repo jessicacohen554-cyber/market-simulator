@@ -2103,6 +2103,41 @@ def run_year(
                     float(np.mean(east_lim[np.isfinite(east_lim)])),
                 )
 
+    # Measured PJM AP-SOUTH interface cut (pjm_apsouth_interface_cut, backcast
+    # overlay, default off — pjm-134, FINDING-pjm134 §4): the western→MAD twin
+    # of the EAST cut above. ONE one-sided hourly aggregate group capping
+    # Flow(West_APS→SWMAAC) + Flow(West_APS→Dominion) at the measured AP-South
+    # limit — the aggregate western→MAD 500 kV flowgate, which
+    # constants.PJM_INTERFACE_LINK_MAP's own note records as spanning BOTH
+    # model links while the per-link overlay applies it to West_APS→SWMAAC
+    # alone (leaving West_APS→Dominion on a 3,000 MW static the real interface
+    # does not have). Rule 19: this REPLACES that flagged misalignment rather
+    # than stacking on it — the joint cap dominates the per-link bound. Zero
+    # fitted scalars; no-op off the flag, for non-PJM, or when neither cut link
+    # exists (byte-identical).
+    if getattr(config, "pjm_apsouth_interface_cut", False) and iso == "PJM":
+        from market_sim.data.transfer_interface_limits import (
+            pjm_apsouth_interface_hourly,
+        )
+        from market_sim.model.transmission import (
+            build_pjm_apsouth_interface_cut_groups,
+        )
+
+        aps_lim = pjm_apsouth_interface_hourly(year, demand.shape[1])
+        aps_groups = build_pjm_apsouth_interface_cut_groups(iso_config.links, aps_lim)
+        if aps_groups:
+            interface_groups = interface_groups + aps_groups
+            logger.info(
+                "PJM %d: measured AP-SOUTH interface cut on %d link(s) — "
+                "joint western→MAD cap follows AP-South "
+                "(hourly %0.0f-%0.0f MW, mean %0.0f)",
+                year,
+                len(aps_groups[0][0]),
+                float(np.min(aps_lim[np.isfinite(aps_lim)])),
+                float(np.max(aps_lim[np.isfinite(aps_lim)])),
+                float(np.mean(aps_lim[np.isfinite(aps_lim)])),
+            )
+
     # [measured: EIA-930 per-corridor (month × hour-of-day) p95 net-flow
     #  envelope → corridor import/export caps | forecast substitute:
     #  caiso_corridor_atc_forward — the shared
