@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-27-nyiso-87-arm-floors",
+  "label": "nyiso 87 arm A floors-off",
+  "date": "2026-07-27",
+  "shorthand": "nyiso-87-arm-floors",
+  "definition": "(PROBE) nyiso-87 ARM A \u2014 the h14-21 peak-window reliability-floor limbs OFF (owner directive 2026-07-27: the peak-hour must-run is inaccurate), the three unwindowed limbs kept. Isolates what the windowed floors were carrying, before the replacement commitment bridge is added. vs CONTROL: CT_PEAKER forcing collapses to 0.0/0.0/0.0 % (the floor was its ONLY mechanism) and its SHAPE improves on every year \u2014 D-1 profile r 0.82/0.85/0.92 -> 0.89/0.93/0.95, off-peak cv_ratio 5.12/4.24/2.37 -> 2.80/1.84/1.24 \u2014 while its volume collapses 1.42 -> 0.48 TWh against a 2.26 TWh actual. C1 2023 CC_REGULAR improves -4.11 -> -3.32 TWh (still FAIL), C3a 2024/2025 improve -5.5/-6.7 % -> -3.2/-4.7 %, C5a 2025 +8.1 -> +7.7 %, diurnal price swing $7.45 -> $8.70, and net imports move toward load-following in all three years. C3c 2025 8h vs 9h (expected; roof-blocked, rule 1 \u2014 not a reason to revert). Determination NOT-YET.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-27-nyiso-87-arm-floors.js",
+  "bundle": "results/calibration/nyiso87_a_floorsoff"
+}

@@ -129,28 +129,25 @@ def _is_seam_class(name: str) -> bool:
 def actual_net_imports(year: int, n_hours: int) -> pd.Series | None:
     """Return measured EIA-930 NYIS net imports (MW) on the model's clock.
 
-    Net imports = -(Total Interchange), the same convention nyiso-86 §3 used.
-    Returns ``None`` when the frame is unavailable.
+    Net imports = -(Total interchange), the nyiso-86 §3 convention. The 930
+    hourly frame is ALREADY on the model's non-leap 8760 local-standard clock
+    (``_eia_hourly_frame_filled``: "Row k is local hour k of the year, the same
+    clock as the strict frame", leap Feb 29 dropped), so no realignment is
+    needed — which is also why the :func:`_utc_index` helper is reserved for
+    the month labelling, where a calendar date is genuinely required.
+
+    Returns ``None`` when the frame is unavailable for the year.
     """
     try:
         from market_sim.data.eia930.frames import _eia_hourly_frame_filled
+
+        frame = _eia_hourly_frame_filled("NYIS", year)
     except Exception:
         return None
-    try:
-        frame = _eia_hourly_frame_filled("NYIS")
-    except Exception:
+    if frame is None or frame.empty or "Total interchange" not in frame.columns:
         return None
-    if frame is None or frame.empty:
-        return None
-    ti = frame[frame.get("type") == "TI"] if "type" in frame.columns else frame
-    if ti.empty:
-        return None
-    col = "value_mwh" if "value_mwh" in ti.columns else ti.columns[-1]
-    s = ti.set_index("period")[col]
-    s.index = pd.to_datetime(s.index, utc=True).tz_localize(None)
-    idx = _utc_index(year, n_hours)
-    aligned = s.reindex(idx)
-    return pd.Series(-aligned.to_numpy(dtype=float), index=np.arange(n_hours))
+    ti = pd.to_numeric(frame["Total interchange"], errors="coerce").to_numpy(float)
+    return pd.Series(-ti[:n_hours], index=np.arange(min(n_hours, ti.size)))
 
 
 def hod_table(series: pd.Series, n_hours: int) -> pd.Series:
