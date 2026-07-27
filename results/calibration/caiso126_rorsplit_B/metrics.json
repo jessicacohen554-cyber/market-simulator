@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-18-caiso-97-evening-trim",
+  "run_id": "2026-07-27-caiso-126-ror-split",
   "iso": "CAISO",
-  "label": "caiso 97 evening trim",
+  "label": "caiso 126 ror split",
   "target_years": [
     2023,
     2024,
@@ -16,7 +16,7 @@
   "rubric_version": 2.7,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_tail, dispatch_corr, co2"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
   "notes": [],
   "criteria": {
@@ -48,7 +48,7 @@
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "co2": {
       "label": "C5a CO2 vs eGRID",
@@ -58,7 +58,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "PASS"
+      "status": "UNATTESTED"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -81,11 +81,11 @@
     }
   },
   "grade_summary": {
-    "scored": 10,
+    "scored": 9,
     "target_grade": 6,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 4
+    "fails": 3
   },
   "free_class_score": {
     "iso": "CAISO",
