@@ -1,0 +1,391 @@
+{
+  "tight_edge": 0.97,
+  "by_iso": {
+    "PJM": {
+      "years": [
+        2023,
+        2024,
+        2025
+      ],
+      "mean_dominant_share": 0.9518,
+      "dominant_season": "summer",
+      "mean_hours_reallocated": 162
+    },
+    "ERCOT": {
+      "years": [
+        2023,
+        2024,
+        2025
+      ],
+      "mean_dominant_share": 0.8378,
+      "dominant_season": "summer",
+      "mean_hours_reallocated": 132
+    },
+    "CAISO": {
+      "years": [
+        2023,
+        2024,
+        2025
+      ],
+      "mean_dominant_share": 0.9138,
+      "dominant_season": "summer",
+      "mean_hours_reallocated": 152
+    },
+    "MISO": {
+      "years": [
+        2023,
+        2024,
+        2025
+      ],
+      "mean_dominant_share": 1.0,
+      "dominant_season": "summer",
+      "mean_hours_reallocated": 175
+    },
+    "NYISO": {
+      "years": [
+        2023,
+        2024,
+        2025
+      ],
+      "mean_dominant_share": 1.0,
+      "dominant_season": "summer",
+      "mean_hours_reallocated": 175
+    },
+    "NEISO": {
+      "years": [
+        2023,
+        2024,
+        2025
+      ],
+      "mean_dominant_share": 0.9569,
+      "dominant_season": "summer",
+      "mean_hours_reallocated": 164
+    }
+  },
+  "rows": [
+    {
+      "iso": "PJM",
+      "year": 2023,
+      "tight_hours": 263,
+      "within_year_composition": {
+        "summer": 260,
+        "winter": 3,
+        "shoulder": 0
+      },
+      "dominant_season": "summer",
+      "dominant_share": 0.9886,
+      "balanced_composition": {
+        "summer": 88,
+        "winter": 87,
+        "shoulder": 88
+      },
+      "hours_reallocated_to_other_seasons": 172
+    },
+    {
+      "iso": "PJM",
+      "year": 2024,
+      "tight_hours": 263,
+      "within_year_composition": {
+        "summer": 262,
+        "winter": 1,
+        "shoulder": 0
+      },
+      "dominant_season": "summer",
+      "dominant_share": 0.9962,
+      "balanced_composition": {
+        "summer": 88,
+        "winter": 87,
+        "shoulder": 88
+      },
+      "hours_reallocated_to_other_seasons": 174
+    },
+    {
+      "iso": "PJM",
+      "year": 2025,
+      "tight_hours": 263,
+      "within_year_composition": {
+        "summer": 229,
+        "winter": 34,
+        "shoulder": 0
+      },
+      "dominant_season": "summer",
+      "dominant_share": 0.8707,
+      "balanced_composition": {
+        "summer": 88,
+        "winter": 87,
+        "shoulder": 88
+      },
+      "hours_reallocated_to_other_seasons": 141
+    },
+    {
+      "iso": "ERCOT",
+      "year": 2023,
+      "tight_hours": 263,
+      "within_year_composition": {
+        "summer": 263,
+        "winter": 0,
+        "shoulder": 0
+      },
+      "dominant_season": "summer",
+      "dominant_share": 1.0,
+      "balanced_composition": {
+        "summer": 88,
+        "winter": 87,
+        "shoulder": 88
+      },
+      "hours_reallocated_to_other_seasons": 175
+    },
+    {
+      "iso": "ERCOT",
+      "year": 2024,
+      "tight_hours": 263,
+      "within_year_composition": {
+        "summer": 215,
+        "winter": 38,
+        "shoulder": 10
+      },
+      "dominant_season": "summer",
+      "dominant_share": 0.8175,
+      "balanced_composition": {
+        "summer": 88,
+        "winter": 87,
+        "shoulder": 88
+      },
+      "hours_reallocated_to_other_seasons": 127
+    },
+    {
+      "iso": "ERCOT",
+      "year": 2025,
+      "tight_hours": 263,
+      "within_year_composition": {
+        "summer": 183,
+        "winter": 64,
+        "shoulder": 16
+      },
+      "dominant_season": "summer",
+      "dominant_share": 0.6958,
+      "balanced_composition": {
+        "summer": 88,
+        "winter": 87,
+        "shoulder": 88
+      },
+      "hours_reallocated_to_other_seasons": 95
+    },
+    {
+      "iso": "CAISO",
+      "year": 2023,
+      "tight_hours": 263,
+      "within_year_composition": {
+        "summer": 241,
+        "winter": 0,
+        "shoulder": 22
+      },
+      "dominant_season": "summer",
+      "dominant_share": 0.9163,
+      "balanced_composition": {
+        "summer": 88,
+        "winter": 87,
+        "shoulder": 88
+      },
+      "hours_reallocated_to_other_seasons": 153
+    },
+    {
+      "iso": "CAISO",
+      "year": 2024,
+      "tight_hours": 263,
+      "within_year_composition": {
+        "summer": 233,
+        "winter": 0,
+        "shoulder": 30
+      },
+      "dominant_season": "summer",
+      "dominant_share": 0.8859,
+      "balanced_composition": {
+        "summer": 88,
+        "winter": 87,
+        "shoulder": 88
+      },
+      "hours_reallocated_to_other_seasons": 145
+    },
+    {
+      "iso": "CAISO",
+      "year": 2025,
+      "tight_hours": 263,
+      "within_year_composition": {
+        "summer": 247,
+        "winter": 0,
+        "shoulder": 16
+      },
+      "dominant_season": "summer",
+      "dominant_share": 0.9392,
+      "balanced_composition": {
+        "summer": 88,
+        "winter": 87,
+        "shoulder": 88
+      },
+      "hours_reallocated_to_other_seasons": 159
+    },
+    {
+      "iso": "MISO",
+      "year": 2023,
+      "tight_hours": 263,
+      "within_year_composition": {
+        "summer": 263,
+        "winter": 0,
+        "shoulder": 0
+      },
+      "dominant_season": "summer",
+      "dominant_share": 1.0,
+      "balanced_composition": {
+        "summer": 88,
+        "winter": 87,
+        "shoulder": 88
+      },
+      "hours_reallocated_to_other_seasons": 175
+    },
+    {
+      "iso": "MISO",
+      "year": 2024,
+      "tight_hours": 263,
+      "within_year_composition": {
+        "summer": 263,
+        "winter": 0,
+        "shoulder": 0
+      },
+      "dominant_season": "summer",
+      "dominant_share": 1.0,
+      "balanced_composition": {
+        "summer": 88,
+        "winter": 87,
+        "shoulder": 88
+      },
+      "hours_reallocated_to_other_seasons": 175
+    },
+    {
+      "iso": "MISO",
+      "year": 2025,
+      "tight_hours": 263,
+      "within_year_composition": {
+        "summer": 263,
+        "winter": 0,
+        "shoulder": 0
+      },
+      "dominant_season": "summer",
+      "dominant_share": 1.0,
+      "balanced_composition": {
+        "summer": 88,
+        "winter": 87,
+        "shoulder": 88
+      },
+      "hours_reallocated_to_other_seasons": 175
+    },
+    {
+      "iso": "NYISO",
+      "year": 2023,
+      "tight_hours": 263,
+      "within_year_composition": {
+        "summer": 263,
+        "winter": 0,
+        "shoulder": 0
+      },
+      "dominant_season": "summer",
+      "dominant_share": 1.0,
+      "balanced_composition": {
+        "summer": 88,
+        "winter": 87,
+        "shoulder": 88
+      },
+      "hours_reallocated_to_other_seasons": 175
+    },
+    {
+      "iso": "NYISO",
+      "year": 2024,
+      "tight_hours": 262,
+      "within_year_composition": {
+        "summer": 262,
+        "winter": 0,
+        "shoulder": 0
+      },
+      "dominant_season": "summer",
+      "dominant_share": 1.0,
+      "balanced_composition": {
+        "summer": 88,
+        "winter": 87,
+        "shoulder": 88
+      },
+      "hours_reallocated_to_other_seasons": 175
+    },
+    {
+      "iso": "NYISO",
+      "year": 2025,
+      "tight_hours": 263,
+      "within_year_composition": {
+        "summer": 263,
+        "winter": 0,
+        "shoulder": 0
+      },
+      "dominant_season": "summer",
+      "dominant_share": 1.0,
+      "balanced_composition": {
+        "summer": 88,
+        "winter": 87,
+        "shoulder": 88
+      },
+      "hours_reallocated_to_other_seasons": 175
+    },
+    {
+      "iso": "NEISO",
+      "year": 2023,
+      "tight_hours": 263,
+      "within_year_composition": {
+        "summer": 253,
+        "winter": 10,
+        "shoulder": 0
+      },
+      "dominant_season": "summer",
+      "dominant_share": 0.962,
+      "balanced_composition": {
+        "summer": 88,
+        "winter": 87,
+        "shoulder": 88
+      },
+      "hours_reallocated_to_other_seasons": 165
+    },
+    {
+      "iso": "NEISO",
+      "year": 2024,
+      "tight_hours": 263,
+      "within_year_composition": {
+        "summer": 257,
+        "winter": 6,
+        "shoulder": 0
+      },
+      "dominant_season": "summer",
+      "dominant_share": 0.9772,
+      "balanced_composition": {
+        "summer": 88,
+        "winter": 87,
+        "shoulder": 88
+      },
+      "hours_reallocated_to_other_seasons": 169
+    },
+    {
+      "iso": "NEISO",
+      "year": 2025,
+      "tight_hours": 263,
+      "within_year_composition": {
+        "summer": 245,
+        "winter": 18,
+        "shoulder": 0
+      },
+      "dominant_season": "summer",
+      "dominant_share": 0.9316,
+      "balanced_composition": {
+        "summer": 88,
+        "winter": 87,
+        "shoulder": 88
+      },
+      "hours_reallocated_to_other_seasons": 157
+    }
+  ]
+}
