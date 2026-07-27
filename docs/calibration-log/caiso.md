@@ -2332,3 +2332,108 @@ OWN single-delta A/B, pumped storage stays flagged-not-built. Promotion was
 not granted and the keeper is unchanged.
 
 Next number: caiso-130.
+
+---
+
+## caiso-130 (2026-07-27) — `hydro_budget_nameplate_aware`: the energy lands (P2 PASS all years), the **evening does not** — KILLED by K2-2024, and it is a rule-14 result
+
+**Keeper `2026-07-27-caiso-126-ror-split` UNCHANGED.** Arm B registered as a
+REJECTED probe (`2026-07-27-caiso-130-nameplate-aware`), arm A as its control
+(`2026-07-27-caiso-130-control`); both on the dashboard (rule 15). Full
+evidence: `results/calibration/FINDING-caiso130-hydro-budget-nameplate-aware-2026-07-27.md`.
+Gates frozen pre-solve at `26259a2`
+(`PREREG-caiso130-hydro-budget-nameplate-aware-2026-07-27.md`). Scorer
+`scripts/probes/_caiso130_nameplate_ab.py`; no-LP derives
+`_caiso130_nameplate_blast_radius.py` / `_caiso130_nameplate_precheck.py`.
+
+**Basis clean:** arm A reproduces the committed keeper **digit-for-digit** (max
+delta 0.000000 MW, all 14 classes, all three years), so `2a01de8..HEAD` is
+CAISO-inert and the A/B carries no basis caveat.
+
+### Gate 0 — cross-ISO blast radius (the grant's own precondition), answered first
+
+The flag is **NOT CAISO-scoped by construction**: it sits in the shared
+`data.hydro` level-pinning branch, so it is live wherever a run pins a monthly
+hydro level. Undeliverable share of the in-LP hydro budget, 2023/24/25:
+**PJM 5.51/3.62/6.72 %**, MISO 1.30/2.12/0.87 %, CAISO 0.53/1.50/0.12 %,
+NEISO 0.81/0.91/0.28 %; **ERCOT and NYISO pin no level ⇒ strict no-op,
+verified bit-equal**. Arming it here still changes no other keeper (per-run
+config field, default off, no shared derived artifact); rule 25 holds without
+scoping work because the mechanism carries no ISO-fitted constant at all. The
+forward path pins through the same branch on every hydro ISO. **PJM's ~10×
+exposure is reported, not acted on** — separate A/B, separate owner act.
+
+### The result
+
+**P2 PASS, all three years** — the mechanism's own identity check. Re-allocation
+fired at 130.2/352.7/26.3 GWh over 70/52/27 clipped plant-months with **0.0 GWh
+physically unattainable**; annual hydro rises +14.5/+37.5/+2.8 MW = **98/96/93 %
+of full delivery**. The undeliverable-energy defect (FINDING-caiso126 K4) is
+closed: 0 MWh / 0 plant-months above the bound. Zero new free parameters.
+
+**K2 KILL (2024)** — overnight |gap| 92 → 152 MW against a +50 MW bound. The
+attribution is the load-bearing result: the LP spreads the freed water almost
+**flat with an overnight tilt**, landing **35.5/46.5/25.9 % in the overnight**
+against **15.7/11.3/31.9 % in the evening**. Evening movement +10.9/+20.4/+4.3
+MW against a pre-registered no-feedback ceiling of +64.8/+172.5/+13.2 — feedback
+ratios **0.17×/0.12×/0.33×** (caiso-126's water-value feedback ran the other
+way, 1.2–3× *above* its proxy). Two structural causes: the water-fill routes
+overflow to the plant-months with nameplate headroom left, whose headroom sits
+in the hours they were not already running flat out; and the evening premium is
+too compressed (the caiso-127 storage pin) for the LP's own λ surface to reward
+concentrating water in h17-21.
+
+**P1 FAIL 2023/24** (evening moved less than 25 % of its own ceiling). The 2025
+"PASS" is an artifact of that year's tiny ceiling and is **not** quotable as a
+partial win. P3/P4/K1/K3/K4/K5 all clean — C3a improves toward actual every year
+(3.73→3.63, 7.70→7.56, 8.50→8.49 %), belly improves every year, D-4 off-window
+0.0000, rubric identical (NOT-YET both arms). Gas −0.080/−0.266/−0.022 TWh
+moves **C5a the wrong way** — second-order against a 6–8 TWh gap, recorded as a
+real cost.
+
+**Pre-registered ex ante, so it cannot be spun after:** this delta could never
+have delivered the caiso-127 charter's "evening heals to ±150 MW" — the
+arithmetic ceiling is 4–20× short of the gap. That was recorded as
+not-applicable, not as a gate this run failed.
+
+### Disposition — rule 14, read the right way
+
+The accurate input made the fit worse, which rule 14 `[R-ACCURATE]` names as a
+signal that **something else was being silently compensated**: the uniform
+scale's nameplate clip was quietly removing 0.13–0.35 TWh/yr and offsetting part
+of the model's known overnight hydro excess. So K2 is a **discovered defect
+elsewhere**, not evidence against the nameplate bound; reverting to the uniform
+scale would bury the error back inside an inaccurate input. The flag stays in
+the tree **default-off, unreverted and undeleted**, a one-flag re-test once the
+evening λ-formation lane lands — the same standing as the RoR family itself.
+
+### rule-22 LOYO
+
+Zero fitted parameters ⇒ LOYO reduces to per-year gate consistency. P2 holds in
+every year (98/96/93 %); the evening under-delivery is same-signed in every
+year; the overnight worsens in every year (+17.7/+60.0/+2.5 MW) and the K2
+breach is confined to 2024 only because 2024 carries 2.6× the re-allocation of
+2023 and 13× that of 2025 — **a systematic mechanism property scaled by the
+delta's own size, not a single-year artifact** (the caiso-126 K1 structure).
+
+### DO-NOT-REDO (new)
+
+Re-arming the flag on the CAISO keeper against this residual in any scoped form
+(per-window/class/plant restriction of where overflow is re-allocated);
+re-measuring the cross-ISO blast radius or per-ISO undeliverable shares;
+re-measuring the delta's energy budget, destination split, or evening ceiling;
+re-solving the A/B to confirm direction (arm A is byte-identical to the keeper);
+reverting to the uniform fleet-wide scale as an improvement (rule 14).
+
+### The caiso-127 grant is now fully spent
+
+Item 1 (S1) killed at the derive gates (caiso-129); item 3 (this session) killed
+at the A/B gates; item 2 (the caiso-114 refinement) stays **unfunded** and still
+gated behind the storage pin; item 4 (pumped storage) stays **flagged, not
+built**. Every hydro-side candidate now converges on the same blocker — this
+session is the sharpest evidence yet: a **zero-DOF** mechanism hands the LP
+free, physically deliverable, evening-capable energy and the LP puts a plurality
+of it in the overnight instead. **Newly raised, not built: the PJM
+nameplate-clip ask** (3.6–6.7 % of its hydro budget, no CAISO-style evening pin).
+
+Next number: caiso-131.
