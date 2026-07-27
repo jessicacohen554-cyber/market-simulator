@@ -119,6 +119,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "capacity-market-avoidable-cost-rate",
     "uranium-marketing-price",
     "benchmark-corridor",
+    "hydro-plant-modes",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -350,6 +351,23 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "one tidy (source, iso, region, scenario, target_year, quantity, "
             "tech) frame with a canonical quantity/technology vocabulary. Per-ISO "
             "rows in one file (iso column key); an ISO total sums its region rows."
+        ),
+    },
+    "hydro-plant-modes": {
+        "summary": (
+            "Per-plant conventional-hydro operational-mode classification "
+            "(shapeable reservoir/peaking vs run-of-river/canal) — the "
+            "external classifier the RoR-split dispatch mechanism "
+            "(ScenarioConfig.hydro_ror_split, caiso-126) consumes."
+        ),
+        "reconciles": (
+            "ORNL EHA FY2024 per-plant Mode labels (keyed to EIA plant id) "
+            "completed for Mode-NaN plants by the documented HILARRI v4 "
+            "reservoir-association / canal-type / Corps-dam-ownership rules "
+            "in scripts/data/curate_hydro_plant_modes.py — all categorical, "
+            "no numeric threshold, frozen against residuals (rule 21). "
+            "CAISO-only until another ISO's lane reviews the completion "
+            "against its own labeled subset."
         ),
     },
     "ercot-wtx-congestion": {

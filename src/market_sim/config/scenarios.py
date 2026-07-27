@@ -174,6 +174,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # default) is byte-stable; an armed run enters the key as a distinct
     # scenario.
     "hydro_min_flow_floor",
+    # Conventional-hydro run-of-river split (caiso-126): default-off gate for
+    # the per-plant shapeability classifier's flat-dispatch mechanism. Same
+    # rationale: byte-identical off, dropped from the hash at its default; an
+    # armed run enters the key as a distinct scenario.
+    "hydro_ror_split",
     # DAM-first outage overlay gates for the four ISOs with a native
     # availability instrument (CAISO / MISO / NEISO / PJM), wired 2026-07-24
     # (infra/dam-outage-wiring-4iso). All default False and back a backcast-only,
@@ -518,7 +523,41 @@ class ScenarioConfig:
     # budget stays economically shaped). Rule 19 — no other mechanism floors
     # conventional hydro today (min_flow_fraction / per_plant_min_flow are 0 for
     # every ISO but NYISO's treaty plants, which are a load_hydro_budget input,
-    # not a min_gen floor).
+    # not a min_gen floor; with hydro_ror_split armed the floor is RECONCILED
+    # into that family, see below).
+    hydro_ror_split: bool = False  # GATED default off (caiso-126). Per-plant
+    # shapeability heterogeneity: plants the EXTERNAL hydro-plant-modes
+    # classifier (ORNL EHA FY2024 operational Mode + the documented HILARRI/
+    # Corps-dam completion, data/clean/hydro-plant-modes via
+    # scripts/data/curate_hydro_plant_modes.py) marks run-of-river/canal
+    # dispatch FLAT at their own measured monthly water, budget[g,m]/hours[m]
+    # (min_gen == availability cap == the flat level, mechanism id
+    # MECH_HYDRO_ROR_FLAT); reservoir-class plants keep the full envelope/
+    # budget shaping machinery.
+    #   DRIVER (rule 17a): a run-of-river or conduit plant's output follows
+    #     inflow/water deliveries — it physically cannot chase price. The
+    #     budget LP gives every plant full within-month shaping freedom, so
+    #     per-plant water values are degenerate and the fleet moves as ONE
+    #     bang-bang block riding the p95 envelope ceiling overnight
+    #     (caiso-125 §1: overnight bind share 0.83-0.85, model mean
+    #     percentile-rank 0.80-0.82 in the measured bucket distribution).
+    #   WINDOW (rule 17b): ALL 24 hours — inflow is around-the-clock; the
+    #     flat level is MONTH-constant so no diurnal shape is pinned
+    #     (rule 13).
+    #   FORWARD STORY (rule 17c): the classification is a static plant
+    #     attribute re-curated only when EHA/HILARRI vintages update
+    #     (rule 21); the flat level is the plant's own monthly budget, which
+    #     every path (measured backcast / climatology forecast) already
+    #     supplies — so the mechanism regenerates for any forward year and
+    #     scales with the water year automatically.
+    #   DOF: zero — the classifier is categorical-external (no threshold),
+    #     the level is the plant's own budget.
+    #   RULE 19 (one family with hydro_min_flow_floor, never stacked): the
+    #     RoR class's flat base IS its floor (subsumed); when the floor flag
+    #     is ALSO on, data.hydro.build_hydro_fleet reduces the fleet Q95
+    #     level by the RoR flat base and allocates the remainder over the
+    #     RESERVOIR class only, so the total forced sustained base equals
+    #     the frozen Q95 level exactly.
     eac_price_nuclear: float = 0.0  # $/MWh, e.g. NY/IL Zero Emission Credit ~$17
     eac_price_wind: float = 0.0  # $/MWh, onshore wind REC
     eac_price_solar: float = 0.0  # $/MWh

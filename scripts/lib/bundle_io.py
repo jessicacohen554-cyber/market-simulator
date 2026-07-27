@@ -64,6 +64,7 @@ DERIVED_INPUT_NAMES: tuple[str, ...] = (
     "unit_outages_e923",
     "unit_outages_layup",
     "capacity_deliverability",
+    "hydro_plant_modes",
 )
 
 
@@ -225,6 +226,33 @@ def write_derived_solve_inputs(iso: str, run_dir: Path) -> dict[str, str]:
     except Exception:
         logger.warning(
             "derived-input capture failed for capacity_deliverability (%s)",
+            iso,
+            exc_info=True,
+        )
+
+    # The clean hydro-plant-modes partition (the caiso-126 RoR-split
+    # classifier): derived from committed raw (EHA/HILARRI) by
+    # scripts/data/curate_hydro_plant_modes.py, but the clean tree is
+    # disposable — pin the exact classification bytes the solve read. Absent
+    # partition (classifier not curated / not reviewed for the ISO) records
+    # nothing, exactly the state the solve degraded to.
+    try:
+        from market_sim.data.hydro_modes import load_hydro_shapeable
+
+        modes = load_hydro_shapeable(iso)
+        if modes is not None:
+            frame = pd.DataFrame(
+                {
+                    "plant_id": list(modes.keys()),
+                    "shapeable": list(modes.values()),
+                }
+            ).sort_values("plant_id")
+            out["hydro_plant_modes"] = write_shared_input(
+                frame, "hydro_plant_modes", iso, run_dir
+            )
+    except Exception:
+        logger.warning(
+            "derived-input capture failed for hydro_plant_modes (%s)",
             iso,
             exc_info=True,
         )

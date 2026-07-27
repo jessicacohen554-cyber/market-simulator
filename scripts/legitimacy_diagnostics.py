@@ -96,6 +96,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
     MECH_CT_NETLOAD_DRAG,
     MECH_GAS_COMMITMENT_BRIDGE,
     MECH_HYDRO_MIN_FLOW,
+    MECH_HYDRO_ROR_FLAT,
     MECH_NAMES,
     MECH_RA_MUSTOFFER,
     MECH_RELIABILITY_FLOOR,
@@ -351,6 +352,33 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # summary never gates. Row exists for the rule-12/17 declaration, not for a
     # C8 escalation path.
     (MECH_HYDRO_MIN_FLOW, None): (0, 24),
+    # hydro_ror_flat (caiso-126, MECH_HYDRO_ROR_FLAT — data.hydro.
+    # build_hydro_fleet under config.hydro_ror_split -> FleetArrays min_gen +
+    # availability, min == max == budget[g,m]/hours[m]): run-of-river flat
+    # dispatch. Rule-12/17 declaration:
+    # * WINDOW — ALL 24 hours BY PHYSICS, same evidence as hydro_min_flow
+    #   above: run-of-river/conduit inflow is an around-the-clock quantity;
+    #   the flat level is month-constant so no diurnal shape is pinned
+    #   (rule 13).
+    # * DRIVER — plants the external hydro-plant-modes classifier (ORNL EHA
+    #   FY2024 Mode + the documented HILARRI reservoir-association /
+    #   canal-type / Corps-dam completion) marks NON-shapeable cannot chase
+    #   price; the budget LP otherwise gives them full within-month shaping
+    #   freedom (caiso-125 §4c: degenerate per-plant water values, the fleet
+    #   rides the envelope as one bang-bang block).
+    # * LEVEL — the plant's OWN monthly energy budget spread flat
+    #   (budget[g,m]/hours[m]) — a quantity every solve already loads; zero
+    #   new free parameters (the classifier is categorical, no threshold).
+    # * FORWARD STORY — the classification is a static plant attribute
+    #   (re-curated only when the EHA/HILARRI sources update, rule 21); the
+    #   level rides the budget, so it regenerates for any forecast year and
+    #   scales with the water year automatically.
+    # Rule 19: ONE family with hydro_min_flow — an RoR unit never also
+    # carries a min-flow stamp (build_hydro_fleet allocates the reconciled
+    # floor over the reservoir class only). Non-thermal forcing
+    # (NON_THERMAL_MECHS), unclassified '' plant_group bucket — the row
+    # exists for the rule-12/17 declaration, not a C8 escalation path.
+    (MECH_HYDRO_ROR_FLAT, None): (0, 24),
     # unit_outage_maxgen_events (M-2 declared-event-window revealed derates)
     # carries NO row here BY CONSTRUCTION, and this note is its rule-12
     # window declaration (the design's "D4_WINDOWS entry for the maxgen
@@ -901,6 +929,24 @@ D5_REGISTRY: tuple[MechanismSpec, ...] = (
         "the same mechanism off a normal-water-year level (the "
         "measured_hydro_hourly_envelope pattern). Adds no free parameter: "
         "HYDRO_MIN_FLOW_PERCENTILE is the mirror of the ceiling's",
+    ),
+    MechanismSpec(
+        "hydro_ror_split",
+        "hydro_ror_split",
+        "both",
+        True,
+        note="conventional-hydro run-of-river split (caiso-126): plants the "
+        "external hydro-plant-modes classifier (ORNL EHA FY2024 Mode + the "
+        "documented HILARRI/Corps-dam completion, "
+        "data/clean/hydro-plant-modes) marks non-shapeable dispatch flat at "
+        "their own monthly water budget[g,m]/hours[m]; reservoir-class "
+        "plants keep the envelope/budget machinery. Mode PARITY by "
+        "construction — the classification is a static plant attribute and "
+        "the level is the plant's own budget, which both backcast and "
+        "forecast paths already supply. Zero free parameters (categorical "
+        "classifier, no threshold). Rule 19: one reconciled family with "
+        "hydro_min_flow_floor (the RoR base subsumes its share of the Q95 "
+        "evidence; the reservoir class carries the remainder)",
     ),
     MechanismSpec(
         "gas_monthly_actuals",

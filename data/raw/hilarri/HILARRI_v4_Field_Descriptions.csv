@@ -1,0 +1,61 @@
+Field Name,Units,Data type,Description,No data value
+fid,N/A,Numeric,"Unique row number (feature ID), specific to the current version of HILARRI",
+hilarriid,N/A,Text,Unique identifier for a set of linkages in the HILARRI database. This ID should remain constant for a record across different versions of HILARRI. ,
+nididfull,N/A,Text,Concatenation of NIDID and OTHERSTRUCTUREID,NA
+nidid,N/A,Text,ID listed in NID,NA
+otrstrctid,N/A,Text,ID listed in NID for auxiliary structures (OTHERSTRUCTUREID). Note that sometimes main structures have a 0 instead of being left blank.,NA
+grand_id,N/A,Numeric,ID from GRanD,-9999
+dam_name,N/A,Text,Dam name listed in dam inventory,NA
+longitude,Decimal Degrees,Numeric,Longitude listed by dam inventory or plant inventory if the power plant wasn't referenced to an inventoried dam. Some features' coordinates have been updated during QA process. See LOC_FLAG for source of updated location. (EPSG: 4269),-9999
+latitude,Decimal Degrees,Numeric,Latitude listed by dam inventory or plant inventory if the power plant wasn't referenced to an inventoried dam. Some features' coordinates have been updated during QA process. See LOC_FLAG for source of updated location. (EPSG: 4269),-9999
+loc_type,N/A,Text,States whether the coordinates for the feature (in the latitude and longitude fields) reflect the location of a dam or a power plant. ,NA
+state,N/A,Text,US State abbreviation,NA
+loc_flag,N/A,Text,"Description of the source for which dataset was used to help update coordinates of a feature. Possible values include:
+
+FERC Elib
+GRanDv1.3
+HydroLAKES
+Location of duplicate dam (coordinates from another dam listed in a dam inventory at the same location)
+NHDPlusV2
+NHDWB",NA
+eha_cmplx,N/A,Text,Root of the EHA ID,NA
+eha_ptid,N/A,Text,Plant ID used by the EHA (EHA_PtID),NA
+pt_name,N/A,Text,Name of the plant reported by the EHA (PtName),NA
+pt_lat,Decimal Degrees,Numeric,"Latitude reported by the EHA (Lat) (EPSG: 4269). If coordinates were corrected, it is noted in the loc_flag field",-9999
+pt_lon,Decimal Degrees,Numeric,"Longitude reported by the EHA (Lon) (EPSG: 4269). If coordinates were corrected, it is noted in the loc_flag field",-9999
+eia_ptid,N/A,Text,"EIA plant identification code, reported by the EHA (EIA_PtID)",NA
+fcdocket,N/A,Text,"FERC license docket number, reported by the EHA (FcDocket)",NA
+nhdv2comid,N/A,Numeric,COMID from the NHDPlusV2 river network that was joined based on QA/inspection,-9999
+nhdwbcomid,N/A,Numeric,COMID of the matched NHD waterbody ,-9999
+nhdwbflag,N/A,Text,"Flags indicating possible issues associated with matching the dam/plant and water body. Flags include ""Infrastructure matched to multiple waterbodies"" (a single waterbody is split into multiple parts), ""Multiple infrastructure features matched to this waterbody"" (more than one dam or plant is located on this waterbody), and ""Waterbody is not accurate"" (the waterbody polygon may be known to represent more or less than the normal boundary of the waterbody.",NA
+hylake_id,N/A,Numeric,HydroLAKE ID for the matched HydroLAKES waterbody,-9999
+hylakeflag,N/A,Text,"Flags indicating possible issues associated with matching the dam/plant and water body. Flags include ""Infrastructure matched to multiple waterbodies"" (a single waterbody is split into multiple parts), ""Multiple infrastructure features matched to this waterbody"" (more than one dam or plant is located on this waterbody), and ""Waterbody is not accurate"" (the waterbody polygon may be known to represent more or less than the normal boundary of the waterbody.",NA
+lagoslkid,N/A,Numeric,ID for the matched LAGOS waterbody (lake dataset),-9999
+lagosflag,N/A,Text,"Flags indicating possible issues associated with matching the dam/plant and water body. Flags include ""Infrastructure matched to multiple waterbodies"" (a single waterbody is split into multiple parts), ""Multiple infrastructure features matched to this waterbody"" (more than one dam or plant is located on this waterbody), and ""Waterbody is not accurate"" (the waterbody polygon may be known to represent more or less than the normal boundary of the waterbody.",NA
+nhdhr_id,N/A,Text,ID for the matched waterbody from the NHD High Resolution Waterbody dataset,NA
+nhdhr_flag,N/A,Text,"Flags indicating possible issues associated with matching the dam/plant and water body. Flags include ""Infrastructure matched to multiple waterbodies"" (a single waterbody is split into multiple parts), ""Multiple infrastructure features matched to this waterbody"" (more than one dam or plant is located on this waterbody), and ""Waterbody is not accurate"" (the waterbody polygon may be known to represent more or less than the normal boundary of the waterbody.",NA
+huc_02,N/A,Text,2-digit identifier for NHD Watershed Boundary Dataset Hydrologic Unit (Region level). Note that all HUCs should be 2 digits. Those from Hydrologic Units 01 - 09 should include the leading zero.,NA
+huc_12,N/A,Text,12-digit identifier for NHD Watershed Boundary Dataset Hydrologic Units (sub-watershed level). Note that all HUCs should be 12 digits. Those from Hydrologic Units 01 - 09 should include the leading zero. HUC12s are not included outside of the CONUS.,NA
+ehadamflag,N/A,Text,Note to describe issues when linking the EHA plant to NID,NA
+statusflag,N/A,Text,"Summarizes which datasets confirmed hydropower.
+
+A feature  listed only in the NID or GRanD but not the EHA may not accurately describe current operational capabilities.",NA
+ra2012_flag,N/A,Text,Flags whether a dam had been included in the 2012 ORNL Potential Hydropower at NPDs Resource Assessment,NA
+ra2025_flag,N/A,Text,Flags whether a dam had been included in the 2025 Resource Assessment of technical potential at NPDs Resource Assessment,NA
+pipestatus,N/A,Text,Status according to the US Hydropower Development Pipeline (2022) dataset,NA
+ret_year,Year,Numeric,Year of retirement according to the U.S. Hydropower Retired Facilities Data (2022),-9999
+ar_rem_id,N/A,Text,ID of dam in the American Rivers Dam Removal Database (2022),NA
+rem_year,Year,Numeric,Year of dam removal according to the American Rivers Dam Removal Database (2022),-9999
+dataset,N/A,Text,"Basic descriptor of the type of relationships represented in each record.Possible values include: 1) Power plant only; no reservoir or inventoried dam, 2)Hydropower dam associated with reservoir but no power plant, 3) Power plant associated with reservoir, 4) Hydropower dam associated with power plant but no reservoir, 5)Hydropower dam associated with reservoir and power plant.",NA
+atrbtnotes,N/A,Text,"Description of known issues with volume, surface area, or dam height reported in underlying datasets. May not be comprehensive in identifying issues.",NA
+projid,N/A,Text,"A concatenation of the nididfull, grand_id, and eha_ptid fields, useful in identifying unique facility combinations. Note that there may be more than one power plant indexed to an individual dam.",
+prjct_type,N/A,Text,"Describes the type of hydropower project (conventional, conduit at a dam, canal/conduit,",NA
+prjct_dtl,N/A,Text,Provides additional detail (where available) for the type of hydropower project,NA
+usgs_gage,N/A,Text,National Water Information System Site ID for USGS Streamflow gages,NA
+gage_flag,N/A,Text,Notes for possible issues with flows reported by the downstream gage in relation to reservoir releases,NA
+sed_dsnum,N/A,Numeric,Datasheet number used in the RESSED database,-9999
+nla2007,N/A,Text,Site ID for the 2007 National Lakes Assessment,NA
+nla2012,N/A,Text,Site ID for the 2012 National Lakes Assessment,NA
+nla2017,N/A,Text,Site ID for the 2017 National Lakes Assessment,NA
+nla2022,N/A,Text,Site ID for the 2022 National Lakes Assessment,NA
+surge_id,N/A,Numeric,Lake ID for used in the EPA SuRGE sampling effort,-9999
