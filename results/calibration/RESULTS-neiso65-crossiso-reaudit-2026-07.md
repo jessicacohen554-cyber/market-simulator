@@ -147,7 +147,28 @@ re-audit measures keeper sensitivity, not extract correctness.
 
 ### 3d. NEISO — done in neiso-64 (fix-in-place); nothing new this session.
 
-### 3e. PJM and MISO — RAM-blocked, not skipped
+### 3e. PJM and MISO — RAM-blocked, not skipped (SUPERSEDED; see the note below)
+
+**SUPERSEDED 2026-07-26 (miso-93 for MISO, pjm-129 for PJM). Both cells are now
+resolved, and this section's "≥24 GB environment" conclusion is WITHDRAWN as
+wrong.** It was an inference from a kill, not a measurement. Measured per
+solve-year from the release-block telemetry already in the code, PJM:
+`resident` after release **1.06 / 1.19 / 1.26 GB** (2023/24/25) against a
+single-year `peak` of **14.87 / 14.94 / 15.06 GB**. `peak(N+1) + floor(N)` =
+**15.93 GB at year 2**, reproducing this section's reported 15.9 GB kill to
+0.03 GB at the year it happened. The year loop is **not** leaking — its
+`del` + `gc.collect()` + `malloc_trim` block releases to a floor miso-90/92
+already attributed and cut by 35 % — the **single-year LP peak is the ceiling**,
+and **one fresh process per solve-year** (the staged `--reuse-solved` chain,
+already recorded in `pjm121_ccbelt`'s own attestation as how the keeper itself was
+solved, "peak ~14.8 GB") fits every PJM and MISO year in the standard ~15.7 GB
+container. No ≥24 GB box was needed for either. Verdicts:
+`results/calibration/FINDING-miso93-keeper-reaudit-meritguard-2026-07.md` (MISO,
+RE-TUNE REQUIRED) and
+`results/calibration/FINDING-pjm129-keeper-reaudit-meritguard-2026-07.md` (PJM,
+RE-TUNE REQUIRED). The original text is kept below as the historical record.
+
+**Original text (2026-07-26, as written):**
 
 Both keeper recipes exceed this container's 15 GB during a single year's LP:
 

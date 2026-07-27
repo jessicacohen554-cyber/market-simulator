@@ -354,6 +354,52 @@ must close by structure.** Keeper designation unchanged (owner call). Evidence:
 charter `docs/handoffs/miso-93-keeper-reaudit-charter-2026-07.md`. Remaining
 open re-audit cells: **ERCOT, NYISO** (PJM targets `pjm121_ccbelt` per §3e).
 
+**PJM re-audit cell RESOLVED (2026-07-26, pjm-129): RE-TUNE REQUIRED.** Arm
+`2026-07-26-pjm-129-meritguard-a1` (2023/2024/2025, one bundle) takes the
+`2026-07-25-pjm-121-cc-belt` keeper from `CALIBRATED` — PJM's first all-pass,
+10/10 — to **`NOT-YET` (7/10)** on **three** newly-failing gates: **C3a-2025
+−9.3 % → −10.6 %** (past the ±10 % veto by 0.6 pp), and **C3c tail 2024
+0.50× → 0.39×** and **2025 0.66× → 0.47×** (band ≥0.5×), plus **C1-2023
+CC_REGULAR −7.87 → −8.10 TWh**, crossing an 8 TWh volume band by 0.10 TWh.
+C2/C3a-2023,24/C3b/C4/C5a/C6/C7/C8 hold, and C3a-2023 (+5.6 → +4.0 %),
+C3b-2023 and C5a-2023/24 **improve**. Like MISO and unlike CAISO this verdict is
+an **isolation, not an attribution**: the extract blob changes exactly once after
+the keeper's own `git_sha` (at the guard commit `6a8f285`) with the on-disk file
+byte-identical to HEAD, and a same-HEAD 2025 probe with the extract reverted
+reproduces the keeper's committed `system_2025` and `class_hourly_2025` sidecars
+at **`max|diff| = 0` on every column** — post-keeper **code** drift is exactly
+**$0.000**, so the guard/extract owns **100 %** of the −$0.518 (−1.3 pp) move.
+Mechanism as this charter predicted: **903 windows / 4,624 GW-days removed, zero
+added** (11.7 % of envelope), **54.7 % of it ST_GAS**, and the returned supply
+lowers the clearing price and *removes scarcity hours* — the C3c leg is the
+consequence the pjm-129 charter itself failed to pre-register, and it deepens the
+already-open G-20b/G-22 reserve-tightness root cause rather than creating a new
+one. A rule-11 discovered-bug signal, −1.3 pp against MISO's −1.4 pp. **No tuning
+applied; keeper designation unchanged (owner call).** Evidence:
+`results/calibration/FINDING-pjm129-keeper-reaudit-meritguard-2026-07.md`;
+charter `docs/handoffs/pjm-129-keeper-reaudit-charter-2026-07.md`.
+
+**And the RAM block on this cell is closed, not deferred.** Both prior attempts
+(§3e, then its re-attempt) concluded the PJM replay "needs a ≥24 GB environment"
+after being SIGKILLed at 15.9 GB building 2024. Measured per solve-year here:
+`resident` after release **1.06 / 1.19 / 1.26 GB** (a fully-attributed floor, not
+a leak — the year loop's `del` + `gc.collect()` + `malloc_trim` block works) and
+single-year `peak` **14.87 / 14.94 / 15.06 GB**. `peak(N+1) + floor(N)` = **15.93
+GB at year 2** reproduces the reported kill to 0.03 GB, at the year both attempts
+reported it. **The single-year LP peak is the ceiling; ≥24 GB was never
+required** — one fresh process per solve-year (the staged `--reuse-solved` chain
+miso-92/93 established, and which `pjm121_ccbelt`'s own attestation records it
+was itself solved with at "peak ~14.8 GB") fits every PJM year in a 15.7 GB box.
+
+**Re-audit ledger after this cell.** All six ISOs now carry a registered arm:
+NEISO fix-in-place, ERCOT fix-in-place (insensitive), CAISO / NYISO / MISO / PJM
+re-tune-required (§3, plus the CAISO amendment above, miso-93 and this entry).
+The "ERCOT, NYISO" wording carried above from miso-93 is left as written; per §3
+both already have registered arms, so what remains under those names is
+**re-tune** work in their own keeper lanes, not an unrun re-audit. Sequencing
+every re-tune against §8/§9's still-open residual / freeze-lift item is an owner
+call. **The freeze stays ACTIVE; nothing here lifts it.**
+
 ## 9. Residual-over-count investigation — CLOSED on evidence; the freeze-lift decision is now the owner's
 
 The single item §8 deferred the freeze to. Three ordered steps were set by
