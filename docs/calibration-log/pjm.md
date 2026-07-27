@@ -1308,3 +1308,24 @@ swap. The container also shipped an empty `data/clean` tree (48 datatypes
 regenerated) and an empty `data/raw/pjm-da-virtuals` (36 months fetched).
 
 **Next number: pjm-134.**
+
+**PROMOTED 2026-07-27 (owner, in-session).** PJM keeper is now
+`2026-07-27-pjm-133-nameplate`, superseding `2026-07-26-pjm-129-meritguard-a1`.
+The owner's criterion — *"if structural integrity improves but gates regress
+that may still be a keeper"* — is met a fortiori: **nothing regresses at all**.
+
+**The blocker recorded above was resolved by main, not by this session.** While
+these arms solved, main designated `pjm-129-meritguard-a1` — the pjm-121 recipe
+replayed VERBATIM on the guard-corrected envelope, NOT-YET 7/10 — as the PJM
+keeper, deciding the corrected-envelope question. So the A/B is like-for-like
+against the designated keeper after all, and **arm A reproduces
+`pjm129_meritguard_a1` byte-identically: 0.000000 MW, all 19 classes, every
+hour, all three years.** The determination is unchanged (NOT-YET, C1/C3a/C3c
+FAIL, exactly as pjm-129 reads on the same envelope); what changes is that a
+real physical defect closes with zero DOF and total class-volume error improves
+in all three years.
+
+`calibration_attestation.json` written for arm B with a 14-entry DOF ledger
+(rule 23); the new entry is measured-external with ZERO solves added to the
+tuning lineage. C6 governance PASSES. `audit_keepers.py --iso PJM` PASS,
+0 failures / 0 warnings.
