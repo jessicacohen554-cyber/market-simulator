@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mechanism Matrix — Codebase Explorer</title>
+  <meta name="description" content="Cross-ISO mechanism testing matrix: which model mechanisms are used in each ISO's backcast keeper and forecast default, what has been tested where, and the verdicts. Includes the modeling glossary.">
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/bc-pages.css">
+  <style>
+    /* Matrix grid (data-completeness archetype, adapted: statuses not coverage) */
+    .mm-summary { display:flex; flex-wrap:wrap; gap:10px 22px; align-items:center;
+      background:var(--bg-card,#fff); border:1px solid var(--border-subtle,#e3e6ea);
+      border-radius:10px; padding:12px 16px; margin:14px 0 10px; font-size:.9rem; }
+    .mm-summary b { font-size:1.05rem; }
+    .mm-chip { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border-subtle,#d8dce1);
+      border-radius:999px; padding:3px 12px; cursor:pointer; user-select:none; font-size:.82rem;
+      background:transparent; color:inherit; }
+    .mm-chip.on { background:var(--navy,#16324f); color:#fff; border-color:var(--navy,#16324f); }
+    .mm-filters { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 14px; align-items:center; }
+    .mm-filters .lbl { font-size:.78rem; opacity:.7; margin-right:2px; }
+    .mm-table-wrap { overflow-x:auto; border:1px solid var(--border-subtle,#e3e6ea); border-radius:10px; }
+    table.mm { border-collapse:separate; border-spacing:0; width:100%; font-size:.85rem; }
+    table.mm th { position:sticky; top:0; background:var(--bg-card,#fff); z-index:3;
+      padding:8px 6px; text-align:center; font-size:.78rem; border-bottom:2px solid var(--border-subtle,#d8dce1); }
+    table.mm th.lblh { text-align:left; padding-left:12px; z-index:4; }
+    table.mm td { padding:6px 6px; border-bottom:1px solid var(--border-subtle,#eef0f3); vertical-align:top; }
+    table.mm td.lbl { position:sticky; left:0; background:var(--bg-card,#fff); z-index:2;
+      min-width:260px; max-width:420px; padding-left:12px; }
+    table.mm tr.sec td { background:var(--navy,#16324f); color:#fff; font-weight:600;
+      font-size:.82rem; letter-spacing:.03em; padding:7px 12px; position:sticky; left:0; }
+    .mm-name { font-weight:600; cursor:pointer; }
+    .mm-def { font-size:.72rem; opacity:.62; margin-top:2px; font-family:var(--font-mono,monospace); }
+    .mm-mode { display:inline-block; font-size:.66rem; border:1px solid currentColor; border-radius:4px;
+      padding:0 4px; margin-left:6px; opacity:.65; vertical-align:1px; }
+    .mm-note { display:none; font-size:.78rem; opacity:.85; margin-top:6px; line-height:1.45;
+      border-left:3px solid var(--border-subtle,#cfd4da); padding-left:8px; }
+    tr.open .mm-note { display:block; }
+    .cell { display:inline-flex; align-items:center; justify-content:center; width:26px; height:22px;
+      border-radius:5px; font-size:.74rem; font-weight:700; }
+    td.c { text-align:center; }
+    .c-K { background:rgba(31,138,76,.16); color:#1f8a4c; }
+    .c-R { background:rgba(196,64,64,.14); color:#c44040; }
+    .c-I { background:rgba(120,120,128,.16); color:#5d6570; }
+    .c-G { background:rgba(140,84,180,.15); color:#8c54b4; }
+    .c-O { background:rgba(212,145,30,.18); color:#b07a10; }
+    .c-U { background:rgba(30,120,200,.13); color:#1e6fb8; border:1px dashed rgba(30,120,200,.5); }
+    .c-N { opacity:.28; }
+    .iso-focus { outline:2px solid var(--info,#1e6fb8); outline-offset:-2px; border-radius:6px; }
+    .mm-legend { display:flex; flex-wrap:wrap; gap:8px 18px; font-size:.8rem; margin:12px 0 4px; }
+    .mm-legend span { display:inline-flex; gap:6px; align-items:center; }
+    .mm-note-foot { font-size:.78rem; opacity:.7; margin:14px 2px; line-height:1.5; }
+    /* Glossary */
+    .gl-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:4px 26px; margin-top:8px; }
+    .gl-item { padding:7px 4px; border-bottom:1px dashed var(--border-subtle,#e6e8ec); font-size:.85rem; line-height:1.45; }
+    .gl-item b { color:var(--navy,#16324f); }
+    .gl-cat { margin:22px 0 4px; font-weight:700; font-size:.95rem; letter-spacing:.02em; }
+    .gl-search { width:100%; max-width:420px; padding:7px 12px; border:1px solid var(--border-subtle,#cfd4da);
+      border-radius:8px; font-size:.9rem; margin-top:8px; background:transparent; color:inherit; }
+    .section-dark .mm-summary, .section-dark table.mm th, .section-dark table.mm td.lbl { background:var(--navy-deep,#0e2338); }
+    .section-dark .gl-item b { color:#cfe3f5; }
+    h2.mm-h { margin:28px 0 4px; font-size:1.25rem; }
+    .mm-sub { font-size:.88rem; opacity:.8; max-width:900px; line-height:1.5; }
+  </style>
+</head>
+<body>
+<nav id="topNav"></nav>
+<div class="content-section" style="padding: var(--space-lg);">
+  <div class="bc-page-header"><h1>Cross-ISO Mechanism Matrix</h1></div>
+  <p class="bc-page-sub">Every model mechanism × every ISO: is it armed in the ISO's current backcast keeper
+    (or forecast default), has it been tested there, and what was the verdict. This page renders the canonical
+    ledger in <code>data/mechanism-matrix.js</code> — sessions that test a mechanism update that file in the same
+    session (CLAUDE.md rule 28 <code>[R-MECH-MATRIX]</code>). Methodology, per-ISO lever queues and update
+    protocol: <code>docs/mechanism-testing-matrix.md</code>. Click a row for its note and evidence citations.</p>
+
+  <div class="mm-summary" id="mmSummary"></div>
+
+  <div class="mm-legend">
+    <span><span class="cell c-K">K</span> keeper / default (tested &amp; accepted)</span>
+    <span><span class="cell c-R">R</span> tested &amp; rejected</span>
+    <span><span class="cell c-I">I</span> tested inert / no-op</span>
+    <span><span class="cell c-G">G</span> governance-refused / closed</span>
+    <span><span class="cell c-O">O</span> open / in play</span>
+    <span><span class="cell c-U">U</span> untested candidate (lever queue)</span>
+    <span><span class="cell c-N">·</span> not applicable</span>
+  </div>
+
+  <div class="mm-filters" id="mmFilters"></div>
+
+  <div class="mm-table-wrap"><table class="mm" id="mmGrid"></table></div>
+
+  <p class="mm-note-foot">Source of truth: <code>docs/codebase-site/data/mechanism-matrix.js</code> (this page is a
+    pure renderer — edit the data file, not this page). Keeper snapshot and failing gates are stamped in the data
+    header. A verdict in one ISO never fills another ISO's cell (rule 25): transfer candidates appear as
+    <b>U</b> in the target ISO. "Untested" does not mean "recommended" — check the per-ISO lever queue in
+    <code>docs/mechanism-testing-matrix.md</code> §5 for ranked candidates tied to each ISO's failing gates.</p>
+
+  <h2 class="mm-h" id="glossary">Glossary</h2>
+  <p class="mm-sub">Terms as used across the spec, the calibration rubric, and this matrix — grouped, plain-English first.</p>
+  <input class="gl-search" id="glSearch" type="search" placeholder="Filter terms…" aria-label="Filter glossary terms">
+  <div id="glBody"></div>
+</div>
+
+<script src="data/mechanism-matrix.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/shared.js"></script>
+<script>
+(function () {
+  var M = window.MECH_MATRIX;
+  var STAT = { K:'keeper/default', R:'rejected', I:'inert', G:'refused/closed', O:'open', U:'untested', '.':'n/a' };
+  var state = { status:null, cat:null, iso:null };
+
+  // hash state (#iso=PJM&status=U&cat=offer)
+  function readHash(){
+    var p = {}; location.hash.replace(/^#/,'').split('&').forEach(function(kv){
+      var i = kv.indexOf('='); if (i>0) p[kv.slice(0,i)] = decodeURIComponent(kv.slice(i+1)); });
+    state.iso = M.isos.indexOf(p.iso)>=0 ? p.iso : null;
+    state.status = STAT[p.status] ? p.status : null;
+    state.cat = M.categories.some(function(c){return c.id===p.cat;}) ? p.cat : null;
+  }
+  function writeHash(){
+    var parts = [];
+    if (state.iso) parts.push('iso='+state.iso);
+    if (state.status) parts.push('status='+state.status);
+    if (state.cat) parts.push('cat='+state.cat);
+    history.replaceState(null,'', parts.length ? '#'+parts.join('&') : location.pathname);
+  }
+
+  function rowMatches(r){
+    if (state.cat && r.cat !== state.cat) return false;
+    if (state.status){
+      if (state.iso) return r.cells[M.isos.indexOf(state.iso)] === state.status;
+      return r.cells.indexOf(state.status) >= 0;
+    }
+    return true;
+  }
+
+  function renderSummary(){
+    var el = document.getElementById('mmSummary');
+    var counts = {}; var rows = M.rows.filter(rowMatches);
+    var idx = state.iso ? M.isos.indexOf(state.iso) : -1;
+    rows.forEach(function(r){
+      if (idx>=0){ var ch=r.cells[idx]; counts[ch]=(counts[ch]||0)+1; }
+      else { for (var i=0;i<6;i++){ counts[r.cells[i]]=(counts[r.cells[i]]||0)+1; } }
+    });
+    var scope = state.iso ? state.iso : 'all ISOs';
+    el.innerHTML = '<b>'+rows.length+'</b> mechanisms shown &middot; scope: <b>'+scope+'</b>' +
+      ['K','U','R','I','G','O'].map(function(s){
+        return ' &middot; <span class="cell c-'+s+'">'+s+'</span> '+(counts[s]||0);
+      }).join('') +
+      (state.iso && M.gates[state.iso] ? '<span style="flex-basis:100%;font-size:.78rem;opacity:.75">Open gates ('+state.iso+'): '+M.gates[state.iso]+' &middot; keeper: <code>'+M.keepers[state.iso]+'</code></span>' : '');
+  }
+
+  function chip(label, on, fn){
+    var b = document.createElement('button');
+    b.className = 'mm-chip'+(on?' on':''); b.textContent = label; b.onclick = fn; return b;
+  }
+
+  function renderFilters(){
+    var el = document.getElementById('mmFilters'); el.innerHTML='';
+    var l1 = document.createElement('span'); l1.className='lbl'; l1.textContent='ISO:'; el.appendChild(l1);
+    M.isos.forEach(function(iso){
+      el.appendChild(chip(iso, state.iso===iso, function(){ state.iso = state.iso===iso?null:iso; update(); }));
+    });
+    var l2 = document.createElement('span'); l2.className='lbl'; l2.textContent='Status:'; el.appendChild(l2);
+    ['K','U','R','I','G','O'].forEach(function(s){
+      el.appendChild(chip(s+' '+STAT[s], state.status===s, function(){ state.status = state.status===s?null:s; update(); }));
+    });
+    var l3 = document.createElement('span'); l3.className='lbl'; l3.textContent='Category:'; el.appendChild(l3);
+    M.categories.forEach(function(c){
+      el.appendChild(chip(c.name.split(' ')[0].replace(/[,:]$/,''), state.cat===c.id, function(){ state.cat = state.cat===c.id?null:c.id; update(); }));
+    });
+  }
+
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+  function renderGrid(){
+    var t = document.getElementById('mmGrid');
+    var isoIdx = state.iso ? M.isos.indexOf(state.iso) : -1;
+    var h = '<thead><tr><th class="lblh">Mechanism</th>' + M.isos.map(function(iso,i){
+      return '<th'+(i===isoIdx?' class="iso-focus"':'')+'>'+iso+'</th>';
+    }).join('') + '</tr></thead><tbody>';
+    M.categories.forEach(function(c){
+      var rows = M.rows.filter(function(r){ return r.cat===c.id && rowMatches(r); });
+      if (!rows.length) return;
+      h += '<tr class="sec"><td colspan="7">'+esc(c.name)+'</td></tr>';
+      rows.forEach(function(r){
+        h += '<tr id="row-'+r.id+'"><td class="lbl"><span class="mm-name">'+esc(r.name)+'</span>' +
+          '<span class="mm-mode">'+r.mode+'</span>' +
+          '<div class="mm-def">'+esc(r.id)+' &middot; '+esc(r.def||'')+'</div>' +
+          '<div class="mm-note">'+esc(r.note||'') +
+          (r.fc ? '<br><b>Forecast lane:</b> '+r.fc.split('').map(function(ch,i){return M.isos[i]+':'+ch;}).join(' ') : '') +
+          (r.ev ? '<br><b>Evidence:</b> '+esc(Object.keys(r.ev).map(function(k){return k+'='+r.ev[k];}).join(' | ')) : '') +
+          '</div></td>' +
+          r.cells.split('').map(function(ch,i){
+            var cls = ch==='.' ? 'c-N' : 'c-'+ch;
+            var title = M.isos[i]+': '+STAT[ch];
+            return '<td class="c'+(i===isoIdx?' iso-focus':'')+'"><span class="cell '+cls+'" title="'+title+'">'+(ch==='.'?'&middot;':ch)+'</span></td>';
+          }).join('') + '</tr>';
+      });
+    });
+    t.innerHTML = h + '</tbody>';
+    t.querySelectorAll('.mm-name').forEach(function(n){
+      n.onclick = function(){ n.closest('tr').classList.toggle('open'); };
+    });
+  }
+
+  function update(){ writeHash(); renderSummary(); renderFilters(); renderGrid(); }
+  readHash(); update();
+  window.addEventListener('hashchange', function(){ readHash(); renderSummary(); renderFilters(); renderGrid(); });
+
+  /* ---------------- Glossary ---------------- */
+  var GLOSSARY = [
+    ['Model & scoring basics', [
+      ['LP (linear program)', 'The optimization the model solves each hour-year: minimize total dispatch cost subject to demand, generator, storage and transmission constraints. No integer variables — units can be "partly on", which is why some commitment behavior needs explicit floors/bridges.'],
+      ['Duals = prices', 'Each constraint in an LP has a shadow price (dual). The dual on a zone-hour energy-balance constraint IS the model\'s electricity price for that zone-hour — there is no separate pricing model (rule 4).'],
+      ['LMP', 'Locational marginal price — the market\'s per-zone (per-node) hourly price. The model\'s duals are compared against measured LMPs.'],
+      ['Backcast', 'Running the model over a historical year (2023–2025) with measured inputs (fuel prices, outages, weather) to test whether its market mechanisms reproduce what actually happened.'],
+      ['Forecast', 'The forward mode (2026–2050): forward-driver inputs only, plus capacity evolution (retirements, new entry). The switch is explicit (ScenarioConfig.mode), never inferred.'],
+      ['Hindcast', 'Running the FORECAST machinery backwards from a past fleet snapshot (e.g. 2021→2025) to test whether the capacity-evolution rules would have predicted the retirements/builds that actually occurred.'],
+      ['Crossover', 'Scoring the same window (2024–H1 2026) in both backcast and forecast mode against the same actuals, to measure how much accuracy comes from measured inputs vs the model itself.'],
+      ['Keeper', 'The designated best structurally-faithful calibration run for an ISO — the reference configuration. A keeper is chosen for structural fidelity, not lowest error (rule 1).'],
+      ['Probe', 'A diagnostic run testing one mechanism/hypothesis. Rejected probes are still registered on the dashboard — the record of what was tried is part of the method.'],
+      ['Frontier (declared)', 'A governance statement that every named admissible mechanism for an ISO\'s remaining gap has been tried on record — further work needs a new measured identification, not another sweep.'],
+      ['Gates C1–C8', 'The calibration rubric\'s criteria: C1 fuel-mix by class, C2 system gas/coal volumes, C3a price level, C3b price shape (NRMSE), C3c scarcity tail hours, C4 hourly dispatch correlation, C5a CO2, C6 governance (no tuned adders), C7 diurnal shape, C8 forced-energy share.'],
+      ['D-diagnostics', 'Protective diagnostics behind the gates: D-1 diurnal profile per class, D-2 which mechanism forced how much energy, D-4 floor binding outside its justified window, D-5 undeclared overlays, D-9 ISO-scope leakage.'],
+      ['MAE / NRMSE', 'Mean absolute error; normalized root-mean-square error — the price level and shape metrics.'],
+      ['DOF ledger', 'Degrees-of-freedom ledger: every free (tuned) parameter in a keeper with its identification source. Residual-identified parameters are open root-cause issues, not features (rule 21).'],
+      ['Holdout tiers', 'Train = 2023–2025 (the only tuned years); validation = 2022 (iterable); locked test = 2019 + H1-2026 (scored once, ever). Currently all holdout spend is frozen on the outage-detector finding.'],
+      ['LOYO', 'Leave-one-year-out: re-scoring a mechanism change with each training year held out, to catch overfitting to one year.']
+    ]],
+    ['Price formation & scarcity', [
+      ['Scarcity pricing', 'Administrative price adders that kick in when operating reserves get scarce — real markets pay far above marginal cost in shortage. Modeled either inside the LP (reserve demand curves) or as a post-solve overlay.'],
+      ['ORDC', 'Operating Reserve Demand Curve (ERCOT\'s design): price adder as a function of remaining reserves, anchored at VOLL, driven by loss-of-load probability (LOLP).'],
+      ['RCPF', 'Reserve Constraint Penalty Factor (NYISO/ISO-NE): the stepped penalty prices at which the market relaxes each reserve requirement — effectively administered scarcity steps.'],
+      ['ASDC', 'Ancillary Service Demand Curve — per-product (RegUp/RRS/ECRS/NonSpin) demand curves in ERCOT\'s co-optimization.'],
+      ['VOLL', 'Value of lost load — the $/MWh cost assigned to unserved energy; the ceiling that anchors scarcity pricing (ERCOT $5,000; others $2,000 here).'],
+      ['C3c tail', 'The count of hours above a high price threshold ($200–300+) per year — the rubric\'s test of whether scarcity events form at all.'],
+      ['Price duration curve', 'All 8,760 hourly prices sorted high→low; the tail is its left edge.'],
+      ['Net revenue margin (offer form)', 'The all-six offer construction: gas units bid their measured physical cost plus a fixed $/MWh margin identified from a delivered-gas anchor, replacing fitted heat-rate multipliers.']
+    ]],
+    ['Reserves & ancillary services', [
+      ['Ancillary services (AS)', 'Reserve products the operator buys alongside energy: regulation, spinning/responsive reserve, non-spin, ramping products. Capacity held for AS can\'t simultaneously serve energy.'],
+      ['Co-optimization', 'Clearing energy and reserves in one optimization so the price of one reflects the opportunity cost of the other. In-model: reserve variables + requirement rows in the same LP.'],
+      ['RegUp / RRS / ECRS / NonSpin', 'ERCOT\'s AS products: regulation-up, responsive reserve, contingency reserve, non-spinning reserve.'],
+      ['Spin / non-spin', 'Reserve from units already online and synchronized vs offline units that can start within (typically) 10–30 minutes.'],
+      ['Reserve withholding', 'Capacity held back from the energy market to meet AS obligations — raises energy prices by removing supply.'],
+      ['LP-vs-MIP dormancy', 'The recurring cross-ISO finding: because the LP has no binary on/off variables, "online headroom" is nearly free, so reserve constraints rarely bind and reserve duals sit near $0 in PJM/MISO/NEISO (and CAISO untested). Real markets, with lumpy commitment, are tighter.']
+    ]],
+    ['Commitment & floors', [
+      ['Unit commitment', 'The on/off decision for thermal units (startup costs, minimum run/down times, minimum stable load). Real markets solve this as a MIP; this model approximates it in LP with bridges and floors.'],
+      ['Min-gen floor', 'A lower bound forcing a unit/class to generate at least X in certain hours — commitment scaffolding, not dispatch (budgeted by rule 20).'],
+      ['Must-run', 'Units that operate regardless of price (nuclear, cogeneration steam hosts, reliability contracts) — floored at measured levels.'],
+      ['Commitment bridge', 'The P1-native mechanism: detect on/off run patterns from the base-cost P0 solve, then floor short gaps so units stay online at min-load across hours a real operator would not cycle — with startup economics deciding.'],
+      ['Min stable load (LSL/HSL)', 'Lowest output a unit holds while online / highest sustainable limit. Bridge floors use measured LSL/HSL ratios (e.g. ERCOT CC 0.574).'],
+      ['Min run / min down', 'Minimum hours a unit must stay on once started / off once stopped. Eligibility for bridging gates on these physics, never class names (rule 18).'],
+      ['Reliability floor limb', 'One (zone, class, driver) row of the reliability-floor registry — e.g. "Houston CT_PEAKER when TMAX > 37.8°C" — with its own window and coefficients. Every limb needs a driver and a forward story (rule 17).'],
+      ['Take-or-pay', 'Coal fuel contracts paid whether or not burned — makes the fuel cost sunk and the plant bid low to run through. Modeled as a committed-band discount (MISO).'],
+      ['RA must-offer', 'CAISO\'s Resource Adequacy rule: contracted capacity must offer into the market — the structural driver behind CAISO\'s gas fleet staying online (its commitment bridge).']
+    ]],
+    ['Fleet, offers & fuel', [
+      ['Plant class', 'The model\'s unit taxonomy: CC (combined cycle), CT (combustion turbine/peaker), ST_GAS (gas steam boiler), CHP (cogeneration), COAL_PRB/LIGNITE/BIT/SUB/WC (coal by supply chain), plus nuclear, hydro, wind, solar, storage.'],
+      ['Tranche / band', 'A slice of a plant\'s capacity offered at one price: must-run, committed, economic, peaking — together forming its rising offer curve.'],
+      ['Offer curve', 'The supply curve a unit/class bids: quantity vs price. "Right structure first, tune level second" is rule 1.'],
+      ['Heat rate', 'Fuel burned per MWh (MMBtu/MWh) — lower is more efficient. Marginal cost ≈ heat rate × fuel price + VOM + emissions cost.'],
+      ['SRMC', 'Short-run marginal cost — the cost floor a rational offer shouldn\'t (persistently) dip below.'],
+      ['Passthrough sigmoid', 'The coal offer construction: how much of the fuel price passes into the offer, as an S-curve of the prevailing gas price (when gas is expensive, coal withholds passthrough to stay in merit).'],
+      ['Startup amortization', 'Spreading a start\'s fixed cost over the hours of its run and adding it to the bid — the P1 markup, and the Order-825-style fast-start pricing analogue.'],
+      ['Offer surface', 'Measured DAM bid data organized by system state (net-load bins) — used to condition class offers on how tight the system is.'],
+      ['Virtual bids / DA depth', 'Financial bids in the day-ahead market that add demand/supply depth without physical assets — PJM\'s G-22 mechanism, the live transfer candidate for other ISOs\' C3c.'],
+      ['Henry Hub (HH) / basis', 'The national gas price benchmark / the location-specific spread on top of it (citygate, zonal hubs). Fuel realism drives most of price-level realism.'],
+      ['Dual-fuel switching', 'Units that burn oil when gas gets scarcer/pricier than oil (winter reliability in the Northeast) — priced at min(gas, oil).']
+    ]],
+    ['Outages & availability', [
+      ['EFOR / WEFOR', '(Weighted) equivalent forced outage rate — the statistical share of time a unit is unexpectedly unavailable. The forecast-mode availability model.'],
+      ['POF', 'Planned outage factor — scheduled maintenance share, seasonally shaped.'],
+      ['CAMPD / CEMS', 'EPA\'s continuous emissions monitoring data (hourly, unit-level) — the source for measured outage windows, emission rates, and conduct parameters.'],
+      ['Outage overlay', 'Backcast-only: measured unit outage windows applied to availability, instead of statistical draws.'],
+      ['Economic layup vs outage', 'THE live cross-ISO data defect: the outage detector books economically-idled units as mechanically out (23–46% of CC capacity-year vs ~10–15% real). The merit-order guard now screens windows that were in-merit; holdout spend is frozen on it.'],
+      ['Derate', 'A partial reduction of available capacity (heat, cold, fuel supply) — vs a full outage.'],
+      ['TDFOR', 'Temperature-dependent forced outage rate — cold-snap derates on gas units without firm fuel.']
+    ]],
+    ['Network & seams', [
+      ['TTC', 'Total transfer capability — the MW limit on a modeled inter-zone link.'],
+      ['GTC', 'Generic transmission constraint (ERCOT) — published stability limits on specific corridors (e.g. West Texas export).'],
+      ['Interface limit', 'A cap on the SUM of several links\' flows (e.g. CAISO\'s simultaneous WECC import cap).'],
+      ['Congestion', 'When a transmission limit binds, prices separate across it. Zonal models only see congestion between zones — both ERCOT and MISO investigations concluded their missing congestion is INSIDE zones (sub-zonal), and refused fabricated splits.'],
+      ['Seam', 'The boundary with a neighboring market (MISO–PJM, CAISO–WECC, NYISO–NEISO...). Modeled with measured flow envelopes (backcast) or reference-price constructions (forecast-valid).'],
+      ['RDT / TCDC', 'MISO\'s Regional Directional Transfer limit between Midwest and South, and the priced transfer steps on it.'],
+      ['Duck curve / belly', 'The midday net-load trough carved by solar (CAISO): the "belly" hours where imports/gas/hydro allocation errors concentrate.']
+    ]],
+    ['Capacity & resource adequacy (forecast)', [
+      ['Resource adequacy (RA)', 'Having enough firm capacity to meet peak plus a margin. Capacity-market ISOs pay for it explicitly; energy-only ERCOT pays via scarcity prices.'],
+      ['PRM', 'Planning reserve margin — the target buffer above expected peak (13.75%–24.4% by ISO).'],
+      ['Capacity market / VRR curve', 'The auction that prices capacity against a downward-sloping administrative demand curve (PJM VRR, ISO-NE FCA, MISO RBDC). "Curve-ON" = clearing modeled against the published curve.'],
+      ['Net-CONE', 'Net cost of new entry — the $/kW-yr a new peaker needs beyond energy margins; anchors the capacity demand curve.'],
+      ['ELCC', 'Effective load-carrying capability — the fraction of nameplate a resource counts toward adequacy (declines with penetration for wind/solar/storage).'],
+      ['Accreditation', 'The rules converting nameplate to countable capacity (UCAP, seasonal ratings, ELCC classes) — where the I4 capacity-accounting leak lives.'],
+      ['Economic retirement screen', 'The forecast rule retiring units whose attainable margin can\'t cover going-forward cost for N consecutive years — currently the forecast program\'s rank-1 open problem (kills the wrong fleets).'],
+      ['Confirmed exit', 'A retirement locked by an enforceable public instrument (deactivation acceptance, consent decree) — the only exogenous fossil exit channel.'],
+      ['Deliverability (CETO/CETL, LCR, TSL, MIC)', 'Published limits on how much capacity in a location actually counts (import capability into load pockets). Part (a) seam-import is live in CAISO; part (b) RA-saturation is unvalidated anywhere.'],
+      ['Cobweb', 'The boom-bust oscillation a naive build rule produces (build → price crash → stop → shortage → build...). The MISO gas_ct I13 signature.']
+    ]],
+    ['Policy & emissions', [
+      ['RPS / REC / ACP', 'Renewable portfolio standard; the certificate that proves compliance (its price = the RPS constraint\'s dual); the alternative compliance payment capping that price.'],
+      ['PTC / ITC', 'Production tax credit ($/MWh — makes wind bid negative) / investment tax credit (% of capex).'],
+      ['45Q / 45U', 'Carbon-capture and existing-nuclear credits (IRA).'],
+      ['RGGI / CARB', 'The Northeast CO2 cap-and-trade program / California\'s — enter dispatch as an allowance cost per ton in CAISO/NYISO/NEISO.'],
+      ['CES', 'Clean energy standard — the modeled federal premium ladder (POC only, off in BAU).'],
+      ['eGRID', 'EPA\'s plant-level emissions/generation database — the CO2 benchmark (C5a) and heat-rate source.']
+    ]]
+  ];
+
+  function renderGlossary(filter){
+    var el = document.getElementById('glBody'); var f = (filter||'').toLowerCase();
+    el.innerHTML = GLOSSARY.map(function(g){
+      var items = g[1].filter(function(it){
+        return !f || it[0].toLowerCase().indexOf(f)>=0 || it[1].toLowerCase().indexOf(f)>=0;
+      });
+      if (!items.length) return '';
+      return '<div class="gl-cat">'+g[0]+'</div><div class="gl-grid">' +
+        items.map(function(it){ return '<div class="gl-item"><b>'+it[0]+'</b> — '+it[1]+'</div>'; }).join('') +
+        '</div>';
+    }).join('');
+  }
+  renderGlossary('');
+  document.getElementById('glSearch').addEventListener('input', function(e){ renderGlossary(e.target.value); });
+})();
+</script>
+</body>
+</html>
