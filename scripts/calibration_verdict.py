@@ -416,6 +416,7 @@ FORCED_EXEMPT_MECH_NAMES = frozenset(
         "firm_import",  # MECH_FIRM_IMPORT (non-thermal boundary)
         "nyiso_local_selfsupply",  # MECH_NYISO_SELFSUPPLY (non-thermal boundary)
         "hydro_min_flow",  # MECH_HYDRO_MIN_FLOW (non-thermal boundary)
+        "hydro_ror_flat",  # MECH_HYDRO_ROR_FLAT (non-thermal boundary)
     }
 )
 

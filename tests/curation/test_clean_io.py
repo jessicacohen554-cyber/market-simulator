@@ -76,6 +76,7 @@ ALL_DATATYPES = [
     "maxgen-events",
     "dam-public-bids",
     "benchmark-corridor",
+    "hydro-plant-modes",
 ]
 
 
