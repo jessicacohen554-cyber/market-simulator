@@ -3898,6 +3898,20 @@ def solve_and_persist(
 
         _supply_consistent = _caiso_demand_flag("caiso_supply_consistent_demand")
         _clock_realign = _caiso_demand_flag("caiso_demand_clock_realign")
+        # td_loss_factor is the SAME defect class as the two flags above and
+        # needs the same treatment (nyiso-87). It is not a solve_and_persist
+        # kwarg, so a `--set td_loss_factor=X` probe can only arrive through
+        # prb_overrides — which run_year applies to ITS config but this
+        # pristine ``cfg`` does not carry. Reading ``cfg.td_loss_factor`` here
+        # therefore threaded RAW demand into the LP while run_config.json
+        # recorded the armed value, so the probe was silently inert AND
+        # misreported (found when an arm-D td_loss probe came back
+        # byte-identical to its control: demand 147.049 TWh either way).
+        # Scalar rather than bool, so it cannot reuse _caiso_demand_flag.
+        _td_loss = (prb_overrides or {}).get("td_loss_factor")
+        _td_loss = (
+            float(_td_loss) if _td_loss is not None else float(cfg.td_loss_factor)
+        )
         # Under caiso_supply_consistent_demand the honest series is loaded
         # HERE too, so the must-run residual derivation, the persisted
         # system.parquet demand column, and the LP all ride ONE demand basis
@@ -3909,7 +3923,7 @@ def solve_and_persist(
             iso,
             year,
             iso_config,
-            td_loss_factor=cfg.td_loss_factor,
+            td_loss_factor=_td_loss,
             include_interchange=not priced_interchange,
             strict_demand_profile=strict_demand_profile,
             caiso_supply_consistent_demand=_supply_consistent,
@@ -4693,7 +4707,17 @@ def solve_and_persist(
         "ercot_offer_hrmult_ep_rebasis": ercot_offer_hrmult_ep_rebasis,
         "ercot_offer_hrmult_ep_rebasis_bands": ercot_offer_hrmult_ep_rebasis_bands,
         "coal_plant_monthly_pricing": first_year_cfg.coal_plant_monthly_pricing,
-        "td_loss_factor": first_year_cfg.td_loss_factor,
+        # EFFECTIVE td_loss_factor, not the pristine cfg's — the same
+        # prb_overrides resolution the demand-threading site applies
+        # (nyiso-87). Reading first_year_cfg here recorded 0.0 while
+        # run_year's own config recorded the armed value in
+        # scenario_config, so a --set probe's run_config.json disagreed
+        # with itself about what solved (rule 24).
+        "td_loss_factor": (
+            float(prb_overrides["td_loss_factor"])
+            if (prb_overrides or {}).get("td_loss_factor") is not None
+            else first_year_cfg.td_loss_factor
+        ),
         # ERCOT gas-basis mechanisms: env-var-gated inside backcast_config
         # (ERCOT_ZONAL_GAS / ERCOT_WEST_NETLOAD_GAS / ERCOT_GAS_FLOOR /
         # ERCOT_WEST_GAS_DELIVERED_FLOOR — no solve_and_persist kwarg exists
