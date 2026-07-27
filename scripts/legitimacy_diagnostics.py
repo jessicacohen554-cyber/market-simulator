@@ -95,6 +95,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
     MECH_CHP_STEAM,
     MECH_CT_NETLOAD_DRAG,
     MECH_GAS_COMMITMENT_BRIDGE,
+    MECH_NYISO_GAS_COMMITMENT_BRIDGE,
     MECH_HYDRO_MIN_FLOW,
     MECH_HYDRO_ROR_FLAT,
     MECH_NAMES,
@@ -336,6 +337,33 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     #   own P0 run pattern + physical constants; no measured series enters
     #   (the CAISO RA bridge convention, rules 13/18).
     (MECH_GAS_COMMITMENT_BRIDGE, "CC_REGULAR"): (0, 24),
+    # nyiso_gas_commitment_bridge (nyiso-87, MECH_NYISO_GAS_COMMITMENT_BRIDGE —
+    # pipeline.commitment.build_nyiso_gas_bridge_p1_prep): the P1-native
+    # committed-state bridge on NYISO's merchant slow-start gas fleet, the
+    # REPLACEMENT for the h14-21 peak-window reliability-floor limbs (owner
+    # directive 2026-07-27). Rule-12 declaration, for both floored classes:
+    # * WINDOW — self-windowing by construction, ALL 24 hours by driver. The
+    #   floor exists ONLY (a) inside an idle gap between two P0-detected runs
+    #   of the same plant — shorter than the unit's physical min-down (a
+    #   restart bar) or bounded by one DA operating day on the economic leg —
+    #   or (b) in the hours immediately following a P0 run-start that are
+    #   inside the unit's own MINIMUM RUN DURATION. Neither placement is a
+    #   clock-hour rule: both are anchored to the model's own run pattern, so
+    #   there is no hour of day the mechanism is declared off. That is the
+    #   POINT of the substitution — the boxcar it replaces asserted a fixed
+    #   afternoon window and bound in hours (overnight CT CF ~= 0) its own
+    #   driver evidence said the class was offline.
+    # * DRIVER — unit-commitment physics only: minimum run duration, minimum
+    #   down time, and the restart inequality (published per-MW startup costs
+    #   from NREL/SR-5500-55433, the model's own P0 duals). Minimum stable
+    #   load is the measured per-class CAMPD loading-when-on statistic
+    #   (CC 0.523 / ST_GAS 0.239 — derive_campd_gas_commitment_params.py).
+    # * FORWARD STORY — regenerates in any forecast year from the model's own
+    #   P0 run pattern plus physical constants; no measured series enters the
+    #   detector (rules 13/18), and the min-load fractions re-derive only when
+    #   the CAMPD vintages update (rule 23).
+    (MECH_NYISO_GAS_COMMITMENT_BRIDGE, "CC_REGULAR"): (0, 24),
+    (MECH_NYISO_GAS_COMMITMENT_BRIDGE, "ST_GAS"): (0, 24),
     # hydro_min_flow (caiso-124, MECH_HYDRO_MIN_FLOW — data.hydro.
     # build_hydro_fleet / allocate_min_flow_floor -> FleetArrays.min_gen): the
     # conventional-hydro minimum-flow floor. Rule-12/17 declaration:

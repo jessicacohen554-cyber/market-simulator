@@ -109,6 +109,21 @@ MECH_HYDRO_MIN_FLOW: int = 18
 # base subsumes its own share of the floor's driver) — the two mechanisms are
 # one reconciled family, never stacked on the same MWh.
 MECH_HYDRO_ROR_FLAT: int = 19
+# NYISO gas commitment bridge (ScenarioConfig.nyiso_gas_commitment_bridge,
+# nyiso-87): the P1-native committed-state floor that REPLACES the h14-21
+# peak-window reliability-floor limbs (owner directive 2026-07-27 — "the
+# h14-21 peak-hour must-run is INACCURATE ... every floor we have added was a
+# compensation for [the] missing commitment drag"). The same ISO-neutral
+# detector as the CAISO RA must-offer / ERCOT gas-CC bridges
+# (model.commitment.caiso_ra_mustoffer_min_gen) routed onto the NYISO merchant
+# slow-start gas fleet (gas_cc + gas_st, both passing the rule-18 physics gate:
+# min-down 4-12 h, $35-50/MW starts; the fast-start CT classes are excluded by
+# their own 1 h min-down / $20 starts), with the MEASURED per-class min-load
+# fractions and the minimum-run-duration extension. Separate id from
+# MECH_GAS_COMMITMENT_BRIDGE (the ERCOT leg) so D-2/D-4 attribution and
+# per-ISO arming stay independent — the MECH_ST_GAS_MUSTRUN_PER_PLANT
+# precedent. A merchant commitment floor — subject to the D-2 forced-share gate.
+MECH_NYISO_GAS_COMMITMENT_BRIDGE: int = 20
 
 MECH_NAMES: dict[int, str] = {
     MECH_NONE: "none",
@@ -131,6 +146,7 @@ MECH_NAMES: dict[int, str] = {
     MECH_GAS_COMMITMENT_BRIDGE: "gas_commitment_bridge",
     MECH_HYDRO_MIN_FLOW: "hydro_min_flow",
     MECH_HYDRO_ROR_FLAT: "hydro_ror_flat",
+    MECH_NYISO_GAS_COMMITMENT_BRIDGE: "nyiso_gas_commitment_bridge",
 }
 
 # Mechanisms whose forced energy is exempt from the D-2 merchant-class gates
@@ -184,6 +200,7 @@ MECH_ABLATION_FIELDS: dict[int, dict[str, object]] = {
     MECH_CC_MUSTRUN_PER_PLANT: {"cc_mustrun_per_plant": False},
     MECH_ST_GAS_MUSTRUN_PER_PLANT: {"st_gas_mustrun_per_plant": False},
     MECH_GAS_COMMITMENT_BRIDGE: {"ercot_gas_commitment_bridge": False},
+    MECH_NYISO_GAS_COMMITMENT_BRIDGE: {"nyiso_gas_commitment_bridge": False},
     # Classified ABLATED, not kept: the min-flow floor is a real physical
     # obligation, but it is a NEW mechanism whose forcing must stay visible and
     # switchable rather than joining the protected structural must-run set.

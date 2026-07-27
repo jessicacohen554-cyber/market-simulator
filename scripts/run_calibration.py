@@ -494,6 +494,14 @@ def run_year(
     nyiso_li_locational_reserve: bool | None = None,
     nyiso_incity_commitment_obligation: bool | None = None,
     nyiso_east_reserve_families: bool | None = None,
+    nyiso_gas_commitment_bridge: bool | None = None,
+    nyiso_gas_bridge_cc_min_load_frac: float | None = None,
+    nyiso_gas_bridge_st_min_load_frac: float | None = None,
+    nyiso_gas_bridge_startup: bool | None = None,
+    nyiso_gas_bridge_da_horizon: bool | None = None,
+    nyiso_gas_bridge_min_run: bool | None = None,
+    nyiso_gas_bridge_cc_min_run_hours: float | None = None,
+    nyiso_gas_bridge_st_min_run_hours: float | None = None,
     nyiso_spin_reserve_online: bool | None = None,
     nyiso_spin_headroom_frac: float | None = None,
     nyiso_dynamic_reserve_requirements: bool | None = None,
@@ -1100,6 +1108,38 @@ def run_year(
     if nyiso_east_reserve_families is not None:
         config = config.with_overrides(
             nyiso_east_reserve_families=nyiso_east_reserve_families
+        )
+    if nyiso_gas_commitment_bridge is not None:
+        config = config.with_overrides(
+            nyiso_gas_commitment_bridge=nyiso_gas_commitment_bridge
+        )
+    if nyiso_gas_bridge_cc_min_load_frac is not None:
+        config = config.with_overrides(
+            nyiso_gas_bridge_cc_min_load_frac=nyiso_gas_bridge_cc_min_load_frac
+        )
+    if nyiso_gas_bridge_st_min_load_frac is not None:
+        config = config.with_overrides(
+            nyiso_gas_bridge_st_min_load_frac=nyiso_gas_bridge_st_min_load_frac
+        )
+    if nyiso_gas_bridge_startup is not None:
+        config = config.with_overrides(
+            nyiso_gas_bridge_startup=nyiso_gas_bridge_startup
+        )
+    if nyiso_gas_bridge_da_horizon is not None:
+        config = config.with_overrides(
+            nyiso_gas_bridge_da_horizon=nyiso_gas_bridge_da_horizon
+        )
+    if nyiso_gas_bridge_min_run is not None:
+        config = config.with_overrides(
+            nyiso_gas_bridge_min_run=nyiso_gas_bridge_min_run
+        )
+    if nyiso_gas_bridge_cc_min_run_hours is not None:
+        config = config.with_overrides(
+            nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours
+        )
+    if nyiso_gas_bridge_st_min_run_hours is not None:
+        config = config.with_overrides(
+            nyiso_gas_bridge_st_min_run_hours=nyiso_gas_bridge_st_min_run_hours
         )
     if nyiso_spin_reserve_online is not None:
         config = config.with_overrides(

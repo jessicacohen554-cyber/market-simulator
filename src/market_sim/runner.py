@@ -144,6 +144,7 @@ from market_sim.pipeline import (
     build_caiso_ra_p1_prep,
     build_caiso_reserve_p1_prep,
     build_ercot_gas_bridge_p1_preps,
+    build_nyiso_gas_bridge_p1_prep,
     build_pjm_reserve_p1_prep,
     run_commitment_pass,
     run_energy_solve,
@@ -1774,6 +1775,15 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 mc_base,
                 floorscoped_markdown_fn=_floorscoped_fn,
             )
+            # P1-native NYISO gas commitment bridge (nyiso-87): committed-state
+            # floor on the merchant slow-start gas fleet (CC_REGULAR + ST_GAS)
+            # from the P0 run pattern -- minimum run duration, minimum down
+            # time and the startup-restart inequality, all forward-native, so
+            # the forecast path carries it identically (D-5 parity). None for
+            # every non-NYISO / gate-off run (byte-identical).
+            nyiso_bridge_prep = build_nyiso_gas_bridge_p1_prep(
+                config, iso, dispatch_fleet, fleet_arrays, mc_base
+            )
             # P1-native PJM commitment-scoped reserve supply (path B, G-20b):
             # fa_p2-style availability mask from the P0 run pattern + the
             # deliverable supply cap recomputed on the masked fleet. (None,
@@ -1802,7 +1812,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 config,
                 xyear_cache=forecast_xyear_cache,
                 xyear_warmstart=config.forecast_xyear_warmstart,
-                p1_fleet_prep=ra_p1_prep or ercot_bridge_prep or pjm_fleet_prep,
+                p1_fleet_prep=(
+                    ra_p1_prep
+                    or ercot_bridge_prep
+                    or nyiso_bridge_prep
+                    or pjm_fleet_prep
+                ),
                 p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
                 p1_bid_adjust_prep=ercot_bridge_bid_prep,
             )
