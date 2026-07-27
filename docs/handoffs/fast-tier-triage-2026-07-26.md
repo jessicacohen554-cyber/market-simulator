@@ -243,6 +243,19 @@ updated the hand-written parser, so **the promotion has been inert on the
 calibration path since it landed**. Wiring the registry is what makes it take
 effect; owner-confirmed as intended.
 
+**Independent confirmation (2026-07-27 rebase).** While this branch was in
+flight, `47c7fd5` (ercot-118) hit the SAME defect from the ERCOT lane and fixed
+the hand-written parser default directly (`False` -> `None`, with the diagnosis
+in an inline comment: "every direct CLI invocation passed an explicit False and
+silently SCRUBBED the promoted per-ISO default … replay_keeper was unaffected
+because it calls solve_and_persist directly"). Two lanes finding it
+independently within a day is the argument for this conversion: with the parser
+hand-written, the registry's `None` and the parser's `False` could disagree
+silently and each lane had to rediscover it. After the conversion the parser IS
+the registry, so the class cannot recur. The rebase keeps ercot-118's citation
+(moved into `pipeline/flags.py` beside the row) and its non-coal
+`--ercot-offer-hrmult-ep-rebasis` flag, which stays hand-written.
+
 Goldens (plan §8): NEISO captured before (pre-D4/D2 `scripts/`+`src/`) and
 after, `regression_gate.py --mode byte` -> **PASS**, 9 files / 44 numeric
 columns at `atol=0 rtol=0` across 2023-2025, zero gross reshuffle. Fidelity
