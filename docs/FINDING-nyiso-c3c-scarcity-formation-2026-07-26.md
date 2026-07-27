@@ -1,11 +1,16 @@
-# NYISO C3c scarcity formation — where the missing tail is, and what it is not (nyiso-83)
+# NYISO C3c scarcity formation — where the missing tail is, and what it is not (nyiso-83 → 85)
 
-**Date:** 2026-07-26 · **Session:** nyiso-83 (in-city commitment adjudication lane) ·
-**Basis:** the nyiso-81 keeper's committed hourly sidecars
-(`results/calibration/nyiso81_floor_rederive/hourly/system_<year>.parquet`) — **no
-LP replay**, no new solve. · **Status:** partial diagnosis. It localizes the
-residual and **refutes one framing**; the leading structural hypothesis is now
-under test by the nyiso-83 obligation probe rather than asserted here.
+**Date:** 2026-07-26, extended 2026-07-27 · **Sessions:** nyiso-83 (in-city
+commitment adjudication) §0–§5 → nyiso-84 (reserve tiers) §6 → nyiso-85
+(residual attribution) §7 · **Basis:** the nyiso-81 keeper's committed hourly
+sidecars (`results/calibration/nyiso81_floor_rederive/hourly/`), the nyiso-84
+probe bundles, and NYISO's raw 5-minute zonal RTD LBMP — **no LP replay in §0–§5
+or §7**. · **Status:** the residual is **attributed** (§7d). Every route proposed
+by §§0–6 is now closed; §7g carries the open lane.
+
+**Read §7 first if you are picking this lane up** — it refutes the framing §6
+handed forward (the tail is 81 % sustained, not RT-interval transient) and names
+the actual ceiling (SRMC / the ~\$258 dual-fuel oil parity).
 
 ## 0. The residual
 
@@ -318,3 +323,172 @@ online CC/steam governor headroom, which the gate excludes, so arming it forces
 GT commitment reality does not show. Widening the gated class to ramp-limited
 online CC/steam headroom is the prerequisite for any promotion case, and with
 C3c unmoved there is no promotion case to make.
+
+## 7. nyiso-85 — the RT-interval-transient framing is REFUTED by measurement, and the real ceiling is SRMC
+
+§6 closed the reserve route and handed the residual to a framing: "**RT-interval
+(5-minute) physical shortage pricing** — transient ramp/contingency shortages the
+hourly LP structurally cannot see". nyiso-85 (2026-07-27) tested that framing
+against the 5-minute data itself. **It does not survive.** No LP was solved; this
+is a scoring-side characterisation of committed actuals plus the keeper's own
+committed hourlies (rule 14), reproducible via
+`scripts/probes/nyiso85_{tail_anatomy,zonal_tail_basis,model_vs_tail}.py`.
+
+### 7a. Provenance, and a clock bug worth recording
+
+The characterisation rebuilds NYISO's hub from the raw monthly 5-minute zonal RTD
+LBMP files (`<YYYYMM>01realtime_zone_csv.zip`; the months absent from
+`data/raw/lmp-data/NYISO/` are fetched on demand from the public MIS archive —
+2023–2025 only, rule 22). The rebuilt 11-internal-zone mean reproduces the
+committed scoring series `actual_lmp_hourly_NYISO.parquet` to **MAE 0.0055 /
+0.0014 / 0.0049 \$/MWh** — the 5-minute files are exactly its source, so every
+decomposition below is of the scored quantity itself.
+
+**Clock gotcha (cost one wrong answer before it was caught):** the committed
+parquet's `hour` index drops local-standard **Feb 29**, so in a leap year every
+row at/after index `(31+28)*24 = 1416` is **24 real hours later** than a naive
+"Jan 1 05:00Z + k h" mapping. Getting this wrong silently shifts all of 2024 by a
+day (corr 0.018 vs **1.0000**, MAE 9.77 vs **0.00** on 2024-04). Any probe mapping
+that parquet to dates must apply the skip — `nyiso85_tail_anatomy._utc_of_hour`.
+
+### 7b. The tail is SUSTAINED, not transient
+
+Every one of the 64 tail hours, decomposed at native 5-minute resolution — how
+many of the hour's ~12 intervals had the 11-zone hub itself above \$300:
+
+| year | SUSTAINED (≥½ intervals) | MIXED | TRANSIENT (≤¼ intervals) |
+|---|--:|--:|--:|
+| 2023 | 5 | 5 | 0 |
+| 2024 | 7 | 4 | 1 |
+| 2025 | 40 | 1 | 1 |
+| **2023–2025** | **52 (81 %)** | **10 (16 %)** | **2 (3 %)** |
+
+**Two hours in three years are 5-minute transients.** The 2025 tail — the worst
+cell, 9 vs 42 — is 95 % sustained, and runs in episodes up to **7 consecutive
+hours** (2025-06-24 14:00–20:00 EDT, hub \$586→\$2,074→\$635). These are
+multi-hour statewide conditions an hourly LP is fully entitled to reproduce.
+
+**Consequence: there is no C3c ceiling note to write.** The Task-1 escape hatch
+("if most are transient, the honest outcome is a scorer-side ceiling note") is
+closed by the data. The gap is real and reachable, and it is a model gap.
+
+### 7c. The tail is STATEWIDE, and the C3c basis flatters the model
+
+Within the hub-tail hours the median number of internal zones above \$300 is
+**11 of 11**, in all three years, and the top zone's share of the 11-zone sum is
+**10.7–11.6 %** against 9.1 % for a perfectly flat state. NYISO's scored tail is
+a near-uniform statewide price event — **not** a load-pocket artifact of averaging
+one spiking zone into a mean.
+
+That matters because the two sides of C3c are not the same statistic: the model
+side counts hours the **max zonal dual** clears the threshold, the actual side
+hours the **11-zone mean** does. Measured like-for-like:
+
+| year | actual, 11-zone MEAN (the C3c actual) | actual, MAX-ZONE (the model's own basis) | model max-zonal |
+|---|--:|--:|--:|
+| 2023 | 10 | 69 | 3 |
+| 2024 | 12 | 44 | 0 |
+| 2025 | 42 | 121 | 9 |
+
+The scored comparison (3/0/9 vs 10/12/42, a 3–5× shortfall) is the **generous**
+one. On a consistent max-zonal basis the shortfall is **20–40×**. This is a note
+for the rubric owner, not a proposed change: C3c's asymmetry currently understates
+the NYISO residual, and no NYISO conclusion to date has depended on it.
+
+### 7d. Where the model actually is in those hours — the SRMC ceiling
+
+Putting the keeper's zonal duals beside the actual in the exact scored hours:
+
+- **The four mainland zones price identically** in essentially every tail hour
+  (e.g. 2025-06-24 18:00: Upstate_West = Capital_Hudson = Lower_Hudson = NYC =
+  \$108). The model's mainland network is uncongested there; only the Zone K tie
+  binds. This is why §1's "every scarcity hour is a Long Island hour" holds — the
+  LI congestion rent is the *only* thing the model can stack above its energy price.
+- **The mainland never clears \$258 — in any hour of any training year.** Annual
+  maxima of the max-across-mainland-zones: **\$134 / \$174 / \$255**; hours above
+  \$258 in all 26,280 hours: **0**. That is the flat **dual-fuel oil-parity cap
+  (~\$258)** the LP code itself documents (`model/lp/rows.py:211`). The model's
+  mainland is *structurally incapable* of producing a single C3c tail hour, and
+  the \$300 threshold sits above the top of its offer stack.
+- **It is not load, and not timing.** 2025-06-24 19:00 EDT is the model's **#1
+  load hour of the year** (31,857 MW) *and* an actual tail hour; 18:00 is rank 3.
+  The model puts its tightest hours in the right place — and prices them \$205
+  mainland / \$459 LI against \$1,365–\$2,074 statewide actual.
+- **It is not a dispatch-level error either.** Model total fossil dispatch in the
+  2025 tail hours is 15.9 GW against NYISO's actual 15.5 GW (Dual Fuel + Natural
+  Gas fuel-mix). The model is burning the right amount of gas; it is pricing it
+  at SRMC.
+- **The LP is nowhere near tight.** Class utilisation in the tail hours (mean
+  dispatch ÷ that class's own annual max dispatch): `oil` **0–4 %**, `import`
+  **46–49 %**, `CT_PEAKER` 49–75 %, `ST_GAS` 54–74 %. Model slack is zero in every
+  hour of every year.
+
+**The attribution, stated plainly:** NYISO's scored tail is formed *above* SRMC —
+by shortage pricing and offer behaviour on multi-hour statewide peaks — while the
+model prices at SRMC with a ~\$258 oil-parity roof and several GW of headroom
+below it. C3c is not blocked by hourly granularity (7b), not by locational
+averaging (7c), not by load, timing or dispatch level (7d). It is blocked by the
+absence of any mechanism that prices above SRMC in a **summer** peak hour. §6
+closed the published reserve curves as that mechanism at hourly granularity; the
+oil-budget dual that *can* lift price above the parity cap
+(`_build_oil_budget_rows`) is a **cold-snap** instrument and does not bind in June.
+
+### 7e. Task 2 — the LI steam OOM commitment driver does NOT target this residual
+
+The carried hypothesis was 2025 LI steam out-of-merit commitment growth (SOM 2025
++68 %, **light-load voltage-driven**, 73 days). Against the tail's own distribution:
+
+| | share of the 64 tail hours |
+|---|--:|
+| summer (Jun–Sep) | **77 %** |
+| winter (Dec–Feb) | 14 % |
+| hours 14:00–21:00 (afternoon/evening peak) | **89 %** |
+| hours 22:00–06:00 (light load) | **2 %** |
+
+The driver is a *light-load* instrument; the residual is a *summer peak* one. It
+addresses the 2 % of tail hours where it could plausibly act. **No instrument is
+built for it** — an OOM intake would be a rule-13-admissible input in general, but
+it cannot be justified as a C3c lever, and §6 already showed that even massive
+commitment-side changes (the composed gate arm, binding 37–63 % of hours) leave
+the tail bit-identical. Closed as a C3c route.
+
+### 7f. Task 3 — reframed, still no promotion case
+
+§6 read the spin gate's "breadth, never depth" as a property of the published
+curves. 7d suggests a sharper reading: a reserve family binds shallowly in
+thousands of hours precisely **because its supply side is too narrow** — with real
+NYISO spin (largely online CC/steam governor headroom) excluded, modelled
+synchronized supply sits just short of the requirement almost always, rather than
+deeply short occasionally. Widening class-2 to ramp-limited online CC/steam
+(`RAMP10_FRAC`-style class physics) remains the prerequisite, and is now motivated
+by the *shape* of the pathology rather than only by product definition. It stays
+**unbuilt** in this session: it is a new mechanism needing its own charter, and on
+its own it still cannot clear a \$258 roof. **Both nyiso-84 flags stay default-off;
+neither is armed in any keeper.** No keeper change was made — the keeper remains
+`2026-07-26-nyiso-81-floor-rederive`, unchanged.
+
+### 7g. What a successor lane should test
+
+In priority order, all rule-13-admissible and all forward-reproducible:
+
+1. **The roof itself.** Nothing can produce a \$300 mainland hour while the stack
+   tops out at ~\$258 with GW of headroom below it. The question is what NYISO's
+   real summer peak offer stack looks like above oil parity — and whether the
+   model's `oil` tranche pricing is the binding artifact.
+2. **Hot-hour capability.** The keeper runs `temp_dependent_derate=False` and
+   `gt_ambient_derate=False`; only a flat `cc_nameplate_summer_derate` is on. The
+   tail is 89 % afternoon/evening on the hottest days of the year — exactly where
+   an incremental ambient derate above the net-summer rating bites. This *narrows*
+   the headroom (7d) but cannot by itself breach the roof, so it is a
+   contributor, not the answer. (Note `temp_dependent_derate`'s refutation is
+   **ERCOT-scoped** — rule 24 — and does not bind NYISO; `gt_ambient_derate` is
+   the cleaner incremental instrument.)
+3. **Import behaviour on regional heat events.** Imports sit at 46–49 % of their
+   own annual max in the tail hours. On 2025-06-23/24 the whole eastern
+   interconnection was in the same heat event; NYISO's real import headroom then
+   was not half-idle.
+
+Do **not** re-open: the J/K ladders (§4), the East ladder (§6a), the NYCA/East
+spin gate as a C3c lever (§6b), the winter-spread standalone arm (nyiso-82), the
+in-city must-run lane, or — now — the RT-interval-transient framing (7b) and the
+LI steam OOM commitment driver as a C3c route (7e).
