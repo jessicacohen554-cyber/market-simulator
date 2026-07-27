@@ -410,5 +410,99 @@ class TestRamp10(unittest.TestCase):
         self.assertTrue((fa.ramp10 >= 0.0).all())
 
 
+class TestCommittedTakeorpaySunkFixed(unittest.TestCase):
+    """coal_committed_takeorpay_sunk_fixed: the contract is an accounting-period
+    tonnage obligation, so it is a sunk FIXED cost and must not discount the
+    marginal MWh. Suppresses the committed-band discount of all three scopes
+    while leaving `_mustrun` — the band that is on regardless of price, and the
+    one place the contract is legitimately carried — untouched (miso-96,
+    rules 17 [R-FLOOR-WINDOW] / 19 [R-ONE-MECH])."""
+
+    def _gen(self, suffix, pc=2832, supply="prb"):
+        return Generator(
+            unit_id=f"COAL_X_p{pc}_{suffix}",
+            name="c",
+            zone="X",
+            fuel_type="coal",
+            pmax_mw=100,
+            plant_group="COAL",
+            plant_code=pc,
+            coal_supply=supply,
+        )
+
+    def test_suppresses_regulated_committed_discount(self):
+        g = self._gen("committed")
+        kw = dict(
+            committed_takeorpay_regulated=True,
+            regulated_plants=frozenset({2832}),
+        )
+        # control: the discount is live and drives the band to fully-sunk fuel
+        self.assertEqual(
+            campd_tranche_fuel_frac(g, {"prb": 1.0}, {2832: 1.0}, **kw), 0.0
+        )
+        # armed: the committed band reverts to its full supply passthrough
+        self.assertEqual(
+            campd_tranche_fuel_frac(
+                g, {"prb": 1.0}, {2832: 1.0}, committed_takeorpay_sunk_fixed=True, **kw
+            ),
+            1.0,
+        )
+
+    def test_suppresses_bit_and_all_scopes_too(self):
+        g = self._gen("committed", supply="bituminous")
+        for scope in ("committed_takeorpay_bit", "committed_takeorpay_all"):
+            with self.subTest(scope=scope):
+                kw = {scope: True}
+                self.assertEqual(
+                    campd_tranche_fuel_frac(g, {"bituminous": 1.0}, {2832: 1.0}, **kw),
+                    0.0,
+                )
+                self.assertEqual(
+                    campd_tranche_fuel_frac(
+                        g,
+                        {"bituminous": 1.0},
+                        {2832: 1.0},
+                        committed_takeorpay_sunk_fixed=True,
+                        **kw,
+                    ),
+                    1.0,
+                )
+
+    def test_mustrun_band_keeps_its_contract_discount(self):
+        # The contract stays carried ONCE, on the band that runs regardless of
+        # price — suppressing the committed discount must not touch `_mustrun`.
+        g = self._gen("mustrun")
+        self.assertAlmostEqual(
+            campd_tranche_fuel_frac(
+                g,
+                {"prb": 1.0},
+                {2832: 0.85},
+                committed_takeorpay_regulated=True,
+                regulated_plants=frozenset({2832}),
+                committed_takeorpay_sunk_fixed=True,
+            ),
+            0.15,
+        )
+
+    def test_default_off_is_byte_identical(self):
+        # Every existing keeper must be unmoved: the default must reproduce the
+        # armed-discount value exactly.
+        g = self._gen("committed")
+        kw = dict(
+            committed_takeorpay_regulated=True,
+            regulated_plants=frozenset({2832}),
+        )
+        self.assertEqual(
+            campd_tranche_fuel_frac(g, {"prb": 1.0}, {2832: 0.85}, **kw),
+            campd_tranche_fuel_frac(
+                g,
+                {"prb": 1.0},
+                {2832: 0.85},
+                committed_takeorpay_sunk_fixed=False,
+                **kw,
+            ),
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
