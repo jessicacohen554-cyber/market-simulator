@@ -23,6 +23,7 @@ Three independent guards:
 from __future__ import annotations
 
 import ast
+import dataclasses
 import importlib
 from pathlib import Path
 
@@ -71,7 +72,23 @@ FROZEN_PICKLE_PATHS: dict[str, list[str]] = {
 # _CACHE_KEY_OPTIONAL_FIELDS (cache-neutral at their defaults), so the default
 # cache_key stays pinned at edbc1b103207170a — no advance. An armed gas-offer run
 # (flag True, or a set anchor) still gets a distinct key.
-PINNED_DEFAULT_CACHE_KEY = "edbc1b103207170a"
+#
+# 2026-07-27 CACHE-EPOCH BUMP edbc1b103207170a -> 603c2498bf71d21d. Authorized by
+# the owner (session sign-off, cache-key path-portability task) — NOT a silenced
+# failure. Cause: six fields default to checkout-ABSOLUTE paths
+# (campd_bins_path, plant_registry_path, plant_emission_rates_path,
+# plant_emission_rates_v2_path, control_retrofit_path, and
+# cc_capacity_reconcile_path via __post_init__), so the old key encoded WHERE the
+# checkout lived: /home/user/market-simulator hashed to edbc1b103207170a but
+# /home/runner/work/market-simulator/market-simulator hashed to 329093815fa58f5b,
+# failing this pin on EVERY GitHub-hosted run of every branch (and with it the
+# blocking persisted-identity step of refactor-guards). cache_key() now folds
+# repo-root/DATA_ROOT-relative paths to sentinels in the hashed payload only
+# (scenarios.py::_normalize_cache_key_paths); no field value, name or default
+# changed. The new key is byte-identical on a session container and a hosted
+# runner. This bump orphans every on-disk results cache (a re-key, not a
+# behavior change — the solve path is untouched).
+PINNED_DEFAULT_CACHE_KEY = "603c2498bf71d21d"
 
 
 @pytest.mark.parametrize(
@@ -104,6 +121,54 @@ def test_default_scenario_config_cache_key_is_pinned() -> None:
         "cache and breaks keeper reproducibility. Do not update the literal to "
         "silence this — find what changed."
     )
+
+
+def test_default_cache_key_is_checkout_path_invariant(monkeypatch) -> None:
+    """The default key is identical whatever directory the checkout lives in.
+
+    Pins the PROPERTY behind the 2026-07-27 cache-epoch bump, not just its
+    literal: before the fix, six absolute-path fields put the checkout
+    directory into the hash, so the pin above failed on every GitHub-hosted
+    run (/home/runner/work/... → 329093815fa58f5b) while passing on a session
+    container. Simulates a relocated checkout by moving the path roots AND the
+    stored path values together, exactly as a real clone elsewhere would.
+    """
+    import market_sim.config.paths as paths_mod
+
+    elsewhere = "/home/runner/work/market-simulator/market-simulator"
+    here = str(paths_mod.REPO_ROOT)
+    base = ScenarioConfig()
+
+    relocated_values = {
+        f.name: getattr(base, f.name).replace(here, elsewhere)
+        for f in dataclasses.fields(base)
+        if isinstance(getattr(base, f.name), str)
+        and getattr(base, f.name).startswith(here + "/")
+    }
+    assert relocated_values, (
+        "No absolute repo-rooted path fields found — if the defaults became "
+        "relative this test is obsolete, but do not delete it silently."
+    )
+
+    monkeypatch.setattr(paths_mod, "REPO_ROOT", Path(elsewhere))
+    monkeypatch.setattr(paths_mod, "DATA_ROOT", Path(elsewhere))
+    relocated = base.with_overrides(**relocated_values)
+
+    assert relocated.cache_key() == PINNED_DEFAULT_CACHE_KEY, (
+        "cache_key() is checkout-path-dependent again: a config identical up to "
+        "the checkout directory hashed differently. A new absolute-path field "
+        "must be folded by scenarios.py::_normalize_cache_key_paths."
+    )
+
+
+def test_cache_key_still_forks_on_a_genuinely_different_file() -> None:
+    """Normalization must not collapse distinct data sources onto one key."""
+    base = ScenarioConfig()
+    for other in (
+        base.with_overrides(campd_bins_path=base.campd_bins_path + ".alt"),
+        base.with_overrides(campd_bins_path="/mnt/external/bins.csv"),
+    ):
+        assert other.cache_key() != base.cache_key()
 
 
 # --------------------------------------------------------------------------
