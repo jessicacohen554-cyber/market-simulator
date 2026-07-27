@@ -71,6 +71,7 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "scripts"))
 
+from market_sim.config.constants import PJM_SEASON_OF_MONTH  # noqa: E402
 from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
 
 sys.path.insert(0, str(REPO / "scripts" / "data"))
@@ -90,6 +91,23 @@ from derive_pjm_offer_surface import (  # noqa: E402
 
 OUT_JSON = CALIBRATION_DIR / "pjm_offer_midcurve_condbinned.json"
 OUT_CSV = CALIBRATION_DIR / "pjm_offer_midcurve_summary.csv"
+
+
+def _out_paths(conditioning: str) -> "tuple[Path, Path]":
+    """Output (JSON, CSV) for a conditioning vintage.
+
+    The within-year vintage keeps the live filenames and stays the default
+    (owner amendment, 2026-07-27); the within-season vintage is written
+    alongside it under a ``_withinseason`` suffix. Mirrors the top-of-curve
+    derive so the family moves as one.
+    """
+    if conditioning == "within-season":
+        return (
+            CALIBRATION_DIR / "pjm_offer_midcurve_condbinned_withinseason.json",
+            CALIBRATION_DIR / "pjm_offer_midcurve_summary_withinseason.csv",
+        )
+    return OUT_JSON, OUT_CSV
+
 
 #: Within-unit capacity shares the curve is sampled at (share-grid midpoints),
 #: plus the top-of-curve belt (0.975 / 0.995 — the "last-5% wall" the decile
@@ -161,6 +179,17 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--years", nargs="*", type=int, default=[2023, 2024, 2025])
     ap.add_argument("--edges", nargs="*", type=float, default=[0.80, 0.90, 0.97])
+    ap.add_argument(
+        "--conditioning",
+        choices=["within-year", "within-season"],
+        default="within-year",
+        help=(
+            "Tightness-ranking scope. within-season writes the separate "
+            "_withinseason vintage (owner-authorized 2026-07-27); the "
+            "within-year default keeps the live filenames. MUST match the "
+            "top-of-curve derive — the two surfaces share one definition."
+        ),
+    )
     args = ap.parse_args(argv)
 
     files, coverage = _month_files(args.years)
@@ -175,7 +204,7 @@ def main(argv: list[str] | None = None) -> int:
             f"{per_unit.loc[idx, 'ecomax'].sum() / 1e3:.1f} GW (union of medians)"
         )
 
-    nl = _netload_pct(args.years)
+    nl = _netload_pct(args.years, args.conditioning)
     fuel = _pjm_fuel_daily()
     edges = tuple(args.edges)
     n_bins = len(edges) + 1
@@ -324,9 +353,15 @@ def main(argv: list[str] | None = None) -> int:
                 "stay validation-only (rule 13)."
             ),
             "driver": (
-                "system net-load percentile within year (EIA-930 PJM Demand "
-                "- WND - SUN), forward-native; edges shared with the frozen "
-                "pjm-99 top-of-curve surface"
+                f"system net-load percentile {args.conditioning} (EIA-930 "
+                "PJM Demand - WND - SUN), forward-native; edges AND "
+                "conditioning shared with the pjm-99 top-of-curve surface"
+            ),
+            "conditioning": args.conditioning,
+            "season_of_month": (
+                dict(sorted(PJM_SEASON_OF_MONTH.items()))
+                if args.conditioning == "within-season"
+                else None
             ),
             "netload_pct_edges": list(edges),
             "shares": [round(float(x), 2) for x in SHARES],
@@ -336,11 +371,12 @@ def main(argv: list[str] | None = None) -> int:
         },
         **out,
     }
-    OUT_JSON.write_text(json.dumps(out_doc, indent=1))
+    out_json, out_csv = _out_paths(args.conditioning)
+    out_json.write_text(json.dumps(out_doc, indent=1))
     sdf = pd.DataFrame(summary)
-    sdf.to_csv(OUT_CSV, index=False)
-    print(f"wrote {OUT_JSON}")
-    print(f"wrote {OUT_CSV}")
+    sdf.to_csv(out_csv, index=False)
+    print(f"wrote {out_json}")
+    print(f"wrote {out_csv}")
     print(sdf.to_string(index=False))
     return 0
 
