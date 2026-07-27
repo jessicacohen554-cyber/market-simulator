@@ -142,6 +142,104 @@ PJM_EAST_CUT_LINKS: tuple[tuple[str, str], ...] = (
 )
 
 
+#: The model's western→MAD cut: the two internal links crossing PJM's
+#: Manual-03 AP SOUTH reactive transfer interface boundary at the 8-zone
+#: grain. ``constants.PJM_INTERFACE_LINK_MAP``'s own note names exactly this
+#: pair as the parallel paths the flowgate splits across in this reduced
+#: network (FINDING-pjm134 §4).
+PJM_APSOUTH_CUT_LINKS: tuple[tuple[str, str], ...] = (
+    ("PJM_West_APS", "PJM_SWMAAC"),
+    ("PJM_West_APS", "PJM_Dominion"),
+)
+
+
+def _build_joint_interface_cut(
+    links: list[TransferLink],
+    limit_hourly: np.ndarray,
+    cut_links: tuple[tuple[str, str], ...],
+) -> list[tuple]:
+    """One one-sided aggregate interface group over ``cut_links``.
+
+    Shared core of the two PJM joint cuts. Caps the summed flow across the
+    named zone pairs at the hour's measured limit; a link oriented opposite
+    the cut enters with sign −1 so the group reads net flow in the cut's
+    direction. One-sided (``bidirectional=False``): an import security limit
+    never caps the reverse direction, which keeps the per-link TTCs.
+
+    Args:
+        links: The topology's transfer links (pre- or post- import-node
+            extension — matching is by zone pair).
+        limit_hourly: ``(T,)`` measured hourly cap.
+        cut_links: The ``(from_zone, to_zone)`` pairs the interface spans,
+            oriented in the cut's direction.
+
+    Returns:
+        A single-element list of 5-tuples ``(link_idx, cap_hourly, False,
+        None, signs)`` for :func:`market_sim.model.dispatch._build_interface_rows`,
+        or an empty list when no cut link exists in the topology (the LP is
+        then byte-identical).
+    """
+    idx: list[int] = []
+    signs: list[float] = []
+    for a, b in cut_links:
+        for li, link in enumerate(links):
+            if (link.from_zone, link.to_zone) == (a, b):
+                idx.append(li)
+                signs.append(1.0)
+            elif (link.from_zone, link.to_zone) == (b, a):
+                idx.append(li)
+                signs.append(-1.0)
+    if not idx:
+        return []
+    return [
+        (
+            np.array(idx, dtype=int),
+            np.asarray(limit_hourly, dtype=float),
+            False,
+            None,
+            np.array(signs, dtype=float),
+        )
+    ]
+
+
+def build_pjm_apsouth_interface_cut_groups(
+    links: list[TransferLink],
+    limit_hourly: np.ndarray,
+) -> list[tuple]:
+    """The measured joint western→MAD cut (``pjm_apsouth_interface_cut``).
+
+    One ONE-SIDED aggregate interface group capping the summed eastward flow
+    across :data:`PJM_APSOUTH_CUT_LINKS` at the hour's measured AP-South
+    limit (:func:`market_sim.data.transfer_interface_limits.pjm_apsouth_interface_hourly`).
+
+    This **replaces**, rather than stacks on (rule 19 ``[R-ONE-MECH]``), the
+    documented misalignment ``constants.PJM_INTERFACE_LINK_MAP`` already
+    records: the per-link ``pjm_measured_interface_limits`` overlay applies
+    AP-South to West_APS→SWMAAC alone while the parallel West_APS→Dominion
+    path rides a 3,000 MW static, so the LP's west→MAD capability is
+    ``AP-South(t) + 3,000 MW`` against a published flowgate of ~3,900 MW. The
+    joint cap is the faithful reduced-network reading of a flowgate that spans
+    both paths, and it dominates the per-link bound (a sum below the limit
+    implies each term is), so the surviving per-link overlay is redundant, not
+    additive. Zero fitted scalars — the same construction, and the same
+    Manual-03 provenance, as
+    :func:`build_pjm_east_interface_cut_groups` (``pjm_east_interface_cut``).
+
+    Args:
+        links: The topology's transfer links (pre- or post- import-node
+            extension — matching is by zone pair).
+        limit_hourly: ``(T,)`` measured hourly cap from
+            :func:`market_sim.data.transfer_interface_limits.pjm_apsouth_interface_hourly`.
+
+    Returns:
+        A single-element list of 5-tuples for
+        :func:`market_sim.model.dispatch._build_interface_rows`, or an empty
+        list when neither cut link exists in the topology (the LP is then
+        byte-identical).
+    """
+    return _build_joint_interface_cut(links, limit_hourly, PJM_APSOUTH_CUT_LINKS)
+
+
 def build_pjm_east_interface_cut_groups(
     links: list[TransferLink],
     limit_hourly: np.ndarray,
@@ -173,27 +271,7 @@ def build_pjm_east_interface_cut_groups(
         or an empty list when neither cut link exists in the topology (the LP
         is then byte-identical).
     """
-    idx: list[int] = []
-    signs: list[float] = []
-    for a, b in PJM_EAST_CUT_LINKS:
-        for li, link in enumerate(links):
-            if (link.from_zone, link.to_zone) == (a, b):
-                idx.append(li)
-                signs.append(1.0)
-            elif (link.from_zone, link.to_zone) == (b, a):
-                idx.append(li)
-                signs.append(-1.0)
-    if not idx:
-        return []
-    return [
-        (
-            np.array(idx, dtype=int),
-            np.asarray(limit_hourly, dtype=float),
-            False,
-            None,
-            np.array(signs, dtype=float),
-        )
-    ]
+    return _build_joint_interface_cut(links, limit_hourly, PJM_EAST_CUT_LINKS)
 
 
 def inject_pjm_seam_flow_limit(
