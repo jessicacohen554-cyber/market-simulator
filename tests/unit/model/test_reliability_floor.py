@@ -17,7 +17,12 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config.constants import MIN_STABLE_PCT_PHYSICAL
-from market_sim.config.iso_configs import ReliabilityFloorSpec
+from market_sim.config.iso_configs import (
+    NYISO_PEAK_WINDOW_FLOORS_OFF,
+    RELIABILITY_FLOOR_REGISTRY,
+    ReliabilityFloorSpec,
+    apply_reliability_floor_overrides,
+)
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model import transmission as T
 from tests.helpers import REPO_ROOT
@@ -933,6 +938,101 @@ class TestPjmCtChpScrubLocked(unittest.TestCase):
             applied = T.inject_reliability_floor(fa, "PJM", 2024, specs, ["Z"])
         self.assertFalse(applied)
         self.assertIsNone(fa.min_gen)
+
+
+class TestRampGroupScopedOverrides(unittest.TestCase):
+    """``apply_reliability_floor_overrides`` ramp-family key (nyiso-87).
+
+    One (zone, class, driver) can mix an always-on base limb with a windowed
+    ramp family — NYISO ``NYC:ST_GAS:tmax`` carries the persistent 24 h
+    voltage/reliability base AND the h14-21 ``NYC_ST_ev`` knots — so the
+    three-segment key cannot disable the peak window without also killing the
+    base. These pin the four-segment behaviour and the unchanged three-segment
+    behaviour.
+    """
+
+    def _limbs(self):
+        base = ReliabilityFloorSpec(
+            zone="Z",
+            plant_class="ST_GAS",
+            driver="tmax",
+            threshold=-50.0,
+            floor_pct=0.20,
+        )
+        knot_lo = ReliabilityFloorSpec(
+            zone="Z",
+            plant_class="ST_GAS",
+            driver="tmax",
+            threshold=25.0,
+            floor_pct=0.30,
+            ramp_group="Z_ST_ev",
+            start_hour=14,
+            end_hour=21,
+        )
+        knot_hi = ReliabilityFloorSpec(
+            zone="Z",
+            plant_class="ST_GAS",
+            driver="tmax",
+            threshold=38.0,
+            floor_pct=0.80,
+            ramp_group="Z_ST_ev",
+            start_hour=14,
+            end_hour=21,
+        )
+        return [base, knot_lo, knot_hi]
+
+    def test_ramp_group_key_disables_only_that_family(self):
+        out = apply_reliability_floor_overrides(
+            self._limbs(), {"Z:ST_GAS:tmax:Z_ST_ev": {"enabled": False}}
+        )
+        enabled = [s for s in out if s.enabled]
+        self.assertEqual(len(enabled), 1)
+        self.assertIsNone(enabled[0].ramp_group)
+        self.assertEqual(enabled[0].threshold, -50.0)
+
+    def test_none_sentinel_disables_only_the_ungrouped_limbs(self):
+        out = apply_reliability_floor_overrides(
+            self._limbs(), {"Z:ST_GAS:tmax:_none": {"enabled": False}}
+        )
+        enabled = [s for s in out if s.enabled]
+        self.assertEqual(len(enabled), 2)
+        self.assertTrue(all(s.ramp_group == "Z_ST_ev" for s in enabled))
+
+    def test_three_segment_key_still_matches_every_limb(self):
+        out = apply_reliability_floor_overrides(
+            self._limbs(), {"Z:ST_GAS:tmax": {"enabled": False}}
+        )
+        self.assertFalse(any(s.enabled for s in out))
+
+    def test_ramp_group_key_wins_over_the_broad_key(self):
+        out = apply_reliability_floor_overrides(
+            self._limbs(),
+            {
+                "Z:ST_GAS:tmax": {"enabled": False},
+                "Z:ST_GAS:tmax:_none": {"enabled": True},
+            },
+        )
+        enabled = [s for s in out if s.enabled]
+        self.assertEqual(len(enabled), 1)
+        self.assertIsNone(enabled[0].ramp_group)
+
+    def test_nyiso_peak_window_disable_keeps_the_persistent_bases(self):
+        """The arm-A override on the real registry: windows off, bases on."""
+        specs = RELIABILITY_FLOOR_REGISTRY.get("NYISO", [])
+        if not specs:
+            self.skipTest("NYISO reliability-floor CSV not present")
+        out = apply_reliability_floor_overrides(specs, NYISO_PEAK_WINDOW_FLOORS_OFF)
+        enabled = [s for s in out if s.enabled]
+        # Every surviving limb is unwindowed — no h14-21 evening ramp remains.
+        self.assertTrue(all(s.ramp_group is None for s in enabled))
+        self.assertTrue(all(s.start_hour is None for s in enabled))
+        # The in-city persistent 24 h ST_GAS bases (driver is 24 h) survive.
+        surviving = {(s.zone, s.plant_class) for s in enabled}
+        self.assertIn(("NYC", "ST_GAS"), surviving)
+        self.assertIn(("Long_Island", "ST_GAS"), surviving)
+        # CT_PEAKER's only enabled limbs were the evening ramps, so it is gone.
+        self.assertNotIn(("NYC", "CT_PEAKER"), surviving)
+        self.assertNotIn(("Long_Island", "CT_PEAKER"), surviving)
 
 
 if __name__ == "__main__":

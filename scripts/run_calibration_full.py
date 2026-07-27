@@ -2751,6 +2751,15 @@ def solve_and_persist(
     nyiso_li_locational_reserve: bool | None = None,
     nyiso_incity_commitment_obligation: bool | None = None,
     nyiso_east_reserve_families: bool | None = None,
+    reliability_floor_overrides: dict | None = None,
+    nyiso_gas_commitment_bridge: bool | None = None,
+    nyiso_gas_bridge_cc_min_load_frac: float | None = None,
+    nyiso_gas_bridge_st_min_load_frac: float | None = None,
+    nyiso_gas_bridge_startup: bool | None = None,
+    nyiso_gas_bridge_da_horizon: bool | None = None,
+    nyiso_gas_bridge_min_run: bool | None = None,
+    nyiso_gas_bridge_cc_min_run_hours: float | None = None,
+    nyiso_gas_bridge_st_min_run_hours: float | None = None,
     nyiso_spin_reserve_online: bool | None = None,
     nyiso_spin_headroom_frac: float | None = None,
     nyiso_dynamic_reserve_requirements: bool | None = None,
@@ -3624,6 +3633,42 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_east_reserve_families=nyiso_east_reserve_families
             )
+        if reliability_floor_overrides is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                reliability_floor_overrides=reliability_floor_overrides
+            )
+        if nyiso_gas_commitment_bridge is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_gas_commitment_bridge=nyiso_gas_commitment_bridge
+            )
+        if nyiso_gas_bridge_cc_min_load_frac is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_gas_bridge_cc_min_load_frac=nyiso_gas_bridge_cc_min_load_frac
+            )
+        if nyiso_gas_bridge_st_min_load_frac is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_gas_bridge_st_min_load_frac=nyiso_gas_bridge_st_min_load_frac
+            )
+        if nyiso_gas_bridge_startup is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_gas_bridge_startup=nyiso_gas_bridge_startup
+            )
+        if nyiso_gas_bridge_da_horizon is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_gas_bridge_da_horizon=nyiso_gas_bridge_da_horizon
+            )
+        if nyiso_gas_bridge_min_run is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_gas_bridge_min_run=nyiso_gas_bridge_min_run
+            )
+        if nyiso_gas_bridge_cc_min_run_hours is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours
+            )
+        if nyiso_gas_bridge_st_min_run_hours is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_gas_bridge_st_min_run_hours=nyiso_gas_bridge_st_min_run_hours
+            )
         if nyiso_spin_reserve_online is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_spin_reserve_online=nyiso_spin_reserve_online
@@ -4124,7 +4169,16 @@ def solve_and_persist(
             nyiso_li_locational_reserve=nyiso_li_locational_reserve,
             nyiso_incity_commitment_obligation=nyiso_incity_commitment_obligation,
             nyiso_east_reserve_families=nyiso_east_reserve_families,
+            reliability_floor_overrides=reliability_floor_overrides,
             nyiso_spin_reserve_online=nyiso_spin_reserve_online,
+            nyiso_gas_commitment_bridge=nyiso_gas_commitment_bridge,
+            nyiso_gas_bridge_cc_min_load_frac=nyiso_gas_bridge_cc_min_load_frac,
+            nyiso_gas_bridge_st_min_load_frac=nyiso_gas_bridge_st_min_load_frac,
+            nyiso_gas_bridge_startup=nyiso_gas_bridge_startup,
+            nyiso_gas_bridge_da_horizon=nyiso_gas_bridge_da_horizon,
+            nyiso_gas_bridge_min_run=nyiso_gas_bridge_min_run,
+            nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours,
+            nyiso_gas_bridge_st_min_run_hours=nyiso_gas_bridge_st_min_run_hours,
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
             nyiso_dynamic_reserve_requirements=nyiso_dynamic_reserve_requirements,
             nyiso_hydro_reserve_eligible=nyiso_hydro_reserve_eligible,
@@ -4836,6 +4890,15 @@ def solve_and_persist(
         "nyiso_li_locational_reserve": nyiso_li_locational_reserve,
         "nyiso_incity_commitment_obligation": nyiso_incity_commitment_obligation,
         "nyiso_east_reserve_families": nyiso_east_reserve_families,
+        "reliability_floor_overrides": reliability_floor_overrides,
+        "nyiso_gas_commitment_bridge": nyiso_gas_commitment_bridge,
+        "nyiso_gas_bridge_cc_min_load_frac": nyiso_gas_bridge_cc_min_load_frac,
+        "nyiso_gas_bridge_st_min_load_frac": nyiso_gas_bridge_st_min_load_frac,
+        "nyiso_gas_bridge_startup": nyiso_gas_bridge_startup,
+        "nyiso_gas_bridge_da_horizon": nyiso_gas_bridge_da_horizon,
+        "nyiso_gas_bridge_min_run": nyiso_gas_bridge_min_run,
+        "nyiso_gas_bridge_cc_min_run_hours": nyiso_gas_bridge_cc_min_run_hours,
+        "nyiso_gas_bridge_st_min_run_hours": nyiso_gas_bridge_st_min_run_hours,
         "nyiso_spin_reserve_online": nyiso_spin_reserve_online,
         "nyiso_spin_headroom_frac": nyiso_spin_headroom_frac,
         "nyiso_dynamic_reserve_requirements": nyiso_dynamic_reserve_requirements,
@@ -9709,6 +9772,85 @@ def main() -> None:
         "resolved absolute curve is recorded in run_config.json.",
     )
     parser.add_argument(
+        "--nyiso-gas-commitment-bridge",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NYISO P1-native gas commitment bridge (nyiso-87): hold the "
+        "merchant slow-start gas fleet (CC_REGULAR + ST_GAS, by unit physics) "
+        "at measured minimum stable load across idle gaps its own commitment "
+        "physics says it cannot cycle through. The REPLACEMENT for the h14-21 "
+        "peak-window reliability floors (owner directive 2026-07-27) - run it "
+        "WITH those limbs disabled via --reliability-floor-overrides, never "
+        "stacked on them (rule 19).",
+    )
+    parser.add_argument(
+        "--nyiso-gas-bridge-cc-min-load-frac",
+        type=float,
+        default=None,
+        help="Override the measured CC_REGULAR minimum-load fraction "
+        "(default 0.523, CAMPD 2023-2025 capacity-weighted p50). Probe only - "
+        "a keeper must cite the derive artifact (rule 23).",
+    )
+    parser.add_argument(
+        "--nyiso-gas-bridge-st-min-load-frac",
+        type=float,
+        default=None,
+        help="Override the measured ST_GAS minimum-load fraction "
+        "(default 0.239, same artifact). Probe only.",
+    )
+    parser.add_argument(
+        "--nyiso-gas-bridge-startup",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Economic (>= min-down) bridging on the startup-restart "
+        "inequality. Default on with the bridge; --no-... is the "
+        "physical-restart-bar-only arm.",
+    )
+    parser.add_argument(
+        "--nyiso-gas-bridge-da-horizon",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Cap economic bridges at one DA operating day (24 h). Default on.",
+    )
+    parser.add_argument(
+        "--nyiso-gas-bridge-min-run",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="MINIMUM RUN DURATION extension: extend a detected P0 run shorter "
+        "than the unit's minimum run and floor the extension at minimum stable "
+        "load. Values from the published class table unless the two "
+        "--nyiso-gas-bridge-*-min-run-hours flags override.",
+    )
+    parser.add_argument(
+        "--nyiso-gas-bridge-cc-min-run-hours",
+        type=float,
+        default=None,
+        help="Minimum run hours for bridged CC_REGULAR (default: class table, "
+        "5-10 h). Measured CAMPD capacity-weighted p25/p50/p75 = 11/21/133 h.",
+    )
+    parser.add_argument(
+        "--nyiso-gas-bridge-st-min-run-hours",
+        type=float,
+        default=None,
+        help="Minimum run hours for bridged ST_GAS (default: class table, "
+        "24-48 h). Measured CAMPD capacity-weighted p25/p50/p75 = 3/13/89 h.",
+    )
+    parser.add_argument(
+        "--reliability-floor-overrides",
+        default=None,
+        metavar="JSON",
+        help="Per-limb reliability-floor overrides applied to "
+        "RELIABILITY_FLOOR_REGISTRY[iso] at run time (the existing registry "
+        "field ScenarioConfig.reliability_floor_overrides, so the value lands "
+        "in run_config.json — rule 24). Keyed "
+        '"<ZONE>:<CLASS>:<driver>" or, to select ONE ramp family within a '
+        '(zone, class, driver), "<ZONE>:<CLASS>:<driver>:<ramp_group>" '
+        '("_none" selects the limbs with no ramp group). Value: '
+        '{"enabled"?: bool, "floor_pct"?: float, "threshold"?: float}. '
+        'e.g. \'{"NYC:ST_GAS:tmax:NYC_ST_ev": {"enabled": false}}\' turns the '
+        "h14-21 evening ramp off while leaving the persistent 24 h base on.",
+    )
+    parser.add_argument(
         "--class-commitment-overrides",
         default=None,
         metavar="JSON",
@@ -9730,6 +9872,12 @@ def main() -> None:
         import json as _json
 
         class_commitment_overrides = _json.loads(args.class_commitment_overrides)
+
+    reliability_floor_overrides = None
+    if args.reliability_floor_overrides:
+        import json as _json
+
+        reliability_floor_overrides = _json.loads(args.reliability_floor_overrides)
 
     if args.report:
         report_run(Path(args.report), band_width=args.cf_band_width)
@@ -10087,7 +10235,16 @@ def main() -> None:
         nyiso_li_locational_reserve=args.nyiso_li_locational_reserve,
         nyiso_incity_commitment_obligation=args.nyiso_incity_commitment_obligation,
         nyiso_east_reserve_families=args.nyiso_east_reserve_families,
+        reliability_floor_overrides=reliability_floor_overrides,
         nyiso_spin_reserve_online=args.nyiso_spin_reserve_online,
+        nyiso_gas_commitment_bridge=args.nyiso_gas_commitment_bridge,
+        nyiso_gas_bridge_cc_min_load_frac=args.nyiso_gas_bridge_cc_min_load_frac,
+        nyiso_gas_bridge_st_min_load_frac=args.nyiso_gas_bridge_st_min_load_frac,
+        nyiso_gas_bridge_startup=args.nyiso_gas_bridge_startup,
+        nyiso_gas_bridge_da_horizon=args.nyiso_gas_bridge_da_horizon,
+        nyiso_gas_bridge_min_run=args.nyiso_gas_bridge_min_run,
+        nyiso_gas_bridge_cc_min_run_hours=args.nyiso_gas_bridge_cc_min_run_hours,
+        nyiso_gas_bridge_st_min_run_hours=args.nyiso_gas_bridge_st_min_run_hours,
         nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,
         nyiso_dynamic_reserve_requirements=args.nyiso_dynamic_reserve_requirements,
         nyiso_hydro_reserve_eligible=args.nyiso_hydro_reserve_eligible,

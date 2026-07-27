@@ -232,6 +232,18 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "nyiso_incity_commitment_obligation",
     "nyiso_east_reserve_families",
     "nyiso_spin_reserve_online",
+    # NYISO gas commitment bridge (nyiso-87) — the flag plus every parameter it
+    # reads. All are inert at their defaults (the gate is off), so registering
+    # them here keeps the pinned default cache_key byte-stable at edbc1b1; an
+    # armed run enters the key as a distinct scenario.
+    "nyiso_gas_commitment_bridge",
+    "nyiso_gas_bridge_cc_min_load_frac",
+    "nyiso_gas_bridge_st_min_load_frac",
+    "nyiso_gas_bridge_startup",
+    "nyiso_gas_bridge_da_horizon",
+    "nyiso_gas_bridge_min_run",
+    "nyiso_gas_bridge_cc_min_run_hours",
+    "nyiso_gas_bridge_st_min_run_hours",
     # Forecast-path cross-year LP warm start (plan §7 H-3, owner decision D-9;
     # default flipped ON 2026-07-26 on the full-horizon A/B). A pure solve-PATH
     # knob — the LP optimum is basis-independent — so it is dropped from the
@@ -1889,6 +1901,14 @@ class ScenarioConfig:
     # iso_configs.apply_reliability_floor_overrides before the engine runs, so a
     # single limb can be toggled or re-tuned (e.g. --floor-disable ZONE:CLASS)
     # without editing the registry. Empty = registry defaults verbatim.
+    # An optional FOURTH segment selects one ramp family within a (zone, class,
+    # driver) — "<ZONE>:<CLASS>:<driver>:<ramp_group>", with "_none" selecting
+    # the limbs that carry no ramp group. Needed wherever one (zone, class,
+    # driver) mixes windows: NYC:ST_GAS:tmax holds BOTH the persistent 24 h
+    # voltage/reliability base and the h14-21 NYC_ST_ev ramp knots, so the
+    # three-segment key cannot turn the peak window off without also killing
+    # the always-on base (nyiso-87). The four-segment form wins where both
+    # match; three-segment behaviour is unchanged.
     class_commitment_overrides: dict[str, dict] = field(default_factory=dict)
     # Per-class commitment overrides for THIS run's ISO, keyed by plant_group
     # class (e.g. "ST_GAS") -> {"min_run_hours"?: int, "min_down_hours"?: int}.
@@ -2513,6 +2533,100 @@ class ScenarioConfig:
     # vintage trail ($25 in the 2019 ASM; $40 from the July-2021 procurement
     # enhancements, corroborated in-force 2022-2023 by the 2023 SOM p. A-132).
     # Default off (byte-identical); NYISO-only; requires --energy-reserve-coopt.
+    # NYISO GAS COMMITMENT BRIDGE (default off, NYISO-gated — nyiso-87): the
+    # P1-native committed-STATE mechanism that REPLACES the h14-21 peak-window
+    # reliability-floor limbs. OWNER DIRECTIVE 2026-07-27: "The h14-21
+    # peak-hour must-run is INACCURATE — turn it off. The model is under-running
+    # gas through the belly/peak and serving those hours with imports; real
+    # NYISO gas runs there because of RA commitment, AS provision, and economic
+    # must-run with MINIMUM RUN DURATIONS — units drag at min-load so they are
+    # ready to respond to peaks. Replace the windowed floors with commitment
+    # physics ... Every floor we have added was a compensation for this missing
+    # commitment drag." Rule 19 [R-ONE-MECH] is therefore satisfied by
+    # SUBSTITUTION, not stacking: an arm that arms this bridge runs with
+    # iso_configs.NYISO_PEAK_WINDOW_FLOORS_OFF applied.
+    #
+    # Mechanism: the same ISO-neutral detector the CAISO RA must-offer and
+    # ERCOT gas-CC bridges use (model.commitment.caiso_ra_mustoffer_min_gen via
+    # pipeline.commitment.build_nyiso_gas_bridge_p1_prep, injected at the P0→P1
+    # seam), fed the model's OWN base-cost P0 run pattern and duals — no
+    # measured generation enters, so it is forward-native (rules 13/18). Three
+    # legs, all commitment physics: (a) a gap shorter than the unit's physical
+    # min-down is a restart bar and always bridges; (b) a gap at/over min-down
+    # bridges when re-paying the published startup cost exceeds the net cost of
+    # holding at min-load (the standard UC restart inequality, priced at the
+    # model's own P0 duals) — see nyiso_gas_bridge_startup; (c) a detected run
+    # shorter than the unit's MINIMUM RUN DURATION is extended to it — see
+    # nyiso_gas_bridge_min_run, the owner's named ask.
+    #
+    # CLASS SCOPE by unit PHYSICS, never a class-name tuple (rule 18
+    # [R-PHYSICS]): the eligible fuels are gas_cc + gas_st, measured on the
+    # NYISO keeper fleet as min-down 4-8 h / $50 per MW (CC_REGULAR, 22 base
+    # tranches, 3.14 GW) and 8-12 h / $35 per MW (ST_GAS, 11 tranches, 1.22 GW)
+    # — both clear the slow-start gate. CT_PEAKER and CT_CHP resolve to 1 h
+    # min-down and $20/MW starts and are therefore NEVER bridged (they also
+    # fail RA_BRIDGE_ECON_MIN_DOWN_HOURS for the economic leg, and a 1 h
+    # min-down makes the physical leg unreachable); the *_CHP groups are
+    # excluded by the detector regardless (cogens follow their steam host).
+    # D-2 id MECH_NYISO_GAS_COMMITMENT_BRIDGE (separate from the ERCOT leg so
+    # attribution and per-ISO arming stay independent); D-4 window declared in
+    # scripts/legitimacy_diagnostics.py.
+    nyiso_gas_commitment_bridge: bool = False
+    # Minimum stable load of a bridged NYISO gas-CC / gas-steam unit as a
+    # fraction of the PLANT's available capacity. MEASURED per class from EPA
+    # CAMPD unit conduct 2023-2025 (NYISO publishes no 60-Day-DAM-equivalent
+    # LSL/HSL disclosure, so the ERCOT identification is reconstructed from the
+    # meter via the WP-3 loading-when-on construction: HSL = p99.5 of pooled
+    # load, LSL = p5 of online-hour load, class value = capacity-weighted p50
+    # across units — scripts/data/derive_campd_gas_commitment_params.py,
+    # artifact data/raw/_processed-legacy/campd_gas_commitment_params_NYISO.csv).
+    # CC 0.523 (p25 0.514 / p75 0.677) lands within 9 % of ERCOT's independently
+    # published 0.574, which cross-validates the reconstruction. Frozen against
+    # residuals (rules 13/21/23) — re-derive only when the CAMPD vintages
+    # update. Only read when the bridge gate is on.
+    nyiso_gas_bridge_cc_min_load_frac: float = 0.523
+    # ST_GAS leg of the same measured statistic: 0.239 (p25 0.210 / p75 0.291).
+    # A separate field because the two classes' turn-down physics differ by more
+    # than 2x — NYISO's large oil/gas boilers (Bowline 0.17-0.21, Roseton
+    # 0.19-0.25, Northport 0.29) turn down far deeper than a combined cycle.
+    nyiso_gas_bridge_st_min_load_frac: float = 0.239
+    # Economic (>= min-down) bridging on the startup-restart inequality — the
+    # overnight/belly-between-run-days carrier (a CC's 4-8 h min-down is
+    # shorter than a typical overnight gap, so the physical bar alone catches
+    # little). Same construction and admissibility as the CAISO/ERCOT legs (MC
+    # and LMP are the model's own P0 quantities). Default on WITH the gate; off
+    # is the physical-restart-bar-only probe arm (arm B).
+    nyiso_gas_bridge_startup: bool = True
+    # Cap economic bridges at one DA operating day
+    # (constants.DA_COMMITMENT_HORIZON_HOURS = 24): a unit idle LONGER than one
+    # DA cycle is a next-day decommit/re-offer decision, never an intra-day
+    # min-load hold. Bounds the mechanism to its declared D-4 window. Default
+    # on with the gate.
+    nyiso_gas_bridge_da_horizon: bool = True
+    # MINIMUM RUN DURATION extension (the owner's named ask): a detected P0 run
+    # shorter than the unit's minimum run is extended to it, the extension hours
+    # floored at minimum stable load, and the extended blocks then define the
+    # run pattern the gap bridges are computed from (so an extension that
+    # reaches the next run CLOSES that gap rather than bridging it twice —
+    # rule 19). Default off with the gate so the bridge's three legs are
+    # separable across the arms. Values come from the class table unless the
+    # two fields below override.
+    nyiso_gas_bridge_min_run: bool = False
+    # Per-class minimum run duration (hours) for the extension above. None =
+    # the published class table (COMMITMENT_PARAMS_BY_FUEL, NREL/SR-5500-55433:
+    # CC 5-10 h by heat-rate class, gas steam 24-48 h), which is the arm-C
+    # starting value and adds NO new parameter. A keeper that sets either field
+    # must identify it from the MEASURED CAMPD run-length distribution in
+    # campd_gas_commitment_params_NYISO.csv, never from a residual (rules 5 /
+    # 13 / 23). That artifact measures, capacity-weighted, CC p25/p50/p75 =
+    # 11 / 21 / 133 h and ST_GAS 3 / 13 / 89 h — i.e. the measurement says the
+    # CC table (5-10 h) UNDER-states NYISO conduct while the gas-steam table
+    # (24-48 h) OVER-states it. Note an OBSERVED run is an upper-ish bound on a
+    # minimum-run CONSTRAINT (a unit that ran 21 h because it was economic does
+    # not prove a 21 h floor), so the low percentiles bound the constraint from
+    # the side it lives on.
+    nyiso_gas_bridge_cc_min_run_hours: float | None = None
+    nyiso_gas_bridge_st_min_run_hours: float | None = None
     nyiso_spin_reserve_online: bool = False  # NYISO online-gated PUBLISHED
     # spinning families (nyiso-84, the mechanism arm): re-classes the published
     # NYCA 10-minute spinning family (655 MW, $775) — and east_10min_spin (330
@@ -8688,6 +8802,16 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_incity_commitment_obligation": 1,
     "nyiso_east_reserve_families": 1,
     "nyiso_spin_reserve_online": 1,
+    # Same tiering as the ERCOT bridge's fields: the gates/legs are structural
+    # flags (1), the measured scalars are parameters (2).
+    "nyiso_gas_commitment_bridge": 1,
+    "nyiso_gas_bridge_cc_min_load_frac": 2,
+    "nyiso_gas_bridge_st_min_load_frac": 2,
+    "nyiso_gas_bridge_startup": 1,
+    "nyiso_gas_bridge_da_horizon": 1,
+    "nyiso_gas_bridge_min_run": 1,
+    "nyiso_gas_bridge_cc_min_run_hours": 2,
+    "nyiso_gas_bridge_st_min_run_hours": 2,
     "nyiso_forward_net_import_twh": 2,
     "nyiso_spin_headroom_frac": 2,
     "miso_firm_imports": 1,
