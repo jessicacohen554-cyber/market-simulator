@@ -1,0 +1,961 @@
+{
+ "_provenance": {
+  "lane": "ercot126-coal-avail-envelope",
+  "keeper": "2026-07-26-ercot115-coal-marginal-hr",
+  "keeper_bundle": "results/calibration/ercot115_coal_floor_only",
+  "arm": "2026-07-26-ercot116-coal-avail-probe",
+  "model_source": "committed dashboard payloads + bench sidecars; NO replay, NO solve",
+  "actual_source": "CAMPD unit-level TX_<year>.parquet, coal-fuelled units of the ten ERCOT coal plants, gross load converted to net by the per-year factor measured against the committed EIA-923 bench classFull",
+  "declared_source": "60-Day DAM disclosure accepted COP live_mw (data/raw/ercot-thermal-dam-availability-site-hourly.parquet), the series ercot_thermal_dam_availability_plant reads; ERCOT HSL, net at the point of interconnection",
+  "holdout": "rule 22 [R-HOLDOUT]: every window is {2023, 2024, 2025}; section F drops the Nov/Dec-2022 delivery rows the DAM Jan-Mar files carry",
+  "rule23_citation": "no parameter is chosen against a residual; the price edges are the model's own published coal stack geometry (ERCOT-122 \u00a73) and the flat-top tolerance/grain are fixed a priori",
+  "sampling": "sections A-F full span; section G's supply curve carries the committed ERCOT-124 artifact's 82-probe-day 2024-2025 bound"
+ },
+ "envelope": {
+  "2023": {
+   "gross_to_net_factor": 0.8972,
+   "declared_twh": 95.998,
+   "actual_twh": 60.42,
+   "keeper_twh": 59.353,
+   "arm_twh": 66.106,
+   "keeper_minus_actual_twh": -1.067,
+   "arm_minus_actual_twh": 5.686,
+   "gap_share_commitment": 0.071,
+   "gap_share_loading": 0.929,
+   "fleet_flat_top_energy_share": {
+    "keeper": 0.431,
+    "arm": 0.197,
+    "actual": 0.036
+   },
+   "monthly": [
+    {
+     "month": 1,
+     "declared_gw": 11.407,
+     "actual_gw": 5.224,
+     "keeper_gw": 3.831,
+     "arm_gw": 5.413
+    },
+    {
+     "month": 2,
+     "declared_gw": 11.432,
+     "actual_gw": 5.253,
+     "keeper_gw": 3.897,
+     "arm_gw": 5.395
+    },
+    {
+     "month": 3,
+     "declared_gw": 8.469,
+     "actual_gw": 4.77,
+     "keeper_gw": 3.114,
+     "arm_gw": 4.308
+    },
+    {
+     "month": 4,
+     "declared_gw": 9.146,
+     "actual_gw": 5.354,
+     "keeper_gw": 4.054,
+     "arm_gw": 5.197
+    },
+    {
+     "month": 5,
+     "declared_gw": 10.198,
+     "actual_gw": 6.857,
+     "keeper_gw": 7.065,
+     "arm_gw": 7.804
+    },
+    {
+     "month": 6,
+     "declared_gw": 11.92,
+     "actual_gw": 8.393,
+     "keeper_gw": 9.6,
+     "arm_gw": 10.12
+    },
+    {
+     "month": 7,
+     "declared_gw": 11.924,
+     "actual_gw": 8.849,
+     "keeper_gw": 10.418,
+     "arm_gw": 10.801
+    },
+    {
+     "month": 8,
+     "declared_gw": 11.696,
+     "actual_gw": 9.086,
+     "keeper_gw": 10.786,
+     "arm_gw": 11.1
+    },
+    {
+     "month": 9,
+     "declared_gw": 11.742,
+     "actual_gw": 8.503,
+     "keeper_gw": 9.946,
+     "arm_gw": 10.253
+    },
+    {
+     "month": 10,
+     "declared_gw": 11.57,
+     "actual_gw": 7.005,
+     "keeper_gw": 6.739,
+     "arm_gw": 6.793
+    },
+    {
+     "month": 11,
+     "declared_gw": 10.556,
+     "actual_gw": 6.931,
+     "keeper_gw": 6.668,
+     "arm_gw": 7.464
+    },
+    {
+     "month": 12,
+     "declared_gw": 11.475,
+     "actual_gw": 6.435,
+     "keeper_gw": 5.01,
+     "arm_gw": 5.791
+    }
+   ],
+   "by_price_band": [
+    {
+     "band": "<15",
+     "hours": 2665,
+     "actual_over_declared": 0.552,
+     "keeper_over_declared": 0.488,
+     "arm_over_declared": 0.556
+    },
+    {
+     "band": "15-20",
+     "hours": 1450,
+     "actual_over_declared": 0.615,
+     "keeper_over_declared": 0.618,
+     "arm_over_declared": 0.682
+    },
+    {
+     "band": "20-25",
+     "hours": 1450,
+     "actual_over_declared": 0.644,
+     "keeper_over_declared": 0.646,
+     "arm_over_declared": 0.719
+    },
+    {
+     "band": "25-30",
+     "hours": 1104,
+     "actual_over_declared": 0.682,
+     "keeper_over_declared": 0.698,
+     "arm_over_declared": 0.772
+    },
+    {
+     "band": "30-35",
+     "hours": 659,
+     "actual_over_declared": 0.689,
+     "keeper_over_declared": 0.707,
+     "arm_over_declared": 0.784
+    },
+    {
+     "band": "35-50",
+     "hours": 787,
+     "actual_over_declared": 0.703,
+     "keeper_over_declared": 0.729,
+     "arm_over_declared": 0.804
+    },
+    {
+     "band": ">=50",
+     "hours": 639,
+     "actual_over_declared": 0.693,
+     "keeper_over_declared": 0.71,
+     "arm_over_declared": 0.78
+    }
+   ],
+   "plants": {
+    "Limestone": {
+     "declared_twh": 10.487,
+     "actual_twh": 6.023,
+     "keeper_twh": 6.867,
+     "arm_twh": 7.68,
+     "offline_while_declared_hours": 906,
+     "offline_while_declared_twh": 1.012,
+     "online_loading_act_over_declared": 0.636,
+     "declared_max_over_nameplate": 0.981,
+     "actual_max_over_declared_max": 0.925,
+     "flat_top_energy_share_keeper": 0.356,
+     "flat_top_energy_share_arm": 0.151,
+     "flat_top_energy_share_actual": 0.026
+    },
+    "W A Parish": {
+     "declared_twh": 17.149,
+     "actual_twh": 9.232,
+     "keeper_twh": 7.559,
+     "arm_twh": 9.361,
+     "offline_while_declared_hours": 0,
+     "offline_while_declared_twh": 0.0,
+     "online_loading_act_over_declared": 0.538,
+     "declared_max_over_nameplate": 0.993,
+     "actual_max_over_declared_max": 0.952,
+     "flat_top_energy_share_keeper": 0.264,
+     "flat_top_energy_share_arm": 0.11,
+     "flat_top_energy_share_actual": 0.021
+    },
+    "Martin Lake": {
+     "declared_twh": 18.913,
+     "actual_twh": 11.691,
+     "keeper_twh": 10.847,
+     "arm_twh": 11.366,
+     "offline_while_declared_hours": 0,
+     "offline_while_declared_twh": 0.0,
+     "online_loading_act_over_declared": 0.618,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 0.934,
+     "flat_top_energy_share_keeper": 0.249,
+     "flat_top_energy_share_arm": 0.034,
+     "flat_top_energy_share_actual": 0.026
+    },
+    "Coleto Creek": {
+     "declared_twh": 4.275,
+     "actual_twh": 2.559,
+     "keeper_twh": 2.6,
+     "arm_twh": 2.816,
+     "offline_while_declared_hours": 1174,
+     "offline_while_declared_twh": 0.762,
+     "online_loading_act_over_declared": 0.727,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 0.925,
+     "flat_top_energy_share_keeper": 0.339,
+     "flat_top_energy_share_arm": 0.053,
+     "flat_top_energy_share_actual": 0.02
+    },
+    "Fayette": {
+     "declared_twh": 12.598,
+     "actual_twh": 7.42,
+     "keeper_twh": 6.857,
+     "arm_twh": 7.988,
+     "offline_while_declared_hours": 0,
+     "offline_while_declared_twh": 0.0,
+     "online_loading_act_over_declared": 0.589,
+     "declared_max_over_nameplate": 0.997,
+     "actual_max_over_declared_max": 0.934,
+     "flat_top_energy_share_keeper": 0.299,
+     "flat_top_energy_share_arm": 0.222,
+     "flat_top_energy_share_actual": 0.01
+    },
+    "Oak Grove": {
+     "declared_twh": 13.833,
+     "actual_twh": 11.677,
+     "keeper_twh": 13.255,
+     "arm_twh": 14.045,
+     "offline_while_declared_hours": 24,
+     "offline_while_declared_twh": 0.02,
+     "online_loading_act_over_declared": 0.845,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 0.96,
+     "flat_top_energy_share_keeper": 0.829,
+     "flat_top_energy_share_arm": 0.359,
+     "flat_top_energy_share_actual": 0.068
+    },
+    "San Miguel": {
+     "declared_twh": 2.0,
+     "actual_twh": 1.412,
+     "keeper_twh": 1.215,
+     "arm_twh": 1.223,
+     "offline_while_declared_hours": 276,
+     "offline_while_declared_twh": 0.099,
+     "online_loading_act_over_declared": 0.741,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 1.015,
+     "flat_top_energy_share_keeper": 0.258,
+     "flat_top_energy_share_arm": 0.192,
+     "flat_top_energy_share_actual": 0.01
+    },
+    "Major Oak": {
+     "declared_twh": 2.565,
+     "actual_twh": 2.365,
+     "keeper_twh": 2.27,
+     "arm_twh": 2.716,
+     "offline_while_declared_hours": 0,
+     "offline_while_declared_twh": 0.0,
+     "online_loading_act_over_declared": 0.922,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 1.01,
+     "flat_top_energy_share_keeper": 0.733,
+     "flat_top_energy_share_arm": 0.637,
+     "flat_top_energy_share_actual": 0.114
+    },
+    "J K Spruce": {
+     "declared_twh": 7.195,
+     "actual_twh": 4.857,
+     "keeper_twh": 3.601,
+     "arm_twh": 3.805,
+     "offline_while_declared_hours": 118,
+     "offline_while_declared_twh": 0.082,
+     "online_loading_act_over_declared": 0.675,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 0.965,
+     "flat_top_energy_share_keeper": 0.333,
+     "flat_top_energy_share_arm": 0.051,
+     "flat_top_energy_share_actual": 0.047
+    },
+    "Sandy Creek": {
+     "declared_twh": 6.985,
+     "actual_twh": 3.185,
+     "keeper_twh": 4.283,
+     "arm_twh": 5.105,
+     "offline_while_declared_hours": 640,
+     "offline_while_declared_twh": 0.569,
+     "online_loading_act_over_declared": 0.495,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 0.961,
+     "flat_top_energy_share_keeper": 0.318,
+     "flat_top_energy_share_arm": 0.263,
+     "flat_top_energy_share_actual": 0.023
+    }
+   }
+  },
+  "2024": {
+   "gross_to_net_factor": 0.9051,
+   "declared_twh": 92.964,
+   "actual_twh": 57.617,
+   "keeper_twh": 57.404,
+   "arm_twh": 66.514,
+   "keeper_minus_actual_twh": -0.213,
+   "arm_minus_actual_twh": 8.897,
+   "gap_share_commitment": 0.083,
+   "gap_share_loading": 0.917,
+   "fleet_flat_top_energy_share": {
+    "keeper": 0.406,
+    "arm": 0.159,
+    "actual": 0.037
+   },
+   "monthly": [
+    {
+     "month": 1,
+     "declared_gw": 12.29,
+     "actual_gw": 8.12,
+     "keeper_gw": 7.662,
+     "arm_gw": 8.603
+    },
+    {
+     "month": 2,
+     "declared_gw": 11.672,
+     "actual_gw": 4.614,
+     "keeper_gw": 2.752,
+     "arm_gw": 4.11
+    },
+    {
+     "month": 3,
+     "declared_gw": 8.684,
+     "actual_gw": 3.921,
+     "keeper_gw": 2.399,
+     "arm_gw": 3.531
+    },
+    {
+     "month": 4,
+     "declared_gw": 9.294,
+     "actual_gw": 4.83,
+     "keeper_gw": 3.052,
+     "arm_gw": 4.591
+    },
+    {
+     "month": 5,
+     "declared_gw": 8.228,
+     "actual_gw": 5.705,
+     "keeper_gw": 5.73,
+     "arm_gw": 6.635
+    },
+    {
+     "month": 6,
+     "declared_gw": 10.08,
+     "actual_gw": 6.691,
+     "keeper_gw": 7.868,
+     "arm_gw": 9.042
+    },
+    {
+     "month": 7,
+     "declared_gw": 12.329,
+     "actual_gw": 7.978,
+     "keeper_gw": 9.641,
+     "arm_gw": 10.432
+    },
+    {
+     "month": 8,
+     "declared_gw": 12.257,
+     "actual_gw": 8.503,
+     "keeper_gw": 10.812,
+     "arm_gw": 11.489
+    },
+    {
+     "month": 9,
+     "declared_gw": 12.422,
+     "actual_gw": 8.248,
+     "keeper_gw": 10.008,
+     "arm_gw": 10.69
+    },
+    {
+     "month": 10,
+     "declared_gw": 10.083,
+     "actual_gw": 6.804,
+     "keeper_gw": 6.689,
+     "arm_gw": 7.639
+    },
+    {
+     "month": 11,
+     "declared_gw": 9.876,
+     "actual_gw": 6.125,
+     "keeper_gw": 5.422,
+     "arm_gw": 6.75
+    },
+    {
+     "month": 12,
+     "declared_gw": 10.21,
+     "actual_gw": 7.183,
+     "keeper_gw": 6.236,
+     "arm_gw": 7.289
+    }
+   ],
+   "by_price_band": [
+    {
+     "band": "<15",
+     "hours": 3353,
+     "actual_over_declared": 0.542,
+     "keeper_over_declared": 0.494,
+     "arm_over_declared": 0.582
+    },
+    {
+     "band": "15-20",
+     "hours": 1367,
+     "actual_over_declared": 0.609,
+     "keeper_over_declared": 0.617,
+     "arm_over_declared": 0.716
+    },
+    {
+     "band": "20-25",
+     "hours": 1270,
+     "actual_over_declared": 0.652,
+     "keeper_over_declared": 0.676,
+     "arm_over_declared": 0.777
+    },
+    {
+     "band": "25-30",
+     "hours": 883,
+     "actual_over_declared": 0.696,
+     "keeper_over_declared": 0.722,
+     "arm_over_declared": 0.832
+    },
+    {
+     "band": "30-35",
+     "hours": 513,
+     "actual_over_declared": 0.683,
+     "keeper_over_declared": 0.706,
+     "arm_over_declared": 0.818
+    },
+    {
+     "band": "35-50",
+     "hours": 602,
+     "actual_over_declared": 0.689,
+     "keeper_over_declared": 0.72,
+     "arm_over_declared": 0.83
+    },
+    {
+     "band": ">=50",
+     "hours": 760,
+     "actual_over_declared": 0.72,
+     "keeper_over_declared": 0.767,
+     "arm_over_declared": 0.871
+    }
+   ],
+   "plants": {
+    "Limestone": {
+     "declared_twh": 9.253,
+     "actual_twh": 5.375,
+     "keeper_twh": 5.565,
+     "arm_twh": 7.137,
+     "offline_while_declared_hours": 404,
+     "offline_while_declared_twh": 0.423,
+     "online_loading_act_over_declared": 0.607,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 0.958,
+     "flat_top_energy_share_keeper": 0.368,
+     "flat_top_energy_share_arm": 0.124,
+     "flat_top_energy_share_actual": 0.033
+    },
+    "W A Parish": {
+     "declared_twh": 18.852,
+     "actual_twh": 9.886,
+     "keeper_twh": 8.525,
+     "arm_twh": 11.145,
+     "offline_while_declared_hours": 265,
+     "offline_while_declared_twh": 0.55,
+     "online_loading_act_over_declared": 0.54,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 0.962,
+     "flat_top_energy_share_keeper": 0.283,
+     "flat_top_energy_share_arm": 0.096,
+     "flat_top_energy_share_actual": 0.035
+    },
+    "Martin Lake": {
+     "declared_twh": 17.449,
+     "actual_twh": 9.74,
+     "keeper_twh": 9.662,
+     "arm_twh": 11.013,
+     "offline_while_declared_hours": 140,
+     "offline_while_declared_twh": 0.188,
+     "online_loading_act_over_declared": 0.564,
+     "declared_max_over_nameplate": 0.994,
+     "actual_max_over_declared_max": 0.951,
+     "flat_top_energy_share_keeper": 0.245,
+     "flat_top_energy_share_arm": 0.083,
+     "flat_top_energy_share_actual": 0.016
+    },
+    "Coleto Creek": {
+     "declared_twh": 4.847,
+     "actual_twh": 2.566,
+     "keeper_twh": 2.859,
+     "arm_twh": 3.165,
+     "offline_while_declared_hours": 1375,
+     "offline_while_declared_twh": 0.882,
+     "online_loading_act_over_declared": 0.645,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 0.938,
+     "flat_top_energy_share_keeper": 0.351,
+     "flat_top_energy_share_arm": 0.036,
+     "flat_top_energy_share_actual": 0.014
+    },
+    "Fayette": {
+     "declared_twh": 11.893,
+     "actual_twh": 6.975,
+     "keeper_twh": 7.077,
+     "arm_twh": 8.198,
+     "offline_while_declared_hours": 0,
+     "offline_while_declared_twh": 0.0,
+     "online_loading_act_over_declared": 0.586,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 0.955,
+     "flat_top_energy_share_keeper": 0.281,
+     "flat_top_energy_share_arm": 0.184,
+     "flat_top_energy_share_actual": 0.004
+    },
+    "Oak Grove": {
+     "declared_twh": 12.772,
+     "actual_twh": 10.763,
+     "keeper_twh": 11.333,
+     "arm_twh": 12.503,
+     "offline_while_declared_hours": 13,
+     "offline_while_declared_twh": 0.02,
+     "online_loading_act_over_declared": 0.843,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 0.966,
+     "flat_top_energy_share_keeper": 0.778,
+     "flat_top_energy_share_arm": 0.161,
+     "flat_top_energy_share_actual": 0.019
+    },
+    "San Miguel": {
+     "declared_twh": 2.001,
+     "actual_twh": 1.347,
+     "keeper_twh": 1.181,
+     "arm_twh": 1.252,
+     "offline_while_declared_hours": 293,
+     "offline_while_declared_twh": 0.112,
+     "online_loading_act_over_declared": 0.707,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 1.021,
+     "flat_top_energy_share_keeper": 0.162,
+     "flat_top_energy_share_arm": 0.367,
+     "flat_top_energy_share_actual": 0.031
+    },
+    "Major Oak": {
+     "declared_twh": 2.477,
+     "actual_twh": 2.13,
+     "keeper_twh": 2.129,
+     "arm_twh": 2.558,
+     "offline_while_declared_hours": 24,
+     "offline_while_declared_twh": 0.004,
+     "online_loading_act_over_declared": 0.861,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 1.019,
+     "flat_top_energy_share_keeper": 0.729,
+     "flat_top_energy_share_arm": 0.691,
+     "flat_top_energy_share_actual": 0.052
+    },
+    "J K Spruce": {
+     "declared_twh": 6.705,
+     "actual_twh": 5.868,
+     "keeper_twh": 4.618,
+     "arm_twh": 4.153,
+     "offline_while_declared_hours": 61,
+     "offline_while_declared_twh": 0.021,
+     "online_loading_act_over_declared": 0.875,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 0.974,
+     "flat_top_energy_share_keeper": 0.244,
+     "flat_top_energy_share_arm": 0.028,
+     "flat_top_energy_share_actual": 0.167
+    },
+    "Sandy Creek": {
+     "declared_twh": 6.716,
+     "actual_twh": 2.966,
+     "keeper_twh": 4.453,
+     "arm_twh": 5.389,
+     "offline_while_declared_hours": 824,
+     "offline_while_declared_twh": 0.73,
+     "online_loading_act_over_declared": 0.496,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 0.958,
+     "flat_top_energy_share_keeper": 0.398,
+     "flat_top_energy_share_arm": 0.319,
+     "flat_top_energy_share_actual": 0.023
+    }
+   }
+  },
+  "2025": {
+   "gross_to_net_factor": 0.9069,
+   "declared_twh": 83.317,
+   "actual_twh": 62.214,
+   "keeper_twh": 60.328,
+   "arm_twh": 73.172,
+   "keeper_minus_actual_twh": -1.886,
+   "arm_minus_actual_twh": 10.957,
+   "gap_share_commitment": 0.045,
+   "gap_share_loading": 0.955,
+   "fleet_flat_top_energy_share": {
+    "keeper": 0.503,
+    "arm": 0.174,
+    "actual": 0.069
+   },
+   "monthly": [
+    {
+     "month": 1,
+     "declared_gw": 11.572,
+     "actual_gw": 8.62,
+     "keeper_gw": 7.396,
+     "arm_gw": 9.13
+    },
+    {
+     "month": 2,
+     "declared_gw": 10.752,
+     "actual_gw": 7.04,
+     "keeper_gw": 5.682,
+     "arm_gw": 7.708
+    },
+    {
+     "month": 3,
+     "declared_gw": 7.568,
+     "actual_gw": 5.602,
+     "keeper_gw": 4.086,
+     "arm_gw": 5.051
+    },
+    {
+     "month": 4,
+     "declared_gw": 8.383,
+     "actual_gw": 5.735,
+     "keeper_gw": 4.842,
+     "arm_gw": 6.575
+    },
+    {
+     "month": 5,
+     "declared_gw": 8.418,
+     "actual_gw": 6.229,
+     "keeper_gw": 5.927,
+     "arm_gw": 7.492
+    },
+    {
+     "month": 6,
+     "declared_gw": 10.12,
+     "actual_gw": 7.57,
+     "keeper_gw": 8.889,
+     "arm_gw": 9.853
+    },
+    {
+     "month": 7,
+     "declared_gw": 10.338,
+     "actual_gw": 8.039,
+     "keeper_gw": 9.124,
+     "arm_gw": 10.385
+    },
+    {
+     "month": 8,
+     "declared_gw": 10.382,
+     "actual_gw": 8.326,
+     "keeper_gw": 9.277,
+     "arm_gw": 10.742
+    },
+    {
+     "month": 9,
+     "declared_gw": 10.644,
+     "actual_gw": 8.24,
+     "keeper_gw": 9.117,
+     "arm_gw": 10.241
+    },
+    {
+     "month": 10,
+     "declared_gw": 9.358,
+     "actual_gw": 7.371,
+     "keeper_gw": 7.191,
+     "arm_gw": 8.679
+    },
+    {
+     "month": 11,
+     "declared_gw": 8.159,
+     "actual_gw": 6.206,
+     "keeper_gw": 5.538,
+     "arm_gw": 7.089
+    },
+    {
+     "month": 12,
+     "declared_gw": 8.536,
+     "actual_gw": 6.218,
+     "keeper_gw": 5.482,
+     "arm_gw": 7.239
+    }
+   ],
+   "by_price_band": [
+    {
+     "band": "<15",
+     "hours": 2634,
+     "actual_over_declared": 0.689,
+     "keeper_over_declared": 0.62,
+     "arm_over_declared": 0.751
+    },
+    {
+     "band": "15-20",
+     "hours": 909,
+     "actual_over_declared": 0.73,
+     "keeper_over_declared": 0.737,
+     "arm_over_declared": 0.879
+    },
+    {
+     "band": "20-25",
+     "hours": 1354,
+     "actual_over_declared": 0.754,
+     "keeper_over_declared": 0.75,
+     "arm_over_declared": 0.908
+    },
+    {
+     "band": "25-30",
+     "hours": 1113,
+     "actual_over_declared": 0.777,
+     "keeper_over_declared": 0.761,
+     "arm_over_declared": 0.934
+    },
+    {
+     "band": "30-35",
+     "hours": 794,
+     "actual_over_declared": 0.774,
+     "keeper_over_declared": 0.76,
+     "arm_over_declared": 0.932
+    },
+    {
+     "band": "35-50",
+     "hours": 1092,
+     "actual_over_declared": 0.789,
+     "keeper_over_declared": 0.787,
+     "arm_over_declared": 0.955
+    },
+    {
+     "band": ">=50",
+     "hours": 858,
+     "actual_over_declared": 0.801,
+     "keeper_over_declared": 0.806,
+     "arm_over_declared": 0.978
+    }
+   ],
+   "plants": {
+    "Limestone": {
+     "declared_twh": 10.141,
+     "actual_twh": 7.504,
+     "keeper_twh": 7.918,
+     "arm_twh": 9.351,
+     "offline_while_declared_hours": 60,
+     "offline_while_declared_twh": 0.035,
+     "online_loading_act_over_declared": 0.743,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 0.957,
+     "flat_top_energy_share_keeper": 0.45,
+     "flat_top_energy_share_arm": 0.093,
+     "flat_top_energy_share_actual": 0.034
+    },
+    "W A Parish": {
+     "declared_twh": 18.218,
+     "actual_twh": 13.353,
+     "keeper_twh": 11.569,
+     "arm_twh": 13.48,
+     "offline_while_declared_hours": 0,
+     "offline_while_declared_twh": 0.0,
+     "online_loading_act_over_declared": 0.733,
+     "declared_max_over_nameplate": 0.994,
+     "actual_max_over_declared_max": 0.962,
+     "flat_top_energy_share_keeper": 0.366,
+     "flat_top_energy_share_arm": 0.168,
+     "flat_top_energy_share_actual": 0.079
+    },
+    "Martin Lake": {
+     "declared_twh": 12.467,
+     "actual_twh": 8.489,
+     "keeper_twh": 9.056,
+     "arm_twh": 13.763,
+     "offline_while_declared_hours": 57,
+     "offline_while_declared_twh": 0.047,
+     "online_loading_act_over_declared": 0.683,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 0.967,
+     "flat_top_energy_share_keeper": 0.439,
+     "flat_top_energy_share_arm": 0.068,
+     "flat_top_energy_share_actual": 0.025
+    },
+    "Coleto Creek": {
+     "declared_twh": 5.058,
+     "actual_twh": 3.016,
+     "keeper_twh": 3.534,
+     "arm_twh": 3.758,
+     "offline_while_declared_hours": 720,
+     "offline_while_declared_twh": 0.451,
+     "online_loading_act_over_declared": 0.653,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 0.95,
+     "flat_top_energy_share_keeper": 0.455,
+     "flat_top_energy_share_arm": 0.127,
+     "flat_top_energy_share_actual": 0.029
+    },
+    "Fayette": {
+     "declared_twh": 11.954,
+     "actual_twh": 8.232,
+     "keeper_twh": 8.224,
+     "arm_twh": 9.511,
+     "offline_while_declared_hours": 0,
+     "offline_while_declared_twh": 0.0,
+     "online_loading_act_over_declared": 0.689,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 0.955,
+     "flat_top_energy_share_keeper": 0.38,
+     "flat_top_energy_share_arm": 0.227,
+     "flat_top_energy_share_actual": 0.003
+    },
+    "Oak Grove": {
+     "declared_twh": 12.596,
+     "actual_twh": 10.937,
+     "keeper_twh": 11.502,
+     "arm_twh": 12.824,
+     "offline_while_declared_hours": 71,
+     "offline_while_declared_twh": 0.111,
+     "online_loading_act_over_declared": 0.876,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 0.975,
+     "flat_top_energy_share_keeper": 0.862,
+     "flat_top_energy_share_arm": 0.207,
+     "flat_top_energy_share_actual": 0.181
+    },
+    "San Miguel": {
+     "declared_twh": 2.196,
+     "actual_twh": 1.466,
+     "keeper_twh": 1.237,
+     "arm_twh": 1.316,
+     "offline_while_declared_hours": 364,
+     "offline_while_declared_twh": 0.132,
+     "online_loading_act_over_declared": 0.706,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 1.023,
+     "flat_top_energy_share_keeper": 0.155,
+     "flat_top_energy_share_arm": 0.147,
+     "flat_top_energy_share_actual": 0.022
+    },
+    "Major Oak": {
+     "declared_twh": 2.514,
+     "actual_twh": 2.299,
+     "keeper_twh": 2.199,
+     "arm_twh": 2.734,
+     "offline_while_declared_hours": 0,
+     "offline_while_declared_twh": 0.0,
+     "online_loading_act_over_declared": 0.914,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 1.021,
+     "flat_top_energy_share_keeper": 0.837,
+     "flat_top_energy_share_arm": 0.82,
+     "flat_top_energy_share_actual": 0.106
+    },
+    "J K Spruce": {
+     "declared_twh": 6.937,
+     "actual_twh": 6.223,
+     "keeper_twh": 5.089,
+     "arm_twh": 5.514,
+     "offline_while_declared_hours": 164,
+     "offline_while_declared_twh": 0.089,
+     "online_loading_act_over_declared": 0.903,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 0.974,
+     "flat_top_energy_share_keeper": 0.367,
+     "flat_top_energy_share_arm": 0.131,
+     "flat_top_energy_share_actual": 0.043
+    },
+    "Sandy Creek": {
+     "declared_twh": 1.237,
+     "actual_twh": 0.697,
+     "keeper_twh": 0.0,
+     "arm_twh": 0.92,
+     "offline_while_declared_hours": 108,
+     "offline_while_declared_twh": 0.092,
+     "online_loading_act_over_declared": 0.604,
+     "declared_max_over_nameplate": 1.0,
+     "actual_max_over_declared_max": 0.96,
+     "flat_top_energy_share_keeper": 0.0,
+     "flat_top_energy_share_arm": 0.212,
+     "flat_top_energy_share_actual": 0.14
+    }
+   }
+  }
+ },
+ "as_reservation_full_span": {
+  "2023": {
+   "hours_covered": 8038,
+   "fleet_hsl_gw_mean": 12.75,
+   "fleet_lsl_over_hsl": 0.3742,
+   "up_as_gw_mean": 0.1433,
+   "up_as_share_of_hsl": 0.0112,
+   "up_as_twh_equivalent": 1.152
+  },
+  "2024": {
+   "hours_covered": 8782,
+   "fleet_hsl_gw_mean": 12.813,
+   "fleet_lsl_over_hsl": 0.3926,
+   "up_as_gw_mean": 0.1078,
+   "up_as_share_of_hsl": 0.0084,
+   "up_as_twh_equivalent": 0.947
+  },
+  "2025": {
+   "hours_covered": 7319,
+   "fleet_hsl_gw_mean": 12.857,
+   "fleet_lsl_over_hsl": 0.3856,
+   "up_as_gw_mean": 0.0184,
+   "up_as_share_of_hsl": 0.0014,
+   "up_as_twh_equivalent": 0.135
+  }
+ },
+ "time_resolution": {
+  "2024": {
+   "intervals": 35132,
+   "hours": 8783,
+   "mean_price": 26.47,
+   "mean_intra_hour_sd": 6.69,
+   "ex_owner_split": {
+    "supply_15min_market": 0.7468,
+    "supply_hourly_merit_order": 0.7506,
+    "resolution_gap_pp_of_hasl": 0.384
+   },
+   "all": {
+    "supply_15min_market": 0.726,
+    "supply_hourly_merit_order": 0.7297,
+    "resolution_gap_pp_of_hasl": 0.363
+   }
+  },
+  "2025": {
+   "intervals": 35036,
+   "hours": 8759,
+   "mean_price": 32.27,
+   "mean_intra_hour_sd": 4.64,
+   "ex_owner_split": {
+    "supply_15min_market": 0.8379,
+    "supply_hourly_merit_order": 0.8406,
+    "resolution_gap_pp_of_hasl": 0.265
+   },
+   "all": {
+    "supply_15min_market": 0.81,
+    "supply_hourly_merit_order": 0.8124,
+    "resolution_gap_pp_of_hasl": 0.246
+   }
+  }
+ }
+}
