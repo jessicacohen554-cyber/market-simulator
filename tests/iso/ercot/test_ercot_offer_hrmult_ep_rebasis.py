@@ -159,7 +159,7 @@ class TestScoping:
         import inspect
         import sys
 
-        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+        sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
         import run_calibration as rc
         import run_calibration_full as rcf
 
@@ -176,7 +176,7 @@ class TestScoping:
         import ast
 
         src = (
-            Path(__file__).resolve().parents[1] / "scripts/run_calibration_full.py"
+            Path(__file__).resolve().parents[3] / "scripts/run_calibration_full.py"
         ).read_text()
         tree = ast.parse(src)
         found = False
