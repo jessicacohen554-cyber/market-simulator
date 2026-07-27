@@ -52,7 +52,8 @@ EGRID = REPO / "data" / "raw" / "fleet-egrid" / "egrid2024_data.xlsx"
 TRANCHES = REPO / "data" / "raw" / "_processed-legacy" / "thermal_tranches_CAISO.csv"
 # LA-Basin facilityId -> ORISPL pins (the _caiso102_evening_merit crosswalk).
 LA_BASIN = {"315": 62115, "335": 62116, "330": 57901}
-KLASS = "CT_PEAKER"
+# CEMS-visible model classes, in the order the cross-class summary reports them.
+CEMS_CLASSES = ("CC_REGULAR", "CC_CHP", "CT_CHP", "ST_GAS", "CT_PEAKER", "COAL")
 
 
 def plant_names() -> dict[int, str]:
@@ -120,17 +121,67 @@ def egrid_heat_rates() -> dict[int, float]:
     return {int(k): float(v) / 1000.0 for k, v in zip(ok[key], ok[hrc])}
 
 
-def model_plant_hourly(bundle: Path, year: int) -> pd.DataFrame:
-    """Return CT_PEAKER model dispatch summed over tranches per (plant, hour)."""
+def model_plant_hourly(bundle: Path, year: int, klass: str) -> pd.DataFrame:
+    """Return ``klass`` model dispatch summed over tranches per (plant, hour)."""
     frame = pd.read_parquet(
         bundle / "dispatch" / f"{year}_P1.parquet",
         columns=["plant_code", "klass", "zone", "hour", "mw"],
     )
-    frame = frame[frame["klass"] == KLASS]
+    frame = frame[frame["klass"] == klass]
     return (
         frame.groupby(["plant_code", "zone", "hour"], observed=True)["mw"]
         .sum()
         .reset_index()
+    )
+
+
+def cross_class_summary(
+    bundle: Path, year: int, state: dict, cem: pd.DataFrame
+) -> None:
+    """Print the per-class dispatch ratio and offer-heat-rate error distribution.
+
+    The scope question behind the CT lane: is the offer heat rate wrong across
+    the whole thermal fleet, or only in some classes? ``HRerr`` is the plant's
+    CHEAPEST tranche heat rate against its CEMS loading-conditional rate, so a
+    class whose curve is built on a good rate reads ~0.
+    """
+    fa = state["fleet_arrays"]
+    pcs = np.asarray(fa.plant_code)
+    hr = np.asarray(fa.heat_rate, dtype=float)
+    groups = np.asarray(list(fa.plant_group), dtype=object)
+    cem_hr = dict(zip(cem["plant_code"], cem["hr_load"]))
+    cem_mwh = dict(zip(cem["plant_code"], cem["cems_mwh"]))
+
+    print(f"\n=== 0. {year} CROSS-CLASS scope: dispatch ratio + offer HR error ===")
+    print(
+        f"{'class':<12} {'mdl TWh':>8} {'CEMS TWh':>9} {'ratio':>6} | "
+        f"{'plants':>6} {'p25':>5} {'p50':>5} {'p75':>5} {'cap-wtd':>8}"
+    )
+    for klass in CEMS_CLASSES:
+        ph = model_plant_hourly(bundle, year, klass)
+        if ph.empty:
+            continue
+        by_plant = ph.groupby("plant_code", observed=True)["mw"].sum()
+        errs, wts = [], []
+        for pc in by_plant.index:
+            sel = np.flatnonzero((pcs == pc) & (groups == klass))
+            ref = cem_hr.get(int(pc), float("nan"))
+            if not len(sel) or not (ref == ref) or ref <= 0.0:
+                continue
+            errs.append(100.0 * (float(hr[sel].min()) / ref - 1.0))
+            wts.append(float(fa.pmax[sel].sum()))
+        e, w = np.asarray(errs), np.asarray(wts)
+        meas = sum(cem_mwh.get(int(p), 0.0) for p in by_plant.index)
+        q = np.percentile(e, [25, 50, 75]) if len(e) else [float("nan")] * 3
+        cw = float(np.average(e, weights=w)) if len(e) else float("nan")
+        print(
+            f"{klass:<12} {by_plant.sum() / 1e6:>8.2f} {meas / 1e6:>9.2f} "
+            f"{by_plant.sum() / max(meas, 1.0):>6.2f} | {len(e):>6} "
+            f"{q[0]:>5.0f} {q[1]:>5.0f} {q[2]:>5.0f} {cw:>8.0f}"
+        )
+    print(
+        "  ratio = model / CEMS energy; HRerr = cheapest-tranche heat rate vs the "
+        "CEMS\n  loading-conditional rate, % (a class built on a good rate reads ~0)."
     )
 
 
@@ -140,14 +191,17 @@ def main() -> None:
     ap.add_argument("--bundle", default="results/probes/caiso127_replay")
     ap.add_argument("--year", type=int, default=2024)
     ap.add_argument("--top", type=int, default=15)
+    ap.add_argument("--klass", default="CT_PEAKER", help="model class to drill into")
     args = ap.parse_args()
-    bundle, year = Path(args.bundle), args.year
+    bundle, year, klass = Path(args.bundle), args.year, args.klass
 
     from _caiso105_evening_q1_pin import fleet_state
     from _caiso125_overnight_attribution import ca_lambda, system_frame
 
     names = plant_names()
-    ph = model_plant_hourly(bundle, year)
+    state = fleet_state(bundle, year)
+    cross_class_summary(bundle, year, state, cems_stats(cems_plant_hourly(year)))
+    ph = model_plant_hourly(bundle, year, klass)
     mdl = (
         ph.groupby(["plant_code", "zone"], observed=True)
         .agg(
@@ -162,7 +216,7 @@ def main() -> None:
         {"cems_mwh": 0.0, "cems_hrs": 0, "cems_pk": 0.0}
     )
 
-    print(f"=== 1. {year} {KLASS} by ZONE (GWh) — is it locational? ===")
+    print(f"\n=== 1. {year} {klass} by ZONE (GWh) — is it locational? ===")
     z = m.groupby("zone", observed=True).agg(
         mdl=("mwh", "sum"), cems=("cems_mwh", "sum")
     )
@@ -187,7 +241,6 @@ def main() -> None:
         )
 
     # --- 3/4: commitment vs price, on the LP's own floors and offers --------
-    state = fleet_state(bundle, year)
     fa = state["fleet_arrays"]
     mc = np.asarray(state["mc_base"], dtype=float)
     cap = fa.pmax[:, None] * np.asarray(fa.availability, dtype=float)
