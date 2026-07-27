@@ -127,8 +127,25 @@ logger = logging.getLogger("legitimacy_diagnostics")
 D1_MIN_PROFILE_R: float = 0.8
 D1_MIN_CV_RATIO: float = 0.5
 D1_OFFPEAK_LAST_HOUR: int = 14  # off-peak window = local hours 0..14 inclusive
-# Classes gated (peaker + intermediate duty); every class is still reported.
-D1_GATED_CLASSES: tuple[str, ...] = ("CT_PEAKER", "ST_GAS")
+# Classes gated; every class is still reported. Peaker + intermediate duty
+# (the original caiso-42 set) plus, since the rubric v2.8 coal
+# gate-blindness correction (ERCOT-121, 2026-07-27), the merchant coal
+# classes — ERCOT COAL_LIGNITE 2023 (profile r 0.745, cv_ratio 0.294: the
+# lignite fleet pinned flat at its availability ceiling) carried the exact
+# C7 failure signature ungated. CHP classes stay ungated (host-steam-pinned
+# duty, same rationale as D2_EXEMPT_CLASSES); the rubric scorer
+# (calibration_verdict.C7_GATED_CLASSES) derives gatedness itself so
+# committed artifacts written under the old set re-score without
+# regeneration — keep the two sets in sync.
+D1_GATED_CLASSES: tuple[str, ...] = (
+    "CT_PEAKER",
+    "ST_GAS",
+    "COAL",
+    "COAL_LIGNITE",
+    "COAL_PRB",
+    "COAL_BIT",
+    "COAL_WC",
+)
 
 # D-2: forced-share gates (audit §7 D-2 / §8 rule 19).
 D2_PEAKER_CLASSES: tuple[str, ...] = ("CT_PEAKER",)

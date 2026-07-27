@@ -124,8 +124,26 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 # The storage numbers remain visible on the dashboard run pages (payload/
 # bench diagnostics, untouched); the pre-removal definitions live in the
 # rubric doc's v2.6 history entry and git history. TIER_RETIRED leaves with
-# them (it existed only for C5b/C5c).
-RUBRIC_VERSION = 2.7
+# them (it existed only for C5b/C5c);
+# v2.8 = the 2026-07-27 coal gate-blindness correction (ERCOT-121 owner
+# charter: "the fix ... is a scorer/gate correction that RE-SCORES every
+# existing keeper in place"). Two distinct blind spots, both scorer-side so
+# committed artifacts re-score without regeneration: (a) C8's materiality
+# lookup resolved the D-2 summary's CAMPD plant-group vocabulary ("COAL")
+# against the payload/bench scored-class split (COAL_LIGNITE/COAL_PRB/...),
+# got 0.0 on both sides, and SKIPPED-immaterial the entire coal fleet of
+# every coal ISO (ERCOT 13-14%, MISO 33-36%, PJM 14-16% of load) while the
+# artifact's own load_share said material — _class_load_share now resolves
+# plant-group aggregates via PLANT_GROUP_MEMBERS; (b) C7 gated only the
+# artifact-baked ``gated`` rows (d1_gated_classes = peaker/intermediate), so
+# a merchant-coal class pinned flat — the exact caiso-42 signature C7 exists
+# to catch, e.g. ERCOT COAL_LIGNITE 2023 cv_ratio 0.294 — was reported and
+# never scored. C7 now derives gatedness rubric-side (C7_GATED_CLASSES:
+# peaker/intermediate + merchant coal) and evaluates each row's STORED
+# metrics against the artifact's gates block, mirroring C8's
+# measured-share-overrides-baked-verdict design (verified to reproduce every
+# baked verdict on previously-gated rows across all six keepers).
+RUBRIC_VERSION = 2.8
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -367,6 +385,42 @@ MAX_LEDGERED_CAVEATS = 3  # non-protective ledgered measured-input caveats
 # 2023/24 (2.1-2.3% — the caiso-42 flat-floor case C7/C8 exist to catch),
 # PJM/MISO CT (3.5-4.2%) and every material ST_GAS (2.1-10.6%) stay gated.
 PROTECTIVE_MIN_LOAD_FRAC = 0.02
+# Rubric-side C7 gate set (v2.8, 2026-07-27 — the ERCOT-121 coal
+# gate-blindness correction). The artifact's baked ``gated`` flag reflects
+# the D1_GATED_CLASSES vintage it was written under (peaker/intermediate
+# only, through 2026-07-27), so the scorer derives gatedness itself — a
+# committed artifact re-scores in place, exactly like C8's measured-share-
+# overrides-baked-verdict rule. Gated: peaker/intermediate duty (the
+# original caiso-42 set) plus the MERCHANT COAL classes (bare rank-fallback
+# + the four rank splits, config/plant_taxonomy.py PLANT_CLASSES) — ERCOT
+# COAL_LIGNITE 2023 (profile r 0.745, off-peak CV ratio 0.294: Oak Grove
+# pinned flat at its ceiling) and MISO COAL_PRB 2023-25 (cv_ratio
+# 0.36-0.45) carried the C7 failure signature invisibly. NOT gated: CHP
+# classes (host-steam-pinned duty, the same structural-must-run rationale
+# as their D2_EXEMPT_CLASSES entry), nuclear (flat-baseload CV degenerate),
+# non-thermal. CC_REGULAR stays ungated pending an owner call (it passes
+# D-1 in all six keepers today; widening beyond the evidenced blindness is
+# an owner amendment).
+C7_GATED_CLASSES = (
+    "CT_PEAKER",
+    "ST_GAS",
+    "COAL",
+    "COAL_LIGNITE",
+    "COAL_PRB",
+    "COAL_BIT",
+    "COAL_WC",
+)
+# D-2 rows/summary label classes by CAMPD plant_group (the floor-attribution
+# vocabulary: coal plants are "COAL"), while the run payload's gmModel and
+# the bench classFull carry the scored-class rank split. _class_load_share
+# bridges the aggregate to its members (mirrors
+# config/plant_taxonomy.COAL_SUPPLY_TO_CLASS values + the bare-COAL parent;
+# kept literal here because this scorer is deliberately stdlib-only). Without
+# the bridge the C8 materiality lookup read 0.0 TWh on both sides for "COAL"
+# and skipped the whole coal fleet as immaterial (v2.8).
+PLANT_GROUP_MEMBERS = {
+    "COAL": ("COAL_LIGNITE", "COAL_PRB", "COAL_BIT", "COAL_WC"),
+}
 # C8 forced-share caps (rubric v2.1): the peaker cap was raised 0.10 -> 0.15
 # by the same owner amendment (CLAUDE.md rule 20 amended in-place); merchant
 # cap unchanged. The scorer derives PASS/FAIL from the artifact's MEASURED
@@ -1630,8 +1684,17 @@ def _class_load_share(klass: str, ypay: dict, ybench: dict) -> float | None:
     scored via the actual side. ``None`` when the totals are unavailable
     (caller then gates — conservative, never a silent skip).
     """
-    m = float((ypay.get("gmModel") or {}).get(klass, 0.0))
-    a = float((ybench.get("classFull") or {}).get(klass) or 0.0)
+    gm = ypay.get("gmModel") or {}
+    cf = ybench.get("classFull") or {}
+    m = float(gm.get(klass, 0.0))
+    a = float(cf.get(klass) or 0.0)
+    if m == 0.0 and a == 0.0 and klass in PLANT_GROUP_MEMBERS:
+        # The class label is a CAMPD plant-group aggregate (D-2 vocabulary)
+        # whose energy the payload/bench carry under the scored-class split —
+        # sum the members so the coal fleet is not read as 0 % of load (v2.8).
+        members = PLANT_GROUP_MEMBERS[klass]
+        m = sum(float(gm.get(c, 0.0)) for c in members)
+        a = sum(float(cf.get(c) or 0.0) for c in members)
     _, a_gen = _gen_totals(ypay, ybench)
     load = _total_load(ypay, a_gen)
     if load <= 0:
@@ -1661,14 +1724,22 @@ def score_shape(year: int, legit: dict | None, ypay: dict, ybench: dict) -> list
     Reads ``<bundle>/legitimacy_diagnostics.json`` (written by
     ``scripts/legitimacy_diagnostics.py --json-out``) — the verdict never
     recomputes the diagnostic, so the S1 suite stays the single
-    implementation. A gated peaker/intermediate class (per the artifact's
-    ``d1_gated_classes``) FAILs the year when its hour-of-day profile
+    implementation. A gated class FAILs the year when its hour-of-day profile
     correlation or off-peak CV ratio breaches the artifact's D-1 gates — the
     caiso-42 flat-floor signature (model CV 0.000 vs actual 0.35-0.45) that
-    annual-volume bands cannot see. Materiality floor (rubric v2.1): a class
-    below ``PROTECTIVE_MIN_LOAD_FRAC`` of ISO load is SKIPPED-immaterial
-    (reported, never gated). SKIPPED (never a silent pass) when the artifact
-    or the year is absent.
+    annual-volume bands cannot see. Gatedness is derived RUBRIC-SIDE
+    (:data:`C7_GATED_CLASSES` — peaker/intermediate + merchant coal, v2.8 —
+    union the artifact's own baked ``gated`` flag), and the verdict is
+    evaluated from the row's STORED ``profile_r``/``cv_ratio`` against the
+    artifact's ``gates`` block rather than the row's baked ``verdict``: an
+    artifact written under the pre-v2.8 gate set (coal rows baked
+    ``gated=False``/``pass``) re-scores in place, mirroring C8's
+    measured-share-overrides-baked-verdict rule. A ``cv_ratio`` of ``None``
+    (degenerate actual off-peak CV) skips the CV leg, matching ``run_d1``.
+    Materiality floor (rubric v2.1): a class below
+    ``PROTECTIVE_MIN_LOAD_FRAC`` of ISO load is SKIPPED-immaterial (reported,
+    never gated). SKIPPED (never a silent pass) when the artifact or the year
+    is absent.
     """
     if legit is None:
         return [
@@ -1682,7 +1753,8 @@ def score_shape(year: int, legit: dict | None, ypay: dict, ybench: dict) -> list
     rows = [
         r
         for r in legit.get("diagnostics", {}).get("D1", {}).get("rows", [])
-        if int(r.get("year", -1)) == int(year) and r.get("gated")
+        if int(r.get("year", -1)) == int(year)
+        and (str(r.get("class")) in C7_GATED_CLASSES or r.get("gated"))
     ]
     if not rows:
         return [
@@ -1692,9 +1764,11 @@ def score_shape(year: int, legit: dict | None, ypay: dict, ybench: dict) -> list
                 "no gated-class D-1 rows for this year in legitimacy_diagnostics.json",
             )
         ]
+    min_r = gates.get("d1_min_profile_r")
+    min_cv = gates.get("d1_min_cv_ratio")
     tol = (
-        f"profile r ≥ {gates.get('d1_min_profile_r')} & off-peak CV ratio ≥ "
-        f"{gates.get('d1_min_cv_ratio')} (h0-{gates.get('d1_offpeak_last_hour')}); "
+        f"profile r ≥ {min_r} & off-peak CV ratio ≥ "
+        f"{min_cv} (h0-{gates.get('d1_offpeak_last_hour')}); "
         f"class ≥ {PROTECTIVE_MIN_LOAD_FRAC:.0%} of load"
     )
     out = []
@@ -1715,7 +1789,18 @@ def score_shape(year: int, legit: dict | None, ypay: dict, ybench: dict) -> list
                 )
             )
             continue
-        ok = r.get("verdict") != "FAIL"
+        pr = r.get("profile_r")
+        cvr = r.get("cv_ratio")
+        if pr is None and min_r is not None:
+            # No stored metric to evaluate (defensive; every committed
+            # artifact carries profile_r) — trust the baked verdict.
+            ok = r.get("verdict") != "FAIL"
+        else:
+            fail_r = min_r is not None and pr is not None and float(pr) < float(min_r)
+            fail_cv = (
+                min_cv is not None and cvr is not None and float(cvr) < float(min_cv)
+            )
+            ok = not (fail_r or fail_cv)
         out.append(
             {
                 "criterion": "shape",
