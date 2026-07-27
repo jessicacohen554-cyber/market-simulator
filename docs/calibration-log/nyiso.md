@@ -1053,3 +1053,59 @@ binding never becomes a tail; and the eligible set is the pocket not steam, so
 binding never becomes steam commitment. `nyiso_li_locational_reserve` is
 therefore a **correct but probe-adjudicated INERT** rule-14 fix — carried
 default-off so no successor re-runs it expecting movement.
+
+## 2026-07-27 — nyiso-84: the ASM pin flips the East-tier premise ($40, not $775); the published-spin gate binds massively and moves C3c by ZERO hours — the reserve-tier route to C3c is closed in full
+
+**Keeper: `2026-07-26-nyiso-81-floor-rederive`, UNCHANGED.** Session scope: the
+nyiso-83 handoff's redirect of the C3c lane at the NYCA/East tier (model tail
+3/0/9 h >$300 vs RT actual 10/12/42). Registered runs (all three years, one
+bundle each, vs a same-HEAD zero-delta control):
+`2026-07-27-nyiso-84-{control,east-ladder,spin-gate,east-gate}`. Full write-up:
+`docs/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md` §6.
+
+**The pin came first and flipped the premise.** The handoff assumed the two
+missing East families (spin_10 330 MW, total_30 1,200 MW — LRR posting rows the
+model never carried) sit "in a tier that CAN price to the gate" ($775). Pinned
+from the ASM §6.8 itself before coding, as instructed: items 2 and 12 are
+**$40/MW** (current May-2026 ASM; $25 in the July-2019 issue — the uplift is
+the July-2021 procurement-enhancement package, corroborated in-force for the
+training window by the 2023 SOM p. A-132). Only item 7 — the East 10-minute
+total already in the model — is $775. The families are added anyway
+(`nyiso_east_reserve_families`, rule-14 fix, default-off) and the ladder-only
+arm is **bit-identical to control** — the East-tier repeat of nyiso-83 §4b.
+
+**The mechanism arm binds and still cannot form the tail.**
+`nyiso_spin_reserve_online` (default-off) generalizes the class-2 online gate
+to the PUBLISHED spinning families — nyca_10min_spin (655 MW, **$775**) and
+east_10min_spin — on the product-definition driver (spinning = synchronized;
+hard-errors vs `nyiso_synchronised_reserve`, rule 19). Gate-only takes the
+NYCA spin family from 22/6/66 reserve-dual hours to 652/800/1589; composed with
+the ladder, 3,248/3,863/5,525 h (37–63 % of all hours) with real overnight GT
+commitment forced (CT_CHP +0.2–0.3 TWh, ev/ng < 1). **C3c: 3/0/9 in every arm,
+bit-identical.** Binding grows in breadth, never depth — dual max never exceeds
+the control's own ($13.5/$63.4/$177.3): the published curves are shortfall
+ramps and modeled synchronized supply never falls deep enough short to climb
+them. With nyiso-83's $25 J/K ceiling and the $40 East pins, **no published
+reserve demand curve forms the >$300 tail at hourly-LP granularity**. The
+residual points at RT-interval (5-minute) shortage pricing the hourly LP
+structurally cannot see, plus the 2025 LI steam OOM commitment driver
+(carried, not chased, per the handoff).
+
+**nyiso-82 consequence:** its winter-spread disposition waited on C3c
+movement; C3c did not move → the winter-spread arm stays unarmed.
+
+**Flag dispositions:** both default-off. The East ladder is
+probe-adjudicated inert (same standing as `nyiso_li_locational_reserve`). The
+spin gate is requirement-side sound but supply-side quick-start-scoped (real
+NYISO spin is substantially online CC/steam governor headroom, which the class
+taxonomy excludes) — widening the gated class to ramp-limited online CC/steam
+headroom is the prerequisite for any future promotion case, and with C3c
+unmoved there is none.
+
+**Collateral repairs shipped this session:** (1) the pinned default cache_key
+test on main was failing — fa9fc78's `nyiso_li_locational_reserve` /
+`nyiso_incity_commitment_obligation` were never registered in
+`_CACHE_KEY_OPTIONAL_FIELDS`; both registered (with the two new nyiso-84
+fields), default key restored to `edbc1b103207170a`. (2) `write_derived_solve_inputs`
+was called but never imported in `run_calibration_full.py` (a3eb7c0), so every
+solve since silently skipped derived-input provenance capture; import added.
