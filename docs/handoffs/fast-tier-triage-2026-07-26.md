@@ -574,7 +574,27 @@ caught by the guard test written for exactly that drift, fixed here.
 0 failed, 0 collection errors, 0 xpassed
 ```
 
-Baseline → here: **141 failed + 2 errors + 60 xpassed → 0 + 0 + 0.** The single
-remaining xfail is this triage's own cited bucket-B mark (§8), which carries its
-removal condition in the mark. `continue-on-error` is REMOVED from ci.yml's fast
-tier and the step renamed; a red there is now a real regression.
+Baseline → here: **141 failed + 2 errors + 60 xpassed → 0 + 0 + 0** (measured
+pre-rebase, at main `b447691`). The single remaining xfail is this triage's own
+cited bucket-B mark (§8), which carries its removal condition in the mark.
+
+### 9.1 Flip HELD on rebase (2026-07-27)
+
+Re-measured after rebasing onto main `2f2d583` (42 commits later): **5210
+passed, 1 xfailed, 0 collection errors, 0 xpassed, 2 failed.** Neither failure
+is an escalation, and neither is honestly fixable from this lane, so
+`continue-on-error` STAYS for now:
+
+| Test | Why it is red | Owner |
+|---|---|---|
+| `tests/unit/data/test_cache_control.py::test_largest_retained_frames_is_sorted_and_limited` | a SECOND, distinct order-dependent leak — passes in isolation, one of the two members the Wave-5A migration newly exposed (§6.2). The EIA-860 vintage global that owned the original five is fixed; this has a different polluter. | needs its own bisect |
+| `tests/regression/test_integration.py::TestFullYearPerformance::test_full_year` | the §6.1 perf budget (30 s) on a 4-core container. Loosening it is forbidden (charter step 5 / rule 14 applied to tests). | needs a reference-hardware measurement |
+
+A third rebase failure WAS fixed here, because it is a genuine main regression
+the pins exist to catch: `fa9fc78` (nyiso-83) added
+`nyiso_li_locational_reserve` + `nyiso_incity_commitment_obligation` without
+registering them in `_CACHE_KEY_OPTIONAL_FIELDS`, moving the default cache key
+`edbc1b103207170a` → `30065460cdc3042c` and orphaning every on-disk cache. Both
+are now registered the sanctioned way; the pin is back at `edbc1b103207170a`.
+
+Everything the flip was gated on is closed. Flip the moment those two clear.
