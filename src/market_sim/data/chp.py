@@ -92,6 +92,26 @@ def _correct_chp_steam_credit_hr(generators: list, iso: str) -> None:
     MISO 2026-07-08: audited but NOT added — its HRs are equally sub-physical yet
     its CHP does not over-deliver (BTM-dominated, CT_CHP already under-runs), so
     the correction only worsens CT_CHP; see CHP_STEAM_CREDIT_HR_CORRECTION_ISOS.
+    ** MISO 2026-07-27 (miso-97): that decision is VACATED — its load-bearing
+    premise is REFUTED. Both clauses rested on a BTM share that was itself the
+    unsourced CHP_BTM_PCT_BY_SECTOR["merchant"] = 35.0 default, because MISO was
+    the only ISO with NO chp_sector data at all (its derive ran without the
+    uncommitted raw f923 ZIPs and the preserve-prior guard froze the empty
+    column). On the now-measured EIA-860 sector shares (CC_CHP 50.9 %, CT_CHP
+    65.5 %) CC_CHP — 72 % of MISO CHP energy — OVER-delivers vs EIA-923 by
+    +8.1 % ALREADY AT THE OLD DEFAULT and by up to +44 % on the measured share,
+    and CT_CHP's under-run is not robust: raising the hold-out rescales LP
+    capacity, the steam floor AND the bench subtrahend by the same (1 - s), so
+    the model/actual ratio can only move UP (rho >= f). "Only worsens CT_CHP" is
+    also exactly the rule-14 [R-ACCURATE] signal to look elsewhere, and rule 1
+    [R-STRUCT] forbids rejecting a correct input on residual grounds.
+    NOTE the replacement is NOT this function's hand factors: caiso-128 measured
+    the 1.8x topping factor OVER-correcting CAISO CT_CHP by +40 % while five
+    ISOs sit 12-62 % under, so a universal factor is wrong in both directions at
+    once. The designed successor is the plant's own CEMS power-only rate
+    (caiso-128 §6), ISO-generic and default-off. Filed, NOT built — it is a
+    separate delta from the sector correction (rule 19 [R-ONE-MECH]).
+    Full measurement: results/calibration/FINDING-miso97-chp-sector-btm-2026-07.md **
     NEISO 2026-07-08: audited but NOT added for the SAME reason — its reported HRs
     are equally sub-physical (CC_CHP 55% of cap < 6.0, CT_CHP 79% < 8.0) but its
     CHP does NOT over-deliver: on 2023-2025 the model runs CC_CHP -37..-42% and
