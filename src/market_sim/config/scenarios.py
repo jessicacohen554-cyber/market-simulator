@@ -242,6 +242,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # scope is inert — so it is dropped from the hash at None; a scoped run
     # enters the key as a distinct scenario.
     "ercot_offer_hrmult_ep_rebasis_bands",
+    # pjm-132 within-season conditioning of the PJM offer-surface family
+    # (owner-authorized 2026-07-27 with the "keep the current config as
+    # default" amendment). Default-off and byte-identical for every existing
+    # config — with the gate off both surfaces resolve to their live
+    # within-year filenames and the binning helper reproduces the original
+    # quantile construction exactly — so it is dropped from the hash at its
+    # default and the pinned default cache_key stays byte-stable. An ARMED run
+    # enters the key as a distinct scenario, which is what keeps the A/B's two
+    # arms independent in the on-disk results cache.
+    "pjm_offer_surface_within_season",
 )
 
 
@@ -5876,6 +5886,33 @@ class ScenarioConfig:
     # frozen against residuals (rule 20). PJM-only (rule 25: the surface
     # carries no generic fallback and never crosses ISO boundaries).
     pjm_offer_surface_conditional: bool = False
+    # WITHIN-SEASON tightness conditioning for the PJM measured-offer-surface
+    # FAMILY (both the top-of-curve and the mid-curve surface), default OFF.
+    #
+    # Authorized by the owner 2026-07-27 with an amendment
+    # (docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md decision
+    # banner; executed by pjm-132, charter
+    # docs/handoffs/pjm-132-midcurve-reconditioning-charter-2026-07.md). The
+    # owner's term was "keep the current config as default unless seasonal is
+    # new keeper", so the within-YEAR surfaces remain live and keep their
+    # filenames and this gate stays default-OFF: every existing keeper and
+    # forecast run is byte-identical unless it is explicitly armed.
+    #
+    # Armed, it switches the whole family COHERENTLY (memo §2 — the two
+    # surfaces deliberately share one tightness-state definition, so they may
+    # never carry contradictory ones): the default surface filenames resolve
+    # to the `_withinseason` vintage AND the solve-time binning ranks each
+    # hour against its own season's net-load quantiles
+    # (constants.PJM_SEASON_OF_MONTH) instead of the year's. A VINTAGE GUARD
+    # hard-fails any solve pairing an armed gate with a within-year JSON, or
+    # an unarmed gate with a within-season JSON, so a half-updated state
+    # cannot silently mismeasure.
+    #
+    # Rule 13: forward-native exactly as the within-year form is — at solve
+    # time the conditioner is built from the year's own simulated net load
+    # (np.quantile per season instead of per year; the month->season map is
+    # calendar), no measured data enters. Rule 25: PJM-only.
+    pjm_offer_surface_within_season: bool = False
     # Path to the measured PJM condition-binned ladder JSON (default: the
     # frozen data/raw/_validation-source/pjm_offer_surface_condbinned.json).
     # None → the mechanism is a no-op even when the flag is on.
