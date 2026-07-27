@@ -1110,7 +1110,12 @@ def load_or_synthesize_bins(
             ),
         )
     bins = _pkg_ns().fleet_to_bins(
-        _pkg_ns().load_fleet_from_csv(iso, iso_config) + retired_within_window,
+        _pkg_ns().load_fleet_from_csv(
+            iso,
+            iso_config,
+            measured_ct_heat_rates=config.measured_ct_heat_rates,
+        )
+        + retired_within_window,
         iso,
         config,
     )
@@ -1184,7 +1189,12 @@ def build_base_fleet(
     if campd_bins is not None:
         campd_fleet, _ = _pkg_ns().bins_to_fleet(campd_bins, zone_names, config)
         all_gens = (
-            _pkg_ns().load_fleet_from_csv(iso, iso_config, year=vintage_year)
+            _pkg_ns().load_fleet_from_csv(
+                iso,
+                iso_config,
+                year=vintage_year,
+                measured_ct_heat_rates=config.measured_ct_heat_rates,
+            )
             + retired_within_window
         )
         if iso == "ERCOT":
@@ -1217,7 +1227,12 @@ def build_base_fleet(
         fleet = non_thermal + campd_fleet
     else:
         fleet = _pkg_ns().aggregate_fleet(
-            _pkg_ns().load_fleet_from_csv(iso, iso_config, year=vintage_year)
+            _pkg_ns().load_fleet_from_csv(
+                iso,
+                iso_config,
+                year=vintage_year,
+                measured_ct_heat_rates=config.measured_ct_heat_rates,
+            )
             + retired_within_window,
             n_bins=(
                 config.heat_rate_bin_count if legacy_n_bins is None else legacy_n_bins
