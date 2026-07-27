@@ -617,6 +617,8 @@ def run_year(
     nyiso_synchronised_reserve: bool | None = None,
     nyiso_li_locational_reserve: bool | None = None,
     nyiso_incity_commitment_obligation: bool | None = None,
+    nyiso_east_reserve_families: bool | None = None,
+    nyiso_spin_reserve_online: bool | None = None,
     nyiso_spin_headroom_frac: float | None = None,
     nyiso_dynamic_reserve_requirements: bool | None = None,
     nyiso_hydro_reserve_eligible: bool | None = None,
@@ -1218,6 +1220,14 @@ def run_year(
     if nyiso_incity_commitment_obligation is not None:
         config = config.with_overrides(
             nyiso_incity_commitment_obligation=nyiso_incity_commitment_obligation
+        )
+    if nyiso_east_reserve_families is not None:
+        config = config.with_overrides(
+            nyiso_east_reserve_families=nyiso_east_reserve_families
+        )
+    if nyiso_spin_reserve_online is not None:
+        config = config.with_overrides(
+            nyiso_spin_reserve_online=nyiso_spin_reserve_online
         )
     if nyiso_spin_headroom_frac is not None:
         config = config.with_overrides(

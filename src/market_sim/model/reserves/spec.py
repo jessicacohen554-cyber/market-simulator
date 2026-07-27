@@ -390,6 +390,62 @@ NYISO_RCPF_LOCATIONAL_LI: dict[str, dict] = {
 # static base above; this is the on-peak step of the same published cell.
 NYISO_LI_30MIN_ONPEAK_MW: float = 540.0
 
+# --- NYISO Eastern (F-K) missing reserve families ---------------------------
+# The published EAST limbs of the SAME "Locational Reserve Requirements"
+# posting that grounds NYISO_RCPF_LOCATIONAL: the model carried only ONE of the
+# three printed EAST rows (east_10min_total, 1,200 MW / $775). The published
+# EAST 10-minute SPINNING (330 MW) and EAST 30-minute total (1,200 MW) families
+# were absent — the same rule-14 [R-ACCURATE] omission class nyiso-83 found for
+# Zone K, one tier up (nyiso-84).
+#
+# Requirements — the transcribed posting
+# (data/raw/NYISO-AS/requirements/nyiso_locational_reserve_requirements.csv,
+# rows ``region=EAST``): spin_10 330 MW ("quarter of largest single
+# contingency"), total_30 1,200 MW, all hours — identical across the v2020 /
+# v2021 / v2026 regimes, so the v2021 regime values span ALL of 2023-2025.
+#
+# Demand-curve values — NYISO Ancillary Services Manual §6.8, PINNED FROM THE
+# MANUAL ITSELF (nyiso-84 session, 2026-07-27) rather than assumed from the
+# $775 the East 10-minute-total family carries:
+#   * item 2 ("Eastern, Southeastern, New York City, or Long Island Spinning
+#     Reserves ... shall be $40/MW");
+#   * item 12 ("Eastern, Southeastern, New York City, or Long Island 30-Minute
+#     Reserves ... shall be $40/MW").
+# Only item 7 — the East 10-minute TOTAL already in NYISO_RCPF_LOCATIONAL —
+# carries $775. Version vintage: the July-2019 ASM printed $25 for items 2/12;
+# the $25 -> $40 uplift belongs to the July-2021 reserve-procurement
+# enhancement package (the same regime change that introduced the SENY hourly
+# steps, FERC accepted 2021-06-23 effective 2021-07-13), and the current ASM
+# (issued May 2026) carries $40. In-force for the training window is
+# corroborated by the 2023 SOM (p. A-132), which reproduces the
+# post-enhancement curve family (NYCA 30-min 9-step $40..$750, SENY $500+$40)
+# as the 2022-2023 as-enforced curves. A $40/MW ceiling CANNOT reach the C3c
+# $300 tail gate — that consequence is measured by the nyiso-84 probe arms,
+# never assumed away (rule 1 [R-STRUCT]: the published families belong in the
+# model because they are real, not because of what they do to the residual).
+NYISO_RCPF_EAST_FAMILIES: tuple[tuple[str, float, float, float], ...] = (
+    ("east_10min_spin", 330.0, 0.0, 40.0),
+    ("east_30min_total", 1200.0, 0.0, 40.0),
+)
+
+# The published SPINNING reserve families the online-spin gate
+# (``nyiso_spin_reserve_online``) re-classes onto the ONLINE-gated reserve
+# class. Driver: the PRODUCT DEFINITION — spinning reserve is supplied by
+# resources synchronized to the grid (ASM §2 product definitions; the NYCA
+# total-spinning and East spinning requirements are exactly the two published
+# spin cells the model carries). Idle capacity cannot be "spinning": letting
+# an offline peaker's pmax satisfy a spinning requirement is the same
+# idle-allowed-headroom misrepresentation nyiso-83 demonstrated for the J/K
+# 10-minute families (FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md
+# §4b), sitting one tier up where nyca_10min_spin prices at $775. Window: all
+# hours (both published requirements are all-hours). Forward story: the gate
+# regenerates from the published requirement + the fleet's online state — no
+# fitted scalar (the rho multiplier is the fleet (pmax-pmin)/pmin property the
+# existing gated classes already use).
+NYISO_SPIN_ONLINE_FAMILIES: frozenset[str] = frozenset(
+    {"nyca_10min_spin", "east_10min_spin"}
+)
+
 # The downstate 10-minute families the in-city COMMITMENT OBLIGATION re-classes
 # onto the online-gated in-zone obligation class
 # (``nyiso_incity_commitment_obligation``). Both are load-pocket 10-minute
@@ -2499,6 +2555,21 @@ def _nyiso_design(
         # carries the published diurnal on/off-peak step, installed as an hourly
         # requirement below.
         locational = {**locational, **NYISO_RCPF_LOCATIONAL_LI}
+    east_families = bool(getattr(config, "nyiso_east_reserve_families", False))
+    if east_families:
+        # Published EAST spin_10 (330 MW, $40) + total_30 (1,200 MW, $40)
+        # families (NYISO_RCPF_EAST_FAMILIES — the nyiso-84 rule-14 omission
+        # fix), config-gated so a flag-off run stays byte-identical. APPENDED
+        # to the existing East region's product tuple — never a second dict
+        # entry, which would silently REPLACE the East 10-minute-total family
+        # under the {**a, **b} merge above.
+        locational = dict(locational)
+        east = dict(
+            locational.get("East")
+            or {"zones": NYISO_RCPF_LOCATIONAL["East"]["zones"], "products": ()}
+        )
+        east["products"] = tuple(east["products"]) + NYISO_RCPF_EAST_FAMILIES
+        locational["East"] = east
     for region in locational.values():
         member_idx = tuple(zone_index[z] for z in region["zones"] if z in zone_index)
         if not member_idx:
@@ -2531,6 +2602,7 @@ def _nyiso_design(
 
     obligation = bool(getattr(config, "nyiso_incity_commitment_obligation", False))
     synch = bool(getattr(config, "nyiso_synchronised_reserve", False))
+    spin_online = bool(getattr(config, "nyiso_spin_reserve_online", False))
     if obligation and synch:
         raise ValueError(
             "nyiso_incity_commitment_obligation=True with "
@@ -2540,6 +2612,16 @@ def _nyiso_design(
             "rule 19 [R-ONE-MECH]). The obligation family GENERALIZES the "
             "path-A NYC-spinning family to the published J/K ladders; enable "
             "one or the other, never both."
+        )
+    if spin_online and synch:
+        raise ValueError(
+            "nyiso_spin_reserve_online=True with "
+            "nyiso_synchronised_reserve=True: both hold spinning reserve on "
+            "ONLINE capacity — one phenomenon, two mechanisms (CLAUDE.md "
+            "rule 19 [R-ONE-MECH]). The spin-online gate applies the path-A "
+            "online-gated class to the PUBLISHED spinning families "
+            "(nyca_10min_spin $775, east_10min_spin $40) instead of path A's "
+            "hand-scoped NYC $500 family; enable one or the other, never both."
         )
     commit_gated = synch and bool(getattr(config, "commitment_enabled", False))
     if synch:
@@ -2563,6 +2645,13 @@ def _nyiso_design(
             # in-zone obligation class (index 2) instead of the idle-allowed
             # quick-start class, so meeting the published requirement forces
             # in-city units to be dispatched rather than counting idle capacity.
+            rclass = 2
+        if spin_online and name in NYISO_SPIN_ONLINE_FAMILIES:
+            # Published SPINNING family: draws the ONLINE-gated class (index 2)
+            # — spinning reserve is by product definition supplied by
+            # synchronized resources, so idle quick-start capacity backs none
+            # of it (NYISO_SPIN_ONLINE_FAMILIES; the nyiso-84 generalization
+            # of the same gate machinery to the NYCA/East spin tier).
             rclass = 2
         if name in dynamic_req:
             # Measured as-enforced hourly requirement (issue #1344): the
@@ -2673,6 +2762,11 @@ def _nyiso_design(
             steam_mask = fuel_names_ob == "gas_st"
         else:
             steam_mask = np.asarray(groups) == "ST_GAS"
+        # When the spin-online gate is armed alongside the obligation, the
+        # published spinning families share this class-2 row: online steam
+        # headroom IS synchronized (spinning) supply, so the wider
+        # steam-union eligible set is physically valid for them and the
+        # single online_rho stays one fleet property (rule 5 [R-NO-MAGIC]).
         obligation_elig = quick_elig | steam_mask
         eligible = np.vstack([full_elig, quick_elig, obligation_elig])
         online_gated = np.array([False, False, True], dtype=bool)
@@ -2692,7 +2786,13 @@ def _nyiso_design(
             )
         else:
             online_rho = 1.0
-    elif synch and not commit_gated:
+    elif (synch and not commit_gated) or spin_online:
+        # ONE online-gated class-2 construction serves both arm shapes: path
+        # A's hand-scoped NYC spin family (synch) and the published spinning
+        # families' gate (spin_online) — the same machinery, never a second
+        # gate (rule 19 [R-ONE-MECH]). Eligibility is the quick-start
+        # (10-minute-capable) set; the gate then counts only its ONLINE
+        # output, so an offline peaker is not spinning reserve.
         eligible = np.vstack([full_elig, quick_elig, quick_elig])
         online_gated = np.array([False, False, True], dtype=bool)
         q_idx = np.flatnonzero(quick_elig)
