@@ -197,6 +197,26 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       specifically (`docs/handoffs/forecast-retirement-calibration-plan-2026-07.md`), **ALL
       remaining sessions are Opus/Fable regardless of scope** (owner order, this rule's
       incident).
+1. `[R-MECH-MATRIX]` **The cross-ISO mechanism matrix is the single test ledger — check it before
+    proposing a lever, update it in the session that tests one.** The matrix
+    (`docs/codebase-site/data/mechanism-matrix.js`, rendered at
+    `docs/codebase-site/mechanism-matrix.html`; protocol, ISO-similarity analysis, per-ISO lever
+    queues and glossary: `docs/mechanism-testing-matrix.md`) records, per mechanism × ISO ×
+    lane (backcast keeper / forecast default), whether the mechanism is armed and its tested
+    verdict (`K` keeper / `R` rejected / `I` inert / `G` governance-refused / `O` open /
+    `U` untested / `·` n/a) with the evidence citation. Binding duties: (a) **handoff prompts
+    that open a calibration or forecast session cite the matrix and the target ISO's lever
+    queue**; the session picks its lever from the queue or states why it goes off-queue, and
+    never re-tests a cell already adjudicated `R`/`I`/`G` without new evidence (the
+    DO-NOT-REDO discipline). (b) **The session that tests a mechanism — probe, candidate, or
+    keeper — updates that mechanism's cell (status + citation) in the same session**, rejected
+    outcomes included, alongside the rule-15 dashboard registration. (c) **A PR that adds a new
+    solve-affecting mechanism adds its matrix row in the same PR** — a mechanism missing from
+    the matrix is an unregistered tuning channel in spirit (rule 24). (d) Verdicts are strictly
+    per-ISO (rule 25): a verdict in one ISO never fills another ISO's cell — transfer candidates
+    enter the target ISO as `U`, and the target session derives its own parameters from its own
+    market's data. When a keeper changes, the promoting session re-stamps the matrix header
+    (keeper ids + open gates) and re-checks that ISO's column.
 
 Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8, numbered
 **16–25 there** — a doc reference to "audit rule N" maps to rule N+1 here. Mapping table, per-rule
