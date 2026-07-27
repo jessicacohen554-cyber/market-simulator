@@ -1403,3 +1403,89 @@ root-cause issue — reported, not tuned.**
   static summer fallbacks replaced" (miso-93 correction 1 respected).
 * Rule 22 honoured: 2023–2025 only. No marker, freeze active.
 * Next number: **miso-95.**
+
+---
+
+## miso-95 — LANE 1 STAGE 1: `thermal_tranches_MISO.csv` is provenance-orphaned, and so is every other ISO's
+
+**Determination `PROVENANCE-BLOCKED`. No solve, no bundle, no registration.**
+Keeper unchanged (`2026-07-25-miso-88-egrid-hr`). Evidence:
+`results/calibration/FINDING-miso95-thermal-tranches-provenance-2026-07.md`.
+
+The miso-94 handoff pre-registered the rule: if the control does not reproduce,
+report and stop (rule 24 `[R-DOF]`). It does not reproduce, so STAGE 2 (the
+single-delta A/B on the std outage extract) was **never entered** and no LP ran.
+
+### The axis miso-94 never named, and it reproduces exactly
+
+`derive_thermal_tranches.py` takes non-ERCOT nameplate from `load_fleet_from_csv`
+with `apply_cc_summer_guard` at its default **True**. The committed artifacts were
+derived with that guard **OFF**: re-deriving with it disabled makes `nameplate_mw`
+match on **every row of all five ISOs** (MISO 6 exceptions → 0, PJM 5 → 0,
+NYISO 3 → 0, CAISO 2 → 0, NEISO 2 → 0). The 18 exceptions are exactly the CC
+plants `_reconcile_cc_pmax_to_nameplate` reconciles.
+
+It is a live defect, not a curiosity: `committed_pct` / `mustrun_pct` / `p25_cf`
+are ratios over that nameplate, and the model applies them to the **guarded**
+(smaller) pmax — so the min-stable/must-run floor is understated twice, one-sided.
+**~1,090 MW of understated CC committed floor across five ISOs, MISO carrying
+~766 MW** (Union Power 55380 r = 1.42, Perryville 55620 r = 1.53, Hot Spring
+55418 r = 1.34, Attala/Hinds r ≈ 1.47, Ouachita r = 1.39). Rule 11 `[R-ACCURATE]`
+item: the accurate input is already in the model and the artifact still quotes the
+pre-guard basis at it. A **code** change, so rule 23's data-change trigger never
+fired — which is exactly why nothing re-derived.
+
+### What does not reproduce, and why it cannot be recovered here
+
+With the guard axis neutralized, MISO still drifts on `online_hours` (94 rows,
+max 17,378 h), `committed_pct` (69, max 53.3 pp) and `p25_cf` (75, max 133.3).
+Four arms (guard on/off × HEAD/pre-guard extract × per-unit/primary routing ×
+derate-off) isolate three of four axes:
+
+* the `6a8f285` merit-order guard — **measured, and immaterial**: 3 of 94 rows,
+  372 of 17,378 hours. The lane's founding premise is true but an order of
+  magnitude too small.
+* the derate **was** applied (disabling it is strictly worse on every column) but
+  was **routed differently** — routing each row to its plant's *primary* fleet
+  group instead of the extract's own per-unit `plant_group` moves Brame 6190/COAL
+  21,099 → 3,288 against a committed 3,721 and cuts the ISO tail to 3,614. Close,
+  not exact.
+* a small, two-signed, ubiquitous ±10–400 h residual on ~84 of 198 `ok` rows with
+  no outage story and exact `nameplate_mw` — the signature of an upstream CAMPD
+  hourly / `parasitic_load_factors.parquet` vintage move. **Not reconstructible**:
+  shallow clone (304 commits), raw parquets now span 2018–2026, `git log` on
+  `data/raw/campd-unit-level/` returns one merge commit.
+
+Adopting the re-derive would move all of that in one blob — a five-way confounded
+arm (the caiso-123 defect) offered against a 0.05 pp C3a-2024 miss.
+
+### Cross-ISO (LANE 2, partially closed)
+
+All five `thermal_tranches_<ISO>.csv` are stale on **both** axes. Schema tells the
+generations before any number is compared: only CAISO's has `steam_level_cf`;
+NYISO and NEISO also lack `mustrun_online_pct` and `online_frac`; CAISO's max
+`online_hours` is 22,760 (a partial year window), which is why its drift is the
+smallest. Standing check:
+`scripts/probes/miso95_tranche_provenance_sweep.py` (no CAMPD read, seconds). `6a8f285` stripped rows from all six std extracts
+(MISO −2,424, PJM −3,246, NYISO −3,037, NEISO −1,294, CAISO −810, ERCOT −3,484).
+**`campd-unit-outages-short-PJM.csv` is stale and un-actioned** — a live consumer
+(`unit_outage_short_windows`), a one-command re-derive, and its MISO twin's control
+*passed* in miso-94, so a clean single-delta A/B is available on it today. Solve-side
+exposure is already covered (pjm-129, miso-93/94) and should not be re-run.
+
+### Hygiene
+
+Every swap hash-verified both ways; `f2b3ec8` mounted once and restored to
+`c298c68` = `HEAD:data/raw/campd-unit-outages-MISO.csv`. All arms wrote to `/tmp`;
+**no file under `data/` was modified.** Rule 22 honoured — `--years 2023 2024 2025`
+only, no marker, freeze active.
+
+### Next
+
+The unblock is an owner call, ranked in the finding §4: (1) re-baseline all five
+tranche artifacts deliberately, one registered arm per ISO; (2) adopt the
+CC-guard sub-axis alone — the only cleanly separable single delta today, known
+sign (floors go **up**); (3) stamp a `campd_vintage` provenance header into every
+derived artifact, which would have answered this session in one `head -1`.
+
+Next number: **miso-96.**
