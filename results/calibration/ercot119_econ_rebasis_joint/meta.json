@@ -1,8 +1,10 @@
 {
-  "timestamp": "2026-07-24T06:24:49",
+  "timestamp": "2026-07-27T02:58:18",
   "iso": "ERCOT",
   "years": [
-    2023
+    2023,
+    2024,
+    2025
   ],
   "hours": 8760,
   "passes": [
@@ -11,7 +13,9 @@
   "commitment": false,
   "commitment_screen_coal": true,
   "gas_prices": {
-    "2023": 2.54
+    "2023": 2.54,
+    "2024": 2.19,
+    "2025": 3.52
   },
   "coal_lignite_mustrun": null,
   "coal_prb_mustrun": null,
@@ -64,11 +68,24 @@
     "gas_st_drag_seasonal": true,
     "ercot_thermal_dam_availability_hourly": true,
     "ercot_thermal_dam_availability_plant": true,
-    "ercot_offer_surface_cleared_share_state": false
+    "ercot_offer_surface_cleared_share_state": false,
+    "coal_econ_marginal_hr_bound": true,
+    "ercot_thermal_dam_availability_coal": true,
+    "ercot_offer_hrmult_ep_rebasis": true,
+    "ercot_offer_hrmult_ep_rebasis_bands": [
+      "econ_low",
+      "econ_high"
+    ]
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
   "coal_econ_srmc_bound": false,
+  "coal_econ_marginal_hr_bound": true,
+  "ercot_offer_hrmult_ep_rebasis": true,
+  "ercot_offer_hrmult_ep_rebasis_bands": [
+    "econ_low",
+    "econ_high"
+  ],
   "coal_plant_monthly_pricing": true,
   "td_loss_factor": 0.0,
   "ercot_zonal_gas_basis": false,
@@ -212,6 +229,7 @@
   "ercot_thermal_dam_availability": true,
   "ercot_thermal_dam_availability_hourly": true,
   "ercot_thermal_dam_availability_plant": true,
+  "ercot_wind_zone_shape": false,
   "ercot_noncampd_plant_availability": true,
   "ercot_storage_capability_measured": true,
   "ercot_online_capacity_envelope_measured": false,
@@ -276,6 +294,8 @@
   "nyiso_import_hub_prices": null,
   "nyiso_iroquois_winter_spread": null,
   "nyiso_synchronised_reserve": null,
+  "nyiso_li_locational_reserve": null,
+  "nyiso_incity_commitment_obligation": null,
   "nyiso_spin_headroom_frac": null,
   "nyiso_dynamic_reserve_requirements": null,
   "nyiso_hydro_reserve_eligible": null,
@@ -306,11 +326,12 @@
   "mass_cap_program": null,
   "btm_backfill_year": null,
   "shared_inputs": {
-    "eia930": "../_shared/ERCOT/eia930-aba4caff3283.parquet",
-    "eia923": "../_shared/ERCOT/eia923-4e3039759c22.parquet",
-    "campd": "../_shared/ERCOT/campd-9ac4ee9da248.parquet"
+    "eia930": "../_shared/ERCOT/eia930-746071bbb6ba.parquet",
+    "eia923": "../_shared/ERCOT/eia923-c9af23c26b01.parquet",
+    "campd": "../_shared/ERCOT/campd-e42e97159860.parquet"
   },
-  "git_sha": "04131f3",
+  "git_sha": "aa80740",
+  "basis_sha": "dc72d7b119c5c8db41182a75d667b2c19055e2c5",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
