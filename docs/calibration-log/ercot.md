@@ -1518,3 +1518,75 @@ scarcity-formation lane (ERCOT-94/99), not another offer probe. Owner decisions 
 committed-band data gap; measured-coal-envelope re-arming stays gated on a shape-clean arm
 (its own legs passed a third consecutive time here). Full write-up:
 `FINDING-ercot119-econ-rebasis-2026-07-27.md`.
+
+## 2026-07-27 — ERCOT-121: fleet-representation audit — the C7/C8 coal gate-blindness is REAL and fixed (rubric v2.8); Oak Grove's pin is the availability envelope, not a missing derate; the CC 60–80 bulge is not a capacity-basis artifact; the model UNDER-curtails vs ERCOT's reported curtailment (ercot121-fleet-repr)
+
+**Charter.** Owner redirect ahead of ERCOT-120 (which stays queued, un-renumbered): six
+observations against the keeper — Oak Grove/lignite pinned at 100 %, COAL_PRB seasonal ±2 GW,
+CC_REGULAR 60–80 % CF bulge, model-vs-actual wind/solar, minor-class alignment, storage
+confidence. Phase 1 diagnostic only (committed sidecars + ONE byte-faithful keeper replay for
+unit grain — the sanctioned R-DASHBOARD exception, `_diag_ercot121fleetrepr_keeper_replay`,
+fidelity 0.0000 TWh class diff, NOT registered). Full write-up:
+`docs/DIAGNOSIS-ercot121-fleet-representation-2026-07-27.md`.
+
+**The protective-gate fix (shipped, scorer-side, rubric v2.8).** TWO confirmed blind spots:
+C8's materiality lookup resolved the D-2 plant-group vocabulary ("COAL") against the
+scored-class split and skipped EVERY coal ISO's coal fleet as "0.0 % of ISO load" (ERCOT
+13–14 %, MISO 33–36 %, PJM 14–16 % — the artifact's own load_share said material); C7 scored
+only artifact-baked gated rows (peaker/intermediate), so ERCOT COAL_LIGNITE 2023 (r 0.745,
+cv_ratio 0.294 — the exact caiso-42 flat-floor signature) was reported and never scored.
+Fixed in `calibration_verdict.py` (PLANT_GROUP_MEMBERS bridge; C7_GATED_CLASSES derives
+gatedness rubric-side and evaluates stored metrics vs the artifact gates — the C8
+measured-overrides-baked precedent; zero drift on previously-gated rows, all six keepers) +
+`legitimacy_diagnostics.py` D1_GATED_CLASSES. **Re-score effects: ERCOT-115 C7 PASS→FAIL
+(COAL_LIGNITE 2023 — machine confirmation of the owner's observation #1, determination stays
+NOT-YET); MISO-88 CALIBRATED-WITH-CAVEATS→NOT-YET (C7 FAIL COAL_PRB all three years, cv_ratio
+0.36–0.45 on ~35 % of load); PJM/CAISO/NYISO/NEISO unchanged; no C8 flips (coal forcing is
+0.0–0.4 % everywhere).** Reported, not suppressed, per the charter.
+
+**Phase-1 root causes (measured).** (#1) Oak Grove's ceiling LEVEL is right (summer plateau
+0.924×npl vs CEMS max 0.937–0.94) — the defect is ~100 % utilization-of-ceiling for whole
+months (July 2023: ALL five tranches incl. peak at max 744/744 h): the statistical
+availability is deterministic and month-flat (backcast WEFOR capped at the short-outage
+residual; sub-5-day forced/partial events exist only as a flat haircut), so a new age-based
+derate is the WRONG fix (would cut a correct level; rule 19). Heterogeneity: Spruce/Sandy
+Creek ceilings are too LOW (0.858/0.899 vs measured 0.90+/0.991); Sandy Creek 2025 missing
+entirely (retirement dated to year-start vs actual ~May — ~0.5 TWh); Parish's CEMS bench
+series includes its gas steamers (actual reads 1.36–1.40×coal-npl — contaminates plant-grain
+and D-1 PRB actuals; C1 unaffected). (#2) the same availability seasonal shape (POF all
+booked as a flat shoulder block) — the measured envelope removes −9.1/−5.7/−7.2 pp of the
+19–21 pp matched-band excess (G1) and narrows the spread every year (G2). (#3) capacity-basis
+REFUTED: re-basing actuals on the CAMPD sustained peak moves the CF bands < 60 h vs a
++1.8–2.3 kh model bulge in [0.6,0.8) and −1.1–1.7 kh deficit ≥0.8; replay tranche grain shows
+no tranche wall (non-peak tranches alone reach 0.90–0.93×npl) — the causes are dispatch
+SPREADING on a too-flat inter-plant CC offer surface plus the measured availability top-cap,
+an offer-DISPERSION lane distinct from the closed ERCOT-119 level-rebasis. (#4) NOT a data
+bug: bounds are measured uncurtailed HSL potential and the LP re-curtails; the model
+UNDER-curtails (wind −0.4/−0.8/−1.9 TWh, solar −0.9/−1.2/−1.1 vs reported), 2025 wind
+intraday locus inverted (model overnight-economic vs actual mid-afternoon congestion, hod
+corr −0.08); wtx driver: West leg clean (West separates 5–17 h/yr — sole mechanism, rule 19
+OK), Panhandle STACKS with the endogenous tie (separated 2.7–4.1 kh/yr, driver active in
+100 % of them, ~6.5 % mean ceiling cut) — depth was jointly LOYO-identified so the level is
+calibrated, but attribution is opaque; flagged, probes routed (solar depth / West-only
+scoping), not pursued. (#5) biomass+OTHER are measured EIA-923 must-run injections (match by
+construction); geothermal correctly absent; the dashboard "misalignment" is the 923-class vs
+EIA-930 OTH-cell definitional gap (model other 2.40 TWh vs 930 cell 1.15→0.27) plus
+anchorless hydro/oil panels; nothing scored is distorted. (#6) storage power basis is
+MEASURED (mean 2.88/6.54/11.43 GW; Oct-2023 720-h hole) — HIGH confidence; duration EIA-860
+MEDIUM; model discharge ~27 % under the observed EIA-930 months (diagnostic only, C5b/c
+removed v2.7).
+
+**Phase 2 — the measured coal envelope on its own merits (no re-solve).**
+`ercot116_coal_avail_on_keeper` scored with `ercot116_seasonal_shape.py` VERBATIM —
+reproduces G1/G2/BITE PASS · G3 FAIL exactly; legitimacy artifact generated into the bundle
+and the full rubric run: NOT-YET (C1 15/16 free 11/12; C3a keeper −26.9/−7.7/−7.6 → arm
+−35.2/−14.5/−13.0, the two passes flip; C4 2024 coal 0.864/0.301 new FAIL; C7 FAIL 2023
+COAL_LIGNITE 0.792/0.426 — improved from 0.745/0.294, still below gates; C8 PASS with coal
+properly material under v2.8). **The envelope IS what un-pins Oak Grove** (Jun–Sep at-max
+2,848→798 / 2,392→552 / 2,084→492 h) but the measured series tops at 1.0×npl, superseding the
+net-summer cap — summer mean moves AWAY from actual (0.952 vs 0.757, 2023): the availability
+estimate was compensating a coal offer-level error (the pre-commit's own successor finding,
+confirmed at unit grain). **Recommendation (recommend-and-STOP, keeper untouched): do NOT
+promote ercot116 alone; the promotion candidate for #1/#2 is envelope + measured coal offer
+top (F923 delivered cost / measured top-of-curve) as ONE pre-committed successor arm
+(ERCOT-122 candidate), behind ERCOT-120 in the owner's queue.**
