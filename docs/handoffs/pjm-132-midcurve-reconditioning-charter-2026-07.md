@@ -119,3 +119,46 @@ scope and nothing else. No other ISO's surface is touched (rule 25). No holdout
 year (rule 22). No `keepers.json` edit. No CI job for a solve. `chp-btm-share`
 is not repaired or wired here. Any post-hoc correction to a pre-registered
 formula is disclosed at the site **and** in the finding (pjm-131 §4 precedent).
+
+## 6. Scope constraint found during execution — the top-of-curve surface cannot be migrated
+
+**Reported before the chain was spent, per memo §4's honesty clause.**
+
+Memo §2 requires both surfaces move as ONE definitional vintage, precisely so a
+future session arming the dormant top-of-curve mechanism cannot stack a
+within-year surface on a within-season one. **That is not achievable in this
+session, and no workaround was taken.**
+
+The committed `pjm_offer_surface_condbinned.json` records its base-HR
+normalisation basis as the **`pjm98_cc_mustrun`** bundle (fleet year 2024). That
+bundle is **absent from disk and absent from git** — only its archived run
+driver (`scripts/archive/run_pjm98_cc_mustrun.py`) survives, and the derive
+needs the bundle's `meta.json` to replay the fleet. Re-deriving the top-of-curve
+surface against any other bundle would change the **fleet basis** as well as the
+ranking scope, which memo §4's closing clause forbids ("the re-derive changes
+the ranking scope and nothing else"). A surface derived that way would not be
+comparable to the vintage it replaces, and the drift would be invisible because
+the mechanism is dormant.
+
+**What was done instead:**
+
+* The **mid-curve** surface — the armed mechanism, the entire lever, and the
+  only one the A/B measures — **is** re-derived within-season exactly. Its
+  derive takes no fleet bundle (`--years`, `--edges`, `--conditioning` only), so
+  it is a true like-for-like: only the ranking scope changes.
+* The **top-of-curve** surface stays within-year and **is not touched**.
+* The half-migrated state is made **unreachable rather than silent**: an armed
+  `pjm_offer_surface_within_season` whose vintage artifact is missing now raises
+  `FileNotFoundError` instead of degrading to "mechanism off". Arming the
+  dormant top-of-curve mechanism together with the seasonal gate therefore
+  hard-fails until its within-season vintage exists.
+
+**Consequence for the A/B: none.** `pjm_offer_surface_conditional` is OFF in the
+keeper, so the top-of-curve surface does not enter either arm; Stage 1 and
+Stage 2 measure the mid-curve change, which is exactly the "armed floor scope"
+memo §4 pre-registered.
+
+**Owner decision deferred, not assumed:** completing the family migration needs
+the `pjm98_cc_mustrun` basis restored (or an explicit authorization to re-derive
+the top-of-curve surface on a new basis, which is a *different* change needing
+its own case). Flagged here; not taken.
