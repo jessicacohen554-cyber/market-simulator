@@ -45,6 +45,7 @@ DATATYPES: tuple[str, ...] = (
     "partial-outages",
     "capacity-deliverability",
     "confirmed-retirements",
+    "transmission-expansion",
     "nuclear-license-status",
     "gtc-limits",
     "transfer-interface-limits",

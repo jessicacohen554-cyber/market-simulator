@@ -95,25 +95,61 @@ jobs:
       # with Wave 2D); naming it in the -m expression is harmless (it simply
       # matches nothing today), so this line needs no edit when 2D adds it.
       #
-      # ADVISORY (continue-on-error) — TEMPORARY, TRIAGED 2026-07-26. The
-      # restoration-era estimate here ("72 pre-existing failures", the
-      # test_net_cone_forward archetype) went stale: a full tier run measured
-      # 141 failures + 2 collection errors + 60 xpasses, all classified in
-      # docs/handoffs/fast-tier-triage-2026-07-26.md (the classification
-      # landed BEFORE the fixes; 57 of the 141 were pip-fallback-venv tzdata
-      # artifacts that never failed under uv sync). After the triage's
-      # fix/delete/unmark commits the measured state is 26 failures + 1
-      # collection error + 0 xpasses — every one an OPEN OWNER-DECISION
-      # ESCALATION written up in that doc (§4/§6), not un-triaged drift:
-      # caiso-117 belly-cap orphans (never-landed mechanism, the collection
-      # error), ff-g1 transmission_expansion gate (unapplied core-wiring
-      # patch), ercot-93 steam-RT (rotted patch), the orchestrator
-      # shim-conversion half (goldens-gated), NEISO bin-artifact drift, and
-      # an order-dependent test-pollution family. Do NOT xfail them — each
-      # needs its named decision. Remove `continue-on-error` only when those
-      # land and the tier is genuinely green (zero failures, zero collection
-      # errors, zero xpasses).
-      - name: Fast pytest tier (advisory until the triage escalations land)
+      # BLOCKING since 2026-07-26. This tier ran advisory
+      # (`continue-on-error: true`) from the workflow's restoration until the
+      # backlog behind it was actually cleared. The history, for anyone
+      # tempted to re-add the flag rather than fix a red:
+      #
+      #   * a full run measured 141 failures + 2 collection errors + 60
+      #     xpasses, every one classified in
+      #     docs/handoffs/fast-tier-triage-2026-07-26.md BEFORE any fix (57 of
+      #     the 141 were pip-fallback-venv tzdata artifacts that never failed
+      #     under `uv sync`);
+      #   * the triage's fix/delete/unmark commits took that to 26 failures +
+      #     1 collection error + 0 xpasses, all OWNER-DECISION escalations;
+      #   * the escalation follow-through then closed all of them — D1/D3
+      #     recorded as drops (never-landed mechanisms, tests C-deleted),
+      #     D2 ff-g1 core wiring applied, D4 orchestrator alias conversion +
+      #     flag-registry wiring landed under byte-identity goldens, D5 NEISO
+      #     bin artifact regenerated and the keeper re-gated (bit-identical
+      #     dispatch), the §6.2 order-dependent pollution family bisected to
+      #     one leaked EIA-860 vintage global, and the seven uncited
+      #     2026-07-05 xfails re-adjudicated (all bucket A, all marks removed).
+      #
+      # Measured at the flip: 5187 passed, 16 skipped, 44 deselected,
+      # 1 xfailed, 0 failed, 0 collection errors, 0 xpassed. The single
+      # remaining xfail is the triage's one cited bucket-B mark (the W3-P1
+      # structural-prior basis-drift guard, which carries its removal
+      # condition in the mark itself).
+      #
+      # FLIP HELD 2026-07-27 — the escalation work is done, main regressed
+      # underneath it. Measured on this branch rebased onto main
+      # (`2f2d583` + this branch): 5210 passed, 1 xfailed, 0 collection errors,
+      # 0 xpassed, and TWO failures, neither of them an escalation and neither
+      # honestly fixable from this lane:
+      #
+      #   * (CLOSED 2026-07-27) tests/unit/data/test_cache_control.py::
+      #     test_largest_retained_frames_is_sorted_and_limited — bisected: NOT
+      #     a leak. The assertion assumed its own frame was the biggest alive in
+      #     the process, which largest_retained_frames' documented contract
+      #     (enumerate EVERY live frame) does not support; it lost to a
+      #     legitimately lru_cached 22.9 MB EIA-923 frame. The assertion now
+      #     pins the real invariants (limit, descending sort, big > small).
+      #   * tests/regression/test_integration.py::TestFullYearPerformance::
+      #     test_full_year — the §6.1 perf budget (30 s). THE ONLY REMAINING
+      #     RED, and it is host-dependent, not a code regression: measured on
+      #     this 4-core session container it PASSED one full-tier run and
+      #     FAILED the next two, with no code change between them. Loosening
+      #     the bound is forbidden (charter step 5 / rule 14 applied to tests),
+      #     so it needs a reference-hardware measurement (or a profile showing
+      #     a real regression) before anyone touches it. CI runs on
+      #     GitHub-hosted runners with `-n 2`, so its behaviour there is
+      #     unmeasured — that measurement is the flip's last prerequisite.
+      #
+      # Everything else the flip was gated on IS closed (triage §9/§9.1). Flip
+      # the moment that one clears — delete `continue-on-error` and rename the
+      # step back to "Fast pytest tier". Do NOT xfail it to force the flip.
+      - name: Fast pytest tier (advisory — 1 host-dependent perf red, see above)
         continue-on-error: true
         run: uv run python -m pytest -n 2 -m "not slow and not integration and not fulldata"
 
@@ -139,10 +175,12 @@ jobs:
       # Facade re-export + persisted-identity pins (BLOCKING, unlike the
       # advisory fast tier): every split package must keep its full pre-split
       # surface, and the pickle-borne classes their frozen module paths.
-      # (test_pipeline_facade_shims.py joins this list once its pre-existing
-      # failures — part of the advisory-tier backlog — are triaged green.)
+      # test_pipeline_facade_shims.py joined this list on 2026-07-26, when the
+      # orchestrator-extraction alias conversion it pins finally landed
+      # (fast-tier escalation D4) — the shims are now the guard that a later
+      # cleanup cannot silently drop one.
       #
-      # These nine live in tests/regression/ since the Wave-5A tests/ migration
+      # These ten live in tests/regression/ since the Wave-5A tests/ migration
       # (they are frozen-surface guards, not unit tests). This list is one of
       # the two path inventories that migration has to keep in step — moving
       # any of them without editing this block silently disarms the only
@@ -151,6 +189,7 @@ jobs:
         run: >-
           uv run python -m pytest -q
           tests/regression/test_persisted_identity.py
+          tests/regression/test_pipeline_facade_shims.py
           tests/regression/test_constants_facade.py
           tests/regression/test_dispatch_facade.py
           tests/regression/test_eia930_facade.py

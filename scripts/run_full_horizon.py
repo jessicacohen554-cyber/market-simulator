@@ -156,11 +156,17 @@ def assert_schedulable(
 
 
 def reference_config(
-    iso: str, start_year: int, end_year: int, cmc: bool, golden_posture: bool = False
+    iso: str,
+    start_year: int,
+    end_year: int,
+    cmc: bool,
+    golden_posture: bool = False,
+    transmission_expansion: bool = False,
 ) -> ScenarioConfig:
     """The P-3A reference forecast: all defaults, forecast mode, P-2A pins.
 
-    Every field except mode/iso/horizon/capacity_market_clearing is left at the
+    Every field except mode/iso/horizon/capacity_market_clearing (and the
+    optional FF-G1 ``transmission_expansion_enabled`` probe gate) is left at the
     ScenarioConfig default, so ``use_campd_bins=True`` yields each ISO's own
     per-plant CAMPD bins where an artifact exists (the ISO default). The FF-1F /
     FF-2A default flips (``datacenter_load_path="mid"``,
@@ -189,6 +195,7 @@ def reference_config(
         end_year=end_year,
         capacity_market_clearing=cmc,
         capacity_market_clearing_by_iso=cmc_by_iso,
+        transmission_expansion_enabled=transmission_expansion,
     )
 
 
@@ -491,6 +498,14 @@ def main(argv: list[str] | None = None) -> int:
         help="Flip the CR-1 sloped-curve gate on (default OFF = P-2A recommendation).",
     )
     ap.add_argument(
+        "--transmission-expansion",
+        action="store_true",
+        help=(
+            "Flip the FF-G1 forward transmission-expansion gate on "
+            "(default OFF; committed-registry TTC deltas per solve year)."
+        ),
+    )
+    ap.add_argument(
         "--sample-interval", type=float, default=0.5, help="RSS sampling seconds."
     )
     ap.add_argument(
@@ -529,6 +544,7 @@ def main(argv: list[str] | None = None) -> int:
         args.end_year,
         args.capacity_market_clearing,
         golden_posture=args.golden_posture,
+        transmission_expansion=args.transmission_expansion,
     )
     summary = solve_and_summarize(
         config,

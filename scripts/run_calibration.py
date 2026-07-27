@@ -29,7 +29,6 @@ Options:
 from __future__ import annotations
 
 import argparse
-import json
 import logging
 import os
 import sys
@@ -43,8 +42,6 @@ sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.constants import (  # noqa: E402
     HOURS_PER_YEAR,
-    NYISO_INTERFACE_TTC_BY_MONTH,
-    NYISO_INTERFACE_TTC_BY_YEAR,
     resolve_reference_price_interface,
 )
 from market_sim.config.interchange_config import (  # noqa: E402
@@ -56,7 +53,6 @@ from market_sim.config.interchange_config import (  # noqa: E402
     resolve_priced_interchange,
 )
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
-from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data.eia_loader import (  # noqa: E402
     load_demand,
@@ -122,6 +118,8 @@ from market_sim.pipeline import (  # noqa: E402
     run_commitment_pass,
     run_energy_solve,
 )
+import market_sim.pipeline.reference as _pipeline_reference  # noqa: E402
+import market_sim.pipeline.ttc as _pipeline_ttc  # noqa: E402
 from market_sim.pipeline.backcast_config import (  # noqa: E402
     _GENERIC_NEUTRAL_GAS_CLASSES,  # noqa: F401 -- re-exported for test_offer_curve_deleakage
     _MISO_CC_COAL_REBALANCE,
@@ -167,19 +165,22 @@ _GAS_FUEL_TYPES: frozenset[str] = frozenset({"gas_cc", "gas_ct", "gas_st"})
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("run_calibration")
 
+# Reference + TTC-overlay halves: PERMANENT same-name aliases of their canonical
+# pipeline homes (orchestrator-unification lane, refactor-consolidation plan §5 —
+# the Stage-7 ``_calibration_config`` precedent below). The bodies moved to
+# ``market_sim.pipeline.{reference,ttc}``; this module's exported symbol names
+# are a frozen surface (probe scripts, tests and ``run_calibration_full``'s seam
+# imports all read them), so every moved name keeps its ``_``-prefixed spelling
+# here and resolves to the SAME object. Verified equivalent before conversion by
+# ``inspect.getsource`` diff (name-only) and constant equality.
+#
 # Calibration reference written by scripts/data/build_calibration_reference.py.
-REFERENCE_PATH: Path = CALIBRATION_DIR / "calibration_reference.json"
+REFERENCE_PATH: Path = _pipeline_reference.REFERENCE_PATH
 
 # Fallback measured Henry Hub annual-average spot price ($/MMBtu), used when
 # the calibration reference JSON has not yet been generated.
 # Source: EIA Henry Hub Natural Gas Spot Price, annual averages.
-_HENRY_HUB_FALLBACK: dict[int, float] = {
-    2021: 3.72,
-    2022: 6.45,
-    2023: 2.54,
-    2024: 2.19,
-    2025: 3.52,
-}
+_HENRY_HUB_FALLBACK: dict[int, float] = _pipeline_reference.HENRY_HUB_FALLBACK
 
 _MWH_PER_TWH: float = 1.0e6
 _TONNES_PER_MT: float = 1.0e6
@@ -187,32 +188,10 @@ _TONNES_PER_MT: float = 1.0e6
 # Zone-pair identifying each transfer link whose TTC the CLI can override.
 # Both legs of the West Texas Export interface and the Panhandle GTC are
 # exposed for tuning — these are ERCOT's primary wind-export constraints.
-_TTC_LINK_ZONES: dict[str, frozenset[str]] = {
-    "ttc_wn": frozenset({"West", "North"}),
-    "ttc_wsc": frozenset({"West", "South_Central"}),
-    "ttc_pn": frozenset({"Panhandle", "North"}),
-}
+_TTC_LINK_ZONES: dict[str, frozenset[str]] = _pipeline_ttc.TTC_LINK_ZONES
 
-
-def _load_reference() -> dict:
-    """Return the calibration reference dict, or an empty dict if unbuilt."""
-    if not REFERENCE_PATH.exists():
-        logger.warning(
-            "calibration reference %s not found — run "
-            "build_calibration_reference.py first; using fallback gas prices",
-            REFERENCE_PATH.relative_to(REPO),
-        )
-        return {}
-    return json.loads(REFERENCE_PATH.read_text())
-
-
-def _henry_hub_actual(reference: dict, year: int) -> float:
-    """Return the measured Henry Hub price for ``year`` from the reference."""
-    table = reference.get("henry_hub_actual", {})
-    if str(year) in table:
-        return float(table[str(year)])
-    return _HENRY_HUB_FALLBACK[year]
-
+_load_reference = _pipeline_reference.load_reference
+_henry_hub_actual = _pipeline_reference.henry_hub_actual
 
 # Backward-compatible alias (orchestrator-unification Stage 7 moved the
 # function to market_sim.pipeline.backcast_config): probe/derive scripts and
@@ -220,113 +199,9 @@ def _henry_hub_actual(reference: dict, year: int) -> float:
 # ``rc._calibration_config``, keep working unchanged.
 _calibration_config = backcast_config
 
-
-def _apply_ttc_overrides(
-    iso_config, ttc: np.ndarray, overrides: dict[str, float | None]
-) -> np.ndarray:
-    """Return ``ttc`` with the requested link capabilities overridden.
-
-    Args:
-        iso_config: The ISO topology, used to map links to zone pairs.
-        ttc: The base ``(n_links,)`` transfer-capability array.
-        overrides: ``{"ttc_wn": MW | None, "ttc_wsc": MW | None,
-            "ttc_pn": MW | None}``.
-
-    Returns:
-        A copy of ``ttc`` with each non-``None`` override applied.
-    """
-    ttc = ttc.copy()
-    for key, value in overrides.items():
-        if value is None:
-            continue
-        target = _TTC_LINK_ZONES[key]
-        for i, link in enumerate(iso_config.links):
-            if frozenset({link.from_zone, link.to_zone}) == target:
-                logger.info(
-                    "override %s link TTC: %.0f -> %.0f MW",
-                    "-".join(sorted(target)),
-                    ttc[i],
-                    value,
-                )
-                ttc[i] = value
-    return ttc
-
-
-def _apply_iso_year_ttc(iso_config, iso: str, year: int):
-    """Return ``iso_config`` with year-varying interface TTCs applied.
-
-    Some interfaces change capacity across the backcast years as transmission
-    is built (e.g. NYISO's Central-East jumps with the NY Transco AC
-    Transmission project, in service December 2023). The static topology in
-    ``iso_configs`` carries one value; this rewrites the matching links to the
-    year-accurate limit (``constants.NYISO_INTERFACE_TTC_BY_YEAR``) so 2023
-    runs on the pre-upgrade limit and 2024+ on the upgraded one. A no-op for
-    ISOs/years with no entry.
-    """
-    if iso != "NYISO":
-        return iso_config
-    overrides = NYISO_INTERFACE_TTC_BY_YEAR.get(year)
-    if not overrides:
-        return iso_config
-    links = []
-    for link in iso_config.links:
-        new_ttc = overrides.get((link.from_zone, link.to_zone))
-        if new_ttc is not None and new_ttc != link.ttc_mw:
-            logger.info(
-                "NYISO %d interface TTC: %s->%s %.0f -> %.0f MW "
-                "(AC Transmission year-varying limit)",
-                year,
-                link.from_zone,
-                link.to_zone,
-                link.ttc_mw,
-                new_ttc,
-            )
-            links.append(link.model_copy(update={"ttc_mw": new_ttc}))
-        else:
-            links.append(link)
-    return iso_config.model_copy(update={"links": links})
-
-
-def _apply_iso_monthly_ttc(ttc, iso_config, iso: str, year: int, hours: int):
-    """Expand the scalar TTC array to a per-hour ``(hours, n_links)`` matrix
-    when the ISO has a measured monthly interface envelope for ``year``.
-
-    NYISO's Central-East day-ahead TTC is not flat across a year: it steps up
-    when the AC Transmission upgrade energizes (Dec 2023) and derates each
-    late-summer/shoulder. ``constants.NYISO_INTERFACE_TTC_BY_MONTH`` carries the
-    measured 12-month mean per interface; this maps each hour of the backcast
-    year to its calendar month (leap-safe) and rewrites the matching link's
-    limit hour by hour, so the dispatch binds on the seasonal envelope rather
-    than one annual value. Returns ``ttc`` unchanged (1-D) for ISOs/years with
-    no monthly table — byte-identical to the prior scalar path.
-    """
-    if iso != "NYISO":
-        return ttc
-    monthly = NYISO_INTERFACE_TTC_BY_MONTH.get(year)
-    if not monthly:
-        return ttc
-    leap = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
-    days_per_month = [31, 29 if leap else 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-    month_of_hour = np.repeat(np.arange(1, 13), [d * 24 for d in days_per_month])[
-        :hours
-    ]
-    ttc_t = np.broadcast_to(ttc, (hours, len(ttc))).copy()
-    for i, link in enumerate(iso_config.links):
-        profile = monthly.get((link.from_zone, link.to_zone))
-        if profile is None:
-            continue
-        prof = np.asarray(profile, dtype=float)
-        ttc_t[:, i] = prof[month_of_hour - 1]
-        logger.info(
-            "NYISO %d %s->%s monthly TTC envelope: %.0f-%.0f MW "
-            "(measured Central-East DAM postings)",
-            year,
-            link.from_zone,
-            link.to_zone,
-            prof.min(),
-            prof.max(),
-        )
-    return ttc_t
+_apply_ttc_overrides = _pipeline_ttc.apply_ttc_overrides
+_apply_iso_year_ttc = _pipeline_ttc.apply_iso_year_ttc
+_apply_iso_monthly_ttc = _pipeline_ttc.apply_iso_monthly_ttc
 
 
 def _apply_caiso_solar_deliverability(

@@ -11,7 +11,6 @@ import unittest
 import unittest.mock
 
 import numpy as np
-import pytest
 
 from market_sim.config.interchange_config import (
     CAISO_IMPORT_TRANCHE_HUB,
@@ -67,19 +66,29 @@ class TestSplitImportNodePerHub(unittest.TestCase):
         self.assertEqual(lim.cap_mw, 7500.0)
         cfg.validate_topology()
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason="pre-existing failure on main as of 2026-07-05 (found wiring PR CI "
-        "in W1-P1); unrelated to this change, tracked for follow-up",
-    )
     def test_split_resolves_to_two_flow_columns(self):
+        """The one simultaneous cap resolves onto both corridor flow columns.
+
+        Re-adjudicated 2026-07-26 (fast-tier §6.3): xfailed as an uncited
+        "pre-existing failure", but the failure was a `ValueError: too many
+        values to unpack` — ``build_interface_groups`` deliberately grew its
+        per-limit tuple from ``(link_idx, cap_mw, bidirectional)`` to
+        ``(link_idx, cap_mw, bidirectional, lower_cap_mw, signs)`` (the
+        reverse-cap and signed-orientation fields its own docstring now
+        documents). A stale unpack, not a mechanism regression: the cap
+        semantics under test are unchanged.
+        """
         cfg = split_caiso_import_node_per_hub(get_iso_config("CAISO"))
         groups = build_interface_groups(cfg.links, cfg.interface_limits)
         self.assertEqual(len(groups), 1)
-        idx, cap, bidir = groups[0]
+        idx, cap, bidir, lower, signs = groups[0]
         self.assertEqual(len(idx), 2)
         self.assertEqual(cap, 7500.0)
         self.assertTrue(bidir)
+        # Both corridor legs are listed in the limit's own orientation, so the
+        # group sums as +flow(PNW->NP15) + flow(DSW->SP15_rest).
+        self.assertEqual(list(signs), [1.0, 1.0])
+        self.assertIsNone(lower)
 
     def test_non_caiso_is_noop(self):
         cfg = get_iso_config("PJM")
