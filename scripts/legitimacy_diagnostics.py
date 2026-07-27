@@ -129,7 +129,11 @@ D1_MIN_CV_RATIO: float = 0.5
 D1_OFFPEAK_LAST_HOUR: int = 14  # off-peak window = local hours 0..14 inclusive
 # Classes gated; every class is still reported. Peaker + intermediate duty
 # (the original caiso-42 set) plus, since the rubric v2.8 coal
-# gate-blindness correction (ERCOT-121, 2026-07-27), the merchant coal
+# gate-blindness correction (ERCOT-121, 2026-07-27 — RATIFIED as an OWNER
+# AMENDMENT 2026-07-27, miso-96; it shipped without the marker every prior
+# tolerance change carries, and widening a PROTECTIVE gate set retroactively
+# re-grades keepers in other lanes, so it is an owner call by construction.
+# Rubric §9 ratification note), the merchant coal
 # classes — ERCOT COAL_LIGNITE 2023 (profile r 0.745, cv_ratio 0.294: the
 # lignite fleet pinned flat at its availability ceiling) carried the exact
 # C7 failure signature ungated. CHP classes stay ungated (host-steam-pinned
