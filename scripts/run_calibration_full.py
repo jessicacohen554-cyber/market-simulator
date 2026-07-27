@@ -4669,6 +4669,16 @@ def solve_and_persist(
         shared_inputs["campd"] = write_shared_input(
             pd.concat(campd_frames, ignore_index=True), "campd", iso, run_dir
         )
+    # Derived solve inputs (per-ISO unit-outage extract family + the clean
+    # capacity-deliverability partition): pinned into the same store so the
+    # bundle records the exact bytes it solved on — the two inputs a bundle
+    # previously recorded nothing about (FINDING-caiso124 §7; the caiso-123
+    # non-reproducible-extract incident and the RESULTS-neiso65 §2
+    # silent-degrade trap). Provenance only — replay ignores shared_inputs.
+    try:
+        shared_inputs.update(write_derived_solve_inputs(iso, run_dir))
+    except Exception:  # provenance capture must never fail a solve
+        logger.warning("derived solve-input capture failed", exc_info=True)
     if storage_frames:
         pd.concat(storage_frames, ignore_index=True).to_parquet(
             run_dir / "storage.parquet", index=False
