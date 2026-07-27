@@ -1,0 +1,1364 @@
+{
+ "keeper_bundle": "results/calibration/pjm121_ccbelt",
+ "arm_bundle": "results/calibration/pjm129_meritguard_a1",
+ "bands": {
+  "vol_cap_twh": 8.0,
+  "vol_load_frac": 0.02,
+  "share_pp": 3.0
+ },
+ "years": {
+  "2023": {
+   "load_twh": 784.823,
+   "c1_keeper": [
+    {
+     "class": "CC_CHP",
+     "model_twh": 8.0086,
+     "actual_twh": 6.1148,
+     "delta_twh": 1.8938,
+     "band_twh": 8.0,
+     "band_util": 0.2367,
+     "share_pp": 0.246,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "CC_REGULAR",
+     "model_twh": 317.7989,
+     "actual_twh": 325.6697,
+     "delta_twh": -7.8708,
+     "band_twh": 8.0,
+     "band_util": 0.9838,
+     "share_pp": -0.39,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "COAL_BIT",
+     "model_twh": 100.7728,
+     "actual_twh": 103.0256,
+     "delta_twh": -2.2528,
+     "band_twh": 8.0,
+     "band_util": 0.2816,
+     "share_pp": -0.094,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "COAL_PRB",
+     "model_twh": 3.3223,
+     "actual_twh": 3.5505,
+     "delta_twh": -0.2282,
+     "band_twh": 8.0,
+     "band_util": 0.0285,
+     "share_pp": -0.022,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "COAL_WC",
+     "model_twh": 5.7019,
+     "actual_twh": 5.8951,
+     "delta_twh": -0.1932,
+     "band_twh": 8.0,
+     "band_util": 0.0241,
+     "share_pp": -0.013,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "CT_CHP",
+     "model_twh": 1.2784,
+     "actual_twh": 1.8749,
+     "delta_twh": -0.5965,
+     "band_twh": 8.0,
+     "band_util": 0.0746,
+     "share_pp": -0.071,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "CT_PEAKER",
+     "model_twh": 23.2038,
+     "actual_twh": 21.6632,
+     "delta_twh": 1.5406,
+     "band_twh": 8.0,
+     "band_util": 0.1926,
+     "share_pp": 0.23,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "OTHER",
+     "model_twh": 7.2251,
+     "actual_twh": 7.2251,
+     "delta_twh": 0.0,
+     "band_twh": 8.0,
+     "band_util": 0.0,
+     "share_pp": 0.013,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "OTHER_FOSSIL",
+     "model_twh": 0.0,
+     "actual_twh": 0.087,
+     "delta_twh": -0.087,
+     "band_twh": 8.0,
+     "band_util": 0.0109,
+     "share_pp": -0.011,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "ST_CHP",
+     "model_twh": 0.9778,
+     "actual_twh": 2.1982,
+     "delta_twh": -1.2204,
+     "band_twh": 8.0,
+     "band_util": 0.1525,
+     "share_pp": -0.147,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "ST_GAS",
+     "model_twh": 8.0928,
+     "actual_twh": 8.8831,
+     "delta_twh": -0.7903,
+     "band_twh": 8.0,
+     "band_util": 0.0988,
+     "share_pp": -0.082,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "biomass",
+     "model_twh": 5.2975,
+     "actual_twh": 5.2975,
+     "delta_twh": 0.0,
+     "band_twh": 8.0,
+     "band_util": 0.0,
+     "share_pp": 0.01,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "hydro",
+     "model_twh": 14.5993,
+     "actual_twh": 15.4681,
+     "delta_twh": -0.8688,
+     "band_twh": 8.0,
+     "band_util": 0.1086,
+     "share_pp": -0.08,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "nuclear",
+     "model_twh": 272.0222,
+     "actual_twh": 272.5913,
+     "delta_twh": -0.5691,
+     "band_twh": 8.0,
+     "band_util": 0.0711,
+     "share_pp": 0.42,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "oil",
+     "model_twh": 0.0006,
+     "actual_twh": 0.637,
+     "delta_twh": -0.6364,
+     "band_twh": 8.0,
+     "band_util": 0.0795,
+     "share_pp": -0.078,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "solar",
+     "model_twh": 8.9757,
+     "actual_twh": 8.977,
+     "delta_twh": -0.0013,
+     "band_twh": 8.0,
+     "band_util": 0.0002,
+     "share_pp": 0.016,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "wind",
+     "model_twh": 29.6306,
+     "actual_twh": 29.628,
+     "delta_twh": 0.0026,
+     "band_twh": 8.0,
+     "band_util": 0.0003,
+     "share_pp": 0.054,
+     "vol_ok": true,
+     "share_ok": true
+    }
+   ],
+   "c1_arm": [
+    {
+     "class": "CC_CHP",
+     "model_twh": 8.6528,
+     "actual_twh": 6.1148,
+     "delta_twh": 2.538,
+     "band_twh": 8.0,
+     "band_util": 0.3172,
+     "share_pp": 0.323,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "CC_REGULAR",
+     "model_twh": 317.5686,
+     "actual_twh": 325.6697,
+     "delta_twh": -8.1011,
+     "band_twh": 8.0,
+     "band_util": 1.0126,
+     "share_pp": -0.526,
+     "vol_ok": false,
+     "share_ok": true
+    },
+    {
+     "class": "COAL_BIT",
+     "model_twh": 101.695,
+     "actual_twh": 103.0256,
+     "delta_twh": -1.3306,
+     "band_twh": 8.0,
+     "band_util": 0.1663,
+     "share_pp": -0.014,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "COAL_PRB",
+     "model_twh": 3.1978,
+     "actual_twh": 3.5505,
+     "delta_twh": -0.3527,
+     "band_twh": 8.0,
+     "band_util": 0.0441,
+     "share_pp": -0.038,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "COAL_WC",
+     "model_twh": 5.6737,
+     "actual_twh": 5.8951,
+     "delta_twh": -0.2214,
+     "band_twh": 8.0,
+     "band_util": 0.0277,
+     "share_pp": -0.019,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "CT_CHP",
+     "model_twh": 1.2225,
+     "actual_twh": 1.8749,
+     "delta_twh": -0.6524,
+     "band_twh": 8.0,
+     "band_util": 0.0816,
+     "share_pp": -0.078,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "CT_PEAKER",
+     "model_twh": 21.784,
+     "actual_twh": 21.6632,
+     "delta_twh": 0.1208,
+     "band_twh": 8.0,
+     "band_util": 0.0151,
+     "share_pp": 0.047,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "OTHER",
+     "model_twh": 7.2251,
+     "actual_twh": 7.2251,
+     "delta_twh": 0.0,
+     "band_twh": 8.0,
+     "band_util": 0.0,
+     "share_pp": 0.011,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "OTHER_FOSSIL",
+     "model_twh": 0.0,
+     "actual_twh": 0.087,
+     "delta_twh": -0.087,
+     "band_twh": 8.0,
+     "band_util": 0.0109,
+     "share_pp": -0.011,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "ST_CHP",
+     "model_twh": 0.9697,
+     "actual_twh": 2.1982,
+     "delta_twh": -1.2285,
+     "band_twh": 8.0,
+     "band_util": 0.1536,
+     "share_pp": -0.149,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "ST_GAS",
+     "model_twh": 10.6006,
+     "actual_twh": 8.8831,
+     "delta_twh": 1.7175,
+     "band_twh": 8.0,
+     "band_util": 0.2147,
+     "share_pp": 0.225,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "biomass",
+     "model_twh": 5.2975,
+     "actual_twh": 5.2975,
+     "delta_twh": 0.0,
+     "band_twh": 8.0,
+     "band_util": 0.0,
+     "share_pp": 0.008,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "hydro",
+     "model_twh": 14.5993,
+     "actual_twh": 15.4681,
+     "delta_twh": -0.8688,
+     "band_twh": 8.0,
+     "band_util": 0.1086,
+     "share_pp": -0.085,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "nuclear",
+     "model_twh": 272.0222,
+     "actual_twh": 272.5913,
+     "delta_twh": -0.5691,
+     "band_twh": 8.0,
+     "band_util": 0.0711,
+     "share_pp": 0.328,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "oil",
+     "model_twh": 0.0002,
+     "actual_twh": 0.637,
+     "delta_twh": -0.6368,
+     "band_twh": 8.0,
+     "band_util": 0.0796,
+     "share_pp": -0.078,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "solar",
+     "model_twh": 8.9757,
+     "actual_twh": 8.977,
+     "delta_twh": -0.0013,
+     "band_twh": 8.0,
+     "band_util": 0.0002,
+     "share_pp": 0.013,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "wind",
+     "model_twh": 29.6306,
+     "actual_twh": 29.628,
+     "delta_twh": 0.0026,
+     "band_twh": 8.0,
+     "band_util": 0.0003,
+     "share_pp": 0.044,
+     "vol_ok": true,
+     "share_ok": true
+    }
+   ],
+   "displacement": {
+    "returned_classes": [
+     "ST_GAS",
+     "COAL_BIT",
+     "COAL_PRB",
+     "COAL_WC",
+     "CC_CHP",
+     "CT_CHP"
+    ],
+    "cc_regular_annual_delta_twh": -0.2304,
+    "cc_regular_gross_loss_twh": 1.4861,
+    "returned_annual_delta_twh": 3.8653,
+    "cc_loss_share_in_returned_up_hours": 0.996,
+    "r_dcc_dreturned": -0.3693,
+    "per_class": {
+     "ST_GAS": {
+      "annual_delta_twh": 2.5077,
+      "r_with_cc_regular": -0.3049,
+      "cc_loss_share_in_up_hours": 0.8724
+     },
+     "COAL_BIT": {
+      "annual_delta_twh": 0.9221,
+      "r_with_cc_regular": -0.106,
+      "cc_loss_share_in_up_hours": 0.7416
+     },
+     "COAL_PRB": {
+      "annual_delta_twh": -0.1245,
+      "r_with_cc_regular": -0.1055,
+      "cc_loss_share_in_up_hours": 0.0013
+     },
+     "COAL_WC": {
+      "annual_delta_twh": -0.0283,
+      "r_with_cc_regular": 0.0994,
+      "cc_loss_share_in_up_hours": 0.0977
+     },
+     "CC_CHP": {
+      "annual_delta_twh": 0.6441,
+      "r_with_cc_regular": -0.038,
+      "cc_loss_share_in_up_hours": 0.8373
+     },
+     "CT_CHP": {
+      "annual_delta_twh": -0.0559,
+      "r_with_cc_regular": -0.1609,
+      "cc_loss_share_in_up_hours": 0.0021
+     }
+    },
+    "verdict": "DISPLACEMENT-CONFIRMED"
+   },
+   "misallocation": {
+    "cc_regular_short": true,
+    "cc_regular_delta_twh": -8.1011,
+    "returned_classes_overshooting_meter": {
+     "ST_GAS": {
+      "delta_twh": 1.7175,
+      "band_util": 0.2147,
+      "vol_ok": true
+     },
+     "CC_CHP": {
+      "delta_twh": 2.538,
+      "band_util": 0.3172,
+      "vol_ok": true
+     }
+    },
+    "structural_lever_exists": true
+   }
+  },
+  "2024": {
+   "load_twh": 812.742,
+   "c1_keeper": [
+    {
+     "class": "CC_CHP",
+     "model_twh": 7.8502,
+     "actual_twh": 7.283,
+     "delta_twh": 0.5672,
+     "band_twh": 8.0,
+     "band_util": 0.0709,
+     "share_pp": 0.086,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "CC_REGULAR",
+     "model_twh": 330.8675,
+     "actual_twh": 335.1241,
+     "delta_twh": -4.2566,
+     "band_twh": 8.0,
+     "band_util": 0.5321,
+     "share_pp": 0.296,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "COAL_BIT",
+     "model_twh": 101.9917,
+     "actual_twh": 105.0966,
+     "delta_twh": -3.1049,
+     "band_twh": 8.0,
+     "band_util": 0.3881,
+     "share_pp": -0.12,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "COAL_PRB",
+     "model_twh": 4.2362,
+     "actual_twh": 4.4111,
+     "delta_twh": -0.1749,
+     "band_twh": 8.0,
+     "band_util": 0.0219,
+     "share_pp": -0.01,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "COAL_WC",
+     "model_twh": 5.4665,
+     "actual_twh": 5.6878,
+     "delta_twh": -0.2213,
+     "band_twh": 8.0,
+     "band_util": 0.0277,
+     "share_pp": -0.013,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "CT_CHP",
+     "model_twh": 1.4463,
+     "actual_twh": 1.6885,
+     "delta_twh": -0.2422,
+     "band_twh": 8.0,
+     "band_util": 0.0303,
+     "share_pp": -0.025,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "CT_PEAKER",
+     "model_twh": 23.8413,
+     "actual_twh": 24.0188,
+     "delta_twh": -0.1775,
+     "band_twh": 8.0,
+     "band_util": 0.0222,
+     "share_pp": 0.037,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "OTHER",
+     "model_twh": 7.321,
+     "actual_twh": 7.321,
+     "delta_twh": -0.0,
+     "band_twh": 8.0,
+     "band_util": 0.0,
+     "share_pp": 0.018,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "OTHER_FOSSIL",
+     "model_twh": 0.0,
+     "actual_twh": 0.1649,
+     "delta_twh": -0.1649,
+     "band_twh": 8.0,
+     "band_util": 0.0206,
+     "share_pp": -0.019,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "ST_CHP",
+     "model_twh": 1.0809,
+     "actual_twh": 2.3727,
+     "delta_twh": -1.2918,
+     "band_twh": 8.0,
+     "band_util": 0.1615,
+     "share_pp": -0.15,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "ST_GAS",
+     "model_twh": 8.4819,
+     "actual_twh": 13.1072,
+     "delta_twh": -4.6253,
+     "band_twh": 8.0,
+     "band_util": 0.5782,
+     "share_pp": -0.525,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "biomass",
+     "model_twh": 5.2484,
+     "actual_twh": 5.2484,
+     "delta_twh": 0.0,
+     "band_twh": 8.0,
+     "band_util": 0.0,
+     "share_pp": 0.013,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "hydro",
+     "model_twh": 15.2453,
+     "actual_twh": 15.8552,
+     "delta_twh": -0.6099,
+     "band_twh": 8.0,
+     "band_util": 0.0762,
+     "share_pp": -0.035,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "nuclear",
+     "model_twh": 270.5943,
+     "actual_twh": 272.3588,
+     "delta_twh": -1.7645,
+     "band_twh": 8.0,
+     "band_util": 0.2206,
+     "share_pp": 0.445,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "oil",
+     "model_twh": 0.0028,
+     "actual_twh": 0.9143,
+     "delta_twh": -0.9115,
+     "band_twh": 8.0,
+     "band_util": 0.1139,
+     "share_pp": -0.108,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "solar",
+     "model_twh": 15.8519,
+     "actual_twh": 15.852,
+     "delta_twh": -0.0001,
+     "band_twh": 8.0,
+     "band_util": 0.0,
+     "share_pp": 0.038,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "wind",
+     "model_twh": 30.9544,
+     "actual_twh": 30.954,
+     "delta_twh": 0.0004,
+     "band_twh": 8.0,
+     "band_util": 0.0001,
+     "share_pp": 0.075,
+     "vol_ok": true,
+     "share_ok": true
+    }
+   ],
+   "c1_arm": [
+    {
+     "class": "CC_CHP",
+     "model_twh": 8.3315,
+     "actual_twh": 7.283,
+     "delta_twh": 1.0485,
+     "band_twh": 8.0,
+     "band_util": 0.1311,
+     "share_pp": 0.143,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "CC_REGULAR",
+     "model_twh": 330.0728,
+     "actual_twh": 335.1241,
+     "delta_twh": -5.0513,
+     "band_twh": 8.0,
+     "band_util": 0.6314,
+     "share_pp": 0.148,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "COAL_BIT",
+     "model_twh": 102.2366,
+     "actual_twh": 105.0966,
+     "delta_twh": -2.86,
+     "band_twh": 8.0,
+     "band_util": 0.3575,
+     "share_pp": -0.107,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "COAL_PRB",
+     "model_twh": 4.1764,
+     "actual_twh": 4.4111,
+     "delta_twh": -0.2347,
+     "band_twh": 8.0,
+     "band_util": 0.0293,
+     "share_pp": -0.018,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "COAL_WC",
+     "model_twh": 5.4834,
+     "actual_twh": 5.6878,
+     "delta_twh": -0.2044,
+     "band_twh": 8.0,
+     "band_util": 0.0255,
+     "share_pp": -0.012,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "CT_CHP",
+     "model_twh": 1.4209,
+     "actual_twh": 1.6885,
+     "delta_twh": -0.2676,
+     "band_twh": 8.0,
+     "band_util": 0.0335,
+     "share_pp": -0.028,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "CT_PEAKER",
+     "model_twh": 23.0134,
+     "actual_twh": 24.0188,
+     "delta_twh": -1.0054,
+     "band_twh": 8.0,
+     "band_util": 0.1257,
+     "share_pp": -0.067,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "OTHER",
+     "model_twh": 7.321,
+     "actual_twh": 7.321,
+     "delta_twh": -0.0,
+     "band_twh": 8.0,
+     "band_util": 0.0,
+     "share_pp": 0.017,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "OTHER_FOSSIL",
+     "model_twh": 0.0,
+     "actual_twh": 0.1649,
+     "delta_twh": -0.1649,
+     "band_twh": 8.0,
+     "band_util": 0.0206,
+     "share_pp": -0.019,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "ST_CHP",
+     "model_twh": 1.0754,
+     "actual_twh": 2.3727,
+     "delta_twh": -1.2973,
+     "band_twh": 8.0,
+     "band_util": 0.1622,
+     "share_pp": -0.151,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "ST_GAS",
+     "model_twh": 10.5443,
+     "actual_twh": 13.1072,
+     "delta_twh": -2.5629,
+     "band_twh": 8.0,
+     "band_util": 0.3204,
+     "share_pp": -0.279,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "biomass",
+     "model_twh": 5.2484,
+     "actual_twh": 5.2484,
+     "delta_twh": 0.0,
+     "band_twh": 8.0,
+     "band_util": 0.0,
+     "share_pp": 0.012,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "hydro",
+     "model_twh": 15.2453,
+     "actual_twh": 15.8552,
+     "delta_twh": -0.6099,
+     "band_twh": 8.0,
+     "band_util": 0.0762,
+     "share_pp": -0.038,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "nuclear",
+     "model_twh": 270.5943,
+     "actual_twh": 272.3588,
+     "delta_twh": -1.7645,
+     "band_twh": 8.0,
+     "band_util": 0.2206,
+     "share_pp": 0.402,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "oil",
+     "model_twh": 0.0022,
+     "actual_twh": 0.9143,
+     "delta_twh": -0.9121,
+     "band_twh": 8.0,
+     "band_util": 0.114,
+     "share_pp": -0.108,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "solar",
+     "model_twh": 15.8519,
+     "actual_twh": 15.852,
+     "delta_twh": -0.0001,
+     "band_twh": 8.0,
+     "band_util": 0.0,
+     "share_pp": 0.036,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "wind",
+     "model_twh": 30.9544,
+     "actual_twh": 30.954,
+     "delta_twh": 0.0004,
+     "band_twh": 8.0,
+     "band_util": 0.0001,
+     "share_pp": 0.07,
+     "vol_ok": true,
+     "share_ok": true
+    }
+   ],
+   "displacement": {
+    "returned_classes": [
+     "ST_GAS",
+     "COAL_BIT",
+     "COAL_PRB",
+     "COAL_WC",
+     "CC_CHP",
+     "CT_CHP"
+    ],
+    "cc_regular_annual_delta_twh": -0.7947,
+    "cc_regular_gross_loss_twh": 1.1277,
+    "returned_annual_delta_twh": 2.7202,
+    "cc_loss_share_in_returned_up_hours": 0.9838,
+    "r_dcc_dreturned": -0.2804,
+    "per_class": {
+     "ST_GAS": {
+      "annual_delta_twh": 2.0624,
+      "r_with_cc_regular": -0.0888,
+      "cc_loss_share_in_up_hours": 0.8677
+     },
+     "COAL_BIT": {
+      "annual_delta_twh": 0.2449,
+      "r_with_cc_regular": -0.267,
+      "cc_loss_share_in_up_hours": 0.6005
+     },
+     "COAL_PRB": {
+      "annual_delta_twh": -0.0599,
+      "r_with_cc_regular": 0.0179,
+      "cc_loss_share_in_up_hours": 0.0001
+     },
+     "COAL_WC": {
+      "annual_delta_twh": 0.0169,
+      "r_with_cc_regular": -0.0061,
+      "cc_loss_share_in_up_hours": 0.3487
+     },
+     "CC_CHP": {
+      "annual_delta_twh": 0.4813,
+      "r_with_cc_regular": -0.1399,
+      "cc_loss_share_in_up_hours": 0.9043
+     },
+     "CT_CHP": {
+      "annual_delta_twh": -0.0254,
+      "r_with_cc_regular": 0.0977,
+      "cc_loss_share_in_up_hours": 0.005
+     }
+    },
+    "verdict": "AMBIGUOUS"
+   },
+   "misallocation": {
+    "cc_regular_short": true,
+    "cc_regular_delta_twh": -5.0513,
+    "returned_classes_overshooting_meter": {
+     "CC_CHP": {
+      "delta_twh": 1.0485,
+      "band_util": 0.1311,
+      "vol_ok": true
+     }
+    },
+    "structural_lever_exists": true
+   }
+  },
+  "2025": {
+   "load_twh": 843.188,
+   "c1_keeper": [
+    {
+     "class": "CC_CHP",
+     "model_twh": 6.7831,
+     "actual_twh": 6.2811,
+     "delta_twh": 0.502,
+     "band_twh": 8.0,
+     "band_util": 0.0627,
+     "share_pp": 0.051,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "CC_REGULAR",
+     "model_twh": 329.2043,
+     "actual_twh": 330.3608,
+     "delta_twh": -1.1565,
+     "band_twh": 8.0,
+     "band_util": 0.1446,
+     "share_pp": -0.454,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "COAL_BIT",
+     "model_twh": 129.3951,
+     "actual_twh": 125.4292,
+     "delta_twh": 3.9659,
+     "band_twh": 8.0,
+     "band_util": 0.4957,
+     "share_pp": 0.333,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "COAL_PRB",
+     "model_twh": 6.6525,
+     "actual_twh": 6.032,
+     "delta_twh": 0.6205,
+     "band_twh": 8.0,
+     "band_util": 0.0776,
+     "share_pp": 0.065,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "COAL_WC",
+     "model_twh": 5.6278,
+     "actual_twh": 5.4027,
+     "delta_twh": 0.2251,
+     "band_twh": 8.0,
+     "band_util": 0.0281,
+     "share_pp": 0.021,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "CT_CHP",
+     "model_twh": 1.1973,
+     "actual_twh": -0.3726,
+     "delta_twh": 1.5699,
+     "band_twh": 8.0,
+     "band_util": 0.1962,
+     "share_pp": 0.18,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "CT_PEAKER",
+     "model_twh": 31.7261,
+     "actual_twh": 23.8249,
+     "delta_twh": 7.9012,
+     "band_twh": 8.0,
+     "band_util": 0.9877,
+     "share_pp": 0.883,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "OTHER",
+     "model_twh": 4.7776,
+     "actual_twh": 4.7776,
+     "delta_twh": 0.0,
+     "band_twh": 8.0,
+     "band_util": 0.0,
+     "share_pp": -0.005,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "OTHER_FOSSIL",
+     "model_twh": 0.0,
+     "actual_twh": 0.1791,
+     "delta_twh": -0.1791,
+     "band_twh": 8.0,
+     "band_util": 0.0224,
+     "share_pp": -0.021,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "ST_CHP",
+     "model_twh": 0.9233,
+     "actual_twh": 1.8358,
+     "delta_twh": -0.9125,
+     "band_twh": 8.0,
+     "band_util": 0.1141,
+     "share_pp": -0.106,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "ST_GAS",
+     "model_twh": 12.7235,
+     "actual_twh": 14.7882,
+     "delta_twh": -2.0647,
+     "band_twh": 8.0,
+     "band_util": 0.2581,
+     "share_pp": -0.251,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "biomass",
+     "model_twh": 2.1722,
+     "actual_twh": 2.1722,
+     "delta_twh": -0.0,
+     "band_twh": 8.0,
+     "band_util": 0.0,
+     "share_pp": -0.002,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "hydro",
+     "model_twh": 14.4637,
+     "actual_twh": 15.5065,
+     "delta_twh": -1.0428,
+     "band_twh": 8.0,
+     "band_util": 0.1304,
+     "share_pp": -0.135,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "nuclear",
+     "model_twh": 269.3312,
+     "actual_twh": 270.0369,
+     "delta_twh": -0.7057,
+     "band_twh": 8.0,
+     "band_util": 0.0882,
+     "share_pp": -0.344,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "oil",
+     "model_twh": 0.0203,
+     "actual_twh": 1.3616,
+     "delta_twh": -1.3413,
+     "band_twh": 8.0,
+     "band_util": 0.1677,
+     "share_pp": -0.155,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "solar",
+     "model_twh": 24.6247,
+     "actual_twh": 24.673,
+     "delta_twh": -0.0483,
+     "band_twh": 8.0,
+     "band_util": 0.006,
+     "share_pp": -0.03,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "wind",
+     "model_twh": 32.1232,
+     "actual_twh": 32.123,
+     "delta_twh": 0.0002,
+     "band_twh": 8.0,
+     "band_util": 0.0,
+     "share_pp": -0.031,
+     "vol_ok": true,
+     "share_ok": true
+    }
+   ],
+   "c1_arm": [
+    {
+     "class": "CC_CHP",
+     "model_twh": 7.275,
+     "actual_twh": 6.2811,
+     "delta_twh": 0.9939,
+     "band_twh": 8.0,
+     "band_util": 0.1242,
+     "share_pp": 0.106,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "CC_REGULAR",
+     "model_twh": 328.8161,
+     "actual_twh": 330.3608,
+     "delta_twh": -1.5447,
+     "band_twh": 8.0,
+     "band_util": 0.1931,
+     "share_pp": -0.577,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "COAL_BIT",
+     "model_twh": 129.0374,
+     "actual_twh": 125.4292,
+     "delta_twh": 3.6082,
+     "band_twh": 8.0,
+     "band_util": 0.451,
+     "share_pp": 0.261,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "COAL_PRB",
+     "model_twh": 6.5543,
+     "actual_twh": 6.032,
+     "delta_twh": 0.5223,
+     "band_twh": 8.0,
+     "band_util": 0.0653,
+     "share_pp": 0.052,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "COAL_WC",
+     "model_twh": 5.6121,
+     "actual_twh": 5.4027,
+     "delta_twh": 0.2094,
+     "band_twh": 8.0,
+     "band_util": 0.0262,
+     "share_pp": 0.017,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "CT_CHP",
+     "model_twh": 1.1669,
+     "actual_twh": -0.3726,
+     "delta_twh": 1.5395,
+     "band_twh": 8.0,
+     "band_util": 0.1924,
+     "share_pp": 0.177,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "CT_PEAKER",
+     "model_twh": 30.1161,
+     "actual_twh": 23.8249,
+     "delta_twh": 6.2912,
+     "band_twh": 8.0,
+     "band_util": 0.7864,
+     "share_pp": 0.691,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "OTHER",
+     "model_twh": 4.7776,
+     "actual_twh": 4.7776,
+     "delta_twh": 0.0,
+     "band_twh": 8.0,
+     "band_util": 0.0,
+     "share_pp": -0.006,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "OTHER_FOSSIL",
+     "model_twh": 0.0,
+     "actual_twh": 0.1791,
+     "delta_twh": -0.1791,
+     "band_twh": 8.0,
+     "band_util": 0.0224,
+     "share_pp": -0.021,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "ST_CHP",
+     "model_twh": 0.9161,
+     "actual_twh": 1.8358,
+     "delta_twh": -0.9197,
+     "band_twh": 8.0,
+     "band_util": 0.115,
+     "share_pp": -0.108,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "ST_GAS",
+     "model_twh": 16.563,
+     "actual_twh": 14.7882,
+     "delta_twh": 1.7748,
+     "band_twh": 8.0,
+     "band_util": 0.2218,
+     "share_pp": 0.185,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "biomass",
+     "model_twh": 2.1722,
+     "actual_twh": 2.1722,
+     "delta_twh": -0.0,
+     "band_twh": 8.0,
+     "band_util": 0.0,
+     "share_pp": -0.003,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "hydro",
+     "model_twh": 14.4637,
+     "actual_twh": 15.5065,
+     "delta_twh": -1.0428,
+     "band_twh": 8.0,
+     "band_util": 0.1304,
+     "share_pp": -0.138,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "nuclear",
+     "model_twh": 269.3312,
+     "actual_twh": 270.0369,
+     "delta_twh": -0.7057,
+     "band_twh": 8.0,
+     "band_util": 0.0882,
+     "share_pp": -0.408,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "oil",
+     "model_twh": 0.0161,
+     "actual_twh": 1.3616,
+     "delta_twh": -1.3455,
+     "band_twh": 8.0,
+     "band_util": 0.1682,
+     "share_pp": -0.156,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "solar",
+     "model_twh": 24.6247,
+     "actual_twh": 24.673,
+     "delta_twh": -0.0483,
+     "band_twh": 8.0,
+     "band_util": 0.006,
+     "share_pp": -0.035,
+     "vol_ok": true,
+     "share_ok": true
+    },
+    {
+     "class": "wind",
+     "model_twh": 32.1232,
+     "actual_twh": 32.123,
+     "delta_twh": 0.0002,
+     "band_twh": 8.0,
+     "band_util": 0.0,
+     "share_pp": -0.039,
+     "vol_ok": true,
+     "share_ok": true
+    }
+   ],
+   "displacement": {
+    "returned_classes": [
+     "ST_GAS",
+     "COAL_BIT",
+     "COAL_PRB",
+     "COAL_WC",
+     "CC_CHP",
+     "CT_CHP"
+    ],
+    "cc_regular_annual_delta_twh": -0.3881,
+    "cc_regular_gross_loss_twh": 1.3194,
+    "returned_annual_delta_twh": 3.8293,
+    "cc_loss_share_in_returned_up_hours": 0.9793,
+    "r_dcc_dreturned": -0.4328,
+    "per_class": {
+     "ST_GAS": {
+      "annual_delta_twh": 3.8394,
+      "r_with_cc_regular": -0.4287,
+      "cc_loss_share_in_up_hours": 0.9523
+     },
+     "COAL_BIT": {
+      "annual_delta_twh": -0.3577,
+      "r_with_cc_regular": -0.1365,
+      "cc_loss_share_in_up_hours": 0.3354
+     },
+     "COAL_PRB": {
+      "annual_delta_twh": -0.0983,
+      "r_with_cc_regular": 0.0688,
+      "cc_loss_share_in_up_hours": 0.0004
+     },
+     "COAL_WC": {
+      "annual_delta_twh": -0.0157,
+      "r_with_cc_regular": -0.0525,
+      "cc_loss_share_in_up_hours": 0.1309
+     },
+     "CC_CHP": {
+      "annual_delta_twh": 0.492,
+      "r_with_cc_regular": 0.1681,
+      "cc_loss_share_in_up_hours": 0.7814
+     },
+     "CT_CHP": {
+      "annual_delta_twh": -0.0305,
+      "r_with_cc_regular": -0.0429,
+      "cc_loss_share_in_up_hours": 0.0015
+     }
+    },
+    "verdict": "DISPLACEMENT-CONFIRMED"
+   },
+   "misallocation": {
+    "cc_regular_short": true,
+    "cc_regular_delta_twh": -1.5447,
+    "returned_classes_overshooting_meter": {
+     "ST_GAS": {
+      "delta_twh": 1.7748,
+      "band_util": 0.2218,
+      "vol_ok": true
+     },
+     "COAL_BIT": {
+      "delta_twh": 3.6082,
+      "band_util": 0.451,
+      "vol_ok": true
+     },
+     "COAL_PRB": {
+      "delta_twh": 0.5223,
+      "band_util": 0.0653,
+      "vol_ok": true
+     },
+     "COAL_WC": {
+      "delta_twh": 0.2094,
+      "band_util": 0.0262,
+      "vol_ok": true
+     },
+     "CC_CHP": {
+      "delta_twh": 0.9939,
+      "band_util": 0.1242,
+      "vol_ok": true
+     },
+     "CT_CHP": {
+      "delta_twh": 1.5395,
+      "band_util": 0.1924,
+      "vol_ok": true
+     }
+    },
+    "structural_lever_exists": true
+   }
+  }
+ }
+}
