@@ -279,6 +279,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # enters the key as a distinct scenario, which is what keeps the A/B's two
     # arms independent in the on-disk results cache.
     "pjm_offer_surface_within_season",
+    # miso-96 coal take-or-pay sunk-FIXED treatment (945191f). Default-off and
+    # byte-identical for every existing config — with the gate off the committed
+    # band keeps its existing take-or-pay discount — so it is dropped from the
+    # hash at its default; an armed run enters the key as a distinct scenario.
+    # (Registered 2026-07-27: the field landed unregistered and so entered the
+    # hash at its default, breaking the pinned default cache_key.)
+    "coal_committed_takeorpay_sunk_fixed",
 )
 
 
