@@ -1223,3 +1223,88 @@ describe the run as keeper (calibration-keeper-auditor pass). Files:
 `status/PJM.js`.
 
 **Next number: pjm-134.**
+
+---
+
+## pjm-133 — `hydro_budget_nameplate_aware`: every gate passes, no kill fires
+
+**Executes the caiso-130 cross-ISO hand-off** (FINDING-caiso130 §5 item 4) as its
+own single-delta A/B. Registered: `2026-07-27-pjm-133-nameplate` (arm B) and
+`2026-07-27-pjm-133-control` (arm A), both 2023+2024+2025, one bundle each
+(rules 15/16). Prereg `PREREG-pjm133-...-2026-07-27.md` committed at `e1bb3d1`
+and merged to main **before either arm solved**. Full write-up:
+`results/calibration/FINDING-pjm133-hydro-budget-nameplate-aware-2026-07-27.md`.
+
+**The pre-solve prediction was exact.** The prereg stated the nameplate clip
+explains **98.0 / 94.0 / 99.9 %** of PJM's entire hydro volume deficit and
+predicted post-delta gaps of −0.017 / −0.037 / −0.001 TWh. The solve returned
+**−0.017 / −0.037 / −0.001**. Delivery is **100.0 %** of the re-allocated energy
+in all three years — the keeper was already at its deliverable ceiling and the
+only thing withholding the energy was a budget the LP's own `pmax` bound
+silently clipped.
+
+**Scorecard — no pre-registered kill fired.** P1 PASS 3/3; P2/K5 PASS (0 MWh over
+bound, month totals to 1.4e-9, plant count unchanged); P3 PASS (worst D-2 move
+0.33 pp of a 2 pp bound, hydro forced share stays 0.0 %, D-4 unchanged); K1 C3a
+−0.10/+0.10/+0.09 pp of a 0.75 pp bound; **K2 volume collateral IMPROVES every
+year, −0.534/−0.145/−1.120 TWh**; K3 CO2 +0.14/+0.10/−0.16 pp; K4 rubric
+identical in both arms. Zero DOF — the bound is EIA-860 nameplate × the calendar.
+
+**Basis: clean once attributed.** Arm A does not reproduce the committed keeper
+bundle (max |Δ| 2453/3459/3330 MW) but IS **byte-identical (0.000000 MW, every
+class, every hour, all three years) to `pjm132_control_A`** — the previous
+session's post-guard control. The difference is entirely the documented
+pre-guard → corrected-outage-envelope change, predates this session, and is
+carried identically by both arms. Independent confirmation: arm A's 2025 λ is
+**40.93**, the guard-corrected A1 exactly.
+
+**Two honest notes.** (i) The prereg predicted K2 "≈ neutral in 2023/2024"; the
+measured result improved in all three years — the prediction was too pessimistic
+and is recorded as such. (ii) The freed water spreads almost exactly flat
+(window shares within ~5 pp of hours-shares, mild overnight tilt) — the same
+signature caiso-130 measured, reproduced on a keeper with none of CAISO's
+evening-λ pin. Not gated here, by pre-registration: PJM files no `NG: PS`, so
+its `NG: WAT` comparator is pumped-storage-contaminated.
+
+**Disclosed, not fixed, not bundled:** PJM's pinned hydro level is the
+PS-inclusive `NG: WAT`, **+6.5 to +7.0 TWh/yr above** the EIA-923 prime-mover-`HY`
+budget, asking a 3.3 GW fleet for energy the model's separate 5.0 GW PS fleet
+already generates. Rule 14 reading: the clip was deleting that phantom energy
+before the LP saw it; removing it EXPOSES the pin rather than causing it. Affects
+every hydro ISO whose BA omits `NG: PS` (PJM/CAISO/NYISO/MISO; ISNE has it).
+Filed as an ask.
+
+**Disposition — NOT promoted, promotion not requested.** Arm B strictly dominates
+arm A: identical recipe plus one flag, no criterion regresses, volume error
+improves in all three years. What blocks a clean promotion is upstream: both arms
+score NOT-YET on the corrected envelope while the designated keeper is registered
+CALIBRATED on the pre-guard envelope, so arm B is comparable only to the
+same-recipe control. That envelope/keeper-designation decision is **owner-only**
+and was already open before this session (miso-88 precedent, FINDING-pjm132 §5).
+Promoting arm B effectively decides it — which is why this session does not
+self-promote.
+
+**Cross-ISO reading:** caiso-130 armed this flag on the ISO with the *smallest*
+exposure (0.12–1.50 %) and was killed by an overnight gate driven by CAISO's own
+storage-arbitrage λ pin. PJM carries 3.6–6.7 % and passes everything. The
+mechanism is sound; the caiso-130 kill was a property of CAISO's evening λ
+surface, not of the nameplate bound. MISO (0.87–2.12 %) and NEISO (0.28–0.91 %)
+remain untested, each its own A/B and its own owner act.
+
+**Also filed this session:** `ASK-pjm134-dominion-zonal-inversion-2026-07-27.md`
+— the owner-raised Dominion CC_REGULAR / CT_PEAKER underrun, measured from
+committed payloads only. It is an **allocation inversion**, not a level error
+(Dominion CT runs 5.3 % model CF vs 19.5 % actual while AEP_Ohio runs 19.5 % vs
+10.1 %, on capacity that is present and correctly zoned), and the pjm-132
+within-season delta moves Dominion by **0.00 TWh** — the offer-surface family
+re-conditions price ISO-wide and cannot reach which zone clears.
+
+**Environment (provisioning, not methodology).** A PJM per-plant year-solve peaks
+at **14.80/15.21/15.21 GB** on a 15 GB box; an attempt was OOM-killed in 2024 at
+that peak. Resident-after-release is flat at ~1.0 GB, so there is **no leak** —
+and splitting years into separate invocations does **not** help, because the peak
+is intra-year (rule 16 is not in tension with the memory limit). Resolved with
+swap. The container also shipped an empty `data/clean` tree (48 datatypes
+regenerated) and an empty `data/raw/pjm-da-virtuals` (36 months fetched).
+
+**Next number: pjm-134.**
