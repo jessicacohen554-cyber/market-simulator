@@ -39,7 +39,6 @@ Cayuga,1001,2,531.0,1174.5,45.2,COAL,eia_exact,2025-07-15,2025-07-18,3.3,2,3
 Cayuga,1001,2,531.0,1174.5,45.2,COAL,eia_exact,2025-08-06,2025-08-09,3.4,2,3
 Edwardsport Generating Station,1004,CTG1,406.3,812.7,50.0,COAL,eia_digits_cc,2024-09-24,2024-09-27,3.0,1,2
 Edwardsport Generating Station,1004,CTG1,406.3,812.7,50.0,COAL,eia_digits_cc,2025-11-10,2025-11-13,3.2,1,2
-F B Culley Generating Station,1012,2,103.7,368.9,28.1,COAL,eia_exact,2023-03-10,2023-03-12,2.2,1,2
 F B Culley Generating Station,1012,3,265.2,368.9,71.9,COAL,eia_exact,2023-08-01,2023-08-04,2.9,1,2
 F B Culley Generating Station,1012,3,265.2,368.9,71.9,COAL,eia_exact,2024-12-12,2024-12-14,2.6,1,2
 F B Culley Generating Station,1012,3,265.2,368.9,71.9,COAL,eia_exact,2025-07-27,2025-07-28,1.8,1,2
