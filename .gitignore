@@ -298,6 +298,16 @@ results/calibration/*_repro_A/
 results/calibration/caiso122_control_A/
 results/calibration/caiso122_headctl_2025/
 results/calibration/caiso122_nooutage_2025/
+# miso-98 CHP-sector A/B staging legs. MISO peaks at 14.4 GB on a 15 GB box
+# (miso-92 §7), so each three-year bundle is built one fresh year per process
+# and chained forward with --reuse-solved. Only the two FINAL three-year
+# bundles (miso98_chp_sector_A / _B) are deliverables; these legs are
+# regenerable from their own run_config.json and must never be registered —
+# a single-year bundle is not a keeper (rule 16 [R-ALLYEARS]).
+results/calibration/miso98_chp_sector_A_y23/
+results/calibration/miso98_chp_sector_A_y2324/
+results/calibration/miso98_chp_sector_B_y23/
+results/calibration/miso98_chp_sector_B_y2324/
 # miso-96 staged --reuse-solved chain legs: the 15 GB box OOMs a 3-year
 # single-process MISO solve (14.34 GB single-year peak), so the arm is built one
 # fresh year per process and each leg byte-copies the prior years forward. Only
