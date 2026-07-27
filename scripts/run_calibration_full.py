@@ -1687,6 +1687,115 @@ def _plant_class_shares(
     return out
 
 
+def _backfill_chp_eia923_from_donor(
+    e923: pd.DataFrame,
+    generation: pd.DataFrame,
+    group_by_code: dict[int, str],
+    year: int,
+    donor_year: int,
+    campd_active: set[int] | None = None,
+) -> pd.DataFrame:
+    """Carry a CHP plant's donor-vintage class total into the **benchmark**.
+
+    The benchmark-side mirror of the ``btm_backfill_year`` repair inside
+    :func:`_btm_frame`. The two must move together. ``classFull`` is
+    ``EIA-923 class total − BTM host self-supply``; the BTM repair carries a
+    plant whose per-(plant, class) total is missing from ``year``'s thin
+    EIA-923 vintage (the monthly-survey-only release). Repairing only that
+    *subtrahend* subtracts a plant's host share from a class total that never
+    received the plant's energy, so the difference can go negative — which is
+    exactly what PJM 2025 did: ``classFull.CT_CHP = −0.3726 TWh``, a negative
+    metered volume (surfaced by pjm-129 §6, localized and reproduced by
+    pjm-130, which recovers the committed ``btmClass`` cells to 4 dp only with
+    this backfill armed).
+
+    The CAMPD backfill in :func:`_backfill_eia923_with_campd` cannot cover this:
+    it fires on **non-CHP** grid plants by construction, so a CHP plant absent
+    from the thin vintage is repaired on neither side without this.
+
+    Same donor vintage, same ``campd_active`` gate (a CEMS-silent plant stays
+    dropped on both sides), same per-(plant, class) key as the BTM repair — so
+    the repaired benchmark and the repaired BTM describe the same plant
+    population and ``btm[k] <= e923[k]`` holds by construction, the host share
+    being a fraction <= 1. Rule 11 [R-ACCURATE]: the plant genuinely generated,
+    the gap is a reporting artifact of the vintage, so the accurate treatment
+    repairs both sides — never one.
+
+    Only the three CHP classes are touched, and only for a (plant, class) the
+    benchmark currently reports as zero, so a complete vintage is a no-op and
+    every non-CHP class is byte-identical.
+    """
+    donor = generation[generation["year"] == donor_year].copy()
+    if donor.empty:
+        return e923
+    donor["klass"] = [
+        _classify_f923(f, pm, str(c).upper().startswith("Y"), pid)
+        for f, pm, c, pid in zip(
+            donor["fuel_type"], donor["prime_mover"], donor["chp"], donor["plant_id"]
+        )
+    ]
+    mcols = monthly_netgen_columns()
+    donor_ann = donor.groupby(["plant_id", "klass"])["netgen_annual_mwh"].sum()
+    donor_mon = donor.groupby(["plant_id", "klass"])[mcols].sum()
+
+    have = (
+        set(zip(e923["plant_id"].astype(int), e923["klass"].astype(str)))
+        if not e923.empty
+        else set()
+    )
+    reported = (
+        e923.groupby(["plant_id", "klass"])["annual_mwh"].sum()
+        if not e923.empty
+        else pd.Series(dtype=float)
+    )
+    out_cols = [f"m{i:02d}" for i in range(1, 13)]
+    added = []
+    for code, grp in group_by_code.items():
+        grp = str(grp)
+        if grp not in ("CC_CHP", "CT_CHP", "ST_CHP"):
+            continue
+        code = int(code)
+        if float(reported.get((code, grp), 0.0)) > 0.0:
+            continue  # measured this year — never overwritten (rule 11)
+        if campd_active is not None and code not in campd_active:
+            continue  # CEMS-silent: stays dropped on both sides
+        carried = float(donor_ann.get((code, grp), 0.0))
+        if carried <= 0.0:
+            continue
+        mon = (
+            donor_mon.loc[(code, grp)].to_numpy(dtype=float)
+            if (code, grp) in donor_mon.index
+            else np.zeros(12)
+        )
+        row = {
+            "year": np.int16(year),
+            "plant_id": code,
+            "klass": grp,
+            "annual_mwh": carried,
+            **{c: float(mon[i]) for i, c in enumerate(out_cols)},
+        }
+        added.append(row)
+        logging.info(
+            "benchmark 923 CHP backfill %s: plant %s %s carries %s class "
+            "netgen %.0f MWh (missing from the %s vintage, CAMPD active) — "
+            "mirrors the BTM backfill so classFull stays non-negative",
+            year,
+            code,
+            grp,
+            donor_year,
+            carried,
+            year,
+        )
+    if not added:
+        return e923
+    extra = pd.DataFrame(added)
+    if have:
+        extra = extra[~extra.set_index(["plant_id", "klass"]).index.isin(have)]
+        if extra.empty:
+            return e923
+    return pd.concat([e923, extra], ignore_index=True)
+
+
 def _benchmark_eia923_frame(
     year: int,
     generation: pd.DataFrame,
@@ -1694,6 +1803,8 @@ def _benchmark_eia923_frame(
     campd_year: pd.DataFrame | None,
     group_by_code: dict[int, str],
     e930: pd.DataFrame | None,
+    btm_backfill_year: int | None = None,
+    campd_active: set[int] | None = None,
 ) -> pd.DataFrame:
     """The bundle's per-class EIA-923 benchmark: CAMPD thermal backfill + the
     EIA-930 renewable / prior-year biomass repair for incomplete vintages.
@@ -1701,6 +1812,11 @@ def _benchmark_eia923_frame(
     Non-ERCOT plants split the CAMPD backfill by measured prime-mover class shares
     (:func:`_plant_class_shares`); ERCOT keeps the single-class bin-sheet path
     (``class_shares=None``), so its output is byte-identical.
+
+    ``btm_backfill_year`` / ``campd_active`` mirror the BTM repair onto the
+    benchmark for the CHP classes the CAMPD backfill does not reach — see
+    :func:`_backfill_chp_eia923_from_donor`. Unset (or a complete vintage) is a
+    no-op.
     """
     class_shares = (
         None if iso == "ERCOT" else _plant_class_shares(iso, generation, year)
@@ -1712,6 +1828,15 @@ def _benchmark_eia923_frame(
         year,
         class_shares=class_shares,
     )
+    if btm_backfill_year is not None:
+        e923 = _backfill_chp_eia923_from_donor(
+            e923,
+            generation,
+            group_by_code,
+            year,
+            btm_backfill_year,
+            campd_active=campd_active,
+        )
     return _backfill_renewables_eia930(e923, year, iso, generation, e930)
 
 
@@ -4440,6 +4565,12 @@ def solve_and_persist(
                     campd_year,
                     group_by_code,
                     e930,
+                    # Mirror the BTM repair onto the benchmark: `classFull` is
+                    # this frame minus btm.parquet, so repairing only the
+                    # subtrahend can drive a metered class volume negative
+                    # (PJM 2025 CT_CHP, pjm-129 §6 / pjm-130).
+                    btm_backfill_year=btm_backfill_year,
+                    campd_active=campd_active,
                 )
             )
             if campd_year is not None:
@@ -6761,11 +6892,29 @@ def rebuild_benchmark(bundle: Path) -> None:
         bins = load_campd_bins(ScenarioConfig().campd_bins_path)
         group_by_code = dict(zip(bins["Plant_Code"].astype(int), bins["Plant_Group"]))
 
+    # The BTM 923 backfill is a benchmark input (it repairs BOTH classFull's
+    # minuend and btm.parquet — see _backfill_chp_eia923_from_donor), so a
+    # rebuild has to reproduce it. Recovered from the bundle's own run_config
+    # when it recorded one; absent, the repair is simply not applied, which is
+    # the pre-flag behaviour.
+    _rc = bundle / "run_config.json"
+    _btm_backfill_year = None
+    if _rc.exists():
+        _cfg = json.loads(_rc.read_text())
+        for _blk in (_cfg, _cfg.get("calibration_flags") or {}):
+            if isinstance(_blk, dict) and _blk.get("btm_backfill_year") is not None:
+                _btm_backfill_year = int(_blk["btm_backfill_year"])
+                break
+
     e923f, e930f, campdf = [], [], []
     for year in years:
         if not is_ercot:
             group_by_code = _fleet_group_by_code(iso, iso_config, year)
         campd_year = _campd_hourly_frame(year, iso, parasitic_factors, hours)
+        _campd_active = None
+        if campd_year is not None:
+            _bp = campd_year.groupby("plant_id")["net_mw"].sum()
+            _campd_active = set(_bp[_bp > 0.0].index.astype(int))
         e930 = _eia930_frame(year, iso, iso_config)
         e923f.append(
             _benchmark_eia923_frame(
@@ -6775,6 +6924,8 @@ def rebuild_benchmark(bundle: Path) -> None:
                 campd_year,
                 group_by_code,
                 e930,
+                btm_backfill_year=_btm_backfill_year,
+                campd_active=_campd_active,
             )
         )
         if e930 is not None:

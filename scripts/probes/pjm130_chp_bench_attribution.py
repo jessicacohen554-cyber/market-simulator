@@ -55,25 +55,39 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--iso", default="PJM")
     ap.add_argument("--years", type=int, nargs="+", default=[2023, 2024, 2025])
+    ap.add_argument(
+        "--backfill-from",
+        type=int,
+        default=None,
+        help="also compute the BTM frame with --btm-backfill-year set to this "
+             "vintage (the incomplete-923 repair path)",
+    )
     ap.add_argument("--json-out")
     args = ap.parse_args()
 
     import run_calibration_full as rcf
-    from market_sim.data.campd import load_campd_unit_data
+    from market_sim.config.iso_configs import get_iso_config
     from market_sim.data.eia923 import load_monthly_generation
 
     generation = load_monthly_generation()
+    parasitic_factors = rcf._parasitic_factor_map()
+    iso_config = get_iso_config(args.iso)
     out: dict = {"iso": args.iso, "years": {}}
 
     for year in args.years:
-        group_by_code = rcf._fleet_group_by_code(args.iso, year)
-        try:
-            campd_year = load_campd_unit_data(args.iso, year)
-        except Exception as exc:  # pragma: no cover - diagnostic
-            print(f"[{year}] campd unavailable ({exc}); backfill side skipped")
-            campd_year = None
+        # NOTE: (iso, iso_config, year) -- the year selects that vintage's
+        # EIA-860 CHP designation, which is what buckets a plant CC_CHP vs
+        # CT_CHP. Dropping it silently loads the default vintage.
+        group_by_code = rcf._fleet_group_by_code(args.iso, iso_config, year)
+        campd_year = rcf._campd_hourly_frame(year, args.iso, parasitic_factors, 8760)
+
+        campd_active = None
+        if campd_year is not None:
+            _bp = campd_year.groupby("plant_id")["net_mw"].sum()
+            campd_active = set(_bp[_bp > 0.0].index.astype(int))
 
         # --- benchmark side (the classFull minuend) -------------------------
+        # UNREPAIRED: no donor backfill on the minuend -- the pre-fix path.
         e923_bench = rcf._benchmark_eia923_frame(
             year, generation, args.iso, campd_year, group_by_code, None
         )
@@ -81,7 +95,23 @@ def main() -> None:
             e923_bench.groupby("klass")["annual_mwh"].sum() / _MWH_PER_TWH
         ).to_dict()
 
-        # --- BTM side (the subtrahend) --------------------------------------
+        # REPAIRED: the same donor backfill the BTM side gets (the fix).
+        bench_bf_cls: dict[str, float] = {}
+        if args.backfill_from is not None:
+            _eb = rcf._benchmark_eia923_frame(
+                year,
+                generation,
+                args.iso,
+                campd_year,
+                group_by_code,
+                None,
+                btm_backfill_year=args.backfill_from,
+                campd_active=campd_active,
+            )
+            bench_bf_cls = (
+                _eb.groupby("klass")["annual_mwh"].sum() / _MWH_PER_TWH
+            ).to_dict()
+
         btm = rcf._btm_frame(
             year,
             "P1",
@@ -91,11 +121,32 @@ def main() -> None:
         )
         btm_cls = dict(zip(btm["klass"], btm["btm_twh"])) if not btm.empty else {}
 
+        # Same frame WITH the prior-vintage BTM backfill armed (the
+        # --btm-backfill-year path). The backfill lifts the SUBTRAHEND only:
+        # `classFull`'s minuend `_benchmark_eia923_frame` has no matching
+        # CHP repair (its CAMPD backfill is explicitly non-CHP), so any plant
+        # the backfill carries in enters the subtraction without entering the
+        # thing being subtracted from.
+        btm_bf_cls: dict[str, float] = {}
+        if args.backfill_from is not None:
+            _bf = rcf._btm_frame(
+                year,
+                "P1",
+                generation,
+                btm_backfill_year=args.backfill_from,
+                campd_active=campd_active,
+                iso=args.iso,
+                group_by_code=group_by_code,
+            )
+            btm_bf_cls = dict(zip(_bf["klass"], _bf["btm_twh"])) if not _bf.empty else {}
+
         # --- the invariant ---------------------------------------------------
         rows = []
         for k in CHP_CLASSES:
             b = float(bench_cls.get(k, 0.0))
             m = float(btm_cls.get(k, 0.0))
+            mb = float(btm_bf_cls.get(k, 0.0)) if btm_bf_cls else None
+            bb = float(bench_bf_cls.get(k, 0.0)) if bench_bf_cls else None
             rows.append(
                 {
                     "class": k,
@@ -103,16 +154,53 @@ def main() -> None:
                     "btm_twh": round(m, 4),
                     "classFull_twh": round(b - m, 4),
                     "invariant_ok": bool(m <= b + 1e-9),
+                    "btm_backfilled_twh": round(mb, 4) if mb is not None else None,
+                    # PRE-FIX: repaired subtrahend against an unrepaired minuend
+                    "classFull_backfilled_twh": (
+                        round(b - mb, 4) if mb is not None else None
+                    ),
+                    "invariant_ok_backfilled": (
+                        bool(mb <= b + 1e-9) if mb is not None else None
+                    ),
+                    # POST-FIX: both sides repaired from the same donor
+                    "e923_bench_repaired_twh": round(bb, 4) if bb is not None else None,
+                    "classFull_repaired_twh": (
+                        round(bb - mb, 4) if (bb is not None and mb is not None) else None
+                    ),
+                    "invariant_ok_repaired": (
+                        bool(mb <= bb + 1e-9)
+                        if (bb is not None and mb is not None)
+                        else None
+                    ),
                 }
             )
 
         print(f"\n===== {args.iso} {year} =====")
-        print(f"{'class':<10}{'e923_bench':>12}{'btm':>10}{'classFull':>12}  inv")
+        print(
+            f"{'class':<10}{'e923':>10}{'btm':>9}{'classFull':>11}  inv "
+            f"| PRE-FIX {'btmBF':>9}{'cFull':>9} {'inv':>6} "
+            f"| POST-FIX {'e923R':>9}{'cFullR':>9} {'inv':>6}"
+        )
         for r in rows:
-            print(
-                f"{r['class']:<10}{r['e923_bench_twh']:>12.4f}{r['btm_twh']:>10.4f}"
-                f"{r['classFull_twh']:>12.4f}  {'ok' if r['invariant_ok'] else 'BROKEN'}"
+            _bf = r.get("btm_backfilled_twh")
+            _cf = r.get("classFull_backfilled_twh")
+            _er = r.get("e923_bench_repaired_twh")
+            _cr = r.get("classFull_repaired_twh")
+            line = (
+                f"{r['class']:<10}{r['e923_bench_twh']:>10.4f}{r['btm_twh']:>9.4f}"
+                f"{r['classFull_twh']:>11.4f}  {'ok' if r['invariant_ok'] else 'BROKEN':>6}"
             )
+            if _bf is not None:
+                line += (
+                    f" |          {_bf:>9.4f}{_cf:>9.4f} "
+                    f"{'ok' if r['invariant_ok_backfilled'] else 'BROKEN':>6}"
+                )
+            if _er is not None:
+                line += (
+                    f" |           {_er:>9.4f}{_cr:>9.4f} "
+                    f"{'ok' if r['invariant_ok_repaired'] else 'BROKEN':>6}"
+                )
+            print(line)
 
         # --- per-plant decomposition for any broken class -------------------
         broken = [r["class"] for r in rows if not r["invariant_ok"]]
