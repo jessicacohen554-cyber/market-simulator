@@ -1,28 +1,28 @@
 plant_code,plant_group,name,status,nameplate_mw,online_hours,committed_pct,mustrun_pct,mustrun_online_pct,online_frac,p25_cf,median_cf,peaking_pct,chp_pmin_cf,chp_sector
-7991,CC_CHP,West Campus Cogeneration Facility,ok,131.8,17012,20.5,0.0,0.0,,24.3,53.1,5.3,0.0,
-10745,CC_CHP,Midland Cogeneration Venture,ok,1479.4,26280,32.8,0.0,0.0,,60.8,69.6,6.3,25.9,
-10789,CC_CHP,Sabine River Operations,eia923_cf,502.0,0,,,,,,,,15.2,
-10819,CC_CHP,Ada Cogeneration LP,eia923_cf,30.0,0,,,,,,,,44.2,
-50152,CC_CHP,Dow St Charles Operations,eia923_cf,270.0,0,,,,,,,,51.4,
-50431,CC_CHP,University of Michigan,eia923_cf,45.5,0,,,,,,,,0.0,
-50973,CC_CHP,Motiva Enterprises Port Arthur Refinery,eia923_cf,183.4,0,,,,,,,,0.0,
-54915,CC_CHP,Michigan Power LP,ok,128.0,24961,70.0,0.0,0.0,,97.7,100.8,0.8,0.0,
-55010,CC_CHP,LSP-Cottage Grove LP,ok,251.0,15347,28.7,0.0,0.0,,63.7,84.5,3.4,0.0,
-55075,CC_CHP,Pine Bluff Energy Center,ok,179.0,20577,70.0,0.0,0.0,,126.3,136.3,4.9,0.0,
-55088,CC_CHP,Dearborn Industrial Generation,ok,350.0,24341,50.3,0.0,0.0,,100.9,136.0,3.4,0.0,
-55089,CC_CHP,Taft Cogeneration Facility,ok,738.9,26184,41.4,0.0,0.0,,59.5,63.5,4.1,36.1,
-55117,CC_CHP,RS Cogen,ok,415.4,23430,45.7,0.0,0.0,,61.0,88.6,4.7,35.0,
-55259,CC_CHP,Whiting Clean Energy,ok,513.0,26260,37.8,0.0,0.0,,46.5,55.2,5.0,32.3,
-55404,CC_CHP,Carville Energy LLC,ok,521.0,26030,42.2,0.0,0.0,,45.3,86.6,5.4,39.5,
-55419,CC_CHP,Plaquemine Cogeneration Plant,ok,890.8,26280,70.0,0.0,0.0,,136.2,143.0,5.6,105.1,
-55558,CC_CHP,Combined Locks Energy Center,ok,51.9,20234,70.0,0.0,0.0,,82.9,84.8,4.1,0.0,
-56309,CC_CHP,Trigen St. Louis,eia923_cf,29.2,0,,,,,,,,0.0,
-57953,CC_CHP,Roquette America,eia923_cf,38.0,0,,,,,,,,0.0,
-58161,CC_CHP,Western Michigan University Power Plant,eia923_cf,9.3,0,,,,,,,,39.4,
-58427,CC_CHP,Lansing BWL REO Town Plant,ok,74.9,21904,53.4,0.0,0.0,,96.1,112.1,4.4,0.0,
-59093,CC_CHP,Holland Energy Park,ok,127.1,24832,51.9,0.0,0.0,,88.1,99.1,3.6,44.8,
-62289,CC_CHP,Dearborn Energy Center,eia923_cf,26.9,0,,,,,,,,64.5,
-65405,CC_CHP,"Flint Hills Resources Pine Bend, LLC",eia923_cf,49.9,0,,,,,,,,22.2,
+7991,CC_CHP,West Campus Cogeneration Facility,ok,131.8,17012,20.5,0.0,0.0,,24.3,53.1,5.3,0.0,merchant
+10745,CC_CHP,Midland Cogeneration Venture,ok,1479.4,26280,32.8,0.0,0.0,,60.8,69.6,6.3,25.9,merchant
+10789,CC_CHP,Sabine River Operations,eia923_cf,502.0,0,,,,,,,,15.2,industrial
+10819,CC_CHP,Ada Cogeneration LP,eia923_cf,30.0,0,,,,,,,,44.2,merchant
+50152,CC_CHP,Dow St Charles Operations,eia923_cf,270.0,0,,,,,,,,51.4,industrial
+50431,CC_CHP,University of Michigan,eia923_cf,45.5,0,,,,,,,,0.0,commercial
+50973,CC_CHP,Motiva Enterprises Port Arthur Refinery,eia923_cf,183.4,0,,,,,,,,0.0,industrial
+54915,CC_CHP,Michigan Power LP,ok,128.0,24961,70.0,0.0,0.0,,97.7,100.8,0.8,0.0,merchant
+55010,CC_CHP,LSP-Cottage Grove LP,ok,251.0,15347,28.7,0.0,0.0,,63.7,84.5,3.4,0.0,merchant
+55075,CC_CHP,Pine Bluff Energy Center,ok,179.0,20577,70.0,0.0,0.0,,126.3,136.3,4.9,0.0,merchant
+55088,CC_CHP,Dearborn Industrial Generation,ok,350.0,24341,50.3,0.0,0.0,,100.9,136.0,3.4,0.0,merchant
+55089,CC_CHP,Taft Cogeneration Facility,ok,738.9,26184,41.4,0.0,0.0,,59.5,63.5,4.1,36.1,industrial
+55117,CC_CHP,RS Cogen,ok,415.4,23430,45.7,0.0,0.0,,61.0,88.6,4.7,35.0,industrial
+55259,CC_CHP,Whiting Clean Energy,ok,513.0,26260,37.8,0.0,0.0,,46.5,55.2,5.0,32.3,merchant
+55404,CC_CHP,Carville Energy LLC,ok,521.0,26030,42.2,0.0,0.0,,45.3,86.6,5.4,39.5,merchant
+55419,CC_CHP,Plaquemine Cogeneration Plant,ok,890.8,26280,70.0,0.0,0.0,,136.2,143.0,5.6,105.1,industrial
+55558,CC_CHP,Combined Locks Energy Center,ok,51.9,20234,70.0,0.0,0.0,,82.9,84.8,4.1,0.0,industrial
+56309,CC_CHP,Trigen St. Louis,eia923_cf,29.2,0,,,,,,,,0.0,merchant
+57953,CC_CHP,Roquette America,eia923_cf,38.0,0,,,,,,,,0.0,industrial
+58161,CC_CHP,Western Michigan University Power Plant,eia923_cf,9.3,0,,,,,,,,39.4,commercial
+58427,CC_CHP,Lansing BWL REO Town Plant,ok,74.9,21904,53.4,0.0,0.0,,96.1,112.1,4.4,0.0,merchant
+59093,CC_CHP,Holland Energy Park,ok,127.1,24832,51.9,0.0,0.0,,88.1,99.1,3.6,44.8,merchant
+62289,CC_CHP,Dearborn Energy Center,eia923_cf,26.9,0,,,,,,,,64.5,merchant
+65405,CC_CHP,"Flint Hills Resources Pine Bend, LLC",eia923_cf,49.9,0,,,,,,,,22.2,industrial
 991,CC_REGULAR,Eagle Valley (IN),ok,673.0,24847,70.0,0.0,0.0,0.946,96.2,97.5,2.5,,
 1007,CC_REGULAR,Noblesville,ok,264.0,19680,39.3,0.0,0.0,0.754,61.5,65.4,4.0,,
 1396,CC_REGULAR,Coughlin Power Station,ok,727.0,22683,50.6,0.0,0.0,0.865,76.3,82.1,8.8,,
@@ -106,47 +106,47 @@ plant_code,plant_group,name,status,nameplate_mw,online_hours,committed_pct,mustr
 55856,COAL,Prairie State Generating Station,ok,1630.0,25751,49.6,49.6,49.4,0.982,95.4,99.5,,,
 56068,COAL,Elm Road Generating Station,ok,1270.8,24861,52.1,51.9,30.5,0.951,78.9,102.2,,,
 56456,COAL,Plum Point Energy Station,ok,680.0,21622,48.4,48.2,48.4,0.831,52.9,72.4,,,
-1391,CT_CHP,Louisiana 1,ok,254.4,26280,70.0,0.0,0.0,,136.8,145.4,,111.5,
-10195,CT_CHP,CF Industries Yazoo City Complex,eia923_cf,20.0,0,,,,,,,,20.7,
-10319,CT_CHP,Geismar,eia923_cf,72.9,0,,,,,,,,36.2,
-10568,CT_CHP,Port Arthur Texas Refinery,eia923_cf,30.3,0,,,,,,,,40.7,
-10690,CT_CHP,ExxonMobil Baton Rouge Turbine Generator,eia923_cf,80.5,0,,,,,,,,57.9,
-10866,CT_CHP,Archer Daniels Midland Peoria,eia923_cf,15.0,0,,,,,,,,5.4,
-50028,CT_CHP,Plant 31 Paper Mill,eia923_cf,32.0,0,,,,,,,,48.9,
-50389,CT_CHP,Port Allen (LA),eia923_cf,7.0,0,,,,,,,,50.6,
-50489,CT_CHP,PPG Powerhouse C,eia923_cf,251.2,0,,,,,,,,8.4,
-50625,CT_CHP,ExxonMobil Beaumont Refinery,ok,467.0,26280,70.0,0.0,0.0,,120.5,148.5,,104.5,
-54091,CT_CHP,Mansfield Mill,eia923_cf,45.0,0,,,,,,,,2.7,
-54240,CT_CHP,Louisiana Tech University Power Plant,eia923_cf,6.4,0,,,,,,,,53.1,
-54262,CT_CHP,Saint Marys Hospital Power Plant,eia923_cf,4.5,0,,,,,,,,34.0,
-54321,CT_CHP,Chickadee G-3,eia923_cf,19.0,0,,,,,,,,60.5,
-54518,CT_CHP,Formosa Plastics,eia923_cf,33.0,0,,,,,,,,62.0,
-54604,CT_CHP,Warner Lambert,eia923_cf,2.8,0,,,,,,,,2.4,
-54637,CT_CHP,JCO Oxides Olefins Plant,eia923_cf,61.0,0,,,,,,,,62.9,
-54851,CT_CHP,MMSD Jones Island Wastewater,eia923_cf,17.6,0,,,,,,,,11.3,
-54918,CT_CHP,Ergon Refining Vicksburg,eia923_cf,4.5,0,,,,,,,,52.6,
-55051,CT_CHP,Westlake Plaquemine,eia923_cf,225.0,0,,,,,,,,22.3,
-55096,CT_CHP,Portside Energy,ok,34.0,8627,68.5,0.0,0.0,,71.3,74.2,,0.0,
-55122,CT_CHP,NAFTA Region Olefins Complex Cogen Fac,eia923_cf,70.0,0,,,,,,,,58.5,
-55309,CT_CHP,Air Products Port Arthur,eia923_cf,66.0,0,,,,,,,,75.0,
-55799,CT_CHP,Otsego Mill Power Plant,ok,17.6,10336,51.1,0.0,0.0,,113.6,119.3,,0.0,
-55857,CT_CHP,Oak Point Cogen,eia923_cf,22.2,0,,,,,,,,30.4,
-56190,CT_CHP,Central Michigan University,eia923_cf,3.2,0,,,,,,,,0.0,
-56248,CT_CHP,Shell Chemical,eia923_cf,69.0,0,,,,,,,,59.2,
-56787,CT_CHP,Geismar Cogen,eia923_cf,72.5,0,,,,,,,,50.6,
-58063,CT_CHP,SABIC Innovative Plastics Mt. Vernon,eia923_cf,78.6,0,,,,,,,,0.0,
-58138,CT_CHP,Otter Creek Ethanol Poet - Ashton,eia923_cf,5.5,0,,,,,,,,57.4,
-58265,CT_CHP,NCAH Central Utility Plant,eia923_cf,3.0,0,,,,,,,,0.0,
-58330,CT_CHP,The Andersons Albion Ethanol LLC,eia923_cf,6.0,0,,,,,,,,71.2,
-58428,CT_CHP,LSU Cogen,eia923_cf,20.6,0,,,,,,,,0.0,
-59197,CT_CHP,Univ Minnesota CHP Plant,eia923_cf,18.0,0,,,,,,,,43.5,
-59448,CT_CHP,Waxdale,eia923_cf,3.5,0,,,,,,,,21.2,
-59452,CT_CHP,East. Michigan Univ. Heating Plant,eia923_cf,6.8,0,,,,,,,,38.4,
-60102,CT_CHP,Lorin Industries,eia923_cf,3.2,0,,,,,,,,10.6,
-60647,CT_CHP,Shakopee Energy Park,eia923_cf,46.5,0,,,,,,,,2.4,
-62117,CT_CHP,Beloit Memorial Hospital Power Plant,eia923_cf,3.0,0,,,,,,,,0.1,
-64854,CT_CHP,Primient,ok,57.2,26000,70.0,0.0,0.0,,134.0,139.1,,78.0,
-65400,CT_CHP,Purdue CHP,eia923_cf,13.5,0,,,,,,,,70.7,
+1391,CT_CHP,Louisiana 1,ok,254.4,26280,70.0,0.0,0.0,,136.8,145.4,,111.5,industrial
+10195,CT_CHP,CF Industries Yazoo City Complex,eia923_cf,20.0,0,,,,,,,,20.7,industrial
+10319,CT_CHP,Geismar,eia923_cf,72.9,0,,,,,,,,36.2,industrial
+10568,CT_CHP,Port Arthur Texas Refinery,eia923_cf,30.3,0,,,,,,,,40.7,industrial
+10690,CT_CHP,ExxonMobil Baton Rouge Turbine Generator,eia923_cf,80.5,0,,,,,,,,57.9,industrial
+10866,CT_CHP,Archer Daniels Midland Peoria,eia923_cf,15.0,0,,,,,,,,5.4,industrial
+50028,CT_CHP,Plant 31 Paper Mill,eia923_cf,32.0,0,,,,,,,,48.9,industrial
+50389,CT_CHP,Port Allen (LA),eia923_cf,7.0,0,,,,,,,,50.6,industrial
+50489,CT_CHP,PPG Powerhouse C,eia923_cf,251.2,0,,,,,,,,8.4,industrial
+50625,CT_CHP,ExxonMobil Beaumont Refinery,ok,467.0,26280,70.0,0.0,0.0,,120.5,148.5,,104.5,industrial
+54091,CT_CHP,Mansfield Mill,eia923_cf,45.0,0,,,,,,,,2.7,industrial
+54240,CT_CHP,Louisiana Tech University Power Plant,eia923_cf,6.4,0,,,,,,,,53.1,commercial
+54262,CT_CHP,Saint Marys Hospital Power Plant,eia923_cf,4.5,0,,,,,,,,34.0,commercial
+54321,CT_CHP,Chickadee G-3,eia923_cf,19.0,0,,,,,,,,60.5,industrial
+54518,CT_CHP,Formosa Plastics,eia923_cf,33.0,0,,,,,,,,62.0,industrial
+54604,CT_CHP,Warner Lambert,eia923_cf,2.8,0,,,,,,,,2.4,commercial
+54637,CT_CHP,JCO Oxides Olefins Plant,eia923_cf,61.0,0,,,,,,,,62.9,industrial
+54851,CT_CHP,MMSD Jones Island Wastewater,eia923_cf,17.6,0,,,,,,,,11.3,commercial
+54918,CT_CHP,Ergon Refining Vicksburg,eia923_cf,4.5,0,,,,,,,,52.6,industrial
+55051,CT_CHP,Westlake Plaquemine,eia923_cf,225.0,0,,,,,,,,22.3,industrial
+55096,CT_CHP,Portside Energy,ok,34.0,8627,68.5,0.0,0.0,,71.3,74.2,,0.0,merchant
+55122,CT_CHP,NAFTA Region Olefins Complex Cogen Fac,eia923_cf,70.0,0,,,,,,,,58.5,industrial
+55309,CT_CHP,Air Products Port Arthur,eia923_cf,66.0,0,,,,,,,,75.0,industrial
+55799,CT_CHP,Otsego Mill Power Plant,ok,17.6,10336,51.1,0.0,0.0,,113.6,119.3,,0.0,industrial
+55857,CT_CHP,Oak Point Cogen,eia923_cf,22.2,0,,,,,,,,30.4,industrial
+56190,CT_CHP,Central Michigan University,eia923_cf,3.2,0,,,,,,,,0.0,commercial
+56248,CT_CHP,Shell Chemical,eia923_cf,69.0,0,,,,,,,,59.2,industrial
+56787,CT_CHP,Geismar Cogen,eia923_cf,72.5,0,,,,,,,,50.6,industrial
+58063,CT_CHP,SABIC Innovative Plastics Mt. Vernon,eia923_cf,78.6,0,,,,,,,,0.0,industrial
+58138,CT_CHP,Otter Creek Ethanol Poet - Ashton,eia923_cf,5.5,0,,,,,,,,57.4,industrial
+58265,CT_CHP,NCAH Central Utility Plant,eia923_cf,3.0,0,,,,,,,,0.0,commercial
+58330,CT_CHP,The Andersons Albion Ethanol LLC,eia923_cf,6.0,0,,,,,,,,71.2,industrial
+58428,CT_CHP,LSU Cogen,eia923_cf,20.6,0,,,,,,,,0.0,commercial
+59197,CT_CHP,Univ Minnesota CHP Plant,eia923_cf,18.0,0,,,,,,,,43.5,merchant
+59448,CT_CHP,Waxdale,eia923_cf,3.5,0,,,,,,,,21.2,industrial
+59452,CT_CHP,East. Michigan Univ. Heating Plant,eia923_cf,6.8,0,,,,,,,,38.4,commercial
+60102,CT_CHP,Lorin Industries,eia923_cf,3.2,0,,,,,,,,10.6,industrial
+60647,CT_CHP,Shakopee Energy Park,eia923_cf,46.5,0,,,,,,,,2.4,merchant
+62117,CT_CHP,Beloit Memorial Hospital Power Plant,eia923_cf,3.0,0,,,,,,,,0.1,commercial
+64854,CT_CHP,Primient,ok,57.2,26000,70.0,0.0,0.0,,134.0,139.1,,78.0,industrial
+65400,CT_CHP,Purdue CHP,eia923_cf,13.5,0,,,,,,,,70.7,merchant
 913,CT_PEAKER,Venice,ok,486.0,389,7.8,0.0,0.0,0.016,15.6,30.1,,,
 976,CT_PEAKER,Marion,ok,140.0,22061,55.7,0.0,0.0,0.84,61.6,66.9,,,
 1068,CT_PEAKER,Marshalltown,ok,156.5,3912,12.8,0.0,0.0,0.15,23.0,33.9,,,
@@ -226,45 +226,45 @@ plant_code,plant_group,name,status,nameplate_mw,online_hours,committed_pct,mustr
 57842,CT_PEAKER,Wabash Valley Power IGCC,ok,154.0,8686,24.7,0.0,0.0,0.331,97.5,102.6,,,
 59926,CT_PEAKER,Alpine Power Plant,ok,405.8,10311,34.5,0.0,0.0,0.392,34.5,37.9,,,
 61144,CT_PEAKER,Astoria Station,ok,241.7,6619,35.2,0.0,0.0,0.252,71.2,93.9,,,
-1073,ST_CHP,Prairie Creek,eia923_cf,111.7,0,,,,,,,,0.0,
-1979,ST_CHP,Hibbing,eia923_cf,35.2,0,,,,,,,,2.2,
-2001,ST_CHP,New Ulm,ok,17.9,42,70.0,0.0,0.0,,139.7,139.7,,0.0,
-4042,ST_CHP,Valley (WI),eia923_cf,263.9,0,,,,,,,,6.6,
-10234,ST_CHP,Biron Mill,eia923_cf,7.5,0,,,,,,,,45.6,
-10301,ST_CHP,Louisiana Sugar Refining,eia923_cf,3.8,0,,,,,,,,44.3,
-10328,ST_CHP,T B Simon Power Plant,eia923_cf,84.8,0,,,,,,,,15.3,
-10360,ST_CHP,Consumer Operations LLC,eia923_cf,41.0,0,,,,,,,,35.6,
-10397,ST_CHP,Indiana Harbor West,eia923_cf,52.0,0,,,,,,,,25.2,
-10430,ST_CHP,Anheuser-Busch St Louis,eia923_cf,22.0,0,,,,,,,,7.6,
-10606,ST_CHP,Georgia-Pacific Crossett LLC,eia923_cf,28.0,0,,,,,,,,0.0,
-10686,ST_CHP,Rapids Energy Center,eia923_cf,22.6,0,,,,,,,,0.0,
-10855,ST_CHP,Cargill Corn Milling Division,eia923_cf,18.0,0,,,,,,,,0.0,
-10861,ST_CHP,Archer Daniels Midland Des Moines,eia923_cf,7.9,0,,,,,,,,0.0,
-10863,ST_CHP,Archer Daniels Midland Mankato,eia923_cf,6.2,0,,,,,,,,21.4,
-10867,ST_CHP,Primient Decatur Plant Cogen,eia923_cf,62.0,0,,,,,,,,12.1,
-50088,ST_CHP,University of Northern Iowa,eia923_cf,7.5,0,,,,,,,,0.0,
-50240,ST_CHP,Purdue University,eia923_cf,37.8,0,,,,,,,,10.2,
-50395,ST_CHP,Georgia-Pacific Corp - Nekoosa Mill,eia923_cf,18.7,0,,,,,,,,14.8,
-50490,ST_CHP,PPG Plant C Caustic,eia923_cf,2.7,0,,,,,,,,16.2,
-50846,ST_CHP,"Atlantic Alumina, Gramercy Operations",eia923_cf,40.0,0,,,,,,,,14.3,
-50903,ST_CHP,Sagamore Plant Cogeneration,eia923_cf,7.4,0,,,,,,,,0.0,
-50969,ST_CHP,MU Combined Heat and Power Plant,eia923_cf,45.0,0,,,,,,,,5.1,
-54201,ST_CHP,Iowa State University,eia923_cf,39.9,0,,,,,,,,0.0,
-54224,ST_CHP,Franklin Heating Station,eia923_cf,10.1,0,,,,,,,,18.8,
-54775,ST_CHP,University of Iowa Main Power Plant,eia923_cf,30.8,0,,,,,,,,0.0,
-54780,ST_CHP,University of Illinois Abbott Power Plt,eia923_cf,54.3,0,,,,,,,,5.6,
-55861,ST_CHP,Stevens Point Mill,eia923_cf,7.0,0,,,,,,,,11.9,
-56786,ST_CHP,Spiritwood Station,eia923_cf,94.1,0,,,,,,,,0.0,
-58066,ST_CHP,"PCA, Filer City Mill",eia923_cf,19.5,0,,,,,,,,17.0,
-58197,ST_CHP,POET Biorefining Lake Crystal,eia923_cf,1.0,0,,,,,,,,0.0,
-63826,ST_CHP,POET Biorefining - Jewell,eia923_cf,0.9,0,,,,,,,,71.9,
-63831,ST_CHP,"POET Biorefining Caro, LLC",eia923_cf,3.8,0,,,,,,,,26.4,
-63852,ST_CHP,"POET Biorefining - North Manchester, LLC",eia923_cf,3.9,0,,,,,,,,36.1,
-63918,ST_CHP,POET Biorefining - Hudson,eia923_cf,3.6,0,,,,,,,,26.6,
-63919,ST_CHP,POET Biorefining LLC - Corning,eia923_cf,5.0,0,,,,,,,,9.1,
-63921,ST_CHP,POET Biorefining - Shelbyville,eia923_cf,5.5,0,,,,,,,,48.9,
-63923,ST_CHP,POET Biorefining - Gowrie,eia923_cf,5.0,0,,,,,,,,10.9,
-68066,ST_CHP,Poet Bioprocessing Emmetsburg,eia923_cf,2.7,0,,,,,,,,20.7,
+1073,ST_CHP,Prairie Creek,eia923_cf,111.7,0,,,,,,,,0.0,merchant
+1979,ST_CHP,Hibbing,eia923_cf,35.2,0,,,,,,,,2.2,merchant
+2001,ST_CHP,New Ulm,ok,17.9,42,70.0,0.0,0.0,,139.7,139.7,,0.0,merchant
+4042,ST_CHP,Valley (WI),eia923_cf,263.9,0,,,,,,,,6.6,merchant
+10234,ST_CHP,Biron Mill,eia923_cf,7.5,0,,,,,,,,45.6,industrial
+10301,ST_CHP,Louisiana Sugar Refining,eia923_cf,3.8,0,,,,,,,,44.3,industrial
+10328,ST_CHP,T B Simon Power Plant,eia923_cf,84.8,0,,,,,,,,15.3,commercial
+10360,ST_CHP,Consumer Operations LLC,eia923_cf,41.0,0,,,,,,,,35.6,industrial
+10397,ST_CHP,Indiana Harbor West,eia923_cf,52.0,0,,,,,,,,25.2,industrial
+10430,ST_CHP,Anheuser-Busch St Louis,eia923_cf,22.0,0,,,,,,,,7.6,industrial
+10606,ST_CHP,Georgia-Pacific Crossett LLC,eia923_cf,28.0,0,,,,,,,,0.0,industrial
+10686,ST_CHP,Rapids Energy Center,eia923_cf,22.6,0,,,,,,,,0.0,merchant
+10855,ST_CHP,Cargill Corn Milling Division,eia923_cf,18.0,0,,,,,,,,0.0,industrial
+10861,ST_CHP,Archer Daniels Midland Des Moines,eia923_cf,7.9,0,,,,,,,,0.0,industrial
+10863,ST_CHP,Archer Daniels Midland Mankato,eia923_cf,6.2,0,,,,,,,,21.4,industrial
+10867,ST_CHP,Primient Decatur Plant Cogen,eia923_cf,62.0,0,,,,,,,,12.1,industrial
+50088,ST_CHP,University of Northern Iowa,eia923_cf,7.5,0,,,,,,,,0.0,commercial
+50240,ST_CHP,Purdue University,eia923_cf,37.8,0,,,,,,,,10.2,commercial
+50395,ST_CHP,Georgia-Pacific Corp - Nekoosa Mill,eia923_cf,18.7,0,,,,,,,,14.8,industrial
+50490,ST_CHP,PPG Plant C Caustic,eia923_cf,2.7,0,,,,,,,,16.2,industrial
+50846,ST_CHP,"Atlantic Alumina, Gramercy Operations",eia923_cf,40.0,0,,,,,,,,14.3,industrial
+50903,ST_CHP,Sagamore Plant Cogeneration,eia923_cf,7.4,0,,,,,,,,0.0,industrial
+50969,ST_CHP,MU Combined Heat and Power Plant,eia923_cf,45.0,0,,,,,,,,5.1,commercial
+54201,ST_CHP,Iowa State University,eia923_cf,39.9,0,,,,,,,,0.0,commercial
+54224,ST_CHP,Franklin Heating Station,eia923_cf,10.1,0,,,,,,,,18.8,commercial
+54775,ST_CHP,University of Iowa Main Power Plant,eia923_cf,30.8,0,,,,,,,,0.0,commercial
+54780,ST_CHP,University of Illinois Abbott Power Plt,eia923_cf,54.3,0,,,,,,,,5.6,commercial
+55861,ST_CHP,Stevens Point Mill,eia923_cf,7.0,0,,,,,,,,11.9,industrial
+56786,ST_CHP,Spiritwood Station,eia923_cf,94.1,0,,,,,,,,0.0,merchant
+58066,ST_CHP,"PCA, Filer City Mill",eia923_cf,19.5,0,,,,,,,,17.0,industrial
+58197,ST_CHP,POET Biorefining Lake Crystal,eia923_cf,1.0,0,,,,,,,,0.0,industrial
+63826,ST_CHP,POET Biorefining - Jewell,eia923_cf,0.9,0,,,,,,,,71.9,industrial
+63831,ST_CHP,"POET Biorefining Caro, LLC",eia923_cf,3.8,0,,,,,,,,26.4,industrial
+63852,ST_CHP,"POET Biorefining - North Manchester, LLC",eia923_cf,3.9,0,,,,,,,,36.1,industrial
+63918,ST_CHP,POET Biorefining - Hudson,eia923_cf,3.6,0,,,,,,,,26.6,industrial
+63919,ST_CHP,POET Biorefining LLC - Corning,eia923_cf,5.0,0,,,,,,,,9.1,industrial
+63921,ST_CHP,POET Biorefining - Shelbyville,eia923_cf,5.5,0,,,,,,,,48.9,industrial
+63923,ST_CHP,POET Biorefining - Gowrie,eia923_cf,5.0,0,,,,,,,,10.9,industrial
+68066,ST_CHP,Poet Bioprocessing Emmetsburg,eia923_cf,2.7,0,,,,,,,,20.7,industrial
 170,ST_GAS,Lake Catherine,ok,522.0,3434,10.2,0.0,0.0,0.146,10.5,28.2,,,
 990,ST_GAS,Harding Street,ok,618.0,25554,15.4,0.0,0.0,0.974,36.7,61.8,,,
 1104,ST_GAS,Burlington (IA),ok,170.3,657,24.5,0.0,0.0,0.026,37.6,39.9,,,
