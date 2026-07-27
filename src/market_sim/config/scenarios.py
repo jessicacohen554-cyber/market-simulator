@@ -248,6 +248,9 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "nyiso_gas_bridge_min_run",
     "nyiso_gas_bridge_cc_min_run_hours",
     "nyiso_gas_bridge_st_min_run_hours",
+    "nyiso_gas_bridge_ct",
+    "nyiso_gas_bridge_ct_min_load_frac",
+    "nyiso_gas_bridge_ct_min_run_hours",
     # Forecast-path cross-year LP warm start (plan §7 H-3, owner decision D-9;
     # default flipped ON 2026-07-26 on the full-horizon A/B). A pure solve-PATH
     # knob — the LP optimum is basis-independent — so it is dropped from the
@@ -2659,6 +2662,62 @@ class ScenarioConfig:
     # the side it lives on.
     nyiso_gas_bridge_cc_min_run_hours: float | None = None
     nyiso_gas_bridge_st_min_run_hours: float | None = None
+    # CT_PEAKER leg of the bridge (nyiso-90): DAY-AHEAD BLOCK COMMITMENT on the
+    # fast-start peaker class. Requires nyiso_gas_commitment_bridge AND
+    # nyiso_gas_bridge_min_run; default off.
+    #
+    # This does NOT widen the fast-start physics gate, and it does not re-open
+    # nyiso-87's exclusion. In caiso_ra_mustoffer_min_gen a CT (min-down 1 h):
+    #   * can never trip the PHYSICAL bridge — ``gap < min_down`` is unreachable
+    #     when min_down = 1 and every gap is >= 1 h;
+    #   * is blocked from the ECONOMIC bridge by RA_BRIDGE_ECON_MIN_DOWN_HOURS
+    #     (4 h), which is UNTOUCHED.
+    # So the only leg that can fire on a CT is the min_run extension. Minimum-
+    # DOWN governs how fast a unit can come back (a CT restarts within the hour,
+    # so it is correctly never HELD ACROSS a gap); minimum-RUN governs how long
+    # a started unit must stay on. They are independent physical properties —
+    # the NREL class tables carry both separately for every other fuel — and a
+    # 10-minute-start GT can still carry a multi-hour minimum run (permit,
+    # OEM warranty, DAM block granularity).
+    #
+    # The extension is anchored to the model's OWN P0 run starts: it can only
+    # extend a run the LP itself began, and has no exogenous clock. That is why
+    # it is NOT the windowed CT floor the G-20 probe rejected in 2026-07-11
+    # (cc_mustrun_per_plant's CT leg bound 12.8 % of its MWh overnight against
+    # the class's own overnight-offline evidence — a rule-17 [R-FLOOR-WINDOW]
+    # bug). A run this mechanism extends into h23-6 is one the model started
+    # there on its own economics.
+    nyiso_gas_bridge_ct: bool = False
+    # Minimum stable load of a block-committed NYISO CT as a fraction of the
+    # PLANT's available capacity: 0.238, the SAME measured statistic and the
+    # same construction as the CC/ST fields above, for the CT class
+    # (scripts/data/derive_campd_gas_commitment_params.py --ct, artifact
+    # data/raw/_processed-legacy/campd_ct_commitment_params_NYISO.csv:
+    # 80 units / 2,454 MW, cap-weighted p50 0.238, p25 0.203 / p75 0.465).
+    # The --ct path restricts to CAMPD unitType == "Combustion turbine" so a
+    # mixed steam/turbine facility (Barrett, Gowanus, Narrows) contributes only
+    # its turbines instead of being dropped as unattributable.
+    nyiso_gas_bridge_ct_min_load_frac: float = 0.238
+    # Minimum run duration (hours) for the CT block-commitment extension.
+    # 2 h = run_hours_p25_capwtd from the artifact above (34,024 measured runs;
+    # cap-weighted p25/p50/p75 = 2 / 4 / 8 h, equally-weighted 2 / 4 / 7 h).
+    # The two weightings nearly coincide, so the CT class — unlike CC/ST — has
+    # no big-unit/small-unit cycling split.
+    #
+    # Why p25 and not p50: an OBSERVED run length is an upper-ish bound on a
+    # minimum-run CONSTRAINT (every observed run is >= the constraint), so the
+    # observed distribution bounds it from ABOVE and a low order statistic is
+    # the correct estimator; p50 overstates. Capacity-weighted because a
+    # min-run constraint floors committed MW, not committed unit-count, and to
+    # match min_load_frac's own weighting. p25 rather than p10 because runs are
+    # computed WITHIN a year, so every run spanning a year boundary splits into
+    # two spurious short ones and p10 absorbs that truncation artifact.
+    # Pre-registered before the value was derived
+    # (docs/handoffs/nyiso90-preregistration.md §2); frozen against residuals
+    # (rules 5 / 13 / 23). NOTE the keeper's CC/ST legs use p50_capwtd (21/13 h)
+    # — a live convention inconsistency, deliberately NOT reconciled here
+    # because doing so would change those legs' floors (a second delta).
+    nyiso_gas_bridge_ct_min_run_hours: float = 2.0
     nyiso_spin_reserve_online: bool = False  # NYISO online-gated PUBLISHED
     # spinning families (nyiso-84, the mechanism arm): re-classes the published
     # NYCA 10-minute spinning family (655 MW, $775) — and east_10min_spin (330
@@ -8870,6 +8929,9 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_gas_bridge_min_run": 1,
     "nyiso_gas_bridge_cc_min_run_hours": 2,
     "nyiso_gas_bridge_st_min_run_hours": 2,
+    "nyiso_gas_bridge_ct": 1,
+    "nyiso_gas_bridge_ct_min_load_frac": 2,
+    "nyiso_gas_bridge_ct_min_run_hours": 2,
     "nyiso_forward_net_import_twh": 2,
     "nyiso_spin_headroom_frac": 2,
     "miso_firm_imports": 1,

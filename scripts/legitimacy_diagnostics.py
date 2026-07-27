@@ -368,6 +368,39 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     #   the CAMPD vintages update (rule 23).
     (MECH_NYISO_GAS_COMMITMENT_BRIDGE, "CC_REGULAR"): (0, 24),
     (MECH_NYISO_GAS_COMMITMENT_BRIDGE, "ST_GAS"): (0, 24),
+    # CT_PEAKER leg of the SAME mechanism (nyiso-90,
+    # ScenarioConfig.nyiso_gas_bridge_ct): day-ahead BLOCK COMMITMENT on the
+    # fast-start peaker class. This row needs its own justification because the
+    # CT overnight-offline signature is exactly what rule 17 [R-FLOOR-WINDOW]
+    # exists to catch, and a CT floor was rejected on it before (the
+    # cc_mustrun_per_plant CT leg, G-20 probe 2026-07-11, 12.8 % overnight
+    # binding under a declared h7-22 window).
+    # * WHY THIS IS NOT THAT FLOOR — the G-20 leg placed CT capacity by an
+    #   EXOGENOUS CLOCK (a plant's top-online_frac hours ranked by system load),
+    #   so it could and did assert CT output in hours the class was offline.
+    #   This leg has no clock at all: on a CT ONLY the min-run extension can
+    #   fire (1 h min-down makes the physical bridge unreachable and fails
+    #   RA_BRIDGE_ECON_MIN_DOWN_HOURS for the economic one), and the extension
+    #   can only extend a run the MODEL ITSELF STARTED in P0 on its own
+    #   economics. It cannot start a unit; it can only refuse to stop one
+    #   inside its minimum run. An overnight-floored CT hour is therefore
+    #   always the tail of a model-chosen evening start.
+    # * WINDOW — ALL 24 hours by driver, and the class's own measured evidence
+    #   supports it HERE where it did not there: the CAMPD 2023-2025 CT record
+    #   is 34,024 runs with a cap-weighted p50 of 4 h and p90 of 14 h
+    #   (campd_ct_commitment_params_NYISO.csv), and a 14 h run necessarily
+    #   spans night hours. "The fleet's overnight CF is ~0" and "a started
+    #   turbine stays on ~4 h" are both true and are not in conflict: the first
+    #   is about STARTS, which this mechanism never creates.
+    # * DRIVER — minimum run duration only. Level = the measured CT
+    #   loading-when-on statistic (0.238 cap-weighted p50); horizon = 2 h, the
+    #   cap-weighted p25 of the measured run distribution (the low order
+    #   statistic, because an observed run bounds a min-run CONSTRAINT from
+    #   above). Both from derive_campd_gas_commitment_params.py --ct.
+    # * FORWARD STORY — regenerates in any forecast year from the model's own
+    #   P0 run pattern plus the two measured class constants, which re-derive
+    #   only on a CAMPD vintage change (rules 13/23).
+    (MECH_NYISO_GAS_COMMITMENT_BRIDGE, "CT_PEAKER"): (0, 24),
     # hydro_min_flow (caiso-124, MECH_HYDRO_MIN_FLOW — data.hydro.
     # build_hydro_fleet / allocate_min_flow_floor -> FleetArrays.min_gen): the
     # conventional-hydro minimum-flow floor. Rule-12/17 declaration:

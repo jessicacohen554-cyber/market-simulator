@@ -571,12 +571,53 @@ def build_ercot_gas_bridge_p1_preps(
     return _fleet_prep, bid_prep
 
 
-# NYISO gas commitment bridge: the merchant slow-start gas fuels it floors.
-# ``gas_cc`` is the CC_REGULAR class, ``gas_st`` the ST_GAS class; the detector
-# excludes every ``*_CHP`` group on top (cogens follow their steam host), and
-# the fast-start CT classes are excluded by their own physics (min-down 1 h,
-# $20/MW starts — rule 18 [R-PHYSICS]), never by a class-name tuple here.
+# NYISO gas commitment bridge: the merchant slow-start gas fuels it floors by
+# default. ``gas_cc`` is the CC_REGULAR class, ``gas_st`` the ST_GAS class; the
+# detector excludes every ``*_CHP`` group on top (cogens follow their steam
+# host). The fast-start CT class is NOT in this default set: it is added by
+# ``ScenarioConfig.nyiso_gas_bridge_ct`` (nyiso-90) and, when added, can only
+# ever reach the ``min_run_hours`` extension leg — its 1 h min-down makes the
+# physical bridge unreachable and fails ``RA_BRIDGE_ECON_MIN_DOWN_HOURS`` (4 h)
+# for the economic one, so it is still never HELD ACROSS an idle gap
+# (rule 18 [R-PHYSICS], nyiso-87 preserved). Scoping is still by unit physics
+# inside the detector; this tuple only says which fuels the caller offers it.
 _NYISO_BRIDGE_FUELS: tuple[str, ...] = ("gas_cc", "gas_st")
+
+# The CT leg's fuel type, added to the per-class loop when armed.
+_NYISO_CT_FUEL: str = "gas_ct"
+
+
+def _nyiso_bridge_min_load_fracs(config) -> dict[str, float]:
+    """Return ``{fuel_type: min_load_frac}`` for the bridge legs that are armed.
+
+    The two slow-start legs are always offered (their fracs are measured class
+    constants); the fast-start CT leg is added only when
+    ``nyiso_gas_bridge_ct`` AND ``nyiso_gas_bridge_min_run`` are both on —
+    without the min-run extension the CT leg has no reachable leg at all and
+    would be silently inert (nyiso-89 §4a: an inert arm reads as "the mechanism
+    does nothing", the most dangerous failure mode).
+
+    Args:
+        config: The run's ``ScenarioConfig``.
+
+    Returns:
+        Mapping of LP fuel type to that class's minimum-stable-load fraction.
+    """
+    out = {
+        "gas_cc": float(config.nyiso_gas_bridge_cc_min_load_frac),
+        "gas_st": float(config.nyiso_gas_bridge_st_min_load_frac),
+    }
+    if getattr(config, "nyiso_gas_bridge_ct", False):
+        if not getattr(config, "nyiso_gas_bridge_min_run", False):
+            logger.warning(
+                "nyiso_gas_bridge_ct is ON but nyiso_gas_bridge_min_run is OFF "
+                "— the CT leg has no reachable leg (a 1 h min-down unit can "
+                "neither physically nor economically bridge) and is INERT. "
+                "Not arming it."
+            )
+        else:
+            out[_NYISO_CT_FUEL] = float(config.nyiso_gas_bridge_ct_min_load_frac)
+    return out
 
 
 def _nyiso_bridge_min_run_hours(config, fleet: list, fleet_arrays) -> np.ndarray:
@@ -611,10 +652,17 @@ def _nyiso_bridge_min_run_hours(config, fleet: list, fleet_arrays) -> np.ndarray
         "gas_cc": getattr(config, "nyiso_gas_bridge_cc_min_run_hours", None),
         "gas_st": getattr(config, "nyiso_gas_bridge_st_min_run_hours", None),
     }
+    fuels = set(_NYISO_BRIDGE_FUELS)
+    if getattr(config, "nyiso_gas_bridge_ct", False):
+        # CT block commitment (nyiso-90): the measured horizon is REQUIRED, not
+        # a class-table fallback — the NREL CT rows carry min_run_hours = 1,
+        # which extends nothing, so falling back would make the leg inert.
+        fuels.add(_NYISO_CT_FUEL)
+        override[_NYISO_CT_FUEL] = float(config.nyiso_gas_bridge_ct_min_run_hours)
     out = np.zeros(len(fleet), dtype=float)
     for g, gen in enumerate(fleet):
         fuel = gen.fuel_type
-        if fuel not in _NYISO_BRIDGE_FUELS or gen.plant_group.endswith("_CHP"):
+        if fuel not in fuels or gen.plant_group.endswith("_CHP"):
             continue
         ov = override.get(fuel)
         if ov is not None:
@@ -666,10 +714,7 @@ def _nyiso_gas_bridge_floor(
         if getattr(config, "nyiso_gas_bridge_min_run", False)
         else None
     )
-    per_class = {
-        "gas_cc": float(config.nyiso_gas_bridge_cc_min_load_frac),
-        "gas_st": float(config.nyiso_gas_bridge_st_min_load_frac),
-    }
+    per_class = _nyiso_bridge_min_load_fracs(config)
     total = None
     for fuel, frac in per_class.items():
         if frac <= 0.0:
@@ -685,6 +730,32 @@ def _nyiso_gas_bridge_floor(
             fuel_types=(fuel,),
             max_econ_gap_hours=max_gap,
             min_run_hours=min_run,
+        )
+        # PER-CLASS trace. The composed total cannot show that one leg
+        # contributed nothing, and a leg that floors zero unit-hours is exactly
+        # the "mechanism is inert" failure nyiso-89 §4a warns reads as a
+        # structural finding. Logged for every armed leg, including zero.
+        logger.info(
+            "NYISO gas bridge leg %s (min_load_frac %.3f, min_run %s): "
+            "%d unit-hours floored, %.4f TWh floor volume",
+            fuel,
+            frac,
+            (
+                "off"
+                if min_run is None
+                else "{:.0f}h".format(
+                    max(
+                        (
+                            min_run[g]
+                            for g, gen in enumerate(fleet)
+                            if gen.fuel_type == fuel
+                        ),
+                        default=0.0,
+                    )
+                )
+            ),
+            int((part > 0.0).sum()),
+            float(part.sum()) / 1e6,
         )
         total = part if total is None else np.maximum(total, part)
     if total is None or not np.any(total > 0.0):
