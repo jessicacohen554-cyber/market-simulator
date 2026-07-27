@@ -571,6 +571,190 @@ def build_ercot_gas_bridge_p1_preps(
     return _fleet_prep, bid_prep
 
 
+# NYISO gas commitment bridge: the merchant slow-start gas fuels it floors.
+# ``gas_cc`` is the CC_REGULAR class, ``gas_st`` the ST_GAS class; the detector
+# excludes every ``*_CHP`` group on top (cogens follow their steam host), and
+# the fast-start CT classes are excluded by their own physics (min-down 1 h,
+# $20/MW starts — rule 18 [R-PHYSICS]), never by a class-name tuple here.
+_NYISO_BRIDGE_FUELS: tuple[str, ...] = ("gas_cc", "gas_st")
+
+
+def _nyiso_bridge_min_run_hours(config, fleet: list, fleet_arrays) -> np.ndarray:
+    """Return the ``(n_gen,)`` minimum run duration for the NYISO bridge.
+
+    Per-unit minimum-run physics for the ``min_run_hours`` extension. The
+    default source is the published class table
+    (``COMMITMENT_PARAMS_BY_FUEL``, NREL/SR-5500-55433) keyed by the unit's own
+    heat rate — the same table the bridge already reads min-down and startup
+    cost from, so the extension adds no new parameter at its default. The two
+    per-class config overrides (``nyiso_gas_bridge_cc_min_run_hours`` /
+    ``..._st_min_run_hours``) exist for the identification sweep and MUST be
+    set from the measured CAMPD run-length artifact when a keeper adopts one
+    (rule 23 [R-FROZEN-DERIVE]), never from a residual.
+
+    Units the bridge cannot floor anyway (wrong fuel, a cogen, an incremental
+    tranche with no startup cost) carry 0 — the detector skips them before it
+    reads this array, so their value is inert either way.
+
+    Args:
+        config: The run's ``ScenarioConfig``.
+        fleet: The dispatch fleet, aligned with ``fleet_arrays`` rows.
+        fleet_arrays: The vectorized fleet, for ``heat_rate``.
+
+    Returns:
+        A ``(n_gen,)`` float array of minimum run hours.
+    """
+    from market_sim.model.commitment import COMMITMENT_PARAMS_BY_FUEL
+
+    hr = np.asarray(fleet_arrays.heat_rate, dtype=float)
+    override = {
+        "gas_cc": getattr(config, "nyiso_gas_bridge_cc_min_run_hours", None),
+        "gas_st": getattr(config, "nyiso_gas_bridge_st_min_run_hours", None),
+    }
+    out = np.zeros(len(fleet), dtype=float)
+    for g, gen in enumerate(fleet):
+        fuel = gen.fuel_type
+        if fuel not in _NYISO_BRIDGE_FUELS or gen.plant_group.endswith("_CHP"):
+            continue
+        ov = override.get(fuel)
+        if ov is not None:
+            out[g] = float(ov)
+            continue
+        table = COMMITMENT_PARAMS_BY_FUEL.get(fuel)
+        if table is None:
+            continue
+        params = table[-1][1]
+        for cutoff, p in table:
+            if hr[g] < cutoff:
+                params = p
+                break
+        out[g] = float(params["min_run_hours"])
+    return out
+
+
+def _nyiso_gas_bridge_floor(
+    config,
+    fleet: list,
+    fleet_arrays,
+    p0_dispatch: np.ndarray,
+    p0_prices: np.ndarray | None,
+    mc_base: np.ndarray,
+) -> np.ndarray | None:
+    """Compute the raw ``(n_gen, T)`` NYISO gas commitment-bridge floor.
+
+    Runs the ISO-neutral detector ONCE PER CLASS, because the measured minimum
+    stable load differs by an order of scale between the two eligible classes
+    (CC 0.523 vs ST_GAS 0.239 — CAMPD 2023-2025,
+    ``scripts/data/derive_campd_gas_commitment_params.py``) and the detector
+    takes a single scalar ``min_load_frac``. The per-class floors are composed
+    by maximum, which is exact here: the two calls floor disjoint rows (a unit
+    has one fuel type), so the maximum is a concatenation, not a stack.
+
+    Returns ``None`` when neither class produces a floor.
+    """
+    from market_sim.config.constants import DA_COMMITMENT_HORIZON_HOURS
+    from market_sim.model.commitment import caiso_ra_mustoffer_min_gen, find_runs
+
+    startup_bridge = bool(getattr(config, "nyiso_gas_bridge_startup", True))
+    max_gap = (
+        float(DA_COMMITMENT_HORIZON_HOURS)
+        if getattr(config, "nyiso_gas_bridge_da_horizon", True)
+        else None
+    )
+    min_run = (
+        _nyiso_bridge_min_run_hours(config, fleet, fleet_arrays)
+        if getattr(config, "nyiso_gas_bridge_min_run", False)
+        else None
+    )
+    per_class = {
+        "gas_cc": float(config.nyiso_gas_bridge_cc_min_load_frac),
+        "gas_st": float(config.nyiso_gas_bridge_st_min_load_frac),
+    }
+    total = None
+    for fuel, frac in per_class.items():
+        if frac <= 0.0:
+            continue
+        part = caiso_ra_mustoffer_min_gen(
+            p0_dispatch,
+            fleet_arrays,
+            fleet,
+            frac,
+            p1_prices=p0_prices if startup_bridge else None,
+            base_mc=mc_base if startup_bridge else None,
+            startup_bridge=startup_bridge,
+            fuel_types=(fuel,),
+            max_econ_gap_hours=max_gap,
+            min_run_hours=min_run,
+        )
+        total = part if total is None else np.maximum(total, part)
+    if total is None or not np.any(total > 0.0):
+        return None
+    # Diagnostic trace for the D-4 window analysis: every floored segment is
+    # either a bridged idle gap or a min-run extension, so its length
+    # distribution is the direct evidence the declared window is what binds.
+    seg_lengths = [
+        e - s
+        for g in np.flatnonzero((total > 0.0).any(axis=1))
+        for s, e in find_runs(total[g] > 0.0)
+    ]
+    if seg_lengths:
+        seg = np.array(seg_lengths)
+        buckets = {
+            "<4h": int((seg < 4).sum()),
+            "4-8h": int(((seg >= 4) & (seg < 8)).sum()),
+            "8-16h": int(((seg >= 8) & (seg < 16)).sum()),
+            "16-24h": int(((seg >= 16) & (seg <= 24)).sum()),
+            ">24h": int((seg > 24).sum()),
+        }
+        logger.info(
+            "NYISO gas commitment bridge: %d unit-hours floored "
+            "(%.2f TWh floor volume), %d floored segments by length %s "
+            "(min_run extension %s)",
+            int((total > 0.0).sum()),
+            float(total.sum()) / 1e6,
+            len(seg_lengths),
+            buckets,
+            "ON" if min_run is not None else "off",
+        )
+    return total
+
+
+def build_nyiso_gas_bridge_p1_prep(
+    config, iso: str, fleet: list, fleet_arrays, mc_base
+):
+    """Return a ``p1_fleet_prep`` hook for the NYISO gas commitment bridge.
+
+    The P1-native replacement for the h14-21 peak-window reliability-floor
+    limbs (owner directive 2026-07-27, nyiso-87): instead of a temperature
+    boxcar asserting that downstate steam and peakers run in fixed afternoon
+    hours, the merchant slow-start gas fleet is held at minimum stable load by
+    its OWN commitment physics — minimum run duration, minimum down time, and
+    the startup-restart inequality priced at the model's own P0 duals. Detector:
+    :func:`_nyiso_gas_bridge_floor`; D-2 attribution:
+    ``MECH_NYISO_GAS_COMMITMENT_BRIDGE``.
+
+    Returns ``None`` when the mechanism is off or the ISO is not NYISO, so
+    every other path is byte-identical. ISO-exclusive with the CAISO, ERCOT and
+    PJM P1-prep hooks by construction (each gates on its own ISO).
+    """
+    if not (getattr(config, "nyiso_gas_commitment_bridge", False) and iso == "NYISO"):
+        return None
+
+    from market_sim.data.floor_mechanisms import MECH_NYISO_GAS_COMMITMENT_BRIDGE
+
+    def _fleet_prep(r0):
+        bridge_floor = _nyiso_gas_bridge_floor(
+            config, fleet, fleet_arrays, r0.dispatch, r0.prices, mc_base
+        )
+        if bridge_floor is None:
+            return None
+        return _bridge_floored_fleet(
+            fleet_arrays, bridge_floor, MECH_NYISO_GAS_COMMITMENT_BRIDGE
+        )
+
+    return _fleet_prep
+
+
 def _pjm_unit_commitment_physics(fleet_arrays) -> tuple[np.ndarray, np.ndarray]:
     """Per-unit ``(min_down_hours, startup $/MW)`` from the published class tables.
 
