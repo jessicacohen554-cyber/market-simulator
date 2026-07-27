@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-26-nyiso-81-floor-rederive",
+  "run_id": "2026-07-27-nyiso-89-ctmeas-hrloaded",
   "iso": "NYISO",
-  "label": "nyiso 81 floor rederive",
+  "label": "nyiso 89 ctmeas hrloaded",
   "target_years": [
     2023,
     2024,
@@ -13,19 +13,19 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
+  "rubric_version": 2.8,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_tail"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
   "notes": [
-    "C8 2024 ST_GAS: grounded above budget \u2014 36.2% forced (3.9291 of 10.8646 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.948 (\u22650.8) & off-peak CV ratio 0.948 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+    "C8 2024 ST_GAS: grounded above budget \u2014 32.0% forced (3.3757 of 10.5458 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.957 (\u22650.8) & off-peak CV ratio 0.738 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
   ],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -61,7 +61,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "PASS"
+      "status": "UNATTESTED"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -86,11 +86,11 @@
     }
   },
   "grade_summary": {
-    "scored": 10,
+    "scored": 9,
     "target_grade": 7,
     "commercial_grade": 1,
     "ledgered": 0,
-    "fails": 2
+    "fails": 1
   },
   "free_class_score": {
     "iso": "NYISO",
@@ -109,13 +109,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 13,
+      "pass": 14,
       "total": 14
     },
     "free": {
-      "pass": 9,
+      "pass": 10,
       "total": 10
     },
-    "headline": "C1 all 13/14 \u00b7 free 9/10"
+    "headline": "C1 all 14/14 \u00b7 free 10/10"
   }
 }
