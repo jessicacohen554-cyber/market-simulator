@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-27-nyiso-87-cmeas-measured",
+  "label": "nyiso 87 arm C-MEAS measured min-run",
+  "date": "2026-07-27",
+  "shorthand": "nyiso-87-cmeas-measured",
+  "definition": "(PROBE) nyiso-87 ARM C-MEAS \u2014 arm C with the minimum run duration set to the MEASURED CAMPD capacity-weighted p50 per class (CC_REGULAR 21 h, ST_GAS 13 h) instead of the published class tables. The rule-23-clean identified variant, and it moves BOTH ways: an INCREASE for CC (the table's 5-10 h sits below the measured p25 of 11 h \u2014 the owner's 'try increasing min run duration' is what the measurement supports there) and a DECREASE for gas steam (the table's 24-48 h sits well above its measured p50). The floor SHAPE is the clearest result: floored segments longer than 24 h collapse 46/55/105 (arm C) -> 8/8/0, while the 16-24 h band grows 256/392/196 -> 532/569/412 \u2014 the steam over-hold replaced by genuine CC commitment blocks, on slightly MORE total floored volume (1.25-1.37 vs 1.18-1.21 TWh/yr). Every gate is at least as good as arm C's: C1 2023 CC_REGULAR -2.89 -> -2.78 TWh (band +/-2.94, so the margin roughly triples from ~0.05 to ~0.16 TWh), C5a 2025 +7.7 -> +7.6 %, C8 2024 ST_GAS 32.4 -> 31.9 % (grounded), within-month import r +0.107 -> +0.108. C1/C2/C3a/C3b/C4/C7/C8 all PASS. C3c still FAILs (roof-blocked, nyiso-85 \u00a77d; rule 1 \u2014 recorded, not reverted), so determination NOT-YET. This is the structurally-faithful candidate of the lane: it closes NYISO's load-bearing C1 FAIL on commitment physics with td_loss_factor still 0.0, and it forces LESS in total than the keeper it would replace (2023 CT_PEAKER+ST_GAS+CC_REGULAR forced 4.46 -> 4.18 TWh) while improving every class's diurnal shape.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-27-nyiso-87-cmeas-measured.js",
+  "bundle": "results/calibration/nyiso87_cmeas_minrun"
+}

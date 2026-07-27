@@ -1,17 +1,21 @@
 {
-  "timestamp": "2026-07-26T16:36:56",
+  "timestamp": "2026-07-27T06:29:57",
   "git": {
-    "sha": "46c30a5",
-    "branch": "claude/nyiso-price-formation-c3-v8x7ds",
+    "sha": "7f68d94",
+    "basis_sha": "12d4afc9521aa96b81d51ca740961ab51f4e5cb0",
+    "branch": "claude/nyiso-gas-commitment-bridge-6n8p2h",
     "dirty": true,
     "changed_files": [
       "rontend/data/backcast/benchmark.js",
       "frontend/data/backcast/manifest.js",
-      "docs/FINDING-nyiso-ordc-span-reliability-floor-2026-07-26.md"
+      "frontend/data/backcast/registry/2026-07-26-nyiso-78-oil-daily.json",
+      "frontend/data/backcast/runs/2026-07-26-nyiso-78-oil-daily.js",
+      "frontend/data/backcast/registry/2026-07-27-nyiso-87-arm-d.json",
+      "frontend/data/backcast/runs/2026-07-27-nyiso-87-arm-d.js"
     ],
-    "diffstat": "frontend/data/backcast/benchmark.js | 2 +-\n frontend/data/backcast/manifest.js  | 2 +-\n 2 files changed, 2 insertions(+), 2 deletions(-)"
+    "diffstat": "frontend/data/backcast/benchmark.js                       |  2 +-\n frontend/data/backcast/manifest.js                        |  2 +-\n .../backcast/registry/2026-07-26-nyiso-78-oil-daily.json  | 15 ---------------\n .../data/backcast/runs/2026-07-26-nyiso-78-oil-daily.js   |  1 -\n 4 files changed, 2 insertions(+), 18 deletions(-)"
   },
-  "model_changes_note": "nyiso-76 CONTROL: keeper config replayed on CURRENT main with both nyiso-76 flags OFF. The committed keeper sidecars were produced at git af74927; main has moved since, so this is the only valid baseline for attributing the S2/P2 arms.",
+  "model_changes_note": "nyiso-87 ARM C-MEAS: arm C with min-run at the MEASURED CAMPD capacity-weighted p50 per class (CC 21h, ST_GAS 13h) instead of the published class tables. The rule-23-clean identified candidate: an INCREASE for CC (table 5-10h, below the measured p25 of 11h) and a DECREASE for gas steam (table 24-48h, well above its measured p50).",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "NYISO",
@@ -53,7 +57,29 @@
       "nyiso_scr_edrp": true,
       "nyiso_hydro_reserve_eligible": true,
       "nyiso_scr_edrp_reserve_eligible": true,
-      "nyiso_ordc_measured_step_span": false
+      "dual_fuel_oil_daily_parity": true,
+      "reliability_floor_overrides": {
+        "NYC:ST_GAS:tmax:NYC_ST_ev": {
+          "enabled": false
+        },
+        "NYC:CT_PEAKER:tmax:NYC_CT_ev": {
+          "enabled": false
+        },
+        "Long_Island:CT_PEAKER:tmax:LI_CT_ev": {
+          "enabled": false
+        },
+        "Long_Island:ST_GAS:tmax:LI_ST_ev": {
+          "enabled": false
+        },
+        "Capital_Hudson:ST_GAS:tmax:CH_ST_ev": {
+          "enabled": false
+        }
+      },
+      "nyiso_gas_commitment_bridge": true,
+      "nyiso_gas_bridge_startup": true,
+      "nyiso_gas_bridge_min_run": true,
+      "nyiso_gas_bridge_cc_min_run_hours": 21,
+      "nyiso_gas_bridge_st_min_run_hours": 13
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -70,7 +96,7 @@
     "nyiso_dynamic_reserve_requirements": true,
     "nyiso_hydro_reserve_eligible": true,
     "nyiso_scr_edrp_reserve_eligible": true,
-    "git_sha": "46c30a5"
+    "git_sha": "7f68d94"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -113,6 +139,9 @@
     "retirement_aggressiveness": "mid",
     "hydro_year": "normal",
     "hydro_dispatch_envelope": false,
+    "hydro_min_flow_floor": false,
+    "hydro_ror_split": false,
+    "hydro_budget_nameplate_aware": false,
     "eac_price_nuclear": 0.0,
     "eac_price_wind": 0.0,
     "eac_price_solar": 0.0,
@@ -293,7 +322,23 @@
     "reference_price_interface": false,
     "neighbor_hr_forward_skill": null,
     "reliability_floor": true,
-    "reliability_floor_overrides": {},
+    "reliability_floor_overrides": {
+      "NYC:ST_GAS:tmax:NYC_ST_ev": {
+        "enabled": false
+      },
+      "NYC:CT_PEAKER:tmax:NYC_CT_ev": {
+        "enabled": false
+      },
+      "Long_Island:CT_PEAKER:tmax:LI_CT_ev": {
+        "enabled": false
+      },
+      "Long_Island:ST_GAS:tmax:LI_ST_ev": {
+        "enabled": false
+      },
+      "Capital_Hudson:ST_GAS:tmax:CH_ST_ev": {
+        "enabled": false
+      }
+    },
     "class_commitment_overrides": {},
     "caiso_gas_commitment_floor": false,
     "caiso_gas_floor_frac": 1.0,
@@ -329,6 +374,18 @@
     "nyiso_import_reconciliation": true,
     "nyiso_import_hub_prices": true,
     "nyiso_iroquois_winter_spread": false,
+    "nyiso_li_locational_reserve": false,
+    "nyiso_incity_commitment_obligation": false,
+    "nyiso_east_reserve_families": false,
+    "nyiso_gas_commitment_bridge": true,
+    "nyiso_gas_bridge_cc_min_load_frac": 0.523,
+    "nyiso_gas_bridge_st_min_load_frac": 0.239,
+    "nyiso_gas_bridge_startup": true,
+    "nyiso_gas_bridge_da_horizon": true,
+    "nyiso_gas_bridge_min_run": true,
+    "nyiso_gas_bridge_cc_min_run_hours": 21,
+    "nyiso_gas_bridge_st_min_run_hours": 13,
+    "nyiso_spin_reserve_online": false,
     "nyiso_synchronised_reserve": false,
     "nyiso_spin_headroom_frac": 1.0,
     "nyiso_forward_net_import_twh": null,
@@ -585,6 +642,7 @@
     "neiso_offer_surface_min_bin": 0,
     "neiso_offer_surface_price_cap_frac": 0.95,
     "pjm_offer_surface_conditional": false,
+    "pjm_offer_surface_within_season": false,
     "pjm_offer_surface_binned_path": null,
     "pjm_offer_surface_netload_pcts": [
       0.8,
@@ -800,6 +858,7 @@
     "caiso_asymmetric_path_ratings": false,
     "caiso_per_year_import_caps": false,
     "pjm_congestion": false,
+    "transmission_expansion_enabled": false,
     "pjm_seam_flow_limit": false,
     "pjm_seam_flow_percentile": null,
     "pjm_seam_export_limit": false,
@@ -816,7 +875,7 @@
     "gas_hub_basis_daily": true,
     "dual_fuel_oil_reattribution": true,
     "dual_fuel_switching": true,
-    "dual_fuel_oil_daily_parity": false,
+    "dual_fuel_oil_daily_parity": true,
     "outage_source": "historic",
     "caiso_dam_outages": false,
     "miso_native_outage_source": false,
@@ -824,7 +883,10 @@
     "unit_partial_outage_windows": false,
     "unit_outage_maxgen_events": false,
     "maxgen_emergency_tier_pricing": false,
-    "gas_price_override": 2.54
+    "forecast_xyear_warmstart": true,
+    "gas_price_override": 2.54,
+    "ercot_offer_hrmult_ep_rebasis": false,
+    "ercot_offer_hrmult_ep_rebasis_bands": null
   },
   "environment": {
     "python_version": "3.11.15",

@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-26-nyiso-79-control",
+  "run_id": "2026-07-27-nyiso-87-cmeas-measured",
   "iso": "NYISO",
-  "label": "nyiso 79 control",
+  "label": "nyiso 87 cmeas measured",
   "target_years": [
     2023,
     2024,
@@ -13,19 +13,19 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
+  "rubric_version": 2.8,
   "determination": "NOT-YET",
   "reasons": [
     "governance gate UNATTESTED: no governance attestation in bundle"
   ],
   "notes": [
-    "C8 2025 ST_GAS: grounded above budget \u2014 40.5% forced (6.6906 of 16.522 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.954 (\u22650.8) & off-peak CV ratio 0.547 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+    "C8 2024 ST_GAS: grounded above budget \u2014 31.9% forced (3.3833 of 10.5989 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.956 (\u22650.8) & off-peak CV ratio 0.75 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
   ],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -35,12 +35,12 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
@@ -66,12 +66,12 @@
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "FAIL"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -87,10 +87,10 @@
   },
   "grade_summary": {
     "scored": 9,
-    "target_grade": 2,
+    "target_grade": 7,
     "commercial_grade": 1,
     "ledgered": 0,
-    "fails": 6
+    "fails": 1
   },
   "free_class_score": {
     "iso": "NYISO",
@@ -109,13 +109,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 11,
+      "pass": 14,
       "total": 14
     },
     "free": {
-      "pass": 7,
+      "pass": 10,
       "total": 10
     },
-    "headline": "C1 all 11/14 \u00b7 free 7/10"
+    "headline": "C1 all 14/14 \u00b7 free 10/10"
   }
 }
