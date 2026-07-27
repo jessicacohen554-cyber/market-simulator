@@ -5,6 +5,62 @@
 **Diagnosis it implements:** `results/calibration/FINDING-nyiso-stgas-underrun-diagnosis-2026-07-23.md` ·
 **Status:** CHARTER ONLY — no mechanism code, no config flag, no intake performed in this
 session. Nothing here is authorized to run until the data question in §3 is answered.
+**§3 EXECUTED AND CONCLUDED (2026-07-26, nyiso-83) — THE MECHANISM IS BUILT AND
+THE SUBSTITUTION IS REFUTED. This lane's §0 question is now ANSWERED: for Zone J
+and Zone K alike, no published instrument reproduces the in-city steam
+commitment, and the §3 "documented NO, not a mechanism" branch is the outcome.**
+Do not re-open it by re-probing the reserve ladders.
+
+Three arms, 2024, each against a same-HEAD zero-delta control:
+
+| arm | LI reserve-dual h >\$0 | ST_GAS TWh | C3c h >\$300 |
+|---|--:|--:|--:|
+| control | 6 | 8.710 | 0 |
+| published LI ladder alone | 6 | 8.710 | 0 |
+| + in-city commitment obligation | **7,003** | **5.810** | 0 |
+
+1. **The published ladder alone is inert** — idle-allowed families are satisfied
+   free by Zone-K idle capacity every hour.
+2. **The online gate is the entire effect** and it works (6 → 7,003 h binding).
+3. **C3c is ceiling-blocked**: the published J/K demand curves are **\$25/MW**
+   (ASM §6.8 items 9/10/14/15), so a load-pocket family can never reach the
+   \$300 gate. The C3c tail must come from NYCA/East (\$750/\$775).
+4. **The rule-19 substitution fails**: replacing the eight NYC/LI `ST_GAS` floor
+   limbs costs **−2.90 TWh** of steam (displaced exactly onto CC/CT), because
+   the obligation is written on the **pocket**, not on **steam** — the LP meets
+   620 MW with the cheapest in-pocket online capacity. Shape improves
+   (evening/overnight 1.905 → 2.449) but level collapses: shape-faithful,
+   level-insufficient. **The floor stays.**
+
+Per §2 this is decisive: the lane required *replacement*, replacement has been
+tested, and it does not act on the class it had to replace. Per §3's own terms
+the correct outcome is the **documented NO** — the gap is an accepted
+representation limit of the full-SRMC LP, because the real driver is the
+non-public Con Edison load-pocket procedure the MMU itself cannot see (41–42 %
+of NYC reliability commitments "unverified"). Both mechanisms remain in the
+codebase, default-off, as the recorded evidence.
+Full evidence: `docs/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md`
+§§4/4a/4b; log: `docs/calibration-log/nyiso.md` 2026-07-26 nyiso-83.
+
+**§3 ADJUDICATED (2026-07-26, nyiso-83 session) — THE GATE IS OPEN.** The owner
+ruled **YES, full J/K reopen**: the closed C3a "reserve" lever was closed as a
+*pricing* lever (measured Δ$0.00, nyiso-71) and does not extend to a
+commitment-obligation reading. Mechanism built, commit `fa9fc78`:
+`nyiso_li_locational_reserve` (the published Zone-K ladder, which the model
+carried **nowhere** — a rule-14 omission, not a new assumption) and
+`nyiso_incity_commitment_obligation` (the published NYC+LI 10-minute families
+re-classed onto an ONLINE-GATED in-pocket class, auto-superseding the NYC/LI
+`ST_GAS` floor limbs per §2). Both default-off and byte-inert.
+Vintage pin resolved from disk evidence: the v2021 regime spans all of
+2023–2025, so NYC 500/1,000 is already correct and **unchanged**; 625/1,250 is
+a 2026 event. The LI on/off-peak `DATA NEEDED` is closed from the tariff (MST
+§2.15). **Zone K: documented-NO recorded** — the current ARR table is behind
+MyNYISO ("Log into MyNYISO to view the Application of Reliability Rules") and
+Manual 12's Table B.5 is now only a pointer to that walled page, so the
+units-in-service genre is unobtainable; the LI limb rests on the published
+reserve ladder instead. Details:
+`docs/handoffs/nyiso-incity-instrument-survey-2026-07.md` §2a.
+
 **§3 UPDATE (2026-07-26, nyiso-82 session):** the Step-1 search is DONE — see
 `docs/handoffs/nyiso-incity-instrument-survey-2026-07.md`. Zone J: documented-NO supported
 (operative Con Ed procedure parameters are non-public, invisible even to the MMU) UNLESS
