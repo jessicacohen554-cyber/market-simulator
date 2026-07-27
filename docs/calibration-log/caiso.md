@@ -1966,3 +1966,170 @@ verdict stands as scored (FINDING §8). The caiso-127 evening λ-formation lane
 now fixes the spread compression ON TOP of the honest hydro base.
 
 Next number: caiso-127.
+
+## caiso-127 (2026-07-27) — the evening premium is not primarily UNDER-PRICED, it is ARBITRAGED FLAT: the model's own storage is interior-discharging in BOTH windows on 53/54/76 % of days and LP optimality pins the two λ equal (measured gap +2.64/+0.36/+0.41 vs a no-arbitrage prediction of 0.00); the charter's nominated candidate is refuted as a FIRST delta by that construction; owner ask filed, keeper UNCHANGED
+
+**Measurement-only session** (the prompt's owner gate: instruments / rule-16
+diagnostic probes at most). Keeper `2026-07-27-caiso-126-ror-split` UNCHANGED;
+no mechanism armed, no A/B, nothing registered. **TASK 3 was not executable** —
+it is conditional on an in-session owner grant on a specific construction and
+no such grant exists in this session; the ask is filed instead.
+
+Instrument (committed): `scripts/probes/_caiso127_evening_formation.py`
+(sections A–E + B2). Full record:
+`results/calibration/FINDING-caiso127-evening-formation-2026-07-27.md`.
+Owner ask: `docs/handoffs/caiso-127-storage-arbitrage-ask-2026-07-27.md`.
+
+### §A — the ladder re-based on the promoted keeper, and the framing that breaks
+
+| year | overnight resid | evening resid | spread model | spread actual | compression |
+|---|---|---|---|---|---|
+| 2023 | −0.09 | **−5.16** | +8.90 | +13.97 | +5.07 (64 % of measured) |
+| 2024 | +1.73 | −2.35 | +4.85 | +8.93 | +4.08 (54 %) |
+| 2025 | **+2.81** | +0.41 | +2.76 | +5.17 | +2.40 (53 %) |
+
+The compression reproduces, but "the evening is under-priced" is **2023's story
+only**: by 2025 the evening LEVEL is right (+0.41) and the whole compression is
+an OVERNIGHT OVER-price. The lane's target is the **spread**, not the evening
+level — a candidate scoped to lift the evening alone cannot fix 2025 and would
+break its already-correct level.
+
+### §B — the load-bearing finding: the spread is a fixed point of the storage arbitrage
+
+The keeper's storage is neither power- nor energy-bound: 54–56 % of the caiso-99
+evening discharge cap, at that cap in only 5.7/7.7/15.0 % of evening hours,
+0.36–0.50 cycles/day — and the **overnight is a DISCHARGE window** (net
++157/+188/+453 MW, discharging in 30/31/43 % of overnight hours). So the
+operative bound is not the round-trip wedge (+15.17/+12.13/+12.56 at the
+model's own overnight levels) but the degenerate discharge-to-discharge **zero**
+wedge: a fleet interior in discharge in two windows of one SOC episode carries a
+common marginal water value, so λ_evening − λ_overnight = 0 by optimality.
+
+Measured (day-paired, strict interiority both windows): pinned on **192/197/276
+of 365 days**, gap **+2.64 / +0.36 / +0.41 $/MWh**. The stratification is the
+whole compression:
+
+| year | pinned days (model/actual spread) | NOT-pinned days |
+|---|---|---|
+| 2023 | +7.36 / +13.66 | +10.60 / +14.32 |
+| 2024 | +2.30 / +4.92 | +7.85 / +13.63 |
+| 2025 | +1.69 / +4.87 | **+6.11 / +6.09** |
+
+**On 2025's 89 non-pinned days the model reproduces the measured spread
+essentially exactly.** Dose–response across the build-out: pinned share
+0.53→0.54→0.76 as the fleet goes 7.6→11.4→15.2 GW, model spread
++8.90→+4.85→+2.76.
+
+**Consequence, and the reason this reorders the lane.** Steepening the evening
+supply rung raises λ_evening; the unbound storage shifts discharge out of the
+overnight and the two λ re-equalize at a HIGHER COMMON LEVEL. The spread does
+not open and the overnight over-price worsens — i.e. **the caiso-113/114 C3a
+failure is a predictable property of any evening-scoped supply-side candidate,
+not bad luck.** The charter's nominated leading candidate (a caiso-114
+refinement) is therefore **not the first delta**; it stays admissible only
+behind the storage pin.
+
+### §B2 (gate D0) — battery vs pumped storage
+
+The KKT argument is technology-blind, but which technology is interior decides
+which mechanism family is admissible: the caiso-99 anchor binds batteries only,
+so the LP's 2,078 MW / 20,776 MWh of pumped storage is its one unrestrained
+arbitrageur. The committed slim bundle could not separate them
+(FINDING-caiso125 §6.4); this session added the per-tech sidecar and replayed
+the keeper to produce it — the replay reproduces the committed bundle
+**digit-for-digit** (class max |Δ| 0.000 MW / 122,640 rows; zonal price max
+|Δ| 0.0000 $/MWh / 61,320 rows, every year), so the sidecars are the keeper's
+own and are committed into its `hourly/`.
+
+| | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| **pinned days — li_ion** | **0.384** | **0.479** | **0.668** |
+| pinned-day gap — li_ion | +2.45 | +1.62 | +1.27 $/MWh |
+| pinned days — pumped storage | 0.074 | 0.132 | 0.077 |
+| pinned-day gap — pumped storage | +5.71 | +0.48 | −5.18 $/MWh |
+| overnight net — li_ion / PS | +98 / +58 MW | +104 / +85 | +365 / +89 |
+
+**The BATTERY fleet carries the pin; pumped storage does not** — the battery
+share rises with the build-out on a gap tightening toward zero, PS's has no
+trend and does not converge, and PS discharges overnight in 5–8 % of hours vs
+the battery's 28–41 %. The ask is aimed at the right resource. Live caveat, not
+a blocker: PS carries no shape restraint of any kind in the model and
+contributes +58/+85/+89 MW of the overnight excess — a smaller, separate lane.
+
+On the clean battery-only basis the throughput comparison **inverts** the
+aggregate reading: model li_ion discharge 4.06/7.62/11.46 TWh vs the measured
+LESR RTD 5.67/10.04/12.06 — the LP **under**-cycles the battery by 28/24/5 %
+while over-discharging the overnight by +151/+99/+98 MW. Both at once is the
+diagnosis: **too little energy moved overall, too much of it placed overnight.**
+The defect is the POSITION, not the volume — which is why every volume-priced
+instrument (the caiso-100/101 adder, a cycle cap) is aimed at the wrong
+quantity.
+
+### §C/§D/§E — the supply side, measured anyway
+
+The evening marginal rung is a **CC_REGULAR / import tie on a near-continuous
+stack**: an offer brackets λ in 96–97 % of evening hours, and the next rung
+above λ is a median **+0.59 $/MWh** away. The overnight is set by the *same two
+classes* — there is no distinct evening rung, which is the structural reason the
+two windows equalize so easily. To lift λ by the year's compression delta the
+(λ, λ+δ] band holds 1856/1444/867 MW/h of free capacity that must be called or
+re-priced through (45/33/19 % of the model's own evening import). Against CEMS,
+the evening gas VOLUME is close (+399/+451/+561 MW) but the COMPOSITION is not:
+the model over-runs CC_REGULAR (+578/+572/+431) and under-runs CT_PEAKER
+(−561/−714/−241), and reality reaches/exceeds the model's own cheapest-available
+CT offer 1.3–1.6× as often (0.442/0.204/0.131 vs 0.334/0.130/0.084). Real, but
+second-order for THIS lane — on the pinned days it changes the spread by ~0 by
+construction — and it belongs to the C5a/C1 composition lane (rule 1: offer
+level LAST).
+
+### §Ask (TASK 2) — filed, not built
+
+`docs/handoffs/caiso-127-storage-arbitrage-ask-2026-07-27.md`. Surviving
+candidate: the **DA/RT allocation on the DISCHARGE side** — the two-sided
+rule-19 reconciliation of M1 (`caiso_charge_allocation_schedule`), same source,
+same Fourier-Motzkin per-day construction, volume left endogenous, zero new free
+parameters. Closed in the memo, so the ask is not a redo: the **entire AS-award
+family** (caiso-74's power-derate and SOC-sustain legs, plus the reg-down form
+newly refuted here by arithmetic on the curated award series — overnight upward
+award 334–713 MW against 2.1–3.1 GW of remaining headroom), a positive
+`battery_dispatch_adder` (caiso-100/101, rejected on the throughput guard), a
+cycle-count cap (slack at 0.36–0.50 cycles/day), and re-deriving the caiso-99
+envelope (rule 21, and useless — the model uses 5–11 % of the overnight cap).
+Derive-first gates D0–D4 and the pre-registered A/B kills (C3a guard;
+two-sided ±15 % throughput; D-4) are in memo §5/§6. **PRIMARY of the eventual
+A/B is the charter's own test**: the keeper's disclosed evening hydro
+starvation (−251/−376/−264 MW) heals to within ±150 MW with NO hydro-side
+change.
+
+### Infrastructure landed (write-only / default-off, keeper unaffected)
+
+- **`hourly/storage_<year>.parquet`** — the per-tech storage sidecar
+  FINDING-caiso125 §6.4 recommended (`year, pass, tech, hour, charge_mw,
+  discharge_mw`); write-only and solve-invariant. Without it a slim bundle
+  cannot separate battery from pumped storage, which is exactly gate D0.
+- **SECONDARY — `hydro_budget_nameplate_aware`** (ScenarioConfig, default off):
+  the FINDING-caiso126 K4 root cause. `load_hydro_budget` applies the monthly
+  LEVEL target with a UNIFORM fleet-wide scale, which pushes small plants above
+  nameplate-hours; the LP cannot deliver that energy and silently clips it.
+  Measured on the keeper's own inputs (no solve): **130 / 341 / 26 GWh =
+  0.533 / 1.502 / 0.123 %** of the CAISO fleet budget undeliverable in
+  2023/24/25, over 67/42/26 plant-months. The gate water-fills instead — each
+  plant-month capped at its physical ceiling, the excess re-allocated to the
+  plants that can deliver it, iterating to convergence, month total met exactly
+  wherever attainable and the shortfall LOGGED where it is not.
+  Byte-identical below the bound (unit-tested); ISO-generic (the defect is in
+  the shared level-pinning path). **Built, tested, NOT armed** — it is not
+  byte-identical on CAISO, so arming it is an owner grant plus its own A/B.
+
+### DO-NOT-REDO (new)
+
+Re-measuring the ladder/spread/compression on this keeper; re-measuring storage
+interiority, the hod profile or the pinned/non-pinned stratification; proposing
+an evening-scoped supply-side repricing as a STAND-ALONE first delta (refuted by
+construction on the pinned days); any hydro-side or offer-curve adder tuned to
+the spread residual (the spread is a fixed point the LP re-equalizes);
+re-deriving or loosening the caiso-99 p95 discharge envelope against this
+residual (rule 21, and slack by 89–95 % where the defect lives); re-testing any
+AS-award form against this defect (§Ask).
+
+Next number: caiso-128.
