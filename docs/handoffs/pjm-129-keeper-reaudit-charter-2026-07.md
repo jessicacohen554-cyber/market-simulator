@@ -1,4 +1,4 @@
-# CHARTER — pjm-128: PJM keeper re-audit on the guard-corrected CAMPD envelope
+# CHARTER — pjm-129: PJM keeper re-audit on the guard-corrected CAMPD envelope
 
 **Opened** 2026-07-26, executing the last unresolved cell of
 `docs/handoffs/campd-economic-layup-fix-charter-2026-07.md` §5/§8 that this
@@ -27,7 +27,7 @@ that kind to cite); lifting the freeze by inference (parent charter §6).
   `hourly/` sidecars and `metrics.json` are the baseline.
 * **A1 (the deliverable)** — the same recipe at HEAD on the corrected extract,
   `--years 2023 2024 2025` in **ONE** bundle (rule 16) →
-  `results/calibration/pjm128_meritguard_a1`. Registered on the dashboard
+  `results/calibration/pjm129_meritguard_a1`. Registered on the dashboard
   whatever the verdict (rule 15).
 
 **A0-validity check, done before solving (the caiso-123 lesson).** The CAISO
@@ -67,11 +67,11 @@ solve-year removes the floor and is what made the MISO 3-year bundle fit here.
 
 ```
 replay_keeper.py results/calibration/pjm121_ccbelt --years 2023 \
-    --out-dir results/calibration/pjm128_a1_y23
+    --out-dir results/calibration/pjm129_a1_y23
 replay_keeper.py results/calibration/pjm121_ccbelt --years 2023 2024 \
-    --out-dir results/calibration/pjm128_a1_y2324 --reuse-solved results/calibration/pjm128_a1_y23
+    --out-dir results/calibration/pjm129_a1_y2324 --reuse-solved results/calibration/pjm129_a1_y23
 replay_keeper.py results/calibration/pjm121_ccbelt --years 2023 2024 2025 \
-    --out-dir results/calibration/pjm128_meritguard_a1 --reuse-solved results/calibration/pjm128_a1_y2324
+    --out-dir results/calibration/pjm129_meritguard_a1 --reuse-solved results/calibration/pjm129_a1_y2324
 ```
 
 Each stage solves exactly ONE fresh year; earlier years byte-copy forward.

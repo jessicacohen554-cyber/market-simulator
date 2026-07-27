@@ -833,3 +833,128 @@ nor formally blocked. Authorize-and-run or decline-and-record; the ledger is
 whole either way.
 
 Next number: pjm-129.
+
+## 2026-07-26 — pjm-129: the keeper does NOT hold on the guard-corrected CAMPD envelope — RE-TUNE REQUIRED (3 gates), and the "needs ≥24 GB" block was never real
+
+**Lane:** the last PJM cell of
+`docs/handoffs/campd-economic-layup-fix-charter-2026-07.md` §5/§8. Charter,
+pre-registered and committed **before any result was read**:
+`docs/handoffs/pjm-129-keeper-reaudit-charter-2026-07.md`. Full evidence:
+`results/calibration/FINDING-pjm129-keeper-reaudit-meritguard-2026-07.md`.
+(Opened as pjm-128; renumbered when the concurrent DA-award-feed census, PR
+#2965, took that number mid-session.)
+
+**Registered arm:** `2026-07-26-pjm-129-meritguard-a1` (PJM 2023/2024/2025, one
+bundle, rule 16; rule 15 — registered whatever the verdict).
+
+### Verdict
+
+**DETERMINATION `CALIBRATED` (10/10, PJM's first all-pass) → `NOT-YET` (7/10).
+RE-TUNE REQUIRED**, three newly-failing gates:
+
+| gate | keeper | A1 | band |
+|---|---|---|---|
+| C3a mean LMP **2025** | −9.3 % ($41.53 / actual $45.80) | **−10.6 %** ($40.93) | ±10 % |
+| C3c tail **2024** | 9 h vs 18 h, 0.50× | **7 h, 0.39×** | ≥0.5× |
+| C3c tail **2025** | 39 h vs 59 h, 0.66× | **28 h, 0.47×** | ≥0.5× |
+| C1 **2023** CC_REGULAR | −7.87 TWh, −0.4 pp | **−8.10 TWh**, −0.5 pp | 8 TWh **and** 3 pp |
+
+C2 / C3a-2023,24 / C3b / C4 / C5a / C6 / C7 / C8 all still PASS; free-class C1
+16/16 → 15/16 (free 12/12 → 11/12). **C3a-2023 (+5.6 → +4.0 %), C3b-2023 (0.157 →
+0.152) and C5a-2023/24 improve.** Nothing was tuned and nothing is licensed to be.
+**Keeper designation UNCHANGED** — promoting/demoting on a NOT-YET arm is an owner
+call (miso-88 precedent).
+
+### The isolation — the code is provably PJM-inert, the extract is the whole story
+
+The charter flagged that `0069f8e..HEAD` is 28 files / +2,235 lines under `src/`,
+including `offer_surfaces.py` +391 — the module owning the keeper's own
+`pjm_offer_midcurve_segments` `CC_LIKE` scope. One single-year throwaway probe
+closed it: 2025 solved at HEAD with `campd-unit-outages-PJM.csv` reverted to the
+keeper's blob `5283f5c6`.
+
+| arm | 2025 sidecar LW $/MWh | C3a |
+|---|---|---|
+| KEEPER (`0069f8e`, pre-guard extract) | 40.070 | −9.3 % |
+| A0′ (HEAD, pre-guard extract) | **40.070** | −9.3 % |
+| A1 (HEAD, guard-corrected extract) | 39.552 | **−10.6 %** |
+
+**Code drift with the extract held fixed: $+0.000.** A0′'s `system_2025` and
+`class_hourly_2025` are `max|diff| = 0` against the keeper's committed sidecars on
+**every** column (price/slack/dump/demand/reserve_price/per-class mw). Corroborated
+in-log: A0′ reports deliverable ramp mean **38.1 GW**, the exact figure in the
+keeper's own designation note, vs A1's 38.9 GW. The guard/extract owns **100 %** of
+the −$0.518 (−1.3 pp) move. PJM does **not** carry the caiso-123 confounded-A0
+defect (the extract blob changes exactly once after the keeper's sha, at `6a8f285`,
+and the on-disk file hashes to HEAD's blob). Keeper re-scored on the same bench
+**after** registration: still CALIBRATED 10/10.
+
+### Why prices fall (measured from the two blobs, no solve)
+
+Guard removes **903 windows / 4,624 GW-days** over 2023–25 and adds zero — 15.3 /
+9.7 / 14.3 % of each year's envelope (11.7 % pooled, close to MISO's 12.8 %), of
+which **ST_GAS is 2,528 GW-days (54.7 %)**, COAL 984, CC_REGULAR 841. Class volumes
+move accordingly (2023 TWh): ST_GAS 8.09 → 10.60, COAL_BIT +0.92, **CT_PEAKER 23.20
+→ 21.78**. Rule 11 discovered bug — the keeper's offer curves were compensating for
+an inflated envelope (NEISO / ERCOT-79 / nyiso-63 / miso-93 condition; −1.3 pp here
+vs MISO's −1.4 pp). **2025 fails because it started 0.7 pp from the veto, not
+because its move was largest.** C3c is the consequence the charter *missed*: adding
+supply removes scarcity hours (5→2 / 9→7 / 39→28 against unchanged 6/18/59) — it
+deepens the already-open G-20b/G-22 reserve-tightness root cause rather than
+creating a new one.
+
+### The RAM block is closed, and it was never a bigger box
+
+Two prior attempts (neiso-65 on `pjm119_overlay_restore`, then its re-attempt on
+`pjm121_ccbelt`) were SIGKILLed at 15.9 GB building **2024** and both concluded
+"needs ≥24 GB". Measured here from the release-block telemetry, one fresh process
+per solve-year:
+
+| year | `resident` after release | `peak` | accumulators |
+|---|---|---|---|
+| 2023 | 1.06 GB | 14.87 GB | 0.07 GB |
+| 2024 | 1.19 GB | 14.94 GB | 0.13 GB |
+| 2025 | 1.26 GB | 15.06 GB | 0.19 GB |
+
+**The year loop is not leaking** — it releases to a fully-attributed ~1.1 GB floor
+(miso-92's attribution, 35 % of it already removed). What kills a single-process
+run is `peak(N+1) + floor(N)` = **15.93 GB at year 2**, reproducing the reported
+15.9 GB kill at the year both attempts reported it, to 0.03 GB. **The single-year
+LP peak is the ceiling.** The staged one-year-per-process `--reuse-solved` chain
+fits every PJM year in this 15.7 GB box with 0.6–0.8 GB spare — and
+`pjm121_ccbelt`'s own attestation already recorded it was solved that way at
+"peak ~14.8 GB". No CI job was spun up; no bigger box is needed. The suggested
+1-zone/24-hour toy was deliberately **not** run: at ~0.01 GB it cannot
+discriminate a 15 GB peak from a 1.1 GB floor.
+
+### Ops
+
+* Four solve-years (2023, 2024, 2025 + one 2025 isolation probe). The probe bundle
+  and both staged intermediates were **deleted**; no partial-year bundle exists
+  (rule 16). `class_hourly_2023/2024` lifted from the staged bundles and verified
+  `max|diff| = 0` against the final bundle's own `system_<year>` slices.
+* Prereqs regenerated before solving (`transfer-interface-limits`,
+  `ramp-capability`, `capacity-deliverability`, all 36 months of
+  `pjm-da-virtuals/hrl_da_incs_decs`); every solve log audited — overlays confirmed
+  live (6 measured interfaces + EAST cut, 128 DA virtual pseudo-units, deliverable
+  ramp 38.7–38.9 GW).
+* **Reported, not introduced:** registration moved four CHP cells in
+  `bench/PJM/2025.json.gz` (`classFull` CT_CHP 0.5456 → **−0.3726**). That is the
+  documented run-own-`btm.parquet` subtraction — the stored CHP split belongs to
+  whichever run registered last; symmetric, so no C1 row is biased, and the keeper
+  re-scores 10/10 on it. Flagged for the PJM lane.
+* Rule 22: 2023–2025 only; **freeze untouched and NOT lifted** (owner only).
+* Rule 12: years strictly sequential, one process each. No concurrent invocation —
+  a single PJM year needs 14.9–15.1 GB of a 15.7 GB box.
+
+### Notes for the next session
+
+* **PJM needs a re-tune charter** scoped to three gates under a ~1.3 pp structural
+  price reduction, and it must close **by structure** — the corrected extract stays
+  in (rule 1). Cheapest first: **C1-2023 CC_REGULAR is 0.10 TWh past an 8 TWh
+  band** (1.2 % of band) on a class the guard barely moved (−0.23 TWh). **C3a-2025**
+  is the pjm-120/122/123 dispersion/level stratum, with pjm-122's measured-ownership
+  route the standing candidate. **C3c** is downstream of G-20b/G-22 and both
+  scoping framings are already closed (pjm-124/125), so it needs the root cause.
+* Code churn `0069f8e..HEAD` is measured **PJM-inert**; don't re-establish it.
+* Next number: **pjm-130.**

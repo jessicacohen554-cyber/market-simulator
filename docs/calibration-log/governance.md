@@ -296,3 +296,58 @@ was held at 0.90 for both cuts throughout (rule 23 — re-tuning it to flatter o
 cut would be fitting to a residual). **The freeze stays ACTIVE**; Lane B was
 never one of its conditions, and only the owner lifts it. Charter §9 updated.
 Record: `results/calibration/FINDING-campd-daygrain-crossiso-2026-07-26.md`.
+
+## 2026-07-26 — CAMPD economic-layup charter: the PJM keeper re-audit cell is RESOLVED (pjm-129, RE-TUNE REQUIRED) and its RAM block is CLOSED — the "≥24 GB" conclusion was wrong
+
+Charter cell (`docs/handoffs/campd-economic-layup-fix-charter-2026-07.md` §5/§8),
+executed in the PJM lane as **pjm-129**. Registered arm
+`2026-07-26-pjm-129-meritguard-a1` (2023/2024/2025, one bundle, rule 16; rule 15).
+Full record: `results/calibration/FINDING-pjm129-keeper-reaudit-meritguard-2026-07.md`;
+per-ISO entry in `docs/calibration-log/pjm.md`.
+
+**Verdict:** `CALIBRATED` 10/10 → **`NOT-YET` 7/10, RE-TUNE REQUIRED** on C3a-2025
+(−9.3 → −10.6 %), C3c tail 2024 (0.50× → 0.39×) and 2025 (0.66× → 0.47×), plus
+C1-2023 CC_REGULAR (−7.87 → −8.10 TWh, 0.10 TWh past an 8 TWh band). Isolation, not
+attribution: a same-HEAD probe with the extract reverted to the keeper's blob
+reproduces the keeper's committed 2025 hourly sidecars at `max|diff| = 0` on every
+column, so post-keeper **code** drift is **$0.000** and the guard/extract owns
+**100 %** of the −$0.518 (−1.3 pp) move. Rule-11 discovered bug; corrected extract
+stays in (rule 1); nothing tuned; keeper designation unchanged (owner call).
+
+**With this cell, all six ISOs carry a registered re-audit arm** — NEISO and ERCOT
+fix-in-place, CAISO / NYISO / MISO / PJM re-tune-required. What remains under the
+charter is the **owner's freeze-lift decision** (§9) plus four keeper-lane re-tunes.
+**The freeze stays ACTIVE and this session does not lift it.**
+
+### A governance correction worth carrying: a resource conclusion was wrong for two sessions
+
+Two prior sessions concluded the PJM replay "needs a ≥24 GB environment" after
+SIGKILLs at 15.9 GB, and that conclusion propagated into `RESULTS-neiso65-...` §3e,
+the PJM log, and this charter. It was wrong. Measured per solve-year from the
+release-block telemetry already in the code:
+
+| year | `resident` after release | single-year `peak` |
+|---|---|---|
+| 2023 | 1.06 GB | 14.87 GB |
+| 2024 | 1.19 GB | 14.94 GB |
+| 2025 | 1.26 GB | 15.06 GB |
+
+`peak(N+1) + floor(N)` = **15.93 GB at year 2**, reproducing the reported 15.9 GB
+kill to 0.03 GB at the year both attempts hit it. **The year loop is not leaking**
+(its `del` + `gc.collect()` + `malloc_trim` block releases to a floor that
+miso-90/92 already attributed and reduced 35 %); the **single-year LP peak is the
+ceiling**, and one fresh process per solve-year fits every PJM year in the standard
+15.7 GB box. The recipe was already documented in `pjm121_ccbelt`'s **own
+attestation** ("one fresh process each, ~15 min/year, peak ~14.8 GB"), and
+miso-92/93 had already established it for MISO. Two lessons:
+
+1. **A resource verdict is a measurement, not an inference from a kill.** "OOM at
+   year 2" plus "2023 fits alone" was read as *the box is too small*; the two
+   numbers that discriminate leak-vs-ceiling were one already-emitted log line
+   away, and were never read. Quote `resident` and `peak` before asking for
+   hardware.
+2. **Cross-lane findings did not reach the lane that needed them.** miso-90/92
+   attributed this floor and miso-93 used the staged recipe to land a MISO 3-year
+   bundle in this same container, *before* the second PJM attempt concluded ≥24 GB.
+   The blocked-cell text in `RESULTS-neiso65-...` §3e and the PJM log should be
+   read as superseded.
