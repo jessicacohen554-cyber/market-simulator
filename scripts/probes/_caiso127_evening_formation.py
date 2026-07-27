@@ -619,11 +619,96 @@ def section_d(arm: Path, states: dict[int, dict]) -> None:
         del mc, cap
 
 
+def section_b2(bundle: Path, states: dict[int, dict]) -> None:
+    """B2 (gate D0). Split §B's pin between battery and pumped storage.
+
+    Consumes the per-tech ``hourly/storage_<year>.parquet`` sidecar (added
+    caiso-127; produced by any solve from that point on). The KKT argument of
+    §B is technology-blind, but which technology is interior decides which
+    mechanism family is even admissible — the caiso-99 shape anchor binds
+    batteries only, so pumped storage is the model's one unrestrained
+    arbitrageur. Silently skips a bundle without the sidecar.
+    """
+    print("\n=== B2 (gate D0). the pin, split by storage technology ===")
+    for year in YEARS:
+        path = bundle / "hourly" / f"storage_{year}.parquet"
+        if not path.exists():
+            print(f"  {year}: no per-tech sidecar in {bundle} — skipped")
+            continue
+        frame = pd.read_parquet(path)
+        frame = frame[frame["pass"] == "P1"]
+        frame = frame.assign(net=frame["discharge_mw"] - frame["charge_mw"])
+        piv = frame.pivot_table(
+            index="hour", columns="tech", values="net", aggfunc="sum", observed=True
+        ).sort_index()
+        hours = len(piv)
+        lam = ca_lambda(system_frame(bundle, year))[:hours]
+        caps = storage_caps(states[year], year, hours)
+        units = states[year]["storage_units"]
+        from market_sim.model.storage import _battery_mask
+
+        batt = _battery_mask(units)
+        pcap = np.asarray(states[year]["storage_power_cap"], dtype=float)
+        if pcap.ndim == 1:
+            pcap = np.repeat(pcap[:, None], hours, axis=1)
+        cap_by = {
+            "li_ion": (caps["dis_batt"], caps["chg_batt"]),
+            "pumped_storage": (
+                pcap[~batt, :hours].sum(axis=0),
+                pcap[~batt, :hours].sum(axis=0),
+            ),
+        }
+        days = hours // 24
+        print(f"\n  {year}:")
+        for tech in piv.columns:
+            net = piv[tech].to_numpy(dtype=float)
+            dcap, ccap = cap_by.get(tech, (np.full(hours, np.inf),) * 2)
+            for lbl, hods in (("overnight", OVERNIGHT), ("evening", EVENING)):
+                m = window_mask(hours, hods)
+                print(
+                    f"    {tech:>14} {lbl:>9}: net {net[m].mean():+7.0f} MW "
+                    f"(discharging {float((net[m] > 1.0).mean()):.2f} of hours, "
+                    f"at cap {float((net[m] >= BIND_FRAC * dcap[m]).mean()):.3f})"
+                )
+            n_d = net[: days * 24].reshape(days, 24)
+            d_d = dcap[: days * 24].reshape(days, 24)
+            c_d = ccap[: days * 24].reshape(days, 24)
+            lam_d = lam[: days * 24].reshape(days, 24)
+            idis = (n_d > 1.0) & (n_d < BIND_FRAC * d_d) & (n_d > -BIND_FRAC * c_d)
+            cross = idis[:, OVERNIGHT].any(axis=1) & idis[:, EVENING].any(axis=1)
+            if cross.any():
+                gap = [
+                    float(
+                        lam_d[d][EVENING][idis[d][EVENING]].mean()
+                        - lam_d[d][OVERNIGHT][idis[d][OVERNIGHT]].mean()
+                    )
+                    for d in np.flatnonzero(cross)
+                ]
+                print(
+                    f"    {tech:>14} pinned days {int(cross.sum()):3d}/{days} "
+                    f"({cross.mean():.3f}); evening-overnight gap mean "
+                    f"{np.mean(gap):+.2f} (median {np.median(gap):+.2f}) $/MWh"
+                )
+            else:
+                print(f"    {tech:>14} pinned days 0/{days} — no pin from this tech")
+            print(
+                f"    {tech:>14} annual: charge "
+                f"{float(frame[frame.tech == tech]['charge_mw'].sum()) / 1e6:.2f} TWh, "
+                f"discharge "
+                f"{float(frame[frame.tech == tech]['discharge_mw'].sum()) / 1e6:.2f} TWh"
+            )
+
+
 def main() -> None:
     """Run every section against the promoted keeper and its control."""
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--arm", default="results/calibration/caiso126_rorsplit_B")
     ap.add_argument("--control", default="results/calibration/caiso126_control_A")
+    ap.add_argument(
+        "--pertech",
+        default=None,
+        help="bundle carrying hourly/storage_<year>.parquet for §B2 (gate D0)",
+    )
     ap.add_argument("--sections", default="ABCDE")
     args = ap.parse_args()
     arm, control = Path(args.arm), Path(args.control)
@@ -634,6 +719,7 @@ def main() -> None:
         states = {y: fleet_reconstruction(arm, y) for y in YEARS}
         if "B" in want:
             section_b(arm, states, ladder)
+            section_b2(Path(args.pertech) if args.pertech else arm, states)
         if want & {"C", "E"}:
             section_ce(arm, states, ladder)
         if "D" in want:
