@@ -61,7 +61,11 @@ from http.cookiejar import CookieJar
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-RAW_DIR = REPO_ROOT / "data" / "raw" / "neiso-operable-capacity" / "daily"
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from market_sim.config.paths import NEISO_OPERABLE_CAPACITY_DIR  # noqa: E402
+
+RAW_DIR = NEISO_OPERABLE_CAPACITY_DIR / "daily"
 
 #: Any ISO Express report page mints an isox_token; use the ancillary tree the
 #: sibling ISO-NE downloaders bootstrap from (stable, small).

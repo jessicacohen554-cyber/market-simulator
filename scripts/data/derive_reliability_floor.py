@@ -32,6 +32,8 @@ REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
+from market_sim.config.paths import CAMPD_UNIT_LEVEL_DIR  # noqa: E402
+
 
 def _load_weather(iso: str, zone: str | None, years: list[int]):
     """Load daily TMAX (and TMIN if available) for the ISO or zone."""
@@ -56,7 +58,7 @@ def _load_weather(iso: str, zone: str | None, years: list[int]):
 
 def _load_campd_cf(iso: str, plant_class: str, zone: str | None, years: list[int]):
     """Load measured CAMPD capacity factor for a plant class."""
-    campd_dir = REPO / "data" / "raw" / "campd-unit-level"
+    campd_dir = CAMPD_UNIT_LEVEL_DIR
     if not campd_dir.exists():
         print(f"  ERROR: CAMPD directory not found: {campd_dir}")
         return None

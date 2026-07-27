@@ -75,13 +75,15 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
-RAW_DIR = REPO / "data" / "raw" / "NEISO-AS" / "da-energy-offers"
-OUT_JSON = (
-    REPO / "data" / "raw" / "_validation-source" / "neiso_offer_surface_condbinned.json"
+from market_sim.config.paths import (  # noqa: E402
+    CALIBRATION_DIR,
+    NEISO_AS_DIR,
+    PROCESSED_DIR,
 )
-OUT_CSV = (
-    REPO / "data" / "raw" / "_validation-source" / "neiso_offer_surface_summary.csv"
-)
+
+RAW_DIR = NEISO_AS_DIR / "da-energy-offers"
+OUT_JSON = CALIBRATION_DIR / "neiso_offer_surface_condbinned.json"
+OUT_CSV = CALIBRATION_DIR / "neiso_offer_surface_summary.csv"
 
 #: Fast-start selection: claimed 30-minute capability covers this fraction of
 #: Economic Maximum (ISO-NE fast-start concept; physics, not a tuned value).
@@ -120,9 +122,7 @@ def _ct_peaker_base_hr() -> float:
     divided by here is the one the mechanism later multiplies (the ERCOT
     derive's round-trip convention).
     """
-    df = pd.read_parquet(
-        REPO / "data" / "raw" / "_processed-legacy" / "neiso_fleet_binned.parquet"
-    )
+    df = pd.read_parquet(PROCESSED_DIR / "neiso_fleet_binned.parquet")
     ct = df[df["fuel_type"] == "gas_ct"]
     if ct.empty:
         raise SystemExit("no gas_ct units in the NEISO binned fleet cache")

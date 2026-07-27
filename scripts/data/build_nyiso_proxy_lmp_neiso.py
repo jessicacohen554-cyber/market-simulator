@@ -48,16 +48,12 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import CALIBRATION_DIR, LMP_DATA_DIR  # noqa: E402
 from market_sim.utils.hour_calendar import hour_index  # noqa: E402
 
-NYISO_DIR = REPO / "data" / "raw" / "lmp-data" / "NYISO"
-OUT_PARQUET = (
-    REPO
-    / "data"
-    / "raw"
-    / "_validation-source"
-    / "nyiso_proxy_lmp_hourly_NEISO.parquet"
-)
+NYISO_DIR = LMP_DATA_DIR / "NYISO"
+OUT_PARQUET = CALIBRATION_DIR / "nyiso_proxy_lmp_hourly_NEISO.parquet"
 
 # NYISO proxy-bus zone name -> output hub id.
 PROXY_HUBS: dict[str, str] = {"H Q": "NYISO_HQ", "NPX": "NYISO_NPX"}

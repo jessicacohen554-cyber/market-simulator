@@ -49,7 +49,11 @@ from urllib.request import urlopen, Request
 from urllib.error import HTTPError, URLError
 
 REPO = Path(__file__).resolve().parent.parent.parent
-OUT_PATH = REPO / "data" / "raw" / "gas-prices" / "transco_z6_ny_daily.csv"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import GAS_PRICES_DIR  # noqa: E402
+
+OUT_PATH = GAS_PRICES_DIR / "transco_z6_ny_daily.csv"
 
 ARCHIVE_INDEX = "https://www.eia.gov/naturalgas/weekly/includes/archive.php"
 PAGE_TMPL = "https://www.eia.gov/naturalgas/weekly/archivenew_ngwu/{y}/{m:02d}_{d:02d}/"

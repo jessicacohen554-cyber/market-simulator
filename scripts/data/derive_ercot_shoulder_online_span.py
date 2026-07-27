@@ -62,6 +62,8 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "scripts"))
 sys.path.insert(0, str(REPO / "scripts" / "data"))
 
+from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
+
 from derive_ercot_dam_cleared_share import (  # noqa: E402
     HOURS,
     NETLOAD_PCT_EDGES,
@@ -70,13 +72,7 @@ from derive_ercot_dam_cleared_share import (  # noqa: E402
 )
 from derive_ercot_sced_offer_wall import CLASS_OF_RESTYPE, SCED_DIR  # noqa: E402
 
-DEFAULT_OUT = (
-    REPO
-    / "data"
-    / "raw"
-    / "_validation-source"
-    / "ercot_shoulder_online_span_condbinned.json"
-)
+DEFAULT_OUT = CALIBRATION_DIR / "ercot_shoulder_online_span_condbinned.json"
 
 _STD_TZ = "Etc/GMT+6"  # ERCOT fixed standard-time clock (derive_actual_lmp)
 

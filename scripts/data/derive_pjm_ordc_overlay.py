@@ -37,6 +37,8 @@ REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "scripts"))
 
+from market_sim.config.paths import CALIBRATION_DIR, PJM_AS_DIR  # noqa: E402
+
 from market_sim.data.fleet import FUEL_TYPE_NAMES  # noqa: E402
 from market_sim.results.scarcity import (  # noqa: E402
     RESERVE_FUEL_TYPES,
@@ -48,8 +50,8 @@ from market_sim.results.scarcity import (  # noqa: E402
 # W1 relocated the old inputs/ tree: inputs/calibration -> data/raw/_validation-source
 # (paths.CALIBRATION_DIR, holds pjm_ordc_curve.csv + actual_lmp_hourly_PJM.parquet)
 # and inputs/raw-data/PJM-AS -> data/raw/PJM-AS (measured reserve requirements).
-CAL_DIR = REPO / "data" / "raw" / "_validation-source"
-RAW_DIR = REPO / "data" / "raw" / "PJM-AS"
+CAL_DIR = CALIBRATION_DIR
+RAW_DIR = PJM_AS_DIR
 DEFAULT_CURVE = CAL_DIR / "pjm_ordc_curve.csv"
 
 # PJM data `service` code -> curve product name. The RT/DA reserve parquets use

@@ -101,6 +101,12 @@ _ROOT = Path(__file__).resolve().parent.parent.parent
 if str(_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(_ROOT / "src"))
 
+from market_sim.config.paths import (  # noqa: E402
+    CAMPD_BINS_CSV,
+    EIA_HOURLY_DIR,
+    ERCOT_WEATHER_DIR,
+)
+
 from market_sim.config.constants import EFORD  # noqa: E402
 
 # Hinge onset (deg C): NERC cold-weather analyses place the onset of sharply
@@ -138,7 +144,7 @@ def system_daily_tmin() -> pd.Series:
     frames = [
         pd.read_csv(p)
         for p in sorted(
-            glob.glob(str(_ROOT / "data/raw/ercot-weather/ercot_zone_temp_daily*.csv"))
+            glob.glob(str(ERCOT_WEATHER_DIR / "ercot_zone_temp_daily*.csv"))
         )
     ]
     wx = pd.concat(frames, ignore_index=True)
@@ -148,7 +154,7 @@ def system_daily_tmin() -> pd.Series:
 
 def certified_days() -> pd.Series:
     """Bool per day: daily-max EIA-930 ERCO net load >= its year's p99."""
-    e = pd.read_parquet(_ROOT / "data/raw/eia-930-hourly/ERCO hourly.parquet")
+    e = pd.read_parquet(EIA_HOURLY_DIR / "ERCO hourly.parquet")
     e["date"] = pd.to_datetime(e["Local date"])
     dem = e["Adjusted demand"] if "Adjusted demand" in e else e["Demand"]
     wnd = e.get("Adjusted WND Gen", e.get("NG: WND")).fillna(0)
@@ -165,7 +171,7 @@ def certified_days() -> pd.Series:
 
 def class_capacity() -> tuple[pd.Series, pd.Series]:
     """(class capacity MW, plant -> class) from the ERCOT CAMPD bin sheet."""
-    bins = pd.read_csv(_ROOT / "data/raw/reference/custom-bin-assignments.csv")
+    bins = pd.read_csv(CAMPD_BINS_CSV)
     cap = (
         bins.groupby(["Plant_Code", "Plant_Group"])["Nameplate_MW"].sum().reset_index()
     )

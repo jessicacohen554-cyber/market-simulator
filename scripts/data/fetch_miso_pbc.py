@@ -36,7 +36,11 @@ from datetime import date, timedelta
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-RAW_DIR = REPO_ROOT / "data" / "raw" / "transfer-constraint-binding" / "MISO"
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from market_sim.config.paths import TRANSFER_CONSTRAINT_BINDING_DIR  # noqa: E402
+
+RAW_DIR = TRANSFER_CONSTRAINT_BINDING_DIR / "MISO"
 BASE_URL = "https://docs.misoenergy.org/marketreports"
 
 # CLAUDE.md rule 22: the calibration train window. Intake outside it needs

@@ -63,14 +63,19 @@ Usage::
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-DAM_DIR = REPO / "data" / "raw" / "ercot"
-DEFAULT_OUT = REPO / "data" / "raw" / "ercot-storage-capability.csv"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import ERCOT_MIS_DIR, RAW_DATA_DIR  # noqa: E402
+
+DAM_DIR = ERCOT_MIS_DIR
+DEFAULT_OUT = RAW_DATA_DIR / "ercot-storage-capability.csv"
 
 HOURS_PER_YEAR = 8760
 # Interpolate telemetry holes up to one day; leave longer gaps NaN for the

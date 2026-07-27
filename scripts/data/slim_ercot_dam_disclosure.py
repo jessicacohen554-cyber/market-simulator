@@ -58,12 +58,17 @@ from __future__ import annotations
 
 import argparse
 import os
+import sys
 from pathlib import Path
 
 import pyarrow.parquet as pq
 
 REPO = Path(__file__).resolve().parents[2]
-DAM_DIR = REPO / "data" / "raw" / "ercot"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import ERCOT_MIS_DIR  # noqa: E402
+
+DAM_DIR = ERCOT_MIS_DIR
 SCED_DIR = DAM_DIR / "SCED"
 
 DAM_KEEP: list[str] = (

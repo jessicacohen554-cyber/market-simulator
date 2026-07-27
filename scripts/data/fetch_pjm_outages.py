@@ -37,13 +37,18 @@ from __future__ import annotations
 import argparse
 import os
 import time
+import sys
 from pathlib import Path
 
 import pandas as pd
 import requests
 
 REPO = Path(__file__).resolve().parents[2]
-DEFAULT_OUT = REPO / "data" / "raw" / "pjm-outages" / "gen_outages_by_type.csv"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import PJM_OUTAGES_DIR  # noqa: E402
+
+DEFAULT_OUT = PJM_OUTAGES_DIR / "gen_outages_by_type.csv"
 
 API_URL = "https://api.pjm.com/api/v1/gen_outages_by_type"
 SETTINGS_URL = "https://dataminer2.pjm.com/config/settings.json"

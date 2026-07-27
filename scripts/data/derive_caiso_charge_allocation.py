@@ -48,8 +48,12 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-RAW = REPO / "data" / "raw" / "storage-as-awards" / "CAISO"
-OUT = REPO / "data" / "raw" / "reference" / "caiso-charge-allocation-profile.csv"
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.config.paths import REFERENCE_DIR, STORAGE_AS_AWARDS_DIR  # noqa: E402
+
+RAW = STORAGE_AS_AWARDS_DIR / "CAISO"
+OUT = REFERENCE_DIR / "caiso-charge-allocation-profile.csv"
 YEARS = (2023, 2024, 2025)
 # Support definition (v2, caiso-104): a hod belongs to the measured
 # DA-allocation SUPPORT only when it carries >= 0.5 % of the annual IFM

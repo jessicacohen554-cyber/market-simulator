@@ -80,6 +80,8 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "scripts"))
 sys.path.insert(0, str(REPO / "scripts" / "data"))
 
+from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
+
 from derive_ercot_dam_cleared_share import (  # noqa: E402
     HOURS,
     NETLOAD_PCT_EDGES,
@@ -104,13 +106,7 @@ from derive_ercot_shoulder_online_span import (  # noqa: E402
     _resolve_cells,
 )
 
-DEFAULT_OUT = (
-    REPO
-    / "data"
-    / "raw"
-    / "_validation-source"
-    / "ercot_shoulder_online_span_steam_condbinned.json"
-)
+DEFAULT_OUT = CALIBRATION_DIR / "ercot_shoulder_online_span_steam_condbinned.json"
 
 # `_scope_fleet` reads Resource Name / status / HASL / HSL / Base Point (it
 # computes the excluded-resource disclosure from HASL+Base Point); the span
