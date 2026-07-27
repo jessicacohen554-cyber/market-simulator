@@ -143,7 +143,16 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 # metrics against the artifact's gates block, mirroring C8's
 # measured-share-overrides-baked-verdict design (verified to reproduce every
 # baked verdict on previously-gated rows across all six keepers).
-RUBRIC_VERSION = 2.8
+# v2.9 (owner amendment 2026-07-27): C5a CO2 vs eGRID REMOVED from the scored
+# rubric and demoted to REPORTED-ONLY. eGRID's latest released workbook is the
+# 2024 vintage, so a 2025 C5a "actual" is the 2024 intensities standing in
+# rather than a measurement — a criterion whose actual does not exist for a
+# scored year cannot be load-bearing. Same grounds and same mechanism as the
+# v2.7 C5b/C5c removal: score_co2 still runs and its number stays on the
+# payload/dashboard, but "co2" is no longer in CRITERIA, so it contributes no
+# status to the determination and consumes no caveat budget. See the CRITERIA
+# comment for the year-scoped restoration path.
+RUBRIC_VERSION = 2.9
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -173,6 +182,9 @@ NOT_YET = "NOT-YET"
 #    shape, C8 forced share). UNCHANGED from rubric v1 in logic, thresholds
 #    and ledger behavior (CLAUDE.md rules 13/14/17-22).
 TIER_LOAD, TIER_SUPPORT, TIER_PROTECT = "load-bearing", "supporting", "protective"
+# Tier of a criterion that was removed from the rubric but is still computed and
+# displayed (REPORTED_ONLY below). It never gates and never budgets a caveat.
+TIER_REPORT = "reported-only"
 # (v2.6(c) briefly held C5b/C5c in a TIER_RETIRED report-only tier; v2.7
 # removed the two criteria from the rubric outright, and the tier with them.)
 
@@ -494,7 +506,19 @@ CRITERIA = {
     # DA count is each row's report-only diagnostic companion.
     "price_tail": ("C3c price tail / scarcity (RT hourly)", TIER_SUPPORT),
     "dispatch_corr": ("C4 fleet hourly dispatch correlation", TIER_SUPPORT),
-    "co2": ("C5a CO2 vs eGRID", TIER_LOAD),
+    # (C5a CO2 vs eGRID was REMOVED from the rubric by the v2.9 owner amendment
+    # 2026-07-27, on the same grounds and the same pattern as C5b/C5c below:
+    # the actual is not measured for every scored year. eGRID's latest released
+    # workbook is the 2024 vintage (data/raw/fleet-egrid/, egrid2024_data.xlsx),
+    # and data.egrid.egrid_vintage_for_year falls any later year back to it — so
+    # a 2025 C5a "actual" is the 2024 intensities standing in, not a 2025
+    # measurement. A criterion whose actual does not exist for a scored year
+    # cannot be load-bearing in a calibration determination. C5a is now
+    # REPORTED-ONLY: score_co2 still runs and its number stays on the payload
+    # and the dashboard run pages, but it no longer contributes a status to the
+    # determination or consumes caveat budget. Restoring it is an owner act and
+    # should be year-scoped — 2023 and 2024 DO have their own released vintages;
+    # only years past the latest vintage lack a measured actual.)
     # (C5b storage throughput and C5c storage dispatch shape were REMOVED from
     # the rubric by the v2.7 owner amendment 2026-07-16 — EIA-930
     # storage-dispatch data is not reliable enough to participate in a
@@ -503,6 +527,15 @@ CRITERIA = {
     "governance": ("C6 governance gate", TIER_PROTECT),
     "shape": ("C7 diurnal shape (D-1)", TIER_PROTECT),
     "forced_share": ("C8 forced-energy share (D-2)", TIER_PROTECT),
+}
+
+# Criteria that still SCORE (their scorer runs and their number reaches the
+# payload, the JSON detail and the dashboard run pages) but are NOT aggregated
+# into the determination and consume no caveat budget, because they were
+# removed from the rubric. Kept here only so their records carry a readable
+# label — membership in this dict is what makes a criterion reported-only.
+REPORTED_ONLY = {
+    "co2": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 — see the CRITERIA note)",
 }
 
 
@@ -2058,7 +2091,11 @@ def _skip(criterion: str, year: int, reason: str, key: str | None = None) -> dic
         "year": year,
         "status": SKIPPED,
         "classification": None,
-        "metric": CRITERIA[criterion][0],
+        "metric": (
+            CRITERIA[criterion][0]
+            if criterion in CRITERIA
+            else REPORTED_ONLY[criterion]
+        ),
         "model": None,
         "actual": None,
         "tol": None,
