@@ -455,6 +455,7 @@ def run_year(
     coal_econ_srmc_bound: bool = False,
     coal_econ_marginal_hr_bound: bool | None = None,
     ercot_offer_hrmult_ep_rebasis: bool | None = None,
+    ercot_offer_hrmult_ep_rebasis_bands: "list[str] | None" = None,
     coal_takeorpay_from_data: bool = False,
     coal_mustrun_online_pmin: bool = False,
     coal_sync_srmc_tranche: bool = False,
@@ -1415,25 +1416,41 @@ def run_year(
     # the values are the frozen rule-23 artifact (ERCOT-117 FINDING §4.3).
     # Tri-state (the ercot-115 seam pattern): None keeps the ScenarioConfig /
     # prb_overrides-resolved value; True/False force it on/off so an A/B arm
-    # can scrub it. ERCOT-scoped (rule 25).
+    # can scrub it. ERCOT-scoped (rule 25). The ERCOT-119 band scope
+    # (ercot_offer_hrmult_ep_rebasis_bands) rides the same tri-state pattern:
+    # None keeps the config-resolved scope (whose own default None = all
+    # artifact bands, the ERCOT-118 behaviour); a list restricts the rebasis
+    # to the named bands, keeping the peak standing wall (and its ladder
+    # rungs and window margin anchor) at the run's resolved values.
     _ep_rebasis_on = (
         bool(getattr(config, "ercot_offer_hrmult_ep_rebasis", False))
         if ercot_offer_hrmult_ep_rebasis is None
         else bool(ercot_offer_hrmult_ep_rebasis)
     )
+    _ep_rebasis_bands = (
+        getattr(config, "ercot_offer_hrmult_ep_rebasis_bands", None)
+        if ercot_offer_hrmult_ep_rebasis_bands is None
+        else list(ercot_offer_hrmult_ep_rebasis_bands)
+    )
     if _ep_rebasis_on and iso.upper() == "ERCOT":
         from market_sim.data.offer_curves import apply_ercot_dam_hrmult_ep_rebasis
 
         _curve, _replaced, _ep_anchor = apply_ercot_dam_hrmult_ep_rebasis(
-            config.offer_curve_by_group, year, offer_curve_deltas
+            config.offer_curve_by_group,
+            year,
+            offer_curve_deltas,
+            bands=_ep_rebasis_bands,
         )
         config = config.with_overrides(
-            ercot_offer_hrmult_ep_rebasis=True, offer_curve_by_group=_curve
+            ercot_offer_hrmult_ep_rebasis=True,
+            ercot_offer_hrmult_ep_rebasis_bands=_ep_rebasis_bands,
+            offer_curve_by_group=_curve,
         )
         logger.info(
-            "ERCOT DAM offer hr-mult EP rebasis (%d): %d bands; %s; "
+            "ERCOT DAM offer hr-mult EP rebasis (%d): scope=%s; %d bands; %s; "
             "per-class margin anchor %.4f $/MMBtu",
             year,
+            ("ALL" if _ep_rebasis_bands is None else ",".join(_ep_rebasis_bands)),
             len(_replaced),
             "; ".join(
                 f"{c}.{b} {before:.3f} -> {after:.3f}"

@@ -48,6 +48,7 @@ from market_sim.data.offer_curves import (
     _econ_split_for_group,
     _hr_override,
     _offer_curve_for_group,
+    band_margin_anchor,
     gas_offer_margin_markup_mult,
     split_gas_tranches,
 )
@@ -962,10 +963,13 @@ def bins_to_fleet(
                 # ``margin_anchor`` (the year's EP-anchored delivered mean its
                 # per-year multipliers were identified at); thread it onto the
                 # tranche so apply_gas_offer_margin prices THIS markup at that
-                # basis. Absent key -> None -> the ISO window anchor.
+                # basis. Band-scoped rebasis (ERCOT-119) writes
+                # ``margin_anchor_<band>`` keys instead, so only the REBASED
+                # bands' markups move off the window anchor —
+                # band_margin_anchor resolves the tranche's suffix against
+                # both forms. Absent keys -> None -> the ISO window anchor.
                 if _margin_markup_hr > 0.0:
-                    _ma = offer.get("margin_anchor")
-                    _margin_anchor = float(_ma) if _ma is not None else None
+                    _margin_anchor = band_margin_anchor(suffix, offer)
             # Step-3a synchronization forcing: the _mustrun (contracted, fuel-
             # free) and _sync (spot, SRMC) coal min-load tranches are held on at
             # their full capacity via min_gen, so the unit stays synchronized at
