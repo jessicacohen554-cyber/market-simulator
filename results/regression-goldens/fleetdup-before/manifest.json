@@ -1,0 +1,86 @@
+{
+  "env": {
+    "MARKET_SIM_HIGHS_THREADS": "1",
+    "MARKET_SIM_WARMSTART": "1",
+    "MARKET_SIM_WARMSTART_XYEAR": "0"
+  },
+  "git_dirty": true,
+  "git_sha": "8b3edb6",
+  "hash_scheme": "sha256-of-canonical-column-float64-bytes",
+  "highspy_version": "unknown",
+  "keepers": {
+    "ERCOT": {
+      "bundle": "results/calibration/ercot115_coal_floor_only",
+      "content_hashes": {
+        "btm.parquet": "8acf053bb5aa6bcb2a38a4081ee9030ed5ef6afc967c7892f6b7bff8d50fd376",
+        "dispatch/2023_P1.parquet": "b5ecd9b70921efb74b6cb8d1795d4a04614faec36ded6ce7e506260a1aee21cd",
+        "dispatch/2024_P1.parquet": "ab7dcb1a7c56b7cb28de762fc18b65a7ab572f7a6680832277e61912b2a86401",
+        "dispatch/2025_P1.parquet": "260ee11d3b4fdf559cb714d227c1ba71755988ae1dee91ed525ad697bed87f69",
+        "flows.parquet": "8de70213976a271a73566c0ca02e6cea33d4bce2c8e67579857a4e50351090f4",
+        "storage.parquet": "bc0d7730ea1420b5ee4b57594210a36977edf195a8455acb9224d18ee8ed0045",
+        "system.parquet": "c7fea3a9484755a42ca2bef0e8780c858955f103895173471006443a55159c33"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_takeorpay_from_data",
+        "ercot_offer_hrmult_ep_rebasis",
+        "ercot_offer_hrmult_ep_rebasis_bands",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "nyiso_east_reserve_families",
+        "nyiso_incity_commitment_obligation",
+        "nyiso_li_locational_reserve",
+        "nyiso_spin_reserve_online",
+        "plant_tranche_config",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "basis_sha",
+          "ercot_offer_hrmult_ep_rebasis",
+          "ercot_offer_hrmult_ep_rebasis_bands",
+          "nyiso_east_reserve_families",
+          "nyiso_incity_commitment_obligation",
+          "nyiso_li_locational_reserve",
+          "nyiso_spin_reserve_online"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 217,
+        "scenario_config_drift": [
+          "offer_curve_by_group"
+        ],
+        "scenario_config_head_only": [
+          "dual_fuel_oil_daily_parity",
+          "ercot_offer_hrmult_ep_rebasis",
+          "ercot_offer_hrmult_ep_rebasis_bands",
+          "forecast_xyear_warmstart",
+          "hydro_budget_nameplate_aware",
+          "hydro_min_flow_floor",
+          "hydro_ror_split",
+          "nyiso_east_reserve_families",
+          "nyiso_incity_commitment_obligation",
+          "nyiso_li_locational_reserve",
+          "nyiso_ordc_measured_step_span",
+          "nyiso_spin_reserve_online",
+          "pjm_offer_surface_within_season",
+          "transmission_expansion_enabled"
+        ],
+        "scenario_config_matched": 606
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-26-ercot115-coal-marginal-hr",
+      "recorded_flag_count": 208,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    }
+  },
+  "note": "Current-HEAD regression baselines (Stage-0). NOT byte-reproductions of the registered July-3 keeper bundles. Multi-GB bundles are gitignored; only this manifest is committed.",
+  "stage_tag": "fleetdup-before"
+}
