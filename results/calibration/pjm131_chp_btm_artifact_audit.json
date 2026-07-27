@@ -1,0 +1,64 @@
+{
+  "artifact_by_iso": {
+    "ERCOT": {
+      "rows": 1,
+      "campd_net_zero_rows": 1,
+      "btm_share_eq_1_rows": 1,
+      "groups": [
+        "CC_CHP"
+      ],
+      "eia923_net_twh": 27.347467723999998
+    },
+    "MISO": {
+      "rows": 19,
+      "campd_net_zero_rows": 19,
+      "btm_share_eq_1_rows": 19,
+      "groups": [
+        "CC_CHP",
+        "ST_CHP"
+      ],
+      "eia923_net_twh": 41.954922271
+    },
+    "NEISO": {
+      "rows": 1,
+      "campd_net_zero_rows": 1,
+      "btm_share_eq_1_rows": 1,
+      "groups": [
+        "ST_CHP"
+      ],
+      "eia923_net_twh": 0.12080273799999999
+    },
+    "NYISO": {
+      "rows": 6,
+      "campd_net_zero_rows": 6,
+      "btm_share_eq_1_rows": 6,
+      "groups": [
+        "CC_CHP",
+        "ST_CHP"
+      ],
+      "eia923_net_twh": 9.621139430000001
+    },
+    "PJM": {
+      "rows": 35,
+      "campd_net_zero_rows": 35,
+      "btm_share_eq_1_rows": 35,
+      "groups": [
+        "ST_CHP"
+      ],
+      "eia923_net_twh": 28.255954920999997
+    }
+  },
+  "all_rows_degenerate": true,
+  "upstream": {
+    "v2_rows": 32886,
+    "steam_reporting_unit_years": 2915,
+    "steam_reporting_with_zero_net_mwh": 2914,
+    "steam_reporting_with_nonzero_net_mwh": 1,
+    "all_rows_zero_net_mwh": 4717
+  },
+  "plant_level_repair": {
+    "cogen_plants": 134,
+    "with_any_cems_mwh": 24,
+    "still_zero": 110
+  }
+}
