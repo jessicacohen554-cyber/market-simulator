@@ -1233,3 +1233,110 @@ watch C5a 2025 +8.1 % → +10 % edge) and **§7g-1** (summer-peak offer
 formation above oil parity — the long pole, now also carrying the interchange
 shape payoff; the internal price swing must ~triple before the roof matters).
 SIL reconcile rides along small. Nothing registered on the dashboard (no run).
+
+---
+
+## 2026-07-27 — nyiso-87: the h14-21 must-run replaced by min-run commitment (C1 CLOSES)
+
+**Owner directive (2026-07-27), executed this session:** the h14-21 peak-hour
+must-run is INACCURATE — turn it off; real NYISO gas runs through the
+belly/peak because of RA commitment, AS provision and economic must-run with
+MINIMUM RUN DURATIONS, so replace the windowed floors with commitment physics
+and try increasing min-run. "Every floor we have added was a compensation for
+this missing commitment drag."
+
+**Headline: C1 — NYISO's load-bearing FAIL — CLOSES on commitment physics,
+with `td_loss_factor` still 0.0.** The 2023 CC_REGULAR cell walks the arms
+−4.11 (control) → −3.32 (A) → −3.20 (B) → −2.89 (C) → **−2.78 TWh (C-MEAS)**
+against a ±2.94 band. That is the opposite of what nyiso-86 §2.1 expected: it
+nominated `td_loss_factor` as the instrument, and the cell closed without it,
+from re-timing gas the model was already free to dispatch.
+
+**Mechanism.** `nyiso_gas_commitment_bridge` (default off, NYISO-only) — the
+third P1-native commitment bridge, sharing the ISO-neutral detector with the
+CAISO RA and ERCOT gas-CC legs, run ONCE PER CLASS because the two eligible
+classes' measured min-loads differ by >2×. Three separately-gated legs:
+physical restart bar, economic bridge on the restart inequality, and a NEW
+**minimum-run-duration extension** (`min_run_hours` on the shared detector) —
+the owner's named ask, which neither existing bridge had. Scope is rule-18
+physics, verified on the rebuilt keeper fleet: CC_REGULAR (22 tranches, 3.14
+GW, min-down 4–8 h, $50/MW) and ST_GAS (11, 1.22 GW, 8–12 h, $35/MW) qualify;
+CT_PEAKER/CT_CHP (1 h, $20/MW) are unreachable by BOTH legs. D-2 id
+`nyiso_gas_commitment_bridge`; D-4 windows declared for both floored classes.
+
+**Measured identification (rule 23), new derive.** NYISO publishes no 60-Day-DAM
+equivalent, so `scripts/data/derive_campd_gas_commitment_params.py` reconstructs
+the ERCOT LSL/HSL statistic from CAMPD conduct via the WP-3 loading-when-on
+construction → CC 0.523, ST_GAS 0.239 (artifact
+`campd_gas_commitment_params_NYISO.csv`). The CC value lands within 9 % of
+ERCOT's independently published 0.574 — an outside cross-check. Run lengths are
+reported capacity-weighted (a min-run floors MW, not unit-count): CC p25/p50/p75
+= 11/21/133 h, ST_GAS 3/13/89 h.
+
+**The min-run answer cuts both ways.** The class tables disagree with NYISO's
+own conduct in OPPOSITE directions — CC's 5–10 h is BELOW its measured p25 of
+11 h (the owner's "increase" is what the data supports), gas steam's 24–48 h is
+well ABOVE its measured p50 of 13 h. Arm C-MEAS sets both to the measured p50
+and is better than arm C on every gate; its floor segments >24 h collapse
+46/55/105 → 8/8/0 while the 16–24 h band grows 256/392/196 → 532/569/412, on
+slightly MORE floored volume. The pathological steam over-hold is replaced by
+genuine CC commitment blocks.
+
+**The boxcar was hurting the shape it was meant to fix.** The h14-21 floor was
+CT_PEAKER's ONLY forcing mechanism (D-2 81.3/86.1/48.3 % → 0.0/0.0/0.0 %), and
+removing it improved the class's D-1 in every year: cv_ratio 5.12/4.24/2.37 →
+**1.38/1.07/1.15** under C-MEAS, for a class the bridge NEVER floors. Arm D
+(floors still on) stays at 4.52/3.51/1.80 — the control on that claim.
+CT_PEAKER volume collapses 1.42 → 0.46 TWh vs a 2.26 actual: reported, not
+patched; a peaker AS/commitment story is a separate rule-17 charter for the
+owner.
+
+**D-2: substitution with LESS total forcing.** 2023 merchant-gas forced energy
+4.46 TWh (control) → 4.18 (C): `reliability_floor` gives up CT_PEAKER entirely
+plus part of ST_GAS, the bridge id picks up CC_REGULAR — attribution shift, not
+new forcing, and the total FALLS while C1 flips to PASS.
+
+**Seam payoff, unwired.** The nyiso-86 §3 defect improves monotonically across
+the ladder and converges from both ends: imports hod01-03 3,048 → 2,797
+(actual 2,596), hod16-18 2,381 → 2,713 (actual 2,857), within-month r +0.072 →
++0.108. Nothing in the bridge touches the interchange node — §3's causal claim
+confirmed by construction. The internal diurnal swing only reaches $8.36 vs the
+real $22.5, which is why C3c stays open.
+
+**Arm D — `td_loss_factor` REFUTED, with new corroboration.** nyiso-86 §2.1
+deferred the value to a Gold Book cross-check; that cross-check already exists
+(`docs/nyiso-td-loss-resolution-2026-06.md`): Table I-2 Note 1 makes NYCA
+Annual Energy loss-INCLUSIVE and 2023's 147,050 GWh equals the EIA-930 demand
+the model serves to the GWh, so a gross-up double-counts. Run as a labelled
+probe anyway: at 0.0251 it flips C1 AND improves C3c more than any other arm
+(2025 tail 9h → 18h) — but **C5a breaks, 2025 CO2 +8.1 → +14.2 %**. If the
+extra 3.7 TWh were real load, burning it would not push measured-rate CO2 four
+points past its band. Independent physical corroboration of the Gold Book. The
+best-fitting arm is the wrong answer — the rule-1 case in its purest form.
+**Open C1 item:** name a correctly-identified instrument for the wedge
+(NYISO-invisible generation / BTM metered at the plant / station service / a
+seam boundary — NOT losses).
+
+**Two silent wiring defects found and closed by regression tests.** (1)
+`run_energy_solve` has THREE call sites, each owning its own `p1_fleet_prep`
+chain; the bridge was wired into two, so the backcast orchestrator — what every
+arm and keeper runs — never fired it (`test_p1_prep_wiring.py`). (2) The
+demand-threading seam read `td_loss_factor` off a pristine config that does not
+carry `prb_overrides`, so a `--set` probe solved on RAW demand while
+`run_config.json` recorded it armed — the bundle disagreeing with itself, and a
+run that would have read as clean evidence for a conclusion it never tested.
+Same defect class caiso-80 fixed for two CAISO demand flags
+(`test_threaded_demand_overrides.py`). Both found only by asking why a result
+looked too clean.
+
+**Determination: still NOT-YET, now on C3c ALONE** (was C1 + C3c). All six arms
+registered: `2026-07-26-nyiso-87-control`, `2026-07-27-nyiso-87-arm-floors`,
+`-arm-b`, `-arm-c`, `-cmeas-measured`, `-arm-d`. **C-MEAS is the
+structurally-faithful candidate** — less forcing, better shape, measured
+parameters, C1 closed without touching demand — but is NOT promoted here: it
+carries no governance attestation (C6 UNATTESTED caps the determination
+regardless), and its C1 margin is thin (~0.16 of ±2.94 TWh). Promotion needs
+`calibration_attestation.json` with the DOF ledger by UNION citing the two
+`min_load_frac` and two min-run values to the CAMPD artifact. LOYO (rule 22) is
+satisfied by construction: no parameter is fitted to any year, all three years
+are scored in every bundle, and the direction is consistent in each.
