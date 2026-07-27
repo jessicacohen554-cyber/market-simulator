@@ -237,6 +237,106 @@ _CONDITIONAL_SURFACE_SPECS: dict[str, _CondSurfaceSpec] = {
     ),
 }
 
+#: Provenance tag a within-season-conditioned PJM surface JSON carries.
+_WITHIN_SEASON = "within-season"
+#: Provenance tag of the legacy (and default) within-year vintage. A surface
+#: JSON predating the tag is within-year by construction, so it is the default.
+_WITHIN_YEAR = "within-year"
+
+
+def _month_of_hour(hours: int, year: int | None = None) -> np.ndarray:
+    """Calendar month (1-12) of each hour index in a Jan-1-based year array.
+
+    Month boundaries depend only on the year's leap-ness, so an unknown year is
+    resolved from the array length (8784 h = leap). Used to map hours onto
+    :data:`market_sim.config.constants.PJM_SEASON_OF_MONTH` for the
+    within-season tightness conditioning.
+    """
+    ref = year if year is not None else (2024 if hours >= 8784 else 2023)
+    return pd.date_range(f"{ref}-01-01", periods=hours, freq="h").month.to_numpy()
+
+
+def _tightness_hour_bin(
+    net_load: np.ndarray,
+    edges: "tuple[float, ...]",
+    *,
+    within_season: bool = False,
+    year: int | None = None,
+) -> np.ndarray:
+    """Per-hour tightness bin from the year's OWN net-load percentiles.
+
+    The single binning seam the PJM measured-offer-surface family shares, so
+    the mid-curve and top-of-curve mechanisms can never carry contradictory
+    definitions of the same tightness state (memo §2).
+
+    ``within_season=False`` (the default, and every non-PJM ISO) ranks each
+    hour against the whole year — the original construction, byte-identical.
+    ``within_season=True`` ranks each hour against its OWN season's quantiles
+    (:data:`~market_sim.config.constants.PJM_SEASON_OF_MONTH`), which is what
+    removes the seasonal composition confound: PJM is summer-peaking in
+    absolute net load, so an annual top-percentile bin is structurally a
+    summer-only sample and can never classify a winter emergency as tight.
+
+    Forward-native either way (rule 13): the thresholds come from the year's
+    own (simulated, in a forecast) net load and the month->season map is
+    calendar, so no measured data enters and the same quantity regenerates for
+    a forward year.
+
+    Args:
+        net_load: ``(T,)`` LP-served net load, the conditioning driver.
+        edges: Ascending percentile edges, e.g. ``(0.80, 0.90, 0.97)``.
+        within_season: Rank within (year, season) rather than within year.
+        year: Delivery year, for the month map's leap-ness. Inferred from
+            ``net_load.size`` when omitted.
+
+    Returns:
+        ``(T,)`` integer bin index in ``0 .. len(edges)``.
+    """
+    net_load = np.asarray(net_load, dtype=float)
+    if not len(edges):
+        return np.zeros(net_load.size, dtype=int)
+    if not within_season:
+        thresholds = np.quantile(net_load, edges)
+        return np.searchsorted(thresholds, net_load, side="right")
+
+    from market_sim.config.constants import PJM_SEASON_OF_MONTH
+
+    months = _month_of_hour(net_load.size, year)
+    seasons = np.array(
+        [PJM_SEASON_OF_MONTH.get(int(m), "shoulder") for m in months], dtype=object
+    )
+    hour_bin = np.zeros(net_load.size, dtype=int)
+    for season in sorted(set(PJM_SEASON_OF_MONTH.values())):
+        mask = seasons == season
+        if not mask.any():
+            continue
+        thresholds = np.quantile(net_load[mask], edges)
+        hour_bin[mask] = np.searchsorted(thresholds, net_load[mask], side="right")
+    return hour_bin
+
+
+def _assert_surface_vintage(
+    surface: dict, within_season: bool, err_name: str, rederive_hint: str
+) -> None:
+    """Hard-fail when the surface JSON's vintage disagrees with the gate.
+
+    The memo §2 vintage guard, strengthened to the owner's amendment: the
+    within-year surfaces stay live and the within-season vintage lives in
+    separate artifacts, so the JSON and the binning code must be paired
+    explicitly. Arming the gate against a within-year JSON would price a
+    season-conditioned mechanism off year-conditioned ladders (and vice
+    versa) — a half-updated state that would silently mismeasure rather than
+    fail. Mirrors the existing edges-mismatch guard's contract.
+    """
+    tag = str(surface.get("_provenance", {}).get("conditioning", _WITHIN_YEAR))
+    want = _WITHIN_SEASON if within_season else _WITHIN_YEAR
+    if tag != want:
+        raise ValueError(
+            f"{err_name}: surface vintage mismatch — the JSON is conditioned "
+            f"{tag!r} but the run wants {want!r} "
+            f"(pjm_offer_surface_within_season={within_season}). {rederive_hint}"
+        )
+
 
 def build_offer_surface_conditional_markup(
     iso: str,
@@ -263,15 +363,28 @@ def build_offer_surface_conditional_markup(
         return None
     if config.iso != iso:
         return None
+    # PJM-only within-season vintage (rule 25): armed, the default filename
+    # resolves to the `_withinseason` artifact and the binning below ranks
+    # per season. Every other ISO is untouched and stays within-year.
+    within_season = iso == "PJM" and bool(
+        getattr(config, "pjm_offer_surface_within_season", False)
+    )
+    filename = spec.default_filename
+    if within_season:
+        filename = filename.replace(".json", "_withinseason.json")
     path = getattr(config, spec.path_field, None)
     if not path:
         from market_sim.config import paths as _paths
 
-        default = _paths.CALIBRATION_DIR / spec.default_filename
+        default = _paths.CALIBRATION_DIR / filename
         if not default.exists():
             return None
         path = str(default)
     surface = _load_condbinned_surface(str(path))
+    if iso == "PJM":
+        _assert_surface_vintage(
+            surface, within_season, spec.err_name, spec.rederive_hint
+        )
 
     edges = tuple(float(x) for x in getattr(config, spec.pcts_field))
     json_edges = tuple(
@@ -296,6 +409,7 @@ def build_offer_surface_conditional_markup(
         price_cap=float(getattr(config, spec.cap_frac_field, 0.95))
         * float(getattr(config, "voll", 5000.0)),
         label=iso,
+        within_season=within_season,
     )
 
 
@@ -453,6 +567,7 @@ def _conditional_surface_markup(
     min_bin: int,
     price_cap: float,
     label: str,
+    within_season: bool = False,
 ) -> "np.ndarray | None":
     """Shared condition-binned peak-rung repricing core (ERCOT/NEISO wrappers).
 
@@ -489,9 +604,12 @@ def _conditional_surface_markup(
     net_load = np.asarray(net_load_mw, dtype=float)[:hours]
     # Per-hour tightness bin on the year's OWN net-load percentiles (forward-native:
     # the identical construction the derive used, so bin b at solve time is the same
-    # scarcity state as bin b in the measurement).
-    thresholds = np.quantile(net_load, edges) if len(edges) else np.array([])
-    hour_bin = np.searchsorted(thresholds, net_load, side="right")  # (T,), 0..n_bins-1
+    # scarcity state as bin b in the measurement). ``within_season`` (PJM only,
+    # default off) ranks within (year, season) instead — the paired half of the
+    # within-season surface vintage, never armed independently of it.
+    hour_bin = _tightness_hour_bin(
+        net_load, edges, within_season=within_season
+    )  # (T,), 0..n_bins-1
     # Optional floor: engage the wall only at/above min_bin (protect mild hours
     # from any residual peak-rung repricing). Below it the ratio is forced to 1
     # (byte-identical). 0 → the full measured distribution applies in every bin.
@@ -615,12 +733,29 @@ def _pjm_midcurve_context(
     Raises:
         ValueError: The surface JSON carries no bin edges / share grid.
     """
+    # Within-season vintage (default off, owner-amended memo §2): armed, the
+    # default filename resolves to the `_withinseason` artifact and the binning
+    # below ranks per season — the JSON and the seam move together, never
+    # independently, and the vintage guard enforces the pairing.
+    within_season = bool(getattr(config, "pjm_offer_surface_within_season", False))
     path = getattr(config, "pjm_offer_midcurve_path", None)
     if not path:
         from market_sim.config import paths as _paths
 
-        path = str(_paths.CALIBRATION_DIR / "pjm_offer_midcurve_condbinned.json")
+        filename = (
+            "pjm_offer_midcurve_condbinned_withinseason.json"
+            if within_season
+            else "pjm_offer_midcurve_condbinned.json"
+        )
+        path = str(_paths.CALIBRATION_DIR / filename)
     surface = json.loads(Path(path).read_text())
+    _assert_surface_vintage(
+        surface,
+        within_season,
+        "pjm_offer_midcurve",
+        "re-derive scripts/data/derive_pjm_offer_midcurve.py with a matching "
+        "--conditioning, or fix the config",
+    )
     prov = surface.get("_provenance", {})
     edges = tuple(float(x) for x in prov.get("netload_pct_edges", ()))
     shares = np.asarray(prov.get("shares", ()), dtype=float)
@@ -633,8 +768,9 @@ def _pjm_midcurve_context(
 
     hours = int(mc_base.shape[1])
     net_load = np.asarray(net_load_mw, dtype=float)[:hours]
-    thresholds = np.quantile(net_load, edges)
-    hour_bin = np.searchsorted(thresholds, net_load, side="right")  # (T,)
+    hour_bin = _tightness_hour_bin(
+        net_load, edges, within_season=within_season, year=year
+    )  # (T,)
 
     # Delivered-gas day series on the model clock (the derive's own price
     # normalizer: HH daily + PJM basis, forward-filled).

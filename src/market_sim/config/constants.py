@@ -2300,6 +2300,36 @@ MISO_SEAM_FLOW_PERCENTILE: float = 90.0
 # neighbor level via pjm_zonal_interchange_envelope). Same convention as MISO.
 PJM_SEAM_FLOW_PERCENTILE: float = 90.0
 
+# PJM measured-offer-surface family: the season a calendar month belongs to,
+# for the within-SEASON tightness conditioning authorized by the owner
+# 2026-07-27 (docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md §3,
+# executed by pjm-132). A DEFINITIONAL choice, fixed in advance and never
+# tuned against a result (rules 20 / 23): summer is PJM's Jun-Sep peak-load
+# season (the 5CP window), winter is the Dec-Mar cold season carrying its own
+# emergency procedures, and the remainder is shoulder. The split is symmetric
+# (4/4/4 months) so no season's bins are structurally thinner than another's.
+#
+# This is the SAME map pjm-126 pre-registered and committed before any result
+# was seen (`scripts/probes/pjm126_midcurve_conditioning_precheck.SEASON_OF_MONTH`,
+# commit 9409f7f); it lives here so the two derives and the two solve-time
+# seams share ONE definition and cannot drift apart. Moving a boundary is a new
+# definitional change and needs its own memo BEFORE any result under the new
+# boundaries is seen.
+PJM_SEASON_OF_MONTH: dict[int, str] = {
+    1: "winter",
+    2: "winter",
+    3: "winter",
+    4: "shoulder",
+    5: "shoulder",
+    6: "summer",
+    7: "summer",
+    8: "summer",
+    9: "summer",
+    10: "shoulder",
+    11: "shoulder",
+    12: "winter",
+}
+
 # ---------------------------------------------------------------------------
 # MISO Regional Directional Transfer (RDT) — contract limits, default derate,
 # and the Transmission Constraint Demand Curve (TCDC) steps.

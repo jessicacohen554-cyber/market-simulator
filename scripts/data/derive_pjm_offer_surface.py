@@ -89,12 +89,31 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "scripts"))
 
+from market_sim.config.constants import PJM_SEASON_OF_MONTH  # noqa: E402
 from market_sim.config.paths import CALIBRATION_DIR, PJM_ENERGY_OFFERS_DIR  # noqa: E402
 
 sys.path.insert(0, str(REPO / "scripts" / "data"))
 RAW_DIR = PJM_ENERGY_OFFERS_DIR
 OUT_JSON = CALIBRATION_DIR / "pjm_offer_surface_condbinned.json"
 OUT_CSV = CALIBRATION_DIR / "pjm_offer_surface_summary.csv"
+
+
+def _out_paths(conditioning: str) -> "tuple[Path, Path]":
+    """Output (JSON, CSV) for a conditioning vintage.
+
+    The within-year vintage keeps the live filenames — it remains the
+    default for every keeper and forecast run (owner amendment,
+    2026-07-27). The within-season vintage is written alongside it under a
+    ``_withinseason`` suffix, so nothing existing is renamed or retired and
+    the arm is selected purely by the default-off ScenarioConfig gate.
+    """
+    if conditioning == "within-season":
+        return (
+            CALIBRATION_DIR / "pjm_offer_surface_condbinned_withinseason.json",
+            CALIBRATION_DIR / "pjm_offer_surface_summary_withinseason.csv",
+        )
+    return OUT_JSON, OUT_CSV
+
 
 #: Fast-start selection: per-unit median min_runtime at or under this (hours).
 #: Physics, not a tuned value (the G-22 §2 segmentation).
@@ -179,8 +198,29 @@ def _class_base_hr(bundle: Path, year: int) -> dict[str, dict[str, float]]:
     return out
 
 
-def _netload_pct(years: list[int]) -> pd.DataFrame:
-    """(local day, hour-ending) -> within-year net-load percentile (PJM)."""
+def _netload_pct(years: list[int], conditioning: str = "within-year") -> pd.DataFrame:
+    """(local day, hour-ending) -> net-load percentile (PJM).
+
+    The single conditioning seam BOTH PJM offer-surface derives share (the
+    mid-curve derive imports this function), so the two surfaces can never
+    carry contradictory definitions of the same tightness state (memo §2).
+
+    ``conditioning``:
+      * ``"within-year"`` (default) — rank against the whole delivery year.
+        The original construction, unchanged.
+      * ``"within-season"`` — rank within (year, season) using
+        :data:`~market_sim.config.constants.PJM_SEASON_OF_MONTH`. Authorized
+        by the owner 2026-07-27
+        (``docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md``). PJM
+        is summer-peaking in absolute net load, so an annual top-percentile
+        bin is structurally a summer-only sample and can never classify a
+        winter emergency as tight; ranking within season removes that
+        composition confound by construction. Only the ranking SCOPE changes
+        — edges, shares, segmentation and gas normalisation are untouched.
+
+    Reproduces pjm-126 arm B exactly (``groupby(season).rank(pct=True)``, the
+    map committed as ``9409f7f`` before any result was seen).
+    """
     from market_sim.data.eia_loader import _eia_hourly_frame_filled
 
     frames = []
@@ -203,8 +243,16 @@ def _netload_pct(years: list[int]) -> pd.DataFrame:
             .interpolate(limit_direction="both")
             .to_numpy(float)
         )
-        q = pd.Series(net).rank(pct=True).to_numpy()
         local = pd.DatetimeIndex(df["Local time"])
+        if conditioning == "within-season":
+            # NA-safe month map (the 2023 fall-back day carries a NaT "Local
+            # time"; such rows carry no (day, he) merge key and are dropped at
+            # the finite-q filter downstream, exactly as in the within-year
+            # path). pjm-126 arm B, reproduced.
+            season = pd.Series(local.month).map(PJM_SEASON_OF_MONTH)
+            q = pd.Series(net).groupby(season.to_numpy()).rank(pct=True).to_numpy()
+        else:
+            q = pd.Series(net).rank(pct=True).to_numpy()
         frames.append(
             pd.DataFrame(
                 {
@@ -297,6 +345,16 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--edges", nargs="*", type=float, default=[0.80, 0.90, 0.97])
     ap.add_argument("--rungs", type=int, default=5)
     ap.add_argument(
+        "--conditioning",
+        choices=["within-year", "within-season"],
+        default="within-year",
+        help=(
+            "Tightness-ranking scope. within-season writes the separate "
+            "_withinseason vintage (owner-authorized 2026-07-27); the "
+            "within-year default keeps the live filenames."
+        ),
+    )
+    ap.add_argument(
         "--fleet-bundle",
         type=Path,
         default=REPO / "results" / "calibration" / "pjm98_cc_mustrun",
@@ -321,7 +379,7 @@ def main(argv: list[str] | None = None) -> int:
             f"resolved peak x{b['resolved_peak']:.1f}"
         )
 
-    nl = _netload_pct(args.years)
+    nl = _netload_pct(args.years, args.conditioning)
     fuel = _pjm_fuel_daily()
     unit_ids: dict[str, int] = {}
     parts = []
@@ -477,8 +535,14 @@ def main(argv: list[str] | None = None) -> int:
                 "(peak-tranche HR / resolved peak — round-trip basis)"
             ),
             "driver": (
-                "system net-load percentile within year (EIA-930 PJM Demand "
-                "- WND - SUN), forward-native"
+                f"system net-load percentile {args.conditioning} (EIA-930 "
+                "PJM Demand - WND - SUN), forward-native"
+            ),
+            "conditioning": args.conditioning,
+            "season_of_month": (
+                dict(sorted(PJM_SEASON_OF_MONTH.items()))
+                if args.conditioning == "within-season"
+                else None
             ),
             "netload_pct_edges": list(edges),
             "peak_ladder_qs": qs,
@@ -497,10 +561,11 @@ def main(argv: list[str] | None = None) -> int:
         },
         **out,
     }
-    OUT_JSON.write_text(json.dumps(out_doc, indent=1))
-    pd.DataFrame(summary_rows).to_csv(OUT_CSV, index=False)
-    print(f"wrote {OUT_JSON}")
-    print(f"wrote {OUT_CSV}")
+    out_json, out_csv = _out_paths(args.conditioning)
+    out_json.write_text(json.dumps(out_doc, indent=1))
+    pd.DataFrame(summary_rows).to_csv(out_csv, index=False)
+    print(f"wrote {out_json}")
+    print(f"wrote {out_csv}")
     print(pd.DataFrame(summary_rows).to_string(index=False))
     return 0
 
