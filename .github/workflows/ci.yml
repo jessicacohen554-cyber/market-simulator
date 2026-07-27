@@ -122,34 +122,53 @@ jobs:
       # structural-prior basis-drift guard, which carries its removal
       # condition in the mark itself).
       #
-      # FLIP HELD 2026-07-27 — the escalation work is done, main regressed
-      # underneath it. Measured on this branch rebased onto main
-      # (`2f2d583` + this branch): 5210 passed, 1 xfailed, 0 collection errors,
-      # 0 xpassed, and TWO failures, neither of them an escalation and neither
-      # honestly fixable from this lane:
+      # FLIP STILL HELD 2026-07-27 (second measurement, PR #2998; full record
+      # in docs/handoffs/fast-tier-triage-2026-07-26.md §9.2). The first
+      # hold's two reds are closed: the test_cache_control assertion was
+      # re-cut (triage §9.1), and the two caiso-126 stale mirrors
+      # (test_clean_io ALL_DATATYPES, calibration_verdict
+      # FORCED_EXEMPT_MECH_NAMES) were synced to their sources in PR #2998.
       #
-      #   * (CLOSED 2026-07-27) tests/unit/data/test_cache_control.py::
-      #     test_largest_retained_frames_is_sorted_and_limited — bisected: NOT
-      #     a leak. The assertion assumed its own frame was the biggest alive in
-      #     the process, which largest_retained_frames' documented contract
-      #     (enumerate EVERY live frame) does not support; it lost to a
-      #     legitimately lru_cached 22.9 MB EIA-923 frame. The assertion now
-      #     pins the real invariants (limit, descending sort, big > small).
+      # The §6.1 perf budget — the flip's stated last prerequisite — is now
+      # MEASURED on the hardware this workflow actually runs on:
+      #
       #   * tests/regression/test_integration.py::TestFullYearPerformance::
-      #     test_full_year — the §6.1 perf budget (30 s). THE ONLY REMAINING
-      #     RED, and it is host-dependent, not a code regression: measured on
-      #     this 4-core session container it PASSED one full-tier run and
-      #     FAILED the next two, with no code change between them. Loosening
-      #     the bound is forbidden (charter step 5 / rule 14 applied to tests),
-      #     so it needs a reference-hardware measurement (or a profile showing
-      #     a real regression) before anyone touches it. CI runs on
-      #     GitHub-hosted runners with `-n 2`, so its behaviour there is
-      #     unmeasured — that measurement is the flip's last prerequisite.
+      #     test_full_year PASSED 4 of 4 observed advisory-tier runs on
+      #     GitHub-hosted ubuntu-latest under `-n 2` (workflow runs #1067,
+      #     #1068, #1069 and PR #2998's own run, all 2026-07-27), tier wall
+      #     time 5m44s-8m14s against the 15-minute job timeout. It remains
+      #     host-dependent on 4-core session containers (same day, same code:
+      #     build_time 5.73 s > 3.0 s there). CLEARED as a flip blocker for
+      #     CI purposes; the 30 s budget itself still needs a
+      #     reference-hardware re-derivation with a citation before it is
+      #     trustworthy off-CI (rule 14 applied to tests — do not loosen it).
       #
-      # Everything else the flip was gated on IS closed (triage §9/§9.1). Flip
-      # the moment that one clears — delete `continue-on-error` and rename the
-      # step back to "Fast pytest tier". Do NOT xfail it to force the flip.
-      - name: Fast pytest tier (advisory — 1 host-dependent perf red, see above)
+      # What holds the flip NOW: the two default-cache-key pin tests
+      # (tests/regression/test_persisted_identity.py::
+      # test_default_scenario_config_cache_key_is_pinned and
+      # tests/unit/pipeline/test_forecast_xyear_warmstart_flag.py::
+      # TestFieldRegistration::test_default_cache_key_unmoved) fail
+      # DETERMINISTICALLY on GitHub-hosted runners while passing on session
+      # containers, with src/ byte-identical on both sides (verified on
+      # PR #2998's merge ref b592a73): six ScenarioConfig fields
+      # (campd_bins_path, plant_registry_path, plant_emission_rates_path,
+      # plant_emission_rates_v2_path, control_retrofit_path, and
+      # cc_capacity_reconcile_path via __post_init__) default to ABSOLUTE
+      # paths and none is in _CACHE_KEY_OPTIONAL_FIELDS, so cache_key()
+      # depends on the checkout path: /home/user/market-simulator hashes to
+      # the pin edbc1b103207170a, /home/runner/work/market-simulator/
+      # market-simulator hashes to 329093815fa58f5b (stable across every
+      # observed run and branch; the same two reds also fail the BLOCKING
+      # persisted-identity step of refactor-guards on every PR). What would
+      # resolve it: an owner decision making the default key path-invariant
+      # (normalize the six fields to repo-relative inside cache_key(), or
+      # register them) — either moves the default key, so it is a cache-epoch
+      # bump plus pin re-derivation owned by the config lane, never a
+      # unilateral lane fix — or a pin derived per environment. Until then
+      # the tier cannot flip: a blocking tier red on every PR breaks every
+      # lane. Do NOT xfail the pins or the perf test to force the flip, and
+      # do NOT update the pin literal to silence it.
+      - name: Fast pytest tier (advisory — 2 path-dependent cache-key pin reds on hosted runners, see above)
         continue-on-error: true
         run: uv run python -m pytest -n 2 -m "not slow and not integration and not fulldata"
 
