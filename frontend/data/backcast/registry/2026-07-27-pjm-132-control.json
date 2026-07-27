@@ -3,7 +3,7 @@
   "label": "pjm 132 control",
   "date": "2026-07-27",
   "shorthand": "pjm-132-control",
-  "definition": "(PROBE \u2014 control) Keeper-recipe replay of pjm121_ccbelt at current HEAD, zero delta. Establishes the true current baseline for the pjm-132 A/B: 2025 load-weighted price 40.932 $/MWh, reproducing pjm-129's guard-corrected A1 value (40.93), NOT the keeper's pre-guard 41.53. Solved as the rule-12 per-year chain (2023, 2024, 2025; one fresh process each).",
+  "definition": "pjm-132 control: keeper recipe replay, zero delta",
   "years": [
     2025
   ],
