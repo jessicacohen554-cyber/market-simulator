@@ -599,7 +599,17 @@ FAILS regardless of every score above.** Four assertions, all required:
 - **Metric:** per plant-class hour-of-day mean profile, model vs CAMPD: the
   **profile correlation r** and the **off-peak (h0–14) CV ratio**
   (model CV / actual CV). Gated classes are the peaker/intermediate duty
-  classes (`CT_PEAKER`, `ST_GAS`); every class is still reported.
+  classes (`CT_PEAKER`, `ST_GAS`) **plus, since v2.8 (2026-07-27, the
+  ERCOT-121 coal gate-blindness correction), the merchant coal classes**
+  (`COAL` + the four rank splits); every class is still reported. CHP
+  classes stay ungated (host-steam-pinned duty — the same structural
+  rationale as their C8 `D2_EXEMPT_CLASSES` entry) and nuclear/non-thermal
+  are never profiled. Gatedness is derived **scorer-side**
+  (`calibration_verdict.C7_GATED_CLASSES`) and the verdict evaluated from
+  each row's stored `profile_r`/`cv_ratio` against the artifact's `gates`
+  block — not the row's baked `gated`/`verdict` fields — so artifacts
+  written under the pre-v2.8 gate set re-score in place (the C8
+  measured-share-overrides-baked-verdict rule, applied to C7).
 - **Source:** the bundle's committed `legitimacy_diagnostics.json`, written by
   `scripts/legitimacy_diagnostics.py --json-out` (the S1 suite is the single
   implementation; this scorer only reads its rows). Model side is the run
@@ -944,6 +954,45 @@ down to.
 
 ## 9. Version history
 
+- **v2.8 (2026-07-27, coal gate-blindness correction — ERCOT-121 owner
+  charter: "the fix … is a scorer/gate correction that RE-SCORES every
+  existing keeper in place (no re-solve), and it may flip verdicts")** — two
+  distinct blind spots that together hid the entire coal fleet from the
+  C7/C8 protective gates, both corrected scorer-side so committed artifacts
+  re-score without regeneration.
+  **(a) C8 materiality vocabulary bug:** the D-2 per-class summary labels
+  classes by CAMPD `plant_group` — coal plants are `"COAL"` — while the run
+  payload's `gmModel` and bench `classFull` carry the scored-class rank
+  split (`COAL_LIGNITE`/`COAL_PRB`/…). `_class_load_share("COAL")` read
+  0.0 TWh on both sides and SKIPPED-immaterial ("COAL immaterial (0.0% of
+  ISO load)") the coal fleet of every coal ISO — ERCOT 13–14 %, MISO
+  33–36 %, PJM 14–16 % of load — while the artifact's own `load_share`
+  field said material. Fixed with the `PLANT_GROUP_MEMBERS` aggregate
+  bridge (sums the member classes on both sides).
+  **(b) C7 gate-set scope:** `score_shape` scored only artifact-baked
+  `gated` rows, and `D1_GATED_CLASSES` was peaker/intermediate only — so a
+  merchant-coal class pinned flat (the exact caiso-42 signature C7 exists
+  to catch) was reported by D-1 and never scored. C7 now derives gatedness
+  rubric-side (`C7_GATED_CLASSES` = `CT_PEAKER`, `ST_GAS` + merchant coal)
+  and evaluates stored metrics against the artifact's gates block (verified
+  zero drift against every baked verdict on previously-gated rows across
+  all six keepers). `CC_REGULAR` stays ungated pending an owner call (it
+  passes D-1 in all six keepers today; widening beyond the evidenced
+  blindness is an owner amendment).
+  **Effects at amendment (all six keepers re-scored):** ERCOT-115 C7
+  PASS → FAIL on COAL_LIGNITE 2023 (profile r 0.745, off-peak CV ratio
+  0.294 — the lignite fleet held flat at its availability ceiling; machine
+  confirmation of the ERCOT-121 owner observation) — determination stays
+  NOT-YET (C3a/b/c already failing); **MISO-88 flips
+  CALIBRATED-WITH-CAVEATS → NOT-YET** (C7 FAIL COAL_PRB in all three
+  years, cv_ratio 0.364–0.453 on a 33–36 %-of-load class) — an honest new
+  open item exactly like the v2.7 NYISO flip, not a regression; PJM-121
+  stays CALIBRATED (COAL_BIT passes D-1 r 0.835–0.884 / cv_ratio 0.85–1.16;
+  COAL_PRB/COAL_WC immaterial); CAISO/NYISO (no coal rows) and NEISO
+  (COAL_BIT 0.2–0.3 TWh immaterial) unchanged. No C8 flips: every coal
+  fleet's non-exempt forced share is 0.0–0.4 % — the newly-gated rows all
+  PASS; the correction closes the blindness rather than reversing any
+  existing C8 outcome.
 - **v2.7 (2026-07-16, owner amendments — session-logged, second of the day,
   calibration-rubric-updates session)** — two changes, both scorer/doc level
   (no re-solve, no payload or bench change; every keeper re-scores in place).
