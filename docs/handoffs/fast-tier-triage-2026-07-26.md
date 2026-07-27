@@ -611,3 +611,56 @@ registering them in `_CACHE_KEY_OPTIONAL_FIELDS`, moving the default cache key
 are now registered the sanctioned way; the pin is back at `edbc1b103207170a`.
 
 Everything the flip was gated on is closed. Flip the moment those two clear.
+
+### 9.2 Second hold (2026-07-27, PR #2998): perf prerequisite CLEARED, a path-dependent cache-key pin now holds the flip
+
+Both §9.1 reds are closed — the `test_cache_control` assertion was re-cut
+(§9.1), and the two remaining deterministic reds turned out to be caiso-126
+stale mirrors, synced to their sources in PR #2998:
+`test_clean_io.ALL_DATATYPES` gained `hydro-plant-modes` (source
+`scripts/regenerate_clean.DATATYPES`, intake `bbb16f3`) and
+`calibration_verdict.FORCED_EXEMPT_MECH_NAMES` gained `hydro_ror_flat` (source
+`floor_mechanisms.D2_EXEMPT_MECHS | NON_THERMAL_MECHS`, mechanism `c8b61a5` —
+the exact drift twin of §9's `hydro_min_flow` case, caught by the same guard
+test).
+
+**The perf measurement (the flip's stated last prerequisite) is done.**
+`TestFullYearPerformance::test_full_year` on GitHub-hosted ubuntu-latest under
+`-n 2`: **4 of 4 observed advisory-tier runs PASSED** (workflow runs #1067,
+#1068, #1069 and PR #2998's own run, all 2026-07-27; tier wall time
+5m44s–8m14s against the 15-minute job timeout). The same day, same code, a
+full tier run on a 4-core session container failed it on `build_time`
+(5.73 s > 3.0 s): the flakiness is session-container-only, CI hardware is
+fine. The 30 s budget itself still deserves a reference-hardware re-derivation
+with a citation before it is trusted off-CI (rule 14 applied to tests); that
+is an open finding, not a flip blocker.
+
+**What holds the flip now — found by this measurement:** the default
+`ScenarioConfig.cache_key()` is *checkout-path-dependent*. Six fields
+(`campd_bins_path`, `plant_registry_path`, `plant_emission_rates_path`,
+`plant_emission_rates_v2_path`, `control_retrofit_path`, and
+`cc_capacity_reconcile_path` via `__post_init__`) default to absolute paths
+and none is registered in `_CACHE_KEY_OPTIONAL_FIELDS`, so the key hashes the
+checkout location: `/home/user/market-simulator` → `edbc1b103207170a` (the
+pin), `/home/runner/work/market-simulator/market-simulator` →
+`329093815fa58f5b`. Both default-key pin tests
+(`test_persisted_identity.py::test_default_scenario_config_cache_key_is_pinned`,
+`test_forecast_xyear_warmstart_flag.py::TestFieldRegistration::test_default_cache_key_unmoved`)
+therefore fail deterministically on every GitHub-hosted run of every branch
+while passing in session containers — src/ byte-identical on both sides,
+verified on PR #2998's merge ref `b592a73` (base `8b3edb6` + two test-only
+edits). This is not a field drift (contrast §9.1's nyiso-83 case, a real
+unregistered-field regression fixed at the polluter): it is a portability
+defect in the pin itself, and it also fails the BLOCKING persisted-identity
+step of the refactor-guards job on every PR. Resolution is an owner/config-lane
+decision — make the default key path-invariant (repo-relative normalization
+inside `cache_key()`, or registering the six fields; either MOVES the default
+key, i.e. cache-epoch bump + pin re-derivation), or derive the pin per
+environment. Until it lands the tier stays advisory: a blocking tier red on
+every PR breaks every lane on a failure no lane session may fix unilaterally.
+
+Worth naming while closing this: PR #2998's reds were the **third time in one
+day** that a correct calibration-lane source change left a refactor-lane
+mirror stale (miso-91 → facade inventory, nyiso-83 → cache_key pin
+registration, caiso-126 → the two mirrors above) — that recurrence is the
+argument FOR the blocking flip once the pin portability is fixed.
