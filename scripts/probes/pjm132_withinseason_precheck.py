@@ -86,7 +86,10 @@ def _mw_weighted_by_bin(delta: np.ndarray, caps: np.ndarray, hour_bin: np.ndarra
     return out
 
 
-def _year_row(bundle: Path, year: int) -> dict:
+def _year_row(
+    bundle: Path, year: int, arm_a_path: str | None = None,
+    arm_b_path: str | None = None,
+) -> dict:
     """One year's arm-A vs arm-B mid-curve markup delta, binned and weighted."""
     from market_sim.data.fleet import build_pjm_offer_midcurve_conditional_markup
     from scripts.lib.bundle_fleet import reconstruct_bundle_fleet
@@ -111,13 +114,21 @@ def _year_row(bundle: Path, year: int) -> dict:
         np.quantile(net_load, EDGES), net_load, side="right"
     )
 
+    # Explicit arm paths (Stage-0 feasibility read, charter §7): both arms are
+    # derived on the SAME year-restricted corpus so the conditioning change is
+    # not confounded with year coverage. Unset = the normal Stage-1 resolution
+    # (arm A the live within-year default, arm B the `_withinseason` vintage).
+    cfg_a = cfg if arm_a_path is None else cfg.with_overrides(
+        pjm_offer_midcurve_path=arm_a_path
+    )
+    cfg_b = cfg.with_overrides(pjm_offer_surface_within_season=True)
+    if arm_b_path is not None:
+        cfg_b = cfg_b.with_overrides(pjm_offer_midcurve_path=arm_b_path)
     arm_a = build_pjm_offer_midcurve_conditional_markup(
-        fa, fleet, mc, net_load, cfg, year
+        fa, fleet, mc, net_load, cfg_a, year
     )
     arm_b = build_pjm_offer_midcurve_conditional_markup(
-        fa, fleet, mc, net_load, cfg.with_overrides(
-            pjm_offer_surface_within_season=True
-        ), year
+        fa, fleet, mc, net_load, cfg_b, year
     )
     if arm_a is None or arm_b is None:
         raise SystemExit(
@@ -148,11 +159,23 @@ def main() -> int:
     ap.add_argument("bundle", help="keeper bundle (results/calibration/pjm121_ccbelt)")
     ap.add_argument("--years", nargs="*", type=int, default=[2023, 2024, 2025])
     ap.add_argument("--json-out", default=None)
+    ap.add_argument(
+        "--arm-a-path",
+        default=None,
+        help="explicit within-YEAR surface JSON (charter §7 Stage-0 read)",
+    )
+    ap.add_argument(
+        "--arm-b-path",
+        default=None,
+        help="explicit within-SEASON surface JSON (charter §7 Stage-0 read)",
+    )
     args = ap.parse_args()
 
     _sys_path()
     bundle = Path(args.bundle)
-    rows = [_year_row(bundle, y) for y in args.years]
+    rows = [
+        _year_row(bundle, y, args.arm_a_path, args.arm_b_path) for y in args.years
+    ]
 
     n_pos = sum(1 for r in rows if r["gradient_positive"])
     tight_rises = [
@@ -164,8 +187,18 @@ def main() -> int:
         "rows": rows,
         "k1_gradient": {
             "years_with_positive_gradient": n_pos,
+            "years_measured": len(rows),
             "required": K1_MIN_YEARS,
-            "verdict": "PASS" if n_pos >= K1_MIN_YEARS else "FAIL",
+            # K1 is a 2-of-3 rule, so a run over fewer than 3 years can only
+            # ever be PARTIAL — it cannot satisfy or refute the gate (charter
+            # §7). Reporting "FAIL" there would misread a Stage-0 feasibility
+            # read as a refutation.
+            "verdict": (
+                ("PASS" if n_pos >= K1_MIN_YEARS else "FAIL")
+                if len(rows) >= 3
+                else f"PARTIAL ({n_pos}/{len(rows)} measured year(s) positive; "
+                f"{K1_MIN_YEARS} of 3 required for the gate)"
+            ),
         },
         "honesty_bound": {
             "threshold_usd": HONESTY_BOUND_USD,
