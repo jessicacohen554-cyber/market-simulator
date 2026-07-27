@@ -1180,4 +1180,46 @@ ranking scope changed and nothing else; gate registered in
 `_CACHE_KEY_OPTIONAL_FIELDS` so the pinned default cache key stays
 `edbc1b103207170a`. 27 — every ≥300-line file edited in place and blob-verified.
 
-**Next number: pjm-133.**
+
+## 2026-07-27 (pjm-133) — KEEPER RE-DESIGNATED onto the corrected envelope: `2026-07-26-pjm-129-meritguard-a1`, NOT-YET 7/10 (owner instruction; FINDING-pjm132 §5 route 2)
+
+No solve. The owner took the keeper-designation call pjm-129 flagged and
+pjm-132 §5 reserved: PJM's keeper is now the run reproducible on TODAY'S
+code — `2026-07-26-pjm-129-meritguard-a1`, the pjm-121 recipe (zero config
+delta) replayed at HEAD on the guard-corrected outage envelope, 2023+2024+2025
+one bundle (rule 16). Determination **NOT-YET, 7/10**: C3a-2025 −10.6 %
+(±10 band), C3c-2024 0.39× / C3c-2025 0.47× (≥0.5× band), C1-2023 CC_REGULAR
+−8.10 TWh (8.00 band, 0.10 over). C2/C3a-2023,24/C3b/C4/C5a/C6/C7/C8 hold;
+C3a-2023, C3b-2023, C5a-2023/24 improve vs pjm-121.
+
+**Why:** `2026-07-25-pjm-121-cc-belt` scores CALIBRATED 10/10 only on the
+pre-guard inflated envelope — data the project corrected and kept — and does
+not reproduce at HEAD (pjm-129 isolation: post-keeper code drift $0.000, the
+extract owns 100 % of the −$0.518 move; pjm-132 control independently
+reproduces the corrected 2025 baseline, 40.932 ≈ 40.93). Keeper = most
+structurally faithful on current data (rules 1/13/14), not the best score on
+superseded data. pjm-121 stays registered as the historical all-pass; its
+sidecar is untouched. (Dashboard-confusion note, for the record: the "122"
+in pjm-121's notes is the pjm-122 *session* that byte-faithfully re-solved
+the bundle after the original container was archived — there is no pjm-122
+run id.)
+
+**Frontier state is unchanged by the swap and remains NOT frontier** — the
+mechanism ledger is complete (pjm-124…132) but a volume criterion is out of
+band and the residual is not confined to the C3c tail (pjm-132 §5). The
+three failing gates have no named admissible mechanism left; what remains is
+new structure on the G-20b/G-22 reserve-tightness class (now carrying the
+guard-falseneg-audit SUSPECT-grade lead: ~2.8–5.0 GW avg returned capacity
+per tight net-load hour, `FINDING-guard-falseneg-audit-2026-07-27.md` §6) or
+a governance attestation of the misses as measured-input limitations
+(pjm-132 §5 route 3 — C1-2023 at 1.2 % over band is arguably one, C3a-2025
+at −10.6 % is a harder case; owner call, not taken here).
+
+Rules: 15 — no solve, nothing new registered; keeper swap + status rebuild
+only. 22 — no year touched. 27 — `audit_keepers.py --iso PJM` PASS 0
+failures after `build_status.py --iso PJM`; sidecar definition refreshed to
+describe the run as keeper (calibration-keeper-auditor pass). Files:
+`keepers/PJM.json`, `registry/2026-07-26-pjm-129-meritguard-a1.json`,
+`status/PJM.js`.
+
+**Next number: pjm-134.**
