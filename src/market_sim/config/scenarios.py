@@ -45,6 +45,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "end_year",
     "hindcast",
     "hindcast_fuel_variant",
+    # Measured CT loaded heat rates (nyiso-89, default off): dropped from the
+    # hash at its default so every pre-existing cached run keeps its key; an
+    # armed run carries a different fleet cost and so gets a distinct key.
+    "measured_ct_heat_rates",
     # T1-X crossover boundary + forward AEO gas path (FF-0E, plan §2.2): dropped
     # from the hash at their defaults (None / "mid") so every pre-existing
     # cached run keeps its key; a crossover run sets a non-None boundary and so
