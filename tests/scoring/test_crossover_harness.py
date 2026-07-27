@@ -310,6 +310,15 @@ class TestCrossoverRunnerPath(unittest.TestCase):
         self._orig_root = cache.CACHE_ROOT
         cache.CACHE_ROOT = Path(self._tmp.name)
         _FakeDispatchModel.n_solves = 0
+        # run_scenario_iso on a hindcast config calls set_eia860_vintage(2023)
+        # and deliberately leaves it active; without this reset the vintage
+        # leaks into every later eia860-fed load in the process (the bisected
+        # fast-tier pollution family — see tests/conftest.py's
+        # _reset_eia860_vintage, which guards pytest runs; this addCleanup
+        # keeps the file hermetic under bare unittest too).
+        from market_sim.config.paths import set_eia860_vintage
+
+        self.addCleanup(set_eia860_vintage, None)
 
     def tearDown(self):
         cache.CACHE_ROOT = self._orig_root

@@ -89,9 +89,18 @@ class TestUnresolvablePriorSha(unittest.TestCase):
         )
         # Isolate the git-identity gate: the recipe channel (replay_keeper)
         # and every other environment gate are held constant and passing.
+        # plan_reuse_solved reaches the channel via the canonical
+        # ``from scripts import replay_keeper`` (bare sibling imports were
+        # retired 2026-07-27), so the stub must sit under BOTH the canonical
+        # sys.modules name and the ``scripts`` package attribute — a
+        # from-import binds the parent-package attribute when it exists and
+        # only falls back to sys.modules otherwise.
+        import scripts
+
         stub_rk = types.SimpleNamespace(build_kwargs=lambda meta: {})
         patches = [
-            mock.patch.dict(sys.modules, {"replay_keeper": stub_rk}),
+            mock.patch.dict(sys.modules, {"scripts.replay_keeper": stub_rk}),
+            mock.patch.object(scripts, "replay_keeper", stub_rk, create=True),
             mock.patch.object(rcf, "_untracked_data_newest_mtime", lambda: (0.0, "")),
             mock.patch.object(rcf, "_highspy_version", lambda: "1.7.2"),
         ]

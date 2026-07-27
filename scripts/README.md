@@ -15,7 +15,7 @@ only the directory moved.
 | `scripts/lib/`      | Shared helpers imported by scripts (`clean_io.py`, `bundle_io.py`, per-datatype registries). One deliberate exception carries an argparse main — see "`keeper_store.py`'s CLI" below. |
 | `scripts/probes/`   | Per-run probe scripts, named `_<iso><run>_*` — the historical record of calibration probes (frozen). |
 | `scripts/probes/artifacts/` | The probes' non-Python repro artifacts (`.patch` / `.xz.b64` chunks, `_<iso><run>_chain.sh` drivers, chunked-patch land dirs), segregated 2026-07-26 so the probe scripts stand alone — same frozen record, content untouched; paths quoted in pre-move records refer to the old flat `probes/` layout. |
-| `scripts/diagnostics/` | Standing measurement harnesses that profile or diff the engine rather than run the programs: `bench_highs_parallel.py` (HiGHS thread-scaling bench), `profile_lp_memory.py` (LP build-vs-solve peak-RSS split), `diff_warmstart_bundles.py` (per-plant cold-vs-warm bundle diff; invoked by `regression_gate.py`) — plus scratch diagnostics. |
+| `scripts/diagnostics/` | Standing measurement harnesses that profile or diff the engine rather than run the programs: `bench_highs_parallel.py` (HiGHS thread-scaling bench), `profile_lp_memory.py` (LP build-vs-solve peak-RSS split), `diff_warmstart_bundles.py` (per-plant cold-vs-warm bundle diff; invoked by `regression_gate.py`), `repro_eia860_vintage_leak.py` (the 2026-07-27 bisect record + standing regression detector for the EIA-860 vintage process-global leak that was the fast-tier order-dependent pollution family) — plus scratch diagnostics. |
 
 Classification rule used (and to use going forward): a script stays at top
 level if it is part of a *standing* workflow — invoked by CI, a skill, tests,
@@ -72,13 +72,37 @@ the frozen `archive/`/`probes/` record (the former tail — `regression_gate.py`
 `scripts/data/build_offer_curve_overrides.py`,
 `scripts/data/derive_caiso_supply_consistent_demand.py` — was converted with
 every consumed attribute verified identical across both import paths first).
-Do not add new ones. A related smell survives in a different form: ~10 live
-scripts still import siblings by bare top-level name (`import
-run_calibration_full as rcf`, `from run_calibration import run_year`), which
-creates the same second-copy hazard if the canonical `scripts.*` name is also
-loaded in-process; prefer `from scripts import run_calibration_full as rcf`
-in new code. (Recorded 2026-07-26; converting the existing ten is open work,
-not part of the closed spec_from_file_location tail.)
+Do not add new ones. The related bare-top-level-name smell (`import
+run_calibration_full as rcf`, `from run_calibration import run_year`) creates
+the same second-copy hazard whenever the canonical `scripts.*` name is also
+loaded in-process; always spell sibling imports `from scripts import …` /
+`from scripts.data.… import …` in new code. The **solve-entry cluster is
+CLOSED as of 2026-07-27**: an AST re-census of the recorded "~10" found 13
+live files bare-importing the `run_calibration` / `run_calibration_full` /
+`replay_keeper` / `derive_pjm_ordc_overlay` family (the recorded nine plus
+`knob_jacobian.py`, `negative_control.py`, `lib/bundle_fleet.py`, and
+`run_calibration_full.py`'s own two deferred `import replay_keeper` sites —
+the last three compelled into the same change: converting only their callers
+would have *created* mixed bare+canonical copies in one process). All 13 were
+converted after a both-paths harness verified every consumed attribute
+byte-identical across the two import forms; the in-function
+`sys.path.insert(0, REPO / "scripts")` shims that existed solely to feed the
+bare form went with them. One recorded side effect: the frozen probe
+`probes/pjm123_composite_precheck.py` bare-imports `run_calibration` itself
+while also calling the now-canonical `lib/bundle_fleet.py`, so a re-run of
+that probe would hold both names (identical code; frozen record, left as-is).
+The **residue is the wider sibling web, measured 2026-07-27 at 105 bare
+sites across 91 live files**: overwhelmingly `scripts/data/` derive/build/
+fetch helpers importing each other by bare name (resolvable only because
+`sys.path[0]` is the script's own directory), plus a few top-level clusters
+(`score_crossover.py`, the `register_hindcast.py` / `register_forecast_run.py`
+/ `check_forecast_invariants.py` trio, `dashboard_add_run.py`,
+`pb5_assemble.py`, `generate_parameter_registry.py`, the two
+`*_zonal_sufficiency.py`, `validate_ercot_online_capacity.py`,
+`diagnostics/scratchpad_diag_evening.py`). Converting that web is open work —
+per-file, with the same both-paths verification; note the deploy trio
+(`register_hindcast.py` et al.) runs on bare `python3` in a sparse checkout,
+so any conversion there must keep its stdlib bootstrap self-sufficient.
 
 ### `keeper_store.py`'s CLI — the sanctioned exception (adjudicated 2026-07-26)
 
