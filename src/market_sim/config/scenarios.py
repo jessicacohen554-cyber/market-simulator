@@ -212,6 +212,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # capacity trajectory bit-identical, so a cold-cached year and a warm-solved
     # year are the same result.
     "forecast_xyear_warmstart",
+    # ERCOT-118 EP-basis rebasis of the measured CC DAM band multipliers.
+    # Default-off and byte-identical for every existing config (with the gate
+    # off no offer-curve band is touched), so it is dropped from the hash at
+    # its default; an armed run enters the key as a distinct scenario (and its
+    # rebased offer_curve_by_group values enter the hash regardless).
+    "ercot_offer_hrmult_ep_rebasis",
 )
 
 
@@ -7418,6 +7424,37 @@ class ScenarioConfig:
     # NOTE: this no longer signals backcast mode; set ``mode="backcast"``
     # explicitly. A forecast may pin gas as a sensitivity without flipping
     # the renewables loader into historical-actuals mode.
+
+    # ERCOT-118: re-ground the measured CC DAM band multipliers on the
+    # EP-anchored dispatch gas basis (default off, ERCOT-scoped). The keeper's
+    # ``offer_curve_overrides`` (CC_REGULAR/CC_CHP committed/econ_low/
+    # econ_high/peak — the cconly lineage of
+    # ``scripts/data/derive_dam_offer_hrmults.py``) were derived by normalizing
+    # measured QSE offers by ``HH_daily − 0.50`` POOLED over 2023-2025, while
+    # dispatch prices gas at the EP-anchored zonal level
+    # (``ercot_zonal_gas_basis``: +0.50/+0.41/+0.04 $/MMBtu above that basis in
+    # 2023/24/25) — so the measured offer surface is reproduced ~+25% high in
+    # 2023/24, and the pooled p50 over-prices the dear-gas 2025 (real CC offers
+    # scale sub-proportionally with gas). Proven causal by the ERCOT-117
+    # ablation (2026-07-26-ercot117-gas-basis-probe: crossing-band elevation
+    # −$3.4/−$3.5/−$2.0 with C1 16/16 — and C3a collapse without the EP level,
+    # so the fix is re-deriving ON the EP basis, never reverting it, rules
+    # 13/14). With this on, ``run_calibration.run_year`` replaces those bands
+    # with the PER-YEAR tables of the committed artifact
+    # ``data/raw/_validation-source/offer_curve_dam_hrmults_ep_yearly.json``
+    # (same derivation, EP-anchored normalization — rule-23 citation in the
+    # artifact's _provenance), re-applies the run's ``offer_curve_deltas`` on
+    # the rebased base (composition preserved: the deltas stay the calibrated
+    # markup, only the measured base under them moves), rewrites the
+    # conditional-surface peak_ladder rungs to the rebased resolved peak, and
+    # threads the year's EP delivered annual mean onto the rebased classes as
+    # their per-class ``margin_anchor`` so the ``gas_offer_net_revenue_margin``
+    # markup decomposition sits on ONE consistent basis (the per-year
+    # multiplier is identified at that year's own delivered mean, not the
+    # window HH−0.50 anchor). Registered in ``_CACHE_KEY_OPTIONAL_FIELDS`` —
+    # byte-identical for every existing config at its default; an armed run
+    # enters the cache key as a distinct scenario.
+    ercot_offer_hrmult_ep_rebasis: bool = False
 
     def __post_init__(self) -> None:
         if self.mode not in ("forecast", "backcast"):

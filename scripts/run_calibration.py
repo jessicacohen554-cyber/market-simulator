@@ -454,6 +454,7 @@ def run_year(
     bit_overrides: dict | None = None,
     coal_econ_srmc_bound: bool = False,
     coal_econ_marginal_hr_bound: bool | None = None,
+    ercot_offer_hrmult_ep_rebasis: bool | None = None,
     coal_takeorpay_from_data: bool = False,
     coal_mustrun_online_pmin: bool = False,
     coal_sync_srmc_tranche: bool = False,
@@ -1397,6 +1398,61 @@ def run_year(
             "%s coal econ marginal-HR floor: SCRUBBED by explicit False "
             "(per-ISO default was on) — offer curve unchanged",
             iso,
+        )
+    # ERCOT-118 EP-basis rebasis of the measured CC DAM band multipliers
+    # (run_calibration_full --ercot-offer-hrmult-ep-rebasis;
+    # ScenarioConfig.ercot_offer_hrmult_ep_rebasis). Runs AFTER the offer-curve
+    # overrides/deltas resolved in backcast_config, after the prb_overrides
+    # ScenarioConfig application, and after the conditional peak split, so it
+    # rebases the curve the calibration path actually produced: the pooled
+    # HH-0.50-derived CC_REGULAR/CC_CHP bands are replaced with the committed
+    # PER-YEAR EP-basis artifact values, the run's offer_curve_deltas for those
+    # bands re-applied on top (composition preserved — the calibrated delta
+    # stays, the measured base under it moves), the conditional peak_ladder
+    # rungs re-stamped at the rebased peak, and the year's EP delivered mean
+    # threaded on as the rebased classes' margin_anchor (basis-consistent
+    # markup pricing under gas_offer_net_revenue_margin). Adds no tunable —
+    # the values are the frozen rule-23 artifact (ERCOT-117 FINDING §4.3).
+    # Tri-state (the ercot-115 seam pattern): None keeps the ScenarioConfig /
+    # prb_overrides-resolved value; True/False force it on/off so an A/B arm
+    # can scrub it. ERCOT-scoped (rule 25).
+    _ep_rebasis_on = (
+        bool(getattr(config, "ercot_offer_hrmult_ep_rebasis", False))
+        if ercot_offer_hrmult_ep_rebasis is None
+        else bool(ercot_offer_hrmult_ep_rebasis)
+    )
+    if _ep_rebasis_on and iso.upper() == "ERCOT":
+        from market_sim.data.offer_curves import apply_ercot_dam_hrmult_ep_rebasis
+
+        _curve, _replaced, _ep_anchor = apply_ercot_dam_hrmult_ep_rebasis(
+            config.offer_curve_by_group, year, offer_curve_deltas
+        )
+        config = config.with_overrides(
+            ercot_offer_hrmult_ep_rebasis=True, offer_curve_by_group=_curve
+        )
+        logger.info(
+            "ERCOT DAM offer hr-mult EP rebasis (%d): %d bands; %s; "
+            "per-class margin anchor %.4f $/MMBtu",
+            year,
+            len(_replaced),
+            "; ".join(
+                f"{c}.{b} {before:.3f} -> {after:.3f}"
+                for c, b, before, after in _replaced
+            ),
+            _ep_anchor,
+        )
+    elif _ep_rebasis_on:
+        raise ValueError(
+            "ercot_offer_hrmult_ep_rebasis is ERCOT-scoped (rule 25) — "
+            f"refusing to arm it for {iso}"
+        )
+    elif getattr(config, "ercot_offer_hrmult_ep_rebasis", False):
+        # Explicit scrub (kwarg False over a config/prb True): the LP solves
+        # WITHOUT the rebasis, so the recorded config must say so (rule 25).
+        config = config.with_overrides(ercot_offer_hrmult_ep_rebasis=False)
+        logger.info(
+            "ERCOT DAM offer hr-mult EP rebasis: SCRUBBED by explicit False "
+            "— offer curve unchanged"
         )
     # Per-plant tranche-config override sheet (run_calibration_full
     # --plant-tranche-config): each listed plant's tranche shares + band HR

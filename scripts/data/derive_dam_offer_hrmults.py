@@ -114,6 +114,21 @@ OUT_JSON_CONDBINNED = paths.CALIBRATION_DIR / "offer_curve_dam_hrmults_condbinne
 # only. Its own artifact so the adopted top-surface JSON stays byte-stable
 # (rule 23); a run opts in via ScenarioConfig.ercot_offer_surface_lowcurve.
 OUT_JSON_LOWCURVE = paths.CALIBRATION_DIR / "offer_curve_dam_lowcurve_condbinned.json"
+# --ep-basis-yearly writes the ERCOT-118 re-grounded CC band-multiplier tables:
+# the SAME committed/econ_low/econ_high/peak p50 derivation as the adopted
+# cconly file (peak mode B), but normalized by the EP-ANCHORED delivered-gas
+# series the dispatch actually prices gas at (HH daily + the measured EIA
+# N3045TX3 electric-power basis, data.fuel.basis.ercot.
+# ercot_electric_power_gas_basis) instead of the stale HH-0.50 scalar, and
+# derived PER DELIVERY YEAR instead of pooled 2023-2025. Rule-23 source-change
+# citation: the ercot_zonal_gas_basis adoption moved the dispatch delivered-gas
+# series (+0.50/+0.41/+0.04 $/MMBtu over HH-0.50 in 2023/24/25) under artifacts
+# whose stated purpose is "the multiplier the model multiplies by", so the
+# normalization series must follow it (derivation-consistency, ERCOT-117
+# FINDING §4.3 — never a residual chase). Its own artifact; the pooled
+# HH-0.50 files above stay byte-stable as the record of the old basis. A run
+# opts in via ScenarioConfig.ercot_offer_hrmult_ep_rebasis.
+OUT_JSON_EP_YEARLY = paths.CALIBRATION_DIR / "offer_curve_dam_hrmults_ep_yearly.json"
 
 # Low-curve rel-band edges: the lower-body (rel < 0.67) incremental curve is
 # measured in three equal curve-position bands, matching the model's per-plant
@@ -603,6 +618,17 @@ def main() -> None:
         "resources only. Writes offer_curve_dam_lowcurve_condbinned.json (its "
         "own artifact; the adopted top-surface JSON is untouched). Gas only.",
     )
+    ap.add_argument(
+        "--ep-basis-yearly",
+        action="store_true",
+        help="emit the ERCOT-118 re-grounded CC band multipliers: the identical "
+        "committed/econ_low/econ_high/peak p50 derivation as the adopted "
+        "cconly override (peak mode B), normalized by the EP-anchored "
+        "delivered-gas series dispatch prices gas at (HH daily + measured EIA "
+        "N3045TX3 electric-power basis) with PER-YEAR tables replacing the "
+        "pooled p50s. Writes offer_curve_dam_hrmults_ep_yearly.json (its own "
+        "artifact; the pooled HH-0.50 files are untouched, rule 23).",
+    )
     args = ap.parse_args()
 
     if args.condition_binned:
@@ -610,6 +636,9 @@ def main() -> None:
         return
     if args.low_curve_binned:
         derive_lowcurve_binned(NETLOAD_PCT_EDGES, args.out_json)
+        return
+    if args.ep_basis_yearly:
+        derive_ep_basis_yearly(args.out_json, args.body_cap)
         return
 
     fleet_hr = class_base_hr()
@@ -994,6 +1023,246 @@ def derive_lowcurve_binned(edges: tuple[float, ...], out_json: str | None) -> No
     out_path = Path(out_json) if out_json else OUT_JSON_LOWCURVE
     out_path.write_text(json.dumps(payload, indent=1) + "\n")
     print(f"\nWrote {out_path}  (groups {sorted(CONDBINNED_GROUPS)})")
+
+
+# Output groups of the EP-rebasis per-year tables: exactly the classes the
+# keeper's offer_curve_overrides carry (the cconly lineage — the CC-only
+# variant that avoids the CT<->ST coupling crater). CT/ST mults are calibrated
+# values outside the measured band-multiplier family (ERCOT-118 charter scope).
+EP_YEARLY_GROUPS: tuple[str, ...] = ("CC_REGULAR", "CC_CHP")
+
+
+def _load_raw_cc_curve_points() -> pd.DataFrame:
+    """Long-form CC energy-curve points straight from the raw 60-day parquets.
+
+    Reproduces the ``ercot_dam_offers.parquet`` row universe for the CC energy
+    curve (any Resource Status, every finite curve point) WITHOUT the parsed
+    intermediate, which is not rebuildable on this container: the owner-ordered
+    2026-07-22 disclosure slimming (``slim_ercot_dam_disclosure.py``) dropped
+    the three-part columns (``Min Gen Cost`` / ``Start Up *``) that
+    ``parse_ercot_dam_offers.py`` requires. The kept columns (Delivery Date,
+    Hour Ending, Resource Type/Name, HSL, LSL, the 10-point QSE curve) fully
+    determine the econ_low/econ_high/peak measurements; the committed
+    (Min-Gen-Cost) band is NOT derivable from the slimmed raws — see
+    :func:`derive_ep_basis_yearly` for the declared consequence. Files are
+    globbed across ALL publication windows and filtered by DELIVERY year
+    (publication labels lag deliveries by 60 days).
+    """
+    mw_cols = [f"QSE submitted Curve-MW{k}" for k in range(1, 11)]
+    pr_cols = [f"QSE submitted Curve-Price{k}" for k in range(1, 11)]
+    cols = ["Delivery Date", "Resource Type", "Resource Name", "HSL", "LSL"]
+    pat = str(
+        paths.RAW_DIR
+        / "ercot"
+        / "60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_*.parquet"
+    )
+    import glob as _glob
+
+    frames = []
+    for f in sorted(_glob.glob(pat)):
+        df = pd.read_parquet(f, columns=cols + mw_cols + pr_cols)
+        df = df[df["Resource Type"].isin(("CCGT90", "CCLE90"))]
+        if df.empty:
+            continue
+        dt = pd.to_datetime(df["Delivery Date"])
+        df = df.assign(_date=dt, year=dt.dt.year)
+        df = df[df["year"].isin(YEARS)]
+        if df.empty:
+            continue
+        long = pd.concat(
+            [
+                df[["_date", "year", "Resource Name", "HSL", "LSL"]].assign(
+                    curve_mw=df[mc].to_numpy(float),
+                    curve_price=df[pc].to_numpy(float),
+                )
+                for mc, pc in zip(mw_cols, pr_cols)
+            ],
+            ignore_index=True,
+        )
+        long = long[np.isfinite(long["curve_mw"]) & np.isfinite(long["curve_price"])]
+        frames.append(
+            long.rename(
+                columns={
+                    "_date": "delivery_date",
+                    "Resource Name": "resource_name",
+                    "HSL": "hsl",
+                    "LSL": "lsl",
+                }
+            )
+        )
+    if not frames:
+        raise SystemExit("no raw 60-day DAM Gen_Resource parquets found")
+    return pd.concat(frames, ignore_index=True)
+
+
+def derive_ep_basis_yearly(out_json: str | None, body_cap: float) -> None:
+    """Derive and write the per-year EP-basis CC band multipliers (ERCOT-118).
+
+    The identical measurement as the adopted ``offer_curve_dam_hrmults_cconly``
+    override's energy-curve bands — per-point heat-rate multipliers reduced to
+    per-resource medians then capacity-weighted p50s (econ_low rel<=0.33 /
+    econ_high rel>=0.67, competitive body < body_cap; peak = mode-B
+    top-of-curve incl. near-cap bids) — with exactly two declared changes,
+    both rule-23 source-change consequences of the ``ercot_zonal_gas_basis``
+    adoption (ERCOT-117 FINDING §4):
+
+    1. **Basis.** The per-point fuel divisor is the EP-anchored delivered-gas
+       series dispatch prices gas at: ``HH_daily(delivery_date) +
+       ercot_electric_power_gas_basis(year)`` (measured EIA N3045TX3 minus
+       measured HH, the level ``apply_ercot_zonal_gas_basis`` re-levels every
+       ERCOT gas unit to) — replacing the stale ``HH_daily − 0.50``.
+    2. **Pooling.** One table per delivery year (2023/2024/2025) replaces the
+       pooled p50s: real CC offers scale sub-proportionally with gas, so a
+       pooled multiplier over-prices the dear-gas year (the 2025 leg).
+
+    **The committed band is deliberately ABSENT from the tables** (it stays at
+    the run's resolved value): its instrument is the three-part Min Gen Cost,
+    whose rows were dropped from the raw parquets by the owner-ordered
+    2026-07-22 slimming, the parsed intermediate was never committed, the free
+    MIS path's ~2.3-year retention has already lost all 2023 publications, and
+    the credentialed archive was owner-declined
+    (docs/handoffs/ercot-as-coopt-plan-2026-07.md §WS-E). A per-year committed
+    rebasis is therefore not measurable today; re-deriving it is an owner
+    decision (archive access, or a 2024/25-only partial intake).
+
+    Each year table also records ``anchor_usd_mmbtu`` — the year's EP-anchored
+    delivered annual mean (``mean(HH_monthly) + ep_basis``, i.e. the measured
+    EP series annual mean on the model's own HH table) — the identification
+    point at which the year's multiplier form and the
+    ``gas_offer_net_revenue_margin`` fixed-margin form coincide. The apply
+    seam threads it onto the rebased classes as their per-class margin anchor
+    so the whole markup decomposition sits on ONE basis (the charter's
+    anchor-consistency audit).
+    """
+    from market_sim.data.fuel._shared import _pkg_ns
+    from market_sim.data.fuel.basis.ercot import ercot_electric_power_gas_basis
+
+    fleet_hr = class_base_hr()
+    ep_basis = {y: ercot_electric_power_gas_basis(y) for y in YEARS}
+    missing = [y for y, b in ep_basis.items() if b is None]
+    if missing:
+        raise SystemExit(
+            f"EP electric-power gas basis unavailable for {missing} — the "
+            "EP-rebasis artifact cannot be derived without the measured series"
+        )
+    df = _load_raw_cc_curve_points()
+    # EP-anchored delivered fuel per point: ffill'd daily HH at the delivery
+    # date plus the year's measured EP level (the exact analogue of
+    # load_offers' HH_daily - 0.50 construction, basis swapped).
+    hh_daily = pd.read_csv(HENRY_HUB, parse_dates=["date"]).rename(
+        columns={"price_usd_mmbtu": "hh"}
+    )
+    hh_daily = hh_daily.set_index("date")["hh"].sort_index()
+    daily = hh_daily.reindex(
+        pd.date_range(hh_daily.index.min(), hh_daily.index.max())
+    ).ffill()
+    df["fuel"] = df["delivery_date"].map(daily) + df["year"].map(ep_basis)
+    df = df[df["fuel"] > 0]
+    hh = _pkg_ns()._henry_hub_monthly(None)
+    print(
+        f"Loaded {len(df):,} CC curve-point rows "
+        f"({df['delivery_date'].min().date()} -> "
+        f"{df['delivery_date'].max().date()}); per-year EP basis vs HH: "
+        + ", ".join(f"{y}: {ep_basis[y]:+.4f}" for y in YEARS)
+    )
+
+    payload: dict = {
+        "_provenance": {
+            "source": "ERCOT 60-Day DAM Disclosure Gen Resource Data raw "
+            "parquets (slimmed 2026-07-22), delivery years 2023-2025, CC "
+            "(CCGT90/CCLE90) energy-curve points, any Resource Status — the "
+            "ercot_dam_offers.parquet row universe for these bands",
+            "method": "per-point mult = curve_price / (fuel x base_HR); "
+            "econ_low rel<=0.33 / econ_high rel>=0.67 competitive body "
+            "(< $1000), per-resource median then capacity(HSL)-weighted p50; "
+            "peak = mode-B per-resource top-of-curve incl. near-cap bids — "
+            "the cconly derivation per delivery YEAR",
+            "basis": "HH_daily(delivery_date) + "
+            "ercot_electric_power_gas_basis(year) (EIA N3045TX3 measured TX "
+            "electric-power delivered level — the series "
+            "apply_ercot_zonal_gas_basis re-levels dispatch gas to), "
+            "replacing HH_daily - 0.50",
+            "rule23_citation": "ercot_zonal_gas_basis adoption changed the "
+            "dispatch delivered-gas series (+0.50/+0.41/+0.04 $/MMBtu over "
+            "HH-0.50 in 2023/24/25) under the band-multiplier artifacts; "
+            "derivation-consistency re-derive per ERCOT-117 FINDING §4.3 "
+            "(FINDING-ercot117-gas-basis-ranking-2026-07-26.md), not a "
+            "residual chase",
+            "committed_band": "ABSENT by data destruction, not by choice: "
+            "Min Gen Cost was dropped by the owner-ordered 2026-07-22 raw "
+            "slimming (slim_ercot_dam_disclosure.py), the parsed "
+            "ercot_dam_offers.parquet was never committed, the free MIS "
+            "path retains only ~2.3 years (2023 publications gone), and the "
+            "credentialed archive was owner-declined. The committed band "
+            "keeps the run's resolved (pooled HH-0.50-derived) value.",
+            "peak_mode": "B",
+            "ep_basis_vs_hh": {str(y): round(float(ep_basis[y]), 4) for y in YEARS},
+            "iso": "ERCOT",
+        }
+    }
+    for year in YEARS:
+        hh_year = [hh[(year, m)] for m in range(1, 13) if (year, m) in hh]
+        anchor = float(np.mean(hh_year)) + float(ep_basis[year])
+        table: dict = {"anchor_usd_mmbtu": round(anchor, 4)}
+        d_year = df[df["year"] == year]
+        for out_group in EP_YEARLY_GROUPS:
+            bhr = output_base_hr(fleet_hr, (out_group,))
+            e = d_year[
+                (d_year["hsl"] > d_year["lsl"]) & (d_year["curve_price"] > 0)
+            ].copy()
+            e["mult"] = e["curve_price"].to_numpy(float) / (
+                e["fuel"].to_numpy(float) * bhr
+            )
+            e["rel"] = ((e["curve_mw"] - e["lsl"]) / (e["hsl"] - e["lsl"])).clip(
+                0.0, 1.0
+            )
+            e["cap"] = e["hsl"].astype(float)
+            body = e[e["curve_price"] < body_cap]
+            lo_pr = (
+                body[body["rel"] <= 0.33]
+                .groupby("resource_name")
+                .agg(econ_low=("mult", "median"), cap=("cap", "median"))
+                .reset_index()
+            )
+            hi_pr = (
+                body[body["rel"] >= 0.67]
+                .groupby("resource_name")
+                .agg(econ_high=("mult", "median"), cap=("cap", "median"))
+                .reset_index()
+            )
+            topf = (
+                e.groupby("resource_name")
+                .agg(peak=("mult", "max"), cap=("cap", "median"))
+                .reset_index()
+            )
+            econ_low = _capwt_band(lo_pr, "econ_low")
+            econ_high = _capwt_band(hi_pr, "econ_high")
+            peak_full = _capwt_band(topf.rename(columns={"peak": "pk"}), "pk")
+            table[out_group] = {
+                "econ_low": econ_low["p50"],
+                "econ_high": econ_high["p50"],
+                "peak": peak_full["p50"],  # mode B, the cconly lineage
+            }
+            table[f"_{out_group}_detail"] = {
+                "base_hr": round(bhr, 3),
+                "n_resources": int(e["resource_name"].nunique()),
+                "n_points": int(len(e)),
+                "econ_low": econ_low,
+                "econ_high": econ_high,
+                "peak_full": peak_full,
+            }
+            print(
+                f"  {year} {out_group:11s} base_HR {bhr:5.2f}  "
+                f"econ_low {econ_low['p50']:.3f}  "
+                f"econ_high {econ_high['p50']:.3f}  "
+                f"peak(B) {peak_full['p50']:.3f}  "
+                f"anchor {anchor:.4f}"
+            )
+        payload[str(year)] = table
+
+    out_path = Path(out_json) if out_json else OUT_JSON_EP_YEARLY
+    out_path.write_text(json.dumps(payload, indent=1) + "\n")
+    print(f"\nWrote {out_path}  (groups {sorted(EP_YEARLY_GROUPS)}, years {YEARS})")
 
 
 if __name__ == "__main__":

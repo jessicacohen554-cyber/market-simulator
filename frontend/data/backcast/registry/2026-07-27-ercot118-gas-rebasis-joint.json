@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-27-ercot118-gas-rebasis-joint",
+ "label": "ercot118 gas rebasis joint",
+ "date": "2026-07-27",
+ "shorthand": "ercot118-gas-rebasis-joint",
+ "definition": "(PROBE \u2014 rejected, ordinary G3 failure mode) ERCOT-118 Phase A joint arm: the ercot115 keeper + ercot_thermal_dam_availability_coal (measured coal envelope, ERCOT-116 gate protocol) + ercot_offer_hrmult_ep_rebasis \u2014 the measured CC DAM band multipliers (econ_low/econ_high/peak) replaced with PER-YEAR tables normalized on the EP-anchored delivered-gas series dispatch prices gas at (offer_curve_dam_hrmults_ep_yearly.json, rule-23 derive; keeper offer deltas re-applied unchanged; per-class per-year margin anchors 2.5402/2.1067/3.0655). The committed band stays un-rebased \u2014 its Min-Gen-Cost source rows were destroyed by the owner-ordered 2026-07-22 raw slimming and 2023 is unreachable (declared ex ante, PRECOMMIT-ercot118-gas-rebasis-2026-07-26.md \u00a72). RESULT: G1/G2/BITE PASS (excess \u221210.9/\u22126.2/\u22126.4 pp; spread narrows all years; C1 16/16 free 12/12 held); crossing-band [15,25) elevation +5.18/+5.03/+7.00 \u2192 +3.34/+2.79/+5.28 (mid-merit legs \u22123.1/\u22126.6/\u22124.3 pp all TOWARD actual) but misses the pre-registered \u2264$2.0 line; G3 fails via C3a AND C3c (72\u219249, 13\u21923): the per-year peak(B) p50s (2.55/3.50/2.63 vs pooled 4.33) deflate the sub-$200 standing scarcity wall \u2014 a within-year top-of-curve max is NOT the pooled always-posted wall measurement. Ordinary rejection per the pre-commit decision rule; keeper unchanged. Successors: ERCOT-119 leg-split (econ-only rebasis, peak kept as the pooled/laddered wall); the committed-band data decision (owner); Phase B stays gated. See FINDING-ercot118-gas-rebasis-2026-07-27.md.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-07-27-ercot118-gas-rebasis-joint.js",
+ "bundle": "results/calibration/ercot118_ep_rebasis_joint"
+}

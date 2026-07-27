@@ -443,6 +443,86 @@ def gas_offer_margin_markup_mult(
     return 0.0
 
 
+def apply_ercot_dam_hrmult_ep_rebasis(
+    curve: dict[str, dict], year: int, offer_curve_deltas: dict | None
+) -> tuple[dict[str, dict], list[tuple[str, str, float, float]], float]:
+    """Rebase the measured CC DAM band multipliers onto the EP dispatch basis.
+
+    The ERCOT-118 mechanism (``ScenarioConfig.ercot_offer_hrmult_ep_rebasis``):
+    the keeper's ``offer_curve_overrides`` bands (CC_REGULAR/CC_CHP
+    committed/econ_low/econ_high/peak, the cconly lineage) were derived at
+    ``HH_daily − 0.50`` pooled 2023-2025, while dispatch prices gas at the
+    EP-anchored zonal level — the ERCOT-117-proven derivation⇄dispatch basis
+    inconsistency. This replaces each of those bands with the PER-YEAR value
+    of the committed EP-basis artifact
+    (``offer_curve_dam_hrmults_ep_yearly.json``,
+    ``derive_dam_offer_hrmults.py --ep-basis-yearly`` — rule-23 citation in
+    its ``_provenance``) and re-applies the run's ``offer_curve_deltas`` for
+    the named class/band on top, so the calibrated delta stays the markup and
+    only the measured base under it moves. The conditional-surface
+    ``peak_ladder`` rungs (uniform copies of the resolved peak, created by
+    the ``ercot_offer_surface_conditional`` split before this runs) are
+    rewritten to the rebased resolved peak; each rebased class additionally
+    carries ``margin_anchor`` — the year's EP-anchored delivered annual mean
+    from the artifact — so ``apply_gas_offer_margin`` prices ITS markups at
+    the same basis its multipliers were identified on (the charter's
+    anchor-consistency requirement; non-rebased classes keep the window
+    anchor untouched).
+
+    Args:
+        curve: The resolved ``offer_curve_by_group`` (post overrides, deltas
+            and conditional split).
+        year: Delivery year — selects the artifact's per-year table.
+        offer_curve_deltas: The run's delta dict (may be ``None``); only the
+            rebased class/band entries are re-applied here.
+
+    Returns:
+        ``(new_curve, replaced, anchor)`` — the rebased curve, the
+        ``(class, band, before, after)`` audit list, and the year's
+        ``anchor_usd_mmbtu``.
+
+    Raises:
+        FileNotFoundError / KeyError: artifact or year table missing while
+            the flag is armed (rule 25 — never a silent fallback).
+    """
+    import json as _json
+
+    from market_sim.config import paths as _paths
+
+    path = _paths.CALIBRATION_DIR / "offer_curve_dam_hrmults_ep_yearly.json"
+    doc = _json.loads(path.read_text())
+    try:
+        table = doc[str(year)]
+    except KeyError:
+        raise KeyError(
+            f"offer_curve_dam_hrmults_ep_yearly.json has no table for {year} "
+            "— the EP rebasis is armed but underived for this year (rule 25: "
+            "re-run derive_dam_offer_hrmults.py --ep-basis-yearly, never a "
+            "silent fallback)"
+        )
+    anchor = float(table["anchor_usd_mmbtu"])
+    deltas = offer_curve_deltas or {}
+    merged = {cls: dict(bands) for cls, bands in curve.items()}
+    replaced: list[tuple[str, str, float, float]] = []
+    for cls, bands in table.items():
+        if cls.startswith("_") or cls == "anchor_usd_mmbtu":
+            continue
+        tgt = merged.setdefault(cls, {})
+        cls_deltas = deltas.get(cls, {}) or {}
+        for band, measured in bands.items():
+            before = float(tgt.get(band, float("nan")))
+            after = float(measured) + float(cls_deltas.get(band, 0.0))
+            tgt[band] = after
+            replaced.append((cls, band, before, after))
+        # The conditional split's uniform rungs carry the OLD resolved peak;
+        # re-stamp them at the rebased one (shares untouched).
+        if "peak_ladder" in tgt and "peak" in bands:
+            new_pk = float(tgt["peak"])
+            tgt["peak_ladder"] = [[share, new_pk] for share, _ in tgt["peak_ladder"]]
+        tgt["margin_anchor"] = anchor
+    return merged, replaced, anchor
+
+
 def apply_gas_offer_margin(
     mc: "np.ndarray",
     generators: list,
@@ -504,15 +584,35 @@ def apply_gas_offer_margin(
     rows = np.nonzero(markup_hr > 0.0)[0]
     if rows.size == 0:
         return
+    # Per-tranche anchor override (ERCOT-118 EP rebasis): a tranche whose
+    # offer band carried ``margin_anchor`` (set on the rebased classes only)
+    # prices its markup at ITS band's identification fuel — the year's
+    # EP-anchored delivered mean the per-year multiplier was measured
+    # against — instead of the ISO window anchor. Tranches without it keep
+    # the config anchor bit-identically (the array holds the same float64).
+    anchors = np.fromiter(
+        (
+            float(
+                a
+                if (a := getattr(g, "offer_margin_anchor", None)) is not None
+                else anchor
+            )
+            for g in generators
+        ),
+        dtype=float,
+        count=len(generators),
+    )
     fp = np.asarray(fuel_prices, dtype=float)
-    mc[rows, :] += markup_hr[rows, None] * (float(anchor) - fp[rows, :])
+    mc[rows, :] += markup_hr[rows, None] * (anchors[rows, None] - fp[rows, :])
+    n_override = int(np.sum(anchors[rows] != float(anchor)))
     logger.info(
         "gas offer net-revenue margin: %d tranches compressed at anchor "
-        "%.4f $/MMBtu (median fixed margin %.2f $/MWh, max %.2f)",
+        "%.4f $/MMBtu (median fixed margin %.2f $/MWh, max %.2f)%s",
         rows.size,
         float(anchor),
-        float(np.median(markup_hr[rows]) * float(anchor)),
-        float(markup_hr[rows].max() * float(anchor)),
+        float(np.median(markup_hr[rows] * anchors[rows])),
+        float((markup_hr[rows] * anchors[rows]).max()),
+        (f"; {n_override} tranches on per-class EP anchors" if n_override else ""),
     )
 
 
