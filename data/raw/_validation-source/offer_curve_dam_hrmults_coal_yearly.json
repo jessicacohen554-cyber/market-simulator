@@ -1,0 +1,297 @@
+{
+ "_provenance": {
+  "source": "ERCOT 60-Day DAM Disclosure Gen Resource Data raw parquets (slimmed 2026-07-22), delivery years 2023-2025, CLLIG (Coal and Lignite) energy-curve points, any Resource Status",
+  "method": "per-point mult = curve_price / (delivered_coal x base_HR(COAL)); econ_low rel<=0.33 / econ_high rel>=0.67 competitive body (< body_cap), per-resource median then capacity(HSL)-weighted p50; peak = mode-B per-resource top-of-curve incl. near-cap bids \u2014 the ERCOT-118 derivation per delivery YEAR on the coal fleet",
+  "basis": "delivered coal $/MMBtu the model dispatches on (COAL_PRICE_LIGNITE_BY_YEAR / COAL_PRICE_PRB_BY_YEAR), NOT Henry Hub: the EP gas-basis correction is gas-specific and has no coal analogue; what carries over is the divide-by-what-you-multiply principle (ERCOT-118 FINDING \u00a71)",
+  "rule23_citation": "derived from the raw disclosure on the ERCOT-122 charter's measurement question (reconciling FINDING-ercot112 \u00a76's ~$21 top submitted coal offer against the pooled summary's COAL_LIGNITE econ_high 2.856); no residual entered the derivation",
+  "committed_band": "ABSENT by data destruction, not by choice \u2014 identical cause to the ERCOT-118 CC tables: Min Gen Cost was dropped by the owner-ordered 2026-07-22 raw slimming, the parsed ercot_dam_offers.parquet was never committed, the free MIS path retains only ~2.3 years, and the credentialed archive was owner-declined.",
+  "econ_high_band": "DERIVED BUT NOT FLEET-REPRESENTATIVE: see each year's detail 'coverage' \u2014 only 21-47 % of fleet capacity submits any point above rel=0.67, so this p50 describes that subsample, not the class. econ_low and peak carry 100 % coverage.",
+  "peak_mode": "B",
+  "iso": "ERCOT"
+ },
+ "2023": {
+  "_reach": {
+   "offered_share_of_headroom": 0.1682,
+   "cc_offered_share_of_headroom": 0.6215,
+   "n_resources": 18
+  },
+  "COAL_LIGNITE": {
+   "econ_low": 1.366,
+   "econ_high": 2.848,
+   "peak": 3.105,
+   "peak_typical": 1.405
+  },
+  "_COAL_LIGNITE_detail": {
+   "base_hr": 10.341,
+   "delivered_fuel_usd_mmbtu": 1.45,
+   "n_resources": 18,
+   "n_points": 472238,
+   "coverage": {
+    "econ_low": 1.0,
+    "econ_high": 0.4683,
+    "peak": 1.0,
+    "peak_typical": 1.0
+   },
+   "usd_mwh_p50": {
+    "econ_low": 20.48,
+    "econ_high": 42.7,
+    "peak": 46.56,
+    "peak_typical": 21.07
+   },
+   "econ_low": {
+    "p25": 1.219,
+    "p50": 1.366,
+    "p75": 2.657
+   },
+   "econ_high": {
+    "p25": 1.511,
+    "p50": 2.848,
+    "p75": 2.987
+   },
+   "peak_full": {
+    "p25": 2.386,
+    "p50": 3.105,
+    "p75": 5.921
+   },
+   "peak_typical": {
+    "p25": 1.337,
+    "p50": 1.405,
+    "p75": 2.848
+   }
+  },
+  "COAL_PRB": {
+   "econ_low": 0.921,
+   "econ_high": 1.921,
+   "peak": 2.094,
+   "peak_typical": 0.948
+  },
+  "_COAL_PRB_detail": {
+   "base_hr": 10.341,
+   "delivered_fuel_usd_mmbtu": 2.15,
+   "n_resources": 18,
+   "n_points": 472238,
+   "coverage": {
+    "econ_low": 1.0,
+    "econ_high": 0.4683,
+    "peak": 1.0,
+    "peak_typical": 1.0
+   },
+   "usd_mwh_p50": {
+    "econ_low": 20.48,
+    "econ_high": 42.71,
+    "peak": 46.56,
+    "peak_typical": 21.08
+   },
+   "econ_low": {
+    "p25": 0.822,
+    "p50": 0.921,
+    "p75": 1.792
+   },
+   "econ_high": {
+    "p25": 1.019,
+    "p50": 1.921,
+    "p75": 2.015
+   },
+   "peak_full": {
+    "p25": 1.609,
+    "p50": 2.094,
+    "p75": 3.994
+   },
+   "peak_typical": {
+    "p25": 0.902,
+    "p50": 0.948,
+    "p75": 1.921
+   }
+  }
+ },
+ "2024": {
+  "_reach": {
+   "offered_share_of_headroom": 0.1844,
+   "cc_offered_share_of_headroom": 0.5941,
+   "n_resources": 16
+  },
+  "COAL_LIGNITE": {
+   "econ_low": 1.384,
+   "econ_high": 1.241,
+   "peak": 5.368,
+   "peak_typical": 1.387
+  },
+  "_COAL_LIGNITE_detail": {
+   "base_hr": 10.341,
+   "delivered_fuel_usd_mmbtu": 1.45,
+   "n_resources": 16,
+   "n_points": 489237,
+   "coverage": {
+    "econ_low": 1.0,
+    "econ_high": 0.2105,
+    "peak": 1.0,
+    "peak_typical": 1.0
+   },
+   "usd_mwh_p50": {
+    "econ_low": 20.75,
+    "econ_high": 18.61,
+    "peak": 80.49,
+    "peak_typical": 20.8
+   },
+   "econ_low": {
+    "p25": 1.129,
+    "p50": 1.384,
+    "p75": 1.529
+   },
+   "econ_high": {
+    "p25": 1.238,
+    "p50": 1.241,
+    "p75": 1.833
+   },
+   "peak_full": {
+    "p25": 1.541,
+    "p50": 5.368,
+    "p75": 5.923
+   },
+   "peak_typical": {
+    "p25": 1.319,
+    "p50": 1.387,
+    "p75": 1.507
+   }
+  },
+  "COAL_PRB": {
+   "econ_low": 1.003,
+   "econ_high": 0.9,
+   "peak": 3.892,
+   "peak_typical": 1.005
+  },
+  "_COAL_PRB_detail": {
+   "base_hr": 10.341,
+   "delivered_fuel_usd_mmbtu": 2.0,
+   "n_resources": 16,
+   "n_points": 489237,
+   "coverage": {
+    "econ_low": 1.0,
+    "econ_high": 0.2105,
+    "peak": 1.0,
+    "peak_typical": 1.0
+   },
+   "usd_mwh_p50": {
+    "econ_low": 20.74,
+    "econ_high": 18.61,
+    "peak": 80.49,
+    "peak_typical": 20.79
+   },
+   "econ_low": {
+    "p25": 0.819,
+    "p50": 1.003,
+    "p75": 1.109
+   },
+   "econ_high": {
+    "p25": 0.897,
+    "p50": 0.9,
+    "p75": 1.329
+   },
+   "peak_full": {
+    "p25": 1.117,
+    "p50": 3.892,
+    "p75": 4.294
+   },
+   "peak_typical": {
+    "p25": 0.956,
+    "p50": 1.005,
+    "p75": 1.092
+   }
+  }
+ },
+ "2025": {
+  "_reach": {
+   "offered_share_of_headroom": 0.161,
+   "cc_offered_share_of_headroom": 0.6775,
+   "n_resources": 12
+  },
+  "COAL_LIGNITE": {
+   "econ_low": 1.391,
+   "econ_high": 1.198,
+   "peak": 4.07,
+   "peak_typical": 1.455
+  },
+  "_COAL_LIGNITE_detail": {
+   "base_hr": 10.341,
+   "delivered_fuel_usd_mmbtu": 1.45,
+   "n_resources": 12,
+   "n_points": 379067,
+   "coverage": {
+    "econ_low": 1.0,
+    "econ_high": 0.28,
+    "peak": 1.0,
+    "peak_typical": 1.0
+   },
+   "usd_mwh_p50": {
+    "econ_low": 20.86,
+    "econ_high": 17.96,
+    "peak": 61.03,
+    "peak_typical": 21.82
+   },
+   "econ_low": {
+    "p25": 1.022,
+    "p50": 1.391,
+    "p75": 1.578
+   },
+   "econ_high": {
+    "p25": 1.15,
+    "p50": 1.198,
+    "p75": 1.518
+   },
+   "peak_full": {
+    "p25": 1.424,
+    "p50": 4.07,
+    "p75": 6.625
+   },
+   "peak_typical": {
+    "p25": 1.227,
+    "p50": 1.455,
+    "p75": 1.653
+   }
+  },
+  "COAL_PRB": {
+   "econ_low": 1.009,
+   "econ_high": 0.868,
+   "peak": 2.951,
+   "peak_typical": 1.055
+  },
+  "_COAL_PRB_detail": {
+   "base_hr": 10.341,
+   "delivered_fuel_usd_mmbtu": 2.0,
+   "n_resources": 12,
+   "n_points": 379067,
+   "coverage": {
+    "econ_low": 1.0,
+    "econ_high": 0.28,
+    "peak": 1.0,
+    "peak_typical": 1.0
+   },
+   "usd_mwh_p50": {
+    "econ_low": 20.87,
+    "econ_high": 17.95,
+    "peak": 61.03,
+    "peak_typical": 21.82
+   },
+   "econ_low": {
+    "p25": 0.741,
+    "p50": 1.009,
+    "p75": 1.144
+   },
+   "econ_high": {
+    "p25": 0.834,
+    "p50": 0.868,
+    "p75": 1.1
+   },
+   "peak_full": {
+    "p25": 1.033,
+    "p50": 2.951,
+    "p75": 4.803
+   },
+   "peak_typical": {
+    "p25": 0.889,
+    "p50": 1.055,
+    "p75": 1.198
+   }
+  }
+ }
+}
