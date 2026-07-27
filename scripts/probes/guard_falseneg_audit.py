@@ -383,7 +383,7 @@ def tight_hours_by_day(iso: str, years: list[int], day0: pd.Timestamp, n_days: i
                 )
         net = net.to_numpy(dtype=float)
         lt = pd.DatetimeIndex(df["Local time"])
-        valid = lt.notna().to_numpy() & np.isfinite(net)
+        valid = np.asarray(lt.notna()) & np.isfinite(net)
         v = net[valid]
         # within-year percentile rank in [0, 1]
         rank = np.empty(v.size, dtype=float)
@@ -443,9 +443,64 @@ def placebo_draws(
 
 
 # --------------------------------------------------------------------------- #
+# POST-HOC diagnostic (added AFTER the pre-registered run; not a verdict       #
+# input — pjm-131 §4 / pjm-132 §4 site-disclosure precedent)                   #
+# --------------------------------------------------------------------------- #
+def placement_null(
+    ws: WindowSet,
+    mask: np.ndarray,
+    year: int,
+    cum_tight: np.ndarray,
+    cum_hours: np.ndarray,
+    rng: np.random.Generator,
+    draws: int,
+) -> tuple[float, float, float]:
+    """Length-preserving placement null for the D3 statistic (POST-HOC).
+
+    The pre-registered D3 placebo matches GW-days but not window LENGTH, and a
+    long window's tight share regresses toward the unconditional quartile rate
+    mechanically. This null isolates within-year TIMING from length: the same
+    windows (same in-year span lengths, same MW) are re-placed uniformly at
+    random inside the year and the MW-weighted tight share re-scored. Pure
+    economic layup should sit BELOW its placement null (laid up in cheap
+    periods); a set indistinguishable from or above it is not timed toward
+    cheap hours at all. Returns (p5, p50, p95) over ``draws`` placements.
+    """
+    y0, y1 = year_span(ws, year)
+    a = np.maximum(ws.a_day[mask], y0)
+    b = np.minimum(ws.b_day[mask], y1)
+    live = b >= a
+    ln = (b - a + 1)[live]
+    mw = ws.mw[mask][live]
+    if ln.size == 0:
+        return float("nan"), float("nan"), float("nan")
+    shares = []
+    for _ in range(draws):
+        s = rng.integers(y0, y1 - ln + 2)
+        t = (cum_tight[s + ln] - cum_tight[s]) * mw
+        h = (cum_hours[s + ln] - cum_hours[s]) * mw
+        tot = float(h.sum())
+        shares.append(float(t.sum()) / tot if tot > 0 else np.nan)
+    shares = [x for x in shares if np.isfinite(x)]
+    if not shares:
+        return float("nan"), float("nan"), float("nan")
+    return (
+        float(np.percentile(shares, 5)),
+        float(np.percentile(shares, 50)),
+        float(np.percentile(shares, 95)),
+    )
+
+
+# --------------------------------------------------------------------------- #
 # driver                                                                       #
 # --------------------------------------------------------------------------- #
-def run_iso(iso: str, years: list[int], draws: int, seed: int) -> dict:
+def run_iso(
+    iso: str,
+    years: list[int],
+    draws: int,
+    seed: int,
+    posthoc_placement: bool = False,
+) -> dict:
     """All three measurements + the pre-registered verdict for one ISO."""
     iso = iso.upper()
     print(f"\n{'=' * 78}\n===== {iso} — merit-order guard false-negative audit =====")
@@ -581,6 +636,34 @@ def run_iso(iso: str, years: list[int], draws: int, seed: int) -> dict:
         )
         d3_fired.append(d3_fire)
 
+        if posthoc_placement:
+            prng = np.random.default_rng([seed + 1, iso_idx, year])
+            dp5, dp50, dp95 = placement_null(ws, dropped, year, cum_t, cum_h, prng, draws)
+            kp5, kp50, kp95 = placement_null(ws, kept, year, cum_t, cum_h, prng, draws)
+            pos_d = (
+                "ABOVE p95" if ts_drop > dp95
+                else "below p5" if ts_drop < dp5
+                else "inside band"
+            )
+            pos_k = (
+                "ABOVE p95" if ts_kept > kp95
+                else "below p5" if ts_kept < kp5
+                else "inside band"
+            )
+            yr["posthoc_placement_null"] = {
+                "dropped": {"actual": round(ts_drop, 4), "p5": round(dp5, 4),
+                            "p50": round(dp50, 4), "p95": round(dp95, 4),
+                            "position": pos_d},
+                "kept": {"actual": round(ts_kept, 4), "p5": round(kp5, 4),
+                         "p50": round(kp50, 4), "p95": round(kp95, 4),
+                         "position": pos_k},
+            }
+            print(
+                f"        POST-HOC placement null (length-preserving): "
+                f"dropped {ts_drop:.3f} vs [{dp5:.3f}, {dp50:.3f}, {dp95:.3f}] {pos_d}; "
+                f"kept {ts_kept:.3f} vs [{kp5:.3f}, {kp50:.3f}, {kp95:.3f}] {pos_k}"
+            )
+
         top_cls = sorted(by_class.items(), key=lambda kv: -kv[1]["dropped_gwd"])[:3]
         cls_txt = ", ".join(f"{c} {v['dropped_gwd']:.0f}" for c, v in top_cls)
         print(
@@ -642,6 +725,13 @@ def main() -> int:
     ap.add_argument("--placebo-draws", type=int, default=PLACEBO_DRAWS)
     ap.add_argument("--seed", type=int, default=SEED)
     ap.add_argument("--json", type=Path, default=None)
+    ap.add_argument(
+        "--posthoc-placement",
+        action="store_true",
+        help="POST-HOC diagnostic added AFTER the pre-registered run: score the "
+        "D3 statistic against a length-preserving random-placement null. Never "
+        "a verdict input; disclosed at the site per pjm-131 §4 precedent.",
+    )
     args = ap.parse_args()
 
     years = sorted(args.years)
@@ -650,7 +740,10 @@ def main() -> int:
             "rule 22 [R-HOLDOUT]: this probe scores 2023-2025 only; "
             f"refused years {sorted(set(years) - {2023, 2024, 2025})}"
         )
-    results = [run_iso(i.upper(), years, args.placebo_draws, args.seed) for i in args.iso]
+    results = [
+        run_iso(i.upper(), years, args.placebo_draws, args.seed, args.posthoc_placement)
+        for i in args.iso
+    ]
 
     print(f"\n{'=' * 78}\n===== PER-ISO VERDICTS (pre-registered; unmet-means-dead) =====")
     for r in results:
