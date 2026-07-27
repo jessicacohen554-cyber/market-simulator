@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-27-nyiso-87-arm-d",
+  "label": "nyiso 87 arm D td-loss probe",
+  "date": "2026-07-27",
+  "shorthand": "nyiso-87-arm-d",
+  "definition": "(PROBE \u2014 DIAGNOSTIC ONLY, NOT a keeper candidate) nyiso-87 ARM D: td_loss_factor 0.0251 (the mean of the nyiso-86 \u00a72.1 2.08/2.94 % final-vintage demand-basis wedge) applied ALONE on the keeper recipe, to bound how much of the C1 cell is a level effect. Demand rises 147.05 -> 150.74 TWh. It buys a lot: C1 PASSES, and C3c improves more than any other arm (2025 model tail 9h -> 18h against 42h actual, 0.21x -> 0.43x; 2023 clears entirely). BUT C5a BREAKS \u2014 2025 CO2 goes +8.1 % -> +14.2 % vs eGRID, out of the commercial band and a MODEL MISS, with 2023/2024 also climbing to +7.4/+7.5 %. That failure is the point: if the extra 3.7 TWh were real load the NYISO fleet serves, burning it would not push measured-rate CO2 4 pp past its band. The emissions check is INDEPENDENT physical evidence for what the Gold Book already says \u2014 docs/nyiso-td-loss-resolution-2026-06.md: Table I-2 Note 1 makes NYCA Annual Energy loss-INCLUSIVE and 2023's 147,050 GWh equals the EIA-930 demand the model serves to the GWh, so the served demand ALREADY carries the loss volume and a gross-up double-counts it. The wedge is real; T&D losses are not its identification. Compare arm C, which closes C1 on commitment physics with td_loss_factor still 0.0 and leaves C5a at +7.7 %. NOTE: this bundle is the RE-RUN after the nyiso-87 fix to the demand-threading seam \u2014 the first attempt solved on raw demand while run_config recorded the factor armed, and was deleted rather than registered. Determination NOT-YET.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-27-nyiso-87-arm-d.js",
+  "bundle": "results/calibration/nyiso87_d_wedge_probe"
+}
