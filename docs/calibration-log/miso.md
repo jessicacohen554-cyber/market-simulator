@@ -1489,3 +1489,110 @@ sign (floors go **up**); (3) stamp a `campd_vintage` provenance header into ever
 derived artifact, which would have answered this session in one `head -1`.
 
 Next number: **miso-96.**
+
+## 2026-07-27 — miso-96: the C7 COAL_PRB failure is the miso-66 take-or-pay discount, PROVEN by A/B — but removing it overshoots; keeper UNCHANGED, CI still blocked on a verdict-text decision
+
+**Lane:** Part 1 of the miso-96 handoff (unblock the repo-wide CI red).
+**Keeper UNCHANGED — `2026-07-25-miso-88-egrid-hr`.** Registered arm:
+`2026-07-27-miso-96-sunkfixed-takeorpay` (MISO 2023/2024/2025, ONE bundle,
+rule 16), **determination NOT-YET, REJECTED — not promoted.** Full evidence:
+`results/calibration/FINDING-miso96-coal-prb-offpeak-2026-07.md`.
+
+### The handoff's hypothesis is refuted, and the real mechanism is dated
+
+The handoff directed the search at "the floors/must-run/take-or-pay path" under
+rule 17 `[R-FLOOR-WINDOW]`. **There is no floor.** The keeper's own D-2 attributes
+0.20–0.36 % of MISO coal energy to any mechanism (`reliability_floor` alone, sole
+entry, all three years). The overnight hold is *economic*.
+
+`cv_ratio` across every MISO bundle carrying a D-1 artifact has a clean
+discontinuity at **miso-66**: `miso65_outage_regen` 0.880/1.036/0.470 →
+`miso66_coalconduct` 0.462/0.465/0.347, and every later bundle sits at ~0.45.
+The miso-65→66 config diff is one delta — `coal_committed_takeorpay_regulated`
+armed, which per its own design doc moves **RE PRB committed 9,403 MW from
+$28.09 → $5.07/MWh**.
+
+The defect is dimensional: a take-or-pay contract is an **accounting-period
+tonnage obligation** — sunk in aggregate, hence a **fixed** cost — but it is
+implemented as an unconditional **per-hour marginal** price discount. A plant
+that over-fulfils its contract buys its marginal ton at spot, so the contract
+should not lower its offer at all. Corroborating: model load-weighted night
+(HE0-3) price runs **+$7.77 / +$6.49 / +$6.89** above actual RT (body-censored)
+in 2023/2024/2025 — year-stable, not summer-specific — and `COAL_PRB` is the
+**only** fossil class the model over-produces overnight while under-producing
+every other one.
+
+### The A/B proves the attribution and refutes its own remedy
+
+New default-off gate `coal_committed_takeorpay_sunk_fixed` (removes the
+committed-band discount; `_mustrun` keeps the contract, rule 19 `[R-ONE-MECH]`).
+Single delta on the miso-93 HEAD-envelope control; hydro and wind byte-identical,
+so the blast radius is the coal/gas merit order alone.
+
+| C7 D-1 `COAL_PRB` | control | arm |
+|---|---|---|
+| 2023 | 0.453 FAIL | **0.792 PASS** |
+| 2024 | 0.441 FAIL | **0.985 PASS** |
+| 2025 | 0.364 FAIL | 0.438 FAIL |
+
+Prices improve too (C3a-2025 −16.6 → −15.9 %, C3b-2025 NRMSE 0.208 → 0.203, DA
+diagnostics 2023 −7.2 → −3.5 %, 2024 −11.0 → −5.3 %). **But C1 fuel-mix FAILS**
+(COAL_BIT −18.26/−19.11 TWh, COAL_PRB −8.34/−13.22 TWh) **and C5a CO2 FAILS**
+(−10.0 %/−11.1 %). Three fails against the keeper's one — strictly worse, so the
+arm is rejected.
+
+**Why, and it is informative:** the discount is doing two jobs. (1) keeping the
+unit *committed* — measured and real (SOM Table 7: regulated utilities
+self-commit 53–56 % of coal starts); (2) making the whole committed band
+*price-insensitive in every hour* — the category error. Deleting the discount
+deletes both, so 18–19 TWh of BIT coal is displaced wholesale.
+
+### The lane this identifies (NOT built)
+
+Separate the two jobs with a **minimum-take constraint** over the contract's
+accounting period: the unit must take the tonnage (stays committed) but chooses
+*when* (still de-loads overnight), and the obligation is priced by the
+constraint's **dual** — non-zero only in the hours it binds, which is exactly the
+window rule 17 demands, with zero fitted parameters. Two hard constraints make it
+multi-session: it is an LP **constraint block** (rule 2 `[R-VECTOR]`), and the
+tonnage **must not** come from the same year's measured receipts — that would pin
+annual coal to ≈85 % of actual, which rule 13 `[R-MEASURED]` forbids.
+
+### 2025, and what is NOT licensed
+
+2025 still fails at 0.438 (model off-peak CV 0.033 vs measured 0.075): the fleet
+barely cycles even with the subsidy gone, in the one year the standing evidence
+says the system is ~10 GW tighter at summer peak than the model can see
+(FINDING-miso89 §2). That is the already-adjudicated, **data-blocked**
+outage-grain gap, not a new phenomenon. NOT re-attacked with a second mechanism
+(rule 19); NOT ledgered — C7 is protective and hard, and the ledgered budget is
+3/3 saturated regardless.
+
+`coal_committed_takeorpay_sunk_fixed` stays **default-off, probe-refuted-alone**,
+on the same footing as the other adjudicated default-off probes in CLAUDE.md. It
+is not a fitted knob (it sizes nothing), so rule 26 `[R-DELETE]` does not require
+removal, and it is the control arm the minimum-take lane will need.
+
+### CI status — STILL RED, and it is an owner decision
+
+The E5 failure is unchanged: the miso-88 sidecar asserts CALIBRATED-WITH-CAVEATS
+while the live verdict is NOT-YET (rubric v2.8 made a real, previously-invisible
+COAL_PRB failure visible — rule 14 `[R-ACCURATE]`; the scorer got sharper, the
+keeper did not get worse). This session did not manufacture a pass, and the
+honest live value is NOT-YET. Restating the keeper's determination is a
+governance statement in an owner-decision lane, so the shards were **not**
+committed and the sidecar was **not** edited. S1 (all seven status shards stale)
+clears with one `build_status.py` run the moment that decision is taken.
+
+Cross-ISO note, reported not actioned: the same rubric v2.8 widening flips
+**ERCOT** C7 shape PASS → FAIL (COAL_LIGNITE 2023, r 0.745, cv_ratio 0.294 — the
+Oak Grove ceiling pin), dropping its grade 6 → 5 target-grade. ERCOT's keeper
+text already says NOT-YET so CI does not fail on it.
+
+* Rule 22 honoured: 2023–2025 only, no marker, freeze active.
+* Solve hygiene: all four clean partitions regenerated first; staged
+  one-year-per-process `--reuse-solved` chain (14.34 GB single-year peak on a
+  15 GB box); `system_2023`/`system_2024` verified byte-identical across the
+  chain; logs audited — seasonal CIL/CEL caps loaded on 5 zone groups every year
+  (miso-93 correction 1 respected).
+* Next number: **miso-97.**

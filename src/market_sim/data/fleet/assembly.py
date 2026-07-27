@@ -1429,6 +1429,9 @@ def build_dispatch_fleet(
                 regulated_plants=(
                     eia860_selfcommit_scope_plants() if _reg_gate else None
                 ),
+                committed_takeorpay_sunk_fixed=getattr(
+                    config, "coal_committed_takeorpay_sunk_fixed", False
+                ),
             )
             for g in dispatch_fleet
         ]

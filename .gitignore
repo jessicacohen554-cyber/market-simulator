@@ -298,6 +298,14 @@ results/calibration/*_repro_A/
 results/calibration/caiso122_control_A/
 results/calibration/caiso122_headctl_2025/
 results/calibration/caiso122_nooutage_2025/
+# miso-96 staged --reuse-solved chain legs: the 15 GB box OOMs a 3-year
+# single-process MISO solve (14.34 GB single-year peak), so the arm is built one
+# fresh year per process and each leg byte-copies the prior years forward. Only
+# the final full-span bundle (results/calibration/miso96_sunkfixed/) is a
+# deliverable and gets registered (rule 16 [R-ALLYEARS] — one bundle, all three
+# years); the legs are scaffolding, regenerable from their run_config.json.
+results/calibration/miso96_sunkfixed_y23/
+results/calibration/miso96_sunkfixed_y2324/
 results/calibration/caiso122_prelayup_2025/
 results/calibration/caiso106_binding_*/
 results/calibration/*_y20[0-9][0-9]/
