@@ -216,22 +216,29 @@ def _log_reserve_coopt(
             int(elig2d[1].sum()) if elig2d.shape[0] > 1 else 0,
         )
         if iso == "NYISO" and design.online_gated is not None:
-            # The two online-gating mechanisms are mutually exclusive (rule 19),
-            # so name the one that is actually armed — logging "synchronised
-            # reserve ON" under the in-city obligation would point a reader at
-            # a flag that CANNOT be set in the same run.
+            # Name the online-gating mechanism(s) actually armed — the
+            # obligation and path-A synch are mutually exclusive (rule 19),
+            # the published-spin gate composes with the obligation, and
+            # logging the wrong flag would point a reader at one that CANNOT
+            # be set in the same run.
             _obligation = bool(
                 getattr(config, "nyiso_incity_commitment_obligation", False)
             )
+            _spin_online = bool(getattr(config, "nyiso_spin_reserve_online", False))
+            _names = []
+            if _obligation:
+                _names.append("in-city J/K commitment obligation")
+            if _spin_online:
+                _names.append("published-spin online gate")
             logger.info(
                 "  NYISO %s ON: online-gated %s class (rho=%.2f), "
                 "%d gated reserve family/ies",
+                " + ".join(_names) if _names else "synchronised reserve",
                 (
-                    "in-city J/K commitment obligation"
+                    "in-pocket obligation"
                     if _obligation
-                    else "synchronised reserve"
+                    else ("quick-start spinning" if _spin_online else "spinning")
                 ),
-                "in-pocket obligation" if _obligation else "spinning",
                 float(design.online_rho),
                 int((rclass == 2).sum()),
             )

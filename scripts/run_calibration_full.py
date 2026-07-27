@@ -2902,6 +2902,8 @@ def solve_and_persist(
     nyiso_synchronised_reserve: bool | None = None,
     nyiso_li_locational_reserve: bool | None = None,
     nyiso_incity_commitment_obligation: bool | None = None,
+    nyiso_east_reserve_families: bool | None = None,
+    nyiso_spin_reserve_online: bool | None = None,
     nyiso_spin_headroom_frac: float | None = None,
     nyiso_dynamic_reserve_requirements: bool | None = None,
     nyiso_hydro_reserve_eligible: bool | None = None,
@@ -3733,6 +3735,14 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_incity_commitment_obligation=nyiso_incity_commitment_obligation
             )
+        if nyiso_east_reserve_families is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_east_reserve_families=nyiso_east_reserve_families
+            )
+        if nyiso_spin_reserve_online is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_spin_reserve_online=nyiso_spin_reserve_online
+            )
         if nyiso_spin_headroom_frac is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_spin_headroom_frac=nyiso_spin_headroom_frac
@@ -4226,6 +4236,8 @@ def solve_and_persist(
             nyiso_synchronised_reserve=nyiso_synchronised_reserve,
             nyiso_li_locational_reserve=nyiso_li_locational_reserve,
             nyiso_incity_commitment_obligation=nyiso_incity_commitment_obligation,
+            nyiso_east_reserve_families=nyiso_east_reserve_families,
+            nyiso_spin_reserve_online=nyiso_spin_reserve_online,
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
             nyiso_dynamic_reserve_requirements=nyiso_dynamic_reserve_requirements,
             nyiso_hydro_reserve_eligible=nyiso_hydro_reserve_eligible,
@@ -4927,6 +4939,8 @@ def solve_and_persist(
         "nyiso_synchronised_reserve": nyiso_synchronised_reserve,
         "nyiso_li_locational_reserve": nyiso_li_locational_reserve,
         "nyiso_incity_commitment_obligation": nyiso_incity_commitment_obligation,
+        "nyiso_east_reserve_families": nyiso_east_reserve_families,
+        "nyiso_spin_reserve_online": nyiso_spin_reserve_online,
         "nyiso_spin_headroom_frac": nyiso_spin_headroom_frac,
         "nyiso_dynamic_reserve_requirements": nyiso_dynamic_reserve_requirements,
         "nyiso_hydro_reserve_eligible": nyiso_hydro_reserve_eligible,
@@ -9448,6 +9462,36 @@ def main() -> None:
         "(unset) keeps the base config value (off).",
     )
     parser.add_argument(
+        "--nyiso-east-reserve-families",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NYISO published EAST spin_10 (330 MW) + total_30 (1,200 MW) "
+        "reserve families - the nyiso-84 rule-14 omission fix, one tier up "
+        "from the Zone-K one: only the EAST 10-minute-total row (1,200 MW / "
+        "$775) of the three printed EAST rows in the Locational Reserve "
+        "Requirements posting was represented. Demand-curve values pinned "
+        "from Ancillary Services Manual sec 6.8 items 2 and 12: BOTH $40/MW "
+        "(NOT the $775 of item 7, the 10-minute total; $25 before the "
+        "July-2021 procurement enhancements). Requires --energy-reserve-coopt; "
+        "NYISO-only. Default (unset) keeps the base config value (off).",
+    )
+    parser.add_argument(
+        "--nyiso-spin-reserve-online",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NYISO online-gated PUBLISHED spinning families (nyiso-84 "
+        "mechanism arm): re-classes nyca_10min_spin (655 MW, $775) - and "
+        "east_10min_spin (330 MW, $40) when --nyiso-east-reserve-families "
+        "adds it - onto the ONLINE-gated reserve class (R <= rho * sum online "
+        "quick-start P), the same class-2 machinery the in-city obligation "
+        "and path A use. Driver: the product definition - spinning reserve "
+        "is synchronized supply, so idle capacity backs none of it. Mutually "
+        "exclusive with --nyiso-synchronised-reserve (hard error: same "
+        "phenomenon); composes with --nyiso-incity-commitment-obligation. "
+        "Requires --energy-reserve-coopt; NYISO-only. Default (unset) keeps "
+        "the base config value (off).",
+    )
+    parser.add_argument(
         "--nyiso-spin-headroom-frac",
         type=float,
         default=None,
@@ -10232,6 +10276,8 @@ def main() -> None:
         nyiso_synchronised_reserve=args.nyiso_synchronised_reserve,
         nyiso_li_locational_reserve=args.nyiso_li_locational_reserve,
         nyiso_incity_commitment_obligation=args.nyiso_incity_commitment_obligation,
+        nyiso_east_reserve_families=args.nyiso_east_reserve_families,
+        nyiso_spin_reserve_online=args.nyiso_spin_reserve_online,
         nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,
         nyiso_dynamic_reserve_requirements=args.nyiso_dynamic_reserve_requirements,
         nyiso_hydro_reserve_eligible=args.nyiso_hydro_reserve_eligible,
