@@ -30,6 +30,36 @@ three-year gap table lives in the pjm-127 finding. Findings:
 > was changed in response to those numbers; this banner is the only edit.
 > The memo is live and awaits the owner's decision.
 
+> **DECISION — AUTHORIZED WITH AN AMENDMENT (owner, 2026-07-27; executed by
+> pjm-132).** The owner authorized the re-derivation, in these words: *"I
+> approve a re-derivation as a bundle to run, but keep the current config as
+> default unless seasonal is new keeper."*
+>
+> **What is authorized:** the within-season re-derive of BOTH surfaces as one
+> definitional vintage (§2), the fixed season definition (§3), and the staged
+> Stage-1 → Stage-2 sequence with the pre-registered gates and refutation
+> signature of §4 — **unchanged**. §4's kill criteria are inherited verbatim;
+> nothing in §1–§6 was rewritten in response to this decision.
+>
+> **The amendment — §2's file-swap clause is superseded.** §2 proposed that
+> "the live filenames carry the new vintage" with the within-year JSONs
+> retired to a `-withinyear-2026-07` suffix, which would make within-season
+> the DEFAULT on merge. The owner's term reverses that: the **within-year
+> surfaces remain the live default and keep their filenames**, the
+> within-season vintage is written to **new, separately-named artifacts**, and
+> the whole family is selected by a **default-OFF `ScenarioConfig` gate**
+> (registry-visible, rule 24 `[R-REGISTRY]`) that switches the JSON vintage
+> and the solve-time seasonal binning **together**. The §2 vintage guard is
+> kept and strengthened to that pairing: an armed gate with a within-year JSON
+> — or an unarmed gate with a within-season JSON — hard-fails the solve, so a
+> half-updated state still cannot silently mismeasure.
+>
+> **Consequence:** every existing keeper and forecast run is byte-identical at
+> the default, the A/B arm is the flag armed, and the default flips only if
+> the owner promotes the seasonal arm to keeper (`keepers.json` is owner-only,
+> as always). This is a strictly more conservative arrangement than §2's, and
+> it does not touch any §4 gate.
+
 ---
 
 ## 1. The definitional case — why within-season is the better definition of tightness state
