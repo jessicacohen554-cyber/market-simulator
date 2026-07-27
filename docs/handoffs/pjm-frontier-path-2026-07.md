@@ -368,7 +368,25 @@ and this lane closes — **either outcome is ledger progress.**
       staged sequence in memo §4 runs (no-LP pre-check first, then the A/B
       chain, rules 12/14/16); if declined, the lever is formally blocked on
       an owner decision and the ledger records it as such.
-4. **Frontier is NOT ready — and as of 2026-07-26 for exactly one reason.**
+3d. **pjm-130 (2026-07-27) — the re-tune opened; no solve spent.** Gate 1
+   (C1-2023 CC_REGULAR) is **displacement, with a real lever**: 99.6 % of
+   CC_REGULAR's gross hourly loss lands in hours the guard-returned supply rose
+   (r = −0.369), and the returned classes now overshoot the **meter** —
+   2023 CC_CHP **+2.54 TWh (+41 %)**, ST_GAS **+1.72 TWh (+19 %)** — while
+   CT_PEAKER *improves* to +0.12. That is the same merit-ownership miss pjm-122
+   named, so **gates 1 and 2 are one stratum** and gate 1 cannot be closed
+   independently while gate 2's measured route is owner-blocked. Gate 3 is
+   ledgered, root cause out of reach (both framings closed; the 5.0–5.6×R floor
+   is 45 % tariff-protected Non-Sync Primary reserve, so a MIP would not close
+   it). Shipped instead: gate 1's **prerequisite** — pjm-129 §6's negative
+   committed metered volume (`classFull.CT_CHP = −0.3726 TWh`) reproduced,
+   localized and fixed (`03e105f`); `--btm-backfill-year` had repaired the
+   subtrahend only. 2023/2024 byte no-ops, 2025 CT_CHP → **+1.4653**, no C1
+   verdict change.
+   `results/calibration/FINDING-pjm130-gate1-and-bench-symmetry-2026-07.md`,
+   `docs/handoffs/pjm-130-retune-charter-2026-07.md`.
+
+4. **Frontier is NOT ready — and as of 2026-07-27 for exactly one reason.**
    Lane 1 is complete (pjm-124/125), Lane 2's commitment-status half is
    terminal (pjm-128, blocked on non-public data — the bar's own second
    clause), and the season half is measured and settled (pjm-126/127). What
