@@ -8,6 +8,7 @@ its own producing script under `scripts/`, all confirmed by `grep -rl
 | File(s) | Producing script |
 |---|---|
 | `bin_assignments_{CAISO,MISO,NEISO,NYISO}.csv` | `scripts/export_iso_bin_assignments.py` — a committed, reviewable snapshot of the per-plant bins `fleet.fleet_to_bins` synthesizes at runtime for non-ERCOT ISOs (ERCOT has a hand-curated `data/raw/reference/custom-bin-assignments.csv` instead) |
+| `campd_ct_heat_rates_NYISO.csv` (+ `_units.csv`) | `scripts/data/derive_campd_ct_heat_rates.py` — per-plant CAMPD-measured **loaded** heat rate (MMBtu/net MWh) for the `CT_PEAKER` class, the rule-14 replacement for eGRID's plant-average annual rate; method and provenance in `SOURCES_campd_ct_heat_rates.md` |
 | `campd_ct_run_lengths_NYISO.csv` | `scripts/derive_campd_ct_run_lengths.py` |
 | `campd_ramp_envelopes_CAISO.csv` | `scripts/derive_campd_ramp_envelopes.py` |
 | `cc_capacity_reconcile_{ERCOT,PJM}.csv` | `scripts/derive_cc_capacity_reconcile.py` |

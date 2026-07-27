@@ -740,6 +740,7 @@ from market_sim.data.fleet.campd_bins import (  # noqa: F401
     load_campd_ramp_envelopes,
     load_plant_registry,
     load_plant_tranche_config,
+    measured_ct_heat_rates,
     oil_primary_bin_plants,
     oil_primary_ct_plants_from_eia860,
     st_gas_intermediate_plants,

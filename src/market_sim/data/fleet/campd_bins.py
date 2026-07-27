@@ -241,6 +241,35 @@ def campd_ct_run_lengths(iso: str) -> dict[int, float]:
     }
 
 
+@lru_cache(maxsize=8)
+def measured_ct_heat_rates(iso: str) -> dict[int, float]:
+    """Return ``{plant_code: measured loaded heat rate}`` for an ISO's CT_PEAKERs.
+
+    Reads the committed CAMPD-measured artifact
+    (``scripts/data/derive_campd_ct_heat_rates.py`` →
+    ``data/raw/_processed-legacy/campd_ct_heat_rates_<ISO>.csv``): per-plant
+    MMBtu per **net** MWh at load, pooled 2023-2025 over CAMPD ``unitType ==
+    'Combustion turbine'`` units. It replaces the eGRID plant-average ANNUAL
+    heat rate the fleet loader otherwise gives a peaker, which is neither a
+    loaded rate nor — at a mixed steam/CT facility — the right technology's
+    rate (CLAUDE.md rule 14 [R-ACCURATE]).
+
+    Only ``flag == "ok"`` rows are returned: the derive marks any plant outside
+    the physical simple-cycle band as a meter defect rather than applying it.
+    Empty dict when the ISO has no artifact, which leaves every plant on its
+    eGRID rate — never a silent hand number (rule 24 [R-FROZEN-DERIVE]).
+    """
+    path = PROCESSED_DIR / f"campd_ct_heat_rates_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path, usecols=["plant_code", "heat_rate", "flag"])
+    return {
+        int(r.plant_code): float(r.heat_rate)
+        for r in df.itertuples(index=False)
+        if str(r.flag) == "ok" and float(r.heat_rate) > 0.0
+    }
+
+
 # Model plant_group -> CAMPD ramp-envelope family bucket. Mirrors the derive
 # script's unitType bucketing (scripts/data/derive_campd_ramp_envelopes.py) so a
 # mixed facility (CC block + standalone peakers) is enveloped per family.

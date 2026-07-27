@@ -839,6 +839,7 @@ def _rows_to_generators(
     iso: str,
     iso_config: ISOConfig | None,
     apply_cc_summer_guard: bool = True,
+    measured_ct_heat_rates: bool = False,
 ) -> list[Generator]:
     """Convert a normalized generator DataFrame into :class:`Generator` objects.
 
@@ -855,6 +856,11 @@ def _rows_to_generators(
     reads the derive's own table, so guarding the derive's input would make the
     demonstrated-peak table self-referential (a plant restored to its peak would
     then read as "at capacity" and drop from the next re-derive).
+
+    ``measured_ct_heat_rates`` (``ScenarioConfig.measured_ct_heat_rates``)
+    swaps the eGRID plant-average annual heat rate for the CAMPD-measured
+    LOADED rate on CT_PEAKER rows the artifact covers — see the row loop below
+    and :func:`market_sim.data.fleet.campd_bins.measured_ct_heat_rates`.
     """
     if "status" in df.columns:
         status = df["status"].astype(str).str.strip().str.upper()
@@ -864,6 +870,17 @@ def _rows_to_generators(
     # CEMS facilities (Riverside 55641). Single seam: every fleet read path — the
     # canonical snapshot, the per-year vintages, the mothball re-carry — lands here.
     df = _apply_egrid_boundary_hr_repairs(df)
+
+    # Measured CT loaded heat rates (config.measured_ct_heat_rates). Resolved
+    # once here rather than in the row loop; empty when the flag is off or the
+    # ISO has no committed artifact, in which case every row keeps its eGRID
+    # rate. Applied INSIDE the loop (not as a frame-level repair like the
+    # boundary fix above) because it is class-scoped: only a row that resolves
+    # to CT_PEAKER may take it, so a mixed steam/CT facility's boilers keep the
+    # eGRID plant average while its turbines take their own measured rate.
+    ct_heat_rates: dict[int, float] = (
+        _pkg_ns().measured_ct_heat_rates(iso) if measured_ct_heat_rates else {}
+    )
 
     records: list[dict] = []
     # Per-plant EIA-860 nameplate sum over merchant-CC generators, for the
@@ -945,6 +962,18 @@ def _rows_to_generators(
                     group = _CHP_GROUP_FOR.get(group, group)
         else:
             group = ""
+
+        # The measured loaded heat rate wins over the eGRID plant-average
+        # annual rate assigned above (rule 14 [R-ACCURATE]): eGRID's figure is
+        # an annual average, so it blends start / part-load / shutdown fuel
+        # into the number that sets a peaker's offer, and it is published
+        # per-PLANT, so at a mixed facility it is not even the right
+        # technology's rate. Gated on ``group`` — resolved just above — so a
+        # mixed plant's steam and CC rows are untouched.
+        if ct_heat_rates and group == "CT_PEAKER":
+            measured_hr = ct_heat_rates.get(plant_code)
+            if measured_hr is not None:
+                heat_rate = measured_hr
 
         record = {
             "plant_id": plant_id,
@@ -1088,6 +1117,7 @@ def _load_fleet_from_parquet(
     iso_config: ISOConfig | None,
     year: int | None = None,
     apply_cc_summer_guard: bool = True,
+    measured_ct_heat_rates: bool = False,
 ) -> list[Generator] | None:
     """Load an ISO's fleet from the committed EIA-860 generator parquet.
 
@@ -1114,7 +1144,11 @@ def _load_fleet_from_parquet(
     df["chp"] = df["plant_id"].map(_chp_by_plant(parquet_path.parent, year)).fillna("N")
 
     generators = _rows_to_generators(
-        df, iso, iso_config, apply_cc_summer_guard=apply_cc_summer_guard
+        df,
+        iso,
+        iso_config,
+        apply_cc_summer_guard=apply_cc_summer_guard,
+        measured_ct_heat_rates=measured_ct_heat_rates,
     )
     if not generators:
         logger.warning("EIA-860 parquet has no generators for %s", iso)
@@ -1192,6 +1226,7 @@ def _load_fleet_from_clean(
     data_dir: Path,
     year: int | None = None,
     apply_cc_summer_guard: bool = True,
+    measured_ct_heat_rates: bool = False,
 ) -> list[Generator] | None:
     """Load an ISO's fleet from the curated clean ``fleet`` registry.
 
@@ -1214,7 +1249,11 @@ def _load_fleet_from_clean(
 
     normalized = _clean_fleet_to_normalized(df.copy(), data_dir, year)
     generators = _rows_to_generators(
-        normalized, iso, iso_config, apply_cc_summer_guard=apply_cc_summer_guard
+        normalized,
+        iso,
+        iso_config,
+        apply_cc_summer_guard=apply_cc_summer_guard,
+        measured_ct_heat_rates=measured_ct_heat_rates,
     )
     if not generators:
         logger.warning(
@@ -1328,6 +1367,7 @@ def load_fleet_from_csv(
     data_dir: Path | None = None,
     year: int | None = None,
     apply_cc_summer_guard: bool = True,
+    measured_ct_heat_rates: bool = False,
 ) -> list[Generator]:
     """Load an ISO's thermal generation fleet.
 
@@ -1359,6 +1399,11 @@ def load_fleet_from_csv(
             leaves this True; only the CC demonstrated-peak derive passes False
             (it must see the raw, un-guarded fleet capacity — see
             :func:`_rows_to_generators`).
+        measured_ct_heat_rates: When True (``ScenarioConfig.
+            measured_ct_heat_rates``), CT_PEAKER generators at plants the
+            committed CAMPD artifact covers take their measured LOADED heat
+            rate instead of the eGRID plant-average annual rate. Only the
+            peaker rows of a mixed facility are affected.
 
     Returns:
         The ISO's thermal fleet as a list of :class:`Generator` objects.
@@ -1384,7 +1429,11 @@ def load_fleet_from_csv(
         # regardless of the clean seam.
         df = _normalize_columns(pd.read_csv(csv_path))
         generators = _rows_to_generators(
-            df, iso, iso_config, apply_cc_summer_guard=apply_cc_summer_guard
+            df,
+            iso,
+            iso_config,
+            apply_cc_summer_guard=apply_cc_summer_guard,
+            measured_ct_heat_rates=measured_ct_heat_rates,
         )
         source = csv_path
         logger.info(
@@ -1398,7 +1447,12 @@ def load_fleet_from_csv(
         # data/raw/_processed-legacy binned-fleet side cache is NOT written here
         # (the clean path must not mutate data/raw).
         from_clean = _load_fleet_from_clean(
-            iso, iso_config, data_dir, year, apply_cc_summer_guard=apply_cc_summer_guard
+            iso,
+            iso_config,
+            data_dir,
+            year,
+            apply_cc_summer_guard=apply_cc_summer_guard,
+            measured_ct_heat_rates=measured_ct_heat_rates,
         )
         if from_clean is None:
             raise FileNotFoundError(
@@ -1415,6 +1469,7 @@ def load_fleet_from_csv(
             iso_config,
             year,
             apply_cc_summer_guard=apply_cc_summer_guard,
+            measured_ct_heat_rates=measured_ct_heat_rates,
         )
         if from_parquet is None:
             raise FileNotFoundError(
