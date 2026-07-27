@@ -958,3 +958,68 @@ discriminate a 15 GB peak from a 1.1 GB floor.
   scoping framings are already closed (pjm-124/125), so it needs the root cause.
 * Code churn `0069f8e..HEAD` is measured **PJM-inert**; don't re-establish it.
 * Next number: **pjm-130.**
+
+---
+
+## pjm-130 — the re-tune opens: gate 1 is displacement with a real lever, gates 2/3 blocked, and a negative metered volume fixed (2026-07-27)
+
+**No LP solved.** Charter: `docs/handoffs/pjm-130-retune-charter-2026-07.md`.
+Finding: `results/calibration/FINDING-pjm130-gate1-and-bench-symmetry-2026-07.md`.
+Both probes were committed before they were run (`0aa1b88`, `b93c305`).
+
+**Gate 1 (C1-2023 CC_REGULAR, −8.10 TWh vs 8.00 band) — DIAGNOSED, not closed.**
+Pre-registered displacement rule met unambiguously in the failing year: **99.6 %**
+of CC_REGULAR's gross hourly loss falls in hours the guard-returned supply rose,
+r = **−0.369** (2025 also confirms, −0.433; 2024 reported AMBIGUOUS on its own
+rule rather than rounded in). The pre-registered kill criterion — a lever exists
+only if a returned class overshoots its *metered* actual — is **met**: 2023
+CC_CHP **+2.54 TWh (+41 % over meter)** and ST_GAS **+1.72 TWh (+19 %)** against
+CC_REGULAR's −8.10. CT_PEAKER *improves* to +0.12 (was +1.54). So the guard
+displaced peaking correctly but routed the freed energy to classes the meter says
+did not serve it — the same merit-ownership question pjm-122 named for gate 2.
+**Gates 1 and 2 are one stratum.**
+
+**Gate 2 (C3a-2025) — BLOCKED, owner decision.** Its only level-bearing
+admissible route needs the re-conditioning memo, verified **still undecided**
+(last commit `f1070d4`). Not nudged, not re-derived, no proxy taken (rule 23).
+
+**Gate 3 (C3c 2024/2025) — LEDGERED, root cause out of reach.** Both scoping
+framings closed (pjm-124/125); the shared floor is 5.0–5.6× the requirement and
+17.5 GW of it is tariff-protected Non-Sync Primary reserve, so a MIP would not
+close it either. No mechanism invented (rules 1 / 19).
+
+**Shipped — the gate-1 prerequisite.** pjm-129 §6's negative committed metered
+volume (`bench/PJM/2025.json.gz`, `classFull.CT_CHP = −0.3726 TWh`) is
+reproduced, localized and **fixed** (`03e105f`). `--btm-backfill-year` repaired
+the *subtrahend only*: the benchmark's own CAMPD repair fires on **non-CHP**
+plants by construction, so a backfilled CHP plant's host share was subtracted
+from a class total that never received its energy. Arming
+`--btm-backfill-year 2024` recovers the committed `btmClass` cells
+**4.4251 / 2.0959 / 0.6801 to 4 dp** and breaks the invariant at exactly CT_CHP.
+`_backfill_chp_eia923_from_donor` mirrors the repair onto the benchmark (same
+donor, same `campd_active` gate, same per-(plant, class) key), so
+`btm[k] ≤ e923_bench[k]` holds by construction. **2023/2024 are byte no-ops**;
+2025 CT_CHP `classFull` −0.2798 → **+1.4653**. No C1 row changes verdict. The
+corrected bench lands on the next PJM registration. Pinned by
+`tests/regression/test_btm_benchmark_symmetry.py` (6 tests).
+
+Because 2023 is a complete vintage the fix is a no-op there, so gate 1's
++2.54 TWh CC_CHP overshoot is real and unaffected.
+
+**Reported, not introduced:**
+`test_persisted_identity.py::test_default_scenario_config_cache_key_is_pinned`
+fails on a clean checkout of `origin/main` in this container (expected
+`edbc1b103207170a`, got `30065460cdc3042c`) — verified pre-existing by stashing.
+Flagged, not touched; the test warns against updating the literal to silence it.
+
+**Rules:** 22 — 2023–2025 only, freeze untouched and NOT lifted. 15 — no solve
+completed, so no bundle to register; nothing solved and dropped. 20/23/24 —
+nothing tuned. 27 — `run_calibration_full.py` (10,422 lines) edited in place and
+blob-verified byte-identical after push. Keeper `2026-07-25-pjm-121-cc-belt`
+untouched.
+
+Fidelity anchor re-verified this session (no solve): `pjm120_c3a_stratum_readout.py
+results/calibration/pjm121_ccbelt --year 2025` → model_lw **41.53** / actual
+**46.07** / gap **−4.54**.
+
+**Next number: pjm-131.**
