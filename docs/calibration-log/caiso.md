@@ -1950,4 +1950,19 @@ family (export-path/corridor, caiso-121); the caiso-124 shape-gate disposition
 re-tune-vs-freeze sequencing decision; the evening λ-formation re-charter
 (now this lane's blocker).
 
+**(5) ADDENDUM — OWNER PROMOTION (same session, later).** The owner authorized
+promotion on the "performs better or is more structurally sound" criterion;
+measured before acting: the evening starvation is **λ-neutral** (evening λ
++0.09/−0.01/+0.05 — the import rung sets the evening price, so K1 is a
+volume-shape cost of removing the unphysical compensator, rule 14's exact
+case), and the prior keeper's C3a-2025 PASS is the caiso-123 NON-reproducible
+partial-extract artifact (its honest same-HEAD control also reads ≈+11 %).
+**Keeper → `2026-07-27-caiso-126-ror-split`** (rule 1: most structurally
+faithful, kills recorded not erased; attestation written with the zero-DOF
+ledger carry, C6 attested; exceptions ledger deliberately EMPTY — C3a-2025
+stays an honest FAIL while the neiso-66 freeze holds). Status: NOT-YET, fail
+{C3a-2025, C3c, C5a}; `audit_keepers --iso CAISO` PASS. The as-armed prereg
+verdict stands as scored (FINDING §8). The caiso-127 evening λ-formation lane
+now fixes the spread compression ON TOP of the honest hydro base.
+
 Next number: caiso-127.
