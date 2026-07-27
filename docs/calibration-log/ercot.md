@@ -1925,3 +1925,104 @@ the RT instrument on 82 probe days, not the DAM committed band — flagged, not 
 the Dec-2025 SCED schema revision warrants a re-fetch intake lane (drop inherited unchanged).
 ERCOT-120 and ERCOT-117 §5.3 remain separate, un-renumbered lanes. Full forensics:
 `docs/DIAGNOSIS-ercot125-coal-owner-split-2026-07-27.md`.
+
+## 2026-07-27 — ERCOT-126: the coal availability envelope is ACCURATE and REALIZABLE; the residual is a DISPATCH property, not an availability one, and every measured availability instrument is empty, mis-shaped or already live; no mechanism licensed (ercot126-coal-avail-envelope)
+
+**Keeper unchanged** (`2026-07-26-ercot115-coal-marginal-hr`). **Phase 1 only — no LP built, no
+year solved, no run registered, no `ScenarioConfig` field / cache-key surface / solve path touched,
+no keeper file touched. Phase 2 not run; abstention, on the ERCOT-122/123/124/125 precedent — the
+fifth in the coal programme.**
+
+**The charter's residual statement is corrected, with receipts.** "+6.8/+9.2/+12.9 TWh of modelled
+coal over actual" is the ERCOT-116 arm's *bite against the keeper* (ERCOT-121 §3's BITE line,
+quoted onward by ERCOT-124 §4). Measured against actual on one denominator (declared = accepted COP
+`live_mw`, the series `ercot_thermal_dam_availability_plant` reads; actual = CAMPD coal-fuelled
+units only, gross→net by the per-year bench factor): **the keeper is UNDER by 1.07/0.21/1.89 TWh
+and the ERCOT-116 arm is OVER by 5.69/8.90/10.96 TWh.**
+
+**The decomposition (charter task a).** The gap between the declared envelope and actual output is
+**92.9/91.7/95.5 % LOADING** (online, below declaration) and only 7.1/8.3/4.5 % commitment — so no
+full-stop-event mechanism can be the primary lever. The keeper's residual is almost purely
+**seasonal**: Jun–Sep +1.48/+1.73/+1.06 GW over, Feb–Apr −1.44/−1.72/−1.26 GW under, annual ≈ 0.
+The two halves have different causes — in Feb–Apr the model runs at 0.24–0.41 of a 6.9–9.3 GW
+declared envelope, i.e. **it is nowhere near its ceiling and availability is not its binding
+constraint there**; in Jun–Sep it is availability-bound.
+
+**The finding that reframes the lane (charter task b).** Share of annual coal **energy** delivered
+within 0.5 % of that plant-month's own maximum — the availability-ride signature: **keeper
+43.1/40.6/50.3 %, ERCOT-116 arm 19.7/15.9/17.4 %, actual 3.6/3.7/6.9 %.** Fleet-wide, not an Oak
+Grove idiosyncrasy: every coal plant in the model delivers 25–45 % of its energy at a binding
+ceiling against a real fleet at 1–5 %. **The model's coal is a ceiling-rider, so raising the ceiling
+raises the energy ~1:1** — that is the mechanism-level reason for ERCOT-116's bite, and it puts the
+defect outside the availability layer. Confirmed price-side: the keeper tracks the real fleet's
+loading-vs-price to ±0.05 above $15, while the arm is 9–15 pp high in **every** band **including
+sub-$15**, where nothing about coal's merit position changed — only its ceiling.
+
+**Rule 14 `[R-ACCURATE]` bites — the envelope is right.** Every plant reaches **0.93–1.02** of its
+COP declaration (measured max vs declared max, all three years), so the declaration is a realizable
+physical ceiling and the rule-14 misalignment exception does not apply. The measured envelope is the
+accurate input and the statistical availability is the estimate that was compensating.
+
+**Rule 19 `[R-ONE-MECH]` enumeration (charter task c) — every measured availability instrument
+refuted.** (i) **AS reservation:** already an unconditional LP constraint — `reserve_rows.py:185`
+builds `cap = pmax × availability` and `:277-306` shares it between energy and reserve, with coal in
+`RESERVE_FUEL_TYPES` and both headroom tiers. *(Correction to ERCOT-123 §1(c): the modelling is NOT
+`ercot_thermal_as_endogenous`, which is forecast-only, `scenarios.py:4475-4494`, and changes nothing
+in any backcast LP. ERCOT-123's conclusion is unaffected and strengthened.)* Measured FULL SPAN from
+the 60-Day DAM award block (the ERCOT-123 §2 statistic, which existed only on 82 probe days):
+**1.12 %/0.84 %/0.14 % of HSL = 1.15/0.95/0.13 TWh** — 20/11/**1** % of what is needed, and it
+collapses in 2025, the year the gap is largest. (ii) **Sub-5-day forced outages** — the layer
+ERCOT-121 §1a named as missing; `unit_outage_short_windows` is registered, default-off, in the cache
+key, and simply never derived for ERCOT. Derived here with the frozen script's default guards: 82
+windows, 43.9/79.8/130.6 unit-days. **Proven ex ante not to clear G4**: D-1's cv_ratio is an
+*intraday* statistic (hour-of-day mean profile, `legitimacy_diagnostics.py:592-604`) and outage
+windows are *day-scale* — applying every 2023 lignite window to the keeper's own series moves
+profile_r 0.744→0.742 and cv_ratio 0.300→0.303 (gates 0.80/0.50) while removing 0.227 TWh from a
+keeper already under. Armed with the envelope it does nothing: the DAM overlay is a class-hour
+water-fill applied *after* the outage overlays (`arrays.py:1163-1365` vs `:896-939`). (iii)
+**Partial-derate plateaus** (`unit_partial_outage_windows`) — the deriver returns **ZERO** ERCOT
+windows, all three years: the real fleet's 0.55–0.97 loading is not a sustained availability
+plateau. (iv) **Time resolution** — the committed ERCOT-124 supply curve on 15-min settlement
+prices vs its hourly mean: **+0.38/+0.26 pp of HASL**, two orders of magnitude short. (v) The **RT
+derate below the COP** (4.9–6.4 %, ERCOT-123 §3) is the one candidate of the right magnitude and has
+**no 2023 instrument** — the G6 LOYO 2023 leg would be unidentified before an hour was solved, the
+exact ERCOT-124 killer. **No un-used, full-span, measured availability input remains.**
+
+**Two defects found on the way, routed not fixed** (both default-changing, so neither fits this
+charter's byte-identity gate). (1) `BIN_FORCED_DERATE_BY_YEAR` (`eia860.py:2392-2404`, applied
+`arrays.py:619-624`) is a live rule 26 `[R-REGISTRY]` breach — the file's own comment records the
+V H Braunig entry being removed for that reason on 2026-07-06. `"SC_COAL3": {2025: 0.0}` (Sandy
+Creek) is **redundant and wrong**: CEMS 2025 shows 364.5 GWh in January and 396.4 in February,
+768.5 GWh gross ≈ **0.70 TWh net** — ~37 % of the year's coal deficit — and the correctly-dated
+measured replacement is **already committed** (`campd-unit-outages.csv:6262-6263`, 2025-02-28 →
+2025-12-31 at 100 % of plant), pre-empted by the hardcode. `"N_COAL4": {2025: 0.67}` (Martin Lake)
+is factually right (CEMS: unit 1 0.000 TWh, units 2/3 4.263/5.097) and **load-bearing** — the CAMPD
+extract carries no 2025 window for unit 1, a detector blind spot for a unit that never runs. (2) The
+ERCOT-123 §1(c) AS attribution, corrected above.
+
+**Recommendation (recommend-and-STOP).** Record the ERCOT-116 envelope as **measured-correct and
+premature**, not as a defect: it halves the pin (43/41/50 % → 20/16/17 %), a real structural gain
+under rule 1 `[R-STRUCT]`, and must not be promoted until something holds coal below its ceiling.
+The successor is the coal **dispatch band**, not coal availability — the real fleet works a narrow
+0.54–0.72 band touching neither min-load nor ceiling while the model works the ends; the measured
+base share (0.374/0.393/0.386 full span here, 0.42–0.52 on the two earlier instruments) against the
+model's 0.28 is the bottom half of that band and is **ERCOT-117 §5.3's**, un-renumbered and not
+folded in. Derived artifacts committed to `data/raw/_validation-source/` under the `ercot126_`
+prefix — deliberately NOT at the paths the loaders read, so nothing can arm them by accident.
+
+**Three inherited owner decisions surfaced, not decided** (unchanged): the ERCOT-122 offer-level
+controlled refutation (no new argument either way); the committed-band data gap (flagged, not
+fetched); the Dec-2025 SCED schema revision re-fetch — note the AS award block that revision drops
+is now measured full span on the DAM instrument instead, removing one reason to care. ERCOT-120 and
+ERCOT-117 §5.3 remain separate, un-renumbered lanes.
+
+**Test state (reported, not chased, pins untouched):** `tests/regression/test_persisted_identity.py`
+**11/11 pass** and `tests/unit/config/test_flag_registry.py` **12/12 pass** in this container —
+matching ercot124/125 and contradicting the ercot122/123 sessions' recorded failures for both.
+`tests/unit/data/test_transmission_expansion.py`, `tests/unit/pipeline/
+test_forecast_xyear_warmstart_flag.py` and `tests/iso/ercot/
+test_ercot_offer_surface_cleared_share_rt.py` also pass. Pre-existing failures here: **4** in
+`tests/unit/results/test_export.py`, **4** in `tests/scoring/test_ff_readiness_battery.py`. This
+session's diff is one probe script, three derived artifacts and two documents — no `src/` code,
+config surface or cache key — so no test outcome is attributable to it. Full forensics:
+`docs/DIAGNOSIS-ercot126-coal-availability-envelope-2026-07-27.md`.
