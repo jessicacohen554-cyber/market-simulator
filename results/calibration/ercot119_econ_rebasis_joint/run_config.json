@@ -1,18 +1,21 @@
 {
-  "timestamp": "2026-07-24T06:24:49",
+  "timestamp": "2026-07-27T02:58:18",
   "git": {
-    "sha": "04131f3",
-    "branch": "claude/ercot-102-as-holdout-repricing-aq6o1e",
+    "sha": "aa80740",
+    "basis_sha": "dc72d7b119c5c8db41182a75d667b2c19055e2c5",
+    "branch": "claude/ercot-119-econ-rebasis-5nkqnh",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "ERCOT-105: keeper + recovered 2023 RT SCED offer wall (cleared_share_rt now has 2023)",
+  "model_changes_note": "ERCOT-119 leg-split joint arm: ercot115 keeper + measured coal DAM envelope + EP rebasis scoped to econ_low/econ_high (peak kept as the pooled standing wall; PRECOMMIT-ercot119-econ-rebasis-2026-07-27.md pushed before this solve)",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "ERCOT",
     "years": [
-      2023
+      2023,
+      2024,
+      2025
     ],
     "hours": 8760,
     "passes": [
@@ -21,7 +24,9 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
-      "2023": 2.54
+      "2023": 2.54,
+      "2024": 2.19,
+      "2025": 3.52
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
@@ -60,7 +65,14 @@
       "gas_st_drag_seasonal": true,
       "ercot_thermal_dam_availability_hourly": true,
       "ercot_thermal_dam_availability_plant": true,
-      "ercot_offer_surface_cleared_share_state": false
+      "ercot_offer_surface_cleared_share_state": false,
+      "coal_econ_marginal_hr_bound": true,
+      "ercot_thermal_dam_availability_coal": true,
+      "ercot_offer_hrmult_ep_rebasis": true,
+      "ercot_offer_hrmult_ep_rebasis_bands": [
+        "econ_low",
+        "econ_high"
+      ]
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -129,7 +141,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "04131f3"
+    "git_sha": "aa80740"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -172,6 +184,7 @@
     "retirement_aggressiveness": "mid",
     "hydro_year": "normal",
     "hydro_dispatch_envelope": false,
+    "hydro_min_flow_floor": false,
     "eac_price_nuclear": 0.0,
     "eac_price_wind": 0.0,
     "eac_price_solar": 0.0,
@@ -324,6 +337,7 @@
     "nyiso_rcpf_products": null,
     "nyiso_rcpf_locational": null,
     "nyiso_dynamic_reserve_requirements": false,
+    "nyiso_ordc_measured_step_span": false,
     "nyiso_hydro_reserve_eligible": false,
     "nyiso_scr_edrp_reserve_eligible": false,
     "neiso_rcpf_enabled": false,
@@ -387,6 +401,8 @@
     "nyiso_import_reconciliation": false,
     "nyiso_import_hub_prices": false,
     "nyiso_iroquois_winter_spread": false,
+    "nyiso_li_locational_reserve": false,
+    "nyiso_incity_commitment_obligation": false,
     "nyiso_synchronised_reserve": false,
     "nyiso_spin_headroom_frac": 1.0,
     "nyiso_forward_net_import_twh": null,
@@ -548,6 +564,7 @@
     "gas_st_wefor_base_override": null,
     "coal_sync_srmc_tranche": false,
     "coal_econ_srmc_bound": false,
+    "coal_econ_marginal_hr_bound": true,
     "coal_bit_committed_takeorpay": false,
     "coal_committed_takeorpay_all": false,
     "coal_committed_takeorpay_regulated": false,
@@ -628,8 +645,11 @@
     "ercot_nuclear_unit_availability": true,
     "nuclear_unit_availability": false,
     "ercot_thermal_dam_availability": true,
+    "neiso_operable_capacity_availability": false,
+    "pjm_dam_availability": false,
     "ercot_thermal_dam_availability_hourly": true,
     "ercot_thermal_dam_availability_plant": true,
+    "ercot_thermal_dam_availability_coal": true,
     "ercot_noncampd_plant_availability": true,
     "ercot_storage_capability_measured": true,
     "neiso_offer_surface_conditional": false,
@@ -665,6 +685,9 @@
     "pjm_offer_midcurve_conditional": false,
     "pjm_offer_midcurve_path": null,
     "pjm_offer_midcurve_segments": null,
+    "pjm_offer_midcurve_level_segments": null,
+    "pjm_offer_midcurve_peak_segments": null,
+    "pjm_ct_measured_max_reprice": false,
     "cc_committed_hr_override": null,
     "cc_econ_hr_override": null,
     "cc_peak_hr_override": null,
@@ -700,8 +723,8 @@
     "offer_curve_by_group": {
       "CC_REGULAR": {
         "committed": 0.998,
-        "econ_low": 0.723,
-        "econ_high": 1.3239999999999998,
+        "econ_low": 0.5720000000000001,
+        "econ_high": 1.105,
         "peak": 4.576,
         "econ_low_share": 0.5,
         "pct_peaking": 8.0,
@@ -730,7 +753,9 @@
             0.2,
             4.576
           ]
-        ]
+        ],
+        "margin_anchor_econ_low": 2.5402,
+        "margin_anchor_econ_high": 2.5402
       },
       "CC_INTERMEDIATE": {
         "committed": 0.92,
@@ -742,8 +767,8 @@
       },
       "CC_CHP": {
         "committed": 1.029,
-        "econ_low": 0.946,
-        "econ_high": 1.857,
+        "econ_low": 0.797,
+        "econ_high": 1.642,
         "peak": 3.748,
         "econ_low_share": 0.5,
         "pct_peaking": 4.0,
@@ -772,7 +797,9 @@
             0.2,
             3.748
           ]
-        ]
+        ],
+        "margin_anchor_econ_low": 2.5402,
+        "margin_anchor_econ_high": 2.5402
       },
       "CT_CHP": {
         "committed": 0.9000000000000001,
@@ -878,7 +905,7 @@
       },
       "COAL_PRB": {
         "committed": 0.9099999999999999,
-        "econ_low": 0.39999999999999997,
+        "econ_low": 0.886,
         "econ_high": 1.38,
         "peak": 1.562,
         "econ_low_share": 0.556
@@ -921,6 +948,7 @@
     "ercot_wtx_curtailment_driver": true,
     "ercot_wtx_curtail_depth_wind": 0.1004,
     "ercot_wtx_curtail_depth_solar": 0.1637,
+    "ercot_wind_zone_shape": false,
     "coal_supply_repricing": true,
     "coal_plant_monthly_pricing": true,
     "gas_plant_monthly_fuel_pricing": false,
@@ -961,12 +989,21 @@
     "gas_hub_basis_daily": false,
     "dual_fuel_oil_reattribution": false,
     "dual_fuel_switching": false,
+    "dual_fuel_oil_daily_parity": false,
     "outage_source": "historic",
+    "caiso_dam_outages": false,
+    "miso_native_outage_source": false,
     "unit_outage_short_windows": false,
     "unit_partial_outage_windows": false,
     "unit_outage_maxgen_events": false,
     "maxgen_emergency_tier_pricing": false,
-    "gas_price_override": 2.54
+    "forecast_xyear_warmstart": true,
+    "gas_price_override": 2.54,
+    "ercot_offer_hrmult_ep_rebasis": true,
+    "ercot_offer_hrmult_ep_rebasis_bands": [
+      "econ_low",
+      "econ_high"
+    ]
   },
   "environment": {
     "python_version": "3.11.15",
