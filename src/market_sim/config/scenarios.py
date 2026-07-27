@@ -188,6 +188,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # rationale: byte-identical off, dropped from the hash at its default; an
     # armed run enters the key as a distinct scenario.
     "hydro_ror_split",
+    # Conventional-hydro nameplate-aware level pinning (caiso-127): default-off
+    # gate for the water-filling monthly-target rescale. Same rationale:
+    # byte-identical off (and byte-identical on wherever no plant-month exceeds
+    # its nameplate-hours bound), dropped from the hash at its default; an armed
+    # run enters the key as a distinct scenario.
+    "hydro_budget_nameplate_aware",
     # DAM-first outage overlay gates for the four ISOs with a native
     # availability instrument (CAISO / MISO / NEISO / PJM), wired 2026-07-24
     # (infra/dam-outage-wiring-4iso). All default False and back a backcast-only,
@@ -577,6 +583,29 @@ class ScenarioConfig:
     #     level by the RoR flat base and allocates the remainder over the
     #     RESERVOIR class only, so the total forced sustained base equals
     #     the frozen Q95 level exactly.
+    hydro_budget_nameplate_aware: bool = False  # GATED default off (caiso-127
+    # SECONDARY, the FINDING-caiso126 K4 root cause). data.hydro applies the
+    # monthly hydro LEVEL target (measured EIA-930 NG: WAT on a backcast, the
+    # normal-water-year climatology on a forecast) with a UNIFORM fleet-wide
+    # per-month scale factor, which can push a small plant's monthly budget
+    # above its own nameplate x hours-in-month. The LP cannot deliver that
+    # energy (P[g,t] <= pmax x availability), so the excess is SILENTLY clipped
+    # and the fleet under-delivers the level target: measured 1.335/1.269/
+    # 0.169 % of the CAISO run-of-river class budget over 30/28/15 plant-months
+    # in 2023/24/25. With this gate on, load_hydro_budget water-fills instead —
+    # each plant-month capped at its physical ceiling, the excess re-allocated
+    # pro-rata to the plant-months that can still deliver it, iterating to
+    # convergence — so the month total is met exactly wherever it is physically
+    # attainable and the shortfall is LOGGED, never hidden, where it is not.
+    #   RULE 14 [R-ACCURATE]: the nameplate is the accurate datum; the uniform
+    #     scale was silently compensating against it.
+    #   DOF: zero — no threshold, no percentile; the bound is the plant's own
+    #     EIA-860 nameplate and the calendar.
+    #   BYTE-IDENTICAL below the bound: when no plant-month overflows, the
+    #     water-fill's first pass IS the uniform expression, unchanged.
+    #   ISO-generic (rule 25): the defect is in the shared level-pinning path,
+    #     not a CAISO literal; every ISO that pins a monthly hydro level is
+    #     exposed to it.
     eac_price_nuclear: float = 0.0  # $/MWh, e.g. NY/IL Zero Emission Credit ~$17
     eac_price_wind: float = 0.0  # $/MWh, onshore wind REC
     eac_price_solar: float = 0.0  # $/MWh
