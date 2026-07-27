@@ -2296,8 +2296,21 @@ def run_year(
         # artifact coverage) leaves campd_bins None and falls through to the
         # legacy aggregate path inside build_base_fleet (n_bins=0 keeps the
         # per-plant identity).
+        # NOTE: this is the BACKCAST's own copy of the bin synthesis in
+        # ``fleet.assembly.load_or_synthesize_bins`` — every fleet-sourcing
+        # flag has to be forwarded HERE too, or a calibration solve silently
+        # ignores it while ``run_config.json`` records it as on
+        # (``measured_ct_heat_rates`` was byte-identical to its control for
+        # exactly this reason, nyiso-89). Covered by
+        # tests/unit/data/test_measured_ct_heat_rates.py.
         synth = fleet_to_bins(
-            load_fleet_from_csv(iso, iso_config, year=year) + retired_units,
+            load_fleet_from_csv(
+                iso,
+                iso_config,
+                year=year,
+                measured_ct_heat_rates=config.measured_ct_heat_rates,
+            )
+            + retired_units,
             iso,
             config,
         )

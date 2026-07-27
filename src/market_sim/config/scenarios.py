@@ -1168,6 +1168,27 @@ class ScenarioConfig:
         PROCESSED_DIR / "plant_emission_rates_v2.parquet"
     )
 
+    # Measured CT_PEAKER loaded heat rates (default OFF).
+    # scripts/data/derive_campd_ct_heat_rates.py ->
+    # data/raw/_processed-legacy/campd_ct_heat_rates_<ISO>.csv
+    # When True, a CT_PEAKER generator whose plant the artifact covers takes its
+    # plant's CAMPD-measured LOADED heat rate (MMBtu per net MWh, pooled
+    # 2023-2025 over unitType == 'Combustion turbine' hours at load) ahead of
+    # the eGRID plant-average ANNUAL rate the loader otherwise assigns. The
+    # eGRID figure is wrong for a peaker twice over: an annual average blends
+    # start / part-load / shutdown fuel into the number that sets an offer, and
+    # eGRID publishes ONE rate per plant, so a mixed facility's turbines inherit
+    # its steam boilers' rate (E F Barrett's FT4s measure 16.69 against the
+    # 11.08 plant blend; Bayswater measures 10.74 against a non-physical 21.68).
+    # The error is source noise in BOTH directions, so no multiplier substitutes
+    # for the measurement. Rule 13 [R-MEASURED] admissible: a machine's loaded
+    # heat rate is a physical characteristic that regenerates for a forward year
+    # and responds to changed conditions (a retrofit moves it), not a measured
+    # outcome fed back to close a residual. Applied per generator by class, so
+    # only the turbines of a mixed plant are repriced. See
+    # docs/FINDING-nyiso88-peaker-heat-rate-2026-07-27.md sec 4.
+    measured_ct_heat_rates: bool = False
+
     # Forward emission-control retrofit channel (Tier 2; default OFF).
     # docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md
     # When True AND in forecast mode, an ANNOUNCED EIA-860 environmental-control
