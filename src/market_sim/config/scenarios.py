@@ -270,6 +270,70 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
 )
 
 
+# Sentinels the cache-key payload uses in place of the machine-specific
+# absolute prefixes, so a key identifies WHICH data file a run reads, never
+# WHERE the checkout happens to live.
+_CACHE_KEY_REPO_SENTINEL = "<repo>"
+_CACHE_KEY_DATA_ROOT_SENTINEL = "<data_root>"
+
+
+def _cache_key_path_roots() -> tuple[tuple[str, str], ...]:
+    """Return the (sentinel, absolute-prefix) pairs to fold out of the payload.
+
+    ``DATA_ROOT`` is listed first, and only when ``MARKET_SIM_DATA_ROOT``
+    actually relocates it, so the default case (``DATA_ROOT == REPO_ROOT``)
+    normalizes to a single sentinel and stays deterministic.
+    """
+    from market_sim.config.paths import DATA_ROOT, REPO_ROOT
+
+    repo_root, data_root = str(REPO_ROOT), str(DATA_ROOT)
+    roots: list[tuple[str, str]] = []
+    if data_root != repo_root:
+        roots.append((_CACHE_KEY_DATA_ROOT_SENTINEL, data_root))
+    roots.append((_CACHE_KEY_REPO_SENTINEL, repo_root))
+    return tuple(roots)
+
+
+def _normalize_cache_key_paths(value, roots: tuple[tuple[str, str], ...]):
+    """Rewrite checkout-absolute paths in a cache-key payload to sentinels.
+
+    Recurses through the ``asdict`` payload (strings, dicts, lists/tuples) and
+    replaces any string that is, or lives under, a known root with the root's
+    sentinel — ``/home/user/market-simulator/data/raw/x.csv`` and
+    ``/home/runner/work/market-simulator/market-simulator/data/raw/x.csv`` both
+    become ``<repo>/data/raw/x.csv``.
+
+    This is a PAYLOAD-ONLY transform: it never touches the stored field values,
+    field names, or defaults, so ``ScenarioConfig`` stays a flat dataclass and
+    every tunable still appears verbatim in ``run_config.json`` (rule 24
+    ``[R-REGISTRY]``). Matching is pure prefix comparison with no filesystem
+    access, so the result is deterministic on any host.
+
+    Applying it to the whole payload rather than a hand-listed field tuple is
+    deliberate: six fields (``campd_bins_path``, ``plant_registry_path``,
+    ``plant_emission_rates_path``, ``plant_emission_rates_v2_path``,
+    ``control_retrofit_path`` and ``cc_capacity_reconcile_path`` via
+    ``__post_init__``) default to absolute paths today, and a hand-listed
+    tuple would silently miss the seventh one somebody adds later — the same
+    "reaches asdict() but nobody registered it" miss that moved the pin twice
+    already (see the ``nyiso_scr_edrp`` notes above). A path that is genuinely
+    outside every known root is left absolute and still forks the key, because
+    it really is a different data source.
+    """
+    if isinstance(value, str):
+        for sentinel, root in roots:
+            if value == root:
+                return sentinel
+            if value.startswith(root + "/"):
+                return sentinel + "/" + value[len(root) + 1 :]
+        return value
+    if isinstance(value, dict):
+        return {k: _normalize_cache_key_paths(v, roots) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_normalize_cache_key_paths(v, roots) for v in value]
+    return value
+
+
 @dataclass
 class ScenarioConfig:
     """Full configuration for a single simulation scenario.
@@ -8122,6 +8186,11 @@ class ScenarioConfig:
         Hashes the stored ``nominal_discount_rate`` field (``asdict`` covers
         it). ``real_discount_rate`` is a derived property, deterministic given
         ``INFLATION_RATE``, so it is not part of the hash.
+
+        The key is PATH-INVARIANT: absolute paths under the repo (or the
+        ``MARKET_SIM_DATA_ROOT`` data root) are folded to sentinels before
+        hashing, so the same config hashes identically whatever directory the
+        checkout lives in. See :func:`_normalize_cache_key_paths`.
         """
         payload_dict = asdict(self)
         # Fields added after the on-disk cache existed are dropped from the
@@ -8132,6 +8201,10 @@ class ScenarioConfig:
         for name in _CACHE_KEY_OPTIONAL_FIELDS:
             if payload_dict.get(name) == getattr(defaults, name):
                 payload_dict.pop(name, None)
+        # Fold checkout-absolute paths to sentinels LAST, so the drop-at-default
+        # comparison above still sees the raw stored values (both sides are
+        # computed in this process, so they carry the same absolute prefix).
+        payload_dict = _normalize_cache_key_paths(payload_dict, _cache_key_path_roots())
         payload = json.dumps(payload_dict, sort_keys=True)
         return hashlib.sha256(payload.encode()).hexdigest()[:16]
 

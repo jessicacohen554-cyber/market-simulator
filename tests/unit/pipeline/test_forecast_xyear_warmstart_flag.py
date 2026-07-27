@@ -37,8 +37,10 @@ from market_sim.pipeline.solve import run_energy_solve
 from tests.unit.pipeline.test_pipeline_solve import _Cfg, _trivial_inputs
 
 # The default cache_key literal pinned by tests/regression/test_persisted_identity.py. A new
-# default-off field must not move it.
-_PINNED_DEFAULT_CACHE_KEY = "edbc1b103207170a"
+# default-off field must not move it. (2026-07-27: advanced edbc1b103207170a ->
+# 603c2498bf71d21d by the owner-authorized path-portability cache-epoch bump —
+# rationale and provenance live on the pin in test_persisted_identity.py.)
+_PINNED_DEFAULT_CACHE_KEY = "603c2498bf71d21d"
 
 
 class TestFieldRegistration:
