@@ -26,9 +26,9 @@ that ``run_year`` actually accepts. :func:`reconstruct_bundle_fleet` wraps the
 whole reconstruction, including the year-chain gas-price fallback and the
 fidelity guard that hard-fails on a dropped gate.
 
-Callers must have the repo's ``scripts/`` and ``scripts/data/`` directories on
-``sys.path`` (see :func:`ensure_probe_path`) — ``run_calibration`` and
-``derive_pjm_ordc_overlay`` are top-level scripts, not package modules.
+Callers must have the repo root on ``sys.path`` (see :func:`ensure_probe_path`)
+so ``run_calibration`` and ``derive_pjm_ordc_overlay`` resolve as canonical
+``scripts.*`` package modules — never as second bare-name copies.
 """
 
 from __future__ import annotations
@@ -89,8 +89,8 @@ def full_run_year_kwargs(meta: dict) -> dict:
     import inspect
 
     ensure_probe_path()
-    from derive_pjm_ordc_overlay import _run_year_kwargs
-    from run_calibration import run_year
+    from scripts.data.derive_pjm_ordc_overlay import _run_year_kwargs
+    from scripts.run_calibration import run_year
 
     kwargs = _run_year_kwargs(meta)
     params = set(inspect.signature(run_year).parameters)
@@ -120,7 +120,7 @@ def bundle_gas_price(meta: dict, year: int) -> float:
     if price is not None:
         return float(price)
     ensure_probe_path()
-    import run_calibration_full as rcf
+    from scripts import run_calibration_full as rcf
 
     return float(rcf._henry_hub_actual(rcf._load_reference(), year))
 
@@ -186,7 +186,7 @@ def reconstruct_bundle_fleet(
         capacity/CF arrays) and the bundle's ``meta.json``.
     """
     ensure_probe_path()
-    from run_calibration import run_year
+    from scripts.run_calibration import run_year
 
     meta = json.loads((Path(bundle) / "meta.json").read_text())
     gas_price = bundle_gas_price(meta, year)

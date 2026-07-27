@@ -65,7 +65,7 @@ sys.path.insert(0, str(_REPO / "scripts"))
 # solve core.
 os.environ.setdefault("MARKET_SIM_WARMSTART_XYEAR", "0")
 
-import run_calibration_full as rcf  # noqa: E402
+from scripts import run_calibration_full as rcf  # noqa: E402
 from scripts.replay_keeper import build_kwargs  # noqa: E402
 from scripts.run_calibration_full import report_run  # noqa: E402
 

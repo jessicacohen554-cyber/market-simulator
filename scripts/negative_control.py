@@ -104,8 +104,7 @@ def corrupt_gas_price(
     so the corrupted value is a scaled version of whatever price the solve
     would actually have used, never a value pulled from thin air.
     """
-    sys.path.insert(0, str(REPO / "scripts"))
-    import run_calibration as rc  # noqa: PLC0415
+    from scripts import run_calibration as rc  # noqa: PLC0415
 
     ref = copy.deepcopy(reference) if reference else {}
     table = ref.setdefault("henry_hub_actual", {})
@@ -340,8 +339,7 @@ def run_negative_control(
     out_root = out_root or Path(tempfile.mkdtemp(prefix="negative_control_"))
     out_root.mkdir(parents=True, exist_ok=True)
     if reference is None:
-        sys.path.insert(0, str(REPO / "scripts"))
-        import run_calibration_full as rcf  # noqa: PLC0415
+        from scripts import run_calibration_full as rcf  # noqa: PLC0415
 
         reference = rcf._load_reference()
 

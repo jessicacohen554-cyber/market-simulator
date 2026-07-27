@@ -36,8 +36,10 @@ import pandas as pd
 
 # Reuse the calibration loaders so the audit sees exactly the plant->ISO and
 # 923-row->class mapping the benchmark builder uses (no parallel taxonomy).
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from run_calibration_full import (  # noqa: E402
+from market_sim.config.paths import REPO_ROOT
+
+sys.path.insert(0, str(REPO_ROOT))
+from scripts.run_calibration_full import (  # noqa: E402
     _classify_f923,
     _iso_plant_ids,
 )

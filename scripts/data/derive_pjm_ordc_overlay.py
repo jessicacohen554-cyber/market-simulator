@@ -35,7 +35,7 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
-sys.path.insert(0, str(REPO / "scripts"))
+sys.path.insert(0, str(REPO))
 
 from market_sim.config.paths import CALIBRATION_DIR, PJM_AS_DIR  # noqa: E402
 
@@ -127,7 +127,7 @@ def build_availability(
         if set(cached["year"].unique()) >= set(years):
             return cached
 
-    from run_calibration import run_year  # late import: heavy module
+    from scripts.run_calibration import run_year  # late import: heavy module
 
     hours = meta["hours"]
     frames = []
