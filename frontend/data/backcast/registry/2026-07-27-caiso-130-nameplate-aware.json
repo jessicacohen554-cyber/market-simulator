@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-27-caiso-130-nameplate-aware",
+ "label": "caiso 130 nameplate aware",
+ "date": "2026-07-27",
+ "shorthand": "caiso-130-nameplate-aware",
+ "definition": "(PROBE \u2014 REJECTED) caiso-130 single delta: hydro_budget_nameplate_aware, the FINDING-caiso126 K4 root-cause fix. Applies the monthly hydro LEVEL target by water-filling under each plant-month's own EIA-860 nameplate x hours ceiling instead of a uniform fleet-wide scale, so the fleet can deliver its own target (130.2/352.7/26.3 GWh re-allocated, 0 GWh unattainable, 0 new free parameters). P2 PASSES all three years (annual hydro +14.5/+37.5/+2.8 MW = 98/96/93 % of full delivery) but the LP spreads the freed water almost flat with an overnight tilt -- 35.5/46.5/25.9 % lands overnight vs 15.7/11.3/31.9 % in the evening -- so pre-registered kill K2 fires in 2024 (overnight |gap| 92 -> 152 MW). A rule-14 result: the accurate input made the fit worse, localizing the evening lambda-formation defect rather than condemning the input. Keeper unchanged; flag stays in the tree default-off.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-07-27-caiso-130-nameplate-aware.js",
+ "bundle": "results/calibration/caiso130_nameplate_B"
+}

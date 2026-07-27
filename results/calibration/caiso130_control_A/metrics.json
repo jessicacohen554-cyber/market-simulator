@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-19-caiso-101-chp-steam",
+  "run_id": "2026-07-27-caiso-130-control",
   "iso": "CAISO",
-  "label": "caiso 101 chp steam",
+  "label": "caiso 130 control",
   "target_years": [
     2023,
     2024,
@@ -13,10 +13,10 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
+  "rubric_version": 2.8,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: price_tail, dispatch_corr, co2"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
   "notes": [],
   "criteria": {
@@ -33,7 +33,7 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
@@ -48,7 +48,7 @@
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "co2": {
       "label": "C5a CO2 vs eGRID",
@@ -58,7 +58,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "PASS"
+      "status": "UNATTESTED"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -81,8 +81,8 @@
     }
   },
   "grade_summary": {
-    "scored": 10,
-    "target_grade": 7,
+    "scored": 9,
+    "target_grade": 6,
     "commercial_grade": 0,
     "ledgered": 0,
     "fails": 3
