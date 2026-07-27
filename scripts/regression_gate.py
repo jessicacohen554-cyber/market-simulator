@@ -22,7 +22,7 @@ It runs four checks and prints a single PASS/FAIL with exit code 0/1:
 2. **Reshuffle localization** — ``scripts/diagnostics/diff_warmstart_bundles.py`` per year,
    to show any marginal-tie reshuffle per ``plant_code`` (informational; helps
    confirm a builder-stage diff is tie-only).
-3. **Trivial-case smoke tests** — ``pytest tests/test_regression_smoke.py``
+3. **Trivial-case smoke tests** — ``pytest tests/regression/test_regression_smoke.py``
    (fast, CI-able; the per-ISO 1-gen/1-zone/24-h LP guard).
 4. **Quarantine + registry gates** — ``scripts/legitimacy_diagnostics.py
    --keepers`` (holdout quarantine: no solve year outside 2023-2025) and
@@ -240,7 +240,13 @@ def main() -> int:
     if not args.skip_smoke:
         print("\n[3] Trivial-case smoke tests")
         ok, line = _run(
-            [sys.executable, "-m", "pytest", "tests/test_regression_smoke.py", "-q"],
+            [
+                sys.executable,
+                "-m",
+                "pytest",
+                "tests/regression/test_regression_smoke.py",
+                "-q",
+            ],
             "smoke",
         )
         print("   ", line)
