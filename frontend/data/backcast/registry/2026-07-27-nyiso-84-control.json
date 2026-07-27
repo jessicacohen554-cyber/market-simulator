@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-27-nyiso-84-control",
+ "label": "nyiso 84 control",
+ "date": "2026-07-27",
+ "shorthand": "nyiso-84-control",
+ "definition": "nyiso-84 CONTROL: zero-delta replay of the nyiso-81 keeper recipe at HEAD d9bd8b0 (fresh-container stack). Reproduces the keeper baseline exactly: C3c tail 3/0/9 h >$300, reserve-dual 22/6/66 h nonzero, max $12.5/$28.1/$177.3. The same-HEAD baseline the three nyiso-84 East-tier arms are judged against.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-07-27-nyiso-84-control.js",
+ "bundle": "results/calibration/nyiso84_control"
+}
