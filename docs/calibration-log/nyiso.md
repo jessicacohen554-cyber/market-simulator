@@ -1340,3 +1340,73 @@ regardless), and its C1 margin is thin (~0.16 of ±2.94 TWh). Promotion needs
 `min_load_frac` and two min-run values to the CAMPD artifact. LOYO (rule 22) is
 satisfied by construction: no parameter is fitted to any year, all three years
 are scored in every bundle, and the direction is consistent in each.
+
+## 2026-07-27 — nyiso-88: the peaker "missing mechanism" is a MEASURED-INPUT error — the model overcharges the fleet's heat rate by more than its whole margin; (c) refuted, no run registered (OOM)
+
+**No LP solved, nothing registered.** A zero-delta keeper replay was started to
+regenerate the dispatch a control/arm pair needs; it completed 2023 and was
+**OOM-killed during 2024's persist** on this 15 GB container. Every result below
+is no-LP, from committed artifacts and measured sources (rule 14), reproducible
+via `scripts/probes/nyiso88_{peaker_price_coupling,peaker_economics}.py`. Full
+write-up: `docs/FINDING-nyiso88-peaker-heat-rate-2026-07-27.md`.
+
+**(c) is refuted — and C3c cannot be this class's lever.** Stretching the
+keeper's own diurnal price profile to the measured NYISO DA swing (granted free,
+no offsetting cost — an upper bound) and re-evaluating CT_PEAKER's *revealed*
+offer curve recovers **12.6 / 12.2 / 16.9 %** of the gap. Only 0.14–0.42 TWh of
+the gap sits above the model's 90th price percentile against 1.05–1.22 TWh in
+the p50–p90 belly; and the full 2,634 MW fleet running every one of 2025's 42
+actual tail hours is 0.11 TWh, under 7 % of that year's gap.
+
+**The real fleet is at the money, not uneconomic.** Priced on the KEEPER's own
+seam (`nyiso_downstate_ct_gas_daily`: Transco Z6 daily + measured KEDNY/KEDLI
+non-firm transport, nyiso-55/G-13) at CAMPD unit-level loaded heat rates, the
+pure-CT downstate fleet earns **−$1.39 / +$5.82 / +$3.49 per MWh** over its own
+SRMC, ~half its energy either side. Measured Zone J/K premia (+$1.23/+$7.42,
+from the raw 5-minute zonal files) move it in the fleet's favour. **A correction
+worth recording:** the first pass used the *superseded* statewide EIA firm
+city-gate stand-in (`nyiso_downstate_ct_gas_premium`), which is ~$1.5–2.3/MMBtu
+dearer and dearest in summer, and produced a spurious "92 % of energy below
+SRMC, −$24.16/MWh" that would have sent the session to build direction (a)'s
+non-spin product. Directions (a) and (b) both answer a question the measurement
+does not pose — and this converges with nyiso-83, which built the in-city
+obligation and measured **+0.11 TWh** on CT_PEAKER.
+
+**The actual defect (rule 14 [R-ACCURATE]).** The non-ERCOT fleet carries an
+**eGRID plant-average annual** heat rate, identical across every generator of a
+plant (E F Barrett's GTs and its 188 MW boilers share 11.076). Against the CAMPD
+unit-level **loaded** rate the model overstates by **9.3–15.7 %**, worth
+**+$6.48 / +$6.70 / +$7.34 per MWh** at the keeper's own delivered gas — **more
+than the entire margin the fleet earns, in every year.** An at-the-money fleet
+charged that much too much never clears; no missing mechanism is needed to
+explain the 0.46-vs-2.3 TWh collapse. The per-plant errors are source noise in
+both directions (Bayswater 21.68 vs 10.58 measured = 2.05×; Barrett 0.74×), so
+no multiplier substitutes for the measurement. Honest bound: correcting it lifts
+in-merit hour-share 5.1→6.8 / 8.1→11.2 / 12.6→15.4 % against the actual price —
+25–33 % relative, not 5×; the remaining residual is day-ahead block commitment
+(measured CT run lengths: median 4 h, p90 14 h) and must be re-measured *after*
+the input fix, per rule 1.
+
+**Second, independent defect — the bench collapses multi-class plants.**
+`render_calibration_html.py` keys `mw_p`/`grp_p` by `plant_code` while iterating
+`(plant_code, klass)`, so a plant spanning two model classes is attributed
+whole to the **alphabetically-last** class (6 of 6 NYISO cases) and the other
+classes' model dispatch is dropped from the payload. Splitting both sides at
+CAMPD `unitType`: CT_PEAKER 2.520 → **2.278** TWh (−0.24, so it does *not*
+explain this class's gap), but ST_CHP 2.134 → 0.000, ST_GAS 11.912 → 9.686,
+CC_REGULAR +2.468, CC_CHP +2.134. Cross-ISO exposure (energy on multi-class
+plants ÷ benched fossil): **NYISO 13.9 %, MISO 9.2 %, ERCOT 8.8 %, PJM 2.6 %,
+CAISO/NEISO 0.1 %**. Filed as a finding for its own lane — it is a scorer change
+touching every ISO's D-1/C-class basis.
+
+**Charter constraints honoured.** No floor re-armed; no windowed limb, boxcar or
+CT-scoped `reliability_floor` row proposed. The NYCA/East spin gate and J/K
+ladders stay closed and default-off — the at-the-money result removes the reason
+to revisit them for this class. Keeper unchanged
+(`2026-07-27-nyiso-87-cmeas-measured`).
+
+**Next.** Build `scripts/data/derive_campd_ct_heat_rates.py` (frozen against
+residuals, rule 24), wire it ahead of the eGRID plant-average, and register ONE
+arm vs a same-HEAD zero-delta control across 2023–2025 in one bundle. Re-score
+C1 **and** C5a: the C1 margin is thin (−2.78 of ±2.94 TWh) and 2025 CO2 is
+already +7.6 % against +10 %, and this arm adds gas volume.
