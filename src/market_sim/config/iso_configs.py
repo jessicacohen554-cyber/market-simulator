@@ -1247,6 +1247,40 @@ def drop_obligation_owned_reliability_specs(
     ]
 
 
+# The nyiso-87 arm-A override: every enabled NYISO h14-21 peak-window ramp
+# family OFF, every unwindowed limb untouched. Named here (rather than retyped
+# per probe) so the arms, the keeper config and the test all cite ONE object.
+#
+# Driver: OWNER DIRECTIVE 2026-07-27 — "the h14-21 peak-hour must-run is
+# INACCURATE — turn it off ... every floor we have added was a compensation for
+# missing commitment drag". That is a rule-23 [R-FROZEN-DERIVE] source trigger
+# of the admissible kind (an owner adjudication of the mechanism, NOT a
+# residual moving): the windowed limbs are replaced by the NYISO gas commitment
+# bridge (``ScenarioConfig.nyiso_gas_commitment_bridge``), which carries the
+# same phenomenon on commitment physics instead of a boxcar (rule 19
+# [R-ONE-MECH]).
+#
+# Scope note: the persistent 24 h NYC / Long_Island ST_GAS bases and the
+# Capital_Hudson hot step are NOT in this dict. Their driver is a 24-hour one
+# (in-city voltage/reliability commitment; a hot-day steam commitment), not the
+# afternoon peak window the directive names, so they stay until a bridge arm
+# shows the bridge reproduces them too.
+NYISO_PEAK_WINDOW_FLOORS_OFF: dict[str, dict] = {
+    "NYC:ST_GAS:tmax:NYC_ST_ev": {"enabled": False},
+    "NYC:CT_PEAKER:tmax:NYC_CT_ev": {"enabled": False},
+    "Long_Island:CT_PEAKER:tmax:LI_CT_ev": {"enabled": False},
+    "Long_Island:ST_GAS:tmax:LI_ST_ev": {"enabled": False},
+    "Capital_Hudson:ST_GAS:tmax:CH_ST_ev": {"enabled": False},
+}
+
+
+# Fourth-segment sentinel selecting the limbs that carry NO ``ramp_group``
+# (standalone step limbs) in a ``reliability_floor_overrides`` key. A literal
+# ramp-group label can never collide with it: the derive scripts emit
+# ``<Zone>_<CLASS>_<window>`` labels, never a leading underscore.
+_NO_RAMP_GROUP_KEY: str = "_none"
+
+
 def apply_reliability_floor_overrides(
     specs: list[ReliabilityFloorSpec],
     overrides: dict[str, dict] | None,
@@ -1258,6 +1292,18 @@ def apply_reliability_floor_overrides(
     ``ScenarioConfig.reliability_floor_overrides``). Each matching limb is
     replaced via :func:`dataclasses.replace`; unrecognized keys are ignored.
     Returns the input list unchanged when *overrides* is falsy.
+
+    **Ramp-family granularity** (nyiso-87): an optional FOURTH key segment
+    selects one ``ramp_group`` within a (zone, class, driver) —
+    ``"<ZONE>:<CLASS>:<driver>:<ramp_group>"``. A (zone, class, driver) can
+    hold several limbs with different windows (NYISO ``NYC:ST_GAS:tmax`` holds
+    the persistent 24 h base AND the two h14–21 ``NYC_ST_ev`` ramp knots), and
+    the three-segment key cannot separate them — disabling the peak window
+    would also disable the always-on voltage/reliability base. The four-segment
+    form matches only limbs whose ``ramp_group`` equals the fourth segment;
+    ``"...:_none"`` matches the limbs with NO ramp group (the standalone
+    steps). Both forms are honoured, and the four-segment form takes precedence
+    where both match, so existing three-segment overrides are unchanged.
     """
     if not overrides:
         return specs
@@ -1265,8 +1311,12 @@ def apply_reliability_floor_overrides(
 
     out: list[ReliabilityFloorSpec] = []
     for spec in specs:
-        key = f"{spec.zone}:{spec.plant_class}:{spec.driver}"
-        ov = overrides.get(key)
+        base_key = f"{spec.zone}:{spec.plant_class}:{spec.driver}"
+        # Ramp-family key wins over the whole-(zone, class, driver) key, so a
+        # config can disable one window and leave the family's other limbs (or
+        # the standalone base) untouched.
+        group_key = f"{base_key}:{spec.ramp_group or _NO_RAMP_GROUP_KEY}"
+        ov = overrides.get(group_key) or overrides.get(base_key)
         if not ov:
             out.append(spec)
             continue

@@ -1889,6 +1889,14 @@ class ScenarioConfig:
     # iso_configs.apply_reliability_floor_overrides before the engine runs, so a
     # single limb can be toggled or re-tuned (e.g. --floor-disable ZONE:CLASS)
     # without editing the registry. Empty = registry defaults verbatim.
+    # An optional FOURTH segment selects one ramp family within a (zone, class,
+    # driver) — "<ZONE>:<CLASS>:<driver>:<ramp_group>", with "_none" selecting
+    # the limbs that carry no ramp group. Needed wherever one (zone, class,
+    # driver) mixes windows: NYC:ST_GAS:tmax holds BOTH the persistent 24 h
+    # voltage/reliability base and the h14-21 NYC_ST_ev ramp knots, so the
+    # three-segment key cannot turn the peak window off without also killing
+    # the always-on base (nyiso-87). The four-segment form wins where both
+    # match; three-segment behaviour is unchanged.
     class_commitment_overrides: dict[str, dict] = field(default_factory=dict)
     # Per-class commitment overrides for THIS run's ISO, keyed by plant_group
     # class (e.g. "ST_GAS") -> {"min_run_hours"?: int, "min_down_hours"?: int}.

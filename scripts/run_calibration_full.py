@@ -2751,6 +2751,7 @@ def solve_and_persist(
     nyiso_li_locational_reserve: bool | None = None,
     nyiso_incity_commitment_obligation: bool | None = None,
     nyiso_east_reserve_families: bool | None = None,
+    reliability_floor_overrides: dict | None = None,
     nyiso_spin_reserve_online: bool | None = None,
     nyiso_spin_headroom_frac: float | None = None,
     nyiso_dynamic_reserve_requirements: bool | None = None,
@@ -3624,6 +3625,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_east_reserve_families=nyiso_east_reserve_families
             )
+        if reliability_floor_overrides is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                reliability_floor_overrides=reliability_floor_overrides
+            )
         if nyiso_spin_reserve_online is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_spin_reserve_online=nyiso_spin_reserve_online
@@ -4124,6 +4129,7 @@ def solve_and_persist(
             nyiso_li_locational_reserve=nyiso_li_locational_reserve,
             nyiso_incity_commitment_obligation=nyiso_incity_commitment_obligation,
             nyiso_east_reserve_families=nyiso_east_reserve_families,
+            reliability_floor_overrides=reliability_floor_overrides,
             nyiso_spin_reserve_online=nyiso_spin_reserve_online,
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
             nyiso_dynamic_reserve_requirements=nyiso_dynamic_reserve_requirements,
@@ -4836,6 +4842,7 @@ def solve_and_persist(
         "nyiso_li_locational_reserve": nyiso_li_locational_reserve,
         "nyiso_incity_commitment_obligation": nyiso_incity_commitment_obligation,
         "nyiso_east_reserve_families": nyiso_east_reserve_families,
+        "reliability_floor_overrides": reliability_floor_overrides,
         "nyiso_spin_reserve_online": nyiso_spin_reserve_online,
         "nyiso_spin_headroom_frac": nyiso_spin_headroom_frac,
         "nyiso_dynamic_reserve_requirements": nyiso_dynamic_reserve_requirements,
@@ -9709,6 +9716,21 @@ def main() -> None:
         "resolved absolute curve is recorded in run_config.json.",
     )
     parser.add_argument(
+        "--reliability-floor-overrides",
+        default=None,
+        metavar="JSON",
+        help="Per-limb reliability-floor overrides applied to "
+        "RELIABILITY_FLOOR_REGISTRY[iso] at run time (the existing registry "
+        "field ScenarioConfig.reliability_floor_overrides, so the value lands "
+        "in run_config.json — rule 24). Keyed "
+        '"<ZONE>:<CLASS>:<driver>" or, to select ONE ramp family within a '
+        '(zone, class, driver), "<ZONE>:<CLASS>:<driver>:<ramp_group>" '
+        '("_none" selects the limbs with no ramp group). Value: '
+        '{"enabled"?: bool, "floor_pct"?: float, "threshold"?: float}. '
+        'e.g. \'{"NYC:ST_GAS:tmax:NYC_ST_ev": {"enabled": false}}\' turns the '
+        "h14-21 evening ramp off while leaving the persistent 24 h base on.",
+    )
+    parser.add_argument(
         "--class-commitment-overrides",
         default=None,
         metavar="JSON",
@@ -9730,6 +9752,12 @@ def main() -> None:
         import json as _json
 
         class_commitment_overrides = _json.loads(args.class_commitment_overrides)
+
+    reliability_floor_overrides = None
+    if args.reliability_floor_overrides:
+        import json as _json
+
+        reliability_floor_overrides = _json.loads(args.reliability_floor_overrides)
 
     if args.report:
         report_run(Path(args.report), band_width=args.cf_band_width)
@@ -10087,6 +10115,7 @@ def main() -> None:
         nyiso_li_locational_reserve=args.nyiso_li_locational_reserve,
         nyiso_incity_commitment_obligation=args.nyiso_incity_commitment_obligation,
         nyiso_east_reserve_families=args.nyiso_east_reserve_families,
+        reliability_floor_overrides=reliability_floor_overrides,
         nyiso_spin_reserve_online=args.nyiso_spin_reserve_online,
         nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,
         nyiso_dynamic_reserve_requirements=args.nyiso_dynamic_reserve_requirements,
