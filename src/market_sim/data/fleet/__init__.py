@@ -261,6 +261,14 @@ class Generator(BaseModel):
     #                                 the ISO anchor). 0 = outside the
     #                                 mechanism (flag off / neutral band /
     #                                 non-gas tranche).
+    offer_margin_anchor: float | None = None  # per-tranche margin anchor
+    #                                 ($/MMBtu) overriding the ISO window
+    #                                 anchor in apply_gas_offer_margin — set
+    #                                 from the offer band's ``margin_anchor``
+    #                                 key (ERCOT-118 EP rebasis: the year's
+    #                                 EP-anchored delivered mean the rebased
+    #                                 per-year multiplier was identified at).
+    #                                 None = the config window anchor.
 
 
 @dataclass
@@ -611,6 +619,14 @@ class Generator(BaseModel):
     #                                 the ISO anchor). 0 = outside the
     #                                 mechanism (flag off / neutral band /
     #                                 non-gas tranche).
+    offer_margin_anchor: float | None = None  # per-tranche margin anchor
+    #                                 ($/MMBtu) overriding the ISO window
+    #                                 anchor in apply_gas_offer_margin — set
+    #                                 from the offer band's ``margin_anchor``
+    #                                 key (ERCOT-118 EP rebasis: the year's
+    #                                 EP-anchored delivered mean the rebased
+    #                                 per-year multiplier was identified at).
+    #                                 None = the config window anchor.
 
 
 @dataclass

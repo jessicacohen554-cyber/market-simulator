@@ -2735,6 +2735,7 @@ def solve_and_persist(
     bit_overrides: dict | None = None,
     coal_econ_srmc_bound: bool = False,
     coal_econ_marginal_hr_bound: bool | None = None,
+    ercot_offer_hrmult_ep_rebasis: bool | None = None,
     coal_takeorpay_from_data: bool = False,
     coal_mustrun_online_pmin: bool = False,
     coal_sync_srmc_tranche: bool = False,
@@ -3180,6 +3181,32 @@ def solve_and_persist(
         elif recorded_cfg.coal_econ_marginal_hr_bound:
             recorded_cfg = recorded_cfg.with_overrides(
                 coal_econ_marginal_hr_bound=False
+            )
+        # Mirror run_year's ERCOT-118 EP rebasis EXACTLY — bool AND curve, per
+        # year (the rebased tables are per delivery year), with the same
+        # tri-state resolution. Recording only the bool would leave
+        # run_config.json showing the pooled HH-0.50 bands while the LP solved
+        # on the rebased ones (rule 25 — the ercot-115 recording-gap lesson).
+        _rec_ep_rebasis_on = (
+            bool(recorded_cfg.ercot_offer_hrmult_ep_rebasis)
+            if ercot_offer_hrmult_ep_rebasis is None
+            else bool(ercot_offer_hrmult_ep_rebasis)
+        )
+        if _rec_ep_rebasis_on and iso.upper() == "ERCOT":
+            from market_sim.data.offer_curves import (
+                apply_ercot_dam_hrmult_ep_rebasis,
+            )
+
+            _rec_ep_curve, _, _ = apply_ercot_dam_hrmult_ep_rebasis(
+                recorded_cfg.offer_curve_by_group, cfg_year, offer_curve_deltas
+            )
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_offer_hrmult_ep_rebasis=True,
+                offer_curve_by_group=_rec_ep_curve,
+            )
+        elif recorded_cfg.ercot_offer_hrmult_ep_rebasis:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_offer_hrmult_ep_rebasis=False
             )
         if plant_tranche_config:
             recorded_cfg = recorded_cfg.with_overrides(
@@ -4048,6 +4075,7 @@ def solve_and_persist(
             bit_overrides=bit_overrides,
             coal_econ_srmc_bound=coal_econ_srmc_bound,
             coal_econ_marginal_hr_bound=coal_econ_marginal_hr_bound,
+            ercot_offer_hrmult_ep_rebasis=ercot_offer_hrmult_ep_rebasis,
             coal_takeorpay_from_data=coal_takeorpay_from_data,
             coal_mustrun_online_pmin=coal_mustrun_online_pmin,
             coal_sync_srmc_tranche=coal_sync_srmc_tranche,
@@ -4730,6 +4758,7 @@ def solve_and_persist(
         },
         "coal_econ_srmc_bound": coal_econ_srmc_bound,
         "coal_econ_marginal_hr_bound": coal_econ_marginal_hr_bound,
+        "ercot_offer_hrmult_ep_rebasis": ercot_offer_hrmult_ep_rebasis,
         "coal_plant_monthly_pricing": first_year_cfg.coal_plant_monthly_pricing,
         "td_loss_factor": first_year_cfg.td_loss_factor,
         # ERCOT gas-basis mechanisms: env-var-gated inside backcast_config
@@ -7550,17 +7579,41 @@ def main() -> None:
     # coal econ band may carry a MARKUP above its physical basis but never a bid
     # BELOW it, so econ_low/econ_high are clamped up to the ISO's own measured
     # CAMPD marginal heat rate for COAL (derive_campd_marginal_hr artifact).
-    # Removes a fitted degree of freedom; adds no tunable. Off by default.
+    # Removes a fitted degree of freedom; adds no tunable.
+    # TRI-STATE default None (ercot-118 session fix): the ercot-115 promotion
+    # made the floor the ERCOT backcast default-ON and moved the pipeline/flags
+    # registry default False -> None, but this hand-written parser (the one
+    # main() actually consumes) kept False — so every direct CLI invocation
+    # passed an explicit False and silently SCRUBBED the promoted per-ISO
+    # default (run_year logs "SCRUBBED by explicit False"; replay_keeper was
+    # unaffected because it calls solve_and_persist directly). None = keep the
+    # per-ISO backcast_config default; the --no- form still forces it off.
     parser.add_argument(
         "--coal-econ-marginal-hr-bound",
         action=argparse.BooleanOptionalAction,
-        default=False,
+        default=None,
         help="Floor each coal class's econ_low/econ_high offer-curve band at "
         "the ISO's own MEASURED CAMPD marginal (incremental) heat rate for "
         "COAL (data/raw/reference/<iso>_campd_marginal_hr_summary.csv), so no "
         "coal econ tranche bids below the physical cost of its next MWh. "
         "Markups above the measured basis, the committed/must-run take-or-pay "
         "bands and the peak scarcity wall are untouched.",
+    )
+    # ERCOT-118 EP-basis rebasis of the measured CC DAM band multipliers:
+    # replace the pooled HH-0.50-derived CC_REGULAR/CC_CHP override bands with
+    # the committed PER-YEAR tables normalized on the EP-anchored delivered-gas
+    # series dispatch actually prices gas at (offer_curve_dam_hrmults_ep_yearly
+    # .json, rule-23 derive citation in its _provenance), re-applying the run's
+    # offer_curve_deltas on the rebased base. TRI-STATE (default None, the
+    # ercot-115 seam lesson): None = keep the ScenarioConfig/prb-resolved
+    # value; the --no- form forces it off for ablation arms.
+    parser.add_argument(
+        "--ercot-offer-hrmult-ep-rebasis",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Rebase the measured CC DAM band multipliers (committed/econ_low/"
+        "econ_high/peak, CC_REGULAR+CC_CHP) onto the EP-anchored dispatch "
+        "gas basis with per-year tables (ERCOT-118; ERCOT-only, rule 25).",
     )
     parser.add_argument(
         "--bit-floor", type=float, default=None, help="Bit sigmoid cheap-gas floor."
@@ -10080,6 +10133,7 @@ def main() -> None:
         coal_bit_sigmoid=args.coal_bit_sigmoid,
         coal_econ_srmc_bound=args.coal_econ_srmc_bound,
         coal_econ_marginal_hr_bound=args.coal_econ_marginal_hr_bound,
+        ercot_offer_hrmult_ep_rebasis=args.ercot_offer_hrmult_ep_rebasis,
         bit_overrides={
             "coal_bit_passthrough_floor": args.bit_floor,
             "coal_bit_passthrough_ceil": args.bit_ceil,
