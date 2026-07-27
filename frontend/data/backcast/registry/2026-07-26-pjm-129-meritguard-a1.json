@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-26-pjm-129-meritguard-a1",
+  "label": "pjm 129 meritguard a1",
+  "date": "2026-07-26",
+  "shorthand": "pjm-129-meritguard-a1",
+  "definition": "pjm-129 A1: keeper 2026-07-25-pjm-121-cc-belt replayed verbatim on the guard-corrected CAMPD availability envelope (campd-economic-layup-fix charter 2026-07 \u00a75/\u00a78). Staged one-year-per-process; 2023+2024 byte-copied from the stage-2 bundle. Nothing tuned. VERDICT: CALIBRATED 10/10 -> NOT-YET 7/10, RE-TUNE REQUIRED (C3a-2025 -9.3 -> -10.6 %; C3c tail 2024 0.50x -> 0.39x, 2025 0.66x -> 0.47x; C1-2023 CC_REGULAR -7.87 -> -8.10 TWh). Keeper designation unchanged. [Lane renumbered 128 -> 129 mid-session after a concurrent session took pjm-128; the bundle's run_config.json keeps its as-solved note reading 'pjm-128 A1'.]",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-26-pjm-129-meritguard-a1.js",
+  "bundle": "results/calibration/pjm129_meritguard_a1"
+}
