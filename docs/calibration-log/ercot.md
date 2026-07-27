@@ -1817,3 +1817,111 @@ it a third time: ex-owner-split the model matches over its WHOLE range, not just
 committed-band data gap, and whether the Dec-2025 SCED schema revision warrants a re-fetch lane.
 ERCOT-120 and ERCOT-117 §5.3 remain separate, un-renumbered lanes. Full forensics:
 `docs/DIAGNOSIS-ercot124-coal-offer-uppertail-2026-07-27.md`.
+
+## 2026-07-27 — ERCOT-125: the jointly-owned-unit offer split FAILS the rule-13 forward test and is not expressible on the model's plant grain; no mechanism licensed, and the fallback default-off probe is recommended AGAINST (ercot125-coal-owner-split)
+
+**Lane** ercot125-coal-owner-split · keeper **unchanged**
+(`2026-07-26-ercot115-coal-marginal-hr`) · **Phase 1 gate only — no LP built, no year solved, no
+arm registered, no `ScenarioConfig` field / constant / cache-key surface / derive script / artifact
+/ solve path touched, no keeper file touched.** Chartered by
+`DIAGNOSIS-ercot124-coal-offer-uppertail` §5.3, which closed the coal offer-curve lane and named
+this as the one surviving measured coal mechanism, explicitly carrying its live rule-13 question
+forward.
+
+**Verdict: the forward test FAILS on four independent grounds, and channel expressibility fails on
+two more. Phase 2 not run; abstention, on the ERCOT-122/123/124 precedent.**
+
+**(a) The forward driver cannot be named, and if named is an announcement, not an instrument.** The
+two shares are slices of the SAME two boilers — identical heat rate, delivered fuel, emissions rate
+and node — so every physical/market variable the model carries is equal across them by
+construction; the quantity is a pure function of who holds which share. And the premise is not even
+measured: ERCOT-124 §2 records that the disclosure carries no ownership field, so the owner-split
+attribution is an inference from capacity arithmetic. Measured against CLAUDE.md step 0's bar for
+this exact class of claim (enforceable public instrument), a stated exit policy is an announcement
+— and `data/raw/confirmed-retirements/ercot.csv` carries **no Fayette row** (zero hits on `6179`/
+`fayette` across all six ISO files), i.e. the model's own instrument bar is currently not met.
+
+**(b) The only registered offer-height form responds to a driver the measurement falsifies — the
+sharpest finding, and measurable rather than argued.** An offer height enters as a heat-rate
+multiplier, whose ENTIRE forward responsiveness is the delivered fuel price it multiplies. Fayette
+is PRB (`coal_supply_class(6179)=="prb"`) and `COAL_PRICE_PRB_BY_YEAR` is **flat** $2.00/MMBtu in
+both 2024 and 2025, so an hr-mult channel is constant by construction over the measured window. The
+measured quantity moved **−22.7 %** (`FPPYD1_FPP_G1_J02` $150.10→$116.00) and **−24.6 %**
+(`_G2_J02` $150.10→$113.15) — two to three times the −7.4 %/−11.8 %/−10.9 % drift of the cost-based
+shares of the same boilers, which is the measurement's own noise floor. The channel's sole forward
+driver explains none of the variation; in a forecast it would respond *spuriously*, tracking coal
+price for a quantity that visibly ignores it. (Two-point observation, 82 probe days, 2024–2025 —
+labelled, not extrapolated; offered as a falsification of the one functional form the registry
+provides, not as an elasticity.) A fuel-invariant $/MWh form would merely be a frozen constant
+carried to 2050 with no driver at all.
+
+**(c) Nothing in the model can represent its falsifiers.** Share sold/bought out, agreement
+renegotiated, position reversed, plant retired, resource re-registered — under every one the
+measured quantity collapses to the co-owner's ~$17–19, and the mechanism would carry $150 anyway:
+no ownership dimension, no `instrument_date` vintage gate, no expiry.
+
+**(d) A verified forward side effect: the height would enter the RETIREMENT screen as a physical
+cost.** Traced in code, not asserted — `assembly.py:897`/`:998` emit the peak tranche with
+`heat_rate = base_hr × mult` on a real LP unit; `runner.py:1198` builds `mc_cost` from
+`assemble_mc(fleet_arrays, …)`, documented in place as the screen's full variable cost;
+`evolve.py:263` consumes it in step 3. So the lift is NOT confined to the bid basis: it would
+depress Fayette's screened attainable inframarginal margin and push it toward economic retirement
+in forecast years — a governance disposition driving retirement through the door step 0 guards,
+with none of step 0's evidence. The codebase states the governing principle at exactly this seam
+(`runner.py:1251-1253`, on the gas net-revenue margin): "**margins are offer components, not
+costs**." A withholding offer is the purest instance of that, and the multiplier surface carries no
+such exemption.
+
+**Channel expressibility ALSO fails, independently (charter's second Phase-1 question).**
+`thermal_tranches_<ISO>.csv`, `COAL_MUSTRUN_BY_PLANT` (6179 → 30.0 %) and `cc_duct_peaking_pct`
+carry **capacity shares only** (and cc_duct is CC/CHP-gated, coal-ineligible). The only
+height-carrying per-plant channel is `plant_tranche_config_path`, which `assembly.py:195-201`
+documents as "bypassing the offer curve and the per-plant committed/peaking dicts" — adopting it at
+Fayette would blindly displace four-to-five of ERCOT-124 §3's eight enumerated coal mechanisms
+(class bands, keeper `offer_curve_deltas`, the bin sheet's `Pct_*` split, `coal_mustrun_per_plant`)
+to express one, and it is a hand-edited what-if sheet reached by a path, not the derived committed
+registered artifact rule 26 requires. **Deeper still: the model's tranches are an economic merit
+ordering; an owner split is a partition orthogonal to merit.** Fayette's peak band is
+`Pct_Peaking 5.0 %` = **84.5 MW** (`custom-bin-assignments.csv:67`) against a withheld block of
+308.0+308.0 = **616 MW = 36.4 %** of nameplate — **7.3× the whole peak band**. Expressing it
+requires asserting the co-owner's 616 MW *is* the top 616 MW of the plant's stack; the measurement
+does not say that (it says one registration's own curve is high), the two owners hold
+interchangeable slices of the same boilers, and rule 21 is explicit that a quantity closable only
+by choosing a value is an open root-cause issue, not a parameter.
+
+**The fallback probe is recommended AGAINST too.** Rule 13's honest ceiling for a failed forward
+test is a backcast-only default-off probe, and that would be right if the forward test were the
+only defect. It is not: with no clean channel, the probe would have to ride the blind override
+sheet and hard-code the unsupported merit-ordering assumption, touching `ScenarioConfig`, the cache
+key and the offer path (rule 27 surface) to install something that can never be armed in a keeper
+and whose one output is a number already known by hand calculation (~0.4–0.8 TWh/yr, ERCOT-124
+§5.3). The measurement is already committed and already answers the question.
+
+**2023 leg — the distinction from ERCOT-124, stated explicitly as the charter required.** Unlike
+ERCOT-124's class tail (whose 2023 leg was unidentified, the DAM tail collapsing 3.87→1.14→0.13 pp
+against the RT tail's flat 5.04→5.31 pp), this conduct IS corroborated in 2023 on the DAM
+instrument: `DIAGNOSIS-ercot122` §1(b) measures `FPPYD1_FPP_G1_J02` at **$114.00**, and records that
+most of Fayette contributes nothing to that band — i.e. the co-owner shares do not reach it in 2023
+either, the same split. So a G6 LOYO would NOT have failed on identification here, and this
+session's abstention does **not** inherit ERCOT-124's verdict; it rests on the forward test and
+channel expressibility alone.
+
+**What would reopen it** (recorded so a successor need not re-litigate): an enforceable public
+instrument for the share — which routes it to **step 0 confirmed exits**, its correct home, not the
+offer surface; an ownership dimension in the fleet representation, making the merit-mapping a
+measurement rather than a choice; or a forward driver with a generative model (divergent-co-owner
+conduct characterized across many jointly-owned plants as a class property, the way EFOR is). One
+plant is not a class.
+
+**Successor, NOT started this session** (charter directive): the ERCOT-116/121 **availability
+envelope** is now the dominant open coal residual at +6.8/+9.2/+12.9 TWh — 10–30× this lane — and
+ERCOT-122/123/124 have jointly eliminated the entire coal offer surface (level, reach, tail) as its
+cause. It deserves its own charter.
+
+**Three inherited owner decisions surfaced, not decided** (unchanged from ERCOT-124 §5.5): the
+ERCOT-122 offer-level controlled refutation (this session adds no new argument either way); the
+committed-band data gap (`Min Gen Cost` exists on 29–31 % of online coal resource-intervals but is
+the RT instrument on 82 probe days, not the DAM committed band — flagged, not fetched); and whether
+the Dec-2025 SCED schema revision warrants a re-fetch intake lane (drop inherited unchanged).
+ERCOT-120 and ERCOT-117 §5.3 remain separate, un-renumbered lanes. Full forensics:
+`docs/DIAGNOSIS-ercot125-coal-owner-split-2026-07-27.md`.
