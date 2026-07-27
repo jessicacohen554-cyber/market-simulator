@@ -36,8 +36,23 @@ Effective-date caveats (bounds, not pinned dates):
   plausibly the 2026-05-01 capability year, **unverified**. Training years
   2023–2025 are fully inside the v2021 regime either way.
 - The LI 270/540 on/off-peak hour boundary is not defined in the posting
-  itself (`DATA NEEDED`: the defining Ancillary Services Manual /
-  Transmission & Dispatch Operations Manual section).
+  itself. **RESOLVED 2026-07-26 (nyiso-83)** — it is defined in neither the
+  Ancillary Services Manual nor the Transmission & Dispatch Operations Manual
+  (both searched in full), but it *is* defined in the tariff: **MST §2.15
+  Definitions-O** (effective 10/31/2025, Docket ER26-1265-000) —
+  *"On-Peak: The hours between 7 a.m. and 11 p.m. inclusive, prevailing
+  Eastern Time, Monday through Friday, except for NERC-defined holidays, or as
+  otherwise decided by the ISO"*; Off-Peak is the stated complement (11 p.m.–
+  7 a.m. Mon–Fri, all day Sat/Sun, and NERC holidays). Hour-beginning 7–22
+  inclusive. Implemented as `model.reserves.spec.nyiso_onpeak_mask` /
+  `nerc_holidays`; a published calendar rule, so it regenerates for any
+  forward year (rule 13 admissible).
+- LI demand-curve values (needed to build the family's ORDC steps) are
+  **Ancillary Services Manual §6.8 items 10 and 15**: the Long Island
+  10-minute and 30-minute reserves demand curves are both **$25/MW** — the
+  same locational tier the published NYC products carry. LI also nests inside
+  the $775 (E/SENY/NYC/LI) and $500/$40 (SENY/NYC/LI) tiers, and providers on
+  Long Island settle as if providing reserves in SENY (ASM §6.5.2).
 
 ## `realtime-events/`, `oper-messages/`
 

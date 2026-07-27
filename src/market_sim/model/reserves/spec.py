@@ -342,6 +342,167 @@ NYISO_RCPF_LOCATIONAL: dict[str, dict] = {
     },
 }
 
+# --- NYISO Long Island (Zone K) locational reserve ladder -------------------
+# The published LI limb of the SAME "Locational Reserve Requirements" posting
+# that grounds NYISO_RCPF_LOCATIONAL above, and the ONE in-city/load-pocket
+# instrument the Zone-J/K must-run survey found passing rule 13 [R-MEASURED]
+# outright (docs/handoffs/nyiso-incity-instrument-survey-2026-07.md §2; owner
+# adjudication 2026-07-26 reopening the closed C3a "reserve" lever as a
+# COMMITMENT-OBLIGATION driver — it was closed as a *pricing* lever, measured
+# Δ$0.00 on the 2023 trough, docs/calibration-log/nyiso.md nyiso-71).
+#
+# The model carried NO Long Island family at all: NYISO_RCPF_LOCATIONAL stops
+# at NYC, and the measured as-enforced #1344 intake
+# (data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_<year>.csv) has no
+# LI region either. This is therefore a rule-14 [R-ACCURATE] omission of a
+# published locational requirement, not a new modelling assumption.
+#
+# Requirements — the transcribed posting
+# (data/raw/NYISO-AS/requirements/nyiso_locational_reserve_requirements.csv,
+# rows ``region=LI``; regime v2021 covers ALL of the 2023-2025 training window):
+#   * LI 10-minute total — 120 MW, all hours.
+#   * LI 30-minute total — 270 MW OFF-peak, 540 MW ON-peak (the diurnal step).
+# Demand-curve values — NYISO Ancillary Services Manual §6.8 items 10 and 15
+# ("Long Island 10-Minute Reserves"/"Long Island 30-Minute Reserves" ... "shall
+# be $25/MW"), the same $25/MW locational tier the published NYC products carry.
+#
+# The 30-minute product's on/off-peak boundary is NOT stated in the LRR posting
+# itself (the `DATA NEEDED` note in that intake's README). It resolves to the
+# NYISO tariff's own definition — MST §2.15 Definitions-O (effective 10/31/2025,
+# Docket ER26-1265-000): "On-Peak: The hours between 7 a.m. and 11 p.m.
+# inclusive, prevailing Eastern Time, Monday through Friday, except for
+# NERC-defined holidays" (Off-Peak is its complement, incl. all weekend hours).
+# That is a published CALENDAR rule, so it regenerates for any forward year and
+# responds to the year's weekday/holiday layout — rule 13 admissible, and the
+# reconciliation rule 14 asks for when the accurate source is silent on a
+# convention (documented here rather than guessed at the call site).
+NYISO_RCPF_LOCATIONAL_LI: dict[str, dict] = {
+    "LI": {
+        "zones": ("Long_Island",),
+        "products": (
+            ("li_30min_total", 270.0, 0.0, 25.0),
+            ("li_10min_total", 120.0, 0.0, 25.0),
+        ),
+    },
+}
+
+# LI 30-minute ON-peak requirement (MW). The off-peak level is the family's
+# static base above; this is the on-peak step of the same published cell.
+NYISO_LI_30MIN_ONPEAK_MW: float = 540.0
+
+# The downstate 10-minute families the in-city COMMITMENT OBLIGATION re-classes
+# onto the online-gated in-zone obligation class
+# (``nyiso_incity_commitment_obligation``). Both are load-pocket 10-minute
+# requirements that a resource can only satisfy while SYNCHRONISED in the
+# pocket: a steam boiler carrying 10-minute reserve is necessarily on-line
+# (it cannot start inside the window), and a fast-start GT is the other
+# in-pocket provider. That is the physics of the published 10-minute product,
+# corroborated by — not dependent on — the Con Edison NYC local rule holding
+# in-city 10-minute reserve on in-city steam + fast-start GTs (2008 ARR
+# vintage / PSC Order 27302; the CURRENT Applications-of-Reliability-Rules
+# table is MyNYISO login-walled and so is NOT relied on as the basis here —
+# see docs/handoffs/nyiso-incity-instrument-survey-2026-07.md §3).
+NYISO_INCITY_OBLIGATION_FAMILIES: frozenset[str] = frozenset(
+    {"nyc_10min_total", "li_10min_total"}
+)
+
+
+def nerc_holidays(year: int) -> "np.ndarray":
+    """Return the six NERC-defined holidays of *year* as ``datetime64[D]``.
+
+    The holiday set the NYISO tariff's On-Peak definition excludes (MST §2.15
+    Definitions-O, "except for NERC-defined holidays"): New Year's Day,
+    Memorial Day, Independence Day, Labor Day, Thanksgiving Day and Christmas
+    Day. Fixed-date holidays falling on a Sunday are observed the following
+    Monday (the NERC/NAESB observance convention); the three floating holidays
+    are defined by weekday rule and need no observance shift.
+
+    A pure calendar rule, so it regenerates for any forward year — this is what
+    keeps the LI on/off-peak split rule-13 [R-MEASURED] admissible rather than
+    a pinned per-year table.
+
+    Args:
+        year: Calendar year.
+
+    Returns:
+        ``(6,)`` array of ``datetime64[D]`` holiday dates, ascending.
+    """
+    import pandas as pd
+
+    def _nth_weekday(month: int, weekday: int, n: int) -> "pd.Timestamp":
+        """*n*-th *weekday* (Mon=0) of *month*; ``n=-1`` means the last one."""
+        days = pd.date_range(f"{year}-{month:02d}-01", periods=31, freq="D")
+        days = days[(days.month == month) & (days.dayofweek == weekday)]
+        return days[n if n < 0 else n - 1]
+
+    fixed = [
+        pd.Timestamp(year=year, month=1, day=1),  # New Year's Day
+        pd.Timestamp(year=year, month=7, day=4),  # Independence Day
+        pd.Timestamp(year=year, month=12, day=25),  # Christmas Day
+    ]
+    # Sunday -> observed Monday (NERC/NAESB observance).
+    fixed = [d + pd.Timedelta(days=1) if d.dayofweek == 6 else d for d in fixed]
+    floating = [
+        _nth_weekday(5, 0, -1),  # Memorial Day: last Monday in May
+        _nth_weekday(9, 0, 1),  # Labor Day: first Monday in September
+        _nth_weekday(11, 3, 4),  # Thanksgiving: fourth Thursday in November
+    ]
+    out = pd.DatetimeIndex(sorted(fixed + floating))
+    return out.values.astype("datetime64[D]")
+
+
+def nyiso_onpeak_mask(year: int, hours: int) -> "np.ndarray":
+    """Return the ``(hours,)`` boolean MST On-Peak mask for *year*.
+
+    NYISO MST §2.15 Definitions-O (effective 10/31/2025, Docket ER26-1265-000):
+    "On-Peak: The hours between 7 a.m. and 11 p.m. inclusive, prevailing
+    Eastern Time, Monday through Friday, except for NERC-defined holidays."
+    Hour-beginning 7 through 22 inclusive covers 7 a.m. to 11 p.m.; every other
+    hour, all weekend hours and all NERC-holiday hours are Off-Peak (the
+    tariff's Off-Peak definition is exactly this complement).
+
+    The horizon is hour-beginning local (prevailing Eastern) time, the same
+    convention the reliability-floor limbs' ``start_hour``/``end_hour`` windows
+    use, so no timezone shift is applied.
+
+    Args:
+        year: Calendar year of the solve horizon.
+        hours: Horizon length T (8760/8784).
+
+    Returns:
+        ``(hours,)`` bool array — True on On-Peak hours.
+    """
+    import pandas as pd
+
+    idx = pd.date_range(f"{year}-01-01", periods=int(hours), freq="h")
+    on = (idx.hour >= 7) & (idx.hour <= 22) & (idx.dayofweek < 5)
+    holiday = np.isin(idx.values.astype("datetime64[D]"), nerc_holidays(year))
+    return np.asarray(on & ~holiday, dtype=bool)
+
+
+def nyiso_li_30min_requirement_mw(
+    year: int, hours: int, off_peak_mw: float, on_peak_mw: float
+) -> "np.ndarray":
+    """Return the ``(hours,)`` published LI 30-minute requirement (MW).
+
+    The diurnal step of the published Long Island cell: *off_peak_mw* on
+    Off-Peak hours, *on_peak_mw* on On-Peak hours (:func:`nyiso_onpeak_mask`).
+    Both levels are printed cells of the LRR posting — nothing is interpolated
+    and nothing is fitted.
+
+    Args:
+        year: Calendar year of the solve horizon.
+        hours: Horizon length T.
+        off_peak_mw: Published Off-Peak requirement (270 MW).
+        on_peak_mw: Published On-Peak requirement (540 MW).
+
+    Returns:
+        ``(hours,)`` float array of requirement MW.
+    """
+    on = nyiso_onpeak_mask(year, hours)
+    return np.where(on, float(on_peak_mw), float(off_peak_mw)).astype(float)
+
+
 # --- NEISO RCPF products ---------------------------------------------------
 NEISO_RCPF_PRODUCTS: tuple[tuple[str, float, float, float], ...] = (
     ("ne_30min_total", 1800.0, 0.0, 1000.0),
@@ -2300,6 +2461,10 @@ def _nyiso_design(
         )
 
     measured_step_span = bool(getattr(config, "nyiso_ordc_measured_step_span", False))
+    # Families whose ORDC step widths translate with their hourly requirement.
+    # The global flag opts in every measured family; the published LI diurnal
+    # family opts itself in below (its two levels ARE the published curve span).
+    span_scaled: set[str] = set()
     dynamic_req: dict[str, np.ndarray] = {}
     if bool(getattr(config, "nyiso_dynamic_reserve_requirements", False)):
         from market_sim.data.nyiso_reserve_requirements import (
@@ -2327,6 +2492,13 @@ def _nyiso_design(
         )
 
     locational = getattr(config, "nyiso_rcpf_locational", None) or NYISO_RCPF_LOCATIONAL
+    li_locational = bool(getattr(config, "nyiso_li_locational_reserve", False))
+    if li_locational:
+        # Published Long Island (Zone K) ladder, config-gated so a flag-off run
+        # stays byte-identical (NYISO_RCPF_LOCATIONAL_LI). Its 30-minute family
+        # carries the published diurnal on/off-peak step, installed as an hourly
+        # requirement below.
+        locational = {**locational, **NYISO_RCPF_LOCATIONAL_LI}
     for region in locational.values():
         member_idx = tuple(zone_index[z] for z in region["zones"] if z in zone_index)
         if not member_idx:
@@ -2336,7 +2508,39 @@ def _nyiso_design(
                 (member_idx, str(name), (float(req), float(crit), float(pen)))
             )
 
+    if li_locational and "li_30min_total" not in dynamic_req:
+        # The published LI 30-minute cell is 270 MW Off-Peak / 540 MW On-Peak
+        # (MST §2.15 On-Peak calendar). Feed it through the SAME hourly-
+        # requirement channel the measured #1344 series uses, so the family's
+        # ORDC curve translates with the requirement exactly as
+        # nyiso_ordc_measured_step_span already does for SENY — one mechanism,
+        # not a second construction (rule 19 [R-ONE-MECH]).
+        dynamic_req = {
+            **dynamic_req,
+            "li_30min_total": nyiso_li_30min_requirement_mw(
+                int(config.weather_year),
+                T,
+                NYISO_RCPF_LOCATIONAL_LI["LI"]["products"][0][1],
+                NYISO_LI_30MIN_ONPEAK_MW,
+            ),
+        }
+        # Scoped to THIS family only — never by flipping the global
+        # nyiso_ordc_measured_step_span, which would silently re-span SENY's
+        # curve too and stack a second behaviour change on an unrelated family.
+        span_scaled.add("li_30min_total")
+
+    obligation = bool(getattr(config, "nyiso_incity_commitment_obligation", False))
     synch = bool(getattr(config, "nyiso_synchronised_reserve", False))
+    if obligation and synch:
+        raise ValueError(
+            "nyiso_incity_commitment_obligation=True with "
+            "nyiso_synchronised_reserve=True: both make the downstate "
+            "locational 10-minute requirement an ONLINE-gated obligation on "
+            "in-city resources — one phenomenon, two mechanisms (CLAUDE.md "
+            "rule 19 [R-ONE-MECH]). The obligation family GENERALIZES the "
+            "path-A NYC-spinning family to the published J/K ladders; enable "
+            "one or the other, never both."
+        )
     commit_gated = synch and bool(getattr(config, "commitment_enabled", False))
     if synch:
         nyc_idx = tuple(i for z, i in zone_index.items() if z == "NYC")
@@ -2354,6 +2558,12 @@ def _nyiso_design(
             if "spin_online" in name
             else (1 if "10min" in name or "spin" in name else 0)
         )
+        if obligation and name in NYISO_INCITY_OBLIGATION_FAMILIES:
+            # In-city commitment obligation: this family draws the ONLINE-gated
+            # in-zone obligation class (index 2) instead of the idle-allowed
+            # quick-start class, so meeting the published requirement forces
+            # in-city units to be dispatched rather than counting idle capacity.
+            rclass = 2
         if name in dynamic_req:
             # Measured as-enforced hourly requirement (issue #1344): the
             # condition-varying series replaces the static published MW for
@@ -2363,7 +2573,7 @@ def _nyiso_design(
         else:
             requirement_arr = np.full(T, req, dtype=float)
         p, w = nyiso_rcpf_product_shortfall_steps(req, crit, pen, n_ramp=n_ramp)
-        if name in dynamic_req and measured_step_span:
+        if name in dynamic_req and (measured_step_span or name in span_scaled):
             # Construction-consistency fix (nyiso_ordc_measured_step_span):
             # the balance RHS above enforces the MEASURED requirement, so the
             # demand curve priced against it must span the measured MW too.
@@ -2439,7 +2649,50 @@ def _nyiso_design(
             [int(z) in downstate_idx for z in fleet_arrays.zone_idx], dtype=bool
         )
         full_elig = full_elig | (dr_mask & gen_downstate)
-    if synch and not commit_gated:
+    if obligation:
+        # In-city COMMITMENT OBLIGATION (class 2, online-gated). The published
+        # NYC/LI 10-minute requirement is met only by resources SYNCHRONISED in
+        # the pocket, so its headroom row is ``R[2,z] - rho * sum_g P[g] <= 0``
+        # over the in-pocket obligation fleet: steam counts only while on-line
+        # (it cannot start inside a 10-minute window) and fast-start GTs are the
+        # other in-pocket provider. Idle capacity backs nothing, which is what
+        # turns a reserve requirement into a COMMITMENT driver — the generalized
+        # form of the nyiso_synchronised_reserve path-A NYC-spinning family
+        # (mutually exclusive with it above, rule 19 [R-ONE-MECH]).
+        #
+        # The family's own zone_mask does the locational scoping (NYC families
+        # consume R[2,NYC], LI families R[2,Long_Island]), so the eligibility
+        # row itself is fleet-wide and needs no zone filter.
+        groups = getattr(fleet_arrays, "plant_group", None)
+        if groups is None:
+            # plant_group is optional on FleetArrays; fall back to the fuel
+            # taxonomy so the mask is well-defined on minimal/synthetic fleets.
+            fuel_names_ob = np.array(
+                [FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx]
+            )
+            steam_mask = fuel_names_ob == "gas_st"
+        else:
+            steam_mask = np.asarray(groups) == "ST_GAS"
+        obligation_elig = quick_elig | steam_mask
+        eligible = np.vstack([full_elig, quick_elig, obligation_elig])
+        online_gated = np.array([False, False, True], dtype=bool)
+        o_idx = np.flatnonzero(obligation_elig)
+        pmin_o = np.asarray(fleet_arrays.pmin, dtype=float)[o_idx]
+        pmax_o = np.asarray(fleet_arrays.pmax, dtype=float)[o_idx]
+        valid = (pmin_o > 0) & (pmax_o > pmin_o)
+        if valid.any():
+            # rho = the obligation fleet's own (pmax-pmin)/pmin at min load —
+            # how much 10-minute headroom one MW of on-line output backs. A
+            # fleet property read off the same arrays the LP dispatches, not a
+            # tuned coefficient (rule 5 [R-NO-MAGIC]); clipped to the same
+            # [0.5, 4.0] physical band the path-A family uses.
+            ratio = (pmax_o[valid] - pmin_o[valid]) / pmin_o[valid]
+            online_rho = float(
+                np.clip(np.average(ratio, weights=pmax_o[valid]), 0.5, 4.0)
+            )
+        else:
+            online_rho = 1.0
+    elif synch and not commit_gated:
         eligible = np.vstack([full_elig, quick_elig, quick_elig])
         online_gated = np.array([False, False, True], dtype=bool)
         q_idx = np.flatnonzero(quick_elig)

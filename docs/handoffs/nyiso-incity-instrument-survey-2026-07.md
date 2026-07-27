@@ -38,6 +38,71 @@ NYISO's own published fix — explicit NYC/LI load-pocket reserve requirements (
 recommendation 2024-1) — is deferred behind the Dynamic Reserves project (~2028 deploy):
 the instrument this lane wants is expected to exist eventually, but does not today.
 
+## 2a. ADJUDICATED 2026-07-26 (owner) — §2 = YES, §3 = documented-NO
+
+**§2 (the reserve lever): YES, full J/K reopen.** The owner ruled that the
+closed C3a "reserve" lever — closed as a *pricing* lever, on the measured
+`energy_reserve_coopt=false` → **Δ$0.00** 2023 off-peak A/B (nyiso-71) — does
+**not** extend to a commitment-obligation reading, which addresses a different
+phenomenon (ST_GAS volume/C1–C7, not the energy trough). Mechanism built this
+session: `nyiso_li_locational_reserve` + `nyiso_incity_commitment_obligation`
+(both default-off, byte-inert), commit `fa9fc78`.
+
+**Two survey questions closed on primary sources, not assumption:**
+
+- **The vintage pin is resolved from evidence already on disk — and needs no
+  change.** `data/raw/NYISO-AS/requirements/nyiso_locational_reserve_requirements.csv`
+  carries three dated versions of the posting (two Wayback + one 2026 retrieval).
+  The **v2021 regime spans all of 2023–2025**, and in it NYC is **500 / 1,000** —
+  i.e. the "SOM-modeled" values already in `NYISO_RCPF_LOCATIONAL` *are* the
+  published values for the training window. The 625/1,250 raise appears only
+  between 2026-02-14 and 2026-07-10 and is a forecast-year event. **No NYC
+  requirement changes.**
+- **What was actually missing is Zone K, entirely.** `NYISO_RCPF_LOCATIONAL`
+  stops at NYC, and the measured as-enforced #1344 intake has **no LI region**
+  either — so a *published* locational requirement (LI 10-min 120; 30-min
+  270→540) was represented nowhere in the model. That reframes the LI half from
+  "new mechanism" to a **rule-14 [R-ACCURATE] omission**.
+- **The LI on/off-peak boundary — the intake README's `DATA NEEDED` — is
+  closed.** It is not defined in the LRR posting or the Ancillary Services
+  Manual, but it is defined in the tariff itself: **MST §2.15 Definitions-O**
+  (effective 10/31/2025, Docket ER26-1265-000) — *"On-Peak: The hours between 7
+  a.m. and 11 p.m. inclusive, prevailing Eastern Time, Monday through Friday,
+  except for NERC-defined holidays"*, Off-Peak its complement. A published
+  **calendar** rule ⇒ regenerates for any forward year ⇒ rule-13 admissible.
+  Implemented as `nerc_holidays` / `nyiso_onpeak_mask`.
+- **LI demand-curve values** come from **Ancillary Services Manual §6.8** items
+  **10** and **15**: "Long Island 10-Minute Reserves … shall be **$25/MW**" and
+  the same for the 30-minute product — the same $25/MW locational tier the
+  published NYC products carry.
+
+**§3 (Zone K / the ARR table): documented-NO, retrieval attempted and
+exhausted.** Owner authorized a bounded public attempt. Result:
+
+1. The current **Manual 12 no longer contains the table.** Its revision log
+   records "Table B.1, B.2, B.3, B.4, and B.5 — replaced with links to the
+   external locations", and Table B.5 is now a one-line pointer: *"The current
+   version of the ARR Table is posted at: https://www.nyiso.com/reports-information"*.
+2. That page's ARR section resolves to a **login wall** — its literal text is
+   *"Log into MyNYISO to view the Application of Reliability Rules"*, linking
+   `nyiso.com/login`.
+
+So the ARR-22-type units-in-service instrument for Long Island (2008 vintage:
+"any two of four Northport units" at peak *and* light load) is **not publicly
+obtainable**, and the 2008 copy is not intake-eligible as current truth (rule
+14). **The Zone-K documented-NO is recorded.** The LI half of this lane
+therefore rests on the published *reserve ladder*, not on a units-in-service
+rule. Consequence for the mechanism: the eligibility restriction to in-city
+steam is grounded on the **physics of a 10-minute product in a load pocket** (a
+steam boiler carrying 10-minute reserve is necessarily synchronised), with the
+Con Edison local rule cited as *corroboration only* — this is written into the
+code comment so no later session mistakes the walled document for the basis.
+
+*(Sources retrieved in-session: NYISO Transmission & Dispatch Operations Manual
+(171 pp) Table B.5 + revision log; nyiso.com/reports-information ARR section;
+NYISO Ancillary Services Manual (142 pp) §6.8; NYISO MST full tariff (1,079 pp)
+§2.15. PDFs reviewed in the session scratchpad — none is a dataset intake.)*
+
 ## 2. The one owner decision this survey tees up
 
 The only instrument passing rule 13 outright is the **locational reserve requirement
