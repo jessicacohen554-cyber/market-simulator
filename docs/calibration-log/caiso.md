@@ -2133,3 +2133,22 @@ residual (rule 21, and slack by 89–95 % where the defect lives); re-testing an
 AS-award form against this defect (§Ask).
 
 Next number: caiso-128.
+
+### ADDENDUM (same session, later) — OWNER GRANT on the caiso-127 ask
+
+The owner granted the §Ask in-session. Terms, recorded verbatim in
+`docs/handoffs/caiso-127-storage-arbitrage-ask-2026-07-27.md` §Status:
+
+1. **S1 (DA/RT allocation on the DISCHARGE side) GRANTED** as the next single
+   delta, conditional on derive gates D1–D3. **D3 is a hard kill-before-solve**
+   — an ex-ante-slack floor kills the family with no LP solved (the caiso-74
+   lesson).
+2. **The caiso-114 refinement is NOT funded** as a first delta; re-judged after
+   S1 lands, against the non-pinned-day residual.
+3. **`hydro_budget_nameplate_aware` arms in its OWN single-delta A/B** — never
+   bundled with S1; cross-ISO blast radius checked before any keeper.
+4. **Pumped storage flagged, not built** (no shape restraint of any kind,
+   +58/+85/+89 MW of the overnight excess) — report only.
+
+Promotion is NOT granted and stays a separate owner act after rule-22 LOYO.
+Keeper remains `2026-07-27-caiso-126-ror-split`. Next number: caiso-128.

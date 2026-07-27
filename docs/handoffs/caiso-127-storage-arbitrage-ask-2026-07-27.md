@@ -1,11 +1,31 @@
 # caiso-127 owner ask — the evening–overnight premium is pinned by the model's own storage arbitrage; the surviving candidate is the DA/RT allocation on the DISCHARGE side
 
-**Status: FILED, NOT BUILT.** This is the TASK-2 design memo of
+**Status: GRANTED 2026-07-27 (owner, in-session), NOT YET BUILT.** This is the
+TASK-2 design memo of
 `results/calibration/FINDING-caiso127-evening-formation-2026-07-27.md`. Nothing
-in it is armed, no A/B was run, the keeper
-(`2026-07-27-caiso-126-ror-split`) is unchanged. Building any of it requires
-an in-session owner grant on a specific construction (the session gate), and
-§5's derive-first checks must pass *before* the grant is worth giving.
+in it was armed in the caiso-127 session, no A/B was run, and the keeper
+(`2026-07-27-caiso-126-ror-split`) is unchanged.
+
+**The grant, exactly as given** (record it verbatim in any session that acts on
+it):
+
+1. **S1 — the DA/RT allocation on the DISCHARGE side (§4) is GRANTED** as the
+   next single delta, *conditional on §5's D1–D3 passing first*. **D3 is a
+   hard kill-before-solve**: if the derived floor is ex-ante slack against the
+   keeper's own committed hourlies, the family dies there and no LP is solved
+   (the caiso-74 lesson — that session spent a full A/B on a mechanism the
+   arithmetic had already refuted).
+2. **The caiso-114 refinement is NOT funded** as a first delta (§1). It is
+   re-judged only after S1 lands, and then against the non-pinned-day residual.
+3. **`hydro_budget_nameplate_aware` is to be armed in its OWN single-delta A/B**
+   — never bundled with S1, which would confound both. Its cross-ISO blast
+   radius is checked before it enters any keeper.
+4. **Pumped storage is flagged, not built**: PS carries no shape restraint of
+   any kind in the model and contributes +58/+85/+89 MW of the overnight excess
+   (§3). Report it; do not open it in the S1 session.
+
+Promotion is **not** granted by any of the above and remains a separate owner
+act (rule 1), after rule-22 LOYO.
 
 ---
 
