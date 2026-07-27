@@ -247,3 +247,74 @@ shares this construction — this is inherited behaviour, not new.
   leave-one-year-out within 2023–2025 (rule 22) before promotion.
 - No out-of-training year was touched: NYISO carries no calibration-complete
   marker, so 2022 / 2019 / ≤2021 / H1-2026 remain quarantined.
+
+## 6. nyiso-84 — the NYCA/East tier is ALSO closed, and the first gate was the pin
+
+§4 redirected the lane at "the tiers whose published penalties are large enough
+to reach it — NYCA 10-min/30-min (\$750) and 10-min spin (\$775), and East
+10-min (\$775)". nyiso-84 (2026-07-27) tested that redirect and closed it. Two
+results, in the order they were found:
+
+**6a. The pin.** The East ladder was incomplete — the LRR posting prints THREE
+East rows (spin_10 330 MW, total_10 1,200 MW, total_30 1,200 MW) and the model
+carried only the 10-minute total. But the two missing families are **not \$775
+tiers**: pinned from the Ancillary Services Manual §6.8 itself (current May-2026
+issue, cross-checked against the July-2019 issue and the 2023 SOM p. A-132),
+items 2 and 12 — East spinning and East 30-minute — are **\$40/MW** (\$25
+before the July-2021 procurement enhancements). Only item 7, the East 10-minute
+total already in the model, carries \$775. The handoff's premise that the
+missing East families sit "in a tier that CAN price to the gate" was exactly the
+assumption its own instruction ("pin before coding") caught. The families are
+added anyway as `nyiso_east_reserve_families` (rule 14 — a real published
+requirement), and the ladder-only arm is **bit-identical to the control** on
+tail, reserve dual and class energy: the same idle-allowed inertness §4b proved
+for the LI ladder, now demonstrated at the East tier.
+
+**6b. The mechanism.** `nyiso_spin_reserve_online` generalizes the §4 gate to
+the published SPINNING families — the product-definition driver (spinning
+reserve is synchronized supply; an idle peaker cannot be spinning), applied to
+`nyca_10min_spin` (655 MW, **\$775**) and `east_10min_spin` (330 MW, \$40) via
+the same class-2 machinery (rule 19). Four arms, all three years, vs the
+same-HEAD zero-delta control (id `2026-07-27-nyiso-84-{control,east-ladder,
+spin-gate,east-gate}`):
+
+| quantity (2023/2024/2025) | control | ladder | gate | ladder+gate |
+|---|--:|--:|--:|--:|
+| C3c h > \$300 (any zone) | 3/0/9 | 3/0/9 | 3/0/9 | **3/0/9** |
+| reserve-dual h > \$0 | 22/6/66 | 22/6/66 | 652/800/1589 | **3248/3863/5525** |
+| reserve-dual max | 12.5/28.1/177.3 | same | 12.5/63.4/177.3 | 13.5/63.4/177.2 |
+
+The gate **works** — the \$775 NYCA spin family goes from never-binding to
+binding 652–1,589 hours, the composed arm to 37–63 % of all hours, and it
+forces real overnight GT commitment (CT_CHP +0.2–0.3 TWh, its evening/overnight
+ratio dropping below 1) — and the tail **does not move by a single hour**. The
+binding explodes in *breadth*, never in *depth*: the published curves are
+shortfall ramps, and the model's synchronized supply (hydro + online
+quick-start output) never falls deep enough short of 655/330 MW to climb them
+anywhere near \$300. The reserve-dual maximum in every arm equals the
+control's own.
+
+**Therefore the reserve-tier route to C3c is closed in full**: the J/K ladders
+are \$25-ceiling-blocked (§4), the missing East families are \$40 ceilings
+(6a), and the \$750–775 NYCA/East families — even online-gated — price only
+shallow ramp steps (6b). No published reserve demand curve forms the missing
+>\$300 tail at hourly-LP granularity. What remains for the residual (model
+3/0/9 vs RT actual 10/12/42) is what the SOM's own shortage accounting points
+at: **RT-interval (5-minute) physical shortage pricing** — transient
+ramp/contingency shortages the hourly LP structurally cannot see — plus the
+commitment-side drivers (2025 LI steam OOM growth) that change what is online
+when those intervals hit. A successor lane should start from that framing, not
+from the reserve ladders.
+
+Consequence for nyiso-82: its winter-spread disposition explicitly waited on
+C3c movement; C3c did not move, so the winter-spread arm stays unarmed.
+
+Disposition of the two flags: both stay **default-off**.
+`nyiso_east_reserve_families` is a correct, probe-adjudicated-inert accuracy
+fix (same standing as `nyiso_li_locational_reserve`). `nyiso_spin_reserve_online`
+is structurally grounded on the requirement side but its supply side inherits
+the class taxonomy's quick-start scoping — real NYISO spin is substantially
+online CC/steam governor headroom, which the gate excludes, so arming it forces
+GT commitment reality does not show. Widening the gated class to ramp-limited
+online CC/steam headroom is the prerequisite for any promotion case, and with
+C3c unmoved there is no promotion case to make.
