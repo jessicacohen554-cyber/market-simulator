@@ -2478,3 +2478,147 @@ warnings). Determination unchanged at **NOT-YET** (C6 governance gate, C3a/C3c/
 C5a).
 
 Next number: caiso-131.
+
+## caiso-131 (2026-07-27) — DIAGNOSIS: C3a-2025 and C3c are **NOT one defect — they do not even share a year**. C3c fails **2023/2024 only** (2025 already PASSES on the rubric's small-count rule, actual 8 h < 10); C3a fails **2025 only**. C3c is a **supply-surplus** defect (min dispatchable headroom 12.2/12.7/13.1 GW over all 8760 h), NOT an offer ceiling (stack tops out at $1,266/$687/$1,632) and NOT a reserve-dual defect (the LOLP overlay IS armed and inert *because* of the surplus). The (λ, $200] band is **12.6–12.8 GW** deep — 52 % of the available gas fleet — which kills every quantity-side candidate before a solve. C3a-2025 is **Sep–Dec (81 % of the gap)** and **57 % of it is DSW→CA corridor congestion**, reproducing caiso-121 on the current keeper. NO SOLVE, nothing registered; keeper `2026-07-27-caiso-130-nameplate-aware` UNCHANGED
+
+**Measurement-only session (charter step 3: diagnose, then FILE the ask).** No
+LP was built or solved, no mechanism was armed, nothing was registered. Step 4
+(prereg + A/B) was conditional on the diagnosis landing a candidate with a real
+driver; §2 of the memo shows the kill-before-solve envelope kills every
+candidate now on the table, so the deliverable is the FINDING plus the ask —
+the caiso-127/129 discipline.
+
+Full record:
+`results/calibration/FINDING-caiso131-tail-and-c3a-decomposition-2026-07-27.md`.
+Owner ask with derive-first gates:
+`docs/handoffs/caiso-131-c3c-c3a-ask-2026-07-27.md`.
+Instrument (committed):
+`scripts/probes/_caiso131_tail_and_level_decomp.py` (sections A–E; committed
+sidecars + committed bench/tail parts + a no-LP `run_year(fleet_only=True)`
+reconstruction — never a replay).
+
+**(1) The determination basis is three ISO-YEARS, not two criteria.** Scored on
+the rubric's own basis and reproducing it digit-for-digit (C3a-2025 **+10.91 %**
+vs the rubric's +10.9 %):
+
+| year | C3a | band margin | C3c | required |
+|---|---|---|---|---|
+| 2023 | +3.22 % PASS | **+$3.67/MWh** | 0 h vs 47 h **FAIL** | ≥ 24 h |
+| 2024 | +8.00 % PASS | **+$0.69/MWh** | 0 h vs 35 h **FAIL** | ≥ 18 h |
+| 2025 | **+10.91 % FAIL** | **−$0.31/MWh** | 0 h vs 8 h **PASS** | — |
+
+C3c-2025 passes on `TAIL_SMALL_COUNT = 10` (`|0 − 8| ≤ 10`); the scorer prints
+no gated row for it because passing rows are not printed. **No year fails both
+criteria.**
+
+**(2) The "one defect / belly-to-tail redistribution" hypothesis is REFUTED**
+three independent ways: different years (above); different months (January is a
+**negative** C3a contributor in all three years — −0.31/−0.35/−0.23 — while
+carrying 24/47 and 26/35 of the tail hours; C3a-2025 is Sep–Dec at +$2.36 of
++$2.90); and different magnitudes (belly excess +5.72/+4.36/+4.12 against a
+tail deficit of −1.41/−0.80/−0.25, 3–6× apart and opposite in sign). What IS
+true is that the price *distribution* is compressed — the model's absolute max
+zonal price is **$192.3/$155.3/$94.3**, never reaching $200 in any hour — but
+that is a shared symptom, not a shared mechanism.
+
+**(3) The practical payoff of the refutation: the two are SEPARABLE.** Closing
+C3c costs the C3a mean only **+$0.60 (2023)** and **+$0.36 (2024)** against
++$3.67 and +$0.69 of band headroom, and 2025 needs no tail at all. Three
+binding design constraints follow, and they are the pre-solve envelope for any
+C3c candidate: **2025 spillover ≤ +$0.00** (it has negative band room),
+**2024 off-tail spillover ≤ +$0.30**, and the candidate must be **narrow in
+hours** (~24/18 hours, nothing else). This is the quantified form of the
+caiso-127 §1 trap.
+
+**(4) The C3c three-way discriminator — (a) surplus, not (b) reserve dual, not
+(c) offer ceiling.**
+- **(c) REFUTED:** the offer stack's top is **$1,266/$687/$1,632/MWh** and the
+  fleet offers 732/248/250 MW/h above $200 — **3,749/9,570/108 MW in the
+  measured tail hours themselves**. The rungs exist; the LP never climbs them.
+  **No offer-curve work can close C3c.**
+- **(b) TRUE BUT DERIVED:** `reserve_price` is identically 0.00 in all 61,320
+  zone-hours of every year (`caiso_reserve_coopt` off), and the published LOLP
+  overlay **is armed** on the keeper (`caiso_scarcity_pricing=True`, so the
+  persisted prices already include it) yet produces nothing — it cannot, since
+  R never approaches MCL = 1,400 MW.
+- **(a) THE CAUSE:** dispatchable headroom (gas+import+hydro) has a **minimum
+  over all 8,760 hours of 12,173 / 12,689 / 13,137 MW**, `slack` is zero
+  everywhere, and in the measured tail hours the model holds 22.6/27.5/24.2 GW.
+  **Cross-ISO:** this is the same class as the standing PJM/ERCOT lead, and
+  CAISO is its sharpest instance — `results/scarcity.py`'s own PJM HONESTY GATE
+  says total-fleet headroom is indefensible and PJM moved to a plant-level
+  ONLINE measure; **CAISO's overlay still uses total headroom.**
+
+**(5) The kill-before-solve arithmetic.** The band `(λ, $200]` in the measured
+tail hours holds **12,609 / 12,816 / 21,372 MW**, split gas_cc 2.7/2.8, gas_ct
+5.2/5.2, gas_st 1.3/0.4, import 3.4/4.4 GW — 52 % of the available gas fleet,
+no dominant limb. **No physically-grounded quantity-side derate removes it**
+(an OFO curtails single-GW quantities; the measured corridor leaves only
+1.6/2.8 GW of deliverable import headroom). Scale-invariant, the caiso-129
+§3(a) form.
+
+**(6) What the measured tail actually is.** Not a summer-evening net-peak
+phenomenon: 2023 is **24/47 hours in January** at hod 6–7, 2024 **26/35 in
+January** including one 16-hour run, 2025 all 8 at hod 5–9 in Jan/Mar/Apr.
+2023/24 are **winter GAS events** — citygate at the **90th/99th percentile**
+($11.25/$10.41 vs year means $5.20/$2.43) at unremarkable load (p88/p78) and
+ramp (p76/p69) percentiles. The model's gas passthrough *works* there (CC offers
+$103/$121 vs year means $61/$42; CT $145/$164) and λ still stops at $112/$123.
+The real market was pricing **gas deliverability**, which the LP does not
+represent. 2025's 8 hours have **no measured driver at all** (gas p57, load p65,
+ramp p71) — RT-only formations, the MISO/NEISO anatomy.
+
+**(7) C3a-2025, and what is different about 2025.** 2025 is the year with the
+largest storage fleet (15.2 GW, 13.60 TWh discharged vs 6.00/9.85), the most
+solar (52.5 TWh), the least gas (45.3 TWh), a higher run gas price (3.52 vs
+2.54/2.19) — and **no citygate spike whatsoever** (max **$5.61** vs $24.29 and
+$17.34). That last fact is *why* its measured tail is 8 hours and why C3c-2025
+passes; it is a quiet year, not a modelling success. The C3a residual is
+Sep–Dec (81 %), in the surplus/belly regime, and the caiso-121 attribution
+**holds on the current keeper**: Sep–Dec 2025 CA λ $46.19 vs actual $39.44
+(+$6.75), of which **CA − WECC_DSW congestion is +$3.87 (57 %)**, with WECC_PNW
+stranded at $4.97. Required move: **−$0.31/MWh**, 0.8 % of the model level.
+
+**(8) The real coupling.** The two criteria are not one defect but share one
+structural object — the WECC import node / DSW→CA corridor — and **pull it in
+opposite directions**: C3c needs the marginal import rung re-priced *up*,
+C3a-2025 needs the corridor rent removed (CA λ pulled *down* toward its node).
+**caiso-114** is the only mechanism on record to have achieved a CAISO C3c PASS,
+and it did so by re-pricing that node — breaking C3a with an evening over-price
+of +18/+12/+4 $/MWh. That breakage is now explained in advance (the
+FINDING-caiso127 §1 storage fixed point) and priced by (3)'s envelope
+($2–4/MWh against $0.69 and −$0.31). **caiso-114 is not re-armable as-is**, and
+its original C5a justification was removed from the rubric by v2.9.
+
+**(9) The ask, filed not built** (memo §3–§6), ranked:
+**A1 (primary)** arm the caiso-121 corridor / export-path family in surplus —
+load-bearing, diagnosed, needs only −$0.31/MWh; D-gates D1 (cross-year `r ≥
+0.99` on the export envelope, the gate that killed S1), D2 (binds in ≥ 50 % of
+the Sep–Dec surplus hours carrying the term), D3 (sign check: a floor that only
+adds cannot reduce a congestion rent), D4 (C3a-2023/24 + C1/C2/C3b/C4/C6/C7/C8
+guards). **A2** re-specify the CAISO LOLP overlay's reserve measure to the
+plant-level ONLINE basis PJM already uses — zero new free parameters, a rule-14
+correction, offered as a structural correction with an honest expectation that
+its C3c yield is small; **blocked on a `unit_hourly` sidecar** the slim bundle
+does not carry (the caiso-127 storage-sidecar precedent is the right fix).
+**A3** a data-intake ask for the **SoCalGas OFO declaration record** — the only
+route that could make C3c-2024 reachable without a fitted threshold (a citygate
+> $8/MMBtu trigger reaches 27 h in 2023 but **17 h in 2024** against 18 needed;
+moving the threshold to clear it is a fitted value, rules 13/24). **A4** the
+honest fallback: ledger C3c as an ACCEPTED MEASURED-INPUT LIMITATION — the
+disposition MISO and NEISO already carry, on evidence stronger than either;
+**C3c is failing or ledger-caveated in all six ISOs**, and CAISO holds 0
+ledgered caveats against a budget of 3. Owner call, and **not** a substitute
+for A1.
+
+**DO-NOT-REDO (new, binding):** re-testing the belly-to-tail redistribution
+hypothesis; treating C3c as a three-year failure or C3a as multi-year; any
+offer-curve / heat-rate work aimed at C3c; any quantity-side derate aimed at
+λ > $200; re-arming `caiso_endogenous_wecc_node` as a C3c fix; deriving a
+citygate threshold that makes C3c-2024 clear; "fixing" C3a-2025 via the extract
+basis (including the +$0.77/+$0.48/+$0.81 weight-basis term the FINDING reports
+— frozen, reported, not actionable); and re-measuring anything in FINDING
+§1/§2/§4/§5/§6/§7, all of which the committed instrument carries without a
+solve.
+
+Next number: caiso-132.
