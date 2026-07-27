@@ -1327,6 +1327,66 @@ class ShapeForcedShareTests(unittest.TestCase):
         recs = cv.score_forced_share(2024, legit, *_mat())
         self.assertIn("lower bound", recs[0]["magnitude"])
 
+    # --- v2.8 coal gate-blindness correction (ERCOT-121) --------------------
+
+    def test_shape_coal_gated_from_pre_v28_artifact(self):
+        # A pre-v2.8 artifact baked coal rows gated=False / verdict "pass"
+        # (D1_GATED_CLASSES was peaker/intermediate only). The scorer now
+        # derives gatedness rubric-side and evaluates the STORED metrics, so
+        # the ERCOT COAL_LIGNITE 2023 signature (r 0.745, cv_ratio 0.294 —
+        # the lignite fleet pinned flat) re-scores FAIL in place.
+        legit = _legit_artifact(klass="COAL_LIGNITE", r=0.745, cv_ratio=0.294)
+        legit["diagnostics"]["D1"]["rows"][0]["gated"] = False
+        legit["diagnostics"]["D1"]["rows"][0]["verdict"] = "pass"
+        recs = cv.score_shape(2024, legit, *_mat(klass="COAL_LIGNITE"))
+        self.assertEqual(recs[0]["status"], cv.FAIL)
+        self.assertEqual(recs[0]["classification"], cv.MODEL_MISS)
+
+    def test_shape_chp_class_stays_ungated(self):
+        # CHP duty is host-steam-pinned (same structural-must-run rationale as
+        # D2_EXEMPT_CLASSES): a failing CT_CHP profile is reported by D-1 but
+        # never scored by C7.
+        legit = _legit_artifact(klass="CT_CHP", r=0.37, cv_ratio=0.02)
+        legit["diagnostics"]["D1"]["rows"][0]["gated"] = False
+        legit["diagnostics"]["D1"]["rows"][0]["verdict"] = "pass"
+        recs = cv.score_shape(2024, legit, *_mat(klass="CT_CHP"))
+        self.assertEqual(recs[0]["status"], cv.SKIPPED)
+        self.assertIn("no gated-class D-1 rows", recs[0]["magnitude"])
+
+    def test_shape_cv_ratio_none_skips_cv_leg(self):
+        # run_d1 stores cv_ratio=None when the actual off-peak CV is
+        # degenerate; the scorer-side evaluation must skip the CV leg (not
+        # fail it), matching run_d1's isfinite guard.
+        legit = _legit_artifact(klass="CT_PEAKER", r=0.9, cv_ratio=1.0)
+        legit["diagnostics"]["D1"]["rows"][0]["cv_ratio"] = None
+        recs = cv.score_shape(2024, legit, *_mat())
+        self.assertEqual(recs[0]["status"], cv.PASS)
+
+    def test_forced_share_plant_group_aggregate_resolves_materiality(self):
+        # The D-2 summary labels classes by CAMPD plant_group ("COAL") while
+        # the payload/bench carry the scored-class rank split. Pre-v2.8 the
+        # materiality lookup read 0.0 on both sides and SKIPPED the whole
+        # coal fleet as immaterial; the PLANT_GROUP_MEMBERS bridge now sums
+        # the members (59.3 of 400 TWh here — material), so the row gates.
+        legit = _legit_artifact(klass="COAL", share=0.001)
+        ypay = {
+            "gmModel": {"COAL_LIGNITE": 16.7, "COAL_PRB": 42.6, "CC_REGULAR": 340.7}
+        }
+        ybench = {"classFull": {"COAL_LIGNITE": 15.3, "COAL_PRB": 45.1}}
+        recs = cv.score_forced_share(2024, legit, ypay, ybench)
+        self.assertEqual(recs[0]["status"], cv.PASS)
+        self.assertNotIn("immaterial", recs[0]["magnitude"])
+
+    def test_forced_share_unresolvable_class_still_skips(self):
+        # A class name absent from both vocabularies (no aggregate mapping)
+        # keeps the pre-v2.8 behaviour: share 0.0 -> SKIPPED-immaterial.
+        legit = _legit_artifact(klass="NOT_A_CLASS", share=0.9)
+        ypay = {"gmModel": {"CC_REGULAR": 340.7}}
+        ybench = {"classFull": {"CC_REGULAR": 341.0}}
+        recs = cv.score_forced_share(2024, legit, ypay, ybench)
+        self.assertEqual(recs[0]["status"], cv.SKIPPED)
+        self.assertIn("immaterial", recs[0]["magnitude"])
+
     # --- v2.2 grounded-above-budget escalation (rubric §1 C8) --------------
     def _grounded_legit(
         self,
