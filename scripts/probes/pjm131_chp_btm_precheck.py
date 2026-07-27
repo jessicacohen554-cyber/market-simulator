@@ -186,17 +186,16 @@ def main() -> int:
 
     # ---- Q4: predicted overshoot with BOTH sides moved --------------------
     # Bench actual for the year, as scored (classFull = e923 − btm).
-    bench = None
-    for cand in (
-        REPO / "frontend" / "data" / "backcast" / "bench" / iso / f"{args.year}.json.gz",
-    ):
-        if cand.exists():
-            import gzip
-
-            bench = json.loads(gzip.decompress(cand.read_bytes()).decode())
+    cand = (
+        REPO / "frontend" / "data" / "backcast" / "bench" / iso / f"{args.year}.json.gz"
+    )
     actual_old = None
-    if bench is not None:
-        cf = bench.get("classFull") or {}
+    if cand.exists():
+        import gzip
+
+        bench = json.loads(gzip.decompress(cand.read_bytes()).decode())
+        # ``classFull`` is nested under the payload's ``bench`` key.
+        cf = (bench.get("bench") or {}).get("classFull") or {}
         if "CC_CHP" in cf:
             actual_old = float(cf["CC_CHP"])
     out["actual_cc_chp_twh_bench"] = actual_old
@@ -205,7 +204,13 @@ def main() -> int:
     if actual_old is not None and np.isfinite(delta_cap):
         s_app = cc["s_applied_capwt"]
         s_meas = cc["s_measured_capwt"]
-        model_new = model_old * (1.0 - kappa * delta_cap)
+        # SIGN CORRECTION, disclosed (finding §4): the charter/docstring wrote
+        # ``model_old × (1 − kappa × delta_cap)``, but ``delta_cap`` is defined
+        # as the SIGNED relative capacity change ((1−s_meas)/(1−s_app) − 1), so
+        # the propagation is ``(1 + kappa × delta_cap)``. Corrected here rather
+        # than left to report a wrong number. It changes no verdict: Q3 refutes
+        # independently and Q4 is moot while no valid measured share exists.
+        model_new = model_old * (1.0 + kappa * delta_cap)
         actual_new = actual_old * (1.0 - s_meas) / (1.0 - s_app)
         out["predicted"] = {
             "model_old_twh": model_old,
@@ -219,7 +224,12 @@ def main() -> int:
     # ---- verdicts, applied exactly as pre-registered ----------------------
     verdicts = {}
     verdicts["Q1_material"] = bool(abs(delta_cap) >= MATERIALITY_MIN)
-    verdicts["Q2_direction_reduces_capacity"] = bool(delta_cap > 0)
+    # delta_cap is the SIGNED relative capacity change: > 0 means the measured
+    # share gives MORE grid capacity (s_meas < s_app) and the overshoot can only
+    # enlarge — the charter §4 Q2 "not a gate-1 arm" branch. Renamed from the
+    # first draft's ``Q2_direction_reduces_capacity``, which read the sign
+    # backwards; the underlying test is unchanged.
+    verdicts["Q2_measured_gives_more_grid_capacity"] = bool(delta_cap > 0)
     if kappa >= KAPPA_BOUND:
         verdicts["Q3"] = "CAPACITY-BOUND (absolute-TWh lever only)"
     elif kappa <= KAPPA_ECON:

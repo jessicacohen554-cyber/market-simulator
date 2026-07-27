@@ -1,0 +1,48 @@
+{
+  "iso": "PJM",
+  "year": 2023,
+  "bundle": "results/calibration/pjm129_meritguard_a1",
+  "n_chp_plants_in_fleet": 81,
+  "n_with_measurement": 11,
+  "by_group": {
+    "CC_CHP": {
+      "covered_nameplate_mw": 69.20000000000005,
+      "coverage_frac_of_group_nameplate": 0.026524610278518736,
+      "s_applied_capwt": 0.7,
+      "s_measured_capwt": 1.0,
+      "delta_cap_frac": -1.0
+    },
+    "CT_CHP": {
+      "covered_nameplate_mw": 244.0,
+      "coverage_frac_of_group_nameplate": 0.3122789841938186,
+      "s_applied_capwt": 0.5364754098360656,
+      "s_measured_capwt": 1.0,
+      "delta_cap_frac": -1.0
+    },
+    "ST_CHP": {
+      "covered_nameplate_mw": 352.7,
+      "coverage_frac_of_group_nameplate": 0.6593259626482187,
+      "s_applied_capwt": 0.7013892826764956,
+      "s_measured_capwt": 1.0,
+      "delta_cap_frac": -1.0
+    }
+  },
+  "kappa_capacity_bound_energy_share": 0.022643795519583065,
+  "model_cc_chp_twh": 8.652752603912354,
+  "mean_class_utilization": 0.7266607925377822,
+  "actual_cc_chp_twh_bench": 6.1148,
+  "predicted": {
+    "model_old_twh": 8.652752603912354,
+    "model_new_twh": 8.456821443267824,
+    "actual_old_twh": 6.1148,
+    "actual_new_twh": 0.0,
+    "overshoot_old_twh": 2.5379526039123546,
+    "overshoot_new_twh": 8.456821443267824
+  },
+  "verdicts": {
+    "Q1_material": true,
+    "Q2_measured_gives_more_grid_capacity": false,
+    "Q3": "ECONOMIC (REFUTED as gate-1 arm)",
+    "Q4_overshoot_reduces": false
+  }
+}
