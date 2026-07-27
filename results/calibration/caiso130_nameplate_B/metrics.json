@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-19-caiso-100-cycling-cost",
+  "run_id": "2026-07-27-caiso-130-nameplate-aware",
   "iso": "CAISO",
-  "label": "caiso 100 cycling cost",
+  "label": "caiso 130 nameplate aware",
   "target_years": [
     2023,
     2024,
@@ -13,7 +13,7 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
+  "rubric_version": 2.8,
   "determination": "NOT-YET",
   "reasons": [
     "governance gate UNATTESTED: no governance attestation in bundle"
@@ -33,7 +33,7 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
@@ -48,7 +48,7 @@
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "co2": {
       "label": "C5a CO2 vs eGRID",
