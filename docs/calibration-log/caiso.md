@@ -2152,3 +2152,99 @@ The owner granted the §Ask in-session. Terms, recorded verbatim in
 
 Promotion is NOT granted and stays a separate owner act after rule-22 LOYO.
 Keeper remains `2026-07-27-caiso-126-ror-split`. Next number: caiso-128.
+
+---
+
+## caiso-128 (2026-07-27) — the CT offer-accuracy lane: **lead REFUTED**, the CT heat rate is right; the real defect is CHP
+
+**Keeper `2026-07-27-caiso-126-ror-split` UNCHANGED. Derive/measurement session
+— no mechanism armed, no A/B, nothing registered.** Full evidence:
+`results/calibration/FINDING-caiso128-heat-rate-provenance-2026-07-27.md`.
+Instrument (committed): `scripts/probes/_caiso128_heat_rate_source_audit.py`.
+
+### The lead, and why it does not survive measurement
+
+The owner lead was that the CT classes' offer heat rates are 27–54 % above their
+own measured CEMS rates, with the `HEAT_RATE_BINS` fuel × vintage fallback the
+suspect. Both halves are refuted:
+
+* **Provenance.** EIA-860 carries no heat rate at all;
+  `process_eia860._join_egrid_heat_rate` fills it from eGRID PLNT23 `PLHTRT`.
+  **89 % of CAISO CT_PEAKER capacity carries a real eGRID rate** — the bin
+  fallback is an 11 %-of-MW tail. (The lead's reading of
+  `_egrid_boundary_hr_repairs` as CC-scoped is correct, but nothing turns on it.)
+* **The gap decomposes into two non-defects.** ~1.147× of it is
+  `caiso_offer_curve_measured.json`'s `CT_PEAKER.econ_low` — the cap-weighted
+  median of the fleet's own **OASIS DAM bids** (real conduct, reproduces
+  "Sentinel 11.00 → 11.28" exactly). The rest is a **net-vs-gross basis
+  artifact**: eGRID `PLHTRT` is heat per **NET** MWh and the LP dispatches net
+  MW, while CEMS reports **gross** load.
+
+### The corrected measurement (NET basis) — CT_PEAKER is accurate everywhere
+
+Model offer base rate vs CEMS annual rate on the model's own net basis, 2024,
+cap-weighted:
+
+| | CAISO | ERCOT | PJM | MISO | NYISO | NEISO |
+|---|---|---|---|---|---|---|
+| **CT_PEAKER** | **0 %** | −3 % | −0 % | 0 % | +1 % | +1 % |
+| CC_REGULAR | −2 % | −4 % | −2 % | −3 % | −2 % | −16 % |
+| COAL | — | +1 % | +1 % | −1 % | — | — |
+| ST_GAS | **+15 %** | +1 % | +6 % | +2 % | +7 % | — |
+| **CC_CHP** | −13 % | **−38 %** | −19 % | **−33 %** | −22 % | **−35 %** |
+| **CT_CHP** | **+40 %** | **−62 %** | −12 % | −33 % | −30 % | — |
+| **ST_CHP** | — | — | **−56 %** | −41 % | — | — |
+
+Against the *loading-conditional* net rate CT_PEAKER reads **−2 to −11 %**, i.e.
+if anything slightly too **cheap**. The gross→net ratio is measured same-year per
+plant and validated by two independent derivations agreeing to three decimals
+(CAISO CT_PEAKER 2023: 1.193 generation-based vs 1.195 heat-rate-based), which
+also proves eGRID's heat input is CEMS's — no boundary mismatch inflates it.
+
+### Why the registered PRIMARY was unreachable anyway
+
+1. **The CT offer is bid-pinned.** `mult` was derived as
+   `bid / (base_HR_class × gas)`, so the product round-trips the measured bid by
+   construction; re-basing without re-deriving would offer **below** a measured
+   bid (a rule-13 regression), and re-basing with the re-derive is offer-neutral.
+2. **The within-class CF tilt is flat** — Spearman rank corr(CF, error) = +0.026.
+3. **A per-plant measured bid is impossible** — the OASIS ids are masked
+   (`derive_caiso_offer_surface.py`: *"the charter's 'plant?' resolves to NO"*).
+
+CT under-dispatch is therefore a **λ-side / rung-continuum** question, already
+owned by FINDING-caiso127 §4 and gated behind the storage pin (§2 there).
+
+### What survives: CHP, filed as a design (§6), NOT built
+
+`chp._correct_chp_steam_credit_hr` uses hand factors (`CAISO_EOR_TOPPING_FACTOR`
+1.8 for CT_CHP, 1.15 for CC_CHP) and only for `CHP_STEAM_CREDIT_HR_CORRECTION_ISOS`
+(CAISO, PJM). A universal factor is wrong in both directions at once — it
+over-corrects where armed (+40 %) and is absent where not (−12 to −62 %). Each
+plant's CEMS `heatInput / grossLoad` **is** its power-only rate, so the
+measurement is on disk (rule 14). Design filed in §6: one ISO-generic gate,
+CHP-scoped, gross→net reconciled, zero fitted parameters, the `emission_rates.py`
+forward story, default off. **Not built** — CAISO CT_CHP is only **17 %**
+CEMS-covered, and widening beyond CHP would trigger the paired
+`caiso_offer_curve_measured.json` re-derive, which needs an owner call.
+
+Coverage/stability of the candidate input (CAISO): ST_GAS 100 %, CC_REGULAR 84 %,
+CT_PEAKER 79 %, CC_CHP 51 %, **CT_CHP 17 %**; cross-year `r` 0.90–0.999 and
+median per-plant CV **0.9 %** — a stable physical property, forward-derivable.
+
+### DO-NOT-REDO (new)
+
+Re-testing the bin fallback as the CT cause; **comparing a model/eGRID heat rate
+to a CEMS gross-basis rate without the gross→net reconciliation** (this is the
+trap that produced the headline); treating the 1.147/1.182 tranche lift as a
+modelling error; re-measuring the provenance chain, the cross-ISO net-basis
+table, coverage/stability, the CF tilt or the gross→net ratios; proposing a
+per-plant measured DAM bid for CAISO; re-basing `base_HR` for CT_PEAKER or
+CC_REGULAR without re-deriving the bid multipliers; pre-registering any
+heat-rate change against `CT_PEAKER energy → 3.30 TWh` or against C5a; treating
+CT under-dispatch as an offer-level defect.
+
+The owner-granted **S1** (DA/RT allocation on the discharge side) is untouched
+and remains the funded next delta; the recommended order's item (a) is now
+closed as refuted, so S1 moves to the front.
+
+Next number: caiso-129.
