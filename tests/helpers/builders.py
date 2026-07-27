@@ -8,7 +8,7 @@ the objects a test then hands to the LP or a loader.
 
 * :func:`make_gen` — one :class:`~market_sim.data.fleet.Generator`.
 * :func:`make_fleet` — :class:`~market_sim.data.fleet.FleetArrays` with one gen
-  per zone entry (the exact shape ``tests/test_dispatch.py::_make_fleet`` used).
+  per zone entry (the exact shape ``tests/unit/model/test_dispatch.py::_make_fleet`` used).
 * :func:`base_scenario` — a forecast :class:`~market_sim.config.scenarios.ScenarioConfig`
   with ``**overrides``.
 * :func:`backcast_scenario` — the calibration config via
@@ -69,7 +69,7 @@ def make_fleet(
 ) -> FleetArrays:
     """Build ``FleetArrays`` with one generator per entry of ``zones_of_gens``.
 
-    Byte-compatible with ``tests/test_dispatch.py::_make_fleet``: generator
+    Byte-compatible with ``tests/unit/model/test_dispatch.py::_make_fleet``: generator
     ``i`` is ``G{i}`` in zone ``zones_of_gens[i]``. ``**fields`` is applied to
     every generator (e.g. ``heat_rate=9.0``), so a caller keeps the one-liner
     shape while tuning the attribute under test.
