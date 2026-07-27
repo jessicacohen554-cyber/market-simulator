@@ -128,22 +128,28 @@ jobs:
       # 0 xpassed, and TWO failures, neither of them an escalation and neither
       # honestly fixable from this lane:
       #
-      #   * tests/unit/data/test_cache_control.py::
-      #     test_largest_retained_frames_is_sorted_and_limited — a SECOND,
-      #     distinct order-dependent leak. It passes in isolation and is one of
-      #     the two members the Wave-5A tests/ migration newly exposed (triage
-      #     §6.2). The EIA-860 vintage global that owned the original five is
-      #     fixed; this one has a different polluter and needs its own bisect.
+      #   * (CLOSED 2026-07-27) tests/unit/data/test_cache_control.py::
+      #     test_largest_retained_frames_is_sorted_and_limited — bisected: NOT
+      #     a leak. The assertion assumed its own frame was the biggest alive in
+      #     the process, which largest_retained_frames' documented contract
+      #     (enumerate EVERY live frame) does not support; it lost to a
+      #     legitimately lru_cached 22.9 MB EIA-923 frame. The assertion now
+      #     pins the real invariants (limit, descending sort, big > small).
       #   * tests/regression/test_integration.py::TestFullYearPerformance::
-      #     test_full_year — the §6.1 perf budget (30 s), failing on this
-      #     4-core container. Loosening the bound is forbidden (charter step 5 /
-      #     rule 14 applied to tests); it needs a reference-hardware
-      #     measurement, not an edit.
+      #     test_full_year — the §6.1 perf budget (30 s). THE ONLY REMAINING
+      #     RED, and it is host-dependent, not a code regression: measured on
+      #     this 4-core session container it PASSED one full-tier run and
+      #     FAILED the next two, with no code change between them. Loosening
+      #     the bound is forbidden (charter step 5 / rule 14 applied to tests),
+      #     so it needs a reference-hardware measurement (or a profile showing
+      #     a real regression) before anyone touches it. CI runs on
+      #     GitHub-hosted runners with `-n 2`, so its behaviour there is
+      #     unmeasured — that measurement is the flip's last prerequisite.
       #
-      # Everything the flip was gated on IS closed (triage §9). Flip this the
-      # moment those two clear — delete `continue-on-error` and rename the step
-      # back to "Fast pytest tier". Do NOT xfail either to force the flip.
-      - name: Fast pytest tier (advisory — 2 non-escalation reds, see above)
+      # Everything else the flip was gated on IS closed (triage §9/§9.1). Flip
+      # the moment that one clears — delete `continue-on-error` and rename the
+      # step back to "Fast pytest tier". Do NOT xfail it to force the flip.
+      - name: Fast pytest tier (advisory — 1 host-dependent perf red, see above)
         continue-on-error: true
         run: uv run python -m pytest -n 2 -m "not slow and not integration and not fulldata"
 
