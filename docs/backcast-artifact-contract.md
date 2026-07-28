@@ -307,7 +307,7 @@ decoded payload is `{label, years: {<year>: {...}}}`; each **year key** carries
 
 | Payload year key | Meaning |
 |---|---|
-| `plants` | `{plant_code: {m, m_ann, m_mon, r, nrmse, cap, tr?, b923?}}` — per-plant model CF (base64 uint8), annual/monthly TWh/GWh, capture metrics |
+| `plants` | `{plant_key: {m, m_ann, m_mon, r, nrmse, cap, tr?, b923?}}` — per-plant model CF (base64 uint8), annual/monthly TWh/GWh, capture metrics. `plant_key` is a bare `"<code>"` for a single-class plant, `"<code>:<KLASS>"` per class slice of a multi-class plant (2026-07-28 multi-class split; keys join the bench `plants` keys 1:1). A payload rendered before the split has only bare keys; its multi-class plants no longer join the slice-keyed bench and re-join at the ISO's next registration |
 | `nonfossil` | `{nuclear, wind, solar}` model annual TWh |
 | `fuelRows` | per-EIA-930-fuel `{fuel, m, b, r, nrmse}` (C2/C4 system fuel-vs-930 table; `m` = model TWh, total load = Σ `fuelRows[*].m`) |
 | `gmModel` | `{class: TWh}` grid-delivered model generation mix |
@@ -335,7 +335,7 @@ part is `{"meta": {...}, "bench": {...}}`:
 
 | Bench key | Contents |
 |---|---|
-| `plants` | `{code: {name, zone, group, npl, nodata, campd (b64 uint8), c_ann, c_mon, e_ann, btm, e_mon, ct_only?, ct_ratio?}}` |
+| `plants` | `{plant_key: {name, zone, group, npl, nodata, campd (b64 uint8), c_ann, c_mon, e_ann, btm, e_mon, ct_only?, ct_ratio?, split?}}` — `plant_key` is a bare `"<code>"` for a single-class plant (unchanged wire format) or `"<code>:<KLASS>"` per class slice of a multi-class plant, whose measured series is split on the `scripts/lib/bench_multiclass` basis ladder (CAMPD unit-level hourly → EIA-923 monthly → EIA-860 nameplate proration; `split` records the basis). Fixes the nyiso-88 §5 alphabetical-collapse defect |
 | `e930` | per-fuel actual TWh: `gas, coal, nuclear, wind, solar` + optional `other`, `coal_cems`, and (corrupt-NG-cell ISOs) `gas_cems_grid`, `gas_cogen_grid`, `fossil_cems_grid` |
 | `classFull` | `{class: TWh}` grid-delivered EIA-923 class total (BTM-subtracted), variable-renewables routed to 930 via `actuals_source` |
 | `avgLMP` | actual mean LMP: `{da, rt, da_mon, rt_mon, da_lw, rt_lw, da_lw_mon, rt_lw_mon}` (equal-hour then load-weighted variants — key order is the frozen serialization order) |
