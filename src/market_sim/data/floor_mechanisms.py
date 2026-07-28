@@ -125,6 +125,21 @@ MECH_HYDRO_ROR_FLAT: int = 19
 # precedent. A merchant commitment floor — subject to the D-2 forced-share gate.
 MECH_NYISO_GAS_COMMITMENT_BRIDGE: int = 20
 
+# Coal MINIMUM ONLINE CONFIGURATION floor (ercot128-unit-grain,
+# config.ercot_coal_min_config_floor): a multi-unit coal plant cannot be pushed
+# below the registered minimum load of its SMALLEST online configuration,
+# ``min over units u of MinLoad_u`` (EIA-860 ``Minimum Load (MW)``, derived by
+# scripts/data/derive_eia860_coal_min_config.py). This is unit-grain
+# commitment's LOWER ENVELOPE, and it needs no commitment state and no
+# integrality: where the plant's exact unit-commitment feasible set is
+# connected — 9 of 10 ERCOT coal plants, 97.8 % of coal capacity — the
+# plant-grain interval represents it with zero error. Distinct from
+# MECH_COAL_MUSTRUN (id 3), which is the step-3a synchronization floor on the
+# _mustrun/_sync tranches: different driver, different level, separate id so
+# D-2/D-4 attribution stays per-mechanism (rule 19 [R-ONE-MECH]). A merchant
+# commitment floor — subject to the D-2 forced-share gate.
+MECH_COAL_MIN_CONFIG: int = 21
+
 MECH_NAMES: dict[int, str] = {
     MECH_NONE: "none",
     MECH_NUCLEAR: "nuclear_mustrun",
@@ -147,6 +162,7 @@ MECH_NAMES: dict[int, str] = {
     MECH_HYDRO_MIN_FLOW: "hydro_min_flow",
     MECH_HYDRO_ROR_FLAT: "hydro_ror_flat",
     MECH_NYISO_GAS_COMMITMENT_BRIDGE: "nyiso_gas_commitment_bridge",
+    MECH_COAL_MIN_CONFIG: "coal_min_config",
 }
 
 # Mechanisms whose forced energy is exempt from the D-2 merchant-class gates
@@ -201,6 +217,7 @@ MECH_ABLATION_FIELDS: dict[int, dict[str, object]] = {
     MECH_ST_GAS_MUSTRUN_PER_PLANT: {"st_gas_mustrun_per_plant": False},
     MECH_GAS_COMMITMENT_BRIDGE: {"ercot_gas_commitment_bridge": False},
     MECH_NYISO_GAS_COMMITMENT_BRIDGE: {"nyiso_gas_commitment_bridge": False},
+    MECH_COAL_MIN_CONFIG: {"ercot_coal_min_config_floor": False},
     # Classified ABLATED, not kept: the min-flow floor is a real physical
     # obligation, but it is a NEW mechanism whose forcing must stay visible and
     # switchable rather than joining the protected structural must-run set.

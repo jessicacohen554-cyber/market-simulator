@@ -45,6 +45,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "end_year",
     "hindcast",
     "hindcast_fuel_variant",
+    # Coal minimum-online-configuration floor (ercot128, default off): dropped
+    # from the hash at its default so every pre-existing cached run keeps its
+    # key -- the arm must be byte-identical off; an armed run carries a real
+    # min-gen floor and so gets a distinct key.
+    "ercot_coal_min_config_floor",
     # pjm-134 measured AP-South interface cut (default off): dropped from the
     # hash at its default so every pre-existing cached run keeps its key -- the
     # field's own docstring promises "byte-identical off" and without this
@@ -5269,6 +5274,69 @@ class ScenarioConfig:
     # the CSV value. The historic outage overlay still applies on top.
     coal_mustrun_per_plant: bool = False
 
+    # Coal MINIMUM ONLINE CONFIGURATION floor (lane ercot128-unit-grain;
+    # docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md). ERCOT-scoped
+    # (rule 25 [R-ISO-SCOPE]), default OFF, byte-identical off.
+    #
+    # WHAT IT IS. A multi-unit coal plant cannot be pushed below the minimum
+    # load of its SMALLEST online configuration — the least MW it can hold with
+    # at least one unit synchronized, ``min over units u of MinLoad_u``. The LP
+    # unit is the PLANT, so today nothing stops the merit order driving a coal
+    # plant to a level no combination of its units could physically deliver:
+    # the ercot115 keeper's per-plant p05 loading runs 0.013-0.093 of declared
+    # on Limestone / J K Spruce / W A Parish against a real fleet that never
+    # goes below 0.106-0.261. This bound is the missing physics.
+    #
+    # WHY IT NEEDS NO COMMITMENT STATE AND NO INTEGRALITY (the ERCOT-127 §5.3
+    # architectural question). Unit-grain commitment STATE is not expressible
+    # in a pure LP — a continuous u in [0,1] relaxation of
+    # ``u*MinLoad <= p <= u*Cap`` projects to ``0 <= p <= Cap`` and deletes the
+    # constraint outright, integer u is forbidden by the no-MIP rule, a measured
+    # u is forbidden by rule 13, and any P0/P1 run-pattern detector is circular
+    # (it infers "off" from the very dispatch it is meant to constrain). But the
+    # min-load LOWER ENVELOPE, which is all this parameter ever needed, IS
+    # expressible exactly: a plant's exact online unit-commitment feasible set
+    # is the union over non-empty unit subsets S of [sum_S MinLoad, sum_S Cap],
+    # and where that union is CONNECTED it equals [min_u MinLoad_u, Cap]. It is
+    # connected for 9 of the 10 ERCOT coal plants and 97.8 % of ERCOT coal
+    # capacity (adjacent configurations overlap whenever MinLoad/Cap < 0.5,
+    # true of every ERCOT coal unit but San Miguel 0.639 and Major Oak 0.625),
+    # so the plant-grain bound is a ZERO-ERROR representation there and a strict
+    # relaxation on Major Oak's 305 MW — the safe direction under rule 14, and
+    # recorded per plant in the artifact's ``connected`` column.
+    #
+    # LEVEL AND PROVENANCE (rule 13 [R-MEASURED] / rule 21 [R-DOF]). Per plant
+    # from EIA-860 ``Minimum Load (MW)`` via
+    # scripts/data/derive_eia860_coal_min_config.py ->
+    # data/raw/_processed-legacy/coal_min_config_ERCOT.csv, read by
+    # fleet.coal_min_config. A REGISTRATION filing, not measured operation and
+    # not an outcome of the dispatch being validated: it exists for any vintage
+    # and responds to condition (a retired unit leaves the file), so it
+    # regenerates for a forward year — the admissibility test. ZERO free
+    # parameters, lineage_solves 0; no value is chosen against a residual.
+    # Corroborated, never substituted: the ERCOT COP LSL agrees EXACTLY on the
+    # three plants whose COP resources are whole units (Coleto Creek 175, Oak
+    # Grove 348, J K Spruce 130) and differs only where a resource is an
+    # ownership SHARE of a unit (Fayette, Sandy Creek), and the fleet
+    # cap-weighted per-unit MinLoad/Cap of 0.3325 independently corroborates
+    # ERCOT-127 §2's DAM-derived committed LSL/HSL p50 of 0.3636.
+    #
+    # RULE 19 [R-ONE-MECH]. Coal forces exactly ZERO energy in the ercot115
+    # keeper (D-2 carries no COAL row in any year) and none of the four live
+    # floors touches coal, so this stacks on nothing. Distinct from the step-3a
+    # synchronization floor (coal_sync_srmc_tranche / MECH_COAL_MUSTRUN):
+    # different driver, different level, its own mechanism id
+    # (MECH_COAL_MIN_CONFIG) so D-2/D-4 attribution stays per-mechanism.
+    #
+    # RULE 17 [R-FLOOR-WINDOW]. Driver: the plant's registered unit inventory.
+    # Window: ALL 24 hours, by driver — a registered minimum load applies in
+    # every hour the plant is synchronized and there is no hour its own evidence
+    # says otherwise (the D4_WINDOWS declaration says so). Forward story: the
+    # artifact re-derives from the next EIA-860 vintage with no model input.
+    # Registered in _CACHE_KEY_OPTIONAL_FIELDS, so an off run's cache key is
+    # byte-identical and an armed run gets its own key.
+    ercot_coal_min_config_floor: bool = False
+
     # When True, each within-window retiree plant (fleet.load_retired_within_
     # window) is capped to its measured monthly CAMPD CEMS envelope
     # (outages.retiree_availability_caps): a winding-down retiree the cost-based
@@ -9168,6 +9236,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_lignite_mustrun_override": 3,
     "coal_prb_mustrun_override": 3,
     "coal_mustrun_per_plant": 3,
+    "ercot_coal_min_config_floor": 3,
     "ct_mustrun_per_plant": 3,
     "ct_mustrun_floor_frac": 3,
     "ct_deployment_overlay": 3,

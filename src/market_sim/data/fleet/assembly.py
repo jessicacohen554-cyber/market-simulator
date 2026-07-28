@@ -936,6 +936,42 @@ def bins_to_fleet(
             *econ_steps,
             *peak_tranches,
         ]
+        # Coal MINIMUM ONLINE CONFIGURATION floor (ercot128-unit-grain,
+        # config.ercot_coal_min_config_floor). A multi-unit coal plant cannot be
+        # pushed below the registered minimum load of its SMALLEST online
+        # configuration, min_u MinLoad_u (EIA-860, derived by
+        # scripts/data/derive_eia860_coal_min_config.py). This is unit-grain
+        # commitment's LOWER ENVELOPE, and it needs no commitment state and no
+        # integrality: where the plant's exact unit-commitment feasible set is
+        # connected — 9 of 10 ERCOT coal plants, 97.8 % of capacity — the
+        # plant-grain interval represents it with zero error (the artifact's
+        # ``connected`` column records the test per plant).
+        #
+        # Spread across the tranches in FILL order (mustrun -> sync -> committed
+        # -> econ -> peak, i.e. cheapest first, the order the plant actually
+        # loads), for the same reason the CHP steam floor is spread: min_gen is
+        # clipped to the TRANCHE's pmax x availability in
+        # generators_to_fleet_arrays, so pinning a 300 MW plant floor on one
+        # ~50 MW slice would silently collapse it. Rule 25 [R-ISO-SCOPE]: the
+        # parameter is derived from ERCOT-registered plants, so the gate is
+        # ERCOT-only and another ISO would derive its own artifact in its own
+        # lane. The ``fuel == "coal"`` gate keeps a mixed plant's gas-steam rows
+        # (W A Parish 3470) out.
+        min_config_by_suffix: dict[str, float] = {}
+        if (
+            fuel == "coal"
+            and getattr(config, "ercot_coal_min_config_floor", False)
+            and (getattr(config, "iso", "ERCOT") or "ERCOT").upper() == "ERCOT"
+        ):
+            _mc_rem = _pkg_ns().coal_min_config("ERCOT").get(plant_code, 0.0)
+            for _suffix, _cap, *_rest in tranches:
+                if _mc_rem <= 0.0:
+                    break
+                if _cap <= 0.5:
+                    continue
+                _take = min(_mc_rem, _cap)
+                min_config_by_suffix[_suffix] = _take
+                _mc_rem -= _take
         for suffix, cap, tr_hr, vom_mult, min_run, min_down, tr_startup in tranches:
             if cap <= 0.5:
                 continue
@@ -1025,6 +1061,7 @@ def bins_to_fleet(
                     coal_sync_online_frac=(
                         sync_online_frac if sync_floor > 0.0 else 1.0
                     ),
+                    coal_min_config_pmin_mw=min_config_by_suffix.get(suffix, 0.0),
                     cc_mustrun_pmin_mw=cc_floor,
                     cc_mustrun_online_frac=(cc_mustrun_frac if cc_floor > 0.0 else 0.0),
                     # Measured amortization horizon only on the fast-start CT
