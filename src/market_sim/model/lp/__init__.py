@@ -168,6 +168,30 @@ class DispatchResult:
     # each containing the generator LP indices that belong to that area.
     # ``None`` unless ``local_capacity_constraints`` is active.
     lcr_gen_idx: list[np.ndarray] | None = None
+    # --- network duals (the ``network_<year>.parquet`` sidecar) -------------
+    # Aggregate-interface row duals, shape ``(n_groups, T)``, and the flow
+    # columns' reduced costs, shape ``(n_links, T)`` — both HiGHS-raw (NOT
+    # sign-normalised). They close the flow column's stationarity identity
+    #     lambda_to - lambda_from = -flow_dual[l] - sum_g s(g,l) * interface_dual[g]
+    # whose right-hand terms are each >= 0 in the import direction and each
+    # the rent charged by exactly ONE limit — the link's own TTC bound, or one
+    # aggregate-interface group. That is what lets a diagnostic say WHICH
+    # transmission limit binds in an hour instead of only that one does.
+    # ``interface_link_idx`` / ``interface_signs`` give each group's signed
+    # link membership, and ``interface_cap_up`` / ``interface_cap_dn`` its
+    # per-hour row bounds ``(n_groups, T)`` (a scalar cap is broadcast). All
+    # ``None`` when the LP carried no links / no interface groups.
+    interface_dual: np.ndarray | None = None
+    interface_link_idx: list[np.ndarray] | None = None
+    interface_signs: list[np.ndarray] | None = None
+    interface_cap_up: np.ndarray | None = None
+    interface_cap_dn: np.ndarray | None = None
+    flow_dual: np.ndarray | None = None
+    # The flow columns' own bounds ``(n_links, T)`` — the per-link TTC the LP
+    # actually saw (hourly where an overlay made it hourly), so the sidecar
+    # records the third candidate limit's level next to its dual.
+    flow_cap_up: np.ndarray | None = None
+    flow_cap_dn: np.ndarray | None = None
 
 
 @dataclass
