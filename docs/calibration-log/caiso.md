@@ -2622,3 +2622,103 @@ basis (including the +$0.77/+$0.48/+$0.81 weight-basis term the FINDING reports
 solve.
 
 Next number: caiso-132.
+
+## caiso-132 (2026-07-28) — DERIVE-GATE ADJUDICATION of ask A1 (the caiso-121 corridor / export-path family in surplus): **KILLED before any solve.** The DSW→CA corridor congestion carrying C3a-2025 is **import-direction** rent — across all 2023–2025 the corridor's export-direction bound is the ACTIVE constraint in **2 of 52,560 corridor-hours (0.0038 %)**, and in **0.000** of the Sep–Dec 2025 surplus hours carrying the +$3.87 term, on **both** legs. A1's limb (a), the export-direction deliverability envelope, is **not a new mechanism — it is already armed on the keeper** and is provably inert; limb (b), a surplus-scoped export floor, has the **WRONG SIGN** and reproduces the measured caiso-113 C3a break. NO LP built or solved, nothing registered; keeper `2026-07-27-caiso-130-nameplate-aware` UNCHANGED
+
+**Keeper UNCHANGED** (NOT-YET, fail {C3a-2025, C3c}). Derive-gate-only session
+per the charter's step 1 ("ANY of D1–D3 failing KILLS A1 for the cost of a
+derive — that outcome is a complete, publishable session"). Steps 2–3 (prereg,
+A/B) are **not reached**: no solve was authorized and none was run, so there is
+no bundle and no dashboard registration (the caiso-131 precedent). Full record:
+`results/calibration/FINDING-caiso132-corridor-export-gates-2026-07-28.md`.
+Instrument (committed): `scripts/probes/_caiso132_corridor_export_gates.py`
+(sections D0/D1/D2/D3/E). Mechanism matrix updated in-session (rule 26): new row
+`caiso_corridor_export_path` = **R** for CAISO, and the `import_hub_pricing`
+note re-stamped.
+
+**Method — binding direction read off the LP's OWN duals, with no solve.** The
+slim bundle carries no flow sidecar, but for a corridor link bounded
+`-export_cap ≤ f ≤ +import_cap`, LP optimality gives
+`λ_terminus − λ_corridor = μ_import − μ_export` with both multipliers
+non-negative and complementary. **The sign of the measured zonal spread IS the
+binding direction** (`> +tol` import-bound, export bound STRICTLY slack;
+`< −tol` export-bound; `|·| ≤ tol` neither), `tol = $0.50/MWh` (caiso-105).
+Both λ series are in the committed `system_<y>.parquet`. The instrument
+reproduces FINDING-caiso131 §7 **digit-for-digit** before measuring anything new
+(2025 CA λ **46.19**, DSW **42.33**, CA−DSW **+3.87**, PNW **4.97**).
+
+**The four gates:**
+
+| gate | asked | result | verdict |
+|---|---|---|---|
+| **D0** (scope, added here) | is the export bound EVER active? | **2 / 52,560** corridor-h | **FAIL, family-wide** |
+| D1 | export envelope hod shape, cross-year `r ≥ 0.99` | DSW **0.9577**, PNW **0.9879** | FAIL (non-discriminating) |
+| D2 | export bound binds in ≥ 50 % of Sep–Dec 2025 surplus h | **0.000** both legs | **FAIL** |
+| D3 | must REDUCE CA λ − WECC_DSW λ | **100 %** of defect rent is import-bound | **FAIL** |
+
+D0 subsumes D2/D3: the export-direction bound is essentially never the active
+constraint anywhere in the scored record, so **no** export-direction mechanism
+can change this LP in **any** hour of **any** year — scoping, threshold and
+window are all irrelevant. The 2 export-bound hours are both 2023 WECC_DSW
+(model hours 2361/2697, hod 09, mid-April) at exactly −$20.00, the negative-price
+floor — not in 2025, not in Sep–Dec, not in the belly.
+
+**D1 fails, and it fails NON-DISCRIMINATINGLY — stated plainly.** The
+import-direction **control** limb, which IS armed and load-bearing, fails the
+same gate (DSW 0.9802, PNW 0.9797). Unlike caiso-129 — where the accepted charge
+side cleared 0.9919 against a failing discharge side at 0.9726 and the gate
+genuinely discriminated — here it rejects the armed control as readily as the
+candidate. **No weight is placed on D1**; the kill rests on D0/D2/D3, which are
+exact and direction-specific. Carried forward as a caution: the `r ≥ 0.99`
+standard was identified on a storage allocation share and does not transfer
+unexamined to a corridor ATC envelope, whose hod shape legitimately moves with
+the neighbours' own solar build.
+
+**Limb (a) is already armed.** The keeper carries `caiso_corridor_flow_limit=True`
+with `caiso_corridor_atc_forward` falsy, so `run_calibration.py` takes the
+measured branch, builds `corridor_export_env` and passes it to
+`build_caiso_corridor_flow_groups(export_envelope=…)`, emitting the asymmetric
+group `(idx, import_cap, False, export_cap)`. Re-arming it is a **no-op** and any
+A/B against it would produce a byte-identical B.
+
+**Quantity-side corroboration** (Sep–Dec surplus belly): corridor import ceiling
+utilisation **0.760 / 0.824 / 0.929** — pressed hard against the import side and
+rising — while the export ceiling is non-zero in 100 % of those hours and
+untouched. Independent data, same conclusion as the duals.
+
+**The finding underneath the kill: the stranding is PNW, not DSW.** On one
+basis, CA − PNW is **+37.40 / +45.58 / +41.22** against CA − DSW's
+**+3.54 / +2.36 / +3.87**, and in the 2025 defect hours the PNW leg is
+import-bound in **76.4 %** of hours vs DSW's 44.1 %. The northern leg's measured
+import envelope is also the small one (mean **1,714 MW** in 2025 vs DSW's 4,885)
+on a corridor whose physical rating is several times that.
+
+**§E forward pointer, OBSERVATION ONLY (not a candidate, not chartered).** The LP
+bounds ONE signed link at the p95 of measured NET import; CAISO's northern
+corridor is nearly balanced in net (−63/+236/+543 MW) while carrying 604–867 MW
+gross import AND 323–667 MW gross export, flowing **both ways at once in 61–73 %**
+of hours (DSW 81–84 %). Four live objections stand (FINDING §8): it is a
+separate topology family needing its own charter; the model already over-imports
+the surplus belly by **+2,606 MW** (caiso-121), so buying import headroom is
+rule-1/rule-14 refused on its face; it must clear the ask memo §2 **E1 (2025
+spillover ≤ +$0.00)**; and it sits where caiso-113 was rejected and caiso-114 is
+not re-armable.
+
+**What this changes.** C3a-2025 **keeps its diagnosis and loses its selected
+family** — FINDING-caiso131 §7's attribution is reproduced unchanged, but
+caiso-121's family selection for it is refuted, so C3a-2025 is now a diagnosed
+defect with **no selected mechanism**. The ask memo's remaining items (A2 LOLP
+reserve measure, A3 SoCalGas OFO intake, A4 ledger C3c) are unaffected — none
+was contingent on A1. **C3c was not touched**, per the charter.
+
+**DO-NOT-REDO (new, binding):** re-proposing the corridor / export-path family
+for CAISO C3a in ANY form (envelope, surplus/window/regime-scoped floor) —
+scoping cannot rescue a mechanism whose bound is slack everywhere; re-arming the
+corridor export envelope as if it were new (already armed, no-op); re-measuring
+the binding-direction census, the defect-hour rents, the CA−DSW/CA−PNW ladder or
+the net-vs-gross decomposition (the committed instrument carries all of them
+without a solve); quoting the `r ≥ 0.99` hod gate against a corridor ATC envelope
+without its control limb; and treating §8's net-vs-gross measurement as a funded
+candidate.
+
+Next number: caiso-133.
