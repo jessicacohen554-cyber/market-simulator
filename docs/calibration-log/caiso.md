@@ -3091,3 +3091,99 @@ citing ERCOT-126 as the reason CAISO's cell is `I` (independent refusals,
 different in kind).
 
 Next number: caiso-137.
+
+## caiso-137 (2026-07-28) — ask **A2 CLOSES as a no-defect**; the storage tier under it is a real rule-14 defect that **fails D2 on E1 structurally** and cannot close C3c
+
+**Keeper `2026-07-27-caiso-130-nameplate-aware` UNCHANGED** (NOT-YET, fail set
+{C3a-2025, C3c}). **No LP was built, no solver called, nothing armed**, no
+`ScenarioConfig` field added. Derive-first, as the brief required.
+Evidence: `results/calibration/FINDING-caiso137-a2-lolp-reserve-measure-2026-07-28.md`.
+Instrument: `scripts/probes/_caiso137_lolp_reserve_measure.py` (§A–§F).
+
+**STEP 1 — A2 as written is CLOSED (option d).** `FINDING-caiso133` §7 had
+already flagged that the ask's premise did not match the code; the correction
+runs deeper — none of the ask's live readings survives.
+`results/scarcity.py:2002-2024` already splits online/offline through
+`_online_plant_mask` and passes `reserves_online_mw=r_online` into `ordc_adder`.
+(a) `reserves_total = r_online + r_offline` **is** the published two-half-hour
+RTORPA form, `r_offline` being offline quick-start 30-minute non-spin — no
+defect. (b) **MOOT**: `caiso_scarcity_import_headroom` is **False** on the
+keeper, so `import_headroom` enters **no tier at all**. (c) **NO**: the code
+already carries storage and curtailed-VRE headroom in `r_online`;
+caiso-133's "missing" was about the *sidecar*, not the code. A rule-1
+`[R-STRUCT]` judgement against the code, not the residual.
+
+**The decomposition A2 was blocking on** (new, all three years): `r_online` p10
+= 8,748 / 10,499 / 13,124 MW, of which **storage is 5.7–11× the thermal leg**
+(thermal p10 1,201/1,119/1,021 MW — caiso-133's D1 was a lower bound by roughly
+an order of magnitude, exactly as it warned). **Curtailed VRE is identically ~0**
+in all 26,280 hours: the LP carries a `Dump` column, so surplus renewables are
+dumped, not curtailed below potential. *Correction to `FINDING-caiso131` §4*:
+the overlay is **nearly** inert, but not for the stated reason — with σ = 2,500
+the Gaussian tail still reaches ~4σ, so the reconstructed adder is $0.14 /
+$0.016 / $0.0004 dw-mean and exceeds $10/MWh in 20 hours of 2023.
+
+**The real defect (rule 14 `[R-ACCURATE]`, filed NOT armed).** `runner.py:2088`
+passes `storage.power_cap` — the per-unit **December nameplate**
+(`storage.py:401`, `power_cap_mw = monthly_p[-1]`) — which `reserve_headroom`
+broadcasts to a **constant** hourly series. The LP dispatches against the hourly
+`storage_power_cap` carrying the COD vintage ramp. Phantom online reserve:
+**3,049 / 3,567 / 4,317 MW max**, 1,854–2,277 MW mean, in **83–92 % of hours**,
+up to **51 % of `r_online`**. Corroborated by the repo disagreeing with itself —
+`derive_ordc_overlay.py:200` and `derive_caiso_scarcity_overlay.py:119` (the
+derivers written to *reproduce* these overlays) both read the **hourly** cap.
+Basis unambiguous: COD-ramped ≡ LP cap, `max |Δ| = 0.000000 MW` all years, so
+no caiso-99 shape-anchor double-count to weigh (rule 19).
+
+**D3 PASS** — VOLL $2,000 / MCL 1,400 / σ 2,500 / shift 0.0 unchanged at their
+published values; no new field, threshold or multiplier (one array swapped for
+another at one call site).
+
+**D2 FAILS on E1 — structurally.** Δ annual dw-mean LMP = **+$2.4926 / +$0.5542
+/ +$0.0668**; E1 (2025 ≤ +$0.00) **FAIL**, E2 (2024 ≤ +$0.30) fails at face
+value. A measure-shrinking correction can only *raise* the adder, so **E1 fails
+for the whole family by construction**, verified across a 0–5,000 MW sensitivity
+sweep. **No solve authorized; none run.**
+
+**Honest limits, measured not asserted.** The rebuild is a
+`run_year(fleet_only=True)` approximation (1,800–1,808 units vs the keeper's
+1,619), so `r_online` is reconstructed. Bounded two ways: (i) the LP's own dump
+floor (λ_z ≥ −dump_cost) pins the realised adder to **exactly 0** in 2,774 /
+4,251 / 2,771 hours — the reconstruction is spurious in only 152/133/7 of them,
+biased high by 6.5–23 %, implying `r_online` understated by ~0.2–0.9 GW; (ii) the
+δ-sweep. **E2 is therefore recorded INDETERMINATE**, not FAIL — it flips to PASS
+from δ = 500 MW, inside the measured error band.
+
+**And it does not buy C3c.** On the scorer's own basis (`_tail_hours`, max zonal
+LMP > $200; CAISO has no `scarcity.parquet` so the fallback applies): **16 h in
+2023** against the 24–94 h band and **0 h in 2024** against 18–70 h — at δ = 0,
+the *most generous* point. Every correction pushes `r_online` up and the count
+**down**: 0 h at every δ > 0. The `FINDING-caiso131` §5 band arithmetic holds —
+this corrects the measure, it does not remove the 12.6–12.8 GW band.
+
+**Disposition.** A2 closed; its replacement filed with its measurement, **not**
+armed. Arming is a separate owner act to be decided on rule-1/14 structural
+grounds — *not* on the residual in either direction. It would need CAISO-scoped
+call-site handling so ERCOT is byte-identical (`runner.py:1996` carries the same
+argument — rule 25 `[R-ISO-SCOPE]`), the full three-year A/B with both arms
+registered (rules 15/16), and the §5 bounds rerun against the arm's own solved
+reserves.
+
+Rule 28 duty (b) discharged in-session: `ordc_scarcity_overlay` CAISO cell stays
+**K** (armed, unchanged — nothing was flipped) with the caiso-137 adjudication
+added to its note + `ev`; other ISOs' cells preserved verbatim (rule 25). **No
+dashboard registration is due** — rule 15 applies to completed *runs*, and this
+session produced no bundle. Rule 22: 2023–2025 only.
+
+### DO-NOT-REDO (new, binding)
+
+Re-specifying A2 as options (a)/(b)/(c) (all three adjudicated against the code);
+re-measuring the CAISO overlay's `r_online` decomposition (committed, no-solve
+instrument); proposing the flat-nameplate storage tier as a **C3c** candidate
+(16 h max against a 24 h floor, 0 h at every other sweep point); re-running the
+**E1** pre-check for any measure-*shrinking* correction to this overlay (E1 fails
+the family by construction, not this candidate in particular); and re-deriving
+which storage cap the overlay should use (COD-ramped ≡ LP cap to 0.000000 MW,
+and both derivers already use the hourly cap).
+
+Next number: caiso-138.
