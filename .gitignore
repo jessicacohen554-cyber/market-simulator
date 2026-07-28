@@ -384,3 +384,4 @@ tmp_*.bin
 
 # caiso-122 session solve logs (transient; the finding + bundle are the deliverable).
 /scratch_logs/
+.comp_cache/

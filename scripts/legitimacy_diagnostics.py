@@ -114,6 +114,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
 # materiality line, no off-registry duplicate constant).
 from scripts.calibration_verdict import PROTECTIVE_MIN_LOAD_FRAC  # noqa: E402
 from scripts.lib import backcast_artifacts as ba  # noqa: E402
+from scripts.lib import bench_multiclass as bm  # noqa: E402
 from scripts.lib import holdout_policy  # noqa: E402
 from scripts.lib import keeper_store  # noqa: E402
 from scripts.lib.known_unsynced_keepers import UNSYNCED_KEEPERS  # noqa: E402
@@ -1618,7 +1619,13 @@ def _decode_cf_bytes(b64: str, annual_twh: float | None, npl: float) -> np.ndarr
 
 
 def load_bench(repo_root: Path, iso: str, year: int) -> dict[str, dict]:
-    """Load the CAMPD bench file: plant id -> {group, zone, npl, mw}."""
+    """Load the CAMPD bench file: plant key -> {group, zone, npl, mw}.
+
+    Keys are the bench wire keys: bare ``"<code>"`` for a single-class plant,
+    ``"<code>:<KLASS>"`` per class slice of a multi-class plant (the nyiso-88
+    §5 attribution fix). D-1 pairs these slice keys directly; plant-level
+    consumers (D-2/D-4) aggregate them via :func:`bench_plant_view`.
+    """
     path = repo_root / "frontend/data/backcast/bench" / iso / f"{year}.json.gz"
     data = ba.load_bench_part(path)
     plants = {}
@@ -1634,6 +1641,36 @@ def load_bench(repo_root: Path, iso: str, year: int) -> dict[str, dict]:
             ),
         }
     return plants
+
+
+def bench_plant_view(bench: dict[str, dict]) -> dict[str, dict]:
+    """Aggregate a (possibly slice-keyed) bench to plant level.
+
+    ``{"<code>": {npl, mw}}`` with slice npl/mw summed per plant — the view
+    D-2/D-4 consume (their plant class attribution is the floors-majority
+    convention, deliberately independent of the bench grouping).
+    """
+    out: dict[str, dict] = {}
+    for key, b in bench.items():
+        code = str(bm.plant_code_of_key(key))
+        cur = out.get(code)
+        if cur is None:
+            out[code] = {"npl": float(b["npl"]), "mw": np.asarray(b["mw"], float)}
+        else:
+            cur["npl"] += float(b["npl"])
+            cur["mw"] = cur["mw"] + np.asarray(b["mw"], float)
+    return out
+
+
+def aggregate_model_plants(
+    model_plants: dict[str, np.ndarray],
+) -> dict[str, np.ndarray]:
+    """Sum a (possibly slice-keyed) model per-plant map to bare plant codes."""
+    out: dict[str, np.ndarray] = {}
+    for key, arr in model_plants.items():
+        code = str(bm.plant_code_of_key(key))
+        out[code] = arr if code not in out else out[code] + arr
+    return out
 
 
 def find_registry_sidecar(repo_root: Path, bundle: Path) -> dict | None:
@@ -1986,7 +2023,12 @@ def diagnose_bundle(
             if {"D1", "D2", "D4"} & only
             else (None, None)
         )
+        # ``model_plants`` is keyed LIKE THE BENCH (bare plant codes plus
+        # "<code>:<KLASS>" slices for multi-class plants) and feeds D-1's
+        # per-key pairing; ``model_plants_plant`` is the bare plant-level view
+        # D-2/D-4 consume (floors are per plant).
         model_plants: dict[str, np.ndarray] = {}
+        model_plants_plant: dict[str, np.ndarray] = {}
         if frame is not None:
             sub = frame[frame["plant_code"] > 0]
             wide = (
@@ -1994,26 +2036,51 @@ def diagnose_bundle(
                 .sum()
                 .unstack("hour", fill_value=0.0)
             )
-            model_plants = {
+            model_plants_plant = {
                 str(int(pc)): wide.loc[pc].to_numpy(dtype=float) for pc in wide.index
             }
+            model_plants = dict(model_plants_plant)
+            slice_keys = [k for k in bench if bm.KEY_SEP in k]
+            if slice_keys:
+                # The bench slices classes POST the OTHER_FOSSIL scoring
+                # relabel (render_calibration_html applies it before
+                # grouping), so mirror it here before slicing the frame.
+                from market_sim.data.fleet import apply_other_fossil_scoring
+
+                sub_k = apply_other_fossil_scoring(
+                    sub, int(year), plant_col="plant_code"
+                )
+                widek = sub_k.groupby(["plant_code", "klass", "hour"], observed=True)[
+                    "mw"
+                ].sum()
+                for key in slice_keys:
+                    code, kl = bm.parse_key(key)
+                    try:
+                        series = widek.loc[(code, kl)]
+                    except KeyError:
+                        continue
+                    model_plants[key] = series.reindex(
+                        range(8760), fill_value=0.0
+                    ).to_numpy(dtype=float)
             logger.info(
                 "%s %s: model dispatch from dispatch/%s_%s.parquet (%d plants)",
                 iso,
                 year,
                 year,
                 pass_label,
-                len(model_plants),
+                len(model_plants_plant),
             )
         elif sidecar is not None and {"D1", "D2", "D4"} & only:
             model_plants = load_payload_plants(repo_root, sidecar, year, bench)
+            model_plants_plant = aggregate_model_plants(model_plants)
             logger.info(
                 "%s %s: model dispatch from run payload %s (%d plants)",
                 iso,
                 year,
                 sidecar["file"],
-                len(model_plants),
+                len(model_plants_plant),
             )
+        bench_pl = bench_plant_view(bench) if bench else {}
 
         if "D1" in only and model_plants and bench:
             model_by_class: dict[str, np.ndarray] = {}
@@ -2030,18 +2097,20 @@ def diagnose_bundle(
             d1.rows.extend(sub_res.rows)
             d1.failures.extend(sub_res.failures)
 
-        if {"D2", "D4"} & only and model_plants:
+        if {"D2", "D4"} & only and model_plants_plant:
             arrays, ra_missing = load_or_rebuild_floors(
                 bundle, iso, year, force_rebuild=rebuild_floors
             )
             pids, floor_sum, mech_plant, groups = aggregate_floors_by_plant(arrays)
             pid_strs = [str(int(p)) for p in pids]
-            common = [i for i, p in enumerate(pid_strs) if p in model_plants]
+            common = [i for i, p in enumerate(pid_strs) if p in model_plants_plant]
             # Class totals need EVERY plant of the class, floored or not:
             # rows below carry all model plants, floors zero-filled outside
             # the floored set.
             klass_by_pid = dict(zip(pid_strs, groups))
-            all_pids = [p for p in model_plants if p in klass_by_pid or p in pid_strs]
+            all_pids = [
+                p for p in model_plants_plant if p in klass_by_pid or p in pid_strs
+            ]
             # plants absent from the floors fleet (e.g. non-thermal payload
             # rows) are excluded — they carry no class in the model fleet.
             t = 8760
@@ -2052,9 +2121,9 @@ def diagnose_bundle(
             npl = np.zeros(len(all_pids))
             index = {p: i for i, p in enumerate(all_pids)}
             for p, i in index.items():
-                disp[i] = model_plants[p][:t]
+                disp[i] = model_plants_plant[p][:t]
                 klass[i] = klass_by_pid.get(p, "")
-                npl[i] = bench.get(p, {}).get("npl", float(disp[i].max()))
+                npl[i] = bench_pl.get(p, {}).get("npl", float(disp[i].max()))
             for j in common:
                 p = pid_strs[j]
                 if p in index:
@@ -2076,7 +2145,7 @@ def diagnose_bundle(
                 # the line and a zeroed material class stays scored.
                 actual_by_class: dict[str, float] = {}
                 for p in all_pids:
-                    b = bench.get(p)
+                    b = bench_pl.get(p)
                     if b is None:
                         continue
                     k = klass_by_pid.get(p, "")
