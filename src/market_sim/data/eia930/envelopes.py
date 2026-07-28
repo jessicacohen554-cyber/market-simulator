@@ -1208,6 +1208,57 @@ def pjm_zonal_interchange_envelope(
     return import_cap, export_cap
 
 
+def pjm_net_interchange_envelope(
+    year: int, hours: int, percentile: float = 95.0
+) -> np.ndarray | None:
+    """Return PJM's (month×hod) NET-position envelope (MW, import-positive).
+
+    The **joint** analogue of :func:`pjm_zonal_interchange_envelope`. That
+    function takes the ``percentile`` of each border's import side and of each
+    border's export side *independently*; the sum of five marginal percentiles
+    is not the percentile of the simultaneous sum, and no constraint anywhere in
+    the PJM stack relates the five ``PJM_external→border`` link flows to PJM's
+    own net position. Measured (pjm-135 M1b/M4): the sum-of-marginal import band
+    runs 4,235 / 5,140 / 5,358 MW against a joint p95 of the simultaneous total
+    of 3,309 / 3,855 / 3,996 MW, and the keeper-lineage model's net interchange
+    lands at −28.9 / −21.9 / −25.8 TWh against a measured −40.0 / −32.8 /
+    −32.9 TWh.
+
+    This applies the *same* construction — the same tie-line file, the same
+    ``percentile``, the same (month, hour-of-day) bucketing — to the system
+    total from :func:`pjm_net_interchange`::
+
+        net_cap[t] = P_pctile( net import | month(t), hod(t) )
+
+    Sign is **import-positive** (the negation of :func:`pjm_net_interchange`),
+    matching the orientation of the star-node links the caller
+    (:func:`market_sim.model.transmission
+    .build_pjm_external_net_position_cut_groups`) sums, so the value is a
+    one-sided ceiling on how import-heavy PJM's net position may be. PJM is a
+    net exporter in 92.5–98.1 % of measured hours, so the ceiling is normally
+    negative — a *ceiling on net import*, which reads as a floor on net export.
+
+    Returns a ``(hours,)`` MW array, or ``None`` when the measured tie file is
+    absent (a forecast year), in which case the caller leaves the node uncapped.
+    """
+    export = pjm_net_interchange(year)  # export-positive, system total
+    if export is None:
+        return None
+    net_import = -np.asarray(export, dtype=float)
+    src_hours = net_import.shape[0]
+    src_clock = pd.date_range(f"{year}-01-01", periods=src_hours, freq="h")
+    s_month = src_clock.month.to_numpy()
+    s_hod = src_clock.hour.to_numpy()
+    table = np.zeros((12, 24))
+    for m in range(1, 13):
+        for h in range(24):
+            sel = (s_month == m) & (s_hod == h)
+            if sel.any():
+                table[m - 1, h] = np.percentile(net_import[sel], percentile)
+    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    return table[clock.month.to_numpy() - 1, clock.hour.to_numpy()]
+
+
 def _eia930_net_interchange(ba_code: str, year: int) -> np.ndarray | None:
     """Return a BA's hourly net export (MW, export-positive), or ``None``.
 
