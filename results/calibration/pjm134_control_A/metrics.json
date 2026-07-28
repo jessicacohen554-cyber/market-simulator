@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-14-pjm-108-cc-belt",
+  "run_id": "2026-07-28-pjm-134-control",
   "iso": "PJM",
-  "label": "pjm 108 cc belt",
+  "label": "pjm 134 control",
   "target_years": [
     2023,
     2024,
@@ -13,12 +13,16 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.5,
+  "rubric_version": 2.9,
   "determination": "NOT-YET",
   "reasons": [
     "governance gate UNATTESTED: no governance attestation in bundle"
   ],
-  "notes": [],
+  "notes": [
+    "C8 2023 CT_PEAKER: grounded above budget \u2014 15.0% forced (3.4502 of 22.9356 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.928 (\u22650.8) & off-peak CV ratio 0.565 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2024 CT_PEAKER: grounded above budget \u2014 15.4% forced (3.6545 of 23.7494 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.963 (\u22650.8) & off-peak CV ratio 0.886 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 CT_PEAKER: grounded above budget \u2014 15.7% forced (4.9485 of 31.4443 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.975 (\u22650.8) & off-peak CV ratio 0.811 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+  ],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
@@ -33,7 +37,7 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
@@ -41,7 +45,7 @@
       "status": "PASS"
     },
     "price_tail": {
-      "label": "C3c price tail / scarcity (DA-expressible)",
+      "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
       "status": "FAIL"
     },
@@ -49,21 +53,6 @@
       "label": "C4 fleet hourly dispatch correlation",
       "tier": "supporting",
       "status": "PASS"
-    },
-    "co2": {
-      "label": "C5a CO2 vs eGRID",
-      "tier": "load-bearing",
-      "status": "PASS"
-    },
-    "storage": {
-      "label": "C5b storage throughput",
-      "tier": "supporting",
-      "status": "SKIPPED"
-    },
-    "storage_shape": {
-      "label": "C5c storage dispatch shape",
-      "tier": "supporting",
-      "status": "SKIPPED"
     },
     "governance": {
       "label": "C6 governance gate",
@@ -91,11 +80,11 @@
     }
   },
   "grade_summary": {
-    "scored": 9,
-    "target_grade": 7,
+    "scored": 8,
+    "target_grade": 5,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 2
+    "fails": 3
   },
   "free_class_score": {
     "iso": "PJM",
