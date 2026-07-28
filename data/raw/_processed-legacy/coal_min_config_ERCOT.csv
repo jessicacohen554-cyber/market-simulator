@@ -1,0 +1,11 @@
+plant_code,plant_name,state,n_units,cap_mw,min_config_mw,min_config_frac_of_cap,connected,gap_mw,status,source
+298,Limestone,TX,2,1688.0,300.0,0.17773,True,0.0,ok,eia860_generator_operable: min over units of Minimum Load (MW)
+3470,W A Parish,TX,4,2514.0,175.0,0.06961,True,0.0,ok,eia860_generator_operable: min over units of Minimum Load (MW)
+6146,Martin Lake,TX,3,2455.0,175.0,0.07128,True,0.0,ok,eia860_generator_operable: min over units of Minimum Load (MW)
+6178,Coleto Creek,TX,1,655.0,175.0,0.26718,True,0.0,ok,eia860_generator_operable: min over units of Minimum Load (MW)
+6179,Fayette Power Project,TX,3,1615.0,156.0,0.09659,True,0.0,ok,eia860_generator_operable: min over units of Minimum Load (MW)
+6180,Oak Grove (TX),TX,2,1710.0,348.0,0.20351,True,0.0,ok,eia860_generator_operable: min over units of Minimum Load (MW)
+6183,San Miguel,TX,1,391.0,250.0,0.63939,True,0.0,ok,eia860_generator_operable: min over units of Minimum Load (MW)
+7030,Major Oak Power,TX,2,305.0,95.0,0.31148,False,37.0,ok,eia860_generator_operable: min over units of Minimum Load (MW)
+7097,J K Spruce,TX,2,1345.0,130.0,0.09665,True,0.0,ok,eia860_generator_operable: min over units of Minimum Load (MW)
+56611,Sandy Creek Energy Station,TX,1,932.6,360.0,0.38602,True,0.0,ok,eia860_generator_operable: min over units of Minimum Load (MW)

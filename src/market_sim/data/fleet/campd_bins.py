@@ -1052,6 +1052,44 @@ def thermal_tranche_peaking(iso: str) -> dict[tuple[int, str], float]:
 
 
 @lru_cache(maxsize=8)
+def coal_min_config(iso: str) -> dict[int, float]:
+    """Return ``{plant_code: min_config_mw}`` for an ISO's coal plants.
+
+    The MINIMUM ONLINE CONFIGURATION — the least MW a coal plant can hold with
+    at least one unit synchronised, ``min over units u of MinLoad_u`` from the
+    EIA-860 registered ``Minimum Load (MW)`` — read from
+    ``data/raw/_processed-legacy/coal_min_config_<ISO>.csv``, written by
+    ``scripts/data/derive_eia860_coal_min_config.py``.
+
+    This is unit-grain commitment's LOWER ENVELOPE expressed on the plant grain
+    the LP actually carries: where a plant's exact unit-commitment feasible set
+    is connected (9 of 10 ERCOT coal plants, 97.8 % of coal capacity) the
+    plant-grain interval ``[min_config_mw, cap]`` represents it with zero error,
+    so no commitment state and no integrality are needed. Consumed by
+    ``config.ercot_coal_min_config_floor`` (lane ercot128-unit-grain).
+
+    Keyed on plant code alone — a plant has ONE minimum online configuration,
+    and the consuming site additionally gates on ``fuel == "coal"`` so a mixed
+    plant's gas-steam rows (W A Parish 3470) never pick the floor up. Empty when
+    the ISO has no artifact; rows whose ``status`` is not ``ok`` are skipped.
+    """
+    path = PROCESSED_DIR / f"coal_min_config_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if "min_config_mw" not in df.columns:
+        return {}
+    out: dict[int, float] = {}
+    for r in df.itertuples(index=False):
+        if str(getattr(r, "status", "ok")) != "ok" or pd.isna(r.min_config_mw):
+            continue
+        mw = float(r.min_config_mw)
+        if mw > 0.0:
+            out[int(r.plant_code)] = mw
+    return out
+
+
+@lru_cache(maxsize=8)
 def thermal_tranche_online_frac(iso: str) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, group): online_frac}`` for an ISO's gas plants.
 
