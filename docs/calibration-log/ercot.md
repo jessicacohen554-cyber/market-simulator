@@ -2394,3 +2394,75 @@ header re-stamped.
 Full forensics: `docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md`
 (Phase 1 §§0–8, Phase 2 §§P1–P5) +
 `docs/PRECOMMIT-ercot129-coal-minconfig-conditional-2026-07-28.md`.
+
+## 2026-07-28 — ERCOT-130 (Phase 1 only, no LP built): the min-config UPPER bound (cap a coal plant OFF when it cannot reach its minimum online configuration) REFUTED — the size and cost gates both PASS, and the mechanism dies on its own physical premise: in 99.8 / 99.0 / 100.0 % of the hours it would zero, CAMPD shows the real plant RUNNING. Residual re-routed to ERCOT-116 (coal availability). Keeper UNCHANGED (ercot129)
+
+**Task.** Close the residual leg `PRECOMMIT-ercot129` §3 named and explicitly
+did not fix: the *category-B* hours, where a coal plant's available capacity
+cannot reach its minimum online configuration, so the ERCOT-129 conditional
+floor correctly drops to zero and nothing then stops the LP running the plant
+below a physically deliverable level. Chartered instrument: an availability
+UPPER bound (`availability := 0` for the plant's coal tranches in those hours),
+placed after every availability layer and before `_compose_min_gen_floors`.
+
+**Phase 1 (probe `scripts/probes/ercot130_capoff_phase1.py`; keeper payload +
+the keeper's own fleet-array availability captured at the point the ERCOT-129
+conditional consults it; no LP solved, no year registered).**
+
+**(1) A clean finding FOR ercot129: category A is EXACTLY ZERO.** Splitting the
+keeper's residual impossible plant-hours — A = floor could have applied but
+dispatch is below it, B = plant cannot reach `min_config` at all — gives A = 0
+in all three years once the run payload's uint8 `npl/100` quantization
+(3.5–24.4 MW per plant) is respected; the apparent 6,532 / 6,082 / 3,350 hours
+are entirely that artifact. **The conditional floor is airtight wherever it
+applies**, and category B (1,690 / 3,262 / 1,257 plant-hours, 0.134 / 0.270 /
+0.115 TWh) is **100 %** of what remains.
+
+**(2) The charter's own gates PASS.** Size: 2.17 / 4.22 / 1.70 % of online coal
+plant-hours, above the "< ~2 % is cosmetic" bar in two years of three. Cost:
+the energy is removed outright, projected C1 +0.237 / +0.527 / −1.282 against
+G2's ±2.0, the −1.167 risk year landing with 0.7 TWh of room. On the written
+Phase-1 test this lane would have proceeded to a solve.
+
+**(3) It is refuted anyway, on correctness.** The charter's physical premise —
+"reality would show it OFF" — is testable and false. In the target hours CAMPD
+shows the real plant **RUNNING in 99.8 / 99.0 / 100.0 %**, and at or **ABOVE**
+its own `min_config` in **71.1 / 38.6 / 86.4 %**. W A Parish is the extreme:
+model 59 MW of coal available, plant delivered 342 MW. An upper bound is the
+UNSAFE direction — ERCOT-128 §1.3 licensed the plant-grain interval precisely
+because a relaxation "never forbids something the real plant did", and this
+forbids exactly that in ~99 % of the hours it touches. Rule 1 `[R-STRUCT]`
+protects a real behaviour that hurts the fit; it does not protect a mechanism
+whose premise measurement contradicts.
+
+**(4) Root cause re-routed — this is ERCOT-116.** Category B is the visible tip
+of a systematic coal-availability under-estimate: actual output exceeds the
+model's entire available coal capacity for that plant in **1,200–6,700 hours per
+plant-year** (Major Oak 5,393 / 5,323 / 6,727; W A Parish 3,509 / 4,276 /
+4,444). Rule 14 `[R-ACCURATE]` governs — fix the input, do not add a mechanism
+that hides its consequence — and rule 19 `[R-ONE-MECH]` independently bars the
+cap-off as a second mechanism on an existing residual. ERCOT-116 remains
+owner-gated and was **not armed**. One plant is a different problem, also
+already named: San Miguel clears its own `min_config` in only 1.5 / 2.5 % of its
+category-B hours, the open EIA-860 registration question from the ERCOT-129
+promotion note (rule 21 — the measured value is not lowered).
+
+**(5) Incidental, outside the lane and NOT fixed.** Sandy Creek (56611) carries
+**0.0 MW of available capacity in all 8,760 hours of 2025** (0.000 TWh
+dispatched) while CAMPD shows 1,300 running hours and 0.697 TWh, peak 895 MW —
+a full-year availability zeroing of a 936 MW plant that still carries its
+`pmax`, ~5× the energy this lane targeted, with the ERCOT-79 phantom-outage
+signature. Recommend a dedicated look.
+
+**Disposition.** ABSTAIN — the eighth consecutive abstention on the coal
+residual and the first to die on correctness rather than an ex-ante size bound.
+No `ScenarioConfig` field added (default cache key verified `603c2498bf71d21d`
+at session start and end), no solve, no bundle, no dashboard registration (no
+run was produced). Keeper unchanged at `2026-07-28-ercot129-conditional-coal-min`;
+`frontend/data/backcast/keepers/ERCOT.json` untouched. Holdout years untouched
+(rule 22); derive script neither run nor edited (rule 23). Environment parity
+with the ercot115–129 baseline recorded ("static TTC kept" 3/3). Tests as
+inherited: `test_persisted_identity` 11/11, `test_flag_registry` 12/12,
+`test_coal_min_config_floor` 18/18. Mechanism matrix `coal_min_load_floor`
+ERCOT cell updated with the DO-NOT-REDO condition (rule 26 duty b).
+Full forensics: `docs/DIAGNOSIS-ercot130-minconfig-capoff-2026-07-28.md`.
