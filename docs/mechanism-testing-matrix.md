@@ -287,7 +287,14 @@ at ~4–5 h/yr and the queue stays offer/DA-side:
 4. **`nyiso_iroquois_winter_spread` re-arm** — decisive winter fix, but ONLY
    jointly with a summer scarcity lever (its construction conserves the annual
    spread; re-arming alone just moves the miss to summer — adjudicated).
-5. **`unit_outage_short_windows`** — derive for NYISO; cheap grain test.
+5. ~~**`unit_outage_short_windows`** — derive for NYISO; cheap grain test.~~
+   **CLOSED 2026-07-28 (nyiso-93): INERT ex-ante, no solve.** The detector is
+   coal-only and NYISO has no coal — 0 coal unit-years in NY+NJ CAMPD 2023-25
+   (last NY coal MWh: Somerset/Kintigh 2020), 0.0 MW COAL `plant_group` in the
+   model fleet; both extracts derive to 0 rows and both overlays return empty
+   dicts. A gas-CC scope extension is the only path to a binding window here
+   and needs its own charter (layup confound).
+   `docs/FINDING-nyiso93-unit-availability-windows-inert-2026-07-28.md`.
 6. **`st_gas_mustrun_p25_level`** — re-ground the in-city ST_GAS persistent
    bases on measured levels (D-2 ST_GAS 31% forced in 2024).
 
