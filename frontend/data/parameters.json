@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-07-20",
+  "generated": "2026-07-28",
   "stale_review_cutoff": "2023-05",
   "field_order": [
     "param_id",
@@ -3688,6 +3688,102 @@
       "flags": []
     },
     {
+      "param_id": "summer_wefor_share",
+      "display_name": "Summer WEFOR Share",
+      "value": 0.3,
+      "unit": "fraction of annual WEFOR",
+      "domain": "Reliability",
+      "tier": 3,
+      "source": "UNCITED A-PRIORI HEURISTIC - declared, not sourced. Fraction of a unit's WEFOR (forced-outage rate, THERMAL_AVAILABILITY) applied during the summer peak (Jun-Sep); the remaining (1 - share) is redistributed into the shoulder months, conserving annual outage energy. Winter keeps flat WEFOR. No primary source, derivation, sweep or calibration lineage exists for the 0.30: market-sim-build-plan.md records it as the 'flat per-plant-group POF heuristic' awaiting a data-derived replacement. It was NOT fitted to a residual. Note the WEFOR MAGNITUDE is GADS-cited (see thermal_availability.*); only this SEASONAL REALLOCATION of it is uncited. PHYSICS TENSION: for PLANNED outages, shifting maintenance off the peak is well-founded (the POF side is separately grounded by the measured MAINTENANCE_MONTHLY_SHAPE); for FORCED outages the reallocation runs OPPOSITE to the physics, since forced outages correlate POSITIVELY with heat and high load. Unverified directional argument, not a citation. MATERIALITY: governs all six non-coal thermal classes (COAL is exempt under coal_drop_pof) - ~3.9-5.8 GW of MISO summer-peak capability depending on fleet age, the same order as the ~10 GW under-derate ledgered as the MISO C3b caveat. DO NOT re-tune against a residual (rule 24): a hand-set value here would be an answer key for an already-ledgered miss. Replaceable ONLY by a measured seasonal forced-outage shape clearing docs/handoffs/miso-outage-grain-data-ask-2026-07.md, and per rule 23 that commit must cite the data change. Declared in the MISO keeper DOF ledger (miso-91, 2026-07-26).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Registered by miso-91 (2026-07-26) when the constant was re-homed from data/fleet/arrays.py to config/fuel_trajectories.py so scripts/validate_parameters.py covers it (that gate scans only vars(constants) + ScenarioConfig defaults and skips private/non-uppercase names, so the prior private literal was invisible to it three ways over - CLAUDE.md rule 20 [R-REGISTRY]). Value unchanged by the move.",
+      "old_repo_location": "src/market_sim/data/fleet/arrays.py::_SUMMER_WEFOR_SHARE",
+      "last_verified": "",
+      "flags": [
+        "needs-citation",
+        "modeled",
+        "residual-identified"
+      ]
+    },
+    {
+      "param_id": "summer_class_derate.CC_REGULAR",
+      "display_name": "Summer Class Derate / Cc Regular",
+      "value": 0.1,
+      "unit": "fraction of capacity",
+      "domain": "Reliability",
+      "tier": 3,
+      "source": "UNCITED FLAT APPROXIMATION of a real, well-established physical effect. Additional summer (Jun-Sep) capacity derate modeling the ambient-temperature output loss gas turbines suffer in heat (gas-turbine mass flow falls as inlet air temperature rises; simple-cycle CTs lose more than combined-cycle, whose steam bottoming cycle partially compensates). The EFFECT is sound; the specific magnitudes 0.10 (CC) / 0.125 (CT) are not derived from a primary source - they are consistent with, but not fitted to, the 10-30% typical CT summer derate the repo's own capacity audit records against EIA-860 net-summer ratings (docs/capacity-audit-860-923-campd.md). A MEASURED per-class dry-bulb alternative exists as scenario.temp_dependent_derate (default-off, probe-refuted for the ERCOT gas fleet 2026-07-09); its MISO sibling scenario.gt_ambient_derate is measured PROVABLY INERT (MISO zone-mean TMAX clears its 35 C reference in 0 h at summer peak in 2023-2025). So rule 11 'prefer the measured input' is not engaged - the measured alternatives were tried and adjudicated, not skipped. Re-homed from data/fleet/arrays.py to config/fuel_trajectories.py (miso-91, 2026-07-26) for registry coverage; values unchanged.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Registered by miso-91 (2026-07-26) when the constant was re-homed from data/fleet/arrays.py to config/fuel_trajectories.py so scripts/validate_parameters.py covers it (that gate scans only vars(constants) + ScenarioConfig defaults and skips private/non-uppercase names, so the prior private literal was invisible to it three ways over - CLAUDE.md rule 20 [R-REGISTRY]). Value unchanged by the move.",
+      "old_repo_location": "src/market_sim/data/fleet/arrays.py::_SUMMER_CLASS_DERATE",
+      "last_verified": "",
+      "flags": [
+        "needs-citation",
+        "modeled"
+      ]
+    },
+    {
+      "param_id": "summer_class_derate.CC_CHP",
+      "display_name": "Summer Class Derate / Cc Chp",
+      "value": 0.1,
+      "unit": "fraction of capacity",
+      "domain": "Reliability",
+      "tier": 3,
+      "source": "UNCITED FLAT APPROXIMATION of a real, well-established physical effect. Additional summer (Jun-Sep) capacity derate modeling the ambient-temperature output loss gas turbines suffer in heat (gas-turbine mass flow falls as inlet air temperature rises; simple-cycle CTs lose more than combined-cycle, whose steam bottoming cycle partially compensates). The EFFECT is sound; the specific magnitudes 0.10 (CC) / 0.125 (CT) are not derived from a primary source - they are consistent with, but not fitted to, the 10-30% typical CT summer derate the repo's own capacity audit records against EIA-860 net-summer ratings (docs/capacity-audit-860-923-campd.md). A MEASURED per-class dry-bulb alternative exists as scenario.temp_dependent_derate (default-off, probe-refuted for the ERCOT gas fleet 2026-07-09); its MISO sibling scenario.gt_ambient_derate is measured PROVABLY INERT (MISO zone-mean TMAX clears its 35 C reference in 0 h at summer peak in 2023-2025). So rule 11 'prefer the measured input' is not engaged - the measured alternatives were tried and adjudicated, not skipped. Re-homed from data/fleet/arrays.py to config/fuel_trajectories.py (miso-91, 2026-07-26) for registry coverage; values unchanged.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Registered by miso-91 (2026-07-26) when the constant was re-homed from data/fleet/arrays.py to config/fuel_trajectories.py so scripts/validate_parameters.py covers it (that gate scans only vars(constants) + ScenarioConfig defaults and skips private/non-uppercase names, so the prior private literal was invisible to it three ways over - CLAUDE.md rule 20 [R-REGISTRY]). Value unchanged by the move.",
+      "old_repo_location": "src/market_sim/data/fleet/arrays.py::_SUMMER_CLASS_DERATE",
+      "last_verified": "",
+      "flags": [
+        "needs-citation",
+        "modeled"
+      ]
+    },
+    {
+      "param_id": "summer_class_derate.CT_PEAKER",
+      "display_name": "Summer Class Derate / Ct Peaker",
+      "value": 0.125,
+      "unit": "fraction of capacity",
+      "domain": "Reliability",
+      "tier": 3,
+      "source": "UNCITED FLAT APPROXIMATION of a real, well-established physical effect. Additional summer (Jun-Sep) capacity derate modeling the ambient-temperature output loss gas turbines suffer in heat (gas-turbine mass flow falls as inlet air temperature rises; simple-cycle CTs lose more than combined-cycle, whose steam bottoming cycle partially compensates). The EFFECT is sound; the specific magnitudes 0.10 (CC) / 0.125 (CT) are not derived from a primary source - they are consistent with, but not fitted to, the 10-30% typical CT summer derate the repo's own capacity audit records against EIA-860 net-summer ratings (docs/capacity-audit-860-923-campd.md). A MEASURED per-class dry-bulb alternative exists as scenario.temp_dependent_derate (default-off, probe-refuted for the ERCOT gas fleet 2026-07-09); its MISO sibling scenario.gt_ambient_derate is measured PROVABLY INERT (MISO zone-mean TMAX clears its 35 C reference in 0 h at summer peak in 2023-2025). So rule 11 'prefer the measured input' is not engaged - the measured alternatives were tried and adjudicated, not skipped. Re-homed from data/fleet/arrays.py to config/fuel_trajectories.py (miso-91, 2026-07-26) for registry coverage; values unchanged.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Registered by miso-91 (2026-07-26) when the constant was re-homed from data/fleet/arrays.py to config/fuel_trajectories.py so scripts/validate_parameters.py covers it (that gate scans only vars(constants) + ScenarioConfig defaults and skips private/non-uppercase names, so the prior private literal was invisible to it three ways over - CLAUDE.md rule 20 [R-REGISTRY]). Value unchanged by the move.",
+      "old_repo_location": "src/market_sim/data/fleet/arrays.py::_SUMMER_CLASS_DERATE",
+      "last_verified": "",
+      "flags": [
+        "needs-citation",
+        "modeled"
+      ]
+    },
+    {
+      "param_id": "summer_class_derate.CT_CHP",
+      "display_name": "Summer Class Derate / Ct Chp",
+      "value": 0.125,
+      "unit": "fraction of capacity",
+      "domain": "Reliability",
+      "tier": 3,
+      "source": "UNCITED FLAT APPROXIMATION of a real, well-established physical effect. Additional summer (Jun-Sep) capacity derate modeling the ambient-temperature output loss gas turbines suffer in heat (gas-turbine mass flow falls as inlet air temperature rises; simple-cycle CTs lose more than combined-cycle, whose steam bottoming cycle partially compensates). The EFFECT is sound; the specific magnitudes 0.10 (CC) / 0.125 (CT) are not derived from a primary source - they are consistent with, but not fitted to, the 10-30% typical CT summer derate the repo's own capacity audit records against EIA-860 net-summer ratings (docs/capacity-audit-860-923-campd.md). A MEASURED per-class dry-bulb alternative exists as scenario.temp_dependent_derate (default-off, probe-refuted for the ERCOT gas fleet 2026-07-09); its MISO sibling scenario.gt_ambient_derate is measured PROVABLY INERT (MISO zone-mean TMAX clears its 35 C reference in 0 h at summer peak in 2023-2025). So rule 11 'prefer the measured input' is not engaged - the measured alternatives were tried and adjudicated, not skipped. Re-homed from data/fleet/arrays.py to config/fuel_trajectories.py (miso-91, 2026-07-26) for registry coverage; values unchanged.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Registered by miso-91 (2026-07-26) when the constant was re-homed from data/fleet/arrays.py to config/fuel_trajectories.py so scripts/validate_parameters.py covers it (that gate scans only vars(constants) + ScenarioConfig defaults and skips private/non-uppercase names, so the prior private literal was invisible to it three ways over - CLAUDE.md rule 20 [R-REGISTRY]). Value unchanged by the move.",
+      "old_repo_location": "src/market_sim/data/fleet/arrays.py::_SUMMER_CLASS_DERATE",
+      "last_verified": "",
+      "flags": [
+        "needs-citation",
+        "modeled"
+      ]
+    },
+    {
       "param_id": "adequacy_demand_response_fraction_by_iso.ERCOT",
       "display_name": "Adequacy Demand Response Fraction By Iso / Ercot",
       "value": 0.058,
@@ -6687,8 +6783,9 @@
       "param_id": "datacenter_additions_mw.MISO.high",
       "display_name": "Datacenter Additions Mw / Miso / High",
       "value": {
-        "2027": 14000.0,
-        "2030": 27000.0
+        "2026": 1400.0,
+        "2030": 27000.0,
+        "2046": 44100.0
       },
       "unit": "",
       "domain": "Uncategorized",
@@ -6708,7 +6805,7 @@
       "param_id": "datacenter_additions_mw.MISO.low",
       "display_name": "Datacenter Additions Mw / Miso / Low",
       "value": {
-        "2027": 0.0,
+        "2026": 0.0,
         "2030": 0.0
       },
       "unit": "",
@@ -6729,8 +6826,9 @@
       "param_id": "datacenter_additions_mw.MISO.mid",
       "display_name": "Datacenter Additions Mw / Miso / Mid",
       "value": {
-        "2027": 11000.0,
-        "2030": 20000.0
+        "2026": 1200.0,
+        "2030": 20500.0,
+        "2046": 33500.0
       },
       "unit": "",
       "domain": "Uncategorized",
@@ -6871,6 +6969,289 @@
       "last_verified": "",
       "flags": [
         "auto-generated"
+      ]
+    },
+    {
+      "param_id": "datacenter_zone_share.ERCOT.Houston",
+      "display_name": "Datacenter Zone Share / Ercot / Houston",
+      "value": 0.114021,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "COAST 5,964 MW (load-heavy, not DC-heavy; load_share 0.2649)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "datacenter_zone_share.ERCOT.North",
+      "display_name": "Datacenter Zone Share / Ercot / North",
+      "value": 0.277388,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "NORTH 5,711 + NORTH_C 8,798 = 14,509 MW (Oncor/DFW; load_share 0.3064)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "datacenter_zone_share.ERCOT.Northeast",
+      "display_name": "Datacenter Zone Share / Ercot / Northeast",
+      "value": 0.005219,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "EAST 273 MW (load_share 0.0351)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "datacenter_zone_share.ERCOT.Panhandle",
+      "display_name": "Datacenter Zone Share / Ercot / Panhandle",
+      "value": 0.0,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "no ERCOT weather zone maps here -> 0 (load_share 0.0)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "datacenter_zone_share.ERCOT.South",
+      "display_name": "Datacenter Zone Share / Ercot / South",
+      "value": 0.138932,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "SOUTHERN 7,267 MW (load_share 0.0800)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "datacenter_zone_share.ERCOT.South_Central",
+      "display_name": "Datacenter Zone Share / Ercot / South Central",
+      "value": 0.220032,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "SOUTH_C 11,509 MW (Austin/San Antonio corridor; load_share 0.1642)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "datacenter_zone_share.ERCOT.West",
+      "display_name": "Datacenter Zone Share / Ercot / West",
+      "value": 0.244408,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "FAR_WEST 7,746 + WEST 5,038 = 12,784 MW (Permian/DC-heavy; load_share 0.1494)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "datacenter_zone_share.PJM.PJM_AEP_Ohio",
+      "display_name": "Datacenter Zone Share / Pjm / Pjm Aep Ohio",
+      "value": 0.115292,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "load_share 0.2178 (named DC-growth zone)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "datacenter_zone_share.PJM.PJM_ATSI",
+      "display_name": "Datacenter Zone Share / Pjm / Pjm Atsi",
+      "value": 0.044677,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "load_share 0.0844",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "datacenter_zone_share.PJM.PJM_Central_PA",
+      "display_name": "Datacenter Zone Share / Pjm / Pjm Central Pa",
+      "value": 0.058281,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "load_share 0.1101 (PPL/PL — named DC-growth zone)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "datacenter_zone_share.PJM.PJM_ComEd",
+      "display_name": "Datacenter Zone Share / Pjm / Pjm Comed",
+      "value": 0.062728,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "load_share 0.1185 (DC-heavy: +3.7 GW/2031, understated by residual)",
+      "source_date": "2031",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "datacenter_zone_share.PJM.PJM_Dominion",
+      "display_name": "Datacenter Zone Share / Pjm / Pjm Dominion",
+      "value": 0.550001,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "ANCHOR — published ~0.55 near-2030 DC share (world's largest DC hub)",
+      "source_date": "2030",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "datacenter_zone_share.PJM.PJM_EMAAC",
+      "display_name": "Datacenter Zone Share / Pjm / Pjm Emaac",
+      "value": 0.088507,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "load_share 0.1672 (incl. PSEG — named DC-growth zone)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "datacenter_zone_share.PJM.PJM_SWMAAC",
+      "display_name": "Datacenter Zone Share / Pjm / Pjm Swmaac",
+      "value": 0.03896,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "load_share 0.0736 (incl. BGE — named DC-growth zone)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "datacenter_zone_share.PJM.PJM_West_APS",
+      "display_name": "Datacenter Zone Share / Pjm / Pjm West Aps",
+      "value": 0.041554,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "load_share 0.0785",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
       ]
     },
     {
@@ -7540,6 +7921,44 @@
       ]
     },
     {
+      "param_id": "diurnal_tmax_hour",
+      "display_name": "Diurnal Tmax Hour",
+      "value": 15,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "local-standard-time hour of the daily maximum",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "diurnal_tmin_hour",
+      "display_name": "Diurnal Tmin Hour",
+      "value": 5,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "local-standard-time hour of the daily minimum",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "eac_price_reference.eac_gas_cc_ccs.high",
       "display_name": "Eac Price Reference / Eac Gas Cc Ccs / High",
       "value": 25.0,
@@ -8012,6 +8431,61 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "egrid_cc_hr_physical_ceiling",
+      "display_name": "Egrid Cc Hr Physical Ceiling",
+      "value": 11.5,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Physical ceiling for a combined-cycle plant heat rate. A combined cycle raises steam from its own topping turbine's exhaust, so it cannot be LESS efficient than a bare simple-cycle GT of the same era — HEAT_RATE_BINS[\"gas_ct\"][\"older\"] (EIA Table 8 legacy combustion turbine). A gas_cc plant rate above this is arithmetic on mismatched boundaries, not measured inefficiency. Scoped to gas_cc: this is the one class where the bound is airtight (a CT has no less-efficient sibling technology to bound it against).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "egrid_colocation_radius_km",
+      "display_name": "Egrid Colocation Radius Km",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "eGRID plant-heat-rate boundary reconciliation (see docs/handoffs/miso-88-egrid-hr-boundary-plan-2026-07.md).  eGRID keys its plant sheet on ORISPL, but CEMS reports co-located plants that share a stack/facility under ONE facilityId. Where that happens the plant row's heat input (PLHTIAN) covers the whole CEMS facility while its net generation (PLNGENAN) covers only the one EIA plant, so PLHTRT is a ratio of two different boundaries and the co-located sibling's fuel is double-counted. Riverside Energy Center (55641) / West Riverside (64020) is the live instance: PLHTRT 14,963.7 Btu/kWh against a boundary-consistent 6,880.  Site identity: co-located plants share a fence line. 1.0 km comfortably spans a multi-block generating station (Riverside/West Riverside are 454 m apart) while never reaching an unrelated station.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "egrid_unit_vintage_tol_years",
+      "display_name": "Egrid Unit Vintage Tol Years",
+      "value": 1,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "CEMS unit commissioning date vs the EIA-860 generator in-service year differ by up to a year for the same machine (CEMS certifies at first fire, EIA-860 records commercial operation): eGRID UNT23 dates West Riverside's turbines 2019, EIA-860 dates the generators 2020. A one-year window matches a unit to its own plant's vintages without reaching an adjacent build.",
+      "source_date": "2019",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -11162,6 +11636,114 @@
       ]
     },
     {
+      "param_id": "gas_offer_margin_anchor_by_iso.CAISO",
+      "display_name": "Gas Offer Margin Anchor By Iso / Caiso",
+      "value": 4.7964,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Gas-offer net-revenue margin ANCHOR ($/MMBtu) by ISO — the delivered-gas identification point of the ``gas_offer_net_revenue_margin`` mechanism (:func:`market_sim.data.offer_curves.apply_gas_offer_margin`). Each value is the mean of the model's own merit-order delivered-gas series (``data.fuel.trajectories._gas_series`` — measured EIA Henry Hub monthly × the ISO's measured hub basis, the exact series the registered ``offer_curve_by_group`` band multipliers were calibrated against) over the training window 2023–2025. At ``fuel == anchor`` the reformed offer reduces EXACTLY to the registered band multiplier, so the anchor is an identification constant, not a tunable: it re-derives ONLY when the gas source workbooks change (rule 23), via ``scripts/data/derive_gas_offer_margin_anchor.py``. Each value is the derive script's output 2026-07-23 (each ISO's keeper gas overlay; TRAIN_WINDOW_HH Henry Hub 2.54 / 2.19 / 3.52), design doc docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md: ERCOT: 2.2494 = mean(2.0394, 1.6895, 3.0192) — annual-HH + seasonality delivered series (ercot99: no monthly actuals / hub overlay; Waha-ish discount to HH). PJM:   3.3483 = mean(3.2551, 2.8556, 3.9341) — monthly-actuals delivered (keeper --gas-monthly-actuals; +GAS_BASIS_DIFFERENTIAL PJM). CAISO: 4.7964 = mean(6.9524, 3.3721, 4.0646) — SoCal/PG&E Citygate hub-basis overlay (the 2023 western-gas-crisis year lifts the mean). MISO:  3.0492 = mean(2.8392, 2.4893, 3.8190) — per-plant EIA-923 monthly level + mean-preserving daily shape. NYISO: 3.9046 = mean(3.3566, 2.7969, 5.5602) — monthly actuals + zonal pipeline-hub basis + Transco Z6 daily overlay. NEISO: 4.0763 = mean(2.9365, 3.0304, 6.2621) — Algonquin (AGT) hub-basis delivered series. ISOs absent from this registry hard-fail when the flag is armed (never a silent fallback — rule 25); tuned per-ISO anchors never cross ISO boundaries (rule 24).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "gas_offer_margin_anchor_by_iso.ERCOT",
+      "display_name": "Gas Offer Margin Anchor By Iso / Ercot",
+      "value": 2.2494,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Gas-offer net-revenue margin ANCHOR ($/MMBtu) by ISO — the delivered-gas identification point of the ``gas_offer_net_revenue_margin`` mechanism (:func:`market_sim.data.offer_curves.apply_gas_offer_margin`). Each value is the mean of the model's own merit-order delivered-gas series (``data.fuel.trajectories._gas_series`` — measured EIA Henry Hub monthly × the ISO's measured hub basis, the exact series the registered ``offer_curve_by_group`` band multipliers were calibrated against) over the training window 2023–2025. At ``fuel == anchor`` the reformed offer reduces EXACTLY to the registered band multiplier, so the anchor is an identification constant, not a tunable: it re-derives ONLY when the gas source workbooks change (rule 23), via ``scripts/data/derive_gas_offer_margin_anchor.py``. Each value is the derive script's output 2026-07-23 (each ISO's keeper gas overlay; TRAIN_WINDOW_HH Henry Hub 2.54 / 2.19 / 3.52), design doc docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md: ERCOT: 2.2494 = mean(2.0394, 1.6895, 3.0192) — annual-HH + seasonality delivered series (ercot99: no monthly actuals / hub overlay; Waha-ish discount to HH). PJM:   3.3483 = mean(3.2551, 2.8556, 3.9341) — monthly-actuals delivered (keeper --gas-monthly-actuals; +GAS_BASIS_DIFFERENTIAL PJM). CAISO: 4.7964 = mean(6.9524, 3.3721, 4.0646) — SoCal/PG&E Citygate hub-basis overlay (the 2023 western-gas-crisis year lifts the mean). MISO:  3.0492 = mean(2.8392, 2.4893, 3.8190) — per-plant EIA-923 monthly level + mean-preserving daily shape. NYISO: 3.9046 = mean(3.3566, 2.7969, 5.5602) — monthly actuals + zonal pipeline-hub basis + Transco Z6 daily overlay. NEISO: 4.0763 = mean(2.9365, 3.0304, 6.2621) — Algonquin (AGT) hub-basis delivered series. ISOs absent from this registry hard-fail when the flag is armed (never a silent fallback — rule 25); tuned per-ISO anchors never cross ISO boundaries (rule 24).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "gas_offer_margin_anchor_by_iso.MISO",
+      "display_name": "Gas Offer Margin Anchor By Iso / Miso",
+      "value": 3.0492,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Gas-offer net-revenue margin ANCHOR ($/MMBtu) by ISO — the delivered-gas identification point of the ``gas_offer_net_revenue_margin`` mechanism (:func:`market_sim.data.offer_curves.apply_gas_offer_margin`). Each value is the mean of the model's own merit-order delivered-gas series (``data.fuel.trajectories._gas_series`` — measured EIA Henry Hub monthly × the ISO's measured hub basis, the exact series the registered ``offer_curve_by_group`` band multipliers were calibrated against) over the training window 2023–2025. At ``fuel == anchor`` the reformed offer reduces EXACTLY to the registered band multiplier, so the anchor is an identification constant, not a tunable: it re-derives ONLY when the gas source workbooks change (rule 23), via ``scripts/data/derive_gas_offer_margin_anchor.py``. Each value is the derive script's output 2026-07-23 (each ISO's keeper gas overlay; TRAIN_WINDOW_HH Henry Hub 2.54 / 2.19 / 3.52), design doc docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md: ERCOT: 2.2494 = mean(2.0394, 1.6895, 3.0192) — annual-HH + seasonality delivered series (ercot99: no monthly actuals / hub overlay; Waha-ish discount to HH). PJM:   3.3483 = mean(3.2551, 2.8556, 3.9341) — monthly-actuals delivered (keeper --gas-monthly-actuals; +GAS_BASIS_DIFFERENTIAL PJM). CAISO: 4.7964 = mean(6.9524, 3.3721, 4.0646) — SoCal/PG&E Citygate hub-basis overlay (the 2023 western-gas-crisis year lifts the mean). MISO:  3.0492 = mean(2.8392, 2.4893, 3.8190) — per-plant EIA-923 monthly level + mean-preserving daily shape. NYISO: 3.9046 = mean(3.3566, 2.7969, 5.5602) — monthly actuals + zonal pipeline-hub basis + Transco Z6 daily overlay. NEISO: 4.0763 = mean(2.9365, 3.0304, 6.2621) — Algonquin (AGT) hub-basis delivered series. ISOs absent from this registry hard-fail when the flag is armed (never a silent fallback — rule 25); tuned per-ISO anchors never cross ISO boundaries (rule 24).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "gas_offer_margin_anchor_by_iso.NEISO",
+      "display_name": "Gas Offer Margin Anchor By Iso / Neiso",
+      "value": 4.0763,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Gas-offer net-revenue margin ANCHOR ($/MMBtu) by ISO — the delivered-gas identification point of the ``gas_offer_net_revenue_margin`` mechanism (:func:`market_sim.data.offer_curves.apply_gas_offer_margin`). Each value is the mean of the model's own merit-order delivered-gas series (``data.fuel.trajectories._gas_series`` — measured EIA Henry Hub monthly × the ISO's measured hub basis, the exact series the registered ``offer_curve_by_group`` band multipliers were calibrated against) over the training window 2023–2025. At ``fuel == anchor`` the reformed offer reduces EXACTLY to the registered band multiplier, so the anchor is an identification constant, not a tunable: it re-derives ONLY when the gas source workbooks change (rule 23), via ``scripts/data/derive_gas_offer_margin_anchor.py``. Each value is the derive script's output 2026-07-23 (each ISO's keeper gas overlay; TRAIN_WINDOW_HH Henry Hub 2.54 / 2.19 / 3.52), design doc docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md: ERCOT: 2.2494 = mean(2.0394, 1.6895, 3.0192) — annual-HH + seasonality delivered series (ercot99: no monthly actuals / hub overlay; Waha-ish discount to HH). PJM:   3.3483 = mean(3.2551, 2.8556, 3.9341) — monthly-actuals delivered (keeper --gas-monthly-actuals; +GAS_BASIS_DIFFERENTIAL PJM). CAISO: 4.7964 = mean(6.9524, 3.3721, 4.0646) — SoCal/PG&E Citygate hub-basis overlay (the 2023 western-gas-crisis year lifts the mean). MISO:  3.0492 = mean(2.8392, 2.4893, 3.8190) — per-plant EIA-923 monthly level + mean-preserving daily shape. NYISO: 3.9046 = mean(3.3566, 2.7969, 5.5602) — monthly actuals + zonal pipeline-hub basis + Transco Z6 daily overlay. NEISO: 4.0763 = mean(2.9365, 3.0304, 6.2621) — Algonquin (AGT) hub-basis delivered series. ISOs absent from this registry hard-fail when the flag is armed (never a silent fallback — rule 25); tuned per-ISO anchors never cross ISO boundaries (rule 24).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "gas_offer_margin_anchor_by_iso.NYISO",
+      "display_name": "Gas Offer Margin Anchor By Iso / Nyiso",
+      "value": 3.9046,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Gas-offer net-revenue margin ANCHOR ($/MMBtu) by ISO — the delivered-gas identification point of the ``gas_offer_net_revenue_margin`` mechanism (:func:`market_sim.data.offer_curves.apply_gas_offer_margin`). Each value is the mean of the model's own merit-order delivered-gas series (``data.fuel.trajectories._gas_series`` — measured EIA Henry Hub monthly × the ISO's measured hub basis, the exact series the registered ``offer_curve_by_group`` band multipliers were calibrated against) over the training window 2023–2025. At ``fuel == anchor`` the reformed offer reduces EXACTLY to the registered band multiplier, so the anchor is an identification constant, not a tunable: it re-derives ONLY when the gas source workbooks change (rule 23), via ``scripts/data/derive_gas_offer_margin_anchor.py``. Each value is the derive script's output 2026-07-23 (each ISO's keeper gas overlay; TRAIN_WINDOW_HH Henry Hub 2.54 / 2.19 / 3.52), design doc docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md: ERCOT: 2.2494 = mean(2.0394, 1.6895, 3.0192) — annual-HH + seasonality delivered series (ercot99: no monthly actuals / hub overlay; Waha-ish discount to HH). PJM:   3.3483 = mean(3.2551, 2.8556, 3.9341) — monthly-actuals delivered (keeper --gas-monthly-actuals; +GAS_BASIS_DIFFERENTIAL PJM). CAISO: 4.7964 = mean(6.9524, 3.3721, 4.0646) — SoCal/PG&E Citygate hub-basis overlay (the 2023 western-gas-crisis year lifts the mean). MISO:  3.0492 = mean(2.8392, 2.4893, 3.8190) — per-plant EIA-923 monthly level + mean-preserving daily shape. NYISO: 3.9046 = mean(3.3566, 2.7969, 5.5602) — monthly actuals + zonal pipeline-hub basis + Transco Z6 daily overlay. NEISO: 4.0763 = mean(2.9365, 3.0304, 6.2621) — Algonquin (AGT) hub-basis delivered series. ISOs absent from this registry hard-fail when the flag is armed (never a silent fallback — rule 25); tuned per-ISO anchors never cross ISO boundaries (rule 24).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "gas_offer_margin_anchor_by_iso.PJM",
+      "display_name": "Gas Offer Margin Anchor By Iso / Pjm",
+      "value": 3.3483,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Gas-offer net-revenue margin ANCHOR ($/MMBtu) by ISO — the delivered-gas identification point of the ``gas_offer_net_revenue_margin`` mechanism (:func:`market_sim.data.offer_curves.apply_gas_offer_margin`). Each value is the mean of the model's own merit-order delivered-gas series (``data.fuel.trajectories._gas_series`` — measured EIA Henry Hub monthly × the ISO's measured hub basis, the exact series the registered ``offer_curve_by_group`` band multipliers were calibrated against) over the training window 2023–2025. At ``fuel == anchor`` the reformed offer reduces EXACTLY to the registered band multiplier, so the anchor is an identification constant, not a tunable: it re-derives ONLY when the gas source workbooks change (rule 23), via ``scripts/data/derive_gas_offer_margin_anchor.py``. Each value is the derive script's output 2026-07-23 (each ISO's keeper gas overlay; TRAIN_WINDOW_HH Henry Hub 2.54 / 2.19 / 3.52), design doc docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md: ERCOT: 2.2494 = mean(2.0394, 1.6895, 3.0192) — annual-HH + seasonality delivered series (ercot99: no monthly actuals / hub overlay; Waha-ish discount to HH). PJM:   3.3483 = mean(3.2551, 2.8556, 3.9341) — monthly-actuals delivered (keeper --gas-monthly-actuals; +GAS_BASIS_DIFFERENTIAL PJM). CAISO: 4.7964 = mean(6.9524, 3.3721, 4.0646) — SoCal/PG&E Citygate hub-basis overlay (the 2023 western-gas-crisis year lifts the mean). MISO:  3.0492 = mean(2.8392, 2.4893, 3.8190) — per-plant EIA-923 monthly level + mean-preserving daily shape. NYISO: 3.9046 = mean(3.3566, 2.7969, 5.5602) — monthly actuals + zonal pipeline-hub basis + Transco Z6 daily overlay. NEISO: 4.0763 = mean(2.9365, 3.0304, 6.2621) — Algonquin (AGT) hub-basis delivered series. ISOs absent from this registry hard-fail when the flag is armed (never a silent fallback — rule 25); tuned per-ISO anchors never cross ISO boundaries (rule 24).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "gas_st_econ_hr_override_default",
       "display_name": "Gas St Econ Hr Override Default",
       "value": 1.0,
@@ -11932,6 +12514,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "hydro_min_flow_percentile",
+      "display_name": "Hydro Min Flow Percentile",
+      "value": 5.0,
+      "unit": "",
+      "domain": "Hydro",
+      "tier": 2,
+      "source": "--- Hydro minimum-flow floor (caiso-124) ------------------------------------ The LOWER half of the same measured two-sided hydro capability envelope: the percentile of the measured EIA-930 NG:WAT hourly output, per CALENDAR MONTH, used as the hydro fleet's sustained minimum-flow level when ScenarioConfig.hydro_min_flow_floor is on. Two properties are load-bearing: * It is the exact MIRROR of HYDRO_ENVELOPE_PERCENTILE (95 -> 5), so the floor adds NO new free parameter — the two-sided envelope is identified by the one percentile the ceiling already carries (DOF ledger: 0 new DOF). Read as an exceedance level it is Q95, the standard hydrological low-flow index that environmental / FERC-license minimum-flow conditions are themselves written against (the level the fleet exceeds 95 % of the hours). * The bucket is the MONTH ALONE — deliberately NOT (month x hour-of-day) as the ceiling's is. A floor carrying the measured diurnal shape would pin dispatch to the measured outcome (rule 13 violation, and it measures out at ~75 % of the annual budget); a month-constant level is the physical quantity a minimum-flow condition actually is (inflow / licence releases vary seasonally, not by hour-of-day) and leaves the LP free to choose WHEN to generate above it (CAISO 2023-25: the floor's energy is 36-46 % of the monthly budget, so 54-64 % stays economically shaped). Identification: measured (rule 21 — re-derive only when the EIA-930 source extends, never against a residual). Source: EIA-930 hourly NG:WAT per BA extract; built by data.eia_loader.measured_hydro_min_flow_level.",
+      "source_date": "2023-25",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -14500,6 +15100,101 @@
       ]
     },
     {
+      "param_id": "net_cone_forward_escalation_real_by_iso.CAISO",
+      "display_name": "Net Cone Forward Escalation Real By Iso / Caiso",
+      "value": 0.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "net_cone_forward_escalation_real_by_iso.MISO",
+      "display_name": "Net Cone Forward Escalation Real By Iso / Miso",
+      "value": 0.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "net_cone_forward_escalation_real_by_iso.NEISO",
+      "display_name": "Net Cone Forward Escalation Real By Iso / Neiso",
+      "value": 0.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "net_cone_forward_escalation_real_by_iso.NYISO",
+      "display_name": "Net Cone Forward Escalation Real By Iso / Nyiso",
+      "value": 0.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "net_cone_forward_escalation_real_by_iso.PJM",
+      "display_name": "Net Cone Forward Escalation Real By Iso / Pjm",
+      "value": 0.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "new_entry_costs.gas_cc_ccs.base_cf",
       "display_name": "New Entry Costs / Gas Cc Ccs / Base Cf",
       "value": 0.8,
@@ -16331,6 +17026,37 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "pjm_season_of_month",
+      "display_name": "Pjm Season Of Month",
+      "value": {
+        "1": "winter",
+        "2": "winter",
+        "3": "winter",
+        "4": "shoulder",
+        "5": "shoulder",
+        "6": "summer",
+        "7": "summer",
+        "8": "summer",
+        "9": "summer",
+        "10": "shoulder",
+        "11": "shoulder",
+        "12": "winter"
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "PJM measured-offer-surface family: the season a calendar month belongs to, for the within-SEASON tightness conditioning authorized by the owner 2026-07-27 (docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md §3, executed by pjm-132). A DEFINITIONAL choice, fixed in advance and never tuned against a result (rules 20 / 23): summer is PJM's Jun-Sep peak-load season (the 5CP window), winter is the Dec-Mar cold season carrying its own emergency procedures, and the remainder is shoulder. The split is symmetric (4/4/4 months) so no season's bins are structurally thinner than another's.  This is the SAME map pjm-126 pre-registered and committed before any result was seen (`scripts/probes/pjm126_midcurve_conditioning_precheck.SEASON_OF_MONTH`, commit 9409f7f); it lives here so the two derives and the two solve-time seams share ONE definition and cannot drift apart. Moving a boundary is a new definitional change and needs its own memo BEFORE any result under the new boundaries is seen.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -18880,6 +19606,24 @@
       ]
     },
     {
+      "param_id": "scenario.caiso_dam_outages",
+      "display_name": "Caiso Dam Outages",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Tier 3 (calibration, CAISO only) — use CAISO's measured DAM outage disclosure for the availability overlay with DAM-before-CAMPD precedence, instead of the CAMPD zero-generation derivation (the \"CAMPD unit outage fallback\"). When set (and ``outage_source == \"historic\"``), each CAISO thermal plant the DAM reports cover is derated by the measured curtailment episodes from the daily Curtailed & Non-Operational Generator prior-trade-date reports (owner-directed intake caiso-104: data/raw/caiso-dam-outages/caiso-dam-outage-windows.parquet, crosswalked to model plants via data/raw/reference/caiso-resource-eia-crosswalk.csv; loader market_sim.data.caiso_outages.caiso_dam_outage_derate_factors); every plant/period the DAM reports do NOT cover keeps its CAMPD window (a per-(plant_code, plant_group) merge, so covered plants use the measured schedule while the rest fall back — never silently zeroed). Driver (rule 13/14): a measured physical availability event (an outage window with a curtailed-MW level and a real FORCED/PLANNED label) whose forecast analogue is the statistical WEFOR/POF draw — prefer-measured over the emissions-gap inference, not a fitted overlay. CAISO's series begins 2021-06-18; earlier years and any resource without an accepted crosswalk row fall back to CAMPD. Default off; GATED CHANGE (alters availability).",
+      "source_date": "2021-06",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.caiso_demand_clock_realign",
       "display_name": "Caiso Demand Clock Realign",
       "value": false,
@@ -18963,6 +19707,25 @@
       "domain": "Structural",
       "tier": 2,
       "source": "Carry the MEASURED surplus-hour",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.caiso_endogenous_wecc_node",
+      "display_name": "Caiso Endogenous Wecc Node",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Make the WECC_import node a REAL",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -20703,6 +21466,24 @@
       ]
     },
     {
+      "param_id": "scenario.coal_committed_takeorpay_sunk_fixed",
+      "display_name": "Coal Committed Takeorpay Sunk Fixed",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "Sunk-FIXED treatment of the take-or-pay contract: suppresses the COMMITTED-band discount of the three flags above while leaving the `_mustrun` band's `1 − contract_share` untouched. Driver (miso-96, results/calibration/FINDING-miso96-coal-prb-offpeak-2026-07.md): a take-or-pay contract is an obligation over an ACCOUNTING PERIOD (annual / monthly contracted tonnage), not a per-hour price. Over that period it is sunk in aggregate, so it does not enter the marginal cost of an incremental MWh unless the obligation would otherwise go unmet — a plant that over-fulfils its contract buys its marginal ton at SPOT. Applying `1 − share` as an unconditional per-hour multiplier on the committed band converts a sunk FIXED cost into a MARGINAL subsidy and makes that band inframarginal in all 8760 h. Measured consequence on MISO: arming the regulated scope moved RE PRB committed 9,403 MW from $28.09 to $5.07/MWh, and COAL_PRB stopped de-loading overnight — D-1 off-peak cv_ratio collapsed 0.88/1.04/0.47 (miso-65) to 0.45/0.44/0.36 (miso-66 onward) against a fleet the CEMS record shows cycling 53.6% → 66.2% utilisation across the day. Rule 17 [R-FLOOR-WINDOW]: the discount has a driver and a forward story but NO WINDOW — it binds in every hour, including the hours its own driver evidence says the plant de-loads. Rule 19 [R-ONE-MECH]: the contract is already carried ONCE, on the band that is on regardless of price (`_mustrun`). The committed band then bids full delivered cost, still bounded by its supply passthrough. Zero fitted parameters (this REMOVES a discount, it does not size one). Default off — every existing keeper byte-identical.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.coal_drop_pof",
       "display_name": "Coal Drop Pof",
       "value": false,
@@ -20738,6 +21519,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_econ_marginal_hr_bound",
+      "display_name": "Coal Econ Marginal Hr Bound",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "Physical floor on the COAL offer curve's ECONOMIC ramp (ERCOT-111). ``offer_curve_by_group`` band multipliers are price-calibrated, not literal heat rates, so a band may legitimately carry a MARKUP above its physical basis. It may not sit BELOW it: an already-committed coal unit's next MWh physically costs at least its own measured incremental burn x delivered fuel, and the real fleet never offers incremental energy under that (ERCOT 2023 60-Day DAM: the price-taker block stops at LSL and every submitted incremental coal offer above it prices >= ~$16.3/MWh, median top-of-curve $21). With this on, each coal class's ``econ_low`` / ``econ_high`` multiplier is clamped UP to the ISO's own measured CAMPD marginal (incremental) heat rate for COAL -- ``data/raw/reference/<iso>_campd_marginal_hr_summary.csv``, ``marg_econ_{low,high}_p50``, written by ``scripts/data/derive_campd_marginal_hr.py`` (ERCOT COAL: 0.886 / 0.898). Markups above the measured basis pass through unchanged; ``committed`` / ``mustrun`` (take-or-pay sunk contract) and ``peak`` (scarcity wall) are out of scope (rule 19).  REMOVES a fitted degree of freedom rather than adding one, and adds no tunable: the floor is a measured artifact this repo already derives and commits, and it regenerates for a forward year from the same CEMS input-output curves (rule 13). Evidence: the ERCOT keeper's resolved COAL_PRB ``econ_low`` is 0.400 (base 0.70 plus a fitted -0.30 run delta) -- 2.2x BELOW the measured 0.886 -- putting ~1.5 GW of coal below the real fleet's incremental offer floor; with ERCOT-110's measured coal availability restored, 99% of the model's +11.7 TWh coal over-run is economic dispatch INSIDE the real fleet's own committed HSL envelope (results/calibration/FINDING-ercot111-coal-dispatch-economics-2026-07-24.md). Default off (every existing keeper unchanged).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -22442,6 +23241,25 @@
       ]
     },
     {
+      "param_id": "scenario.dual_fuel_oil_daily_parity",
+      "display_name": "Dual Fuel Oil Daily Parity",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "GATED, default-OFF",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.dual_fuel_oil_reattribution",
       "display_name": "Dual Fuel Oil Reattribution",
       "value": false,
@@ -22974,6 +23792,24 @@
       ]
     },
     {
+      "param_id": "scenario.ercot_coal_min_config_floor",
+      "display_name": "Ercot Coal Min Config Floor",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "Coal MINIMUM ONLINE CONFIGURATION floor (lane ercot128-unit-grain; docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md). ERCOT-scoped (rule 25 [R-ISO-SCOPE]), default OFF, byte-identical off.  WHAT IT IS. A multi-unit coal plant cannot be pushed below the minimum load of its SMALLEST online configuration — the least MW it can hold with at least one unit synchronized, ``min over units u of MinLoad_u``. The LP unit is the PLANT, so today nothing stops the merit order driving a coal plant to a level no combination of its units could physically deliver: the ercot115 keeper's per-plant p05 loading runs 0.013-0.093 of declared on Limestone / J K Spruce / W A Parish against a real fleet that never goes below 0.106-0.261. This bound is the missing physics.  WHY IT NEEDS NO COMMITMENT STATE AND NO INTEGRALITY (the ERCOT-127 §5.3 architectural question). Unit-grain commitment STATE is not expressible in a pure LP — a continuous u in [0,1] relaxation of ``u*MinLoad <= p <= u*Cap`` projects to ``0 <= p <= Cap`` and deletes the constraint outright, integer u is forbidden by the no-MIP rule, a measured u is forbidden by rule 13, and any P0/P1 run-pattern detector is circular (it infers \"off\" from the very dispatch it is meant to constrain). But the min-load LOWER ENVELOPE, which is all this parameter ever needed, IS expressible exactly: a plant's exact online unit-commitment feasible set is the union over non-empty unit subsets S of [sum_S MinLoad, sum_S Cap], and where that union is CONNECTED it equals [min_u MinLoad_u, Cap]. It is connected for 9 of the 10 ERCOT coal plants and 97.8 % of ERCOT coal capacity (adjacent configurations overlap whenever MinLoad/Cap < 0.5, true of every ERCOT coal unit but San Miguel 0.639 and Major Oak 0.625), so the plant-grain bound is a ZERO-ERROR representation there and a strict relaxation on Major Oak's 305 MW — the safe direction under rule 14, and recorded per plant in the artifact's ``connected`` column.  LEVEL AND PROVENANCE (rule 13 [R-MEASURED] / rule 21 [R-DOF]). Per plant from EIA-860 ``Minimum Load (MW)`` via scripts/data/derive_eia860_coal_min_config.py -> data/raw/_processed-legacy/coal_min_config_ERCOT.csv, read by fleet.coal_min_config. A REGISTRATION filing, not measured operation and not an outcome of the dispatch being validated: it exists for any vintage and responds to condition (a retired unit leaves the file), so it regenerates for a forward year — the admissibility test. ZERO free parameters, lineage_solves 0; no value is chosen against a residual. Corroborated, never substituted: the ERCOT COP LSL agrees EXACTLY on the three plants whose COP resources are whole units (Coleto Creek 175, Oak Grove 348, J K Spruce 130) and differs only where a resource is an ownership SHARE of a unit (Fayette, Sandy Creek), and the fleet cap-weighted per-unit MinLoad/Cap of 0.3325 independently corroborates ERCOT-127 §2's DAM-derived committed LSL/HSL p50 of 0.3636.  RULE 19 [R-ONE-MECH]. Coal forces exactly ZERO energy in the ercot115 keeper (D-2 carries no COAL row in any year) and none of the four live floors touches coal, so this stacks on nothing. Distinct from the step-3a synchronization floor (coal_sync_srmc_tranche / MECH_COAL_MUSTRUN): different driver, different level, its own mechanism id (MECH_COAL_MIN_CONFIG) so D-2/D-4 attribution stays per-mechanism.  RULE 17 [R-FLOOR-WINDOW]. Driver: the plant's registered unit inventory. Window: ALL 24 hours, by driver — a registered minimum load applies in every hour the plant is synchronized and there is no hour its own evidence says otherwise (the D4_WINDOWS declaration says so). Forward story: the artifact re-derives from the next EIA-860 vintage with no model input. Registered in _CACHE_KEY_OPTIONAL_FIELDS, so an off run's cache key is byte-identical and an armed run gets its own key.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.ercot_commitment_posture",
       "display_name": "Ercot Commitment Posture",
       "value": false,
@@ -23355,6 +24191,42 @@
       "tier": 2,
       "source": "ERCOT unit-level (window-grain) nuclear refuel availability (default off, ERCOT backcast-gated). Replaces the NUCLEAR_MONTHLY_CF_BY_YEAR fleet-month smear for the four ERCOT reactors with the measured per-reactor DAILY availability from the 60-Day DAM disclosure Gen_Resource NUC status (data/raw/ercot-nuclear-availability.csv, scripts/data/derive_ercot_nuclear_availability.py), monthly energy reconciled to the same EIA-923 anchor the smear used. The smear carries the right monthly ENERGY but mis-times refuel windows within the month by up to ±1.4 GW (2024 type case: STP-2 out 3/23–5/19 spans the Apr-16/Apr-28/ May-8 scarcity events, Comanche Peak 1 out 5/11–5/16 overlaps the May DA-shoulder days, and all four units were BACK for the May-24..27 record heat the smear kept derated — docs/DIAGNOSIS-ercot-may2024-outage- forensics-2026-07.md §2.1). A refuel window is a physical availability event (rule-14 admissible, the nuclear analogue of the CAMPD fossil outage windows; forward years regenerate via NUCLEAR_MONTHLY_CF / refuel-block scheduling). Dates the disclosure does not cover (Oct 2023 hole, Nov-Dec 2025 until the 2026 publications land) keep the monthly smear. See data.outages.ercot_nuclear_unit_availability_series and the application in data.fleet.generators_to_fleet_arrays.",
       "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_offer_hrmult_ep_rebasis",
+      "display_name": "Ercot Offer Hrmult Ep Rebasis",
+      "value": false,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "ERCOT-118: re-ground the measured CC DAM band multipliers on the EP-anchored dispatch gas basis (default off, ERCOT-scoped). The keeper's ``offer_curve_overrides`` (CC_REGULAR/CC_CHP committed/econ_low/ econ_high/peak — the cconly lineage of ``scripts/data/derive_dam_offer_hrmults.py``) were derived by normalizing measured QSE offers by ``HH_daily − 0.50`` POOLED over 2023-2025, while dispatch prices gas at the EP-anchored zonal level (``ercot_zonal_gas_basis``: +0.50/+0.41/+0.04 $/MMBtu above that basis in 2023/24/25) — so the measured offer surface is reproduced ~+25% high in 2023/24, and the pooled p50 over-prices the dear-gas 2025 (real CC offers scale sub-proportionally with gas). Proven causal by the ERCOT-117 ablation (2026-07-26-ercot117-gas-basis-probe: crossing-band elevation −$3.4/−$3.5/−$2.0 with C1 16/16 — and C3a collapse without the EP level, so the fix is re-deriving ON the EP basis, never reverting it, rules 13/14). With this on, ``run_calibration.run_year`` replaces those bands with the PER-YEAR tables of the committed artifact ``data/raw/_validation-source/offer_curve_dam_hrmults_ep_yearly.json`` (same derivation, EP-anchored normalization — rule-23 citation in the artifact's _provenance), re-applies the run's ``offer_curve_deltas`` on the rebased base (composition preserved: the deltas stay the calibrated markup, only the measured base under them moves), rewrites the conditional-surface peak_ladder rungs to the rebased resolved peak, and threads the year's EP delivered annual mean onto the rebased classes as their per-class ``margin_anchor`` so the ``gas_offer_net_revenue_margin`` markup decomposition sits on ONE consistent basis (the per-year multiplier is identified at that year's own delivered mean, not the window HH−0.50 anchor). Registered in ``_CACHE_KEY_OPTIONAL_FIELDS`` — byte-identical for every existing config at its default; an armed run enters the cache key as a distinct scenario.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_offer_hrmult_ep_rebasis_bands",
+      "display_name": "Ercot Offer Hrmult Ep Rebasis Bands",
+      "value": null,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "ERCOT-119 leg-split of the EP rebasis: restrict the rebasis to the named artifact bands (e.g. [\"econ_low\", \"econ_high\"]), leaving every other band — above all the peak standing wall and its conditional-surface peak_ladder rungs — at the run's resolved (pooled HH−0.50-derived) values. None (the default) rebases every band the artifact carries, the ERCOT-118 behaviour. Grounding (FINDING-ercot118-gas-rebasis-2026-07-27 §4.2): the per-year peak(B) p50 (2.546/3.501/2.629) is structurally smaller than the pooled 4.326 — a within-year top-of-curve max is NOT the 3-year always-posted standing wall — so repricing the CC peak band to it deflates the sub-$200 scarcity wall (C3c 72→49, 13→3); the econ bands' per-year rebasis is the measured fix, the peak leg is the breach. With a scope set, the per-class ``margin_anchor`` threading becomes band-scoped too (``margin_anchor_<band>`` keys, resolved per tranche by ``offer_curves.band_margin_anchor``): each REBASED band's markup is priced at the year's EP identification anchor while every un-rebased band keeps the ISO window anchor its multiplier was identified at — every band's (mult, anchor) pair stays on one basis (the ERCOT-118 pre-commit §3 principle, now per band). Unknown band names hard-fail in ``apply_ercot_dam_hrmult_ep_rebasis`` (rule 25 — never a silent no-op). Registered in ``_CACHE_KEY_OPTIONAL_FIELDS`` — byte-identical at its default; a scoped run enters the cache key as a distinct scenario.",
+      "source_date": "2026-07",
       "page_or_table": "",
       "url": "",
       "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
@@ -24064,6 +24936,60 @@
       ]
     },
     {
+      "param_id": "scenario.ercot_thermal_dam_availability_coal",
+      "display_name": "Ercot Thermal Dam Availability Coal",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "ERCOT measured DAM availability extended to COAL (default off, ERCOT backcast-gated — ERCOT-110, 2026-07-24). A CLASS-SCOPE switch of the same mechanism (rule 19), not a new overlay: when armed on top of ercot_thermal_dam_availability + _hourly it lets the COAL_PRB / COAL_LIGNITE classes consume the measured 60-Day DAM fraction the same way the gas classes already do (class-HOUR water-fill, plus the plant grain when _plant is also on). Off, the coal rows in the derived artifacts are dropped at the apply seam, so an armed-gas run is byte-identical to its pre-ERCOT-110 self even though the CSVs/parquet now carry coal — the re-derive cannot silently move a keeper.  WHY COAL (ERCOT-109 -> ERCOT-110). At the 122 true scarcity hours of Jul-Sep 2023 the model serves the same load with 1.7 GW LESS GAS, backfilled by cheap resource — coal +424 MW among it — and coal is 0.0 % forced (D-2), so the error is merit-order elasticity against a capability ceiling the model does not have. The disclosure measures ERCOT coal at 0.86-0.88 of ratings in Jun-Sep 2023 (11.7-11.9 GW of the 13.6 GW p98 rated fleet) while the model runs coal to 12.5 GW in Aug/Sep — ~834 MW of phantom coal precisely in the tail hours. The statistical/CAMPD stack cannot see it: CAMPD windows are a >=5-day FULL-STOP detector, blind to a partial summer HSL derate, and blind to a long single-unit mothball (W A Parish G8 reads OUT/zero for ~96 % of 2023 while the model carries its 610 MW available all year).  GRAIN. The overlay keys the single class COAL, because that is the grain BOTH sides carry: the disclosure publishes one coal Resource Type (CLLIG) with no fuel basin, and the ERCOT LP assigns the whole coal fleet Plant_Group = COAL (the COAL_PRB / COAL_LIGNITE split is applied only at REPORTING time, in run_calibration_full._dispatch_frame). Keying the supply-rank split would match no generator at the apply seam and leave the overlay silently inert. WHICH coal unit is derated is carried by the PLANT grain instead (ercot_thermal_dam_availability_plant), keyed by EIA plant code through the reviewed crosswalk (data/raw/reference/ercot-dam-coal-site-seeds.csv -> ercot-dam-plant-crosswalk.csv — all 26 coal sites hand-adjudicated, because ERCOT coal mnemonics are substation codes with no lexical bridge to the EIA plant name). All 26 sites map onto all 10 modelled coal plants, so the plant grain covers coal with no unmapped residual.  Rule-13 admissible identically to the gas scope: published unit-resolved MW capability, regenerates for any delivery year, responds to changed conditions — never a price, never an outcome. Rule 23: a class-SCOPE extension of the frozen derive (the same argument ERCOT-96/97 used for the hour and plant grains), source files unchanged. Backcast only; forecast keeps the statistical stack (the G4 mode-aware seam). No effect unless ercot_thermal_dam_availability + _hourly are also on.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_thermal_dam_availability_hourly",
+      "display_name": "Ercot Thermal Dam Availability Hourly",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "ERCOT measured class-HOUR thermal availability (default off, ERCOT backcast-gated — ERCOT-96, 2026-07-22). The GRAIN switch of the mechanism above, not a second overlay (rule 19): when armed on top of ercot_thermal_dam_availability, the covered classes' availability is set to the measured 60-Day DAM fraction per delivery HOUR (Hour Ending 1-24) instead of the day-flat mean — same disclosure rows, finer resolution (scripts/data/derive_ercot_thermal_dam_availability.py --hourly-out, data/raw/ercot-thermal-dam-availability-hourly.csv). Owns the hourly ambient-derate shape the day mean discards: the ERCOT-95 diagnosis (docs/handoffs/ercot95-scarcity-tail-diagnosis-2026-07.md Finding 6) measured the flat block handing the model +216 MW mean (+433 p90, +578 max) phantom CC+CT capacity on the 181 actual 2023 RT tail hours — real HSL dips below its day mean exactly in the hod 13-19 afternoon window where the missing scarcity tail sits — and symmetrically under-crediting the fleet overnight. Application (data.fleet): the same bidirectional cap-1.0 water-fill as the day grain, per HOUR — restore a' = a + λ(1−a) toward the measured level, remove a' = a·(t/cur) — so the cap-weighted class-hour mean lands exactly on the measured fraction; NaN hours (the Oct-2023 hole, an uncovered HE) keep the pre-overlay statistical stack, hour by hour. Rule-13 admissible identically to the day grain (published MW capability, regenerates for any year, responds to conditions — never a price); rule 23: a grain/schema extension of the frozen derive, source files unchanged. Forecast mode untouched (the statistical stack is the forward analogue — the G4 mode-aware seam). No effect unless ercot_thermal_dam_availability is also on.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_thermal_dam_availability_plant",
+      "display_name": "Ercot Thermal Dam Availability Plant",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "ERCOT measured PLANT-grain DAM availability (default off, ERCOT-97). On top of the class-HOUR flag (requires ercot_thermal_dam_availability_hourly): each plant an accepted DAM-site -> EIA-plant crosswalk row maps (data/raw/reference/ercot-dam-plant-crosswalk.csv, build_ercot_dam_resource _crosswalk.py) is pinned to its OWN measured site-hour availability fraction, and the unmapped remainder is water-filled so the class-HOUR total still lands on the measured class fraction. A within-class REDISTRIBUTION (which plant carries the derate), not a level change: the class total is unchanged, so this is a merit-mix/zonal-placement channel, not a system-tightness one (ERCOT-96 Finding: per-plant misallocation ~259 MW mean on the 181 actual 2023 tail hours; net-zero on the class total). Zero fitted parameters — crosswalk rows are accepted-gated identification metadata (rules 1/11), the fractions are the same measured DAM HSL/rating as the class grain (rule 13), and a residual/mapped split is arithmetic. NaN plant-hours fall back to the class grain. No effect unless ercot_thermal_dam_availability + _hourly are also on; forecast mode untouched (the statistical stack is the forward analogue — G4 seam).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.ercot_west_gas_collapse_freq",
       "display_name": "Ercot West Gas Collapse Freq",
       "value": null,
@@ -24155,6 +25081,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_wind_zone_shape",
+      "display_name": "Ercot Wind Zone Shape",
+      "value": false,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 3,
+      "source": "ERCOT-113 per-zone wind SHAPE gate (data.renewables._WIND_ZONE_SHAPE_GATES). Give each ERCOT zone its own MERRA-2 reanalysis wind shape (NASA POWER WS50M at the zone's EIA-860 wind-plant locations through a turbine power curve, data/raw/ercot-wind-shape/) instead of one ISO-wide hourly profile applied to every zone. The measured night(00-06)/afternoon(12-18) ratio separates the nocturnal-jet West/North/Panhandle (1.04-1.17) from the Gulf-sea-breeze South (0.84-0.89), stable across 2023-2025; one ISO-wide profile averages them. Purely SPATIAL: _redistribute_preserving_total holds the ISO aggregate exactly in every hour, so annual wind energy and the ISO-wide bound cannot move — only WHICH ZONE holds the wind, hence when the West/Panhandle curtailment ceiling and the zonal links bind. Keeper-affecting, so default-off. Same builder/schema as MISO's unconditional shape (scripts/data/build_miso_wind_shape.py --iso ERCOT).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -24327,6 +25271,24 @@
       ]
     },
     {
+      "param_id": "scenario.forecast_xyear_warmstart",
+      "display_name": "Forecast Xyear Warmstart",
+      "value": true,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Cross-year LP warm-start on the FORECAST path (refactor-consolidation plan §7 H-3, owner decision D-9). The backcast already carries its year-loop basis forward (``MARKET_SIM_WARMSTART_XYEAR``, default ON in the calibration CLIs); the forecast has always passed ``xyear_cache=None`` because the prior year's basis reshuffles dispatch among units tied at the marginal price, and that per-unit realized dispatch used to be read by the economic retirement screen — so a pure wall-clock lever could tip a retire/keep decision and move the NEXT year's fleet (``docs/cross-year-warmstart.md`` \"Why the forecast path is not wired\").  Wave 4C closed the last realized-dispatch reader: the screen now prices the attainable pro-forma margin and credits attribute revenue (EAC / RPS / §45U) on attainable in-merit generation, both functions of prices, mc and capacity only (``model/capacity_evolution/retirements.py``, pinned by ``tests/test_forecast_warmstart_tie_invariance.py``). This flag threads the year-loop basis through ``runner.run_scenario_iso``; it is a SOLVE- PATH knob only — the LP optimum is basis-independent, so it may change how fast a year converges and never what it converges to.  This is a registry field (rule 24 [R-REGISTRY]), not an env-var knob: it reaches ``run_energy_solve`` explicitly and is recorded in ``run_config.json``. Registered in ``_CACHE_KEY_OPTIONAL_FIELDS`` so it is cache-neutral at its default (the pinned default ``cache_key`` stays ``edbc1b1``); a run that OPTS OUT (``False``) enters the key as a distinct scenario, which is the escape hatch for a strictly cold forecast.  DEFAULT FLIPPED ON 2026-07-26 under owner decision D-9's guardrail: the full-horizon ERCOT 2026-2050 A/B (8760 h, threads=1, two concurrent invocations) showed the CAPACITY TRAJECTORY EXACTLY UNCHANGED — every per-fuel capacity, build, retirement, reserve margin, peak demand and max hourly price bit-identical in all 25 years — while total wall fell 51.1 -> 25.1 min (2.04x overall, 2.20x on the warm-startable years 2027-2050). The only residuals are marginal-tie / dual-degeneracy noise: load-weighted price max 2.5e-5 relative, CO2 max 6.6e-6 relative. Recorded as Exp 5 in docs/handoffs/wallclock-baseline-2026-07.md.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.gas_daily_shape",
       "display_name": "Gas Daily Shape",
       "value": false,
@@ -24417,6 +25379,43 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.gas_offer_margin_anchor",
+      "display_name": "Gas Offer Margin Anchor",
+      "value": null,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "The mechanism's delivered-gas identification anchor ($/MMBtu). None + flag armed is a hard error (no silent fallback — rule 25); the backcast harness resolves it from constants.GAS_OFFER_MARGIN_ANCHOR_BY_ISO so the bundle's run_config.json records the resolved value.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.gas_offer_net_revenue_margin",
+      "display_name": "Gas Offer Net Revenue Margin",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Gas-offer NET-REVENUE MARGIN form (markup compression) — default OFF. When set, every CAMPD gas tranche whose offer-curve band declares a measured physical basis (phys_* keys above) is repriced from the fully fuel-scaled multiplier form to phys × HR_base × fuel(t)  +  (mult − phys) × HR_base × anchor i.e. the band's above-physical markup becomes a fuel-INVARIANT $/MWh net-revenue margin identified at ``gas_offer_margin_anchor``, while the physical burn keeps full fuel (and dual-fuel oil-parity) tracking. At fuel == anchor the offer reduces exactly to the registered multiplier. Grounding: the multiplicative form's markup scales linearly with the fuel bill — unidentified inside the homogeneous 2023–25 training gas window, rejected by the 2022 NEISO validation rotation (bulk 40–80 overshoot +57.7 $/MWh at ~2.9× anchor gas) and by the within-window winter-over/summer-under signature (neiso-45/46/47). Real bidders express start/no-load hurdles, competitive reach and the scarcity wall in $ terms (net-revenue targets), not heat-rate multiples. Design + identification table: docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md. Implemented as a post-assemble_mc adjustment on BOTH passes (data.offer_curves.apply_gas_offer_margin); coal keeps its own gas-keyed supply sigmoid (rule 19), the legacy non-CAMPD tranche path is inert.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -24948,6 +25947,25 @@
       ]
     },
     {
+      "param_id": "scenario.hydro_budget_nameplate_aware",
+      "display_name": "Hydro Budget Nameplate Aware",
+      "value": false,
+      "unit": "",
+      "domain": "Hydro",
+      "tier": 2,
+      "source": "GATED default off (caiso-127",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.hydro_dispatch_envelope",
       "display_name": "Hydro Dispatch Envelope",
       "value": false,
@@ -24955,6 +25973,44 @@
       "domain": "Hydro",
       "tier": 2,
       "source": "GATED default off (caiso-72",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.hydro_min_flow_floor",
+      "display_name": "Hydro Min Flow Floor",
+      "value": false,
+      "unit": "",
+      "domain": "Hydro",
+      "tier": 2,
+      "source": "GATED default off (caiso-124). The",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.hydro_ror_split",
+      "display_name": "Hydro Ror Split",
+      "value": false,
+      "unit": "",
+      "domain": "Hydro",
+      "tier": 2,
+      "source": "GATED default off (caiso-126). Per-plant",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -25248,6 +26304,42 @@
       ]
     },
     {
+      "param_id": "scenario.measured_chp_heat_rates",
+      "display_name": "Measured Chp Heat Rates",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Measured POWER-ONLY heat rates for topping-cycle CHP (miso-99; default OFF, byte-identical off). eGRID's ``PLHTRT`` is the number the model loads for every plant, and at a cogen eGRID publishes it net of the fuel it attributes to useful thermal output — a STEAM-CREDITED rate, not the rate at which the machine turns fuel into power, which makes CHP the cheapest thermal on the system (six ISOs measure 12-62 % understated, FINDING-caiso128 §4). eGRID publishes the credit it removed (``CHPCHTI``) alongside the rate it kept (``PLHTIAN``), so the power-only rate is ``(PLHTIAN + CHPCHTI) / PLNGENAN`` — the incumbent input with eGRID's own allocation undone, on the same NET denominator, so no gross-to-net reconciliation is involved (that is what blocked the CEMS route, FINDING-miso98 §6.1). Validated against independently metered CAMPD heat input at a ratio of 1.00000 on 19/22 covered MISO plants. Rule 13 [R-MEASURED] admissible: a machine's power-only heat rate is a physical characteristic that regenerates from each eGRID vintage and responds to changed conditions, not a measured outcome fed back to close a residual. Scoped to topping cycles (CC_CHP / CT_CHP) on turbine physics — a boiler-first back-pressure cogen's fuel is process fuel, not power fuel. Zero fitted parameters. See scripts/data/derive_chp_power_only_heat_rates.py and results/calibration/FINDING-miso99-chp-heat-rate-2026-07-28.md.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.measured_ct_heat_rates",
+      "display_name": "Measured Ct Heat Rates",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Measured CT_PEAKER loaded heat rates (default OFF). scripts/data/derive_campd_ct_heat_rates.py -> data/raw/_processed-legacy/campd_ct_heat_rates_<ISO>.csv When True, a CT_PEAKER generator whose plant the artifact covers takes its plant's CAMPD-measured LOADED heat rate (MMBtu per net MWh, pooled 2023-2025 over unitType == 'Combustion turbine' hours at load) ahead of the eGRID plant-average ANNUAL rate the loader otherwise assigns. The eGRID figure is wrong for a peaker twice over: an annual average blends start / part-load / shutdown fuel into the number that sets an offer, and eGRID publishes ONE rate per plant, so a mixed facility's turbines inherit its steam boilers' rate (E F Barrett's FT4s measure 16.69 against the 11.08 plant blend; Bayswater measures 10.74 against a non-physical 21.68). The error is source noise in BOTH directions, so no multiplier substitutes for the measurement. Rule 13 [R-MEASURED] admissible: a machine's loaded heat rate is a physical characteristic that regenerates for a forward year and responds to changed conditions (a retrofit moves it), not a measured outcome fed back to close a residual. Applied per generator by class, so only the turbines of a mixed plant are repriced. See docs/FINDING-nyiso88-peaker-heat-rate-2026-07-27.md sec 4.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.measured_ramp_capability",
       "display_name": "Measured Ramp Capability",
       "value": false,
@@ -25397,6 +26489,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.miso_native_outage_source",
+      "display_name": "Miso Native Outage Source",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Tier 3 (calibration) — MISO-native published-outage overlay (MISO-only, backcast). When set (and outage_source == \"historic\" and iso == MISO), the MISO Multiday Operating Margin measured region×cause offline-MW record (data/raw/miso-generation-outages, built by scripts/data/fetch_miso_outages.py) REPLACES the CAMPD unit-outage derate as MISO's availability overlay — the MISO analog of ERCOT's measured DAM class-day availability (outage_source's ERCOT path). Driver (rule 12): MISO's own published generation-outage bookkeeping (Derated/Forced/ Planned/Unplanned MW by region). Forward story (rule 13): a measured physical availability quantity whose forecast analogue is the statistical outage-rate model; backcast overlay only. The public report is AGGREGATE grain (no unit/fuel-class identity), so the overlay applies a uniform region availability envelope to the thermal fleet — an approximation whose exact composition is a calibration decision (see market_sim.data .miso_outages). Coverage starts 2023-01-01 (MISO publishes no earlier); a year the record does not cover falls back to the CAMPD unit-outage derate. Default off; GATED CHANGE (alters availability). No keeper uses it yet.",
+      "source_date": "2023-01",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -25992,6 +27102,24 @@
       ]
     },
     {
+      "param_id": "scenario.neiso_operable_capacity_availability",
+      "display_name": "Neiso Operable Capacity Availability",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "NEISO measured FLEET operable-capacity availability (default off, NEISO backcast-gated). The ISO-NE analogue of ercot_thermal_dam_availability: use the ISO-NE Morning Report Section 3 \"Operable Capacity Analysis\" measured daily generation-outage / operable-capacity figures IN PLACE OF the CAMPD-derived unit-outage fallback (campd-unit-outages-NEISO.csv). data/raw/neiso-operable-capacity/neiso_operable_capacity_<YYYY>.csv, built by scripts/data/build_neiso_operable_capacity.py from the daily CSVs scripts/data/fetch_neiso_morning_report.py downloads.  SEMANTICS: ISO-NE publishes this only at FLEET grain (it does not publish per-unit / per-fuel availability, only masked-asset DA offers), so the measured daily availability fraction -- 1 - outages / (CSO + EcoMax-above- CSO), a transparent ratio of published MW, never a price (rule 13) -- is imposed on the covered dispatchable-thermal classes TOGETHER by the same bidirectional cap-1.0 water-fill the ERCOT class-day overlay uses (RESTORE where the measured fleet availability exceeds the model's, REMOVE where it is below), setting the covered thermal fleet's cap-weighted day-mean availability to the measured level and superseding the CAMPD unit-outage derate there. The model's own within-fleet shape is preserved below the measured level. Uncovered dates (before the 2018-07-01 archive start, any publication gap) keep the statistical/CAMPD availability. Backcast-only; forecast keeps the statistical WEFOR/POF stack (the mode-aware seam). See data.neiso_operable_capacity.neiso_thermal_availability_series and the application in data.fleet.generators_to_fleet_arrays. Default off; GATED CHANGE (alters availability). No keeper uses it yet.",
+      "source_date": "2018-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.neiso_rcpf_enabled",
       "display_name": "Neiso Rcpf Enabled",
       "value": false,
@@ -26144,6 +27272,25 @@
       ]
     },
     {
+      "param_id": "scenario.net_cone_forward_escalation",
+      "display_name": "Net Cone Forward Escalation",
+      "value": "hold_last",
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "\"hold_last\" |",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.nominal_discount_rate",
       "display_name": "Nominal Discount Rate",
       "value": 0.08,
@@ -26255,6 +27402,25 @@
       ]
     },
     {
+      "param_id": "scenario.nyiso_east_reserve_families",
+      "display_name": "Nyiso East Reserve Families",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 1,
+      "source": "NYISO published EAST spin_10",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.nyiso_firm_imports",
       "display_name": "Nyiso Firm Imports",
       "value": false,
@@ -26281,6 +27447,231 @@
       "domain": "Structural",
       "tier": 2,
       "source": "FORECAST band",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_gas_bridge_cc_min_load_frac",
+      "display_name": "Nyiso Gas Bridge Cc Min Load Frac",
+      "value": 0.523,
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "Minimum stable load of a bridged NYISO gas-CC / gas-steam unit as a fraction of the PLANT's available capacity. MEASURED per class from EPA CAMPD unit conduct 2023-2025 (NYISO publishes no 60-Day-DAM-equivalent LSL/HSL disclosure, so the ERCOT identification is reconstructed from the meter via the WP-3 loading-when-on construction: HSL = p99.5 of pooled load, LSL = p5 of online-hour load, class value = capacity-weighted p50 across units — scripts/data/derive_campd_gas_commitment_params.py, artifact data/raw/_processed-legacy/campd_gas_commitment_params_NYISO.csv). CC 0.523 (p25 0.514 / p75 0.677) lands within 9 % of ERCOT's independently published 0.574, which cross-validates the reconstruction. Frozen against residuals (rules 13/21/23) — re-derive only when the CAMPD vintages update. Only read when the bridge gate is on.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_gas_bridge_cc_min_run_hours",
+      "display_name": "Nyiso Gas Bridge Cc Min Run Hours",
+      "value": null,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-class minimum run duration (hours) for the extension above. None = the published class table (COMMITMENT_PARAMS_BY_FUEL, NREL/SR-5500-55433: CC 5-10 h by heat-rate class, gas steam 24-48 h), which is the arm-C starting value and adds NO new parameter. A keeper that sets either field must identify it from the MEASURED CAMPD run-length distribution in campd_gas_commitment_params_NYISO.csv, never from a residual (rules 5 / 13 / 23). That artifact measures, capacity-weighted, CC p25/p50/p75 = 11 / 21 / 133 h and ST_GAS 3 / 13 / 89 h — i.e. the measurement says the CC table (5-10 h) UNDER-states NYISO conduct while the gas-steam table (24-48 h) OVER-states it. Note an OBSERVED run is an upper-ish bound on a minimum-run CONSTRAINT (a unit that ran 21 h because it was economic does not prove a 21 h floor), so the low percentiles bound the constraint from the side it lives on.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_gas_bridge_ct",
+      "display_name": "Nyiso Gas Bridge Ct",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 1,
+      "source": "CT_PEAKER leg of the bridge (nyiso-90): DAY-AHEAD BLOCK COMMITMENT on the fast-start peaker class. Requires nyiso_gas_commitment_bridge AND nyiso_gas_bridge_min_run; default off.  This does NOT widen the fast-start physics gate, and it does not re-open nyiso-87's exclusion. In caiso_ra_mustoffer_min_gen a CT (min-down 1 h): * can never trip the PHYSICAL bridge — ``gap < min_down`` is unreachable when min_down = 1 and every gap is >= 1 h; * is blocked from the ECONOMIC bridge by RA_BRIDGE_ECON_MIN_DOWN_HOURS (4 h), which is UNTOUCHED. So the only leg that can fire on a CT is the min_run extension. Minimum- DOWN governs how fast a unit can come back (a CT restarts within the hour, so it is correctly never HELD ACROSS a gap); minimum-RUN governs how long a started unit must stay on. They are independent physical properties — the NREL class tables carry both separately for every other fuel — and a 10-minute-start GT can still carry a multi-hour minimum run (permit, OEM warranty, DAM block granularity).  The extension is anchored to the model's OWN P0 run starts: it can only extend a run the LP itself began, and has no exogenous clock. That is why it is NOT the windowed CT floor the G-20 probe rejected in 2026-07-11 (cc_mustrun_per_plant's CT leg bound 12.8 % of its MWh overnight against the class's own overnight-offline evidence — a rule-17 [R-FLOOR-WINDOW] bug). A run this mechanism extends into h23-6 is one the model started there on its own economics.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_gas_bridge_ct_min_load_frac",
+      "display_name": "Nyiso Gas Bridge Ct Min Load Frac",
+      "value": 0.238,
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "Minimum stable load of a block-committed NYISO CT as a fraction of the PLANT's available capacity: 0.238, the SAME measured statistic and the same construction as the CC/ST fields above, for the CT class (scripts/data/derive_campd_gas_commitment_params.py --ct, artifact data/raw/_processed-legacy/campd_ct_commitment_params_NYISO.csv: 80 units / 2,454 MW, cap-weighted p50 0.238, p25 0.203 / p75 0.465). The --ct path restricts to CAMPD unitType == \"Combustion turbine\" so a mixed steam/turbine facility (Barrett, Gowanus, Narrows) contributes only its turbines instead of being dropped as unattributable.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_gas_bridge_ct_min_run_hours",
+      "display_name": "Nyiso Gas Bridge Ct Min Run Hours",
+      "value": 2.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Minimum run duration (hours) for the CT block-commitment extension. 2 h = run_hours_p25_capwtd from the artifact above (34,024 measured runs; cap-weighted p25/p50/p75 = 2 / 4 / 8 h, equally-weighted 2 / 4 / 7 h). The two weightings nearly coincide, so the CT class — unlike CC/ST — has no big-unit/small-unit cycling split.  Why p25 and not p50: an OBSERVED run length is an upper-ish bound on a minimum-run CONSTRAINT (every observed run is >= the constraint), so the observed distribution bounds it from ABOVE and a low order statistic is the correct estimator; p50 overstates. Capacity-weighted because a min-run constraint floors committed MW, not committed unit-count, and to match min_load_frac's own weighting. p25 rather than p10 because runs are computed WITHIN a year, so every run spanning a year boundary splits into two spurious short ones and p10 absorbs that truncation artifact. Pre-registered before the value was derived (docs/handoffs/nyiso90-preregistration.md §2); frozen against residuals (rules 5 / 13 / 23). NOTE the keeper's CC/ST legs use p50_capwtd (21/13 h) — a live convention inconsistency, deliberately NOT reconciled here because doing so would change those legs' floors (a second delta).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_gas_bridge_da_horizon",
+      "display_name": "Nyiso Gas Bridge Da Horizon",
+      "value": true,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 1,
+      "source": "Cap economic bridges at one DA operating day (constants.DA_COMMITMENT_HORIZON_HOURS = 24): a unit idle LONGER than one DA cycle is a next-day decommit/re-offer decision, never an intra-day min-load hold. Bounds the mechanism to its declared D-4 window. Default on with the gate.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_gas_bridge_min_run",
+      "display_name": "Nyiso Gas Bridge Min Run",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 1,
+      "source": "MINIMUM RUN DURATION extension (the owner's named ask): a detected P0 run shorter than the unit's minimum run is extended to it, the extension hours floored at minimum stable load, and the extended blocks then define the run pattern the gap bridges are computed from (so an extension that reaches the next run CLOSES that gap rather than bridging it twice — rule 19). Default off with the gate so the bridge's three legs are separable across the arms. Values come from the class table unless the two fields below override.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_gas_bridge_st_min_load_frac",
+      "display_name": "Nyiso Gas Bridge St Min Load Frac",
+      "value": 0.239,
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "ST_GAS leg of the same measured statistic: 0.239 (p25 0.210 / p75 0.291). A separate field because the two classes' turn-down physics differ by more than 2x — NYISO's large oil/gas boilers (Bowline 0.17-0.21, Roseton 0.19-0.25, Northport 0.29) turn down far deeper than a combined cycle.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_gas_bridge_st_min_run_hours",
+      "display_name": "Nyiso Gas Bridge St Min Run Hours",
+      "value": null,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_gas_bridge_startup",
+      "display_name": "Nyiso Gas Bridge Startup",
+      "value": true,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 1,
+      "source": "Economic (>= min-down) bridging on the startup-restart inequality — the overnight/belly-between-run-days carrier (a CC's 4-8 h min-down is shorter than a typical overnight gap, so the physical bar alone catches little). Same construction and admissibility as the CAISO/ERCOT legs (MC and LMP are the model's own P0 quantities). Default on WITH the gate; off is the physical-restart-bar-only probe arm (arm B).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_gas_commitment_bridge",
+      "display_name": "Nyiso Gas Commitment Bridge",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 1,
+      "source": "(330 MW) + total_30 (1,200 MW) reserve families — the nyiso-84 rule-14 [R-ACCURATE] omission fix, one tier up from the nyiso-83 Zone-K one: the model carried only the EAST 10-minute-total row (1,200 MW / $775) of the three printed EAST rows in the Locational Reserve Requirements posting (data/raw/NYISO-AS/requirements/nyiso_locational_reserve_requirements.csv, region=EAST; identical across v2020/v2021/v2026, so v2021 spans all of 2023-2025). Demand-curve values PINNED from the Ancillary Services Manual §6.8 items 2 and 12: BOTH $40/MW — NOT the $775 of item 7 (the 10-minute total). See model.reserves.spec.NYISO_RCPF_EAST_FAMILIES for the full vintage trail ($25 in the 2019 ASM; $40 from the July-2021 procurement enhancements, corroborated in-force 2022-2023 by the 2023 SOM p. A-132). Default off (byte-identical); NYISO-only; requires --energy-reserve-coopt. NYISO GAS COMMITMENT BRIDGE (default off, NYISO-gated — nyiso-87): the P1-native committed-STATE mechanism that REPLACES the h14-21 peak-window reliability-floor limbs. OWNER DIRECTIVE 2026-07-27: \"The h14-21 peak-hour must-run is INACCURATE — turn it off. The model is under-running gas through the belly/peak and serving those hours with imports; real NYISO gas runs there because of RA commitment, AS provision, and economic must-run with MINIMUM RUN DURATIONS — units drag at min-load so they are ready to respond to peaks. Replace the windowed floors with commitment physics ... Every floor we have added was a compensation for this missing commitment drag.\" Rule 19 [R-ONE-MECH] is therefore satisfied by SUBSTITUTION, not stacking: an arm that arms this bridge runs with iso_configs.NYISO_PEAK_WINDOW_FLOORS_OFF applied.  Mechanism: the same ISO-neutral detector the CAISO RA must-offer and ERCOT gas-CC bridges use (model.commitment.caiso_ra_mustoffer_min_gen via pipeline.commitment.build_nyiso_gas_bridge_p1_prep, injected at the P0→P1 seam), fed the model's OWN base-cost P0 run pattern and duals — no measured generation enters, so it is forward-native (rules 13/18). Three legs, all commitment physics: (a) a gap shorter than the unit's physical min-down is a restart bar and always bridges; (b) a gap at/over min-down bridges when re-paying the published startup cost exceeds the net cost of holding at min-load (the standard UC restart inequality, priced at the model's own P0 duals) — see nyiso_gas_bridge_startup; (c) a detected run shorter than the unit's MINIMUM RUN DURATION is extended to it — see nyiso_gas_bridge_min_run, the owner's named ask.  CLASS SCOPE by unit PHYSICS, never a class-name tuple (rule 18 [R-PHYSICS]): the eligible fuels are gas_cc + gas_st, measured on the NYISO keeper fleet as min-down 4-8 h / $50 per MW (CC_REGULAR, 22 base tranches, 3.14 GW) and 8-12 h / $35 per MW (ST_GAS, 11 tranches, 1.22 GW) — both clear the slow-start gate. CT_PEAKER and CT_CHP resolve to 1 h min-down and $20/MW starts and are therefore NEVER bridged (they also fail RA_BRIDGE_ECON_MIN_DOWN_HOURS for the economic leg, and a 1 h min-down makes the physical leg unreachable); the *_CHP groups are excluded by the detector regardless (cogens follow their steam host). D-2 id MECH_NYISO_GAS_COMMITMENT_BRIDGE (separate from the ERCOT leg so attribution and per-ISO arming stay independent); D-4 window declared in scripts/legitimacy_diagnostics.py.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_hydro_reserve_eligible",
+      "display_name": "Nyiso Hydro Reserve Eligible",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "GATED, default-OFF",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -26331,6 +27722,25 @@
       ]
     },
     {
+      "param_id": "scenario.nyiso_incity_commitment_obligation",
+      "display_name": "Nyiso Incity Commitment Obligation",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 1,
+      "source": "NYISO in-city (Zone J/K)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.nyiso_iroquois_winter_spread",
       "display_name": "Nyiso Iroquois Winter Spread",
       "value": false,
@@ -26357,6 +27767,25 @@
       "domain": "Structural",
       "tier": 1,
       "source": "NYISO Long Island Zone-K LCR/TSL mechanism",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_li_locational_reserve",
+      "display_name": "Nyiso Li Locational Reserve",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 1,
+      "source": "NYISO Long Island (Zone K)",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -26407,6 +27836,82 @@
       ]
     },
     {
+      "param_id": "scenario.nyiso_ordc_measured_step_span",
+      "display_name": "Nyiso Ordc Measured Step Span",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "GATED, default-OFF",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_scr_edrp",
+      "display_name": "Nyiso Scr Edrp",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "NYISO SCR/EDRP emergency demand response as",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_scr_edrp_reserve_eligible",
+      "display_name": "Nyiso Scr Edrp Reserve Eligible",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "GATED, default-OFF",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_scr_edrp_strike",
+      "display_name": "Nyiso Scr Edrp Strike",
+      "value": 500.0,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "DR block marginal cost ($/MWh): the",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.nyiso_spin_headroom_frac",
       "display_name": "Nyiso Spin Headroom Frac",
       "value": 1.0,
@@ -26414,6 +27919,25 @@
       "domain": "Structural",
       "tier": 2,
       "source": "Path-B committed-capacity target",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_spin_reserve_online",
+      "display_name": "Nyiso Spin Reserve Online",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 1,
+      "source": "NYISO online-gated PUBLISHED",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -26692,6 +28216,24 @@
       ]
     },
     {
+      "param_id": "scenario.pjm_apsouth_interface_cut",
+      "display_name": "Pjm Apsouth Interface Cut",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "PJM measured AP-SOUTH interface cut (backcast/calibration overlay, pjm-134 — results/calibration/FINDING-pjm134-dominion-zonal-inversion- 2026-07-27.md §4). The western→MAD twin of pjm_east_interface_cut, and the same construction: ONE one-sided aggregate interface-group row per hour caps the JOINT eastward flow Flow(West_APS->SWMAAC) + Flow(West_APS->Dominion) at the hour's measured AP-South transfer limit (elementwise min of the pre- and post-contingency postings, both simultaneously-enforced security limits).  Rule 19 [R-ONE-MECH] — this REPLACES a misalignment constants.py already flags in its own PJM_INTERFACE_LINK_MAP note, it does not stack on it: \"AP-South is the aggregate western→MAD 500 kV flowgate, one of several parallel paths this 8-zone mesh splits across West_APS->SWMAAC and West_APS->Dominion\", yet the per-link overlay applies it to West_APS->SWMAAC alone while the parallel West_APS->Dominion path rides a 3,000 MW static. The LP's west→MAD capability is therefore AP-South(t) + 3,000 MW ≈ 6,900 against a published ~3,900 flowgate, and every megawatt of the excess is Dominion-facing. The joint cap dominates the surviving per-link bound (a sum under the limit implies each term is), so the per-link overlay becomes redundant rather than additive.  Measured (pjm-134 §2): the keeper's PJM clears as a copper-plate — Dominion sits at its neighbours' dual in 100.0 % of 26,280 hours, while PJM's own DA congestion separates DOM from AEP-DAYTON by >$1 in ~50-63 % of hours. Reverse (westward) flow keeps the per-link TTCs. Zero fitted scalars: the cap is the published hourly series verbatim, from the same transfer-interface-limits clean partition. Same rule #13/#14 admissibility and two-track construction as pjm_measured_interface_limits (forecast years keep the static seeds). Off by default; byte-identical off.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.pjm_commitment_posture",
       "display_name": "Pjm Commitment Posture",
       "value": false,
@@ -26727,6 +28269,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.pjm_ct_measured_max_reprice",
+      "display_name": "Pjm Ct Measured Max Reprice",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "CT_FAST measured max()-seam reprice (default OFF, PJM-gated). The measured CT_FAST corpus prices the fast-start ladder at 22.5-39.6 x delivered gas ($96-174 at 2025 tight-strata gas) against a model marginal CT bid of $47-80 — a thick, too-cheap idle mid-merit shelf that pins the dual at $48.5 in hours the market cleared $66 (FINDING-pjm121 §3). pjm-101/102 armed this as a floor computed against ``mc_base`` ALONE and it over-expressed (CT -12 TWh, C3a +12 %) because the CT stack is already owned by the pjm-103 startup amortization and the two SUMMED. This is the rule-19 reconciliation instead of a second mechanism: the measured level enters as a max() against the FULL P1 bid (mc_base + startup markup + every other bid adjustment), applied at the pipeline's own ``p1_bid_max_target`` seam, so the amortization keeps ownership wherever it already prices the row above measured and the measured level binds only where the model is cheaper than the corpus. Never additive.",
+      "source_date": "2025",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -26767,6 +28327,25 @@
       ]
     },
     {
+      "param_id": "scenario.pjm_dam_availability",
+      "display_name": "Pjm Dam Availability",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "PJM measured generation-outage availability (default off, PJM backcast-gated). The PJM analogue of ercot_thermal_dam_availability: rescales the covered PJM fossil-thermal classes' (COAL, CC_REGULAR, CT_PEAKER, ST_GAS + the three CHP classes) class-day MEAN availability to the measured value derived from PJM Data Miner 2's \"Generation Outage for Seven Days by Type\" (gen_outages_by_type). PJM publishes outages only at RTO/sub-region aggregate (never per fuel class), so the measured UNPLANNED-outage MW (forced + maintenance; planned is excluded to avoid double-counting nuclear refuel which the nuclear overlay carries) is converted to a single fleet-wide availability fraction = 1 - outage_mw / fossil_thermal_capacity and applied UNIFORMLY across the covered classes (each class water-filled to the same measured fleet fraction) — the honest first-order transform the public aggregate supports; a zone/class-resolved allocation is a documented future refinement (the parquet keeps the sub-regional detail). data/raw/pjm-outages/by-year/*.csv (+ gitignored data/raw/pjm-dam-availability.parquet), scripts/data/derive_pjm_dam_availability.py (raw fetch: scripts/data/fetch_pjm_outages.py). The published outage forecast is a forward-looking, operator-published capacity-availability quantity that regenerates for a future day (rule 13); forecast years keep the statistical stack (the G4 mode-aware seam). Uncovered dates keep the pre-overlay availability. Applied by the same bidirectional cap-1.0 water-fill as the ERCOT overlay (data.fleet). See data.pjm_outages.pjm_dam_availability_series. NOTE: intake-ready but NOT yet calibration-validated — turning it on and choosing the final allocation/denominator is a keeper session's job (subject to the holdout discipline), not the data-intake session's.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.pjm_east_interface_cut",
       "display_name": "Pjm East Interface Cut",
       "value": false,
@@ -26774,6 +28353,24 @@
       "domain": "Structural",
       "tier": 3,
       "source": "PJM measured EAST interface cut (backcast/calibration overlay, pjm-cong-1 — docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §10). When True in backcast mode for PJM, ONE one-sided aggregate interface-group row per hour caps the JOINT EMAAC import flow Flow(Central_PA->EMAAC) + Flow(SWMAAC->EMAAC) at the hour's measured \"Average Eastern\" transfer limit — PJM's EASTERN reactive transfer interface (Manual 03 §3.8: the seven EHV circuits into the eastern Mid-Atlantic, i.e. the real EMAAC import cut, which spans BOTH model links; the per-link overlay above applies the same series to Central_PA->EMAAC alone, leaving the 5,000 MW SWMAAC->EMAAC static as an un-monitored parallel path the real interface does not have). Reverse (westward) flow keeps the per-link TTCs; the per-link statics stay as their own bounds. Zero fitted scalars: the cap is the published hourly series verbatim, from the same transfer-interface-limits clean partition. Same rule #13/#14 admissibility and two-track construction as pjm_measured_interface_limits (forecast years keep the static seeds). Off by default; byte-identical off.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.pjm_external_net_position_cut",
+      "display_name": "Pjm External Net Position Cut",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "PJM measured star-node NET-POSITION cut (backcast/calibration overlay, pjm-135 — results/calibration/FINDING-pjm135-star-node-import-2026-07-28.md). The EXTERNAL-seam twin of pjm_east_interface_cut / pjm_apsouth_interface_cut, and the same construction: ONE one-sided aggregate interface-group row per hour caps the SUMMED injection across all five PJM_external->border links Σ_z Flow(PJM_external -> z)  <=  p95( measured net import | month, hod ) at the measured net-position envelope (eia_loader.pjm_net_interchange_envelope, the same PJM tie-line file, the same PJM_EXTERNAL_FLOW_PERCENTILE and the same (month × hour-of-day) bucketing the per-border envelope already uses). Because the summed star-link flow IS the LP's net interchange, this row is the model's only statement about PJM's net position.  Rule 19 [R-ONE-MECH] — this REPLACES the sum-of-marginals ceiling on the AGGREGATE question, it does not stack: build_pjm_external_flow_groups caps each link at its own border's marginal p95 and inject_pjm_seam_flow_limit sizes each neighbor's bands from the same rows, so five marginal 95th percentiles are summed as though they were a joint one and nothing bounds the total. The joint cap dominates (a sum under the limit implies each term is), so the per-border groups keep the LOCATIONAL bound while this row owns the TOTAL.  Measured (pjm-135 M1b/M4, results/probes/pjm135_star_node_net_position.json): the sum-of-marginal import band is 4,235/5,140/5,358 MW against a joint p95 of the simultaneous total of 3,309/3,855/3,996 MW, and the keeper-lineage model's net interchange is -28.9/-21.9/-25.8 TWh against a measured -40.0/-32.8/-32.9 TWh — the star node supplies PJM with 7.1-11.1 TWh/yr the real seam did not, in an ISO whose zonal duals are tied to the star node in 100.00 % of hours (M3), so no per-border re-attribution can reach it. One-sided: net EXPORT is never capped, so every export path survives. Zero fitted scalars. Same rule #13/#14 admissibility and two-track construction as pjm_measured_interface_limits (forecast years have no measured tie file, so the envelope is None and the node is left uncapped). Off by default; byte-identical off.",
       "source_date": "2026-07",
       "page_or_table": "",
       "url": "",
@@ -26822,6 +28419,24 @@
       ]
     },
     {
+      "param_id": "scenario.pjm_offer_midcurve_level_segments",
+      "display_name": "Pjm Offer Midcurve Level Segments",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "LEVEL-form scope for the mid-curve surface (default OFF = floor-only). Segments listed here — always intersected with the floor scope above, a segment absent from pjm_offer_midcurve_segments is never priced at all — have their targeted rows SET to the measured capacity-share offer level instead of floored at it: the markup is signed (target - mc_base), so the measured ladder can LOWER a fitted band that sits above it; the resulting bid is the target itself, clamped >= 0 and capped below VOLL exactly like the floor form. REFUTED as the C3a-2025 dispersion lever by the pjm-121 no-LP pre-check (level CC_LIKE lowers the CC econ bids -8.76 $/MWh MW-weighted and NARROWS the offer spread in every net-load bin — a level-lowering lever cannot close a dispersion gap; docs/FINDING-pjm121-ccbelt-c3a-close-2026-07.md §5) and kept default-off as the correct construction for a fleet whose fitted bands sit BELOW measured. Exercised by scripts/probes/pjm121_level_form_precheck.py; regression contract in tests/test_pjm_offer_midcurve_level_form.py.",
+      "source_date": "2025",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.pjm_offer_midcurve_path",
       "display_name": "Pjm Offer Midcurve Path",
       "value": null,
@@ -26838,6 +28453,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.pjm_offer_midcurve_peak_segments",
+      "display_name": "Pjm Offer Midcurve Peak Segments",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "PEAK-row scope for the mid-curve surface (default OFF, PJM-gated). The mid-curve targeting excludes the CC/CT ``peak`` rungs by design (only the LONG_RUN peak rung is in scope), so the measured STEEP top belt — the CC_LIKE s0.95-0.99 rungs at 11.1-18.8 x delivered gas ($49-83 at 2025 tight-strata gas) — has no row to land on: the model's CC econ tops at ~9.6 x and its CC peak starts at ~31.9 x, leaving the $49-83 region unowned by ANY row (docs/FINDING-pjm122-marginal-ownership-2026-07.md §3). A segment listed here extends the targeting to that segment's ``peak*`` rungs, priced in LEVEL form (the measured belt REPLACES the fitted band — a floor cannot pull a fitted rung sitting above measured down onto it). Always intersected with pjm_offer_midcurve_segments, so a segment absent from the floor scope is never priced by either form (rule 19). This is NOT the refuted pjm-121 §5 arm: that measured the CC ECON rows, which sit where the ladder is flat and cheap; the steep belt lands on the PEAK rows the arm excluded. Mutually exclusive with pjm_offer_surface_conditional (the pjm-99 top-of-curve surface owns the same rungs — one mechanism per row, rule 19); the pair is rejected in __post_init__.",
+      "source_date": "2025",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -26955,6 +28588,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.pjm_offer_surface_within_season",
+      "display_name": "Pjm Offer Surface Within Season",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "WITHIN-SEASON tightness conditioning for the PJM measured-offer-surface FAMILY (both the top-of-curve and the mid-curve surface), default OFF.  Authorized by the owner 2026-07-27 with an amendment (docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md decision banner; executed by pjm-132, charter docs/handoffs/pjm-132-midcurve-reconditioning-charter-2026-07.md). The owner's term was \"keep the current config as default unless seasonal is new keeper\", so the within-YEAR surfaces remain live and keep their filenames and this gate stays default-OFF: every existing keeper and forecast run is byte-identical unless it is explicitly armed.  Armed, it switches the whole family COHERENTLY (memo §2 — the two surfaces deliberately share one tightness-state definition, so they may never carry contradictory ones): the default surface filenames resolve to the `_withinseason` vintage AND the solve-time binning ranks each hour against its own season's net-load quantiles (constants.PJM_SEASON_OF_MONTH) instead of the year's. A VINTAGE GUARD hard-fails any solve pairing an armed gate with a within-year JSON, or an unarmed gate with a within-season JSON, so a half-updated state cannot silently mismeasure.  Rule 13: forward-native exactly as the within-year form is — at solve time the conditioner is built from the year's own simulated net load (np.quantile per season instead of per year; the month->season map is calendar), no measured data enters. Rule 25: PJM-only.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -28320,6 +29971,60 @@
       ]
     },
     {
+      "param_id": "scenario.temp_derate_classes",
+      "display_name": "Temp Derate Classes",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Plant-group scope for the whole temperature-derate mechanism (None = every class it knows). Source: rule 25 [R-ISO-SCOPE] — pjm-95 refuted the committed literature slopes on PJM's own CAMPD, so an ISO arms only the classes it has identified on its own fleet. MISO arms ST_CHP+CT_CHP, the two tranches its CEMS cogen meter spans (miso-101, 2026-07).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.temp_derate_hourly_grain",
+      "display_name": "Temp Derate Hourly Grain",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "--- hour-grain leg of the temperature derate (miso-101) ------------------ The curve above is fed by ``iso_zone_tmax``, which broadcasts the daily TMAX **flat within the day**: even armed, it reshapes day-to-day and seasonally but carries ZERO hour-of-day signal, so no channel in the availability chain can produce a diurnal capability wave (results/calibration/FINDING-miso100-stchp-diurnal-2026-07.md §4/§5). ``temp_derate_hourly_grain`` swaps that input for ``iso_zone_hourly_drybulb`` — the same curated daily TMIN/TMAX reconstructed to hourly by the standard climatological two-piece cosine bridge (constants.DIURNAL_TMIN_HOUR / DIURNAL_TMAX_HOUR, Parton & Logan 1981). It is an input-GRAIN refinement, NOT a new mechanism and NOT a new floor (rule 19 [R-ONE-MECH]): the existing MECH_CHP_STEAM floor is already clipped to ``pmax x availability``, so the finer availability shape propagates to every floored cogen automatically, and unfloored units simply see an hour-varying pmax.  ``temp_derate_mean_anchored`` changes the curve's ANCHOR, and with it the claim being made. The committed form ``1 - slope x max(0, T - ref)`` is a hinge that asserts no response below ``ref`` and a pure level CUT above it. Mean-anchored instead evaluates ``1 - slope x (T - Tbar_zone)`` about the zone's own annual-mean dry-bulb, with NO hinge: capability rises below the mean and falls above it, and the annual mean of the curve is exactly 1.0 by construction. So the arm claims ONLY the within-day/seasonal SHAPE that the derivation identifies and claims NOTHING about the class's level — deliberately the smaller claim, since the estimator behind it is a within-day fixed-effects regression that differences every level term away. (Availability is still clipped to <= 1, so a unit already near 1.0 loses a sliver of the cold-hour uplift; the level-neutrality is exact only below that clip.)  ``temp_derate_classes`` scopes the WHOLE temperature-derate mechanism to a subset of plant groups (None = every class it knows, the committed behaviour). Scoping matters because the slopes are per-class physics and pjm-95 refuted the committed literature values on PJM's own CAMPD — an ISO may only arm the classes it has actually identified (rule 25 [R-ISO-SCOPE]).  ``temp_derate_slope_st_chp`` / ``temp_derate_slope_ct_chp`` carry a cogen-specific slope so an ISO can arm its CHP classes without disturbing merchant ST_GAS / CT_PEAKER, which are a different fleet with a different (and here un-identified) response. None falls back to the ST_GAS / CT slope above, i.e. byte-identical to the committed behaviour.  MISO identification (scripts/data/derive_campd_temp_derate_params.py --iso MISO; docs/parameter-citations.md): within-day, plant-day fixed-effects regression of log CEMS gross load on the hour-grain dry-bulb, over the six CEMS-identifiable MISO cogens, 2023-2025 => capacity-weighted p50 slope **0.00141/C** for the ST_CHP+CT_CHP pair, ~5x BELOW the committed literature CC slope (0.0076/C) — MISO's own confirmation of the pjm-95 non-transferability finding. The onset scan finds NO hinge: at the dominant plant the response is 0.0036/C in the 5-10 C bin and 0.0030/C in the 10-15 C bin (r = -0.38 / -0.28), i.e. clearly present BELOW the committed 15 C reference, which would have zeroed it. Hence mean-anchored rather than hinged. The h05/h15 phase anchors are validated on the same conduct (best-fit lag 0 h). Hour-grain dry-bulb input (iso_zone_hourly_drybulb) instead of the day-flat TMAX. Source: constants.DIURNAL_TMIN_HOUR/DIURNAL_TMAX_HOUR, Parton & Logan (1981) two-piece cosine reconstruction; phase validated on MISO CAMPD conduct at lag 0 (derive_campd_temp_derate_params.py --iso MISO).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.temp_derate_mean_anchored",
+      "display_name": "Temp Derate Mean Anchored",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "No onset hinge; curve evaluated about the zone's own annual-mean dry-bulb so its annual mean is exactly 1.0 and it composes as a level-neutral SHAPE overlay. Source: the MISO onset scan measures a within-day response in the 5-15 C bins (0.0036 / 0.0030 per C, r -0.38 / -0.28) that the committed max(0, T - 15) hinge would zero (derive_campd_temp_derate_params.py, MISO CAMPD 2023-2025, derived 2026-07).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.temp_derate_ref_c",
       "display_name": "Temp Derate Ref C",
       "value": 15.0,
@@ -28415,6 +30120,42 @@
       ]
     },
     {
+      "param_id": "scenario.temp_derate_slope_ct_chp",
+      "display_name": "Temp Derate Slope Ct Chp",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "CT_CHP fractional capability loss per deg C; None falls back to the CT_PEAKER slope. Source: the same MISO derivation, 0.00141/C — the CEMS facility meter spans both cogen tranches, so they identify jointly and must carry the same slope or one half of a plant would breathe alone (MISO CAMPD 2023-2025, derived 2026-07).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.temp_derate_slope_st_chp",
+      "display_name": "Temp Derate Slope St Chp",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "ST_CHP fractional capability loss per deg C; None falls back to the ST_GAS slope. Source: MISO measured 0.00141/C — capacity-weighted p50 of the within-day plant-day fixed-effects slope across the 6 CEMS-identifiable MISO cogens, 2023-25 (scripts/data/derive_campd_temp_derate_params.py --iso MISO; data/raw/_processed-legacy/campd_temp_derate_params_MISO.csv).",
+      "source_date": "2023-25",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.temp_derate_slope_st_gas",
       "display_name": "Temp Derate Slope St Gas",
       "value": 0.0054,
@@ -28478,6 +30219,24 @@
       "tier": 1,
       "source": "Fast-start amortization v3 — MEASURED run-length basis (requires ``tranche_startup_amortization``). v2 amortizes each fast-start tranche's NREL start cost over the tranche's own P0 run lengths, which is circular when the offer level itself is wrong: offers too cheap -> P0 runs the CTs in long blocks -> per-MWh amortized start cost ~0 -> the lever self-disables (the nyiso-44 probe finding: CT_PEAKER moved only 4.90 -> 4.75 TWh vs 2.13 actual). When set, the simple-cycle CT tranches (CT_PEAKER / CT_CHP) instead amortize over the unit's CAMPD-MEASURED median start-to-stop run length (scripts/data/derive_campd_ct_run_lengths.py: consecutive grossLoad-online hours from the unit-level CAMPD extracts, pooled 2023-2025, ISO-class median fallback for plants without CEMS). Basis choice (documented per the derivation): the measured median is the EX-ANTE expected-run horizon real GT offers amortize start recovery over (the NYISO/ISO-NE fast-start pricing convention); the endogenous P0 run length may only SHORTEN the horizon (a unit the model itself starts for 2 h genuinely pays its start over 2 h), never lengthen it beyond the measured basis — markup = startup / max(1, min(P0_month_avg_run, measured_median)), a month with no P0 runs uses the measured median outright. This removes the self-disabling circularity while keeping the month-resolved dynamics. CC peak (duct-burner) bands keep the v2 P0 basis — a duct burner's \"run\" is not a CEMS start-to-stop block, so the measured statistic does not describe it. The measured run length is a rule-#12-admissible measured market-behaviour parameter (same class as the CAMPD committed shares / min-stable loads): it regenerates from the CAMPD pipeline for any new vintage and re-derives only when its source data updates (rule #23), never from a residual. Default off -> every prior keeper stays byte-identical.",
       "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.transmission_expansion_enabled",
+      "display_name": "Transmission Expansion Enabled",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Forward transmission-expansion channel (FF-G1, GATED default off). When on in forecast mode, the committed-instrument registry (data/raw/transmission-expansion via data.transmission_expansion) adds each in-service project's transfer-capability delta to the matching TransferLink TTC / InterfaceLimit cap per solve year — cumulative from each row's in_service_year, additive to the ISO's base-static vintage (data.transmission_expansion.TRANSMISSION_BASE_STATIC_VINTAGE), so the 2026-2050 topology evolves with board/regulator-committed builds (NECEC, Permian plan, LRTP) instead of staying frozen at the base year. Registry rows are binding-instrument only (energized / under_construction / approved_funded — the confirmed-retirements admissibility convention, rule 13); measured backcast overlays are untouched (backcast coerces this off in __post_init__; hindcast is excluded in V1 pending an RC-1B style instrument_date information gate). Off by default: every existing forecast and backcast is byte-identical (the flag is also in _CACHE_KEY_OPTIONAL_FIELDS, so default-off cache keys are unchanged). See docs/transmission-expansion-methodology-2026-07.md.",
+      "source_date": "2026",
       "page_or_table": "",
       "url": "",
       "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
@@ -28791,6 +30550,25 @@
       ]
     },
     {
+      "param_id": "state_rps_acp.MISO",
+      "display_name": "State Rps Acp / Miso",
+      "value": 30.0,
+      "unit": "",
+      "domain": "Policy",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "state_rps_acp.NEISO",
       "display_name": "State Rps Acp / Neiso",
       "value": 50.0,
@@ -28842,6 +30620,30 @@
       "last_verified": "",
       "flags": [
         "auto-generated"
+      ]
+    },
+    {
+      "param_id": "state_rps_floors.MISO",
+      "display_name": "State Rps Floors / Miso",
+      "value": {
+        "2026": 0.11,
+        "2030": 0.16,
+        "2040": 0.2,
+        "2045": 0.2
+      },
+      "unit": "",
+      "domain": "Policy",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
       ]
     },
     {
@@ -31972,102 +33774,6 @@
       "flags": [
         "auto-generated",
         "needs-citation"
-      ]
-    },
-    {
-      "param_id": "summer_wefor_share",
-      "display_name": "Summer WEFOR Share",
-      "value": 0.3,
-      "unit": "fraction of annual WEFOR",
-      "domain": "Reliability",
-      "tier": 3,
-      "source": "UNCITED A-PRIORI HEURISTIC - declared, not sourced. Fraction of a unit's WEFOR (forced-outage rate, THERMAL_AVAILABILITY) applied during the summer peak (Jun-Sep); the remaining (1 - share) is redistributed into the shoulder months, conserving annual outage energy. Winter keeps flat WEFOR. No primary source, derivation, sweep or calibration lineage exists for the 0.30: market-sim-build-plan.md records it as the 'flat per-plant-group POF heuristic' awaiting a data-derived replacement. It was NOT fitted to a residual. Note the WEFOR MAGNITUDE is GADS-cited (see thermal_availability.*); only this SEASONAL REALLOCATION of it is uncited. PHYSICS TENSION: for PLANNED outages, shifting maintenance off the peak is well-founded (the POF side is separately grounded by the measured MAINTENANCE_MONTHLY_SHAPE); for FORCED outages the reallocation runs OPPOSITE to the physics, since forced outages correlate POSITIVELY with heat and high load. Unverified directional argument, not a citation. MATERIALITY: governs all six non-coal thermal classes (COAL is exempt under coal_drop_pof) - ~3.9-5.8 GW of MISO summer-peak capability depending on fleet age, the same order as the ~10 GW under-derate ledgered as the MISO C3b caveat. DO NOT re-tune against a residual (rule 24): a hand-set value here would be an answer key for an already-ledgered miss. Replaceable ONLY by a measured seasonal forced-outage shape clearing docs/handoffs/miso-outage-grain-data-ask-2026-07.md, and per rule 23 that commit must cite the data change. Declared in the MISO keeper DOF ledger (miso-91, 2026-07-26).",
-      "source_date": "",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Registered by miso-91 (2026-07-26) when the constant was re-homed from data/fleet/arrays.py to config/fuel_trajectories.py so scripts/validate_parameters.py covers it (that gate scans only vars(constants) + ScenarioConfig defaults and skips private/non-uppercase names, so the prior private literal was invisible to it three ways over - CLAUDE.md rule 20 [R-REGISTRY]). Value unchanged by the move.",
-      "old_repo_location": "src/market_sim/data/fleet/arrays.py::_SUMMER_WEFOR_SHARE",
-      "last_verified": "",
-      "flags": [
-        "needs-citation",
-        "modeled",
-        "residual-identified"
-      ]
-    },
-    {
-      "param_id": "summer_class_derate.CC_REGULAR",
-      "display_name": "Summer Class Derate / Cc Regular",
-      "value": 0.1,
-      "unit": "fraction of capacity",
-      "domain": "Reliability",
-      "tier": 3,
-      "source": "UNCITED FLAT APPROXIMATION of a real, well-established physical effect. Additional summer (Jun-Sep) capacity derate modeling the ambient-temperature output loss gas turbines suffer in heat (gas-turbine mass flow falls as inlet air temperature rises; simple-cycle CTs lose more than combined-cycle, whose steam bottoming cycle partially compensates). The EFFECT is sound; the specific magnitudes 0.10 (CC) / 0.125 (CT) are not derived from a primary source - they are consistent with, but not fitted to, the 10-30% typical CT summer derate the repo's own capacity audit records against EIA-860 net-summer ratings (docs/capacity-audit-860-923-campd.md). A MEASURED per-class dry-bulb alternative exists as scenario.temp_dependent_derate (default-off, probe-refuted for the ERCOT gas fleet 2026-07-09); its MISO sibling scenario.gt_ambient_derate is measured PROVABLY INERT (MISO zone-mean TMAX clears its 35 C reference in 0 h at summer peak in 2023-2025). So rule 11 'prefer the measured input' is not engaged - the measured alternatives were tried and adjudicated, not skipped. Re-homed from data/fleet/arrays.py to config/fuel_trajectories.py (miso-91, 2026-07-26) for registry coverage; values unchanged.",
-      "source_date": "",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Registered by miso-91 (2026-07-26) when the constant was re-homed from data/fleet/arrays.py to config/fuel_trajectories.py so scripts/validate_parameters.py covers it (that gate scans only vars(constants) + ScenarioConfig defaults and skips private/non-uppercase names, so the prior private literal was invisible to it three ways over - CLAUDE.md rule 20 [R-REGISTRY]). Value unchanged by the move.",
-      "old_repo_location": "src/market_sim/data/fleet/arrays.py::_SUMMER_CLASS_DERATE",
-      "last_verified": "",
-      "flags": [
-        "needs-citation",
-        "modeled"
-      ]
-    },
-    {
-      "param_id": "summer_class_derate.CC_CHP",
-      "display_name": "Summer Class Derate / Cc Chp",
-      "value": 0.1,
-      "unit": "fraction of capacity",
-      "domain": "Reliability",
-      "tier": 3,
-      "source": "UNCITED FLAT APPROXIMATION of a real, well-established physical effect. Additional summer (Jun-Sep) capacity derate modeling the ambient-temperature output loss gas turbines suffer in heat (gas-turbine mass flow falls as inlet air temperature rises; simple-cycle CTs lose more than combined-cycle, whose steam bottoming cycle partially compensates). The EFFECT is sound; the specific magnitudes 0.10 (CC) / 0.125 (CT) are not derived from a primary source - they are consistent with, but not fitted to, the 10-30% typical CT summer derate the repo's own capacity audit records against EIA-860 net-summer ratings (docs/capacity-audit-860-923-campd.md). A MEASURED per-class dry-bulb alternative exists as scenario.temp_dependent_derate (default-off, probe-refuted for the ERCOT gas fleet 2026-07-09); its MISO sibling scenario.gt_ambient_derate is measured PROVABLY INERT (MISO zone-mean TMAX clears its 35 C reference in 0 h at summer peak in 2023-2025). So rule 11 'prefer the measured input' is not engaged - the measured alternatives were tried and adjudicated, not skipped. Re-homed from data/fleet/arrays.py to config/fuel_trajectories.py (miso-91, 2026-07-26) for registry coverage; values unchanged.",
-      "source_date": "",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Registered by miso-91 (2026-07-26) when the constant was re-homed from data/fleet/arrays.py to config/fuel_trajectories.py so scripts/validate_parameters.py covers it (that gate scans only vars(constants) + ScenarioConfig defaults and skips private/non-uppercase names, so the prior private literal was invisible to it three ways over - CLAUDE.md rule 20 [R-REGISTRY]). Value unchanged by the move.",
-      "old_repo_location": "src/market_sim/data/fleet/arrays.py::_SUMMER_CLASS_DERATE",
-      "last_verified": "",
-      "flags": [
-        "needs-citation",
-        "modeled"
-      ]
-    },
-    {
-      "param_id": "summer_class_derate.CT_PEAKER",
-      "display_name": "Summer Class Derate / Ct Peaker",
-      "value": 0.125,
-      "unit": "fraction of capacity",
-      "domain": "Reliability",
-      "tier": 3,
-      "source": "UNCITED FLAT APPROXIMATION of a real, well-established physical effect. Additional summer (Jun-Sep) capacity derate modeling the ambient-temperature output loss gas turbines suffer in heat (gas-turbine mass flow falls as inlet air temperature rises; simple-cycle CTs lose more than combined-cycle, whose steam bottoming cycle partially compensates). The EFFECT is sound; the specific magnitudes 0.10 (CC) / 0.125 (CT) are not derived from a primary source - they are consistent with, but not fitted to, the 10-30% typical CT summer derate the repo's own capacity audit records against EIA-860 net-summer ratings (docs/capacity-audit-860-923-campd.md). A MEASURED per-class dry-bulb alternative exists as scenario.temp_dependent_derate (default-off, probe-refuted for the ERCOT gas fleet 2026-07-09); its MISO sibling scenario.gt_ambient_derate is measured PROVABLY INERT (MISO zone-mean TMAX clears its 35 C reference in 0 h at summer peak in 2023-2025). So rule 11 'prefer the measured input' is not engaged - the measured alternatives were tried and adjudicated, not skipped. Re-homed from data/fleet/arrays.py to config/fuel_trajectories.py (miso-91, 2026-07-26) for registry coverage; values unchanged.",
-      "source_date": "",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Registered by miso-91 (2026-07-26) when the constant was re-homed from data/fleet/arrays.py to config/fuel_trajectories.py so scripts/validate_parameters.py covers it (that gate scans only vars(constants) + ScenarioConfig defaults and skips private/non-uppercase names, so the prior private literal was invisible to it three ways over - CLAUDE.md rule 20 [R-REGISTRY]). Value unchanged by the move.",
-      "old_repo_location": "src/market_sim/data/fleet/arrays.py::_SUMMER_CLASS_DERATE",
-      "last_verified": "",
-      "flags": [
-        "needs-citation",
-        "modeled"
-      ]
-    },
-    {
-      "param_id": "summer_class_derate.CT_CHP",
-      "display_name": "Summer Class Derate / Ct Chp",
-      "value": 0.125,
-      "unit": "fraction of capacity",
-      "domain": "Reliability",
-      "tier": 3,
-      "source": "UNCITED FLAT APPROXIMATION of a real, well-established physical effect. Additional summer (Jun-Sep) capacity derate modeling the ambient-temperature output loss gas turbines suffer in heat (gas-turbine mass flow falls as inlet air temperature rises; simple-cycle CTs lose more than combined-cycle, whose steam bottoming cycle partially compensates). The EFFECT is sound; the specific magnitudes 0.10 (CC) / 0.125 (CT) are not derived from a primary source - they are consistent with, but not fitted to, the 10-30% typical CT summer derate the repo's own capacity audit records against EIA-860 net-summer ratings (docs/capacity-audit-860-923-campd.md). A MEASURED per-class dry-bulb alternative exists as scenario.temp_dependent_derate (default-off, probe-refuted for the ERCOT gas fleet 2026-07-09); its MISO sibling scenario.gt_ambient_derate is measured PROVABLY INERT (MISO zone-mean TMAX clears its 35 C reference in 0 h at summer peak in 2023-2025). So rule 11 'prefer the measured input' is not engaged - the measured alternatives were tried and adjudicated, not skipped. Re-homed from data/fleet/arrays.py to config/fuel_trajectories.py (miso-91, 2026-07-26) for registry coverage; values unchanged.",
-      "source_date": "",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Registered by miso-91 (2026-07-26) when the constant was re-homed from data/fleet/arrays.py to config/fuel_trajectories.py so scripts/validate_parameters.py covers it (that gate scans only vars(constants) + ScenarioConfig defaults and skips private/non-uppercase names, so the prior private literal was invisible to it three ways over - CLAUDE.md rule 20 [R-REGISTRY]). Value unchanged by the move.",
-      "old_repo_location": "src/market_sim/data/fleet/arrays.py::_SUMMER_CLASS_DERATE",
-      "last_verified": "",
-      "flags": [
-        "needs-citation",
-        "modeled"
       ]
     }
   ]

@@ -6839,10 +6839,35 @@ class ScenarioConfig:
     # clearly present BELOW the committed 15 C reference, which would have
     # zeroed it. Hence mean-anchored rather than hinged. The h05/h15 phase
     # anchors are validated on the same conduct (best-fit lag 0 h).
+    # Hour-grain dry-bulb input (iso_zone_hourly_drybulb) instead of the
+    # day-flat TMAX. Source: constants.DIURNAL_TMIN_HOUR/DIURNAL_TMAX_HOUR,
+    # Parton & Logan (1981) two-piece cosine reconstruction; phase validated on
+    # MISO CAMPD conduct at lag 0 (derive_campd_temp_derate_params.py --iso MISO).
     temp_derate_hourly_grain: bool = False
+    # No onset hinge; curve evaluated about the zone's own annual-mean dry-bulb
+    # so its annual mean is exactly 1.0 and it composes as a level-neutral SHAPE
+    # overlay. Source: the MISO onset scan measures a within-day response in the
+    # 5-15 C bins (0.0036 / 0.0030 per C, r -0.38 / -0.28) that the committed
+    # max(0, T - 15) hinge would zero (derive_campd_temp_derate_params.py,
+    # MISO CAMPD 2023-2025, derived 2026-07).
     temp_derate_mean_anchored: bool = False
+    # Plant-group scope for the whole temperature-derate mechanism (None = every
+    # class it knows). Source: rule 25 [R-ISO-SCOPE] — pjm-95 refuted the
+    # committed literature slopes on PJM's own CAMPD, so an ISO arms only the
+    # classes it has identified on its own fleet. MISO arms ST_CHP+CT_CHP, the
+    # two tranches its CEMS cogen meter spans (miso-101, 2026-07).
     temp_derate_classes: frozenset[str] | None = None
+    # ST_CHP fractional capability loss per deg C; None falls back to the ST_GAS
+    # slope. Source: MISO measured 0.00141/C — capacity-weighted p50 of the
+    # within-day plant-day fixed-effects slope across the 6 CEMS-identifiable
+    # MISO cogens, 2023-25 (scripts/data/derive_campd_temp_derate_params.py
+    # --iso MISO; data/raw/_processed-legacy/campd_temp_derate_params_MISO.csv).
     temp_derate_slope_st_chp: float | None = None
+    # CT_CHP fractional capability loss per deg C; None falls back to the
+    # CT_PEAKER slope. Source: the same MISO derivation, 0.00141/C — the CEMS
+    # facility meter spans both cogen tranches, so they identify jointly and
+    # must carry the same slope or one half of a plant would breathe alone
+    # (MISO CAMPD 2023-2025, derived 2026-07).
     temp_derate_slope_ct_chp: float | None = None
 
     # Reliability gas-steam (ST_GAS) tranche heat-rate OVERRIDES (relative to
