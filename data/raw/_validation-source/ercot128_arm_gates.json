@@ -1,0 +1,279 @@
+{
+  "arm_bundle": "results/calibration/ercot128_unit_grain",
+  "keeper_bundle": "results/calibration/ercot115_coal_floor_only",
+  "H_arm_gates": {
+    "2023": {
+      "c1_delta_twh": {
+        "keeper": -1.078,
+        "arm": -0.955,
+        "actual_twh": 60.42
+      },
+      "g1_bands": {
+        "<15": {
+          "hours": 2665,
+          "actual": 0.552,
+          "keeper": 0.488,
+          "keeper_pass": false,
+          "arm": 0.489,
+          "arm_pass": false
+        },
+        "15-20": {
+          "hours": 1450,
+          "actual": 0.615,
+          "keeper": 0.618,
+          "keeper_pass": true,
+          "arm": 0.619,
+          "arm_pass": true
+        },
+        "20-25": {
+          "hours": 1450,
+          "actual": 0.644,
+          "keeper": 0.646,
+          "keeper_pass": true,
+          "arm": 0.648,
+          "arm_pass": true
+        },
+        "25-30": {
+          "hours": 1104,
+          "actual": 0.682,
+          "keeper": 0.698,
+          "keeper_pass": true,
+          "arm": 0.699,
+          "arm_pass": true
+        },
+        "30-35": {
+          "hours": 659,
+          "actual": 0.689,
+          "keeper": 0.706,
+          "keeper_pass": true,
+          "arm": 0.708,
+          "arm_pass": true
+        },
+        "35-50": {
+          "hours": 787,
+          "actual": 0.703,
+          "keeper": 0.729,
+          "keeper_pass": true,
+          "arm": 0.73,
+          "arm_pass": true
+        },
+        ">=50": {
+          "hours": 639,
+          "actual": 0.693,
+          "keeper": 0.71,
+          "keeper_pass": true,
+          "arm": 0.711,
+          "arm_pass": true
+        }
+      },
+      "g1_pass": {
+        "keeper": "6/7",
+        "arm": "6/7"
+      },
+      "d1": {
+        "COAL_LIGNITE": {
+          "keeper": {
+            "profile_r": 0.745,
+            "cv_ratio": 0.294
+          },
+          "arm": {
+            "profile_r": 0.736,
+            "cv_ratio": 0.281
+          }
+        },
+        "COAL_PRB": {
+          "keeper": {
+            "profile_r": 0.995,
+            "cv_ratio": 1.11
+          },
+          "arm": {
+            "profile_r": 0.995,
+            "cv_ratio": 1.113
+          }
+        }
+      }
+    },
+    "2024": {
+      "c1_delta_twh": {
+        "keeper": -0.294,
+        "arm": -0.102,
+        "actual_twh": 57.617
+      },
+      "g1_bands": {
+        "<15": {
+          "hours": 3352,
+          "actual": 0.542,
+          "keeper": 0.494,
+          "keeper_pass": true,
+          "arm": 0.496,
+          "arm_pass": true
+        },
+        "15-20": {
+          "hours": 1368,
+          "actual": 0.609,
+          "keeper": 0.617,
+          "keeper_pass": true,
+          "arm": 0.619,
+          "arm_pass": true
+        },
+        "20-25": {
+          "hours": 1270,
+          "actual": 0.652,
+          "keeper": 0.675,
+          "keeper_pass": true,
+          "arm": 0.677,
+          "arm_pass": true
+        },
+        "25-30": {
+          "hours": 883,
+          "actual": 0.696,
+          "keeper": 0.721,
+          "keeper_pass": true,
+          "arm": 0.723,
+          "arm_pass": true
+        },
+        "30-35": {
+          "hours": 513,
+          "actual": 0.683,
+          "keeper": 0.705,
+          "keeper_pass": true,
+          "arm": 0.707,
+          "arm_pass": true
+        },
+        "35-50": {
+          "hours": 602,
+          "actual": 0.689,
+          "keeper": 0.719,
+          "keeper_pass": true,
+          "arm": 0.72,
+          "arm_pass": true
+        },
+        ">=50": {
+          "hours": 760,
+          "actual": 0.72,
+          "keeper": 0.765,
+          "keeper_pass": true,
+          "arm": 0.767,
+          "arm_pass": true
+        }
+      },
+      "g1_pass": {
+        "keeper": "7/7",
+        "arm": "7/7"
+      },
+      "d1": {
+        "COAL_LIGNITE": {
+          "keeper": {
+            "profile_r": 0.862,
+            "cv_ratio": 1.117
+          },
+          "arm": {
+            "profile_r": 0.885,
+            "cv_ratio": 0.976
+          }
+        },
+        "COAL_PRB": {
+          "keeper": {
+            "profile_r": 0.986,
+            "cv_ratio": 0.813
+          },
+          "arm": {
+            "profile_r": 0.987,
+            "cv_ratio": 0.813
+          }
+        }
+      }
+    },
+    "2025": {
+      "c1_delta_twh": {
+        "keeper": -1.926,
+        "arm": -1.678,
+        "actual_twh": 62.214
+      },
+      "g1_bands": {
+        "<15": {
+          "hours": 2634,
+          "actual": 0.689,
+          "keeper": 0.62,
+          "keeper_pass": false,
+          "arm": 0.625,
+          "arm_pass": false
+        },
+        "15-20": {
+          "hours": 909,
+          "actual": 0.73,
+          "keeper": 0.737,
+          "keeper_pass": true,
+          "arm": 0.739,
+          "arm_pass": true
+        },
+        "20-25": {
+          "hours": 1354,
+          "actual": 0.754,
+          "keeper": 0.749,
+          "keeper_pass": true,
+          "arm": 0.751,
+          "arm_pass": true
+        },
+        "25-30": {
+          "hours": 1113,
+          "actual": 0.777,
+          "keeper": 0.76,
+          "keeper_pass": true,
+          "arm": 0.762,
+          "arm_pass": true
+        },
+        "30-35": {
+          "hours": 794,
+          "actual": 0.774,
+          "keeper": 0.759,
+          "keeper_pass": true,
+          "arm": 0.761,
+          "arm_pass": true
+        },
+        "35-50": {
+          "hours": 1092,
+          "actual": 0.789,
+          "keeper": 0.786,
+          "keeper_pass": true,
+          "arm": 0.788,
+          "arm_pass": true
+        },
+        ">=50": {
+          "hours": 858,
+          "actual": 0.801,
+          "keeper": 0.805,
+          "keeper_pass": true,
+          "arm": 0.807,
+          "arm_pass": true
+        }
+      },
+      "g1_pass": {
+        "keeper": "6/7",
+        "arm": "6/7"
+      },
+      "d1": {
+        "COAL_LIGNITE": {
+          "keeper": {
+            "profile_r": 0.913,
+            "cv_ratio": 1.612
+          },
+          "arm": {
+            "profile_r": 0.927,
+            "cv_ratio": 1.375
+          }
+        },
+        "COAL_PRB": {
+          "keeper": {
+            "profile_r": 0.975,
+            "cv_ratio": 1.161
+          },
+          "arm": {
+            "profile_r": 0.977,
+            "cv_ratio": 1.123
+          }
+        }
+      }
+    }
+  }
+}

@@ -16,8 +16,10 @@ breaks **thirteen** of the nineteen it already passes (8/21 against 19/21).
 The question this lane owns: **can multi-unit coal plants carry unit-grain
 commitment state inside the standing pure-LP / no-MIP rule?**
 
-Diagnostic only: no LP is built, no year is solved, nothing is registered, and
-no ``ScenarioConfig`` field, cache-key surface or solve path is touched. Every
+Sections A-G are diagnostic only: no LP is built, no year is solved, nothing is
+registered, and no ``ScenarioConfig`` field, cache-key surface or solve path is
+touched. (Section H, added for Phase 2, SCORES a bundle another process solved;
+it still builds no LP.) Every
 model quantity is read from the KEEPER's committed payload (rule 15
 ``[R-DASHBOARD]``); every actual is read from a raw source. The loaders, the
 coal-plant filter, the gross->net convention and the price-band edges are
@@ -91,6 +93,15 @@ G  WHERE THE D-1 FAILURE COMES FROM — the off-peak (h0-14) flat-top pin share,
    applied uniformly across hour-of-day can only flatten it further. This
    section locates the flatness so the successor is routed rather than merely
    refused.
+H  SCORE A SOLVED ARM (``--arm-bundle``) — Phase 2. G1 / G2 / G3 for the armed
+   bundle's OWN P1 dispatch against the keeper's and the actuals, on the same
+   fleet-aggregate basis, price-band edges and D-1 construction as sections D
+   and F, so the arm is directly comparable to the ex-ante bound that predicted
+   it. This is the authority
+   ``docs/PRECOMMIT-ercot128-coal-min-config-2026-07-28.md`` §2 names for G1.
+   Reads each bundle's committed ``hourly/class_hourly_<year>.parquet`` sidecar
+   rather than replaying a solve (rule 15 ``[R-DASHBOARD]``). Sections A-G do
+   not run in this mode.
 
 Bases, stated once (identical to ERCOT-127)
 -------------------------------------------
@@ -115,6 +126,9 @@ aggregate, exactly as the ERCOT-126/127 probes do.
 Usage
 -----
     python scripts/probes/ercot128_coal_unit_grain.py [--json-out PATH]
+    python scripts/probes/ercot128_coal_unit_grain.py \
+        --arm-bundle results/calibration/ercot128_unit_grain \
+        --json-out data/raw/_validation-source/ercot128_arm_gates.json
 """
 
 from __future__ import annotations
@@ -902,6 +916,112 @@ def section_g_flatness(keeper: dict) -> dict:
     return out
 
 
+# --------------------------------------------------------------------------
+# H -- score a SOLVED arm bundle on the pre-commit's gates
+# --------------------------------------------------------------------------
+def _bundle_coal_hourly(bundle: Path, year: int) -> dict[str, np.ndarray]:
+    """Per-COAL-class hourly P1 MW from a bundle's committed ``hourly`` sidecar.
+
+    Reads ``hourly/class_hourly_<year>.parquet`` (written by every solve since
+    2026-07-19) rather than replaying the solve — rule 15 ``[R-DASHBOARD]``:
+    a keeper replay is justified only for unit-level questions, and G1/G2/G3
+    are all class-level.
+    """
+    df = pd.read_parquet(bundle / "hourly" / f"class_hourly_{year}.parquet")
+    df = df[(df["pass"] == "P1") & df.klass.astype(str).str.startswith("COAL")]
+    out: dict[str, np.ndarray] = {}
+    for klass, g in df.groupby("klass"):
+        mw = np.zeros(8760)
+        g = g.sort_values("hour")
+        h = g.hour.to_numpy(dtype=int)
+        sel = h < 8760
+        mw[h[sel]] = g.mw.to_numpy(dtype=float)[sel]
+        out[str(klass)] = mw
+    return out
+
+
+def section_h_score_arm(bundle: Path, keeper_bundle: Path) -> dict:
+    """H -- G1 / G2 / G3 for a SOLVED arm, against the keeper and the actuals.
+
+    This is the authority the pre-commit
+    (``docs/PRECOMMIT-ercot128-coal-min-config-2026-07-28.md`` §2) names for
+    G1, and it scores the arm's own solved P1 dispatch — not the section-D
+    ex-ante lift, which was only ever a bound. Same fleet-aggregate basis,
+    same price-band edges, same D-1 construction as the rest of this probe, so
+    the arm's numbers are directly comparable to the keeper's.
+    """
+    price = pd.read_parquet(
+        paths.RAW_DIR / "_validation-source" / "actual_lmp_hourly_SPP.parquet"
+    )
+    out: dict = {}
+    for year in YEARS:
+        gross = campd_coal_gross(year)
+        gn = bench_coal_actual_twh(year) / (gross.to_numpy().sum() / 1e6)
+        act = (gross * gn).to_numpy().sum(axis=1)
+        dec = (dam_declared(year).reindex(columns=sorted(COAL_PLANTS))
+               .fillna(0.0).to_numpy().sum(axis=1))
+        arm_cls = _bundle_coal_hourly(bundle, year)
+        kee_cls = _bundle_coal_hourly(keeper_bundle, year)
+        series = {"keeper": sum(kee_cls.values()), "arm": sum(arm_cls.values())}
+
+        act_twh = float(act.sum() / 1e6)
+        c1 = {k: round(float(v.sum() / 1e6) - act_twh, 3) for k, v in series.items()}
+        c1["actual_twh"] = round(act_twh, 3)
+
+        p = price[price.year == year].sort_values("hour")
+        ph = p.rt.to_numpy(dtype=float)[:8760]
+        band = np.asarray(pd.cut(ph, PRICE_EDGES, labels=PRICE_LABELS, right=False))
+        bands: dict[str, dict] = {}
+        passes = {k: 0 for k in series}
+        nband = 0
+        for lab in PRICE_LABELS:
+            sel = band == lab
+            den = dec[sel].sum()
+            if sel.sum() < 24 or den <= 0:
+                continue
+            nband += 1
+            a = float(act[sel].sum() / den)
+            row = {"hours": int(sel.sum()), "actual": round(a, 3)}
+            for k, v in series.items():
+                m = float(v[sel].sum() / den)
+                ok = abs(m - a) <= G1_TOL
+                passes[k] += int(ok)
+                row[k] = round(m, 3)
+                row[f"{k}_pass"] = bool(ok)
+            bands[lab] = row
+
+        # D-1 on the SAME per-class construction the scorer uses, from the
+        # bench actual for the plants of each coal class.
+        bench = load_bench(year)["bench"]["plants"]
+        d1: dict[str, dict] = {}
+        for klass in sorted(set(arm_cls) | set(kee_cls)):
+            members = [c for c, r in bench.items()
+                       if str(r.get("group")) == klass and r.get("campd")
+                       and not r.get("nodata") and int(c) in COAL_PLANTS]
+            if not members:
+                continue
+            actual = np.zeros(8760)
+            for c in members:
+                actual += _decode_cf_bytes(bench[c])[:8760]
+            row: dict = {}
+            for k, cls in (("keeper", kee_cls), ("arm", arm_cls)):
+                mw = cls.get(klass)
+                if mw is None:
+                    continue
+                r, cvm, cva = _d1_metrics(mw, actual)
+                ratio = cvm / cva if cva > 1e-9 else float("nan")
+                row[k] = {
+                    "profile_r": round(r, 3),
+                    "cv_ratio": round(ratio, 3) if np.isfinite(ratio) else None,
+                }
+            d1[klass] = row
+
+        out[str(year)] = {"c1_delta_twh": c1, "g1_bands": bands,
+                          "g1_pass": {k: f"{v}/{nband}" for k, v in passes.items()},
+                          "d1": d1}
+    return out
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(
         description=(
@@ -914,7 +1034,42 @@ def main() -> None:
     )
     ap.add_argument("--json-out", type=Path, default=OUT_JSON,
                     help="where to write the full section dump (JSON)")
+    ap.add_argument("--arm-bundle", type=Path, default=None,
+                    help=(
+                        "score a SOLVED arm bundle on the pre-commit gates "
+                        "(section H) instead of running the ex-ante sections "
+                        "A-G. Compares the arm's own P1 dispatch to the keeper's"
+                    ))
+    ap.add_argument("--keeper-bundle", type=Path,
+                    default=Path("results/calibration/ercot115_coal_floor_only"),
+                    help="keeper bundle the arm is scored against (--arm-bundle only)")
     args = ap.parse_args()
+
+    if args.arm_bundle is not None:
+        res = {
+            "arm_bundle": str(args.arm_bundle),
+            "keeper_bundle": str(args.keeper_bundle),
+            "H_arm_gates": section_h_score_arm(args.arm_bundle, args.keeper_bundle),
+        }
+        args.json_out.parent.mkdir(parents=True, exist_ok=True)
+        args.json_out.write_text(json.dumps(res, indent=2))
+        print(f"\n=== ERCOT-128 arm gates — {args.arm_bundle} ===")
+        for y in YEARS:
+            d = res["H_arm_gates"][str(y)]
+            print(f"\n  {y}  G1 {d['g1_pass']}")
+            print(f"       C1 delta TWh {d['c1_delta_twh']}")
+            for klass, row in d["d1"].items():
+                cells = "  ".join(
+                    f"{k} {row[k]['profile_r']:.3f}/{row[k]['cv_ratio']}"
+                    for k in ("keeper", "arm") if k in row
+                )
+                print(f"       D-1 {klass:<13} {cells}")
+            for lab, r in d["g1_bands"].items():
+                print(f"         {lab:<7} act {r['actual']:.3f}  keeper {r['keeper']:.3f}"
+                      f"{'' if r['keeper_pass'] else ' FAIL'}  arm {r['arm']:.3f}"
+                      f"{'' if r['arm_pass'] else ' FAIL'}")
+        print(f"\nwrote {args.json_out}")
+        return
 
     payload = load_run_payload(KEEPER_RUN)
     keeper = {y: payload_coal_plants(payload, y) for y in YEARS}
