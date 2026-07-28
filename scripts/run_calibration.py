@@ -366,6 +366,11 @@ def run_year(
     gt_ambient_derate_slope_cc: float | None = None,
     gt_ambient_derate_slope_ct: float | None = None,
     temp_dependent_derate: bool = False,
+    temp_derate_hourly_grain: bool = False,
+    temp_derate_mean_anchored: bool = False,
+    temp_derate_classes: frozenset[str] | tuple[str, ...] | None = None,
+    temp_derate_slope_st_chp: float | None = None,
+    temp_derate_slope_ct_chp: float | None = None,
     ercot_offer_surface_conditional: bool = False,
     ercot_offer_surface_midcurve_conditional: bool = False,
     ercot_offer_surface_cleared_share: bool = False,
@@ -1690,7 +1695,20 @@ def run_year(
         # net-summer derate with a per-class physical curve in measured hourly
         # zone dry-bulb temperature (fleet.generators_to_fleet_arrays). Slopes/
         # reference temps default to the ScenarioConfig physical values.
-        config = config.with_overrides(temp_dependent_derate=True)
+        _td: dict = {"temp_dependent_derate": True}
+        # Hour-grain / mean-anchored legs (miso-101). Both default off, so an
+        # unset flag leaves the committed day-flat hinged curve untouched.
+        if temp_derate_hourly_grain:
+            _td["temp_derate_hourly_grain"] = True
+        if temp_derate_mean_anchored:
+            _td["temp_derate_mean_anchored"] = True
+        if temp_derate_classes:
+            _td["temp_derate_classes"] = frozenset(temp_derate_classes)
+        if temp_derate_slope_st_chp is not None:
+            _td["temp_derate_slope_st_chp"] = float(temp_derate_slope_st_chp)
+        if temp_derate_slope_ct_chp is not None:
+            _td["temp_derate_slope_ct_chp"] = float(temp_derate_slope_ct_chp)
+        config = config.with_overrides(**_td)
     if zero_forcing_ablation:
         # D-3 zero-forcing ablation twin (audit §7 / CLAUDE.md rule 20): drop
         # every MERCHANT floor/bridge, keeping only the structural must-run set
