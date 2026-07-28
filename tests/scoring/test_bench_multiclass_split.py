@@ -226,3 +226,36 @@ class TestSingleClassByteIdentity(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestEmptyE923VectorLength(unittest.TestCase):
+    """A multi-class plant with NO EIA-923 rows must honour the caller's length.
+
+    ``render_calibration_html.build_payload`` builds ``e923_pk`` as the
+    13-vector ``[annual, m01..m12]`` and every consumer reads ``[1:]`` as
+    twelve months. When a plant has no EIA-923 rows there is no input array
+    to take the length from, and the pre-fix default of 12 produced an
+    11-month slice that ran the month loop off the end (IndexError, first
+    seen registering a MISO 2025 bundle).
+    """
+
+    def test_default_is_unchanged_for_twelve_vector_callers(self) -> None:
+        got = bm.map_e923_to_model_classes({}, ["CC_CHP", "CT_CHP"], {})
+        self.assertEqual({k: len(v) for k, v in got.items()},
+                         {"CC_CHP": 12, "CT_CHP": 12})
+
+    def test_thirteen_vector_caller_gets_thirteen(self) -> None:
+        got = bm.map_e923_to_model_classes(
+            {}, ["CC_CHP", "CT_CHP"], {}, empty_len=13
+        )
+        self.assertEqual({k: len(v) for k, v in got.items()},
+                         {"CC_CHP": 13, "CT_CHP": 13})
+        for arr in got.values():
+            self.assertEqual(len(arr[1:]), 12, "must yield twelve months")
+
+    def test_populated_input_still_drives_the_length(self) -> None:
+        """``empty_len`` is only the no-data fallback, never an override."""
+        got = bm.map_e923_to_model_classes(
+            {"CC_CHP": np.zeros(13)}, ["CC_CHP"], {"CC_CHP": 1.0}, empty_len=12
+        )
+        self.assertEqual(len(got["CC_CHP"]), 13)

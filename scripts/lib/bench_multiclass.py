@@ -533,6 +533,7 @@ def map_e923_to_model_classes(
     e923_by_class: dict[str, np.ndarray],
     classes: list[str],
     comp: dict[str, float],
+    empty_len: int = 12,
 ) -> dict[str, np.ndarray]:
     """Assign a plant's EIA-923 per-class monthly rows to its model classes.
 
@@ -540,8 +541,15 @@ def map_e923_to_model_classes(
     model class sharing its technology family, else to the plant's largest
     class (logged by the caller via the returned dict's coverage). Length-
     agnostic: works for 12-vector monthlies or 13-vector [annual, m01..m12].
+
+    ``empty_len`` is the vector length to return when the plant has **no**
+    EIA-923 rows at all, where there is no input array to take the length
+    from. It must match the caller's convention: a caller that reads
+    ``[1:]`` as twelve months needs ``empty_len=13``, or a multi-class plant
+    absent from EIA-923 yields an 11-month array and the reader runs off the
+    end. Defaults to 12 so existing 12-vector callers are unchanged.
     """
-    n = len(next(iter(e923_by_class.values()))) if e923_by_class else 12
+    n = len(next(iter(e923_by_class.values()))) if e923_by_class else int(empty_len)
     out: dict[str, np.ndarray] = {k: np.zeros(n) for k in classes}
     fam_to_class: dict[str, list[str]] = collections.defaultdict(list)
     for k in classes:
