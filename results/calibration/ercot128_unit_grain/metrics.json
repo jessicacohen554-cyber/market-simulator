@@ -1,15 +1,19 @@
 {
-  "run_id": "2026-07-24-ercot106-envelope-recovered-rt",
+  "run_id": "2026-07-28-ercot128-unit-grain-coal",
   "iso": "ERCOT",
-  "label": "ercot106 envelope recovered rt",
+  "label": "ercot128 unit grain coal",
   "target_years": [
-    2023
+    2023,
+    2024,
+    2025
   ],
   "scorable_years": [
-    2023
+    2023,
+    2024,
+    2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
+  "rubric_version": 2.9,
   "determination": "NOT-YET",
   "reasons": [
     "governance gate UNATTESTED: no governance attestation in bundle"
@@ -46,11 +50,6 @@
       "tier": "supporting",
       "status": "PASS"
     },
-    "co2": {
-      "label": "C5a CO2 vs eGRID",
-      "tier": "load-bearing",
-      "status": "PASS"
-    },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
@@ -59,12 +58,12 @@
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "FAIL"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -77,11 +76,11 @@
     }
   },
   "grade_summary": {
-    "scored": 7,
+    "scored": 8,
     "target_grade": 4,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 3
+    "fails": 4
   },
   "free_class_score": {
     "iso": "ERCOT",
@@ -99,13 +98,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 7,
-      "total": 7
+      "pass": 16,
+      "total": 16
     },
     "free": {
-      "pass": 5,
-      "total": 5
+      "pass": 12,
+      "total": 12
     },
-    "headline": "C1 all 7/7 \u00b7 free 5/5"
+    "headline": "C1 all 16/16 \u00b7 free 12/12"
   }
 }

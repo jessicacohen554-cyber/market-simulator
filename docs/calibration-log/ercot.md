@@ -2211,3 +2211,89 @@ FAILURES**, root-caused above and not attributable to this session. Pre-existing
 unchanged from the ercot127 baseline: **4** in `tests/unit/results/test_export.py`, **4** in
 `tests/scoring/test_ff_readiness_battery.py`. Full forensics:
 `docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md`.
+
+## 2026-07-28 — ERCOT-128 PHASE 2: the coal minimum-online-configuration floor is BUILT, SOLVED and REGISTERED — passes every absolute gate, and fails its own structural claim because the floor is availability-SCALED where the physics is availability-CONDITIONAL (ercot128-unit-grain)
+
+**Lane** ercot128-unit-grain · keeper **unchanged** (`2026-07-26-ercot115-coal-marginal-hr`) ·
+run **`2026-07-28-ercot128-unit-grain-coal`** (bundle `results/calibration/ercot128_unit_grain`)
+registered as a **rejected probe** · `frontend/data/backcast/keepers/ERCOT.json` **untouched**.
+Pre-commit `docs/PRECOMMIT-ercot128-coal-min-config-2026-07-28.md`, pushed BEFORE the
+first solve. Single delta `ercot_coal_min_config_floor=true`, three years, one
+invocation, years sequential.
+
+**Why Phase 2 ran at all.** The owner reversed the same-day Phase 1
+recommend-and-STOP on rule 1 `[R-STRUCT]`, and the reversal was correct: Phase 1
+rejected a structurally-correct MEASURED mechanism partly because the residual
+didn't move, and partly on gate G3 — which measures the ceiling-pin's
+over-flatness, a *different* mechanism's residual. Rule 1 forbids both as grounds.
+
+**The mechanism, all of it default-off and byte-identical off.**
+`scripts/data/derive_eia860_coal_min_config.py` → `coal_min_config_ERCOT.csv`:
+each coal plant's `min_u MinLoad_u` from the EIA-860 registered `Minimum Load`,
+10 plants / 13,611 MW / cap-weighted frac **0.1590** / 9-of-10 gap-free
+(**97.76 %** of capacity exactly representable). Loader `fleet.coal_min_config`;
+`Generator.coal_min_config_pmin_mw` spread across the plant's tranches in fill
+order; `ScenarioConfig.ercot_coal_min_config_floor` (ERCOT-scoped, rule 25) in
+`_CACHE_KEY_OPTIONAL_FIELDS` + `TIER_TAGS` — **default cache key stays at the
+pinned `603c2498bf71d21d`**, armed `5f497a0ab6b142be`; `MECH_COAL_MIN_CONFIG=21`
+with its own `D4_WINDOWS (0,24)` all-hours-by-driver entry. **Zero free
+parameters** (rule 21), `lineage_solves 0`. 14 new unit tests.
+
+**Gates, as pre-committed.** **G0 PASS** — 6 `ARMED` lines (P0+P1 × 3 yr), 10
+plants / 2164 MW, `run_config` carries the flag, D-2 `coal_min_config`
+**1.749/1.679/1.393 TWh**. **G1 PASS** (do-no-harm) — **19/21 against the
+keeper's 19/21**, the same two `<$15` bands failing. **G2 PASS** — C1
+**−0.955/−0.102/−1.678** against the keeper's −1.078/−0.294/−1.926: **better in
+all three years** (mean abs 0.91 vs 1.10). **G4 PASS** — C1 all **16/16 · free
+12/12**, coal forced share **2.94/2.92/2.30 %** against the 30 % cap. **G5 PASS**
+(LOYO holds per-year). **G6 PASS**. D-4 `coal_min_config` off-window share
+**0.0 %** all years. **No new rubric failure**: the arm's failing gates
+(C3a/C3b 2023, C3c all years, C7 COAL_LIGNITE 2023) are exactly the keeper's
+known open set. **G3 FAILS AS WRITTEN** on three cells (2024/2025 COAL_LIGNITE,
+2025 COAL_PRB `cv_ratio` falling 0.141/0.237/0.038 against a 0.030 bound) —
+reported as a fail and **not** rewritten, with the tolerance recorded as my own
+mis-specification (an absolute 0.030 band on a ratio spanning 0.294–1.612). On
+the gate the scorer actually enforces the arm fails exactly the one cell the
+keeper fails and improves `profile_r` in four of six coal class-years.
+
+**NOT A KEEPER CANDIDATE — and NOT for a fit reason.** The arm fails its OWN
+pre-registered structural evidence. p05 loading moves toward the real fleet in
+**10 of 29** plant-years and away in 19 (W A Parish 2023 0.026 → **0.011** vs
+0.171 actual; Limestone 0.093 → 0.104 vs 0.261); nothing overshoots. The direct
+measure is decisive: online plant-hours delivering **below the plant's own
+`min_u MinLoad_u`** — a level no unit combination can produce — go
+**14,582 → 14,886 / 13,020 → 13,051 / 9,558 → 9,561** (18.7 %→19.0 %,
+17.0 %→16.9 %, 13.1 %→13.0 % of online hours). **The floor removes essentially
+none of the impossible loadings it exists to remove**, while costing 1.4–1.7
+TWh/yr of forced energy. Forcing without the mechanism biting is the one outcome
+rule 1 does not protect.
+
+**ROOT CAUSE, and the fix is one expression.** The floor is built as
+`min_config_frac × pmax × availability[g,t]`. **Scaling is the wrong physics for
+this quantity**: a minimum online configuration does not shrink when units go
+out — a 4-unit plant with 2 units on outage still cannot run below ONE unit's
+175 MW; it makes 175 MW or it is off. ERCOT coal availability under the DAM
+water-fill sits well below 1.0 in most hours, so the applied floor lands *below*
+the physical minimum exactly where the defect lives. Decomposition: **89/72/68 %**
+of the arm's change is raising already-online plants; only 554/643/885 plant-hours
+are newly on. The successor is availability-**CONDITIONAL** —
+`floor = min_config_mw if avail×pmax ≥ min_config_mw else 0` — which stays inside
+pure LP because `availability` is exogenous data, not a decision variable, and
+which is what §1.3's exactness proof always described (it was conditional on *at
+least one unit online*; the scaled build silently dropped that condition). Same
+artifact, flag, mechanism id, one re-solve; **this run is its control**.
+
+Rule 26 `[R-MECH-MATRIX]`: `coal_min_config_floor` row updated with the Phase 2
+result (ERCOT cell stays **R**, now on a solved bundle rather than an ex-ante
+bound).
+
+**Also fixed on this branch, unrelated to the lane:** the default `ScenarioConfig`
+cache key was broken on `main` since `b9d2b4d` (pjm-134 added
+`pjm_apsouth_interface_cut` without registering it in
+`_CACHE_KEY_OPTIONAL_FIELDS`, moving the key `603c2498bf71d21d → 2904ac9ad9ed5c0c`
+and orphaning every on-disk cache). One-line registration, matching the
+`9df6be7` / `c45fed4` precedents; the pinned literal is untouched and
+`tests/regression/test_persisted_identity.py` returns to **11/11**.
+
+Full forensics: `docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md`
+(§§0–8 Phase 1, §§P1–P5 the Phase 2 addendum).

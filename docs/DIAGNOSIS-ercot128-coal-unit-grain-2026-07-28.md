@@ -14,7 +14,18 @@ mechanism-attribution paths.
 `ScenarioConfig` field, cache-key surface or solve path was touched. No keeper
 file was touched.**
 
-**Outcome: Phase 1 does NOT license a mechanism, and Phase 2 was not run** —
+> **SUPERSEDED IN PART — read the PHASE 2 ADDENDUM at the end of this file.**
+> The owner reversed the §8 recommend-and-STOP on rule 1 `[R-STRUCT]` (a
+> structurally-correct measured mechanism may not be rejected because the
+> residual didn't move, nor on a gate belonging to another mechanism's residual).
+> Phase 2 WAS built, solved full-span and registered as
+> `2026-07-28-ercot128-unit-grain-coal`. Everything in §§0-7 below stands as
+> measured; §8's *recommendation* is superseded by §P5. The Phase 2 verdict is
+> still "do not promote", but for an entirely different and better-evidenced
+> reason: the arm passes every absolute gate and fails its own pre-registered
+> STRUCTURAL claim (§P3), with a specified fix (§P4).
+
+**Outcome of Phase 1: it does NOT license a mechanism** —
 the seventh consecutive abstention on the coal residual, and the first one that
 answers its charter's question in the AFFIRMATIVE and still refuses.
 
@@ -472,3 +483,148 @@ root-caused in §8(6e) to `b9d2b4d` and **not** this lane's to fix;
 `tests/unit/results/test_export.py` 4 pre-existing failures and
 `tests/scoring/test_ff_readiness_battery.py` 4 pre-existing failures, both
 unchanged from the ERCOT-127 baseline. No pin was updated in either direction.
+
+---
+
+# PHASE 2 ADDENDUM — the arm was BUILT and SOLVED. It passes every absolute gate and fails its own structural claim
+
+**Added 2026-07-28, after the owner reversed §8's abstention on rule 1
+`[R-STRUCT]`.** The reversal was correct and is recorded as such: §8 rejected a
+structurally-correct measured mechanism partly because the residual didn't move,
+and partly on a gate (G3) belonging to a different mechanism's residual — both
+of which rule 1 forbids as grounds for rejection. Phase 2 was therefore run.
+
+**Arm** `results/calibration/ercot128_unit_grain` ·
+run id `2026-07-28-ercot128-unit-grain-coal` · pre-commit
+`docs/PRECOMMIT-ercot128-coal-min-config-2026-07-28.md`, pushed before the first
+solve · single delta `ercot_coal_min_config_floor=true` · three years, one
+invocation, years sequential.
+
+**Verdict: NOT a recommended keeper candidate — and NOT for a fit reason.** Every
+absolute gate passes, G1 ties, and G2 improves in all three years. What fails is
+the mechanism's **own pre-registered structural evidence** (§4.4 of the
+pre-commit): the arm does not remove the physically-impossible plant loadings it
+exists to remove. §P4 gives the root cause and the fix.
+
+## P1. The gates, as pre-committed
+
+| gate | criterion | keeper | **arm** | verdict |
+|---|---|---|---|---|
+| **G0** arming + bite | 3/3 logs, run_config, non-zero D-2 row | no COAL row | 6 `ARMED` lines (P0+P1 × 3 yr), 10 plants / **2164 MW**; `run_config.ercot_coal_min_config_floor: true`; D-2 `coal_min_config` **1.749 / 1.679 / 1.393 TWh** | **PASS** |
+| **G1** loading-vs-price | do-no-harm, ≥ 19/21 | 19/21 | **19/21** (6/7 · 7/7 · 6/7 — the same two `<$15` bands fail) | **PASS** |
+| **G2** C1 coal level | within ±2.0 TWh every year | −1.078 / −0.294 / −1.926 | **−0.955 / −0.102 / −1.678** | **PASS**, better in all three years (mean abs 0.91 vs 1.10) |
+| **G3** D-1 do-no-harm | ≤ 0.030 fall vs keeper, every coal class-year | — | see §P2 | **FAIL as written** |
+| **G4** rubric + C8 | C1 16/16 · free 12/12; forced share < 30 % | — | **C1 all 16/16 · free 12/12**; coal forced **2.94 / 2.92 / 2.30 %** | **PASS** |
+| **G5** LOYO | per-year, 2-of-3 fails | — | G1 and G2 verdicts hold independently in each of 2023, 2024, 2025 | **PASS** |
+| **G6** DOF ledger | measured, `lineage_solves = 0` | — | per-plant `min_config_mw`, EIA-860 registration, no fitted value | **PASS** |
+
+D-4 is clean: `coal_min_config`, window `h0-23`, **off-window share 0.0 %** in
+all three years. The arm introduces **no new rubric failure** — its failing
+gates (C3a/C3b 2023, C3c all years, C7 `COAL_LIGNITE` 2023) are exactly the
+keeper's known open set.
+
+## P2. G3 fails as written, and the tolerance was mine and mis-specified
+
+| year · class | keeper `r`/`cv_ratio` | arm | fall in `cv_ratio` | vs the 0.030 bound |
+|---|---|---|---|---|
+| 2023 COAL_LIGNITE | 0.745 / 0.294 | 0.736 / 0.281 | 0.013 | pass |
+| 2023 COAL_PRB | 0.995 / 1.110 | 0.995 / 1.113 | rose | pass |
+| 2024 COAL_LIGNITE | 0.862 / 1.117 | 0.885 / 0.976 | **0.141** | **FAIL** |
+| 2024 COAL_PRB | 0.986 / 0.813 | 0.987 / 0.813 | 0.000 | pass |
+| 2025 COAL_LIGNITE | 0.913 / 1.612 | 0.927 / 1.375 | **0.237** | **FAIL** |
+| 2025 COAL_PRB | 0.975 / 1.161 | 0.977 / 1.123 | **0.038** | **FAIL** |
+
+**Reported as a FAIL, and not rewritten.** The pre-commit says a gate that fails,
+fails. The tolerance is nonetheless a bad one and that is my error, stated
+plainly rather than repaired: an **absolute** 0.030 band applied to a ratio whose
+keeper values span 0.294 to 1.612 is ~10 % of one cell and ~2 % of another.
+
+The substantive picture, for the owner's judgement and not as a substitute for
+the verdict above: on the gate the **scorer actually enforces** (`r ≥ 0.8`,
+`cv_ratio ≥ 0.5`) the arm fails exactly one coal class-year — 2023
+`COAL_LIGNITE` — which is precisely the cell the keeper fails, and it **improves
+`profile_r` in four of six** class-years while never dropping one from pass to
+fail.
+
+## P3. The structural claim — the arm's own pre-registered evidence, and it is negative
+
+Pre-commit §4.4 fixed the affirmative case in advance: *"evidenced by the
+per-plant p05 loading moving toward, and never past, the real fleet's — reported
+for every plant-year whatever it shows."*
+
+**It does not move toward.** Across 29 scoreable plant-years the arm's p05 moves
+closer to the real fleet's in **10** and away in **19**. Nothing overshoots
+(1 of 29 sits above actual — Oak Grove 2023 — and it was already above on the
+keeper, 0.767, which the arm *reduces* to 0.721). Examples, 2023: Limestone
+0.093 → 0.104 (actual 0.261); W A Parish 0.026 → **0.011** (0.171); J K Spruce
+0.013 → 0.015 (0.106). The one real closure is **San Miguel**, the single-unit
+plant whose min-config is 0.639 of capacity: 0.507 → 0.569 in 2023,
+0.317 → 0.376 in 2024, 0.493 → 0.558 in 2025 against ~0.58 actual.
+
+**And the direct measure — the one the mechanism literally controls — confirms
+it.** Counting online plant-hours delivering **below** the plant's own
+`min_u MinLoad_u`, i.e. a level no combination of its units can produce:
+
+| year | keeper | **arm** | keeper share of online hours | **arm share** |
+|---|---|---|---|---|
+| 2023 | 14,582 | **14,886** | 18.7 % | **19.0 %** |
+| 2024 | 13,020 | **13,051** | 17.0 % | **16.9 %** |
+| 2025 | 9,558 | **9,561** | 13.1 % | **13.0 %** |
+
+**The arm removes essentially none of them.** That is the whole structural claim,
+measured directly, and it is not delivered.
+
+## P4. Root cause — the floor is availability-SCALED, and it should be availability-CONDITIONAL
+
+The floor is built as `min_config_frac[g] × pmax[g] × availability[g,t]`, the
+scaling form chosen deliberately (§3.1) because `min_gen` must not exceed
+`pmax × availability` or the LP is infeasible, and because the existing
+`apply_netload_reliability_floor` *caps* instead of scaling and would pin a unit
+at 100 % of what is available.
+
+**Scaling is the wrong physics for this quantity.** A minimum online
+configuration does not shrink when units go out: a 4-unit plant with 2 units on
+outage still cannot run below **one unit's** 175 MW — it either makes 175 MW or
+it is off. ERCOT coal availability under the DAM water-fill sits well below 1.0
+in most hours, so the applied floor lands *below* the physical minimum in exactly
+the hours the defect lives in. The decomposition shows the consequence: of the
+arm's change against the keeper, **89 / 72 / 68 %** is raising plants that were
+already online, and only 554 / 643 / 885 plant-hours are newly on. The floor is
+nudging, not bounding.
+
+**The fix is small and stays inside pure LP.** `availability[g,t]` is exogenous
+data, not a decision variable, so a *conditional* is a data-side computation with
+no integrality:
+
+```
+floor[g,t] = min_config_mw[g]   if availability[g,t] × pmax[g] ≥ min_config_mw[g]
+           = 0                  otherwise      # plant cannot reach min config → off
+```
+
+This is the mechanism §1.3's exactness proof actually describes — the proof was
+always conditional on *at least one unit online*, and the availability-scaled
+build quietly dropped that condition. It is the natural successor and it is
+cheap: one expression in `_compose_min_gen_floors`, the same artifact, the same
+flag, the same mechanism id, one re-solve.
+
+## P5. Recommendation
+
+1. **Do NOT promote `2026-07-28-ercot128-unit-grain-coal`.** Registered on the
+   dashboard as a rejected probe (rule 15). `frontend/data/backcast/keepers/ERCOT.json`
+   untouched.
+2. **The reason is NOT the fit** — G1 ties, G2 improves in all three years, no new
+   rubric failure. Under rule 1 those would not be grounds. The reason is that it
+   **costs 1.4–1.7 TWh/yr of forced energy and removes ~0 of the 9.5–14.9 k
+   physically-impossible plant-hours it exists to remove** (§P3). Forcing without
+   the mechanism actually biting is the one outcome rule 1 does not protect.
+3. **The successor is specified and narrow** (§P4): re-solve the same flag with an
+   availability-**conditional** floor. If that removes the impossible plant-hours
+   while holding G1/G2, it is a genuine keeper candidate on rule-1 grounds, and
+   the arm here is its control.
+4. **Everything built stands and is reusable**: the derive, artifact, loader,
+   `ScenarioConfig` flag (default off, cache key unmoved at the pinned
+   `603c2498bf71d21d`), `MECH_COAL_MIN_CONFIG`, the D-4 window, and 14 unit tests.
+   The successor changes one expression.
+5. **Owner decisions (§8 item 6) all stand unchanged**, including (e), the
+   `pjm_apsouth_interface_cut` cache-key regression — **fixed on this branch** in
+   its own commit, restoring the default key to the pinned literal.
