@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-16-pjm-113-short-only",
+  "run_id": "2026-07-28-pjm-135-netpos-keeper",
   "iso": "PJM",
-  "label": "pjm 113 short only",
+  "label": "pjm 135 netpos keeper",
   "target_years": [
     2023,
     2024,
@@ -13,12 +13,15 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.5,
+  "rubric_version": 2.9,
   "determination": "NOT-YET",
   "reasons": [
     "undocumented out-of-tolerance (FAIL) criteria: price_tail"
   ],
-  "notes": [],
+  "notes": [
+    "C8 2024 CT_PEAKER: grounded above budget \u2014 15.0% forced (3.6146 of 24.0407 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.959 (\u22650.8) & off-peak CV ratio 0.85 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 CT_PEAKER: grounded above budget \u2014 15.4% forced (4.8822 of 31.6575 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.971 (\u22650.8) & off-peak CV ratio 0.664 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+  ],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
@@ -41,7 +44,7 @@
       "status": "PASS"
     },
     "price_tail": {
-      "label": "C3c price tail / scarcity (DA-expressible)",
+      "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
       "status": "FAIL"
     },
@@ -49,21 +52,6 @@
       "label": "C4 fleet hourly dispatch correlation",
       "tier": "supporting",
       "status": "PASS"
-    },
-    "co2": {
-      "label": "C5a CO2 vs eGRID",
-      "tier": "load-bearing",
-      "status": "PASS"
-    },
-    "storage": {
-      "label": "C5b storage throughput",
-      "tier": "supporting",
-      "status": "SKIPPED"
-    },
-    "storage_shape": {
-      "label": "C5c storage dispatch shape",
-      "tier": "supporting",
-      "status": "SKIPPED"
     },
     "governance": {
       "label": "C6 governance gate",
@@ -91,8 +79,8 @@
     }
   },
   "grade_summary": {
-    "scored": 10,
-    "target_grade": 9,
+    "scored": 9,
+    "target_grade": 8,
     "commercial_grade": 0,
     "ledgered": 0,
     "fails": 1

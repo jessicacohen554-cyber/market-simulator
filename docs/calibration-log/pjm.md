@@ -1409,3 +1409,96 @@ solve and is the main argument against carrying a flag that moves 0.01 TWh.
 `pjm_apsouth_cut` = **I** (inert), flag stays default-off.
 
 **Next number: pjm-135.**
+
+---
+
+## pjm-135 — the external star node: the border decomposition is degenerate, the NET POSITION is the defect, and the joint cut flips C1+C3a
+
+**Runs:** `2026-07-28-pjm-135-control` (arm A) / `2026-07-28-pjm-135-netpos`
+(arm B) on the pjm-121 recipe, plus `pjm135_netpos_keeper_C` re-based onto the
+pjm-133 keeper recipe. All 2023+2024+2025 in one invocation (rule 16). Gates:
+`PREREG-pjm135-star-node-net-position-cut-2026-07-28.md`, committed and pushed
+**before any arm solved**. Write-up:
+`FINDING-pjm135-star-node-import-2026-07-28.md`. Probes:
+`_pjm135_star_node_import.py`, `_pjm135_star_node_net_position.py`,
+`_pjm135_star_flow_utilisation.py`, `_pjm135_netpos_ab.py`.
+
+**The measurement (no LP).** FINDING-pjm134 §7 handed this session the
+`PJM_external → PJM_Dominion` star link (+2,266 MW / +19.9 TWh/yr). Four
+measurements, all on committed data:
+
+- **M1 border attribution — the map is SOUND, the band is not.** All 22 ties in
+  the file match `_PJM_TIE_ZONE` (the default never fires) and Dominion's four
+  are genuinely Carolinas/TVA-facing. Dominion measurably net-imports
+  **11.6/12.2/11.3 TWh**, in 86–93 % of hours. The band it is handed is
+  **1.71/1.78/1.92×** that.
+- **M2 shape — a capability envelope used as an energy schedule.** The band is a
+  281–286-value (month × hod) p95 climatology; its R² against the measured
+  hourly import is **negative every year**. From arm A's flows: the link sits
+  **AT** the band in **92.6/93.3/76.5 %** of hours, and the export side rides
+  its bands too (ComEd at its export band in 98.3–98.8 %).
+- **M3 degeneracy — the charter's own number is a vertex artifact.**
+  `PJM_external` clears at the **identical dual to every PJM zone in 100.00 % of
+  hours**, max |Δ| = **0.0000 $/MWh**. The border decomposition is not a physical
+  statement, so per-border re-attribution is provably re-routable. **That lever
+  is dead on arrival and was not pursued.**
+- **M4 net position — the real, non-degenerate defect.** `PJM_external` carries
+  zero demand, so the `import` class **is** `Σ_z Flow(ext→z)` (verified against
+  flows to **0.0005 MW**). It reads **−28.89/−21.86/−25.80 TWh** against a
+  measured **−39.98/−32.83/−32.93** — the star node supplies PJM with
+  **7.1–11.1 TWh/yr the real seam did not** — with a **negative** hourly R² and
+  ~10 % of hours more import-heavy than PJM has *ever* been in that bucket.
+  Three star-node mechanisms exist and **every one is marginal**; nothing
+  constrains the total.
+
+**The delta.** `pjm_external_net_position_cut` (new, default off, **zero DOF**):
+one one-sided aggregate row per hour caps `Σ_z Flow(PJM_external → z)` at the
+measured (month × hod) p95 net-position envelope — the same tie-line file, the
+same `PJM_EXTERNAL_FLOW_PERCENTILE`, the same bucketing, via the same
+`_build_joint_interface_cut` core as the EAST and AP-South cuts. Rule 19: it
+REPLACES the sum-of-marginals ceiling on the aggregate question (five marginal
+p95s summed as though joint — 4,235/5,140/5,358 MW against a joint p95 of
+3,309/3,855/3,996; the per-neighbor bands compound it by double-counting
+Dominion and triple-counting AEP_Ohio).
+
+**Every pre-registered gate PASSES.** P1 enforcement 23.48/21.22/18.56 % of
+hours above the envelope → **0.00 %** (max excess on the constrained flows
+**0.000000 MW**); P2 direction toward measured, never past it; **K2 zero slack
+and zero dump in BOTH arms, ALL years** — the pre-registered principal risk,
+since the cap binds in **93.2/92.1/96.6 %** of top-1 % load hours; K5 arm A
+reproduces `pjm134_control_A` **byte-identically** (0.000000000 MW). Realised
+net move −1.52/−1.80/−1.73 TWh against −1.54/−1.80/−1.73 **pre-computed before
+the solve**. **Solve cost: none** — arm B ran **33.6 min vs arm A's 40**.
+
+**And the rubric improves, which the gate table could not anticipate:** C1
+**FAIL → PASS** (all 16/16, free 12/12) and C3a **FAIL → PASS**, with C3c
+**byte-identical** — target grade 5 → 7, fails 3 → 1.
+
+**INERT on the chartered defect, as PREREG §4 pre-registered.** Dominion
+CT_PEAKER +0.024/+0.038/+0.063 TWh against gaps of −6.7/−7.4/−7.2; only ~15 % of
+the ISO-wide CC gain lands in Dominion, the rest going west exactly as M3's
+zero-dual copper-plate predicts. **The zonal inversion stays OPEN.**
+
+**PROMOTED 2026-07-28 (owner, in-session).** PJM keeper is now
+`2026-07-28-pjm-135-netpos-keeper` (`pjm135_netpos_keeper_C` — the pjm-133
+recipe carried VERBATIM plus the single flag; hydro budget preserved to the GWh
+at 15.451/15.819/15.506 TWh), superseding `2026-07-27-pjm-133-nameplate`. The
+owner's criterion — *"if structural integrity improves but gates regress that
+may still be a keeper"* — is met a fortiori: **nothing regresses and two
+load-bearing criteria improve.** C1 **FAIL → PASS** (2023 CC_REGULAR
+−8.45 → **−7.89** TWh against ±8.00; all 16/16, free 12/12), C3a **FAIL → PASS**,
+C3c **byte-identical**; fails **3 → 1**, with the C3c scarcity tail now the
+**sole** failing criterion. C6 governance PASSES on a 15-entry DOF ledger
+(n_residual unchanged at 6). `audit_keepers.py --iso PJM`: **PASS, 0 failures,
+0 warnings.** Matrix cell `pjm_external_net_position_cut` = **K**.
+
+**Two caveats carried, not buried.** (a) C1's flip is **thin** — −7.89 inside a
+±8.00 band, 1.4 % of margin — and a future delta could flip it back. (b) The
+delta is **INERT on the Dominion inversion it was chartered against**; the
+C1/C3a gain is an ISO-wide level effect, not a zonal-allocation fix.
+
+**Next number: pjm-136.** The Dominion zonal inversion remains the open defect,
+but the per-border lever is now **CLOSED by measurement** (§7 DO-NOT-REDO): the
+star node is price-tied to every PJM zone in 100.00 % of hours at max |Δ| =
+0.0000 $/MWh, so no re-attribution can bind. A successor needs a mechanism that
+changes the *dual structure* — real internal congestion — not another flow cap.
