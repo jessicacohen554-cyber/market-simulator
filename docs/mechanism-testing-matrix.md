@@ -274,10 +274,36 @@ actual RT tail: it is **summer** (2025 Jun 23–25 alone = 18 of 42 h; the
 Jan-2024 storm produced zero >$300 hours), so the winter-fuel lane caps out
 at ~4–5 h/yr and the queue stays offer/DA-side:
 
-1. **DA virtual depth / DA demand formation** (`pjm_da_virtual_bids` form,
-   NYISO derivation) — the one mechanism family that moved another ISO's C3c
-   without touching reserves; untested here. The nyiso-92 tail dating makes
-   this the only queue item aimed at where the misses actually live.
+1. ~~**DA virtual depth / DA demand formation** (`pjm_da_virtual_bids` form,
+   NYISO derivation).~~ **CLOSED 2026-07-28 (nyiso-94): REFUSED ex-ante, no
+   solve.** PJM's lever is admissible because `hrl_da_incs_decs` is the
+   **submitted** curve; NYISO publishes no submitted-curve equivalent. Four
+   independent blockers: (a) P-59 `zonalBidLoad` carries **no price axis** — one
+   MW per zone-hour, so `net(λ)` needs an assumed price distribution = a fitted
+   scalar (rule 21); (b) those columns are **cleared, not submitted** — they
+   reproduce the IMM's published cleared MW/h to within 1–2 MW (rule 13), and
+   the priced P-27 masked archive cannot separate virtual from physical
+   price-capped load; (c) the **premise is false here** — net virtual is
+   *negative* in the mean hour (−230/−186/−277 MW) and only +580/+293/+917 MW
+   in the measured tail vs PJM's +7–11 GW, with NYISO's whole DA book ~0.85 GW
+   *below* RT load (IMM: DA net scheduled load ≈96 % of actual peak load);
+   (d) **roof-blocked** — all five mainland zones share one max dual
+   (149.9/194.5/255.1), 0 h >$258, zero load-shed slack, and every model >$300
+   hour is Long Island. **Successor lever identified — see item 1b.**
+   Evidence: `docs/FINDING-nyiso94-da-virtual-not-identifiable-2026-07-28.md`.
+1b. **TSA (Thunderstorm Alert) downstate transfer derate** — *the recommended
+   new queue head, data-intake first.* NYSRC rules make NYISO pre-secure the
+   ConEd system as if the first contingency occurred, cutting upstate→downstate
+   transfer capability **1–2 GW, real-time only, never in the DA market**
+   (2025 SOM §D). It fires in **hours 13–21, May–September** — exactly where
+   nyiso-92 dated the tail — and on >26 GW peak-load days costs **$300–500/MWh**,
+   with 50 of 1,377 hours carrying 99 % of the cost. The model has no TSA
+   representation and prices `Lower_Hudson − Upstate_West` at **$0.0** in the
+   measured tail hours, i.e. no downstate congestion at all where NYISO says it
+   is most expensive. A weather-driven interface derate is rule-13 admissible
+   (physical availability event, forward-reproducible — the IMM built its own
+   forecast from public weather data). Caveats: needs a TSA-history intake that
+   does not exist in-repo, and must be argued on the **RT** side.
 2. **CT start-frequency lane** (nyiso-89 successor): model starts the CT fleet
    2–5× less often than measured; 50–68% of measured CT energy clears below
    its own SRMC — candidates are start-economics (see 3) and DA-award
