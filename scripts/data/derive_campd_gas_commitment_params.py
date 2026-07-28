@@ -62,9 +62,16 @@ would be produced identically for a forward year and respond to changed
 conditions (a fleet that cycles more shortens its measured runs); neither is a
 measured OUTCOME fed back to close a residual.
 
+BASIS (``--plant-basis``): the per-unit ratio above is one TURBINE's turndown.
+A consumer whose floor is multiplied by PLANT capacity needs the PLANT's
+minimum stable CONFIGURATION instead, which on a multi-train combined cycle is
+roughly half the per-unit value. See :data:`PLANT_BASIS_NOTE` for the
+adjudication and the CAISO measurement that forced it.
+
 Usage::
 
     python scripts/data/derive_campd_gas_commitment_params.py --iso NYISO
+    python scripts/data/derive_campd_gas_commitment_params.py --iso CAISO --plant-basis
 """
 
 from __future__ import annotations
@@ -144,6 +151,39 @@ _LSL_PCTILE: float = 5.0
 # this reproduces that aggregation on the conduct-derived ratios.
 _CLASS_PCTILE: float = 50.0
 
+# ``--plant-basis``: WHICH minimum-load fraction a consumer actually needs.
+#
+# The two statistics are different physical quantities and differ by ~2x on a
+# multi-train combined-cycle fleet:
+#
+# * PER-UNIT (the default) — one CEMS unit's own turndown against its own
+#   maximum sustained load. This is what ERCOT's published 60-Day-DAM LSL/HSL
+#   pairs measure (per RESOURCE/train), which is why the two agree there
+#   (CAISO per-unit 0.566-0.572 vs ERCOT 0.574).
+# * PER-PLANT (this flag) — the facility's whole metered output against its own
+#   full capability. A 2x1 or 3x1 CC plant's minimum stable CONFIGURATION is
+#   one train at minimum, so the plant fraction is roughly the per-train
+#   fraction divided by the train count.
+#
+# A consumer must use the basis its own denominator is on. The CAISO RA
+# must-offer bridge (``market_sim.model.commitment.caiso_ra_mustoffer_min_gen``)
+# floors ``min_load_frac x PLANT pmax`` — "the floor is the PLANT's minimum
+# stable load ... never a per-tranche fraction" — and CAISO runs
+# ``plant_level_fleet=True``, so the PLANT statistic is the admissible one
+# there. Measured on CAISO CC_REGULAR 2023-25 the two bases are 0.566-0.572
+# (unit) against 0.289-0.304 (plant): applying the per-unit value to plant
+# capacity asserts a minimum CAISO's own plants sit below in ~2 of every 5
+# online hours. Evidence and adjudication: ``FINDING-caiso135`` §A / §R.
+#
+# Writes its own ``*_plant.csv`` artifact so the default per-unit invocation
+# (the NYISO/ERCOT identification the shipped bridge parameters cite) stays
+# byte-identical.
+PLANT_BASIS_NOTE: str = (
+    "PLANT basis: facility units summed to one series before measuring, so "
+    "min_load_frac is the plant's minimum stable CONFIGURATION over its full "
+    "capability (the basis a floor multiplied by PLANT pmax requires)"
+)
+
 
 def unit_run_lengths(on: np.ndarray) -> list[int]:
     """Return the lengths (hours) of maximal True-blocks in ``on``."""
@@ -217,6 +257,7 @@ def unit_statistics(
     years: list[int],
     classes: tuple[str, ...] = TARGET_CLASSES,
     unit_type: str | None = None,
+    plant_basis: bool = False,
 ) -> pd.DataFrame:
     """Return one row per CAMPD unit with its measured LSL fraction and runs.
 
@@ -233,6 +274,10 @@ def unit_statistics(
         unit_type: When given, keep only CAMPD rows whose ``unitType`` matches
             (casefolded). The ``--ct`` path passes :data:`CT_UNIT_TYPE` so a
             mixed steam/turbine facility contributes only its turbines.
+        plant_basis: Sum each facility's units to one PLANT series before
+            measuring, so ``lsl_frac`` is the plant's minimum stable
+            CONFIGURATION over its full capability rather than one turbine's
+            own turndown. See :data:`PLANT_BASIS_NOTE`.
     """
     mapping, ambiguous = class_plant_codes(iso, classes)
     if not mapping:
@@ -274,6 +319,16 @@ def unit_statistics(
                 ]
             if df.empty:
                 continue
+            if plant_basis:
+                # Collapse the facility's units to one PLANT series BEFORE any
+                # statistic is taken, so the p99.5/p5 pair describes the plant's
+                # own configuration ladder (2x1 -> 1x1 -> off) instead of a
+                # single turbine's turndown (caiso-135 §A).
+                df = df.groupby(["facilityId", "date", "hour"], as_index=False).agg(
+                    grossLoad=("grossLoad", "sum"),
+                    facilityName=("facilityName", "first"),
+                )
+                df["unitId"] = "PLANT"
             df = df.sort_values(["facilityId", "unitId", "date", "hour"])
             for (fid, uid), g in df.groupby(["facilityId", "unitId"], sort=False):
                 key = (int(fid), str(uid))
@@ -339,6 +394,7 @@ def class_summary(
     years: list[int],
     classes: tuple[str, ...] = TARGET_CLASSES,
     unit_type: str | None = None,
+    plant_basis: bool = False,
 ) -> pd.DataFrame:
     """Aggregate the per-unit conduct table to one row per class.
 
@@ -410,6 +466,8 @@ def class_summary(
         )
         if unit_type is not None:
             row["source"] += f"; restricted to CAMPD unitType == '{unit_type}'"
+        if plant_basis:
+            row["source"] += f"; {PLANT_BASIS_NOTE}"
         out.append(row)
     return pd.DataFrame(out)
 
@@ -440,15 +498,31 @@ def main() -> None:
         "campd_ct_commitment_params_<ISO>.csv; the default invocation is "
         "unaffected and byte-identical.",
     )
+    parser.add_argument(
+        "--plant-basis",
+        action="store_true",
+        help="sum each facility's units to ONE plant series before measuring, so "
+        "min_load_frac is the plant's minimum stable CONFIGURATION rather than a "
+        "single turbine's turndown. Required by any consumer whose floor is "
+        "multiplied by PLANT capacity (the CAISO RA must-offer bridge). Writes "
+        "campd_gas_commitment_params_plant_<ISO>.csv; the default per-unit "
+        "invocation is unaffected and byte-identical.",
+    )
     args = parser.parse_args()
     iso = args.iso.upper()
 
     classes = CT_TARGET_CLASSES if args.ct else TARGET_CLASSES
     unit_type = CT_UNIT_TYPE if args.ct else None
     stem = "campd_ct_commitment_params" if args.ct else "campd_gas_commitment_params"
+    if args.plant_basis:
+        stem += "_plant"
 
-    units, class_runs = unit_statistics(iso, args.years, classes, unit_type)
-    summary = class_summary(units, class_runs, iso, args.years, classes, unit_type)
+    units, class_runs = unit_statistics(
+        iso, args.years, classes, unit_type, args.plant_basis
+    )
+    summary = class_summary(
+        units, class_runs, iso, args.years, classes, unit_type, args.plant_basis
+    )
     if summary.empty:
         raise SystemExit(f"{iso}: no target-class units measured — nothing to write")
 
