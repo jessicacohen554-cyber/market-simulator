@@ -347,6 +347,169 @@ def build_pjm_external_net_position_cut_groups(
     )
 
 
+# --------------------------------------------------------------------------
+# Marginal transmission-loss physics (pjm_zonal_loss_surface, pjm-136 M2)
+# --------------------------------------------------------------------------
+
+# Non-leap month lengths in hours. The model's fixed 8760-hour clock drops
+# Feb 29, so non-leap month boundaries align exactly in every year.
+_MONTH_HOURS: tuple[int, ...] = tuple(
+    d * 24 for d in (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+)
+
+# Loss-pair flow tiebreaker (``pjm_zonal_loss_surface``): the same role and
+# magnitude as the storage ε = 0.001 $/MWh (CLAUDE.md rule 9 ``[R-EPSILON]``),
+# charged on BOTH one-way directions of each lossy internal PJM link so that
+# (a) a degenerate lossless-direction wash nets to one direction per hour, and
+# (b) circulating flow (both directions at once, which dissipates
+# ε_loss × flow at each end — free disposal) is strictly cost-positive whenever
+# |zonal dual| × loss fraction < this charge. PJM renewables offer at ≥ $0
+# (``negative_renewable_offers`` is default-off and CAISO-scoped), so the
+# model's PJM duals floor near −dump ε and 0.001 dominates the disposal value
+# in every hour. A numerical device, not a hurdle rate and not a fitted level —
+# the priced-hurdle family is deliberately NOT what this mechanism is
+# (rule 13 ``[R-MEASURED]``: the separation comes from measured loss physics in
+# the energy balance, never from a cost adder tuned to a price residual).
+PJM_LOSS_LINK_TIEBREAK_EPS = 1e-3
+
+
+def _pjm_internal(from_zone: str, to_zone: str) -> bool:
+    """Whether a link joins two internal PJM zones (the external star excluded).
+
+    The star node's five ``PJM_external→border`` links are deliberately NOT
+    lossy: ``PJM_external`` is a fictitious pricing node with no location, so
+    it has no published delivery-factor deviation to derive one from, and
+    inventing one would be a fitted scalar (rule 5 ``[R-NO-MAGIC]``). The seam
+    keeps its own mechanisms — the per-border envelopes, the measured ladders
+    and the pjm-135 net-position cut.
+    """
+    return (
+        from_zone.startswith("PJM_")
+        and to_zone.startswith("PJM_")
+        and "PJM_external" not in (from_zone, to_zone)
+    )
+
+
+def apply_pjm_zonal_loss_links(iso_config):
+    """Split each internal PJM link into a one-way loss pair.
+
+    The pjm-136 M2 topology transform (gated on
+    ``ScenarioConfig.pjm_zonal_loss_surface``): every bidirectional
+    PJM-internal link becomes TWO one-way links (``is_bidirectional=False``,
+    same TTC each way), each charged the
+    :data:`PJM_LOSS_LINK_TIEBREAK_EPS` flow cost. The per-direction marginal
+    loss fractions themselves are hour-varying and enter the energy balance
+    via :func:`build_pjm_link_loss` +
+    ``dispatch.build_constraints(link_loss=...)``; the split exists because a
+    loss coefficient on a SIGNED link would create energy on reverse flow, so
+    each direction must be its own nonnegative column.
+
+    Composition with PJM's existing network mechanisms is by construction:
+
+    * the joint interface cuts (``pjm_east_interface_cut``,
+      ``pjm_apsouth_interface_cut``, ``pjm_external_net_position_cut``) match
+      links by zone pair and enter the reverse orientation with sign −1
+      (:func:`_build_joint_interface_cut`), so each pair sums to the net
+      corridor flow automatically;
+    * ``pjm_measured_interface_limits`` keys
+      :data:`~market_sim.config.constants.PJM_INTERFACE_LINK_MAP` on the
+      forward ``(from, to)`` pair, so the forward one-way link takes the
+      measured hourly cap and the reverse one keeps the static rating — the
+      same asymmetric semantics the bidirectional link had via ``ttc_import``;
+    * the external star links are untouched (:func:`_pjm_internal`), so the
+      import-node identification and the net-position cut are unchanged.
+
+    Returns a validated copy; a config with no internal bidirectional PJM
+    links (already split, or not PJM) is returned unchanged.
+    """
+    new_links: list[TransferLink] = []
+    changed = False
+    for ln in iso_config.links:
+        if ln.is_bidirectional and _pjm_internal(ln.from_zone, ln.to_zone):
+            for frm, to in ((ln.from_zone, ln.to_zone), (ln.to_zone, ln.from_zone)):
+                new_links.append(
+                    ln.model_copy(
+                        update={
+                            "from_zone": frm,
+                            "to_zone": to,
+                            "is_bidirectional": False,
+                            "flow_cost": ln.flow_cost + PJM_LOSS_LINK_TIEBREAK_EPS,
+                        }
+                    )
+                )
+            changed = True
+        else:
+            new_links.append(ln)
+    if not changed:
+        return iso_config
+    extended = iso_config.model_copy(update={"links": new_links})
+    extended.validate_topology()
+    return extended
+
+
+def build_pjm_link_loss(
+    links: list[TransferLink], iso: str, year: int, hours: int
+) -> np.ndarray | None:
+    """Return the ``(n_links, hours)`` per-link marginal loss fractions for PJM.
+
+    For each one-way internal link ``x -> y`` and month ``m``, the
+    receiving-side loss fraction is::
+
+        eps_(x->y),m = max(0, (dev_y,m - dev_x,m) / (1 + dev_y,m))
+
+    so an interior, uncongested flow ``x -> y`` prices the receiving zone at
+    ``lambda_y = lambda_x x (1 + dev_y,m)/(1 + dev_x,m)`` — exactly the
+    measured marginal delivery-factor ratio PJM's own LMPs carry
+    (``LMP_i = MEC + MCC_i + MLC_i``, PJM Manual 11 §2 / OATT Att. K; the
+    derive's ``dev_z = sum(MLC_z)/sum(MEC)`` estimator reproduces the measured
+    MLC when re-multiplied by the measured MEC). The reverse direction of the
+    pair clamps to 0 for that month — the marginal-DF linearization is oriented
+    by the month's persistent gradient, and the clamp is conservative:
+    atypical-direction hours carry no separation rather than a fabricated
+    inverted one. A month whose measured gradient flips sign swaps the lossy
+    direction automatically.
+
+    The monthly surface comes from
+    :func:`market_sim.data.loss_surface.load_zone_month_deviation` (PJM's own
+    ``PJM_loss_surface.csv`` — year rows for a train backcast year, pooled rows
+    otherwise) and expands to hours on the model's fixed non-leap calendar.
+    External star links carry zero rows. Fails loud if any internal link is
+    still bidirectional (the loss coefficient would create energy on reverse
+    flow — apply :func:`apply_pjm_zonal_loss_links` first), or if a PJM zone is
+    missing from the surface.
+
+    Returns ``None`` for a non-PJM ``iso`` (byte-identical elsewhere, rule 24).
+    """
+    if iso.upper() != "PJM":
+        return None
+    from market_sim.data.loss_surface import load_zone_month_deviation
+
+    surface = load_zone_month_deviation(iso, year)
+    month_of_hour = np.repeat(np.arange(12), _MONTH_HOURS)[:hours]
+    loss = np.zeros((len(links), hours), dtype=float)
+    for i, ln in enumerate(links):  # i: link column (few links, not hours)
+        if not _pjm_internal(ln.from_zone, ln.to_zone):
+            continue
+        if ln.is_bidirectional:
+            raise ValueError(
+                f"link {ln.from_zone}->{ln.to_zone} is bidirectional; "
+                "apply_pjm_zonal_loss_links must run before "
+                "build_pjm_link_loss (a signed lossy link would create "
+                "energy on reverse flow)"
+            )
+        try:
+            dev_from = np.asarray(surface[ln.from_zone], dtype=float)
+            dev_to = np.asarray(surface[ln.to_zone], dtype=float)
+        except KeyError as exc:
+            raise ValueError(
+                f"loss surface has no zone {exc.args[0]!r} — regenerate "
+                "scripts/data/derive_pjm_loss_surface.py"
+            ) from exc
+        eps_m = np.maximum(0.0, (dev_to - dev_from) / (1.0 + dev_to))
+        loss[i, :] = eps_m[month_of_hour]
+    return loss if np.any(loss > 0.0) else None
+
+
 def inject_pjm_seam_flow_limit(
     fleet_arrays,
     iso: str,

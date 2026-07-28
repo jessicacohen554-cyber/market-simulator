@@ -199,14 +199,17 @@ from market_sim.model.interchange.miso import (  # noqa: F401
     split_miso_south_external_node,
 )
 from market_sim.model.interchange.pjm import (  # noqa: F401
+    apply_pjm_zonal_loss_links,
     build_pjm_apsouth_interface_cut_groups,
     build_pjm_external_net_position_cut_groups,
     build_pjm_east_interface_cut_groups,
     build_pjm_external_flow_groups,
+    build_pjm_link_loss,
     inject_pjm_seam_flow_limit,
     pjm_external_star_cut_links,
     inject_pjm_seam_ladder_prices,
     PJM_EAST_CUT_LINKS,
+    PJM_LOSS_LINK_TIEBREAK_EPS,
 )
 from market_sim.model.interchange.nyiso import (  # noqa: F401
     _dispatchable_thermal_codes as _dispatchable_thermal_codes,
@@ -319,6 +322,7 @@ __all__ = [
     "MECH_RELIABILITY_FLOOR",
     "MISO_FIRM_IMPORT_DEFAULT_ISOS",
     "MISO_LOSS_LINK_TIEBREAK_EPS",
+    "PJM_LOSS_LINK_TIEBREAK_EPS",
     "MISO_MANITOBA_FIRM_IMPORT_FLOOR_FRAC",
     "MISO_MANITOBA_FIRM_IMPORT_MW",
     "MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR",
@@ -365,6 +369,7 @@ __all__ = [
     "apply_miso_firm_import_injections",
     "apply_miso_rdt_tcdc",
     "apply_miso_zonal_loss_links",
+    "apply_pjm_zonal_loss_links",
     "apply_nyiso_firm_import_injections",
     "apply_nyiso_li_tsl_import_cap",
     "apply_nyiso_nyc_tsl_import_cap",
@@ -385,6 +390,7 @@ __all__ = [
     "build_pjm_external_net_position_cut_groups",
     "build_pjm_east_interface_cut_groups",
     "build_pjm_external_flow_groups",
+    "build_pjm_link_loss",
     "build_reference_price_node",
     "build_wecc_export_sink",
     "build_wecc_import_generators",

@@ -107,6 +107,7 @@ from market_sim.model.transmission import (
     build_incidence_matrix,
     build_interface_groups,
     build_miso_link_loss,
+    build_pjm_link_loss,
     forward_corridor_interface_groups,
     get_link_bidirectional_array,
     get_link_flow_cost_array,
@@ -1513,7 +1514,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         iso_config.links, iso, year, int(base_demand.shape[1])
                     )
                     if getattr(config, "miso_zonal_loss_surface", False)
-                    else UNSET
+                    else (
+                        build_pjm_link_loss(
+                            iso_config.links, iso, year, int(base_demand.shape[1])
+                        )
+                        if getattr(config, "pjm_zonal_loss_surface", False)
+                        else UNSET
+                    )
                 ),
                 storage_power_cap=storage.power_cap,
                 storage_energy_cap=storage.energy_cap,
