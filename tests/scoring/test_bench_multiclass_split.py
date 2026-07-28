@@ -241,15 +241,15 @@ class TestEmptyE923VectorLength(unittest.TestCase):
 
     def test_default_is_unchanged_for_twelve_vector_callers(self) -> None:
         got = bm.map_e923_to_model_classes({}, ["CC_CHP", "CT_CHP"], {})
-        self.assertEqual({k: len(v) for k, v in got.items()},
-                         {"CC_CHP": 12, "CT_CHP": 12})
+        self.assertEqual(
+            {k: len(v) for k, v in got.items()}, {"CC_CHP": 12, "CT_CHP": 12}
+        )
 
     def test_thirteen_vector_caller_gets_thirteen(self) -> None:
-        got = bm.map_e923_to_model_classes(
-            {}, ["CC_CHP", "CT_CHP"], {}, empty_len=13
+        got = bm.map_e923_to_model_classes({}, ["CC_CHP", "CT_CHP"], {}, empty_len=13)
+        self.assertEqual(
+            {k: len(v) for k, v in got.items()}, {"CC_CHP": 13, "CT_CHP": 13}
         )
-        self.assertEqual({k: len(v) for k, v in got.items()},
-                         {"CC_CHP": 13, "CT_CHP": 13})
         for arr in got.values():
             self.assertEqual(len(arr[1:]), 12, "must yield twelve months")
 
