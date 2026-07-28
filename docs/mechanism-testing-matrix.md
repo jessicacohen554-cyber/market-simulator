@@ -229,24 +229,50 @@ not a new sweep:
    CHP miscosting (caiso-128) both point at offer-cost inputs; measured loaded
    HRs are the audit-grade first step.
 
-### 5.3 PJM — targets C1 CC_REGULAR-2023, C3a-2025, C3c-24/25
+### 5.3 PJM — **NO failing criterion** (keeper `2026-07-28-pjm-136-lossurf`, CALIBRATED)
 
-1. **`pjm_dam_availability`** — the intaken-but-untested measured availability
-   re-basis (2018–2026 data landed 2026-07-24, ships default-off). Directly
-   at C1 CC_REGULAR volume and the outage-envelope story.
-2. **Dominion CT/CC zonal inversion** (pjm-134 ask): first lever =
-   **`measured_ct_heat_rates`** on PJM's CT fleet (the measured-offer-surface
-   family provably cannot reach it — pjm-132 gives Dominion identical values).
-3. **G-20b guard false-negative lead** (~2.8–5.0 GW returned capacity per
-   tight hour) — the SUSPECT-grade reserve-supply tightness lead; audit before
-   any new mechanism.
-4. **`st_gas_mustrun_p25_level`** (MISO form) — re-ground the six overnight
-   ST_GAS floor limbs on measured operating levels (D-2 ST_GAS 44–55% forced).
-5. **Requirement-side dynamic reserves** (NYISO form, measured as-enforced
-   hourly requirement) — the supply side is adjudicated; the requirement side
-   is not.
-6. **TETCO-M3 winter daily citygate** (MISO `winter_citygate_daily` form) —
-   winter C3a shape candidate, own hub derivation.
+C1 CC_REGULAR-2023 and C3a-2025 closed at pjm-135; **C3c-24/25 closed at
+pjm-136**. The queue below is therefore no longer gate-driven — it is ranked by
+*structural* defect, per rule 1 `[R-STRUCT]` (a keeper is the most faithful run,
+not the lowest-error one).
+
+1. **Dominion CT_PEAKER leg — the primary open defect, NO selected mechanism.**
+   Model 0.724/1.380/2.923 TWh against 7.38/8.68/9.64; pjm-136 moved it for the
+   first time (+0.015/+0.096/+0.411, and Dominion *gains* while the ISO-wide CT
+   total falls) but ~94 % of the gap is unclosed. The remaining 76–80 % of the
+   measured DOM-vs-AEP separation is **congestion**, and nothing in the model
+   produces it on that boundary: every internal PJM link is
+   *bound-but-priceless* (AEP_Ohio→Dominion pinned at its limit in 84–91 % of
+   hours at a shadow price of **exactly 0.000**). A successor needs a mechanism
+   that makes an internal constraint *price*, not one that makes it tighter —
+   `pjm_apsouth_cut` is **I** and the per-border star lever is **closed by
+   measurement** (FINDING-pjm135 §7, FINDING-pjm136 §5).
+2. **`measured_ct_heat_rates`** (**U**) — still the first *named* lever for the
+   CT leg, and unaffected by pjm-136 (the measured-offer-surface family
+   provably cannot reach Dominion — pjm-132 gives it identical values).
+3. **C3c margin hardening** — C3c now passes by **1 h** (2024) and **2.5 h**
+   (2025) against a 0.5× floor. Not a gate to chase, but the thinnest margin in
+   the keeper: any delta must report its C3c effect explicitly.
+4. **`pjm_dam_availability`** (**U**) — the intaken-but-untested measured
+   availability re-basis (2018–2026 landed 2026-07-24, ships default-off). Its
+   original target (C1 CC_REGULAR volume) is closed, so it now stands or falls
+   on the outage-envelope story alone.
+5. **G-20b guard false-negative lead** (~2.8–5.0 GW returned capacity per tight
+   hour) — the SUSPECT-grade reserve-supply tightness lead; audit before any
+   new mechanism.
+6. **`st_gas_mustrun_p25_level`** (**U**, MISO form) — re-ground the six
+   overnight ST_GAS floor limbs on measured operating levels (D-2 ST_GAS
+   43–56 % forced).
+7. **Requirement-side dynamic reserves** (NYISO form) — the supply side is
+   adjudicated; the requirement side is not.
+8. **TETCO-M3 winter daily citygate** (`winter_citygate_daily` form, **U**) —
+   own hub derivation.
+
+**Representation limits filed at pjm-136, not defects to chase with a lever:**
+EMAAC hides sub-zonal congestion the 8-zone reduction cannot express (EASTERN vs
+NEW JERSEY $4.3–$5.0 mean |Δ|, >$1 in 36–45 % of hours, *inside* one model
+zone); and the external star node is lossless while internal wheeling pays a
+loss, so seam-sourced energy is delivered cheaper than internal energy.
 
 ### 5.4 MISO — targets C7 COAL_PRB (non-ledgerable), C3b spread compression (instrument-blocked), C3a-2024
 
