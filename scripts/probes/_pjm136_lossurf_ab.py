@@ -134,25 +134,30 @@ def _zonal_class_twh(bundle: Path, year: int) -> dict[str, float]:
     path = bundle / "dispatch" / f"{year}_P1.parquet"
     if not path.exists():
         return {}
-    frame = pd.read_parquet(path, columns=["zone", "plant_group", "mw"])
+    frame = pd.read_parquet(path, columns=["zone", "klass", "mw"])
     frame = frame[frame["zone"].astype(str) == "PJM_Dominion"]
-    grouped = frame.groupby("plant_group", observed=True)["mw"].sum() / 1.0e6
+    grouped = frame.groupby("klass", observed=True)["mw"].sum() / 1.0e6
     return {str(k): round(float(v), 4) for k, v in grouped.items() if v != 0.0}
 
 
 def _link_utilisation(bundle: Path, year: int) -> list[dict]:
-    """REPORTED ONLY — the charter's literal M1, from `flows.parquet`.
+    """REPORTED ONLY — the charter's literal M1, from `hourly/network_<year>`.
 
     Per internal link: utilisation against its own hourly limit, the share of
     hours at the bound, and — the caveat the pjm-135 lineage insists on — the
-    share of those hours carrying a NONZERO shadow price. A flow at its bound
-    with a zero dual is a degenerate vertex artifact, not a physical statement.
+    share of hours carrying a NONZERO shadow price. A flow at its bound with a
+    zero dual is a degenerate vertex artifact, not a physical statement.
+
+    NB the source is the `network_<year>.parquet` sidecar, not the bundle-level
+    `flows.parquet`: only the sidecar carries the `dual` / `limit_up` columns
+    (`flows.parquet` is the flat `from_zone`/`to_zone`/`mw` frame), and the dual
+    is the whole point of this measurement.
     """
-    path = bundle / "flows.parquet"
+    path = bundle / "hourly" / f"network_{year}.parquet"
     if not path.exists():
         return []
     frame = pd.read_parquet(path)
-    frame = frame[frame["kind"] == "link"]
+    frame = frame[(frame["kind"] == "link") & (frame["pass"] == "P1")]
     out: list[dict] = []
     for name, block in frame.groupby("name", observed=True):
         name = str(name)

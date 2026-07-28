@@ -15,7 +15,7 @@ committed metered zonal load, and the pjm-136 zonal LMP-component intake.
 
 | test | question | result | fires? |
 |---|---|---|---|
-| **M1a** what binds in the MODEL | which internal link would have to bind for Dominion's dual to move? | **NONE DOES.** The keeper separates on `AEP_Ohio→Dominion`, `West_APS→Dominion` and `SWMAAC→Dominion` in **0.0 % of all 26,280 hours**; the only links that ever separate are the two EAST-cut links (2.3–2.7 %) and `ComEd→AEP_Ohio` (0.0–0.4 %). All eight zones sit at ONE dual in **96.4 / 97.6 / 97.0 %** of hours | **YES — and it kills the flow-limit family** |
+| **M1a** what binds in the MODEL | which internal link would have to bind for Dominion's dual to move? | **NONE PRICES.** The keeper separates on `AEP_Ohio→Dominion`, `West_APS→Dominion` and `SWMAAC→Dominion` in **0.0 % of all 26,280 hours**, and (§1a, flow space) `AEP_Ohio→Dominion` is **pinned at its bound in 84–91 %** of them at a shadow price of **exactly 0.000** — bound-but-priceless, not slack. All eight zones sit at ONE dual in **96.4 / 97.6 / 97.0 %** of hours; exactly one internal link ever carries a nonzero dual (`ComEd→AEP_Ohio`, 0.35 % of 2025) | **YES — and it kills the flow-limit family** |
 | **M1b** what PJM does | how often does PJM separate on those same boundaries? | **100.0 % of hours, every link, every year.** Mean max zonal spread **$16.83 / $18.06 / $29.64** against the model's **$0.29 / $0.63 / $0.97** | **YES** |
 | **M2** the losses question | how much of the separation needs no binding constraint? | the loss component carries **20 / 24 / 23 %** of the mean DOM−AEP-DAYTON gap and **exceeds $1 on its own in 24 / 33 / 54 %** of hours. Per-zone deviations are **sign-stable across all 12 months** and derive to an offline acceptance of **12/12 pair-years in [0.5×, 1.5×]** (ratios 0.95–1.07) | **YES — the delta** |
 | **M3** topology adequacy | can an 8-zone reduction carry Dominion's congestion, or does it live inside a zone? | **it can.** Intra-zone hub spread is **$0.25–$1.70** mean \|Δ\| inside ComEd and AEP_Ohio against an inter-zone DOM-vs-AEP **$3.02 / $3.88 / $6.57**. (EMAAC is the exception — EASTERN vs NEW JERSEY runs **$4.3–$5.0**, a real sub-zonal limitation, but it is not the Dominion defect) | **NO — does not block** |
@@ -50,11 +50,43 @@ dearer end**.)
 tried tightening a Dominion-facing flow limit (AP-South) and the mesh re-routed;
 pjm-135 measured the star node price-tied to every zone at max |Δ| = 0.0000 and
 closed the per-border lever. M1a says why both were doomed and why any successor
-in that family would be: **the model's Dominion-facing links never bind at all.**
-Making a slack constraint tighter can only start to bind; it cannot manufacture
-the persistent, every-hour gradient the measurement shows. A mechanism that
-separates duals **without requiring a constraint to bind** is the only kind that
-can reach this defect.
+in that family would be. A mechanism that separates duals **without requiring a
+constraint to price** is the only kind that can reach this defect.
+
+### §1a — the flow-space half of M1: the links are **bound-but-priceless**, not slack
+
+The dual-space table above was read from the committed sidecars before any
+solve. The charter also asked for the flow-space reading — per-link utilisation
+against the hourly limit — which needs a solved bundle. Run on arm A's own
+`hourly/network_<year>.parquet` (the sidecar that carries `dual` and
+`limit_up`; the bundle-level `flows.parquet` carries neither):
+
+| arm-A internal link | median utilisation | hours **at** the bound | hours with a **nonzero dual** | max \|dual\| |
+|---|---|---|---|---|
+| **AEP_Ohio→Dominion** | **1.000 / 1.000** | **84.44 % / 90.73 %** | **0.00 % / 0.00 %** | **0.000 / 0.000** |
+| **SWMAAC→Dominion** | **1.000 / 1.000** | **68.45 % / 80.50 %** | **0.00 % / 0.00 %** | **0.000 / 0.000** |
+| West_APS→Central_PA | 1.000 / 1.000 | 61.51 % / 64.35 % | 0.00 % / 0.00 % | 0.000 / 0.000 |
+| ATSI→Central_PA | 0.923 / 0.807 | 38.15 % / 29.57 % | 0.00 % / 0.00 % | 0.000 / 0.000 |
+| West_APS→Dominion | 0.763 / 0.627 | 33.86 % / 26.34 % | 0.00 % / 0.00 % | 0.000 / 0.000 |
+| ComEd→AEP_Ohio | 0.181 / 0.379 | 0.40 % / 0.48 % | 0.00 % / **0.35 %** | 0.000 / **21.073** |
+
+(2023 / 2025; the remaining links are lower still.)
+
+**This corrects a natural but wrong reading of §1 — including one this session
+first wrote — that the Dominion-facing constraints are "slack."** They are not.
+`AEP_Ohio→Dominion` is **pinned at its limit in 84–91 % of hours**, and
+`SWMAAC→Dominion` in 68–81 %. What is zero is the **shadow price**, in every
+hour of every year. The constraints are *weakly* active: the optimal face
+contains points where the flow is below the bound, so the LP is indifferent to
+the flow's value and no rent forms. In the whole 8-zone internal network, across
+26,280 hours, exactly one link ever prices — `ComEd→AEP_Ohio` in 0.35 % of 2025.
+
+This makes the flow-limit family's failure **stronger**, not weaker. Tightening
+a limit that is already ridden and still prices at exactly zero cannot produce a
+gradient — the simplex simply picks a different vertex on the same face at the
+same cost, which is precisely the re-routing pjm-134 observed and pjm-135
+measured. The degeneracy *is* the disease, and no re-parameterisation of a flow
+bound treats it.
 
 ## §2 — M1b/M2: the loss component is exactly such a mechanism, and it is measured
 
@@ -174,12 +206,14 @@ solved.
 ## §5 — DO-NOT-REDO (binding on successors)
 
 - **Do not propose another PJM internal flow-limit lever against the Dominion
-  inversion.** §1 measures every Dominion-facing link separating in **0.0 % of
-  26,280 hours** in the keeper: those constraints are slack, and tightening a
-  slack constraint cannot produce a persistent every-hour gradient. This
-  generalises pjm-134 §8 (AP-South) and pjm-135 §7 (the star node) from "the mesh
-  re-routes" to "there is nothing to re-route *from* — no Dominion boundary
-  carries congestion at all."
+  inversion.** §1/§1a measure every Dominion-facing link separating in **0.0 % of
+  26,280 hours** while `AEP_Ohio→Dominion` is **pinned at its bound in 84–91 %**
+  of them at a shadow price of **exactly 0.000**. The constraints are
+  bound-but-priceless, so tightening one moves the simplex to another vertex on
+  the same zero-cost face instead of creating rent. This generalises pjm-134 §8
+  (AP-South) and pjm-135 §7 (the star node) from "the mesh re-routes" to the
+  reason it can: **no internal PJM boundary carries a nonzero dual at all**,
+  except `ComEd→AEP_Ohio` in 0.35 % of 2025.
 - **Do not re-open the 8-zone topology for the Dominion boundary.** §3 measures
   the DOM-vs-AEP separation at 4–12× the intra-zone spread of either neighbour:
   the reduction can carry it. (EMAAC is a *different*, disclosed sub-zonal
