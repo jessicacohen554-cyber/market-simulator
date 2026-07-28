@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-28T02:31:11",
+  "timestamp": "2026-07-28T02:57:23",
   "iso": "MISO",
   "years": [
-    2024
+    2025
   ],
   "hours": 8760,
   "passes": [
@@ -11,7 +11,7 @@
   "commitment": false,
   "commitment_screen_coal": true,
   "gas_prices": {
-    "2024": 2.19
+    "2025": 3.52
   },
   "coal_lignite_mustrun": null,
   "coal_prb_mustrun": null,
@@ -263,9 +263,9 @@
   "mass_cap_program": null,
   "btm_backfill_year": null,
   "shared_inputs": {
-    "eia930": "../_shared/MISO/eia930-bd516a63f9d7.parquet",
-    "eia923": "../_shared/MISO/eia923-8eb33d0efb4d.parquet",
-    "campd": "../_shared/MISO/campd-c6badd8f79dc.parquet",
+    "eia930": "../_shared/MISO/eia930-506784cbfc9c.parquet",
+    "eia923": "../_shared/MISO/eia923-466be6c80c50.parquet",
+    "campd": "../_shared/MISO/campd-b125b4859ce0.parquet",
     "unit_outages": "../_shared/MISO/unit_outages-5b083f8b739a.parquet",
     "unit_outages_short": "../_shared/MISO/unit_outages_short-8bcb14c5f625.parquet",
     "unit_outages_maxgen": "../_shared/MISO/unit_outages_maxgen-1244687d16cc.parquet",
@@ -273,8 +273,8 @@
     "unit_outages_layup": "../_shared/MISO/unit_outages_layup-ec855c2a24ba.parquet",
     "capacity_deliverability": "../_shared/MISO/capacity_deliverability-8949cf5d0c5b.parquet"
   },
-  "git_sha": "a90b752",
-  "basis_sha": "a90b752cf782a166b9678087edb4d33c8cf129cb",
+  "git_sha": "29e0f60",
+  "basis_sha": "29e0f6027b0dde4f42aab50020b482b574c8f201",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
