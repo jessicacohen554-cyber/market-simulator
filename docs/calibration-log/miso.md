@@ -1814,3 +1814,44 @@ OOM) — one process per year into one bundle, reassembled with
 no marker. Rule 16: all three years fresh in one bundle per arm.
 
 Next number: **miso-100.**
+
+## 2026-07-28 — miso-100: the ST_CHP diurnal anti-correlation is CHARACTERIZED to a representation choice (no solve) — the measured wave is ambient temperature (r ≈ −0.96, amplitude predicted by the committed 0.0054/°C slope), the model is flat on every channel that matters, and the class statistic is one refinery vs one anti-phase merchant hump
+
+**Lane:** the bench-collapse FINDING §6.1 follow-up (owner-scoped
+characterization; rule 1 structural fidelity — ST_CHP is D-1-ungated and
+D-2-exempt, no gate at risk). **No LP, no lever tested, no matrix cell
+change. Keeper `2026-07-27-miso-98b-sectormeasured` UNCHANGED by this
+session.** *(The miso-99 promotion merged concurrently; the finding carries
+over to the new keeper unchanged — `miso99_chp_hr_B`'s own diagnostics read
+ST_CHP `profile_r` −0.797/−0.762/−0.771, ST_CHP being out of the miso-99
+delta's scope by design.)* Evidence:
+`results/calibration/FINDING-miso100-stchp-diurnal-2026-07.md`.
+
+* **The D-1 ST_CHP row is a one-refinery test**: 3 of 9 benched plants carry
+  CEMS hourly; the paired actual (0.85–0.93 TWh, ~a fifth of the class's
+  5.2/5.5/3.9 TWh EIA-923 actual) is 91–99 % ExxonMobil Beaumont Refinery.
+* **The actual's shape is temperature, not host-following**: peak h05–08,
+  trough h14–16, amp 3–6.6 %, winter and summer; corr vs a TMIN→TMAX
+  diurnal proxy −0.91..−0.99 every year/season; the committed
+  `temp_derate_slope_st_gas` 0.0054/°C × the ~11 °C diurnal range predicts
+  the amplitude. The winter wave means no hard 15 °C onset.
+* **The model is flat by construction** (flat `MECH_CHP_STEAM` floor — the
+  ONLY floor on ST_CHP unit-hours, {2: 192,720} census — clipped to
+  hour-flat availability; flat report BTM add-back; Beaumont 100 %
+  floor-pinned, byte-flat payload), and its entire class hour-of-day signal
+  is R S Nelson's 2.5–10 GWh/yr afternoon price-following dispatch —
+  anti-phase with the temperature trough, corr −0.795/−0.751/−0.740 by
+  itself. `temp_dependent_derate` (MISO cell `U`, OFF here) could not help:
+  `iso_zone_tmax` broadcasts daily TMAX **flat within-day** — hour-of-day
+  capability resolution does not exist anywhere in the availability chain.
+* **Proposed, NOT built** (owner decides on an arm): hour-grain diurnal
+  temperature capability for the steam classes — interpolate the curated
+  daily TMIN/TMAX into an hourly dry-bulb input for the existing
+  temperature-derate ST leg; MISO-derived slope AND onset (pjm-95 refuted
+  the committed slopes on PJM's own fleet; rule 25). No new floor (the
+  steam-floor clip propagates the shape; rule 19). Pre-stated honestly: the
+  scored `profile_r` may stay negative in 2024–25 because Nelson's
+  anti-phase hump and the flat add-back are separate channels — not grounds
+  to widen the lever (rule 1). Nelson slice conduct / `1393`
+  fleet-classification is a separable owner decision.
+* Next number: **miso-101.**
