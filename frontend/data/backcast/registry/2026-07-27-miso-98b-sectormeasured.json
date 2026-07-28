@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-27-miso-98b-sectormeasured",
+  "label": "miso 98b sectormeasured",
+  "date": "2026-07-27",
+  "shorthand": "miso-98b-sectormeasured",
+  "definition": "(PROBE \u2014 A/B ARM; keeper unchanged) miso-98 arm B: chp_sector = the measured EIA-860 sector on 104 rows (the landed miso-97 TASK 1 correction), holding 1,405 MW more CHP behind the meter. The A/B verdict: the accurate input IMPROVES the run \u2014 C3b price shape FAIL->PASS, C3a better in all three years (2024 -10.1 -> -7.8 %, flips PASS), C1 PASS in both arms, no criterion regresses. The pre-registered CC_CHP degradation happened (+4.9 -> +11.8 % 2023) and stays well inside the C1 band; the pre-registered CT_CHP prediction is REFUTED (-21.8 -> -33.3 %) because the BTM share is nameplate-weighted on capacity but generation-weighted on the benchmark. Evidence: results/calibration/FINDING-miso98-chp-sector-ab-2026-07.md",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-27-miso-98b-sectormeasured.js",
+  "bundle": "results/calibration/miso98_chp_sector_B"
+}
