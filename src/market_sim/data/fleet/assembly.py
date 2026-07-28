@@ -1114,6 +1114,7 @@ def load_or_synthesize_bins(
             iso,
             iso_config,
             measured_ct_heat_rates=config.measured_ct_heat_rates,
+            measured_chp_heat_rates=config.measured_chp_heat_rates,
         )
         + retired_within_window,
         iso,
@@ -1194,6 +1195,7 @@ def build_base_fleet(
                 iso_config,
                 year=vintage_year,
                 measured_ct_heat_rates=config.measured_ct_heat_rates,
+                measured_chp_heat_rates=config.measured_chp_heat_rates,
             )
             + retired_within_window
         )
@@ -1232,6 +1234,7 @@ def build_base_fleet(
                 iso_config,
                 year=vintage_year,
                 measured_ct_heat_rates=config.measured_ct_heat_rates,
+                measured_chp_heat_rates=config.measured_chp_heat_rates,
             )
             + retired_within_window,
             n_bins=(
