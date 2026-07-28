@@ -2923,6 +2923,11 @@ def solve_and_persist(
     gt_ambient_derate_slope_cc: float | None = None,
     gt_ambient_derate_slope_ct: float | None = None,
     temp_dependent_derate: bool = False,
+    temp_derate_hourly_grain: bool = False,
+    temp_derate_mean_anchored: bool = False,
+    temp_derate_classes: frozenset[str] | tuple[str, ...] | None = None,
+    temp_derate_slope_st_chp: float | None = None,
+    temp_derate_slope_ct_chp: float | None = None,
     ercot_offer_surface_conditional: bool = False,
     ercot_offer_surface_midcurve_conditional: bool = False,
     ercot_offer_surface_cleared_share: bool = False,
@@ -3522,8 +3527,21 @@ def solve_and_persist(
         if temp_dependent_derate:
             # Mirror run_year so run_config.json records the switch (rule 25). The
             # per-class slopes/reference temps live in ScenarioConfig defaults, so
-            # recording the boolean captures the full solve-changing configuration.
-            recorded_cfg = recorded_cfg.with_overrides(temp_dependent_derate=True)
+            # recording the boolean captures the full solve-changing configuration
+            # EXCEPT where a leg overrides them — those are recorded explicitly
+            # below (rule 24 [R-REGISTRY]: no off-registry tuning channel).
+            _td_rec: dict = {"temp_dependent_derate": True}
+            if temp_derate_hourly_grain:
+                _td_rec["temp_derate_hourly_grain"] = True
+            if temp_derate_mean_anchored:
+                _td_rec["temp_derate_mean_anchored"] = True
+            if temp_derate_classes:
+                _td_rec["temp_derate_classes"] = frozenset(temp_derate_classes)
+            if temp_derate_slope_st_chp is not None:
+                _td_rec["temp_derate_slope_st_chp"] = float(temp_derate_slope_st_chp)
+            if temp_derate_slope_ct_chp is not None:
+                _td_rec["temp_derate_slope_ct_chp"] = float(temp_derate_slope_ct_chp)
+            recorded_cfg = recorded_cfg.with_overrides(**_td_rec)
         if coal_mustrun_online_pmin:
             # Meta-writer audit fix (Stage 7): mirrors run_year; previously
             # entirely absent from recorded_cfg.
@@ -4338,6 +4356,11 @@ def solve_and_persist(
             gt_ambient_derate_slope_cc=gt_ambient_derate_slope_cc,
             gt_ambient_derate_slope_ct=gt_ambient_derate_slope_ct,
             temp_dependent_derate=temp_dependent_derate,
+            temp_derate_hourly_grain=temp_derate_hourly_grain,
+            temp_derate_mean_anchored=temp_derate_mean_anchored,
+            temp_derate_classes=temp_derate_classes,
+            temp_derate_slope_st_chp=temp_derate_slope_st_chp,
+            temp_derate_slope_ct_chp=temp_derate_slope_ct_chp,
             ercot_offer_surface_conditional=ercot_offer_surface_conditional,
             ercot_offer_surface_midcurve_conditional=(
                 ercot_offer_surface_midcurve_conditional
@@ -5091,6 +5114,16 @@ def solve_and_persist(
         "cc_nameplate_summer_derate": cc_nameplate_summer_derate,
         "coal_nameplate_summer_derate": coal_nameplate_summer_derate,
         "temp_dependent_derate": temp_dependent_derate,
+        "temp_derate_hourly_grain": temp_derate_hourly_grain,
+        "temp_derate_mean_anchored": temp_derate_mean_anchored,
+        # JSON has no set type — meta carries the scope as a sorted list, which
+        # ``run_year`` re-freezes. Without this the no-LP bundle reconstruction
+        # (full_run_year_kwargs) would silently rebuild an UNSCOPED arm.
+        "temp_derate_classes": (
+            sorted(temp_derate_classes) if temp_derate_classes else None
+        ),
+        "temp_derate_slope_st_chp": temp_derate_slope_st_chp,
+        "temp_derate_slope_ct_chp": temp_derate_slope_ct_chp,
         "ercot_offer_surface_conditional": ercot_offer_surface_conditional,
         "ercot_offer_surface_midcurve_conditional": (
             ercot_offer_surface_midcurve_conditional
@@ -8793,6 +8826,52 @@ def main() -> None:
         "in ScenarioConfig.temp_derate_slope_*; forward-reproducible (rule 11).",
     )
     parser.add_argument(
+        "--temp-derate-hourly-grain",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Feed the temperature derate an HOUR-GRAIN dry-bulb series "
+        "(daily TMIN/TMAX reconstructed by the standard climatological cosine "
+        "bridge) instead of the day-flat TMAX, so the curve carries an "
+        "hour-of-day capability wave. Input-grain refinement of the existing "
+        "mechanism, not a new floor (rule 19). Requires "
+        "--temp-dependent-derate.",
+    )
+    parser.add_argument(
+        "--temp-derate-mean-anchored",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Evaluate the derate curve about the zone's own ANNUAL-MEAN "
+        "dry-bulb with NO onset hinge (annual mean exactly 1.0), composing as a "
+        "pure SHAPE overlay on top of the existing level treatment instead of "
+        "replacing it. Claims only the within-day/seasonal shape the "
+        "within-day estimator identifies, never the class level. Requires "
+        "--temp-dependent-derate.",
+    )
+    parser.add_argument(
+        "--temp-derate-classes",
+        default=None,
+        help="Comma-separated plant groups to scope the temperature derate to "
+        "(e.g. 'ST_CHP,CT_CHP'). Default: every class the mechanism knows. An "
+        "ISO arms only the classes it has identified on its own fleet "
+        "(rule 25 [R-ISO-SCOPE]; pjm-95 refuted the literature slopes on PJM).",
+    )
+    parser.add_argument(
+        "--temp-derate-slope-st-chp",
+        type=float,
+        default=None,
+        help="ST_CHP fractional capability loss per deg C. Defaults to the "
+        "ST_GAS slope. MISO measured value 0.00141 "
+        "(scripts/data/derive_campd_temp_derate_params.py --iso MISO).",
+    )
+    parser.add_argument(
+        "--temp-derate-slope-ct-chp",
+        type=float,
+        default=None,
+        help="CT_CHP fractional capability loss per deg C. Defaults to the "
+        "CT_PEAKER slope. MISO measured value 0.00141 (same derivation — the "
+        "CEMS meter spans both cogen tranches, so they identify jointly).",
+    )
+    parser.add_argument(
         "--cc-capacity-reconcile",
         action=argparse.BooleanOptionalAction,
         default=False,
@@ -10494,6 +10573,17 @@ def main() -> None:
         cc_derate_from_top=args.cc_derate_from_top,
         cc_nameplate_summer_derate=args.cc_nameplate_summer_derate,
         temp_dependent_derate=args.temp_dependent_derate,
+        temp_derate_hourly_grain=args.temp_derate_hourly_grain,
+        temp_derate_mean_anchored=args.temp_derate_mean_anchored,
+        temp_derate_classes=(
+            frozenset(
+                c.strip() for c in args.temp_derate_classes.split(",") if c.strip()
+            )
+            if args.temp_derate_classes
+            else None
+        ),
+        temp_derate_slope_st_chp=args.temp_derate_slope_st_chp,
+        temp_derate_slope_ct_chp=args.temp_derate_slope_ct_chp,
         pjm_offer_surface_conditional=args.pjm_offer_surface_conditional,
         pjm_da_virtual_bids=args.pjm_da_virtual_bids,
         pjm_offer_midcurve_conditional=args.pjm_offer_midcurve_conditional,

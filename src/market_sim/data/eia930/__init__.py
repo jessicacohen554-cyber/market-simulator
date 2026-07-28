@@ -74,6 +74,8 @@ from .weather import (
     _LW_RAW as _LW_RAW,
     _broadcast_daily_to_hourly as _broadcast_daily_to_hourly,
     _load_weather_from_raw as _load_weather_from_raw,
+    diurnal_drybulb_from_daily,
+    iso_zone_hourly_drybulb,
     iso_zone_tmax,
     load_weather,
     neiso_load_weighted_temp,
@@ -183,6 +185,8 @@ __all__ = [
     "DATA_DIR",
     # weather
     "load_weather",
+    "diurnal_drybulb_from_daily",
+    "iso_zone_hourly_drybulb",
     "iso_zone_tmax",
     "neiso_load_weighted_temp",
     # zonal shares
