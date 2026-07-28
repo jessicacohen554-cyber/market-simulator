@@ -1382,6 +1382,13 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                         e923_pk.get(code, {}),
                         klasses,
                         bm.class_nameplate_split(npl_fam.get(code, {}), klasses),
+                        # Every consumer below reads these as the 13-vector
+                        # [annual, m01..m12] that ``e923_pk`` is built as, and
+                        # slices ``[1:]`` for twelve months. A multi-class plant
+                        # with NO EIA-923 rows has no input array to take the
+                        # length from, so the length must be stated here or the
+                        # month loop runs off an 11-long array (MISO 2025).
+                        empty_len=13,
                     )
                 else:
                     whole = np.zeros(13)
