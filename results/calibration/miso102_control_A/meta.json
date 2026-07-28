@@ -284,9 +284,9 @@
   "mass_cap_program": null,
   "btm_backfill_year": null,
   "shared_inputs": {
-    "eia930": "../_shared/MISO/eia930-506784cbfc9c.parquet",
-    "eia923": "../_shared/MISO/eia923-466be6c80c50.parquet",
-    "campd": "../_shared/MISO/campd-b125b4859ce0.parquet",
+    "eia930": "../_shared/MISO/eia930-2f4bfa01b1e4.parquet",
+    "eia923": "../_shared/MISO/eia923-96136b23f6a3.parquet",
+    "campd": "../_shared/MISO/campd-0c8c8860e930.parquet",
     "unit_outages": "../_shared/MISO/unit_outages-5b083f8b739a.parquet",
     "unit_outages_short": "../_shared/MISO/unit_outages_short-8bcb14c5f625.parquet",
     "unit_outages_maxgen": "../_shared/MISO/unit_outages_maxgen-1244687d16cc.parquet",
