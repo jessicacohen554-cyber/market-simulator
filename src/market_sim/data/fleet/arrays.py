@@ -468,32 +468,97 @@ def _availability_matrix(
             if year is not None
             else (getattr(config, "weather_year", None) if config else None)
         )
+        # Hour-grain leg (config.temp_derate_hourly_grain): feed the curve the
+        # diurnal dry-bulb reconstruction instead of the day-flat TMAX, so the
+        # derate carries an hour-of-day capability wave. Falls back to the
+        # day-flat series for any zone whose source lacks TMIN (byte-identical
+        # to the committed path there).
+        _td_hourly = (
+            bool(getattr(config, "temp_derate_hourly_grain", False))
+            if config
+            else False
+        )
+        # Mean-anchored leg (config.temp_derate_mean_anchored): no hinge, curve
+        # evaluated about the zone's own annual-mean dry-bulb, annual mean 1.0.
+        _td_anchored = (
+            bool(getattr(config, "temp_derate_mean_anchored", False))
+            if config
+            else False
+        )
         if _td_on and _iso and _td_year:
             _ref = float(config.temp_derate_ref_c)
+            # Cogen-specific slopes fall back to their merchant sibling's, so an
+            # unset value is byte-identical to the committed behaviour.
+            _slope_st_chp = getattr(config, "temp_derate_slope_st_chp", None)
+            _slope_ct_chp = getattr(config, "temp_derate_slope_ct_chp", None)
             _TD_PARAMS = {
                 "CC_REGULAR": (float(config.temp_derate_slope_cc), _ref),
                 "CC_CHP": (float(config.temp_derate_slope_cc), _ref),
                 "CT_PEAKER": (float(config.temp_derate_slope_ct), _ref),
-                "CT_CHP": (float(config.temp_derate_slope_ct), _ref),
+                "CT_CHP": (
+                    float(
+                        _slope_ct_chp
+                        if _slope_ct_chp is not None
+                        else config.temp_derate_slope_ct
+                    ),
+                    _ref,
+                ),
                 "ST_GAS": (float(config.temp_derate_slope_st_gas), _ref),
-                "ST_CHP": (float(config.temp_derate_slope_st_gas), _ref),
+                "ST_CHP": (
+                    float(
+                        _slope_st_chp
+                        if _slope_st_chp is not None
+                        else config.temp_derate_slope_st_gas
+                    ),
+                    _ref,
+                ),
                 "COAL": (
                     float(config.temp_derate_slope_coal),
                     float(config.temp_derate_ref_c_coal),
                 ),
             }
-            from market_sim.data.eia_loader import iso_zone_tmax
+            # Class scope (config.temp_derate_classes): an ISO arms only the
+            # classes it has identified on its own fleet (rule 25 [R-ISO-SCOPE]).
+            _td_scope = getattr(config, "temp_derate_classes", None)
+            if _td_scope:
+                _TD_PARAMS = {
+                    k: v for k, v in _TD_PARAMS.items() if k in set(_td_scope)
+                }
+            from market_sim.data.eia_loader import (
+                iso_zone_hourly_drybulb,
+                iso_zone_tmax,
+            )
 
             _td_zones = {g.zone for g in generators if g.plant_group in _TD_PARAMS}
             for _z in _td_zones:
-                _t = iso_zone_tmax(_iso, int(_td_year), hours, zone=_z)
-                if _t is not None and _t[0] is not None:
-                    _td_tmax[_z] = np.asarray(_t[0], dtype=float)
+                _series = None
+                if _td_hourly:
+                    _series = iso_zone_hourly_drybulb(
+                        _iso, int(_td_year), hours, zone=_z
+                    )
+                if _series is None:
+                    _t = iso_zone_tmax(_iso, int(_td_year), hours, zone=_z)
+                    _series = _t[0] if (_t is not None and _t[0] is not None) else None
+                if _series is not None:
+                    _td_tmax[_z] = np.asarray(_series, dtype=float)
 
         def _td_covers(gen: "Generator") -> bool:
             """True when the temperature derate handles this generator's summer
-            capability (so the flat net-summer derate must be skipped for it)."""
-            return _td_on and gen.plant_group in _TD_PARAMS and gen.zone in _td_tmax
+            capability (so the flat net-summer derate must be skipped for it).
+
+            Never true in mean-anchored mode: that leg is a pure SHAPE overlay
+            with annual mean 1.0, so it composes ON TOP of the existing level
+            treatment (the flat class derate / measured net-summer ratio) rather
+            than replacing it. Replacing it there would silently move the class
+            level, which the within-day estimator behind the slope explicitly
+            does not identify.
+            """
+            return (
+                _td_on
+                and not _td_anchored
+                and gen.plant_group in _TD_PARAMS
+                and gen.zone in _td_tmax
+            )
 
         for g_idx, gen in enumerate(generators):
             if gen.plant_group not in THERMAL_AVAILABILITY:
@@ -729,13 +794,30 @@ def _availability_matrix(
                 if _tmax is None:
                     continue
                 _slope, _ref_td = _p
-                # capacity fraction vs the ISO/onset rating point (<= 1.0)
-                raw = 1.0 - _slope * np.maximum(0.0, _tmax - _ref_td)
+                if _td_anchored:
+                    # Mean-anchored (config.temp_derate_mean_anchored): NO hinge,
+                    # evaluated about the zone's own annual-mean dry-bulb, so the
+                    # curve's annual mean is exactly 1.0 and the arm claims only
+                    # SHAPE, never level. The hinge form below asserts no
+                    # response below ``_ref_td``; MISO's own CAMPD onset scan
+                    # measures a clear response in the 5-15 C bins, which that
+                    # hinge would zero (see ScenarioConfig.temp_derate_mean_
+                    # anchored). Capability rises below the mean and falls above.
+                    raw = 1.0 - _slope * (_tmax - float(np.mean(_tmax)))
+                else:
+                    # capacity fraction vs the ISO/onset rating point (<= 1.0)
+                    raw = 1.0 - _slope * np.maximum(0.0, _tmax - _ref_td)
                 # Net-summer anchor for classes that already carry a summer
                 # derate: rescale so the Jun-Sep mean of the curve equals that
                 # net-summer factor (reshape only). COAL/ST_GAS have no existing
                 # summer derate -> no anchor, raw curve applied directly.
-                if cc_np_derate and gen.plant_group in ("CC_REGULAR", "CC_CHP"):
+                # Skipped entirely in mean-anchored mode, where the flat derate
+                # was never removed and the curve is already annual-mean 1.0 —
+                # re-anchoring it on the summer mean there would re-introduce the
+                # level move the mode exists to avoid.
+                if _td_anchored:
+                    _anchor = None
+                elif cc_np_derate and gen.plant_group in ("CC_REGULAR", "CC_CHP"):
                     _r = _pkg_ns().cc_summer_derate_ratio(int(gen.plant_code))
                     _anchor = _r if (_r is not None and _r < 1.0) else None
                 elif gen.plant_group in _SUMMER_CLASS_DERATE:
@@ -746,7 +828,16 @@ def _availability_matrix(
                     _sm = float(np.mean(raw[summer]))
                     if _sm > 0.0:
                         raw = raw * (_anchor / _sm)
-                availability[g_idx, :] *= np.clip(raw, 0.0, 1.0)
+                if _td_anchored:
+                    # The mean-anchored curve is >1 on cold hours BY DESIGN (a
+                    # gas turbine makes more than its rating point when the air
+                    # is dense). Clipping the multiplier at 1 here would keep
+                    # only the downward half and turn a level-neutral reshape
+                    # into a net level cut; the trailing clip on availability
+                    # still bounds the result at the pmax basis.
+                    availability[g_idx, :] *= np.maximum(raw, 0.0)
+                else:
+                    availability[g_idx, :] *= np.clip(raw, 0.0, 1.0)
             np.clip(availability, 0.0, 1.0, out=availability)
 
 

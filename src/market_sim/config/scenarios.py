@@ -6795,6 +6795,92 @@ class ScenarioConfig:
     temp_derate_slope_st_gas: float = 0.0054  # gas-steam fractional loss per C
     temp_derate_slope_coal: float = 0.0040  # coal fractional loss per C above ref
 
+    # --- hour-grain leg of the temperature derate (miso-101) ------------------
+    # The curve above is fed by ``iso_zone_tmax``, which broadcasts the daily
+    # TMAX **flat within the day**: even armed, it reshapes day-to-day and
+    # seasonally but carries ZERO hour-of-day signal, so no channel in the
+    # availability chain can produce a diurnal capability wave
+    # (results/calibration/FINDING-miso100-stchp-diurnal-2026-07.md §4/§5).
+    # ``temp_derate_hourly_grain`` swaps that input for
+    # ``iso_zone_hourly_drybulb`` — the same curated daily TMIN/TMAX
+    # reconstructed to hourly by the standard climatological two-piece cosine
+    # bridge (constants.DIURNAL_TMIN_HOUR / DIURNAL_TMAX_HOUR, Parton & Logan
+    # 1981). It is an input-GRAIN refinement, NOT a new mechanism and NOT a new
+    # floor (rule 19 [R-ONE-MECH]): the existing MECH_CHP_STEAM floor is already
+    # clipped to ``pmax x availability``, so the finer availability shape
+    # propagates to every floored cogen automatically, and unfloored units
+    # simply see an hour-varying pmax.
+    #
+    # ``temp_derate_mean_anchored`` changes the curve's ANCHOR, and with it the
+    # claim being made. The committed form ``1 - slope x max(0, T - ref)`` is a
+    # hinge that asserts no response below ``ref`` and a pure level CUT above
+    # it. Mean-anchored instead evaluates ``1 - slope x (T - Tbar_zone)`` about
+    # the zone's own annual-mean dry-bulb, with NO hinge: capability rises below
+    # the mean and falls above it, and the annual mean of the curve is exactly
+    # 1.0 by construction. So the arm claims ONLY the within-day/seasonal SHAPE
+    # that the derivation identifies and claims NOTHING about the class's level
+    # — deliberately the smaller claim, since the estimator behind it is a
+    # within-day fixed-effects regression that differences every level term
+    # away. (Availability is still clipped to <= 1, so a unit already near 1.0
+    # loses a sliver of the cold-hour uplift; the level-neutrality is exact only
+    # below that clip.)
+    #
+    # ``temp_derate_classes`` scopes the WHOLE temperature-derate mechanism to a
+    # subset of plant groups (None = every class it knows, the committed
+    # behaviour). Scoping matters because the slopes are per-class physics and
+    # pjm-95 refuted the committed literature values on PJM's own CAMPD — an ISO
+    # may only arm the classes it has actually identified (rule 25
+    # [R-ISO-SCOPE]).
+    #
+    # ``temp_derate_slope_st_chp`` / ``temp_derate_slope_ct_chp`` carry a
+    # cogen-specific slope so an ISO can arm its CHP classes without disturbing
+    # merchant ST_GAS / CT_PEAKER, which are a different fleet with a different
+    # (and here un-identified) response. None falls back to the ST_GAS / CT
+    # slope above, i.e. byte-identical to the committed behaviour.
+    #
+    # MISO identification (scripts/data/derive_campd_temp_derate_params.py
+    # --iso MISO; docs/parameter-citations.md): within-day, plant-day
+    # fixed-effects regression of log CEMS gross load on the hour-grain
+    # dry-bulb, over the six CEMS-identifiable MISO cogens, 2023-2025 =>
+    # capacity-weighted p50 slope **0.00141/C** for the ST_CHP+CT_CHP pair,
+    # ~5x BELOW the committed literature CC slope (0.0076/C) — MISO's own
+    # confirmation of the pjm-95 non-transferability finding. The onset scan
+    # finds NO hinge: at the dominant plant the response is 0.0036/C in the
+    # 5-10 C bin and 0.0030/C in the 10-15 C bin (r = -0.38 / -0.28), i.e.
+    # clearly present BELOW the committed 15 C reference, which would have
+    # zeroed it. Hence mean-anchored rather than hinged. The h05/h15 phase
+    # anchors are validated on the same conduct (best-fit lag 0 h).
+    # Hour-grain dry-bulb input (iso_zone_hourly_drybulb) instead of the
+    # day-flat TMAX. Source: constants.DIURNAL_TMIN_HOUR/DIURNAL_TMAX_HOUR,
+    # Parton & Logan (1981) two-piece cosine reconstruction; phase validated on
+    # MISO CAMPD conduct at lag 0 (derive_campd_temp_derate_params.py --iso MISO).
+    temp_derate_hourly_grain: bool = False
+    # No onset hinge; curve evaluated about the zone's own annual-mean dry-bulb
+    # so its annual mean is exactly 1.0 and it composes as a level-neutral SHAPE
+    # overlay. Source: the MISO onset scan measures a within-day response in the
+    # 5-15 C bins (0.0036 / 0.0030 per C, r -0.38 / -0.28) that the committed
+    # max(0, T - 15) hinge would zero (derive_campd_temp_derate_params.py,
+    # MISO CAMPD 2023-2025, derived 2026-07).
+    temp_derate_mean_anchored: bool = False
+    # Plant-group scope for the whole temperature-derate mechanism (None = every
+    # class it knows). Source: rule 25 [R-ISO-SCOPE] — pjm-95 refuted the
+    # committed literature slopes on PJM's own CAMPD, so an ISO arms only the
+    # classes it has identified on its own fleet. MISO arms ST_CHP+CT_CHP, the
+    # two tranches its CEMS cogen meter spans (miso-101, 2026-07).
+    temp_derate_classes: frozenset[str] | None = None
+    # ST_CHP fractional capability loss per deg C; None falls back to the ST_GAS
+    # slope. Source: MISO measured 0.00141/C — capacity-weighted p50 of the
+    # within-day plant-day fixed-effects slope across the 6 CEMS-identifiable
+    # MISO cogens, 2023-25 (scripts/data/derive_campd_temp_derate_params.py
+    # --iso MISO; data/raw/_processed-legacy/campd_temp_derate_params_MISO.csv).
+    temp_derate_slope_st_chp: float | None = None
+    # CT_CHP fractional capability loss per deg C; None falls back to the
+    # CT_PEAKER slope. Source: the same MISO derivation, 0.00141/C — the CEMS
+    # facility meter spans both cogen tranches, so they identify jointly and
+    # must carry the same slope or one half of a plant would breathe alone
+    # (MISO CAMPD 2023-2025, derived 2026-07).
+    temp_derate_slope_ct_chp: float | None = None
+
     # Reliability gas-steam (ST_GAS) tranche heat-rate OVERRIDES (relative to
     # the plant's base HR). When set, each reliability ST_GAS bin's committed /
     # economic / peaking heat rate is base_HR x {gas_st_committed_hr_override,
