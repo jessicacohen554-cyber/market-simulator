@@ -34,6 +34,16 @@ ARM_A = Path("results/calibration/pjm135_control_A")
 ARM_B = Path("results/calibration/pjm135_netpos_B")
 IDENTITY_REF = Path("results/calibration/pjm134_control_A")
 
+# Envelope-satisfaction tolerance, MW. A row that BINDS sits exactly at its
+# bound, so the reported value straddles it by the solver's primal tolerance —
+# measured on arm B, the largest excess over the envelope is 0.000281 MW (0.28 W)
+# across 1,035 hours, i.e. pure round-off. A 1e-6 threshold therefore scores
+# *binding* hours as violations (it read 11.82 % where the true answer is 0.00 %);
+# 1e-3 MW is six orders of magnitude below anything physical and far above HiGHS
+# round-off, so it separates "at the bound" from "through the bound". Arm A's
+# excess reaches 4,619 MW, so no plausible tolerance blurs the two arms.
+ENVELOPE_TOL_MW = 1.0e-3
+
 OUT_PATH = Path("results/probes/pjm135_netpos_ab.json")
 
 
@@ -58,7 +68,10 @@ def _class_twh(bundle: Path, year: int) -> dict[str, float]:
 
 def _slack_dump(bundle: Path, year: int) -> tuple[float, float]:
     """Return the year's total slack and dump (MWh)."""
-    frame = pd.read_parquet(bundle / "hourly" / f"system_{year}.parquet")
+    path = bundle / "hourly" / f"system_{year}.parquet"
+    if not path.exists():  # written at bundle close; absent mid-solve
+        return float("nan"), float("nan")
+    frame = pd.read_parquet(path)
     frame = frame[frame["pass"] == "P1"]
     return float(frame["slack"].sum()), float(frame["dump"].sum())
 
@@ -104,7 +117,8 @@ def score(year: int) -> dict:
             "available": True,
             "net_import_twh": float(net.sum()) / 1.0e6,
             "net_import_mw_mean": float(net.mean()),
-            "hours_above_envelope_pct": float(100.0 * (net > env + 1e-6).mean()),
+            "hours_above_envelope_pct": float(100.0 * (net > env + ENVELOPE_TOL_MW).mean()),
+            "hours_cut_active_pct": float(100.0 * (np.abs(net - env) <= ENVELOPE_TOL_MW).mean()),
             "max_excess_mw": float(np.clip(net - env, 0.0, None).max()),
             "slack_mwh": slack,
             "dump_mwh": dump,
@@ -113,7 +127,7 @@ def score(year: int) -> dict:
     a, b = out.get("arm_A", {}), out.get("arm_B", {})
     if a.get("available") and b.get("available"):
         out["gates"] = {
-            "P1_enforced": b["hours_above_envelope_pct"] < 0.005,
+            "P1_enforced": b["hours_above_envelope_pct"] == 0.0,
             "P1_arm_a_pct": a["hours_above_envelope_pct"],
             "P1_arm_b_pct": b["hours_above_envelope_pct"],
             # P2: more exporting than arm A, never past the measured value.
@@ -160,6 +174,8 @@ def main() -> None:
             f"  P1 hours above envelope   A {a['hours_above_envelope_pct']:6.2f} %"
             f"  ->  B {b['hours_above_envelope_pct']:6.2f} %"
             f"   {'PASS' if g['P1_enforced'] else 'FAIL'}"
+            f"   | cut active in {b['hours_cut_active_pct']:.2f} % of hours"
+            f", max excess {b['max_excess_mw']:.6f} MW"
         )
         print(
             f"  P2 net interchange TWh    A {a['net_import_twh']:+7.2f}"
