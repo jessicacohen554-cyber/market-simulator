@@ -1502,3 +1502,112 @@ but the per-border lever is now **CLOSED by measurement** (§7 DO-NOT-REDO): the
 star node is price-tied to every PJM zone in 100.00 % of hours at max |Δ| =
 0.0000 $/MWh, so no re-attribution can bind. A successor needs a mechanism that
 changes the *dual structure* — real internal congestion — not another flow cap.
+
+---
+
+## pjm-136 — the copper-plate was the defect: PJM's internal network is LOSSLESS, the Dominion links are bound-but-priceless, and the measured loss surface breaks the single dual, moves the zonal allocation for the first time, and flips C3c
+
+**Runs:** `2026-07-28-pjm-136-control` (arm A) / `2026-07-28-pjm-136-lossurf`
+(arm B), both on the `2026-07-28-pjm-135-netpos-keeper` recipe, all three years
+in one invocation (rule 16), arms sequential (rule 12). Gates:
+`PREREG-pjm136-zonal-loss-surface-2026-07-28.md`, committed and pushed **before
+either arm solved**. Write-up:
+`FINDING-pjm136-zonal-dual-structure-2026-07-28.md`. Probes:
+`_pjm136_zonal_dual_structure.py`, `_pjm136_model_vs_measured_zonal.py`,
+`_pjm136_lossurf_ab.py`.
+
+**The measurement (no LP).** pjm-135 §7 handed this session a closed per-border
+lever and the instruction to find a mechanism that changes the *dual structure*.
+
+- **M1a/M1b — the model has NO dual structure on any Dominion boundary.** The
+  keeper separates on `AEP_Ohio→Dominion`, `West_APS→Dominion` and
+  `SWMAAC→Dominion` in **0.0 % of all 26,280 hours**; all eight zones sit at ONE
+  dual in **96.4/97.6/97.0 %**. PJM's own DA prices separate on every one of
+  those links in **100.0 %** (mean max zonal spread $16.83/$18.06/$29.64 vs the
+  model's $0.29/$0.63/$0.97).
+- **M1a flow space — bound-but-priceless, NOT slack.** `AEP_Ohio→Dominion` is
+  **pinned at its bound in 84.4/90.7 %** of hours at a shadow price of **exactly
+  0.000**; `SWMAAC→Dominion` 68.5/80.5 %, same. Exactly one internal link ever
+  prices (`ComEd→AEP_Ohio`, 0.35 % of 2025). Tightening a limit that is already
+  ridden and still prices at zero only moves the simplex to another vertex on
+  the same zero-cost face — which is precisely the re-routing pjm-134 observed
+  and pjm-135 measured. **The degeneracy IS the disease.**
+- **M2 — losses separate duals with nothing binding.** The loss component
+  carries **20/24/23 %** of the measured DOM-vs-AEP gap and exceeds $1 on its
+  own in **24/33/54 %** of hours, on a **sign-stable** gradient (Dominion
+  positive 12/12 months, SWMAAC 12/12, ComEd negative 12/12) — the contrast with
+  the cancelling MISO pair-year that tripped miso-76's R2.
+- **M3 — the 8-zone reduction can carry it.** Intra-zone hub spread inside
+  ComEd/AEP_Ohio is $0.25–$1.70 against an inter-zone DOM-vs-AEP $3.02/$3.88/
+  $6.57. (EMAAC hides $4.3–$5.0 internally — disclosed, separate, not this
+  defect.)
+
+**Intake + derive (rule 14 / rule 23).** PJM's `type = ZONE` LMP components for
+all 21 transmission zones, 2023-2025 (bulk gitignored under the DataMiner2
+non-member restriction with a committed sha256 manifest; only the dimensionless
+surface is committed). `dev_z,m = Σ MLC_z / Σ MEC`, DA basis, load-weighted onto
+the eight model zones through the canonical `_PJM_LOAD_ZONE_GROUPS` crosswalk —
+**every model zone real, NONE interpolated**. Keyed on the UTC interval, not the
+EPT stamp: the DST fall-back hour shares one EPT label and keying on it merges
+two market intervals (it surfaces as a $3.84/MWh break in the MEC identity,
+which is how it was found; on UTC the identity holds at exactly 0.000000).
+Offline acceptance **12/12 pair-years in [0.5×, 1.5×]** (0.95–1.07) before any
+solve.
+
+**The delta.** `pjm_zonal_loss_surface` (new, default off, **zero DOF** —
+`n_residual` unchanged at 6). Each internal PJM link splits into a one-way pair
+whose receiving-end energy-balance coefficient is `1 − eps(month)`,
+`eps_(x→y),m = max(0, (dev_y−dev_x)/(1+dev_y))`. Losses consume MWh; prices stay
+LP duals (rule 4). Rule 19: the **loss** component only — congestion stays with
+the measured interface limits and the joint EAST/AP-South/net-position cuts, and
+the external star node is deliberately **not** lossy (a fictitious pricing node
+has no published deviation; inventing one would be a fitted scalar).
+
+**RESULT.**
+
+- **P2 — the copper-plate does not shrink, it DISAPPEARS**: all-8-zones-at-one-
+  dual **96.4/97.6/97.0 % → 0.00 %** in every year, against PJM's measured 0.0 %.
+- **P1** reproduces the measured loss component in band on **31/33** link-years
+  and on **all nine** Dominion-facing ones.
+- **K2** zero slack, zero dump, both arms, all years — losses consume
+  **1.52/1.72/2.26 TWh/yr** and the fleet covered every megawatt.
+- **K5** arm A byte-identical to the committed keeper (**0.000000000 MW** over
+  166,440 class-hours per year). **K6** solve cost **+1.8 %** overall (2025 was
+  *faster* with the mechanism on).
+- **C3c FAIL → PASS** — the sole blocker since pjm-133: 2024 **7 h → 10 h** vs
+  RT 18 h (0.39× → 0.56×), 2025 **28 h → 32 h** vs RT 59 h (0.47× → 0.54×).
+  Arm B's determination is **CALIBRATED**; arm A's is NOT-YET.
+- **THE ZONAL RESULT — the first lever in the lineage to move it.** Dominion
+  CC_REGULAR **+0.537/+1.410/+1.764 TWh**, which is **115/82/78 %** of the
+  ISO-wide CC_REGULAR move (pjm-135 landed ~15 % in Dominion), with **ComEd —
+  the measured upstream generation pocket — giving up −0.978/−1.521/−1.512**.
+  Dominion CT_PEAKER **+0.015/+0.096/+0.411** while the ISO-wide CT total
+  *falls* in 2024-25: pure reallocation toward the deficit zone.
+
+**CARRIED CAVEATS, none buried.** (a) **C3c's flip is THIN** — the floor is 0.5×,
+so 2024 clears by **1 hour** and 2025 by **2.5 hours**. (b) **P1 as written is an
+all-33 gate and misses 2** (`AEP_Ohio↔ATSI` 2023, ratio −0.22 on tiny
+quantities; `West_APS→Central_PA` 2025 at 0.50×, the band edge). (c) **K1's sign
+clause fails 1 of 9 Dominion link-years** — `SWMAAC→Dominion` 2025, the exact
+case PREREG §3 pre-declared *with its numbers* because congestion offsets loss
+there, but the sign clause did not carve it out; recorded as a fail of the
+clause as written. (d) **Dominion CC_REGULAR 2025 overshoots**: −0.907 → +0.857
+vs actual — |error| improves by a hair but the sign flips. (e) **The CT_PEAKER
+leg is still ~94 % open**, exactly as PREREG §4 pre-registered
+INERT-on-the-CT-leg.
+
+**Rule-22 leave-one-year-out clean:** same-signed in every year independently
+(copper-plate breaks in all three; Dominion CC_REGULAR and CT_PEAKER rise in all
+three), and the C3c flip is carried by **two different years** (2024 and 2025
+each flip on their own), so it rests on neither alone.
+
+**Keeper: NOT self-promoted** (owner-only act). Matrix cell `zonal_loss_surface`
+PJM = **O** (tested, verdict recorded; MISO stays **R**, rule 25 — no verdict
+crosses the boundary in either direction). PREREG §4's no-feedback ceiling was
+honoured: no multiplier, percentile, haircut, blend, scale, floor, cap or
+scarcity exemption was applied to the surface, and none may be.
+
+**Next number: pjm-137.** The Dominion CT_PEAKER leg is the open defect; the
+network now has a real dual structure to work against, and the remaining
+76–80 % of the measured DOM-vs-AEP separation is **congestion**, which no
+mechanism in the model currently produces on that boundary.

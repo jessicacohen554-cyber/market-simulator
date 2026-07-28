@@ -243,3 +243,122 @@ solved.
    disclosed rather than buried.
 3. Carried from pjm-135, still open: the `_PJM_TIE_ZONE` / `INTERFACE_NEIGHBORS`
    TVA disagreement, and PJM `CC_CHP` running +42 %.
+
+---
+
+## §6 — the A/B result: **the copper-plate breaks outright, the allocation moves for the first time in the lineage, and C3c flips FAIL → PASS**
+
+Arms `pjm136_control_A` / `pjm136_lossurf_B`, 2023+2024+2025 each in one
+invocation (rule 16), solved sequentially (rule 12). Scorer:
+`scripts/probes/_pjm136_lossurf_ab.py`; machine output
+`results/probes/pjm136_lossurf_ab.json`.
+
+**Verified single-delta.** Arm A reproduces the committed
+`pjm135_netpos_keeper_C` **byte-identically — 0.000000000 MW over 166,440
+class-hours, each of the three years** (K5), and the topology transform logs in
+arm B in all three years and in arm A **zero** times.
+
+| gate (PREREG §2/§3) | 2023 | 2024 | 2025 | verdict |
+|---|---|---|---|---|
+| **P2** all-8-zones-at-one-dual (A → B) | 96.4 → **0.00 %** | 97.6 → **0.00 %** | 97.0 → **0.00 %** | **PASS** |
+| **P1** link-years in [0.5×, 1.5×] of measured loss | 10/11 | 11/11 | 10/11 | **31/33 — MISSES 2** |
+| — of which the 9 Dominion-facing link-years | 3/3 | 3/3 | 3/3 | **PASS** |
+| **K1** Dominion within measured total / no undeclared over-total | ✓ / ✓ | ✓ / ✓ | ✓ / ✓ | **PASS** |
+| **K1** Dominion sign matches measured total | ✓ | ✓ | **✗** | **FAILS 1 of 9** |
+| **K2** slack / dump, both arms | 0 / 0 | 0 / 0 | 0 / 0 | **PASS** |
+| **K3** net interchange move (tol 1.0 TWh) | +0.31 | +0.18 | +0.53 | **PASS** |
+| **K5** arm-A identity | — | — | — | **PASS (0.000000000 MW)** |
+| **K6** solve cost | +13.3 % | +6.0 % | **−13.1 %** | **+1.8 % overall** |
+
+**P2 is the headline structural result.** The copper-plate does not shrink — it
+**disappears**. All eight PJM zones sat at one dual in 96.4/97.6/97.0 % of hours
+in arm A; in arm B that is **0.00 %** in every year, against PJM's own measured
+0.0 %. The model's PJM now has a zonal dual structure where it previously had
+none.
+
+**P1 reproduces the measured loss component at 31 of 33 link-years**, and at
+**all nine** Dominion-facing link-years (AEP_Ohio→Dominion 1.00/0.77/0.76;
+West_APS→Dominion 0.99/0.93/0.84; SWMAAC→Dominion 1.03/0.90/0.84). The two
+misses are `AEP_Ohio→ATSI` 2023 (ratio −0.22 on a measured loss of +0.140 —
+both quantities are tiny) and `West_APS→Central_PA` 2025 (0.50×, at the band
+edge). **P1 as written is an all-33 gate, so strictly it does not pass**; the
+deliverable it was written for — the chartered Dominion boundaries — does.
+
+**K1's sign clause fails on one link-year**, `SWMAAC→Dominion` 2025: the model
+gives +0.591 (SWMAAC dearer, the loss direction) against a measured **total** of
+−3.009 (Dominion dearer, because congestion dominates and flips it). This is the
+exact link-year PREREG §3 pre-declared **with its numbers** in the K1 exception
+table — but the exception paragraph was scoped to *over-total* magnitude, and
+the K1 sentence's sign clause did not carve it out. **Recorded as a fail of the
+clause as written, not argued away.** The scorer deliberately does not consult
+the exception set for the sign test, so the flag reads FAIL and stays FAIL.
+
+**K2 is the load-bearing pass.** Losses consume **1.52 / 1.72 / 2.26 TWh** that
+PJM's fleet must physically make up, and it covered every megawatt: zero slack
+and zero dump in both arms, all three years.
+
+### §6a — the chartered defect: the first mechanism in the lineage that reallocates ZONALLY
+
+| PJM_Dominion, TWh | 2023 A → B | 2024 A → B | 2025 A → B | actual |
+|---|---|---|---|---|
+| CC_REGULAR | 31.815 → **32.352** | 41.181 → **42.591** | 48.323 → **50.087** | 41.70 / 49.27 / 49.23 |
+| CT_PEAKER | 0.709 → **0.724** | 1.284 → **1.380** | 2.512 → **2.923** | 7.38 / 8.68 / 9.64 |
+| **Dominion share of the ISO-wide CC_REGULAR move** | **115 %** | **82 %** | **78 %** | — |
+| ComEd CC_REGULAR (the measured upstream pocket) | −0.978 | −1.521 | −1.512 | — |
+
+**This is the structural difference from every prior lever.** pjm-135 landed
+~15 % of its ISO-wide CC gain in Dominion — the rest went west, exactly as the
+zero-dual copper-plate predicted. Here **78–115 %** of the ISO-wide CC_REGULAR
+move lands in Dominion, and ComEd — the zone the measured surface puts furthest
+upstream (dev −0.036/−0.053/−0.053) — is the zone that gives it up. On CT_PEAKER
+the ISO-wide total *falls* in 2024-25 while Dominion *rises*, i.e. pure
+reallocation toward the deficit zone.
+
+Gap closure against actual: CC_REGULAR −9.885 → −9.348, −8.089 → **−6.679**
+(17.4 %), −0.907 → **+0.857**; CT_PEAKER −6.671 → −6.656, −7.396 → −7.300,
+−7.128 → **−6.717** (5.8 %).
+
+**Two honest costs on that row.** (a) The **CT leg remains largely open** —
+5.8 % of the 2025 gap is the best of the three years, exactly as PREREG §4
+pre-registered INERT-on-the-CT-leg. (b) Dominion CC_REGULAR **2025 now
+overshoots**: it crosses from 0.907 TWh under the actual to 0.857 TWh over. The
+absolute error improves by a hair, but the sign flips, and a mechanism that
+carries a zone past its measured value is a fact worth watching rather than a
+clean win.
+
+### §6b — the rubric
+
+| | arm A (keeper recipe) | arm B (+ loss surface) |
+|---|---|---|
+| **determination** | **NOT-YET** | **CALIBRATED** |
+| C1 fuel-mix | PASS (16/16, free 12/12) | PASS (16/16, free 12/12) |
+| C2 / C3a / C3b / C4 / C6 / C7 / C8 | PASS | PASS |
+| **C3c price tail** | **FAIL** (2024 7 h vs 18 h, 0.39×; 2025 28 h vs 59 h, 0.47×) | **PASS** (10 h, 0.56×; 32 h, 0.54×) |
+
+**C3c — the sole blocker of the whole pjm-133/134/135 lineage — flips, and the
+margin is THIN.** The gate floor is 0.5× of the RT actual: 2024 clears by
+**1 hour**, 2025 by **2.5 hours**. That is the same order of thinness as
+pjm-135's C1 flip (1.4 % of band), and it is quoted here so nobody reads
+"CALIBRATED" as comfortable.
+
+**Rule-22 leave-one-year-out.** The delta is same-signed in every year
+independently — the copper-plate breaks in all three, Dominion CC_REGULAR rises
+in all three (+0.537/+1.410/+1.764), Dominion CT_PEAKER rises in all three — and
+the C3c flip is carried by **two different years** (2024 and 2025 each flip on
+their own), so it does not rest on a single year.
+
+**Determination: STRUCTURALLY CORRECT, ZONALLY EFFECTIVE, RUBRIC-COMPLETE — with
+the CT leg still open.** Zero DOF (`n_residual` unchanged at 6), +1.8 % solve
+cost, no shedding, and a measured mechanism that reproduces PJM's own published
+loss physics. Per PREREG §4's no-feedback ceiling, **no multiplier, percentile,
+haircut, blend, scale, floor, cap or scarcity exemption was applied to the
+surface in response, and none may be.**
+
+**Keeper: NOT self-promoted** (owner-only act). The honest case each way:
+*for* — arm B is the first PJM run to reach CALIBRATED, it closes the lineage's
+sole blocker, it is the first lever to move the chartered zonal defect at all,
+it adds zero DOF and no solve cost, and it repairs a structural absence
+(a lossless network) rather than a residual. *Against* — C3c clears by 1–2.5
+hours, P1 misses 2 of 33 link-years and K1's sign clause 1 of 9, Dominion
+CC_REGULAR 2025 overshoots, and the CT_PEAKER leg the session was chartered on
+is still ~94 % open.
