@@ -138,6 +138,7 @@ from market_sim.model.transmission import (  # noqa: E402
     build_incidence_matrix,
     build_interface_groups,
     build_miso_link_loss,
+    build_pjm_link_loss,
     get_link_bidirectional_array,
     get_link_flow_cost_array,
     get_ttc_array,
@@ -410,6 +411,7 @@ def run_year(
     miso_south_seam_split: bool = False,
     miso_rdt_tcdc: bool = False,
     miso_zonal_loss_surface: bool = False,
+    pjm_zonal_loss_surface: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_ecrs_conservative_deployment: bool = False,
     ercot_nonreleasable_as_withholding: bool = False,
@@ -1476,6 +1478,12 @@ def run_year(
     # surface, zero fitted scalars.
     if miso_zonal_loss_surface:
         config = config.with_overrides(miso_zonal_loss_surface=True)
+    # PJM marginal-loss physics (pjm-136 M2): the flag rides config into
+    # apply_interchange_topology (internal one-way loss pairs) and the
+    # DispatchSpec link_loss assembly below. Measured delivery-factor
+    # surface from PJM's own published MLC record, zero fitted scalars.
+    if pjm_zonal_loss_surface:
+        config = config.with_overrides(pjm_zonal_loss_surface=True)
     if ercot_multiproduct_as_coopt:
         config = config.with_overrides(ercot_multiproduct_as_coopt=True)
     # Published pre-reform ECRS deployment design (no price-based release
@@ -4081,10 +4089,17 @@ def run_year(
         # (miso_zonal_loss_surface): (n_links, T) receiving-side losses from
         # the derived delivery-factor surface; None (flag off / other ISOs)
         # keeps the ±1 incidence coefficients — byte-identical.
+        # PJM (pjm_zonal_loss_surface) rides the same seam with its own
+        # per-ISO surface; the two flags are ISO-gated inside their builders
+        # so they can never both fire in one solve (rule 25).
         link_loss=(
             build_miso_link_loss(iso_config.links, iso, year, int(demand.shape[1]))
             if getattr(config, "miso_zonal_loss_surface", False)
-            else None
+            else (
+                build_pjm_link_loss(iso_config.links, iso, year, int(demand.shape[1]))
+                if getattr(config, "pjm_zonal_loss_surface", False)
+                else None
+            )
         ),
         hydro_monthly_energy=hydro_monthly_energy,
         hydro_gen_idx=hydro_gen_idx,

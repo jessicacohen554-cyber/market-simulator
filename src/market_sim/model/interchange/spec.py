@@ -1956,4 +1956,23 @@ def apply_interchange_topology(
             "miso-76 charter §4)",
             year,
         )
+    # 8. ``config.pjm_zonal_loss_surface`` — the PJM twin of step 7: split the
+    #    internal PJM links into one-way loss pairs so PJM's own measured
+    #    marginal delivery-factor surface can enter the energy balance as
+    #    hour-varying receiving-side loss fractions (pjm-136 M2; the fractions
+    #    are built per solve year by transmission.build_pjm_link_loss).
+    #    Internal links only — the external star node keeps its per-border
+    #    envelopes, measured ladders and net-position cut untouched, and the
+    #    joint interface cuts match by zone pair with orientation signs, so
+    #    this composes with every step above (rule 19).
+    if getattr(config, "pjm_zonal_loss_surface", False) and iso == "PJM":
+        from market_sim.model.transmission import apply_pjm_zonal_loss_links
+
+        iso_config = apply_pjm_zonal_loss_links(iso_config)
+        logger.info(
+            "PJM %d: pjm_zonal_loss_surface — internal links split into "
+            "one-way loss pairs (marginal delivery-factor physics, "
+            "pjm-136 M2)",
+            year,
+        )
     return iso_config
