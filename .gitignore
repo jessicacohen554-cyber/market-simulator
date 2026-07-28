@@ -261,6 +261,12 @@ results/calibration/*/model_changes.diff
 results/calibration/*/dispatch/
 results/calibration/*/*.parquet
 results/calibration/*/floors/
+# Heavy per-unit / per-link hourly sidecars (~58 MB/bundle) — regenerable by a
+# replay; bundles commit only hourly/{class_hourly,storage,system} (rule 15).
+results/calibration/*/hourly/unit_hourly_*.parquet
+results/calibration/*/hourly/network_*.parquet
+results/calibration/*/*/hourly/unit_hourly_*.parquet
+results/calibration/*/*/hourly/network_*.parquet
 results/calibration/*/solve.log
 results/calibration/*-capdel-probe.log
 results/calibration/*/_shared/

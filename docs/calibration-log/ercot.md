@@ -2466,3 +2466,64 @@ inherited: `test_persisted_identity` 11/11, `test_flag_registry` 12/12,
 `test_coal_min_config_floor` 18/18. Mechanism matrix `coal_min_load_floor`
 ERCOT cell updated with the DO-NOT-REDO condition (rule 26 duty b).
 Full forensics: `docs/DIAGNOSIS-ercot130-minconfig-capoff-2026-07-28.md`.
+
+## 2026-07-28 — ERCOT-134: the coal availability PIN documented and made reproducible; the ERCOT-116 A/B re-solved on the CURRENT keeper — the measured envelope un-pins coal (impossible plant-hours −83/−86/−91 %) and the exposed coal-vs-gas merit bias over-runs +6.5/+9.6/+11.4 TWh (ARM rejected as pre-registered); the fresh BASE is PROMOTED keeper (ercot134-coal-pin / ercot116-regate)
+
+**Phase 1 (no LP).** `docs/DIAGNOSIS-ercot134-coal-availability-pin-2026-07-28.md`
+consolidates the ERCOT-130 §4 / ERCOT-132 leg-B / ERCOT-116 synthesis with every
+number re-verified on current HEAD, and
+`scripts/probes/ercot134_coal_availability_pin.py` makes the previously
+prose-only §4 evidence a committed, re-runnable measurement (model avail vs COP
+declared vs CAMPD actual; impossible-hours; ceiling-pin share; the §4 artifact
+audit — whole-facility gross-basis Parish would read 6,213 not 4,448, gross-basis
+Oak Grove 6,325 not 3,613, the all-TX anchor trap 0.8037 vs the COAL_PLANTS-scoped
+0.9069, now hard-asserted). Keeper coal: pinned at the availability ceiling in
+31.9/33.0/45.2 % of online plant-hours (Oak Grove 89 %, Major Oak 84 % in 2025);
+model avail below the COP declaration at all six §2 plants (Parish 0.774 …
+Spruce 0.994) and below actual p95 at all six. Consequence stated plainly: no
+merit-order work on ERCOT coal has been validated against anything — ~half its
+dispatch is set by an availability estimate, not by price.
+
+**Phase 2 (pre-committed A/B, `docs/PRECOMMIT-ercot134-coal-avail-regate-2026-07-28.md`
+pushed before any solve).** BASE = ercot129 recipe unchanged on current HEAD;
+ARM = single delta `ercot_thermal_dam_availability_coal=true`. Sequential
+full-span solves, both registered (rule 15).
+
+* **BASE (`2026-07-28-ercot116-regate-base`) — PROMOTED KEEPER** (owner
+  sign-off this session; ercot97→ercot98 precedent: the committed ercot129 is no
+  longer byte-reproducible after the merged Sandy Creek repair). Zero config
+  delta; 2023/2024 coal byte-identical to ercot129; Sandy Creek 2025 dispatches
+  again (0.778 TWh vs CAMPD 0.697 — the ERCOT-130 §6 finding closed); G1
+  19/21 → 20/21 (2025 <$15 flips PASS); C1 coal mean-abs 0.778 → 0.554; rubric
+  profile identical (C3a −27.2/−8.0/−8.2 %, C3c 68/12/0 vs 181/53/31);
+  determination NOT-YET; DOF ledger carried unchanged (11/8).
+* **ARM (`2026-07-28-ercot116-regate-arm`) — REJECTED PROBE, prediction
+  confirmed.** G0 armed 3/3 (class targets 0.827/0.787/0.757), bite
+  +6.1/+8.8/+11.9 TWh vs BASE. THE MEASUREMENT: impossible plant-hours
+  22,633/24,627/30,697 → 3,846/3,462/2,622 (−83/−86/−91 %); ceiling-pin
+  31.0/32.6/44.6 → 28.1/27.9/38.6 % (remaining ceiling hours are in-merit, not
+  physically impossible); model/COP ratios rise to ~0.95–1.13 (Martin Lake 2025
+  overshoots to 1.45 — reported). THE EXPOSED BIAS: coal +6.5/+9.6/+11.4 TWh
+  over actual; C1 15/16 free 11/12 (COAL_PRB 2025 +8.92); C3a
+  −35.3/−14.7/−13.2 %; C3b 2024 flips FAIL; C3c 47/6/0; G1 collapses 20/21 →
+  **1/21**, coal over-loaded +6–18 pp in every band of every year. Predictions:
+  6 of 8 confirmed; misses stated in the FINDING (pin-share fell less than the
+  <25 % predicted — statistic-basis mismatch vs ERCOT-116's energy-on-flat-top
+  figure; G1 count collapsed far past the predicted 14–19/21 — the bias is
+  larger than predicted, which is the finding).
+
+**No tuning anywhere** (rules 13/19 honoured; the over-run routes to the
+chartered successor). **Owner decisions surfaced, not decided:** ERCOT-116
+adoption (this lane sized it; still un-ruled — the ARM is NOT promotable, G1
+1/21); San Miguel registration (unchanged). **Successor chartered, not
+started:** the coal-vs-gas MERIT-ORDER lane on the un-pinned fleet
+(DIAGNOSIS-ercot134 §10) — first possible only once ERCOT-116 is armed by
+owner ruling. Environment parity with the ercot115–132 baseline recorded
+("static TTC kept" 3/3, hydro-plant-modes + wtx-stomp warnings expected).
+Tests: pinned baseline 36/36 (`test_persisted_identity` 11,
+`test_flag_registry` 12, `test_ramp_envelope_basis` 8,
+`test_bin_forced_derate_registry` 5); cache key `603c2498bf71d21d` unmoved.
+Mechanism matrix: `dam_availability_rebasis` ERCOT note carries the coal-scope
+re-gate verdict; header re-stamped to the new keeper (rule 26 duties a/b).
+Registration pruned `2026-07-24-ercot110-coal-dam-availability` and
+`2026-07-24-ercot111-coal-econ-marginal` (top-15 retention).

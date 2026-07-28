@@ -30,13 +30,17 @@
  * 2026-07-28 on the nyiso-92 keeper promotion (hydro envelope/floor cells -> K).
  * 2026-07-28 on the pjm-135 keeper promotion (pjm_external_net_position_cut -> K;
  *   PJM gates drop to C3c alone — C1 and C3a closed).
+ * ERCOT column re-checked 2026-07-28 on the ercot116-regate-base keeper promotion
+ * (ERCOT-134: zero config delta vs ercot129 — re-solve on the corrected coal
+ * forced-derate registry; no cell verdict moves except dam_availability_rebasis,
+ * whose coal-scope re-gate is recorded on that row).
  */
 window.MECH_MATRIX = {
   version: 1,
   updated: "2026-07-28",
   isos: ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"],
   keepers: {
-    ERCOT: "2026-07-28-ercot129-conditional-coal-min",
+    ERCOT: "2026-07-28-ercot116-regate-base",
     CAISO: "2026-07-27-caiso-130-nameplate-aware",
     PJM: "2026-07-28-pjm-135-netpos-keeper",
     MISO: "2026-07-28-miso-99b-chp-power",
@@ -315,8 +319,8 @@ window.MECH_MATRIX = {
     { id: "dam_availability_rebasis", cat: "outage", name: "Measured DAM/telemetered availability re-basis",
       def: "ercot_thermal_dam_availability* :5976+ / pjm_dam_availability :6030 / neiso_operable :6003 / caiso_dam_outages :7730", mode: "B",
       cells: "KUUR.R",
-      note: "ERCOT keeper at plant grain (ERCOT-96/97). PJM: data intaken 2026-07-24, ships default-off — UNTESTED LEVER. CAISO built untested (caiso_dam_outages). NYISO: no equivalent disclosure (60-Day reconstruction used for bridge params instead). NEISO: operable-capacity source NOT ADOPTED (fleet-wide denominator on thermal-only application, neiso-62); MISO native outage source REVERTED on grain (miso-85/86) — its outage-grain data ask is the standing instrument-blocked lane.",
-      ev: { E: "ERCOT-96/97", Q: "neiso-62", M: "miso-85/86" } },
+      note: "ERCOT keeper at plant grain (ERCOT-96/97) — FOR THE GAS CLASSES ONLY: the coal sub-flag (ercot_thermal_dam_availability_coal, ERCOT-110) stays default-off, so ERCOT coal remains on the legacy statistical availability estimate. COAL-SCOPE RE-GATE ON THE CURRENT KEEPER (ERCOT-134, 2026-07-28, pre-committed A/B, run 2026-07-28-ercot116-regate-arm): the measured envelope is MEASURED-CORRECT — impossible plant-hours (CAMPD actual above the model's entire available capacity) fall 22,633/24,627/30,697 -> 3,846/3,462/2,622 (-83/-86/-91%) — and REJECTED AGAIN on level: the un-pinned coal over-runs +6.5/+9.6/+11.4 TWh, G1 loading-vs-price collapses 20/21 -> 1/21 (over-loaded in every band), C3a -35.3/-14.7/-13.2%. Confirms ERCOT-116 on the ercot129 recipe + Sandy Creek repair: the estimate's carve-out is load-bearing for the fit because it silently absorbs a coal-vs-gas mid-merit ranking bias (rule 14). Owner adoption ruling still OPEN; successor = the coal-vs-gas merit-order lane on the un-pinned fleet (DIAGNOSIS-ercot134 s10). PJM: data intaken 2026-07-24, ships default-off — UNTESTED LEVER. CAISO built untested (caiso_dam_outages). NYISO: no equivalent disclosure (60-Day reconstruction used for bridge params instead). NEISO: operable-capacity source NOT ADOPTED (fleet-wide denominator on thermal-only application, neiso-62); MISO native outage source REVERTED on grain (miso-85/86) — its outage-grain data ask is the standing instrument-blocked lane.",
+      ev: { E: "ERCOT-96/97 + ERCOT-134 (coal scope R)", Q: "neiso-62", M: "miso-85/86" } },
     { id: "unit_outage_short_windows", cat: "outage", name: "Short (1-5 day) unit outage windows, baseload coal",
       def: "scenarios.py:7771 (+partial windows :7796)", mode: "B",
       cells: "IUKKUR",

@@ -1,15 +1,19 @@
 {
-  "run_id": "2026-07-24-ercot111-coal-econ-marginal",
+  "run_id": "2026-07-28-ercot116-regate-arm",
   "iso": "ERCOT",
-  "label": "ercot111 coal econ marginal",
+  "label": "ercot116 regate arm",
   "target_years": [
-    2023
+    2023,
+    2024,
+    2025
   ],
   "scorable_years": [
-    2023
+    2023,
+    2024,
+    2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
+  "rubric_version": 2.9,
   "determination": "NOT-YET",
   "reasons": [
     "governance gate UNATTESTED: no governance attestation in bundle"
@@ -19,7 +23,7 @@
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -44,11 +48,6 @@
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
       "tier": "supporting",
-      "status": "PASS"
-    },
-    "co2": {
-      "label": "C5a CO2 vs eGRID",
-      "tier": "load-bearing",
       "status": "PASS"
     },
     "governance": {
@@ -77,11 +76,11 @@
     }
   },
   "grade_summary": {
-    "scored": 7,
-    "target_grade": 4,
+    "scored": 6,
+    "target_grade": 2,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 3
+    "fails": 4
   },
   "free_class_score": {
     "iso": "ERCOT",
@@ -99,13 +98,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 7,
-      "total": 7
+      "pass": 15,
+      "total": 16
     },
     "free": {
-      "pass": 5,
-      "total": 5
+      "pass": 11,
+      "total": 12
     },
-    "headline": "C1 all 7/7 \u00b7 free 5/5"
+    "headline": "C1 all 15/16 \u00b7 free 11/12"
   }
 }
