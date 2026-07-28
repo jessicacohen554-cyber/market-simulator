@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-07-28T05:54:32",
+  "timestamp": "2026-07-28T06:17:11",
   "git": {
-    "sha": "c19ffdd",
+    "sha": "481c4e7",
     "basis_sha": "8501baa4d85a85a8d6179be1ec714b0a7b781078",
     "branch": "claude/miso-101-temp-derate-hourly-sq4vcg",
     "dirty": false,
@@ -13,7 +13,7 @@
   "calibration_flags": {
     "iso": "MISO",
     "years": [
-      2023
+      2024
     ],
     "hours": 8760,
     "passes": [
@@ -22,7 +22,7 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
-      "2023": 2.54
+      "2024": 2.19
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
@@ -78,10 +78,10 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "c19ffdd"
+    "git_sha": "481c4e7"
   },
   "scenario_config": {
-    "weather_year": 2023,
+    "weather_year": 2024,
     "iso": "MISO",
     "mode": "backcast",
     "voll": 5000.0,
@@ -871,7 +871,7 @@
     "unit_outage_maxgen_events": true,
     "maxgen_emergency_tier_pricing": true,
     "forecast_xyear_warmstart": true,
-    "gas_price_override": 2.54,
+    "gas_price_override": 2.19,
     "ercot_offer_hrmult_ep_rebasis": false,
     "ercot_offer_hrmult_ep_rebasis_bands": null
   },
