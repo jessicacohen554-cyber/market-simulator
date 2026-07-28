@@ -124,6 +124,58 @@ def _copper_plate_share(bundle: Path, year: int) -> float:
     return float((spread <= EPS).mean())
 
 
+def _zonal_class_twh(bundle: Path, year: int) -> dict[str, float]:
+    """REPORTED ONLY — PJM_Dominion CT_PEAKER / CC_REGULAR TWh from `dispatch/`.
+
+    `dispatch/<year>_P1.parquet` is the (gitignored) per-generator-hour frame,
+    so this is available on a locally-solved bundle and absent from a committed
+    slim one; missing means the key is simply omitted, never imputed.
+    """
+    path = bundle / "dispatch" / f"{year}_P1.parquet"
+    if not path.exists():
+        return {}
+    frame = pd.read_parquet(path, columns=["zone", "plant_group", "mw"])
+    frame = frame[frame["zone"].astype(str) == "PJM_Dominion"]
+    grouped = frame.groupby("plant_group", observed=True)["mw"].sum() / 1.0e6
+    return {str(k): round(float(v), 4) for k, v in grouped.items() if v != 0.0}
+
+
+def _link_utilisation(bundle: Path, year: int) -> list[dict]:
+    """REPORTED ONLY — the charter's literal M1, from `flows.parquet`.
+
+    Per internal link: utilisation against its own hourly limit, the share of
+    hours at the bound, and — the caveat the pjm-135 lineage insists on — the
+    share of those hours carrying a NONZERO shadow price. A flow at its bound
+    with a zero dual is a degenerate vertex artifact, not a physical statement.
+    """
+    path = bundle / "flows.parquet"
+    if not path.exists():
+        return []
+    frame = pd.read_parquet(path)
+    frame = frame[frame["kind"] == "link"]
+    out: list[dict] = []
+    for name, block in frame.groupby("name", observed=True):
+        name = str(name)
+        if "external" in name:
+            continue
+        mw = block["mw"].to_numpy(dtype=float)
+        up = block["limit_up"].to_numpy(dtype=float)
+        dual = np.abs(block["dual"].to_numpy(dtype=float))
+        with np.errstate(divide="ignore", invalid="ignore"):
+            util = np.where(up > 0, np.abs(mw) / up, np.nan)
+        at_bound = np.isfinite(util) & (util >= 0.999)
+        out.append(
+            {
+                "link": name,
+                "median_utilisation": round(float(np.nanmedian(util)), 4),
+                "hours_at_bound_pct": round(float(100.0 * at_bound.mean()), 3),
+                "hours_nonzero_dual_pct": round(float(100.0 * (dual > 1e-6).mean()), 3),
+                "max_abs_dual": round(float(dual.max()), 4),
+            }
+        )
+    return out
+
+
 def _identity(year: int) -> dict:
     """K5 — arm A against the committed keeper bundle, every class-hour."""
     for path in (ARM_A, IDENTITY_REF):
@@ -171,6 +223,9 @@ def score(year: int) -> dict:
             "dump_mwh": dump,
             "mean_price": float(_duals(bundle, year).mean().mean()),
             "class_twh": _class_twh(bundle, year),
+            # Reported only, never gated (rule 1 [R-STRUCT]).
+            "dominion_class_twh": _zonal_class_twh(bundle, year),
+            "link_utilisation": _link_utilisation(bundle, year),
         }
     a, b = out.get("arm_A", {}), out.get("arm_B", {})
     if not (a.get("available") and b.get("available")):
@@ -285,6 +340,23 @@ def main() -> None:
             f"  K3 net interchange  A {a['net_import_twh']:+.2f}  "
             f"B {b['net_import_twh']:+.2f} TWh"
         )
+        if a.get("dominion_class_twh"):
+            keys = sorted(
+                set(a["dominion_class_twh"]) | set(b.get("dominion_class_twh", {}))
+            )
+            shown = [k for k in keys if k in ("CT_PEAKER", "CC_REGULAR", "COAL_BIT")]
+            cells = "  ".join(
+                f"{k} {a['dominion_class_twh'].get(k, 0.0):.3f}→"
+                f"{b.get('dominion_class_twh', {}).get(k, 0.0):.3f}"
+                for k in shown
+            )
+            print(f"  REPORTED Dominion TWh: {cells}")
+        if a.get("link_utilisation"):
+            worst = max(a["link_utilisation"], key=lambda r: r["hours_nonzero_dual_pct"])
+            print(
+                f"  REPORTED M1 arm-A links: max nonzero-dual share "
+                f"{worst['hours_nonzero_dual_pct']:.2f}% on {worst['link']}"
+            )
         ident = g["K5_identity"]
         if ident.get("available"):
             print(
