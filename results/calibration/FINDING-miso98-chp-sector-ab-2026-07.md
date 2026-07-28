@@ -33,10 +33,17 @@ Each arm scored against **its own** benchmark (see §4 — this is not a detail)
 | **C3b price shape** | **FAIL** — 0.087 / 0.137 / **0.214** | **PASS** — 0.077 / 0.121 / **0.198** | **FAIL → PASS** |
 | C3c price tail | FAIL | FAIL | unchanged |
 | C4 dispatch corr | PASS | PASS | unchanged |
-| C5a CO2 | PASS | PASS | unchanged |
+| C5a CO2 | PASS | PASS | unchanged (no longer scored — see below) |
 | C7 diurnal shape | FAIL | FAIL | unchanged |
 | C8 forced share | PASS | PASS | unchanged |
 | **determination** | NOT-YET | NOT-YET | C3a-2025 / C3c / C7 decide both |
+
+**Rubric version.** Both arms' committed `metrics.json` were scored at **v2.8**,
+each against its own benchmark (which is what makes them correct — §5.2).
+Rubric **v2.9** landed on main mid-session (`1bd70b3`, owner amendment) and
+removes **C5a CO2** from the scored set; re-scoring arm B at v2.9 reproduces
+every other status exactly, so the comparison above is unaffected and the C5a
+row simply drops out.
 
 **One load-bearing criterion flips FAIL → PASS and no criterion regresses.**
 The mechanism is the obvious one: removing 1,405 MW of host self-supply that was
