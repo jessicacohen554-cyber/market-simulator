@@ -160,3 +160,20 @@ document was written and pushed. The genuinely open quantities: how the
 min-config floor (absent from every prior ERCOT-116 solve) interacts with
 the measured coal availability; and what the Sandy-Creek-repaired 2025
 does under either config.
+
+---
+
+## Verdict recorded after the fact
+
+**G0 PASS · measurement delivered · ARM rejected on level as predicted · BASE
+promoted keeper (owner sign-off this session).** Full write-up:
+`results/calibration/FINDING-ercot134-regate-2026-07-28.md`. Runs
+`2026-07-28-ercot116-regate-base` (keeper) / `2026-07-28-ercot116-regate-arm`
+(rejected probe). Predictions: 6 of 8 confirmed; misses — ARM plant-hour pin
+share fell only to 28.1/27.9/38.6 % (the <25 % prediction anchored to
+ERCOT-116's energy-on-flat-top statistic, a different basis), and ARM G1
+landed 1/21 against the predicted 14–19/21 (the merit bias is uniform across
+every price band, larger than predicted — that is the finding). Impossible
+plant-hours −83/−86/−91 %; over-run +6.5/+9.6/+11.4 TWh; C3a
+−35.3/−14.7/−13.2 %. No tuning; no ERCOT-116 adoption (owner ruling still
+open); successor: the coal-vs-gas merit-order lane on the un-pinned fleet.
