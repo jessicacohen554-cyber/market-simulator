@@ -1916,3 +1916,136 @@ class TestInterfaceGroupLimit(unittest.TestCase):
         )
         np.testing.assert_allclose(base.flows, none_groups.flows)
         np.testing.assert_allclose(base.prices, none_groups.prices)
+
+
+class TestNetworkDualAttribution(unittest.TestCase):
+    """The network sidecar's duals: the flow-column stationarity identity.
+
+    ``FINDING-caiso132`` §2 could read the binding *direction* of a corridor off
+    the zonal spread but not WHICH limit binds — the deliverability group, the
+    link's own TTC, or the simultaneous-import interface. The separation is the
+    LP's own optimality condition on the flow column, which carries zero
+    objective cost and appears in exactly the two energy-balance rows plus every
+    interface group it belongs to::
+
+        lambda_to - lambda_from = -flow_dual[l] - sum_g s(g,l) * interface_dual[g]
+
+    Each right-hand term is >= 0 in the import direction and is the rent charged
+    by ONE limit, so the spread decomposes exactly. These tests pin that identity
+    and both one-limit corner cases on trivial systems (CLAUDE.md testing
+    pattern: 2 zones, short horizons).
+    """
+
+    def _two_zone(self, T: int, link_ttc: float = 6000.0):
+        """Cheap Z0 exporting to expensive Z1 over a single bidirectional link."""
+        zone_names = ["Z0", "Z1"]
+        fleet = _make_fleet(
+            ["Z0", "Z1"], zone_names, hours=T, pmax=10000.0, pmin=0.0, eford=0.0
+        )
+        mc = np.vstack([np.full(T, 10.0), np.full(T, 90.0)])
+        demand = np.array([np.zeros(T), np.full(T, 5000.0)])
+        links = [TransferLink(from_zone="Z0", to_zone="Z1", ttc_mw=link_ttc)]
+        return (
+            fleet,
+            demand,
+            dict(
+                mc=mc,
+                T=T,
+                incidence=build_incidence_matrix(links, zone_names),
+                ttc=get_ttc_array(links),
+                wind_cf=np.zeros((2, T)),
+                wind_cap=np.zeros(2),
+                solar_cf=np.zeros((2, T)),
+                solar_cap=np.zeros(2),
+            ),
+        )
+
+    def _assert_identity(self, res, group_signs=(1.0,)):
+        """spread == -(flow reduced cost) - sum_g sign_g * group dual."""
+        spread = res.prices[1] - res.prices[0]  # lambda_to - lambda_from
+        rhs = -np.asarray(res.flow_dual, dtype=float)[0]
+        if res.interface_dual is not None:
+            for gi, sgn in enumerate(group_signs):
+                rhs = rhs - sgn * np.asarray(res.interface_dual, dtype=float)[gi]
+        np.testing.assert_allclose(spread, rhs, atol=1e-6)
+
+    def test_group_binds_link_ttc_slack_is_fully_attributed_to_the_group(self):
+        # The corridor case: the group cap (2000) is strictly tighter than the
+        # link's own TTC (6000), so the link bound is UNREACHABLE. The whole
+        # $80 spread must be charged to the group and none to the link.
+        T = 4
+        fleet, demand, kw = self._two_zone(T, link_ttc=6000.0)
+        res = solve_dispatch(
+            fleet, demand, interface_groups=[(np.array([0]), 2000.0, False)], **kw
+        )
+        np.testing.assert_allclose(res.flows[0], np.full(T, 2000.0), atol=1e-6)
+        np.testing.assert_allclose(res.flow_dual[0], np.zeros(T), atol=1e-6)
+        self.assertAlmostEqual(float(-res.interface_dual[0, 0]), 80.0, places=6)
+        self._assert_identity(res)
+
+    def test_link_ttc_binds_with_no_group_is_attributed_to_the_link(self):
+        # The mirror: no group at all, so the same $80 spread is charged
+        # entirely to the flow column's own bound.
+        T = 4
+        fleet, demand, kw = self._two_zone(T, link_ttc=2000.0)
+        res = solve_dispatch(fleet, demand, **kw)
+        np.testing.assert_allclose(res.flows[0], np.full(T, 2000.0), atol=1e-6)
+        self.assertIsNone(res.interface_dual)
+        self.assertAlmostEqual(float(-res.flow_dual[0, 0]), 80.0, places=6)
+        self._assert_identity(res)
+
+    def test_slack_group_carries_a_zero_dual(self):
+        # A group whose cap exceeds the link TTC can never bind: its dual must
+        # be exactly zero in every hour while the link takes the whole rent.
+        T = 4
+        fleet, demand, kw = self._two_zone(T, link_ttc=2000.0)
+        res = solve_dispatch(
+            fleet, demand, interface_groups=[(np.array([0]), 9000.0, False)], **kw
+        )
+        np.testing.assert_allclose(res.interface_dual[0], np.zeros(T), atol=1e-6)
+        self.assertAlmostEqual(float(-res.flow_dual[0, 0]), 80.0, places=6)
+        self._assert_identity(res)
+
+    def test_two_groups_split_the_rent_and_close_the_identity(self):
+        # Two groups over the same link with the SAME cap: the LP may put the
+        # rent on either row (or split it), so the gate is the identity plus the
+        # total, never a per-row expectation.
+        T = 4
+        fleet, demand, kw = self._two_zone(T, link_ttc=6000.0)
+        groups = [
+            (np.array([0]), 2000.0, False),
+            (np.array([0]), 2000.0, False),
+        ]
+        res = solve_dispatch(fleet, demand, interface_groups=groups, **kw)
+        total = float(-res.interface_dual[:, 0].sum() - res.flow_dual[0, 0])
+        self.assertAlmostEqual(total, 80.0, places=6)
+        self._assert_identity(res, group_signs=(1.0, 1.0))
+
+    def test_hourly_caps_are_reported_per_group_per_hour(self):
+        # The recorded limits must be the per-hour bounds the LP actually saw,
+        # so a diagnostic can compute utilisation without re-deriving the cap.
+        T = 24
+        fleet, demand, kw = self._two_zone(T, link_ttc=6000.0)
+        cap = np.where(np.arange(T) < 12, 1000.0, 3000.0)
+        res = solve_dispatch(
+            fleet, demand, interface_groups=[(np.array([0]), cap, False)], **kw
+        )
+        np.testing.assert_allclose(res.interface_cap_up[0], cap, atol=1e-9)
+        np.testing.assert_allclose(res.flow_cap_up[0], np.full(T, 6000.0), atol=1e-9)
+        np.testing.assert_allclose(res.flow_cap_dn[0], np.full(T, -6000.0), atol=1e-9)
+        np.testing.assert_allclose(res.flows[0], cap, atol=1e-6)
+
+    def test_reporting_fields_do_not_change_the_solve(self):
+        # Solve-invariance, stated as a test: the extraction is downstream of
+        # HiGHS, so two solves of the same LP agree bit-for-bit on every scored
+        # quantity while the new fields are populated.
+        T = 8
+        fleet, demand, kw = self._two_zone(T, link_ttc=6000.0)
+        groups = [(np.array([0]), 2500.0, False)]
+        a = solve_dispatch(fleet, demand, interface_groups=groups, **kw)
+        b = solve_dispatch(fleet, demand, interface_groups=groups, **kw)
+        for field in ("dispatch", "prices", "flows", "slack", "dump"):
+            np.testing.assert_array_equal(getattr(a, field), getattr(b, field))
+        self.assertEqual(a.objective_value, b.objective_value)
+        self.assertIsNotNone(a.interface_dual)
+        self.assertIsNotNone(a.flow_dual)

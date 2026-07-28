@@ -17,11 +17,14 @@ A run bundle lives in ``results/calibration/<iso>/<timestamp>/`` and holds:
   * ``system.parquet`` — per-zone hourly price, load slack and demand target,
     for every year and pass.
   * ``hourly/class_hourly_<year>.parquet`` + ``hourly/system_<year>.parquet``
-    — committable slim sidecars (class-hour dispatch aggregate; per-year
-    system slices). ``dispatch/`` and ``system.parquet`` are gitignored by
+    + ``hourly/storage_<year>.parquet`` + ``hourly/unit_hourly_<year>.parquet``
+    + ``hourly/network_<year>.parquet`` — committable slim sidecars (class-hour
+    dispatch aggregate; per-year system slices; per-tech storage; per-unit
+    dispatch AND availability cap; per-link/per-group flow, dual and limit).
+    ``dispatch/``, ``system.parquet`` and ``flows.parquet`` are gitignored by
     the slim-bundle rules, so KEEPER bundles commit ``hourly/`` and
-    diagnostics read it instead of replaying the solve; a replay is
-    justified only for unit-level questions.
+    diagnostics read it instead of replaying the solve. Every sidecar is
+    write-only and solve-invariant.
   * ``eia930.parquet`` — EIA-930 hourly benchmark series (gas, coal, wind,
     solar, nuclear, net generation).
   * ``eia923.parquet`` — EIA-923 net generation per (plant, class), annual and
@@ -58,6 +61,8 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
@@ -522,6 +527,256 @@ def _write_storage_hourly_sidecar(
         .sum()
         .reset_index()
         .to_parquet(out, index=False)
+    )
+    return out
+
+
+def _unit_hourly_frame(
+    year: int, pass_label: str, result, context, fleet_arrays, iso: str = "ERCOT"
+) -> "pd.DataFrame | None":
+    """Per-LP-unit hourly dispatch AND available capacity for one year-pass.
+
+    The committed class sidecar sums dispatch to 14 classes and the storage
+    sidecar to 3 techs, so a slim bundle exposes **no per-unit series at all** —
+    which is why ``docs/handoffs/caiso-131-c3c-c3a-ask-2026-07-27.md`` §4 records
+    ask A2's D1 (the plant-level ONLINE/synchronized reserve measure PJM already
+    uses, ``results.scarcity.reserve_headroom``) as BLOCKED on a data gap. That
+    measure needs exactly two per-unit-hour series: the solved ``mw`` and the
+    availability-derated cap ``pmax x availability`` the LP bounded it by —
+    online status is then the plant-level ``sum(mw) > threshold`` and headroom
+    is ``sum(cap_mw) - sum(mw)`` over the online plants (both sums are linear in
+    the tranches, so the plant grain is recovered exactly from this frame).
+
+    Attributes ride along raw — ``fuel`` straight from ``context.fuel_types``
+    (the RESERVE/QUICK_START masks key on it) and ``plant_group`` from the fleet
+    arrays — so nothing here re-derives the ``_dispatch_frame`` classifier and
+    the two can never drift. Renewable/must-run pseudo-units are NOT included:
+    they carry no LP capacity bound, and their series are already the class
+    sidecar's ``wind``/``solar``/must-run rows.
+
+    Write-only and solve-invariant: every input is a solved output or an LP
+    input the solve already consumed. Returns ``None`` when the pass carried no
+    generators or the fleet arrays do not align with the dispatch block.
+    """
+    disp = np.asarray(result.dispatch, dtype=np.float32)
+    if disp.size == 0:
+        return None
+    n_gen, T = disp.shape
+    fa = fleet_arrays
+    if fa is None or np.asarray(fa.pmax).shape[0] != n_gen:
+        # Misalignment is a bundle-quality problem, never a reason to fail a
+        # solve: skip the sidecar and leave the rest of the bundle intact.
+        logger.warning(
+            "unit_hourly sidecar skipped for %d %s: fleet arrays (%s) do not "
+            "align with the dispatch block (%d gens)",
+            year,
+            pass_label,
+            None if fa is None else np.asarray(fa.pmax).shape,
+            n_gen,
+        )
+        return None
+    cap = (
+        np.asarray(fa.pmax, dtype=np.float32)[:, None]
+        * np.asarray(fa.availability, dtype=np.float32)
+    )[:, :T]
+    unit_ids = [str(u) for u in context.unit_ids][:n_gen]
+    fuels = [str(f) for f in context.fuel_types][:n_gen]
+    zones = [str(z) for z in context.zones][:n_gen]
+    groups = getattr(fa, "plant_group", None)
+    groups = [str(g) for g in groups][:n_gen] if groups is not None else [""] * n_gen
+    # Same plant-code convention as _dispatch_frame, so the two frames join.
+    plant_codes = _plant_codes_from_unit_ids(unit_ids, numeric_head=iso != "ERCOT")
+    rep = lambda a: np.repeat(np.asarray(a, dtype=object), T)  # noqa: E731
+    df = pd.DataFrame(
+        {
+            "year": np.int16(year),
+            "pass": pass_label,
+            "unit_id": rep(unit_ids),
+            "plant_code": np.repeat(plant_codes.astype(np.int32), T),
+            "plant_group": rep(groups),
+            "fuel": rep(fuels),
+            "zone": rep(zones),
+            "hour": np.tile(np.arange(T, dtype=np.int32), n_gen),
+            "mw": disp.reshape(-1),
+            "cap_mw": cap.reshape(-1),
+        }
+    )
+    for col in ("pass", "unit_id", "plant_group", "fuel", "zone"):
+        df[col] = df[col].astype("category")
+    return df
+
+
+def _network_frame(year: int, pass_label: str, result, links) -> "pd.DataFrame | None":
+    """Per-link and per-interface-group hourly flow, dual and limit.
+
+    The committable half of ``flows.parquet`` plus the piece it never carried:
+    the **duals**. A binding transmission limit shows up in a slim bundle only
+    as a positive zonal spread, and ``FINDING-caiso132`` §2 states the resulting
+    limit honestly — the spread says *some* import-direction limit binds but not
+    WHICH of the corridor deliverability group, the link's own TTC, or the
+    simultaneous-import interface. This frame separates them, because the LP's
+    flow-column stationarity gives, exactly,
+
+        lambda_to - lambda_from = -z_link - sum_g s(g,link) * y_g
+
+    with ``z_link`` the link column's reduced cost, ``y_g`` each containing
+    group's row dual and ``s`` its signed membership. Every right-hand term is
+    the rent charged by ONE limit, so the spread decomposes per leg per hour
+    with no replay.
+
+    Two record kinds share the frame, keyed by ``kind``:
+
+    * ``link`` — ``name`` is ``"<from>><to>"``, ``mw`` the signed flow
+      (positive = from->to), ``dual`` the column's reduced cost, and
+      ``limit_up`` / ``limit_dn`` the flow column's own bounds.
+    * ``group`` — ``name`` is ``"grp:"`` + the signed member links joined by
+      ``"+"``/``"-"`` (self-describing, so no group-label channel has to be
+      threaded through the solve path), ``mw`` the group's signed member sum,
+      ``dual`` the row dual, ``limit_up`` / ``limit_dn`` the row bounds.
+
+    ``dual`` is HiGHS-raw in both cases and deliberately NOT sign-normalised: a
+    two-sided group row can bind up or down and the reader must be able to tell
+    which. In a minimisation a binding upper bound carries a non-positive dual,
+    so the identity above reads ``-y >= 0`` for an import-direction bind.
+
+    Write-only and solve-invariant. Returns ``None`` when the solve carried no
+    flows (single-zone ISO).
+    """
+    flows = getattr(result, "flows", None)
+    if flows is None or links is None or len(links) == 0:
+        return None
+    flows = np.asarray(flows, dtype=np.float32)
+    n_links, T = flows.shape
+    link_names = [f"{ln.from_zone}>{ln.to_zone}" for ln in links][:n_links]
+
+    def _col(arr, fill=np.nan):
+        """(n, T) float32 view of an optional result array, else a fill block."""
+        if arr is None:
+            return np.full((n_links, T), fill, dtype=np.float32)
+        return np.asarray(arr, dtype=np.float32)[:n_links, :T]
+
+    hours = np.tile(np.arange(T, dtype=np.int32), n_links)
+    frames = [
+        pd.DataFrame(
+            {
+                "kind": "link",
+                "name": np.repeat(np.asarray(link_names, dtype=object), T),
+                "hour": hours,
+                "mw": flows.reshape(-1),
+                "dual": _col(getattr(result, "flow_dual", None)).reshape(-1),
+                "limit_up": _col(getattr(result, "flow_cap_up", None)).reshape(-1),
+                "limit_dn": _col(getattr(result, "flow_cap_dn", None)).reshape(-1),
+            }
+        )
+    ]
+
+    g_dual = getattr(result, "interface_dual", None)
+    g_idx = getattr(result, "interface_link_idx", None)
+    g_sgn = getattr(result, "interface_signs", None)
+    if g_dual is not None and g_idx:
+        g_dual = np.asarray(g_dual, dtype=np.float32)
+        cap_up = getattr(result, "interface_cap_up", None)
+        cap_dn = getattr(result, "interface_cap_dn", None)
+        seen_labels: dict[str, int] = {}
+        for gi, idx in enumerate(g_idx):
+            idx = np.asarray(idx, dtype=int)
+            signs = (
+                np.ones(idx.size)
+                if not g_sgn
+                else np.asarray(g_sgn[gi], dtype=float)[: idx.size]
+            )
+            label = "grp:" + "".join(
+                f"{'+' if s > 0 else '-'}{link_names[i]}"
+                for i, s in zip(idx, signs)
+                if i < n_links
+            )
+            # Two groups CAN share a signed membership (a static cap plus an
+            # hourly overlay on the same links). Suffix the repeat so ``name``
+            # stays a key — a reader selecting by label must never silently
+            # collect two groups' duals into one 2T-long series.
+            seen_labels[label] = seen_labels.get(label, 0) + 1
+            if seen_labels[label] > 1:
+                label = f"{label}#{seen_labels[label]}"
+            member = np.zeros(T, dtype=np.float32)
+            for i, s in zip(idx, signs):
+                if i < n_links:
+                    member += np.float32(s) * flows[i]
+            frames.append(
+                pd.DataFrame(
+                    {
+                        "kind": "group",
+                        "name": label,
+                        "hour": np.arange(T, dtype=np.int32),
+                        "mw": member,
+                        "dual": g_dual[gi, :T],
+                        "limit_up": (
+                            np.full(T, np.nan, dtype=np.float32)
+                            if cap_up is None
+                            else np.asarray(cap_up, dtype=np.float32)[gi, :T]
+                        ),
+                        "limit_dn": (
+                            np.full(T, np.nan, dtype=np.float32)
+                            if cap_dn is None
+                            else np.asarray(cap_dn, dtype=np.float32)[gi, :T]
+                        ),
+                    }
+                )
+            )
+
+    df = pd.concat(frames, ignore_index=True)
+    df.insert(0, "pass", pass_label)
+    df.insert(0, "year", np.int16(year))
+    for col in ("pass", "kind", "name"):
+        df[col] = df[col].astype("category")
+    return df
+
+
+def _write_hourly_sidecar(
+    run_dir: Path, year: int, name: str, frames: "list[pd.DataFrame]"
+) -> "Path | None":
+    """Concatenate this year's ``frames`` into ``hourly/<name>_<year>.parquet``.
+
+    Shared tail of the per-year committable sidecars that are already built as
+    per-pass frames (``unit_hourly`` / ``network``), the same ``hourly/``
+    convention — and the same gitignore escape — as the class/storage/system
+    sidecars.
+
+    Two encoding choices, both load-bearing for whether a KEEPER bundle can
+    carry these at all (rule 15 ``[R-DASHBOARD]``):
+
+    * **zstd**, because both frames are long runs of repeated per-unit /
+      per-link values where it is materially smaller than the snappy default
+      at no read cost;
+    * **``DELTA_BINARY_PACKED`` on ``hour``**, because these frames are tall
+      and narrow and the tiled ``0..8759`` ramp otherwise falls back to PLAIN
+      int32 and *dominates the file*. Measured on the CAISO 2023 unit frame
+      (14.2 M rows): 12.60 MB total, of which ``hour`` alone was **11.12 MB**
+      against 1.04 MB for ``mw`` + ``cap_mw``; delta-packing the ramp takes the
+      whole file to **1.74 MB**. Lossless — same rows, values and dtypes.
+
+    Returns the path, or ``None`` when the year produced no frames.
+    """
+    rows = [f for f in frames if f is not None and int(f["year"].iloc[0]) == year]
+    if not rows:
+        return None
+    hourly_dir = run_dir / "hourly"
+    hourly_dir.mkdir(parents=True, exist_ok=True)
+    out = hourly_dir / f"{name}_{year}.parquet"
+    df = pd.concat(rows, ignore_index=True)
+    # pyarrow requires an explicit per-column dictionary list whenever
+    # column_encoding is given, so name the low-cardinality label columns.
+    dict_cols = [
+        c for c in df.columns if str(df[c].dtype) == "category" or df[c].dtype == object
+    ]
+    pq.write_table(
+        pa.Table.from_pandas(df, preserve_index=False),
+        out,
+        compression="zstd",
+        version="2.6",
+        use_dictionary=dict_cols,
+        column_encoding=(
+            {"hour": "DELTA_BINARY_PACKED"} if "hour" in df.columns else None
+        ),
     )
     return out
 
@@ -4259,6 +4514,15 @@ def solve_and_persist(
             campd_active = set(_by_plant[_by_plant > 0.0].index.astype(int))
         _t_campd_done = time.perf_counter()
 
+        # Year-LOCAL accumulators for the two per-year diagnostic sidecars.
+        # Deliberately not the cross-year lists above: a per-plant unit-hour
+        # frame is the largest object in this loop after ``_dispf`` (CAISO 2025
+        # = 1,358 gens x 8,760 h), so it is built after ``_dispf`` is freed,
+        # written at the end of the year, and released before the next year's
+        # fleet build — never carried across the year boundary.
+        unit_frames: list[pd.DataFrame] = []
+        network_frames: list[pd.DataFrame] = []
+
         for label, res in labelled:
             passes_seen.add(label)
             _dispf = _dispatch_frame(
@@ -4324,6 +4588,30 @@ def solve_and_persist(
             # `_sysf` and `campd_year` are deliberately NOT freed here — both
             # are appended to cross-year accumulators and are still live.
             del _dispf
+            # Per-unit dispatch + availability cap (ask A2's D1 input) and the
+            # per-link/per-group flow + duals. Built HERE, after ``_dispf`` is
+            # freed, so the two large unit-hour frames never coexist.
+            _unitf = _unit_hourly_frame(
+                year,
+                label,
+                res,
+                context,
+                # P2 (archived path) re-bounds the fleet, so its cap series is
+                # the P2 arrays' — the same selection _save_floor_arrays makes.
+                (
+                    p2_state.get("fleet_arrays_p2", p2_state.get("fleet_arrays"))
+                    if label == "P2"
+                    else p2_state.get("fleet_arrays")
+                ),
+                iso=iso,
+            )
+            if _unitf is not None:
+                unit_frames.append(_unitf)
+            del _unitf
+            _netf = _network_frame(year, label, res, p2_state.get("links"))
+            if _netf is not None:
+                network_frames.append(_netf)
+            del _netf
             system_frames.append(_sysf)
             # Reserve-dual diagnostic sidecar (MARKET_SIM_RESERVE_DUAL_DUMP,
             # default OFF): the per-family reserve balance-row duals
@@ -4460,8 +4748,11 @@ def solve_and_persist(
         # per-year frames accumulated above survive the loop.
         _write_class_hourly_sidecar(run_dir, year, [lbl for lbl, _ in labelled])
         _write_storage_hourly_sidecar(run_dir, year, storage_frames)
+        _write_hourly_sidecar(run_dir, year, "unit_hourly", unit_frames)
+        _write_hourly_sidecar(run_dir, year, "network", network_frames)
         del result, context, result_p1, p2_state, demand, must_run
         del must_run_total, labelled, res
+        del unit_frames, network_frames
         gc.collect()
         # Hand the freed solve heap back to the kernel. gc.collect() returns the
         # LP's memory to glibc, but glibc holds large fragmented arenas instead
