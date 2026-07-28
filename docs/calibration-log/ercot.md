@@ -2117,3 +2117,97 @@ ercot124/125/126. Pre-existing failures unchanged: **4** in `tests/unit/results/
 derived artifacts and two documents — no `src/` code, config surface or cache key — so no test
 outcome is attributable to it. Full forensics:
 `docs/DIAGNOSIS-ercot127-coal-dispatch-band-2026-07-27.md`.
+
+## 2026-07-28 — ERCOT-128: unit-grain commitment IS expressible in pure LP — exactly, for 97.8 % of coal capacity, with no detector and no integrality — and the correctly-grained min-load floor still buys nothing; the one gate that demands a win is unreachable by the ORACLE (ercot128-unit-grain)
+
+**Lane** ercot128-unit-grain · keeper **unchanged** (`2026-07-26-ercot115-coal-marginal-hr`) ·
+**no mechanism licensed, no arm built, no year solved, no run registered, no keeper file
+touched.** Chartered by `DIAGNOSIS-ercot127` §5.3. Probe
+`scripts/probes/ercot128_coal_unit_grain.py` (sections A–G, full span, no LP).
+
+**The charter's architectural question is answered — in the affirmative, on the part that
+matters — and the lane is refused anyway.** Unit-grain commitment *state* is unavailable in
+pure LP by construction: a continuous `u ∈ [0,1]` relaxation of `u·MinLoad ≤ p ≤ u·Cap`
+projects to `0 ≤ p ≤ Cap` and **deletes the constraint entirely**; integer `u` is forbidden;
+measured `u` is rule-13 forbidden; and every P0/P1 detector is **circular** — it infers "off"
+from the dispatch it is meant to constrain. Measured, not asserted: the plant-level detector
+marks coal committed in 83–88 % of plant-hours (the 12.1/12.9/16.8 % at zero are whole-month
+outages — a **correction** to ERCOT-127 §5.3's "never reaches zero"), and the tranche-prefix
+detector binds only 16.0/16.4/8.9 % of hours for 1.74/1.63/0.82 TWh, because
+`C_on(t) < P(t) + c_last` makes its floor self-satisfying outside a sliver.
+
+**But the parameter never needed state — only the right grain, and that IS expressible
+exactly.** Enumerating all 2^N unit configurations on the EIA-860 registrations: the plant's
+exact online feasible set is **connected for 9 of 10 plants and 97.76 % of coal capacity**, so
+it equals `[min_u MinLoad_u, Cap]` and a static plant-grain `pmin` at the **minimum online
+configuration** is a zero-error representation — no detector, no integrality, **no change to
+the tranche offer curve** (Major Oak is the lone exception, a 153–190 MW gap = 17.6 % of its
+range on 305 MW of 13.6 GW). The parameter is registration-grade and independently
+corroborated: the three plants whose COP resources are *whole units* match EIA-860 **exactly**
+(Coleto 175/175, Oak Grove 348/348, J K Spruce 130/130) across two unrelated filings, the two
+large misses are exactly the ownership-split plants (Fayette 5 resources on 3 units, Sandy
+Creek 4 on 1 — the ERCOT-124/125 artifact on the registration side), and the fleet cap-weighted
+per-unit `MinLoad/Cap` of **0.3325** corroborates ERCOT-127 §2's DAM-derived **0.3636** to
+0.03. The fleet-effective floor is **0.159**, 44 % of the blanket one.
+
+**The prize, bounded ex ante — this is what kills it.** Three floors applied to the keeper's own
+series (the ERCOT-127 §3 construction; the `plant_0.364` control reproduces that lane's
+`floor_0.364` column to **±0.001 in all 21 bands**, tally 9/21 vs its published 8/21 on one
+knife-edge band, 2025 `$15–20` |Δ| 0.049 vs 0.050). **G1: keeper 19/21 · `min_config` 19/21 ·
+ORACLE 20/21 · blanket 9/21.** The candidate merely *swaps* bands (repairs 2023 `<$15`
+0.488→0.512 vs 0.552, breaks 2024 `≥$50` 0.767→0.776 vs 0.720); the **oracle** — the floor on
+exactly the capacity CAMPD says reality held online, an upper bound no forward rule can beat —
+buys **one band**. C1 `min_config` +0.66/+1.09/−1.13 TWh (keeper −1.07/−0.21/−1.89), C8 forced
+4.8/3.4/2.8 % — both pass, and both irrelevant given G1. The ERCOT-127 §4 p05 tail barely moves
+(Limestone 0.093→**0.093** vs actual 0.261; W A Parish 0.026→0.057 vs 0.171), because the
+*physical* minimum sits far below observed conduct — reality runs two or three of W A Parish's
+four units, not one at min load. Closing that gap needs a floor **above** the physical minimum:
+rule 21 `[R-DOF]` makes that an open root-cause issue, not a parameter.
+
+**Gate G3 refutes the entire mechanism family, at every grain and value, including the oracle.**
+The charter's only win-condition gate requires `COAL_LIGNITE` 2023 to clear D-1 (`r ≥ 0.8`,
+`cv_ratio ≥ 0.5`); the keeper is a **live FAIL** at 0.745/0.294 (coal joined `D1_GATED_CLASSES`
+at rubric v2.8, after the keeper's artifact was written). Reproduced exactly (probe keeper row
+0.744/0.300) and evaluated for every variant: **`min_config` 0.724/0.274, ORACLE 0.741/0.283,
+blanket 0.738/0.272 — `cv_ratio` falls in all twelve class-years.** Structural, not numerical:
+the model is **3.4× too flat** overnight (off-peak CV 0.017 vs 0.057), and a lower bound
+constant across hour-of-day can only raise the trough. **No floor can fix an over-flatness
+defect**, and an hour-of-day window would be shaped to the residual (rules 17/23).
+
+**Where the D-1 failure actually is — the finding that routes the successor.** The off-peak
+(h0–14) flat-top pin share, model vs actual: **COAL_LIGNITE 2023 73.3 % vs 6.2 % (11.8×)**,
+2024 66.7/4.6, 2025 77.3/18.6; COAL_PRB 2023 17.6/1.5. **The D-1 cv_ratio failure and the
+ERCOT-126 §1.4 ceiling pin are the same phenomenon** — three-quarters of the model's lignite
+energy overnight sits on a binding flat top, which is exactly why its overnight variance is
+zero. The coal residual's open item is not that coal needs holding up at the bottom; it is that
+**nothing holds it down at the top**.
+
+**The coal band lane should CLOSE.** With ERCOT-122 (offer level), -123 (reach), -124 (upper
+tail), -125 (owner split), -126 (availability), -127 (dispatch band) and this session (unit
+grain), every instrument is closed. Residual stays attributed, not tuned (rule 1 `[R-STRUCT]`).
+Rule 26 `[R-MECH-MATRIX]`: new `coal_min_load_floor` row added, ERCOT cell **R** with both
+lanes cited; `coal_econ_bound`'s note extended ERCOT-122..126 → 122..128.
+
+**Owner decisions surfaced, not decided.** (a) **ERCOT-116 is now the lane's ONLY live item and
+this session materially strengthens it** — the keeper carries a live G3/C7 FAIL, that failure
+*is* the ceiling pin, and no min-load mechanism can ever repair it, so "premature, wait for
+something that caps coal below its ceiling" no longer has a successor to wait for. Not armed,
+not promoted, its C1 cost not re-litigated. (b) `BIN_FORCED_DERATE_BY_YEAR` — untouched.
+(c) The ramp-envelope gross/net basis error (ERCOT-127 §1) — unchanged, still default-affecting
+for any ISO arming `ramp_limits`. (d) The ERCOT-122 offer-level controlled refutation — no new
+argument. (e) **NEW, stop-the-line and NOT this lane's to fix: the default cache key is broken
+on `origin/main`.** `ScenarioConfig().cache_key()` is `2904ac9ad9ed5c0c` against the pinned
+`603c2498bf71d21d`. Bisected on `scenarios.py` alone: clean through `98a5655`, **broken at
+`b9d2b4d` (pjm-134)**, which added `pjm_apsouth_interface_cut: bool = False` without registering
+it in `_CACHE_KEY_OPTIONAL_FIELDS`. This orphans every on-disk cache and breaks keeper
+reproducibility. Two precedents fixed the identical mistake in one line — `9df6be7` and
+`c45fed4` — so the fix is that registration, **not** re-pinning the literal.
+ERCOT-120 remains a separate un-renumbered lane.
+
+**Test state (reported, not chased, pins untouched; measured on an EMPTY tracked diff — this
+session's three files are all untracked additions).** `tests/unit/config/test_flag_registry.py`
+**12/12 pass**. `tests/regression/test_persisted_identity.py` **9/11 — 2 PRE-EXISTING
+FAILURES**, root-caused above and not attributable to this session. Pre-existing failures
+unchanged from the ercot127 baseline: **4** in `tests/unit/results/test_export.py`, **4** in
+`tests/scoring/test_ff_readiness_battery.py`. Full forensics:
+`docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md`.
