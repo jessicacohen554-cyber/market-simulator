@@ -49,6 +49,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # hash at its default so every pre-existing cached run keeps its key; an
     # armed run carries a different fleet cost and so gets a distinct key.
     "measured_ct_heat_rates",
+    # Measured power-only CHP heat rates (miso-99, default off): dropped from
+    # the hash at its default so every pre-existing cached run keeps its key;
+    # an armed run carries a different fleet cost and so gets a distinct key.
+    "measured_chp_heat_rates",
     # T1-X crossover boundary + forward AEO gas path (FF-0E, plan §2.2): dropped
     # from the hash at their defaults (None / "mid") so every pre-existing
     # cached run keeps its key; a crossover run sets a non-None boundary and so
@@ -1195,6 +1199,29 @@ class ScenarioConfig:
     # only the turbines of a mixed plant are repriced. See
     # docs/FINDING-nyiso88-peaker-heat-rate-2026-07-27.md sec 4.
     measured_ct_heat_rates: bool = False
+
+    # Measured POWER-ONLY heat rates for topping-cycle CHP (miso-99; default
+    # OFF, byte-identical off). eGRID's ``PLHTRT`` is the number the model
+    # loads for every plant, and at a cogen eGRID publishes it net of the fuel
+    # it attributes to useful thermal output — a STEAM-CREDITED rate, not the
+    # rate at which the machine turns fuel into power, which makes CHP the
+    # cheapest thermal on the system (six ISOs measure 12-62 % understated,
+    # FINDING-caiso128 §4). eGRID publishes the credit it removed (``CHPCHTI``)
+    # alongside the rate it kept (``PLHTIAN``), so the power-only rate is
+    # ``(PLHTIAN + CHPCHTI) / PLNGENAN`` — the incumbent input with eGRID's own
+    # allocation undone, on the same NET denominator, so no gross-to-net
+    # reconciliation is involved (that is what blocked the CEMS route,
+    # FINDING-miso98 §6.1). Validated against independently metered CAMPD heat
+    # input at a ratio of 1.00000 on 19/22 covered MISO plants. Rule 13
+    # [R-MEASURED] admissible: a machine's power-only heat rate is a physical
+    # characteristic that regenerates from each eGRID vintage and responds to
+    # changed conditions, not a measured outcome fed back to close a residual.
+    # Scoped to topping cycles (CC_CHP / CT_CHP) on turbine physics — a
+    # boiler-first back-pressure cogen's fuel is process fuel, not power fuel.
+    # Zero fitted parameters. See
+    # scripts/data/derive_chp_power_only_heat_rates.py and
+    # results/calibration/FINDING-miso99-chp-heat-rate-2026-07-28.md.
+    measured_chp_heat_rates: bool = False
 
     # Forward emission-control retrofit channel (Tier 2; default OFF).
     # docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md
