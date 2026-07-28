@@ -64,6 +64,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the field's own "byte-identical off" promise. An armed run cuts the star
     # node's net position and so gets a distinct key.
     "pjm_external_net_position_cut",
+    # Plant-group hourly ramp envelopes (ercot132 leg A, default off): the
+    # field's DECLARATION was never written even though the design doc
+    # (docs/ramp-locational-design-2026-07.md §245), TIER_TAGS, the CLI flag,
+    # the LP rows, the loader and the committed CAISO artifact all assumed it
+    # existed, so the mechanism was unreachable. Declaring it now adds a field
+    # to a config surface that predates none of the caches -- dropped from the
+    # hash at its default so every pre-existing cached run keeps its key (the
+    # pinned default 603c2498bf71d21d is byte-stable); an armed run carries
+    # real two-sided ramp rows and so gets a distinct key.
+    "ramp_limits",
     # Measured CT loaded heat rates (nyiso-89, default off): dropped from the
     # hash at its default so every pre-existing cached run keeps its key; an
     # armed run carries a different fleet cost and so gets a distinct key.
@@ -1761,6 +1771,7 @@ class ScenarioConfig:
     # False = the frozen-penetration byte-compat mode: credits pin back to
     # the pre-CR-3.1 flat constants (the capacity-hindcast BASELINE arm and
     # the byte-identity tests) — no curve, no penetration response.
+    ramp_limits: bool = False  # GATED, default-OFF plant-group hourly ramp
     # envelopes in the dispatch LP (model/dispatch._build_ramp_rows). One
     # two-sided row per ramp-constrained plant group per hour transition,
     # bounding the group's hourly dispatch delta by its CAMPD-measured max

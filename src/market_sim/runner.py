@@ -1591,7 +1591,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # forecast and backcast paths share the mechanism (forecast
             # parity, design doc §4). No-op (identical LP) when off or when
             # the ISO has no committed envelope artifact.
-            if getattr(config, "ramp_limits", False):
+            if config.ramp_limits:
                 from market_sim.data.fleet import build_ramp_groups
 
                 ramp_groups = build_ramp_groups(fleet_arrays, iso)
