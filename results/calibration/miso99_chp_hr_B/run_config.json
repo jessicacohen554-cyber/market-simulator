@@ -1,19 +1,19 @@
 {
-  "timestamp": "2026-07-28T02:57:23",
+  "timestamp": "2026-07-28T03:41:32",
   "git": {
-    "sha": "29e0f60",
+    "sha": "1f22aae",
     "basis_sha": "29e0f6027b0dde4f42aab50020b482b574c8f201",
     "branch": "claude/miso-99-chp-heat-rate-t06xu7",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "miso-99 measured CHP power-only heat-rate A/B, arm A (measured_chp_heat_rates=False). SINGLE DELTA vs the other arm: that one ScenarioConfig field; no data file staged, no other kwarg moved, benchmark identical by construction. Armed, 72 generators / 6,732 MW of CC_CHP + CT_CHP take their plant's own measured power-only heat rate \u2014 eGRID PLHTRT with eGRID's published CHP useful-thermal heat-input allocation CHPCHTI added back over the same PLNGENAN denominator (no gross-to-net factor is involved). Keeper recipe (2026-07-27-miso-98b-sectormeasured) rebuilt from meta.json. Evidence: results/calibration/FINDING-miso99-chp-heat-rate-2026-07-28.md",
+  "model_changes_note": "miso-99 measured CHP power-only heat-rate A/B, arm B (measured_chp_heat_rates=True). SINGLE DELTA vs the other arm: that one ScenarioConfig field; no data file staged, no other kwarg moved, benchmark identical by construction. Armed, 72 generators / 6,732 MW of CC_CHP + CT_CHP take their plant's own measured power-only heat rate \u2014 eGRID PLHTRT with eGRID's published CHP useful-thermal heat-input allocation CHPCHTI added back over the same PLNGENAN denominator (no gross-to-net factor is involved). Keeper recipe (2026-07-27-miso-98b-sectormeasured) rebuilt from meta.json. Evidence: results/calibration/FINDING-miso99-chp-heat-rate-2026-07-28.md",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "MISO",
     "years": [
-      2025
+      2024
     ],
     "hours": 8760,
     "passes": [
@@ -22,7 +22,7 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
-      "2025": 3.52
+      "2024": 2.19
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
@@ -51,7 +51,8 @@
       "miso_midwest_subregional_reserves": true,
       "miso_winter_citygate_daily": true,
       "miso_manitoba_seam": true,
-      "miso_seam_envelope_merit_cap": true
+      "miso_seam_envelope_merit_cap": true,
+      "measured_chp_heat_rates": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -68,10 +69,10 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "29e0f60"
+    "git_sha": "1f22aae"
   },
   "scenario_config": {
-    "weather_year": 2025,
+    "weather_year": 2024,
     "iso": "MISO",
     "mode": "backcast",
     "voll": 5000.0,
@@ -231,7 +232,7 @@
     "use_plant_emission_rates_v2": true,
     "plant_emission_rates_v2_path": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
     "measured_ct_heat_rates": false,
-    "measured_chp_heat_rates": false,
+    "measured_chp_heat_rates": true,
     "control_retrofit_forward": false,
     "control_retrofit_path": "/home/user/market-simulator/data/raw/eia-860/eia860_enviro_assoc_emissions_control_equipment.parquet",
     "cc_peak_hr_penalty": 1.15,
@@ -851,7 +852,7 @@
     "unit_outage_maxgen_events": true,
     "maxgen_emergency_tier_pricing": true,
     "forecast_xyear_warmstart": true,
-    "gas_price_override": 3.52,
+    "gas_price_override": 2.19,
     "ercot_offer_hrmult_ep_rebasis": false,
     "ercot_offer_hrmult_ep_rebasis_bands": null
   },
