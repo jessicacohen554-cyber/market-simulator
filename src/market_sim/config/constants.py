@@ -2551,6 +2551,34 @@ def weather_year_pool(iso: str) -> tuple[int, ...]:
 
 
 # ---------------------------------------------------------------------------
+# Diurnal dry-bulb interpolation anchors (hour-grain temperature input)
+# ---------------------------------------------------------------------------
+# The curated weather tree carries DAILY TMIN/TMAX only (NOAA GHCN-D style
+# extremes); the capability response of a thermal unit is an HOURLY quantity.
+# ``data.eia930.weather.iso_zone_hourly_drybulb`` bridges the two with the
+# standard climatological two-piece cosine reconstruction: temperature rises on
+# a half-cosine from TMIN at the morning minimum to TMAX at the afternoon
+# maximum, then falls on a half-cosine to the NEXT day's TMIN.
+#
+# The anchor hours are the conventional diurnal phase of a mid-latitude
+# continental site in LOCAL STANDARD TIME: the minimum sits at/just after
+# sunrise and the maximum ~2-3 h after solar noon (the surface-energy-balance
+# lag). Source: Parton & Logan (1981), "A model for diurnal variation in soil
+# and air temperature", Agricultural Meteorology 23:205-216 -- the reference
+# TMIN/TMAX-to-hourly reconstruction, whose fitted air-temperature phase is
+# sunrise for the minimum and ~1.5-3 h past solar noon for the maximum; the
+# same anchors the FAO-56 / crop-model and TMY weather-generator families use.
+#
+# These are CLIMATOLOGICAL constants, not fitted parameters: they are set from
+# the meteorology literature and then VALIDATED against ISO conduct by
+# scripts/data/derive_campd_temp_derate_params.py (which reports the empirical
+# best-fit phase as a cross-check), never fitted to a price or volume residual
+# (rules 5 [R-NO-MAGIC], 13 [R-MEASURED], 23 [R-FROZEN-DERIVE]).
+DIURNAL_TMIN_HOUR: int = 5  # local-standard-time hour of the daily minimum
+DIURNAL_TMAX_HOUR: int = 15  # local-standard-time hour of the daily maximum
+
+
+# ---------------------------------------------------------------------------
 # Structural-error prior (PB-3, probability-bounds program)
 # ---------------------------------------------------------------------------
 # The published emissions band convolves the parametric input band (PB-2) with a

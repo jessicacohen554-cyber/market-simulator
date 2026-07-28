@@ -196,6 +196,113 @@ def iso_zone_tmax(
     return (tmax, tmin) if tmax is not None else None
 
 
+def diurnal_drybulb_from_daily(
+    tmin: np.ndarray, tmax: np.ndarray, year: int, hours: int
+) -> np.ndarray:
+    """Reconstruct an hourly dry-bulb series from day-flat TMIN/TMAX arrays.
+
+    The standard climatological two-piece cosine bridge (Parton & Logan 1981;
+    anchors :data:`~market_sim.config.constants.DIURNAL_TMIN_HOUR` /
+    :data:`~market_sim.config.constants.DIURNAL_TMAX_HOUR`): temperature rises
+    on a half-cosine from that day's TMIN at the morning-minimum hour to its
+    TMAX at the afternoon-maximum hour, then falls on a half-cosine to the
+    NEXT day's TMIN.  Pre-dawn hours are the tail of the PREVIOUS day's
+    falling limb, so the series is continuous across midnight rather than
+    resetting at hour 0.
+
+    By construction the reconstruction hits TMIN exactly at the minimum hour
+    and TMAX exactly at the maximum hour, and its daily mean is the mean of the
+    two limbs — it RESHAPES the day, it does not move the daily extremes.
+
+    Fully vectorized (no Python loop over hours, rule 2 ``[R-VECTOR]``).
+
+    Args:
+        tmin: Day-flat daily minimum broadcast to ``(hours,)``, deg C.
+        tmax: Day-flat daily maximum broadcast to ``(hours,)``, deg C.
+        year: Calendar year (fixes the hour-of-day clock).
+        hours: Number of run hours (typically 8760).
+
+    Returns:
+        ``(hours,)`` ndarray of interpolated hourly dry-bulb temperature, deg C.
+    """
+    from market_sim.config.constants import DIURNAL_TMAX_HOUR, DIURNAL_TMIN_HOUR
+
+    h_min = int(DIURNAL_TMIN_HOUR)
+    h_max = int(DIURNAL_TMAX_HOUR)
+    tmin = np.asarray(tmin, dtype=float)
+    tmax = np.asarray(tmax, dtype=float)
+
+    hod = pd.date_range(f"{year}-01-01", periods=hours, freq="h").hour.to_numpy()
+
+    # Neighbouring days' extremes, day-flat like the inputs. The first day has
+    # no predecessor and the last no successor; holding the edge value there
+    # makes those limbs flat rather than inventing a swing.
+    tmin_next = np.concatenate([tmin[24:], tmin[-24:]])[:hours]
+    tmax_prev = np.concatenate([tmax[:24], tmax[:-24]])[:hours]
+
+    rise_span = float(h_max - h_min)  # h_min -> h_max, same day
+    fall_span = float(24 - h_max + h_min)  # h_max -> next day's h_min
+
+    def _cos_blend(a: np.ndarray, b: np.ndarray, frac: np.ndarray) -> np.ndarray:
+        """Half-cosine interpolation from *a* to *b* over ``frac`` in [0, 1]."""
+        return a + (b - a) * (1.0 - np.cos(np.pi * np.clip(frac, 0.0, 1.0))) / 2.0
+
+    out = np.empty(hours, dtype=float)
+
+    rising = (hod >= h_min) & (hod <= h_max)
+    out[rising] = _cos_blend(
+        tmin[rising], tmax[rising], (hod[rising] - h_min) / rise_span
+    )
+
+    falling = hod > h_max
+    out[falling] = _cos_blend(
+        tmax[falling], tmin_next[falling], (hod[falling] - h_max) / fall_span
+    )
+
+    # Pre-dawn: the tail of yesterday's falling limb (yesterday's TMAX -> today's
+    # TMIN), which is why the fraction carries the +24 h wrap.
+    predawn = hod < h_min
+    out[predawn] = _cos_blend(
+        tmax_prev[predawn], tmin[predawn], (hod[predawn] + 24 - h_max) / fall_span
+    )
+    return out
+
+
+def iso_zone_hourly_drybulb(
+    iso: str, year: int, hours: int, zone: str | None = None
+) -> np.ndarray | None:
+    """Return an HOUR-GRAIN dry-bulb series for an ISO zone, deg C.
+
+    The hour-of-day counterpart to :func:`iso_zone_tmax`, which broadcasts the
+    daily TMAX **flat within the day** and therefore carries zero diurnal
+    signal.  Reads the same curated daily TMIN/TMAX and reconstructs the within-
+    day wave via :func:`diurnal_drybulb_from_daily`.
+
+    Both inputs are required: a source with no ``tmin_c`` (CAISO
+    ``'_load_weighted'``, NYISO ``'_downstate'``) cannot support the
+    reconstruction and returns ``None`` so the caller falls back to the day-flat
+    path rather than silently fabricating a wave.
+
+    Args:
+        iso: ISO identifier (e.g. ``"MISO"``).
+        year: Calendar year to extract.
+        hours: Number of run hours (typically 8760).
+        zone: Model zone name, or ``None`` to leave the frame unfiltered.
+
+    Returns:
+        ``(hours,)`` ndarray of hourly dry-bulb temperature in deg C, or
+        ``None`` when the weather source, the zone/year, or ``tmin_c`` is
+        missing.
+    """
+    pair = iso_zone_tmax(iso, year, hours, zone=zone)
+    if pair is None:
+        return None
+    tmax, tmin = pair
+    if tmax is None or tmin is None:
+        return None
+    return diurnal_drybulb_from_daily(tmin, tmax, year, hours)
+
+
 def neiso_load_weighted_temp(
     year: int, hours: int
 ) -> tuple[np.ndarray, np.ndarray] | None:
