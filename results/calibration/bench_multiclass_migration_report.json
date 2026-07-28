@@ -1,0 +1,294 @@
+[
+ {
+  "iso": "CAISO",
+  "year": 2023,
+  "migrated": 0
+ },
+ {
+  "iso": "CAISO",
+  "year": 2024,
+  "migrated": 1,
+  "old_group": {
+   "422": "CT_PEAKER"
+  },
+  "bytes_before": 135615,
+  "bytes_after": 135754
+ },
+ {
+  "iso": "CAISO",
+  "year": 2025,
+  "migrated": 1,
+  "old_group": {
+   "422": "CT_PEAKER"
+  },
+  "bytes_before": 115548,
+  "bytes_after": 116014
+ },
+ {
+  "run": "2026-07-27-caiso-130-nameplate-aware",
+  "rekeyed": 2
+ },
+ {
+  "iso": "ERCOT",
+  "year": 2023,
+  "migrated": 0
+ },
+ {
+  "iso": "ERCOT",
+  "year": 2024,
+  "migrated": 0
+ },
+ {
+  "iso": "ERCOT",
+  "year": 2025,
+  "migrated": 0
+ },
+ {
+  "iso": "MISO",
+  "year": 2023,
+  "migrated": 24,
+  "old_group": {
+   "976": "CT_PEAKER",
+   "990": "ST_GAS",
+   "1001": "CT_PEAKER",
+   "1004": "COAL_BIT",
+   "1073": "ST_CHP",
+   "1104": "ST_GAS",
+   "1393": "ST_CHP",
+   "1904": "CT_PEAKER",
+   "2070": "ST_GAS",
+   "2123": "ST_GAS",
+   "6034": "CT_PEAKER",
+   "6035": "ST_GAS",
+   "6055": "ST_GAS",
+   "6085": "CT_PEAKER",
+   "6190": "ST_GAS",
+   "6358": "CT_PEAKER",
+   "10328": "ST_CHP",
+   "50625": "ST_CHP",
+   "55087": "CT_PEAKER",
+   "55088": "CT_CHP",
+   "55096": "ST_CHP",
+   "55218": "CT_PEAKER",
+   "55620": "CT_PEAKER",
+   "63259": "CT_PEAKER"
+  },
+  "bytes_before": 591863,
+  "bytes_after": 622146
+ },
+ {
+  "iso": "MISO",
+  "year": 2024,
+  "migrated": 24,
+  "old_group": {
+   "976": "CT_PEAKER",
+   "990": "ST_GAS",
+   "1001": "CT_PEAKER",
+   "1004": "COAL_BIT",
+   "1073": "ST_CHP",
+   "1104": "ST_GAS",
+   "1393": "ST_CHP",
+   "1904": "CT_PEAKER",
+   "2070": "ST_GAS",
+   "2123": "ST_GAS",
+   "6034": "CT_PEAKER",
+   "6035": "ST_GAS",
+   "6055": "ST_GAS",
+   "6085": "CT_PEAKER",
+   "6190": "ST_GAS",
+   "6358": "CT_PEAKER",
+   "10328": "ST_CHP",
+   "50625": "ST_CHP",
+   "55087": "CT_PEAKER",
+   "55088": "CT_CHP",
+   "55096": "ST_CHP",
+   "55218": "CT_PEAKER",
+   "55620": "CT_PEAKER",
+   "63259": "CT_PEAKER"
+  },
+  "bytes_before": 606003,
+  "bytes_after": 638848
+ },
+ {
+  "iso": "MISO",
+  "year": 2025,
+  "migrated": 25,
+  "old_group": {
+   "976": "CT_PEAKER",
+   "990": "ST_GAS",
+   "1001": "CT_PEAKER",
+   "1004": "COAL_BIT",
+   "1073": "ST_CHP",
+   "1104": "ST_GAS",
+   "1393": "ST_CHP",
+   "1464": "ST_GAS",
+   "1904": "CT_PEAKER",
+   "2070": "ST_GAS",
+   "2123": "ST_GAS",
+   "6034": "CT_PEAKER",
+   "6035": "ST_GAS",
+   "6055": "ST_GAS",
+   "6085": "CT_PEAKER",
+   "6190": "ST_GAS",
+   "6358": "CT_PEAKER",
+   "10328": "ST_CHP",
+   "50625": "ST_CHP",
+   "55087": "CT_PEAKER",
+   "55088": "CT_CHP",
+   "55096": "ST_CHP",
+   "55218": "CT_PEAKER",
+   "55620": "CT_PEAKER",
+   "63259": "CT_PEAKER"
+  },
+  "bytes_before": 627314,
+  "bytes_after": 658456
+ },
+ {
+  "run": "2026-07-27-miso-98b-sectormeasured",
+  "rekeyed": 73
+ },
+ {
+  "iso": "NEISO",
+  "year": 2023,
+  "migrated": 1,
+  "old_group": {
+   "52026": "CT_PEAKER"
+  },
+  "bytes_before": 128714,
+  "bytes_after": 129256
+ },
+ {
+  "iso": "NEISO",
+  "year": 2024,
+  "migrated": 1,
+  "old_group": {
+   "52026": "CT_PEAKER"
+  },
+  "bytes_before": 130208,
+  "bytes_after": 130868
+ },
+ {
+  "iso": "NEISO",
+  "year": 2025,
+  "migrated": 1,
+  "old_group": {
+   "52026": "CT_PEAKER"
+  },
+  "bytes_before": 137065,
+  "bytes_after": 138020
+ },
+ {
+  "run": "2026-07-23-neiso-61-netrev-margin",
+  "rekeyed": 3
+ },
+ {
+  "iso": "NYISO",
+  "year": 2023,
+  "migrated": 7,
+  "old_group": {
+   "2493": "ST_CHP",
+   "2500": "ST_GAS",
+   "2511": "ST_GAS",
+   "2517": "ST_GAS",
+   "2682": "ST_GAS",
+   "10025": "ST_CHP",
+   "50292": "CT_PEAKER"
+  },
+  "bytes_before": 159025,
+  "bytes_after": 170482
+ },
+ {
+  "iso": "NYISO",
+  "year": 2024,
+  "migrated": 7,
+  "old_group": {
+   "2493": "ST_CHP",
+   "2500": "ST_GAS",
+   "2511": "ST_GAS",
+   "2517": "ST_GAS",
+   "2682": "ST_GAS",
+   "10025": "ST_CHP",
+   "50292": "CT_PEAKER"
+  },
+  "bytes_before": 160271,
+  "bytes_after": 170609
+ },
+ {
+  "iso": "NYISO",
+  "year": 2025,
+  "migrated": 7,
+  "old_group": {
+   "2493": "ST_CHP",
+   "2500": "ST_GAS",
+   "2511": "ST_GAS",
+   "2517": "ST_GAS",
+   "2682": "ST_GAS",
+   "10025": "ST_CHP",
+   "50292": "CT_PEAKER"
+  },
+  "bytes_before": 172720,
+  "bytes_after": 185260
+ },
+ {
+  "run": "2026-07-27-nyiso-89-ctmeas-hrloaded",
+  "rekeyed": 21
+ },
+ {
+  "iso": "PJM",
+  "year": 2023,
+  "migrated": 9,
+  "old_group": {
+   "1571": "ST_GAS",
+   "2393": "CT_PEAKER",
+   "2406": "CT_PEAKER",
+   "10030": "CT_CHP",
+   "50279": "ST_GAS",
+   "50397": "ST_CHP",
+   "50481": "ST_CHP",
+   "52019": "CT_PEAKER",
+   "54785": "ST_CHP"
+  },
+  "bytes_before": 592549,
+  "bytes_after": 601203
+ },
+ {
+  "iso": "PJM",
+  "year": 2024,
+  "migrated": 9,
+  "old_group": {
+   "1571": "ST_GAS",
+   "2393": "CT_PEAKER",
+   "2406": "CT_PEAKER",
+   "10030": "CT_CHP",
+   "50279": "ST_GAS",
+   "50397": "ST_CHP",
+   "50481": "ST_CHP",
+   "52019": "CT_PEAKER",
+   "54785": "ST_CHP"
+  },
+  "bytes_before": 602672,
+  "bytes_after": 610597
+ },
+ {
+  "iso": "PJM",
+  "year": 2025,
+  "migrated": 9,
+  "old_group": {
+   "1571": "ST_GAS",
+   "2393": "CT_PEAKER",
+   "2406": "CT_PEAKER",
+   "10030": "CT_CHP",
+   "50279": "ST_GAS",
+   "50397": "ST_CHP",
+   "50481": "ST_CHP",
+   "52019": "CT_PEAKER",
+   "54785": "ST_CHP"
+  },
+  "bytes_before": 607515,
+  "bytes_after": 613843
+ },
+ {
+  "run": "2026-07-27-pjm-133-nameplate",
+  "rekeyed": 27
+ }
+]
