@@ -1771,3 +1771,70 @@ every prior NYISO keeper.
 caution; NYISO queue extended with the dispatch-matching lane
 (nuclear_unit_availability, ror_split review, import shape, reattribution
 lineage cleanup).
+
+## 2026-07-28 — nyiso-93: measured unit-availability window family adjudicated INERT (ex-ante, no solve)
+
+Lane task: derive + A/B the measured unit-availability window family
+(`unit_outage_short_windows` + `unit_partial_outage_windows`) for NYISO,
+matrix cell `U` → tested. **Stopped at the task's own branch point: both
+extracts derive to ZERO rows, so the A/B arm was never solved.** The cell is
+adjudicated **`I` (inert, ex-ante)**.
+
+**Step 1 — the derive.** Both artifacts built on the frozen constants,
+coal-only scope and when-operable baseload guard exactly as shipped (rule 23;
+nothing loosened, no gas-CC scope extension):
+
+```
+scripts/data/derive_campd_unit_outages.py --iso NYISO --short-windows   --years 2023 2024 2025  -> 0 rows
+scripts/data/derive_campd_unit_outages.py --iso NYISO --partial-windows --years 2023 2024 2025  -> 0 rows
+```
+
+Coverage: 0 windows/yr, 0 distinct units, 0 MW-days, no class mix, all three
+years. Both CSVs are committed with full headers — a valid empty extract, not
+a missing file.
+
+**Why — the detector found no COAL, not no windows.** Two independent zeros:
+(a) the short/partial guard is CAMPD `primaryFuelInfo ∈ {coal, coal refuse}`,
+and NYISO's CAMPD states (NY, NJ) carry **0 coal unit-years** in 2023/2024/
+2025 against 276/249/243 pipeline-gas unit-years; (b)
+`unit_outage_short_derate_factors` re-filters to `plant_group == "COAL"`, and
+the NYISO model fleet is **0.0 MW COAL** in all three years (of 30,253 MW;
+78 % gas by capacity). Dated from repo data: the last NY coal MWh is
+**Somerset/Kintigh (6082) unit 1, 160.4 GWh in 2020** (376.6 GWh 2019);
+2021–22 are zombie CEMS registrations at 0.0 GWh; 2023+ absent entirely.
+
+**Inert, not merely empty.** Both consumers return **0-key** multiplier dicts
+for NYISO in every year while the standard ≥5-day overlay returns 39–41 keys
+as a live control — so arming both flags derates nothing and the Step-2 arm
+would be byte-identical to the keeper by construction. No solve spent; no
+dashboard registration (rule 15 governs completed runs, and there is none).
+
+**Rule 25 discipline:** ERCOT's `I` was NOT ported. ERCOT's cell is inert for
+a different reason (ERCOT-126: day-scale windows vs an intraday cv gate, on a
+fleet that *has* coal); NYISO's verdict is derived from NYISO's own data and
+the two are non-transferable in either direction.
+
+**Consequence.** NYISO queue item 5 (§5.5) is closed — the cheapest remaining
+item, spent at no cost. C3c is untouched and the queue head remains item 1
+(DA virtual depth), aimed where nyiso-92 dated the actual tail (summer RT).
+Standing note for the forecast lane: NYISO has **no measured sub-5-day
+availability channel at all** — its forced-outage representation rests
+entirely on the statistical WEFOR/POF stack plus the standard ≥5-day extract.
+Do not attribute a short-duration NYISO tightness miss to fleet availability
+without remembering that.
+
+**Matrix:** `unit_outage_short_windows` N `U`→`I` with citation; §5.5 queue
+item 5 struck through as closed. Evidence:
+`docs/FINDING-nyiso93-unit-availability-windows-inert-2026-07-28.md`; probe
+`scripts/probes/nyiso93_unit_window_census.py` reproduces every number.
+
+**Rebase addendum (same session, after `origin/main` advanced 28 commits):**
+NEISO ran the same lane task in parallel and adjudicated its own cell
+`U`→`R` (neiso-69 — rejected on *provenance*, not fit: its single derived
+window is unit-mismatched to an EIA-860-excluded Merrimack u2). Both verdicts
+are preserved in the merged row, `cells: "IUKKIR"`. The row now carries three
+mutually non-transferable negative verdicts for three unrelated causes —
+ERCOT `I` (day-scale vs cv gate), NEISO `R` (unit-mismatch provenance), NYISO
+`I` (empty population) — and none touches the PJM/MISO `K` cells. The derive
+script, `outages.py`, `outage_detect.py` and the CAMPD unit-level extracts are
+untouched by those 28 commits, so the NYISO artifacts stand without re-derive.
