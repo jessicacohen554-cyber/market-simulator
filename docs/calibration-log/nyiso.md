@@ -1838,3 +1838,91 @@ ERCOT `I` (day-scale vs cv gate), NEISO `R` (unit-mismatch provenance), NYISO
 `I` (empty population) — and none touches the PJM/MISO `K` cells. The derive
 script, `outages.py`, `outage_detect.py` and the CAMPD unit-level extracts are
 untouched by those 28 commits, so the NYISO artifacts stand without re-derive.
+
+---
+
+## 2026-07-28 — nyiso-94: DA virtual-bid lever REFUSED ex-ante (no solve, no run)
+
+**Verdict: `da_virtual_bids` × NYISO `U` → `G`.** The charter's own Step-1
+branch point fired: NYISO's published DA grain cannot identify a PJM-form
+`net(λ)` without a fitted scalar, so **no A/B was solved and no run was
+registered** (rule 15 governs completed runs; there is none — same posture as
+nyiso-93). **No keeper candidate.** Keeper stays
+`2026-07-28-nyiso-92-hydro-envelope` (`results/calibration/nyiso92_hydro_envfloor`),
+untouched; its DOF ledger is unchanged at 20 entries / 6 residual because this
+session added no parameter.
+
+**The one-line reason.** PJM's mechanism is admissible because PJM publishes
+the **submitted** bid curve (`hrl_da_incs_decs`). NYISO publishes only the
+**cleared** volume, and publishes it **without a price**. One defect blocks
+identification (rule 21 `[R-DOF]`), the other blocks admissibility (rule 13
+`[R-MEASURED]`); each is disqualifying alone.
+
+**Step 1 (data intake, no solve).** NYISO MIS P-59 `zonalBidLoad` (26,301 h ×
+11 zones, 2023–2025), P-27 `biddata_loadbids`/`_genbids` (3-month lag), P-58B
+`pal`, plus the in-repo 2025 SOM. Four findings:
+
+1. **No price axis.** `zonalBidLoad` gives ONE MW per zone-hour for Virtual
+   Load and Virtual Supply. The priced P-27 archive cannot separate virtual
+   from physical price-capped load — corr 0.667 vs Virtual Load, 0.894 vs Price
+   Cap Load, best 0.912 vs their SUM at 0.78× level; the 834 "financial
+   signature" sinks (no `Forecast MW`, no `Fixed MW`) partition cleanly from the
+   1,350 physical sinks yet total **2.46×** published Virtual Load — a mixture,
+   not an identification. The archive also carries superseded submissions
+   (`Forecast MW` 2.14× the official Energy Bid Load).
+2. **Cleared, not submitted.** The virtual columns reproduce the IMM's published
+   **cleared** MW/h (2025 SOM Fig 24) to within 1–2 MW: 1,090/1,275 vs
+   1,089/1,275 (2024); 1,052/1,329 vs 1,051/1,327 (2025).
+3. **Premise false.** Net virtual is **negative** in the mean hour
+   (−230/−186/−277 MW) and only **+580/+293/+917 MW** in the measured RT>$300
+   tail (2.5/1.3/3.3 % of RT load) against PJM's +7–11 GW. NYISO's whole DA book
+   sits **846–869 MW below RT load** on the annual mean and 827–1,255 MW below
+   in the tail hours — corroborated verbatim by the IMM (2025 SOM p.47: DA net
+   scheduled load ≈ **96 %** of actual NYCA peak load).
+4. **Roof-blocked, re-confirmed on the keeper's committed sidecars** (no
+   re-solve): all five **mainland** zones share ONE identical annual max dual
+   (149.9/194.5/255.1), **0 hours >$258**, and **zero load-shed slack** in all
+   three years. Every model >$300 hour is **Long Island** (3/0/7 = the whole
+   C3c count), where measured net virtual is only +211/+145/+249 MW. Demand
+   added to a stack with no rung above $255 and GW of headroom cannot make a
+   >$300 mainland hour — the nyiso-85 §7d roof, verified rather than re-derived.
+
+**What the data DID produce — the successor lever.** NYISO's virtual market is
+a **congestion play, not a depth play**: in the tail hours net virtual is
+DEMAND downstate (NYC +264/+373/**+872**, Lower_Hudson +403/+358/+420,
+Long_Island +211/+145/+249) and SUPPLY upstate (Capital_Hudson −255/−400/−403,
+Upstate_West −43/−183/−221) — verbatim the IMM's own description (2025 SOM
+p.21), traders *"purchasing load downstate and selling virtual energy
+upstate."* That points at **Thunderstorm Alerts (TSAs)**: NYSRC rules force
+NYISO to pre-secure the ConEd system as if the first contingency occurred,
+cutting upstate→downstate transfer capability **1–2 GW, RT-only, never in the
+DA market** (2025 SOM §D), in **hours 13–21 May–September** — exactly where
+nyiso-92 dated the tail — costing **$300–500/MWh** on >26 GW days, with **50 of
+1,377 hours carrying 99 %** of the cost. The keeper prices
+`Lower_Hudson − Upstate_West` at **$0.5/$0.0/$0.0** and `NYC − Upstate_West` at
+$13/$3/$27 in those very hours: the model has essentially **no downstate
+congestion where NYISO says congestion is most expensive**. A weather-driven
+interface derate is rule-13 admissible (physical availability event,
+forward-reproducible — the IMM built its own forecast from public weather
+data), and it targets the roof/congestion that blocks C3c rather than the
+tightness the roof swallows. Caveats declared: needs a TSA-history intake that
+does not exist in-repo, and must be argued on the **RT** side.
+
+**Data deliberately NOT committed.** Cleared virtual volume is a market
+*outcome*; parking it under `data/raw/` would leave a re-armable answer key
+(rule 26 `[R-DELETE]` in spirit). The probe re-fetches from NYISO's public MIS
+instead.
+
+**Rule 25 discipline.** PJM's `K` was not ported and is unaffected (PJM's data
+supports the mechanism; NYISO's does not). NEISO stays `U` — whether ISO-NE
+publishes a *submitted* virtual curve is untested here.
+
+**DO-NOT-REDO.** Re-opening requires **new evidence of a submitted, priced
+NYISO virtual curve**. A price distribution assumed onto the cleared MW is not
+new evidence — it is the fitted scalar this finding refused.
+
+**Matrix:** `da_virtual_bids` N `U`→`G` with citation; §5.5 queue item 1 struck
+through as closed and a new item 1b (TSA) added as the recommended head.
+Evidence: `docs/FINDING-nyiso94-da-virtual-not-identifiable-2026-07-28.md`;
+probe `scripts/probes/nyiso94_da_virtual_identifiability.py` reproduces every
+number.
