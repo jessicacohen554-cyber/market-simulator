@@ -28,6 +28,8 @@
  * Last full audit: 2026-07-27 (keepers ercot115 / caiso-130 / pjm-133 / miso-88 /
  * nyiso-89 / neiso-61; forecast board of 2026-07-20). NYISO column re-checked
  * 2026-07-28 on the nyiso-92 keeper promotion (hydro envelope/floor cells -> K).
+ * 2026-07-28 on the pjm-135 keeper promotion (pjm_external_net_position_cut -> K;
+ *   PJM gates drop to C3c alone — C1 and C3a closed).
  */
 window.MECH_MATRIX = {
   version: 1,
@@ -36,7 +38,7 @@ window.MECH_MATRIX = {
   keepers: {
     ERCOT: "2026-07-28-ercot129-conditional-coal-min",
     CAISO: "2026-07-27-caiso-130-nameplate-aware",
-    PJM: "2026-07-27-pjm-133-nameplate",
+    PJM: "2026-07-28-pjm-135-netpos-keeper",
     MISO: "2026-07-28-miso-99b-chp-power",
     NYISO: "2026-07-28-nyiso-92-hydro-envelope",
     NEISO: "2026-07-23-neiso-61-netrev-margin"
@@ -44,7 +46,7 @@ window.MECH_MATRIX = {
   gates: {
     ERCOT: "C3a/C3b 2023, C3c all years, C7 COAL_LIGNITE 2023 (v2.8)",
     CAISO: "C5a all years, C3a 2025, C3c 2023-24",
-    PJM: "C1 CC_REGULAR 2023, C3a 2025, C3c 2024-25",
+    PJM: "C3c 2024-25 (SOLE blocker since pjm-135; C1 and C3a closed 2026-07-28)",
     MISO: "C3a/C3b/C3c ledger-saturated (3/3), C7 COAL_PRB all years",
     NYISO: "C3c sole blocker, all years",
     NEISO: "C3c ledgered caveat (frontier declared; only calibration-complete ISO)"
@@ -415,9 +417,9 @@ window.MECH_MATRIX = {
       ev: { P: "pjm-134 (FINDING/PREREG 2026-07-27; arms pjm134_control_A/pjm134_apsouth_B)" } },
     { id: "pjm_external_net_position_cut", cat: "network", name: "Star-node NET-position joint cut (external seam)",
       def: "pjm_external_net_position_cut :7152", mode: "B",
-      cells: "..O...",
-      note: "OPEN — chartered pjm-135, A/B under test. The EXTERNAL-seam twin of the EAST / AP-South joint cuts: ONE one-sided aggregate row caps the SUMMED injection across all five PJM_external→border links (= the LP's net interchange) at the measured (month × hod) p95 net-position envelope. Same tie-line file, same PJM_EXTERNAL_FLOW_PERCENTILE, same bucketing as the per-border envelope; ZERO fitted scalars. Rule 19: REPLACES the sum-of-marginals ceiling on the AGGREGATE question (build_pjm_external_flow_groups caps each link at its own border's marginal p95 and nothing bounds the total), the per-border groups keep the locational bound. Chartered because pjm-135 M3 measures PJM_external price-tied to every PJM zone in 100.00% of hours (max |Δ| = 0.0000 $/MWh), so per-border re-attribution is provably re-routable and only an aggregate cap can bind. Measured basis: sum-of-marginal import band 4,235/5,140/5,358 MW vs a joint p95 of the simultaneous total of 3,309/3,855/3,996 MW; model net interchange −28.9/−21.9/−25.8 TWh vs measured −40.0/−32.8/−32.9 TWh.",
-      ev: { P: "pjm-135 (PREREG 2026-07-28; probes pjm135_star_node_import / pjm135_star_node_net_position)" } },
+      cells: "..K...",
+      note: "PJM KEEPER (2026-07-28-pjm-135-netpos-keeper, promoted 2026-07-28 by owner instruction; supersedes pjm-133-nameplate, whose recipe it carries verbatim — hydro budget preserved to the GWh). ONE config delta, ZERO DOF: the DOF ledger goes 14→15 entries with n_residual UNCHANGED at 6. The EXTERNAL-seam twin of the EAST / AP-South joint cuts: ONE one-sided aggregate row caps the SUMMED injection across all five PJM_external→border links (= the LP's net interchange) at the measured (month × hod) p95 net-position envelope. Same tie-line file, same PJM_EXTERNAL_FLOW_PERCENTILE, same bucketing as the per-border envelope; ZERO fitted scalars. Rule 19: REPLACES the sum-of-marginals ceiling on the AGGREGATE question (build_pjm_external_flow_groups caps each link at its own border's marginal p95 and nothing bounds the total), the per-border groups keep the locational bound. Chartered because pjm-135 M3 measures PJM_external price-tied to every PJM zone in 100.00% of hours (max |Δ| = 0.0000 $/MWh), so per-border re-attribution is provably re-routable and only an aggregate cap can bind. Measured basis: sum-of-marginal import band 4,235/5,140/5,358 MW vs a joint p95 of the simultaneous total of 3,309/3,855/3,996 MW; model net interchange −29.0/−21.9/−25.9 TWh vs measured −40.0/−32.8/−32.9 TWh, with a NEGATIVE hourly R² and ~10% of hours more import-heavy than PJM has ever been in that (month,hod) bucket. RESULT: every pre-registered gate PASSES — P1 enforcement 23.25/21.07/18.30% of hours above the envelope → 0.00% (max excess on the constrained flows 0.000000 MW); P2 toward measured, never past it; K2 ZERO slack/dump in every arm and year, the pre-registered principal risk since the cap binds in 93.2/92.1/96.6% of top-1% load hours; K5 control arm byte-identical to pjm134_control_A. Rubric IMPROVES: C1 FAIL→PASS (2023 CC_REGULAR −8.45→−7.89 vs ±8.00; 16/16, free 12/12), C3a FAIL→PASS, C3c byte-identical — fails 3→1, C3c the sole remaining blocker. Solve cost NONE (33.6 min vs the control's 40) — one aggregate row per hour carries none of AP-South's ~2.5x per-link penalty. HONEST SCOPE: INERT on the Dominion inversion it was chartered against (CT_PEAKER +0.024/+0.038/+0.063 TWh vs −6.7/−7.4/−7.2 gaps; ~15% of the ISO-wide CC gain lands in Dominion) — the C1/C3a gain is an ISO-wide level effect, not a zonal-allocation fix, and that defect stays OPEN. C1's flip is thin (1.4% of band).",
+      ev: { P: "pjm-135 (PREREG/FINDING 2026-07-28; arms pjm135_control_A / pjm135_netpos_B / pjm135_netpos_keeper_C)" } },
     { id: "rdt_tcdc", cat: "network", name: "MISO RDT 92% derate + TCDC priced transfer steps",
       def: "miso_rdt_tcdc :3726", mode: "BF",
       cells: "...K..", note: "MISO keeper; the flow_cost priced-link machinery is ISO-generic if ever needed elsewhere." },

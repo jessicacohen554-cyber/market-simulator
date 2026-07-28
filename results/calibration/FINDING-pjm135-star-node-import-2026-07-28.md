@@ -236,8 +236,77 @@ arm solved.
 
 ---
 
-## §8 — the A/B result
+## §8 — the A/B result: every pre-registered gate PASSES, and the delta is INERT on the defect
 
-*(Written after both arms solved; see `results/probes/pjm135_netpos_ab.json`.)*
+Arms `pjm135_control_A` / `pjm135_netpos_B`, 2023+2024+2025 each in one
+invocation (rule 16), solved sequentially (rule 12). Scorer:
+`scripts/probes/_pjm135_netpos_ab.py`; machine output
+`results/probes/pjm135_netpos_ab.json`.
 
-<!-- PENDING: arms pjm135_control_A / pjm135_netpos_B -->
+**Verified single-delta.** Arm A reproduces `pjm134_control_A` **byte-identically
+— 0.000000000 MW on all 19 classes, every hour, all three years** (K5), and
+therefore also `pjm132_control_A` / `pjm129_meritguard_a1`.
+
+| gate (PREREG §3/§5) | 2023 | 2024 | 2025 | verdict |
+|---|---|---|---|---|
+| **P1** hours above the measured envelope (arm A → arm B) | 23.48 → **0.00 %** | 21.22 → **0.00 %** | 18.56 → **0.00 %** | **PASS** |
+| — cut active (binding) in | 23.79 % | 21.24 % | 18.64 % | — |
+| **P2** net interchange TWh (A → B; measured) | −28.89 → **−30.41** (−39.98) | −21.86 → **−23.66** (−32.83) | −25.80 → **−27.53** (−32.93) | **PASS** |
+| **P3** cap = envelope verbatim, one-sided | ✓ | ✓ | ✓ | **PASS** |
+| **K2** slack / dump, both arms | 0 / 0 | 0 / 0 | 0 / 0 | **PASS** |
+| **K5** arm-A identity | — | — | — | **PASS (0.000000000 MW)** |
+
+**Enforcement is exact.** On the constrained quantity itself — the summed star
+flow read from `flows.parquet` — the maximum excess over the envelope is
+**0.000000 MW** in every year. (The class-series view reads a 0.00028 MW
+straddle, which is aggregation round-off on a binding row, not a breach; the
+scorer's tolerance constant records this.)
+
+**K2 is the load-bearing pass.** PREREG §5 named load shedding as the principal
+structural risk *with numbers before the solve*: the envelope is conditioned on
+(month × hod) but not on system stress, and it binds in **93.2 / 92.1 / 96.6 %
+of the top-1 % load hours**, clipping **1,428 / 1,487 / 2,334 MW** there. PJM's
+internal fleet covered every megawatt — zero slack, zero dump, both arms, all
+years. The envelope's scarcity conditioning is adequate for this topology, which
+was a genuinely open question.
+
+**The magnitude matched the pre-computation almost exactly.** PREREG §4
+predicted, from arm A's own committed series, that the cut would remove
+1.54 / 1.80 / 1.73 TWh. Realised: **1.52 / 1.80 / 1.73 TWh.**
+
+**Solve cost: none.** Arm B ran **33.6 min against arm A's 40 min — faster**.
+One aggregate row per hour does not cut across the degenerate face the way
+pjm-134's per-link AP-South rows did (which cost ~2.5×). This removes the main
+argument that stood against the AP-South flag.
+
+**And it is INERT on the chartered defect**, the outcome PREREG §4
+pre-registered as expected and publishable.
+
+| PJM_Dominion, TWh | 2023 A → B | 2024 A → B | 2025 A → B | actual |
+|---|---|---|---|---|
+| CT_PEAKER | 0.68 → **0.71** | 1.25 → **1.29** | 2.46 → **2.53** | 7.38 / 8.68 / 9.64 |
+| CC_REGULAR | 31.76 → **31.85** | 41.10 → **41.21** | 48.33 → **48.41** | 41.70 / 49.27 / 49.23 |
+
+CT_PEAKER moves **+0.024 / +0.038 / +0.063 TWh** against gaps of
+−6.7 / −7.4 / −7.2 — it closes **0.4 / 0.5 / 0.9 %** of the defect. ISO-wide the
+displaced import reappears as **CC_REGULAR +0.58 / +0.52 / +0.48**,
+**COAL_BIT +0.30 / +0.39 / +0.22**, **CT_PEAKER +0.27 / +0.38 / +0.41 TWh** —
+but only **~15 %** of the CC gain lands in Dominion. The rest goes west, which
+is exactly what §4's zero-dual copper-plate predicts: the LP replaces the removed
+import wherever it is cheapest, and that is not Dominion.
+
+**Determination: ENFORCED-BUT-INERT-ON-THE-DEFECT.** The mechanism does exactly
+what it was built to do, closes **14 / 16 / 24 %** of a real measured
+net-position error the model previously had **no constraint of any kind** on,
+adds **zero DOF** and **zero solve cost** — and moves the Dominion inversion by
+under 1 %. Per PREREG §4's no-feedback ceiling, **no percentile, multiplier,
+haircut or scarcity exemption was applied to the envelope in response, and none
+may be.**
+
+**Keeper: NOT self-promoted** (owner-only act). The honest case each way is
+recorded here rather than resolved: *for* — zero DOF, every gate passes, no
+solve cost, no shedding, and it repairs a structural absence rather than a
+residual; *against* — it is chartered against the Dominion inversion and moves
+it by <1 %, and this A/B sits on the pjm-121 recipe, so a promotion would want a
+re-base onto the pjm-133 keeper recipe and the rule-22 leave-one-year-out score
+first.

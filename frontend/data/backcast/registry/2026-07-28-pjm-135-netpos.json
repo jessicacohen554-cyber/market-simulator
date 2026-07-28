@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-28-pjm-135-netpos",
+  "label": "pjm 135 netpos",
+  "date": "2026-07-28",
+  "shorthand": "pjm-135-netpos",
+  "definition": "pjm-135 measured star-node NET-position joint cut (single delta)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-28-pjm-135-netpos.js",
+  "bundle": "results/calibration/pjm135_netpos_B"
+}
