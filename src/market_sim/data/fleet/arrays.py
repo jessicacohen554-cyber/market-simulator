@@ -34,6 +34,7 @@ from market_sim.data.cod_ramp import (
 from market_sim.data.floor_mechanisms import (
     MECH_CC_MUSTRUN_PER_PLANT,
     MECH_CHP_STEAM,
+    MECH_COAL_MIN_CONFIG,
     MECH_COAL_MUSTRUN,
     MECH_CT_DEPLOYMENT_OVERLAY,
     MECH_CT_MUSTRUN_PER_PLANT,
@@ -1600,6 +1601,9 @@ def _compose_min_gen_floors(
     min_gen_mech = None
     chp_pmin_any = any(getattr(g, "chp_grid_pmin_mw", 0.0) > 0.0 for g in generators)
     coal_sync_any = any(getattr(g, "coal_sync_pmin_mw", 0.0) > 0.0 for g in generators)
+    coal_min_config_any = any(
+        getattr(g, "coal_min_config_pmin_mw", 0.0) > 0.0 for g in generators
+    )
     cc_mustrun_any = any(
         getattr(g, "cc_mustrun_pmin_mw", 0.0) > 0.0 for g in generators
     )
@@ -1665,6 +1669,7 @@ def _compose_min_gen_floors(
         or rd_deploy_plants
         or nuclear_flat
         or coal_sync_any
+        or coal_min_config_any
         or cc_mustrun_any
         or st_gas_p25_tranches
         or hydro_min_flow_any
@@ -1740,6 +1745,44 @@ def _compose_min_gen_floors(
                     raised = hrs[min_gen[g_idx, hrs] < pmin_mw]
                     min_gen[g_idx, hrs] = np.maximum(min_gen[g_idx, hrs], pmin_mw)
                     min_gen_mech[g_idx, raised] = MECH_COAL_MUSTRUN
+        # Coal MINIMUM ONLINE CONFIGURATION floor
+        # (config.ercot_coal_min_config_floor, ercot128-unit-grain): the plant
+        # may not be pushed below the registered minimum load of its SMALLEST
+        # online configuration, min_u MinLoad_u (EIA-860). Unlike the step-3a
+        # synchronization floor above, this is NOT online%-shaped: a registered
+        # minimum load applies in every hour the plant is synchronized, and
+        # there is no hour its own driver evidence says otherwise (rule 17
+        # [R-FLOOR-WINDOW] — the D4_WINDOWS declaration is all 24 hours by
+        # driver). assembly already spread the plant-level MW across the
+        # plant's tranches in fill order, so each tranche carries its own share
+        # and the clip to pmax x availability below cannot collapse the floor
+        # onto one slice; an outage hour relaxes it through that same clip.
+        # np.maximum composes with any floor already placed — the binding floor
+        # wins, nothing stacks (rule 19 [R-ONE-MECH]), and the id is overwritten
+        # only where this mechanism strictly raised min_gen.
+        if coal_min_config_any:
+            _mc_plants: set[int] = set()
+            _mc_mw = 0.0
+            for g_idx, gen in enumerate(generators):
+                pmin_mw = getattr(gen, "coal_min_config_pmin_mw", 0.0)
+                if pmin_mw <= 0.0:
+                    continue
+                raised = min_gen[g_idx, :] < pmin_mw
+                np.maximum(min_gen[g_idx, :], pmin_mw, out=min_gen[g_idx, :])
+                min_gen_mech[g_idx, raised] = MECH_COAL_MIN_CONFIG
+                _mc_plants.add(int(getattr(gen, "plant_code", 0) or 0))
+                _mc_mw += pmin_mw
+            logger.info(
+                "coal_min_config floor ARMED: %d plants, %.0f MW of minimum "
+                "online configuration across %d tranches",
+                len(_mc_plants),
+                _mc_mw,
+                sum(
+                    1
+                    for g in generators
+                    if getattr(g, "coal_min_config_pmin_mw", 0.0) > 0.0
+                ),
+            )
         # Per-plant gas local-reliability commitment floor
         # (config.cc_mustrun_per_plant / st_gas_mustrun_per_plant): each
         # gate-armed committed tranche is held on at its full capacity in the

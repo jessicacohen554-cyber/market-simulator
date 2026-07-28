@@ -447,6 +447,12 @@ def _derate_generator(gen: Generator, factor: float) -> Generator:
             "bin_nameplate_mw": gen.bin_nameplate_mw * factor,
             "chp_grid_pmin_mw": gen.chp_grid_pmin_mw * factor,
             "coal_sync_pmin_mw": gen.coal_sync_pmin_mw * factor,
+            # The minimum online configuration scales with the derated plant
+            # for the same reason every other MW floor here does: a partially
+            # retired plant carries proportionally less minimum load, and an
+            # unscaled floor would force the shrunken unit above its own
+            # capacity.
+            "coal_min_config_pmin_mw": gen.coal_min_config_pmin_mw * factor,
         }
     )
 
