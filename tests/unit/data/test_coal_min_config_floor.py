@@ -214,5 +214,90 @@ class TestMinGenAndAttribution(unittest.TestCase):
         )
 
 
+class TestAvailabilityConditional(unittest.TestCase):
+    """The ercot129 contract: CONDITIONAL on availability, never scaled by it.
+
+    ERCOT-128 applied a per-tranche constant and let the generic clip to
+    ``pmax x availability`` scale it, which under ERCOT's DAM availability
+    water-fill put the applied floor BELOW the physical minimum in most hours
+    and removed none of the impossible loadings. The corrected form asks whether
+    the PLANT can reach its minimum configuration at all, and then delivers the
+    WHOLE level or nothing.
+    """
+
+    def _plant_floor_hourly(self):
+        fleet, fa = _build(flag_on=True)
+        idx = [
+            i for i, g in enumerate(fleet)
+            if g.plant_code == _LIMESTONE and g.fuel_type == "coal"
+        ]
+        level = sum(fleet[i].coal_min_config_pmin_mw for i in idx)
+        tagged = fa.min_gen_mechanism[idx, :] == MECH_COAL_MIN_CONFIG
+        applied = np.where(tagged, fa.min_gen[idx, :], 0.0).sum(axis=0)
+        avail_cap = (fa.availability[idx, :] * fa.pmax[idx, None]).sum(axis=0)
+        return level, applied, avail_cap
+
+    def test_full_level_delivered_whenever_the_plant_can_reach_it(self):
+        """Feasible hours carry the WHOLE min-config, not a scaled fraction."""
+        level, applied, avail_cap = self._plant_floor_hourly()
+        feasible = avail_cap >= level
+        self.assertTrue(feasible.any(), "no feasible hour in the fixture")
+        np.testing.assert_allclose(applied[feasible], level, rtol=1e-6, atol=1e-3)
+
+    def test_zero_where_the_plant_cannot_reach_min_config(self):
+        """Infeasible hours carry NO floor — the plant is off, not part-loaded."""
+        level, applied, avail_cap = self._plant_floor_hourly()
+        infeasible = avail_cap < level
+        if infeasible.any():
+            np.testing.assert_allclose(applied[infeasible], 0.0, atol=1e-6)
+
+    def test_floor_is_never_the_availability_scaled_value(self):
+        """The ERCOT-128 regression guard: applied != level x availability.
+
+        Where the plant is derated but still able to reach its minimum
+        configuration, the scaled form would deliver ``level x avail`` and the
+        conditional form delivers ``level``. Those differ, and this pins which
+        one is live.
+        """
+        level, applied, avail_cap = self._plant_floor_hourly()
+        plant_avail = avail_cap / max(float(avail_cap.max()), 1e-9)
+        derated = (plant_avail < 0.995) & (avail_cap >= level)
+        if derated.any():
+            scaled = level * plant_avail[derated]
+            self.assertTrue(
+                np.all(applied[derated] > scaled + 1e-6),
+                "floor is tracking the availability-SCALED value (ercot128 bug)",
+            )
+
+    def test_level_spills_into_higher_tranches_when_the_committed_band_derates(self):
+        """A derated committed tranche must not shrink the plant's floor.
+
+        The level is re-allocated in fill order over the plant's AVAILABLE
+        tranche capacity, so what the committed band cannot carry is taken by
+        the bands above it — the plant still holds its whole minimum
+        configuration.
+        """
+        fleet, fa = _build(flag_on=True)
+        idx = [
+            i for i, g in enumerate(fleet)
+            if g.plant_code == _LIMESTONE and g.fuel_type == "coal"
+        ]
+        level = sum(fleet[i].coal_min_config_pmin_mw for i in idx)
+        tagged = fa.min_gen_mechanism[idx, :] == MECH_COAL_MIN_CONFIG
+        applied = np.where(tagged, fa.min_gen[idx, :], 0.0)
+        # Hours where the first floored tranche alone cannot carry the level.
+        first = fa.availability[idx[0], :] * fa.pmax[idx[0]]
+        avail_cap = (fa.availability[idx, :] * fa.pmax[idx, None]).sum(axis=0)
+        spill = (first < level - 1e-6) & (avail_cap >= level)
+        if spill.any():
+            np.testing.assert_allclose(
+                applied[:, spill].sum(axis=0), level, rtol=1e-6, atol=1e-3
+            )
+            self.assertTrue(
+                (applied[1:, spill] > 0.0).any(),
+                "level did not spill past the first tranche",
+            )
+
+
 if __name__ == "__main__":
     unittest.main()
