@@ -72,8 +72,11 @@ what C2 measures the model to have thrown away.
 **Method note — a substitution, stated plainly.** ASK §4 specified a
 "binding-share and flow-direction histogram … from the keeper's committed
 `hourly/` sidecars". Those sidecars carry per-zone hourly prices, demand, slack
-and dump, but **no flow column** — flows are not persisted by any run. The test
-was therefore run on **price separation**, which for this LP is exact and
+and dump, but **no flow column**: a run *does* write `flows.parquet`, but at the
+bundle top level, where `.gitignore` (`results/calibration/*/*.parquet`) strips
+it — so no *committed* bundle has flows, and a no-LP test on the keeper cannot
+use them. (§6/§7 report the real flow histogram from this session's own arms.)
+The test was therefore run on **price separation**, which for this LP is exact and
 strictly stronger: every PJM link has `flow_cost = 0` and the transport
 formulation is lossless, so two zones joined by an uncongested path clear at the
 *same* energy-balance dual. Hence `P[Dominion,t] ≠ P[neighbour,t]` **iff** the
@@ -214,12 +217,121 @@ A/B measures, and INERT is a pre-registered, publishable outcome.
 - **Do not use DOM CETL as an hourly energy cap.** Wrong construct
   (peak-hour capacity-emergency deliverability) and unpublished as a clean
   number for two of the three scored years.
-- **Do not look for a flow histogram in the sidecars.** No run persists flows;
-  price separation is the exact and stronger substitute for this LP (§2 method
-  note). If a future session wants flows, that is a sidecar-writer change, not a
-  re-solve of this keeper.
+- **Flows: `flows.parquet` DOES exist in a fresh bundle** (top-level, gitignored
+  by `results/calibration/*/*.parquet`, so absent from every *committed* keeper —
+  which is why the no-LP tests above had to use price separation). Once this
+  session solved its own arms the real flow histogram became available and is
+  reported in §6/§7. Correcting this file's own earlier wording: the claim was
+  "the committed sidecars carry no flow column", which is true; "no run persists
+  flows" would not be.
 - Carried forward unchanged: ASK-pjm134 §5 (not bundled with pjm-133; no
   measured-offer-surface retry — pjm-132 moves Dominion by 0.00 TWh) and
   FINDING-pjm133 §8.
 
 Next number: pjm-135.
+
+---
+
+## §6 — the A/B result: every pre-registered gate PASSES, and the delta is INERT on the defect
+
+Arms `pjm134_control_A` / `pjm134_apsouth_B`, 2023+2024+2025 each in one
+invocation (rule 16), solved sequentially (rule 12) at HEAD `b0ee3eb`. Scorer:
+`scripts/probes/_pjm134_apsouth_ab.py`; machine output
+`results/probes/pjm134_apsouth_ab.json`.
+
+**Verified single-delta.** Arm A reproduces `pjm132_control_A` **byte-identically
+— 0.000000000 MW on all 19 classes, every hour, all three years** (K5). The
+`_build_joint_interface_cut` refactor of the EMAAC cut is therefore provably
+inert, and `git diff src/market_sim/ scripts/run_calibration*.py
+scripts/replay_keeper.py` between the two arms' HEADs is **empty** despite a
+container restart that forced arm B to re-base — the arms share identical solve
+code.
+
+| gate (PREREG §3/§5) | 2023 | 2024 | 2025 | verdict |
+|---|---|---|---|---|
+| **P1** cut engages (> 0 % of hours; arm A = 0.00 %) | 0.03 % | 0.09 % | 0.62 % | **PASS** |
+| **P2** Dominion is the dearer side ≥ 2/3 of separated hours | **100.0 %** | **100.0 %** | **100.0 %** | **PASS** |
+| **P3** no counterflow forcing (cap ≥ 0 every hour) | ✓ | ✓ | ✓ | **PASS** |
+| **K2** load shedding (slack/dump) | 0 / 0 | 0 / 0 | 0 / 0 | **PASS** |
+| **K5** arm-A identity | — | — | — | **PASS (0.000000000 MW)** |
+
+**The mechanism does exactly what it was built to do, and the misalignment it
+corrects was real and large.** Arm A flows across the AP-South pair **exceed
+PJM's published cap in 11.6 % / 11.7 % / 20.4 % of hours, by up to 3,000 MW**;
+arm B enforces it to **0.00 %** of hours in every year, moving the joint flow by
+−117 / −152 / −266 MW on average across 77–82 % of hours. That is a genuine,
+zero-DOF repair of a published security limit the model was violating.
+
+**And it does nothing whatsoever to the defect.**
+
+| PJM_Dominion, TWh | 2023 A → B | 2024 A → B | 2025 A → B | actual |
+|---|---|---|---|---|
+| CT_PEAKER | 0.68 → **0.68** | 1.25 → **1.25** | 2.46 → **2.47** | 7.38 / 8.68 / 9.64 |
+| CC_REGULAR | 31.76 → **31.76** | 41.10 → **41.11** | 48.33 → **48.33** | 41.70 / 49.27 / 49.23 |
+
+Largest zonal movement anywhere in PJM: **0.01 TWh**. Dominion's total net
+import *rises* by +1.9 / +1.3 / +2.7 MW-average. ISO-wide class volumes move
+0.006 TWh. Price separation reaches 0.03–0.62 % of hours against a **measured
+50–63 %** — two orders of magnitude short.
+
+**Determination: INERT on the defect** — the outcome PREREG §4 pre-registered.
+Per §4's no-feedback ceiling, **no scale factor, percentile or haircut may be
+applied to the published AP-South series in response to this**, and none was.
+
+## §7 — WHY it is inert, and the next charter this hands over
+
+Capping one path in a meshed reduced network does nothing when the load pocket
+is fed by parallel paths with slack. Dominion's import decomposition (arm A,
+2025, from `flows.parquet`):
+
+| path into PJM_Dominion | mean MW | TWh/yr |
+|---|---|---|
+| PJM_AEP_Ohio → Dominion | +3,877 | **+34.0** |
+| **PJM_external → Dominion** | **+2,266** | **+19.9** |
+| PJM_West_APS → Dominion | +1,080 | +9.5 |
+| Dominion → PJM_SWMAAC (export) | −3,273 | −28.7 |
+| **net** | **+3,951** | **+34.6** |
+
+Two facts settle it:
+
+1. **AP-South is not Dominion's supply route.** The West_APS path carries 9.5 of
+   the 34.6 TWh. Squeezing it by ~0.3 GW is absorbed by the mesh.
+2. **The external seam node feeds Dominion directly with 19.9 TWh/yr** — more
+   than Dominion's entire 12.1 TWh fossil deficit — and **no internal interface
+   cut can touch it.** `PJM_external → PJM_Dominion` is a star-node link
+   governed by the seam/import-envelope family (`pjm_seam_flow_limit`,
+   `priced_interchange`, `PJM_EXTERNAL_FLOW_PERCENTILE`), not by
+   `PJM_INTERFACE_LINK_MAP`.
+
+Add the degeneracy this session measured — links pinned at their bounds with
+**exactly zero** shadow prices (SWMAAC↔Dominion sits at its 3,500 MW bound in
+80.1 % of hours with a price difference of 0.0000) — and the picture is complete:
+the reduced network has so much redundant Dominion-facing capability that
+tightening any single internal path is re-routed at zero cost.
+
+**Next charter (pjm-135), stated but NOT built here** (ASK-pjm134 §5 discipline):
+the external star-node import into Dominion. It is the largest single
+unexplained Dominion supply path, it is ~1.6× the zone's fossil deficit, and it
+is governed by a *different* mechanism family than the one this session tested.
+Whether PJM's measured tie-line deliverability envelope should be attributed to
+border zones in a way that lets ~2.3 GW land continuously in Dominion is a
+measurement question with committed data
+(`PJM_<year>_import_export_act_sch_interchange.csv`), not a new mechanism.
+
+**Solve-cost note, for whoever picks this up:** arm B ran **~2.5× slower** than
+arm A (2023 P0 1,902 s vs 765 s; 2024 P0 2,308 s; whole arm 2 h 07 m vs 59 m).
+The added 8,760 interface rows cut across the degenerate face, and simplex pays
+for it. That cost is real and recurs on every future PJM solve — it is the main
+argument against carrying a flag that moves 0.01 TWh.
+
+## §8 — DO-NOT-REDO (added by the A/B)
+
+- **Do not re-run this A/B, and do not re-parameterise AP-South.** The cut is
+  correctly implemented, provably enforced (11.6–20.4 % → 0.00 % violations),
+  directionally perfect (P2 = 100.0 %), and immaterial (≤ 0.01 TWh). PREREG §4's
+  ceiling is binding: no multiplier, percentile, haircut or blend on the
+  published series, ever, in response to this result.
+- **Do not extend the joint-cut construction to another internal PJM interface
+  expecting it to move Dominion.** §7 shows the mesh re-routes; the binding
+  question is the external node, not another internal flowgate.
+- **Do not re-derive the import decomposition** — §7's table is committed.
