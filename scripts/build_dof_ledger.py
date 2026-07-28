@@ -1050,6 +1050,51 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "data-blocked M4 gap)",
             )
         )
+    if iso == "PJM" and sc.get("pjm_zonal_loss_surface"):
+        # pjm-136 M2 marginal-loss physics, ZERO fitted scalars: the internal
+        # PJM links become one-way pairs whose receiving-end energy-balance
+        # coefficient is 1 - eps(month), eps derived from PJM's OWN published
+        # per-ZONE LMP component record (LMP = MEC + MCC + MLC, PJM Manual 11
+        # §2 / OATT Att. K) as the dimensionless per-zone monthly
+        # delivery-factor deviation surface (frozen derive; per-year rows for
+        # backcast train years — the same-year measured-physical class as CEMS
+        # emission rates — and pooled rows as the forecast forward analogue).
+        # Zonal duals then separate by the measured DF ratio: losses consume
+        # MWh and prices stay LP duals (rule 4), never a price adder. The
+        # surface is the measured object; the only non-measured device is the
+        # 0.001 flow tiebreak (storage-eps class,
+        # transmission.PJM_LOSS_LINK_TIEBREAK_EPS).
+        out.append(
+            _entry(
+                "pjm_zonal_loss_surface (marginal delivery-factor surface)",
+                "data/raw/iso-specific-transmission/PJM_loss_surface.csv via "
+                "data.loss_surface.load_zone_month_deviation -> "
+                "transmission.apply_pjm_zonal_loss_links + "
+                "build_pjm_link_loss -> dispatch.build_constraints(link_loss)",
+                "measured-physical",
+                iso,
+                n_scalars=0,
+                source="Ratio-of-sums dev_z,m = sum(MLC)/sum(MEC) per zone-"
+                "month from PJM's published da_hrl_lmps type=ZONE record (all "
+                "21 transmission zones, DA basis; MEC published per row and "
+                "identity-checked uniform across zones per UTC interval to "
+                "0.000000 $/MWh). Transmission zones roll up to model zones "
+                "load-weighted by the metered hrl_load_metered series through "
+                "the canonical eia930.zonal_shares._PJM_LOAD_ZONE_GROUPS "
+                "crosswalk — every model zone is real, NONE interpolated. "
+                "Frozen derive scripts/data/derive_pjm_loss_surface.py; "
+                "offline acceptance 12/12 pair-years in [0.5x,1.5x] (ratios "
+                "0.95-1.07) before any solve. Charter: results/calibration/"
+                "FINDING-pjm136-zonal-dual-structure-2026-07-28.md.",
+                root_cause="re-derive trigger is a source-data change only "
+                "(rule 23), never a residual; representation bounds: one-way "
+                "monthly linearization (reverse direction clamps to 0 — "
+                "under-transmits in atypical-direction/congested hours), and "
+                "the external star node carries NO loss (PJM_external is a "
+                "fictitious pricing node with no published deviation), so "
+                "seam-sourced energy is delivered lossless",
+            )
+        )
     if sc.get("unit_outage_short_windows"):
         # Short (< 5-day) baseload-coal unit-outage windows, ZERO scalars:
         # each window is the unit's own CEMS record; the derive-script guards

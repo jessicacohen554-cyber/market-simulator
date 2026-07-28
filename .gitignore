@@ -96,6 +96,16 @@ data/raw/transfer-constraint-binding/MISO/*_bc_HIST.csv.gz
 data/raw/pjm-da-virtuals/*
 !data/raw/pjm-da-virtuals/README.md
 
+# PJM DataMiner2 transmission-ZONE LMP components (da_hrl_lmps / rt_hrl_lmps,
+# type=ZONE): same non-member redistribution restriction; refetch with
+# scripts/data/fetch_pjm_zonal_lmp_components.py (see
+# data/raw/pjm-zonal-lmp/README.md). Only the dimensionless DERIVED surface
+# iso-specific-transmission/PJM_loss_surface.csv is committed. The sha256
+# manifest IS committed as the provenance record for that derive.
+data/raw/pjm-zonal-lmp/*
+!data/raw/pjm-zonal-lmp/README.md
+!data/raw/pjm-zonal-lmp/SHA256SUMS.txt
+
 # NYISO MIS public DAM zonal LBMP monthly archives (36 zips, ~13 MB): raw
 # source of nyiso_proxy_lmp_hourly_NEISO.parquet (committed). Regenerable
 # byte-identical from the stable public URLs
