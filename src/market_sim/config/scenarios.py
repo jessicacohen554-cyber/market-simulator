@@ -64,6 +64,20 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the field's own "byte-identical off" promise. An armed run cuts the star
     # node's net position and so gets a distinct key.
     "pjm_external_net_position_cut",
+    # miso-101 hourly-grain / mean-anchored temperature derate (default off /
+    # None): same one-line remedy as pjm_apsouth_interface_cut and
+    # pjm_external_net_position_cut below -- these four landed on main without
+    # registration and moved the pinned default key 603c2498bf71d21d ->
+    # 1ee75f8e6c5efce5, orphaning every on-disk cache and failing three
+    # pre-existing pinned tests (test_persisted_identity x2,
+    # test_forecast_xyear_warmstart_flag). Dropped from the hash at their
+    # defaults so every pre-existing cached run keeps its key; an armed run
+    # carries a real derate and so gets a distinct key.
+    "temp_derate_classes",
+    "temp_derate_hourly_grain",
+    "temp_derate_mean_anchored",
+    "temp_derate_slope_st_chp",
+    "temp_derate_slope_ct_chp",
     # Plant-group hourly ramp envelopes (ercot132 leg A, default off): the
     # field's DECLARATION was never written even though the design doc
     # (docs/ramp-locational-design-2026-07.md §245), TIER_TAGS, the CLI flag,
