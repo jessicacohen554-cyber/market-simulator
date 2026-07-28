@@ -228,7 +228,8 @@ class TestAvailabilityConditional(unittest.TestCase):
     def _plant_floor_hourly(self):
         fleet, fa = _build(flag_on=True)
         idx = [
-            i for i, g in enumerate(fleet)
+            i
+            for i, g in enumerate(fleet)
             if g.plant_code == _LIMESTONE and g.fuel_type == "coal"
         ]
         level = sum(fleet[i].coal_min_config_pmin_mw for i in idx)
@@ -279,7 +280,8 @@ class TestAvailabilityConditional(unittest.TestCase):
         """
         fleet, fa = _build(flag_on=True)
         idx = [
-            i for i, g in enumerate(fleet)
+            i
+            for i, g in enumerate(fleet)
             if g.plant_code == _LIMESTONE and g.fuel_type == "coal"
         ]
         level = sum(fleet[i].coal_min_config_pmin_mw for i in idx)
