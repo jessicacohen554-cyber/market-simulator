@@ -25,6 +25,7 @@ on:
       - ".python-version"
       - "conftest.py"
       - "frontend/data/backcast/**"
+      - "docs/codebase-site/data/mechanism-matrix.js"
       - "CLAUDE.md"
       - ".github/workflows/ci.yml"
 
@@ -61,6 +62,21 @@ jobs:
       # ids (scripts/lib/known_unsynced_keepers.py); any new gap fails.
       - name: check_registry_payload_parity
         run: uv run python scripts/check_registry_payload_parity.py
+
+  mechanism-matrix-guard:
+    name: Rule-28 mechanism-matrix guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch PR base
+        run: git fetch --no-tags --depth=1 origin ${{ github.event.pull_request.base.sha }}
+      # Rule 28 [R-MECH-MATRIX]: matrix integrity always; on the diff, a new
+      # ScenarioConfig field missing from the matrix FAILS (28c), and a new
+      # registry sidecar / calibration CLI flag without a matrix touch WARNS
+      # (28b). Stdlib-only — no uv sync needed, runs in seconds.
+      - name: check_mechanism_matrix
+        run: python3 scripts/check_mechanism_matrix.py --base ${{ github.event.pull_request.base.sha }}
 
   lint:
     name: Ruff lint + format

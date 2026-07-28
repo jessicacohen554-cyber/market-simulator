@@ -60,6 +60,17 @@ The matrix answers three questions no single doc answered before:
   `keepers`/`gates` header block and re-check that ISO's column (a promotion
   usually flips 1–2 cells).
 
+**Mechanical enforcement.** `scripts/check_mechanism_matrix.py` (stdlib-only)
+runs as the `mechanism-matrix-guard` CI job on every PR: it validates matrix
+integrity (unique ids, well-formed 6-char cells), **fails** a PR that adds a
+new `ScenarioConfig` field not mentioned anywhere in the matrix (duty c —
+mention-anywhere is the escape hatch for sub-scalars that belong on an
+existing family's row), and **warns** when a new backcast registry sidecar or
+calibration CLI flag lands without a matrix touch (duty b — advisory, since
+re-runs of recorded recipes legitimately change no cell). In-session, the
+`.claude/hooks/mechanism-matrix-reminder.sh` SessionStart hook injects the
+duties and pointers at the start of every session, local and web.
+
 ## 2. How similar are the six ISO configs? (the up-front answer)
 
 Quantitatively, from the keeper `run_config.json`s (true non-default counts,

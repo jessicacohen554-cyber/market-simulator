@@ -216,7 +216,12 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     per-ISO (rule 25): a verdict in one ISO never fills another ISO's cell — transfer candidates
     enter the target ISO as `U`, and the target session derives its own parameters from its own
     market's data. When a keeper changes, the promoting session re-stamps the matrix header
-    (keeper ids + open gates) and re-checks that ISO's column.
+    (keeper ids + open gates) and re-checks that ISO's column. Enforcement: CI
+    (`.github/workflows/ci.yml`, `mechanism-matrix-guard` job → `scripts/check_mechanism_matrix.py`)
+    validates matrix integrity and FAILS any PR that adds a `ScenarioConfig` field absent from the
+    matrix (duty c); it WARNS on new run registrations or calibration CLI flags with no matrix
+    touch (duty b). The `.claude/hooks/mechanism-matrix-reminder.sh` SessionStart hook surfaces
+    these duties at the start of every session.
 
 Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8, numbered
 **16–25 there** — a doc reference to "audit rule N" maps to rule N+1 here. Mapping table, per-rule
