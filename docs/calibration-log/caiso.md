@@ -2722,3 +2722,108 @@ without its control limb; and treating §8's net-vs-gross measurement as a funde
 candidate.
 
 Next number: caiso-133.
+
+## caiso-133 (2026-07-28) — the binding CAISO import limit is **the corridor deliverability group, ALONE**: the link's own TTC and the `WECC_import_simultaneous` seam row are **structurally unreachable in all 26,280 corridor-hours of 2023–2025, in BOTH directions**, and their solved duals are **exactly 0.000 in every hour**. 100 % of the defect-hour congestion rent is charged by a MEASURED envelope — and in the very hours it binds the model already carries **+2.0 to +2.5 GW MORE import than actually flowed**, so it is not the inaccurate input. **C3a-2025 handed back as unreachable from the corridor lane, no candidate manufactured.** Plus two new write-only sidecars proved byte-inert (`max |delta| = 0`), which unblocks ask A2's D1 — and D1 **passes**
+
+**Keeper `2026-07-27-caiso-130-nameplate-aware` UNCHANGED. Nothing armed** — no
+mechanism, no flag, no new `ScenarioConfig` field. The one solve was a no-delta
+keeper replay whose only purpose was the byte-identity proof; registered as the
+control arm `2026-07-28-caiso-133-sidecar-control` (rule 15). Full evidence:
+`results/calibration/FINDING-caiso133-binding-limit-separation-2026-07-28.md`.
+Instruments: `scripts/probes/_caiso133_binding_limit_separation.py` (A/B/C/D),
+`scripts/probes/_caiso133_sidecar_invariance.py`.
+
+### Part 1 — two write-only sidecars, and the proof they cannot touch the LP
+
+`hourly/unit_hourly_<y>.parquet` (per-LP-unit `mw` **and** `cap_mw` = the LP's
+own `pmax × availability` bound) and `hourly/network_<y>.parquet` (per-link and
+per-interface-group `mw`, `dual`, `limit_up`, `limit_dn`). Both under `hourly/`,
+so a KEEPER bundle carries them.
+
+**Byte-identity, exact.** The keeper recipe replayed at this session's HEAD
+reproduces the committed keeper with `max |delta| = 0` on `class_hourly.mw` and
+on every `system` column (price / slack / dump / demand / reserve_price), all
+three years — not a tolerance, zero. The LP-side additions (the interface row
+block's offset out of `build_constraints`; the interface row duals and flow
+reduced costs sliced out of the HiGHS solution) add no row, bound or coefficient.
+
+**Size nearly bit.** The first build wrote `unit_hourly_2023` at 12.60 MB, of
+which the tiled `0..8759` `hour` ramp alone was **11.12 MB** (PLAIN int32, 88 %
+of the file) against 1.04 MB for `mw` + `cap_mw`. `DELTA_BINARY_PACKED` on that
+one column (lossless) takes it to **1.74 MB** and the 3-year bundle from ~38 MB
+to **5.2 MB**. Pinned by a regression test — losing it silently re-inflates every
+future keeper.
+
+### Part 2 — the separation, answered two independent ways that agree exactly
+
+**§A, no LP at all.** A limit can carry a positive dual only if it is attainable.
+Each leg's flow is bounded above by its own corridor cap, and that cap never
+reaches the link's TTC (max ratio 0.801 / 0.672 / 0.721 across the years) nor do
+the two legs' caps sum to the published MIC (max 0.600 / 0.581 / 0.667) — **0
+hours out of 26,280, in both directions**. So the corridor group is the only
+limit that can *ever* bind. The caiso-132 §2 ambiguity is closed analytically,
+from bytes that were already committed when caiso-132 was written.
+
+**§B, the measured duals.** The zero-cost flow column's stationarity gives
+`λ_to − λ_from = −z_link − Σ_g s(g,link)·y_g` exactly, each term one limit's
+rent. On the Sep–Dec surplus belly: **100.0 % corridor group, 0.00 link TTC,
+0.00 seam row** on both legs in all three years (2023 PNW 17.16 / DSW 8.99; 2024
+21.71 / 6.31; **2025 35.33 / 9.02**), identity closing to 3.4e-06 $/MWh. Three
+exact reconciliations: the rents match FINDING-caiso132 §6 digit-for-digit; the
+corridor group's binding-hour share read off its *dual* reproduces caiso-132 §3's
+census read off the *spread sign* (2023 PNW 0.5281, DSW 0.3765); and the link/seam
+duals are nonzero in **0 of 8,760** hours.
+
+**§C, rule 14 — the limit is not the inaccurate input.** Against the same EIA-930
+bytes and (month × hod) bucketing the cap is *built* from, in the defect hours:
+model import 3,296 / 4,898 / 5,569 MW against measured 756 / 2,882 / 3,510 MW —
+**+2,540 / +2,016 / +2,059 MW**, reproducing caiso-121's +2,606 MW over-import on
+the current keeper. The cap is not too tight; on the hours that matter it is if
+anything too generous. Relaxing it is rule 1 `[R-STRUCT]` / rule 14 `[R-ACCURATE]`
+refused, and FINDING-caiso132 §8's net-vs-gross observation is *priced* by this
+(its objection (ii) measured on the exact hours it would act on), not rehabilitated.
+
+**The hand-back.** The corridor congestion carrying C3a-2025 is real, is
+import-direction, and is charged entirely by a correct measured input. There is
+nothing to fix and no slack limit to tighten — **the corridor lane is closed for
+C3a-2025 and no candidate was manufactured.** Filed as an observation only: the
+cap binds because the model *wants* ~2 GW more import than reality took, so the
+pressure is **upstream of the corridor**, in whatever makes CA's own midday
+supply expensive enough to pull it.
+
+### Part 1's dividend — ask A2's D1 is unblocked, and it PASSES
+
+D1 (ask §4) was recorded BLOCKED on exactly this data. Plant-level ONLINE
+*thermal* headroom: min 704 / 701 / 670 MW, **p10 1,201 / 1,119 / 1,021 MW**
+against a 5 GW gate and the 12–13 GW total-headroom surface FINDING-caiso131 §4
+measured — inside the LOLP's live range (MCL 1,400 MW, σ 2,500 MW). **D1 does not
+kill A2.** Two honest qualifications: (i) the ask's premise that CAISO "evaluates
+`reserve_headroom` on total fleet headroom" does not match the code —
+`caiso_scarcity_overlay` already passes `reserves_online_mw=r_online` into
+`ordc_adder`'s half-hour term; what is large is `reserves_total` (online +
+offline + import headroom), the full-hour term; (ii) the number is the online
+*thermal* component only — a lower bound on `r_online`, which also carries storage
+and curtailed-renewable headroom no committed sidecar holds. A2's D2/D3 are NOT
+run here; arming A2 remains a separate owner ask.
+
+### Also measured: the `capacity_deliverability_limits` seam half is INERT in the backcast
+
+At 16,055 / 16,452 / 16,148 MW the published MIC sits above the sum of both legs'
+own measured envelopes (max 9,631 / 9,557 / 10,777 MW), so the seam row's dual is
+exactly 0.000 in every hour of every year. This bounds what the flag's part (a)
+can do in a **backcast**; it says nothing about the forecast lane, where the
+corridor envelope is not the binding object. Mechanism matrix updated (rule 26).
+
+### DO-NOT-REDO (new, binding)
+
+Re-measuring which CAISO import limit binds by any route (§A settles it
+analytically, §B confirms it from the duals, and they agree exactly); proposing
+to relax, widen or re-derive the corridor import envelope to close C3a-2025 (the
+model already over-imports those hours by +2.0–2.5 GW against measured flow);
+re-deriving C3a-2025 as a transmission defect at all (the binding object is a
+correct measured input — the pressure is upstream); re-running the sidecar
+byte-identity proof (`max |delta| = 0`, committed); re-measuring ask A2's D1 (the
+committed instrument re-runs it in seconds); and dropping the
+`DELTA_BINARY_PACKED` encoding on the sidecars' `hour` column.
+
+Next number: caiso-134.
