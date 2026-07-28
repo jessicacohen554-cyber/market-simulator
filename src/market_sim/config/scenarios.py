@@ -58,6 +58,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # (9df6be7) and measured_ct_heat_rates (c45fed4). An armed run cuts a real
     # interface and so gets a distinct key.
     "pjm_apsouth_interface_cut",
+    # pjm-135 measured star-node NET-position cut (default off): same one-line
+    # remedy as pjm_apsouth_interface_cut directly above -- dropped from the hash
+    # at its default so every pre-existing cached run keeps its key, honouring
+    # the field's own "byte-identical off" promise. An armed run cuts the star
+    # node's net position and so gets a distinct key.
+    "pjm_external_net_position_cut",
     # Measured CT loaded heat rates (nyiso-89, default off): dropped from the
     # hash at its default so every pre-existing cached run keeps its key; an
     # armed run carries a different fleet cost and so gets a distinct key.
@@ -7110,6 +7116,41 @@ class ScenarioConfig:
     # off.
     pjm_apsouth_interface_cut: bool = False
 
+    # PJM measured star-node NET-POSITION cut (backcast/calibration overlay,
+    # pjm-135 — results/calibration/FINDING-pjm135-star-node-import-2026-07-28.md).
+    # The EXTERNAL-seam twin of pjm_east_interface_cut / pjm_apsouth_interface_cut,
+    # and the same construction: ONE one-sided aggregate interface-group row per
+    # hour caps the SUMMED injection across all five PJM_external->border links
+    #   Σ_z Flow(PJM_external -> z)  <=  p95( measured net import | month, hod )
+    # at the measured net-position envelope (eia_loader.pjm_net_interchange_envelope,
+    # the same PJM tie-line file, the same PJM_EXTERNAL_FLOW_PERCENTILE and the
+    # same (month × hour-of-day) bucketing the per-border envelope already uses).
+    # Because the summed star-link flow IS the LP's net interchange, this row is
+    # the model's only statement about PJM's net position.
+    #
+    # Rule 19 [R-ONE-MECH] — this REPLACES the sum-of-marginals ceiling on the
+    # AGGREGATE question, it does not stack: build_pjm_external_flow_groups caps
+    # each link at its own border's marginal p95 and inject_pjm_seam_flow_limit
+    # sizes each neighbor's bands from the same rows, so five marginal 95th
+    # percentiles are summed as though they were a joint one and nothing bounds
+    # the total. The joint cap dominates (a sum under the limit implies each term
+    # is), so the per-border groups keep the LOCATIONAL bound while this row owns
+    # the TOTAL.
+    #
+    # Measured (pjm-135 M1b/M4, results/probes/pjm135_star_node_net_position.json):
+    # the sum-of-marginal import band is 4,235/5,140/5,358 MW against a joint p95
+    # of the simultaneous total of 3,309/3,855/3,996 MW, and the keeper-lineage
+    # model's net interchange is -28.9/-21.9/-25.8 TWh against a measured
+    # -40.0/-32.8/-32.9 TWh — the star node supplies PJM with 7.1-11.1 TWh/yr the
+    # real seam did not, in an ISO whose zonal duals are tied to the star node in
+    # 100.00 % of hours (M3), so no per-border re-attribution can reach it.
+    # One-sided: net EXPORT is never capped, so every export path survives. Zero
+    # fitted scalars. Same rule #13/#14 admissibility and two-track construction
+    # as pjm_measured_interface_limits (forecast years have no measured tie file,
+    # so the envelope is None and the node is left uncapped). Off by default;
+    # byte-identical off.
+    pjm_external_net_position_cut: bool = False
+
     # ERCOT West Texas Export corridor VRE curtailment-share driver
     # (backcast/calibration overlay; docs/handoffs/ercot-vre-curtailment-topology-
     # scope-2026-07.md, WP-B). When True in backcast mode for ERCOT, the West and
@@ -9303,6 +9344,7 @@ TIER_TAGS: dict[str, int] = {
     "pjm_measured_interface_limits": 3,
     "pjm_east_interface_cut": 3,
     "pjm_apsouth_interface_cut": 3,
+    "pjm_external_net_position_cut": 3,
     "ercot_wtx_curtailment_driver": 3,
     "ercot_wind_zone_shape": 3,
     "ercot_wtx_curtail_depth_wind": 3,

@@ -124,6 +124,7 @@ from .envelopes import (
     nyiso_forward_net_import_monthly,
     nyiso_net_interchange,
     pjm_net_interchange,
+    pjm_net_interchange_envelope,
     pjm_zonal_interchange,
     pjm_zonal_interchange_envelope,
 )
@@ -201,6 +202,7 @@ __all__ = [
     "caiso_solar_fraction",
     "measured_seam_import_envelope",
     "pjm_net_interchange",
+    "pjm_net_interchange_envelope",
     "pjm_zonal_interchange",
     "pjm_zonal_interchange_envelope",
     "nyiso_net_interchange",
