@@ -2941,3 +2941,102 @@ CAMPD CEMS and the caiso-80 supply-consistent series); and re-measuring belly
 solar/wind curtailment as a $0-rung candidate.
 
 Next number: caiso-135.
+
+---
+
+## caiso-135 (2026-07-28) — the committed-gas charter is **REFUSED on measured bytes, before any solve**: the RA floor is multiplied by **PLANT** capacity, but the standing `caiso_ra_min_load_frac = 0.570` is a per-**TURBINE** turndown; on the consuming basis CAISO measures **0.289–0.304**, so the keeper's **0.26 is already inside the band** and caiso-118b's "fitted below physical" premise is refuted. The quantity gate is a **verified NO-OP**. And the lane's premise falls: on the same 28 matched plants the model has **1.01–1.13× reality's online CC plant count** at **0.74–0.80× its MW** — a LOADING defect on already-committed plants, not an under-commitment. Keeper UNCHANGED, **nothing armed, no solve**
+
+Full record: `results/calibration/FINDING-caiso135-committed-gas-charter-2026-07-28.md`.
+Instrument: `scripts/probes/_caiso135_committed_gas_charter.py` (§A/B/C/D/E/R,
+no LP built, no solver called).
+
+**D1 (decisive) — derive, don't pick.** `caiso_ra_mustoffer_min_gen` floors
+`min_load_frac × plant_pmax` ("the floor is the PLANT's minimum stable load …
+never a per-tranche fraction"), and CAISO is `plant_level_fleet=True`, so the
+measured statistic must be the **plant's** minimum stable configuration. Both
+bases, both conventions, identical CAMPD CA bytes:
+
+| year | UNIT full-op | **PLANT full-op** | UNIT online | PLANT online | plant/unit |
+|---|---|---|---|---|---|
+| 2023 | 0.5662 | **0.2891** | 0.3891 | 0.2433 | 0.511 |
+| 2024 | 0.5697 | **0.3005** | 0.3863 | 0.2587 | 0.527 |
+| 2025 | 0.5720 | **0.3041** | 0.3758 | 0.2188 | 0.532 |
+
+The UNIT column **reproduces caiso-119's own 0.565/0.570/0.570** to within 0.002,
+so the conventions are matched and the only difference is the **basis**. The
+~0.52 ratio is the 2-train CC signature (a plant's minimum stable *configuration*
+is one train at min). ERCOT's 0.574 agrees with the UNIT column because
+60-Day-DAM LSL/HSL pairs are **also per-train** — corroboration of the basis, not
+of the value. Reality test: a 0.570 floor is contradicted by CAISO's own plants
+in **35.7–43.0 %** of online plant-hours, 0.3756 in ~20–23 %, 0.26 in 7.5–9.4 %.
+
+**GOVERNANCE — the caiso-121/122 disposition is WITHDRAWN AS STATED.** "The
+measured 0.570 is KEPT … and is still the value the next keeper must carry" is a
+basis error and must not be carried forward. Rule 14 `[R-ACCURATE]` is *served*
+by the withdrawal: the accurate input is the plant-basis statistic and the
+estimate being displaced is the per-turbine one. Identification source for any
+future value is the new
+`data/raw/_processed-legacy/campd_gas_commitment_params_plant_CAISO.csv`
+(**0.259** pooled cap-weighted p50), never the per-unit artifact. No re-solve is
+warranted to move 0.26 — it is inside the band and the family is near-inert.
+
+**D2 / D5 — not the refusal.** D5 passes with headroom (CC_REGULAR forced share
+7.2/8.3/9.9 % → 10.0/10.5/12.4 % at 0.30, cap 30 %). E1/E2 were never at risk
+from the *sign* (min-load supply pushes λ down, and the model's evening CC plants
+already sit at 0.90–0.93 loading, far above any candidate floor). The lever is
+**already SOLVED and near-inert**: caiso-119's A/B moved belly gas −28/+59/+52 MW
+for a 2.2× larger delta, because the RA bridge owns **1.8 % of floored cells**.
+
+**D4 — object 2 is a measured NO-OP.** CC_REGULAR is floored by exactly one
+mechanism (`ra_mustoffer_bridge`), so a parameter change would have been rule-19
+clean. But the bridged CC fleet is **13,465 / 11,670 / 9,580 MW** against a
+published cap of **19,130 / 15,566 / 15,566 MW**, and the gate sheds
+cheapest-startup-first — CT (0.1–1.0 % forced share) goes first. The gate cannot
+remove one bridged CC plant. The **DRIVER** reframe fails separately: must-OFFER
+is a bid-insertion duty, not must-stay-online (the code's own G-61 adjudication
+already named the conflation) — rule 1 `[R-STRUCT]`.
+
+**THE REFRAME (the finding that closes the lane).** On the same 28 matched CC
+plants, in caiso-134's own defect window, one shared online convention:
+
+| year | model online | CEMS online | on ratio | model MW | CEMS MW | MW ratio |
+|---|---|---|---|---|---|---|
+| 2023 | 13.9 | 13.0 | **1.072** | 3,695 | 4,638 | **0.797** |
+| 2024 | 11.7 | 10.4 | **1.129** | 2,749 | 3,670 | **0.749** |
+| 2025 | 10.1 | 10.0 | **1.011** | 2,699 | 3,637 | **0.742** |
+
+The model has **as many or more** CC plants online than reality and runs each one
+lower. A min-load floor is the wrong instrument by construction: **the plants it
+would commit are already committed.** Energy above min-load is an economic
+dispatch outcome, so no commitment mechanism reaches this defect. This corrects
+caiso-118b's *causal* claim, as caiso-134 §7 already corrected its magnitude.
+(No conflict with caiso-134 §3's "74–86 % offline": that ladder ranks the
+cheapest replacement across all CA classes and is dominated by CT_PEAKER and by
+CC plants **reality also has off**.)
+
+**Code (additive, byte-safe).** `derive_campd_gas_commitment_params.py` gains
+`--plant-basis`; the default per-unit path is verified **byte-identical** for
+CAISO and NYISO (whose 0.523132 / 0.239362 are shipped bridge parameters). No
+`src/market_sim/` change. Rule 22: 2023–2025 only. Rule 28: the
+`gas_commitment_bridge` row's CAISO note + evidence updated (cell stays K — the
+bridge itself remains the armed keeper mechanism; the quantity sub-flag is
+recorded INERT). No dashboard registration due — no run was produced.
+Ask A2's D2/D3 again NOT reached; A2 is now the strongest remaining candidate.
+
+### DO-NOT-REDO (new, binding)
+
+Raising `caiso_ra_min_load_frac` toward 0.40–0.57 as a CAISO lever (per-turbine
+range applied to a plant denominator; contradicted in ~2 of 5 online hours);
+re-deriving it on the per-unit basis, or citing ERCOT 0.574 / NYISO 0.523 as
+corroboration of a CAISO plant-basis value (they agree because they are also
+per-train — rules 5 `[R-NO-MAGIC]` / 25 `[R-ISO-SCOPE]`); re-solving the
+`min_load_frac` A/B to reach C3a-2025 (SOLVED at ±60 MW by caiso-119 for a 2.2×
+larger delta); arming `caiso_ra_mustoffer_quantity_gate` as a cap (verified
+no-op, all three years); wiring `CAISO_RA_MUSTOFFER_GAS_MW` as a commitment
+DRIVER / obligation floor (must-offer ≠ must-run, and §7 removes the premise);
+and proposing that the CAISO belly deficit is an under-COMMITMENT of gas plants
+— any future belly-gas candidate must address per-plant LOADING above min-load
+and state why a commitment mechanism could reach a defect on already-committed
+plants.
+
+Next number: caiso-136.
