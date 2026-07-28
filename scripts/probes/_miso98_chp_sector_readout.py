@@ -64,26 +64,31 @@ def _pct(model: float, bench: float) -> float:
 def control_check(arm_a: pd.DataFrame) -> None:
     """Print arm A's class energies against the registered keeper's."""
     keeper = keeper_class_energy()
-    merged = arm_a.merge(keeper, on=["year", "class"], how="left")
+    # ``class`` is a keyword, so itertuples renames it — work on ``klass``.
+    merged = arm_a.merge(keeper, on=["year", "class"], how="left").rename(
+        columns={"class": "klass"}
+    )
     print("=== 1. A-ARM CONTROL vs registered keeper 2026-07-25-miso-88-egrid-hr")
     print("    (structural agreement, NOT equality — miso-92 §7 envelope drift)")
     print(f"    {'year':<6}{'class':<14}{'keeper TWh':>12}{'arm A TWh':>12}{'drift %':>10}")
-    for r in merged.sort_values(["year", "class"]).itertuples(index=False):
+    for r in merged.sort_values(["year", "klass"]).itertuples(index=False):
         if r.keeper != r.keeper:  # nan — class not in the keeper sidecar
             continue
         drift = _pct(r.model, r.keeper)
         mark = "  <-- CHECK" if abs(drift) > 5.0 else ""
         print(
-            f"    {r.year:<6}{getattr(r, 'class'):<14}{r.keeper:12.3f}"
+            f"    {r.year:<6}{r.klass:<14}{r.keeper:12.3f}"
             f"{r.model:12.3f}{drift:10.2f}{mark}"
         )
 
 
 def class_block(title: str, a: pd.DataFrame, b: pd.DataFrame, classes) -> None:
     """Print the model/bench/%-error table for ``classes`` in both arms."""
-    merged = a.merge(
-        b, on=["year", "class"], suffixes=("_a", "_b"), how="outer"
-    ).sort_values(["class", "year"])
+    merged = (
+        a.merge(b, on=["year", "class"], suffixes=("_a", "_b"), how="outer")
+        .sort_values(["class", "year"])
+        .rename(columns={"class": "klass"})  # keyword — see control_check
+    )
     print(f"\n=== {title}")
     print(
         f"    {'class':<14}{'year':<6}"
@@ -91,7 +96,7 @@ def class_block(title: str, a: pd.DataFrame, b: pd.DataFrame, classes) -> None:
         f"{'B model':>10}{'B bench':>10}{'B err%':>9}{'|err| move':>12}"
     )
     for r in merged.itertuples(index=False):
-        klass = getattr(r, "class")
+        klass = r.klass
         if klass not in classes:
             continue
         ea, eb = _pct(r.model_a, r.bench_a), _pct(r.model_b, r.bench_b)
