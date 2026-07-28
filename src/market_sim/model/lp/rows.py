@@ -1054,11 +1054,17 @@ def build_constraints(
             ``hydro_monthly_energy`` is set.
 
     Returns:
-        Tuple ``(A, row_lower, row_upper)`` where ``A`` is a CSR matrix --
+        Tuple ``(A, row_lower, row_upper, lcr_row_offset, n_lcr_areas,
+        iface_row_offset, n_iface_groups)`` where ``A`` is a CSR matrix --
         the row-wise layout HiGHS consumes directly -- and the bound
         vectors give the lower and upper row bounds. The energy-balance and
         storage rows are equalities; the optional RPS row has an infinite
-        upper bound.
+        upper bound. The two ``*_row_offset`` / count pairs locate the
+        local-capacity and aggregate-interface blocks inside the row vector
+        so their duals can be read back after the solve (``-1`` / ``0`` when
+        the block is absent). Both are pure *reporting* outputs: they name
+        rows the assembler already built and change no row, bound or
+        coefficient.
     """
     T = layout.T  # T: number of hours
     n_zones = layout.n_zones
@@ -1281,11 +1287,19 @@ def build_constraints(
     # energy/storage rows but before hydro/RPS/reserve, so the front-anchored
     # energy-balance duals and the end-anchored RPS/reserve duals keep their
     # positions. No rows (identical LP) when no groups are supplied.
+    iface_row_offset = -1
+    n_iface_groups = 0
     if interface_groups:
         iface_block, iface_lower, iface_upper = _build_interface_rows(
             layout, interface_groups
         )
         if iface_block.shape[0]:
+            # Record where the block starts so the solved row duals can be
+            # sliced back out per group (the network sidecar's interface
+            # duals). Reporting only — the block, its bounds and its
+            # coefficients are exactly what was built above.
+            iface_row_offset = row_lower.size
+            n_iface_groups = len(interface_groups)
             blocks.append(iface_block)
             del iface_block
             row_lower = np.concatenate([row_lower, iface_lower])
@@ -1507,6 +1521,8 @@ def build_constraints(
                 row_upper,
                 lcr_row_offset,
                 n_lcr_areas,
+                iface_row_offset,
+                n_iface_groups,
             )
         elig = (
             np.ones(layout.n_gen, dtype=bool)
@@ -1543,4 +1559,6 @@ def build_constraints(
         row_upper,
         lcr_row_offset,
         n_lcr_areas,
+        iface_row_offset,
+        n_iface_groups,
     )
