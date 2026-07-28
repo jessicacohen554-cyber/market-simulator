@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-15-pjm-112-unit-availability",
+  "run_id": "2026-07-28-pjm-135-control",
   "iso": "PJM",
-  "label": "pjm 112 unit availability",
+  "label": "pjm 135 control",
   "target_years": [
     2023,
     2024,
@@ -13,17 +13,21 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.5,
+  "rubric_version": 2.9,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: price_tail"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
-  "notes": [],
+  "notes": [
+    "C8 2023 CT_PEAKER: grounded above budget \u2014 15.0% forced (3.4502 of 22.9356 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.915 (\u22650.8) & off-peak CV ratio 0.547 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2024 CT_PEAKER: grounded above budget \u2014 15.4% forced (3.6545 of 23.7494 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.959 (\u22650.8) & off-peak CV ratio 0.865 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 CT_PEAKER: grounded above budget \u2014 15.7% forced (4.9485 of 31.4443 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.97 (\u22650.8) & off-peak CV ratio 0.668 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+  ],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -33,7 +37,7 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
@@ -41,7 +45,7 @@
       "status": "PASS"
     },
     "price_tail": {
-      "label": "C3c price tail / scarcity (DA-expressible)",
+      "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
       "status": "FAIL"
     },
@@ -50,25 +54,10 @@
       "tier": "supporting",
       "status": "PASS"
     },
-    "co2": {
-      "label": "C5a CO2 vs eGRID",
-      "tier": "load-bearing",
-      "status": "PASS"
-    },
-    "storage": {
-      "label": "C5b storage throughput",
-      "tier": "supporting",
-      "status": "SKIPPED"
-    },
-    "storage_shape": {
-      "label": "C5c storage dispatch shape",
-      "tier": "supporting",
-      "status": "SKIPPED"
-    },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "PASS"
+      "status": "UNATTESTED"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -91,11 +80,11 @@
     }
   },
   "grade_summary": {
-    "scored": 10,
-    "target_grade": 9,
+    "scored": 8,
+    "target_grade": 5,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 1
+    "fails": 3
   },
   "free_class_score": {
     "iso": "PJM",
@@ -113,13 +102,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 16,
+      "pass": 15,
       "total": 16
     },
     "free": {
-      "pass": 12,
+      "pass": 11,
       "total": 12
     },
-    "headline": "C1 all 16/16 \u00b7 free 12/12"
+    "headline": "C1 all 15/16 \u00b7 free 11/12"
   }
 }
