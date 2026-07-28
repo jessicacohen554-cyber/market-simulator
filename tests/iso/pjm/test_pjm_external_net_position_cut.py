@@ -66,6 +66,45 @@ def test_cut_is_one_sided_and_passes_negative_caps_through(pjm_links):
     assert np.array_equal(cap, limit)  # no clamp at 0
 
 
+def test_lp_rows_bound_net_import_above_and_leave_export_free(pjm_links):
+    """The LP row is ``Σ Flow ≤ envelope`` with a free lower bound.
+
+    This is the semantics K3 gates on, and it only holds if
+    ``_build_interface_rows`` passes a NEGATIVE cap through unclamped and
+    leaves the one-sided lower bound at −inf. A clamp at zero would silently
+    disarm the mechanism (PJM's envelope is negative in ~95 % of hours); a
+    symmetric floor would force net IMPORT, the opposite of the contract.
+    """
+    from market_sim.model.lp import _build_interface_rows
+    from market_sim.model.lp.layout import VariableLayout
+
+    hours = 3
+    limit = np.array([-2207.0, -1310.0, 1887.0])
+    groups = build_pjm_external_net_position_cut_groups(pjm_links, limit)
+    layout = VariableLayout(
+        T=hours,
+        n_gen=1,
+        n_zones=len(
+            set(z for link in pjm_links for z in (link.from_zone, link.to_zone))
+        ),
+        n_storage=0,
+        n_links=len(pjm_links),
+    )
+    block, lower, upper = _build_interface_rows(layout, groups)
+
+    assert np.array_equal(upper, limit)  # negative ceiling survives verbatim
+    assert np.all(np.isneginf(lower))  # net export is never bounded
+    # Every star link enters the row at +1, so the row IS the net position.
+    star = [
+        i for i, link in enumerate(pjm_links) if link.from_zone == IMPORT_ZONE["PJM"]
+    ]
+    row0 = block.getrow(0).toarray().ravel()
+    assert sorted(np.nonzero(row0)[0].tolist()) == sorted(
+        (layout._flow_off + np.array(star)).tolist()
+    )
+    assert set(row0[np.nonzero(row0)]) == {1.0}
+
+
 def test_no_star_link_is_a_noop():
     """A topology without the import node yields no group (LP byte-identical)."""
     assert (
