@@ -1,0 +1,16 @@
+{
+  "id": "2026-07-27-miso-98b-sectormeasured",
+  "label": "miso 98b sectormeasured",
+  "date": "2026-07-27",
+  "shorthand": "miso-98b-sectormeasured",
+  "definition": "KEEPER (promoted 2026-07-28, miso-98). The 2026-07-25-miso-88-egrid-hr recipe rebuilt from its meta.json (208 kwargs) and solved fresh for 2023/2024/2025, with ONE data delta: thermal_tranches_MISO.csv's chp_sector column populated from the measured EIA-860 plant sector. MISO was the only ISO whose column was empty (the derive reads uncommitted raw f923 ZIPs and the preserve-prior guard froze the emptiness), so chp_btm_pct fell through to the unsourced merchant 35.0 / ST 90.0 defaults and ~1,405 MW of host self-supply was being offered into the LP as grid-facing merchant capacity. Against a same-HEAD control with the column reverted (2026-07-27-miso-98a-sectorabsent-control): C3b price shape FAIL -> PASS, C3a better in all three years (2024 flips PASS), C1 PASS in both, no criterion regresses, and the ledgered-caveat budget SHRINKS 3/3 -> 2/3. Zero free parameters added, one removed. Determination NOT-YET, decided by C7 diurnal shape (the miso-96 COAL_PRB issue, unrelated to this delta and unchanged by it). Evidence: results/calibration/FINDING-miso98-chp-sector-ab-2026-07.md",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-27-miso-98b-sectormeasured.js",
+  "bundle": "results/calibration/miso98_chp_sector_B",
+  "market_story": "CC_CHP \u2014 MISO's cogens are half industrial by capacity, and an industrial host burns most of what its cogen makes; only the surplus is offered to the grid. Holding out the measured 50.9 % rather than an unsourced 35.0 % stops the model selling the host's own steam-driven power into the market. The class still over-delivers (+11.8 %) and that is an open root-cause issue, named: its eGRID heat rate is steam-credited and measures 30.7 % below the plant's own CEMS power-only rate, so CC_CHP still clears too cheaply. CT_CHP \u2014 small industrial cogens, 65.5 % measured host share; the model runs them below their meter (-33 %) because they are capacity-bound at the corrected share while the meter is not, which is a measured weighting effect, not residual absorption. ST_CHP \u2014 moves off the no-sector 90.0 fallback onto its measured 63.6, landing inside the peer band (PJM 62-66, NEISO 67) and closing its miss -4.72 -> -3.05 TWh. CT_PEAKER \u2014 the class that actually served the withdrawn energy: real MISO peakers pick up the load an over-stated cogen fleet was absorbing, and the model follows, closing -22.4 -> -14.4 % (2023) and -10.8 -> -1.8 % (2025). Prices rise toward the meter because 1.4 GW of spurious cheap supply left the stack, not because anything was tuned."
+}

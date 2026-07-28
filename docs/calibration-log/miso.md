@@ -1596,3 +1596,114 @@ text already says NOT-YET so CI does not fail on it.
   chain; logs audited — seasonal CIL/CEL caps loaded on 5 zone groups every year
   (miso-93 correction 1 respected).
 * Next number: **miso-97.**
+
+---
+
+## 2026-07-28 — miso-98: the miso-97 CHP sector correction is SOLVED and the arm is **PROMOTED** — the accurate input improves the run (C3b CAVEAT→PASS, ledger 3/3→2/3), the pre-registered CC_CHP degradation happened, and the pre-registered CT_CHP prediction is REFUTED
+
+**Lane:** the miso-97 TASK 4 A/B, pre-registered in FINDING-miso97 §5.1 and left
+unrun. **Keeper → `2026-07-27-miso-98b-sectormeasured`** (bundle
+`results/calibration/miso98_chp_sector_B`), superseding
+`2026-07-25-miso-88-egrid-hr`. Evidence:
+`results/calibration/FINDING-miso98-chp-sector-ab-2026-07.md`.
+
+Six year-solves, two registered arms, single delta: the `chp_sector` column of
+`thermal_tranches_MISO.csv`, absent (A, `2026-07-27-miso-98a-sectorabsent-control`)
+vs the measured EIA-860 sector on 104 rows (B). Both same-HEAD replays of the
+miso-88 recipe rebuilt from its `meta.json` — **208 kwargs, zero unmapped**;
+`run_config.json`'s `calibration_flags` is a curated ~35-key subset and would
+have mis-specified the arm.
+
+### The promotion
+
+| criterion | outgoing miso-88 | **incoming miso-98b** |
+|---|---|---|
+| C1 fuel-mix | PASS | PASS |
+| C3a mean LMP | CAVEAT | CAVEAT (−2.5 / −7.8 / −15.4 %, better every year) |
+| **C3b price shape** | **CAVEAT** (ledgered) | **PASS** (0.077 / 0.121 / 0.198) |
+| C3c price tail | CAVEAT | CAVEAT |
+| C6 governance | PASS | PASS |
+| C7 diurnal shape | FAIL | FAIL |
+| determination | NOT-YET | NOT-YET |
+
+**Strict dominance: one ledgered caveat removed, nothing regressed.** The
+ledgered-caveat budget goes **3/3 → 2/3** — the C3b-2025 entry is *deleted*, not
+re-scoped (rule 26 `[R-DELETE]`), because the criterion now passes on its own
+gate. It passes **marginally** (0.198 against ≤0.20) and that is stated, not
+smoothed. NOT-YET is unchanged and is decided by C7 COAL_PRB shape — the
+miso-96 issue, unrelated to this delta.
+
+Promotion rests on rule 1 `[R-STRUCT]`: an unsourced `merchant = 35.0` default
+(the one entry `constants.py` marks *"residual-identified, forecast-risk"*)
+replaced by a measured EIA attribute, validated 232/232 against the four peer
+ISOs at **exactly 0.0 MW** peer movement. Zero free parameters added, one
+removed — a rule-24 `[R-DOF]` **shrink**.
+
+### It is also a correctness fix
+
+Registering the measured arm re-bases the committed MISO benchmark for every
+registered MISO run. The outgoing keeper solved on the 35.0 % default, so it was
+being scored against a benchmark its own dispatch never used — its C1 CC_CHP
+miss inflating to **+7.77 TWh, 97 % of the ±8 TWh gate**, with no change to its
+dispatch at all. The promotion puts model and meter back on one BTM basis.
+
+### Pre-registration: one half honoured, one half refuted
+
+* **CC_CHP fits WORSE — predicted** (+4.9 → +11.8 %, 2023). Under rules 1 / 14
+  the accurate input stays and the worse fit is the discovered-bug signal. The
+  miss stays well inside C1 (+2.52 TWh of an 8 TWh gate). Named root cause: the
+  steam-credited eGRID heat rate (§ below).
+* **CT_CHP prediction REFUTED** (−21.8 → −33.3 %, 2023). miso-97 §2.1's
+  `ρ ≥ f` "structural bound" — and its §6 DO-NOT-REDO line forbidding the
+  argument — assumed capacity and the benchmark subtrahend rescale by the *same*
+  `(1 − s)`. They do not: `s` applies to **nameplate** on the capacity side
+  (ratio 0.531) and to **net generation** on the benchmark side (0.615), and
+  MISO's high-BTM CT_CHP plants run at lower capacity factor. Model loses 47.6 %
+  of the class, meter loses 38.5 %.
+* **ST_CHP** reported, never gated: −4.72 → −3.05 TWh, off the no-sector 90.0
+  fallback onto its measured 63.6, inside the peer band.
+* **Peers: zero by construction** — the delta is one column of a MISO-only file.
+
+### Two contamination traps, both caught, both DO-NOT-REDO
+
+1. **Four post-solve steps recompute the benchmark from the artifact on disk**
+   (`pjm119_merge_year_chain`'s `btm.parquet`, `--rebuild-benchmark`,
+   `legitimacy_diagnostics`, `dashboard_add_run`). Arm A post-processed under
+   arm B's artifact reported CC_CHP *improving* +38.1 → +11.8 % — the opposite
+   of the truth. Post-processing must be staged per arm.
+2. **`bench/<ISO>/<year>.json.gz` is shared per ISO-year, not per run.** When a
+   delta moves the benchmark the last-registered arm owns it; arm A first scored
+   C1 FAIL (+8.11 TWh) purely from that. Arm A's sidecar warns that its rendered
+   scorecard carries the keeper's bench.
+
+### TASK 3 (CHP heat rate) — built as a measurement, deliberately NOT armed
+
+`scripts/data/derive_campd_chp_heat_rates.py` implements the caiso-128 §6 design
+ISO-generically. Measured for MISO: CC_CHP **83.2 %** MW-covered, model 6.72 vs
+measured **9.69** (−30.7 %); CT_CHP 10.4 %; ST_CHP 21.9 % and accurate to
+−2.0 %. It confirms caiso-128 §4 — 16 of 19 rows understate, **3 overstate, one
+by +68 %** — so the 1.8× topping factor stays unarmed.
+
+**Blocking defect, which is why no `ScenarioConfig` gate is wired:** §6(a)'s
+"plant's own same-year measured gross→net ratio" fires on **0 of 19 rows**.
+`compute_parasitic_factors` sends every cogen to `class_default` because
+EIA-923 net includes host generation CEMS never meters, so 94 % of covered MW
+divides by a **2.5 % class constant** against MISO's measured CHP station
+service of 8.0 / 23.7 / 30.8 %. The artifact is on a near-**gross** basis;
+arming it would be a guess substituted for misaligned real data (rule 14) and an
+unsourced constant on the critical path (rule 21). Two charter figures corrected
+under the design's own gates: CT_CHP coverage is **10.4 %, not 38 %**; ST_CHP is
+**21.9 %, not 0 %**.
+
+* **`--reuse-solved` OOM'd at 15.9 GB** on the three-year assembly stage (the
+  2025 LP itself finished, `Solve: 644.063s`); `_load_prior_bundle_tables` holds
+  the reused years alongside the fresh one. Use one process per year into one
+  bundle dir + `pjm119_merge_year_chain.py`.
+* Solve hygiene: four clean partitions regenerated first; every log carries
+  `seasonal CIL/CEL interface caps on 5 zone group(s) … static summer fallbacks
+  replaced`; chain byte-identity verified; A-arm control reproduces the keeper
+  on the classes under test (CC_CHP +1.2 %, CT_CHP −0.6 %), with ST_GAS /
+  CT_PEAKER showing the documented post-CAMPD-envelope drift (miso-93 §3).
+* Rule 22 `[R-HOLDOUT]` honoured: 2023–2025 only, all three years FRESH in one
+  bundle (rule 16 `[R-ALLYEARS]`), no marker, freeze active.
+* Next number: **miso-99.**
