@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-07-28T03:20:36",
+  "timestamp": "2026-07-28T03:41:32",
   "git": {
-    "sha": "fce21d3",
+    "sha": "1f22aae",
     "basis_sha": "29e0f6027b0dde4f42aab50020b482b574c8f201",
     "branch": "claude/miso-99-chp-heat-rate-t06xu7",
     "dirty": false,
@@ -13,7 +13,7 @@
   "calibration_flags": {
     "iso": "MISO",
     "years": [
-      2023
+      2024
     ],
     "hours": 8760,
     "passes": [
@@ -22,7 +22,7 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
-      "2023": 2.54
+      "2024": 2.19
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
@@ -69,10 +69,10 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "fce21d3"
+    "git_sha": "1f22aae"
   },
   "scenario_config": {
-    "weather_year": 2023,
+    "weather_year": 2024,
     "iso": "MISO",
     "mode": "backcast",
     "voll": 5000.0,
@@ -852,7 +852,7 @@
     "unit_outage_maxgen_events": true,
     "maxgen_emergency_tier_pricing": true,
     "forecast_xyear_warmstart": true,
-    "gas_price_override": 2.54,
+    "gas_price_override": 2.19,
     "ercot_offer_hrmult_ep_rebasis": false,
     "ercot_offer_hrmult_ep_rebasis_bands": null
   },
