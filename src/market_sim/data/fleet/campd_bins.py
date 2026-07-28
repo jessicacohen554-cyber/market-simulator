@@ -270,6 +270,42 @@ def measured_ct_heat_rates(iso: str) -> dict[int, float]:
     }
 
 
+@lru_cache(maxsize=8)
+def measured_chp_heat_rates(iso: str) -> dict[tuple[int, str], float]:
+    """Return ``{(plant_code, class): measured power-only heat rate}`` for CHP.
+
+    Reads the committed measured artifact
+    (``scripts/data/derive_chp_power_only_heat_rates.py`` →
+    ``data/raw/_processed-legacy/chp_power_only_heat_rates_<ISO>.csv``): the
+    plant's own ``(PLHTIAN + CHPCHTI) / PLNGENAN`` from the same eGRID vintage
+    the model's incumbent ``heat_rate`` is joined from — that is, eGRID's
+    published rate with eGRID's published CHP useful-thermal heat-input
+    allocation added back, on the SAME net-generation denominator. It replaces
+    the **steam-credited** rate a cogen otherwise carries, which is not the rate
+    at which the machine turns fuel into power and which makes CHP the cheapest
+    thermal on the system (CLAUDE.md rule 14 [R-ACCURATE]).
+
+    Keyed on the ``(plant_code, plant_group)`` PAIR, not the plant: a mixed
+    facility's out-of-scope rows (its ``ST_CHP`` boiler train, its merchant
+    ``CC_REGULAR`` block) must keep the rate they have.
+
+    Only ``flag == "ok"`` rows are returned — the derive writes every plant in
+    the population, including the ones its topping-cycle and physical-band
+    gates reject, and those keep the existing eGRID → hand-factor chain. Empty
+    dict when the ISO has no artifact, which leaves every plant unchanged —
+    never a silent hand number (rule 24 [R-REGISTRY]).
+    """
+    path = PROCESSED_DIR / f"chp_power_only_heat_rates_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path, usecols=["plant_code", "plant_group", "heat_rate", "flag"])
+    return {
+        (int(r.plant_code), str(r.plant_group)): float(r.heat_rate)
+        for r in df.itertuples(index=False)
+        if str(r.flag) == "ok" and float(r.heat_rate) > 0.0
+    }
+
+
 # Model plant_group -> CAMPD ramp-envelope family bucket. Mirrors the derive
 # script's unitType bucketing (scripts/data/derive_campd_ramp_envelopes.py) so a
 # mixed facility (CC block + standalone peakers) is enveloped per family.
