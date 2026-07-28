@@ -471,3 +471,36 @@ that must confront charter §3a D2's "not shortened" decision and neiso-68
 (rule 19 — replacement, never stacking). No guard parameter moves on this
 finding (rule 23); SUSPECT is not to be quoted as CONFIRMED downstream. No
 solve ⇒ nothing registered (rule 15).
+
+## 2026-07-28 — Bench multi-class collapse: cross-ISO scorer fix, committed artifacts migrated, all keepers re-scored — no gate moves
+
+**What changed (scorer-only; no LP, no mechanism, no keeper change).** The
+nyiso-88 §5 defect — `render_calibration_html.build_payload` keying `mw_p`/
+`grp_p` by `plant_code` while iterating `(plant_code, klass)`, collapsing every
+multi-class plant's whole measured series onto its alphabetically-last class
+and dropping the other classes' model dispatch — is characterized across all
+six ISOs, fixed, and the committed artifacts migrated in place. Per-plant
+bench/payload entries are now keyed `"<code>"` (single-class, byte-unchanged)
+/ `"<code>:<KLASS>"` (per class slice); measured series split on a measured
+basis ladder (CAMPD unit-level hourly shares → EIA-923 per-prime-mover monthly
+→ EIA-860 nameplate proration, used once) in `scripts/lib/bench_multiclass.py`;
+migration `scripts/migrate_bench_multiclass.py`; probe
+`scripts/probes/bench_multiclass_collapse.py` (correction table produced BEFORE
+the fix); pinned by `tests/scoring/test_bench_multiclass_split.py`; contract
+§3.2/§3.3 updated. Blast radius measured: MISO 12–13 % of benched CEMS energy
+(whole coal plants scored as CT_PEAKER, ±20–25 TWh/yr/class), NYISO ~10–12 %,
+PJM 2.5 %, CAISO/NEISO ≤0.2 %, ERCOT 0 (binning books one class per plant).
+
+**Re-score result: every keeper's determination and every criterion/record
+status is UNCHANGED.** NYISO C1 CC_REGULAR 2023 (−2.78 of ±2.94) is
+bit-identical — C1's classFull/gmModel never routed through the collapsed
+grouping, so the nyiso-89 keeper's thin C1 margin was never contaminated. The
+real damage was in the D-1 shape actuals and the MISO C2 coal anchor: MISO
+CT_PEAKER cv_ratio 2.26→1.01 (the "model too peaky" signal was benchmark
+contamination), coal_cems 176→192.5 TWh, NYISO/PJM CT_PEAKER cv_ratio toward
+the model — all inside bands. Discovered and left for owner scoping: MISO
+ST_CHP model diurnal profile is anti-correlated with its true actual
+(profile_r ≈ −0.75..−0.80; ungated/exempt today). Full record:
+`docs/FINDING-bench-multiclass-collapse-2026-07-28.md`;
+`results/calibration/bench_multiclass_collapse.json` +
+`bench_multiclass_migration_report.json`.
