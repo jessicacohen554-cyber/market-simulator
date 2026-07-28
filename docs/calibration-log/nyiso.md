@@ -1687,3 +1687,87 @@ energy loss on two thirds of its runs. It is NOT the published reserve ladder
 question (sub-zonal load pockets) before it is a mechanism question, and it needs
 owner scoping. Until then CT_PEAKER's level gap is a **diagnosed, unclosed structural
 limitation of the five-zone representation**, not an open tuning target.
+
+---
+
+## 2026-07-28 — nyiso-92: the hourly-r decomposition finds hydro; the measured hydro capability envelope becomes the keeper
+
+**Keeper: `2026-07-28-nyiso-92-hydro-envelope` (PROMOTED, owner instruction
+in-session; replaces `2026-07-27-nyiso-89-ctmeas-hrloaded`).** Registered runs
+(all three years, one bundle each, same HEAD, one mechanism-family apart):
+`2026-07-28-nyiso-92-{control,hydro-envelope}`. Full write-up:
+`docs/FINDING-nyiso92-hydro-capability-envelope-2026-07-28.md`. Probe:
+`scripts/probes/nyiso92_hourly_r_decomposition.py`.
+
+**The charter was dispatch matching ("hourly r for each asset class is pretty
+abysmal"), and the decomposition localized the loss before any lever was
+touched.** Per-class hourly r is lost at the DAY-PICKING layer (profile r
+0.95+ everywhere C7 gates; CC_REGULAR r_day 0.742/0.566/0.534), it collapses
+in winter (2024 CC_REGULAR DJF daily r 0.163), and the gas classes' residuals
+are POSITIVELY cross-correlated — a common non-fossil driver, not merit-order
+shuffling. Attributing against the measured EIA-930 components: **hydro is
+the worst-tracking material input** (r_day 0.353/0.405/0.190 on 21–28 TWh)
+and carries the exact CAISO parks-at-zero pathology — model 349/405/1,098
+hours <100 MW vs measured 0/15/15, hourly p5 274/151/0 MW vs measured
+2,072/1,969/1,526, day-to-day std 3× measured (the budget LP's
+perfect-foresight hoarding). Nuclear (r_day 0.84 → 0.50/0.51 in 2024–25,
+refuel timing) and imports (r_hr 0.40–0.49) are next; both queued, neither
+this session's arm. The dramatic cold-snap gas↔oil daily swaps turned out to
+be the `dual_fuel_oil_reattribution` RECORDING basis (0.80 TWh relabelled in
+Jan-2025 vs 0.031 TWh measured `NG: OIL`; CLI has since pinned it
+NEISO-only), not a dispatch error of that size.
+
+**C3c re-anchored while we were in the tail data:** the measured >$300 RT
+hours are SUMMER scarcity — 2025 Jun 23–25 alone is 18 of 42 h, July 15 more;
+Jan-2024 (storm Gerri) produced ZERO. The winter-fuel lane therefore caps out
+at ~4–5 h/yr and the C3c queue leader stays DA virtual depth
+(`da_virtual_bids` N=U).
+
+**The arm: `hydro_dispatch_envelope` + `hydro_min_flow_floor`** — the
+caiso-72/124 keeper engines, one two-sided measured family (the floor
+percentile is the ceiling's mirror; ZERO new fitted scalars, n_residual
+stays 6), NYISO levels derived from NYISO's own EIA-930 NG:WAT at solve time
+(floor 1.8–2.5 GW by month = 66 % of the 2023 budget — a fleet 72 %-by-MW
+run-of-river SHOULD hold most of its energy in the sustained base; ceiling
+evening p95 ~4.4 GW). `hydro_ror_split` DELIBERATELY UNARMED: the ORNL-EHA
+completion rule is CAISO-reviewed only and would flatten Robert Moses Niagara
+(52 % of fleet MW, hybrid label) whose diurnal pattern is treaty-structured —
+its own NYISO review is a named follow-up. Rule-19 reconciliation:
+`NYISO_HYDRO_TREATY_MIN_FLOW` is dead code in the production path (tests
+only); the Q95 floor is the single live hydro floor and covers the ~1.06 GW
+treaty-implied minimum.
+
+**RESULT.** The pathology is eliminated (0 hours <100 MW in every year; p5
+2,100/1,852/1,376 MW vs measured 2,072/1,969/1,526; day std 8.4/11.3/11.5 vs
+measured 6.2/8.4/7.9 GWh; hydro r_day 0.353/0.405/0.190 → 0.517/0.701/0.328)
+and **every material gas class's hourly r improves in every year** — TOTAL
+fossil 0.861/0.836/0.788 → 0.915/0.896/0.819, CC_REGULAR 0.705/0.583/0.536 →
+0.770/0.652/0.573, CC_CHP 0.728/0.700/0.647 → 0.790/0.781/0.676, ST_GAS
+0.831/0.876/0.827 → 0.852/0.893/0.839 — with the measured import series'
+hourly r rising 0.477/0.493/0.396 → 0.587/0.612/0.454 under a mechanism that
+touches no seam wiring. Class energies move <0.5 TWh (a re-timing, not a
+level change).
+
+**GATES — promoted with a regression on the record (rules 1/14; owner
+standing rule re-affirmed in-session).** C2/C3a/C3b/C4/C6/C7/C8 PASS (C6 on
+the UNION'd 20-entry DOF ledger; C8 2024 ST_GAS IMPROVES 32.0 % → 30.9 %
+forced, grounded). **C1 FAILS 13/14 (free 9/10):** the 2023 CC_REGULAR
+knife-edge cell walks −2.784 → −3.045 TWh of ±2.94 — out by 0.105 TWh — the
+exact cell the nyiso-89 note flagged as "one small adverse change from
+flipping". The control's PASS was borrowing ~0.26 TWh of phantom overnight CC
+that existed only because hydro could park at 0 MW; the accurate input
+reveals the true downstate CC deficit rather than creating it, and re-burying
+it under false hydro structure is forbidden. **C3c UNCHANGED 3/0/7 h vs
+10/12/42** and remains the sole determination blocker. Honest adverse cells:
+CT_PEAKER 2024 r_day 0.735 → 0.668; C7 CT_PEAKER 2025 off-peak cv_ratio
+0.934 → 0.797 (both ungated, class under the 2 % floor). LOYO (rule 22): no
+parameter fitted to any year — each year's bounds derive from that year's own
+measured series. `calibration-keeper-auditor --iso NYISO`: 0 failures,
+0 repairs. Determination **NOT-YET** — same class and same sole blocker as
+every prior NYISO keeper.
+
+**Matrix:** `hydro_dispatch_envelope` N U→K, `hydro_min_flow_floor` N U→K
+(citations added); `hydro_ror_split` N stays U with the Niagara-review
+caution; NYISO queue extended with the dispatch-matching lane
+(nuclear_unit_availability, ror_split review, import shape, reattribution
+lineage cleanup).
