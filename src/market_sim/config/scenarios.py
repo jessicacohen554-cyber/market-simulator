@@ -340,6 +340,19 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # (Registered 2026-07-27: the field landed unregistered and so entered the
     # hash at its default, breaking the pinned default cache_key.)
     "coal_committed_takeorpay_sunk_fixed",
+    # pjm-136 measured PJM zonal marginal-LOSS surface (default off): same
+    # one-line remedy as pjm_apsouth_interface_cut / pjm_external_net_position_cut
+    # above -- the field landed on main unregistered and so entered the hash at
+    # its default, moving the pinned default key 603c2498bf71d21d ->
+    # 25aa0d236dd6a574 and orphaning every on-disk cache. Its own declaration
+    # promises "Off by default; byte-identical off"; this registration is what
+    # makes that true. Dropped from the hash at its default so every
+    # pre-existing cached run keeps its key; an armed run splits every internal
+    # link into a lossy one-way pair and so gets a distinct key. NOTE the MISO
+    # analogue miso_zonal_loss_surface is deliberately NOT registered here -- it
+    # predates the pinned key and is already inside it, so registering it would
+    # MOVE the key rather than restore it.
+    "pjm_zonal_loss_surface",
 )
 
 

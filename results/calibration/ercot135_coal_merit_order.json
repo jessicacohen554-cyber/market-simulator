@@ -1,0 +1,1210 @@
+{
+  "keeper_bundle": "ercot116_regate_base",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "D_committed_share": {
+    "measured": {
+      "convention": "ERCOT-62 derive, Resource Type CLLIG, committed = HSL>0",
+      "2023": {
+        "resource_hours": 208989,
+        "distinct_resources": 26,
+        "cap_weighted_p50_lsl_over_hsl": 0.35,
+        "fleet_aggregate_lsl_over_hsl": 0.3742
+      },
+      "2024": {
+        "resource_hours": 228358,
+        "distinct_resources": 26,
+        "cap_weighted_p50_lsl_over_hsl": 0.3729,
+        "fleet_aggregate_lsl_over_hsl": 0.3926
+      },
+      "2025": {
+        "resource_hours": 190294,
+        "distinct_resources": 26,
+        "cap_weighted_p50_lsl_over_hsl": 0.3705,
+        "fleet_aggregate_lsl_over_hsl": 0.3856
+      },
+      "pooled": {
+        "resource_hours": 627641,
+        "cap_weighted_p50_lsl_over_hsl": 0.3636,
+        "fleet_aggregate_lsl_over_hsl": 0.3844
+      }
+    },
+    "model": {
+      "coal_tranche_1_frac": 0.3,
+      "coal_tranche_1_fuel_passthrough": 0.0,
+      "coal_tranche_2_frac": 0.25,
+      "coal_tranche_2_fuel_passthrough": 0.35,
+      "coal_tranche_3_frac": 0.45,
+      "coal_tranche_3_fuel_passthrough": 1.0,
+      "note": "tranche 1 is the take-or-pay (VOM-only) band; the model's 'committed' share is coal_tranche_1_frac"
+    }
+  },
+  "A_model_offer": {
+    "2023": {
+      "per_plant": [
+        {
+          "plant": "Limestone",
+          "plant_code": 298,
+          "pmax_mw": 1849.8,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 19.62,
+          "bid_top_tranche": 32.16,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 27.66,
+          "bid_top_tranche_p95hr": 39.37,
+          "heat_rate_capwtd": 10.715,
+          "fuel_price_mmbtu": 1.823,
+          "passthrough_capwtd": 0.7639
+        },
+        {
+          "plant": "W A Parish",
+          "plant_code": 3470,
+          "pmax_mw": 2443.0,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 21.69,
+          "bid_top_tranche": 33.76,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 29.26,
+          "bid_top_tranche_p95hr": 41.39,
+          "heat_rate_capwtd": 11.488,
+          "fuel_price_mmbtu": 1.823,
+          "passthrough_capwtd": 0.8117
+        },
+        {
+          "plant": "Martin Lake",
+          "plant_code": 6146,
+          "pmax_mw": 2379.6,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 19.78,
+          "bid_top_tranche": 32.46,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 27.96,
+          "bid_top_tranche_p95hr": 39.74,
+          "heat_rate_capwtd": 10.831,
+          "fuel_price_mmbtu": 1.823,
+          "passthrough_capwtd": 0.7639
+        },
+        {
+          "plant": "Coleto Creek",
+          "plant_code": 6178,
+          "pmax_mw": 622.4,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 18.63,
+          "bid_top_tranche": 33.8,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 29.3,
+          "bid_top_tranche_p95hr": 42.66,
+          "heat_rate_capwtd": 10.786,
+          "fuel_price_mmbtu": 1.823,
+          "passthrough_capwtd": 0.7031
+        },
+        {
+          "plant": "Fayette",
+          "plant_code": 6179,
+          "pmax_mw": 1690.0,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 18.83,
+          "bid_top_tranche": 34.22,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 29.72,
+          "bid_top_tranche_p95hr": 43.08,
+          "heat_rate_capwtd": 11.238,
+          "fuel_price_mmbtu": 1.774,
+          "passthrough_capwtd": 0.7031
+        },
+        {
+          "plant": "Oak Grove",
+          "plant_code": 6180,
+          "pmax_mw": 1795.4,
+          "n_tranches": 5,
+          "bid_capwtd_mean": 11.32,
+          "bid_top_tranche": 21.19,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 16.69,
+          "bid_top_tranche_p95hr": 23.55,
+          "heat_rate_capwtd": 10.283,
+          "fuel_price_mmbtu": 1.45,
+          "passthrough_capwtd": 0.4303
+        },
+        {
+          "plant": "San Miguel",
+          "plant_code": 6183,
+          "pmax_mw": 410.0,
+          "n_tranches": 5,
+          "bid_capwtd_mean": 20.41,
+          "bid_top_tranche": 52.24,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 47.74,
+          "bid_top_tranche_p95hr": 78.35,
+          "heat_rate_capwtd": 11.999,
+          "fuel_price_mmbtu": 3.473,
+          "passthrough_capwtd": 0.3521
+        },
+        {
+          "plant": "Major Oak",
+          "plant_code": 7030,
+          "pmax_mw": 349.2,
+          "n_tranches": 5,
+          "bid_capwtd_mean": 11.8,
+          "bid_top_tranche": 22.37,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 17.87,
+          "bid_top_tranche_p95hr": 24.89,
+          "heat_rate_capwtd": 11.009,
+          "fuel_price_mmbtu": 1.45,
+          "passthrough_capwtd": 0.4303
+        },
+        {
+          "plant": "J K Spruce",
+          "plant_code": 7097,
+          "pmax_mw": 1488.5,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 23.51,
+          "bid_top_tranche": 35.73,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 31.23,
+          "bid_top_tranche_p95hr": 45.26,
+          "heat_rate_capwtd": 11.755,
+          "fuel_price_mmbtu": 1.904,
+          "passthrough_capwtd": 0.8403
+        },
+        {
+          "plant": "Sandy Creek",
+          "plant_code": 56611,
+          "pmax_mw": 936.0,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 15.7,
+          "bid_top_tranche": 31.68,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 27.18,
+          "bid_top_tranche_p95hr": 39.91,
+          "heat_rate_capwtd": 9.915,
+          "fuel_price_mmbtu": 1.823,
+          "passthrough_capwtd": 0.6027
+        }
+      ],
+      "fleet": {
+        "pmax_mw": 13963.9,
+        "bid_capwtd_mean": 18.78,
+        "bid_top": 52.24,
+        "bid_top_p95hr": 78.35,
+        "bid_deciles": {
+          "p10": 4.5,
+          "p25": 4.5,
+          "p50": 21.55,
+          "p75": 24.41,
+          "p90": 28.88
+        }
+      }
+    },
+    "2024": {
+      "per_plant": [
+        {
+          "plant": "Limestone",
+          "plant_code": 298,
+          "pmax_mw": 1849.8,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 17.59,
+          "bid_top_tranche": 28.45,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 23.95,
+          "bid_top_tranche_p95hr": 35.05,
+          "heat_rate_capwtd": 10.715,
+          "fuel_price_mmbtu": 1.752,
+          "passthrough_capwtd": 0.6883
+        },
+        {
+          "plant": "W A Parish",
+          "plant_code": 3470,
+          "pmax_mw": 2443.0,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 19.39,
+          "bid_top_tranche": 29.84,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 25.34,
+          "bid_top_tranche_p95hr": 36.82,
+          "heat_rate_capwtd": 11.488,
+          "fuel_price_mmbtu": 1.752,
+          "passthrough_capwtd": 0.7313
+        },
+        {
+          "plant": "Martin Lake",
+          "plant_code": 6146,
+          "pmax_mw": 2379.6,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 17.73,
+          "bid_top_tranche": 28.71,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 24.21,
+          "bid_top_tranche_p95hr": 35.38,
+          "heat_rate_capwtd": 10.831,
+          "fuel_price_mmbtu": 1.752,
+          "passthrough_capwtd": 0.6883
+        },
+        {
+          "plant": "Coleto Creek",
+          "plant_code": 6178,
+          "pmax_mw": 622.4,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 16.47,
+          "bid_top_tranche": 29.33,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 24.83,
+          "bid_top_tranche_p95hr": 37.46,
+          "heat_rate_capwtd": 10.786,
+          "fuel_price_mmbtu": 1.752,
+          "passthrough_capwtd": 0.6202
+        },
+        {
+          "plant": "Fayette",
+          "plant_code": 6179,
+          "pmax_mw": 1690.0,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 16.71,
+          "bid_top_tranche": 29.81,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 25.31,
+          "bid_top_tranche_p95hr": 37.92,
+          "heat_rate_capwtd": 11.238,
+          "fuel_price_mmbtu": 1.713,
+          "passthrough_capwtd": 0.6202
+        },
+        {
+          "plant": "Oak Grove",
+          "plant_code": 6180,
+          "pmax_mw": 1795.4,
+          "n_tranches": 5,
+          "bid_capwtd_mean": 10.87,
+          "bid_top_tranche": 20.08,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 15.58,
+          "bid_top_tranche_p95hr": 22.39,
+          "heat_rate_capwtd": 10.283,
+          "fuel_price_mmbtu": 1.45,
+          "passthrough_capwtd": 0.4017
+        },
+        {
+          "plant": "San Miguel",
+          "plant_code": 6183,
+          "pmax_mw": 410.0,
+          "n_tranches": 5,
+          "bid_capwtd_mean": 19.21,
+          "bid_top_tranche": 48.65,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 44.15,
+          "bid_top_tranche_p95hr": 90.35,
+          "heat_rate_capwtd": 11.999,
+          "fuel_price_mmbtu": 3.475,
+          "passthrough_capwtd": 0.3286
+        },
+        {
+          "plant": "Major Oak",
+          "plant_code": 7030,
+          "pmax_mw": 349.2,
+          "n_tranches": 5,
+          "bid_capwtd_mean": 11.32,
+          "bid_top_tranche": 21.18,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 16.68,
+          "bid_top_tranche_p95hr": 23.66,
+          "heat_rate_capwtd": 11.009,
+          "fuel_price_mmbtu": 1.45,
+          "passthrough_capwtd": 0.4017
+        },
+        {
+          "plant": "J K Spruce",
+          "plant_code": 7097,
+          "pmax_mw": 1488.5,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 20.59,
+          "bid_top_tranche": 30.95,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 26.45,
+          "bid_top_tranche_p95hr": 38.64,
+          "heat_rate_capwtd": 11.755,
+          "fuel_price_mmbtu": 1.791,
+          "passthrough_capwtd": 0.7572
+        },
+        {
+          "plant": "Sandy Creek",
+          "plant_code": 56611,
+          "pmax_mw": 936.0,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 13.99,
+          "bid_top_tranche": 27.53,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 23.03,
+          "bid_top_tranche_p95hr": 35.08,
+          "heat_rate_capwtd": 9.915,
+          "fuel_price_mmbtu": 1.752,
+          "passthrough_capwtd": 0.5316
+        }
+      ],
+      "fleet": {
+        "pmax_mw": 13963.9,
+        "bid_capwtd_mean": 16.88,
+        "bid_top": 48.65,
+        "bid_top_p95hr": 90.35,
+        "bid_deciles": {
+          "p10": 4.5,
+          "p25": 4.5,
+          "p50": 19.26,
+          "p75": 21.74,
+          "p90": 25.15
+        }
+      }
+    },
+    "2025": {
+      "per_plant": [
+        {
+          "plant": "Limestone",
+          "plant_code": 298,
+          "pmax_mw": 1849.8,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 20.11,
+          "bid_top_tranche": 33.06,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 28.56,
+          "bid_top_tranche_p95hr": 39.59,
+          "heat_rate_capwtd": 10.715,
+          "fuel_price_mmbtu": 1.614,
+          "passthrough_capwtd": 0.8881
+        },
+        {
+          "plant": "W A Parish",
+          "plant_code": 3470,
+          "pmax_mw": 2443.0,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 22.25,
+          "bid_top_tranche": 34.72,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 30.22,
+          "bid_top_tranche_p95hr": 41.62,
+          "heat_rate_capwtd": 11.488,
+          "fuel_price_mmbtu": 1.614,
+          "passthrough_capwtd": 0.9436
+        },
+        {
+          "plant": "Martin Lake",
+          "plant_code": 6146,
+          "pmax_mw": 2379.6,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 20.28,
+          "bid_top_tranche": 33.37,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 28.87,
+          "bid_top_tranche_p95hr": 39.97,
+          "heat_rate_capwtd": 10.831,
+          "fuel_price_mmbtu": 1.614,
+          "passthrough_capwtd": 0.8881
+        },
+        {
+          "plant": "Coleto Creek",
+          "plant_code": 6178,
+          "pmax_mw": 622.4,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 19.49,
+          "bid_top_tranche": 35.58,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 31.08,
+          "bid_top_tranche_p95hr": 43.44,
+          "heat_rate_capwtd": 10.786,
+          "fuel_price_mmbtu": 1.614,
+          "passthrough_capwtd": 0.8394
+        },
+        {
+          "plant": "Fayette",
+          "plant_code": 6179,
+          "pmax_mw": 1690.0,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 19.67,
+          "bid_top_tranche": 35.96,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 31.46,
+          "bid_top_tranche_p95hr": 44.26,
+          "heat_rate_capwtd": 11.238,
+          "fuel_price_mmbtu": 1.567,
+          "passthrough_capwtd": 0.8394
+        },
+        {
+          "plant": "Oak Grove",
+          "plant_code": 6180,
+          "pmax_mw": 1795.4,
+          "n_tranches": 5,
+          "bid_capwtd_mean": 12.07,
+          "bid_top_tranche": 23.01,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 18.51,
+          "bid_top_tranche_p95hr": 25.07,
+          "heat_rate_capwtd": 10.283,
+          "fuel_price_mmbtu": 1.45,
+          "passthrough_capwtd": 0.4773
+        },
+        {
+          "plant": "San Miguel",
+          "plant_code": 6183,
+          "pmax_mw": 410.0,
+          "n_tranches": 5,
+          "bid_capwtd_mean": 21.7,
+          "bid_top_tranche": 56.09,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 51.59,
+          "bid_top_tranche_p95hr": 115.95,
+          "heat_rate_capwtd": 11.999,
+          "fuel_price_mmbtu": 3.445,
+          "passthrough_capwtd": 0.3906
+        },
+        {
+          "plant": "Major Oak",
+          "plant_code": 7030,
+          "pmax_mw": 349.2,
+          "n_tranches": 5,
+          "bid_capwtd_mean": 12.6,
+          "bid_top_tranche": 24.32,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 19.82,
+          "bid_top_tranche_p95hr": 26.52,
+          "heat_rate_capwtd": 11.009,
+          "fuel_price_mmbtu": 1.45,
+          "passthrough_capwtd": 0.4773
+        },
+        {
+          "plant": "J K Spruce",
+          "plant_code": 7097,
+          "pmax_mw": 1488.5,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 23.98,
+          "bid_top_tranche": 36.52,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 32.02,
+          "bid_top_tranche_p95hr": 43.73,
+          "heat_rate_capwtd": 11.755,
+          "fuel_price_mmbtu": 1.677,
+          "passthrough_capwtd": 0.977
+        },
+        {
+          "plant": "Sandy Creek",
+          "plant_code": 56611,
+          "pmax_mw": 936.0,
+          "n_tranches": 9,
+          "bid_capwtd_mean": 16.38,
+          "bid_top_tranche": 33.33,
+          "bid_bot_tranche": 4.5,
+          "bid_spread": 28.83,
+          "bid_top_tranche_p95hr": 40.63,
+          "heat_rate_capwtd": 9.915,
+          "fuel_price_mmbtu": 1.614,
+          "passthrough_capwtd": 0.7195
+        }
+      ],
+      "fleet": {
+        "pmax_mw": 13963.9,
+        "bid_capwtd_mean": 19.42,
+        "bid_top": 56.09,
+        "bid_top_p95hr": 115.95,
+        "bid_deciles": {
+          "p10": 4.5,
+          "p25": 4.5,
+          "p50": 22.2,
+          "p75": 25.25,
+          "p90": 29.5
+        }
+      }
+    }
+  },
+  "B_measured_offer": {
+    "2023": {
+      "per_plant": [
+        {
+          "plant": "Limestone",
+          "plant_code": 298,
+          "resource_hours": 16078,
+          "submit_share": 0.0627,
+          "top_offer_capwtd_p50": 44.24,
+          "top_offer_mean": 43.75,
+          "bot_offer_capwtd_p50": 43.54
+        },
+        {
+          "plant": "W A Parish",
+          "plant_code": 3470,
+          "resource_hours": 32156,
+          "submit_share": 0.0007,
+          "top_offer_capwtd_p50": 46.5,
+          "top_offer_mean": 46.5,
+          "bot_offer_capwtd_p50": 38.66
+        },
+        {
+          "plant": "Martin Lake",
+          "plant_code": 6146,
+          "resource_hours": 24117,
+          "submit_share": 0.7782,
+          "top_offer_capwtd_p50": 19.58,
+          "top_offer_mean": 20.57,
+          "bot_offer_capwtd_p50": 19.58
+        },
+        {
+          "plant": "Coleto Creek",
+          "plant_code": 6178,
+          "resource_hours": 8039,
+          "submit_share": 0.5793,
+          "top_offer_capwtd_p50": 21.29,
+          "top_offer_mean": 21.48,
+          "bot_offer_capwtd_p50": 21.29
+        },
+        {
+          "plant": "Fayette",
+          "plant_code": 6179,
+          "resource_hours": 40195,
+          "submit_share": 0.6705,
+          "top_offer_capwtd_p50": 19.78,
+          "top_offer_mean": 40.74,
+          "bot_offer_capwtd_p50": 16.26
+        },
+        {
+          "plant": "Oak Grove",
+          "plant_code": 6180,
+          "resource_hours": 16078,
+          "submit_share": 0.0,
+          "top_offer_capwtd_p50": null,
+          "top_offer_mean": null,
+          "bot_offer_capwtd_p50": null
+        },
+        {
+          "plant": "San Miguel",
+          "plant_code": 6183,
+          "resource_hours": 8039,
+          "submit_share": 0.0,
+          "top_offer_capwtd_p50": null,
+          "top_offer_mean": null,
+          "bot_offer_capwtd_p50": null
+        },
+        {
+          "plant": "Major Oak",
+          "plant_code": 7030,
+          "resource_hours": 16078,
+          "submit_share": 0.0,
+          "top_offer_capwtd_p50": null,
+          "top_offer_mean": null,
+          "bot_offer_capwtd_p50": null
+        },
+        {
+          "plant": "J K Spruce",
+          "plant_code": 7097,
+          "resource_hours": 16078,
+          "submit_share": 0.6705,
+          "top_offer_capwtd_p50": 20.86,
+          "top_offer_mean": 23.49,
+          "bot_offer_capwtd_p50": 0.6
+        },
+        {
+          "plant": "Sandy Creek",
+          "plant_code": 56611,
+          "resource_hours": 32131,
+          "submit_share": 0.6068,
+          "top_offer_capwtd_p50": 32.14,
+          "top_offer_mean": 34.1,
+          "bot_offer_capwtd_p50": 1.0
+        }
+      ],
+      "fleet": {
+        "resource_hours": 208989,
+        "submit_share": 0.3909,
+        "top_offer_capwtd_p50": 20.46,
+        "top_offer_p90": 41.99,
+        "top_offer_max": 750.0
+      }
+    },
+    "2024": {
+      "per_plant": [
+        {
+          "plant": "Limestone",
+          "plant_code": 298,
+          "resource_hours": 17566,
+          "submit_share": 0.0,
+          "top_offer_capwtd_p50": null,
+          "top_offer_mean": null,
+          "bot_offer_capwtd_p50": null
+        },
+        {
+          "plant": "W A Parish",
+          "plant_code": 3470,
+          "resource_hours": 35132,
+          "submit_share": 0.0,
+          "top_offer_capwtd_p50": null,
+          "top_offer_mean": null,
+          "bot_offer_capwtd_p50": null
+        },
+        {
+          "plant": "Martin Lake",
+          "plant_code": 6146,
+          "resource_hours": 26349,
+          "submit_share": 0.737,
+          "top_offer_capwtd_p50": 21.51,
+          "top_offer_mean": 21.13,
+          "bot_offer_capwtd_p50": 21.51
+        },
+        {
+          "plant": "Coleto Creek",
+          "plant_code": 6178,
+          "resource_hours": 8783,
+          "submit_share": 0.7175,
+          "top_offer_capwtd_p50": 19.69,
+          "top_offer_mean": 21.15,
+          "bot_offer_capwtd_p50": 19.69
+        },
+        {
+          "plant": "Fayette",
+          "plant_code": 6179,
+          "resource_hours": 43915,
+          "submit_share": 0.52,
+          "top_offer_capwtd_p50": 18.82,
+          "top_offer_mean": 21.32,
+          "bot_offer_capwtd_p50": 15.64
+        },
+        {
+          "plant": "Oak Grove",
+          "plant_code": 6180,
+          "resource_hours": 17566,
+          "submit_share": 0.0,
+          "top_offer_capwtd_p50": null,
+          "top_offer_mean": null,
+          "bot_offer_capwtd_p50": null
+        },
+        {
+          "plant": "San Miguel",
+          "plant_code": 6183,
+          "resource_hours": 8783,
+          "submit_share": 0.0322,
+          "top_offer_capwtd_p50": 20.0,
+          "top_offer_mean": 21.02,
+          "bot_offer_capwtd_p50": 19.0
+        },
+        {
+          "plant": "Major Oak",
+          "plant_code": 7030,
+          "resource_hours": 17566,
+          "submit_share": 0.0,
+          "top_offer_capwtd_p50": null,
+          "top_offer_mean": null,
+          "bot_offer_capwtd_p50": null
+        },
+        {
+          "plant": "J K Spruce",
+          "plant_code": 7097,
+          "resource_hours": 17566,
+          "submit_share": 0.7895,
+          "top_offer_capwtd_p50": 20.02,
+          "top_offer_mean": 20.04,
+          "bot_offer_capwtd_p50": 0.33
+        },
+        {
+          "plant": "Sandy Creek",
+          "plant_code": 56611,
+          "resource_hours": 35132,
+          "submit_share": 0.7273,
+          "top_offer_capwtd_p50": 34.82,
+          "top_offer_mean": 34.54,
+          "bot_offer_capwtd_p50": 19.99
+        }
+      ],
+      "fleet": {
+        "resource_hours": 228358,
+        "submit_share": 0.3865,
+        "top_offer_capwtd_p50": 20.49,
+        "top_offer_p90": 34.82,
+        "top_offer_max": 153.99
+      }
+    },
+    "2025": {
+      "per_plant": [
+        {
+          "plant": "Limestone",
+          "plant_code": 298,
+          "resource_hours": 14638,
+          "submit_share": 0.0,
+          "top_offer_capwtd_p50": null,
+          "top_offer_mean": null,
+          "bot_offer_capwtd_p50": null
+        },
+        {
+          "plant": "W A Parish",
+          "plant_code": 3470,
+          "resource_hours": 29276,
+          "submit_share": 0.0,
+          "top_offer_capwtd_p50": null,
+          "top_offer_mean": null,
+          "bot_offer_capwtd_p50": null
+        },
+        {
+          "plant": "Martin Lake",
+          "plant_code": 6146,
+          "resource_hours": 21957,
+          "submit_share": 0.538,
+          "top_offer_capwtd_p50": 22.12,
+          "top_offer_mean": 22.08,
+          "bot_offer_capwtd_p50": 22.12
+        },
+        {
+          "plant": "Coleto Creek",
+          "plant_code": 6178,
+          "resource_hours": 7319,
+          "submit_share": 0.8199,
+          "top_offer_capwtd_p50": 26.58,
+          "top_offer_mean": 25.92,
+          "bot_offer_capwtd_p50": 26.58
+        },
+        {
+          "plant": "Fayette",
+          "plant_code": 6179,
+          "resource_hours": 36595,
+          "submit_share": 0.5309,
+          "top_offer_capwtd_p50": 17.49,
+          "top_offer_mean": 17.15,
+          "bot_offer_capwtd_p50": 14.07
+        },
+        {
+          "plant": "Oak Grove",
+          "plant_code": 6180,
+          "resource_hours": 14638,
+          "submit_share": 0.0,
+          "top_offer_capwtd_p50": null,
+          "top_offer_mean": null,
+          "bot_offer_capwtd_p50": null
+        },
+        {
+          "plant": "San Miguel",
+          "plant_code": 6183,
+          "resource_hours": 7319,
+          "submit_share": 0.0,
+          "top_offer_capwtd_p50": null,
+          "top_offer_mean": null,
+          "bot_offer_capwtd_p50": null
+        },
+        {
+          "plant": "Major Oak",
+          "plant_code": 7030,
+          "resource_hours": 14638,
+          "submit_share": 0.0,
+          "top_offer_capwtd_p50": null,
+          "top_offer_mean": null,
+          "bot_offer_capwtd_p50": null
+        },
+        {
+          "plant": "J K Spruce",
+          "plant_code": 7097,
+          "resource_hours": 14638,
+          "submit_share": 0.7426,
+          "top_offer_capwtd_p50": 18.41,
+          "top_offer_mean": 18.53,
+          "bot_offer_capwtd_p50": 0.1
+        },
+        {
+          "plant": "Sandy Creek",
+          "plant_code": 56611,
+          "resource_hours": 29276,
+          "submit_share": 0.1602,
+          "top_offer_capwtd_p50": 34.82,
+          "top_offer_mean": 34.72,
+          "bot_offer_capwtd_p50": 19.99
+        }
+      ],
+      "fleet": {
+        "resource_hours": 190294,
+        "submit_share": 0.2775,
+        "top_offer_capwtd_p50": 21.5,
+        "top_offer_p90": 26.79,
+        "top_offer_max": 224.99
+      }
+    }
+  },
+  "AB_cheap_share": {
+    "2023": {
+      "reference_dam_offer": 20.46,
+      "capacity_below_mw": 8480.9,
+      "capacity_total_mw": 13963.9,
+      "share_below": 0.6073
+    },
+    "2024": {
+      "reference_dam_offer": 20.49,
+      "capacity_below_mw": 9645.1,
+      "capacity_total_mw": 13963.9,
+      "share_below": 0.6907
+    },
+    "2025": {
+      "reference_dam_offer": 21.5,
+      "capacity_below_mw": 8556.0,
+      "capacity_total_mw": 13963.9,
+      "share_below": 0.6127
+    }
+  },
+  "C_f923": {
+    "2023": {
+      "per_plant": [
+        {
+          "plant": "Limestone",
+          "plant_code": 298,
+          "pmax_mw": 1849.8,
+          "model_fuel_price": 1.823,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        },
+        {
+          "plant": "W A Parish",
+          "plant_code": 3470,
+          "pmax_mw": 2443.0,
+          "model_fuel_price": 1.823,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        },
+        {
+          "plant": "Martin Lake",
+          "plant_code": 6146,
+          "pmax_mw": 2379.6,
+          "model_fuel_price": 1.823,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        },
+        {
+          "plant": "Coleto Creek",
+          "plant_code": 6178,
+          "pmax_mw": 622.4,
+          "model_fuel_price": 1.823,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        },
+        {
+          "plant": "Fayette",
+          "plant_code": 6179,
+          "pmax_mw": 1690.0,
+          "model_fuel_price": 1.774,
+          "f923_qty_wtd_price": 1.773,
+          "delta": 0.001,
+          "months_reported": 12,
+          "priced_from": "f923_receipt"
+        },
+        {
+          "plant": "Oak Grove",
+          "plant_code": 6180,
+          "pmax_mw": 1795.4,
+          "model_fuel_price": 1.45,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        },
+        {
+          "plant": "San Miguel",
+          "plant_code": 6183,
+          "pmax_mw": 410.0,
+          "model_fuel_price": 3.473,
+          "f923_qty_wtd_price": 3.509,
+          "delta": -0.036,
+          "months_reported": 12,
+          "priced_from": "f923_receipt"
+        },
+        {
+          "plant": "Major Oak",
+          "plant_code": 7030,
+          "pmax_mw": 349.2,
+          "model_fuel_price": 1.45,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        },
+        {
+          "plant": "J K Spruce",
+          "plant_code": 7097,
+          "pmax_mw": 1488.5,
+          "model_fuel_price": 1.904,
+          "f923_qty_wtd_price": 1.895,
+          "delta": 0.009,
+          "months_reported": 12,
+          "priced_from": "f923_receipt"
+        },
+        {
+          "plant": "Sandy Creek",
+          "plant_code": 56611,
+          "pmax_mw": 936.0,
+          "model_fuel_price": 1.823,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        }
+      ],
+      "coverage": {
+        "plants_reporting": 3,
+        "plants_total": 10,
+        "capacity_reporting_mw": 3588.5,
+        "capacity_total_mw": 13963.9,
+        "capacity_share_reporting": 0.257,
+        "fallback_levels_mmbtu": [
+          1.45,
+          1.823
+        ]
+      }
+    },
+    "2024": {
+      "per_plant": [
+        {
+          "plant": "Limestone",
+          "plant_code": 298,
+          "pmax_mw": 1849.8,
+          "model_fuel_price": 1.752,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        },
+        {
+          "plant": "W A Parish",
+          "plant_code": 3470,
+          "pmax_mw": 2443.0,
+          "model_fuel_price": 1.752,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        },
+        {
+          "plant": "Martin Lake",
+          "plant_code": 6146,
+          "pmax_mw": 2379.6,
+          "model_fuel_price": 1.752,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        },
+        {
+          "plant": "Coleto Creek",
+          "plant_code": 6178,
+          "pmax_mw": 622.4,
+          "model_fuel_price": 1.752,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        },
+        {
+          "plant": "Fayette",
+          "plant_code": 6179,
+          "pmax_mw": 1690.0,
+          "model_fuel_price": 1.713,
+          "f923_qty_wtd_price": 1.713,
+          "delta": 0.0,
+          "months_reported": 12,
+          "priced_from": "f923_receipt"
+        },
+        {
+          "plant": "Oak Grove",
+          "plant_code": 6180,
+          "pmax_mw": 1795.4,
+          "model_fuel_price": 1.45,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        },
+        {
+          "plant": "San Miguel",
+          "plant_code": 6183,
+          "pmax_mw": 410.0,
+          "model_fuel_price": 3.475,
+          "f923_qty_wtd_price": 3.558,
+          "delta": -0.083,
+          "months_reported": 10,
+          "priced_from": "f923_receipt"
+        },
+        {
+          "plant": "Major Oak",
+          "plant_code": 7030,
+          "pmax_mw": 349.2,
+          "model_fuel_price": 1.45,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        },
+        {
+          "plant": "J K Spruce",
+          "plant_code": 7097,
+          "pmax_mw": 1488.5,
+          "model_fuel_price": 1.791,
+          "f923_qty_wtd_price": 1.809,
+          "delta": -0.018,
+          "months_reported": 11,
+          "priced_from": "f923_receipt"
+        },
+        {
+          "plant": "Sandy Creek",
+          "plant_code": 56611,
+          "pmax_mw": 936.0,
+          "model_fuel_price": 1.752,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        }
+      ],
+      "coverage": {
+        "plants_reporting": 3,
+        "plants_total": 10,
+        "capacity_reporting_mw": 3588.5,
+        "capacity_total_mw": 13963.9,
+        "capacity_share_reporting": 0.257,
+        "fallback_levels_mmbtu": [
+          1.45,
+          1.752
+        ]
+      }
+    },
+    "2025": {
+      "per_plant": [
+        {
+          "plant": "Limestone",
+          "plant_code": 298,
+          "pmax_mw": 1849.8,
+          "model_fuel_price": 1.614,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        },
+        {
+          "plant": "W A Parish",
+          "plant_code": 3470,
+          "pmax_mw": 2443.0,
+          "model_fuel_price": 1.614,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        },
+        {
+          "plant": "Martin Lake",
+          "plant_code": 6146,
+          "pmax_mw": 2379.6,
+          "model_fuel_price": 1.614,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        },
+        {
+          "plant": "Coleto Creek",
+          "plant_code": 6178,
+          "pmax_mw": 622.4,
+          "model_fuel_price": 1.614,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        },
+        {
+          "plant": "Fayette",
+          "plant_code": 6179,
+          "pmax_mw": 1690.0,
+          "model_fuel_price": 1.567,
+          "f923_qty_wtd_price": 1.561,
+          "delta": 0.006,
+          "months_reported": 12,
+          "priced_from": "f923_receipt"
+        },
+        {
+          "plant": "Oak Grove",
+          "plant_code": 6180,
+          "pmax_mw": 1795.4,
+          "model_fuel_price": 1.45,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        },
+        {
+          "plant": "San Miguel",
+          "plant_code": 6183,
+          "pmax_mw": 410.0,
+          "model_fuel_price": 3.445,
+          "f923_qty_wtd_price": 3.972,
+          "delta": -0.527,
+          "months_reported": 9,
+          "priced_from": "f923_receipt"
+        },
+        {
+          "plant": "Major Oak",
+          "plant_code": 7030,
+          "pmax_mw": 349.2,
+          "model_fuel_price": 1.45,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        },
+        {
+          "plant": "J K Spruce",
+          "plant_code": 7097,
+          "pmax_mw": 1488.5,
+          "model_fuel_price": 1.677,
+          "f923_qty_wtd_price": 1.676,
+          "delta": 0.001,
+          "months_reported": 12,
+          "priced_from": "f923_receipt"
+        },
+        {
+          "plant": "Sandy Creek",
+          "plant_code": 56611,
+          "pmax_mw": 936.0,
+          "model_fuel_price": 1.614,
+          "f923_qty_wtd_price": null,
+          "delta": null,
+          "months_reported": 0,
+          "priced_from": "supply_trajectory"
+        }
+      ],
+      "coverage": {
+        "plants_reporting": 3,
+        "plants_total": 10,
+        "capacity_reporting_mw": 3588.5,
+        "capacity_total_mw": 13963.9,
+        "capacity_share_reporting": 0.257,
+        "fallback_levels_mmbtu": [
+          1.45,
+          1.614
+        ]
+      }
+    }
+  },
+  "F_excess_cheap": {
+    "2023": {
+      "share_below_measured_offer": 0.6073,
+      "measured_committed_share": 0.3742,
+      "excess_cheap_share": 0.2331,
+      "excess_cheap_mw": 3255.0
+    },
+    "2024": {
+      "share_below_measured_offer": 0.6907,
+      "measured_committed_share": 0.3926,
+      "excess_cheap_share": 0.2981,
+      "excess_cheap_mw": 4162.6
+    },
+    "2025": {
+      "share_below_measured_offer": 0.6127,
+      "measured_committed_share": 0.3856,
+      "excess_cheap_share": 0.2271,
+      "excess_cheap_mw": 3171.2
+    }
+  }
+}
