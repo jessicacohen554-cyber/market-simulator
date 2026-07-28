@@ -153,6 +153,22 @@ PJM_APSOUTH_CUT_LINKS: tuple[tuple[str, str], ...] = (
 )
 
 
+def pjm_external_star_cut_links() -> tuple[tuple[str, str], ...]:
+    """The star node's five ``PJM_external→border`` links, in topology order.
+
+    Derived from :data:`~market_sim.config.interchange_config.IMPORT_NODE_LINKS`
+    and :data:`~market_sim.config.interchange_config.IMPORT_ZONE` rather than
+    re-listed, so the cut spans exactly the links the import-node extension
+    creates and cannot drift from them. Empty when PJM has no import zone.
+    """
+    from market_sim.config.interchange_config import IMPORT_NODE_LINKS, IMPORT_ZONE
+
+    ext = IMPORT_ZONE.get("PJM")
+    if ext is None:
+        return ()
+    return tuple((ext, border) for border, _ in IMPORT_NODE_LINKS.get("PJM", []))
+
+
 def _build_joint_interface_cut(
     links: list[TransferLink],
     limit_hourly: np.ndarray,
@@ -272,6 +288,63 @@ def build_pjm_east_interface_cut_groups(
         is then byte-identical).
     """
     return _build_joint_interface_cut(links, limit_hourly, PJM_EAST_CUT_LINKS)
+
+
+def build_pjm_external_net_position_cut_groups(
+    links: list[TransferLink],
+    limit_hourly: np.ndarray,
+) -> list[tuple]:
+    """The measured joint star-node NET-position cut (``pjm_external_net_position_cut``).
+
+    One ONE-SIDED aggregate interface group capping the **summed** injection
+    across every ``PJM_external→border`` link
+    (:func:`pjm_external_star_cut_links`) at the hour's measured net-position
+    envelope (:func:`market_sim.data.eia_loader.pjm_net_interchange_envelope`)::
+
+        Σ_z Flow(PJM_external → z)  ≤  P_p95( measured net import | month, hod )
+
+    Because the summed star-link flow **is** the LP's net interchange, this one
+    row is the model's only statement about PJM's net position — today there is
+    none. The star node is bounded solely by *marginal* per-border, per-direction
+    percentiles: ``build_pjm_external_flow_groups`` caps each link's signed flow
+    at that border's own p95 and ``inject_pjm_seam_flow_limit`` sizes each
+    neighbor's bands from the same rows, so five marginal 95th percentiles are
+    summed as though they were a joint one, and nothing bounds the total.
+
+    Rule 19 ``[R-ONE-MECH]`` — this **REPLACES** that sum-of-marginals ceiling on
+    the aggregate question rather than stacking on it: the joint cap dominates
+    (a sum under the limit implies the marginal terms are), so the per-border
+    groups stay as the *locational* bound while the joint row owns the *total*.
+    It is the same construction as :func:`build_pjm_apsouth_interface_cut_groups`
+    and :func:`build_pjm_east_interface_cut_groups` — a measured aggregate
+    applied to the aggregate rather than element by element — carried from the
+    internal flowgates to the external seam (pjm-135; FINDING-pjm134 §7's
+    handover). Zero fitted scalars: the same tie-line file, the same
+    ``PJM_EXTERNAL_FLOW_PERCENTILE``, the same (month × hour-of-day) bucketing
+    the per-border envelope already uses.
+
+    One-sided (``bidirectional=False``): the cap bounds how import-heavy the net
+    position may be and never bounds net export, so the LP keeps every export
+    path it has today. PJM is a measured net exporter in 92.5–98.1 % of hours,
+    so the ceiling is normally negative — an upper bound on net import that
+    reads as a floor on net export.
+
+    Args:
+        links: The **import-node-extended** transfer links (the star links exist
+            only after that extension; matching is by zone pair).
+        limit_hourly: ``(T,)`` measured hourly net-import ceiling, MW
+            import-positive, from
+            :func:`market_sim.data.eia_loader.pjm_net_interchange_envelope`.
+
+    Returns:
+        A single-element list of 5-tuples ``(link_idx, cap_hourly, False,
+        None, signs)`` for :func:`market_sim.model.dispatch._build_interface_rows`,
+        or an empty list when the topology carries no star link (the LP is then
+        byte-identical).
+    """
+    return _build_joint_interface_cut(
+        links, limit_hourly, pjm_external_star_cut_links()
+    )
 
 
 def inject_pjm_seam_flow_limit(

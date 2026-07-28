@@ -200,9 +200,11 @@ from market_sim.model.interchange.miso import (  # noqa: F401
 )
 from market_sim.model.interchange.pjm import (  # noqa: F401
     build_pjm_apsouth_interface_cut_groups,
+    build_pjm_external_net_position_cut_groups,
     build_pjm_east_interface_cut_groups,
     build_pjm_external_flow_groups,
     inject_pjm_seam_flow_limit,
+    pjm_external_star_cut_links,
     inject_pjm_seam_ladder_prices,
     PJM_EAST_CUT_LINKS,
 )
@@ -380,6 +382,7 @@ __all__ = [
     "build_miso_firm_imports",
     "build_miso_link_loss",
     "build_pjm_apsouth_interface_cut_groups",
+    "build_pjm_external_net_position_cut_groups",
     "build_pjm_east_interface_cut_groups",
     "build_pjm_external_flow_groups",
     "build_reference_price_node",
@@ -417,6 +420,7 @@ __all__ = [
     "inject_nyiso_import_hub_prices",
     "inject_nyiso_local_selfsupply",
     "inject_pjm_seam_flow_limit",
+    "pjm_external_star_cut_links",
     "inject_pjm_seam_ladder_prices",
     "inject_reference_price_firm_export",
     "inject_reference_price_firm_import",

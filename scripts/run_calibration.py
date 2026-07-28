@@ -2260,6 +2260,57 @@ def run_year(
                 cap_note,
             )
 
+    # Measured PJM star-node NET-POSITION cut (pjm_external_net_position_cut,
+    # backcast overlay, default off — pjm-135, FINDING-pjm135 §5): the EXTERNAL
+    # twin of the EAST / AP-SOUTH joint cuts above. ONE one-sided hourly
+    # aggregate group capping the SUMMED injection across all five
+    # PJM_external→border links — i.e. the LP's own net interchange — at the
+    # measured (month × hour-of-day) p95 net-position envelope. Rule 19: this
+    # REPLACES the sum-of-marginals ceiling on the aggregate question (the
+    # per-border groups above cap each link at its own border's marginal p95 and
+    # nothing bounds the total), it does not stack — the joint cap dominates, so
+    # the per-border groups keep the locational bound while this row owns the
+    # total. Zero fitted scalars: same tie-line file, same percentile, same
+    # bucketing. Requires the priced star node; no-op off the flag, for non-PJM,
+    # or when the year has no measured tie file (byte-identical).
+    if (
+        getattr(config, "pjm_external_net_position_cut", False)
+        and iso == "PJM"
+        and priced_interchange
+    ):
+        from market_sim.config.constants import PJM_EXTERNAL_FLOW_PERCENTILE
+        from market_sim.data.eia_loader import pjm_net_interchange_envelope
+        from market_sim.model.transmission import (
+            build_pjm_external_net_position_cut_groups,
+        )
+
+        net_lim = pjm_net_interchange_envelope(
+            year, demand.shape[1], PJM_EXTERNAL_FLOW_PERCENTILE
+        )
+        if net_lim is None:
+            logger.warning(
+                "pjm_external_net_position_cut: no measured PJM tie-line file "
+                "for %d — joint star-node net-position cut skipped",
+                year,
+            )
+        else:
+            net_groups = build_pjm_external_net_position_cut_groups(
+                iso_config.links, net_lim
+            )
+            if net_groups:
+                interface_groups = interface_groups + net_groups
+                logger.info(
+                    "PJM %d: measured star-node NET-position cut (p%g) on %d "
+                    "link(s) — joint net import ≤ measured envelope (hourly "
+                    "%0.0f-%0.0f MW, mean %0.0f)",
+                    year,
+                    PJM_EXTERNAL_FLOW_PERCENTILE,
+                    len(net_groups[0][0]),
+                    float(np.min(net_lim)),
+                    float(np.max(net_lim)),
+                    float(np.mean(net_lim)),
+                )
+
     # Commercial-operation-date (COD) vintage ramp: in a backcast the fleet
     # snapshot is a recent vintage that includes units built after the solved
     # year. The ramp is now applied uniformly inside generators_to_fleet_arrays
