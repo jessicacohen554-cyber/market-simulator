@@ -64,6 +64,7 @@ from scripts import run_calibration_full as rcf  # noqa: E402
 # stdout report (docs/ordc-overlay.md, "Reliability-deployment overlay").
 from scripts.data import derive_ordc_overlay as ordc  # noqa: E402
 
+from scripts.lib import bench_multiclass as bm  # noqa: E402
 from scripts.lib import benchmark_semantics as bs  # noqa: E402
 from scripts.lib.bundle_io import bundle_input_path  # noqa: E402
 from scripts.calibration_verdict import TAIL_THRESHOLD  # noqa: E402  # rubric §5 per-ISO tail $
@@ -1037,7 +1038,9 @@ def _flag_ct_only_reporters(bplants: dict[str, dict]) -> list[dict]:
         # scoring; ct_only targets plants WITH a CAMPD series that is too small.
         if c_ann <= 0.0 or e_ann <= 0.0:
             continue
-        factor = factors.get(int(code_s), _DEFAULT_PARASITIC)
+        # Slice keys ("<code>:<KLASS>") carry the plant's parasitic factor;
+        # the provenance row keeps the full key so the flag stays per-slice.
+        factor = factors.get(bm.plant_code_of_key(code_s), _DEFAULT_PARASITIC)
         campd_gross = c_ann / factor if factor > 0.0 else c_ann
         if campd_gross > 0.0 and e_ann > _CT_ONLY_RATIO * campd_gross:
             ratio = round(e_ann / campd_gross, 3)
@@ -1045,7 +1048,7 @@ def _flag_ct_only_reporters(bplants: dict[str, dict]) -> list[dict]:
             p["ct_ratio"] = ratio
             flagged.append(
                 {
-                    "code": int(code_s),
+                    "code": code_s if bm.KEY_SEP in code_s else int(code_s),
                     "name": p.get("name", str(code_s)),
                     "group": p.get("group", "?"),
                     "ratio": ratio,
@@ -1301,9 +1304,16 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             e930 = e930_all[e930_all["year"] == year]
             campd = campd_all[campd_all["year"] == year]
 
-            # Model hourly MW per (fossil) plant, with its zone and class.
+            # Model hourly MW per (fossil) plant AND class. Keyed by the
+            # serialized (plant_code, klass) slice key — bare "<code>" for a
+            # single-class plant (wire format unchanged), "<code>:<KLASS>" per
+            # class slice of a multi-class plant. The old dicts keyed by
+            # plant_code alone silently attributed a multi-class plant's whole
+            # measured series to its alphabetically-last class and dropped the
+            # other classes' model dispatch (nyiso-88 finding §5).
             dm = disp[(disp["plant_code"] > 0) & (disp["klass"].isin(FOSSIL_GROUPS))]
-            mw_p, zone_p, grp_p = {}, {}, {}
+            mw_pc: dict[tuple[int, str], np.ndarray] = {}
+            zone_p: dict[int, str] = {}
             for (code, klass), g in dm.groupby(["plant_code", "klass"], observed=True):
                 arr = (
                     g.groupby("hour")["mw"]
@@ -1311,11 +1321,23 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                     .reindex(range(_T), fill_value=0.0)
                     .to_numpy(float)
                 )
-                mw_p[int(code)] = arr
+                mw_pc[(int(code), str(klass))] = arr
                 zone_p[int(code)] = str(g["zone"].iloc[0])
-                grp_p[int(code)] = str(klass)
                 zones_set.add(zone_p[int(code)])
                 groups_set.add(str(klass))
+            classes_p: dict[int, list[str]] = {}
+            for _code, _klass in mw_pc:
+                classes_p.setdefault(_code, []).append(_klass)
+            classes_p = {c: sorted(ks) for c, ks in classes_p.items()}
+            multi_p = {c: ks for c, ks in classes_p.items() if len(ks) > 1}
+            mw_p: dict[str, np.ndarray] = {}
+            grp_p: dict[str, str] = {}
+            code_p: dict[str, int] = {}
+            for (code, klass), arr in mw_pc.items():
+                key = bm.slice_key(code, klass if code in multi_p else None)
+                mw_p[key] = arr
+                grp_p[key] = klass
+                code_p[key] = code
 
             # CAMPD net hourly per plant (benchmark — built once on run 0).
             cn_p: dict[int, np.ndarray] = {}
@@ -1325,12 +1347,110 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                     [a, np.zeros(max(0, _T - a.shape[0]))]
                 )[:_T]
 
-            e923_ann = e923.groupby("plant_id")["annual_mwh"].sum().to_dict()
             mcols = [f"m{i:02d}" for i in range(1, 13)]
-            e923_mon = {
-                int(i): (row.to_numpy(float) / 1e3)
-                for i, row in e923.groupby("plant_id")[mcols].sum().iterrows()
-            }
+            # EIA-923 per (plant, klass) — the slice actuals and the monthly
+            # split-fallback basis, as a 13-vector [annual_mwh, m01..m12] so
+            # the slice ``e_ann`` stays on the reported annual (NOT the
+            # monthly sum, which can differ) exactly like the plant total did.
+            # Rows map onto each plant's MODEL classes (exact name ->
+            # technology family -> largest class) so a single-class plant
+            # keeps its whole-plant e923 byte-identical and a multi-class
+            # plant's e923 lands in the measured class.
+            e923_pk: dict[int, dict[str, np.ndarray]] = {}
+            for (pid, klass), g in e923.groupby(["plant_id", "klass"], observed=True):
+                arr = np.concatenate(
+                    [[float(g["annual_mwh"].sum())], g[mcols].sum().to_numpy(float)]
+                )
+                d = e923_pk.setdefault(int(pid), {})
+                d[str(klass)] = d.get(str(klass), np.zeros(13)) + arr
+            # Measured-series split for multi-class plants (the basis ladder:
+            # CAMPD unit-level hourly shares, then EIA-923 monthly shares,
+            # then EIA-860 nameplate proration — scripts/lib/bench_multiclass,
+            # rules 13/14). ``cn_s``/``grp_b`` are the slice-keyed bench-side
+            # dicts every consumer below joins on.
+            _iso_bm = str(meta.get("iso", "ERCOT"))
+            unit_hr, _bm_unres = (
+                bm.unit_class_hourly(_iso_bm, int(year), multi_p)
+                if multi_p
+                else ({}, {})
+            )
+            npl_fam = bm.plant_class_nameplates(set(multi_p)) if multi_p else {}
+            e923_slices: dict[int, dict[str, np.ndarray]] = {}
+            for code, klasses in classes_p.items():
+                if code in multi_p:
+                    e923_slices[code] = bm.map_e923_to_model_classes(
+                        e923_pk.get(code, {}),
+                        klasses,
+                        bm.class_nameplate_split(npl_fam.get(code, {}), klasses),
+                    )
+                else:
+                    whole = np.zeros(13)
+                    for arr in e923_pk.get(code, {}).values():
+                        whole = whole + arr
+                    e923_slices[code] = {klasses[0]: whole}
+            # Per-slice nameplate for EVERY dispatch plant (model payload CF
+            # scale needs it whether or not the plant is CAMPD-benched).
+            npl_s: dict[str, float] = {}
+            for code, klasses in classes_p.items():
+                cap_plant = float(npl.get(code, 0.0)) or 1.0
+                if code not in multi_p:
+                    npl_s[str(code)] = cap_plant
+                else:
+                    _shares = bm.nameplate_shares(
+                        bm.class_nameplate_split(npl_fam.get(code, {}), klasses),
+                        klasses,
+                        cap_plant,
+                    )
+                    for k in klasses:
+                        npl_s[bm.slice_key(code, k)] = _shares[k]
+            cn_s: dict[str, np.ndarray] = {}
+            grp_b: dict[str, str] = {}
+            split_notes: dict[str, str] = {}
+            for code, cn in cn_p.items():
+                code = int(code)
+                klasses = classes_p.get(code)
+                if klasses is None:
+                    continue  # CAMPD plant absent from the dispatch (as before)
+                if code not in multi_p:
+                    key = str(code)
+                    cn_s[key] = cn
+                    grp_b[key] = klasses[0]
+                    continue
+                uh = unit_hr.get(code)
+                covered = (
+                    [k for k in klasses if uh.get(k) is not None and uh[k].sum() > 0]
+                    if uh
+                    else []
+                )
+                caps = bm.class_nameplate_split(npl_fam.get(code, {}), klasses)
+                if covered:
+                    # The facility CEMS series sums the REPORTING units only,
+                    # so it splits across the CEMS-covered classes; an
+                    # uncovered class's CEMS slice is genuinely zero (its
+                    # actual lives in its EIA-923 slice — the ct_only shape).
+                    series, basis = bm.split_measured_series(
+                        cn,
+                        covered,
+                        {k: caps.get(k, 0.0) for k in covered},
+                        {k: uh[k] for k in covered},
+                        None,
+                    )
+                    for k in klasses:
+                        if k not in series:
+                            series[k] = np.zeros(_T)
+                else:
+                    series, basis = bm.split_measured_series(
+                        cn,
+                        klasses,
+                        caps,
+                        None,
+                        e923_slices.get(code),
+                    )
+                for k in klasses:
+                    key = bm.slice_key(code, k)
+                    cn_s[key] = series[k]
+                    grp_b[key] = k
+                    split_notes[key] = basis
 
             # ---- benchmark payload (newest bundle wins) ----
             # Rebuilt for every run, so the LAST run in the id-sorted registry
@@ -1342,13 +1462,17 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # rename), making every newer run compare against incompatible
             # groups (-100% "Coal" rows, vanished class heatmaps).
             bplants: dict[str, dict] = {}
-            for code, cn in cn_p.items():
-                grp = grp_p.get(code)
-                if grp is None:
-                    continue
-                cap = float(npl.get(code, 0.0)) or 1.0
-                e_ann = float(e923_ann.get(code, 0.0)) / 1e6
-                bplants[str(code)] = {
+            for key, cn in cn_s.items():
+                code = bm.plant_code_of_key(key)
+                grp = grp_b[key]
+                cap = float(npl_s.get(key, 0.0)) or 1.0
+                # Slice e923: the (plant, klass) measured record mapped onto
+                # the model classes; a single-class plant's slice is its whole
+                # plant (byte-identical to the pre-split payload).
+                _e13 = e923_slices.get(code, {}).get(grp, np.zeros(13))
+                _e_mon = _e13[1:]
+                e_ann = float(_e13[0]) / 1e6
+                bplants[key] = {
                     "name": pnames.get(code, str(code)),
                     "zone": zone_p.get(code, "?"),
                     "group": grp,
@@ -1365,8 +1489,10 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                     "btm": round(
                         e_ann * _btm_share(code, grp, meta.get("iso", "ERCOT")), 4
                     ),
-                    "e_mon": [round(x, 2) for x in e923_mon.get(code, np.zeros(12))],
+                    "e_mon": [round(x, 2) for x in (_e_mon / 1e3)],
                 }
+                if key in split_notes:
+                    bplants[key]["split"] = split_notes[key]
             # CT-only CEMS reporters: EIA-923 net > 1.1x CAMPD gross is a
             # physically impossible complete record (the 2x1 CC block reports
             # only its combustion turbines). Flag them so the per-plant capture
@@ -1444,11 +1570,17 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # plants' `.first()` klass is arbitrary, pulling whole-plant
             # CAMPD nets of mixed coal/gas plants into the sum, +9..+15
             # TWh/yr of cross-contamination.)
+            # Slice-keyed since the multi-class split: a mixed coal/gas
+            # plant contributes ONLY its coal slices here (the whole-plant
+            # `.first()`-klass cross-contamination the note above describes
+            # is exactly what the split removes), and the basis stays
+            # consistent across a registration's years because all parts are
+            # re-rendered atomically.
             _e930d["coal_cems"] = round(
                 sum(
                     float(cn.sum())
-                    for code, cn in cn_p.items()
-                    if str(grp_p.get(int(code), "")).startswith("COAL")
+                    for key, cn in cn_s.items()
+                    if str(grp_b.get(key, "")).startswith("COAL")
                 )
                 / 1e6,
                 3,
@@ -1474,7 +1606,11 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 # A dispatch plant with NO usable CAMPD series (nodata) is not
                 # CEMS-covered: it contributes nothing to the CEMS block and
                 # its EIA-923 mass falls to the cogen block below instead.
-                _cems_ids = {int(c) for c, p in bplants.items() if not p["nodata"]}
+                _cems_ids = {
+                    bm.plant_code_of_key(c)
+                    for c, p in bplants.items()
+                    if not p["nodata"]
+                }
                 _gas_cems_full = sum(
                     float(p["c_ann"])
                     for p in bplants.values()
@@ -1693,10 +1829,16 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             }
 
             # ---- model payload (per run) ----
+            # Slice-keyed like the bench: one entry per (plant, class), so a
+            # multi-class plant's every class keeps its model dispatch (the
+            # old plant-keyed dict silently dropped all but the last class)
+            # and pairs with ITS OWN measured slice.
             mplants: dict[str, dict] = {}
-            for code, mw in mw_p.items():
-                cap = float(npl.get(code, 0.0)) or 1.0
-                grp = grp_p.get(code, "")
+            for key, mw in mw_p.items():
+                code = code_p[key]
+                cap = float(npl_s.get(key, npl.get(code, 0.0))) or 1.0
+                grp = grp_p.get(key, "")
+                _e13 = e923_slices.get(code, {}).get(grp, np.zeros(13))
                 # CHP add-back (report only, NOT in the LP): the host
                 # behind-the-meter self-supply was held out of the grid solve,
                 # but CAMPD measures the full plant. Add it back flat so the
@@ -1704,31 +1846,31 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 # the full plant to the full CAMPD plant. A flat add is
                 # correlation-invariant (it corrects the level, not the shape).
                 if grp in ("CC_CHP", "CT_CHP", "ST_CHP"):
-                    btm_mwh = float(e923_ann.get(code, 0.0)) * _btm_share(
+                    btm_mwh = float(_e13[0]) * _btm_share(
                         code, grp, meta.get("iso", "ERCOT")
                     )
                     if btm_mwh > 0.0:
                         mw = mw + btm_mwh / float(_T)
-                cn = cn_p.get(code)
+                cn = cn_s.get(key)
                 r = nr = None
                 cap_pct = None
-                _bp = bench[int(year)]["plants"].get(str(code))
+                _bp = bench[int(year)]["plants"].get(key)
                 if _bp is not None and _bp.get("ct_only"):
                     # CT-only CEMS reporter: the CAMPD series is incomplete, so
                     # score this plant on its EIA-923 monthly row instead
                     # (diagnosis §3a). The per-plant Δ table is already 923-based.
                     r, nr, cap_pct = _capture_on_923(
                         mw,
-                        e923_mon.get(code, np.zeros(12)),
+                        _e13[1:] / 1e3,
                         float(mw.sum()) / 1e6,
-                        float(e923_ann.get(code, 0.0)) / 1e6,
+                        float(_e13[0]) / 1e6,
                     )
                 elif cn is not None and cn.sum() > 0 and mw.std() > 0:
                     r = round(_pearson(mw, cn), 3)
                     nr = round(_nrmse(mw, cn), 3)
                     dev = (mw.sum() - cn.sum()) / cn.sum()
                     cap_pct = _capture(r, nr, dev)
-                mplants[str(code)] = {
+                mplants[key] = {
                     "m": _b64(100.0 * mw / cap),
                     "m_ann": round(float(mw.sum()) / 1e6, 4),
                     "m_mon": _monthly_gwh(mw),
@@ -1737,9 +1879,9 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                     "cap": cap_pct,
                 }
                 if _bp is not None and _bp.get("ct_only"):
-                    mplants[str(code)]["b923"] = True
+                    mplants[key]["b923"] = True
                 if code in tr_bands:
-                    mplants[str(code)]["tr"] = tr_bands[code]
+                    mplants[key]["tr"] = tr_bands[code]
             # Non-fossil model annual (nuclear / wind / solar) for fuel table.
             nf = {}
             for f in ("nuclear", "wind", "solar"):
@@ -1800,11 +1942,11 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                     ob = (
                         sum(
                             (
-                                cn_p[int(c)]
+                                cn_s[c]
                                 for c, p in bplants.items()
                                 if p["group"] in set(classes)
                                 and not p["nodata"]
-                                and int(c) in cn_p
+                                and c in cn_s
                             ),
                             np.zeros(_T),
                         )
@@ -2004,8 +2146,9 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # because EIA-930 is neither zonal nor monthly here.
             _iso = meta.get("iso", "ERCOT")
             vol_err: dict[str, dict] = {}
-            for code in mw_p:
-                grp = grp_p.get(code)
+            for key in mw_p:
+                code = code_p[key]
+                grp = grp_p.get(key)
                 zone = zone_p.get(code)
                 if grp is None or zone is None:
                     continue
@@ -2017,10 +2160,15 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                     zone, {"m": [0.0] * 12, "a": [0.0] * 12}
                 )
                 # Grid-delivered: model from the grid LP (mw_p, no add-back),
-                # actual from EIA-923 net gen minus the plant's BTM host supply.
-                m_mon = _monthly_gwh(mw_p[code])  # grid-LP model GWh
+                # actual from the plant's own-class EIA-923 slice minus its
+                # BTM host supply (a single-class plant's slice is its whole
+                # plant, unchanged; a multi-class plant's actual lands in the
+                # measured class instead of the collapsed one).
+                m_mon = _monthly_gwh(mw_p[key])  # grid-LP model GWh
                 _grid_frac = 1.0 - _btm_share(code, grp, _iso)
-                a_mon = e923_mon.get(code, np.zeros(12))  # EIA-923 GWh
+                a_mon = (
+                    e923_slices.get(code, {}).get(grp, np.zeros(13))[1:] / 1e3
+                )  # EIA-923 GWh
                 for mo in range(12):
                     zc["m"][mo] += float(m_mon[mo]) / 1e3  # GWh -> TWh
                     zc["a"][mo] += float(a_mon[mo]) * _grid_frac / 1e3
