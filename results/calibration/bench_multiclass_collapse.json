@@ -1,0 +1,3126 @@
+[
+ {
+  "iso": "CAISO",
+  "year": 2023,
+  "n_benched_plants": 84,
+  "n_multiclass": 0,
+  "benched_cems_twh": 62.91,
+  "multiclass_cems_twh": 0,
+  "share_pct": 0.0,
+  "delta_twh_cems": {},
+  "delta_twh_e923": {},
+  "plants": [],
+  "multiclass_not_benched": []
+ },
+ {
+  "iso": "CAISO",
+  "year": 2024,
+  "n_benched_plants": 83,
+  "n_multiclass": 1,
+  "benched_cems_twh": 55.47,
+  "multiclass_cems_twh": 0.034,
+  "share_pct": 0.1,
+  "delta_twh_cems": {},
+  "delta_twh_e923": {},
+  "plants": [
+   {
+    "plant": 422,
+    "name": "Glenarm",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 87.0,
+     "CT_PEAKER": 138.4
+    },
+    "basis": "unit_hourly (CEMS covers ['CT_PEAKER'] of ['CC_REGULAR', 'CT_PEAKER'])",
+    "c_ann": 0.0343,
+    "c_slices": {
+     "CT_PEAKER": 0.0343
+    },
+    "e_ann": 0.0385,
+    "e_slices": {
+     "CC_REGULAR": 0.0,
+     "CT_PEAKER": 0.0385
+    },
+    "ct_only": false
+   }
+  ],
+  "multiclass_not_benched": []
+ },
+ {
+  "iso": "CAISO",
+  "year": 2025,
+  "n_benched_plants": 82,
+  "n_multiclass": 1,
+  "benched_cems_twh": 46.093,
+  "multiclass_cems_twh": 0.104,
+  "share_pct": 0.2,
+  "delta_twh_cems": {
+   "CC_REGULAR": 0.0077,
+   "CT_PEAKER": -0.0077
+  },
+  "delta_twh_e923": {
+   "CT_PEAKER": -0.1043
+  },
+  "plants": [
+   {
+    "plant": 422,
+    "name": "Glenarm",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 87.0,
+     "CT_PEAKER": 138.4
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.1043,
+    "c_slices": {
+     "CC_REGULAR": 0.0077,
+     "CT_PEAKER": 0.0966
+    },
+    "e_ann": 0.1043,
+    "e_slices": {
+     "CC_REGULAR": 0.0,
+     "CT_PEAKER": 0.0
+    },
+    "ct_only": false
+   }
+  ],
+  "multiclass_not_benched": []
+ },
+ {
+  "iso": "ERCOT",
+  "year": 2023,
+  "n_benched_plants": 99,
+  "n_multiclass": 0,
+  "benched_cems_twh": 259.489,
+  "multiclass_cems_twh": 0,
+  "share_pct": 0.0,
+  "delta_twh_cems": {},
+  "delta_twh_e923": {},
+  "plants": [],
+  "multiclass_not_benched": []
+ },
+ {
+  "iso": "ERCOT",
+  "year": 2024,
+  "n_benched_plants": 100,
+  "n_multiclass": 0,
+  "benched_cems_twh": 262.983,
+  "multiclass_cems_twh": 0,
+  "share_pct": 0.0,
+  "delta_twh_cems": {},
+  "delta_twh_e923": {},
+  "plants": [],
+  "multiclass_not_benched": []
+ },
+ {
+  "iso": "ERCOT",
+  "year": 2025,
+  "n_benched_plants": 100,
+  "n_multiclass": 0,
+  "benched_cems_twh": 261.792,
+  "multiclass_cems_twh": 0,
+  "share_pct": 0.0,
+  "delta_twh_cems": {},
+  "delta_twh_e923": {},
+  "plants": [],
+  "multiclass_not_benched": []
+ },
+ {
+  "iso": "MISO",
+  "year": 2023,
+  "n_benched_plants": 215,
+  "n_multiclass": 24,
+  "benched_cems_twh": 427.913,
+  "multiclass_cems_twh": 55.461,
+  "share_pct": 13.0,
+  "delta_twh_cems": {
+   "CC_CHP": 1.1431,
+   "CC_REGULAR": 16.3164,
+   "COAL_BIT": 5.2998,
+   "COAL_PRB": 11.2463,
+   "CT_CHP": 3.7484,
+   "CT_PEAKER": -25.3953,
+   "ST_CHP": -6.4916,
+   "ST_GAS": -5.8672
+  },
+  "delta_twh_e923": {
+   "CC_CHP": 1.6514,
+   "CC_REGULAR": 16.153,
+   "COAL_BIT": 5.2989,
+   "COAL_PRB": 11.7725,
+   "CT_CHP": 2.2136,
+   "CT_PEAKER": -24.8016,
+   "ST_CHP": -5.6534,
+   "ST_GAS": -6.6344
+  },
+  "plants": [
+   {
+    "plant": 976,
+    "name": "Marion",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "COAL_BIT": 120.0,
+     "CT_PEAKER": 140.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.7074,
+    "c_slices": {
+     "COAL_BIT": 0.6374,
+     "CT_PEAKER": 0.07
+    },
+    "e_ann": 0.7089,
+    "e_slices": {
+     "COAL_BIT": 0.6363,
+     "CT_PEAKER": 0.0726
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 990,
+    "name": "Harding Street",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 288.0,
+     "ST_GAS": 618.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 2.8848,
+    "c_slices": {
+     "CT_PEAKER": 0.2861,
+     "ST_GAS": 2.5987
+    },
+    "e_ann": 2.8998,
+    "e_slices": {
+     "CT_PEAKER": 0.2898,
+     "ST_GAS": 2.61
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 1001,
+    "name": "Cayuga",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "COAL_BIT": 995.0,
+     "CT_PEAKER": 84.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 4.241,
+    "c_slices": {
+     "COAL_BIT": 4.2234,
+     "CT_PEAKER": 0.0176
+    },
+    "e_ann": 4.3274,
+    "e_slices": {
+     "COAL_BIT": 4.3104,
+     "CT_PEAKER": 0.017
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 1004,
+    "name": "Edwardsport",
+    "old_group": "COAL_BIT",
+    "classes": {
+     "CC_REGULAR": 481.2,
+     "COAL_BIT": 555.0
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['COAL_BIT']]",
+    "c_ann": 2.9954,
+    "c_slices": {
+     "CC_REGULAR": 1.1149,
+     "COAL_BIT": 1.8805
+    },
+    "e_ann": 3.2734,
+    "e_slices": {
+     "CC_REGULAR": 1.1796,
+     "COAL_BIT": 2.0938
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 1073,
+    "name": "Prairie Creek",
+    "old_group": "ST_CHP",
+    "classes": {
+     "COAL_PRB": 29.3,
+     "ST_CHP": 72.6
+    },
+    "basis": "e923_monthly",
+    "c_ann": 0.0,
+    "c_slices": {
+     "COAL_PRB": 0.0,
+     "ST_CHP": 0.0
+    },
+    "e_ann": 0.0816,
+    "e_slices": {
+     "COAL_PRB": 0.0576,
+     "ST_CHP": 0.024
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 1104,
+    "name": "Burlington (IA)",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 39.9,
+     "ST_GAS": 170.3
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['CT_PEAKER']]",
+    "c_ann": 0.0169,
+    "c_slices": {
+     "CT_PEAKER": 0.0015,
+     "ST_GAS": 0.0154
+    },
+    "e_ann": 0.0069,
+    "e_slices": {
+     "CT_PEAKER": 0.0014,
+     "ST_GAS": 0.0055
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 1393,
+    "name": "R S Nelson",
+    "old_group": "ST_CHP",
+    "classes": {
+     "COAL_PRB": 513.5,
+     "ST_CHP": 42.5
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['ST_CHP']]",
+    "c_ann": 1.6094,
+    "c_slices": {
+     "COAL_PRB": 1.6001,
+     "ST_CHP": 0.0093
+    },
+    "e_ann": 1.7402,
+    "e_slices": {
+     "COAL_PRB": 1.7308,
+     "ST_CHP": 0.0094
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 1904,
+    "name": "Black Dog",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 282.0,
+     "CT_PEAKER": 209.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 1.8454,
+    "c_slices": {
+     "CC_REGULAR": 1.422,
+     "CT_PEAKER": 0.4234
+    },
+    "e_ann": 1.7904,
+    "e_slices": {
+     "CC_REGULAR": 1.3875,
+     "CT_PEAKER": 0.4029
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2070,
+    "name": "Moselle",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CC_REGULAR": 268.0,
+     "CT_PEAKER": 150.0,
+     "ST_GAS": 59.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 2.2119,
+    "c_slices": {
+     "CC_REGULAR": 1.8925,
+     "CT_PEAKER": 0.2567,
+     "ST_GAS": 0.0627
+    },
+    "e_ann": 2.1418,
+    "e_slices": {
+     "CC_REGULAR": 1.8367,
+     "CT_PEAKER": 0.2474,
+     "ST_GAS": 0.0577
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2123,
+    "name": "Columbia (MO)",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 12.5,
+     "ST_GAS": 35.0
+    },
+    "basis": "e923_monthly [unit 6 family ST_COAL matches no scored class ['CT_PEAKER', 'ST_GAS']]",
+    "c_ann": 0.0,
+    "c_slices": {
+     "CT_PEAKER": 0.0,
+     "ST_GAS": 0.0
+    },
+    "e_ann": 0.0166,
+    "e_slices": {
+     "CT_PEAKER": 0.0002,
+     "ST_GAS": 0.0164
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 6034,
+    "name": "Belle River",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "COAL_PRB": 1270.0,
+     "CT_PEAKER": 224.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 6.5088,
+    "c_slices": {
+     "COAL_PRB": 6.3499,
+     "CT_PEAKER": 0.1589
+    },
+    "e_ann": 6.0064,
+    "e_slices": {
+     "COAL_PRB": 5.8536,
+     "CT_PEAKER": 0.1528
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 6035,
+    "name": "Greenwood (MI)",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 224.0,
+     "ST_GAS": 785.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 1.1052,
+    "c_slices": {
+     "CT_PEAKER": 0.134,
+     "ST_GAS": 0.9712
+    },
+    "e_ann": 1.0255,
+    "e_slices": {
+     "CT_PEAKER": 0.1284,
+     "ST_GAS": 0.8971
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 6055,
+    "name": "Big Cajun 2",
+    "old_group": "ST_GAS",
+    "classes": {
+     "COAL_PRB": 551.3,
+     "ST_GAS": 546.4
+    },
+    "basis": "unit_hourly",
+    "c_ann": 2.4667,
+    "c_slices": {
+     "COAL_PRB": 1.464,
+     "ST_GAS": 1.0027
+    },
+    "e_ann": 2.3246,
+    "e_slices": {
+     "COAL_PRB": 1.3503,
+     "ST_GAS": 0.9743
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 6085,
+    "name": "R M Schahfer",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "COAL_BIT": 722.0,
+     "CT_PEAKER": 155.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 1.5749,
+    "c_slices": {
+     "COAL_BIT": 1.5539,
+     "CT_PEAKER": 0.021
+    },
+    "e_ann": 1.5511,
+    "e_slices": {
+     "COAL_BIT": 1.5318,
+     "CT_PEAKER": 0.0193
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 6190,
+    "name": "Brame Energy Center",
+    "old_group": "ST_GAS",
+    "classes": {
+     "COAL_PRB": 488.1,
+     "ST_GAS": 428.5
+    },
+    "basis": "unit_hourly",
+    "c_ann": 4.5373,
+    "c_slices": {
+     "COAL_PRB": 1.8323,
+     "ST_GAS": 2.705
+    },
+    "e_ann": 4.1055,
+    "e_slices": {
+     "COAL_PRB": 2.7803,
+     "ST_GAS": 1.3252
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 6358,
+    "name": "Hutchinson Plant #2",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 51.0,
+     "CT_PEAKER": 22.0
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['CT_PEAKER']]",
+    "c_ann": 0.0267,
+    "c_slices": {
+     "CC_REGULAR": 0.0267,
+     "CT_PEAKER": 0.0
+    },
+    "e_ann": 0.025,
+    "e_slices": {
+     "CC_REGULAR": 0.0249,
+     "CT_PEAKER": 0.0001
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 10328,
+    "name": "T B Simon Power Plant",
+    "old_group": "ST_CHP",
+    "classes": {
+     "CT_CHP": 14.3,
+     "ST_CHP": 29.7
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['CT_CHP']]",
+    "c_ann": 0.0,
+    "c_slices": {
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.0
+    },
+    "e_ann": 0.2449,
+    "e_slices": {
+     "CT_CHP": 0.0536,
+     "ST_CHP": 0.1913
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 50625,
+    "name": "ExxonMobil Beaumont Refinery",
+    "old_group": "ST_CHP",
+    "classes": {
+     "CT_CHP": 140.1,
+     "ST_CHP": 41.6
+    },
+    "basis": "e923_monthly [unit 61STK1 family CC matches no scored class ['CT_CHP', 'ST_CHP']]",
+    "c_ann": 5.6694,
+    "c_slices": {
+     "CT_CHP": 4.8233,
+     "ST_CHP": 0.8461
+    },
+    "e_ann": 4.2539,
+    "e_slices": {
+     "CT_CHP": 3.6186,
+     "ST_CHP": 0.6353
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 55087,
+    "name": "Zeeland Generating Station",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 524.5,
+     "CT_PEAKER": 318.2
+    },
+    "basis": "unit_hourly",
+    "c_ann": 4.8047,
+    "c_slices": {
+     "CC_REGULAR": 3.4859,
+     "CT_PEAKER": 1.3188
+    },
+    "e_ann": 4.7072,
+    "e_slices": {
+     "CC_REGULAR": 3.4175,
+     "CT_PEAKER": 1.2897
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 55088,
+    "name": "Dearborn Industrial Generation",
+    "old_group": "CT_CHP",
+    "classes": {
+     "CC_CHP": 227.5,
+     "CT_CHP": 107.2
+    },
+    "basis": "e923_monthly [unit BL1100 family ST_GAS matches no scored class ['CC_CHP', 'CT_CHP']]",
+    "c_ann": 3.6481,
+    "c_slices": {
+     "CC_CHP": 1.1431,
+     "CT_CHP": 2.505
+    },
+    "e_ann": 5.2598,
+    "e_slices": {
+     "CC_CHP": 1.6514,
+     "CT_CHP": 3.6084
+    },
+    "ct_only": true
+   },
+   {
+    "plant": 55096,
+    "name": "Portside Energy",
+    "old_group": "ST_CHP",
+    "classes": {
+     "CT_CHP": 22.1,
+     "ST_CHP": 12.3
+    },
+    "basis": "unit_hourly (CEMS covers ['CT_CHP'] of ['CT_CHP', 'ST_CHP'])",
+    "c_ann": 0.0682,
+    "c_slices": {
+     "CT_CHP": 0.0682
+    },
+    "e_ann": 0.232,
+    "e_slices": {
+     "CT_CHP": 0.1928,
+     "ST_CHP": 0.0392
+    },
+    "ct_only": true
+   },
+   {
+    "plant": 55218,
+    "name": "Hinds Energy Facility",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 532.1,
+     "CT_PEAKER": 27.2
+    },
+    "basis": "unit_hourly",
+    "c_ann": 3.3022,
+    "c_slices": {
+     "CC_REGULAR": 3.2976,
+     "CT_PEAKER": 0.0046
+    },
+    "e_ann": 3.31,
+    "e_slices": {
+     "CC_REGULAR": 3.3057,
+     "CT_PEAKER": 0.0043
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 55620,
+    "name": "Perryville Power Station",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 637.9,
+     "CT_PEAKER": 152.7
+    },
+    "basis": "unit_hourly",
+    "c_ann": 4.2552,
+    "c_slices": {
+     "CC_REGULAR": 4.1546,
+     "CT_PEAKER": 0.1006
+    },
+    "e_ann": 4.2172,
+    "e_slices": {
+     "CC_REGULAR": 4.124,
+     "CT_PEAKER": 0.0932
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 63259,
+    "name": "Delta Energy Park",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 177.6,
+     "CT_PEAKER": 46.3
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.9813,
+    "c_slices": {
+     "CC_REGULAR": 0.9223,
+     "CT_PEAKER": 0.059
+    },
+    "e_ann": 0.9316,
+    "e_slices": {
+     "CC_REGULAR": 0.8771,
+     "CT_PEAKER": 0.0545
+    },
+    "ct_only": false
+   }
+  ],
+  "multiclass_not_benched": [
+   10319,
+   10864,
+   50489,
+   50973,
+   54321,
+   54518,
+   54775,
+   54780,
+   56309,
+   58161
+  ]
+ },
+ {
+  "iso": "MISO",
+  "year": 2024,
+  "n_benched_plants": 212,
+  "n_multiclass": 24,
+  "benched_cems_twh": 427.898,
+  "multiclass_cems_twh": 55.528,
+  "share_pct": 13.0,
+  "delta_twh_cems": {
+   "CC_CHP": 1.1909,
+   "CC_REGULAR": 16.7421,
+   "COAL_BIT": 5.3209,
+   "COAL_PRB": 10.0508,
+   "CT_CHP": 3.9241,
+   "CT_PEAKER": -25.4154,
+   "ST_CHP": -6.6688,
+   "ST_GAS": -5.1446
+  },
+  "delta_twh_e923": {
+   "CC_CHP": 1.6849,
+   "CC_REGULAR": 16.738,
+   "COAL_BIT": 5.1739,
+   "COAL_PRB": 9.3407,
+   "CT_CHP": 2.317,
+   "CT_PEAKER": -24.8674,
+   "ST_CHP": -5.5226,
+   "ST_GAS": -4.8646
+  },
+  "plants": [
+   {
+    "plant": 976,
+    "name": "Marion",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "COAL_BIT": 120.0,
+     "CT_PEAKER": 140.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.7447,
+    "c_slices": {
+     "COAL_BIT": 0.633,
+     "CT_PEAKER": 0.1117
+    },
+    "e_ann": 0.7462,
+    "e_slices": {
+     "COAL_BIT": 0.632,
+     "CT_PEAKER": 0.1142
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 990,
+    "name": "Harding Street",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 288.0,
+     "ST_GAS": 618.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 3.6423,
+    "c_slices": {
+     "CT_PEAKER": 0.4191,
+     "ST_GAS": 3.2232
+    },
+    "e_ann": 3.6544,
+    "e_slices": {
+     "CT_PEAKER": 0.4285,
+     "ST_GAS": 3.2259
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 1001,
+    "name": "Cayuga",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "COAL_BIT": 995.0,
+     "CT_PEAKER": 84.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 4.1795,
+    "c_slices": {
+     "COAL_BIT": 4.167,
+     "CT_PEAKER": 0.0125
+    },
+    "e_ann": 4.1856,
+    "e_slices": {
+     "COAL_BIT": 4.1725,
+     "CT_PEAKER": 0.0131
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 1004,
+    "name": "Edwardsport",
+    "old_group": "COAL_BIT",
+    "classes": {
+     "CC_REGULAR": 481.2,
+     "COAL_BIT": 555.0
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['COAL_BIT']]",
+    "c_ann": 2.3488,
+    "c_slices": {
+     "CC_REGULAR": 1.1557,
+     "COAL_BIT": 1.1931
+    },
+    "e_ann": 2.7095,
+    "e_slices": {
+     "CC_REGULAR": 1.3285,
+     "COAL_BIT": 1.381
+    },
+    "ct_only": true
+   },
+   {
+    "plant": 1073,
+    "name": "Prairie Creek",
+    "old_group": "ST_CHP",
+    "classes": {
+     "COAL_PRB": 29.3,
+     "ST_CHP": 72.6
+    },
+    "basis": "e923_monthly",
+    "c_ann": 0.0,
+    "c_slices": {
+     "COAL_PRB": 0.0,
+     "ST_CHP": 0.0
+    },
+    "e_ann": 0.0676,
+    "e_slices": {
+     "COAL_PRB": 0.0453,
+     "ST_CHP": 0.0223
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 1104,
+    "name": "Burlington (IA)",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 39.9,
+     "ST_GAS": 170.3
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['CT_PEAKER']]",
+    "c_ann": 0.0072,
+    "c_slices": {
+     "CT_PEAKER": 0.0003,
+     "ST_GAS": 0.0069
+    },
+    "e_ann": 0.001,
+    "e_slices": {
+     "CT_PEAKER": 0.0008,
+     "ST_GAS": 0.0002
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 1393,
+    "name": "R S Nelson",
+    "old_group": "ST_CHP",
+    "classes": {
+     "COAL_PRB": 513.5,
+     "ST_CHP": 42.5
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['ST_CHP']]",
+    "c_ann": 1.5538,
+    "c_slices": {
+     "COAL_PRB": 1.5538,
+     "ST_CHP": 0.0
+    },
+    "e_ann": 1.4754,
+    "e_slices": {
+     "COAL_PRB": 1.4754,
+     "ST_CHP": 0.0
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 1904,
+    "name": "Black Dog",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 282.0,
+     "CT_PEAKER": 209.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 2.3557,
+    "c_slices": {
+     "CC_REGULAR": 1.8702,
+     "CT_PEAKER": 0.4855
+    },
+    "e_ann": 2.3097,
+    "e_slices": {
+     "CC_REGULAR": 1.8475,
+     "CT_PEAKER": 0.4622
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2070,
+    "name": "Moselle",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CC_REGULAR": 268.0,
+     "CT_PEAKER": 150.0,
+     "ST_GAS": 59.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 2.0642,
+    "c_slices": {
+     "CC_REGULAR": 1.6828,
+     "CT_PEAKER": 0.3538,
+     "ST_GAS": 0.0277
+    },
+    "e_ann": 2.0093,
+    "e_slices": {
+     "CC_REGULAR": 1.6388,
+     "CT_PEAKER": 0.3449,
+     "ST_GAS": 0.0256
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2123,
+    "name": "Columbia (MO)",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 12.5,
+     "ST_GAS": 35.0
+    },
+    "basis": "e923_monthly [unit 6 family ST_COAL matches no scored class ['CT_PEAKER', 'ST_GAS']]",
+    "c_ann": 0.0,
+    "c_slices": {
+     "CT_PEAKER": 0.0,
+     "ST_GAS": 0.0
+    },
+    "e_ann": 0.0216,
+    "e_slices": {
+     "CT_PEAKER": 0.0003,
+     "ST_GAS": 0.0213
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 6034,
+    "name": "Belle River",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "COAL_PRB": 1270.0,
+     "CT_PEAKER": 224.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 6.6949,
+    "c_slices": {
+     "COAL_PRB": 5.9988,
+     "CT_PEAKER": 0.6961
+    },
+    "e_ann": 6.2445,
+    "e_slices": {
+     "COAL_PRB": 5.5538,
+     "CT_PEAKER": 0.6907
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 6035,
+    "name": "Greenwood (MI)",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 224.0,
+     "ST_GAS": 785.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 1.5558,
+    "c_slices": {
+     "CT_PEAKER": 0.1905,
+     "ST_GAS": 1.3653
+    },
+    "e_ann": 1.4554,
+    "e_slices": {
+     "CT_PEAKER": 0.1849,
+     "ST_GAS": 1.2705
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 6055,
+    "name": "Big Cajun 2",
+    "old_group": "ST_GAS",
+    "classes": {
+     "COAL_PRB": 551.3,
+     "ST_GAS": 546.4
+    },
+    "basis": "unit_hourly",
+    "c_ann": 1.7662,
+    "c_slices": {
+     "COAL_PRB": 0.8971,
+     "ST_GAS": 0.8691
+    },
+    "e_ann": 1.6311,
+    "e_slices": {
+     "COAL_PRB": 0.7803,
+     "ST_GAS": 0.8508
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 6085,
+    "name": "R M Schahfer",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "COAL_BIT": 722.0,
+     "CT_PEAKER": 155.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 1.7193,
+    "c_slices": {
+     "COAL_BIT": 1.6766,
+     "CT_PEAKER": 0.0427
+    },
+    "e_ann": 1.744,
+    "e_slices": {
+     "COAL_BIT": 1.6979,
+     "CT_PEAKER": 0.0461
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 6190,
+    "name": "Brame Energy Center",
+    "old_group": "ST_GAS",
+    "classes": {
+     "COAL_PRB": 488.1,
+     "ST_GAS": 428.5
+    },
+    "basis": "unit_hourly",
+    "c_ann": 2.8973,
+    "c_slices": {
+     "COAL_PRB": 1.6011,
+     "ST_GAS": 1.2962
+    },
+    "e_ann": 2.5855,
+    "e_slices": {
+     "COAL_PRB": 1.486,
+     "ST_GAS": 1.0995
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 6358,
+    "name": "Hutchinson Plant #2",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 51.0,
+     "CT_PEAKER": 22.0
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['CT_PEAKER']]",
+    "c_ann": 0.0017,
+    "c_slices": {
+     "CC_REGULAR": 0.0017,
+     "CT_PEAKER": 0.0
+    },
+    "e_ann": 0.0014,
+    "e_slices": {
+     "CC_REGULAR": 0.0014,
+     "CT_PEAKER": 0.0
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 10328,
+    "name": "T B Simon Power Plant",
+    "old_group": "ST_CHP",
+    "classes": {
+     "CT_CHP": 14.3,
+     "ST_CHP": 29.7
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['CT_CHP']]",
+    "c_ann": 0.0,
+    "c_slices": {
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.0
+    },
+    "e_ann": 0.2411,
+    "e_slices": {
+     "CT_CHP": 0.0572,
+     "ST_CHP": 0.1839
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 50625,
+    "name": "ExxonMobil Beaumont Refinery",
+    "old_group": "ST_CHP",
+    "classes": {
+     "CT_CHP": 140.1,
+     "ST_CHP": 41.6
+    },
+    "basis": "e923_monthly [unit 61STK1 family CC matches no scored class ['CT_CHP', 'ST_CHP']]",
+    "c_ann": 5.9227,
+    "c_slices": {
+     "CT_CHP": 5.0538,
+     "ST_CHP": 0.8689
+    },
+    "e_ann": 4.3658,
+    "e_slices": {
+     "CT_CHP": 3.7248,
+     "ST_CHP": 0.641
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 55087,
+    "name": "Zeeland Generating Station",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 524.5,
+     "CT_PEAKER": 318.2
+    },
+    "basis": "unit_hourly",
+    "c_ann": 5.7524,
+    "c_slices": {
+     "CC_REGULAR": 4.0151,
+     "CT_PEAKER": 1.7373
+    },
+    "e_ann": 5.681,
+    "e_slices": {
+     "CC_REGULAR": 3.9629,
+     "CT_PEAKER": 1.7181
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 55088,
+    "name": "Dearborn Industrial Generation",
+    "old_group": "CT_CHP",
+    "classes": {
+     "CC_CHP": 227.5,
+     "CT_CHP": 107.2
+    },
+    "basis": "e923_monthly [unit BL1100 family ST_GAS matches no scored class ['CC_CHP', 'CT_CHP']]",
+    "c_ann": 4.0116,
+    "c_slices": {
+     "CC_CHP": 1.1909,
+     "CT_CHP": 2.8207
+    },
+    "e_ann": 5.663,
+    "e_slices": {
+     "CC_CHP": 1.6849,
+     "CT_CHP": 3.9781
+    },
+    "ct_only": true
+   },
+   {
+    "plant": 55096,
+    "name": "Portside Energy",
+    "old_group": "ST_CHP",
+    "classes": {
+     "CT_CHP": 22.1,
+     "ST_CHP": 12.3
+    },
+    "basis": "unit_hourly (CEMS covers ['CT_CHP'] of ['CT_CHP', 'ST_CHP'])",
+    "c_ann": 0.0612,
+    "c_slices": {
+     "CT_CHP": 0.0612
+    },
+    "e_ann": 0.2564,
+    "e_slices": {
+     "CT_CHP": 0.22,
+     "ST_CHP": 0.0364
+    },
+    "ct_only": true
+   },
+   {
+    "plant": 55218,
+    "name": "Hinds Energy Facility",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 532.1,
+     "CT_PEAKER": 27.2
+    },
+    "basis": "unit_hourly",
+    "c_ann": 3.433,
+    "c_slices": {
+     "CC_REGULAR": 3.4289,
+     "CT_PEAKER": 0.0041
+    },
+    "e_ann": 3.4376,
+    "e_slices": {
+     "CC_REGULAR": 3.4341,
+     "CT_PEAKER": 0.0035
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 55620,
+    "name": "Perryville Power Station",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 637.9,
+     "CT_PEAKER": 152.7
+    },
+    "basis": "unit_hourly",
+    "c_ann": 3.845,
+    "c_slices": {
+     "CC_REGULAR": 3.7488,
+     "CT_PEAKER": 0.0962
+    },
+    "e_ann": 3.8129,
+    "e_slices": {
+     "CC_REGULAR": 3.7232,
+     "CT_PEAKER": 0.0897
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 63259,
+    "name": "Delta Energy Park",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 177.6,
+     "CT_PEAKER": 46.3
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.9705,
+    "c_slices": {
+     "CC_REGULAR": 0.8389,
+     "CT_PEAKER": 0.1316
+    },
+    "e_ann": 0.9272,
+    "e_slices": {
+     "CC_REGULAR": 0.8017,
+     "CT_PEAKER": 0.1255
+    },
+    "ct_only": false
+   }
+  ],
+  "multiclass_not_benched": [
+   10319,
+   10864,
+   50489,
+   50973,
+   54321,
+   54518,
+   54775,
+   54780,
+   56309,
+   58161
+  ]
+ },
+ {
+  "iso": "MISO",
+  "year": 2025,
+  "n_benched_plants": 211,
+  "n_multiclass": 25,
+  "benched_cems_twh": 439.473,
+  "multiclass_cems_twh": 54.112,
+  "share_pct": 12.3,
+  "delta_twh_cems": {
+   "CC_CHP": 0.7981,
+   "CC_REGULAR": 14.6206,
+   "COAL_BIT": 4.5302,
+   "COAL_PRB": 12.7304,
+   "CT_CHP": 4.4197,
+   "CT_PEAKER": -23.5839,
+   "ST_CHP": -7.3273,
+   "ST_GAS": -6.1878
+  },
+  "delta_twh_e923": {
+   "CC_CHP": 1.083,
+   "CC_REGULAR": 14.0848,
+   "COAL_BIT": 4.3861,
+   "COAL_PRB": 11.974,
+   "CT_CHP": 2.7647,
+   "CT_PEAKER": -23.1364,
+   "ST_CHP": -5.8938,
+   "ST_GAS": -6.322
+  },
+  "plants": [
+   {
+    "plant": 976,
+    "name": "Marion",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "COAL_BIT": 120.0,
+     "CT_PEAKER": 140.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.7701,
+    "c_slices": {
+     "COAL_BIT": 0.6784,
+     "CT_PEAKER": 0.0917
+    },
+    "e_ann": 0.767,
+    "e_slices": {
+     "COAL_BIT": 0.6734,
+     "CT_PEAKER": 0.0936
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 990,
+    "name": "Harding Street",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 288.0,
+     "ST_GAS": 618.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 3.4527,
+    "c_slices": {
+     "CT_PEAKER": 0.407,
+     "ST_GAS": 3.0457
+    },
+    "e_ann": 3.4257,
+    "e_slices": {
+     "CT_PEAKER": 0.4086,
+     "ST_GAS": 3.0171
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 1001,
+    "name": "Cayuga",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "COAL_BIT": 995.0,
+     "CT_PEAKER": 84.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 3.9428,
+    "c_slices": {
+     "COAL_BIT": 3.9337,
+     "CT_PEAKER": 0.0091
+    },
+    "e_ann": 4.01,
+    "e_slices": {
+     "COAL_BIT": 4.0011,
+     "CT_PEAKER": 0.0089
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 1004,
+    "name": "Edwardsport",
+    "old_group": "COAL_BIT",
+    "classes": {
+     "CC_REGULAR": 481.2,
+     "COAL_BIT": 555.0
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['COAL_BIT']]",
+    "c_ann": 3.0946,
+    "c_slices": {
+     "CC_REGULAR": 1.4962,
+     "COAL_BIT": 1.5984
+    },
+    "e_ann": 3.5437,
+    "e_slices": {
+     "CC_REGULAR": 1.6934,
+     "COAL_BIT": 1.8503
+    },
+    "ct_only": true
+   },
+   {
+    "plant": 1073,
+    "name": "Prairie Creek",
+    "old_group": "ST_CHP",
+    "classes": {
+     "COAL_PRB": 29.3,
+     "ST_CHP": 72.6
+    },
+    "basis": "e923_monthly",
+    "c_ann": 0.0,
+    "c_slices": {
+     "COAL_PRB": 0.0,
+     "ST_CHP": 0.0
+    },
+    "e_ann": 0.0953,
+    "e_slices": {
+     "COAL_PRB": 0.0632,
+     "ST_CHP": 0.0321
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 1104,
+    "name": "Burlington (IA)",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 39.9,
+     "ST_GAS": 170.3
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['CT_PEAKER']]",
+    "c_ann": 0.0257,
+    "c_slices": {
+     "CT_PEAKER": 0.0014,
+     "ST_GAS": 0.0243
+    },
+    "e_ann": 0.0163,
+    "e_slices": {
+     "CT_PEAKER": 0.0009,
+     "ST_GAS": 0.0154
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 1393,
+    "name": "R S Nelson",
+    "old_group": "ST_CHP",
+    "classes": {
+     "COAL_PRB": 513.5,
+     "ST_CHP": 42.5
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['ST_CHP']]",
+    "c_ann": 2.1096,
+    "c_slices": {
+     "COAL_PRB": 2.1096,
+     "ST_CHP": 0.0
+    },
+    "e_ann": 1.9829,
+    "e_slices": {
+     "COAL_PRB": 1.9829,
+     "ST_CHP": 0.0
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 1464,
+    "name": "Big Cajun 1",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 199.5,
+     "ST_GAS": 174.5
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.1662,
+    "c_slices": {
+     "CT_PEAKER": 0.0982,
+     "ST_GAS": 0.068
+    },
+    "e_ann": 0.1662,
+    "e_slices": {
+     "CT_PEAKER": 0.0,
+     "ST_GAS": 0.0
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 1904,
+    "name": "Black Dog",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 282.0,
+     "CT_PEAKER": 209.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.8934,
+    "c_slices": {
+     "CC_REGULAR": 0.4923,
+     "CT_PEAKER": 0.4011
+    },
+    "e_ann": 0.8934,
+    "e_slices": {
+     "CC_REGULAR": 0.0,
+     "CT_PEAKER": 0.0
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2070,
+    "name": "Moselle",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CC_REGULAR": 268.0,
+     "CT_PEAKER": 150.0,
+     "ST_GAS": 59.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 1.7191,
+    "c_slices": {
+     "CC_REGULAR": 1.5234,
+     "CT_PEAKER": 0.1899,
+     "ST_GAS": 0.0058
+    },
+    "e_ann": 1.6593,
+    "e_slices": {
+     "CC_REGULAR": 1.4731,
+     "CT_PEAKER": 0.1809,
+     "ST_GAS": 0.0053
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2123,
+    "name": "Columbia (MO)",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 12.5,
+     "ST_GAS": 35.0
+    },
+    "basis": "capacity [unit 6 family ST_COAL matches no scored class ['CT_PEAKER', 'ST_GAS']]",
+    "c_ann": 0.0,
+    "c_slices": {
+     "CT_PEAKER": 0.0,
+     "ST_GAS": 0.0
+    },
+    "e_ann": 0.0,
+    "e_slices": {
+     "CT_PEAKER": 0.0,
+     "ST_GAS": 0.0
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 6034,
+    "name": "Belle River",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "COAL_PRB": 1270.0,
+     "CT_PEAKER": 224.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 7.3899,
+    "c_slices": {
+     "COAL_PRB": 6.8965,
+     "CT_PEAKER": 0.4934
+    },
+    "e_ann": 6.49,
+    "e_slices": {
+     "COAL_PRB": 6.0714,
+     "CT_PEAKER": 0.4186
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 6035,
+    "name": "Greenwood (MI)",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 224.0,
+     "ST_GAS": 785.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 1.3388,
+    "c_slices": {
+     "CT_PEAKER": 0.2436,
+     "ST_GAS": 1.0952
+    },
+    "e_ann": 1.2497,
+    "e_slices": {
+     "CT_PEAKER": 0.2359,
+     "ST_GAS": 1.0138
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 6055,
+    "name": "Big Cajun 2",
+    "old_group": "ST_GAS",
+    "classes": {
+     "COAL_PRB": 551.3,
+     "ST_GAS": 546.4
+    },
+    "basis": "unit_hourly",
+    "c_ann": 2.7721,
+    "c_slices": {
+     "COAL_PRB": 2.1432,
+     "ST_GAS": 0.6289
+    },
+    "e_ann": 2.6273,
+    "e_slices": {
+     "COAL_PRB": 1.9508,
+     "ST_GAS": 0.6765
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 6085,
+    "name": "R M Schahfer",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "COAL_BIT": 722.0,
+     "CT_PEAKER": 155.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 1.4873,
+    "c_slices": {
+     "COAL_BIT": 1.4143,
+     "CT_PEAKER": 0.073
+    },
+    "e_ann": 1.4864,
+    "e_slices": {
+     "COAL_BIT": 1.4051,
+     "CT_PEAKER": 0.0813
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 6190,
+    "name": "Brame Energy Center",
+    "old_group": "ST_GAS",
+    "classes": {
+     "COAL_PRB": 488.1,
+     "ST_GAS": 428.5
+    },
+    "basis": "unit_hourly",
+    "c_ann": 3.2887,
+    "c_slices": {
+     "COAL_PRB": 1.5812,
+     "ST_GAS": 1.7075
+    },
+    "e_ann": 2.7603,
+    "e_slices": {
+     "COAL_PRB": 1.9057,
+     "ST_GAS": 0.8546
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 6358,
+    "name": "Hutchinson Plant #2",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 51.0,
+     "CT_PEAKER": 22.0
+    },
+    "basis": "capacity [no CAMPD unit maps to class(es) ['CT_PEAKER']]",
+    "c_ann": 0.0298,
+    "c_slices": {
+     "CC_REGULAR": 0.0208,
+     "CT_PEAKER": 0.009
+    },
+    "e_ann": 0.0,
+    "e_slices": {
+     "CC_REGULAR": 0.0,
+     "CT_PEAKER": 0.0
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 10328,
+    "name": "T B Simon Power Plant",
+    "old_group": "ST_CHP",
+    "classes": {
+     "CT_CHP": 14.3,
+     "ST_CHP": 29.7
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['CT_CHP']]",
+    "c_ann": 0.0,
+    "c_slices": {
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.0
+    },
+    "e_ann": 0.2506,
+    "e_slices": {
+     "CT_CHP": 0.0534,
+     "ST_CHP": 0.1972
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 50625,
+    "name": "ExxonMobil Beaumont Refinery",
+    "old_group": "ST_CHP",
+    "classes": {
+     "CT_CHP": 140.1,
+     "ST_CHP": 41.6
+    },
+    "basis": "e923_monthly [unit 61STK1 family CC matches no scored class ['CT_CHP', 'ST_CHP']]",
+    "c_ann": 5.9697,
+    "c_slices": {
+     "CT_CHP": 5.1294,
+     "ST_CHP": 0.8403
+    },
+    "e_ann": 4.4167,
+    "e_slices": {
+     "CT_CHP": 3.7943,
+     "ST_CHP": 0.6224
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 55087,
+    "name": "Zeeland Generating Station",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 524.5,
+     "CT_PEAKER": 318.2
+    },
+    "basis": "unit_hourly",
+    "c_ann": 5.4035,
+    "c_slices": {
+     "CC_REGULAR": 4.0158,
+     "CT_PEAKER": 1.3877
+    },
+    "e_ann": 5.3144,
+    "e_slices": {
+     "CC_REGULAR": 3.9523,
+     "CT_PEAKER": 1.3621
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 55088,
+    "name": "Dearborn Industrial Generation",
+    "old_group": "CT_CHP",
+    "classes": {
+     "CC_CHP": 227.5,
+     "CT_CHP": 107.2
+    },
+    "basis": "e923_monthly [unit BL1100 family ST_GAS matches no scored class ['CC_CHP', 'CT_CHP']]",
+    "c_ann": 2.8076,
+    "c_slices": {
+     "CC_CHP": 0.7981,
+     "CT_CHP": 2.0095
+    },
+    "e_ann": 3.783,
+    "e_slices": {
+     "CC_CHP": 1.083,
+     "CT_CHP": 2.7
+    },
+    "ct_only": true
+   },
+   {
+    "plant": 55096,
+    "name": "Portside Energy",
+    "old_group": "ST_CHP",
+    "classes": {
+     "CT_CHP": 22.1,
+     "ST_CHP": 12.3
+    },
+    "basis": "unit_hourly (CEMS covers ['CT_CHP'] of ['CT_CHP', 'ST_CHP'])",
+    "c_ann": 0.0883,
+    "c_slices": {
+     "CT_CHP": 0.0883
+    },
+    "e_ann": 0.0,
+    "e_slices": {
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.0
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 55218,
+    "name": "Hinds Energy Facility",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 532.1,
+     "CT_PEAKER": 27.2
+    },
+    "basis": "unit_hourly",
+    "c_ann": 1.9457,
+    "c_slices": {
+     "CC_REGULAR": 1.9373,
+     "CT_PEAKER": 0.0084
+    },
+    "e_ann": 1.9457,
+    "e_slices": {
+     "CC_REGULAR": 1.9377,
+     "CT_PEAKER": 0.008
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 55620,
+    "name": "Perryville Power Station",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 637.9,
+     "CT_PEAKER": 152.7
+    },
+    "basis": "unit_hourly",
+    "c_ann": 3.8754,
+    "c_slices": {
+     "CC_REGULAR": 3.7579,
+     "CT_PEAKER": 0.1175
+    },
+    "e_ann": 3.7907,
+    "e_slices": {
+     "CC_REGULAR": 3.7106,
+     "CT_PEAKER": 0.0801
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 63259,
+    "name": "Delta Energy Park",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 177.6,
+     "CT_PEAKER": 46.3
+    },
+    "basis": "unit_hourly",
+    "c_ann": 1.5405,
+    "c_slices": {
+     "CC_REGULAR": 1.3768,
+     "CT_PEAKER": 0.1637
+    },
+    "e_ann": 1.4719,
+    "e_slices": {
+     "CC_REGULAR": 1.3176,
+     "CT_PEAKER": 0.1543
+    },
+    "ct_only": false
+   }
+  ],
+  "multiclass_not_benched": [
+   10319,
+   10864,
+   50489,
+   50846,
+   50973,
+   54518,
+   54775,
+   54780,
+   56309,
+   58161
+  ]
+ },
+ {
+  "iso": "NEISO",
+  "year": 2023,
+  "n_benched_plants": 43,
+  "n_multiclass": 1,
+  "benched_cems_twh": 49.539,
+  "multiclass_cems_twh": 0.037,
+  "share_pct": 0.1,
+  "delta_twh_cems": {
+   "CC_REGULAR": 0.0262,
+   "CT_PEAKER": -0.0262
+  },
+  "delta_twh_e923": {
+   "CC_REGULAR": 0.025,
+   "CT_PEAKER": -0.025
+  },
+  "plants": [
+   {
+    "plant": 52026,
+    "name": "Dartmouth Power Associates LP",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 88.4,
+     "CT_PEAKER": 19.6
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.0369,
+    "c_slices": {
+     "CC_REGULAR": 0.0262,
+     "CT_PEAKER": 0.0107
+    },
+    "e_ann": 0.0348,
+    "e_slices": {
+     "CC_REGULAR": 0.025,
+     "CT_PEAKER": 0.0098
+    },
+    "ct_only": false
+   }
+  ],
+  "multiclass_not_benched": [
+   10883,
+   50087,
+   54225,
+   54236,
+   68493
+  ]
+ },
+ {
+  "iso": "NEISO",
+  "year": 2024,
+  "n_benched_plants": 44,
+  "n_multiclass": 1,
+  "benched_cems_twh": 53.929,
+  "multiclass_cems_twh": 0.066,
+  "share_pct": 0.1,
+  "delta_twh_cems": {
+   "CC_REGULAR": 0.0533,
+   "CT_PEAKER": -0.0533
+  },
+  "delta_twh_e923": {
+   "CC_REGULAR": 0.0537,
+   "CT_PEAKER": -0.0537
+  },
+  "plants": [
+   {
+    "plant": 52026,
+    "name": "Dartmouth Power Associates LP",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 88.4,
+     "CT_PEAKER": 19.6
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.0655,
+    "c_slices": {
+     "CC_REGULAR": 0.0533,
+     "CT_PEAKER": 0.0122
+    },
+    "e_ann": 0.0656,
+    "e_slices": {
+     "CC_REGULAR": 0.0537,
+     "CT_PEAKER": 0.0119
+    },
+    "ct_only": false
+   }
+  ],
+  "multiclass_not_benched": [
+   10883,
+   50087,
+   54225,
+   54236,
+   68493
+  ]
+ },
+ {
+  "iso": "NEISO",
+  "year": 2025,
+  "n_benched_plants": 43,
+  "n_multiclass": 1,
+  "benched_cems_twh": 54.405,
+  "multiclass_cems_twh": 0.093,
+  "share_pct": 0.2,
+  "delta_twh_cems": {
+   "CC_REGULAR": 0.0723,
+   "CT_PEAKER": -0.0723
+  },
+  "delta_twh_e923": {
+   "CT_PEAKER": -0.0934
+  },
+  "plants": [
+   {
+    "plant": 52026,
+    "name": "Dartmouth Power Associates LP",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 88.4,
+     "CT_PEAKER": 19.6
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.0934,
+    "c_slices": {
+     "CC_REGULAR": 0.0723,
+     "CT_PEAKER": 0.0211
+    },
+    "e_ann": 0.0934,
+    "e_slices": {
+     "CC_REGULAR": 0.0,
+     "CT_PEAKER": 0.0
+    },
+    "ct_only": false
+   }
+  ],
+  "multiclass_not_benched": [
+   10883,
+   50087,
+   54225,
+   54236,
+   58084,
+   68493
+  ]
+ },
+ {
+  "iso": "NYISO",
+  "year": 2023,
+  "n_benched_plants": 69,
+  "n_multiclass": 7,
+  "benched_cems_twh": 65.654,
+  "multiclass_cems_twh": 7.583,
+  "share_pct": 11.6,
+  "delta_twh_cems": {
+   "CC_REGULAR": 2.4576,
+   "CT_CHP": 1.4567,
+   "CT_PEAKER": -0.2188,
+   "ST_CHP": -1.4567,
+   "ST_GAS": -2.2389
+  },
+  "delta_twh_e923": {
+   "CC_REGULAR": 2.3411,
+   "CT_CHP": 2.0221,
+   "CT_PEAKER": -0.2069,
+   "ST_CHP": -2.0221,
+   "ST_GAS": -2.1342
+  },
+  "plants": [
+   {
+    "plant": 2493,
+    "name": "East River",
+    "old_group": "ST_CHP",
+    "classes": {
+     "CT_CHP": 198.9,
+     "ST_CHP": 201.2
+    },
+    "basis": "e923_monthly [unit 1 family CC matches no scored class ['CT_CHP', 'ST_CHP']]",
+    "c_ann": 2.1335,
+    "c_slices": {
+     "CT_CHP": 1.4567,
+     "ST_CHP": 0.6768
+    },
+    "e_ann": 3.0787,
+    "e_slices": {
+     "CT_CHP": 2.0221,
+     "ST_CHP": 1.0566
+    },
+    "ct_only": true
+   },
+   {
+    "plant": 2500,
+    "name": "Ravenswood",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CC_REGULAR": 268.5,
+     "ST_GAS": 1724.8
+    },
+    "basis": "e923_monthly [unit CT0001 family CT matches no scored class ['CC_REGULAR', 'ST_GAS']]",
+    "c_ann": 2.8501,
+    "c_slices": {
+     "CC_REGULAR": 1.9981,
+     "ST_GAS": 0.852
+    },
+    "e_ann": 2.7025,
+    "e_slices": {
+     "CC_REGULAR": 1.9025,
+     "ST_GAS": 0.8
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2511,
+    "name": "E F Barrett",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 281.4,
+     "ST_GAS": 372.2
+    },
+    "basis": "unit_hourly",
+    "c_ann": 1.5257,
+    "c_slices": {
+     "CT_PEAKER": 0.1395,
+     "ST_GAS": 1.3862
+    },
+    "e_ann": 1.4278,
+    "e_slices": {
+     "CT_PEAKER": 0.1274,
+     "ST_GAS": 1.3004
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2517,
+    "name": "Port Jefferson",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 82.7,
+     "ST_GAS": 385.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.4001,
+    "c_slices": {
+     "CT_PEAKER": 0.0755,
+     "ST_GAS": 0.3246
+    },
+    "e_ann": 0.3555,
+    "e_slices": {
+     "CT_PEAKER": 0.0625,
+     "ST_GAS": 0.293
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2682,
+    "name": "S A Carlson",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 42.0,
+     "ST_GAS": 45.0
+    },
+    "basis": "e923_monthly [unit 20 family CC matches no scored class ['CT_PEAKER', 'ST_GAS']]",
+    "c_ann": 0.0424,
+    "c_slices": {
+     "CT_PEAKER": 0.0259,
+     "ST_GAS": 0.0165
+    },
+    "e_ann": 0.0524,
+    "e_slices": {
+     "CT_PEAKER": 0.0418,
+     "ST_GAS": 0.0106
+    },
+    "ct_only": true
+   },
+   {
+    "plant": 10025,
+    "name": "RED-Rochester, LLC",
+    "old_group": "ST_CHP",
+    "classes": {
+     "CT_CHP": 10.8,
+     "ST_CHP": 35.9
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['CT_CHP']]",
+    "c_ann": 0.0,
+    "c_slices": {
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.0
+    },
+    "e_ann": 0.2916,
+    "e_slices": {
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.2916
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 50292,
+    "name": "Bethpage Power Plant",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 179.6,
+     "CT_PEAKER": 44.1
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.6314,
+    "c_slices": {
+     "CC_REGULAR": 0.4596,
+     "CT_PEAKER": 0.1718
+    },
+    "e_ann": 0.5948,
+    "e_slices": {
+     "CC_REGULAR": 0.4386,
+     "CT_PEAKER": 0.1562
+    },
+    "ct_only": false
+   }
+  ],
+  "multiclass_not_benched": []
+ },
+ {
+  "iso": "NYISO",
+  "year": 2024,
+  "n_benched_plants": 68,
+  "n_multiclass": 7,
+  "benched_cems_twh": 72.86,
+  "multiclass_cems_twh": 7.168,
+  "share_pct": 9.8,
+  "delta_twh_cems": {
+   "CC_REGULAR": 2.467,
+   "CT_CHP": 1.6931,
+   "CT_PEAKER": -0.2703,
+   "ST_CHP": -1.6931,
+   "ST_GAS": -2.1967
+  },
+  "delta_twh_e923": {
+   "CC_REGULAR": 2.363,
+   "CT_CHP": 2.1492,
+   "CT_PEAKER": -0.2521,
+   "ST_CHP": -2.1492,
+   "ST_GAS": -2.1109
+  },
+  "plants": [
+   {
+    "plant": 2493,
+    "name": "East River",
+    "old_group": "ST_CHP",
+    "classes": {
+     "CT_CHP": 198.9,
+     "ST_CHP": 201.2
+    },
+    "basis": "e923_monthly [unit 1 family CC matches no scored class ['CT_CHP', 'ST_CHP']]",
+    "c_ann": 2.2497,
+    "c_slices": {
+     "CT_CHP": 1.6931,
+     "ST_CHP": 0.5566
+    },
+    "e_ann": 2.8941,
+    "e_slices": {
+     "CT_CHP": 2.1492,
+     "ST_CHP": 0.7449
+    },
+    "ct_only": true
+   },
+   {
+    "plant": 2500,
+    "name": "Ravenswood",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CC_REGULAR": 268.5,
+     "ST_GAS": 1724.8
+    },
+    "basis": "e923_monthly [unit CT0001 family CT matches no scored class ['CC_REGULAR', 'ST_GAS']]",
+    "c_ann": 2.6592,
+    "c_slices": {
+     "CC_REGULAR": 1.9789,
+     "ST_GAS": 0.6803
+    },
+    "e_ann": 2.5319,
+    "e_slices": {
+     "CC_REGULAR": 1.8964,
+     "ST_GAS": 0.6355
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2511,
+    "name": "E F Barrett",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 281.4,
+     "ST_GAS": 372.2
+    },
+    "basis": "unit_hourly",
+    "c_ann": 1.2517,
+    "c_slices": {
+     "CT_PEAKER": 0.1144,
+     "ST_GAS": 1.1373
+    },
+    "e_ann": 1.1835,
+    "e_slices": {
+     "CT_PEAKER": 0.119,
+     "ST_GAS": 1.0645
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2517,
+    "name": "Port Jefferson",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 82.7,
+     "ST_GAS": 385.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.3706,
+    "c_slices": {
+     "CT_PEAKER": 0.0829,
+     "ST_GAS": 0.2877
+    },
+    "e_ann": 0.327,
+    "e_slices": {
+     "CT_PEAKER": 0.0672,
+     "ST_GAS": 0.2598
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2682,
+    "name": "S A Carlson",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 42.0,
+     "ST_GAS": 45.0
+    },
+    "basis": "e923_monthly [unit 20 family CC matches no scored class ['CT_PEAKER', 'ST_GAS']]",
+    "c_ann": 0.0288,
+    "c_slices": {
+     "CT_PEAKER": 0.0204,
+     "ST_GAS": 0.0084
+    },
+    "e_ann": 0.0335,
+    "e_slices": {
+     "CT_PEAKER": 0.0283,
+     "ST_GAS": 0.0052
+    },
+    "ct_only": true
+   },
+   {
+    "plant": 10025,
+    "name": "RED-Rochester, LLC",
+    "old_group": "ST_CHP",
+    "classes": {
+     "CT_CHP": 10.8,
+     "ST_CHP": 35.9
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['CT_CHP']]",
+    "c_ann": 0.0,
+    "c_slices": {
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.0
+    },
+    "e_ann": 0.313,
+    "e_slices": {
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.313
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 50292,
+    "name": "Bethpage Power Plant",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 179.6,
+     "CT_PEAKER": 44.1
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.6076,
+    "c_slices": {
+     "CC_REGULAR": 0.4881,
+     "CT_PEAKER": 0.1195
+    },
+    "e_ann": 0.5735,
+    "e_slices": {
+     "CC_REGULAR": 0.4666,
+     "CT_PEAKER": 0.1069
+    },
+    "ct_only": false
+   }
+  ],
+  "multiclass_not_benched": []
+ },
+ {
+  "iso": "NYISO",
+  "year": 2025,
+  "n_benched_plants": 68,
+  "n_multiclass": 7,
+  "benched_cems_twh": 75.467,
+  "multiclass_cems_twh": 7.731,
+  "share_pct": 10.2,
+  "delta_twh_cems": {
+   "CC_REGULAR": 2.5763,
+   "CT_CHP": 1.689,
+   "CT_PEAKER": -0.3404,
+   "ST_CHP": -1.689,
+   "ST_GAS": -2.2359
+  },
+  "delta_twh_e923": {
+   "CC_REGULAR": 1.8466,
+   "CT_CHP": 2.1638,
+   "CT_PEAKER": -0.6028,
+   "ST_CHP": -2.1638,
+   "ST_GAS": -2.1733
+  },
+  "plants": [
+   {
+    "plant": 2493,
+    "name": "East River",
+    "old_group": "ST_CHP",
+    "classes": {
+     "CT_CHP": 198.9,
+     "ST_CHP": 201.2
+    },
+    "basis": "e923_monthly [unit 1 family CC matches no scored class ['CT_CHP', 'ST_CHP']]",
+    "c_ann": 2.1886,
+    "c_slices": {
+     "CT_CHP": 1.689,
+     "ST_CHP": 0.4996
+    },
+    "e_ann": 2.7537,
+    "e_slices": {
+     "CT_CHP": 2.0792,
+     "ST_CHP": 0.6745
+    },
+    "ct_only": true
+   },
+   {
+    "plant": 2500,
+    "name": "Ravenswood",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CC_REGULAR": 268.5,
+     "ST_GAS": 1724.8
+    },
+    "basis": "unit_hourly",
+    "c_ann": 2.994,
+    "c_slices": {
+     "CC_REGULAR": 1.9266,
+     "ST_GAS": 1.0674
+    },
+    "e_ann": 2.8444,
+    "e_slices": {
+     "CC_REGULAR": 1.8466,
+     "ST_GAS": 0.9978
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2511,
+    "name": "E F Barrett",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 281.4,
+     "ST_GAS": 372.2
+    },
+    "basis": "unit_hourly",
+    "c_ann": 1.2384,
+    "c_slices": {
+     "CT_PEAKER": 0.203,
+     "ST_GAS": 1.0354
+    },
+    "e_ann": 1.1698,
+    "e_slices": {
+     "CT_PEAKER": 0.2005,
+     "ST_GAS": 0.9693
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2517,
+    "name": "Port Jefferson",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 82.7,
+     "ST_GAS": 385.0
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.3807,
+    "c_slices": {
+     "CT_PEAKER": 0.072,
+     "ST_GAS": 0.3087
+    },
+    "e_ann": 0.3377,
+    "e_slices": {
+     "CT_PEAKER": 0.0553,
+     "ST_GAS": 0.2824
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2682,
+    "name": "S A Carlson",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 42.0,
+     "ST_GAS": 45.0
+    },
+    "basis": "capacity [unit 20 family CC matches no scored class ['CT_PEAKER', 'ST_GAS']]",
+    "c_ann": 0.071,
+    "c_slices": {
+     "CT_PEAKER": 0.0343,
+     "ST_GAS": 0.0367
+    },
+    "e_ann": 0.071,
+    "e_slices": {
+     "CT_PEAKER": 0.0,
+     "ST_GAS": 0.0
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 10025,
+    "name": "RED-Rochester, LLC",
+    "old_group": "ST_CHP",
+    "classes": {
+     "CT_CHP": 10.8,
+     "ST_CHP": 35.9
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['CT_CHP']]",
+    "c_ann": 0.0,
+    "c_slices": {
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.0
+    },
+    "e_ann": 0.3449,
+    "e_slices": {
+     "CT_CHP": 0.0845,
+     "ST_CHP": 0.2604
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 50292,
+    "name": "Bethpage Power Plant",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 179.6,
+     "CT_PEAKER": 44.1
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.8585,
+    "c_slices": {
+     "CC_REGULAR": 0.6497,
+     "CT_PEAKER": 0.2088
+    },
+    "e_ann": 0.8585,
+    "e_slices": {
+     "CC_REGULAR": 0.0,
+     "CT_PEAKER": 0.0
+    },
+    "ct_only": false
+   }
+  ],
+  "multiclass_not_benched": []
+ },
+ {
+  "iso": "PJM",
+  "year": 2023,
+  "n_benched_plants": 215,
+  "n_multiclass": 9,
+  "benched_cems_twh": 472.276,
+  "multiclass_cems_twh": 11.737,
+  "share_pct": 2.5,
+  "delta_twh_cems": {
+   "CC_CHP": 0.0644,
+   "CC_REGULAR": 9.0312,
+   "CT_CHP": 0.5346,
+   "CT_PEAKER": -8.9276,
+   "ST_CHP": -0.599,
+   "ST_GAS": -0.1037
+  },
+  "delta_twh_e923": {
+   "CC_CHP": 0.0649,
+   "CC_REGULAR": 9.0497,
+   "COAL_BIT": 0.7431,
+   "CT_CHP": 0.8087,
+   "CT_PEAKER": -8.936,
+   "ST_CHP": -1.6166,
+   "ST_GAS": -0.1137
+  },
+  "plants": [
+   {
+    "plant": 1571,
+    "name": "Chalk Point Power",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 390.0,
+     "ST_GAS": 1180.3
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.7066,
+    "c_slices": {
+     "CT_PEAKER": 0.0226,
+     "ST_GAS": 0.684
+    },
+    "e_ann": 0.7078,
+    "e_slices": {
+     "CT_PEAKER": 0.0208,
+     "ST_GAS": 0.687
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2393,
+    "name": "Gilbert",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 351.0,
+     "CT_PEAKER": 152.7
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.0319,
+    "c_slices": {
+     "CC_REGULAR": 0.0228,
+     "CT_PEAKER": 0.0091
+    },
+    "e_ann": 0.0268,
+    "e_slices": {
+     "CC_REGULAR": 0.0198,
+     "CT_PEAKER": 0.007
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2406,
+    "name": "Linden Generating Station",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 1355.6,
+     "CT_PEAKER": 336.2
+    },
+    "basis": "unit_hourly",
+    "c_ann": 4.6792,
+    "c_slices": {
+     "CC_REGULAR": 4.6528,
+     "CT_PEAKER": 0.0264
+    },
+    "e_ann": 4.6902,
+    "e_slices": {
+     "CC_REGULAR": 4.6695,
+     "CT_PEAKER": 0.0207
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 10030,
+    "name": "Energy Center Dover",
+    "old_group": "CT_CHP",
+    "classes": {
+     "CC_CHP": 44.2,
+     "CT_CHP": 28.6
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.0901,
+    "c_slices": {
+     "CC_CHP": 0.0644,
+     "CT_CHP": 0.0257
+    },
+    "e_ann": 0.0898,
+    "e_slices": {
+     "CC_CHP": 0.0649,
+     "CT_CHP": 0.0249
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 50279,
+    "name": "Archbald Power Station",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 43.7,
+     "ST_GAS": 20.0
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['ST_GAS']]",
+    "c_ann": 0.0889,
+    "c_slices": {
+     "CT_PEAKER": 0.0811,
+     "ST_GAS": 0.0078
+    },
+    "e_ann": 0.112,
+    "e_slices": {
+     "CT_PEAKER": 0.0928,
+     "ST_GAS": 0.0192
+    },
+    "ct_only": true
+   },
+   {
+    "plant": 50397,
+    "name": "Pixelle Specialty Solutions LLC - Spring",
+    "old_group": "ST_CHP",
+    "classes": {
+     "COAL_BIT": 10.8,
+     "ST_CHP": 1.8
+    },
+    "basis": "e923_monthly",
+    "c_ann": 0.0,
+    "c_slices": {
+     "COAL_BIT": 0.0,
+     "ST_CHP": 0.0
+    },
+    "e_ann": 0.4106,
+    "e_slices": {
+     "COAL_BIT": 0.3251,
+     "ST_CHP": 0.0855
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 50481,
+    "name": "Tennessee Eastman Operations",
+    "old_group": "ST_CHP",
+    "classes": {
+     "COAL_BIT": 33.1,
+     "ST_CHP": 8.4
+    },
+    "basis": "e923_monthly",
+    "c_ann": 0.0,
+    "c_slices": {
+     "COAL_BIT": 0.0,
+     "ST_CHP": 0.0
+    },
+    "e_ann": 0.941,
+    "e_slices": {
+     "COAL_BIT": 0.418,
+     "ST_CHP": 0.523
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 52019,
+    "name": "Doswell Energy Center",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 752.0,
+     "CT_PEAKER": 496.7
+    },
+    "basis": "unit_hourly",
+    "c_ann": 5.3371,
+    "c_slices": {
+     "CC_REGULAR": 4.3556,
+     "CT_PEAKER": 0.9815
+    },
+    "e_ann": 5.2978,
+    "e_slices": {
+     "CC_REGULAR": 4.3604,
+     "CT_PEAKER": 0.9374
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 54785,
+    "name": "Grays Ferry Cogeneration",
+    "old_group": "ST_CHP",
+    "classes": {
+     "CT_CHP": 74.1,
+     "ST_CHP": 36.8
+    },
+    "basis": "e923_monthly [unit 2 family CC matches no scored class ['CT_CHP', 'ST_CHP']]",
+    "c_ann": 0.8031,
+    "c_slices": {
+     "CT_CHP": 0.599,
+     "ST_CHP": 0.2041
+    },
+    "e_ann": 1.1732,
+    "e_slices": {
+     "CT_CHP": 0.8736,
+     "ST_CHP": 0.2996
+    },
+    "ct_only": true
+   }
+  ],
+  "multiclass_not_benched": [
+   2914,
+   2935,
+   52148,
+   58194,
+   58207
+  ]
+ },
+ {
+  "iso": "PJM",
+  "year": 2024,
+  "n_benched_plants": 208,
+  "n_multiclass": 9,
+  "benched_cems_twh": 491.351,
+  "multiclass_cems_twh": 12.377,
+  "share_pct": 2.5,
+  "delta_twh_cems": {
+   "CC_CHP": 0.079,
+   "CC_REGULAR": 9.3575,
+   "CT_CHP": 0.5051,
+   "CT_PEAKER": -9.2394,
+   "ST_CHP": -0.5841,
+   "ST_GAS": -0.1181
+  },
+  "delta_twh_e923": {
+   "CC_CHP": 0.0795,
+   "CC_REGULAR": 9.4094,
+   "COAL_BIT": 0.7962,
+   "CT_CHP": 0.7876,
+   "CT_PEAKER": -9.2838,
+   "ST_CHP": -1.6633,
+   "ST_GAS": -0.1256
+  },
+  "plants": [
+   {
+    "plant": 1571,
+    "name": "Chalk Point Power",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 390.0,
+     "ST_GAS": 1180.3
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.9251,
+    "c_slices": {
+     "CT_PEAKER": 0.0381,
+     "ST_GAS": 0.887
+    },
+    "e_ann": 0.9311,
+    "e_slices": {
+     "CT_PEAKER": 0.0309,
+     "ST_GAS": 0.9002
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2393,
+    "name": "Gilbert",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 351.0,
+     "CT_PEAKER": 152.7
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.0603,
+    "c_slices": {
+     "CC_REGULAR": 0.0377,
+     "CT_PEAKER": 0.0226
+    },
+    "e_ann": 0.0603,
+    "e_slices": {
+     "CC_REGULAR": 0.0398,
+     "CT_PEAKER": 0.0205
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2406,
+    "name": "Linden Generating Station",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 1355.6,
+     "CT_PEAKER": 336.2
+    },
+    "basis": "unit_hourly",
+    "c_ann": 4.7439,
+    "c_slices": {
+     "CC_REGULAR": 4.6896,
+     "CT_PEAKER": 0.0543
+    },
+    "e_ann": 4.7492,
+    "e_slices": {
+     "CC_REGULAR": 4.7034,
+     "CT_PEAKER": 0.0458
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 10030,
+    "name": "Energy Center Dover",
+    "old_group": "CT_CHP",
+    "classes": {
+     "CC_CHP": 44.2,
+     "CT_CHP": 28.6
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.1136,
+    "c_slices": {
+     "CC_CHP": 0.079,
+     "CT_CHP": 0.0346
+    },
+    "e_ann": 0.1145,
+    "e_slices": {
+     "CC_CHP": 0.0795,
+     "CT_CHP": 0.035
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 50279,
+    "name": "Archbald Power Station",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 43.7,
+     "ST_GAS": 20.0
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['ST_GAS']]",
+    "c_ann": 0.0816,
+    "c_slices": {
+     "CT_PEAKER": 0.08,
+     "ST_GAS": 0.0016
+    },
+    "e_ann": 0.1005,
+    "e_slices": {
+     "CT_PEAKER": 0.0947,
+     "ST_GAS": 0.0058
+    },
+    "ct_only": true
+   },
+   {
+    "plant": 50397,
+    "name": "Pixelle Specialty Solutions LLC - Spring",
+    "old_group": "ST_CHP",
+    "classes": {
+     "COAL_BIT": 10.8,
+     "ST_CHP": 1.8
+    },
+    "basis": "e923_monthly",
+    "c_ann": 0.0,
+    "c_slices": {
+     "COAL_BIT": 0.0,
+     "ST_CHP": 0.0
+    },
+    "e_ann": 0.395,
+    "e_slices": {
+     "COAL_BIT": 0.3035,
+     "ST_CHP": 0.0915
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 50481,
+    "name": "Tennessee Eastman Operations",
+    "old_group": "ST_CHP",
+    "classes": {
+     "COAL_BIT": 33.1,
+     "ST_CHP": 8.4
+    },
+    "basis": "e923_monthly",
+    "c_ann": 0.0,
+    "c_slices": {
+     "COAL_BIT": 0.0,
+     "ST_CHP": 0.0
+    },
+    "e_ann": 1.1444,
+    "e_slices": {
+     "COAL_BIT": 0.4927,
+     "ST_CHP": 0.6517
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 52019,
+    "name": "Doswell Energy Center",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 752.0,
+     "CT_PEAKER": 496.7
+    },
+    "basis": "unit_hourly",
+    "c_ann": 5.6551,
+    "c_slices": {
+     "CC_REGULAR": 4.6302,
+     "CT_PEAKER": 1.0249
+    },
+    "e_ann": 5.6551,
+    "e_slices": {
+     "CC_REGULAR": 4.6662,
+     "CT_PEAKER": 0.9889
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 54785,
+    "name": "Grays Ferry Cogeneration",
+    "old_group": "ST_CHP",
+    "classes": {
+     "CT_CHP": 74.1,
+     "ST_CHP": 36.8
+    },
+    "basis": "e923_monthly [unit 2 family CC matches no scored class ['CT_CHP', 'ST_CHP']]",
+    "c_ann": 0.7973,
+    "c_slices": {
+     "CT_CHP": 0.5841,
+     "ST_CHP": 0.2132
+    },
+    "e_ann": 1.1812,
+    "e_slices": {
+     "CT_CHP": 0.8671,
+     "ST_CHP": 0.3141
+    },
+    "ct_only": true
+   }
+  ],
+  "multiclass_not_benched": [
+   2914,
+   2935,
+   52148,
+   58194
+  ]
+ },
+ {
+  "iso": "PJM",
+  "year": 2025,
+  "n_benched_plants": 205,
+  "n_multiclass": 9,
+  "benched_cems_twh": 510.352,
+  "multiclass_cems_twh": 12.714,
+  "share_pct": 2.5,
+  "delta_twh_cems": {
+   "CC_CHP": 0.0798,
+   "CC_REGULAR": 8.885,
+   "CT_CHP": 0.4241,
+   "CT_PEAKER": -8.7583,
+   "ST_CHP": -0.5038,
+   "ST_GAS": -0.1267
+  },
+  "delta_twh_e923": {
+   "CC_CHP": 0.0804,
+   "CC_REGULAR": 8.8193,
+   "COAL_BIT": 0.6938,
+   "CT_CHP": -0.0804,
+   "CT_PEAKER": -8.8274,
+   "ST_CHP": -1.5602,
+   "ST_GAS": -0.0837
+  },
+  "plants": [
+   {
+    "plant": 1571,
+    "name": "Chalk Point Power",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 390.0,
+     "ST_GAS": 1180.3
+    },
+    "basis": "unit_hourly",
+    "c_ann": 1.6846,
+    "c_slices": {
+     "CT_PEAKER": 0.0577,
+     "ST_GAS": 1.6269
+    },
+    "e_ann": 1.7178,
+    "e_slices": {
+     "CT_PEAKER": 0.0182,
+     "ST_GAS": 1.6996
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2393,
+    "name": "Gilbert",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 351.0,
+     "CT_PEAKER": 152.7
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.0918,
+    "c_slices": {
+     "CC_REGULAR": 0.0611,
+     "CT_PEAKER": 0.0307
+    },
+    "e_ann": 0.0918,
+    "e_slices": {
+     "CC_REGULAR": 0.0,
+     "CT_PEAKER": 0.0
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 2406,
+    "name": "Linden Generating Station",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 1355.6,
+     "CT_PEAKER": 336.2
+    },
+    "basis": "unit_hourly",
+    "c_ann": 4.4823,
+    "c_slices": {
+     "CC_REGULAR": 4.3698,
+     "CT_PEAKER": 0.1125
+    },
+    "e_ann": 4.4422,
+    "e_slices": {
+     "CC_REGULAR": 4.3416,
+     "CT_PEAKER": 0.1006
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 10030,
+    "name": "Energy Center Dover",
+    "old_group": "CT_CHP",
+    "classes": {
+     "CC_CHP": 44.2,
+     "CT_CHP": 28.6
+    },
+    "basis": "unit_hourly",
+    "c_ann": 0.099,
+    "c_slices": {
+     "CC_CHP": 0.0798,
+     "CT_CHP": 0.0192
+    },
+    "e_ann": 0.0984,
+    "e_slices": {
+     "CC_CHP": 0.0804,
+     "CT_CHP": 0.018
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 50279,
+    "name": "Archbald Power Station",
+    "old_group": "ST_GAS",
+    "classes": {
+     "CT_PEAKER": 43.7,
+     "ST_GAS": 20.0
+    },
+    "basis": "e923_monthly [no CAMPD unit maps to class(es) ['ST_GAS']]",
+    "c_ann": 0.069,
+    "c_slices": {
+     "CT_PEAKER": 0.069,
+     "ST_GAS": 0.0
+    },
+    "e_ann": 0.0655,
+    "e_slices": {
+     "CT_PEAKER": 0.0655,
+     "ST_GAS": 0.0
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 50397,
+    "name": "Pixelle Specialty Solutions LLC - Spring",
+    "old_group": "ST_CHP",
+    "classes": {
+     "COAL_BIT": 10.8,
+     "ST_CHP": 1.8
+    },
+    "basis": "e923_monthly",
+    "c_ann": 0.0,
+    "c_slices": {
+     "COAL_BIT": 0.0,
+     "ST_CHP": 0.0
+    },
+    "e_ann": 0.3958,
+    "e_slices": {
+     "COAL_BIT": 0.2895,
+     "ST_CHP": 0.1063
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 50481,
+    "name": "Tennessee Eastman Operations",
+    "old_group": "ST_CHP",
+    "classes": {
+     "COAL_BIT": 33.1,
+     "ST_CHP": 8.4
+    },
+    "basis": "e923_monthly",
+    "c_ann": 0.0,
+    "c_slices": {
+     "COAL_BIT": 0.0,
+     "ST_CHP": 0.0
+    },
+    "e_ann": 1.0718,
+    "e_slices": {
+     "COAL_BIT": 0.4043,
+     "ST_CHP": 0.6675
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 52019,
+    "name": "Doswell Energy Center",
+    "old_group": "CT_PEAKER",
+    "classes": {
+     "CC_REGULAR": 752.0,
+     "CT_PEAKER": 496.7
+    },
+    "basis": "unit_hourly",
+    "c_ann": 5.5333,
+    "c_slices": {
+     "CC_REGULAR": 4.4542,
+     "CT_PEAKER": 1.0791
+    },
+    "e_ann": 5.501,
+    "e_slices": {
+     "CC_REGULAR": 4.4777,
+     "CT_PEAKER": 1.0233
+    },
+    "ct_only": false
+   },
+   {
+    "plant": 54785,
+    "name": "Grays Ferry Cogeneration",
+    "old_group": "ST_CHP",
+    "classes": {
+     "CT_CHP": 74.1,
+     "ST_CHP": 36.8
+    },
+    "basis": "capacity [unit 2 family CC matches no scored class ['CT_CHP', 'ST_CHP']]",
+    "c_ann": 0.754,
+    "c_slices": {
+     "CT_CHP": 0.5038,
+     "ST_CHP": 0.2502
+    },
+    "e_ann": 0.8664,
+    "e_slices": {
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.0
+    },
+    "ct_only": false
+   }
+  ],
+  "multiclass_not_benched": [
+   2914,
+   2935,
+   52148,
+   58194
+  ]
+ }
+]
