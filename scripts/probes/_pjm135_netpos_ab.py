@@ -136,11 +136,26 @@ def score(year: int) -> dict:
                 <= b["net_import_twh"]
                 <= a["net_import_twh"] + 1e-6
             ),
+            # None (not False) while a bundle is still open: system_<year>.parquet
+            # is written at close, so a missing file is "not yet measurable",
+            # never a KILL.
             "K2_no_shedding": (
-                b["slack_mwh"] == 0.0
-                and b["dump_mwh"] == 0.0
-                and a["slack_mwh"] == 0.0
-                and a["dump_mwh"] == 0.0
+                None
+                if any(
+                    np.isnan(v)
+                    for v in (
+                        a["slack_mwh"],
+                        a["dump_mwh"],
+                        b["slack_mwh"],
+                        b["dump_mwh"],
+                    )
+                )
+                else (
+                    b["slack_mwh"] == 0.0
+                    and b["dump_mwh"] == 0.0
+                    and a["slack_mwh"] == 0.0
+                    and a["dump_mwh"] == 0.0
+                )
             ),
             "K3_export_never_exceeds_measured": (
                 b["net_import_twh"] >= out["measured_net_import_twh"] - 1e-6
@@ -186,7 +201,7 @@ def main() -> None:
         print(
             f"  K2 slack / dump (MWh)     A {a['slack_mwh']:.0f} / {a['dump_mwh']:.0f}"
             f"   B {b['slack_mwh']:.0f} / {b['dump_mwh']:.0f}"
-            f"   {'PASS' if g['K2_no_shedding'] else 'KILL'}"
+            f"   {'PENDING' if g['K2_no_shedding'] is None else ('PASS' if g['K2_no_shedding'] else 'KILL')}"
         )
         k5 = r["K5_identity"]
         if k5.get("available"):
