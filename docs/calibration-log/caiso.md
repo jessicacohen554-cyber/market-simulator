@@ -3040,3 +3040,54 @@ and state why a commitment mechanism could reach a defect on already-committed
 plants.
 
 Next number: caiso-136.
+
+---
+
+## caiso-136 (2026-07-28) — the measured unit-availability window family (`unit_outage_short_windows` + `unit_partial_outage_windows`) is **STRUCTURALLY UNDERIVABLE for CAISO**, adjudicated **INERT**: the detector is COAL-ONLY and CAISO's entire coal fleet is **2 units / 50.0 MW** (0.16 % of capacity, 0.04–0.07 % of keeper energy) at **one facility absent from CAMPD entirely** — the CA extract carries 108–109 facilities with **ZERO coal-fuelled rows**. Both derives return **0 windows**. STOPPED at the lane task's own Step-1 branch point — no A/B, no solve, keeper UNCHANGED
+
+Full record: `results/calibration/FINDING-caiso136-unit-availability-windows-2026-07-28.md`.
+
+**Step 1, run as specified.** `derive_campd_unit_outages.py --iso CAISO
+--short-windows` and `--partial-windows`, years 2023 2024 2025 → **0 windows, 0
+units, 0 MW-days** in both. Artifacts committed with headers and no rows: the
+negative result is the record and stops a future session re-running the intake.
+
+**Why it is zero — structural, not a guard threshold.** (a) CAISO's coal fleet
+is `10684_TG8` + `10684_TG9`, 25 MW each, zone ZP26 — one facility (Argus Cogen,
+Trona CA). (b) Facility 10684 is **absent from the CA unit-level extract in all
+three years and from the facility-level extract too**; the CA fuel mix is
+104–105 Pipeline Natural Gas, 2 Natural Gas, 1 Other Gas, 1 Wood, and **zero**
+coal-fuelled rows in any year. There is no series to filter, so no guard setting
+could change the outcome. (c) Even a perfect window could not matter — CAISO COAL
+energy in the keeper is 0.0935 / 0.0517 / 0.0830 TWh, i.e. **0.067 / 0.038 /
+0.065 %** of 140.1 / 136.8 / 127.4 TWh.
+
+**No guard was touched** (rule 23 `[R-FROZEN-DERIVE]`): CF ≥ 0.55 baseload guard,
+plateau constants and coal-only class scope unchanged, and the detector was
+**not** extended to gas CC — the layup confound (economic single-train CC
+operation is indistinguishable from a partial outage in CF) needs its own
+charter, not a workaround for an empty coal extract.
+
+**The adjudication is CAISO's own, not a port of ERCOT-126** (rule 25
+`[R-ISO-SCOPE]`). The two refusals differ in kind: ERCOT's units and CEMS series
+exist and the windows are derivable but *unhelpful*; CAISO's are **underivable**.
+That matters for re-opening — ERCOT's could move on a better gate, CAISO's only
+if CAISO gains a CEMS-reporting coal unit.
+
+Rule 28 duty (b) discharged in-session: `unit_outage_short_windows` CAISO cell
+**U → I** (cells `IUKKIR` → `IIKKIR`; the concurrent NEISO `R` (neiso-69) and NYISO `I` (nyiso-93) preserved untouched, rule 25) with this finding cited. Steps 2–3 not
+reached by the task's own branch point, so **no dashboard registration is due**
+(rule 15 applies to completed runs) and no DOF entry (nothing armed). Rule 22:
+2023–2025 only. No `src/market_sim/` change.
+
+### DO-NOT-REDO (new, binding)
+
+Re-running the `--short-windows` / `--partial-windows` intake for CAISO (0
+windows; the committed empty artifacts are the record); loosening the CF ≥ 0.55
+guard, plateau constants or coal-only scope to obtain CAISO windows (rule 23,
+and futile — the denominator series does not exist); extending the detector to
+CAISO gas CC as a workaround (own charter, layup confound unresolved); and
+citing ERCOT-126 as the reason CAISO's cell is `I` (independent refusals,
+different in kind).
+
+Next number: caiso-137.
