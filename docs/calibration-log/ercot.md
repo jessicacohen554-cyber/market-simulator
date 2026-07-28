@@ -2297,3 +2297,100 @@ and orphaning every on-disk cache). One-line registration, matching the
 
 Full forensics: `docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md`
 (§§0–8 Phase 1, §§P1–P5 the Phase 2 addendum).
+
+## 2026-07-28 — ERCOT-129 KEEPER: the availability-CONDITIONAL coal minimum-online-configuration floor passes all 8 pre-registered gates, cuts physically-impossible plant-hours 86/75/87 %, and costs ZERO new degrees of freedom — PROMOTED (ercot129-conditional)
+
+**Lane** ercot129-conditional · **KEEPER CHANGED** `2026-07-26-ercot115-coal-marginal-hr`
+→ **`2026-07-28-ercot129-conditional-coal-min`** (bundle
+`results/calibration/ercot129_conditional`) on the owner's sign-off this session
+("if structural integrity improves but gates regress that may still be a
+keeper") and the standing rule-1 `[R-STRUCT]` "structurally more accurate = new
+keeper" standard. Pre-commit
+`docs/PRECOMMIT-ercot129-coal-minconfig-conditional-2026-07-28.md`, pushed BEFORE
+the first solve. **Control** `2026-07-28-ercot128-unit-grain-coal`.
+
+**The single delta.** `ercot_coal_min_config_floor` armed. A coal plant may not
+be pushed below the registered minimum load of its **smallest online
+configuration**, `min_u MinLoad_u` from EIA-860 (10 plants / 13,611 MW / 2,164 MW
+total, cap-weighted 0.1590). This **removes a structural falsehood rather than
+closing a residual**: the LP carries one variable per plant with no lower bound
+and was driving coal to levels no combination of that plant's units can deliver
+(outgoing keeper per-plant p05 0.013–0.093 of declared against a real fleet whose
+floor is 0.106–0.261).
+
+**Availability-CONDITIONAL, and that is the whole difference from the control.**
+A minimum online configuration does not shrink when units go out — a 4-unit plant
+with 2 units on outage still cannot run below ONE unit's 175 MW; it makes 175 MW
+or it is off. The condition is evaluated on the **plant's** available capacity
+and the level re-allocated across its coal tranches in fill order on their
+AVAILABLE capacity each hour. **No integrality, no MIP**: `availability` is
+exogenous data, not a decision variable, and the plant's exact unit-commitment
+feasible set is the connected interval `[min_u MinLoad_u, Cap]` for **9 of 10
+plants and 97.76 %** of ERCOT coal capacity, so the plant-grain bound carries
+**zero relaxation error** there (Major Oak, 305 MW, is a strict relaxation,
+recorded in the artifact's `connected` column).
+
+**G7, the structural win condition, pre-registered:** physically-impossible
+online plant-hours fall **14,582 → 2,074 / 13,020 → 3,262 / 9,558 → 1,240**
+against the outgoing keeper — **85.8 / 74.9 / 87.0 %** — and **18.7 → 2.6 /
+17.0 → 4.2 / 13.1 → 1.7 %** as a share of online hours. Per-plant p05 moves
+toward the real fleet in **22 of 29** plant-years; the availability-SCALED
+control managed 10 of 29.
+
+**8/8 pre-committed gates PASS.** G0 arming+bite (3/3 `ARMED` lines, 10 plants /
+2,164 MW / 78 tranches, `run_config` carries the flag, D-2 `coal_min_config`
+**3.198 / 2.872 / 2.546 TWh**). G1 **19/21 = the keeper's 19/21** (do-no-harm —
+FIXES 2023 `<$15` 0.488 → 0.507 vs 0.552, breaks 2024 `≥$50` 0.765 → 0.771 vs
+0.720). G2 C1 **+0.371 / +0.797 / −1.167** against −1.078 / −0.294 / −1.926, all
+inside ±2.0 and **better on mean absolute (0.78 vs 1.10)**. G3 no coal class-year
+flips pass→fail (2023 COAL_LIGNITE stays the outgoing keeper's own FAIL,
+0.745/0.294 → 0.710/0.288). G4 **C1 all 16/16 · free 12/12**, coal forced share
+**5.26 / 4.92 / 4.17 %** against the 30 % cap. G5 LOYO (one of three years shows
+a G1 regression, not two). G6 DOF. G7 above. D-4 `coal_min_config` off-window
+share **0.0 %** all years (window h0-23, all hours BY DRIVER).
+
+**ZERO DOF cost (rule 21).** Ledger 10 → 11 entries with the **residual count
+UNCHANGED at 8**; the new entry is `measured-physical`, `lineage_solves 0`, 0
+free scalars, and `offer_curve_by_group` is untouched at 111. The derive reads
+one registration file and takes a minimum, so it has **no residual input by
+construction** (rule 23). Corroborated on an independent filing: the ERCOT COP
+LSL agrees EXACTLY on the three plants whose resources are whole units (Coleto
+Creek 175, Oak Grove 348, J K Spruce 130), and the fleet cap-weighted per-unit
+`MinLoad/Cap` of **0.3325** independently corroborates ERCOT-127 §2's DAM-derived
+**0.3636**.
+
+**RUBRIC PROFILE IDENTICAL to the outgoing keeper** — C1/C2/C4/C8 PASS,
+C3a/C3b/C3c/C7 FAIL, C6 UNATTESTED. **DETERMINATION REMAINS NOT-YET — not
+calibrated.** C6 stays UNATTESTED **deliberately and like-for-like**: the gate
+requires asserting `levers_trace_to_measured_input`, still FALSE while 8
+residual-identified DOF entries remain, exactly as for ercot-115.
+
+**PRICE COST ON THE RECORD** (declared, NOT counted for the mechanism, rule 1):
+C3a degrades marginally in every year — 2023 **−26.9 → −27.2 %**, 2024 −13.1 →
+−13.4 %, 2025 −0.8 → −1.1 % — about 0.3 pp, FAIL/PASS profile unchanged.
+
+**TWO p05 OVERSHOOTS, open not hidden.** Oak Grove 2023 (actual 0.467) is
+**pre-existing and REDUCED**, 0.767 → 0.690. San Miguel 2025 is **NEW**, 0.493 →
+0.639 against actual 0.585 — a +0.054 overshoot on a 391 MW single-unit plant
+(2.9 % of ERCOT coal capacity) whose registered minimum load is genuinely 0.639
+of capacity; reality occasionally runs it below its own filed LSL, which is a
+question about that plant's registration rather than evidence the mechanism is
+wrong. **ALSO STILL OPEN:** 7.4 / 11.6 / 0.0 % of the original impossible
+plant-hours sit at plants that cannot reach `min_config` at all in that hour;
+those need an **upper** bound (cap the plant off), a separate leg NOT built here.
+D-4 `reliability_floor × CT_PEAKER` still FAILs off-window: pre-existing,
+unchanged.
+
+**THE CONTROL, and why it matters.** `2026-07-28-ercot128-unit-grain-coal` is the
+availability-**SCALED** build of the same flag — same artifact, same mechanism
+id, same cache key — which **passed every absolute gate and was REJECTED** because
+it removed none of the impossible loadings (14,582 → 14,886). Registered as a
+rejected probe. The two runs are a true A/B on one expression, and the pair is
+the evidence that the gates alone would have promoted the wrong build.
+
+Rule 26 `[R-MECH-MATRIX]`: `coal_min_load_floor` ERCOT cell **R → K**, matrix
+header re-stamped.
+
+Full forensics: `docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md`
+(Phase 1 §§0–8, Phase 2 §§P1–P5) +
+`docs/PRECOMMIT-ercot129-coal-minconfig-conditional-2026-07-28.md`.
