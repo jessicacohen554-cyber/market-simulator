@@ -345,7 +345,15 @@ class DispatchModel:
             np.add.at(pool_cap_full, col_p, cap_p)
             posture_ucap = pool_cap_full[ppools]
 
-        A, row_lower, row_upper, lcr_row_offset, n_lcr_areas = build_constraints(
+        (
+            A,
+            row_lower,
+            row_upper,
+            lcr_row_offset,
+            n_lcr_areas,
+            iface_row_offset,
+            n_iface_groups,
+        ) = build_constraints(
             layout,
             fleet,
             demand,
@@ -584,6 +592,61 @@ class DispatchModel:
             if local_capacity_specs and n_lcr_areas > 0
             else []
         )
+        # Aggregate-interface (flow-group) reporting state — the network
+        # sidecar's inputs. Membership/signs identify each group's links; the
+        # per-hour row bounds are sliced out of the assembled bound vectors
+        # ONCE here, before they are handed to HiGHS, so the post-solve
+        # extraction never has to re-derive a cap. Pure bookkeeping: nothing
+        # below is read by the matrix build or by HiGHS.
+        self._iface_row_offset = iface_row_offset
+        self._n_iface_groups = n_iface_groups
+        self._iface_link_idx: list[np.ndarray] = []
+        self._iface_signs: list[np.ndarray] = []
+        self._iface_cap_up: np.ndarray | None = None
+        self._iface_cap_dn: np.ndarray | None = None
+        if interface_groups and n_iface_groups > 0 and iface_row_offset >= 0:
+            for grp in interface_groups:
+                idx = np.asarray(grp[0], dtype=int)
+                self._iface_link_idx.append(idx)
+                sgn = grp[4] if len(grp) > 4 else None
+                self._iface_signs.append(
+                    np.ones(idx.size)
+                    if sgn is None
+                    else np.asarray(sgn, dtype=float)[: idx.size]
+                )
+            # Rows are hour-major, group-minor (the _build_interface_rows kron
+            # order), so a (T, n_groups) reshape transposes to (n_groups, T).
+            n_i = n_iface_groups * self.T
+            self._iface_cap_up = (
+                row_upper[iface_row_offset : iface_row_offset + n_i]
+                .reshape(self.T, n_iface_groups)
+                .T.copy()
+            )
+            self._iface_cap_dn = (
+                row_lower[iface_row_offset : iface_row_offset + n_i]
+                .reshape(self.T, n_iface_groups)
+                .T.copy()
+            )
+        # The flow columns' own bounds (the per-link TTC the LP saw, hourly
+        # where an overlay made it hourly) — the third candidate limit in the
+        # network sidecar's attribution, alongside each interface group.
+        self._flow_cap_up: np.ndarray | None = None
+        self._flow_cap_dn: np.ndarray | None = None
+        if n_links:
+            self._flow_cap_up = (
+                col_upper.reshape(T, layout.vars_per_hour)[
+                    :, layout._flow_off : layout._slack_off
+                ]
+                .T.copy()
+                .astype(np.float32)
+            )
+            self._flow_cap_dn = (
+                col_lower.reshape(T, layout.vars_per_hour)[
+                    :, layout._flow_off : layout._slack_off
+                ]
+                .T.copy()
+                .astype(np.float32)
+            )
         # Emissions mass-cap rows: k inequality rows appended after import-node
         # rows and before RPS (plan §4). Their duals (negated) are the endogenous
         # allowance prices, recovered end-anchored in solve().
@@ -949,6 +1012,35 @@ class DispatchModel:
             lcr_dual = row_dual[off : off + n_a * T].reshape(T, n_a).T
             lcr_gen_idx_out = self._lcr_gen_idx
 
+        # Network duals (the ``network_<year>.parquet`` sidecar's inputs): the
+        # aggregate-interface row duals and the flow columns' reduced costs.
+        # Together with the zonal prices already extracted above they close the
+        # LP's own flow-column stationarity identity, which is what makes a
+        # binding transmission limit ATTRIBUTABLE without a replay:
+        #
+        #     lambda_to - lambda_from = -z_link - sum_g s_(g,link) * y_g
+        #
+        # (``z`` the flow column's reduced cost, ``y_g`` the group row's dual,
+        # ``s`` the group's signed membership). Each term on the right is >= 0
+        # in the import direction and is exactly the rent charged by ONE limit:
+        # the link's own TTC bound, or each interface group it belongs to.
+        # Signs are HiGHS-raw and deliberately NOT normalised here (a two-sided
+        # group row binds up or down and the reader needs to know which) --
+        # ``run_calibration_full._network_frame`` records them verbatim.
+        # Read-only post-solve extraction; nothing here re-enters the model.
+        interface_dual = None
+        flow_dual = None
+        if self._n_iface_groups > 0 and self._iface_row_offset >= 0:
+            n_g = self._n_iface_groups
+            off_i = self._iface_row_offset
+            interface_dual = row_dual[off_i : off_i + n_g * T].reshape(T, n_g).T
+        if n_links:
+            col_dual = np.asarray(solution.col_dual, dtype=float)
+            flow_dual = col_dual.reshape(T, layout.vars_per_hour)[
+                :, layout._flow_off : layout._slack_off
+            ].T.copy()
+            del col_dual
+
         return DispatchResult(
             dispatch=dispatch,
             wind_dispatched=wind_dispatched,
@@ -978,6 +1070,14 @@ class DispatchModel:
             co2_cap_price=co2_cap_price,
             lcr_dual=lcr_dual,
             lcr_gen_idx=lcr_gen_idx_out,
+            interface_dual=interface_dual,
+            interface_link_idx=(self._iface_link_idx or None),
+            interface_signs=(self._iface_signs or None),
+            interface_cap_up=self._iface_cap_up,
+            interface_cap_dn=self._iface_cap_dn,
+            flow_dual=flow_dual,
+            flow_cap_up=self._flow_cap_up,
+            flow_cap_dn=self._flow_cap_dn,
         )
 
     def export_cross_year_basis(self) -> "CrossYearBasis | None":
