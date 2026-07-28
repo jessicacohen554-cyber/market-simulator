@@ -66,7 +66,58 @@ def _chp_by_plant(eia860_dir, year: int | None = None) -> "pd.Series":
 # ---------------------------------------------------------------------------
 
 
-def _correct_chp_steam_credit_hr(generators: list, iso: str) -> None:
+def apply_measured_chp_heat_rates(generators: list, iso: str) -> frozenset[int]:
+    """Swap in the MEASURED power-only CHP heat rate where it covers (in place).
+
+    Gated by ``ScenarioConfig.measured_chp_heat_rates``; ISO-generic, default
+    off, byte-identical off. The rate is the plant's own
+    ``(PLHTIAN + CHPCHTI) / PLNGENAN`` from the eGRID vintage the model's
+    incumbent ``heat_rate`` already comes from — eGRID's steam-credited
+    ``PLHTRT`` with eGRID's own published useful-thermal heat-input allocation
+    added back, on the same net-generation denominator. See
+    :func:`market_sim.data.fleet.campd_bins.measured_chp_heat_rates` and
+    ``scripts/data/derive_chp_power_only_heat_rates.py``.
+
+    Runs BEFORE :func:`_correct_chp_steam_credit_hr` and returns the ``id()``
+    set of the generators it repriced, which that function then skips: a plant
+    on its own measured rate must never also take the 1.8x hand topping factor
+    (rule 19 `[R-ONE-MECH]` — one mechanism per phenomenon; caiso-128 §4
+    measured that factor over-correcting CAISO CT_CHP by +40 %). Plants the
+    measurement does not reach keep the existing eGRID -> hand-factor chain
+    untouched.
+
+    Args:
+        generators: The ISO's loaded fleet, mutated in place.
+        iso: ISO identifier.
+
+    Returns:
+        ``id()`` of every generator whose heat rate was replaced. Empty when
+        the ISO has no committed artifact.
+    """
+    from market_sim.data.fleet import measured_chp_heat_rates
+
+    rates = measured_chp_heat_rates(iso)
+    if not rates:
+        return frozenset()
+    touched: set[int] = set()
+    for gen in generators:
+        rate = rates.get((int(gen.plant_code or 0), gen.plant_group or ""))
+        if rate is not None and rate > 0.0:
+            gen.heat_rate = rate
+            touched.add(id(gen))
+    logger.info(
+        "%s: measured power-only CHP heat rates applied to %d generator(s) "
+        "across %d (plant, class) pair(s)",
+        iso,
+        len(touched),
+        len(rates),
+    )
+    return frozenset(touched)
+
+
+def _correct_chp_steam_credit_hr(
+    generators: list, iso: str, skip_ids: frozenset[int] = frozenset()
+) -> None:
     """Correct steam-credited heat rates for an ISO's CHP gas turbines (in place).
 
     Applied to the ISOs in
@@ -111,7 +162,16 @@ def _correct_chp_steam_credit_hr(generators: list, iso: str) -> None:
     once. The designed successor is the plant's own CEMS power-only rate
     (caiso-128 §6), ISO-generic and default-off. Filed, NOT built — it is a
     separate delta from the sector correction (rule 19 [R-ONE-MECH]).
-    Full measurement: results/calibration/FINDING-miso97-chp-sector-btm-2026-07.md **
+    Full measurement: results/calibration/FINDING-miso97-chp-sector-btm-2026-07.md
+    ** MISO/ISO-generic 2026-07-28 (miso-99): the designed successor IS BUILT and
+    armable — :func:`apply_measured_chp_heat_rates` /
+    ``ScenarioConfig.measured_chp_heat_rates``, default off. Its measurement is
+    NOT the CEMS gross route caiso-128 §6(a) specified (that route needs a
+    CHP-specific gross->net ratio ``compute_parasitic_factors`` cannot supply —
+    FINDING-miso98 §6.1); it is eGRID's OWN published CHP heat-input allocation
+    ``CHPCHTI`` added back to ``PLHTIAN`` over the same ``PLNGENAN``, so no
+    gross basis is involved at all. Where that measurement covers a plant it
+    wins and this hand factor is skipped. **
     NEISO 2026-07-08: audited but NOT added for the SAME reason — its reported HRs
     are equally sub-physical (CC_CHP 55% of cap < 6.0, CT_CHP 79% < 8.0) but its
     CHP does NOT over-deliver: on 2023-2025 the model runs CC_CHP -37..-42% and
@@ -131,6 +191,13 @@ def _correct_chp_steam_credit_hr(generators: list, iso: str) -> None:
     if iso.upper() not in CHP_STEAM_CREDIT_HR_CORRECTION_ISOS:
         return
     for gen in generators:
+        if id(gen) in skip_ids:
+            # Already on its own MEASURED power-only rate
+            # (:func:`apply_measured_chp_heat_rates`). Stacking the hand factor
+            # on top would be two mechanisms for one phenomenon (rule 19
+            # [R-ONE-MECH]) and would double-correct a plant that is already
+            # right.
+            continue
         if gen.plant_group == "CT_CHP":
             if gen.heat_rate < CAISO_CHP_CT_STEAM_CREDIT_HR_THRESHOLD:
                 gen.heat_rate *= CAISO_EOR_TOPPING_FACTOR
