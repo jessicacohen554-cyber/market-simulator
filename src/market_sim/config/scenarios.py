@@ -45,6 +45,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "end_year",
     "hindcast",
     "hindcast_fuel_variant",
+    # pjm-134 measured AP-South interface cut (default off): dropped from the
+    # hash at its default so every pre-existing cached run keeps its key -- the
+    # field's own docstring promises "byte-identical off" and without this
+    # registration it was not (default key 603c249 -> 2904ac9, orphaning every
+    # on-disk cache). Same one-line remedy as coal_committed_takeorpay_sunk_fixed
+    # (9df6be7) and measured_ct_heat_rates (c45fed4). An armed run cuts a real
+    # interface and so gets a distinct key.
+    "pjm_apsouth_interface_cut",
     # Measured CT loaded heat rates (nyiso-89, default off): dropped from the
     # hash at its default so every pre-existing cached run keeps its key; an
     # armed run carries a different fleet cost and so gets a distinct key.
