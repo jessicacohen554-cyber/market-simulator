@@ -2827,3 +2827,117 @@ committed instrument re-runs it in seconds); and dropping the
 `DELTA_BINARY_PACKED` encoding on the sidecars' `hour` column.
 
 Next number: caiso-134.
+
+## caiso-134 (2026-07-28) — the excess midday import is **ONE tranche** (`DSW_surplus_clean`), and **NEITHER side's PRICE is misplaced**: the import rungs sit on their own measured hubs **to the cent** ($0.00 / $4.00 / $5.00 wheel, all three years) and the CA replacement band's implied delivered gas tracks the measured SoCal citygate to −$1.70 / +$0.29 / +$0.13 $/MMBtu. The defect is **QUANTITY/STATE on the CA side**: on the SAME 81–82 physical plants the model's gas fleet runs at **0.58–0.63×** reality's own belly utilisation, and **74–86 % of the CA supply that would replace the excess import is OFFLINE**. **Lane = the caiso-118b RA must-offer committed-gas state.** Tightening the corridor is priced at **+$14.40 to +$17.92/MWh the WRONG way**
+
+**Derive-first, NO SOLVE, nothing armed, nothing registered.** Keeper
+`2026-07-27-caiso-130-nameplate-aware` UNCHANGED (NOT-YET, fail {C3a-2025, C3c}).
+Full evidence:
+`results/calibration/FINDING-caiso134-import-demand-source-2026-07-28.md`.
+Instrument: `scripts/probes/_caiso134_import_demand_source.py` (§A–§E), run
+entirely off the keeper's committed `hourly/` sidecars (the caiso-133 dividend)
+plus `run_year(fleet_only=True)` — no LP built, no solver called.
+
+Chartered by `FINDING-caiso133` §6's hand-back: the corridor cap binds because
+the model *wants* ~2 GW more import than reality took, so the pressure is
+upstream. Defect hours are the standing caiso-120/121 set (Sep–Dec, hod 10–15,
+measured RT ≤ $20; n = 192 / 239 / 229).
+
+### §A — the excess is one tranche, and it is not the one that is capped
+
+`DSW_surplus_clean` carries **2,665 / 1,995 / 2,638 MW** against a corridor
+over-import of **+2,540 / +2,016 / +2,059 MW**. Every other economic rung is
+inert: `DSW_CT` and `WECC_scarcity` at **0.000** utilisation in all three years,
+`PNW_midC` 0.007–0.018, `DSW_CCGT` 0.002–0.098. The two firm rungs
+(`DSW_solar_PV`, `PNW_hydro_base`) are at util **1.000** — self-scheduled
+must-flow, a quantity no offer change can move. Crucially the marginal tranche
+is **INTERIOR at 55 / 63 / 69 %** of its own measured WEIM depth, so **its depth
+is not the binding object** (the corridor group is, caiso-133 §3/§4).
+
+*Side observation, filed not chartered:* **70 → 161 → 307 MW** of self-scheduled
+firm PNW hydro is **DUMPED** at the `WECC_PNW` node because the PNW corridor cap
+cannot carry it; `λ_WECC_PNW` collapses to a **median −$26.00** against a
+measured MALIN print of **+$26.23**. A real interaction between
+`caiso_firm_import_selfschedule` and `caiso_corridor_flow_limit`, growing yearly.
+
+### §B — who it displaces, and the priced counterfactual
+
+Per-hour CA replacement ladder (headroom below λ excluded — the LP already took
+what it could there): replacing the excess costs **+$17.92 / +$14.40 /
++$15.90 /MWh** at the margin, taking CA λ **23.42 → 41.34**, **17.49 → 31.89**,
+**26.31 → 42.21** against actuals of $9.36 / $8.75 / $9.06. So **tightening the
+corridor makes C3a strictly worse** — the mirror of caiso-133 §5's refusal,
+now priced, which closes **both** directions of the corridor lane with numbers.
+And the block is **20.5 / 26.4 / 13.9 % ONLINE**: 74–86 % of it is capacity the
+model would have to START.
+
+### §C/§D — both prices check out against their own anchors
+
+**Import:** every rung reproduces `inject_caiso_per_hub_intertie_prices`'s
+`hub + wheel + border × EF/EF_unspec` to the cent, all three years —
+`DSW_overnight_clean` / `DSW_daytime_clean` **+0.00** (raw hub),
+`DSW_surplus_clean` **+4.00** (its OATT wheel), `PNW_midC` **+5.00**. Neither
+"offered too low" nor "too deep" survives (and a deeper cheap rung moves λ the
+wrong way anyway).
+
+**CA:** the 2025 replacement band's offer $43.45 = fuel $30.04 + VOM $2.00 +
+`gas_offer_net_revenue_margin` $3.96 (9.1 %, at its registered $4.7964 anchor) +
+CA cap-and-trade $7.44. Implied delivered gas **$4.07 vs the measured SoCal
+citygate $3.94** (2024 +$0.29; 2023 **−$1.70**, i.e. the model *below* the
+print — the sign flips, so this is print cadence, not inflation).
+
+### §E — the CA quantity, on the honest CEMS basis
+
+The raw EIA-930 CISO `NG` cell is unusable as a midday anchor
+(`FINDING-caiso-c2c4-bench-basis-930ng`: a fabricated noon-peaked block from
+~2024-05; it prints 79.0 TWh of 2025 CAISO gas against the bench's honest 51.6).
+Against **matched-plant CAMPD hourly CEMS**, each side normalised by its own
+annual mean:
+
+| year | plants | model belly util | CEMS belly util | shape ratio | deficit | vs excess |
+|---|---|---|---|---|---|---|
+| 2023 | 82 | 0.442 | 0.767 | **0.575** | −1,574 MW | 62 % |
+| 2024 | 81 | 0.448 | 0.746 | **0.600** | −1,263 MW | 63 % |
+| 2025 | 81 | 0.527 | 0.834 | **0.632** | −1,081 MW | 53 % |
+
+The real fleet runs at 75–83 % of its own annual average in these hours; the
+model at 44–53 %. That one shape defect is **53–63 % of the corridor
+over-import**, level-free, with the compensating excess in the evening (Sep–Dec
+h19 util 1.83 model vs 1.45 CEMS). And the model has **no zero-cost margin**:
+solar curtailment is **0.41 / 0.69 / 0.01 %**, wind **0.00 %** — re-confirming
+`FINDING-caiso118`'s suspect-1 refutation on the current keeper.
+
+### The verdict
+
+By elimination on measured anchors, the only object left is **how much CA gas is
+COMMITTED in the belly** — `FINDING-caiso118b`'s RA must-offer paradigm. This
+session reproduces it on the **current** keeper, on the **honest CEMS basis**
+(caiso-118's "2–3.6×" is **1.6–1.7×** shape-normalised plant-for-plant), and
+localises it to the exact C3a-2025 defect hours. The two objects caiso-118b named
+are unchanged on this keeper four sessions later: `caiso_ra_min_load_frac` =
+**0.26** (physical ~0.40–0.57) and `caiso_ra_mustoffer_quantity_gate` = **False**
+(`CAISO_RA_MUSTOFFER_GAS_MW` wired as a CAP, never as the commitment DRIVER).
+**Nothing is proposed** — chartering a candidate is a separate owner act and must
+clear the ask memo §2 envelope, above all E1 (2025 ≤ +$0.00, −$0.31 of room).
+Directional prior only: more committed belly gas pushes belly λ *down* (E1's
+favourable direction) but also moves the evening, where §E shows the model
+already over-runs gas ~25 % — that is where the pre-check belongs.
+
+Rule 20: 2023–2025 only. Rule 26: no mechanism tested, so no matrix cell moves.
+Ask A2's D2/D3 were NOT reached (the optional second item).
+
+### DO-NOT-REDO (new, binding)
+
+Re-measuring which tranche carries the over-import (§A); proposing to re-derive /
+deepen / trim the `dsw_*_clean` depths for C3a-2025 (the marginal tranche is
+interior at 55–69 %, so depth is slack); repricing ANY CAISO import tranche
+against the residual (every rung matches its own hub to the cent — a proposal
+must first show the hub series or wheel wrong against its own source); proposing
+CA gas is offered too high as the C3a-2025 lever (fuel tracks citygate, sign
+flips across years); **tightening** the corridor envelope (priced at +$14–18/MWh
+the wrong way); using the raw EIA-930 CISO `NG` or `Demand` cell as a midday
+anchor for CAISO gas or load (both corrupt for this purpose — use matched-plant
+CAMPD CEMS and the caiso-80 supply-consistent series); and re-measuring belly
+solar/wind curtailment as a $0-rung candidate.
+
+Next number: caiso-135.
