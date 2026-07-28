@@ -7262,6 +7262,48 @@ class ScenarioConfig:
     # byte-identical off.
     pjm_external_net_position_cut: bool = False
 
+    # PJM marginal transmission-LOSS physics on the internal links
+    # (backcast/calibration overlay, pjm-136 M2 —
+    # results/calibration/FINDING-pjm136-zonal-dual-structure-2026-07-28.md).
+    # Each bidirectional PJM-internal link splits into a one-way pair
+    # (transmission.apply_pjm_zonal_loss_links) and each direction's
+    # receiving-end energy-balance coefficient becomes 1 - eps(month)
+    # (dispatch.build_constraints link_loss), where
+    #   eps_(x->y),m = max(0, (dev_y,m - dev_x,m) / (1 + dev_y,m))
+    # is derived from PJM's OWN published per-zone marginal-loss component —
+    # the dimensionless marginal delivery-factor deviation surface
+    # dev_z = Σ MLC_z / Σ MEC (frozen derive
+    # scripts/data/derive_pjm_loss_surface.py; per-year rows for backcast train
+    # years, pooled rows for forecast years). Transported energy then consumes
+    # MWh and the zonal duals separate by the measured delivery-factor ratio
+    # (LMP = MEC + MCC + MLC, PJM Manual 11 §2 / OATT Att. K) — prices stay LP
+    # duals (rule 4 [R-DUALS]), never a price adder, ZERO fitted scalars.
+    #
+    # DRIVER (pjm-136 M1a/M2): the model's PJM clears as a COPPER-PLATE — all
+    # eight zones sit at ONE dual in ~95-96 % of hours — because every internal
+    # link is lossless with flow_cost = 0, so two zones joined by an uncongested
+    # path clear identically BY CONSTRUCTION. PJM's own day-ahead prices
+    # separate DOM from AEP-DAYTON in 100 % of hours (mean |Δ| $3.0/$3.9/$6.6),
+    # and ~20-24 % of that mean is the LOSS component, which needs NO binding
+    # constraint to exist: measured ΔMLC(DOM − AEP) = +0.54/+1.05/+1.90 $/MWh
+    # with the loss part alone above $1 in 24/33/54 % of hours. The measured
+    # deviations are sign-stable — Dominion positive 12/12 months, SWMAAC
+    # 12/12, ComEd negative 12/12 — i.e. a persistent physical gradient, not a
+    # cancelling one. Rule 19 [R-ONE-MECH]: this is the LOSS component only;
+    # the congestion component stays owned by the measured interface limits and
+    # the joint EAST / AP-South / net-position cuts, and nothing here is
+    # applied to the external star node (PJM_external is a fictitious pricing
+    # node with no published deviation — inventing one would be a fitted
+    # scalar, rule 5).
+    #
+    # Rule 25 [R-ISO-SCOPE]: the surface is PJM's own published components,
+    # read from PJM_loss_surface.csv; no value crosses from MISO's analogue
+    # (miso_zonal_loss_surface), whose per-ISO verdict is its own. Same rule
+    # 13/14 admissibility as the measured interface limits — a network
+    # property that regenerates every year from the same feed and responds to
+    # changed grid conditions. Off by default; byte-identical off.
+    pjm_zonal_loss_surface: bool = False
+
     # ERCOT West Texas Export corridor VRE curtailment-share driver
     # (backcast/calibration overlay; docs/handoffs/ercot-vre-curtailment-topology-
     # scope-2026-07.md, WP-B). When True in backcast mode for ERCOT, the West and
@@ -9273,6 +9315,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_rdt_tcdc": 1,
     "miso_rpe_pricing": 1,
     "miso_zonal_loss_surface": 3,
+    "pjm_zonal_loss_surface": 3,
     "caiso_commitment_posture": 1,
     "caiso_reserve_online_scoped": 1,
     "ercot_load_resource_reserve": 1,
