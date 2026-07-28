@@ -272,7 +272,16 @@ The J/K-commitment and reserve-tier routes are closed IN FULL (nyiso-83/84);
 the tail is blocked by an SRMC roof (~$258 mainland). nyiso-92 dated the
 actual RT tail: it is **summer** (2025 Jun 23–25 alone = 18 of 42 h; the
 Jan-2024 storm produced zero >$300 hours), so the winter-fuel lane caps out
-at ~4–5 h/yr and the queue stays offer/DA-side:
+at ~4–5 h/yr and the queue stays offer/DA-side.
+
+**Queue head is now item 2 (CT start-frequency).** Both congestion/DA-side
+candidates are closed ex-ante — item 1 (DA virtual depth, nyiso-94) and item 1b
+(TSA transfer derate, nyiso-95). Both closed on *identification*, not on fit:
+NYISO publishes no submitted virtual curve, and no TSA derate magnitude. The
+lane therefore has **no remaining congestion lever** — nyiso-95 §2 further shows
+the model was not missing downstate tightness that a published derate would have
+supplied. C3c stays roof-blocked, and the surviving candidates are all
+offer/commitment-side: items 2, 3 and 6.
 
 1. ~~**DA virtual depth / DA demand formation** (`pjm_da_virtual_bids` form,
    NYISO derivation).~~ **CLOSED 2026-07-28 (nyiso-94): REFUSED ex-ante, no
@@ -291,19 +300,39 @@ at ~4–5 h/yr and the queue stays offer/DA-side:
    (149.9/194.5/255.1), 0 h >$258, zero load-shed slack, and every model >$300
    hour is Long Island. **Successor lever identified — see item 1b.**
    Evidence: `docs/FINDING-nyiso94-da-virtual-not-identifiable-2026-07-28.md`.
-1b. **TSA (Thunderstorm Alert) downstate transfer derate** — *the recommended
-   new queue head, data-intake first.* NYSRC rules make NYISO pre-secure the
-   ConEd system as if the first contingency occurred, cutting upstate→downstate
-   transfer capability **1–2 GW, real-time only, never in the DA market**
-   (2025 SOM §D). It fires in **hours 13–21, May–September** — exactly where
-   nyiso-92 dated the tail — and on >26 GW peak-load days costs **$300–500/MWh**,
-   with 50 of 1,377 hours carrying 99 % of the cost. The model has no TSA
-   representation and prices `Lower_Hudson − Upstate_West` at **$0.0** in the
-   measured tail hours, i.e. no downstate congestion at all where NYISO says it
-   is most expensive. A weather-driven interface derate is rule-13 admissible
-   (physical availability event, forward-reproducible — the IMM built its own
-   forecast from public weather data). Caveats: needs a TSA-history intake that
-   does not exist in-repo, and must be argued on the **RT** side.
+1b. ~~**TSA (Thunderstorm Alert) downstate transfer derate.**~~ **CLOSED
+   2026-07-28 (nyiso-95): REFUSED ex-ante, no solve.** The event set was never
+   the problem — and two premises in the original queue entry were wrong, both
+   in the model's favour. (i) A TSA history **does** exist in-repo: MIS **P-35
+   Real-Time Events**, intaken 2026-07-10 under owner authorization, clean
+   datatype `nyiso-operating-events` (`event_type=thunderstorm_alert`);
+   reconstructed windows 32/30/18 spans = 187/272/477 h, h13–21 share 61/55/42 %,
+   May–Sep 75/90/97 % — independently corroborating the IMM's stated window.
+   (ii) The model **already** represents TSA's one published, quantified
+   consequence: the LRR `tsa_reduced_to_zero` rule feeds
+   `derive_nyiso_reserve_requirements_hourly.py::build_tsa_windows` →
+   `nyiso_dynamic_reserve_requirements`, **armed on the nyiso-92 keeper**.
+   What is unidentifiable is the **magnitude**. (a) It is **not in the published
+   limits**: a declaration-instant event study on MIS P-32 across all 18
+   interfaces (83 pooled starts) gives **exactly +0.0 MW** on SPR/DUN-SOUTH and
+   TOTAL EAST (0 % of events |Δ|>100 MW) and **−23.9 MW** on UPNY CONED (median
+   exactly 0.0 every year) — against a feed that resolves 835–1,565 MW
+   hour-over-hour steps, so the null is well-powered. (b) The SOM's "1–2 GW" is
+   defined *"relative to day-ahead scheduled levels"* — a range, not a rating;
+   selecting a point inside it and scoring it on C3c **is** the fitted scalar
+   (rules 21/5). (c) It sits **off our boundary** — the constraint carrying 71 %
+   of July-2025 TSA uplift is the **Lovett-Buchanan 345 kV** line under
+   multi-contingency **CE40**, which the IMM explicitly distinguishes from the
+   UPNY-Con Ed interface; it is one of six parallel paths our five-zone network
+   collapses into one link (rule 14's named misalignment clause), and
+   reconciling it needs ratings/OTDFs NYISO does not publish. (d) Even the IMM
+   has **no magnitude model** — Appendix III.J predicts *P(occurrence)* only.
+   The one real measured signal (DiD flow response at onset: UPNY CONED
+   −57/−412/−326 MW, SPR/DUN-SOUTH −36/−330/−279 MW, CENTRAL EAST placebo n.s.)
+   is a **validation target, never an input** (rule 13) — and at ~280–410 MW it
+   is ~¼ of the IMM's low end, confirming the 1–2 GW is mostly the **DA-vs-RT
+   schedule gap**, which has no analogue in a formulation with no DA/RT split.
+   Evidence: `docs/FINDING-nyiso95-tsa-derate-not-identifiable-2026-07-28.md`.
 2. **CT start-frequency lane** (nyiso-89 successor): model starts the CT fleet
    2–5× less often than measured; 50–68% of measured CT energy clears below
    its own SRMC — candidates are start-economics (see 3) and DA-award
