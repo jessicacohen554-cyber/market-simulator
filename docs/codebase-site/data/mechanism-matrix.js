@@ -30,7 +30,7 @@
  */
 window.MECH_MATRIX = {
   version: 1,
-  updated: "2026-07-27",
+  updated: "2026-07-28",
   isos: ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"],
   keepers: {
     ERCOT: "2026-07-26-ercot115-coal-marginal-hr",
@@ -175,6 +175,11 @@ window.MECH_MATRIX = {
       cells: "...K..",
       note: "MISO keeper — and the diagnosed root cause of its C7 COAL_PRB cycling failure (pins 9,403 MW inframarginal 8760h). Removing it (sunk_fixed) REJECTED: fixes C7, breaks C1+C5a. Named successor lane (NOT built): minimum-take LP constraint over the contract period, priced by its dual.",
       ev: { M: "miso-96" } },
+    { id: "coal_min_load_floor", cat: "commit", name: "Coal min-load floor (plant-grain fraction / unit-grain minimum online configuration)",
+      def: "NOT BUILT — no ScenarioConfig field, no MECH_* id; refuted ex ante on the keeper payload", mode: "B",
+      cells: "R.....",
+      note: "ERCOT REJECTED ex ante on its own pre-registered gates, twice, no LP built either time. Plant-grain at the measured 0.3636 (committed LSL/HSL cap-weighted p50, 627,641 CLLIG resource-hours): G1 collapses 19/21 -> 9/21 and C1 lands +2.0 to +5.9 TWh over actual (ERCOT-127). Unit-grain: the min-load LOWER ENVELOPE *is* exactly LP-expressible as a static pmin at min_u MinLoad_u for 9/10 plants and 97.8% of coal capacity (no detector, no integrality, tranche curve untouched), and EIA-860 unit min-loads corroborate the DAM parameter to 0.03 — but it buys nothing: 19/21 G1 (a band swap, not a gain), the ORACLE ceiling is 20/21, and gate G3 (COAL_LIGNITE 2023 D-1) moves the WRONG WAY under every variant INCLUDING the oracle, because the defect is over-flatness (off-peak flat-top pin 73.3% model vs 6.2% actual) and a uniform lower bound can only flatten further (ERCOT-128). Commitment STATE is unavailable in pure LP by construction (a continuous u relaxation deletes the constraint; any P0/P1 detector infers 'off' from the dispatch it constrains, so it is circular). Other ISOs '.': untested and not chartered — the physics is generic but rule 25 forbids transferring the verdict, and each would derive its own parameter.",
+      ev: { E: "ERCOT-127 §§2-4; ERCOT-128 §§1-6" } },
     { id: "st_gas_mustrun_p25", cat: "commit", name: "ST_GAS per-plant must-run at measured p25 level",
       def: "st_gas_mustrun_per_plant :6481 + p25 level :6513", mode: "B",
       cells: "..UKUU",
@@ -218,8 +223,8 @@ window.MECH_MATRIX = {
     { id: "coal_econ_bound", cat: "offer", name: "Coal economic-band SRMC / marginal-HR bounds",
       def: "coal_econ_srmc_bound :5106 / coal_econ_marginal_hr_bound :5137", mode: "BF",
       cells: "K..K..",
-      note: "MISO SRMC bound keeper; ERCOT marginal-HR bound keeper (ERCOT-112/115, removes a free parameter). ERCOT coal enumeration beyond it is EXHAUSTED (ERCOT-122..126: no further class mechanism licensed).",
-      ev: { E: "ERCOT-112/115, ERCOT-122..126", M: "miso archive" } },
+      note: "MISO SRMC bound keeper; ERCOT marginal-HR bound keeper (ERCOT-112/115, removes a free parameter). ERCOT coal enumeration beyond it is EXHAUSTED (ERCOT-122..128: offer level/reach/tail/owner-split, the availability layer, ramp trajectory bounds and the min-load floor at BOTH grains — no further class mechanism licensed; the lane's only live item is the owner's ERCOT-116 envelope decision).",
+      ev: { E: "ERCOT-112/115, ERCOT-122..128", M: "miso archive" } },
     { id: "tranche_startup_amortization", cat: "offer", name: "Fast-start tranche startup amortization (Order-825/ELMP)",
       def: "scenarios.py:4981 (+measured/conditional runs)", mode: "BF",
       cells: "UUKKUK",
