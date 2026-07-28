@@ -39,8 +39,21 @@ YEARS = (2023, 2024, 2025)
 BEAUMONT = 50625
 #: In scope for the arm — these MAY move (G2 bounds how much).
 IN_SCOPE = ("ST_CHP", "CT_CHP")
-#: Out of scope — these must NOT move (G3).
-OUT_SCOPE = ("ST_GAS", "COAL", "CC_REGULAR", "CC_CHP", "CT_PEAKER")
+#: Out of scope — the arm must not touch their CAPABILITY (verified 0.000 % on
+#: the reconstructed fleet, no LP). Their dispatched energy may still move a
+#: little: when the in-scope cogens' hourly capability changes, the LP rebalances
+#: and other classes fill the gap. That is a legitimate dispatch response, not a
+#: scope leak — G3's 0.1 % bound is sized to catch a leak, not to forbid it.
+#: Coal is three separate model classes in the hourly sidecar, never "COAL".
+OUT_SCOPE = (
+    "ST_GAS",
+    "COAL_BIT",
+    "COAL_PRB",
+    "COAL_LIGNITE",
+    "CC_REGULAR",
+    "CC_CHP",
+    "CT_PEAKER",
+)
 
 
 def _class_energy(bundle: Path, year: int) -> pd.Series:
@@ -61,23 +74,30 @@ def _class_profile(bundle: Path, year: int, klass: str) -> np.ndarray:
 
 
 def _plant_profile(bundle: Path, year: int, plant: int, klass: str) -> np.ndarray | None:
-    """Hour-of-day mean MW for one plant-class slice from the dispatch parquet."""
+    """Hour-of-day mean MW for one plant-class slice from the dispatch parquet.
+
+    Reads with predicate push-down: the file is ~24.5 M rows / 80 MB per year and
+    this probe may run alongside an LP, so the whole frame is never materialized.
+    Sums the plant's tranches within the class before taking the profile — a
+    plant is several LP units and the slice is their total.
+    """
     path = bundle / "dispatch" / f"{year}_P1.parquet"
     if not path.is_file():
         return None
-    df = pd.read_parquet(path)
-    cols = {c.lower(): c for c in df.columns}
-    pc = cols.get("plant_code") or cols.get("plant_id")
-    kc = cols.get("plant_group") or cols.get("klass") or cols.get("class")
-    hc = cols.get("hour") or cols.get("hour_of_year")
-    mc = cols.get("mw") or cols.get("gen_mw") or cols.get("dispatch_mw")
-    if not all((pc, kc, hc, mc)):
+    df = pd.read_parquet(
+        path,
+        columns=["plant_code", "klass", "hour", "mw", "pass"],
+        filters=[("plant_code", "==", plant), ("klass", "==", klass)],
+    )
+    if df.empty:
         return None
-    sub = df[(pd.to_numeric(df[pc], errors="coerce") == plant) & (df[kc] == klass)]
-    if sub.empty:
+    df = df[df["pass"] == "P1"]
+    if df.empty:
         return None
-    grp = sub.groupby(sub[hc].to_numpy() % 24)[mc].mean()
-    return grp.reindex(range(24)).to_numpy(dtype=float)
+    tot = df.groupby("hour")["mw"].sum()  # tranches -> plant slice
+    hod = tot.index.to_numpy() % 24
+    mw = tot.to_numpy(dtype=float)
+    return np.array([mw[hod == h].mean() for h in range(24)])
 
 
 def _measured_profile(year: int, plant: int) -> np.ndarray | None:
