@@ -154,6 +154,7 @@
       if (v == null) return '—';
       return (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
     }
+    function fmtSigned2(v) { return (v >= 0 ? '+' : '') + v.toFixed(2); }
     function fmtTWh(v) {
       return (v >= 0 ? '+' : '') + (Math.abs(v) >= 1 ? v.toFixed(1) + ' TWh' : (v * 1e3).toFixed(0) + ' GWh');
     }
@@ -1883,7 +1884,7 @@
 
     // Generation mix + supply/load reconciliation — a faithful port of the shell
     // genMixPanel. Iterates over EVERY benchmarked class in classFull (fossil +
-    // biomass/hydro/nuclear/oil/solar/wind, CHP folded into parents), so shares
+    // biomass/hydro/nuclear/oil/solar/wind, CHP listed separately), so shares
     // are share of TOTAL generation, and appends the net-imports / total-supply /
     // load rows so the net-import volume the generation-only rows omit is visible.
     function genMixTable(yr) {
@@ -1901,47 +1902,67 @@
       const mImp = ix ? -ix.m : null, aImp = (ix && ix.b != null) ? -ix.b : null;
       const load = sysDemand(yr);
 
-      // CHP → parent merge (grid-delivered values already BTM-subtracted).
-      const FG_disp = FG.filter(g => !(g in CHP_MERGE));
-      const cf_d = Object.fromEntries(FG_disp.map(g => [g, cf[g] || 0]));
-      const gm_d = Object.fromEntries(FG_disp.map(g => [g, gm[g] || 0]));
-      for (const [chp, par] of Object.entries(CHP_MERGE)) {
-        if (par in cf_d) cf_d[par] = (cf_d[par] || 0) + (cf[chp] || 0);
-        if (par in gm_d) gm_d[par] = (gm_d[par] || 0) + (gm[chp] || 0);
-      }
+      // UNMERGED, on purpose: this table used to fold CHP into its parent
+      // (CHP_MERGE), so the CC Regular row was CC_REGULAR + CC_CHP. That made
+      // the row disagree with the class C1 actually gates — PJM 2023 read
+      // -5.56 TWh merged while the gated CC_REGULAR was -8.10 against a ±8.00
+      // band, i.e. the table showed a comfortable pass for a failing class,
+      // because the model's CC_CHP over-run (+2.54 TWh) cancelled part of the
+      // CC_REGULAR miss. The C1 partition wins: every classFull class gets its
+      // own row and the CHP subclasses are shown separately (they are separate
+      // C1 rows, and the Fossil-classes table already lists them that way).
+      const FG_disp = FG;
+      const cf_d = Object.fromEntries(FG.map(g => [g, cf[g] || 0]));
+      const gm_d = Object.fromEntries(FG.map(g => [g, gm[g] || 0]));
+      // C1's VOLUME band — ±min(2% of ISO load, 8 TWh), the leg that actually
+      // fails most often and had no column here at all (only Δpp, the share
+      // leg, was shown, so a volume-only breach was invisible whatever the
+      // class partition). Mirrors calibration_verdict.score_fuelmix and the
+      // page's own volInTol.
+      const volBand = Math.min(SUM_TOL_LOAD_FRAC * totalLoad(yr), SUM_TOL_LOAD_CAP);
 
-      let h = `<div class="bc-panel"><h2>Generation mix <span class="panel-sub">(system-wide; share of total generation by class vs grid-delivered EIA-923 (923 &minus; BTM); CHP folded into parent class; BTM excluded — grid-delivered only)</span></h2>`;
+      let h = `<div class="bc-panel"><h2>Generation mix <span class="panel-sub">(system-wide; share of total generation by class vs grid-delivered EIA-923 (923 &minus; BTM); CHP shown separately, as C1 gates it; BTM excluded — grid-delivered only)</span></h2>`;
       h += `<p class="panel-sub">${esc(RUN(yr).label || st.runId)} generation ${mGen.toFixed(1)} TWh &middot; actual ${aGen.toFixed(1)} TWh`
         + (mImp != null ? ` &middot; + net imports ${mImp.toFixed(1)} (actual ${aImp == null ? '—' : aImp.toFixed(1)}) &rarr; supply ${(mGen + mImp).toFixed(1)} TWh vs load ${load.toFixed(1)} TWh` : '') + `</p>`;
       if (prelim) h += '<p class="panel-sub" style="color:#9a5b12"><b>Preliminary EIA-923 vintage:</b> only <span class="badge-923 ok">&#10003; 923</span> classes are verified-complete and gate the C1 fuel-mix test; <span class="badge-923 inc">&#9888; 923</span> (incomplete) and <span class="badge-923 imm">&mdash; 923</span> (immaterial) classes are shown for reference but not gated.</p>';
       h += `<div class="bc-table-wrap"><table>
-        <thead><tr><th>class</th><th>model TWh</th><th>actual TWh</th><th>model %gen</th><th>actual %gen</th><th>Δpp</th></tr></thead>
+        <thead><tr><th>class</th><th>model TWh</th><th>actual TWh</th><th title="C1 volume leg: ±min(${(SUM_TOL_LOAD_FRAC * 100).toFixed(1)}% ISO load, ${SUM_TOL_LOAD_CAP} TWh) = ±${volBand.toFixed(2)} TWh">Δ TWh</th><th>model %gen</th><th>actual %gen</th><th title="C1 share leg: ±${SUM_TOL_SHARE_PP} pp">Δpp</th></tr></thead>
         <tbody>`;
 
       for (const g of FG_disp) {
         const a = cf_d[g] || 0, m = gm_d[g] || 0;
         const a_g = aGen > 0 ? 100 * a / aGen : 0, m_g = mGen > 0 ? 100 * m / mGen : 0, dpp = m_g - a_g;
+        const dtwh = m - a;
         const ci = prelim && (g in ((getCompleteness()?.[yr] || {})[iso] || {})) ? cmpInfo(yr, iso, g) : null;
         const rowcls = ci ? (ci.status === 'incomplete' ? ' class="cmpl-inc"' : (ci.status === 'immaterial' ? ' class="cmpl-imm"' : '')) : '';
-        const dppcls = (ci && !ci.gate) ? '' : ppcls(dpp);
+        // Colour BOTH C1 legs by C1's own bands, and only where the class
+        // actually gates — so a green cell means "inside the gate" and nothing
+        // else. Non-gated rows (non-fossil, C1-excluded, incomplete vintage)
+        // stay uncoloured rather than borrowing a verdict they never face.
+        const gated = classIsGated(yr, g) && !(ci && !ci.gate);
+        const dppcls = gated ? (Math.abs(dpp) <= SUM_TOL_SHARE_PP ? 'clr-good' : 'clr-bad') : '';
+        const dvcls = gated ? (Math.abs(dtwh) <= volBand ? 'clr-good' : 'clr-bad') : '';
         h += `<tr${rowcls}><td>${esc(mixLabel(g))}${cmpBadge(ci)}</td><td class="num">${m.toFixed(2)}</td><td class="num">${a.toFixed(2)}</td>`
+          + `<td class="num ${dvcls}">${fmtSigned2(dtwh)}</td>`
           + `<td class="num">${m_g.toFixed(1)}</td><td class="num">${a_g.toFixed(1)}</td>`
           + `<td class="num ${dppcls}">${fmtpp(dpp)}</td></tr>`;
       }
       h += `<tr class="sub"><td>Total generation</td><td class="num">${mGen.toFixed(2)}</td><td class="num">${aGen.toFixed(2)}</td>`
+        + `<td class="num">${fmtSigned2(mGen - aGen)}</td>`
         + `<td class="num">100.0</td><td class="num">100.0</td><td class="num"></td></tr>`;
+      h += `<tr><td colspan="7" class="panel-sub" style="text-align:left;white-space:normal;padding:6px 0 0">A class passes C1 iff BOTH legs are inside their band: |Δ TWh| ≤ ±${volBand.toFixed(2)} (=&nbsp;min(${(SUM_TOL_LOAD_FRAC * 100).toFixed(1)}%&nbsp;ISO&nbsp;load, ${SUM_TOL_LOAD_CAP}&nbsp;TWh)) AND |Δpp| ≤ ±${SUM_TOL_SHARE_PP}. Only C1-gated fossil classes are coloured; CHP subclasses are listed separately because C1 scores them separately.</td></tr>`;
 
       // Reconcile generation + net imports = supply = load.
       if (mImp != null) {
         const mSup = mGen + mImp;
         const aSup = aImp != null ? aGen + aImp : null;
-        h += `<tr><td>net imports</td><td class="num">${mImp.toFixed(2)}</td><td class="num">${aImp == null ? '—' : aImp.toFixed(2)}</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>`;
-        h += `<tr class="sub"><td>Total supply (gen + net imports)</td><td class="num">${mSup.toFixed(2)}</td><td class="num">${aSup == null ? '—' : aSup.toFixed(2)}</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>`;
+        h += `<tr><td>net imports</td><td class="num">${mImp.toFixed(2)}</td><td class="num">${aImp == null ? '—' : aImp.toFixed(2)}</td><td class="num">${aImp == null ? '' : fmtSigned2(mImp - aImp)}</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>`;
+        h += `<tr class="sub"><td>Total supply (gen + net imports)</td><td class="num">${mSup.toFixed(2)}</td><td class="num">${aSup == null ? '—' : aSup.toFixed(2)}</td><td class="num">${aSup == null ? '' : fmtSigned2(mSup - aSup)}</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>`;
         if (load > 0) {
           const dM = mSup - load, dA = aSup != null ? aSup - load : null;
-          h += `<tr><td>Load (EIA-930 demand)</td><td class="num">${load.toFixed(2)}</td><td class="num">${load.toFixed(2)}</td><td class="num"></td><td class="num"></td><td class="num ${ppcls(100 * dM / load)}">${fmtTWh(dM)}</td></tr>`;
+          h += `<tr><td>Load (EIA-930 demand)</td><td class="num">${load.toFixed(2)}</td><td class="num">${load.toFixed(2)}</td><td class="num ${ppcls(100 * dM / load)}">${fmtSigned2(dM)}</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>`;
           if (dA != null && Math.abs(dA) > 2)
-            h += `<tr><td colspan="6" class="panel-sub" style="text-align:left;white-space:normal;padding:6px 0 0">Model supply balances load to ${fmtTWh(dM)} (storage round-trip + dump). The actual column is EIA-923 net generation reconciled to the EIA-930 grid series per fossil family (grid-delivered: CHP behind-the-meter and 923↔930 plant-to-BA assignment removed so each family matches what reached the grid). Any residual ${fmtTWh(dA)} vs load is EIA-930's own net-generation-minus-demand discrepancy (the two series are independently surveyed), not behind-the-meter — both columns are now on the same grid-delivered basis, so the per-class shares and the absolute supply total are directly comparable.</td></tr>`;
+            h += `<tr><td colspan="7" class="panel-sub" style="text-align:left;white-space:normal;padding:6px 0 0">Model supply balances load to ${fmtTWh(dM)} (storage round-trip + dump). The actual column is EIA-923 net generation reconciled to the EIA-930 grid series per fossil family (grid-delivered: CHP behind-the-meter and 923↔930 plant-to-BA assignment removed so each family matches what reached the grid). Any residual ${fmtTWh(dA)} vs load is EIA-930's own net-generation-minus-demand discrepancy (the two series are independently surveyed), not behind-the-meter — both columns are now on the same grid-delivered basis, so the per-class shares and the absolute supply total are directly comparable.</td></tr>`;
         }
       }
       return h + '</tbody></table></div></div>';
