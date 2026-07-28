@@ -35,6 +35,9 @@
  * 2026-07-28 on the pjm-136 keeper promotion (zonal_loss_surface PJM -> K; PJM reaches
  *   CALIBRATED — C3c, its last open gate, closes. PJM has NO failing criterion; the open
  *   work is the Dominion CT_PEAKER leg (~94 % of the gap) and C3c's 1-2.5 h margin).
+ * CAISO column re-checked 2026-07-28 by caiso-137 (ordc_scarcity_overlay: ask A2
+ *   CLOSED as a no-defect, cell stays K — nothing armed, no solve; the storage-tier
+ *   rule-14 defect it exposes is filed, D2-E1-refused and C3c-inert).
  * ERCOT column re-checked 2026-07-28 on the ercot116-regate-base keeper promotion
  * (ERCOT-134: zero config delta vs ercot129 — re-solve on the corrected coal
  * forced-derate registry; no cell verdict moves except dam_availability_rebasis,
@@ -115,8 +118,8 @@ window.MECH_MATRIX = {
     { id: "ordc_scarcity_overlay", cat: "price", name: "Post-solve ORDC scarcity price adder",
       def: "scarcity_pricing_enabled scenarios.py:1288 + scarcity_price_overlay / caiso_scarcity_pricing", mode: "BF",
       cells: "RKGG.K",
-      note: "ERCOT: ORDC-only swap REJECTED (adds spurious tail; ERCOT-97 lane 3) — superseded by the in-LP co-opt + measured RTORDPA overlay. PJM: retired to diagnostic, inadmissible stack on the live co-opt (rule 19). MISO: refuted — scarcity is STARVED not missing (31.9 GW idle headroom; miso-82). NYISO n/a (RCPF family owns it).",
-      ev: { E: "ERCOT-97", P: "DIAGNOSIS-pjm-dof-scarcity-tail §B.3", M: "miso-scarcity-tail-external-validation §1" } },
+      note: "ERCOT: ORDC-only swap REJECTED (adds spurious tail; ERCOT-97 lane 3) — superseded by the in-LP co-opt + measured RTORDPA overlay. PJM: retired to diagnostic, inadmissible stack on the live co-opt (rule 19). MISO: refuted — scarcity is STARVED not missing (31.9 GW idle headroom; miso-82). NYISO n/a (RCPF family owns it). CAISO: armed and near-inert; ask A2 (re-specify its reserve measure to plant-level ONLINE) CLOSED as a no-defect — the measure ALREADY is plant-level online (_online_plant_mask), import_headroom is off so it enters no tier, and storage + curtailed VRE are already in r_online (caiso-137 §1). r_online p10 8.7/10.5/13.1 GW, storage 5.7-11x the thermal leg, curtailed VRE identically ~0 (the LP dumps rather than curtails). A DISTINCT rule-14 defect is filed NOT armed: runner.py:2088 passes the flat December nameplate storage.power_cap where the LP uses the COD-ramped hourly cap (phantom 1.9-2.3 GW mean, up to 51% of r_online) — FAILS D2 E1 structurally (a measure-shrinking fix can only raise the adder; E1's gate is +$0.00) and never clears C3c's 24h/18h floor at any offset.",
+      ev: { E: "ERCOT-97", C: "caiso-137 (FINDING-caiso137-a2-lolp-reserve-measure-2026-07-28 §1/§3/§5)", P: "DIAGNOSIS-pjm-dof-scarcity-tail §B.3", M: "miso-scarcity-tail-external-validation §1" } },
     { id: "ercot_rtordpa_overlay", cat: "price", name: "Measured RTORDPA reliability-deployment adder",
       def: "run_calibration_full.py:8240 (CLI)", mode: "B",
       cells: "K.....",
