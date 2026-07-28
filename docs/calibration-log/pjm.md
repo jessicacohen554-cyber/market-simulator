@@ -1329,3 +1329,83 @@ in all three years.
 (rule 23); the new entry is measured-external with ZERO solves added to the
 tuning lineage. C6 governance PASSES. `audit_keepers.py --iso PJM` PASS,
 0 failures / 0 warnings.
+
+---
+
+## pjm-134 — the Dominion CT/CC zonal inversion: C1 refuted, C2 fires, and the AP-South joint cut is INERT
+
+**Runs:** `2026-07-28-pjm-134-control` (arm A) / `2026-07-28-pjm-134-apsouth`
+(arm B), 2023+2024+2025 each in one invocation (rule 16). Gates:
+`PREREG-pjm134-apsouth-joint-cut-2026-07-27.md`, committed at `b9d2b4d` and
+merged to main **before either arm solved**. Write-up:
+`FINDING-pjm134-dominion-zonal-inversion-2026-07-27.md`. Probes:
+`_pjm134_c1_zonal_gas_basis.py`, `_pjm134_c2_dominion_interface.py`,
+`_pjm134_apsouth_ab.py`.
+
+**The measurement (no LP).** ASK-pjm134 §4's two candidates were separated:
+
+- **C1 zonal gas basis — REFUTED.** Against EIA-923 Sch.2 plant receipts
+  volume-weighted over the plants `build_zone_lookup("PJM")` itself places in
+  each zone, the model's Dominion−AEP_Ohio spread (+1.007/+0.578/+0.694 $/MMBtu)
+  is *smaller* than measured (+1.231/+0.649/+0.643) in 2023/24 and within $0.05
+  in 2025. No sign inversion in any year. The basis is measured-faithful.
+- **C2 transfer capability — FIRES.** The keeper's PJM is a copper-plate:
+  Dominion clears at the identical dual to all three neighbours in **100.0 % of
+  26,280 hours**; all eight zones plus the import node share one price in
+  95.5/97.3/96.2 % of hours; EMAAC (`pjm_east_interface_cut`) is the only
+  internal cut that ever binds. PJM's own DA congestion separates DOM from
+  AEP-DAYTON by >$1 in 59.2/49.5/62.7 % of hours (DOM dearer in 55.9/42.8/49.9 %,
+  mean +$2.17/+$2.53/+$4.41). Misallocated energy: Dominion fossil
+  −20.0/−19.8/−12.1 TWh while 2025's ISO-wide fossil balance is **+0.2 TWh** —
+  right fuel, wrong states.
+
+**Together these are one result.** The gas basis is *correct*, and Dominion
+really does pay $0.6–1.2/MMBtu more ($6–13/MWh on a peaker). Reality runs its
+CTs at 19.5 % CF anyway because the network decides. With no congestion at all,
+the correct basis alone decides the allocation.
+
+**The delta and its verdict.** `pjm_apsouth_interface_cut` (new, default off,
+zero DOF): one one-sided aggregate group capping
+Flow(West_APS→SWMAAC)+Flow(West_APS→Dominion) at the measured AP-South hourly
+limit — the joint-cut twin of the EAST cut, replacing (rule 19) the misalignment
+`PJM_INTERFACE_LINK_MAP` already flags in its own note.
+
+**Every pre-registered gate PASSES** — P1 engagement (0.03/0.09/0.62 % of hours
+vs arm A's 0.00 %), P2 direction (Dominion the dearer side in **100.0 %** of
+separated hours, floor 2/3), P3, K1 (rubric criteria byte-identical), K2
+(slack/dump 0/0), K4 (determination identical NOT-YET), K5 (**arm A reproduces
+`pjm132_control_A` byte-identically, 0.000000000 MW, all 19 classes, every hour,
+all three years**).
+
+**And the correction is real:** arm A's joint AP-South flow **violates PJM's
+published cap in 11.6/11.7/20.4 % of hours by up to 3,000 MW**; arm B enforces it
+to 0.00 %.
+
+**Determination: INERT on the defect** (the PREREG §4 pre-registered outcome).
+Dominion CT_PEAKER 0.68→0.68 / 1.25→1.25 / 2.46→2.47 TWh against gaps of
+−6.7/−7.4/−7.2; largest zonal move anywhere **0.01 TWh**. Per §4's no-feedback
+ceiling **no scale factor was applied to the published series, and none may be.**
+
+**WHY — the finding that matters.** The mesh re-routes. Dominion's supply
+decomposition (arm A 2025, from `flows.parquet`): **AEP_Ohio +34.0 TWh/yr,
+EXTERNAL star node +19.9, West_APS +9.5, export to SWMAAC −28.7, net +34.6.**
+AP-South carries the *smallest* inbound path. And the network is degenerate —
+SWMAAC↔Dominion sits at its 3,500 MW bound in 80.1 % of hours with a price
+difference of exactly 0.0000 — so tightening any one internal path is re-routed
+at zero cost.
+
+**Next charter (filed, NOT built):** the **external star-node import into
+Dominion**, +19.9 TWh/yr — larger than the zone's entire 12.1 TWh fossil deficit,
+and governed by the seam/import-envelope family
+(`pjm_seam_flow_limit`, `priced_interchange`, `PJM_EXTERNAL_FLOW_PERCENTILE`),
+NOT by `PJM_INTERFACE_LINK_MAP`. No internal interface cut can touch it.
+
+**Solve cost (recorded for whoever carries this):** arm B ran **~2.5× slower**
+than arm A (2023 P0 1,902 s vs 765 s; whole arm 2 h 07 vs 59 m) — the added 8,760
+interface rows cut across the degenerate face. That cost recurs on every PJM
+solve and is the main argument against carrying a flag that moves 0.01 TWh.
+
+**Keeper: NOT recommended, and not self-promoted** (owner-only act). Matrix cell
+`pjm_apsouth_cut` = **I** (inert), flag stays default-off.
+
+**Next number: pjm-135.**
