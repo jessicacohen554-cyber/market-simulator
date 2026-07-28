@@ -1855,3 +1855,65 @@ delta's scope by design.)* Evidence:
   to widen the lever (rule 1). Nelson slice conduct / `1393`
   fleet-classification is a separable owner decision.
 * Next number: **miso-101.**
+
+## 2026-07-28 — miso-101: the hour-grain diurnal temperature input is BUILT and MISO's OWN slope/onset DERIVED — Beaumont's floored cogen slice goes byte-flat → r +0.96…+0.98 against its own meter, every pre-registered gate passes, and the committed 15 °C hinge is measured FALSE on MISO's fleet
+
+**Lane:** the arm lane FINDING-miso100 §7 proposed and the owner
+pre-authorized. **Keeper RECOMMENDED, not performed:
+`2026-07-28-miso-101b-tempgrain`.** The shard was deliberately not edited —
+a `replay_keeper` bundle carries no `calibration_attestation.json`, so
+promoting it would break rule 21 `[R-DOF]` and would silently drop MISO from
+`CALIBRATED-WITH-CAVEATS` to `NOT-YET` on a missing governance file rather
+than on model quality (the current determination rests on the miso-90 owner
+re-gate, caveat budget 3/3). Carrying the attestation forward is the owner's
+act; the arm itself adds **zero free parameters**.
+Runs: `2026-07-28-miso-101a-control` (control) +
+`2026-07-28-miso-101b-tempgrain` (arm), both 2023–2025 in one bundle
+(rule 16). Pre-registration committed BEFORE either solve (`4a4cfcf`);
+evidence: `results/calibration/FINDING-miso101-stchp-temp-grain-2026-07-28.md`.
+Matrix `temp_dependent_derate` MISO **`U` → `K`** (duty (b)).
+
+* **The grain did not exist and now does.** `iso_zone_tmax` broadcasts daily
+  TMAX flat within the day, so the derate curve carried zero hour-of-day
+  signal even when armed. `iso_zone_hourly_drybulb` reconstructs the within-day
+  wave from the same curated daily TMIN/TMAX (two-piece cosine bridge, Parton &
+  Logan 1981; anchors validated at lag 0 on MISO conduct). **No new floor, no
+  new mechanism** (rule 19): `MECH_CHP_STEAM` already clips to
+  `pmax × availability`, so the shape propagates to floored cogens by itself.
+* **MISO's own identification refutes BOTH committed parameters.** Within-day
+  plant-day fixed-effects regression, 6 CEMS-identifiable MISO cogens 2023–25:
+  cap-weighted p50 **0.00141/°C**, ~5× below the literature CC slope
+  (0.0076/°C) — MISO's own confirmation of pjm-95 (rule 25). Onset scan finds
+  **no 15 °C hinge**: 0.0036/0.0030 per °C in the 5–10/10–15 °C bins
+  (r −0.38/−0.28), where `max(0, T − 15)` is identically flat. LOO-stable
+  (0.00130/0.00140/0.00153 vs 0.00141). Hence the mean-anchored form —
+  level-neutral by construction, claiming only the shape the estimator
+  identifies.
+* **The metered machine is a gas turbine, not a boiler.** Beaumont is 3 ×
+  combined cycle; the only other substantial CEMS cogen meter is a 26 MW CT;
+  R S Nelson's CEMS unit is a *coal* boiler and is dropped. miso-100's
+  condenser framing was right about temperature, wrong about the slope family —
+  and GT physics is precisely why the winter wave survives with no onset.
+* **Result — all four pre-registered gates PASS, 3/3 years.** Beaumont's ST_CHP
+  slice: byte-flat (amp 0.000000 MW) → trough **h15** = the meter's own trough,
+  corr **+0.964 / +0.958 / +0.984**. G2 level neutrality max 0.396 % (bound
+  1.0 %); G3 scope containment max 0.068 % (bound 0.1 %). Control reproduces
+  the committed keeper `miso99_chp_hr_B` to **0.00000 %** on every class —
+  a true single-delta A/B, and proof the five new fields are inert when off.
+* **Reported, not gated.** D-1 `profile_r` improves every year: ST_CHP
+  −0.797/−0.762/−0.771 → −0.587/−0.647/−0.680 (stays negative exactly as
+  pre-registered — Nelson's anti-phase hump and the flat BTM add-back are
+  channels the lever does not own, and it was NOT widened); CT_CHP
+  +0.652/−0.104/+0.171 → +0.684/−0.033/+0.298. C-series rubric **identical**
+  between arms. System mean price +0.003 %.
+* **One pre-registered prediction was WRONG.** P6 said the model's within-day
+  CV would rise; it **fell** (ST_CHP `cv_ratio` 0.386/1.345/1.019 →
+  0.253/1.041/0.664). Cause, unanticipated: the arm's wave is anti-correlated
+  with Nelson's merchant afternoon hump, so the class composite partially
+  **cancels** — the same cancellation that moves `profile_r` the right way.
+  Recorded as wrong; neither class is gated.
+* **Scope stated before solving and held:** ST_CHP + CT_CHP only (the two
+  tranches the CEMS meter spans; they breathe together at 1.56–1.62 % /
+  1.62–1.67 %). ST_GAS/COAL/CC/CT_PEAKER untouched — no MISO identification,
+  and pjm-95 makes the literature slopes non-transferable.
+* Next number: **miso-102.**
