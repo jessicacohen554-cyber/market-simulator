@@ -4143,7 +4143,7 @@ def run_year(
     # docs/ramp-locational-design-2026-07.md §1). Mirrored in runner.py so
     # the forecast path shares the mechanism (forecast parity, design §4).
     # No-op (identical LP) when off or when the ISO has no envelope artifact.
-    if getattr(config, "ramp_limits", False):
+    if config.ramp_limits:
         from market_sim.data.fleet import build_ramp_groups
 
         ramp_groups = build_ramp_groups(fleet_arrays, iso)
