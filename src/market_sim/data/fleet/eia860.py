@@ -2407,18 +2407,42 @@ def eia860_selfcommit_scope_plants() -> frozenset[int]:
 # that the age-based THERMAL_AVAILABILITY model cannot anticipate (turbine
 # fires, boiler explosions, etc.). Keyed by ``Bin_Label`` and run year, the
 # value is a flat multiplier on the bin's availability for the whole year.
+#
+# RULE 24 [R-REGISTRY] STATUS: this dict is an off-registry per-plant tuning
+# channel and is being retired entry by entry as each event finds its proper
+# measured or registry home. Two are already gone (see below). Do NOT add to
+# it -- route new events to the measured outage overlay
+# (data/raw/campd-unit-outages.csv) or the confirmed-retirement registry.
 BIN_FORCED_DERATE_BY_YEAR: dict[str, dict[int, float]] = {
     # Martin Lake -- turbine fire and boiler explosion took unit 1 out of
     # commission for 2025 (1 of 3 units, ~33% nameplate loss).
+    #
+    # RETAINED, and checked rather than assumed (ercot132 follow-up): the
+    # measured overlay does NOT carry this event. campd-unit-outages.csv has
+    # 2025 rows for Martin Lake units 2 and 3 only (five short maintenance
+    # outages, 5.0-18.2 days); there is no unit-1 row at all, because a unit
+    # destroyed before the year starts never produces the run/stop transition
+    # the outage derive detects. Deleting this entry would hand the 2025 fleet
+    # back ~793 MW of capacity that physically did not exist.
+    # TO RETIRE IT: give the outage derive a way to represent a unit absent for
+    # a whole vintage (or add the event to a registry), then delete this line.
     "N_COAL4": {2025: 0.67},
     # V H Braunig -- CPS Energy retired ST units 1 (225 MW) and 2 (252 MW)
     # in early 2025 (March). Handled via confirmed-exit registry injection
     # (data/raw/confirmed-retirements/ercot.csv, plant 3612) with
     # month-level precision: (3/12 * 1.0) + (9/12 * 661/1138) = 0.686.
     # Removed from hardcode 2026-07-06 per rule 24 (no off-registry tuning).
-    # Sandy Creek -- removed from availability in 2025 (mostly offline; EIA-923
-    # shows 0.72 TWh vs ~3.0-3.3 TWh in 2023-2024).
-    "SC_COAL3": {2025: 0.0},
+    #
+    # Sandy Creek (56611, SC_COAL3) -- REMOVED 2026-07-28 (owner decision, the
+    # ercot132 D2/D3 resolution). The entry set availability to 0.0 for all
+    # 8,760 hours of 2025 while its own justifying comment cited EIA-923
+    # showing 0.72 TWh GENERATED -- self-refuting, and the sole cause of the
+    # ERCOT-130 §6 finding (model 0.000 TWh against CAMPD 1,300 running hours /
+    # 0.697 TWh / 895 MW peak). The measured overlay already carries the event
+    # correctly and needs no hardcode: campd-unit-outages.csv has Sandy Creek
+    # S01 out 2025-01-22..01-29 and 2025-02-28..12-31 (306 days), leaving 1,246
+    # available hours against the 1,300 hours CAMPD observed it running.
+    # Deleting the line is what lets that measured signal through (rules 14/24).
 }
 
 # Fallback heat rate (MMBtu/MWh) by plant group, used when a plant's
