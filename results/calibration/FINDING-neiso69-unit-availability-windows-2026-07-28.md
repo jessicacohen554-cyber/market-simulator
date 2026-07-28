@@ -182,9 +182,71 @@ scripts/replay_keeper.py results/calibration/neiso61_netrev_margin \
 
 Rule 16: all three years, sequential within the one invocation. Environment
 pinned to the keeper's recorded package set (highspy 1.15.1 / pandas 3.0.5 /
-pyarrow 25.0.0) so the delta is the mechanism, not solver drift.
+pyarrow 25.0.0) on **both** arms.
 
-<!-- A/B RESULTS -->
+**A drift CONTROL arm was required, and the attribution is only valid against
+it.** The keeper's committed sidecars no longer reproduce at HEAD: it was solved
+at `eede1c4` (2026-07-23, since squash-merged) and `src/market_sim/` has moved
+under it. Measuring the arm against the keeper would have charged five days of
+code drift to this mechanism. Both arms are registered:
+
+| run id | arm |
+|---|---|
+| `2026-07-28-neiso-69-control` | keeper recipe replayed verbatim at HEAD, no overrides |
+| `2026-07-28-neiso-69-shortpartial` | same + both window flags |
+
+**Decomposition (P1, GWh) — DRIFT = control − keeper, MECH = arm − control:**
+
+| year | class | keeper | control | arm | DRIFT | **MECH** |
+|---|---|---|---|---|---|---|
+| 2023 | COAL_BIT | 92.4 | 81.9 | 74.4 | −10.5 | **−7.5** |
+| 2023 | CC_REGULAR | 51,916.5 | 51,876.5 | 51,882.5 | −40.0 | **+6.0** |
+| 2023 | oil | 298.9 | 317.2 | 318.7 | +18.3 | **+1.5** |
+| 2023 | CT_PEAKER | 231.1 | 182.7 | 182.7 | −48.4 | **−0.0** |
+| 2023 | CC_CHP | 1,257.0 | 1,333.8 | 1,333.9 | +76.9 | **+0.1** |
+| 2023 | **TOTAL** | 97,019.4 | 96,992.2 | 96,992.2 | −27.3 | **+0.0** |
+| **2024** | *(every class)* | | | | up to −89.6 | **+0.0** |
+| **2025** | *(every class)* | | | | up to −189.7 | **+0.0** |
+
+**2024 and 2025 are byte-identical between control and arm — MECH is exactly
+zero for every class and every hour**, the correct result: those years hold no
+windows and both overlays return `{}`. All their apparent movement (CT_PEAKER
+−89.6 / −189.7 GWh, CC_REGULAR +145.8 in 2025) is drift. This is also the
+cleanest possible confirmation that the mechanism is correctly scoped.
+
+The whole mechanism is therefore **2023 only**: it removes **−7.5 GWh** of coal
+(−6.89 GWh of it inside the 72 masked hours, the rest knock-on from the changed
+P0 run pattern) and replaces it with **+6.0 GWh CC_REGULAR + 1.5 GWh oil**, at
+exact energy balance (TOTAL +0.0).
+
+**Price effect — real but negligible, and it moves the tail UP:**
+
+| metric (2023) | control | arm | Δ |
+|---|---|---|---|
+| hours with any price change | — | — | **105 / 8760** |
+| annual mean LMP | 38.304 | 38.309 | **+0.005** |
+| p99 | 180.49 | 180.96 | +0.47 |
+| p99.5 | 203.12 | 203.48 | +0.36 |
+| p99.9 | 215.53 | 215.87 | +0.34 |
+| max hourly move | — | — | **+3.25** (h770, Feb-02 02:00) |
+
+2024/2025: **0 of 8760 hours** change. Every changed hour lies in or beside the
+masked window, and the largest moves fall on **Feb 2** — the one day the unit
+genuinely was off — not on the Feb 3 evening peak, where the marginal unit is
+something else entirely and removing 96 MW of coal barely moves the clearing
+price.
+
+**Gate outcome: the mechanism changes NO gate.** Control and arm score
+criterion-for-criterion identically (`fuelmix/sysvol/price_mean/price_shape/
+dispatch_corr` PASS, `price_tail` FAIL, `shape/forced_share` SKIPPED,
+`governance` UNATTESTED → `NOT-YET` on both). `NOT-YET` is the expected probe
+determination — probes carry no `calibration_attestation.json`, exactly as
+`neiso64_meritguard_a1`; none was manufactured. The keeper's own `price_tail`
+CAVEAT is its ledgered caveat, which a probe cannot inherit.
+
+So the family is **gate-neutral in NEISO**. The rejection cannot be read as
+fit-motivated in either direction: arming it neither helps nor hurts the
+scorecard, and it is refused purely because §3 shows the input is wrong.
 
 ## §6 — DOF ledger
 
