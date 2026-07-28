@@ -269,12 +269,15 @@ not a new sweep:
 ### 5.5 NYISO — target: C3c (sole blocker, roof-blocked)
 
 The J/K-commitment and reserve-tier routes are closed IN FULL (nyiso-83/84);
-the tail is blocked by an SRMC roof (~$258 mainland). The queue is therefore
-offer-side:
+the tail is blocked by an SRMC roof (~$258 mainland). nyiso-92 dated the
+actual RT tail: it is **summer** (2025 Jun 23–25 alone = 18 of 42 h; the
+Jan-2024 storm produced zero >$300 hours), so the winter-fuel lane caps out
+at ~4–5 h/yr and the queue stays offer/DA-side:
 
 1. **DA virtual depth / DA demand formation** (`pjm_da_virtual_bids` form,
    NYISO derivation) — the one mechanism family that moved another ISO's C3c
-   without touching reserves; untested here.
+   without touching reserves; untested here. The nyiso-92 tail dating makes
+   this the only queue item aimed at where the misses actually live.
 2. **CT start-frequency lane** (nyiso-89 successor): model starts the CT fleet
    2–5× less often than measured; 50–68% of measured CT energy clears below
    its own SRMC — candidates are start-economics (see 3) and DA-award
@@ -286,7 +289,24 @@ offer-side:
    spread; re-arming alone just moves the miss to summer — adjudicated).
 5. **`unit_outage_short_windows`** — derive for NYISO; cheap grain test.
 6. **`st_gas_mustrun_p25_level`** — re-ground the in-city ST_GAS persistent
-   bases on measured levels (D-2 ST_GAS 32% forced in 2024).
+   bases on measured levels (D-2 ST_GAS 31% forced in 2024).
+
+Dispatch-matching lane (hourly r, opened by the nyiso-92 charter; the hydro
+capability envelope/floor pair is now the keeper — cells K above):
+
+7. **`nuclear_unit_availability`** (NYISO derivation) — nuclear r_day drops
+   0.84 → 0.50/0.51 in 2024–25 (refuel/outage timing) on 26–28 TWh; the
+   ISO-generic engine exists (ERCOT keeper). Mind the PJM NRC-overlay
+   provenance-gate failure before choosing the source.
+8. **`hydro_ror_split` NYISO classifier review** — blocked on answering the
+   Robert Moses Niagara hybrid label (Run-of-river/Peaking, 52% of fleet MW)
+   from the treaty scenic-flow schedule; never arm on the CAISO-reviewed rule
+   alone.
+9. **Import hourly shape** (nyiso-86 §3): r_hr 0.45–0.61 after nyiso-92's
+   side-effect improvement; still the third-largest mistracking component.
+10. **Keeper-lineage cleanup:** drop `dual_fuel_oil_reattribution` from the
+    NYISO recipe metas (CLI already pins it NEISO-only; zero dispatch delta,
+    removes a known recording-basis artifact from the sidecars).
 
 ### 5.6 NEISO — target: C3c (ledgered; FRONTIER DECLARED — charter required first)
 

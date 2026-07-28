@@ -26,7 +26,8 @@
  * across a boundary; transfer candidates enter the target ISO's cell as U.
  * Methodology, lever queues & glossary: docs/mechanism-testing-matrix.md.
  * Last full audit: 2026-07-27 (keepers ercot115 / caiso-130 / pjm-133 / miso-88 /
- * nyiso-89 / neiso-61; forecast board of 2026-07-20).
+ * nyiso-89 / neiso-61; forecast board of 2026-07-20). NYISO column re-checked
+ * 2026-07-28 on the nyiso-92 keeper promotion (hydro envelope/floor cells -> K).
  */
 window.MECH_MATRIX = {
   version: 1,
@@ -37,7 +38,7 @@ window.MECH_MATRIX = {
     CAISO: "2026-07-27-caiso-130-nameplate-aware",
     PJM: "2026-07-27-pjm-133-nameplate",
     MISO: "2026-07-28-miso-99b-chp-power",
-    NYISO: "2026-07-27-nyiso-89-ctmeas-hrloaded",
+    NYISO: "2026-07-28-nyiso-92-hydro-envelope",
     NEISO: "2026-07-23-neiso-61-netrev-margin"
   },
   gates: {
@@ -355,16 +356,18 @@ window.MECH_MATRIX = {
       cells: "K.....", note: "ERCOT keeper (discovered live via a run_config recorder defect, since fixed)." },
     { id: "hydro_dispatch_envelope", cat: "vre", name: "Hydro dispatch envelope (measured month×hod p95 ceiling)",
       def: "scenarios.py:592", mode: "BF",
-      cells: ".KUUUU",
-      note: "CAISO keeper. ISO-agnostic engine untested elsewhere (PJM/NYISO/NEISO hydro fleets material)." },
+      cells: ".KUUKU",
+      note: "CAISO + NYISO keeper (NYISO: nyiso-92, armed jointly with the mirrored min-flow floor as one two-sided family; every material gas class's hourly r up in every year). ISO-agnostic engine untested for PJM/NEISO (fleets material).",
+      ev: { N: "nyiso-92 / FINDING-nyiso92-hydro-capability-envelope-2026-07-28.md" } },
     { id: "hydro_min_flow_floor", cat: "vre", name: "Hydro minimum-flow floor (lower-envelope month floor)",
       def: "scenarios.py:606", mode: "BF",
-      cells: ".KU.UU",
-      note: "CAISO: KILLED as written by its own K3 gate, then promoted on rule 1/14 (eliminates parks-at-zero). NYISO treaty min-flows (Niagara/St-Lawrence) are a separate hard-coded registry — reconciling the two is an audit item." },
+      cells: ".KU.KU",
+      note: "CAISO: KILLED as written by its own K3 gate, then promoted on rule 1/14 (eliminates parks-at-zero). NYISO keeper (nyiso-92): eliminates parks-at-zero 349/405/1098h -> 0; the treaty min-flow registry (NYISO_HYDRO_TREATY_MIN_FLOW) is dead code in the production path — the Q95 floor is the single live floor and subsumes the ~1.06 GW treaty-implied minimum (rule 19 reconciled).",
+      ev: { N: "nyiso-92 / FINDING-nyiso92-hydro-capability-envelope-2026-07-28.md" } },
     { id: "hydro_ror_split", cat: "vre", name: "Run-of-river vs reservoir hydro split (ORNL EHA)",
       def: "scenarios.py:643", mode: "BF",
       cells: ".KUUUU",
-      note: "CAISO keeper (promoted from a rejected probe on rule 1/14). Untested for the other hydro fleets." },
+      note: "CAISO keeper (promoted from a rejected probe on rule 1/14). Untested for the other hydro fleets. NYISO caution (nyiso-92): the completion rule is CAISO-reviewed only, and its hybrid mapping (Run-of-river/Peaking -> flat) would bind Robert Moses Niagara (52% of fleet MW) whose diurnal pattern is treaty-structured — arming requires an NYISO classifier review answering the Niagara hybrid from the treaty schedule first." },
     { id: "hydro_budget_nameplate_aware", cat: "vre", name: "Nameplate-aware monthly hydro budget allocation",
       def: "scenarios.py:676", mode: "BF",
       cells: ".KKUUU",
