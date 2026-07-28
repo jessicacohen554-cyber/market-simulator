@@ -1,0 +1,1834 @@
+{
+  "run": "2026-07-26-ercot115-coal-marginal-hr",
+  "measured_min_load_frac": 0.3636,
+  "A_unit_inventory": {
+    "eia860_units": 21,
+    "plants": {
+      "298": {
+        "name": "Limestone",
+        "n_units": 2,
+        "unit_cap_mw": [
+          831.0,
+          857.0
+        ],
+        "unit_min_load_mw": [
+          300.0,
+          300.0
+        ],
+        "eia860_cap_mw": 1688.0,
+        "model_pmax_mw": 1850.0,
+        "min_config_mw": 300.0,
+        "min_config_frac_of_model_pmax": 0.1622,
+        "min_config_frac_of_eia860_cap": 0.1777,
+        "blanket_floor_frac": 0.3636,
+        "unit_min_load_over_unit_cap": [
+          0.361,
+          0.35
+        ],
+        "dam_resources": 2,
+        "dam_min_resource_lsl_p50_mw": 262.0,
+        "dam_sum_resource_hsl_max_mw": 1688.0,
+        "status": [
+          "OP"
+        ]
+      },
+      "3470": {
+        "name": "W A Parish",
+        "n_units": 4,
+        "unit_cap_mw": [
+          577.0,
+          610.0,
+          663.0,
+          664.0
+        ],
+        "unit_min_load_mw": [
+          175.0,
+          175.0,
+          175.0,
+          175.0
+        ],
+        "eia860_cap_mw": 2514.0,
+        "model_pmax_mw": 2443.0,
+        "min_config_mw": 175.0,
+        "min_config_frac_of_model_pmax": 0.0716,
+        "min_config_frac_of_eia860_cap": 0.0696,
+        "blanket_floor_frac": 0.3636,
+        "unit_min_load_over_unit_cap": [
+          0.303,
+          0.287,
+          0.264,
+          0.264
+        ],
+        "dam_resources": 4,
+        "dam_min_resource_lsl_p50_mw": 159.0,
+        "dam_sum_resource_hsl_max_mw": 2517.0,
+        "status": [
+          "OP"
+        ]
+      },
+      "6146": {
+        "name": "Martin Lake",
+        "n_units": 3,
+        "unit_cap_mw": [
+          815.0,
+          820.0,
+          820.0
+        ],
+        "unit_min_load_mw": [
+          175.0,
+          175.0,
+          175.0
+        ],
+        "eia860_cap_mw": 2455.0,
+        "model_pmax_mw": 2380.0,
+        "min_config_mw": 175.0,
+        "min_config_frac_of_model_pmax": 0.0735,
+        "min_config_frac_of_eia860_cap": 0.0713,
+        "blanket_floor_frac": 0.3636,
+        "unit_min_load_over_unit_cap": [
+          0.215,
+          0.213,
+          0.213
+        ],
+        "dam_resources": 3,
+        "dam_min_resource_lsl_p50_mw": 215.0,
+        "dam_sum_resource_hsl_max_mw": 2475.0,
+        "status": [
+          "OP"
+        ]
+      },
+      "6178": {
+        "name": "Coleto Creek",
+        "n_units": 1,
+        "unit_cap_mw": [
+          655.0
+        ],
+        "unit_min_load_mw": [
+          175.0
+        ],
+        "eia860_cap_mw": 655.0,
+        "model_pmax_mw": 622.0,
+        "min_config_mw": 175.0,
+        "min_config_frac_of_model_pmax": 0.2814,
+        "min_config_frac_of_eia860_cap": 0.2672,
+        "blanket_floor_frac": 0.3636,
+        "unit_min_load_over_unit_cap": [
+          0.267
+        ],
+        "dam_resources": 1,
+        "dam_min_resource_lsl_p50_mw": 175.0,
+        "dam_sum_resource_hsl_max_mw": 655.0,
+        "status": [
+          "OP"
+        ]
+      },
+      "6179": {
+        "name": "Fayette",
+        "n_units": 3,
+        "unit_cap_mw": [
+          435.0,
+          590.0,
+          590.0
+        ],
+        "unit_min_load_mw": [
+          156.0,
+          156.0,
+          180.0
+        ],
+        "eia860_cap_mw": 1615.0,
+        "model_pmax_mw": 1690.0,
+        "min_config_mw": 156.0,
+        "min_config_frac_of_model_pmax": 0.0923,
+        "min_config_frac_of_eia860_cap": 0.0966,
+        "blanket_floor_frac": 0.3636,
+        "unit_min_load_over_unit_cap": [
+          0.264,
+          0.264,
+          0.414
+        ],
+        "dam_resources": 5,
+        "dam_min_resource_lsl_p50_mw": 78.0,
+        "dam_sum_resource_hsl_max_mw": 1654.0,
+        "status": [
+          "OP"
+        ]
+      },
+      "6180": {
+        "name": "Oak Grove",
+        "n_units": 2,
+        "unit_cap_mw": [
+          855.0,
+          855.0
+        ],
+        "unit_min_load_mw": [
+          348.0,
+          455.0
+        ],
+        "eia860_cap_mw": 1710.0,
+        "model_pmax_mw": 1795.0,
+        "min_config_mw": 348.0,
+        "min_config_frac_of_model_pmax": 0.1939,
+        "min_config_frac_of_eia860_cap": 0.2035,
+        "blanket_floor_frac": 0.3636,
+        "unit_min_load_over_unit_cap": [
+          0.407,
+          0.532
+        ],
+        "dam_resources": 2,
+        "dam_min_resource_lsl_p50_mw": 348.0,
+        "dam_sum_resource_hsl_max_mw": 1710.0,
+        "status": [
+          "OP"
+        ]
+      },
+      "6183": {
+        "name": "San Miguel",
+        "n_units": 1,
+        "unit_cap_mw": [
+          391.0
+        ],
+        "unit_min_load_mw": [
+          250.0
+        ],
+        "eia860_cap_mw": 391.0,
+        "model_pmax_mw": 410.0,
+        "min_config_mw": 250.0,
+        "min_config_frac_of_model_pmax": 0.6098,
+        "min_config_frac_of_eia860_cap": 0.6394,
+        "blanket_floor_frac": 0.3636,
+        "unit_min_load_over_unit_cap": [
+          0.639
+        ],
+        "dam_resources": 1,
+        "dam_min_resource_lsl_p50_mw": 220.0,
+        "dam_sum_resource_hsl_max_mw": 391.0,
+        "status": [
+          "OP"
+        ]
+      },
+      "7030": {
+        "name": "Major Oak",
+        "n_units": 2,
+        "unit_cap_mw": [
+          152.0,
+          153.0
+        ],
+        "unit_min_load_mw": [
+          95.0,
+          95.0
+        ],
+        "eia860_cap_mw": 305.0,
+        "model_pmax_mw": 349.0,
+        "min_config_mw": 95.0,
+        "min_config_frac_of_model_pmax": 0.2722,
+        "min_config_frac_of_eia860_cap": 0.3115,
+        "blanket_floor_frac": 0.3636,
+        "unit_min_load_over_unit_cap": [
+          0.625,
+          0.621
+        ],
+        "dam_resources": 2,
+        "dam_min_resource_lsl_p50_mw": 80.0,
+        "dam_sum_resource_hsl_max_mw": 310.0,
+        "status": [
+          "OP"
+        ]
+      },
+      "7097": {
+        "name": "J K Spruce",
+        "n_units": 2,
+        "unit_cap_mw": [
+          560.0,
+          785.0
+        ],
+        "unit_min_load_mw": [
+          130.0,
+          300.0
+        ],
+        "eia860_cap_mw": 1345.0,
+        "model_pmax_mw": 1488.0,
+        "min_config_mw": 130.0,
+        "min_config_frac_of_model_pmax": 0.0874,
+        "min_config_frac_of_eia860_cap": 0.0967,
+        "blanket_floor_frac": 0.3636,
+        "unit_min_load_over_unit_cap": [
+          0.232,
+          0.382
+        ],
+        "dam_resources": 2,
+        "dam_min_resource_lsl_p50_mw": 130.0,
+        "dam_sum_resource_hsl_max_mw": 1345.0,
+        "status": [
+          "OP"
+        ]
+      },
+      "56611": {
+        "name": "Sandy Creek",
+        "n_units": 1,
+        "unit_cap_mw": [
+          932.6
+        ],
+        "unit_min_load_mw": [
+          360.0
+        ],
+        "eia860_cap_mw": 932.6,
+        "model_pmax_mw": 936.0,
+        "min_config_mw": 360.0,
+        "min_config_frac_of_model_pmax": 0.3846,
+        "min_config_frac_of_eia860_cap": 0.386,
+        "blanket_floor_frac": 0.3636,
+        "unit_min_load_over_unit_cap": [
+          0.386
+        ],
+        "dam_resources": 4,
+        "dam_min_resource_lsl_p50_mw": 41.0,
+        "dam_sum_resource_hsl_max_mw": 932.8,
+        "status": [
+          "OS"
+        ]
+      }
+    },
+    "fleet": {
+      "eia860_cap_mw": 13610.6,
+      "sum_min_config_mw": 2164.0,
+      "cap_weighted_min_config_frac": 0.159,
+      "blanket_floor_frac": 0.3636,
+      "unit_min_load_cap_weighted_frac": 0.3325
+    }
+  },
+  "B_lp_expressibility": {
+    "plants": {
+      "298": {
+        "name": "Limestone",
+        "n_units": 2,
+        "n_configurations": 3,
+        "exact_lower_endpoint_mw": 300.0,
+        "capacity_mw": 1688.0,
+        "connected": true,
+        "gaps_mw": [],
+        "gap_share_of_range": 0.0
+      },
+      "3470": {
+        "name": "W A Parish",
+        "n_units": 4,
+        "n_configurations": 15,
+        "exact_lower_endpoint_mw": 175.0,
+        "capacity_mw": 2514.0,
+        "connected": true,
+        "gaps_mw": [],
+        "gap_share_of_range": 0.0
+      },
+      "6146": {
+        "name": "Martin Lake",
+        "n_units": 3,
+        "n_configurations": 7,
+        "exact_lower_endpoint_mw": 175.0,
+        "capacity_mw": 2455.0,
+        "connected": true,
+        "gaps_mw": [],
+        "gap_share_of_range": 0.0
+      },
+      "6178": {
+        "name": "Coleto Creek",
+        "n_units": 1,
+        "n_configurations": 1,
+        "exact_lower_endpoint_mw": 175.0,
+        "capacity_mw": 655.0,
+        "connected": true,
+        "gaps_mw": [],
+        "gap_share_of_range": 0.0
+      },
+      "6179": {
+        "name": "Fayette",
+        "n_units": 3,
+        "n_configurations": 7,
+        "exact_lower_endpoint_mw": 156.0,
+        "capacity_mw": 1615.0,
+        "connected": true,
+        "gaps_mw": [],
+        "gap_share_of_range": 0.0
+      },
+      "6180": {
+        "name": "Oak Grove",
+        "n_units": 2,
+        "n_configurations": 3,
+        "exact_lower_endpoint_mw": 348.0,
+        "capacity_mw": 1710.0,
+        "connected": true,
+        "gaps_mw": [],
+        "gap_share_of_range": 0.0
+      },
+      "6183": {
+        "name": "San Miguel",
+        "n_units": 1,
+        "n_configurations": 1,
+        "exact_lower_endpoint_mw": 250.0,
+        "capacity_mw": 391.0,
+        "connected": true,
+        "gaps_mw": [],
+        "gap_share_of_range": 0.0
+      },
+      "7030": {
+        "name": "Major Oak",
+        "n_units": 2,
+        "n_configurations": 3,
+        "exact_lower_endpoint_mw": 95.0,
+        "capacity_mw": 305.0,
+        "connected": false,
+        "gaps_mw": [
+          [
+            153.0,
+            190.0
+          ]
+        ],
+        "gap_share_of_range": 0.1762
+      },
+      "7097": {
+        "name": "J K Spruce",
+        "n_units": 2,
+        "n_configurations": 3,
+        "exact_lower_endpoint_mw": 130.0,
+        "capacity_mw": 1345.0,
+        "connected": true,
+        "gaps_mw": [],
+        "gap_share_of_range": 0.0
+      },
+      "56611": {
+        "name": "Sandy Creek",
+        "n_units": 1,
+        "n_configurations": 1,
+        "exact_lower_endpoint_mw": 360.0,
+        "capacity_mw": 932.6,
+        "connected": true,
+        "gaps_mw": [],
+        "gap_share_of_range": 0.0
+      }
+    },
+    "fleet": {
+      "plants_connected": 9,
+      "plants_total": 10,
+      "capacity_share_exactly_representable": 0.9776,
+      "max_gap_share_of_range": 0.1762
+    }
+  },
+  "C_detector": {
+    "2023": {
+      "plant_detector": {
+        "off_bar": "keeper plant MW <= 1 % of model pmax",
+        "off_hours": 10554,
+        "plant_hours": 87600,
+        "off_share": 0.12048,
+        "verdict": "detector separates hours"
+      },
+      "prefix_detector": {
+        "binding_hours": 14017,
+        "plant_hours": 87600,
+        "binding_share": 0.16001,
+        "lift_twh": 1.7384,
+        "lift_share_of_coal_energy": 0.02929
+      },
+      "per_plant": {
+        "298": {
+          "name": "Limestone",
+          "off_hours_share": 0.1237,
+          "prefix_binding_hours": 2369,
+          "prefix_lift_mwh": 311591.7
+        },
+        "3470": {
+          "name": "W A Parish",
+          "off_hours_share": 0.0755,
+          "prefix_binding_hours": 1757,
+          "prefix_lift_mwh": 195201.5
+        },
+        "6146": {
+          "name": "Martin Lake",
+          "off_hours_share": 0.0018,
+          "prefix_binding_hours": 1315,
+          "prefix_lift_mwh": 145114.8
+        },
+        "6178": {
+          "name": "Coleto Creek",
+          "off_hours_share": 0.2828,
+          "prefix_binding_hours": 1313,
+          "prefix_lift_mwh": 68349.6
+        },
+        "6179": {
+          "name": "Fayette",
+          "off_hours_share": 0.0024,
+          "prefix_binding_hours": 1148,
+          "prefix_lift_mwh": 66655.9
+        },
+        "6180": {
+          "name": "Oak Grove",
+          "off_hours_share": 0.0316,
+          "prefix_binding_hours": 3,
+          "prefix_lift_mwh": 422.5
+        },
+        "6183": {
+          "name": "San Miguel",
+          "off_hours_share": 0.3546,
+          "prefix_binding_hours": 336,
+          "prefix_lift_mwh": 15280.5
+        },
+        "7030": {
+          "name": "Major Oak",
+          "off_hours_share": 0.0033,
+          "prefix_binding_hours": 179,
+          "prefix_lift_mwh": 3447.7
+        },
+        "7097": {
+          "name": "J K Spruce",
+          "off_hours_share": 0.1438,
+          "prefix_binding_hours": 4033,
+          "prefix_lift_mwh": 808227.4
+        },
+        "56611": {
+          "name": "Sandy Creek",
+          "off_hours_share": 0.1853,
+          "prefix_binding_hours": 1564,
+          "prefix_lift_mwh": 124095.3
+        }
+      }
+    },
+    "2024": {
+      "plant_detector": {
+        "off_bar": "keeper plant MW <= 1 % of model pmax",
+        "off_hours": 11266,
+        "plant_hours": 87600,
+        "off_share": 0.12861,
+        "verdict": "detector separates hours"
+      },
+      "prefix_detector": {
+        "binding_hours": 14400,
+        "plant_hours": 87600,
+        "binding_share": 0.16438,
+        "lift_twh": 1.6324,
+        "lift_share_of_coal_energy": 0.02844
+      },
+      "per_plant": {
+        "298": {
+          "name": "Limestone",
+          "off_hours_share": 0.2164,
+          "prefix_binding_hours": 2696,
+          "prefix_lift_mwh": 413183.1
+        },
+        "3470": {
+          "name": "W A Parish",
+          "off_hours_share": 0.0837,
+          "prefix_binding_hours": 1514,
+          "prefix_lift_mwh": 199583.4
+        },
+        "6146": {
+          "name": "Martin Lake",
+          "off_hours_share": 0.0586,
+          "prefix_binding_hours": 1349,
+          "prefix_lift_mwh": 130475.9
+        },
+        "6178": {
+          "name": "Coleto Creek",
+          "off_hours_share": 0.2332,
+          "prefix_binding_hours": 1299,
+          "prefix_lift_mwh": 70601.0
+        },
+        "6179": {
+          "name": "Fayette",
+          "off_hours_share": 0.0092,
+          "prefix_binding_hours": 780,
+          "prefix_lift_mwh": 36789.8
+        },
+        "6180": {
+          "name": "Oak Grove",
+          "off_hours_share": 0.0545,
+          "prefix_binding_hours": 172,
+          "prefix_lift_mwh": 20121.2
+        },
+        "6183": {
+          "name": "San Miguel",
+          "off_hours_share": 0.3205,
+          "prefix_binding_hours": 1440,
+          "prefix_lift_mwh": 56388.9
+        },
+        "7030": {
+          "name": "Major Oak",
+          "off_hours_share": 0.0227,
+          "prefix_binding_hours": 290,
+          "prefix_lift_mwh": 6706.0
+        },
+        "7097": {
+          "name": "J K Spruce",
+          "off_hours_share": 0.0514,
+          "prefix_binding_hours": 3987,
+          "prefix_lift_mwh": 644976.3
+        },
+        "56611": {
+          "name": "Sandy Creek",
+          "off_hours_share": 0.2358,
+          "prefix_binding_hours": 873,
+          "prefix_lift_mwh": 53551.2
+        }
+      }
+    },
+    "2025": {
+      "plant_detector": {
+        "off_bar": "keeper plant MW <= 1 % of model pmax",
+        "off_hours": 14754,
+        "plant_hours": 87600,
+        "off_share": 0.16842,
+        "verdict": "detector separates hours"
+      },
+      "prefix_detector": {
+        "binding_hours": 7759,
+        "plant_hours": 87600,
+        "binding_share": 0.08857,
+        "lift_twh": 0.8207,
+        "lift_share_of_coal_energy": 0.0136
+      },
+      "per_plant": {
+        "298": {
+          "name": "Limestone",
+          "off_hours_share": 0.0398,
+          "prefix_binding_hours": 1886,
+          "prefix_lift_mwh": 179479.7
+        },
+        "3470": {
+          "name": "W A Parish",
+          "off_hours_share": 0.0131,
+          "prefix_binding_hours": 620,
+          "prefix_lift_mwh": 53431.6
+        },
+        "6146": {
+          "name": "Martin Lake",
+          "off_hours_share": 0.0148,
+          "prefix_binding_hours": 885,
+          "prefix_lift_mwh": 88441.9
+        },
+        "6178": {
+          "name": "Coleto Creek",
+          "off_hours_share": 0.1234,
+          "prefix_binding_hours": 974,
+          "prefix_lift_mwh": 53670.1
+        },
+        "6179": {
+          "name": "Fayette",
+          "off_hours_share": 0.0128,
+          "prefix_binding_hours": 562,
+          "prefix_lift_mwh": 20756.1
+        },
+        "6180": {
+          "name": "Oak Grove",
+          "off_hours_share": 0.0515,
+          "prefix_binding_hours": 11,
+          "prefix_lift_mwh": 1758.7
+        },
+        "6183": {
+          "name": "San Miguel",
+          "off_hours_share": 0.3279,
+          "prefix_binding_hours": 2,
+          "prefix_lift_mwh": 85.0
+        },
+        "7030": {
+          "name": "Major Oak",
+          "off_hours_share": 0.0143,
+          "prefix_binding_hours": 40,
+          "prefix_lift_mwh": 780.3
+        },
+        "7097": {
+          "name": "J K Spruce",
+          "off_hours_share": 0.0866,
+          "prefix_binding_hours": 2779,
+          "prefix_lift_mwh": 422263.0
+        },
+        "56611": {
+          "name": "Sandy Creek",
+          "off_hours_share": 1.0,
+          "prefix_binding_hours": 0,
+          "prefix_lift_mwh": 0.0
+        }
+      }
+    }
+  },
+  "D_prize": {
+    "2023": {
+      "c1_delta_twh": {
+        "keeper": -1.067,
+        "plant_0.364": 5.851,
+        "oracle": 1.7,
+        "min_config": 0.657,
+        "actual_twh": 60.42
+      },
+      "c8_forced_share": {
+        "plant_0.364": 0.1723,
+        "oracle": 0.0989,
+        "min_config": 0.0484
+      },
+      "g1_bands": {
+        "<15": {
+          "hours": 2665,
+          "actual": 0.552,
+          "keeper": 0.488,
+          "keeper_pass": false,
+          "plant_0.364": 0.588,
+          "plant_0.364_pass": true,
+          "oracle": 0.533,
+          "oracle_pass": true,
+          "min_config": 0.512,
+          "min_config_pass": true
+        },
+        "15-20": {
+          "hours": 1450,
+          "actual": 0.615,
+          "keeper": 0.618,
+          "keeper_pass": true,
+          "plant_0.364": 0.685,
+          "plant_0.364_pass": false,
+          "oracle": 0.644,
+          "oracle_pass": true,
+          "min_config": 0.634,
+          "min_config_pass": true
+        },
+        "20-25": {
+          "hours": 1450,
+          "actual": 0.644,
+          "keeper": 0.646,
+          "keeper_pass": true,
+          "plant_0.364": 0.714,
+          "plant_0.364_pass": false,
+          "oracle": 0.671,
+          "oracle_pass": true,
+          "min_config": 0.664,
+          "min_config_pass": true
+        },
+        "25-30": {
+          "hours": 1104,
+          "actual": 0.682,
+          "keeper": 0.698,
+          "keeper_pass": true,
+          "plant_0.364": 0.753,
+          "plant_0.364_pass": false,
+          "oracle": 0.716,
+          "oracle_pass": true,
+          "min_config": 0.713,
+          "min_config_pass": true
+        },
+        "30-35": {
+          "hours": 659,
+          "actual": 0.689,
+          "keeper": 0.707,
+          "keeper_pass": true,
+          "plant_0.364": 0.762,
+          "plant_0.364_pass": false,
+          "oracle": 0.726,
+          "oracle_pass": true,
+          "min_config": 0.721,
+          "min_config_pass": true
+        },
+        "35-50": {
+          "hours": 787,
+          "actual": 0.703,
+          "keeper": 0.729,
+          "keeper_pass": true,
+          "plant_0.364": 0.781,
+          "plant_0.364_pass": false,
+          "oracle": 0.748,
+          "oracle_pass": true,
+          "min_config": 0.744,
+          "min_config_pass": true
+        },
+        ">=50": {
+          "hours": 639,
+          "actual": 0.693,
+          "keeper": 0.71,
+          "keeper_pass": true,
+          "plant_0.364": 0.764,
+          "plant_0.364_pass": false,
+          "oracle": 0.73,
+          "oracle_pass": true,
+          "min_config": 0.725,
+          "min_config_pass": true
+        }
+      },
+      "g1_pass": {
+        "keeper": "6/7",
+        "plant_0.364": "1/7",
+        "oracle": "7/7",
+        "min_config": "7/7"
+      }
+    },
+    "2024": {
+      "c1_delta_twh": {
+        "keeper": -0.213,
+        "plant_0.364": 5.332,
+        "oracle": 1.825,
+        "min_config": 1.086,
+        "actual_twh": 57.617
+      },
+      "c8_forced_share": {
+        "plant_0.364": 0.159,
+        "oracle": 0.0784,
+        "min_config": 0.0343
+      },
+      "g1_bands": {
+        "<15": {
+          "hours": 3352,
+          "actual": 0.542,
+          "keeper": 0.494,
+          "keeper_pass": true,
+          "plant_0.364": 0.578,
+          "plant_0.364_pass": true,
+          "oracle": 0.529,
+          "oracle_pass": true,
+          "min_config": 0.514,
+          "min_config_pass": true
+        },
+        "15-20": {
+          "hours": 1368,
+          "actual": 0.609,
+          "keeper": 0.618,
+          "keeper_pass": true,
+          "plant_0.364": 0.673,
+          "plant_0.364_pass": false,
+          "oracle": 0.637,
+          "oracle_pass": true,
+          "min_config": 0.631,
+          "min_config_pass": true
+        },
+        "20-25": {
+          "hours": 1270,
+          "actual": 0.652,
+          "keeper": 0.676,
+          "keeper_pass": true,
+          "plant_0.364": 0.724,
+          "plant_0.364_pass": false,
+          "oracle": 0.692,
+          "oracle_pass": true,
+          "min_config": 0.687,
+          "min_config_pass": true
+        },
+        "25-30": {
+          "hours": 883,
+          "actual": 0.696,
+          "keeper": 0.722,
+          "keeper_pass": true,
+          "plant_0.364": 0.763,
+          "plant_0.364_pass": false,
+          "oracle": 0.734,
+          "oracle_pass": true,
+          "min_config": 0.731,
+          "min_config_pass": true
+        },
+        "30-35": {
+          "hours": 513,
+          "actual": 0.683,
+          "keeper": 0.706,
+          "keeper_pass": true,
+          "plant_0.364": 0.752,
+          "plant_0.364_pass": false,
+          "oracle": 0.719,
+          "oracle_pass": true,
+          "min_config": 0.717,
+          "min_config_pass": true
+        },
+        "35-50": {
+          "hours": 602,
+          "actual": 0.689,
+          "keeper": 0.72,
+          "keeper_pass": true,
+          "plant_0.364": 0.762,
+          "plant_0.364_pass": false,
+          "oracle": 0.731,
+          "oracle_pass": true,
+          "min_config": 0.73,
+          "min_config_pass": true
+        },
+        ">=50": {
+          "hours": 760,
+          "actual": 0.72,
+          "keeper": 0.767,
+          "keeper_pass": true,
+          "plant_0.364": 0.801,
+          "plant_0.364_pass": false,
+          "oracle": 0.775,
+          "oracle_pass": false,
+          "min_config": 0.776,
+          "min_config_pass": false
+        }
+      },
+      "g1_pass": {
+        "keeper": "7/7",
+        "plant_0.364": "1/7",
+        "oracle": "6/7",
+        "min_config": "6/7"
+      }
+    },
+    "2025": {
+      "c1_delta_twh": {
+        "keeper": -1.886,
+        "plant_0.364": 2.002,
+        "oracle": -0.629,
+        "min_config": -1.133,
+        "actual_twh": 62.214
+      },
+      "c8_forced_share": {
+        "plant_0.364": 0.1213,
+        "oracle": 0.0448,
+        "min_config": 0.0278
+      },
+      "g1_bands": {
+        "<15": {
+          "hours": 2634,
+          "actual": 0.689,
+          "keeper": 0.62,
+          "keeper_pass": false,
+          "plant_0.364": 0.692,
+          "plant_0.364_pass": true,
+          "oracle": 0.65,
+          "oracle_pass": true,
+          "min_config": 0.634,
+          "min_config_pass": false
+        },
+        "15-20": {
+          "hours": 909,
+          "actual": 0.73,
+          "keeper": 0.737,
+          "keeper_pass": true,
+          "plant_0.364": 0.779,
+          "plant_0.364_pass": true,
+          "oracle": 0.749,
+          "oracle_pass": true,
+          "min_config": 0.745,
+          "min_config_pass": true
+        },
+        "20-25": {
+          "hours": 1354,
+          "actual": 0.754,
+          "keeper": 0.75,
+          "keeper_pass": true,
+          "plant_0.364": 0.79,
+          "plant_0.364_pass": true,
+          "oracle": 0.76,
+          "oracle_pass": true,
+          "min_config": 0.757,
+          "min_config_pass": true
+        },
+        "25-30": {
+          "hours": 1113,
+          "actual": 0.777,
+          "keeper": 0.761,
+          "keeper_pass": true,
+          "plant_0.364": 0.799,
+          "plant_0.364_pass": true,
+          "oracle": 0.77,
+          "oracle_pass": true,
+          "min_config": 0.768,
+          "min_config_pass": true
+        },
+        "30-35": {
+          "hours": 794,
+          "actual": 0.774,
+          "keeper": 0.76,
+          "keeper_pass": true,
+          "plant_0.364": 0.797,
+          "plant_0.364_pass": true,
+          "oracle": 0.77,
+          "oracle_pass": true,
+          "min_config": 0.767,
+          "min_config_pass": true
+        },
+        "35-50": {
+          "hours": 1092,
+          "actual": 0.789,
+          "keeper": 0.787,
+          "keeper_pass": true,
+          "plant_0.364": 0.819,
+          "plant_0.364_pass": true,
+          "oracle": 0.795,
+          "oracle_pass": true,
+          "min_config": 0.793,
+          "min_config_pass": true
+        },
+        ">=50": {
+          "hours": 858,
+          "actual": 0.801,
+          "keeper": 0.806,
+          "keeper_pass": true,
+          "plant_0.364": 0.833,
+          "plant_0.364_pass": true,
+          "oracle": 0.811,
+          "oracle_pass": true,
+          "min_config": 0.811,
+          "min_config_pass": true
+        }
+      },
+      "g1_pass": {
+        "keeper": "6/7",
+        "plant_0.364": "7/7",
+        "oracle": "7/7",
+        "min_config": "6/7"
+      }
+    }
+  },
+  "E_bottom_tail": {
+    "2023": {
+      "298": {
+        "name": "Limestone",
+        "actual": 0.261,
+        "keeper": 0.093,
+        "plant_0.364": 0.187,
+        "oracle": 0.172,
+        "min_config": 0.093
+      },
+      "3470": {
+        "name": "W A Parish",
+        "actual": 0.171,
+        "keeper": 0.026,
+        "plant_0.364": 0.29,
+        "oracle": 0.067,
+        "min_config": 0.057
+      },
+      "6146": {
+        "name": "Martin Lake",
+        "actual": 0.233,
+        "keeper": 0.058,
+        "plant_0.364": 0.294,
+        "oracle": 0.198,
+        "min_config": 0.085
+      },
+      "6178": {
+        "name": "Coleto Creek",
+        "actual": 0.284,
+        "keeper": 0.257,
+        "plant_0.364": 0.297,
+        "oracle": 0.304,
+        "min_config": 0.23
+      },
+      "6179": {
+        "name": "Fayette",
+        "actual": 0.301,
+        "keeper": 0.131,
+        "plant_0.364": 0.165,
+        "oracle": 0.131,
+        "min_config": 0.131
+      },
+      "6180": {
+        "name": "Oak Grove",
+        "actual": 0.467,
+        "keeper": 0.767,
+        "plant_0.364": 0.682,
+        "oracle": 0.682,
+        "min_config": 0.677
+      },
+      "6183": {
+        "name": "San Miguel",
+        "actual": 0.585,
+        "keeper": 0.507,
+        "plant_0.364": 0.33,
+        "oracle": 0.41,
+        "min_config": 0.507
+      },
+      "7030": {
+        "name": "Major Oak",
+        "actual": 0.559,
+        "keeper": 0.473,
+        "plant_0.364": 0.721,
+        "oracle": 0.473,
+        "min_config": 0.545
+      },
+      "7097": {
+        "name": "J K Spruce",
+        "actual": 0.106,
+        "keeper": 0.013,
+        "plant_0.364": 0.259,
+        "oracle": 0.138,
+        "min_config": 0.088
+      },
+      "56611": {
+        "name": "Sandy Creek",
+        "actual": 0.381,
+        "keeper": 0.211,
+        "plant_0.364": 0.325,
+        "oracle": 0.325,
+        "min_config": 0.343
+      }
+    },
+    "2024": {
+      "298": {
+        "name": "Limestone",
+        "actual": 0.247,
+        "keeper": 0.061,
+        "plant_0.364": 0.155,
+        "oracle": 0.095,
+        "min_config": 0.095
+      },
+      "3470": {
+        "name": "W A Parish",
+        "actual": 0.166,
+        "keeper": 0.02,
+        "plant_0.364": 0.043,
+        "oracle": 0.022,
+        "min_config": 0.013
+      },
+      "6146": {
+        "name": "Martin Lake",
+        "actual": 0.282,
+        "keeper": 0.104,
+        "plant_0.364": 0.238,
+        "oracle": 0.189,
+        "min_config": 0.101
+      },
+      "6178": {
+        "name": "Coleto Creek",
+        "actual": 0.294,
+        "keeper": 0.257,
+        "plant_0.364": 0.293,
+        "oracle": 0.293,
+        "min_config": 0.227
+      },
+      "6179": {
+        "name": "Fayette",
+        "actual": 0.32,
+        "keeper": 0.168,
+        "plant_0.364": 0.238,
+        "oracle": 0.199,
+        "min_config": 0.166
+      },
+      "6180": {
+        "name": "Oak Grove",
+        "actual": 0.465,
+        "keeper": 0.244,
+        "plant_0.364": 0.367,
+        "oracle": 0.249,
+        "min_config": 0.247
+      },
+      "6183": {
+        "name": "San Miguel",
+        "actual": 0.579,
+        "keeper": 0.317,
+        "plant_0.364": 0.317,
+        "oracle": 0.317,
+        "min_config": 0.32
+      },
+      "7030": {
+        "name": "Major Oak",
+        "actual": 0.558,
+        "keeper": 0.45,
+        "plant_0.364": 0.45,
+        "oracle": 0.45,
+        "min_config": 0.45
+      },
+      "7097": {
+        "name": "J K Spruce",
+        "actual": 0.341,
+        "keeper": 0.065,
+        "plant_0.364": 0.299,
+        "oracle": 0.156,
+        "min_config": 0.108
+      },
+      "56611": {
+        "name": "Sandy Creek",
+        "actual": 0.384,
+        "keeper": 0.351,
+        "plant_0.364": 0.179,
+        "oracle": 0.351,
+        "min_config": 0.189
+      }
+    },
+    "2025": {
+      "298": {
+        "name": "Limestone",
+        "actual": 0.335,
+        "keeper": 0.153,
+        "plant_0.364": 0.351,
+        "oracle": 0.196,
+        "min_config": 0.176
+      },
+      "3470": {
+        "name": "W A Parish",
+        "actual": 0.308,
+        "keeper": 0.102,
+        "plant_0.364": 0.287,
+        "oracle": 0.219,
+        "min_config": 0.08
+      },
+      "6146": {
+        "name": "Martin Lake",
+        "actual": 0.348,
+        "keeper": 0.167,
+        "plant_0.364": 0.302,
+        "oracle": 0.295,
+        "min_config": 0.164
+      },
+      "6178": {
+        "name": "Coleto Creek",
+        "actual": 0.312,
+        "keeper": 0.246,
+        "plant_0.364": 0.297,
+        "oracle": 0.298,
+        "min_config": 0.237
+      },
+      "6179": {
+        "name": "Fayette",
+        "actual": 0.356,
+        "keeper": 0.261,
+        "plant_0.364": 0.319,
+        "oracle": 0.319,
+        "min_config": 0.213
+      },
+      "6180": {
+        "name": "Oak Grove",
+        "actual": 0.476,
+        "keeper": 0.468,
+        "plant_0.364": 0.465,
+        "oracle": 0.464,
+        "min_config": 0.462
+      },
+      "6183": {
+        "name": "San Miguel",
+        "actual": 0.585,
+        "keeper": 0.493,
+        "plant_0.364": 0.493,
+        "oracle": 0.493,
+        "min_config": 0.493
+      },
+      "7030": {
+        "name": "Major Oak",
+        "actual": 0.562,
+        "keeper": 0.495,
+        "plant_0.364": 0.495,
+        "oracle": 0.473,
+        "min_config": 0.495
+      },
+      "7097": {
+        "name": "J K Spruce",
+        "actual": 0.42,
+        "keeper": 0.109,
+        "plant_0.364": 0.353,
+        "oracle": 0.25,
+        "min_config": 0.137
+      },
+      "56611": {
+        "name": "Sandy Creek",
+        "actual": 0.386,
+        "keeper": null,
+        "plant_0.364": null,
+        "oracle": null,
+        "min_config": null
+      }
+    }
+  },
+  "F_d1_gate": {
+    "2023": {
+      "COAL_LIGNITE": {
+        "plants": [
+          "Oak Grove",
+          "San Miguel",
+          "Major Oak"
+        ],
+        "keeper": {
+          "profile_r": 0.744,
+          "model_offpeak_cv": 0.017,
+          "actual_offpeak_cv": 0.057,
+          "cv_ratio": 0.3,
+          "gates_cleared": false
+        },
+        "plant_0.364": {
+          "profile_r": 0.738,
+          "model_offpeak_cv": 0.016,
+          "actual_offpeak_cv": 0.057,
+          "cv_ratio": 0.272,
+          "gates_cleared": false
+        },
+        "oracle": {
+          "profile_r": 0.741,
+          "model_offpeak_cv": 0.016,
+          "actual_offpeak_cv": 0.057,
+          "cv_ratio": 0.283,
+          "gates_cleared": false
+        },
+        "min_config": {
+          "profile_r": 0.724,
+          "model_offpeak_cv": 0.016,
+          "actual_offpeak_cv": 0.057,
+          "cv_ratio": 0.274,
+          "gates_cleared": false
+        }
+      },
+      "COAL_PRB": {
+        "plants": [
+          "Limestone",
+          "W A Parish",
+          "Martin Lake",
+          "Coleto Creek",
+          "Fayette",
+          "J K Spruce",
+          "Sandy Creek"
+        ],
+        "keeper": {
+          "profile_r": 0.995,
+          "model_offpeak_cv": 0.128,
+          "actual_offpeak_cv": 0.115,
+          "cv_ratio": 1.114,
+          "gates_cleared": true
+        },
+        "plant_0.364": {
+          "profile_r": 0.991,
+          "model_offpeak_cv": 0.092,
+          "actual_offpeak_cv": 0.115,
+          "cv_ratio": 0.8,
+          "gates_cleared": true
+        },
+        "oracle": {
+          "profile_r": 0.992,
+          "model_offpeak_cv": 0.106,
+          "actual_offpeak_cv": 0.115,
+          "cv_ratio": 0.925,
+          "gates_cleared": true
+        },
+        "min_config": {
+          "profile_r": 0.995,
+          "model_offpeak_cv": 0.121,
+          "actual_offpeak_cv": 0.115,
+          "cv_ratio": 1.058,
+          "gates_cleared": true
+        }
+      }
+    },
+    "2024": {
+      "COAL_LIGNITE": {
+        "plants": [
+          "Oak Grove",
+          "San Miguel",
+          "Major Oak"
+        ],
+        "keeper": {
+          "profile_r": 0.862,
+          "model_offpeak_cv": 0.02,
+          "actual_offpeak_cv": 0.018,
+          "cv_ratio": 1.128,
+          "gates_cleared": true
+        },
+        "plant_0.364": {
+          "profile_r": 0.892,
+          "model_offpeak_cv": 0.015,
+          "actual_offpeak_cv": 0.018,
+          "cv_ratio": 0.873,
+          "gates_cleared": true
+        },
+        "oracle": {
+          "profile_r": 0.896,
+          "model_offpeak_cv": 0.016,
+          "actual_offpeak_cv": 0.018,
+          "cv_ratio": 0.94,
+          "gates_cleared": true
+        },
+        "min_config": {
+          "profile_r": 0.879,
+          "model_offpeak_cv": 0.017,
+          "actual_offpeak_cv": 0.018,
+          "cv_ratio": 0.966,
+          "gates_cleared": true
+        }
+      },
+      "COAL_PRB": {
+        "plants": [
+          "Limestone",
+          "W A Parish",
+          "Martin Lake",
+          "Coleto Creek",
+          "Fayette",
+          "J K Spruce",
+          "Sandy Creek"
+        ],
+        "keeper": {
+          "profile_r": 0.986,
+          "model_offpeak_cv": 0.061,
+          "actual_offpeak_cv": 0.075,
+          "cv_ratio": 0.816,
+          "gates_cleared": true
+        },
+        "plant_0.364": {
+          "profile_r": 0.989,
+          "model_offpeak_cv": 0.047,
+          "actual_offpeak_cv": 0.075,
+          "cv_ratio": 0.62,
+          "gates_cleared": true
+        },
+        "oracle": {
+          "profile_r": 0.99,
+          "model_offpeak_cv": 0.053,
+          "actual_offpeak_cv": 0.075,
+          "cv_ratio": 0.705,
+          "gates_cleared": true
+        },
+        "min_config": {
+          "profile_r": 0.987,
+          "model_offpeak_cv": 0.059,
+          "actual_offpeak_cv": 0.075,
+          "cv_ratio": 0.787,
+          "gates_cleared": true
+        }
+      }
+    },
+    "2025": {
+      "COAL_LIGNITE": {
+        "plants": [
+          "Oak Grove",
+          "San Miguel",
+          "Major Oak"
+        ],
+        "keeper": {
+          "profile_r": 0.914,
+          "model_offpeak_cv": 0.038,
+          "actual_offpeak_cv": 0.023,
+          "cv_ratio": 1.624,
+          "gates_cleared": true
+        },
+        "plant_0.364": {
+          "profile_r": 0.93,
+          "model_offpeak_cv": 0.028,
+          "actual_offpeak_cv": 0.023,
+          "cv_ratio": 1.206,
+          "gates_cleared": true
+        },
+        "oracle": {
+          "profile_r": 0.928,
+          "model_offpeak_cv": 0.031,
+          "actual_offpeak_cv": 0.023,
+          "cv_ratio": 1.313,
+          "gates_cleared": true
+        },
+        "min_config": {
+          "profile_r": 0.918,
+          "model_offpeak_cv": 0.032,
+          "actual_offpeak_cv": 0.023,
+          "cv_ratio": 1.366,
+          "gates_cleared": true
+        }
+      },
+      "COAL_PRB": {
+        "plants": [
+          "Limestone",
+          "W A Parish",
+          "Martin Lake",
+          "Coleto Creek",
+          "Fayette",
+          "J K Spruce",
+          "Sandy Creek"
+        ],
+        "keeper": {
+          "profile_r": 0.975,
+          "model_offpeak_cv": 0.079,
+          "actual_offpeak_cv": 0.068,
+          "cv_ratio": 1.162,
+          "gates_cleared": true
+        },
+        "plant_0.364": {
+          "profile_r": 0.988,
+          "model_offpeak_cv": 0.053,
+          "actual_offpeak_cv": 0.068,
+          "cv_ratio": 0.776,
+          "gates_cleared": true
+        },
+        "oracle": {
+          "profile_r": 0.987,
+          "model_offpeak_cv": 0.06,
+          "actual_offpeak_cv": 0.068,
+          "cv_ratio": 0.892,
+          "gates_cleared": true
+        },
+        "min_config": {
+          "profile_r": 0.978,
+          "model_offpeak_cv": 0.074,
+          "actual_offpeak_cv": 0.068,
+          "cv_ratio": 1.099,
+          "gates_cleared": true
+        }
+      }
+    }
+  },
+  "G_flatness": {
+    "2023": {
+      "COAL_LIGNITE": {
+        "plants": [
+          "Oak Grove",
+          "San Miguel",
+          "Major Oak"
+        ],
+        "model_offpeak_pin_share": 0.7331,
+        "actual_offpeak_pin_share": 0.062,
+        "model_hod_profile": [
+          1842.8,
+          1837.3,
+          1832.5,
+          1846.3,
+          1873.1,
+          1906.5,
+          1931.9,
+          1937.4,
+          1909.5,
+          1903.8,
+          1900.0,
+          1894.2,
+          1896.6,
+          1898.9,
+          1906.4,
+          1915.4,
+          1946.4,
+          1984.0,
+          1989.8,
+          1986.8,
+          1972.6,
+          1946.5,
+          1920.9,
+          1881.4
+        ],
+        "actual_hod_profile": [
+          1657.0,
+          1628.5,
+          1615.2,
+          1621.9,
+          1638.6,
+          1663.9,
+          1690.2,
+          1701.3,
+          1704.9,
+          1771.7,
+          1837.1,
+          1856.8,
+          1871.4,
+          1876.8,
+          1877.1,
+          1880.5,
+          1892.0,
+          1912.8,
+          1921.2,
+          1918.2,
+          1908.8,
+          1887.7,
+          1865.8,
+          1773.4
+        ]
+      },
+      "COAL_PRB": {
+        "plants": [
+          "Limestone",
+          "W A Parish",
+          "Martin Lake",
+          "Coleto Creek",
+          "Fayette",
+          "J K Spruce",
+          "Sandy Creek"
+        ],
+        "model_offpeak_pin_share": 0.1759,
+        "actual_offpeak_pin_share": 0.0145,
+        "model_hod_profile": [
+          3941.5,
+          3723.7,
+          3676.5,
+          3703.2,
+          3908.6,
+          4343.3,
+          4565.9,
+          4423.2,
+          4251.6,
+          4513.4,
+          4883.7,
+          5082.2,
+          5185.0,
+          5256.0,
+          5318.3,
+          5397.0,
+          5584.1,
+          5984.8,
+          6190.3,
+          6127.8,
+          5913.9,
+          5520.1,
+          4928.9,
+          4326.4
+        ],
+        "actual_hod_profile": [
+          4494.5,
+          4227.3,
+          4116.6,
+          4164.3,
+          4376.5,
+          4775.6,
+          5113.4,
+          5097.5,
+          4854.7,
+          4966.4,
+          5256.3,
+          5493.4,
+          5654.8,
+          5773.0,
+          5839.2,
+          5905.2,
+          6037.2,
+          6468.1,
+          6775.9,
+          6694.1,
+          6358.7,
+          5947.4,
+          5505.4,
+          4987.5
+        ]
+      }
+    },
+    "2024": {
+      "COAL_LIGNITE": {
+        "plants": [
+          "Oak Grove",
+          "San Miguel",
+          "Major Oak"
+        ],
+        "model_offpeak_pin_share": 0.6666,
+        "actual_offpeak_pin_share": 0.0462,
+        "model_hod_profile": [
+          1646.1,
+          1629.1,
+          1623.2,
+          1631.4,
+          1652.9,
+          1681.5,
+          1703.2,
+          1700.9,
+          1647.4,
+          1613.9,
+          1614.4,
+          1603.7,
+          1600.7,
+          1610.3,
+          1617.2,
+          1636.4,
+          1679.0,
+          1754.1,
+          1777.6,
+          1777.0,
+          1770.5,
+          1752.6,
+          1717.3,
+          1678.1
+        ],
+        "actual_hod_profile": [
+          1570.8,
+          1553.9,
+          1552.1,
+          1563.3,
+          1589.8,
+          1617.3,
+          1638.7,
+          1629.7,
+          1590.2,
+          1586.2,
+          1594.7,
+          1602.9,
+          1619.9,
+          1626.4,
+          1631.6,
+          1638.6,
+          1670.0,
+          1718.6,
+          1752.2,
+          1765.6,
+          1760.0,
+          1723.5,
+          1662.1,
+          1597.1
+        ]
+      },
+      "COAL_PRB": {
+        "plants": [
+          "Limestone",
+          "W A Parish",
+          "Martin Lake",
+          "Coleto Creek",
+          "Fayette",
+          "J K Spruce",
+          "Sandy Creek"
+        ],
+        "model_offpeak_pin_share": 0.1583,
+        "actual_offpeak_pin_share": 0.0214,
+        "model_hod_profile": [
+          4433.5,
+          4233.7,
+          4168.8,
+          4183.7,
+          4356.2,
+          4726.7,
+          4859.4,
+          4511.8,
+          4137.5,
+          4043.3,
+          4261.6,
+          4484.4,
+          4667.9,
+          4775.6,
+          4904.4,
+          5016.6,
+          5359.6,
+          5911.3,
+          6187.7,
+          6160.1,
+          6020.2,
+          5736.4,
+          5267.2,
+          4744.2
+        ],
+        "actual_hod_profile": [
+          4681.9,
+          4454.4,
+          4334.7,
+          4350.9,
+          4561.1,
+          4964.3,
+          5244.9,
+          4980.5,
+          4496.9,
+          4356.1,
+          4543.8,
+          4850.6,
+          5116.5,
+          5290.2,
+          5409.1,
+          5512.9,
+          5763.2,
+          6359.5,
+          6909.2,
+          6894.2,
+          6463.2,
+          5933.7,
+          5432.6,
+          5022.0
+        ]
+      }
+    },
+    "2025": {
+      "COAL_LIGNITE": {
+        "plants": [
+          "Oak Grove",
+          "San Miguel",
+          "Major Oak"
+        ],
+        "model_offpeak_pin_share": 0.7725,
+        "actual_offpeak_pin_share": 0.1864,
+        "model_hod_profile": [
+          1739.7,
+          1734.6,
+          1731.6,
+          1735.9,
+          1742.7,
+          1749.6,
+          1751.6,
+          1737.3,
+          1686.7,
+          1633.2,
+          1610.5,
+          1601.6,
+          1597.2,
+          1596.3,
+          1612.2,
+          1630.6,
+          1699.8,
+          1758.6,
+          1769.4,
+          1771.0,
+          1770.0,
+          1764.1,
+          1755.2,
+          1747.0
+        ],
+        "actual_hod_profile": [
+          1659.4,
+          1653.5,
+          1656.1,
+          1660.6,
+          1672.5,
+          1677.4,
+          1683.3,
+          1669.4,
+          1633.4,
+          1595.4,
+          1588.7,
+          1588.1,
+          1586.5,
+          1585.7,
+          1586.6,
+          1584.7,
+          1615.6,
+          1683.1,
+          1731.3,
+          1749.1,
+          1753.4,
+          1746.8,
+          1716.3,
+          1681.2
+        ]
+      },
+      "COAL_PRB": {
+        "plants": [
+          "Limestone",
+          "W A Parish",
+          "Martin Lake",
+          "Coleto Creek",
+          "Fayette",
+          "J K Spruce",
+          "Sandy Creek"
+        ],
+        "model_offpeak_pin_share": 0.2747,
+        "actual_offpeak_pin_share": 0.0227,
+        "model_hod_profile": [
+          5157.0,
+          5060.7,
+          5017.5,
+          5052.5,
+          5219.6,
+          5481.7,
+          5517.1,
+          5126.7,
+          4637.5,
+          4331.0,
+          4265.6,
+          4389.7,
+          4571.4,
+          4686.1,
+          4794.9,
+          4907.3,
+          5244.0,
+          5770.9,
+          6050.2,
+          6049.5,
+          6012.1,
+          5923.0,
+          5699.8,
+          5390.8
+        ],
+        "actual_hod_profile": [
+          5635.8,
+          5445.7,
+          5350.3,
+          5360.9,
+          5594.4,
+          5948.3,
+          6042.4,
+          5577.2,
+          4991.9,
+          4733.8,
+          4799.9,
+          5007.6,
+          5263.8,
+          5412.7,
+          5496.0,
+          5533.3,
+          5719.4,
+          6242.2,
+          6698.5,
+          6773.7,
+          6690.4,
+          6481.2,
+          6144.3,
+          5866.3
+        ]
+      }
+    }
+  }
+}
