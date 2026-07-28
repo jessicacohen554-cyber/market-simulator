@@ -1,7 +1,14 @@
-# FINDING miso-99 — the CHP heat-rate correction is UNBLOCKED: the gross→net basis miso-98 §6.1 could not obtain is **not needed**, because eGRID publishes the steam credit it removed (`CHPCHTI`) and adding it back lands on the model's own NET denominator
+# FINDING miso-99 — the CHP heat-rate correction is UNBLOCKED and PROMOTED: the gross→net basis miso-98 §6.1 could not obtain is **not needed**, because eGRID publishes the steam credit it removed (`CHPCHTI`) and adding it back lands on the model's own NET denominator
 
-**Status: STEP 1 + STEP 2 COMPLETE, STEP 3 A/B IN FLIGHT.** Keeper
-`2026-07-27-miso-98b-sectormeasured` unchanged pending the arms.
+**Determination: A/B SOLVED, REGISTERED, AND PROMOTED. MISO keeper →
+`2026-07-28-miso-99b-chp-power`** (supersedes
+`2026-07-27-miso-98b-sectormeasured`; same determination NOT-YET, same
+criterion profile, C3a better in all three years, no criterion regressed).
+
+| arm | run id | bundle | `measured_chp_heat_rates` |
+|---|---|---|---|
+| A | `2026-07-28-miso-99a-chp-hr` | `miso99_chp_hr_A` | off (control) |
+| B | `2026-07-28-miso-99b-chp-power` | `miso99_chp_hr_B` | **on** |
 
 ---
 
@@ -178,8 +185,105 @@ Post-miso-98 residual: **CC_CHP +11.8 / +11.1 % (over)**, **CT_CHP −33.3 /
 
 ## 4. RESULTS
 
-*(pending — the six year-solves are in flight; this section is written after
-the arms are read, and §3 above is frozen.)*
+### 4.1 The control is an EQUALITY check, not structural agreement
+
+miso-98 could only claim its A arm *structurally agreed* with the keeper
+(post-CAMPD-envelope drift). Here arm A reproduces
+`2026-07-27-miso-98b-sectormeasured` **exactly — 0.0000 % on all 17 classes in
+2023, 2024 and 2025.** So every arm-B movement below is fully attributable to
+the single flag. Two further invariants were **measured, not assumed**:
+
+* all **nine** `shared_inputs` hashes are byte-identical across the arms after
+  both `--rebuild-benchmark` runs;
+* the **benchmark is identical on all 21 class-year rows** — §5's claim that a
+  heat rate cannot move `_btm_frame` holds, so the miso-98 §5 shared-`bench/`
+  trap cannot bite this A/B.
+
+### 4.2 Criteria — identical verdicts, C3a better every year, nothing regresses
+
+| criterion | arm A (off) | arm B (on) | |
+|---|---|---|---|
+| C1 fuel-mix | PASS | PASS | unchanged |
+| C2 system volume | PASS | PASS | unchanged |
+| **C3a mean LMP** | −6.4 / −10.2 / **−15.4** % | −5.4 / −9.1 / **−14.3** % | **better every year** |
+| **C3b price shape** | **PASS** | **PASS** | **kill guard HELD** |
+| C3c price tail | 1 / 6 / 0 h vs 30 / 37 / 88 | **bit-identical** | untouched |
+| C4 dispatch corr | PASS | PASS | unchanged |
+| C7 diurnal (D-1) | FAIL COAL_PRB | FAIL COAL_PRB | unchanged, unrelated |
+| C8 forced share | PASS | PASS | unchanged |
+| **determination** | NOT-YET | NOT-YET | C3a-2025 / C3c / C7 decide both |
+
+C3b was the pre-registered kill guard — miso-98b passes it at 0.198 against a
+≤0.20 bound and **could** have flipped back. It did not. C3c being
+*bit-identical* is reported as what it is: a CHP cost change does not reach the
+scarcity tail. It is not evidence of improvement.
+
+*(Arm A is an unattested control probe, so its C3a/C3c render as raw FAIL
+rather than the ledgered CAVEAT arm B carries. The underlying numbers are the
+ones tabulated above; the ledger is inherited unchanged at 2/3.)*
+
+### 4.3 Class energies — the pre-registered lines
+
+| class | year | A err | B err | \|err\| move |
+|---|---|---|---|---|
+| **CC_CHP** | 2023 | +11.8 % | **−9.8 %** | **−2.0 pp** |
+| **CC_CHP** | 2024 | +11.1 % | **−10.1 %** | **−1.0 pp** |
+| **CC_CHP** | 2025 | +31.7 % | **−4.9 %** | **−26.8 pp** |
+| **CT_CHP** | 2023 | −33.3 % | **−38.4 %** | **+5.1 pp** |
+| **CT_CHP** | 2024 | −32.9 % | **−37.8 %** | **+4.9 pp** |
+| **CT_CHP** | 2025 | +15.7 % | +6.2 % | −9.4 pp |
+| CC_REGULAR | 23/24/25 | −5.4 / −1.5 / −5.9 | −4.2 / −0.2 / −4.0 | better ×3 |
+| CT_PEAKER | 23/24/25 | −14.4 / −2.5 / −1.8 | −10.7 / +1.3 / +2.7 | better ×2 |
+| COAL_LIGNITE | 23/24/25 | −12.5 / −19.3 / −6.7 | −11.7 / −18.9 / −5.9 | better ×3 |
+| COAL_PRB | 23/24/25 | +0.7 / +0.8 / +4.7 | +1.5 / +1.4 / +5.6 | worse ×3 (≤0.9 pp) |
+| ST_GAS | 23/24/25 | +16.2 / −8.3 / +6.8 | +17.6 / −7.3 / +8.0 | mixed, ≤1.4 pp |
+
+**§3's prediction 1 holds and then some**: CC_CHP's absolute error falls in all
+three years, including a 26.8 pp improvement in 2025. **Prediction 2 holds**:
+CT_CHP degrades in 2023/2024, by ~5 pp, and it is **not** grounds to revert
+(rules 1 / 14) — the credited rate is measurably the wrong quantity, validated
+to 1e-7 against metered fuel, while non-CHP classes measure 0–3 % accurate on
+the same pipeline. **Prediction 3 holds**: prices rise (mean system price
+31.458 → 31.818 in 2023, 28.863 → 29.214 in 2024) and C3a improves. **Prediction
+5 holds**: the displaced energy goes to CC_REGULAR, imports, CT_PEAKER and
+COAL_PRB — the merchant continuum that actually served it.
+
+Year-over-year the class response is stable (CC_CHP −19.3 / −19.1 %, CT_CHP
+−7.6 / −7.3 % of arm A's energy in 2023 / 2024), which is what a measured input
+carrying no per-year parameter should look like.
+
+### 4.4 THREE adverse movements, reported not smoothed
+
+1. **CT_CHP's C1 fit degrades** in 2023/2024 (above) — pre-registered.
+2. **CC_CHP's diurnal AMPLITUDE overshoots.** D-1 `cv` 0.026 → 0.141 against an
+   actual 0.066, so `cv_ratio` 0.392 → 2.132 (2023), 0.473 → 3.058 (2024),
+   0.737 → 2.713 (2025). The class was too flat and is now too peaky.
+3. **CT_CHP's profile correlation degrades**: `profile_r` 0.768 → 0.652,
+   0.084 → **−0.104**, 0.627 → 0.171.
+
+Against that, **CC_CHP's profile correlation improves** (0.959 → 0.989,
+0.980 → 0.986, 0.860 → 0.965). Neither CHP class is D-1-gated (the gate covers
+CT_PEAKER / ST_GAS / COAL*), so no gate moves — but all three are real and are
+the named open items, not caveats absorbed into the ledger.
+
+**COAL_PRB's D-1 FAIL and MISO ST_CHP's −0.79 profile anti-correlation are
+UNCHANGED by this delta** (−0.795 → −0.797, −0.763 → −0.762, −0.801 → −0.771),
+which independently confirms both are orthogonal to CHP heat rates — relevant
+to the ST_CHP shape lane, which should not expect this mechanism to have moved
+its signal.
+
+### 4.5 A blocker fixed in shared infrastructure, on the way
+
+Registering on post-fix main crashed in `render_calibration_html.build_payload`
+with `IndexError: index 11 is out of bounds for axis 0 with size 11`.
+`bench_multiclass.map_e923_to_model_classes` (PR #3062) is length-agnostic and
+fell back to a **12**-vector when a plant has no EIA-923 rows, while the render
+path builds 13-vectors `[annual, m01..m12]` and slices `[1:]` for twelve months.
+A multi-class plant absent from EIA-923 therefore yielded an 11-month array.
+Fixed with an explicit `empty_len` (default 12, so every existing caller is
+byte-unchanged; the render site passes 13) plus three regression tests. **This
+was not specific to miso-99 — it would block registration for any ISO carrying
+such a plant.**
 
 ---
 
