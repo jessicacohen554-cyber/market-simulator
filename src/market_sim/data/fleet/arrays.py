@@ -1746,42 +1746,96 @@ def _compose_min_gen_floors(
                     min_gen[g_idx, hrs] = np.maximum(min_gen[g_idx, hrs], pmin_mw)
                     min_gen_mech[g_idx, raised] = MECH_COAL_MUSTRUN
         # Coal MINIMUM ONLINE CONFIGURATION floor
-        # (config.ercot_coal_min_config_floor, ercot128-unit-grain): the plant
+        # (config.ercot_coal_min_config_floor, ercot129-conditional): the plant
         # may not be pushed below the registered minimum load of its SMALLEST
-        # online configuration, min_u MinLoad_u (EIA-860). Unlike the step-3a
-        # synchronization floor above, this is NOT online%-shaped: a registered
-        # minimum load applies in every hour the plant is synchronized, and
-        # there is no hour its own driver evidence says otherwise (rule 17
-        # [R-FLOOR-WINDOW] — the D4_WINDOWS declaration is all 24 hours by
-        # driver). assembly already spread the plant-level MW across the
-        # plant's tranches in fill order, so each tranche carries its own share
-        # and the clip to pmax x availability below cannot collapse the floor
-        # onto one slice; an outage hour relaxes it through that same clip.
-        # np.maximum composes with any floor already placed — the binding floor
-        # wins, nothing stacks (rule 19 [R-ONE-MECH]), and the id is overwritten
-        # only where this mechanism strictly raised min_gen.
+        # online configuration, min_u MinLoad_u (EIA-860) — and it is either
+        # ABOVE that level or OFF, never in between.
+        #
+        # AVAILABILITY-CONDITIONAL, not availability-scaled (ERCOT-128 §P4).
+        # A minimum online configuration does NOT shrink when units go out: a
+        # 4-unit plant with 2 units on outage still cannot run below ONE unit's
+        # 175 MW; it makes 175 MW or it is off. The first build of this floor
+        # placed a per-tranche constant and let the generic clip to
+        # ``pmax x availability`` scale it, which under ERCOT's DAM
+        # availability water-fill (availability well below 1.0 in most hours)
+        # put the applied floor BELOW the physical minimum exactly where the
+        # defect lives — it removed none of the impossible loadings
+        # (14,582 -> 14,886 plant-hours; run
+        # 2026-07-28-ercot128-unit-grain-coal, the control). The condition is
+        # evaluated on the PLANT's available capacity and the level is then
+        # re-allocated across its tranches in FILL order using each tranche's
+        # AVAILABLE capacity in that hour, so a partially-available plant still
+        # carries its whole minimum configuration instead of a scaled fraction:
+        #
+        #   total[p,t] = sum_k avail[k,t] x pmax[k]        (k = plant p's tranches)
+        #   floor[k,t] = clip(min_config[p] - sum_{j<k} avail_cap[j,t],
+        #                     0, avail_cap[k,t])            if total >= min_config
+        #              = 0                                  otherwise
+        #
+        # ``availability`` is EXOGENOUS DATA, not a decision variable, so the
+        # conditional is a data-side computation carrying no integrality — this
+        # stays inside the pure-LP rule. It is what the exactness proof always
+        # described: the plant's online feasible set is the connected interval
+        # [min_u MinLoad_u, Cap] *given at least one unit online*, and the
+        # else-branch above is that condition (the scaled build dropped it).
+        #
+        # Rule 17 [R-FLOOR-WINDOW]: driver = the plant's registered unit
+        # inventory; window = all 24 hours BY DRIVER (the D4_WINDOWS
+        # declaration), and the conditional form is strictly NARROWER than the
+        # declaration rather than wider. np.maximum composes with any floor
+        # already placed — the binding floor wins, nothing stacks (rule 19
+        # [R-ONE-MECH]) — and the id is overwritten only where this mechanism
+        # strictly raised min_gen. Vectorized over all 8760 hours (rule 2
+        # [R-VECTOR]); the only Python loops are over plants and their handful
+        # of tranches.
         if coal_min_config_any:
-            _mc_plants: set[int] = set()
-            _mc_mw = 0.0
+            # The LEVEL comes from the tranches assembly tagged; the CONDITION
+            # and the re-allocation run over ALL of the plant's coal tranches.
+            # Both matter: a plant's minimum configuration is a property of the
+            # whole plant, so a derated committed tranche must be able to spill
+            # the level into the tranches above it rather than shrink it (the
+            # ERCOT-128 failure mode in miniature). Restricted to the plant's
+            # COAL rows, so a mixed plant's gas-steam tranches (W A Parish
+            # 3470) are neither counted nor floored.
+            _mc_level: dict[int, float] = {}
+            _mc_rows: dict[int, list[int]] = {}
             for g_idx, gen in enumerate(generators):
-                pmin_mw = getattr(gen, "coal_min_config_pmin_mw", 0.0)
-                if pmin_mw <= 0.0:
+                if getattr(gen, "fuel_type", "") != "coal":
                     continue
-                raised = min_gen[g_idx, :] < pmin_mw
-                np.maximum(min_gen[g_idx, :], pmin_mw, out=min_gen[g_idx, :])
-                min_gen_mech[g_idx, raised] = MECH_COAL_MIN_CONFIG
-                _mc_plants.add(int(getattr(gen, "plant_code", 0) or 0))
-                _mc_mw += pmin_mw
+                code = int(getattr(gen, "plant_code", 0) or 0)
+                # assembly appends tranches in fill order, so insertion order
+                # IS merit/fill order for the allocation below.
+                _mc_rows.setdefault(code, []).append(g_idx)
+                share = getattr(gen, "coal_min_config_pmin_mw", 0.0)
+                if share > 0.0:
+                    _mc_level[code] = _mc_level.get(code, 0.0) + float(share)
+            _mc_by_plant = {c: _mc_rows[c] for c in _mc_level}
+            _mc_mw = 0.0
+            for _code, level in _mc_level.items():
+                _idx = _mc_rows[_code]
+                if level <= 0.0 or not _idx:
+                    continue
+                _mc_mw += level
+                avail_cap = availability[_idx, :] * pmax[_idx, np.newaxis]
+                total = avail_cap.sum(axis=0)
+                feasible = total >= level
+                # Fill order: each tranche takes what is left of the level, up
+                # to its own available capacity that hour.
+                taken = np.zeros(hours, dtype=float)
+                for row, g_idx in enumerate(_idx):
+                    share = np.clip(level - taken, 0.0, avail_cap[row, :])
+                    share = np.where(feasible, share, 0.0)
+                    taken += share
+                    raised = min_gen[g_idx, :] < share
+                    np.maximum(min_gen[g_idx, :], share, out=min_gen[g_idx, :])
+                    min_gen_mech[g_idx, raised] = MECH_COAL_MIN_CONFIG
             logger.info(
-                "coal_min_config floor ARMED: %d plants, %.0f MW of minimum "
-                "online configuration across %d tranches",
-                len(_mc_plants),
+                "coal_min_config floor ARMED (availability-conditional): "
+                "%d plants, %.0f MW of minimum online configuration across "
+                "%d tranches",
+                len(_mc_by_plant),
                 _mc_mw,
-                sum(
-                    1
-                    for g in generators
-                    if getattr(g, "coal_min_config_pmin_mw", 0.0) > 0.0
-                ),
+                sum(len(v) for v in _mc_by_plant.values()),
             )
         # Per-plant gas local-reliability commitment floor
         # (config.cc_mustrun_per_plant / st_gas_mustrun_per_plant): each
