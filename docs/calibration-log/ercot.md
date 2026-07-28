@@ -2527,3 +2527,70 @@ Mechanism matrix: `dam_availability_rebasis` ERCOT note carries the coal-scope
 re-gate verdict; header re-stamped to the new keeper (rule 26 duties a/b).
 Registration pruned `2026-07-24-ercot110-coal-dam-availability` and
 `2026-07-24-ercot111-coal-econ-marginal` (top-15 retention).
+
+## 2026-07-28 — ERCOT-135 Phase 1 (no-LP, measurement only): the coal-vs-gas merit bias is a coal offer-curve SHAPE defect, SIZED at 3.2–4.2 GW; the F923 delivered-price lead is CLOSED (25.7 % receipt coverage); the plant-grain water-fill saturates at model `pmax` (Martin Lake 1.451 decomposed). No solve, no run, no mechanism, keeper UNCHANGED (ercot116-regate-base); Phase 2 pre-registered and BLOCKED on the ERCOT-116 owner ruling
+
+**Task.** The successor lane `DIAGNOSIS-ercot134` §10 chartered — the coal-vs-gas
+merit-order lane on the un-pinned fleet. The entry gate held: ERCOT-116 adoption
+is un-ruled, so this session ran **only** the no-LP measurement phase and stopped
+at the ruling, per the charter.
+
+**Result (`docs/DIAGNOSIS-ercot135-coal-merit-order-2026-07-28.md`; probe
+`scripts/probes/ercot135_coal_merit_order.py`, artifact
+`results/calibration/ercot135_coal_merit_order.json`).** The model's coal supply
+curve is **bimodal** — p10 and p25 both **$4.50/MWh** (the tranche-1 take-or-pay
+band bidding VOM-only, ~30 % of capacity), p50 $19–22, top $49–56 — while the
+real fleet's **submitted** DAM curve (60-Day DAM, `CLLIG`) is a nearly **flat
+step at $20.46/$20.49/$21.50**, with bottom == top at most plants. Netting the
+min-load-justified share (measured `ΣLSL/ΣHSL` 0.374/0.393/0.386, ERCOT-127 §E
+convention imported verbatim) off the share offered below the measured price
+(60.7/69.1/61.3 %) leaves **23.3/29.8/22.7 pp = 3,255/4,163/3,171 MW** of coal
+capacity offered cheap with **no min-load justification**. That block sits under
+the whole price distribution, which is the arithmetic cause of ERCOT-134's
+band-uniform over-loading (G1 1/21, +6 to +18 pp in EVERY band) and the ex-post
+explanation of why the LEVEL lever was inert (ercot132 leg B).
+
+**F923 lead CLOSED as a price question.** Only **3 of 10** ERCOT coal plants
+(**25.7 % of coal MW**) report an EIA-923 delivered cost receipt — in *any* year
+2018–2026; the merchant fleet's receipts are confidential (already noted at
+`data/fuel/coal.py:73`). Where a receipt exists the model already matches it
+(2023 deltas +0.001 / +0.009 / −0.036 $/MMBtu). So the offer gap cannot be a
+fuel-price error, and no receipts-based correction exists to buy.
+
+**Incidental, reported not acted on.** (a) The plant-grain water-fill saturates
+each plant at its **model `pmax`**: per-plant ARM/declared equals
+pmax/declared-max to three decimals at every plant, so Martin Lake's 1.451
+(ERCOT-134 §2 prediction-4 partial) is its `pmax` standing ~45 % above its own
+COP declaration — unit 1 destroyed, carried by `BIN_FORCED_DERATE_BY_YEAR`
+`N_COAL4 {2025: 0.67}`. The redistribution can lift a plant back above a forced
+derate modelling a destroyed unit; new input to the adoption ruling. (b)
+**Cache-key regression fixed**: pjm-136 (PR #3093) landed `pjm_zonal_loss_surface`
+unregistered, moving the pinned default key `603c2498bf71d21d → 25aa0d236dd6a574`
+and orphaning every on-disk cache against its own "byte-identical off" promise;
+registered, key restored, pinned tests 40/40 (fifth instance of that one-line
+remedy).
+
+**No mechanism built and none licensed.** The measured curve covers only the
+27.8–39.1 % of committed coal resource-hours that submit any curve; the unoffered
+remainder may be self-scheduled (price-taking), in which case a near-zero bid is
+*faithful* — `DIAGNOSIS-ercot122` §4's caution is unchanged and binding, and
+pricing that block without evidence would be a fitted wall (rule 13) stacked as a
+second mechanism (rule 19). Successor instrument stays the **SCED TPO** lane
+(`FINDING-ercot117` §E), now with a pre-registered magnitude to hit.
+
+**Phase 2 pre-registered, NOT executed**
+(`docs/PRECOMMIT-ercot135-coal-offer-width-2026-07-28.md`): the coal offer-curve
+WIDTH arm, both arms with the ERCOT-116 envelope ARMED (rule 14 — the
+compensator must not be re-tuned around the estimate), per-band predictions and
+a fixed decision rule. **Blocked on the ERCOT-116 owner ruling**; if the ruling
+is do-not-adopt the arm is withdrawn, not re-scoped to the pinned fleet.
+
+**Scope.** No LP solved, no run registered, no keeper file touched, no
+`ScenarioConfig` mechanism added; span exactly {2023, 2024, 2025} and the probe
+hard-fails any other `--year` (rule 22). Matrix cells `coal_econ_bound`,
+`coal_offer_level_rebasis` and `dam_availability_rebasis` updated in-session
+(rule 26b). One process error on the record: the first capture patched a dead
+copy of `apply_coal_tranches` (`market_sim.runner`) instead of the live one in
+`scripts.run_calibration`, so that replay solved 2025 in full rather than
+aborting at the seam — training year, scratch output, deleted unregistered; the
+probe now patches the live copy and documents the trap.
