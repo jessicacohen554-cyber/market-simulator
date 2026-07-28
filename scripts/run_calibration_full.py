@@ -8389,9 +8389,9 @@ def main() -> None:
         "scripts/data/derive_pjm_loss_surface.py). Zonal duals then separate "
         "by the measured delivery-factor ratio — losses consume MWh, prices "
         "stay duals, zero fitted scalars. Addresses the measured copper-plate: "
-        "the model's eight PJM zones clear at ONE dual in ~95-96 % of hours "
-        "while PJM's own DA prices separate DOM from AEP-DAYTON in 100 %, "
-        "~20-24 % of it the loss component. PJM-only; default off.",
+        "the model's eight PJM zones clear at ONE dual in ~95-96 %% of hours "
+        "while PJM's own DA prices separate DOM from AEP-DAYTON in 100 %%, "
+        "~20-24 %% of it the loss component. PJM-only; default off.",
     )
     parser.add_argument(
         "--pjm-reserve-pergen",
