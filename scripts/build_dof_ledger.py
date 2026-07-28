@@ -510,6 +510,45 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "never a residual (rule 23)",
             )
         )
+    if sc.get("temp_dependent_derate") and (
+        sc.get("temp_derate_slope_st_chp") is not None
+        or sc.get("temp_derate_slope_ct_chp") is not None
+    ):
+        # miso-101: the ISO-OWN cogen ambient slope. Only enumerated when an ISO
+        # has overridden the committed literature value with its own measured
+        # one — the literature defaults are `published` rows, this is the
+        # measured-physical replacement (rule 25 [R-ISO-SCOPE]: pjm-95 refuted
+        # the literature slopes on PJM's own fleet, so they do not transfer).
+        _slope = sc.get("temp_derate_slope_st_chp") or sc.get(
+            "temp_derate_slope_ct_chp"
+        )
+        out.append(
+            _entry(
+                "temp_derate_slope_st_chp / _ct_chp",
+                "ScenarioConfig (per-ISO measured cogen ambient slope)",
+                "measured-physical",
+                iso,
+                value=_slope,
+                source="within-day PLANT-DAY fixed-effects regression of log "
+                "CEMS gross load on the hour-grain dry-bulb over the ISO's own "
+                "CEMS-identifiable cogens, 2023-2025; class value = the "
+                "capacity-weighted p50 across plants (the same population "
+                "statistic derive_campd_gas_commitment_params.py uses for "
+                "min_load_frac). Frozen derive script "
+                "scripts/data/derive_campd_temp_derate_params.py; artifact "
+                "data/raw/_processed-legacy/campd_temp_derate_params_<ISO>.csv. "
+                "The onset was measured ABSENT (response present below 15 C), "
+                "hence the hinge-free mean-anchored form. ZERO fitted scalars: "
+                "the estimator never sees a price, a benchmark or a model "
+                "output, and it is level-neutral by construction",
+                root_cause="not a residual DOF. Leave-one-year-out on MISO "
+                "gives 0.00153/0.00140/0.00130 vs 0.00141 full-sample (+-8 %), "
+                "so no year drives it; re-derive trigger is a CAMPD or weather "
+                "source-data update, never a residual (rule 23 "
+                "[R-FROZEN-DERIVE]). Per-ISO by construction — a slope measured "
+                "on one ISO's fleet never fills another's (rule 25)",
+            )
+        )
     if sc.get("nyiso_local_selfsupply"):
         out.append(
             _entry(
