@@ -1926,3 +1926,141 @@ through as closed and a new item 1b (TSA) added as the recommended head.
 Evidence: `docs/FINDING-nyiso94-da-virtual-not-identifiable-2026-07-28.md`;
 probe `scripts/probes/nyiso94_da_virtual_identifiability.py` reproduces every
 number.
+
+## 2026-07-28 — nyiso-95: TSA downstate transfer derate REFUSED ex-ante (no solve, no run)
+
+**Verdict: new matrix row `tsa_transfer_derate` × NYISO `G`.** The charter's
+Step-1 branch point fired — but through a different door than the charter
+anticipated. The **event set is fine**; the **derate magnitude** cannot be
+identified from published data without a fitted scalar, so **no A/B was solved
+and no run was registered** (rule 15 governs completed runs; there is none —
+same posture as nyiso-93/94). **No keeper candidate.** Keeper stays
+`2026-07-28-nyiso-92-hydro-envelope`
+(`results/calibration/nyiso92_hydro_envfloor`), untouched; its DOF ledger is
+unchanged at 20 entries / 6 residual because this session added no parameter.
+
+**Two charter premises are factually wrong — both in the model's favour.**
+
+1. *"needs a TSA-history intake that does not exist in-repo"* — **it has existed
+   since 2026-07-10.** NYISO MIS **P-35 Real-Time Events**
+   (`mis.nyiso.com/public/csv/RealTimeEvents/`), fetched by
+   `scripts/fetch_nyiso_operating_events.py`, raw at
+   `data/raw/NYISO-AS/requirements/realtime-events/`, clean datatype
+   `nyiso-operating-events` (`event_type=thunderstorm_alert`), coverage
+   **2018-01 → 2026-06** under the session-logged owner authorization of
+   2026-07-10 (`docs/out-of-sample-results-2026-07.md` §1.2). The feed carries
+   the alert state directly — start / end / start-of-day-ACTIVE — so **no
+   weather classifier is needed at all**. We hold something strictly better than
+   the IMM's own instrument: the IMM built a classifier because the DA market
+   cannot see the future; a backcast has the realized events.
+2. *"The model has no TSA representation"* — **its published, quantified half is
+   already armed on the keeper.** The LRR `tsa_reduced_to_zero` rule (a TSA
+   zeroes NYC 10T/30T + SENY 30T) flows
+   `nyiso_locational_reserve_requirements.csv` →
+   `derive_nyiso_reserve_requirements_hourly.py::build_tsa_windows` →
+   `NYISO_reserve_requirements_<year>.csv` → `nyiso_dynamic_reserve_requirements`,
+   which is **`True` on nyiso-92** (verified in its `run_config.json`).
+
+Reconstructed windows independently corroborate the IMM: 32/30/18 spans =
+**187/272/477 TSA-active hours** (2.1/3.1/5.4 % of year), share in **h13–21**
+61/55/42 %, share **May–Sep** 75/90/97 %, against the SOM's stated "afternoon
+hours from 13 to 21 during the months of May through September."
+
+**Step 1 (data intake, no solve) — the magnitude is the blocker. Four findings.**
+
+1. **NOT in the published limits — measured, well-powered, null.** Declaration-
+   instant event study on MIS **P-32** (`NYISO_interface_flows_hourly_<year>.csv.gz`,
+   hourly posted limits), `limit[h+1] − limit[h−1]` over all **83** non-carryover
+   TSA starts, **all 18 interfaces**: **SPR/DUN-SOUTH +0.0 MW** and **TOTAL EAST
+   +0.0 MW** (0 % of events |Δ|>100 MW), **UPNY CONED −23.9 MW** (per-year
+   −40.9/−19.5/−4.5, **median exactly 0.0 in all three years**, only 19/17/10 %
+   of events negative), and **no interface exceeds |32| MW**. This is **not** a
+   power failure: UPNY CONED posts **137–142 distinct values/yr**, hour-over-hour
+   std ~80 MW, **max |Δ1h| 835–1,565 MW**, full range 2,440–2,945 MW. A 1–2 GW
+   step would be plainly visible. It is absent.
+2. **The SOM's "1–2 GW" is not a rating.** It is defined *"relative to
+   **day-ahead scheduled levels**"* (2025 SOM p.50) and is a **range, not a
+   value**. Picking a point inside it and scoring it on C3c **is** the fitted
+   scalar (rule 21 `[R-DOF]`; rule 5 `[R-NO-MAGIC]` — no primary-source citation
+   exists for any specific value).
+3. **The real constraint is off our boundary (rule 14 misalignment clause,
+   verbatim).** The TSA constraint carrying **71 % of July-2025 TSA uplift** is
+   the **Lovett-Buchanan 345 kV** line limited under multi-contingency **CE40**,
+   with the Pleasant Valley–Wood St.–Millwood/Pleasantville 345 kV lines as
+   contingent elements. The IMM **explicitly separates it from the interface**:
+   lines #5/#6 *"are not part of the TSA constraint itself but are key components
+   of the UPNY-Con Ed interface."* Six lines carry the majority of Zone G→H/I
+   flow; our five-zone network collapses that entire boundary into **one** link
+   (`Capital_Hudson→Lower_Hudson`, TTC 5,150 — itself Tier-3 seeded). Rule 14
+   prefers a *reconciled* real input over a guess, but reconciliation needs the
+   line rating + its OTDF for the G→H/I transfer under CE40 + base-case loading:
+   **NYISO publishes none of the three at that grain, and none is in-repo.**
+4. **Even the IMM has no magnitude model.** Appendix III.J is a logistic
+   regression on six ERA5 variables (CAPE, K-Index, Lifted Index, RH-500, V-500,
+   VV-850), trained 2023–2024, AUC > 0.93 on 2025 — it predicts **P(occurrence)**,
+   a binary. The congestion cost is then measured **ex post** from realized
+   shadow prices. There is no published magnitude to adopt.
+
+**What the data DID produce — a validation target, never an input.** TSA has a
+real, statistically strong **flow** response. Difference-in-differences at the
+declaration instant (`flow[h+1] − flow[h−1]`, net of the same 2-hour drift at
+the same hour-of-day and month on TSA-free days): **UPNY CONED −57 (z −0.65) /
+−412 (z −5.81) / −326 (z −3.87) MW**; **SPR/DUN-SOUTH −36 (z −0.57) / −330
+(z −5.25) / −279 (z −4.40) MW**; TOTAL EAST −80/−205/−235; **CENTRAL EAST as a
+clean placebo** (−27/−25/−143, mostly n.s.) — the effect is localized downstate,
+the signature is right. Two consequences: (a) realized flow is a market
+**outcome** that already embeds the dispatch response, so rule 13 `[R-MEASURED]`
+forbids it as an input (same class as pinning a unit to observed CEMS); (b) the
+**physical** reduction is **~280–410 MW** in 2024–25 and ~zero in 2023 — about a
+**quarter of the IMM's low end** — which, read with the SOM's own "relative to
+day-ahead scheduled levels", means the 1–2 GW is predominantly the **DA-vs-RT
+schedule gap**, not a capability cut.
+
+**A second, independent structural blocker.** The model has **no DA/RT split**
+— P1 is a single clearing. There is no "day-ahead scheduled level" in our
+formulation for a derate to be measured *relative to*, so the mechanism **as the
+IMM defines it is not expressible here**, regardless of magnitude. The charter's
+instruction to "argue it on the RT side, do not smuggle it in as a DA
+constraint" is not available either: our P1 is the only side there is.
+
+**Adjudicated on rule 1 `[R-STRUCT]`, not the residual.** Every route to a MW
+number is disqualified: the posted-limit change is null (§1); the IMM's prose is
+a range (rule 21/5); the observed flow is an outcome (rule 13); an N-1-1 share of
+the link TTC (TTC ÷ 6) is a modelling choice that would be selected on C3c, on
+top of a Tier-3 base; and the correct reconciliation (rating × OTDF under CE40)
+is unpublished. A mechanism whose sole free parameter must be fitted **cannot
+carry a DOF ledger entry**. Spending a three-year LP solve to select that scalar
+is exactly what the branch point exists to prevent.
+
+**C3c consequence.** The lane now has **no remaining congestion lever** — item 1
+(DA virtual depth) and item 1b (TSA) are both closed on *identification*, not on
+fit. §1's null additionally shows the model was **not** missing downstate
+tightness that a published derate would have supplied; C3c stays **roof-blocked**
+(all five mainland zones on one max dual 149.9/194.5/255.1, 0 h >$258, zero
+load-shed slack, every model >$300 hour on Long Island). Queue head moves to
+item 2 (CT start-frequency); surviving candidates are all offer/commitment-side
+(items 2, 3, 6).
+
+**Data deliberately NOT committed.** Nothing new was intaken — the event set was
+already in-repo and already curated. No cleared/realized quantity was parked
+under `data/raw/` (rule 26 `[R-DELETE]` in spirit); the probes read committed raw
+data and the committed production parser
+(`curate_nyiso_reserve_requirements.py::build_events_frame`) only.
+
+**Rule 25 discipline.** Other ISOs stay `.` — TSA is a NYSRC/ConEd-specific
+operating rule. Any analogous weather-driven derate elsewhere enters that ISO's
+own cell as `U` and derives its own parameters from its own market's data.
+
+**DO-NOT-REDO.** Re-opening requires **one** of: (a) NYISO publishing the
+as-enforced TSA constraint set (limiting facility, contingency, MW limit) at
+hourly/5-min grain — the open **B1** ask already logged in
+`data/raw/NYISO-AS/requirements/README.md`; (b) line ratings **+ OTDFs** for the
+Zone G→H/I 345 kV group under the named TSA contingencies, enabling the rule-14
+reconciliation; or (c) a DA/RT split in the LP. **Not** new evidence: a point
+value taken from the IMM's prose range, or a derate backed out of the observed
+LBMP, observed flow, DA–RT spread, or the C3c residual.
+
+**Matrix:** new row `tsa_transfer_derate` (cat `network`) N `G` with citation;
+header re-stamped; §5.5 queue item 1b struck through as closed and the queue
+head advanced to item 2. Evidence:
+`docs/FINDING-nyiso95-tsa-derate-not-identifiable-2026-07-28.md`.
