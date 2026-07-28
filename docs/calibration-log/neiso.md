@@ -518,3 +518,77 @@ verdict adopted it, NEISO's committed extract and layup companion are
 untouched, and no rule-22 obligation arises because no mechanism change is
 proposed. **The freeze stays ACTIVE** — Lane B was never one of its conditions.
 Next shorthand is unchanged: **neiso-69**.
+
+## 2026-07-28 — neiso-69: the measured unit-availability window family is REJECTED on PROVENANCE (matrix U→R) — the one derived window belongs to a unit the fleet does not carry, and applying it deletes a unit that never stopped
+
+**Lane:** OFF-QUEUE input-accuracy lever (rule 28a). A rule-14 `[R-ACCURATE]`
+measured-availability input in the sense of `measured_ct_heat_rates`, **not** a
+member of NEISO's frontier-declared C3c scarcity family; no new charter needed,
+and nothing here is framed or promoted as a C3c lever.
+
+**Keeper `2026-07-23-neiso-61-netrev-margin` UNCHANGED.** Both flags stay
+default-off. Nothing armed.
+
+**Step 1 — derivation (frozen constants; no guard loosened, no class scope
+widened, no gas-CC extension):**
+
+| extract | windows | units | MW-days |
+|---|---|---|---|
+| `campd-unit-outages-short-NEISO.csv` | **1** (2023 only) | 1 — Merrimack u2 | 691 |
+| `campd-partial-outages-NEISO.csv` | **0** | 0 | 0 |
+
+NEISO's entire CEMS coal fleet 2023–25 is one plant (Merrimack, 2364). Raw
+annual CF 4–9 %; modelled `COAL_BIT` is 0.10 / 0.13 / 0.20 % of load, 102 MW
+peak — an order of magnitude under rule 20's materiality line.
+
+**The stop-branch was NOT taken.** The partial half is a provable no-op (empty
+extract → measured `{}` overlay), but the short half is **not** inert: it drives
+the coal bin's availability multiplier to **0.0000** across h744–815, where the
+standard ≥5-day overlay carries 1.0000. It had to be tested.
+
+**Why it is rejected — the window is unit-mismatched.** Merrimack u2 (345.6 MW)
+is `OS` in EIA-860 and the fleet **excludes** it; the `(2364,'COAL')` bin is
+**108.0 MW = u1's net summer capacity**, the whole NEISO coal fleet. The
+plant-keyed overlay applies u2's window at u2's capacity share against that
+denominator (345.6/108.0 → clipped to full derate) and thereby zeroes **u1** —
+which per hourly CEMS ran **72 of 72 masked hours** at 103 MW mean and a flat
+121 MW through the Feb 3–4 2023 Arctic outbreak, covering **8 of 2023's top-22
+prices**. The keeper already tracks u1 to **≈7 %** there. Arming the family
+**deletes measured supply** instead of removing a phantom — the inverse of the
+PJM case that motivated it.
+
+Contributing cause, ISO-local: the `when-operable CF ≥ 0.55` baseload guard is
+degenerate where the standard overlay already books the fleet ~90–97 % offline.
+It judged Merrimack on **6–10 % of the year** (u2 2023: 528/8760 h, CF 0.611 on
+that sliver vs a true annual 0.046). Operable-hour share 0.06 sits below both
+PJM's (median 0.62) and MISO's (0.75) 10th percentile — **no verdict transfers
+to their `K` cells (rule 25)**; the per-plant exclusion-share spot-check is left
+to those lanes.
+
+**A drift CONTROL arm was required.** The keeper's committed sidecars no longer
+reproduce at HEAD (solved at `eede1c4`, 2026-07-23, since squash-merged), so
+keeper-relative deltas charge code drift to the mechanism. Both arms registered:
+`2026-07-28-neiso-69-control` and `2026-07-28-neiso-69-shortpartial`.
+
+**MECH (arm − control) — 2023-only and gate-neutral:**
+
+* 2023: `COAL_BIT` **−7.5 GWh** → `CC_REGULAR` +6.0, `oil` +1.5; TOTAL +0.0.
+* **2024 + 2025: exactly 0.0 for every class and every hour** (no windows;
+  both overlays `{}`) — all their apparent movement is drift (CT_PEAKER −89.6 /
+  −189.7 GWh, CC_REGULAR +145.8 in 2025).
+* Prices: **105 / 8760** hours changed in 2023, **0** in 2024/2025; annual mean
+  LMP **+$0.005**, p99 +$0.47, max hourly +$3.25 (h770, Feb-02 02:00 — the one
+  day the unit genuinely was off, not the Feb 3 evening peak).
+* **Control and arm score criterion-for-criterion identically.** The rejection
+  is not fit-motivated in either direction.
+
+**DOF ledger:** zero free parameters, zero residual solves — measured-physical,
+mirroring the ercot129 / pjm-113 treatment. The rejection returns both flags to
+default-off, so the keeper's ledger is unchanged.
+
+**Observation filed, not chartered:** Merrimack u2 (330.5 MW net summer, `OS`)
+carries no LP representation though it generated ~140–260 GWh/yr and ramped to
+320 MW in the Feb 3 2023 peak. Genuine representation question, but `COAL_BIT`
+is 0.1–0.2 % of load, so it cannot move a gate. No charter, nothing armed.
+
+Next shorthand: **neiso-70**.
