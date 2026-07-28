@@ -93,6 +93,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
     MECH_CAISO_GAS_COMMITMENT_FLOOR,
     MECH_CC_MUSTRUN_PER_PLANT,
     MECH_CHP_STEAM,
+    MECH_COAL_MIN_CONFIG,
     MECH_CT_NETLOAD_DRAG,
     MECH_GAS_COMMITMENT_BRIDGE,
     MECH_NYISO_GAS_COMMITMENT_BRIDGE,
@@ -246,6 +247,19 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # only their p2/923-CF never-below base). D2-exempt structural must-run;
     # row exists for the rule-12/17 declaration, not for a C8 escalation path.
     (MECH_CHP_STEAM, None): (0, 24),
+    # coal_min_config (MECH_COAL_MIN_CONFIG — the coal MINIMUM ONLINE
+    # CONFIGURATION floor, config.ercot_coal_min_config_floor, ercot128): the
+    # driver-justified window is ALL 24 hours BY DRIVER. The driver is the
+    # plant's registered unit inventory — the least MW it can hold with at
+    # least one unit synchronized, min_u MinLoad_u from EIA-860 — which is a
+    # standing physical property, not an event. There is no hour in which the
+    # driver says the bound does not apply: whenever the plant is synchronized
+    # it applies, and whenever it is NOT (an outage) the floor is already zero
+    # because min_gen is clipped to pmax x availability, so the mechanism binds
+    # nowhere off-window by construction rather than by measurement. Rule 17
+    # [R-FLOOR-WINDOW] forward story: the level re-derives from the next EIA-860
+    # vintage with no model input (scripts/data/derive_eia860_coal_min_config.py).
+    (MECH_COAL_MIN_CONFIG, None): (0, 24),
     (MECH_RELIABILITY_FLOOR, "CT_PEAKER"): (14, 22),
     (MECH_RELIABILITY_FLOOR, "CT_CHP"): (14, 22),
     (MECH_CT_NETLOAD_DRAG, None): (15, 22),

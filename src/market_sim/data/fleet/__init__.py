@@ -390,6 +390,19 @@ class Generator(BaseModel):
     #                                 the floor all 8760 h; a cycler is forced
     #                                 only in its top online_frac fraction of
     #                                 hours by system load (the rest stay Pmin=0).
+    coal_min_config_pmin_mw: float = 0.0  # coal MINIMUM ONLINE CONFIGURATION
+    #                                 floor (MW) forced on via FleetArrays.min_gen
+    #                                 under config.ercot_coal_min_config_floor:
+    #                                 the least MW the plant can hold with at
+    #                                 least one unit synchronised, min_u
+    #                                 MinLoad_u from EIA-860 (ercot128). Spread
+    #                                 across the plant's tranches in fill order
+    #                                 by assembly, so the clip to
+    #                                 pmax x availability cannot collapse it onto
+    #                                 one slice. Distinct from coal_sync_pmin_mw
+    #                                 (step-3a synchronization): different
+    #                                 driver, different level, separate
+    #                                 mechanism id (rule 19).
     cc_mustrun_pmin_mw: float = 0.0  # gas local-reliability commitment floor
     #                                 (MW) forced on via FleetArrays.min_gen for
     #                                 a CC_REGULAR / CT_PEAKER committed tranche
@@ -732,6 +745,7 @@ from market_sim.data.fleet.campd_bins import (  # noqa: F401
     cc_intermediate_plants,
     cc_summer_capacity,
     cc_summer_derate_ratio,
+    coal_min_config,
     coal_summer_capacity,
     coal_summer_derate_ratio,
     ct_intermediate_plants,
