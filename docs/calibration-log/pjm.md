@@ -1601,11 +1601,25 @@ INERT-on-the-CT-leg.
 three), and the C3c flip is carried by **two different years** (2024 and 2025
 each flip on their own), so it rests on neither alone.
 
-**Keeper: NOT self-promoted** (owner-only act). Matrix cell `zonal_loss_surface`
-PJM = **O** (tested, verdict recorded; MISO stays **R**, rule 25 — no verdict
+**PROMOTED 2026-07-28 (owner, in-session).** PJM keeper is now
+`2026-07-28-pjm-136-lossurf` (bundle `pjm136_lossurf_B` — the pjm-135 recipe
+carried VERBATIM plus the single flag, with pjm-135's own net-position cut and
+pjm-133's hydro budget preserved beneath it), superseding
+`2026-07-28-pjm-135-netpos-keeper`. **This is the first PJM keeper to carry a
+`CALIBRATED` determination — no failing criterion remains.** `build_status.py
+--iso PJM` rebuilt `status/PJM.js` (PJM:CALIBRATED); `audit_keepers.py --iso
+PJM`: **PASS, 0 failures, 0 warnings**. Matrix cell `zonal_loss_surface` PJM =
+**K** and the matrix header re-stamped (MISO stays **R** — rule 25, no verdict
 crosses the boundary in either direction). PREREG §4's no-feedback ceiling was
 honoured: no multiplier, percentile, haircut, blend, scale, floor, cap or
 scarcity exemption was applied to the surface, and none may be.
+
+**The five caveats above travel WITH the promotion**, into the keeper shard's
+`promotion_note` and `note` rather than being dropped at the moment of
+acceptance — in particular that C3c now passes by **1 hour** (2024) and **2.5
+hours** (2025) against a 0.5× floor, that Dominion CC_REGULAR 2025 now
+*overshoots* where every prior keeper undershot, and that the CT_PEAKER leg is
+~94 % open.
 
 **Next number: pjm-137.** The Dominion CT_PEAKER leg is the open defect; the
 network now has a real dual structure to work against, and the remaining
