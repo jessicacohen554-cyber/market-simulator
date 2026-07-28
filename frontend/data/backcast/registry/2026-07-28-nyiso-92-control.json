@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-28-nyiso-92-control",
+ "label": "nyiso 92 control",
+ "date": "2026-07-28",
+ "shorthand": "nyiso-92-control",
+ "definition": "(PROBE) nyiso-92 same-HEAD zero-delta control \u2014 the nyiso-89 keeper recipe replayed on current main; reproduces the nyiso-91 control exactly (2023 CC_REGULAR 32.513, CT_PEAKER 0.443/0.394/1.407 TWh), so no HEAD drift entered the A/B. Carries the session's characterization baseline: per-class hourly r is lost at the DAY-PICKING layer, not the diurnal profile (CC_REGULAR r_hr 0.705/0.583/0.536 vs profile r 0.95+), gas-class residuals are POSITIVELY cross-correlated (a common non-fossil driver), and hydro is the worst-tracking material component (r_day 0.353/0.405/0.190 on 21-28 TWh) with the CAISO parks-at-zero signature (349/405/1098 h <100 MW vs measured 0/15/15). Probe: scripts/probes/nyiso92_hourly_r_decomposition.py; write-up: docs/FINDING-nyiso92-hydro-capability-envelope-2026-07-28.md.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-07-28-nyiso-92-control.js",
+ "bundle": "results/calibration/nyiso92_ctrl_zerodelta"
+}
