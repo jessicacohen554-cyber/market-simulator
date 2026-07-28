@@ -21,6 +21,10 @@ from market_sim.config.paths import (
 )
 from market_sim.config.plant_taxonomy import COAL_SUPPLY_TO_CLASS
 from market_sim.config.scenarios import ScenarioConfig
+from market_sim.data.campd import (
+    DEFAULT_PARASITIC_LOAD_PCT,
+    _DEFAULT_PARASITIC_LOAD_PCT,
+)
 from pathlib import Path
 from market_sim.data.fleet.models import (
     FleetArrays,
@@ -320,6 +324,33 @@ _RAMP_BUCKET_BY_GROUP: dict[str, str] = {
 }
 
 
+@lru_cache(maxsize=1)
+def _ramp_parasitic_factor_map() -> "dict[int, float]":
+    """Return ``{plant_code: net/gross factor}`` for the ramp-envelope rebasis.
+
+    Reads the pooled (``year == 0``) rows of the committed parasitic-load
+    artifact (``scripts/data/derive_parasitic_factors.py`` →
+    ``data/raw/_processed-legacy/parasitic_load_factors.parquet``,
+    :func:`market_sim.data.campd.compute_parasitic_factors`) — annual EIA-923
+    NET generation over annual CAMPD GROSS, per plant, with that derive's own
+    class default already substituted for out-of-band/missing reconciliations.
+
+    Empty when the artifact is absent; :func:`build_ramp_groups` then leaves
+    the affected plants on the published gross basis (factor 1.0) and logs the
+    count, rather than inventing a conversion (rule 5 ``[R-NO-MAGIC]``).
+    """
+    path = PROCESSED_DIR / "parasitic_load_factors.parquet"
+    if not path.exists():
+        return {}
+    df = pd.read_parquet(path)
+    pooled = df[df["year"] == 0]
+    return {
+        int(p): float(f)
+        for p, f in zip(pooled["plant_id"], pooled["parasitic_factor"])
+        if float(f) > 0.0
+    }
+
+
 @lru_cache(maxsize=8)
 def load_campd_ramp_envelopes(iso: str) -> "pd.DataFrame | None":
     """Return the ISO's CAMPD plant-level hourly ramp-envelope table, or None.
@@ -331,7 +362,12 @@ def load_campd_ramp_envelopes(iso: str) -> "pd.DataFrame | None":
     pooled 2023-2025 (``basis == "plant"``), sparse-coverage rows
     (``basis == "sparse"``, informational only) and the capacity-weighted
     class-median envelope FRACTIONS under ``plant_code == 0``
-    (``basis == "class_fraction"``). ``None`` when the ISO has no artifact —
+    (``basis == "class_fraction"``).
+
+    The frame is returned exactly as published, on CAMPD's **GROSS** basis;
+    :func:`build_ramp_groups` rebases the MW rows to the model's NET columns
+    (the ``class_fraction`` rows need no rebasis — see its comment). ``None``
+    when the ISO has no artifact —
     the ramp rows are then simply absent (never a silent hand number,
     rule #23). Cached per ISO; treat the returned frame as read-only.
     """
@@ -351,7 +387,9 @@ def build_ramp_groups(
     (CC_REGULAR/CC_CHP → CC; ST_GAS/ST_CHP/COAL → ST; CT_PEAKER/CT_CHP →
     CT) — the envelope is a plant property, tranche switching inside a plant
     stays free (design doc §1.2). Each group's envelope resolves from its
-    measured ``basis == "plant"`` row (MW, used directly); groups without one
+    measured ``basis == "plant"`` row (published MW, rebased from CAMPD gross
+    to the model's NET basis by that plant's measured EIA-923-net /
+    CAMPD-gross parasitic factor); groups without one
     fall back to the CC/ST class-median fraction × group pmax. CT groups get
     NO fallback — a CT without a well-observed CEMS trace simply has no row
     (bang-bang is the measured norm for the class).
@@ -387,6 +425,39 @@ def build_ramp_groups(
         dtype=object,
     )
 
+    # GROSS -> NET rebasis (ercot127 §1, repaired ercot132 leg A). The derive
+    # measures CAMPD ``grossLoad`` deltas and the LP's P columns are NET, so
+    # the published MW are ~10 % looser than the measured capability. The
+    # conversion lives HERE, on the loader side, and NOT in the derive, for
+    # three reasons (putting it in both would double-count):
+    #   1. The artifact is a MEASUREMENT RECORD of what CAMPD reports, which is
+    #      gross. A derive that silently wrote net would misrepresent its own
+    #      source, and rule 23 [R-FROZEN-DERIVE] re-derives only on a source
+    #      change -- a representation fix is not one.
+    #   2. The basis change happens exactly where the measured plant MW meets
+    #      the model's net columns, which is this seam.
+    #   3. Only the ``basis == "plant"`` rows carry MW. The
+    #      ``class_fraction`` fallback rows are ALREADY basis-neutral by
+    #      construction -- the derive forms them as
+    #      ``median(gross_delta / gross_pmax_obs)``, a gross-over-gross ratio,
+    #      and this function applies them as ``frac x net pmax``, which yields
+    #      a net delta with no conversion at all. A derive-side fix would have
+    #      to convert one row family and not the other, i.e. write a
+    #      mixed-basis file; converting here keeps that asymmetry explicit.
+    # The factor is the per-plant MEASURED EIA-923-net / CAMPD-gross ratio
+    # (rule 14 [R-ACCURATE]) -- never ERCOT's coal 0.897 class annual-energy
+    # ratio, which is a single-class energy aggregate and has no business
+    # rebasing a per-plant cross-class ramp envelope.
+    # The factor is the plant's MEASURED EIA-923-net / CAMPD-gross ratio where
+    # the committed artifact has one (rule 14 [R-ACCURATE]); where it does not,
+    # the cited class default keyed by the group's OWN model ``plant_group``
+    # (``campd.DEFAULT_PARASITIC_LOAD_PCT``, EPRI/EIA station-service typicals)
+    # — the identical measured-else-class-default resolution
+    # :func:`market_sim.data.campd.compute_parasitic_factors` applies for the
+    # same reason, so the two paths cannot disagree. It is NEVER ERCOT's coal
+    # 0.897 class annual-energy ratio, which is a single-class energy aggregate
+    # and has no business rebasing a per-plant cross-class ramp envelope.
+    parasitic = _ramp_parasitic_factor_map()
     measured = {
         (int(r.plant_code), str(r.bucket)): (
             float(r.ramp_up_mw),
@@ -406,14 +477,41 @@ def build_ramp_groups(
     for i in np.flatnonzero((plant_code > 0) & (buckets != "")):
         members.setdefault((int(plant_code[i]), str(buckets[i])), []).append(int(i))
 
+    plant_groups = np.asarray(fleet.plant_group, dtype=object)
+
+    def _net_basis_factor(pk: int, m: list[int]) -> float:
+        """Gross -> net factor for one measured plant group (see above)."""
+        factor = parasitic.get(int(pk))
+        if factor is not None:
+            return factor
+        # No measured reconciliation for this plant: fall back to the cited
+        # class default, keyed by the group's capacity-dominant model
+        # plant_group (finer than the artifact's CC/CT/ST bucket, which
+        # collapses COAL and ST_GAS into one family with different typicals).
+        by_group: dict[str, float] = {}
+        for i in m:
+            g = str(plant_groups[i])
+            by_group[g] = by_group.get(g, 0.0) + float(pmax[i])
+        dominant = max(by_group, key=by_group.get) if by_group else ""
+        pct = DEFAULT_PARASITIC_LOAD_PCT.get(dominant, _DEFAULT_PARASITIC_LOAD_PCT)
+        return 1.0 - pct
+
     gen_idx: list[int] = []
     group_col: list[int] = []
     ramp_up: list[float] = []
     ramp_dn: list[float] = []
+    n_measured_factor = 0
+    n_class_default = 0
     for (pk, bucket), m in members.items():
         cap = float(pmax[m].sum())
         if (pk, bucket) in measured:
             ru, rd = measured[(pk, bucket)]
+            factor = _net_basis_factor(pk, m)
+            if int(pk) in parasitic:
+                n_measured_factor += 1
+            else:
+                n_class_default += 1
+            ru, rd = ru * factor, rd * factor
         elif bucket in class_frac:
             fu, fd = class_frac[bucket]
             ru, rd = fu * cap, fd * cap
@@ -428,6 +526,14 @@ def build_ramp_groups(
         ramp_dn.append(rd)
     if not ramp_up:
         return None
+    logger.info(
+        "ramp envelopes (%s): %d group(s) — gross->net rebasis from %d "
+        "measured parasitic factor(s) and %d class default(s)",
+        iso.upper(),
+        len(ramp_up),
+        n_measured_factor,
+        n_class_default,
+    )
     return (
         np.asarray(gen_idx, dtype=int),
         np.asarray(group_col, dtype=int),

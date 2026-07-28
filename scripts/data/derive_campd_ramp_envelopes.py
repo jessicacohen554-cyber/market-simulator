@@ -38,6 +38,19 @@ physics by parameters, not class names).
 Output: ``data/raw/_processed-legacy/campd_ramp_envelopes_{ISO}.csv``,
 consumed by :func:`market_sim.data.fleet.load_campd_ramp_envelopes`.
 
+BASIS — DO NOT CONVERT HERE (ercot127 §1, repaired ercot132 leg A). The MW this
+script writes are on CAMPD's **GROSS** basis, because that is what CAMPD
+measures and this file is the measurement record. The model's ``P`` columns are
+**NET**, and the gross->net rebasis is applied on the LOADER side, in
+:func:`market_sim.data.fleet.build_ramp_groups`, by each plant's measured
+EIA-923-net / CAMPD-gross parasitic factor. Converting here as well would
+DOUBLE-COUNT the station-service fraction. Note also that the
+``basis == "class_fraction"`` rows need no conversion on either side: they are
+formed below as ``median(gross_delta / gross_pmax_obs)``, a gross-over-gross
+ratio that the loader applies to NET pmax, so they are basis-neutral already —
+a derive-side conversion would have to treat the two row families differently
+and write a mixed-basis file.
+
 Governance (CLAUDE.md rules #12/#13/#23): a measured physical-capability
 parameter in the same admissibility class as the CAMPD min-stable loads,
 committed shares and measured run lengths — it regenerates from the CAMPD
