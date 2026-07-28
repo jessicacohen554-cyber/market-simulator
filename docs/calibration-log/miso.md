@@ -1707,3 +1707,110 @@ under the design's own gates: CT_CHP coverage is **10.4 %, not 38 %**; ST_CHP is
 * Rule 22 `[R-HOLDOUT]` honoured: 2023–2025 only, all three years FRESH in one
   bundle (rule 16 `[R-ALLYEARS]`), no marker, freeze active.
 * Next number: **miso-99.**
+
+## 2026-07-28 — miso-99: the CHP heat-rate correction UNBLOCKED and PROMOTED — eGRID publishes the steam credit it removes (`CHPCHTI`), so the gross→net basis miso-98 §6.1 could not obtain is not needed
+
+**Keeper → `2026-07-28-miso-99b-chp-power`** (bundle
+`results/calibration/miso99_chp_hr_B`), superseding
+`2026-07-27-miso-98b-sectormeasured`. Determination **NOT-YET**, the same
+determination and the same criterion profile as the keeper it replaces, decided
+by the same C7 COAL_PRB diurnal-shape issue (miso-96) that this delta does not
+touch. Full evidence:
+`results/calibration/FINDING-miso99-chp-heat-rate-2026-07-28.md`.
+
+**The blocker, and why the answer was to delete the gross basis rather than
+estimate it.** caiso-128 §6(a) made the plant's own measured gross→net ratio
+non-optional; FINDING-miso98 §6.1 measured it firing on **0 of 19** MISO rows.
+Root cause measured here: at a cogen CAMPD's `grossLoad` channel and EIA-923's
+net generation cover **different unit sets**, in both directions and by large
+margins — Midland CEMS gross 7.89 TWh vs EIA-923 net 9.76 TWh (CEMS misses the
+steam turbines), Portside 0.070 vs 0.232, Primient 0.674 vs 0.389. caiso-128's
+`g2n` survived only via `clip(1.0, 1.35)`, a hand bound doing the work exactly
+where the raw ratio is meaningless. It is therefore **not obtainable**, and it
+is also **not the quantity needed**: eGRID's `PLNGENAN` is already the model's
+NET denominator and is identical to the EIA-923 combustion net the benchmark
+holds out against.
+
+**The measurement.** The eGRID plant sheet carries `PLHTIAN` (heat input
+allocated to electricity — the numerator of the rate the model loads) **and
+`CHPCHTI`** (heat input allocated to useful thermal output — the credit
+itself). So the power-only rate is `(PLHTIAN + CHPCHTI) / PLNGENAN`: the
+incumbent input with eGRID's own allocation undone, same source, same vintage,
+same denominator, one change, **no gross basis anywhere**. Validated against
+independently metered CAMPD heat input at a median ratio **1.00000 on 22 of 25**
+CEMS-covered MISO CHP plants (`PLHTIAN` alone: 1.473, 2/25); Midland matches to
+3 MMBtu in 86 million. No host double-count: `chp_btm_pct` holds the host out as
+a *volume*, this is an *intensity*.
+
+**Scope on turbine physics.** `CC_CHP`/`CT_CHP` only — the add-back charges all
+fuel to power, right for a topping cycle and wrong for a boiler-first
+back-pressure cogen (MISO `ST_CHP` add-backs reach 435 MMBtu/MWh). Gates are
+definitional and frozen: prime mover; unfired-topping thermal share ≤ 0.50 (the
+EPA CHP Partnership gas-turbine envelope over eGRID's `T/0.8` displaced-boiler
+credit); the repo's existing committed physical bands; a basis check.
+**Zero fitted parameters.** The legacy 1.8× hand topping factor is *skipped*
+where the measurement covers, never stacked (rule 19);
+`CHP_STEAM_CREDIT_HR_CORRECTION_ISOS` unchanged, MISO NOT added.
+MISO: 25 (plant, class) rows applied — CC_CHP **81.8 %** of class MW
+(6.70 → 9.16), CT_CHP **37.2 %** (6.39 → 9.43); 72 generators / 6,732 MW.
+
+**The A/B.** Every criterion verdict is identical between the arms and **C3a
+improves in all three years** (−6.4/−10.2/−15.4 % → −5.4/−9.1/−14.3 %) with
+**no criterion regressing**. The pre-registered kill guard **held**: C3b stays
+PASS (0.198 against ≤0.20 — it could have flipped back). C3c is **bit-identical**
+(1/6/0 model hours vs 30/37/88) — a CHP cost change does not reach the scarcity
+tail, stated as such rather than claimed as improvement.
+
+**The control is an EQUALITY check**, not merely structural agreement: arm A
+reproduces the outgoing keeper at **0.0000 % on all 17 classes in all three
+years**. All nine `shared_inputs` hashes *and* the benchmark (identical on all
+21 class-year rows) match across the arms, so the miso-98 §5 shared-`bench/`
+trap is defused by measurement rather than assumption.
+
+**Pre-registered and honoured**, committed before any arm was readable
+(FINDING §3) and **correcting the charter's own coverage figure** — CT_CHP is
+37.2 % MW-covered, not the 10.4 % the CEMS route implied, so the predicted
+CT_CHP degradation is larger than the charter implied. CC_CHP's C1 |err|
+improves in all three years (+11.8 → −9.8 %, +11.1 → −10.1 %, +31.7 → −4.9 %);
+CT_CHP degrades in 2023/2024 (−33.3 → −38.4 %, −32.9 → −37.8 %) and improves in
+2025 (+15.7 → +6.2 %).
+
+**Three adverse movements, kept in and reported (rules 1 / 14):** (a) CT_CHP's
+C1 fit degrades as predicted; (b) CC_CHP's diurnal **amplitude** overshoots —
+D-1 `cv` 0.026 → 0.141 against an actual 0.066 (`cv_ratio` 0.392 → 2.132) —
+although its profile **correlation** improves (0.959 → 0.989 / 0.980 → 0.986 /
+0.860 → 0.965); (c) CT_CHP's profile correlation degrades (0.768 → 0.652,
+0.084 → −0.104, 0.627 → 0.171). Neither CHP class is D-1-gated, so no gate
+moves; all three are named open items, not ledgered caveats. The ledger is
+inherited **unchanged at 2/3**.
+
+**COAL_PRB's D-1 FAIL and MISO ST_CHP's −0.79 profile anti-correlation are
+UNCHANGED by this delta**, confirming both are orthogonal to CHP heat rates —
+the ST_CHP shape lane should not expect this mechanism to have moved its signal.
+
+**A shared-infrastructure blocker fixed on the way.** Registering on post-fix
+main crashed in `render_calibration_html.build_payload` with `IndexError: index
+11 is out of bounds for axis 0 with size 11`:
+`bench_multiclass.map_e923_to_model_classes` (PR #3062) fell back to a
+12-vector for a plant with no EIA-923 rows while the render path builds
+13-vectors and slices `[1:]`. Fixed with an explicit `empty_len` (default 12, so
+every existing caller is byte-unchanged) plus three regression tests. **Not
+specific to this run — it would block registration for any ISO carrying such a
+plant.**
+
+**Pre-existing red gate, reported not fixed:** `audit_keepers.py --check` shows
+S1 stale status parts for PJM/CAISO/NYISO/NEISO. Verified pre-existing by
+re-running with this session's changes stashed (the same failure then lists
+five ISOs including MISO); this promotion removes MISO from the list. Cause is
+main-side — the bench multi-class fix moved every ISO's verdicts and only
+MISO's part has been rebuilt. `keepers/README.md` forbids editing another ISO's
+lane.
+
+**Solve hygiene.** Four clean partitions regenerated first; every solve log
+carries the healthy `seasonal CIL/CEL interface caps on 5 zone group(s) …
+static summer fallbacks replaced` tell. `--reuse-solved` NOT used (miso-98 §8
+OOM) — one process per year into one bundle, reassembled with
+`pjm119_merge_year_chain.py`. Rule 22 honoured: 2023–2025 only, freeze active,
+no marker. Rule 16: all three years fresh in one bundle per arm.
+
+Next number: **miso-100.**
