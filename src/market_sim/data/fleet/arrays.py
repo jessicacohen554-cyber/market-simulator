@@ -1279,6 +1279,21 @@ def _apply_outage_overlays(
         from market_sim.data.outages import ercot_thermal_dam_availability_series
 
         _meas = ercot_thermal_dam_availability_series(int(_yr), hours)
+        # ERCOT-137 correctness fix (ERCOT-135 §7.2): the overlay's water-fill
+        # ceiling is pmax × forced_derate, never raw pmax. The measured DAM
+        # fraction is live/rating over the disclosure's OWN (post-unit-loss)
+        # rating, while the model pmax still carries the destroyed unit —
+        # only BIN_FORCED_DERATE_BY_YEAR knows it is gone (the CAMPD outage
+        # derive can never detect a unit destroyed before the vintage
+        # starts), so restoring toward 1.0 resurrected Martin Lake to 1.451×
+        # its COP-declared max. Ceiling 1.0 everywhere else → bit-identical.
+        _dam_ceil = np.array(
+            [
+                BIN_FORCED_DERATE_BY_YEAR.get(g.bin_label, {}).get(int(_yr), 1.0)
+                for g in generators
+            ],
+            dtype=float,
+        )
         # ERCOT-110 coal class-SCOPE gate
         # (config.ercot_thermal_dam_availability_coal). The deriver now emits
         # COAL_PRB / COAL_LIGNITE rows alongside the gas classes, so the coal
@@ -1338,6 +1353,7 @@ def _apply_outage_overlays(
                         _meas_h,
                         _plant_series,
                         logger,
+                        ceil_full=_dam_ceil,
                     )
             for _cls, _t_h in _meas_h.items():
                 if _cls in _hourly_done:
@@ -1360,14 +1376,20 @@ def _apply_outage_overlays(
                 _cur = (_a * _cap[:, None]).sum(axis=0) / _cap_sum  # (hours,)
                 _restore = _covered & (_t >= _cur)
                 _remove = _covered & (_t < _cur)
-                _lam = np.clip((_t - _cur) / np.maximum(1.0 - _cur, 1e-9), 0.0, 1.0)
+                # Per-unit forced-derate ceiling (ERCOT-137; 1.0 everywhere
+                # no BIN_FORCED_DERATE_BY_YEAR entry exists → bit-identical).
+                _ceil = _dam_ceil[_idx]
+                _ceil_mean = float((_ceil * _cap).sum()) / _cap_sum
+                _lam = np.clip(
+                    (_t - _cur) / np.maximum(_ceil_mean - _cur, 1e-9), 0.0, 1.0
+                )
                 _new = _a.copy()
-                _new[:, _restore] = _a[:, _restore] + _lam[None, _restore] * (
-                    1.0 - _a[:, _restore]
+                _new[:, _restore] = _a[:, _restore] + _lam[None, _restore] * np.maximum(
+                    _ceil[:, None] - _a[:, _restore], 0.0
                 )
                 _mu = np.where(_remove, _t / np.maximum(_cur, 1e-9), 1.0)
                 _new[:, _remove] = _a[:, _remove] * _mu[None, _remove]
-                availability[_idx, :hours] = np.minimum(_new, 1.0)
+                availability[_idx, :hours] = np.minimum(_new, _ceil[:, None])
                 _hourly_done.add(_cls)
                 logger.info(
                     "ERCOT measured thermal DAM availability (%d): %s set to "
@@ -1424,9 +1446,13 @@ def _apply_outage_overlays(
             _new = _ad.copy()
             _restore = _covered & (_t >= _cur)
             _remove = _covered & (_t < _cur)
-            _lam = np.clip((_t - _cur) / np.maximum(1.0 - _cur, 1e-9), 0.0, 1.0)
-            _new[:, _restore] = _ad[:, _restore] + _lam[None, _restore] * (
-                1.0 - _ad[:, _restore]
+            # Per-unit forced-derate ceiling (ERCOT-137; 1.0 everywhere no
+            # BIN_FORCED_DERATE_BY_YEAR entry exists → bit-identical).
+            _ceil = _dam_ceil[_idx]
+            _ceil_mean = float((_ceil * _cap).sum()) / _cap_sum
+            _lam = np.clip((_t - _cur) / np.maximum(_ceil_mean - _cur, 1e-9), 0.0, 1.0)
+            _new[:, _restore] = _ad[:, _restore] + _lam[None, _restore] * np.maximum(
+                _ceil[:, None] - _ad[:, _restore], 0.0
             )
             _mu = np.where(_remove, _t / np.maximum(_cur, 1e-9), 1.0)
             _new[:, _remove] = _ad[:, _remove] * _mu[None, _remove]
@@ -1440,7 +1466,7 @@ def _apply_outage_overlays(
             _flat = (_ad <= 1e-9) & (_new > 1e-9)  # revived-from-zero (n, days)
             if _flat.any():
                 _scaled[_flat, :] = _new[_flat][:, None]
-            _scaled = np.minimum(_scaled, 1.0)
+            _scaled = np.minimum(_scaled, _ceil[:, None, None])
             _scaled[:, ~_covered, :] = _a[:, ~_covered, :]  # uncovered untouched
             availability[_idx, : _n_days * 24] = _scaled.reshape(_idx.size, -1)
             logger.info(

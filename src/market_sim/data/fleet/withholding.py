@@ -399,32 +399,54 @@ _COAL_SYNC_FORCE_ALL: float = 0.99
 
 
 def _dam_waterfill(
-    a: np.ndarray, cap: np.ndarray, target: np.ndarray, active: np.ndarray
+    a: np.ndarray,
+    cap: np.ndarray,
+    target: np.ndarray,
+    active: np.ndarray,
+    ceil: "np.ndarray | None" = None,
 ) -> np.ndarray:
     """Bidirectional water-fill of an availability sub-block to a per-hour target.
 
     ``a`` is (m, H) unit availability, ``cap`` (m,) the units' pmax, ``target``
     (H,) the desired cap-weighted mean availability, ``active`` (H,) the hours
-    to touch. Restore (target >= cur): ``a' = a + λ(1 − a)`` with
-    ``λ = (target − cur)/(1 − cur)``; remove (target < cur): ``a' = a·
-    (target/cur)`` — both land the cap-weighted mean on ``target`` while keeping
-    each unit's relative shape; tranches cap at 1.0; inactive hours untouched.
-    Identical semantics to the class-HOUR water-fill in
-    :func:`generators_to_fleet_arrays`, factored so a mapped plant and the
-    unmapped residual set share one implementation (ERCOT-97 plant grain).
+    to touch. Restore (target >= cur): ``a' = a + λ(ceil − a)`` with
+    ``λ = (target − cur)/(ceil_mean − cur)``; remove (target < cur): ``a' = a·
+    (target/cur)`` — both land the cap-weighted mean on ``target`` (where the
+    ceiling permits) while keeping each unit's relative shape; tranches cap at
+    their ceiling; inactive hours untouched. Identical semantics to the
+    class-HOUR water-fill in :func:`generators_to_fleet_arrays`, factored so a
+    mapped plant and the unmapped residual set share one implementation
+    (ERCOT-97 plant grain).
+
+    ``ceil`` (m,) is each unit's availability CEILING — 1.0 by default, and
+    ``BIN_FORCED_DERATE_BY_YEAR``'s multiplier for units carrying a confirmed
+    physical unit loss (ERCOT-137 correctness fix; ERCOT-135 §7.2): the
+    measured plant fraction is live/rating over the DAM's OWN (post-loss)
+    rating, so restoring toward a flat 1.0 of model pmax resurrects destroyed
+    capacity — Martin Lake landed at 1.451× its own COP-declared max because
+    the water-fill overrode the ``N_COAL4 {2025: 0.67}`` forced derate
+    (unit 1 destroyed before the vintage; the CAMPD outage derive can never
+    see it). With ``ceil`` at 1.0 everywhere the arithmetic is bit-identical
+    to the previous form.
     """
     cap_sum = float(cap.sum())
     if cap_sum <= 0.0 or a.shape[0] == 0:
         return a
+    if ceil is None:
+        ceil = np.ones(a.shape[0])
+    ceil_col = ceil[:, None]  # (m, 1)
+    ceil_mean = float((ceil * cap).sum()) / cap_sum
     cur = (a * cap[:, None]).sum(axis=0) / cap_sum  # (H,)
     restore = active & np.isfinite(target) & (target >= cur)
     remove = active & np.isfinite(target) & (target < cur)
     new = a.copy()
-    lam = np.clip((target - cur) / np.maximum(1.0 - cur, 1e-9), 0.0, 1.0)
-    new[:, restore] = a[:, restore] + lam[None, restore] * (1.0 - a[:, restore])
+    lam = np.clip((target - cur) / np.maximum(ceil_mean - cur, 1e-9), 0.0, 1.0)
+    new[:, restore] = a[:, restore] + lam[None, restore] * np.maximum(
+        ceil_col - a[:, restore], 0.0
+    )
     mu = np.where(remove, target / np.maximum(cur, 1e-9), 1.0)
     new[:, remove] = a[:, remove] * mu[None, remove]
-    return np.minimum(new, 1.0)
+    return np.minimum(new, ceil_col)
 
 
 def _ercot_dam_plant_hourly_apply(
@@ -436,6 +458,7 @@ def _ercot_dam_plant_hourly_apply(
     meas_h: "dict[str, np.ndarray]",
     plant_series: "dict[int, np.ndarray]",
     logger: "logging.Logger",
+    ceil_full: "np.ndarray | None" = None,
 ) -> set:
     """Redistribute measured DAM availability to the PLANT grain (ERCOT-97).
 
@@ -448,6 +471,14 @@ def _ercot_dam_plant_hourly_apply(
     parameters. Returns the set of classes it handled (the caller skips them in
     the class-HOUR loop). A class with no crosswalked plant is left untouched so
     the class-HOUR grain handles it.
+
+    ``ceil_full`` (n_gen,) is the fleet-wide per-unit availability ceiling
+    (``BIN_FORCED_DERATE_BY_YEAR`` multipliers, 1.0 elsewhere; ERCOT-137
+    correctness fix — see :func:`_dam_waterfill`). The residual target the
+    UNMAPPED remainder chases is left on the raw ``pf`` accounting
+    deliberately: a mapped plant saturating at its forced-derate ceiling must
+    NOT push its destroyed capacity onto other plants — that would resurrect
+    the loss elsewhere in the class.
     """
     done: set = set()
     # plant_code -> class-local unit indices, for plants that actually have
@@ -495,7 +526,11 @@ def _ercot_dam_plant_hourly_apply(
             gidx = idx[loc]
             cap_p = pmax[gidx]
             availability[gidx, :hours] = _dam_waterfill(
-                availability[gidx, :hours], cap_p, pf, active
+                availability[gidx, :hours],
+                cap_p,
+                pf,
+                active,
+                ceil=None if ceil_full is None else ceil_full[gidx],
             )
             mapped_mw[active] += pf[active] * float(cap_p.sum())
 
@@ -513,7 +548,11 @@ def _ercot_dam_plant_hourly_apply(
                     1.0,
                 )
                 availability[res_gidx, :hours] = _dam_waterfill(
-                    availability[res_gidx, :hours], res_cap, res_frac, covered
+                    availability[res_gidx, :hours],
+                    res_cap,
+                    res_frac,
+                    covered,
+                    ceil=None if ceil_full is None else ceil_full[res_gidx],
                 )
         done.add(cls)
         logger.info(

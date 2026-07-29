@@ -228,6 +228,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # True, or a set gas_offer_margin_anchor) enters the key as a distinct scenario.
     "gas_offer_net_revenue_margin",
     "gas_offer_margin_anchor",
+    # Coal-offer net-revenue margin form (ERCOT-137): the gate plus its two
+    # identification constants (delivered-coal anchor $/MMBtu + measured RT
+    # curve-bottom level $/MWh). All three default-off (False / None / None)
+    # and byte-identical for every config that does not arm the mechanism;
+    # registered here at their defaults so every pre-existing cache key stays
+    # byte-stable. An armed run (the flag True, or either constant set)
+    # enters the key as a distinct scenario.
+    "coal_offer_net_revenue_margin",
+    "coal_offer_margin_anchor",
+    "coal_offer_margin_level",
     # Conventional-hydro minimum-flow floor (caiso-124): default-off gate for
     # the lower half of the measured hydro capability envelope. Dropped from the
     # hash at its default so every pre-existing cache key (and the pinned
@@ -7017,6 +7027,52 @@ class ScenarioConfig:
     # harness resolves it from constants.GAS_OFFER_MARGIN_ANCHOR_BY_ISO so the
     # bundle's run_config.json records the resolved value.
     gas_offer_margin_anchor: float | None = None
+
+    # Coal-offer NET-REVENUE MARGIN form (the gas form's coal analogue,
+    # ERCOT-137; owner ruling 2026-07-29: coal offers move to a measured
+    # net-margin-off-fuel-cost form, "exactly how we do it for gas") —
+    # default OFF. When set, every CAMPD coal ``_mustrun`` (take-or-pay /
+    # min-load) tranche is repriced from the sunk-fuel VOM-only discount
+    # (fuel_frac 0 -> the fitted $4.50/MWh band ERCOT-136 §3 refuted:
+    # measured share offered <= $4.50 is 5.8-8.4 % vs the model's 30 %) to
+    #   HR_tranche × (fuel(t) − anchor)  +  emis(t)  +  level
+    # i.e. the block keeps FULL delivered-fuel tracking (physical burn at the
+    # tranche's own min-load heat rate) while everything above fuel becomes a
+    # fuel-INVARIANT $/MWh net-revenue level identified at the ISO's
+    # training-window delivered-coal anchor. At fuel == anchor the resolved
+    # bid is EXACTLY ``coal_offer_margin_level`` — the measured RT curve
+    # bottom (60-Day SCED ``Submitted TPO-Price1`` cap-wtd p50, 98.8-100 %
+    # coverage; results/calibration/ercot136_coal_headroom_conduct.json
+    # B1_curve_bottom). The margin is DERIVED, never fitted (rule 13):
+    #   margin = level − HR_capwtd × anchor
+    # (scripts/data/derive_coal_offer_margin_anchor.py, rule-23 frozen).
+    # Rule-19 grounding (ERCOT-136 §6): the min-load block is already floored
+    # TWICE (ercot_coal_min_config_floor + coal_mustrun_per_plant); the $4.50
+    # discount was a third, redundant must-run device whose side effect is
+    # the band-uniform merit bias ERCOT-134 measured — this form REPLACES it
+    # rather than stacking (the committed/econ supply sigmoids above the
+    # block are a separate mechanism and are untouched). Scope mirrors gas:
+    # CAMPD tranche path only (the legacy non-CAMPD ``_t1`` path is inert;
+    # ERCOT keeper is CAMPD). Applied in
+    # data.fleet.legacy_bins.apply_coal_tranches on the BASE cost, so P0 and
+    # P1 see the same offer curve. ISO scope: identified on ERCOT SCED
+    # 2024-25 — never crosses ISO boundaries (rule 25).
+    coal_offer_net_revenue_margin: bool = False
+    # The mechanism's delivered-COAL identification anchor ($/MMBtu): the
+    # training-window (2023-25) capacity-weighted mean of the model's own
+    # delivered coal price at the LP seam (per-plant EIA-923 receipts where
+    # published, the coal supply trajectories elsewhere — the committed
+    # ercot135 A_model_offer capture). None + flag armed is a hard error (no
+    # silent fallback — rule 25); the backcast harness resolves it from
+    # constants.COAL_OFFER_MARGIN_ANCHOR_BY_ISO so run_config.json records
+    # the resolved value.
+    coal_offer_margin_anchor: float | None = None
+    # The measured min-load offer level ($/MWh) the margin is identified
+    # against: the RT curve bottom (SCED Submitted TPO-Price1, cap-wtd p50,
+    # res-hours-pooled across the 2024-25 subsets). None + flag armed is a
+    # hard error (rule 25); resolved from
+    # constants.COAL_OFFER_MARGIN_LEVEL_BY_ISO.
+    coal_offer_margin_level: float | None = None
 
     # N-slice smoothing of the economic offer curve. When
     # offer_curve_smoothing_n > 0, each plant's flat econ blocks (econ-low /

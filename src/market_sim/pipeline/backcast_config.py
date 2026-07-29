@@ -1260,6 +1260,17 @@ def backcast_config(
         # the NYISO State-of-the-Market reports (data/raw/
         # nyiso_zonal_gas_hub.csv); see fuel.apply_nyiso_zonal_gas_basis.
         nyiso_zonal_gas_basis=(iso.upper() == "NYISO"),
+        # ERCOT-137 / owner ruling R2 (2026-07-29): the measured DAM
+        # availability overlay's COAL class scope is the ERCOT BACKCAST
+        # DEFAULT. ERCOT-134 proved the legacy statistical coal availability
+        # measured-wrong (impossible plant-hours 22,633/24,627/30,697 →
+        # 3,846/3,462/2,622 under the measured envelope, −83/−86/−91 %) and
+        # rule 14 [R-ACCURATE] bars reverting to the estimate because it
+        # fits better. Only bites when the parent overlay
+        # (ercot_thermal_dam_availability, CLI-armed) is on, and the
+        # overlay itself is ERCOT+backcast-gated in the fleet application —
+        # the other five ISOs stay False (rule 25).
+        ercot_thermal_dam_availability_coal=(iso.upper() == "ERCOT"),
         # ERCOT prices gas off structurally different regional hubs by zone
         # (deeply-discounted Waha in the West/Permian, ~Henry-Hub North/East
         # Texas and Houston Ship Channel, a South-Texas premium), so the flat
