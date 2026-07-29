@@ -2301,11 +2301,16 @@ year's own NRC reports against that year's own 923 anchor; all three years are
 scored in this one bundle and the direction is the same in each. No
 out-of-training year touched (NYISO carries no calibration-complete marker).
 
-**VERDICT: KEEPER-RECOMMENDED, NOT PROMOTED — promotion is an owner call and
-is not taken here.** Keeper remains `2026-07-29-nyiso-96-ctamort`. A promotion
-additionally needs a promotion-built C6 attestation (the entry adds zero
-fitted scalars, so `n_residual` stays 6). Matrix cell
-`nuclear_unit_availability` N: U → **K**.
+**VERDICT: KEEPER-RECOMMENDED by the building session, then OWNER-PROMOTED the
+same day** (AskUserQuestion, this session). **NYISO keeper →
+`2026-07-29-nyiso-98-nucavail`**, DETERMINATION **NOT-YET** (C3c sole blocker,
+the same determination class as every prior NYISO keeper). Promotion-built C6
+attestation `scripts/gen_nyiso98_attestation.py` UNION's the nyiso-96 ledger →
+**22 DOF entries, `n_residual` unchanged at 6** (the entry replaces an estimate
+rather than adding a degree of freedom); C6 re-scores **PASS**. Matrix cell
+`nuclear_unit_availability` N: U → **K**, matrix header re-stamped, keeper shard
++ `build_status.py --iso NYISO` rebuilt, `calibration-keeper-auditor --iso
+NYISO` run on the promotion.
 
 **Follow-up raised, deliberately not done here (rule 24):** the same
 zero-block audit for the other EIA-930 component series this repo scores

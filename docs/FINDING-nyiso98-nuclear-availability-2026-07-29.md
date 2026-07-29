@@ -209,11 +209,21 @@ roof-blocked (nyiso-85 §7d).
 
 **All pre-registered gates pass — G1/G2/G3 at build time, S1 and S2 in solve.
 Per the pre-registration's own outcome table this is a registered
-KEEPER-RECOMMENDED arm.** Promotion is an owner call and is **not** taken
-here; the keeper remains `2026-07-29-nyiso-96-ctamort` until the owner decides
-(a promotion additionally needs a C6 attestation, which is promotion-built —
-`gen_nyiso96_attestation.py` is the precedent, and this entry adds **zero**
-fitted scalars so `n_residual` stays 6).
+KEEPER-RECOMMENDED arm.** The building session did not promote it; it surfaced
+the call (the NYISO lane convention since nyiso-96). **The owner promoted it
+on 2026-07-29** (AskUserQuestion, this session):
+
+> **NYISO keeper → `2026-07-29-nyiso-98-nucavail`**, DETERMINATION **NOT-YET**
+> (C3c remains the sole blocker — the same determination class as every prior
+> NYISO keeper).
+
+The promotion-built C6 attestation (`scripts/gen_nyiso98_attestation.py`)
+UNION's the nyiso-96 keeper's 21-entry DOF ledger and adds one
+measured-physical entry → **22 entries, `n_residual` unchanged at 6**: the
+deriver constants are inherited frozen and unmodified from ERCOT (verified by
+the PJM extract still reproducing byte-for-byte), the level anchor is
+pre-existing and untouched, and the entry **replaces an estimate** rather than
+adding a degree of freedom. C6 re-scores **PASS** with it present.
 
 The rule-1 [R-STRUCT] case, stated without leaning on fit: this replaces an
 **estimate** — a fleet-month CF smeared flat across four reactors, which
