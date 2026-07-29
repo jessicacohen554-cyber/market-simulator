@@ -1748,3 +1748,117 @@ hours against the model's whole Dominion dual at $32.07/$32.28/$42.72. A
 congestion half and is **refused until a measured sub-zonal load basis exists**
 (PJM's metered-load feed stops at the transmission zone; a sub-zonal share would
 be a fitted scalar).
+
+## pjm-138 — the SYSTEM-ENERGY half is mostly the reserve opportunity cost the no-MIP LP cannot price: PJM prices synchronized reserve above zero in 84/97/48 % of ALL hours and the model prices it in 0/2/28 of 8,760, with the requirement, the published two-step ORDC curve and the in-LP co-optimization all already correct and armed. Of the CT-hour deficit, 8/23/22 % is reachable. NO delta chartered, no LP solved, no run registered.
+
+**Runs:** none. This is a measurement session; nothing was solved, nothing was
+registered, and the keeper is unchanged at `2026-07-29-pjm-137-ctheatrate`.
+Write-up: `FINDING-pjm138-system-energy-is-reserve-opportunity-cost-2026-07-29.md`.
+Probes: `_pjm138_mec_gap_shape.py` (M2/D1–D5), `_pjm138_marginal_ownership.py`
+(M1 + the G-20b price sizing). Committed inputs only, plus the pjm-136 zonal
+LMP-component intake re-fetched by its own committed fetcher.
+
+**THE CHARTER.** pjm-137 closed the CONGESTION half of the Dominion CT-hour
+price deficit by measurement and handed the successor the other half: the
+system-energy component, which a zonal model *could* in principle produce. The
+charter's own discriminator was diffuse (offer-stack level) vs concentrated
+(scarcity/reserve).
+
+- **D1 — the split is an exact identity, and both halves are now sized.**
+  `measured_DOM_LMP − model_DOM_dual = (measured_MEC − model_load_weighted_dual)
+  + (measured_DOM_basis − model_DOM_basis)`, identity residual **0.000000000**
+  in every hour of every year. CT-energy-weighted the total deficit is
+  **$17.97 / $26.44 / $54.06**, splitting **$8.15 / $12.74 / $24.78** system
+  energy and **$9.82 / $13.70 / $29.28** basis. **PJM's `system_energy_price_da`
+  is RTO-UNIFORM** (zero spread across all 23 zonal pnodes, every hour), so the
+  system-energy half is not a Dominion quantity at all.
+- **D2 — it is a DISPERSION defect, not a level one.** Annual load-weighted the
+  model reproduces PJM's own MEC to **+$0.47 / +$2.62 / +$8.48**, while running
+  **−$4.86…−$5.78 too DEAR** in the slackest net-load decile and
+  **+$14.32 / +$21.59 / +$39.92 too CHEAP** in the tightest. Overnight (h01–h04)
+  it is $1.6–7.3 too dear; the gap peaks at the morning ramp (h06–h07) and the
+  evening peak (h16–h19). CT-weighted, **DJF 2025 is +$46.05** — the winter
+  morning ramp is the worst cell in the measurement.
+- **D4 — the tail is 3–6× too thin inside PJM's own energy component.** Measured
+  MEC exceeds $100 in **29 / 128 / 392** hours; the model's load-weighted system
+  price in **3 / 72 / 65**. Above $150: **14 / 26 / 146** vs **0 / 1 / 24**.
+- **D5 — and the missing price is the reserve opportunity cost, which PJM
+  publishes.** From `data/raw/PJM-AS/da_reserve_market_results_*` (committed):
+  synchronized-reserve MCP is above zero in **84.2 / 96.7 / 47.6 %** of hours
+  (Primary 45.1 / 64.0 / 30.8 %) at a cover ratio of **1.00–1.11**, while the
+  **model's reserve dual is above zero in 0 / 2 / 28 hours of 8,760**. It
+  correlates with the model's system-energy gap at **r = +0.788 / +0.604 /
+  +0.657**, the top net-load decile carries **26.2 / 26.5 / 35.9 %** of the
+  year's reserve price, and in the Dominion CT hours it is
+  **$6.71 / $6.65 / $14.18** against a system-energy gap of
+  **$8.17 / $12.74 / $24.78** — **82 / 52 / 57 %** of it. The co-optimized LP's
+  own optimality conditions make this additive, not analogical: a unit interior
+  in both products satisfies `λ = mc + μ`.
+
+**VERDICT: NOT A MISSING MECHANISM.** The requirement is PJM's own measured
+Primary series (`load_pjm_measured_reserve_requirement`, RTO + the nested
+Mid-Atlantic/Dominion subzone), validated here against PJM's published
+day-ahead requirement to **2–4 %**; the demand curve is PJM's published two-step
+ORDC (`pjm_ordc_curve.csv`, m11 §4.3.3, $850/$300, in force since the 2022-10-01
+Reserve Price Formation reform); and the in-LP per-generator joint-headroom
+co-optimization — whose dual *is* the forgone energy margin by construction — is
+armed and is the sole reserve-price owner under rule 19. It clears at $0 anyway
+because the model's reserve **supply** is 5–10× the requirement, which pjm-82
+already attributed to the **LP-vs-MIP boundary**: with a continuous commitment
+variable, fractional online capacity is free, so every idle unit's headroom is
+synchronized-reserve-eligible. PJM's market cannot do that, which is exactly why
+its cover ratio is 1.0–1.1 and its price is positive in half to almost all
+hours. **Under the no-MIP mandate this is a DISCLOSURE, not a defect** — and the
+lane was owner-closed 2026-07-11 ("do not re-open reserve-supply probes for PJM
+C3c"). Requirement-side dynamic reserves (lever-queue item 9) is adjudicated
+**INERT by measurement**; matrix cell `.` → **K**.
+
+**WHAT IS LEFT.** Of the CT-hour deficit, pjm-137 closed **54.6 / 51.8 / 54.2 %**
+(intra-zonal congestion) and pjm-138 attributes **37.3 / 25.2 / 26.2 %** to the
+reserve opportunity cost. **Only 8.1 / 23.1 / 22.1 % is reachable by any
+energy-stack mechanism** — $1.46 / $6.12 / $11.97 /MWh. Crediting the whole
+measured reserve price takes the annual load-weighted gap to
+**−$2.36 / −$0.08 / +$2.76**, i.e. the energy stack's LEVEL is right and the
+residual is shape-only.
+
+**AN HOUR-KEY CORRECTION TO pjm-137, and its size.** That session's measured-side
+loader indexes hour-of-year on `datetime_beginning_ept` — Eastern PREVAILING
+time — while the model's 8760 index and the CAMPD record are both Eastern
+STANDARD, so from March to November the measured series sat one hour ahead of
+both. Re-keyed on `datetime_beginning_utc` at UTC−5 the correlation improves
+0.704 → **0.745**, 0.732 → **0.764**, 0.772 → **0.823**, and the DST/standard
+split is the signature (2025 Apr–Oct 0.7964 → **0.8731**; Jan/Feb/Dec 0.7807 →
+0.7867, i.e. unchanged). **pjm-137's headline stands** — its M3 levels move
+$0.12–0.38/MWh (total CT-hour deficit 17.586 → 17.968, 26.559 → 26.439,
+54.389 → 54.059) and M1/M2/M4 are unaffected — but **no diurnal statistic may be
+quoted from `_pjm137_dominion_ct_congestion.py`**.
+
+**NO DELTA CHARTERED, and why.** The charter is explicit that a mechanism is
+proposed only after a measurement fires one. The measurement fired at the
+reserve lane, and that lane is closed four ways — measured requirement,
+published curve, live co-optimization, owner closure — with its residual named
+as the no-MIP boundary. Every other lane the shape points at is already
+adjudicated: zonal congestion `R` (pjm-137), the measured offer surface as a
+dispersion lever `R` (pjm-123/126/127/132), the post-solve ORDC adder `G`,
+reserve deliverability scoping `I`. Under rule 1 `[R-STRUCT]` the keeper is
+CALIBRATED with every criterion passing and there is no gate to chase; under
+rule 28 the adjudicated cells are not re-tested without new evidence, and the
+new evidence **confirms** them.
+
+**STANDING KILLS, unchanged because nothing was solved.** C3c still passes by
+~1 h (2024: 10 h vs 18 h RT, 0.56×) and ~2.5 h (2025: 32 h vs 59 h, 0.54×)
+against a 0.5× floor — still the thinnest margin in the keeper. C8 `CT_PEAKER`
+forced share stays 16.3 / 16.9 / 17.1 %, all GROUNDED (D-4 clear, profile
+r 0.923–0.973, off-peak CV ratio 0.703–1.083). C1 stays 16/16 free 12/12; ISO
+`CT_PEAKER` |err| stays 2.11 / 3.57 / 3.32 TWh.
+
+**Next number: pjm-139.** The named lever is **`gas_daily_shape`** (**U**,
+measured, mean-preserving, zero new DOF, never probed on PJM): the largest
+single cell in this measurement is the winter morning ramp, and
+`DIAGNOSIS-pjm-dof-scarcity-tail` §B.4.1 named that mechanism for exactly that
+phenomenon — a January merit order priced on a flat monthly gas level cannot
+express the measured intra-month cold-snap spike. Second: the **overnight
+over-pricing** (h01–h04, $1.6–7.3/MWh too dear, worst in 2023) is the one part
+of the dispersion defect the reserve credit does not touch, and nothing in this
+lineage has measured what sets the model's overnight price against what set
+PJM's.
