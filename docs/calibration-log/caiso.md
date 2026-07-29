@@ -3321,3 +3321,82 @@ re-deriving the PNW firm level/shape basis as a quick fix (upstream lane); and
 treating the β dump as part of this lane.
 
 Next number: caiso-139.
+
+## caiso-139 (2026-07-29) — the caiso-138 β defect is CHARTERED, FIXED and the fix PROMOTED: the dump-cost guard was an **incomplete enumeration**, not a wrong price. Widened to its own stated domain (`dump_cost_full_offer_domain`, **zero new DOF**), the 0.531/0.035 TWh of phantom generate-to-dump tranche revenue is eliminated **exactly**, the CA-side LP is **byte-identical** (E1/E2 = **+0.0000**, max per-zone-hour |Δ| = **0.0000**), and the WECC nodes reprice from the −$26.001 dump optimum to **hub + OATT wheel + ε — the marginal delivered import offer, exact to $0.0000 in 100 % of all 212 former dump hours**. NEW KEEPER: `2026-07-29-caiso139-dump-guard-offer`
+
+Arms `2026-07-29-caiso139-control` (`caiso139_control_A`) and
+`2026-07-29-caiso139-dump-guard-offer` (`caiso139_dumpguard_B`), both
+`--year 2023 2024 2025`, same pushed HEAD, arms sequential. Control is
+byte-identical to the caiso-138 keeper on prices and dumps in all three years —
+which also proves the flag-**off** code path byte-identical on the full solve
+path. Full derivation: `FINDING-caiso139-dump-cost-blindspot-2026-07-29.md`;
+prereg `PREREG-caiso139-dump-cost-offer-domain-2026-07-29.md` (pushed before
+either arm solved); instruments `scripts/probes/_caiso139_dump_cost_blindspot.py`
+(D-gates) and `_caiso139_dumpguard_ab.py` (gate scorer).
+
+1. **The defect is an enumeration bug.** `build_cost_vector`'s own comment states
+   the invariant — the dump price must exceed any production credit, else the LP
+   generates purely to dump — but the minimum ran over
+   `(wind_mc, solar_mc, −storage_eac)` ONLY. CAISO's per-hub import tranches are
+   priced at their own measured hub, and Palo Verde crashes to **−$58.24/MWh**
+   (2024) / −$36.26 (2025), i.e. **$3.69–32.24/MWh of pure generate-to-dump
+   profit**. D2 attributes it exactly in BOTH directions: every dump hour carries
+   a producible offer below −dump_cost (5/5, 175/175, 8/8, 24/24), no dump hour
+   lacks one, and 2023 — the one year with no row below the guard — has no dump.
+2. **D3 made E1/E2 analytic, not estimated.** CA zones never dump (0 zone-hours,
+   all years), min CA λ −20.000 sits above −dump_cost, and the corridor is at cap
+   in **100 %** of every affected hour. Dump's reduced cost is `dump_cost + λ`,
+   so raising it leaves a column already at its lower bound. The caiso-134 SSB
+   replacement-ladder was not invoked and **could not be** — its trigger
+   (corridor flow moving) cannot fire when the flow is cap-bound throughout.
+3. **The rejected alternative (rule 14).** Flooring the import offers at
+   −dump_cost — the `virtual_bids._inc_offer_floor` treatment — is refused: it is
+   "representation-exact" for PJM only because it never binds there (min INC rung
+   ≈ −$1.3 vs a ≈ −$27 floor), whereas here it would rewrite measured hub prices
+   (−58.24 → −26.00). The guard was what was wrong, so the guard is what moved.
+4. **The `pmax > 0` producible mask is load-bearing.** Export sinks sit BELOW the
+   producible minimum (2024: −58.2407 vs −58.2387); their negative price is a
+   willingness-to-pay on a WITHDRAWAL, not a production credit, so dropping the
+   mask would inflate the guard off a credit that does not exist.
+5. **Cross-ISO settled ex ante (rule 25).** Every keeper's own fleet, all three
+   years: ERCOT −2.84/+1.40/+1.40; MISO/NEISO/NYISO/PJM +1.40. No non-CAISO
+   keeper is within **$24/MWh** of the guard, so the repair is CAISO-only in
+   effect. PJM's virtual layer is settled analytically and more strongly than by
+   measurement: DEC rows are `pmax 0` (outside the mask) and INC rungs are
+   ALREADY floored at `min_credit + ε ≥ −dump_cost + ε`. Ships flag-gated
+   default-off anyway (ISO-agnostic LP infrastructure), registered in the
+   cache-key drop list so the pinned default stays `603c2498bf71d21d`.
+6. **Latent break caught.** `solve_dispatch` has an explicit signature, and
+   `pipeline/solve.py`'s non-warm path plus the archived P2 path reach the LP
+   through it with the same `dispatch_kwargs` mapping — an armed run on either
+   would have raised on an unexpected keyword instead of solving.
+
+**Promotion (owner grant in-session 2026-07-29: "Promote").** Keeper shard
+`frontend/data/backcast/keepers/CAISO.json` → `2026-07-29-caiso139-dump-guard-offer`;
+`status/CAISO.js` rebuilt (`build_status.py --iso CAISO`, NOT-YET). Rule 21
+[R-DOF]: the DOF ledger is carried forward VERBATIM from the caiso-138 keeper
+(11 entries, 9 residual) — this mechanism adds none. `legitimacy_diagnostics.json`
+regenerated on the new bundle: its **`gates` block is IDENTICAL** to the prior
+keeper's; the only movement is sub-0.25 pp `load_share` (the phantom dumped
+energy leaving the denominator) and a 2 MWh float shift in `hydro_min_flow` —
+every verdict unchanged.
+
+Matrix: new row `dump_cost_full_offer_domain` — CAISO `K`, every other ISO `I`
+measured-inert ex ante. Rule-22 LOYO
+note: no fitted parameter and a CA-side effect of exactly zero in every year —
+nothing to overfit. Rule 20: derive scripts untouched. Rule 24: one new
+`ScenarioConfig` flag, registered.
+
+### DO-NOT-REDO (new, binding — full list in FINDING-caiso139 §G)
+
+Re-measuring the β dump / its per-node-per-tranche split / the offer-below-guard
+attribution / the CA-dump & CA-λ census / the cross-ISO guard census (the
+committed probe carries all of them); re-proposing the offer-floor repair as a
+CAISO lever (rule 14, §D); dropping the `pmax > 0` producible mask; re-testing
+the widened guard in ERCOT/MISO/NYISO/NEISO/PJM as a fit lever (measured inert
+ex ante in all five); quoting the remaining WECC node-vs-hub gap ($4–5/MWh) as a
+pricing defect (it is exactly the published OATT wheel + ε, verified to $0.0000
+in 100 % of hours); and treating the P1 export-sink deletion seam as settled by
+this lane (untouched — still FINDING-caiso138 §D's cross-ISO lane).
+
+Next number: caiso-140.

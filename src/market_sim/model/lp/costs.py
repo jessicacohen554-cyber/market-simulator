@@ -25,6 +25,7 @@ def build_cost_vector(
     rps_acp_price: float = 0.0,
     link_flow_cost: np.ndarray | None = None,
     slack_cost: np.ndarray | None = None,
+    min_injectable_mc: float | None = None,
 ) -> np.ndarray:
     """Assemble the flat LP objective cost vector.
 
@@ -34,8 +35,9 @@ def build_cost_vector(
     credit (so its slot cost can go negative), load slack carries the
     value of lost load (``voll``), wind and solar carry their dispatch
     marginal cost (negative under a production credit), overgeneration
-    dump carries a tiny cost that still exceeds any production credit, and
-    SOC/flow slots are zero-cost.
+    dump carries a tiny cost that still exceeds any production credit (and,
+    when ``min_injectable_mc`` is supplied, any negative *offer* that can
+    reach a dumpable node), and SOC/flow slots are zero-cost.
 
     Args:
         layout: Variable layout describing the column structure.
@@ -75,6 +77,11 @@ def build_cost_vector(
             ``data.maxgen_events.emergency_tier_slack_cost`` — never above
             ``voll`` by construction there). ``None`` keeps the flat ``voll``
             (byte-identical).
+        min_injectable_mc: Most negative marginal cost in $/MWh over the
+            ``mc`` rows that can inject positive MW, folded into the
+            overgeneration-dump guard below (``dump_cost_full_offer_domain``).
+            ``None`` keeps the guard on the renewable/storage-credit set alone
+            — byte-identical, and the historical behaviour.
 
     Returns:
         Cost vector of length ``layout.total_columns``.
@@ -139,7 +146,22 @@ def build_cost_vector(
         float(np.min(np.asarray(solar_mc, dtype=float))),
         -storage_discharge_eac,
     )
-    dump_cost = max(storage_epsilon, -min_renewable_mc + storage_epsilon)
+    # caiso-139: the guard above enumerates only the renewable/storage credit
+    # set, but its stated invariant — no row may profit by generating purely to
+    # dump — binds on EVERY offer that can reach a dumpable node. A generator
+    # row priced below -dump_cost (the CAISO per-hub import tranches carry their
+    # own measured hub, and Palo Verde crashes to -$58/MWh in the desert-SW
+    # solar glut) books -mc - dump_cost per MWh of pure generate-to-dump. Where
+    # the caller supplies the injectable-row minimum, the SAME guard is taken
+    # over its full domain (rule 19 [R-ONE-MECH]: one mechanism, widened, not a
+    # second one) — zero new free parameters, the bound is read off the offer
+    # arrays the LP already carries.
+    min_dumpable_mc = (
+        min_renewable_mc
+        if min_injectable_mc is None
+        else min(min_renewable_mc, float(min_injectable_mc))
+    )
+    dump_cost = max(storage_epsilon, -min_dumpable_mc + storage_epsilon)
     # Dump block only -- the reserve/ORDC co-opt blocks (when present) follow it
     # and are priced separately below. With no co-opt columns _reserve_off ==
     # total vars/hour, so this stays the original "to the end" assignment.
