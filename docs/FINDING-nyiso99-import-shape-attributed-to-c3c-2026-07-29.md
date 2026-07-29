@@ -195,6 +195,29 @@ Across all six modeled BAs × 2023–2025 the only affected series is `NYIS`
 `system_<year>.parquet`, where total served demand is exactly 0.0 MW. **The
 model serves no load at all in five hours New York drew ~20 GW.**
 
+### 4.1 The consequence is much larger than five hours of energy
+
+Measured on the keeper's own committed sidecars, the five dropout hours are not
+a rounding error — they are the **entire** overgeneration-dump and
+negative-price record of the NYISO keeper:
+
+| year | total dump | dump **in** the dropout hours | zonal price there | slack |
+|---|---|---|---|---|
+| 2023 | 0.0 MWh | — (no dropout hour) | — | 0.0 |
+| 2024 | 22,026.6 MWh | **22,026.6 MWh = 100 %** | **−$26.001 in all 5 zones** | 0.0 |
+| 2025 | 15,587.7 MWh | **15,587.7 MWh = 100 %** | **−$26.001 in all 5 zones** | 0.0 |
+
+With demand pinned at zero, the must-run stack — nuclear, run-of-river hydro,
+the 900 MW firm HQ import floor, wind and solar — has nowhere to go, so ~7–8 GW
+per hour is thrown to the Dump variable and every zone prints the dump-cost
+optimum. So the artifact was manufacturing **five fabricated floor-price hours
+and the keeper's entire dumped-energy total**, not merely misplacing 0.1 TWh of
+load. Any price-distribution statistic on this bundle — negative-price-hour
+counts, price minima, the low tail feeding C3a/C3b — carried all five.
+
+2023's clean zero-dump row is the control: no dropout hour, no dump, no
+negative price.
+
 `_screen_demand_dropouts` (`src/market_sim/data/eia930/demand.py`) is the
 low-side twin of the existing `_screen_demand_spikes`, wired into all six
 per-BA loaders. A whole BA's metered demand is never 0 MW, so the flag needs no
@@ -214,6 +237,57 @@ A/B result and gate verdicts: §5, appended after the solve.
 
 ---
 
-## 5. A/B result
+## 5. A/B result — every pre-registered gate PASSES
 
-*(appended post-solve — see the calibration log entry for the registered run.)*
+Registered run **`2026-07-29-nyiso-99-demandfix`**
+(`results/calibration/nyiso99_demandfix`), a `replay_keeper.py` re-solve of the
+keeper's own `meta.json` recipe on the fixed HEAD, so the only delta is the
+code change. Scorer: `scripts/probes/nyiso99_ab_compare.py`.
+
+| gate | condition | result |
+|---|---|---|
+| **G1** | arm 2023 ≡ keeper 2023 | **PASS** — max \|Δ class MW\| **0.000000**, max \|Δ price\| **0.000000** $/MWh |
+| **G2** | no zero-served-demand hours | **PASS** — 3 → **0** (2024), 2 → **0** (2025), 0 → 0 (2023) |
+| **G3** | served energy rises by the wedge only | **PASS** — **+0.05624** / **+0.04345** TWh, matching the pre-registered figures exactly |
+| **G4** | C1 protection | **PASS** — C1 **14/14 · free 10/10**, unchanged. 2023 `CC_REGULAR` **bit-unchanged** at 32.5119 TWh (the ISO's tightest cell never moves — the screen is a no-op in 2023). 2024 +0.0121, 2025 +0.0090 TWh, ≈0.4 % of the ±2.94 band |
+| **G5** | protective gates hold | **PASS** — C7 **PASS**, C8 **PASS**. The fragile 2024 `ST_GAS` cell moves 30.5 % → **30.4 %**, i.e. *toward* the 30 % cap, grounded on both sides |
+| **G6** | C3c honesty | **unchanged** — hours > \$300 **4 / 0 / 7 → 4 / 0 / 7** |
+
+G1's exact zero also discharges two secondary questions: this container
+reproduces the keeper bit-for-bit, and the `dump_cost_full_offer_domain` guard
+that landed on `main` mid-session (caiso-139) is confirmed byte-neutral for
+NYISO.
+
+**The headline is the dump and the price, not the energy.** Overgeneration dump
+goes **22,026.6 → 0.0 MWh (2024)** and **15,587.7 → 0.0 MWh (2025)** — *exactly*
+zero, in both years — and with it the five fabricated −\$26.001 all-zone hours.
+**Slack stays 0.0 MWh in every year**, so the restored ~20 GW is served by real
+resources, not shed. Max \|Δ price\| is \$121.0 (2024) / \$110.0 (2025): the
+dropout hours repricing off the dump floor to a real clearing price.
+
+Determination is **NOT-YET** in both bundles with **C3c the sole FAIL** — the
+repair changes no verdict, which is the correct outcome for a five-hour data
+repair and was pre-registered as such. The arm's C6 reads UNATTESTED only
+because no governance attestation is built for a non-promoted run.
+
+**Import r_hr moves 0.624 → 0.623 (2024) and 0.454 → 0.453 (2025)** — i.e. not
+at all. Stated because the pre-registration said it would be: this is **not**
+an item-9 fix and is not offered as one.
+
+**Pre-existing, unchanged, reported (rule 14):** D-5 forecast/backcast parity
+FAILs on `nyiso_local_selfsupply` ("active backcast-only for this config but
+NOT on the declared backcast-overlay list"). The keeper's own committed
+`legitimacy_diagnostics.json` carries the identical row, so this is inherited,
+not caused here. It is a declaration-list gap, not a dispatch defect, and it is
+left for its own session.
+
+**LOYO (rule 20):** not applicable in the fitted sense — nothing here is a
+parameter, so there is no value to overfit. The 2023 no-op *is* the held-out
+year, and it comes back bit-identical. No out-of-training year was touched
+(NYISO carries no calibration-complete marker).
+
+**Verdict: KEEPER-RECOMMENDED, owner call.** Every gate passes, C1's tightest
+cell is untouched, the protective gates hold, and the bundle removes five
+fabricated floor-price hours and 100 % of the keeper's dumped energy. Following
+the NYISO lane convention since nyiso-96, the building session leaves the
+promotion decision to the owner rather than taking it.
