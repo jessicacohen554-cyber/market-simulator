@@ -1,4 +1,43 @@
-# FINDING — caiso-137: ask **A2 CLOSES as a no-defect**. The CAISO overlay's reserve measure is ALREADY plant-level online — the ask's own premise was the error, and options (a)/(b)/(c) are each refuted against the code. The decomposition A2 was blocking on does expose a **distinct, real rule-14 defect**: the overlay credits storage at **flat year-end NAMEPLATE** where the LP dispatches against the **COD-ramped hourly cap**, a phantom of **1.9–2.3 GW mean / up to 4.3 GW** in 83–92 % of hours. It **FAILS D2 on E1, structurally and robustly**, and it **cannot close C3c under any admissible reconstruction** (16 h against a 24 h floor at the most generous point, 0 h everywhere else). **No solve was run and nothing was armed.**
+# FINDING — caiso-137 (⚠ PARTLY CORRECTED, see the banner below): ask **A2 CLOSES as a no-defect** — the CAISO overlay's reserve measure is ALREADY plant-level online, and options (a)/(b)/(c) are each refuted against the code. **That result stands.** The storage-tier "defect" this document went on to file, and the D2 E1/E2 gate table built on it, are **WITHDRAWN by caiso-137b**: the overlay never runs in a CAISO backcast, and its storage argument was never the flat nameplate. **No solve was run and nothing was armed.**
+
+
+> ## ⚠ CORRECTED 2026-07-29 (caiso-137b) — READ THIS FIRST
+>
+> **§1 STANDS in full: ask A2 closes as a no-defect.** That is this document's
+> primary result and it is re-verified by the correction instrument.
+>
+> **§2–§5 are WITHDRAWN.** Two secondary claims were wrong, both because this
+> session reconstructed the overlay through
+> `scripts/run_calibration.py::run_year(fleet_only=True)` instead of tracing the
+> call site:
+>
+> 1. **The overlay never runs in a CAISO backcast.** `caiso_scarcity_overlay` is
+>    called in exactly one place — `src/market_sim/runner.py:2085`, the FORECAST
+>    path. The calibration path never imports `market_sim.runner`, and its only
+>    price writer (`_system_frame`) builds `total_overlay` from **ERCOT terms
+>    alone**. A CAISO keeper's persisted price is the **energy-only LP dual**, the
+>    realised adder is **exactly $0.00 in every hour**, and
+>    `caiso_scarcity_pricing=True` is a **stored no-op** in that lane. The
+>    "realised overlay adder $0.1399 / $0.0158 / $0.0004" is withdrawn — it
+>    described a counterfactual, and with it the entire §4 D2 E1/E2 gate table.
+> 2. **There is no flat-nameplate defect.** `runner.py:993-999` REPLACES
+>    `storage.power_cap` with the COD-ramped 2-D array before any solve, so the
+>    overlay's third argument is already the hourly in-service cap. The 1-D
+>    nameplate measured in §3 is a property of the `fleet_only` reconstruction
+>    helper (which assigns the ramped cap to a separate local, line 3741), **not
+>    of the overlay**. The "phantom 3,049 / 3,567 / 4,317 MW" is withdrawn.
+>
+> **Net effect: there is no defect and no keeper candidate.** What the correction
+> leaves standing is sharper than what it removes — CAISO has **no
+> scarcity-pricing mechanism in the backcast at all**, which is the honest reason
+> its C3c is 0 / 0 / 0.
+>
+> Correction record and instrument:
+> `FINDING-caiso137b-overlay-reachability-2026-07-29.md`,
+> `scripts/probes/_caiso137b_overlay_reachability.py`. The §2 `r_online`
+> decomposition and the §5 dump-floor method remain valid as *technique*; their
+> numbers characterise the forecast-path overlay evaluated on backcast inputs,
+> never a realised backcast price.
 
 **Keeper `2026-07-27-caiso-130-nameplate-aware` UNCHANGED**, determination NOT-YET,
 fail set {C3a-2025, C3c}. No LP was built, no solver called, no `ScenarioConfig`
