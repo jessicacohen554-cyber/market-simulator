@@ -312,6 +312,101 @@ def section_baseline(bundle: Path) -> None:
     print("  r_p32 = model vs the INDEPENDENT P-32 instrument — a target cross-check.")
 
 
+def model_system_price(bundle: Path, year: int) -> np.ndarray:
+    """Model load-weighted internal system price ($/MWh), hour-of-year.
+
+    Load-weighted over the five NYISO load zones; the external node carries no
+    load and is excluded. Hours whose total served demand is 0 MW come back
+    ``nan`` — those are the EIA-930 demand-dropout hours this session repairs
+    (2024 h403/6760/6761, 2025 h354/355), and they carry no price.
+    """
+    df = pd.read_parquet(bundle / "hourly" / f"system_{year}.parquet")
+    df = df[(df["pass"] == "P1") & (df["zone"] != "NYISO_external")]
+    g = df.assign(w=df["price"] * df["demand"]).groupby("hour").agg(
+        w=("w", "sum"), d=("demand", "sum")
+    )
+    load = g["d"].to_numpy(float)
+    return np.where(load > 0.0, g["w"].to_numpy(float) / np.maximum(load, 1e-9), np.nan)
+
+
+def seam_price(year: int) -> np.ndarray:
+    """The cheapest measured neighbor DA LMP + wheeling hurdle, hour-of-year.
+
+    The price the LP's import node is actually offered — the same measured
+    series ``inject_nyiso_import_hub_prices`` writes onto the seam rows, so the
+    spread computed against it is the LP's own decision variable, not a proxy.
+    """
+    from market_sim.data.neighbor_price import neighbor_lmp_hourly
+    from market_sim.model.interchange.nyiso import NYISO_IMPORT_HUB_HURDLE
+
+    legs = [
+        np.asarray(neighbor_lmp_hourly(nb, year, "da")[:8760], float)
+        for nb in ("PJM", "NEISO")
+    ]
+    return np.minimum.reduce(legs) + NYISO_IMPORT_HUB_HURDLE
+
+
+def section_attribute(bundle: Path) -> None:
+    """Attribute the item-9 shape defect: is the seam broken, or its input?
+
+    Three questions, in order:
+
+    1. Does the import node follow the spread **it is shown**? If yes, the seam
+       mechanism is faithful and the defect is upstream of it.
+    2. Is that spread in phase with the real one?
+    3. If not, which of its two terms is wrong — the measured seam price (an
+       input) or the model's own internal price (the C3c deficit)?
+    """
+    print(f"\n=== attribute — where the import shape comes from ({bundle.name}) ===")
+    for year in YEARS:
+        from market_sim.data.neighbor_price import neighbor_lmp_hourly
+
+        mprice = model_system_price(bundle, year)
+        seam = seam_price(year)
+        real = np.asarray(neighbor_lmp_hourly("NYISO", year, "da")[:8760], float)
+        mod = model_import(bundle, year)
+        m_spread, a_spread = mprice - seam, real - seam
+
+        def prof(x: np.ndarray) -> np.ndarray:
+            return np.nanmean(np.asarray(x, float).reshape(365, 24), axis=0)
+
+        def rr(a: np.ndarray, b: np.ndarray) -> float:
+            a, b = np.asarray(a, float), np.asarray(b, float)
+            ok = np.isfinite(a) & np.isfinite(b)
+            return _r(a[ok], b[ok])
+
+        mp, ap = prof(mprice), prof(real)
+        print(f"\n-- {year}")
+        print(
+            f"   [1] r(model import profile, MODEL spread profile) "
+            f"{rr(prof(mod), prof(m_spread)):+.3f}"
+            f"   <- the seam tracks the spread it is shown"
+        )
+        print(
+            f"   [2] r(MODEL spread profile, REAL spread profile) "
+            f"{rr(prof(m_spread), prof(a_spread)):+.3f}"
+            f"   (model peaks h{int(np.nanargmax(prof(m_spread))):02d}, "
+            f"real peaks h{int(np.nanargmax(prof(a_spread))):02d})"
+        )
+        print(
+            f"   [3] internal price hod swing: model {np.nanmax(mp) - np.nanmin(mp):6.2f}"
+            f"  real {np.nanmax(ap) - np.nanmin(ap):6.2f}"
+            f"  ratio {(np.nanmax(mp) - np.nanmin(mp)) / (np.nanmax(ap) - np.nanmin(ap)):.2f}"
+            f"   |  seam price swing {np.nanmax(prof(seam)) - np.nanmin(prof(seam)):6.2f}"
+            f" (measured — correct)"
+        )
+        peak = int(np.nanargmax(prof(a_spread)))
+        print(
+            f"       model spread at the real peak hour h{peak:02d}: "
+            f"{prof(m_spread)[peak]:+.1f} $/MWh   (real {prof(a_spread)[peak]:+.1f})"
+        )
+    print(
+        "\n  Reading: [1] high + [2] negative + [3] ratio << 1 means the import "
+        "node is faithful and\n  the defect is the C3c internal-price-swing "
+        "deficit reaching the seam — not an import mechanism."
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the requested audit sections."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -319,7 +414,7 @@ def main(argv: list[str] | None = None) -> int:
         "--sections",
         nargs="+",
         default=["census", "falsify"],
-        choices=["census", "falsify", "baseline"],
+        choices=["census", "falsify", "baseline", "attribute"],
     )
     parser.add_argument("--bundle", type=Path, default=None)
     args = parser.parse_args(argv)
@@ -328,11 +423,12 @@ def main(argv: list[str] | None = None) -> int:
         section_census()
     if "falsify" in args.sections:
         section_falsify()
-    if "baseline" in args.sections:
-        if args.bundle is None:
-            print("\n(baseline needs --bundle)")
-            return 2
-        section_baseline(args.bundle)
+    for name, fn in (("baseline", section_baseline), ("attribute", section_attribute)):
+        if name in args.sections:
+            if args.bundle is None:
+                print(f"\n({name} needs --bundle)")
+                return 2
+            fn(args.bundle)
     return 0
 
 
