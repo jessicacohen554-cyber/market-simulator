@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-19-pjm-gasshape-interpfix-base",
+  "run_id": "2026-07-29-pjm-137-ctheatrate",
   "iso": "PJM",
-  "label": "pjm gasshape interpfix base",
+  "label": "pjm 137 ctheatrate",
   "target_years": [
     2023,
     2024,
@@ -13,12 +13,14 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
-  "determination": "NOT-YET",
-  "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+  "rubric_version": 2.9,
+  "determination": "CALIBRATED",
+  "reasons": [],
+  "notes": [
+    "C8 2023 CT_PEAKER: grounded above budget \u2014 16.3% forced (3.3785 of 20.7513 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.923 (\u22650.8) & off-peak CV ratio 0.703 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2024 CT_PEAKER: grounded above budget \u2014 16.9% forced (3.5996 of 21.2552 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.958 (\u22650.8) & off-peak CV ratio 1.083 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 CT_PEAKER: grounded above budget \u2014 17.1% forced (4.8922 of 28.6009 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.973 (\u22650.8) & off-peak CV ratio 0.838 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
   ],
-  "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
@@ -50,25 +52,20 @@
       "tier": "supporting",
       "status": "PASS"
     },
-    "co2": {
-      "label": "C5a CO2 vs eGRID",
-      "tier": "load-bearing",
-      "status": "PASS"
-    },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -81,8 +78,8 @@
     }
   },
   "grade_summary": {
-    "scored": 7,
-    "target_grade": 7,
+    "scored": 9,
+    "target_grade": 9,
     "commercial_grade": 0,
     "ledgered": 0,
     "fails": 0

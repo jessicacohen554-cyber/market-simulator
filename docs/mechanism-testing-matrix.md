@@ -244,50 +244,86 @@ not a new sweep:
    CHP miscosting (caiso-128) both point at offer-cost inputs; measured loaded
    HRs are the audit-grade first step.
 
-### 5.3 PJM — **NO failing criterion** (keeper `2026-07-28-pjm-136-lossurf`, CALIBRATED)
+### 5.3 PJM — **NO failing criterion** (keeper `2026-07-29-pjm-137-ctheatrate`, CALIBRATED)
 
 C1 CC_REGULAR-2023 and C3a-2025 closed at pjm-135; **C3c-24/25 closed at
-pjm-136**. The queue below is therefore no longer gate-driven — it is ranked by
-*structural* defect, per rule 1 `[R-STRUCT]` (a keeper is the most faithful run,
-not the lowest-error one).
+pjm-136** and is UNCHANGED by pjm-137. The queue below is not gate-driven — it
+is ranked by *structural* defect, per rule 1 `[R-STRUCT]`.
 
-1. **Dominion CT_PEAKER leg — the primary open defect, NO selected mechanism.**
-   Model 0.724/1.380/2.923 TWh against 7.38/8.68/9.64; pjm-136 moved it for the
-   first time (+0.015/+0.096/+0.411, and Dominion *gains* while the ISO-wide CT
-   total falls) but ~94 % of the gap is unclosed. The remaining 76–80 % of the
-   measured DOM-vs-AEP separation is **congestion**, and nothing in the model
-   produces it on that boundary: every internal PJM link is
-   *bound-but-priceless* (AEP_Ohio→Dominion pinned at its limit in 84–91 % of
-   hours at a shadow price of **exactly 0.000**). A successor needs a mechanism
-   that makes an internal constraint *price*, not one that makes it tighter —
-   `pjm_apsouth_cut` is **I** and the per-border star lever is **closed by
-   measurement** (FINDING-pjm135 §7, FINDING-pjm136 §5).
-2. **`measured_ct_heat_rates`** (**U**) — still the first *named* lever for the
-   CT leg, and unaffected by pjm-136 (the measured-offer-surface family
-   provably cannot reach Dominion — pjm-132 gives it identical values).
-3. **C3c margin hardening** — C3c now passes by **1 h** (2024) and **2.5 h**
-   (2025) against a 0.5× floor. Not a gate to chase, but the thinnest margin in
-   the keeper: any delta must report its C3c effect explicitly.
-4. **`pjm_dam_availability`** (**U**) — the intaken-but-untested measured
-   availability re-basis (2018–2026 landed 2026-07-24, ships default-off). Its
-   original target (C1 CC_REGULAR volume) is closed, so it now stands or falls
-   on the outage-envelope story alone.
+**CLOSED AT pjm-137, binding on successors — do not re-open:**
+
+- **The zonal-congestion route to the Dominion CT leg.** PJM's own day-ahead
+  binding-constraint record (new intake `data/raw/pjm-binding-constraints/`,
+  228,795 constraint-hours) puts only **6.34 / 3.06 / 6.19 %** of its congestion
+  rent on a named zonal-scale interface and **80.0–87.8 %** on monitored
+  facilities rated ≤ 230 kV; **`AEP-DOM` carries 0.041 / 0.071 / 0.236 %**. The
+  constraints that dominate the DOM-separation hours are PLEASNTV TX3 500 kV,
+  GOOSECRE TX1 500 kV, PLEASNTV-ASHBURN 230 kV, ASHBURN-GOOSECRE 230 kV and
+  BRAMBLET-EVRGREEN — every one `zone = DOM` in PJM's own pnode registry, i.e.
+  **both ends inside `PJM_Dominion`**. PJM's 500 kV EHV nodes (new intake
+  `data/raw/pjm-ehv-lmp/`) measure **more** dispersion inside Dominion
+  ($6.18/$8.68/$16.78) than across the whole DOM–AEP boundary
+  ($4.76/$6.13/$14.42). This is the ERCOT/MISO `internal_congestion_split`
+  refusal class. **No successor may propose another zonal congestion mechanism
+  for this defect.**
+- **`measured_ct_heat_rates` → K** (pjm-137 keeper). Adjudicated on PJM's own
+  artifact; see the matrix cell.
+
+**The queue:**
+
+1. **The system-energy-price half of the Dominion CT deficit — the successor's
+   target.** In the hours Dominion's real turbines run, the model's zonal price
+   is **$17.72 / $26.69 / $54.61 /MWh** short; netting the measured congestion
+   component out leaves **$8.63 / $14.37 / $26.88** (49 / 54 / 49 %) that a
+   zonal model *could* produce. Measured DOM **MEC** alone runs at a p50 of
+   $35.94 / $41.35 / **$58.86** in those hours against the model's whole
+   Dominion dual at $32.07 / $32.28 / **$42.72**. This is an ISO-wide
+   marginal-unit question and it joins item 5 below.
+2. **The defect is ~1.9× smaller than every prior note said.** The Dominion
+   `CT_PEAKER` actual is **3.066 / 4.048 / 5.218 TWh** on the benchmark's own
+   unit-split per-plant record — not the 7.38 / 8.68 / 9.64 carried forward,
+   which is the nine roster plants' *whole-plant* energy and counts Doswell's
+   combined-cycle blocks as peaker output. After pjm-137 the gap is
+   **−2.345 / −2.600 / −2.056 TWh**, i.e. the model is at **24 / 36 / 61 %** of
+   actual. Take a zonal class actual from
+   `frontend/data/backcast/bench/<ISO>/<year>.json.gz` (which carries
+   `split: "unit_hourly"` at mixed sites), never by summing CAMPD over a plant
+   roster.
+3. **A `PJM_Dominion` NoVA/Loudoun split** is the structurally correct fix and
+   is **blocked on one measured input**: PJM's metered-load feed stops at the
+   transmission zone, so a sub-zonal load share would be a fitted scalar
+   (rules 5/24). Refused until a measured sub-zonal load basis exists.
+4. **C8 `CT_PEAKER` forced share** rose to 16.3 / 16.9 / 17.1 % at pjm-137 (all
+   GROUNDED — D-4 clear, profile r 0.923–0.973, CV ratio 0.703–1.083) on a class
+   whose ISO-wide volume fell 2.6–2.9 TWh. A clean pass under rule 20, but worth
+   watching.
 5. **G-20b guard false-negative lead** (~2.8–5.0 GW returned capacity per tight
-   hour) — the SUSPECT-grade reserve-supply tightness lead; audit before any
-   new mechanism.
-6. **`st_gas_mustrun_p25_level`** (**U**, MISO form) — re-ground the six
+   hour) — the SUSPECT-grade reserve-supply tightness lead; audit before any new
+   mechanism. Connects to item 1.
+6. **C3c margin** — still passes by **1 h** (2024) and **2.5 h** (2025) against a
+   0.5× floor, untouched by pjm-137. Any delta must report its C3c effect
+   explicitly.
+7. **`pjm_dam_availability`** (**U**) — intaken but untested. pjm-137 measured
+   that Dominion's real turbines are synchronised in 68.3 / 54.4 / 62.4 % of all
+   hours, so the CT leg is **not** an availability defect; this lever now stands
+   on the outage-envelope story alone.
+8. **`st_gas_mustrun_p25_level`** (**U**, MISO form) — re-ground the six
    overnight ST_GAS floor limbs on measured operating levels (D-2 ST_GAS
-   43–56 % forced).
-7. **Requirement-side dynamic reserves** (NYISO form) — the supply side is
+   42–55 % forced).
+9. **Requirement-side dynamic reserves** (NYISO form) — the supply side is
    adjudicated; the requirement side is not.
-8. **TETCO-M3 winter daily citygate** (`winter_citygate_daily` form, **U**) —
-   own hub derivation.
+10. **TETCO-M3 winter daily citygate** (`winter_citygate_daily` form, **U**) —
+    own hub derivation.
 
-**Representation limits filed at pjm-136, not defects to chase with a lever:**
-EMAAC hides sub-zonal congestion the 8-zone reduction cannot express (EASTERN vs
-NEW JERSEY $4.3–$5.0 mean |Δ|, >$1 in 36–45 % of hours, *inside* one model
-zone); and the external star node is lossless while internal wheeling pays a
-loss, so seam-sourced energy is delivered cheaper than internal energy.
+**Representation limits, measured at pjm-137 and ISO-wide (not EMAAC-only):**
+intra-zone EHV dispersion in 2025 runs **West_APS $18.58, Dominion $16.78,
+Central_PA $12.38, AEP_Ohio $9.40, SWMAAC $7.35** against an inter-zonal
+DOM–AEP spread of $14.42 — six of seven measurable model zones carry as much
+separation inside them as the model is chartered to reproduce between them.
+ComEd ($1.93) is the exception, which is why pjm-136 §3's hub-based test read
+clean: PJM publishes multiple hubs only inside its two most internally-uniform
+zones. The external star node remains lossless while internal wheeling pays a
+loss.
 
 ### 5.4 MISO — targets C7 COAL_PRB (non-ledgerable), C3b spread compression (instrument-blocked), C3a-2024
 
