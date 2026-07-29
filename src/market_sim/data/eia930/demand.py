@@ -241,7 +241,9 @@ def _load_ercot_hourly(year: int) -> tuple[np.ndarray, np.ndarray] | None:
     )
     if np.isnan(demand).any() or np.isnan(interchange).any():
         return None
-    return demand, interchange
+    # Demand only: ERCO's interchange legitimately reads 0.0 MW on idle DC
+    # ties, so the dropout screen must never see it (see the screen's docstring).
+    return _screen_demand_dropouts(demand, ba_code="ERCO", year=year), interchange
 
 
 def _load_caiso_supply_consistent_demand(year: int) -> np.ndarray:
@@ -344,6 +346,8 @@ def _load_caiso_hourly_demand(
     demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
     if np.isnan(demand).any():
         return None
+    # Repaired on the source clock, before any realignment shifts rows.
+    demand = _screen_demand_dropouts(demand, ba_code="CISO", year=year)
     if clock_realign and "Local date" in frame.columns:
         end = pd.Timestamp(_CAISO_DEMAND_CLOCK_REALIGN_END)
         misaligned = (pd.to_datetime(frame["Local date"]) < end).to_numpy()
@@ -389,7 +393,7 @@ def _load_nyiso_hourly_demand(year: int) -> np.ndarray | None:
     demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
     if np.isnan(demand).any():
         return None
-    return demand
+    return _screen_demand_dropouts(demand, ba_code="NYIS", year=year)
 
 
 # Multiple of the annual median above which an hourly demand reading is treated
@@ -444,6 +448,55 @@ def _screen_demand_spikes(demand: np.ndarray, *, ba_code: str, year: int) -> np.
     return pd.Series(repaired).interpolate().bfill().ffill().to_numpy(dtype=float)
 
 
+def _screen_demand_dropouts(
+    demand: np.ndarray, *, ba_code: str, year: int
+) -> np.ndarray:
+    """Repair EIA-930 reporting dropouts posted as exactly 0.0 MW.
+
+    The low-side twin of :func:`_screen_demand_spikes`. EIA-930 posts some
+    reporting gaps as a literal ``0.0`` **value** rather than an absent row, so
+    they survive the NaN reindex in :func:`_eia_hourly_frame_filled` and the
+    ``interpolate().bfill().ffill()`` every loader applies — the frame looks
+    complete and the LP is handed an hour in which the balancing authority
+    serves no load at all. A whole BA's metered demand is never 0 MW, so an
+    exactly-zero reading is an artifact by construction and needs no threshold.
+    Each flagged hour is dropped and linearly interpolated from its neighbours,
+    the same repair the spike screen and the missing-meter path already use.
+
+    Provenance (nyiso-99, extending the nyiso-98 audit that first identified
+    this artifact class in the NYIS ``NG: NUC`` series): across the six modeled
+    BAs and 2023-2025 the ONLY affected series is ``NYIS`` ``Demand`` — 3 hours
+    in 2024 (403, 6760, 6761) and 2 in 2025 (354, 355), each bracketed by
+    ~17-22 GW readings and each reproduced 1:1 in the solved bundle's served
+    load. Every other BA-year is untouched, so this is byte-identical outside
+    NYISO 2024/2025 (rule 22).
+
+    Scoped to **demand only, never interchange**: a BA's net interchange
+    legitimately *is* 0.0 MW when its ties are idle (ERCO posts 187/140/113
+    such hours in 2023/24/25 on its ~1.2 GW DC ties), so the same screen on an
+    interchange series would delete real measurements — the rule-14 failure
+    mode this repair exists to avoid.
+
+    Returns the array unchanged (same object) when nothing is flagged, and
+    when *every* hour is zero (an empty extract, which the caller's own
+    ``None`` fallback must handle rather than this screen inventing a series).
+    """
+    dropout = np.isfinite(demand) & (demand == 0.0)
+    n_dropout = int(dropout.sum())
+    if n_dropout == 0 or n_dropout == demand.size:
+        return demand
+    logger.warning(
+        "%s %d: repairing %d demand-dropout hour(s) reported as exactly 0 MW "
+        "-- EIA-930 reporting gap posted as a value, not an absent row",
+        ba_code,
+        year,
+        n_dropout,
+    )
+    repaired = demand.copy()
+    repaired[dropout] = np.nan
+    return pd.Series(repaired).interpolate().bfill().ffill().to_numpy(dtype=float)
+
+
 def _load_neiso_hourly_demand(year: int) -> np.ndarray | None:
     """Return NEISO hourly metered demand (MW) for a year, or ``None``.
 
@@ -467,7 +520,11 @@ def _load_neiso_hourly_demand(year: int) -> np.ndarray | None:
     demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
     if np.isnan(demand).any():
         return None
-    return _screen_demand_spikes(demand, ba_code="ISNE", year=year)
+    return _screen_demand_spikes(
+        _screen_demand_dropouts(demand, ba_code="ISNE", year=year),
+        ba_code="ISNE",
+        year=year,
+    )
 
 
 def _load_miso_hourly_demand(year: int) -> np.ndarray | None:
@@ -497,7 +554,11 @@ def _load_miso_hourly_demand(year: int) -> np.ndarray | None:
     demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
     if np.isnan(demand).any():
         return None
-    return _screen_demand_spikes(demand, ba_code="MISO", year=year)
+    return _screen_demand_spikes(
+        _screen_demand_dropouts(demand, ba_code="MISO", year=year),
+        ba_code="MISO",
+        year=year,
+    )
 
 
 def _load_pjm_hourly_demand(year: int) -> np.ndarray | None:
@@ -539,7 +600,11 @@ def _load_pjm_hourly_demand(year: int) -> np.ndarray | None:
     demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
     if np.isnan(demand).any():
         return None
-    return _screen_demand_spikes(demand, ba_code="PJM", year=year)
+    return _screen_demand_spikes(
+        _screen_demand_dropouts(demand, ba_code="PJM", year=year),
+        ba_code="PJM",
+        year=year,
+    )
 
 
 def _ercot_demand_source(
