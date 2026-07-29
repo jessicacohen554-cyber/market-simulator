@@ -49,7 +49,17 @@
  *   PJM gates drop to C3c alone — C1 and C3a closed).
  * 2026-07-28 on the pjm-136 keeper promotion (zonal_loss_surface PJM -> K; PJM reaches
  *   CALIBRATED — C3c, its last open gate, closes. PJM has NO failing criterion; the open
- *   work is the Dominion CT_PEAKER leg (~94 % of the gap) and C3c's 1-2.5 h margin).
+ *   work is the Dominion CT_PEAKER leg and C3c's 1-2.5 h margin).
+ * 2026-07-29 on the pjm-137 keeper promotion (measured_ct_heat_rates PJM U -> K; PJM stays
+ *   CALIBRATED with every criterion passing and C3c UNCHANGED). pjm-137 also CLOSES the
+ *   zonal-congestion route to the Dominion CT leg BY MEASUREMENT — PJM's own DA
+ *   binding-constraint record puts 3.1-6.3 % of its congestion rent on zonal-scale
+ *   interfaces and 0.04-0.24 % on AEP-DOM, the DOM-separation hours are driven by
+ *   Loudoun facilities with BOTH ends inside PJM_Dominion, and intra-Dominion EHV
+ *   dispersion EXCEEDS the inter-zonal DOM-AEP spread. No successor may propose another
+ *   zonal congestion mechanism for that defect (ERCOT/MISO internal_congestion_split
+ *   refusal class). The defect itself was also mis-sized ~1.9x in prior notes: the
+ *   benchmark's own unit-split actual is 3.066/4.048/5.218 TWh, not 7.38/8.68/9.64.
  * CAISO column re-checked 2026-07-28 by caiso-137 (ordc_scarcity_overlay: ask A2
  *   CLOSED as a no-defect, cell stays K — nothing armed, no solve) and CORRECTED
  *   2026-07-29 by caiso-137b: the overlay is UNREACHABLE in the CAISO backcast
@@ -72,7 +82,7 @@ window.MECH_MATRIX = {
   keepers: {
     ERCOT: "2026-07-28-ercot116-regate-base",
     CAISO: "2026-07-27-caiso-130-nameplate-aware",
-    PJM: "2026-07-28-pjm-136-lossurf",
+    PJM: "2026-07-29-pjm-137-ctheatrate",
     MISO: "2026-07-28-miso-99b-chp-power",
     NYISO: "2026-07-29-nyiso-96-ctamort",
     NEISO: "2026-07-23-neiso-61-netrev-margin"
@@ -279,9 +289,9 @@ window.MECH_MATRIX = {
       ev: { M: "MISO-55", Q: "neiso-47", N: "nyiso-96 (docs/FINDING-nyiso96-ct-start-frequency-2026-07-29.md)" } },
     { id: "measured_ct_heat_rates", cat: "offer", name: "Measured loaded CT heat rates (CAMPD, per-plant)",
       def: "scenarios.py:1197", mode: "BF",
-      cells: "UUUUKU",
-      note: "NYISO keeper (nyiso-89: 91.6% of class capacity re-priced; eliminated the heat-rate hypothesis for the peaker gap). Untested everywhere else — audit-grade transfer candidate, esp. PJM (Dominion CT/CC zonal inversion, pjm-134) and CAISO (CT priced-out, caiso-119).",
-      ev: { N: "nyiso-89; FINDING-nyiso89" } },
+      cells: "UUKUKU",
+      note: "NYISO keeper (nyiso-89: 91.6% of class capacity re-priced; eliminated the heat-rate hypothesis for the peaker gap). PJM KEEPER at pjm-137, per-ISO on PJM's own artifact (rule 25, no verdict transferred): 71 plants, ZERO excluded by the physical band, 29 moved >0.5 MMBtu/MWh, 35 cheaper / 36 dearer, ISO energy-weighted +0.229 MMBtu/MWh. Chartered under rule 14 [R-ACCURATE] because eGRID publishes ONE plant-average rate — Doswell Energy Center's 3 peaking turbines carried the 9.027 average of a site that is 6 CC blocks, against a measured 11.350. Determination CALIBRATED with every criterion passing and C3c UNCHANGED (tail hours identical 3/10/32); Dominion CT_PEAKER rises 0.724->0.721 / 1.380->1.448 / 2.923->3.162 TWh while the ISO-WIDE class FALLS 2.6-2.9 TWh — pure reallocation. The PREREG predicted the OPPOSITE direction (zone-average +0.634 MMBtu/MWh) and is recorded as refuted: the mechanism is per-PLANT. Still untested in ERCOT / CAISO (CT priced-out, caiso-119) / MISO.",
+      ev: { N: "nyiso-89; FINDING-nyiso89", P: "pjm-137; FINDING-pjm137-dominion-congestion-is-subzonal-2026-07-29" } },
     { id: "measured_chp_heat_rates", cat: "offer", name: "Measured power-only CHP heat rates (eGRID CHPCHTI add-back, per-plant)",
       def: "scenarios.py:1224", mode: "BF",
       cells: "UUUKUU",
