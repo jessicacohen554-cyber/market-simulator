@@ -609,7 +609,9 @@ def inject_caiso_per_hub_intertie_prices(
     return applied
 
 
-def inject_caiso_firm_import_shape(fleet_arrays, iso: str, year: int) -> bool:
+def inject_caiso_firm_import_shape(
+    fleet_arrays, iso: str, year: int, envelope_clip: bool = False
+) -> bool:
     """Shape the CAISO firm import blocks by the measured revealed base profile.
 
     caiso-73 (``config.caiso_firm_import_shape``; FINDING-caiso72 live lead
@@ -648,16 +650,37 @@ def inject_caiso_firm_import_shape(fleet_arrays, iso: str, year: int) -> bool:
     below (pmin = 0) — an hour-varying pmax, not a floor, not a price adder
     (rules #13/#14).
 
+    With ``envelope_clip`` (``config.caiso_firm_import_envelope_clip``,
+    caiso-138) the shaped capability is additionally capped, hour by hour, at
+    the tranche's OWN corridor measured deliverability envelope — the same
+    :func:`~market_sim.data.eia_loader.measured_corridor_flow_envelope` series
+    the ``caiso_corridor_flow_limit`` link cap is built from. Rationale
+    (FINDING-caiso138 §B/§C): the shape ``w`` is the TOTAL-system revealed
+    profile while the level is corridor-split, so on the near-balanced PNW
+    corridor ``level × w`` exceeds the corridor's own p95 net import in a
+    growing set of (month × hod) buckets and the caiso-77 floor then forces
+    1.0–1.7 TWh/yr out the node's Dump variable at −$26.001/MWh. The clip
+    reconciles the floor to the cap with zero new parameters (their pointwise
+    min); delivered corridor flow in collision hours is the cap before and
+    after, so the CA-side dispatch is unchanged. A year with no measured
+    envelope (a forecast year) is left unclipped.
+
     Returns ``True`` when at least one firm tranche was shaped, ``False``
     (byte-identical) when the fleet has no firm rows or no measured shape is
     available.
     """
-    from market_sim.data.eia_loader import measured_firm_import_shape
+    from market_sim.data.eia_loader import (
+        measured_corridor_flow_envelope,
+        measured_firm_import_shape,
+    )
 
     hours = int(fleet_arrays.availability.shape[1])
     w = measured_firm_import_shape(iso, year, hours)
     if w is None:
         return False
+    env = (
+        measured_corridor_flow_envelope(iso, year, hours) if envelope_clip else None
+    ) or {}
     ladder = IMPORT_TRANCHES_BY_YEAR.get(iso, {}).get(year) or IMPORT_TRANCHES.get(
         iso, []
     )
@@ -680,6 +703,17 @@ def inject_caiso_firm_import_shape(fleet_arrays, iso: str, year: int) -> bool:
             continue
         fleet_arrays.availability[row, :] *= shaped / peak
         fleet_arrays.pmax[row] = peak
+        zone_env = env.get(zone)
+        if zone_env is not None:
+            # caiso-138 deliverability clip: capability = min(eford-derated
+            # shaped capability, corridor envelope). Applied on availability so
+            # pmax stays the shaped peak and the clip composes with the eford
+            # derate already inside availability (capability can only shrink).
+            with np.errstate(divide="ignore", invalid="ignore"):
+                frac = np.where(peak > 0.0, np.asarray(zone_env) / peak, 1.0)
+            fleet_arrays.availability[row, :] = np.minimum(
+                fleet_arrays.availability[row, :], np.clip(frac, 0.0, 1.0)
+            )
         applied = True
     return applied
 
@@ -2045,14 +2079,25 @@ def apply_caiso_seam_injections(
         and getattr(config, "caiso_perhub_firm_base", False)
         and getattr(config, "caiso_firm_import_shape", False)
     ):
-        if inject_caiso_firm_import_shape(fleet_arrays, iso, year):
+        if inject_caiso_firm_import_shape(
+            fleet_arrays,
+            iso,
+            year,
+            envelope_clip=getattr(config, "caiso_firm_import_envelope_clip", False),
+        ):
             _logger.info(
                 "%s %d: firm import blocks shaped by the measured revealed "
                 "base profile (DMM level × unit-mean (month × hod) median of "
                 "measured corridor net imports; flat block replaced by an "
-                "hour-varying capability)",
+                "hour-varying capability)%s",
                 iso,
                 year,
+                (
+                    " — capability clipped at each corridor's measured "
+                    "deliverability envelope (caiso-138)"
+                    if getattr(config, "caiso_firm_import_envelope_clip", False)
+                    else ""
+                ),
             )
         # CAISO firm-block self-schedule floor (caiso_firm_import_selfschedule,
         # caiso-77): the shaped contracted base becomes must-flow — RA/LTC
