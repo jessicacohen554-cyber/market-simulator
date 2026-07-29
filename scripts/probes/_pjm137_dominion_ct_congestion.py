@@ -33,8 +33,11 @@ This probe asks PJM. Three measurements, no solve:
 * **M3 — the CT reality check.** PJM's congestion record says *where*; CAMPD
   says *when the Dominion CT fleet actually ran*. The roster is taken from the
   committed benchmark payload — the exact plants the model's own fleet assigns
-  to `PJM_Dominion` / `CT_PEAKER`, so the measurement and the class it explains
-  cover the same machines — and their CAMPD hourly generation is weighted
+  to `PJM_Dominion` / `CT_PEAKER` — and then narrowed to those plants'
+  `unitType == 'Combustion turbine'` units, the same filter the CT heat-rate
+  derive applies, so the measurement and the class it explains cover the same
+  machines rather than a mixed plant's combined-cycle blocks. Their CAMPD
+  hourly generation is weighted
   against the measured DOM LMP, the measured DOM congestion component, and the
   model's own Dominion dual in the same hours. This decides whether the CT leg
   is a **congestion-tail** phenomenon a zonal mechanism could reach, or
@@ -445,7 +448,19 @@ def _dominion_ct_hourly(year: int) -> tuple[np.ndarray, dict]:
         )
     d = pd.concat(frames, ignore_index=True)
     d["facilityId"] = pd.to_numeric(d["facilityId"], errors="coerce")
-    ct = d[d["facilityId"].isin(roster)].copy()
+    # The roster selects the PLANTS; `unitType` selects the MACHINES. Both are
+    # required: several roster plants are MIXED, and taking a plant whole would
+    # count its combined-cycle blocks as peaker output. Doswell Energy Center is
+    # the case — the model fleet splits it into 6 CC_REGULAR + 3 CT_PEAKER
+    # generators, and its CC blocks alone ran 4.47 TWh in 2025 against 1.08 TWh
+    # from its turbines. This is the same filter
+    # `scripts/data/derive_campd_ct_heat_rates.py` applies, so the class
+    # measured here and the class the derive prices are the same machines.
+    unit_type = d["unitType"].fillna("")
+    is_ct = unit_type.str.contains(
+        "combustion turbine", case=False, regex=False
+    ) & ~unit_type.str.contains("combined cycle", case=False, regex=False)
+    ct = d[d["facilityId"].isin(roster) & is_ct].copy()
 
     dt = pd.to_datetime(ct["date"])
     keep = ~((dt.dt.month == 2) & (dt.dt.day == 29))

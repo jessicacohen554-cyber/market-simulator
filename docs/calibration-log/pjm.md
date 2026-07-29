@@ -1625,3 +1625,126 @@ hours** (2025) against a 0.5× floor, that Dominion CC_REGULAR 2025 now
 network now has a real dual structure to work against, and the remaining
 76–80 % of the measured DOM-vs-AEP separation is **congestion**, which no
 mechanism in the model currently produces on that boundary.
+
+## pjm-137 — the Dominion congestion is SUB-ZONAL: PJM's own binding-constraint record puts 3–6 % of its DA congestion rent on zonal-scale interfaces and 0.04–0.24 % on AEP-DOM, the DOM-separation hours are driven by Loudoun facilities with BOTH ends inside `PJM_Dominion`, and there is more price separation INSIDE the Dominion zone than across the DOM–AEP boundary. The chartered defect was also mis-sized ~1.9×. `measured_ct_heat_rates` promoted.
+
+**Runs:** `2026-07-29-pjm-137-control` (arm A) / `2026-07-29-pjm-137-ctheatrate`
+(arm B), both on the `2026-07-28-pjm-136-lossurf` recipe, all three years in one
+invocation (rule 16), arms sequential (rule 12). Gates:
+`PREREG-pjm137-measured-ct-heat-rates-2026-07-29.md`, committed and pushed
+**before either arm solved** (including its own §2a correction). Write-up:
+`FINDING-pjm137-dominion-congestion-is-subzonal-2026-07-29.md`. Probes:
+`_pjm137_dominion_ct_congestion.py`, `_pjm137_intrazonal_ehv_spread.py`,
+`_pjm137_ctheatrate_ab.py`.
+
+**Two new public intakes** (gitignored bulk, committed README + sha256 manifest):
+`data/raw/pjm-binding-constraints/` (DataMiner2 `da_marginal_value` — PJM's OWN
+binding day-ahead constraints with monitored facility, contingency and **shadow
+price**, the MISO `bc_HIST` analogue and directly comparable to the model's own
+transmission duals; 228,795 constraint-hours) and `data/raw/pjm-ehv-lmp/`
+(DataMiner2 `da_hrl_lmps` `type = EHV` — 500 kV aggregate-node LMPs, ~135 nodes,
+**38 inside DOM alone**; the server-side `zone` filter 400s on archived rows so
+the fetcher pulls every zone and filters locally, which is why the measurement
+covers all eight model zones).
+
+**THE MEASUREMENT (no LP).** pjm-136 §5 asked a successor to *"make an internal
+PJM constraint actually price, or prove it can't."* **It can't.**
+
+- **M1 — the loss surface did exactly what it claimed; the residual is
+  congestion.** On the NEW keeper the model separates on `AEP_Ohio→Dominion` in
+  **96.1/98.9/96.9 %** of hours (was 0.0 %), reproducing the measured LOSS
+  component (−0.54/−1.06/−1.90) and **none** of the measured congestion
+  (−3.65/−4.42/**−12.44**).
+- **M2 — PJM's congestion is not on the boundaries a zonal model has.** Only
+  **6.34/3.06/6.19 %** of the shadow-price record sits on a named zonal-scale
+  interface; **80.0–87.8 %** sits on facilities rated **≤ 230 kV** (pooled:
+  115–138 kV 54.9 %, 230 kV 23.0 %, 500 kV 4.0 %). **`AEP-DOM` carries
+  0.041/0.071/0.236 %.** In the top-decile DOM-separation hours the largest rent
+  *lift* is **PLEASNTV TX3 500 kV (+4.98 pp)**, then GOOSECRE TX1 500 kV,
+  PLEASNTV-ASHBURN 230 kV, ASHBURN-GOOSECRE 230 kV, BRAMBLET-EVRGREEN — and PJM's
+  `/api/v1/pnode` registry returns **`zone = DOM`** for every one, so **both ends
+  are inside `PJM_Dominion`**.
+- **M3 — the CT leg is a price-formation defect.** The nine-plant / **40-turbine**
+  roster (`unitType == 'Combustion turbine'`) runs **68.3/54.4/62.4 %** of hours;
+  CT-energy-weighted measured DOM LMP **$50.78/$62.04/$103.41** against the
+  model's **$33.06/$35.35/$48.80** — a deficit of **$17.72/$26.69/$54.61**, of
+  which measured congestion is **51/46/51 %**. **80 % of 2025's real CT energy is
+  produced in hours PJM prices Dominion congestion above $5.**
+- **M4 — there is MORE separation inside Dominion than across its boundary.**
+  Intra-`PJM_Dominion` EHV dispersion **$6.18/$8.68/$16.78** vs the inter-zonal
+  DOM-vs-AEP spread **$4.76/$6.13/$14.42** — ratio **1.30/1.42/1.16×**. Six of
+  seven measurable zones are at or above their inter-zonal spread; ComEd
+  ($0.65–$1.93) is the exception, which is why pjm-136 §3's hub-based test read
+  clean — PJM publishes multiple hubs only inside its two most uniform zones.
+
+**VERDICT: the zonal-congestion route is CLOSED BY MEASUREMENT** — the
+ERCOT/MISO `internal_congestion_split` refusal class, established for PJM on
+PJM's own published numbers.
+
+**THE DEFECT WAS MIS-SIZED ~1.9×.** Every prior handoff and the keeper note
+state the Dominion `CT_PEAKER` actual as 7.38/8.68/9.64 TWh. On the join the
+dashboard itself renders, the benchmark says **3.066/4.048/5.218 TWh** — its
+Doswell record carries `split: "unit_hourly"` and puts that site's CT share at
+1.079 TWh against 4.454 TWh of CC. The quoted figure reproduces exactly as
+*whole-plant* net (7.320/8.635/9.632). **The benchmark and dashboard have always
+been right; the prose number was computed on the wrong basis** — the same
+mixed-facility trap that corrupted this session's own first pre-computation.
+
+**The delta.** `measured_ct_heat_rates` (existing field, first PJM artifact from
+the existing frozen derive, **zero DOF**, `n_residual` unchanged at 6). Chartered
+under rule 14 `[R-ACCURATE]`, not as a fix for the residual: eGRID publishes ONE
+plant-average rate, so Doswell's three peaking turbines carried the **9.027**
+average of a site that is six CC blocks, against a **measured 11.350**. 71
+plants, **zero excluded** by the physical band, 29 moved > 0.5 MMBtu/MWh, **35
+cheaper / 36 dearer** — a measurement, not a multiplier.
+
+**RESULT.**
+
+- **K5** arm A byte-identical to the committed keeper (**0.000000000 MW** over
+  166,440 class-hours, each year). **K4** zero slack, zero dump, both arms.
+  **K3** zero band exclusions.
+- **K1, the C3c standing kill: PASS and UNCHANGED** — model tail-hour counts
+  identical at 3/10/32 h. The keeper's thinnest margin was not touched.
+- **Both arms CALIBRATED with every criterion passing**; C1 **16/16, free 12/12**
+  in both.
+- **THE ZONAL RESULT.** Dominion `CT_PEAKER` **0.724→0.721 / 1.380→1.448 /
+  2.923→3.162 TWh** while the **ISO-wide class FALLS 2.857/2.635/2.794** — pure
+  reallocation toward the deficit zone. Against the benchmark's actual the gap
+  goes −2.342→−2.345 / −2.668→−2.600 / −2.295→**−2.056**, closing **10.4 %** of
+  the 2025 gap.
+- **THE PRE-REGISTRATION WAS REFUTED ON ITS OWN EXPECTED DIRECTION** and is
+  recorded as such rather than re-written. PREREG §4 predicted the delta would
+  push Dominion the *wrong* way because its zone-average rate rises most
+  (+0.634 MMBtu/MWh). It did rise, and Dominion still gained — the mechanism is
+  **per plant**: Doswell (+2.324) and Gravel Neck (+3.204) are correctly made
+  dearer while Remington (−0.329) and Ladysmith (−0.001) are not.
+
+**CARRIED CAVEATS, none buried.** (a) ISO-wide `CT_PEAKER` volume moves *further*
+from its EIA-923 class total in two of three years (|err| 0.75→2.11 in 2023,
+0.94→3.57 in 2024) while 2025 improves markedly (6.11→3.32); C1 holds 16/16 so no
+band breaks, but the trade is real — `CC_REGULAR` (7.42→6.07, 3.03→1.84) and
+`COAL_BIT` (0.87→0.29, 2.15→1.62) both improve as CT energy moves into them.
+(b) C8 `CT_PEAKER` forced share rises to **16.3/16.9/17.1 %** (2023 newly above
+the 15 % peaker cap), all **GROUNDED** — D-4 clear, profile r 0.923–0.973, CV
+ratio 0.703–1.083 — so a clean pass under rule 20, but a shrinking class carrying
+a larger forced fraction. (c) The delta does not touch the congestion half of the
+price deficit. (d) C3c still passes by ~1 h / ~2.5 h, inherited unchanged.
+(e) Dominion `CC_REGULAR` 2025 still overshoots, inherited from pjm-136.
+
+**PROMOTED 2026-07-29 (owner, in-session).** PJM keeper is now
+`2026-07-29-pjm-137-ctheatrate` (bundle `pjm137_ctheatrate_B` — the pjm-136
+recipe carried VERBATIM plus the single flag), superseding
+`2026-07-28-pjm-136-lossurf`. `build_status.py --iso PJM` rebuilt `status/PJM.js`
+(PJM:CALIBRATED); `audit_keepers.py --iso PJM`: **PASS, 0 failures, 0 warnings**.
+Matrix cell `measured_ct_heat_rates` PJM **U → K** with the header re-stamped and
+§5.3 rewritten (NYISO stays K on its own evidence — rule 25, no verdict crosses
+the boundary).
+
+**Next number: pjm-138.** The successor's target is the **system-energy-price**
+half of the CT-hour deficit — **$8.63/$14.37/$26.88 /MWh** after netting out
+measured congestion, with measured DOM MEC at a p50 of $35.94/$41.35/$58.86 in CT
+hours against the model's whole Dominion dual at $32.07/$32.28/$42.72. A
+`PJM_Dominion` NoVA/Loudoun split is the structurally correct fix for the
+congestion half and is **refused until a measured sub-zonal load basis exists**
+(PJM's metered-load feed stops at the transmission zone; a sub-zonal share would
+be a fitted scalar).
