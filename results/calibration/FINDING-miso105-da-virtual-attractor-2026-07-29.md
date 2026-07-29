@@ -174,6 +174,33 @@ The admissible part of the mechanism closes **one to five percent** of the targe
 and its contribution **shrinks as the miss grows**. On materiality alone this
 would not be worth a solve.
 
+### 4.2 The nyiso-94 blocker-3 test, run in MISO — and what carries the wedge
+
+nyiso-94 killed its lever partly on the whole DA book sitting **below** RT load
+(−846/−859/−869 MW). MISO's does not, so that specific blocker does **not**
+transfer — and running it anyway is what shows the depth is not the virtuals':
+
+| year | DA physical (F+P cleared) | net virtual | DA book | RT actual | DA − RT | peak HE16-18 DA − RT |
+|---|---|---|---|---|---|---|
+| 2023 | 73.9 GW | +0.15 | 74.0 | 73.2 | **+844 MW** | **+2,368 MW** |
+| 2024 | 73.1 GW | +1.03 | 74.1 | 73.6 | **+469 MW** | **+1,942 MW** |
+| 2025 | 75.5 GW | +0.03 | 75.5 | 75.8 | **−232 MW** | **+760 MW** |
+
+Two things follow. **(i) The wedge is carried by the physical demand bid, not by
+virtuals** — net virtual contributes +0.15/+1.03/+0.03 GW of a +0.8/+0.5/−0.2 GW
+mean wedge, so `da_virtual_bids` is the wrong instrument for it even for a
+session that wanted to chase it. **(ii) It moves the wrong way across years**:
+the peak wedge shrinks 2,368 → 1,942 → 760 MW while the C3b miss grows
+($14.6 → $15.9 → $20.5), the same sign problem as the net virtual position in §4.
+
+**Stated as an observation, deliberately NOT chartered.** The comparison is
+MISO's cleared physical demand bids against EIA-930 BA `Demand`, and those two
+are not verified like-for-like — MISO's DA cleared demand can carry scheduling
+elements (wheeling, export obligations) that EIA-930 BA demand excludes. Anyone
+who wants to make something of the residual wedge owes it a boundary
+reconciliation first (rule 14's named misalignment clause). It is recorded here
+only because it is the measurement that rules the virtuals out of it.
+
 ## 5. The material channel is the inadmissible one (question (d), this session's addition)
 
 MISO's book is big enough that the interesting question is not its net level but
