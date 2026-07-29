@@ -2150,3 +2150,68 @@ needing owner scoping before it is a mechanism question.
 derived and gitignored, and `nyiso_li_lcr_tsl` defaults ON while living only in
 `run_config.json` (not `meta.json`), so `--replay-bundle` hard-fails on the
 missing Long Island import limit. Environment setup, not a keeper defect.
+
+## 2026-07-29 — nyiso-97: OWNER PROMOTION of nyiso-96 + C3c load-pocket scoping (step 0)
+
+**Session charter:** the C3c sub-zonal load-pocket scoping lane (the lane's only
+surviving candidate, per nyiso-91/96). Step 0 put both standing owner questions
+via `AskUserQuestion` before any building:
+
+- **(a) Sub-zonal NYC/LI load-pocket topology: AUTHORIZED**, data-first — the
+  session proceeds to establish whether the as-enforced Con Edison in-city
+  reliability rule is publicly obtainable, and STOPS with no build and no solve
+  if it is still MyNYISO login-walled (a pocket requirement backed out of the
+  residual is rule 13/21 forbidden).
+- **(b) nyiso-96 C1 trade: OWNER TOOK THE GATE.** `2026-07-29-nyiso-96-ctamort`
+  is **PROMOTED to keeper** for its C1 PASS (14/14 · free 10/10), explicitly
+  accepting the CT_PEAKER 27–39 % degradation. This is the owner-visible call
+  FINDING-nyiso96 §5 surfaced; the building session's rule-1 rejection stands
+  unedited as the structural adjudication.
+
+**Promotion mechanics (this session):**
+
+- `scripts/gen_nyiso96_attestation.py` builds the C6 attestation the promotion
+  requires (rule 21): the nyiso-92 keeper's UNION'd 20-entry ledger carried
+  forward + ONE measured entry (`tranche_startup_amortization` on the v3
+  measured NYISO run-length basis — NREL start costs already cited, pooled
+  CAMPD p50 horizon; zero fitted scalars, **n_residual stays 6**, 21 entries).
+- Scorer confirms on the promoted run: C1 PASS 14/14 · free 10/10, C2/C3a/C3b/
+  C4/C6/C7/C8 PASS (C8 2024 ST_GAS 30.4 % grounded above budget), **C3c FAIL
+  3/0/7 h vs 10/12/42 — bit-unchanged, the SOLE determination blocker.
+  DETERMINATION: NOT-YET.**
+- `keepers/NYISO.json` promotion note records the trade as a **known,
+  deliberately-accepted misrepresentation** (attestation `_open_items (0)`);
+  the peaker diagnosis (nyiso-90/91/96 §2) is no longer an open mechanism item
+  and may be un-accepted only by the load-pocket lane producing a
+  published-primary-source mechanism — never a floor (rule 17; h14-21 windowed
+  floors stay OFF by owner directive 2026-07-27).
+- **Matrix (rule 28b):** `tranche_startup_amortization` NYISO `R` → **`K`** by
+  owner decision, citation updated; header re-stamped (keeper →
+  `2026-07-29-nyiso-96-ctamort`, NYISO gates → C3c alone).
+- `build_status.py --iso NYISO` rebuilt; `check_mechanism_matrix.py` OK.
+
+The keeper now reflects an owner gate-preference, NOT a claim of superior
+structural fidelity over nyiso-92 — that comparison is adjudicated the other
+way in the finding, and stays there.
+
+**C3c identification (step 1) follows in this session** — outcome appended
+below when reached.
+
+**C3c identification outcome (step 1, same session): LANE CLOSED EX-ANTE, NO
+SOLVE.** The as-enforced Con Edison AORR table remains MyNYISO login-walled
+(nyiso-83 re-confirmed 2026-07-29; the nysrc.org posting promised by Manual 12
+§2.1.5 does not exist). Decisively, a complete PUBLIC 2008-vintage Appendix B
+was found this session (October-2017 Manual 12, mirrored at ercot.com) and it
+settles the question on CONTENT: every Con Edison in-city commitment row is
+qualitative and condition-triggered on TO contingency analysis, with the
+operational parameters in unpublished Con Ed SO procedures (SO3-18) — no MW
+level, no min-units-per-pocket table, no eligible-unit list exists to derive,
+at any vintage. Rule 13's regeneration test fails outright; BPCG/SOM uplift
+aggregates are outcomes, not requirements (pinning). **NYISO C3c is recorded
+as a DIAGNOSED, UNCLOSED structural limitation of the five-zone
+representation** and the lane handed back — per the owner's stop-if-walled
+authorization, no build, no topology change, no data intake. Matrix: new row
+`scuc_load_pocket_commitment` → NYISO `G` ex-ante; §5.5 C3c queue now EMPTY
+(remaining live work: dispatch-matching items 7–10, hygiene item 6). Re-open
+conditions and evidence:
+`docs/FINDING-nyiso97-load-pocket-identification-2026-07-29.md`.

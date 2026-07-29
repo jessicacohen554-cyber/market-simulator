@@ -315,14 +315,23 @@ actual RT tail: it is **summer** (2025 Jun 23–25 alone = 18 of 42 h; the
 Jan-2024 storm produced zero >$300 hours), so the winter-fuel lane caps out
 at ~4–5 h/yr and the queue stays offer/DA-side.
 
-**Queue head is now item 2 (CT start-frequency).** Both congestion/DA-side
-candidates are closed ex-ante — item 1 (DA virtual depth, nyiso-94) and item 1b
-(TSA transfer derate, nyiso-95). Both closed on *identification*, not on fit:
-NYISO publishes no submitted virtual curve, and no TSA derate magnitude. The
-lane therefore has **no remaining congestion lever** — nyiso-95 §2 further shows
-the model was not missing downstate tightness that a published derate would have
-supplied. C3c stays roof-blocked, and the surviving candidates are all
-offer/commitment-side: items 2, 3 and 6.
+**THE C3c QUEUE IS NOW EMPTY (2026-07-29, nyiso-96/97).** Every candidate is
+adjudicated: items 1/1b closed ex-ante on identification (nyiso-94/95), item 2
+characterised and item 3 tested by nyiso-96 (verdict commitment/obligation, not
+start economics; the amortization arm adjudicated R on rule 1, then
+owner-promoted to keeper 2026-07-29 for its C1 PASS with the CT_PEAKER trade on
+the record), and the last surviving candidate — **SCUC load-pocket security
+commitment + BPCG (NYC/LI sub-zonal)** — closed **ex-ante, no solve** by
+nyiso-97: the owner authorized sub-zonal scoping data-first, and identification
+failed on *content*, not only access (the as-enforced AORR is MyNYISO-walled;
+the public 2008-vintage Appendix B carries no derivable NYC parameter — every
+Con Ed in-city commitment row is condition-triggered on TO contingency analysis
+with parameters in unpublished SO procedures). **NYISO C3c is recorded as a
+DIAGNOSED, UNCLOSED structural limitation of the five-zone representation**
+(`docs/FINDING-nyiso97-load-pocket-identification-2026-07-29.md`, re-open
+conditions §5). Remaining live NYISO work is the dispatch-matching lane (items
+7–10) and the D-2 hygiene item 6; item 4 stays blocked on its joint-lever
+condition.
 
 1. ~~**DA virtual depth / DA demand formation** (`pjm_da_virtual_bids` form,
    NYISO derivation).~~ **CLOSED 2026-07-28 (nyiso-94): REFUSED ex-ante, no
@@ -374,12 +383,22 @@ offer/commitment-side: items 2, 3 and 6.
    is ~¼ of the IMM's low end, confirming the 1–2 GW is mostly the **DA-vs-RT
    schedule gap**, which has no analogue in a formulation with no DA/RT split.
    Evidence: `docs/FINDING-nyiso95-tsa-derate-not-identifiable-2026-07-28.md`.
-2. **CT start-frequency lane** (nyiso-89 successor): model starts the CT fleet
-   2–5× less often than measured; 50–68% of measured CT energy clears below
-   its own SRMC — candidates are start-economics (see 3) and DA-award
-   commitment, NOT heat rates (eliminated).
-3. **`tranche_startup_amortization`** — start-cost amortization changes
-   marginal start economics directly at the start-frequency gap; untested.
+2. ~~**CT start-frequency lane** (nyiso-89 successor).~~ **CLOSED 2026-07-29
+   (nyiso-96 characterisation + nyiso-97 identification).** The
+   characterisation chose the commitment/obligation family over start
+   economics (below-SRMC energy spread FLAT; 82–88 % of missing online-hours
+   priced below the plant's own SRMC; run lengths already right — start COUNT
+   is the defect), every commitment-side candidate is adjudicated
+   (nyiso-83/84/90/91), and the surviving load-pocket candidate died on
+   identification (nyiso-97). The defect is carried on the nyiso-96 keeper
+   attestation as an owner-accepted misrepresentation (`_open_items (0)`).
+3. ~~**`tranche_startup_amortization`**~~ **TESTED 2026-07-29 (nyiso-96,
+   registered A/B): adjudicated R on rule 1 (C1 flips to PASS but CT_PEAKER
+   degrades 27–39 % and C3c is bit-unchanged), then OWNER-PROMOTED to keeper
+   the same day for the C1 PASS with the trade on the record (cell K;
+   keeper `2026-07-29-nyiso-96-ctamort`). Do not re-test; do not read the
+   cell K as a structural endorsement — the finding's §5 adjudication
+   stands.**
 4. **`nyiso_iroquois_winter_spread` re-arm** — decisive winter fix, but ONLY
    jointly with a summer scarcity lever (its construction conserves the annual
    spread; re-arming alone just moves the miss to summer — adjudicated).
