@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-25-ercot112-coal-dam-availability",
+  "run_id": "2026-07-29-ercot137-coal-margin-measured",
   "iso": "ERCOT",
-  "label": "ercot112 coal dam availability",
+  "label": "ercot137 coal margin measured",
   "target_years": [
     2023,
     2024,
@@ -13,17 +13,17 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
+  "rubric_version": 2.9,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "governance gate UNATTESTED: no governance attestation in bundle (attestation has no governance block)"
   ],
   "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -50,11 +50,6 @@
       "tier": "supporting",
       "status": "FAIL"
     },
-    "co2": {
-      "label": "C5a CO2 vs eGRID",
-      "tier": "load-bearing",
-      "status": "PASS"
-    },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
@@ -63,12 +58,12 @@
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "FAIL"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -81,8 +76,8 @@
     }
   },
   "grade_summary": {
-    "scored": 7,
-    "target_grade": 2,
+    "scored": 8,
+    "target_grade": 3,
     "commercial_grade": 0,
     "ledgered": 0,
     "fails": 5
@@ -103,13 +98,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 12,
+      "pass": 16,
       "total": 16
     },
     "free": {
-      "pass": 8,
+      "pass": 12,
       "total": 12
     },
-    "headline": "C1 all 12/16 \u00b7 free 8/12"
+    "headline": "C1 all 16/16 \u00b7 free 12/12"
   }
 }
