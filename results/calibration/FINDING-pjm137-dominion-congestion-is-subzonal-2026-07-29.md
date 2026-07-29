@@ -250,6 +250,31 @@ best case available to it. With the EHV nodes the sample is complete, and six of
 the seven measurable model zones carry intra-zone dispersion at or above the
 inter-zonal spread the model is chartered to reproduce.
 
+### §4a — and the geography inside Dominion is the one M2 named
+
+Per-node mean premium over the zone's *own* EHV average (2025) — no hand-drawn
+grouping, every one of the 38 nodes reported and sorted by the data:
+
+| dearest 6 | LMP | of which congestion | | cheapest 4 | LMP | congestion |
+|---|---|---|---|---|---|---|
+| **OX** | **+4.13** | +3.10 | | GRNSVIL | −2.83 | −1.79 |
+| **CLIFTON** | **+4.05** | +2.94 | | BRUNSSWY | −2.84 | −1.80 |
+| **POSSUM POINT** | **+3.83** | +2.90 | | GREENLAND GAP | −3.87 | −3.45 |
+| **BRISTERS** | **+2.80** | +2.11 | | **MT STORM** | **−3.94** | **−3.50** |
+| **LOUDOUN** | **+2.72** | +1.60 | | | | |
+| MOSBY | +2.71 | +1.58 | | | | |
+
+The dear end is the northern-Virginia data-centre pocket — the same stations
+§2.2's binding constraints name — and the cheap end is the western and southern
+generation (Mt Storm, Greenland Gap, Brunswick, Greensville). The spread across
+the zone is **~$8/MWh, and three-quarters of it is congestion.**
+
+**This is the sign test for a future `PJM_Dominion` split, and it passes**: a
+NoVA pocket separated from a rest-of-Dominion node would price the pocket
+dearer, which is the direction that brings local peakers on. What blocks the
+split is not the physics but the *load basis* (§5, §6.1) — PJM publishes metered
+load only by transmission zone, so the pocket's share would be a fitted scalar.
+
 ## §5 — DO-NOT-REDO (binding on successors)
 
 - **Do not propose any zonal congestion mechanism against the Dominion CT leg.**
