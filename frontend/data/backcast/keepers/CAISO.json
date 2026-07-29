@@ -1,5 +1,5 @@
 {
  "iso": "CAISO",
- "keeper": "2026-07-27-caiso-130-nameplate-aware",
- "note": "RoR-split hydro family + nameplate-aware budget target (owner promotion 2026-07-27, rule 1/14 structural grounds: the accurate EIA-860 nameplate bound replaces a uniform fleet-wide scale whose silent clip was removing 0.13-0.35 TWh/yr of deliverable water; promoted over a regressed overnight window gate because the rubric is identical to the control and reverting would bury the error inside an inaccurate input)"
+ "keeper": "2026-07-29-caiso138-envelope-clip",
+ "note": "caiso-130 recipe + the firm-import deliverability clip (owner promotion 2026-07-29, rule 1/19 structural grounds: the caiso-77 must-flow floor is reconciled to the caiso-51 corridor envelope by their pointwise min, zero new DOF, eliminating the 1.09/1.71/0.97 TWh/yr WECC_PNW dump at -$26.001 and repricing the node from -26.00 to +40.79/+37.46/+41.83 median against measured MALIN same-hours +52.67/+41.22/+41.77; CA-side LP byte-identical to control so the rubric is unchanged: NOT-YET, fail {C3a-2025, C3c})"
 }
