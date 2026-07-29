@@ -3257,3 +3257,67 @@ forecast-path characterisation); and re-deriving CAISO's 0/0/0 C3c as a
 scarcity-*mechanism* failure rather than the absence of one.
 
 Next number: caiso-138.
+
+---
+
+## caiso-138 (2026-07-29) — the WECC_PNW firm-hydro dump is CHARTERED, FIXED and the fix PROMOTED: the caiso-77 must-flow floor (corridor-split DMM level × TOTAL-system shape) collides with the corridor's own correct envelope and the residual — **1.09/1.71/0.97 TWh/yr, 98.6–100 % of the PNW dump** — had no outlet because the design's export sink is **deleted in every scored P1 pass** by the bridge seam's zeros-floor max-composition. Reconciliation = `caiso_firm_import_envelope_clip` (pointwise min of the two measured series, **zero new DOF**); A/B vs a **byte-identical** control passes every pre-registered gate (E1/E2 = **+0.0000**, rubric unchanged) and the node reprices **−26.00 → +40.79/+37.46/+41.83** vs measured MALIN same-hours **+52.67/+41.22/+41.77**. NEW KEEPER: `2026-07-29-caiso138-envelope-clip`
+
+Diagnose-first per the charter; all D-gates passed on committed bytes before any
+solve. Full record: `results/calibration/FINDING-caiso138-pnw-firm-dump-2026-07-29.md`
+(§A–§G); instrument `scripts/probes/_caiso138_pnw_firm_dump.py` (no LP, no
+solver); pre-registration `PREREG-caiso138-firm-envelope-clip-2026-07-29.md`
+(committed and pushed before arm B solved). Arms registered:
+`2026-07-29-caiso138-control` (byte-identical to the caiso-130 keeper on prices
+and dumps, all years) and `2026-07-29-caiso138-envelope-clip` (KEEPER, owner
+promotion in-session under the stated criterion; rubric NOT-YET, fail
+{C3a-2025, C3c} — identical to control by construction, since the CA-side LP is
+byte-identical: max CA per-zone-hour |Δprice| = 0.0000).
+
+**The charter's central question — floor, cap, or composition — is answered
+"composition", with three proven objects:**
+
+1. **The collision (D1/D2).** Per-hour identities on committed bytes:
+   `dump = firm + midC − flow`, `flow ≡ cap` in 100 % of dump hours; the α
+   component (firm shaped capability > corridor cap) carries 100/99.5/98.6 %
+   of the PNW dump energy. The filed 70/161/307 MW reproduces exactly on
+   caiso-134's window basis (70.2/160.9/307.2). The β remainder is a
+   DIFFERENT defect (dump-cost formula guards only wind/solar mc, so
+   hub-priced tranches with mc < −$26 generate-to-dump: DSW 0.522/0.021 TWh
+   in 2024/25, `DSW_surplus_clean`-dominated) — filed, its own lane.
+2. **The P1 sink deletion (infrastructure defect, FILED, not fixed blind).**
+   `pipeline/commitment.py::_bridge_floored_fleet` composes every P1-native
+   bridge floor as `np.maximum(base_min_gen, zeros_floor)` — for negative-pmin
+   export sinks max(−TTC, 0) = 0, deleting their absorption range from the
+   scored pass. Explains caiso-132 §3's "globally inert" export bound (the LP
+   was never ABLE to export — D0's census stands, its interpretation is
+   corrected), and P0/P1 solve different economies. Violates the invariant
+   documented at `data/fleet/arrays.py` (min_gen zeros-init block). Cross-ISO
+   blast radius (generic priced-node sinks + the ERCOT/NYISO bridges through
+   the same seam) — each ISO re-gates in its own lane. The NAIVE fix is
+   refused for CAISO: the terminus λ sits below the measured hub in 20–57 %
+   of hours (mean positive gap $1.28–8.54/MWh), so an unguarded sink U-turns
+   DELIVERED firm energy out of the market, voiding caiso-77 and failing E1.
+3. **Charter ask (a), answered NO at the energy scale.** The floor forces
+   `level × 8760` of energy: **9.20/13.38/13.44 TWh** of PNW firm against a
+   measured corridor net of **−0.55/+2.06/+4.73 TWh** (net-importing hours
+   only 4.65/5.77/7.05) — the DMM RA "Imports" row is a capacity-showing
+   quantity, mis-converted to a round-the-clock energy base by the unit-mean
+   shape; ~1 GW-mean of phantom northern import all year, upstream fuel for
+   the caiso-121/133 belly over-import. E1-adverse to shrink — handed to the
+   upstream CA-supply lane, NOT armed here.
+
+Matrix: new row `caiso_firm_envelope_clip` = K (CAISO), header re-stamped.
+Rule-22 LOYO note: the mechanism carries no fitted parameter and its CA-side
+effect is exactly zero in every year — nothing to overfit. Rule 20: derive
+scripts untouched. Rule 24: one new `ScenarioConfig` flag, registered.
+
+### DO-NOT-REDO (new, binding — full list in FINDING-caiso138 §G)
+
+Re-measuring the dump/α–β split/collision identity/forced-vs-measured energy/
+U-turn set (the committed probe carries all of them); re-arming the export
+sinks naively or any hub-resale sink bound beyond the stranded residual as a
+CAISO lever; quoting caiso-132 D0 as "the model does not want to export";
+re-deriving the PNW firm level/shape basis as a quick fix (upstream lane); and
+treating the β dump as part of this lane.
+
+Next number: caiso-139.
