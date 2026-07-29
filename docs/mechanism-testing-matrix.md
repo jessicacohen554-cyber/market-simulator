@@ -567,15 +567,20 @@ capability envelope/floor pair is now the keeper — cells K above):
    forcing peak imports *depresses* peak duals, moving C3c the wrong way —
    rule-14-backwards), and rule 19 (the phenomenon already has a mechanism).
    **Reported, not armed:** the 4,350 MW `NYISO_simultaneous_import` cap is a
-   hand-set estimate measurement contradicts (hard-pins import at exactly
-   4,350 MW in 548/689/177 h/yr, `import_scarcity` never reached in any hour of
-   any year, vs a measured schedule exceeding it in 287/314/145 h and published
-   P-32 limits summing to a minimum of 5,805/6,090/6,680 MW) — a live rule-14
-   reconcile item needing a *reconciled* identification (the P-32 sum is
-   parallel paths our five-zone network collapses, rule 14's misalignment
-   clause) and its own charter; and the ladder pins at a rung boundary in
-   67.0/63.5/64.2 % of hours with 45 % of its MW on per-year constants, which
-   cannot be the lever because a finer ladder cannot fix a wrong-phase spread.
+   hand-set estimate measurement contradicts (model import tops out at exactly
+   4,350 MW, never above it in any hour of any year, and sits on the cap in
+   548/689/177 h/yr, vs a measured schedule exceeding it in 287/314/145 h at
+   max 5,929 MW and published P-32 limits summing to a minimum of
+   5,805/6,090/6,680 MW) — a live rule-14 reconcile item needing a *reconciled*
+   identification (the P-32 sum is parallel paths our five-zone network
+   collapses, rule 14's misalignment clause) and its own charter; and 2,970 MW
+   of the 6,580 MW ladder (45 %) carries a per-year *constant* price with no
+   hourly signal, five of seven rungs sitting at their own cap or at zero in
+   most hours. Neither can be the lever: a finer ladder or a higher cap cannot
+   fix a spread that peaks at the wrong hour. *(Correcting this entry's first
+   draft: `import_scarcity` is NOT unreachable — 1.182 TWh in 2023, at its
+   2,230 MW cap in 27 h; the hourly repricer reorders the merit list, clearing
+   it while `eastern_mid` is below cap in 1,209 h.)*
    Evidence: `docs/FINDING-nyiso99-import-shape-attributed-to-c3c-2026-07-29.md`.
 9b. **EIA-930 zero-dropout repair on metered demand** — the by-product of item
    9's audit, and the one thing nyiso-99 armed. Extending the falsification
