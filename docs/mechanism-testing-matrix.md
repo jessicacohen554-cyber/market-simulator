@@ -190,6 +190,21 @@ repeated here; the matrix `R`/`G`/`I` cells are the DO-NOT-REDO list.
 The lane is heavily enumerated; the honest top of the queue is closure work,
 not a new sweep:
 
+0. **Coal tranche-1 take-or-pay REPRICE — pre-registered, OWNER-BLOCKED, and now
+   the best-identified coal lever.** `docs/PRECOMMIT-ercot136-coal-minload-reprice-2026-07-29.md`.
+   ERCOT-136 read the SCED TPO instrument and settled the standing
+   self-scheduled/withheld/telemetered-down fork: **none of the three** — the
+   unoffered-in-DAM block is offered economically in RT at \$8–25/MWh, so the
+   "a near-zero bid is faithful" escape is refuted and a coal offer-SHAPE
+   correction is licensed for the first time. The lever is a **single existing
+   registered scalar** (`coal_tranche_1_fuel_passthrough`, 0.00 → measured), it
+   **retires a fitted value** rather than adding one, and it is rule-19-clean
+   because the block is already floored twice (`ercot_coal_min_config_floor` +
+   `coal_mustrun_per_plant`). **Blocked on the same ERCOT-116 adoption ruling**
+   (rule 14: an offer-curve change cannot move a pinned block). Do NOT re-derive
+   the identification — it is measured and committed
+   (`results/calibration/ercot136_coal_headroom_conduct.json`). It **supersedes**
+   the ERCOT-135 width arm (wrong instrument, wrong level by ~\$4–5).
 1. **C6 governance attestation of the C3c tail** as an attributed
    measured-input limitation (ERCOT-101/107/108 adjudication) — the named
    closure route; blocked only by the 8 residual-identified DOF entries.
