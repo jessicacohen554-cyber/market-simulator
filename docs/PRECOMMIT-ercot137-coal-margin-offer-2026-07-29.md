@@ -1,7 +1,20 @@
 # PRE-COMMIT — ERCOT-137: coal on the MEASURED NET-MARGIN offer form, on the ACCURATE availability envelope
 
 **Date** 2026-07-29 · **ISO** ERCOT · **Lane** ercot137-coal-margin-offer ·
-**Status** PRE-REGISTERED AND PUSHED **BEFORE ANY SOLVE.** ·
+**Status** PRE-REGISTERED AND PUSHED **BEFORE ANY SOLVE.**
+**OUTCOME (recorded post-solve, same session — the pre-registered text below
+is unchanged):** run `2026-07-29-ercot137-coal-margin-measured`. Structural
+gates PASS (P1 armed+bites; P6 impossible hours −83/−86/−91 %; P7 basis
+16.00/14.54 vs 16.63/15.00, inside ±$1.00; P8 Martin Lake 1.451→1.059; (f)
+DOF −1 residual scalar). FIT gates FAIL (P2 G1 3/21; P3 band-uniform; P4 C1
+coal +6.2/+8.8/+8.6 TWh; P5 C3a −35.2/−14.5/−12.1; (d) C4 2024 coal flips
+FAIL) — **the falsifier FIRED**: the residual is the dispatchable coal bands'
+ranking vs gas (`FINDING-ercot117` §5.1), the named successor lane; no
+mid-session re-scope. **PROMOTED KEEPER regardless, per the owner's
+in-session sign-off on the rule-1 structural standard** (rulings R1/R2 made
+both measured inputs the adopted representation; the fit residual is an open
+root-cause lane, not a reason to revert — rule 14). Ledger:
+`docs/calibration-log/ercot.md` 2026-07-29. ·
 **Keeper / BASE** `2026-07-28-ercot116-regate-base` (bundle
 `results/calibration/ercot116_regate_base`) — **the COMMITTED bundle is the
 BASE; it is NOT re-solved** (owner ruling R3). ·
