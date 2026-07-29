@@ -1,5 +1,13 @@
 # PRE-COMMIT — ERCOT-136 Phase 2: reprice the coal take-or-pay band onto its measured RT level
 
+> **SUPERSEDED 2026-07-29 by the owner ruling and
+> `docs/PRECOMMIT-ercot137-coal-margin-offer-2026-07-29.md`:** the
+> single-scalar `coal_tranche_1_fuel_passthrough` arm below was replaced by
+> the coal NET-REVENUE MARGIN form (the gas form's coal analogue), solved as
+> the ERCOT-137 one-arm bundle. This document's gate skeleton and falsifier
+> were reused there; its §0 blocking gate is discharged (ERCOT-116 ADOPTED,
+> ruling R2). Never execute this arm.
+
 **Date** 2026-07-29 · **ISO** ERCOT · **Lane** ercot136-coal-headroom-conduct ·
 **Status** **PRE-REGISTERED, NOT EXECUTED — BLOCKED ON THE SAME OWNER RULING (§0).**
 Written and pushed **before any solve**. ·
