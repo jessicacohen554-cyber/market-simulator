@@ -4154,6 +4154,13 @@ def run_year(
     dispatch_kwargs = build_base_dispatch_kwargs(
         dispatch_spec, import_node_recon=import_node_recon
     )
+    # Overgeneration-dump guard domain (dump_cost_full_offer_domain, GATED
+    # default off — caiso-139): widen build_cost_vector's dump price over every
+    # offer that can reach a dumpable node, so a measured-hub import tranche
+    # priced below -dump_cost can no longer generate purely to dump. Flag off
+    # leaves the key unset — identical LP.
+    if getattr(config, "dump_cost_full_offer_domain", False):
+        dispatch_kwargs.update(dump_cost_full_offer_domain=True)
     # Measured storage-AS SOC sustain floor (caiso_storage_as_reservation,
     # GATED default off): the power-cap leg is already inside
     # storage_power_cap above; this adds the (n_storage, T) SOC lower bound.

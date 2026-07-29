@@ -144,6 +144,7 @@ class DispatchModel:
         link_flow_cost: np.ndarray | None = None,
         link_loss: np.ndarray | None = None,
         slack_cost: np.ndarray | None = None,
+        dump_cost_full_offer_domain: bool = False,
         T: int | None = None,
     ) -> None:
         build_start = time.perf_counter()
@@ -557,6 +558,14 @@ class DispatchModel:
         self.solar_mc = solar_mc
         self.storage_discharge_eac = storage_discharge_eac
         self.storage_discharge_cost = storage_discharge_cost
+        # Overgeneration-dump guard domain (caiso-139, ScenarioConfig.
+        # dump_cost_full_offer_domain; GATED default off = byte-identical).
+        # When on, :meth:`solve` extends the dump price over every ``mc`` row
+        # that can INJECT — the rows that could otherwise generate purely to
+        # dump. Export sinks are excluded there by construction (pmax = 0), so
+        # a sink's negative price, which is a willingness-to-pay on a
+        # withdrawal rather than a production credit, can never inflate it.
+        self.dump_cost_full_offer_domain = bool(dump_cost_full_offer_domain)
         # Per-link directed flow cost (MISO RDT TCDC tiers). A positive cost
         # on a signed bidirectional flow would CREDIT the reverse direction,
         # so nonzero entries require one-way links — fail loud, never solve a
@@ -837,6 +846,19 @@ class DispatchModel:
             )
         mc = np.asarray(mc, dtype=float)
 
+        # Dump-guard domain (caiso-139). The per-row minimum over the hours is
+        # taken with a single vectorized reduction (rule 2 [R-VECTOR]: no hour
+        # loop, and no (n_gen, T) temporary), then masked to the rows that can
+        # inject. ``pmax <= 0`` rows are the export sinks
+        # (interchange.import_nodes.build_export_sinks: pmax 0, pmin -cap) —
+        # they absorb, so their negative price is not a production credit and
+        # must stay outside the guard.
+        min_injectable_mc = None
+        if self.dump_cost_full_offer_domain:
+            injectable = np.asarray(self.fleet.pmax, dtype=float) > 0.0
+            if injectable.any():
+                min_injectable_mc = float(mc.min(axis=1)[injectable].min())
+
         cost = build_cost_vector(
             layout,
             mc,
@@ -850,6 +872,7 @@ class DispatchModel:
             rps_acp_price=(self.rps_acp_price or 0.0),
             link_flow_cost=self.link_flow_cost,
             slack_cost=self.slack_cost,
+            min_injectable_mc=min_injectable_mc,
         )
 
         h = self._h
