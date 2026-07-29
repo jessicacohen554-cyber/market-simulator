@@ -138,10 +138,145 @@ the mechanism as designed, and it is why the CC classes move at all below.
 
 ## 4. A/B result
 
-*(filled from `scripts/probes/nyiso96_ab_compare.py` — see §5 for the verdict.)*
+Registered runs, same HEAD, all three years in one invocation each, one
+mechanism-family apart: `2026-07-29-nyiso-96-control-zerodelta`
+(`results/calibration/nyiso96_ctrl_zerodelta`) and
+`2026-07-29-nyiso-96-ctamort` (`results/calibration/nyiso96_ctamort`).
+
+**The control is a faithful baseline.** It reproduces the nyiso-92 keeper on
+every number checked: CC_REGULAR 32.252 TWh in 2023, CT_PEAKER
+0.524/0.459/1.516 TWh, C3c tail 3/0/7 h, C1 13/14 · free 9/10 with the sole
+failing cell `2023 CC_REGULAR −3.05 TWh`.
+
+**The mechanism is LIVE** (the nyiso-89 §4a check, run before anything was
+read): max absolute hourly class delta 1,257 / 1,253 / 2,105 MW. This is not a
+byte-identical no-op.
+
+**CT_PEAKER, on one common bar (18/18/17 plants, both sides and the measured
+series sharing one online threshold):**
+
+| | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| control TWh | 0.3234 | 0.3049 | 1.0696 |
+| **arm TWh** | **0.2202** | **0.1875** | **0.7412** |
+| Δ | −0.1032 (−32 %) | −0.1174 (−39 %) | −0.3284 (−31 %) |
+| measured TWh | 1.8795 | 1.7588 | 2.2167 |
+| control starts | 987 | 894 | 2,048 |
+| **arm starts** | **719** | **582** | **1,453** |
+| Δ | −268 (−27 %) | −312 (−35 %) | −595 (−29 %) |
+| measured starts | 3,737 | 3,796 | 3,528 |
+| start ratio | 3.79x → **5.20x** | 4.25x → **6.52x** | 1.72x → **2.43x** |
+
+**Prediction 1 confirmed, and larger than forecast.** The pre-registration
+expected "a few hundredths of a TWh"; the class actually loses 0.10–0.33 TWh,
+about 6–20 % of its own gap, in the wrong direction. The start deficit — the
+defect this lane exists to close — gets materially worse in every year.
+
+**Prediction 2 confirmed.** Median run length 6→7 / 6→5 / 6→6 against a
+measured 5 in every year: essentially unmoved, because the model's blocks were
+already the right length and the v3 measured ceiling rarely binds.
+
+**Prediction 3 REFUTED — and this is the decisive result.** C3c tail hours
+>$300 are **3→3, 0→0, 7→7** against an actual 10/12/42. The lever buys
+**exactly zero** tail hours. The one channel by which it could have helped the
+lane's sole determination blocker is completely inert.
+
+**Prediction 4 wrong in an important way — the arm CLOSES C1.** The displaced
+energy lands on CC_REGULAR (+0.284/+0.496/+0.408 TWh) and ST_GAS
+(+0.159/+0.183/+0.175), sourced from CT_PEAKER (−0.184/−0.190/−0.447), CT_CHP
+(−0.121/−0.097/−0.056) and CC_CHP (−0.141/−0.363/−0.062). That +0.284 TWh walks
+the knife-edge cell from −3.05 to −2.76 against its ±2.94 band, and it is the
+control's ONLY failing C1 cell:
+
+| criterion | control | arm |
+|---|---|---|
+| C1 fuel-mix (load-bearing) | **FAIL** (13/14 · free 9/10) | **PASS** (14/14 · free 10/10) |
+| C3c price tail (supporting) | FAIL 3/0/7 | FAIL 3/0/7 — unchanged |
+| C2 / C3a / C3b / C4 | PASS | PASS |
+| C7 diurnal shape (D-1) | PASS | PASS |
+| C8 forced share (D-2) | PASS | PASS |
+| C6 governance | UNATTESTED (probe) | UNATTESTED (probe) |
+
+**C1 is the ONLY criterion that differs between the two arms.** Every other
+scored criterion — including both protective gates — is identical, so the whole
+case for the arm rests on that single flipped cell, and the whole case against
+it rests on §5.
 
 ---
 
-## 5. Verdict
+## 5. Verdict — REJECTED, and rejected *despite* a better scorecard
 
-*(pending)*
+**`tranche_startup_amortization` → NYISO `R`.** The arm is not promoted, and
+the reason is rule 1 [R-STRUCT], not the residual.
+
+This is the inverse of the owner's standing keeper clause. That clause admits a
+run whose **structural integrity improves while gates regress**. This arm does
+the opposite: it **flips NYISO's only failing load-bearing gate to PASS while
+making the lane's dominant diagnosed structural defect 27–39 % worse.** Rule 1
+addresses exactly this case — "never reach the right number through a mechanism
+that isn't real", and "a more-accurate run that is missing real structure is
+**not** a keeper."
+
+**The mechanism is not real for this fleet, and the measurement says so.**
+
+1. **The measured fleet does not price this way.** 53–66 % of NYISO CT energy
+   clears **below its own bare SRMC at its own zonal price** (§2). A fleet
+   running the majority of its energy below fuel cost is not adding a ~$5/MWh
+   start-recovery markup on top of SRMC. This lever moves the model's offer in
+   the *opposite* direction from the measured conduct of the fleet it
+   represents.
+2. **Start-cost recovery was already refuted on NYISO data.** nyiso-91's block
+   test integrated each missed run whole — what a commitment actually decides —
+   and found only 21.7/30.0/36.1 % profitable as blocks, with the median margin
+   negative at **every** position h1–h7 inside the run. There is no
+   loss-leading-start-then-earn-it-back shape to amortize against.
+3. **There was no defect for it to fix.** The model's run lengths already match
+   measured (§2), so the amortization horizon has nothing to correct — which is
+   why prediction 2 held and the runs barely moved.
+4. **It does not touch the lane's target.** C3c is bit-for-bit unchanged.
+
+**How the C1 pass is actually produced, and why it must not be banked.** Both
+CC_REGULAR and CT_PEAKER are *under*-produced against measured. The arm makes
+the smaller shortfall (CT_PEAKER, model at 17 % of measured) worse in order to
+shrink the larger one (CC_REGULAR), and the scored cell happens to land inside
+its band on the way. No class is better represented afterwards — energy moved
+between two classes that are both too low. Banking that C1 pass would bury the
+peaker defect one layer deeper and advertise a closed gate the model has not
+earned, which is precisely the failure mode rules 1 and 14 exist to prevent.
+
+**This is an owner-visible call.** The arm produces a strictly better NYISO
+scorecard than the current keeper (C1 PASS vs FAIL; every other criterion
+identical). It is being left unpromoted on structural grounds. If the owner
+prefers the gate, the run is registered and promotable — but the peaker
+diagnosis in §2 and nyiso-90/91 would then need re-opening as a known,
+deliberately-accepted misrepresentation rather than an open item.
+
+**What this closes for the lane.** Queue item 3 is now adjudicated on measured
+evidence rather than direction. With `da_virtual_bids` (nyiso-94, `G`),
+`tsa_transfer_derate` (nyiso-95, `G`), block commitment (nyiso-90),
+the J/K obligation (nyiso-83) and the reserve tiers (nyiso-84) all closed,
+**NYISO's C3c lane has no remaining buildable in-model lever.** The surviving
+candidate is unchanged from nyiso-91: NYISO SCUC load-pocket security
+commitment with BPCG make-whole, which is a sub-zonal data-intake and topology
+question requiring owner scoping before it is a mechanism question.
+
+### DOF ledger (rule 21)
+
+The arm adds **zero fitted scalars** and `n_residual` is unchanged. Both inputs
+are measured/published and re-derive only on source-data updates (rule 23):
+NREL `BIN_STARTUP_COST_PER_MW` ($20/MW CT, $50/MW CC duct bands), already cited
+and in use for the committed tranche; and `campd_ct_run_lengths_NYISO.csv`
+(22 plants + a pooled class fallback of 4.0 h over 34,057 measured runs),
+derived from NYISO's own CAMPD unit conduct. No parameter is ported from
+another ISO (rule 25) and none is fitted to a residual. The ledger entry is
+recorded here for the rejected arm; no attestation is built because C6 is
+correctly UNATTESTED for a probe.
+
+### Reproducibility note for the next session
+
+The nyiso-92 keeper does **not** replay in a fresh container without first
+running `python scripts/data/curate_capacity_deliverability.py`. `data/clean/`
+is derived and gitignored, `nyiso_li_lcr_tsl` defaults ON, and it lives only in
+`run_config.json` — not `meta.json` — so `--replay-bundle` hard-fails with
+"no published Long Island import limit ... available areas: []". Both arms hit
+this identically; it is an environment-setup step, not a code or keeper defect.

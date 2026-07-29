@@ -64,15 +64,15 @@ def class_max_delta(a: Path, b: Path, year: int) -> tuple[float, str]:
     """Return (max abs hourly class MW delta, the class carrying it)."""
     da = pd.read_parquet(a / "hourly" / f"class_hourly_{year}.parquet")
     db = pd.read_parquet(b / "hourly" / f"class_hourly_{year}.parquet")
-    ka = da.set_index(["klass", "hour"], observed=True)["mw"]
-    kb = db.set_index(["klass", "hour"], observed=True)["mw"]
+    ka = da.set_index(["klass", "hour"])["mw"]
+    kb = db.set_index(["klass", "hour"])["mw"]
     diff = (ka - kb).abs().dropna()
     if diff.empty:
         return 0.0, ""
     return float(diff.max()), str(diff.idxmax()[0])
 
 
-def tail_hours(bundle: Path, year: int) -> int:
+def tail_hours(bundle: Path, year: int) -> int | None:
     """Return the count of hours whose MAX zonal dual exceeds $300.
 
     Matches the rubric's C3c model-tail convention (``calibration_verdict``
@@ -82,67 +82,72 @@ def tail_hours(bundle: Path, year: int) -> int:
     while the five mainland zones share one lower dual, so a weighted mean
     would understate the tail to zero.
     """
-    df = pd.read_parquet(bundle / "hourly" / f"system_{year}.parquet")
+    path = bundle / "hourly" / f"system_{year}.parquet"
+    if not path.exists():
+        # system_*.parquet is written once, after the whole run's year loop, so
+        # a mid-run read has the per-year class/unit sidecars but not this one.
+        return None
+    df = pd.read_parquet(path)
     px = df.groupby("hour", observed=True)["price"].max()
     return int((px > TAIL_THRESHOLD).sum())
 
 
-def ct_stats(bundle: Path, year: int) -> dict[str, dict]:
-    """Return per-CT-class start count, run-length and energy for a bundle."""
-    pure, _hr, _vom = model_fleet_view(year)
-    mw, _zone, cap = model_plant_hourly(bundle, year)
-    out: dict[str, dict] = {}
-    for klass in CT_CLASSES:
-        codes = [c for c, k in pure.items() if k == klass and c in mw]
-        starts = 0
-        runs: list[int] = []
-        online = 0
-        energy = 0.0
-        for c in codes:
-            on = _online(mw[c], cap.get(c, 0.0))
-            starts += len(_starts(on))
-            runs += _run_lengths(on)
-            online += int(on.sum())
-            energy += float(mw[c].sum())
-        out[klass] = {
-            "plants": len(codes), "starts": starts, "online_h": online,
-            "twh": round(energy / 1e6, 4),
-            "median_run": float(np.median(runs)) if runs else 0.0,
-            "mean_run": round(float(np.mean(runs)), 2) if runs else 0.0,
-        }
-    return out
+def _summarise(series: dict[int, np.ndarray], caps: dict[int, float],
+               codes: list[int]) -> dict:
+    """Return start/run/energy statistics for one plant set on one bar."""
+    starts = 0
+    runs: list[int] = []
+    online = 0
+    energy = 0.0
+    for c in codes:
+        on = _online(series[c], caps.get(c, 0.0))
+        starts += len(_starts(on))
+        runs += _run_lengths(on)
+        online += int(on.sum())
+        energy += float(series[c].sum())
+    return {
+        "plants": len(codes), "starts": starts, "online_h": online,
+        "twh": round(energy / 1e6, 4),
+        "median_run": float(np.median(runs)) if runs else 0.0,
+        "mean_run": round(float(np.mean(runs)), 2) if runs else 0.0,
+    }
 
 
-def measured_ct(year: int) -> dict[str, dict]:
-    """Return the measured CAMPD-bench CT statistics on the same bar."""
+def ct_panel(control: Path, arm: Path, year: int) -> dict[str, dict]:
+    """Return control / arm / measured CT statistics on ONE common bar.
+
+    All three sides are restricted to the SAME plant set (plants the model
+    classes as pure-CT AND the CAMPD bench covers) and share ONE online
+    threshold per plant, taken from `max(model cap, bench cap)`. Without this,
+    a model-side threshold on model capacity and a measured-side threshold on
+    bench capacity silently score different populations, and the level
+    comparison stops being apples-to-apples (the nyiso-90 "common bar"
+    discipline).
+    """
     pure, _hr, _vom = model_fleet_view(year)
+    mw_c, _zc, cap_c = model_plant_hourly(control, year)
+    mw_a, _za, cap_a = model_plant_hourly(arm, year)
+
     bench = load_bench(REPO, "NYISO", year)
     agg: dict[int, np.ndarray] = collections.defaultdict(lambda: np.zeros(8760))
-    caps: dict[int, float] = collections.defaultdict(float)
+    cap_b: dict[int, float] = collections.defaultdict(float)
     for pid, rec in bench.items():
         code = int(str(pid).split(":")[0])
         if rec["group"] not in CT_CLASSES:
             continue
         agg[code] += np.asarray(rec["mw"], dtype=float)[:8760]
-        caps[code] += float(rec["npl"] or 0.0)
+        cap_b[code] += float(rec["npl"] or 0.0)
+
     out: dict[str, dict] = {}
     for klass in CT_CLASSES:
-        codes = [c for c, k in pure.items() if k == klass and c in agg]
-        starts = 0
-        runs: list[int] = []
-        energy = 0.0
-        online = 0
-        for c in codes:
-            on = _online(agg[c], caps[c])
-            starts += len(_starts(on))
-            runs += _run_lengths(on)
-            online += int(on.sum())
-            energy += float(agg[c].sum())
+        codes = sorted(c for c, k in pure.items()
+                       if k == klass and c in agg and c in mw_c and c in mw_a)
+        caps = {c: max(cap_c.get(c, 0.0), cap_a.get(c, 0.0), cap_b.get(c, 0.0))
+                for c in codes}
         out[klass] = {
-            "plants": len(codes), "starts": starts, "online_h": online,
-            "twh": round(energy / 1e6, 4),
-            "median_run": float(np.median(runs)) if runs else 0.0,
-            "mean_run": round(float(np.mean(runs)), 2) if runs else 0.0,
+            "control": _summarise(mw_c, caps, codes),
+            "arm": _summarise(mw_a, caps, codes),
+            "measured": _summarise(agg, caps, codes),
         }
     return out
 
@@ -165,15 +170,14 @@ def main(argv: list[str] | None = None) -> int:
             continue
         delta, who = class_max_delta(args.arm, args.control, year)
         ce_c, ce_a = class_energy(args.control, year), class_energy(args.arm, year)
-        ct_c, ct_a = ct_stats(args.control, year), ct_stats(args.arm, year)
-        ct_m = measured_ct(year)
+        panel = ct_panel(args.control, args.arm, year)
         t_c, t_a = tail_hours(args.control, year), tail_hours(args.arm, year)
 
         rec = {
             "liveness_max_abs_class_delta_mw": round(delta, 4),
             "liveness_class": who,
             "class_energy_twh": {"control": ce_c, "arm": ce_a},
-            "ct": {"control": ct_c, "arm": ct_a, "measured": ct_m},
+            "ct_common_bar": panel,
             "tail_hours_gt300": {"control": t_c, "arm": t_a},
         }
         out["years"][str(year)] = rec
@@ -182,13 +186,14 @@ def main(argv: list[str] | None = None) -> int:
         flag = "LIVE" if delta > 1e-6 else "*** BYTE-IDENTICAL — MECHANISM INERT ***"
         print(f"liveness: max |Δ| class MW = {delta:.4f} ({who})   {flag}")
         for klass in CT_CLASSES:
-            c, a, m = ct_c[klass], ct_a[klass], ct_m.get(klass, {})
-            print(f"  [{klass}] TWh ctl {c['twh']:.4f} -> arm {a['twh']:.4f} "
-                  f"(Δ {a['twh'] - c['twh']:+.4f})   measured {m.get('twh')}")
-            print(f"      starts ctl {c['starts']:5d} -> arm {a['starts']:5d}   "
-                  f"measured {m.get('starts')}    "
-                  f"median run ctl {c['median_run']} -> arm {a['median_run']} "
-                  f"(measured {m.get('median_run')})")
+            c, a, m = panel[klass]["control"], panel[klass]["arm"], panel[klass]["measured"]
+            print(f"  [{klass}] {c['plants']} plants on a common bar")
+            print(f"      TWh    ctl {c['twh']:.4f} -> arm {a['twh']:.4f} "
+                  f"(Δ {a['twh'] - c['twh']:+.4f})   measured {m['twh']:.4f}")
+            print(f"      starts ctl {c['starts']:5d} -> arm {a['starts']:5d} "
+                  f"(Δ {a['starts'] - c['starts']:+5d})   measured {m['starts']:5d}")
+            print(f"      median run ctl {c['median_run']} -> arm {a['median_run']}"
+                  f"   measured {m['median_run']}")
         print(f"  C3c hours >${TAIL_THRESHOLD:.0f}: ctl {t_c} -> arm {t_a}")
         print("  class energy deltas (TWh, |Δ| > 0.001):")
         for k in sorted(set(ce_c) | set(ce_a)):

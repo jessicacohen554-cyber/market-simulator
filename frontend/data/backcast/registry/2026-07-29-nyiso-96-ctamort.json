@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-29-nyiso-96-ctamort",
+  "label": "nyiso 96 ctamort",
+  "date": "2026-07-29",
+  "shorthand": "nyiso-96-ctamort",
+  "definition": "nyiso-96 ARM: tranche_startup_amortization + tranche_startup_measured_runs (v3 measured NYISO CAMPD run-length basis); single mechanism-family delta vs nyiso96_ctrl_zerodelta",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-29-nyiso-96-ctamort.js",
+  "bundle": "results/calibration/nyiso96_ctamort"
+}
