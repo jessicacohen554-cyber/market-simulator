@@ -2849,6 +2849,7 @@ def solve_and_persist(
     tranche_startup_measured_runs: bool = False,
     tranche_startup_conditional_runs: bool = False,
     gas_offer_margin: bool = False,
+    coal_offer_margin: bool = False,
     nysdec_peaker_rule_availability: bool = False,
     oil_primary_bin_fuel: bool = False,
     st_gas_intermediate: bool = False,
@@ -4039,6 +4040,20 @@ def solve_and_persist(
                 gas_offer_net_revenue_margin=True,
                 gas_offer_margin_anchor=GAS_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
             )
+        if coal_offer_margin:
+            # Coal net-revenue margin form (ERCOT-137): record the gate AND
+            # both resolved identification constants (rule 25 — run_config
+            # carries the values the solve used, never a lookup indirection).
+            from market_sim.config.constants import (
+                COAL_OFFER_MARGIN_ANCHOR_BY_ISO,
+                COAL_OFFER_MARGIN_LEVEL_BY_ISO,
+            )
+
+            recorded_cfg = recorded_cfg.with_overrides(
+                coal_offer_net_revenue_margin=True,
+                coal_offer_margin_anchor=COAL_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
+                coal_offer_margin_level=COAL_OFFER_MARGIN_LEVEL_BY_ISO[iso],
+            )
         if nysdec_peaker_rule_availability:
             recorded_cfg = recorded_cfg.with_overrides(
                 nysdec_peaker_rule_availability=True
@@ -4291,6 +4306,7 @@ def solve_and_persist(
             tranche_startup_measured_runs=tranche_startup_measured_runs,
             tranche_startup_conditional_runs=tranche_startup_conditional_runs,
             gas_offer_margin=gas_offer_margin,
+            coal_offer_margin=coal_offer_margin,
             nysdec_peaker_rule_availability=nysdec_peaker_rule_availability,
             oil_primary_bin_fuel=oil_primary_bin_fuel,
             st_gas_intermediate=st_gas_intermediate,
@@ -5008,6 +5024,7 @@ def solve_and_persist(
         "tranche_startup_measured_runs": tranche_startup_measured_runs,
         "tranche_startup_conditional_runs": tranche_startup_conditional_runs,
         "gas_offer_margin": gas_offer_margin,
+        "coal_offer_margin": coal_offer_margin,
         "nysdec_peaker_rule_availability": nysdec_peaker_rule_availability,
         "oil_primary_bin_fuel": oil_primary_bin_fuel,
         "st_gas_intermediate": st_gas_intermediate,
@@ -7649,6 +7666,27 @@ def main() -> None:
         "derived anchor hard-fail; ISOs without phys_* keys are inert. "
         "Design: docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md. "
         "Default OFF -> prior keepers byte-identical.",
+    )
+    parser.add_argument(
+        "--coal-offer-margin",
+        dest="coal_offer_margin",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Coal-offer NET-REVENUE MARGIN form (ERCOT-137, "
+        "ScenarioConfig.coal_offer_net_revenue_margin — the gas form's coal "
+        "analogue): the CAMPD coal _mustrun (take-or-pay) band is repriced "
+        "from the fitted VOM-only sunk-fuel discount ($4.50/MWh, refuted by "
+        "ERCOT-136 — the real fleet offers only 5.8-8.4 % of capability at "
+        "or below $4.50) to full delivered-fuel tracking plus a "
+        "fuel-invariant measured margin: at the training-window "
+        "delivered-coal anchor the bid lands EXACTLY on the measured RT "
+        "curve bottom (SCED Submitted TPO-Price1 cap-wtd p50, 98.8-100 % "
+        "coverage). Identification constants: "
+        "constants.COAL_OFFER_MARGIN_ANCHOR_BY_ISO / _LEVEL_BY_ISO "
+        "(derive_coal_offer_margin_anchor.py). ISOs without a derived pair "
+        "hard-fail (rule 24); the committed/econ supply sigmoids above the "
+        "block are untouched (rule 19). Default OFF -> prior keepers "
+        "byte-identical.",
     )
     parser.add_argument(
         "--nysdec-peaker-rule",
@@ -10505,6 +10543,7 @@ def main() -> None:
         tranche_startup_measured_runs=args.tranche_startup_measured_runs,
         tranche_startup_conditional_runs=args.tranche_startup_conditional_runs,
         gas_offer_margin=args.gas_offer_margin,
+        coal_offer_margin=args.coal_offer_margin,
         nysdec_peaker_rule_availability=args.nysdec_peaker_rule_availability,
         oil_primary_bin_fuel=args.oil_primary_bin_fuel,
         cc_intermediate_cf_threshold=args.cc_intermediate_cf_threshold,

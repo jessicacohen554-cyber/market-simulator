@@ -159,8 +159,11 @@ def capture_coal_offer_surface(year: int, overrides: dict | None = None) -> dict
     real = rc.apply_coal_tranches
     box: dict = {}
 
-    def _spy(mc, generators, fleet_arrays, fuel_fracs, fuel_prices):
-        real(mc, generators, fleet_arrays, fuel_fracs, fuel_prices)
+    def _spy(mc, generators, fleet_arrays, fuel_fracs, fuel_prices, config=None):
+        # ERCOT-137 added a trailing ``config`` parameter to the live seam
+        # (the coal net-revenue margin gate); pass it through so the capture
+        # stays replayable at HEAD and records the post-margin bid when armed.
+        real(mc, generators, fleet_arrays, fuel_fracs, fuel_prices, config)
         is_coal = np.array(
             [str(getattr(g, "fuel_type", "")) == "coal" for g in generators],
             dtype=bool,

@@ -1242,8 +1242,10 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             apply_eac_to_mc(mc_base, fleet_arrays, config, year)
             # Coal tranche 1 bids at VOM only (its fuel is sunk under the
             # take-or-pay contract); higher tranches pass through more fuel.
+            # Under coal_offer_net_revenue_margin the CAMPD _mustrun band is
+            # instead repriced to the measured net-margin form (ERCOT-137).
             apply_coal_tranches(
-                mc_base, dispatch_fleet, fleet_arrays, fuel_fracs, fuel_prices
+                mc_base, dispatch_fleet, fleet_arrays, fuel_fracs, fuel_prices, config
             )
             # Gas-offer net-revenue margin (gas_offer_net_revenue_margin,
             # default off — forecast parity with the backcast orchestrator's
