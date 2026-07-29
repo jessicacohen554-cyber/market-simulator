@@ -150,5 +150,70 @@ class TestInjectCaisoFirmImportShape(unittest.TestCase):
         self.assertFalse(np.array_equal(fleet.availability, base_avail))
 
 
+class TestFirmImportEnvelopeClip(unittest.TestCase):
+    """caiso-138: firm capability clipped at the corridor's own envelope."""
+
+    def _shaped(self, year, envelope_clip):
+        fleet, _ = _per_hub_fleet()
+        self.assertTrue(
+            inject_caiso_firm_import_shape(
+                fleet, "CAISO", year, envelope_clip=envelope_clip
+            )
+        )
+        return fleet
+
+    def test_clip_is_pointwise_min_of_capability_and_envelope(self):
+        from market_sim.data.eia_loader import measured_corridor_flow_envelope
+
+        year = 2025
+        plain = self._shaped(year, envelope_clip=False)
+        clipped = self._shaped(year, envelope_clip=True)
+        env = measured_corridor_flow_envelope("CAISO", year, HOURS)
+        zones = set(CAISO_PER_HUB_IMPORT_ZONES.values())
+        n_clipped_rows = 0
+        for row, uid in enumerate(plain.unit_ids):
+            zone = next((z for z in zones if uid.startswith(f"{z}_")), None)
+            name = uid[len(zone) + 1 :] if zone else ""
+            cap_plain = plain.pmax[row] * plain.availability[row, :]
+            cap_clip = clipped.pmax[row] * clipped.availability[row, :]
+            if name in CAISO_FIRM_IMPORT_TRANCHES and zone in env:
+                np.testing.assert_allclose(
+                    cap_clip, np.minimum(cap_plain, env[zone]), atol=1e-6
+                )
+                if (cap_clip < cap_plain - 1e-6).any():
+                    n_clipped_rows += 1
+            else:
+                np.testing.assert_array_equal(cap_clip, cap_plain)
+        # 2025: the PNW firm block collides with its envelope (FINDING-caiso138
+        # §B: 2,769 collision hours); the DSW block does not. At least one firm
+        # row must actually be clipped or the mechanism is inert.
+        self.assertGreaterEqual(n_clipped_rows, 1)
+
+    def test_clip_never_raises_capability(self):
+        year = 2024
+        plain = self._shaped(year, envelope_clip=False)
+        clipped = self._shaped(year, envelope_clip=True)
+        cap_plain = plain.pmax[:, None] * plain.availability
+        cap_clip = clipped.pmax[:, None] * clipped.availability
+        self.assertLessEqual(float((cap_clip - cap_plain).max()), 1e-9)
+
+    def test_forecast_year_without_envelope_is_unclipped(self):
+        """A year the 930 extract does not cover: clip is a verified no-op."""
+        year = 2035
+        plain = self._shaped(year, envelope_clip=False)
+        clipped = self._shaped(year, envelope_clip=True)
+        np.testing.assert_array_equal(clipped.availability, plain.availability)
+        np.testing.assert_array_equal(clipped.pmax, plain.pmax)
+
+    def test_default_arg_is_byte_identical(self):
+        """Omitting envelope_clip reproduces the pre-caiso-138 injector."""
+        year = 2025
+        default = self._shaped(year, envelope_clip=False)
+        fleet, _ = _per_hub_fleet()
+        self.assertTrue(inject_caiso_firm_import_shape(fleet, "CAISO", year))
+        np.testing.assert_array_equal(fleet.availability, default.availability)
+        np.testing.assert_array_equal(fleet.pmax, default.pmax)
+
+
 if __name__ == "__main__":
     unittest.main()

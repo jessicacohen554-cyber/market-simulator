@@ -3252,6 +3252,30 @@ class ScenarioConfig:
     # Requires caiso_per_hub_intertie + caiso_perhub_firm_base +
     # caiso_firm_import_shape (the shaped capability IS the floor's window).
     # Default off (byte-identical); CAISO-only.
+    caiso_firm_import_envelope_clip: bool = False  # Clip each firm import
+    # block's shaped capability (and therefore the caiso-77 must-flow floor
+    # riding on it) at its OWN corridor's measured deliverability envelope —
+    # the same eia_loader.measured_corridor_flow_envelope series
+    # caiso_corridor_flow_limit caps the link with (caiso-138;
+    # FINDING-caiso138). Reconciles the two mechanisms (rule 19
+    # [R-ONE-MECH]): the shaped floor is corridor-split DMM level x the
+    # TOTAL-system revealed shape, so on the PNW corridor it exceeds the
+    # corridor's own measured p95 net import in a growing set of
+    # (month x hod) buckets (level 1,072 -> 1,566 MW while the corridor is
+    # near-balanced in net), and the un-deliverable residual — 1.09 / 1.71 /
+    # 0.97 TWh in 2023/24/25 — is forced out the node's Dump variable at
+    # -$26.001/MWh against a measured MALIN print of +$41-53 in the same
+    # hours. The clip caps capability at min(pmax x availability,
+    # envelope[corridor]) per hour, so the delivered corridor flow in
+    # collision hours is the cap before and after (CA-side dispatch
+    # unchanged; E1/E2 = +$0.00) and the dump is zero by optimality. Zero
+    # new free parameters (rule 24): both series already exist in the model;
+    # the clip is their pointwise min. Forward story (rule 17): the measured
+    # envelope regenerates per year from EIA-930; a forecast year (no
+    # measured envelope) leaves the block unclipped — its forward analogue
+    # is the forward ATC envelope, wired when the forecast lane adopts it.
+    # Requires caiso_firm_import_shape (it clips that injector's output).
+    # Default off (byte-identical); CAISO-only.
     caiso_demand_clock_realign: bool = False  # Apply the MEASURED source-data
     # clock correction to the CAISO backcast demand input (caiso-75;
     # FINDING-caiso75-demand-clock-2026-07-11): the EIA-930 CISO extract's
