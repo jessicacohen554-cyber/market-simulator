@@ -344,6 +344,7 @@ def run_year(
     tranche_startup_measured_runs: bool = False,
     tranche_startup_conditional_runs: bool = False,
     gas_offer_margin: bool = False,
+    coal_offer_margin: bool = False,
     nysdec_peaker_rule_availability: bool = False,
     oil_primary_bin_fuel: bool = False,
     plant_tranche_config: str | None = None,
@@ -887,6 +888,39 @@ def run_year(
         config = config.with_overrides(
             gas_offer_net_revenue_margin=True,
             gas_offer_margin_anchor=GAS_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
+        )
+    if coal_offer_margin:
+        # Coal-offer NET-REVENUE MARGIN form (ERCOT-137, the gas form's coal
+        # analogue): the CAMPD coal _mustrun (take-or-pay) band is repriced
+        # from the fitted VOM-only sunk-fuel discount to the measured
+        # net-margin-off-fuel-cost form — full delivered-fuel tracking plus a
+        # fuel-invariant margin that lands the bid EXACTLY on the measured RT
+        # curve bottom (SCED Submitted TPO-Price1 cap-wtd p50) at the
+        # training-window delivered-coal anchor. Both identification
+        # constants resolve HERE from the registries so the bundle's
+        # run_config.json records the values (rule 25); an ISO without a
+        # derived pair is a hard error, never a fallback (rule 24).
+        # Identification: scripts/data/derive_coal_offer_margin_anchor.py.
+        from market_sim.config.constants import (
+            COAL_OFFER_MARGIN_ANCHOR_BY_ISO,
+            COAL_OFFER_MARGIN_LEVEL_BY_ISO,
+        )
+
+        if (
+            iso not in COAL_OFFER_MARGIN_ANCHOR_BY_ISO
+            or iso not in COAL_OFFER_MARGIN_LEVEL_BY_ISO
+        ):
+            raise SystemExit(
+                f"--coal-offer-margin: no derived delivered-coal anchor/level "
+                f"for {iso} in constants.COAL_OFFER_MARGIN_ANCHOR_BY_ISO / "
+                "COAL_OFFER_MARGIN_LEVEL_BY_ISO — run "
+                "scripts/data/derive_coal_offer_margin_anchor.py and register "
+                "the values (rule 24: anchors never cross ISO boundaries)"
+            )
+        config = config.with_overrides(
+            coal_offer_net_revenue_margin=True,
+            coal_offer_margin_anchor=COAL_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
+            coal_offer_margin_level=COAL_OFFER_MARGIN_LEVEL_BY_ISO[iso],
         )
     if nysdec_peaker_rule_availability:
         # NYSDEC 6 NYCRR 227-3 peaker-rule availability overlay: curated
@@ -3165,7 +3199,7 @@ def run_year(
     # then the coal take-or-pay tranche discount. No startup-cost markup.
     mc_base = assemble_mc(fleet_arrays, fuel_prices, carbon_price, config.nox_price)
     apply_eac_to_mc(mc_base, fleet_arrays, config)
-    apply_coal_tranches(mc_base, fleet, fleet_arrays, fuel_fracs, fuel_prices)
+    apply_coal_tranches(mc_base, fleet, fleet_arrays, fuel_fracs, fuel_prices, config)
     # Gas-offer net-revenue margin (gas_offer_net_revenue_margin, default
     # off): compress each gas tranche's above-physical markup to a fixed
     # $/MWh margin at the ISO's delivered-gas anchor. Runs after

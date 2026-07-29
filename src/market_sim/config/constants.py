@@ -546,6 +546,45 @@ GAS_OFFER_MARGIN_ANCHOR_BY_ISO: dict[str, float] = {
     "NEISO": 4.0763,
 }
 
+# Delivered-COAL anchor ($/MMBtu) — the identification point of the
+# ``coal_offer_net_revenue_margin`` mechanism (ERCOT-137, the gas form's coal
+# analogue; :func:`market_sim.data.fleet.legacy_bins.apply_coal_tranches`).
+# Each value is the training-window (2023–2025) capacity-weighted mean of the
+# model's own delivered coal price at the LP seam — per-plant EIA-923 receipts
+# where published (Fayette / J K Spruce / San Miguel, the only ERCOT
+# reporters; ercot135 §3), the measured coal supply trajectories elsewhere —
+# read from the COMMITTED seam capture
+# ``results/calibration/ercot135_coal_merit_order.json`` (A_model_offer
+# per_plant ``fuel_price_mmbtu`` × ``pmax_mw``; year means
+# 1.8169 / 1.7556 / 1.6436). An identification constant, not a tunable: it
+# re-derives ONLY when the underlying coal price sources change (rule 23),
+# via ``scripts/data/derive_coal_offer_margin_anchor.py``. ISOs absent from
+# the registry hard-fail when the flag is armed (rule 24 — never a silent
+# fallback); the ERCOT value is identified on ERCOT SCED conduct and never
+# crosses ISO boundaries (rule 25).
+COAL_OFFER_MARGIN_ANCHOR_BY_ISO: dict[str, float] = {
+    "ERCOT": 1.7387,
+}
+
+# Measured coal min-load offer LEVEL ($/MWh) — the other half of the
+# ``coal_offer_net_revenue_margin`` identification: the real fleet's RT
+# supply-curve bottom, 60-Day SCED ``Submitted TPO-Price1`` capacity-weighted
+# p50 at 98.8–100 % coverage, pooled res-hours-weighted across the four
+# 2024–2025 disclosure subsets (16.86 / 16.37 / 15.00 / 15.00 →
+# 15.8807; committed artifact
+# ``results/calibration/ercot136_coal_headroom_conduct.json``
+# B1_curve_bottom, the ERCOT-136 §3 decisive measurement). The min-load
+# block's own declared price corroborates it independently (Min Gen Cost p25
+# $18.00, 28–31 % coverage — corroboration only, never the anchor). At
+# ``fuel == anchor`` the resolved ``_mustrun`` bid equals this level exactly.
+# 2023 application is a declared extrapolation (no 2023 SCED disclosure
+# exists) — the margin is fuel-invariant by construction, gated LOYO per-year
+# in the ERCOT-137 precommit. Re-derives only with its source disclosure
+# (rule 23), via the same derive script; per-ISO, never transferred (rule 25).
+COAL_OFFER_MARGIN_LEVEL_BY_ISO: dict[str, float] = {
+    "ERCOT": 15.8807,
+}
+
 # CO2 emission rates (tCO2/MWh), derived from heat rate × fuel emission factor.
 # Keyed by fuel class and efficiency bin, mirroring HEAT_RATE_BINS.
 # Source: EPA eGRID 2022.

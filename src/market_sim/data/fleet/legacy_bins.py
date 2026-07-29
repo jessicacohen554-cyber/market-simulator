@@ -11,12 +11,17 @@ the full pre-split surface; patch semantics are preserved via
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
+
 import numpy as np
 
 from market_sim.data.fleet.models import (
     FleetArrays,
     Generator,
 )
+
+if TYPE_CHECKING:
+    from market_sim.config.scenarios import ScenarioConfig
 
 # Pre-split logger name: records keep the historical module path.
 logger = logging.getLogger("market_sim.data.fleet")
@@ -492,6 +497,7 @@ def apply_coal_tranches(
     fleet_arrays: FleetArrays,
     fuel_fracs: list[float],
     fuel_prices: np.ndarray,
+    config: "ScenarioConfig | None" = None,
 ) -> None:
     """Reduce coal-tranche marginal cost by the sunk (unpassed) fuel fraction.
 
@@ -506,6 +512,25 @@ def apply_coal_tranches(
     discounted — they are incurred per MWh dispatched regardless of the fuel
     contract. ``mc`` is modified in place.
 
+    **Coal-offer net-revenue margin form** (ERCOT-137,
+    ``config.coal_offer_net_revenue_margin``): a CAMPD coal ``_mustrun``
+    tranche is NOT fuel-discounted; instead its assembled cost is shifted to
+    the measured net-margin form::
+
+        mc[g, t] = heat_rate[g] × (fuel(t) − anchor) + emis(t) + level
+
+    (implemented as ``mc[g, :] += level − heat_rate[g] × anchor − vom[g]`` on
+    the assembled cost — the VOM already inside ``mc`` is folded into the
+    measured all-in level, never double-counted). The block keeps FULL
+    delivered-fuel tracking while everything above fuel is the fuel-invariant
+    measured margin; at ``fuel == anchor`` the bid is exactly ``level``, the
+    measured RT curve bottom (ERCOT-136 §3). Mirrors
+    :func:`market_sim.data.offer_curves.apply_gas_offer_margin`; scope is the
+    CAMPD tranche path only (legacy ``_t1`` rows keep the sunk-fuel form —
+    the same legacy-path inertness the gas mechanism declares). The
+    committed/econ supply-sigmoid passthroughs above the block are a separate
+    mechanism (rule 19) and are untouched.
+
     Args:
         mc: The ``(n_gen, T)`` marginal-cost array, modified in place.
         generators: The generator list aligned row-for-row with ``mc``.
@@ -514,9 +539,51 @@ def apply_coal_tranches(
             :func:`split_coal_tranches`.
         fuel_prices: The ``(n_gen, T)`` delivered fuel price array used to
             assemble ``mc``.
+        config: Scenario configuration supplying the coal net-revenue margin
+            gate and its identification constants. ``None`` (legacy callers)
+            keeps the sunk-fuel form everywhere.
+
+    Raises:
+        ValueError: ``coal_offer_net_revenue_margin`` armed without a
+            resolved anchor or level (rule 25 — the constants must be
+            resolved into the recorded config, never silently defaulted).
     """
+    margin_on = config is not None and getattr(
+        config, "coal_offer_net_revenue_margin", False
+    )
+    coal_anchor = coal_level = 0.0
+    if margin_on:
+        _anchor = getattr(config, "coal_offer_margin_anchor", None)
+        _level = getattr(config, "coal_offer_margin_level", None)
+        if _anchor is None or _level is None:
+            raise ValueError(
+                "coal_offer_net_revenue_margin is armed but "
+                "coal_offer_margin_anchor / coal_offer_margin_level is unset; "
+                "resolve them from constants.COAL_OFFER_MARGIN_ANCHOR_BY_ISO / "
+                "COAL_OFFER_MARGIN_LEVEL_BY_ISO at config build (rule 25 — no "
+                "silent fallback in the offer path)"
+            )
+        coal_anchor, coal_level = float(_anchor), float(_level)
+    n_margin = 0
     fuel_prices = np.asarray(fuel_prices, dtype=float)
     for g, gen in enumerate(generators):
+        if (
+            margin_on
+            and gen.fuel_type == "coal"
+            and getattr(gen, "is_campd_bin", False)
+            and gen.unit_id.endswith("_mustrun")
+        ):
+            # Net-revenue margin form: keep the assembled full fuel cost
+            # (no sunk-fuel discount) and add the fuel-invariant measured
+            # margin, netting out the VOM already in mc (the measured level
+            # is the all-in submitted offer price).
+            mc[g, :] += (
+                coal_level
+                - fleet_arrays.heat_rate[g] * coal_anchor
+                - fleet_arrays.vom[g]
+            )
+            n_margin += 1
+            continue
         # Discount the fuel term for any generator with a take-or-pay
         # contract or host-steam obligation that sinks part of its fuel
         # cost (coal tranches; CAMPD must-run tranches across all fuels).
@@ -528,3 +595,12 @@ def apply_coal_tranches(
             continue
         fuel_cost = fleet_arrays.heat_rate[g] * fuel_prices[g, :]
         mc[g, :] -= (1.0 - np.asarray(ff, dtype=float)) * fuel_cost
+    if n_margin:
+        logger.info(
+            "coal offer net-revenue margin: %d _mustrun tranche(s) repriced at "
+            "level %.4f $/MWh / anchor %.4f $/MMBtu (fuel-invariant margin, "
+            "full delivered-fuel tracking)",
+            n_margin,
+            coal_level,
+            coal_anchor,
+        )
