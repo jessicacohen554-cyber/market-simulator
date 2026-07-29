@@ -297,11 +297,18 @@ is ranked by *structural* defect, per rule 1 `[R-STRUCT]`.
    GROUNDED — D-4 clear, profile r 0.923–0.973, CV ratio 0.703–1.083) on a class
    whose ISO-wide volume fell 2.6–2.9 TWh. A clean pass under rule 20, but worth
    watching.
-5. **~~G-20b guard false-negative lead~~ — subsumed by the pjm-138 closure
-   below.** The ~2.8–5.0 GW the guard returns to PJM's tightest quartile lives
-   in the same reserve-supply lane pjm-138 closed; its own audit
-   (`FINDING-guard-falseneg-audit-2026-07-27` §4/§7) already attributed most of
-   its D3 signal to window LENGTH and declined to license a fix.
+5. **G-20b guard false-negative lead — now PRICED, and the price is material.**
+   pjm-138 §4.2 sized what
+   `FINDING-guard-falseneg-audit-2026-07-27` §7 said no instrument could:
+   removing the guard's own 2.8–5.0 GW from the tightest decile's offer stack
+   moves the clearing price **+$4–23/MWh** on the mean (3 GW: +$3.97 / +$8.02 /
+   +$14.95; 5 GW: +$7.45 / +$12.46 / +$23.36), i.e. **28–59 %** of that decile's
+   system-energy gap, as a LOWER bound. The **verdict is unchanged** — that
+   audit's D2 population test is clean 3/3 for PJM and its D3 exceedance is
+   mostly a window-LENGTH effect — so this is a change of stakes, not of
+   evidence. Route stays its §7.2: a within-window tight-hour treatment memo,
+   owner sign-off, its own charter, LOYO within 2023–2025. **Do not arm anything
+   on the price alone.**
 6. **C3c margin** — still passes by **1 h** (2024) and **2.5 h** (2025) against a
    0.5× floor, untouched by pjm-137 and by pjm-138 (which solved nothing). Any
    delta must report its C3c effect explicitly.
@@ -357,6 +364,16 @@ is ranked by *structural* defect, per rule 1 `[R-STRUCT]`.
   *dispersion* defect, not a level one, and any successor lever must raise tight
   hours **without** raising slack ones (the gradient test the measured offer
   surface failed at pjm-123).
+- **Keeper root cause (6) — "fitted coal rungs own the $40–150 region the
+  measured corpus assigns to the CC top belt and `CT_FAST`" — is CLOSED.** On
+  the current keeper's own fleet (no LP), `COAL` is **12.7–18.2 %** of the
+  marginal set across all hours and **11.1–17.6 %** in that band, against
+  pjm-122's **44–79 %** on the `pjm-121` bundle; `CC_REGULAR` + `CT_PEAKER` hold
+  **68.4 / 72.6 / 75.5 %** of it and `CT_PEAKER` alone is **60.7 / 65.9 /
+  67.1 %** of the tightest net-load decile. The intervening keeper line (CC
+  mid-curve belt, net-position cut, loss surface, measured CT heat rates) is the
+  plausible cause. It should be retired from `keepers/PJM.json` — a
+  promotion-lane edit pjm-138 reports rather than performs.
 - **An hour-key correction to pjm-137's shape statistics.** Its measured-side
   loader indexes on Eastern *Prevailing* time against a model and a CAMPD record
   that are both Eastern *Standard*. Levels move ≤ $0.38/MWh and every pjm-137

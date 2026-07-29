@@ -23,6 +23,8 @@ already-`CALIBRATED` keeper.
 | **D4** how thin is the tail | on PJM's own system energy price, not the total LMP | **3–6× too thin.** Measured MEC exceeds $100 in **29 / 128 / 392** hours; the model's load-weighted system price does so in **3 / 72 / 65**. Above $150: **14 / 26 / 146** measured against **0 / 1 / 24** | the tail is a system-energy defect, not a congestion one |
 | **D5** is it reserve | PJM publishes its own DA reserve clearing price — does it explain the gap? | **yes, most of it.** Measured synchronized-reserve MCP is above zero in **84.2 / 96.7 / 47.6 %** of hours and correlates with the model's system-energy gap at **r = 0.788 / 0.604 / 0.657**; the top net-load decile carries **26.2 / 26.5 / 35.9 %** of the year's reserve price. In Dominion CT hours the measured reserve MCP is **$6.71 / $6.65 / $14.18** against a system-energy gap of **$8.17 / $12.74 / $24.78** — **82 / 52 / 57 %** of it. The model's reserve dual in those same hours is **$0.00 / $0.03 / $1.37** | **the system-energy half is largely a reserve-price half** |
 | **D5b** why can't the model price it | is this a missing mechanism? | **NO — every part of the mechanism is already built, measured and armed.** The requirement is PJM's own measured `as_req_mw` (`load_pjm_measured_reserve_requirement`), the demand curve is PJM's published two-step ORDC (`pjm_ordc_curve.csv`, m11 §4.3.3, $850 / $300), and the co-optimization is the in-LP per-generator joint-headroom form that is *designed* to price exactly this opportunity cost. It still clears at $0 because the model's reserve **supply** is 5–10× the requirement — which pjm-82 attributed to the **LP-vs-MIP boundary**: with a continuous commitment variable, fractional online capacity is free, so every idle unit's headroom is synchronized-reserve-eligible | **a disclosed architectural limit, not a calibration gap** |
+| **M1** who owns the model's price | does pjm-122's charge — fitted coal rungs owning the $40–150 region — still hold? | **NO. It is closed by measurement.** Coal is **18.2 / 16.7 / 12.7 %** of the marginal set across all hours and **17.6 / 14.4 / 11.1 %** in the $40–150 band, against pjm-122's **44–79 %** on the pjm-121 bundle; `CC_REGULAR` + `CT_PEAKER` — the classes the measured corpus assigns that region — hold **68.4 / 72.6 / 75.5 %** of it, and `CT_PEAKER` alone is **60.7 / 65.9 / 67.1 %** of the tightest decile | **keeper root cause (6) is retired** |
+| **M3** what is the G-20b lead worth | the guard returns ~2.8–5.0 GW to the tightest quartile — at what price? | **$4–23/MWh in the top decile**, on the mean: removing 3 GW moves the clearing price **+$3.97 / +$8.02 / +$14.95** and 5 GW **+$7.45 / +$12.46 / +$23.36**, i.e. **28–59 %** of that decile's system-energy gap, as a lower bound. Strongly right-skewed (3 GW p50 only $1.41 / $2.32 / $3.59). The shelf within $1 of the dual is **2.10 → 1.54 → 1.01 GW** | the lane's **stakes** rise; its **verdict** does not |
 | **A1** an hour-key correction to pjm-137 | does the EPT/EST offset matter? | **not to pjm-137's levels; yes to any shape statistic.** pjm-137 keyed the measured components on Eastern PREVAILING time against a model and a CAMPD record that are both Eastern STANDARD. Re-keyed on `datetime_beginning_utc` at UTC−5 its M3 headline moves by **$0.12–0.38/MWh** (total CT-hour deficit 17.586 → **17.968**, 26.559 → **26.439**, 54.389 → **54.059**) and the measured/model price correlation improves 0.704 → **0.745**, 0.732 → **0.764**, 0.772 → **0.823** | pjm-137 stands; its diurnal profile does not |
 
 ---
@@ -244,31 +246,116 @@ calibration gap**, and the owner closed the lane that would chase it on
 2026-07-11 ("do not re-open reserve-supply probes for PJM C3c",
 `DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §B.3).
 
-## §4 — M1: who owns the model's price, and what 3–5 GW of capacity is worth
+## §4 — M1: **keeper root cause (6) is closed** — coal no longer owns the $40–150 band — and the G-20b lead now has a price
 
-**STATUS: queued, not yet run — this section is appended when it completes, and
-nothing above depends on it.** `_pjm138_marginal_ownership.py` needs a fleet
-rebuild, hence the whole `data/clean` contract (`scripts/regenerate_clean.py`,
-~31 datatypes, which this container ships empty); the §1–§3 measurements need
-only committed inputs and were run first for that reason.
+Run on the current keeper's exact fleet, reconstructed by replaying its
+`meta.json` through `replay_keeper.build_kwargs` into `solve_and_persist` with
+`run_year` forced to `fleet_only=True`. No LP. 2,745 internal generators.
 
-What it will answer, and why neither answer changes §6:
+### §4.1 — the ownership census
 
-* **the ownership census** re-runs pjm-122's charge (fitted coal rungs owning
-  the $40–150 region the measured DataMiner2 corpus assigns to the CC top belt
-  and `CT_FAST`) on the CURRENT keeper. Whatever it finds, the lever family that
-  would act on it is matrix `R` — pjm-123 refuted the three-leg composite at the
-  no-LP pre-check and generalized the refutation to the measured surface itself
-  (it prices every segment *cheapest* in the tightest net-load bin, so handing a
-  model class its measured level compresses dispersion rather than widening it),
-  and pjm-126/127/132 closed the conditioning and within-season variants.
-* **the withdrawal price response** — `mc(Q+Δ) − mc(Q)` off each tight hour's own
-  sorted offer stack — puts a **price** on the ~2.8–5.0 GW that
-  `FINDING-guard-falseneg-audit-2026-07-27` §3 measured the merit-order guard
-  returning to PJM's tightest net-load quartile. §7 of that audit declined to
-  write a fix precisely because no instrument sized the price consequence; this
-  supplies one (as a lower bound, per the probe's stated bounds). It is a
-  *sizing* of a lane §3.3 closes on other grounds, not a candidate mechanism.
+In an LP the marginal set is not a judgement call: units strictly cheaper than
+the dual sit at their upper bound, dearer ones are off, and the units offering
+*at* the dual are the price setters. Reported two ways, because pjm-122's charge
+is a **count** statistic and quoting an MW share against it would compare two
+different measurements:
+
+**Count share of the marginal set (pjm-122's construction — each hour split
+equally across the units at its dual, then hours weighted), %:**
+
+| scope | | CC_REGULAR | CT_PEAKER | COAL | ST_GAS |
+|---|---|---|---|---|---|
+| all hours | 2023 / 24 / 25 | 34.2 / 31.3 / 29.7 | 31.8 / 37.0 / 42.1 | **18.2 / 16.7 / 12.7** | 2.3 / 2.1 / 2.8 |
+| band $40–150 | | 36.1 / 12.7 / 24.8 | 32.3 / 59.9 / 50.7 | **17.6 / 14.4 / 11.1** | 2.0 / 4.4 / 2.9 |
+| net-load decile 10 | | 15.4 / 11.0 / 11.6 | **60.7 / 65.9 / 67.1** | **14.9 / 13.9 / 8.2** | 4.7 / 5.0 / 3.8 |
+| Dominion CT hours | | 22.5 / 16.4 / 16.1 | 48.0 / 59.0 / 61.0 | 15.7 / 13.3 / 9.5 | 3.0 / 3.7 / 3.8 |
+
+**MW share of the capacity at the dual, %** (the capacity-weighted view of the
+same set):
+
+| scope | | CC_REGULAR | CT_PEAKER | COAL | ST_GAS |
+|---|---|---|---|---|---|
+| all hours | 2023 / 24 / 25 | 50.8 / 48.2 / 43.8 | 20.4 / 23.1 / 25.7 | 14.4 / 14.1 / 13.0 | 4.8 / 4.3 / 8.0 |
+| band $40–150 | | 57.9 / 22.1 / 40.0 | 16.0 / 36.5 / 28.4 | 15.5 / 20.0 / 13.2 | 3.3 / 16.2 / 9.8 |
+| net-load decile 10 | | 26.6 / 19.4 / 25.2 | 35.5 / 38.8 / 41.6 | 15.3 / 20.0 / 13.4 | 20.4 / 19.4 / 15.9 |
+
+**pjm-122's charge does not reproduce on the current keeper.** That finding
+measured `COAL` setting the price in **44–79 %** of hours across the
+actual-price strata on the `pjm-121` bundle, with `CC_REGULAR` marginal in
+**0–1 %** despite 33–45 GW dispatched. Here coal is **12.7–18.2 %** of the
+marginal set across all hours and **11.1–17.6 %** in the $40–150 band, while
+`CC_REGULAR` + `CT_PEAKER` — the classes the measured DataMiner2 corpus assigns
+that region (pjm-122 §3: CC top belt $49–83, `CT_FAST` $96–174) — hold
+**68.4 / 72.6 / 75.5 %** of it. In the tightest net-load decile `CT_PEAKER`
+alone is **60.7 / 65.9 / 67.1 %**.
+
+Two caveats, both stated rather than buried: the strata differ (pjm-122 binned
+on the *actual* RT price, this on the model's own load-weighted dual), and
+pjm-122 additionally required units to be strictly interior to their bounds,
+which needs per-unit dispatch this no-LP reconstruction does not have. Neither
+can account for a 44–79 % → 12–18 % move, and the all-hours comparison is
+insensitive to the binning. The plausible cause is the intervening keeper line
+itself — the `CC_LIKE` mid-curve belt (pjm-121), the net-position cut
+(pjm-135), the zonal loss surface (pjm-136) and the measured CT heat rates
+(pjm-137) — which between them re-priced the CC and CT stacks that own this
+region.
+
+**Keeper note root cause (6) — "fitted coal rungs own the $40–150 region the
+measured corpus assigns to the CC top belt and CT_FAST" — is therefore CLOSED
+by measurement.** It is carried in `frontend/data/backcast/keepers/PJM.json` and
+should be retired there; editing a keeper note is a promotion-lane act, so this
+session reports it rather than performing it.
+
+### §4.2 — the G-20b sizing that has never been done
+
+`FINDING-guard-falseneg-audit-2026-07-27` §3 measured the merit-order guard
+returning **~2.8–5.0 GW** of capacity to PJM's tightest net-load quartile, and
+§7 declined to write a fix because no instrument sized the price consequence.
+It is sizeable with no solve: removing ΔMW of inframarginal capacity moves the
+clearing point ΔMW up the same offer stack, so the response is `mc(Q+Δ) − mc(Q)`
+read off each hour's own sorted offer curve.
+
+**Top net-load decile (876 h/yr), $/MWh, mean / p50 / p90:**
+
+| Δ | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| 1 GW | 1.15 / 0.48 / 1.44 | 3.10 / 0.77 / 3.59 | 5.19 / 1.22 / 5.60 |
+| **3 GW** | **3.97** / 1.41 / 4.36 | **8.02** / 2.32 / 15.38 | **14.95** / 3.59 / 45.53 |
+| **5 GW** | **7.45** / 2.41 / 8.21 | **12.46** / 4.06 / 39.77 | **23.36** / 7.42 / 65.09 |
+| 8 GW | 12.80 / 4.28 / 17.46 | 21.14 / 7.07 / 60.91 | 40.05 / 15.41 / 91.23 |
+
+Against §2.1's top-decile system-energy gap of **+$14.32 / +$21.59 / +$39.92**,
+the guard's own 2.8–5.0 GW is worth **28–52 % / 37–58 % / 37–59 %** of it on the
+mean — and this is a **lower** bound (the P0 base-cost stack, without the
+startup markup P1 adds at the top). **The lead is price-material.** It is also
+strongly right-skewed — the p50 response to 3 GW is only $1.41 / $2.32 / $3.59 —
+so it is a minority of very steep hours doing the work, which is the same
+population the measured tail lives in.
+
+The supporting stack geometry, decile 10, GW of available capacity offered
+within a given distance above the dual:
+
+| | available | below dual | +$1 | +$5 | +$10 | +$25 | +$50 |
+|---|---|---|---|---|---|---|---|
+| 2023 | 159.5 | 120.5 | 2.10 | 8.59 | 13.27 | 20.51 | 26.08 |
+| 2024 | 160.4 | 124.7 | 1.54 | 6.24 | 10.01 | 16.05 | 20.92 |
+| 2025 | 163.3 | 128.9 | **1.01** | **4.06** | 6.74 | 12.39 | 17.09 |
+
+The shelf immediately above the clearing price is **thin and thinning** — 1.0 GW
+within a dollar in 2025, against 2.1 GW in 2023 — which is why the same
+withdrawal buys three times as much price in 2025 as in 2023.
+
+**What this does and does not license.** It sizes the lane; it does not
+resurrect it. The guard audit's own population tests refuted the strong form of
+the false-negative hypothesis in every anchored ISO (D2 clean 3/3 for PJM — the
+dropped windows track the published *layup* series, not the mechanical one), and
+its D3 exceedance is mostly a window-**length** composition effect (§4 of that
+document: controlled for length, PJM's dropped set is *weakly tight-avoiding*).
+What §4.2 changes is the **stakes**, not the verdict: if a sub-population of
+genuinely-broken-while-uneconomic windows is being erased, it is worth
+$4–23/MWh in the top decile, which is why the audit's §7.2 recommendation — a
+within-window tight-hour treatment memo, owner sign-off, its own charter, LOYO
+within 2023–2025 — is the correct next step and is **not** taken here.
 
 ## §5 — A1: a measured-side hour-key correction to pjm-137, and its size
 
@@ -318,9 +405,18 @@ handoff warns about, where two 01:00 intervals carry a single EPT label.
   stack). The lane was owner-closed 2026-07-11 and the residual is the LP-vs-MIP
   representation boundary, which the no-MIP mandate makes a **disclosure**, not
   a defect to fix.
-- **Do not size the G-20b guard lead from population statistics alone.** §4
-  gives it a price, which is what
-  `FINDING-guard-falseneg-audit-2026-07-27` §7 said was missing.
+- **Do not re-run pjm-122's marginal-ownership charge as a live diagnosis.** §4.1
+  closes it on the current keeper: coal holds **12–18 %** of the marginal set
+  where pjm-122 measured 44–79 %, and `CC_REGULAR` + `CT_PEAKER` hold 68–76 % of
+  the $40–150 band. **Keeper root cause (6) should be retired from
+  `keepers/PJM.json`** (a promotion-lane edit this session does not make).
+- **Do not size the G-20b guard lead from population statistics alone**, and do
+  not read §4.2's price as licence to arm anything. It supplies what
+  `FINDING-guard-falseneg-audit-2026-07-27` §7 said was missing — a price
+  ($4–23/MWh in the top decile) — while that document's own D2 population test
+  is clean 3/3 for PJM and its D3 exceedance is mostly a window-length effect.
+  The correct next step remains its §7.2: a within-window tight-hour treatment
+  memo with owner sign-off and its own charter.
 - **Do not read the CT-hour price deficit as an offer-curve error.** Of
   $17.97 / $26.44 / $54.06, only **8 / 23 / 22 %** survives after the two closed
   lanes are credited. An offer-side mechanism that closed *all* of the residual

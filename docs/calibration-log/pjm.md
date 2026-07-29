@@ -1795,6 +1795,33 @@ charter's own discriminator was diffuse (offer-stack level) vs concentrated
   own optimality conditions make this additive, not analogical: a unit interior
   in both products satisfies `λ = mc + μ`.
 
+- **M1 — and keeper root cause (6) is CLOSED by measurement.** On the current
+  keeper's own fleet (rebuilt no-LP through `replay_keeper.build_kwargs` →
+  `solve_and_persist` with `run_year` forced to `fleet_only=True`), `COAL` is
+  **18.2 / 16.7 / 12.7 %** of the marginal set across all hours and
+  **17.6 / 14.4 / 11.1 %** in the $40–150 band — against pjm-122's
+  **44–79 %** on the `pjm-121` bundle. `CC_REGULAR` + `CT_PEAKER`, the classes
+  the measured DataMiner2 corpus assigns that region, hold
+  **68.4 / 72.6 / 75.5 %** of it, and `CT_PEAKER` alone is
+  **60.7 / 65.9 / 67.1 %** of the tightest net-load decile. The intervening
+  keeper line (the CC mid-curve belt, the net-position cut, the loss surface,
+  the measured CT heat rates) is the plausible cause. **Root cause (6) should be
+  retired from `keepers/PJM.json`** — a promotion-lane edit this session reports
+  rather than performs.
+- **M3 — the G-20b guard lead now has a PRICE, which is what its own audit said
+  was missing.** Removing capacity from the tightest decile's own offer stack
+  (`mc(Q+Δ) − mc(Q)`, no solve) moves the clearing price **+$3.97 / +$8.02 /
+  +$14.95** at 3 GW and **+$7.45 / +$12.46 / +$23.36** at 5 GW on the mean —
+  **28–59 %** of that decile's system-energy gap, and a LOWER bound (P0
+  base-cost stack, no startup markup). Strongly right-skewed (3 GW p50 only
+  $1.41 / $2.32 / $3.59). The shelf within $1 of the dual thins
+  **2.10 → 1.54 → 1.01 GW**. This raises the lane's **stakes**, not its
+  **verdict**: `FINDING-guard-falseneg-audit-2026-07-27`'s D2 population test is
+  clean 3/3 for PJM and its D3 exceedance is mostly a window-LENGTH effect, so
+  its §7.2 route (a within-window tight-hour treatment memo, owner sign-off, its
+  own charter, LOYO within 2023–2025) remains the correct next step and is not
+  taken here.
+
 **VERDICT: NOT A MISSING MECHANISM.** The requirement is PJM's own measured
 Primary series (`load_pjm_measured_reserve_requirement`, RTO + the nested
 Mid-Atlantic/Dominion subzone), validated here against PJM's published
