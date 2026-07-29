@@ -2034,3 +2034,90 @@ committed artifacts only).
   touch (2018–2022 receipts are authorized on-disk intake, read only as
   inputs to a no-LP statistical test).
 * Next number: **miso-104.**
+
+## 2026-07-29 — miso-104: the coal minimum-take TONNAGE data ask is OPENED — an ex-ante contractual series exists as a FERC Form 580 field and as public Kentucky contracts, but NOTHING carries it at plant grain across the MISO target set for 2023–2025, so no candidate was testable; keeper UNCHANGED
+
+**Keeper UNCHANGED: `2026-07-28-miso-101b-tempgrain`.** No solve, no run, no
+bundle, no dashboard registration, no intake — a sourcing session. Deliverable:
+the standing ask
+`docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md` (the second MISO
+data ask, beside outage grain). Reproduction of the coverage ledger:
+`scripts/probes/miso104_contract_source_coverage.py` (no LP, no network).
+
+* **Charter executed as written** (miso-103 §4): evaluate availability,
+  plant-grain mappability and 2020–2025 vintage coverage for (a) FERC Form 580,
+  (b) state fuel-adjustment-clause filings, (c) IRP fuel-budget exhibits — and
+  run the miso-103 pin-strength battery on **any** series found *before*
+  proposing a mechanism charter. **No series reached the threshold of being
+  testable, so the battery was not run — not skipped: there is nothing to run
+  it on.** That is the finding.
+* **Target set quantified:** 39 plants, **26 owners, 12 states**, all EIA-860
+  regulated; **94.0 / 80.7 / 89.5 Mt** in 2023/2024/2025. Top five owners
+  (Union Electric, Rainbow Energy Center, MidAmerican, DTE Electric, Duke
+  Energy Indiana) = 39/44/44 % of tonnage; the tail runs to municipals and
+  co-ops under 1 Mt.
+* **(a) FERC Form 580 — the RIGHT FIELD, at the WRONG GRAIN.** Q6a collects a
+  genuinely ex-ante **"Fuel quantity — Coal (×10³ tons)" per contract**, with
+  contract signing and expiration dates and an evergreen flag; Q6b links each
+  delivery to a named **Destination Plant** and even reports "Coal (×10³ tons)
+  not delivered by end of contract year". Four measured blockers: **(1) grain**
+  — the quantity is contract-grain and the plant only appears on delivery rows,
+  so pushing it down needs delivered-ton weights, i.e. miso-103's refuted answer
+  key; only 1:1 contract↔plant cases are admissible and that share is
+  **unmeasured**; **(2) coverage** — Q6 is answered only by holders of a
+  *wholesale* 18 CFR 35.14 FAC, **24 respondents nationally across all fuels and
+  regions** (ICR IC25-1-000, 2024-12-03; 29 in the 2020 collection), while the
+  MISO set recovers fuel through *state retail* clauses; **(3) scope** —
+  contracts >1 year only; **(4) vintage** — biennial, each form covering the two
+  prior CYs, so the latest filed (2024) covers CY2022–**2023** and CY2024–2025
+  arrives with the 2026 form **due 2026-10-30**. Today it spans **one** of three
+  training years (rule 16 `[R-ALLYEARS]`). No bulk/API access (eLibrary is a
+  Cloudflare-gated SPA; `/eLibraryAPI` probes 404). Cycle confirmed from the
+  waiver notices: **DTE Electric** filed for the 2024 form on 2024-10-31
+  (90 FR 7691), **PG&E** for the 2026 form on 2026-05-21 (91 FR 32025).
+* **(b) State filings — Kentucky is the exemplar and covers 1 of 39 plants.**
+  807 KAR 5:056 makes each fossil fuel purchase contract a public filing; the
+  Alliance Coal / LG&E–KU agreement **J24007** (executed 2024-01-19) publishes,
+  un-redacted, a **Base Quantity table by delivery year 2024–2028** plus
+  quarterly nomination minimums, make-up tons and force majeure — exactly the
+  datum, fixed years before delivery and with stated conditions under which it
+  moves. But the repository covers six Kentucky utilities of which only **Big
+  Rivers Electric** is MISO: **D B Wilson = 1.5 / 1.1 / 1.1 %** of target
+  tonnage, no cross-section. The large MISO states file it under seal —
+  Indiana's public FAC exhibit §VI "Coal Contracts and Inventory" is purely
+  qualitative with the specifics in confidential attachments (Cause 38702
+  FAC-91, 2023-09-05). **Michigan PSCR** (MCL 460.6j, genuinely ex-ante;
+  DTE+Consumers = 12.8 % of 2025 tonnage) is the one remaining unchecked lead.
+* **(c) IRP fuel-budget exhibits — REJECTED ON KIND, do not re-attempt.** IRPs
+  publish *modelled* burn: another model's forecast of the outcome, which is
+  rule 13's forbidden half in a worse form than receipts (not even a
+  measurement). Closed on principle, not availability.
+* **Also ruled out permanently:** EIA-923 Schedule 2 purchase-type / expiration
+  -date subsetting (dates are terms, the quantity on the row is a delivery);
+  SEC 10-K purchase obligations (company grain, **dollars**); coal-producer
+  "committed and priced tons" (producer grain, no plant key); FERC Form 1 p.402
+  (burn, ex post); STB waybill (ex post, no plant id in the public file).
+* **The ask is written to be decidable, not aspirational:** a coverage bar
+  (**≥15 of 39 plants AND ≥60 % of tonnage in EVERY training year** — below
+  that the battery yields no R² and the constraint governs a corner), and the
+  pin-strength battery made **binding** with thresholds — level-R² **≥0.80
+  FAILS**, no year may put the aggregate floor above actual burn (miso-103's
+  2024 was 1.136×), and the **delta test is the one that must PASS**: an
+  admissible contractual series shows the **inverse** profile of the receipts
+  construction (lower level-R², higher delta-R² than 0.87–0.94 / 0.172). A
+  symmetry clause records that a clearing source showing minimums that do **not**
+  bind has *refuted* the minimum-take hypothesis — reportable, not discardable.
+* **Bounded next experiment (ask §8):** pull the 2024 Form 580 filings for the
+  26 target owners from docket IN79-6 and count (i) filers, (ii) Q6 answerers,
+  (iii) 1:1 contract↔plant coal contracts and their share of 2023 target
+  tonnage. If (iii) clears, the lane is **timing-blocked** — it unblocks when
+  the 2026 form lands CY2024–25 — rather than data-blocked.
+* **Rule 22 honoured: nothing was intaken.** No new-source authorization was
+  requested or granted; nothing written under `data/raw/`; every document read
+  in scratch and re-fetchable from the ask's §7 citation table. Rule 26 duty
+  (b): `coal_takeorpay_committed` MISO cell updated in-session with this
+  outcome. Rule 15: no run produced, nothing to register.
+* **C7 COAL_PRB still fails 3/3 with no open admissible lever**; caveat budget
+  stays 3/3 saturated and C7 is not ledgered. The lane's continuation is a data
+  ask, not a solve.
+* Next number: **miso-105.**
