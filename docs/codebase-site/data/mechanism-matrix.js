@@ -74,6 +74,17 @@
  * fork is SETTLED — none of the three; the block is offered economically in RT.
  * NO cell verdict moves (no mechanism was armed); the coal_econ_bound and
  * coal_offer_level_rebasis notes are updated where they stated the question as open.
+ * PJM reserve cells re-checked 2026-07-29 by pjm-138 (no-LP, no solve, no run):
+ * PJM's OWN published day-ahead reserve clearing price explains 82/52/57 % of the
+ * system-energy half of the Dominion CT-hour price deficit, and the model prices
+ * reserve in 0/2/28 hours of 8,760 with the requirement, the published two-step
+ * ORDC curve and the in-LP co-optimization ALL already correct and armed. One cell
+ * moves: dynamic_reserve_requirements PJM . -> K (the mechanism is armed inside
+ * _pjm_design rather than behind a flag, and is now validated against PJM's own
+ * published requirement). The ordc_scarcity_overlay / energy_reserve_coopt /
+ * reserve_deliverability_scoping PJM verdicts are CONFIRMED, not moved, and their
+ * notes carry the new measured evidence. PJM's gates line is re-stamped: the ISO
+ * has had no open gate since pjm-137.
  */
 window.MECH_MATRIX = {
   version: 1,
@@ -90,7 +101,7 @@ window.MECH_MATRIX = {
   gates: {
     ERCOT: "C3a/C3b 2023, C3c all years, C7 COAL_LIGNITE 2023 (v2.8)",
     CAISO: "C5a all years, C3a 2025, C3c 2023-24",
-    PJM: "C3c 2024-25 (SOLE blocker since pjm-135; C1 and C3a closed 2026-07-28)",
+    PJM: "NONE — CALIBRATED since pjm-137, every criterion passing (C1 16/16 free 12/12). Thinnest margin: C3c passes by ~1 h (2024) / ~2.5 h (2025) against a 0.5x floor, closed at pjm-136 and unchanged since. Remaining defect is the Dominion CT leg, of which pjm-137 closed 52-55 % (intra-zonal congestion) and pjm-138 attributes a further 25-37 % to the reserve opportunity cost the no-MIP LP cannot price — 8/23/22 % is reachable",
     MISO: "C3a/C3b/C3c ledger-saturated (3/3), C7 COAL_PRB all years",
     NYISO: "C3c sole blocker, all years (C1 closed 2026-07-29 by owner promotion of nyiso-96, CT_PEAKER trade accepted)",
     NEISO: "C3c ledgered caveat (frontier declared; only calibration-complete ISO)"
@@ -151,7 +162,7 @@ window.MECH_MATRIX = {
       def: "scarcity_pricing_enabled scenarios.py:1288 + scarcity_price_overlay / caiso_scarcity_pricing", mode: "BF",
       cells: "RKGG.K",
       note: "ERCOT: ORDC-only swap REJECTED (adds spurious tail; ERCOT-97 lane 3) — superseded by the in-LP co-opt + measured RTORDPA overlay. PJM: retired to diagnostic, inadmissible stack on the live co-opt (rule 19). MISO: refuted — scarcity is STARVED not missing (31.9 GW idle headroom; miso-82). NYISO n/a (RCPF family owns it). CAISO: cell is K for the FORECAST lane only — the overlay is UNREACHABLE in the backcast (caiso-137b). caiso_scarcity_overlay has one call site, runner.py:2085 (forecast); the calibration path never imports market_sim.runner and its only price writer (_system_frame) adds ERCOT terms alone, so a CAISO keeper's price is the ENERGY-ONLY LP dual, the realised adder is exactly $0.00 in every hour, and caiso_scarcity_pricing=True in a backcast run_config.json is a STORED NO-OP (rule 24 provenance trap — do NOT solve a backcast A/B on it, it is byte-identical by construction). Ask A2 (re-specify its reserve measure to plant-level ONLINE) CLOSED as a no-defect: the measure ALREADY is plant-level online (_online_plant_mask), import_headroom is off so it enters no tier, and storage + curtailed VRE are already in r_online (caiso-137 §1, re-verified caiso-137b §1). caiso-137's flat-nameplate 'defect' and its D2 E1/E2 table are WITHDRAWN — runner.py:997-998 already replaces storage.power_cap with the COD-ramped 2-D array; the 1-D array belonged to run_calibration.py's fleet_only helper. Net: CAISO has NO scarcity-pricing mechanism in the scored lane, which is the honest reason its C3c is 0/0/0.",
-      ev: { E: "ERCOT-97", C: "caiso-137b (FINDING-caiso137b-overlay-reachability-2026-07-29 §2/§3/§4); caiso-137 §1", P: "DIAGNOSIS-pjm-dof-scarcity-tail §B.3", M: "miso-scarcity-tail-external-validation §1" } },
+      ev: { E: "ERCOT-97", C: "caiso-137b (FINDING-caiso137b-overlay-reachability-2026-07-29 §2/§3/§4); caiso-137 §1", P: "DIAGNOSIS-pjm-dof-scarcity-tail §B.3; pjm-138 (FINDING-pjm138-system-energy-is-reserve-opportunity-cost-2026-07-29 §3.3/§6) CONFIRMS G — the in-LP co-opt already owns the phenomenon with PJM's published two-step ORDC curve loaded, so an adder would still be a rule-19 stack", M: "miso-scarcity-tail-external-validation §1" } },
     { id: "ercot_rtordpa_overlay", cat: "price", name: "Measured RTORDPA reliability-deployment adder",
       def: "run_calibration_full.py:8240 (CLI)", mode: "B",
       cells: "K.....",
@@ -171,8 +182,8 @@ window.MECH_MATRIX = {
     { id: "energy_reserve_coopt", cat: "reserves", name: "In-LP energy + reserve co-optimization (master)",
       def: "scenarios.py:3565; per-ISO designs reserves/spec.py:683", mode: "BF",
       cells: "KUKKKK",
-      note: "CAISO is the ONLY keeper without it — top of the CAISO lever queue (its pergen builder omits storage/hydro/RegUpDown, so arming it un-completed over-states scarcity ex ante). Cross-ISO pattern: duals dormant in PJM (max $211, 22 h), MISO (0/6/2 h), NEISO ($0 all 26,280 h) — shared LP-vs-MIP root cause; ERCOT's is the only one that bites, and there it over-fires when enveloped.",
-      ev: { E: "ercot81", P: "pjm-120 §6.1", M: "miso-82", Q: "neiso-56", C: "multi-iso/caiso-reserve-coopt.md gaps" } },
+      note: "CAISO is the ONLY keeper without it — top of the CAISO lever queue (its pergen builder omits storage/hydro/RegUpDown, so arming it un-completed over-states scarcity ex ante). Cross-ISO pattern: duals dormant in PJM (max $211, 22 h), MISO (0/6/2 h), NEISO ($0 all 26,280 h) — shared LP-vs-MIP root cause; ERCOT's is the only one that bites, and there it over-fires when enveloped. PJM DORMANCY NOW SIZED AGAINST PJM'S OWN MARKET (pjm-138, 2026-07-29, no-LP): PJM's published DA synchronized-reserve MCP is above zero in 84.2/96.7/47.6 % of ALL hours (Primary 45.1/64.0/30.8 %) at a cover ratio of 1.04-1.11, while the model's reserve dual is above zero in 0/2/28 hours of 8,760 — and it correlates with the model's system-energy price gap at r = +0.788/+0.604/+0.657, with the top net-load decile carrying 26.2/26.5/35.9 % of the year's reserve price. In the Dominion CT-running hours the measured MCP is $6.71/$6.65/$14.18 against a system-energy gap of $8.17/$12.74/$24.78 — 82/52/57 % of it. The dormancy is therefore NOT small change: it is most of the reachable half of the pjm-133..138 chartered defect. It is also NOT a missing mechanism — requirement, published two-step ORDC curve and the per-gen joint-headroom row (whose dual IS the forgone energy margin by construction) are all armed — so the LP-vs-MIP attribution above is confirmed rather than softened, and under the no-MIP mandate it is a DISCLOSURE, not an open lever.",
+      ev: { E: "ercot81", P: "pjm-120 §6.1; pjm-138 (FINDING-pjm138-system-energy-is-reserve-opportunity-cost-2026-07-29 §3)", M: "miso-82", Q: "neiso-56", C: "multi-iso/caiso-reserve-coopt.md gaps" } },
     { id: "ercot_multiproduct_as", cat: "reserves", name: "Multi-product AS stack (RegUp/RRS/ECRS/NonSpin ASDCs)",
       def: "scenarios.py:4000 + supply caps/credits family", mode: "BF",
       cells: "K.....",
@@ -189,10 +200,10 @@ window.MECH_MATRIX = {
       note: "PJM (arch B, on measured ramp) and MISO armed. CAISO built, incomplete, untested in keeper. SYNC product split owner-closed on merit for PJM ($0-10 vs $75-200 need).",
       ev: { P: "pjm-120", M: "miso-56/71" } },
     { id: "dynamic_reserve_requirements", cat: "reserves", name: "Measured as-enforced hourly reserve requirements",
-      def: "nyiso :1429 / neiso :1554 / miso_measured_reserve_requirements :3691", mode: "B",
-      cells: "UU.KKR",
-      note: "NYISO keeper (closed C3b-2023). MISO keeper (static South estimate had fabricated ~1.8 GW withholding). NEISO tested — co-opt engages only 1 of 12 2025 tail hours (kept built, verdict short). PJM untested on the requirement side (supply-side tightness separately adjudicated); ERCOT/CAISO use their own measured constructions.",
-      ev: { N: "nyiso-70", M: "miso-71", Q: "neiso-57" } },
+      def: "nyiso :1429 / neiso :1554 / miso_measured_reserve_requirements :3691 / pjm NOT flag-gated — reserves/spec.py::_pjm_design reads results/scarcity.py::load_pjm_measured_reserve_requirement (+ _mad_, _sync_) unconditionally", mode: "B",
+      cells: "UUKKKR",
+      note: "NYISO keeper (closed C3b-2023). MISO keeper (static South estimate had fabricated ~1.8 GW withholding). NEISO tested — co-opt engages only 1 of 12 2025 tail hours (kept built, verdict short). PJM . -> K at pjm-138 (2026-07-29, no-LP): the cell read n/a because PJM has no FLAG for this, but the mechanism is armed unconditionally inside _pjm_design, which uses PJM's own measured Primary requirement (pr_req_mw, RT reserve market results via build_pjm_as_withholding.py) for BOTH the RTO Reserve Zone and the nested Mid-Atlantic/Dominion subzone. pjm-138 VALIDATED it against PJM's published DAY-AHEAD requirement (da_reserve_market_results): annual means 3,094/3,422/3,348 MW vs 3,213/3,504/3,337, agreeing to 2-4 % (mean hourly |diff| 157/128/72 MW; not an hour-key offset — lag 0 is the best of three tested). The requirement side is therefore adjudicated INERT AS A LEVER, on PJM's own numbers: PJM's Primary cover ratio (cleared/required) is 1.00-1.01 at the median, so there is no requirement-side headroom to find, and a +-130 MW discrepancy cannot price anything when the model's reserve SUPPLY is 5-10x the requirement (pjm-124/125). Lever-queue item 9 is closed by that measurement. ERCOT/CAISO use their own measured constructions.",
+      ev: { N: "nyiso-70", M: "miso-71", Q: "neiso-57", P: "pjm-138 (FINDING-pjm138-system-energy-is-reserve-opportunity-cost-2026-07-29 §3.3)" } },
     { id: "measured_ramp_capability", cat: "reserves", name: "Measured per-plant ramp capability (EIA-860 10M)",
       def: "scenarios.py:4435", mode: "BF",
       cells: "UUKUUU",
@@ -200,8 +211,8 @@ window.MECH_MATRIX = {
     { id: "reserve_deliverability_scoping", cat: "reserves", name: "Reserve deliverability / online-quality scoping",
       def: "pjm ramp10 scoping; caiso_reserve_online_scoped :3875; caiso_locational_as_families :3908", mode: "BF",
       cells: ".IIR..",
-      note: "PJM ramp10 scoping CLOSED INERT no-solve (bound stays 9.7-10.5x requirement); commitment-scoped framing PARTIAL but insufficient (5.0-5.6x). CAISO online-scoping measured inert (12.9 GW vs 2.2 GW req); locational AS families ex-ante inert (~15x oversupply). MISO zone-aggregate co-opt scoping refuted empirically.",
-      ev: { P: "pjm-124/125", C: "caiso-91; FINDING-caiso71" } },
+      note: "PJM ramp10 scoping CLOSED INERT no-solve (bound stays 9.7-10.5x requirement); commitment-scoped framing PARTIAL but insufficient (5.0-5.6x). CAISO online-scoping measured inert (12.9 GW vs 2.2 GW req); locational AS families ex-ante inert (~15x oversupply). MISO zone-aggregate co-opt scoping refuted empirically. PJM I CONFIRMED with the measured counterpart pjm-124/125 lacked (pjm-138, no-LP): PJM's own market clears Primary reserve at a cover ratio of 1.00-1.01 and Synchronized at 1.04-1.11, against the model's 5.0-10.5x AFTER the best scoping tested — so no further scoping brings the model's reserve supply into PJM's regime. What separates them is not a deliverability rule but the no-MIP boundary: a continuous commitment variable makes fractional online capacity free, so EVERY idle unit's headroom is synchronized-reserve-eligible in the LP and none of it is in PJM.",
+      ev: { P: "pjm-124/125; pjm-138 (FINDING-pjm138-system-energy-is-reserve-opportunity-cost-2026-07-29 §3.2/§3.3)", C: "caiso-91; FINDING-caiso71" } },
 
     /* ============ commit ============ */
     { id: "gas_commitment_bridge", cat: "commit", name: "Gas commitment bridge (min-gen from P0 run pattern)",
