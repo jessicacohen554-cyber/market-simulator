@@ -327,10 +327,18 @@ loss.
 
 ### 5.4 MISO — targets C7 COAL_PRB (non-ledgerable), C3b spread compression (instrument-blocked), C3a-2024
 
-1. **Coal minimum-take LP constraint** (the named miso-96 successor lane; NOT
-   built): contract-period tonnage constraint priced by its dual, replacing
-   the take-or-pay discount's cycling side-effect. Multi-session; the only
-   identified route to C7 COAL_PRB that doesn't break C1/C5a.
+1. **Coal minimum-take tonnage data ask**
+   (`miso-coal-contract-tonnage-data-ask-2026-07.md`) — **the LP constraint is
+   NOT the lever any more; the RHS is.** The constraint itself (contract-period
+   tonnage priced by its dual, the named miso-96 successor) stays the only
+   identified route to C7 COAL_PRB that doesn't break C1/C5a, but miso-103
+   adjudicated its only forward-regenerable RHS candidate — receipts-derived
+   tonnage in any window/lag/smoothing — inadmissible (log R² 0.87–0.94 vs
+   same-year burn), and miso-104's sourcing pass found **no** ex-ante
+   contractual series at plant grain across the 39-plant target set for
+   2023–2025. Do NOT charter the constraint until a source clears that ask's
+   §4; do NOT re-test any receipts variant. Bounded next step is the ask's §8
+   Form 580 count, not a solve.
 2. **Outage-grain data ask** (`miso-outage-grain-data-ask-2026-07.md`) — the
    C3b driver (~10 GW 2025 summer under-derate) is instrument-blocked; the
    lever is data intake at unit/fuel grain, not a model change.
