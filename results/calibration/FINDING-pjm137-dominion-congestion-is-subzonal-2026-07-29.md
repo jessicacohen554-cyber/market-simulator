@@ -109,13 +109,28 @@ set surfaces from the data rather than from a hand-drawn substation map:
 | **BRAMBLET-EVRGREEN 2172B** | 1.94 % | 0.56 % | **+1.38 pp** |
 | LENOX-NMESHOPP 115 KV (PPL, the ISO's single largest constraint) | 5.18 % | 14.81 % | −9.64 pp |
 
-**Pleasant View, Goose Creek, Ashburn, Brambleton and Evergreen are all
-substations in Loudoun County, Virginia** — "Data Center Alley", the load pocket
+**Every one of those substations is inside the DOM transmission zone — verified
+against PJM's own pnode registry, not inferred from the names.** Querying
+`/api/v1/pnode` (23,711 rows) for each returns `zone = DOM` and nothing else:
+
+| substation | PJM `zone` | | substation | PJM `zone` |
+|---|---|---|---|---|
+| PLEASNTV / PLEASANT VIEW | **DOM** | | BRAMBLET | **DOM** |
+| GOOSECRE | **DOM** | | EVRGREEN | **DOM** |
+| ASHBURN | **DOM** | | LOUDOUN | **DOM** |
+| MORRISVILLE | **DOM** | | MT STORM | **DOM** |
+
+These are the northern-Virginia data-centre pocket — the load concentration
 `constants.py:1376` already anchors at a ~0.55 near-2030 data-centre share for
-`PJM_Dominion`. **Every one of them has both ends inside the `PJM_Dominion`
+`PJM_Dominion`. **Both ends of every one of these constraints map to the same
 model zone.** In a single-node zone those constraints do not exist: the LP has
 one dual for the whole of Dominion, so a limit between two points inside it is
 not representable at any parameter value.
+
+For contrast, the non-Dominion hot-hour constraints resolve to other single
+zones too — `YORKANA` → METED (`PJM_Central_PA`), `NOTTINGH` → PECO
+(`PJM_EMAAC`), `CONASTON` → BGE (`PJM_SWMAAC`), `LENOX` → PENELEC/AECO. They
+are facility constraints inside zones, not the interfaces between them.
 
 Note also what *loses* share in the hot hours: `LENOX-NMESHOPP 115 KV`, the
 single largest constraint in the whole ISO (14.8 % of all rent), is a PPL-area
@@ -226,10 +241,16 @@ inter-zonal spread the model is chartered to reproduce.
    mechanism and this defect becomes reachable. Until then it is a fitted
    scalar and is refused.
 2. **The other half of the CT price deficit is system-energy-price formation**,
-   not congestion: measured DOM **MEC** in CT hours runs above the model's whole
-   Dominion dual. That is an ISO-wide marginal-unit question and connects to the
-   open root cause (6) in the keeper note (fitted coal rungs owning the
-   $40–150 region the measured corpus assigns to the CC top belt and CT_FAST).
+   not congestion. Netting the measured congestion component out of §3's
+   deficit leaves **+$3.82 / +$7.83 / +$18.13 /MWh** (37 / 48 / 47 % of it) that
+   a zonal model *could* in principle produce: the measured DOM **MEC** alone
+   runs at a p50 of $31.63 / $33.90 / **$49.32** in CT hours against the model's
+   whole Dominion dual at $31.57 / $30.67 / **$41.18**. That is an ISO-wide
+   marginal-unit question and connects to open root cause (6) in the keeper note
+   (fitted coal rungs owning the $40–150 region the measured corpus assigns to
+   the CC top belt and CT_FAST). **This, not congestion, is where a successor
+   should look** — and note it is only ~half the gap, so even closing it fully
+   would not close the CT leg.
 3. **`PJM_West_APS` and `PJM_Central_PA` carry intra-zone dispersion as large as
    Dominion's** ($18.58 and $12.38 in 2025). Whatever representation-boundary
    disclosure Dominion gets, those two need it as well — and EMAAC's, filed at
