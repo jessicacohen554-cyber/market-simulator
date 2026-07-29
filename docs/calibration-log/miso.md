@@ -1917,3 +1917,69 @@ Matrix `temp_dependent_derate` MISO **`U` → `K`** (duty (b)).
   1.62–1.67 %). ST_GAS/COAL/CC/CT_PEAKER untouched — no MISO identification,
   and pjm-95 makes the literature slopes non-transferable.
 * Next number: **miso-102.**
+
+## 2026-07-28 — miso-102: C7 COAL_PRB is OWNED by the regulated committed-band take-or-pay discount (A/B: 2/3 years FAIL→PASS), the arm is REJECTED as structurally incomplete, and my own pre-registered mechanism test P5 is FALSIFIED IN DIRECTION — removing the discount fixes the dispatch wave while making the PRICE wave WORSE
+
+**Keeper UNCHANGED: `2026-07-28-miso-101b-tempgrain`.** Runs
+`2026-07-28-miso-102a-control` (`miso102_control_A`) +
+`2026-07-29-miso-102b-sunkfixed` (`miso102_sunkfixed_B`), both 2023–2025 in one
+bundle (rule 16). Pre-registration committed BEFORE either solve (`5200d16`);
+evidence `results/calibration/FINDING-miso102-coalprb-c7-shape-2026-07-28.md`;
+reproduction `scripts/probes/miso102_c7_coalprb_diagnosis.py`.
+Matrix `coal_takeorpay_committed` MISO cell updated (duty b).
+
+* **Five alternatives refuted from committed artifacts, no solve.** NOT a floor
+  (D-2: MISO coal carries exactly one mechanism, `reliability_floor`, at
+  0.31/0.35/0.19 % of class energy); NOT a mix effect (D-1 pairs the same keys,
+  **0 dropped**, 31/31/30); NOT the benchmark basis; **NOT the miso-101 §5
+  cancellation** (off-peak coherence `std(Σ)/Σstd` 0.984/0.981/0.939 model vs
+  0.971/0.972/0.922 actual — both in phase, and phase coherence *matches*:
+  0.68/0.62/0.55 vs 0.67/0.62/0.53, only amplitude misses); and **SEPARABLE from
+  miso-89** — seasonal `cv_ratio` is worst in **winter/shoulder** (0.416/0.457/
+  0.488, 0.453/0.411/0.526, 0.374/**0.274**/0.384) in the h0–h14 window, where
+  miso-89's instrument is a summer HE16–18 under-derate.
+* **Which units.** 100 % of the byte-flat PRB plants are **regulated**, all three
+  years (9/8/10 plants, 46/44/50 % of class energy). Pooled 2023–25, all coal
+  ranks: ACTUAL within-day CV **regulated 0.197 vs merchant 0.134**; MODEL
+  **0.073 vs 0.351** — the model **inverts the measured flexibility ordering by
+  4.8×**, and within COAL_PRB the two groups are measured indistinguishable
+  (0.262 vs 0.231). The discount's scoping premise has no support in MISO conduct.
+* **The A/B proves the attribution.** `cv_ratio` **0.467→0.727** (2023),
+  **0.476→0.931** (2024) — both FAIL→PASS; 2025 **0.318→0.364**, still FAIL.
+  Coal volume −18.47/−27.22/−7.68 TWh.
+* **REJECTED, and pre-registered as a non-keeper before the solve.** C1 goes
+  PASS→FAIL (16/16 · free 12/12 → 11/16 · free 7/12); `grade_summary` fails 3→4.
+  The rejection is **structural, not gate-driven**: removing the discount deletes
+  the category error (an annual tonnage obligation priced as an hourly marginal
+  subsidy — rule 17, a discount with no window) **and** a real behaviour
+  (regulated self-commitment, SOM Table 7). Rule 1 forbids promoting a mechanism
+  that deletes real behaviour exactly as it forbids rejecting a correct one on
+  gates. Corroborating tell: COAL_BIT **overshoots** to 2.6–2.8× measured
+  off-peak variability — the arm overcorrects rather than restoring conduct.
+* **P5 FALSIFIED, IN DIRECTION — the most useful result here.** I pre-registered
+  that the arm must WIDEN the off-peak price wave. It **narrows** it every year
+  (ratio 0.460→0.377, 0.530→0.418, 0.331→0.311) and pushes the night price
+  further from the meter ($27.81→29.96 vs actual $19.42, etc.). The dispatch/price
+  amplitude co-movement is a **joint consequence of the discount**, not
+  price→dispatch causation. **Consequence: price formation (queue item 3, DA
+  virtual depth) is NOT the route to C7**, and the C7 fix makes the price wave
+  worse — they are separate misses and must not be pursued as one.
+* **Scorecard: 5 hit, 1 missed, 1 falsified, 1 unscoreable.** P1/P2/P6/P7/P8 hit
+  (P8: the control reproduces the keeper to **0.00000000 %** on every class in
+  every year, mean price bit-identical — a true single delta). P3 **missed on
+  magnitude** (2023 −18.47 TWh below the predicted 20–30 band; the miso-101b
+  keeper is materially less discount-sensitive than miso-96's miso-88 base).
+  P4 **unscoreable** — C5a is not in rubric v2.9's MISO criterion set, and my
+  direct CO2 recompute failed on a join dtype, so no number is reported.
+* **Lane space after this session.** CLOSED: floor / mix / basis / cancellation /
+  miso-89; offer-steepening (coal is already 0.9–2.8× the real fleet's
+  price-responsiveness); price formation as the C7 route; blunt removal. STILL
+  OPEN: the **minimum-take LP constraint**, whose blocker was **verified not
+  assumed** — EIA-923 publishes deliveries, not contract terms, so a same-year
+  receipts tonnage would pin annual coal energy to actuals (rule 13). A
+  lagged/multi-year-mean tonnage is the only forward-regenerable candidate and
+  needs its own charter plus a pin-strength test.
+* 2025's residual (0.364, model off-peak CV 0.027 vs measured 0.074) is the
+  already-adjudicated data-blocked outage-grain gap (FINDING-miso89 §7), not a
+  new phenomenon, and is not re-attacked with a second mechanism.
+* Next number: **miso-103.**
