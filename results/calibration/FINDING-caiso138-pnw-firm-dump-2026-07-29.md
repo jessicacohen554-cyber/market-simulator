@@ -172,9 +172,32 @@ deliverability envelope, inside `inject_caiso_firm_import_shape`
 
 ## §F — the A/B (arms solved AFTER the prereg was pushed)
 
-*A/B results are recorded here by the same session after both arms completed.*
+Arms: `caiso138_control_A` (keeper recipe, run id `2026-07-29-caiso138-control`)
+and `caiso138_envclip_B` (+ the flag, run id
+`2026-07-29-caiso138-envelope-clip`), both `--year 2023 2024 2025` in one
+invocation, arms sequential. **Control integrity:** arm A is **byte-identical**
+to the committed caiso-130 keeper on prices and dumps in all three years
+(max |Δ| = 0.0) — which also proves the flag-off code path byte-identical on
+the full solve path.
 
-TBD-AB-RESULTS
+**Every pre-registered gate passed:**
+
+| gate | prediction | result |
+|---|---|---|
+| P1 α-dump eliminated | PNW dump → β bound (0.000/0.009/0.014 TWh) | **EXACT**: 1.086/1.716/0.965 → 0.000/0.009/0.014 TWh; dump hours 2,774/4,084/2,769 → 0/5/8; DSW β unchanged |
+| P2 E1/E2 | +$0.00 / +$0.00 (±$0.02 degeneracy) | **+0.0000 all three years**; max CA per-zone-hour \|Δprice\| = 0.0000 — CA-side LP byte-identical |
+| P3 rubric | identical to control | **IDENTICAL** by construction (CA series byte-identical): NOT-YET, fail {C3a-2025, C3c} |
+| P4 node print (reported) | degenerate corner, no longer −26.001 | median **+40.79 / +37.46 / +41.83** in former dump hours vs measured MALIN same-hours +52.67/+41.22/+41.77 (was −26.00; 2025 within $0.06 of the measured print) |
+
+The degenerate corner resolved to the import-parity side, so the node-level
+pricing error the charter named (~$52/MWh) is closed to $1–12 (the residual is
+the G-26 static-price limitation and the remaining β hours). **Promotion:**
+owner grant in-session ("if structural integrity improves but gates regress
+that may still be a keeper" — here gates do not even regress, they are
+byte-identical); keeper shard advanced to `2026-07-29-caiso138-envelope-clip`.
+Rule-22 LOYO note: the mechanism carries no fitted parameter and its CA-side
+effect is exactly zero in every year — nothing to overfit; the criterion is
+satisfied degenerately.
 
 ## §G — DO-NOT-REDO (new, binding)
 
