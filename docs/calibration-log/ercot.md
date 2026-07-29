@@ -2594,3 +2594,60 @@ copy of `apply_coal_tranches` (`market_sim.runner`) instead of the live one in
 `scripts.run_calibration`, so that replay solved 2025 in full rather than
 aborting at the seam — training year, scratch output, deleted unregistered; the
 probe now patches the live copy and documents the trap.
+
+## 2026-07-29 — ERCOT-137: coal moves to the MEASURED NET-MARGIN offer form on the ACCURATE availability envelope (owner rulings R1–R3); one combined arm solved 2023–2025 and PROMOTED KEEPER on the rule-1 structural standard (`2026-07-29-ercot137-coal-margin-measured`); the pre-registered FIT gates FAIL and the falsifier routes the residual to the GAS side of the ranking
+
+**The build** (precommit pushed before any solve:
+`docs/PRECOMMIT-ercot137-coal-margin-offer-2026-07-29.md`):
+
+1. **Coal net-revenue margin form** — `coal_offer_net_revenue_margin` +
+   `coal_offer_margin_anchor` (1.7387 $/MMBtu) + `coal_offer_margin_level`
+   (15.8807 $/MWh), the gas form's coal analogue. The CAMPD `_mustrun` band
+   bids `HR × (fuel − anchor) + level` — full delivered-fuel tracking, the
+   above-fuel component fuel-invariant, identified from the COMMITTED
+   ercot135/ercot136 measured artifacts
+   (`scripts/data/derive_coal_offer_margin_anchor.py`, rules 13/23). Replaces
+   the ERCOT-136-refuted fitted $4.50 VOM-only bid (rule 19: the block keeps
+   its two floors; the sigmoids above are untouched; `coal_tranche_1_frac`
+   stays). Legacy `_t1` path inert (mirrors the gas mechanism's scope).
+2. **Measured coal availability ADOPTED** (`ercot_thermal_dam_availability_coal`
+   = ERCOT backcast default, ruling R2): impossible plant-hours
+   22,633/24,627/30,697 → **3,846/3,462/2,622 (−83/−86/−91 %)**.
+3. **Water-fill/forced-derate ceiling fix**: restore ceiling =
+   `pmax × BIN_FORCED_DERATE_BY_YEAR` at plant + both class grains; Martin
+   Lake **1.451 → 1.059** of its COP-declared max (destroyed unit no longer
+   resurrected); bit-identical where no forced-derate entry exists.
+
+**Basis gate PASSES** (the ercot132-leg-B failure mode did not recur): the
+resolved `_mustrun` cap-wtd p50 lands 16.00 (2024) / 14.54 (2025) vs measured
+16.63 / 15.00 — inside ±$1.00. The $4.50 band is gone (model share offered
+≤$4.50: 0.30 → ~0 vs measured 0.058–0.084). DOF: `coal_take_or_pay_tranches`
+4 → 3 residual scalars; anchor+level measured, `lineage_solves 0`.
+
+**The fit gates FAIL, and are recorded as the open root-cause lane** — the
+run is the keeper on the structural standard (owner sign-off in-session), not
+on fit: G1 loading-vs-price **3/21** (pinned keeper 20/21, availability-only
+arm 1/21), C1 coal **+6.2/+8.8/+8.6 TWh**, C3a **−35.2/−14.5/−12.1 %** (was
+−27.2/−8.0/−8.2), C3b 0.645/0.205, C4 2024 coal r 0.864 flips FAIL, C7
+COAL_LIGNITE 2023 FAIL persists (though D-1 coal profile r improves in every
+year: 0.710→0.775 / 0.878→0.958 / 0.924→0.959). C1 rubric 16/16 free 12/12,
+C2/C8 PASS; determination NOT-YET (C6 UNATTESTED).
+
+**The falsifier FIRED, as pre-registered:** with the min-load price
+measured-correct and the fleet un-pinned, the over-run is band-UNIFORM (every
+band 15-20 → ≥50 over by ~7–13 pp) — the residual defect is NOT the min-load
+price. It is the **dispatchable coal bands' ranking vs gas**
+(`FINDING-ercot117` §5.1): the committed/econ coal tranches (supply-sigmoid
+passthroughs 0.76/0.675 + marginal-HR-bounded econ ramp) still clear ahead of
+gas across the whole price distribution on the accurate envelope. That is the
+named successor lane; per the precommit it was NOT re-scoped mid-session.
+
+**Open owner ruling surfaced:** delete outright vs leave inert the retired
+`coal_tranche_1_fuel_passthrough` pricing path and the legacy non-CAMPD
+tranche path (rule 26 [R-DELETE]).
+
+Registered `2026-07-29-ercot137-coal-margin-measured` (top-15 prune dropped
+`2026-07-25-ercot112-coal-dam-availability`); keeper shard + status rebuilt,
+`audit_keepers --iso ERCOT` PASS; matrix row `coal_offer_net_revenue_margin`
+→ K with the refuted-fit nuance; `dam_availability_rebasis` ERCOT note
+updated (coal scope armed).
