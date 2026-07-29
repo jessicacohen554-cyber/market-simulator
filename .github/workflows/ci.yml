@@ -78,6 +78,26 @@ jobs:
       - name: check_mechanism_matrix
         run: python3 scripts/check_mechanism_matrix.py --base ${{ github.event.pull_request.base.sha }}
 
+  cache-key-guard:
+    name: Cache-key registration guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch PR base
+        run: git fetch --no-tags --depth=1 origin ${{ github.event.pull_request.base.sha }}
+      # A new ScenarioConfig field that is not listed in
+      # _CACHE_KEY_OPTIONAL_FIELDS moves the DEFAULT cache key and orphans every
+      # on-disk cache, even when the field ships default-off. That has happened
+      # FIVE times (coal_committed_takeorpay_sunk_fixed, measured_ct_heat_rates,
+      # pjm_apsouth_interface_cut, pjm_external_net_position_cut / temp_derate_*
+      # / ramp_limits, pjm_zonal_loss_surface) and each time surfaced only as a
+      # pinned-literal test failure in an unrelated session, whose tempting and
+      # WRONG remedy is to re-pin the literal. This moves detection to the PR
+      # that adds the field. Stdlib-only — no uv sync needed, runs in seconds.
+      - name: check_cache_key_registration
+        run: python3 scripts/check_cache_key_registration.py --base ${{ github.event.pull_request.base.sha }}
+
   lint:
     name: Ruff lint + format
     runs-on: ubuntu-latest
