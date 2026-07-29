@@ -167,13 +167,19 @@ phantom energy removed reconciles to the dump exactly (DSW 2024:
 `DSW_surplus_clean` −0.3834, `DSW_CCGT` −0.0582, `WECC_scarcity` −0.0500,
 `DSW_CT` −0.0302 TWh = −0.5218 TWh).
 
-**Status: keeper CANDIDATE.** All four gates pass, the CA-side series are
-byte-identical to the current keeper, and the rubric is unchanged
-(NOT-YET, fail {C3a-2025, C3c}) — so this is a pure structural-integrity gain
-with zero fit cost. Promotion is an owner act and is **not** claimed here.
-Rule-22 LOYO note: the mechanism carries no fitted parameter and its CA-side
-effect is exactly zero in every year — nothing to overfit; the criterion is
-satisfied degenerately, as for caiso-138.
+**Status: PROMOTED — new CAISO keeper `2026-07-29-caiso139-dump-guard-offer`**
+(owner grant in-session, 2026-07-29: *"Promote"*). All four gates pass, the
+CA-side series are byte-identical to the prior keeper, and the rubric is
+unchanged (NOT-YET, fail {C3a-2025, C3c}) — a pure structural-integrity gain at
+zero fit cost. Rule-22 LOYO note: the mechanism carries no fitted parameter and
+its CA-side effect is exactly zero in every year — nothing to overfit; the
+criterion is satisfied degenerately, as for caiso-138. Rule 21 [R-DOF]: the DOF
+ledger is carried forward VERBATIM from the caiso-138 keeper (11 entries,
+9 residual) because this mechanism adds none. The keeper's
+`legitimacy_diagnostics.json` was regenerated on the new bundle: its **`gates`
+block is IDENTICAL** to the prior keeper's, and the only D-1/D-2/D-4 movement is
+sub-0.25 pp `load_share` (the phantom dumped energy leaving the denominator)
+plus a 2 MWh floating-point shift in `hydro_min_flow` — every verdict unchanged.
 
 ## §G — DO-NOT-REDO (new, binding)
 

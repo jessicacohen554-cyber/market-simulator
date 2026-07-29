@@ -3322,7 +3322,7 @@ treating the β dump as part of this lane.
 
 Next number: caiso-139.
 
-## caiso-139 (2026-07-29) — the caiso-138 β defect is CHARTERED and FIXED: the dump-cost guard was an **incomplete enumeration**, not a wrong price. Widened to its own stated domain (`dump_cost_full_offer_domain`, **zero new DOF**), the 0.531/0.035 TWh of phantom generate-to-dump tranche revenue is eliminated **exactly**, the CA-side LP is **byte-identical** (E1/E2 = **+0.0000**, max per-zone-hour |Δ| = **0.0000**), and the WECC nodes reprice from the −$26.001 dump optimum to **hub + OATT wheel + ε — the marginal delivered import offer, exact to $0.0000 in 100 % of all 212 former dump hours**. Keeper CANDIDATE; promotion is an owner act
+## caiso-139 (2026-07-29) — the caiso-138 β defect is CHARTERED, FIXED and the fix PROMOTED: the dump-cost guard was an **incomplete enumeration**, not a wrong price. Widened to its own stated domain (`dump_cost_full_offer_domain`, **zero new DOF**), the 0.531/0.035 TWh of phantom generate-to-dump tranche revenue is eliminated **exactly**, the CA-side LP is **byte-identical** (E1/E2 = **+0.0000**, max per-zone-hour |Δ| = **0.0000**), and the WECC nodes reprice from the −$26.001 dump optimum to **hub + OATT wheel + ε — the marginal delivered import offer, exact to $0.0000 in 100 % of all 212 former dump hours**. NEW KEEPER: `2026-07-29-caiso139-dump-guard-offer`
 
 Arms `2026-07-29-caiso139-control` (`caiso139_control_A`) and
 `2026-07-29-caiso139-dump-guard-offer` (`caiso139_dumpguard_B`), both
@@ -3371,8 +3371,18 @@ either arm solved); instruments `scripts/probes/_caiso139_dump_cost_blindspot.py
    through it with the same `dispatch_kwargs` mapping — an armed run on either
    would have raised on an unexpected keyword instead of solving.
 
-Matrix: new row `dump_cost_full_offer_domain` — CAISO `O` (keeper candidate,
-promotion pending), every other ISO `I` measured-inert ex ante. Rule-22 LOYO
+**Promotion (owner grant in-session 2026-07-29: "Promote").** Keeper shard
+`frontend/data/backcast/keepers/CAISO.json` → `2026-07-29-caiso139-dump-guard-offer`;
+`status/CAISO.js` rebuilt (`build_status.py --iso CAISO`, NOT-YET). Rule 21
+[R-DOF]: the DOF ledger is carried forward VERBATIM from the caiso-138 keeper
+(11 entries, 9 residual) — this mechanism adds none. `legitimacy_diagnostics.json`
+regenerated on the new bundle: its **`gates` block is IDENTICAL** to the prior
+keeper's; the only movement is sub-0.25 pp `load_share` (the phantom dumped
+energy leaving the denominator) and a 2 MWh float shift in `hydro_min_flow` —
+every verdict unchanged.
+
+Matrix: new row `dump_cost_full_offer_domain` — CAISO `K`, every other ISO `I`
+measured-inert ex ante. Rule-22 LOYO
 note: no fitted parameter and a CA-side effect of exactly zero in every year —
 nothing to overfit. Rule 20: derive scripts untouched. Rule 24: one new
 `ScenarioConfig` flag, registered.
