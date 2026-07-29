@@ -145,24 +145,43 @@ lever. It re-opens only if C3c does.
 ## 3. Two by-products, reported and NOT armed
 
 **(a) The 4,350 MW `NYISO_simultaneous_import` cap is a hand-set estimate that
-measurement contradicts.** It hard-pins model import at exactly 4,350 MW in
-548 / 689 / 177 h/yr, and the `import_scarcity` rung (2,230 / 2,120 / 1,725 MW)
-is **never reached in any hour of any year**. Measured net import exceeds
-4,350 MW in 287 / 314 / 145 h (max 5,929 MW, nyiso-86), and the published P-32
-external limits sum to a *minimum* of 5,805 / 6,090 / 6,680 MW. This is a live
-rule-14 `[R-ACCURATE]` reconcile item and it is **not** armed here, for two
-reasons: the P-32 sum (~10 GW mean) is **not** a simultaneous limit — it is the
-sum of parallel paths the five-zone network collapses into one link, exactly
-rule 14's named misalignment clause — so a *reconciled* identification is owed
+measurement contradicts.** Model import tops out at **exactly 4,350 MW**, is
+never above it in any hour of any year, and sits on the cap in
+**548 / 689 / 177 h/yr**. Measured net import exceeds 4,350 MW in
+287 / 314 / 145 h (max 5,929 MW, nyiso-86), and the published P-32 external
+limits sum to a *minimum* of 5,805 / 6,090 / 6,680 MW — so the model cannot
+reach flows New York actually scheduled. This is a live rule-14
+`[R-ACCURATE]` reconcile item and it is **not** armed here, for two reasons:
+the P-32 sum (~10 GW mean) is **not** a simultaneous limit — it is the sum of
+parallel paths the five-zone network collapses into one link, exactly rule
+14's named misalignment clause — so a *reconciled* identification is owed
 first; and relaxing the cap alone would only let the model import more in its
 wrong-phase overnight hours. Separate charter.
 
-**(b) The model's import node is a 7-step ladder pinned at a rung boundary in
-67.0 / 63.5 / 64.2 % of hours**, of which 2,970 MW (45 %) — `HQ_hydro`,
-`IESO_Ontario`, `PJM_shoulder`, `eastern_mid` — carries a per-year *constant*
-price and no hourly signal at all. Recorded as characterisation. It is not
-offered as item 9's lever: §2 shows the shape follows the spread the node is
-shown, so a finer ladder cannot fix a spread that peaks at the wrong hour.
+**(b) The node is a 7-rung step supply curve, and 45 % of its MW carries no
+hourly price signal.** `HQ_hydro` (900 MW), `IESO_Ontario`, `PJM_shoulder` and
+`eastern_mid` (690 MW each) = **2,970 MW of 6,580** keep a per-year *constant*
+ladder price; only `PJM_west`, `ISONE_tie` and `import_scarcity` are repriced
+hourly off the measured neighbor DA LMP. The step character shows in the
+dispatch: on 2023, five of the seven rungs sit at their own cap or at zero in
+the large majority of hours (`HQ_hydro` at cap all 8,760 h — it is
+firm-floored; `IESO_Ontario` 7,903 h at cap; `PJM_shoulder` 5,757 h at cap;
+`ISONE_tie` 6,622 h at zero; `eastern_mid` 6,911 h at zero).
+
+**Correction to an earlier draft of this finding:** `import_scarcity` is
+**not** unreachable — it dispatches **1.182 TWh** in 2023 and sits at its
+2,230 MW cap in 27 h. The mistaken claim came from reading the *static
+ladder's* cumulative position (4,350–6,580 MW, above the SIL) as the tranche's
+dispatch order. The hourly repricing reorders the merit list: `import_scarcity`
+is priced at the hourly max of the two neighbors + $1, which is frequently
+below the static `eastern_mid` constant ($33.61 in 2023), so it clears while
+`eastern_mid` is below cap in 1,209 h. Recorded here because it is also the
+substantive point — the repricer materially reorders the ladder, which is
+further evidence for §2's conclusion that the seam mechanism is working.
+
+Both are characterisation, not levers: §2 shows the shape follows the spread
+the node is shown, so neither a finer ladder nor a higher cap can fix a spread
+that peaks at the wrong hour.
 
 ---
 
