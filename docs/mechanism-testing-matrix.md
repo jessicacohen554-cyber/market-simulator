@@ -190,36 +190,77 @@ repeated here; the matrix `R`/`G`/`I` cells are the DO-NOT-REDO list.
 The lane is heavily enumerated; the honest top of the queue is closure work,
 not a new sweep:
 
-0. **Coal tranche-1 take-or-pay REPRICE — pre-registered, OWNER-BLOCKED, and now
-   the best-identified coal lever.** `docs/PRECOMMIT-ercot136-coal-minload-reprice-2026-07-29.md`.
-   ERCOT-136 read the SCED TPO instrument and settled the standing
-   self-scheduled/withheld/telemetered-down fork: **none of the three** — the
-   unoffered-in-DAM block is offered economically in RT at \$8–25/MWh, so the
-   "a near-zero bid is faithful" escape is refuted and a coal offer-SHAPE
-   correction is licensed for the first time. The lever is a **single existing
-   registered scalar** (`coal_tranche_1_fuel_passthrough`, 0.00 → measured), it
-   **retires a fitted value** rather than adding one, and it is rule-19-clean
-   because the block is already floored twice (`ercot_coal_min_config_floor` +
-   `coal_mustrun_per_plant`). **Blocked on the same ERCOT-116 adoption ruling**
-   (rule 14: an offer-curve change cannot move a pinned block). Do NOT re-derive
-   the identification — it is measured and committed
-   (`results/calibration/ercot136_coal_headroom_conduct.json`). It **supersedes**
-   the ERCOT-135 width arm (wrong instrument, wrong level by ~\$4–5).
-1. **C6 governance attestation of the C3c tail** as an attributed
+**CLOSED AT ercot138, binding on successors — do not re-open
+(no LP solved; `docs/DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29.md`):**
+
+- **The COAL side of the coal-vs-gas ranking.** A matched-band, matched-hour,
+  denominator-free bid comparison against each class's OWN 60-Day SCED TPO
+  conduct puts the model's coal committed/econ bands at **−1.6..+3.9 $/MWh**
+  through the crossing band while the CC bands run **+2.8..+6.6 dear**; the gas
+  leg carries **78–99 %** of the 2024 ranking gap and 50–78 % at p25–p50 in
+  2025, and the verdict survives restricting both sides to identical
+  crosswalked plants (2024: a flat **+$6/MWh** CC overpricing at p10–p75 with
+  coal running $1–2.8 *cheap*). **No further coal offer lever is licensed** —
+  touching coal to close a gas residual is the compensating-error pattern rules
+  1/14 forbid. Coal's remaining signal is at p90 only (model tops out
+  9.6–15.5 $/MWh UNDER measured), which is the near-tail/C3c lane and is
+  OPPOSITE in sign to the crossing band.
+- **`gas_offer_net_revenue_margin` as the lever for this defect.** §J measures
+  its own delta on the ERCOT CC committed+econ band at **0.00 $/MWh at p50** —
+  it is inert there. The level is set by the `offer_curve_by_group`
+  CC_REGULAR multipliers underneath it (1.101× physical heat rate), which
+  account for only ~29 % of the gap; the remaining ~71 % is that the real CC
+  fleet offers a large share of its above-LSL MW **below its own fuel cost**
+  and the model has no mechanism that can produce such an offer.
+
+0. **ERCOT-138's successor — the CC committed/econ offer SHAPE, on the SCED TPO
+   instrument.** The best-identified open lever, and the direct gas-side
+   analogue of the ERCOT-136→137 template this lane just validated end-to-end.
+   The instrument is admissible for CC on the same grounds it was for coal
+   (ERCOT-136 §A, committed: CC offers **95.3–98.5 %** of RT-dispatchable
+   headroom into SCED, price-taking bucket 0.008–0.035). The measured target is
+   ERCOT-138 §2.3: the real fleet offers **34.5 % / 64.7 %** of its
+   above-min-load CC MW at ≤\$10 / ≤\$15 against the model's **0.9 % / 23.1 %**
+   (2024 tail). Rule-19 clean as a REPLACEMENT of the band multipliers, never a
+   fourth surface. **Two pre-registered failure modes are mandatory:**
+   ERCOT-119's C3c drain (72→49, 13→3 — deflating the CC curve is exactly what
+   caused it) and the p90 finding above, which runs opposite in sign. **Do NOT**
+   re-test `ercot_offer_hrmult_ep_rebasis` / `_bands` (ERCOT-118/119 ordinary
+   rejections; rule 26(a)) or `measured_ct_heat_rates` on this defect (the
+   model's physical CC HR 6.915 is already reasonable and a heat-rate lever
+   cannot reach a below-cost offer).
+1. **Coal tranche-1 take-or-pay REPRICE — CLOSED, EXECUTED as ERCOT-137.**
+   Lineage only: `docs/PRECOMMIT-ercot136-coal-minload-reprice-2026-07-29.md`
+   (superseded) → `docs/PRECOMMIT-ercot137-coal-margin-offer-2026-07-29.md`.
+   ERCOT-136 read the SCED TPO instrument and settled the
+   self-scheduled/withheld/telemetered-down fork (none of the three fires);
+   ERCOT-137 replaced the fitted \$4.50 with the measured net-margin form
+   (`coal_offer_net_revenue_margin`, level 15.8807 / anchor 1.7387) and it is
+   the ERCOT keeper. The ERCOT-116 adoption block that gated it is DISCHARGED
+   (owner ruling R2). Do not re-open, and do not re-derive the identification —
+   it is measured and committed
+   (`results/calibration/ercot136_coal_headroom_conduct.json`).
+2. **C6 governance attestation of the C3c tail** as an attributed
    measured-input limitation (ERCOT-101/107/108 adjudication) — the named
    closure route; blocked only by the 8 residual-identified DOF entries.
-2. **Coal dispatch-band mechanism** (ERCOT-117 §5.3 named successor): real
+3. **Coal dispatch-band mechanism** (ERCOT-117 §5.3 named successor): real
    fleet works 0.54–0.72 of its range, model rides ceilings (43–50% of energy
    within 0.5% of plant-month max vs 3.6–6.9% actual) → C7 COAL_LIGNITE-2023
    + the ±1.5 GW coal seasonal split. Needs a measured band identification
-   (CAMPD loading distributions), not a floor.
-3. **Five-ISO fuel stack on ERCOT** (`gas_daily_shape`,
+   (CAMPD loading distributions), not a floor. **ERCOT-138 caution:** this is a
+   dispatch-SHAPE lever and is NOT closed by ERCOT-138's coal-offer exoneration
+   — but it is *adverse* to the C1 over-run (the model's coal price-taking base
+   is 0.28 of capability vs a measured RT 0.49–0.52, so re-grounding it raises
+   coal further). Charter it on C7, never as an over-run fix.
+4. **Five-ISO fuel stack on ERCOT** (`gas_daily_shape`,
    `gas_monthly_actuals`, `gas_plant_monthly_fuel_pricing`) — consistency
    audit + candidate for 2023 winter-volatility C3b; cheap A/B, zero new DOF.
-4. **`tranche_startup_amortization`** (PJM/MISO/NEISO form) vs ERCOT's
+5. **`tranche_startup_amortization`** (PJM/MISO/NEISO form) vs ERCOT's
    season-spread ST startup — mid-merit/trough price formation candidate.
-5. **`measured_ct_heat_rates`** (NYISO form) on ERCOT's CT fleet — audit-grade.
-6. **WP-B nodal curtailment layer** — *data-intake first* (station→area
+6. **`measured_ct_heat_rates`** (NYISO form) on ERCOT's CT fleet — audit-grade.
+   **Not** a candidate for the ERCOT-138 gas-dearness defect (see the closure
+   note above); the CT fleet is its own question.
+7. **WP-B nodal curtailment layer** — *data-intake first* (station→area
    crosswalk does not exist in-repo), then the under-curtailment gap
    (ERCOT-121).
 

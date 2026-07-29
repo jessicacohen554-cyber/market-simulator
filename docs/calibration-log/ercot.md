@@ -2651,3 +2651,90 @@ Registered `2026-07-29-ercot137-coal-margin-measured` (top-15 prune dropped
 `audit_keepers --iso ERCOT` PASS; matrix row `coal_offer_net_revenue_margin`
 → K with the refuted-fit nuance; `dam_availability_rebasis` ERCOT note
 updated (coal scope armed).
+
+## 2026-07-29 — ERCOT-138 Phase 1: the coal-vs-gas ranking above coal min-load is a **GAS-side** defect — matched-band, matched-hour, denominator-free bid comparison on the SCED TPO instrument (no-LP diagnosis; no mechanism built, no year solved)
+
+**Charter.** The lane the ERCOT-137 falsifier routed here (`PRECOMMIT-ercot137`
+§3 OUTCOME header; `FINDING-ercot117` §5.1). With the coal min-load PRICE
+measured-correct and the fleet un-pinned, coal still over-runs actual in every
+RT band ≥ $15 band-UNIFORMLY (G1 3/21, C1 +6.2/+8.8/+8.6 TWh, displaced ~1:1
+from gas). Phase 1 asks which side of the ranking is wrong ABOVE min-load:
+(a) coal's committed/econ bands too cheap vs their own conduct, or (b) the gas
+CC bands too dear vs theirs.
+
+**Built (no-LP, nothing armed).** `scripts/probes/ercot138_coal_gas_ranking.py`
+→ `results/calibration/ercot138_coal_gas_ranking.json`. ERCOT-123's SCED loader
+and class map IMPORTED, never re-implemented; the model side captured at
+`run_energy_solve` — i.e. AFTER both `apply_coal_tranches` and
+`apply_gas_offer_margin`, so coal and gas are final and mutually comparable
+(capturing at the ERCOT-135 seam records gas *pre*-reform, the comparison that
+must not be made). Two upgrades over ERCOT-135/136: **matched hours** (the model
+bid evaluated on exactly each subset's own (day, hour) set — 300/264/264/240 h,
+not an annual mean) and **both classes at one seam**. Footing: the committed
+ERCOT-136 §B2 `floored` grid reproduces to **4.8e-7**.
+
+**VERDICT — (b), the GAS stack.** Capacity-weighted quantiles of the price on
+above-min-load MW, model committed+econ vs each class's OWN measured conduct.
+2024 (tail/control): **coal Δ +0.31/+0.06 (p25), −1.34/−1.40 (p50),
+−0.63/−0.67 (p75)** against **CC Δ +6.64/+6.26, +5.28/+4.91, +3.25/+2.85**. The
+ranking spread `COAL − CC` is **+8.34/+7.88 measured** and only **+1.72/+1.57
+modelled** at p50 — the gas leg carries **78–99 %** of the gap in 2024 and
+50–78 % at p25–p50 in 2025. In quantity terms (2024 tail) the model is missing
+**41.6 pp of CC incremental supply at ≤$15** and only 8.1 pp of coal's, and
+carries **+17.4 pp too much coal at ≤$20**.
+
+**SAME-PLANTS robustness.** Restricting BOTH sides to the EIA plant codes the
+committed `ercot-dam-plant-crosswalk.csv` accepts (coal ~50 % of measured HSL /
+4 plants; CC ~22 % / 12 plants): 2024 is a flat **+$6/MWh CC overpricing at
+every quantile p10–p75**, with coal running $1.0–2.8 *cheap*. GAS owns all 8
+crossing-band cells in 2024. The "different fleets" objection is dead.
+
+**WHICH gas mechanism (§J) — not the margin form.**
+`gas_offer_net_revenue_margin`'s own delta on the ERCOT CC committed+econ band
+is **0.00/0.00/+0.11 $/MWh at p25/p50/p75** (2024): it is **INERT there**. The
+level is set by the `offer_curve_by_group` CC_REGULAR multipliers underneath it
+— **1.101× physical heat rate** cap-weighted (offer 0.998/0.723/1.324 vs
+physical 1.006/0.825/0.95), worth ~$1.54/MWh at 2024's $2.213 delivered gas,
+i.e. only ~29 % of the ~$5.3 gap. **The remaining ~71 % is structural:** the
+model's CC physical SRMC is ~$15.3/MWh before VOM while the real fleet's median
+incremental MW is offered at **$12.10** and its p25 at **$8.38** — the ERCOT CC
+fleet offers a large share of its above-LSL energy **below its own fuel cost**,
+and the model has **no mechanism that can produce such an offer**. That is the
+exact gas-side analogue of the coal `_mustrun` block ERCOT-136/137 just put on a
+measured basis. Coal has that mechanism; gas does not.
+
+**Confirms** `FINDING-ercot117` §1.1(3) independently, on the RT instrument
+rather than the DAM one. **New:** the defect is sized per class in $/MWh against
+each class's own conduct; it is *not* the margin form; and CC passes the same
+RT-instrument licensing test coal passed (ERCOT-136 §A: CC offers 95.3–98.5 %
+of RT-dispatchable headroom into SCED).
+
+**Licensed / refused.** Licensed: a gas-side Phase 2 on the CC committed/econ
+offer SHAPE, identified from ERCOT's own SCED TPO conduct, as a rule-19
+REPLACEMENT of the band multipliers. Refused: any coal-side lever (the coal legs
+are −1.6..+3.9 and coal's enumeration is exhausted — closing a gas residual on
+coal is the compensating-error pattern rules 1/14 forbid); re-testing
+`ercot_offer_hrmult_ep_rebasis`/`_bands` (ERCOT-118/119 ordinary rejections,
+rule 26(a)); `measured_ct_heat_rates` on this defect (physical CC HR 6.915 is
+already reasonable and a heat-rate lever cannot reach a below-cost offer). Any
+Phase 2 must carry ERCOT-119's C3c drain (72→49, 13→3) as a pre-registered
+failure mode.
+
+**Separable, reported not acted on:** at p90 the model's COAL curve runs
+9.6–15.5 $/MWh UNDER measured in all four subsets — the near-tail/C3c lane
+(ERCOT-99/101/107/108, ERCOT-119), OPPOSITE in sign to the crossing band, which
+is why no single level lever serves both.
+
+**Scope.** No LP built, no year solved, nothing registered, no keeper file
+touched, no `ScenarioConfig` field added or changed, holdout years untouched
+(rule 22). Full write-up
+`docs/DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29.md`. Matrix (rule 26b):
+`gas_offer_net_revenue_margin` ERCOT note + ev (inert on this band, cell stays
+K), `coal_econ_bound` ev (coal bands EXONERATED in the crossing band),
+`coal_offer_net_revenue_margin` ev (routed residual now LOCATED),
+`measured_offer_surface` ev (the armed P1 surfaces make gas dearer still, so the
+verdict is conservative); ERCOT lever queue re-headed with the ERCOT-138 closure
+block + the successor charter. **Open ruling surfaced:**
+`ercot_offer_hrmult_ep_rebasis` / `_bands` are solve-affecting fields with no
+matrix row — a rule-26(c) gap predating this lane (CI guard passes; it only
+checks fields new vs base).
