@@ -106,6 +106,24 @@ data/raw/pjm-zonal-lmp/*
 !data/raw/pjm-zonal-lmp/README.md
 !data/raw/pjm-zonal-lmp/SHA256SUMS.txt
 
+# PJM DataMiner2 day-ahead BINDING TRANSMISSION CONSTRAINTS (da_marginal_value
+# / da_transconstraints — monitored facility, contingency, shadow price): same
+# non-member redistribution restriction; refetch with
+# scripts/data/fetch_pjm_binding_constraints.py (see
+# data/raw/pjm-binding-constraints/README.md). The sha256 manifest IS committed
+# as the provenance record for the pjm-137 measurement.
+data/raw/pjm-binding-constraints/*
+!data/raw/pjm-binding-constraints/README.md
+!data/raw/pjm-binding-constraints/SHA256SUMS.txt
+
+# PJM DataMiner2 500 kV EHV aggregate-node LMPs (da_hrl_lmps, type=EHV): the
+# intra-zonal price-spread measurement. Same non-member redistribution
+# restriction; refetch with scripts/data/fetch_pjm_ehv_lmp.py (see
+# data/raw/pjm-ehv-lmp/README.md). The sha256 manifest IS committed.
+data/raw/pjm-ehv-lmp/*
+!data/raw/pjm-ehv-lmp/README.md
+!data/raw/pjm-ehv-lmp/SHA256SUMS.txt
+
 # NYISO MIS public DAM zonal LBMP monthly archives (36 zips, ~13 MB): raw
 # source of nyiso_proxy_lmp_hourly_NEISO.parquet (committed). Regenerable
 # byte-identical from the stable public URLs
