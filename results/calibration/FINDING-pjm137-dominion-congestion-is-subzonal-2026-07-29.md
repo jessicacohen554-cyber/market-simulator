@@ -17,8 +17,9 @@ intake, and two **new** pjm-137 intakes (§2.0).
 |---|---|---|---|
 | **M1** where the model prices NOW | did pjm-136's loss surface leave a congestion-shaped residual? | **yes, and it is the whole remainder.** The new keeper separates on `AEP_Ohio→Dominion` in **96.1 / 98.9 / 96.9 %** of hours (was 0.0 %) at a mean of **−0.54 / −0.82 / −1.43**, reproducing the measured **loss** component (−0.54 / −1.06 / −1.90) — and leaving the measured **congestion** (−3.65 / −4.42 / **−12.44**) entirely unproduced | the deficit is real and it is congestion |
 | **M2** what PJM says was binding | is that congestion on a boundary an 8-zone model represents? | **NO.** Across 228,795 day-ahead binding constraint-hours, only **6.34 / 3.06 / 6.19 %** of the absolute shadow-price record sits on a named zonal-scale interface; **80.0–87.8 %** sits on monitored facilities rated **≤ 230 kV**. `AEP-DOM` is **0.041 / 0.071 / 0.236 %**. In the top-decile DOM-separation hours the dominant constraints are **PLEASNTV TX3 500 kV, GOOSECRE TX1 500 kV, PLEASNTV-ASHBURN 230 kV, ASHBURN-GOOSECRE 230 kV, BRAMBLET-EVRGREEN** — Loudoun County, **both ends inside `PJM_Dominion`** | **the route is closed** |
-| **M3** does the CT leg even want congestion | do Dominion's real CTs run in congested hours, and how big is the model's price deficit there? | **yes, and it is huge.** The 9-plant / 44-unit roster runs **97.7–99.5 %** of hours; CT-energy-weighted measured DOM LMP **$42.49 / $49.08 / $83.90** against the model's **$32.21 / $32.85 / $45.69** — a deficit of **$10.28 / $16.23 / $38.21**, of which the measured congestion component is **$6.46 / $8.40 / $20.08 (63 / 52 / 53 %)** | the defect is price formation, and half of it is unreachable congestion |
+| **M3** does the CT leg even want congestion | do Dominion's real CTs run in congested hours, and how big is the model's price deficit there? | **yes, and it is large.** The 9-plant / 40-turbine roster (CAMPD `unitType == 'Combustion turbine'`) runs **68.3 / 54.4 / 62.4 %** of hours; CT-energy-weighted measured DOM LMP **$50.78 / $62.04 / $103.41** against the model's **$33.06 / $35.35 / $48.80** — a deficit of **$17.72 / $26.69 / $54.61**, of which the measured congestion component is **$9.09 / $12.32 / $27.73 (51 / 46 / 51 %)**. **62.4 / 64.5 / 80.0 %** of real CT energy is produced in hours with DOM congestion above $5 | the defect is price formation, and half of it is unreachable congestion |
 | **M4** can the reduction carry it | how much separation lives *inside* a model zone? | **more than across the boundary.** Intra-`PJM_Dominion` EHV dispersion **$6.18 / $8.68 / $16.78** vs inter-zonal DOM-vs-AEP **$4.76 / $6.13 / $14.42** — ratio **1.30 / 1.42 / 1.16×**; > $10 in **13.0 / 17.4 / 31.6 %** of hours. Widest intra-zone pairs: **LOUDOUN vs MT STORM**, **GRNSVIL vs PLEASANT VIEW** | **no zonal mechanism can reach it** |
+| **§3a** how big is the defect really | does the quoted `CT_PEAKER` actual match the benchmark? | **NO — it is ~1.9× too large.** The benchmark's own per-plant record puts Dominion `CT_PEAKER` at **3.066 / 4.048 / 5.218 TWh**, not the **7.38 / 8.68 / 9.64** every handoff and the keeper note carry; the quoted figure is those nine plants' **whole-plant** energy, which counts Doswell Energy Center's combined-cycle blocks (4.45 TWh in 2025) as peaker output. The real gap is **−2.34 / −2.67 / −2.30 TWh**, i.e. the model is at **24 / 34 / 56 %** of actual | **the target was mis-stated** |
 
 ---
 
@@ -141,30 +142,82 @@ does not have and structurally cannot have.
 ## §3 — M3: the CT leg is a price-formation defect, and half of the missing price is that congestion
 
 The roster is taken from the **committed benchmark payload** — the exact plants
-the model's own fleet assigns to `PJM_Dominion` / `CT_PEAKER` — so the
-measurement and the class it explains cover the same machines. Nine plants,
-44 CAMPD units; the CAMPD gross energy (7.55 / 8.87 / 9.93 TWh) reconciles with
-the benchmark's net actual (7.38 / 8.68 / 9.64) to within the parasitic factor,
-which validates the roster.
+the model's own fleet assigns to `PJM_Dominion` / `CT_PEAKER` — and then
+narrowed to those plants' CAMPD `unitType == 'Combustion turbine'` units, the
+same filter the CT heat-rate derive applies. **Both steps are required**: three
+of the nine are mixed sites, and taking a plant whole would count its
+combined-cycle blocks as peaker output (§3a). Nine plants, **40 turbines**,
+**3.177 / 4.225 / 5.462 TWh** gross — which reconciles with the benchmark's own
+unit-split actual (3.066 / 4.048 / 5.218 net) to within the parasitic factor.
 
 | CT-energy-weighted, $/MWh | 2023 | 2024 | 2025 |
 |---|---|---|---|
-| measured DOM LMP | **42.49** | **49.08** | **83.90** |
-| model Dominion dual, same hours | **32.21** | **32.85** | **45.69** |
-| **price deficit** | **−10.28** | **−16.23** | **−38.21** |
-| of which measured **congestion** (MCC) | **6.46** | **8.40** | **20.08** |
-| congestion share of the deficit | **63 %** | **52 %** | **53 %** |
-| CT energy in hours with DOM MCC > $5 | 42.8 % | 43.7 % | 63.7 % |
-| CT energy in hours with \|DOM MCC\| ≤ $1 | 10.1 % | 22.9 % | 13.5 % |
+| measured DOM LMP | **50.78** | **62.04** | **103.41** |
+| model Dominion dual, same hours | **33.06** | **35.35** | **48.80** |
+| **price deficit** | **−17.72** | **−26.69** | **−54.61** |
+| of which measured **congestion** (MCC) | **9.09** | **12.32** | **27.73** |
+| congestion share of the deficit | **51 %** | **46 %** | **51 %** |
+| CT energy in hours with DOM MCC > $5 | 62.4 % | 64.5 % | **80.0 %** |
+| CT energy in hours with \|DOM MCC\| ≤ $1 | 2.6 % | 6.5 % | 4.7 % |
 
 Two things follow. **(a) The CT leg is not an availability defect.** The real
-fleet is synchronised in **97.7–99.5 %** of hours and its diurnal profile never
-reaches zero (2025: ~578 MW at 04:00 rising to ~1,845 MW at 19:00, on a
-4,861 MW maximum). A fleet that is already online is not held back by an outage
-envelope; the model dispatches it to 2.9 TWh against 9.9 because its Dominion
-price is $10–38/MWh short in exactly those hours. **(b) Roughly half of that
-shortfall is the congestion §2 just proved unreachable.** The other half is
+turbines are synchronised in **68.3 / 54.4 / 62.4 %** of all hours — extremely
+high duty for a peaking fleet — with a 2025 diurnal profile rising from ~65 MW
+at 01:00 to **1,317 MW at 19:00** on a 4,198 MW maximum. A fleet running in two
+hours out of three is not held back by an outage envelope; the model under-runs
+it because its Dominion price is **$18–55/MWh short in exactly the hours that
+fleet is producing**. **(b) About half of that shortfall is the congestion §2
+just proved unreachable** — and the concentration is striking: **80 % of 2025's
+real CT energy is produced in hours PJM prices Dominion congestion above $5**,
+against 4.7 % in hours it prices it at essentially nothing. The other half is
 system-energy-price formation, which is a different (and open) question.
+
+### §3a — the chartered defect has been overstated ~1.9×: the quoted "actual" counts Doswell's COMBINED-CYCLE output as peaker
+
+Every handoff in this lineage — and the `PJM.json` keeper note — states the
+Dominion `CT_PEAKER` actual as **7.38 / 8.68 / 9.64 TWh**. **The benchmark does
+not say that.** Joining the committed run payload's per-plant model series to the
+committed benchmark's per-plant actual — the same join
+`docs/codebase-site/js/backcast-runs.js` renders — gives, on the nine
+`PJM_Dominion` / `CT_PEAKER` keys:
+
+| TWh | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| model (matches the quoted figure exactly) | 0.724 | 1.380 | 2.923 |
+| **benchmark actual, CAMPD** | **3.066** | **4.048** | **5.218** |
+| benchmark actual, EIA-923 | 3.019 | 4.012 | 5.162 |
+| *quoted in the keeper note / handoffs* | *7.38* | *8.68* | *9.64* |
+
+The quoted figure is the **whole-plant** CAMPD net energy of those nine plants —
+recomputed here as **7.320 / 8.635 / 9.632 TWh**, matching to 0.1–0.8 %. The
+benchmark's own figure is the **unit-level split**: its Doswell record carries
+`split: "unit_hourly"` and puts that site's `CT_PEAKER` share at 1.079 TWh in
+2025 against 4.454 TWh for its `CC_REGULAR` blocks. CT-only metered energy for
+the nine plants recomputes to **3.082 / 4.114 / 5.298 TWh net**, matching the
+benchmark to 0.5–1.5 %.
+
+**So the benchmark and the dashboard have always been right; the prose number
+carried forward in the notes was computed on the wrong basis** — the same
+mixed-facility trap that corrupted this session's own first pre-computation of
+the heat-rate delta (`PREREG-pjm137` §2a), and the same one
+`measured_ct_heat_rates` exists to fix.
+
+Restated, the chartered defect is:
+
+| Dominion CT_PEAKER | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| gap (model − actual), TWh | **−2.342** | **−2.668** | **−2.295** |
+| model as a share of actual | **24 %** | **34 %** | **56 %** |
+| *as previously stated* | *−6.66 / 10 %* | *−7.30 / 16 %* | *−6.72 / 30 %* |
+
+The leg is **~2.3 TWh short and 56 % closed in 2025**, not "~94 % unclosed".
+pjm-136's `+0.411 TWh` therefore closed **≈15 %** of the true remaining 2025 gap,
+not 5.8 %. Nothing about this session's other measurements changes — M1, M2 and
+M4 never used the class total — but the *size* of the target does, and every
+statement of it downstream of this document should use the benchmark's own
+number. **This has not been propagated into `PJM.json` or the matrix by this
+session**; it is reported here for the owner, because rewriting a keeper's note
+is a promotion-lane act.
 
 ## §4 — M4: there is more separation INSIDE Dominion than across its boundary
 
@@ -226,6 +279,15 @@ inter-zonal spread the model is chartered to reproduce.
 - **Do not quote M3's price deficit as an offer-curve error.** It is a *zonal
   price* deficit, and §2/§4 attribute 52–63 % of it to congestion the model
   cannot represent. Only the remainder is available to any offer-side lever.
+- **Do not quote `7.38 / 8.68 / 9.64` as the Dominion `CT_PEAKER` actual again**
+  (§3a). It is a whole-plant figure that counts Doswell's combined-cycle blocks
+  as peaker output. The benchmark's own unit-split number is
+  **3.066 / 4.048 / 5.218**, the gap is **−2.34 / −2.67 / −2.30 TWh**, and any
+  successor sizing this defect — or claiming a share of it closed — must use the
+  benchmark's number. Whenever a class actual is quoted for a zone, take it from
+  the committed `frontend/data/backcast/bench/<ISO>/<year>.json.gz` per-plant
+  record (which carries `split: "unit_hourly"` at mixed sites), never by summing
+  CAMPD over a plant roster.
 - Carried forward unchanged: `FINDING-pjm134` §5/§8, `FINDING-pjm135` §7, and
   `FINDING-pjm136` §5 in full — including that the delivery-factor surface may
   never be multiplied, scaled, haircut, blended, floored, capped or
@@ -242,10 +304,10 @@ inter-zonal spread the model is chartered to reproduce.
    scalar and is refused.
 2. **The other half of the CT price deficit is system-energy-price formation**,
    not congestion. Netting the measured congestion component out of §3's
-   deficit leaves **+$3.82 / +$7.83 / +$18.13 /MWh** (37 / 48 / 47 % of it) that
+   deficit leaves **+$8.63 / +$14.37 / +$26.88 /MWh** (49 / 54 / 49 % of it) that
    a zonal model *could* in principle produce: the measured DOM **MEC** alone
-   runs at a p50 of $31.63 / $33.90 / **$49.32** in CT hours against the model's
-   whole Dominion dual at $31.57 / $30.67 / **$41.18**. That is an ISO-wide
+   runs at a p50 of $35.94 / $41.35 / **$58.86** in CT hours against the model's
+   whole Dominion dual at $32.07 / $32.28 / **$42.72**. That is an ISO-wide
    marginal-unit question and connects to open root cause (6) in the keeper note
    (fitted coal rungs owning the $40–150 region the measured corpus assigns to
    the CC top belt and CT_FAST). **This, not congestion, is where a successor

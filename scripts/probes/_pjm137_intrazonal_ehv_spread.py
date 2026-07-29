@@ -184,6 +184,30 @@ def _widest_pair(frame: pd.DataFrame, nodes: list[str]) -> dict:
     return best
 
 
+def _node_premiums(frame: pd.DataFrame, nodes: list[str]) -> list[dict]:
+    """Per-node mean premium over the zone's own EHV average, LMP and congestion.
+
+    No hand-drawn grouping: every node in the zone is reported with its own
+    premium, so which end of the zone is dear falls out of the data. This is
+    what says whether splitting the zone would carry the right SIGN — a pocket
+    that prices above its zone's average is a pocket local generation is needed
+    in.
+    """
+    out = []
+    for col, key in (("total_lmp_da", "lmp"), ("congestion_price_da", "mcc")):
+        wide = frame.pivot_table(
+            index="hour", columns="pnode_name", values=col, aggfunc="mean"
+        ).reindex(range(HOURS))[nodes]
+        prem = wide.sub(wide.mean(axis=1), axis=0)
+        for node in nodes:
+            rec = next((r for r in out if r["node"] == node), None)
+            if rec is None:
+                rec = {"node": node}
+                out.append(rec)
+            rec[f"mean_{key}_premium"] = float(np.nanmean(prem[node].to_numpy()))
+    return sorted(out, key=lambda r: -r["mean_lmp_premium"])
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--out", type=Path, default=OUT_PATH)
@@ -222,6 +246,11 @@ def main(argv: list[str] | None = None) -> int:
             payload["per_year"][str(year)]["dominion_intra_over_inter_ratio"] = float(
                 dom["mean_intrazone_lmp_dispersion"]
                 / np.nanmean(np.abs(ref["lmp"]))
+            )
+            dom_frame = d[d["model_zone"] == "PJM_Dominion"]
+            _, dom_nodes = _dispersion(dom_frame, "total_lmp_da")
+            payload["per_year"][str(year)]["dominion_node_premiums"] = _node_premiums(
+                dom_frame, dom_nodes
             )
         print(f"  {year} done ({len(zones)} model zones with >=2 EHV nodes)", flush=True)
 
