@@ -1983,3 +1983,54 @@ Matrix `coal_takeorpay_committed` MISO cell updated (duty b).
   already-adjudicated data-blocked outage-grain gap (FINDING-miso89 §7), not a
   new phenomenon, and is not re-attacked with a second mechanism.
 * Next number: **miso-103.**
+
+## 2026-07-29 — miso-103: the coal minimum-take lane is DATA-BLOCKED — the only forward-regenerable tonnage (lagged/trailing-mean receipts) FAILS the chartered pin-strength test; NO LP built, keeper UNCHANGED, C7 stands with no open admissible lever
+
+**Keeper UNCHANGED: `2026-07-28-miso-101b-tempgrain`.** No run produced, no
+bundle, no dashboard registration (nothing to register — ERCOT-127/-130
+ex-ante-refusal precedent). Finding:
+`results/calibration/FINDING-miso103-coal-mintake-tonnage-2026-07-29.md`.
+Reproduction: `scripts/probes/miso103_mintake_pin_strength.py` (~2 min,
+committed artifacts only).
+
+* **Charter executed as written** (MISO lever queue item 1, the only C7 route
+  miso-102 left open): Stage 1 tonnage admissibility FIRST, no LP. It fails,
+  so Stage 2 (the LP constraint block) was never built and no substitute
+  mechanism was reached for.
+* **(a) Data on disk:** Schedule-5 receipts at monthly plant grain 2018–2025
+  (`eia923_monthly_fuel_costs.parquet`) for **39/49** take-or-pay plants — the
+  cost-reporting subset, which is exactly the regulated target set (merchant
+  fuel costs withheld upstream). Raw `f923_*.zip` absent by design.
+  Tons-weighted `contract_share` 0.969 (1.00 at 34/49 plants), so MinTake ≈
+  the trailing-mean receipts themselves.
+* **(b) Pin-strength: FAIL on every measure and window.** Log-space
+  cross-section R² of year-Y burn on the trailing mean **0.87–0.94**, with
+  lag-1 / lag-3 / lag-5 equivalent — the lag adds no independence (contract
+  persistence IS the autocorrelation). Floor = **0.964 / 1.136 / 0.978×**
+  same-year actual tonnage (aggregate), dictating **90.3 / 95.9 / 90.9 %** of
+  the target plants' actual CAMPD coal energy. It **binds** vs the
+  discount-free miso-102 arm B (22/33/20 of 38 plants; **32/44/20 TWh**
+  forced above unconstrained economics) — the constraint, not economics,
+  would write annual coal energy ≈ actuals. Rule 13 pin, worse than the
+  same-year case miso-96 §7 forbade (~85 %).
+* **2024 overshoots outright:** floor 1.136× actual burn (≥100 % at 77 % of
+  plants) — a hard ≥ floor forces MORE coal than reality burned; softening it
+  needs a fitted penalty price (rule 24).
+* **Delta test R² 0.172:** the trailing mean transmits the *level* of the
+  measured outcome without the year-specific driver signal — the exact
+  inversion of rule 13's admissibility test. **(c)** fails too: a forecast
+  year has no measured trailing receipts, so the forward generator would be
+  model-simulated prior burn — a different quantity, hence not "the same
+  quantity produced for a forward year."
+* **DO NOT REDO:** any receipts-derived tonnage variant (window, lag,
+  smoothing, scalar shrink) — same answer key or residual-fitted knob.
+  **Unblock:** genuinely contractual ex-ante data (FERC Form 580 contract
+  minimums, fuel-adjustment-clause filings, IRP fuel-budget exhibits) — a
+  data-intake ask, now the second standing MISO ask beside outage grain.
+* **C7 COAL_PRB stands failing 3/3 on the keeper with NO open admissible
+  lever.** Caveat budget stays 3/3 saturated; C7 is not ledgered.
+* Rule 26 duty (b): `coal_takeorpay_committed` MISO cell updated with the
+  miso-103 adjudication. Rule 22 honoured — no solve, no out-of-training
+  touch (2018–2022 receipts are authorized on-disk intake, read only as
+  inputs to a no-LP statistical test).
+* Next number: **miso-104.**
