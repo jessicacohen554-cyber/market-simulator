@@ -297,23 +297,72 @@ is ranked by *structural* defect, per rule 1 `[R-STRUCT]`.
    GROUNDED — D-4 clear, profile r 0.923–0.973, CV ratio 0.703–1.083) on a class
    whose ISO-wide volume fell 2.6–2.9 TWh. A clean pass under rule 20, but worth
    watching.
-5. **G-20b guard false-negative lead** (~2.8–5.0 GW returned capacity per tight
-   hour) — the SUSPECT-grade reserve-supply tightness lead; audit before any new
-   mechanism. Connects to item 1.
+5. **~~G-20b guard false-negative lead~~ — subsumed by the pjm-138 closure
+   below.** The ~2.8–5.0 GW the guard returns to PJM's tightest quartile lives
+   in the same reserve-supply lane pjm-138 closed; its own audit
+   (`FINDING-guard-falseneg-audit-2026-07-27` §4/§7) already attributed most of
+   its D3 signal to window LENGTH and declined to license a fix.
 6. **C3c margin** — still passes by **1 h** (2024) and **2.5 h** (2025) against a
-   0.5× floor, untouched by pjm-137. Any delta must report its C3c effect
-   explicitly.
+   0.5× floor, untouched by pjm-137 and by pjm-138 (which solved nothing). Any
+   delta must report its C3c effect explicitly.
 7. **`pjm_dam_availability`** (**U**) — intaken but untested. pjm-137 measured
    that Dominion's real turbines are synchronised in 68.3 / 54.4 / 62.4 % of all
    hours, so the CT leg is **not** an availability defect; this lever now stands
-   on the outage-envelope story alone.
+   on the outage-envelope story alone. Note the ERCOT precedent before
+   chartering it: the measured envelope there is *measured-correct* and was
+   rejected twice on level (ERCOT-116/134).
 8. **`st_gas_mustrun_p25_level`** (**U**, MISO form) — re-ground the six
    overnight ST_GAS floor limbs on measured operating levels (D-2 ST_GAS
-   42–55 % forced).
-9. **Requirement-side dynamic reserves** (NYISO form) — the supply side is
-   adjudicated; the requirement side is not.
+   42–55 % forced). **Newly motivated by pjm-138**: the model runs
+   **$1.6–7.3/MWh too DEAR at h01–h04**, worst in 2023, and that over-pricing is
+   the one part of the dispersion defect the reserve credit does not touch.
+9. **`gas_daily_shape`** (**U**) — measured, mean-preserving HH daily shape,
+   never probed on PJM. **pjm-138 makes this the best-identified remaining
+   lever**: the largest single cell in its whole measurement is the *winter
+   morning ramp* (CT-weighted DJF 2025 **+$46.05/MWh**, h06–h07 the worst hours
+   of the day), which is exactly the phenomenon
+   `DIAGNOSIS-pjm-dof-scarcity-tail` §B.4.1 named it for — a January merit order
+   priced on a flat monthly gas level cannot express the measured intra-month
+   cold-snap spike.
 10. **TETCO-M3 winter daily citygate** (`winter_citygate_daily` form, **U**) —
-    own hub derivation.
+    own hub derivation. Same winter-ramp target as item 9; derive PJM's own hub.
+
+**CLOSED AT pjm-138, binding on successors — do not re-open (no LP solved;
+`FINDING-pjm138-system-energy-is-reserve-opportunity-cost-2026-07-29.md`):**
+
+- **The RESERVE/SCARCITY route to the Dominion CT leg, and to PJM price
+  formation generally.** PJM's own published day-ahead reserve market prices
+  synchronized reserve **above zero in 84.2 / 96.7 / 47.6 %** of all hours
+  (Primary 45.1 / 64.0 / 30.8 %) at a cover ratio of **1.00–1.11**; the model's
+  reserve dual is above zero in **0 / 2 / 28** hours of 8,760. That dormancy
+  correlates with the model's system-energy price gap at **r = +0.79 / +0.60 /
+  +0.66** and accounts for **82 / 52 / 57 %** of it in the Dominion CT-running
+  hours. **It is not a missing mechanism**: the requirement is PJM's own
+  measured series, the demand curve is PJM's published two-step ORDC
+  (`pjm_ordc_curve.csv`, m11 §4.3.3), and the in-LP per-generator joint-headroom
+  co-optimization that is *designed* to price the opportunity cost is armed and
+  is its sole owner under rule 19. It clears at $0 because the model's reserve
+  supply is 5–10× the requirement — the **LP-vs-MIP boundary** pjm-82 named,
+  which the no-MIP mandate makes a **disclosure, not a defect**. The lane was
+  owner-closed 2026-07-11 and this measurement confirms that closure on PJM's
+  own numbers. **Requirement-side dynamic reserves (the old queue item 9) is
+  adjudicated INERT by measurement** and the matrix cell moves `.` → `K`.
+- **The size of what is left.** Of the CT-hour price deficit
+  (**$17.97 / $26.44 / $54.06**, restated on the corrected hour key), pjm-137
+  closed **54.6 / 51.8 / 54.2 %** as intra-zonal congestion and pjm-138
+  attributes **37.3 / 25.2 / 26.2 %** to the reserve opportunity cost. **Only
+  8.1 / 23.1 / 22.1 % is reachable by any energy-stack mechanism**, and on an
+  annual load-weighted basis the model already reproduces PJM's own system
+  energy price to **+$0.47 / +$2.62 / +$8.48** — so the residual is a
+  *dispersion* defect, not a level one, and any successor lever must raise tight
+  hours **without** raising slack ones (the gradient test the measured offer
+  surface failed at pjm-123).
+- **An hour-key correction to pjm-137's shape statistics.** Its measured-side
+  loader indexes on Eastern *Prevailing* time against a model and a CAMPD record
+  that are both Eastern *Standard*. Levels move ≤ $0.38/MWh and every pjm-137
+  conclusion stands, but **no diurnal statistic may be quoted from
+  `_pjm137_dominion_ct_congestion.py`** — use `_pjm138_mec_gap_shape.py`'s
+  UTC-keyed loader.
 
 **Representation limits, measured at pjm-137 and ISO-wide (not EMAAC-only):**
 intra-zone EHV dispersion in 2025 runs **West_APS $18.58, Dominion $16.78,
