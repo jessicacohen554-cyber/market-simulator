@@ -255,6 +255,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # its nameplate-hours bound), dropped from the hash at its default; an armed
     # run enters the key as a distinct scenario.
     "hydro_budget_nameplate_aware",
+    # CAISO WECC_PNW firm-import envelope clip (caiso-138, PR #3111): GATED /
+    # default-off and intended byte-identical for every existing config, but it
+    # reached asdict() unregistered and moved the pinned default cache_key
+    # 603c2498bf71d21d -> 3864813e26e111cb, orphaning every on-disk cache —
+    # the SIXTH instance of this one-line miss (ercot135 §7.1 was the fifth).
+    # Dropped from the hash at its default; an armed run enters the key as a
+    # distinct scenario.
+    "caiso_firm_import_envelope_clip",
     # DAM-first outage overlay gates for the four ISOs with a native
     # availability instrument (CAISO / MISO / NEISO / PJM), wired 2026-07-24
     # (infra/dam-outage-wiring-4iso). All default False and back a backcast-only,
