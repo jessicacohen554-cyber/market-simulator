@@ -12,6 +12,7 @@ from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.iso_configs import TransferLink, get_iso_config
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.dispatch import (
+    DispatchModel,
     VariableLayout,
     _build_zone_gen_map,
     build_constraints,
@@ -697,6 +698,117 @@ class TestOvergeneration(unittest.TestCase):
         )
         supply = result.dispatch.sum(axis=0) + result.slack[0] - result.dump[0]
         np.testing.assert_allclose(supply, demand[0], atol=1e-4)
+
+
+class TestDumpGuardOfferDomain(unittest.TestCase):
+    """caiso-139: the dump guard must cover EVERY injectable negative offer.
+
+    ``build_cost_vector``'s dump price exists so no resource can profit by
+    generating purely to dump, but its minimum ran over the renewable/storage
+    production credits alone. A generator row priced below ``-dump_cost`` —
+    the CAISO per-hub import tranches carry their own measured hub, which goes
+    deeply negative in the desert-SW solar glut — slipped under it.
+    """
+
+    T = 24
+
+    def _solve(self, mc_value, full_domain, pmax=200.0):
+        """One zone, one unit at ``mc_value``, demand 100 MW flat."""
+        fleet = _make_fleet(
+            ["Z0"], ["Z0"], hours=self.T, pmax=pmax, pmin=0.0, eford=0.0
+        )
+        model = DispatchModel(
+            fleet,
+            np.full((1, self.T), 100.0),
+            wind_cf=np.zeros((1, self.T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, self.T)),
+            solar_cap=np.zeros(1),
+            voll=5000.0,
+            dump_cost_full_offer_domain=full_domain,
+            T=self.T,
+        )
+        return model.solve(mc=np.full((1, self.T), mc_value))
+
+    def test_negative_offer_generates_to_dump_when_guard_is_narrow(self):
+        """The defect, reproduced: mc = -$50 < -dump_cost → generate-to-dump."""
+        result = self._solve(-50.0, full_domain=False)
+        self.assertEqual(result.status, "Optimal")
+        # The unit runs to its cap and spills the 100 MW it cannot deliver,
+        # collecting the $50/MWh credit on undelivered energy.
+        np.testing.assert_allclose(result.dispatch[0], 200.0, atol=1e-4)
+        np.testing.assert_allclose(result.dump[0], 100.0, atol=1e-4)
+
+    def test_full_domain_guard_curtails_instead_of_dumping(self):
+        """Repaired: the same offer is curtailed to load, dump stays zero."""
+        result = self._solve(-50.0, full_domain=True)
+        self.assertEqual(result.status, "Optimal")
+        np.testing.assert_allclose(result.dispatch[0], 100.0, atol=1e-4)
+        np.testing.assert_allclose(result.dump[0], 0.0, atol=1e-4)
+        # The dump price is the offer's own magnitude (+ε), so the zonal dual
+        # can still reach the offer — the guard bounds it, it does not clamp it.
+        np.testing.assert_allclose(result.prices[0], -50.0, atol=1e-2)
+
+    def test_positive_offers_are_byte_identical(self):
+        """No negative offer → the widened guard changes nothing."""
+        narrow = self._solve(30.0, full_domain=False)
+        wide = self._solve(30.0, full_domain=True)
+        np.testing.assert_array_equal(narrow.dispatch, wide.dispatch)
+        np.testing.assert_array_equal(narrow.prices, wide.prices)
+        np.testing.assert_array_equal(narrow.dump, wide.dump)
+
+    def test_export_sink_price_never_inflates_the_guard(self):
+        """A ``pmax = 0`` absorbing row is outside the guard's domain.
+
+        Export sinks (``import_nodes.build_export_sinks``) are pmax 0 /
+        pmin −cap: their negative price is a willingness-to-pay on a
+        *withdrawal*, not a production credit, so it must not raise the dump
+        price (which would drop every zone's LMP floor for nothing).
+        """
+        generators = [
+            Generator(
+                unit_id="G0",
+                name="G0",
+                zone="Z0",
+                fuel_type="gas_cc",
+                pmax_mw=200.0,
+                pmin_mw=0.0,
+                eford=0.0,
+            ),
+            Generator(
+                unit_id="Z0_export",
+                name="export",
+                zone="Z0",
+                fuel_type="import",
+                pmax_mw=0.0,
+                pmin_mw=-50.0,
+                heat_rate=0.0,
+                vom=0.0,
+                eford=0.0,
+            ),
+        ]
+        fleet = generators_to_fleet_arrays(generators, ["Z0"], hours=self.T)
+        model = DispatchModel(
+            fleet,
+            np.full((1, self.T), 100.0),
+            wind_cf=np.zeros((1, self.T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, self.T)),
+            solar_cap=np.zeros(1),
+            voll=5000.0,
+            dump_cost_full_offer_domain=True,
+            T=self.T,
+        )
+        # Sink priced at −$500/MWh; the only injectable row offers +$30.
+        mc = np.vstack(
+            [np.full(self.T, 30.0), np.full(self.T, -500.0)],
+        )
+        result = model.solve(mc=mc)
+        self.assertEqual(result.status, "Optimal")
+        # Guard unmoved: with no injectable negative offer the dump price stays
+        # at ε, so the zonal dual is the injecting unit's own offer.
+        np.testing.assert_allclose(result.prices[0], 30.0, atol=1e-2)
+        np.testing.assert_allclose(result.dump[0], 0.0, atol=1e-4)
 
 
 class TestRPSConstraint(unittest.TestCase):
