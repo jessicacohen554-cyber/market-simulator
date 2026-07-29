@@ -382,6 +382,17 @@ counts:
    target tonnage do those 1:1 contracts cover? (This is blocker 1, the only
    one that cannot be inferred from published aggregates.)
 
+**Access re-probed 2026-07-29 (miso-105, incidental): eLibrary is still
+SPA-walled with no reachable public API.** Four endpoint classes tried from the
+session environment — the legacy `idmws/*.asp` CGI (`docket_sheet.asp` etc.,
+which 301-redirects into the Angular app), `eLibrarySWS/api/v1/*` (404), and
+both `eLibrary/api/*` and `eLibrary/assets/*.json` (which return the 22,464-byte
+SPA shell for every path). The only `/api/` base in the app bundle is Datadog
+RUM, not FERC. So this count needs either a headless-browser session against the
+search UI or an authorized alternative source; it is **not** a `curl`-able
+fetch. This does not change the ask's status — it records what the next session
+should not re-derive.
+
 If (3) clears the §2C bar for 2023, the lane is **timing-blocked, not
 data-blocked**, and the ask reduces to waiting for the **2026** form
 (CY2024–2025, due **2026-10-30**) to complete the three-year span — at which
