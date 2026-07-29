@@ -89,24 +89,40 @@ explicit `solve_and_persist` kwarg and rides `replay_keeper.py`'s generic
 `prb_overrides` channel, so that the flag actually reaches the fleet build is a
 gate, not an assumption (the ERCOT-65 defect class).
 
-**P2 — the re-pricing must be material and two-signed.** Pre-computed from the
-committed benchmark's own 76-plant PJM `CT_PEAKER` roster against eGRID 2023
-`PLHTRT`, before any solve: **39 of 72** plants with both rates move by more than
-**0.5 MMBtu/MWh**, in **both directions** (largest: O H Hutchings −29.4,
-Forked River −13.9, Woodsdale −7.4; Galion +5.2, Bowling Green +4.6, Darby
-+3.4). Energy-weighted the ISO moves **−0.254 MMBtu/MWh**, i.e. about
-**−$0.89/MWh** on the CT offer at $3.50/MMBtu. A delta that changes almost
-nothing has not fired; a delta that moves every plant one way would be a
-multiplier in disguise and is not what the measurement says.
+**P2 — the re-pricing must be material and two-signed.** Read from the generated
+artifact itself, **before any arm solved**: **71 plants**, all inside the
+physical band (`flag == "ok"`, zero excluded), of which **29 move by more than
+0.5 MMBtu/MWh**, **35 cheaper and 36 dearer** — two-signed, as a measurement
+should be, and not a multiplier in disguise. Energy-weighted the ISO moves
+**+0.229 MMBtu/MWh**, i.e. about **+$0.80/MWh** on the CT offer at $3.50/MMBtu.
 
-Per-zone energy-weighted Δ (MMBtu/MWh), pre-computed:
+Per-zone energy-weighted Δ (MMBtu/MWh) from the artifact:
 
-| zone | plants | Δ | zone | plants | Δ |
-|---|---|---|---|---|---|
-| PJM_SWMAAC | 5 | **−1.331** | PJM_EMAAC | 13 | −0.183 |
-| PJM_AEP_Ohio | 17 | −0.327 | **PJM_Dominion** | **9** | **−0.168** |
-| PJM_ATSI | 7 | −0.296 | PJM_West_APS | 6 | −0.149 |
-| PJM_Central_PA | 3 | −0.046 | PJM_ComEd | 12 | **+0.212** |
+| zone | plants | Δ | $/MWh | zone | plants | Δ | $/MWh |
+|---|---|---|---|---|---|---|---|
+| **PJM_Dominion** | **9** | **+0.634** | **+2.22** | PJM_SWMAAC | 5 | +0.195 | +0.68 |
+| PJM_ComEd | 12 | +0.446 | +1.56 | PJM_AEP_Ohio | 17 | +0.158 | +0.55 |
+| PJM_Central_PA | 3 | +0.153 | +0.54 | PJM_West_APS | 6 | +0.076 | +0.27 |
+| PJM_EMAAC | 12 | **−0.364** | −1.28 | PJM_ATSI | 7 | +0.017 | +0.06 |
+
+### §2a — CORRECTION to this document's own first draft, made before any solve
+
+The version of this PREREG first committed (`7b4e8d6`) quoted **−0.254
+MMBtu/MWh** ISO-wide and **−0.168** for Dominion, from a *proxy* computed
+against eGRID 2023 `PLHTRT` over the benchmark's plant roster. **That proxy was
+wrong, and its error is the exact pathology this mechanism exists to fix.** It
+pooled every CAMPD unit at each roster plant instead of filtering
+`unitType == 'Combustion turbine'` as the shipped derive does — so at a mixed
+facility it averaged the efficient combined-cycle blocks into the "CT" rate.
+Doswell Energy Center is the case in point: the model fleet splits it into **6
+`CC_REGULAR` + 3 `CT_PEAKER` generators, all carrying the single eGRID plant
+average of 9.027 MMBtu/MWh**, while its simple-cycle turbines measure
+**11.350**. The proxy inherited that same blend and reported ~8.9.
+
+Both the sign and the magnitude therefore change, and they are restated here
+**before either arm was solved**, from the artifact that is the actual model
+input. Nothing in the delta, the gates or the kills is altered — only this
+document's arithmetic about what to expect. The consequences are recorded in §4.
 
 **P3 — the off-state must be byte-identical.** Arm A must reproduce the
 committed `pjm136_lossurf_B` class hourlies exactly (K5 below).
@@ -115,10 +131,13 @@ committed `pjm136_lossurf_B` class hourlies exactly (K5 below).
 
 **K1 — the C3c standing kill, named first because it is the thinnest margin in
 the keeper.** C3c passes by **1 hour** (2024: 10 h vs RT 18 h, 0.56× against a
-0.5× floor) and **2.5 hours** (2025: 32 h vs 59 h, 0.54×). This delta cuts CT
-offers ISO-wide by ~$0.89/MWh energy-weighted, and CTs are the units that set
-the top of the stack — so a *reduction* in tail hours is the mechanically
-expected direction and a flip back to FAIL is live. **Reported explicitly and in
+0.5× floor) and **2.5 hours** (2025: 32 h vs 59 h, 0.54×). On the corrected §2
+arithmetic this delta *raises* CT offers ISO-wide by ~$0.80/MWh
+energy-weighted, and CTs set the top of the stack — so the mechanically
+expected direction is now **more** tail hours, i.e. C3c moving away from its
+floor rather than toward it. The gate is reported explicitly either way, because
+the sign of this prediction just changed once already (§2a) and the ratio has an
+upper bound as well as a lower one. **Reported explicitly and in
 the headline either way.** Pre-registered disposition (rule 1 `[R-STRUCT]`): a
 C3c flip does **NOT** retire the mechanism — a measured input that is more
 accurate than the estimate it replaces stays in even when the fit worsens, and
@@ -148,24 +167,41 @@ costs is reported.
 
 ## §4 — the expected magnitude, pre-computed, and INERT pre-registered
 
-**This delta is pre-registered as unable to close the Dominion CT leg.** The
-nine Dominion CT plants are **all pure-CT facilities** — none is a mixed
-steam/CT site, which is the pathology this mechanism exists to fix — so their
-eGRID plant rates are already within 0.04–0.72 MMBtu/MWh of their measured
-loaded rates, except Gravel Neck which measures **higher** (+2.40). Energy
-weighted, Dominion moves **−0.168 MMBtu/MWh ≈ −$0.59/MWh**.
+**This delta is pre-registered as unable to close the Dominion CT leg — and, on
+the corrected arithmetic, as pushing it the WRONG WAY.** Dominion's nine CT
+plants move **+0.634 MMBtu/MWh ≈ +$2.22/MWh dearer**, driven by two mixed or
+mis-rated sites: **Doswell +2.324** (the model prices its three simple-cycle
+peakers at the plant average of a facility that is mostly combined cycle) and
+**Gravel Neck +3.204**. A dearer peaker runs *less*, so the expected effect on
+Dominion `CT_PEAKER` volume — already **−6.7 TWh** short — is to make it
+shorter.
 
 Against that, `FINDING-pjm137` §3 measures the model's Dominion price deficit in
 the hours the real CT fleet runs at **−$10.28 / −$16.23 / −$38.21 /MWh**, of
 which **52–63 %** is congestion §2/§4 of that finding prove is intra-zonal and
-unreachable. **A $0.59/MWh offer cut does not close a $10–38/MWh price gap.**
+unreachable. A $2.22/MWh offer *increase* neither closes that gap nor is meant
+to.
 
-**A result in which Dominion CT_PEAKER barely moves is the expected outcome and
-is published as a PASS of the PRIMARY**, exactly as pjm-134's, pjm-135's and
-pjm-136's INERT verdicts were. If P1/P2 hold and Dominion does not move, the
-determination is **ACCURACY-CORRECT, INERT-ON-THE-DOMINION-LEG**, and that
-adjudicates matrix cell `measured_ct_heat_rates` × PJM on PJM's own evidence
-(rule 28 duty b) rather than leaving it open for a fourth session to re-propose.
+**This is the rule 14 `[R-ACCURATE]` case, stated in advance.** That rule is
+explicit: *"If swapping a hand estimate for real data makes the backcast worse,
+that is a signal that something else in the model is miscalibrated and the
+estimate was silently compensating for it… keep the accurate input, find and fix
+the real root cause. Do not bury the error back inside an inaccurate input."*
+The eGRID plant average is an estimate, demonstrably wrong at a mixed facility
+(Doswell: one number for six CC blocks and three peaking turbines). The measured
+loaded rate is the machine's real rate. **The delta is therefore chartered to be
+kept on accuracy grounds even if every volume metric worsens**, and this
+document records that expectation before the arms run so no result can be
+presented as a surprise.
+
+The determination language is fixed here: if P1/P2 hold, the verdict is
+**ACCURACY-CORRECT** — qualified **INERT**, **ADVERSE** or **FAVOURABLE** on the
+Dominion leg by what the arms show. Any of the three adjudicates matrix cell
+`measured_ct_heat_rates` × PJM on PJM's own evidence (rule 28 duty b) rather
+than leaving it open for a fourth session to re-propose. **ADVERSE is not a
+rejection** and does not retire the mechanism; it does block any promotion
+recommendation from this session and it opens the root-cause question rule 14
+requires.
 
 **No-feedback ceiling (binding on this session and any successor):** there is
 nothing in this mechanism to re-parameterise, and nothing may be added. **No
