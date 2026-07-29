@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-29-nyiso-96-control-zerodelta",
+  "label": "nyiso 96 control zerodelta",
+  "date": "2026-07-29",
+  "shorthand": "nyiso-96-control-zerodelta",
+  "definition": "nyiso-96 CONTROL: same-HEAD zero-delta replay of the nyiso-92 keeper recipe (baseline for the tranche_startup_amortization A/B)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-29-nyiso-96-control-zerodelta.js",
+  "bundle": "results/calibration/nyiso96_ctrl_zerodelta"
+}

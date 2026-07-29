@@ -2064,3 +2064,89 @@ LBMP, observed flow, DA–RT spread, or the C3c residual.
 header re-stamped; §5.5 queue item 1b struck through as closed and the queue
 head advanced to item 2. Evidence:
 `docs/FINDING-nyiso95-tsa-derate-not-identifiable-2026-07-28.md`.
+
+---
+
+## 2026-07-29 — nyiso-96: fast-start amortization REJECTED despite flipping C1 to PASS; the NYISO C3c lane has no remaining buildable lever
+
+**Keeper: `2026-07-28-nyiso-92-hydro-envelope`, UNCHANGED.** Registered runs
+(all three years, one bundle each, same HEAD, one mechanism-family apart):
+`2026-07-29-nyiso-96-{control-zerodelta,ctamort}`. Full write-up:
+`docs/FINDING-nyiso96-ct-start-frequency-2026-07-29.md`. Parameter choice and
+predictions pre-registered before the solve:
+`docs/handoffs/nyiso96-preregistration.md`.
+
+**STEP-1 characterisation, no LP spent** (`nyiso96_ct_start_characterization.py`,
+`nyiso96_ct_offer_reveal.py`, both on the keeper's committed sidecars). The two
+discriminating signatures both select the COMMITMENT family over start
+economics, in all three years: run lengths already match measured (plant-grain
+median 6 h model vs 5 h; mean 6.29/6.26/8.62 vs 6.62/6.40/7.83) so only block
+COUNT is short (987/894/2,048 vs 3,737/3,796/3,528); **82–88 % of the missing
+online-hours are hours the model prices BELOW the plant's own measured SRMC**;
+and the measured below-SRMC energy is spread FLAT — the deepest 10 % of those
+hours carry 3.3–6.6 % of it against a 2.5–4.4 % total-energy reference on the
+same ranking. Two objections closed rather than assumed: the hub-vs-zonal price
+(measured NYC/LI premium from the raw RTD files — **53–66 % of measured CT
+energy still clears below its own SRMC at the fleet's own zonal price**, a
+model-independent number) and availability (class derated ≤3 %). This
+independently reproduces nyiso-90/91 on a different bar and a different keeper.
+
+**A non-surviving reading, recorded so it is not rediscovered.** The per-tranche
+capture rate is low (committed 0.05/0.05/0.08, econ 0.29–0.65), which reads as
+an offer markup. It is not: the denominator is affordability at the PLANT SRMC
+while each tranche carries its own heat-rate multiplier. nyiso-91 §(i) measured
+the cheapest CT tranche bidding at bare SRMC (`median offer − direct = +0.00`);
+this session does not contradict it and claims no offer-level defect.
+
+**The arm.** `tranche_startup_amortization` + `tranche_startup_measured_runs`
+(v3 measured basis on NYISO's OWN `campd_ct_run_lengths_NYISO.csv`: 22 plants +
+a pooled 4.0 h class fallback over 34,057 runs; NREL start costs $20/MW CT).
+Zero fitted scalars, nothing ported (rule 25), `n_residual` unchanged. Chosen
+because it was the last **buildable, un-adjudicated, non-governance-blocked**
+cell in the queue — every commitment-side candidate is already closed (J/K
+obligation +0.11 TWh nyiso-83; reserve tiers nyiso-84; block commitment
++0.01–0.03 % nyiso-90; windowed floors forbidden by the 2026-07-27 owner
+directive and rule 17).
+
+**LIVE first** (the nyiso-89 §4a check): max |Δ| class 1,257/1,253/2,105 MW.
+
+**Result. The arm flips C1 to PASS and is rejected anyway.**
+CT_PEAKER on one common bar: 0.323/0.305/1.070 → **0.220/0.188/0.741 TWh**
+(−32/−39/−31 %) against a measured 1.880/1.759/2.217; starts 987/894/2,048 →
+**719/582/1,453** (−27/−35/−29 %) against 3,737/3,796/3,528, so the start ratio
+DEGRADES 3.79x/4.25x/1.72x → **5.20x/6.52x/2.43x**. Median run 6→7/6→5/6→6 vs a
+measured 5 — unmoved, as pre-registered, because there was no horizon defect to
+correct. **C3c is BIT-UNCHANGED: 3/0/7 both arms** against an actual 10/12/42 —
+the lever buys ZERO tail hours on the lane's own target. Displaced energy lands
+on CC_REGULAR (+0.284/+0.496/+0.408) and ST_GAS (+0.159/+0.183/+0.175), and that
++0.284 walks the knife-edge cell from **−3.05 to −2.76** inside its ±2.94 band
+— the control's ONLY failing C1 cell. Scored: control **C1 FAIL** (13/14 · free
+9/10), arm **C1 PASS** (14/14 · free 10/10); C2/C3a/C3b/C4 PASS both; C3c FAIL
+both; C6 UNATTESTED (correct for probes); C7/C8 SKIPPED.
+
+**Verdict: REJECTED on rule 1 [R-STRUCT], not on the residual.** This is the
+INVERSE of the owner's standing keeper clause — that clause admits structure-up
+/ gates-down; this arm is **gates-up / structure-down**. It is not real for this
+fleet and the measurement says so: a fleet clearing 53–66 % of its energy below
+its own SRMC is not adding a ~$5/MWh start-recovery markup on top of SRMC;
+nyiso-91's block test already refuted start-cost recovery (21.7/30.0/36.1 %
+profitable whole, median margin negative at every position h1–h7); and the run
+lengths were already right. The C1 pass is manufactured by moving energy between
+**two classes that are both under-produced** — no class is better represented
+afterwards. Banking it would bury the peaker defect a layer deeper. **Owner-
+visible:** the arm is a strictly better scorecard than the keeper and is
+registered and promotable if the owner prefers the gate — but the §2 peaker
+diagnosis would then be a deliberately-accepted misrepresentation, not an open
+item.
+
+**Matrix (rule 28b):** `tranche_startup_amortization` NYISO `U` → **`R`**.
+**With this the NYISO C3c lane has NO remaining buildable in-model lever.** The
+surviving candidate is unchanged from nyiso-91 — NYISO SCUC load-pocket security
+commitment with BPCG make-whole — a sub-zonal data-intake and topology question
+needing owner scoping before it is a mechanism question.
+
+**Reproducibility note.** The keeper does not replay in a fresh container until
+`scripts/data/curate_capacity_deliverability.py` is run: `data/clean/` is
+derived and gitignored, and `nyiso_li_lcr_tsl` defaults ON while living only in
+`run_config.json` (not `meta.json`), so `--replay-bundle` hard-fails on the
+missing Long Island import limit. Environment setup, not a keeper defect.

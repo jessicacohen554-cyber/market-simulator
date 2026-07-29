@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-27-nyiso-84-east-ladder",
+  "run_id": "2026-07-29-nyiso-96-control-zerodelta",
   "iso": "NYISO",
-  "label": "nyiso 84 east ladder",
+  "label": "nyiso 96 control zerodelta",
   "target_years": [
     2023,
     2024,
@@ -13,13 +13,13 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
+  "rubric_version": 2.9,
   "determination": "NOT-YET",
   "reasons": [
     "governance gate UNATTESTED: no governance attestation in bundle"
   ],
   "notes": [
-    "C8 2024 ST_GAS: grounded above budget \u2014 36.2% forced (3.9291 of 10.865 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.948 (\u22650.8) & off-peak CV ratio 0.947 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+    "C8 2024 ST_GAS: grounded above budget \u2014 30.9% forced (3.3862 of 10.9734 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.956 (\u22650.8) & off-peak CV ratio 0.896 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
   ],
   "criteria": {
     "fuelmix": {
@@ -52,12 +52,6 @@
       "tier": "supporting",
       "status": "PASS"
     },
-    "co2": {
-      "label": "C5a CO2 vs eGRID",
-      "tier": "load-bearing",
-      "status": "CAVEAT",
-      "caveat_kind": "commercial-band"
-    },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
@@ -77,18 +71,16 @@
   "caveats": {
     "protective": [],
     "ledgered": [],
-    "commercial_band": [
-      "C5a CO2 vs eGRID"
-    ],
+    "commercial_band": [],
     "budget": {
       "protective_max": 1,
       "ledgered_max": 3
     }
   },
   "grade_summary": {
-    "scored": 9,
+    "scored": 8,
     "target_grade": 6,
-    "commercial_grade": 1,
+    "commercial_grade": 0,
     "ledgered": 0,
     "fails": 2
   },
