@@ -2196,3 +2196,22 @@ way in the finding, and stays there.
 
 **C3c identification (step 1) follows in this session** — outcome appended
 below when reached.
+
+**C3c identification outcome (step 1, same session): LANE CLOSED EX-ANTE, NO
+SOLVE.** The as-enforced Con Edison AORR table remains MyNYISO login-walled
+(nyiso-83 re-confirmed 2026-07-29; the nysrc.org posting promised by Manual 12
+§2.1.5 does not exist). Decisively, a complete PUBLIC 2008-vintage Appendix B
+was found this session (October-2017 Manual 12, mirrored at ercot.com) and it
+settles the question on CONTENT: every Con Edison in-city commitment row is
+qualitative and condition-triggered on TO contingency analysis, with the
+operational parameters in unpublished Con Ed SO procedures (SO3-18) — no MW
+level, no min-units-per-pocket table, no eligible-unit list exists to derive,
+at any vintage. Rule 13's regeneration test fails outright; BPCG/SOM uplift
+aggregates are outcomes, not requirements (pinning). **NYISO C3c is recorded
+as a DIAGNOSED, UNCLOSED structural limitation of the five-zone
+representation** and the lane handed back — per the owner's stop-if-walled
+authorization, no build, no topology change, no data intake. Matrix: new row
+`scuc_load_pocket_commitment` → NYISO `G` ex-ante; §5.5 C3c queue now EMPTY
+(remaining live work: dispatch-matching items 7–10, hygiene item 6). Re-open
+conditions and evidence:
+`docs/FINDING-nyiso97-load-pocket-identification-2026-07-29.md`.
