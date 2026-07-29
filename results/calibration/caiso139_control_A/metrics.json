@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-20-caiso-104-m1-v1",
+  "run_id": "2026-07-29-caiso139-control",
   "iso": "CAISO",
-  "label": "caiso 104 m1 v1",
+  "label": "caiso139 control",
   "target_years": [
     2023,
     2024,
@@ -13,7 +13,7 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
+  "rubric_version": 2.9,
   "determination": "NOT-YET",
   "reasons": [
     "governance gate UNATTESTED: no governance attestation in bundle"
@@ -38,23 +38,17 @@
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
       "tier": "supporting",
-      "status": "FAIL"
-    },
-    "co2": {
-      "label": "C5a CO2 vs eGRID",
-      "tier": "load-bearing",
-      "status": "CAVEAT",
-      "caveat_kind": "commercial-band"
+      "status": "PASS"
     },
     "governance": {
       "label": "C6 governance gate",
@@ -64,31 +58,29 @@
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     }
   },
   "caveats": {
     "protective": [],
     "ledgered": [],
-    "commercial_band": [
-      "C5a CO2 vs eGRID"
-    ],
+    "commercial_band": [],
     "budget": {
       "protective_max": 1,
       "ledgered_max": 3
     }
   },
   "grade_summary": {
-    "scored": 9,
-    "target_grade": 5,
-    "commercial_grade": 1,
+    "scored": 6,
+    "target_grade": 4,
+    "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 3
+    "fails": 2
   },
   "free_class_score": {
     "iso": "CAISO",

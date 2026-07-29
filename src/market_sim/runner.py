@@ -1563,6 +1563,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             dispatch_kwargs = build_base_dispatch_kwargs(
                 dispatch_spec, import_node_recon=import_node_recon
             )
+            # Overgeneration-dump guard domain (dump_cost_full_offer_domain,
+            # GATED default off — caiso-139). Mirrors the run_calibration.py
+            # hook so the forecast and backcast paths share the mechanism: the
+            # guard is an LP soundness invariant (no row may profit by
+            # generating purely to dump), so it regenerates from whatever offer
+            # set a forecast year assembles. Flag off → key unset → identical LP.
+            if getattr(config, "dump_cost_full_offer_domain", False):
+                dispatch_kwargs.update(dump_cost_full_offer_domain=True)
             # Emissions mass-cap rows (policy constraint path, gated). When
             # mass_cap_enabled and a power-sector CO2 budget is configured for
             # the ISO's program/year, bound in-region fossil emissions; each

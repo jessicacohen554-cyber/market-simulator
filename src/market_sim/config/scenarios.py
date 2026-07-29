@@ -263,6 +263,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # Dropped from the hash at its default; an armed run enters the key as a
     # distinct scenario.
     "caiso_firm_import_envelope_clip",
+    # Overgeneration-dump guard domain (caiso-139): GATED / default-off and
+    # byte-identical for every existing config (with the gate off the dump
+    # price is the unchanged renewable/storage-credit bound). Registered here
+    # at its default so every pre-existing cache key stays byte-stable — the
+    # caiso-138 field above was the SIXTH instance of missing this one line;
+    # an armed run enters the key as a distinct scenario.
+    "dump_cost_full_offer_domain",
     # DAM-first outage overlay gates for the four ISOs with a native
     # availability instrument (CAISO / MISO / NEISO / PJM), wired 2026-07-24
     # (infra/dam-outage-wiring-4iso). All default False and back a backcast-only,
@@ -3294,6 +3301,32 @@ class ScenarioConfig:
     # is the forward ATC envelope, wired when the forecast lane adopts it.
     # Requires caiso_firm_import_shape (it clips that injector's output).
     # Default off (byte-identical); CAISO-only.
+    dump_cost_full_offer_domain: bool = False  # Take the overgeneration-dump
+    # guard over EVERY offer that can reach a dumpable node, not just the
+    # renewable/storage production credits (caiso-139; FINDING-caiso139). The
+    # guard in model.lp.costs.build_cost_vector exists so no resource can
+    # profit by generating purely to dump — it sets
+    # `dump_cost = max(eps, -min_credit + eps)` where the min runs over
+    # (wind_mc, solar_mc, -storage_eac) ONLY. Every OTHER negative offer slips
+    # under it: the CAISO per-hub import tranches are priced at their own
+    # measured hub (inject_caiso_per_hub_intertie_prices), and Palo Verde
+    # crashes to -$58.24/MWh (2024) / -$36.26 (2025) in the desert-SW solar
+    # glut, so those tranches book -mc - dump_cost per MWh of pure
+    # generate-to-dump — 0.531 TWh (2024) and 0.035 TWh (2025) of phantom
+    # tranche revenue at the WECC pseudo-nodes, printing the node at the
+    # -$26.001 dump optimum. When on, the SAME guard is taken over its full
+    # domain: the min additionally spans every `mc` row that can INJECT
+    # (pmax > 0 — export sinks absorb, so their negative price is a
+    # willingness-to-pay on a withdrawal, not a production credit, and is
+    # excluded by construction). Zero new free parameters (rule 24): the bound
+    # is read off the offer arrays the LP already carries, per solve, with no
+    # threshold, percentile or margin. Rule 19 [R-ONE-MECH]: one mechanism
+    # widened to its stated domain, not a second one stacked on it. Forward
+    # story (rule 17): the guard regenerates from whatever offer set a forecast
+    # year assembles — it is an LP soundness invariant, not an overlay.
+    # ISO-agnostic LP infrastructure, so it is gated rather than unconditional
+    # (rule 25 [R-ISO-SCOPE]): each ISO's lane arms it on its own evidence.
+    # Default off (byte-identical).
     caiso_demand_clock_realign: bool = False  # Apply the MEASURED source-data
     # clock correction to the CAISO backcast demand input (caiso-75;
     # FINDING-caiso75-demand-clock-2026-07-11): the EIA-930 CISO extract's

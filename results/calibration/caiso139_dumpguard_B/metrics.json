@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-19-caiso-gasshape-interpfix-base",
+  "run_id": "2026-07-29-caiso139-dump-guard-offer",
   "iso": "CAISO",
-  "label": "caiso gasshape interpfix base",
+  "label": "caiso139 dump guard offer",
   "target_years": [
     2023,
     2024,
@@ -13,10 +13,10 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
+  "rubric_version": 2.9,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_tail"
   ],
   "notes": [],
   "criteria": {
@@ -33,7 +33,7 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
@@ -48,27 +48,22 @@
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
       "tier": "supporting",
-      "status": "FAIL"
-    },
-    "co2": {
-      "label": "C5a CO2 vs eGRID",
-      "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -81,11 +76,11 @@
     }
   },
   "grade_summary": {
-    "scored": 7,
-    "target_grade": 4,
+    "scored": 9,
+    "target_grade": 7,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 3
+    "fails": 2
   },
   "free_class_score": {
     "iso": "CAISO",
