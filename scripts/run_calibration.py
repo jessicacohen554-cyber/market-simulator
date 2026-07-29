@@ -389,6 +389,7 @@ def run_year(
     caiso_offer_surface_measured: bool = False,
     caiso_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
+    nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
     ercot_thermal_dam_availability_hourly: bool = False,
     ercot_thermal_dam_availability_plant: bool = False,
@@ -692,6 +693,12 @@ def run_year(
         # disclosure daily series; ScenarioConfig field docstring has the full
         # provenance/admissibility note). ERCOT-gated in the fleet application.
         config = config.with_overrides(ercot_nuclear_unit_availability=True)
+    if nuclear_unit_availability:
+        # ISO-generic window-grain nuclear refuel availability (measured NRC
+        # daily Power Reactor Status; ScenarioConfig field docstring has the
+        # full provenance/admissibility note). The fleet application excludes
+        # ERCOT, which keeps its own flag/file above.
+        config = config.with_overrides(nuclear_unit_availability=True)
     if ercot_thermal_dam_availability:
         # Measured class-day thermal availability rescale (60-Day DAM
         # disclosure HSL/status; ScenarioConfig field docstring has the full

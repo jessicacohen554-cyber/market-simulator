@@ -139,6 +139,15 @@ NRC_TO_EIA: dict[str, dict[str, tuple[int, int]]] = {
         "Susquehanna 1": (6103, 1),
         "Susquehanna 2": (6103, 2),
     },
+    # NYISO (nyiso-98, matrix §5.5 item 7). All four reactors report
+    # 365/366 days in 2023-2025; Indian Point 2/3 retired 2020/2021 and
+    # carry no rows. Every unit is in zone Upstate_West.
+    "NYISO": {
+        "FitzPatrick": (6110, 1),
+        "Ginna": (6122, 1),
+        "Nine Mile Point 1": (2589, 1),
+        "Nine Mile Point 2": (2589, 2),
+    },
 }
 
 
