@@ -159,9 +159,18 @@ closure path, mechanism by mechanism.
    PJM, promoted in both; MISO/NYISO/NEISO cells `U`), and it surfaced the
    **PS-inclusive hydro pin defect** — audit every hydro ISO whose BA omits
    `NG: PS` from EIA-930 `NG: WAT`.
-3. **`pjm_da_virtual_bids` is the highest-value untested transfer**: it moved
-   PJM's 2025 C3c 0→17 h — and C3c is exactly the sole/ledgered blocker for
-   NYISO and NEISO and failing in CAISO/MISO/ERCOT.
+3. ~~**`pjm_da_virtual_bids` is the highest-value untested transfer.**~~
+   **Downgraded 2026-07-29 — it has now been refused at both ends it was tried**
+   (NYISO nyiso-94 on identification, MISO miso-105 on a fully measured book),
+   and miso-105 surfaced a question the family had never been asked: the measured
+   net virtual curve's crossing price λ0 *is* the price the book cleared at
+   ($0.09–$1.80 in MISO), so a stiff curve blends a measured clearing price into
+   the dual at weight `N ÷ (S+N)` — 31–34 % in MISO on the annual mean, ~63 % in
+   its tight summer hours. **This does not move PJM's `K`** (rule 25: PJM's
+   premise is genuinely different — it has +7–11 GW of real net depth that MISO
+   does not), but PJM's lane should measure its own λ0-gap and its own
+   `N ÷ (S+N)` before this is transferred anywhere else, and CAISO/NEISO should
+   answer that question in the same breath as the identification one.
 4. **The CAMPD economic-layup defect is upstream of everything** (all six
    extracts; holdout frozen; MISO/PJM/NYISO re-tune required; downstream
    derived artifacts not yet re-derived post-guard — an open cross-ISO audit).
@@ -408,9 +417,30 @@ loss.
 2. **Outage-grain data ask** (`miso-outage-grain-data-ask-2026-07.md`) — the
    C3b driver (~10 GW 2025 summer under-derate) is instrument-blocked; the
    lever is data intake at unit/fuel grain, not a model change.
-3. **DA virtual depth** (`pjm_da_virtual_bids` form, own derivation) — the
-   diurnal-spread compression (model reproduces 29–47% of observed
-   peak-minus-night spread) is a DA-formation signature; untested.
+3. ~~**DA virtual depth** (`pjm_da_virtual_bids` form, own derivation).~~
+   **CLOSED 2026-07-29 (miso-105): REFUSED ex-ante, no solve** — and refused on
+   the *opposite* evidence from NYISO's. MISO **does** publish the submitted
+   priced curve (`bids_cb`, its FERC-Order-719 masked archive,
+   `docs.misoenergy.org/marketreports/YYYYMMDD_bids_cb.zip`, ~90-day lag,
+   2023-01-01→2026-01-01 and 404 on every holdout year), its incremental ladder
+   semantics were **identified from the file** (99.36 % reproduction of the
+   published cleared MW vs 93.49 % cumulative), and the mechanism was measured
+   across all 26,304 training hours. Three measured grounds: (a) **premise
+   false** — summer-peak net cleared virtual **+1.09/+2.47/−0.34 GW** against
+   PJM's **+7–11 GW**, negative in 2025 (the year C3b fails), and −158/+1,336/−62
+   MW in the RT>$300 tail; MISO's book is 2.7× PJM's as a share of load *gross*
+   (15.8/14.5 % vs 5.9/5.6 %) and ≈0 *net* — the IMM's own convergence/congestion
+   instrument, 1,694 MW/h of it explicitly energy-neutral **matched** pairs;
+   (b) **immaterial where admissible** — the peak-minus-night net differential
+   priced at the keeper's own stack slope buys **+$0.75/+$0.72/+$0.27** of
+   diurnal spread against a $14.6/$15.9/$20.5 gap = **5.1/4.5/1.3 %**, shrinking
+   as the miss grows; (c) **the material channel is inadmissible** — the curve's
+   crossing price λ0 reproduces the price its own book cleared at to
+   $0.09/$1.80/$0.17, and at 0.93/0.93/0.69 GW per $/MWh against the model
+   stack's 1.85/1.79/1.56 GW/$ it would supply **31–34 % of every hour's price
+   displacement and ~63 % at the steepest 2025 summer ventile**. Evidence:
+   `results/calibration/FINDING-miso105-da-virtual-attractor-2026-07-29.md`.
+   Do not re-open on this data; the DO-NOT-REDO list is that finding's §10.
 4. **`measured_ct_heat_rates`** — audit-grade.
 5. **`dual_fuel_switching`** — winter-event pricing candidate (Elliott-class),
    untested in MISO.
