@@ -510,7 +510,8 @@ Dispatch-matching lane (hourly r, opened by the nyiso-92 charter; the hydro
 capability envelope/floor pair is now the keeper — cells K above):
 
 7. ~~**`nuclear_unit_availability`** (NYISO derivation).~~ **TESTED 2026-07-29
-   (nyiso-98, registered A/B): all gates PASS — cell K, KEEPER-RECOMMENDED.**
+   (nyiso-98, registered A/B): all gates PASS — cell K, OWNER-PROMOTED to
+   keeper `2026-07-29-nyiso-98-nucavail` the same day.**
    **The queue entry's own premise was wrong.** "r_day drops 0.84 → 0.50/0.51
    in 2024–25" is scored against EIA-930 `NYIS` `NG: NUC`, which posts exactly
    0.0 MW in contiguous blocks (1,179 h 2023 / 380 h 2024 / 117 h 2025 — zeros
