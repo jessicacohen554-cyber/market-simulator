@@ -36,6 +36,11 @@
  *   NYISO C3c lane has NO remaining buildable in-model lever — the surviving
  *   candidate (SCUC load-pocket security commitment + BPCG) is a sub-zonal
  *   data-intake/topology question needing owner scoping (nyiso-91).
+ * NYISO column re-stamped 2026-07-29 on the OWNER promotion of nyiso-96
+ *   (tranche_startup_amortization R -> K by owner decision, CT_PEAKER trade
+ *   accepted on the record; keeper -> 2026-07-29-nyiso-96-ctamort, gates ->
+ *   C3c alone). Same session: owner AUTHORIZED sub-zonal NYC/LI load-pocket
+ *   scoping, data-first (stop-if-walled).
  * 2026-07-28 on the pjm-135 keeper promotion (pjm_external_net_position_cut -> K;
  *   PJM gates drop to C3c alone — C1 and C3a closed).
  * 2026-07-28 on the pjm-136 keeper promotion (zonal_loss_surface PJM -> K; PJM reaches
@@ -65,7 +70,7 @@ window.MECH_MATRIX = {
     CAISO: "2026-07-27-caiso-130-nameplate-aware",
     PJM: "2026-07-28-pjm-136-lossurf",
     MISO: "2026-07-28-miso-99b-chp-power",
-    NYISO: "2026-07-28-nyiso-92-hydro-envelope",
+    NYISO: "2026-07-29-nyiso-96-ctamort",
     NEISO: "2026-07-23-neiso-61-netrev-margin"
   },
   gates: {
@@ -73,7 +78,7 @@ window.MECH_MATRIX = {
     CAISO: "C5a all years, C3a 2025, C3c 2023-24",
     PJM: "C3c 2024-25 (SOLE blocker since pjm-135; C1 and C3a closed 2026-07-28)",
     MISO: "C3a/C3b/C3c ledger-saturated (3/3), C7 COAL_PRB all years",
-    NYISO: "C3c sole blocker, all years",
+    NYISO: "C3c sole blocker, all years (C1 closed 2026-07-29 by owner promotion of nyiso-96, CT_PEAKER trade accepted)",
     NEISO: "C3c ledgered caveat (frontier declared; only calibration-complete ISO)"
   },
   categories: [
@@ -265,8 +270,8 @@ window.MECH_MATRIX = {
       ev: { E: "ERCOT-132 leg B (FINDING-ercot132-legB-coal-offerlevel-2026-07-28), DIAGNOSIS-ercot122 §§1-5, ERCOT-135 (DIAGNOSIS-ercot135-coal-merit-order-2026-07-28)" } },
     { id: "tranche_startup_amortization", cat: "offer", name: "Fast-start tranche startup amortization (Order-825/ELMP)",
       def: "scenarios.py:4981 (+measured/conditional runs)", mode: "BF",
-      cells: "UUKKRK",
-      note: "PJM+MISO+NEISO keeper. Untested in ERCOT (which uses gas_st startup spread instead) and CAISO. NYISO REJECTED by registered single-delta A/B (nyiso-96, 2026-07-29: 2026-07-29-nyiso-96-{control-zerodelta,ctamort}, v3 measured basis on NYISO's OWN campd_ct_run_lengths_NYISO.csv, zero fitted scalars) — and rejected DESPITE A BETTER SCORECARD, on rule 1 [R-STRUCT]. The arm FLIPS NYISO's only failing load-bearing gate to PASS (C1 13/14 free 9/10 -> 14/14 free 10/10; the sole failing cell 2023 CC_REGULAR -3.05 -> -2.76 inside its ±2.94 band) while making the lane's dominant diagnosed defect 27-39 % WORSE: CT_PEAKER 0.323/0.305/1.070 -> 0.220/0.188/0.741 TWh against a measured 1.880/1.759/2.217, starts 987/894/2048 -> 719/582/1453 against 3737/3796/3528, so the start ratio degrades 3.79x/4.25x/1.72x -> 5.20x/6.52x/2.43x. C3c — the lane's actual target and NYISO's sole determination blocker — is BIT-UNCHANGED (3/0/7 both arms vs actual 10/12/42), so the lever buys ZERO tail hours. Mechanism verified LIVE first (max |Δ| class 1257/1253/2105 MW, the nyiso-89 §4a check). WHY IT IS NOT REAL HERE: 53-66 % of measured NYISO CT energy clears BELOW its own bare SRMC at its own zonal price, so the fleet demonstrably does not add a ~$5/MWh start-recovery markup on top of SRMC; nyiso-91's block test independently refuted start-cost recovery (only 21.7/30.0/36.1 % of missed runs profitable whole, median margin negative at every position h1-h7); and the model's run lengths ALREADY match measured (median 6 vs 5), so there was no amortization horizon to correct. The C1 pass is produced by moving energy between two classes that are BOTH under-produced — no class is better represented after it. DO NOT re-test on the strength of the C1 gain without re-opening the §2 peaker diagnosis.",
+      cells: "UUKKKK",
+      note: "PJM+MISO+NEISO keeper. NYISO K BY OWNER DECISION 2026-07-29 (C3c scoping session): the owner promoted 2026-07-29-nyiso-96-ctamort to keeper for its C1 PASS, explicitly accepting the CT_PEAKER 27-39 % degradation — the building session's rule-1 rejection below stands UNEDITED as the structural adjudication, and the peaker diagnosis is now carried as a known, deliberately-accepted misrepresentation (see keepers/NYISO.json promotion note + the bundle's attestation _open_items (0)). Untested in ERCOT (which uses gas_st startup spread instead) and CAISO. NYISO session adjudication was REJECTED, by registered single-delta A/B (nyiso-96, 2026-07-29: 2026-07-29-nyiso-96-{control-zerodelta,ctamort}, v3 measured basis on NYISO's OWN campd_ct_run_lengths_NYISO.csv, zero fitted scalars) — and rejected DESPITE A BETTER SCORECARD, on rule 1 [R-STRUCT]. The arm FLIPS NYISO's only failing load-bearing gate to PASS (C1 13/14 free 9/10 -> 14/14 free 10/10; the sole failing cell 2023 CC_REGULAR -3.05 -> -2.76 inside its ±2.94 band) while making the lane's dominant diagnosed defect 27-39 % WORSE: CT_PEAKER 0.323/0.305/1.070 -> 0.220/0.188/0.741 TWh against a measured 1.880/1.759/2.217, starts 987/894/2048 -> 719/582/1453 against 3737/3796/3528, so the start ratio degrades 3.79x/4.25x/1.72x -> 5.20x/6.52x/2.43x. C3c — the lane's actual target and NYISO's sole determination blocker — is BIT-UNCHANGED (3/0/7 both arms vs actual 10/12/42), so the lever buys ZERO tail hours. Mechanism verified LIVE first (max |Δ| class 1257/1253/2105 MW, the nyiso-89 §4a check). WHY IT IS NOT REAL HERE: 53-66 % of measured NYISO CT energy clears BELOW its own bare SRMC at its own zonal price, so the fleet demonstrably does not add a ~$5/MWh start-recovery markup on top of SRMC; nyiso-91's block test independently refuted start-cost recovery (only 21.7/30.0/36.1 % of missed runs profitable whole, median margin negative at every position h1-h7); and the model's run lengths ALREADY match measured (median 6 vs 5), so there was no amortization horizon to correct. The C1 pass is produced by moving energy between two classes that are BOTH under-produced — no class is better represented after it. DO NOT re-test on the strength of the C1 gain without re-opening the §2 peaker diagnosis.",
       ev: { M: "MISO-55", Q: "neiso-47", N: "nyiso-96 (docs/FINDING-nyiso96-ct-start-frequency-2026-07-29.md)" } },
     { id: "measured_ct_heat_rates", cat: "offer", name: "Measured loaded CT heat rates (CAMPD, per-plant)",
       def: "scenarios.py:1197", mode: "BF",
