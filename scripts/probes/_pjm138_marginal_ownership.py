@@ -29,6 +29,23 @@ asks the two questions that shape leaves open.
   sorted offer curve. If 3–5 GW buys a few dollars, the lead is inert whatever
   its population statistics say; if it buys tens of dollars, it is live.
 
+**Two bounds are stated up front, because both run one way.**
+
+1. `mc_base` is the assembled **P0 base cost** — fuel, VOM, carbon, NOx, EAC and
+   the coal tranches with every pricing overlay applied, but *not* the amortized
+   startup markup P1 adds to the fast-start tranches (`tranche_startup_
+   amortization`, a PJM keeper mechanism). The markup lands near the TOP of the
+   stack, so the true P1 offer curve is **steeper** there than the one measured
+   here: the ownership census identifies which class's *base cost* sits at the
+   dual, and the withdrawal response below is a **lower bound** on the true one.
+   The repo's precedent for the unavailable markup is to bracket it
+   (pjm-123's `lo`/`hi` endpoints); this probe states the direction instead of
+   guessing the size.
+2. The withdrawal curve prices against a single ISO-wide clearing price (the
+   load-weighted internal dual) rather than eight zonal ones. The keeper's mean
+   max zonal spread is $2.12 / $3.03 / $4.59 (`FINDING-pjm137` §1), so the
+   approximation is small relative to the tens-of-dollars question being asked.
+
 The keeper fleet is reconstructed through the AUTHORITATIVE path — the bundle's
 `meta.json` replayed through `replay_keeper`'s own meta→kwarg mapping into
 `solve_and_persist`, with `run_year` intercepted and forced to `fleet_only=True`
@@ -110,10 +127,19 @@ def _keeper_fleet(bundle: Path, year: int) -> dict:
     spec.loader.exec_module(rk)
 
     from scripts import run_calibration
-    from scripts import run_calibration_full as rcf
+    from scripts import run_calibration_full as rcf  # noqa: F811
 
-    kwargs = rk.build_kwargs(json.loads((bundle / "meta.json").read_text()))
+    meta = json.loads((bundle / "meta.json").read_text())
+    kwargs = rk.build_kwargs(meta)
+    # The four keys replay_keeper.main supplies outside build_kwargs. `run_dir`
+    # is pointed at a scratch path that is never written to: run_year is
+    # intercepted before the first solve, so solve_and_persist unwinds before
+    # any output stage.
     kwargs["years"] = [year]
+    kwargs["iso"] = meta["iso"]
+    kwargs["hours"] = int(meta.get("hours", HOURS))
+    kwargs["reference"] = rcf._load_reference()
+    kwargs["run_dir"] = bundle
 
     captured: dict = {}
     real_run_year = run_calibration.run_year

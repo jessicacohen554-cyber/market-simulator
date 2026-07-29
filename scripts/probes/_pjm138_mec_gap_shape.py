@@ -163,25 +163,36 @@ def _measured_reserve_est(year: int) -> dict[str, np.ndarray]:
         columns=["datetime_beginning_utc", "locale", "service", "mcp", "as_req_mw",
                  "total_mw"],
     )
-    frame = frame[frame["locale"] == "PJM RTO Reserve Zone"].copy()
     keep, hoy = _est_hour_of_year(frame["datetime_beginning_utc"], year)
     frame = frame[keep].copy()
     frame["hour"] = hoy
     out: dict[str, np.ndarray] = {}
-    for svc, tag in (
-        ("Synchronized Reserve", "syn"),
-        ("Primary Reserve", "pri"),
-        ("Thirty Minutes Reserve", "t30"),
+    # Both locales: the RTO Reserve Zone is the system product; the nested
+    # Mid-Atlantic/Dominion Reserve Subzone is the one Dominion actually sits in
+    # (Manual 11 §4.2), so a MAD MW counts toward both and the subzone can price
+    # above the RTO. Reported separately rather than pooled.
+    for loc, ltag in (
+        ("PJM RTO Reserve Zone", ""),
+        ("Mid-Atlantic/Dominion Reserve Subzone", "mad_"),
     ):
-        sub = frame[frame["service"] == svc]
-        for col, key in (("mcp", f"{tag}_mcp"), ("as_req_mw", f"{tag}_req"),
-                         ("total_mw", f"{tag}_cleared")):
-            out[key] = (
-                sub.groupby("hour")[col]
-                .mean()
-                .reindex(range(HOURS))
-                .to_numpy(float)
-            )
+        floc = frame[frame["locale"] == loc]
+        for svc, tag in (
+            ("Synchronized Reserve", "syn"),
+            ("Primary Reserve", "pri"),
+            ("Thirty Minutes Reserve", "t30"),
+        ):
+            sub = floc[floc["service"] == svc]
+            for col, key in (
+                ("mcp", f"{ltag}{tag}_mcp"),
+                ("as_req_mw", f"{ltag}{tag}_req"),
+                ("total_mw", f"{ltag}{tag}_cleared"),
+            ):
+                out[key] = (
+                    sub.groupby("hour")[col]
+                    .mean()
+                    .reindex(range(HOURS))
+                    .to_numpy(float)
+                )
     return out
 
 
@@ -526,9 +537,13 @@ def measure(bundle: Path) -> dict:
             "ct_energy_weighted": {
                 "system_energy_gap": _w(sys_gap, wct, okr),
                 "measured_syn_mcp": _w(syn, wct, okr),
+                "measured_syn_mcp_mad_subzone": _w(res["mad_syn_mcp"], wct, okr),
                 "model_reserve_dual": _w(mdl["reserve"], wct, okr),
                 "residual_after_full_reserve_credit": _w(
                     sys_gap - syn + mdl["reserve"], wct, okr
+                ),
+                "residual_after_full_reserve_credit_mad": _w(
+                    sys_gap - res["mad_syn_mcp"] + mdl["reserve"], wct, okr
                 ),
             },
             "load_weighted": {
