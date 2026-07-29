@@ -342,6 +342,7 @@ def solve_dispatch(
     link_bidirectional: np.ndarray | None = None,
     link_flow_cost: np.ndarray | None = None,
     link_loss: np.ndarray | None = None,
+    dump_cost_full_offer_domain: bool = False,
     T: int | None = None,
 ) -> DispatchResult:
     """Solve the linear economic-dispatch problem with HiGHS.
@@ -369,6 +370,13 @@ def solve_dispatch(
         slack_cost: Optional ``(n_zones, T)`` per-zone-hour load-slack cost
             override (declared-window ELMP emergency-tier repricing). ``None``
             keeps the flat ``voll`` broadcast (byte-identical).
+        dump_cost_full_offer_domain: Take the overgeneration-dump guard over
+            every ``mc`` row that can inject, not just the renewable/storage
+            production credits (``ScenarioConfig.dump_cost_full_offer_domain``,
+            caiso-139). ``False`` is byte-identical. Present here so the
+            non-warm and P2 paths, which reach the LP through this facade with
+            the same ``dispatch_kwargs`` mapping, carry the flag instead of
+            raising on an unexpected keyword.
         incidence: Node-link incidence of shape ``(n_zones, n_links)``.
         ttc: Total transfer capability per link, shape ``(n_links,)``
             (static) or ``(T, n_links)`` (per-hour seasonal limit).
@@ -517,6 +525,7 @@ def solve_dispatch(
         link_bidirectional=link_bidirectional,
         link_flow_cost=link_flow_cost,
         link_loss=link_loss,
+        dump_cost_full_offer_domain=dump_cost_full_offer_domain,
         T=T,
     )
     return model.solve(
