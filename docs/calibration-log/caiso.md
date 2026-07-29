@@ -3187,3 +3187,73 @@ which storage cap the overlay should use (COD-ramped ≡ LP cap to 0.000000 MW,
 and both derivers already use the hourly cap).
 
 Next number: caiso-138.
+
+### CORRECTION (caiso-137b, 2026-07-29) — two secondary caiso-137 claims WITHDRAWN; the primary result stands
+
+Filed the next session-day, before any further work. Evidence:
+`results/calibration/FINDING-caiso137b-overlay-reachability-2026-07-29.md`.
+Instrument: `scripts/probes/_caiso137b_overlay_reachability.py`.
+
+**STANDS: ask A2 closes as a no-defect** (the caiso-137 entry's §1). The
+overlay's measure basis is already plant-level ONLINE; options (a)/(b)/(c) are
+each refuted against the code. Re-verified by the correction instrument.
+
+**WITHDRAWN 1 — the overlay never runs in a CAISO backcast.**
+`caiso_scarcity_overlay` has exactly one call site,
+`src/market_sim/runner.py:2085` (the FORECAST path). The calibration path
+contains **zero** imports of `market_sim.runner` (AST-verified), and its only
+price writer, `_system_frame`, builds `total_overlay` from **ERCOT terms alone**.
+So a CAISO keeper's persisted price is the **energy-only LP dual**, the realised
+adder is **exactly $0.00 in every hour**, and `caiso_scarcity_pricing=True` is a
+**stored no-op** in this lane. The caiso-137 entry's "realised adder $0.14 /
+$0.016 / $0.0004" and its **entire D2 E1/E2 table** are withdrawn — they priced a
+spillover onto a backcast LMP the mechanism cannot reach. (Corroborated: the
+keeper's min zonal price is exactly −$26.001 in 2,774/4,251/2,771 hours; a
+uniform positive adder would break that exactness. caiso-137 §5.1 read the
+152/133/7 disagreements as reconstruction error — the correct explanation is that
+the adder is identically zero.)
+
+**WITHDRAWN 2 — there is no flat-nameplate defect.** `runner.py:993-999`
+REPLACES `storage.power_cap` with the COD-ramped 2-D array before any solve, so
+the overlay's third argument is already the hourly in-service cap and
+`reserve_headroom` takes its `cap.ndim == 2` branch. The 1-D nameplate caiso-137
+measured belongs to `scripts/run_calibration.py`'s `fleet_only` helper, which
+assigns the ramped cap to a **separate local** (line 3741). The "phantom 3,049 /
+3,567 / 4,317 MW", its rule-14 framing, the "codebase disagrees with itself"
+corroboration and the rule-25 ERCOT scope note are all withdrawn. *Lesson: a
+claim about what a call site passes must be traced from the call site, never
+inferred from a reconstruction helper that reproduces the same LP inputs by a
+different route.*
+
+**WHAT THIS LEAVES — sharper than what it removes.** CAISO has **no
+scarcity-pricing mechanism in the backcast lane at all**: the in-LP co-opt is off
+(and inert when armed, caiso-131 §4), the LOLP overlay is forecast-path only, and
+with no `scarcity.parquet` the render falls back to `_tail_hours` on the
+energy-only duals. **That is the honest reason CAISO's C3c is 0/0/0** — not an
+armed overlay failing to fire, but nothing pricing scarcity in the scored lane.
+It sharpens caiso-131 §4 (R is irrelevant; the code never evaluates it here) and
+relocates ask A4: any future C3c work must first decide whether CAISO should
+*have* a backcast scarcity mechanism — a charter question, not a tuning one.
+Rule 24 `[R-REGISTRY]`: a flag that reads as armed in `run_config.json` while
+being structurally incapable of changing the run is a provenance trap, and is
+what produced two different wrong readings of it.
+
+**KEEPER: no candidate, nothing promoted.** Arming any storage-tier flag is
+**provably inert** in a backcast (Δ = exactly 0 on every scored series), and an
+inert flag is matrix code `I`, not a keeper. Keeper remains
+`2026-07-27-caiso-130-nameplate-aware`, NOT-YET, {C3a-2025, C3c}. No dashboard
+registration due — rule 15 applies to completed runs; no bundle was produced.
+Rule 28 duty (b): the `ordc_scarcity_overlay` CAISO cell is corrected to record
+backcast unreachability. Rule 22: 2023–2025 only.
+
+### DO-NOT-REDO (caiso-137b, binding)
+
+Treating `caiso_scarcity_pricing` / `caiso_scarcity_import_headroom` as live in a
+CAISO **backcast** (byte-identical by construction — do not solve an A/B on
+them); re-proposing the flat-nameplate storage-tier defect; quoting caiso-137's
+realised-adder numbers, phantom MW or D2 E1/E2 table (all withdrawn — the
+`r_online` decomposition and dump-floor bound survive only as technique and as a
+forecast-path characterisation); and re-deriving CAISO's 0/0/0 C3c as a
+scarcity-*mechanism* failure rather than the absence of one.
+
+Next number: caiso-138.
