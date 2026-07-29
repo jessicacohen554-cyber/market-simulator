@@ -142,8 +142,101 @@ results).
 
 ## 6. Solve result
 
-*(filled in below from the registered A/B pair)*
+Registered pair, `--year 2023 2024 2025` in one invocation (rule 16):
+`2026-07-29-nyiso-98-control-zerodelta` (same-HEAD zero delta) and
+`2026-07-29-nyiso-98-nucavail` (single delta). The control reproduces the
+keeper criterion-for-criterion, including the published knife-edge cell.
+
+### S2 — the mechanism's own target: closes in every year
+
+Gap-masked against the audited benchmark (56 / 21 / 9 falsified gap days
+dropped):
+
+| year | r_day control → arm | r_hr control → arm |
+|---|---|---|
+| 2023 | 0.446 → **0.885** | 0.418 → **0.834** |
+| 2024 | 0.833 → **0.960** | 0.819 → **0.941** |
+| 2025 | 0.534 → **0.917** | 0.502 → **0.836** |
+
+The realized r_day reproduces the build-time extract-arithmetic prediction
+(0.885 / 0.960 / 0.917) **to three decimals** — the LP did exactly what the
+gate said the input would make it do, which is itself the strongest available
+check that nothing else moved.
+
+Displacement lands on **imports** (max |arm − control| 1,380 / 1,620 /
+2,272 MW): nuclear is must-run, so a reactor going out is replaced at the
+seam and its return backs the seam off. That is the physical signature, and it
+is why the mistracking mattered — the smear was mis-timing 0.6–1.3 GW of
+must-run supply against a measured import series that is itself an open
+mistracking item (queue item 9).
+
+### S1 — no criterion verdict flips
+
+| criterion | control | arm |
+|---|---|---|
+| C1 fuel mix | PASS **14/14 · free 10/10** | PASS **14/14 · free 10/10** |
+| C2 system volume | PASS | PASS |
+| C3a mean LMP | PASS | PASS |
+| C3b price shape | PASS | PASS |
+| C3c price tail | FAIL 3/0/7 h | FAIL 4/0/7 h |
+| C4 dispatch corr | PASS | PASS |
+| C6 governance | UNATTESTED | UNATTESTED |
+| C7 diurnal (D-1) | PASS | PASS |
+| C8 forced share (D-2) | PASS (grounded) | PASS (grounded) |
+
+C6 is UNATTESTED on **both** sides — the probe posture (an attestation is
+promotion-built), not an arm effect.
+
+### Reported adverse, not patched (rule 14 [R-ACCURATE])
+
+* **The knife-edge C1 cell degrades.** 2023 `CC_REGULAR` walks **−2.76 →
+  −2.79 TWh** against ±2.94: ~14 % of the remaining 0.18 TWh headroom
+  consumed. It stays **in band**, and the measured input **stays in**. A
+  thinner margin against an accurate physical input is a discovered root cause
+  elsewhere — never grounds to restore a known-defective estimate.
+* **C8 2024 `ST_GAS`** 30.43 % → 30.47 % forced (+0.04 pp), grounded above
+  budget on **both** sides — the fragile cell does not flip.
+* C7 D-1 rows move in the third decimal; nothing approaches a gate.
+
+### S3 — C3c, reported, not a gate
+
+3/0/7 → **4/0/7** h > $300 against a measured 10/12/42. Marginal, and it
+adjudicates nothing: C3c is a diagnosed, unclosed structural limitation of the
+five-zone representation with an empty lever queue (nyiso-94/95/96/97) and is
+roof-blocked (nyiso-85 §7d).
 
 ## 7. Verdict
 
-*(filled in below)*
+**All pre-registered gates pass — G1/G2/G3 at build time, S1 and S2 in solve.
+Per the pre-registration's own outcome table this is a registered
+KEEPER-RECOMMENDED arm.** Promotion is an owner call and is **not** taken
+here; the keeper remains `2026-07-29-nyiso-96-ctamort` until the owner decides
+(a promotion additionally needs a C6 attestation, which is promotion-built —
+`gen_nyiso96_attestation.py` is the precedent, and this entry adds **zero**
+fitted scalars so `n_residual` stays 6).
+
+The rule-1 [R-STRUCT] case, stated without leaning on fit: this replaces an
+**estimate** — a fleet-month CF smeared flat across four reactors, which
+cannot represent a single unit being out — with the **measured physical state
+of each reactor**, from a public per-unit daily instrument, at zero fitted
+scalars, with the level still owned by the independent EIA-923 anchor. It is
+the same mechanism class as ERCOT's live keeper overlay and the CAMPD fossil
+outage windows. That it also nearly doubles the 2023 and 2025 daily-tracking
+correlation is corroboration, not the argument.
+
+**What this session also establishes, independent of the mechanism:** the
+NYISO nuclear benchmark is contaminated by 81 falsifiable gap days, and any
+NYISO statistic scored against EIA-930 `NG: NUC` without that mask is
+unreliable — including two numbers already on the record (the queue's r_day
+ordering and nyiso-92's 2023 nuclear level). The gap mask is measured, not
+chosen: NRC contradicts **every** gap day.
+
+**Named follow-ups (not done here, deliberately — rule 24):**
+1. The same zero-block audit for the other EIA-930 component series this repo
+   scores against (`import`, `NG: WAT`, `NG: OIL`) and for the other five
+   ISOs' BAs. NYISO's `NG: OIL` r_day of 0.07 is the obvious next suspect.
+2. `NUCLEAR_MONTHLY_CF_BY_YEAR["NYISO"]` remains the level anchor and is
+   untouched; two 2025 months (Feb, Apr) hit the frozen `SCALE_CLIP` 1.25 and
+   still reconcile only to −0.62 %/−0.32 %, inside `WEDGE_TOL` but at its
+   edge. If a future NRC year lands, re-derive and re-check those two (rule 23
+   — data change only, never a residual).

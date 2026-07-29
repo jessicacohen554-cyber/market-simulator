@@ -2215,3 +2215,99 @@ authorization, no build, no topology change, no data intake. Matrix: new row
 (remaining live work: dispatch-matching items 7–10, hygiene item 6). Re-open
 conditions and evidence:
 `docs/FINDING-nyiso97-load-pocket-identification-2026-07-29.md`.
+
+## 2026-07-29 — nyiso-98 `nuclear_unit_availability`: the queue's defect was a benchmark artifact; the real one closes, all gates PASS
+
+Dispatch-matching lane, matrix §5.5 item 7 (queue head). Registered A/B:
+`2026-07-29-nyiso-98-control-zerodelta` + `2026-07-29-nyiso-98-nucavail`,
+2023+2024+2025 in one invocation. Pre-registration
+`docs/PREREG-nyiso98-nuclear-availability-2026-07-29.md` committed and pushed
+**before** the extract was derived and before any solve; finding
+`docs/FINDING-nyiso98-nuclear-availability-2026-07-29.md`.
+
+**PREMISE CORRECTION — the queue entry was wrong, and it inverts.** "Nuclear
+r_day drops 0.84 → 0.50/0.51 in 2024–25" reproduces exactly on the keeper
+(0.839/0.504/0.511) but is scored against EIA-930 `NYIS` `NG: NUC`, which
+posts **exactly 0.0 MW** in contiguous blocks — 1,179 h in 2023 (50 all-zero
+days), 380 h in 2024, 117 h in 2025. Zeros **in the source parquet**: not NaN,
+and not produced by the repo's `_eia_hourly_frame_filled` gap-bridging, which
+emits NaN. **Falsified against NRC on all 81 gap days across the three years,
+zero survivors** — every one has ≥1 NY reactor at **100 %** of licensed
+thermal power (2023-04-14…20: FitzPatrick 100 % + Nine Mile Point 2 100 % =
+2,127 MW online against a metered 0.0 MW for all 24 h). Gap-masked, the
+ordering **inverts** to **0.446 / 0.833 / 0.534** — 2023 is the WORST year,
+not the best, and the stated "2024–25 drop" does not exist. Second artifact,
+same cause: nyiso-92's component table reads 2023 nuclear +14.5 %
+over-produced (27.49/24.00 TWh); on gap-clean days it is **−2.1 %**. There is
+no nuclear level defect. The lane stayed live on the real residual and the
+target was re-based onto gap-clean r_day **in the pre-registration, before the
+arm existed**.
+
+**SOURCE (rule 13, adjudicated before the derive).** NRC daily Power Reactor
+Status selected — public, per-reactor, 365/366-day coverage of all four NY
+reactors every year. NYISO outage schedules are CEII; EIA-923 is the level
+anchor and cannot see intra-month timing; nuclear is not in CAMPD; EIA-930
+`NG: NUC` is forbidden as an input (it is the scored outcome, and it is the
+contaminated series). Extract `data/raw/nuclear-availability-NYISO.csv`,
+4,384 reactor-days; **all 36 months reconcile inside `WEDGE_TOL`** (worst
+−0.62 %) so unlike PJM no month is dropped. **Zero fitted scalars** — deriver
+constants frozen from ERCOT and unmodified; the PJM extract still reproduces
+byte-for-byte under `--check` (rule 23).
+
+**THE PJM PRECEDENT DOES NOT REPEAT, for the pre-registered reason.**
+pjm-nuc-1b stopped at its build-time gate because the 923 anchor redistributes
+event-day energy onto near-full pool days and PJM's target — the level at 22
+scarcity tail hours — *is* those days (−72 MW vs a ≥ +75 MW commitment).
+NYISO's target is within-month **timing**, which the anchor is neutral to.
+Gate G2 was written to detect the PJM mode directly and it measured the
+opposite: **104 % retention** where PJM's was negative.
+
+**BUILD-TIME GATES (no LP), all PASS:** G1 raw-NRC lift **+0.304** 3-yr mean
+gap-clean r_day (gate ≥ +0.10, no year regresses); G2 reconciled retention
+**104 %**, worst year +0.126 (gate ≥ 70 %, > 0 every year); G3 max annual
+|ΔTWh| **0.14 %** (gate < 0.5 %).
+
+**LIVE-MECHANISM CHECK (nyiso-89 §4a) recorded BEFORE results were read:**
+29,088 / 32,184 / 26,136 availability cells changed with **zero** changes
+outside nuclear rows, `min_gen` tracking cell-for-cell, available nuclear
+energy −0.01/−0.02/−0.14 %. In-solve the overlay applies 4 reactors in all
+three years and the A/B diverges at the P0→P1 commitment seam. Disclosed: the
+solve logs the overlay twice per year (0 reactors, then 4) — the 0-reactor
+call is `bins_to_fleet`'s fossil-CAMPD-bins array build before
+`build_base_fleet` adds nuclear, not the LP's fleet.
+
+**RESULT — S2 closes in every year.** Gap-clean nuclear r_day
+**0.446/0.833/0.534 → 0.885/0.960/0.917**, r_hr 0.418/0.819/0.502 →
+0.834/0.941/0.836 — reproducing the build-time extract prediction to three
+decimals. Displacement lands on imports (max |arm−control| 1,380/1,620/
+2,272 MW), the signature of a must-run reactor going out and back.
+
+**S1 holds — every criterion verdict identical to the control:** C1 **14/14 ·
+free 10/10**, C2/C3a/C3b/C4/C7/C8 PASS. C6 UNATTESTED on **both** (probe
+posture, not an arm effect). The control reproduces the keeper
+criterion-for-criterion including its published knife-edge cell (−2.76).
+
+**REPORTED ADVERSE, NOT PATCHED (rule 14).** 2023 `CC_REGULAR` walks
+**−2.76 → −2.79 TWh** against ±2.94 — ~14 % of the remaining 0.18 TWh headroom
+gone. **In band**, and the accurate measured input **stays in**: a thinner
+margin is a discovered root cause elsewhere, never grounds to restore the
+fleet-month smear. C8 2024 `ST_GAS` 30.43 → 30.47 % forced, grounded above
+budget on both sides — the fragile cell does not flip. C3c (not the gate,
+roof-blocked) 3/0/7 → 4/0/7 h vs actual 10/12/42.
+
+**LOYO (rule 22):** no parameter is fitted to any year — the deriver constants
+are frozen cross-ISO inheritances and each year's overlay derives from that
+year's own NRC reports against that year's own 923 anchor; all three years are
+scored in this one bundle and the direction is the same in each. No
+out-of-training year touched (NYISO carries no calibration-complete marker).
+
+**VERDICT: KEEPER-RECOMMENDED, NOT PROMOTED — promotion is an owner call and
+is not taken here.** Keeper remains `2026-07-29-nyiso-96-ctamort`. A promotion
+additionally needs a promotion-built C6 attestation (the entry adds zero
+fitted scalars, so `n_residual` stays 6). Matrix cell
+`nuclear_unit_availability` N: U → **K**.
+
+**Follow-up raised, deliberately not done here (rule 24):** the same
+zero-block audit for the other EIA-930 component series this repo scores
+against (`import`, `NG: WAT`, `NG: OIL`) and for the other five ISOs' BAs —
+NYISO `NG: OIL` (r_day 0.07) is the obvious next suspect.

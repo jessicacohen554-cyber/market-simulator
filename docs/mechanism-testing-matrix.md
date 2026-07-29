@@ -452,10 +452,28 @@ condition.
 Dispatch-matching lane (hourly r, opened by the nyiso-92 charter; the hydro
 capability envelope/floor pair is now the keeper — cells K above):
 
-7. **`nuclear_unit_availability`** (NYISO derivation) — nuclear r_day drops
-   0.84 → 0.50/0.51 in 2024–25 (refuel/outage timing) on 26–28 TWh; the
-   ISO-generic engine exists (ERCOT keeper). Mind the PJM NRC-overlay
-   provenance-gate failure before choosing the source.
+7. ~~**`nuclear_unit_availability`** (NYISO derivation).~~ **TESTED 2026-07-29
+   (nyiso-98, registered A/B): all gates PASS — cell K, KEEPER-RECOMMENDED.**
+   **The queue entry's own premise was wrong.** "r_day drops 0.84 → 0.50/0.51
+   in 2024–25" is scored against EIA-930 `NYIS` `NG: NUC`, which posts exactly
+   0.0 MW in contiguous blocks (1,179 h 2023 / 380 h 2024 / 117 h 2025 — zeros
+   in the source parquet, not NaN). Falsified against NRC on **all 81 gap days,
+   zero survivors**: every one has ≥1 NY reactor at 100 % licensed thermal
+   power. Gap-masked the ordering **inverts** — 0.446/0.833/0.534, so **2023 is
+   the worst year** and the "2024–25 drop" does not exist as described. (Same
+   artifact: nyiso-92's 2023 nuclear level reads +14.5 % over-produced; clean
+   it is −2.1 %.) Target re-based onto gap-clean r_day in the pre-registration
+   **before** the arm was built. The PJM failure mode does **not** repeat, for
+   the pre-registered reason: PJM's target was the *level at near-full pool
+   days* (what the 923 anchor moves), NYISO's is *within-month timing* (what it
+   preserves). Build-time gates: G1 raw-NRC lift **+0.304** (≥ +0.10), G2
+   reconciled retention **104 %** (≥ 70 %; PJM's was negative), G3 max annual
+   |ΔTWh| **0.14 %** (< 0.5 %). In-solve: gap-clean r_day **0.446/0.833/0.534 →
+   0.885/0.960/0.917**, r_hr 0.418/0.819/0.502 → 0.834/0.941/0.836, every
+   criterion verdict identical to the same-HEAD zero-delta control. Reported
+   adverse (rule 14, not patched): 2023 `CC_REGULAR` −2.76 → −2.79 of ±2.94,
+   in band. Zero fitted scalars.
+   `docs/FINDING-nyiso98-nuclear-availability-2026-07-29.md`.
 8. **`hydro_ror_split` NYISO classifier review** — blocked on answering the
    Robert Moses Niagara hybrid label (Run-of-river/Peaking, 52% of fleet MW)
    from the treaty scenic-flow schedule; never arm on the CAISO-reviewed rule
