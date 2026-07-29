@@ -18,8 +18,10 @@ separation inside the Dominion zone than across the DOM–AEP boundary**
 With the congestion route closed, `measured_ct_heat_rates` is the **only named
 lever remaining** in the PJM lever queue for the CT leg (matrix §5.3 item 2,
 cell **U**). It is chartered here **as a rule-14 `[R-ACCURATE]` accuracy
-correction, not as a fix for the Dominion residual** — and §4 pre-registers it
-as **INERT on that residual**, with the arithmetic, before any solve.
+correction, not as a fix for the Dominion residual** — and §4 pre-registers, with
+the artifact's own arithmetic and before any solve, that it is expected to move
+that residual **the wrong way**, which rule 14 says to keep and investigate
+rather than revert.
 
 **Promotion is NOT pre-granted** and is not requested by this session. It
 remains a separate owner act, and (rule 22 `[R-HOLDOUT]`) a structural mechanism

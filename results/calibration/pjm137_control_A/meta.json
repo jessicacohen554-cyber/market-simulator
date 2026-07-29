@@ -1,5 +1,5 @@
 {
- "timestamp": "2026-07-19T16:15:59",
+ "timestamp": "2026-07-29T01:28:49",
  "iso": "PJM",
  "years": [
   2023,
@@ -36,6 +36,7 @@
  "tranche_startup_amortization": true,
  "tranche_startup_measured_runs": true,
  "tranche_startup_conditional_runs": true,
+ "gas_offer_margin": true,
  "nysdec_peaker_rule_availability": false,
  "oil_primary_bin_fuel": false,
  "st_gas_intermediate": false,
@@ -50,13 +51,25 @@
   "cc_mustrun_per_plant": true,
   "gas_daily_shape": true,
   "unit_outage_short_windows": true,
-  "pjm_east_interface_cut": true
+  "pjm_east_interface_cut": true,
+  "gas_offer_net_revenue_margin": true,
+  "gas_offer_margin_anchor": 3.3483,
+  "pjm_offer_midcurve_segments": [
+   "LONG_RUN",
+   "CC_LIKE"
+  ],
+  "hydro_budget_nameplate_aware": true,
+  "pjm_external_net_position_cut": true,
+  "pjm_zonal_loss_surface": true
  },
  "coal_bit_passthrough_sigmoid": true,
  "coal_bit_sigmoid_overrides": {
   "coal_bit_passthrough_floor": 0.65
  },
  "coal_econ_srmc_bound": false,
+ "coal_econ_marginal_hr_bound": false,
+ "ercot_offer_hrmult_ep_rebasis": null,
+ "ercot_offer_hrmult_ep_rebasis_bands": null,
  "coal_plant_monthly_pricing": true,
  "td_loss_factor": 0.0,
  "ercot_zonal_gas_basis": false,
@@ -76,6 +89,7 @@
  "miso_south_seam_split": false,
  "miso_rdt_tcdc": false,
  "miso_zonal_loss_surface": false,
+ "pjm_zonal_loss_surface": true,
  "ercot_multiproduct_as_coopt": false,
  "ercot_ecrs_conservative_deployment": false,
  "ercot_nonreleasable_as_withholding": false,
@@ -123,7 +137,7 @@
  "offer_curve_overrides": {
   "CC_REGULAR": {
    "committed": 1.0,
-   "econ_low": 1.0,
+   "econ_low": 0.96,
    "econ_high": 1.5,
    "peak": 5.0,
    "econ_low_share": 0.55
@@ -145,8 +159,8 @@
   },
   "CT_PEAKER": {
    "committed": 1.05,
-   "econ_low": 1.05,
-   "econ_high": 1.27,
+   "econ_low": 1.25,
+   "econ_high": 1.65,
    "peak": 4.0,
    "econ_low_share": 0.5,
    "pct_peaking": 20.0
@@ -212,6 +226,11 @@
  "cc_nameplate_summer_derate": false,
  "coal_nameplate_summer_derate": false,
  "temp_dependent_derate": false,
+ "temp_derate_hourly_grain": false,
+ "temp_derate_mean_anchored": false,
+ "temp_derate_classes": null,
+ "temp_derate_slope_st_chp": null,
+ "temp_derate_slope_ct_chp": null,
  "ercot_offer_surface_conditional": false,
  "ercot_offer_surface_midcurve_conditional": false,
  "ercot_offer_surface_cleared_share": false,
@@ -227,10 +246,14 @@
  "caiso_offer_surface_measured": false,
  "caiso_offer_surface_conditional": false,
  "pjm_offer_midcurve_segments": [
-  "LONG_RUN"
+  "LONG_RUN",
+  "CC_LIKE"
  ],
  "ercot_nuclear_unit_availability": false,
  "ercot_thermal_dam_availability": false,
+ "ercot_thermal_dam_availability_hourly": false,
+ "ercot_thermal_dam_availability_plant": false,
+ "ercot_wind_zone_shape": false,
  "ercot_noncampd_plant_availability": false,
  "ercot_storage_capability_measured": false,
  "ercot_online_capacity_envelope_measured": false,
@@ -298,13 +321,30 @@
  "ramp_limits": null,
  "local_capacity_constraints": null,
  "nyiso_local_selfsupply": null,
+ "nyiso_scr_edrp": null,
+ "nyiso_scr_edrp_strike": null,
  "nyiso_firm_imports": null,
  "nyiso_import_reconciliation": null,
  "nyiso_import_hub_prices": null,
  "nyiso_iroquois_winter_spread": null,
  "nyiso_synchronised_reserve": null,
+ "nyiso_li_locational_reserve": null,
+ "nyiso_incity_commitment_obligation": null,
+ "nyiso_east_reserve_families": null,
+ "reliability_floor_overrides": null,
+ "nyiso_gas_commitment_bridge": null,
+ "nyiso_gas_bridge_cc_min_load_frac": null,
+ "nyiso_gas_bridge_st_min_load_frac": null,
+ "nyiso_gas_bridge_startup": null,
+ "nyiso_gas_bridge_da_horizon": null,
+ "nyiso_gas_bridge_min_run": null,
+ "nyiso_gas_bridge_cc_min_run_hours": null,
+ "nyiso_gas_bridge_st_min_run_hours": null,
+ "nyiso_spin_reserve_online": null,
  "nyiso_spin_headroom_frac": null,
  "nyiso_dynamic_reserve_requirements": null,
+ "nyiso_hydro_reserve_eligible": null,
+ "nyiso_scr_edrp_reserve_eligible": null,
  "neiso_dynamic_reserve_requirements": null,
  "miso_firm_imports": null,
  "miso_seam_flow_limit": false,
@@ -332,9 +372,28 @@
  "btm_backfill_year": 2024,
  "shared_inputs": {
   "eia930": "../_shared/PJM/eia930-ec2962505b2c.parquet",
-  "eia923": "../_shared/PJM/eia923-782726db3be7.parquet",
-  "campd": "../_shared/PJM/campd-db315991835d.parquet"
+  "eia923": "../_shared/PJM/eia923-515fa22df146.parquet",
+  "campd": "../_shared/PJM/campd-db315991835d.parquet",
+  "unit_outages": "../_shared/PJM/unit_outages-efd694c287be.parquet",
+  "unit_outages_short": "../_shared/PJM/unit_outages_short-3ba0897821ba.parquet",
+  "unit_outages_partial": "../_shared/PJM/unit_outages_partial-b37584b96662.parquet",
+  "unit_outages_e923": "../_shared/PJM/unit_outages_e923-5db50221ce30.parquet",
+  "unit_outages_layup": "../_shared/PJM/unit_outages_layup-b8ac78eb969e.parquet",
+  "capacity_deliverability": "../_shared/PJM/capacity_deliverability-7b81c5eca3cf.parquet"
  },
- "git_sha": "688e168",
- "highspy_version": "1.14.0"
+ "git_sha": "7139e57",
+ "basis_sha": "204faf80c8dafbe0a584861c57b8a9cf6b224d5b",
+ "highspy_version": "1.14.0",
+ "environment": {
+  "python_version": "3.11.15",
+  "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+  "packages": {
+   "highspy": "1.14.0",
+   "numpy": "2.4.6",
+   "scipy": "1.17.1",
+   "pandas": "3.0.3",
+   "pyarrow": "24.0.0",
+   "pydantic": "2.13.4"
+  }
+ }
 }

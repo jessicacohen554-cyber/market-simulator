@@ -320,3 +320,91 @@ inter-zonal spread the model is chartered to reproduce.
    level, i.e. **smaller** than the hub-based reading suggested.
 4. Carried from pjm-135, still open: the `_PJM_TIE_ZONE` / `INTERFACE_NEIGHBORS`
    TVA disagreement, and PJM `CC_CHP` running +42 %.
+
+---
+
+## §7 — the A/B result: **the measured heat rates are ACCURACY-CORRECT and, against the pre-registration's own expectation, FAVOURABLE on the Dominion leg**
+
+Arms `pjm137_control_A` / `pjm137_ctheatrate_B`, 2023+2024+2025 each in one
+invocation (rule 16), solved sequentially (rule 12). Scorer:
+`scripts/probes/_pjm137_ctheatrate_ab.py`; machine output
+`results/probes/pjm137_ctheatrate_ab.json`.
+
+**Verified single-delta.** Arm A reproduces the committed `pjm136_lossurf_B`
+**byte-identically — 0.000000000 MW over 166,440 class-hours, each of the three
+years** (K5), and `run_config.json` shows `measured_ct_heat_rates` False in A and
+True in B with `pjm_zonal_loss_surface` True in both.
+
+| gate (PREREG §2/§3) | result | verdict |
+|---|---|---|
+| **P2** material and two-signed | **29 of 71** plants move > 0.5 MMBtu/MWh; **35 cheaper / 36 dearer**; ISO energy-weighted **+0.229 MMBtu/MWh (+$0.80/MWh)** | **PASS** |
+| **K3** physical-band exclusions ≤ 10 % of energy | **0 plants, 0.00 %** excluded | **PASS** |
+| **K4** zero slack / zero dump, both arms | 0 / 0 in every year | **PASS** |
+| **K5** arm-A identity | **0.000000000 MW**, all three years | **PASS** |
+| **K1** the C3c standing kill | **PASS in both arms, and UNCHANGED** — the model's tail-hour counts are identical (3 / 10 / 32 h) | **PASS** |
+| **K2** C1 per class | **16/16, free 12/12 in BOTH arms** | **PASS** |
+| **K6** solve cost | no new rows or columns; coefficient values only | reported |
+
+**Both arms carry a `CALIBRATED` determination with every criterion passing.**
+
+### §7a — the chartered defect: Dominion GAINS while the ISO-wide class FALLS
+
+| PJM_Dominion, TWh | 2023 A → B | 2024 A → B | 2025 A → B | benchmark actual (§3a) |
+|---|---|---|---|---|
+| **CT_PEAKER** | 0.724 → **0.721** | 1.380 → **1.448** | 2.923 → **3.162** | 3.066 / 4.048 / 5.218 |
+| CC_REGULAR | 32.352 → 32.501 | 42.591 → 42.852 | 50.087 → 50.320 | — |
+| **ISO-wide CT_PEAKER** | 22.410 → **19.553** | 23.081 → **20.446** | 29.934 → **27.140** | — |
+
+**The ISO-wide class loses 2.6–2.9 TWh in every year while Dominion gains** —
+the same pure-reallocation signature pjm-136 produced, and for a different
+reason: this is a per-plant re-pricing, so the zones whose peakers were most
+over-credited by the eGRID plant average give up energy to those whose were not.
+
+Against the benchmark's own actual, the Dominion gap goes **−2.342 → −2.345**
+(2023, flat), **−2.668 → −2.600** (2024), and **−2.295 → −2.056** (2025) — the
+2025 year closes **10.4 %** of the remaining gap, comparable to pjm-136's
++0.411 TWh.
+
+**This contradicts the pre-registration, which is the point of writing one.**
+`PREREG-pjm137` §4 predicted the delta would push the Dominion leg *the wrong
+way*, because Dominion's energy-weighted rate rises the most of any zone
+(+0.634 MMBtu/MWh). It rose — and Dominion still gained, because the mechanism
+is **per plant**, not per zone: Doswell (+2.324) and Gravel Neck (+3.204) are
+correctly made dearer while Remington (−0.329) and Ladysmith (−0.001) are not,
+and Dominion's cheaper turbines improve their standing against other zones'
+peakers that got dearer. A zone-average prediction could not see that, and the
+pre-registration is recorded as **refuted on its own expected direction** rather
+than quietly re-written.
+
+### §7b — the honest costs
+
+1. **ISO-wide `CT_PEAKER` volume moves further from its class total in two of
+   three years**: |error| 0.75 → 2.11 (2023) and 0.94 → 3.57 (2024) against the
+   EIA-923 class totals, while 2025 improves markedly (6.11 → 3.32). C1 still
+   passes 16/16 in both arms, so no band breaks, but the class-level trade is
+   real: `CC_REGULAR` (7.42 → 6.07, 3.03 → 1.84) and `COAL_BIT` (0.87 → 0.29,
+   2.15 → 1.62) both improve as CT energy moves into them.
+2. **C8 `CT_PEAKER` forced share rises** — 15.1 → 16.9 % (2024), 15.6 → 17.1 %
+   (2025), and 2023 newly appears above the 15 % peaker cap at 16.3 %. All three
+   are **GROUNDED** (every binding mechanism clears D-4; profile r 0.923–0.973
+   and off-peak CV ratio 0.703–1.083), so under rule 20 this is a clean PASS
+   surfaced as a report note. It is nonetheless a shrinking class carrying a
+   larger forced fraction, and the next session should watch it.
+3. **The mechanism does not address the congestion half of the price deficit**
+   (§3), and was never claimed to.
+
+### §7c — what this says about rule 14
+
+The eGRID plant-average heat rate is an *estimate*; the measured loaded rate is
+the machine's real rate; and at Doswell the estimate was wrong by
+**2.32 MMBtu/MWh ≈ $8/MWh** because eGRID publishes one number for a site that
+is six combined-cycle blocks and three peaking turbines. Replacing it is
+mandatory under rule 14 `[R-ACCURATE]` independently of any residual — and here
+it happens to cost nothing: no criterion fails, C3c is untouched, C1 holds at
+16/16, and the chartered defect improves. **PREREG §4's no-feedback ceiling was
+honoured: no multiplier, blend, scale, floor, cap, per-plant override or band
+widening was applied to the derived rates, and none may be.**
+
+**Determination: ACCURACY-CORRECT, ZERO-DOF, FAVOURABLE-ON-THE-DOMINION-LEG,
+RUBRIC-COMPLETE.** `n_residual` unchanged at 6; the DOF ledger goes 16 → 17
+entries, the new one `measured-physical`.

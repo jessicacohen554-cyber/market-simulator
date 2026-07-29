@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-19-pjm-gasshape-interpfix",
+  "run_id": "2026-07-29-pjm-137-control",
   "iso": "PJM",
-  "label": "pjm gasshape interpfix",
+  "label": "pjm 137 control",
   "target_years": [
     2023,
     2024,
@@ -13,12 +13,13 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
-  "determination": "NOT-YET",
-  "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+  "rubric_version": 2.9,
+  "determination": "CALIBRATED",
+  "reasons": [],
+  "notes": [
+    "C8 2024 CT_PEAKER: grounded above budget \u2014 15.1% forced (3.6036 of 23.8026 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.959 (\u22650.8) & off-peak CV ratio 0.867 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 CT_PEAKER: grounded above budget \u2014 15.6% forced (4.8763 of 31.2165 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.972 (\u22650.8) & off-peak CV ratio 0.685 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
   ],
-  "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
@@ -50,15 +51,10 @@
       "tier": "supporting",
       "status": "PASS"
     },
-    "co2": {
-      "label": "C5a CO2 vs eGRID",
-      "tier": "load-bearing",
-      "status": "PASS"
-    },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
