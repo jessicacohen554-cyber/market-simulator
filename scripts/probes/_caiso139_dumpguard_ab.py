@@ -155,22 +155,16 @@ def gate_p3(control: Path, arm: Path) -> bool:
     print("=" * 96)
 
     def rubric(b: Path) -> tuple[str, list[str]]:
+        """(determination, sorted FAIL criteria ids) from the bundle metrics."""
         m = json.loads((b / "metrics.json").read_text())
-        gates = m.get("gates") or m.get("rubric") or {}
-        det = m.get("determination") or m.get("verdict") or ""
+        det = str(m.get("determination", ""))
+        crit = m.get("criteria") or {}
         fails = sorted(
             k
-            for k, v in gates.items()
-            if isinstance(v, dict)
-            and str(v.get("status", v.get("verdict", ""))).upper().startswith("FAIL")
+            for k, v in crit.items()
+            if str((v or {}).get("status", "")).upper().startswith("FAIL")
         )
-        if not fails:
-            fails = sorted(
-                k
-                for k, v in gates.items()
-                if isinstance(v, str) and v.upper().startswith("FAIL")
-            )
-        return str(det), fails
+        return det, fails
 
     da, fa = rubric(control)
     db, fb = rubric(arm)
