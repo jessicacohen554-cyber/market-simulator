@@ -73,17 +73,17 @@ def class_max_delta(a: Path, b: Path, year: int) -> tuple[float, str]:
 
 
 def tail_hours(bundle: Path, year: int) -> int:
-    """Return the count of hours whose load-weighted zonal price exceeds $300.
+    """Return the count of hours whose MAX zonal dual exceeds $300.
 
-    Matches the C3c convention: one ISO-wide hourly price formed as the
-    demand-weighted mean of the zonal duals, then thresholded.
+    Matches the rubric's C3c model-tail convention (``calibration_verdict``
+    §C3c: "count of hours the LP's max zonal dual exceeds the per-ISO
+    threshold", NYISO threshold $300) — deliberately the max, not a
+    demand-weighted mean: on this keeper every model >$300 hour is Long Island
+    while the five mainland zones share one lower dual, so a weighted mean
+    would understate the tail to zero.
     """
     df = pd.read_parquet(bundle / "hourly" / f"system_{year}.parquet")
-    g = df.groupby("hour", observed=True)
-    num = g.apply(lambda x: float((x["price"] * x["demand"]).sum()),
-                  include_groups=False)
-    den = g["demand"].sum()
-    px = (num / den.replace(0, np.nan)).dropna()
+    px = df.groupby("hour", observed=True)["price"].max()
     return int((px > TAIL_THRESHOLD).sum())
 
 
