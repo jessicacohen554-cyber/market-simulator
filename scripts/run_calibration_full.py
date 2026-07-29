@@ -2946,6 +2946,7 @@ def solve_and_persist(
     caiso_offer_surface_measured: bool = False,
     caiso_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
+    nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
     ercot_thermal_dam_availability_hourly: bool = False,
     ercot_thermal_dam_availability_plant: bool = False,
@@ -3591,6 +3592,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 ercot_nuclear_unit_availability=True
             )
+        if nuclear_unit_availability:
+            # Mirror run_year's with_overrides so run_config.json records the
+            # ISO-generic window-grain nuclear overlay the LP solved with.
+            recorded_cfg = recorded_cfg.with_overrides(nuclear_unit_availability=True)
         if ercot_thermal_dam_availability:
             # Mirror run_year's with_overrides so run_config.json records the
             # measured thermal class-day availability the LP solved with.
@@ -4405,6 +4410,7 @@ def solve_and_persist(
             caiso_offer_surface_measured=caiso_offer_surface_measured,
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
             ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
+            nuclear_unit_availability=nuclear_unit_availability,
             ercot_thermal_dam_availability=ercot_thermal_dam_availability,
             ercot_thermal_dam_availability_hourly=(
                 ercot_thermal_dam_availability_hourly
@@ -5174,6 +5180,7 @@ def solve_and_persist(
             else None
         ),
         "ercot_nuclear_unit_availability": ercot_nuclear_unit_availability,
+        "nuclear_unit_availability": nuclear_unit_availability,
         "ercot_thermal_dam_availability": ercot_thermal_dam_availability,
         "ercot_thermal_dam_availability_hourly": (
             ercot_thermal_dam_availability_hourly
@@ -8230,6 +8237,23 @@ def main() -> None:
         "Off (default, keeper-reproducing).",
     )
     parser.add_argument(
+        "--nuclear-unit-availability",
+        action="store_true",
+        help="Backcast, non-ERCOT ISOs: replace the "
+        "NUCLEAR_MONTHLY_CF_BY_YEAR fleet-month smear with the measured "
+        "per-reactor DAILY availability from the NRC daily Power Reactor "
+        "Status reports (data/raw/nuclear-availability-<ISO>.csv, monthly "
+        "energy reconciled to the same EIA-923 anchor — the anchor owns the "
+        "LEVEL, NRC owns the TIMING; "
+        "scripts/data/derive_nuclear_availability.py). The ISO-generic "
+        "sibling of --ercot-nuclear-unit-availability (which keeps ERCOT's "
+        "own flag/file); a reactor power state is a physical availability "
+        "event (rule 13), zero fitted scalars. Uncovered reactors/dates — "
+        "including any month the deriver drops for the thermal-vs-net wedge "
+        "— keep the monthly smear. Off (default, keeper-reproducing); an "
+        "ISO with no derived extract is a no-op.",
+    )
+    parser.add_argument(
         "--ercot-thermal-dam-availability",
         action="store_true",
         help="ERCOT backcast: rescale the CC_REGULAR/CT_PEAKER classes' "
@@ -10583,6 +10607,7 @@ def main() -> None:
         ercot_ordc_cap_dual_adder=args.ercot_ordc_cap_dual_adder,
         ercot_storage_as_product_credit=args.ercot_storage_as_product_credit,
         ercot_nuclear_unit_availability=args.ercot_nuclear_unit_availability,
+        nuclear_unit_availability=args.nuclear_unit_availability,
         ercot_thermal_dam_availability=args.ercot_thermal_dam_availability,
         ercot_thermal_dam_availability_hourly=(
             args.ercot_thermal_dam_availability_hourly

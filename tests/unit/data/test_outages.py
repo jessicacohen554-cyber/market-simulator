@@ -676,6 +676,186 @@ class NuclearUnitAvailabilityTest(unittest.TestCase):
             places=3,
         )
 
+    def test_committed_nyiso_series_covers_every_reactor_and_month(self):
+        """NYISO leg (nyiso-98): four reactors, no wedge-dropped month."""
+        from market_sim.data.outages import nuclear_unit_availability_series
+
+        for year in (2023, 2024, 2025):
+            s = nuclear_unit_availability_series("NYISO", year)
+            # FitzPatrick, Ginna, Nine Mile Point 1 + 2. Indian Point 2/3
+            # retired 2020/2021 and carry no NRC rows.
+            self.assertEqual(sorted(s), [(2589, 1), (2589, 2), (6110, 1), (6122, 1)])
+            for key, arr in s.items():
+                self.assertEqual(arr.shape, (HOURS_PER_YEAR,), msg=f"{year} {key}")
+                # Every NYISO month reconciles inside WEDGE_TOL, so unlike PJM
+                # no month is dropped and the series is finite throughout.
+                self.assertFalse(np.isnan(arr).any(), msg=f"{year} {key}")
+                self.assertTrue(((arr >= 0.0) & (arr <= 1.0)).all())
+        # Nine Mile Point 1's measured 2023-03-13..04-19 refuel outage: the
+        # fleet-month smear cannot see it (Mar/Apr CF 0.86/0.74 spread over
+        # all four units), the overlay zeroes the unit that is actually out.
+        nmp1 = nuclear_unit_availability_series("NYISO", 2023)[(2589, 1)]
+        self.assertEqual(nmp1[_hour_of_year(3, 20, 12)], 0.0)
+        self.assertGreater(nmp1[_hour_of_year(5, 15, 12)], 0.9)
+        # 2025 refuel window on the same unit, 2025-03-17..04-04.
+        self.assertEqual(
+            nuclear_unit_availability_series("NYISO", 2025)[(2589, 1)][
+                _hour_of_year(3, 25, 12)
+            ],
+            0.0,
+        )
+
+    def test_nyiso_fleet_application_replaces_the_smear(self):
+        """Flag on -> the out unit is zeroed and only it; flag off -> smear."""
+        from market_sim.config.scenarios import ScenarioConfig
+        from market_sim.data.fleet import Generator, generators_to_fleet_arrays
+
+        def nuke(unit_no: int, code: int, mw: float) -> Generator:
+            return Generator(
+                unit_id=f"{code}_{unit_no}",
+                name=f"nuke {code}_{unit_no}",
+                zone="Upstate_West",
+                fuel_type="nuclear",
+                pmax_mw=mw,
+                pmin_mw=0.0,
+                heat_rate=10.4,
+                vom=2.0,
+                emission_rate_co2=0.0,
+                nox_rate=0.0,
+                eford=0.03,
+                online_year=1969,
+                plant_code=code,
+            )
+
+        gens = [nuke(1, 2589, 619.7), nuke(1, 6110, 844.0)]
+        base = dict(weather_year=2023, iso="NYISO", mode="backcast")
+        fa_off, fa_on = (
+            generators_to_fleet_arrays(
+                gens,
+                ["Upstate_West"],
+                hours=HOURS_PER_YEAR,
+                iso="NYISO",
+                config=cfg,
+                year=2023,
+            )
+            for cfg in (
+                ScenarioConfig(**base),
+                ScenarioConfig(**base, nuclear_unit_availability=True),
+            )
+        )
+        h = _hour_of_year(3, 20, 12)  # NMP-1 out, FitzPatrick at power
+        # Off: the March smear (0.86) on both units — the outage is invisible.
+        self.assertAlmostEqual(fa_off.availability[0, h], 0.86, places=2)
+        self.assertAlmostEqual(fa_off.availability[1, h], 0.86, places=2)
+        # On: NMP-1 zeroed, FitzPatrick lifted to its measured near-full state.
+        self.assertEqual(fa_on.availability[0, h], 0.0)
+        self.assertGreater(fa_on.availability[1, h], 0.9)
+        # The flat must-run floor follows the overlay (zero MW while out).
+        self.assertEqual(float(fa_on.min_gen[0, h]), 0.0)
+
+    def test_ercot_is_excluded_from_the_generic_flag(self):
+        """ERCOT keeps its own flag/file — the generic one must not fire there."""
+        from market_sim.config.scenarios import ScenarioConfig
+        from market_sim.data.fleet import Generator, generators_to_fleet_arrays
+
+        gen = Generator(
+            unit_id="6145_1",
+            name="nuke",
+            zone="ERCOT_South",
+            fuel_type="nuclear",
+            pmax_mw=1250.0,
+            pmin_mw=0.0,
+            heat_rate=10.4,
+            vom=2.0,
+            emission_rate_co2=0.0,
+            nox_rate=0.0,
+            eford=0.03,
+            online_year=1988,
+            plant_code=6145,
+        )
+        base = dict(weather_year=2023, iso="ERCOT", mode="backcast")
+        arrays = [
+            generators_to_fleet_arrays(
+                [gen],
+                ["ERCOT_South"],
+                hours=HOURS_PER_YEAR,
+                iso="ERCOT",
+                config=cfg,
+                year=2023,
+            )
+            for cfg in (
+                ScenarioConfig(**base),
+                ScenarioConfig(**base, nuclear_unit_availability=True),
+            )
+        ]
+        np.testing.assert_array_equal(arrays[0].availability, arrays[1].availability)
+
+
+class NuclearUnitAvailabilityRunnerWiringTest(unittest.TestCase):
+    """The flag reaches the solved config and the recorded config (nyiso-98).
+
+    The nyiso-89 §4a defect class in its config-borne form: a calibration flag
+    that is recorded in ``run_config.json`` but never applied to the
+    ``ScenarioConfig`` the LP solves with makes the arm silently inert — it
+    fails as "the mechanism is byte-identical to its control", not as a crash.
+    ``nuclear_unit_availability`` travels on the config (not as a
+    ``load_fleet_from_csv`` argument), so the seams to pin are the runner's
+    ``with_overrides`` and the full runner's kwarg forwarding.
+    """
+
+    def test_run_calibration_applies_the_override(self) -> None:
+        import ast
+
+        tree = ast.parse(Path("scripts/run_calibration.py").read_text())
+        applied = any(
+            isinstance(n, ast.Call)
+            and isinstance(n.func, ast.Attribute)
+            and n.func.attr == "with_overrides"
+            and any(k.arg == "nuclear_unit_availability" for k in n.keywords)
+            for n in ast.walk(tree)
+        )
+        self.assertTrue(
+            applied,
+            "run_calibration.py::run_year never applies "
+            "with_overrides(nuclear_unit_availability=...), so the flag would "
+            "be recorded but not solved",
+        )
+
+    def test_run_calibration_full_forwards_and_records(self) -> None:
+        src = Path("scripts/run_calibration_full.py").read_text()
+        for needle, why in (
+            ("--nuclear-unit-availability", "no CLI flag"),
+            (
+                "nuclear_unit_availability=args.nuclear_unit_availability",
+                "argparse value never dispatched",
+            ),
+            (
+                "nuclear_unit_availability=nuclear_unit_availability",
+                "never forwarded to run_year",
+            ),
+            (
+                '"nuclear_unit_availability": nuclear_unit_availability',
+                "absent from run_config.json",
+            ),
+            (
+                "recorded_cfg.with_overrides(nuclear_unit_availability=True)",
+                "recorded_cfg does not mirror the solved config",
+            ),
+        ):
+            self.assertIn(needle, src, why)
+
+    def test_flag_is_registered_in_the_cache_key(self) -> None:
+        """An unregistered field silently serves the control's cached results."""
+        from market_sim.config.scenarios import ScenarioConfig
+
+        base = ScenarioConfig().cache_key()
+        self.assertEqual(
+            base, ScenarioConfig(nuclear_unit_availability=False).cache_key()
+        )
+        self.assertNotEqual(
+            base, ScenarioConfig(nuclear_unit_availability=True).cache_key()
+        )
+
 
 class ErcotThermalDamAvailabilityTest(unittest.TestCase):
     """The measured class-day thermal availability series + fleet rescale."""
