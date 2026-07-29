@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-29-nyiso-98-control-zerodelta",
+  "label": "nyiso 98 control zerodelta",
+  "date": "2026-07-29",
+  "shorthand": "nyiso-98-control-zerodelta",
+  "definition": "nyiso-98 same-HEAD ZERO-DELTA CONTROL: byte-faithful replay of keeper 2026-07-29-nyiso-96-ctamort at HEAD, the A/B reference for the nuclear_unit_availability arm (matrix 5.5 item 7, PREREG nyiso-98).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-29-nyiso-98-control-zerodelta.js",
+  "bundle": "results/calibration/nyiso98_control_zerodelta"
+}
