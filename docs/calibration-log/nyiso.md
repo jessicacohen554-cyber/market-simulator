@@ -2598,3 +2598,92 @@ Evidence: `docs/FINDING-nyiso100-simultaneous-import-misattribution-2026-07-30.m
 `docs/PREREG-nyiso100-simultaneous-import-retire-2026-07-30.md`, probes
 `nyiso100_simultaneous_import_identification.py` / `nyiso100_ab_compare.py`,
 attestation `scripts/gen_nyiso100_attestation.py`.
+
+---
+
+## nyiso-101 — 2026-07-30 — G-J locality limit on its own boundary: REFUSED EX-ANTE
+
+**Keeper UNCHANGED: `2026-07-30-nyiso-100-silretire`.** No flag added, no solve run,
+no bundle produced (rule 15 satisfied vacuously — no run completed). The nyiso-100
+follow-on (matrix item 9c) is **CLOSED**; matrix row `nyiso_gj_locality_tsl` → **G**.
+
+**The premise survives; the boundary does not.** The G-J Bulk Power Transmission
+Limit *is* real, published every capability year (3,425 / 3,425 / 4,350 / 4,500 MW
+for 2022/23–2025/26), and the topology *does* represent it nowhere. But it cannot be
+placed on any link of the five-zone network.
+
+1. **Mechanical cutset test.** The G-J locality is NYISO zones G+H+I+J and
+   `Capital_Hudson` = F+G **straddles** it. No model link is a valid
+   import-direction G-J edge: `Upstate_West->Capital_Hudson` and
+   `Capital_Hudson->Lower_Hudson` each have one straddling end;
+   `Lower_Hudson->NYC` is **interior** to G-J — capping it is category-wrong, not
+   merely a rule-19 stack, and it already hosts the NYC 2,875 MW cap;
+   `NYC->Long_Island` is an edge only **reversed** and already carries
+   `nyiso_li_lcr_tsl` in the same window.
+2. **Two of four real legs are not LP quantities.** The **F→G AC cutset** is
+   interior to `Capital_Hudson` (no column crosses it; Zone G holds 4,688/4,759/4,704
+   MW of Gold Book summer capability). The **external ties landing in Zone G** (PJM
+   Ramapo ~1,000 MW + ISO-NE New Scotland/Pleasant Valley ~600 MW) are lumped into
+   the 1,600 MW `import_node->Capital_Hudson` link, whose F-vs-G split
+   `interchange/spec.py` **itself** calls *"a modelling choice inside the topology"*.
+   Leg 2 is what closes the door: the endogenous subset-sum form
+   (`F_[CH->LH] - Σ_{g∈G} P[g,t] ≤ limit - load_G[t]`, buildable since NYISO runs
+   `plant_level_fleet` and Zone G holds only ~80 MW of un-splittable hydro) dissolves
+   leg 1 but still needs `ext_G`, which no measurement determines.
+3. **No validating series exists, in principle.** P-32 posts seven internal
+   interfaces (`CENTRAL EAST - VC`, `DYSINGER EAST`, `MOSES SOUTH`, `SPR/DUN-SOUTH`,
+   `TOTAL EAST`, `UPNY CONED`, `WEST CENTRAL`) and **none is G-J**. Running the house
+   pattern's own admissibility test shows the asymmetry: the accepted NYC cap sits
+   essentially **at the p95** of `SPR/DUN-SOUTH` in-window flow (exceeded 1.8/5.0/6.9 %
+   of HB14-21 hours), whereas G-J on `UPNY CONED` would sit at pctile 74.1/90.6/95.6
+   (exceeded 25.9/9.4/4.4 %) and on `TOTAL EAST` at 67.9/81.5/83.4 (32.1/18.5/16.6 %).
+4. **A static reconciled cap is unidentified — proven, not asserted.** Via the Zone-G
+   balance `F_[F->G] + ext_G = load_G + F_[G->H] - gen_G`: `load_G` is measured
+   (`HUD VL` in-window mean 1,168/1,207/1,231 MW), but `gen_G` is bounded only by
+   [0, Zone-G capability], pinning the reconciled cap to an interval of width
+   4,688/4,759/4,704 MW = **137 % / 109 % / 105 % of the limit itself**.
+5. **Provably inert on the one uncontested edge**, no solve:
+   `min(1,650 link TTC, 275–325 LI in-window cap, 3,425–4,500 G-J)` never selects G-J.
+
+**Honesty note, recorded because it cuts against the refusal's rhetoric:** the
+measured exceedance does **not** falsify the published limit. Required `gen_G` at the
+in-window extremes — 2,010/1,487/1,180 MW at p95, 3,545/2,605/2,994 MW at max — stays
+**inside** Zone-G capability (76 %/55 %/64 %) in every year, so the limit is
+*consistent with* measurement for an unobservable Zone-G net position. The verdict is
+**unidentified, not refuted**: the discrepancy and the missing term are the same size.
+
+**Refused against its own incentive** (rule 1 `[R-STRUCT]`, both directions): a
+binding G-J limit tightens downstate supply and would **raise** downstate peak prices
+— the direction C3c, the sole NYISO determination blocker, wants. That was
+pre-registered as grounds for *extra* scrutiny, and the boundary could not be
+identified, so the limit stays out whatever it would have done to C3c.
+
+**Budget spent: 0.00 TWh.** The ISO's tightest cell (2023 `CC_REGULAR`, −2.80 of
+±2.94, 32.497 TWh) was budgeted ~0.14 TWh and is untouched. C1 14/14 · free 10/10,
+C6 PASS (24-entry ledger, `n_residual` 6), C7/C8 PASS, C3c sole blocker,
+DETERMINATION NOT-YET — all unchanged.
+
+### Open / follow-on
+
+- **Re-open condition (satisfiable, unlike C3c's):** split `Capital_Hudson` into Zone
+  F and Zone G. That makes leg 1 a real link and forces leg 2 to be allocated
+  explicitly, after which the house pattern applies unchanged. The F/G county split is
+  already carried per-county in `zone_assignment.NYISO_CAPITAL_HUDSON_COUNTIES` and
+  Gold Book Table III-2a carries the zone letter per unit, so the fleet side is ready.
+  **But it is a topology change** — load shares, zonal shapes, reliability-floor limb
+  keys (`Capital_Hudson:ST_GAS`), D-2 ids and every NYISO keeper's comparability move
+  with it — the same class as the ERCOT West/Panhandle split, which is **CLOSED**. It
+  needs its own owner-authorized charter and is **not** queued as a lever.
+- Carried forward unchanged, none touched this session: D-5 parity FAIL on
+  `nyiso_local_selfsupply` (declaration-list gap, own session); item 8
+  (`hydro_ror_split`, blocked on the Robert Moses Niagara treaty-schedule classifier
+  review); item 10 (`dual_fuel_oil_reattribution` in the NYISO recipe metas); the
+  stale `frontend/data/backcast/status/NEISO.js` (different lane); the cross-ISO
+  EIA-930 `NG:*` zero-block sweep (only `Demand` was swept cross-ISO).
+- **Method note honoured, not re-derived:** the probe keeps both clocks — UTC for any
+  join, local for the HB14-21 window (a local-clock definition) — since 2024 posts
+  8,784 P-32 hours against the model's 8,760.
+
+Evidence: `docs/FINDING-nyiso101-gj-locality-boundary-2026-07-30.md`, probe
+`scripts/probes/nyiso101_gj_locality_boundary.py` (no LP; sections `provenance`,
+`cutset`, `legs`, `split`, `falsify`, `reconcile`).
