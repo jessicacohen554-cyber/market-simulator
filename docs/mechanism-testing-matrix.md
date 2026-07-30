@@ -357,7 +357,7 @@ rule-13-admissible mechanism available to carry it.
    crosswalk does not exist in-repo), then the under-curtailment gap
    (ERCOT-121).
 
-### 5.2 CAISO — targets C5a (all years), C3c-23/24, C3a-2025
+### 5.2 CAISO — targets C3c-23/24, C3a-2025 (both now owner-level; in-model queues EMPTY)
 
 **C3a-2025 IS DIAGNOSED-UNCLOSED WITH AN EMPTY IN-MODEL LEVER QUEUE (caiso-142).**
 All three of `FINDING-caiso140` §E's asks are resolved *against*, so no successor
@@ -387,11 +387,30 @@ accept it as diagnosed-unclosed (the nyiso-97 C3c disposition). **Do not propose
 any export / absorption / "somewhere to put the surplus" mechanism for it** —
 caiso-142 §H generalises the sign argument to every basis and bound.
 
-1. **`energy_reserve_coopt` + completing `caiso_reserve_coopt`** (add
-   storage/hydro/RegUp-Down to the pergen builder first — documented gaps) —
-   the only ISO that has never tested the in-LP co-opt, and its C3c is 0
-   modeled hours. Expect LP-dormancy (pattern §4.1); the test is still owed
-   before any further overlay work (rule 19: pick one owner for scarcity).
+1. ~~**`energy_reserve_coopt` + completing `caiso_reserve_coopt`**~~ —
+   **DISCHARGED EX ANTE at caiso-144 (2026-07-30, no-LP).** The "complete the
+   builder first" premise was stale: storage RS + hydro were already completed
+   in `_caiso_design` (issue #1492 constraints 2/3; only Regulation stays
+   walled as a build). On the caiso-139 keeper's committed hourlies the
+   completed design's requirement is covered with strictly positive
+   family-level slack in every hour of 2023–25 (min +854/+1,485/+2,114 MW,
+   storage RS excluded; +max-measured-RegUp sensitivity still 0/2/0 short
+   hours with 2.6–3.0 GW of excluded storage RS covering the 2), so the armed
+   LP is EXACTLY inert — matrix cells `energy_reserve_coopt`/`reserve_pergen`
+   CAISO → `I`, DO-NOT-SOLVE. Decisively for C3c: in reality's RT >$200 hours
+   the pool is slack by 1.6–10.5 GW. **The rule-19 scarcity-owner question is
+   fully adjudicated:** the in-LP route is closed, and the caiso-137b overlay
+   charter is ANSWERED NEGATIVE by measurement in the same finding (timing
+   overlap with the actual tail ≤ 1/90 hours over three years — the actual
+   C3c tail is WINTER-MORNING fuel/cold-snap, not model-state scarcity).
+   **C3c's in-model queue is now EMPTY on every route** (offer rungs closed
+   caiso-131 §10, reserve tiers closed caiso-144 §B/§C, overlay refused §D,
+   fuel grain already armed to its measured daily ceiling §E). Live
+   dispositions are owner-level: caiso-131 **A3** (SoCalGas OFO declaration
+   record intake — unfunded, the one path to an unfitted C3c-2024 trigger) and
+   **A4** (ledger C3c-23/24 as an ACCEPTED MEASURED-INPUT LIMITATION on the
+   MISO/NEISO precedent; CAISO carries 0/3 ledgered caveats).
+   (`FINDING-caiso144-coopt-dormancy-c3c-frontier-2026-07-30.md`.)
 2. **Corridor/export-path congestion family** — the *selected* open family for
    C5a (59–101% of the belly wedge is DSW→CA congestion, caiso-120/121);
    surplus-regime import pricing is the specific defect. **Scope narrowed by
