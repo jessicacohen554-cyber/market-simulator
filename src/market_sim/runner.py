@@ -1187,6 +1187,50 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # point reserve (charter D.6: the mean-availability channel).
         apply_correlated_outage_derate(fleet_arrays, config, iso, year)
 
+        # NYISO Long Island local self-supply floor (orchestrator-unification
+        # Stage 6, the plan's §2.2 accidental-drift row): force the cable-
+        # islanded LI pocket to meet a fraction of its own load with in-zone
+        # thermal generation rather than importing cheap NYC gas
+        # (interchange.nyiso.inject_nyiso_local_selfsupply). NYISO-only; gated
+        # on nyiso_local_selfsupply (default off -- byte-identical when unset).
+        #
+        # WHY IT IS HERE AND NOT BACKCAST-ONLY: the LMIC / local-reliability
+        # rule this proxies is NYISO MARKET DESIGN, not a measured overlay --
+        # it scales with load and responds to changed conditions, so it is
+        # forward-reproducible (rule 13 [R-MEASURED]) and its D-5 registry row
+        # is mode="both", declared=False ("LMIC market-design rule --
+        # mode-independent by intent"). It was wired only in the backcast
+        # orchestrator, so D-5 read it as an undeclared backcast-only
+        # difference and FAILed on every NYISO keeper through nyiso-100.
+        # Placed after the availability derates above so the floor's
+        # "never demand more than the in-zone fleet can supply" clamp sees
+        # final availability -- the same order the backcast orchestrator uses.
+        if getattr(config, "nyiso_local_selfsupply", False):
+            from market_sim.model.transmission import inject_nyiso_local_selfsupply
+
+            # Zone-K LCR/TSL mechanism active (issue #1345): the published-limit
+            # import cap owns Long_Island this run; skipping its floor entry
+            # here keeps the two mechanisms from stacking (rule 19
+            # [R-ONE-MECH]). Mirrors the backcast orchestrator exactly.
+            _selfsupply_exclude = (
+                frozenset({"Long_Island"})
+                if getattr(config, "nyiso_li_lcr_tsl", False)
+                else frozenset()
+            )
+            if inject_nyiso_local_selfsupply(
+                fleet_arrays,
+                iso,
+                year_demand,
+                zone_names,
+                exclude_zones=_selfsupply_exclude,
+            ):
+                logger.info(
+                    "%s %d: local self-supply floor applied to downstate "
+                    "pocket(s) (LMIC / cable-islanded local reliability)",
+                    iso,
+                    year,
+                )
+
         fuel_prices = resolve_fuel_prices(config, fleet_arrays, year)
         # Reprice CAMPD coal bins by plant fuel supply (mine-mouth
         # lignite vs PRB by rail); no-op for the legacy fleet.
@@ -1495,6 +1539,51 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         }
                         or "none",
                     )
+            # NYISO locality LCR/TSL import caps (orchestrator-unification
+            # Stage 6, same accidental-drift row as the self-supply floor
+            # above): cap the NYC->Long_Island (Zone-K) and Lower_Hudson->NYC
+            # (Zone-J) links at their PUBLISHED locality import limits in the
+            # HB14-21 design-condition window. Both gated (default off --
+            # byte-identical when unset) and NYISO-only; both are published
+            # transmission limits that republish every capability year, so
+            # they are forward-reproducible market design, not overlays.
+            #
+            # These travel WITH the self-supply floor and must never be split
+            # from it: nyiso_li_lcr_tsl is precisely what excludes Long_Island
+            # from that floor (rule 19 [R-ONE-MECH]). Wiring the floor into
+            # this orchestrator without these caps would leave a forecast run
+            # carrying the keeper's config with NEITHER mechanism on the
+            # downstate pocket -- D-5 green with the real gap still open.
+            if iso == "NYISO" and getattr(config, "nyiso_li_lcr_tsl", False):
+                from market_sim.model.transmission import (
+                    apply_nyiso_li_tsl_import_cap,
+                )
+
+                year_ttc = apply_nyiso_li_tsl_import_cap(
+                    year_ttc, _year_iso_config, iso, year, year_demand.shape[1]
+                )
+                logger.info(
+                    "%s %d: Zone-K LCR/TSL import cap on NYC->Long_Island "
+                    "(HB14-21, published locality import limit; replaces the "
+                    "LI self-supply energy floor)",
+                    iso,
+                    year,
+                )
+            if iso == "NYISO" and getattr(config, "nyiso_nyc_lcr_tsl", False):
+                from market_sim.model.transmission import (
+                    apply_nyiso_nyc_tsl_import_cap,
+                )
+
+                year_ttc = apply_nyiso_nyc_tsl_import_cap(
+                    year_ttc, _year_iso_config, iso, year, year_demand.shape[1]
+                )
+                logger.info(
+                    "%s %d: Zone-J LCR/TSL import cap on Lower_Hudson->NYC "
+                    "(HB14-21, published NYC locality import limit; replaces "
+                    "the 3,900 MW Dunwoodie-South energy-TTC estimate)",
+                    iso,
+                    year,
+                )
             # Base dispatch kwargs + priced import-node band: the shared
             # pipeline assembly (orchestrator-unification Stage 2) -- the same
             # key set the inline dict carried, byte-identical values.
