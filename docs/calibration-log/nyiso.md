@@ -2834,3 +2834,118 @@ would have been a no-op A/B against itself — **drop it from the NYISO lever qu
 
 Evidence: `docs/FINDING-nyiso102-d5-parity-wiring-2026-07-30.md`;
 `tests/scoring/test_legitimacy_diagnostics.py::TestD5NyisoDownstateParity`.
+
+---
+
+## nyiso-103 — the unregistered-field cache-key break (rule 24 [R-REGISTRY]); NO LP
+
+**No solve. Zero dispatch delta. Rule 15 is satisfied VACUOUSLY — no run was
+produced, so there is nothing to register** (the nyiso-101 / nyiso-102 precedent).
+The NYISO keeper is **unchanged**: `2026-07-30-nyiso-100-silretire`.
+
+### The defect
+
+`ScenarioConfig().cache_key()` had moved off its pinned value:
+
+```
+        actual  2c8098e8e1684c7d
+      expected  603c2498bf71d21d
+```
+
+**Blast radius was larger than the charter recorded** — not one failing test but
+**five, across four files**: `test_persisted_identity` ×2
+(`test_default_scenario_config_cache_key_is_pinned`,
+`test_default_cache_key_is_checkout_path_invariant`),
+`test_forecast_xyear_warmstart_flag`, `test_ramp_envelope_basis`, and the
+`test_cc_committed_offer_margin` case the charter named.
+
+### Identification — the culprit is NYISO's own field
+
+Bisected by loading the pre-pin `scenarios.py` (commit `47e320b`, which set the pin)
+alongside the current one and diffing the two post-drop-pass payload key sets. Exactly
+one key differs:
+
+| new field since the pin | registered in `_CACHE_KEY_OPTIONAL_FIELDS`? |
+|---|---|
+| `caiso_p1_export_sink_seam` | yes |
+| `coal_peak_offer_gas_hr` / `_level` / `_margin` | yes |
+| `ercot_gas_bridge_online_hours` | yes |
+| **`nyiso_import_sil_retire`** | **NO** |
+
+Dropping `nyiso_import_sil_retire` alone reproduces `603c2498bf71d21d` byte-exactly.
+It landed with nyiso-100 (`2cc1179`) — the simultaneous-import retire — and was never
+added to the drop-at-default registry, so it entered the digest **at its own default**.
+
+### Which side was fixed, and why the drop list is the correct side
+
+**Registered, not re-baselined.** The field belongs in the drop list because it is
+byte-identical at its default, and that is *measured*, not merely asserted:
+
+1. Its consumer (`model/interchange/spec.py:1878`) is gated —
+   `if iso == "NYISO" and getattr(config, "nyiso_import_sil_retire", False)` — so at
+   `False` the branch is never taken.
+2. nyiso-100's own **G0 zero-delta control** (`2026-07-29-nyiso-100-control-zerodelta`)
+   reproduced the prior keeper **bit-for-bit in all three years** at this default —
+   max |Δ class MW| 0.000000, max |Δ price| 0.000000 $/MWh.
+
+Re-baselining the literal would have buried a live rule-24 breach and left every
+pre-nyiso-100 cache orphaned permanently.
+
+### Cache-invalidation consequence — the fix RESTORES, it does not orphan
+
+Verified against the pre-fix build:
+
+| config | key before fix | key after fix |
+|---|---|---|
+| default (`False`) | `2c8098e8e1684c7d` | **`603c2498bf71d21d`** (restored) |
+| armed (`True`, the keeper) | `604490693f01c1e2` | `604490693f01c1e2` (**unchanged**) |
+
+So **the nyiso-100 keeper's cache key does not move**. Only default-valued configs
+re-key, and they re-key *back* to the pre-nyiso-100 value — every cache orphaned since
+`2cc1179` becomes live again. Armed runs stay a distinct scenario, which is what keeps
+the keeper independent of its control on disk.
+
+### Root cause, not just the instance
+
+This is the **sixth documented recurrence** of the identical defect — the registry
+table's own comments record `pjm_apsouth_interface_cut`,
+`pjm_external_net_position_cut`, the four miso-101 `temp_derate_*` fields,
+`coal_committed_takeorpay_sunk_fixed` and `pjm_zonal_loss_surface` all landing
+unregistered and moving the pin. Every time, the failure message was an opaque hash
+mismatch naming no field, and diagnosis meant hand-writing a bisect against the pre-pin
+commit — which is exactly what this session had to do again.
+
+`test_default_scenario_config_cache_key_is_pinned` now runs that bisect **in-process on
+an already-failing pin** and names the culprit:
+
+```
+CULPRIT: 'nyiso_import_sil_retire' — dropping it from the payload restores
+603c2498bf71d21d. It is a solve-affecting field that landed WITHOUT an entry in
+scenarios.py::_CACHE_KEY_OPTIONAL_FIELDS … Register it; do NOT re-baseline the literal.
+```
+
+Zero maintenance and no false positives: it only executes when the pin already failed,
+and it reports a field only when dropping that single field demonstrably restores the
+pin. It deliberately does **not** assert "every default-off field must be registered" —
+`miso_zonal_loss_surface` is correctly unregistered (it predates the pin and is already
+inside it, so registering it would *move* the key rather than restore it).
+
+### Verification
+
+- All 5 previously-failing pinned tests green; 42 passed across the four files.
+- Full `tests/unit` + `tests/regression` sweep: **3290 passed**, 19 skipped.
+- `ruff` clean on both touched files; `check_mechanism_matrix.py` integrity OK.
+- Matrix: no cell change — no mechanism was tested and no verdict moved.
+  `nyiso_import_sil_retire` keeps its nyiso-100 `K`.
+- Two failures in the sweep are **pre-existing and unrelated**, both confirmed by
+  re-running them on stashed-clean main: `test_export.py::test_curtailment_never_negative`
+  (fresh-container `data/clean/confirmed-retirements` gap — cleared by
+  `curate_confirmed_retirements.py`) and
+  `test_fleet_arrays_golden.py::test_generators_to_fleet_arrays_ercot_2023_golden`
+  (`availability` / `min_gen` drift; cannot be reached by a cache-key drop-list edit).
+
+### Not touched
+
+Item B (stale `frontend/data/backcast/status/NEISO.js`, `audit_keepers --check` S1) is
+**still open** — single-delta discipline, and a different ISO lane. It remains the only
+`audit_keepers` failure repo-wide.

@@ -414,6 +414,25 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # predates the pinned key and is already inside it, so registering it would
     # MOVE the key rather than restore it.
     "pjm_zonal_loss_surface",
+    # nyiso-100 mis-attributed simultaneous-import retire (default off): the
+    # same one-line remedy as pjm_apsouth_interface_cut / pjm_zonal_loss_surface
+    # above -- the field landed on main (2cc1179) unregistered and so entered
+    # the hash at its default, moving the pinned default key
+    # 603c2498bf71d21d -> 2c8098e8e1684c7d, orphaning every on-disk cache and
+    # failing FIVE pinned tests across four files (test_persisted_identity x2,
+    # test_forecast_xyear_warmstart_flag, test_ramp_envelope_basis,
+    # test_cc_committed_offer_margin). Byte-identical off is not merely promised
+    # here but MEASURED: its consumer (interchange/spec.py) gates the retire
+    # behind ``if iso == "NYISO" and config.nyiso_import_sil_retire``, and the
+    # nyiso-100 G0 control (2026-07-29-nyiso-100-control-zerodelta) reproduced
+    # the prior keeper BIT-FOR-BIT in all three years at this default (max
+    # |delta class MW| 0.000000, max |delta price| 0.000000 $/MWh). Dropped from
+    # the hash at its default so every pre-existing cached run keeps its key; an
+    # ARMED run drops a real interface limit and so gets a distinct key -- which
+    # is what keeps the nyiso-100 keeper (armed True) independent of its control
+    # in the on-disk cache. The KEEPER'S OWN KEY IS UNCHANGED by this
+    # registration; only default-valued configs move, and they move BACK.
+    "nyiso_import_sil_retire",
 )
 
 
