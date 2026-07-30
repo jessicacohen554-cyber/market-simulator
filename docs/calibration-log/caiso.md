@@ -3473,3 +3473,58 @@ C3a-2025 closer; re-testing single-component supply additions ≤1.5 GW against
 C3a-2025 (the plateau kill is instrument-agnostic).
 
 Next number: caiso-141.
+
+## caiso-141 (2026-07-30) — the A2 water-state intake is **WALLED**: no public source separates CAISO pumped-storage from conventional hydro at hourly grain for 2023–2025 — Helms (1,053 MW, 50.7 % of the fleet) and Eastwood (199.8 MW) have **no public hourly telemetry anywhere**, and every hourly hydro series CAISO or EIA publishes is the same single PS-NET EMS feed. NO INTAKE, NO MECHANISM, NO SOLVE — filed per the charter's stop-if-walled discipline
+
+Charter: FINDING-caiso140 §E ask A2 — ground the +793 MW Sep–Dec belly water
+wedge with a measured HOURLY PS / conventional-hydro instrument, then (only
+if it lands) run the joint A1+A2 D-gates for C3a-2025. It does not land.
+Keeper `2026-07-29-caiso139-dump-guard-offer` UNCHANGED (NOT-YET, fail
+{C3a-2025, C3c}); the joint D-gates were NOT run and the A1 rule-13 grant
+question was NOT posed (both were conditioned on the split being measured).
+Full record: `results/calibration/FINDING-caiso141-water-intake-walled-2026-07-30.md`;
+instrument: `scripts/probes/_caiso141_water_source_survey.py` (a NETWORK
+probe — re-runs every check against the live endpoints and prints
+unchanged-WALL / CHANGED per source).
+
+1. **Six source families, each checked to a verdict on live bytes:**
+   EIA-930 carries a `PS` fuel category but **CISO files 0 rows** under it;
+   Today's Outlook fuel mix (the Renewables Watch successor) prints
+   **negative belly hydro** (−414 MW, 2025-10-15) and matches 930 `WAT` at
+   corr 0.95 / |diff| 287 MW hour-ending-aligned — the SAME net-of-pumping
+   EMS feed, not a split; the Outlook storage page is battery-only; **CDEC
+   has ZERO hourly sensors at Courtright/Wishon (Helms) and Shaver
+   (Eastwood)** — PG&E/SCE don't report hourly telemetry; the EIA-930 sub-BA
+   route is demand-only by schema; OASIS `ENE_SLRS` is system totals and no
+   OASIS queryname publishes per-fuel actuals. Daily-grain publications (DWR
+   SWP / USBR CVO daily ops) and monthly 923 fail the hourly requirement by
+   design.
+2. **The partial (DWR-only) instrument doesn't resolve the fleet.** The
+   CDEC-instrumentable DWR share is 824.8 MW = 39.7 % (itself gappy — San
+   Luis hourly storage was out 2022-07→2024-01 — and needing an AF→MWh
+   derivation); the uninstrumented Helms+Eastwood share is **1,252.8 MW =
+   60.3 %**, and Helms alone can pump ~900 MW — larger than the whole
+   ~700 MW signal under adjudication. A bound did fall out: the net feed
+   shows ≥400 MW of real net fleet pumping in some belly hours — a bound,
+   NOT a split (the caiso-140 PS-caveat clause governs).
+3. **Owner decision filed (§C):** (i) A3 export-sink seam first (caiso-138
+   §D — the wall removes its only competing data-first route); (ii) obtain
+   the non-public hourly data (CAISO settlement-quality / PG&E plant
+   records — owner-level action); (iii) accept C3a-2025 as
+   diagnosed-unclosed (the nyiso-97 C3c disposition). Re-open conditions are
+   mechanical and probe-checked (§E): CISO starts filing 930 `PS`/`BAT`, a
+   CAISO PS trace appears, PG&E/SCE telemetry lands in CDEC, or non-public
+   data arrives.
+4. **Matrix (rule 28): no cell changes** — no mechanism proposed, tested, or
+   adjudicated; no `ScenarioConfig` field, no curated datatype, no
+   solve-affecting change. Rule 22: no out-of-training year touched.
+
+### DO-NOT-REDO (new, binding — full list in FINDING-caiso141 §G)
+
+Re-surveying the six source families without a §E trigger (run the probe
+instead); intaking a DWR-only hourly instrument as the fleet adjudicator;
+deriving an hourly PS shape from monthly 923 / the model's own arbitrage /
+any assumed allocation (the forbidden fabricated shape); quoting the
+negative-hydro bound as a split; re-posing the A1 rule-13 grant standalone.
+
+Next number: caiso-142.
