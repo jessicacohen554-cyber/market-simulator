@@ -52,7 +52,10 @@ from market_sim.data.fleet import (
     load_retired_within_window,
 )
 from market_sim.data.build_throughput import max_annual_build_gw_by_tech
-from market_sim.data.offer_curves import apply_gas_offer_margin
+from market_sim.data.offer_curves import (
+    apply_cc_committed_offer_margin,
+    apply_gas_offer_margin,
+)
 from market_sim.data.confirmed_retirements import (
     ConfirmedExit,
     load_announced_reversal_plants,
@@ -1255,6 +1258,15 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # mc_cost (the retirement screen's full variable cost above —
             # margins are offer components, not costs).
             apply_gas_offer_margin(mc_base, dispatch_fleet, fuel_prices, config)
+            # CC committed-block measured offer level (cc_committed_offer_margin,
+            # default off — ERCOT-139): the CC_REGULAR `_committed` tranche is
+            # repriced from its band multiplier to the measured RT SCED curve
+            # bottom as a fuel-invariant margin at the SHARED gas anchor. Bid
+            # basis only, never mc_cost (the retirement screen's full variable
+            # cost — a measured offer level is an offer component, not a cost).
+            apply_cc_committed_offer_margin(
+                mc_base, dispatch_fleet, fleet_arrays, config
+            )
             # ERCOT G-22 condition-responsive CT/peaker offer surface: raise the
             # CT/peaker econ+peak tranche bid to the MEASURED self-withholding
             # level (60-Day DAM disclosure) in the top-net-load hours where the

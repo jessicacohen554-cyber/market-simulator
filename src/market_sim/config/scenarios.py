@@ -238,6 +238,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "coal_offer_net_revenue_margin",
     "coal_offer_margin_anchor",
     "coal_offer_margin_level",
+    # CC committed-block measured offer level (ERCOT-139): the gate plus its
+    # single identification constant (the anchor is the SHARED gas anchor
+    # already registered above — rule 19, no second anchor). Both default-off
+    # (False / None) and byte-identical for every config that does not arm the
+    # mechanism; registered here at their defaults so every pre-existing cache
+    # key (and the pinned default 603c2498bf71d21d) stays byte-stable. An armed
+    # run (the flag True, or the level set) enters the key as a distinct
+    # scenario.
+    "cc_committed_offer_margin",
+    "cc_committed_offer_level",
     # Conventional-hydro minimum-flow floor (caiso-124): default-off gate for
     # the lower half of the measured hydro capability envelope. Dropped from the
     # hash at its default so every pre-existing cache key (and the pinned
@@ -7138,6 +7148,66 @@ class ScenarioConfig:
     # hard error (rule 25); resolved from
     # constants.COAL_OFFER_MARGIN_LEVEL_BY_ISO.
     coal_offer_margin_level: float | None = None
+
+    # CC COMMITTED-BLOCK measured offer level (default off — ERCOT-139, the
+    # gas-CC analogue of the coal min-load form above; charter
+    # docs/DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29.md §6, precommit
+    # docs/PRECOMMIT-ercot139-cc-committed-offer-2026-07-30.md). ERCOT-138
+    # measured the defect: against ERCOT's own SCED TPO conduct the model's CC
+    # committed/econ bands bid +$2.8-6.6/MWh too DEAR through the crossing band
+    # (coal's sit at -1.6..+3.9 and are exonerated), and §2.5 located the
+    # residual in a MISSING below-cost committed-CC block — the model's cheapest
+    # CC band bottoms at $13.3 while the real fleet's median incremental MW is
+    # offered at $12.10 and its p25 at $8.38, below its own fuel cost. Coal has
+    # that block and it is now measured; gas did not have one.
+    # With this armed, a CC_REGULAR ``_committed*`` tranche is repriced from its
+    # band multiplier (0.998 × base HR) to
+    #   HR_tranche × (fuel(t) − anchor)  +  emis(t)  +  level
+    # so the block keeps FULL delivered-fuel tracking while everything above
+    # fuel becomes a fuel-INVARIANT $/MWh level. At fuel == anchor the resolved
+    # bid is EXACTLY ``cc_committed_offer_level``. The ANCHOR is the SHARED
+    # gas anchor (``gas_offer_margin_anchor`` /
+    # constants.GAS_OFFER_MARGIN_ANCHOR_BY_ISO) — one identification point for
+    # the whole gas offer surface, never a second that could drift against the
+    # first (rule 19 [R-ONE-MECH] bookkeeping).
+    # RULE-19 REPLACEMENT, enumerated from the ERCOT-137 keeper's run_config:
+    # the band multiplier is the SOLE owner of this row's price.
+    # ``gas_offer_net_revenue_margin`` is provably inert on it (markup =
+    # max(0, committed 0.998 − phys_committed 1.006) = 0; ERCOT-138 §J measures
+    # its delta at $0.00 at p25/p50); ``ercot_offer_surface_cleared_share``
+    # scopes itself to ``econ*`` and explicitly cedes the committed block;
+    # ``ercot_offer_surface_conditional`` owns ``peak*`` only; the gas
+    # commitment bridge moves ``min_gen``, never ``mc``. econ/peak bands and
+    # every other class are untouched.
+    # SCOPE: CC_REGULAR only, CAMPD tranche path. CC_CHP is EXCLUDED —
+    # ERCOT-138's MODEL_CC_GROUPS is ("CC_REGULAR",) and CC_CHP is a reported
+    # sensitivity never pooled into the measured control (its committed state is
+    # owned by its steam host, rule 19), so the mechanism's population is
+    # exactly the measurement's. Applied on the BASE cost in
+    # data.offer_curves.apply_cc_committed_offer_margin, so P0 run discovery and
+    # the P1 bid see the same offer curve.
+    # RULE 26(a) CLEARANCE — this is NOT the refuted lowcurve re-run. The
+    # probe-REFUTED ``ercot_offer_surface_lowcurve`` moved DAM Min-Gen-Cost
+    # ladders onto committed AND econ rungs, and its stated failure cause is the
+    # ECON rows (it repriced above-floor mid-merit capacity at the LSL bid); the
+    # probe-INERT ``_floorscoped`` variant was confined to the bridge-floored
+    # window where the row is PINNED and cannot price. This is the RT SCED
+    # TPO-Price1 instrument ERCOT-136 licensed, on the ``_committed`` row only,
+    # in all hours, as a base-cost level+anchor. ERCOT-138 §J is the new
+    # evidence (a different object: this band's markup vs its multipliers, on
+    # the RT instrument).
+    cc_committed_offer_margin: bool = False
+    # The measured CC committed-block offer level ($/MWh) the margin is
+    # identified against: the RT curve bottom (SCED Submitted TPO-Price1,
+    # cap-wtd p50, res-hours-pooled over the four 2024-25 subsets) expressed at
+    # the shared gas anchor by removing the corpus's own measured fuel response.
+    # None + flag armed is a hard error (rule 25 — no silent fallback in the
+    # offer path); the backcast harness resolves it from
+    # constants.CC_COMMITTED_OFFER_LEVEL_BY_ISO so run_config.json records the
+    # resolved value. Frozen against residuals (rule 23) — re-derives only when
+    # its source disclosure changes, via
+    # scripts/data/derive_cc_committed_offer_margin.py.
+    cc_committed_offer_level: float | None = None
 
     # N-slice smoothing of the economic offer curve. When
     # offer_curve_smoothing_n > 0, each plant's flat econ blocks (econ-low /
