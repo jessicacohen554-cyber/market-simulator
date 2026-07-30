@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-30-nyiso-100-silretire",
+ "label": "nyiso 100 silretire",
+ "date": "2026-07-30",
+ "shorthand": "nyiso-100-silretire",
+ "definition": "nyiso-100 KEEPER (promoted 2026-07-30): single delta on keeper 2026-07-29-nyiso-99-demandfix, replayed byte-faithfully via replay_keeper.py on that keeper's own meta.json with --set nyiso_import_sil_retire=true. RETIRES the 4,350 MW NYISO_simultaneous_import scalar, which is EXACTLY the published G-J LOCALITY Bulk Power Transmission Limit for capability year 2024/2025 \u2014 an INTERNAL New York transfer boundary (Load Zones G,H,I,J) \u2014 mis-installed as the EXTERNAL NYCA seam cap and frozen at one capability year of a series that moves 3,425/3,425/4,350/4,500. The cited Gold Book contains no external simultaneous limit (Table VI-1 redacted as CEII in all three editions), and measurement falsifies 4,350 as an external bound: NYCA net import reached 5,929/5,662/5,872 MW metered and 7,078/7,298/6,727 MW scheduled. Retiring introduces NO new number and REMOVES a free parameter \u2014 the aggregate becomes the border-link sum 6,800 MW, inside the measured admissible interval [5,929, 10,715], with the per-link bounds already at posted P-32 ratings (NYC 975, Long_Island 1,190). Every pre-registered gate passes: control bit-identical to the prior keeper, mechanism live and releasing (import max -> 6,518.9/6,470.0/6,075.0 MW), monthly band held, C1 14/14 free 10/10, C7/C8 PASS with the 2024 ST_GAS grounding evidence improving. Reported not claimed: C3c 4/0/7 -> 3/0/7 and import r_hr 0.598/0.623/0.453 -> 0.584/0.605/0.451. Determination NOT-YET, C3c the sole blocker.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-07-30-nyiso-100-silretire.js",
+ "bundle": "results/calibration/nyiso100_silretire"
+}
