@@ -280,6 +280,35 @@
  * measured max, so a p99-vs-p99 excess of 1.4-1.7x is fully consistent with
  * binding in 0.3-0.5 % of transitions. ERCOT's R and CAISO's I are UNTOUCHED
  * (rule 25).
+ *
+ * pjm-141 (2026-07-30) runs pjm-140's named successor instrument (the committed
+ * --with-fleet W6 census, plus a new tranche census) and MOVES NO CELL -- no
+ * mechanism was armed and no LP was solved. Two notes are EXTENDED, not
+ * replaced (rule 28 duty b): measured_offer_surface PJM gains the D-BIN
+ * resolution bound, and import_hub_pricing PJM gains a refuted overnight
+ * seam-volume premise while STAYING U. The chartered question is ANSWERED: the
+ * marginal TRANCHE at h01-h04 is `econ` (78.7/78.4/77.5 % of the marginal set,
+ * 100.0 % detection) and the evening-peak control is statistically identical
+ * (77.3/79.5/80.7 %), so the overnight tranche is NOT the defect; the model's
+ * overnight thermal requirement also matches CAMPD to +0.9/-2.0/+2.5 %. What
+ * the census exposes is bigger: measured on the keeper's own offers, EVERY one
+ * of the 2,034-2,044 thermal LP rows posts the SAME offer in every hour of a
+ * calendar day (within-day sigma = $0.000000; h01-h04 offer = h16-h18 offer to
+ * $0.0000, all three years), so the model's whole intra-day price amplitude
+ * comes from merit-order traversal alone -- and it delivers 31/33/32 % of the
+ * measured overnight->evening-peak swing, too DEAR overnight (+6.82/+5.78/
+ * +3.40) and too CHEAP at peak (-7.62/-11.37/-22.19). That unifies the
+ * overnight miss with pjm-139's winter morning ramp (26/21/18 % of the h04->h07
+ * rise) as ONE flat-stack defect, and it means PJM's annual price level passes
+ * by CANCELLATION, not correctness. The successor mechanism is hour-varying
+ * offer conduct and every in-model route is adjudicated (measured_offer_surface
+ * R under both conditioning definitions; re-binning barred by rule 23; the
+ * reserve lane owner-closed; ramp_envelopes spent; daily gas series barred by
+ * the zero within-day sigma) -- so PJM's diurnal amplitude deficit is a
+ * DIAGNOSED, UNCLOSED structural limitation with an EMPTY lever queue, the
+ * state NYISO's C3c lane reached at nyiso-96/97. It fails NO gate; the keeper
+ * stays CALIBRATED. Every other ISO's cells are UNTOUCHED (rule 25).
+ * (FINDING-pjm141-overnight-marginal-tranche-is-correct-the-defect-is-a-flat-offer-stack-2026-07-30.md)
  */
 window.MECH_MATRIX = {
   version: 1,
@@ -474,8 +503,8 @@ window.MECH_MATRIX = {
     { id: "measured_offer_surface", cat: "offer", name: "Measured DAM offer-surface conditioning (net-load binned)",
       def: "ercot_offer_surface_* :5477+ / caiso :6281 / pjm :6221 / neiso :6183", mode: "B",
       cells: "KKRUUI",
-      note: "ERCOT: conditional + cleared-share DA/RT ladder keeper (state weight OFF — ERCOT-99). CAISO: measured surface keeper at zero new DOF (caiso-92). PJM: dispersion-lever family REFUTED — the tight-bin inversion is a conditioning artifact (pjm-126/127); within-season re-conditioning refuted (pjm-132). The artifact finding is ISO-WIDE but acting on it elsewhere needs each ISO's own memo (rules 23/25) — MISO cell R inherits only the MISO-specific refusal of SOM deep-discount premise (MISO-53); NYISO untested; NEISO Limb B DORMANT (real tail forms while cheaper non-fast-start headroom remains).",
-      ev: { E: "ERCOT-73/92/93/99; ERCOT-138 §4 (DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29) — the two ARMED ERCOT surfaces make the P1 gas curve DEARER still (CC p75/p90 delta vs measured goes +3.25/+5.13 base -> +7.12/+36.01 with them), so the ERCOT-138 gas-too-dear verdict measured on the base curve is CONSERVATIVE", C: "caiso-92", P: "pjm-126/127/132", Q: "neiso-58" } },
+      note: "ERCOT: conditional + cleared-share DA/RT ladder keeper (state weight OFF — ERCOT-99). CAISO: measured surface keeper at zero new DOF (caiso-92). PJM: dispersion-lever family REFUTED — the tight-bin inversion is a conditioning artifact (pjm-126/127); within-season re-conditioning refuted (pjm-132). PJM RESOLUTION BOUND, measured no-LP at pjm-141 (D-BIN): the armed [0.80,0.90,0.97] net-load bins put 99.0/97.2/94.4 % of h01-h04 AND 61.3/61.1/63.7 % of h16-h18 in the SAME bin 0 (bin 0 = bottom 80 % of net load, edge 94.7/99.1/103.5 GW; overnight net load 75.3/77.7/81.4 GW vs peak 94.4/98.0/98.9 GW), so the surface assigns one conduct level to a ~20 GW swing and contributes ZERO diurnal slope where PJM's amplitude defect lives — it is a scarcity-reach device for the tightest fifth of hours, not a merit-slope mechanism. This does NOT reopen the cell: re-binning the edges against that residual with unchanged source data is barred by rule 23 [R-FROZEN-DERIVE] independently of the R verdict, so there is no admissible 're-bin it so it binds'. The artifact finding is ISO-WIDE but acting on it elsewhere needs each ISO's own memo (rules 23/25) — MISO cell R inherits only the MISO-specific refusal of SOM deep-discount premise (MISO-53); NYISO untested; NEISO Limb B DORMANT (real tail forms while cheaper non-fast-start headroom remains).",
+      ev: { E: "ERCOT-73/92/93/99; ERCOT-138 §4 (DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29) — the two ARMED ERCOT surfaces make the P1 gas curve DEARER still (CC p75/p90 delta vs measured goes +3.25/+5.13 base -> +7.12/+36.01 with them), so the ERCOT-138 gas-too-dear verdict measured on the base curve is CONSERVATIVE", C: "caiso-92", P: "pjm-126/127/132; pjm-141 D-BIN resolution bound (FINDING-pjm141-overnight-marginal-tranche-is-correct-the-defect-is-a-flat-offer-stack-2026-07-30 §4.2/§5.3)", Q: "neiso-58" } },
     { id: "pjm_midcurve_belt", cat: "offer", name: "Measured CC_LIKE mid-curve belt (conditional)",
       def: "pjm_offer_midcurve_conditional :6347", mode: "B",
       cells: "U.K...",
@@ -721,7 +750,7 @@ window.MECH_MATRIX = {
       def: "nyiso_import_hub_prices :2467 / caiso per-hub family :3075+ / miso_pjm_lmp :2914", mode: "B",
       cells: ".KUKKK",
       note: "CAISO (per-hub intertie + firm base + DSW cleanups), NYISO (PJM/ISONE DA hubs + reconciliation), NEISO (HQ tranches), MISO (border anchor) keeper. CAISO's belly/C3a-2025 defect is adjudicated a corridor congestion story (59-101% of the wedge) — but the corridor/export-path family it selected is now REJECTED at the derive gate (caiso-132); the rent is IMPORT-direction, so C3a-2025 is a diagnosed defect with NO selected mechanism. NYISO CELL RE-CONFIRMED K AND EXONERATED (nyiso-99, no solve): matrix §5.5 item 9 charged this seam with the import hourly-shape defect (r_hr 0.45-0.61); the attribution clears the mechanism. The node's diurnal shape tracks the spread IT IS SHOWN at r = +0.673/+0.686/+0.772, so the repricer is faithful — but that spread is phase-inverted against the real one (r = -0.401/-0.236/-0.600; model peaks h21/h02/h22 vs real h17/h16/h17) for a purely arithmetic reason with ONE bad term. The seam side is measured and correct (neighbor DA LMP, hod swing 19.8/24.1/32.1 = reality); NYISO's INTERNAL price swing is 12.95/13.17/19.75 against a real 22.45/25.13/43.27, a ratio of 0.58/0.52/0.46. Subtracting a correctly-peaked seam price from a too-flat internal price drives the spread to its MINIMUM exactly at the peak (model spread at the real peak hour: -0.1/+1.8/+5.3 $/MWh vs a real +5.6/+9.7/+27.0), so the LP stops importing in the hour NY imports most and buys its reconciled monthly quota overnight. That deficit IS C3c. Item 9 is therefore CLOSED as an attributed C3c symptom, not an import lever — see the import_shape_lever row.",
-      ev: { C: "caiso-120/121, caiso-132", N: "keeper; nyiso-86 §3, nyiso-99 (FINDING-nyiso99 §2)" } },
+      ev: { C: "caiso-120/121, caiso-132", N: "keeper; nyiso-86 §3, nyiso-99 (FINDING-nyiso99 §2)", P: "pjm-141 §5.2 — cell STAYS U (the mechanism prices import BANDS and is still untested), but its overnight SEAM-VOLUME premise is REFUTED no-LP: PJM is genuinely a net exporter overnight and the model's h01-h04 net import (-4.33/-3.61/-3.76 GW) tracks EIA-930 Total interchange (-5.16/-4.71/-2.47 GW) to ~1 GW with a sign that FLIPS across years (+0.83/+1.09/-1.29), wrong-signed for the overnight over-pricing in 2023-24. Do not charter it on the overnight cell" } },
     { id: "import_shape_lever", cat: "network", name: "Import hourly-shape re-timing (peak-ward interchange lever)",
       def: "(no mechanism — adjudicated closed before any was built)", mode: "B",
       cells: "....G.",
