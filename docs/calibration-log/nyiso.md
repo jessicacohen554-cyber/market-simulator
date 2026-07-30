@@ -2687,3 +2687,141 @@ DETERMINATION NOT-YET — all unchanged.
 Evidence: `docs/FINDING-nyiso101-gj-locality-boundary-2026-07-30.md`, probe
 `scripts/probes/nyiso101_gj_locality_boundary.py` (no LP; sections `provenance`,
 `cutset`, `legs`, `split`, `falsify`, `reconcile`).
+
+## nyiso-102 — 2026-07-30 — the D-5 parity FAIL was a **forecast-wiring gap**, not a declaration gap; fixed, keeper unchanged
+
+**Keeper unchanged:** `2026-07-30-nyiso-100-silretire`. **No LP delta on the backcast.**
+Scope: `src/market_sim/runner.py` + tests + matrix. C3c remains the sole determination
+blocker; DETERMINATION NOT-YET, untouched.
+
+The charter offered two candidate causes — "does `nyiso_local_selfsupply` belong on the
+declared backcast-overlay list, or is its backcast-only gating itself the bug?" —
+and **neither is quite right**.
+
+### It is not a declaration gap
+
+`nyiso_local_selfsupply` is **market design, not an overlay**, and its own definition
+says so in exactly the terms rule 13 `[R-MEASURED]` asks for: *"FORWARD-REPRODUCIBLE
+(scales with load, responds to conditions) and grounded in NYISO market design — NOT a
+pin to measured LI generation."* It floors in-zone thermal at `frac × zonal load` in the
+HB14-21 window, consumes no measured outcome, and regenerates for any forward year. Its
+D-5 registry row already records that intent: `mode="both", declared=False`.
+
+Declaring it would have asserted the opposite — that an LMIC self-supply rule is a
+historical overlay with no forward analogue — **sanctioned the real gap permanently**,
+and turned the gate green through a change that isn't the fix (rule 1 `[R-STRUCT]`).
+
+### It IS a wiring gap — three mechanisms, not one
+
+D-5 measures wiring by source text. Before this session:
+
+| symbol | `scripts/run_calibration.py` | `src/market_sim/runner.py` |
+|---|---|---|
+| `inject_nyiso_local_selfsupply` | 3× | **0** |
+| `apply_nyiso_li_tsl_import_cap` | present | **0** |
+| `apply_nyiso_nyc_tsl_import_cap` | present | **0** |
+
+The whole NYISO downstate family was reachable only from the backcast orchestrator.
+This is a known defect class with a named precedent: `runner.py` already carries
+`apply_neiso_coldsnap_derate` annotated *"orchestrator-unification Stage 6: previously
+wired only in the backcast orchestrator, the plan's §2.2 accidental-drift row."*
+
+**All three are now wired into `runner.py`**, each behind its existing default-off gate:
+the floor after the availability derates (so its "never demand more than the fleet can
+supply" clamp sees final availability — the backcast's own ordering), the two caps onto
+`year_ttc` after the CAISO/transmission-expansion swaps.
+
+### Why the caps had to travel with the floor
+
+`nyiso_li_lcr_tsl` is **exactly what excludes `Long_Island`** — the *only* pocket in
+`NYISO_LOCAL_SELFSUPPLY_FRAC` — from the floor (rule 19 `[R-ONE-MECH]`). Wiring the
+floor alone would have turned D-5 green while leaving a forecast run on the keeper's
+config with the floor excluded (flag on) and the cap never called: **neither mechanism
+on the downstate pocket, gate reporting parity.** That is gate-gaming in the precise
+sense rule 1 names. Pinned by
+`TestD5NyisoDownstateParity::test_lcr_tsl_caps_travel_with_the_floor`.
+
+### The nuance the charter did not anticipate: the named mechanism is INERT here
+
+`NYISO_LOCAL_SELFSUPPLY_FRAC` holds exactly one pocket (`Long_Island: 0.45`), and the
+keeper runs `nyiso_li_lcr_tsl=True`, which excludes it. So
+`inject_nyiso_local_selfsupply` iterates one pocket, hits `continue`, and returns
+`False` — **no floor at all**. The keeper's own committed D-2 confirms it: **zero rows,
+zero forced energy** attributed to `nyiso_local_selfsupply` (0 of 20 D-2 rows, 0 of 15
+D-4 rows).
+
+D-5's `_toggle_on` reads the raw config flag, so it called a mechanism active that the
+rule-19 exclusion had already reduced to nothing. **The FAIL was therefore a true defect
+AND a false positive for this keeper simultaneously.** The gate coarseness is
+**deliberately left alone**: teaching D-5 to excuse an inert mechanism would weaken a
+legitimacy gate to silence a symptom, and would leave the forecast gap open for any
+config with `nyiso_li_lcr_tsl=False`, where the floor *is* live in backcast. Recorded as
+a known property, not patched.
+
+### Byte-identity of the backcast — proved three ways, not asserted
+
+- **Static:** no file in the backcast chain (`run_calibration_full.py`,
+  `run_calibration.py`, `pipeline/solve.py`, `pipeline/commitment.py`) references
+  `market_sim.runner`. The only module naming it is `pipeline/api.py`, the forecast
+  facade, lazily.
+- **Runtime:** `import scripts.run_calibration` → `'market_sim.runner' in sys.modules`
+  is `False`. Pinned as a regression test.
+- **Empirical:** a same-HEAD zero-delta control (`replay_keeper.py` on the keeper's own
+  `meta.json`, 2023 2024 2025 in one sequential invocation, rule 16) reproduces the
+  keeper bit-for-bit — see the A/B line below.
+
+### Result
+
+D-5 **PASS** on the keeper's config: 12 rows → 11, **every remaining row `declared`**,
+`failures: []`. The `nyiso_local_selfsupply` row is *gone entirely* rather than
+downgraded — `active_backcast == active_forecast` now holds, so the gate emits no row.
+That is the correct shape of the fix: the difference stopped existing.
+
+`legitimacy_diagnostics.json` regenerated in place (scorer-only, rule 20 — no re-solve,
+diff confined to the D5 block). `audit_keepers.py --check`: **NYISO all checks passed**;
+the single repo-wide failure remains the pre-existing stale
+`frontend/data/backcast/status/NEISO.js` (different lane, not caused here).
+
+**Forecast blast radius: none.** All three flags default `False` and no forecast driver
+or recipe sets any of them, so every existing forecast run is byte-identical too — what
+changed is that the mechanisms are now *reachable* in forecast mode instead of silently
+dropped. Matrix `lcr_tsl_published` has always declared `mode: "BF"` while its forecast
+half was unreachable **in code**; nyiso-102 makes the declared mode true and stamps
+`fc: "..UUU."` (reachable, untested — **U**, not K).
+
+**Budget spent: 0.00 TWh.** The ISO's tightest cell (2023 `CC_REGULAR`, −2.80 of ±2.94)
+cannot move: the backcast dispatch is unchanged. C1 14/14 · free 10/10, C6, C7/C8 all
+unchanged.
+
+### Correction to the charter: item B was already done
+
+Item B proposed arming `nyiso_gas_commitment_bridge` as "the only remaining armable
+NYISO lever (default off)". That is the **`ScenarioConfig` default**, not the keeper's
+state — `2026-07-30-nyiso-100-silretire` **already runs it**, at the measured
+parameters, with the peak-window floors off exactly as the owner directive requires:
+`nyiso_gas_commitment_bridge=true`, `cc_min_load_frac` 0.523 / `st_min_load_frac` 0.239
+(ScenarioConfig defaults, WP-3 measured), `min_run=true` with 21 h / 13 h,
+`startup=true`, and `reliability_floor_overrides` = the five
+`NYISO_PEAK_WINDOW_FLOORS_OFF` limbs. Armed since `2026-07-29-nyiso-99-demandfix`.
+Confirmed live in this session's control log: *"NYISO gas commitment bridge: 34998
+unit-hours floored (2.32 TWh floor volume) … (min_run extension ON)"*. Re-arming it
+would have been a no-op A/B against itself — **drop it from the NYISO lever queue.**
+
+### Open / follow-on
+
+- **D-5 `_toggle_on` coarseness** (flag-based, blind to rule-19 exclusions) is recorded,
+  not patched — see above for why.
+- **`_apply_iso_monthly_ttc`** (the NYISO Central-East measured seasonal envelope) is
+  also backcast-only, but it is a *measured monthly limit series* — an overlay by
+  nature, unlike the three fixed here — and it carries no D-5 registry row. Noted, not
+  touched.
+- Carried forward unchanged, none touched: item 8 (`hydro_ror_split`, blocked on the
+  Robert Moses Niagara treaty-schedule classifier review); item 10
+  (`dual_fuel_oil_reattribution` still in the NYISO recipe metas though the CLI pins it
+  NEISO-only); the stale `frontend/data/backcast/status/NEISO.js` (different lane); the
+  cross-ISO EIA-930 `NG:*` component zero-block sweep.
+- **C3c** untouched and unaimed-at: diagnosed structural limitation of the five-zone
+  representation, empty lever queue (nyiso-94/95/96/97).
+
+Evidence: `docs/FINDING-nyiso102-d5-parity-wiring-2026-07-30.md`;
+`tests/scoring/test_legitimacy_diagnostics.py::TestD5NyisoDownstateParity`.
