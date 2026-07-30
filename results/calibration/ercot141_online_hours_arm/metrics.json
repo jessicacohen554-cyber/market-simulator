@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-26-ercot113-per-zone-wind",
+  "run_id": "2026-07-30-ercot141-online-hours-lsl",
   "iso": "ERCOT",
-  "label": "ercot113 per zone wind",
+  "label": "ercot141 online hours lsl",
   "target_years": [
     2023,
     2024,
@@ -13,10 +13,10 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
+  "rubric_version": 2.9,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "governance gate UNATTESTED: no governance attestation in bundle (attestation has no governance block)"
   ],
   "notes": [],
   "criteria": {
@@ -50,11 +50,6 @@
       "tier": "supporting",
       "status": "PASS"
     },
-    "co2": {
-      "label": "C5a CO2 vs eGRID",
-      "tier": "load-bearing",
-      "status": "PASS"
-    },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
@@ -63,12 +58,12 @@
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "FAIL"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -81,11 +76,11 @@
     }
   },
   "grade_summary": {
-    "scored": 7,
+    "scored": 8,
     "target_grade": 4,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 3
+    "fails": 4
   },
   "free_class_score": {
     "iso": "ERCOT",
