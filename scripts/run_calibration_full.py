@@ -2977,6 +2977,7 @@ def solve_and_persist(
     ercot_gas_bridge_min_load_frac: float | None = None,
     ercot_gas_bridge_startup: bool | None = None,
     ercot_gas_bridge_da_horizon: bool | None = None,
+    ercot_gas_bridge_online_hours: bool | None = None,
     ercot_commitment_posture: bool | None = None,
     ercot_commitment_posture_min_load_frac: float | None = None,
     reliability_floor: bool | None = None,
@@ -3710,6 +3711,10 @@ def solve_and_persist(
         if ercot_gas_bridge_da_horizon is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 ercot_gas_bridge_da_horizon=ercot_gas_bridge_da_horizon
+            )
+        if ercot_gas_bridge_online_hours is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_gas_bridge_online_hours=ercot_gas_bridge_online_hours
             )
         if reliability_floor is not None:
             recorded_cfg = recorded_cfg.with_overrides(
@@ -4483,6 +4488,7 @@ def solve_and_persist(
             ercot_gas_bridge_min_load_frac=ercot_gas_bridge_min_load_frac,
             ercot_gas_bridge_startup=ercot_gas_bridge_startup,
             ercot_gas_bridge_da_horizon=ercot_gas_bridge_da_horizon,
+            ercot_gas_bridge_online_hours=ercot_gas_bridge_online_hours,
             ercot_commitment_posture=ercot_commitment_posture,
             ercot_commitment_posture_min_load_frac=(
                 ercot_commitment_posture_min_load_frac
@@ -5252,6 +5258,7 @@ def solve_and_persist(
         "ercot_gas_bridge_min_load_frac": ercot_gas_bridge_min_load_frac,
         "ercot_gas_bridge_startup": ercot_gas_bridge_startup,
         "ercot_gas_bridge_da_horizon": ercot_gas_bridge_da_horizon,
+        "ercot_gas_bridge_online_hours": ercot_gas_bridge_online_hours,
         "ercot_commitment_posture": ercot_commitment_posture,
         "ercot_commitment_posture_min_load_frac": (
             ercot_commitment_posture_min_load_frac
@@ -9333,6 +9340,19 @@ def main() -> None:
         "ERCOT-62b monkeypatch construction (any gap length).",
     )
     parser.add_argument(
+        "--ercot-gas-bridge-online-hours",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="ERCOT-141: extend the gas bridge's min-load floor from the idle "
+        "GAPS between P0-detected runs to EVERY hour the P0 pattern has the "
+        "plant ONLINE. A synchronized CC cannot run below its LSL, so the "
+        "committed band is must-take whenever it is online; without this the "
+        "band is a free LP variable at part load and a cheap committed offer "
+        "sets the margin (the ERCOT-139 trough flood). Same detector, same "
+        "measured level, same D-2 id — a wider window, not a new mechanism "
+        "(rule 19). Requires --ercot-gas-commitment-bridge; default off.",
+    )
+    parser.add_argument(
         "--ercot-commitment-posture",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -10791,6 +10811,7 @@ def main() -> None:
         ercot_gas_bridge_min_load_frac=args.ercot_gas_bridge_min_load_frac,
         ercot_gas_bridge_startup=args.ercot_gas_bridge_startup,
         ercot_gas_bridge_da_horizon=args.ercot_gas_bridge_da_horizon,
+        ercot_gas_bridge_online_hours=args.ercot_gas_bridge_online_hours,
         ercot_commitment_posture=args.ercot_commitment_posture,
         ercot_commitment_posture_min_load_frac=(
             args.ercot_commitment_posture_min_load_frac

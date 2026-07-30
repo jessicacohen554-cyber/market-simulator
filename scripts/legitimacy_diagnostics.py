@@ -338,16 +338,33 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # ercot_gas_commitment_bridge (ERCOT-63, MECH_GAS_COMMITMENT_BRIDGE —
     # pipeline.commitment.ercot_gas_bridge_p1_floor_fleet): the P1-native
     # gas-CC committed-state bridge. Rule-12 declaration:
-    # * WINDOW — self-windowing by construction: the floor exists ONLY inside
-    #   idle gaps between two P0-detected runs of the same plant, each gap
-    #   shorter than the unit's physical min-down (a restart bar) or bounded
-    #   by one DA operating day (DA_COMMITMENT_HORIZON_HOURS) on the economic
-    #   leg. The hour-of-day window is ALL 24 hours because the driver does
-    #   not restrict clock hours — the gap placement is the model's own
-    #   run pattern; measured incidence is overnight-dominated (the keeper's
-    #   2023 dispatch cycles 902 CC plant-nights/yr off overnight between
-    #   run-days, ~1.07 GW mean — diagnosis §5), the overnight analogue of
-    #   the CAISO midday gap.
+    # * WINDOW — self-windowing by construction, ALL 24 hours by driver. Two
+    #   placements, both anchored to the model's own P0 run pattern rather than
+    #   to any clock hour:
+    #   (a) GAP legs (default): the floor exists inside an idle gap between two
+    #       P0-detected runs of the same plant, each gap shorter than the unit's
+    #       physical min-down (a restart bar) or bounded by one DA operating day
+    #       (DA_COMMITMENT_HORIZON_HOURS) on the economic leg. Measured incidence
+    #       is overnight-dominated (the keeper's 2023 dispatch cycles 902 CC
+    #       plant-nights/yr off overnight between run-days, ~1.07 GW mean —
+    #       diagnosis §5), the overnight analogue of the CAISO midday gap.
+    #   (b) ONLINE-HOURS leg (ercot141, ScenarioConfig.ercot_gas_bridge_online_
+    #       hours, default off): the floor ALSO covers every hour of a detected
+    #       RUN. The gap legs model the restart DECISION; this leg models the
+    #       committed STATE those gaps interpolate between — a synchronized unit
+    #       cannot operate below its minimum stable load, so its LSL block is
+    #       must-take in every online hour. There is no hour of day the driver
+    #       declares it off (being synchronized is not a clock-hour property),
+    #       and it binds nowhere off-window BY CONSTRUCTION rather than by
+    #       measurement: the leg only floors hours the model's own P0 pattern
+    #       already has the plant online, and min_gen is clipped to
+    #       pmax × availability, so an offline or outaged plant carries a zero
+    #       floor. It cannot force a start. (Same rationale shape as
+    #       MECH_COAL_MIN_CONFIG above: a standing physical property, not an
+    #       event.) Bounded above by measurement, too — the floor target clips
+    #       at the committed tranche's own capacity, whose gas-CC share (p50
+    #       0.250, max 0.550, 41/41 plants) is BELOW the measured LSL fraction
+    #       0.574, so the leg never holds more than the unit's real minimum.
     # * DRIVER — DAM one-operating-day commitment + the unit-commitment
     #   restart inequality (published per-MW startup costs, physical
     #   min-down, the model's own P0 duals); min-load = the measured

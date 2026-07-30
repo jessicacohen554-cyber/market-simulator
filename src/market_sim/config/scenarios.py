@@ -353,6 +353,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "nyiso_gas_bridge_ct",
     "nyiso_gas_bridge_ct_min_load_frac",
     "nyiso_gas_bridge_ct_min_run_hours",
+    # ERCOT gas-bridge ONLINE-HOURS leg (ercot141): inert at its default (off —
+    # the floor stays gap-only and the detector call is byte-identical), so
+    # registering it here keeps the pinned default cache_key byte-stable; an
+    # armed run widens a real min-gen floor and so enters the key as a distinct
+    # scenario. Same one-line remedy as the NYISO bridge block directly above.
+    "ercot_gas_bridge_online_hours",
     # Forecast-path cross-year LP warm start (plan §7 H-3, owner decision D-9;
     # default flipped ON 2026-07-26 on the full-horizon A/B). A pure solve-PATH
     # knob — the LP optimum is basis-independent — so it is dropped from the
@@ -6124,6 +6130,55 @@ class ScenarioConfig:
     # gate; off reproduces the ERCOT-62b monkeypatch construction exactly
     # (economic bridges at any gap length).
     ercot_gas_bridge_da_horizon: bool = True
+    # ONLINE-HOURS LSL FLOOR (default off, requires the bridge — ERCOT-141, the
+    # ERCOT-139 §4.1 named successor): extend the bridge's minimum-load floor
+    # from the idle GAPS between P0-detected runs to EVERY hour the P0 pattern
+    # has the plant ONLINE. Same detector, same measured level, same D-2 id
+    # (MECH_GAS_COMMITMENT_BRIDGE) — a wider WINDOW on one mechanism, so it
+    # EXTENDS rather than stacks (rule 19 [R-ONE-MECH]); the rule-19 enumeration
+    # of what else floors CC_REGULAR is the keeper's own D-2 (gas_commitment_
+    # bridge 1.1-1.5% of class + reliability_floor 0.05-0.8%, which composes by
+    # maximum, never by addition).
+    #
+    # WHY THE STATE, NOT A PRICE (the ERCOT-139 §4.1 charter): ERCOT-139 put the
+    # CC committed block on its measured $10.35 SCED TPO level and the trough
+    # FLOODED (model hours <$15 roughly doubled) because outside bridged gap
+    # hours that now-cheap block is a FREE LP variable — whenever the plant's own
+    # output sits below the committed tranche's capacity the block is partly
+    # loaded and therefore MARGINAL, so it sets the clearing price at its own
+    # bid. The real market's "LSL block never sets the margin" inflexibility is
+    # carried by the committed STATE, not the offer: ERCOT-64 proved this by
+    # building the price-side twin (ercot_offer_surface_lowcurve_floorscoped) and
+    # measuring it PROVABLY INERT — in the bridge's floored window the tranche is
+    # already exactly pinned (max P − floor = 0.0 across all 37,788 floored
+    # gen-hours), and a pinned variable's objective coefficient cannot move the
+    # LP or its duals. The defect is therefore the floor's COVERAGE, not a price
+    # on the floored rows. This flag fixes the coverage: pinning the block in
+    # every online hour makes the next-dearer rung marginal and lifts the trough
+    # WITHOUT touching any offer (rule 19-clean — a floor, not a bid).
+    #
+    # PINNING ARITHMETIC (measured, ercot141 — reproduces ERCOT-64 §8): the floor
+    # target is min(0.574 x plant_pmax, tranche_pmax); the gas-CC committed share
+    # is p50 0.250, max 0.550, cap-weighted 0.319, and is below 0.574 on 41 of 41
+    # non-CHP gas-CC plants, so the target clips to the tranche bound on EVERY
+    # plant and the block is exactly pinned wherever this leg binds. The same
+    # arithmetic bounds the forcing: because the committed share is BELOW the
+    # measured LSL fraction, the floor never holds more than the unit's real
+    # minimum stable load — it is conservative by construction, not a tuning
+    # surface. Scope needs no class tuple (rule 18 [R-PHYSICS]): the detector's
+    # _ra_bridge_unit_params accepts only the base committed tranche (measured
+    # 40 rows) and rejects every incremental econ/peak tranche (startup 0).
+    #
+    # RULE 12 [R-FLOOR-WINDOW]: driver = minimum-stable-load inflexibility of a
+    # synchronized CC, level = the measured committed-CC LSL/HSL cap-weighted p50
+    # (0.574, 60-Day DAM disclosure, ERCOT-62 derive, frozen against residuals
+    # per rules 13/21/23 — this flag adds NO new scalar); window = the model's own
+    # P0 online hours, no clock-hour rule, and a plant the model has offline is
+    # never floored; forward story = regenerates in any forecast year from the
+    # model's own P0 run pattern plus that frozen constant, exactly as the gap
+    # legs do. D-4 window declaration amended in scripts/legitimacy_diagnostics.py
+    # (the prior text declared the floor gap-only).
+    ercot_gas_bridge_online_hours: bool = False
     # ERCOT COMMITMENT POSTURE (default off, ERCOT-gated — the commitment-
     # thinness lane, docs/handoffs/ercot-commitment-thinness-2026-07.md): the
     # STANDALONE energy-only port of the pooled-linear commitment-posture lever
