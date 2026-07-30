@@ -1344,15 +1344,28 @@ EXTERNAL_SIMULTANEOUS_LIMITS: dict[str, tuple[str, float, bool]] = {
     # simultaneously.
     # Source: MISO PRA clearing results; MISO LOLE Study Report; MTEP.
     "MISO": ("MISO_simultaneous_import", 8700.0, True),
-    # NYISO Simultaneous Import Limit.  NYISO publishes external interface
-    # transfer limits via the Gold Book (Load & Capacity Data Report) and the
-    # IRM/LCR (Installed Reserve Margin / Locational Capacity Requirement) study.
-    # The total simultaneous import capability is ~4,350 MW — below the sum of
-    # border-link TTCs (Upstate_West 3.0 + NYC 1.0 + Long_Island 1.2 = 5.2 GW),
-    # because the downstate import interfaces (Dunwoodie-South 3.9 GW into NYC,
-    # cable-limited 1.65 GW into LI) share upstream transmission.
-    # Source: NYISO Gold Book; IRM/LCR studies; NYISO Reliability Needs
-    # Assessment; NYISO Comprehensive Reliability Plan.
+    # NYISO Simultaneous Import Limit.  **PROVENANCE DEFECT — see
+    # ScenarioConfig.nyiso_import_sil_retire (nyiso-100).**  The 4,350 MW here
+    # is NOT an external NYCA seam limit: it is exactly the published G-J
+    # LOCALITY Bulk Power Transmission Limit for capability year 2024/2025
+    # (data/raw/capacity-deliverability/nyiso/nyiso.csv, area "G-J",
+    # import_limit), an INTERNAL New York transfer boundary (Load Zones
+    # G,H,I,J) frozen at one capability year's value (the published series
+    # moves 3,425 / 3,425 / 4,350 / 4,500 across 2022/23-2025/26).  The
+    # originally cited source does not contain it — the Gold Book publishes no
+    # aggregate external simultaneous import limit, and its per-facility
+    # transmission table (Table VI-1) is redacted as Critical Energy
+    # Infrastructure Information in every 2023-2025 edition.  Measurement
+    # falsifies it as an external cap: NYCA net import reached 5,929 / 5,662 /
+    # 5,872 MW metered (EIA-930) and 7,078 / 7,298 / 6,727 MW scheduled (NYISO
+    # MIS P-32) in 2023/2024/2025, exceeding 4,350 MW in 287/314/145 h and
+    # 865/685/388 h respectively.  The stale arithmetic in the superseded
+    # comment also omitted the Capital_Hudson border link: the actual
+    # border-link TTC sum is 6.8 GW (Upstate_West 3.0 + Capital_Hudson 1.6 +
+    # NYC 1.0 + Long_Island 1.2), not 5.2 GW.  Retained at its historical value
+    # so every pre-nyiso-100 keeper replays byte-identically; set
+    # ``nyiso_import_sil_retire=True`` to drop the mis-attributed constraint and
+    # let the posted-rating-grounded per-link TTCs bound the seam.
     "NYISO": ("NYISO_simultaneous_import", 4350.0, True),
 }
 
@@ -1854,6 +1867,7 @@ def apply_interchange_topology(
     from market_sim.model.transmission import (
         apply_deliverability_seam_limit,
         extend_with_import_node,
+        retire_misattributed_sil,
         split_caiso_import_node_per_hub,
     )
 
@@ -1861,6 +1875,16 @@ def apply_interchange_topology(
     iso = spec.iso
     if extend_node:
         iso_config = extend_with_import_node(iso_config)
+    if iso == "NYISO" and getattr(config, "nyiso_import_sil_retire", False):
+        iso_config = retire_misattributed_sil(iso_config, iso)
+        logger.info(
+            "%s %d: nyiso_import_sil_retire — dropped the mis-attributed "
+            "NYISO_simultaneous_import scalar (the published G-J LOCALITY "
+            "Bulk Power Transmission Limit, an internal boundary); the seam "
+            "is now bounded by the posted-rating per-link TTCs alone",
+            iso,
+            year,
+        )
     if getattr(config, "capacity_deliverability_limits", False):
         from market_sim.config.capacity_area_crosswalk import aggregate_by_zone
         from market_sim.data import capacity_deliverability as capdel
