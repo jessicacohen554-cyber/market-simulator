@@ -2210,7 +2210,20 @@ derivation path, and audit value independent of any gate.
 **NOT-YET** with an **identical criterion profile** to the keeper it replaces
 (9 scored / 6 target-grade / 2 ledgered / 1 fail), decided by the same C7
 COAL_PRB shape issue this delta does not touch. Ledgered caveats **unchanged at
-3/3**. Control arm `2026-07-30-miso-106a-ct-hr` registered alongside it.
+2/3** (C3a, C3c). Control arm `2026-07-30-miso-106a-ct-hr` registered alongside it.
+
+**Ledger correction, and a standing prose drift worth fixing.** This session
+first wrote the budget as "3/3 (C3a, C3b, C3c)", repeating its handoff premise;
+the keeper auditor caught it and the artifacts settle it. **miso-98 moved the
+ledger 3/3 → 2/3**, *deleting* the C3b-2025 entry under rule 26 `[R-DELETE]`
+once the criterion passed on its own gate. Both this bundle's and the outgoing
+keeper's `calibration_attestation.json` carry **no `price_shape` exception** and
+both score `ledgered: 2`. Yet several MISO log entries *after* miso-98 —
+including miso-105's — restate the budget as "UNCHANGED at 3/3 (C3a, C3b,
+C3c)". That is stale prose that drifted from the artifact, not a governance
+change, and it propagated into this session's handoff prompt. **A successor
+should sweep the post-miso-98 entries.** This session consumes and frees
+nothing.
 
 **One delta:** `measured_ct_heat_rates=True` on a **MISO-derived** artifact —
 86 of 168 CT_PEAKER plants, 19,121 of 22,289 MW (85.8 % of class capacity,

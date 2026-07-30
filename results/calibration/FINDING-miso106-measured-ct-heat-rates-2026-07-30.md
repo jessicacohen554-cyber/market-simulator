@@ -7,7 +7,11 @@
 > Determination **NOT-YET**, the SAME determination and the SAME criterion
 > profile as the keeper it replaces (9 scored / 6 target-grade / 2 ledgered /
 > 1 fail), decided by the same C7 COAL_PRB shape issue this delta does not touch.
-> Ledgered-caveat budget **unchanged at 3/3**.
+> Ledgered-caveat budget **unchanged at 2/3** (C3a, C3c). *Corrected post-hoc by the keeper auditor:
+> this doc first said 3/3, repeating the handoff premise. miso-98 deleted the C3b entry under rule 26
+> `[R-DELETE]` when the criterion began passing; both bundles' attestations carry no `price_shape`
+> exception and both score `ledgered: 2`. Several post-miso-98 log entries still say 3/3 — stale prose,
+> not a governance change. This session consumes and frees nothing.*
 
 * **Pre-registration:** `PREREG-miso106-measured-ct-heat-rates-2026-07-30.md`,
   committed **before either arm was solved** (`166339f`).
