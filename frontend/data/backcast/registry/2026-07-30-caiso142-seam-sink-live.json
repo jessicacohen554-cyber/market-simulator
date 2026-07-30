@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-30-caiso142-seam-sink-live",
+  "label": "caiso142 seam sink live",
+  "date": "2026-07-30",
+  "shorthand": "caiso142-seam-sink-live",
+  "definition": "caiso-142 P1 export-sink seam (single delta)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-30-caiso142-seam-sink-live.js",
+  "bundle": "results/calibration/caiso142_seam_B"
+}
