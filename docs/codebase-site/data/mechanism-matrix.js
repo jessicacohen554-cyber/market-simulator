@@ -97,6 +97,20 @@
  *   2026-07-29 by caiso-137b: the overlay is UNREACHABLE in the CAISO backcast
  *   (forecast-path call site only), so its K is forecast-lane; caiso-137's
  *   storage-tier "defect" and D2 table are WITHDRAWN. A2 stays closed.
+ * CAISO column re-checked 2026-07-30 by caiso-140 (kill-before-solve, no run):
+ *   the C3a-2025 supply state is EXACTLY ledgered on the keeper's own demand
+ *   identity — gas ride-through +1,477 MW (74 % of the Sep-Dec belly import
+ *   wedge), water/PS +793 MW (the caiso-130 hydro-gap basis missed the model's
+ *   own ~700 MW PS belly pumping), reality curtailment -453 MW — and the D3
+ *   walk-down shows the belly lambda pinned by a 2.7-3.0 GW economic-import
+ *   parity plateau (51-61 % of defect hours never leave it at S=3 GW). Two
+ *   cells move: cc_mustrun_per_plant CAISO . -> R and netload_drag_floors
+ *   CAISO U -> R (any committed-gas floor at measured conduct level delivers
+ *   < half the -0.31 the gate needs; per-plant own-p25 form adds +757/+304 MW
+ *   belly/night 2025 ~= -0.13 upper bound). C3a-2025 now has NO standalone
+ *   in-model lever: closing it needs the gas conduct floor JOINTLY with a
+ *   water/PS hourly instrument (data intake) or the caiso-138 §D P1
+ *   export-sink seam lane (the plateau is that seam wearing a price).
  * ERCOT column re-checked 2026-07-28 on the ercot116-regate-base keeper promotion
  * (ERCOT-134: zero config delta vs ercot129 — re-solve on the corrected coal
  * forced-derate registry; no cell verdict moves except dam_availability_rebasis,
@@ -281,7 +295,8 @@ window.MECH_MATRIX = {
       note: "MISO keeper. Untested transfer for NYISO (ST_GAS D-2 32% forced) and PJM (ST_GAS 44-55% forced) — could re-ground those floors on measured operating levels instead of fitted fractions." },
     { id: "cc_mustrun_per_plant", cat: "commit", name: "CC per-plant local-reliability commitment floor",
       def: "scenarios.py:6456", mode: "B",
-      cells: "..K...", note: "PJM keeper (ISO-agnostic engine, PJM-motivated)." },
+      cells: ".RK...", note: "PJM keeper (ISO-agnostic engine, PJM-motivated). CAISO: rejected EX ANTE, no solve (caiso-140 kill-before-solve) as the C3a-2025 lever — the only reality-test-admissible form (per-plant own-p25 ride-through, the mustrun_p25 family) delivers +757/+304 MW belly/night in 2025, an upper-bound C3a move of ~-0.13 against the -0.31 the gate needs; the belly lambda is pinned by a 2.7-3.0 GW economic-import parity plateau. May return only under an owner rule-13 grant and only jointly with a water/PS instrument (intake) or the P1 export-sink seam lane.",
+      ev: { C: "caiso-140 (FINDING-caiso140-belly-supply-state-2026-07-30 §C/§D; probes _caiso140_belly_supply_state.py + _caiso140_d3_walkdown.py)" } },
     { id: "winter_fuelsec_posture", cat: "commit", name: "Winter fuel-security must-run + inventory + oil budget",
       def: "neiso_winter_fuel_mustrun :2286 family", mode: "B",
       cells: "U..U.K",
@@ -292,8 +307,9 @@ window.MECH_MATRIX = {
       note: "All six. ERCOT adds measured export floors; CAISO the p25 steam-host level (caiso-89). CAISO CHP miscosting remains attributed-unfixed (caiso-128)." },
     { id: "netload_drag_floors", cat: "commit", name: "Net-load drag floors (CT ramp-window / ST_GAS overnight)",
       def: "ct_netload_drag :5432 / gas_st_netload_drag :5388 (+seasonal)", mode: "BF",
-      cells: "KUKURU",
-      note: "Forward-native floor family. ERCOT ST_GAS drag + seasonal re-derive (ERCOT-91). PJM both drags with own-fleet coefficients. NYISO all-hours ST drag REJECTED on its own honesty gates. Automatic de-conflict: drag-owned limbs drop matching reliability-floor limbs (rule 19)." },
+      cells: "KRKURU",
+      note: "Forward-native floor family. ERCOT ST_GAS drag + seasonal re-derive (ERCOT-91). PJM both drags with own-fleet coefficients. NYISO all-hours ST drag REJECTED on its own honesty gates. CAISO: rejected EX ANTE, no solve (caiso-140) as the C3a-2025 lever — the walk-down kill is instrument-agnostic: any committed-gas floor at its measured conduct level delivers < half the gate against the 2.7-3.0 GW import-parity plateau, and a fleet-curve floor additionally fails the caiso-135 §3 reality test on the measured 70/30 ride-through mixture. Automatic de-conflict: drag-owned limbs drop matching reliability-floor limbs (rule 19).",
+      ev: { C: "caiso-140 (FINDING-caiso140-belly-supply-state-2026-07-30 §C/§D)" } },
     { id: "ramp_envelopes", cat: "commit", name: "Plant-group hourly ramp envelopes (+ LCR local-capacity rows)",
       def: "ramp_limits :1764 / local_capacity_constraints :1782 (model/lp/rows.py::_build_ramp_rows, data.fleet.build_ramp_groups, derive_campd_ramp_envelopes.py)", mode: "BF",
       cells: "RIUUUU",
