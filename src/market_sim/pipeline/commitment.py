@@ -403,6 +403,12 @@ def _ercot_gas_bridge_floor(
         if getattr(config, "ercot_gas_bridge_da_horizon", True)
         else None
     )
+    # ercot141 online-hours leg: floor the committed band in every P0-ONLINE
+    # hour, not only the idle gaps (ScenarioConfig.ercot_gas_bridge_online_hours
+    # — the ERCOT-139 §4.1 successor; same mechanism/level/D-2 id, wider window).
+    # The getattr default mirrors the registered field default, so a replayed
+    # pre-ercot141 recorded config reproduces its original solve exactly.
+    online_hours = bool(getattr(config, "ercot_gas_bridge_online_hours", False))
     bridge_floor = caiso_ra_mustoffer_min_gen(
         p0_dispatch,
         fleet_arrays,
@@ -413,6 +419,7 @@ def _ercot_gas_bridge_floor(
         startup_bridge=startup_bridge,
         fuel_types=("gas_cc",),
         max_econ_gap_hours=max_gap,
+        floor_online_hours=online_hours,
     )
     if not np.any(bridge_floor > 0.0):
         return None
@@ -434,12 +441,20 @@ def _ercot_gas_bridge_floor(
             "16-24h": int(((seg >= 16) & (seg <= 24)).sum()),
             ">24h": int((seg > 24).sum()),
         }
+        # With the ercot141 online-hours leg armed a floored segment is no longer
+        # a bridged GAP — runs and the gaps between them fuse into one committed
+        # block — so the leg is named explicitly and the buckets relabelled, and
+        # the headroom is reported: the leg's whole premise is that the floored
+        # rows are PINNED (max P − floor = 0), which is what makes them unable to
+        # set the margin (ERCOT-64). This is the arm's live verification.
         logger.info(
-            "ERCOT gas commitment bridge: %d unit-hours floored "
-            "(%.2f TWh floor volume), %d bridged gaps by length %s",
+            "ERCOT gas commitment bridge%s: %d unit-hours floored "
+            "(%.2f TWh floor volume), %d floored %s by length %s",
+            " [+online-hours leg]" if online_hours else "",
             int((bridge_floor > 0.0).sum()),
             float(bridge_floor.sum()) / 1e6,
             len(seg_lengths),
+            "committed blocks" if online_hours else "bridged gaps",
             buckets,
         )
     return bridge_floor
@@ -547,7 +562,9 @@ def build_ercot_gas_bridge_p1_preps(
             bridge's floor mask — there is no window without it), or together
             with the refuted tranche-wide ``ercot_offer_surface_lowcurve``
             (same rows, same phenomenon — rule 19: one mechanism per
-            phenomenon).
+            phenomenon), or if ``ercot_gas_bridge_online_hours`` is on without
+            ``ercot_gas_commitment_bridge`` (it widens that bridge's window —
+            there is no floor to widen without it).
     """
     floorscoped = bool(
         getattr(config, "ercot_offer_surface_lowcurve_floorscoped", False)
@@ -569,6 +586,19 @@ def build_ercot_gas_bridge_p1_preps(
                 "(same committed rows, same phenomenon — CLAUDE.md rule 19; "
                 "the tranche-wide form is probe-refuted, diagnosis §7)."
             )
+    # ercot141: the online-hours leg is a WIDER WINDOW on the bridge's own floor,
+    # so it is meaningless (and silently inert) without the bridge — fail loud
+    # rather than let an arm record the flag and solve the keeper unchanged.
+    if (
+        getattr(config, "ercot_gas_bridge_online_hours", False)
+        and iso == "ERCOT"
+        and not getattr(config, "ercot_gas_commitment_bridge", False)
+    ):
+        raise ValueError(
+            "ercot_gas_bridge_online_hours requires ercot_gas_commitment_bridge: "
+            "it widens that bridge's min-load floor from the idle gaps to every "
+            "P0-online hour (no bridge, no floor to widen)."
+        )
     if not bridge_on:
         return None, None
 
