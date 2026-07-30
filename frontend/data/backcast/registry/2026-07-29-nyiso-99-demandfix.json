@@ -3,7 +3,7 @@
   "label": "nyiso 99 demandfix",
   "date": "2026-07-29",
   "shorthand": "nyiso-99-demandfix",
-  "definition": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
+  "definition": "nyiso-99: single delta on keeper 2026-07-29-nyiso-98-nucavail, replayed byte-faithfully via replay_keeper.py so the fix is the only change — `_screen_demand_dropouts` (src/market_sim/data/eia930/demand.py), the low-side twin of `_screen_demand_spikes`, repairs EIA-930 NYIS demand hours recorded as exactly 0 MW. A source-data repair with zero free parameters under rule 14 [R-ACCURATE] (n_residual stays 6 on the UNION'd 23-entry DOF ledger); those hours were 100% of the prior keeper's overgeneration dump, so dump goes 22,026.6 -> 0.0 MWh (2024) and 15,587.7 -> 0.0 (2025) with slack unchanged at 0.0 MWh every year, and 2023 (a no-op year) reproduces the prior keeper bit-for-bit. DETERMINATION: NOT-YET — C3c price tail remains the sole FAIL, bit-unchanged at 4/0/7 h >$300 vs actual 10/12/42.",
   "years": [
     2023,
     2024,

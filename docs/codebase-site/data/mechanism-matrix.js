@@ -77,6 +77,22 @@
  *   (byte-identical on 16 of 18 ISO-years). Item 9 must not be re-opened while
  *   C3c is open; the 4,350 MW NYISO_simultaneous_import estimate is filed as a
  *   separate rule-14 reconcile charter.
+ * NYISO column re-stamped 2026-07-29 on the OWNER promotion of nyiso-99.
+ *   KEEPER -> 2026-07-29-nyiso-99-demandfix (bundle nyiso99_demandfix); gates
+ *   -> C3c alone, UNCHANGED, and every other criterion PASS (C1 14/14 free
+ *   10/10, C6 PASS on a UNION'd 23-entry DOF ledger with n_residual still 6).
+ *   The promoted delta carries ZERO free parameters of any kind — a
+ *   source-data repair under rule 14, not a mechanism — so demand_dropout_screen
+ *   is the armed row and import_shape_lever stays G. The promotion rests on
+ *   structural integrity, not fit: the five repaired hours were 100 % of the
+ *   previous keeper's overgeneration dump (22,026.6 MWh 2024 / 15,587.7 MWh
+ *   2025) and printed -$26.001 in all five zones, so the bundle removes five
+ *   FABRICATED floor-price hours; dump goes to EXACTLY 0.0 in both years with
+ *   slack still 0.0. C1's tightest cell (2023 CC_REGULAR, -2.79 of +-2.94) is
+ *   BIT-UNCHANGED because the screen is a no-op in 2023 — which is also the
+ *   A/B's built-in zero-delta control (max |delta| 0.000000 MW / 0.000000
+ *   $/MWh). Import r_hr is unmoved (0.624->0.623, 0.454->0.453): this is NOT
+ *   an item-9 fix and is not offered as one.
  * 2026-07-28 on the pjm-135 keeper promotion (pjm_external_net_position_cut -> K;
  *   PJM gates drop to C3c alone — C1 and C3a closed).
  * 2026-07-28 on the pjm-136 keeper promotion (zonal_loss_surface PJM -> K; PJM reaches
