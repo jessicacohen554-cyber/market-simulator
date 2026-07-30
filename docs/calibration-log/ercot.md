@@ -2856,3 +2856,109 @@ rule-26(c) matrix gap on `ercot_offer_hrmult_ep_rebasis` / `_bands`.
 argparse's help formatter on the base commit as well as on this branch (an
 unescaped `%` in some help string); flags parse normally. Recorded for a docs/CLI
 hygiene pass.
+
+## 2026-07-30 — ERCOT-140 (Phase 2 build + full-span arm): the coal `_peak` tranche put on its MEASURED gas-anchored top-decile level (`coal_peak_offer_margin`, level 35.1989 $/MWh / gas slope 10.4100 MMBtu/MWh at the SHARED gas anchor 2.2494) — ALL THREE pre-registered guards PASS (zero-spurious EXACT 2/2/0 → 2/2/0; C3a improves every year; coal −0.61/−0.74/−1.28 TWh, LOYO 3/3), C3c bit-unchanged 47/6/0, **C4 FLIPS FAIL→PASS** (fail set shrinks to {C3a,C3b,C3c,C7}); **PROMOTED KEEPER `2026-07-30-ercot140-coal-peak-offer`** (owner pre-authorization, precommit §5 case 2)
+
+**Task.** The near-tail / top-of-curve lane ERCOT-139 localised: the coal p90
+that runs $9.6–15.5/MWh UNDER measured in all four SCED subsets (ERCOT-138
+§5.6/§2.1) — the ERCOT-123 §7.2 upper-tail successor, owner-issued as
+ERCOT-140. Precommit `docs/PRECOMMIT-ercot140-coal-peak-offer-2026-07-30.md`,
+pushed (and merged, PR #3134) before any solve.
+
+**The mechanism question, decided with evidence (precommit §0).** Three
+candidates: (i) a coal offer-CEILING object, (ii) a scarcity/ORDC
+price-formation object, (iii) a commitment-STATE object. **(i) chosen**: the
+deficit is measured in the coal fleet's own SUBMITTED RT offers on two
+independent agreeing instruments (§E p90 quantiles; the ercot123 §5 supply
+grid — model fully offered by $32–34 vs a real top needing $500); (ii) is the
+CLOSED reserve-side family (ERCOT-107/108 bistable, ERCOT-101/102 attributed)
+and cannot reprice a submitted $27 offer to its measured $35–48; (iii) moves
+`min_gen`, never a TPO price, and its live lane (the CC state, precommit
+ercot139 §4.1) is a different object. The signal-vs-gate routing reconciles:
+the near-tail adjudications closed the gas wall, the reserve family and the
+gas econ rebasis — none measured the coal top; this arm does not claim C3c
+(the >$200 tail stays attributed) and instead composes with the ERCOT-107/108
+depth diagnosis by removing up to ~0.7 GW of mispriced sub-$35 supply from
+the spike-hour stack for measured reasons.
+
+**The FORM is gas-anchored by measurement (precommit §0.1).** The measured
+top ROSE 34.82 → 45.43 $/MWh (res-hours-pooled p90, 2024 → 2025) while
+delivered coal FELL 1.748 → 1.630 — a coal-fuel form has slope **−89.9**
+(wrong sign, refuted). On gas (2.213 → 3.232) the implied slope is
+**10.4100 MMBtu/MWh — within 4.5 % of the coal fleet's own measured cap-wtd
+offer heat rate 10.905** (§J): gas-parity opportunity pricing of the marginal
+coal MW. Identification (`derive_coal_peak_offer_margin.py`, rule-23 frozen,
+committed artifacts only): LEVEL **35.1989** = the four §E p90s expressed at
+the SHARED anchor 2.2494 (rule 19 — no second anchor), res-hours-pooled;
+dispersion ±18.74 % raw → ±7.12 % anchored. Zero fitted parameters.
+
+**The arm.** `coal_peak_offer_margin` (new gate + 2 constants, default off,
+ERCOT-scoped registries, cache key stable at 603c2498bf71d21d): the CAMPD
+coal `_peak` tranche (10 plants, 5.0 % of the 13,964 MW fleet, 6.9 % of
+above-mustrun capability) repriced on the BASE cost to
+`GAS_HR × (gas_cc(t) − anchor) + level`, coal-fuel and VOM folded out (the
+measured finding, not an omission), `gas_cc(t)` = the cap-weighted CC_REGULAR
+delivered-gas series (the identification's own §J basis). Rule-19
+REPLACEMENT: the peak band multiplier and the gas-keyed supply sigmoid — the
+exactly-two prior owners of the row's price — both stand down; the margin
+branch exits before the fuel-frac seam. Every other coal row, every gas
+curve, and the measured availability envelope untouched (rule 14).
+Live-verified before trusting any number: `coal peak-tranche offer margin:
+10 _peak tranche(s) repriced at level 35.1989 / gas slope 10.4100 / shared
+gas anchor 2.2494`.
+
+**Result — run `2026-07-30-ercot140-coal-peak-offer`** (bundle
+`ercot140_coal_peak_arm`, full span 2023/2024/2025 in ONE bundle per rule 16,
+single-delta `replay_keeper --set` off `ercot139_cc_committed_arm`).
+
+| | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| spurious tail h (model >$200, actual ≤$200) | 2 → **2** | 2 → **2** | 0 → **0** |
+| C3a official | −36.8 → **−36.7 %** | −16.7 → **−16.4 %** | −14.6 → **−14.1 %** |
+| COAL TWh | 62.81 → **62.20** (−0.61) | 62.96 → **62.22** (−0.74) | 67.77 → **66.49** (−1.28) |
+| C3c hours >$200 | 47 → **47** | 6 → **6** | 0 → **0** |
+
+**All pre-registered predictions and guards held.** (1) Zero-spurious EXACT —
+the ERCOT-89/91 killer that took both prior top-of-curve arms did not fire.
+(2) C3a improved every year, no overshoot. (3) C1 coal gave back
+−0.61/−0.74/−1.28 TWh — inside the predicted 0.3–1.6 band, LOYO 3/3 (2023,
+the declared extrapolation year, improves; the §2.2 §H-flip risk did NOT
+fire — 2025 improved MOST). (4) C3c bit-unchanged (the repriced top at
+~$35–48 is deep inframarginal at the scarcity wall, as predicted).
+
+**Rubric: the fail set SHRINKS.** C4 fleet hourly dispatch **FLIPS
+FAIL→PASS** (the keeper's 2024 coal r 0.854 / NRMSE 0.306 cell clears —
+repricing the top tranche breaks the flat-out coal pattern C4 was penalising).
+{C3a, C3b, C3c, C4, C7} → **{C3a, C3b, C3c, C7}**; grade 8 scored / target 4 /
+4 fails (keeper 3/5). C7 2023 COAL_LIGNITE improves but still FAILs (profile
+r 0.733 → 0.769, off-peak cv 0.566 → 0.535). C3b 0.648/0.221 → 0.647/0.219.
+C1 16/16 free 12/12, C2/C8 PASS. Determination NOT-YET (C6 UNATTESTED —
+blocked on the 8 residual-identified DOF entries; not attested to buy a
+determination, per the standing instruction).
+
+**Verdict: PROMOTED KEEPER** — precommit §5 case 2 (guards intact + C1 coal
+improves 3/3), with the owner's in-session pre-authorization ("Is this a
+recommended keeper candidate? If so plz promote…"). Keeper shard + status
+rebuilt; matrix cell `coal_peak_offer_margin` O → K and header re-stamped;
+prune dropped `2026-07-26-ercot113-meritguard-a1` (top-15 retention).
+Single-delta keeper lineage: ercot137 → ercot139 → **ercot140**.
+
+**Named successor.** The remaining C3a/C3b/C3c residual is unchanged in
+kind: the trough band (ercot139's localisation) and the attributed scarcity
+tail. The OTHER live successor remains the CC commitment STATE (precommit
+ercot139 §4.1 — the bridge's floor coverage outside gap hours), the one lever
+that could recover C3a without touching a price; owner sequencing call. On
+the coal side this lane's enumeration is now closed top-to-bottom: mustrun
+(137, measured), committed/econ (138, exonerated), peak (140, measured).
+
+**Scope.** Holdout years untouched (rule 22). ERCOT-scoped (rule 25 —
+PJM/MISO enter the matrix as U). Matrix row landed with the ScenarioConfig
+fields (rule 26c, PR #3134); cell + evidence stamped this session (rule 26b).
+No new GitHub Actions workflow. Open owner rulings carried forward unresolved
+(precommit §6): the rule-26 [R-DELETE] disposition of the retired
+`coal_tranche_1_fuel_passthrough` / legacy `split_coal_tranches` paths, and
+the rule-26(c) matrix gap on `ercot_offer_hrmult_ep_rebasis` / `_bands`.
+Pre-existing, matched not fixed: 4 failures in tests/unit/results/
+test_export.py on origin/main; audit_keepers "status/NEISO.js stale" (another
+ISO's lane); the fresh-container gtc-limits/hydro-plant-modes clean-partition
+warnings ("static TTC kept 3/3").
