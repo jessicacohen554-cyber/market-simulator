@@ -296,6 +296,28 @@ not a new sweep:
 
 ### 5.2 CAISO — targets C5a (all years), C3c-23/24, C3a-2025
 
+**C3a-2025 IS DIAGNOSED-UNCLOSED WITH AN EMPTY IN-MODEL LEVER QUEUE (caiso-142).**
+All three of `FINDING-caiso140` §E's asks are resolved *against*, so no successor
+should open a C3a-2025 candidate without new data or an owner decision:
+
+- **A1** (per-plant own-p25 committed-gas ride-through floor) delivers **< half**
+  the −0.31 the gate needs (+757/+304 MW belly/night ≈ −0.13 upper bound);
+  DO-NOT-REDO standalone (caiso-140 §D/§G).
+- **A2** (hourly PS ↔ conventional-hydro split) is **WALLED** — no public source
+  separates them, Helms + Eastwood = 60.3 % of the fleet is uninstrumented
+  (caiso-141; re-open conditions are probe-checked, `_caiso141_water_source_survey.py`).
+- **A3** (the P1 export-sink seam) is the **wrong sign**: an absorption column can
+  only ADD demand, so it can only weakly RAISE λ, and the export leg is priced
+  *below* the plateau's own marginal-import λ by the corridor's OATT wheel + 2ε.
+  The seam's **infrastructure defect is real and now fixed** (flag-gated,
+  default-off, `caiso_p1_export_sink_seam`); the mechanism is rejected ex ante
+  as a price lever (caiso-142 §C/§D/§H).
+
+What remains for C3a-2025 is owner-level: land non-public hourly PS data, or
+accept it as diagnosed-unclosed (the nyiso-97 C3c disposition). **Do not propose
+any export / absorption / "somewhere to put the surplus" mechanism for it** —
+caiso-142 §H generalises the sign argument to every basis and bound.
+
 1. **`energy_reserve_coopt` + completing `caiso_reserve_coopt`** (add
    storage/hydro/RegUp-Down to the pergen builder first — documented gaps) —
    the only ISO that has never tested the in-LP co-opt, and its C3c is 0
@@ -303,7 +325,16 @@ not a new sweep:
    before any further overlay work (rule 19: pick one owner for scarcity).
 2. **Corridor/export-path congestion family** — the *selected* open family for
    C5a (59–101% of the belly wedge is DSW→CA congestion, caiso-120/121);
-   surplus-regime import pricing is the specific defect.
+   surplus-regime import pricing is the specific defect. **Scope narrowed by
+   caiso-142:** the *export* half of this family is closed — the export-direction
+   envelope is armed and correct (it is each corridor group's `limit_dn`), the P1
+   seam that made it unreachable is fixed flag-gated, and no absorption mechanism
+   can lower a λ. The remaining live question is the **import** side's price
+   basis, and the shared-headroom release channel is dead (the simultaneous
+   interface group binds in 0 of 26,280 corridor-hours). One specified, unbuilt
+   item survives: the export leg's **netback price** (`hub − wheel_out − ε` for
+   the as-built `hub − ε`, zero new DOF) — a symmetry correction to arm *with*
+   the seam whenever the seam is armed, never as a price lever (caiso-142 §E).
 3. **S2: DA/RT two-settlement separation charter** for the evening/overnight
    storage spread (caiso-129's only surviving candidate; a real charter, not a
    shaped floor — the S1 family is DO-NOT-REDO).
