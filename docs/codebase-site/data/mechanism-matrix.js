@@ -127,6 +127,28 @@
  *   in-model lever: closing it needs the gas conduct floor JOINTLY with a
  *   water/PS hourly instrument (data intake) or the caiso-138 §D P1
  *   export-sink seam lane (the plateau is that seam wearing a price).
+ * CAISO column re-checked 2026-07-30 by caiso-142 (kill-before-solve, no run —
+ *   the A3 seam lane, selected by the owner after caiso-141 walled A2). The
+ *   infrastructure defect is REAL and FIXED flag-gated default-off
+ *   (caiso_p1_export_sink_seam; both export sinks were pinned off in every
+ *   scored P1 pass, P0 and P1 solving different economies, 17,520 spurious
+ *   MECH_RA_MUSTOFFER sink row-hours, and the RA decommit screen crediting
+ *   15.4 GW of absorption the scored pass cannot use). The MECHANISM is
+ *   rejected ex ante as the C3a-2025 lever on a STRUCTURAL, basis-independent
+ *   argument: an absorption column can only ADD demand, so it can only weakly
+ *   RAISE every zonal lambda, and the charter needed the plateau pushed DOWN.
+ *   Both escape channels measured dead — the export leg is priced BELOW the
+ *   plateau's own marginal-import lambda by the corridor's OATT wheel + 2 eps
+ *   (DSW defect p50 +$4.002, night +$0.002), and the SIMULTANEOUS interface
+ *   group binds in 0 of 26,280 corridor-hours. One new row
+ *   (caiso_p1_export_sink_seam: CAISO R, ERCOT I, NYISO/PJM/MISO/NEISO U) and
+ *   the caiso_corridor_export_path note is corrected — its "provably inert"
+ *   census was confounded by this very seam, and its R now stands on the
+ *   stronger sign argument. Also here: ERCOT is REMOVED from the caiso-138 §D
+ *   blast radius (its keeper builds 0 interchange rows) and NYISO is measured
+ *   EXPOSED (one -600 MW sink + nyiso_gas_commitment_bridge armed) for its own
+ *   lane. With A1 standalone <half the gate, A2 walled and A3 the wrong sign,
+ *   CAISO C3a-2025 is DIAGNOSED-UNCLOSED with an EMPTY in-model lever queue.
  * ERCOT column re-checked 2026-07-28 on the ercot116-regate-base keeper promotion
  * (ERCOT-134: zero config delta vs ercot129 — re-solve on the corrected coal
  * forced-derate registry; no cell verdict moves except dam_availability_rebasis,
@@ -177,7 +199,7 @@
  */
 window.MECH_MATRIX = {
   version: 1,
-  updated: "2026-07-29",
+  updated: "2026-07-30",
   isos: ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"],
   keepers: {
     ERCOT: "2026-07-29-ercot137-coal-margin-measured",
@@ -634,8 +656,14 @@ window.MECH_MATRIX = {
     { id: "caiso_corridor_export_path", cat: "network", name: "CAISO corridor export-direction envelope + surplus export floor",
       def: "measured_corridor_flow_envelope(direction='export') -> build_caiso_corridor_flow_groups export_envelope (armed inside caiso_corridor_flow_limit :3109)", mode: "B",
       cells: ".R....",
-      note: "REJECTED at the derive gate, no solve (caiso-132). The export-direction bound is the ACTIVE constraint in 2 of 52,560 corridor-hours (0.0038%) over 2023-25 and in 0.000 of the Sep-Dec 2025 surplus hours carrying the +$3.87 term; 100% of the defect-hour congestion rent is import-bound on both legs, all three years. Limb (a), the export envelope, is ALREADY ARMED on the keeper and provably inert (re-arming is a no-op); limb (b), a surplus-scoped export floor, has the WRONG SIGN and reproduces the measured caiso-113 C3a break (+11.5%/+12.7%). Do not re-propose in scoped or windowed form.",
-      ev: { C: "caiso-132 (ask A1); precedents caiso-113 rejected, caiso-121 family selection" } },
+      note: "REJECTED at the derive gate, no solve (caiso-132). The export-direction bound is the ACTIVE constraint in 2 of 52,560 corridor-hours (0.0038%) over 2023-25 and in 0.000 of the Sep-Dec 2025 surplus hours carrying the +$3.87 term; 100% of the defect-hour congestion rent is import-bound on both legs, all three years. Limb (a), the export envelope, is ALREADY ARMED on the keeper and provably inert (re-arming is a no-op); limb (b), a surplus-scoped export floor, has the WRONG SIGN and reproduces the measured caiso-113 C3a break (+11.5%/+12.7%). Do not re-propose in scoped or windowed form. VERDICT CONFIRMED AND ITS BASIS CORRECTED TWICE. (i) caiso-138 §D: limb (a)'s 'provably inert' census was CONFOUNDED — the P1 pass could not export at all (the RA bridge's min_gen max-composition collapsed both export sinks to a 0 lower bound), so the bound was armed and correct with nothing to bound. (ii) caiso-142 §C/§E: the R stands on a STRONGER, basis-independent reason — an export sink is an ABSORPTION column, so restoring it can only weakly RAISE every zonal lambda (permitting withdrawal D >= 0 at a node is a +D RHS move, and the LP's balance dual is nondecreasing in its RHS), which is the wrong sign for a model that over-prices. Limb (a) IS the admissible quantity bound and remains armed (limit_dn per corridor group = the measured export envelope: DSW mean 177/189/171 MW and 0 MW in 7,201/7,172/7,260 h; PNW 1,377/1,110/725 MW); the outstanding basis gap is PRICE ONLY — the export leg is written hub - eps, wheeling out for FREE, against an import leg on the same corridor paying the OATT charge (the symmetric hub - wheel_out - eps is zero new DOF, specified caiso-142 §E, NOT built). Limb (b)'s wrong-sign rejection now generalises: NO absorption mechanism on any price basis or bound can lower a lambda (caiso-142 §H first bullet).",
+      ev: { C: "caiso-132 (ask A1); basis corrected caiso-138 §D, then caiso-142 (FINDING-caiso142-export-sink-seam-2026-07-30 §C/§E, probe _caiso142_export_sink_basis.py); precedents caiso-113 rejected, caiso-121 family selection" } },
+    { id: "caiso_p1_export_sink_seam", cat: "network", name: "P1 export-sink seam — preserve pmin<0 absorption rows through the bridge composition",
+      def: "caiso_p1_export_sink_seam (scenarios.py) -> pipeline/commitment.py::_bridge_floored_fleet preserve_absorption (threaded from the CAISO RA path only)", mode: "B",
+      cells: "IR..UU",
+      fc: "......",
+      note: "THE INFRASTRUCTURE DEFECT IS REAL AND FIXED (flag-gated, DEFAULT-OFF, byte-identical off); the MECHANISM IS REJECTED EX ANTE AS A C3a-2025 LEVER, no solve, no A/B, keeper unchanged (caiso-142, D3 kill-before-solve; chartered as FINDING-caiso140 §E ask A3 after caiso-141 walled A2). The defect: _bridge_floored_fleet composes new_min_gen = max(base_min_gen, bridge_floor) over a zeros-initialised floor positive only on bridged thermal rows, so every export sink's max(-TTC, 0) = 0 pins the LP variable off — the exact failure data/fleet/arrays.py::_compose_min_gen_floors guards against in its own zeros-init ('export sinks (pmin < 0 ...) must keep their range'). Measured on the real functions over the reconstructed 2025 keeper fleet (probe §A): both sinks (WECC_PNW_export_MALIN -4,800 / WECC_DSW_export_PALOVRDE -10,623) go to min_gen 0 with the gate off and keep their pmin with it on; the fix is surgical (2 rows differ, 0 others, availability byte-identical) and clears 17,520 spurious MECH_RA_MUSTOFFER sink row-hours. Two further consequences: P0 and P1 solve structurally different economies (the detector reads a P0 that HAS the outlet), and the RA bridge's own decommit screen credits up to 15.4 GW of export absorption the scored P1 cannot use. WHY IT IS NOT A LEVER (structural, basis-independent): an absorption column can only ADD demand, so restoring it can only weakly RAISE every zonal lambda, while the charter needed the 2.7-3.0 GW import-parity plateau pushed DOWN. Both escape channels measured dead: (1) direct — the plateau's lambda IS a delivered-import price and the export leg is priced strictly below it by the corridor's own OATT wheel + 2 eps (DSW defect-hour p50 +$4.002 with DSW_surplus_clean marginal in 85-91% of hours; night +$0.002 with the wheel-free DSW_overnight_clean marginal), in-the-money in only 0.4/8.3/8.4% of defect hours; (2) indirect — freeing shared interface headroom to let the cheaper corridor import more requires the SIMULTANEOUS group to bind, and it binds in 0 of 26,280 corridor-hours in all three years (max |dual| 0.00, flow p50 3.9-4.7 GW vs limit 16.0-16.5 GW) while every congested regime is bound by the corridor's OWN ATC group. E1 ceiling if armed anyway: C3a +9.379/+7.860/+3.865 on the as-built hub-eps basis and +7.745/+5.698/+2.139 on the netback basis — every basis WORSE on a model that already over-prices; zero fitted values swept because there is no value to sweep (rule 21/D4 vacuous). CROSS-ISO EXPOSURE MEASURED on each keeper's own run_config (probe §F, rule 25 — measurement, not a verdict in another lane): CAISO and NYISO are the only EXPOSED ISOs (absorption row AND a P1-native bridge armed). ERCOT is NOT exposed — its keeper builds 0 interchange rows, so the shared composer has no absorption row to collapse, CORRECTING the caiso-138 §D blast-radius list which named it; its cell is I by construction. NYISO IS exposed (one -600 MW sink + nyiso_gas_commitment_bridge armed in 2026-07-29-nyiso-99-demandfix) and enters U for its own lane. PJM/MISO/NEISO carry 40/32/3 absorption rows but arm no such bridge today — latent, U. The admissible arm basis is specified in caiso-142 §E (bound already armed at the link; price = hub - wheel_out - eps) and is MOOT for C3a by this row's own kill.",
+      ev: { C: "caiso-142 (FINDING-caiso142-export-sink-seam-2026-07-30 §A/§C/§D/§F, probe _caiso142_export_sink_basis.py, test test_caiso_p1_export_sink_seam_gate); origin caiso-138 §D; charter FINDING-caiso140 §E ask A3", E: "caiso-142 §F ex-ante census (0 interchange rows)", N: "caiso-142 §F measured exposure", P: "caiso-142 §F (latent: 40 absorption rows, no bridge armed)", M: "caiso-142 §F (latent: 32 absorption rows, no bridge armed)", Q: "caiso-142 §F (latent: 3 absorption rows, no bridge armed)" } },
     { id: "wecc_endogenous_node", cat: "network", name: "Endogenous WECC neighbor zone (CAISO)",
       def: "caiso_endogenous_wecc_node :3366", mode: "BF",
       cells: ".R....",
