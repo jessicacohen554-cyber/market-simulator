@@ -266,8 +266,16 @@ def measure_year(bundle: Path, year: int) -> dict:
         classes = sorted(set(grp[internal]))
         marg_mw: dict[str, float] = {}
         marg_h: dict[str, float] = {}
+        marg_n: dict[str, float] = {}
         shelf: dict[str, dict] = {}
         any_at = at.any(axis=0)
+        # COUNT share, the pjm-122 §1 construction: each hour is split equally
+        # across the units at its dual, then hours are weighted. Reported
+        # alongside the MW share because pjm-122's "COAL sets the price in
+        # 44-79 % of hours" is a COUNT statistic, and comparing an MW share to
+        # it would be comparing two different measurements.
+        n_at = at.sum(axis=0).astype(float)
+        n_at_safe = np.where(n_at > 0, n_at, np.nan)
         for c in classes:
             cm = (grp == c) & internal
             if not cm.any():
@@ -277,6 +285,9 @@ def measure_year(bundle: Path, year: int) -> dict:
             marg_mw[c] = float(((sub_av[cm] * atc).sum(axis=0) * w).sum() / w.sum())
             # hour-share ownership: hours where this class has ANY unit at the dual
             marg_h[c] = float((atc.any(axis=0) * w).sum() / w.sum() * 100)
+            # count share: this class's fraction of the hour's marginal SET
+            frac = np.where(n_at > 0, atc.sum(axis=0) / n_at_safe, 0.0)
+            marg_n[c] = float((frac * w).sum() / w.sum() * 100)
             row = {}
             for s in SHELVES:
                 inb = live[cm] & (sub_mc[cm] > sub_du[cm]) & (
@@ -306,6 +317,9 @@ def measure_year(bundle: Path, year: int) -> dict:
             ),
             "marginal_share_pct_by_mw": {
                 k: round(v / tot * 100, 2) for k, v in sorted(marg_mw.items()) if v > 0
+            },
+            "marginal_share_pct_by_count": {
+                k: round(v, 2) for k, v in sorted(marg_n.items()) if v > 0.05
             },
             "marginal_hour_share_pct": {
                 k: round(v, 2) for k, v in sorted(marg_h.items()) if v > 0.05
