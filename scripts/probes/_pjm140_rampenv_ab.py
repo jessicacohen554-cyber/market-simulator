@@ -234,8 +234,18 @@ def _env_binding(bundle: Path, year: int, iso: str = "PJM") -> dict:
     }
 
     frame = pd.read_parquet(path, columns=["plant_code", "klass", "hour", "mw"])
+    # The loader buckets on the fleet's ``plant_group``, where every coal unit is
+    # the single group ``COAL``; the dispatch parquet's ``klass`` splits that into
+    # COAL_BIT / COAL_PRB / COAL_WC. Mapping ``klass`` through
+    # ``_RAMP_BUCKET_BY_GROUP`` alone therefore silently DROPS every coal group —
+    # 42 of the 194 live groups and 38.6 GW (31 % of live capacity), i.e. exactly
+    # the class the winter-morning defect implicates. Collapse the coal variants
+    # back onto the ``COAL`` key before mapping.
+    klass = frame["klass"].astype(str)
     frame["bucket"] = (
-        frame["klass"].astype(str).map(_RAMP_BUCKET_BY_GROUP).fillna("")
+        klass.where(~klass.str.startswith("COAL"), "COAL")
+        .map(_RAMP_BUCKET_BY_GROUP)
+        .fillna("")
     )
     frame = frame[(frame["plant_code"] > 0) & (frame["bucket"] != "")]
     grouped = (
@@ -262,6 +272,10 @@ def _env_binding(bundle: Path, year: int, iso: str = "PJM") -> dict:
                 "rd_mw": rd,
                 "max_up_mw": float(d.max()) if d.size else 0.0,
                 "max_dn_mw": float(-d.min()) if d.size else 0.0,
+                # The pjm-139 W7 pre-check's own numerator: the model's p99 1-h
+                # up-move. Recording it against the envelope (which is the real
+                # fleet's MAX, not its p99) is what exposes the proxy's gap.
+                "p99_up_mw": float(np.quantile(d, 0.99)) if d.size else 0.0,
                 "n_up_violations": n_up,
                 "n_dn_violations": n_dn,
                 "n_violations": n_up + n_dn,
@@ -273,12 +287,27 @@ def _env_binding(bundle: Path, year: int, iso: str = "PJM") -> dict:
     if det.empty:
         return {"available": False, "reason": "no live group matched dispatch"}
     n_trans = HOURS - 1
+    # Disclose the match rate rather than reporting a share of an unstated
+    # denominator: a live group absent from dispatch contributes no transitions.
+    n_live = int(len(live))
+    matched_cap = float(
+        live[
+            live.apply(
+                lambda r: (int(r.plant_code), str(r.bucket))
+                in set(zip(det["plant_code"], det["bucket"])),
+                axis=1,
+            )
+        ]["cap_net_mw"].sum()
+    )
     det.sort_values("n_violations", ascending=False).to_csv(
         Path("results/probes") / f"pjm140_env_binding_{year}.csv", index=False
     )
     return {
         "available": True,
         "n_groups": int(len(det)),
+        "n_live_groups_in_loader": n_live,
+        "matched_cap_mw": round(matched_cap, 1),
+        "live_cap_mw": round(float(live["cap_net_mw"].sum()), 1),
         "n_transitions_per_group": n_trans,
         "n_group_transitions": int(len(det) * n_trans),
         "n_violating_group_transitions": int(det["n_violations"].sum()),
@@ -293,13 +322,22 @@ def _env_binding(bundle: Path, year: int, iso: str = "PJM") -> dict:
         "total_excess_energy_mwh": round(
             float(det["excess_up_mwh"].sum() + det["excess_dn_mwh"].sum()), 1
         ),
-        # The proxy-vs-bound comparison the pjm-139 pre-check could not make:
-        # the model's own worst move against the measured max, per group.
+        # The proxy-vs-bound comparison the pjm-139 pre-check could not make.
+        # W7 compared the model's p99 1-h move against the REAL FLEET's p99 and
+        # found a 1.4-1.7x excess; the envelope is the real fleet's MAX. These
+        # two rows put the model's max AND its p99 against that max directly, so
+        # the ratio that actually decides binding is on the record.
         "median_max_up_over_envelope": round(
             float((det["max_up_mw"] / det["ru_mw"]).median()), 3
         ),
         "p90_max_up_over_envelope": round(
             float((det["max_up_mw"] / det["ru_mw"]).quantile(0.90)), 3
+        ),
+        "median_p99_up_over_envelope": round(
+            float((det["p99_up_mw"] / det["ru_mw"]).median()), 3
+        ),
+        "p90_p99_up_over_envelope": round(
+            float((det["p99_up_mw"] / det["ru_mw"]).quantile(0.90)), 3
         ),
         "top_groups": det.sort_values("n_violations", ascending=False)
         .head(10)
@@ -404,7 +442,8 @@ def main(argv: list[str] | None = None) -> int:
                 f"{env['n_group_transitions']:,} group-transitions "
                 f"({env['share_of_group_transitions_pct']:.4f} %); "
                 f"{env['n_groups_violating']}/{env['n_groups']} groups ever cross; "
-                f"median max-up/envelope {env['median_max_up_over_envelope']:.3f}"
+                f"median max-up/envelope {env['median_max_up_over_envelope']:.3f}, "
+                f"median p99-up/envelope {env['median_p99_up_over_envelope']:.3f}"
             )
         else:
             print(f"  D-ENV unavailable: {env.get('reason')}")

@@ -2016,3 +2016,134 @@ was produced (rule 15 is satisfied vacuously, the pjm-138 precedent). Keeper
 pointer untouched; `keepers/PJM.json` NOT edited, so pjm-138's two owner-lane
 items are still pending and pjm-139 adds a third: root cause (3)'s reachable share
 is **concentrated in the winter morning ramp**, not spread across CT hours.
+
+---
+
+## 2026-07-30 — pjm-140: `ramp_envelopes` ARMED, A/B'd and PROMOTED. The measured envelope removes **85–91 % of the keeper's physically infeasible hourly ramping** (~0.5 TWh/yr) and moves the chartered winter-morning price by **+$0.03–0.07/MWh**. Keeper `2026-07-29-pjm-137-ctheatrate` → **`2026-07-30-pjm-140-rampenv`**.
+
+**Two arms, all three years each, arms sequential (rule 12), years sequential
+within each (rule 16).** `2026-07-30-pjm-140-control` (arm A, no delta) and
+`2026-07-30-pjm-140-rampenv` (arm B, `ramp_limits` False → True). Both
+**CALIBRATED**, every criterion PASS. Arm A reproduces the superseded keeper
+**BYTE-IDENTICALLY** — `0.000000000` MW over **166,440** class-hours in each of
+2023/2024/2025 — so the single delta is provably isolated (PREREG K5).
+
+**The artifact.** `derive_campd_ramp_envelopes.py --iso PJM --years 2023 2024 2025`
+run for PJM for the **first time** — the existing frozen derive for a new ISO, the
+pjm-137 pattern, **not** a re-derivation against a residual (rule 23). 209 rows,
+145 well-observed plant-family groups, 61 sparse rows the loader never reads, 3
+`class_fraction` rows (CC 0.4435/0.5801, CT 0.7606/0.7535, ST 0.3152/0.4365; the
+loader applies CC/ST only — CT gets no class fallback).
+
+**Coverage (K7 PASS).** The loader puts a **live envelope on 194 of 323**
+(plant, family) groups = **124.1 GW = 90.1 %** of ramp-eligible thermal capacity
+(56.7 % of all capacity). Only **6 groups / 664 MW** prune as non-binding (2 CC,
+4 CT); **123 CT groups / 12.9 GW** get no row at all — bang-bang is the measured
+norm, and there is no class-name gate anywhere (rule 18). Live up-envelope median
+**0.40** of group pmax (p25 0.32 / p75 0.53), down median 0.53. Gross→net rebasis
+on **142 measured per-plant** EIA-923-net/CAMPD-gross factors (min 0.8252, median
+0.9700, max 0.9968) + **2** cited class defaults (0.9750).
+
+**Memory, measured before the three-year arm (PREREG §7.1).** One-year throwaway
+probe peaked **15.32 GB** RSS (~3.1 GB swap) and was deleted un-registered (rule
+16 forbids a single-year bundle). Arm A peaked **15.18 GB**, arm B **15.55 GB**.
+The rows add **1,699,246** LP rows (each two-sided) and **~23.3 M** nonzeros, so
+**swap is now a requirement, not a cushion**, for a PJM per-plant solve on a
+15 GB box.
+
+**THE STRUCTURAL RESULT, and it is why this was promoted (D-ENV, new).** With the
+flag off the LP asserts every thermal plant can move from any output to any other
+in one hour — and the model *acts* on it. Measured on the superseded keeper's own
+per-unit dispatch, it crosses the measured envelope in **0.393 / 0.463 / 0.319 %**
+of 1,699,246 group-transitions (**149 / 167 / 147** of 194 groups ever cross),
+carrying **555,882 / 587,079 / 536,940 MWh a year** of hourly ramping the real PJM
+fleet's own measured maxima say those machines could not deliver that fast.
+Arming the envelope cuts that to **51,161 / 64,048 / 82,425 MWh** — a
+**90.8 / 89.1 / 84.6 %** reduction. Arm B's residual is **by design**: the
+availability-edge widening (`RU_eff = RU + max(0, cap[t] − cap[t−1])`) is the
+row's only slack, so every remaining crossing sits at a capacity discontinuity.
+
+**THE PRE-REGISTRATION WAS REFUTED ON MAGNITUDE** and is recorded as such rather
+than re-written (the pjm-137 precedent). K6, the primary — the DJF h04→h07 model
+system-price rise — moves **UP** in all three years, so K6 passes its literal
+test: **+3.933→+4.004**, **+4.554→+4.600**, **+6.512→+6.546**. But that is
+**+$0.07 / +$0.05 / +$0.03** against PJM's own measured **+$15.28 / +$21.63 /
++$35.45**, i.e. **0.6 / 0.2 / 0.1 %** of the remaining gap, against a
+pre-registered claimable ceiling of **+$5.55 / +$13.44** load-weighted for
+2024–25. PREREG §4 secondary 1 is **also** refuted: `CC_REGULAR` moves **up** and
+`CT_PEAKER` **down** — the opposite of the predicted direction. Arm A reproduces
+`FINDING-pjm139`'s published model column **exactly** (+3.93/+4.55/+6.51), so the
+control is validated against the statistic itself.
+
+**WHY the pre-check misfired — an all-ISO scope bound.** pjm-139 W7 compared the
+model's **p99** 1-h up-move to the real fleet's **p99** (CC 1.42/1.72/1.53, CT
+1.38/1.70/1.52, ST 1.61/1.62/1.50) and concluded aggregate excess "PROVES
+per-plant rows would bind." The measurement is sound; the inference does not
+follow, because **the envelope is not the fleet's p99 — it is each plant's MAX**,
+pooled over 26,280 hours. On arm A's own dispatch the model's p99 sits at
+**0.281 / 0.293 / 0.289** of that max (its own max at 1.415/1.478/1.361, p90
+2.533/2.825/2.548). **A MAX-based envelope cannot be pre-checked with a p99-based
+excess statistic** — pre-check a bound against the bound. This is the ERCOT-127
+property ("the real fleet violates the envelope 0–10 times a year") now measured
+on PJM's own fleet.
+
+**Gates.** Determination **CALIBRATED** in both arms; C1 · C2 · C3a · C3b · C3c ·
+C4 · C6 · C7 · C8 all **PASS**; C1 **16/16 with free 12/12** (pinned `CC_CHP` /
+`ST_CHP` excluded as always). **K3, the standing kill: C3c is IDENTICAL** — model
+tail-hour counts **3 / 10 / 32 h in BOTH arms** — so the keeper's thinnest margin
+(~1 h in 2024, ~2.5 h in 2025 against a 0.5× floor) was untouched in either
+direction. **K4: ZERO slack and ZERO dump**, both arms, all years, so the envelope
+is not infeasibly tight. C8 `CT_PEAKER` forced share **unchanged at 16.3 / 16.9 /
+17.1 %**, all GROUNDED (D-4 clear, profile r 0.923–0.973, off-peak CV ratio
+0.705–1.084) — as pre-registered, a ramp row is not a min-gen floor and adds no
+D-2 mechanism id. D-1/D-2 read FAIL in both arms **and in the superseded keeper's
+own committed `legitimacy_report.md`**: pre-existing states that the rule-20
+materiality filter and C7/C8 grounding resolve to PASS, unchanged by the delta.
+**K1 does not fire**: the literal test (every class < 0.1 %) is not met — worst
+class **+0.262 / −0.184 / −0.219 %** (`COAL_PRB` / `VIRTUAL_INC` / `ST_GAS`) —
+but every **material** class moves under 0.06 % and the ISO total moves 2–5 GWh
+of ~820 TWh, so **near-inert** is the honest description.
+
+**DOF.** Ledger **17 → 18 entries with `n_residual` UNCHANGED at 6**. Every number
+in the artifact is a measured maximum from the CEMS trace; PREREG §5's no-feedback
+ceiling was honoured absolutely — no multiplier, scale, haircut, blend, floor,
+cap, widening, tightening, per-plant override or quantile swap, and the only knob
+touched was the flag's on/off state. Rule 19: no other keeper mechanism owns
+intertemporal thermal coupling. Rule 25: PJM's artifact from PJM's own plants;
+ERCOT's `R` and CAISO's `I` do not transfer and were not touched.
+
+**Promotion rationale (rule 1 `[R-STRUCT]` / rule 14 `[R-ACCURATE]`).** Promoted
+because the measured envelope is more accurate than the implicit infinite-ramp
+estimate it replaces — demonstrably so, at ~0.5 TWh/yr of infeasible dispatch —
+and **not** because it improved the fit, which it essentially did not. A real
+physical constraint stays in even when the residual does not move. **Honest scope,
+leading rather than trailing: the winter morning ramp is NOT closed and its root
+cause is still unidentified.**
+
+**Probe defect found and fixed in-session, disclosed because it changed a reported
+number.** The first D-ENV pass mapped the dispatch parquet's `klass` through
+`_RAMP_BUCKET_BY_GROUP` directly, silently dropping **every coal group** — the
+fleet's `plant_group` is the single `COAL` while `klass` splits into
+`COAL_BIT`/`COAL_PRB`/`COAL_WC` — losing 42 of 194 live groups and **38.6 GW
+(31 %)** of live capacity, i.e. exactly the class the defect implicates. Fixed by
+collapsing the coal variants before mapping; the probe now reports its own match
+rate (**194/194**, full 124.1 GW) so the denominator can never be silent again.
+All D-ENV figures above are post-fix.
+
+**Matrix (rule 28 duty b).** `ramp_envelopes` PJM **`U` → `K`** — the first keeper
+in **any** ISO to carry `ramp_limits=True`. Header re-stamped, keeper pointer
+updated, note extended with the coverage, the A/B result, the D-ENV measurement
+and the p99-vs-max scope bound; the `P` evidence key **extended, not replaced**.
+ERCOT `R` / CAISO `I` untouched (rule 25). `check_mechanism_matrix.py` PASS.
+`mechanism-testing-matrix.md` §5.3: item 11 **closed with the result and the
+inference error recorded** rather than deleted, and a new item 12 names the
+successor instrument.
+
+**Holdouts / governance.** `--years 2023 2024 2025` only; no out-of-training year
+touched (rule 22), no `--holdout-authorized` passed. No offer curve, sigmoid,
+floor, derive value or ORDC parameter changed (rules 13/21/23/26); the derive was
+**run**, not modified. Both arms registered on the dashboard (rule 15), pruning
+`2026-07-25-pjm-121-cc-belt` and `2026-07-26-pjm-129-meritguard-a1` under the
+top-15 PJM retention. `audit_keepers.py --check` passes PJM's own row; its single
+failure is the **pre-existing** stale `status/NEISO.js` on main, which belongs to
+NEISO's lane and was deliberately not touched.
