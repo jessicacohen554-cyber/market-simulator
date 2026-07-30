@@ -108,6 +108,14 @@
  *   zonal congestion mechanism for that defect (ERCOT/MISO internal_congestion_split
  *   refusal class). The defect itself was also mis-sized ~1.9x in prior notes: the
  *   benchmark's own unit-split actual is 3.066/4.048/5.218 TWh, not 7.38/8.68/9.64.
+ * 2026-07-30 on the miso-106 keeper promotion (measured_ct_heat_rates MISO U -> K, derived from MISO's
+ *   OWN CAMPD under rule 25 — no NYISO/PJM value transferred). MISO stays NOT-YET on the SAME C7
+ *   COAL_PRB blocker with an IDENTICAL criterion profile to its outgoing keeper. Third ISO to arm this
+ *   flag and the SECOND whose pre-registration was refuted in direction (after pjm-137): MISO predicted
+ *   C1 CT_PEAKER would improve in 2024/2025 and the ~1 TWh/yr volume fall OVERSHOT past zero instead.
+ *   New cross-ISO signal for any successor arming this flag: the correction is a CURVE COMPRESSION
+ *   (cheap end dearer, expensive tail much cheaper), so it can RAISE a reliability floor's forced share
+ *   by shrinking the class the floor is divided into — check D-2 headroom BEFORE arming.
  * CAISO column re-checked 2026-07-28 by caiso-137 (ordc_scarcity_overlay: ask A2
  *   CLOSED as a no-defect, cell stays K — nothing armed, no solve) and CORRECTED
  *   2026-07-29 by caiso-137b: the overlay is UNREACHABLE in the CAISO backcast
@@ -213,7 +221,7 @@ window.MECH_MATRIX = {
     ERCOT: "2026-07-29-ercot137-coal-margin-measured",
     CAISO: "2026-07-29-caiso138-envelope-clip",
     PJM: "2026-07-29-pjm-137-ctheatrate",
-    MISO: "2026-07-28-miso-101b-tempgrain",
+    MISO: "2026-07-30-miso-106b-ct-heatrate",
     NYISO: "2026-07-29-nyiso-98-nucavail",
     NEISO: "2026-07-23-neiso-61-netrev-margin"
   },
@@ -221,7 +229,7 @@ window.MECH_MATRIX = {
     ERCOT: "C3a/C3b 2023, C3c all years, C7 COAL_LIGNITE 2023 (v2.8)",
     CAISO: "C5a all years, C3a 2025, C3c 2023-24",
     PJM: "NONE — CALIBRATED since pjm-137, every criterion passing (C1 16/16 free 12/12). Thinnest margin: C3c passes by ~1 h (2024) / ~2.5 h (2025) against a 0.5x floor, closed at pjm-136 and unchanged since. Remaining defect is the Dominion CT leg, of which pjm-137 closed 52-55 % (intra-zonal congestion) and pjm-138 attributes a further 25-37 % to the reserve opportunity cost the no-MIP LP cannot price — 8/23/22 % is reachable",
-    MISO: "C3a/C3b/C3c ledger-saturated (3/3), C7 COAL_PRB all years",
+    MISO: "C3a/C3b/C3c ledger-saturated (3/3), C7 COAL_PRB all years. NEW OPEN ITEM at miso-106: the h14-21 CT_PEAKER reliability_floor binds 47 % HARDER once peakers carry their measured loaded heat rates (forced energy 1.188 -> 1.743 TWh, D-2 share 11.77 -> 14.21 % against a 15 % cap) — the floor is holding up capacity the corrected economics would shut off. Not to be closed by relaxing the floor.",
     NYISO: "C3c sole blocker, all years (C1 closed 2026-07-29 by owner promotion of nyiso-96, CT_PEAKER trade accepted)",
     NEISO: "C3c ledgered caveat (frontier declared; only calibration-complete ISO)"
   },
@@ -442,9 +450,9 @@ window.MECH_MATRIX = {
       ev: { M: "MISO-55", Q: "neiso-47", N: "nyiso-96 (docs/FINDING-nyiso96-ct-start-frequency-2026-07-29.md)" } },
     { id: "measured_ct_heat_rates", cat: "offer", name: "Measured loaded CT heat rates (CAMPD, per-plant)",
       def: "scenarios.py:1197", mode: "BF",
-      cells: "UUKUKU",
-      note: "NYISO keeper (nyiso-89: 91.6% of class capacity re-priced; eliminated the heat-rate hypothesis for the peaker gap). PJM KEEPER at pjm-137, per-ISO on PJM's own artifact (rule 25, no verdict transferred): 71 plants, ZERO excluded by the physical band, 29 moved >0.5 MMBtu/MWh, 35 cheaper / 36 dearer, ISO energy-weighted +0.229 MMBtu/MWh. Chartered under rule 14 [R-ACCURATE] because eGRID publishes ONE plant-average rate — Doswell Energy Center's 3 peaking turbines carried the 9.027 average of a site that is 6 CC blocks, against a measured 11.350. Determination CALIBRATED with every criterion passing and C3c UNCHANGED (tail hours identical 3/10/32); Dominion CT_PEAKER rises 0.724->0.721 / 1.380->1.448 / 2.923->3.162 TWh while the ISO-WIDE class FALLS 2.6-2.9 TWh — pure reallocation. The PREREG predicted the OPPOSITE direction (zone-average +0.634 MMBtu/MWh) and is recorded as refuted: the mechanism is per-PLANT. Still untested in ERCOT / CAISO (CT priced-out, caiso-119) / MISO.",
-      ev: { N: "nyiso-89; FINDING-nyiso89", P: "pjm-137; FINDING-pjm137-dominion-congestion-is-subzonal-2026-07-29" } },
+      cells: "UUKKKU",
+      note: "NYISO keeper (nyiso-89: 91.6% of class capacity re-priced; eliminated the heat-rate hypothesis for the peaker gap). PJM KEEPER at pjm-137, per-ISO on PJM's own artifact (rule 25, no verdict transferred): 71 plants, ZERO excluded by the physical band, 29 moved >0.5 MMBtu/MWh, 35 cheaper / 36 dearer, ISO energy-weighted +0.229 MMBtu/MWh. Chartered under rule 14 [R-ACCURATE] because eGRID publishes ONE plant-average rate — Doswell Energy Center's 3 peaking turbines carried the 9.027 average of a site that is 6 CC blocks, against a measured 11.350. Determination CALIBRATED with every criterion passing and C3c UNCHANGED (tail hours identical 3/10/32); Dominion CT_PEAKER rises 0.724->0.721 / 1.380->1.448 / 2.923->3.162 TWh while the ISO-WIDE class FALLS 2.6-2.9 TWh — pure reallocation. The PREREG predicted the OPPOSITE direction (zone-average +0.634 MMBtu/MWh) and is recorded as refuted: the mechanism is per-PLANT. Still untested in ERCOT / CAISO (CT priced-out, caiso-119). MISO KEEPER at miso-106 (2026-07-30), per-ISO on MISO's OWN artifact (rule 25, no NYISO or PJM value transferred): 86 of 168 plants / 19,121 of 22,289 MW (85.8 % of class capacity, ~92-96 % of the class's real energy), ZERO excluded by the physical band, 51 moved >0.5 MMBtu/MWh, 56 cheaper / 30 dearer, capacity-weighted 12.290 -> 11.868 (-3.4 %) but generation-weighted only -0.1 % — the change is a CURVE COMPRESSION, not a level shift (bottom-12 of the model's CT curve +1.280 MMBtu/MWh DEARER, top-8 -4.510 CHEAPER, p100 $67.42 -> $53.53). Chartered under rule 14 [R-ACCURATE] on two measured defects: South Fond Du Lac (7203, 326.5 MW) priced at eGRID 26.544 MMBtu/MWh, ABOVE the physical simple-cycle ceiling, because its turbines ran at CF ~0.5 % so the annual mean is start fuel (measured loaded 14.014; one of 5 MISO plants / 445 MW outside [6,25]); and 19 plants / 1,651 MW carrying a COMBINED-CYCLE rate on a peaker, which CAMPD's own unitType tag separates decisively (Perryville 55620 units 1-1/1-2 'Combined cycle' vs 2-1 'Combustion turbine', model 6.890 vs measured 10.774; Zeeland 55087 CC1/CC2 'Combustion turbine' matching the model's 318.2 MW at 8.587 vs measured 10.922). PROMOTED ON RULE 1 WITH THE COSTS ON THE RECORD: against a same-HEAD flag-off control every criterion verdict is IDENTICAL (9 scored / 6 target / 2 ledgered / 1 fail, the same C7 COAL_PRB blocker), C3a improves in ALL THREE years (-1.4 -> -1.2 %, -6.7 -> -6.6 %, -14.3 -> -14.2 %) and D-1 CT_PEAKER cv_ratio moves toward 1.0 in 2024 (0.848 -> 0.931) and 2025 (0.805 -> 1.046), C3c BIT-IDENTICAL — but C1 CT_PEAKER |err| DEGRADES in all three years (-20.18 -> -26.35 %, +1.31 -> -3.63 %, +2.73 -> -3.69 %, all inside the +-8 TWh band), D-2 CT_PEAKER forced share RISES 11.77 -> 14.21 % with forced ENERGY up 47 % (1.188 -> 1.743 TWh: correctly-priced peakers want to run less so the h14-21 reliability floor binds harder — an OPEN ITEM, not to be closed by relaxing the floor), and C3b-2025 moves 0.190 -> 0.192 inside its 0.20 veto. THE MISO PREREG WAS REFUTED IN DIRECTION for C1-2024/2025 (predicted improvement, got overshoot) — the second ISO running of this flag whose pre-registration was wrong, after pjm-137's. DO NOT transfer any of these numbers to ERCOT or CAISO: each derives its own.",
+      ev: { N: "nyiso-89; FINDING-nyiso89", P: "pjm-137; FINDING-pjm137-dominion-congestion-is-subzonal-2026-07-29", M: "miso-106 (results/calibration/FINDING-miso106-measured-ct-heat-rates-2026-07-30.md; PREREG committed before either arm was solved)" } },
     { id: "measured_chp_heat_rates", cat: "offer", name: "Measured power-only CHP heat rates (eGRID CHPCHTI add-back, per-plant)",
       def: "scenarios.py:1224", mode: "BF",
       cells: "UUUKUU",
