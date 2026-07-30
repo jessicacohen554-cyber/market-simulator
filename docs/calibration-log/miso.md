@@ -2266,3 +2266,96 @@ to stop.
 * Rule 15: no run produced by this part, nothing to register. Rule 22: no
   solve, no out-of-training year touched.
 
+## 2026-07-30 — miso-107 (part 2): the h15-21 CT_PEAKER reliability floor did NOT absorb a mispriced fleet — REFUTED ex ante on the deriver's own provenance, NO SOLVE SPENT, keeper UNCHANGED
+
+miso-106 §8 left one open item and called it the best-identified thing it
+produced: arming `measured_ct_heat_rates` made the h15-21 `CT_PEAKER`
+`reliability_floor` force **1.188 → 1.743 TWh (+47 %)**, D-2 share
+**11.77 → 14.21 %** against a 15 % peaker cap, and asked whether the floor's
+**level** had been implicitly absorbing a mispriced fleet. It is answerable from
+the coefficient artifact and its deriver, and the answer is **no, by
+construction** — so no LP was spent testing a premise the source already
+falsifies.
+
+### The level has no model-dependent input
+
+`scripts/data/derive_reliability_coeffs.py` builds every limb as
+`floor_pct = commit_frac × min_stable_pct`, where `commit_frac` is the share of
+class nameplate **online** (`grossLoad > 0`) on flagged days — measured from
+MISO's own CAMPD unit-level record — and `min_stable_pct` is **0.38**, the
+`constants.MIN_STABLE_PCT_PHYSICAL` simple-cycle CT value from NREL WWSIS-2
+Table 7. The gate is p70 of MISO's own daily-peak net load (**78.52 GW**), and
+the enable test (`rho ≥ RHO_MIN`, `n ≥ N_MIN`, `commit_frac > baseline_commit`)
+is entirely measured. **No price, dispatch, residual or model output enters any
+term.** The deriver states it directly: *"never tuned to a price/volume
+residual"*, and `commit_frac` is *"a commitment count, NOT a measured-CF
+ceiling"*. A level that never touched the model's economics cannot have been
+compensating for them.
+
+### What the +47 % actually is
+
+The floor binds only when economics fall beneath it. **1,068 MW of MISO CTs
+previously carried combined-cycle heat rates** (one at a physically impossible
+26.544 MMBtu/MWh), so the LP ran them *economically above* their commitment
+floor and the floor rarely bound. Correctly priced, the cheap end of the curve
+rises **+1.280 MMBtu/MWh** (capacity-weighted, bottom-12) and those units clear
+less on merit, so the **same unchanged floor** now binds. The mispricing had
+been discharging a commitment obligation for free; the accurate input did not
+break the floor, it **stopped masking it**. That inverts the "propping up
+capacity the corrected economics would shut off" reading.
+
+### Not over-forcing, on a bound from committed numbers
+
+Flagged days are **n = 329 / 1,096** = 30.0 % (≈110 days/yr) and the window is
+7 h ⇒ **767.7 h/yr = 8.76 %** of 8,760. Arm B forces **1.743 TWh** against the
+class's **metered** 2023 actual of **19.199 TWh** = **9.08 %**. Nine per cent of
+measured energy inside 8.8 % of the hours — proportionate, not inflationary.
+**D-4 off-window binding is exactly 0.000 in both arms**, so the limb binds
+nowhere its driver says the class is idle, which is the specific pathology
+rule 17 `[R-FLOOR-WINDOW]` exists to catch.
+
+### Rule 17 triple, for the record
+
+**(a) driver** — MISO system daily-peak net load (demand − VRE) ≥ 78.52 GW, the
+p70 of MISO's own distribution. **(b) window** — h15-21 on flagged days only,
+D-4 clean at 0.000. **(c) forward** — net load is a forward model quantity, the
+p70 threshold recomputes from the forecast distribution, `commit_frac`
+re-derives from CAMPD on source-data change, `min_stable_pct` is published.
+Rule 13 `[R-MEASURED]`'s admissibility test passes on every term.
+
+### Left open, and what must not be done about it
+
+* **C1 `CT_PEAKER` volume** (degrading in all three years, miso-106 §5.1) is the
+  real open item. It must **not** be closed by relaxing this floor — the
+  compensating-error pattern rules 1 `[R-STRUCT]` / 14 `[R-ACCURATE]` forbid and
+  the miso-106 keeper note bars explicitly.
+* Whether **0.38** min-stable fits MISO's own CT fleet is a *different* question.
+  Rule 25 `[R-ISO-SCOPE]`: MISO derives its own or not at all. Rule 23
+  `[R-FROZEN-DERIVE]`: only a source-data change may trigger it, **never a moved
+  residual**. No trigger exists; recorded, not actioned.
+* Queue items **5** (`dual_fuel_switching`) and **6**
+  (`hydro_budget_nameplate_aware` + `NG: PS` pin audit) untouched.
+
+### Governance
+
+* **Rule 19** — D-2 shows `reliability_floor` is the *only* mechanism forcing
+  `CT_PEAKER`; nothing to reconcile, nothing stacked.
+* **Rule 15** — no run produced, nothing to register (same discipline as
+  miso-103/104/105: refuse ex ante on measurement rather than spend a solve).
+* **Rule 22** — no year solved or scored; no holdout touched.
+* **Rule 26 duty (b)** — `reliability_floor` MISO adjudication recorded in the
+  matrix in-session, with the DO-NOT-REDO clause.
+* **Contamination declared** — the handoff quoted miso-106's arm-B outcomes
+  before any artifact was read, so this session was **not blind** to them.
+  Immaterial: nothing was predicted or pre-registered here, and the finding rests
+  on the deriver's source and published coefficients, which predate both arms.
+* **Dependency** — miso-106's artifacts are in **PR #3140**, open and unmerged.
+  Its MISO governance is green; it is blocked by three failures that reproduce on
+  a clean `main` and that it did not cause (20 Ruff `F811` redefinitions in
+  `src/market_sim/data/fleet/__init__.py` from a partial extraction to
+  `fleet/models.py`; a dangling `derive_parasitic_factors.py` reference in
+  `campd_bins.py`; a stale `status/NEISO.js`).
+* Evidence:
+  `results/calibration/FINDING-miso107-reliability-floor-provenance-2026-07-30.md`.
+* Next number: **miso-108.**
+
