@@ -292,6 +292,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # caiso-138 field above was the SIXTH instance of missing this one line;
     # an armed run enters the key as a distinct scenario.
     "dump_cost_full_offer_domain",
+    # CAISO P1 export-sink seam (caiso-142): GATED / default-off and
+    # byte-identical for every existing config (with the gate off the RA
+    # bridge's min_gen composition is the unchanged maximum-compose).
+    # Registered here at its default so every pre-existing cache key stays
+    # byte-stable — the caiso-138 field above was the SIXTH instance of
+    # missing this one line; an armed run enters the key as a distinct
+    # scenario.
+    "caiso_p1_export_sink_seam",
     # DAM-first outage overlay gates for the four ISOs with a native
     # availability instrument (CAISO / MISO / NEISO / PJM), wired 2026-07-24
     # (infra/dam-outage-wiring-4iso). All default False and back a backcast-only,
@@ -3375,6 +3383,34 @@ class ScenarioConfig:
     # is the forward ATC envelope, wired when the forecast lane adopts it.
     # Requires caiso_firm_import_shape (it clips that injector's output).
     # Default off (byte-identical); CAISO-only.
+    caiso_p1_export_sink_seam: bool = False  # Exempt the pmin < 0 absorption
+    # rows (the priced per-hub export sinks) from the P1-native RA bridge's
+    # min_gen maximum-composition, so the SCORED P1 pass keeps the export
+    # outlet P0 already has (caiso-142; FINDING-caiso142).
+    # pipeline.commitment._bridge_floored_fleet composes
+    # `new_min_gen = max(base_min_gen, bridge_floor)` over a zeros-initialised
+    # bridge floor that is positive only on bridged thermal rows, so every
+    # sink's lower bound collapses `max(-TTC, 0) = 0` and the LP variable is
+    # pinned off — the exact failure data.fleet.arrays._compose_min_gen_floors
+    # guards against in its own zeros-init ("export sinks (pmin < 0 ...) must
+    # keep their range — a zero floor would pin them off"). Measured
+    # consequence (FINDING-caiso138 §D): zero exports in all 26,280
+    # corridor-hours of every CAISO keeper since the RA bridge, P0 and P1
+    # solving structurally different economies, and the RA bridge's own
+    # decommit screen crediting ~15 GW of export absorption the scored pass
+    # cannot use. Zero new free parameters (rule 24): the restored bound is
+    # the sink's own pmin (its corridor link TTC) and its price the measured
+    # hub series inject_caiso_per_hub_intertie_prices already writes.
+    # Rule 25 [R-ISO-SCOPE] / caiso-138 §D blast radius: the same shared
+    # composition serves the ERCOT and NYISO gas bridges over fleets that
+    # also carry negative-pmin sink rows, so the exemption is threaded from
+    # the CAISO RA path ONLY and each ISO's lane re-gates on its own
+    # evidence. NOT a C3a-2025 price lever: an absorber can only ADD demand,
+    # so it can only RAISE lambda, and FINDING-caiso142 §C measures it
+    # out-of-the-money by the corridor's own OATT wheel + 2 eps in the
+    # import-parity plateau hours (p50 +$4.002 in the 2025 defect set) —
+    # armed for structural P0/P1 consistency (rule 1 [R-STRUCT]), never to
+    # move a residual. Default off (byte-identical); CAISO-only.
     dump_cost_full_offer_domain: bool = False  # Take the overgeneration-dump
     # guard over EVERY offer that can reach a dumpable node, not just the
     # renewable/storage production credits (caiso-139; FINDING-caiso139). The
