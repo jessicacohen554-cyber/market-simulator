@@ -743,6 +743,64 @@ def apply_deliverability_seam_limit(
     return extended
 
 
+def retire_misattributed_sil(iso_config: ISOConfig, iso: str) -> ISOConfig:
+    """Drop the ISO's aggregate simultaneous-import cap from the topology.
+
+    ``ScenarioConfig.nyiso_import_sil_retire`` (nyiso-100, the rule-14
+    ``[R-ACCURATE]`` reconcile). The NYISO entry of
+    :data:`~market_sim.model.interchange.spec.EXTERNAL_SIMULTANEOUS_LIMITS`
+    caps total simultaneous flow across all four import-node border links at
+    4,350 MW. That value is the published G-J **locality** Bulk Power
+    Transmission Limit for capability year 2024/2025 — an *internal* New York
+    transfer boundary (Load Zones G,H,I,J) — mis-installed as the *external*
+    NYCA seam cap, frozen at one capability year of a series that moves
+    3,425 / 3,425 / 4,350 / 4,500 across 2022/23-2025/26. Measurement falsifies
+    it as an external bound: NYCA net import reached 5,929 / 5,662 / 5,872 MW
+    metered (EIA-930) and 7,078 / 7,298 / 6,727 MW scheduled (NYISO MIS P-32)
+    in 2023/2024/2025.
+
+    NYISO publishes no external simultaneous limit to substitute (Gold Book
+    Table VI-1 is redacted as Critical Energy Infrastructure Information), and
+    the naive measured replacement — the ~10.7 GW sum of posted per-interface
+    P-32 limits — is precisely rule 14's named misalignment exception (several
+    parallel paths this five-zone network collapses into one link). So the
+    reconcile **retires** the scalar rather than restating it: the seam is left
+    bounded by the per-link TTCs, which *are* posted-rating-grounded (NYC 1,000
+    MW against HTP 660 + Linden-VFT 315 = 975 posted; Long_Island 1,200 MW
+    against Neptune 660 + Cross-Sound 330 + NPX-1385 200 = 1,190 posted), with
+    the AC seams behind the internal Central-East chain the topology already
+    carries. The resulting aggregate is the border-link sum, 6,800 MW, inside
+    the measured admissible interval [5,929, 10,715] — no new number, one fewer
+    free parameter (rule 22 ``[R-DOF]``).
+
+    The simultaneous-import :class:`InterfaceLimit` is identified structurally
+    as the one whose every link originates at the import node — the same
+    identification :func:`apply_deliverability_seam_limit` uses — so this is
+    ISO-agnostic plumbing; only the caller's gate is NYISO-only.
+
+    Args:
+        iso_config: The (import-node-extended) ISO topology.
+        iso: Model ISO name.
+
+    Returns:
+        ``iso_config`` without its aggregate simultaneous-import limit, or
+        unchanged when the ISO has no import node or no such limit is present.
+    """
+    zone = IMPORT_ZONE.get(iso)
+    if zone is None:
+        return iso_config
+    kept = [
+        lim
+        for lim in iso_config.interface_limits
+        if not (lim.links and all(pair[0] == zone for pair in lim.links))
+    ]
+    if len(kept) == len(iso_config.interface_limits):
+        return iso_config
+    trimmed = iso_config.model_copy(update={"interface_limits": kept})
+    trimmed.validate_topology()
+    return trimmed
+
+
 def inject_interchange_shape(
     fleet_arrays,
     iso: str,
