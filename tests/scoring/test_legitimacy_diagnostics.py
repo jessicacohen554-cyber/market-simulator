@@ -520,6 +520,125 @@ class TestD5NyisoDownstateParity:
 
 
 # ---------------------------------------------------------------------------
+# D-5 — NYISO Central-East measured TTC, the DECLARED-OVERLAY half
+#
+# nyiso-104. The measured Central-East DAM TTC tables have been live in every
+# NYISO backcast since they landed but carried no D-5 row at all, so parity was
+# blind to them. Classification (rule 13 [R-MEASURED]) resolved OPPOSITE to
+# nyiso_local_selfsupply above: this one is a genuine backcast overlay, so the
+# fix is a declared registry row, NOT a forecast wiring. These tests pin both
+# halves of that verdict — the declaration, and the evidence it rests on.
+# ---------------------------------------------------------------------------
+
+
+class TestD5NyisoCentralEastTtc:
+    """The measured Central-East envelope is declared, scoped, and not wired forward."""
+
+    ROW = "nyiso_central_east_measured_ttc"
+    # Keeper-shaped (2026-07-30-nyiso-100-silretire) minus every toggle that
+    # would emit an unrelated declared row and blur what is being asserted.
+    CFG = {
+        "outage_source": "estimated",
+        "reliability_floor": False,
+        "ct_netload_drag": False,
+        "gas_st_netload_drag": False,
+    }
+
+    @staticmethod
+    def _entry_sources():
+        from scripts.legitimacy_diagnostics import REPO_ROOT
+
+        return (
+            (REPO_ROOT / "scripts/run_calibration.py").read_text(),
+            (REPO_ROOT / "src/market_sim/runner.py").read_text(),
+        )
+
+    def _spec(self):
+        from scripts.legitimacy_diagnostics import D5_REGISTRY
+
+        return next(s for s in D5_REGISTRY if s.name == self.ROW)
+
+    def test_registered_as_a_declared_backcast_overlay(self):
+        spec = self._spec()
+        assert spec.declared is True
+        assert spec.mode == "backcast_only"
+        assert spec.iso == "NYISO"
+        # No ScenarioConfig flag gates it — it is unconditional for any NYISO
+        # backcast year with a table, which is exactly why it needs iso scoping.
+        assert spec.toggle is None
+
+    def test_emitted_as_declared_on_the_real_sources(self):
+        backcast_src, forecast_src = self._entry_sources()
+        res = run_d5(self.CFG, "NYISO", backcast_src, forecast_src)
+        assert res.passed, res.failures
+        rows = [r for r in res.rows if r["mechanism"] == self.ROW]
+        assert rows, "the Central-East overlay is invisible to D-5 again"
+        assert rows[0]["difference"] == "backcast-only"
+        assert rows[0]["verdict"] == "declared"
+
+    def test_scoped_to_nyiso_only(self):
+        """An always-on ISO-exclusive overlay must not report itself elsewhere."""
+        backcast_src, forecast_src = self._entry_sources()
+        for iso in ("ERCOT", "CAISO", "PJM", "MISO", "NEISO"):
+            res = run_d5(self.CFG, iso, backcast_src, forecast_src)
+            assert not any(r["mechanism"] == self.ROW for r in res.rows), (
+                f"the NYISO Central-East overlay claims to be active in {iso}"
+            )
+
+    def test_not_wired_into_the_forecast_orchestrator(self):
+        """The declaration is only honest while the helpers stay backcast-only.
+
+        If a future session wires these tables into ``runner.py``, the overlay
+        stops being a declared backcast difference and this test must fail
+        LOUDLY rather than let a forecast year inherit one historical year's
+        transmission-outage schedule (see the classification test below).
+        """
+        backcast_src, forecast_src = self._entry_sources()
+        for sym in ("apply_iso_year_ttc", "apply_iso_monthly_ttc"):
+            assert sym in backcast_src
+            assert sym not in forecast_src, (
+                f"{sym} is now called from the forecast orchestrator; the "
+                "nyiso-104 classification (rule 13) must be re-adjudicated "
+                "before this is allowed to stand"
+            )
+
+    def test_within_year_shape_is_not_a_reproducible_seasonal_rating(self):
+        """The measured evidence the OVERLAY verdict rests on (nyiso-104).
+
+        A published seasonal rating is recomputed the same way every year, so
+        on an unchanged network its level-normalized monthly shape must repeat
+        (r ~ 0.9+). 2024 and 2025 share the post-AC-Transmission topology and
+        correlate at only r = +0.21 — the signature of that year's own approved
+        transmission outages, which have no forward analogue.
+
+        Guards the classification against a silent data refresh: if updated
+        postings ever DID show a reproducible seasonal shape, the overlay would
+        have to be re-adjudicated as a forward mechanism, and this fails first.
+        """
+        import statistics as st
+
+        from market_sim.config.constants import NYISO_INTERFACE_TTC_BY_MONTH
+
+        link = ("Upstate_West", "Capital_Hudson")
+        shapes = {}
+        for year in (2024, 2025):  # the two fully post-upgrade years
+            vals = NYISO_INTERFACE_TTC_BY_MONTH[year][link]
+            mu = st.mean(vals)
+            shapes[year] = [v / mu for v in vals]
+        a, b = shapes[2024], shapes[2025]
+        ma, mb = st.mean(a), st.mean(b)
+        num = sum((x - ma) * (y - mb) for x, y in zip(a, b))
+        den = (sum((x - ma) ** 2 for x in a) * sum((y - mb) ** 2 for y in b)) ** 0.5
+        r = num / den
+        assert r < 0.5, (
+            f"same-topology monthly shape now correlates at r={r:+.3f}; the "
+            "series may be a reproducible seasonal rating after all, which "
+            "would make it a forward MECHANISM rather than the declared "
+            "backcast overlay nyiso-104 classified it as"
+        )
+
+
+# ---------------------------------------------------------------------------
 # D-9 — overlay quarantine
 # ---------------------------------------------------------------------------
 
