@@ -650,6 +650,109 @@ def section_f() -> dict:
     return out
 
 
+# --------------------------------------------------------------------------- #
+# §G — the export PRICE basis, identified from measured bytes
+# --------------------------------------------------------------------------- #
+def section_g() -> dict:
+    """Identify the export netback: in REAL net-export hours, where does CAISO clear?
+
+    The mirror of the caiso-93/94 import-basis identification (which read the
+    delivered basis off ``actual CAISO LMP − raw hub`` in the relevant hours and
+    is cited in ``CAISO_IMPORT_DELIVERY_BASIS`` for the zero-wheel WEIM rungs).
+    Applied to the export direction: in hours the corridor MEASURABLY net-exported
+    (EIA-930 CISO BA-to-BA interchange, model-clock aligned), compare the committed
+    actual CAISO RT against that corridor's raw measured hub. Arbitrage-free, an
+    export nets back ``hub − wheel_out``, so the spread identifies the wheel:
+    ≈ 0 means the raw-hub WEIM/EDAM transfer basis (no OATT point-to-point
+    charge), negative means a real netback deduction.
+    """
+    from market_sim.config.interchange_config import CAISO_CORRIDOR_DIBA
+    from market_sim.data.eia930.envelopes import _caiso_interchange_model_clock
+
+    print("\n" + "=" * 78)
+    print("§G  the export PRICE basis, identified on measured bytes")
+    print("=" * 78)
+    print(
+        "As built the export leg is priced hub - eps: the WEIM/EDAM transfer basis\n"
+        "(no OATT point-to-point wheel), the same basis the IMPORT side's\n"
+        "DSW_overnight_clean / DSW_daytime_clean rungs carry, cited to\n"
+        "FINDING-caiso93 §3/§5 and caiso-94 §2-3. Identified the same way, in the\n"
+        "export direction:"
+    )
+    path = REPO / "data/raw/eia-930-interchange" / "CISO interchange hourly.parquet"
+    if not path.exists():
+        print("  interchange frame absent — skipped")
+        return {}
+    frame = pd.read_parquet(path)
+    local = _caiso_interchange_model_clock(pd.DatetimeIndex(frame["local_time"]))
+    out: dict[str, dict] = {}
+    for year in YEARS:
+        a = actual_rt(year)
+        hubs = hub_series(year)
+        m = local.year == year
+        f = frame[m].copy()
+        f["corridor"] = f["diba"].astype(str).map(CAISO_CORRIDOR_DIBA)
+        f["ts"] = local[m].to_numpy()
+        per_ts = (
+            f.dropna(subset=["corridor"]).groupby(["corridor", "ts"])["mw"].sum()
+        ).reset_index()
+        per_ts["net_import"] = -per_ts["mw"]
+        stamps = pd.Timestamp(f"{year}-01-01") + pd.to_timedelta(
+            np.arange(HOURS + 48), unit="h"
+        )
+        stamps = stamps[~((stamps.month == 2) & (stamps.day == 29))][:HOURS]
+        idx = pd.Series(np.arange(HOURS), index=stamps)
+        yr: dict[str, dict] = {}
+        print(f"  --- {year}")
+        for zone in CORRIDORS:
+            hub = hubs[zone]
+            sub = per_ts[per_ts["corridor"] == zone].copy()
+            sub["h"] = sub["ts"].map(idx)
+            sub = sub.dropna(subset=["h"])
+            net = np.full(HOURS, np.nan)
+            net[sub["h"].to_numpy().astype(int)] = sub["net_import"].to_numpy()
+            exp_h = (net < -50.0) & np.isfinite(a) & np.isfinite(hub)
+            if not exp_h.any():
+                print(f"    {zone:9s} no measured net-export hours")
+                continue
+            spread = a[exp_h] - hub[exp_h]
+            deep = exp_h & (net < -500.0)
+            yr[zone] = {
+                "export_hours": int(exp_h.sum()),
+                "p25": float(np.percentile(spread, 25)),
+                "p50": float(np.percentile(spread, 50)),
+                "p75": float(np.percentile(spread, 75)),
+                "mean": float(spread.mean()),
+                "deep_hours": int(deep.sum()),
+                "deep_p50": (
+                    float(np.median(a[deep] - hub[deep])) if deep.any() else None
+                ),
+            }
+            v = yr[zone]
+            print(
+                f"    {zone:9s} measured net-export hours n={v['export_hours']:5d} | "
+                f"actual CAISO RT − raw hub: p25={v['p25']:+7.2f} p50={v['p50']:+7.2f} "
+                f"p75={v['p75']:+7.2f} mean={v['mean']:+7.2f} | deep (<−500 MW) "
+                f"n={v['deep_hours']:5d} p50="
+                + (f"{v['deep_p50']:+7.2f}" if v["deep_p50"] is not None else "n/a")
+            )
+        out[str(year)] = yr
+    print(
+        "\nReading: reality's PNW export netback sits BELOW the raw hub (p50 −3.56 /\n"
+        "−8.30 / −7.40; deep −4.68 / −10.81 / −8.30), and reality's DSW exports\n"
+        "happen with CA priced ABOVE the raw Palo Verde hub (p50 +3.69 / +4.39 /\n"
+        "+4.49). So the as-built hub − eps is measurably TOO HIGH on BOTH\n"
+        "corridors: a live sink on that basis OVER-exports relative to reality, and\n"
+        "its price regression is an UPPER BOUND on the correctly-priced\n"
+        "mechanism's. This CORRECTS §E's 'asymmetry with no source' — the source is\n"
+        "the WEIM transfer design, cited in CAISO_IMPORT_DELIVERY_BASIS; what is\n"
+        "wrong is the LEVEL, not the provenance. Re-basing it is a SEPARATE charter\n"
+        "(a new measured parameter needing its own derive + citation + forward\n"
+        "story), deliberately not stacked on the seam arm (single delta)."
+    )
+    return out
+
+
 def main() -> int:
     a = section_a()
     b = section_b()
@@ -657,6 +760,7 @@ def main() -> int:
     d = section_d()
     e = section_e()
     f = section_f()
+    g = section_g()
     print("\n" + "=" * 78)
     print("SUMMARY")
     print("=" * 78)
@@ -671,6 +775,17 @@ def main() -> int:
     print("  §E admissible basis exists           : True (and moot per §C)")
     exposed = [iso for iso, v in f.items() if v.get("exposed")]
     print(f"  §F ISOs whose keeper hits the seam   : {exposed}")
+    for year in YEARS:
+        row = g.get(str(year), {})
+        pnw = row.get("WECC_PNW", {}).get("p50")
+        dsw = row.get("WECC_DSW", {}).get("p50")
+        print(
+            f"  §G export basis {year} (CAISO−hub p50)  : PNW "
+            + (f"{pnw:+.2f}" if pnw is not None else "n/a")
+            + " / DSW "
+            + (f"{dsw:+.2f}" if dsw is not None else "n/a")
+            + "  -> hub−eps is TOO HIGH on both"
+        )
     del b, e
     return 0
 

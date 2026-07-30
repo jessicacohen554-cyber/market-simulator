@@ -200,12 +200,16 @@ REJECTED). It exists:
   keeper's own solve log prints *"export-direction cap on (evening net-export
   ~0 → no wheel-out): median export DSW 0.0 GW / PNW 0.3 GW"*. Nothing needs
   building.
-* **Price — a one-line symmetric correction, not built here.** `hub − wheel_out
-  − ε` instead of `hub − ε`: the as-built export leg wheels out **for free**,
-  an asymmetry with no source, while the import leg on the same corridor pays
-  the OATT point-to-point charge. Zero new DOF (the wheel is the existing
-  `CAISO_IMPORT_DELIVERY_BASIS` value); forward-regenerating from forward ATC +
-  forward hub.
+* **Price — measurably too HIGH, and its provenance is NOT what this section
+  first said (CORRECTED, see §I).** The as-built `hub − ε` is the **WEIM/EDAM
+  transfer basis** — no OATT point-to-point wheel, exactly the basis the
+  *import* side's `DSW_overnight_clean` / `DSW_daytime_clean` rungs carry,
+  cited in `CAISO_IMPORT_DELIVERY_BASIS` to FINDING-caiso93 §3/§5 and caiso-94
+  §2–3 ("WEIM/EDAM transfers use available transmission without an OATT
+  point-to-point wheeling charge"). It is therefore **sourced**, and this
+  section's original claim that the free wheel-out was "an asymmetry with no
+  source" was **wrong**. What §I measures is that the **level** is too high on
+  both corridors, which is a different (and re-basable) defect.
 
 **This also un-confounds caiso-132 §3.** Its verdict that the export-direction
 envelope is *"provably inert, re-arming is a no-op"* (active in 2 of 52,560
@@ -311,6 +315,44 @@ another lane):
 * **Naming ERCOT in the export-sink blast radius.** §F: its keeper builds no
   interchange rows.
 * **Re-opening A1 on the grounds that A3 landed.** §G: A3 closed against.
+
+## §I — ADDENDUM (same session, after the owner's promotion grant): the export price basis, measured
+
+The owner granted promotion on structural grounds ("if structural integrity
+improves but gates regress that may still be a keeper"), which turned the arm
+question live and made the export leg's **price** decision-relevant for the
+first time — a sink pinned at 0 has an unobservable price. Two results, both on
+committed bytes, both recorded **before** either arm solved
+(`PREREG-caiso142-export-sink-seam-2026-07-30.md` §0):
+
+**1. The quantity bound was never the sink's pmin.** Each corridor group's
+`limit_dn` **is** `measured_corridor_flow_envelope(direction="export")` —
+verified byte-for-byte (DSW mean 177/189/171 MW with **0 MW in
+7,201/7,172/7,260 hours**; PNW mean 1,377/1,110/725 MW). So a live sink is
+bounded by the corridor's **own measured export capability**, and caiso-138 §E's
+objection to "bounds beyond the stranded residual" does not describe this fleet.
+That is the new evidence that retires the refusal — not a re-litigation of it.
+
+**2. The export basis is measured too high (probe §G).** Identified the same way
+caiso-93/94 identified the *import* basis — read off `actual CAISO RT − raw hub`
+in the hours the corridor **measurably net-exported** (EIA-930 CISO BA-to-BA
+interchange, model-clock aligned, net < −50 MW):
+
+| corridor | n (2023/24/25) | p50 2023 | p50 2024 | p50 2025 | deep export (< −500 MW) p50 |
+|---|---|---|---|---|---|
+| WECC_PNW | 4,341 / 3,224 / 2,560 | **−3.56** | **−8.30** | **−7.40** | −4.68 / −10.81 / −8.30 |
+| WECC_DSW | 474 / 459 / 405 | **+3.69** | **+4.39** | **+4.49** | +5.20 / +5.60 / +5.09 |
+
+Reality's PNW export netback sits **$3.6–$10.8 below** the raw hub; reality's
+DSW exports happen with CA priced **$3.7–$5.1 above** the raw Palo Verde hub. So
+`hub − ε` over-prices the outlet on **both** corridors: a live sink on that
+basis **over-exports** relative to reality, and any price regression it produces
+is an **upper bound** on the correctly-priced mechanism's.
+
+**Not stacked on the arm (rule 19, single delta).** Re-basing the export leg
+introduces a new measured parameter needing its own derive script, citation and
+forward story. It is the named successor charter; the arm under the grant carries
+the seam composition fix alone.
 
 Carried forward unchanged: everything in `FINDING-caiso141` §G,
 `FINDING-caiso140` §G, `FINDING-caiso139` §G, `FINDING-caiso138` §G (both sink
