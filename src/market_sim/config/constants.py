@@ -1165,6 +1165,60 @@ NYISO_HYDRO_TREATY_MIN_FLOW: dict[int, float] = {
 # 2021-2025.
 HYDRO_CLIMATOLOGY_YEARS: tuple[int, ...] = (2021, 2022, 2023, 2024, 2025)
 
+# --- BAs that fold pumped storage into EIA-930 NG: WAT (miso-108/miso-109) ---
+# EIA-930's per-fuel split gives pumped storage its own `NG: PS` column. A BA
+# that operates pumped storage but files NO such column has nowhere to report
+# it, so its `NG: WAT` is a conventional-hydro PLUS pumped-storage-discharge
+# series. The hydro LP units are conventional hydro ALONE (EIA-923 prime mover
+# `HY`; data.hydro excludes `PS` — pumped storage is a storage resource, not
+# inflow hydro), so pinning their monthly energy LEVEL to `NG: WAT` applies one
+# population's energy to a different population's units. Rule 14 [R-ACCURATE]:
+# the accurate level for these units is the EIA-923 `HY` series the per-plant
+# budget already carries, and the listed ISOs take it instead of the pin.
+#
+# Membership is MEASURED on the BA's own data, never assumed — three signatures,
+# reproduced by scripts/probes/_miso109_hydro_level_audit.py §1-§3:
+#   (a) the BA's extract carries no `NG: PS` column;
+#   (b) `NG: WAT` exceeds the BA's OWN conventional-hydro (`HY`) EIA-860
+#       nameplate — physically impossible for inflow hydro — in hundreds of
+#       hours a year; and
+#   (c) there are ZERO negative `NG: WAT` hours, so pumping is not netted and
+#       the contamination is one-way gross discharge.
+# MISO: no `NG: PS`; `NG: WAT` peaks 3,535 / 3,964 MW (2023 / 2024) against a
+# 2,478.4 MW conventional nameplate — 580 / 826 hours above it — beside a
+# 2,416.8 MW PS fleet (Ludington 1,978.8, Taum Sauk 408, Degray 30); 0 negative
+# hours in any year 2018-2025; `NG: WAT` 9.979 / 10.710 TWh against EIA-923 `HY`
+# 8.789 / 9.041 TWh, i.e. +1.190 TWh / +13.5 % and +1.669 TWh / +18.5 %. EIA-923
+# `PS` net generation is NEGATIVE every year (-0.840 / -1.033 TWh, the
+# round-trip loss) — the opposite sign — independently confirming the 930 series
+# is gross discharge.
+#
+# NO reconciliation FACTOR is applied, because none is identifiable from the
+# source data (probe §4): MISO's conventional share of `NG: WAT` drifts
+# 0.9937 -> 0.8442 across 2019-2024 (spread 0.15) and the monthly gap changes
+# sign by month in 4 of the 5 complete-filing years. A fitted scale constant
+# would be a free parameter with no forward story (rules 5 / 13 / 22).
+#
+# SCREENED but deliberately NOT listed — each ISO's own lane decides (rule 25):
+#   PJM   — shows all three signatures far larger (+52.9 % to +79.6 % vs 923
+#           `HY`, breaches nameplate in 1,250-1,612 h/yr): a live defect, but
+#           listing it here would move PJM's keeper without its own A/B.
+#   NYISO — shows NONE of them (0-33 breach hours a year, <=0.007 TWh) and its
+#           923 `HY` EXCEEDS `NG: WAT` by 4-6 % every year: the opposite bias,
+#           not a PS fold.
+#   NEISO — files `NG: PS` from Nov 2024 and has zero breach hours in 2025, so
+#           its exposure is a TIME SPLIT of the older vintages, not a standing
+#           fold, and needs a per-window treatment rather than this switch.
+#
+# HAZARD for a future session: the hydro dispatch ENVELOPE
+# (HYDRO_ENVELOPE_PERCENTILE) and the MIN-FLOW FLOOR (HYDRO_MIN_FLOW_PERCENTILE)
+# are also built from hourly `NG: WAT` and inherit the same contamination. Both
+# are default-off and off in every listed ISO's keeper, so nothing is stacked
+# here (rule 19), but arming either at a listed ISO needs its own source fix
+# first — EIA-923 is monthly and offers no hourly substitute.
+# Source: EIA-930 hourly per-BA extracts; EIA-923 monthly generation; EIA-860.
+EIA930_PS_FOLDED_INTO_WAT: frozenset[str] = frozenset({"MISO"})
+
 # --- Hydro hourly deliverability envelope (caiso-72 STEP-2) ------------------
 # Percentile of the measured EIA-930 NG:WAT hourly output, per (month x
 # hour-of-day) bucket, used as the hydro fleet's hourly dispatch ceiling when

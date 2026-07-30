@@ -731,6 +731,19 @@ def build_hydro_fleet(
     changes no existing run. **Backcast-only** — a measured realization, never
     on the forecast path.
 
+    The pin is also a no-op — REFUSED, and logged — for an ISO listed in
+    :data:`~market_sim.config.constants.EIA930_PS_FOLDED_INTO_WAT`, i.e. one
+    whose balancing authority operates pumped storage but files no ``NG: PS``
+    column, so its ``NG: WAT`` is a conventional-hydro **plus** pumped-storage
+    -discharge series. Those units are conventional hydro alone, so the pin
+    would apply one population's energy to another's units (rule 14
+    ``[R-ACCURATE]``, miso-108/109: MISO's ``NG: WAT`` runs +13.5 % / +18.5 %
+    above EIA-923 ``HY`` in 2023 / 2024 and exceeds the whole conventional
+    nameplate in 580 / 826 hours). Their level stays on EIA-923 ``HY``, the same
+    series and the same plants the budget itself is built from. Note this makes
+    ``nameplate_aware_target`` inert for those ISOs by construction — with no
+    level target there is nothing to re-allocate.
+
     ``forecast_budget`` is the forward analogue of ``eia930_monthly``: instead
     of pinning the budget to a measured year, it sets the monthly *level* to a
     normal-water-year climatology (the multi-year mean of measured EIA-930
@@ -848,10 +861,46 @@ def build_hydro_fleet(
         )
     shape_year = year
     if eia930_monthly:
+        from market_sim.config.constants import EIA930_PS_FOLDED_INTO_WAT
         from market_sim.data.eia_loader import measured_monthly_hydro
 
-        target = measured_monthly_hydro(iso, year)
+        if iso.upper() in EIA930_PS_FOLDED_INTO_WAT:
+            # Rule 14 [R-ACCURATE], miso-109: this BA files no `NG: PS`, so its
+            # `NG: WAT` is a conventional-hydro PLUS pumped-storage-discharge
+            # series — not an admissible LEVEL for a conventional-hydro-only
+            # unit population. The accurate level for these units is the
+            # EIA-923 `HY` series the per-plant budget already carries, which
+            # is exactly what `target = None` leaves in place, so the level and
+            # the units become the same population. Never a fitted correction:
+            # no reconciliation factor is identifiable from the source data
+            # (see the constant's citation, rules 13/23).
+            logger.info(
+                "%s %d: EIA-930 NG: WAT level pin REFUSED — this BA folds "
+                "pumped storage into NG: WAT (no NG: PS column); the monthly "
+                "hydro level stays on EIA-923 HY, the same population as the "
+                "LP units (rule 14)",
+                iso,
+                year,
+            )
+            target = None
+        else:
+            target = measured_monthly_hydro(iso, year)
     elif forecast_budget:
+        from market_sim.config.constants import EIA930_PS_FOLDED_INTO_WAT
+
+        if iso.upper() in EIA930_PS_FOLDED_INTO_WAT:
+            # Not fixed here — the forecast level is a multi-year `NG: WAT`
+            # climatology, and replacing it needs its own derivation and its
+            # own forecast-lane gates. Flagged loudly so a forecast session
+            # cannot inherit the contamination silently (miso-109 §7).
+            logger.warning(
+                "%s %d: forecast hydro climatology is built from EIA-930 "
+                "NG: WAT, which this BA folds pumped storage into — the "
+                "forecast hydro LEVEL is PS-inflated (backcast path is fixed; "
+                "the forward analogue is not)",
+                iso,
+                year,
+            )
         target = forecast_monthly_hydro(iso, hydro_year)
         # Forecast branch only: the budget *shape* (per-plant within-month
         # shares) must come from a complete plant census. EIA-923 vintages
