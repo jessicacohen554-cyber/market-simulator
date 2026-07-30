@@ -141,9 +141,9 @@ the D-2 registry covers min-gen floors only). The ownership table for
 | reserve price (all regimes) | `_pjm_design` in-LP co-opt (Primary RTO+MAD, published two-step ORDC, measured req/ramp) | live; opportunity-cost magnitude LP-bounded (below) |
 | DA financial demand depth | `pjm_da_virtual_bids` symmetric net | live |
 | LONG_RUN (coal/steam) econ+peak offer level | `pjm_offer_midcurve_conditional` (LONG_RUN) | live |
-| CC econ offer level (s05–s99 belt) | same mechanism, `CC_LIKE` segment | **proposed leg B** (currently: fitted `econ_high`/smoothing) |
+| CC econ offer level (s05–s99 belt) | same mechanism, `CC_LIKE` segment | **LIVE — `pjm137_ctheatrate_B` runs `pjm_offer_midcurve_segments = ["LONG_RUN", "CC_LIKE"]`.** (Leg B was C1-REJECTED as first posed at pjm-108, −8.52 TWh `CC_REGULAR`; the segment was later adopted by a subsequent keeper on its own evidence.) NOT "proposed" |
 | CC/CT peak rungs | fitted curve (pjm-99 top surface stays retired) | R6-keep |
-| within-month gas commodity swing (SRMC basis) | `gas_daily_shape` (measured HH daily, mean-preserving) | **proposed leg A** (currently: flat plant-month) |
+| within-month gas commodity swing (SRMC basis) | `gas_daily_shape` (measured HH daily, mean-preserving) | **LIVE — adopted at pjm-107 (2026-07-14) and carried in every keeper since; matrix PJM = `K`.** `run_config.json::scenario_config.gas_daily_shape = True` in `pjm137_ctheatrate_B` (on the `prb_overrides` channel). NOT "proposed", NOT "flat plant-month" |
 | fast-start CT offer level | tranche startup amortization (NREL × CAMPD horizons) | live |
 
 ### B.4 The root cause of the missing 34 hours, named
@@ -151,18 +151,41 @@ the D-2 registry covers min-gen floors only). The ownership table for
 Two structural gaps — both **input/offer fidelity on the energy stack**, not
 missing scarcity machinery:
 
-1. **Winter (the Jan-2025 28 h): the model prices January on a flat monthly
-   gas level.** The keeper runs `gas_monthly_actuals` + F923 plant-months;
-   `gas_daily_shape=False` means the merit order never sees the measured
-   intra-month cold-snap commodity spike (HH daily peaked ~2.4× its January
-   monthly mean in the 2025 event; East-hub delivered spikes were larger
-   still). A CT/CC stack priced on the monthly mean *cannot* print $250 on
-   Jan 21 — the input, not the market model, caps the tail. The mechanism to
-   fix it exists, is measured, is mean-preserving (monthly level byte-kept,
-   `fuel.py:3803–3817` re-carries the shape onto every overwritten gas
-   plant-month), was adopted for exactly this phenomenon elsewhere (miso-50
-   coal-vs-gas flip days; the NEISO daily-basis keeper line made the winter
-   oil/LMP tail appear endogenously), and **has never been probed on PJM**.
+1. ~~**Winter (the Jan-2025 28 h): the model prices January on a flat monthly
+   gas level.**~~ **CLOSED — ARMED, AND REFUTED TWICE OVER. Do not re-charter
+   this (pjm-107, pjm-139).** As written this item predicted that arming
+   `gas_daily_shape` would ADD the January cold-snap tail. Both halves of it are
+   now settled against it:
+
+   * **It is armed, and has been since pjm-107** (2026-07-14, leg A of the
+     pjm-107/108/109 cycle). `pjm137_ctheatrate_B`'s
+     `run_config.json::scenario_config.gas_daily_shape = True`. The sentence
+     "`gas_daily_shape=False` means the merit order never sees the measured
+     intra-month cold-snap commodity spike" is false for every keeper from
+     `2026-07-14-pjm-107-gas-daily` onward; the merit order DOES see it, and the
+     measured swing it carries is real — the January peak calendar-day factor is
+     **1.151 / 3.287 / 2.143** (2023/24/25), with 0 / 4 / 4 DJF days above 2×.
+   * **Arming it did the OPPOSITE of what this item predicted.** On the
+     mean-preserving mechanism (the G-A1 fix, same session) daily gas *removed*
+     spurious winter tail hours — the 2025 model tail went **17 h → 6 h** —
+     because the flat-monthly baseline had been over-pricing *every* January day
+     at the elevated monthly mean. The prediction was written against the
+     flawed, mean-inflating builder.
+   * **And it never could have reached the winter *shape* defect**, on
+     resolution grounds that hold whether or not it is armed
+     (`FINDING-pjm139` W1): the factors are built per CALENDAR DAY and repeated
+     across that day's 24 hours (`hubs.py`, `np.repeat(day_factor, 24)`), so
+     their within-day standard deviation is **≤ 4e-16** and their hour-of-day
+     mean profile is **flat to 0.000**. The winter defect is an *intra-day*
+     differential — DJF 2025 load-weighted, the system-energy gap runs **+$3.18
+     overnight, +$26.94 at the h06–h07 morning ramp, +$1.69 midday** — and a
+     mechanism with zero intra-day variation cannot move any of that
+     differential. Its sign is also wrong on the overnight half, which is
+     already too dear in 2023–24.
+
+   The measured/mean-preserving/forecast-native virtues of the mechanism are
+   real and are why it is a keeper; they were never the question. What is dead
+   is the claim that it is the winter *tail* or winter *shape* lever.
 2. **Summer (the Jun/Jul 22 h): the CC top belt is the one mid-merit top
    still on a fitted basis.** The measured CC_LIKE s0.95–s0.99 belt runs
    11.1–17.7× the delivered gas-day in the top net-load bin (2025 table) —
@@ -184,6 +207,22 @@ C3c stays a disclosed boundary and **no adder is tuned to the residual**
 (rules 1/11/13). Both legs are independently justified as input/structure
 fidelity (rule 14) — they go in, or not, on their own gates, whatever C3c
 does (rule 1).
+
+> **OUTCOME (pjm-107/108, 2026-07-14) — both legs adjudicated; the pre-registered
+> expectation above is RESOLVED, not open.** Leg A (`gas_daily_shape`) passed
+> every gate and was **adopted** (matrix PJM = `K`), but it *reduced* the 2025
+> tail 17 h → 6 h rather than adding hours — the inversion recorded in item 1
+> above. Leg B (`pjm_offer_midcurve_segments += CC_LIKE`) was **C1-REJECTED**:
+> the measured CC surface sits ABOVE the model's fitted CC econ bids, so
+> flooring to it displaced 8.52 TWh of `CC_REGULAR` out of merit in 2023. Note
+> that the CC_LIKE segment was subsequently adopted by a later keeper on its own
+> evidence — `pjm137_ctheatrate_B` runs
+> `pjm_offer_midcurve_segments = ["LONG_RUN", "CC_LIKE"]` — so the §B.3 "proposed
+> leg B" row is also stale. **Neither leg is available as a new charter.** C3c is
+> confirmed a representation boundary (`FINDING-pjm138` §3.3: PJM's requirement,
+> its published ORDC and the in-LP co-opt are all armed and correct; the reserve
+> dual is $0 because LP reserve supply is 5–10× the requirement — the LP-vs-MIP
+> boundary, owner-closed 2026-07-11).
 
 ### B.5 The C3a trough drift shares the same roots
 

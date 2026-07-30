@@ -370,19 +370,70 @@ is ranked by *structural* defect, per rule 1 `[R-STRUCT]`.
    rejected twice on level (ERCOT-116/134).
 8. **`st_gas_mustrun_p25_level`** (**U**, MISO form) — re-ground the six
    overnight ST_GAS floor limbs on measured operating levels (D-2 ST_GAS
-   42–55 % forced). **Newly motivated by pjm-138**: the model runs
-   **$1.6–7.3/MWh too DEAR at h01–h04**, worst in 2023, and that over-pricing is
-   the one part of the dispersion defect the reserve credit does not touch.
-9. **`gas_daily_shape`** (**U**) — measured, mean-preserving HH daily shape,
-   never probed on PJM. **pjm-138 makes this the best-identified remaining
-   lever**: the largest single cell in its whole measurement is the *winter
-   morning ramp* (CT-weighted DJF 2025 **+$46.05/MWh**, h06–h07 the worst hours
-   of the day), which is exactly the phenomenon
-   `DIAGNOSIS-pjm-dof-scarcity-tail` §B.4.1 named it for — a January merit order
-   priced on a flat monthly gas level cannot express the measured intra-month
-   cold-snap spike.
+   42–55 % forced). ~~**Newly motivated by pjm-138**: the model runs
+   **$1.6–7.3/MWh too DEAR at h01–h04**~~ — **the overnight motivation is
+   WITHDRAWN at pjm-139 on a size measurement.** The over-pricing is real, but
+   `ST_GAS` cannot be its owner: in the keeper's own overnight hours (h01–h04)
+   `ST_GAS` carries **0.9 / — / 1.9 %** of thermal energy (0.44 / 1.04 GW) at a
+   night/peak ratio of **0.22 / 0.35** and cv **1.18 / 1.00** — i.e. it is a
+   small, peak-following class, not an overnight floor-dominated one. The
+   overnight stack is **`CC_REGULAR` 69 / 66 %** (32.3 / 35.2 GW, cv 0.19) and
+   **`COAL_BIT` 23 / 26 %**, so a class 35× smaller cannot move a $3.4–6.9/MWh
+   overnight gap. The keeper's ST_GAS forcing mechanism is also **`st_netload_drag`**
+   (D-2: 54.7 / 51.3 / 42.5 % of class), a net-load-conditioned drag — not the
+   "six overnight floor limbs" this item describes, which is the MISO form. The
+   lever may still be defensible as a rule-23 re-derivation on its own source
+   data; it is **not** an overnight-price lever. (`FINDING-pjm139` W4.)
+9. ~~**`gas_daily_shape`**~~ — **STRUCK AT pjm-139. It is `K`, not `U`, and it is
+   not a winter-ramp lever.** This item was wrong on both its premises and is
+   recorded here rather than deleted so the error is not re-made. (a) The
+   mechanism is **already armed in the keeper** —
+   `pjm137_ctheatrate_B::run_config.json::scenario_config.gas_daily_shape = True`
+   (carried on the `prb_overrides` channel) — adopted at **pjm-107**
+   (2026-07-14), where it passed every gate and became the
+   `2026-07-14-pjm-107-gas-daily` keeper. The matrix cell has read **`K`** since.
+   The winter cell pjm-138 measured was measured *with the mechanism on*. (b) It
+   could not reach an hour-of-day defect even if it were off: the factors are
+   one-per-calendar-day, repeated across 24 hours (`hubs.py`,
+   `np.repeat(day_factor, 24)`), so their within-day σ is **≤ 4e-16** and their
+   hour-of-day mean profile is **flat to 0.000** — while the DJF system-energy
+   gap swings **+$3.18 overnight → +$26.94 at h06–h07 → +$1.69 midday**
+   (load-weighted 2025). A zero-intra-day-variation mechanism cannot move an
+   intra-day differential, and its sign is wrong on the overnight half.
+   (`FINDING-pjm139-winter-morning-ramp-is-a-ramp-rate-deficit-2026-07-30.md`
+   W0/W1; the stale `DIAGNOSIS-pjm-dof-scarcity-tail` §B.3/§B.4 text that
+   produced this item is corrected in place.)
 10. **TETCO-M3 winter daily citygate** (`winter_citygate_daily` form, **U**) —
-    own hub derivation. Same winter-ramp target as item 9; derive PJM's own hub.
+    own hub derivation, PJM cell genuinely untested. **But note what pjm-139
+    measured before chartering it: a daily citygate series has the same
+    calendar-day resolution as item 9**, so it inherits the same W1 objection
+    against the *morning-ramp* cell. It remains defensible as a rule-14 accuracy
+    correction to the winter *level* (PJM's delivered winter basis is a real
+    quantity the model currently proxies with the HH+zonal-basis construction),
+    and as a candidate for the **day**-scale winter tail — not for the intra-day
+    ramp. Charter it on the level story or not at all.
+11. **`ramp_envelopes`** (**U**) — **NEW at pjm-139, and the only PJM lever
+    currently carrying a fired no-LP pre-check.** The keeper runs
+    `ramp_limits = False`, so the LP has **no intertemporal coupling on the
+    thermal fleet at all** and the winter morning ramp is a free slide up the
+    merit order. The model reproduces only **26 / 21 / 18 %** of PJM's own DJF
+    h04→h07 system-energy price rise (measured +$15.28 / +$21.63 / +$35.45 vs
+    model +$3.93 / +$4.55 / +$6.51) because on winter mornings it ramps **STEAM
+    1.8× / 2.4× / 2.6× harder** than the real fleet and **CTs only 58 / 76 /
+    83 %** as hard — cheap coal substituting for the dear CTs PJM actually
+    starts, which also predicts the standing `CT_PEAKER` −2.11 / −3.57 /
+    −3.32 TWh C1 note. Pre-check: at the p99 1-h up-move as a fraction of each
+    side's own fleet peak, model ÷ actual = **CC 1.42 / 1.72 / 1.53, CT 1.38 /
+    1.70 / 1.52, ST 1.61 / 1.62 / 1.50**; aggregate excess *proves* per-plant
+    rows would bind (one-sided — it cannot prove inertness). CAMPD-measured,
+    **zero fitted DOF**, armed in no keeper in any ISO; ERCOT `R` and CAISO `I`
+    were reached on different defects and do not transfer (rule 25). Charter,
+    expected direction, no-feedback ceiling and 7 pre-registered kills:
+    `PREREG-pjm140-ramp-envelopes-2026-07-30.md`. Blocked on two things, both
+    stated: the PJM artifact has never been derived
+    (`derive_campd_ramp_envelopes.py --iso PJM`, needs `data/clean/`), and the
+    LP memory cost of the extra rows is unquantified on a 15 GB box — PREREG §7
+    requires a one-year solve to measure the peak first.
 
 **CLOSED AT pjm-138, binding on successors — do not re-open (no LP solved;
 `FINDING-pjm138-system-energy-is-reserve-opportunity-cost-2026-07-29.md`):**
