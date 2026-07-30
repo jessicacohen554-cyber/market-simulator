@@ -531,6 +531,30 @@ def apply_coal_tranches(
     committed/econ supply-sigmoid passthroughs above the block are a separate
     mechanism (rule 19) and are untouched.
 
+    **Coal `_peak`-tranche gas-anchored margin form** (ERCOT-140,
+    ``config.coal_peak_offer_margin``): a CAMPD coal ``_peak*`` tranche is
+    repriced from its band-multiplier composition to the measured
+    top-of-curve form::
+
+        mc[g, t] = gas_hr × (gas_cc(t) − anchor) + emis(t) + level
+
+    (implemented as ``mc[g, :] += level + gas_hr × (gas_cc − anchor) −
+    heat_rate[g] × fuel_price[g, :] − vom[g]`` on the assembled cost — the
+    coal-fuel and VOM terms are folded into the measured all-in level). The
+    slope basis is GAS, not coal: the measured top tracks delivered gas
+    (gas-parity opportunity pricing of the marginal coal MW) while delivered
+    coal moved the other way, so coal-fuel tracking is REMOVED on these rows
+    — that is the measured finding, not an omission
+    (``docs/PRECOMMIT-ercot140-coal-peak-offer-2026-07-30.md`` §0.1).
+    ``gas_cc(t)`` is the pmax-cap-weighted mean of the CC_REGULAR CAMPD
+    rows' delivered-gas series — the identification's own fuel basis
+    (ERCOT-138 §J ``fuel_capwtd``). The anchor is the SHARED gas anchor
+    (``config.gas_offer_margin_anchor`` — rule 19, never a second one); at
+    ``gas == anchor`` the resolved bid is exactly ``level``. The branch
+    exits before the fuel-frac discount, so the supply-sigmoid passthrough
+    never composes with it (rule 19 replacement — the two prior owners of
+    this row's price, the peak multiplier and the sigmoid, both stand down).
+
     Args:
         mc: The ``(n_gen, T)`` marginal-cost array, modified in place.
         generators: The generator list aligned row-for-row with ``mc``.
@@ -566,7 +590,71 @@ def apply_coal_tranches(
         coal_anchor, coal_level = float(_anchor), float(_level)
     n_margin = 0
     fuel_prices = np.asarray(fuel_prices, dtype=float)
+    # Coal `_peak`-tranche gas-anchored margin (ERCOT-140): resolve the gate
+    # and, when armed, build the gas reference series gas_cc(t) — the
+    # pmax-cap-weighted mean of the CC_REGULAR CAMPD rows' delivered-gas
+    # series, the identification's own fuel basis (ERCOT-138 §J).
+    peak_margin_on = config is not None and getattr(
+        config, "coal_peak_offer_margin", False
+    )
+    peak_level = peak_gas_hr = peak_anchor = 0.0
+    gas_cc: "np.ndarray | None" = None
+    n_peak_margin = 0
+    if peak_margin_on:
+        _plevel = getattr(config, "coal_peak_offer_level", None)
+        _pghr = getattr(config, "coal_peak_offer_gas_hr", None)
+        _panchor = getattr(config, "gas_offer_margin_anchor", None)
+        if _plevel is None or _pghr is None or _panchor is None:
+            raise ValueError(
+                "coal_peak_offer_margin is armed but coal_peak_offer_level / "
+                "coal_peak_offer_gas_hr / gas_offer_margin_anchor is unset; "
+                "resolve them from constants.COAL_PEAK_OFFER_LEVEL_BY_ISO / "
+                "COAL_PEAK_OFFER_GAS_HR_BY_ISO / GAS_OFFER_MARGIN_ANCHOR_BY_ISO "
+                "at config build (rule 25 — no silent fallback in the offer "
+                "path; the anchor is SHARED with the gas offer surface, "
+                "rule 19)"
+            )
+        peak_level, peak_gas_hr, peak_anchor = (
+            float(_plevel),
+            float(_pghr),
+            float(_panchor),
+        )
+        cc_rows = [
+            g
+            for g, gen in enumerate(generators)
+            if getattr(gen, "is_campd_bin", False)
+            and getattr(gen, "plant_group", None) == "CC_REGULAR"
+        ]
+        if not cc_rows:
+            raise ValueError(
+                "coal_peak_offer_margin is armed but no CC_REGULAR CAMPD rows "
+                "exist to form the delivered-gas reference series gas_cc(t) — "
+                "the mechanism's fuel basis (ERCOT-138 §J) is undefined for "
+                "this fleet (rule 25 — no silent fallback)"
+            )
+        _w = np.array([float(fleet_arrays.pmax[g]) for g in cc_rows], dtype=float)
+        gas_cc = (_w[:, None] * np.asarray(fuel_prices, dtype=float)[cc_rows, :]).sum(
+            axis=0
+        ) / _w.sum()
     for g, gen in enumerate(generators):
+        if (
+            peak_margin_on
+            and gen.fuel_type == "coal"
+            and getattr(gen, "is_campd_bin", False)
+            and gen.unit_id.rpartition("_")[2].startswith("peak")
+        ):
+            # Gas-anchored top-of-curve margin form: remove the assembled
+            # coal-fuel and VOM terms and post the measured gas-parity bid
+            # (emissions adders stay on top). Exits before the fuel-frac
+            # discount — the sigmoid passthrough never composes (rule 19).
+            mc[g, :] += (
+                peak_level
+                + peak_gas_hr * (gas_cc - peak_anchor)
+                - fleet_arrays.heat_rate[g] * fuel_prices[g, :]
+                - fleet_arrays.vom[g]
+            )
+            n_peak_margin += 1
+            continue
         if (
             margin_on
             and gen.fuel_type == "coal"
@@ -603,4 +691,15 @@ def apply_coal_tranches(
             n_margin,
             coal_level,
             coal_anchor,
+        )
+    if n_peak_margin:
+        logger.info(
+            "coal peak-tranche offer margin: %d _peak tranche(s) repriced at "
+            "level %.4f $/MWh / gas slope %.4f MMBtu/MWh / shared gas anchor "
+            "%.4f $/MMBtu (gas-parity top-of-curve form; coal-fuel tracking "
+            "removed on these rows by measurement — ERCOT-140)",
+            n_peak_margin,
+            peak_level,
+            peak_gas_hr,
+            peak_anchor,
         )
