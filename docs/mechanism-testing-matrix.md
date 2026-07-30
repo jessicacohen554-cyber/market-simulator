@@ -311,7 +311,13 @@ should open a C3a-2025 candidate without new data or an owner decision:
   *below* the plateau's own marginal-import λ by the corridor's OATT wheel + 2ε.
   The seam's **infrastructure defect is real and now fixed** (flag-gated,
   default-off, `caiso_p1_export_sink_seam`); the mechanism is rejected ex ante
-  as a price lever (caiso-142 §C/§D/§H).
+  as a price lever (caiso-142 §C/§D/§H), and the solved A/B under the owner's
+  structural grant then confirmed the R by measurement — the restored outlet is
+  **node-level resale, not export** (caiso-142 §J). **caiso-143 closes the
+  follow-on lane too:** both prerequisites that arm named are refused (no
+  node-level constraint exists — the soundness set is non-convex; no export
+  price basis is identifiable without a fitted value), leaving caiso-138 §C
+  firm-block elasticity as the only live prerequisite.
 
 What remains for C3a-2025 is owner-level: land non-public hourly PS data, or
 accept it as diagnosed-unclosed (the nyiso-97 C3c disposition). **Do not propose
@@ -331,10 +337,21 @@ caiso-142 §H generalises the sign argument to every basis and bound.
    seam that made it unreachable is fixed flag-gated, and no absorption mechanism
    can lower a λ. The remaining live question is the **import** side's price
    basis, and the shared-headroom release channel is dead (the simultaneous
-   interface group binds in 0 of 26,280 corridor-hours). One specified, unbuilt
-   item survives: the export leg's **netback price** (`hub − wheel_out − ε` for
-   the as-built `hub − ε`, zero new DOF) — a symmetry correction to arm *with*
-   the seam whenever the seam is armed, never as a price lever (caiso-142 §E).
+   interface group binds in 0 of 26,280 corridor-hours). **Scope narrowed again
+   by caiso-143 — the export half is now closed with NOTHING unbuilt.** The two
+   prerequisites caiso-142 §J named are both refused at the design gate: the
+   node-level export constraint is algebraically redundant with the corridor
+   group's `limit_dn` *and* a sound sink is not LP-representable at all (the
+   soundness set is non-convex; the tightest linear surrogate reduces to
+   `F + I_econ ≤ 0`, infeasible while the must-flow block forces 11.7 + 15.6 TWh),
+   and the export **netback price** — the one item caiso-142 §E left specified —
+   is **not identifiable without a fitted value** (PNW p50 range $4.74 vs the
+   import basis's $1.25, $7.70–10.48 season/depth cell range, 2023 sign flip;
+   DSW stable but **wrong sign**, since CA clears *above* the raw hub in 62–72 %
+   of real DSW net-export hours, so `hub − ε` under-prices that outlet by ~$4.4).
+   The only live prerequisite left is **caiso-138 §C firm-block elasticity**, and
+   with the forced injection removed no new export constraint is needed at all
+   (caiso-143 §F).
 3. **S2: DA/RT two-settlement separation charter** for the evening/overnight
    storage spread (caiso-129's only surviving candidate; a real charter, not a
    shaped floor — the S1 family is DO-NOT-REDO).
