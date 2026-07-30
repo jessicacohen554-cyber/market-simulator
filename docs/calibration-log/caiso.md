@@ -3788,3 +3788,75 @@ bundle (its `network_*`/`unit_hourly_*` sidecars are gitignored — caiso-142 §
 the binding per-corridor record).
 
 Next number: caiso-144.
+
+---
+
+## caiso-144 (2026-07-30) — lever-queue item 1 (the owed in-LP co-opt test) is **DISCHARGED EX ANTE**: the builder the queue said to complete is **already complete in source**, and on the caiso-139 keeper's own committed bytes the completed design never goes short in any hour of any year — **exactly inert, DO NOT SOLVE**. The caiso-137b overlay charter is **ANSWERED NEGATIVE by measurement** (timing overlap with reality's tail ≤ 1/90 hours). The actual C3c tail is a **winter-morning fuel/cold-snap tail** the model already prices at its armed daily-spot SRMC ceiling. **C3c's in-model queue is EMPTY on every route; both blocked gates now sit on owner-level dispositions.** NO SOLVE, NO ARM, NO NEW FIELD, keeper unchanged
+
+**Keeper UNCHANGED:** `2026-07-29-caiso139-dump-guard-offer` (NOT-YET, fail
+{C3a-2025, C3c-2023/24}). Full record:
+`FINDING-caiso144-coopt-dormancy-c3c-frontier-2026-07-30.md`; instrument
+`scripts/probes/_caiso144_coopt_dormancy_gates.py` (no LP, no solver — reads
+the keeper bundle's committed hourlies, the committed actual RT LMP series,
+the raw OASIS AS_REQ CSVs, and the design constants from source).
+
+1. **The queue premise was stale.** `_caiso_design` already carries the
+   storage RS columns (ASSOC SOC gate) and the hydro pergen membership
+   (`CAISO_HYDRO_RAMP10_FRAC` backfill) — "issue #1492 design constraints 2/3,
+   completed" in its own docstring. Only Regulation stays walled as a build
+   (no forward-derivable requirement series), and it is *measurable* (OASIS
+   AS_REQ `RU_REQ_MIN_MW`), which is all the bounding needs.
+   `docs/multi-iso/caiso-reserve-coopt.md` §gaps re-synced to source.
+2. **§B dormancy proof, no solve.** At the keeper's solved dispatch the
+   completed design's requirement (`max(MSSC 2,240 MW, 6 % load)`) is covered
+   with strictly positive family-level slack in EVERY hour: T2 (+hydro) min
+   **+854 / +1,485 / +2,114 MW** (2023/24/25), thermal-only T1 min +285 with
+   **0 short hours in every year**, and the max-measured-RegUp sensitivity's
+   only 2 sub-zero hours (Aug-16-2023 evening, −346/−58 MW) carry
+   **2.6–3.0 GW** of excluded storage-RS headroom. Storage is excluded from
+   every supply tier, so each slack is a strict lower bound. Costless reserve
+   columns + strictly positive shortfall penalties ⇒ every optimum of the
+   armed LP has zero shortfall, and with strict family slack the balance rows
+   price zero — prices/volumes are the keeper's. C3c contribution: exactly 0
+   hours. Matrix `energy_reserve_coopt` CAISO **U→I**, `reserve_pergen` CAISO
+   **U→I**; header re-stamped (caiso138→caiso139, missed at promotion).
+3. **§C the decisive cross-check.** In reality's RT >$200 hours (47/35/8) the
+   completed pool is slack by **+1,568 / +1,632 / +8,310 MW minimum**
+   (means ~10 GW). No reserve co-optimization at any completion level can
+   price reality's scarcity hours while the model's own reserve state there
+   is GW-deep — the rule-19 in-LP owner question is closed on state, not
+   granularity.
+4. **§D overlay charter answered NO.** The forecast-path LOLP overlay
+   reproduced on the keeper's bytes with `r_online` deliberately UNDER-stated
+   (adder over-estimated): settlement >$200 in 151/71/48 hours — but
+   overlapping the ACTUAL tail in **1/47, 0/35, 0/8**. The model-tight hours
+   (Apr–Nov) are not reality's tail hours; wiring the overlay closes nothing
+   and invents a mis-timed tail (2025 would flip its small-count PASS toward
+   an invented-tail FAIL). Backcast lane keeps NO scarcity overlay;
+   forecast-lane `K` untouched.
+5. **§E what the tail is.** Winter-morning dominated: Jan 24/47 (2023, the
+   citygate blowout; hod 6–9), Jan 26/35 (2024, the national freeze), 8
+   Jan/Mar/Apr mornings (2025). Model max-zonal λ there: mean $112/$123/$50 vs
+   actual RT mean $310/$283/$326. With `caiso_citygate_spot_level` +
+   `caiso_citygate_flow_date` both armed the model already prints the measured
+   daily-fuel SRMC ceiling ($150–181 at Jan-2023's $16–18/MMBtu); the wedge
+   above is the probabilistic/administrative RT premium the MISO/NEISO C3c
+   ledgers already name — now with CAISO's own hour-level corroboration.
+6. **Disposition map (§F).** C3c-23/24: in-model queue EMPTY on every route
+   (offer rungs caiso-131 §10; reserve tiers §B/§C; overlay §D; fuel grain
+   §E). Live: **A3** (SoCalGas OFO declaration-record intake, unfunded — the
+   one path to an unfitted C3c-2024 trigger; re-verified absent from
+   `data/raw/`) and **A4** (owner ledger as ACCEPTED MEASURED-INPUT
+   LIMITATION, MISO/NEISO precedent, 0/3 budget used). C3a-2025 untouched
+   (caiso-142/143 state). Ledgering C3c alone leaves C3a-2025 as the sole
+   NOT-YET blocker.
+
+### DO-NOT-REDO (new, binding — full list in FINDING-caiso144 §G)
+
+Solving any CAISO backcast A/B on `energy_reserve_coopt`/`caiso_reserve_coopt`
+at any completion increment (re-open only if a future keeper's committed
+hourlies show the §B slack approaching zero — the probe re-runs in seconds);
+proposing any backcast-lane scarcity-overlay wiring for CAISO; re-deriving the
+C3c tail as summer-evening scarcity; fuel-grain work aimed at C3c.
+
+Next number: caiso-145.
