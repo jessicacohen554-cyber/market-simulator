@@ -934,7 +934,13 @@ def section_f() -> dict:
         "  dependency inverts: the forced injection (F) must go elastic FIRST\n"
         "  (FINDING-caiso138 §C), and only then is the already-armed NET bound\n"
         "  (limit_dn = the measured export envelope) sufficient, because with\n"
-        "  F = 0 the surrogate -S <= -flow is feasible and equals the net bound."
+        "  F = 0 the RESALE CHANNEL ITSELF is precluded by the objective (§B: an\n"
+        "  economic tranche costs hub + wheel + eps against the sink's hub - eps, so\n"
+        "  buy-to-resell always loses), and the already-armed NET bound continues to\n"
+        "  bound the physical flow. No new constraint is needed -- not because the\n"
+        "  surrogate becomes usable (with F = 0 it collapses to I_econ = 0, which\n"
+        "  would forbid legitimate imports too), but because nothing is left to\n"
+        "  constrain."
     )
     return {"endpoints": [p1, p2], "combos": rows}
 

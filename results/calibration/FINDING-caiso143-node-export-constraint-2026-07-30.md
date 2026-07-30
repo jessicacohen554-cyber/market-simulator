@@ -245,10 +245,14 @@ An LP's feasible region is convex by construction. Therefore:
   relaxation can do is permit exactly the behaviour being excluded.
 
 **So the charter's prerequisite (a) is not merely redundant — it does not
-exist.** And the dependency **inverts**: with `F = 0` the surrogate `−S ≤ −flow`
-becomes feasible and *equals* the already-armed net bound, so the forced
-injection must go elastic **first**, after which no new constraint is needed at
-all.
+exist.** And the dependency **inverts**: the forced injection must go elastic
+**first**, after which no new constraint is needed at all — because with `F = 0`
+the resale channel is precluded by the **objective** itself (§B: buy-to-resell
+loses `wheel + 2ε` per MWh), and the already-armed net bound still bounds the
+physical flow. *Not* because the surrogate becomes usable: at `F = 0` it
+collapses to `I_econ = 0`, which would forbid legitimate imports too. The
+surrogate is over-strong at every `F`; what changes is that there is nothing left
+to constrain.
 
 ## §G — cross-ISO: the precondition, per node — and **MISO's keeper already has the channel open**
 

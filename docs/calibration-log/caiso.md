@@ -3765,8 +3765,10 @@ instrument `scripts/probes/_caiso143_node_export_gates.py` (no LP, no solver).
    (1) node constraint → (2) re-basis → (3) firm elasticity is corrected to:
    **(a) caiso-138 §C firm-block elasticity — the only real prerequisite;
    (b) then re-examine whether any sink is wanted, using the net bound already
-   armed** — because with `F = 0` the surrogate becomes feasible *and equals* that
-   bound. caiso-138 §E's refusal is re-confirmed a second time, now as a
+   armed** — because with `F = 0` the resale channel is precluded by the
+   **objective** (§B's wheel arithmetic: buy-to-resell always loses), so nothing
+   is left to constrain. *(Not because the surrogate becomes usable: at `F = 0` it
+   collapses to `I_econ = 0`, which would forbid legitimate imports too.)* caiso-138 §E's refusal is re-confirmed a second time, now as a
    **model-class impossibility** rather than a measurement outcome. New matrix row
    `caiso_node_export_constraint` (CAISO **G**); `caiso_p1_export_sink_seam` and
    `caiso_corridor_export_path` notes corrected.
