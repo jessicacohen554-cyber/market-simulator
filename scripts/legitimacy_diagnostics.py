@@ -923,6 +923,11 @@ class MechanismSpec:
     via shared modules, no entry-point call needed). ``declared``: on the
     declared backcast-overlay list (docs/backcast-measured-data-audit-2026-06
     .md), so a backcast/forecast difference is sanctioned.
+
+    ``iso``: restrict the row to one ISO. Only needed for a row with no
+    config toggle (``toggle=None``) — an always-on ISO-exclusive overlay would
+    otherwise report itself as active in every other ISO's bundle. Rows gated
+    by a per-ISO flag are already scoped by the toggle and leave this ``None``.
     """
 
     name: str
@@ -932,6 +937,7 @@ class MechanismSpec:
     backcast_symbols: tuple[str, ...] = ()
     forecast_symbols: tuple[str, ...] = ()
     note: str = ""
+    iso: str | None = None  # None = applies to every ISO
 
 
 # Declared backcast-overlay list, built from
@@ -1183,6 +1189,31 @@ D5_REGISTRY: tuple[MechanismSpec, ...] = (
         note="LMIC market-design rule — mode-independent by intent",
     ),
     MechanismSpec(
+        "nyiso_central_east_measured_ttc",
+        None,
+        "backcast_only",
+        True,
+        iso="NYISO",
+        backcast_symbols=("apply_iso_year_ttc", "apply_iso_monthly_ttc"),
+        note="measured Central-East DAM transfer capability (nyiso-104): the "
+        "month-mean of NYISO's posted MIS ATC_TTC 'TTC (DAM)' series for the "
+        "CENT EAST interface, applied to Upstate_West->Capital_Hudson as a "
+        "per-hour envelope (NYISO_INTERFACE_TTC_BY_MONTH) over the annual mean "
+        "(_BY_YEAR). Classified an OVERLAY, not a mechanism, on the source "
+        "data's own forward reproducibility: across the two years that share "
+        "the post-AC-Transmission topology (2024/2025) the level-normalized "
+        "monthly shape correlates at only r=+0.21 (Spearman +0.16, dihedral-"
+        "null p=0.25) and the deepest-derate month MOVES Sep->Apr, so the "
+        "series is that year's realized transmission-outage schedule, not a "
+        "seasonal rating that regenerates forward. Same admissibility family "
+        "as historic_outage_overlay — a physical availability event, on the "
+        "network instead of on a unit. Deliberately NOT wired forward: the "
+        "LEVEL already has its forward channel (the transmission-expansion "
+        "registry + the static 2,850 MW, itself the measured post-upgrade DAM "
+        "mean), and pushing these numbers into a forecast would import one "
+        "historical year's outage schedule into every forward year",
+    ),
+    MechanismSpec(
         "cc_mustrun_per_plant",
         "cc_mustrun_per_plant",
         "both",
@@ -1233,6 +1264,8 @@ def run_d5(
     """
     res = GateResult("D-5 forecast/backcast parity")
     for spec in D5_REGISTRY:
+        if spec.iso is not None and spec.iso != iso:
+            continue
         if not _toggle_on(spec, cfg):
             continue
         wired_b = all(s in backcast_entry_src for s in spec.backcast_symbols)

@@ -2949,3 +2949,100 @@ inside it, so registering it would *move* the key rather than restore it).
 Item B (stale `frontend/data/backcast/status/NEISO.js`, `audit_keepers --check` S1) is
 **still open** — single-delta discipline, and a different ISO lane. It remains the only
 `audit_keepers` failure repo-wide.
+
+---
+
+## nyiso-104 — the `_apply_iso_monthly_ttc` D-5 registry gap: OVERLAY, declared (2026-07-30)
+
+**No LP. No solve-affecting change. Keeper `2026-07-30-nyiso-100-silretire` UNCHANGED.**
+Charter Item A. Item B (stale `status/NEISO.js`) deliberately not taken — single-delta.
+
+### The gap
+
+`pipeline/ttc.py::apply_iso_monthly_ttc` and `apply_iso_year_ttc` apply NYISO's
+measured Central-East DAM TTC to `Upstate_West -> Capital_Hudson` from
+`scripts/run_calibration.py` only (`:1871`, `:2021`); `runner.py` references
+neither. Textbook D-5 mode difference — but **`D5_REGISTRY` had no row for
+either**, so parity never saw them. D-5 was green on an incomplete inventory.
+
+Scope note: the charter names only the monthly helper. `apply_iso_year_ttc` has
+the identical gap on the identical source series, so both are covered by **one**
+row (two aggregations of one series over one link — rule 19 `[R-ONE-MECH]`).
+
+### The fork, resolved (a) — argued from the data, not by analogy
+
+The source is the `TTC (DAM)` column of NYISO's MIS `ATC_TTC` postings for
+`CENT EAST`, month-meaned and rounded to 25 MW — a **realized operational
+series** carrying that day's approved transmission outages, not a rating table.
+
+Discriminating test: a published seasonal rating is recomputed the same way
+every year, so on an unchanged network its level-normalized monthly shape must
+repeat. 2024 and 2025 share the post-AC-Transmission topology.
+
+| | result |
+|---|---|
+| Pearson r (2024 vs 2025 shape) | **+0.209** |
+| Spearman ρ | +0.155 |
+| p vs dihedral calendar null | 0.250 |
+| deepest-derate month | **Sep → Apr** |
+
+The true calendar alignment fits no better than a rotated or reversed one.
+**`constants.py`'s "recurring late-summer/shoulder derate" claim is FALSIFIED**
+by the tables it describes (Aug–Nov: +7.9 % in 2024, **+0.0 %** in 2025);
+corrected here, along with the same claim propagated into `pipeline/ttc.py`.
+
+Variance: 82.0 % between-year (level/step), only **6.8 %** the post-upgrade
+within-year shape (sd 162/199 MW on a 2,850 MW link). The disputed component is
+non-reproducible *and* small.
+
+Admissible in a backcast all the same — a year's transmission-outage schedule is
+a physical availability event on the network, the same family as
+`historic_outage_overlay` on a unit, and it enters as a constraint, not a pinned
+outcome. So: declared overlay.
+
+### Why NOT wired forward (fc = G, refused, not untested)
+
+The forecast is missing nothing. The forward-reproducible component (the level)
+already has its channel: `data/raw/transmission-expansion/nyiso.csv`
+(`in_service_year` + ΔTTC, wired into `runner.py`) over the static 2,850 MW —
+which **is** this series' measured post-upgrade annual mean. The registry's own
+Smart Path Connect row already says so. Pushing the monthly numbers forward
+would import one historical year's outage schedule into every forecast year.
+
+### Changes
+
+- `D5_REGISTRY` row `nyiso_central_east_measured_ttc` — `declared=True`,
+  `mode="backcast_only"`, `iso="NYISO"`, `toggle=None`.
+- `MechanismSpec` gains optional `iso`; `run_d5` skips non-matching ISOs.
+  Required because the row has no toggle to scope it — an always-on
+  ISO-exclusive overlay would otherwise claim to be active in all six ISOs.
+- `constants.py` + `pipeline/ttc.py` provenance comments corrected.
+- Declared-overlay list: new 2026-07-30 section in
+  `docs/backcast-measured-data-audit-2026-06.md`.
+- Keeper artifact `legitimacy_diagnostics.json` re-emitted (D-5 block only —
+  `--only D5 --json-out` would have dropped D1/D2/D4/D9/D10, which need floor
+  reconstruction from raw inputs absent here). 7-line pure insertion.
+
+### Verification
+
+- D-5 on the keeper: **PASS**, 11 → 12 rows, new row `declared`, 0 failures.
+- Every other row unchanged, proved on two bundles: CAISO keeper re-scores 11 →
+  11 (none added, none removed, order preserved); NYISO 11 → 12, the one add.
+- Keeper artifact: D1/D2/D4/D9/D10 + `gates` + `schema` asserted equal before write.
+- `tests/scoring/test_legitimacy_diagnostics.py` 68 passed (5 new);
+  `test_fuel.py -k "ttc or monthly"` 9 passed; facade shims 12 passed.
+- `check_mechanism_matrix.py` integrity OK. Matrix row + header stamp added.
+- Rule 15 satisfied **vacuously** — no solve ran, nothing to register.
+
+### Recorded, not fixed
+
+- **`ordc_floor_active_mask` bleeds across ISOs** — an ERCOT mechanism with
+  `toggle=None` and no `iso` scope, reporting itself active in every non-ERCOT
+  bundle (visible in the NYISO keeper's own artifact). The new `iso` field is
+  the fix, but applying it changes other ISOs' committed row sets — separate delta.
+- **Binding frequency unmeasured** — how often the monthly envelope binds
+  differently from the annual mean needs an LP replay (the `hourly/` sidecars
+  carry no link flows). The classification does not turn on it.
+
+Evidence: `docs/FINDING-nyiso104-central-east-ttc-classification-2026-07-30.md`,
+probe `scripts/probes/nyiso104_central_east_ttc_classification.py`.
