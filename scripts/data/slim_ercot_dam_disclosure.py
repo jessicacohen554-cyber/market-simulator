@@ -133,7 +133,6 @@ def slim_file(path: Path, keep: list[str], dry: bool) -> tuple[int, int]:
     pf = pq.ParquetFile(path)
     present = [c for c in keep if c in pf.schema_arrow.names]
     missing = [c for c in keep if c not in pf.schema_arrow.names]
-    already = set(pf.schema_arrow.names) == set(present)
     if missing:
         print(
             f"    (schema gap — {len(missing)} KEEP col(s) absent: {missing[:4]}{'…' if len(missing) > 4 else ''})"
