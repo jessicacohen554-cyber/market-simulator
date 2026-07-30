@@ -1,0 +1,385 @@
+{
+ "schema": "calibration-attestation/v1",
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "nyiso-100 KEEPER-RECOMMENDED 2026-07-30: the 2026-07-29-nyiso-99-demandfix keeper recipe re-solved via scripts/replay_keeper.py (which reads the keeper's own meta.json, so the recipe is reproduced exactly) with ONE delta \u2014 nyiso_import_sil_retire. THE SESSION'S PRIMARY RESULT IS AN IDENTIFICATION, AND IT IS A PROVENANCE RESULT, NOT A NEW NUMBER. The nyiso-99 charter carried this forward as 'a hand-set estimate measurement contradicts'. That framing was too generous: 4,350 MW is a REAL published NYISO quantity measured on the WRONG BOUNDARY \u2014 the G-J LOCALITY Bulk Power Transmission Limit for capability year 2024/2025 (Load Zones G,H,I,J, an INTERNAL New York transfer boundary), installed as the EXTERNAL NYCA simultaneous-import cap and frozen at one capability year of a series that moves 3,425 / 3,425 / 4,350 / 4,500. Three corroborations that this is mis-attribution and not coincidence: (a) exactly ONE row in the entire published import_limit table equals the constant, and it is the G-J row, while the constant is applied unchanged to 2023 whose own capability-year value is 3,425; (b) the constant's OWN justification comment argued from INTERNAL downstate interfaces ('Dunwoodie-South 3.9 GW into NYC, cable-limited 1.65 GW into LI') \u2014 an internal-boundary rationale attached to an external limit \u2014 and its border-link arithmetic omitted the Capital_Hudson link entirely (it summed 5.2 GW against a real 6.8 GW); (c) the CITED SOURCE DOES NOT CONTAIN IT \u2014 extraction over all three 2023-2025 Gold Books on disk finds ZERO pages naming a simultaneous import or transfer limit, and Table VI-1 is REDACTED as Critical Energy Infrastructure Information in every edition, so NYISO publishes no aggregate external simultaneous import limit available to this repo at all. MEASUREMENT FALSIFIES IT AS AN EXTERNAL BOUND: NYCA net import reached 5,929 / 5,662 / 5,872 MW metered (EIA-930) and 7,078 / 7,298 / 6,727 MW scheduled (MIS P-32), exceeding 4,350 MW in 287/314/145 h and 865/685/388 h respectively \u2014 and the P-32 sum is cross-validated as NYCA net interchange rather than a double-count of the three HQ rows (UTC-joined r 0.910/0.906/0.879, bias +17/-179/-262 MW on means of 2,677/2,322/2,612 MW; a double-count would bias ~+1,200 MW). WHY THE RECONCILE RETIRES RATHER THAN RAISES: the naive measured replacement \u2014 the sum of posted per-interface P-32 limits, 10,575/10,715/10,450 MW \u2014 is PRECISELY rule 14's named misalignment exception, several parallel paths this five-zone network collapses into one link, and NYISO publishes no external simultaneous limit to substitute. But the misalignment does NOT extend to every path: for the two links whose tie sets are point-to-point HVDC converters there is no parallel-path ambiguity at all, and the model is ALREADY at the posted rating (NYC 1,000 vs 975 posted; Long_Island 1,200 vs 1,190 posted), with the AC seams sitting behind the internal Central-East chain the topology already carries (2,850 MW model vs a P-32 CENTRAL EAST - VC posted median of 2,865 MW). Retiring the scalar therefore introduces NO new number and REMOVES a free parameter; the resulting aggregate, the border-link sum 6,800 MW, lies INSIDE the measured admissible interval [5,929 lower bound, 10,715 posted-rating upper bound], where the retired 4,350 MW lay OUTSIDE it in all three years. Rule 19 [R-ONE-MECH] reinforces it: shared-upstream-capacity limitation already has a mechanism here (the internal interface chain); the scalar was a second one, stacked on the first and pointed at the wrong boundary. RULE-24 [R-REGISTRY] SIDE EFFECT: the retired constant was a solve-affecting value that carried NO DOF ledger entry of its own, so the retire also closes a registry gap.",
+  "note": "Rule 13 [R-MEASURED] admissibility: both levels are measured physical CAPABILITY bounds (never a flow pinned to an outcome) that re-derive from the same EIA-930 history in a forward year (solve-year series in backcast, pooled HYDRO_CLIMATOLOGY_YEARS climatology forward) and respond to the water year through the budget they clip against. The LP still chooses when to generate between the bounds (the floor is month-constant \u2014 no diurnal shape is pinned; 2023 floor energy is 66% of the 28.4 TWh budget, consistent with a fleet dominated 72%-by-MW by the two RoR-class NYPA projects). Rule 25 [R-ISO-SCOPE]: engine transfer, data NYISO-own; nothing fitted crosses the boundary. Rule 19 [R-ONE-MECH] reconciliation: NYISO_HYDRO_TREATY_MIN_FLOW (constants.py) is DEAD in the production path (only tests pass it to load_hydro_budget); the Q95 floor becomes the SINGLE live floor on conventional hydro, and the treaty registry stays as the audit cross-check (fleet Q95 1.8-2.5 GW covers the ~1.06 GW treaty-implied minimum on Niagara/St-Lawrence, so the licence evidence is subsumed, not contradicted). hydro_ror_split stays DELIBERATELY UNARMED: the classifier's completion rule is CAISO-reviewed only, and its hybrid mapping would flatten Robert Moses Niagara (52% of fleet MW) whose real diurnal pattern is treaty-structured \u2014 a named follow-up requiring its own NYISO review, not silently transferred.",
+  "residuals_note": "SCORED EFFECT vs the nyiso-99 keeper. EVERY PRE-REGISTERED GATE PASSED; the two REPORTED diagnostics moved slightly adversely and are recorded here without being used to justify anything (rule 1 [R-STRUCT]: a structurally-correct mechanism is never judged on whether the residual moved, in EITHER direction). G0 CONTROL IDENTITY: a separate same-HEAD zero-delta control (2026-07-29-nyiso-100-control-zerodelta) reproduces the nyiso-99 keeper BIT-FOR-BIT in all three years \u2014 max |delta class MW| 0.000000 and max |delta price| 0.000000 $/MWh \u2014 so this container reproduces the keeper and every arm delta below is attributable to the single flag. G1 LIVE-MECHANISM (nyiso-89 section 4a): the arm's solved topology carries ZERO import-node interface limits and the control exactly one at 4,350 MW, confirmed both by topology rebuild and by the arm's own solve log; the arm is not a silent no-op. G2 THE MECHANISM RELEASES: model import maximum 4,350.0 -> 6,518.9 / 6,470.0 / 6,075.0 MW, hours pinned AT the old cap 548/689/176 -> 0/2/0, hours above it 0/0/0 -> 436/587/161. Every annual maximum lands inside the pre-registered (4,350, 6,800] window. G3 VOLUME STAYS BAND-HELD: the +-2% monthly reconciliation band holds in every month of every year (ratio range [1.020,1.020] in 2023/2024, [0.995,1.020] in 2025) and the count of months at the upper edge RISES 10/11/11 -> 12/12/11, so the arm reallocates a band-bounded quota rather than escaping it. Import energy therefore moves only +0.041/+0.070/+0.035 TWh (+0.17/+0.34/+0.18 %), all of it the band ceiling being reached in two more months. G4 C1 PROTECTION: 'C1 all 14/14 \u00b7 free 10/10', IDENTICAL to the keeper; the knife-edge 2023 CC_REGULAR cell (-2.79 of +-2.94) still passes. G5 PROTECTIVE GATES: C7 PASS and C8 PASS. The fragile 2024 ST_GAS grounded-above-budget cell moves 30.4 % -> 30.6 % forced, i.e. slightly further above the 30 % cap \u2014 but it remains a GROUNDED pass and its grounding evidence IMPROVES on both legs (D-1 profile r 0.954 -> 0.958, off-peak CV ratio 0.957 -> 0.972), with every binding mechanism still clearing D-4. G6 C3c REPORTED, NOT TARGETED AND NOT CLAIMED: hours > $300 4/0/7 -> 3/0/7 against actuals 10/12/42, i.e. 2023 loses one hour and 2024/2025 are unchanged; mean LMP 33.56/36.32/58.98 -> 33.49/36.22/58.95. C3c REMAINS THE SOLE DETERMINATION BLOCKER and the determination stays NOT-YET, exactly as for every prior NYISO keeper. The pre-registration predicted C3c would tick UP (band-fixed volume reallocated overnight leaving less import at peak); it ticked DOWN slightly instead, because volume was not in fact fixed \u2014 reaching the band ceiling in two more months added ~0.15 TWh of supply. THAT PREDICTION IS RECORDED AS WRONG rather than re-narrated. G7 ITEM-9 IMPORT SHAPE REPORTED: r_hr 0.598/0.623/0.453 -> 0.584/0.605/0.451, worse in all three years \u2014 as the pre-registration predicted, and for the reason it gave: the retired cap was binding 54/59/62 % OVERNIGHT (h21-h03) and only 3/2/2 % in h16-h18, so releasing it lets the LP buy more of its quota in the model's wrong-phase overnight peak. This is NOT evidence against the arm: item 9 is CLOSED as an attributed C3c symptom (nyiso-99, matrix row import_shape_lever -> G), the import node is EXONERATED, and the phase inversion is a property of NYISO's too-flat INTERNAL price swing (0.58/0.52/0.46 of the real one), not of the seam. A cap that improved r_hr by truncating the model in hours the REAL system imported LESS than the cap in 84/89/94 % of cases was flattering the statistic, not modelling the market. SLACK AND DUMP STAY EXACTLY 0.0 MWh in every year, both runs."
+ },
+ "_open_items": [
+  "FOLLOW-ON LEVER, DELIBERATELY NOT ARMED HERE (single-delta discipline): the published G-J locality limit is a REAL NYISO constraint the topology does not represent AT ITS OWN BOUNDARY, and retiring the scalar removes its only (misplaced) representative. Representing it belongs on the INTERNAL G-J interface in the nyiso_nyc_lcr_tsl / nyiso_li_lcr_tsl family \u2014 a published locality limit applied to an internal link inside its design-condition window \u2014 never on the external seam. It enters the mechanism matrix as U (untested). NOTE it owes its own rule-14 boundary reconciliation first: the five-zone aggregation carries no clean G-J cutset (Zone G sits in Capital_Hudson, H+I in Lower_Hudson, J is NYC).",
+  "C3c remains the SOLE determination blocker and a DIAGNOSED, UNCLOSED structural limitation of the five-zone representation with an EMPTY lever queue (nyiso-94/95/96/97 closed every candidate; re-open conditions FINDING-nyiso97 section 5, none currently satisfiable). Unchanged by this arm and not targeted by it.",
+  "PRE-EXISTING AND UNCHANGED, INHERITED NOT CAUSED: D-5 forecast/backcast parity FAILs on nyiso_local_selfsupply ('active backcast-only for this config but NOT on the declared backcast-overlay list'). The nyiso-99 keeper's own committed legitimacy_diagnostics.json carries the identical row, as does this session's zero-delta control. It is a declaration-list gap, not a dispatch defect, and needs its own session.",
+  "Carried from nyiso-96/98/99: the keeper-lineage meta still arms dual_fuel_oil_reattribution for NYISO \u2014 a recording basis the CLI has since pinned NEISO-only; dropping it is a zero-dispatch-delta cleanup for the next re-solve (queue item 10).",
+  "Carried from nyiso-98: two 2025 months (Feb, Apr) hit the frozen nuclear SCALE_CLIP 1.25 and reconcile only to -0.62 %/-0.32 %, inside WEDGE_TOL but at its edge; re-check if a future NRC year lands (rule 23 \u2014 data change only, never a residual).",
+  "Carried from nyiso-99 and STILL OPEN: the EIA-930 exactly-0.0 zero-dropout audit was swept cross-ISO for the Demand column only. The NG:* COMPONENT series of the other five ISOs were never swept. Instrument to copy: scripts/probes/nyiso99_import_benchmark_provenance.py. Method note carried forward and re-confirmed this session: align MIS/instrument feeds on UTC, never positionally \u2014 the model clock is 8,760 h even in leap-year 2024 while P-32 posts all 8,784, and positional alignment shears the series after Feb 29 (r 0.906 -> 0.774).",
+  "NOT re-tested and NOT to be re-opened: the import ladder's price granularity (2,970 MW of the 6,580 MW ladder carries a per-year constant price). A finer ladder cannot fix a spread that peaks at the wrong hour \u2014 nyiso-99 characterisation, unchanged here."
+ ],
+ "exceptions": [],
+ "free_parameters": {
+  "schema": "dof-ledger/v1",
+  "seeded": "2026-07-30 nyiso-100 \u2014 UNION'd forward from the nyiso-99 keeper ledger (23 entries) and NOT rebuilt (a blind build_dof_ledger.py rebuild drops the curated measured/published entries \u2014 the failure mode the nyiso-81/87/89/92/96/98/99 notes all recorded). ONE new entry, and it records a REMOVAL: the mis-attributed 4,350 MW NYISO_simultaneous_import scalar is retired and NOTHING replaces it (the seam's aggregate bound becomes the sum of border-link TTCs already present, an emergent consequence of per-link posted ratings rather than a new constant). n_residual STAYS 6 \u2014 the arm adds zero free parameters and subtracts one unledgered constant. The retired scalar had NO ledger entry of its own, so this also closes a rule-24 [R-REGISTRY] gap.",
+  "n_entries": 24,
+  "n_residual": 6,
+  "entries": [
+   {
+    "name": "offer_curve_by_group",
+    "where": "run_config.scenario_config.offer_curve_by_group",
+    "identification": "residual",
+    "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+    "value": {
+     "CC_REGULAR": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CC_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "CT_PEAKER": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "ST_GAS_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "COAL_LIGNITE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_PRB": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_BIT": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_WC": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ]
+    },
+    "n_scalars": 88,
+    "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page \u00b7 NYISO B-NYI-1/C-13: CC_REGULAR econ_high de-leaked 1.21 -> 1.0 (ERCOT cross-borrowed markup removed); the exposed C3a hole is missing NYISO reserve/scarcity price formation, not a CC markup \u2014 open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1344"
+   },
+   {
+    "name": "offer_curve_smoothing",
+    "where": "run_config.scenario_config.offer_curve_smoothing_*",
+    "identification": "residual",
+    "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+    "value": {
+     "offer_curve_smoothing_n": 6,
+     "offer_curve_smoothing_exp": 1.0
+    },
+    "n_scalars": 2,
+    "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "COAL_SIGMOID_DEFAULTS[NYISO]",
+    "where": "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via coal_prb_passthrough_sigmoid)",
+    "identification": "residual",
+    "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+    "n_scalars": 4,
+    "source": "gas-keyed coal passthrough sigmoids \u2014 the largest fitted surface (audit C-1); owner-sanctioned under rule #1",
+    "root_cause": "weakly identified: each asymptote is pinned by a single gas regime (floor by 2024, gas_mid/ceil by 2025 \u2014 docs/out-of-sample-results-2026-07.md \u00a72C); open: literature/physical anchoring of floor/ceil, plus identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "wefor_multiplier",
+    "where": "run_config.scenario_config.wefor_multiplier",
+    "identification": "residual",
+    "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+    "value": 0.7,
+    "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+    "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "reliability_floor coefficients",
+    "where": "data/raw/reference/reliability_floor_coeffs_NYISO.csv",
+    "identification": "measured-physical",
+    "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+    "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+    "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+   },
+   {
+    "name": "NYISO_LOCAL_SELFSUPPLY_FRAC['Long_Island']",
+    "where": "constants.py NYISO_LOCAL_SELFSUPPLY_FRAC",
+    "identification": "residual",
+    "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+    "value": 0.45,
+    "source": "LI self-supply floor set 'a touch below' the 2023 realized share ~0.48 (audit C-17; W1d marker) \u2014 the LMIC rule is market design but the fraction is outcome-anchored",
+    "root_cause": "audit C-17 / B-NYI-1: the published Zone-K LCR is now on disk (data/raw/capacity-deliverability/nyiso/nyiso.csv, value_pu 1.052/1.053/1.065) but it is a PEAK-capacity ratio, while this is an all-hours energy self-supply fraction \u2014 a rule-14 boundary mismatch: substituting the LCR% (~1.05) or the TSL-implied ~0.94 peak fraction over-forces ~2x the physical LI generation, and any scalar reproducing ~0.45 requires a load-duration haircut tuned to the realized share (rule-12 pin). The faithful fix is a peak-capacity/TSL MECHANISM, not a scalar re-ground; 0.45 left in place \u2014 open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1345"
+   },
+   {
+    "name": "IMPORT_TRANCHES/EXPORT_TRANCHES[NYISO]",
+    "where": "interchange_config.py per-ISO seam supply-curve ladders",
+    "identification": "residual",
+    "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+    "source": "fitted seam price/volume ladders (audit C-6/L7/L8); CAISO's keeper supersedes the fitted ladder with measured hub prices on the binding path but the static ladder remains the fallback; NEISO closed this item (see the NEISO-only entry, measured-physical), MISO closes it under miso_seam_measured_ladder and PJM under pjm_seam_measured_ladder (their own measured-physical rows) \u2014 remaining scope for this item is NYISO/CAISO's static ladder (and the MISO/PJM formula seams only when their measured ladders are off)",
+    "root_cause": "audit C-6/#1350 open item: replace year-keyed rungs with measured hub prices / published wheeling costs per seam, following the NEISO precedent (scripts/data/derive_neiso_import_tranches.py); identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "GAS_AVAILABILITY_FACTOR[NYISO]",
+    "where": "constants.py GAS_AVAILABILITY_FACTOR",
+    "identification": "published",
+    "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+    "value": 0.866,
+    "source": "NERC GADS Generating Unit Statistical Brochure 3, 2019-2023 (NERC-wide \u2014 no per-ISO breakdown exists), 'FOSSIL Gas Primary, All Sizes', EFORd=13.44%",
+    "note": "open R2-vs-R5 disposition (not a residual on this value): GAS_AVAILABILITY_FACTOR is not read anywhere in src/market_sim (dead/orphaned, confirmed by grep 2026-07-05), so this verified value has zero materiality today. Either wire it in with a fleet-mix-weighted reconciliation against the ISO's own CT/CC/ST capacity shares (replacing, never stacking with, the existing per-unit EFORD-derived availability) or delete it as dead code (rule 26) \u2014 tracked in https://github.com/jessicacohen554-cyber/market-simulator/issues/1349"
+   },
+   {
+    "name": "nyiso_li_lcr_tsl (Zone-K locality import limit)",
+    "where": "data/raw/capacity-deliverability/nyiso/nyiso.csv (325/275/275 MW) via transmission.apply_nyiso_li_tsl_import_cap",
+    "identification": "published",
+    "note": "REPLACES the residual-identified NYISO_LOCAL_SELFSUPPLY_FRAC['Long_Island']=0.45 (nyiso-41 DOF ledger S5) \u2014 the issue-#1345 closure. Published NYISO Locality Bulk-Power Transmission Capability values; HB14-21 window shared with the PR-#1442 floor ramps; boundary reconciled vs measured top-100-load-hour LI implied inflow 1,493/1,440/1,598 MW (in-window capability 1,525/1,475/1,475 MW)."
+   },
+   {
+    "name": "use_plant_emission_rates_v2",
+    "where": "data/raw/_processed-legacy/plant_emission_rates_v2.parquet via fleet.bins_to_fleet (backcast wiring 2026-07-06)",
+    "identification": "measured",
+    "note": "Same-year CAMPD plant-specific CO2/NOx/SO2 rates (rule-13 canonical admissible backcast overlay), replacing heat_rate x FUEL_CO2_FACTOR estimates; dispatch-affecting under the RGGI state carbon price. Zero fitted values."
+   },
+   {
+    "name": "nyiso_downstate_ct_gas_daily",
+    "where": "data/clean/nyiso-downstate-gas (scripts/curate_nyiso_downstate_gas.py from data/raw/gas-prices/{transco_z6_ny_daily,nyiso_downstate_ldc_transport_monthly}.csv) via fuel.apply_nyiso_downstate_ct_gas_daily",
+    "identification": "measured",
+    "note": "Per-zone daily LDC-transport delivered-gas index for the downstate CT_PEAKER fleet (G-13 closure): Transco Z6 NY daily commodity spot + KEDNY SC-22 (NYC) / KEDLI SC-19 (Long Island) monthly non-firm Tier-1 transportation delivery rate, broadcast monthly->daily; non-trading days interpolated. SUPERSEDES the v1 monthly statewide citygate premium (nyiso_downstate_ct_gas_basis, OFF in this config - rule 19, one mechanism per phenomenon). Zero fitted values; re-derives only on source-data updates (rule 23)."
+   },
+   {
+    "name": "nyiso_dynamic_reserve_requirements",
+    "where": "data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_{year}.csv via data.nyiso_reserve_requirements (reserve_config._nyiso_design)",
+    "identification": "measured",
+    "note": "Measured as-enforced hourly locational reserve-requirement series (issue #1344): published LRR base with the SENY 30-min hourly step schedule (dated Locational-Reserve-Requirements postings, Wayback-bounded v2020/v2021/v2026) x TSA-window zeroing from the B2 MIS event logs; derived by the frozen scripts/derive_nyiso_reserve_requirements_hourly.py. Zero fitted values; re-derives only on source-data updates (rule 23). Lower bound in non-TSA hours pending B1."
+   },
+   {
+    "name": "nyiso_scr_edrp",
+    "where": "ScenarioConfig.nyiso_scr_edrp / nyiso_scr_edrp_strike; data/raw/nyiso-demand-response/nyiso_scr_edrp_enrollment.csv via data.nyiso_demand_response.build_nyiso_dr_generators",
+    "identification": "measured/published",
+    "value": {
+     "nyiso_scr_edrp": true,
+     "nyiso_scr_edrp_strike": 500.0
+    },
+    "note": "NYISO SCR/EDRP emergency demand response as endogenous per-zone price-responsive supply blocks. Capacity = Gold-Book-registered SCR+EDRP MW per model zone (2023/24/25 summer 1.23/1.29/1.49 GW, scripts/data/build_nyiso_scr_edrp.py, byte-identical to the transcribed enrollment CSV). Strike = the published NYISO EDRP $500/MWh compensation floor (Market Services Tariff \u00a75.12) \u2014 a market-design constant, NOT a residual. Clears the energy balance only when the zone LBMP exceeds the strike (endogenous scarcity trigger, never pinned to observed event dates; rule 13/17). ZERO fitted values; re-derives for a forward year from the next Gold Book (rule 23). Excluded from generation-mix scoring (avoided load, not generation)."
+   },
+   {
+    "name": "nyiso_hydro_reserve_eligible",
+    "where": "ScenarioConfig.nyiso_hydro_reserve_eligible; reserve_config._nyiso_design (fuel==hydro union into full+quick eligible)",
+    "identification": "measured/published",
+    "value": {
+     "nyiso_hydro_reserve_eligible": true
+    },
+    "note": "NYISO in-fleet conventional hydro (data.hydro.build_hydro_fleet, ~4.6 GW) made eligible to supply operating reserve in BOTH the full-30min and quick-10min classes. NYPA Niagara/St-Lawrence + Capital hydro are NYISO-certified operating-reserve providers (Ancillary Services Manual); the eligibility union mirrors the CAISO _caiso_reserve_eligible hydro seam. Held reserve spends no water \u2014 the monthly hydro energy budget bounds only DISPATCHED energy, so budget and reserve headroom compose correctly. ZERO fitted value; a market-design eligibility gate, not a parameter."
+   },
+   {
+    "name": "nyiso_scr_edrp_reserve_eligible",
+    "where": "ScenarioConfig.nyiso_scr_edrp_reserve_eligible; reserve_config._nyiso_design (fuel==demand_response AND downstate zone union into full-30min eligible)",
+    "identification": "measured/published",
+    "value": {
+     "nyiso_scr_edrp_reserve_eligible": true
+    },
+    "note": "The downstate SCR/EDRP demand-response blocks (already in the fleet, energy-only $500 strike) made eligible to SUPPLY the FULL 30-min operating reserve, scoped to the downstate SENY zones NYC + Long_Island + Lower_Hudson. SCR is a NYISO-certified 30-min operating-reserve provider (Ancillary Services Manual S4 / MST S15) \u2014 a real market-design eligibility, 30-min only (not spinning/10-min). ZERO fitted value; a market-design eligibility gate, not a parameter. Held reserve forces no energy (the per-zone reserve-headroom row trades it against the $500 strike)."
+   },
+   {
+    "name": "gas_offer_net_revenue_margin",
+    "where": "run_config.scenario_config.gas_offer_net_revenue_margin=True, gas_offer_margin_anchor=3.9046",
+    "identification": "grounded",
+    "lineage_solves": "charter neiso-61 precedent + nyiso-72 A/B (2026-07-23)",
+    "value": "Markup gas-elasticity 1->0 on the already-registered offer surface. Adds NO free parameter: the per-band markup LEVELS are the existing offer_curve_by_group residual (already counted above); the physical basis (phys_committed/econ_low/econ_high/peak) is measured CAMPD marginal-HR p50s (nyiso_campd_marginal_hr_summary.csv); the anchor 3.9046 $/MMBtu is the measured 2023-25 delivered-gas overlay mean (GAS_OFFER_MARGIN_ANCHOR_BY_ISO['NYISO']), not fitted. Re-derivable for a forward year from forward delivered gas + the same CAMPD physical basis (rule 13). n_residual UNCHANGED at 5."
+   },
+   {
+    "name": "dual_fuel_oil_daily_parity",
+    "where": "ScenarioConfig.dual_fuel_oil_daily_parity (armed TRUE this bundle; intake data/raw/oil-prices/ny_harbor_ulsd_daily.csv)",
+    "identification": "measured",
+    "lineage_solves": "nyiso-78 (arm A/B) + nyiso-81",
+    "source": "EIA daily NY Harbor ULSD spot shaped onto the monthly EIA-923 Petroleum receipt by the same trade-date staircase the gas daily shape uses; per-month factor means 1.0 to 1e-12 so the delivered LEVEL stays the measured receipt",
+    "note": "granularity refinement of the existing dual-fuel oil-parity cap - ZERO fitted scalars (mean-preserving by construction); quantified +~$0.10/MWh on the 2025 mean (FINDING sec 2), armed because daily is the more accurate measured representation (rule 14), not for fit"
+   },
+   {
+    "name": "nyiso_gas_commitment_bridge (min_load_frac + min_run_hours)",
+    "where": "ScenarioConfig.nyiso_gas_bridge_{cc,st}_min_load_frac and nyiso_gas_bridge_{cc,st}_min_run_hours; mechanism pipeline.commitment.build_nyiso_gas_bridge_p1_prep",
+    "identification": "measured-physical",
+    "lineage_solves": "nyiso-87 arms CONTROL/A/B/C/C-MEAS (2026-07-27)",
+    "value": {
+     "nyiso_gas_bridge_cc_min_load_frac": 0.523,
+     "nyiso_gas_bridge_st_min_load_frac": 0.239,
+     "nyiso_gas_bridge_cc_min_run_hours": 21,
+     "nyiso_gas_bridge_st_min_run_hours": 13
+    },
+    "n_scalars": 4,
+    "source": "ALL FOUR values read from ONE frozen derive artifact, data/raw/_processed-legacy/campd_gas_commitment_params_NYISO.csv (scripts/data/derive_campd_gas_commitment_params.py, EPA CAMPD unit-level hourly grossLoad 2023-2025, 78 units). min_load_frac = the capacity-weighted p50 across units of each unit's own LSL/HSL ratio, where HSL = p99.5 of pooled load and LSL = p5 of online-hour load (the WP-3 loading-when-on construction + the derive_cc_committed_pct.py p5-of-online minimum-stable statistic). min_run_hours = the capacity-weighted p50 of the measured run-length distribution (CC p25/p50/p75 = 11/21/133 h; ST_GAS 3/13/89 h). NYISO publishes no 60-Day-DAM equivalent of the ERCOT LSL/HSL disclosure, which is why the ratio is reconstructed from the meter; the reconstructed CC value 0.523 lands within 9 % of ERCOT's independently PUBLISHED cap-weighted p50 of 0.574 \u2014 an outside cross-check that the construction is not self-referential.",
+    "note": "ZERO residual identification: no value was chosen for its effect on a price or volume residual, and none was swept. The capacity weighting is forced by what the parameter does (a min-run constraint floors committed MW, not committed unit-count) and is the same weighting min_load_frac uses. The min-run values DISAGREE with the published class tables in OPPOSITE directions \u2014 CC 21 h is an increase over the table's 5-10 h, ST_GAS 13 h a decrease from its 24-48 h \u2014 which is itself evidence the values follow the measurement rather than a residual: a residual-fitted pair would not move against a published table in one class and with it in the other. Caveat recorded: an OBSERVED run length is an upper-ish bound on a minimum-run CONSTRAINT, so the low percentiles bound it from the side the constraint lives on; the p50 is the deliberate, documented choice and re-derives ONLY when the CAMPD vintages update (rule 23 [R-FROZEN-DERIVE]). The mechanism's other inputs add no parameters at all: min-down and startup cost come from the published NREL/SR-5500-55433 class tables the model already used, the DA horizon is the tariff-cited DA_COMMITMENT_HORIZON_HOURS=24, and the restart inequality is priced at the model's OWN P0 duals. n_residual UNCHANGED at 6."
+   },
+   {
+    "name": "measured_ct_heat_rates (per-plant CT_PEAKER loaded heat rate)",
+    "where": "run_config.scenario_config.measured_ct_heat_rates -> data/raw/_processed-legacy/campd_ct_heat_rates_NYISO.csv (scripts/data/derive_campd_ct_heat_rates.py), applied in market_sim.data.fleet.eia860._rows_to_generators",
+    "identification": "measured-physical",
+    "lineage_solves": "1 arm + 1 same-HEAD zero-delta control (nyiso-89); no sweep, no value chosen by looking at a residual",
+    "n_scalars": 19,
+    "n_residual_scalars": 0,
+    "value": {
+     "plants_covered": 19,
+     "class_capacity_covered_mw": 2395.0,
+     "class_capacity_total_mw": 2614.0,
+     "coverage_pct_of_class_capacity": 91.6,
+     "construction": {
+      "window": "grossLoad >= 0.80 x p95 of that unit's own gross load",
+      "min_qualifying_hours": 50,
+      "unit_filter": "CAMPD unitType == 'Combustion turbine'",
+      "years_pooled": [
+       2023,
+       2024,
+       2025
+      ],
+      "gross_to_net": "divided by the COMMITTED parasitic factor (parasitic_load_factors.parquet) -- the same map run_calibration_full._campd_hourly_frame uses to build the benchmark's net actual",
+      "plant_aggregation": "generation-weighted mean over the plant's turbines",
+      "physical_band_guard": [
+       6.0,
+       25.0
+      ]
+     }
+    },
+    "source": "EPA CAMPD unit-level hourly grossLoad + heatInput. Replaces the eGRID PLANT-AVERAGE ANNUAL heat rate, which is neither a loaded rate nor -- at a mixed facility -- the right technology's rate (E F Barrett 2511: 1971 FT4 turbines and 188 MW steam boilers share one 11.076; measured separately the turbines run 16.69. Bayswater 55699 carries a non-physical 21.68 against a measured 10.74).",
+    "identification_note": "ZERO fitted scalars. Every value is a measured unit-conduct statistic; no parameter of the construction (window, percentile, minimum hours, band) was chosen by looking at a residual. Rule 13 [R-MEASURED] admissible: a machine's loaded heat rate regenerates for a forward year from the same pipeline and responds to changed conditions (a retrofit moves it; a new unit carries its design rate). Rule 24 [R-FROZEN-DERIVE]: re-derives ONLY on a CAMPD vintage change.",
+    "root_cause": "OPEN (LOYO caveat, nyiso-89): re-deriving the artifact leaving each year out is stable for 16 of 19 plants (<5 % spread) and never reverses the correction's sign on any plant that carries its weight -- Bayonne 0.5 %, Bayswater 1.0 %, Port Jefferson 2.8 %, Barrett 6.1 % (16.07-17.09, never approaching the eGRID 11.08). It is NOT stable on the two low-utilization 1970s barge plants: Gowanus 2494 (16.5 % spread) and Narrows 2499 (12.8 %), where dropping 2025 reverses the sign vs eGRID. Those plants are thin-sampled (0.09 and 0.22 TWh of measured energy across three years) and sit far out of merit at EVERY fold value (13.2-16.2 MMBtu/MWh against a class base near 10), so no gate moves. A minimum-energy screen for thin-sampled plants is the named follow-up; it is deliberately NOT added here, because adding a screen after seeing the LOYO result would be a post-hoc choice (rule 24)."
+   },
+   {
+    "name": "hydro_capability_envelope",
+    "where": "run_config.scenario_config.hydro_dispatch_envelope + hydro_min_flow_floor",
+    "identification": "measured",
+    "lineage_solves": "nyiso-92 (1 solve, no sweep); engines caiso-72/124 keepers",
+    "value": {
+     "percentile": "constants.HYDRO_ENVELOPE_PERCENTILE=95 (shared cross-ISO constant, not a new DOF); floor = its 100-p mirror (Q95)",
+     "levels": "EIA-930 NYIS NG:WAT solve-year series (2023 floor 1844-2496 MW/mo = 66% of budget; ceiling evening p95 ~4394 MW)"
+    }
+   },
+   {
+    "name": "tranche_startup_amortization (v3 measured NYISO run-length basis)",
+    "where": "run_config.scenario_config.tranche_startup_amortization + tranche_startup_measured_runs",
+    "identification": "measured-physical",
+    "lineage_solves": "0 solves added to the tuning lineage \u2014 the mechanism was built to a pre-registration (docs/handoffs/nyiso96-preregistration.md, committed before the A/B launched) and A/B-tested ONCE against its same-HEAD zero-delta control (2026-07-29-nyiso-96-control-zerodelta). Nothing was swept and no parameter was adjusted after the result.",
+    "value": "Each thermal tranche's offer adds start_cost_per_mw / expected_run_hours: start costs from the NREL BIN_STARTUP_COST_PER_MW table already ledgered for the committed tranche ($20/MW CT_PEAKER/CT_CHP, $50/MW CC duct bands); expected run hours from the plant's own measured CAMPD run-length p50 (campd_ct_run_lengths_NYISO.csv, 22 plants + pooled class fallback 4.0 h, 34,057 measured runs 2023-2025). Realised offer increment ~$5/MWh on the CT bands, as pre-registered.",
+    "source": "NREL startup-cost table (docs/parameter-citations.md, pre-existing citation) + data/raw CAMPD unit conduct reduced by the frozen derive scripts/data/derive_campd_ct_run_lengths.py (rule 23 [R-FROZEN-DERIVE]: re-derives only on a CAMPD source update). No parameter is ported from another ISO (rule 25 [R-ISO-SCOPE]) and none is fitted to a residual.",
+    "forward_story": "Both inputs regenerate for a forward year: the NREL table is a published engineering constant, and the run-length basis re-derives from rolling CAMPD history conditioned on the fleet, responding to changed conditions through the runs the fleet actually produces (rule 13 admissibility).",
+    "rule_13_admissibility": "A start-cost amortization over a measured expected run length is a market-design input (bid production cost recovery), not an outcome pinned to a residual: no volume or price is pinned, the LP still chooses dispatch, and prices remain LP duals (rule 4 [R-DUALS])."
+   },
+   {
+    "name": "nuclear_unit_availability (NYISO, measured per-reactor daily NRC)",
+    "where": "run_config.scenario_config.nuclear_unit_availability",
+    "identification": "measured-physical",
+    "lineage_solves": "0 solves added to the tuning lineage \u2014 the mechanism was built to a pre-registration (docs/PREREG-nyiso98-nuclear-availability-2026-07-29.md, committed AND PUSHED before the extract was derived and before any LP ran) and A/B-tested ONCE against its same-HEAD zero-delta control (2026-07-29-nyiso-98-control-zerodelta). Nothing was swept and no parameter was adjusted after the result.",
+    "value": "Each of the four NYISO reactors (FitzPatrick 6110_1, Ginna 6122_1, Nine Mile Point 1/2 2589_1/2) takes its own MEASURED DAILY availability in place of the fleet-month NUCLEAR_MONTHLY_CF_BY_YEAR smear: data/raw/nuclear-availability-NYISO.csv, 4,384 reactor-days, 365/366-day coverage every year, all 36 months reconciling inside WEDGE_TOL so no month is dropped. The anchor owns the LEVEL (annual nuclear TWh moves -0.01/-0.02/-0.14 %); NRC owns the TIMING.",
+    "source": "NRC daily Power Reactor Status reports (data/raw/nrc-reactor-status/<YYYY>PowerStatus.txt, scripts/data/fetch_nrc_reactor_status.py) reduced by the frozen derive scripts/data/derive_nuclear_availability.py --iso NYISO (rule 23 [R-FROZEN-DERIVE]: re-derives only when a new NRC year lands). Every deriver constant is inherited UNMODIFIED from the ERCOT deriver and the PJM extract still reproduces byte-for-byte under --check, so nothing was re-tuned for NYISO (rule 25 [R-ISO-SCOPE]); the level anchor NUCLEAR_MONTHLY_CF_BY_YEAR ['NYISO'] is pre-existing and untouched. No parameter is fitted to a residual.",
+    "forward_story": "A refuel window / reactor power state is a physical availability event that regenerates for a forward year through the NUCLEAR_MONTHLY_CF / refuel-block scheduling path already in the forecast lane, and responds to changed conditions through the outages the fleet actually takes (rule 13 admissibility) \u2014 the same class as the CAMPD fossil outage windows and as ERCOT's live keeper overlay ercot_nuclear_unit_availability.",
+    "rule_13_admissibility": "The overlay sets AVAILABILITY from an independent physical instrument (percent of licensed thermal power at the NRC morning report), never generation from a metered outcome. STATED TENSION, NOT HIDDEN: nuclear is a flat must-run price-taker, so an availability overlay on it sits close to an output overlay. The line that keeps it admissible is that the LEVEL remains owned by the independent EIA-923 anchor and never by the scored series \u2014 the EIA-930 NG:NUC series this run is SCORED against is used only as a validation target and is forbidden as an input (rule 13)."
+   },
+   {
+    "name": "EIA-930 demand zero-dropout repair (_screen_demand_dropouts)",
+    "where": "market_sim.data.eia930.demand._screen_demand_dropouts \u2014 wired into all six per-BA demand loaders; NOT a ScenarioConfig field (a source-data repair is not a tunable, so there is nothing to arm)",
+    "identification": "measured-physical",
+    "lineage_solves": "0 solves added to the tuning lineage \u2014 the repair was built to a pre-registration (docs/PREREG-nyiso99-import-audit-demand-dropout-2026-07-29.md, committed AND PUSHED before any LP ran), its blast radius was measured on the loaders BEFORE solving, and it was A/B'd ONCE. Nothing was swept and no value was adjusted after the result \u2014 there is no value to adjust.",
+    "value": "No parameter. The screen flags demand hours reading EXACTLY 0.0 MW and linearly interpolates them from their neighbours, the same repair the pre-existing _screen_demand_spikes and the missing-meter path already apply. Across all six modeled BAs x 2023-2025 it fires on exactly five hours, all in NYIS Demand: 2024 h403/6760/6761 and 2025 h354/355. Byte-identical (delta 0.00000 TWh, max |delta| 0.0 MW) on 16 of the 18 ISO-years; NYISO 2024 +0.05624 TWh (+0.037 %), NYISO 2025 +0.04345 TWh, 2023 untouched in EVERY ISO.",
+    "source": "The artifact is in the source parquet itself (EIA-930 <BA> hourly extracts). Identified by extending the nyiso-98 zero-block audit from benchmark series to INPUT series, and corroborated three ways: the flanking hours read ~17-22 GW; a whole BA's metered demand is never 0 MW; and the keeper's own solved system_<year>.parquet reproduces the zeros 1:1 as 0.0 MW of served load. No residual was consulted (rule 23 [R-FROZEN-DERIVE]).",
+    "forward_story": "The repair regenerates identically for any year of any BA from the source extract alone and responds to changed conditions trivially (a year with no dropout is a no-op \u2014 16 of 18 ISO-years here). It is mode-independent: nothing about it is backcast-only, so it carries no forecast/backcast parity burden (rule 13).",
+    "rule_13_admissibility": "Not an overlay at all. It removes a KNOWN DEFECT from a measured input series rather than adding information: no measured OUTCOME is consulted, no residual is targeted, and the repaired quantity (system demand) is an input the model serves, never a series it is scored against. Deliberately scoped to DEMAND ONLY, never interchange \u2014 a BA's net interchange legitimately reads 0.0 MW when its ties are idle (ERCO posts 187/140/113 such hours in 2023/24/25 on its ~1.2 GW DC ties), so the same screen on an interchange series would DELETE REAL MEASUREMENTS. That is the rule-14 failure mode this repair exists to avoid, and the scope line is the whole of its correctness argument."
+   },
+   {
+    "name": "NYISO_simultaneous_import RETIRED (nyiso_import_sil_retire) \u2014 mis-attributed G-J locality limit removed from the external seam",
+    "where": "ScenarioConfig.nyiso_import_sil_retire -> model.interchange.import_nodes.retire_misattributed_sil, applied in interchange.spec.apply_interchange_topology; drops the EXTERNAL_SIMULTANEOUS_LIMITS['NYISO'] InterfaceLimit",
+    "identification": "measured-physical",
+    "lineage_solves": "1 A/B pair, 0 sweeps. Built to a pre-registration (docs/PREREG-nyiso100-simultaneous-import-retire-2026-07-30.md, committed AND PUSHED before any LP ran) on top of an identification that used NO solve at all (the finding is a provenance + posted-ratings argument read off published tables and the committed keeper sidecars). No value was swept and none was adjusted after the result \u2014 there is no value to adjust, because the arm sets no number.",
+    "value": "NO PARAMETER \u2014 the entry records a REMOVAL. The retired scalar was 4,350 MW; nothing replaces it. The seam's aggregate bound becomes the sum of the four border-link TTCs already in the topology, 6,800 MW, which is not a new constant but an emergent consequence of per-link ratings that were already there. Realised arm import maxima 6,518.9 / 6,470.0 / 6,075.0 MW (2023/2024/2025) \u2014 below the link sum, so the LP is bounded by the priced ladder and the per-link ratings, not by a scalar.",
+    "source": "The 4,350 MW value is EXACTLY the published NYISO G-J LOCALITY Bulk Power Transmission Limit for capability year 2024/2025 (data/raw/capacity-deliverability/nyiso/nyiso.csv, area 'G-J', metric import_limit; 2024-25 Locality Bulk Power Transmission Capability Report p.7) \u2014 an INTERNAL New York transfer boundary (Load Zones G,H,I,J), not the external NYCA seam. Exactly one row in the whole published table matches the constant, and the published G-J series MOVES by capability year (3,425 / 3,425 / 4,350 / 4,500 for 2022/23-2025/26) while the constant was frozen at the 2024/25 reading across all three solve years. The originally cited source does not contain it: extraction over all three Gold Books on disk finds ZERO pages naming a simultaneous import or transfer limit, and Table VI-1 is redacted as Critical Energy Infrastructure Information in every edition. The retained per-link bounds ARE posted ratings (NYISO MIS P-32 external limits): NYC 1,000 MW vs HTP 660 + Linden-VFT 315 = 975 posted; Long_Island 1,200 MW vs Neptune 660 + Cross-Sound 330 + NPX-1385 200 = 1,190 posted. No residual was consulted (rule 23 [R-FROZEN-DERIVE]).",
+    "forward_story": "Strictly stronger forward than what it replaces: there is no scalar left to regenerate. The bound that remains is the per-link posted rating, which re-derives from the P-32 posting for any year and responds to changed conditions (CHPE enters the same feed as a nineteenth interface in 2026). The retired constant, by contrast, was a single capability year of an INTERNAL locality's limit and would have had to be hand-refreshed \u2014 against the wrong boundary \u2014 for every forward year.",
+    "rule_13_admissibility": "No measured OUTCOME enters the model. The measured simultaneous flow series (EIA-930 metered, MIS P-32 scheduled) are used ONLY to FALSIFY the retired constant and to bound an admissible interval for an aggregate cap \u2014 never to set one, which is precisely why the reconcile retires the scalar instead of restating it at a measured extreme. Rule 14's misalignment clause is why the naive measured replacement (the ~10.7 GW sum of posted per-interface limits) is rejected: it is the sum of several parallel paths this five-zone network collapses into one link. The quantities that DO enter are posted ratings already in the topology."
+   }
+  ]
+ }
+}
