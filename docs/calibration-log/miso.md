@@ -2121,3 +2121,77 @@ data ask, beside outage grain). Reproduction of the coverage ledger:
   stays 3/3 saturated and C7 is not ledgered. The lane's continuation is a data
   ask, not a solve.
 * Next number: **miso-105.**
+
+## 2026-07-29 — miso-105: MISO's DA virtual lever is REFUSED ex ante on its OWN COMPLETE SUBMITTED BOOK — the source exists and was found, the premise is measured false, and the only channel big enough to move C3b is the curve's own crossing price; NO solve, keeper UNCHANGED
+
+**Keeper UNCHANGED: `2026-07-28-miso-101b-tempgrain`.** No solve, no run, no
+bundle, no dashboard registration, no intake. Matrix cell `da_virtual_bids`
+× MISO: **U → G**. Evidence:
+`results/calibration/FINDING-miso105-da-virtual-attractor-2026-07-29.md`.
+Probe: `scripts/probes/miso105_da_virtual_identifiability.py`.
+
+* **The source exists — this is new for the repo.** MISO publishes the
+  **submitted** virtual bid/offer curve with a price axis:
+  `docs.misoenergy.org/marketreports/YYYYMMDD_bids_cb.zip`, its FERC-Order-719
+  masked demand-bid archive on a ~90-day lag, one row per **bid × hour** with
+  `PRICE1..9 / MW1..9` plus the cleared `MW` and the clearing `LMP`.
+  `Type of Bid` D = DEC / I = INC. Probed span 2023-01-01 → 2026-01-01 all HTTP
+  200, 2022-06-01 and earlier 404 — the rolling window is **quarantine-safe by
+  construction** (rule 22 needs no authorization question here).
+* **Ladder semantics IDENTIFIED from the file, not assumed.** Reading
+  `(PRICE_i, MW_i)` as **incremental** blocks and clearing them against the
+  row's own LMP reproduces the published cleared MW for **99.36 %** of 207,549
+  priced virtual bid-hours (MAE 0.028 MW) against 93.49 % / 0.410 for the
+  cumulative reading. The same test proves the ladder is *submitted*: **66.66 %**
+  of priced bid-hours carry blocks that did not clear.
+* **Provenance proved in BOTH directions** — the strong form nyiso-94 could not
+  reach. Cleared `MW` = 16.3 % / 14.9 % of load in 2024 against the IMM's
+  published **15.8 % / 14.5 %** (2024 SOM Appendix Table A2), while the submitted
+  ladder is **2.49–2.79×** larger. Same table: PJM 5.9 % / 5.6 %.
+* **Refused on three MEASURED grounds, not on access.**
+  (a) **Premise false.** PJM's lever runs on **+7–11 GW** net DEC at the top
+  summer hours; MISO's summer-peak net cleared virtual is **+1.09 / +2.47 /
+  −0.34 GW** — negative in 2025, the year C3b fails — and **−158 / +1,336 / −62
+  MW** in the RT>$300 tail (6/13/28 hours). MISO's book is **2.7× PJM's as a
+  share of load gross and ≈ 0 net**: a convergence and congestion instrument,
+  verbatim the IMM (2025 SOM §IV.B — "essential to price convergence",
+  **1,694 MW/h** of energy-neutral **matched** pairs).
+  (b) **Immaterial where admissible.** The peak-minus-night net differential
+  (+1.40 / +1.28 / +0.43 GW) at the keeper's own re-measured summer stack slope
+  (**0.54 / 0.56 / 0.64 $/GW**, miso-89 §2 ventile method on the miso-101b
+  sidecars) buys **+$0.75 / +$0.72 / +$0.27** of diurnal spread against a
+  **$14.6 / $15.9 / $20.5** C3b summer gap — **5.1 / 4.5 / 1.3 %**, shrinking as
+  the miss grows.
+  (c) **The material channel is inadmissible — a blocker nyiso-94 never reached
+  because NYISO had no data to reach it.** The measured net curve's crossing
+  price **λ0 reproduces the price its own book cleared at to $0.09 / $1.80 /
+  $0.17**, and its stiffness (**0.93 / 0.93 / 0.69 GW per $/MWh**) against the
+  model stack's elasticity (**1.85 / 1.79 / 1.56 GW/$**) means arming it supplies
+  **31–34 % of every hour's price displacement, and ~63 % at the steepest 2025
+  summer ventile**. The model's price would substantially *become* the measured
+  book's crossing price — rule 1 `[R-STRUCT]`, and rule 13 `[R-MEASURED]`'s
+  forward test dies because whatever regenerates the curve forward must reproduce
+  λ0, which **is** the price the model exists to forecast.
+* **Rule 19 `[R-ONE-MECH]` — nothing stacked.** D-2 was enumerated from the
+  keeper's committed `legitimacy_diagnostics.json` first: `nuclear_mustrun`,
+  `chp_steam` (h0–23), `reliability_floor × CT_PEAKER` (h14–21),
+  `reliability_floor × ST_GAS` (h0–23), `st_gas_mustrun_per_plant` (h0–23) — all
+  D-4 clean, **none a diurnal-price-spread mechanism**. C3b's ledgered root cause
+  (the ~10 GW 2025 summer-peak under-derate, miso-89 §7 + the outage-grain data
+  ask) is untouched and was not widened, re-scoped or substituted for.
+* **Rule 25 `[R-ISO-SCOPE]`.** No parameter crossed a boundary. PJM's `K` is
+  **not** re-adjudicated — but the λ0-attractor question is a property of the
+  mechanism family that was never asked in PJM's lane, and is recorded as an
+  observation for PJM to answer on **PJM's own** data (its λ0-gap, its
+  `N ÷ (S+N)`). CAISO/NEISO stay `U`.
+* **Rule 22 honoured: nothing was intaken.** No `data/raw/` write — the archive
+  carries cleared `MW`/`LMP` alongside the submitted ladder, and parking that in
+  the input tree would be a re-armable answer key. Everything is in scratch and
+  re-fetchable from the finding's §2. Rule 15: no run produced, nothing to
+  register. Rule 26 duty (b): cell updated in-session.
+* **Caveat budget UNCHANGED at 3/3** (C3a, C3b, C3c). Nothing ledgered, added,
+  widened or re-scoped; C3b's determination stands exactly where miso-90 left it.
+* **C3b keeps no open in-model lever.** Its identified driver stays the
+  instrument-blocked outage-grain gap (standing data ask), and MISO item 3 is now
+  closed alongside items 1–2.
+* Next number: **miso-106.**
