@@ -394,6 +394,18 @@ C1 CC_REGULAR-2023 and C3a-2025 closed at pjm-135; **C3c-24/25 closed at
 pjm-136** and is UNCHANGED by pjm-137. The queue below is not gate-driven — it
 is ranked by *structural* defect, per rule 1 `[R-STRUCT]`.
 
+**READ ITEMS 12–13 FIRST (pjm-141, 2026-07-30).** PJM's remaining structural
+defect is now diagnosed and named: the model has **no hour-varying offer
+conduct** (every thermal LP row's within-day offer σ is **$0.000000**), so its
+whole intra-day price amplitude comes from merit-order traversal and it delivers
+only **31 / 33 / 32 %** of the measured overnight→evening-peak swing — too dear
+overnight, too cheap at peak, with the **annual level passing by cancellation**.
+The overnight bottom-of-distribution miss and the winter morning ramp are **one
+defect**. Its lever queue is **EMPTY** (every in-model route is `R`,
+owner-closed, spent, or barred by rule 23), with one non-adjudicated successor
+carrying a partial ex-ante refutation (item 13). **Judge any PJM price lever on
+the AMPLITUDE, never on the annual mean.**
+
 **CLOSED AT pjm-137, binding on successors — do not re-open:**
 
 - **The zonal-congestion route to the Dominion CT leg.** PJM's own day-ahead
@@ -505,7 +517,13 @@ is ranked by *structural* defect, per rule 1 `[R-STRUCT]`.
     correction to the winter *level* (PJM's delivered winter basis is a real
     quantity the model currently proxies with the HH+zonal-basis construction),
     and as a candidate for the **day**-scale winter tail — not for the intra-day
-    ramp. Charter it on the level story or not at all.
+    ramp. Charter it on the level story or not at all. **Bound TIGHTENED at
+    pjm-141:** the objection is now measured on the *whole* offer rather than
+    inferred from the gas leg — every thermal LP row's within-day offer σ is
+    **$0.000000** (item 12), so no calendar-day series can move an intra-day
+    differential in this model. Item 10 is **not** a candidate for the overnight
+    cell or the amplitude defect; it survives on the winter-**level** story
+    alone.
 11. **`ramp_envelopes`** — **SOLVED, PROMOTED and CLOSED at pjm-140 (2026-07-30).
     PJM cell `U` → `K`**, and it is the **first keeper in any ISO** to carry
     `ramp_limits=True` (`2026-07-30-pjm-140-rampenv`, superseding
@@ -552,16 +570,92 @@ is ranked by *structural* defect, per rule 1 `[R-STRUCT]`.
     (`FINDING-pjm140-ramp-envelopes-remove-infeasible-ramping-but-not-the-price-shape-2026-07-30.md`;
     `PREREG-pjm140-ramp-envelopes-2026-07-30.md`.)
 
-12. **The winter morning ramp is STILL OPEN — its chartered lever is spent.** The
-    reachable residual is unchanged: DJF h06–h07 load-weighted **−$0.37 / +$5.55 /
-    +$13.44** after the pjm-137 basis and pjm-138 reserve lanes are credited, so
-    2023 is fully explained and 2024–25 are not. **The next instrument is
-    `FINDING-pjm139` §8 lead 2** — the overnight bottom-of-distribution miss
-    (model p05 $21.22/$20.15/$26.35 against PJM's $13.32/$11.44/$17.02; overnight
-    stack `CC_REGULAR` 66–69 % + `COAL_BIT` 23–26 %) as a marginal-**tranche**
-    question at h01–h04. Its instrument is the committed `--with-fleet` W6 census
-    in `scripts/probes/_pjm139_winter_ramp.py`, which pjm-139 could not run
-    because `data/clean/` was incomplete and which is **now runnable**.
+12. **CLOSED AT pjm-141 (2026-07-30) — the instrument ran, and the answer
+    RE-FRAMES the item.** Its named instrument (the committed `--with-fleet` W6
+    census, plus the new tranche census
+    `scripts/probes/_pjm141_overnight_tranche.py`) is run, no LP solved. Kept
+    rather than deleted so the re-framing is not undone.
+    - **The chartered question is answered and the tranche is NOT the defect.**
+      The marginal rung at h01–h04 is **`econ` 78.7 / 78.4 / 77.5 %** of the
+      marginal set at **100.0 %** detection (dominant pair `CC_REGULAR:econ`
+      40.2 / 38.5 / 35.4 %; `committed` only 14.4 / 15.3 / 14.9 %), and the
+      **evening-peak control is statistically identical** (`econ` 77.3 / 79.5 /
+      80.7 %). No floor rung, no part-load artifact, no pinning at the margin.
+      The model's overnight thermal requirement also matches PJM's own CAMPD
+      actual to **+0.9 / −2.0 / +2.5 %** (CC within ±1.4 %), so it is not simply
+      standing deeper in its stack.
+    - **§W4's "no offer cheap enough" clause is CORRECTED.** The model's cheapest
+      thermal offer is **$4.50** (coal `mustrun`, fuel sunk) — *below* PJM's
+      overnight p05 in all three years. What it lacks is **depth**: only
+      **6.65 / 4.43 / 6.40 GW** of 95.9 / 94.4 / 96.5 GW available offers price
+      below the target (**4.7–6.9 %** of the stack, the same order as ERCOT-136's
+      measured 5.8–8.4 %) against 46–53 GW of thermal to serve. The clearing
+      rung's own p05 is only **+$3.51 / +$5.14 / +$3.33** above target.
+    - **Marginal ≠ energy, and `CT_PEAKER` is the surprise.** Marginal shares are
+      `CC_REGULAR` 44.5 / 42.3 / 40.0 %, **`CT_PEAKER` 17.4 / 20.7 / 27.0 %**,
+      `COAL` 21.0 / 19.9 / 15.3 % — `CT_PEAKER` is a fifth to a quarter of who
+      sets the overnight price on **0.6–1.0 GW** of output, invisible in §W4's
+      energy view. (Item 8's `ST_GAS` closure is confirmed on this second,
+      independent measure: 1.8 / — / 1.9 % of the marginal set.)
+    - **THE STRUCTURAL FINDING, and it is bigger than the overnight cell: nothing
+      in the model's offer varies by hour.** Measured on the keeper's own
+      offers, **every one of the 2,034–2,044 thermal LP rows posts the SAME
+      offer in every hour of a calendar day** — within-day σ **$0.000000**,
+      h01–h04 offer = h16–h18 offer to **$0.0000**, all three years. The startup
+      markup is amortized per calendar **month**; the mid-curve conduct surface
+      is the only hour-varying element and its `[0.80,0.90,0.97]` bins put
+      **99.0 / 97.2 / 94.4 %** of h01–h04 *and* **61.3 / 61.1 / 63.7 %** of
+      h16–h18 in the **same bin 0** (a ~20 GW net-load swing inside one conduct
+      level). So the model's entire intra-day price amplitude comes from
+      merit-order traversal alone.
+    - **ONE DEFECT, TWO WINDOWS.** The model reproduces **31 / 33 / 32 %** of the
+      measured overnight→evening-peak swing, against pjm-139's **26 / 21 / 18 %**
+      of the DJF h04→h07 rise — the same flat-stack defect at two points. The
+      error is sign-symmetric: **+$6.82 / +$5.78 / +$3.40** overnight,
+      **−$7.62 / −$11.37 / −$22.19** at peak. **PJM's annual price level
+      therefore passes by CANCELLATION, not correctness** — judge any successor
+      lever on the AMPLITUDE, never on the mean, and pre-register its
+      annual-level effect.
+    - **The peak half is already owner-closed; only the overnight half is open.**
+      The peak under-pricing is substantially pjm-138's reserve/opportunity-cost
+      lane (owner-closed 2026-07-11). Overnight PJM's reserve price is small and
+      the model's is zero, so that credit does not touch the overnight half.
+    - **`import_hub_pricing` REFUTED as the overnight owner** (cell stays `U`):
+      PJM is genuinely a net exporter overnight and the model tracks EIA-930
+      `Total interchange` to ~1 GW with a sign that flips across years
+      (+0.83 / +1.09 / **−1.29** GW), wrong-signed for the defect in 2023–24.
+    (`FINDING-pjm141-overnight-marginal-tranche-is-correct-the-defect-is-a-flat-offer-stack-2026-07-30.md`.)
+
+13. **PJM's diurnal amplitude deficit is a DIAGNOSED, UNCLOSED structural
+    limitation, and the lever queue for it is EMPTY.** The mechanism the
+    diagnosis names is **hour-varying offer conduct on the marginal rung**, and
+    every in-model route is adjudicated — do not re-charter any of them:
+    - `measured_offer_surface` PJM = **R** under BOTH conditioning definitions
+      (pjm-123 pre-check, pjm-126/127 season, **pjm-132 "Lane 2 ENDS"**, which
+      solved it and measured C3a moving −0.011 $/MWh with dispersion *narrowing*).
+    - **Re-binning that surface's edges is barred independently of the verdict**:
+      with unchanged source data it is a re-derivation against a residual, which
+      **rule 23 `[R-FROZEN-DERIVE]`** forbids. There is no admissible "re-bin it
+      so it binds".
+    - The reserve/scarcity route is **owner-closed** (pjm-138 §6) and does not
+      reach overnight; `ramp_envelopes` is **spent** (pjm-140 §6); **any daily
+      gas series** — including item 10 — is barred by the zero within-day σ.
+    This is the state NYISO's C3c lane reached at nyiso-96/97, and it is a
+    legitimate terminal state under rule 1 `[R-STRUCT]`: the alternative is an
+    adder tuned to the residual, which rule 13 forbids. **It fails no gate** —
+    the keeper is CALIBRATED on every criterion.
+    **The one non-adjudicated successor** (`FINDING-pjm141` §8 lead 1): a **PJM
+    overnight gas commitment bridge**. The keeper carries no bridge
+    (`commitment_enabled` / `pjm_commitment_posture` False) and the three
+    P1-native bridges are ISO-exclusive to CAISO/ERCOT/NYISO; a PJM form would
+    shift marginal ownership from `econ` (p05 $16.58–20.35) toward the cheaper
+    `committed` rung (p05 $14.50) — the right direction. **But pjm-141 partially
+    refutes its premise ex ante:** overnight thermal volume is already correct to
+    ±2.6 % and the LP already loads `committed` preferentially (28.79 of 36.24 GW
+    in merit, 79 %, vs `econ` 15.08 of 48.72, 31 %), so a bridge must move MW
+    *between tranches of the same plants* without adding volume. It needs a real
+    no-LP pre-check, a new `ScenarioConfig` field with its matrix row in the same
+    PR (rule 28 duty c), owner sign-off, and a PREREG committed before any arm.
 
 **CLOSED AT pjm-138, binding on successors — do not re-open (no LP solved;
 `FINDING-pjm138-system-energy-is-reserve-opportunity-cost-2026-07-29.md`):**
