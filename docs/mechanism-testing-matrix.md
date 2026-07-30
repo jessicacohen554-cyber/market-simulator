@@ -860,25 +860,37 @@ loss.
 4. **`measured_ct_heat_rates`** — audit-grade.
 5. **`dual_fuel_switching`** — winter-event pricing candidate (Elliott-class),
    untested in MISO.
-6. **`hydro_budget_nameplate_aware`** + the `NG: PS` pin audit — **audit DONE
-   2026-07-30 (miso-108): the pin defect is CONFIRMED for MISO, and it BLOCKS
-   the mechanism until the LEVEL is fixed.** The mechanism cell stays `U` (not
-   tested, no solve). MISO's keeper runs `hydro_eia930_monthly=True`, pinning
-   the monthly level to EIA-930 `NG: WAT`, while `data/hydro.py` builds the LP
-   units from EIA-923 `HY` only — and MISO files **no `NG: PS` column**, so its
+6. **`hydro_budget_nameplate_aware`** + the `NG: PS` pin audit — **CLOSED
+   2026-07-30 across two sessions: the pin defect was confirmed (miso-108), the
+   LEVEL was fixed (miso-109), and the mechanism is then `I` — provably INERT at
+   MISO.** Audit: MISO's keeper ran `hydro_eia930_monthly=True`, pinning the
+   monthly level to EIA-930 `NG: WAT`, while `data/hydro.py` builds the LP units
+   from EIA-923 `HY` only — and MISO files **no `NG: PS` column**, so its
    `NG: WAT` carries pumped-storage discharge. Proof: `NG: WAT` exceeds MISO's
    entire 2,478 MW conventional-hydro nameplate in 332–827 h/yr (peak **+1,486
    MW**, 2024) against a **2,417 MW** PS fleet (Ludington 1,979 / Taum Sauk 408
    / Degray 30), with **zero** negative-`WAT` hours, so the contamination is
    one-way gross discharge (923 PS net is −0.7 to −1.0 TWh/yr, the opposite
    sign). Gap vs the 923 `HY` budget: **+1.190 TWh / +13.5 %** (2023),
-   **+1.701 TWh / +18.8 %** (2024). **2025 is not quotable** — its 923 filing is
+   **+1.669 TWh / +18.5 %** (2024). **2025 is not quotable** — its 923 filing is
    an early release with 14 plants vs 165, so the naive +918 % is a source
-   coverage artifact. Next step is the **level** fix (923 `HY` directly, or
-   `NG: WAT` shape rescaled to the 923 level and documented as a
-   reconciliation), *then* the allocation on MISO's own parameters; arming the
-   allocation first is barred by rules 14/19. Evidence:
-   `results/calibration/FINDING-miso108-hydro-ps-pin-audit-2026-07-30.md`.
+   coverage artifact. Fix (miso-109): the level now comes from EIA-923 `HY`
+   directly, so level and units are the same population — the `NG: WAT` pin is
+   refused for any BA in `constants.EIA930_PS_FOLDED_INTO_WAT`. **No
+   reconciliation factor** was used: none is identifiable from the source data
+   (MISO's conventional share of `NG: WAT` drifts 0.9937 → 0.8442 over 2019–2024
+   and the monthly gap changes sign by month in 4 of 5 complete years), so the
+   "rescale the 930 shape to the 923 level" alternative is refused on measured
+   evidence, not preference. **Then the mechanism itself:** with no level
+   *target* there is nothing for the nameplate-aware allocator to re-distribute,
+   so the budgets are byte-identical with it on and off in all three years
+   (L1 = 0.000 GWh) — `U` → **`I`**, adjudicated without a solve. On the
+   *contaminated* level it had moved 259 / 454 / 171 GWh, i.e. its entire
+   apparent MISO signal was the allocator shuffling PS contamination off
+   plant-months pushed above their own nameplate×hours ceiling. Evidence:
+   `results/calibration/FINDING-miso108-hydro-ps-pin-audit-2026-07-30.md`,
+   `results/calibration/FINDING-miso109-hydro-level-923hy-2026-07-30.md`,
+   probe `scripts/probes/_miso109_hydro_level_audit.py`.
 
 ### 5.5 NYISO — target: C3c (sole blocker, roof-blocked)
 
@@ -1127,14 +1139,31 @@ charter with a new measured identification** before a solve:
 
 - Post-guard re-derivation sweep of outage-derived artifacts, all six ISOs
   (flagged in governance.md 2026-07-26, unaudited).
-- `NG: PS` hydro-pin audit (PJM disclosed; every hydro BA to check). **MISO
-  audited 2026-07-30 (miso-108): DEFECT CONFIRMED**, +1.2–1.7 TWh/yr (13–19 %)
-  of PS discharge inside the pinned hydro level; level fix owed before
-  `hydro_budget_nameplate_aware` can be tested there (§5.4 item 6).
-  **Still unaudited: NYISO, NEISO** — NEISO began filing `NG: PS` in Nov 2024
-  (`eia930/actuals.py`), so its exposure is likely a time-split rather than a
-  total omission. The check is mechanical and portable: no `NG: PS` column →
-  `NG: WAT` exceeding conventional-hydro nameplate → zero negative-`WAT` hours.
+- `NG: PS` hydro-pin audit — **ALL SIX ISOs NOW SCREENED** (miso-108 audited
+  MISO; miso-109 fixed it and ran the same three-signature screen across the
+  rest, `scripts/probes/_miso109_hydro_level_audit.py`). The check is
+  mechanical and portable: no `NG: PS` column → `NG: WAT` exceeding
+  conventional-hydro nameplate → zero negative-`WAT` hours (a series that
+  netted pumping would go negative). Rule 25 — a screen result is evidence for
+  that ISO's own lane, never a transferred verdict.
+
+  | ISO | `NG: PS` col | h/yr above conv. nameplate | neg. `WAT` h | 930 vs 923 `HY` | verdict |
+  |------|---|---|---|---|---|
+  | ERCOT | no | 0 | 0 | — | clean (no PS fleet) |
+  | CAISO | no | **0** | 1–121 | — | clean; negatives show pumping IS netted |
+  | PJM | no | **1,249–1,612** | 0 | **+52.9 % … +79.6 %** | **DEFECT, largest — own lane owes the fix** |
+  | MISO | no | 332–826 | 0 | +13.5 % / +18.5 % | **DEFECT — FIXED (miso-109)** |
+  | NYISO | no | 0–33 (≤0.007 TWh) | 0 | −4 % … −6 % | clean; the bias is the opposite sign |
+  | NEISO | **yes** (from Nov 2024) | 63–276, **0 in 2025** | 0–1 | +2.7 % … +10.1 % | **TIME SPLIT** — pre-Nov-2024 vintages only |
+
+  Open follow-ons: **PJM** (a live defect on a live keeper — the fix is the
+  same one-line registry entry plus its own A/B and re-gate) and **NEISO**
+  (needs a per-window treatment, not a switch, since its own filing changes
+  mid-series). Standing hazard for every listed ISO: the hydro dispatch
+  *envelope* and *min-flow floor* are also built from hourly `NG: WAT` and
+  inherit the same contamination — both are default-off and off in the affected
+  keepers today, so nothing is stacked, but arming either needs its own source
+  fix first (EIA-923 is monthly and offers no hourly substitute).
 - `thermal_tranches_<ISO>.csv` provenance re-derivation (blocked at HEAD,
   miso-95).
 - Registry hygiene fixes from §4.6 (dangling `--ramp-limits`, inert-default
