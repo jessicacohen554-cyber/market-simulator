@@ -159,13 +159,22 @@ def apply_iso_monthly_ttc(ttc, iso_config, iso: str, year: int, hours: int):
     when the ISO has a measured monthly interface envelope for ``year``.
 
     NYISO's Central-East day-ahead TTC is not flat across a year: it steps up
-    when the AC Transmission upgrade energizes (Dec 2023) and derates each
-    late-summer/shoulder. ``constants.NYISO_INTERFACE_TTC_BY_MONTH`` carries the
-    measured 12-month mean per interface; this maps each hour of the backcast
-    year to its calendar month (leap-safe) and rewrites the matching link's
-    limit hour by hour, so the dispatch binds on the seasonal envelope rather
+    when the AC Transmission upgrade energizes (Dec 2023) and moves month to
+    month with that year's approved transmission outages.
+    ``constants.NYISO_INTERFACE_TTC_BY_MONTH`` carries the measured 12-month
+    mean per interface; this maps each hour of the backcast year to its
+    calendar month (leap-safe) and rewrites the matching link's limit hour by
+    hour, so the dispatch binds on the measured within-year envelope rather
     than one annual value. Returns ``ttc`` unchanged (1-D) for ISOs/years with
     no monthly table — byte-identical to the prior scalar path.
+
+    **Backcast-only, and deliberately so** (rule 13 [R-MEASURED]; nyiso-104,
+    D-5 row ``nyiso_central_east_measured_ttc``). The within-year shape is
+    *not* a seasonal rating — on the unchanged post-upgrade topology the
+    level-normalized monthly shape correlates across 2024/2025 at only
+    r=+0.21 — so it carries no forward analogue, and applying it to a forecast
+    year would import one historical year's outage schedule. The forward
+    channel for the *level* is the transmission-expansion registry.
     """
     if iso != "NYISO":
         return ttc

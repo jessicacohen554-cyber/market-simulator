@@ -2308,11 +2308,25 @@ PJM_INTERFACE_LINK_MAP: dict[tuple[str, str], tuple[str, ...]] = {
 # NY Transco's "AC Transmission" Segment A (Central-East, Edic–New Scotland /
 # Princetown–Rotterdam 345 kV) energized in December 2023, which the postings
 # capture as a step from ~1,525-1,950 MW (Jan-Nov 2023) to ~2,725 MW (Dec 2023)
-# and ~2,500-3,175 MW across 2024-25, with a recurring late-summer/shoulder
-# derate. NYISO_INTERFACE_TTC_BY_MONTH carries that seasonal envelope (12
-# monthly means per year); _BY_YEAR carries the annual mean as the scalar
-# fallback for paths that do not apply the monthly profile (e.g. forecast).
+# and ~2,500-3,175 MW across 2024-25. NYISO_INTERFACE_TTC_BY_MONTH carries the
+# within-year envelope (12 monthly means per year); _BY_YEAR carries the annual
+# mean, used where no monthly table exists for the year.
 # UPNY-SENY stays at its static 5,150 MW (it does not bind in the backcast).
+#
+# BOTH TABLES ARE BACKCAST-ONLY OVERLAYS, and the within-year variation is NOT
+# a seasonal rating (nyiso-104, rule 13 [R-MEASURED] classification; D-5 row
+# nyiso_central_east_measured_ttc). An earlier revision of this comment claimed
+# "a recurring late-summer/shoulder derate"; that is FALSIFIED by the tables
+# themselves — across 2024 and 2025, which share one post-upgrade topology, the
+# level-normalized monthly shape correlates at only r=+0.21 and the Aug-Nov
+# derate is +7.9 % in 2024 but +0.0 % in 2025, with the deepest-derate month
+# moving Sep -> Apr. The within-year signal is that year's own realized
+# transmission-outage schedule, so it has no forward analogue and must never be
+# pushed into a forecast year. The forecast path is not missing anything as a
+# result: the LEVEL's forward channel is the transmission-expansion registry
+# (data/raw/transmission-expansion/nyiso.csv) over the static 2,850 MW, which is
+# itself this series' measured post-upgrade annual mean. See
+# scripts/probes/nyiso104_central_east_ttc_classification.py.
 NYISO_INTERFACE_TTC_BY_YEAR: dict[int, dict[tuple[str, str], float]] = {
     2023: {("Upstate_West", "Capital_Hudson"): 1750.0},
     2024: {("Upstate_West", "Capital_Hudson"): 2850.0},
@@ -2322,8 +2336,9 @@ NYISO_INTERFACE_TTC_BY_YEAR: dict[int, dict[tuple[str, str], float]] = {
 # Measured calendar-month mean DAM TTC (MW) for the Central-East interface, one
 # 12-element list (Jan..Dec) per backcast year. Applied per-hour over a single
 # backcast year by run_calibration._apply_iso_monthly_ttc, which expands the
-# scalar TTC array to (hours, n_links) so the dispatch runs on the seasonal
-# Central-East envelope instead of one annual value. Regenerate with
+# scalar TTC array to (hours, n_links) so the dispatch runs on the measured
+# within-year envelope instead of one annual value. Backcast-only (see the
+# classification note on _BY_YEAR above). Regenerate with
 # scripts/data/derive_nyiso_central_east_ttc.py after refreshing the postings.
 NYISO_INTERFACE_TTC_BY_MONTH: dict[int, dict[tuple[str, str], list[float]]] = {
     2023: {

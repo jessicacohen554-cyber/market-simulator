@@ -278,3 +278,63 @@ SLD TAC actual; the "supply-implied load" alternative was REJECTED as a
 zero-daily-mean 930 supply-side artifact, so no outcome series entered the
 demand input). Inert-probe record:
 `results/calibration/FINDING-caiso74-storage-as-reservation-2026-07-11.md`.
+
+---
+
+## `NYISO_INTERFACE_TTC_BY_MONTH` / `_BY_YEAR` — measured Central-East DAM transfer capability (2026-07-30)
+
+**Declared backcast overlay** (nyiso-104). This entry closes a registry gap
+rather than admitting a new input: the overlay has been live in every NYISO
+backcast since the Central-East tables landed, but it carried **no D-5 row**,
+so the parity gate was blind to it. It is now
+`nyiso_central_east_measured_ttc` in
+`scripts/legitimacy_diagnostics.py::D5_REGISTRY`, `declared=True`,
+`mode="backcast_only"`, ISO-scoped to NYISO.
+
+**What it is.** The month-mean of NYISO's posted MIS `ATC_TTC` `TTC (DAM)`
+series for the `CENT EAST` interface (`scripts/data/derive_nyiso_central_east_ttc.py`),
+applied to the `Upstate_West -> Capital_Hudson` link — per-hour by calendar
+month (`_BY_MONTH`, via `pipeline/ttc.py::apply_iso_monthly_ttc`) over an
+annual-mean scalar (`_BY_YEAR`, via `apply_iso_year_ttc`). Both helpers are
+called only from `scripts/run_calibration.py`; `runner.py` never references
+them.
+
+**Why it is an overlay and not a forward mechanism.** The charter for this
+session posed the fork explicitly — a measured series with no forward analogue
+(declare it) versus a published seasonal rating that regenerates forward (wire
+it into the forecast, as nyiso-102 did for the three downstate mechanisms).
+It resolves to the former, on a falsifiable test of the source data rather
+than by analogy:
+
+| test | result | reading |
+|---|---|---|
+| Level-normalized monthly shape, correlated across the two years sharing the post-AC-Transmission topology (2024 vs 2025) | Pearson r = **+0.21**, Spearman ρ = +0.16, dihedral-null one-sided p = 0.25 | A rating recomputed the same way each year would repeat at r ≈ 0.9+ on an unchanged network. The true calendar alignment is no better than a rotated or reversed one. |
+| Deepest-derate month, same two years | **Sep (2024) → Apr (2025)** | The derate is not anchored to a season. |
+| The prior provenance comment's "recurring late-summer/shoulder derate" | Aug–Nov derate **+7.9 % (2024)** but **+0.0 % (2025)** | **Falsified**; the comment is corrected in `constants.py`. |
+| Variance decomposition over all 36 monthly means | 82.0 % between-year (level/step); 6.8 % is the post-upgrade within-year shape (sd 162/199 MW on a 2,850 MW link) | The disputed component is both non-reproducible *and* small. |
+
+The within-year signal is that year's own **approved transmission-outage
+schedule** — a physical availability event on the network, the same
+admissibility family as `historic_outage_overlay` on a unit, and admissible in
+a backcast for the same reason. What it does not have is a forward analogue at
+the *month* level, so pushing these numbers into a forecast year would import
+one historical year's outage schedule into every forward year.
+
+**The forecast loses nothing by this.** The *level* — the component that is
+forward-reproducible — already has its forward channel: the
+transmission-expansion registry (`data/raw/transmission-expansion/nyiso.csv`,
+`in_service_year` + ΔTTC, wired into `runner.py`) over the static 2,850 MW in
+`iso_configs._nyiso_config`, which is itself this series' measured
+post-upgrade annual mean. The registry's own Smart Path Connect row already
+records that reasoning ("the model's Central-East 2,850 MW static is the
+measured 2024-25 DAM mean"). So the correct forward treatment of a
+Central-East re-rate is a registry row with a published instrument and an
+in-service date — not this table.
+
+Adjudication record: `docs/FINDING-nyiso104-central-east-ttc-classification-2026-07-30.md`;
+probe `scripts/probes/nyiso104_central_east_ttc_classification.py`.
+
+**Data status:** `data/raw/NYISO/ATC_TTC.zip` is **not present in this
+environment** (see the `DATA NEEDED` note in `data/raw/NYISO/README.md`); the
+committed tables are the derived artifact. Re-fetch from NYISO's MIS before
+re-running the derive script.
