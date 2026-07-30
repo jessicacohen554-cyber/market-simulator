@@ -2768,7 +2768,16 @@ a known property, not patched.
   is `False`. Pinned as a regression test.
 - **Empirical:** a same-HEAD zero-delta control (`replay_keeper.py` on the keeper's own
   `meta.json`, 2023 2024 2025 in one sequential invocation, rule 16) reproduces the
-  keeper bit-for-bit — see the A/B line below.
+  keeper **BIT-FOR-BIT**: `max |delta| = 0.0000000000` over `class_hourly` / `system` /
+  `storage` × 3 years — 42 numeric columns, **2,417,760 value comparisons**, every shape
+  matching. Not "within tolerance": exactly zero. The pass criterion was pre-registered
+  and pushed (`a5fc1b8`) **while year 2025 was still solving**.
+
+**No run registered; rule 15 satisfied vacuously.** The control reproduces an
+already-registered keeper exactly, so registering it would put a numerically
+indistinguishable duplicate on the run explorer — the nyiso-101 precedent (*"say so
+explicitly rather than inventing a bundle"*). Unlike nyiso-100's registered control,
+which was the A-side of a real A/B, here the A/B is A against A.
 
 ### Result
 
