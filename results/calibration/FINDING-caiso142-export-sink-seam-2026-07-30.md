@@ -354,6 +354,107 @@ introduces a new measured parameter needing its own derive script, citation and
 forward story. It is the named successor charter; the arm under the grant carries
 the seam composition fix alone.
 
+## §J — the A/B result: **NOT a keeper. P2 FAILS, and it falsifies §I.** The restored outlet is node-level RESALE, not export — caiso-138 §E was right and my §I read of the bound was wrong
+
+Arms (both `--year 2023 2024 2025`, one invocation each, sequential, same
+`basis_sha 9e393a9`): `caiso142_control_A` (no delta) and `caiso142_seam_B`
+(`caiso_p1_export_sink_seam=true`). Scored by the frozen
+`scripts/probes/_caiso142_arm_gates.py`, committed before the arms finished.
+
+| gate | result |
+|---|---|
+| **P1** outlet exists | **PASS** — B exports in 3,339/4,788/4,075 h (PNW) and 1,683/1,496/1,062 h (DSW); A exports in **0** h; corridor-group limit violation **0.0000 MW** |
+| **P2** volume inside the measured envelope | **FAIL** — B's export energy EXCEEDS the corridor's measured export-envelope energy in 4 of 6 corridor-years (PNW 2024 **10.030 vs 9.722 TWh**, PNW 2025 **7.040 vs 6.352**, DSW 2023 **2.033 vs 1.552**, DSW 2024 **2.207 vs 1.659**), and B exports in **99/1,463/734/1,422/1,393/948** hours where that envelope is **0 MW** |
+| **P3** corridor net toward measured | PASS as written (PNW │err│ 9.90→3.28, 10.22→0.24, 8.07→1.12 TWh) — **but see below: achieved through the P2 channel, so it is not evidence of structural gain** |
+| **P4** C3a up, inside ceiling | PASS — move **+3.401/+4.172/+2.649** vs ceilings +9.379/+7.860/+3.865 |
+| **P5** band | **C3a-2024 leaves the band: +8.00 % → +20.06 % (PASS → FAIL).** 2023 +3.22 % → +9.50 % (still PASS, 0.5 pt of margin left); 2025 +10.91 % → +18.61 % (FAIL → FAIL) |
+| **P6** control integrity | **PASS, exact** — arm A max │Δprice│ = 0 and max │Δdump│ = 0 vs the committed keeper, all 3 years / 7 zones, which also proves the flag-OFF path byte-identical on the full solve path |
+
+**Per the pre-registered §3 rule (P1∧P2∧P3∧P6 ∧ P4-sign/ceilings): NOT
+PROMOTED.** P2 fails, and P2 was written as the gate that *"distinguishes a
+bounded, measured outlet from the caiso-138 §E unbounded U-turn."* It does.
+
+**The scored rubric confirms it independently, and worse than P5 alone showed.**
+Registered run ids `2026-07-30-caiso142-control` and
+`2026-07-30-caiso142-seam-sink-live`:
+
+| | determination | governance | fail set | grade |
+|---|---|---|---|---|
+| keeper `caiso139_dumpguard_B` | NOT-YET | PASS | {C3a, **C3c**} | 7/9 |
+| **arm A control** | NOT-YET | PASS | {C3a, **C3c**} | 7/9 — **identical to the keeper** |
+| **arm B seam** | NOT-YET | PASS | {C3a, **C3b**} | 7/9 |
+
+Arm A reproduces the keeper's determination, governance and fail set exactly —
+control integrity confirmed at the rubric level as well as byte level (P6).
+
+Arm B keeps the *count* at 2 but **swaps a load-bearing criterion for a
+supporting one**: **C3b (price duration/shape, load-bearing) breaks
+PASS → FAIL**, while C3c (price tail, supporting) flips FAIL → PASS. That C3c
+"pass" is the phantom-resale price inflation putting hours into the tail, not
+scarcity formation — CAISO still has no scarcity-pricing mechanism in the scored
+lane (caiso-137b), so it cannot be read as a C3c closure. Net: the arm trades
+C3b **and** the C3a-2024 band exit for a mechanism §J shows is not real.
+
+**The mechanism, measured (why P2 fails while the link limit is never
+violated).** In the closed-envelope hours where the sink transacts:
+
+| year | corridor | closed-envelope h | of which sink exports | net LINK flow p50 | flow ≥ 0 | import inject p50 | sink absorb p50 |
+|---|---|---|---|---|---|---|---|
+| 2024 | WECC_PNW | 1,644 | 734 | **0.0 MW** | **100.0 %** | 2,095 MW | 1,825 MW |
+| 2024 | WECC_DSW | 7,172 | 1,422 | +212 MW | **100.0 %** | 2,262 MW | 1,503 MW |
+| 2025 | WECC_PNW | 3,062 | 1,393 | **0.0 MW** | **100.0 %** | 2,078 MW | 1,761 MW |
+| 2025 | WECC_DSW | 7,260 | 948 | +741 MW | **100.0 %** | 2,314 MW | 1,332 MW |
+
+Node balance `import_inject + sink = link_flow` holds to **0.0002 MW**. So the
+sink's counterparty is the **same-node import block**, and the transaction never
+crosses the link — the net corridor flow stays ≥ 0 in 100 % of those hours.
+
+**§I is therefore WRONG and is withdrawn.** Its claim that *"the quantity bound
+was never the sink's pmin — each corridor group's `limit_dn` bounds the
+outlet"* misread the topology: `limit_dn` bounds the **net link flow**, not the
+sink's withdrawal. A sink that trades against injections at its own node is
+invisible to every link and group constraint in the model. **caiso-138 §E's
+refusal was correct on its own terms**, and this session's "new evidence retires
+it" was a reading error, corrected here by measurement. The refusal stands; §E
+of this finding stands only as the *price-basis* observation (§I part 2), not as
+a bound argument.
+
+**What the U-turn actually is.** The firm tranches (`PNW_hydro_base`,
+`DSW_solar_PV`) are pmin = pmax must-flow blocks priced at inframarginal
+contract cost, so the forced energy arrives at the node whatever CA's λ. With a
+live sink the LP diverts it to `hub − ε` whenever that beats delivering to CA —
+exactly the "delivered firm energy U-turned out of the market" §E described.
+Consequences all measured: the PNW link's delivered flow collapses **1,067→311 /
+1,402→263 / 1,462→668 MW mean**, CA loses that supply, and C3a rises
++$3.40/+4.17/+2.65.
+
+**P3's pass is not a structural win, and is not claimed as one.** The PNW
+corridor net does move toward its measured net (9.90→3.28, 10.22→0.24,
+8.07→1.12 TWh of error) — but the channel doing it is the phantom resale above:
+a phantom *import* (caiso-138 §C's ~1 GW-mean overreach) is being cancelled by a
+phantom *export*. The interchange number improves through a mechanism that is
+not real, which is precisely what rule 1 [R-STRUCT] forbids ("never reach the
+right number through a mechanism that isn't real"). The pre-registered P3 was
+too weak to separate these — a fair criticism of the prereg, recorded rather
+than argued away. Its per-corridor split did discriminate partially (DSW 2023
+moves *away*), but the decisive discriminator turned out to be P2.
+
+**Disposition.** Keeper stays `2026-07-29-caiso139-dump-guard-offer`. The seam
+fix stays in the code, **default-off**, byte-identical off (P6, exact) — a
+correctly-implemented gate whose arm is now measured-refused on this fleet. What
+a future arm would need first, in order:
+
+1. **A node-level export constraint**, not a link-level one — the sink must be
+   barred from absorbing against same-node injections. The natural form is a
+   per-node net-interchange row (the machinery exists: `model/lp/rows.py:1416`
+   already pins a node's net interchange for other designs), bounded by the
+   measured export envelope. Without it no sink bound is enforceable.
+2. **The re-based export price** (§I part 2): measured PNW netback
+   −$3.56/−8.30/−7.40 and DSW +$3.69/+4.39/+4.49 vs the raw hub, so `hub − ε`
+   over-prices the outlet on both corridors and maximises the U-turn.
+3. **Only then** the caiso-138 §C firm-block energy overreach, whose phantom
+   import is what the sink is currently laundering.
+
 Carried forward unchanged: everything in `FINDING-caiso141` §G,
 `FINDING-caiso140` §G, `FINDING-caiso139` §G, `FINDING-caiso138` §G (both sink
 re-arm forms remain refused — this finding adds the reason they cannot help),
