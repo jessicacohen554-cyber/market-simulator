@@ -2551,7 +2551,7 @@ keeper's own `meta.json`, so the flag is the only delta.
 | **G1** LIVE-mechanism | arm topology carries **zero** import-node interface limits, control exactly one at 4,350 MW — confirmed by topology rebuild **and** the arm's own solve log |
 | **G2** releases | import max 4,350.0 → **6,518.9 / 6,470.0 / 6,075.0 MW**; hours pinned AT the old cap **548/689/176 → 0/2/0**; hours above it 0 → 436/587/161. Every max inside the pre-registered (4,350, 6,800] window |
 | **G3** volume band-held | ±2 % monthly band holds every month of every year; upper-edge months **rise 10/11/11 → 12/12/11**; import energy moves only **+0.041/+0.070/+0.035 TWh** (+0.17/+0.34/+0.18 %) |
-| **G4** C1 | **all 14/14 · free 10/10**, identical to the keeper; knife-edge 2023 `CC_REGULAR` (−2.79 of ±2.94) still passes |
+| **G4** C1 | **all 14/14 · free 10/10**, identical to the keeper. The knife-edge 2023 `CC_REGULAR` cell does move: **−2.79 of ±2.94 in the control** (32.512 TWh — the prior keeper's own value) **→ −2.80 in the arm** (32.497 TWh), a ~15 GWh/yr shift. Still passes, comfortably inside band |
 | **G5** C7/C8 | both **PASS**. Fragile 2024 `ST_GAS` grounded-above-budget moves 30.4 → 30.6 % forced, but stays a **grounded** pass and its grounding evidence **improves on both legs** (D-1 profile r 0.954 → 0.958, off-peak CV ratio 0.957 → 0.972), every binding mechanism still clearing D-4 |
 
 Slack and dump stay **exactly 0.0 MWh** in every year, both runs.
