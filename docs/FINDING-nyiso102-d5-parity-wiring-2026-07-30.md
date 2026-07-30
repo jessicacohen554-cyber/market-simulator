@@ -202,7 +202,22 @@ Pinned as a regression test
 replays the keeper's own `meta.json` (so the fix is the only delta) across
 **2023 2024 2025 in one sequential invocation** (rule 16) into
 `results/calibration/nyiso102_ctrl_zerodelta`, compared against the committed
-keeper hourlies. Result in §6.
+keeper hourlies.
+
+The pass criterion was **pre-registered and committed before the solve finished**
+(commit `a5fc1b8`, pushed while year 2025 was still solving): max |delta|
+*exactly* 0.0 on every numeric column of every shared sidecar, all three years.
+
+**Result — BIT-FOR-BIT IDENTICAL:**
+
+```
+max |delta| across every numeric column, all years: 0.0000000000
+VERDICT: BIT-FOR-BIT IDENTICAL — max |delta| exactly 0.0 everywhere.
+```
+
+Coverage: `class_hourly` / `system` / `storage` sidecars × 3 years = 9 files,
+**42 numeric columns, 2,417,760 value comparisons**, every shape matching. Not
+"within tolerance" — exactly zero.
 
 ---
 
@@ -220,7 +235,16 @@ entirely** — not downgraded to a sanctioned difference, but absent, because
 This is the correct shape of the fix: the gate stops reporting a difference
 because there is no longer a difference.
 
-Zero-delta control vs the committed keeper: see §7 and the calibration log entry.
+Zero-delta control vs the committed keeper: **bit-for-bit identical**, §5(c).
+
+**No run is registered on the dashboard, and rule 15 is satisfied vacuously.**
+The control reproduces an already-registered keeper *exactly* — same config,
+same numbers to the last bit — so registering it would put a numerically
+indistinguishable duplicate on the run explorer. This follows the nyiso-101
+precedent (*"there is NO run to register … say so explicitly rather than
+inventing a bundle"*). It differs from nyiso-100's registered control, which was
+the A-side of a real A/B; here the A/B is A against A. The control bundle is a
+verification artifact, not a result.
 
 ---
 
