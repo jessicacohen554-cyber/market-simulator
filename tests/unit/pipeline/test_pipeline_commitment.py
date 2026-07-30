@@ -305,6 +305,80 @@ def test_caiso_ra_p1_floor_fleet_sets_floor_and_raises_availability():
     assert fa.min_gen is None
 
 
+def test_caiso_p1_export_sink_seam_gate():
+    """The pmin<0 absorption rows survive the bridge composition only when gated.
+
+    caiso-142 / FINDING-caiso138 §D: ``_bridge_floored_fleet`` maximum-composes a
+    zeros-initialised bridge floor onto ``min_gen``, so an export sink's
+    ``max(-TTC, 0) = 0`` collapses its absorption range and the SCORED P1 pass
+    solves with the outlet deleted. Gate off = that behaviour (byte-stable for
+    every existing keeper); gate on = the sink keeps its own pmin, nothing else
+    moves, and MECH_RA_MUSTOFFER never lands on a sink row.
+    """
+    from market_sim.data.floor_mechanisms import MECH_RA_MUSTOFFER
+
+    gens, fa, demand, mc_base, _dk = _trivial_inputs("CAISO")
+    iso_config = get_iso_config("CAISO")
+    # A priced export sink exactly as the per-hub intertie builds one: pmax 0,
+    # pmin = -corridor TTC, absorption modeled as negative generation.
+    sink = Generator(
+        unit_id="WECC_PNW_export_MALIN",
+        name="export_MALIN",
+        zone=iso_config.zone_names[0],
+        fuel_type="import",
+        pmax_mw=0.0,
+        pmin_mw=-4800.0,
+        heat_rate=0.0,
+        vom=0.0,
+        eford=0.0,
+    )
+    gens = [*gens, sink]
+    fa = generators_to_fleet_arrays(gens, iso_config.zone_names, hours=T)
+    p0 = np.zeros((len(gens), T))
+    p0[0, :10] = 200.0
+    p0[0, 12:] = 200.0  # a 2-hour gap on the CC so the bridge has work
+    prices = np.full((demand.shape[0], T), 40.0)
+    mc_base = np.vstack([mc_base, np.full(T, 25.0)])
+
+    off = caiso_ra_p1_floor_fleet(
+        ScenarioConfig(hours=T, caiso_ra_mustoffer=True),
+        "CAISO",
+        gens,
+        fa,
+        p0,
+        prices,
+        mc_base,
+    )
+    on = caiso_ra_p1_floor_fleet(
+        ScenarioConfig(
+            hours=T, caiso_ra_mustoffer=True, caiso_p1_export_sink_seam=True
+        ),
+        "CAISO",
+        gens,
+        fa,
+        p0,
+        prices,
+        mc_base,
+    )
+    assert off is not None and on is not None
+    # Gate OFF reproduces the seam: the sink's lower bound is pinned to 0.
+    assert np.allclose(off.min_gen[-1], 0.0)
+    assert np.all(off.min_gen_mechanism[-1] == MECH_RA_MUSTOFFER)
+    # Gate ON restores the absorption range and clears the spurious D-2 tag.
+    assert np.allclose(on.min_gen[-1], -4800.0)
+    assert np.all(on.min_gen_mechanism[-1] == 0)
+    # Surgical: every non-absorption row and the availability array are identical.
+    assert np.array_equal(off.min_gen[:-1], on.min_gen[:-1])
+    assert np.array_equal(off.min_gen_mechanism[:-1], on.min_gen_mechanism[:-1])
+    assert np.array_equal(off.availability, on.availability)
+    # The gate is CAISO-scoped: the shared composer defaults to the old behaviour
+    # so the ERCOT / NYISO bridges are untouched (rule 25 [R-ISO-SCOPE]).
+    shared = pipeline_commitment._bridge_floored_fleet(
+        fa, np.zeros((len(gens), T)), MECH_RA_MUSTOFFER
+    )
+    assert np.allclose(shared.min_gen[-1], 0.0)
+
+
 def test_cc_startup_lead_hours_mapping(monkeypatch):
     """Lead mapping: plant row wins, class row backfills, CT/CHP stay 0, and
     a missing artifact leaves the extension inert (caiso-96 WP-1)."""

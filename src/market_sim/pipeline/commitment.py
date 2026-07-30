@@ -232,10 +232,20 @@ def caiso_ra_p1_floor_fleet(
             apply_ra_mustoffer_quantity_gate(ra_floor, fleet, fleet_arrays, cap_mw)
     if not np.any(ra_floor > 0.0):
         return None
-    return _bridge_floored_fleet(fleet_arrays, ra_floor, MECH_RA_MUSTOFFER)
+    return _bridge_floored_fleet(
+        fleet_arrays,
+        ra_floor,
+        MECH_RA_MUSTOFFER,
+        preserve_absorption=bool(getattr(config, "caiso_p1_export_sink_seam", False)),
+    )
 
 
-def _bridge_floored_fleet(fleet_arrays, bridge_floor: np.ndarray, mech_id: int):
+def _bridge_floored_fleet(
+    fleet_arrays,
+    bridge_floor: np.ndarray,
+    mech_id: int,
+    preserve_absorption: bool = False,
+):
     """Compose a P1-native bridge floor onto a ``FleetArrays`` (shared tail).
 
     The floor-composition/attribution/feasibility sequence both P1-native
@@ -248,6 +258,24 @@ def _bridge_floored_fleet(fleet_arrays, bridge_floor: np.ndarray, mech_id: int):
     infeasible — the same guard the P2 preserve_min_gen path applied, minus
     the coal pin / commitment mask (P1 solves every unit freely above the
     floor; there is no second pass to lock a prior dispatch into).
+
+    Args:
+        preserve_absorption: Exempt the ``pmin < 0`` absorption rows (the
+            priced export sinks) from the maximum-composition, restoring the
+            invariant ``data.fleet.arrays._compose_min_gen_floors`` already
+            states for its own zeros-init: *"export sinks (pmin < 0,
+            absorption modeled as negative generation) must keep their range
+            — a zero floor would pin them off"*. The bridge floor is a
+            zeros-initialised array positive only on bridged thermal rows, so
+            ``max(pmin, 0) = 0`` collapses every sink's lower bound to zero
+            and the scored P1 pass solves with its export outlet DELETED
+            while P0 keeps it (FINDING-caiso138 §D measured the consequence:
+            zero exports in all 26,280 corridor-hours of every CAISO keeper
+            since the RA bridge). Default ``False`` — the seam is
+            CAISO-flag-gated (``ScenarioConfig.caiso_p1_export_sink_seam``)
+            so no other ISO's keeper recipe shifts underneath it; the ERCOT
+            and NYISO bridges re-gate on their own evidence (rule 25
+            [R-ISO-SCOPE], caiso-138 §D cross-ISO blast radius).
     """
     import dataclasses
 
@@ -257,13 +285,21 @@ def _bridge_floored_fleet(fleet_arrays, bridge_floor: np.ndarray, mech_id: int):
         else np.broadcast_to(fleet_arrays.pmin[:, None], bridge_floor.shape)
     )
     new_min_gen = np.maximum(base_min_gen, bridge_floor)
+    if preserve_absorption:
+        absorb = np.asarray(fleet_arrays.pmin, dtype=float) < 0.0
+        if absorb.any():
+            new_min_gen[absorb, :] = np.asarray(base_min_gen, dtype=float)[absorb, :]
     base_mech = getattr(fleet_arrays, "min_gen_mechanism", None)
     new_mech = (
         base_mech.copy()
         if base_mech is not None
         else np.zeros(bridge_floor.shape, dtype=np.int8)
     )
-    new_mech[bridge_floor > base_min_gen] = mech_id
+    # Tag where the COMPOSED floor strictly rose, not where the raw bridge
+    # floor exceeds the base: identical for every gen row, and with
+    # preserve_absorption on it keeps MECH_RA_MUSTOFFER off the exempt sink
+    # rows (the raw floor's 0 does exceed their negative pmin).
+    new_mech[new_min_gen > base_min_gen] = mech_id
     avail = fleet_arrays.availability.copy()
     pmax_safe = np.maximum(fleet_arrays.pmax, 1.0)[:, None]
     floored = new_min_gen > 0.0
