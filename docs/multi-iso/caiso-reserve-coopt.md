@@ -77,22 +77,37 @@ short"). Verified in a trivial LP: reserve-short + energy-abundant prices reserv
 at $700 (spin $100 + non-spin $600) without lifting LMP; reserve-short +
 energy-tight lifts LMP by the summed reserve dual (`test_reserve_coopt`).
 
-## Documented gaps (issue #1492 "Honest expectation" — next increments)
+## Documented gaps (issue #1492 "Honest expectation") — 2/3 CLOSED in source
 
-Each would ADD reserve supply, so this first build **over-states** scarcity
-ex-ante (rule 1: right structure first, level tuning later — a real mechanism
-stays in even if it worsens the fit):
+*(Updated 2026-07-30, caiso-144 `/sync-docs`: this section described the
+2026-07-06 caiso-59 state. The completion increments have since been built —
+the code is the source of truth.)*
 
-* **Storage** — the dominant CAISO AS provider (2023–25), but
-  `_build_reserve_rows_pergen` backs no per-unit storage reserve columns
-  (`storage_eligible` is inert on the pergen path). Extending the pergen builder
-  with per-unit storage reserve columns is the highest-value next step.
-* **Hydro** — a certified spin/non-spin provider (166 plants, ~6.4 GW), but
-  `RAMP10_FRAC_BY_*` has no hydro entry so its `ramp10 = 0` and the
-  `ramp10 > 0` pergen filter drops it. `_caiso_reserve_eligible` is the seam
-  where a published 10-minute hydro ramp fraction would enable it.
-* **Regulation Up / Down** — no forward-derivable requirement series; RegDown is
-  a downward product the upward-headroom pergen row does not model.
+* **Storage** — CLOSED. `_caiso_design` backs reserve through the
+  duration-gated per-zone `RS[c,z]` storage columns (power competition against
+  charge/discharge + the ASSOC state-of-charge gate at the published 30-minute
+  sustain, `CAISO_AS_SUSTAIN_DURATION_H`).
+* **Hydro** — CLOSED. `_caiso_reserve_eligible` admits hydro to the pergen
+  pool and `caiso_pergen_structure` backfills its 10-minute deliverable ramp
+  from `CAISO_HYDRO_RAMP10_FRAC` (= 1.0, governor-class physics; hydro has no
+  CEMS so no measured ramp-capability row exists).
+* **Regulation Up / Down** — still open, and walled as a *build*: no
+  forward-derivable requirement series; RegDown is a downward product the
+  upward-headroom pergen row does not model. (The measured OASIS AS_REQ
+  `RU_REQ_MIN_MW` series exists and is used by the caiso-144 dormancy probe as
+  a bounding sensitivity.)
+
+**caiso-144 (2026-07-30, no-LP): the COMPLETED design is provably inert on the
+caiso-139 keeper — DO NOT SOLVE.** Measured from the keeper's committed hourly
+sidecars (`scripts/probes/_caiso144_coopt_dormancy_gates.py`): the requirement
+`max(MSSC 2,240 MW, 6 % load)` is covered with strictly positive family-level
+slack in every hour of 2023–25 (min +854/+1,485/+2,114 MW with storage RS
+excluded from supply; the thermal-only tier also never goes short), so every
+optimum of the armed LP carries zero shortfall and zero reserve duals. In the
+actual RT >$200 hours the pool is slack by 1.6–10.5 GW — the in-LP co-opt
+cannot close C3c at any completion level. Matrix: `energy_reserve_coopt` /
+`reserve_pergen` CAISO → `I`.
+(`results/calibration/FINDING-caiso144-coopt-dormancy-c3c-frontier-2026-07-30.md`.)
 
 ## Measured ramp capability (data intake, #1500 pattern)
 
