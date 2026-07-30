@@ -471,6 +471,56 @@ class TestNYISODemand(unittest.TestCase):
         self.assertIsNone(nyiso_zonal_load_shares(2099, zone_names))
 
 
+# The demand screens are internal to the demand module and are deliberately
+# NOT on the package re-export surface (same convention as
+# ``_screen_demand_spikes``), so this imports through the submodule.
+from market_sim.data.eia930.demand import _screen_demand_dropouts  # noqa: E402
+
+
+class TestDemandDropoutScreen(unittest.TestCase):
+    """EIA-930 reporting gaps posted as exactly 0.0 MW never reach the LP.
+
+    nyiso-99: the artifact class nyiso-98 identified in ``NG: NUC`` also lands
+    in the ``NYIS`` ``Demand`` column, where it survives the NaN reindex and
+    every loader's ``interpolate().bfill().ffill()`` because the value is
+    present, not missing. Before the screen the solved NYISO bundle served
+    0 MW of load in 2024 h403/6760/6761 and 2025 h354/355.
+    """
+
+    def test_zero_hours_are_interpolated_from_neighbours(self):
+        demand = np.array([100.0, 0.0, 300.0, 400.0])
+        out = _screen_demand_dropouts(demand, ba_code="TEST", year=2024)
+        np.testing.assert_allclose(out, [100.0, 200.0, 300.0, 400.0])
+
+    def test_clean_series_is_returned_untouched(self):
+        demand = np.array([100.0, 200.0, 300.0])
+        out = _screen_demand_dropouts(demand, ba_code="TEST", year=2024)
+        self.assertIs(out, demand)
+
+    def test_all_zero_series_is_left_for_the_caller_to_reject(self):
+        """An empty extract is not a gap — the screen must not invent a series."""
+        demand = np.zeros(4)
+        out = _screen_demand_dropouts(demand, ba_code="TEST", year=2024)
+        self.assertIs(out, demand)
+
+    def test_nyiso_demand_has_no_zero_hours_after_the_screen(self):
+        for year in (2023, 2024, 2025):
+            with self.subTest(year=year):
+                raw = _eia_hourly_frame_filled("NYIS", year)
+                if raw is None:
+                    self.skipTest(f"no NYIS frame for {year}")
+                served = _load_nyiso_hourly_demand(year)
+                self.assertIsNotNone(served)
+                self.assertEqual(int((np.asarray(served) == 0.0).sum()), 0)
+                # The repair is local: annual energy moves by << 0.1 %.
+                unrepaired = (
+                    raw["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
+                )
+                self.assertLess(
+                    abs(served.sum() - unrepaired.sum()) / unrepaired.sum(), 1e-3
+                )
+
+
 class TestInterchangeEnvelope(unittest.TestCase):
     """Measured EIA-930 diurnal/seasonal net-interchange envelope (CAISO)."""
 

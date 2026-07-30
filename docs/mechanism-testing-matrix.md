@@ -553,8 +553,60 @@ capability envelope/floor pair is now the keeper — cells K above):
    Robert Moses Niagara hybrid label (Run-of-river/Peaking, 52% of fleet MW)
    from the treaty scenic-flow schedule; never arm on the CAISO-reviewed rule
    alone.
-9. **Import hourly shape** (nyiso-86 §3): r_hr 0.45–0.61 after nyiso-92's
-   side-effect improvement; still the third-largest mistracking component.
+9. ~~**Import hourly shape** (nyiso-86 §3): r_hr 0.45–0.61.~~ **CLOSED
+   2026-07-29 (nyiso-99): REFUSED ex-ante, no solve — an attributed C3c
+   symptom, not an import lever.** Unlike item 7, **the queue's premise
+   survived the audit**: the nyiso-98 falsification was re-run on this target
+   and *cleared* it. EIA-930 `NYIS` `Total interchange` carries **0 / 6 / 14**
+   suspect hours (vs `NG: NUC`'s 1,179 / 380 / 117), all falsified against the
+   independent NYISO MIS **P-32** external schedules (which validate at hourly
+   r 0.910/0.908/0.882 on the clean hours); gap-masking leaves the statistic
+   **bit-unchanged** (r_hr 0.598/0.624/0.454 → 0.598/0.624/0.458) and scoring
+   against P-32 instead reproduces it (0.612/0.611/0.495). `NG: WAT` is clean
+   too (0/1/1); `NG: OIL`'s many zeros are *confirmed* genuine by P-63 (3,074 /
+   6,285 / 7,343) and its weak instrument agreement is the dual-fuel recording
+   basis — item 10's territory.
+   **The defect is real and it is not the seam's.** The import node tracks the
+   spread *it is shown* at r = **+0.673 / +0.686 / +0.772**, so
+   `inject_nyiso_import_hub_prices` is faithful; but that spread is
+   phase-inverted against the real one (r = **−0.401 / −0.236 / −0.600**; model
+   peaks h21/h02/h22 vs real h17/h16/h17) for a purely arithmetic reason with
+   one bad term. The seam side is measured and correct (neighbor DA LMP, hod
+   swing 19.8/24.1/32.1 — it *is* reality); NYISO's **internal** price swing is
+   12.95/13.17/19.75 against a real 22.45/25.13/43.27, a ratio of
+   **0.58/0.52/0.46**. Subtracting a correctly-peaked seam price from a
+   too-flat internal price drives the spread to its **minimum** at the peak
+   (model spread at the real peak hour −0.1/+1.8/+5.3 $/MWh vs real
+   +5.6/+9.7/+27.0), so the LP stops importing in the hour NY imports most and
+   buys its reconciled monthly quota overnight. **That deficit is C3c.**
+   Refused on three grounds: identification (the only series saying "import
+   more at h17" is the scored outcome — rule 13), sign (nyiso-86 recorded that
+   forcing peak imports *depresses* peak duals, moving C3c the wrong way —
+   rule-14-backwards), and rule 19 (the phenomenon already has a mechanism).
+   **Reported, not armed:** the 4,350 MW `NYISO_simultaneous_import` cap is a
+   hand-set estimate measurement contradicts (model import tops out at exactly
+   4,350 MW, never above it in any hour of any year, and sits on the cap in
+   548/689/177 h/yr, vs a measured schedule exceeding it in 287/314/145 h at
+   max 5,929 MW and published P-32 limits summing to a minimum of
+   5,805/6,090/6,680 MW) — a live rule-14 reconcile item needing a *reconciled*
+   identification (the P-32 sum is parallel paths our five-zone network
+   collapses, rule 14's misalignment clause) and its own charter; and 2,970 MW
+   of the 6,580 MW ladder (45 %) carries a per-year *constant* price with no
+   hourly signal, five of seven rungs sitting at their own cap or at zero in
+   most hours. Neither can be the lever: a finer ladder or a higher cap cannot
+   fix a spread that peaks at the wrong hour. *(Correcting this entry's first
+   draft: `import_scarcity` is NOT unreachable — 1.182 TWh in 2023, at its
+   2,230 MW cap in 27 h; the hourly repricer reorders the merit list, clearing
+   it while `eastern_mid` is below cap in 1,209 h.)*
+   Evidence: `docs/FINDING-nyiso99-import-shape-attributed-to-c3c-2026-07-29.md`.
+9b. **EIA-930 zero-dropout repair on metered demand** — the by-product of item
+   9's audit, and the one thing nyiso-99 armed. Extending the falsification
+   from benchmarks to **inputs** found the same exactly-0.0 artifact in `NYIS`
+   `Demand`: 2024 h403/6760/6761 and 2025 h354/355, each bracketed by ~17–22 GW
+   and each reproduced 1:1 in the keeper's solved sidecar as **0 MW of served
+   load**. `_screen_demand_dropouts` is the low-side twin of the existing
+   `_screen_demand_spikes`, zero DOF, demand-only (ERCO's interchange
+   legitimately reads 0.0 on idle ties), byte-identical on 16 of 18 ISO-years.
 10. **Keeper-lineage cleanup:** drop `dual_fuel_oil_reattribution` from the
     NYISO recipe metas (CLI already pins it NEISO-only; zero dispatch delta,
     removes a known recording-basis artifact from the sidecars).

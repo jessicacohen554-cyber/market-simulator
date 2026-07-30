@@ -57,6 +57,26 @@
  *   EVERY NYISO SESSION: any statistic scored against EIA-930 NG:NUC without
  *   the gap mask is unreliable, and the same zero-block audit is OPEN for
  *   import / NG:WAT / NG:OIL and for the other five ISOs' BAs (nyiso-98 §7).
+ * NYISO column re-checked 2026-07-29 by nyiso-99 — THE nyiso-98 AUDIT IS NOW
+ *   DISCHARGED for import / NG:WAT / NG:OIL and for all six BAs' Demand.
+ *   Keeper UNCHANGED (2026-07-29-nyiso-98-nucavail). Findings: (a) the artifact
+ *   does NOT repeat on the import target — Total interchange carries 0/6/14
+ *   suspect hours, all falsified against NYISO MIS P-32 external schedules,
+ *   and gap-masking leaves item 9's statistic bit-unchanged, so unlike item 7
+ *   the queue's premise SURVIVES; NG:WAT clean (0/1/1); NG:OIL's zeros are
+ *   CONFIRMED genuine by P-63 (a dual-fuel recording basis, item 10's lane).
+ *   (b) Item 9 CLOSED anyway — new row import_shape_lever -> G ex-ante, no
+ *   solve: the import node tracks the spread it is SHOWN (r +0.673/+0.686/
+ *   +0.772) but that spread is phase-inverted (r -0.401/-0.236/-0.600) purely
+ *   because the model's internal price swing is 0.58/0.52/0.46 of the real one
+ *   while the seam price is measured and correct — i.e. C3c reaching the seam.
+ *   import_hub_pricing's NYISO cell is EXONERATED and stays K. (c) The audit
+ *   extended to INPUTS found the same 0.0 MW artifact in NYIS Demand (2024
+ *   h403/6760/6761, 2025 h354/355 served at 0 MW in the keeper's own sidecar);
+ *   new row demand_dropout_screen -> K NYISO, I elsewhere BY MEASUREMENT
+ *   (byte-identical on 16 of 18 ISO-years). Item 9 must not be re-opened while
+ *   C3c is open; the 4,350 MW NYISO_simultaneous_import estimate is filed as a
+ *   separate rule-14 reconcile charter.
  * 2026-07-28 on the pjm-135 keeper promotion (pjm_external_net_position_cut -> K;
  *   PJM gates drop to C3c alone — C1 and C3a closed).
  * 2026-07-28 on the pjm-136 keeper promotion (zonal_loss_surface PJM -> K; PJM reaches
@@ -522,8 +542,13 @@ window.MECH_MATRIX = {
     { id: "import_hub_pricing", cat: "network", name: "Measured import hub prices / firm import shapes",
       def: "nyiso_import_hub_prices :2467 / caiso per-hub family :3075+ / miso_pjm_lmp :2914", mode: "B",
       cells: ".KUKKK",
-      note: "CAISO (per-hub intertie + firm base + DSW cleanups), NYISO (PJM/ISONE DA hubs + reconciliation), NEISO (HQ tranches), MISO (border anchor) keeper. CAISO's belly/C3a-2025 defect is adjudicated a corridor congestion story (59-101% of the wedge) — but the corridor/export-path family it selected is now REJECTED at the derive gate (caiso-132); the rent is IMPORT-direction, so C3a-2025 is a diagnosed defect with NO selected mechanism.",
-      ev: { C: "caiso-120/121, caiso-132" } },
+      note: "CAISO (per-hub intertie + firm base + DSW cleanups), NYISO (PJM/ISONE DA hubs + reconciliation), NEISO (HQ tranches), MISO (border anchor) keeper. CAISO's belly/C3a-2025 defect is adjudicated a corridor congestion story (59-101% of the wedge) — but the corridor/export-path family it selected is now REJECTED at the derive gate (caiso-132); the rent is IMPORT-direction, so C3a-2025 is a diagnosed defect with NO selected mechanism. NYISO CELL RE-CONFIRMED K AND EXONERATED (nyiso-99, no solve): matrix §5.5 item 9 charged this seam with the import hourly-shape defect (r_hr 0.45-0.61); the attribution clears the mechanism. The node's diurnal shape tracks the spread IT IS SHOWN at r = +0.673/+0.686/+0.772, so the repricer is faithful — but that spread is phase-inverted against the real one (r = -0.401/-0.236/-0.600; model peaks h21/h02/h22 vs real h17/h16/h17) for a purely arithmetic reason with ONE bad term. The seam side is measured and correct (neighbor DA LMP, hod swing 19.8/24.1/32.1 = reality); NYISO's INTERNAL price swing is 12.95/13.17/19.75 against a real 22.45/25.13/43.27, a ratio of 0.58/0.52/0.46. Subtracting a correctly-peaked seam price from a too-flat internal price drives the spread to its MINIMUM exactly at the peak (model spread at the real peak hour: -0.1/+1.8/+5.3 $/MWh vs a real +5.6/+9.7/+27.0), so the LP stops importing in the hour NY imports most and buys its reconciled monthly quota overnight. That deficit IS C3c. Item 9 is therefore CLOSED as an attributed C3c symptom, not an import lever — see the import_shape_lever row.",
+      ev: { C: "caiso-120/121, caiso-132", N: "keeper; nyiso-86 §3, nyiso-99 (FINDING-nyiso99 §2)" } },
+    { id: "import_shape_lever", cat: "network", name: "Import hourly-shape re-timing (peak-ward interchange lever)",
+      def: "(no mechanism — adjudicated closed before any was built)", mode: "B",
+      cells: "....G.",
+      note: "NYISO GOVERNANCE-REFUSED ex-ante, NO SOLVE (nyiso-99), closing matrix §5.5 item 9. The benchmark was audited FIRST in the nyiso-98 shape and CLEARED — unlike the nuclear case the queue's premise survives: EIA-930 NYIS Total interchange carries 0/6/14 suspect hours (vs NG: NUC's 1,179/380/117), every one falsified against NYISO MIS P-32 external schedules, and gap-masking leaves the statistic bit-unchanged (r_hr 0.598/0.624/0.454 -> 0.598/0.624/0.458) while an independent P-32 scoring reproduces it (0.612/0.611/0.495). The defect is REAL — and it is not the seam's (see import_hub_pricing). Refused on three grounds. (1) IDENTIFICATION: the only series that says 'import more at h17' is the measured net interchange, which is the SCORED OUTCOME and forbidden as an input (rule 13); anything fitted to the shape residual is a tuned value, not a parameter (rules 5/21). (2) SIGN: nyiso-86 recorded that forcing peak imports DEPRESSES peak duals, moving C3c the wrong way while flattering the import metric — rule-14-backwards, and the current peak-starved allocation is what silently flatters C3c today. (3) Rule 19 [R-ONE-MECH]: the phenomenon already has a mechanism (internal price formation); a second at the seam would stack on the first's unexplained residual. Two by-products REPORTED, NOT ARMED: the 4,350 MW NYISO_simultaneous_import cap is a hand-set estimate measurement contradicts (model import tops out at EXACTLY 4,350 MW, never above it in any hour of any year, and sits on the cap in 548/689/177 h/yr, vs a measured schedule exceeding it in 287/314/145 h at max 5,929 MW and published P-32 limits summing to a MINIMUM of 5,805/6,090/6,680 MW — the model cannot reach flows NY actually scheduled) — a live rule-14 reconcile item held back because the P-32 sum is not a simultaneous limit but the sum of parallel paths the five-zone network collapses (rule 14's misalignment clause), so it needs a reconciled identification and its own charter; and 2,970 MW of the 6,580 MW ladder (45% — HQ_hydro, IESO_Ontario, PJM_shoulder, eastern_mid) carries a per-year CONSTANT price with no hourly signal, only PJM_west / ISONE_tie / import_scarcity being repriced off the measured neighbor DA LMP, with five of seven rungs at their own cap or at zero in the large majority of hours (2023: HQ_hydro at cap all 8,760 h, IESO 7,903 at cap, PJM_shoulder 5,757 at cap, ISONE_tie 6,622 at zero, eastern_mid 6,911 at zero). Neither can be item 9's lever: a finer ladder or a higher cap cannot fix a spread that peaks at the wrong hour. NOTE, correcting this row's first draft: import_scarcity is NOT unreachable — it dispatches 1.182 TWh in 2023 and hits its 2,230 MW cap in 27 h; the hourly repricer reorders the merit list (it clears while eastern_mid is below cap in 1,209 h), which is itself further evidence the seam mechanism works. Do not re-open while C3c is open.",
+      ev: { N: "nyiso-99 (FINDING-nyiso99-import-shape-attributed-to-c3c-2026-07-29), nyiso-86 §3" } },
     { id: "caiso_firm_envelope_clip", cat: "network", name: "Firm import block clipped at its corridor's deliverability envelope",
       def: "caiso_firm_import_envelope_clip (scenarios.py) -> inject_caiso_firm_import_shape envelope_clip", mode: "B",
       cells: ".K....",
@@ -547,6 +572,11 @@ window.MECH_MATRIX = {
     { id: "demand_repairs", cat: "demand", name: "Measured demand-series repairs (clock realign / supply-consistent)",
       def: "caiso_demand_clock_realign :3171 / caiso_supply_consistent_demand :3187", mode: "B",
       cells: ".K....", note: "CAISO keeper; data-quality class, derive-first if another ISO's EIA-930 series shows the same defect." },
+    { id: "demand_dropout_screen", cat: "demand", name: "EIA-930 zero-dropout repair on metered demand",
+      def: "_screen_demand_dropouts (data/eia930/demand.py), wired into all six per-BA loaders", mode: "BF",
+      cells: "IIIIKI",
+      note: "NYISO KEEPER-LANE (nyiso-99). The low-side twin of the existing _screen_demand_spikes, and the answer to THIS row's predecessor note ('derive-first if another ISO's EIA-930 series shows the same defect') — it does. EIA-930 posts some reporting gaps as a literal 0.0 MW VALUE rather than an absent row, so they survive the NaN reindex in _eia_hourly_frame_filled and the interpolate().bfill().ffill() every loader applies: the frame looks complete and the LP is handed an hour in which the balancing authority serves no load. nyiso-98 first identified this artifact class in the NYIS NG: NUC benchmark (1,179/380/117 h); nyiso-99 extended the audit from benchmarks to INPUTS and found it in NYIS Demand — 2024 h403/6760/6761 and 2025 h354/355, each bracketed by ~17-22 GW readings and each reproduced 1:1 in the keeper's solved system sidecar as exactly 0.0 MW of served load. A whole BA's metered demand is never 0 MW, so the flag needs no threshold and adds ZERO DOF (rule 24); flagged hours are dropped and linearly interpolated, the same repair the spike screen and the missing-meter path already use. Scoped to DEMAND ONLY, never interchange: a BA's net interchange legitimately reads 0.0 MW on idle ties (ERCO posts 187/140/113 such hours on its ~1.2 GW DC ties) and screening those would delete real measurements — the rule-14 failure mode the repair exists to avoid. The other five cells are I by MEASUREMENT, not by transfer (rule 25): the pre-solve census over all six modeled BAs x 2023-2025 finds Demand==0 in NO other BA-year, so the screen is byte-identical (d = 0.00000 TWh, max |d| = 0.0 MW) on 16 of 18 ISO-years. NYISO 2024 +0.0562 TWh (+0.037%), NYISO 2025 +0.0435 TWh, 2023 untouched EVERYWHERE — which makes the arm's own 2023 year a same-recipe zero-delta control. Ungated by design: this is a source-data repair under rule 14 [R-ACCURATE], not a tunable, so there is no ScenarioConfig field to arm.",
+      ev: { N: "nyiso-99 (FINDING-nyiso99, PREREG-nyiso99, probes nyiso99_import_benchmark_provenance / nyiso99_ab_compare)" } },
     { id: "scr_edrp_dr", cat: "demand", name: "Emergency DR as priced supply blocks (SCR/EDRP)",
       def: "nyiso_scr_edrp :2409 (+reserve eligible)", mode: "BF",
       cells: "G...K.",
