@@ -2962,3 +2962,118 @@ Pre-existing, matched not fixed: 4 failures in tests/unit/results/
 test_export.py on origin/main; audit_keepers "status/NEISO.js stale" (another
 ISO's lane); the fresh-container gtc-limits/hydro-plant-modes clean-partition
 warnings ("static TTC kept 3/3").
+
+## 2026-07-30 — ERCOT-141: the CC committed-block commitment STATE (online-hours LSL floor) built, full-span solved and REJECTED — the mechanism worked exactly as designed and REFUTED its own hypothesis: pinning the cheap band DEEPENS the trough; the CC committed band CLOSES end-to-end as a C3a lever; keeper stays ercot140-coal-peak-offer
+
+**Task (the ERCOT-139 §4.1 hand-back).** Test the named STATE successor to the
+refused price levers: extend the gas bridge's LSL floor beyond bridged gap
+hours. Precommit
+`docs/PRECOMMIT-ercot141-cc-committed-lsl-floor-2026-07-30.md`, pushed before
+the solve.
+
+**Built (default off, ERCOT-gated, requires the bridge and fails loud without
+it):** `ercot_gas_bridge_online_hours` — the shared detector
+(`model/commitment.py::caiso_ra_mustoffer_min_gen`, via the single shared
+`pipeline/commitment.py::_ercot_gas_bridge_floor` so the P1 fleet hook, the bid
+hook and the `runner.py` forecast path cannot diverge) floors the merchant
+gas-CC `_committed` band in EVERY hour the P0 pattern has the plant online, not
+only the idle gaps between runs. Same measured level (0.574 LSL/HSL p50,
+frozen), same D-2 id `MECH_GAS_COMMITMENT_BRIDGE`, composing by maximum — a
+wider WINDOW on one mechanism, extending rather than stacking (rule 19), as the
+nyiso-87 `min_run` and caiso-96 `startup_trajectory` legs do. ZERO new scalars.
+Registered in `_CACHE_KEY_OPTIONAL_FIELDS` (default key byte-stable
+`2c8098e8e1684c7d`, armed `d1b1651372aba2e8`); D-4 window declaration amended
+(its prior text declared the floor gap-only); 9 new tests; CAISO/NYISO/legacy-P2
+call sites byte-identical.
+
+**Ex-ante measurement (no solve) reproducing ERCOT-64 §8:** the gas-CC
+`_committed` capacity share is p50 0.250 / max 0.550 / cap-weighted 0.319 and
+below 0.574 on **41 of 41** non-CHP plants, so the target
+`min(0.574 × plant_pmax, tranche_pmax)` clips to the tranche bound on every
+plant and the band pins wherever the leg binds. Because the committed share is
+BELOW the measured LSL fraction, the leg never holds more than the unit's real
+minimum — conservative by construction. Scope needed no class tuple (rule 18):
+`_ra_bridge_unit_params` accepts only the base committed tranche (40 rows) and
+rejects every incremental econ/peak tranche (41/41 each).
+
+**Solved and registered** (`2026-07-30-ercot141-online-hours-lsl`, bundle
+`ercot141_online_hours_arm`, full span 2023-25 in ONE bundle, single-delta
+`replay_keeper --set` off the ercot140 keeper).
+
+**ALL THREE live-verification criteria HELD — this is a refutation, not a
+wiring failure.** The leg fired (317,243 / 330,044 / 311,453 unit-hours
+floored; 62.07 / 61.82 / 60.62 TWh floor volume, against the gap-only bridge's
+37,788 gen-hours in 2023); the floored segments FUSED out of the ≤24 h gap
+buckets into whole committed blocks (296 / 258 / 612 blocks >24 h); and the
+floored rows are EXACTLY PINNED — **max `P − floor` = 0.000000 MW across
+100.0000 % of the 314,651 bridge-floored gen-hours** (2023), the ERCOT-64
+property reproduced on the wider window.
+
+**EVERY GUARD PASSED.** Zero-spurious Δ 0/0/0; no C3a overshoot past 0; C3c
+**bit-unchanged 47/6/0** (prediction 3 held exactly); C1 16/16 free 12/12 PASS;
+C2 PASS; C8 forced share **5.90/4.84/3.95 %** against the 30 % merchant cap
+(up from 2.17/1.14/1.56 %) — no rule-20 escalation needed, and the precommit's
+own 63 % ceiling is recorded as far too loose: D-2's per-plant at-floor test
+converts 60+ TWh of floor VOLUME into only 5.7-8.6 TWh of counted forced
+energy. Gate set **IDENTICAL** to the keeper's, no flips in either direction;
+determination NOT-YET (C6 UNATTESTED, as the keeper).
+
+**BOTH SUBSTANTIVE PREDICTIONS FAILED, in the same direction.** C3a DEGRADED
+−36.7/−16.4/−14.1 → **−37.4/−17.6/−14.7 %** and the trough DEEPENED (hours
+<$10 139→293, 319→426, 241→288; <$15 400→548, 1146→1198, 293→364), with C3b
+0.647/0.219 → 0.649/0.230 and 16 `[7c]` operating-shape regressions. Volume
+moved as predicted but small: coal −0.31/−0.11/−0.32 TWh, CC_REGULAR
++0.70/+0.48/+0.50 TWh.
+
+**THE STRUCTURAL FINDING (the deliverable).** Pinning the cheap committed band
+does **NOT** hand the margin to the next-dearer rung, because the band's
+min-load energy still has to be absorbed: it **ADDS must-take supply**,
+lengthens the system, and pulls the marginal unit **CHEAPER**. The measured
+"LSL block never sets the margin" inflexibility is real, but *removing that
+block's price-setting ability lowers prices rather than raising them.* This
+**FALSIFIES the ERCOT-139 §4.1 hypothesis** that the trough residual is carried
+by the committed band's STATE. With the price side already closed (the ercot139
+level measured and keeper; ERCOT-64's floor-scoped markdown provably inert),
+**the CC committed band is now CLOSED end-to-end as a C3a lever.**
+
+**Why this is NOT a rule-1 [R-STRUCT] "structure improves, gates regress"
+keeper.** The LSL must-take physics is real, but the leg as built implements
+only HALF of it: it holds units at min-load through hours the real market would
+**DECOMMIT** — precisely what CAISO's `bridge_decommit` surplus screen models
+and what the ERCOT bridge deliberately omits ("ERCOT is an island: no import
+backdown / export-sink absorption to measure surplus against"). The deeper
+trough is the direct symptom of that missing half. So this is a structurally
+**INCOMPLETE** mechanism whose incompleteness moved the residual — not a
+correct mechanism penalised by fit. Rule 1 protects the latter and does not
+require adopting the former. **Keeper stays `2026-07-30-ercot140-coal-peak-offer`,
+unchanged.** The mechanism stays in the codebase default-off as the recorded
+closure (zero scalars — not a rule-26 re-armable knob).
+
+**Successor, if the lane is ever reopened:** an ERCOT surplus/decommitment
+screen (the `bridge_decommit` analogue) is a **prerequisite**, not an add-on —
+and since it would REDUCE the leg's coverage back toward the gap-only bridge
+that is already keeper, expected value is low. **Not queued.** C3a's remaining
+residual is handed back to the D-2/G1 enumeration; ERCOT-138 §5.6's
+opposite-sign p90 finding (model coal curve $9.6-15.5 UNDER measured at p90)
+still belongs to the separate near-tail/C3c lane.
+
+**Governance.** Years 2023-25 only, one bundle (rules 16/22) — no holdout year
+touched. ERCOT-scoped (rule 25). No offer curve, sigmoid, derive value or
+measured parameter changed (rules 13/21/23); the 0.574 level is read, never
+re-derived, and nothing was swept. Matrix cell stamped this session on the
+`gas_commitment_bridge` row (rule 26b/c — registered there rather than as a new
+row, correctly under rule 19 since it is a wider window on that mechanism).
+Pre-existing conditions matched and NOT fixed: `audit_keepers` NEISO status
+stale, 20 ruff errors, 4 `test_export` failures, gtc/hydro clean-partition
+warnings, and the `ercot_wtx_*` dual-channel warning (the documented ERCOT-65
+defect class — the keeper's own behaviour, so byte-faithful here).
+
+**Defect surfaced on `main`, in NYISO's lane (NOT fixed, rule 25):**
+`nyiso_import_sil_retire` (PR #3136) is missing from
+`_CACHE_KEY_OPTIONAL_FIELDS`, which moved the default `ScenarioConfig`
+cache key `603c2498bf71d21d → 2c8098e8e1684c7d`. That orphans every on-disk
+cache and fails **5 pinned tests on a clean checkout of main**
+(`test_persisted_identity` ×2, `test_cc_committed_offer_margin`,
+`test_ramp_envelope_basis`, `test_forecast_xyear_warmstart_flag`). One-line
+remedy in NYISO's lane; `scripts/check_cache_key_registration.py` explicitly
+warns that re-pinning the test literal instead is the WRONG fix.
