@@ -3400,3 +3400,76 @@ in 100 % of hours); and treating the P1 export-sink deletion seam as settled by
 this lane (untouched — still FINDING-caiso138 §D's cross-ISO lane).
 
 Next number: caiso-140.
+
+## caiso-140 (2026-07-30) — C3a-2025 DIAGNOSED TO CLOSURE ARITHMETIC and the solve KILLED at the D-gates: the "belly over-price" is a Sep–Dec ALL-low-price-hours residual (belly band = only 26 % of the gap); its supply state is EXACTLY ledgered on the keeper's own demand identity — gas ride-through **+1,477 MW (74 %)** of the Sep–Dec belly import wedge, water/PS **+793 MW** (the caiso-130 hydro-gap basis missed the model's own ~700 MW PS belly pumping 10×), reality curtailment −453 MW — and the D3 walk-down shows the belly λ PINNED by a **2.7–3.0 GW economic-import parity plateau**, so the only admissible floor instrument delivers **less than half** the −$0.31 the gate needs. NO SOLVE, NOTHING ARMED
+
+Charter: close C3a-2025 (the last CAISO gate with a diagnosed defect and no
+selected mechanism), diagnose-first on the caiso-139 keeper's committed
+sidecars, D1–D4 kill-before-solve. The gates fired at D4 — the caiso-129
+pattern, executed as designed. Keeper `2026-07-29-caiso139-dump-guard-offer`
+UNCHANGED (NOT-YET, fail {C3a-2025, C3c}); no dashboard registration due
+(rule 15 applies to completed runs — the caiso-134/135 disposition).
+
+Instruments (committed, no LP, no solver):
+`scripts/probes/_caiso140_belly_supply_state.py` (D1 month×hod residual map +
+D2 exact ledger + drill-down) and `scripts/probes/_caiso140_d3_walkdown.py`
+(counterfactual λ(S) from the sidecars + the fleet-only offer reconstruction).
+Full record: `results/calibration/FINDING-caiso140-belly-supply-state-2026-07-30.md`.
+
+1. **D1 corrects the "belly" shorthand.** Sep–Dec carries +2.35 of the +2.90
+   (caiso-131 reproduced), but the belly band 10–15 is only **+0.75 (26 %)**;
+   overnight (+0.72) and the 7–9/16/22–23 shoulders (+0.95) carry as much. A
+   belly-scoped candidate reaches ≤ 38 % of the residual by construction.
+2. **D2 is an EXACT ledger, not an estimate.** The keeper's demand is BUILT
+   from measured supply (caiso-80), so (model import − measured import)
+   decomposes per-hour into named CA supply wedges with **closure 0.0**.
+   Sep–Dec belly 2025: import wedge +1,989 MW = gas +1,477 (74 %) + water/PS
+   +793 (40 %) + other +332 − solar −453 (reality curtails; the model does
+   not) − battery −131. Overnight: gas +886 of import +1,133. The water wedge
+   is **+769/+803/+793 MW in all three years** — the caiso-130 disclosure
+   (−92/−58/−83) compared conventional hydro against the PS-blind 930 WAT
+   cell; like-for-like the model's unrestrained 2,078 MW PS fleet pumps ~700 MW
+   through the belly (caiso-127 §B2's "entirely unrestrained arbitrageur").
+3. **D3 is the reachability map.** Defect hours split ~45 % corridor-priced
+   (DSW group bound, dual mean −$18.4 when bound) / ~55 % parity-priced (CA λ
+   = WECC_DSW node λ EXACTLY, spread p50 0.00). Economic import mean 2,705 MW
+   (p50 3,038); at S = 3 GW of added CA supply, 51–61 % of hours never leave
+   the plateau. λ(S) upper bounds (elastic absorption disclosed): belly
+   S=1,500 → C3a −0.313; the FULL measured wedge (~2.3–2.6 GW belly + 0.9
+   night) → −0.5..−0.7 vs the −0.31 needed. E1/E2 structurally favourable
+   (supply additions only move λ down). **Every partial lever ≤1.5 GW is
+   arithmetically insufficient — instrument-agnostic.**
+4. **D4 KILLS the solve.** The measured ride-through mixture (62–74 % of
+   evening-full-config CC plant-days ride the belly at p50 0.67–0.78; 20–29 %
+   drop below 0.30) refutes any class-flat/fleet-quantile floor (caiso-135 §3
+   reality test); the only admissible form — per-plant own-p25, the
+   mustrun_p25 family, stable across years (cap-wtd belly 0.356/0.331/0.337,
+   night 0.579/0.604/0.554) — adds only **+757/+304 MW** (2025 belly/night,
+   0.68 CAMPD match) ≈ **−0.13 C3a upper bound, less than half the gate**.
+   The water half has NO in-repo hourly instrument (930 WAT PS-blind, 923
+   monthly, LESR battery-only). Bridging by a tuned value is rule 21/24
+   forbidden → STOP and file.
+5. **Asks filed, not built:** A1 the per-plant ride-through conduct floor
+   (reconciled INTO the RA bridge level, rule 19) — only jointly with A2/A3
+   and under an owner rule-13 grant; A2 DATA INTAKE: an hourly PS /
+   conventional-hydro split (OASIS/CDEC) to ground the +793 MW water wedge;
+   A3 the P1 export-sink seam (caiso-138 §D, owner-chartered) — this session
+   prices it: the plateau is that seam wearing a price (2023 defect hours:
+   reality imported +50 MW; the model 3,226).
+
+Matrix (rule 28): `cc_mustrun_per_plant` CAISO `.` → **R** and
+`netload_drag_floors` CAISO `U` → **R**, both ex-ante with FINDING citations;
+CAISO column header re-stamped. `check_mechanism_matrix.py` integrity OK.
+Rule 22: 2023–2025 only.
+
+### DO-NOT-REDO (new, binding — full list in FINDING-caiso140 §G)
+
+Re-measuring the residual map / exact ledger / walk-down / conduct p25s /
+kill-check (both probes carry them); belly-only scoping for C3a-2025; quoting
+the caiso-130 hydro-gap basis as the water state; using 930 WAT as a
+conventional-hydro anchor without the PS caveat; class-flat or fleet-quantile
+committed-CC loading floors; the per-plant own-p25 floor as a STANDALONE
+C3a-2025 closer; re-testing single-component supply additions ≤1.5 GW against
+C3a-2025 (the plateau kill is instrument-agnostic).
+
+Next number: caiso-141.
