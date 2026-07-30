@@ -194,10 +194,21 @@ order is a prior, not a mandate — a session with a better-identified lever
 goes off-queue and says so. Entries already adjudicated elsewhere are *not*
 repeated here; the matrix `R`/`G`/`I` cells are the DO-NOT-REDO list.
 
-### 5.1 ERCOT — targets C3a/C3b-2023, C3c (attributed), C7 lignite, coal seasonal split
+### 5.1 ERCOT — targets C3a/C3b-2023, C3c (attributed); ~~C7 lignite, coal seasonal split~~ CLOSED
 
 The lane is heavily enumerated; the honest top of the queue is closure work,
 not a new sweep:
+
+**THE C7 LIGNITE + COAL-SEASONAL-SPLIT TARGET IS CLOSED (ERCOT-142 Phase 1 →
+ERCOT-143 Phase 2, both no-LP, keeper unchanged).** The seasonal split is
+refuted in its level form, the floor reading is exonerated, the offer-slope
+re-route has no measured object behind it, and the AS-reservation successor is
+refuted in advance. See queue item 3 below — it is DONE, not open. **With it,
+the last named LIVE ERCOT target is gone**: what remains is item 2 (the C6
+governance attestation of the C3c tail) plus the un-chartered audit-grade items
+4–7. C7's ERCOT cell stays failing at `2023 COAL_LIGNITE profile r 0.769`, 0.031
+short, with its cause attributed **outside the offer surface** and no
+rule-13-admissible mechanism available to carry it.
 
 **CLOSED AT ercot138, binding on successors — do not re-open
 (no LP solved; `docs/DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29.md`):**
@@ -307,6 +318,33 @@ not a new sweep:
    the slope with **zero swept parameters** and carries a pre-registered **hard
    kill: 2025 `profile_r` ≥ 0.80** (the ex-ante sweep shows too much backdown
    drives 2025 from 0.964 → 0.769).
+   **▶ CLOSED AT ERCOT-143 (2026-07-30) — NO ARM, NO SOLVE, KEEPER UNCHANGED.
+   THIS QUEUE ITEM IS DONE; DO NOT RE-OPEN IT.**
+   `docs/DIAGNOSIS-ercot143-lignite-offer-slope-2026-07-30.md`, probe
+   `scripts/probes/ercot143_lignite_offer_slope.py`. Phase 2 ran the
+   identification and it **does not exist**, which is the outcome ERCOT-142 §8.2
+   pre-registered. Resolved **per plant** instead of fleet-pooled, Oak Grove
+   submits a **near-horizontal** SCED curve — `(0 MW @ $9.28) → (880 MW @ $9.64)`,
+   a **$0.36** spread, 98.2 % of capability at or below **$10** — while the
+   model's Oak Grove spans **$13.14 → $38.94** (spread $25.80, cap-wtd $16.10),
+   so the model's lignite is already **22–72× steeper** (against the plant's own
+   $1.16/$0.36 spreads) and **$4–7/MWh dearer** than the real plant, and the
+   premise is backwards. The cited 35.7 pp segment belongs to **other plants** (Martin Lake
+   0.535, Parish 0.539, Limestone 0.455 vs Oak Grove **0.016**, Major Oak
+   **0.001**) and is **not slope at all** — every plant but Parish offers a flat
+   curve and the fleet's smooth rise is **cross-plant level dispersion**, already
+   carried by per-plant fuel/HR and already calibrated on LEVEL by
+   ERCOT-137/138/140. The corpus also **cannot see the window** (h0–h8 is 8.4 %
+   of it, all from the one year with no turndown; no 2023 SCED exists), and in
+   the full-24-h **DAM** disclosure Oak Grove submits **no energy curve and holds
+   no AS award in any of 2023/2024/2025** — which additionally **refutes the
+   AS-reservation successor in advance**. Also **supersedes ERCOT-142 §6's
+   `$21.19`**: on the current ercot140 keeper Oak Grove's top is **$38.94**
+   (2023), already above the overnight price. The residual cause is **outside the
+   offer surface** (intra-zonal North congestion — not representable in a 7-zone
+   network, and ERCOT-117 closed the topology family — or QSE self-schedule,
+   which fails rule 13). **No successor is chartered**; C7's ERCOT cell is left
+   failing at 0.769 with its cause attributed.
 4. **Five-ISO fuel stack on ERCOT** (`gas_daily_shape`,
    `gas_monthly_actuals`, `gas_plant_monthly_fuel_pricing`) — consistency
    audit + candidate for 2023 winter-volatility C3b; cheap A/B, zero new DOF.
