@@ -585,6 +585,49 @@ COAL_OFFER_MARGIN_LEVEL_BY_ISO: dict[str, float] = {
     "ERCOT": 15.8807,
 }
 
+# Measured CC committed-block offer LEVEL ($/MWh) — the identification constant
+# of the ``cc_committed_offer_margin`` mechanism (ERCOT-139, the gas-CC analogue
+# of the coal min-load net-revenue margin above;
+# :func:`market_sim.data.offer_curves.apply_cc_committed_offer_margin`). The
+# real CC fleet's RT supply-curve bottom expressed at the delivered-gas anchor:
+# 60-Day SCED ``Submitted TPO-Price1`` capacity-weighted p50, pooled
+# res-hours-weighted across the four 2024–2025 disclosure subsets (committed
+# artifact ``results/calibration/ercot136_coal_headroom_conduct.json``
+# B1_curve_bottom, CC rows — the same measurement, instrument, construction and
+# loader that supplied coal's level, read off its COAL twin). Curve coverage on
+# those rows is 95.1–98.0 % of RT-dispatchable headroom, so CC passes the same
+# RT-instrument licensing test coal passed (ERCOT-138 §3.4).
+#
+# The raw subset bottoms are NOT year-invariant (2024 $10.07 / 2025 $18.07 —
+# delivered gas moved 2.213 → 3.232 $/MMBtu); the margin form's claim is that
+# the residual ABOVE fuel is, so the level is identified by removing the
+# corpus's own measured fuel response (HR_implied 7.8521 $/MMBtu, from the
+# disclosure itself — no model heat rate, no fitted slope):
+#   level_i = bottom_i − HR_implied × (fuel_i − anchor)
+#   10.1158 / 10.6358 / 9.6746 / 11.0146 → 10.354 res-hours-weighted.
+# Identification quality: cross-subset dispersion ±42.98 % raw → ±6.47 %
+# anchored, and the INDEPENDENT ``Min Gen Cost`` p50 instrument at 70–82 %
+# coverage lands 10.6662 (3.02 % away). Coal's corroborating instrument sat at
+# 28–31 % coverage, so this level is the better-attested of the two.
+#
+# The ANCHOR is NOT a second constant: the mechanism reuses
+# ``GAS_OFFER_MARGIN_ANCHOR_BY_ISO`` (ERCOT 2.2494) so the whole gas offer
+# surface keeps ONE identification point that cannot drift against itself
+# (rule 19 [R-ONE-MECH] bookkeeping). At ``fuel == anchor`` the resolved
+# ``_committed`` bid equals this level exactly.
+#
+# 2023 application is a declared extrapolation (no 2023 SCED disclosure
+# exists) — the margin is fuel-invariant by construction, gated LOYO per-year
+# in the ERCOT-139 precommit exactly as ERCOT-137's was. Re-derives only with
+# its source disclosure (rule 23), via
+# ``scripts/data/derive_cc_committed_offer_margin.py``. ISOs absent from the
+# registry hard-fail when the flag is armed (rule 24 — never a silent
+# fallback); ERCOT-identified from ERCOT conduct and never transferred
+# (rule 25).
+CC_COMMITTED_OFFER_LEVEL_BY_ISO: dict[str, float] = {
+    "ERCOT": 10.354,
+}
+
 # CO2 emission rates (tCO2/MWh), derived from heat rate × fuel emission factor.
 # Keyed by fuel class and efficiency bin, mirroring HEAT_RATE_BINS.
 # Source: EPA eGRID 2022.

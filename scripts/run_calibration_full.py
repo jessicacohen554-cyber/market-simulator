@@ -2850,6 +2850,7 @@ def solve_and_persist(
     tranche_startup_conditional_runs: bool = False,
     gas_offer_margin: bool = False,
     coal_offer_margin: bool = False,
+    cc_committed_offer_margin: bool = False,
     nysdec_peaker_rule_availability: bool = False,
     oil_primary_bin_fuel: bool = False,
     st_gas_intermediate: bool = False,
@@ -4059,6 +4060,23 @@ def solve_and_persist(
                 coal_offer_margin_anchor=COAL_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
                 coal_offer_margin_level=COAL_OFFER_MARGIN_LEVEL_BY_ISO[iso],
             )
+        if cc_committed_offer_margin:
+            # CC committed-block measured offer level (ERCOT-139): record the
+            # gate AND both resolved constants (rule 25 — run_config carries the
+            # values the solve used, never a lookup indirection). The anchor is
+            # the SHARED gas anchor, so arming this without
+            # gas_offer_net_revenue_margin still needs it resolved (rule 19: one
+            # identification point for the whole gas offer surface).
+            from market_sim.config.constants import (
+                CC_COMMITTED_OFFER_LEVEL_BY_ISO,
+                GAS_OFFER_MARGIN_ANCHOR_BY_ISO,
+            )
+
+            recorded_cfg = recorded_cfg.with_overrides(
+                cc_committed_offer_margin=True,
+                cc_committed_offer_level=CC_COMMITTED_OFFER_LEVEL_BY_ISO[iso],
+                gas_offer_margin_anchor=GAS_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
+            )
         if nysdec_peaker_rule_availability:
             recorded_cfg = recorded_cfg.with_overrides(
                 nysdec_peaker_rule_availability=True
@@ -4312,6 +4330,7 @@ def solve_and_persist(
             tranche_startup_conditional_runs=tranche_startup_conditional_runs,
             gas_offer_margin=gas_offer_margin,
             coal_offer_margin=coal_offer_margin,
+            cc_committed_offer_margin=cc_committed_offer_margin,
             nysdec_peaker_rule_availability=nysdec_peaker_rule_availability,
             oil_primary_bin_fuel=oil_primary_bin_fuel,
             st_gas_intermediate=st_gas_intermediate,
@@ -5031,6 +5050,7 @@ def solve_and_persist(
         "tranche_startup_conditional_runs": tranche_startup_conditional_runs,
         "gas_offer_margin": gas_offer_margin,
         "coal_offer_margin": coal_offer_margin,
+        "cc_committed_offer_margin": cc_committed_offer_margin,
         "nysdec_peaker_rule_availability": nysdec_peaker_rule_availability,
         "oil_primary_bin_fuel": oil_primary_bin_fuel,
         "st_gas_intermediate": st_gas_intermediate,
@@ -7694,6 +7714,29 @@ def main() -> None:
         "hard-fail (rule 24); the committed/econ supply sigmoids above the "
         "block are untouched (rule 19). Default OFF -> prior keepers "
         "byte-identical.",
+    )
+    parser.add_argument(
+        "--cc-committed-offer-margin",
+        dest="cc_committed_offer_margin",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="CC committed-block MEASURED offer level (ERCOT-139, "
+        "ScenarioConfig.cc_committed_offer_margin — the coal min-load form's "
+        "gas-CC analogue): the CC_REGULAR _committed tranche is repriced from "
+        "its band multiplier (0.998 x base HR) to full delivered-fuel "
+        "tracking plus a fuel-invariant measured margin, so at the SHARED "
+        "delivered-gas anchor the bid lands EXACTLY on the measured RT curve "
+        "bottom (SCED Submitted TPO-Price1 cap-wtd p50, 95.1-98.0 % curve "
+        "coverage). Repairs the defect ERCOT-138 sized: the model's CC bands "
+        "bid +$2.8-6.6/MWh too DEAR through the crossing band while coal's "
+        "are exonerated, because the model has no below-cost committed-CC "
+        "block at all. Identification constant: "
+        "constants.CC_COMMITTED_OFFER_LEVEL_BY_ISO "
+        "(derive_cc_committed_offer_margin.py); the anchor is the shared "
+        "GAS_OFFER_MARGIN_ANCHOR_BY_ISO (rule 19 — one identification point "
+        "for the whole gas offer surface). ISOs without a derived level "
+        "hard-fail (rule 24); econ/peak bands and every other class are "
+        "untouched (rule 19). Default OFF -> prior keepers byte-identical.",
     )
     parser.add_argument(
         "--nysdec-peaker-rule",
@@ -10568,6 +10611,7 @@ def main() -> None:
         tranche_startup_conditional_runs=args.tranche_startup_conditional_runs,
         gas_offer_margin=args.gas_offer_margin,
         coal_offer_margin=args.coal_offer_margin,
+        cc_committed_offer_margin=args.cc_committed_offer_margin,
         nysdec_peaker_rule_availability=args.nysdec_peaker_rule_availability,
         oil_primary_bin_fuel=args.oil_primary_bin_fuel,
         cc_intermediate_cf_threshold=args.cc_intermediate_cf_threshold,
