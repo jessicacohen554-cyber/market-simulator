@@ -781,6 +781,38 @@ capability envelope/floor pair is now the keeper — cells K above):
    load**. `_screen_demand_dropouts` is the low-side twin of the existing
    `_screen_demand_spikes`, zero DOF, demand-only (ERCO's interchange
    legitimately reads 0.0 on idle ties), byte-identical on 16 of 18 ISO-years.
+9c. ~~**G-J locality Bulk Power Transmission Limit on its own boundary** — the
+   follow-on nyiso-100 chartered when it retired the mis-attributed external
+   scalar. The limit is real, published every capability year (3,425 / 3,425 /
+   4,350 / 4,500 MW for 2022/23–2025/26) and represented nowhere; it belongs in
+   the `nyiso_nyc_lcr_tsl` / `nyiso_li_lcr_tsl` family.~~ **CLOSED 2026-07-30
+   (nyiso-101): REFUSED ex-ante, no solve, no flag.** The premise survives — the
+   limit *is* real and *is* unrepresented — but it has **no representable
+   boundary**. `Capital_Hudson` = F+G **straddles** the G-J locality (G inside,
+   F outside), so the mechanical cutset test returns no valid import-direction
+   edge: two links have a straddling end, `Lower_Hudson->NYC` is *interior* to
+   G-J (capping it is category-wrong, and it already hosts the NYC 2,875 MW
+   cap), and `NYC->Long_Island` is an edge only *reversed* and already carries
+   the LI cap in the same window. Two of the four real boundary legs are not LP
+   quantities: the **F→G cutset** (interior to `Capital_Hudson`) and the
+   **external ties landing in Zone G** (PJM Ramapo ~1,000 MW + ISO-NE ~600 MW,
+   lumped into the 1,600 MW `Capital_Hudson` node link whose F/G split
+   `interchange/spec.py` itself calls "a modelling choice inside the topology").
+   Leg 2 is decisive — the endogenous subset-sum workaround dissolves leg 1 but
+   not leg 2. And unlike its two accepted siblings there is **no posted G-J
+   series in principle**: P-32 carries seven internal interfaces, none G-J, so
+   the admissibility evidence the NYC cap has (2,875 MW sitting at the p95 of
+   `SPR/DUN-SOUTH` in-window flow, exceeded 1.8/5.0/6.9 % of HB14-21 hours) is
+   unavailable — placed on `UPNY CONED` the G-J limit would sit at pctile
+   74.1/90.6/95.6 and be exceeded 25.9/9.4/4.4 %. A static reconciled cap is
+   *unidentified*: the translation needs `gen_G`, bounded only by [0, Zone-G
+   capability], pinning the cap to an interval 105–137 % as wide as the limit.
+   Refused **against its own incentive** — a binding G-J limit would raise
+   downstate peak prices, the direction C3c wants (rule 1, both directions).
+   **Re-opens only behind a `Capital_Hudson` → Zone-F/Zone-G topology split**,
+   which needs its own owner charter (ERCOT West/Panhandle class, CLOSED) — not
+   a lever-queue entry, and never as a mechanism flag.
+   Evidence: `docs/FINDING-nyiso101-gj-locality-boundary-2026-07-30.md`.
 10. **Keeper-lineage cleanup:** drop `dual_fuel_oil_reattribution` from the
     NYISO recipe metas (CLI already pins it NEISO-only; zero dispatch delta,
     removes a known recording-basis artifact from the sidecars).
