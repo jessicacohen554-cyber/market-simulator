@@ -3197,3 +3197,131 @@ Pre-existing and matched-not-fixed: `audit_keepers` `status/NEISO.js` stale
 forward unresolved: the rule-26 [R-DELETE] disposition of
 `coal_tranche_1_fuel_passthrough` / legacy `split_coal_tranches`, and the
 rule-26(c) matrix gap on `ercot_offer_hrmult_ep_rebasis` / `_bands`.
+
+## 2026-07-30 — ERCOT-143 Phase 2 (no LP built, no year solved): the chartered lignite mid-band offer SLOPE HAS NO MEASURED OBJECT — measured PER PLANT, Oak Grove's own curve is a NEAR-FLAT $9 line (spread $0.36), already ~20× flatter and ~$5/MWh cheaper than the model's; the cited fleet segment belongs to OTHER plants; the corpus cannot see the overnight window; and the plant submits NO DAM curve and holds NO AS award — LANE CLOSED, no solve spent, keeper UNCHANGED (ercot140-coal-peak-offer)
+
+**Task.** The chartered successor to ERCOT-142 Phase 1 and the last named LIVE
+ERCOT target (`docs/mechanism-testing-matrix.md` §5.1 queue item 3). Phase 2's
+job, fixed in `docs/DIAGNOSIS-ercot142-lignite-shape-2026-07-30.md` §8: re-measure
+the lignite offer curve on the CURRENT keeper, identify the mid-band slope from
+`B2_supply_grid` with **zero swept parameters**, and — explicitly — **close the
+lane if no non-fitted identification survives**. Full closure:
+`docs/DIAGNOSIS-ercot143-lignite-offer-slope-2026-07-30.md`; reproduce with
+`scripts/probes/ercot143_lignite_offer_slope.py`.
+
+**Verdict: the identification does not exist. LANE CLOSED, no arm built, no
+solve spent, keeper UNCHANGED `2026-07-30-ercot140-coal-peak-offer`.** The ERCOT
+fail set is unchanged at {C3a, C3b, C3c, C7}; C6 remains UNATTESTED (8
+residual-identified DOF entries — not attested to buy a determination).
+
+**Step 1, the re-measurement — and a correction that supersedes ERCOT-142 §6.**
+Captured at the live LP seam (`apply_coal_tranches`) on the current ercot140
+keeper, Oak Grove 2023 is `mustrun 45%@$13.14 | committed 10%@$13.97 | econhi
+18%@$16.48 | econlo 22%@$17.59 | peak 5%@$38.94` (spread $25.80; 2024 top
+$34.84, 2025 top $45.43). **ERCOT-142 §6's "the ENTIRE curve tops at $21.19,
+BELOW the $24.34 overnight price, so every MW is inframarginal" was
+ercot135-vintage and must not be re-quoted** — ERCOT-140's `_peak` tranche
+already lifted the top ABOVE the overnight price. What survives is only the
+weaker claim: the top tranche is 5 % of the plant (89.8 MW) and the other 95 %
+is offered by $17.59.
+
+**Step 2, the identification — REFUTED four independent ways.**
+
+*(1) Measured PER PLANT, the charter's premise is backwards.* ERCOT-142 read
+`B2_supply_grid` **fleet-pooled**. Resolved per resource on ERCOT-136
+`section_b`'s verbatim construction, Oak Grove submits a **near-horizontal**
+SCED TPO curve — unit 1 `(0 MW @ $9.28) → (880 MW @ $9.64)`, a **$0.36** spread
+across its whole range; unit 2 `$8.19 → $9.35`; `curve_present` 0.995/1.000;
+**98.2/98.3 % of HASL offered at or below $10**. The model's Oak Grove spans
+`$13.14 → $38.94` (spread $25.80, cap-weighted $16.10). **The model's lignite is
+already 22–72× steeper** (against the plant's own $1.16 / $0.36 spreads) **and
+$4–7/MWh dearer than the real plant** — it does not lack mid-band slope, it has
+far more of it than the market does.
+
+*(2) The cited segment belongs to other plants, and is not slope.* The fleet's
+31.3 pp between $17.5 and $25 is carried by Martin Lake **0.535**, W A Parish
+**0.539**, Limestone **0.455**; the lignite plants contribute Oak Grove
+**0.016/0.018**, Major Oak **0.001/0.000**, San Miguel 0.168 — i.e. the 84 % of
+the class that carries the C7 miss is essentially absent from it. And the
+segment is not a within-plant gradient at all: every ERCOT coal plant but Parish
+submits a **flat** curve (Major Oak $14.73 flat, Martin Lake $22.2 flat, San
+Miguel `-$250` min-load then `$42–53` headroom), and the fleet curve rises
+smoothly only because flat curves are **stacked at different heights**. **The
+measured object is cross-plant LEVEL dispersion**, which the model already
+carries through per-plant delivered fuel and heat rate and which ERCOT-137
+(bottom), ERCOT-138 (crossing band) and ERCOT-140 (top) already calibrated on
+LEVEL. There is no within-plant mid-band slope to identify.
+
+*(3) The identifying corpus cannot see the defect window.* Three of the four
+SCED subsets cover **h11–h22 only**. Pooled, **h0–h8 is 8.44 %** of the corpus
+(6,853 / 81,206) and **100 % of it comes from the single 2025-tail subset** —
+the year whose measured plant does not cycle at all (fall day-minus-night CF gap
+−0.008). **No 2023 SCED disclosure exists**, and 2023 is the failing year. Even
+had (1) gone the other way, this instrument could not identify an
+overnight-shape parameter; rule 14's own exception clause (data on a different
+time aggregation) applies squarely.
+
+*(4) The full-coverage instrument closes it and kills the obvious successor.*
+The 60-Day **DAM** disclosure (`QSE submitted Curve-MW/Price1..10` + AS awards)
+does carry 24-h, full-year, **2023-inclusive** coverage. In it **Oak Grove and
+Major Oak submit NO energy curve (0.000) and hold NO AS award (0.000) in ANY of
+2023/2024/2025** (San Miguel likewise; contrast Limestone/Parish at 18–24 MW of
+real AS). So the overnight backdown is carried by no priced energy offer in
+either market — **and a measured AS power reservation, the one successor rule 13
+[R-MEASURED] explicitly names as admissible, cannot back Oak Grove down because
+Oak Grove sells no AS.**
+
+**The direction, stated without a solve.** The rule-14 [R-ACCURATE]-faithful
+version — repricing each plant onto its OWN measured curve — moves Oak Grove
+from ($13.14…$38.94, spread $25.80) to (**$8.19…$9.64, spread ~$1**): lower and
+flatter, hence *strictly more* inframarginal in every overnight hour and with
+*less* internal structure to back down on. It cannot improve C7. **So the only
+version of the chartered mechanism that could clear C7 is the fleet-transfer
+version that per-plant measurement refutes** — rule 1 [R-STRUCT]'s and rule 13's
+forbidden move ("never reach the right number through a mechanism that isn't
+real"). **Refused.**
+
+**What the defect actually is — recorded as an observation, NOT chartered.** The
+real plant offers ~$9 into a ~$19–24 overnight price yet sits at **808 MW = its
+own telemetered LSL** (measured LSL/HSL 0.49–0.72 per unit; 808 MW is also
+exactly `COAL_MUSTRUN_BY_PLANT[6180] = 45.0`, which ERCOT-142 §3(a) already
+verified correct). A resource offered below the clearing price that is
+nonetheless dispatched to its LSL is **not being cleared on its energy offer**.
+The remaining candidates sit outside the offer surface: **intra-zonal North
+congestion** (not representable in a 7-zone reduced network — and ERCOT-117
+CLOSED the topology-split family, do not re-open it) or **QSE self-schedule /
+telemetered self-derate** (no forward analogue that responds to changed
+conditions, so importing it would be pinning the unit to observed conduct, the
+named rule-13 forbidden move). **No successor is chartered from this lane.**
+C7's ERCOT cell is left failing at `2023 COAL_LIGNITE profile r 0.769 < 0.80`,
+0.031 short, with its cause attributed.
+
+**Governance.** No precommit was pushed because no solve was run (the charter's
+§8.4/§8.5 obligations — hard kill, guards, `_CACHE_KEY_OPTIONAL_FIELDS`, six
+wiring seams, matrix row — are all conditional on an arm that does not exist).
+No dashboard run registered: no run was produced (ERCOT-117 / ERCOT-130 /
+ERCOT-142 / miso-107 / caiso-140 precedent; rule 15 governs runs). Holdouts
+(rule 22) — 2023/2024/2025 only; the on-disk `*_2026_*` DAM files were never
+opened. ERCOT-scoped (rule 25) — the pjm-141 parallel is noted as context only,
+no parameter or verdict crosses. Rules 13/14/21/23 — all measured conduct read
+as driver evidence; nothing fed back as an answer key, no derive re-run, no
+parameter changed. Matrix (rule 26b) — `coal_min_load_floor` (stays **K**) and
+`coal_offer_level_rebasis` (stays **R**) both re-noted, §5.1 queue item 3 closed,
+header re-stamped; **no cell verdict moves and no new `ScenarioConfig` field, so
+rule 26(c) is n/a**. **Preconditions VERIFIED, not assumed:**
+`ScenarioConfig().cache_key()` = **603c2498bf71d21d** (matches — the
+`nyiso_import_sil_retire` registration has landed on `main`, so that ERCOT-142
+open ruling is CLOSED); `audit_keepers.py` **PASS, 0 failures / 0 warnings** (the
+NEISO `status/NEISO.js` staleness the handoff listed as pre-existing has since
+been fixed in NEISO's own lane — recorded, not touched); ERCOT-142's basis check
+reproduces D-1 **0.769 / 0.973 / 0.964 exactly**.
+
+**Open owner rulings carried forward (surfaced, not decided).** (1) delete vs
+leave inert the retired `coal_tranche_1_fuel_passthrough` + legacy
+`split_coal_tranches` paths (rule 26 [R-DELETE]); (2) `ercot_offer_hrmult_ep_rebasis`
+/ `_bands` still carry no mechanism-matrix row (rule 26(c) gap, now predating
+seven lanes); (3) **NEW** — the model's `COAL_LIGNITE` class holds Oak Grove /
+San Miguel / Major Oak while **Martin Lake** (EIA 6146), a lignite-burning plant
+in reality, is classed elsewhere. Immaterial to this closure (it would add a
+plant whose measured curve is flat at $22.2) and untouched here; recorded so a
+future class-composition lane weighs it deliberately.
