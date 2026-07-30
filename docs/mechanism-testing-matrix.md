@@ -282,6 +282,31 @@ not a new sweep:
    — but it is *adverse* to the C1 over-run (the model's coal price-taking base
    is 0.28 of capability vs a measured RT 0.49–0.52, so re-grounding it raises
    coal further). Charter it on C7, never as an over-run fix.
+   **PHASE 1 DONE AT ERCOT-142 (2026-07-30, no LP built, no year solved, keeper
+   unchanged) — the object is RE-ROUTED from a dispatch BAND to an offer SLOPE,
+   and Phase 2 is chartered:**
+   `docs/DIAGNOSIS-ercot142-lignite-shape-2026-07-30.md`, probe
+   `scripts/probes/ercot142_lignite_shape_probe.py`. C7's ERCOT failure is ONE
+   cell and ONE leg (`2023 COAL_LIGNITE: profile r 0.769 < 0.8`; the `cv_ratio`
+   leg PASSES at 0.535/0.50, 2024-25 pass both), carried by ONE plant — Oak
+   Grove (6180, 70 % of the class) in fall 2023. **The named ±1.5 GW coal
+   SEASONAL SPLIT is REFUTED in its level form**: neutralising the seasonal
+   level mix moves annual r **0.769 → 0.738**, i.e. worse. **The floor reading
+   is closed**: `COAL_MUSTRUN_BY_PLANT[6180]=45.0` ⇒ 808 MW is *exactly* the
+   measured overnight floor, and it is not the pin (model sits ~730 MW above
+   it). **The cause is offer-curve REACH**: Oak Grove's entire modelled curve
+   tops at **$21.19**, below the $24.34 overnight price, so no LP can back it
+   down. **The measured identification exists** — `B2_supply_grid`
+   (`results/calibration/ercot136_coal_headroom_conduct.json`) puts **35.7 pp
+   of coal capacity between $17.5 and $25**, straddling that price. Two
+   hypotheses are now DO-NOT-REDO: daily **unit commitment** (refuted at unit
+   grain — both units stay online and back down together, so this is continuous
+   turndown and the ERCOT-127/128 pure-LP blocker does *not* apply) and **"not
+   price-following"** (a Pearson-on-levels artifact; robust Spearman within-day
+   gives REAL ρ 0.446 in 2023 vs 0.208/0.217 in 2024-25). Phase 2 must identify
+   the slope with **zero swept parameters** and carries a pre-registered **hard
+   kill: 2025 `profile_r` ≥ 0.80** (the ex-ante sweep shows too much backdown
+   drives 2025 from 0.964 → 0.769).
 4. **Five-ISO fuel stack on ERCOT** (`gas_daily_shape`,
    `gas_monthly_actuals`, `gas_plant_monthly_fuel_pricing`) — consistency
    audit + candidate for 2023 winter-volatility C3b; cheap A/B, zero new DOF.

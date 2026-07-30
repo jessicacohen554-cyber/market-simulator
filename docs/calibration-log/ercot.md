@@ -3077,3 +3077,123 @@ cache and fails **5 pinned tests on a clean checkout of main**
 `test_ramp_envelope_basis`, `test_forecast_xyear_warmstart_flag`). One-line
 remedy in NYISO's lane; `scripts/check_cache_key_registration.py` explicitly
 warns that re-pinning the test literal instead is the WRONG fix.
+
+## 2026-07-30 — ERCOT-142 Phase 1 (no LP built, no year solved): the C7 2023 COAL_LIGNITE miss is ONE plant's missing price-response AMPLITUDE — Oak Grove's entire modelled offer curve tops at $21.19 BELOW the ~$24 overnight price, so no LP can back it down; the named coal SEASONAL SPLIT is REFUTED in its level form; a measured band identification exists and Phase 2 is chartered; keeper UNCHANGED (ercot140-coal-peak-offer)
+
+**Task.** The last named LIVE target in the ERCOT lever queue
+(`docs/mechanism-testing-matrix.md` §5.1 #3, ERCOT-117 §5.3's named successor:
+"→ C7 COAL_LIGNITE-2023 + the ±1.5 GW coal seasonal split. Needs a measured
+band identification (CAMPD loading distributions), not a floor. Charter it on
+C7, never as an over-run fix."). Full diagnosis:
+`docs/DIAGNOSIS-ercot142-lignite-shape-2026-07-30.md`; reproduce with
+`scripts/probes/ercot142_lignite_shape_probe.py`.
+
+**The gate, corrected against the keeper's own artifact.** C7's ERCOT failure is
+**one cell and one leg**: `failures` contains exactly `2023 COAL_LIGNITE:
+profile r 0.769 < 0.8`. The `cv_ratio` leg **PASSES** (0.535 vs a 0.50 gate),
+and 2024/2025 pass both legs (0.973/1.147, 0.964/1.277). The handoff brief's
+"fails on BOTH legs (profile r 0.761, off-peak cv 0.561)" does not match the
+committed artifact — only `profile_r` fails, by **0.031**. The class-aggregate
+basis used throughout reproduces 0.769/0.973/0.964 **exactly**, so the miss is a
+class-shape property, not a D-1 pairing artifact.
+
+**Localised: one season, then one plant.** Fall 2023 is the outlier (r 0.745,
+model off-peak CV 0.014 — dead flat — against the year's most variable measured
+season at 0.128). Of the three lignite plants, San Miguel matches to 1 MW and
+Major Oak to ~25 MW; **Oak Grove (6180, 1,795 MW = 70 % of the class) misses by
+519 MW at night** (model 1,541 MW / 0.859 CF vs measured 1,022 MW / 0.569 CF).
+The model holds it at a *constant* 1,508 MW for days while the real plant cycles
+808 → 1,526 MW; the model spends 30.7 % of 2023 at a single value (0.950 CF)
+while the measured plant is **bimodal** (5.6 % of hours at exactly 808 MW).
+
+**The named SEASONAL SPLIT companion is REFUTED in its level form.**
+Re-weighting each model season to the measured season's own level and
+recomputing the annual profile correlation moves it **0.769 → 0.738** — the
+composition fix makes the gate WORSE. The seasonal level mix is not the cause
+and is not a lever.
+
+**Rule 19 [R-ONE-MECH] enumeration — everything already floring/pricing
+COAL_LIGNITE is MEASURED-CORRECT.** (a) D-2 attributes one mechanism to class
+COAL, `coal_min_config` (6.35/6.07/3.20 % of class energy);
+`COAL_MUSTRUN_BY_PLANT[6180] = 45.0` ⇒ 808 MW is **exactly** the measured
+overnight floor the real plant sits on (808 MW appears 493× in 2023) — the
+constant is right, and it is **not the pin** (model sits ~730 MW above it;
+at/below it in 0.9 % of fall-2023 night hours vs the real plant's 40.5 %). A
+floor cannot fix a plant that never *descends* — the ERCOT-128 over-flatness
+result. (b) The fuel price is right: Oak Grove and Major Oak are mine-mouth and
+carry **zero** EIA-923 Schedule-5 rows in any year, falling back to
+`LIGNITE_PRICE_2023_25 = 1.45`, which checks out against the in-repo EIA Annual
+Coal Report — **Texas lignite 2023 $18.76/ton ÷ 13.30 = $1.411/MMBtu, model
++2.8 %**, no transport to add. Rule 14 licenses no change; San Miguel's F923
+$3.51–3.97 is NOT a valid donor (captive lignite, own economics). (c) The offer
+LEVEL is right (ERCOT-137 mustrun, ERCOT-138 committed/econ −1.6…+3.9 $/MWh,
+ERCOT-140 peak). Nothing re-opened.
+
+**TWO hypotheses tested and REFUTED en route, recorded so they are not re-run.**
+(i) *Daily unit commitment* — 808 MW ≈ one of Oak Grove's two ~915 MW units, but
+unit-grain CAMPD (`TX_2023.parquet`) shows **both units stay online** (95.2/95.1
+and 94.6/95.6 % night/day) and **both back down together** (845→561, 819→598
+MW). It is continuous **turndown, not commitment**, so the ERCOT-127/128 "state
+is unavailable in pure LP" blocker **does not apply**. (ii) *"Not
+price-following"* — a first pass on price levels showed almost no separation
+between the plant's floor and high hours (real RT $19.13 vs $21.52), reading as
+a non-price driver. **That test was wrong**: Pearson-on-levels against a price
+that swings 0.35→3.48 intraday is outlier-dominated. Robust re-test (Spearman,
+within-day) reverses it — REAL ρ **0.446** (2023) vs 0.208/0.217 (2024/25). The
+plant IS price-following, twice as strongly in 2023. The defect is **amplitude**.
+
+**THE FINDING (the deliverable).** Oak Grove's **entire** modelled offer curve —
+bottom $4.50, cap-weighted $11.32, **top $21.19** — sits **below** the model's
+$24.34 fall-2023 overnight North price. Every MW is inframarginal in every night
+hour, so **no LP can back the plant down**; it is flat by construction. San
+Miguel, whose curve spans $4.50–$52.24 and straddles the price, tracks its
+measured shape to 1 MW. The measured target is the SCED TPO supply curve
+(`ercot136_coal_headroom_conduct.json` `B2_supply_grid`, floored): ~43 % at ≤$0,
+flat to ~$17.5, then a **steep segment carrying 35.7 pp of capacity between
+$17.5 and $25** — straddling exactly the overnight price. That is the "measured
+band identification, not a floor" queue item 3 asked for. It is a **shape**
+object and is NOT closed by ERCOT-138, which exonerated the committed/econ bands
+on **level** at p10–p75 quantiles — a curve can pass that and still have the
+wrong slope.
+
+**Why no year-specific driver is needed (the rule-13 resolution).** Measured
+day-minus-night CF gap is +0.117 (2023) / +0.029 (2024) / −0.007 (2025), which
+looked like a rule-13 trap — every obvious driver points the wrong way (gas was
+**cheapest** in 2024 when cycling stopped; the at-floor share is *higher* in the
+flat years). The resolution: measured HB_NORTH fall diurnal price ratio is
+**9.9× (2023) / 4.7× (2024) / 3.6× (2025)**. One year-invariant curve with the
+correct slope produces a large turndown in 2023 and a small one in 2025 —
+reproducing both regimes **from each year's own prices, with no year-specific
+parameter**.
+
+**Feasibility bounded ex ante (no solve).** Energy-preserving price-keyed
+reshaping of the keeper's own Oak Grove series, one shared parameter across all
+three years: a wide feasible window exists (k=8/depth 0.25 → **0.885/0.973/0.916,
+all pass**), bounded above — too much backdown **breaks 2025** (0.964 → 0.769 at
+k=10/depth 1.00). **2025 is the binding guard** and is pre-registered as Phase
+2's hard kill.
+
+**Verdict: NO MECHANISM PROMOTED, NO SOLVE SPENT, keeper UNCHANGED
+`2026-07-30-ercot140-coal-peak-offer`.** Phase 2 is chartered in the diagnosis
+§8 (re-measure the curve on the *current* keeper; identify the slope from
+`B2_supply_grid` at the shared gas anchor with **zero swept parameters** — the
+feasibility (k, depth) values are a bound, and adopting them would be rule-13
+residual tuning; land as a rule-19 REPLACEMENT; 2025 `profile_r` ≥ 0.80 as a
+hard kill; LOYO within 2023–2025). **Expected value stated honestly:** the prize
+is one C7 cell 0.031 short of its gate; it does not touch C3a/C3b/C3c, so a
+successful Phase 2 takes the fail set {C3a,C3b,C3c,C7} → {C3a,C3b,C3c} and does
+not by itself produce a determination (C6 stays UNATTESTED on its 8
+residual-identified DOF entries — not attested to buy a determination).
+
+**Governance.** No LP built, no year solved, no parameter/derive value changed
+(rules 13/21/23); years 2023–2025 only, no holdout touched (rule 22);
+ERCOT-scoped (rule 25); no dashboard run registered because no run was produced
+(the ERCOT-117/130, miso-107, caiso-140 Phase-1 precedent); matrix cell stamped
+on the `coal_min_load_floor` row and §5.1 queue item 3 re-stamped (rule 26b); no
+new `ScenarioConfig` field, so rule 26c is n/a. No new GitHub Actions workflow.
+Pre-existing and matched-not-fixed: `audit_keepers` `status/NEISO.js` stale
+(another ISO's lane); the `nyiso_import_sil_retire` cache-key gap on `main`
+(default key verified unmoved at `2c8098e8e1684c7d`). Open owner rulings carried
+forward unresolved: the rule-26 [R-DELETE] disposition of
+`coal_tranche_1_fuel_passthrough` / legacy `split_coal_tranches`, and the
+rule-26(c) matrix gap on `ercot_offer_hrmult_ep_rebasis` / `_bands`.
