@@ -709,6 +709,7 @@ def caiso_ra_mustoffer_min_gen(
     max_econ_gap_hours: float | None = None,
     startup_lead_hours: np.ndarray | None = None,
     min_run_hours: np.ndarray | None = None,
+    floor_online_hours: bool = False,
 ) -> np.ndarray:
     """Return the ``(n_gen, T)`` CAISO RA must-offer minimum-load floor.
 
@@ -907,6 +908,33 @@ def caiso_ra_mustoffer_min_gen(
             with the gap-bridge and startup-trajectory floors and shares their
             D-2 attribution — same mechanism, wider physics. ``None``
             (default) is byte-identical.
+        floor_online_hours: When True (ercot141,
+            ``ScenarioConfig.ercot_gas_bridge_online_hours``), the minimum-load
+            floor ALSO covers every hour of each detected (and, under
+            ``startup_aware``, commitment-real) run — not only the idle gaps
+            between runs. The gap legs model the *restart* decision; this leg
+            models the STATE those gaps interpolate between: a synchronized
+            thermal unit cannot operate below its minimum stable load, so its
+            LSL block is must-take in EVERY online hour, not only the ones
+            between two runs. Without it the base tranche is a free LP variable
+            whenever the plant's own output sits below that tranche's capacity,
+            so a cheap committed band can set the margin at part load — the
+            defect ERCOT-64 attributed to the commitment STATE rather than the
+            offer price (its floor-scoped LSL markdown was provably inert
+            precisely because the floored rows are already pinned, and a pinned
+            variable cannot price). Driver: minimum-stable-load inflexibility of
+            a synchronized unit, level = the caller's measured ``min_load_frac``;
+            window: the detector's own online hours — no clock-hour rule;
+            forward story: regenerates from the model's own P0 run pattern plus
+            that measured constant (rule 12 [R-FLOOR-WINDOW]). Conservative by
+            construction: ``target_mw`` is capped at the base tranche's own
+            capacity, which on the ERCOT CC fleet is a *smaller* share of the
+            plant than the measured LSL (median committed share 0.25 vs
+            ``min_load_frac`` 0.574), so the floor never forces more than the
+            unit's real minimum. Composes by maximum with every other leg and
+            shares their D-2 attribution — same mechanism, wider WINDOW, so it
+            EXTENDS rather than stacks (rule 19 [R-ONE-MECH]). Default False is
+            byte-identical.
 
     Returns:
         The ``(n_gen, T)`` min-load floor; all-zero (a no-op) when
@@ -1032,6 +1060,20 @@ def caiso_ra_mustoffer_min_gen(
                         floor[g, ext_mask], target_mw * avail[g, ext_mask]
                     )
                     runs = find_runs(run_mask | ext_mask)
+        # ONLINE-HOURS EXTENSION (ercot141, ``floor_online_hours``): the LSL
+        # block of a SYNCHRONIZED unit is must-take in every hour it is online,
+        # not only across the idle gaps the bridge legs cover. The gap legs
+        # model the restart DECISION; this leg models the committed STATE those
+        # gaps interpolate between. Applied to the runs as they stand here — so
+        # a min-run extension above is already part of the online block — and by
+        # maximum, so it never lowers a floor another leg has written. Runs come
+        # from the detector's own P0 pattern, so a unit the model has offline is
+        # never floored, and the target is capped at the base tranche's own
+        # capacity (below the measured LSL on this fleet): the leg cannot force
+        # a start, and cannot force more than the unit's real minimum.
+        if floor_online_hours:
+            for s, e in runs:
+                floor[g, s:e] = np.maximum(floor[g, s:e], target_mw * avail[g, s:e])
         # Startup-trajectory lead (caiso-96 WP-1): a unit with a measured
         # start-to-load duration L ramps in over the L hours BEFORE each
         # detected run-start — floor them at the linear ramp-in toward
