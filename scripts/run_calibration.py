@@ -349,6 +349,7 @@ def run_year(
     gas_offer_margin: bool = False,
     coal_offer_margin: bool = False,
     cc_committed_offer_margin: bool = False,
+    coal_peak_offer_margin: bool = False,
     nysdec_peaker_rule_availability: bool = False,
     oil_primary_bin_fuel: bool = False,
     plant_tranche_config: str | None = None,
@@ -967,6 +968,46 @@ def run_year(
         config = config.with_overrides(
             cc_committed_offer_margin=True,
             cc_committed_offer_level=CC_COMMITTED_OFFER_LEVEL_BY_ISO[iso],
+            gas_offer_margin_anchor=GAS_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
+        )
+    if coal_peak_offer_margin:
+        # Coal `_peak`-tranche gas-anchored offer margin (ERCOT-140, the coal
+        # offer-curve UPPER-TAIL successor ERCOT-123 §7.2 chartered): the
+        # CAMPD coal _peak tranche is repriced from its band-multiplier ×
+        # sigmoid composition to the measured top-decile level at the SHARED
+        # gas anchor, with the corpus's own measured GAS slope (the top
+        # tracks gas — gas-parity opportunity pricing — not coal fuel). All
+        # constants resolve HERE from the registries so the bundle's
+        # run_config.json records the values (rule 25); an ISO without a
+        # derived pair is a hard error, never a fallback (rule 24). The
+        # ANCHOR is the SAME registry the gas margin forms use — one gas
+        # identification point for the whole offer surface (rule 19), so it
+        # resolves whether or not the gas mechanisms are also armed.
+        # Identification: scripts/data/derive_coal_peak_offer_margin.py.
+        from market_sim.config.constants import (
+            COAL_PEAK_OFFER_GAS_HR_BY_ISO,
+            COAL_PEAK_OFFER_LEVEL_BY_ISO,
+            GAS_OFFER_MARGIN_ANCHOR_BY_ISO,
+        )
+
+        if (
+            iso not in COAL_PEAK_OFFER_LEVEL_BY_ISO
+            or iso not in COAL_PEAK_OFFER_GAS_HR_BY_ISO
+            or iso not in GAS_OFFER_MARGIN_ANCHOR_BY_ISO
+        ):
+            raise SystemExit(
+                f"--coal-peak-offer-margin: no derived coal peak level / gas "
+                f"slope / delivered-gas anchor for {iso} in "
+                "constants.COAL_PEAK_OFFER_LEVEL_BY_ISO / "
+                "COAL_PEAK_OFFER_GAS_HR_BY_ISO / GAS_OFFER_MARGIN_ANCHOR_BY_ISO "
+                "— run scripts/data/derive_coal_peak_offer_margin.py and "
+                "register the values (rule 24: levels never cross ISO "
+                "boundaries)"
+            )
+        config = config.with_overrides(
+            coal_peak_offer_margin=True,
+            coal_peak_offer_level=COAL_PEAK_OFFER_LEVEL_BY_ISO[iso],
+            coal_peak_offer_gas_hr=COAL_PEAK_OFFER_GAS_HR_BY_ISO[iso],
             gas_offer_margin_anchor=GAS_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
         )
     if nysdec_peaker_rule_availability:
