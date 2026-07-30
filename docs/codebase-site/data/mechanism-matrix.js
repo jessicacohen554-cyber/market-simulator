@@ -128,6 +128,22 @@
  * book cleared at. No other cell moves; PJM's K is NOT re-adjudicated (rule 25),
  * only flagged for its own lane to measure. The MISO keeper id in this header is
  * also corrected to the shard's current value (miso-101b, promoted 2026-07-28).
+ * PJM fuel/commit cells re-checked 2026-07-30 by pjm-139 (no-LP, no solve, no
+ * run). NO cell verdict moves; three notes are corrected or extended. (1) A
+ * handoff had read gas_daily_shape's PJM cell as U — it is K and has been since
+ * pjm-107 (2026-07-14): pjm137_ctheatrate_B carries
+ * scenario_config.gas_daily_shape=True on the prb_overrides channel. (2) pjm-139
+ * W1 adds an ALL-ISO scope bound to that row and to winter_citygate_daily: a
+ * calendar-day factor is repeated across its 24 hours, so within-day sigma
+ * <= 4e-16 and the hour-of-day profile is flat to 0.000 — these are DAY-scale
+ * levers and can never move a diurnal differential in any ISO. (3) ramp_envelopes
+ * gains a PJM evidence key: the cell stays U, but the lever is now PRE-CHECKED
+ * (the model out-ramps the real PJM fleet 1.4-1.7x at the p99 1-h move) and
+ * CHARTERED (PREREG-pjm140-ramp-envelopes-2026-07-30.md). The stale source of
+ * the gas_daily_shape error (DIAGNOSIS-pjm-dof-scarcity-tail B.3/B.4 describing
+ * the mechanism as "proposed leg A / currently flat plant-month") is corrected in
+ * place, as is lever-queue item 8, whose overnight motivation pjm-139 W4
+ * withdraws on a size measurement.
  */
 window.MECH_MATRIX = {
   version: 1,
@@ -308,8 +324,9 @@ window.MECH_MATRIX = {
     { id: "ramp_envelopes", cat: "commit", name: "Plant-group hourly ramp envelopes (+ LCR local-capacity rows)",
       def: "ramp_limits :1764 / local_capacity_constraints :1782 (model/lp/rows.py::_build_ramp_rows, data.fleet.build_ramp_groups, derive_campd_ramp_envelopes.py)", mode: "BF",
       cells: "RIUUUU",
-      note: "CAMPD-measured max observed 1-h up/down move per (plant, CC/CT/ST) family — a measured physical-capability input, zero fitted DOF. ARMED IN NO KEEPER, ANY ISO. ERCOT: refuted ex ante as the coal dispatch-band candidate (ERCOT-127 §1) — measured INERT on that defect by construction, the pin is 91-93 % SUSTAIN and arrivals via a forbidden move are only 0.02/0.09/0.13 % of pinned energy; the real fleet violates the envelope 0-10 times a year. Artifact deliberately parked at the PROBE path (data/raw/_validation-source/ercot127_campd_ramp_envelopes_ERCOT.csv) so it cannot arm on ERCOT by accident; promoting it to the loader path is the owner's call and its own lane. CAISO: A/B tested with LCR and drags OFF, near-inert on evening CT (+2 MW) and still fails criterion (i) after P2 archival — the suppressor is the P1-native RA physical bridge, not ramp (FINDING-ramp-lcr-caiso-2026-07, re-verified 2026-07-07). CAISO is the only ISO with a loader-path artifact (89 rows). TWO DEFECTS REPAIRED ERCOT-132 leg A: (1) ScenarioConfig.ramp_limits was NEVER DECLARED though the CLI flag, TIER_TAGS entry, LP rows, loader, frozen derive and CAISO artifact all assumed it — arming raised TypeError while consumers read it via getattr and silently saw False, so the mechanism was UNREACHABLE and every prior 'armed' claim needs re-reading; (2) the derive measures CAMPD GROSS load and the loader fed those MW into the model's NET P columns, so every ISO's rows were ~2-7 % loose — rebased at the loader by the per-plant measured EIA-923-net/CAMPD-gross factor (class default where absent). Both are latent-correctness fixes with no live blast radius.",
-      ev: { E: "ERCOT-127 §1, ERCOT-132 leg A", C: "FINDING-ramp-lcr-caiso-2026-07, caiso-ct-drag-d8-closure §7" } },
+      note: "CAMPD-measured max observed 1-h up/down move per (plant, CC/CT/ST) family — a measured physical-capability input, zero fitted DOF. ARMED IN NO KEEPER, ANY ISO. ERCOT: refuted ex ante as the coal dispatch-band candidate (ERCOT-127 §1) — measured INERT on that defect by construction, the pin is 91-93 % SUSTAIN and arrivals via a forbidden move are only 0.02/0.09/0.13 % of pinned energy; the real fleet violates the envelope 0-10 times a year. Artifact deliberately parked at the PROBE path (data/raw/_validation-source/ercot127_campd_ramp_envelopes_ERCOT.csv) so it cannot arm on ERCOT by accident; promoting it to the loader path is the owner's call and its own lane. CAISO: A/B tested with LCR and drags OFF, near-inert on evening CT (+2 MW) and still fails criterion (i) after P2 archival — the suppressor is the P1-native RA physical bridge, not ramp (FINDING-ramp-lcr-caiso-2026-07, re-verified 2026-07-07). CAISO is the only ISO with a loader-path artifact (89 rows). TWO DEFECTS REPAIRED ERCOT-132 leg A: (1) ScenarioConfig.ramp_limits was NEVER DECLARED though the CLI flag, TIER_TAGS entry, LP rows, loader, frozen derive and CAISO artifact all assumed it — arming raised TypeError while consumers read it via getattr and silently saw False, so the mechanism was UNREACHABLE and every prior 'armed' claim needs re-reading; (2) the derive measures CAMPD GROSS load and the loader fed those MW into the model's NET P columns, so every ISO's rows were ~2-7 % loose — rebased at the loader by the per-plant measured EIA-923-net/CAMPD-gross factor (class default where absent). Both are latent-correctness fixes with no live blast radius. PJM stays U but is now PRE-CHECKED and CHARTERED (pjm-139 W7, no LP): PJM's keeper runs ramp_limits=False so the LP has NO intertemporal thermal coupling, and the model out-ramps the real PJM fleet at the p99 1-h up-move as a fraction of each side's own fleet peak by CC 1.42/1.72/1.53, CT 1.38/1.70/1.52, ST 1.61/1.62/1.50 — aggregate excess PROVES per-plant rows would bind (one-sided test; it cannot prove inertness). The defect it targets: the model reproduces only 26/21/18 % of PJM's own DJF h04->h07 system-energy price rise, because on winter mornings it ramps STEAM 1.8/2.4/2.6x harder than the real fleet and CTs only 58/76/83 % as hard — cheap coal substituting for the dear CTs PJM actually starts. Charter, expected direction, no-feedback ceiling and 7 pre-registered kills: PREREG-pjm140-ramp-envelopes-2026-07-30.md. NOT ARMED and NO ARM SOLVED at pjm-139; needs the PJM artifact built (derive --iso PJM, never yet run) and carries an unquantified LP memory cost on a 15 GB box.",
+      ev: { E: "ERCOT-127 §1, ERCOT-132 leg A", C: "FINDING-ramp-lcr-caiso-2026-07, caiso-ct-drag-d8-closure §7",
+            P: "pjm-139 W7 (no-LP pre-check FIRES; cell stays U pending a solve) + PREREG-pjm140-ramp-envelopes-2026-07-30" } },
 
     /* ============ offer ============ */
     { id: "offer_curve_by_group", cat: "offer", name: "Per-class band offer curves (offer_curve_by_group)",
@@ -390,7 +407,8 @@ window.MECH_MATRIX = {
     { id: "gas_daily_shape", cat: "fuel", name: "Measured daily gas shape (within-month HH)",
       def: "scenarios.py:7154", mode: "BF",
       cells: "UKKKKK",
-      note: "Five keepers; ERCOT untested — candidate for the 2023 winter-volatility C3a/C3b residual (would need its own ERCOT evidence)." },
+      note: "Five keepers; ERCOT untested — candidate for the 2023 winter-volatility C3a/C3b residual (would need its own ERCOT evidence). PJM K CONFIRMED at pjm-139 against a handoff that mis-read the cell as U: armed at pjm-107 (leg A, all gates PASS, became the 2026-07-14-pjm-107-gas-daily keeper) and live in pjm137_ctheatrate_B (run_config scenario_config.gas_daily_shape=True, on the prb_overrides channel). pjm-139 W1 additionally BOUNDS what the mechanism can ever do in ANY ISO: the factors are one-per-calendar-day repeated over 24 h (hubs.py np.repeat(day_factor,24)), so within-day sigma <= 4e-16 and the hour-of-day mean profile is flat to 0.000 — it is a DAY-scale lever and can never move an intra-day (hour-of-day) differential. Do not charter it against a diurnal defect in any ISO. It is NOT inert on its own terms: the January peak calendar-day factor is 1.151/3.287/2.143 with 0/4/4 DJF days above 2x.",
+      ev: { P: "pjm-107 (adopted, leg A); pjm-139 W0/W1 (cell confirmed K; all-ISO day-scale resolution bound)" } },
     { id: "zonal_gas_basis", cat: "fuel", name: "Per-zone gas hub basis",
       def: "ercot :7466 / nyiso :7185 / pjm :7252 / miso :7261 / caiso :7296", mode: "B",
       cells: "KKKKK.",
@@ -402,7 +420,8 @@ window.MECH_MATRIX = {
     { id: "winter_citygate_daily", cat: "fuel", name: "Winter daily citygate gas overlays",
       def: "miso_winter_citygate_daily :7278 / caiso_citygate_* :3208", mode: "B",
       cells: "U.UK..",
-      note: "MISO keeper (Chicago citygate DJF). CAISO citygate spot level+flow-date keeper (separate row counted here). Untested: ERCOT (Houston Ship Channel/Katy daily) and PJM (TETCO M3 winter daily) — candidate winter C3 levers with per-ISO derivations." },
+      note: "MISO keeper (Chicago citygate DJF). CAISO citygate spot level+flow-date keeper (separate row counted here). Untested: ERCOT (Houston Ship Channel/Katy daily) and PJM (TETCO M3 winter daily) — candidate winter C3 levers with per-ISO derivations. SCOPE BOUND from pjm-139 W1: a daily citygate series carries the same CALENDAR-DAY resolution as gas_daily_shape, so it inherits the same limit — chartered defensibly against a winter LEVEL or day-scale tail defect, never against an intra-day/diurnal one.",
+      ev: { P: "pjm-139 W1 (scope bound only; PJM cell still untested)" } },
     { id: "dual_fuel_switching", cat: "fuel", name: "Dual-fuel oil/gas switching (min(gas,oil) pricing)",
       def: "scenarios.py:7672 (+oil daily parity, oil reattribution)", mode: "BF",
       cells: "U.KUKK",
