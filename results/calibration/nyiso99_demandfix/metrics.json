@@ -16,7 +16,7 @@
   "rubric_version": 2.9,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: price_tail"
   ],
   "notes": [
     "C8 2024 ST_GAS: grounded above budget \u2014 30.4% forced (3.3793 of 11.097 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.954 (\u22650.8) & off-peak CV ratio 0.957 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
@@ -55,7 +55,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -78,8 +78,8 @@
     }
   },
   "grade_summary": {
-    "scored": 8,
-    "target_grade": 7,
+    "scored": 9,
+    "target_grade": 8,
     "commercial_grade": 0,
     "ledgered": 0,
     "fails": 1

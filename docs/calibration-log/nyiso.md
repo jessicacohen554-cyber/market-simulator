@@ -2454,3 +2454,18 @@ new rows `import_shape_lever` (N → G) and `demand_dropout_screen` (N → K,
 I elsewhere **by measurement** — byte-identical on 16 of 18 ISO-years), header
 re-stamped, §5.5 item 9 struck with 9b added. Dashboard: run registered;
 `2026-07-27-nyiso-87-arm-c` pruned by top-15 NYISO retention.
+
+**PROMOTED 2026-07-29 (owner decision, same session).** NYISO keeper →
+**`2026-07-29-nyiso-99-demandfix`**, DETERMINATION **NOT-YET** (C3c sole
+blocker — the same determination class as every prior NYISO keeper). C6
+attestation built by `scripts/gen_nyiso99_attestation.py`, UNION'ing the
+nyiso-98 ledger → **23 DOF entries, `n_residual` unchanged at 6** (the entry
+adds zero free parameters of any kind: a source-data repair is not a tunable,
+and there is no `ScenarioConfig` field because there is nothing to arm); C6
+re-scores **PASS**, and the full rubric is then identical to the outgoing
+keeper's — C1/C2/C3a/C3b/C4/C6/C7/C8 PASS, C3c FAIL. Keeper shard +
+`build_status.py --iso NYISO` rebuilt, matrix header re-stamped,
+`calibration-keeper-auditor --iso NYISO` run on the promotion. **The promotion
+rests on structural integrity, not fit** — the rubric does not move at all; what
+moves is that five fabricated −$26.001 all-zone hours and 100 % of the keeper's
+dumped energy leave the bundle.
