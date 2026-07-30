@@ -407,6 +407,89 @@ class TestD5:
 
 
 # ---------------------------------------------------------------------------
+# D-5 — NYISO downstate parity, measured on the REAL entry-point sources
+#
+# nyiso-102. The NYISO downstate mechanisms were wired only in the backcast
+# orchestrator, so D-5 read nyiso_local_selfsupply as an UNDECLARED
+# backcast-only difference and FAILed on every NYISO keeper through nyiso-100.
+# Declaring it would have been wrong: the LMIC / local-reliability rule is
+# NYISO market design that scales with load and republishes every capability
+# year, so it is forward-reproducible (rule 13 [R-MEASURED]) and its registry
+# row is mode="both", declared=False. The fix was to close the wiring gap in
+# src/market_sim/runner.py. These tests read the REAL sources so the drift
+# cannot silently return.
+# ---------------------------------------------------------------------------
+
+
+class TestD5NyisoDownstateParity:
+    """The NYISO downstate family must be reachable from BOTH orchestrators."""
+
+    # Keeper-shaped config (2026-07-30-nyiso-100-silretire): all three
+    # downstate flags on, no declared-overlay toggles that would mask a gap.
+    CFG = {
+        "outage_source": "estimated",
+        "nyiso_local_selfsupply": True,
+        "nyiso_li_lcr_tsl": True,
+        "nyiso_nyc_lcr_tsl": True,
+        "reliability_floor": False,
+        "ct_netload_drag": False,
+        "gas_st_netload_drag": False,
+    }
+
+    @staticmethod
+    def _entry_sources():
+        from scripts.legitimacy_diagnostics import REPO_ROOT
+
+        return (
+            (REPO_ROOT / "scripts/run_calibration.py").read_text(),
+            (REPO_ROOT / "src/market_sim/runner.py").read_text(),
+        )
+
+    def test_keeper_config_has_no_undeclared_parity_gap(self):
+        """The real sources clear D-5 for a NYISO keeper-shaped config."""
+        backcast_src, forecast_src = self._entry_sources()
+        res = run_d5(self.CFG, "NYISO", backcast_src, forecast_src)
+        assert res.passed, res.failures
+        # Every emitted row must be a sanctioned overlay, never a bare FAIL.
+        assert all(r["verdict"] == "declared" for r in res.rows)
+        assert not any(r["mechanism"] == "nyiso_local_selfsupply" for r in res.rows)
+
+    def test_selfsupply_floor_wired_in_both_orchestrators(self):
+        backcast_src, forecast_src = self._entry_sources()
+        for src in (backcast_src, forecast_src):
+            assert "inject_nyiso_local_selfsupply" in src
+
+    def test_lcr_tsl_caps_travel_with_the_floor(self):
+        """Anti-gaming guard (rule 1 [R-STRUCT]).
+
+        ``nyiso_li_lcr_tsl`` is exactly what excludes Long_Island — the only
+        pocket in ``NYISO_LOCAL_SELFSUPPLY_FRAC`` — from the self-supply floor
+        (rule 19 [R-ONE-MECH]). Wiring the floor into an orchestrator WITHOUT
+        the published-limit caps would leave a run carrying the keeper's config
+        with NEITHER mechanism on the downstate pocket: D-5 green, real gap
+        still open. The caps must therefore appear wherever the floor does.
+        """
+        for src in self._entry_sources():
+            assert "inject_nyiso_local_selfsupply" in src
+            assert "apply_nyiso_li_tsl_import_cap" in src
+            assert "apply_nyiso_nyc_tsl_import_cap" in src
+
+    def test_backcast_chain_never_loads_the_forecast_orchestrator(self):
+        """Why the fix cannot perturb a backcast solve.
+
+        The forecast orchestrator (``market_sim.runner``) is not on the
+        calibration import graph at all, so editing it is byte-identical for
+        every backcast run by construction — the empirical zero-delta control
+        (nyiso-102) confirms the same thing on a full 3-year solve.
+        """
+        import sys
+
+        import scripts.run_calibration  # noqa: F401  (import for its side effect)
+
+        assert "market_sim.runner" not in sys.modules
+
+
+# ---------------------------------------------------------------------------
 # D-9 — overlay quarantine
 # ---------------------------------------------------------------------------
 

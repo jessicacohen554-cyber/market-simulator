@@ -663,7 +663,7 @@
   },
   "D5": {
    "name": "D-5 forecast/backcast parity",
-   "passed": false,
+   "passed": true,
    "rows": [
     {
      "mechanism": "historic_outage_overlay",
@@ -741,19 +741,10 @@
      "declared_overlay": true,
      "note": "declared admissible overlay (2026-06 audit); a wiring gap in the forecast entry is reported but sanctioned by the declaration",
      "verdict": "declared"
-    },
-    {
-     "mechanism": "nyiso_local_selfsupply",
-     "difference": "backcast-only",
-     "declared_overlay": false,
-     "note": "LMIC market-design rule \u2014 mode-independent by intent",
-     "verdict": "FAIL"
     }
    ],
    "summary": [],
-   "failures": [
-    "nyiso_local_selfsupply: active backcast-only for this config but NOT on the declared backcast-overlay list (docs/backcast-measured-data-audit-2026-06.md)"
-   ],
+   "failures": [],
    "notes": []
   },
   "D9": {
