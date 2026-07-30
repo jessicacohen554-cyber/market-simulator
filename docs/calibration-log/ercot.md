@@ -2738,3 +2738,121 @@ block + the successor charter. **Open ruling surfaced:**
 `ercot_offer_hrmult_ep_rebasis` / `_bands` are solve-affecting fields with no
 matrix row — a rule-26(c) gap predating this lane (CI guard passes; it only
 checks fields new vs base).
+
+## 2026-07-30 — ERCOT-139 (Phase 2 build + full-span arm): the CC committed block put on its MEASURED SCED TPO level (`cc_committed_offer_margin`, level 10.354 $/MWh at the SHARED gas anchor 2.2494) — the PRE-REGISTERED C3c FALSIFIER HELD EXACTLY (47/6/0 → 47/6/0, bit-unchanged), coal gives back −3.81/−3.49/−3.00 TWh (61/40/35 % of the keeper's over-run) and CC_REGULAR takes +5.22/+5.07/+4.49, rubric fail set IDENTICAL to the keeper with no flips either way, at the pre-quantified C3a cost (−$1.082/−0.695/−0.906, all inside the predicted band); **KEEPER CANDIDATE surfaced to the owner, NOT self-promoted**; keeper UNCHANGED (ercot137)
+
+**Task.** Execute the gas-side Phase 2 that ERCOT-138 §6 licensed, deciding its
+§7.3 open mechanism question first. Precommit
+`docs/PRECOMMIT-ercot139-cc-committed-offer-2026-07-30.md`, pushed before any
+solve.
+
+**The mechanism question, decided with evidence (precommit §0).** ERCOT-138 left
+two candidates: (i) re-identify the `offer_curve_by_group['CC_REGULAR']` band
+multipliers on the RT instrument, or (ii) a below-cost committed-CC block, the gas
+analogue of coal's measured `_mustrun` tranche. **(ii) chosen**, on four checkable
+grounds: §J puts the ENTIRE offer/physical heat-rate markup at 1.101× ≈ $1.54/MWh,
+only ~29 % of the ~$5.3 gap, so (i) cannot reach the measurement; the gap's SHAPE
+is wrong for (i) (−33.6 pp at ≤$10, −41.6 at ≤$15, −11.5 at ≤$20, −0.8 at ≤$25 —
+bottom-concentrated and already closed by $25, while a multiplier scales the whole
+class curve); its YEAR behaviour is wrong for (i) (a multiplier low enough for
+2024's measured p25 of $8.38 prices 2025 at ~$12 against a measured $18.07, because
+the measured bottoms move with fuel at full pass-through — the margin form's
+signature, not a multiplier's); and (ii) is the form ERCOT-136→137 already
+validated end-to-end on this defect's coal twin.
+
+**Identification (measured, zero fitted parameters; rules 13/23).**
+`scripts/data/derive_cc_committed_offer_margin.py`, reading only committed
+artifacts. LEVEL **10.354 $/MWh** = the CC rows of
+`ercot136_coal_headroom_conduct.json` `B1_curve_bottom` (SCED `Submitted
+TPO-Price1` cap-wtd p50, res-hours-pooled over the four 2024-25 subsets, 95.1-98.0 %
+curve coverage), expressed at the anchor by removing the corpus's OWN measured fuel
+response — `HR_implied` = (18.0694 − 10.0681)/(3.232 − 2.213) = **7.8521 $/MMBtu**,
+a physically sensible CC offer heat rate and the functional form's own falsifier.
+Cross-subset dispersion falls **±42.98 % raw → ±6.47 % anchored**. The INDEPENDENT
+`Min Gen Cost` p50 instrument at **70-82 %** coverage (coal's corroborator sat at
+28-31 %) lands **10.6662**, 3.02 % away. The ANCHOR is NOT a second constant: the
+mechanism reuses `GAS_OFFER_MARGIN_ANCHOR_BY_ISO['ERCOT']` = 2.2494 so the whole
+gas offer surface keeps one identification point (rule 19).
+
+**Rule 19 `[R-ONE-MECH]` — a REPLACEMENT, enumerated from the keeper's own
+run_config before the solve.** The band multiplier (`committed` 0.998 × base HR)
+was the SOLE owner of this row's price: `gas_offer_net_revenue_margin` is provably
+inert on it (markup = max(0, 0.998 − `phys_committed` 1.006) = 0, and §J measures
+its delta at **$0.00 at p25/p50**), `ercot_offer_surface_cleared_share` scopes
+itself to `econ*` and explicitly cedes the committed block,
+`ercot_offer_surface_conditional` owns `peak*` only, and the gas commitment bridge
+moves `min_gen` never `mc`. `econ_low`/`econ_high`/`peak` and every other class are
+untouched. Rule 26(a) clearance vs the refuted `ercot_offer_surface_lowcurve`
+(DAM Min-Gen-Cost ladders on committed **and econ** rungs; its stated failure cause
+is the econ rows) and the inert `_floorscoped` variant (confined to the
+bridge-floored window where the row is PINNED and cannot price): different
+instrument, different rows, different form.
+
+**Mechanism live-verified before trusting any number:** `CC committed-block offer
+margin: 41 _committed tranche(s) repriced at level 10.3540 $/MWh / shared gas
+anchor 2.2494` — 41 plants, matching ERCOT-138's 41-42 CC_REGULAR plant count.
+
+**Result — run `2026-07-30-ercot139-cc-committed-offer`** (bundle
+`ercot139_cc_committed_arm`, full span 2023/2024/2025 in ONE bundle per rule 16,
+single-delta `replay_keeper --set` off `ercot137_margin_arm`).
+
+| | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| COAL TWh | 66.63 → **62.81** (−3.81) | 66.45 → **62.96** (−3.49) | 70.77 → **67.77** (−3.00) |
+| CC_REGULAR TWh | 140.42 → **145.64** (+5.22) | 139.63 → **144.70** (+5.07) | 139.60 → **144.09** (+4.49) |
+| C3c hours >$200 | 47 → **47** | 6 → **6** | 0 → **0** |
+| hours >$100 | 111 → 111 | 17 → 24 | 9 → 9 |
+| hours <$15 | 206 → 400 | 741 → 1147 | 194 → 290 |
+| C3a | −35.2 → **−36.8 %** | −14.5 → **−16.7 %** | −12.1 → **−14.6 %** |
+| mean LMP $/MWh | −1.082 | −0.695 | −0.906 |
+
+**All four pre-registered predictions held.** (1) **C3c ≈unchanged — it is
+BIT-unchanged in all three years**, and the ex-ante structural reason is confirmed:
+the repriced block is deep inframarginal in every scarcity hour, and the
+ERCOT-118/119 drain (72→49, 13→3) was owned by the **econ** legs plus a peak
+rebasis that this arm does not touch. (2) C3a worsens **inside** the predicted
+−$0.5..1.5/MWh band, all three years. (3) The effect is **trough-confined**: hours
+>$100 essentially still while hours <$15 nearly double and hours <$10 double.
+(4) C1 coal improves — the structural target — removing 61/40/35 % of the keeper's
++6.2/+8.8/+8.6 TWh over-run (residual +2.4/+5.3/+5.6).
+
+**Rubric.** Fail set **EXACTLY IDENTICAL** to the keeper's {C3a, C3b, C3c, C4, C7}
+— same cells, same years, **no gate flips in either direction**. C1 16/16 free
+12/12 PASS, C2 PASS, C8 PASS, grade summary identical (8 scored / target 3 /
+5 fails), determination NOT-YET (C6 UNATTESTED, as the keeper). Costs stated not
+buried: C3b 0.645/0.205 → 0.648/0.221, C4 2024 coal r 0.864 → 0.854, and C7 2023
+COAL_LIGNITE **splits** — profile r 0.775 → 0.733 worse, off-peak CV ratio
+0.42 → 0.566 better (toward 1.0).
+
+**Verdict: KEEPER CANDIDATE, surfaced to the owner — not self-promoted.** The
+precommit §5 decision rule's case 2 (C3c intact + C1 coal improves) routes here
+explicitly, and promotion is the owner's call on the ERCOT-137 "structural
+integrity improves but gates regress" standard. Per rule 1 `[R-STRUCT]` the C3a
+loss **localises** a compensating error rather than creating one: the model's price
+level was partly propped up by an offer the market demonstrably does not make
+(28 % of CC capability priced ~$7.4/MWh dearer than the fleet prices it, in every
+measured subset), and with the bid measured-correct the residual sits exactly where
+ERCOT-138 §5.6 said it does — the near-tail/C3c lane, top-of-curve, **opposite in
+sign** to the crossing band, which is why no single level lever serves both.
+
+**Named successor is the STATE, not another price lever.** If the owner declines
+promotion, the precommit §4.1 forward story stands: the measured bottom is cheap
+because it sits on an *inflexible* already-committed block that cannot set the
+margin (ERCOT-64: the model reproduces that inflexibility "via the STATE alone"),
+so the next lever is the bridge's floor coverage outside gap hours — **never** a
+re-tuned level, which would be a residual fit.
+
+**Scope.** Holdout years (2022/2019/≤2021/H1-2026) untouched (rule 22).
+ERCOT-scoped (rule 25 — other ISOs enter the matrix as `U`; only ERCOT has the
+SCED TPO disclosure this reads). Mechanism-matrix row landed in the same commit as
+the `ScenarioConfig` field (rule 26c) and its cell + evidence stamped this session
+(rule 26b). No new GitHub Actions workflow. Two open owner rulings carried forward
+unresolved (precommit §6): the rule-26 `[R-DELETE]` disposition of the retired
+`coal_tranche_1_fuel_passthrough` / legacy `split_coal_tranches` paths, and the
+rule-26(c) matrix gap on `ercot_offer_hrmult_ep_rebasis` / `_bands`.
+
+**Noted, not fixed (pre-existing, out of this lane's scope):**
+`scripts/run_calibration_full.py --help` raises `TypeError: %o format` from
+argparse's help formatter on the base commit as well as on this branch (an
+unescaped `%` in some help string); flags parse normally. Recorded for a docs/CLI
+hygiene pass.
