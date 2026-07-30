@@ -113,14 +113,74 @@ def test_pickle_class_resolves_at_frozen_path(
     )
 
 
+def _fields_explaining_the_key_move() -> list[str]:
+    """Name the unregistered field(s) whose presence moved the default key.
+
+    Diagnostic only — runs solely on an already-failing pin. The recurring
+    rule-24 defect is a solve-affecting field landing on main WITHOUT an entry
+    in ``_CACHE_KEY_OPTIONAL_FIELDS``, so it enters the digest at its own
+    default and orphans every on-disk cache (documented recurrences in that
+    table: pjm_apsouth_interface_cut, pjm_external_net_position_cut, the four
+    miso-101 temp_derate_* fields, coal_committed_takeorpay_sunk_fixed,
+    pjm_zonal_loss_surface, nyiso_import_sil_retire). Isolating the culprit
+    previously required hand-writing a bisect against the pre-pin commit; this
+    reproduces that search in-process by dropping one candidate at a time and
+    re-hashing. Returns the single-field explanation when there is one, else
+    ``[]`` (a multi-field move needs the manual bisect the message describes).
+    """
+    import hashlib
+    import json
+    from dataclasses import asdict
+
+    from market_sim.config import scenarios as scen
+
+    payload = asdict(ScenarioConfig())
+    defaults = ScenarioConfig()
+    for name in scen._CACHE_KEY_OPTIONAL_FIELDS:
+        if payload.get(name) == getattr(defaults, name):
+            payload.pop(name, None)
+    payload = scen._normalize_cache_key_paths(payload, scen._cache_key_path_roots())
+
+    for candidate in sorted(payload):
+        probe = {k: v for k, v in payload.items() if k != candidate}
+        digest = hashlib.sha256(json.dumps(probe, sort_keys=True).encode()).hexdigest()[
+            :16
+        ]
+        if digest == PINNED_DEFAULT_CACHE_KEY:
+            return [candidate]
+    return []
+
+
 def test_default_scenario_config_cache_key_is_pinned() -> None:
     """``ScenarioConfig().cache_key()`` equals the pinned literal."""
-    assert ScenarioConfig().cache_key() == PINNED_DEFAULT_CACHE_KEY, (
-        "The default ScenarioConfig cache_key changed. A field that reaches "
-        "asdict() moved or changed its default; this orphans every on-disk "
-        "cache and breaks keeper reproducibility. Do not update the literal to "
-        "silence this — find what changed."
-    )
+    actual = ScenarioConfig().cache_key()
+    if actual != PINNED_DEFAULT_CACHE_KEY:
+        culprits = _fields_explaining_the_key_move()
+        blame = (
+            f"\n\nCULPRIT: {culprits[0]!r} — dropping it from the payload "
+            f"restores {PINNED_DEFAULT_CACHE_KEY}. It is a solve-affecting "
+            "field that landed WITHOUT an entry in "
+            "scenarios.py::_CACHE_KEY_OPTIONAL_FIELDS, so it enters the digest "
+            "at its own default (rule 24 [R-REGISTRY]). If it is "
+            "byte-identical at that default — verify its consumer is gated on "
+            "the flag — the one-line remedy is to register it there, which "
+            "restores every orphaned cache key and leaves ARMED runs' keys "
+            "untouched. Register it; do NOT re-baseline the literal."
+            if culprits
+            else (
+                "\n\nNo SINGLE field explains the move (several landed at "
+                "once, or a field's default value changed). Bisect against the "
+                "commit that last set the pin: diff the payload key sets of "
+                "that commit's ScenarioConfig and this one."
+            )
+        )
+        raise AssertionError(
+            f"The default ScenarioConfig cache_key changed: {actual} != "
+            f"{PINNED_DEFAULT_CACHE_KEY}. A field that reaches asdict() moved "
+            "or changed its default; this orphans every on-disk cache and "
+            "breaks keeper reproducibility. Do not update the literal to "
+            f"silence this — find what changed.{blame}"
+        )
 
 
 def test_default_cache_key_is_checkout_path_invariant(monkeypatch) -> None:
