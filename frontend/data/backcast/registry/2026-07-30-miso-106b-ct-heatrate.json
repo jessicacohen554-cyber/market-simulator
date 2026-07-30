@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-30-miso-106b-ct-heatrate",
+  "label": "miso 106b ct heatrate",
+  "date": "2026-07-30",
+  "shorthand": "miso-106b-ct-heatrate",
+  "definition": "miso-106 arm B (TREATMENT): the 2026-07-28-miso-101b-tempgrain keeper recipe at the SAME HEAD as arm A with a SINGLE delta, measured_ct_heat_rates=true, carried on the generic prb_overrides channel so it round-trips through meta.json. MISO-derived artifact only (rule 25). Solved one process per year (rule 12) with --reuse-solved chaining into one 2023-2025 bundle (rule 16).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-30-miso-106b-ct-heatrate.js",
+  "bundle": "results/calibration/miso106_ctheatrate_B"
+}

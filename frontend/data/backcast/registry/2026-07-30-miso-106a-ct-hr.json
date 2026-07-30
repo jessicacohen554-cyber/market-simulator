@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-30-miso-106a-ct-hr",
+  "label": "miso 106a ct hr",
+  "date": "2026-07-30",
+  "shorthand": "miso-106a-ct-hr",
+  "definition": "miso-106 arm A (CONTROL): byte-faithful replay of the 2026-07-28-miso-101b-tempgrain keeper recipe at HEAD, measured_ct_heat_rates OFF. Equality reference for the arm-B single delta (PREREG-miso106 G3). Solved one process per year (rule 12) with --reuse-solved chaining into one 2023-2025 bundle (rule 16); forced by a 15.9 GB OOM when all three years shared one process.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-30-miso-106a-ct-hr.js",
+  "bundle": "results/calibration/miso106_control_A"
+}

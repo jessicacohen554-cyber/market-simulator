@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-24-miso-85-dam-outage",
+  "run_id": "2026-07-30-miso-106a-ct-hr",
   "iso": "MISO",
-  "label": "miso 85 dam outage",
+  "label": "miso 106a ct hr",
   "target_years": [
     2023,
     2024,
@@ -13,21 +13,17 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
+  "rubric_version": 2.9,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
-  "notes": [
-    "C8 2023 ST_GAS: grounded above budget \u2014 40.3% forced (10.1493 of 25.1878 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.983 (\u22650.8) & off-peak CV ratio 1.519 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
-    "C8 2024 ST_GAS: grounded above budget \u2014 36.4% forced (9.2877 of 25.5309 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.972 (\u22650.8) & off-peak CV ratio 1.254 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
-    "C8 2025 ST_GAS: grounded above budget \u2014 40.4% forced (10.2088 of 25.2608 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.973 (\u22650.8) & off-peak CV ratio 1.388 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
-  ],
+  "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -42,37 +38,32 @@
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
       "tier": "supporting",
       "status": "PASS"
     },
-    "co2": {
-      "label": "C5a CO2 vs eGRID",
-      "tier": "load-bearing",
-      "status": "PASS"
-    },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "PASS"
+      "status": "UNATTESTED"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     }
   },
   "caveats": {
@@ -85,11 +76,11 @@
     }
   },
   "grade_summary": {
-    "scored": 10,
-    "target_grade": 7,
+    "scored": 6,
+    "target_grade": 4,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 3
+    "fails": 2
   },
   "free_class_score": {
     "iso": "MISO",
@@ -108,13 +99,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 12,
+      "pass": 16,
       "total": 16
     },
     "free": {
-      "pass": 8,
+      "pass": 12,
       "total": 12
     },
-    "headline": "C1 all 12/16 \u00b7 free 8/12"
+    "headline": "C1 all 16/16 \u00b7 free 12/12"
   }
 }
