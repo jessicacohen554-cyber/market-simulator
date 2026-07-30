@@ -481,12 +481,42 @@ class TestD5NyisoDownstateParity:
         calibration import graph at all, so editing it is byte-identical for
         every backcast run by construction — the empirical zero-delta control
         (nyiso-102) confirms the same thing on a full 3-year solve.
+
+        Probed in a CLEAN subprocess (2026-07-30): the claim is about what
+        ``scripts.run_calibration`` pulls in BY ITSELF, which is only
+        observable in an interpreter that has imported nothing else. The
+        former in-process form read the whole worker's accumulated
+        ``sys.modules``, so under ``pytest -n`` it failed whenever an
+        unrelated test happened to import ``market_sim.runner`` into the same
+        worker first — a test-ORDER artifact, not an import-graph regression.
+        Exit code 3 (not 1) signals the leak so an import crash stays
+        distinguishable from a positive detection.
         """
+        import subprocess
         import sys
 
-        import scripts.run_calibration  # noqa: F401  (import for its side effect)
+        from market_sim.config.paths import REPO_ROOT
 
-        assert "market_sim.runner" not in sys.modules
+        probe = (
+            "import sys; import scripts.run_calibration; "
+            "sys.exit(3 if 'market_sim.runner' in sys.modules else 0)"
+        )
+        proc = subprocess.run(
+            [sys.executable, "-c", probe],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+        )
+        assert proc.returncode != 3, (
+            "importing scripts.run_calibration pulled market_sim.runner onto "
+            "the calibration import graph: a backcast solve now loads the "
+            "forecast orchestrator, so editing it is no longer byte-identical "
+            "for backcast runs."
+        )
+        assert proc.returncode == 0, (
+            f"import probe crashed (rc={proc.returncode}), so the import graph "
+            f"was never checked:\n{proc.stderr}"
+        )
 
 
 # ---------------------------------------------------------------------------
