@@ -2469,3 +2469,132 @@ keeper's — C1/C2/C3a/C3b/C4/C6/C7/C8 PASS, C3c FAIL. Keeper shard +
 rests on structural integrity, not fit** — the rubric does not move at all; what
 moves is that five fabricated −$26.001 all-zone hours and 100 % of the keeper's
 dumped energy leave the bundle.
+
+---
+
+## nyiso-100 (2026-07-30) — `NYISO_simultaneous_import` is a mis-attributed **internal** locality limit; retired. **KEEPER**
+
+**Keeper → `2026-07-30-nyiso-100-silretire`** (bundle `results/calibration/nyiso100_silretire`),
+promoted on the owner's in-session instruction that structural-integrity gains may
+carry a keeper even where reported diagnostics regress. Determination **NOT-YET**,
+**C3c the sole blocker** — the same determination class as every prior NYISO keeper.
+Matrix row `nyiso_import_sil_retire` → **K**.
+
+### The identification (this is the session's real result, and it took no LP)
+
+The nyiso-99 charter carried this forward as "a hand-set estimate measurement
+contradicts". **That framing was too generous.** 4,350 MW is a *real published
+NYISO quantity measured on the wrong boundary*: it is exactly the **G-J locality**
+Bulk Power Transmission Limit for capability year **2024/2025** (`data/raw/
+capacity-deliverability/nyiso/nyiso.csv`, area `G-J`, `import_limit`) — an
+**internal** New York transfer boundary (Load Zones G,H,I,J) — installed as the
+**external** NYCA simultaneous-import cap.
+
+Three corroborations that this is mis-attribution and not coincidence:
+
+1. Exactly **one** row in the entire published `import_limit` table equals the
+   constant, and it is the G-J row. The published G-J series **moves** by
+   capability year (3,425 / 3,425 / 4,350 / 4,500 for 2022/23–2025/26) while the
+   constant is frozen at the 2024/25 reading across all three solve years —
+   including 2023, whose own value is 3,425.
+2. The constant's **own** justification comment argued from *internal* downstate
+   interfaces ("Dunwoodie-South 3.9 GW into NYC, cable-limited 1.65 GW into LI"),
+   and its border-link arithmetic **omitted the `Capital_Hudson` link entirely**
+   (it summed 5.2 GW against a real 6.8 GW).
+3. **The cited source does not contain it.** Extraction over all three 2023–2025
+   Gold Books on disk finds **zero** pages naming a simultaneous import or
+   transfer limit, and **Table VI-1 is redacted as Critical Energy Infrastructure
+   Information in every edition**. NYISO publishes no aggregate external
+   simultaneous import limit available to this repo at all.
+
+Measurement then falsifies 4,350 MW as an external bound: NYCA net import reached
+**5,929 / 5,662 / 5,872 MW metered** (EIA-930) and **7,078 / 7,298 / 6,727 MW
+scheduled** (MIS P-32), exceeding the cap in **287/314/145 h** and **865/685/388 h**.
+The P-32 sum is cross-validated as NYCA net interchange rather than a double-count
+of the three HQ rows — UTC-joined r **0.910/0.906/0.879**, bias **+17/−179/−262 MW**
+on means of 2,677/2,322/2,612 MW (a double-count would bias ~+1,200 MW).
+
+### Why it retires rather than raises
+
+The naive measured replacement — the sum of posted per-interface P-32 limits,
+**10,575 / 10,715 / 10,450 MW** — is *precisely* rule 14's named misalignment
+exception: several parallel paths this five-zone network collapses into one link.
+But the misalignment does **not** extend to every path. For the two links whose tie
+sets are point-to-point HVDC converters there is no parallel-path ambiguity at all,
+and the model is **already at the posted rating**:
+
+| model link | posted P-32 ties | posted | model TTC |
+|---|---|---|---|
+| NYC | HTP 660 + Linden-VFT 315 | 975 | 1,000 |
+| Long_Island | Neptune 660 + Cross-Sound 330 + NPX-1385 200 | 1,190 | 1,200 |
+
+with the AC seams sitting behind the internal Central-East chain the topology
+already carries (2,850 MW model vs a P-32 `CENTRAL EAST - VC` posted median of
+2,865 MW). So retiring the scalar **introduces no new number and removes a free
+parameter**: the aggregate becomes the border-link sum **6,800 MW**, *inside* the
+measured admissible interval **[5,929 lower bound, 10,715 posted-rating upper
+bound]**, where 4,350 lay *outside* it in all three years. Rule 19 `[R-ONE-MECH]`
+reinforces it — shared-upstream-capacity limitation already has a mechanism here
+(the internal interface chain); the scalar was a second one pointed at the wrong
+boundary. **Rule-24 side effect:** the retired constant was solve-affecting but
+carried **no DOF ledger entry**, so the retire also closes a registry gap.
+`n_residual` stays **6** on a UNION'd **24-entry** ledger.
+
+### The A/B — every pre-registered gate passes
+
+PREREG committed **and pushed** before any LP ran; `replay_keeper.py` on the
+keeper's own `meta.json`, so the flag is the only delta.
+
+| gate | result |
+|---|---|
+| **G0** control identity | separate same-HEAD zero-delta control (`2026-07-29-nyiso-100-control-zerodelta`) reproduces the nyiso-99 keeper **bit-for-bit**, all three years: max abs Δ class MW **0.000000**, max abs Δ price **0.000000** |
+| **G1** LIVE-mechanism | arm topology carries **zero** import-node interface limits, control exactly one at 4,350 MW — confirmed by topology rebuild **and** the arm's own solve log |
+| **G2** releases | import max 4,350.0 → **6,518.9 / 6,470.0 / 6,075.0 MW**; hours pinned AT the old cap **548/689/176 → 0/2/0**; hours above it 0 → 436/587/161. Every max inside the pre-registered (4,350, 6,800] window |
+| **G3** volume band-held | ±2 % monthly band holds every month of every year; upper-edge months **rise 10/11/11 → 12/12/11**; import energy moves only **+0.041/+0.070/+0.035 TWh** (+0.17/+0.34/+0.18 %) |
+| **G4** C1 | **all 14/14 · free 10/10**, identical to the keeper. The knife-edge 2023 `CC_REGULAR` cell does move: **−2.79 of ±2.94 in the control** (32.512 TWh — the prior keeper's own value) **→ −2.80 in the arm** (32.497 TWh), a ~15 GWh/yr shift. Still passes, comfortably inside band |
+| **G5** C7/C8 | both **PASS**. Fragile 2024 `ST_GAS` grounded-above-budget moves 30.4 → 30.6 % forced, but stays a **grounded** pass and its grounding evidence **improves on both legs** (D-1 profile r 0.954 → 0.958, off-peak CV ratio 0.957 → 0.972), every binding mechanism still clearing D-4 |
+
+Slack and dump stay **exactly 0.0 MWh** in every year, both runs.
+
+### Reported, not claimed — and one prediction recorded as wrong
+
+Rule 1 `[R-STRUCT]` applies in **both** directions, so neither of these is offered
+as support for the arm:
+
+- **C3c** h>$300 **4/0/7 → 3/0/7** vs actual 10/12/42; mean LMP 33.56/36.32/58.98 →
+  33.49/36.22/58.95. **The pre-registration predicted C3c would tick *up*** (a
+  band-fixed quota reallocated overnight leaving less import at peak). It ticked
+  *down*: volume was not in fact fixed, because hitting the band ceiling in two more
+  months added ~0.15 TWh of supply. **That prediction is recorded as wrong rather
+  than re-narrated.**
+- **Import `r_hr`** 0.598/0.623/0.453 → **0.584/0.605/0.451**, worse in all three
+  years — exactly as pre-registered, and for the reason given. The retired cap bound
+  **54/59/62 % overnight** (h21–h03) and only **3/2/2 %** in h16–h18, and in
+  **84/89/94 %** of cap-bound hours the real system imported **less** than the cap.
+  It was flattering the statistic by truncating the model where reality was quieter.
+  Item 9 is already CLOSED as an attributed C3c symptom with `import_hub_pricing`
+  exonerated (nyiso-99), so a worse `r_hr` is not evidence against this arm.
+
+### Open / follow-on
+
+- **NOT armed here** (single-delta discipline): the G-J locality limit is a **real**
+  constraint the topology does not represent *at its own boundary*, and retiring the
+  scalar removes its only (misplaced) representative. It belongs on the **internal**
+  G-J interface in the `nyiso_nyc_lcr_tsl` / `nyiso_li_lcr_tsl` family, and owes its
+  own rule-14 boundary reconciliation first — the five-zone aggregation has no clean
+  G-J cutset (G sits in `Capital_Hudson`, H+I in `Lower_Hudson`, J is `NYC`). Enters
+  the matrix as **U**.
+- **Pre-existing, unchanged, inherited not caused:** D-5 parity FAILs on
+  `nyiso_local_selfsupply`, identical in the nyiso-99 keeper and this session's own
+  control. A declaration-list gap, not a dispatch defect; needs its own session.
+- **Method note re-confirmed:** align MIS/instrument feeds on **UTC, never
+  positionally** — the model clock is 8,760 h even in leap-year 2024 while P-32 posts
+  all 8,784, and positional alignment shears the series after Feb 29 (r 0.906 → 0.774).
+- Carried forward: item 10 (`dual_fuel_oil_reattribution` still armed in the NYISO
+  recipe metas, zero-dispatch-delta cleanup); the cross-ISO EIA-930 `NG:*` zero-block
+  audit (only `Demand` was swept cross-ISO).
+
+Evidence: `docs/FINDING-nyiso100-simultaneous-import-misattribution-2026-07-30.md`,
+`docs/PREREG-nyiso100-simultaneous-import-retire-2026-07-30.md`, probes
+`nyiso100_simultaneous_import_identification.py` / `nyiso100_ab_compare.py`,
+attestation `scripts/gen_nyiso100_attestation.py`.
