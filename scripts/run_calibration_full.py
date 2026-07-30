@@ -2851,6 +2851,7 @@ def solve_and_persist(
     gas_offer_margin: bool = False,
     coal_offer_margin: bool = False,
     cc_committed_offer_margin: bool = False,
+    coal_peak_offer_margin: bool = False,
     nysdec_peaker_rule_availability: bool = False,
     oil_primary_bin_fuel: bool = False,
     st_gas_intermediate: bool = False,
@@ -4077,6 +4078,23 @@ def solve_and_persist(
                 cc_committed_offer_level=CC_COMMITTED_OFFER_LEVEL_BY_ISO[iso],
                 gas_offer_margin_anchor=GAS_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
             )
+        if coal_peak_offer_margin:
+            # Coal `_peak`-tranche gas-anchored offer margin (ERCOT-140):
+            # record the gate AND all three resolved constants (rule 25 —
+            # run_config carries the values the solve used, never a lookup
+            # indirection). The anchor is the SHARED gas anchor (rule 19).
+            from market_sim.config.constants import (
+                COAL_PEAK_OFFER_GAS_HR_BY_ISO,
+                COAL_PEAK_OFFER_LEVEL_BY_ISO,
+                GAS_OFFER_MARGIN_ANCHOR_BY_ISO,
+            )
+
+            recorded_cfg = recorded_cfg.with_overrides(
+                coal_peak_offer_margin=True,
+                coal_peak_offer_level=COAL_PEAK_OFFER_LEVEL_BY_ISO[iso],
+                coal_peak_offer_gas_hr=COAL_PEAK_OFFER_GAS_HR_BY_ISO[iso],
+                gas_offer_margin_anchor=GAS_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
+            )
         if nysdec_peaker_rule_availability:
             recorded_cfg = recorded_cfg.with_overrides(
                 nysdec_peaker_rule_availability=True
@@ -4331,6 +4349,7 @@ def solve_and_persist(
             gas_offer_margin=gas_offer_margin,
             coal_offer_margin=coal_offer_margin,
             cc_committed_offer_margin=cc_committed_offer_margin,
+            coal_peak_offer_margin=coal_peak_offer_margin,
             nysdec_peaker_rule_availability=nysdec_peaker_rule_availability,
             oil_primary_bin_fuel=oil_primary_bin_fuel,
             st_gas_intermediate=st_gas_intermediate,
@@ -5051,6 +5070,7 @@ def solve_and_persist(
         "gas_offer_margin": gas_offer_margin,
         "coal_offer_margin": coal_offer_margin,
         "cc_committed_offer_margin": cc_committed_offer_margin,
+        "coal_peak_offer_margin": coal_peak_offer_margin,
         "nysdec_peaker_rule_availability": nysdec_peaker_rule_availability,
         "oil_primary_bin_fuel": oil_primary_bin_fuel,
         "st_gas_intermediate": st_gas_intermediate,
@@ -7737,6 +7757,33 @@ def main() -> None:
         "for the whole gas offer surface). ISOs without a derived level "
         "hard-fail (rule 24); econ/peak bands and every other class are "
         "untouched (rule 19). Default OFF -> prior keepers byte-identical.",
+    )
+    parser.add_argument(
+        "--coal-peak-offer-margin",
+        dest="coal_peak_offer_margin",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Coal _peak-tranche MEASURED gas-anchored offer margin "
+        "(ERCOT-140, ScenarioConfig.coal_peak_offer_margin — the coal "
+        "offer-curve UPPER-TAIL successor ERCOT-123 section 7.2 chartered): "
+        "the CAMPD coal _peak tranche is repriced from its band-multiplier x "
+        "sigmoid composition to the measured top-decile level (SCED "
+        "Submitted TPO-Price1 cap-wtd p90 of above-min-load capability) at "
+        "the SHARED delivered-gas anchor, with the corpus's own measured GAS "
+        "slope. Repairs the defect ERCOT-138 section 5.6 sized: at p90 the "
+        "model's coal curve runs $9.6-15.5/MWh UNDER measured in all four "
+        "subsets (fully offered by ~$32-34 vs a real top needing $500). The "
+        "slope basis is GAS, not coal (the measured top tracks gas while "
+        "delivered coal moved the other way - gas-parity opportunity "
+        "pricing); coal-fuel tracking is REMOVED on the repriced rows by "
+        "measurement. Identification constants: "
+        "constants.COAL_PEAK_OFFER_LEVEL_BY_ISO / "
+        "COAL_PEAK_OFFER_GAS_HR_BY_ISO (derive_coal_peak_offer_margin.py); "
+        "the anchor is the shared GAS_OFFER_MARGIN_ANCHOR_BY_ISO (rule 19). "
+        "ISOs without derived values hard-fail (rule 24); every other coal "
+        "row, every gas curve and the measured availability envelope are "
+        "untouched (rules 14/19). Default OFF -> prior keepers "
+        "byte-identical.",
     )
     parser.add_argument(
         "--nysdec-peaker-rule",
@@ -10612,6 +10659,7 @@ def main() -> None:
         gas_offer_margin=args.gas_offer_margin,
         coal_offer_margin=args.coal_offer_margin,
         cc_committed_offer_margin=args.cc_committed_offer_margin,
+        coal_peak_offer_margin=args.coal_peak_offer_margin,
         nysdec_peaker_rule_availability=args.nysdec_peaker_rule_availability,
         oil_primary_bin_fuel=args.oil_primary_bin_fuel,
         cc_intermediate_cf_threshold=args.cc_intermediate_cf_threshold,

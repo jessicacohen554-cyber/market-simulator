@@ -248,6 +248,18 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # scenario.
     "cc_committed_offer_margin",
     "cc_committed_offer_level",
+    # Coal `_peak`-tranche measured offer margin (ERCOT-140): the gate plus
+    # its two identification constants (top-decile level $/MWh + measured gas
+    # slope MMBtu/MWh; the anchor is the SHARED gas anchor already registered
+    # above — rule 19, no second anchor). All three default-off
+    # (False / None / None) and byte-identical for every config that does not
+    # arm the mechanism; registered here at their defaults so every
+    # pre-existing cache key (and the pinned default 603c2498bf71d21d) stays
+    # byte-stable. An armed run (the flag True, or either constant set)
+    # enters the key as a distinct scenario.
+    "coal_peak_offer_margin",
+    "coal_peak_offer_level",
+    "coal_peak_offer_gas_hr",
     # Conventional-hydro minimum-flow floor (caiso-124): default-off gate for
     # the lower half of the measured hydro capability envelope. Dropped from the
     # hash at its default so every pre-existing cache key (and the pinned
@@ -7208,6 +7220,57 @@ class ScenarioConfig:
     # its source disclosure changes, via
     # scripts/data/derive_cc_committed_offer_margin.py.
     cc_committed_offer_level: float | None = None
+
+    # Coal `_peak`-tranche measured offer margin (ERCOT-140,
+    # docs/PRECOMMIT-ercot140-coal-peak-offer-2026-07-30.md — the coal
+    # offer-curve UPPER-TAIL successor ERCOT-123 §7.2 chartered). ERCOT-138
+    # §5.6 measured the defect: at p90 the model's COAL curve runs
+    # $9.6–15.5/MWh UNDER its own fleet's SCED TPO conduct in all four
+    # 2024–2025 subsets (model top $24.6–32.5 vs measured $34.8–48.0) — the
+    # model's stack is fully offered by ~$32–34 while the real fleet's last
+    # MW needs $500 (ERCOT-123 §5).
+    # With this armed, a CAMPD coal ``_peak*`` tranche is repriced from its
+    # band-multiplier composition to the measured gas-anchored margin form
+    #   GAS_HR × (gas_cc(t) − anchor)  +  emis(t)  +  level
+    # where ``gas_cc(t)`` is the model's own cap-weighted CC_REGULAR
+    # delivered-gas series at the LP seam (the identification's fuel basis,
+    # ERCOT-138 §J fuel_capwtd). The slope basis is GAS, not coal: the
+    # measured top ROSE with gas while delivered coal FELL (a coal-fuel form
+    # has slope −89.9 — wrong sign, refuted), and GAS_HR lands within ~5 % of
+    # the coal fleet's own measured offer heat rate (10.905) — gas-parity
+    # opportunity pricing of the marginal coal MW. Coal-fuel tracking is
+    # REMOVED on the repriced rows (that is the measured finding, not an
+    # omission); emissions adders remain. At gas == anchor the resolved bid
+    # is EXACTLY ``coal_peak_offer_level``. The ANCHOR is the SHARED gas
+    # anchor (rule 19 — never a second identification point).
+    # RULE-19 REPLACEMENT, enumerated from the ercot139 keeper's run_config:
+    # exactly two composed mechanisms price the coal ``_peak`` row — the
+    # ``offer_curve_by_group`` peak multiplier and the supply-chain gas-keyed
+    # sigmoid passthrough (≤1.0) — and this arm replaces the composition (the
+    # margin branch exits before the fuel-frac discount).
+    # ``coal_offer_net_revenue_margin`` owns ``_mustrun`` only;
+    # ``coal_econ_marginal_hr_bound`` owns the econ bands only; the ERCOT
+    # offer surfaces are gas-class-scoped. Every other coal row, every gas
+    # curve, and the measured availability envelope are untouched (rule 14).
+    # Applied on the BASE cost in data.fleet.legacy_bins.apply_coal_tranches,
+    # so P0 run discovery and the P1 bid see the same offer curve.
+    coal_peak_offer_margin: bool = False
+    # The measured coal `_peak`-tranche offer level ($/MWh): the fleet's
+    # top-decile boundary price (SCED Submitted TPO-Price1 cap-wtd p90 of
+    # above-min-load capability, res-hours-pooled over the four 2024–25
+    # subsets) expressed at the shared gas anchor by removing the corpus's own
+    # measured GAS response. None + flag armed is a hard error (rule 25 — no
+    # silent fallback in the offer path); the harness resolves it from
+    # constants.COAL_PEAK_OFFER_LEVEL_BY_ISO so run_config.json records the
+    # resolved value. Frozen against residuals (rule 23) — re-derives only
+    # when its source disclosure changes, via
+    # scripts/data/derive_coal_peak_offer_margin.py.
+    coal_peak_offer_level: float | None = None
+    # The measured GAS slope of the coal top (MMBtu/MWh): the corpus's own
+    # gas response (Δp90/Δgas across the two disclosure years), NOT a model
+    # heat rate and NOT fitted. Same resolution/freeze rules as the level
+    # (constants.COAL_PEAK_OFFER_GAS_HR_BY_ISO).
+    coal_peak_offer_gas_hr: float | None = None
 
     # N-slice smoothing of the economic offer curve. When
     # offer_curve_smoothing_n > 0, each plant's flat econ blocks (econ-low /
