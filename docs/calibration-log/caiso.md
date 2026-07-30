@@ -3617,3 +3617,68 @@ admissible sink basis; naming ERCOT in the export-sink blast radius;
 re-opening A1 on the grounds that A3 landed.
 
 Next number: caiso-143.
+
+### caiso-142 ADDENDUM (same session, owner grant) — the seam arm SOLVED and **NOT PROMOTED**: the restored outlet is **node-level RESALE, not export**, so caiso-138 §E was right and the §I "the link bound retires it" reasoning is **WITHDRAWN**
+
+Owner grant 2026-07-30 ("if structural integrity improves but gates regress that
+may still be a keeper") turned the arm live. Prereg
+`PREREG-caiso142-export-sink-seam-2026-07-30.md` pushed and the scorer
+`scripts/probes/_caiso142_arm_gates.py` committed **before** the arms landed.
+Arms `2026-07-30-caiso142-control` / `2026-07-30-caiso142-seam-sink-live`
+(bundles `caiso142_control_A` / `caiso142_seam_B`, `--year 2023 2024 2025` one
+invocation each, sequential, same `basis_sha 9e393a9`).
+
+1. **P2 FAILS — the decisive gate.** B's export energy exceeds the corridor's
+   measured export-direction envelope in **4 of 6 corridor-years** (PNW 2024
+   10.030 vs 9.722 TWh; PNW 2025 7.040 vs 6.352; DSW 2023 2.033 vs 1.552;
+   DSW 2024 2.207 vs 1.659), and the sink transacts in
+   **99/1,463/734/1,422/1,393/948 CLOSED-envelope hours** — while the
+   corridor-group limit violation is **0.0000 MW**.
+2. **Why: it is RESALE, not export.** In those hours the net corridor **link**
+   flow is **≥ 0 in 100.0 %** of hours (PNW p50 exactly 0.0 MW) while same-node
+   import tranches inject ~2,100 MW and the sink absorbs ~1,800 MW; the node
+   identity `import_inject + sink = link_flow` holds to **0.0002 MW**. A sink
+   trading against injections at its OWN node is invisible to every link and
+   group constraint, so the pmin=pmax firm must-flow block is U-turned out of CA
+   and booked as hub resale — **exactly FINDING-caiso138 §E**, now CONFIRMED.
+   **§I is WITHDRAWN**: `limit_dn` bounds the net LINK flow, not the sink's
+   withdrawal, and reading it as the sink's bound was a topology error.
+3. **Cost.** PNW delivered flow collapses **1,067→311 / 1,402→263 / 1,462→668
+   MW** mean; C3a rises **+3.401/+4.172/+2.649** (inside the pre-registered
+   ceilings, so P4 held); **C3a-2024 leaves the ±10 % band (+8.00 % →
+   +20.06 %)**; and the scored fail set swaps a **load-bearing** gate for a
+   supporting one: **{C3a, C3c} → {C3a, C3b}** (C3b price-shape PASS→FAIL; the
+   C3c FAIL→PASS is phantom-resale price inflation entering the tail, NOT
+   scarcity formation — caiso-137b: CAISO has no scarcity mechanism in the
+   scored lane).
+4. **P3 passed as written but is NOT a structural win.** PNW corridor net │err│
+   9.90→3.28 / 10.22→0.24 / 8.07→1.12 TWh — achieved through the same phantom
+   channel (a phantom import cancelled by a phantom export), which rule 1
+   [R-STRUCT] forbids as reaching the right number through a mechanism that is
+   not real. The prereg's P3 was too weak to separate them; recorded, not
+   argued away.
+5. **Control integrity EXACT (P6).** Arm A: max │Δprice│ = 0, max │Δdump│ = 0 vs
+   the committed keeper in all three years / 7 zones, D-1 rows bit-identical,
+   and determination/governance/fail set reproduce the keeper's — which also
+   proves the seam fix's flag-OFF path byte-identical on the full solve path.
+6. **Disposition.** **Keeper UNCHANGED** (`2026-07-29-caiso139-dump-guard-offer`).
+   The seam fix stays in the code, **default-off**. Both arms registered
+   (rule 15). Matrix row `caiso_p1_export_sink_seam` stays **R**, now with a
+   solved-A/B citation. What a future arm needs first, in order: (a) a
+   **NODE-level** net-interchange export constraint (`model/lp/rows.py:1416`
+   machinery) bounded by the measured envelope — without it no sink bound is
+   enforceable; (b) the re-based export price (measured PNW netback
+   −3.56/−8.30/−7.40, DSW +3.69/+4.39/+4.49 vs the raw hub; `hub − ε` is the
+   SOURCED WEIM/EDAM basis, so the defect is its LEVEL not its provenance);
+   (c) only then the caiso-138 §C firm-block energy overreach, whose phantom
+   import the sink is laundering.
+
+### DO-NOT-REDO (addendum, binding)
+
+Re-arming the export sink on ANY price basis or bound before a **node-level**
+export constraint exists (§J: link/group limits cannot bound same-node resale);
+citing `limit_dn` / the measured export envelope as the sink's bound; quoting
+this arm's C3c FAIL→PASS as scarcity progress; quoting its PNW corridor-net
+improvement as structural gain.
+
+Next number: caiso-143.

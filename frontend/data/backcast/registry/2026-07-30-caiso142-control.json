@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-30-caiso142-control",
+  "label": "caiso142 control",
+  "date": "2026-07-30",
+  "shorthand": "caiso142-control",
+  "definition": "caiso-142 control arm (keeper recipe, no delta)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-30-caiso142-control.js",
+  "bundle": "results/calibration/caiso142_control_A"
+}
