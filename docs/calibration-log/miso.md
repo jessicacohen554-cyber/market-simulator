@@ -1865,7 +1865,9 @@ a `replay_keeper` bundle carries no `calibration_attestation.json`, so
 promoting it would break rule 21 `[R-DOF]` and would silently drop MISO from
 `CALIBRATED-WITH-CAVEATS` to `NOT-YET` on a missing governance file rather
 than on model quality (the current determination rests on the miso-90 owner
-re-gate, caveat budget 3/3). Carrying the attestation forward is the owner's
+re-gate, caveat budget **2/3** — *the entry as written said 3/3; corrected by
+the miso-107 ledger sweep, see the 2026-07-30 correction entry*). Carrying the
+attestation forward is the owner's
 act; the arm itself adds **zero free parameters**.
 Runs: `2026-07-28-miso-101a-control` (control) +
 `2026-07-28-miso-101b-tempgrain` (arm), both 2023–2025 in one bundle
@@ -2028,7 +2030,11 @@ committed artifacts only).
   minimums, fuel-adjustment-clause filings, IRP fuel-budget exhibits) — a
   data-intake ask, now the second standing MISO ask beside outage grain.
 * **C7 COAL_PRB stands failing 3/3 on the keeper with NO open admissible
-  lever.** Caveat budget stays 3/3 saturated; C7 is not ledgered.
+  lever.** Caveat budget stays at **2/3**; C7 is not ledgered. *(The entry as
+  written said "3/3 saturated"; corrected by the miso-107 ledger sweep — see
+  the 2026-07-30 correction entry. The budget is NOT saturated, so the
+  "must be BUILT, not documented" pressure this line asserted is weaker than
+  stated.)*
 * Rule 26 duty (b): `coal_takeorpay_committed` MISO cell updated with the
   miso-103 adjudication. Rule 22 honoured — no solve, no out-of-training
   touch (2018–2022 receipts are authorized on-disk intake, read only as
@@ -2118,8 +2124,9 @@ data ask, beside outage grain). Reproduction of the coverage ledger:
   (b): `coal_takeorpay_committed` MISO cell updated in-session with this
   outcome. Rule 15: no run produced, nothing to register.
 * **C7 COAL_PRB still fails 3/3 with no open admissible lever**; caveat budget
-  stays 3/3 saturated and C7 is not ledgered. The lane's continuation is a data
-  ask, not a solve.
+  stays at **2/3** and C7 is not ledgered. *(The entry as written said "3/3
+  saturated"; corrected by the miso-107 ledger sweep — see the 2026-07-30
+  correction entry.)* The lane's continuation is a data ask, not a solve.
 * Next number: **miso-105.**
 
 ## 2026-07-29 — miso-105: MISO's DA virtual lever is REFUSED ex ante on its OWN COMPLETE SUBMITTED BOOK — the source exists and was found, the premise is measured false, and the only channel big enough to move C3b is the curve's own crossing price; NO solve, keeper UNCHANGED
@@ -2189,9 +2196,73 @@ Probe: `scripts/probes/miso105_da_virtual_identifiability.py`.
   the input tree would be a re-armable answer key. Everything is in scratch and
   re-fetchable from the finding's §2. Rule 15: no run produced, nothing to
   register. Rule 26 duty (b): cell updated in-session.
-* **Caveat budget UNCHANGED at 3/3** (C3a, C3b, C3c). Nothing ledgered, added,
+* **Caveat budget UNCHANGED at 2/3** (C3a, C3c). Nothing ledgered, added,
   widened or re-scoped; C3b's determination stands exactly where miso-90 left it.
+  *(The entry as written said "3/3 (C3a, C3b, C3c)"; corrected by the miso-107
+  ledger sweep — see the 2026-07-30 correction entry. C3b has carried NO ledger
+  entry since miso-98 deleted it under rule 26 `[R-DELETE]`. The substantive
+  claim on this line — that miso-105 ledgered nothing — is unaffected.)*
 * **C3b keeps no open in-model lever.** Its identified driver stays the
   instrument-blocked outage-grain gap (standing data ask), and MISO item 3 is now
   closed alongside items 1–2.
 * Next number: **miso-106.**
+
+## 2026-07-30 — miso-107 (part 1, NO LP): the ledgered-caveat budget is **2/3**, not 3/3 — four post-miso-98 entries and the live keeper shard restated a number miso-98 had already deleted, and the machine scorer never once agreed with them
+
+**The correction.** MISO's non-protective ledgered-caveat budget has been
+**2/3 — C3a mean LMP and C3c price tail — since 2026-07-28 (miso-98)**, which
+deleted the C3b-2025 `price_shape` entry under rule 26 `[R-DELETE]` when the
+criterion began passing. Every subsequent restatement of "3/3 (C3a, C3b, C3c)"
+is stale prose.
+
+**Grounded in the artifacts, not in prose.** `scripts/calibration_verdict.py`,
+run on each bundle's own committed files, returns:
+
+| run | `caveats.ledgered` | count |
+|---|---|---|
+| `2026-07-27-miso-98b-sectormeasured` | `C3a mean LMP`, `C3c price tail / scarcity (RT hourly)` | **2** |
+| `2026-07-28-miso-99b-chp-power` | `C3a mean LMP`, `C3c price tail / scarcity (RT hourly)` | **2** |
+| `2026-07-28-miso-101b-tempgrain` *(current keeper)* | `C3a mean LMP`, `C3c price tail / scarcity (RT hourly)` | **2** |
+
+Both the keeper's and its predecessors' `calibration_attestation.json` carry
+**six** exceptions — `storage` 2025, `storage_shape` 2025, `price_tail`
+2023/2024/2025, `price_mean` 2025 — and **no `price_shape` entry at all**.
+
+**The machine verdict was never wrong; only the prose was.** The committed
+dashboard part `frontend/data/backcast/status/MISO.js` has carried
+`"ledgered":["C3a mean LMP","C3c price tail / scarcity (RT hourly)"]` since it
+was built on 2026-07-28. Rebuilding it in this session changed **only the
+`generated` timestamp** — the verdict bytes are identical. So the Calibration
+Status page has been telling the truth throughout while the log, the handoff
+prompts and the keeper shard's prose said otherwise.
+
+**Sites corrected (post-miso-98 only; earlier "3/3" statements were true when
+written and are left as the historical record).**
+
+* `docs/calibration-log/miso.md` — miso-101 ("caveat budget 3/3"), miso-103
+  and miso-104 ("caveat budget stays 3/3 saturated"), miso-105 ("Caveat budget
+  UNCHANGED at 3/3 (C3a, C3b, C3c)"). Each is corrected in place with a visible
+  marker rather than silently rewritten; no substantive claim in any of those
+  four entries is altered — each said "this session ledgered nothing", which
+  remains true.
+* `frontend/data/backcast/keepers/MISO.json` — the live `note` and the
+  miso-101 `promotion_note` both said 3/3; corrected, with the superseded
+  wording quoted inside the correction so the drift stays auditable. The
+  miso-90 `GOVERNANCE NOTE` deeper in the prior-note chain was **true when
+  written** (2026-07-26, pre-miso-98) and is annotated `[SUPERSEDED]` in place,
+  not rewritten. `status/MISO.js` rebuilt via `build_status.py --iso MISO`
+  (MISO lane only).
+* Occurrences of "3/3" meaning **three of three years** (e.g. "C7 COAL_PRB
+  stands failing 3/3") are untouched — they are not ledger claims.
+
+**Why it mattered enough to spend a session opening on it.** The stale number
+carried a governance consequence: miso-90's saturation note concluded that "the
+next load-bearing miss must be **BUILT**, not documented". At 2/3 the budget is
+**not** saturated, so that pressure was overstated in every entry that repeated
+it. The drift also propagated *outward* — into the miso-106 handoff prompt and
+briefly into the keeper shard — which is the pattern this correction is meant
+to stop.
+
+* Rule 15: no run produced by this part, nothing to register. Rule 22: no
+  solve, no out-of-training year touched.
+
