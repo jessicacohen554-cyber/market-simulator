@@ -3672,13 +3672,119 @@ invocation each, sequential, same `basis_sha 9e393a9`).
    SOURCED WEIM/EDAM basis, so the defect is its LEVEL not its provenance);
    (c) only then the caiso-138 §C firm-block energy overreach, whose phantom
    import the sink is laundering.
+   **⚠ CORRECTED by caiso-143 (below): (a) does not exist and (b) is not
+   derivable, so the order is just (c).** (a) is algebraically redundant with the
+   corridor group's `limit_dn` and no LP row of any granularity can make a sink
+   sound while the must-flow block injects at the same node (non-convex soundness
+   set); (b) is unidentifiable without a fitted value on PNW and **wrong-signed on
+   DSW**, where `hub − ε` in fact **under**-prices the outlet by ~$4.4.
 
 ### DO-NOT-REDO (addendum, binding)
 
 Re-arming the export sink on ANY price basis or bound before a **node-level**
-export constraint exists (§J: link/group limits cannot bound same-node resale);
+export constraint exists (§J: link/group limits cannot bound same-node resale;
+**caiso-143 strengthens this to: never, since no such constraint exists**);
 citing `limit_dn` / the measured export envelope as the sink's bound; quoting
 this arm's C3c FAIL→PASS as scarcity progress; quoting its PNW corridor-net
 improvement as structural gain.
 
 Next number: caiso-143.
+
+---
+
+## caiso-143 (2026-07-30) — **both** prerequisites the caiso-142 arm named are REFUSED at the design gate. The node-level export constraint is **algebraically redundant** with the corridor bound already armed — and worse, a **sound** export sink is **NOT LP-REPRESENTABLE**: the soundness set is non-convex, its tightest linear surrogate is infeasible while the must-flow block forces 27.2 TWh, and its convex hull permits exactly the resale it would forbid. The export price re-basis is **not identifiable without a fitted value** (and `hub − ε` **under**-prices DSW by ~$4.4, correcting caiso-142 §I). NO SOLVE, NO ARM, **NO NEW FIELD**, keeper unchanged
+
+**Keeper UNCHANGED:** `2026-07-29-caiso139-dump-guard-offer` (NOT-YET, fail
+{C3a-2025, C3c}). Full record: `FINDING-caiso143-node-export-constraint-2026-07-30.md`;
+instrument `scripts/probes/_caiso143_node_export_gates.py` (no LP, no solver).
+
+1. **D1a — the chartered row is REDUNDANT, not weak.** Every priced per-hub
+   corridor node has `load_share = 0.000`, exactly **one** link out and **zero**
+   links in, and its solved `slack` = `dump` = **0.0000 MW in every hour of every
+   year in BOTH committed bundles** (keeper and `caiso142_seam_B`). Its energy
+   balance is therefore the exact identity `Σ_g P[g,t] ≡ link_flow[t]`, so a row
+   bounding the node's net export interchange is **the same linear combination**
+   as the corridor group's bound — which is already `limit_dn` ==
+   `measured_corridor_flow_envelope(direction="export")`, **max diff 0.000000 MW**
+   over all six corridor-years. caiso-142 §J measured the consequence from the
+   other side: net link flow ≥ 0 in **100.0 %** of the resale hours, i.e. the row
+   is slack in exactly the hours D1 asked it to bind. (The cited machinery,
+   `rows.py:1416`, is also a **monthly** net-throughput band, not an hourly
+   directional bound.)
+2. **The channel's origin is the must-flow block, not the sink.** Only **2 of 9**
+   interchange injection rows are price-insensitive — `PNW_hydro_base`
+   (**11.668 TWh** forced) and `DSW_solar_PV` (**15.564 TWh**), floored at
+   `min_gen = pmax × availability` by the caiso-77 self-schedule injector. Every
+   economic tranche costs `hub + wheel + ε` against the sink's `hub − ε`, so
+   buy-to-resell loses `wheel + 2ε` (wheels $2/$4/$5/$6) — **an all-economic node
+   cannot resell at all, whatever the sink's bound.**
+3. **D1c — the one non-redundant linear form is refused for a stronger reason.**
+   A **gross** absorption bound (`S ≥ −envelope`, a column bound) does pin the
+   sink to 0 in the closed hours, but leaves resale in **31.7–51.4 %** (PNW) /
+   **7.4–39.8 %** (DSW) of transacting hours — exactly the hours where the forced
+   block alone equals or exceeds the corridor's measured export capability
+   (`F ≥ E` and `I_A ≥ E` coincide to 0.1 pp in all six corridor-years, so the
+   residual is *entirely* the must-flow block). In PNW 2024/2025 the net-flow
+   floor is **positive** (+67.6 / +46.4 MW): the corridor stays a net importer at
+   full permitted absorption. And it would make the pre-registered **P2 gate —
+   the only gate that detected the defect — pass by construction**, which is
+   rule 1 [R-STRUCT] in its sharpest form.
+4. **D2 — arm B's own committed bytes corroborate §J.** From `class_hourly`'s
+   signed `import` class: the sink transacted in **5,022/6,284/5,137**
+   corridor-hours while the seam was a **net exporter in only 1,546/981/409**
+   (**30.8 / 15.6 / 8.0 %**).
+5. **D3 — the bounded arm still leaves the C3a-2024 band.** Apportioning arm B's
+   realised move by the absorption a closed-hour bound removes: **+2.296 /
+   +2.648 / +0.957** $/MWh, against C3a-2024's remaining **$0.69** headroom —
+   **3.8×**. **D4: zero fitted values.**
+6. **The price re-basis is NOT derivable.** Measured export-hour spread
+   (`actual CAISO RT − raw hub`, real net-export hours): PNW p50
+   **−3.56/−8.30/−7.40** — a **$4.74** across-year range against the import
+   basis's **$1.25**, a **$7.70–10.48** season/depth cell range and a 2023 sign
+   flip (winter +5.80 vs summer −3.49); DSW p50 **+3.69/+4.39/+4.49** — stable
+   ($0.80 range) but the **wrong sign**. *Honest counter-evidence recorded:* the
+   import basis was read off a distribution with a **comparable IQR**
+   (9.6–28.2), so dispersion alone is no objection; instability, congestion
+   structure and sign are. **This corrects caiso-142 §I part 2 / PREREG-caiso142
+   §0.4:** `hub − ε` over-prices **PNW** but **UNDER**-prices **DSW by ~$4.4**,
+   so "over-prices on **both** corridors" is wrong and a DSW re-basis would make
+   the sink *more* aggressive. A hub-priced sink also cannot reproduce **62–72 %**
+   of reality's DSW export hours at any level (CA clears *above* Palo Verde
+   there) — those exports are contractual, not price-driven.
+7. **The deeper result — no such constraint exists.** Soundness
+   (`−S ≤ max(0, −flow)`) is **non-convex**: `flow = +2,100 / S = 0` and
+   `flow = −500 / S = −500` are both sound, their midpoint
+   `flow = +800 / S = −250` is **resale**. An LP feasible region is convex, so no
+   rows at any granularity express it; the exact condition is a disjunction
+   (MIP — forbidden); its tightest linear surrogate `−S ≤ −flow` reduces via the
+   node identity to `F + I_econ ≤ 0`, **infeasible** while `F > 0`; and its convex
+   hull contains the resale points.
+8. **Disposition — the dependency INVERTS.** No code change, **no
+   `ScenarioConfig` field**, no cache-key entry (a flag for a non-existent
+   mechanism is dead code, rules 24/26). caiso-142 §J's prerequisite order
+   (1) node constraint → (2) re-basis → (3) firm elasticity is corrected to:
+   **(a) caiso-138 §C firm-block elasticity — the only real prerequisite;
+   (b) then re-examine whether any sink is wanted, using the net bound already
+   armed** — because with `F = 0` the resale channel is precluded by the
+   **objective** (§B's wheel arithmetic: buy-to-resell always loses), so nothing
+   is left to constrain. *(Not because the surrogate becomes usable: at `F = 0` it
+   collapses to `I_econ = 0`, which would forbid legitimate imports too.)* caiso-138 §E's refusal is re-confirmed a second time, now as a
+   **model-class impossibility** rather than a measurement outcome. New matrix row
+   `caiso_node_export_constraint` (CAISO **G**); `caiso_p1_export_sink_seam` and
+   `caiso_corridor_export_path` notes corrected.
+
+### DO-NOT-REDO (new, binding — full list in FINDING-caiso143 §H)
+
+Proposing a node-level (or any) LP constraint to make an export sink sound (§F:
+non-convex, surrogate infeasible, hull permits the resale — covers hourly,
+monthly, node, link, grouped, net and gross forms); citing `rows.py:1416` as the
+machinery for a directional export bound (it is a monthly band, and a node net
+bound is redundant); arming a gross absorption bound at the measured envelope (it
+makes P2 pass by construction while ~half the resale persists); re-basing the
+export leg off the measured export-hour spread (unidentifiable on PNW,
+wrong-signed on DSW); saying `hub − ε` over-prices the outlet on "both
+corridors"; re-measuring any of §A–§F; reading arm B's per-corridor flows from its
+bundle (its `network_*`/`unit_hourly_*` sidecars are gitignored — caiso-142 §J is
+the binding per-corridor record).
+
+Next number: caiso-144.
