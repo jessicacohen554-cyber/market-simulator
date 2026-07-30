@@ -705,6 +705,7 @@ def evaluate_rung(spec_dict: dict) -> dict:
         except (json.JSONDecodeError, OSError):
             pass  # corrupt cache — re-solve
 
+    from market_sim import runner
     from market_sim.config.scenarios import ScenarioConfig
     from market_sim.results import cache
     from market_sim.results.evolution_ledger import load_ledgers_for_run
@@ -731,7 +732,7 @@ def evaluate_rung(spec_dict: dict) -> dict:
             end_year=spec.end_year,
             **clean,
         )
-        key = run_scenario(config, spec.iso)
+        key = runner.run_scenario_iso(config, spec.iso)
         run_dir = cache.CACHE_ROOT / spec.iso / key
         ledgers = load_ledgers_for_run(run_dir)
         metrics = _extract_metrics(spec, config, cache, key, ledgers, _summarize_year)

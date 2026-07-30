@@ -68,6 +68,19 @@ KNOWN_DANGLING: dict[str, str] = {
     # nyiso_demand_response.py's docstring + a build-hint error string. Tracked
     # with the nyiso-65 re-sync follow-up.
     "scripts/data/build_nyiso_scr_edrp.py": "un-synced nyiso-65 SCR/EDRP lane; re-sync owed",
+    # The CLI wrapper that produced the committed parasitic-load artifact
+    # (data/raw/_processed-legacy/parasitic_load_factors.parquet) — never
+    # committed (no delete in git history), the same never-synced condition as
+    # build_nyiso_scr_edrp.py above. Referenced only by
+    # fleet/campd_bins.py::_ramp_parasitic_factor_map's docstring, which cites
+    # it ALONGSIDE the in-repo computation it wraps
+    # (market_sim.data.campd.compute_parasitic_factors), so the rule-5
+    # [R-NO-MAGIC] provenance chain for the net/gross factors is intact in-repo
+    # without it. NOT restored deliberately: authoring a fresh deriver to
+    # regenerate an already-committed artifact risks silently emitting a
+    # different one, and rule 23 [R-FROZEN-DERIVE] re-derives only on a source-
+    # data change.
+    "scripts/data/derive_parasitic_factors.py": "never committed; rule-23 provenance citation only (compute_parasitic_factors is in-repo)",
     # Synthetic paths tests/test_file_integrity_guard.py (f05f5b0, 2026-07-26)
     # writes into its throwaway tmp-repo fixtures to exercise the rule-27
     # shrink guard. They must LOOK like guarded scripts/ files for the test to

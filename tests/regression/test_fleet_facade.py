@@ -34,6 +34,12 @@ from unittest import mock
 # Every top-level name the pre-split fleet.py namespace carried (module logger
 # included), captured at the split commit. This is the package's minimum
 # contractual surface.
+#
+# ``_name`` / ``_code`` are deliberately NOT pinned: they were the leaked loop
+# temporaries of the module-level ``for _name, _code in FUEL_TYPE_MAP.items()``
+# that fills FUEL_TYPE_NAMES, never API, and nothing in src/scripts/tests
+# imports them. That loop now runs in the ``.models`` leaf, so the temporaries
+# leak there instead of here (the F811 de-duplication, 2026-07-30).
 HISTORICAL_SURFACE = (
     "BA_CODE_TO_ISO",
     "BINNED_FLEET_COLUMNS",
@@ -193,7 +199,6 @@ HISTORICAL_SURFACE = (
     "_clean_fleet_to_normalized",
     "_clean_fleet_year",
     "_coal_class_for",
-    "_code",
     "_conditional_surface_markup",
     "_correct_chp_steam_credit_hr",
     "_correct_mixed_facility_steam_hr",
@@ -220,7 +225,6 @@ HISTORICAL_SURFACE = (
     "_lowcurve_row_family",
     "_map_fuel_type",
     "_measured_plant_rate_map_v2",
-    "_name",
     "_normalize_columns",
     "_nuclear_zone_override",
     "_offer_curve_for_group",
@@ -586,8 +590,12 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
 PHYSICAL_INIT_NAMES = ("Generator", "FleetArrays")
 FROZEN_MODULE_PATH = "market_sim.data.fleet"
 
-# Names defined in the package __init__ itself (constants + clean seam +
-# the two pickle-borne classes) — present and owned by the frozen path.
+# Names owned by the frozen ``market_sim.data.fleet`` path (constants + clean
+# seam + the two pickle-borne classes). Only Generator/FleetArrays are defined
+# PHYSICALLY in the ``__init__`` (pickle identity, asserted separately via
+# PHYSICAL_INIT_NAMES); the constants and clean-seam helpers live in the
+# ``.models`` leaf and are re-imported into this namespace, so what is asserted
+# below is namespace presence on the frozen path, not the defining module.
 INIT_DEFINED = (
     "BA_CODE_TO_ISO",
     "BINNED_FLEET_COLUMNS",
