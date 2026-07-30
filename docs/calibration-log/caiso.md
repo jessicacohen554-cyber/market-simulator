@@ -3528,3 +3528,92 @@ any assumed allocation (the forbidden fabricated shape); quoting the
 negative-hydro bound as a split; re-posing the A1 rule-13 grant standalone.
 
 Next number: caiso-142.
+
+## caiso-142 (2026-07-30) — the A3 export-sink seam: the **infrastructure defect is REAL and FIXED** (flag-gated, default-off, surgical) but the **mechanism cannot be a C3a-2025 lever on ANY basis** — an export sink is an **absorption column**, so restoring it can only weakly **RAISE** every zonal λ while the charter needed the import-parity plateau pushed **DOWN**. The export leg is priced **below** the plateau's own marginal-import λ by exactly the corridor's OATT wheel + 2ε (DSW defect p50 **+$4.002**, night **+$0.002**), and the **simultaneous interface group binds in 0 of 26,280 corridor-hours**. D3 KILL before solve — NO ARM, NO A/B, keeper unchanged
+
+Charter: FINDING-caiso140 §E ask A3, selected by the owner after caiso-141
+walled A2 — restore the P1 export outlet the RA-bridge seam deletes
+(FINDING-caiso138 §D) on a principled sink basis and re-price the C3a-2025
+plateau. Keeper `2026-07-29-caiso139-dump-guard-offer` UNCHANGED (NOT-YET,
+fail {C3a-2025, C3c}); no LP built, no solver called, no bundle, no dashboard
+registration due. Full record:
+`results/calibration/FINDING-caiso142-export-sink-seam-2026-07-30.md`;
+instrument: `scripts/probes/_caiso142_export_sink_basis.py` (§A exercises the
+real bridge functions on the reconstructed 2025 keeper fleet; §B–§F read
+committed bytes only).
+
+1. **The seam, reproduced on the real functions, and FIXED (§A).**
+   `_bridge_floored_fleet` composes `max(base_min_gen, bridge_floor)` over a
+   zeros-initialised floor, so both export sinks
+   (`WECC_PNW_export_MALIN` −4,800 / `WECC_DSW_export_PALOVRDE` −10,623) went
+   to `min_gen = 0` and were pinned off in every scored P1 pass — the exact
+   failure `arrays.py::_compose_min_gen_floors` guards against in its own
+   zeros-init. New gate `caiso_p1_export_sink_seam` (**default off**,
+   byte-identical, cache-key registered, threaded from the CAISO RA path only
+   so no other ISO's recipe shifts) restores the range: **2 rows differ, 0
+   others**, availability byte-identical, and **17,520 spurious
+   `MECH_RA_MUSTOFFER` sink row-hours → 0**. Two further consequences filed:
+   P0 and P1 solve structurally different economies, and the RA bridge's own
+   decommit screen credits up to **15.4 GW** of export absorption the scored
+   pass cannot use.
+2. **The mechanism is the WRONG SIGN, structurally (§C — the kill).** An
+   absorption column (`pmin ≤ P ≤ 0`) can only ADD demand; permitting `D ≥ 0`
+   of withdrawal at a node is a `+D` RHS move and an LP's balance dual is
+   nondecreasing in its RHS, so **every** CA λ moves weakly UP. C3a-2025 is a
+   +$2.90 **over**-price, so the chartered effect is unreachable by
+   construction — the basis question is **moot for the chartered effect**.
+   Both escape channels measured dead: (a) direct — the plateau's λ *is* a
+   delivered-import price and the export leg sits below it by
+   `wheel + carbon + 2ε` every hour (`DSW_surplus_clean` marginal in 85–91 %
+   of defect hours → p50 +$4.002; the wheel-free `DSW_overnight_clean`
+   marginal overnight → +$0.002), in-the-money in only **0.4/8.3/8.4 %** of
+   defect hours; (b) indirect — releasing shared interface headroom needs the
+   **simultaneous** group to bind and it binds in **0 h** of all three years
+   (max │dual│ 0.00; flow p50 3.9–4.7 GW vs limit 16.0–16.5 GW) while every
+   congested regime is bound by the corridor's OWN ATC group.
+3. **E1 ceiling if armed anyway (§D).** C3a moves **+9.379/+7.860/+3.865**
+   (as-built `hub−ε`) and **+7.745/+5.698/+2.139** (netback) — every basis
+   worse. Zero fitted values swept: there is no value to sweep. The measured
+   export envelope (already each corridor group's `limit_dn`) removes ~95–99 %
+   of the DSW U-turn exposure (DSW export capability is **0 MW in
+   7,201/7,172/7,260 h**), leaving the PNW leg where the caiso-138 §E U-turn
+   lives.
+4. **An admissible third basis EXISTS and half of it is already armed (§E).**
+   Bound = `min(link TTC, measured export-direction envelope)` — armed today
+   via `caiso_corridor_flow_limit`. Price = `hub − wheel_out − ε` — a
+   zero-DOF symmetry correction (the as-built leg wheels out for FREE while
+   the import leg on the same corridor pays the OATT charge); **specified, NOT
+   built**. This also **un-confounds caiso-132 §3**: its "provably inert"
+   export-envelope census was measured on a fleet that could not export at
+   all; the bound was armed and correct with nothing to bound. Its R verdict
+   stands on the stronger §C sign argument.
+5. **Cross-ISO exposure MEASURED, and the caiso-138 §D list CORRECTED (§F).**
+   Only **CAISO and NYISO** are exposed (absorption row AND a P1-native bridge
+   armed). **ERCOT is NOT** — its keeper builds **0 interchange rows**, so the
+   shared composer has no absorption row to collapse. NYISO IS (one −600 MW
+   sink + `nyiso_gas_commitment_bridge` armed in
+   `2026-07-29-nyiso-99-demandfix`) and enters `U` for its own lane (rule 25).
+   PJM/MISO/NEISO carry 40/32/3 absorption rows but arm no such bridge —
+   latent.
+6. **Matrix (rule 28):** new row `caiso_p1_export_sink_seam` (CAISO **R**,
+   ERCOT **I**, NYISO/PJM/MISO/NEISO **U**); `caiso_corridor_export_path`
+   note corrected per §E. **C3a-2025 is now DIAGNOSED-UNCLOSED with an EMPTY
+   in-model lever queue** — A1 standalone < half the gate, A2 walled, A3 the
+   wrong sign; what remains is owner-level (non-public hourly PS data, or
+   accept it as diagnosed-unclosed per the nyiso-97 C3c disposition). Rule 22:
+   no out-of-training year touched.
+
+### DO-NOT-REDO (new, binding — full list in FINDING-caiso142 §H)
+
+Proposing ANY export/absorption mechanism as a fix for a model **over**-price
+(the sign argument covers every price basis, bound, corridor, and "surplus
+export"/"wheel-out" variant — state the sign before proposing); quoting the
+plateau as "the export-sink seam wearing a price" (caiso-140 §C bullet 3's
+mechanism claim is **WITHDRAWN**; its arithmetic stands); re-measuring the
+no-trade band, wheel table, marginal-rung identification, group-binding
+census, E1 ceiling, export envelope or cross-ISO census (run the probe);
+re-testing the shared-headroom release channel in any form; re-deriving the
+admissible sink basis; naming ERCOT in the export-sink blast radius;
+re-opening A1 on the grounds that A3 landed.
+
+Next number: caiso-143.
