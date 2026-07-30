@@ -222,8 +222,29 @@ not a new sweep:
   fleet offers a large share of its above-LSL MW **below its own fuel cost**
   and the model has no mechanism that can produce such an offer.
 
-0. **ERCOT-138's successor — the CC committed/econ offer SHAPE, on the SCED TPO
-   instrument.** The best-identified open lever, and the direct gas-side
+0. **ERCOT-138's successor — the CC committed offer SHAPE, on the SCED TPO
+   instrument. BUILT AND SOLVED at ERCOT-139 (2026-07-30); KEEPER CANDIDATE
+   awaiting the owner.** `cc_committed_offer_margin`, run
+   `2026-07-30-ercot139-cc-committed-offer` (bundle `ercot139_cc_committed_arm`,
+   full span 2023-25, single delta off the ercot137 keeper). The §7.3 open
+   question was decided in favour of a **below-cost committed block** over a
+   band-multiplier re-identification (the multipliers cap at ~29 % of the gap,
+   have the wrong shape, and have the wrong year behaviour — precommit §0). The
+   pre-registered C3c falsifier **HELD exactly**: 47/6/0 → 47/6/0, bit-unchanged,
+   because the repriced block is deep inframarginal in every scarcity hour and
+   the 118/119 drain channel was the *econ* legs plus a peak rebasis this arm does
+   not touch. Coal gives back **−3.81/−3.49/−3.00 TWh** (61/40/35 % of the
+   keeper's over-run), CC_REGULAR takes **+5.22/+5.07/+4.49**; the rubric fail
+   set is EXACTLY the keeper's with no flips either way, at a pre-registered and
+   pre-quantified C3a cost (−$1.082/−0.695/−0.906, all inside the predicted band).
+   **Do not re-test the level or re-derive it** — it is measured and committed
+   (`derive_cc_committed_offer_margin.py` over
+   `ercot136_coal_headroom_conduct.json` B1_curve_bottom CC rows). **The named
+   successor is the STATE, not another price lever:** with the bid now measured
+   correct, the remaining CC dearness is the *econ* band and the remaining price
+   deficit is top-of-curve (ERCOT-138 §5.6, opposite in sign) — the near-tail/C3c
+   lane. See precommit §4.1's forward story if the owner declines promotion.
+0b. **(historical framing of item 0, retained)** The best-identified open lever, and the direct gas-side
    analogue of the ERCOT-136→137 template this lane just validated end-to-end.
    The instrument is admissible for CC on the same grounds it was for coal
    (ERCOT-136 §A, committed: CC offers **95.3–98.5 %** of RT-dispatchable
