@@ -468,6 +468,7 @@ def run_year(
     ercot_gas_bridge_min_load_frac: float | None = None,
     ercot_gas_bridge_startup: bool | None = None,
     ercot_gas_bridge_da_horizon: bool | None = None,
+    ercot_gas_bridge_online_hours: bool | None = None,
     ercot_commitment_posture: bool | None = None,
     ercot_commitment_posture_min_load_frac: float | None = None,
     carry_operating_mothballs: bool | None = None,
@@ -1100,6 +1101,10 @@ def run_year(
     if ercot_gas_bridge_da_horizon is not None:
         config = config.with_overrides(
             ercot_gas_bridge_da_horizon=ercot_gas_bridge_da_horizon
+        )
+    if ercot_gas_bridge_online_hours is not None:
+        config = config.with_overrides(
+            ercot_gas_bridge_online_hours=ercot_gas_bridge_online_hours
         )
     if carry_operating_mothballs is not None:
         config = config.with_overrides(
