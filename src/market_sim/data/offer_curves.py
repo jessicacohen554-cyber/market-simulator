@@ -27,6 +27,8 @@ from market_sim.config.scenarios import ScenarioConfig
 if TYPE_CHECKING:
     import pandas as pd
 
+    from market_sim.data.fleet import FleetArrays
+
 logger = logging.getLogger(__name__)
 
 # Gas peak-band classes the ERCOT condition-responsive offer surface prices
@@ -701,6 +703,134 @@ def apply_gas_offer_margin(
         float((markup_hr[rows] * anchors[rows]).max()),
         (f"; {n_override} tranches on per-class EP anchors" if n_override else ""),
     )
+
+
+#: Model plant group whose ``_committed`` tranche carries the measured CC
+#: committed-block level. ERCOT-138's ``MODEL_CC_GROUPS`` is ``("CC_REGULAR",)``
+#: — CC_CHP is reported there as a sensitivity and never pooled into the
+#: measured CC control (its committed state is owned by its steam host, rule
+#: 19), so this scope is exactly the measurement's population (rule 18: the
+#: exclusion is the steam-host physics gate the gas commitment bridge uses, not
+#: a class-name convenience).
+CC_COMMITTED_OFFER_GROUPS: frozenset[str] = frozenset({"CC_REGULAR"})
+
+
+def apply_cc_committed_offer_margin(
+    mc: "np.ndarray",
+    generators: list,
+    fleet_arrays: "FleetArrays",
+    config: ScenarioConfig,
+) -> None:
+    """Reprice the CC committed block to its MEASURED net-revenue offer level.
+
+    The ERCOT-139 mechanism (``config.cc_committed_offer_margin``) — the gas-CC
+    analogue of the coal min-load form
+    (:func:`market_sim.data.fleet.legacy_bins.apply_coal_tranches`'s ERCOT-137
+    branch), chartered by
+    ``docs/DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29.md`` §6.
+
+    ERCOT-138 measured the defect against ERCOT's own SCED TPO conduct: the
+    model's CC committed/econ bands bid **+$2.8–6.6/MWh too DEAR** through the
+    crossing band (coal's sit at −1.6..+3.9 and are exonerated), and §2.5
+    located the residual in a **missing below-cost committed-CC block** — the
+    model's cheapest CC band bottoms at $13.3 while the real fleet's median
+    incremental MW is offered at $12.10 and its p25 at $8.38, below its own fuel
+    cost. Each CC_REGULAR ``_committed*`` tranche is shifted from its band
+    multiplier to the measured form::
+
+        mc[g, t] = heat_rate[g] × (fuel(t) − anchor) + emis(t) + level
+
+    implemented as ``mc[g, :] += level − heat_rate[g] × anchor − vom[g]`` on the
+    assembled cost — the VOM already inside ``mc`` is folded into the measured
+    all-in level, never double-counted. The block keeps FULL delivered-fuel
+    tracking (physical burn at the tranche's own heat rate) while everything
+    above fuel is the fuel-invariant measured margin; at ``fuel == anchor`` the
+    bid is exactly ``level``, the measured RT curve bottom.
+
+    The **anchor is the SHARED gas anchor** (``gas_offer_margin_anchor`` /
+    ``constants.GAS_OFFER_MARGIN_ANCHOR_BY_ISO``), never a second constant, so
+    the whole gas offer surface keeps one identification point that cannot
+    drift against itself (rule 19 ``[R-ONE-MECH]`` bookkeeping). The margin is
+    DERIVED, never fitted (rule 13)::
+
+        margin = level − HR_tranche × anchor
+
+    (``scripts/data/derive_cc_committed_offer_margin.py``, rule-23 frozen:
+    level 10.354 $/MWh at anchor 2.2494 $/MMBtu, identified by removing the
+    disclosure corpus's own measured fuel response; cross-subset dispersion
+    ±42.98 % raw → ±6.47 % anchored, independent Min-Gen-Cost instrument 3.02 %
+    away at 70–82 % coverage).
+
+    **Rule 19 — this REPLACES, it does not stack.** The band multiplier
+    (``offer_curve_by_group['CC_REGULAR']['committed']`` = 0.998 × base HR) is
+    the sole owner of this row's price in the ERCOT-137 keeper:
+    ``gas_offer_net_revenue_margin`` is provably inert on it (its markup is
+    ``max(0, 0.998 − phys_committed 1.006)`` = 0; ERCOT-138 §J measures the
+    delta at $0.00 at p25/p50), ``ercot_offer_surface_cleared_share`` scopes
+    itself to ``econ*`` and cedes the committed block, and
+    ``ercot_offer_surface_conditional`` owns ``peak*`` only. The
+    ``econ_low``/``econ_high``/``peak`` bands and every other class are
+    untouched — this is a bottom-of-curve mechanism, and ERCOT-138 §5.6's
+    opposite-sign p90 finding is explicitly NOT its target.
+
+    Applies to the BASE marginal cost, so P0 run discovery and the P1 bid see
+    the same offer curve — exactly like the two margin forms it mirrors, and
+    unlike the P1-only offer surfaces. Vectorized per row over the full hour
+    block; no per-hour loop (rule 2). Mutates ``mc`` in place; no-op when the
+    flag is off or no row is in scope.
+
+    Args:
+        mc: ``(n_gen, T)`` marginal-cost array, modified in place.
+        generators: Generator list aligned row-for-row with ``mc``.
+        fleet_arrays: The vectorized fleet, for per-tranche heat rate and VOM.
+        config: Scenario configuration supplying the gate
+            (``cc_committed_offer_margin``), the measured level
+            (``cc_committed_offer_level``) and the shared delivered-gas anchor
+            (``gas_offer_margin_anchor``).
+
+    Raises:
+        ValueError: flag armed without a resolved level or anchor (rule 25 —
+            both must be resolved into the recorded config, never silently
+            defaulted in the offer path).
+    """
+    if not getattr(config, "cc_committed_offer_margin", False):
+        return
+    level = getattr(config, "cc_committed_offer_level", None)
+    anchor = getattr(config, "gas_offer_margin_anchor", None)
+    if level is None or anchor is None:
+        raise ValueError(
+            "cc_committed_offer_margin is armed but cc_committed_offer_level / "
+            "gas_offer_margin_anchor is unset; resolve them from "
+            "constants.CC_COMMITTED_OFFER_LEVEL_BY_ISO / "
+            "GAS_OFFER_MARGIN_ANCHOR_BY_ISO at config build (rule 25 — no "
+            "silent fallback in the offer path). The anchor is SHARED with "
+            "gas_offer_net_revenue_margin by design (rule 19): one "
+            "identification point for the whole gas offer surface."
+        )
+    level, anchor = float(level), float(anchor)
+    n_repriced = 0
+    for g, gen in enumerate(generators):
+        # Suffix vocabulary matches gas_offer_margin_markup_mult's
+        # ``committed*``: the plain ``committed`` block plus the ``committedNN``
+        # rising slices a non-zero ``committed_ramp_spread`` renders it as — all
+        # of which are the measured block this level replaces.
+        if not (
+            getattr(gen, "is_campd_bin", False)
+            and getattr(gen, "plant_group", None) in CC_COMMITTED_OFFER_GROUPS
+            and str(gen.unit_id).rpartition("_")[2].startswith("committed")
+        ):
+            continue
+        mc[g, :] += level - fleet_arrays.heat_rate[g] * anchor - fleet_arrays.vom[g]
+        n_repriced += 1
+    if n_repriced:
+        logger.info(
+            "CC committed-block offer margin: %d _committed tranche(s) repriced "
+            "at level %.4f $/MWh / shared gas anchor %.4f $/MMBtu "
+            "(fuel-invariant margin, full delivered-fuel tracking)",
+            n_repriced,
+            level,
+            anchor,
+        )
 
 
 # ---------------------------------------------------------------------------

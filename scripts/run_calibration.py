@@ -80,7 +80,10 @@ from market_sim.data.fleet import (  # noqa: E402
     load_retired_within_window,
     thermal_tranche_overrides,
 )
-from market_sim.data.offer_curves import apply_gas_offer_margin  # noqa: E402
+from market_sim.data.offer_curves import (  # noqa: E402
+    apply_cc_committed_offer_margin,
+    apply_gas_offer_margin,
+)
 from market_sim.data.fuel import (  # noqa: E402
     apply_caiso_zonal_gas_basis,
     apply_coal_supply_pricing,
@@ -345,6 +348,7 @@ def run_year(
     tranche_startup_conditional_runs: bool = False,
     gas_offer_margin: bool = False,
     coal_offer_margin: bool = False,
+    cc_committed_offer_margin: bool = False,
     nysdec_peaker_rule_availability: bool = False,
     oil_primary_bin_fuel: bool = False,
     plant_tranche_config: str | None = None,
@@ -928,6 +932,42 @@ def run_year(
             coal_offer_net_revenue_margin=True,
             coal_offer_margin_anchor=COAL_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
             coal_offer_margin_level=COAL_OFFER_MARGIN_LEVEL_BY_ISO[iso],
+        )
+    if cc_committed_offer_margin:
+        # CC COMMITTED-BLOCK measured offer level (ERCOT-139, the coal min-load
+        # form's gas-CC analogue): the CC_REGULAR _committed tranche is repriced
+        # from its band multiplier to full delivered-fuel tracking plus a
+        # fuel-invariant margin that lands the bid EXACTLY on the measured RT
+        # curve bottom (SCED Submitted TPO-Price1 cap-wtd p50, 95.1-98.0 %
+        # curve coverage) at the SHARED delivered-gas anchor. Both constants
+        # resolve HERE from the registries so the bundle's run_config.json
+        # records the values (rule 25); an ISO without a derived level is a hard
+        # error, never a fallback (rule 24). The ANCHOR is the SAME registry the
+        # gas margin form uses — one identification point for the whole gas
+        # offer surface (rule 19), so it resolves whether or not
+        # gas_offer_margin is also armed.
+        # Identification: scripts/data/derive_cc_committed_offer_margin.py.
+        from market_sim.config.constants import (
+            CC_COMMITTED_OFFER_LEVEL_BY_ISO,
+            GAS_OFFER_MARGIN_ANCHOR_BY_ISO,
+        )
+
+        if (
+            iso not in CC_COMMITTED_OFFER_LEVEL_BY_ISO
+            or iso not in GAS_OFFER_MARGIN_ANCHOR_BY_ISO
+        ):
+            raise SystemExit(
+                f"--cc-committed-offer-margin: no derived CC committed level / "
+                f"delivered-gas anchor for {iso} in "
+                "constants.CC_COMMITTED_OFFER_LEVEL_BY_ISO / "
+                "GAS_OFFER_MARGIN_ANCHOR_BY_ISO — run "
+                "scripts/data/derive_cc_committed_offer_margin.py and register "
+                "the level (rule 24: levels never cross ISO boundaries)"
+            )
+        config = config.with_overrides(
+            cc_committed_offer_margin=True,
+            cc_committed_offer_level=CC_COMMITTED_OFFER_LEVEL_BY_ISO[iso],
+            gas_offer_margin_anchor=GAS_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
         )
     if nysdec_peaker_rule_availability:
         # NYSDEC 6 NYCRR 227-3 peaker-rule availability overlay: curated
@@ -3215,6 +3255,14 @@ def run_year(
     # discovery and the P1 bid see the same offer curve — exactly like the
     # multiplier form it reprices. Byte-identical when off (no-op return).
     apply_gas_offer_margin(mc_base, fleet, fuel_prices, config)
+    # CC committed-block measured offer level (cc_committed_offer_margin,
+    # default off — ERCOT-139): reprice the CC_REGULAR `_committed` tranche from
+    # its band multiplier to the measured RT SCED curve bottom, expressed as a
+    # fuel-invariant margin at the SHARED gas anchor. Runs after
+    # apply_gas_offer_margin (which is provably inert on this row — ERCOT-138
+    # §J) and on the BASE cost, so P0 run discovery and the P1 bid see the same
+    # offer curve. Byte-identical when off (no-op return).
+    apply_cc_committed_offer_margin(mc_base, fleet, fleet_arrays, config)
     # ERCOT G-22 condition-responsive CT/peaker offer surface (default off,
     # ERCOT-gated): raise the CT/peaker econ+peak tranche bid to the MEASURED
     # self-withholding level (60-Day DAM disclosure) in the top-net-load hours
