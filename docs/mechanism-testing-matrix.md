@@ -346,7 +346,7 @@ caiso-142 §H generalises the sign argument to every basis and bound.
    CHP miscosting (caiso-128) both point at offer-cost inputs; measured loaded
    HRs are the audit-grade first step.
 
-### 5.3 PJM — **NO failing criterion** (keeper `2026-07-29-pjm-137-ctheatrate`, CALIBRATED)
+### 5.3 PJM — **NO failing criterion** (keeper `2026-07-30-pjm-140-rampenv`, CALIBRATED)
 
 C1 CC_REGULAR-2023 and C3a-2025 closed at pjm-135; **C3c-24/25 closed at
 pjm-136** and is UNCHANGED by pjm-137. The queue below is not gate-driven — it
@@ -464,28 +464,62 @@ is ranked by *structural* defect, per rule 1 `[R-STRUCT]`.
     quantity the model currently proxies with the HH+zonal-basis construction),
     and as a candidate for the **day**-scale winter tail — not for the intra-day
     ramp. Charter it on the level story or not at all.
-11. **`ramp_envelopes`** (**U**) — **NEW at pjm-139, and the only PJM lever
-    currently carrying a fired no-LP pre-check.** The keeper runs
-    `ramp_limits = False`, so the LP has **no intertemporal coupling on the
-    thermal fleet at all** and the winter morning ramp is a free slide up the
-    merit order. The model reproduces only **26 / 21 / 18 %** of PJM's own DJF
-    h04→h07 system-energy price rise (measured +$15.28 / +$21.63 / +$35.45 vs
-    model +$3.93 / +$4.55 / +$6.51) because on winter mornings it ramps **STEAM
-    1.8× / 2.4× / 2.6× harder** than the real fleet and **CTs only 58 / 76 /
-    83 %** as hard — cheap coal substituting for the dear CTs PJM actually
-    starts, which also predicts the standing `CT_PEAKER` −2.11 / −3.57 /
-    −3.32 TWh C1 note. Pre-check: at the p99 1-h up-move as a fraction of each
-    side's own fleet peak, model ÷ actual = **CC 1.42 / 1.72 / 1.53, CT 1.38 /
-    1.70 / 1.52, ST 1.61 / 1.62 / 1.50**; aggregate excess *proves* per-plant
-    rows would bind (one-sided — it cannot prove inertness). CAMPD-measured,
-    **zero fitted DOF**, armed in no keeper in any ISO; ERCOT `R` and CAISO `I`
-    were reached on different defects and do not transfer (rule 25). Charter,
-    expected direction, no-feedback ceiling and 7 pre-registered kills:
-    `PREREG-pjm140-ramp-envelopes-2026-07-30.md`. Blocked on two things, both
-    stated: the PJM artifact has never been derived
-    (`derive_campd_ramp_envelopes.py --iso PJM`, needs `data/clean/`), and the
-    LP memory cost of the extra rows is unquantified on a 15 GB box — PREREG §7
-    requires a one-year solve to measure the peak first.
+11. **`ramp_envelopes`** — **SOLVED, PROMOTED and CLOSED at pjm-140 (2026-07-30).
+    PJM cell `U` → `K`**, and it is the **first keeper in any ISO** to carry
+    `ramp_limits=True` (`2026-07-30-pjm-140-rampenv`, superseding
+    `2026-07-29-pjm-137-ctheatrate`). **Do not re-test it.**
+    - **What it bought, and it is real:** with the flag off the LP asserts every
+      thermal plant can move from any output to any other in one hour, and the
+      model *acts* on it — the superseded keeper's own dispatch crosses the
+      measured envelope in **0.393 / 0.463 / 0.319 %** of 1,699,246
+      group-transitions, carrying **555,882 / 587,079 / 536,940 MWh a year** of
+      ramping the real PJM fleet's measured maxima say those machines could not
+      deliver. Arming it cuts that to **51,161 / 64,048 / 82,425 MWh** — a
+      **90.8 / 89.1 / 84.6 %** reduction, ~0.5 TWh/yr of infeasible dispatch
+      removed. Coverage: **194 live groups = 124.1 GW = 90.1 %** of ramp-eligible
+      thermal capacity. Zero fitted DOF; ledger 17 → 18 with `n_residual`
+      unchanged at 6.
+    - **What it did NOT buy:** the chartered DJF h04→h07 model price rise moves
+      only **+3.933→+4.004 / +4.554→+4.600 / +6.512→+6.546** — **+$0.07 / +$0.05
+      / +$0.03**, i.e. **0.6 / 0.2 / 0.1 %** of the gap to PJM's own
+      +$15.28/+$21.63/+$35.45, against a pre-registered ceiling of
+      **+$5.55/+$13.44**. Dispatch is near-inert (worst class
+      +0.262/−0.184/−0.219 %, every material class under 0.06 %). PREREG
+      secondary 1 is refuted too: `CC_REGULAR` moves **up** and `CT_PEAKER`
+      **down**, the opposite of the prediction. Every gate is unchanged — C1
+      16/16 free 12/12, **C3c identical at 3/10/32 h**, C8 CT_PEAKER unchanged
+      at 16.3/16.9/17.1 % all GROUNDED, zero slack and dump.
+    - **THE TRANSFERABLE LESSON, and it is an all-ISO scope bound: a MAX-based
+      envelope cannot be pre-checked with a p99-based excess statistic.** pjm-139
+      W7 compared the model's p99 1-h move to the real fleet's **p99** (1.4–1.7×)
+      and inferred that per-plant rows would bind. But the derive writes each
+      plant's **MAX** pooled over 26,280 hours, and the model's own p99 sits at
+      just **0.281 / 0.293 / 0.289** of that max (its own max at 1.415/1.478/1.361).
+      A p99-vs-p99 excess of 1.7× is therefore fully consistent with binding in
+      0.3–0.5 % of transitions. **Pre-check a bound against the bound.** This is
+      the ERCOT-127 property ("the real fleet violates the envelope 0–10 times a
+      year") now measured on PJM's own fleet.
+    - **There is no second version of this lever.** PREREG §5's no-feedback
+      ceiling forbids any multiplier, scale, haircut, blend, floor, cap,
+      widening, tightening, per-plant override or **quantile swap** — so "re-derive
+      it at p95 so it binds" is inadmissible. A binding ramp representation needs
+      a **different mechanism with its own charter**.
+    - **Operational cost now carried by the keeper:** 1,699,246 LP rows, ~23.3 M
+      nonzeros, peak RSS 15.18 → 15.55 GB, so **swap is a requirement** for a PJM
+      per-plant solve on a 15 GB box.
+    (`FINDING-pjm140-ramp-envelopes-remove-infeasible-ramping-but-not-the-price-shape-2026-07-30.md`;
+    `PREREG-pjm140-ramp-envelopes-2026-07-30.md`.)
+
+12. **The winter morning ramp is STILL OPEN — its chartered lever is spent.** The
+    reachable residual is unchanged: DJF h06–h07 load-weighted **−$0.37 / +$5.55 /
+    +$13.44** after the pjm-137 basis and pjm-138 reserve lanes are credited, so
+    2023 is fully explained and 2024–25 are not. **The next instrument is
+    `FINDING-pjm139` §8 lead 2** — the overnight bottom-of-distribution miss
+    (model p05 $21.22/$20.15/$26.35 against PJM's $13.32/$11.44/$17.02; overnight
+    stack `CC_REGULAR` 66–69 % + `COAL_BIT` 23–26 %) as a marginal-**tranche**
+    question at h01–h04. Its instrument is the committed `--with-fleet` W6 census
+    in `scripts/probes/_pjm139_winter_ramp.py`, which pjm-139 could not run
+    because `data/clean/` was incomplete and which is **now runnable**.
 
 **CLOSED AT pjm-138, binding on successors — do not re-open (no LP solved;
 `FINDING-pjm138-system-energy-is-reserve-opportunity-cost-2026-07-29.md`):**
