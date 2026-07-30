@@ -628,6 +628,47 @@ CC_COMMITTED_OFFER_LEVEL_BY_ISO: dict[str, float] = {
     "ERCOT": 10.354,
 }
 
+# Measured coal `_peak`-tranche offer LEVEL ($/MWh) and GAS slope (MMBtu/MWh)
+# — the identification constants of the ``coal_peak_offer_margin`` mechanism
+# (ERCOT-140, the coal offer-curve UPPER-TAIL successor ERCOT-123 §7.2
+# chartered; ``docs/PRECOMMIT-ercot140-coal-peak-offer-2026-07-30.md``;
+# applied in :func:`market_sim.data.fleet.legacy_bins.apply_coal_tranches`).
+# The real coal fleet's top-decile boundary price: 60-Day SCED ``Submitted
+# TPO-Price1`` capacity-weighted p90 of above-min-load capability, from the
+# committed ERCOT-138 artifact
+# ``results/calibration/ercot138_coal_gas_ranking.json`` (``E_bid_detail``
+# COAL p90 rows: 34.82 / 34.82 / 43.00 / 48.01 across the four 2024–2025
+# disclosure subsets, vs the model's 24.61–32.52 — the §5.6 finding).
+#
+# The slope basis is GAS, not coal: the measured top ROSE 34.82 → 45.43
+# (res-hours-pooled) while delivered coal FELL 1.748 → 1.630 $/MMBtu (a
+# coal-fuel form has slope −89.9 — wrong sign, refuted), and delivered gas
+# rose 2.213 → 3.232, giving GAS_HR = 10.4100 MMBtu/MWh — within ~5 % of the
+# fleet's own measured cap-weighted offer heat rate (10.905, ERCOT-138 §J):
+# gas-parity opportunity pricing of the marginal coal MW.
+#   level_i = p90_i − GAS_HR × (gas_i − anchor)
+#   35.1989 / 35.1989 / 32.7711 / 37.7811 → 35.1989 res-hours-weighted.
+# Identification quality: cross-subset dispersion ±18.74 % raw → ±7.12 %
+# anchored. The ANCHOR is NOT a new constant: the mechanism reuses
+# ``GAS_OFFER_MARGIN_ANCHOR_BY_ISO`` (ERCOT 2.2494 — rule 19, one gas
+# identification point for the whole offer surface). At ``gas == anchor`` the
+# resolved ``_peak`` bid equals this level exactly.
+#
+# 2023 application is a declared extrapolation (no 2023 SCED disclosure
+# exists), gated per-year in the ERCOT-140 precommit §4.1; the ERCOT-138 §H
+# same-plants 2025 flip is that precommit's declared identification risk
+# (§2.2). Re-derives only with its source disclosure (rule 23), via
+# ``scripts/data/derive_coal_peak_offer_margin.py``. ISOs absent from the
+# registries hard-fail when the flag is armed (rule 24 — never a silent
+# fallback); ERCOT-identified from ERCOT conduct and never transferred
+# (rule 25).
+COAL_PEAK_OFFER_LEVEL_BY_ISO: dict[str, float] = {
+    "ERCOT": 35.1989,
+}
+COAL_PEAK_OFFER_GAS_HR_BY_ISO: dict[str, float] = {
+    "ERCOT": 10.4100,
+}
+
 # CO2 emission rates (tCO2/MWh), derived from heat rate × fuel emission factor.
 # Keyed by fuel class and efficiency bin, mirroring HEAT_RATE_BINS.
 # Source: EPA eGRID 2022.
