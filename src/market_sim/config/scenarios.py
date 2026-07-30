@@ -2525,6 +2525,58 @@ class ScenarioConfig:
     # Forward-reproducible: the NYISO Locality Bulk-Power Transmission Capability
     # tables publish every capability year and respond to new cables / topology
     # (rule #12/#13/#17). Default off (byte-identical); NYISO-only.
+    nyiso_import_sil_retire: bool = False  # NYISO external simultaneous-import
+    # cap: RETIRE the mis-attributed scalar (nyiso-100, rule 14 [R-ACCURATE]
+    # reconcile). interchange.spec.EXTERNAL_SIMULTANEOUS_LIMITS["NYISO"] caps
+    # the total simultaneous flow across ALL four import-node border links at
+    # 4,350 MW, cited to "NYISO Gold Book; IRM/LCR studies". THE VALUE IS A
+    # PUBLISHED NYISO NUMBER FOR A DIFFERENT BOUNDARY: 4,350 MW is exactly the
+    # G-J LOCALITY Bulk Power Transmission Limit for capability year 2024/2025
+    # (data/raw/capacity-deliverability/nyiso/nyiso.csv, area "G-J",
+    # import_limit; 2024-25 Locality Bulk Power Transmission Capability Report
+    # p.7). G-J is an INTERNAL New York transfer boundary (Load Zones G,H,I,J)
+    # — the limit on power moving from upstate INTO the downstate locality —
+    # not the EXTERNAL NYCA seam. Three corroborations that this is a
+    # mis-attribution and not a coincidence: (a) the published G-J limit moves
+    # by capability year (3,425 / 3,425 / 4,350 / 4,500 for 2022/23-2025/26)
+    # and the constant is frozen at the 2024/25 value across all three solve
+    # years; (b) the constant's own justification comment argues from INTERNAL
+    # downstate interfaces ("Dunwoodie-South 3.9 GW into NYC, cable-limited
+    # 1.65 GW into LI"), i.e. an internal-boundary rationale attached to an
+    # external limit; (c) the cited source does not contain it — the Gold Book
+    # publishes no aggregate external simultaneous import limit, and its
+    # per-facility transmission table (Table VI-1) is REDACTED as Critical
+    # Energy Infrastructure Information in every 2023-2025 edition on disk.
+    # MEASUREMENT FALSIFIES 4,350 AS AN EXTERNAL CAP: NYCA net import reached
+    # 5,929 / 5,662 / 5,872 MW metered (EIA-930 NYIS total interchange) and
+    # 7,078 / 7,298 / 6,727 MW scheduled (NYISO MIS P-32 external schedules,
+    # the eleven "SCH -" rows) in 2023/2024/2025 — the real system simultaneously
+    # exceeded the cap in 287/314/145 h (metered) and 865/685/388 h (scheduled),
+    # so 4,350 MW lies BELOW the measured lower bound on NYCA's true simultaneous
+    # external transfer capability in all three years. RULE-14 MISALIGNMENT
+    # (why this retires the scalar rather than raising it): the naive measured
+    # replacement — the sum of the posted per-interface P-32 limits, ~10.7 GW —
+    # is exactly rule 14's named exception, the sum of several parallel paths
+    # this five-zone network collapses into one link, so it must NOT be used
+    # literally. NYISO publishes no external simultaneous limit to put in its
+    # place (CEII, above). What IS identified per-path is the posted per-tie
+    # rating, and the model already carries it: the NYC link (1,000 MW) against
+    # HTP 660 + Linden-VFT 315 = 975 MW posted, and the Long_Island link
+    # (1,200 MW) against Neptune 660 + Cross-Sound 330 + NPX-1385 200 = 1,190 MW
+    # posted, with the AC seams sitting behind the internal Central-East chain
+    # the topology already represents. Retiring the mis-attributed scalar
+    # therefore introduces NO new number and REMOVES a free parameter: the
+    # aggregate becomes the sum of the four posted-rating-grounded border links,
+    # 6,800 MW, which lies INSIDE the measured admissible interval
+    # [5,929 lower bound, 10,715 posted-rating upper bound]. Forward-reproducible
+    # by construction — there is no scalar left to regenerate, and the per-link
+    # ratings re-derive from the P-32 posting (CHPE enters the same feed in
+    # 2026). NOTE (follow-on lever, NOT this flag): the published G-J locality
+    # limit is a REAL constraint the topology does not represent at its own
+    # boundary; representing it belongs on the internal G-J interface as a
+    # separate windowed mechanism in the nyiso_nyc_lcr_tsl / nyiso_li_lcr_tsl
+    # family, not on the external seam. Default off (byte-identical);
+    # NYISO-only.
     nyiso_scr_edrp: bool = False  # NYISO SCR/EDRP emergency demand response as
     # price-responsive supply blocks (data.nyiso_demand_response). NYISO
     # registers ~1.2-1.5 GW (summer) of demand-side reliability capability in
