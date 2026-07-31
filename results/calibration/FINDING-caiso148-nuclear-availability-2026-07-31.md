@@ -190,12 +190,202 @@ correctly armed.** The duplicate line is pre-existing, ISO-generic log noise
 
 ## §E — the A/B
 
-*(filled from the solved arms — see §F for the verdict)*
+Two single-flag replays of the caiso-147 keeper at the same HEAD, `--year 2023
+2024 2025` in one invocation each (rule 16), run concurrently (rule 12):
 
-## §F — verdict
+| arm | bundle | run id |
+|---|---|---|
+| A (control) | `caiso148_control_A` | `2026-07-31-caiso148-control-zerodelta` |
+| B (arm) | `caiso148_nucavail_B` | `2026-07-31-caiso148-nuclear-availability` |
 
-*(pending)*
+Environment conditions are symmetric across arms (identical warning counts:
+7 capacity-deliverability, 4 hydro-modes), so the delta is the flag alone.
+
+### E.0 — the control reproduces caiso-147 BIT-EXACTLY (carried item resolved)
+
+The **keeper-reproducibility drift** carried as an open item since caiso-146 —
+the caiso-139 keeper's committed sidecars diverging up to 3.2 GW on a class-hour
+at HEAD — **does not affect the caiso-147 keeper**:
+
+| year | max \|class-hour\| control − committed keeper | CA λ keeper → control |
+|---|---|---|
+| 2023 | **0.000 MW** | $55.7916 → $55.7916 |
+| 2024 | **0.000 MW** | $37.4222 → $37.4222 |
+| 2025 | **0.000 MW** | $38.2331 → $38.2331 |
+
+caiso-147's re-basing onto HEAD closed it **for CAISO**. The program-wide
+charter is unaffected — this is a CAISO observation, not a general resolution.
+
+### E.1 — pre-registered REJECT checks (§5): all clear
+
+- **R1/R2** — the extract reproduces on `--check`; PJM and NYISO reproduce
+  byte-for-byte. No cross-ISO contamination.
+- **R3 (inertness)** — **PASS, the overlay binds.** Hours moving > 1 MW:
+  **4,368 / 3,672 / 2,232**; max \|Δ\| **1,075 / 893 / 963 MW**.
+- **R4 (level escape)** — **PASS.** Annual nuclear energy moves
+  **+0.0001 % / −0.0240 % / −0.0445 %** (17.6263→17.6263, 18.1972→18.1929,
+  17.4924→17.4847 TWh) against a 0.5 % gate. **The G3 gate holds in-solve**, so
+  the overlay posts *timing*, not a level.
+- **R5** — no dropped month is resurrected; uncovered dates keep the smear.
+
+### E.2 — S2: the mechanism does what it was armed to do
+
+Nuclear dispatch r_day against **EIA-930 CISO metered**, covered days only:
+
+| year | days | r_day control → arm | lift | MAE control → arm |
+|---|---|---|---|---|
+| 2023 | 365 | 0.7873 → **0.9709** | **+0.1836** | 156.4 → **47.2 MW** |
+| 2024 | 364 | 0.8473 → **0.9921** | **+0.1448** | 101.0 → **31.3 MW** |
+| 2025 | 212 | 0.8550 → **0.9878** | **+0.1327** | 125.0 → **39.9 MW** |
+
+This matches the extract's ex-ante prediction (§B.3) **to four decimals** in all
+three years. Note the control's r_day is *exactly* the smear's own r_day — the
+model dispatches nuclear at availability, which is what makes the test
+well-posed.
+
+### E.3 — where the displaced energy goes
+
+Annual class energy delta (arm − control), GWh:
+
+| year | CC_REGULAR | import | CT_PEAKER | other |
+|---|---|---|---|---|
+| 2023 | **−85.6** | +36.0 | +46.1 | solar +2.4, ST_GAS +2.3 |
+| 2024 | **−35.8** | +31.7 | +2.7 | hydro +7.8, ST_GAS −2.1 |
+| 2025 | −13.8 | **+16.4** | +6.0 | solar −4.7, hydro −1.6 |
+
+Small, and it lands on the marginal classes. **This is NOT the
+imports-dominated signature nyiso-98 measured**, and the difference is
+structural rather than contradictory: NYISO swings a 4-reactor pool in and out,
+while CAISO's 2-unit fleet mostly *re-times within a month* at constant monthly
+energy.
+
+System demand-weighted price: **+$0.015 / −$0.036 / +$0.018 per MWh**, p99
+essentially unchanged (148.18→148.14, 76.48→76.48, 62.18→62.26); **3,261 /
+1,897 / 1,835** hours repriced. Well inside the pre-registered "< $0.50/MWh".
+
+### E.4 — criterion verdicts: identical, arm for arm
+
+Scored **unattested on both** first (the caiso-146/147 probe posture):
+
+| criterion | control | arm |
+|---|---|---|
+| C1 `fuelmix` | PASS | PASS |
+| C2 `sysvol` | PASS | PASS |
+| C3a `price_mean` | FAIL | FAIL |
+| C3b `price_shape` | PASS | PASS |
+| C3c `price_tail` | FAIL | FAIL |
+| C4 `dispatch_corr` | PASS | PASS |
+| C6 `governance` | UNATTESTED | UNATTESTED |
+| C7 `shape` | PASS | PASS |
+| C8 `forced_share` | PASS | PASS |
+
+**Every verdict is unchanged.** With arm B's attestation applied (the owner's
+caiso-145 ledger carried forward, magnitudes re-measured), C3a/C3c become
+`CAVEAT` and C6 `PASS` → determination **CALIBRATED-WITH-CAVEATS, 0 FAILs, C1
+all 12/12 · free 8/8**, still **2 of 3** ledgered slots and **0 of 1**
+protective.
+
+### E.5 — protective gates, on the ABSORBING classes
+
+Nuclear is exempt from **both** C7 and C8 by explicit class list, so **no
+nuclear D-1/D-2 number is quoted here as a passed gate** (caiso-147 §G framing).
+
+**C7 / D-1, CT_PEAKER** (floor 0.80) — holds, and the most exposed year improves:
+
+| year | profile_r control → arm | cv_ratio control → arm |
+|---|---|---|
+| 2023 | 0.881 → 0.881 | 1.623 → 1.684 |
+| 2024 | 0.934 → 0.933 | 1.817 → 1.814 |
+| 2025 | 0.864 → **0.866** | 2.178 → 2.175 |
+
+**C8 / D-2, CT_PEAKER** forced share (0.15 peaker cap): 0.0016 → 0.0015,
+0.0054 → 0.0059, 0.0007 → 0.0007.
+
+**ST_GAS 2024/2025 raw D-1 rows read `FAIL` in BOTH arms identically** (0.229 →
+0.231, −0.031 → −0.034). Pre-existing, not caused by this lever, and below the
+rubric's 2 % materiality floor — which is why C7 scores PASS on both sides. This
+is reported rather than buried, and it is **not** a caiso-148 finding.
+
+### E.6 — materiality (prereg §7)
+
+C3a: **+3.0 → +3.0 %**, **+8.2 → +8.1 %**, **+11.2 → +11.2 %** — max **0.1 pp**
+against the pre-registered **1.0 pp** trigger. CA load-weighted λ moves
+$55.7916→$55.8026, $37.4222→$37.3871, $38.2331→$38.2506. **Trigger did not
+fire**, so no leave-one-year-out re-scoring was required.
+
+C3c: **bit-identical** — model 0 h vs RT actual 47/35/8 h in both arms. An
+energy-neutral within-month re-arrangement cannot create a tail, exactly as
+pre-registered.
+
+---
+
+## §F — verdict: **KEEPER**, promoted 2026-07-31
+
+`nuclear_unit_availability` CAISO cell **`U` → `K`**; keeper
+`2026-07-31-caiso147-chp-heat-rates` → **`2026-07-31-caiso148-nuclear-availability`**.
+
+The case is structural, not residual-driven. It is a rule-14 `[R-ACCURATE]`
+measured-input swap with **zero fitted parameters**, covering **100 % of CAISO's
+nuclear capacity and unit count**, validated against an **independent** source at
+r_day 0.9807, clearing every build-time and in-solve gate that was fixed in
+advance — and it **closes S2 in every year** while leaving every criterion
+verdict unchanged and *improving* the binding protective gate's most exposed
+number. The residual barely moved (max C3a 0.1 pp), which is the expected result
+for an energy-neutral timing correction and is **not** the reason for promotion.
+
+**What it is not:** not a C3a lever, not a C3c lever, not a reserve/MSSC test
+(§C). It closes neither ledgered caveat and was not selected to.
+
+---
 
 ## §G — DO-NOT-REDO (binding on successors)
 
-*(pending)*
+1. **Do NOT re-derive `nuclear-availability-CAISO.csv` against a residual**
+   (rule 23 `[R-FROZEN-DERIVE]`). It re-derives **only** when NRC publishes a new
+   year or EIA-923 revises the anchor, and the commit **must cite the data
+   change**. The deriver's `EVENT_RAW_MAX` / `SCALE_CLIP` / `WEDGE_TOL` are
+   frozen from ERCOT — do not re-tune them for CAISO.
+2. **Do NOT "fix" the five dropped 2025 months by loosening `WEDGE_TOL`,
+   raising `SCALE_CLIP`, or letting the per-day cap exceed 1.0.** The drop is
+   correct (§B.1). Every one of those knobs would post an availability level the
+   EIA-923 basis is known to under-express, deleting real capability to buy
+   coverage. The **only** admissible fix is item 3.
+3. **The real open item is a Diablo nameplate/uprate basis reconciliation** —
+   EIA-860 net summer capacity (2,240 MW) vs licensed thermal power, where
+   EIA-930 measures the unit reaching 2,309 MW. That is a **fleet-representation**
+   change, not a calibration lever, and it is out of scope for a calibration
+   session. It would recover 2025 coverage *and* is the honest fix. Anyone
+   opening it should treat it as a fleet/data charter, and note it likely
+   touches other ISOs' uprated units too.
+4. **Do NOT cite caiso-148 as evidence about CAISO's reserve floor, MSSC, or
+   scarcity requirement** (§C). The keeper runs `energy_reserve_coopt`,
+   `caiso_reserve_coopt` and `as_reserve_formula` all `False`, and
+   `caiso_scarcity_pricing`'s MCL is a static 1,400 MW tariff constant. This
+   session tested **no** reserve mechanism. The handoff's framing was checked and
+   found not to hold for this keeper.
+5. **Do NOT re-open the "0 reactor(s)" log line as a defect** (§D). It is
+   `bins_to_fleet` correctly reporting no nuclear in the binned *thermal* fleet;
+   the dispatch fleet gets 2. Pre-existing, ISO-generic, cosmetic.
+6. **Do NOT quote a nuclear D-1/D-2 number as a passed gate** — nuclear is in
+   `D2_EXEMPT_CLASSES` and absent from `D1_GATED_CLASSES`, exempt by **explicit
+   class list**, not by the 2 % materiality floor (the caiso-147 §G framing,
+   which this session re-confirms for nuclear).
+7. **Do NOT attribute the ST_GAS 2024/2025 D-1 FAILs to this lever.** They are
+   identical in both arms and pre-date it (§E.5).
+8. **Do NOT treat the EIA-930 CISO screen as transferable.** That CISO carries
+   no zero-block artifact is a **CAISO-specific** measurement; it says nothing
+   about any other ISO's 930 series, and nyiso-98's gap-masking remains correct
+   for NYISO.
+9. **The verdict transfers to no other ISO** (rule 25). MISO and NEISO cells stay
+   `U`; PJM stays `U` on its own build-time refusal (negative G2 retention). Each
+   must derive its own artifact and clear its own gates.
+10. Everything carried in `FINDING-caiso147` §G, `FINDING-caiso146` §G,
+    `FINDING-caiso144` §G, caiso-143 §H, caiso-142 §K, caiso-141, caiso-138 §G,
+    caiso-137b §6, caiso-131 §10 remains binding and is **not** re-litigated here.
+
+**Also carried forward unchanged** (not this session's scope, not resolved by
+it): the latent CHP derive defect in PJM (caiso-147 §B); CT_CHP's thin and
+adversely-selected CAISO coverage; the shared-derive sub-6.0 MMBtu/MWh meter bug
+across all four measured ISOs. The **keeper-reproducibility drift** is resolved
+*for CAISO only* (§E.0) — the program-wide charter still stands.
+
