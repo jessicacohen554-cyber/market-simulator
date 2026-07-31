@@ -1,0 +1,238 @@
+{
+ "session": "nyiso-107",
+ "iso": "NYISO",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "keeper": "2026-07-31-nyiso105-chp-heat-rates",
+ "keeper_hydro_config": {
+  "hydro_backfill_year": null,
+  "hydro_eia930_monthly": false,
+  "hydro_forecast_budget": false,
+  "hydro_year": "normal",
+  "hydro_budget_nameplate_aware": false,
+  "hydro_min_flow_floor": true,
+  "hydro_ror_split": false
+ },
+ "model_hydro_twh": {
+  "2023": 28.3833,
+  "2024": 27.8294,
+  "2025": 21.0482
+ },
+ "census_eia923": {
+  "2023": {
+   "hy_plants": 157,
+   "hy_twh": 28.4033,
+   "ps_plants": 2,
+   "ps_twh": -0.3721,
+   "hy_plus_ps_twh": 28.0312
+  },
+  "2024": {
+   "hy_plants": 150,
+   "hy_twh": 27.875,
+   "ps_plants": 2,
+   "ps_twh": -0.4096,
+   "hy_plus_ps_twh": 27.4654
+  },
+  "2025": {
+   "hy_plants": 4,
+   "hy_twh": 21.0482,
+   "ps_plants": 2,
+   "ps_twh": -0.49,
+   "hy_plus_ps_twh": 20.5582
+  }
+ },
+ "benchmark_parts": {
+  "2023": {
+   "e923_raw_twh": 28.0312,
+   "e930_twh": 26.8365,
+   "as_scored_twh": 28.0312,
+   "vintage_completeness": 1.0495
+  },
+  "2024": {
+   "e923_raw_twh": 27.4654,
+   "e930_twh": 26.7777,
+   "as_scored_twh": 27.4654,
+   "vintage_completeness": 1.037
+  },
+  "2025": {
+   "e923_raw_twh": 20.5582,
+   "e930_twh": 24.1039,
+   "as_scored_twh": 24.1039,
+   "vintage_completeness": 0.885
+  }
+ },
+ "basis": {
+  "as_scored_mixed_923_923_930": {
+   "actual_twh": {
+    "2023": 28.0312,
+    "2024": 27.4654,
+    "2025": 24.1039
+   },
+   "error_pct": {
+    "2023": 1.26,
+    "2024": 1.33,
+    "2025": -12.68
+   }
+  },
+  "all_eia930": {
+   "actual_twh": {
+    "2023": 26.8365,
+    "2024": 26.7777,
+    "2025": 24.1039
+   },
+   "error_pct": {
+    "2023": 5.76,
+    "2024": 3.93,
+    "2025": -12.68
+   }
+  },
+  "all_eia923_carry_corrected": {
+   "actual_twh": {
+    "2023": 28.0312,
+    "2024": 27.4654,
+    "2025": 24.3075
+   },
+   "error_pct": {
+    "2023": 1.26,
+    "2024": 1.33,
+    "2025": -13.41
+   }
+  }
+ },
+ "falsify_p63": {
+  "2023": {
+   "p63_hydro_twh": 27.1845,
+   "p63_hours": 8760,
+   "e930_twh": 26.8365,
+   "e923_raw_twh": 28.0312,
+   "p63_vs_930_pct": 1.3
+  },
+  "2024": {
+   "p63_hydro_twh": 26.9763,
+   "p63_hours": 8784,
+   "e930_twh": 26.7777,
+   "e923_raw_twh": 27.4654,
+   "p63_vs_930_pct": 0.74
+  },
+  "2025": {
+   "p63_hydro_twh": 24.2489,
+   "p63_hours": 8760,
+   "e930_twh": 24.1039,
+   "e923_raw_twh": 20.5582,
+   "p63_vs_930_pct": 0.6
+  }
+ },
+ "psfold": {
+  "eia930_ps_folded_into_wat": [
+   "MISO",
+   "PJM"
+  ],
+  "2023": {
+   "e930_wat_twh": 26.8365,
+   "e923_hy_twh": 28.4033,
+   "ratio": 0.9448
+  },
+  "2024": {
+   "e930_wat_twh": 26.7777,
+   "e923_hy_twh": 27.875,
+   "ratio": 0.9606
+  },
+  "2025": {
+   "e930_wat_twh": 24.1039,
+   "e923_hy_twh": 21.0482,
+   "ratio": 1.1452
+  }
+ },
+ "budget": {
+  "per_year_keeper_config": {
+   "2023": {
+    "plants": 154,
+    "budget_twh": 28.4033,
+    "max_mw": 4647.5
+   },
+   "2024": {
+    "plants": 147,
+    "budget_twh": 27.875,
+    "max_mw": 4587.1
+   },
+   "2025": {
+    "plants": 3,
+    "budget_twh": 21.0482,
+    "max_mw": 3343.0
+   }
+  },
+  "repair_ladder_2025": {
+   "bare_KEEPER": {
+    "plants": 3,
+    "budget_twh": 21.0482,
+    "max_mw": 3343.0
+   },
+   "backfill_2024": {
+    "plants": 147,
+    "budget_twh": 25.9944,
+    "max_mw": 4587.1
+   },
+   "backfill_2024_plus_930pin": {
+    "plants": 147,
+    "budget_twh": 24.0625,
+    "max_mw": 4587.1
+   },
+   "backfill_2024_plus_930pin_plus_nameplate_aware": {
+    "plants": 147,
+    "budget_twh": 24.0625,
+    "max_mw": 4587.1
+   },
+   "930pin_ONLY_no_backfill": {
+    "plants": 3,
+    "budget_twh": 24.0625,
+    "max_mw": 3343.0
+   }
+  },
+  "nameplate_aware_work_under_pin": {
+   "with_backfill_2024": {
+    "clipped_plant_months": 10,
+    "moved_mwh": 3683.8,
+    "moved_pct_of_budget": 0.0153,
+    "physically_unattainable_mwh": 0.0
+   },
+   "without_backfill": {
+    "clipped_plant_months": 4,
+    "moved_mwh": 196793.1,
+    "moved_pct_of_budget": 0.8178,
+    "physically_unattainable_mwh": 0.0
+   }
+  }
+ },
+ "inert": {
+  "per_year": {
+   "2023": {
+    "energy_sha_off": "939797e1d578cee7",
+    "energy_sha_on": "939797e1d578cee7",
+    "pmax_sha_off": "b7302477b07be95e",
+    "pmax_sha_on": "b7302477b07be95e",
+    "units": 154,
+    "bit_identical": true
+   },
+   "2024": {
+    "energy_sha_off": "0e15d6a2cde4e79d",
+    "energy_sha_on": "0e15d6a2cde4e79d",
+    "pmax_sha_off": "b382890fab610a7a",
+    "pmax_sha_on": "b382890fab610a7a",
+    "units": 147,
+    "bit_identical": true
+   },
+   "2025": {
+    "energy_sha_off": "860247dfee9bd600",
+    "energy_sha_on": "860247dfee9bd600",
+    "pmax_sha_off": "17334f1462619707",
+    "pmax_sha_on": "17334f1462619707",
+    "units": 3,
+    "bit_identical": true
+   }
+  },
+  "bit_identical_all_years": true
+ }
+}
