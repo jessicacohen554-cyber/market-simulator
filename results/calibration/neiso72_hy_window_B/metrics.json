@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-13-neiso-60-phantom-outage",
+  "run_id": "2026-07-31-neiso-72-hy-window",
   "iso": "NEISO",
-  "label": "neiso 60 phantom outage",
+  "label": "neiso 72 hy window",
   "target_years": [
     2023,
     2024,
@@ -13,7 +13,7 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
+  "rubric_version": 2.9,
   "determination": "CALIBRATED-WITH-CAVEATS",
   "reasons": [
     "1 ledgered measured-input caveat(s): C3c price tail / scarcity (RT hourly)",
@@ -52,11 +52,6 @@
       "tier": "supporting",
       "status": "PASS"
     },
-    "co2": {
-      "label": "C5a CO2 vs eGRID",
-      "tier": "load-bearing",
-      "status": "PASS"
-    },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
@@ -85,8 +80,8 @@
     }
   },
   "grade_summary": {
-    "scored": 9,
-    "target_grade": 8,
+    "scored": 8,
+    "target_grade": 7,
     "commercial_grade": 0,
     "ledgered": 1,
     "fails": 0

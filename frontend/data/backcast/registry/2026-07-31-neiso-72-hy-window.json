@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-31-neiso-72-hy-window",
+  "label": "neiso 72 hy window",
+  "date": "2026-07-31",
+  "shorthand": "neiso-72-hy-window",
+  "definition": "neiso-72 arm B: keeper recipe + EIA930_PS_SPLIT_COMPLETE_FROM windowed pin refusal (design D) \u2014 2023/2024 on 923 HY basis, 2025 pin kept (PREREG-neiso72)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-07-31-neiso-72-hy-window.js",
+  "bundle": "results/calibration/neiso72_hy_window_B"
+}

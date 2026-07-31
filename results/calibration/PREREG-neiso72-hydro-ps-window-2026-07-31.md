@@ -232,11 +232,24 @@ Levels each treatment hands the LP (probe §5; seam 2024-11):
 * **(C) per-window** splices 923 (Jan–Oct) to 930 (Nov–Dec) inside 2024. Given
   §3 — the two sources differ systematically — a mid-year splice injects an
   artificial step at the seam month. It differs from (D) by 0.030 TWh.
-* **(D) whole-year rule — RECOMMENDED.** Refuse the pin for any year whose PS
-  filing is incomplete (2019–2024); accept it for a fully-split year (2025+).
-  Every year stays on **one basis**, no intra-year splice, and the seam
-  measurement (§1) is what classifies the year. Zero free parameters — like the
-  MISO/PJM fix it *removes* a mechanism rather than adding one.
+* **(D) whole-year rule — RECOMMENDED, and owner-adjudicated 2026-07-31.**
+  Refuse the pin for any year whose PS filing is incomplete (2019–2024); accept
+  it for a fully-split year (2025+). Every year stays on **one basis**, no
+  intra-year splice, and the seam measurement (§1) is what classifies the year.
+  Zero free parameters — like the MISO/PJM fix it *removes* a mechanism rather
+  than adding one.
+
+**What the LP will actually see under D** (builder-level, `backfill_year=2024`,
+measured no-LP after the code change and before any arm solve — the builder's
+population construction adds ~0.03 TWh of 2024-backfilled plants on top of the
+raw census, exactly as every existing run already does; the pin is the only
+thing removed):
+
+| year | control budget (pinned) | candidate budget (923 basis) | delta |
+|---|---:|---:|---:|
+| 2023 | 8.7750 TWh | **8.5762 TWh** | −0.1988 TWh |
+| 2024 | 7.3942 TWh | **6.7144 TWh** | −0.6798 TWh |
+| 2025 | 5.1207 TWh | **5.1207 TWh** | 0 (bit-identical, confirmed no-LP) |
 
 ### 4a. Design E — subtract an approximated PS from the 930 pin (owner proposal, adjudicated)
 
