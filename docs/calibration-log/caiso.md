@@ -4435,3 +4435,133 @@ as evidence about the *cause* of CAISO's CT under-production; do not open the
 still holds NO rule-22 calibration-complete marker** — every read in this session
 was confined to 2023–2025 and **no marker was written**. Matrix §5.2 live queue
 is now items **2 and 3** only.
+
+---
+
+## caiso-150 (2026-07-31) — lever-queue item 2's only live prerequisite (`caiso-138 §C` **firm-block elasticity**): the design gate **OPENS**. The firm must-flow floor's **shape basis measures the wrong object**, proved **direction-free** against CAISO's own as-submitted DAM bids — an independent source the mechanism had never been checked against. **NO SOLVE, no arm, no new field, keeper unchanged**
+
+**Keeper `2026-07-31-caiso148-nuclear-availability` UNCHANGED**
+(CALIBRATED-WITH-CAVEATS, 0 FAILs). Nothing registered — the
+caiso-136/143/144/149 pattern. Full evidence:
+`results/calibration/FINDING-caiso150-firm-import-elasticity-2026-07-31.md`;
+instrument `scripts/probes/_caiso150_firm_import_elasticity.py` (§A–§C, no LP
+beyond one `run_year(fleet_only=True)` reconstruction).
+
+### The lever, and why it was on-queue
+
+caiso-143 §H inverted the export-lane dependency and left **exactly one** live
+prerequisite for item 2: caiso-138 §C firm-block elasticity — is the forced firm
+import injection `F` price-insensitive at all? `F` is
+`inject_caiso_firm_import_selfschedule` (caiso-77), which pins both firm
+tranches' `min_gen` at their **full** shaped capability in every hour.
+
+### §A — the mechanism as built
+
+Forced **18.856 / 27.232 / 27.989 TWh** (mean 2,152 / 3,109 / 3,195 MW) over
+7,693 / 7,994 / 8,151 hours; **every** forced hour is must-flow. 2024 reproduces
+caiso-143 §B's 11.668 + 15.564 TWh exactly. **`MECH_FIRM_IMPORT` is in both
+`NON_THERMAL_MECHS` and `MECH_ABLATION_KEPT` and has no `D4_WINDOWS` entry** — a
+19–28 TWh/yr floor invisible to the C8 forced-share budget *and* the D-4
+off-window check. No gate has ever window-tested it.
+
+### §B–§C — the independent source and the result
+
+The floor's rule-17 declaration cites the CPUC D.20-06-028 RA import **must-offer**
+obligation and "the DMM revealed self-scheduled base", but its shape comes from
+EIA-930 realised **net corridor interchange** — the sum of a broadly flat
+price-insensitive core and a large price-elastic economic layer. CAISO OASIS
+**Public Bid Data** measures the price-insensitive position *directly* and is
+independent of **both** inputs the floor consumes. Corpus fetched this session:
+**374 seasonally balanced trade days, 1,618,533 (resource × hour) records.**
+
+Direction-free result — the floor forces more price-insensitive import than
+CAISO's **entire** measured price-insensitive intertie position (both directions
+unsigned, plus every import bid at ≤ $0/MWh) in:
+
+| year | hours | share | energy above ceiling | share of forced |
+|---|---|---|---|---|
+| 2023 | 2,094 | 23.9 % | 0.969 TWh | 5.1 % |
+| 2024 | 4,132 | 47.2 % | 4.634 TWh | 17.0 % |
+| 2025 | 4,284 | 48.9 % | 5.705 TWh | 20.4 % |
+
+Concentrated **overnight (h22–h05, 2024 ratios 1.24–1.39)**, and it **scales with
+the level** (5.1 → 17.0 → 20.4 % as the DMM RA level steps 2,323 → 3,371 MW while
+measured conduct stays flat) — the caiso-138 §C signature re-measured on
+**conduct** instead of flow.
+
+**Two honesty limits recorded up front.** (a) **Direction is not identifiable**:
+a self-scheduling resource submits no economic curve and the feed carries no
+direction field, so 1,141 of 1,452 resources carrying **94.91 %** of
+self-scheduled MW are unclassifiable — only the one-sided ceiling is measurable,
+and the midday ratio 0.26–0.34 must **not** be read as under-forcing (midday is
+exactly where CAISO export self-schedules peak). (b) **Seasonal balance is
+load-bearing**: a winter-only corpus read `ss_all` 2,291 MW and nearly flat vs
+the balanced 3,449 MW peaking in the evening — it would have overstated the
+headline ~50 % and mislocated the peak.
+
+### Not struck by caiso-138 §G
+
+§G struck re-deriving the PNW firm **level/shape basis "as a quick fix"** because
+the basis "is real". This is new evidence, from a source never used in this lane,
+that the basis measures a **different quantity** than the mechanism claims —
+rule-28a re-entry on new evidence. Nothing §G struck is reopened: no level
+re-derive, no naive sink re-arming, no β-dump work. **E1-adversity is unchanged
+and stated ex ante**: any reconciliation removes forced cheap overnight import,
+so overnight λ rises (rule 1 governs — not a reason to reject, not a reason to
+adopt before it is properly derived).
+
+### Mechanism SPECIFIED, deliberately NOT built
+
+`caiso_firm_import_selfsched_clip` — pointwise min of the floor and the measured
+(month × hod) self-schedule ceiling. Direction-free (uses only an upper bound, so
+it can only remove unsupported forcing, never add any), **zero new DOF**,
+structurally the accepted caiso-138 envelope-clip pattern, and it *reconciles*
+the caiso-73 shape rather than stacking on it (rule 19). Prerequisites before any
+arm: its own **rule-23 frozen derive with CV/LOYO honesty gates**, a `D4_WINDOWS`
+entry, a cache-key registration, and a matrix row (rule 28c). Building it in the
+tail of this session would have been exactly the rushed floor rules 1/17/19 exist
+to prevent.
+
+### Filed, not absorbed (two defects found in passing)
+
+1. **`scripts/lib/dam_public_bids/caiso.py` never expands OASIS run-length
+   ranges** — it keys rows by `TIMEINTERVALSTART_GMT` alone and does not read the
+   STOP columns. GENERATOR EN curves: 5,514 rows vs 12,878 true curve-hours
+   (2023-01-15), 6,628 vs 14,036, 9,195 vs 18,414 — the clean datatype carries
+   **43–50 %** of real resource-hours and drops exactly the **stable-bid** ones.
+   `derive_caiso_offer_surface.py` groups on `(resource_seq, interval_start_utc)`
+   with no hour weighting, so the keeper input `caiso_offer_surface_measured` is
+   derived from a biased population. **The directional effect on the fitted band
+   prices is NOT measured here** — that is the offer-surface lane's job.
+   Cross-ISO by construction (ISO-generic seam).
+2. **A silent keeper-reconstruction trap.** CAISO's three firm-import flags have
+   no CLI flag and no top-level `meta.json` key; they reach the solve only via the
+   generic override channel whose meta name is **`coal_prb_sigmoid_overrides`**
+   (→ `run_year(prb_overrides=)`). A probe omitting that rename rebuilds the fleet
+   with the **entire 27 TWh must-flow block absent** while every other CAISO
+   mechanism still arms, so the fleet looks correct. `run_config.json` is truthful
+   and `replay_keeper.py` is correct — the hazard is for probe authors.
+
+### Matrix
+
+New row **`caiso_firm_selfsched_floor`**, CAISO cell **`O`** (chartered, in play,
+verdict not yet reached); `caiso_firm_envelope_clip`'s note cross-referenced.
+Integrity check passes.
+
+### DO-NOT-REDO (new; full list `FINDING-caiso150` §H)
+
+Re-measuring the OASIS self-schedule ceiling, its RLE expansion, or the
+direction wall; attempting the import/export split of intertie self-schedules by
+any route (curve monotonicity — the population has no curve; masked-id crosswalk
+— masking is the disclosure's purpose; EIA-930 correlation — it contaminates the
+independence the finding rests on); quoting the midday ratio as under-forcing;
+re-running on a season-biased corpus; re-deriving the PNW firm **level**;
+building the clip without its frozen derive and honesty gates, or arming it on
+the caiso-138 flag (rule 19); absorbing either §E defect into a CAISO lever
+session.
+
+**CAISO still holds NO rule-22 calibration-complete marker** — every read was
+confined to 2023–2025 and **no marker was written**. Matrix §5.2 live queue after
+this session: item 2 (prerequisite now *answered*, build pending) and item 3.
+
+Next number: caiso-151.
