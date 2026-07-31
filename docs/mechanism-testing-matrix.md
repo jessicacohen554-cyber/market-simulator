@@ -977,6 +977,27 @@ loss.
    `results/calibration/FINDING-miso108-hydro-ps-pin-audit-2026-07-30.md`,
    `results/calibration/FINDING-miso109-hydro-level-923hy-2026-07-30.md`,
    probe `scripts/probes/_miso109_hydro_level_audit.py`.
+   **FORECAST HALF CLOSED 2026-07-31 (miso-110)** — miso-109 fixed only the
+   *backcast* level and left the forward analogue WARNING-only. The forecast
+   level was the mean of that same PS-inclusive `NG: WAT` series over
+   `HYDRO_CLIMATOLOGY_YEARS`, so it was contaminated exactly as each year was;
+   it now comes from `data/hydro.climatological_monthly_hydro_923` (EIA-923
+   `HY`, coverage-gated), same 12-vector contract, same window constant, same
+   wet/dry lever, still no scale factor. MISO forward level **10.244 →
+   9.3116 TWh**. Verification is **no-LP** (the level is a 12-vector) and no
+   solve was spent: MISO equals the gated 923 mean exactly, all five
+   non-registry ISOs are byte-identical across dry/normal/wet, and the
+   nyiso-forecast-2035 census-collapse guard is re-asserted at 2026 and 2035.
+   **Do not requote the naive climatology delta (+10.0 %) as the fold** — it
+   mixes the fold with a WINDOW MISMATCH (923 realises 2021–2024, 930 realises
+   2021+2023–2025); the fold numbers remain +13.5 % / +18.5 %. CAISO is the
+   control that proves the trap: +15.5 % naive, yet clean on all three
+   signatures. `HYDRO_CLIMATOLOGY_YEARS` deliberately **not** extended — the
+   2022 hole is an extract-build gap in the two wide per-BA hourly parquets
+   (7 and 9 rows vs 8760) while the per-year source files are complete, so the
+   remedy is a data-intake rebuild, not a window move (rule 23). Evidence:
+   `results/calibration/FINDING-miso110-forecast-hydro-level-923hy-2026-07-31.md`,
+   probe `scripts/probes/_miso110_forward_level_audit.py`.
 
 ### 5.5 NYISO — target: C3c (sole blocker, roof-blocked)
 
