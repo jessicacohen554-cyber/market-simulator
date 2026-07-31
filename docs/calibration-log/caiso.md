@@ -4303,3 +4303,135 @@ benign "0 reactor(s)" log line; do not attribute the pre-existing ST_GAS
 transferable. **CAISO still holds NO rule-22 calibration-complete marker** —
 2023/2024/2025 only were solved and no marker was written. Matrix §5.2 live queue
 is now items **2, 3, 4**.
+
+## 2026-07-31 — CAISO — caiso-149: `tranche_startup_amortization` REFUSED EX ANTE (matrix §5.2 item 4, `U` → `G`) — the mechanism is the Order-825 **fast-start pricing** object and **CAISO does not have fast-start pricing**: it recovers those costs as **Bid Cost Recovery uplift settled OUTSIDE the LMP**. Separately sufficient: **92.9 % of the targeted capacity already carries a MEASURED CAISO DAM bid** plus a fuel-invariant margin **2.2×–7.9×** the candidate. NO SOLVE, NO ARM, NO NEW FIELD, keeper unchanged
+
+**Runs:** NONE. No LP ran, no bundle was produced, nothing registered on the
+dashboard (rule 15 registers *completed runs*; the caiso-136 / caiso-144
+pattern). **Keeper unchanged:** `2026-07-31-caiso148-nuclear-availability`,
+determination CALIBRATED-WITH-CAVEATS, 0 FAILs, C1 12/12 free 8/8, the same 2 of
+3 non-protective ledger slots, protective 0/1.
+
+**Charter and the DO-NOT-REDO discipline.** Matrix §5.2 item 4 listed
+`tranche_startup_amortization` untested in CAISO (`U`). The handoff bound this
+session to read the two standing adjudications first — NYISO `R` (nyiso-96, rule
+1, after a registered A/B) and ERCOT `G` (ERCOT-145, rule 19, ex ante) — and to
+state what makes CAISO different from both before arming anything. Phase 0 was
+run as no-LP with an explicit no-solve-closure exit. It closes: **the A/B is not
+licensed.** Full record:
+`results/calibration/FINDING-caiso149-tranche-startup-2026-07-31.md`; probe
+`scripts/probes/caiso149_tranche_startup_phase0.py`.
+
+**Ground 1 — rule 1 `[R-STRUCT]`, dispositive alone: the pricing rule does not
+exist in this market.** The mechanism is, by its own source docstring, the
+"Order 825 analogue": it amortizes a fast-start unit's start cost into the
+**price-setting energy bid** so the cost reaches the LMP, and it changes nothing
+else (`min_run`/`min_down` stay 0 — "bid markup only, no new UC coupling",
+`data/fleet/assembly.py`). **CAISO does not have fast-start pricing**, and did
+not at any point in 2023–2025; it recovers exactly those costs as **Bid Cost
+Recovery**, a make-whole uplift settled outside the price — so it never enters
+the energy-balance dual the model prices on (rule 4 `[R-DUALS]`). CAISO's own
+Department of Market Monitoring says so twice, nine years apart:
+
+- **FERC Docket RM17-3, 2017-02-28** — *"CAISO sets locational marginal prices
+  based on marginal production costs. CAISO provides bid cost recovery payments
+  made to compensate resources for any discrete commitment costs that are not
+  recovered through marginal cost pricing."* (DMM opposed being required to
+  adopt fast-start pricing; FERC never finalized RM17-3 as a generic rule.)
+- **Body of State Regulators, 2025-01-10** — *"If energy revenues do not cover
+  full startup and minimum load bid costs after being committed, unit receives
+  bid cost recovery (BCR) payments"*, and on status: *"CAISO is examining the
+  **possibility** of some form of FSP in the WEIM"* — a candidate enhancement
+  **mid-calibration-window**, not a rule. The same deck sizes it: fast-start BCR
+  was $19M/$33M/$27M in 2021/22/23 = 12/13/10 % of total CAISO BCR. It remains a
+  Phase-2 Price-Formation-Enhancements item in 2026.
+
+This satisfies METHOD step 1's independent-validation requirement: the market
+monitor is independent of **both** inputs the supporting legs consume (the OASIS
+Public Bid Data the offer-surface derive reads, and the CAMPD extracts the
+run-length derive reads). The four `K` cells are the four ISOs that **have** the
+rule — rule 25 in action, in the cleanest form the matrix has produced.
+
+**Ground 2 — rule 19 `[R-ONE-MECH]`, sufficient alone: the rows are occupied.**
+Enumerated on the keeper's own `run_config.json`. Every `_committed` tranche in
+every ISO is *already* amortized by `compute_monthly_markup` at the
+**unconditional** P0→P1 seam (`pipeline/solve.py:254`), flag or no flag; the
+flag's marginal object is only the CT `econ*`/`peak*` and CC `peak*` extension.
+Those rows carry `caiso_offer_surface_measured` (the cap-weighted medians of the
+CAISO fleet's **own submitted DAM energy bids**, OASIS Public Bid Data,
+carbon/VOM-netted) decomposed by `gas_offer_net_revenue_margin` (anchor 4.7964
+$/MMBtu) into physical marginal HR × delivered fuel **+ a fixed, fuel-invariant
+$/MWh margin** — structurally the same object an amortized start cost is:
+
+| group | band | MW | margin $/MWh | vs candidate |
+|---|---|---:|---:|---:|
+| CT_PEAKER | econ_low | 3,289 | 22.16 | 5.75× |
+| CT_PEAKER | econ_high | 2,964 | 22.69 | 5.89× |
+| CT_PEAKER | peak | 533 | 8.42 | 2.19× |
+| CT_CHP | econ_low / econ_high | 199 / 199 | 30.26 / 30.06 | 7.86× / 7.81× |
+| CT_CHP | peak | 96 | 20.21 | 5.25× |
+| CC_REGULAR | peak | 472 | 0.00 | — |
+| CC_CHP | peak | 56 | 0.00 | — |
+
+The candidate's own reach is **$3.85/MWh**, measured on CAISO's own CEMS: the
+new rule-23 artifact `data/raw/_processed-legacy/campd_ct_run_lengths_CAISO.csv`
+(`derive_campd_ct_run_lengths.py --iso CAISO`; **50 plants + a pooled ISO-class
+fallback, 26,623 measured start-to-stop runs**, class median run **4.0 h**, mean
+6.47, p90 10.0) crossed with the NREL class start costs the mechanism amortizes
+($12.3/$24.5/$19.0 per MW) — cap-weighted **$3.85**, median $4.10, range
+$0.09–9.50. **92.9 % of the 7,808 MW targeted is occupied.** The two zero-margin
+rows (6.8 %) do not rescue it: `CC_REGULAR peak`'s multiplier **1.333 is the
+measured DAM bid**, sitting *below* the 2.250 physical F-class duct ratio — the
+CAISO CC fleet measurably offers its duct band below its own physical duct cost,
+so a markup there moves the model **away** from measured conduct; `CC_CHP peak`
+is registered exactly at physical and is host-steam-pinned.
+
+**Ground 3 — rule 14 `[R-ACCURATE]`: ERCOT's reopen route is already spent
+here.** ERCOT-145 could name a reopen condition because ERCOT's incumbent is a
+**fitted** multiplier set: *retire the fit by measured re-identification, and the
+start component then enters as one term of that identification*. **In CAISO that
+re-identification already happened** — `caiso_offer_surface_measured` is it, and
+its result **is** the incumbent. There is no fit left to retire, and the only
+rule-19-clean form would swap a measurement for a model, which rule 14 forbids
+outright. That is what makes CAISO's refusal **strictly stronger** than ERCOT's,
+and why it carries **no offer-side reopen condition at all**.
+
+**What makes CAISO different from each precedent.** *vs NYISO:* nyiso-96's
+rejection was **conduct**-based (its CT fleet demonstrably does not add a start
+markup to SRMC) in a market that **has** the rule — the question there was
+identification, and the owner ultimately promoted it. CAISO fails the **prior**
+question. *vs ERCOT:* same rule-19 regime (rows occupied, markup does not clip to
+zero — CAISO is **not** in the four-keeper-ISO "sits at/below physical" regime),
+but for the opposite reason: ERCOT's occupant is fitted, CAISO's is measured.
+
+**Direction reported, and explicitly NOT the ground (rule 1).** The arm makes the
+CT econ/peak bands dearer, and CT_PEAKER already sits at 1.832/0.659/0.471 TWh
+against actual 4.128/4.326/2.374 (44/15/20 %) — the nyiso-96 signature from a far
+worse base. Recorded so no successor mistakes the refusal for a fit argument: it
+would not have licensed a rejection on its own, and would not have licensed an
+arming either. It does **not** reopen caiso-119 R4, whose guardrail (a real
+obligation-keyed mechanism with a cited D-4 window) is untouched — and an offer
+markup is the wrong sign for R4 besides.
+
+**Filed, not absorbed (out of scope).** `compute_monthly_markup` amortizes the
+NREL start cost into the P1 bid of every `_committed` tranche **unconditionally,
+in all six ISOs**. Ground 1's reasoning about BCR-not-LMP touches that seam in
+principle, but it is architecture-level (the two-pass P0→P1 bid-cost structure
+that *defines* P1, spec §1.6), it would move six keepers at once, and it is a
+spec question rather than a per-ISO lever. Surfaced for an owner-scoped
+cross-ISO charter; **do not absorb it into a CAISO lever session** (rule 25).
+
+**DO-NOT-REDO** (full list `FINDING-caiso149` §G): do **not** propose
+`tranche_startup_amortization` for CAISO again — the cell is `G` on three
+independent grounds with **no reopen condition**, and the four `K` cells are not
+evidence for CAISO (rule 25); do not invent a CC-peak-only scope for the flag (a
+new mechanism needing its own row and identification, rule 28c — and that
+incumbent is measured too); do not strip `caiso_offer_surface_measured` or the
+`gas_offer_net_revenue_margin` decomposition to "make room" for the amortization;
+do not re-derive `campd_ct_run_lengths_CAISO.csv` against a residual (rule 23 —
+only a CAMPD data update, and the commit must cite it); do not cite this session
+as evidence about the *cause* of CAISO's CT under-production; do not open the
+`compute_monthly_markup` committed-row seam from a CAISO lever session. **CAISO
+still holds NO rule-22 calibration-complete marker** — every read in this session
+was confined to 2023–2025 and **no marker was written**. Matrix §5.2 live queue
+is now items **2 and 3** only.
