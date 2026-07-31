@@ -209,6 +209,9 @@ offer curves verified NOT leaking into forecast defaults (rule-25 containment ho
 > **Execution vehicle:** `docs/forecast-readiness-prompt-pack-2026-07.md` — the FFR wave/prompt
 > pack (Opus/Fable assignments, file-disjoint parallel sessions per wave, copy-paste prompts).
 > Dispatch from the pack; this section remains the findings-to-fix rationale.
+> **Refreshed 2026-07-31** (pack §0a state delta: keepers/markers/freeze moved, zero FFR items
+> executed) and peer-reviewed against commercial PCM/CEM practice —
+> `docs/forecast-readiness-peer-review-2026-07.md` (adds FFR-2E for FR-14; promotes FFR-PA).
 
 Sequencing logic: **(1)** fix what corrupts every default forecast and the dominant gate blocker
 (no owner decision needed, all ≤ T0/T1 scale); **(2)** put the already-implemented mechanism
