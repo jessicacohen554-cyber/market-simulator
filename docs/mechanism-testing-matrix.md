@@ -357,9 +357,33 @@ rule-13-admissible mechanism available to carry it.
    crosswalk does not exist in-repo), then the under-curtailment gap
    (ERCOT-121).
 
-### 5.2 CAISO — targets C3c-23/24, C3a-2025 (both now owner-level; in-model queues EMPTY)
+### 5.2 CAISO — **NO failing criterion** (keeper `2026-07-29-caiso139-dump-guard-offer`, CALIBRATED-WITH-CAVEATS)
 
-**C3a-2025 IS DIAGNOSED-UNCLOSED WITH AN EMPTY IN-MODEL LEVER QUEUE (caiso-142).**
+**BOTH former blockers were DISPOSITIONED BY THE OWNER at caiso-145
+(2026-07-30) and are now ACCEPTED MEASURED-INPUT LIMITATIONS** — ledgered in
+the keeper's `calibration_attestation.json`, spending 2 of the 3 non-protective
+ledger slots (protective 0/1, FAILs 0): **C3c-2023/24** on caiso-131 §9 **A4**
+with the caiso-144 evidence, and **C3a-2025** on the caiso-141 **A2 data wall**.
+The evidence and the standing limits stay exactly as written below — a ledger
+records a limit, it does not license a fit — so the two subsections that follow
+remain the binding reference for anyone tempted to reopen either gate.
+
+**Neither caveat is ever closable by an adder, haircut or any value tuned to the
+residual** (rules 1 `[R-STRUCT]` / 13 `[R-MEASURED]`). The only routes that
+reopen either are owner-funded intakes, both unfunded at adoption: the
+**SoCalGas OFO declaration record** (C3c — the one path to an unfitted C3c-2024
+trigger) and **non-public hourly pumped-storage data** (C3a). A successor
+proposing a lever for either gate must bring **new evidence against a named
+caiso-140/141/142/143/144 DO-NOT-REDO cell**, not a re-framing of a closed one.
+CALIBRATED-WITH-CAVEATS is a rubric determination, **not** the rule-22
+calibration-complete marker — CAISO holds no marker, so every out-of-training
+year stays quarantined. (caiso-145; `docs/calibration-log/caiso.md`.)
+
+Items 2–6 below are the live lever queue and are **not** blocked-gate work: they
+target C5a and the standing structural/offer questions.
+
+**C3a-2025 IS DIAGNOSED-UNCLOSED WITH AN EMPTY IN-MODEL LEVER QUEUE (caiso-142);
+LEDGERED at caiso-145.**
 All three of `FINDING-caiso140` §E's asks are resolved *against*, so no successor
 should open a C3a-2025 candidate without new data or an owner decision:
 
@@ -382,10 +406,12 @@ should open a C3a-2025 candidate without new data or an owner decision:
   price basis is identifiable without a fitted value), leaving caiso-138 §C
   firm-block elasticity as the only live prerequisite.
 
-What remains for C3a-2025 is owner-level: land non-public hourly PS data, or
-accept it as diagnosed-unclosed (the nyiso-97 C3c disposition). **Do not propose
-any export / absorption / "somewhere to put the surplus" mechanism for it** —
-caiso-142 §H generalises the sign argument to every basis and bound.
+What remained for C3a-2025 was owner-level: land non-public hourly PS data, or
+accept it as diagnosed-unclosed (the nyiso-97 C3c disposition). **The owner
+accepted it at caiso-145** (ledgered, 2026-07-30); the non-public PS intake is
+the only route that reopens it. **Do not propose any export / absorption /
+"somewhere to put the surplus" mechanism for it** — caiso-142 §H generalises the
+sign argument to every basis and bound.
 
 1. ~~**`energy_reserve_coopt` + completing `caiso_reserve_coopt`**~~ —
    **DISCHARGED EX ANTE at caiso-144 (2026-07-30, no-LP).** The "complete the
@@ -405,11 +431,12 @@ caiso-142 §H generalises the sign argument to every basis and bound.
    C3c tail is WINTER-MORNING fuel/cold-snap, not model-state scarcity).
    **C3c's in-model queue is now EMPTY on every route** (offer rungs closed
    caiso-131 §10, reserve tiers closed caiso-144 §B/§C, overlay refused §D,
-   fuel grain already armed to its measured daily ceiling §E). Live
-   dispositions are owner-level: caiso-131 **A3** (SoCalGas OFO declaration
-   record intake — unfunded, the one path to an unfitted C3c-2024 trigger) and
-   **A4** (ledger C3c-23/24 as an ACCEPTED MEASURED-INPUT LIMITATION on the
-   MISO/NEISO precedent; CAISO carries 0/3 ledgered caveats).
+   fuel grain already armed to its measured daily ceiling §E). **Dispositioned
+   at caiso-145 (2026-07-30): the owner ADOPTED A4** — C3c-2023/24 is ledgered
+   as an ACCEPTED MEASURED-INPUT LIMITATION on the MISO/NEISO precedent
+   (CAISO now spends 2 of 3 non-protective slots, C3c + C3a together). **A3**
+   (the SoCalGas OFO declaration-record intake) stays unfunded and is the one
+   path to an unfitted C3c-2024 trigger — the only route that reopens the cell.
    (`FINDING-caiso144-coopt-dormancy-c3c-frontier-2026-07-30.md`.)
 2. **Corridor/export-path congestion family** — the *selected* open family for
    C5a (59–101% of the belly wedge is DSW→CA congestion, caiso-120/121);
