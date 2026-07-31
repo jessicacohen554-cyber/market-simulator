@@ -124,9 +124,11 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 
-from market_sim.config.paths import ERCOT_MIS_DIR, RAW_DATA_DIR  # noqa: E402
+from market_sim.config.paths import (  # noqa: E402
+    RAW_DATA_DIR,
+    ercot_dam_disclosure_files,
+)
 
-DAM_DIR = ERCOT_MIS_DIR
 DEFAULT_OUT = RAW_DATA_DIR / "ercot-thermal-dam-availability.csv"
 DEFAULT_HOURLY_OUT = RAW_DATA_DIR / "ercot-thermal-dam-availability-hourly.csv"
 DEFAULT_SITE_HOURLY_OUT = (
@@ -186,8 +188,15 @@ def _load_year(year: int) -> pd.DataFrame:
     """Read every Gen_Resource disclosure row whose DELIVERY date is ``year``.
 
     The 60-day publication lag spills a year's Nov-Dec deliveries into the
-    following year's first file, so both ``<year>`` and ``<year+1>`` files are
-    scanned and filtered on the Delivery Date column.
+    following year's first file, so both ``<year>`` and ``<year+1>`` LABEL
+    years are scanned and filtered on the Delivery Date column. File
+    resolution goes through :func:`paths.ercot_dam_disclosure_files`, which
+    covers BOTH registered disclosure directories — the MIS-fetcher lane
+    (``data/raw/ercot``, 2023-2026) and the annual-archive lane
+    (``data/raw/ercot-AS``, 2018-2022) — so a delivery year is assembled from
+    whichever lane published it (2022's Nov-Dec tail, for instance, comes from
+    the MIS lane's label-2023 fragment while its Jan-Oct comes from the
+    archive lane).
     """
     cols = [
         "Delivery Date",
@@ -199,7 +208,7 @@ def _load_year(year: int) -> pd.DataFrame:
     ]
     frames: list[pd.DataFrame] = []
     for y in (year, year + 1):
-        for path in sorted(DAM_DIR.glob(f"*60d_DAM_Gen_Resource_Data_{y}_*.parquet")):
+        for path in ercot_dam_disclosure_files("Gen_Resource_Data", y):
             df = pd.read_parquet(path, columns=cols)
             df = df[df["Resource Type"].isin(RESTYPE_TO_CLASS)]
             dt = pd.to_datetime(df["Delivery Date"])
