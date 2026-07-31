@@ -6147,6 +6147,295 @@
         }
       },
       "zones_src": "MISO RT-final/DA-ex-post LMP, named trading hubs mapped to model zones (actual_lmp_hourly_zonal_MISO.parquet; MISO-Plains = MINN+ILLINOIS hub mean proxy, no LRZ 3/5 hub exists)"
+    },
+    "2026": {
+      "da": 53.15,
+      "rt": 51.25,
+      "da_mon": [
+        109.95,
+        51.38,
+        38.83,
+        39.43,
+        33.54,
+        44.92,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "rt_mon": [
+        94.73,
+        58.18,
+        41.37,
+        37.75,
+        33.96,
+        41.43,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "da_pct": {
+        "min": 10.21,
+        "p1": 16.33,
+        "p5": 21.33,
+        "p10": 23.67,
+        "p25": 27.7,
+        "p50": 34.36,
+        "p75": 48.65,
+        "p90": 80.3,
+        "p95": 145.13,
+        "p99": 411.13,
+        "max": 745.58
+      },
+      "rt_pct": {
+        "min": -42.09,
+        "p1": 5.03,
+        "p5": 16.52,
+        "p10": 20.34,
+        "p25": 25.02,
+        "p50": 31.62,
+        "p75": 42.29,
+        "p90": 80.96,
+        "p95": 153.11,
+        "p99": 406.57,
+        "max": 2001.11
+      },
+      "da_cov": {
+        "annual": 0.4958,
+        "mon": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.9986,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "rt_cov": {
+        "annual": 0.4958,
+        "mon": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.9986,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "src": "MISO RT/DA LMP, system reference hourly series (actual_lmp_hourly_MISO.parquet \u2014 verified hour-for-hour identical to the INDIANA.HUB series in the D6 per-hub staging, i.e. MISO's usual Indiana Hub price reference)",
+      "zones": {
+        "MISO-East": {
+          "da": 50.08,
+          "da_mon": [
+            90.55,
+            51.67,
+            39.53,
+            40.49,
+            33.6,
+            44.28,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "rt": 50.59,
+          "rt_mon": [
+            88.79,
+            57.01,
+            41.9,
+            39.7,
+            33.41,
+            42.71,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        "MISO-Illinois": {
+          "da": 42.63,
+          "da_mon": [
+            89.91,
+            39.84,
+            29.92,
+            28.97,
+            29.11,
+            37.17,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "rt": 39.5,
+          "rt_mon": [
+            70.41,
+            46.54,
+            30.5,
+            27.64,
+            29.34,
+            32.62,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        "MISO-Indiana": {
+          "da": 53.15,
+          "da_mon": [
+            109.95,
+            51.38,
+            38.83,
+            39.43,
+            33.54,
+            44.92,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "rt": 51.25,
+          "rt_mon": [
+            94.73,
+            58.18,
+            41.37,
+            37.75,
+            33.96,
+            41.43,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        "MISO-South": {
+          "da": 38.02,
+          "da_mon": [
+            76.22,
+            33.31,
+            30.94,
+            28.92,
+            26.92,
+            30.81,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "rt": 36.36,
+          "rt_mon": [
+            62.61,
+            40.42,
+            32.62,
+            26.19,
+            26.57,
+            29.59,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        "MISO-West": {
+          "da": 41.26,
+          "da_mon": [
+            91.5,
+            36.4,
+            33.13,
+            28.27,
+            26.47,
+            30.56,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "rt": 38.27,
+          "rt_mon": [
+            81.38,
+            41.25,
+            33.09,
+            22.14,
+            26.42,
+            24.67,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        "MISO-Plains": {
+          "da": 41.95,
+          "da_mon": [
+            90.71,
+            38.12,
+            31.53,
+            28.62,
+            27.79,
+            33.86,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "rt": 38.89,
+          "rt_mon": [
+            75.89,
+            43.9,
+            31.8,
+            24.89,
+            27.88,
+            28.64,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "proxy": "MINN.HUB+ILLINOIS.HUB mean (no LRZ 3/5 hub)"
+        }
+      },
+      "zones_src": "MISO RT-final/DA-ex-post LMP, named trading hubs mapped to model zones (actual_lmp_hourly_zonal_MISO.parquet; MISO-Plains = MINN+ILLINOIS hub mean proxy, no LRZ 3/5 hub exists)"
     }
   }
 }

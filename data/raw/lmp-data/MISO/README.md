@@ -94,3 +94,22 @@ Because the downstream means are NaN-ignoring, the MISO block of
 `actual_lmp.json` carries `da_cov` / `rt_cov` = `{annual, mon[12]}` so a
 partially-covered month cannot be mistaken for a priced one (without it, 2022's
 one December RT hour reads as a $22.82/MWh December RT price).
+
+## H1-2026 staging (2026-07-31 rule-22 holdout intake)
+
+`miso_hub_lmp_2026_{da,rt}_p01..p26` — 52 chunk files, **181/181 days each
+market** (2026-01-01 .. 2026-06-30), 4,344 rows per market. Same source, same
+chunk convention, same eight hubs as 2022; staged with
+`fetch_miso_hub_lmp.py --years 2026 --through 2026-06-30`.
+
+The `--through` bound is deliberate. `docs.misoenergy.org` publishes well past
+June 30 (2026-07-30 was HTTP 200 at intake time), but the owner's rule-22
+authorization names **H1-2026** — staging the later days would land data nobody
+authorized. Extending to the rest of 2026 is a new authorization, not a re-run.
+
+Downstream: `derive_miso_hub_lmp.py --years 2026` +
+`build_miso_lmp_reference.py --years 2026` add the 2026 blocks to the system
+and zonal parquets and to `actual_lmp.json` (DA $53.15 / RT $51.25,
+`da_cov`/`rt_cov` annual **0.4958** — half-year coverage, Jul-Dec `null` in
+`*_mon`). Both writers merge on year, so the 2022-2025 blocks stayed
+byte-identical.
