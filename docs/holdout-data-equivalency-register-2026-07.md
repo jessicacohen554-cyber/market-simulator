@@ -17,12 +17,19 @@ MISSING row carries materiality and a fix (or "accepted").
 
 ## Summary matrix
 
+> **Coverage baseline 2026-07-31:** the cross-ISO availability audit
+> `docs/iso-2022-holdout-data-availability-audit-2026-07.md` supersedes this
+> matrix's coverage claims for ERCOT/PJM/CAISO/MISO (keeper-flag-grounded 2022
+> parity matrix + 2018–2021 census, per-family row counts). The per-input
+> equivalency GRADING (source/grain/recipe parity + owner sign-off) for those
+> four lanes remains pending; the audit doc is the seed for it.
+
 | ISO | 2022 | H1-2026 | Register section |
 |---|---|---|---|
-| ERCOT | intaken 2026-07-04 (§1.1), **not yet equivalency-audited** | intaken, publication-blocked tail (CAMPD Q2+, gas May+) | pending |
-| PJM | intaken 2026-07-04 (§1.1), **not yet equivalency-audited** | same | pending |
-| CAISO | zero intake — rows start MISSING | blocked + zero intake | pending |
-| MISO | zero intake — rows start MISSING | blocked + zero intake | pending |
+| ERCOT | intaken 2026-07-04 (§1.1); **coverage-audited 2026-07-31: GAPPED** (DAM-availability family, HSL, v2 rates, LMP bench all missing 2022 — audit doc §3.1); equivalency grading pending | intaken, publication-blocked tail (CAMPD Q2+, gas May+) | pending (seed: audit doc §3.1) |
+| PJM | intaken 2026-07-04 (§1.1); **coverage-audited 2026-07-31: NEAR-READY** (interface limits, short windows, AS series, seam ladder — audit doc §3.3); equivalency grading pending | same | pending (seed: audit doc §3.3) |
+| CAISO | **no longer zero-intake** (930 long-form 2026-07-08, CAMPD 2026-07-10, outage extracts 2026-07-24); **coverage-audited 2026-07-31: GAPPED, largest queue of the six** (audit doc §3.2) | blocked + partial intake | pending (seed: audit doc §3.2) |
+| MISO | **no longer zero-intake** (same waves + 2022 hub-LMP raws on disk); **coverage-audited 2026-07-31: GAPPED, LMP bench derivable from committed raws** (audit doc §3.4) | blocked + partial intake | pending (seed: audit doc §3.4) |
 | NYISO | **§NYISO — 2022** EQUIVALENT 24 / DEGRADED 4 / MISSING 5 (2026-07-12); **§NYISO — 2018/2019/2020/2021** below (this session) | **§NYISO — H1-2026** below (this session) — partial, CAMPD/gas/LMP sources publication-lag to ~Q1-2026 | **§NYISO below** |
 | NEISO | **THIS DOC §NEISO** — EQUIVALENT 12 / DEGRADED 8 / MISSING 6 (2026-07-13 intake, 2018-2022) | blocked (publication horizon, same class as all ISOs) | **§NEISO below** |
 
@@ -380,6 +387,11 @@ scores it, so its one-shot eligibility is unaffected by this readiness work.
 ## ERCOT / PJM / CAISO / MISO
 
 Sections pending their own lanes. Seed material:
-`docs/out-of-sample-results-2026-07.md` §1.1 (ERCOT/PJM, incl. the known Waha
-annual-basis and PJM wide-extract-lineage DEGRADED candidates) and the
-register handoff's known-items list (§"Known DEGRADED/asymmetric items").
+`docs/iso-2022-holdout-data-availability-audit-2026-07.md` (2026-07-31
+cross-ISO coverage audit — keeper-flag-grounded per-family 2022 parity matrix,
+per-ISO gap tables §3.1–§3.4, 2018–2021 census §4, and the repo-vs-record
+discrepancy list §5, incl. the CISO/MISO wide-hourly 2022 hole and the v1
+emission-rates intake drift); plus `docs/out-of-sample-results-2026-07.md`
+§1.1 (ERCOT/PJM, incl. the known Waha annual-basis and PJM
+wide-extract-lineage DEGRADED candidates) and the register handoff's
+known-items list (§"Known DEGRADED/asymmetric items").
