@@ -1,11 +1,24 @@
 # Forecast-readiness remediation — prompt pack (FFR waves)
 
 **Execution vehicle for `docs/forecast-readiness-audit-2026-07.md` §4** (findings FR-1..FR-27).
-Produced 2026-07-30 against `origin/main` HEAD `fd60eef`. This pack extends the FF program
-(`docs/forecast-development-plan-2026-07.md`) with remediation waves; it does **not** supersede
-that plan — its §7 standing constraints bind every session below, and the FF wave manager may
-adopt these rows into its ledger as `FFR-*`. FF Wave 4 (golden solves) remains WITHDRAWN; this
-pack schedules **nothing** beyond T0/T1 windows (§2.1b cap, ≤5 solve-years per invocation).
+Produced 2026-07-30 against `origin/main` HEAD `fd60eef`. **REFRESHED 2026-07-31 against HEAD
+`7b8c36a`** — §0a records everything that moved in between (all six keepers, the two-block
+marker restructure, the active holdout freeze, determinations); code-side, **zero FFR items
+were executed between the two dates** (re-verified at file:line 2026-07-31), so every prompt's
+technical content stands. The refresh also folds in the commercial-practice peer review
+(`docs/forecast-readiness-peer-review-2026-07.md`): one added session (FFR-2E, the FR-14
+coverage hole), FFR-PA promoted to dispatch-with-Wave-1 (2026-08-22 deadline), and the standing
+disclosure list (peer review §4) that every forecast deliverable now carries. This pack extends
+the FF program (`docs/forecast-development-plan-2026-07.md`) with remediation waves; it does
+**not** supersede that plan — its §7 standing constraints bind every session below, and the FF
+wave manager may adopt these rows into its ledger as `FFR-*`. FF Wave 4 (golden solves) remains
+WITHDRAWN; this pack schedules **nothing** beyond T0/T1 windows.
+
+**Solve-window cap (owner standing instruction 2026-07-31 + plan §2.1b):** every test/probe
+forecast invocation in this pack is limited to **~3–5 solve-years** — enough to exercise and
+debug mechanisms, never a full horizon. No invocation may exceed 5 solve-years; full-horizon
+(25-year) runs happen only under a separate, explicit, session-logged owner authorization per
+§2.1b(d). Do not burn compute proving what a 5-year window already proves.
 
 **House conventions (as FF §6):** waves are sequential; prompts within a wave are independent
 parallel sessions unless flagged; `[FABLE]` = hard structural/adjudication work, `[OPUS]` =
@@ -23,7 +36,80 @@ file ≥300 lines (fetch back, compare). Register every run on the forecast-vali
 in the producing session (`scripts/register_forecast_run.py`; NEVER the backcast registry).
 Update the mechanism-matrix cell for any mechanism you test, rejections included (rule 28).
 Findings doc to `docs/handoffs/ffr-<id>-<topic>-<date>.md`. No tuning: a residual closable only
-by an unidentified value is an open blocker, written up (rules 1/13/14/21).*
+by an unidentified value is an open blocker, written up (rules 1/13/14/21). Any invocation that
+solves forecast years stays ≤5 solve-years (§2.1b + owner instruction 2026-07-31); any
+forecast-facing deliverable carries the standing disclosure list
+(`docs/forecast-readiness-peer-review-2026-07.md` §4).*
+
+---
+
+## 0a. State delta — 2026-07-31 refresh (read before dispatching anything)
+
+Everything below changed between the audit/pack production (2026-07-30, HEAD `fd60eef`) and this
+refresh (2026-07-31, HEAD `7b8c36a`). ~200 commits of backcast-calibration work merged; **no FFR
+session ran** (no `docs/handoffs/ffr-*` exists; every FR code finding re-verified open).
+
+**1. Keepers — all six moved.** Sessions must use the sharded store
+`frontend/data/backcast/keepers/<ISO>.json` at their own HEAD, never ids quoted in a doc:
+
+| ISO | At pack production | At this refresh (2026-07-31) |
+|---|---|---|
+| ERCOT | ercot140 | `2026-07-31-ercot145-gas-daily-shape` |
+| CAISO | caiso139 | `2026-07-31-caiso148-nuclear-availability` |
+| PJM | pjm-137 | `2026-07-31-pjm-143b-hy-level` |
+| MISO | miso-101b | `2026-07-31-miso-109b-hy-level` |
+| NYISO | nyiso-100 | `2026-07-31-nyiso105-chp-heat-rates` |
+| NEISO | neiso-61 | `2026-07-31-neiso-71-nucavail` |
+
+**2. Markers — the two-block restructure landed, and part of owner decision D-5 is EXECUTED.**
+`calibration-complete.json` now has two independent blocks (owner decision 2026-07-31):
+`complete` = validation tier (2022 + backward ladder, iterable) and `final` = locked-test tier
+(2019/H1-2026, touch-once) — **deliberately empty** ("Neither is final"). `complete` now holds
+**{NEISO, NYISO, PJM}**: PJM declared 2026-07-31 (CALIBRATED, zero caveats, at pjm-140), NYISO
+re-declared 2026-07-31 (CALIBRATED-WITH-CAVEATS, C3c ledgered, at nyiso-100 — the old withdrawal
+is marked superseded), NEISO re-scoped validation-only (its locked test is SPENT, never
+re-grantable). Consequences for this pack: the FFR-2D D-5 briefs are rewritten (see the prompt);
+gate (a) of §2.1b is now arguably met by THREE ISOs, not one — but §2.1b(a)'s text predates the
+two-block split and still cites the superseded NYISO withdrawal, so the reconciliation of
+"gate (a) keys on `complete`" is itself a D-5 residue item. All three markers record the
+keeper-at-declaration (pjm-140 / nyiso-100 / neiso-54-lineage), which now lags the dashboard
+keepers — the marker format freezes the keeper for the one-shot score, so treat
+"re-key vs by-design snapshot" as an owner question (in 2D), not a defect. One live doc
+inconsistency to carry, not resolve: PJM's marker text says the CI marker gate is tier-agnostic
+while CLAUDE.md rule 22 (amended 2026-07-31) says enforcement is tier-aware.
+
+**3. HOLDOUT SPEND FREEZE is ACTIVE** (`frontend/data/backcast/holdout-freeze.json`, declared
+2026-07-25, HELD 2026-07-26; cause: the CAMPD economic-layup outage over-count). While active,
+NO out-of-training year (anything outside 2023–2025) may be solved/scored/registered for ANY
+ISO, marker or not. **It does NOT touch this pack's work**: forecast-mode 2026+ solves, T1-F/
+T1-X/T1-H windows as specified (T1-X scoring stops at 2025), and in-sample 2023–2025 work are
+all outside its scope, and data intake stays open under session-logged owner authorization.
+State this in-session rather than self-blocking; equally, never read a marker as spendable —
+each carries a `freeze_interaction` clause saying it grants nothing while the freeze stands.
+
+**4. Determinations moved.** PJM **CALIBRATED** (re-verified 9/9 in both pjm-143 A/B arms);
+NEISO / NYISO / CAISO **CALIBRATED-WITH-CAVEATS** (ledgered C3c-family caveats); ERCOT NOT-YET
+{C3a,C3b,C3c,C7} (C6 now ATTESTED and passing); MISO NOT-YET (sole blocker C7 COAL_PRB shape).
+Four of six ISOs now hold a calibrated-grade backcast — the Phase-4 gate-open order (PJM →
+NEISO → …) strengthens.
+
+**5. `program-status.json` is internally inconsistent** — still the 2026-07-20 board except one
+hand-edited NYISO gate-(a) row (2026-07-31). Its PJM/NEISO rows are now factually wrong (PJM
+holds a marker; NEISO is not "the ONLY ISO meeting gate (a)"). Unchanged instruction: **do not
+hand-edit it further** — FFR-3A regenerates it from re-scored evidence; until then, this §0a is
+the drift record.
+
+**6. Cache-epoch debt grew.** `scenarios.py` gained fields twice since the audit (ercot148,
+miso-111) with no epoch bump; any 2026+ bundle cached since 2026-07-29 predates both the
+pending FR fixes AND this config drift. §W1-X's single bump now also invalidates those.
+
+**7. Forward hydro climatology fixed** (miso-110 `forecast_monthly_hydro` mode B→BF; MISO
+forward level 10.244→9.312 TWh, PJM 15.875→9.254 TWh) — the one forecast-lane code change since
+the audit. FFR-1C's accreditation work is orthogonal (capacity credit, not energy budget); cite,
+don't re-diagnose. Also landed: the NYISO D-5 downstate parity wiring (2026-07-30) that FR-22
+generalizes from, and `nyiso_central_east_measured_ttc` adjudicated K-backcast/**G-forecast**
+(measured TTC explicitly refused a forward channel — transmission-expansion registry owns
+forward TTC).
 
 ---
 
@@ -31,8 +117,8 @@ by an unidentified value is an open blocker, written up (rules 1/13/14/21).*
 
 | Wave | Sessions (model) | Parallel? | Solves? | Gate to next wave |
 |---|---|---|---|---|
-| **W1 fix** | 1A (F), 1B (F), 1C (O), 1D (O), 1E (O) | yes — file-disjoint; 1D's `ci.yml` hunk precedes 1C's (flag §W1) | T0 probes + ≤2-ISO T1-F acceptance probes only | all five merged + **Wave-1 close checklist** (§W1-X: single cache-epoch bump) |
-| **W2 evidence** | 2A (O), 2B (O), 2C (O), 2D (F) | yes — ≤2 concurrent solve invocations (rule 12) | T1-X ×3, T1-H probe legs, T0/T1 probes | evidence docs committed → **OWNER SITTING** |
+| **W1 fix** | 1A (F), 1B (F), 1C (O), 1D (O), 1E (O) **+ PA (O, promoted from WP — 2026-08-22 deadline)** | yes — file-disjoint; 1D's `ci.yml` hunk precedes 1C's (flag §W1) | T0 probes + ≤2-ISO T1-F acceptance probes only | all five merged + **Wave-1 close checklist** (§W1-X: single cache-epoch bump) |
+| **W2 evidence** | 2A (O), 2B (O), 2C (O), 2D (F), 2E (O) | yes — ≤2 concurrent solve invocations (rule 12) | T1-X ×3, T1-H probe legs, T0/T1 probes, capacity-hindcast re-runs (no-LP-heavy) | evidence docs committed → **OWNER SITTING** |
 | **⛔ OWNER** | decision batch D-1..D-7 (audit §4 Phase 2) | one sitting | none | signed decisions |
 | **W3 re-baseline** | 3A (O), 3B (O) | 3B first or parallel (3B lands schema, 3A populates) | the ONE consolidated battery: T1-F ×6 + T1-X folds + T1-H re-scores + FC-6 | boards regenerated & current |
 | **WS structural** | SA (F), SB (F), SC (O) | yes | T0 smoke only; everything ships **default-off/no-solve** so the W3 baseline stays valid | owner arming decisions (later) |
@@ -40,8 +126,17 @@ by an unidentified value is an open blocker, written up (rules 1/13/14/21).*
 | **WG gate-open** | per-ISO, order: PJM → NEISO → MISO → ERCOT → NYISO → CAISO | — | **HELD.** Prompts re-authored at gate-open per §2.1b(d); not included here by design (FF Wave-4 withdrawal stands) | — |
 
 **Lane threads (sequential per lane across waves):**
-L-CAP: 1A → 2B → (owner D-1/D-2) → 3A → WG · L-SCAR: 1B → 3A · L-VAL: 1D/1E → 2A → 3B/3A ·
+L-CAP: 1A → 2B → (owner D-1/D-2) → 3A → WG · L-SCAR: 1B → 3A · L-VAL: 1D/1E → 2A/2E → 3B/3A ·
 L-INP: 2C + WP → SA/SB · governance: 2D → owner sitting → 3A step-0.
+
+**FR coverage ledger (every audit finding → exactly one owner):** FR-1/2/13 → 1A · FR-3 → 1C ·
+FR-4/5 → 2B → owner D-1/D-2 · **FR-6 → no dedicated session by design**: the ERCOT scarcity
+slack is expected to move with D-1/D-2 + the 1A/1B fixes and is re-measured at 3A; if it
+survives the re-baseline it becomes a chartered L-SCAR structural session at WG-ERCOT, never a
+tuned patch · FR-7/8/12 → 1B · FR-9 → 2A · FR-10/11/15 → 1D · FR-14 → 2E · FR-16 → SA ·
+**FR-17 → owner D-7 weather-posture box** (2D/3A; ensemble machinery exists — this is a
+decision, not code) · FR-18 → SB/PA · FR-19 → 2C → owner D-3 · FR-20 → PB/SC · FR-21 → 3B/3A ·
+FR-22 → 1E · FR-23 → 1A/3B · FR-24/25/26 → 1D · FR-27 → 3B (stub) + WG (full).
 
 **Efficiency rules baked into this pack** (why the ordering is what it is):
 
@@ -165,6 +260,10 @@ Read: audit §3.1 FR-3; docs/handoffs/ff-2b-adequacy-basis-2026-07.md §"hydro"
 (the spec: CAISO 3,601 MW / NYISO 3,343 MW / NEISO 30 MW dispatched-but-
 unaccredited); src/market_sim/model/capacity_evolution/adequacy.py:131-198;
 data/hydro.py (capacity source); docs/parameter-citations.md.
+Context (2026-07-31): the forward hydro ENERGY climatology was fixed after the
+audit (miso-110, forecast_monthly_hydro mode B->BF; PJM forward level
+15.875->9.254 TWh). That is the energy-budget channel — your ACCREDITATION
+term is orthogonal to it; cite it, do not re-diagnose or touch it.
 
 1. Add the hydro term inside adequacy.py: hydro nameplate (from the hydro
    fleet/capacity loader, resolved for the solve year — NOT via the persistent
@@ -266,7 +365,7 @@ Deliver: parity report for all six ISOs + the registry + findings doc.
 
 ---
 
-## Wave 2 — evidence for the owner sitting (4 sessions; ≤2 concurrent solve invocations)
+## Wave 2 — evidence for the owner sitting (5 sessions; ≤2 concurrent solve invocations)
 
 ### FFR-2A [OPUS] — Crossover seam + T1-X refresh (ERCOT/PJM/MISO)
 
@@ -351,34 +450,83 @@ any new ScenarioConfig field appears (none expected).
 Deliver: findings doc + citations + the D-3 box.
 ```
 
+### FFR-2E [OPUS] — Validate the SHIPPED capacity-price posture (FR-14)
+
+```
+[OPUS] FFR-2E — Make the capacity-hindcast instrument exercise the production
+curve-ON capacity-price formation (FR-14; peer-review bucket-A addition)
+
+Read: audit §3.2 FR-14; docs/forecast-readiness-peer-review-2026-07.md §3.1
+(the "validate the configuration you ship" row); scripts/run_capacity_hindcast.py
+(:256-258, the capacity_market_clearing_by_iso=None default);
+config/scenarios.py (the curve-ON production defaults for PJM/MISO/CAISO/NEISO);
+docs/capacity-price-forward-methodology-2026-07.md; ff-t1-gate FC-3 rows.
+
+1. Teach run_capacity_hindcast.py to run the SHIPPED posture: default the
+   hindcast's capacity-market clearing to the production ScenarioConfig
+   defaults (sloped VRR where the ISO ships curve-ON), with an explicit
+   --fixed-net-cone flag preserving the old comparison arm. Never silently
+   change what an existing committed FC-3 verdict means — new runs are new
+   evidence rows, old sidecars stand as scored.
+2. Re-run the T1-H capacity-hindcast legs for the curve-ON ISOs (2021-2025
+   window, ≤5 solve-years per invocation, rule-12 concurrency; reuse every
+   committed leg the posture change provably does not touch).
+3. Score FC-3 on BOTH arms; the findings doc states, per ISO, whether the
+   shipped posture's build/retire path diverges from the fixed-price arm and
+   which arm the T1 gate evidence should cite (recommendation only — the
+   rubric-text change, if any, is FFR-3A/3B's).
+Do not: change any ScenarioConfig default; touch the rubric scorer beyond
+reading it; exceed 5 solve-years in any invocation.
+Deliver: findings doc + registered runs + the per-ISO posture-divergence table
+(feeds the D-1/D-3 owner boxes — a sloped-curve validation posture changes what
+those flips are judged against).
+```
+
 ### FFR-2D [FABLE] — Governance brief: the owner sitting's packet
 
 ```
-[FABLE] FFR-2D — Assemble the owner-decision packet (D-1..D-7) + the two marker
-briefs (docs only, no code, no solve)
+[FABLE] FFR-2D — Assemble the owner-decision packet (docs only, no code, no solve)
+— REWRITTEN 2026-07-31: part of D-5 is already EXECUTED by the owner
 
-Read: audit §2, §4 Phase 2; frontend/data/backcast/calibration-complete.json;
-docs/handoffs/neiso-calibration-complete-memo-2026-07.md (the precedent);
-docs/calibration-log/pjm.md tail; keepers/PJM.json + keepers/NEISO.json;
-docs/handoffs/nyiso-neiso-capacity-pairing-adjudication-2026-07-15.md.
+Read: audit §2, §4 Phase 2; pack §0a (the state delta — your ground truth for
+what already happened); frontend/data/backcast/calibration-complete.json (the
+two-block restructure + all three `complete` entries verbatim);
+frontend/data/backcast/holdout-freeze.json; keepers/<ISO>.json (all six);
+docs/forecast-development-plan-2026-07.md §2.1b;
+docs/forecast-readiness-peer-review-2026-07.md §3.3 (the D-7 weather box).
 
-1. One packet doc (docs/handoffs/ffr-owner-sitting-<date>.md): the seven
-   decisions with, per item: what it changes, the evidence doc (FFR-2A/2B/2C
+1. One packet doc (docs/handoffs/ffr-owner-sitting-<date>.md): the decision
+   batch with, per item: what it changes, the evidence doc (FFR-2A/2B/2C/2E
    outputs as they land), what it re-opens, recommendation, sign-off line.
-   D-5 gets its own two briefs attached:
-   (a) PJM calibration-complete memo in the NEISO-memo pattern — keeper
-   pjm-137 CALIBRATED, zero failing criteria, the thin C3c margin stated
-   honestly (1 h / 2.5 h vs the 0.5× floor), what marker declaration authorizes
-   (rule 22 one-shot remains an owner-run event OUTSIDE this program);
-   (b) NEISO marker re-key brief — marker frozen to neiso-54/-60 vs HEAD keeper
-   neiso-61, holdout freeze HELD (governance 2026-07-26): lay out re-key vs
-   hold options; the freeze-lift is the owner's alone.
-2. D-6 NYISO brief: C3c sole blocker, EMPTY lever queue (every candidate
-   adjudicated) — frame as adjudication (ledgered-caveat precedent vs stay-
-   withdrawn), plus the FF-3D pair-evidence regeneration order (rule-11 taint).
-3. Keep the packet strictly decision-support: no recommendation dressed as a
+   The batch as of 2026-07-31: D-1 retirement-rule flip, D-2 damper arming,
+   D-3 net-CONE currency, D-4 fuel option A/B, D-5-residue (below), D-6-residue
+   (below), D-7 golden-run posture (now TWO sub-questions: fixture reseed
+   authorization AND weather posture — single pinned draw labelled
+   weather-conditional vs weather-year ensemble golden; peer review §3.3.3).
+2. D-5 residue (the marker briefs are OBSOLETE — do not write a PJM
+   calibration-complete memo; the owner declared PJM 2026-07-31, and NYISO was
+   re-declared, NEISO re-scoped, all in the two-block restructure). What
+   remains for the owner:
+   (a) §2.1b(a) reconciliation: the plan's gate-(a) text predates the
+   complete/final split and still cites the superseded NYISO withdrawal —
+   propose the one-paragraph amendment (gate (a) keys on `complete`; `final`
+   is never required for forecast work) for owner sign-off, executed by
+   FFR-3B.
+   (b) Marker keeper-snapshot policy: all three `complete` entries freeze the
+   keeper-at-declaration (pjm-140 / nyiso-100 / neiso-54-lineage), which lags
+   the dashboard keepers (pjm-143b / nyiso105 / neiso-71). Lay out re-key vs
+   by-design-snapshot ONCE, as policy, not per-ISO briefs; note the freeze
+   makes this non-urgent (nothing is spendable while it stands, and the
+   freeze-lift is the owner's alone, outside this program).
+   (c) Flag (do not resolve) the tier-agnostic-vs-tier-aware enforcement
+   wording inconsistency between PJM's marker text and CLAUDE.md rule 22.
+3. D-6 residue: the NYISO C3c adjudication is DONE (owner accepted the
+   ledgered caveat; NYISO is CALIBRATED-WITH-CAVEATS with a validation
+   marker). What remains: the FF-3D pair-evidence regeneration order (rule-11
+   taint on the R5a Option-B pair) — schedule it or explicitly wontfix it.
+4. Keep the packet strictly decision-support: no recommendation dressed as a
    default change, no number without its measured source.
-Deliver: the packet + briefs, cross-linked from the audit doc (one-line edit).
+Deliver: the packet, cross-linked from the audit doc (one-line edit).
 ```
 
 **⛔ OWNER SITTING** — decisions D-1..D-7 signed (or explicitly deferred, which re-scopes FFR-3A
@@ -411,6 +559,13 @@ do NOT hand-edit contents; FFR-3A regenerates them).
    corrected (machinery NOT merged, patch rotted); firm_clean_mw display seam
    from FFR-1C's flag; forecasting-entry-exit-assessment.md headline re-graded
    post-flip (state what FF-2C changed; keep every measured claim sourced).
+   ALSO (2026-07-31 refresh): execute the SIGNED D-5(a) §2.1b(a) amendment
+   (gate (a) keys on the `complete` block; drop the superseded NYISO-withdrawal
+   example); fix the mechanism-matrix header `keepers:` object in
+   docs/codebase-site/data/mechanism-matrix.js (ERCOT/CAISO entries lag their
+   per-column re-stamps) and the two stale "Built 2026-07-27 keeper snapshot"
+   header lines (matrix .js + mechanism-testing-matrix.md) — header hygiene
+   only, never a cell verdict.
 4. Add the forecast DOF-ledger builder STUB chartered honestly (FR-27): emit
    the ledger skeleton from run_config with identification-source fields left
    explicitly UNATTESTED — turning FC-7's silent CAVEAT into a fillable
@@ -431,11 +586,15 @@ to mirror); docs/forecast-determination-rubric.md; the signed packet.
 
 0. One dedicated commit per SIGNED decision, each citing the sign-off (FF-2C
    pattern): retirement_rule default (D-1), damper arming (D-2), net-CONE
-   escalation choice (D-3), fuel option (D-4), marker actions (D-5 — the
-   calibration-complete.json edit follows the NEISO memo pattern verbatim),
-   NYISO adjudication (D-6), golden reseed IF authorized (D-7 — it is a
-   15-solve-year invocation; run it ONLY under its own written authorization,
-   --full-solve-authorized, per §2.1b(d)).
+   escalation choice (D-3), fuel option (D-4), D-5 residue actions (any
+   marker re-key + the §2.1b(a) amendment ride FFR-3B, not marker files
+   here — the PJM/NYISO/NEISO `complete` declarations already happened
+   2026-07-31, see §0a), D-6 residue (FF-3D pair regeneration order), golden
+   reseed IF authorized (D-7 — it is a 15-solve-year invocation; run it ONLY
+   under its own written authorization, --full-solve-authorized, per
+   §2.1b(d); apply the SIGNED weather-posture choice — single-draw goldens
+   carry the weather-conditional label from the peer review's disclosure
+   list).
 1. The consolidated battery, rule-12 scheduled (pairing: light ISOs pair, PJM
    solo, MISO solo; budget ~1 day wall): T1-F 2026-2030 × 6 ISOs; T1-H re-scores
    (re-solve ONLY legs the signed decisions touch — a flipped retirement rule
@@ -565,15 +724,18 @@ verification (FR-20; FF-0D M1/M2) — DATA + CITATIONS ONLY
 
 ## Dispatch cheat-sheet (owner)
 
-1. **Now:** launch FFR-1A/1B/1C/1D/1E in parallel (+ FFR-PA/PB anytime). Watch for the two
+1. **Now:** launch FFR-1A/1B/1C/1D/1E in parallel, **plus FFR-PA in the same wave** (its
+   Eddystone §202(c) checkpoint is 2026-08-22) and FFR-PB anytime. Watch for the two
    byte-identity attestations (1A arm-1, 1B) — a keeper that moves is a stop-the-line finding.
-2. **Wave-1 close:** run §W1-X (single cache-epoch bump), then launch FFR-2A/2B/2C (≤2 solve
+2. **Wave-1 close:** run §W1-X (single cache-epoch bump), then launch FFR-2A/2B/2C/2E (≤2 solve
    sessions at a time; PJM/MISO legs never co-run) + FFR-2D.
-3. **Sitting:** decide D-1..D-7 from the FFR-2D packet.
+3. **Sitting:** decide the FFR-2D packet (D-1..D-4, D-5/D-6 residues, the two-part D-7).
 4. **Then:** FFR-3B, then FFR-3A (the one big battery, ~1 day wall). Its output is the refreshed
    §2.1b scorecard — the gate-open conversation happens on THAT, per ISO, PJM first.
 5. **Anytime after W3:** FFR-SA/SB/SC (default-off; baseline stays valid).
 6. **WG (gate-open per ISO)** stays held: prompts are re-authored at gate-open under §2.1b(d) —
    this pack deliberately contains none (FF Wave-4 withdrawal stands).
 
-*Produced 2026-07-30. No LP solved, no parameter changed, nothing registered by the pack itself.*
+*Produced 2026-07-30; refreshed 2026-07-31 @ HEAD `7b8c36a` (state delta §0a; FFR-2E added,
+FFR-PA promoted, peer review `docs/forecast-readiness-peer-review-2026-07.md` folded in). No LP
+solved, no parameter changed, nothing registered by the pack itself.*
