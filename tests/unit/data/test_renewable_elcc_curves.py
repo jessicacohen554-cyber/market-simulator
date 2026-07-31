@@ -30,6 +30,7 @@ from market_sim.model.capacity import (
     renewable_credits_applied,
     resolve_renewable_capacity_credit,
 )
+from tests.helpers.builders import no_hydro_accreditation
 
 # A hand-computable synthetic declining curve on the installed-MW axis:
 # 50% at 1 GW, 30% at 2 GW, 10% at 4 GW.
@@ -271,6 +272,14 @@ class TestResolutionLadder(unittest.TestCase):
 
 class TestAccreditedLedger(unittest.TestCase):
     """accredited_firm_capacity_mw with the curves on/off (hand-computed)."""
+
+    def setUp(self):
+        # Hand-computed VRE/thermal ledger arithmetic: zero the FFR-1C hydro
+        # pool so PJM's real EIA hydro census stays out of these sums (the
+        # hydro term has its own tests in test_hydro_accreditation.py).
+        patcher = no_hydro_accreditation()
+        patcher.start()
+        self.addCleanup(patcher.stop)
 
     def test_hand_computed_pjm_ledger_curves_on(self):
         # 1 x 1000 MW gas-CC accredited at PJM's published ELCC class rating
