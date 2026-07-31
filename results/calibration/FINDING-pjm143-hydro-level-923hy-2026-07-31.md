@@ -3,7 +3,12 @@
 
 **Session:** pjm-143 (the miso-109 §7 / miso-110 §9.2 hand-back — PJM's own lane)
 **Date:** 2026-07-31
-**Verdict:** *(filled from the A/B — see §5)*
+**Verdict:** LEVEL FIX **landed** (rule 14 `[R-ACCURATE]`) and the candidate is
+**CALIBRATED with every criterion passing** — 9/9 target grade, C1 16/16 with
+free 12/12, identical determination to the control, **no gate flipped in either
+direction**. Promoted to PJM keeper (owner authorization on record in-session).
+`hydro_level_923_hy` PJM **`U` → `K`**; `hydro_budget_nameplate_aware` PJM
+**`K` → `I`** (provably inert on the corrected level, §3).
 **Rule 25:** every parameter and every signature re-derived from PJM's own data
 this session; no MISO verdict transferred, and one half of the MISO argument is
 explicitly shown NOT to transfer (§2).
@@ -153,7 +158,60 @@ precisely so a favourable result could not be read as the reason.
 
 ## 5. The A/B
 
-*(filled from `scripts/probes/_pjm143_hydro_level_ab.py` once both arms solved.)*
+Two runs, same tree, single delta — both registered (rule 15):
+
+* **control** `2026-07-31-pjm-143a-control-930pin` (`pjm143_control_A`) — the
+  keeper recipe with the pin still armed. **Noise floor exactly zero**: it
+  reproduces the committed keeper's load-weighted prices to the third decimal
+  (31.134 / 30.902 / 41.985) and its C8 notes to the digit, so every arm-B
+  movement below is attributable to the single registry line.
+* **candidate** `2026-07-31-pjm-143b-hy-level` (`pjm143_hy_level_B`) — the same
+  recipe with the corrected level. **Promoted keeper.**
+
+Instrument: `scripts/probes/_pjm143_hydro_level_ab.py` (validated
+control-vs-itself at exact zeros before use).
+
+| | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| hydro dispatched (TWh) | 15.451 → **8.903** (−6.548) | 15.819 → **8.861** (−6.958) | 15.506 → **8.464** (−7.042) |
+| fossil total (TWh) | +5.186 | +5.636 | +5.648 |
+| imports (TWh) | +0.624 | +0.448 | +0.506 |
+| load-weighted LMP ($/MWh) | 31.134 → 31.421 (**+0.287**, +0.92 %) | 30.902 → 31.194 (**+0.293**, +0.95 %) | 41.985 → 42.368 (**+0.383**, +0.91 %) |
+| C3a vs DA-lw actual | +2.05 % → **+2.99 %** (away) | −2.21 % → **−1.28 %** (toward) | −9.87 % → **−9.04 %** (toward) |
+| C3c hours > $200 (vs actual) | 3 vs 6 (**unchanged**) | 10 vs 18 (**unchanged**) | 32 vs 59 (**unchanged**) |
+
+**The §4 sign prediction holds on every limb in every year**: hydro falls to
+the corrected budget (the dispatched delta tracks the no-LP budget delta to
+within 0.08 TWh), fossil and imports pick it up — CC_REGULAR the largest
+(+2.4 to +2.7 TWh), then **CT_PEAKER +0.99 / +1.24 / +1.51 TWh**, narrowing
+the keeper's standing CT_PEAKER C1 deficit — and the price rises ~+0.9 % in
+all three years. The effect is **summer-peaked exactly where the fold lived**
+(Jun–Sep mean delta +0.39 / +0.40 / +0.53 $/MWh against +0.23 / +0.23 / +0.29
+elsewhere, July the largest single month at +0.41 / +0.53 / +0.84), the
+Jul/Aug PS-cycling signature §1 measured in the source data.
+
+**The magnitude band is REFUTED in two of three years, recorded rather than
+re-written** (the pjm-137/140 precedent): declared +0.3..+1.5 $/MWh, measured
++0.287 (2023) and +0.293 (2024) — below the floor by $0.013 and $0.007 — and
++0.383 (2025) inside it. The direction and order of magnitude were right; the
+band's floor was set a hair too high.
+
+**Scored outcome: CALIBRATED with every criterion passing, in BOTH arms.**
+No criterion flips in either direction; C1 stays 16/16 (free 12/12); C3c's
+model tail counts are **byte-identical** between arms (the +0.3 $/MWh mean
+rise adds no >$200 hours), so the keeper's thinnest margin — C3c-2024/2025
+passing by ~1 h / ~2.5 h against the 0.5× floor — is untouched. The C8
+CT_PEAKER grounded share *improves* 16.3/16.9/17.1 % → **15.2/15.4/15.8 %**
+(the class's energy grew while its floors didn't), with all grounding gates
+still clear. The pre-declared C3a-2023 casualty did move away from actual
+(+2.05 → +2.99 %) but stays well inside its band.
+
+**One prediction from the PREREG did not materialize, disclosed**: the
+kill/keep rule's discovered-bug branch was never entered — no gate flipped, so
+no root-cause investigation is owed. The offer-calibration-absorbed-the-fold
+hypothesis (PREREG §5.3) stands untested and should be remembered if PJM's
+2023 over-pricing (+2.99 % post-fix) ever becomes a target: ~$0.29/MWh of it
+is newly exposed by removing the phantom hydro that was suppressing it.
 
 ## 6. Governance
 
@@ -185,12 +243,14 @@ precisely so a favourable result could not be read as the reason.
 * **Rule 27 `[R-PUSH]`** — Fable session (scope writes
   `src/market_sim/config/constants.py`); edits made locally with the Edit tool
   and blob-verified after push (both files MATCH).
-* **Branch provenance.** The registry fix merged as PR #3206 mid-session, so the
-  remaining deliverables were rebased onto the post-merge `main` and pushed as a
-  fresh PR. Both arms were solved at pre-merge trees (control `1950b72`,
-  candidate `7bfaa73`) whose only difference is the one-line registry change;
-  `main`'s later `src/` drift (miso-111's `coal_prb_committed_dispatchable`,
-  `bool = False`) is default-off and does not touch PJM's solve path.
+* **Branch provenance.** The owner merged the session branch continuously
+  (PRs #3206/#3215/#3216 took the PREREG, the registry fix, the instrument and
+  the FINDING skeleton mid-session), so the deliverable commits were rebased
+  onto the post-merge `main` as they landed. Both arms were solved at pre-merge
+  trees (control `1950b72`, candidate `7bfaa73`) whose only difference is the
+  one-line registry change; `main`'s later `src/` drift (miso-111's
+  `coal_prb_committed_dispatchable`, `bool = False`) is default-off and does
+  not touch PJM's solve path.
 
 ## 7. Open, not actioned
 

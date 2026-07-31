@@ -729,11 +729,23 @@ sign argument to every basis and bound.
    fleet-representation fix outside a calibration session's scope.
    (`FINDING-caiso148-nuclear-availability-2026-07-31.md`.)
 
-### 5.3 PJM — **NO failing criterion** (keeper `2026-07-30-pjm-140-rampenv`, CALIBRATED)
+### 5.3 PJM — **NO failing criterion** (keeper `2026-07-31-pjm-143b-hy-level`, CALIBRATED)
 
 C1 CC_REGULAR-2023 and C3a-2025 closed at pjm-135; **C3c-24/25 closed at
-pjm-136** and is UNCHANGED by pjm-137. The queue below is not gate-driven — it
-is ranked by *structural* defect, per rule 1 `[R-STRUCT]`.
+pjm-136** and is UNCHANGED through pjm-143 (tail counts byte-identical in both
+pjm-143 A/B arms). The queue below is not gate-driven — it is ranked by
+*structural* defect, per rule 1 `[R-STRUCT]`.
+
+**CLOSED AT pjm-143 (2026-07-31, keeper promotion):** the PS-fold hydro LEVEL
+defect (the old keeper-note item 11). PJM is listed in
+`constants.EIA930_PS_FOLDED_INTO_WAT`; the `NG: WAT` pin is refused and the
+level is EIA-923 `HY` — ~7 TWh/yr of phantom zero-MC hydro removed, CALIBRATED
+9/9 in both A/B arms, `hydro_budget_nameplate_aware` provably inert (K → I).
+Note for future price work: C3a-2023 is now **+2.99 %** (was +2.05) — the
+phantom hydro was suppressing a real over-pricing; ~$0.29/MWh of 2023
+over-pricing is newly exposed, per the untested PREREG §5.3 hypothesis that
+PJM's offer calibration was fitted on the contaminated stack
+(`FINDING-pjm143-hydro-level-923hy-2026-07-31.md`).
 
 **READ ITEMS 12–13 FIRST (pjm-141, 2026-07-30; item 13 CLOSED at pjm-142,
 2026-07-31).** PJM's remaining structural defect is diagnosed and named: the
@@ -1601,7 +1613,7 @@ charter with a new measured identification** before a solve:
   |------|---|---|---|---|---|
   | ERCOT | no | 0 | 0 | — | clean (no PS fleet) |
   | CAISO | no | **0** | 1–121 | — | clean; negatives show pumping IS netted |
-  | PJM | no | **1,249–1,612** | 0 | **+52.9 % … +79.6 %** | **DEFECT, largest — own lane owes the fix** |
+  | PJM | no | **1,249–1,612** | 0 | **+52.9 % … +79.6 %** | **DEFECT, largest — FIXED (pjm-143, keeper)** |
   | MISO | no | 332–826 | 0 | +13.5 % / +18.5 % | **DEFECT — FIXED (miso-109)** |
   | NYISO | no | 0–33 (≤0.007 TWh) | 0 | −4 % … −6 % | clean; the bias is the opposite sign |
   | NEISO | **yes** (from Nov 2024) | 63–276, **0 in 2025** | 0–1 | +2.7 % … +10.1 % | **TIME SPLIT** — pre-Nov-2024 vintages only |
