@@ -29,12 +29,13 @@ machine-readable distribution channel for ATB data
 (https://data.openei.org/submissions/4129, the "Annual Technology Baseline"
 OEDI submission) -- this script uses that, not a scrape of the site.
 
-Output (raw, immutable, never hand-edited):
-  data/raw/nrel-atb/atb_2024_electricity_filtered.csv
+Output (raw, immutable, never hand-edited), one file per ATB edition/version:
+  data/raw/nrel-atb/atb_2024_electricity_filtered.csv     (2024 v3.0.0)
+  data/raw/nrel-atb/atb_2024v4_electricity_filtered.csv   (2024 v4.0.0)
 
 Usage:
     python scripts/data/fetch_nrel_atb.py
-    python scripts/data/fetch_nrel_atb.py --atb-year 2024 --atb-version v3.0.0
+    python scripts/data/fetch_nrel_atb.py --atb-year 2024 --atb-version v4.0.0
 """
 
 from __future__ import annotations
@@ -54,7 +55,33 @@ sys.path.insert(0, str(REPO / "src"))
 from market_sim.config.paths import NREL_ATB_DIR  # noqa: E402
 
 OUT_DIR = NREL_ATB_DIR
-OUT_CSV = OUT_DIR / "atb_2024_electricity_filtered.csv"
+
+# Output filename stem per (edition year, version). NREL re-releases an ATB
+# edition under successive point versions when it corrects it, so the stem
+# carries the version too -- otherwise a refreshed edition would silently
+# overwrite the extract earlier constants were derived from. The original
+# 2024 v3.0.0 extract keeps its historical unsuffixed name (committed, and
+# referenced by data/raw/nrel-atb/README.md and the derive scripts); every
+# other version gets an explicit "<year>v<major>" stem.
+_OUT_STEM = {
+    (2024, "v3.0.0"): "atb_2024_electricity_filtered",
+    (2024, "v4.0.0"): "atb_2024v4_electricity_filtered",
+}
+
+
+def out_csv_path(atb_year: int, atb_version: str) -> Path:
+    """Return the raw extract path for one ATB edition/version.
+
+    Falls back to a "<year>v<major>" stem for an edition/version this script
+    has not seen before, so a newly released ATB lands under a distinct name
+    rather than overwriting an existing extract.
+    """
+    stem = _OUT_STEM.get(
+        (atb_year, atb_version),
+        f"atb_{atb_year}v{atb_version.lstrip('v').split('.')[0]}_electricity_filtered",
+    )
+    return OUT_DIR / f"{stem}.csv"
+
 
 OEDI_BASE = "https://oedi-data-lake.s3.amazonaws.com/ATB/electricity/csv"
 
@@ -192,7 +219,13 @@ def filter_atb(source_csv: Path) -> pd.DataFrame:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--atb-year", type=int, default=2024)
-    ap.add_argument("--atb-version", default="v3.0.0")
+    # Defaults track the latest ATB edition/version published on OEDI as of
+    # 2026-07-31 (2024 v4.0.0, mirrored 2026-07-28). 2024 is still the
+    # current EDITION -- no 2025/2026 ATB exists (verified against the ATB
+    # site itself, atb.nlr.gov, and the OEDI listing; see the raw README).
+    # Each version writes its own file, so re-running with an older
+    # --atb-version never overwrites a newer extract.
+    ap.add_argument("--atb-version", default="v4.0.0")
     ap.add_argument(
         "--source-csv",
         default=None,
@@ -213,8 +246,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     filtered = filter_atb(source)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    filtered.to_csv(OUT_CSV, index=False)
-    print(f"wrote {len(filtered)} rows -> {OUT_CSV}")
+    out_csv = out_csv_path(args.atb_year, args.atb_version)
+    filtered.to_csv(out_csv, index=False)
+    print(f"wrote {len(filtered)} rows -> {out_csv}")
     return 0
 
 

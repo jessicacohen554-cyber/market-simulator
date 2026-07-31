@@ -5,9 +5,29 @@ Source root for the `nrel-atb` clean datatype
 `scripts/fetch_nrel_atb.py` from NREL's public OEDI data lake distribution of
 the Annual Technology Baseline (not a scrape of `atb.nrel.gov`, which is
 blocked by this environment's outbound network policy — see below) and
-curated by `scripts/curate_nrel_atb.py`, which reads
-`atb_2024_electricity_filtered.csv` in this directory and writes schema-valid
-Parquet to `data/clean/nrel-atb/nrel-atb.parquet`.
+curated by `scripts/curate_nrel_atb.py`, which reads every committed
+per-version extract in this directory and writes schema-valid Parquet to
+`data/clean/nrel-atb/nrel-atb.parquet`.
+
+## Editions vs versions (read this before "bumping the vintage")
+
+NREL re-releases an ATB **edition** (a year, e.g. 2024) under successive
+point **versions** when it corrects or refreshes it — ATB 2024 exists on OEDI
+as `v2.0.0`, `v3.0.0` and `v4.0.0`. **Edition-year alone therefore does not
+identify a vintage**, which is why `atb_version` is part of the schema key
+and each version lands its own raw extract under its own filename stem. Two
+versions are committed:
+
+| file stem | edition | version | OEDI object | status |
+|---|---|---|---|---|
+| `atb_2024_electricity_filtered` | 2024 | `v3.0.0` | `ATB/electricity/csv/2024/v3.0.0/ATBe.csv` | **the derivation pin** — every committed cost constant is derived from this |
+| `atb_2024v4_electricity_filtered` | 2024 | `v4.0.0` | `ATB/electricity/csv/2024/v4.0.0/ATBe.csv` | latest published; landed 2026-07-31, **not yet consumed** |
+
+`curate_nrel_atb.parse()` defaults to
+`curate_nrel_atb.DERIVATION_PINNED_VERSION` (`v3.0.0`), so the derive scripts
+and their rule-23 consistency tests keep reading the exact bytes the
+constants were built against; `curate()` writes **both**. Moving that pin is
+a deliberate re-derivation act, never a side effect of landing new data.
 
 ## Why this exists
 
@@ -33,13 +53,19 @@ distribution channel for ATB
 (<https://data.openei.org/submissions/4129>), not a workaround or a scrape.
 This intake used that path exclusively.
 
-One consequence: the ATB 2024 **dollar-year convention** (2022$, per
-`atb.nrel.gov/electricity/2024/index` — "All monetary values are in 2022 USD
-based on the Consumer Price Index... (BLS, 2024)") could only be confirmed
-via search-indexed content, not a direct fetch of the source page. Flagged
-in the schema's `unit` column description for verification with browser
-access if a session needs higher confidence before using these values in a
-constants.py re-derivation.
+One consequence *at the time of that intake*: the ATB 2024 **dollar-year
+convention** (2022$) could only be confirmed via search-indexed content, not
+a direct fetch of the source page.
+
+**RESOLVED 2026-07-31 (FFR-PB).** The ATB site moved with the lab's rename to
+**`atb.nlr.gov`** (National Laboratory of the Rockies), and **that domain is
+reachable from this environment** — only the old `atb.nrel.gov` name is
+proxy-blocked (still `CONNECT` 502, re-probed this session). Fetching
+`atb.nlr.gov/electricity/2024b/index` directly returns the statement
+**"Monetary values are in 2022$"**, confirming the dollar year from the
+publisher's own page. The schema's `unit` description is updated accordingly
+and the verification flag is cleared. Useful corollary for later sessions:
+**try `atb.nlr.gov` before recording an ATB page as unreachable.**
 
 ## Source file and filter
 
@@ -110,20 +136,30 @@ single file again, which the curate script also reads fine.
 ## Regeneration
 
 ```
-python scripts/fetch_nrel_atb.py          # downloads ~94MB, filters, writes the CSV above
-python scripts/curate_nrel_atb.py         # raw CSV (or its .part*.csv pieces) -> clean Parquet
+python scripts/data/fetch_nrel_atb.py     # downloads ~103MB, filters, writes the v4.0.0 CSV
+python scripts/data/curate_nrel_atb.py    # every committed version's CSV (or .part*.csv) -> clean Parquet
 ```
 
-`--atb-year`/`--atb-version` select a different ATB edition once one is
-released (each edition/version is its own immutable OEDI object, so this
-regenerates cleanly rather than overwriting history).
+`--atb-year`/`--atb-version` select a different ATB edition/version (each is
+its own immutable OEDI object, and each writes its own filename stem, so this
+regenerates cleanly rather than overwriting history). The fetch default
+tracks the latest published edition/version — **2024 `v4.0.0`** as of
+2026-07-31; pass `--atb-version v3.0.0` to regenerate the pinned extract.
+Before assuming a newer edition exists, check the OEDI listing:
+
+```
+curl -s "https://oedi-data-lake.s3.amazonaws.com/?list-type=2&prefix=ATB/electricity/csv/&delimiter=/"
+```
 
 ## DATA (landed)
 
-- [x] `atb_2024_electricity_filtered.csv` — 3,858 rows (23 tech/techdetail
-      combos x up to 2 parameters (CAPEX, Fixed O&M) x 3 cost cases x 27
-      years, crpyears-deduped as above; not every combination populated for
-      every tech).
+- [x] `atb_2024_electricity_filtered.csv` (2024 **v3.0.0**) — 3,858 rows (23
+      tech/techdetail combos x up to 2 parameters (CAPEX, Fixed O&M) x 3 cost
+      cases x 27 years, crpyears-deduped as above; not every combination
+      populated for every tech). **The derivation pin.**
+- [x] `atb_2024v4_electricity_filtered.csv` (2024 **v4.0.0**) — 3,858 rows,
+      same key set; landed 2026-07-31, byte-reproducible from a fresh fetch.
+      Not yet consumed by any constant (see the v4.0.0 note above).
 
 > **FF-1E completeness fix (2026-07):** the extract was previously committed as
 > only `.part00`/`.part01` (600 rows, the four alphabetically-first techs —
@@ -145,9 +181,41 @@ regenerates cleanly rather than overwriting history).
 > numeric identity verified at rtol 1e-12) — the committed FF-1E bytes were
 > kept rather than churning attested parts for ulp noise. A from-scratch
 > regeneration therefore reproduces every VALUE but not byte order. ATB 2024
-> remains the **final ATB edition** (no 2025/2026 edition exists — verified
+> remains the **current ATB edition** (no 2025/2026 edition exists — verified
 > 2026-07-19 against the renamed lab's site and the OEDI listing, which ends
 > at `csv/2024/`), so this extract is the current-latest, not a stale vintage.
+> *(Wording softened 2026-07-31: "final" overstated it — 2024 is the latest
+> edition published, not a declared last one, and NREL has since re-released
+> it as v4.0.0. The no-2025/2026 finding itself re-verified and stands.)*
+
+> **v4.0.0 landed (2026-07-31, FFR-PB / FR-20 M1).** OEDI mirrored a **new
+> version of the 2024 edition**, `ATB/electricity/csv/2024/v4.0.0/ATBe.csv`,
+> on **2026-07-28** (102,696,929 B / 585,631 rows, vs v3.0.0's 98,516,887 B /
+> ~572k rows). Landed here as
+> `atb_2024v4_electricity_filtered.part{00..09}.csv` — 3,858 rows, verified
+> to reproduce a fresh `fetch_nrel_atb.py --atb-version v4.0.0` run
+> **byte-for-byte** when the parts are concatenated.
+>
+> **What actually changed in this model's slice: one technology.** The key
+> set is identical (3,858 rows, no additions or removals; `display_name`,
+> `default` and `atb_year` unchanged on every row). Exactly **56 values**
+> move by more than float-repr noise, all of them
+> **`Geothermal` / `DeepEGSFlash` / `Moderate`**: CAPEX for all 28 published
+> years (2023-2050, up to **+6.14%**, e.g. 2030 `7897.52` → `8315.49`
+> 2022 $/kW) and Fixed O&M for the same 28 years (up to **+2.00%**). A
+> further 16 rows differ only in last-digit serialization (≤1e-12 relative)
+> — the same ulp drift the note above records. Every other technology this
+> model builds — wind, solar, gas CC/CT/CCS, nuclear, all five battery
+> durations, offshore wind, the other three EGS classes — is **unchanged**.
+>
+> **Consumer impact is therefore narrow but real:** `derive_cost_benchmark_
+> envelope.derive_egs_fom` reads `NFEGSFlash` (unchanged), but
+> `GEOTHERMAL_PARAMS`' EGS capex band and any DeepEGS-derived figure would
+> move on a re-derive. Nothing is re-derived here by design — the intake
+> session lands data only; the re-derive against v4.0.0 belongs to FFR-SC
+> (forecast-readiness prompt pack §7.2 P1/P2), which flips
+> `DERIVATION_PINNED_VERSION` and re-runs the consistency tests as one
+> reviewed change.
 
 ## What this doesn't cover
 

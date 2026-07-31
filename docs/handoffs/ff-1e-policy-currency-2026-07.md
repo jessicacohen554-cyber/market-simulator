@@ -52,10 +52,15 @@ cross-check, this session):
 | `ira_ptc_wind` | 26.0 | inflation-adjusted §45 wage-compliant |
 | `ira.py` credit values | 45V $3/kg · 45Q $85/tCO2 · 45U 1.5¢/kWh (0.3×5) · 2.5¢ threshold · 16% phase-down | §45V / §45Q / §45U(a)(b)(2)(d)(1) |
 
-**45Y/48E primary confirmation (§4.2)** remains a MANUAL DOWNLOAD — the
-2033–2036 steps are triangulated from two secondary OBBBA alerts; `federalregister.gov`
-still returns a bot-wall in this environment (unchanged from FF-0D/FF-1E). Not a
-suspected error; a provenance upgrade for a later authorized pull.
+**45Y/48E primary confirmation (§4.2)** — ~~remains a MANUAL DOWNLOAD~~
+**CLOSED 2026-07-31 by FFR-PB.** `federalregister.gov` still bot-walls, but it
+was never the necessary source: the codified statute controls, and the Office of
+the Law Revision Counsel publishes it at `uscode.house.gov` (reachable). 26
+U.S.C. §45Y(d)(2)-(3) and §48E(e)(2)-(3) confirm the 2033/2034/2035/2036 steps
+**unchanged**, with OBBBA §70512(a)(2) having fixed the "applicable year" flatly
+at 2032 (striking the prior emissions-determination test). The two secondary
+alerts were correct; every phase-down row now carries a primary citation. See
+`docs/handoffs/ffr-pb-atb-statute-intake-2026-07-31.md`.
 
 ## 2. State RPS / ACP (§4.3) — refreshed to cited published schedules
 

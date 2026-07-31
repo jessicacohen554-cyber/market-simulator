@@ -171,7 +171,7 @@ before re-solving (`results/cache.py:15-28` documents exactly this).
 | **FR-17** | HIGH | **Single pinned weather year (2024) for demand *and* renewables CF** across all 25 years; the widened per-ISO weather pool exists but is ensemble-only. One year's wind drought/heat event is presented as the 2026–2050 climate. Compounded by FR-7/FR-8 (the same pin drives fleet age and event derates). |
 | **FR-18** | HIGH | **Confirmed-retirements registry horizon ends 2032; NYISO registry is empty (honest zero); vintage 2026-07-05 (25 days stale)** — and the PJM Eddystone §202(c) order expires **2026-08-22** (~3 weeks), flipping a supersession. 2033–2050 exits ride the economic screen alone — i.e., on FR-4's legacy rule today. |
 | **FR-19** | HIGH | **Net-CONE anchors stale and frozen**: PJM last vintage 2027/28 (242.52 $/MW-day) vs the published 2028/29 clearing at 325.69 (+34 %), held flat 23 years; NYISO/MISO frozen at 2025-26 for 25 years. FF-G3's escalation machinery is inert at default. Direct driver of over-retirement/under-entry in the largest capacity market. |
-| **FR-20** | MED | **ATB vintage 2024** (two editions behind; the M1 manual download never landed) under the 2024–26 cost escalation; entry-cost mid case frozen at the 2026 snapshot with only Wright's-Law decline. **IRA/OBBBA**: current and correctly windowed, but the 2033–36 "other-clean" steps remain triangulated from secondary sources (M2 open). NYISO Gold Book / MISO LTLF anchors superseded by 2026 editions. |
+| **FR-20** | MED | ~~**ATB vintage 2024** (two editions behind; the M1 manual download never landed)~~ **PARTLY CORRECTED 2026-07-31 (FFR-PB)** — the "two editions behind" premise was **wrong**: ATB **2024 is the current edition**; no 2025 or 2026 edition exists (re-verified against the publisher's own site `atb.nlr.gov` and the OEDI listing, which ends at `csv/2024/`). The real gap was a **point-version**: OEDI mirrored ATB 2024 **v4.0.0** on 2026-07-28 and the repo held **v3.0.0**. v4.0.0 is now **landed** (`data/raw/nrel-atb/atb_2024v4_*`, `atb_version` added to the datatype key); in this model's tech slice it changes **only Geothermal/DeepEGSFlash Moderate** CAPEX (≤+6.1 %) and Fixed O&M (≤+2.0 %) — every entry technology is byte-unchanged, so the cost-escalation concern below is **not** an ATB-vintage artifact. Constants remain pinned to v3.0.0 pending the FFR-SC re-derive. **Still open:** entry-cost mid case frozen at the 2026 snapshot with only Wright's-Law decline. **IRA/OBBBA**: ~~2033–36 "other-clean" steps triangulated from secondary sources (M2 open)~~ **M2 CLOSED** — verified against primary codified text (26 U.S.C. §45Y(d)(2)-(3), §48E(e)(2)-(3), OLRC `uscode.house.gov`); all four step years confirmed **unchanged**, and OBBBA §70512(a)(2) is found to have fixed the "applicable year" flatly at 2032, removing the emissions-determination contingency. NYISO Gold Book / MISO LTLF anchors superseded by 2026 editions (unchanged, still open). |
 
 ### 3.5 Evidence-currency & process findings
 
@@ -275,8 +275,11 @@ a CI check WARNs when solve-affecting paths moved ≥N commits past the scored S
 
 FF-G4 Option B load-shape implementation (FR-16; memo→code, NEISO→PJM first); nuclear-registry
 consumption design (FR-18/BLK-9; rule 19: one exit mechanism); confirmed-retirements re-query
-cadence + the **Eddystone 2026-08-22 expiry** (3 weeks out); ATB 2025/2026 intake (M1) + §45Y/48E
-statute verification (M2); FF-G1 T1-F A/B; forecast DOF-ledger builder (FR-27, Phase-B
+cadence + the **Eddystone 2026-08-22 expiry** (3 weeks out); ~~ATB 2025/2026 intake (M1) + §45Y/48E
+statute verification (M2)~~ **both DONE 2026-07-31 by FFR-PB** (M1 landed as ATB 2024 **v4.0.0** —
+there is no 2025/2026 edition; M2 closed against primary statute, values unchanged) — what remains
+is the FFR-SC **re-derive** against the landed v4.0.0, not an intake; FF-G1 T1-F A/B; forecast
+DOF-ledger builder (FR-27, Phase-B
 prerequisite). PB-5 and all T2/T3 windows remain deferred behind §2.1b — nothing in this plan
 schedules them.
 

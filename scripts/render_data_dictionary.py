@@ -287,8 +287,8 @@ NARRATIVE: dict[str, dict[str, str]] = {
     "nrel-atb": {
         "summary": (
             "NREL Annual Technology Baseline CAPEX / Fixed-O&M trajectories "
-            "(ATB 2024 v3.0.0, 2022-2050) — the new-entry cost surface for "
-            "the capacity-evolution screens."
+            "(ATB 2024, versions v3.0.0 and v4.0.0, 2022-2050) — the "
+            "new-entry cost surface for the capacity-evolution screens."
         ),
         "reconciles": (
             "ATB 2024 trajectories for the technologies the model builds as "

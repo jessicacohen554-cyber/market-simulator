@@ -1170,12 +1170,32 @@ class ScenarioConfig:
     # schedule (100% / 75% / 50% / 0%), keyed on the four breakpoints below
     # and read by policy.ira.ira_phaseout_fraction. RULE-24 DEFAULT CHANGE
     # (2026-07): the prior 2028 / 2033 defaults encoded an undocumented
-    # linear ramp; they move here to the statute-triangulated
-    # 2033 / 2034 / 2035 / 2036 step years — a real behaviour change for any
-    # scenario relying on the old defaults. Source: 26 U.S.C. §45Y(d) /
-    # §48E(e); the 75% / 50% / 0% step years are triangulated from secondary
-    # OBBBA sources (NOT primary statute text) — see the confidence note in
-    # data/raw/policy/ira-credit-parameters/README.md.
+    # linear ramp; they move here to the 2033 / 2034 / 2035 / 2036 step
+    # years — a real behaviour change for any scenario relying on the old
+    # defaults.
+    # PRIMARY-STATUTE VERIFIED 2026-07-31 (FFR-PB, FR-20 M2) — this
+    # SUPERSEDES the former "triangulated from secondary OBBBA sources (NOT
+    # primary statute text)" caveat; the four step years below are confirmed
+    # UNCHANGED against the codified text. Source: Office of the Law
+    # Revision Counsel, US Code (uscode.house.gov, prelim edition), read
+    # 2026-07-31. 26 U.S.C. §45Y(d)(2) keys the phase-out percentage to the
+    # calendar year construction BEGINS, relative to the "applicable year":
+    # (A) first following calendar year 100%, (B) second 75%, (C) third 50%,
+    # (D) any subsequent calendar year 0%. §45Y(d)(3), AS AMENDED by OBBBA
+    # (Pub. L. 119-21 §70512(a)(2), 2025-07-04), now reads in its entirety:
+    # "For purposes of this subsection, the term 'applicable year' means
+    # calendar year 2032." OBBBA STRUCK the former (d)(3) "later of" test
+    # (the calendar year US electricity GHG emissions fall to <=25% of their
+    # 2022 level, or 2032), so these step years are no longer contingent on
+    # an emissions determination that could have pushed them later — the
+    # schedule is now a flat statutory certainty. Applicable year 2032 =>
+    # 100% BOC-2033 / 75% BOC-2034 / 50% BOC-2035 / 0% BOC-2036 onward.
+    # §48E(e)(2) is the parallel investment-credit schedule; §48E(e)(3)
+    # takes "applicable year" from §45Y(d)(3) by cross-reference, and
+    # §48E(e)(2) names "energy storage technology" expressly — which is what
+    # places storage in this bucket. Provenance detail:
+    # data/raw/policy/ira-credit-parameters/README.md and
+    # docs/handoffs/ffr-pb-atb-statute-intake-2026-07-31.md.
     ira_other_clean_last_full_year: int = 2033  # 100% through this year
     ira_other_clean_75pct_year: int = 2034  # 75% step (BOC in this year)
     ira_other_clean_50pct_year: int = 2035  # 50% step (BOC in this year)

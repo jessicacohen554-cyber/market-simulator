@@ -75,6 +75,12 @@ DATATYPES: tuple[str, ...] = (
     "dam-public-bids",
     "benchmark-corridor",
     "hydro-plant-modes",
+    # Both have had a curate_*.py since their intake but were never listed
+    # here, so `regenerate_clean.py` (no args = "all") silently skipped them.
+    # Registered 2026-07-31 (FFR-PB) while extending nrel-atb with its
+    # version axis — the intake contract's step 5.
+    "nrel-atb",
+    "ira-credit-parameters",
 )
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
