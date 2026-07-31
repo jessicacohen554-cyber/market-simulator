@@ -33,7 +33,7 @@ MISSING row carries materiality and a fix (or "accepted").
 |---|---|---|---|
 | ERCOT | intaken 2026-07-04 (§1.1); **coverage-audited 2026-07-31: GAPPED** (DAM-availability family, HSL, v2 rates, LMP bench all missing 2022 — audit doc §3.1); equivalency grading pending | intaken, publication-blocked tail (CAMPD Q2+, gas May+) | pending (seed: audit doc §3.1) |
 | PJM | **§PJM below** (2026-07-31 intake + grading) — 2022 READY on data: interface limits, tie interchange, AS series, short-window outages and the 930 interchange all landed at parity; LMP bench clock-lineage CLEAN (no re-derive owed); `actual_tail` 2022 emitted. Residual: 2 recipe-freeze adjudications + the freeze | **§PJM below** — raws landed (transfer/interchange/AS/hub-LMP, all `_partial`-suffixed); locked tier, not built or scored | **§PJM below** |
-| CAISO | **no longer zero-intake** (930 long-form 2026-07-08, CAMPD 2026-07-10, outage extracts 2026-07-24); **coverage-audited 2026-07-31: GAPPED, largest queue of the six** (audit doc §3.2) | blocked + partial intake | pending (seed: audit doc §3.2) |
+| CAISO | **§CAISO below** — EQUIVALENT 17 / DEGRADED 6 / MISSING 12 (2026-07-31 intake, 2018-2022 + H1-2026). Much of the audit doc's §3.2 queue is now CLOSED (wide-hourly hole, HSL 2022, MIC+LCR registry, gas, interchange, AS_REQ, calref) — but the **LMP bench is SOURCE-BLOCKED, not merely missing**: OASIS retention now stops at 2023-04-19 (N-CA-1) | **§CAISO below** — LMP bench BUILT (DA $20.22 / RT $19.59), 930 + CAMPD + AS_REQ + interchange landed; gas/curtailment/emissions publication- or discontinuation-blocked | **§CAISO below** |
 | MISO | **no longer zero-intake** (same waves + 2022 hub-LMP raws on disk); **coverage-audited 2026-07-31: GAPPED, LMP bench derivable from committed raws** (audit doc §3.4) | blocked + partial intake | pending (seed: audit doc §3.4) |
 | NYISO | **§NYISO — 2022** EQUIVALENT 24 / DEGRADED 4 / MISSING 5 (2026-07-12); **§NYISO — 2018/2019/2020/2021** below (this session) | **§NYISO — H1-2026** below (this session) — partial, CAMPD/gas/LMP sources publication-lag to ~Q1-2026 | **§NYISO below** |
 | NEISO | **THIS DOC §NEISO** — EQUIVALENT 12 / DEGRADED 8 / MISSING 6 (2026-07-13 intake, 2018-2022) | blocked (publication horizon, same class as all ISOs) | **§NEISO below** |
@@ -551,14 +551,213 @@ readiness is not authorization.
 
 ---
 
-## ERCOT / CAISO / MISO
+## CAISO — 2022 + 2018/2019/2020/2021 (validation ladder + locked 2019) + H1-2026 (locked-test edge) intake (2026-07-31, this session)
 
-Sections pending their own lanes. Seed material:
+Keeper: **`2026-07-31-caiso146-ct-heat-rates`**
+(`frontend/data/backcast/keepers/CAISO.json`; bundle
+`results/calibration/caiso146_ctheatrate_B`, flags from its `run_config.json`).
+CAISO holds **no calibration-complete marker of either tier**, and the
+**holdout spend freeze** (`frontend/data/backcast/holdout-freeze.json`) is
+active, so every year in this section is quarantined for solve/score/
+registration regardless of its data grade. This lane is rule-22 **channel 1**
+only — data intake under explicit, session-logged owner authorization, all
+validation no-LP (byte-identity, row counts, loader resolvability, producer
+re-derivation). **No dispatch was constructed, solved or scored for any year,
+and nothing was registered on any dashboard.**
+
+Owner authorization (verbatim, logged in `calibration-complete.json`
+`intake_log`): *"I (the owner) explicitly authorize out-of-training data
+intake for CAISO for ALL of 2018-2022 and H1-2026 in this session under
+CLAUDE.md rule 22 (Option 2) — fetch each source's full year span at once. …
+All validation is no-LP only. Do NOT solve, score, or register any
+out-of-training year — CAISO has NO calibration-complete marker, the freeze
+is in force, 2019 is locked-tier (intake fine, touch never). Data readiness
+only."*
+
+Data-consuming flags ON in the keeper (the materiality basis for every grade
+below): `use_campd_bins`, `plant_level_fleet`, `use_plant_emission_rates`
+(+`v2`), `outage_source=historic`, `reliability_floor`,
+`capacity_deliverability_limits`, `caiso_ra_mustoffer` (+`_ra_startup_bridge`,
+`_ra_bridge_decommit`, `_ra_bridge_startup_aware`, `_ra_startup_trajectory`),
+`caiso_offer_surface_measured` + `caiso_offer_surface_conditional`,
+`caiso_solar_endogenous_spill` + `caiso_solar_deliverability`,
+`caiso_supply_consistent_demand`, `caiso_demand_clock_realign`,
+`caiso_firm_import_{shape,selfschedule,envelope_clip}` +
+`caiso_perhub_firm_base` + `caiso_per_hub_intertie`,
+`caiso_corridor_flow_limit`, `caiso_citygate_{flow_date,spot_level}`,
+gas stack (`gas_monthly_actuals`, `gas_daily_shape`, `gas_hub_basis_overlay`,
+`gas_plant_monthly_fuel_pricing`, `coal_plant_monthly_pricing`),
+`measured_ct_heat_rates`, `hydro_dispatch_envelope` + `hydro_min_flow_floor`,
+`temp_dependent_derate`, `chp_steam_following`, `maintenance_monthly_shape`,
+`state_carbon_pricing`, `storage_capacity_value`, `renewable_elcc_curves`,
+`caiso_scarcity_pricing`.
+
+### Model inputs
+
+| input | keeper-years source + grain | 2018-2022 / H1-2026 status | materiality / fix |
+|---|---|---|---|
+| Hourly demand driver (`eia-930/eia_demand_profiles.parquet`) | EIA-930 repaired full-8760, 2021-2025 | **EQUIVALENT 2021-2022** (8760 rows each, pre-existing). **MISSING 2018-2020 and 2026** — the artifact has no CAISO rows outside 2021-2025 | **HIGH for 2018-2020**: without it `load_demand` hard-fails and those years cannot be dispatched at all, whatever every other row says. Same cross-ISO F3-class blocker already recorded for NEISO (hand-uploaded artifact, no in-repo builder); not fixed in a data-only lane |
+| EIA-930 CISO wide hourly (`eia-930-hourly/CISO hourly.parquet`) | wide extract the loader filters by local year | **EQUIVALENT 2018-2022** (this session: the **2022 hole is CLOSED**, 9 rows → dense 8760, by `build_eia930_hourly_from_raw.py --ba CISO --merge-missing --merge-years 2018 … 2022 2026` from the already-landed API v2 long extracts; every one of the 65,711 pre-existing rows verified byte-identical). **DEGRADED H1-2026** (4,343 h through 2026-06-30, publication lag) | closes audit-doc §5.1. `NG: GEO` is null for 2022 — but it is null for **every** year including in-sample 2023/2024, so this is a standing taxonomy gap, not a holdout degradation |
+| EIA-930 CISO long form (`eia-930/CISO_{region,fueltype}_<y>.parquet`) | API v2 tidy extracts | **EQUIVALENT 2018-2022 + 2026** (pre-existing; 2018 covers Jul-Dec only — see the HSL row) | — |
+| Zonal/TAC load actuals (`zone-specific-demand/CAISO/CAISO_tac_load_hourly_<y>.csv`) | OASIS SLD_FCST ACTUAL, hourly per TAC | **EQUIVALENT 2018-2025** (pre-existing) | — |
+| CAMPD unit-level CA (`campd-unit-level/CA_<y>.parquet`) | EPA CAMPD hourly per unit | **EQUIVALENT 2018-2026** (pre-existing) | — |
+| Unit-outage windows (`campd-unit-outages-CAISO.csv`) | uniform 2026-07-24 all-ISO detector | **EQUIVALENT 2018-2026** (449/530/497/535/442 windows 2018-2022; 235 in 2026) — one detector vintage across every year, so the NYISO/NEISO vintage asymmetry does not apply here | the freeze's cross-ISO layup over-count still hangs over the whole family; that is the freeze's exit condition, not a CAISO gap |
+| Renewable HSL / uncurtailed potential (`caiso-hsl/caiso_<y>_hsl_hourly.parquet`) | delivered EIA-930 + reported curtailment, 2019-2021 + 2023-2025 | **EQUIVALENT 2019-2022** — **2022 BUILT AND COMMITTED this session** once the wide-extract hole above was closed; the same run re-derived 2019/2020/2021/2023/2024/2025 **byte-identically**, so 2022 is the committed producer on the committed recipe. **MISSING 2018** (built, QA-failed, deliberately withheld) and **MISSING H1-2026** (source discontinued) | 2022 closes the audit-doc §3.2 "one hole in an otherwise 2019-2025 series". **2018**: 4,343 of 4,380 H1 hours have null `NG: WND`/`NG: SUN` (EIA-930 per-fuel reporting for CISO did not exist for H1-2018), so `eia_loader`'s `.interpolate().bfill().ffill()` fabricates a flat wind series — annual wind 24.87 TWh vs 15.9/14.9/18.3 in 2019-2021, `min = 18 MW`, `nonzero_frac = 1.000`. Committing it would put a fabricated series ahead of the delivered-profile fallback; the `eia_loader` imputation defect is the open issue. **2026**: CAISO stopped publishing the Production-and-Curtailments report 2025-06-01 (stated on its own library page) — a source discontinuation, not a fetch gap |
+| Capacity-deliverability registry, MIC half (`capacity-deliverability/caiso/caiso.csv`, `branch_group` / `import_limit`) — read by the keeper's `capacity_deliverability_limits` | CAISO annual "Maximum RA Import Capability" filing, per branch group | **EQUIVALENT 2018-2022** (this session: 174 rows — 32/35/35/36/36 branch groups — transcribed by the new `scripts/data/curate_caiso_mic.py`, whose `--verify` reproduces the committed **2023, 2024 and 2025** rows value-for-value, 36/36/33) | closes the audit-doc §3.2 HIGH item for the half that actually fires in a backcast (MIC → `WECC_import`). Committed bytes frozen: the merge byte-appends and never rewrites |
+| Capacity-deliverability registry, LCR half (`local_area` / `requirement`) | CAISO Local Capacity Technical Study, 10 local areas | **EQUIVALENT 2021-2022**, **DEGRADED 2018-2020** (this session: 50 rows via the new `scripts/data/curate_caiso_lcr.py`, `--verify` reproduces committed 2023-2025 exactly). The 2018/2019 reports publish Category B and Category C(with operating procedure) triplets and the 2020 report a Category B/C pair; only 2021+ carries the single post-TPL-001-4 `Capacity Needed` column the committed rows use | the transcription takes the **last numeric cell of each area row** — the most-severe-criterion total including deficiency — which is exactly what the 2021+ single column reports, and is asserted against 2023-2025. Pre-2021 rows carry `Category C total` in `source_page` so the criterion vintage is visible in the data itself |
+| Capacity-deliverability, zone peak load + system PRM (`zone` / `peak_load`, `rto` / `system_requirement`) | LCT §3.2 "Total Zonal Resource Needs" (NP26/SP26 CEC load forecast) + CPUC minimum PRM | **EQUIVALENT 2020-2022** (6 zone rows + 3 PRM rows; zone values verified against committed 2023-2025). **MISSING 2018-2019** — the §3.2 zonal section postdates those reports | the PRM rows are a documented **source substitution**: committed 2023-2025 take 0.16/0.17/0.17 from a CPUC fact sheet because each study is published a year early and can predate a later CPUC decision; for 2018-2022 there is no such lag (15% throughout) and each study states it, so the study is cited |
+| Capacity-deliverability, local-area peak load (`local_area` / `peak_load`) | 3 rows/yr (LA Basin, San Diego/IV, Greater Bay) | **MISSING 2018-2022** | LOW-MEDIUM. The committed rows' own citations (`Table 3.3-7 Load+Losses+Pumps`, `Table 3.3-29`) **do not resolve** in the reports they cite — Table 3.3-7 in the 2023 report is "Fulton LCR Sub-area Requirements" — so the extraction convention cannot be reproduced without a calibration-owner clarification. Flagged rather than guessed |
+| Zonal gas hub (`caiso_zonal_gas_hub.csv`) | PG&E / SoCal Citygate weekly Wednesday prints, month-balanced annual basis | **EQUIVALENT 2020-2022** (15 rows this session; the derive re-produced committed 2023/2024/2025 **exactly** — 4.042/4.533, 0.875/0.336, 0.098/0.282 — before the back-years were written). **MISSING 2018-2019** | 2020-2022 coverage (44-48 weeks / 12 months) is at or better than the in-sample years' own (23-49 weeks). 2018-2019 fail at source: the older EIA weekly narrative carries almost no PG&E Citygate row (2 prints in 2018, 7 in 2019 against ~50/yr later), so the NP15/ZP26 basis is not derivable at the committed grain |
+| Daily citygate composite (`gas-prices/caiso_citygate_daily.csv`) — `gas_daily_shape` / `caiso_citygate_spot_level` | EIA NG Weekly Update "Cal. Comp. Avg", ~224-232 prints/yr | **EQUIVALENT 2018-2022** (this session: 224/213/213/231/233 prints merged, against in-sample 232/224/224; committed rows preserved verbatim). **DEGRADED H1-2026** — 12 prints, Jan-05 to Jan-21 only | the 2026 shortfall is EIA's, not ours: its weekly archive index lists **3** editions for 2026 and every later 2026 edition URL 404s (probed directly). The monthly basis below covers the rest at plateau grain, the NEISO-2022 Algonquin precedent. 11 of 292 back-year pages fail to parse (older layouts) — a ~4% within-year hole, same class as the committed years' own gaps |
+| Weekly hub prints (`gas-prices/pge_socal_citygate_weekly.csv`) | the zonal-hub input above | **EQUIVALENT 2020-2022**, **MISSING 2018-2019**, **DEGRADED 2026** (2 PG&E prints, 0 SoCal) | 40 same-date CONFLICT flags across the 292 back-year pages (the producer's own mis-parse detector; first-seen value kept) — concentrated in 2021-2022 SoCal, disclosed rather than suppressed |
+| Gas basis by ISO-month (`gas_basis_by_iso_month.csv`) | EIA citygate monthly, 12 rows/yr | **EQUIVALENT 2018-2022** (pre-existing, 12 rows every year); **DEGRADED 2026** (3 months) | this is what `gas_hub_basis_overlay` falls back to wherever the daily series is short |
+| F923 delivered fuel + generation (`_processed-legacy/eia923_monthly_*.parquet`) | EIA-923 monthly per plant | **EQUIVALENT 2018-2022** (176/187/191/188/186 CA cost rows vs 184/189/185 in-sample); **DEGRADED 2026** (57 rows, partial) | — |
+| Plant emission rates v2 (`plant_emission_rates_v2.parquet`) | per-plant-unit-year measured CO2/NOx, CAISO 2018-2021 + 2023-2025 | **MISSING 2022 and 2026** — 2022 is a *gap year* inside an otherwise 2018-2025 CAISO block (252/245/245/245 rows 2018-2021, 245/240/240 in 2023-2025, **0** in 2022) | **MEDIUM-HIGH** (same-year measured rates are the backcast's CO2 cost basis). **The N3 tool gate is already resolved in code** — both `curate_emissions_unit_annual.py` and `derive_plant_emissions_v2.py` now accept a logged `intake_log` authorization *instead of* a calibration-complete marker, so with this session's entry landed the pair is runnable as `--holdout-intake CAISO`. Deliberately **not run here** (the owner's scope for this lane is "record, don't resolve"): it rewrites a keeper-consumed artifact and is the calibration owner's call. 2026 additionally waits on EPA CAMPD Q2-2026 |
+| Plant emission rates v1 (`plant_emission_rates.parquet`) | pooled `year==0` + `{2023, 2024}` | **MISSING** all holdout years | accepted — **structural**, identical in-sample; `egrid._campd_rate_map` consumes the pooled rows |
+| Measured offer surface (`caiso_offer_surface_condbinned.json`, `caiso_offer_surface_summary.csv`) — `caiso_offer_surface_measured` + `_conditional`, both keeper-ON | condbinned ladder fit on OASIS Public Bid Data, `_provenance.source` = "trade years [2023, 2024, 2025]" | **METHODOLOGY ADJUDICATION, recorded not resolved** (see §CAISO notes N-CA-2) | the artifact is a frozen 2023-2025-conduct surface; `data/raw/caiso-public-bids/` is gitignored and empty, and the OASIS bid archive is the same API whose LMP retention now stops at 2023-04-19 |
+| WECC intertie hub prices (`_validation-source/wecc_intertie_lmp_hourly_CAISO.parquet`) — `caiso_per_hub_intertie`, `caiso_perhub_firm_base` | MALIN + PALOVRDE hourly, 8760/yr | **MISSING 2018-2022 + 2026** (2023/2024/2025 only) | **HIGH** — same root cause as the LMP bench: these are OASIS intertie LMPs and the API no longer serves the window. Fix requires hand-downloaded GRP bulk zips |
+| Interchange actuals (`eia-930-interchange/CISO interchange hourly.parquet`) — `caiso_firm_import_shape`, export-cap derivation | EIA-930 BA-to-BA hourly per DIBA | **EQUIVALENT 2019-2022 + H1-2026** (this session: 8,759 distinct local hours × 11 DIBAs per year, identical grain to in-sample; all 289,344 committed rows verified preserved with exact values and multiplicities). **MISSING 2018** | 2018 is a **source** gap: EIA's `interchange-data` route returns `total: 0` for CISO for any 2018 window (probed) — the product begins 2019-01-01 UTC for this BA |
+| `IMPORT_TRANCHES_BY_YEAR["CAISO"]` | hand-derived per-year ladder constants | **MISSING** all holdout years (`{2023, 2024, 2025}`) | MEDIUM — a code constant, and its derivation needs the neighbour/intertie prices that are themselves missing (row above). Blocked behind the OASIS retention wall, not behind effort |
+| CAISO-AS requirements (`CAISO-AS/asreq_ALL_*.csv`) | OASIS `AS_REQ` DAM, hourly MW per AS region × product | **EQUIVALENT 2018-2022 + H1-2026** (this session: 15/15/14/15/15 window files for 2018-2022 and 8 for H1-2026, byte-schema and per-window row count identical to the in-sample files — 31,201 rows for a 25-day window in both 2018 and 2023) | closes the audit-doc §3.2 `asreq` item. `AS_REQ` carries **no** OASIS retention limit, unlike PRC_LMP |
+| Fleet statics (EIA-860 vintage, `custom-bin-assignments.csv`, `master-plant-registry.csv`) | single registry snapshot, year-agnostic | **DEGRADED (accepted)** — same static vintage every year; identical caveat in-sample | accepted, same convention as §NYISO / §NEISO |
+| Weather (CAISO zone temp raws) — `temp_dependent_derate` | NOAA daily | **EQUIVALENT 2018-2022** (pre-existing) | — |
+| DAM outage windows parquet (`caiso-dam-outages/`) | not keeper-consumed (`outage_source=historic` covers it) | census only | LOW |
+| storage-as-awards (`storage-as-awards/CAISO/`) | `caiso_storage_as_reservation`, default OFF, probe-inert | census only | NONE for the keeper |
+
+### Bench / scoring series
+
+| series | keeper-years grain | 2018-2022 / H1-2026 status | note |
+|---|---|---|---|
+| **`actual_lmp_hourly_CAISO.parquet` + `actual_lmp.json` CAISO block** | load-weighted TH_NP15/TH_SP15/TH_ZP26 DAM + RTM hourly, 2023-2025 | **MISSING 2018-2022 — SOURCE-BLOCKED, not a fetch task.** OASIS's ~39-month LMP retention has aged past the entire holdout window: binary-searched 2026-07-31, the earliest DAM trade date `PRC_LMP` still serves is **2023-04-19**; 2018, 2020 and 2022 all return `ERR_CODE 1000` "No data returned", and `PRC_INTVL_LMP` RTM matches. **H1-2026 EQUIVALENT — BUILT this session**: DA $20.22 / RT $19.59 over 4,343 dense hours (Jan-Jun), from 3 hubs × both markets; committed 2023-2025 records and parquet rows unchanged (the JSON diff is 59 pure insertions, zero deletions). No `*_lw` fields on 2026 — the load-weighted basis needs a demand profile the artifact does not carry for that year | **This refutes the audit doc's stated fix** ("OASIS `PRC_LMP` group fetch for 2022 (public), committed builder") — the API cannot serve it at any window size. The only route to aged-out history is a hand-downloaded GRP bulk zip (`fold_caiso_oasis_grp_zips.py`, the same route that produced the committed 2023-01 zips). **CAISO's 2022 touchpoint is therefore un-scorable until someone hand-downloads those zips** — the single most disqualifying gap in this section, and it is now a procurement task, not a scripting task |
+| `actual_tail.json` CAISO | marker-aware `derive_actual_tail.py` | **MISSING** — deriver is marker-gated and CAISO has none | governance, not data; and moot for 2018-2022 while the hourly bench above is source-blocked |
+| `calibration_reference.json` `isos.CAISO.<y>` | EIA-860/-923/-930 per-year block | **EQUIVALENT 2021-2022** (this session: only the two new blocks spliced in; every other block, including CAISO 2023-2025 in-sample, left exactly as committed, and all unrelated rebuild churn restored). **MISSING 2018-2020 + 2026** | 2022 demand 223.64 TWh / peak 51,104 MW; 2021 219.07 TWh / 43,615 MW. 2018-2020 blocked by the demand-profile row above (`_demand_totals` hard-requires it) — same F3 root as NEISO's |
+| `CAISO_<y>_renewable_capacity.csv` | EIA-860 per-zone monthly wind/solar MW | **EQUIVALENT 2021-2022** (new); **MISSING 2018-2020 + 2026** | same root cause |
+| EIA-930 fuel-mix bench (`CISO_{fueltype,region}_<y>.parquet`) | hourly | **EQUIVALENT 2018-2022 + H1-2026** | — |
+| CAMPD generation bench (CA unit-level) | hourly | **EQUIVALENT 2018-2026** | — |
+| Curtailment actuals (`caiso-curtailment/*.xlsx`) | CAISO 5-minute report | **EQUIVALENT 2018-2022**; **MISSING 2026** (report discontinued 2025-06-01) | validation side of the HSL row |
+| EIA-930 storage breakout (C5b/C5c) | exists in-sample | **accepted structural absence** for the back years — will SKIP | same finding as §NYISO / §NEISO |
+
+### Notes
+
+- **N-CA-1 (the LMP retention wall — the headline finding of this lane).**
+  The audit doc graded CAISO's 2022 LMP bench "BLOCKING. Fix: OASIS `PRC_LMP`
+  group fetch for 2022 (public), committed builder". That fix does not exist:
+  the OASIS API's retention boundary **moves forward with the calendar** and
+  has now passed the whole 2018-2022 window. Measured this session by binary
+  search, not inferred: `2023-03-24` aged out → `2023-04-19` serves, and every
+  probe at 2018-06-01 / 2020-06-01 / 2022-06-01 returns ERR 1000 for both DAM
+  and RTM. `fetch_caiso_oasis.py`'s docstring is corrected accordingly. The
+  practical consequence for the register: **no amount of scripting closes
+  CAISO's out-of-training bench** — it needs the bulk GRP zips, which are a
+  hand-download from the OASIS UI (the 2023-01 zips already in
+  `data/raw/lmp-data/CAISO/` came that way). Same wall blocks the WECC
+  intertie hub prices and, in all likelihood, the public-bid corpus of N-CA-2.
+- **N-CA-2 (measured-offer-surface vintage — ADJUDICATION RECORDED, NOT
+  RESOLVED).** `caiso_offer_surface_measured` and
+  `caiso_offer_surface_conditional` are both keeper-ON and read a condbinned
+  ladder whose `_provenance` records "trade years [2023, 2024, 2025]". A
+  2018-2022 or H1-2026 solve has exactly two options, and choosing between
+  them is a **methodology** decision for the calibration owner, not a data
+  task: **(a)** reuse the 2023-2025-fit surface unchanged, accepting a
+  vintage asymmetry — the offer conduct of a year is then imported from a
+  different regime (2022's gas crisis and 2018-2020's pre-storage fleet are
+  not the 2023-2025 market), which is a *forward-analogue* question under
+  rule 13 rather than an outright violation, since the surface is a measured
+  behavioural input and not an outcome; or **(b)** re-derive per window from
+  that window's own public bids — for which **no raw exists**:
+  `data/raw/caiso-public-bids/` is gitignored and holds only its README, and
+  the OASIS `PUB_DAM_GRP` GroupZip route is the same API as N-CA-1's
+  (queued "in Processing" on every probe this session, so its own retention
+  boundary is unconfirmed — but the LMP boundary is the strong prior).
+  Recorded here for the register's sign-off; **no flag was changed and no
+  surface was re-derived.**
+- **N-CA-3 (v2 emission-rate marker gate — DECISION RECORDED, NOT
+  EXERCISED).** The register's standing N3 blocker ("both tools hard-require
+  a calibration-complete MARKER, encoding the pre-amendment rule-22 gate") is
+  **stale**: at HEAD both `curate_emissions_unit_annual.py` and
+  `derive_plant_emissions_v2.py` accept *either* the marker *or* a logged
+  `intake_log` authorization. With this session's `intake_log` entry landed,
+  `--holdout-intake CAISO` passes the gate, so CAISO 2022 (and, when EPA
+  posts Q2-2026, 2026) can be derived without any marker. Not run here: the
+  owner scoped this lane to record the decision, and the derive rewrites a
+  keeper-consumed artifact (`plant_emission_rates_v2.parquet`) whose
+  in-sample rows every CAISO keeper reads. Owner/calibration-owner call.
+- **N-CA-4 (in-sample defect surfaced, NOT fixed).** An unscoped
+  `--merge-missing` rebuild of the wide extract filled **9 missing local-2025
+  hours** (2025-12-31 16:00-23:00, supplied by the 2026 long extract's
+  leading UTC hours) and thereby moved `caiso_2025_hsl_hourly.parquet` — an
+  in-sample keeper input. The merge was re-scoped to the authorized holdout
+  years only and 2025 was restored byte-identical; a `--merge-years` flag now
+  makes that scoping explicit so no future holdout back-fill can move a
+  training year by accident. The 2025 tail gap is real and is flagged to the
+  CAISO calibration owner.
+- **N-CA-5 (transcription lineage).** Both new capacity-deliverability
+  transcribers ship a `--verify` mode that asserts they reproduce the
+  **committed** 2023-2025 rows before any back-year row is written, and both
+  merge by **byte-append** rather than rewrite (the committed registry
+  carries mixed line endings from successive hand-appends, so re-emitting it
+  through `csv.writer` would churn every committed line). The same
+  discipline applies to the gas derivation, which reproduced the committed
+  2023-2025 basis values exactly before the 2020-2022 rows were added.
+  `tests/iso/caiso/test_capacity_deliverability_caiso.py` pins both the new
+  total (386) and the unchanged in-sample subtotal (153).
+
+### Verdict tally (this section)
+
+**EQUIVALENT 17** (wide hourly 2018-2022, long form, TAC load, CAMPD
+unit-level, unit outages, HSL 2019-2022, MIC 2018-2022, LCR 2021-2022, zonal
+peak/PRM 2020-2022, zonal gas hub 2020-2022, citygate daily 2018-2022,
+weekly hub prints 2020-2022, monthly gas basis, F923, AS_REQ 2018-2022 +
+H1-2026, interchange 2019-2022 + H1-2026, calref/renew-cap 2021-2022,
+930 fuel-mix + CAMPD bench, curtailment actuals) /
+**DEGRADED 6** (LCR 2018-2020 criterion vintage, PRM citation substitution,
+wide hourly H1-2026, citygate daily H1-2026, weekly prints H1-2026, monthly
+gas basis 2026, fleet statics) /
+**MISSING 12** (demand profile 2018-2020 + 2026, HSL 2018 + 2026, LMP bench
+2018-2022, WECC intertie all years, import-tranche constants, v2 emission
+rates 2022 + 2026, v1 emission rates, local-area peak load, zonal gas hub
+2018-2019, weekly prints 2018-2019, calref/renew-cap 2018-2020 + 2026,
+`actual_tail`). **Zero unresolved MISSING**: every row carries a materiality
+rating and either a fix or an explicit acceptance/blocking rationale.
+
+### What still blocks a CAISO out-of-training touchpoint
+
+1. **The holdout spend freeze** (`holdout-freeze.json`) — outranks every
+   marker; nothing is spendable while it stands.
+2. **No calibration-complete marker of either tier.** CAISO is absent from
+   both `complete` and `final`, so 2022 (validation) and 2019 / H1-2026
+   (locked) are all quarantined. An owner determination, not a data task.
+3. **Register sign-off** (this section) by the owner.
+4. **The LMP bench (N-CA-1)** — the hard data blocker, and now known to be a
+   hand-download rather than a fetch. A touchpoint that cannot be scored
+   cannot be spent, so this gates 2018-2022 outright even if 1-3 clear.
+5. **The demand-profile artifact** for 2018-2020 (and 2026) — a hard blocker
+   below which no dispatch of those years is possible at all.
+6. Optional-for-parity, in descending materiality: v2 emission rates 2022
+   (now runnable, N-CA-3), the WECC intertie prices + import-tranche
+   constants (same wall as 4), the offer-surface vintage adjudication
+   (N-CA-2), local-area peak loads, zonal gas hub 2018-2019.
+
+**H1-2026** additionally rides the publication horizon shared by every ISO:
+EPA CAMPD Q2-2026, EIA delivered gas from May-2026, the full-8760 demand
+contract, and — CAISO-specific — the EIA weekly gas archive's 3-edition 2026
+coverage and the permanently discontinued curtailment report. What **is**
+landed and EQUIVALENT through 2026-06-30: `CISO hourly` (4,343 h),
+`CISO_{region,fueltype}_2026`, CAMPD `CA_2026`, AS_REQ (8 windows),
+interchange (4,317 h), and — uniquely for this window — the **DAM and RTM
+hub LMPs**, which OASIS serves for 2026 because the retention wall is
+behind, not ahead of, it.
+
+---
+
+## ERCOT / MISO
+
+Sections pending their own lanes (PJM's and CAISO's are above). Seed material:
 `docs/iso-2022-holdout-data-availability-audit-2026-07.md` (2026-07-31
 cross-ISO coverage audit — keeper-flag-grounded per-family 2022 parity matrix,
 per-ISO gap tables §3.1–§3.4, 2018–2021 census §4, and the repo-vs-record
-discrepancy list §5, incl. the CISO/MISO wide-hourly 2022 hole and the v1
-emission-rates intake drift); plus `docs/out-of-sample-results-2026-07.md`
-§1.1 (ERCOT/PJM, incl. the known Waha annual-basis and PJM
-wide-extract-lineage DEGRADED candidates) and the register handoff's
-known-items list (§"Known DEGRADED/asymmetric items").
+discrepancy list §5; its CAISO rows were re-graded on 2026-07-31 by the
+§CAISO lane above, which CLOSED the wide-hourly hole and REFUTED its stated
+CAISO LMP fix); plus `docs/out-of-sample-results-2026-07.md` §1.1 (ERCOT,
+incl. the known Waha annual-basis DEGRADED candidate) and the register
+handoff's known-items list (§"Known DEGRADED/asymmetric items").

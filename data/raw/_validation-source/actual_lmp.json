@@ -1093,6 +1093,65 @@
         49.3
       ],
       "src_lw": "system hub hourly series load-weighted by measured system demand (eia_loader.load_demand)"
+    },
+    "2026": {
+      "da": 20.22,
+      "rt": 19.59,
+      "da_mon": [
+        34.53,
+        26.45,
+        18.98,
+        11.2,
+        12.21,
+        18.16,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "rt_mon": [
+        33.36,
+        24.59,
+        22.19,
+        8.86,
+        11.9,
+        16.65,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "da_pct": {
+        "min": -14.74,
+        "p1": -11.6,
+        "p5": -8.02,
+        "p10": -4.34,
+        "p25": 6.75,
+        "p50": 23.76,
+        "p75": 31.58,
+        "p90": 36.61,
+        "p95": 40.49,
+        "p99": 67.62,
+        "max": 102.83
+      },
+      "rt_pct": {
+        "min": -30.88,
+        "p1": -15.45,
+        "p5": -10.73,
+        "p10": -6.78,
+        "p25": 6.45,
+        "p50": 20.99,
+        "p75": 30.67,
+        "p90": 37.85,
+        "p95": 46.7,
+        "p99": 72.32,
+        "max": 715.61
+      },
+      "src": "CAISO OASIS hub LMPs (PRC_LMP DAM / PRC_INTVL_LMP RTM hourly), load-weighted across TH_NP15/TH_ZP26/TH_SP15"
     }
   },
   "NYISO": {
