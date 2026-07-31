@@ -35,6 +35,12 @@ from scripts.lib.clean_io import validate_clean, write_clean  # noqa: E402
 
 # eGRID plant-sheet workbooks by vintage year (mirrors market_sim.data.egrid).
 EGRID_FILES: dict[int, str] = {
+    # epa.gov/egrid historical archive (retrieved 2026-07-31, holdout-ladder
+    # intake): the latest revision EPA publishes for each vintage.
+    2018: "egrid2018_data_v2.xlsx",
+    2019: "egrid2019_data.xlsx",
+    2020: "eGRID2020_Data_v2.xlsx",
+    2021: "eGRID2021_data.xlsx",
     2022: "egrid2022_data.xlsx",  # epa.gov eGRID2022 (retrieved 2026-07-04)
     2023: "egrid2023_data_rev2.xlsx",
     2024: "egrid2024_data.xlsx",

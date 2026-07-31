@@ -274,9 +274,27 @@ def parse_miso_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
         .dropna(subset=["mw"])
     )
     mzone = long["subba"].map(_MISO_SUBBA_ZONE_GROUPS)
-    return _hourly_shares_from_groups(
+    shares = _hourly_shares_from_groups(
         mzone, long["hoy"].to_numpy(), long["mw"], zone_names
     )
+    # The sub-BA export spans only the years it was pulled for (2023-2025). For
+    # any other year the UTC->local mapping still lands a handful of rows —
+    # January 1st's first UTC hours belong to the previous local year — and the
+    # `df.empty` guard above does not catch that: a 7-hour year sails through
+    # and returns shares that are NaN for the other 8,753 hours, which
+    # propagates straight into `load_demand`'s zonal allocation. Require the
+    # assembled series to cover the year; anything short is an uncovered year,
+    # handled exactly like a missing file (caller falls back to the
+    # sample-average shares).
+    if shares is None or np.isnan(shares).any():
+        logger.warning(
+            "MISO sub-BA load file covers %d only partially (%d/%d hours); skipping",
+            year,
+            0 if shares is None else int((~np.isnan(shares[0])).sum()),
+            HOURS_PER_YEAR,
+        )
+        return None
+    return shares
 
 
 def parse_nyiso_shares(year: int, zone_names: list[str]) -> np.ndarray | None:

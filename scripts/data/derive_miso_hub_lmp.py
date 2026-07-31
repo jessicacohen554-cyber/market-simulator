@@ -237,15 +237,39 @@ def write_system_parquet(df: pd.DataFrame) -> None:
     log.info("wrote %s (%d rows)", SYSTEM_OUT, len(sys_df))
 
 
+def write_zonal_parquet(df: pd.DataFrame) -> None:
+    """Write the per-hub zonal parquet, merging on year.
+
+    Same MERGE-never-replace contract as :func:`write_system_parquet`: rows for
+    years this run did not build are preserved from the committed file. Before
+    2026-07-31 only the *system* parquet honoured it, so a single-year run
+    (``--years 2022``) silently truncated the zonal file to that one year and
+    dropped the committed 2023-2025 blocks (rule 22 — an out-of-training intake
+    must never disturb a training year).
+    """
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    if OUT.exists():
+        old = pd.read_parquet(OUT)
+        keep = old[~old["year"].isin(df["year"].unique())]
+        if not keep.empty:
+            log.info(
+                "zonal parquet: preserving committed rows for years %s",
+                sorted(keep["year"].unique().tolist()),
+            )
+            df = pd.concat([keep, df], ignore_index=True).sort_values(
+                ["year", "hub", "hour"], ignore_index=True
+            )
+    df.to_parquet(OUT, index=False)
+    log.info("wrote %s (%d rows)", OUT, len(df))
+
+
 def main() -> None:
     """CLI: build and write the zonal + system validation parquets."""
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", nargs="+", type=int, default=list(DEFAULT_YEARS))
     args = ap.parse_args()
     df = build(args.years)
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    df.to_parquet(OUT, index=False)
-    log.info("wrote %s (%d rows)", OUT, len(df))
+    write_zonal_parquet(df)
     write_system_parquet(df)
     # Eyeball block: per-zone annual means (South = member-hub mean).
     zonal = df.groupby(["year", "zone"])[["rt", "da"]].mean().round(2)

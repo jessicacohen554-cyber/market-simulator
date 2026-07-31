@@ -16,9 +16,21 @@ It depends on ``parasitic_load_factors.parquet`` (run
 plant-year plus a pooled ``year == 0`` summary) and, unless ``--no-registry``,
 adds per-MWh-net rate columns to ``data/raw/reference/master-plant-registry.csv``.
 
+**The write is a year-scoped merge, and the pooled ``year == 0`` block is
+protected.** Only the ``--years`` requested are re-derived; every other year
+already in the artifact is carried through value-identical, and the pooled rows
+— the ONLY rows the model reads (``fleet._plant_emission_rate_map`` and
+``egrid._campd_rate_map`` both filter ``year == 0``) — keep whatever pool they
+were built from unless ``--repool`` is passed. That is what lets an
+out-of-training back-year land (rule 22 data intake) without silently
+re-pooling the emission rates every keeper was scored on. ``--repool`` rebuilds
+the pooled block from ``--years``; ``--overwrite-all`` restores the older
+replace-the-whole-file behaviour.
+
 Usage:
     python scripts/data/derive_plant_emissions.py --iso ERCOT --years 2023 2024 2025
     python scripts/data/derive_plant_emissions.py --states TX --years 2023
+    python scripts/data/derive_plant_emissions.py --states TX --years 2022  # back-year, pool untouched
 """
 
 from __future__ import annotations
@@ -91,12 +103,53 @@ def _update_registry(rates: pd.DataFrame, years: list[int]) -> int:
     return int(plant_ids.isin(by_plant.index).sum())
 
 
+def merge_years(
+    existing: pd.DataFrame, fresh: pd.DataFrame, *, repool: bool
+) -> pd.DataFrame:
+    """Return ``existing`` with the ``fresh`` years spliced in.
+
+    Per-year rows (``year != 0``) for every year present in ``fresh`` are
+    replaced; all other years are carried through untouched. The pooled
+    ``year == 0`` block is replaced only when ``repool`` is set — otherwise the
+    committed pool survives, because it is the block the dispatch LP reads and
+    re-pooling it on a back-year intake would move every solve's CO2 basis.
+
+    Args:
+        existing: The artifact as read from disk.
+        fresh: Newly derived rows (per-year plus its own pooled block).
+        repool: Replace the pooled ``year == 0`` rows with ``fresh``'s.
+
+    Returns:
+        The merged table, sorted by ``(plant_id, year)``.
+    """
+    fresh_years = set(fresh.loc[fresh["year"] != 0, "year"].unique())
+    kept = existing[~existing["year"].isin(fresh_years)]
+    add = fresh[fresh["year"] != 0]
+    if repool:
+        kept = kept[kept["year"] != 0]
+        add = fresh
+    merged = pd.concat([kept, add], ignore_index=True)
+    return merged.sort_values(["plant_id", "year"]).reset_index(drop=True)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--iso", default=None)
     parser.add_argument("--states", nargs="+", default=None)
     parser.add_argument("--years", nargs="+", type=int, required=True)
     parser.add_argument("--no-registry", action="store_true")
+    parser.add_argument(
+        "--repool",
+        action="store_true",
+        help="Also replace the pooled year==0 block (the rows the LP reads) "
+        "with the pool over --years. Default: the committed pool is preserved.",
+    )
+    parser.add_argument(
+        "--overwrite-all",
+        action="store_true",
+        help="Replace the whole artifact with just --years instead of merging "
+        "into the years already on disk (default: merge).",
+    )
     args = parser.parse_args()
 
     states = args.states or list(campd.states_for_iso(args.iso or ""))
@@ -132,6 +185,20 @@ def main() -> None:
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
     pq_path = PROCESSED_DIR / "plant_emission_rates.parquet"
     csv_path = PROCESSED_DIR / "plant_emission_rates.csv"
+    # True when the pooled block written below is the one derived from --years
+    # (a fresh file, a full overwrite, or an explicit --repool) rather than the
+    # committed pool carried through by the merge.
+    repooled = args.overwrite_all or args.repool or not pq_path.exists()
+    if not args.overwrite_all and pq_path.exists():
+        prior = pd.read_parquet(pq_path)
+        carried = sorted(set(prior["year"].unique()) - set(args.years))
+        rates = merge_years(prior, rates, repool=args.repool)
+        logger.info(
+            "merged into existing artifact; years carried through: %s "
+            "(pooled year==0 %s)",
+            carried,
+            "REPOOLED over --years" if args.repool else "PRESERVED",
+        )
     rates.to_parquet(pq_path, index=False)
     rates.to_csv(csv_path, index=False)
     logger.info("wrote %s and %s", pq_path, csv_path)
@@ -147,9 +214,14 @@ def main() -> None:
         pooled["so2_kg_per_mwh_net"].mean(),
     )
 
-    if not args.no_registry and REGISTRY_PATH.exists():
+    # The registry mirrors the POOLED block only. A merge that preserved the
+    # pool has nothing new to mirror, and rewriting it would divide the old
+    # pool's `starts` by this run's year count — so it is skipped, not redone.
+    if not args.no_registry and REGISTRY_PATH.exists() and repooled:
         n = _update_registry(rates, args.years)
         logger.info("added emission-rate columns for %d registry plants", n)
+    elif not args.no_registry:
+        logger.info("registry untouched (pooled block preserved by the merge)")
 
 
 if __name__ == "__main__":
