@@ -279,7 +279,7 @@ down, CI-enforced and time-bounded instead of invisible. **The fixture was NOT r
 
 ---
 
-## 7a. Test fallout from the FR-11 guard (15 tests, all legitimately updated)
+## 7a. Test fallout from the FR-11 guard (20 tests, all legitimately updated)
 
 The overlay guard surfaced tests that were exercising **backcast** mechanisms on a **forecast**
 config — `ScenarioConfig()` defaults to `mode="forecast"`, so a test that only set the overlay flag
@@ -289,18 +289,27 @@ means; none was weakened.
 | Tests | Change |
 |---|---|
 | `test_fuel.py` × 6 (MISO winter citygate daily) | `mode="backcast"` added to the fixtures |
+| `test_caiso_citygate_spot_level.py` × 6 | `mode="backcast"` added to the two fixtures |
 | `test_fleet.py::TestStGasP25LevelFloor` × 4 | `mode="backcast"` added to the fixture |
 | `test_pjm_dispersion_composite.py::TestPjmCtMeasuredMaxTarget` × 3 | `mode="backcast"` added to `_cfg()` |
+| `test_summer_availability_constants.py` (2 tests + 13 subtests) | `mode="backcast"` added to `KEEPER_FLAGS` — the flags are read off a backcast keeper's `run_config.json`, so the fixture now matches the run it mirrors |
+| `test_eia923_fuel.py::test_gas_series_uses_monthly_actuals_when_on` | `mode="backcast"` on the base config the `gas_monthly_actuals` leg overrides |
 | `test_outages.py::ErcotThermalDamAvailabilityTest` × 2 | the two **"forecast mode: overlay never applies"** assertions now assert the config REFUSES the overlay — strictly stronger than asserting a silent no-op |
 | `test_runner.py::TestMainCLI` × 2 | the CLI-parsing fixture pins a T1-F window (an unguarded 2026–2050 default is now refused; the refusal has its own coverage) |
 
-**Pre-existing failures, NOT this session's** (confirmed by running the same files at `origin/main`
-in a clean worktree — 13 failures there, identical set): `test_persisted_identity` × 2,
-`test_ramp_envelope_basis`, `test_cc_committed_offer_margin`,
-`test_forecast_xyear_warmstart_flag` (all four are the stale `PINNED_DEFAULT_CACHE_KEY`),
-`test_measured_chp_heat_rates::TestDerive` × 7, and
-`test_outages::NuclearUnitAvailabilityTest::test_unknown_iso_degrades_to_empty`. They are named here
-so the next session does not attribute them to this branch.
+**Final fast tier: 5,673 passed / 14 failed**, and all 14 are **pre-existing on `origin/main`** —
+verified by running the same tests at `origin/main` in a clean worktree:
+
+| Pre-existing failure | Cause |
+|---|---|
+| `test_persisted_identity` × 2, `test_ramp_envelope_basis`, `test_cc_committed_offer_margin`, `test_forecast_xyear_warmstart_flag` | the stale repo-wide `PINNED_DEFAULT_CACHE_KEY = "603c2498bf71d21d"` (HEAD computes `0e9fce2fb55b889f`) |
+| `test_measured_chp_heat_rates::TestDerive` × 7 | unrelated derive-path failures |
+| `test_outages::NuclearUnitAvailabilityTest::test_unknown_iso_degrades_to_empty` | unrelated |
+| `test_ff_readiness_battery::test_marker_state_reflects_committed_markers` | marker state moved (nyiso-104b re-declaration) |
+
+They are named here so the next session does not attribute them to this branch.
+`test_integration::TestFullYearPerformance::test_full_year` failed once under `-n 2` load and passed
+on re-run — a timing flake, not a regression.
 
 ## 7b. One incidental repair: the `lint` CI job was red on main
 
@@ -317,7 +326,12 @@ calibration record), not code under maintenance. No source file's lint scope cha
 1. **`tranche_startup_measured_runs` and `neiso_winter_fuel_inventory`** — plausibly members of the
    FR-11 family; left unguarded pending their owning lane's judgement (§4).
 2. **`PINNED_DEFAULT_CACHE_KEY = "603c2498bf71d21d"` is stale at `origin/main`** (HEAD computes
-   `0e9fce2fb55b889f`). Pre-existing; belongs to whichever session lands the §W1-X cache-epoch bump.
+   `0e9fce2fb55b889f`), reddening five tests. Pre-existing; belongs to whichever session lands the
+   §W1-X cache-epoch bump.
+2b. **`audit_keepers --check` is RED on `origin/main`** — `frontend/data/backcast/status/MISO.js` is
+   stale vs the current verdicts (`build_status.py --iso MISO` regenerates it). That is a MISO-lane
+   keeper artifact, so this session did NOT touch it (per-ISO lane discipline); it means the CI
+   `quarantine-gates` job is red on this PR for a reason that predates it.
 3. **The nine pre-field backcast bundles** (§3) cannot be reconstructed to their on-disk keys at HEAD
    at all — a general property of fields added without `_CACHE_KEY_OPTIONAL_FIELDS` registration, not
    specific to this change. Worth a sweep if anyone needs those bundles reproducible.
