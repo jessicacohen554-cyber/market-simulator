@@ -154,7 +154,7 @@ The truncation is universal — every ISO's 2025 EIA-923 hydro vintage is an ear
 release. **Four of the six keepers arm the repair; NYISO does not.** The only
 other unrepaired keeper is ERCOT, whose hydro is 0.017–0.463 TWh/yr (immaterial,
 ~0.1 % of load). **NYISO is the sole ISO where a material hydro class —
-26.5 TWh/yr, ~18 % of NYISO load — runs on an unrepaired truncated input.** This
+26.5 TWh/yr, ~18 % of NYISO generation — runs on an unrepaired truncated input.** This
 is not an exotic gap; it is a standard recipe element every other hydro-material
 ISO already carries.
 

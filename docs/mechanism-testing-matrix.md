@@ -1607,7 +1607,7 @@ capability envelope/floor pair is now the keeper — cells K above):
     (CAISO/PJM/MISO/NEISO all `--hydro-backfill-year 2024`; PJM+MISO have the 930
     pin internally refused for the PS fold) **and NYISO does not**. The only other
     holdout is ERCOT, whose hydro is 0.017–0.463 TWh/yr (immaterial), so **NYISO
-    is the SOLE ISO running a MATERIAL hydro class (26.5 TWh/yr, ~18 % of load)
+    is the SOLE ISO running a MATERIAL hydro class (26.5 TWh/yr, ~18 % of generation)
     on an unrepaired truncated input.** Arming the pair moves **all three years**
     (−1.5668 / −1.1287 / +3.0143 TWh), and a 930 level pin would make the hydro
     **volume** statistic near-tautological (−0.17 % by construction, budget and

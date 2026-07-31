@@ -3438,7 +3438,7 @@ ERCOT 8.3 / CAISO 16.2 / PJM 13.9 / MISO 8.8 / **NYISO 2.0** / NEISO 3.0 %), but
 `--hydro-backfill-year 2024` (PJM and MISO have the 930 pin internally refused for
 the PS fold) — **and NYISO does not**. The only other holdout is ERCOT, whose
 hydro is 0.017-0.463 TWh/yr and immaterial. **NYISO is the sole ISO running a
-material hydro class (26.5 TWh/yr, ~18 % of load) on an unrepaired truncated
+material hydro class (26.5 TWh/yr, ~18 % of generation) on an unrepaired truncated
 input.**
 
 Chartered, **not armed** (owner decision in-session). Two things a successor must
