@@ -2359,3 +2359,104 @@ Rule 13 `[R-MEASURED]`'s admissibility test passes on every term.
   `results/calibration/FINDING-miso107-reliability-floor-provenance-2026-07-30.md`.
 * Next number: **miso-108.**
 
+
+## 2026-07-30/31 — miso-109: MISO's hydro LEVEL was a DIFFERENT POPULATION from its hydro UNITS — the PS-inclusive `NG: WAT` pin is removed, the level is EIA-923 `HY`, and `hydro_budget_nameplate_aware` is then PROVABLY INERT (its whole MISO signal was the defect)
+
+**Runs:** `2026-07-30-miso-109a-control-930pin` (control) /
+`2026-07-31-miso-109b-hy-level` (candidate). **Keeper UNCHANGED**
+(`2026-07-28-miso-101b-tempgrain`) — promotion is an owner call; the candidate
+scores identically to it.
+
+### What was wrong
+
+`data/hydro.py` builds the hydro LP units from EIA-923 prime mover `HY` alone —
+pumped storage is a storage resource, not inflow hydro. The keeper pinned those
+units' monthly energy **level** to EIA-930 `NG: WAT`. MISO files **no `NG: PS`
+column**, so its `NG: WAT` is conventional hydro **plus PS gross discharge**:
+the level and the units were different populations. `NG: WAT` 9.979 / 10.710 TWh
+against 923 `HY` 8.789 / 9.042 TWh (**+13.5 % / +18.5 %**), peaking 3,535 /
+3,964 MW against **2,478.4 MW** of conventional nameplate — 580 / 826 h/yr above
+the whole fleet — beside a 2,417 MW PS fleet, with **zero** negative-`WAT` hours
+(one-way gross discharge; 923 `PS` net is −0.840 / −1.033 TWh, the opposite
+sign). The control's own log says it: *"MISO 2023 hydro budget pinned to monthly
+target total 9979.0 GWh (was 8789.4 GWh)"*.
+
+### The fix, and the alternative that was killed on measurement
+
+The level is now **EIA-923 `HY` directly** — same series, same plants as the
+units — via a measured registry (`constants.EIA930_PS_FOLDED_INTO_WAT`). It
+**removes** a mechanism: zero free parameters, nothing tuned to a residual.
+miso-108's second option (keep `NG: WAT` for shape, rescale to the 923 level)
+required a reconciliation constant, and this session **measured that none is
+identifiable**: MISO's conventional share of `NG: WAT` drifts **0.9937 →
+0.8442** across 2019–2024 (spread 0.15) and the monthly gap **changes sign by
+month** in 4 of 5 complete-filing years. Refused on evidence, not preference.
+
+### The A/B (single delta, same HEAD)
+
+The control reproduces the committed keeper at **0.00000 %** on every class-year
+— a measured noise floor of exactly zero, despite 21 changed `src/market_sim/`
+files since the keeper's registration (checked with `git diff` *before* the
+control ran; bit-equality was never pre-registered — the miso-106 G3 lesson).
+
+| | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| hydro | −1.075 TWh | −1.454 TWh | −0.722 TWh |
+| fossil / imports | +0.869 / +0.207 | +1.168 / +0.279 | +0.575 / +0.144 |
+| load-wtd LMP | +0.072 $/MWh | +0.089 $/MWh | +0.050 $/MWh |
+| C3a | −1.4 → **−1.2 %** | −6.7 → **−6.4 %** | −14.3 → **−14.2 %** |
+
+**Sign and magnitude were both declared before the solve** and both hold. Every
+C-series verdict is identical between arms: `NOT-YET`, ledgered **2/3** {C3a,
+C3c}, same C7 `COAL_PRB` blocker. Rule 14 mandates the accurate input whichever
+way the residual moves — the favourable direction is a consequence, not the
+reason.
+
+### Item 6 closed: `hydro_budget_nameplate_aware` → `I`, no solve spent
+
+The mechanism only redistributes a level **target**; with the level corrected
+there is none, so budgets are byte-identical on/off in all three years
+(L1 = **0.000 GWh**). On the *contaminated* level it moved 259 / 454 / 171 GWh —
+its entire apparent MISO signal was the allocator shuffling PS energy off
+plant-months pushed above their own `nameplate × hours` ceiling. Fix the level
+and the symptom goes with it. Exactly why miso-108 refused to arm it first.
+
+### Cross-ISO screen — the standing `NG: PS` audit item is CLOSED
+
+All six ISOs, three signatures each: **PJM a live defect** (+52.9 … +79.6 %,
+1,249–1,612 breach h/yr — its own lane owes the A/B, rule 25), **NEISO a time
+split** (files `NG: PS` from Nov 2024; zero breach hours in 2025 — needs a
+per-window treatment, not this switch), **ERCOT / CAISO / NYISO clean** (CAISO's
+negative `WAT` hours show pumping *is* netted; NYISO's 923 `HY` *exceeds*
+`NG: WAT`).
+
+### Left open, and what must not be done about it
+
+* **C7 `COAL_PRB`** is untouched and still the blocker (miso-96/102).
+* **`COAL_PRB` volume** was the one fossil class already over-producing and goes
+  further over (+1.794 → +2.018 TWh, 2023). **Not** to be closed by restoring
+  hydro — that is the compensating-error pattern rules 1/14 forbid.
+* **The forecast climatology is still PS-inflated** (multi-year `NG: WAT` mean).
+  Out of scope here; it now warns loudly rather than failing silently.
+* **Hazard:** the hydro dispatch envelope and min-flow floor are also
+  `NG: WAT`-derived. Both default-off and off in this keeper, so nothing is
+  stacked — but arming either at a listed ISO needs its own source fix first
+  (EIA-923 is monthly; there is no hourly substitute).
+
+### Governance
+
+* **Rule 12** — years sequential, one fresh year per process (~13.3 min/year,
+  peak ~12 GB); **rule 16** — 2023/2024/2025 in one bundle per arm.
+* **Rule 22** — 2023–2025 only; MISO carries no calibration-complete marker and
+  no holdout year was touched.
+* **Rule 15** — both arms registered in-session; **rule 26 duty (b)/(c)** —
+  `hydro_budget_nameplate_aware` MISO cell `U` → `I` and the new
+  `hydro_level_923_hy` row, both landed in this session.
+* **Infrastructure fix shipped alongside** — `--reuse-solved` was not carrying
+  the `hourly/` sidecars forward, so a rule-12 per-year chain produced bundles
+  with class-hour holes in exactly the years it reused. Fixed with tests and
+  verified end-to-end on both arms.
+* Evidence:
+  `results/calibration/FINDING-miso109-hydro-level-923hy-2026-07-30.md`;
+  probe: `scripts/probes/_miso109_hydro_level_audit.py`.
+* Next number: **miso-110.**
