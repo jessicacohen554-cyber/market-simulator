@@ -186,11 +186,18 @@ def g2_control_integrity() -> dict:
     is REPORTED as the drift finding, never scored as a gate (prereg §2/§6).
     """
     ctrl, keep = _scenario_block(CONTROL), _scenario_block(KEEPER)
-    diff = {
+    all_diff = {
         k: {"control": ctrl.get(k), "keeper": keep.get(k)}
         for k in sorted(set(ctrl) | set(keep))
         if ctrl.get(k) != keep.get(k)
     }
+    # A field the keeper's snapshot never carried is a ScenarioConfig field ADDED
+    # to the codebase since eede1c4, sitting at its default in the control — code
+    # evolution, not a recipe difference. The gate is the RECIPE: fields present
+    # in BOTH snapshots that disagree. Counting new-default fields as diffs would
+    # fail G-2 on every keeper older than the last config addition.
+    new_fields = sorted(k for k, v in all_diff.items() if v["keeper"] is None)
+    recipe_diff = {k: v for k, v in all_diff.items() if v["keeper"] is not None}
     flags_off = all(_flag_value(CONTROL, f) is not True for f in FLAGS)
     drift = {}
     for year in YEARS:
@@ -199,10 +206,12 @@ def g2_control_integrity() -> dict:
         except FileNotFoundError:
             drift[year] = None
     return {
-        "config_diff_vs_keeper": diff,
-        "n_config_diff": len(diff),
+        "recipe_diff_vs_keeper": recipe_diff,
+        "n_recipe_diff": len(recipe_diff),
+        "n_new_fields_since_keeper": len(new_fields),
+        "new_fields_since_keeper": new_fields,
         "control_flags_off": flags_off,
-        "passed": bool(not diff and flags_off),
+        "passed": bool(not recipe_diff and flags_off),
         "REPORTED_byte_drift_vs_committed_keeper": drift,
     }
 
@@ -345,7 +354,8 @@ def main() -> int:
     g2, g5 = result["G2_control_integrity"], result["G5_year_span"]
     print(
         f"G-2 control integrity : {'PASS' if g2['passed'] else 'FAIL'}  "
-        f"({g2['n_config_diff']} config diffs vs keeper, "
+        f"({g2['n_recipe_diff']} RECIPE diffs vs keeper, "
+        f"{g2['n_new_fields_since_keeper']} fields added since the keeper solved, "
         f"flags_off={g2['control_flags_off']})"
     )
     print(
