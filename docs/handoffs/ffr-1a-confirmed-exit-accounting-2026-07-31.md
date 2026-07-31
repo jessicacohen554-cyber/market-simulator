@@ -4,8 +4,10 @@
 **Findings fixed:** FR-1 (I4/A1 capacity-accounting leak, BLOCKER), FR-2 (partial-year exit
 ghost, HIGH), FR-13 (latent additions-baseline gap, MED), FR-23 (docstring drift, the
 `evolution_ledger.py` schema text + the `retirements.py` hydro claim slice only).
-**Branch:** `claude/forecast-readiness-fr-fixes-typcr5` — two commits, strictly ordered:
-`a47a949` (arm 1, bookkeeping, dispatch-inert) → `4bad95c` (arm 2, behavioral, cited).
+**Branch:** `claude/forecast-readiness-fr-fixes-typcr5` — strictly ordered:
+`a47a949` (arm 1, bookkeeping, dispatch-inert) → `4bad95c` (arm 2, behavioral, cited) →
+`53a8f4d` (arm-2 over-subscription cap, found by this session's own probe evidence before
+any arm-2 probe was registered — §3).
 **Baseline:** `origin/main` @ `40ecb0a` (2026-07-31). No default, band, threshold, or curve
 changed; no cache-epoch bump (§W1-X owns it) — all probes below use isolated `--out-dir`
 caches via `run_full_horizon.py --out-dir` (redirected cache). Every invocation ≤ 5
@@ -91,6 +93,19 @@ Live rows affected (all eight `exit_month ≤ 6` rows; instruments in the commit
 ERCOT V H Braunig 1/2 (2025-03, backlog), NEISO Merrimack 1/2 (2028-06),
 PJM Brandon Shores 1/2 + Wagner 3/4 (2029-05).
 
+**Over-subscription cap (`53a8f4d`).** The arm-1 probe detail showed both live
+completion cases are *over-subscribed* — the registry exit MW exceeds the plant's binned
+fleet MW (Merrimack 459.2 registry vs 108.0 binned; Brandon Shores 1370.2 vs 1273.0 —
+and Wagner (1554) has **no binned representation at all** in the PJM fleet, so its
+743.7 MW of registry rows act on nothing; the audit's "2,144 MW" of RMR registry rows
+reach the fleet as plant 602's 1,273 MW). Uncapped, the effective-year leg would have cut
+deeper than the annual-average (NEISO 2028: 108→0 instead of 108→54). The current/prior
+removal is now apportioned by `binned/raw` when `raw > binned`, reproducing the pre-fix
+effective-year factor exactly in every subscription regime; the uncapped completion leg
+floors the factor at 0 the following year, finishing the plant at `max(0, binned − mw)`.
+The first NEISO/ERCOT arm-2 probe pair was killed and re-run at `53a8f4d`; nothing from
+the uncapped build was registered.
+
 ## 4. Acceptance evidence
 
 ### 4.1 Arm 1 byte-identity (ledger-only change)
@@ -109,7 +124,9 @@ config → identical cache key (`ff63ca9a0a1d65c6`), isolated out-dirs:
 - The evolution ledgers differ exactly as intended: the new `confirmed_derates` rows +
   the `confirmed`/`announced` reason split; fleet totals unchanged.
 
-<!-- PJM-BYTE-IDENTITY -->
+PJM T1-F 2026–2030, same protocol: **all five years value-identical** (every parquet
+column element-wise equal, objective equal), `meta_diffs=['build_time','solve_time']`
+only, floor-retention JSONs byte-identical. Arm 1 is dispatch-inert on both probe ISOs.
 
 ### 4.2 I4 before/after — T1-F 2026–2030, NEISO + PJM (the two FC-1-on-I4-alone ISOs)
 
@@ -117,8 +134,15 @@ config → identical cache key (`ff63ca9a0a1d65c6`), isolated out-dirs:
 |---|---|---|---|
 | NEISO | before (`40ecb0a`) | **FAIL** | `2028:coal off by 54.0 MW` |
 | NEISO | arm 1 (`a47a949`) | **PASS** | `closes` — 2028 ledgers 3 Merrimack tranche derates (`COAL_North_p2364_{committed,econ,peak}`) summing 54.0 MW |
-| PJM | before (`40ecb0a`) | **FAIL** | `2029:coal off by 742.6 MW` — I4 is PJM's ONLY failing invariant (audit's "743 MW", Brandon Shores + Wagner month-5 derate branch; Rockport's 2,600 MW IS ledgered — full-drop path) |
+| PJM | before (`40ecb0a`) | **FAIL** | `2029:coal off by 742.6 MW` — I4 is PJM's ONLY failing invariant (audit's "743 MW", Brandon Shores month-5 derate branch; Rockport's 2,600 MW IS ledgered — full-drop path) |
+| PJM | arm 1 (`a47a949`) | **PASS** | `closes` — 2029 ledgers 3 Brandon Shores tranche derates (`COAL_PJM_SWMAAC_p602_{committed,econ,peak}`: 132.2 + 595.5 + 14.9 = 742.6 MW) beside the 4 Rockport `confirmed` full-drop rows (2,600.0 MW) |
 <!-- PJM-I4-ROWS -->
+
+The PJM decomposition pins the audit's number: plant 602's binned fleet MW is 1,273.0
+(vs 1,370.2 registry — over-subscribed), so the month-5 annual-average leg removes
+(7/12) × 1,273.0 = 742.6 MW; Wagner's rows have no binned fleet counterpart and act on
+nothing. **Arm-1 acceptance met on both target ISOs: I4 FAIL→PASS with dispatch
+value-identical, no other invariant moved.**
 
 NEISO ledger trace (identical dispatch both legs): coal 108.0 → 108.0 → **108.0→54.0
 (2028)** → 54.0 → 54.0; before-leg `retirements=[]` with no `confirmed_derates` key —
