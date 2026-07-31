@@ -56,7 +56,15 @@ target-version = "py311"
 # scripts/probes/ + scripts/archive/ are the per-run probe/retired-driver
 # history, exempt from all boilerplate retrofits). Linting them would force
 # edits ruff's own policy forbids, so they are out of the lint/format scope.
-extend-exclude = ["scripts/archive", "scripts/probes"]
+# `results/` is the on-disk run-BUNDLE tree (parquet, ledgers, run_config.json),
+# not source. Sessions occasionally commit a per-run scratch driver inside a
+# bundle (e.g. results/calibration/_ercot144_scratch/verify_armed_capture.py),
+# and ruff was linting those as if they were library code — which is how the
+# `lint` CI job went red on main for every PR that touches src/ (repaired in
+# passing by FFR-1D 2026-07-31; the E402s are in a committed scratch file, not
+# in any module). Same rationale as the probe/archive exemptions above: it is
+# the calibration record, not code under maintenance.
+extend-exclude = ["scripts/archive", "scripts/probes", "results"]
 
 [tool.ruff.lint]
 # Pin ruff's historical default ruleset (pyflakes F + pycodestyle E4/E7/E9) so
