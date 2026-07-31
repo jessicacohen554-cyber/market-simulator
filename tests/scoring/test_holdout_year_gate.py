@@ -24,11 +24,13 @@ _RCF = importlib.util.module_from_spec(_SPEC)
 _SPEC.loader.exec_module(_RCF)
 
 
-def _repo_with_marker(tmp_path: Path, complete: dict | None = None) -> Path:
+def _repo_with_marker(
+    tmp_path: Path, complete: dict | None = None, final: dict | None = None
+) -> Path:
     marker_dir = tmp_path / "frontend" / "data" / "backcast"
     marker_dir.mkdir(parents=True)
     (marker_dir / "calibration-complete.json").write_text(
-        json.dumps({"complete": complete or {}})
+        json.dumps({"complete": complete or {}, "final": final or {}})
     )
     return tmp_path
 
@@ -46,9 +48,12 @@ class TestHoldoutYearGate:
             _RCF.enforce_holdout_year_gate([2022], "ERCOT", False, root)
 
     def test_holdout_year_with_flag_but_no_marker_hard_fails(self, tmp_path):
-        """--holdout-authorized alone is not enough without the ISO marker."""
+        """--holdout-authorized alone is not enough without the ISO marker.
+
+        2026 is LOCKED-tier, so the unmet block named is ``final``.
+        """
         root = _repo_with_marker(tmp_path)
-        with pytest.raises(SystemExit, match="calibration-complete marker"):
+        with pytest.raises(SystemExit, match=r"locked_test-tier.*'final' block"):
             _RCF.enforce_holdout_year_gate([2026], "ERCOT", True, root)
 
     def test_marker_alone_without_flag_hard_fails(self, tmp_path):
@@ -65,12 +70,12 @@ class TestHoldoutYearGate:
     def test_marker_is_iso_scoped(self, tmp_path):
         """A different ISO's marker doesn't authorize this ISO's holdout."""
         root = _repo_with_marker(tmp_path, complete={"CAISO": {"declared": "x"}})
-        with pytest.raises(SystemExit, match="calibration-complete marker"):
+        with pytest.raises(SystemExit, match=r"ERCOT is not in the 'complete' block"):
             _RCF.enforce_holdout_year_gate([2022], "ERCOT", True, root)
 
     def test_missing_marker_file_treated_as_no_iso_complete(self, tmp_path):
         """No calibration-complete.json at all behaves like an empty marker map."""
-        with pytest.raises(SystemExit, match="calibration-complete marker"):
+        with pytest.raises(SystemExit, match=r"not in the 'complete' block"):
             _RCF.enforce_holdout_year_gate([2022], "ERCOT", True, tmp_path)
 
     def test_mixed_years_gate_on_the_out_of_window_subset(self, tmp_path):
@@ -85,3 +90,88 @@ class TestHoldoutYearGate:
         from scripts.legitimacy_diagnostics import D6_CALIBRATION_YEARS
 
         assert _RCF.HOLDOUT_CALIBRATION_YEARS == D6_CALIBRATION_YEARS
+
+
+# ---------------------------------------------------------------------------
+# Two-tier markers (CLAUDE.md rule 22, owner decision 2026-07-31)
+#
+# Before the split, ONE `complete` entry authorized every out-of-training year:
+# the iterable 2022 validation ladder AND the touch-once 2019 / H1-2026 locked
+# test. Rule 22 said so itself ("the CI gate is tier-agnostic"). That made the
+# least reversible spend in the policy reachable on the cheapest declaration.
+# These tests pin the separation at the gate that actually blocks a solve.
+# ---------------------------------------------------------------------------
+
+
+class TestHoldoutMarkerTiers:
+    VAL_ONLY = {"NYISO": {"declared": "2026-07-31"}}
+
+    def test_complete_authorizes_validation_but_not_locked_test(self, tmp_path):
+        """The whole point: `complete` must NOT buy 2019 / H1-2026."""
+        root = _repo_with_marker(tmp_path, complete=self.VAL_ONLY)
+        # Validation tier — authorized.
+        _RCF.enforce_holdout_year_gate([2022], "NYISO", True, root)
+        # Locked tier — blocked, on the SAME marker that just authorized 2022.
+        for locked_year in (2019, 2026):
+            with pytest.raises(SystemExit, match=r"locked_test-tier.*'final' block"):
+                _RCF.enforce_holdout_year_gate([locked_year], "NYISO", True, root)
+
+    def test_final_authorizes_the_locked_test(self, tmp_path):
+        root = _repo_with_marker(
+            tmp_path, complete=self.VAL_ONLY, final={"NYISO": {"declared": "x"}}
+        )
+        _RCF.enforce_holdout_year_gate([2019], "NYISO", True, root)
+        _RCF.enforce_holdout_year_gate([2026], "NYISO", True, root)
+
+    def test_final_alone_does_not_authorize_validation(self, tmp_path):
+        """The blocks are independent, not nested — `final` is not a superset."""
+        root = _repo_with_marker(tmp_path, final={"NYISO": {"declared": "x"}})
+        with pytest.raises(SystemExit, match=r"not in the 'complete' block"):
+            _RCF.enforce_holdout_year_gate([2022], "NYISO", True, root)
+
+    def test_mixed_tier_years_need_both_markers(self, tmp_path):
+        root = _repo_with_marker(tmp_path, complete=self.VAL_ONLY)
+        with pytest.raises(SystemExit, match=r"\[2019\] are locked_test-tier"):
+            _RCF.enforce_holdout_year_gate([2022, 2019], "NYISO", True, root)
+
+    def test_absent_final_block_fails_closed(self, tmp_path):
+        """A marker file with no `final` key at all authorizes no locked test."""
+        marker_dir = tmp_path / "frontend" / "data" / "backcast"
+        marker_dir.mkdir(parents=True)
+        (marker_dir / "calibration-complete.json").write_text(
+            json.dumps({"complete": self.VAL_ONLY})  # no `final` key
+        )
+        with pytest.raises(SystemExit, match=r"'final' block"):
+            _RCF.enforce_holdout_year_gate([2019], "NYISO", True, tmp_path)
+
+    def test_unenumerated_year_falls_to_the_strictest_tier(self, tmp_path):
+        """Fail closed: an unanticipated year must not be spendable on `complete`."""
+        from scripts.lib import holdout_policy
+
+        assert holdout_policy.tier_for_year(2027) == holdout_policy.TIER_LOCKED
+        assert holdout_policy.tier_for_year(2015) == holdout_policy.TIER_LOCKED
+        root = _repo_with_marker(tmp_path, complete=self.VAL_ONLY)
+        with pytest.raises(SystemExit, match=r"'final' block"):
+            _RCF.enforce_holdout_year_gate([2027], "NYISO", True, root)
+
+    def test_rule22_tier_membership_matches_the_rule_text(self):
+        """2022+ladder = validation; 2019 and H1-2026 = locked test."""
+        from scripts.lib import holdout_policy as hp
+
+        assert hp.LOCKED_TEST_YEARS == frozenset({2019, 2026})
+        assert {2018, 2020, 2021, 2022} <= hp.VALIDATION_YEARS
+        assert not (hp.VALIDATION_YEARS & hp.LOCKED_TEST_YEARS)
+        assert not (hp.VALIDATION_YEARS & hp.CALIBRATION_YEARS)
+        assert not (hp.LOCKED_TEST_YEARS & hp.CALIBRATION_YEARS)
+
+    def test_freeze_still_outranks_both_markers(self, tmp_path):
+        """A freeze suspends every tier's authorization, marker or not."""
+        root = _repo_with_marker(
+            tmp_path, complete=self.VAL_ONLY, final={"NYISO": {"declared": "x"}}
+        )
+        (root / "frontend/data/backcast/holdout-freeze.json").write_text(
+            json.dumps({"active": True, "declared": "2026-07-25", "by": "owner"})
+        )
+        for year in (2022, 2019):
+            with pytest.raises(SystemExit, match="ACTIVE HOLDOUT SPEND FREEZE"):
+                _RCF.enforce_holdout_year_gate([year], "NYISO", True, root)

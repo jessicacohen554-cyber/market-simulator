@@ -135,6 +135,32 @@
  *   Re-opens ONLY behind a Capital_Hudson -> Zone-F/Zone-G split, which is a
  *   topology change needing its own owner charter (ERCOT West/Panhandle class,
  *   CLOSED) — never as a mechanism-flag lever.
+ * NYISO 2026-07-31 (nyiso-104b): FRONTIER DECLARED, determination NOT-YET ->
+ *   CALIBRATED-WITH-CAVEATS by OWNER decision, on the condition that the scarcity-tail
+ *   options be exhausted — VERIFIED against the record, not assumed. C3c was the SOLE
+ *   FAIL; it is now ONE ledgered caveat (budget 3) via the keeper's attestation
+ *   exceptions block. KEEPER UNCHANGED (2026-07-30-nyiso-100-silretire), NO SOLVE.
+ *   The caveat does NOT claim the benchmark is wrong — model 3/0/7 h vs actual
+ *   10/12/42 h >$300 is a real miss — it records an EXHAUSTED queue on a diagnosed
+ *   structural limit of the five-zone representation, in MISO's honest price_tail
+ *   shape ("MODEL MISS (structural ... every admissible mechanism tried on record")
+ *   rather than a borrowed measured-input excuse. The one nominally-open item,
+ *   nyiso_iroquois_winter_spread, is blocked on a JOINT summer lever and summer is
+ *   exactly what is exhausted (nyiso-92: the RT tail is summer — 2025 Jun 23-25 alone
+ *   = 18 of 42 h; the Jan-2024 storm produced ZERO >$300 h). Rule 1 [R-STRUCT] is why
+ *   this is a ledger entry and not a mechanism. RE-OPEN: the Capital_Hudson ->
+ *   Zone-F/Zone-G topology split, its own owner charter, never a flag lever.
+ *   SAME SESSION, CROSS-ISO GOVERNANCE: the rule-22 holdout marker SPLITS IN TWO —
+ *   'complete' now authorizes ONLY the iterable validation ladder (2022 + 2018/2020/
+ *   2021) and a new 'final' block authorizes the touch-once locked test (2019,
+ *   H1-2026). Previously ONE marker bought both, so declaring an ISO complete
+ *   silently armed its locked test (rule 22 said so itself: "the CI gate is
+ *   tier-agnostic"). NEISO and NYISO hold 'complete'; 'final' is EMPTY — NEISO's
+ *   locked test is already SPENT (2026-07-07, frozen neiso-53) and must never be
+ *   re-granted. All three gates read scripts/lib/holdout_policy.py and FAIL CLOSED
+ *   (an unenumerated year maps to locked). The ACTIVE holdout spend freeze still
+ *   outranks both blocks, so nothing is spendable until the owner lifts it.
+ *   docs/FINDING-nyiso104-c3c-frontier-and-tiered-holdout-2026-07-31.md.
  * NYISO column re-checked 2026-07-30 by nyiso-104 (registry-gap closure, no solve,
  *   KEEPER UNCHANGED). New row nyiso_central_east_measured_ttc -> K backcast /
  *   G forecast: the measured Central-East DAM TTC tables have shaped every NYISO

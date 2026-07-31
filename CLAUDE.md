@@ -120,8 +120,8 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     - **Train / calibration = 2023–2025.** The ONLY years tuned against. Every keeper is built and
       scored here, all three in one bundle (rule 16).
     - **Validation holdout = 2022**, extensible backward as a staged ladder (2022 → 2020–2022 →
-      earlier as data lands and is authorized). **Iterable.** After an ISO's calibration-complete
-      marker exists, 2022 may be solved and scored, and a miss MAY send you back to re-tune
+      earlier as data lands and is authorized). **Iterable.** After an ISO's `complete` marker
+      exists, 2022 may be solved and scored, and a miss MAY send you back to re-tune
       2023–2025 and re-solve — that is its purpose (model selection). Because it is iterated
       against, a validation number is selection evidence, **NOT** a certified out-of-sample skill
       number, and must never be quoted as one.
@@ -131,6 +131,14 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       replacement. This is the honest out-of-sample number. (2019 is the clean-regime test;
       H1-2026 is the forward-edge test. Pre-2020 years exercise a structurally different fleet —
       grade against regime drift, not raw MAE.)
+    - **The two tiers carry SEPARATE markers** (owner decision 2026-07-31), because one
+      declaration must never spend both: `calibration-complete.json`'s **`complete`** block
+      authorizes the validation ladder and **`final`** authorizes the locked test. An ISO in
+      `complete` but not `final` may spend 2022 and **nothing else**. Absence from `final` is NOT
+      self-explaining — read the ISO's `locked_test` note, which distinguishes "never authorized"
+      from "authorized once, **SPENT**, never re-grantable" (NEISO is the latter). Tier
+      membership and the block mapping live in `scripts/lib/holdout_policy.py`; the
+      **holdout spend freeze** (`holdout-freeze.json`) outranks both blocks and is checked first.
     - **Crossover window = 2024–H1 2026** is scored in BOTH modes — backcast (measured overlays)
       and forecast (forward drivers) — against the same actuals, to measure the backcast→forecast
       input gap. Diagnostic, not a locked test; its forecast side uses no measured actuals so it is
@@ -144,21 +152,29 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       per-window — now including 2018–2021, itemized in `docs/out-of-sample-results-2026-07.md` §1)
       requires its own authorization.
     - **No solve, no scoring, no registration** may touch ANY out-of-training year (2022, 2019,
-      ≤2021, H1-2026) — no backcast, no diagnostic probe, no "throwaway" solve — until the ISO's
-      calibration-complete marker exists in `frontend/data/backcast/calibration-complete.json`.
+      ≤2021, H1-2026) — no backcast, no diagnostic probe, no "throwaway" solve — until the ISO
+      holds **that year's tier marker** in `frontend/data/backcast/calibration-complete.json`
+      (`complete` for validation, `final` for the locked test).
     - **2026 forecast runs are permitted:** forecast-mode runs (`ScenarioConfig.mode="forecast"`)
       span 2026+ and use no measured H1-2026 actuals (overlays are backcast-only by construction) —
       NOT restricted. Only a *backcast* of H1-2026 on real data, or scoring output against measured
       H1-2026 actuals, is quarantined.
     - Structural mechanism changes are still scored leave-one-year-out within 2023–2025 before
       promotion. In-sample gain with held-out degradation is overfitting, not skill.
-    Enforcement: CI (`.github/workflows/ci.yml`, `quarantine-gates` job) fails any PR whose
-    registered bundle contains a solve year outside 2023–2025 before that ISO's marker exists, and
+    Enforcement (**TIER-AWARE since 2026-07-31**): CI (`.github/workflows/ci.yml`,
+    `quarantine-gates` job) fails any PR whose registered bundle contains a solve year outside
+    2023–2025 before that ISO holds **the marker for that year's tier**, and
     `scripts/run_calibration_full.py` hard-fails any `--year` outside {2023, 2024, 2025} unless
-    `--holdout-authorized` is passed AND the target ISO carries a calibration-complete marker. The
-    CI gate is tier-agnostic — it enforces the marker, not the validation/locked distinction, which
-    is a discipline clause above (a locked-test year re-solved after its one-shot is a governance
-    breach, not a CI failure).
+    `--holdout-authorized` is passed AND the target ISO carries that tier's marker — `complete`
+    for a validation year, `final` for a locked-test year. A `--year` spanning both tiers needs
+    both. All three gates (the CLI year gate, `legitimacy_diagnostics.run_d6_quarantine`,
+    `audit_keepers`) read the tier map from `scripts/lib/holdout_policy.py`, which **fails closed**:
+    a year in none of the enumerated sets is treated as locked-test, the strictest tier. *(This
+    supersedes the former "the CI gate is tier-agnostic … a locked-test year re-solved after its
+    one-shot is a governance breach, not a CI failure" clause: spending the touch-once tier now
+    requires its own declaration, so the distinction is enforced, not merely disciplined. Re-solving
+    an ALREADY-SPENT locked test remains a governance breach rather than a CI failure — CI checks
+    the grant, not the spend history, which is what the marker's `locked_test` note records.)*
 1. `[R-FROZEN-DERIVE]` **Derive scripts are frozen against residuals.** Measured-behaviour parameters (min-stable
     loads, drag hinges, sigmoid anchors, committed shares) re-derive only when their *source data*
     updates — never because a residual moved. Re-derivation commits must cite the data change.

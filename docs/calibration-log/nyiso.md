@@ -3046,3 +3046,76 @@ would import one historical year's outage schedule into every forecast year.
 
 Evidence: `docs/FINDING-nyiso104-central-east-ttc-classification-2026-07-30.md`,
 probe `scripts/probes/nyiso104_central_east_ttc_classification.py`.
+
+---
+
+## nyiso-104b — FRONTIER + CALIBRATED-WITH-CAVEATS, and the holdout marker splits in two (2026-07-31)
+
+**No LP. Keeper `2026-07-30-nyiso-100-silretire` UNCHANGED — scorer/governance-side only.**
+Owner decision, conditional on exhaustion; the condition was **verified against the record**.
+
+### 1. Determination: NOT-YET -> CALIBRATED-WITH-CAVEATS
+
+C3c (`price_tail`) was the **sole** FAIL — C1/C2/C3a/C3b/C4/C6/C7/C8 all already PASS. It is now
+one ledgered caveat (budget 3, 0 protective, 0 FAILs), added through
+`scripts/gen_nyiso100_attestation.py` (the **generator** is the source of truth).
+
+The caveat does **not** claim the benchmark is wrong. The miss is real: **model 3/0/7 h vs actual
+10/12/42 h** above $300 (0.30x / 0.00x / 0.17x). It records an exhausted queue on a diagnosed
+structural limit, in MISO's honest `price_tail` shape — `MODEL MISS (structural — representation-
+frontier caveat, every admissible mechanism tried on record per rule 1)` — not a borrowed
+measured-input excuse.
+
+**Exhaustion, checked not assumed:** J/K-commitment + reserve tiers closed (nyiso-83/84); DA
+virtual depth and TSA derate refused ex-ante on identification (nyiso-94/95); short outage windows
+inert (nyiso-93); CT start-frequency closed and `tranche_startup_amortization` tested (nyiso-96);
+the last surviving candidate — SCUC load-pocket + BPCG — closed ex-ante on **content**, not merely
+access (nyiso-97); import shape refused as an attributed C3c symptom (nyiso-99); G-J locality
+refused for want of a representable boundary (nyiso-101). The one nominally-open item,
+`nyiso_iroquois_winter_spread`, conserves the annual spread and is blocked on a **joint summer
+lever** — and summer is exactly what is exhausted (nyiso-92 dated the RT tail as summer: 2025
+Jun 23-25 alone = 18 of 42 h; the Jan-2024 storm produced **zero** >$300 h). Rule 1 `[R-STRUCT]`
+is why this is a ledger entry: every remaining way to lift the tail is fitted to the tail residual.
+Re-open condition is the `Capital_Hudson -> Zone-F/Zone-G` topology split — its own owner charter.
+
+### 2. The rule-22 holdout marker splits into two tiers
+
+The load-bearing change. Previously ONE `complete` entry authorized **every** out-of-training year,
+so declaring an ISO complete silently armed its **touch-once** locked test. Rule 22 admitted it:
+*"the CI gate is tier-agnostic."*
+
+| tier | years | block | semantics |
+|---|---|---|---|
+| validation | 2018, 2020, 2021, 2022 | `complete` | iterable, model-selection evidence |
+| locked test | 2019, 2026 (H1) | **`final`** | touch-once, ever |
+
+`scripts/lib/holdout_policy.py` owns the tier map; all three gates read it and **fail closed** (an
+unenumerated year maps to locked). NEISO and NYISO hold `complete`; **`final` is empty** — NEISO's
+locked test is already **SPENT** (2026-07-07, frozen neiso-53) and must never be re-granted, and
+both files say so, because a blank must not read as an invitation.
+
+NYISO's is a **RE-declaration**: its 2026-07-13 marker was withdrawn 2026-07-19 by the
+phantom-outage re-audit, whose own prescribed path was "re-calibrate ... then re-declare". The
+keeper here descends entirely from that post-correction re-calibration (nyiso-96 -> 98 -> 99 ->
+100). The withdrawn record is annotated `superseded`, not deleted.
+
+### 3. Nothing is spendable today
+
+The **holdout spend freeze** (declared 2026-07-25, held 2026-07-26) is **ACTIVE** and outranks
+every marker — verified by exercising the gate against the real repo, where the freeze fires ahead
+of the marker check. NYISO's 2022 touchpoint opens only when the **owner** lifts it.
+
+### 4. Verification
+
+- Determination: `CALIBRATED-WITH-CAVEATS`, basis "1 ledgered measured-input caveat(s): C3c".
+- Gate matrix: `[2019]`/`[2026]` now **BLOCKED** for NEISO and NYISO (allowed pre-split);
+  mixed-tier blocked on the locked leg; `final`-only does not buy validation; `[2027]` blocked.
+- D-6 `--keepers`: PASS, NEISO's two 2022 bundles correctly tiered validation/`complete`.
+- `audit_keepers --check`: PASS 0/0 — after fixing the E5 drift it caught (the sidecar
+  `definition` still asserted NOT-YET; rewritten).
+- Tests: 96 passed across `test_holdout_year_gate` / `test_audit_keepers` /
+  `test_legitimacy_diagnostics` — 8 new tier tests; 3 existing updated to assert the new
+  tier-specific message rather than the superseded one.
+- `check_mechanism_matrix.py --base origin/main`: integrity OK; matrix header re-stamped.
+
+Evidence: `docs/FINDING-nyiso104-c3c-frontier-and-tiered-holdout-2026-07-31.md`.
