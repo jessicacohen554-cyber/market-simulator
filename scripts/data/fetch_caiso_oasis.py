@@ -4,8 +4,18 @@
 2026-06-22: PRC_LMP/PRC_INTVL_LMP SingleZip queries return data; the bare
 endpoint 403s only because it needs query params). The practical limits are
 OASIS's strict rate limiting (HTTP 429/403 under bursts — keep ``--sleep`` high
-and back off) and its ~39-month retention: as of mid-2026 DAM/RTM before
-~2023-03-10 is aged out (ERR 1000), so 2023 is only fetchable Mar-Dec. Run:
+and back off) and its ~39-month retention.
+
+**The LMP retention boundary moves forward with the calendar** — it is not a
+fixed date, and it aged past the whole 2018-2022 holdout window during 2026.
+Binary-searched 2026-07-31: the earliest DAM trade date PRC_LMP still serves
+is **2023-04-19** (every earlier date returns ERR_CODE 1000 "No data returned",
+2018/2020/2022 included; PRC_INTVL_LMP RTM matches). A back-year LMP intake is
+therefore NOT a fetch task at all — the API cannot serve it, and the only route
+to aged-out history is a hand-downloaded GRP bulk zip
+(``fold_caiso_oasis_grp_zips.py``). ``AS_REQ`` carries NO such limit: 2018,
+2020, 2022 and 2026 all return full data (re-verified 2026-07-31), so the
+ancillary-requirement history is fetchable for every year. Run:
 
     python scripts/data/fetch_caiso_oasis.py                 # everything, 2023-2025
     python scripts/data/fetch_caiso_oasis.py --datasets dam load
@@ -259,11 +269,16 @@ def fetch_dataset(
     window: int,
     sleep_s: float,
     deadline: float | None = None,
+    end_date: dt.date | None = None,
 ) -> None:
     """Fetch one dataset for the given years with adaptive window sizing.
 
     Stops cleanly (returns) when ``deadline`` (a ``time.monotonic`` value)
     passes, so a CI job can leave time for post-processing and commit.
+
+    ``end_date`` is an exclusive upper bound on the trade dates fetched, so a
+    partial year can be pinned to an exact window (e.g. ``2026-07-01`` for the
+    H1-2026 holdout edge) instead of running to today's date.
     """
     spec = DATASETS[key]
     out_dir: Path = spec["out_dir"]
@@ -273,6 +288,8 @@ def fetch_dataset(
     end = dt.date(max(years) + 1, 1, 1)
     today = dt.date.today()
     end = min(end, today)  # OASIS has no future actuals
+    if end_date is not None:
+        end = min(end, end_date)
 
     for node in nodes:
         done_days = _aggregate_covered_days(out_dir, key, node)
@@ -356,6 +373,13 @@ def main() -> None:
         help="stop fetching cleanly after this many minutes "
         "(for CI jobs with a hard timeout)",
     )
+    parser.add_argument(
+        "--end-date",
+        type=dt.date.fromisoformat,
+        default=None,
+        help="exclusive upper bound on trade dates (YYYY-MM-DD); pins a "
+        "partial year to an exact window, e.g. 2026-07-01 for H1-2026",
+    )
     args = parser.parse_args()
 
     deadline = (
@@ -365,7 +389,7 @@ def main() -> None:
     )
     for key in args.datasets:
         print(f"=== {key} ({DATASETS[key]['params']['queryname']}) ===")
-        fetch_dataset(key, args.years, args.window, args.sleep, deadline)
+        fetch_dataset(key, args.years, args.window, args.sleep, deadline, args.end_date)
     print("done. Commit the new files under data/raw/ when finished.")
 
 

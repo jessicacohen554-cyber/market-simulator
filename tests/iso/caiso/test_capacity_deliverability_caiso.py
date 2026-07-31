@@ -59,8 +59,16 @@ class TestCurateCapacityDeliverabilityCaiso(unittest.TestCase):
         # 138 original rows + 15 peak_load rows (LA Basin / San Diego-IV /
         # Greater Bay local areas + SP26 / NP26 zonal x 2023-2025, the
         # local-capacity constraint inputs; Greater Bay + NP26 landed with the
-        # caiso-79 STEP-0 intake, e017d877 2026-07-12).
-        self.assertEqual(len(df), 153)
+        # caiso-79 STEP-0 intake, e017d877 2026-07-12) = the 153 in-sample
+        # (2023-2025) rows, + 233 rule-22 holdout rows for delivery years
+        # 2018-2022 (2026-07-31 CAISO out-of-training intake: 174 MIC branch
+        # groups via curate_caiso_mic.py, 50 LCR local-area requirements +
+        # 6 zonal peak loads + 3 PRM rows via curate_caiso_lcr.py; the 2018 and
+        # 2019 studies carry no §3.2 zonal section, so those two years have no
+        # zone/rto rows).
+        self.assertEqual(len(df), 386)
+        year = pd.to_numeric(df["delivery_year"])
+        self.assertEqual(int(year.between(2023, 2025).sum()), 153)
 
     def test_mixed_area_type_survives(self) -> None:
         df = self._curate_caiso()
