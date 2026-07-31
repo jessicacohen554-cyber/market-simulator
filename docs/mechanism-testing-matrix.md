@@ -1623,9 +1623,9 @@ capability envelope/floor pair is now the keeper — cells K above):
     truncation — the `hydro_level_923_hy` trap, re-verified, still not quotable.
     `results/calibration/FINDING-nyiso107-hydro-input-truncation-2026-07-31.md`.
 
-### 5.6 NEISO — target: C3c (ledgered; FRONTIER DECLARED — charter required first); ~~item 6~~ CLOSED and ~~item 7~~ EXECUTED-with-keeper at neiso-71
+### 5.6 NEISO — target: C3c (ledgered; FRONTIER DECLARED — charter required first); ~~item 6~~ CLOSED and ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72
 
-Keeper `2026-07-31-neiso-71-nucavail` (neiso-71).
+Keeper `2026-07-31-neiso-72-hy-window` (neiso-72).
 
 Frontier discipline: every named admissible mechanism in the winter/summer
 scarcity family is already on record. Anything below needs its **own new
@@ -1644,10 +1644,21 @@ charter with a new measured identification** before a solve:
    collapsing 0.396 / 0.274 / 0.068 → 0.201 / 0.074 / 0.027 — the class clears
    economically instead of leaning on its commitment floor. Evidence:
    `results/calibration/FINDING-neiso70-heat-rate-provenance-2026-07-31.md`.
-4. **`hydro_budget_nameplate_aware`** + `NG: PS` pin audit — cheap, flagged.
-   NEISO is the **TIME SPLIT** case in the §5.7 table (the only ISO filing an
-   `NG: PS` column, and only from Nov 2024), so it needs a per-window
-   treatment, not a switch. Its own lane.
+4. ~~**`hydro_budget_nameplate_aware`** + `NG: PS` pin audit~~ — **EXECUTED at
+   neiso-72 (2026-07-31) → `hydro_level_923_hy` NEISO `K`, PROMOTED keeper
+   `2026-07-31-neiso-72-hy-window`.** The per-window treatment landed exactly
+   as flagged: `EIA930_PS_SPLIT_COMPLETE_FROM` (seam measured to the hour,
+   2024-11-07 00:00) refuses the `NG: WAT` pin for pre-split 2023/2024 (level
+   → the units' own 923 `HY` filings) and keeps it for wholly-split 2025
+   (bit-identical to control). Every criterion IDENTICAL to the neiso-71
+   keeper; owner design sign-off (D over flat/splice/subtract-estimated-PS) +
+   promotion authorization in-session. Named successors: storage-side PS
+   cycling depth (measured 1.932 vs endogenous 0.497 TWh, 2025), bench hydro
+   basis 2024 (the C1 actual is the folded 930 series), sizing the 930
+   conventional under-count. Evidence:
+   `results/calibration/FINDING-neiso72-hydro-ps-window-2026-07-31.md`.
+   (`hydro_budget_nameplate_aware` itself stays default-off at NEISO — never
+   armed, nothing to adjudicate.)
 5. **STEP 3 seam disposition** (owner decision pending): carry the
    layup-vs-outage seam explicitly (recommendation (b) on record).
 6. ~~**`measured_chp_heat_rates` companion floor (the neiso-71 successor).**~~
@@ -1713,16 +1724,23 @@ charter with a new measured identification** before a solve:
   | PJM | no | **1,249–1,612** | 0 | **+52.9 % … +79.6 %** | **DEFECT, largest — FIXED (pjm-143, keeper)** |
   | MISO | no | 332–826 | 0 | +13.5 % / +18.5 % | **DEFECT — FIXED (miso-109)** |
   | NYISO | no | 0–33 (≤0.007 TWh) | 0 | −4 % … −6 % | clean; the bias is the opposite sign |
-  | NEISO | **yes** (from Nov 2024) | 63–276, **0 in 2025** | 0–1 | +2.7 % … +10.1 % | **TIME SPLIT** — pre-Nov-2024 vintages only |
+  | NEISO | **yes** (from Nov 2024) | 63–276, **0 in 2025** | 0–1 | +2.7 % … +10.1 % | **TIME SPLIT — FIXED (neiso-72, keeper, per-window)** |
 
-  Open follow-ons: **PJM** (a live defect on a live keeper — the fix is the
-  same one-line registry entry plus its own A/B and re-gate) and **NEISO**
-  (needs a per-window treatment, not a switch, since its own filing changes
-  mid-series). Standing hazard for every listed ISO: the hydro dispatch
+  **THE AUDIT ROW IS CLOSED AT ALL SIX ISOs** (neiso-72, 2026-07-31). NEISO —
+  the last open follow-on — landed as the flagged per-window treatment:
+  `constants.EIA930_PS_SPLIT_COMPLETE_FROM` +
+  `data/hydro.py::eia930_wat_level_folded` (seam measured to the hour,
+  2024-11-07 00:00, `scripts/probes/_neiso72_ps_window_audit.py`; the probe
+  adds the within-month seam test and its five-year no-seam control to the
+  three-signature screen). NEISO detail worth carrying: its small +2.7 %/+10.1 %
+  level gap hid a ~1.9 TWh/yr fold cancelling against a ~1.2–1.6 TWh/yr 930
+  telemetry UNDER-count of the 923 census — screen on the signatures, never on
+  the net gap. Standing hazard for every listed ISO: the hydro dispatch
   *envelope* and *min-flow floor* are also built from hourly `NG: WAT` and
   inherit the same contamination — both are default-off and off in the affected
   keepers today, so nothing is stacked, but arming either needs its own source
-  fix first (EIA-923 is monthly and offers no hourly substitute).
+  fix first (EIA-923 is monthly and offers no hourly substitute; for NEISO the
+  post-split window is the only clean hourly source and holds one water year).
 - `thermal_tranches_<ISO>.csv` provenance re-derivation (blocked at HEAD,
   miso-95).
 - Registry hygiene fixes from §4.6 (dangling `--ramp-limits`, inert-default

@@ -757,6 +757,11 @@ class ScenarioConfig:
     # folds in pumped-storage discharge: there the backcast pin is REFUSED
     # (miso-109) and the forecast climatology is built from EIA-923 HY instead
     # (miso-110), so both levels stay on the same population as the LP's units.
+    # The same refusal applies PER-YEAR for the time-split BAs in
+    # constants.EIA930_PS_SPLIT_COMPLETE_FROM (NEISO: NG:PS filed only from
+    # 2024-11-07, so pre-2025 backcast pins are refused and the forecast
+    # climatology is 923-based while its window holds any folded year —
+    # neiso-72, data.hydro.eia930_wat_level_folded).
     # This lever is unchanged by that — it still scales whichever climatology
     # applies.
     hydro_dispatch_envelope: bool = False  # GATED default off (caiso-72
