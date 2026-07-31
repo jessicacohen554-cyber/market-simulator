@@ -162,6 +162,21 @@ NRC_TO_EIA: dict[str, dict[str, tuple[int, int]]] = {
         "Diablo Canyon 1": (6099, 1),
         "Diablo Canyon 2": (6099, 2),
     },
+    # NEISO (neiso-71, matrix §5.6 item 7). The whole ISO fleet is Millstone
+    # 2+3 (EIA plant 566, 863.4 + 1,245.0 MW, zone Connecticut) and Seabrook 1
+    # (EIA 6115, 1,247.0 MW, zone North) = 3,355.4 MW — the same three units
+    # NUCLEAR_MONTHLY_CF_BY_YEAR["NEISO"] anchors. All three report 365/366
+    # days in 2023-2025. Pilgrim (retired 2019), Vermont Yankee (2014), Maine
+    # Yankee and Connecticut Yankee carry neither NRC rows nor a model fleet
+    # unit. The per-reactor spread the fleet smear cannot express is large
+    # here: in 2025 Millstone 2 never fell below 94 % and Seabrook below 47 %
+    # while Millstone 3 took a full refuel, yet the Apr/May anchor (0.75/0.77)
+    # derates all three alike.
+    "NEISO": {
+        "Millstone 2": (566, 2),
+        "Millstone 3": (566, 3),
+        "Seabrook 1": (6115, 1),
+    },
 }
 
 
