@@ -74,12 +74,20 @@ def audit(iso: str) -> pd.DataFrame:
                 continue
             df = pd.read_parquet(
                 path,
-                columns=["facilityId", "facilityName", "unitId", "unitType",
-                         "grossLoad", "heatInput"],
+                columns=[
+                    "facilityId",
+                    "facilityName",
+                    "unitId",
+                    "unitType",
+                    "grossLoad",
+                    "heatInput",
+                ],
             )
             df["facilityId"] = pd.to_numeric(df["facilityId"], errors="coerce")
             df = df[df["facilityId"].isin(codes)]
-            df = df[df["unitType"].astype(str).str.strip().str.casefold() == CT_UNIT_TYPE]
+            df = df[
+                df["unitType"].astype(str).str.strip().str.casefold() == CT_UNIT_TYPE
+            ]
             if not df.empty:
                 frames.append(df)
     if not frames:
@@ -96,20 +104,23 @@ def audit(iso: str) -> pd.DataFrame:
         hr_h = (ld["heatInput"] / ld["grossLoad"]).to_numpy(float)
         bad = hr_h < HR_FLOOR
         keep = ld[~bad]
-        rows.append({
-            "plant_code": int(code),
-            "plant_name": str(g["facilityName"].iloc[0]),
-            "unit_id": str(unit),
-            "loaded_h": int(len(ld)),
-            "bad_h": int(bad.sum()),
-            "bad_pct": round(100.0 * bad.mean(), 2),
-            "gross_mwh": float(ld["grossLoad"].sum()),
-            "hr_as_is": float(ld["heatInput"].sum() / ld["grossLoad"].sum()),
-            "hr_screened": (
-                float(keep["heatInput"].sum() / keep["grossLoad"].sum())
-                if len(keep) else float("nan")
-            ),
-        })
+        rows.append(
+            {
+                "plant_code": int(code),
+                "plant_name": str(g["facilityName"].iloc[0]),
+                "unit_id": str(unit),
+                "loaded_h": int(len(ld)),
+                "bad_h": int(bad.sum()),
+                "bad_pct": round(100.0 * bad.mean(), 2),
+                "gross_mwh": float(ld["grossLoad"].sum()),
+                "hr_as_is": float(ld["heatInput"].sum() / ld["grossLoad"].sum()),
+                "hr_screened": (
+                    float(keep["heatInput"].sum() / keep["grossLoad"].sum())
+                    if len(keep)
+                    else float("nan")
+                ),
+            }
+        )
     d = pd.DataFrame(rows)
     if d.empty:
         return d
@@ -133,20 +144,40 @@ def main() -> int:
         committed = art_path.exists()
         gross = d["gross_mwh"].sum()
         print(f"{iso} — {len(d)} qualifying CT units, committed artifact: {committed}")
-        print(f"  units with ANY sub-{HR_FLOOR} loaded hour: "
-              f"{(d['bad_h'] > 0).sum()} / {len(d)}")
-        print(f"  loaded hours below the floor: {int(d['bad_h'].sum()):,} / "
-              f"{int(d['loaded_h'].sum()):,} ({100 * d['bad_h'].sum() / d['loaded_h'].sum():.2f} %)")
-        print(f"  energy-weighted unit HR  as-is {np.average(d['hr_as_is'], weights=d['gross_mwh']):.4f}"
-              f"  screened {np.average(d['hr_screened'], weights=d['gross_mwh']):.4f}"
-              f"  (delta {np.average(d['delta'], weights=d['gross_mwh']):+.4f})")
+        print(
+            f"  units with ANY sub-{HR_FLOOR} loaded hour: "
+            f"{(d['bad_h'] > 0).sum()} / {len(d)}"
+        )
+        print(
+            f"  loaded hours below the floor: {int(d['bad_h'].sum()):,} / "
+            f"{int(d['loaded_h'].sum()):,} ({100 * d['bad_h'].sum() / d['loaded_h'].sum():.2f} %)"
+        )
+        print(
+            f"  energy-weighted unit HR  as-is {np.average(d['hr_as_is'], weights=d['gross_mwh']):.4f}"
+            f"  screened {np.average(d['hr_screened'], weights=d['gross_mwh']):.4f}"
+            f"  (delta {np.average(d['delta'], weights=d['gross_mwh']):+.4f})"
+        )
         moved = d[d["delta"].abs() > 0.25].sort_values("delta", ascending=False)
-        print(f"  units moving > 0.25 MMBtu/MWh under an hour-grain floor: {len(moved)}"
-              f"  ({100 * moved['gross_mwh'].sum() / gross:.2f} % of class CT energy)")
+        print(
+            f"  units moving > 0.25 MMBtu/MWh under an hour-grain floor: {len(moved)}"
+            f"  ({100 * moved['gross_mwh'].sum() / gross:.2f} % of class CT energy)"
+        )
         if len(moved):
-            print(moved[["plant_code", "plant_name", "unit_id", "loaded_h", "bad_h",
-                         "bad_pct", "hr_as_is", "hr_screened", "delta"]]
-                  .to_string(index=False))
+            print(
+                moved[
+                    [
+                        "plant_code",
+                        "plant_name",
+                        "unit_id",
+                        "loaded_h",
+                        "bad_h",
+                        "bad_pct",
+                        "hr_as_is",
+                        "hr_screened",
+                        "delta",
+                    ]
+                ].to_string(index=False)
+            )
     return 0
 
 
