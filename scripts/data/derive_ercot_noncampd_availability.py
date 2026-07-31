@@ -74,10 +74,10 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.paths import (  # noqa: E402
-    ERCOT_MIS_DIR,
     PROCESSED_DIR,
     RAW_DATA_DIR,
     REFERENCE_DIR,
+    ercot_dam_disclosure_files,
 )
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
@@ -86,7 +86,6 @@ from market_sim.data.fleet import load_fleet_from_csv  # noqa: E402
 
 EIA923_MONTHLY = PROCESSED_DIR / "eia923_monthly_generation.parquet"
 CROSSWALK_CSV = REFERENCE_DIR / "ercot_noncampd_dam_crosswalk.csv"
-DAM_DIR = ERCOT_MIS_DIR
 DEFAULT_OUT = RAW_DATA_DIR / "ercot-noncampd-availability.csv"
 
 _MONTH_COLS = [
@@ -151,9 +150,13 @@ def _blind_gas_plants(year: int) -> dict[int, tuple[str, str]]:
 def _load_disclosure_cc(year: int) -> pd.DataFrame:
     """Return CC 60-Day DAM disclosure rows delivered in ``year``.
 
-    Both ``<year>`` and ``<year+1>`` files are scanned (the 60-day publication
-    lag spills Nov-Dec deliveries into the next year's first file) and filtered
-    on the Delivery Date column.
+    Both ``<year>`` and ``<year+1>`` LABEL years are scanned (the 60-day
+    publication lag spills Nov-Dec deliveries into the next year's first file)
+    and filtered on the Delivery Date column.
+    :func:`paths.ercot_dam_disclosure_files` resolves both registered
+    disclosure directories — the MIS-fetcher lane (``data/raw/ercot``,
+    2023-2026) and the annual-archive lane (``data/raw/ercot-AS``, 2018-2022) —
+    so pre-2023 delivery years assemble with no per-file list here.
     """
     cols = [
         "Delivery Date",
@@ -165,11 +168,7 @@ def _load_disclosure_cc(year: int) -> pd.DataFrame:
     ]
     frames: list[pd.DataFrame] = []
     for y in (year, year + 1):
-        for p in sorted(
-            DAM_DIR.glob(
-                f"60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_{y}_*.parquet"
-            )
-        ):
+        for p in ercot_dam_disclosure_files("Gen_Resource_Data", y):
             d = pd.read_parquet(p, columns=cols)
             d = d[d["Resource Type"].isin(_DAM_CC_TYPES)]
             dt = pd.to_datetime(d["Delivery Date"])

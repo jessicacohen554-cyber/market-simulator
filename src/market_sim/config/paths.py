@@ -294,6 +294,55 @@ FRONTEND_BACKCAST_DIR: Path = DATA_ROOT / "frontend" / "data" / "backcast"
 # stale carbon-priced statmode inputs) lands as a new versioned file.
 STRUCTURAL_PRIOR_ARTIFACT_DIR: Path = ENSEMBLE_DIR / "structural-prior"
 
+# ---------------------------------------------------------------------------
+# ERCOT 60-Day DAM Disclosure extracts live in TWO raw directories under two
+# filename conventions, and every consumer needs both:
+#
+#   ERCOT_MIS_DIR   data/raw/ercot/60_DAY_DAM_DISCLOSURE_60d_DAM_<family>_<y>_*.parquet
+#                   the MIS-fetcher lane (2023-2026), written by
+#                   scripts/data/fetch_ercot_60day_gen_resource.py
+#   ERCOT_AS_DIR    data/raw/ercot-AS/60d_DAM_<family>_<y>_*.parquet
+#                   the annual-archive lane (2018-2022), landed by the AS
+#                   back-year intake
+#
+# Same ERCOT product, same consumed schema (Delivery Date / Hour Ending /
+# Resource Name / Resource Type / HSL / Resource Status / Settlement Point
+# Name are present in every file of both lanes); only the filename prefix and
+# the fragment split differ. Registered here rather than re-globbed per script
+# so "where does the 60-Day DAM disclosure live" has ONE answer that a new
+# directory extends for every consumer at once (CLAUDE.md directory map: every
+# path resolves through config/paths.py).
+ERCOT_DAM_DISCLOSURE_DIRS: tuple[Path, ...] = (ERCOT_MIS_DIR, ERCOT_AS_DIR)
+
+
+def ercot_dam_disclosure_files(
+    family: str = "Gen_Resource_Data", label_year: int | str = "*"
+) -> list[Path]:
+    """Return the committed 60-Day DAM Disclosure parquets for one family/label.
+
+    ``family`` is the ERCOT report family (``Gen_Resource_Data``,
+    ``ESR_Data``, ...); ``label_year`` the year in the FILENAME, which is the
+    ARCHIVE label, not the delivery year — ERCOT's 60-day publication lag makes
+    a label-``y`` archive span deliveries ``y-1``-11-02 .. ``y``-11-01. Callers
+    therefore scan label ``y`` AND ``y+1`` and filter on the Delivery Date
+    column; this function only resolves files, it never filters by date.
+
+    Both registered directories (:data:`ERCOT_DAM_DISCLOSURE_DIRS`) are
+    searched under both filename conventions via a leading-wildcard pattern, so
+    a file is matched by its family + label year alone — no per-file list, and
+    a new archive drop is picked up by existing in place.
+
+    Returned sorted by (filename, directory) so the read order is stable and
+    independent of which directory a fragment happens to sit in.
+    """
+    seen: dict[tuple[str, str], Path] = {}
+    for d in ERCOT_DAM_DISCLOSURE_DIRS:
+        if not d.is_dir():
+            continue
+        for p in d.glob(f"*60d_DAM_{family}_{label_year}_*.parquet"):
+            seen[(p.name, str(d))] = p
+    return [seen[k] for k in sorted(seen)]
+
 
 def clean_path(
     datatype: str,
