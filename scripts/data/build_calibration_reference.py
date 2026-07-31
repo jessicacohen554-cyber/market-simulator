@@ -102,11 +102,19 @@ CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
     # NYISO gained 2022 on 2026-07-12 under the owner-authorized rule-22 DATA
     # intake (calibration-complete.json intake_log; NO marker, NO solve — the
     # one-shot stays quarantined): 2022 is reference/bench data readiness
-    # only, never a calibration year. The missing in-sample 2024 entry is a
-    # separate, FLAGGED gap (the "gated on unit-level outages" rationale
-    # above is stale — NY_2024 CEMS exists; NYISO-calibration-owner decision,
-    # docs/holdout-data-equivalency-register-2026-07.md).
-    "NYISO": (2022, 2023, 2025),
+    # only, never a calibration year.
+    # 2024 added 2026-07-31, closing the in-sample gap the register had carried
+    # since 2026-07-12: the "gated on NY_2024 unit-level outages" rationale in
+    # the comment above was stale on both counts — campd-unit-level/NY_2024
+    # (and NJ_2024) are on disk, and the 2026-07-24 all-ISO re-derivation gives
+    # campd-unit-outages-NYISO.csv uniform-detector windows for 2018-2026. 2024
+    # is an ordinary IN-SAMPLE training year (rule 22 train tier), so this is a
+    # parity repair, not a holdout action: NYISO was the only multi-year ISO
+    # missing a reference block for a year it is actually calibrated on.
+    # 2018-2021 remain absent — build_reference()._demand_totals hard-requires
+    # eia_demand_profiles.parquet rows, and that artifact starts at 2021 for
+    # every ISO (the cross-ISO F3 blocker); extending it is not a NYISO task.
+    "NYISO": (2022, 2023, 2024, 2025),
     # NEISO gained 2022 on 2026-07-07: the calibration-complete marker
     # (frontend/data/backcast/calibration-complete.json) authorizes the ONE-SHOT
     # 2022 holdout validation (CLAUDE.md rule 22) — 2022 is a validation year
