@@ -17,8 +17,8 @@ the BA reports. Consumed by `src/market_sim/data/eia_loader.py`
 | NYIS | NYISO | 2015-07-01 .. 2026-06-13 |
 | SWPP | — (SPP, not a modeled ISO) | 2015-07-01 .. 2026-05-20 |
 | PJM | PJM | 2018-01-01 .. 2026-06-30 (2019-2021 backfilled 2026-07-06; 2018 backfilled 2026-07-08) |
-| CISO | CAISO | 2018-01-01 .. 2026-06-30 (2019-2021 backfilled 2026-07-06; 2018 + H1-2026 landed 2026-07-08) |
-| MISO | MISO | 2018-01-01 .. 2026-06-30 (2019-2021 backfilled 2026-07-06; 2018 + H1-2026 landed 2026-07-08) |
+| CISO | CAISO | 2018-01-01 .. 2026-06-30 (2019-2021 backfilled 2026-07-06; 2018 + H1-2026 landed 2026-07-08; **2022 filled 2026-07-31**) |
+| MISO | MISO | 2018-01-01 .. 2026-06-30 (2019-2021 backfilled 2026-07-06; 2018 + H1-2026 landed 2026-07-08; **2022 filled 2026-07-31**) |
 | SOCO | — (Southern Co, not a modeled ISO) | 2022-12-31 .. 2025-12-31 |
 | FLA | — (Florida, not a modeled ISO) | 2022-12-31 .. 2025-01-31 |
 
@@ -145,3 +145,31 @@ loaders that indexed the prevailing `datetime_beginning_ept` stamp
 `parse_pjm_shares` in `scripts/curate_zonal_shares.py`) were switched to the
 files' own `datetime_beginning_utc` on the same fixed-EST clock (byte-identical
 outside DST, exactly one hour earlier inside).
+
+## CISO/MISO 2022 fill (2026-07-31)
+
+The 2026-07-08 pass landed the 2022 **long-form** files but its wide extension
+covered only 2018 + H1-2026, so `CISO hourly.parquet` carried **9** rows of
+local-2022 and `MISO hourly.parquet` **6** — the Jan-1 UTC-boundary spillover
+alone, while every other year 2018-2026 was dense. Any wide-extract consumer
+silently saw an empty 2022 and fell through to a fallback; for `load_demand`
+that fallback was the "corrupted legacy `eia_demand_profiles`" path, with its
+own warning.
+
+Filled from the already-landed long-form raws with
+`build_eia930_hourly_from_raw.py --ba {CISO,MISO} --fill-years 2022`, a new
+flag: keep every existing row byte-identical and splice in only the MISSING
+hours of the named local years. `--append-only` cannot reach a hole in the
+MIDDLE of an extract (it starts from the last UTC hour), and a plain rebuild
+would have rewritten the committed 2023-2025 rows.
+
+    CISO: kept 65,711 rows byte-identical, spliced 8,751 -> local-2022 = 8,760
+    MISO: kept 65,712 rows byte-identical, spliced 8,753 -> local-2022 = 8,760
+
+Every pre-existing row verified value-identical before/after for both BAs.
+CAISO and MISO 2022 demand now come off the real per-BA extract. Rule-22
+Option-2 intake (owner-authorized 2026-07-31), no-LP validation only.
+
+The fill also flushed out a latent `parse_miso_shares` bug the empty 2022 had
+been masking — see `scripts/data/curate_zonal_shares.py` and
+`docs/iso-2022-holdout-data-availability-audit-2026-07.md` §7.1.
