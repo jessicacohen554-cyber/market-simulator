@@ -46,6 +46,11 @@ def _cfg(**kw):
 
     defaults = dict(
         iso="ERCOT",
+        # Backcast: these fixtures exercise the measured-artifact paths
+        # (AS-plan requirement fallback, measured reserve series), which are
+        # mode-gated backcast-only since FR-12 — a SimpleNamespace without
+        # ``mode`` reads as forecast and now hard-errors at those read sites.
+        mode="backcast",
         weather_year=2024,
         ordc_voll=5000.0,
         ordc_mcl_mw=3000.0,
@@ -1703,3 +1708,178 @@ class TestCaisoDesignOnlineScoped(TestCaisoDesign):
                 24,
                 self._ZONES,
             )
+
+
+class TestFr12SolveYearAndBackcastGates(unittest.TestCase):
+    """FR-12 (forecast-readiness audit §3.2): the reserve layer keys its
+    date/regime gates on the SOLVE year and hard-gates measured artifacts to
+    backcast mode."""
+
+    @staticmethod
+    def _plan_mock():
+        import unittest.mock as mock
+
+        def fake_req(_year, hours, code):
+            base = {"REGUP": 50.0, "RRS": 100.0, "ECRS": 150.0, "NSPIN": 120.0}
+            return np.full(hours, base[str(code)])
+
+        return mock.patch(
+            "market_sim.results.scarcity.ercot_as_plan_requirement_mw",
+            side_effect=fake_req,
+        )
+
+    def _forecast_multi_design(self, sim_year, **cfg_kw):
+        T = 24
+        cfg = _cfg(
+            mode="forecast",
+            weather_year=2024,
+            ercot_multiproduct_as_coopt=True,
+            ercot_as_forward_requirement=True,
+            ercot_nonreleasable_as_withholding=True,
+            ercot_as_critical_frac=0.0,
+            ercot_as_n_ramp=4,
+            **cfg_kw,
+        )
+        # Forward drivers threaded — the forecast-legal requirement source.
+        return get_reserve_design(
+            cfg,
+            _fleet(T=T),
+            T,
+            ["Z0"],
+            sim_year=sim_year,
+            system_load=np.full(T, 60000.0),
+            wind_gen=np.full(T, 12000.0),
+            solar_gen=np.full(T, 8000.0),
+        )
+
+    def test_withholding_keys_solve_year_not_weather_pin(self):
+        """A 2030 forecast solve on weather 2024 is RTC+B: no withheld family.
+
+        Pre-FR-12 the regime test read weather_year (2024 < 2025 ⇒ rigid all
+        year), re-arming the retired HASL carve-out for every forward year.
+        """
+        names = [f.name for f in self._forecast_multi_design(2030).families]
+        self.assertNotIn("RRS_withheld", names)
+        self.assertNotIn("RegUp_withheld", names)
+        self.assertIn("RRS", names)
+
+    def test_ordc_design_pin_keeps_withholding_in_forward_years(self):
+        """ercot_market_design='ordc' pins the pre-RTC+B construction — the
+        regime seam honors the explicit scenario pin the numeric year gates
+        ignored."""
+        names = [
+            f.name
+            for f in self._forecast_multi_design(
+                2030, ercot_market_design="ordc"
+            ).families
+        ]
+        self.assertIn("RRS_withheld", names)
+        self.assertIn("RegUp_withheld", names)
+
+    def test_forecast_plan_fallback_is_a_hard_error(self):
+        """Forward requirement armed but drivers unthreaded ⇒ fail loud, never
+        silently price the measured plan (zero for forecast years)."""
+        T = 24
+        cfg = _cfg(
+            mode="forecast",
+            weather_year=2024,
+            ercot_multiproduct_as_coopt=True,
+            ercot_as_forward_requirement=True,
+        )
+        with self._plan_mock():
+            with self.assertRaisesRegex(ValueError, r"\[R-MEASURED\]"):
+                get_reserve_design(cfg, _fleet(T=T), T, ["Z0"], sim_year=2030)
+
+    def test_backcast_multiproduct_unchanged_via_sim_year(self):
+        """sim_year == weather_year (the backcast pin) is byte-identical to
+        the legacy weather_year-keyed build."""
+        T = 24
+        cfg = _cfg(
+            weather_year=2024,
+            ercot_multiproduct_as_coopt=True,
+            ercot_nonreleasable_as_withholding=True,
+            ercot_as_critical_frac=0.0,
+            ercot_as_n_ramp=4,
+        )
+        with self._plan_mock():
+            legacy = get_reserve_design(cfg, _fleet(T=T), T, ["Z0"])
+        with self._plan_mock():
+            threaded = get_reserve_design(cfg, _fleet(T=T), T, ["Z0"], sim_year=2024)
+        self.assertEqual(
+            [f.name for f in legacy.families], [f.name for f in threaded.families]
+        )
+        for a, b in zip(legacy.families, threaded.families):
+            np.testing.assert_array_equal(a.requirement, b.requirement)
+            np.testing.assert_array_equal(a.ordc_penalties, b.ordc_penalties)
+            np.testing.assert_array_equal(a.ordc_step_widths, b.ordc_step_widths)
+
+    def test_measured_reserve_artifacts_hard_gate_in_forecast(self):
+        """Every measured reserve series in the layer refuses forecast mode."""
+        T = 24
+        cases = [
+            (
+                "ercot_ecrs_requirement",
+                _cfg(mode="forecast", ercot_ecrs_requirement=True),
+                ["Z0"],
+            ),
+            (
+                "ercot_storage_as_reserve",
+                _cfg(
+                    mode="forecast",
+                    ercot_storage_as_reserve=True,
+                    storage_as_commitment=True,
+                ),
+                ["Z0"],
+            ),
+            (
+                "miso_measured_reserve_requirements",
+                _cfg(
+                    iso="MISO",
+                    mode="forecast",
+                    miso_measured_reserve_requirements=True,
+                ),
+                ["Z0"],
+            ),
+            (
+                "nyiso_dynamic_reserve_requirements",
+                _cfg(
+                    iso="NYISO",
+                    mode="forecast",
+                    nyiso_dynamic_reserve_requirements=True,
+                ),
+                ["Z0"],
+            ),
+            (
+                "neiso_dynamic_reserve_requirements",
+                _cfg(
+                    iso="NEISO",
+                    mode="forecast",
+                    neiso_dynamic_reserve_requirements=True,
+                ),
+                ["Z0"],
+            ),
+        ]
+        for flag, cfg, zones in cases:
+            with self.subTest(flag=flag):
+                with self.assertRaisesRegex(ValueError, flag):
+                    get_reserve_design(cfg, _fleet(), T, zones, sim_year=2030)
+
+    def test_measured_artifacts_still_load_in_backcast(self):
+        """The gates are mode gates, not removals: backcast still consumes the
+        measured series (mocked loaders — hermetic)."""
+        import unittest.mock as mock
+
+        T = 24
+        cfg = _cfg(iso="MISO", mode="backcast", miso_measured_reserve_requirements=True)
+        fake = {
+            "market": np.full(T, 1000.0),
+            "MISO-South": np.full(T, 400.0),
+            "MISO-Midwest": np.full(T, 600.0),
+        }
+        with mock.patch(
+            "market_sim.data.miso_reserve_requirements.load_miso_reserve_requirements",
+            return_value=fake,
+        ) as loader:
+            design = get_reserve_design(cfg, _fleet(), T, ["Z0"], sim_year=2024)
+        loader.assert_called_once_with(2024, T)
+        np.testing.assert_array_equal(design.families[0].requirement, fake["market"])

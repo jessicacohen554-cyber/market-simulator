@@ -46,6 +46,9 @@ def _fa():
 def _config(**overrides):
     base = dict(
         iso="NEISO",
+        # Backcast: the dynamic-requirements series is mode-gated
+        # backcast-only (FR-12); a namespace without mode reads as forecast.
+        mode="backcast",
         weather_year=2024,
         neiso_rcpf_products=None,
         neiso_rcpf_enabled=False,

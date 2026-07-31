@@ -143,7 +143,11 @@ class TestMisoDesignMeasuredRequirements(unittest.TestCase):
             "MISO-South": np.full(T, 420.0),
         }
         cfg = SimpleNamespace(
-            iso="MISO", weather_year=2023, miso_measured_reserve_requirements=True
+            # Backcast: the measured series is mode-gated backcast-only (FR-12).
+            iso="MISO",
+            mode="backcast",
+            weather_year=2023,
+            miso_measured_reserve_requirements=True,
         )
         with mock.patch(
             "market_sim.data.miso_reserve_requirements.load_miso_reserve_requirements",
@@ -169,7 +173,9 @@ class TestMisoDesignMeasuredRequirements(unittest.TestCase):
         south[18] = 1200.0  # event-evening bump
         measured = {"market": np.full(T, 2500.0), "MISO-South": south}
         cfg = SimpleNamespace(
+            # Backcast: the measured series is mode-gated backcast-only (FR-12).
             iso="MISO",
+            mode="backcast",
             weather_year=2023,
             miso_measured_reserve_requirements=True,
             miso_zonal_reserves=True,

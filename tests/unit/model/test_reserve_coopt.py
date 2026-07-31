@@ -1134,6 +1134,9 @@ class TestMisoMidwestReserveLP(unittest.TestCase):
             (),
             {
                 "iso": "MISO",
+                # Backcast: the measured-requirement series is mode-gated
+                # backcast-only since FR-12 (no mode attr reads as forecast).
+                "mode": "backcast",
                 "weather_year": 2025,
                 "miso_measured_reserve_requirements": True,
                 "miso_midwest_subregional_reserves": midwest,
