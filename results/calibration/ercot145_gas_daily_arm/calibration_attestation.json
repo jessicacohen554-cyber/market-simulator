@@ -1,9 +1,9 @@
 {
  "free_parameters": {
   "schema": "dof-ledger/v1",
-  "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20) | amended 2026-07-26 (ercot-115 promotion): COAL_PRB.econ_low 0.400 (fitted) -> 0.886 (measured CAMPD marginal HR); offer_curve_by_group 112 -> 111 free scalars",
-  "n_entries": 10,
-  "n_residual": 8,
+  "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+  "n_entries": 8,
+  "n_residual": 6,
   "entries": [
    {
     "name": "offer_curve_by_group",
@@ -18,7 +18,11 @@
       "econ_low_share",
       "pct_peaking",
       "peak",
-      "peak_ladder"
+      "peak_ladder",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
      ],
      "CC_INTERMEDIATE": [
       "committed",
@@ -35,14 +39,22 @@
       "econ_low_share",
       "pct_peaking",
       "peak",
-      "peak_ladder"
+      "peak_ladder",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
      ],
      "CT_CHP": [
       "committed",
       "econ_high",
       "econ_low",
       "econ_low_share",
-      "peak"
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
      ],
      "CT_PEAKER": [
       "committed",
@@ -51,7 +63,11 @@
       "econ_low_share",
       "pct_peaking",
       "peak",
-      "peak_ladder"
+      "peak_ladder",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
      ],
      "CT_INTERMEDIATE": [
       "committed",
@@ -68,7 +84,11 @@
       "econ_low_share",
       "pct_peaking",
       "peak",
-      "peak_ladder"
+      "peak_ladder",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
      ],
      "ST_GAS_INTERMEDIATE": [
       "committed",
@@ -77,44 +97,10 @@
       "econ_low_share",
       "pct_peaking",
       "peak"
-     ],
-     "COAL_LIGNITE": [
-      "committed",
-      "econ_high",
-      "econ_low",
-      "econ_low_share",
-      "peak"
-     ],
-     "COAL_PRB": [
-      "committed",
-      "econ_high",
-      "econ_low_share",
-      "peak"
-     ],
-     "COAL_BIT": [
-      "committed",
-      "econ_high",
-      "econ_low",
-      "econ_low_share",
-      "peak"
-     ],
-     "COAL_WC": [
-      "committed",
-      "econ_high",
-      "econ_low",
-      "econ_low_share",
-      "peak"
-     ],
-     "COAL": [
-      "committed",
-      "econ_high",
-      "econ_low",
-      "econ_low_share",
-      "peak"
      ]
     },
-    "n_scalars": 111,
-    "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13) \u2014 MINUS COAL_PRB.econ_low, which the ercot-115 promotion moved to the measured CAMPD marginal-HR basis (entry below)",
+    "n_scalars": 107,
+    "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
     "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
    },
    {
@@ -132,13 +118,13 @@
     "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
    },
    {
-    "name": "COAL_SIGMOID_DEFAULTS[ERCOT]",
-    "where": "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via coal_prb_passthrough_sigmoid, coal_lignite_passthrough_sigmoid)",
-    "identification": "residual",
+    "name": "coal_perplant_offer_curves (per-plant measured TPO curves)",
+    "where": "constants.COAL_PERPLANT_OFFER_CURVE_BY_ISO via run_config.scenario_config.coal_perplant_offer_curves; applied in fleet.legacy_bins.apply_coal_tranches",
+    "identification": "measured-physical",
     "lineage_solves": ">=165 solves (audit \u00a75.1)",
-    "n_scalars": 8,
-    "source": "gas-keyed coal passthrough sigmoids \u2014 the largest fitted surface (audit C-1); owner-sanctioned under rule #1",
-    "root_cause": "weakly identified: each asymptote is pinned by a single gas regime (floor by 2024, gas_mid/ceil by 2025 \u2014 docs/out-of-sample-results-2026-07.md \u00a72C); open: literature/physical anchoring of floor/ceil, plus identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+    "n_scalars": 0,
+    "source": "each plant's merged modal 60-Day SCED Submitted TPO supply curve, pooled over the four 2024-2025 disclosure subsets \u2014 verbatim submitted conduct, zero fitted parameters (frozen scripts/data/derive_coal_perplant_offer.py; provenance data/raw/_processed-legacy/coal_perplant_offer_curves_ERCOT.json; ERCOT-144, chartered by ERCOT-143 \u00a72's per-plant measurement)",
+    "note": "re-derive trigger is a new SCED disclosure subset only (rule 23), never a residual; representation bounds declared in the ERCOT-144 precommit: the 2023 application is an extrapolation (no 2023 SCED exists), levels are fuel-invariant by measurement (mid-band only \u2014 _mustrun/_peak keep their measured fuel/gas responses), and within-tranche measured dispersion is capacity-weight averaged at the CAMPD tranche grain"
    },
    {
     "name": "wefor_multiplier",
@@ -168,15 +154,6 @@
     "root_cause": "reduced-form stand-in for cycling degradation + AS opportunity cost; forward-valid replacement is the measured AS power reservation (storage_as_commitment) + an ATB-derived degradation cost \u2014 open item to re-derive from those"
    },
    {
-    "name": "coal_take_or_pay_tranches",
-    "where": "scenarios.py ScenarioConfig.coal_tranche_{1,2,3}_{frac,fuel_passthrough} (0.30/0.25/0.45 capacity fracs, 0.00/0.35/1.00 fuel passthrough); the constants.py COAL_TRANCHES mirror of these values was dead code (never read) and was deleted 2026-07",
-    "identification": "residual",
-    "lineage_solves": ">=165 solves (audit \u00a75.1)",
-    "n_scalars": 4,
-    "source": "core coal offer-curve step sizes (audit C-8) \u2014 'Tier 3 (calibration)'; sanctioned mechanism, undisciplined values",
-    "root_cause": "audit C-8: ground on contract-structure data (EIA-923 fuel-cost dispersion) or freeze via rule 23; open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1336"
-   },
-   {
     "name": "CHP_BTM_PCT_BY_SECTOR['merchant']",
     "where": "constants.py CHP_BTM_PCT_BY_SECTOR",
     "identification": "residual",
@@ -192,21 +169,14 @@
     "lineage_solves": ">=165 solves (audit \u00a75.1)",
     "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
     "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
-   },
-   {
-    "name": "coal_econ_marginal_hr_bound floor (COAL econ bands)",
-    "where": "backcast_config(iso='ERCOT').coal_econ_marginal_hr_bound -> data.coal.apply_coal_econ_marginal_hr_floor",
-    "identification": "measured-physical",
-    "lineage_solves": "0 residual solves \u2014 the value is read from the frozen derive artifact, never tuned (rule 23)",
-    "value": {
-     "COAL_PRB.econ_low": 0.886,
-     "was_fitted": 0.4,
-     "marg_econ_high_p50": 0.898
-    },
-    "n_scalars": 0,
-    "source": "data/raw/reference/ercot_campd_marginal_hr_summary.csv, COAL row, marg_econ_low_p50 / marg_econ_high_p50 \u2014 the slope d(heatInput)/d(grossLoad) of each unit's own CEMS input-output curve at the band-representative load, capacity-weighted over 25 units and pooled across the available years (scripts/data/derive_campd_marginal_hr.py). An already-committed unit's next MWh cannot cost less than its own measured incremental burn, so this is the physical LOWER bound on the band's offer multiplier, not a fit.",
-    "root_cause": "CLOSED as a free parameter: the band is no longer identified from the residual. It is a measured input that regenerates for a forward year from the same CEMS derivation and responds to changed conditions (rule 13), and it is frozen against residuals \u2014 re-derived only on a source-data update (rule 23). Only bands BELOW the measured basis are lifted; a genuine markup above it stays on the fitted surface above."
    }
   ]
+ },
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "ercot145b gas-daily-shape session 2026-07-31 (matrix \u00a75.1 item-4 five-ISO fuel-stack consistency lane; precommit docs/PRECOMMIT-ercot145-gas-daily-shape-2026-07-31.md pushed before the solve). BASIS FOR THE ATTESTATION, stated so it is auditable: (1) the DOF state is UNCHANGED from the attested ercot144 keeper \u2014 this arm is a single-delta replay of ercot144_perplant_arm adding ONE measured-commodity input (gas_daily_shape: the measured Henry Hub daily staircase divided by its own month mean \u2014 fuel.hubs.gas_daily_shape_factors, mean-preserving per month by construction, ZERO fitted parameters, re-derived only on source updates per rule 23); the ledger's n_entries 8 / n_residual 6 and every entry are byte-identical in kind to the ercot144 attestation basis. (2) Every structural lever traces to a measured/published input: the full ercot144 measured coal surface (ERCOT-137/144/140), CC committed = ERCOT-139 measured level, gas margin/cleared-share surfaces = measured SCED/DAM conduct, availability = measured DAM envelope, outages = historic CAMPD windows (exogenous), fuel = F923/EP measured + the measured HH daily shape this arm adds. (3) The remaining 6 residual entries are the rule-1-sanctioned offer-curve scope shared by every CALIBRATED keeper (offer_curve_by_group gas bands, smoothing shape) plus wefor pair / battery adder / merchant-CHP share, each carrying its open root-cause issue in this ledger (audit_keepers E8). (4) No lever in this run was fitted to a price residual and no output is pinned to actuals: the one input this run adds is a national commodity price series that predates and is independent of any ERCOT residual; the precommit \u00a71c RECORDS that a fit gain was NOT predicted (ex-ante correlations nil/adverse/mild), so the observed C3a-2024/25 and C3b-2024 improvements were not tuning targets (rule 1). Guard outcomes are reported hour-level in the promotion note: two pre-registered guards tripped by \u00b11 threshold-straddling hour each (2023 C3c 47\u219246, the $203\u2192$199.5 h6016 straddle on a real $2110 hour; 2024 spurious 2\u21923, a $207 model hour on the real Heather storm day h346 whose own actual is $141) \u2014 adjudicated by the owner's in-session standard (structural-integrity improvement outranks gate regression) as threshold noise, not the ERCOT-119 drain / tail-invention patterns the guards were designed against."
  }
 }
