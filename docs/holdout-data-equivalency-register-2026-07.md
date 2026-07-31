@@ -31,10 +31,10 @@ MISSING row carries materiality and a fix (or "accepted").
 
 | ISO | 2022 | H1-2026 | Register section |
 |---|---|---|---|
-| ERCOT | **§ERCOT below** (2026-07-31 intake + grading) — LMP scoring bench CLOSED for 2018-2022 on the fixed clock (no re-derive owed), plus ORDC 2018-2021, N3045 gas 2018-2021, zonal gas basis (5 of 7 zones) and partial outages 2018-2021. The DAM-availability family, HSL, DAM-AS and GTC 2018-2019 are **structurally unobtainable** on the authorized path (measured rolling-retention wall, §ERCOT) | **§ERCOT below** — 60-Day DAM deliveries through 2026-06-01 landed and the availability derives extended; LMP bench through the publication horizon; locked tier, not built or scored | **§ERCOT below** |
+| ERCOT | **§ERCOT below** (2026-07-31 intake + grading) — LMP scoring bench CLOSED for 2018-2022 on the fixed clock (no re-derive owed), plus ORDC 2018-2021, N3045 gas 2018-2021, zonal gas basis (5 of 7 zones) and partial outages 2018-2021. HSL, DAM-AS and GTC 2018-2019 are **structurally unobtainable** on the authorized path (measured rolling-retention wall, §ERCOT). **CORRECTED 2026-07-31: the 60-Day DAM availability family is NOT unobtainable** — its Gen_Resource_Data source 2018-2022 is already committed in `data/raw/ercot-AS/` (full calendar coverage); the availability CSVs are one derive session away (§ERCOT CORRECTION block) | **§ERCOT below** — 60-Day DAM deliveries through 2026-06-01 landed and the availability derives extended; LMP bench through the publication horizon; locked tier, not built or scored | **§ERCOT below** |
 | PJM | **§PJM below** (2026-07-31 intake + grading) — 2022 READY on data: interface limits, tie interchange, AS series, short-window outages and the 930 interchange all landed at parity; LMP bench clock-lineage CLEAN (no re-derive owed); `actual_tail` 2022 emitted. Residual: 2 recipe-freeze adjudications + the freeze | **§PJM below** — raws landed (transfer/interchange/AS/hub-LMP, all `_partial`-suffixed); locked tier, not built or scored | **§PJM below** |
 | CAISO | **§CAISO below** — EQUIVALENT 17 / DEGRADED 6 / MISSING 12 (2026-07-31 intake, 2018-2022 + H1-2026). Much of the audit doc's §3.2 queue is now CLOSED (wide-hourly hole, HSL 2022, MIC+LCR registry, gas, interchange, AS_REQ, calref) — but the **LMP bench is SOURCE-BLOCKED, not merely missing**: OASIS retention now stops at 2023-04-19 (N-CA-1) | **§CAISO below** — LMP bench BUILT (DA $20.22 / RT $19.59), 930 + CAMPD + AS_REQ + interchange landed; gas/curtailment/emissions publication- or discontinuation-blocked | **§CAISO below** |
-| MISO | **no longer zero-intake** (same waves + 2022 hub-LMP raws on disk); **coverage-audited 2026-07-31: GAPPED, LMP bench derivable from committed raws** (audit doc §3.4) | blocked + partial intake | pending (seed: audit doc §3.4) |
+| MISO | **§MISO below** — EQUIVALENT 9 / DEGRADED 7 / MISSING 8 (2026-07-31 intake, 2022 + 2018-2021 + H1-2026). 2022 LMP bench BUILT from the committed raws (PARTIAL, rt 86.3% / da 94.0% — Nov-Dec tail open); ASM 2018-2022 not automatable (methodology call); hub LMP 2018-2021 needs `MISO_PRICING_API_KEY` | **§MISO below** — hub-LMP raws + bench, ASM MCP, citygate, sub-BA landed to the publication horizon | **§MISO below** |
 | NYISO | **§NYISO — 2022** EQUIVALENT 24 / DEGRADED 4 / MISSING 5 (2026-07-12); **§NYISO — 2018/2019/2020/2021** (2026-07-13); **§NYISO — 2018-2022 + H1-2026 RESIDUAL closure (2026-07-31)** — every 2026-07-13 carryover closed except 3 items now measured as REAL source gaps (LDC transport archive stops Oct-2021; capacity-deliverability 2019/20+2020/21 hosted off-pattern; reserve-requirements LRR splice = methodology decision) | **§NYISO — H1-2026** — LMP bench re-clocked; nuclear/ladder/`*_lw` blocked on publication horizon (see the 2026-07-31 section) | **§NYISO below** |
 | NEISO | **THIS DOC §NEISO** — EQUIVALENT 12 / DEGRADED 8 / MISSING 6 (2026-07-13 intake, 2018-2022) | blocked (publication horizon, same class as all ISOs) | **§NEISO below** |
 
@@ -989,11 +989,37 @@ live this session (2026-07-31): `api.ercot.com/api/public-reports/...` returns
 `401 {"message":"Access denied due to missing subscription key..."}`, and
 `mis.ercot.com/misapp/GetReports.do` still fails the TLS/redirect gate.
 
-**Consequence, stated plainly:** the ERCOT availability + HSL + DAM-AS
-families are *not* a fetch that was skipped — they are structurally
-unobtainable for 2018-2022 on the authorized path, and no future session can
-close them without either an owner upload or a policy change on the
-credentialed archive.
+**Consequence, stated plainly:** the ERCOT HSL family, the GTC limits for
+2018-2019, and the rolling DAM-AS feeds (DAMASAGG; AS plan pre-2022) are
+structurally unobtainable for the back years on the authorized path, and no
+future session can close them without either an owner upload or a policy
+change on the credentialed archive.
+
+> **CORRECTION (2026-07-31, owner-prompted re-check): the 60-Day DAM
+> Gen Resource Data for 2018-2022 is ALREADY IN THE REPO — the availability
+> family is DERIVABLE, not unobtainable.** The fetch-wall measurements above
+> are correct, but the conclusion missed committed extracts under
+> `data/raw/ercot-AS/`: `60d_DAM_Gen_Resource_Data_{2018..2022}_*.parquet`
+> (18 files, ~39.8M rows, on main since 2026-07-28 via the PR #3098 merge
+> lineage), plus `60d_DAM_Load_Resource_Data_{2018..2022}.parquet`,
+> `60d_DAM_{Generation,Load}_Resource_ASOffers` back years and the
+> EnergyBids/Offers/Awards series. Verified this session (no-LP): each label
+> year spans deliveries Nov-2 (y−1) → Nov-1 (y) — the 60-day publication lag
+> — and together with the already-committed
+> `ercot/60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_2023_Jan-Mar.parquet`
+> fragment (deliveries 2022-11-02..12-31) the calendar coverage is
+> **365 / 365 / 366 / 365 / 365 distinct delivery days for 2018-2022 — no
+> gaps**; the column set is a strict superset of the consumed
+> `data/raw/ercot/60_DAY_DAM_DISCLOSURE_*` schema (extra: startup costs,
+> Min Gen Cost, DME, per-product MCPCs). Since `derive_ercot_storage_capability.py`
+> reads PWRSTR rows of this same product, `ercot-storage-capability.csv`
+> 2018-2022 is derivable from it too. What extending the family actually
+> needs: point the derives' `DAM_DIR` glob at (or map in) the `ercot-AS`
+> files, handle the label-vs-delivery-year offset (a calendar year y needs
+> label-y AND label-(y+1) files), re-prove 2023-2025 byte-identical, then
+> derive 2018-2022 — a derive session, not a fetch and not an owner upload.
+> The HSL / GTC-2018-2019 / DAMASAGG conclusions are unaffected (none of
+> those products is in `ercot-AS`).
 
 ### Bench / scoring series
 
@@ -1011,7 +1037,7 @@ credentialed archive.
 
 | input | keeper-years source + grain | status | materiality / fix |
 |---|---|---|---|
-| 60-Day DAM availability family — `ercot-thermal-dam-availability{,-hourly}.csv`, `ercot-noncampd-availability.csv`, `ercot-nuclear-availability.csv`, `ercot-storage-capability.csv` | 60-Day DAM Disclosure Gen_Resource_Data, 2023-2025 | **MISSING 2018-2022 — STRUCTURALLY UNOBTAINABLE** (retention wall above). **EQUIVALENT 2026 through Jun 1**: this session landed deliveries 2026-01-01..2026-06-01 (`..._2026_Mar-May.parquet` 2,904,663 rows + `..._2026_Jun-Jul.parquet` 1,963,902 rows) and extended the three replace-mode derives to 2026 | **HIGH** for the validation ladder — this is the keeper's availability envelope and it cannot be built for any of 2018-2022. Only an owner upload or the declined credentialed archive can close it |
+| 60-Day DAM availability family — `ercot-thermal-dam-availability{,-hourly}.csv`, `ercot-noncampd-availability.csv`, `ercot-nuclear-availability.csv`, `ercot-storage-capability.csv` | 60-Day DAM Disclosure Gen_Resource_Data, 2023-2025 | ~~MISSING 2018-2022 — STRUCTURALLY UNOBTAINABLE~~ **CORRECTED 2026-07-31: MISSING but DERIVABLE (d)** — the source Gen_Resource_Data extracts for 2018-2022 are already committed under `data/raw/ercot-AS/` with full calendar coverage (see the CORRECTION block above); the CSVs just have never been derived from them. **EQUIVALENT 2026 through Jun 1**: this session landed deliveries 2026-01-01..2026-06-01 (`..._2026_Mar-May.parquet` 2,904,663 rows + `..._2026_Jun-Jul.parquet` 1,963,902 rows) and extended the three replace-mode derives to 2026 | **HIGH** for the validation ladder — this is the keeper's availability envelope. Fix is now a derive session: map the `ercot-AS` files into the derives' input glob (label-year ↔ delivery-year offset handled), re-prove 2023-2025 byte-identical, derive 2018-2022 |
 | ↳ derive re-proof (all five) | — | **VERIFIED** — before any extension, each derive was re-run over 2023-2025 into a scratch path and compared: `ercot-thermal-dam-availability.csv`, `-hourly.csv`, `ercot-noncampd-availability.csv` and `ercot-storage-capability.csv` all reproduce **byte-identically**. After extending to 2026, the committed 2023-2025 rows were re-asserted unchanged in every file | the recipes are faithful; the 2026 rows are the same recipe, not a variant |
 | ↳ 2022 fragment (already on disk) | — | **DEGRADED / NOT EMITTED** — the committed `..._2023_Jan-Mar.parquet` (publications 2023-01-01..03-01) carries deliveries **2022-11-02..2022-12-31 only**, 1,673,433 rows = **2 of 12 months**. Deliberately **excluded** from the availability CSVs this session | a two-month envelope written into a year-keyed availability file reads downstream as a full 2022 year. Emitting it is an owner call, and would need an explicit partial-year label |
 | ↳ `ercot-outages.csv` | 7,088 rows, no year column | **CANNOT BE REGENERATED** — no producer exists under `scripts/data/`; the only in-repo reference is the archived audit script. It could not be extended or re-proved | **owner trace needed**: the file is consumed but orphaned from its recipe. Independent of the holdout question — it is an in-sample provenance gap too |
@@ -1092,10 +1118,12 @@ credentialed archive.
   2018-2021; N3045 delivered gas 2018-2021; partial-outage derates 2018-2021;
   60-Day DAM deliveries 2026-01-01..06-01 and the three availability derives
   extended to 2026.
-* **STRUCTURALLY UNOBTAINABLE (2018-2022):** the whole 60-Day DAM availability
-  family, HSL, DAM-AS aggregate, AS plan, GTC 2018-2019 — all behind the
-  rolling-window wall, all requiring an owner upload or the declined
-  credentialed archive.
+* **STRUCTURALLY UNOBTAINABLE (2018-2022):** HSL, DAM-AS aggregate, AS plan
+  pre-2022, GTC 2018-2019 — behind the rolling-window wall, requiring an owner
+  upload or the declined credentialed archive. *(The 60-Day DAM availability
+  family was WRONGLY listed here — corrected 2026-07-31: its Gen_Resource_Data
+  source for 2018-2022 is already committed in `data/raw/ercot-AS/`, so the
+  family is derivable; see the CORRECTION block in the method note.)*
 * **OPEN OWNER DECISIONS:** v2 emission rates 2022/2026 (unblocked, not
   requested); Waha annual averages 2018-2021; whether to emit the 2022
   Nov-Dec 60-day fragment; the 2021 Uri-dominated zonal gas scalar; the
