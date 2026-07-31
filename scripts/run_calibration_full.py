@@ -2797,6 +2797,19 @@ def _copy_reused_year(
     Dispatch parquets are copied for every recorded pass (their existence was
     verified by plan_reuse_solved); floors/p2_state are copied when present —
     a fleet with no floor matrix legitimately writes no floors npz.
+
+    The ``hourly/`` sidecars are carried too. They are the *committed* half of a
+    bundle (rule 15 ``[R-DASHBOARD]``) and every one of them is a pure function
+    of artifacts copied above or of the prior tables the caller splices back in
+    — ``class_hourly`` / ``unit_hourly`` / ``network`` aggregate the very
+    dispatch frames copied here, ``storage`` aggregates the year's storage rows
+    — so byte-copying is exactly what a re-derivation would produce. Without
+    this a ``--reuse-solved`` chain (the CLAUDE.md rule 12 per-year invocation
+    chain, one fresh year per process) silently produced bundles whose reused
+    years carried dispatch but NO class-hour sidecar, so the run registered on
+    the dashboard with holes in precisely the years it reused.
+    ``system_<year>.parquet`` is regenerated later from the spliced prior slice
+    and simply overwrites the copy.
     """
     for label in passes:
         src = prior / "dispatch" / f"{year}_{label}.parquet"
@@ -2805,6 +2818,16 @@ def _copy_reused_year(
         if floors.exists():
             (run_dir / "floors").mkdir(parents=True, exist_ok=True)
             shutil.copy2(floors, run_dir / "floors" / floors.name)
+    prior_hourly = prior / "hourly"
+    if prior_hourly.is_dir():
+        for src in sorted(prior_hourly.glob(f"*_{year}.parquet")):
+            (run_dir / "hourly").mkdir(parents=True, exist_ok=True)
+            shutil.copy2(src, run_dir / "hourly" / src.name)
+    # A prior bundle predating a sidecar (or pruned to dispatch only) carries
+    # no copy to take: re-derive the class-hour sidecar from the dispatch
+    # frames just copied, so the reused year is never the one with the hole.
+    if not (run_dir / "hourly" / f"class_hourly_{year}.parquet").exists():
+        _write_class_hourly_sidecar(run_dir, year, passes)
     if persist_p2_state:
         p2 = prior / "p2_state" / f"{year}.pkl.gz"
         if p2.exists():

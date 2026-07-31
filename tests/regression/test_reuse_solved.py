@@ -269,6 +269,27 @@ class TestPerYearMixedPlan(_PlanBase):
         self.assertIn("not solved", record["refusals"]["2025"])
 
 
+def _class_hour_frame() -> pd.DataFrame:
+    """A minimal ``(year, pass, klass, hour, mw)`` class-hour frame."""
+    return pd.DataFrame(
+        {
+            "year": [2023, 2023],
+            "pass": ["P1", "P1"],
+            "klass": ["CC", "CC"],
+            "hour": [0, 1],
+            "mw": [10.0, 20.0],
+        }
+    )
+
+
+def _stub_class_sidecar(prior: Path, year: int) -> None:
+    """Give a fixture bundle the class-hour sidecar every real bundle carries."""
+    (prior / "hourly").mkdir(parents=True, exist_ok=True)
+    _class_hour_frame().to_parquet(
+        prior / "hourly" / f"class_hourly_{year}.parquet", index=False
+    )
+
+
 class TestCopyReusedYear(unittest.TestCase):
     def test_copies_dispatch_floors_and_optional_p2_state(self):
         import tempfile
@@ -282,6 +303,7 @@ class TestCopyReusedYear(unittest.TestCase):
             (prior / "dispatch" / "2023_P1.parquet").write_bytes(b"d")
             (prior / "floors" / "2023_P1.npz").write_bytes(b"f")
             (prior / "p2_state" / "2023.pkl.gz").write_bytes(b"p")
+            _stub_class_sidecar(prior, 2023)
             rcf._copy_reused_year(prior, dest, 2023, ["P1"], persist_p2_state=True)
             self.assertEqual((dest / "dispatch" / "2023_P1.parquet").read_bytes(), b"d")
             self.assertEqual((dest / "floors" / "2023_P1.npz").read_bytes(), b"f")
@@ -297,6 +319,7 @@ class TestCopyReusedYear(unittest.TestCase):
             (dest / "dispatch").mkdir(parents=True)
             (prior / "dispatch" / "2023_P1.parquet").write_bytes(b"d")
             (prior / "p2_state" / "2023.pkl.gz").write_bytes(b"p")
+            _stub_class_sidecar(prior, 2023)
             rcf._copy_reused_year(prior, dest, 2023, ["P1"], persist_p2_state=False)
             self.assertFalse((dest / "p2_state").exists())
 
@@ -324,6 +347,63 @@ class TestNormalization(unittest.TestCase):
 
         params = set(inspect.signature(rcf.solve_and_persist).parameters)
         self.assertLessEqual(rcf._REUSE_KWARG_EXEMPT, params)
+
+
+class TestCopyReusedYearCarriesHourlySidecars(unittest.TestCase):
+    """``hourly/`` is the COMMITTED half of a bundle — a reused year keeps it.
+
+    Before this, a rule-12 per-year ``--reuse-solved`` chain wrote dispatch for
+    the reused years but no class-hour sidecar, so the registered bundle had
+    holes in exactly the years it reused.
+    """
+
+    def _prior(self, tmp: Path, *, with_hourly: bool) -> Path:
+        prior = tmp / "prior"
+        (prior / "dispatch").mkdir(parents=True)
+        frame = _class_hour_frame()
+        frame.to_parquet(prior / "dispatch" / "2023_P1.parquet", index=False)
+        if with_hourly:
+            (prior / "hourly").mkdir(parents=True)
+            for name in ("class_hourly_2023", "network_2023", "unit_hourly_2023"):
+                frame.to_parquet(prior / "hourly" / f"{name}.parquet", index=False)
+            # A different year's sidecar must NOT be dragged along.
+            frame.to_parquet(
+                prior / "hourly" / "class_hourly_2024.parquet", index=False
+            )
+        return prior
+
+    def test_sidecars_are_copied_for_the_reused_year_only(self):
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+            prior = self._prior(tmp, with_hourly=True)
+            run_dir = tmp / "run"
+            (run_dir / "dispatch").mkdir(parents=True)
+            rcf._copy_reused_year(prior, run_dir, 2023, ["P1"], persist_p2_state=False)
+            got = sorted(p.name for p in (run_dir / "hourly").glob("*.parquet"))
+            self.assertEqual(
+                got,
+                [
+                    "class_hourly_2023.parquet",
+                    "network_2023.parquet",
+                    "unit_hourly_2023.parquet",
+                ],
+            )
+            self.assertTrue((run_dir / "dispatch" / "2023_P1.parquet").exists())
+
+    def test_class_sidecar_is_rederived_when_the_prior_has_none(self):
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+            prior = self._prior(tmp, with_hourly=False)
+            run_dir = tmp / "run"
+            (run_dir / "dispatch").mkdir(parents=True)
+            rcf._copy_reused_year(prior, run_dir, 2023, ["P1"], persist_p2_state=False)
+            out = run_dir / "hourly" / "class_hourly_2023.parquet"
+            self.assertTrue(out.exists())
+            self.assertEqual(float(pd.read_parquet(out)["mw"].sum()), 30.0)
 
 
 class TestReplayIgnoresReuseKey(unittest.TestCase):
