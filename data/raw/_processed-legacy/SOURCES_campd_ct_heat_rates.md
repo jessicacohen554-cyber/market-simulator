@@ -73,6 +73,7 @@ the data change.
 | ISO | Years pooled | Coverage | Derived |
 |---|---|---|---|
 | NYISO | 2023–2025 | 19/42 plants, 2,395/2,614 MW (91.6 % of class capacity) | 2026-07-27 |
+| ERCOT | 2023–2025 | 34/182 plants, 7,036/8,211 MW (85.7 % of eia860 class capacity; 99.2 % of metered class CT energy on the curated sheet) | 2026-07-31 (ERCOT-146 — NOTE: the consuming flag is INERT on ERCOT's curated-bin fleet path; artifact committed as the physical-HR term of a future measured CT-band re-identification, see `docs/DIAGNOSIS-ercot146-measured-ct-heat-rates-2026-07-31.md`) |
 
 The 23 uncovered plants are the tail below ~45 MW plus fuel cells and small
 municipal turbines with no qualifying CEMS-loaded hours; each keeps its eGRID

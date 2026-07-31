@@ -194,7 +194,7 @@ order is a prior, not a mandate — a session with a better-identified lever
 goes off-queue and says so. Entries already adjudicated elsewhere are *not*
 repeated here; the matrix `R`/`G`/`I` cells are the DO-NOT-REDO list.
 
-### 5.1 ERCOT — NOT-YET (keeper `2026-07-31-ercot145-gas-daily-shape`, C6 PASSES); open gates C3a/C3b/C3c/C7; ~~C7 lignite, coal seasonal split~~ CLOSED; ~~items 4+5~~ EXECUTED at ERCOT-145
+### 5.1 ERCOT — NOT-YET (keeper `2026-07-31-ercot145-gas-daily-shape`, C6 PASSES); open gates C3a/C3b/C3c/C7; ~~C7 lignite, coal seasonal split~~ CLOSED; ~~items 4+5~~ EXECUTED at ERCOT-145; ~~item 6~~ CLOSED `I` at ERCOT-146
 
 **QUEUE ITEM 2 IS PARTIALLY EXECUTED (ERCOT-144, 2026-07-31).** The DOF half
 landed: the ERCOT-144 lane retired the residual-identified coal offer DOF onto
@@ -217,10 +217,11 @@ model's $7.21/$0.51/$0.00; the load-weighted official C3a miss
 miss concentrates in high-load hours. **A ledger records a limit, it does not
 license a fit** (rules 1/13): no successor may close these gates with an
 adder, haircut or residual-tuned value. Remaining live in-model work: the
-un-chartered audit-grade items 6 and 7 below (item 5 CLOSED `G` and item 4
-EXECUTED-with-keeper, both at ERCOT-145 — see the struck items; the C3b
-shoulder/winter residual ERCOT-145 measured now points at the LOCAL daily
-gas basis, `winter_citygate_daily`, data-intake first).
+un-chartered audit-grade item 7 below (item 5 CLOSED `G` and item 4
+EXECUTED-with-keeper at ERCOT-145; item 6 CLOSED `I` at ERCOT-146 — see the
+struck items; the C3b shoulder/winter residual ERCOT-145 measured now points
+at the LOCAL daily gas basis, `winter_citygate_daily`, data-intake first —
+no HSC/Katy daily series is on disk yet).
 
 The lane is heavily enumerated; the honest top of the queue is closure work,
 not a new sweep:
@@ -417,9 +418,28 @@ rule-13-admissible mechanism available to carry it.
    committed row) and was never the incumbent; the fitted multipliers are.
    Reopen only as one term of a measured CT-band re-identification (item 6 /
    SCED TPO on the CT fleet), never a stack.
-6. **`measured_ct_heat_rates`** (NYISO form) on ERCOT's CT fleet — audit-grade.
+6. ~~**`measured_ct_heat_rates`** (NYISO form) on ERCOT's CT fleet — audit-grade.
    **Not** a candidate for the ERCOT-138 gas-dearness defect (see the closure
-   note above); the CT fleet is its own question.
+   note above); the CT fleet is its own question.~~
+   **▶ CLOSED AT ERCOT-146 (2026-07-31) — INERT BY WIRING, NO SOLVE SPENT;
+   CELL STAMPED `I`. DO NOT RE-TEST THE FLAG.**
+   `docs/DIAGNOSIS-ercot146-measured-ct-heat-rates-2026-07-31.md`, probe
+   `scripts/probes/ercot146_ct_heat_rates_phase1.py`. The flag's consumer is
+   the `load_fleet_from_csv` path; under `use_campd_bins` ERCOT's thermal
+   fleet comes from the curated sheet (`load_campd_bins`), which never
+   receives it — base fleet flag-on vs flag-off is **byte-identical**
+   (609 generators), so the A/B would produce a bit-identical bundle.
+   ERCOT's own artifact was derived and committed anyway
+   (`campd_ct_heat_rates_ERCOT.csv`, 34 plants, 99.2 % of metered class CT
+   energy, no adverse selection): it **confirms** the CAMPD-derived curated
+   sheet on its own basis (loaded gross −1.0 % cap-wt) — the +6.5 % net
+   delta is entirely the gross→net parasitic conversion, a fleet-wide sheet
+   basis convention, not per-plant noise. The artifact is the physical-HR
+   term of the licensed successor: the measured CT-band re-identification
+   (item 5's reopen condition — SCED TPO CT levels + this HR + the run-length
+   start term) that retires the fitted CT multipliers. Mixed-facility CT
+   rates at 9 uncurated-CT plants (1,708 MW) recorded as evidence for the
+   Martin Lake-family class-composition ruling.
 7. **WP-B nodal curtailment layer** — *data-intake first* (station→area
    crosswalk does not exist in-repo), then the under-curtailment gap
    (ERCOT-121).
