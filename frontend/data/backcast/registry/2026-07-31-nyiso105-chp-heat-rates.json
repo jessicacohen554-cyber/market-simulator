@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-31-nyiso105-chp-heat-rates",
+  "label": "nyiso105 chp heat rates",
+  "date": "2026-07-31",
+  "shorthand": "nyiso105-chp-heat-rates",
+  "definition": "nyiso-105 single delta: measured_chp_heat_rates=true on the nyiso-100 keeper",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-31-nyiso105-chp-heat-rates.js",
+  "bundle": "results/calibration/nyiso105_chpheatrate_B"
+}
