@@ -223,3 +223,27 @@ Appended AFTER the §4 measurement runs and BEFORE any solve (the miso-111
 §8 pattern): kill-rule readout, measured slice sizes, and any
 measurement-forced design refinement. Refinements may only narrow scope or
 report diagnostics — the split rule of §3 is frozen as written.
+
+**Measurement ran (this commit; §1–§8 committed first at f9d5d61). No kill
+rule fired; no design refinement — the §3 rule stands verbatim.**
+
+- Census: 30 MISO COAL_PRB plants measured (26 REG, 4 MER), every REG
+  plant carrying a `thermal_tranches_MISO.csv` COAL row, so the readout
+  basis is exactly the runtime basis (`COAL_MUSTRUN_BY_PLANT` holds no
+  MISO plant — verified, 10 ERCOT entries only).
+- **K1 NOT fired**: cap-weighted hold share of the committed band =
+  **0.286** (≥ 0.05).
+- **K2 NOT fired**: cap-weighted cycling share = **0.714** (≥ 0.05).
+- P-A was 0.35/0.65 from the class aggregates; the plant-resolved answer
+  is 0.29/0.71 — same neighbourhood, and now per-plant: **8 plants**
+  (Sherco 6090, Labadie 6009 among them) measure `night_p50 ≤ pct_mr/100`
+  → hold slice floored at 0, their whole band cycles (the miso-111 form
+  is CORRECT at those plants per their own meter); **12 plants** measure
+  `night_p50` at/above the band top → whole band holds through (keeper
+  form persists there); **6 plants** genuinely split (1710, 1733, 2103,
+  4050, 8023, 56068). The heterogeneity is the mechanism: miso-111
+  applied one answer to all 26 and both uniform answers are refuted.
+- Consistency diagnostic (`day_p50`, sizes nothing): recorded per plant
+  in `results/calibration/miso112_prb_conduct.csv`; band tops generally
+  sit at-or-above day_p50 (the econ tranches above the band carry the
+  measured day peak), no anomaly requiring narrowing.
