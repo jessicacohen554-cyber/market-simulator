@@ -2147,3 +2147,42 @@ floor, derive value or ORDC parameter changed (rules 13/21/23/26); the derive wa
 top-15 PJM retention. `audit_keepers.py --check` passes PJM's own row; its single
 failure is the **pre-existing** stale `status/NEISO.js` on main, which belongs to
 NEISO's lane and was deliberately not touched.
+
+## 2026-07-31 — pjm-143: the PS-fold hydro LEVEL closed — `hydro_level_923_hy` ARMED at PJM, A/B'd and PROMOTED. Keeper `2026-07-30-pjm-140-rampenv` → **`2026-07-31-pjm-143b-hy-level`**.
+
+The miso-109 cross-ISO screen measured PJM as the largest pumped-storage fold
+of the six ISOs and left it for this lane (rule 25). Re-derived from source
+in-session: PJM files no `NG: PS` column, its `NG: WAT` peaks 6,633/6,383 MW
+against a 3,334.2 MW conventional nameplate (1,437/1,572 h/yr above it, beside
+a 5,046.1 MW PS fleet — Bath County 2,862), zero negative hours, EIA-923 PS
+netgen NEGATIVE every year; coverage-gated level gap **+6.475 TWh (+72.1 %)
+2023, +6.957 TWh (+78.5 %) 2024** (2025 never differenced — early release,
+13 of a modal 77 plants). The keeper pinned the LP's EIA-923 `HY` units to that
+PS-inclusive series, so ~70–80 % of PJM's real hydro budget was phantom
+zero-marginal-cost energy — on a keeper the board called CALIBRATED.
+
+**The fix is one line** — `"PJM"` into `constants.EIA930_PS_FOLDED_INTO_WAT`
+(commit `7bfaa73`) — arming both prebuilt lanes at once: the miso-109 backcast
+pin refusal and the miso-110 forecast 923-climatology (forward level
+15.875 → 9.254 TWh). Zero new parameters; DOF ledger unchanged (18/6). No
+reconciliation factor — none identifiable, and **the MISO sign-change premise
+does NOT transfer** (PJM's monthly gap never changes sign; the refusal rests on
+the 0.654→0.556 share drift + the 3–6× seasonal range + rule 13).
+
+**Pre-registered A/B** (`PREREG-pjm143-hydro-level-923hy-2026-07-31.md`
+committed before either arm solved; sign, magnitude band, kill/keep).
+Control `2026-07-31-pjm-143a-control-930pin` reproduces the outgoing keeper's
+load-weighted prices to the third decimal. Candidate
+`2026-07-31-pjm-143b-hy-level`: hydro −6.548/−6.958/−7.042 TWh → fossil
++5.19/+5.64/+5.65 TWh (CT_PEAKER +0.99/+1.24/+1.51, narrowing its C1 deficit
+note) + imports; LMP **+0.287/+0.293/+0.383 $/MWh** (~+0.9 %), summer-peaked
+on the fold's own Jul/Aug signature; C3a 2024/25 toward actual, 2023 away
+(+2.05→+2.99 %) exactly as pre-declared. **CALIBRATED 9/9 in BOTH arms — no
+gate flipped**; C3c tail counts byte-identical (3/10/32 vs 6/18/59); C8
+CT_PEAKER grounded share improves to 15.2/15.4/15.8 %. Magnitude band refuted
+by $0.013/$0.007 in 2023/24 (holds 2025) — recorded, not re-written.
+`hydro_budget_nameplate_aware` PJM **K → I** (inert on the corrected level,
+L1 = 0.000 GWh exactly; under the pin it shuffled 1,703/1,147/2,085 GWh — its
+entire apparent signal was the defect). Keeper note 11 CLOSED. Rule 22: only
+2023–2025 touched; 2022 deliberately not spent. Full write-up:
+`results/calibration/FINDING-pjm143-hydro-level-923hy-2026-07-31.md`.
