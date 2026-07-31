@@ -3505,3 +3505,75 @@ chartered successor is **item 4** (five-ISO fuel stack on ERCOT:
 `gas_daily_shape` / `gas_monthly_actuals` / `gas_plant_monthly_fuel_pricing`
 — cheap A/B, zero new DOF, the C3b-2023 winter-volatility candidate, now
 also carrying the 2024/25 shoulder residual measured here).
+
+## 2026-07-31 — ERCOT-145b (item-4 execution, same session as the item-5 closure): the five-ISO fuel-stack audit stamps two cells from the record and solves the one live cell — `gas_daily_shape` armed as a single-delta A/B and **PROMOTED KEEPER `2026-07-31-ercot145-gas-daily-shape`** under the owner's in-session standard (structural-integrity improvement outranks gate regression); C3a-2024/25 and C3b-2024 improve UN-TARGETED; two pre-registered guards trip by ±1 threshold-straddling hour each, recorded honestly
+
+**Task (matrix §5.1 item 4, the chartered successor to the item-5 closure).**
+Precommit `docs/PRECOMMIT-ercot145-gas-daily-shape-2026-07-31.md` pushed
+BEFORE the solve; probe `scripts/probes/ercot145_gas_daily_exante.py`.
+
+**The audit (no LP).** Measured from the six keepers' own `run_config.json`:
+ERCOT was the ONLY ISO with all three fuel-stack flags off. Two cells were
+already adjudicated and are stamped FROM THE RECORD, not re-tested:
+`gas_monthly_actuals` ERCOT **U → G** (the Run-77 postmortem — ERCOT's
+~20 %-coverage EIA-923 reporter sample runs ~+$1/MMBtu above the merchant
+hub; the admissible descendant `gas_hh_monthly_shape` still carries NO
+matrix row, a 26c gap surfaced to the owner) with the MISO cell corrected
+**K → n/a** (drift: every recent MISO bundle records it False — MISO owns
+the phenomenon at finer grain via per-plant F923 + citygate daily);
+`gas_plant_monthly_fuel_pricing` ERCOT **U → G** (documented design refusal:
+~12 % CC-MW coverage ⇒ spurious intra-zone asymmetry, the Jack County
+incident). The single live cell: `gas_daily_shape` (measured HH daily
+staircase / own month mean, mean-preserving by construction, zero fitted
+parameters, forward-valid).
+
+**Ex-ante, recorded so the result cannot be mistaken for tuning (precommit
+§1c).** Within-month correlation of the keeper's daily price residual with
+the daily factor: 2023 **−0.011**, 2024 **−0.061**, 2025 **+0.127** — a fit
+gain was NOT predicted; the arm is a rule-14 input-correctness A/B. The
+queue's "2023 winter-volatility candidate" premise measured WEAK (2023
+factor std 0.076, max 1.276; the storm years are 2024 Heather max 3.287 and
+2025 max 2.143).
+
+**Result (single-delta replay off ercot144_perplant_arm, full span, one
+bundle `ercot145_gas_daily_arm`).** C1 **16/16 free 12/12 HELD**, C2 HELD,
+C4/C8 PASS held, C7-2024/25 COAL_LIGNITE both legs PASS (guard held),
+DOF ledger **n_residual 6 UNCHANGED**. Un-targeted improvements (rule 1 —
+reported, never the basis): **C3a improves 2024 AND 2025**
+(−36.4/−14.8/−14.3 → −36.4/**−14.3/−13.9** %), **C3b-2024 improves**
+(0.208 → **0.205**; 2025 stays PASS; 2023 0.637 unchanged exactly as the
+precommit predicted). **Two precommit §4 guards TRIPPED, each by one
+threshold-straddling hour, adjudicated hour-level:** (a) C3c-2023 47 → 46 —
+h6016 (real actual $2,110) slips $203.2 → $199.5, a 0.25 % straddle on a
+cheap-factor day, NOT the ERCOT-119 systematic drain (72→49/13→3); (b)
+2024 spurious 2 → 3 — h346 prices $207 on the REAL Winter Storm Heather day
+(Jan 15) whose own hourly actual is $141 (the actual's tail sits in
+adjacent hours): right day, wrong hour, not tail invention. Per the
+precommit's own letter these trip the rejection rule; **the owner's
+in-session standard — "if structural integrity improves but gates regress
+that may still be a keeper" — adjudicates them as threshold noise and
+carries the promotion.** Recorded verbatim so no successor reads this as a
+session-authored exceptions ledger (the ERCOT-144 correction stands; all
+four gates remain honest FAILs, no ledger entries written).
+
+**C6 + determination.** The governance block is attested on the new bundle
+(single-delta arm, DOF state byte-identical in kind to the attested
+ercot144 basis; the added input is a national commodity series independent
+of any ERCOT residual) — **C6 PASSES; DETERMINATION `NOT-YET`**, fail set
+{C3a, C3b, C3c, C7} identical to ercot144.
+
+**Governance.** Registered `2026-07-31-ercot145-gas-daily-shape` (top-15
+prune retired `2026-07-26-ercot115-coal-marginal-hr`), keeper shard +
+`build_status --iso ERCOT`, matrix cells (`gas_daily_shape` U→K,
+`gas_monthly_actuals` U→G + MISO drift fix, `gas_plant_monthly_pricing`
+U→G) + header re-stamp + §5.1 items 4/5 struck, calibration log — same
+session (rules 15/26b). Holdouts untouched. ERCOT-scoped (rule 25). LOYO:
+zero fitted parameters (each year its own measured factors) — structurally
+LOYO-exempt, per-year guard table standing in. Pre-existing matched, not
+fixed: hydro-plant-modes warning, `ercot_wtx_*` dual-channel warning.
+Open owner rulings carried: (1) `gas_hh_monthly_shape` matrix row (26c);
+(2) per-gate dispositions of the attributed gates; (3) `split_coal_tranches`
+delete-vs-inert; (4) `ercot_offer_hrmult_ep_*` matrix rows; (5) Martin Lake
+composition (ERCOT-143 §7.3). Successor pointer: the measured winter
+residual now names the LOCAL daily basis (`winter_citygate_daily` ERCOT,
+data-intake first — HSC/Katy daily).
