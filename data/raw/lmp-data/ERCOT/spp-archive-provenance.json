@@ -1,0 +1,170 @@
+{
+ "DAMLZHBSPP_2018": {
+  "bytes": 1765054,
+  "constructed_name": "rpt.00013060.0000000000000000.20190101.080239873.DAMLZHBSPP_2018.zip",
+  "doc_id": "642564845",
+  "publish_date": "2019-01-01T08:02:39-05:00",
+  "report_type_id": 13060,
+  "sha256": "2c1b63c36d64341c25650a3eeb579cad981c9ac7030804e6bbd6f026ab91bb01",
+  "status": "fetched"
+ },
+ "DAMLZHBSPP_2019": {
+  "bytes": 2013424,
+  "constructed_name": "rpt.00013060.0000000000000000.20200101.080319632.DAMLZHBSPP_2019.zip",
+  "doc_id": "694281912",
+  "publish_date": "2020-01-01T08:03:19-05:00",
+  "report_type_id": 13060,
+  "sha256": "736f7f933d5a59f8ccd3814cd124722b5f45651934e9084b2e0bb46ff84cf2d4",
+  "status": "fetched"
+ },
+ "DAMLZHBSPP_2020": {
+  "bytes": 2021142,
+  "constructed_name": "rpt.00013060.0000000000000000.20210101.080809625.DAMLZHBSPP_2020.zip",
+  "doc_id": "751351545",
+  "publish_date": "2021-01-01T08:08:09-05:00",
+  "report_type_id": 13060,
+  "sha256": "0d07c345750ef48322002badff0497136ffee6fc8bb2c27919c3c795eba06844",
+  "status": "fetched"
+ },
+ "DAMLZHBSPP_2021": {
+  "bytes": 1997884,
+  "constructed_name": "rpt.00013060.0000000000000000.20220101.081333707.DAMLZHBSPP_2021.zip",
+  "doc_id": "814918746",
+  "publish_date": "2022-01-01T08:13:33-05:00",
+  "report_type_id": 13060,
+  "sha256": "c9e8b92fbbb3b82232d578cb8679751511600fc895eca760cf993835f079d435",
+  "status": "fetched"
+ },
+ "DAMLZHBSPP_2022": {
+  "bytes": 2106454,
+  "constructed_name": "rpt.00013060.0000000000000000.20230101.081114733.DAMLZHBSPP_2022.zip",
+  "doc_id": "886627599",
+  "publish_date": "2023-01-01T08:11:13-05:00",
+  "report_type_id": 13060,
+  "sha256": "c71656e45a865bdec7166defa1cde1ac875219655be20425a08265e34fd641b8",
+  "status": "fetched"
+ },
+ "DAMLZHBSPP_2023": {
+  "bytes": 2081453,
+  "constructed_name": "rpt.00013060.0000000000000000.20240101.081011828.DAMLZHBSPP_2023.zip",
+  "doc_id": "969803138",
+  "local_sha256": "dd704eeeb794ba1d1ebfc52acdec55836a0409283ff8357e3561b555f0d94d79",
+  "publish_date": "2024-01-01T08:10:11-05:00",
+  "report_type_id": 13060,
+  "sha256": "dd704eeeb794ba1d1ebfc52acdec55836a0409283ff8357e3561b555f0d94d79",
+  "status": "verified"
+ },
+ "DAMLZHBSPP_2024": {
+  "bytes": 2110124,
+  "constructed_name": "rpt.00013060.0000000000000000.20250101.080733817.DAMLZHBSPP_2024.zip",
+  "doc_id": "1065468714",
+  "local_sha256": "b9fd0b9aa9ec83376c6385c91416174857ca6ba556c6df08e942a2f98b89af65",
+  "publish_date": "2025-01-01T08:07:33-05:00",
+  "report_type_id": 13060,
+  "sha256": "b9fd0b9aa9ec83376c6385c91416174857ca6ba556c6df08e942a2f98b89af65",
+  "status": "verified"
+ },
+ "DAMLZHBSPP_2025": {
+  "bytes": 2050483,
+  "constructed_name": "rpt.00013060.0000000000000000.20260101.084409719.DAMLZHBSPP_2025.zip",
+  "doc_id": "1177667469",
+  "local_sha256": "30df71ebb306bbe8c6cc075598d2e5bd47079b8ab9e0442979f3331353618320",
+  "publish_date": "2026-01-01T08:44:09-05:00",
+  "report_type_id": 13060,
+  "sha256": "30df71ebb306bbe8c6cc075598d2e5bd47079b8ab9e0442979f3331353618320",
+  "status": "verified"
+ },
+ "DAMLZHBSPP_2026": {
+  "bytes": 1172811,
+  "constructed_name": "rpt.00013060.0000000000000000.20260726.080129621.DAMLZHBSPP_2026.zip",
+  "doc_id": "1254762457",
+  "publish_date": "2026-07-26T08:01:29-05:00",
+  "report_type_id": 13060,
+  "sha256": "f3769d6ed1ec095bbafdf4f626419182db8dc6272eda5dd265e02fd8c1a98f17",
+  "status": "fetched"
+ },
+ "RTMLZHBSPP_2018": {
+  "bytes": 13792963,
+  "constructed_name": "rpt.00013061.0000000000000000.20190101.082527062.RTMLZHBSPP_2018.zip",
+  "doc_id": "642564849",
+  "publish_date": "2019-01-01T08:25:24-05:00",
+  "report_type_id": 13061,
+  "sha256": "199b5823aeb4cf7f9c885a2bd75282d6c4efbdaad11f88730292cae2007398ae",
+  "status": "fetched"
+ },
+ "RTMLZHBSPP_2019": {
+  "bytes": 14299439,
+  "constructed_name": "rpt.00013061.0000000000000000.20200101.082516926.RTMLZHBSPP_2019.zip",
+  "doc_id": "694284436",
+  "publish_date": "2020-01-01T08:25:15-05:00",
+  "report_type_id": 13061,
+  "sha256": "99663eea4a9002d30ce9064fb0d5225558f9f43d632c760dd23f2f5b6a4e00f9",
+  "status": "fetched"
+ },
+ "RTMLZHBSPP_2020": {
+  "bytes": 13523263,
+  "constructed_name": "rpt.00013061.0000000000000000.20210101.084127415.RTMLZHBSPP_2020.zip",
+  "doc_id": "751356439",
+  "publish_date": "2021-01-01T08:41:25-05:00",
+  "report_type_id": 13061,
+  "sha256": "2c5154762e26cef8ad619a97a3d4346668713fe1d458b6e57ea79e43ead2381f",
+  "status": "fetched"
+ },
+ "RTMLZHBSPP_2021": {
+  "bytes": 13278381,
+  "constructed_name": "rpt.00013061.0000000000000000.20220101.083820464.RTMLZHBSPP_2021.zip",
+  "doc_id": "814922832",
+  "publish_date": "2022-01-01T08:38:17-05:00",
+  "report_type_id": 13061,
+  "sha256": "5255421af0d19274e852cd3a8eb6388b88e14238043487852d3cadc4edccd18d",
+  "status": "fetched"
+ },
+ "RTMLZHBSPP_2022": {
+  "bytes": 13773266,
+  "constructed_name": "rpt.00013061.0000000000000000.20230101.083407763.RTMLZHBSPP_2022.zip",
+  "doc_id": "886632075",
+  "publish_date": "2023-01-01T08:34:04-05:00",
+  "report_type_id": 13061,
+  "sha256": "9807875a28926cba482f935bece5cb865dfed8a3ebd70a3bf65c47e2dc8afb4f",
+  "status": "fetched"
+ },
+ "RTMLZHBSPP_2023": {
+  "bytes": 14000500,
+  "constructed_name": "rpt.00013061.0000000000000000.20240101.081911295.RTMLZHBSPP_2023.zip",
+  "doc_id": "969805139",
+  "local_sha256": "e22179bf7efe1b7f6ac25f8757e97d8d11c27de3638523da4166727f5d5652cb",
+  "publish_date": "2024-01-01T08:19:08-05:00",
+  "report_type_id": 13061,
+  "sha256": "e22179bf7efe1b7f6ac25f8757e97d8d11c27de3638523da4166727f5d5652cb",
+  "status": "verified"
+ },
+ "RTMLZHBSPP_2024": {
+  "bytes": 14288420,
+  "constructed_name": "rpt.00013061.0000000000000000.20250101.081829672.RTMLZHBSPP_2024.zip",
+  "doc_id": "1065471230",
+  "local_sha256": "cffa1d6011ca8272af9ba3ba0d0afa397d728ea4ce8d05abe96fe3fe6662adac",
+  "publish_date": "2025-01-01T08:18:28-05:00",
+  "report_type_id": 13061,
+  "sha256": "cffa1d6011ca8272af9ba3ba0d0afa397d728ea4ce8d05abe96fe3fe6662adac",
+  "status": "verified"
+ },
+ "RTMLZHBSPP_2025": {
+  "bytes": 13969454,
+  "constructed_name": "rpt.00013061.0000000000000000.20260101.132601474.RTMLZHBSPP_2025.zip",
+  "doc_id": "1177737535",
+  "local_sha256": "522a26678575b93bbc7e2c040760eead52c4aae484e0f353c603d5b1a0378faa",
+  "publish_date": "2026-01-01T13:25:58-05:00",
+  "report_type_id": 13061,
+  "sha256": "522a26678575b93bbc7e2c040760eead52c4aae484e0f353c603d5b1a0378faa",
+  "status": "verified"
+ },
+ "RTMLZHBSPP_2026": {
+  "bytes": 7867575,
+  "constructed_name": "rpt.00013061.0000000000000000.20260726.080546836.RTMLZHBSPP_2026.zip",
+  "doc_id": "1254762551",
+  "publish_date": "2026-07-26T08:05:44-05:00",
+  "report_type_id": 13061,
+  "sha256": "210ef0ff5635c25fea5d4678ef44ec1c214fee9ea923d18cab1eaa5c2d863fdc",
+  "status": "fetched"
+ }
+}
