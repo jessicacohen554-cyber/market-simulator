@@ -504,5 +504,91 @@ class TestCommittedTakeorpaySunkFixed(unittest.TestCase):
         )
 
 
+class TestPrbCommittedDispatchable(unittest.TestCase):
+    """coal_prb_committed_dispatchable: PRB/subbituminous plants are excluded
+    from the committed-band take-or-pay discount — their committed band bids
+    full delivered cost like a merchant's, while BIT/lignite keep the
+    discount and `_mustrun` is untouched (miso-111,
+    PREREG-miso111-prb-committed-flex-2026-07-31.md §8)."""
+
+    _PRB_DISPATCH = frozenset({"prb", "subbituminous"})
+
+    def _gen(self, suffix, pc=2832, supply="prb"):
+        return Generator(
+            unit_id=f"COAL_X_p{pc}_{suffix}",
+            name="c",
+            zone="X",
+            fuel_type="coal",
+            pmax_mw=100,
+            plant_group="COAL",
+            plant_code=pc,
+            coal_supply=supply,
+        )
+
+    def test_regulated_prb_committed_bids_full_cost(self):
+        g = self._gen("committed", supply="prb")
+        self.assertEqual(
+            campd_tranche_fuel_frac(
+                g,
+                {"prb": 1.0},
+                {2832: 1.0},
+                committed_takeorpay_regulated=True,
+                regulated_plants=frozenset({2832}),
+                committed_dispatchable_supplies=self._PRB_DISPATCH,
+            ),
+            1.0,
+        )
+
+    def test_regulated_bit_keeps_discount(self):
+        # The exclusion is supply-scoped: a regulated bituminous plant's
+        # committed band keeps its sunk-contract discount (the miso-102
+        # COAL_BIT overshoot protection is by construction).
+        g = self._gen("committed", supply="bituminous")
+        self.assertAlmostEqual(
+            campd_tranche_fuel_frac(
+                g,
+                {"bituminous": 1.0},
+                {2832: 0.85},
+                committed_takeorpay_regulated=True,
+                regulated_plants=frozenset({2832}),
+                committed_dispatchable_supplies=self._PRB_DISPATCH,
+            ),
+            0.15,
+        )
+
+    def test_mustrun_band_untouched(self):
+        # The self-commitment stays carried once, on `_mustrun` (rule 19).
+        g = self._gen("mustrun", supply="prb")
+        self.assertAlmostEqual(
+            campd_tranche_fuel_frac(
+                g,
+                {"prb": 1.0},
+                {2832: 0.85},
+                committed_takeorpay_regulated=True,
+                regulated_plants=frozenset({2832}),
+                committed_dispatchable_supplies=self._PRB_DISPATCH,
+            ),
+            0.15,
+        )
+
+    def test_default_none_is_byte_identical(self):
+        # Default off: every existing keeper unmoved.
+        g = self._gen("committed", supply="prb")
+        kw = dict(
+            committed_takeorpay_regulated=True,
+            regulated_plants=frozenset({2832}),
+        )
+        self.assertEqual(
+            campd_tranche_fuel_frac(g, {"prb": 1.0}, {2832: 1.0}, **kw),
+            campd_tranche_fuel_frac(
+                g,
+                {"prb": 1.0},
+                {2832: 1.0},
+                committed_dispatchable_supplies=None,
+                **kw,
+            ),
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
