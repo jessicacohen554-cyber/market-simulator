@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-31-neiso-70-ctheatrate",
+  "label": "neiso 70 ctheatrate",
+  "date": "2026-07-31",
+  "shorthand": "neiso-70-ctheatrate",
+  "definition": "neiso-70 single delta: measured_ct_heat_rates=true on the neiso-61 keeper",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-07-31-neiso-70-ctheatrate.js",
+  "bundle": "results/calibration/neiso70_ctheatrate_B"
+}
