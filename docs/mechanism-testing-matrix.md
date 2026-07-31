@@ -400,7 +400,10 @@ calibration-complete marker — CAISO holds no marker, so every out-of-training
 year stays quarantined. (caiso-145; `docs/calibration-log/caiso.md`.)
 
 Items 2–6 below are the live lever queue and are **not** blocked-gate work: they
-target C5a and the standing structural/offer questions.
+target C5a and the standing structural/offer questions. Items 1 and 5 are struck
+through — both were adjudicated and closed **without spending a solve** (caiso-144
+and caiso-136 respectively); they are kept in place so the numbering stays stable
+and so neither is re-proposed.
 
 **C3a-2025 IS DIAGNOSED-UNCLOSED WITH AN EMPTY IN-MODEL LEVER QUEUE (caiso-142);
 LEDGERED at caiso-145.**
@@ -485,9 +488,17 @@ sign argument to every basis and bound.
    storage spread (caiso-129's only surviving candidate; a real charter, not a
    shaped floor — the S1 family is DO-NOT-REDO).
 4. **`tranche_startup_amortization`** — untested; evening-ramp start economics.
-5. **`unit_outage_short_windows` / `unit_partial_outage_windows`** — derive
-   for CAISO (currently MISO/PJM-only artifacts); cheap availability-grain
-   test.
+5. ~~**`unit_outage_short_windows` / `unit_partial_outage_windows`** — derive
+   for CAISO~~ — **CLOSED, cell is `I`: ADJUDICATED INERT ex ante at caiso-136
+   (no solve spent).** Nothing to derive. The detector is coal-only and CAISO's
+   coal class is **CEMS-invisible**: the fleet carries 2 coal units / 50.0 MW
+   (0.16 % of capacity, 0.04–0.07 % of keeper energy) at one facility (10684
+   Argus Cogen), and that facility is **absent from CAMPD entirely** — the CA
+   extract holds 108–109 facilities with zero coal-fuelled rows in 2023/24/25
+   and no 10684 row in the facility-level extract either. Both derives return
+   0 windows; no guard setting can change that, because there is no input
+   series to measure. Re-open **only** if CAISO gains a CEMS-reporting coal
+   unit. (`FINDING-caiso136-unit-availability-windows-2026-07-28.md`.)
 6. **`measured_ct_heat_rates`** — CT priced-out finding (caiso-119) and the
    CHP miscosting (caiso-128) both point at offer-cost inputs; measured loaded
    HRs are the audit-grade first step.
