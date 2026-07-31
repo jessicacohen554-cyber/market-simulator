@@ -148,6 +148,15 @@ NRC_TO_EIA: dict[str, dict[str, tuple[int, int]]] = {
         "Nine Mile Point 1": (2589, 1),
         "Nine Mile Point 2": (2589, 2),
     },
+    # CAISO (caiso-148, matrix §5.2 item 8). The whole ISO fleet is Diablo
+    # Canyon 1+2 (EIA plant 6099, 1,122 + 1,118 = 2,240 MW, zone NP15) — the
+    # same two units NUCLEAR_MONTHLY_CF_BY_YEAR["CAISO"] anchors. Both report
+    # 365/366 days in 2023-2025. SONGS 2/3 retired 2013 and Rancho Seco 1989;
+    # neither carries NRC rows nor a model fleet unit.
+    "CAISO": {
+        "Diablo Canyon 1": (6099, 1),
+        "Diablo Canyon 2": (6099, 2),
+    },
 }
 
 
