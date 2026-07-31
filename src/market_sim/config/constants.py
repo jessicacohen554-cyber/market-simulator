@@ -1237,10 +1237,27 @@ EIA923_COMPLETE_FILING_CENSUS_FRACTION: float = 0.50
 # sign by month in 4 of the 5 complete-filing years. A fitted scale constant
 # would be a free parameter with no forward story (rules 5 / 13 / 22).
 #
+# PJM (pjm-143, every number re-derived from source in that session —
+# PREREG-pjm143-hydro-level-923hy-2026-07-31.md, committed before either A/B
+# arm solved): no `NG: PS`; `NG: WAT` peaks 6,633 / 6,383 MW (2023 / 2024)
+# against a 3,334.2 MW conventional nameplate — 1,437 / 1,572 hours above it
+# (1,249-1,612 h/yr across 2019-2025) — beside a 5,046.1 MW PS fleet (Bath
+# County 2,862.0, Muddy Run 1,072.0, Yards Creek 453.0, Seneca 411.8, Smith
+# Mountain 247.3); 0 negative hours in any year 2019-2025; `NG: WAT` 15.451 /
+# 15.819 TWh against EIA-923 `HY` 8.976 / 8.861 TWh, i.e. +6.475 TWh / +72.1 %
+# and +6.957 TWh / +78.5 % — the LARGEST fold of the six ISOs (2025 not
+# differenced: early release, 13 of a modal 77 plants). EIA-923 `PS` net
+# generation is NEGATIVE every year (-2.525 / -2.673 TWh in 2023/24), the
+# opposite sign. UNLIKE MISO, PJM's monthly gap NEVER changes sign (0 sign
+# changes in all six complete-filing years, +166 to +984 GWh every month —
+# Bath County cycles daily year-round), so the sign-change half of the MISO
+# argument does not transfer (rule 25); the no-reconciliation-factor refusal
+# at PJM rests on the conventional-share drift (0.654 -> 0.556 across
+# 2019-2024, spread 0.097 — a factor fitted on one year misstates another by
+# up to ~17 % relative), the 3-6x seasonal range of the gap (Jul/Aug ~900-980
+# GWh vs Oct ~170-300 GWh — not one scalar), and rule 13's forward-story test.
+#
 # SCREENED but deliberately NOT listed — each ISO's own lane decides (rule 25):
-#   PJM   — shows all three signatures far larger (+52.9 % to +79.6 % vs 923
-#           `HY`, breaches nameplate in 1,250-1,612 h/yr): a live defect, but
-#           listing it here would move PJM's keeper without its own A/B.
 #   NYISO — shows NONE of them (0-33 breach hours a year, <=0.007 TWh) and its
 #           923 `HY` EXCEEDS `NG: WAT` by 4-6 % every year: the opposite bias,
 #           not a PS fold.
@@ -1255,7 +1272,7 @@ EIA923_COMPLETE_FILING_CENSUS_FRACTION: float = 0.50
 # here (rule 19), but arming either at a listed ISO needs its own source fix
 # first — EIA-923 is monthly and offers no hourly substitute.
 # Source: EIA-930 hourly per-BA extracts; EIA-923 monthly generation; EIA-860.
-EIA930_PS_FOLDED_INTO_WAT: frozenset[str] = frozenset({"MISO"})
+EIA930_PS_FOLDED_INTO_WAT: frozenset[str] = frozenset({"MISO", "PJM"})
 
 # --- Hydro hourly deliverability envelope (caiso-72 STEP-2) ------------------
 # Percentile of the measured EIA-930 NG:WAT hourly output, per (month x
