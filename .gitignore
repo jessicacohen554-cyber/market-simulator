@@ -245,6 +245,9 @@ frontend/data/forecast/program-status.js
 /results/d9-ab/
 /results/probe-*/
 /results/verify-*/
+# FFR-1A confirmed-exit accounting acceptance probes (isolated run_full_horizon
+# --out-dir caches + logs). Same class as /results/full-horizon/.
+/results/ffr1a/
 /results/*.log
 # Backcast diagnostic-probe solve output (scripts/probes/* --out-dir default,
 # e.g. results/probes/pjm119_eastcut). Same class as the /results/probe-*/ rule
