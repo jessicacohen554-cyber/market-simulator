@@ -676,6 +676,47 @@ class ReserveDesign:
 
 
 # ---------------------------------------------------------------------------
+# FR-12 year-semantics helpers (forecast-readiness audit §3.2)
+# ---------------------------------------------------------------------------
+
+
+def _reserve_solve_year(config, sim_year: "int | None") -> int:
+    """The reserve layer's fleet-clock year.
+
+    ``sim_year`` when threaded (both orchestrators pass the evolving solve
+    year), else ``config.weather_year`` (legacy/test callers). In backcast the
+    harness pins ``weather_year == solve year``, so the fallback — and the
+    substitution of this helper for the former bare
+    ``int(config.weather_year)`` reads — is value-identical there. What it
+    fixes is the forecast side: a 2026–2050 solve no longer keys its
+    calendar/date gates and per-year artifact lookups to the pinned weather
+    year (FR-12).
+    """
+    return int(sim_year) if sim_year is not None else int(config.weather_year)
+
+
+def _require_backcast_measured(config, flag: str, what: str) -> None:
+    """Hard-gate a measured reserve artifact to backcast mode (FR-12).
+
+    ``what`` is a short description of the measured record. A measured
+    requirement/award series is a rule-13 [R-MEASURED] backcast input: it has
+    no forward analogue, so arming it in a forecast/crossover run would
+    either freeze the pinned weather-year's record into every solve year
+    (the pre-FR-12 behavior) or silently look up a year with no file. Both
+    are wrong — fail loud instead, mirroring the ``gas_price_factor``
+    hard-error pattern at the read site that consumes the artifact.
+    """
+    mode = str(getattr(config, "mode", "forecast"))
+    if mode != "backcast":
+        raise ValueError(
+            f"{flag}=True in mode={mode!r}: {what} is a measured record "
+            "(backcast-only, rule 13 [R-MEASURED]) with no forward analogue. "
+            "Disable the flag for forecast/crossover runs, or use the "
+            "mechanism's forward/endogenous variant where one exists."
+        )
+
+
+# ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
 
@@ -718,13 +759,13 @@ def get_reserve_design(
             solar_gen=solar_gen,
         )
     if iso == "PJM":
-        return _pjm_design(config, fleet_arrays, hours, zone_names)
+        return _pjm_design(config, fleet_arrays, hours, zone_names, sim_year=sim_year)
     if iso == "MISO":
-        return _miso_design(config, fleet_arrays, hours, zone_names)
+        return _miso_design(config, fleet_arrays, hours, zone_names, sim_year=sim_year)
     if iso == "NYISO":
-        return _nyiso_design(config, fleet_arrays, hours, zone_names)
+        return _nyiso_design(config, fleet_arrays, hours, zone_names, sim_year=sim_year)
     if iso == "NEISO":
-        return _neiso_design(config, fleet_arrays, hours, zone_names)
+        return _neiso_design(config, fleet_arrays, hours, zone_names, sim_year=sim_year)
     if iso == "CAISO":
         return _caiso_design(
             config,
@@ -1130,16 +1171,30 @@ def _ercot_design(
     )
     requirement = np.full(int(hours), req_total, dtype=float)
 
-    if getattr(config, "ercot_ecrs_requirement", False) and int(
-        config.weather_year
-    ) >= int(getattr(config, "ercot_ecrs_requirement_from_year", 2023)):
-        requirement = requirement + ercot_ecrs_requirement_mw(
-            int(config.weather_year), hours
-        )
+    # FR-12: from-year onset gates and per-year artifact lookups key the SOLVE
+    # year (the fleet clock), never the pinned weather year — in backcast the
+    # two coincide (sim_year falls back to weather_year), in forecast the date
+    # gates now track the horizon instead of freezing at the weather pin.
+    solve_year = _reserve_solve_year(config, sim_year)
 
-    if getattr(config, "ercot_load_resource_reserve", False) and int(
-        config.weather_year
-    ) >= int(getattr(config, "ercot_load_resource_reserve_from_year", 2023)):
+    if getattr(config, "ercot_ecrs_requirement", False) and solve_year >= int(
+        getattr(config, "ercot_ecrs_requirement_from_year", 2023)
+    ):
+        # Measured AS-plan ECRS series (ASPLANNP433) — backcast-only record
+        # (all-zero for any year with no file, so a forecast arming would
+        # silently add nothing while claiming to).
+        _require_backcast_measured(
+            config,
+            "ercot_ecrs_requirement",
+            "the measured ERCOT AS-plan ECRS requirement (ASPLANNP433)",
+        )
+        requirement = requirement + ercot_ecrs_requirement_mw(solve_year, hours)
+
+    if getattr(config, "ercot_load_resource_reserve", False) and solve_year >= int(
+        getattr(config, "ercot_load_resource_reserve_from_year", 2023)
+    ):
+        # Mode-aware inside (G4 pattern): measured NP3-911 enrollment in
+        # backcast, forward enrollment formula in forecast — no gate needed.
         load_mw = ercot_load_resource_reserve_credit_mw(config, hours, year=sim_year)
         requirement = np.maximum(requirement - load_mw, float(config.ordc_mcl_mw))
 
@@ -1147,10 +1202,17 @@ def _ercot_design(
         getattr(config, "ercot_storage_as_reserve", False)
         and getattr(config, "storage_as_commitment", False)
         and not getattr(config, "ercot_storage_as_endogenous", False)
-        and int(config.weather_year)
+        and solve_year
         >= int(getattr(config, "ercot_storage_as_reserve_from_year", 2025))
     ):
-        storage_as_mw = ercot_storage_as_reserve_mw(int(config.weather_year), hours)
+        # Measured 60-Day-DAM storage AS awards — backcast-only record (the
+        # forward story is ercot_storage_as_endogenous, excluded above).
+        _require_backcast_measured(
+            config,
+            "ercot_storage_as_reserve",
+            "the measured ERCOT storage AS-award series (60-Day DAM)",
+        )
+        storage_as_mw = ercot_storage_as_reserve_mw(solve_year, hours)
         requirement = np.maximum(requirement - storage_as_mw, float(config.ordc_mcl_mw))
 
     eligible = _reserve_eligible(fleet_arrays)
@@ -1202,10 +1264,12 @@ def _ercot_multiproduct_design(
     """ERCOT multi-product AS co-optimization (RegUp/RRS/ECRS/NonSpin)."""
     from market_sim.results.scarcity import (
         RTCB_GOLIVE_HOUR,
+        RTCB_GOLIVE_YEAR,
         ercot_as_forward_drivers,
         ercot_as_forward_requirement_mw,
         ercot_as_plan_requirement_mw,
         ercot_load_resource_reserve_credit_mw,
+        ercot_market_regime,
         ercot_rtolcap_supply_cap_mw,
         nyiso_rcpf_product_shortfall_steps,
     )
@@ -1217,7 +1281,11 @@ def _ercot_multiproduct_design(
     voll = float(config.ordc_voll)
     crit_frac = float(getattr(config, "ercot_as_critical_frac", 0.0))
     n_ramp = int(getattr(config, "ercot_as_n_ramp", 12))
-    year = int(config.weather_year)
+    # FR-12: the fleet-clock year for every date/regime gate and per-year
+    # artifact lookup below (== weather_year in backcast; the evolving solve
+    # year in forecast, so the RTC+B transition and reform dates track the
+    # horizon instead of freezing at the weather pin).
+    year = _reserve_solve_year(config, sim_year)
 
     forward_drivers: dict[str, np.ndarray] | None = None
     if (
@@ -1236,6 +1304,20 @@ def _ercot_multiproduct_design(
     for p, (_name, code, _tier) in enumerate(products):
         req_t = ercot_as_forward_requirement_mw(config, code, T, forward_drivers)
         if req_t is None:
+            # Measured AS-plan fallback (ASPLANNP433) — a backcast-only
+            # record: any year with no file reads all-zero, so a forecast
+            # falling through here would demand zero AS and withhold nothing
+            # (FR-12, the failure the __post_init__ forward-requirement
+            # guards describe). Fail loud instead of pricing that silently —
+            # this also catches the armed-but-unthreaded-drivers case the
+            # config-level guards cannot see.
+            _require_backcast_measured(
+                config,
+                "ercot_multiproduct_as_coopt",
+                f"the measured ERCOT AS-plan requirement for {code} "
+                "(ASPLANNP433; arm ercot_as_forward_requirement and thread "
+                "the load/VRE drivers for the forward formula)",
+            )
             req_t = ercot_as_plan_requirement_mw(year, T, code)
         requirement[p, :] = req_t
         req_peak = float(req_t.max())
@@ -1300,10 +1382,17 @@ def _ercot_multiproduct_design(
             elif getattr(
                 config, "ercot_nonreleasable_as_withholding", False
             ) and code in ("REGUP", "RRS"):
-                if year < 2025:
-                    rigid_end = T  # whole ORDC-regime year
-                elif year == 2025:
-                    rigid_end = min(RTCB_GOLIVE_HOUR, T)
+                # FR-12: the regime test rides the SOLVE year through the
+                # ercot_market_regime seam (results/scarcity.py) — RTC+B
+                # retired the HASL carve-out, so an auto-regime 2026+ year
+                # (or an explicit design="rtcb" pin) never re-arms it, and a
+                # design="ordc" scenario pin keeps it in force as pinned.
+                # Under auto this is value-identical to the former numeric
+                # gates (ordc ⇔ year < 2026) for every backcast year.
+                if ercot_market_regime(year, config) == "ordc":
+                    rigid_end = (
+                        min(RTCB_GOLIVE_HOUR, T) if year == RTCB_GOLIVE_YEAR else T
+                    )
         if rigid_end > 0:
             req_rigid = req_t.copy()
             req_rigid[rigid_end:] = 0.0
@@ -1613,6 +1702,13 @@ def _ercot_multiproduct_design(
             and not getattr(config, "ercot_storage_as_endogenous", False)
             and year >= int(getattr(config, "ercot_storage_as_reserve_from_year", 2025))
         ):
+            # Measured 60-Day-DAM storage AS awards — backcast-only record
+            # (FR-12; the forward story is ercot_storage_as_endogenous).
+            _require_backcast_measured(
+                config,
+                "ercot_storage_as_reserve",
+                "the measured ERCOT storage AS-award series (60-Day DAM)",
+            )
             storage_as_mw = ercot_storage_as_reserve_mw(year, T)
             total_req = np.maximum(total_req - storage_as_mw, float(config.ordc_mcl_mw))
         total_families.append(
@@ -1854,6 +1950,8 @@ def _pjm_design(
     fleet_arrays: FleetArrays,
     hours: int,
     zone_names: list[str] | None = None,
+    *,
+    sim_year: int | None = None,
 ) -> ReserveDesign:
     """PJM energy+reserve co-optimization (measured Primary requirement + published ORDC).
 
@@ -1893,7 +1991,14 @@ def _pjm_design(
         pjm_reserve_deliverable_supply_cap_mw,
     )
 
-    year = int(config.weather_year)
+    # FR-12: the measured-series lookups key the SOLVE year (== weather_year
+    # in backcast). This loader family has a designed forward story — a year
+    # with no parquet returns None and the design falls back to the
+    # fleet-responsive 1.5×MSSC formula (the documented forecast path) — so
+    # it is solve-year-keyed rather than backcast-gated: a forecast year now
+    # takes the formula instead of silently freezing the pinned weather
+    # year's measured record.
+    year = _reserve_solve_year(config, sim_year)
     req = load_pjm_measured_reserve_requirement(year, hours)
     if req is None:
         eligible_mask = _reserve_eligible(fleet_arrays)
@@ -2165,6 +2270,8 @@ def _miso_design(
     hours: int,
     zone_names: list[str] | None = None,
     n_ramp: int = 8,
+    *,
+    sim_year: int | None = None,
 ) -> ReserveDesign:
     """MISO energy+reserve co-optimization: market-wide RBDC, optional zonal.
 
@@ -2225,7 +2332,18 @@ def _miso_design(
             load_miso_reserve_requirements,
         )
 
-        measured_req = load_miso_reserve_requirements(int(config.weather_year), T)
+        # FR-12: measured cleared-reservation series — a backcast-only record
+        # (the loader hard-errors on a missing year rather than reverting to
+        # the static estimate, so there is no forward fallback to key to).
+        # Solve-year-keyed (== weather_year in backcast) behind the mode gate.
+        _require_backcast_measured(
+            config,
+            "miso_measured_reserve_requirements",
+            "the measured MISO cleared reg+spin+supp reservation series",
+        )
+        measured_req = load_miso_reserve_requirements(
+            _reserve_solve_year(config, sim_year), T
+        )
         requirement = measured_req["market"]
         if float(requirement.max()) > req:
             # Feasibility guard: static widths must span the requirement in
@@ -2472,6 +2590,8 @@ def _nyiso_design(
     hours: int,
     zone_names: list[str],
     n_ramp: int = 8,
+    *,
+    sim_year: int | None = None,
 ) -> ReserveDesign:
     """NYISO locational energy+reserve co-optimization (nested RCPF families).
 
@@ -2527,10 +2647,18 @@ def _nyiso_design(
             load_nyiso_reserve_requirements,
         )
 
-        # weather_year is the backcast fleet-clock year (the calibration
-        # harness constructs one config per solve year, weather_year=year).
+        # FR-12: measured as-enforced hourly requirements (the #1344 intake) —
+        # a backcast-only record (the loader hard-errors on a missing year
+        # rather than reverting to the static requirements it replaces, so
+        # there is no forward fallback to key to). Solve-year-keyed
+        # (== weather_year in backcast) behind the mode gate.
+        _require_backcast_measured(
+            config,
+            "nyiso_dynamic_reserve_requirements",
+            "the measured NYISO as-enforced hourly reserve-requirement series",
+        )
         dynamic_req = load_nyiso_reserve_requirements(
-            int(config.weather_year), int(hours)
+            _reserve_solve_year(config, sim_year), int(hours)
         )
 
     T = int(hours)
@@ -2586,6 +2714,11 @@ def _nyiso_design(
         # ORDC curve translates with the requirement exactly as
         # nyiso_ordc_measured_step_span already does for SENY — one mechanism,
         # not a second construction (rule 19 [R-ONE-MECH]).
+        # KEEPS weather_year (FR-12 meaning note): both levels are published
+        # constants, not a measured record — the year only lays out the
+        # weekday/holiday On-Peak mask, and the solve's 8760 hour grid IS the
+        # pinned weather year's calendar (demand/weather shapes ride it), so
+        # the mask must align with that calendar in forecast too.
         dynamic_req = {
             **dynamic_req,
             "li_30min_total": nyiso_li_30min_requirement_mw(
@@ -2829,6 +2962,8 @@ def _neiso_design(
     hours: int,
     zone_names: list[str],
     n_ramp: int = 8,
+    *,
+    sim_year: int | None = None,
 ) -> ReserveDesign:
     """NEISO system-wide energy+reserve co-optimization (3-level RCPF nesting).
 
@@ -2869,10 +3004,18 @@ def _neiso_design(
             load_neiso_reserve_requirements,
         )
 
-        # weather_year is the backcast fleet-clock year (the calibration
-        # harness constructs one config per solve year, weather_year=year).
+        # FR-12: measured as-enforced hourly requirements (Limb A) — a
+        # backcast-only record (the loader hard-errors on a missing year
+        # rather than reverting to the static requirements it replaces, so
+        # there is no forward fallback to key to). Solve-year-keyed
+        # (== weather_year in backcast) behind the mode gate.
+        _require_backcast_measured(
+            config,
+            "neiso_dynamic_reserve_requirements",
+            "the measured ISO-NE as-enforced hourly reserve-requirement series",
+        )
         dynamic_req = load_neiso_reserve_requirements(
-            int(config.weather_year), int(hours)
+            _reserve_solve_year(config, sim_year), int(hours)
         )
 
     T = int(hours)
