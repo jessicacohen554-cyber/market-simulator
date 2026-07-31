@@ -3982,4 +3982,117 @@ slot remains.
   caiso-143 §H, caiso-142 §K, caiso-141, caiso-138 §G, caiso-137b §6,
   caiso-131 §10.
 
-Next number: caiso-146.
+## caiso-146 (2026-07-31) — the CT class was **mispriced by eGRID's plant-average ANNUAL heat rate**, and CAISO's own CAMPD artifact says so **one-sidedly**: 41 of 43 plants cheaper, cap-weighted **−10.7 %**. Armed as a single-flag rule-14 swap with **zero fitted parameters**, it moves CT_PEAKER **26→42 / 10→15 / 11→19 %** of actual while every criterion verdict holds and the protective C7 number with the least headroom **improves**. **NEW KEEPER: `2026-07-31-caiso146-ct-heat-rates`.** Also: the heat-rate route to caiso-119 R4 is **closed by measurement**, and the outgoing keeper's committed bytes are found **not to reproduce at HEAD**
+
+**Keeper `2026-07-29-caiso139-dump-guard-offer` → `2026-07-31-caiso146-ct-heat-rates`**
+(CALIBRATED-WITH-CAVEATS both sides; 0 FAILs; the **same** two owner-adopted
+caveats carried forward unchanged in substance — no new caveat, no new slot).
+Records: `results/calibration/FINDING-caiso146-measured-ct-heat-rates-2026-07-31.md`,
+`PREREG-caiso146-ct-heat-rates-2026-07-31.md` (committed+pushed **before either
+arm solved**, `abaa952`). Arms: `2026-07-31-caiso146-control` /
+`2026-07-31-caiso146-ct-heat-rates`. Lever queue §5.2 item 6, cell `U` → `K`.
+
+**The defect.** eGRID publishes ONE plant-average ANNUAL heat rate per plant and
+`eia860._rows_to_generators` hands it to every combustion turbine. For a peaker
+that is wrong twice: an annual average blends startup fuel and part-load tails
+into the number that sets the offer, and at a mixed facility it is not even the
+right technology's rate. **Glenarm (422) is defect #2 in the flesh** — 4
+`CT_PEAKER` units (138.4 MW) **and** 2 `CC_REGULAR` units (84 MW) on one eGRID
+10.3895, where CAMPD tags GT3/GT4 `Combustion turbine` and GT5 `Combined cycle`.
+
+**The artifact (STEP 1, no LP).** 43 plant rows, **all `flag=="ok"`** — zero
+excluded by the physical band. Coverage **76.8 % of class capacity but 99.9 % of
+the class's own metered CAMPD CT energy** (8.015/8.025 TWh): the 90 uncovered
+plants are the Part-75 reporting boundary (median **2.2 MW**, **zero** metered CT
+energy — nothing to swap in), and there is **no adverse selection** (covered
+cap-wt eGRID HR 10.819 vs uncovered 11.004). **CAISO's direction is ONE-SIDED
+and that differs from both precedents** (NYISO: errors both ways; PJM: net
+**+**0.229): 41 plants / 5,649 MW cheaper vs **2 / 198 MW dearer**, cap-wt
+**−1.159 MMBtu/MWh (−10.7 %)**, gen-wt −0.884. Largest moves are the lowest-CF
+peakers, exactly as the start-fuel defect predicts (Grapeland 15.5477→9.5563,
+Center 14.5803→9.5251).
+
+**Result.** CT_PEAKER **1.088→1.727 / 0.423→0.634 / 0.272→0.455 TWh** vs actual
+4.128/4.326/2.374 — **26→42 %, 10→15 %, 11→19 %** — inside the prereg's
+predicted +0.1–0.8 TWh band. Displaced: CC_REGULAR −0.399/−0.130/−0.093
+(94→93 / 94→93 / 90→90 % of actual, a ~1 pp cost against a 5–16 pp gain), ST_GAS
+(better in 2 of 3 years), imports. Every criterion verdict **unchanged** vs a
+same-HEAD zero-delta control. C3a improves in all three years (+3.6→+2.8,
++8.2→+7.8, **+11.3→+11.0 %**); **C3c BIT-UNCHANGED** (0 h both arms).
+**Protective gates improve:** C7 CT_PEAKER `profile_r` 0.903/0.951/**0.837** →
+0.885/0.936/**0.864** — 2025, the outgoing keeper's most exposed number at 0.036
+of headroom and the prereg's flagged risk, **rises**; `cv_ratio`
+2.635/2.048/2.087 → 1.613/1.805/2.172 moves *toward* measured off-peak
+variability; C8 forced share 0.0032/0.0104/0.0012 → 0.0016/0.0055/0.0007 against
+a 0.15 cap. All six pre-registered K-gates pass, including **K6**: excluding the
+Delano broken-meter row the class move keeps its sign at 80/84/66 % of size.
+
+**caiso-119 R4 ANSWERED, and the heat-rate route to it CLOSED.** R4 attributed
+CT_PEAKER to "priced out" and set the guardrail that *marking peaker offers down
+until 4 TWh appears is rule-1/13 forbidden*. This lever clears it by
+construction — the magnitude is set by the meter, not the gap, and the prereg
+predicted the gap would **not** close before the solve. All three plants R4 named
+rise (Sentinel 0.227→0.360, Walnut Creek 0.223→0.329, Panoche 0.063→0.088 in
+2023). **A mispriced offer was PART of the defect but only part:** fully
+re-priced, the class still reaches only 42/15/19 %, so the residual 2.4–3.7 TWh
+is **not** a heat-rate defect — the same conclusion nyiso-89 reached, derived
+independently on CAISO's data.
+
+**Ledger discipline (prereg §8).** C3a-2025 moved **0.3 pp** (+11.3→+11.0 %),
+inside the 1.0 pp materiality trigger fixed **before** the solve, so no
+leave-one-year-out re-scoring was required. The movement is **reported, never
+tuned toward**, and is **not** offered as justification; the lever was selected
+off the §5.2 queue on caiso-119's CT finding and closes **neither** ledgered
+caveat. The two caveats remain the **owner's** act of 2026-07-30 (caiso-145),
+re-stated against this bundle with magnitudes re-measured. **CAISO still holds
+NO rule-22 marker; 2023/2024/2025 only.**
+
+**OPEN ITEM — the outgoing keeper's committed bytes no longer reproduce at
+HEAD.** The zero-delta control diverged from the committed caiso-139 keeper by
+up to **2.1/1.7/3.2 GW** on a class-hour, netting a **CC_REGULAR ↔ import** swap
+of +0.45/+0.46/+0.85 TWh at **identical total generation** (3 dp) and CA λ
++$0.19/+$0.06/+$0.14. **It does NOT touch CT_PEAKER** (+0.007/0.000/0.000), so
+the A/B — an order of magnitude larger, with both arms at the same HEAD — is
+unaffected; this is exactly why a same-HEAD control was solved rather than a
+keeper-relative comparison (neiso-69 precedent). Promotion **re-bases CAISO onto
+HEAD** so the committed bytes reproduce again. Cause **unidentified**: 15 commits
+touched `src/market_sim/` between `fa9971b` and `db02071`; bisecting needs full
+solves, so it is filed rather than guessed.
+
+**Cross-cutting side finding, deliberately NOT acted on.** Sub-6.0 MMBtu/MWh
+loaded **meter** hours bias the *shared* CT derive low in **every** ISO measured
+— CAISO 3.46 % of loaded hours / **+0.114**, NYISO 2.45 % / +0.122, PJM 1.55 % /
++0.081, MISO 0.30 % / +0.014 MMBtu/MWh energy-weighted
+(`scripts/probes/_caiso146_hourly_hr_integrity.py`). An hour-grain screen would
+move **three committed keepers'** inputs, so it needs its own charter, not a
+CAISO calibration session (rules 24/25).
+
+**Housekeeping.** §5.2 queue item 5 was stale — it asked for
+`unit_outage_short_windows` to be derived for CAISO, but that cell was already
+`I` (caiso-136: CAISO's coal class is CEMS-invisible, Argus Cogen absent from
+CAMPD entirely, both derives return 0 windows). Struck with its reason and
+re-open condition. The old item 6 is split: the CHP half survives as the new
+item 7 (`measured_chp_heat_rates`), and `nuclear_unit_availability` is added as
+item 8.
+
+**DO-NOT-REDO (caiso-146).**
+- **Do not re-derive `campd_ct_heat_rates_CAISO.csv` against a residual** (rule
+  24 — source-data change only, and the commit must cite it).
+- **Do not add a CAISO-scoped heat-rate multiplier, band or exclusion.** The
+  error is plant-specific source noise; no scalar substitutes, and a CAISO-only
+  screen on a shared derive is a rule-25 breach.
+- **Do not re-open "CT_PEAKER is priced out" as a heat-rate question** — it is
+  measured and answered. Successor levers must be obligation-keyed with a cited
+  D-4 window, never an offer markdown sized to the gap.
+- **Do not treat the hour-grain meter screen as a CAISO lane** — it is
+  cross-cutting and touches three committed keepers.
+- **Do not quote the C3a improvement as evidence for this mechanism**, and do
+  not propose it as a C3a-2025 or C3c lever.
+- **The keeper-reproducibility drift is not this lever's defect** and must not be
+  re-litigated as one; if investigated it is a reproducibility lane over
+  `fa9971b..db02071` scoped to the CC ↔ import margin.
+- Carried forward unchanged: every DO-NOT-REDO in FINDING-caiso144 §G,
+  caiso-143 §H, caiso-142 §K, caiso-141, caiso-138 §G, caiso-137b §6,
+  caiso-131 §10, and the caiso-145 bar on re-litigating either ledgered caveat.
+
+Next number: caiso-147.
