@@ -175,9 +175,9 @@ def _k6_delano(year: int) -> dict:
         )
         frame = frame[(frame["pass"] == "P1") & (frame["plant_group"] == "CT_PEAKER")]
         total = float(frame["mw"].sum()) / 1e6
-        delano = float(
-            frame.loc[frame["plant_code"] == DELANO_PLANT_CODE, "mw"].sum()
-        ) / 1e6
+        delano = (
+            float(frame.loc[frame["plant_code"] == DELANO_PLANT_CODE, "mw"].sum()) / 1e6
+        )
         out[name] = {
             "ct_peaker_twh": round(total, 4),
             "delano_twh": round(delano, 4),
@@ -249,10 +249,18 @@ def _artifact_report() -> dict:
         "dearer": int((delta > 0).sum()),
         "moved_gt_0p5": int((delta.abs() > 0.5).sum()),
         "moved_gt_1p0": int((delta.abs() > 1.0).sum()),
-        "cap_weighted_model": round(float((ok["model_heat_rate_egrid"] * cap).sum() / cap.sum()), 4),
-        "cap_weighted_measured": round(float((ok["heat_rate"] * cap).sum() / cap.sum()), 4),
-        "gen_weighted_model": round(float((ok["model_heat_rate_egrid"] * gen).sum() / gen.sum()), 4),
-        "gen_weighted_measured": round(float((ok["heat_rate"] * gen).sum() / gen.sum()), 4),
+        "cap_weighted_model": round(
+            float((ok["model_heat_rate_egrid"] * cap).sum() / cap.sum()), 4
+        ),
+        "cap_weighted_measured": round(
+            float((ok["heat_rate"] * cap).sum() / cap.sum()), 4
+        ),
+        "gen_weighted_model": round(
+            float((ok["model_heat_rate_egrid"] * gen).sum() / gen.sum()), 4
+        ),
+        "gen_weighted_measured": round(
+            float((ok["heat_rate"] * gen).sum() / gen.sum()), 4
+        ),
     }
 
 
@@ -324,7 +332,12 @@ def main(argv: list[str] | None = None) -> int:
         )
         sa, da = _slack_dump(ARM_A, year)
         sb, db = _slack_dump(ARM_B, year)
-        row["slack_dump_mwh"] = {"A_slack": sa, "B_slack": sb, "A_dump": da, "B_dump": db}
+        row["slack_dump_mwh"] = {
+            "A_slack": sa,
+            "B_slack": sb,
+            "A_dump": da,
+            "B_dump": db,
+        }
 
         row["caiso119_r4_plants"] = _r4_plants(year)
         row["K6_delano"] = _k6_delano(year)
@@ -345,36 +358,52 @@ def main(argv: list[str] | None = None) -> int:
     out.write_text(json.dumps(result, indent=1) + "\n")
 
     print(json.dumps(result["summary"], indent=1))
-    print(f"\nartifact: {art['plants_applied']}/{art['plants_total']} rows applied, "
-          f"{art['cheaper']} cheaper / {art['dearer']} dearer, cap-wt "
-          f"{art['cap_weighted_model']} -> {art['cap_weighted_measured']} MMBtu/MWh")
+    print(
+        f"\nartifact: {art['plants_applied']}/{art['plants_total']} rows applied, "
+        f"{art['cheaper']} cheaper / {art['dearer']} dearer, cap-wt "
+        f"{art['cap_weighted_model']} -> {art['cap_weighted_measured']} MMBtu/MWh"
+    )
     for year in YEARS:
         row = result["years"][str(year)]
         ct = row["class_twh"].get("CT_PEAKER", {})
         lam = row["ca_lambda_usd_mwh"]
         print(f"\n{year}:")
-        print(f"  CT_PEAKER TWh   A {ct.get('A')} -> B {ct.get('B')} "
-              f"({ct.get('delta'):+}) vs actual {ct.get('actual')}")
+        print(
+            f"  CT_PEAKER TWh   A {ct.get('A')} -> B {ct.get('B')} "
+            f"({ct.get('delta'):+}) vs actual {ct.get('actual')}"
+        )
         print(f"  CA lambda $/MWh A {lam['A']} -> B {lam['B']} ({lam['delta']:+})")
-        print(f"  liveness  max |Δ CT_PEAKER| {row['K3_liveness']['ct_peaker_max_abs_diff_mw']} MW"
-              f" ; arm-A vs keeper max |Δ| {row['K2_control_integrity']['max_abs_diff_mw']} MW")
+        print(
+            f"  liveness  max |Δ CT_PEAKER| {row['K3_liveness']['ct_peaker_max_abs_diff_mw']} MW"
+            f" ; arm-A vs keeper max |Δ| {row['K2_control_integrity']['max_abs_diff_mw']} MW"
+        )
         big = sorted(
-            ((k, v["delta"]) for k, v in row["class_twh"].items() if abs(v["delta"]) > 0.01),
+            (
+                (k, v["delta"])
+                for k, v in row["class_twh"].items()
+                if abs(v["delta"]) > 0.01
+            ),
             key=lambda kv: -abs(kv[1]),
         )
         if big:
-            print("  class moves >0.01 TWh: "
-                  + ", ".join(f"{k} {d:+.4f}" for k, d in big))
+            print(
+                "  class moves >0.01 TWh: " + ", ".join(f"{k} {d:+.4f}" for k, d in big)
+            )
         r4 = row.get("caiso119_r4_plants") or {}
         if r4:
-            print("  caiso-119 R4 plants: "
-                  + ", ".join(f"{k} {v['A']}->{v['B']} ({v['delta']:+.4f})"
-                              for k, v in r4.items()))
+            print(
+                "  caiso-119 R4 plants: "
+                + ", ".join(
+                    f"{k} {v['A']}->{v['B']} ({v['delta']:+.4f})" for k, v in r4.items()
+                )
+            )
         k6 = row["K6_delano"]
         if k6.get("A"):
-            print(f"  K6 Delano: class Δ {k6['delta_twh_full']:+} TWh, "
-                  f"ex-Delano {k6['delta_twh_ex_delano']:+} TWh "
-                  f"(Delano is {k6['delano_share_of_delta']} of it)")
+            print(
+                f"  K6 Delano: class Δ {k6['delta_twh_full']:+} TWh, "
+                f"ex-Delano {k6['delta_twh_ex_delano']:+} TWh "
+                f"(Delano is {k6['delano_share_of_delta']} of it)"
+            )
     print(f"\nwrote {out}")
     return 0
 

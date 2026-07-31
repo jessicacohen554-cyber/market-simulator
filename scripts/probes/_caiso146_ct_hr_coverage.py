@@ -107,8 +107,10 @@ def main() -> int:
 
     ok = art[art["flag"] == "ok"]
     print("=" * 78)
-    print(f"1. ARTIFACT — {len(art)} plant rows, {len(ok)} applied (flag=='ok'), "
-          f"{len(art) - len(ok)} flagged out")
+    print(
+        f"1. ARTIFACT — {len(art)} plant rows, {len(ok)} applied (flag=='ok'), "
+        f"{len(art) - len(ok)} flagged out"
+    )
     print(f"   per-unit detail rows: {len(units)}")
     if len(art) != len(ok):
         print(art[art["flag"] != "ok"].to_string(index=False))
@@ -116,8 +118,10 @@ def main() -> int:
     total_mw = float(fleet["pmax_mw"].sum())
     cov_mw = float(ok["class_capacity_mw"].sum())
     print("=" * 78)
-    print(f"2. COVERAGE — capacity {cov_mw:,.0f} / {total_mw:,.0f} MW "
-          f"({100 * cov_mw / total_mw:.1f} %), plants {len(ok)} / {len(fleet)}")
+    print(
+        f"2. COVERAGE — capacity {cov_mw:,.0f} / {total_mw:,.0f} MW "
+        f"({100 * cov_mw / total_mw:.1f} %), plants {len(ok)} / {len(fleet)}"
+    )
 
     # Energy basis: covered share of the class's own metered CAMPD CT energy.
     merged = fleet.merge(ct_energy, on="plant_code", how="left")
@@ -125,8 +129,10 @@ def main() -> int:
     merged["covered"] = merged["plant_code"].isin(set(ok["plant_code"]))
     e_tot = float(merged["campd_gross_mwh"].sum())
     e_cov = float(merged.loc[merged["covered"], "campd_gross_mwh"].sum())
-    print(f"   metered CAMPD CT energy {e_cov / 1e6:,.3f} / {e_tot / 1e6:,.3f} TWh "
-          f"({100 * e_cov / e_tot:.1f} % of the class's own measured energy)")
+    print(
+        f"   metered CAMPD CT energy {e_cov / 1e6:,.3f} / {e_tot / 1e6:,.3f} TWh "
+        f"({100 * e_cov / e_tot:.1f} % of the class's own measured energy)"
+    )
 
     print("=" * 78)
     print("3. EXCLUSIONS — why each uncovered plant is uncovered")
@@ -152,18 +158,25 @@ def main() -> int:
     print("   uncovered plants > 20 MW (largest 20):")
     big = unc.sort_values("pmax_mw", ascending=False).head(20)
     print(
-        big[["plant_code", "name", "pmax_mw", "model_hr", "campd_gross_mwh", "cause"]]
-        .to_string(index=False)
+        big[
+            ["plant_code", "name", "pmax_mw", "model_hr", "campd_gross_mwh", "cause"]
+        ].to_string(index=False)
     )
-    print(f"   uncovered size profile: median {unc['pmax_mw'].median():.1f} MW, "
-          f"p90 {unc['pmax_mw'].quantile(0.9):.1f} MW, max {unc['pmax_mw'].max():.1f} MW")
-    print(f"   covered   size profile: median "
-          f"{merged.loc[merged['covered'], 'pmax_mw'].median():.1f} MW")
+    print(
+        f"   uncovered size profile: median {unc['pmax_mw'].median():.1f} MW, "
+        f"p90 {unc['pmax_mw'].quantile(0.9):.1f} MW, max {unc['pmax_mw'].max():.1f} MW"
+    )
+    print(
+        f"   covered   size profile: median "
+        f"{merged.loc[merged['covered'], 'pmax_mw'].median():.1f} MW"
+    )
     # Selection check: is the uncovered set systematically dearer/cheaper on paper?
-    print(f"   model eGRID HR — covered cap-wt "
-          f"{np.average(merged.loc[merged['covered'], 'model_hr'], weights=merged.loc[merged['covered'], 'pmax_mw']):.3f}"
-          f" vs uncovered cap-wt "
-          f"{np.average(unc['model_hr'], weights=unc['pmax_mw']):.3f} MMBtu/MWh")
+    print(
+        f"   model eGRID HR — covered cap-wt "
+        f"{np.average(merged.loc[merged['covered'], 'model_hr'], weights=merged.loc[merged['covered'], 'pmax_mw']):.3f}"
+        f" vs uncovered cap-wt "
+        f"{np.average(unc['model_hr'], weights=unc['pmax_mw']):.3f} MMBtu/MWh"
+    )
 
     print("=" * 78)
     print("4. DISTRIBUTION — measured vs model, BOTH directions")
@@ -171,43 +184,84 @@ def main() -> int:
     d["delta"] = d["heat_rate"] - d["model_heat_rate_egrid"]
     cheaper = d[d["delta"] < 0]
     dearer = d[d["delta"] > 0]
-    print(f"   cheaper (measured < model): {len(cheaper)} plants, "
-          f"{cheaper['class_capacity_mw'].sum():,.0f} MW")
-    print(f"   dearer  (measured > model): {len(dearer)} plants, "
-          f"{dearer['class_capacity_mw'].sum():,.0f} MW")
-    print(f"   |delta| > 0.5 MMBtu/MWh: {(d['delta'].abs() > 0.5).sum()} plants; "
-          f"> 1.0: {(d['delta'].abs() > 1.0).sum()}")
+    print(
+        f"   cheaper (measured < model): {len(cheaper)} plants, "
+        f"{cheaper['class_capacity_mw'].sum():,.0f} MW"
+    )
+    print(
+        f"   dearer  (measured > model): {len(dearer)} plants, "
+        f"{dearer['class_capacity_mw'].sum():,.0f} MW"
+    )
+    print(
+        f"   |delta| > 0.5 MMBtu/MWh: {(d['delta'].abs() > 0.5).sum()} plants; "
+        f"> 1.0: {(d['delta'].abs() > 1.0).sum()}"
+    )
     w = d["class_capacity_mw"].to_numpy(float)
-    print(f"   capacity-weighted delta {np.average(d['delta'], weights=w):+.3f} "
-          f"MMBtu/MWh ({100 * np.average(d['delta'], weights=w) / np.average(d['model_heat_rate_egrid'], weights=w):+.1f} %)")
+    print(
+        f"   capacity-weighted delta {np.average(d['delta'], weights=w):+.3f} "
+        f"MMBtu/MWh ({100 * np.average(d['delta'], weights=w) / np.average(d['model_heat_rate_egrid'], weights=w):+.1f} %)"
+    )
     g = d["gross_mwh"].to_numpy(float)
-    print(f"   generation-weighted delta {np.average(d['delta'], weights=g):+.3f} "
-          f"MMBtu/MWh")
-    print(f"   ratio model/measured: min {d['model_over_measured'].min():.3f}, "
-          f"p25 {d['model_over_measured'].quantile(.25):.3f}, "
-          f"median {d['model_over_measured'].median():.3f}, "
-          f"p75 {d['model_over_measured'].quantile(.75):.3f}, "
-          f"max {d['model_over_measured'].max():.3f}")
+    print(
+        f"   generation-weighted delta {np.average(d['delta'], weights=g):+.3f} "
+        f"MMBtu/MWh"
+    )
+    print(
+        f"   ratio model/measured: min {d['model_over_measured'].min():.3f}, "
+        f"p25 {d['model_over_measured'].quantile(0.25):.3f}, "
+        f"median {d['model_over_measured'].median():.3f}, "
+        f"p75 {d['model_over_measured'].quantile(0.75):.3f}, "
+        f"max {d['model_over_measured'].max():.3f}"
+    )
     print()
     print("   largest 8 moves by |delta| x capacity:")
     d["impact"] = d["delta"].abs() * d["class_capacity_mw"]
     print(
         d.sort_values("impact", ascending=False)
-        .head(8)[["plant_code", "plant_name", "class_capacity_mw", "heat_rate",
-                  "model_heat_rate_egrid", "delta"]]
+        .head(8)[
+            [
+                "plant_code",
+                "plant_name",
+                "class_capacity_mw",
+                "heat_rate",
+                "model_heat_rate_egrid",
+                "delta",
+            ]
+        ]
         .to_string(index=False)
     )
     print()
     print("   the two DEARER rows in full:")
-    print(dearer[["plant_code", "plant_name", "class_capacity_mw", "n_units",
-                  "loaded_hours", "heat_rate", "model_heat_rate_egrid"]]
-          .to_string(index=False))
+    print(
+        dearer[
+            [
+                "plant_code",
+                "plant_name",
+                "class_capacity_mw",
+                "n_units",
+                "loaded_hours",
+                "heat_rate",
+                "model_heat_rate_egrid",
+            ]
+        ].to_string(index=False)
+    )
     print()
     print("   band-edge rows (measured < 7.0 or > 15.0 MMBtu/MWh):")
     edge = d[(d["heat_rate"] < 7.0) | (d["heat_rate"] > 15.0)]
-    print(edge[["plant_code", "plant_name", "class_capacity_mw", "n_units",
-                "loaded_hours", "gross_mwh", "heat_rate",
-                "model_heat_rate_egrid"]].to_string(index=False))
+    print(
+        edge[
+            [
+                "plant_code",
+                "plant_name",
+                "class_capacity_mw",
+                "n_units",
+                "loaded_hours",
+                "gross_mwh",
+                "heat_rate",
+                "model_heat_rate_egrid",
+            ]
+        ].to_string(index=False)
+    )
     for code in edge["plant_code"]:
         u = units[units["plant_code"] == code]
         print(f"   -- plant {code} units --")
