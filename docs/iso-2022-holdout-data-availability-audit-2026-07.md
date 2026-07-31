@@ -447,3 +447,44 @@ the same tracked-but-ignored state.
    2021} only, or the full 2018–2021 span; and **(b)** sign-off to route the
    deriver through `holdout_policy.py` so `final` gates 2019/2026 and `complete`
    gates the rest. Not changed here — it is a governance-gate edit, not data.
+
+---
+
+## 8. CORRECTION (2026-07-31, owner-prompted re-check) — the ERCOT 60-Day DAM Gen Resource Data 2018–2022 is already in the repo
+
+This audit's §2 row "ISO availability overlay — ERCOT ✗ (60-Day DAM family
+2023–25)" and §3.1's "Fix: fetch ERCOT 60-Day DAM disclosure archives for
+2022", and the register §ERCOT verdict built on them ("MISSING 2018-2022 —
+STRUCTURALLY UNOBTAINABLE"), are all **wrong about the source data**. Committed
+under `data/raw/ercot-AS/` since 2026-07-28 (PR #3098 merge lineage):
+
+- `60d_DAM_Gen_Resource_Data_{2018..2022}_*.parquet` — 18 files, ~39.8M rows.
+  Each label year spans deliveries Nov-2 (y−1) → Nov-1 (y) (the 60-day
+  publication lag); combined with the already-committed
+  `ercot/60_DAY_DAM_DISCLOSURE_..._2023_Jan-Mar.parquet` fragment (deliveries
+  2022-11-02..12-31), calendar coverage is **365/365/366/365/365 distinct
+  delivery days for 2018–2022 — no gaps** (verified no-LP this session).
+- Column set is a strict **superset** of the consumed
+  `data/raw/ercot/60_DAY_DAM_DISCLOSURE_*` schema (extra: startup costs,
+  Min Gen Cost, DME, per-product AS MCPCs) — so every consumer of the
+  2023–2025 files can read these.
+- Companions for the same span: `60d_DAM_Load_Resource_Data_{2018..2022}`,
+  `60d_DAM_{Generation,Load}_Resource_ASOffers` back years, EnergyBids /
+  EnergyOnlyOffers / Awards series.
+
+Consequences: the whole availability family
+(`ercot-thermal-dam-availability{,-hourly}.csv`, `ercot-noncampd-availability.csv`,
+`ercot-nuclear-availability.csv`, and — via the PWRSTR rows the derive already
+reads — `ercot-storage-capability.csv`) is **derivable for 2018–2022 from
+committed data**: point the derives' input glob at (or map in) the `ercot-AS`
+files, handle the label-vs-delivery-year offset (calendar year y needs label-y
+AND label-(y+1) files), re-prove 2023–2025 byte-identical, then derive. No
+fetch, no owner upload, no credentialed archive. The HSL, GTC-2018-2019 and
+DAMASAGG "unobtainable" verdicts stand — none of those products is in
+`ercot-AS`.
+
+Root cause of the miss, both times: this audit's scanner truncated the
+`ercot-AS/` directory listing to its first 20 entries (alphabetically, the
+json.zip bundles), and the ERCOT intake session graded reachability from the
+live MIS retention windows without checking what earlier AS-lane sessions had
+already landed locally. Register §ERCOT carries the matching correction block.
