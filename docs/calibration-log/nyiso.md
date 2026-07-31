@@ -3119,3 +3119,107 @@ of the marker check. NYISO's 2022 touchpoint opens only when the **owner** lifts
 - `check_mechanism_matrix.py --base origin/main`: integrity OK; matrix header re-stamped.
 
 Evidence: `docs/FINDING-nyiso104-c3c-frontier-and-tiered-holdout-2026-07-31.md`.
+
+## nyiso-105 — three no-solve closures, and `measured_chp_heat_rates` becomes the KEEPER (2026-07-31)
+
+**Keeper `2026-07-30-nyiso-100-silretire` → `2026-07-31-nyiso105-chp-heat-rates`**
+(bundle `results/calibration/nyiso105_chpheatrate_B`). Frozen HEAD `0852d5b`.
+Pre-registration `results/calibration/PREREG-nyiso105-chp-heat-rates-2026-07-31.md`,
+committed **and pushed before either arm solved**. Scorer
+`scripts/probes/_nyiso105_chpheatrate_ab.py`; no-LP probe
+`scripts/probes/_nyiso105_seam_recipe_stgas.py`.
+
+Four items were scoped. **Three closed on measurement alone, no LP** — the
+nyiso-93/94/95/97/99/101 pattern. One solved and is the keeper.
+
+### 1. Lever 1 `st_gas_mustrun_p25_level` — INERT ex ante, cell `U → I`, no solve
+
+Four independent blockers, any one decisive. (a) The **single flag is a no-op by
+construction** — `arrays.py:1750-1753` gates the p25 block on
+`st_gas_mustrun_per_plant` too, which the keeper carries `False`, so the scope's
+suggested `--set` arm would have solved a bit-identical control. **The arm is the
+pair.** (b) The **pair is a no-op on today's artifact**:
+`thermal_tranche_online_frac("NYISO")` returns **0 rows** — no `online_frac`
+column exists — so 0 of 11 ST_GAS plants clear the `level>0 AND frac>0` gate.
+Census: MISO 16/16 populated, CAISO 0/3, PJM 0/10, NYISO/NEISO no column. (c)
+Making it fire is a **fleet-wide re-basing**: re-deriving at HEAD moves `p25_cf`
+on 32/78 rows (max 83.6 pts), `committed_pct` 36/78, `median_cf` 37/78 — the
+tranche shares the whole offer curve is built from — and emits **`p25_cf > 100 %`**
+on two plants (S A Carlson 142.2, Astoria 101.7) against an accessor with **no
+upper clamp**. (d) **The queue's premise was wrong**: "measured levels instead of
+fitted fractions" describes MISO's incumbent; NYISO's surviving NYC/LI limbs are
+*already* measured p25 (0.1750 / 0.2620, *"when-available cool-day CF p25"*). Rule
+19 independently forbids the stack — ST_GAS already carries two mechanisms with
+D-2 recording 2024 at 30.6 %.
+
+### 2. Item A — the caiso-142 export-sink seam is CONFIRMED and **LIVE**, cell `U → O`
+
+caiso-142 §F measured the *superseded* nyiso-99 keeper. Re-measured on nyiso-100:
+705 fleet rows, exactly **1** absorption row (`NYISO_external_export_surplus`,
+pmin −600 / pmax 0), driven to `min_gen` 0.0 by `_bridge_floored_fleet` with the
+gate off and held at −600.0 with it on — 1 row differing, 0 others, availability
+byte-identical. The NYISO call site (`commitment.py:888`) passes **no**
+`preserve_absorption` argument at all, so the collapse is unconditional there.
+**New over the CAISO finding: it is LIVE, not latent** — in the money against the
+keeper's own node dual in **921 / 1,078 / 679 h**, max gap $164.80 / $148.20 /
+$321.27, foregone export ≤ 0.553 / 0.647 / 0.407 TWh (first-order bound: the dual
+was solved *with* the sink pinned off). **Nothing armed** — the fix is
+CAISO-flag-gated, and the direction (off-peak λ up) *compresses* the diurnal
+spread and does nothing for C3c's summer tail.
+
+### 3. Item B — `dual_fuel_oil_reattribution`: dispatch delta zero, recording delta **not**
+
+The CLI pin holds (`calibration_flags` = `None`) but the lineage carries the flag
+through `prb_overrides`, so the solved config had it **on**. Dispatch delta proved
+zero two ways: structurally (the mask's only consumers are the NEISO-gated winter
+budget and `_dispatch_frame`'s post-solve relabel) and empirically — **every LP
+input byte-identical** with the flag flipped, all three years. But the relabel
+moves **0.1119 / 0.3511 / 1.1508 TWh** (53 / 155 / 715 h) into a recorded `oil`
+class — 1.61 TWh, the order of an entire scored class. §5.5 item 10 is **struck as
+written and re-opened as a scored cleanup**.
+
+### 4. Lever 2 `measured_chp_heat_rates` — **KEEPER**, cell `U → K`
+
+One boolean delta, **zero free parameters** (`n_residual` unchanged at 6). It
+undoes eGRID's own CHP allocation on eGRID's own net denominator,
+`(PLHTIAN + CHPCHTI) / PLNGENAN` — no gross-to-net factor, which is what blocked
+the CEMS route. 18 of 31 rows applied: CC_CHP 11/17 plants (2,984 of 4,309 MW,
+69.3 %) 6.82 → 8.50 MMBtu/MWh; CT_CHP 7/14 (384 of 446 MW, 86.2 %) 7.46 → 11.68.
+CEMS-validated 16/18 at median ratio 1.00000. NYISO is **not** in
+`CHP_STEAM_CREDIT_HR_CORRECTION_ISOS`, so unlike caiso-147 no hand factor is
+involved — a pure rule-14 accuracy swap.
+
+**Every pre-registered gate passes.** K2 passes on the **strict byte** basis, not
+merely the scorecard one: control − committed keeper is **exactly 0.0** on every
+class in all three years, so unlike caiso-146/neiso-69 **NYISO has no same-HEAD
+drift** and the A/B is unconfounded. K3 liveness: CC_CHP 727.0/578.9/660.4 MW,
+CT_CHP 160.7/157.3/160.7 MW. K6: free classes move too (CC_REGULAR, ST_GAS,
+CT_PEAKER), so the verdict does not rest on D-10-pinned classes.
+
+**No criterion regresses, and two things improve.** Determination
+CALIBRATED-WITH-CAVEATS, 0 FAILs, the same single ledgered caveat (C3c) — no new
+slot spent. (i) Energy-weighted C1 |error| **9.458 % → 9.224 %** (7.66→7.60,
+5.66→4.76, 15.06→15.31), more classes better than worse every year (4/3, 5/2,
+4/3): CC_CHP +13.61→+10.75, +7.95→+2.74, +31.41→+28.21 %; CC_REGULAR −7.93→−6.61
+and −1.87→+0.23 %; ST_GAS better in 2024/2025; CT_PEAKER better in all three.
+(ii) **The previous keeper's own D-2 failure clears** — nyiso-100 carried
+*"2024 ST_GAS: forced share 30.6 % > 30 %"*; this arm has no D-2 failures, because
+ST_GAS dispatches more once CHP is priced honestly.
+
+**Reported, not patched (rules 1 / 14).** CT_CHP deepens −49.3/−52.4/−38.6 % →
+−67.9/−67.6/−62.0 %. An **open root-cause item**, not a defect of this mechanism:
+CT_CHP was *already* 39–52 % under-dispatched before the arm, so a strictly more
+accurate offer **exposes** a pre-existing miss rather than creating one. Named
+successor lane: the BTM host-steam holdout (`chp_btm_pct` / `chp_grid_pmin_mw`)
+and the CT_CHP must-run treatment — **not** the heat rate. Mean λ rises
+34.660→35.078, 37.667→38.227, 61.974→62.837 $/MWh; C3a stays PASS.
+
+**C3c is not targeted, not claimed and not moved.** The closed C3c queue stays
+closed and the nyiso-104b frontier declaration stands.
+
+Evidence: `results/calibration/FINDING-nyiso105-stgas-inert-seam-live-2026-07-31.md`;
+`results/calibration/_nyiso105_chpheatrate_ab.json`.
+Runs registered: `2026-07-31-nyiso105-control`, `2026-07-31-nyiso105-chp-heat-rates`
+(top-15 retention pruned nyiso-87-cmeas and nyiso-89-control-zerodelta).
+
+Next shorthand: nyiso-106.

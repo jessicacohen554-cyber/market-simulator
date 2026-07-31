@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-31-nyiso105-control",
+  "label": "nyiso105 control",
+  "date": "2026-07-31",
+  "shorthand": "nyiso105-control",
+  "definition": "nyiso-105 same-HEAD zero-delta control",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-31-nyiso105-control.js",
+  "bundle": "results/calibration/nyiso105_control_A"
+}

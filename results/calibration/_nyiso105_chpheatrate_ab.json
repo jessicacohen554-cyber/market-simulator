@@ -1,0 +1,655 @@
+{
+ "probe": "nyiso-105 measured_chp_heat_rates A/B",
+ "prereg": "results/calibration/PREREG-nyiso105-chp-heat-rates-2026-07-31.md",
+ "arms": {
+  "A_control": "nyiso105_control_A",
+  "B": "nyiso105_chpheatrate_B",
+  "keeper": "nyiso100_silretire"
+ },
+ "K1_flag_fidelity": {
+  "arm_A_flag": false,
+  "arm_B_flag": true,
+  "artifact_rows": 31,
+  "artifact_applied_ok": 18,
+  "applied_all_ok": true,
+  "applied_mw": 3368.7,
+  "passed": true
+ },
+ "K2_control_integrity": {
+  "byte_basis_vs_committed_keeper": {
+   "2023": {
+    "max_abs_diff_mw": 0.0,
+    "max_by_class_mw": {
+     "CC_CHP": 0.0,
+     "CC_REGULAR": 0.0,
+     "CT_CHP": 0.0,
+     "CT_PEAKER": 0.0,
+     "OTHER": 0.0,
+     "ST_CHP": 0.0,
+     "ST_GAS": 0.0,
+     "biomass": 0.0,
+     "hydro": 0.0,
+     "import": 0.0,
+     "nuclear": 0.0,
+     "oil": 0.0,
+     "solar": 0.0,
+     "wind": 0.0
+    }
+   },
+   "2024": {
+    "max_abs_diff_mw": 0.0,
+    "max_by_class_mw": {
+     "CC_CHP": 0.0,
+     "CC_REGULAR": 0.0,
+     "CT_CHP": 0.0,
+     "CT_PEAKER": 0.0,
+     "OTHER": 0.0,
+     "ST_CHP": 0.0,
+     "ST_GAS": 0.0,
+     "biomass": 0.0,
+     "hydro": 0.0,
+     "import": 0.0,
+     "nuclear": 0.0,
+     "oil": 0.0,
+     "solar": 0.0,
+     "wind": 0.0
+    }
+   },
+   "2025": {
+    "max_abs_diff_mw": 0.0,
+    "max_by_class_mw": {
+     "CC_CHP": 0.0,
+     "CC_REGULAR": 0.0,
+     "CT_CHP": 0.0,
+     "CT_PEAKER": 0.0,
+     "OTHER": 0.0,
+     "ST_CHP": 0.0,
+     "ST_GAS": 0.0,
+     "biomass": 0.0,
+     "hydro": 0.0,
+     "import": 0.0,
+     "nuclear": 0.0,
+     "oil": 0.0,
+     "solar": 0.0,
+     "wind": 0.0
+    }
+   }
+  },
+  "byte_basis_identical": true,
+  "note": "Byte basis is REPORTED, not the gate (prereg \u00a74 K2). The gate is the scorecard basis, scored from the arms' own metrics.json."
+ },
+ "K3_liveness": {
+  "per_year": {
+   "2023": {
+    "max_abs_diff_mw": 1244.403809,
+    "repriced_class_max_mw": {
+     "CC_CHP": 727.0076,
+     "CT_CHP": 160.6698
+    },
+    "max_by_class_mw": {
+     "CC_CHP": 727.0076,
+     "CC_REGULAR": 771.3784,
+     "CT_CHP": 160.6698,
+     "CT_PEAKER": 477.1339,
+     "OTHER": 0.0,
+     "ST_CHP": 147.6562,
+     "ST_GAS": 486.8872,
+     "biomass": 0.0,
+     "hydro": 1087.2378,
+     "import": 1244.4038,
+     "nuclear": 0.0,
+     "oil": 629.1143,
+     "solar": 0.0,
+     "wind": 0.0
+    }
+   },
+   "2024": {
+    "max_abs_diff_mw": 1342.753906,
+    "repriced_class_max_mw": {
+     "CC_CHP": 578.8546,
+     "CT_CHP": 157.3211
+    },
+    "max_by_class_mw": {
+     "CC_CHP": 578.8546,
+     "CC_REGULAR": 1161.8899,
+     "CT_CHP": 157.3211,
+     "CT_PEAKER": 232.3468,
+     "OTHER": 0.0,
+     "ST_CHP": 115.3679,
+     "ST_GAS": 432.8066,
+     "biomass": 0.0,
+     "hydro": 1280.0874,
+     "import": 1342.7539,
+     "nuclear": 0.0,
+     "oil": 802.5894,
+     "solar": 0.0,
+     "wind": 0.0
+    }
+   },
+   "2025": {
+    "max_abs_diff_mw": 2013.293701,
+    "repriced_class_max_mw": {
+     "CC_CHP": 660.4176,
+     "CT_CHP": 160.6698
+    },
+    "max_by_class_mw": {
+     "CC_CHP": 660.4176,
+     "CC_REGULAR": 1063.0222,
+     "CT_CHP": 160.6698,
+     "CT_PEAKER": 501.166,
+     "OTHER": 0.0,
+     "ST_CHP": 113.3103,
+     "ST_GAS": 491.3867,
+     "biomass": 0.0,
+     "hydro": 1201.6248,
+     "import": 2013.2937,
+     "nuclear": 0.0,
+     "oil": 740.1333,
+     "solar": 0.0,
+     "wind": 0.0
+    }
+   }
+  },
+  "threshold_mw": 50.0,
+  "passed": true
+ },
+ "K4_single_delta": {
+  "differing_keys": {
+   "measured_chp_heat_rates": {
+    "A": false,
+    "B": true
+   }
+  },
+  "n_differing": 1,
+  "passed": true
+ },
+ "K5_year_span": {
+  "years": {
+   "A": [
+    2023,
+    2024,
+    2025
+   ],
+   "B": [
+    2023,
+    2024,
+    2025
+   ]
+  },
+  "passed": true
+ },
+ "K6_pin_sensitivity": {
+  "per_year": {
+   "2023": {
+    "by_class": {
+     "CC_CHP": {
+      "A": 12.8368,
+      "B": 12.5138,
+      "delta": -0.323,
+      "pinned": true
+     },
+     "CC_REGULAR": {
+      "A": 32.4973,
+      "B": 32.9636,
+      "delta": 0.4663,
+      "pinned": false
+     },
+     "CT_CHP": {
+      "A": 1.2642,
+      "B": 0.8019,
+      "delta": -0.4623,
+      "pinned": true
+     },
+     "CT_PEAKER": {
+      "A": 0.341,
+      "B": 0.3543,
+      "delta": 0.0133,
+      "pinned": false
+     },
+     "OTHER": {
+      "A": 2.1973,
+      "B": 2.1973,
+      "delta": 0.0,
+      "pinned": false
+     },
+     "ST_CHP": {
+      "A": 0.7787,
+      "B": 0.8,
+      "delta": 0.0213,
+      "pinned": true
+     },
+     "ST_GAS": {
+      "A": 9.9447,
+      "B": 10.2269,
+      "delta": 0.2822,
+      "pinned": false
+     },
+     "biomass": {
+      "A": 0.8395,
+      "B": 0.8395,
+      "delta": 0.0,
+      "pinned": false
+     },
+     "hydro": {
+      "A": 28.3833,
+      "B": 28.3833,
+      "delta": 0.0,
+      "pinned": true
+     },
+     "import": {
+      "A": 23.9228,
+      "B": 23.9228,
+      "delta": 0.0,
+      "pinned": false
+     },
+     "nuclear": {
+      "A": 27.4871,
+      "B": 27.4871,
+      "delta": 0.0,
+      "pinned": true
+     },
+     "oil": {
+      "A": 0.1119,
+      "B": 0.1118,
+      "delta": -0.0001,
+      "pinned": false
+     },
+     "solar": {
+      "A": 1.9381,
+      "B": 1.9381,
+      "delta": 0.0,
+      "pinned": true
+     },
+     "wind": {
+      "A": 4.6009,
+      "B": 4.6009,
+      "delta": 0.0,
+      "pinned": true
+     }
+    },
+    "free_classes_moved": {
+     "CC_REGULAR": 0.4663,
+     "CT_PEAKER": 0.0133,
+     "ST_GAS": 0.2822
+    },
+    "free_abs_twh_moved": 0.7618
+   },
+   "2024": {
+    "by_class": {
+     "CC_CHP": {
+      "A": 14.5428,
+      "B": 13.8408,
+      "delta": -0.702,
+      "pinned": true
+     },
+     "CC_REGULAR": {
+      "A": 37.3266,
+      "B": 38.1267,
+      "delta": 0.8001,
+      "pinned": false
+     },
+     "CT_CHP": {
+      "A": 1.0982,
+      "B": 0.7474,
+      "delta": -0.3508,
+      "pinned": true
+     },
+     "CT_PEAKER": {
+      "A": 0.2572,
+      "B": 0.2694,
+      "delta": 0.0122,
+      "pinned": false
+     },
+     "OTHER": {
+      "A": 2.2014,
+      "B": 2.2014,
+      "delta": 0.0,
+      "pinned": false
+     },
+     "ST_CHP": {
+      "A": 0.7799,
+      "B": 0.8061,
+      "delta": 0.0262,
+      "pinned": true
+     },
+     "ST_GAS": {
+      "A": 9.1022,
+      "B": 9.3281,
+      "delta": 0.2259,
+      "pinned": false
+     },
+     "biomass": {
+      "A": 0.7597,
+      "B": 0.7597,
+      "delta": 0.0,
+      "pinned": false
+     },
+     "hydro": {
+      "A": 27.8294,
+      "B": 27.8294,
+      "delta": 0.0,
+      "pinned": true
+     },
+     "import": {
+      "A": 20.7538,
+      "B": 20.7538,
+      "delta": 0.0,
+      "pinned": false
+     },
+     "nuclear": {
+      "A": 26.9532,
+      "B": 26.9532,
+      "delta": 0.0,
+      "pinned": true
+     },
+     "oil": {
+      "A": 0.3511,
+      "B": 0.3365,
+      "delta": -0.0146,
+      "pinned": false
+     },
+     "solar": {
+      "A": 2.6439,
+      "B": 2.6439,
+      "delta": 0.0,
+      "pinned": true
+     },
+     "wind": {
+      "A": 6.0116,
+      "B": 6.0116,
+      "delta": 0.0,
+      "pinned": true
+     }
+    },
+    "free_classes_moved": {
+     "CC_REGULAR": 0.8001,
+     "CT_PEAKER": 0.0122,
+     "ST_GAS": 0.2259,
+     "oil": -0.0146
+    },
+    "free_abs_twh_moved": 1.0528
+   },
+   "2025": {
+    "by_class": {
+     "CC_CHP": {
+      "A": 16.6251,
+      "B": 16.2198,
+      "delta": -0.4053,
+      "pinned": true
+     },
+     "CC_REGULAR": {
+      "A": 37.1036,
+      "B": 37.6557,
+      "delta": 0.5521,
+      "pinned": false
+     },
+     "CT_CHP": {
+      "A": 1.5458,
+      "B": 0.9567,
+      "delta": -0.5891,
+      "pinned": true
+     },
+     "CT_PEAKER": {
+      "A": 1.0665,
+      "B": 1.1449,
+      "delta": 0.0784,
+      "pinned": false
+     },
+     "OTHER": {
+      "A": 1.9483,
+      "B": 1.9483,
+      "delta": 0.0,
+      "pinned": false
+     },
+     "ST_CHP": {
+      "A": 1.1916,
+      "B": 1.2119,
+      "delta": 0.0203,
+      "pinned": true
+     },
+     "ST_GAS": {
+      "A": 11.2515,
+      "B": 11.5764,
+      "delta": 0.3249,
+      "pinned": false
+     },
+     "biomass": {
+      "A": 0.6724,
+      "B": 0.6724,
+      "delta": 0.0,
+      "pinned": false
+     },
+     "hydro": {
+      "A": 21.0482,
+      "B": 21.0482,
+      "delta": 0.0,
+      "pinned": true
+     },
+     "import": {
+      "A": 19.4106,
+      "B": 19.4364,
+      "delta": 0.0258,
+      "pinned": false
+     },
+     "nuclear": {
+      "A": 28.3416,
+      "B": 28.3416,
+      "delta": 0.0,
+      "pinned": true
+     },
+     "oil": {
+      "A": 1.1508,
+      "B": 1.1411,
+      "delta": -0.0097,
+      "pinned": false
+     },
+     "solar": {
+      "A": 3.5545,
+      "B": 3.5545,
+      "delta": 0.0,
+      "pinned": true
+     },
+     "wind": {
+      "A": 7.0487,
+      "B": 7.0487,
+      "delta": 0.0,
+      "pinned": true
+     }
+    },
+    "free_classes_moved": {
+     "CC_REGULAR": 0.5521,
+     "CT_PEAKER": 0.0784,
+     "ST_GAS": 0.3249,
+     "import": 0.0258,
+     "oil": -0.0097
+    },
+    "free_abs_twh_moved": 0.9909
+   }
+  },
+  "verdict_rests_on_free_classes_too": true
+ },
+ "scorecards": {
+  "keeper": {
+   "determination": "CALIBRATED-WITH-CAVEATS",
+   "criteria": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "PASS",
+    "price_shape": "PASS",
+    "price_tail": "CAVEAT",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "PASS",
+    "forced_share": "PASS"
+   },
+   "grade_summary": {
+    "scored": 9,
+    "target_grade": 8,
+    "commercial_grade": 0,
+    "ledgered": 1,
+    "fails": 0
+   },
+   "free_class_headline": "C1 all 14/14 \u00b7 free 10/10"
+  },
+  "A": null,
+  "B": null
+ },
+ "reported_only": {
+  "2023": {
+   "mean_lambda": {
+    "A": 34.6603,
+    "B": 35.0785
+   },
+   "tail_hours_gt_300": {
+    "A": 0,
+    "B": 0
+   },
+   "slack_mwh": {
+    "A": 0.0,
+    "B": 0.0
+   },
+   "dump_mwh": {
+    "A": 0.0,
+    "B": 0.0
+   },
+   "class_twh": {
+    "A": {
+     "CC_CHP": 12.836799621582031,
+     "CC_REGULAR": 32.49729919433594,
+     "CT_CHP": 1.26419997215271,
+     "CT_PEAKER": 0.3409999907016754,
+     "OTHER": 2.1972999572753906,
+     "ST_CHP": 0.7786999940872192,
+     "ST_GAS": 9.944700241088867,
+     "biomass": 0.8395000100135803,
+     "hydro": 28.38330078125,
+     "import": 23.922800064086914,
+     "nuclear": 27.48710060119629,
+     "oil": 0.11190000176429749,
+     "solar": 1.938099980354309,
+     "wind": 4.600900173187256
+    },
+    "B": {
+     "CC_CHP": 12.513799667358398,
+     "CC_REGULAR": 32.963600158691406,
+     "CT_CHP": 0.8019000291824341,
+     "CT_PEAKER": 0.35429999232292175,
+     "OTHER": 2.1972999572753906,
+     "ST_CHP": 0.800000011920929,
+     "ST_GAS": 10.226900100708008,
+     "biomass": 0.8395000100135803,
+     "hydro": 28.38330078125,
+     "import": 23.922800064086914,
+     "nuclear": 27.48710060119629,
+     "oil": 0.11180000007152557,
+     "solar": 1.938099980354309,
+     "wind": 4.600900173187256
+    }
+   }
+  },
+  "2024": {
+   "mean_lambda": {
+    "A": 37.667,
+    "B": 38.2273
+   },
+   "tail_hours_gt_300": {
+    "A": 0,
+    "B": 0
+   },
+   "slack_mwh": {
+    "A": 0.0,
+    "B": 0.0
+   },
+   "dump_mwh": {
+    "A": 0.0,
+    "B": 0.0
+   },
+   "class_twh": {
+    "A": {
+     "CC_CHP": 14.542799949645996,
+     "CC_REGULAR": 37.32659912109375,
+     "CT_CHP": 1.0981999635696411,
+     "CT_PEAKER": 0.2572000026702881,
+     "OTHER": 2.2014000415802,
+     "ST_CHP": 0.7799000144004822,
+     "ST_GAS": 9.10219955444336,
+     "biomass": 0.7597000002861023,
+     "hydro": 27.82939910888672,
+     "import": 20.753799438476562,
+     "nuclear": 26.95319938659668,
+     "oil": 0.35109999775886536,
+     "solar": 2.643899917602539,
+     "wind": 6.011600017547607
+    },
+    "B": {
+     "CC_CHP": 13.840800285339355,
+     "CC_REGULAR": 38.12670135498047,
+     "CT_CHP": 0.7473999857902527,
+     "CT_PEAKER": 0.2694000005722046,
+     "OTHER": 2.2014000415802,
+     "ST_CHP": 0.8061000108718872,
+     "ST_GAS": 9.328100204467773,
+     "biomass": 0.7597000002861023,
+     "hydro": 27.82939910888672,
+     "import": 20.753799438476562,
+     "nuclear": 26.95319938659668,
+     "oil": 0.33649998903274536,
+     "solar": 2.643899917602539,
+     "wind": 6.011600017547607
+    }
+   }
+  },
+  "2025": {
+   "mean_lambda": {
+    "A": 61.9742,
+    "B": 62.8367
+   },
+   "tail_hours_gt_300": {
+    "A": 0,
+    "B": 0
+   },
+   "slack_mwh": {
+    "A": 0.0,
+    "B": 0.0
+   },
+   "dump_mwh": {
+    "A": 0.0,
+    "B": 0.0
+   },
+   "class_twh": {
+    "A": {
+     "CC_CHP": 16.625099182128906,
+     "CC_REGULAR": 37.103599548339844,
+     "CT_CHP": 1.545799970626831,
+     "CT_PEAKER": 1.066499948501587,
+     "OTHER": 1.9483000040054321,
+     "ST_CHP": 1.19159996509552,
+     "ST_GAS": 11.251500129699707,
+     "biomass": 0.6723999977111816,
+     "hydro": 21.048200607299805,
+     "import": 19.410600662231445,
+     "nuclear": 28.34160041809082,
+     "oil": 1.1507999897003174,
+     "solar": 3.554500102996826,
+     "wind": 7.048699855804443
+    },
+    "B": {
+     "CC_CHP": 16.21980094909668,
+     "CC_REGULAR": 37.65570068359375,
+     "CT_CHP": 0.9567000269889832,
+     "CT_PEAKER": 1.1448999643325806,
+     "OTHER": 1.9483000040054321,
+     "ST_CHP": 1.211899995803833,
+     "ST_GAS": 11.576399803161621,
+     "biomass": 0.6723999977111816,
+     "hydro": 21.048200607299805,
+     "import": 19.436399459838867,
+     "nuclear": 28.34160041809082,
+     "oil": 1.1411000490188599,
+     "solar": 3.554500102996826,
+     "wind": 7.048699855804443
+    }
+   }
+  }
+ }
+}
