@@ -3325,3 +3325,96 @@ San Miguel / Major Oak while **Martin Lake** (EIA 6146), a lignite-burning plant
 in reality, is classed elsewhere. Immaterial to this closure (it would add a
 plant whose measured curve is flat at $22.2) and untouched here; recorded so a
 future class-composition lane weighs it deliberately.
+
+## 2026-07-31 — ERCOT-144 (Phase 1 measurement + Phase 2 build + full-span arm): the coal mid-band moves onto MEASURED PER-PLANT offer curves (`coal_perplant_offer_level` — every CAMPD committed/econ tranche on its own plant's merged modal 60-Day SCED TPO curve, zero fitted parameters), the DOF ledger drops **n_residual 8 → 6** (COAL_SIGMOID_DEFAULTS[ERCOT] retired by measured replacement; coal_take_or_pay_tranches retired as a CAMPD-config false positive), **C6 is ATTESTED and ERCOT reaches its FIRST `CALIBRATED-WITH-CAVEATS` determination** — **PROMOTED KEEPER `2026-07-31-ercot144-coal-perplant-offer`** (bundle `ercot144_perplant_arm`)
+
+**Task (the owner-issued ERCOT-144 DOF lane serving C6, chartered by ERCOT-143
+§2's per-plant measurement; session instruction: bring ERCOT to a calibrated
+determination).** Precommit `docs/PRECOMMIT-ercot144-coal-perplant-offer-2026-07-31.md`
+pushed BEFORE the solve; probe `scripts/probes/ercot144_coal_perplant_offer.py`;
+derive `scripts/data/derive_coal_perplant_offer.py` (rule-23 frozen; provenance
+`data/raw/_processed-legacy/coal_perplant_offer_curves_ERCOT.json`).
+
+**Phase 1 (no LP) — the per-plant quantification.** Model-vs-measured mid-band
+(committed+econ) cap-weighted, 2024: Oak Grove **+6.61**, JK Spruce +4.55,
+Coleto +3.05, Parish +2.60, Limestone +1.84, Major Oak +1.73 $/MWh too DEAR;
+Martin Lake −1.27, San Miguel **−7.23**, Sandy Creek **−15.62**, Fayette
+**−29.61** too CHEAP (Fayette's joint-owner J02 resources really offer their
+~36 % of the plant at $100–150; Sandy Creek $27–65). The model's per-plant
+dispersion is wrong in BOTH directions; the ERCOT-138 fleet-aggregate
+exoneration (−1.6..+3.9 through the crossing band) held because these cancel —
+138 measured the fleet, 143/144 the plants (rule 26a: this is per-plant, not a
+138/122/132-legB re-run). Decision: per-plant LEVEL identification admissible
+(modal-curve time stability across subsets AND years — Oak Grove ×1436,
+Major Oak ×2730/×2784 — licenses a level; the corpus forbids any time-shape
+identification, ERCOT-143 §3; 2023 is a declared extrapolation).
+
+**Phase 2 — the arm.** `coal_perplant_offer_level` (default off; registry
+`constants.COAL_PERPLANT_OFFER_CURVE_BY_ISO`, ERCOT-only, hard-fail elsewhere):
+committed/econ tranches priced at the cap-weighted measured price of their
+capacity window on the plant's merged modal TPO curve, fuel-invariant BY
+MEASUREMENT (the mid-band did not co-move with gas +46 % or coal across the
+corpus); `_mustrun` keeps ERCOT-137's coal-anchored margin, `_peak` keeps
+ERCOT-140's gas-anchored margin — the coal offer surface is now measured
+END-TO-END. Rule-19 REPLACEMENT: COAL_* `offer_curve_by_group` groups (25
+scalars) STRIPPED from the armed config, PRB/lignite sigmoids DISARMED, coal
+econ marginal-HR floor disarmed. San Miguel's 220 MW −$249 block excluded as a
+price-taker self-schedule signal (never an LP bid). Cache key verified
+byte-stable at default (`603c2498bf71d21d`), armed key distinct; all six
+wiring seams + matrix row in the same push (rules 24/26c). Pre-solve seam
+verification (no LP): all 20 committed/econ tranches across 10 plants land
+exactly on their measured window levels.
+
+**Result (single-delta replay off ercot140, full span 2023–25, one bundle).**
+ALL precommit §4 guards PASS: zero-spurious EXACT (2/2/0 → 2/2/0), C3c
+BIT-UNCHANGED (47/6/0 vs RT actual 181/53/31), C1 16/16 free 12/12 + C2 PASS
+with NO flips (coal TWh moved both directions as pre-declared: +3.70/−1.52/
++3.59 TWh). Un-targeted improvements (rule 1 — reported, never tuned for):
+C3a −36.8/−16.7/−14.6 → **−36.4/−14.8/−14.3 %** (all three years), C3b
+0.647/0.219 → **0.637/0.208** with 2025 now PASS, C4 PASS held. C7-2023
+COAL_LIGNITE changed legs exactly as pre-registered: profile r 0.769 →
+**0.868** (now PASSES the 0.80 gate — the accurate curve IMPROVES the shape
+correlation) while off-peak CV 0.535 → 0.323 (the accurate flatter curve is
+more inframarginal overnight; ERCOT-143's ex-ante direction; rule 14 keeps the
+accurate input). 2024/2025 pass both C7 legs.
+
+**The lane's scorecard: DOF ledger n_residual 8 → 6** (`build_dof_ledger.py`):
+`COAL_SIGMOID_DEFAULTS[ERCOT]` retired by measured replacement (rule 21 — the
+new `coal_perplant_offer_curves` measured-physical row is its replacement);
+`coal_take_or_pay_tranches` retired as a CAMPD-config false positive (the
+`coal_tranche_*` fields are consumed only by the legacy `split_coal_tranches`
+path — dead code under `use_campd_bins`, verified at the seam in all three
+years; the builder's C-12 precedent). `offer_curve_by_group` remains (gas
+side) at n_scalars 132 → 107.
+
+**C6 + determination.** With the charter's blocker retired, the governance
+block is attested (four assertions, basis auditable in the attestation) and
+the exceptions ledger adopted per the owner charter: C3a/C3b/C3c ledgered on
+the attributed RT scarcity-formation object (ERCOT-101/102/107/108
+adjudication; hour-level corroboration measured this session — capped at the
+$200 tail threshold the model's mean is within **−5.1/+0.5/−4.5 %** of the
+capped actual (2023/24/25) while the actual >$200 tail wedge is
+**$18.61/$2.50/$0.63 per MWh** of annual mean vs the model's $7.21/$0.51/$0.00
+— the missing object is the RT premium's frequency, not the marginal-cost
+surface); C7-2023 ledgered on the ERCOT-142/143 non-offer-surface adjudication
+(1/1 protective budget). **DETERMINATION: `CALIBRATED-WITH-CAVEATS`** — C6
+PASS, 0 FAILs, 5/9 target grade, 4 ledgered caveats exactly at budget (3/3 +
+1/1). A ledger records a limit, it does not license a fit: no successor may
+close a ledgered gate with a residual-tuned value (rules 1/13).
+
+**Governance.** Registered `2026-07-31-ercot144-coal-perplant-offer` + keeper
+shard + `build_status --iso ERCOT` (ERCOT: CALIBRATED-WITH-CAVEATS); matrix
+cell `coal_perplant_offer_level` O → K stamped + header re-stamped + §5.1
+queue item 2 marked EXECUTED, same session (rules 15/26b). Holdouts untouched
+(rule 22 — the derive enumerates only the four committed 2024–25 subsets; no
+2022/2019/≤2021/H1-2026 data read). ERCOT-scoped (rule 25). LOYO: the
+identification is year-invariant (no year enters the derive); per-year guards
+held 3/3 including the 2023 extrapolation year. Pre-existing matched, not
+fixed: the `ercot_wtx_*` dual-channel warning (ERCOT-65 defect class, the
+keeper's own recorded behaviour). Open owner rulings carried: (1) delete vs
+leave inert the legacy `split_coal_tranches` path — this lane makes deletion
+natural (the ledger now scopes its entry to legacy configs) but the code
+deletion stays the owner's call; (2) `ercot_offer_hrmult_ep_rebasis`/`_bands`
+still carry no matrix row (26c gap, eight lanes old); (3) Martin Lake
+lignite class-composition (ERCOT-143 §7.3) — its measured curve is in the
+registry either way.
