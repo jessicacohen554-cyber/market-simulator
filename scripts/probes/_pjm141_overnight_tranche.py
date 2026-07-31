@@ -554,19 +554,50 @@ def _year(bundle: Path, year: int, own, p138, p137) -> dict:
     MLF_SCAN = (0.30, 0.45, 0.574)
     OVERNIGHT_GAP_H = 8.0  # h23–h06, the gap a bridge would floor
 
+    # PJM's CAMPD-bin tranches carry NO native commitment physics
+    # (min_run_hours = min_down_hours = 0 on every CC row — measured 2024:
+    # 543/543), so ``_commitment_params`` would return None for them and the
+    # existing detector machinery has nothing to gate on. A Step-2 bridge port
+    # would wire the heat-rate-keyed ``CC_COMMITMENT_PARAMS`` table (the same
+    # resolution the legacy fleet path and the CAISO/NYISO bridges use), so
+    # the pre-check resolves the rule-18 physics gate the same way: per-unit
+    # fields when set, else the table row for the unit's heat rate. Every CC
+    # table row carries min-down 4–8 h ≥ BRIDGE_MIN_DOWN_H.
+    from market_sim.config.constants import CC_COMMITMENT_PARAMS
+
+    def _cc_table(hr: float) -> dict[str, float]:
+        """CC_COMMITMENT_PARAMS row for one unit's heat rate."""
+        for cutoff, params in CC_COMMITMENT_PARAMS:
+            if hr < cutoff:
+                return params
+        return CC_COMMITMENT_PARAMS[-1][1]
+
+    hr_arr = np.asarray(fa.heat_rate, dtype=float)
+    resolved_min_down = np.zeros(mc.shape[0])
+    startup_per_mw = np.zeros(mc.shape[0])
+    for i, g in enumerate(fleet_list):
+        if g.fuel_type != "gas_cc":
+            continue
+        row = _cc_table(hr_arr[i])
+        resolved_min_down[i] = (
+            float(g.min_down_hours)
+            if float(g.min_down_hours) > 0
+            else float(row["min_down_hours"])
+        )
+        startup_per_mw[i] = (
+            float(g.startup_cost_per_mw)
+            if float(g.startup_cost_per_mw) > 0
+            else float(row["startup_per_mw"])
+        )
+
     chp_groups = ("CC_CHP", "CT_CHP", "ST_CHP")
     elig_unit = np.array(
         [
-            (g.fuel_type == "gas_cc")
-            and (float(g.min_down_hours) >= BRIDGE_MIN_DOWN_H)
-            and (str(gp) not in chp_groups)
+            (g.fuel_type == "gas_cc") and (str(gp) not in chp_groups)
             for g, gp in zip(fleet_list, grp)
         ]
-    )
+    ) & (resolved_min_down >= BRIDGE_MIN_DOWN_H)
     elig_committed = elig_unit & (tranche == "committed") & internal
-    startup_per_mw = np.array(
-        [float(g.startup_cost_per_mw) for g in fleet_list], dtype=float
-    )
     # Plant key: unit_id prefix before the tranche suffix (bins_to_fleet
     # builds f"{bin_id}_{suffix}").
     plant_key = np.array(
