@@ -208,6 +208,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # seam when it is off), so it is dropped from the hash at its default; an
     # armed run enters the key as a distinct scenario.
     "ercot_thermal_dam_availability_coal",
+    # ERCOT-148 measured-event precedence cap (CAMPD event windows cap the DAM
+    # COP restore on coal). Default-off and byte-identical for every existing
+    # config (with the gate off no availability array is touched), so it is
+    # dropped from the hash at its default; an armed run enters the key as a
+    # distinct scenario.
+    "ercot_dam_availability_coal_event_cap",
     # ERCOT-111 measured incremental-heat-rate floor on the COAL econ ramp.
     # Default-off and byte-identical for every existing config (with the gate
     # off no offer-curve band is touched), so it is dropped from the hash at its
@@ -6568,6 +6574,43 @@ class ScenarioConfig:
     # unless ercot_thermal_dam_availability + _hourly are also on.
     ercot_thermal_dam_availability_coal: bool = False
 
+    # ERCOT-148 measured-event precedence: the CAMPD event-window family CAPS
+    # the DAM COP restore on the coal fleet (default off, ERCOT backcast-gated).
+    # The two measured availability instruments CONFLICT on the coal fleet's
+    # long dead stops: the >= 5-day CAMPD unit full-stop windows (the canonical
+    # rule-13 overlay, whose frozen identification — outage_detect
+    # FULL_STOP_OVERRIDE — certifies a sustained weeks-long CF~0 dead stop of a
+    # baseload coal unit as a mechanical-availability event: "economic idling
+    # backs down but rarely fully STOPS for weeks") say the unit is OUT, while
+    # the 60-Day DAM COP files the resource OFF-at-full-HSL ("startable") and
+    # the plant-grain pin (ercot_thermal_dam_availability_plant, bidirectional
+    # water-fill) RESTORES the windowed-out capacity — the model then runs
+    # coal plants through months-long CAMPD zero-op blocks (ERCOT-148 audit:
+    # Coleto Creek COP OFF@655 MW through its 2023/2024 mothball blocks,
+    # Limestone LIM1 OFF@793 through a 21.6-day dead stop the model dispatches
+    # at 1,653 MW plant peak; Sandy Creek is the control — its COP honestly
+    # reads OUT, so pin and windows agree and the plant scores -1.2%/-0.7%).
+    # Dispatch above the measured-window ceiling on the ercot145 keeper:
+    # 4.36 / 4.98 / 5.01 TWh (2023/24/25). With this gate on, after the DAM
+    # rescale every COAL bin's availability is min()-capped at the product of
+    # its ARMED measured event-window factors (>= 5-day unit windows + the
+    # plant-grain partial plateaus; short/unit-partial layers included when
+    # armed) — the physical CEMS record outranks the QSE's paper declaration
+    # (rule 14: on instrument conflict prefer the measured physical record and
+    # document the misalignment), and the DAM overlay keeps its designed job of
+    # replacing the STATISTICAL stack everywhere else (restore outside windows
+    # and the whole remove direction are untouched; rule 19 — a reconciliation
+    # of the two incumbent layers, no new mechanism). Coal-scoped because the
+    # coal detector's averaged-rule identification is what certifies dead
+    # stops as mechanical; the gas classes' OFF-is-available convention is
+    # genuinely correct for load-following units and their symmetric question
+    # is left explicitly open (ERCOT-148 diagnosis section 6). Zero fitted
+    # parameters. Backcast-only by construction (inert unless
+    # ercot_thermal_dam_availability is armed, which is backcast-gated, and
+    # additionally requires outage_source == "historic" so the cap only ever
+    # reconciles layers that are actually applied). Forecast untouched.
+    ercot_dam_availability_coal_event_cap: bool = False
+
     # ERCOT CAMPD-blind per-plant availability (default off, ERCOT backcast-gated
     # — ERCOT-71). Restores measured availability for the ERCOT gas plants ABSENT
     # from the TX CAMPD extract (Kiamichi 55501, Hidalgo 55545, Arthur Von
@@ -10039,6 +10082,7 @@ TIER_TAGS: dict[str, int] = {
     "unit_outage_short_windows": 3,
     "unit_partial_outage_windows": 3,
     "unit_outage_maxgen_events": 3,
+    "ercot_dam_availability_coal_event_cap": 3,
     "maxgen_emergency_tier_pricing": 3,
     "gas_price_override": 3,
 }
