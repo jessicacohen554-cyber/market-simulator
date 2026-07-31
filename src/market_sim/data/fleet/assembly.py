@@ -1468,6 +1468,14 @@ def build_dispatch_fleet(
                 return pt_by_supply
 
         _reg_gate = getattr(config, "coal_committed_takeorpay_regulated", False)
+        # ScenarioConfig.coal_prb_committed_dispatchable: PRB/subbituminous
+        # (the COAL_PRB class) committed bands bid full delivered cost — the
+        # measured conduct scope (miso-111), see campd_tranche_fuel_frac.
+        _prb_dispatchable = (
+            frozenset({"prb", "subbituminous"})
+            if getattr(config, "coal_prb_committed_dispatchable", False)
+            else None
+        )
         fuel_fracs = [
             _pkg_ns().campd_tranche_fuel_frac(
                 g,
@@ -1487,6 +1495,7 @@ def build_dispatch_fleet(
                 committed_takeorpay_sunk_fixed=getattr(
                     config, "coal_committed_takeorpay_sunk_fixed", False
                 ),
+                committed_dispatchable_supplies=_prb_dispatchable,
             )
             for g in dispatch_fleet
         ]

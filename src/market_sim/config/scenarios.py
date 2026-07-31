@@ -5535,6 +5535,30 @@ class ScenarioConfig:
     # Default off — every existing keeper byte-identical.
     coal_committed_takeorpay_sunk_fixed: bool = False
 
+    # PRB-scoped committed-band dispatchability: excludes PRB/subbituminous-
+    # supplied plants (the COAL_PRB class) from the committed-band take-or-pay
+    # discount of the three flags above, so their `_committed` tranche bids
+    # full delivered cost under its supply passthrough — identical to a
+    # merchant committed band — while BIT/lignite keep the discount and the
+    # `_mustrun` band (the always-on self-commitment floor, 30-52% of
+    # nameplate per plant on MISO's CAMPD tranches) is untouched everywhere.
+    # Driver (miso-111, results/calibration/
+    # PREREG-miso111-prb-committed-flex-2026-07-31.md §8 + probe
+    # scripts/probes/_miso111_prb_conduct.py): MISO's regulated PRB fleet,
+    # conditioned on being ONLINE in its own CEMS record, cycles within-day
+    # (off-peak CV of the online-hours hour-of-day profile 0.159/0.126/0.076
+    # in 2023/24/25, amplitude 18-25% of HSL, trough h2 → peak h17-18) and
+    # its overnight de-load is PRICE-RESPONSIVE (0.45-0.49 of day-max on
+    # cheap nights vs 0.19-0.22 on dear nights) — only the COMMITMENT is
+    # self-determined, which `_mustrun` already carries once (rule 19
+    # [R-ONE-MECH]); holding the committed band at ~VOM in all 8760 h is the
+    # miso-96 category error scoped one band too wide. Measured plant-basis
+    # loading-when-on p50 = 0.182 sits far BELOW the mustrun bands, so no
+    # new floor accompanies this (it would be provably inert). Zero fitted
+    # parameters (removes a discount from a measured scope). Default off —
+    # every existing keeper byte-identical.
+    coal_prb_committed_dispatchable: bool = False
+
     # Lignite (mine-mouth): take-or-pay fixed costs are sunk, so in
     # cheap-gas months lignite discounts its BID (not its cost) to hold
     # baseload against cheap gas CC instead of being priced out.
@@ -9915,6 +9939,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_committed_takeorpay_all": 3,
     "coal_committed_takeorpay_regulated": 3,
     "coal_committed_takeorpay_sunk_fixed": 3,
+    "coal_prb_committed_dispatchable": 3,
     "coal_lignite_passthrough_sigmoid": 3,
     "coal_lignite_passthrough_floor": 3,
     "coal_lignite_passthrough_ceil": 3,
