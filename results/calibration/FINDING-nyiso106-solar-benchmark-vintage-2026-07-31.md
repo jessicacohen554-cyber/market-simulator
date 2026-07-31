@@ -131,11 +131,11 @@ unrepaired cell.**
 
 Solar is **not** a C1-gated row (`score_fuelmix` scores only `GAS_CLASSES +
 COAL_CLASSES`), so the +437 % never fired a FAIL. It is not harmless either: it
-enters `_gen_totals`' `a_gen`, the shared share denominator. Correcting 2025 solar
-0.662 → 2.901 moves `a_gen` 133.953 → 136.192 TWh (+1.67 %) and every fossil
-class's `share_pp` — CC_REGULAR −0.43 pp, ST_GAS −0.20 pp, CC_CHP −0.16 pp
-(band ±3.0 pp). Material, not decisive. The headline damage is the dashboard
-reporting a 5.4× over-generation that does not exist.
+enters `_gen_totals`' `a_gen`, the shared share denominator. Applying the §B
+repair (solar 0.6617 → 2.5673) moves `a_gen` 133.953 → 135.859 TWh (+1.42 %) and
+every fossil class's `share_pp` — CC_REGULAR −0.37 pp, ST_GAS −0.17 pp, CC_CHP
+−0.13 pp, the rest ≤ 0.03 pp (band ±3.0 pp). Material, not decisive. The headline
+damage is the dashboard reporting a 5.4× over-generation that does not exist.
 
 **Rule-14 verdict: the 2025 solar statistic must not size or judge any mechanism** —
 which is what Item A was for.
