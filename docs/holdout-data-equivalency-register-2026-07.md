@@ -31,7 +31,7 @@ MISSING row carries materiality and a fix (or "accepted").
 
 | ISO | 2022 | H1-2026 | Register section |
 |---|---|---|---|
-| ERCOT | intaken 2026-07-04 (§1.1); **coverage-audited 2026-07-31: GAPPED** (DAM-availability family, HSL, v2 rates, LMP bench all missing 2022 — audit doc §3.1); equivalency grading pending | intaken, publication-blocked tail (CAMPD Q2+, gas May+) | pending (seed: audit doc §3.1) |
+| ERCOT | **§ERCOT below** (2026-07-31 intake + grading) — LMP scoring bench CLOSED for 2018-2022 on the fixed clock (no re-derive owed), plus ORDC 2018-2021, N3045 gas 2018-2021, zonal gas basis (5 of 7 zones) and partial outages 2018-2021. The DAM-availability family, HSL, DAM-AS and GTC 2018-2019 are **structurally unobtainable** on the authorized path (measured rolling-retention wall, §ERCOT) | **§ERCOT below** — 60-Day DAM deliveries through 2026-06-01 landed and the availability derives extended; LMP bench through the publication horizon; locked tier, not built or scored | **§ERCOT below** |
 | PJM | **§PJM below** (2026-07-31 intake + grading) — 2022 READY on data: interface limits, tie interchange, AS series, short-window outages and the 930 interchange all landed at parity; LMP bench clock-lineage CLEAN (no re-derive owed); `actual_tail` 2022 emitted. Residual: 2 recipe-freeze adjudications + the freeze | **§PJM below** — raws landed (transfer/interchange/AS/hub-LMP, all `_partial`-suffixed); locked tier, not built or scored | **§PJM below** |
 | CAISO | **§CAISO below** — EQUIVALENT 17 / DEGRADED 6 / MISSING 12 (2026-07-31 intake, 2018-2022 + H1-2026). Much of the audit doc's §3.2 queue is now CLOSED (wide-hourly hole, HSL 2022, MIC+LCR registry, gas, interchange, AS_REQ, calref) — but the **LMP bench is SOURCE-BLOCKED, not merely missing**: OASIS retention now stops at 2023-04-19 (N-CA-1) | **§CAISO below** — LMP bench BUILT (DA $20.22 / RT $19.59), 930 + CAMPD + AS_REQ + interchange landed; gas/curtailment/emissions publication- or discontinuation-blocked | **§CAISO below** |
 | MISO | **no longer zero-intake** (same waves + 2022 hub-LMP raws on disk); **coverage-audited 2026-07-31: GAPPED, LMP bench derivable from committed raws** (audit doc §3.4) | blocked + partial intake | pending (seed: audit doc §3.4) |
@@ -936,16 +936,172 @@ it: MISO holds **no marker of either tier**, and the **spend freeze is active**.
 
 ---
 
-## ERCOT
+## ERCOT — 2018-2022 (validation ladder) + H1-2026 (locked-test edge) data readiness (intake 2026-07-31, this session)
 
-Section pending its own lane (PJM's, CAISO's and MISO's are above). Seed material:
-`docs/iso-2022-holdout-data-availability-audit-2026-07.md` (2026-07-31
-cross-ISO coverage audit — keeper-flag-grounded per-family 2022 parity matrix,
-per-ISO gap tables §3.1–§3.4, 2018–2021 census §4, and the repo-vs-record
-discrepancy list §5; its CAISO rows were re-graded on 2026-07-31 by the
-§CAISO lane above, which CLOSED the wide-hourly hole and REFUTED its stated
-CAISO LMP fix, and its MISO rows by the §MISO lane, which CLOSED the 2025
-wide-hourly shortfall and CONFIRMED the ASM 2018-2022 purge exhaustively);
-plus `docs/out-of-sample-results-2026-07.md` §1.1 (ERCOT,
-incl. the known Waha annual-basis DEGRADED candidate) and the register
-handoff's known-items list (§"Known DEGRADED/asymmetric items").
+Keeper: **`2026-07-31-ercot144-coal-perplant-offer`**. ERCOT carries **NO
+calibration-complete marker** — neither `complete` nor `final` — and the
+**HOLDOUT SPEND FREEZE** (`frontend/data/backcast/holdout-freeze.json`) is
+active, so every out-of-training year stays fully quarantined for
+solve/score/register regardless of what this section grades READY. 2019 is
+**locked-test tier** (touch-once, ever): its data is landed here because
+intake is marker-free, and it must never be solved.
+
+This lane ran under the owner's 2026-07-31 rule-22 **Option-2 DATA-INTAKE**
+authorization (verbatim in `intake_log`), which asked for each source's full
+year span in one sweep rather than year-by-year. **No LP was constructed,
+solved, or scored for any year.** Every landed artifact was validated no-LP
+only: byte-identity of pre-existing rows, producer re-proof on a committed
+year, loader-resolvable schema, and independent cross-checks against known
+market events.
+
+### Method note — the ERCOT free-path retention wall
+
+ERCOT's free, unauthenticated MIS endpoints (`IceDocListJsonWS` +
+`mirDownload`) expose two structurally different product classes, and which
+class a report belongs to decides whether a back year is reachable **at all**:
+
+* **Annual archive bundles** — one posting per calendar year, retained
+  indefinitely. Measured live 2026-07-31: `reportTypeId=13060` (DAM SPP) and
+  `13061` (RTM SPP) each list **17 annual postings, 2010-2026**; `13231`
+  (RT price adders / ORDC reserves) lists **2014-2026**. Everything this
+  session closed came from this class.
+* **Rolling-window daily/interval feeds** — the doc list is a window whose
+  right edge is always "today", so a back year never becomes reachable no
+  matter when the fetch runs. Measured live 2026-07-31:
+
+  | report | reportTypeId | docs listed | publish window | reach |
+  |---|---|---|---|---|
+  | 60-Day DAM Disclosure (NP3-966-ER) | 13051 | 860 | 2024-03-24 .. 2026-07-31 | deliveries ≥ 2024-01-24 |
+  | DAM Aggregated AS Offer Curve (DAMASAGGNP419) | 12330 | 64 | 2026-06-30 .. 2026-07-31 | ~32 days |
+  | DAM AS Plan (ASPLANNP433) | 12316 | 64 | 2026-06-30 .. 2026-07-31 | ~32 days |
+  | SCED GTC limits (SCEDBTCNP686) | 12302 | 336 | 2026-07-24 .. 2026-07-31 | ~8 days |
+  | Wind HSL hourly (NP4-732-CD) | 13028 | 360 | 2026-07-24 .. 2026-07-31 | ~7 days |
+  | Solar HSL hourly (NP4-737-CD) | 13483 | 360 | 2026-07-24 .. 2026-07-31 | ~7 days |
+
+  The 13051 left edge (2024-03-24) is **identical to the 2026-07-10
+  measurement** recorded in `scripts/data/fetch_ercot_as_reports.py`, i.e. it
+  has not advanced in three weeks — but it is still ~6 years short of 2018.
+
+The only ERCOT-side route past this wall is the credentialed
+`data.ercot.com` / `api.ercot.com` archive, **permanently declined by the repo
+owner** (`docs/handoffs/ercot-as-coopt-plan-2026-07.md` §WS-E). Re-verified
+live this session (2026-07-31): `api.ercot.com/api/public-reports/...` returns
+`401 {"message":"Access denied due to missing subscription key..."}`, and
+`mis.ercot.com/misapp/GetReports.do` still fails the TLS/redirect gate.
+
+**Consequence, stated plainly:** the ERCOT availability + HSL + DAM-AS
+families are *not* a fetch that was skipped — they are structurally
+unobtainable for 2018-2022 on the authorized path, and no future session can
+close them without either an owner upload or a policy change on the
+credentialed archive.
+
+### Bench / scoring series
+
+| series | keeper-years grain | 2018-2022 + H1-2026 status | note |
+|---|---|---|---|
+| **Raw SPP archives** (`lmp-data/ERCOT/{DAM,RTM}LZHBSPP_<year>.zip`) | hand-downloaded 2023-2025 at the `lmp-data/` top level | **EQUIVALENT** — 12 archives landed this session for 2018/2019/2020/2021/2022/2026 by the new `scripts/data/fetch_ercot_spp_archives.py` (reportTypeId 13060/13061), with `spp-archive-provenance.json` recording each file's ERCOT `ConstructedName`, `DocID`, publish timestamp and sha256 | the same fetcher run in `--verify` mode re-downloaded all six **committed** 2023-2025 archives and found them **sha256-identical** to what MIS serves today — the scripted path reproduces the hand-downloads byte-for-byte, and the in-sample archives are unchanged at source |
+| `actual_lmp_hourly_ERCOT.parquet` (dense 8760 HB_HUBAVG DA+RT) | 2023-2025, 26,280 h | **EQUIVALENT 2018-2022** (8,760 h each, zero NaN); **DEGRADED H1-2026** (4,943 h — Jan 1 through ~Jul 25, the annual archive's publication horizon; H1 itself is complete) | now 78,840 h / 9 years. The committed 2023-2025 frame is **byte-identical** after the rebuild (asserted) |
+| `actual_lmp.json` ERCOT annual/monthly/pct | 2023-2025 | **EQUIVALENT 2018-2022** — 2018 DA $33.07/RT $29.66; 2019 $37.62/$35.77; 2020 $21.78/$21.18; 2021 $145.62/$148.19; 2022 $64.31/$62.30. **DEGRADED 2026** ($34.08/$30.11, 7/12 months) | every pre-existing ISO-year block in the file (all six ISOs) asserted unchanged |
+| `actual_lmp_zonal_ERCOT.parquet` (15 LZ/HB settlement points) | 2023-2025, 394,155 rows | **EQUIVALENT 2019-2022**, **DEGRADED 2018** (14 points — `HB_PAN` does not exist; ERCOT created the Panhandle hub in 2019, a real market-structure fact, not a coverage defect), **DEGRADED 2026** (74,145 rows, partial year) | 1,114,211 rows / 9 years; committed 2023-2025 rows byte-identical |
+| **Scoring clock** | — | **CLEAN — no §5.6 re-derive owed** | these blocks were built *after* the 2026-07-14 clock fix, directly on the fixed chronological standard-time calendar. Unlike the NYISO/NEISO out-of-training blocks, they carry no old-prevailing-clock artifact and need no re-derivation before scoring |
+| Independent event cross-check (no-LP validation) | — | **PASS** | 2021 monthly DA mean peaks at **$1,482.98 in February** and all five highest RT hours land on **Feb 17 at the ~$9,000 cap** (Winter Storm Uri); 2019's highest RT hours land on **Aug 13 and Aug 15, mid-afternoon**, at the cap (the 2019 August scarcity events). Correct month/day/hour placement on the model clock, independently of the model |
+| `actual_tail.json` ERCOT | marker-aware deriver | **MISSING** — `derive_actual_tail.py`'s year gate is marker-driven and ERCOT holds none | governance, not data; unchanged by this session |
+
+### Model inputs
+
+| input | keeper-years source + grain | status | materiality / fix |
+|---|---|---|---|
+| 60-Day DAM availability family — `ercot-thermal-dam-availability{,-hourly}.csv`, `ercot-noncampd-availability.csv`, `ercot-nuclear-availability.csv`, `ercot-storage-capability.csv` | 60-Day DAM Disclosure Gen_Resource_Data, 2023-2025 | **MISSING 2018-2022 — STRUCTURALLY UNOBTAINABLE** (retention wall above). **EQUIVALENT 2026 through Jun 1**: this session landed deliveries 2026-01-01..2026-06-01 (`..._2026_Mar-May.parquet` 2,904,663 rows + `..._2026_Jun-Jul.parquet` 1,963,902 rows) and extended the three replace-mode derives to 2026 | **HIGH** for the validation ladder — this is the keeper's availability envelope and it cannot be built for any of 2018-2022. Only an owner upload or the declined credentialed archive can close it |
+| ↳ derive re-proof (all five) | — | **VERIFIED** — before any extension, each derive was re-run over 2023-2025 into a scratch path and compared: `ercot-thermal-dam-availability.csv`, `-hourly.csv`, `ercot-noncampd-availability.csv` and `ercot-storage-capability.csv` all reproduce **byte-identically**. After extending to 2026, the committed 2023-2025 rows were re-asserted unchanged in every file | the recipes are faithful; the 2026 rows are the same recipe, not a variant |
+| ↳ 2022 fragment (already on disk) | — | **DEGRADED / NOT EMITTED** — the committed `..._2023_Jan-Mar.parquet` (publications 2023-01-01..03-01) carries deliveries **2022-11-02..2022-12-31 only**, 1,673,433 rows = **2 of 12 months**. Deliberately **excluded** from the availability CSVs this session | a two-month envelope written into a year-keyed availability file reads downstream as a full 2022 year. Emitting it is an owner call, and would need an explicit partial-year label |
+| ↳ `ercot-outages.csv` | 7,088 rows, no year column | **CANNOT BE REGENERATED** — no producer exists under `scripts/data/`; the only in-repo reference is the archived audit script. It could not be extended or re-proved | **owner trace needed**: the file is consumed but orphaned from its recipe. Independent of the holdout question — it is an in-sample provenance gap too |
+| ERCOT HSL (`ercot-hsl/np6/`) | published NP4-732/737 uploads, 2023-2025 | **MISSING — every out-of-training year, structurally** | **HIGH.** Both HSL reports are ~7-day rolling products (table above): no historical year is reachable on the free path, so this is not specific to 2018-2022. The only working route is the documented **owner manual upload** through the ERCOT Data Access Portal UI (the precedent that landed 2024/2025). Consequence while missing: out-of-training renewables ride EIA-930-delivered-as-CF with no endogenous curtailment, **and** `ercot_gtc_limits_measured` self-disables for those years even though GTC raws exist for 2020-2025 |
+| ERCOT GTC raws (`SCEDBTCNP686_*`) | 2020-2025 on disk | **MISSING 2018-2019** — reportTypeId 12302 retains ~8 days | low priority while the HSL gate above keeps the overlay disabled anyway |
+| RT ORDC reserves / price adders (`ercot_<year>_ordc_reserves_hourly.parquet`) | 2022-2025 | **EQUIVALENT 2018-2021** — landed this session from the reportTypeId 13231 **annual** archives via the committed `fetch_ercot_ordc_reserves.py`; 8,760 h × 9 columns per year, matching the committed schema | sanity-checked against known history: 2019 mean RTORDPA $2.12 / max $5,568 (Aug scarcity), 2021 $64.37 / $8,987 (Uri), 2020 $0.01 (quiet), and `rtolcap` rising 13.5→19.1 GW across 2023-2025 as storage grows |
+| ↳ 2026 | — | **MISSING — RTC+B regime change, not a fetch gap.** ERCOT *renamed* the annual archive (`RTM_ORDC_REL_DPLY_PRC_ADDR_RSRV_<year>` → `HIST_RT_SCED_PRC_ADDR_<year>` from the 2026-01-08 posting; 2025 exists under both). The fetcher now accepts either prefix, and the 2026 bundle downloads — but **all eight curated columns are absent from it**: post-RTC+B the report is a different product, its own cover sheet describing "Real-Time On-Line Reliability Deployment Price Adders for energy **and each ancillary service**, the total RUC/RMR LDL relaxed, total Load Resource MW deployed..., total LSL, and total HSL" | the pre-RTC+B recipe does not apply to 2026 and should not be forced onto it. Fix: a separate RTC+B-era mapping, scoped as its own session (methodology, not intake) |
+| DAM Aggregated AS offer curve (`DAMASAGGNP419_*`) | 2023-2025 | **MISSING 2018-2022 — structurally** (32-day retention) | **LOW for the ladder** — `ercot_dam_as_overlay_from_year=2024`, so 2018-2022 never arms it. Census only, as the audit graded |
+| AS plan (`ASPLANNP433_*`) | 2022-2026 | **MISSING pre-2022 — structurally** (32-day retention) | low; 2022 already on disk |
+| Delivered-to-electric-power gas (`ercot_electric_power_gas_price.csv`, EIA N3045TX3) | monthly, 2022-2026 | **EQUIVALENT 2018-2021** — +48 rows this session, file now spans 2018-2026 with no gaps | landed **without an EIA API key**: `fetch_eia_delivered_gas.py` gained a keyless fallback to EIA's public `dnav/ng/hist_xls` sheet for the same series, validated by reproducing **all 52 committed rows exactly, zero mismatches** (rule 14 — an equivalent route to the same measured series, not a substitute estimate). A new `--only` flag kept the shared PJM file untouched (asserted byte-identical) |
+| Zonal gas basis (`ercot_zonal_gas_hub.csv`) | per-zone annual basis, 2022-2026 | **PARTIAL 2018-2021** — 20 rows added (North, Northeast, South_Central, South, Houston) from the committed `derive_ercot_zonal_gas_hub.py` over F923 Schedule-5 workbooks fetched from EIA's keyless archive path. Producer re-validated on committed 2023 first (recomputed North +0.15 vs committed +0.13, South +1.20 vs +1.23, South_Central +0.56 vs +0.56 — inside its documented ±$0.03 F923-revision tolerance). **West / Panhandle MISSING for all four years** | the producer *refuses* to write West/Panhandle without an explicit `--waha-annual-avg` + `--waha-source`: the Waha annual average is not derivable from any in-repo or API source and must be a literature citation. Not fabricated. Absent zones degrade to a zero spread in `apply_ercot_zonal_gas_basis`. **Fix: owner-supplied Waha annual averages for 2018-2021** |
+| ↳ **2021 caveat (read before arming)** | — | **DEGRADED — Uri-dominated annual scalar.** The 2021 rows are North/Northeast **+6.12**, South_Central **+6.30**, South **+4.36** $/MMBtu (2020 South is also elevated at +3.53). These are the *correct measured* quantity-weighted annual delivered basis — February 2021 delivered gas in Texas ran into the hundreds of $/MMBtu — but `apply_ercot_zonal_gas_basis` consumes this column as a **flat annual scalar**, so arming 2021 as-is would smear a one-week shock across all 8,760 hours | **HIGH if 2021 is ever solved.** Flagged, not silently dropped (the number is measured). Calibration-owner call: use the monthly/daily gas mechanisms for 2021 rather than the annual basis row |
+| Partial-outage derates (`campd-partial-outages.csv`) | 2022-2026, 297 windows | **EQUIVALENT 2018-2021** — one all-years invocation of `derive_partial_outages.py`; 49/47/61/47 windows added for 2018/2019/2020/2021 (501 total). The derive is replace-mode, so the committed 2022-2026 rows were re-derived and asserted **byte-identical** | — |
+| Plant emission rates v2 (`plant_emission_rates_v2.parquet`) | ERCOT 2018-2021 + 2023-2025 on disk | **MISSING 2022 + 2026 — NOT RUN, by owner instruction** | see the correction below — this is now a one-command follow-up, not a blocked item |
+| Plant emission rates v1 (`plant_emission_rates.parquet`) | pooled `year==0` + `{2023,2024}` | **MISSING all out-of-training years** — pre-existing structural gap; the pooled `year==0` rows are what `egrid._campd_rate_map` consumes | unchanged; see the drift resolution below |
+| CAMPD unit-level, unit-outage windows, F923, monthly gas basis, native zonal load, weather, EIA-930 (all forms), eGRID2022, EIA-860 vintages, calref + renewable-capacity 2021 | — | **EQUIVALENT (pre-existing)** — landed by earlier authorized lanes | unchanged by this session |
+
+### Findings this session
+
+1. **Two producer defects in the LMP bench path, both silent.** ERCOT's 2018
+   and 2019 annual SPP workbooks ship a bogus `<dimension ref="A1:A1">`.
+   openpyxl's read-only reader trusts that header and truncates every row to a
+   single cell, so `derive_actual_lmp.py` found **zero** `HB_HUBAVG` rows and
+   emitted **no record at all** for both years — a silent skip, not an error
+   (`calculate_dimension(force=True)` returns the cached `A1:A1` too, so the
+   only fix is re-opening unsized workbooks in normal mode). Separately, the
+   2018/2019 **RTM** workbooks each carry one trailing blank row, which made
+   `derive_ercot_zonal_lmp.py` die on `IntCastingNaNError`. Both fixed; 2020+
+   keep the untouched streaming path, so the committed years re-derive
+   bit-identically. Both ERCOT globs were also made recursive so the per-ISO
+   `lmp-data/ERCOT/` subdirectory resolves alongside the top-level 2023-2025
+   files, without moving a committed byte.
+
+2. **The v2 emission-rate tools are NOT marker-gated — the register's N3
+   blocker is stale.** §NYISO records that `curate_emissions_unit_annual.py`
+   and `derive_plant_emissions_v2.py` "hard-require a calibration-complete
+   MARKER". At HEAD they do not: `--holdout-intake` resolves through
+   `_intake_authorized_isos()`, which reads the **`intake_log`**, exactly the
+   rule-22 Option-2 channel. **ERCOT already passes that gate today** (verified
+   by calling the function directly, no write) on the strength of the existing
+   log entries, and this session's entry reinforces it. Per the owner's
+   explicit instruction the tools were **not run** and v2 2022/2026 is recorded
+   as the open owner decision — but the reason is no longer "blocked", it is
+   "not requested": closing it is `curate_emissions_unit_annual.py --years 2022
+   2026 --holdout-intake ERCOT` followed by `derive_plant_emissions_v2.py --iso
+   ERCOT --years 2022 2026 --holdout-intake ERCOT`.
+
+3. **v1 `plant_emission_rates.parquet` drift — RESOLVED, and the audit's second
+   hypothesis is wrong.** Audit §5.2 asked whether the recorded 2026-07-04 F5
+   intake ("Added 2022 (130 TX plants) and 2026 Q1 (128)") "never reached main
+   or a later rebuild dropped the rows". Exhaustive history trace across **all
+   refs**: exactly **one blob** (77,393 bytes) has ever existed under this
+   filename anywhere in the repository's history — introduced 2026-07-22
+   (PR #2813) and touched again 2026-07-28 (PR #3104) — and its composition has
+   always been `{year 0: 131, 2023: 130, 2024: 129}`. No commit on any branch
+   ever carried 2022 or 2026 rows. **The landing never reached main; nothing
+   was dropped.** Not silently re-added, per instruction — the recorded intake
+   is simply unsubstantiated by the repository.
+
+4. **NEW: `ercot-nuclear-availability.csv` no longer reproduces from its own
+   producer — and it is pre-existing, not caused by this intake.**
+   `derive_ercot_nuclear_availability.py --check` FAILS at HEAD. Verified
+   independent of this session by removing the newly-landed 2026 parquets (the
+   derive's glob matches them) and re-running: it still fails. Committed
+   **4,024** rows vs re-derived **4,264** (+240 = 60 reactor-days × 4 reactors,
+   the 2023 disclosure pool having grown to 335 covered dates); value deltas are
+   small — `avail_raw` max 0.0017, `avail` max 0.0213, mean 0.0002. Benign
+   input-growth staleness rather than corruption, but the committed file is no
+   longer its recipe's output. **Deliberately NOT regenerated here**: it is an
+   in-sample, keeper-consumed input and re-deriving it changes ercot-144's
+   availability envelope — a calibration-owner decision, not a data-readiness
+   one.
+
+### Verdict tally (2018-2022 + H1-2026)
+
+* **CLOSED this session:** the full LMP scoring bench (raws, hourly, annual/
+  monthly, zonal) for 2018-2022 + H1-2026 on the fixed clock; RT ORDC reserves
+  2018-2021; N3045 delivered gas 2018-2021; partial-outage derates 2018-2021;
+  60-Day DAM deliveries 2026-01-01..06-01 and the three availability derives
+  extended to 2026.
+* **STRUCTURALLY UNOBTAINABLE (2018-2022):** the whole 60-Day DAM availability
+  family, HSL, DAM-AS aggregate, AS plan, GTC 2018-2019 — all behind the
+  rolling-window wall, all requiring an owner upload or the declined
+  credentialed archive.
+* **OPEN OWNER DECISIONS:** v2 emission rates 2022/2026 (unblocked, not
+  requested); Waha annual averages 2018-2021; whether to emit the 2022
+  Nov-Dec 60-day fragment; the 2021 Uri-dominated zonal gas scalar; the
+  orphaned `ercot-outages.csv` producer; the stale
+  `ercot-nuclear-availability.csv`.
+* **Unchanged:** ERCOT has no marker and the freeze is active, so **nothing
+  here is spendable**. The bench being complete means only that an ERCOT
+  out-of-training year is now *scorable in principle* — it does not authorize
+  scoring it.

@@ -62,7 +62,9 @@ LMP_DIR = LMP_DATA_DIR
 
 def _parse(pattern: str, market: str) -> pd.DataFrame:
     out = []
-    for f in sorted(glob.glob(str(LMP_DIR / pattern))):
+    # ``**`` + recursive: the 2023-2025 archives sit at the ``lmp-data/`` top
+    # level, the 2018-2022 + 2026 holdout intake under ``lmp-data/ERCOT/``.
+    for f in sorted(glob.glob(str(LMP_DIR / "**" / pattern), recursive=True)):
         yr = int(f.split("SPP_")[1][:4])
         z = zipfile.ZipFile(f)
         sheets = pd.read_excel(
@@ -75,10 +77,17 @@ def _parse(pattern: str, market: str) -> pd.DataFrame:
             if "Settlement Point Name" in df.columns
             else "Settlement Point"
         )
-        if "Delivery Hour" in df.columns:
-            hour1 = df["Delivery Hour"].astype(int)
+        # ERCOT's 2018/2019 RTM annual workbooks each end in one fully-blank
+        # row, which makes the hour cast raise IntCastingNaNError. Drop rows
+        # with no hour label before casting: a blank row carries no price, so
+        # this cannot change any year whose workbook is clean (2020-2026 and
+        # every DAM file have zero such rows).
+        hcol = "Delivery Hour" if "Delivery Hour" in df.columns else "Hour Ending"
+        df = df[df[hcol].notna()]
+        if hcol == "Delivery Hour":
+            hour1 = df[hcol].astype(int)
         else:  # DAM: "Hour Ending" = "HH:00"
-            hour1 = df["Hour Ending"].astype(str).str.split(":").str[0].astype(int)
+            hour1 = df[hcol].astype(str).str.split(":").str[0].astype(int)
         df = df.assign(_h1=hour1)
         df = df[df[spcol].isin(KEEP)].copy()
         # Fixed non-leap 8760-hour clock: map month/day through the non-leap
