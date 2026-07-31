@@ -353,6 +353,7 @@ def campd_tranche_fuel_frac(
     committed_takeorpay_regulated: bool = False,
     regulated_plants: "frozenset[int] | None" = None,
     committed_takeorpay_sunk_fixed: bool = False,
+    committed_dispatchable_supplies: "frozenset[str] | None" = None,
 ) -> "float | np.ndarray":
     """Return the fuel-cost passthrough for one CAMPD tranche generator.
 
@@ -420,6 +421,16 @@ def campd_tranche_fuel_frac(
     already carried once, on the band that runs regardless of price). The
     committed band then bids full delivered cost under its supply passthrough.
 
+    ``committed_dispatchable_supplies``
+    (``ScenarioConfig.coal_prb_committed_dispatchable`` → ``{"prb",
+    "subbituminous"}``): coal plants whose ``coal_supply`` tag is in this set
+    are excluded from ALL THREE committed-band discounts above — their
+    ``_committed`` tranche bids full delivered cost under its supply
+    passthrough, exactly like a merchant plant's. The ``_mustrun`` band keeps
+    its sunk-contract treatment. Measured basis: miso-111 (the regulated PRB
+    fleet's own CEMS record shows its committed band cycling nightly and
+    price-responsively — the discount held it byte-flat instead).
+
     The ``_sync`` synchronization tranche (rebuild step 3a,
     ``ScenarioConfig.coal_sync_srmc_tranche``) bids its **full SRMC** — full
     delivered fuel + VOM + reagents — so it passes ``1.0`` (no discount). It is
@@ -458,6 +469,17 @@ def campd_tranche_fuel_frac(
     # regardless of price; discounting the committed band as well subsidises
     # the MARGINAL MWh in all 8760 h (rules 17/19, miso-96).
     if committed_takeorpay_sunk_fixed:
+        _scope = False
+    # ScenarioConfig.coal_prb_committed_dispatchable: PRB-supplied plants are
+    # excluded from the committed-band discount — their committed band bids
+    # full delivered cost like a merchant's. The meter shows that band cycling
+    # nightly and price-responsively even at regulated plants (miso-111,
+    # PREREG-miso111-prb-committed-flex-2026-07-31.md §8); the self-commitment
+    # is carried once, by `_mustrun` (rule 19 [R-ONE-MECH]).
+    if (
+        committed_dispatchable_supplies
+        and getattr(gen, "coal_supply", "") in committed_dispatchable_supplies
+    ):
         _scope = False
     if (
         _scope
