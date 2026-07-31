@@ -4438,6 +4438,98 @@ is now items **2 and 3** only.
 
 ---
 
+## caiso-151 (2026-07-31) — lever-queue item 2 **BUILT and PROMOTED**: the caiso-77 firm must-flow floor is now clipped at CAISO's own measured price-insensitive intertie ceiling. All four frozen derive gates PASS; every criterion verdict unchanged and both protective gates PASS, at a **pre-registered, knowingly accepted E1-adverse** cost. New keeper `2026-07-31-caiso-151-firm-selfsched`
+
+**Keeper CHANGES: `2026-07-31-caiso148-nuclear-availability` -> `2026-07-31-caiso-151-firm-selfsched`**
+(CALIBRATED-WITH-CAVEATS, 0 FAILs, C1 12/12 · free 8/8, same 2 of 3 ledgered
+slots, protective 0/1). Full evidence:
+`results/calibration/FINDING-caiso151-firm-selfsched-clip-2026-07-31.md`;
+prereg `PREREG-caiso151-firm-selfsched-clip-2026-07-31.md` (committed+pushed
+before either arm solved).
+
+### The build caiso-150 specified
+
+caiso-150 proved the defect direction-free and specified the mechanism but
+deliberately did not build it. This session built it: `min_gen[t] =
+min(pmax x availability[t], ceiling[t])`, the system ceiling allocated across
+firm tranches pro rata by their own shaped capability so **no allocation
+parameter** is introduced. It clips the **FLOOR and never the CAPABILITY** —
+above the measured ceiling the import is still available, merely price-ELASTIC,
+so it goes to the LP as economic capability instead of forced. **Zero new DOF**;
+composes with the caiso-138 envelope clip as a SECOND pointwise min on its own
+flag (rule 19).
+
+### The derive — all four gates declared ex ante, all PASS
+
+357 balanced trade days, 1,574,341 resource-hours, zero archive holes. The
+caiso-150 corpus was gitignored and its container gone, so this is an
+**independent re-fetch**.
+
+| gate | measured | threshold |
+|---|---|---|
+| G1 year-stability CV | 0.042 | <= 0.20 |
+| G2 LOYO level | 4.6 / 8.4 / 4.6 % | <= 25 % |
+| G3 LOYO shape (288 buckets) | 19.3 / 12.3 / 18.6 % | <= 25 % |
+| G4 coverage | 288 / 288 | 288 |
+
+It reproduces caiso-150 independently: unclassifiable 94.54 % (94.91 %), swing
+1.52x (1.49x), overnight 3,388-3,542 MW (3,381-3,443). Per-year levels FLAT at
+3,886/4,241/3,886 MW while the DMM RA level steps 2,323 -> 3,371 — the
+caiso-138 §C signature re-measured on conduct.
+
+### The A/B
+
+Forced totals reproduce caiso-150 §A exactly. Forcing removed
+0.919/4.548/5.495 TWh (4.9/16.7/19.6 %), binding 2,006/4,068/4,469 h — within
+~5 % of a prediction made on a different corpus. But only 0.042/1.099/0.628 TWh
+of import energy actually **stops flowing**: the rest flows on economics, which
+is the mechanism working as designed (forced -> elastic, not deleted).
+Displacement is import -> CC_REGULAR ~1:1. Every criterion verdict UNCHANGED;
+CT_PEAKER C7 0.881/0.933/0.866 -> 0.881/0.932/0.865, C8 far under the 0.15
+peaker cap, CC_REGULAR C8 forced share FALLS.
+
+### The cost, paid knowingly
+
+Registered E1-ADVERSE before either arm solved, and CONFIRMED: overnight lambda
++$0.043/+$0.376/+$0.224, and because CAISO's model lambda already sits ABOVE the
+RT actual the **C3a miss GROWS** +3.01->+3.06 / +8.05->+8.68 / +11.23->+11.72 %
+(+0.045/+0.626/+0.494 pp). All below the 1.0 pp prereg trigger, so not built
+upon — but the 2025 movement is 10x caiso-148's and lands on a ledgered caveat,
+so it is stated rather than left to be found. It does NOT reopen C3a-2025.
+Rule 1 governs: a structurally-correct mechanism stays in when the fit worsens,
+and is never adopted because a residual moved. Rule 22 LOYO is discharged at the
+derive stage (G2/G3) — there is no fitted parameter to overfit.
+
+### CORRECTION to caiso-150 §A (and to this session's own first claim)
+
+Adding the `D4_WINDOWS` entry for `MECH_FIRM_IMPORT` is **necessary but NOT
+sufficient**: the `firm_import` row still does not appear in either arm's
+`legitimacy_diagnostics.json`. The diagnostics harness scores a PLANT-aggregated
+matrix keyed on CAMPD plant ids, and the intertie tranches carry `plant_code 0`
+with an empty `plant_group`, so they are dropped from the `all_pids` matrix that
+D-1/D-2/D-4 all score. Run D-4 on the unaggregated LP rows and the row appears
+at once (firm_import, 15.4689 TWh floored, 2024, h0-23, off-window 0.000, pass).
+The binding cause is the **plant-set restriction**, not the missing window.
+ISO-generic (it equally hides MISO Manitoba and NYISO HQ) — **FILED, NOT
+ABSORBED**; diagnostics lane.
+
+### DO-NOT-REDO (caiso-151, binding)
+
+* Re-deriving `caiso_intertie_selfsched_ceiling.csv` against a residual, or
+  retuning any of the four frozen gates to move a verdict (rule 23).
+* Re-litigating the E1-adverse cost as a rejection ground. Revisit the ROOT
+  CAUSE of CAISO's over-priced lambda; do not revert the clip to recover C3a.
+* Arming this clip on the caiso-138 envelope-clip flag, or replacing one with
+  the other — they reconcile different objects and compose (rule 19).
+* Clipping CAPABILITY instead of the FLOOR.
+* Attempting the import/export split of intertie self-schedules by any route
+  (caiso-150 §H carried forward; wall re-confirmed at 94.54 %).
+* Quoting the midday ratio as under-forcing.
+* Citing the D4_WINDOWS entry as evidence the floor is gate-visible — it is not.
+* Absorbing the diagnostics-harness defect into a CAISO lever session.
+
+Next number: caiso-152.
+
 ## caiso-150 (2026-07-31) — lever-queue item 2's only live prerequisite (`caiso-138 §C` **firm-block elasticity**): the design gate **OPENS**. The firm must-flow floor's **shape basis measures the wrong object**, proved **direction-free** against CAISO's own as-submitted DAM bids — an independent source the mechanism had never been checked against. **NO SOLVE, no arm, no new field, keeper unchanged**
 
 **Keeper `2026-07-31-caiso148-nuclear-availability` UNCHANGED**
