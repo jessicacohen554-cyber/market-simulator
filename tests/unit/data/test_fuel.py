@@ -2082,7 +2082,9 @@ def test_miso_winter_citygate_daily_off_is_byte_identical():
     fleet = _miso_gas_fleet(_MISO_WINTER_HOURS)
     base = _miso_winter_base(fleet)
     prices = base.copy()
-    config = ScenarioConfig(iso="MISO", hours=_MISO_WINTER_HOURS, gas_daily_shape=True)
+    config = ScenarioConfig(
+        iso="MISO", mode="backcast", hours=_MISO_WINTER_HOURS, gas_daily_shape=True
+    )
     apply_miso_winter_citygate_daily(prices, fleet, config, 2024)
     np.testing.assert_array_equal(prices, base)
 
@@ -2094,6 +2096,9 @@ def test_miso_winter_citygate_daily_lifts_coldsnap_mean_preserving():
     on = base.copy()
     config = ScenarioConfig(
         iso="MISO",
+        # Measured Chicago Citygate daily prints — a backcast-only overlay, so
+        # the config must say so (FFR-1D rule-13 guard, audit FR-11).
+        mode="backcast",
         hours=_MISO_WINTER_HOURS,
         gas_daily_shape=True,
         miso_winter_citygate_daily=True,
@@ -2124,6 +2129,9 @@ def test_miso_winter_citygate_daily_supersedes_national_shape():
     on = base.copy()
     config = ScenarioConfig(
         iso="MISO",
+        # Measured Chicago Citygate daily prints — a backcast-only overlay, so
+        # the config must say so (FFR-1D rule-13 guard, audit FR-11).
+        mode="backcast",
         hours=_MISO_WINTER_HOURS,
         gas_daily_shape=True,
         miso_winter_citygate_daily=True,
@@ -2142,6 +2150,9 @@ def test_miso_winter_citygate_daily_zone_and_season_scoped():
     on = base.copy()
     config = ScenarioConfig(
         iso="MISO",
+        # Measured Chicago Citygate daily prints — a backcast-only overlay, so
+        # the config must say so (FFR-1D rule-13 guard, audit FR-11).
+        mode="backcast",
         hours=_MISO_WINTER_HOURS,
         gas_daily_shape=True,
         miso_winter_citygate_daily=True,
@@ -2166,6 +2177,7 @@ def test_miso_winter_citygate_daily_skips_other_isos():
     prices = base.copy()
     config = ScenarioConfig(
         iso="PJM",
+        mode="backcast",
         hours=_MISO_WINTER_HOURS,
         gas_daily_shape=True,
         miso_winter_citygate_daily=True,
@@ -2189,6 +2201,7 @@ def test_miso_winter_citygate_daily_synthetic_coldsnap(monkeypatch):
     on = base.copy()
     config = ScenarioConfig(
         iso="MISO",
+        mode="backcast",
         hours=_MISO_WINTER_HOURS,
         gas_daily_shape=False,
         miso_winter_citygate_daily=True,

@@ -939,20 +939,18 @@ class ErcotThermalDamAvailabilityTest(unittest.TestCase):
         np.testing.assert_array_equal(
             fa_on.availability[:, o0 : o0 + 24], fa_off.availability[:, o0 : o0 + 24]
         )
-        # Forecast mode: overlay never applies.
-        cfg_fc = ScenarioConfig(
-            weather_year=2023,
-            iso="ERCOT",
-            mode="forecast",
-            ercot_thermal_dam_availability=True,
-        )
-        fa_fc = generators_to_fleet_arrays(
-            gens, zones, hours=HOURS_PER_YEAR, iso="ERCOT", config=cfg_fc, year=2023
-        )
-        fc_frac = float(
-            (fa_fc.availability[:, day].mean(axis=1) * pmax).sum() / pmax.sum()
-        )
-        self.assertNotAlmostEqual(fc_frac, float(target[d0]), places=3)
+        # Forecast mode: the overlay cannot even be CONSTRUCTED there. It used
+        # to be a silent no-op; since FFR-1D (audit FR-11) ScenarioConfig
+        # refuses the measured DAM-award record in mode="forecast" (rule 13),
+        # which is strictly stronger than asserting the no-op.
+        with self.assertRaises(ValueError) as ctx:
+            ScenarioConfig(
+                weather_year=2023,
+                iso="ERCOT",
+                mode="forecast",
+                ercot_thermal_dam_availability=True,
+            )
+        self.assertIn("backcast-only measured overlays", str(ctx.exception))
 
     def test_committed_hourly_series_reconciles_with_day_grain(self):
         """ERCOT-96 class-hour series: shape, day-mean reconciliation, the
@@ -1135,28 +1133,20 @@ class ErcotThermalDamAvailabilityTest(unittest.TestCase):
             fa_on.availability[:, o0 : o0 + 24],
             fa_off.availability[:, o0 : o0 + 24],
         )
-        # Forecast mode is untouched (the statistical stack is the forward
-        # analogue — the G4 mode-aware seam).
-        cfg_fc = ScenarioConfig(
-            weather_year=2023,
-            iso="ERCOT",
-            mode="forecast",
-            ercot_thermal_dam_availability=True,
-            ercot_thermal_dam_availability_hourly=True,
-            ercot_thermal_dam_availability_coal=True,
-        )
-        fa_fc = generators_to_fleet_arrays(gens, zones, **{**kw, "config": cfg_fc})
-        fa_fc_off = generators_to_fleet_arrays(
-            gens,
-            zones,
-            **{
-                **kw,
-                "config": ScenarioConfig(
-                    weather_year=2023, iso="ERCOT", mode="forecast"
-                ),
-            },
-        )
-        np.testing.assert_array_equal(fa_fc.availability, fa_fc_off.availability)
+        # Forecast mode: the statistical stack is the forward analogue (the G4
+        # mode-aware seam), and since FFR-1D (audit FR-11) the measured DAM
+        # record cannot be armed there at all — ScenarioConfig refuses it
+        # (rule 13), which is strictly stronger than the old no-op assertion.
+        with self.assertRaises(ValueError) as ctx:
+            ScenarioConfig(
+                weather_year=2023,
+                iso="ERCOT",
+                mode="forecast",
+                ercot_thermal_dam_availability=True,
+                ercot_thermal_dam_availability_hourly=True,
+                ercot_thermal_dam_availability_coal=True,
+            )
+        self.assertIn("backcast-only measured overlays", str(ctx.exception))
 
     def test_plant_grain_preserves_class_total_and_pins_plants(self):
         """ERCOT-97 plant grain: a crosswalked plant is pinned to its own
