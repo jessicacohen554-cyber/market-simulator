@@ -1,7 +1,9 @@
 {
-  "timestamp": "2026-07-27T06:54:11",
+  "timestamp": "2026-07-31T20:38:11",
   "iso": "PJM",
   "years": [
+    2023,
+    2024,
     2025
   ],
   "hours": 8760,
@@ -11,6 +13,8 @@
   "commitment": false,
   "commitment_screen_coal": true,
   "gas_prices": {
+    "2023": 2.54,
+    "2024": 2.19,
     "2025": 3.52
   },
   "coal_lignite_mustrun": null,
@@ -33,6 +37,10 @@
   "tranche_startup_measured_runs": true,
   "tranche_startup_conditional_runs": true,
   "gas_offer_margin": true,
+  "coal_offer_margin": false,
+  "cc_committed_offer_margin": false,
+  "coal_peak_offer_margin": false,
+  "coal_perplant_offer_level": false,
   "nysdec_peaker_rule_availability": false,
   "oil_primary_bin_fuel": false,
   "st_gas_intermediate": false,
@@ -53,7 +61,12 @@
     "pjm_offer_midcurve_segments": [
       "LONG_RUN",
       "CC_LIKE"
-    ]
+    ],
+    "hydro_budget_nameplate_aware": true,
+    "pjm_external_net_position_cut": true,
+    "pjm_zonal_loss_surface": true,
+    "measured_ct_heat_rates": true,
+    "ramp_limits": true
   },
   "coal_bit_passthrough_sigmoid": true,
   "coal_bit_sigmoid_overrides": {
@@ -82,6 +95,7 @@
   "miso_south_seam_split": false,
   "miso_rdt_tcdc": false,
   "miso_zonal_loss_surface": false,
+  "pjm_zonal_loss_surface": true,
   "ercot_multiproduct_as_coopt": false,
   "ercot_ecrs_conservative_deployment": false,
   "ercot_nonreleasable_as_withholding": false,
@@ -218,6 +232,11 @@
   "cc_nameplate_summer_derate": false,
   "coal_nameplate_summer_derate": false,
   "temp_dependent_derate": false,
+  "temp_derate_hourly_grain": false,
+  "temp_derate_mean_anchored": false,
+  "temp_derate_classes": null,
+  "temp_derate_slope_st_chp": null,
+  "temp_derate_slope_ct_chp": null,
   "ercot_offer_surface_conditional": false,
   "ercot_offer_surface_midcurve_conditional": false,
   "ercot_offer_surface_cleared_share": false,
@@ -237,6 +256,7 @@
     "CC_LIKE"
   ],
   "ercot_nuclear_unit_availability": false,
+  "nuclear_unit_availability": false,
   "ercot_thermal_dam_availability": false,
   "ercot_thermal_dam_availability_hourly": false,
   "ercot_thermal_dam_availability_plant": false,
@@ -264,6 +284,7 @@
   "ercot_gas_bridge_min_load_frac": null,
   "ercot_gas_bridge_startup": null,
   "ercot_gas_bridge_da_horizon": null,
+  "ercot_gas_bridge_online_hours": null,
   "ercot_commitment_posture": null,
   "ercot_commitment_posture_min_load_frac": null,
   "carry_operating_mothballs": null,
@@ -305,7 +326,7 @@
   "caiso_corridor_atc_forward": null,
   "caiso_reference_price_seam": null,
   "capacity_deliverability_limits": null,
-  "ramp_limits": null,
+  "ramp_limits": true,
   "local_capacity_constraints": null,
   "nyiso_local_selfsupply": null,
   "nyiso_scr_edrp": null,
@@ -318,6 +339,15 @@
   "nyiso_li_locational_reserve": null,
   "nyiso_incity_commitment_obligation": null,
   "nyiso_east_reserve_families": null,
+  "reliability_floor_overrides": null,
+  "nyiso_gas_commitment_bridge": null,
+  "nyiso_gas_bridge_cc_min_load_frac": null,
+  "nyiso_gas_bridge_st_min_load_frac": null,
+  "nyiso_gas_bridge_startup": null,
+  "nyiso_gas_bridge_da_horizon": null,
+  "nyiso_gas_bridge_min_run": null,
+  "nyiso_gas_bridge_cc_min_run_hours": null,
+  "nyiso_gas_bridge_st_min_run_hours": null,
   "nyiso_spin_reserve_online": null,
   "nyiso_spin_headroom_frac": null,
   "nyiso_dynamic_reserve_requirements": null,
@@ -349,17 +379,18 @@
   "mass_cap_program": null,
   "btm_backfill_year": 2024,
   "shared_inputs": {
-    "eia930": "../_shared/PJM/eia930-5d75f210361b.parquet",
-    "eia923": "../_shared/PJM/eia923-0984676da1c3.parquet",
-    "campd": "../_shared/PJM/campd-38837d7d575c.parquet",
+    "eia930": "../_shared/PJM/eia930-ec2962505b2c.parquet",
+    "eia923": "../_shared/PJM/eia923-515fa22df146.parquet",
+    "campd": "../_shared/PJM/campd-db315991835d.parquet",
     "unit_outages": "../_shared/PJM/unit_outages-efd694c287be.parquet",
-    "unit_outages_short": "../_shared/PJM/unit_outages_short-3ba0897821ba.parquet",
+    "unit_outages_short": "../_shared/PJM/unit_outages_short-6fd29c386319.parquet",
     "unit_outages_partial": "../_shared/PJM/unit_outages_partial-b37584b96662.parquet",
     "unit_outages_e923": "../_shared/PJM/unit_outages_e923-5db50221ce30.parquet",
-    "unit_outages_layup": "../_shared/PJM/unit_outages_layup-b8ac78eb969e.parquet"
+    "unit_outages_layup": "../_shared/PJM/unit_outages_layup-b8ac78eb969e.parquet",
+    "capacity_deliverability": "../_shared/PJM/capacity_deliverability-7b81c5eca3cf.parquet"
   },
-  "git_sha": "34e287c",
-  "basis_sha": "8b3edb62509097d2d5457ffb958097d743266207",
+  "git_sha": "a1a3a60",
+  "basis_sha": "a1a3a609fb4f5a5bb5f9acae2267b32ed030f02c",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
@@ -374,11 +405,28 @@
     }
   },
   "reuse": {
-    "source_bundle": "results/calibration/pjm132_control_A",
+    "source_bundle": "results/calibration/pjm143_hy_level_B_y24",
     "requested_years": [
+      2023,
+      2024,
       2025
     ],
-    "reused_years": {},
+    "reused_years": {
+      "2023": {
+        "passes": [
+          "P1"
+        ],
+        "cache_key": "33ee0065d2dc36ac",
+        "scenario_config_sha256": "6f5212bafea2cc0a"
+      },
+      "2024": {
+        "passes": [
+          "P1"
+        ],
+        "cache_key": "5c806b7fee5973cf",
+        "scenario_config_sha256": "b6a9bc8069086a04"
+      }
+    },
     "fresh_years": [
       2025
     ],
@@ -386,7 +434,7 @@
       "2025": "year not solved in the prior bundle"
     },
     "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
-    "source_timestamp": "2026-07-27T06:34:00",
-    "source_git_sha": "34e287c"
+    "source_timestamp": "2026-07-31T20:24:23",
+    "source_git_sha": "a1a3a60"
   }
 }
