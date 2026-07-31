@@ -3860,3 +3860,126 @@ proposing any backcast-lane scarcity-overlay wiring for CAISO; re-deriving the
 C3c tail as summer-evening scarcity; fuel-grain work aimed at C3c.
 
 Next number: caiso-145.
+
+## caiso-145 (2026-07-30) — **OWNER DISPOSITION of both blocked gates: CAISO is CALIBRATED-WITH-CAVEATS.** With the in-model lever queue EMPTY on every route for C3c (caiso-144) *and* for C3a-2025 (caiso-141/142/143), the owner ADOPTED caiso-131 **A4** for C3c-2023/24 and the caiso-141 **A2 data wall** for C3a-2025 as ACCEPTED MEASURED-INPUT LIMITATIONS. Three ledger entries written to the keeper's attestation; determination **NOT-YET → CALIBRATED-WITH-CAVEATS** (2 of 3 non-protective ledgered slots, 0 of 1 protective, **0 FAILs**). NO SOLVE, NO ARM, NO NEW FIELD, NO CELL VERDICT CHANGED — keeper, config and bytes all unchanged
+
+**Keeper UNCHANGED:** `2026-07-29-caiso139-dump-guard-offer` (bundle
+`results/calibration/caiso139_dumpguard_B`). This is a **disposition, not a
+lever**: no LP was built, no solver called, nothing armed, no `ScenarioConfig`
+field added, no bundle produced, and no mechanism-matrix cell verdict changed.
+The change is **scorer-only** — the exceptions ledger in the existing bundle's
+`calibration_attestation.json` — so the verdict re-derives from committed bytes
+and every earlier keeper re-scores in place.
+
+### The decision (owner, put at session open per the disposition charter)
+
+Both questions were posed before any work, with the standing alternatives
+(adopt / hold / fund the intake). Both were answered **adopt**:
+
+| gate | disposition | basis |
+|---|---|---|
+| **C3c-2023/24** | ADOPT caiso-131 §9 **A4** ledger | caiso-144 §C/§D/§E; MISO `miso101` + NEISO `neiso61` precedent |
+| **C3a-2025** | ADOPT ledger on the **A2 wall** | caiso-141 (walled), caiso-140 §D (A1 short), caiso-142 §H / caiso-143 (family rejected on sign) |
+
+### What was written
+
+Three entries in `calibration_attestation.json` `exceptions`, ERCOT-76
+`"ADOPTED LEDGER (owner, 2026-07-30 …)"` format extended with the MISO/NEISO
+`metric`/`classification` keys, **per-year** as the rubric matches them:
+
+1. **`price_tail` 2023** — model 0 h vs RT actual 47 h. Hour-set decomposition
+   in the entry (caiso-144 §E): 24/47 in January (hod peak 6–7 AM, 16/47 in
+   hod 6–9 — the Dec-2022/Jan-2023 citygate blowout), 12 Jul–Aug evenings,
+   rest scattered singles; model max zonal λ $181 (mean $112) vs actual RT max
+   $907 (mean $310).
+2. **`price_tail` 2024** — model 0 h vs RT actual 35 h. 26/35 in January (the
+   national freeze / MLK storm), 4 in July; model max λ $155 (mean $123) vs
+   actual max $897 (mean $283); LOLP-overlay overlap with these hours **0**.
+3. **`price_mean` 2025** — model $38.14 vs RT actual $34.39 = **+10.9 %**
+   (band ±10 %, so 0.9 pt beyond band); 2023 (+3.2 %) and 2024 (+8.0 %) PASS
+   on the same basis, so the caveat is **2025-only**.
+
+Both C3c entries share one reason block citing the MISO Scarcity Pricing White
+Paper (Mar-2024 §3.2.1) probabilistic-RT anatomy — a real ISO's tail price is
+an administrative/probabilistic construct over 10–30 min net-load and outage
+uncertainty, not an emergent marginal-cost outcome — plus CAISO's own
+hour-level corroboration: **§C** 1.6–10.5 GW of deliverable reserve slack in
+reality's own RT>$200 hours (storage RS excluded, so a strict lower bound),
+**§D** the over-stated LOLP adder overlapping that tail in ≤1 of 90 hours over
+three years, **§E** the winter-morning fuel/cold-snap tail already priced to
+the armed daily-spot SRMC ceiling ($150–180 at Jan-2023's measured
+$16–18/MMBtu, with `caiso_citygate_spot_level` + `caiso_citygate_flow_date`
+both armed; observed model max zonal λ there $181). The C3a entry cites the caiso-141 wall (Helms 1,053 MW + Eastwood
+199.8 MW = **60.3 %** of the PS fleet with no public hourly telemetry; every
+public hourly hydro series is the same PS-NET EMS feed), A1's arithmetic
+shortfall (≤ −0.13 of the −0.31 needed), and the export/absorption family's
+sign refusal.
+
+### Verdict change (`scripts/calibration_verdict.py`, re-run on committed bytes)
+
+```
+NOT-YET                                  →  CALIBRATED-WITH-CAVEATS
+C3a mean LMP            FAIL             →  CAVEAT [ledgered]  (2025, ACCEPTED MEASURED-INPUT LIMITATION)
+C3c price tail          FAIL             →  CAVEAT [ledgered]  (2023 + 2024, same)
+grade_summary: fails 2, ledgered 0       →  fails 0, ledgered 2
+budget: protective 0/1, non-protective ledgered 2/3
+```
+
+C1/C2/C3b/C4/C6/C7/C8 all unchanged and passing. One non-protective ledger
+slot remains.
+
+### Artifacts updated (all committed)
+
+- `results/calibration/caiso139_dumpguard_B/calibration_attestation.json` —
+  the three ledger entries (`free_parameters` verified byte-unchanged; the DOF
+  ledger is untouched because no free parameter was added). `governance` takes
+  one **additive, dated appendix** to `attested_by`: the caiso-139 promotion
+  record still reads "fail set {C3a-2025, C3c} unchanged, NOT-YET", which was
+  and remains a correct statement about *that A/B's* pre-registered P2 gate —
+  it is left **intact**, with the appendix recording that the determination has
+  since changed with no change to the run's bytes. Rewriting another session's
+  attestation to match a later verdict is not a repair; dating it is.
+- `.../metrics.json` — regenerated by the scorer itself
+  (`calibration_verdict.py --write-metrics`), never hand-edited.
+- `frontend/data/backcast/keepers/CAISO.json` — the stale
+  "so the rubric is unchanged: NOT-YET, fail {C3a-2025, C3c}" tail removed
+  from `note`; new `disposition_note` records the adoption, the evidence and
+  the two owner-funded intakes that could reopen either caveat.
+- `frontend/data/backcast/status/CAISO.js` — rebuilt (`build_status.py --iso
+  CAISO`), now reads `CAISO:CALIBRATED-WITH-CAVEATS`.
+- `docs/codebase-site/data/mechanism-matrix.js` — header stamped with
+  caiso-145; `gates.CAISO` rewritten from two blockers to the two ledgered
+  caveats. **No cell verdict touched** (no mechanism tested), no other ISO's
+  column touched (rule 25).
+
+### Standing limits on this disposition
+
+- Neither caveat is **ever** closable by an offer adder, scarcity adder,
+  haircut or any value tuned to the residual (rules 1 `[R-STRUCT]` /
+  13 `[R-MEASURED]`). A ledger records a limit; it does not license a fit.
+- The only routes that reopen either are **owner-funded intakes**, both
+  unfunded at adoption: the **SoCalGas OFO declaration record** (C3c — the one
+  path to an unfitted C3c-2024 trigger) and **non-public hourly pumped-storage
+  data** (C3a).
+- The caiso-131 §8 interaction still binds: no C3c mechanism may later be
+  re-opened that would spend C3a-2025's negative headroom. This ledger does
+  not license one.
+- **CALIBRATED-WITH-CAVEATS is a rubric determination, not the rule-22
+  calibration-complete marker.** No marker was written for CAISO in this
+  session, so every out-of-training year (2022, 2019, ≤2021, H1-2026) remains
+  quarantined for CAISO — solve, scoring and registration alike. Writing that
+  marker is a separate owner act.
+
+### DO-NOT-REDO (new, binding)
+
+- **Re-litigating either ledgered caveat as an open mechanism lane.** Both are
+  adjudicated ACCEPTED MEASURED-INPUT LIMITATIONS on owner disposition with
+  the in-model queues measured empty; a successor proposing a C3a-2025 or
+  C3c-2023/24 lever must first present **new evidence against a named
+  caiso-140/141/142/143/144 DO-NOT-REDO cell**, not a new framing of a closed
+  one.
+- Carried forward unchanged: every DO-NOT-REDO in FINDING-caiso144 §G,
+  caiso-143 §H, caiso-142 §K, caiso-141, caiso-138 §G, caiso-137b §6,
+  caiso-131 §10.
+
+Next number: caiso-146.

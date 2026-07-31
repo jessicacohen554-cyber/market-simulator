@@ -358,6 +358,27 @@
  * (stays diagnosed-unclosed per caiso-142/143). Keeper unchanged; header
  * re-stamped caiso138->caiso139 (missed at caiso-139 promotion).
  * (FINDING-caiso144-coopt-dormancy-c3c-frontier-2026-07-30.md)
+ *
+ * caiso-145 (2026-07-30, no-LP, scorer-only): OWNER DISPOSITION of both
+ * CAISO blocked gates. With the in-model lever queues empty on every route
+ * for BOTH -- C3c per caiso-144 (offer rungs closed caiso-131 §10, reserve
+ * tiers provably inert §B/§C, overlay refused on measurement §D, fuel grain
+ * already at its measured daily ceiling §E) and C3a-2025 per caiso-141/142/143
+ * (the hourly PS<->conventional-hydro split is WALLED on public data; A1 is
+ * arithmetically short; the export/absorption family is rejected on sign) --
+ * the owner ADOPTED caiso-131 A4 for C3c-2023/24 and the caiso-141 A2 wall
+ * for C3a-2025 as ACCEPTED MEASURED-INPUT LIMITATIONS. Three ledger entries
+ * written to the caiso-139 bundle's calibration_attestation.json (price_tail
+ * 2023, price_tail 2024, price_mean 2025), so calibration_verdict.py returns
+ * CALIBRATED-WITH-CAVEATS: 2 of 3 non-protective ledgered slots spent, 0 of 1
+ * protective, 0 FAILs. NO mechanism was tested and NO cell verdict changed --
+ * this is a disposition, not a lever. Keeper, config and solve all unchanged
+ * (2026-07-29-caiso139-dump-guard-offer). Both caveats stay NEVER-closable by
+ * an adder or any value tuned to the residual (rules 1/13); the only routes
+ * that could reopen either are owner-funded intakes, both unfunded at
+ * adoption: the SoCalGas OFO declaration record (C3c) and non-public hourly
+ * pumped-storage data (C3a). Every other ISO's cells UNTOUCHED (rule 25).
+ * (FINDING-caiso144 §F resolution map; caiso-131 §9 A4; caiso-141 A2 wall)
  */
 window.MECH_MATRIX = {
   version: 1,
@@ -373,7 +394,7 @@ window.MECH_MATRIX = {
   },
   gates: {
     ERCOT: "C3a/C3b 2023, C3c all years, C7 COAL_LIGNITE 2023 (v2.8)",
-    CAISO: "C3a 2025 (+10.9 %, diagnosed-unclosed, empty in-model queue per caiso-142/143), C3c 2023-24 (0 h vs RT 47/35; in-model queue EMPTY on every route per caiso-144 — live dispositions: A3 OFO intake / A4 owner ledger)",
+    CAISO: "NONE failing — CALIBRATED-WITH-CAVEATS since caiso-145 (owner disposition 2026-07-30, scorer-only). Both former blockers are now ACCEPTED MEASURED-INPUT LIMITATIONS, 2 of 3 non-protective ledger slots: C3a 2025 (+10.9 %) on the caiso-141 A2 wall (no public hourly PS↔conventional-hydro split; Helms+Eastwood = 60.3 % of the fleet uninstrumented), and C3c 2023-24 (0 h vs RT 47/35) on caiso-131 A4 with the caiso-144 evidence (in-LP co-opt provably inert with 1.6-10.5 GW slack in reality's own tail hours; LOLP overlay overlaps that tail ≤1/90 h; the tail is winter-morning fuel/cold-snap already priced to the armed daily-spot SRMC ceiling). Reopening either needs an owner-funded intake — SoCalGas OFO record (C3c) or non-public hourly PS data (C3a); neither is closable by an adder (rules 1/13)",
     PJM: "NONE — CALIBRATED since pjm-137, every criterion passing (C1 16/16 free 12/12). Thinnest margin: C3c passes by ~1 h (2024) / ~2.5 h (2025) against a 0.5x floor, closed at pjm-136 and unchanged since. Remaining defect is the Dominion CT leg, of which pjm-137 closed 52-55 % (intra-zonal congestion) and pjm-138 attributes a further 25-37 % to the reserve opportunity cost the no-MIP LP cannot price — 8/23/22 % is reachable",
     MISO: "C3a/C3b/C3c ledger-saturated (3/3), C7 COAL_PRB all years",
     NYISO: "C3c sole blocker, all years (C1 closed 2026-07-29 by owner promotion of nyiso-96, CT_PEAKER trade accepted)",
