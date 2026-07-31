@@ -74,6 +74,11 @@ from market_sim.config.constants import (  # noqa: E402
 )
 
 NRC_DIR = NRC_REACTOR_STATUS_DIR
+# In-sample default. Widened per-run by ``--years`` for out-of-training DATA
+# READINESS (rule 22 channel 1 — intake is no-LP; the solve/score quarantine is
+# untouched by writing this extract). Every year passed must carry BOTH an NRC
+# annual file and a ``NUCLEAR_MONTHLY_CF_BY_YEAR`` anchor entry, else the year's
+# months fall back to the smear.
 YEARS = (2023, 2024, 2025)
 
 # Frozen constants inherited verbatim from derive_ercot_nuclear_availability
@@ -160,9 +165,16 @@ NRC_TO_EIA: dict[str, dict[str, tuple[int, int]]] = {
 }
 
 
-def fleet_caps(iso: str) -> dict[tuple[int, int], float]:
+def fleet_caps(
+    iso: str, years: tuple[int, ...] = YEARS
+) -> dict[tuple[int, int], float]:
     """EIA-860 pmax per (plant_code, unit_no) — the capacities the model
-    dispatches, used as the monthly-reconciliation weights."""
+    dispatches, used as the monthly-reconciliation weights.
+
+    ``years`` selects the fleet vintage (its last element) exactly as before;
+    the fleet snapshot is year-agnostic in practice (register: fleet statics
+    DEGRADED-accepted), so this only changes which year is *asked for*.
+    """
     import logging
 
     logging.disable(logging.WARNING)
@@ -170,7 +182,7 @@ def fleet_caps(iso: str) -> dict[tuple[int, int], float]:
     from market_sim.data.fleet import load_fleet_from_csv
 
     caps: dict[tuple[int, int], float] = {}
-    for g in load_fleet_from_csv(iso, get_iso_config(iso), year=YEARS[-1]):
+    for g in load_fleet_from_csv(iso, get_iso_config(iso), year=years[-1]):
         if g.fuel_type != "nuclear":
             continue
         tail = str(g.unit_id).rsplit("_", 1)[-1]
@@ -179,11 +191,11 @@ def fleet_caps(iso: str) -> dict[tuple[int, int], float]:
     return caps
 
 
-def load_daily_raw(iso: str) -> pd.DataFrame:
+def load_daily_raw(iso: str, years: tuple[int, ...] = YEARS) -> pd.DataFrame:
     """Per (reactor, date) raw daily availability from the NRC reports."""
     xwalk = NRC_TO_EIA[iso]
     frames = []
-    for yr in YEARS:
+    for yr in years:
         path = NRC_DIR / f"{yr}PowerStatus.txt"
         if not path.exists():
             raise FileNotFoundError(
@@ -206,7 +218,9 @@ def load_daily_raw(iso: str) -> pd.DataFrame:
     )
 
 
-def reconcile_monthly(day: pd.DataFrame, iso: str) -> pd.DataFrame:
+def reconcile_monthly(
+    day: pd.DataFrame, iso: str, years: tuple[int, ...] = YEARS
+) -> pd.DataFrame:
     """Scale non-event unit-days so fully-covered months hit the EIA-923 anchor.
 
     Ported verbatim from ``derive_ercot_nuclear_availability.reconcile_monthly``
@@ -217,14 +231,14 @@ def reconcile_monthly(day: pd.DataFrame, iso: str) -> pd.DataFrame:
     excludes dormant units (they have no NRC rows here either).
     """
     cf_by_year = NUCLEAR_MONTHLY_CF_BY_YEAR[iso]
-    caps = fleet_caps(iso)
+    caps = fleet_caps(iso, years)
     covered_keys = {
         k for k in caps if any((day.plant_code == k[0]) & (day.unit_no == k[1]))
     }
     missing = {
         k
         for k in caps
-        if k not in covered_keys and YEARS[-1] >= NUCLEAR_DORMANT_UNTIL.get(k[0], 0)
+        if k not in covered_keys and years[-1] >= NUCLEAR_DORMANT_UNTIL.get(k[0], 0)
     }
     if missing:
         print(f"  NOTE: fleet units with no NRC rows (smear stands): {sorted(missing)}")
@@ -232,9 +246,18 @@ def reconcile_monthly(day: pd.DataFrame, iso: str) -> pd.DataFrame:
     day = day.assign(avail=day.avail_raw)
     day["capw"] = [caps[(p, u)] for p, u in zip(day.plant_code, day.unit_no)]
     n_units = len(covered_keys)
-    for yr in YEARS:
+    for yr in years:
         cf = cf_by_year.get(yr)
         if cf is None:
+            # No EIA-923 anchor for this year: the rows would carry raw NRC
+            # %-thermal in `avail` — a DIFFERENT recipe from every anchored
+            # year in the same column. Say so loudly rather than emit a silent
+            # lineage asymmetry (the register's standing vintage discipline).
+            print(
+                f"  {yr}: NO NUCLEAR_MONTHLY_CF_BY_YEAR[{iso}] anchor — "
+                "rows would be RAW-ONLY (unreconciled), a recipe asymmetry "
+                "vs the anchored years; drop the year or land the anchor first"
+            )
             continue
         for mo in range(1, 13):
             days_in_month = pd.Period(f"{yr}-{mo:02d}").days_in_month
@@ -297,15 +320,42 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--iso", default="PJM", choices=sorted(NRC_TO_EIA))
     ap.add_argument(
+        "--years",
+        nargs="+",
+        type=int,
+        default=list(YEARS),
+        help=(
+            "years to derive (default the in-sample 2023-2025). Widen for "
+            "out-of-training DATA READINESS only (rule 22 channel 1); each year "
+            "needs an NRC annual file and a NUCLEAR_MONTHLY_CF_BY_YEAR anchor."
+        ),
+    )
+    ap.add_argument(
         "--check",
         action="store_true",
         help="verify the committed CSV reproduces from the raw NRC files",
     )
     args = ap.parse_args()
     out_csv = RAW_DATA_DIR / f"nuclear-availability-{args.iso}.csv"
+    years = tuple(sorted(args.years))
 
-    day = load_daily_raw(args.iso)
-    day = reconcile_monthly(day, args.iso)
+    # `--check` verifies the COMMITTED extract against the raws, so it must span
+    # the years that extract actually holds — otherwise an ISO whose extract was
+    # widened past the in-sample default (NYISO: 2018-2025 since 2026-07-31)
+    # reports a false MISMATCH that is really just a row-count difference. In
+    # check mode the committed file's own span therefore wins; a caller who
+    # wants a narrower re-derivation is asking for a comparison that can only
+    # fail, so there is nothing to preserve for them.
+    if args.check and out_csv.exists():
+        committed_years = tuple(
+            sorted({int(d[:4]) for d in pd.read_csv(out_csv, usecols=["date"])["date"]})
+        )
+        if committed_years and committed_years != years:
+            print(f"  --check: using the committed extract's span {committed_years}")
+            years = committed_years
+
+    day = load_daily_raw(args.iso, years)
+    day = reconcile_monthly(day, args.iso, years)
     day["date"] = day["date"].dt.strftime("%Y-%m-%d")
     day["avail_raw"] = day["avail_raw"].round(4)
     day["avail"] = day["avail"].round(4)

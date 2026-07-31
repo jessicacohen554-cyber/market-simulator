@@ -1407,7 +1407,28 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     #   2025           — only a mild Nine Mile dip (Mar 0.80); no deep refuel.
     # Source: EIA-923 Page 1 monthly net generation, 2023-2025 final.
     # Derivation/verify: scripts/data/derive_nuclear_monthly_cf.py --isos NYISO.
+    # 2018-2022 added 2026-07-31 (NYISO out-of-training DATA READINESS, rule 22
+    # Option-2 owner authorization) from the SAME producer and the same EIA-923
+    # source, after `--check` proved the committed 2023-2025 block re-derives
+    # exactly. Data-change citation per rule 23 [R-FROZEN-DERIVE]: these are new
+    # YEARS of the measured series, not a re-tune of an existing one — every
+    # committed 2023-2025 value is byte-unchanged.
+    #   CAVEAT (fleet vintage, material for 2018-2021): the CF is measured
+    #   against the MODEL fleet's pmax, and the model's NYISO nuclear fleet is
+    #   the current 4-reactor EIA-860 snapshot. Indian Point 2 (retired Apr
+    #   2020) and 3 (retired Apr 2021) actually ran in 2018-2021 but are absent
+    #   from that snapshot, so these CFs anchor the model's 3,326 MW upstate
+    #   fleet only — they do NOT restore the ~2,060 MW of retired downstate
+    #   nuclear. A 2018-2021 solve is short that capacity regardless of this
+    #   overlay; see the register's fleet-statics DEGRADED row.
+    #   2026 is deliberately ABSENT: EIA-923 carries only Jan-Apr 2026 (zeros
+    #   May onward), so a 2026 anchor would post a false zero for H1's May-Jun.
     "NYISO": {
+        2018: [1.00, 1.00, 0.96, 0.80, 0.76, 0.96, 0.96, 0.90, 0.79, 0.86, 0.95, 1.00],
+        2019: [1.00, 0.99, 0.89, 0.82, 0.96, 0.97, 0.98, 0.98, 1.00, 0.98, 1.00, 1.00],
+        2020: [1.00, 0.90, 0.66, 0.79, 0.86, 0.99, 0.97, 0.96, 0.82, 0.95, 1.00, 1.00],
+        2021: [1.00, 1.00, 0.94, 0.93, 1.00, 0.99, 1.00, 0.97, 0.99, 0.85, 0.99, 1.00],
+        2022: [1.00, 0.95, 0.71, 0.94, 0.99, 0.98, 0.96, 0.93, 0.72, 0.85, 1.00, 1.00],
         2023: [1.00, 0.98, 0.86, 0.74, 0.99, 0.99, 0.96, 0.97, 0.88, 0.97, 0.99, 0.99],
         2024: [0.99, 0.99, 0.69, 1.00, 0.99, 0.98, 0.97, 0.89, 0.75, 0.90, 0.98, 0.98],
         2025: [0.98, 0.98, 0.89, 0.96, 1.00, 0.99, 0.97, 0.98, 0.98, 0.99, 0.97, 1.00],

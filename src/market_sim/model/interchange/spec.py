@@ -468,7 +468,75 @@ IMPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = 
     # the fitted ladder's $34.2 was the audit-C6 over-price that pinned the
     # 2023 trough. Offline (actual-DA-driven, SIL-capped) reproduction of the
     # measured net import: 98% of volume every year, duration RMSE ≤328 MW.
+    #
+    # 2018-2022 added 2026-07-31 (NYISO out-of-training DATA READINESS, rule 22
+    # Option-2 owner authorization; NO solve, NO score). Same producer, same
+    # frozen formula, same two measured sources — `derive_nyiso_import_tranches.py
+    # --years 2018 2019 2020 2021 2022` — run AFTER the out-of-training DA blocks
+    # of actual_lmp_hourly_NYISO.parquet were re-derived on the fixed
+    # chronological clock, so the Q-Q coupling pairs price and flow on one clock.
+    # Byte-identity proof: re-running the producer over 2023-2025 reproduces the
+    # committed in-sample rungs below EXACTLY, so these years are the same
+    # derivation extended, not a re-fit. Data-change citation per rule 23
+    # [R-FROZEN-DERIVE]: new years of the measured series.
+    #   Reproduction quality is materially looser in the high-import years than
+    #   in-sample (duration RMSE 643/488/307/662/719 MW for 2018-2022 vs the
+    #   in-sample <=328 MW; hourly corr +0.13 in 2018): the ladder is measured,
+    #   not fitted, so this is disclosed rather than corrected. Grade it before
+    #   any authorized 2018/2020/2021/2022 use.
+    #   H1-2026 is deliberately ABSENT. The producer's Q-Q coupling has no
+    #   partial-year mode, and on the H1 window it returns a degenerate ladder
+    #   (top rungs $174/$294/$510/$761 against a 1,096 MW mean net import, and
+    #   a NEGATIVE diurnal correlation of -0.74 — its own reproduction check
+    #   says it reproduces the shape backwards). Landing it would post a
+    #   misaligned number; rule 14's misalignment clause says don't. Needs a
+    #   partial-window methodology decision first.
     "NYISO": {
+        2018: [
+            ("HQ_hydro", 900.0, 11.09),
+            ("IESO_Ontario", 690.0, 14.04),
+            ("PJM_shoulder", 690.0, 16.69),
+            ("PJM_west", 690.0, 19.76),
+            ("eastern_mid", 690.0, 23.50),
+            ("ISONE_tie", 690.0, 28.27),
+            ("import_scarcity", 2670.0, 56.24),
+        ],
+        2019: [
+            ("HQ_hydro", 900.0, 9.56),
+            ("IESO_Ontario", 690.0, 12.05),
+            ("PJM_shoulder", 690.0, 14.29),
+            ("PJM_west", 690.0, 17.36),
+            ("eastern_mid", 690.0, 20.98),
+            ("ISONE_tie", 690.0, 25.10),
+            ("import_scarcity", 2365.0, 43.68),
+        ],
+        2020: [
+            ("HQ_hydro", 900.0, 6.16),
+            ("IESO_Ontario", 690.0, 10.46),
+            ("PJM_shoulder", 690.0, 12.72),
+            ("PJM_west", 690.0, 15.11),
+            ("eastern_mid", 690.0, 18.51),
+            ("ISONE_tie", 690.0, 22.93),
+            ("import_scarcity", 1955.0, 41.41),
+        ],
+        2021: [
+            ("HQ_hydro", 900.0, 11.30),
+            ("IESO_Ontario", 690.0, 13.52),
+            ("PJM_shoulder", 690.0, 16.28),
+            ("PJM_west", 690.0, 20.42),
+            ("eastern_mid", 690.0, 26.01),
+            ("ISONE_tie", 690.0, 33.42),
+            ("import_scarcity", 2560.0, 61.00),
+        ],
+        2022: [
+            ("HQ_hydro", 900.0, 25.16),
+            ("IESO_Ontario", 690.0, 34.27),
+            ("PJM_shoulder", 690.0, 41.12),
+            ("PJM_west", 690.0, 46.94),
+            ("eastern_mid", 690.0, 53.35),
+            ("ISONE_tie", 690.0, 62.59),
+            ("import_scarcity", 2760.0, 126.79),
+        ],
         2023: [
             ("HQ_hydro", 900.0, 15.20),
             ("IESO_Ontario", 690.0, 18.67),
