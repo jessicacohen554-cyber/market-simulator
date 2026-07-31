@@ -4,10 +4,16 @@
 **Session:** neiso-72 (the miso-109 §7 / pjm-143 §2 hand-back — NEISO's own lane,
 the last open cell of the `hydro_level_923_hy` row)
 **Date:** 2026-07-31
-**Status:** committed and pushed **before any solve**. NEISO is
-calibration-complete with a **declared frontier**, so this document is the
-charter request's evidence base — **no keeper-moving solve runs until the owner
-signs off** (matrix §5.6: "charter required first").
+**Status:** committed and pushed **before any solve**. Originally written as a
+charter request against keeper `2026-07-31-neiso-70-ctheatrate`; updated the
+same day after three events: (a) the **neiso-71 keeper promotion**
+(`2026-07-31-neiso-71-nucavail`, bundle `results/calibration/neiso71_nucavail_B`
+— the control re-bases onto it, §5 E1 re-sized, deltas negligible), (b) the
+owner's coverage question (§1a and the §2 test-iv control), and (c) the owner's
+counter-proposal to approximate pre-split PS from the split data (**design E,
+adjudicated §4a**). The neiso-72 handoff lists this lever as an in-scope arm
+(Lever B), so the open owner decision is the **design**, not the charter.
+**Still no solve has run.**
 **Rule 25 `[R-ISO-SCOPE]`:** every number below derived from NEISO's own data
 this session (`scripts/probes/_neiso72_ps_window_audit.py`); no MISO or PJM
 verdict transferred, and §2 states explicitly where the PJM argument does *not*
@@ -19,9 +25,23 @@ transfer.
 
 The LP's hydro units are EIA-923 prime mover `HY` — conventional inflow hydro
 alone (`data/hydro.py` excludes `PS`; pumped storage is a storage resource, not
-inflow). The NEISO keeper `2026-07-31-neiso-70-ctheatrate` carries
-`hydro_eia930_monthly=true` + `hydro_backfill_year=2024`, so it pins those
-units' monthly energy **level** to EIA-930 `NG: WAT`.
+inflow). The NEISO keeper `2026-07-31-neiso-71-nucavail` carries
+`hydro_eia930_monthly=true` + `hydro_backfill_year=2024` (verified from
+`neiso71_nucavail_B/meta.json` — identical hydro flags to the neiso-70 keeper
+this document was first written against), so it pins those units' monthly
+energy **level** to EIA-930 `NG: WAT`.
+
+**And pumped storage itself is NOT absent from the model.** NEISO's PS fleet is
+a first-class endogenous **storage** resource in the LP —
+`model/storage.py::load_eia860_pumped_storage`, tech `pumped_storage`, at
+exactly the EIA-860 fleet size (**1,865.0 MW** = Northfield Mountain 1,168 +
+Bear Swamp 666 + Rocky River 31), `PUMPED_STORAGE_RTE = 0.80`, 10 h duration,
+with Chg/Dis/SOC decision variables and cyclic SOC. In the keeper it discharges
+**0.400 / 0.364 / 0.497 TWh** across 2023/24/25 (P1, storage sidecars). The pin
+therefore **double-represents** pumped storage: the storage layer dispatches it
+endogenously, *and* the conventional-hydro budget carries its discharge again
+as MC=0 "river water". Correcting the level does not remove PS from the model's
+world — it removes the second, mislabeled copy.
 
 NEISO is the **only one of the six ISOs that files an `NG: PS` column at all**,
 and it starts filing it part-way through the series. The onset is not
@@ -56,6 +76,14 @@ may be asked to do:
 | what the split data is **NOT** used for | what that rests on instead |
 |---|---|
 | **the correction itself in 2023 and 2024** | **EIA-923 `HY`** — an independent source with a complete 173/169-plant census in every affected year. The corrected levels (8.5469 / 6.7136 TWh) do not touch the `NG: PS` column at all. |
+
+And one thing the split data **cannot** provide, for any design: gross PS
+discharge for the pre-split years does not exist anywhere on disk and cannot be
+fetched — ISO-NE's BA did not file the `NG: PS` column before 2024-11-07 (a
+filing-practice change at the source, not an extract gap), EIA-923 reports PS
+**net** generation only (negative — the round-trip loss), and PS plants have no
+CAMPD/CEMS units. The 1.15 post-split years are the *only* measured
+gross-discharge series that will ever exist for NEISO's PS fleet.
 
 **The caveat this creates, stated plainly.** The §6 fingerprint's "clean"
 reference comes from a single, unusually **low-water** year (2025: 5.121 TWh
@@ -210,6 +238,58 @@ Levels each treatment hands the LP (probe §5; seam 2024-11):
   measurement (§1) is what classifies the year. Zero free parameters — like the
   MISO/PJM fix it *removes* a mechanism rather than adding one.
 
+### 4a. Design E — subtract an approximated PS from the 930 pin (owner proposal, adjudicated)
+
+The owner proposed using the available split data to **approximate** the PS
+component in the pre-split years and keep pinning to the corrected 930 series,
+"instead of pretending pumped storage didn't exist". Two halves to the answer.
+
+**The premise: nothing is pretended away.** Pumped storage is already endogenous
+in the model at full fleet size (§1, 1,865.0 MW, discharging 0.400–0.497
+TWh/yr in the keeper). Every design here — D included — keeps that. The only
+question is what monthly energy the *conventional* units are entitled to, and
+for that a complete measured answer exists with **no approximation at all**:
+their own EIA-923 filings, full 173/169-plant census in both affected years.
+
+**The arithmetic: the subtraction lands on a measurably wrong level.** Design E
+computed exactly (930 `WAT` minus the probe-§8 fitted PS over each year's
+pre-split hours):
+
+| year | 930 `WAT` | fitted PS removed | design E level | 923 `HY` (the units' own filings) | E vs 923 |
+|---|---:|---:|---:|---:|---:|
+| 2023 | 8.7750 | 188 MW × 8,760 h | **7.1281 TWh** | 8.5469 | **−1.419 TWh / −16.6 %** |
+| 2024 | 7.3942 | 263 MW × 7,464 h | **5.4312 TWh** | 6.7136 | **−1.282 TWh / −19.1 %** |
+
+The subtraction over-corrects by the *second* discrepancy (§3): 930's
+conventional component is BA telemetry that under-counts the 923 census by
+~1.2–1.6 TWh/yr (small/distribution-connected plants; December 2024 — the one
+clean complete-census month — shows 930 running 8 % *below* 923). `WAT − PS`
+recovers the telemetry subset, not the modeled fleet: design E would starve the
+actual 173 units by 17–19 % relative to what they measurably generated.
+
+**Three independent grounds against, each measured:**
+1. **Wrong population** — the table above. The level and the units must be one
+   population (the miso-109/pjm-143 principle); `WAT − PS` is a different,
+   smaller population than the units the LP dispatches.
+2. **The estimate is genuinely uncertain** — fitted 154–263 MW across years
+   with 44–72 MW rms (±0.4–0.6 TWh/yr), resting on the §1a caveat (the "clean"
+   reference shape is one low-water year). It would be the first **estimated
+   free parameter** in this lane; D has zero.
+3. **No forward story (rule 13)** — from 2025 onward the split is filed, so the
+   approximation would never be needed in any forward year. A parameter that
+   exists only to salvage backcast years is backcast plumbing by construction.
+
+**Where the owner's instinct DOES bite — recorded as a successor, not
+discarded.** The split data is the first *measured* gross-cycling series NEISO's
+PS fleet has ever had, and it exposes a real gap in the **storage layer**: the
+real fleet cycled **1.932 TWh** in 2025 against the keeper's endogenous
+**0.497 TWh** — the model under-cycles ~4×
+(`PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO` carries no NEISO entry; ancillary value
+is not in the storage objective). That is a legitimate new lever **on the
+storage side**, identified by exactly the data the owner pointed at — and it is
+scoped as a successor (§7), because patching it through the conventional-hydro
+budget would put the energy back on the wrong units.
+
 **Forecast lane.** `forecast_monthly_hydro` averages 930 `NG: WAT` over
 `HYDRO_CLIMATOLOGY_YEARS` = (2021…2025), four of whose five years are
 PS-contaminated at NEISO. Under (D) NEISO takes `climatological_monthly_hydro_923`
@@ -221,15 +301,17 @@ docstring warns about. It is reported, not relied on.
 
 ## 5. E1 — sign and magnitude, declared BEFORE any solve
 
-Sized against the keeper's **committed** hourly sidecars (rule 15 — read, not
-replayed). The pin binds essentially fully: dispatched hydro is 99.2 / 99.1 /
-99.7 % of the pinned level.
+Sized against the **current** keeper's committed hourly sidecars
+(`neiso71_nucavail_B`, rule 15 — read, not replayed; originally sized on
+neiso-70's, re-derived after the promotion — every delta ≤ $0.03). The pin
+binds essentially fully: dispatched hydro is 99.2 / 99.1 / 99.7 % of the
+pinned level.
 
 | year | keeper load | keeper hydro | keeper LMP | energy removed | as % of load |
 |---|---:|---:|---:|---:|---:|
-| 2023 | 96.863 TWh | 8.704 TWh (9.0 %) | $39.13 | −0.228 TWh | **−0.235 %** |
-| 2024 | 103.810 TWh | 7.327 TWh (7.1 %) | $43.83 | −0.681 TWh | **−0.656 %** |
-| 2025 | 107.155 TWh | 5.106 TWh (4.8 %) | $71.99 | 0 | **0.000 %** |
+| 2023 | 96.863 TWh | 8.704 TWh (9.0 %) | $39.10 | −0.228 TWh | **−0.235 %** |
+| 2024 | 103.810 TWh | 7.327 TWh (7.1 %) | $43.80 | −0.681 TWh | **−0.656 %** |
+| 2025 | 107.155 TWh | 5.106 TWh (4.8 %) | $71.97 | 0 | **0.000 %** |
 
 **Direction — declared now.** The fix removes zero-marginal-cost energy in 2023
 and 2024 and none in 2025. That energy must be re-served by the marginal stack,
@@ -279,15 +361,48 @@ defect**, and the design is fixed and re-solved rather than the verdict being
 recorded. This is the one outcome that sends the session back to the
 implementation.
 
+**Liveness bar (neiso-72 handoff method).** The arm scores `I` (inert), not
+`R`/`K`, if max hourly |Δ class MW| ≤ 50 in every solved year. Expectation,
+declared now: 2023 and 2024 are **live** (the budget deltas are −26 / −78
+MW-average and the within-month hydro re-shaping concentrates them, so hourly
+hydro deltas ≫ 50 MW); 2025 is bit-identical **by design** — its zero is the
+wiring check above, never counted toward inertness.
+
+**REPORTED vs KILL (handoff method).** *Reported:* every gate outcome, the C1
+hydro ratio move, the LMP move against the §5 sign, the D-2 attribution.
+*Kill:* only (i) the 2025 wiring defect above, (ii) a flag-fidelity or
+control-integrity failure (the replayed control must reproduce the keeper
+recipe; verified via `replay_keeper.build_kwargs` diff before solving). Gate
+outcomes are never kill conditions (§6 items 1–4).
+
 There is no outcome in which this session reverts to the contaminated level, and
 none in which it tunes anything against the residual. Keeper promotion is a
 **separate** decision from landing the fix and is the owner's call.
 
 ## 7. Governance boundaries
 
-* **Charter (matrix §5.6).** NEISO's frontier is declared, so this lever needs
-  an owner charter before a keeper-moving solve. **No solve has been run.** This
-  document plus `_neiso72_ps_window_audit.py` are the charter's evidence.
+* **Charter status (matrix §5.6 / the neiso-72 handoff).** The frontier
+  declaration's charter requirement covers the C3c winter/summer
+  scarcity-price-formation family (§5.6 items 1–2), which stays untouched. This
+  lever is §5.6 item 4, and the owner's neiso-72 handoff lists it as an
+  in-scope arm (**Lever B**); the open owner decision is the **design** (D vs
+  the owner-proposed E, §4a). **No solve has been run**, and none runs until
+  that design decision. (The handoff's Lever A — the CC_CHP capacity basis —
+  is NOT picked up here: one arm per session, and the owner engaged this one.)
+* **Method (neiso-72 handoff, binding for the A/B).** Same-HEAD control via
+  `--replay-bundle results/calibration/neiso71_nucavail_B`; the arm is that
+  control's `meta.json` with ONE key flipped, single-delta proven via
+  `replay_keeper.build_kwargs` diff **before** solving; HEAD frozen across
+  arms and **nothing committed while a solve is running** (persist stamps
+  `git_state()` at write time). Carried traps: probe bundles score
+  NOT-YET/UNATTESTED and C3c degrades CAVEAT→FAIL without an attestation
+  (artifact — `scripts/gen_neiso71_attestation.py` pattern); pass
+  `dashboard_add_run.py` a **resolved absolute** bundle path (else
+  "determination: unavailable"); **C1 2025 rows are SKIPPED** (preliminary
+  EIA-923) — never quote a 2025 C1 ratio, which also means the C1 face of the
+  2025 no-op is unscored and the bit-identity check is the sidecar diff, not a
+  gate; C7 `shape` is skipped for NEISO; run payloads (~560 KB) exceed
+  `push_files`' cap — `git push` after a fresh fetch+rebase.
 * **Rule 22 `[R-HOLDOUT]`.** NEISO is the only calibration-complete ISO and its
   `final` tier is **SPENT and never re-grantable**. This session touches
   **2023–2025 and nothing else** — no 2022, no 2019, no H1-2026, not even as a
@@ -315,8 +430,14 @@ none in which it tunes anything against the residual. Keeper promotion is a
   every pushed file ≥300 lines blob-verified after push.
 
 **Explicitly out of scope, named as successors:** sizing the 930-vs-923
-conventional under-report (§3); `hydro_dispatch_envelope` /
-`hydro_min_flow_floor`, which are built from hourly `NG: WAT` and inherit the
-same pre-seam contamination (both default-off and off in this keeper, so nothing
-is stacked — but arming either at NEISO needs its own source fix first, and
-EIA-923 is monthly so it offers no hourly substitute).
+conventional under-report (§3); **the storage-layer PS cycling depth** (§4a —
+measured 1.932 TWh gross discharge in 2025 vs the keeper's endogenous 0.497
+TWh, ~4× under-cycling; the first year this is measurable, and a storage-side
+lever — dispatch-adder identification or AS value in the storage objective —
+never a hydro-budget patch); the handoff's **Lever A** (CC_CHP capacity basis,
+Kendall Square ~90 MW — the handoff's PRIMARY, left for its own session);
+`hydro_dispatch_envelope` / `hydro_min_flow_floor`, which are built from hourly
+`NG: WAT` and inherit the same pre-seam contamination (both default-off and off
+in this keeper, so nothing is stacked — but arming either at NEISO needs its
+own source fix first, and EIA-923 is monthly so it offers no hourly
+substitute).
