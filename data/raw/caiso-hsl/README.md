@@ -60,6 +60,56 @@ Running `build_caiso_hsl.py` against the fetched workbooks produced:
   reports (`SKIP 2022: no full-year EIA-930 'CISO hourly' wind/solar
   series`), consistent with the data register's note that CAISO's 2022
   EIA-930 per-fuel coverage remains incomplete.
+  **CLOSED 2026-07-31** — see below.
+
+## 2022 closure + 2018 re-confirmation (2026-07-31 CAISO holdout intake)
+
+**2022 is now built and committed.** The 2026-07-10 blocker was not a
+curtailment-workbook gap at all: `data/raw/eia-930-hourly/CISO hourly.parquet`
+carried only **9** rows for local-2022 (a Jan-1 UTC-boundary spillover) even
+though the 2022 API long-form extracts (`eia-930/CISO_{region,fueltype}_2022.parquet`)
+had landed — so `load_eia_hourly_renewable_gen` found no full year to anchor
+the delivered side. Rebuilding the wide extract from those long extracts
+(`build_eia930_hourly_from_raw.py --ba CISO --merge-missing --merge-years
+2018 2019 2020 2021 2022 2026`) fills the hole to a dense 8760 h, after which
+`build_caiso_hsl.py` produces 2022 unchanged in recipe.
+
+Lineage proof: the same run re-derived **2019, 2020, 2021, 2023 and 2024
+byte-identically** to their committed parquets (2025 likewise, once the merge
+was scoped to the authorized holdout years — see the in-sample note below), so
+2022 is the same producer on the same recipe, not a new derivation. Its
+totals sit in family between the neighbouring years: wind 17.38 TWh
+(2021: 18.30, 2023: 16.40), solar 35.83 TWh (2021: 32.76, 2023: 37.17),
+curtailment 0.129 wind + 2.320 solar TWh (2023: 0.151 + 2.509), and the
+delivered series' 2022 minima (wind 35 MW, solar -89 MW) match 2023-2025's
+real near-zero/negative noise. Only **3** hours of the 2022 fuel series are
+null, against 2 in 2023 — full parity, no imputation exposure.
+
+**2018 is still deliberately NOT delivered.** Re-running the builder
+reproduced the 2026-07-10 artifact exactly (wind 24.87 TWh, min 18 MW,
+`nonzero_frac = 1.000`), and the root cause is now measured rather than
+inferred: **4,343 of the 4,380 H1-2018 hours have null `NG: WND`/`NG: SUN`**
+in the wide extract (EIA-930 per-fuel reporting for CISO did not exist for
+H1-2018; the 2018 API long extract starts 2018-07-01), so
+`load_eia_hourly_renewable_gen`'s `.interpolate().bfill().ffill()` chain
+carries the first valid July reading back across the whole first half as a
+flat constant. The parquet was built and then withheld: committing it would
+put a fabricated series in front of `market_sim.data.renewables`, which
+prefers this file over the delivered-profile fallback. The underlying
+`eia_loader` imputation defect remains the open issue.
+
+**H1-2026 remains impossible** — CAISO discontinued the source report
+2025-06-01 (see `data/raw/caiso-curtailment/README.md`), so no 2026 workbook
+exists or will.
+
+**In-sample note (in-sample defect, NOT fixed here):** the unscoped
+`--merge-missing` rebuild also filled **9 missing local-2025 hours**
+(2025-12-31 16:00-23:00 local, supplied by the 2026 long extract's leading
+UTC hours), which shifted `caiso_2025_hsl_hourly.parquet`. Because 2025 is a
+training year, the merge was re-scoped to the authorized holdout years only
+and 2025 was left exactly as committed. The 2025 tail gap is real and is
+flagged for the CAISO calibration owner, not silently landed in a
+holdout-readiness lane.
 
 The raw 2018–2022 `.xlsx` workbooks themselves (20-30MB each, ~118MB total)
 were verified downloadable and byte-valid, and are committed alongside this

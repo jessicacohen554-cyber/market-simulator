@@ -6,22 +6,32 @@ EIA-930 BA-to-BA net interchange product (`TI` interchange family), long form
 per directly-interconnected balancing authority (DIBA): columns
 `diba, mw, local_time`. EIA sign convention: positive = the named BA exports
 to the DIBA. `local_time` is the hour-ending timestamp on the BA's local
-clock, spanning the covered local calendar years — 2023-2025 for
-CISO/MISO/ISNE; **2019 - H1-2026 for PJM**, extended 2026-07-31 under the
-rule-22 intake authorization logged in `calibration-complete.json`.
+clock, spanning the covered local calendar years — 2023-2025 for MISO/ISNE;
+**2019 - H1-2026 for PJM and CISO**, both extended 2026-07-31 under the
+rule-22 intake authorizations logged in `calibration-complete.json`.
 
-**PJM span and its two source-side limits.** The EIA API v2
-`interchange-data` route returns **no PJM rows for any month of 2018**
-(probed month-by-month 2026-07-31: `total: 0` for 2018-01/04/07/08/09/10/12;
-first rows 2019-01) — a publication floor for this product, not a fetch gap,
-so 2018 is absent rather than padded. 2026 is capped at hour-ending
-**2026-07-01 00:00**, the H1 authorization boundary, not the API's own
-horizon. Per-year DIBA-hour coverage: 2019 99.7% · 2020 99.4% · 2021
-**95.5%** · 2022 99.5% · 2023 99.4% · 2024 99.4% · 2025 97.0% · H1-2026
-95.1%. The 2021 dip is a hole in EIA's own submission — CPLE is complete
-(8,759 h) while the other six DIBAs are each cut to 8,303 h by the same
-~457-hour gap — the same class of incompleteness the committed 2025 block
-already carries, not a fetch artifact.
+**The 2018 floor is the product's, not ours.** Two independent probes on
+2026-07-31 found the EIA API v2 `interchange-data` route returns **no rows at
+all for 2018** — `total: 0` for PJM month-by-month (2018-01/04/07/08/09/10/12,
+first rows 2019-01) and for CISO on any 2018 window. That is a publication
+floor for this product, so 2018 is absent rather than padded. Each file's
+handful of stray local-2018 rows is just the local tail of the first UTC-2019
+hours, exactly as the committed years carry theirs.
+
+**PJM span.** 2026 is capped at hour-ending **2026-07-01 00:00**, the H1
+authorization boundary, not the API's own horizon. Per-year DIBA-hour
+coverage: 2019 99.7% · 2020 99.4% · 2021 **95.5%** · 2022 99.5% · 2023 99.4% ·
+2024 99.4% · 2025 97.0% · H1-2026 95.1%. The 2021 dip is a hole in EIA's own
+submission — CPLE is complete (8,759 h) while the other six DIBAs are each cut
+to 8,303 h by the same ~457-hour gap — the same class of incompleteness the
+committed 2025 block already carries, not a fetch artifact.
+
+**CISO holdout back-fill.** Extended with the same committed producer under
+`--merge`, which drops every fetched hour the file already carries and leaves
+the committed rows untouched (verified: all 289,344 pre-existing rows survive
+with their exact values and multiplicities). It now holds 721,892 rows —
+8,759 distinct local hours × 11 DIBAs for 2019-2022, identical to the
+in-sample years' grain, plus 4,317 h of H1-2026 through 2026-06-30.
 
 ISNE's DIBAs are its three external seams: `HQT` (Hydro-Québec TransÉnergie —
 the Phase II + Highgate ties), `NBSO` (New Brunswick) and `NYIS` (New York).
