@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-24-miso-86-netrev-margin",
+  "run_id": "2026-07-31-miso-111b-prb-dispatch",
   "iso": "MISO",
-  "label": "miso 86 netrev margin",
+  "label": "miso 111b prb dispatch",
   "target_years": [
     2023,
     2024,
@@ -13,15 +13,15 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
+  "rubric_version": 2.9,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_shape"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
   "notes": [
-    "C8 2023 ST_GAS: grounded above budget \u2014 35.0% forced (7.6308 of 21.7688 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.98 (\u22650.8) & off-peak CV ratio 1.321 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
-    "C8 2024 ST_GAS: grounded above budget \u2014 36.2% forced (8.0469 of 22.2318 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.978 (\u22650.8) & off-peak CV ratio 1.104 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
-    "C8 2025 ST_GAS: grounded above budget \u2014 50.3% forced (10.163 of 20.1837 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.983 (\u22650.8) & off-peak CV ratio 1.472 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+    "C8 2023 ST_GAS: grounded above budget \u2014 31.2% forced (7.7197 of 24.749 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.956 (\u22650.8) & off-peak CV ratio 1.537 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2024 ST_GAS: grounded above budget \u2014 30.8% forced (7.8201 of 25.3978 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.962 (\u22650.8) & off-peak CV ratio 1.119 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 ST_GAS: grounded above budget \u2014 45.6% forced (10.6141 of 23.2916 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.974 (\u22650.8) & off-peak CV ratio 1.499 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
   ],
   "criteria": {
     "fuelmix": {
@@ -37,39 +37,32 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "CAVEAT",
-      "caveat_kind": "ledgered"
+      "status": "FAIL"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "CAVEAT",
-      "caveat_kind": "ledgered"
+      "status": "FAIL"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
       "tier": "supporting",
       "status": "PASS"
     },
-    "co2": {
-      "label": "C5a CO2 vs eGRID",
-      "tier": "load-bearing",
-      "status": "PASS"
-    },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "PASS"
+      "status": "UNATTESTED"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
@@ -79,10 +72,7 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [
-      "C3a mean LMP",
-      "C3c price tail / scarcity (RT hourly)"
-    ],
+    "ledgered": [],
     "commercial_band": [],
     "budget": {
       "protective_max": 1,
@@ -90,11 +80,11 @@
     }
   },
   "grade_summary": {
-    "scored": 10,
-    "target_grade": 6,
+    "scored": 8,
+    "target_grade": 4,
     "commercial_grade": 0,
-    "ledgered": 2,
-    "fails": 2
+    "ledgered": 0,
+    "fails": 4
   },
   "free_class_score": {
     "iso": "MISO",
@@ -113,13 +103,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 15,
+      "pass": 14,
       "total": 16
     },
     "free": {
-      "pass": 11,
+      "pass": 10,
       "total": 12
     },
-    "headline": "C1 all 15/16 \u00b7 free 11/12"
+    "headline": "C1 all 14/16 \u00b7 free 10/12"
   }
 }
