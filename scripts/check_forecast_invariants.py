@@ -40,7 +40,8 @@ from pathlib import Path
 import numpy as np
 
 # Repo import bootstrap so the script runs from a checkout without an install.
-_SRC = Path(__file__).resolve().parent.parent / "src"
+_REPO = Path(__file__).resolve().parent.parent
+_SRC = _REPO / "src"
 if _SRC.exists() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
@@ -861,6 +862,162 @@ def _print_table(results: list[Result]) -> None:
         print(f"  [{icon[r.status]}] {r.ident:<4} {r.name:<26} {r.detail}")
 
 
+# --------------------------------------------------------------------------- #
+# Artifact mode — audit the invariant blocks in the COMMITTED run sidecars.
+# --------------------------------------------------------------------------- #
+# Every registered forecast/hindcast run commits an `invariants` block into
+# `frontend/data/hindcast/<run_id>.json`: the I1-I14 verdicts this checker
+# produced at solve time. Re-running the checker itself needs each run's cache
+# directory (per-year parquet + ledgers, gigabytes, uncommitted), so it can
+# never be a CI job. Auditing the COMMITTED verdicts can — and until FFR-1D
+# nothing did: the `forecast-invariants.yml` workflow was deleted 2026-07-14
+# and CI ran only the checker's unit tests on synthetic runs, while the plan
+# text claimed the invariants were "CI-wired" (audit FR-24).
+#
+# This mode is that gate. It is a no-LP, stdlib-plus-json audit of the evidence
+# base itself, and it enforces three things a registration PR can otherwise get
+# wrong silently:
+#
+#   1. SCHEMA — every record carries this module's own Result fields, a status
+#      from this module's vocabulary, and an ident this module actually emits.
+#      A renamed or dropped invariant here makes the committed evidence
+#      unreadable; catching that at the rename is the point.
+#   2. COVERAGE — the run harness always emits all fourteen single-run
+#      invariants, so a committed block must carry ALL of I1-I14 unless the
+#      run is DECLARED a curated subset in the ledger (the six FF-2D
+#      `*-ff-t1-gate` registrations, which record only the gate's own rows).
+#      Declaring the exception is the point: an undeclared partial battery
+#      reads as evidence it is not.
+#   3. DECLARED FAILURES — every FAIL in the committed evidence must be listed
+#      in the failure ledger. A newly registered run that fails an invariant is
+#      then a deliberate, reviewed entry in that file rather than a number that
+#      slides onto the dashboard unremarked.
+_INVARIANT_STATUSES = frozenset({PASS, FAIL, WARN, SKIP})
+_RESULT_FIELDS = frozenset({"ident", "name", "status", "detail"})
+_SINGLE_RUN_IDENTS = tuple(f"I{i}" for i in range(1, len(SINGLE_CHECKS) + 1))
+_PAIRED_IDENTS = ("P1", "P2", "P3")
+_KNOWN_IDENTS = frozenset(_SINGLE_RUN_IDENTS + _PAIRED_IDENTS)
+
+
+def audit_sidecars(sidecar_dir: Path, ledger_path: Path) -> list[str]:
+    """Audit the committed invariant blocks under ``sidecar_dir``.
+
+    Args:
+        sidecar_dir: Directory of registered run sidecars (``*.json``), i.e.
+            ``frontend/data/hindcast``.
+        ledger_path: JSON file declaring the known FAILs as
+            ``{"declared_failures": {run_id: [ident, ...]}, ...}``.
+
+    Returns:
+        A list of human-readable problems; empty means the audit passed.
+    """
+    problems: list[str] = []
+    if not sidecar_dir.is_dir():
+        return [f"{sidecar_dir}: not a directory"]
+
+    ledger = json.loads(ledger_path.read_text()) if ledger_path.exists() else {}
+    declared: dict[str, list] = ledger.get("declared_failures", {})
+    curated: dict[str, str] = ledger.get("curated_subsets", {})
+
+    n_runs = n_records = 0
+    observed: dict[str, set] = {}
+    for path in sorted(sidecar_dir.glob("*.json")):
+        try:
+            sidecar = json.loads(path.read_text())
+        except json.JSONDecodeError as exc:
+            problems.append(f"{path.name}: invalid JSON ({exc})")
+            continue
+        run_id = sidecar.get("run_id") or sidecar.get("id") or path.stem
+        records = sidecar.get("invariants")
+        if records is None:
+            # Tolerated: a scoring-only registration (the FF-2D crossover
+            # re-scores, the FF-3E readiness battery) carries no invariant
+            # block of its own. Nothing to audit — but a t1f run without one
+            # would be a hole, since FC-1 is scored off exactly this block.
+            if (sidecar.get("meta") or {}).get("kind") == "t1f":
+                problems.append(
+                    f"{path.name}: kind=t1f carries no `invariants` block — "
+                    "FC-1 is scored off it, so a t1f registration without one "
+                    "has no invariant evidence at all"
+                )
+            continue
+        if not isinstance(records, list):
+            problems.append(f"{path.name}: `invariants` is not a list")
+            continue
+
+        n_runs += 1
+        idents: list[str] = []
+        statuses: list[str] = []
+        for i, rec in enumerate(records):
+            n_records += 1
+            if not isinstance(rec, dict) or set(rec) != _RESULT_FIELDS:
+                problems.append(
+                    f"{path.name}[{i}]: record fields {sorted(rec) if isinstance(rec, dict) else type(rec).__name__} "
+                    f"!= the checker's Result schema {sorted(_RESULT_FIELDS)}"
+                )
+                continue
+            if rec["status"] not in _INVARIANT_STATUSES:
+                problems.append(
+                    f"{path.name}[{i}]: status {rec['status']!r} is not one of "
+                    f"{sorted(_INVARIANT_STATUSES)}"
+                )
+            if rec["ident"] not in _KNOWN_IDENTS:
+                problems.append(
+                    f"{path.name}[{i}]: ident {rec['ident']!r} is emitted by no "
+                    "check in this module — the committed evidence and the "
+                    "checker have diverged"
+                )
+            idents.append(rec["ident"])
+            statuses.append(rec["status"])
+
+        dupes = sorted({i for i in idents if idents.count(i) > 1})
+        if dupes:
+            problems.append(f"{path.name}: duplicate invariant idents {dupes}")
+
+        missing = [i for i in _SINGLE_RUN_IDENTS if i not in idents]
+        if missing and run_id not in curated:
+            problems.append(
+                f"{path.name}: missing invariants {missing}. The run harness "
+                "emits the full I1-I14 battery, so a partial block reads as "
+                "evidence it is not. If this registration deliberately records "
+                f"only a subset, declare it in {ledger_path.name} under "
+                "`curated_subsets` with one line of why."
+            )
+
+        failures = sorted({i for i, s in zip(idents, statuses) if s == FAIL})
+        observed[run_id] = set(failures)
+        undeclared = [i for i in failures if i not in declared.get(run_id, [])]
+        if undeclared:
+            problems.append(
+                f"{run_id}: FAILs {undeclared} are not declared in "
+                f"{ledger_path.name}. A registered run that fails an invariant "
+                "must say so there (id -> idents, with the finding it belongs "
+                "to) — that is what keeps a new failure from landing silently."
+            )
+
+    for run_id, idents in sorted(declared.items()):
+        if run_id not in observed:
+            problems.append(
+                f"{ledger_path.name}: declares failures for {run_id!r}, which "
+                "has no sidecar carrying invariants (stale entry — prune it)"
+            )
+            continue
+        stale = [i for i in idents if i not in observed[run_id]]
+        if stale:
+            problems.append(
+                f"{ledger_path.name}: {run_id} declares {stale}, which no "
+                "longer FAIL — the run improved; prune the declaration so the "
+                "ledger keeps meaning what it says"
+            )
+
+    print(
+        f"forecast-invariant artifact audit: {n_runs} sidecar(s) with an "
+        f"invariants block, {n_records} record(s), "
+        f"{sum(len(v) for v in observed.values())} FAIL(s) declared"
+    )
+    return problems
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-dir", type=Path, help="Scenario cache dir for I1-I14.")
@@ -878,7 +1035,32 @@ def main(argv: list[str] | None = None) -> int:
         help="Which paired invariant to run (P1/P2/P3).",
     )
     parser.add_argument("--json", action="store_true", help="Emit JSON, not a table.")
+    parser.add_argument(
+        "--sidecar-dir",
+        type=Path,
+        nargs="?",
+        const=_REPO / "frontend" / "data" / "hindcast",
+        help="ARTIFACT mode (no LP): audit the committed `invariants` blocks of "
+        "every registered run sidecar in this directory. Defaults to "
+        "frontend/data/hindcast. This is the CI-runnable mode.",
+    )
+    parser.add_argument(
+        "--failure-ledger",
+        type=Path,
+        default=_REPO / "frontend" / "data" / "hindcast" / "invariant-failures.json",
+        help="Declared-failure ledger for --sidecar-dir.",
+    )
     args = parser.parse_args(argv)
+
+    if args.sidecar_dir is not None:
+        problems = audit_sidecars(args.sidecar_dir, args.failure_ledger)
+        if problems:
+            print("\nforecast-invariant artifact audit FAILED:", file=sys.stderr)
+            for p in problems:
+                print(f"  - {p}", file=sys.stderr)
+            return 1
+        print("forecast-invariant artifact audit OK")
+        return 0
 
     results: list[Result] = []
     if args.run_dir:
@@ -886,7 +1068,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.paired:
         results += run_paired(args.paired[0], args.paired[1], args.pair_kind)
     if not results:
-        parser.error("supply --run-dir and/or --paired")
+        parser.error("supply --run-dir, --paired and/or --sidecar-dir")
 
     if args.json:
         print(json.dumps([r.__dict__ for r in results], indent=2))
