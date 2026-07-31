@@ -1,0 +1,4900 @@
+{
+  "lane": "ercot144-coal-perplant-offer",
+  "phase": 1,
+  "no_lp": true,
+  "keeper_bundle": "ercot140_coal_peak_arm",
+  "S1_model_offer": [
+    {
+      "year": 2023,
+      "plant": "Limestone",
+      "plant_code": 298,
+      "pmax_mw": 1849.8,
+      "capw_bid": 22.4,
+      "bid_bot": 16.73,
+      "bid_top": 38.94,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.2,
+          "pmax_mw": 370.0,
+          "bid": 16.73,
+          "heat_rate": 10.17,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "committed",
+          "share": 0.25,
+          "pmax_mw": 462.4,
+          "bid": 20.61,
+          "heat_rate": 9.255,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.0833,
+          "pmax_mw": 154.1,
+          "bid": 20.7,
+          "heat_rate": 9.304,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.0833,
+          "pmax_mw": 154.1,
+          "bid": 21.72,
+          "heat_rate": 9.89,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.0833,
+          "pmax_mw": 154.1,
+          "bid": 22.74,
+          "heat_rate": 10.476,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.0833,
+          "pmax_mw": 154.1,
+          "bid": 24.2,
+          "heat_rate": 11.313,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.0833,
+          "pmax_mw": 154.1,
+          "bid": 26.09,
+          "heat_rate": 12.402,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.0833,
+          "pmax_mw": 154.1,
+          "bid": 27.99,
+          "heat_rate": 13.49,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 92.5,
+          "bid": 38.94,
+          "heat_rate": 15.886,
+          "fuel_price": 1.8227
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "plant": "W A Parish",
+      "plant_code": 3470,
+      "pmax_mw": 2443.0,
+      "capw_bid": 23.79,
+      "bid_bot": 16.78,
+      "bid_top": 38.94,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.15,
+          "pmax_mw": 366.4,
+          "bid": 16.78,
+          "heat_rate": 10.76,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "pmax_mw": 488.6,
+          "bid": 21.55,
+          "heat_rate": 9.792,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.1,
+          "pmax_mw": 244.3,
+          "bid": 21.64,
+          "heat_rate": 9.843,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.1,
+          "pmax_mw": 244.3,
+          "bid": 22.72,
+          "heat_rate": 10.464,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.1,
+          "pmax_mw": 244.3,
+          "bid": 23.8,
+          "heat_rate": 11.084,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.1,
+          "pmax_mw": 244.3,
+          "bid": 25.34,
+          "heat_rate": 11.97,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.1,
+          "pmax_mw": 244.3,
+          "bid": 27.35,
+          "heat_rate": 13.121,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.1,
+          "pmax_mw": 244.3,
+          "bid": 29.35,
+          "heat_rate": 14.273,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 122.2,
+          "bid": 38.94,
+          "heat_rate": 16.807,
+          "fuel_price": 1.8227
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "plant": "Martin Lake",
+      "plant_code": 6146,
+      "pmax_mw": 2379.6,
+      "capw_bid": 22.55,
+      "bid_bot": 16.74,
+      "bid_top": 38.94,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.2,
+          "pmax_mw": 475.9,
+          "bid": 16.74,
+          "heat_rate": 10.28,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "committed",
+          "share": 0.25,
+          "pmax_mw": 594.9,
+          "bid": 20.79,
+          "heat_rate": 9.355,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.0833,
+          "pmax_mw": 198.3,
+          "bid": 20.87,
+          "heat_rate": 9.404,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.0833,
+          "pmax_mw": 198.3,
+          "bid": 21.91,
+          "heat_rate": 9.997,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.0833,
+          "pmax_mw": 198.3,
+          "bid": 22.94,
+          "heat_rate": 10.589,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.0833,
+          "pmax_mw": 198.3,
+          "bid": 24.41,
+          "heat_rate": 11.436,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.0833,
+          "pmax_mw": 198.3,
+          "bid": 26.33,
+          "heat_rate": 12.536,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.0833,
+          "pmax_mw": 198.3,
+          "bid": 28.24,
+          "heat_rate": 13.636,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 119.0,
+          "bid": 38.94,
+          "heat_rate": 16.057,
+          "fuel_price": 1.8227
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "plant": "Coleto Creek",
+      "plant_code": 6178,
+      "pmax_mw": 622.4,
+      "capw_bid": 22.56,
+      "bid_bot": 16.74,
+      "bid_top": 38.94,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.3,
+          "pmax_mw": 186.7,
+          "bid": 16.74,
+          "heat_rate": 10.24,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "pmax_mw": 124.5,
+          "bid": 21.57,
+          "heat_rate": 9.318,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.075,
+          "pmax_mw": 46.7,
+          "bid": 21.66,
+          "heat_rate": 9.368,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.075,
+          "pmax_mw": 46.7,
+          "bid": 22.74,
+          "heat_rate": 9.958,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.075,
+          "pmax_mw": 46.7,
+          "bid": 23.82,
+          "heat_rate": 10.548,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.075,
+          "pmax_mw": 46.7,
+          "bid": 25.37,
+          "heat_rate": 11.391,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.075,
+          "pmax_mw": 46.7,
+          "bid": 27.37,
+          "heat_rate": 12.487,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.075,
+          "pmax_mw": 46.7,
+          "bid": 29.38,
+          "heat_rate": 13.583,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 31.1,
+          "bid": 38.94,
+          "heat_rate": 15.995,
+          "fuel_price": 1.8227
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "plant": "Fayette",
+      "plant_code": 6179,
+      "pmax_mw": 1690.0,
+      "capw_bid": 22.59,
+      "bid_bot": 16.26,
+      "bid_top": 38.94,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.3,
+          "pmax_mw": 507.0,
+          "bid": 16.26,
+          "heat_rate": 10.67,
+          "fuel_price": 1.7738
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "pmax_mw": 338.0,
+          "bid": 21.81,
+          "heat_rate": 9.71,
+          "fuel_price": 1.7738
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.075,
+          "pmax_mw": 126.8,
+          "bid": 21.9,
+          "heat_rate": 9.761,
+          "fuel_price": 1.7738
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.075,
+          "pmax_mw": 126.8,
+          "bid": 23.0,
+          "heat_rate": 10.376,
+          "fuel_price": 1.7738
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.075,
+          "pmax_mw": 126.8,
+          "bid": 24.1,
+          "heat_rate": 10.991,
+          "fuel_price": 1.7738
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.075,
+          "pmax_mw": 126.8,
+          "bid": 25.66,
+          "heat_rate": 11.869,
+          "fuel_price": 1.7738
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.075,
+          "pmax_mw": 126.8,
+          "bid": 27.7,
+          "heat_rate": 13.012,
+          "fuel_price": 1.7738
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.075,
+          "pmax_mw": 126.8,
+          "bid": 29.74,
+          "heat_rate": 14.154,
+          "fuel_price": 1.7738
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 84.5,
+          "bid": 38.94,
+          "heat_rate": 16.667,
+          "fuel_price": 1.7738
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "plant": "Oak Grove",
+      "plant_code": 6180,
+      "pmax_mw": 1795.4,
+      "capw_bid": 16.1,
+      "bid_bot": 13.14,
+      "bid_top": 38.94,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.45,
+          "pmax_mw": 807.9,
+          "bid": 13.14,
+          "heat_rate": 9.49,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "committed",
+          "share": 0.1,
+          "pmax_mw": 179.5,
+          "bid": 13.97,
+          "heat_rate": 8.351,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "econhi",
+          "share": 0.1776,
+          "pmax_mw": 318.9,
+          "bid": 16.48,
+          "heat_rate": 10.562,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "econlo",
+          "share": 0.2224,
+          "pmax_mw": 399.3,
+          "bid": 17.59,
+          "heat_rate": 11.54,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 89.8,
+          "bid": 38.94,
+          "heat_rate": 14.71,
+          "fuel_price": 1.45
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "plant": "San Miguel",
+      "plant_code": 6183,
+      "pmax_mw": 410.0,
+      "capw_bid": 36.73,
+      "bid_bot": 31.6,
+      "bid_top": 41.95,
+      "tranches": [
+        {
+          "tranche": "committed",
+          "share": 0.1,
+          "pmax_mw": 41.0,
+          "bid": 31.6,
+          "heat_rate": 9.9,
+          "fuel_price": 3.4729
+        },
+        {
+          "tranche": "mustrun",
+          "share": 0.55,
+          "pmax_mw": 225.5,
+          "bid": 35.39,
+          "heat_rate": 11.25,
+          "fuel_price": 3.4729
+        },
+        {
+          "tranche": "econhi",
+          "share": 0.1332,
+          "pmax_mw": 54.6,
+          "bid": 38.78,
+          "heat_rate": 12.521,
+          "fuel_price": 3.4729
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 20.5,
+          "bid": 38.94,
+          "heat_rate": 17.438,
+          "fuel_price": 3.4729
+        },
+        {
+          "tranche": "econlo",
+          "share": 0.1668,
+          "pmax_mw": 68.4,
+          "bid": 41.95,
+          "heat_rate": 13.68,
+          "fuel_price": 3.4729
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "plant": "Major Oak",
+      "plant_code": 7030,
+      "pmax_mw": 349.2,
+      "capw_bid": 16.43,
+      "bid_bot": 12.95,
+      "bid_top": 38.94,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.45,
+          "pmax_mw": 157.1,
+          "bid": 12.95,
+          "heat_rate": 10.16,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "committed",
+          "share": 0.1,
+          "pmax_mw": 34.9,
+          "bid": 14.64,
+          "heat_rate": 8.941,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "econhi",
+          "share": 0.1776,
+          "pmax_mw": 62.0,
+          "bid": 17.33,
+          "heat_rate": 11.308,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "econlo",
+          "share": 0.2224,
+          "pmax_mw": 77.7,
+          "bid": 18.52,
+          "heat_rate": 12.355,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 17.5,
+          "bid": 38.94,
+          "heat_rate": 15.748,
+          "fuel_price": 1.45
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "plant": "JK Spruce",
+      "plant_code": 7097,
+      "pmax_mw": 1488.5,
+      "capw_bid": 25.25,
+      "bid_bot": 17.7,
+      "bid_top": 38.94,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.12,
+          "pmax_mw": 178.6,
+          "bid": 17.7,
+          "heat_rate": 10.98,
+          "fuel_price": 1.9043
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "pmax_mw": 297.7,
+          "bid": 22.69,
+          "heat_rate": 9.992,
+          "fuel_price": 1.9043
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.105,
+          "pmax_mw": 156.3,
+          "bid": 22.79,
+          "heat_rate": 10.045,
+          "fuel_price": 1.9043
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.105,
+          "pmax_mw": 156.3,
+          "bid": 23.94,
+          "heat_rate": 10.678,
+          "fuel_price": 1.9043
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.105,
+          "pmax_mw": 156.3,
+          "bid": 25.1,
+          "heat_rate": 11.31,
+          "fuel_price": 1.9043
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.105,
+          "pmax_mw": 156.3,
+          "bid": 26.74,
+          "heat_rate": 12.214,
+          "fuel_price": 1.9043
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.105,
+          "pmax_mw": 156.3,
+          "bid": 28.88,
+          "heat_rate": 13.39,
+          "fuel_price": 1.9043
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.105,
+          "pmax_mw": 156.3,
+          "bid": 31.02,
+          "heat_rate": 14.565,
+          "fuel_price": 1.9043
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 74.4,
+          "bid": 38.94,
+          "heat_rate": 17.151,
+          "fuel_price": 1.9043
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "plant": "Sandy Creek",
+      "plant_code": 56611,
+      "pmax_mw": 936.0,
+      "capw_bid": 20.94,
+      "bid_bot": 16.68,
+      "bid_top": 38.94,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.4,
+          "pmax_mw": 374.4,
+          "bid": 16.68,
+          "heat_rate": 9.5,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "pmax_mw": 187.2,
+          "bid": 20.34,
+          "heat_rate": 8.645,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.0583,
+          "pmax_mw": 54.6,
+          "bid": 20.42,
+          "heat_rate": 8.691,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.0583,
+          "pmax_mw": 54.6,
+          "bid": 21.42,
+          "heat_rate": 9.238,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.0583,
+          "pmax_mw": 54.6,
+          "bid": 22.42,
+          "heat_rate": 9.786,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.0583,
+          "pmax_mw": 54.6,
+          "bid": 23.86,
+          "heat_rate": 10.568,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.0583,
+          "pmax_mw": 54.6,
+          "bid": 25.72,
+          "heat_rate": 11.585,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.0583,
+          "pmax_mw": 54.6,
+          "bid": 27.58,
+          "heat_rate": 12.602,
+          "fuel_price": 1.8227
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 46.8,
+          "bid": 38.94,
+          "heat_rate": 14.839,
+          "fuel_price": 1.8227
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "Limestone",
+      "plant_code": 298,
+      "pmax_mw": 1849.8,
+      "capw_bid": 20.21,
+      "bid_bot": 16.01,
+      "bid_top": 34.84,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.2,
+          "pmax_mw": 370.0,
+          "bid": 16.01,
+          "heat_rate": 10.17,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "committed",
+          "share": 0.25,
+          "pmax_mw": 462.4,
+          "bid": 18.45,
+          "heat_rate": 9.255,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.0833,
+          "pmax_mw": 154.1,
+          "bid": 18.53,
+          "heat_rate": 9.304,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.0833,
+          "pmax_mw": 154.1,
+          "bid": 19.41,
+          "heat_rate": 9.89,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.0833,
+          "pmax_mw": 154.1,
+          "bid": 20.29,
+          "heat_rate": 10.476,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.0833,
+          "pmax_mw": 154.1,
+          "bid": 21.55,
+          "heat_rate": 11.313,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.0833,
+          "pmax_mw": 154.1,
+          "bid": 23.2,
+          "heat_rate": 12.402,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.0833,
+          "pmax_mw": 154.1,
+          "bid": 24.84,
+          "heat_rate": 13.49,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 92.5,
+          "bid": 34.84,
+          "heat_rate": 15.886,
+          "fuel_price": 1.7517
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "W A Parish",
+      "plant_code": 3470,
+      "pmax_mw": 2443.0,
+      "capw_bid": 21.36,
+      "bid_bot": 16.02,
+      "bid_top": 34.84,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.15,
+          "pmax_mw": 366.4,
+          "bid": 16.02,
+          "heat_rate": 10.76,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "pmax_mw": 488.6,
+          "bid": 19.26,
+          "heat_rate": 9.792,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.1,
+          "pmax_mw": 244.3,
+          "bid": 19.34,
+          "heat_rate": 9.843,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.1,
+          "pmax_mw": 244.3,
+          "bid": 20.27,
+          "heat_rate": 10.464,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.1,
+          "pmax_mw": 244.3,
+          "bid": 21.21,
+          "heat_rate": 11.084,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.1,
+          "pmax_mw": 244.3,
+          "bid": 22.54,
+          "heat_rate": 11.97,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.1,
+          "pmax_mw": 244.3,
+          "bid": 24.28,
+          "heat_rate": 13.121,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.1,
+          "pmax_mw": 244.3,
+          "bid": 26.02,
+          "heat_rate": 14.273,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 122.2,
+          "bid": 34.84,
+          "heat_rate": 16.807,
+          "fuel_price": 1.7517
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "Martin Lake",
+      "plant_code": 6146,
+      "pmax_mw": 2379.6,
+      "capw_bid": 20.34,
+      "bid_bot": 16.01,
+      "bid_top": 34.84,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.2,
+          "pmax_mw": 475.9,
+          "bid": 16.01,
+          "heat_rate": 10.28,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "committed",
+          "share": 0.25,
+          "pmax_mw": 594.9,
+          "bid": 18.6,
+          "heat_rate": 9.355,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.0833,
+          "pmax_mw": 198.3,
+          "bid": 18.68,
+          "heat_rate": 9.404,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.0833,
+          "pmax_mw": 198.3,
+          "bid": 19.57,
+          "heat_rate": 9.997,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.0833,
+          "pmax_mw": 198.3,
+          "bid": 20.46,
+          "heat_rate": 10.589,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.0833,
+          "pmax_mw": 198.3,
+          "bid": 21.74,
+          "heat_rate": 11.436,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.0833,
+          "pmax_mw": 198.3,
+          "bid": 23.4,
+          "heat_rate": 12.536,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.0833,
+          "pmax_mw": 198.3,
+          "bid": 25.06,
+          "heat_rate": 13.636,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 119.0,
+          "bid": 34.84,
+          "heat_rate": 16.057,
+          "fuel_price": 1.7517
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "Coleto Creek",
+      "plant_code": 6178,
+      "pmax_mw": 622.4,
+      "capw_bid": 20.2,
+      "bid_bot": 16.01,
+      "bid_top": 34.84,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.3,
+          "pmax_mw": 186.7,
+          "bid": 16.01,
+          "heat_rate": 10.24,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "pmax_mw": 124.5,
+          "bid": 18.96,
+          "heat_rate": 9.318,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.075,
+          "pmax_mw": 46.7,
+          "bid": 19.04,
+          "heat_rate": 9.368,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.075,
+          "pmax_mw": 46.7,
+          "bid": 19.96,
+          "heat_rate": 9.958,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.075,
+          "pmax_mw": 46.7,
+          "bid": 20.87,
+          "heat_rate": 10.548,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.075,
+          "pmax_mw": 46.7,
+          "bid": 22.18,
+          "heat_rate": 11.391,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.075,
+          "pmax_mw": 46.7,
+          "bid": 23.88,
+          "heat_rate": 12.487,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.075,
+          "pmax_mw": 46.7,
+          "bid": 25.58,
+          "heat_rate": 13.583,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 31.1,
+          "bid": 34.84,
+          "heat_rate": 15.995,
+          "fuel_price": 1.7517
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "Fayette",
+      "plant_code": 6179,
+      "pmax_mw": 1690.0,
+      "capw_bid": 20.29,
+      "bid_bot": 15.61,
+      "bid_top": 34.84,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.3,
+          "pmax_mw": 507.0,
+          "bid": 15.61,
+          "heat_rate": 10.67,
+          "fuel_price": 1.7132
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "pmax_mw": 338.0,
+          "bid": 19.25,
+          "heat_rate": 9.71,
+          "fuel_price": 1.7132
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.075,
+          "pmax_mw": 126.8,
+          "bid": 19.32,
+          "heat_rate": 9.761,
+          "fuel_price": 1.7132
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.075,
+          "pmax_mw": 126.8,
+          "bid": 20.26,
+          "heat_rate": 10.376,
+          "fuel_price": 1.7132
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.075,
+          "pmax_mw": 126.8,
+          "bid": 21.19,
+          "heat_rate": 10.991,
+          "fuel_price": 1.7132
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.075,
+          "pmax_mw": 126.8,
+          "bid": 22.53,
+          "heat_rate": 11.869,
+          "fuel_price": 1.7132
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.075,
+          "pmax_mw": 126.8,
+          "bid": 24.26,
+          "heat_rate": 13.012,
+          "fuel_price": 1.7132
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.075,
+          "pmax_mw": 126.8,
+          "bid": 26.0,
+          "heat_rate": 14.154,
+          "fuel_price": 1.7132
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 84.5,
+          "bid": 34.84,
+          "heat_rate": 16.667,
+          "fuel_price": 1.7132
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "Oak Grove",
+      "plant_code": 6180,
+      "pmax_mw": 1795.4,
+      "capw_bid": 15.49,
+      "bid_bot": 13.14,
+      "bid_top": 34.84,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.45,
+          "pmax_mw": 807.9,
+          "bid": 13.14,
+          "heat_rate": 9.49,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "committed",
+          "share": 0.1,
+          "pmax_mw": 179.5,
+          "bid": 13.34,
+          "heat_rate": 8.351,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "econhi",
+          "share": 0.1776,
+          "pmax_mw": 318.9,
+          "bid": 15.69,
+          "heat_rate": 10.562,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "econlo",
+          "share": 0.2224,
+          "pmax_mw": 399.3,
+          "bid": 16.72,
+          "heat_rate": 11.54,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 89.8,
+          "bid": 34.84,
+          "heat_rate": 14.71,
+          "fuel_price": 1.45
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "San Miguel",
+      "plant_code": 6183,
+      "pmax_mw": 410.0,
+      "capw_bid": 35.53,
+      "bid_bot": 29.56,
+      "bid_top": 39.13,
+      "tranches": [
+        {
+          "tranche": "committed",
+          "share": 0.1,
+          "pmax_mw": 41.0,
+          "bid": 29.56,
+          "heat_rate": 9.9,
+          "fuel_price": 3.4751
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 20.5,
+          "bid": 34.84,
+          "heat_rate": 17.438,
+          "fuel_price": 3.4751
+        },
+        {
+          "tranche": "mustrun",
+          "share": 0.55,
+          "pmax_mw": 225.5,
+          "bid": 35.41,
+          "heat_rate": 11.25,
+          "fuel_price": 3.4751
+        },
+        {
+          "tranche": "econhi",
+          "share": 0.1332,
+          "pmax_mw": 54.6,
+          "bid": 36.2,
+          "heat_rate": 12.521,
+          "fuel_price": 3.4751
+        },
+        {
+          "tranche": "econlo",
+          "share": 0.1668,
+          "pmax_mw": 68.4,
+          "bid": 39.13,
+          "heat_rate": 13.68,
+          "fuel_price": 3.4751
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "Major Oak",
+      "plant_code": 7030,
+      "pmax_mw": 349.2,
+      "capw_bid": 15.8,
+      "bid_bot": 12.95,
+      "bid_top": 34.84,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.45,
+          "pmax_mw": 157.1,
+          "bid": 12.95,
+          "heat_rate": 10.16,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "committed",
+          "share": 0.1,
+          "pmax_mw": 34.9,
+          "bid": 13.97,
+          "heat_rate": 8.941,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "econhi",
+          "share": 0.1776,
+          "pmax_mw": 62.0,
+          "bid": 16.47,
+          "heat_rate": 11.308,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "econlo",
+          "share": 0.2224,
+          "pmax_mw": 77.7,
+          "bid": 17.58,
+          "heat_rate": 12.355,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 17.5,
+          "bid": 34.84,
+          "heat_rate": 15.748,
+          "fuel_price": 1.45
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "JK Spruce",
+      "plant_code": 7097,
+      "pmax_mw": 1488.5,
+      "capw_bid": 22.22,
+      "bid_bot": 16.46,
+      "bid_top": 34.84,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.12,
+          "pmax_mw": 178.6,
+          "bid": 16.46,
+          "heat_rate": 10.98,
+          "fuel_price": 1.7912
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "pmax_mw": 297.7,
+          "bid": 19.91,
+          "heat_rate": 9.992,
+          "fuel_price": 1.7912
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.105,
+          "pmax_mw": 156.3,
+          "bid": 19.99,
+          "heat_rate": 10.045,
+          "fuel_price": 1.7912
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.105,
+          "pmax_mw": 156.3,
+          "bid": 20.96,
+          "heat_rate": 10.678,
+          "fuel_price": 1.7912
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.105,
+          "pmax_mw": 156.3,
+          "bid": 21.94,
+          "heat_rate": 11.31,
+          "fuel_price": 1.7912
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.105,
+          "pmax_mw": 156.3,
+          "bid": 23.33,
+          "heat_rate": 12.214,
+          "fuel_price": 1.7912
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.105,
+          "pmax_mw": 156.3,
+          "bid": 25.15,
+          "heat_rate": 13.39,
+          "fuel_price": 1.7912
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.105,
+          "pmax_mw": 156.3,
+          "bid": 26.96,
+          "heat_rate": 14.565,
+          "fuel_price": 1.7912
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 74.4,
+          "bid": 34.84,
+          "heat_rate": 17.151,
+          "fuel_price": 1.7912
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "Sandy Creek",
+      "plant_code": 56611,
+      "pmax_mw": 936.0,
+      "capw_bid": 18.96,
+      "bid_bot": 16.0,
+      "bid_top": 34.84,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.4,
+          "pmax_mw": 374.4,
+          "bid": 16.0,
+          "heat_rate": 9.5,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "pmax_mw": 187.2,
+          "bid": 17.92,
+          "heat_rate": 8.645,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.0583,
+          "pmax_mw": 54.6,
+          "bid": 17.99,
+          "heat_rate": 8.691,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.0583,
+          "pmax_mw": 54.6,
+          "bid": 18.84,
+          "heat_rate": 9.238,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.0583,
+          "pmax_mw": 54.6,
+          "bid": 19.69,
+          "heat_rate": 9.786,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.0583,
+          "pmax_mw": 54.6,
+          "bid": 20.9,
+          "heat_rate": 10.568,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.0583,
+          "pmax_mw": 54.6,
+          "bid": 22.48,
+          "heat_rate": 11.585,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.0583,
+          "pmax_mw": 54.6,
+          "bid": 24.06,
+          "heat_rate": 12.602,
+          "fuel_price": 1.7517
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 46.8,
+          "bid": 34.84,
+          "heat_rate": 14.839,
+          "fuel_price": 1.7517
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "Limestone",
+      "plant_code": 298,
+      "pmax_mw": 1849.8,
+      "capw_bid": 22.75,
+      "bid_bot": 14.61,
+      "bid_top": 45.43,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.2,
+          "pmax_mw": 370.0,
+          "bid": 14.61,
+          "heat_rate": 10.17,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "committed",
+          "share": 0.25,
+          "pmax_mw": 462.4,
+          "bid": 21.14,
+          "heat_rate": 9.255,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.0833,
+          "pmax_mw": 154.1,
+          "bid": 21.23,
+          "heat_rate": 9.304,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.0833,
+          "pmax_mw": 154.1,
+          "bid": 22.28,
+          "heat_rate": 9.89,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.0833,
+          "pmax_mw": 154.1,
+          "bid": 23.33,
+          "heat_rate": 10.476,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.0833,
+          "pmax_mw": 154.1,
+          "bid": 24.84,
+          "heat_rate": 11.313,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.0833,
+          "pmax_mw": 154.1,
+          "bid": 26.8,
+          "heat_rate": 12.402,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.0833,
+          "pmax_mw": 154.1,
+          "bid": 28.75,
+          "heat_rate": 13.49,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 92.5,
+          "bid": 45.43,
+          "heat_rate": 15.886,
+          "fuel_price": 1.614
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "W A Parish",
+      "plant_code": 3470,
+      "pmax_mw": 2443.0,
+      "capw_bid": 24.29,
+      "bid_bot": 14.54,
+      "bid_top": 45.43,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.15,
+          "pmax_mw": 366.4,
+          "bid": 14.54,
+          "heat_rate": 10.76,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "pmax_mw": 488.6,
+          "bid": 22.1,
+          "heat_rate": 9.792,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.1,
+          "pmax_mw": 244.3,
+          "bid": 22.2,
+          "heat_rate": 9.843,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.1,
+          "pmax_mw": 244.3,
+          "bid": 23.31,
+          "heat_rate": 10.464,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.1,
+          "pmax_mw": 244.3,
+          "bid": 24.43,
+          "heat_rate": 11.084,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.1,
+          "pmax_mw": 244.3,
+          "bid": 26.02,
+          "heat_rate": 11.97,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.1,
+          "pmax_mw": 244.3,
+          "bid": 28.09,
+          "heat_rate": 13.121,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.1,
+          "pmax_mw": 244.3,
+          "bid": 30.16,
+          "heat_rate": 14.273,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 122.2,
+          "bid": 45.43,
+          "heat_rate": 16.807,
+          "fuel_price": 1.614
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "Martin Lake",
+      "plant_code": 6146,
+      "pmax_mw": 2379.6,
+      "capw_bid": 22.9,
+      "bid_bot": 14.6,
+      "bid_top": 45.43,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.2,
+          "pmax_mw": 475.9,
+          "bid": 14.6,
+          "heat_rate": 10.28,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "committed",
+          "share": 0.25,
+          "pmax_mw": 594.9,
+          "bid": 21.32,
+          "heat_rate": 9.355,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.0833,
+          "pmax_mw": 198.3,
+          "bid": 21.41,
+          "heat_rate": 9.404,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.0833,
+          "pmax_mw": 198.3,
+          "bid": 22.47,
+          "heat_rate": 9.997,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.0833,
+          "pmax_mw": 198.3,
+          "bid": 23.54,
+          "heat_rate": 10.589,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.0833,
+          "pmax_mw": 198.3,
+          "bid": 25.06,
+          "heat_rate": 11.436,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.0833,
+          "pmax_mw": 198.3,
+          "bid": 27.04,
+          "heat_rate": 12.536,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.0833,
+          "pmax_mw": 198.3,
+          "bid": 29.02,
+          "heat_rate": 13.636,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 119.0,
+          "bid": 45.43,
+          "heat_rate": 16.057,
+          "fuel_price": 1.614
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "Coleto Creek",
+      "plant_code": 6178,
+      "pmax_mw": 622.4,
+      "capw_bid": 23.01,
+      "bid_bot": 14.6,
+      "bid_top": 45.43,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.3,
+          "pmax_mw": 186.7,
+          "bid": 14.6,
+          "heat_rate": 10.24,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "pmax_mw": 124.5,
+          "bid": 22.61,
+          "heat_rate": 9.318,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.075,
+          "pmax_mw": 46.7,
+          "bid": 22.7,
+          "heat_rate": 9.368,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.075,
+          "pmax_mw": 46.7,
+          "bid": 23.85,
+          "heat_rate": 9.958,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.075,
+          "pmax_mw": 46.7,
+          "bid": 24.99,
+          "heat_rate": 10.548,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.075,
+          "pmax_mw": 46.7,
+          "bid": 26.63,
+          "heat_rate": 11.391,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.075,
+          "pmax_mw": 46.7,
+          "bid": 28.76,
+          "heat_rate": 12.487,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.075,
+          "pmax_mw": 46.7,
+          "bid": 30.89,
+          "heat_rate": 13.583,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 31.1,
+          "bid": 45.43,
+          "heat_rate": 15.995,
+          "fuel_price": 1.614
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "Fayette",
+      "plant_code": 6179,
+      "pmax_mw": 1690.0,
+      "capw_bid": 23.01,
+      "bid_bot": 14.05,
+      "bid_top": 45.43,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.3,
+          "pmax_mw": 507.0,
+          "bid": 14.05,
+          "heat_rate": 10.67,
+          "fuel_price": 1.567
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "pmax_mw": 338.0,
+          "bid": 22.83,
+          "heat_rate": 9.71,
+          "fuel_price": 1.567
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.075,
+          "pmax_mw": 126.8,
+          "bid": 22.93,
+          "heat_rate": 9.761,
+          "fuel_price": 1.567
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.075,
+          "pmax_mw": 126.8,
+          "bid": 24.09,
+          "heat_rate": 10.376,
+          "fuel_price": 1.567
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.075,
+          "pmax_mw": 126.8,
+          "bid": 25.25,
+          "heat_rate": 10.991,
+          "fuel_price": 1.567
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.075,
+          "pmax_mw": 126.8,
+          "bid": 26.91,
+          "heat_rate": 11.869,
+          "fuel_price": 1.567
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.075,
+          "pmax_mw": 126.8,
+          "bid": 29.06,
+          "heat_rate": 13.012,
+          "fuel_price": 1.567
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.075,
+          "pmax_mw": 126.8,
+          "bid": 31.22,
+          "heat_rate": 14.154,
+          "fuel_price": 1.567
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 84.5,
+          "bid": 45.43,
+          "heat_rate": 16.667,
+          "fuel_price": 1.567
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "Oak Grove",
+      "plant_code": 6180,
+      "pmax_mw": 1795.4,
+      "capw_bid": 17.08,
+      "bid_bot": 13.14,
+      "bid_top": 45.43,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.45,
+          "pmax_mw": 807.9,
+          "bid": 13.14,
+          "heat_rate": 9.49,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "committed",
+          "share": 0.1,
+          "pmax_mw": 179.5,
+          "bid": 15.01,
+          "heat_rate": 8.351,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "econhi",
+          "share": 0.1776,
+          "pmax_mw": 318.9,
+          "bid": 17.79,
+          "heat_rate": 10.562,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "econlo",
+          "share": 0.2224,
+          "pmax_mw": 399.3,
+          "bid": 19.02,
+          "heat_rate": 11.54,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 89.8,
+          "bid": 45.43,
+          "heat_rate": 14.71,
+          "fuel_price": 1.45
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "San Miguel",
+      "plant_code": 6183,
+      "pmax_mw": 410.0,
+      "capw_bid": 37.98,
+      "bid_bot": 33.79,
+      "bid_top": 45.43,
+      "tranches": [
+        {
+          "tranche": "committed",
+          "share": 0.1,
+          "pmax_mw": 41.0,
+          "bid": 33.79,
+          "heat_rate": 9.9,
+          "fuel_price": 3.4454
+        },
+        {
+          "tranche": "mustrun",
+          "share": 0.55,
+          "pmax_mw": 225.5,
+          "bid": 35.08,
+          "heat_rate": 11.25,
+          "fuel_price": 3.4454
+        },
+        {
+          "tranche": "econhi",
+          "share": 0.1332,
+          "pmax_mw": 54.6,
+          "bid": 41.55,
+          "heat_rate": 12.521,
+          "fuel_price": 3.4454
+        },
+        {
+          "tranche": "econlo",
+          "share": 0.1668,
+          "pmax_mw": 68.4,
+          "bid": 44.98,
+          "heat_rate": 13.68,
+          "fuel_price": 3.4454
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 20.5,
+          "bid": 45.43,
+          "heat_rate": 17.438,
+          "fuel_price": 3.4454
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "Major Oak",
+      "plant_code": 7030,
+      "pmax_mw": 349.2,
+      "capw_bid": 17.46,
+      "bid_bot": 12.95,
+      "bid_top": 45.43,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.45,
+          "pmax_mw": 157.1,
+          "bid": 12.95,
+          "heat_rate": 10.16,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "committed",
+          "share": 0.1,
+          "pmax_mw": 34.9,
+          "bid": 15.75,
+          "heat_rate": 8.941,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "econhi",
+          "share": 0.1776,
+          "pmax_mw": 62.0,
+          "bid": 18.73,
+          "heat_rate": 11.308,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "econlo",
+          "share": 0.2224,
+          "pmax_mw": 77.7,
+          "bid": 20.05,
+          "heat_rate": 12.355,
+          "fuel_price": 1.45
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 17.5,
+          "bid": 45.43,
+          "heat_rate": 15.748,
+          "fuel_price": 1.45
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "JK Spruce",
+      "plant_code": 7097,
+      "pmax_mw": 1488.5,
+      "capw_bid": 25.71,
+      "bid_bot": 15.2,
+      "bid_top": 45.43,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.12,
+          "pmax_mw": 178.6,
+          "bid": 15.2,
+          "heat_rate": 10.98,
+          "fuel_price": 1.6769
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "pmax_mw": 297.7,
+          "bid": 23.15,
+          "heat_rate": 9.992,
+          "fuel_price": 1.6769
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.105,
+          "pmax_mw": 156.3,
+          "bid": 23.25,
+          "heat_rate": 10.045,
+          "fuel_price": 1.6769
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.105,
+          "pmax_mw": 156.3,
+          "bid": 24.43,
+          "heat_rate": 10.678,
+          "fuel_price": 1.6769
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.105,
+          "pmax_mw": 156.3,
+          "bid": 25.61,
+          "heat_rate": 11.31,
+          "fuel_price": 1.6769
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.105,
+          "pmax_mw": 156.3,
+          "bid": 27.3,
+          "heat_rate": 12.214,
+          "fuel_price": 1.6769
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.105,
+          "pmax_mw": 156.3,
+          "bid": 29.5,
+          "heat_rate": 13.39,
+          "fuel_price": 1.6769
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.105,
+          "pmax_mw": 156.3,
+          "bid": 31.69,
+          "heat_rate": 14.565,
+          "fuel_price": 1.6769
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 74.4,
+          "bid": 45.43,
+          "heat_rate": 17.151,
+          "fuel_price": 1.6769
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "Sandy Creek",
+      "plant_code": 56611,
+      "pmax_mw": 936.0,
+      "capw_bid": 21.06,
+      "bid_bot": 14.7,
+      "bid_top": 45.43,
+      "tranches": [
+        {
+          "tranche": "mustrun",
+          "share": 0.4,
+          "pmax_mw": 374.4,
+          "bid": 14.7,
+          "heat_rate": 9.5,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "pmax_mw": 187.2,
+          "bid": 21.3,
+          "heat_rate": 8.645,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.0583,
+          "pmax_mw": 54.6,
+          "bid": 21.39,
+          "heat_rate": 8.691,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.0583,
+          "pmax_mw": 54.6,
+          "bid": 22.45,
+          "heat_rate": 9.238,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.0583,
+          "pmax_mw": 54.6,
+          "bid": 23.51,
+          "heat_rate": 9.786,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.0583,
+          "pmax_mw": 54.6,
+          "bid": 25.03,
+          "heat_rate": 10.568,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.0583,
+          "pmax_mw": 54.6,
+          "bid": 27.01,
+          "heat_rate": 11.585,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.0583,
+          "pmax_mw": 54.6,
+          "bid": 28.98,
+          "heat_rate": 12.602,
+          "fuel_price": 1.614
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "pmax_mw": 46.8,
+          "bid": 45.43,
+          "heat_rate": 14.839,
+          "fuel_price": 1.614
+        }
+      ]
+    }
+  ],
+  "S2_measured_perplant": {
+    "unmapped_resources": [],
+    "plants": [
+      {
+        "plant_code": 298,
+        "plant": "Limestone",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "LEG_LEG_G1",
+            "n_intervals": 2876,
+            "modal_count": 281,
+            "modal_mw": [
+              260.0,
+              360.0,
+              361.0,
+              588.0,
+              646.0,
+              700.0,
+              749.0,
+              796.0,
+              831.0
+            ],
+            "modal_price": [
+              15.0,
+              16.0,
+              22.71,
+              22.74,
+              22.76,
+              22.79,
+              22.82,
+              22.85,
+              22.87
+            ],
+            "priced_level": 19.5283,
+            "priced_lo": 15.0,
+            "priced_hi": 22.87,
+            "floor_block_mw": 0.0,
+            "priced_mw": 831.0,
+            "level_by_year": {
+              "2024": 23.34,
+              "2025": 19.53
+            }
+          },
+          {
+            "resource": "LEG_LEG_G2",
+            "n_intervals": 2591,
+            "modal_count": 260,
+            "modal_mw": [
+              258.0,
+              360.0,
+              361.0,
+              362.0,
+              457.0,
+              603.0,
+              665.0,
+              773.0,
+              837.0
+            ],
+            "modal_price": [
+              15.0,
+              16.0,
+              18.63,
+              18.65,
+              18.73,
+              19.02,
+              19.18,
+              19.47,
+              19.75
+            ],
+            "priced_level": 17.5047,
+            "priced_lo": 15.0,
+            "priced_hi": 19.75,
+            "floor_block_mw": 0.0,
+            "priced_mw": 837.0,
+            "level_by_year": {
+              "2024": 17.5,
+              "2025": 18.76
+            }
+          }
+        ],
+        "plant_level": 18.5129,
+        "within_plant_spread": 7.87
+      },
+      {
+        "plant_code": 3470,
+        "plant": "W A Parish",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "WAP_WAP_G5",
+            "n_intervals": 3792,
+            "modal_count": 284,
+            "modal_mw": [
+              156.0,
+              274.0,
+              355.0,
+              420.0,
+              477.0,
+              527.0,
+              573.0,
+              616.0,
+              667.0
+            ],
+            "modal_price": [
+              20.01,
+              20.59,
+              21.18,
+              21.76,
+              22.35,
+              22.93,
+              23.52,
+              24.1,
+              24.76
+            ],
+            "priced_level": 21.713,
+            "priced_lo": 20.01,
+            "priced_hi": 24.76,
+            "floor_block_mw": 0.0,
+            "priced_mw": 667.0,
+            "level_by_year": {
+              "2024": 21.66,
+              "2025": 21.71
+            }
+          },
+          {
+            "resource": "WAP_WAP_G6",
+            "n_intervals": 2976,
+            "modal_count": 276,
+            "modal_mw": [
+              158.0,
+              278.0,
+              360.0,
+              427.0,
+              484.0,
+              536.0,
+              583.0,
+              626.0,
+              659.0
+            ],
+            "modal_price": [
+              16.9,
+              17.74,
+              18.59,
+              19.43,
+              20.28,
+              21.12,
+              21.97,
+              22.81,
+              23.66
+            ],
+            "priced_level": 19.2315,
+            "priced_lo": 16.9,
+            "priced_hi": 23.66,
+            "floor_block_mw": 0.0,
+            "priced_mw": 659.0,
+            "level_by_year": {
+              "2024": 19.23,
+              "2025": 21.67
+            }
+          },
+          {
+            "resource": "WAP_WAP_G7",
+            "n_intervals": 3120,
+            "modal_count": 312,
+            "modal_mw": [
+              159.0,
+              226.0,
+              227.0,
+              370.0,
+              418.0,
+              461.0,
+              501.0,
+              537.0,
+              574.0
+            ],
+            "modal_price": [
+              13.0,
+              14.0,
+              21.0,
+              21.46,
+              21.91,
+              22.37,
+              22.83,
+              23.28,
+              23.84
+            ],
+            "priced_level": 18.7138,
+            "priced_lo": 13.0,
+            "priced_hi": 23.84,
+            "floor_block_mw": 0.0,
+            "priced_mw": 574.0,
+            "level_by_year": {
+              "2024": 17.09,
+              "2025": 18.71
+            }
+          },
+          {
+            "resource": "WAP_WAP_G8",
+            "n_intervals": 3727,
+            "modal_count": 288,
+            "modal_mw": [
+              159.0,
+              227.0,
+              228.0,
+              394.0,
+              446.0,
+              492.0,
+              535.0,
+              574.0,
+              612.0
+            ],
+            "modal_price": [
+              9.0,
+              10.0,
+              17.64,
+              18.36,
+              19.08,
+              19.8,
+              20.52,
+              21.25,
+              21.97
+            ],
+            "priced_level": 15.7277,
+            "priced_lo": 9.0,
+            "priced_hi": 21.97,
+            "floor_block_mw": 0.0,
+            "priced_mw": 612.0,
+            "level_by_year": {
+              "2024": 15.73,
+              "2025": 17.1
+            }
+          }
+        ],
+        "plant_level": 18.9185,
+        "within_plant_spread": 15.76
+      },
+      {
+        "plant_code": 6146,
+        "plant": "Martin Lake",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "MLSES_UNIT1",
+            "n_intervals": 1830,
+            "modal_count": 768,
+            "modal_mw": [
+              0.0,
+              146.0,
+              261.0,
+              371.0,
+              479.0,
+              587.0,
+              697.0,
+              825.0
+            ],
+            "modal_price": [
+              22.19,
+              22.2,
+              22.21,
+              22.22,
+              22.23,
+              22.24,
+              22.25,
+              22.26
+            ],
+            "priced_level": 22.2292,
+            "priced_lo": 22.19,
+            "priced_hi": 22.26,
+            "floor_block_mw": 0.0,
+            "priced_mw": 825.0,
+            "level_by_year": {
+              "2024": 22.23
+            }
+          },
+          {
+            "resource": "MLSES_UNIT2",
+            "n_intervals": 3030,
+            "modal_count": 618,
+            "modal_mw": [
+              0.0,
+              200.0,
+              308.0,
+              413.0,
+              514.0,
+              615.0,
+              719.0,
+              825.0
+            ],
+            "modal_price": [
+              22.18,
+              22.2,
+              22.21,
+              22.22,
+              22.23,
+              22.24,
+              22.25,
+              22.26
+            ],
+            "priced_level": 22.2264,
+            "priced_lo": 22.18,
+            "priced_hi": 22.26,
+            "floor_block_mw": 0.0,
+            "priced_mw": 825.0,
+            "level_by_year": {
+              "2024": 22.23,
+              "2025": 22.96
+            }
+          },
+          {
+            "resource": "MLSES_UNIT3",
+            "n_intervals": 3753,
+            "modal_count": 852,
+            "modal_mw": [
+              0.0,
+              194.0,
+              303.0,
+              408.0,
+              510.0,
+              613.0,
+              718.0,
+              835.0
+            ],
+            "modal_price": [
+              20.89,
+              20.91,
+              20.92,
+              20.93,
+              20.94,
+              20.95,
+              20.96,
+              20.97
+            ],
+            "priced_level": 20.9371,
+            "priced_lo": 20.89,
+            "priced_hi": 20.97,
+            "floor_block_mw": 0.0,
+            "priced_mw": 835.0,
+            "level_by_year": {
+              "2024": 20.94,
+              "2025": 21.72
+            }
+          }
+        ],
+        "plant_level": 21.7941,
+        "within_plant_spread": 1.37
+      },
+      {
+        "plant_code": 6178,
+        "plant": "Coleto Creek",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "COLETO_COLETOG1",
+            "n_intervals": 3350,
+            "modal_count": 840,
+            "modal_mw": [
+              0.0,
+              220.0,
+              299.0,
+              371.0,
+              442.0,
+              512.0,
+              585.0,
+              655.0
+            ],
+            "modal_price": [
+              17.29,
+              17.32,
+              17.33,
+              17.34,
+              17.91,
+              18.49,
+              19.04,
+              19.69
+            ],
+            "priced_level": 17.9574,
+            "priced_lo": 17.29,
+            "priced_hi": 19.69,
+            "floor_block_mw": 0.0,
+            "priced_mw": 655.0,
+            "level_by_year": {
+              "2024": 17.96,
+              "2025": 24.23
+            }
+          }
+        ],
+        "plant_level": 17.9574,
+        "within_plant_spread": 2.4
+      },
+      {
+        "plant_code": 6179,
+        "plant": "Fayette",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "FPPYD1_FPP_G1_J01",
+            "n_intervals": 3744,
+            "modal_count": 360,
+            "modal_mw": [
+              78.0,
+              100.0,
+              122.0,
+              144.0,
+              166.0,
+              188.0,
+              210.0,
+              232.0,
+              254.0,
+              301.0
+            ],
+            "modal_price": [
+              14.55,
+              14.84,
+              15.12,
+              15.41,
+              15.69,
+              15.98,
+              16.26,
+              16.55,
+              16.83,
+              17.39
+            ],
+            "priced_level": 15.7448,
+            "priced_lo": 14.55,
+            "priced_hi": 17.39,
+            "floor_block_mw": 0.0,
+            "priced_mw": 301.0,
+            "level_by_year": {
+              "2024": 17.22,
+              "2025": 15.74
+            }
+          },
+          {
+            "resource": "FPPYD1_FPP_G1_J02",
+            "n_intervals": 3744,
+            "modal_count": 392,
+            "modal_mw": [
+              78.0,
+              105.0,
+              130.0,
+              155.0,
+              180.0,
+              205.0,
+              230.0,
+              238.9,
+              239.0,
+              298.0
+            ],
+            "modal_price": [
+              100.42,
+              102.94,
+              105.28,
+              107.61,
+              109.95,
+              112.28,
+              114.61,
+              115.45,
+              150.0,
+              150.1
+            ],
+            "priced_level": 114.9456,
+            "priced_lo": 100.42,
+            "priced_hi": 150.1,
+            "floor_block_mw": 0.0,
+            "priced_mw": 298.0,
+            "level_by_year": {
+              "2024": 114.95,
+              "2025": 106.19
+            }
+          },
+          {
+            "resource": "FPPYD1_FPP_G2_J01",
+            "n_intervals": 3213,
+            "modal_count": 344,
+            "modal_mw": [
+              78.0,
+              99.0,
+              120.0,
+              141.0,
+              162.0,
+              183.0,
+              204.0,
+              225.0,
+              246.0,
+              301.0
+            ],
+            "modal_price": [
+              14.07,
+              14.27,
+              14.48,
+              14.68,
+              14.88,
+              15.09,
+              15.29,
+              15.49,
+              15.7,
+              16.13
+            ],
+            "priced_level": 14.9571,
+            "priced_lo": 14.07,
+            "priced_hi": 16.13,
+            "floor_block_mw": 0.0,
+            "priced_mw": 301.0,
+            "level_by_year": {
+              "2024": 16.93,
+              "2025": 14.96
+            }
+          },
+          {
+            "resource": "FPPYD1_FPP_G2_J02",
+            "n_intervals": 3205,
+            "modal_count": 332,
+            "modal_mw": [
+              78.0,
+              105.0,
+              130.0,
+              155.0,
+              180.0,
+              205.0,
+              230.0,
+              235.9,
+              236.0,
+              294.0
+            ],
+            "modal_price": [
+              98.86,
+              100.85,
+              102.69,
+              104.53,
+              106.38,
+              108.22,
+              110.07,
+              110.5,
+              150.0,
+              150.1
+            ],
+            "priced_level": 112.5987,
+            "priced_lo": 98.86,
+            "priced_hi": 150.1,
+            "floor_block_mw": 0.0,
+            "priced_mw": 294.0,
+            "level_by_year": {
+              "2024": 112.6,
+              "2025": 103.17
+            }
+          },
+          {
+            "resource": "FPPYD2_FPP_G3",
+            "n_intervals": 4043,
+            "modal_count": 344,
+            "modal_mw": [
+              180.0,
+              205.0,
+              230.0,
+              255.0,
+              280.0,
+              305.0,
+              330.0,
+              355.0,
+              380.0,
+              440.0
+            ],
+            "modal_price": [
+              13.83,
+              14.2,
+              14.57,
+              14.94,
+              15.3,
+              15.67,
+              16.04,
+              16.41,
+              16.78,
+              17.52
+            ],
+            "priced_level": 15.0872,
+            "priced_lo": 13.83,
+            "priced_hi": 17.52,
+            "floor_block_mw": 0.0,
+            "priced_mw": 440.0,
+            "level_by_year": {
+              "2024": 15.98,
+              "2025": 15.09
+            }
+          }
+        ],
+        "plant_level": 50.9409,
+        "within_plant_spread": 136.27
+      },
+      {
+        "plant_code": 6180,
+        "plant": "Oak Grove",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "OGSES_UNIT1A",
+            "n_intervals": 3452,
+            "modal_count": 1436,
+            "modal_mw": [
+              0.0,
+              317.0,
+              408.0,
+              493.0,
+              575.0,
+              658.0,
+              743.0,
+              880.0
+            ],
+            "modal_price": [
+              9.28,
+              9.32,
+              9.33,
+              9.36,
+              9.43,
+              9.5,
+              9.57,
+              9.64
+            ],
+            "priced_level": 9.4261,
+            "priced_lo": 9.28,
+            "priced_hi": 9.64,
+            "floor_block_mw": 0.0,
+            "priced_mw": 880.0,
+            "level_by_year": {
+              "2024": 9.43,
+              "2025": 9.43
+            }
+          },
+          {
+            "resource": "OGSES_UNIT2",
+            "n_intervals": 3429,
+            "modal_count": 1377,
+            "modal_mw": [
+              0.0,
+              317.0,
+              408.0,
+              493.0,
+              575.0,
+              658.0,
+              743.0,
+              880.0
+            ],
+            "modal_price": [
+              8.19,
+              8.37,
+              8.42,
+              8.58,
+              8.77,
+              8.96,
+              9.14,
+              9.35
+            ],
+            "priced_level": 8.7153,
+            "priced_lo": 8.19,
+            "priced_hi": 9.35,
+            "floor_block_mw": 0.0,
+            "priced_mw": 880.0,
+            "level_by_year": {
+              "2024": 8.72,
+              "2025": 8.72
+            }
+          }
+        ],
+        "plant_level": 9.0707,
+        "within_plant_spread": 1.45
+      },
+      {
+        "plant_code": 6183,
+        "plant": "San Miguel",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "SANMIGL_G1",
+            "n_intervals": 2725,
+            "modal_count": 853,
+            "modal_mw": [
+              0.0,
+              220.0,
+              221.0,
+              396.0
+            ],
+            "modal_price": [
+              -250.0,
+              -249.0,
+              42.0,
+              43.0
+            ],
+            "priced_level": 42.9943,
+            "priced_lo": 42.0,
+            "priced_hi": 43.0,
+            "floor_block_mw": 220.0,
+            "priced_mw": 176.0,
+            "level_by_year": {
+              "2024": 42.99,
+              "2025": 52.99
+            }
+          }
+        ],
+        "plant_level": 42.9943,
+        "within_plant_spread": 1.0
+      },
+      {
+        "plant_code": 7030,
+        "plant": "Major Oak",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "TNP_ONE_TNP_O_1",
+            "n_intervals": 3894,
+            "modal_count": 2730,
+            "modal_mw": [
+              80.0,
+              90.0,
+              101.0,
+              112.0,
+              122.0,
+              133.0,
+              144.0,
+              155.0
+            ],
+            "modal_price": [
+              14.73,
+              14.74,
+              14.74,
+              14.74,
+              14.74,
+              14.74,
+              14.74,
+              14.74
+            ],
+            "priced_level": 14.7348,
+            "priced_lo": 14.73,
+            "priced_hi": 14.74,
+            "floor_block_mw": 0.0,
+            "priced_mw": 155.0,
+            "level_by_year": {
+              "2024": 14.73,
+              "2025": 14.73
+            }
+          },
+          {
+            "resource": "TNP_ONE_TNP_O_2",
+            "n_intervals": 3888,
+            "modal_count": 2784,
+            "modal_mw": [
+              80.0,
+              90.0,
+              101.0,
+              112.0,
+              122.0,
+              133.0,
+              144.0,
+              155.0
+            ],
+            "modal_price": [
+              14.73,
+              14.74,
+              14.74,
+              14.74,
+              14.74,
+              14.74,
+              14.74,
+              14.74
+            ],
+            "priced_level": 14.7348,
+            "priced_lo": 14.73,
+            "priced_hi": 14.74,
+            "floor_block_mw": 0.0,
+            "priced_mw": 155.0,
+            "level_by_year": {
+              "2024": 14.73,
+              "2025": 14.73
+            }
+          }
+        ],
+        "plant_level": 14.7348,
+        "within_plant_spread": 0.01
+      },
+      {
+        "plant_code": 7097,
+        "plant": "JK Spruce",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "CALAVERS_JKS1",
+            "n_intervals": 3302,
+            "modal_count": 460,
+            "modal_mw": [
+              125.0,
+              135.0,
+              175.0,
+              205.0,
+              275.0,
+              305.0,
+              375.0,
+              405.0,
+              565.0
+            ],
+            "modal_price": [
+              16.37,
+              16.46,
+              16.81,
+              17.08,
+              17.69,
+              17.95,
+              18.57,
+              18.83,
+              20.24
+            ],
+            "priced_level": 18.187,
+            "priced_lo": 16.37,
+            "priced_hi": 20.24,
+            "floor_block_mw": 0.0,
+            "priced_mw": 565.0,
+            "level_by_year": {
+              "2024": 18.19,
+              "2025": 16.9
+            }
+          },
+          {
+            "resource": "CALAVERS_JKS2",
+            "n_intervals": 2880,
+            "modal_count": 476,
+            "modal_mw": [
+              290.0,
+              300.0,
+              380.0,
+              420.0,
+              440.0,
+              460.0,
+              590.0,
+              610.0,
+              800.0
+            ],
+            "modal_price": [
+              15.72,
+              15.83,
+              16.61,
+              16.99,
+              17.16,
+              17.34,
+              18.41,
+              18.56,
+              19.82
+            ],
+            "priced_level": 17.4322,
+            "priced_lo": 15.72,
+            "priced_hi": 19.82,
+            "floor_block_mw": 0.0,
+            "priced_mw": 800.0,
+            "level_by_year": {
+              "2024": 17.43,
+              "2025": 31.56
+            }
+          }
+        ],
+        "plant_level": 17.7446,
+        "within_plant_spread": 4.52
+      },
+      {
+        "plant_code": 56611,
+        "plant": "Sandy Creek",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "SCES_UNIT1_J01",
+            "n_intervals": 2160,
+            "modal_count": 1448,
+            "modal_mw": [
+              152.0,
+              252.0,
+              352.0,
+              440.0
+            ],
+            "modal_price": [
+              29.36,
+              31.14,
+              32.92,
+              34.82
+            ],
+            "priced_level": 31.6656,
+            "priced_lo": 29.36,
+            "priced_hi": 34.82,
+            "floor_block_mw": 0.0,
+            "priced_mw": 440.0,
+            "level_by_year": {
+              "2024": 31.67,
+              "2025": 31.67
+            }
+          },
+          {
+            "resource": "SCES_UNIT1_J02",
+            "n_intervals": 2160,
+            "modal_count": 624,
+            "modal_mw": [
+              90.0,
+              90.1,
+              233.2
+            ],
+            "modal_price": [
+              27.55,
+              27.56,
+              65.0
+            ],
+            "priced_level": 50.5307,
+            "priced_lo": 27.55,
+            "priced_hi": 65.0,
+            "floor_block_mw": 0.0,
+            "priced_mw": 233.2,
+            "level_by_year": {
+              "2024": 50.53,
+              "2025": 25.36
+            }
+          },
+          {
+            "resource": "SCES_UNIT1_J03",
+            "n_intervals": 2160,
+            "modal_count": 2160,
+            "modal_mw": [
+              60.2,
+              87.8,
+              121.8,
+              155.8
+            ],
+            "modal_price": [
+              29.36,
+              31.14,
+              32.92,
+              34.82
+            ],
+            "priced_level": 31.6437,
+            "priced_lo": 29.36,
+            "priced_hi": 34.82,
+            "floor_block_mw": 0.0,
+            "priced_mw": 155.8,
+            "level_by_year": {
+              "2024": 31.64,
+              "2025": 31.64
+            }
+          },
+          {
+            "resource": "SCES_UNIT1_J04",
+            "n_intervals": 2162,
+            "modal_count": 480,
+            "modal_mw": [
+              41.0,
+              47.0,
+              53.0,
+              59.0,
+              65.0,
+              71.0,
+              77.0,
+              83.0,
+              89.0,
+              106.0
+            ],
+            "modal_price": [
+              21.53,
+              21.68,
+              21.83,
+              21.98,
+              22.13,
+              22.28,
+              22.43,
+              22.58,
+              22.73,
+              23.1
+            ],
+            "priced_level": 22.0875,
+            "priced_lo": 21.53,
+            "priced_hi": 23.1,
+            "floor_block_mw": 0.0,
+            "priced_mw": 106.0,
+            "level_by_year": {
+              "2024": 21.84,
+              "2025": 22.09
+            }
+          }
+        ],
+        "plant_level": 35.2813,
+        "within_plant_spread": 43.47
+      }
+    ]
+  },
+  "S3_delta": [
+    {
+      "year": 2023,
+      "plant": "Limestone",
+      "plant_code": 298,
+      "model_mid_capw": 22.81,
+      "measured_plant_level": 18.5129,
+      "delta_mid": 4.29,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.2,
+          "model_bid": 16.73,
+          "measured_window_price": 15.0
+        },
+        {
+          "tranche": "committed",
+          "share": 0.25,
+          "model_bid": 20.61,
+          "measured_window_price": 16.0
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.0833,
+          "model_bid": 20.7,
+          "measured_window_price": 22.74
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.0833,
+          "model_bid": 21.72,
+          "measured_window_price": 22.74
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.0833,
+          "model_bid": 22.74,
+          "measured_window_price": 22.74
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.0833,
+          "model_bid": 24.2,
+          "measured_window_price": 22.76
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.0833,
+          "model_bid": 26.09,
+          "measured_window_price": 22.8
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.0833,
+          "model_bid": 27.99,
+          "measured_window_price": 22.84
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 38.94,
+          "measured_window_price": 22.87
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "plant": "W A Parish",
+      "plant_code": 3470,
+      "model_mid_capw": 24.16,
+      "measured_plant_level": 18.9185,
+      "delta_mid": 5.24,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.15,
+          "model_bid": 16.78,
+          "measured_window_price": 13.0
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "model_bid": 21.55,
+          "measured_window_price": 13.36
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.1,
+          "model_bid": 21.64,
+          "measured_window_price": 18.19
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.1,
+          "model_bid": 22.72,
+          "measured_window_price": 21.46
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.1,
+          "model_bid": 23.8,
+          "measured_window_price": 21.48
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.1,
+          "model_bid": 25.34,
+          "measured_window_price": 22.01
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.1,
+          "model_bid": 27.35,
+          "measured_window_price": 22.59
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.1,
+          "model_bid": 29.35,
+          "measured_window_price": 23.26
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 38.94,
+          "measured_window_price": 23.84
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "plant": "Martin Lake",
+      "plant_code": 6146,
+      "model_mid_capw": 23.01,
+      "measured_plant_level": 21.7941,
+      "delta_mid": 1.21,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.2,
+          "model_bid": 16.74,
+          "measured_window_price": 20.91
+        },
+        {
+          "tranche": "committed",
+          "share": 0.25,
+          "model_bid": 20.79,
+          "measured_window_price": 20.92
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.0833,
+          "model_bid": 20.87,
+          "measured_window_price": 20.94
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.0833,
+          "model_bid": 21.91,
+          "measured_window_price": 20.94
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.0833,
+          "model_bid": 22.94,
+          "measured_window_price": 20.95
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.0833,
+          "model_bid": 24.41,
+          "measured_window_price": 20.96
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.0833,
+          "model_bid": 26.33,
+          "measured_window_price": 20.96
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.0833,
+          "model_bid": 28.24,
+          "measured_window_price": 20.97
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 38.94,
+          "measured_window_price": 20.97
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "plant": "Coleto Creek",
+      "plant_code": 6178,
+      "model_mid_capw": 23.98,
+      "measured_plant_level": 17.9574,
+      "delta_mid": 6.03,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.3,
+          "model_bid": 16.74,
+          "measured_window_price": 17.32
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "model_bid": 21.57,
+          "measured_window_price": 17.33
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.075,
+          "model_bid": 21.66,
+          "measured_window_price": 17.41
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.075,
+          "model_bid": 22.74,
+          "measured_window_price": 17.91
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.075,
+          "model_bid": 23.82,
+          "measured_window_price": 18.3
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.075,
+          "model_bid": 25.37,
+          "measured_window_price": 18.62
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.075,
+          "model_bid": 27.37,
+          "measured_window_price": 19.04
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.075,
+          "model_bid": 29.38,
+          "measured_window_price": 19.53
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 38.94,
+          "measured_window_price": 19.69
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "plant": "Fayette",
+      "plant_code": 6179,
+      "model_mid_capw": 24.26,
+      "measured_plant_level": 50.9409,
+      "delta_mid": -26.68,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.3,
+          "model_bid": 16.26,
+          "measured_window_price": 100.74
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "model_bid": 21.81,
+          "measured_window_price": 105.41
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.075,
+          "model_bid": 21.9,
+          "measured_window_price": 109.32
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.075,
+          "model_bid": 23.0,
+          "measured_window_price": 111.38
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.075,
+          "model_bid": 24.1,
+          "measured_window_price": 113.43
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.075,
+          "model_bid": 25.66,
+          "measured_window_price": 114.93
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.075,
+          "model_bid": 27.7,
+          "measured_window_price": 149.32
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.075,
+          "model_bid": 29.74,
+          "measured_window_price": 150.1
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 38.94,
+          "measured_window_price": 150.1
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "plant": "Oak Grove",
+      "plant_code": 6180,
+      "model_mid_capw": 16.47,
+      "measured_plant_level": 9.0707,
+      "delta_mid": 7.4,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.45,
+          "model_bid": 13.14,
+          "measured_window_price": 9.32
+        },
+        {
+          "tranche": "committed",
+          "share": 0.1,
+          "model_bid": 13.97,
+          "measured_window_price": 9.36
+        },
+        {
+          "tranche": "econhi",
+          "share": 0.1776,
+          "model_bid": 16.48,
+          "measured_window_price": 9.46
+        },
+        {
+          "tranche": "econlo",
+          "share": 0.2224,
+          "model_bid": 17.59,
+          "measured_window_price": 9.6
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 38.94,
+          "measured_window_price": 9.64
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "plant": "San Miguel",
+      "plant_code": 6183,
+      "model_mid_capw": 38.31,
+      "measured_plant_level": 42.9943,
+      "delta_mid": -4.69,
+      "tranche_grain": [
+        {
+          "tranche": "committed",
+          "share": 0.1,
+          "model_bid": 31.6,
+          "measured_window_price": -249.0
+        },
+        {
+          "tranche": "mustrun",
+          "share": 0.55,
+          "model_bid": 35.39,
+          "measured_window_price": -198.86
+        },
+        {
+          "tranche": "econhi",
+          "share": 0.1332,
+          "model_bid": 38.78,
+          "measured_window_price": 43.0
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 38.94,
+          "measured_window_price": 43.0
+        },
+        {
+          "tranche": "econlo",
+          "share": 0.1668,
+          "model_bid": 41.95,
+          "measured_window_price": 43.0
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "plant": "Major Oak",
+      "plant_code": 7030,
+      "model_mid_capw": 17.32,
+      "measured_plant_level": 14.7348,
+      "delta_mid": 2.59,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.45,
+          "model_bid": 12.95,
+          "measured_window_price": 14.73
+        },
+        {
+          "tranche": "committed",
+          "share": 0.1,
+          "model_bid": 14.64,
+          "measured_window_price": 14.73
+        },
+        {
+          "tranche": "econhi",
+          "share": 0.1776,
+          "model_bid": 17.33,
+          "measured_window_price": 14.74
+        },
+        {
+          "tranche": "econlo",
+          "share": 0.2224,
+          "model_bid": 18.52,
+          "measured_window_price": 14.74
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 38.94,
+          "measured_window_price": 14.74
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "plant": "JK Spruce",
+      "plant_code": 7097,
+      "model_mid_capw": 25.51,
+      "measured_plant_level": 17.7446,
+      "delta_mid": 7.77,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.12,
+          "model_bid": 17.7,
+          "measured_window_price": 15.72
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "model_bid": 22.69,
+          "measured_window_price": 15.72
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.105,
+          "model_bid": 22.79,
+          "measured_window_price": 16.16
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.105,
+          "model_bid": 23.94,
+          "measured_window_price": 16.82
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.105,
+          "model_bid": 25.1,
+          "measured_window_price": 17.92
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.105,
+          "model_bid": 26.74,
+          "measured_window_price": 18.41
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.105,
+          "model_bid": 28.88,
+          "measured_window_price": 19.55
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.105,
+          "model_bid": 31.02,
+          "measured_window_price": 19.82
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 38.94,
+          "measured_window_price": 19.82
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "plant": "Sandy Creek",
+      "plant_code": 56611,
+      "model_mid_capw": 22.4,
+      "measured_plant_level": 35.2813,
+      "delta_mid": -12.89,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.4,
+          "model_bid": 16.68,
+          "measured_window_price": 29.42
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "model_bid": 20.34,
+          "measured_window_price": 31.46
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.0583,
+          "model_bid": 20.42,
+          "measured_window_price": 32.92
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.0583,
+          "model_bid": 21.42,
+          "measured_window_price": 32.92
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.0583,
+          "model_bid": 22.42,
+          "measured_window_price": 32.92
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.0583,
+          "model_bid": 23.86,
+          "measured_window_price": 34.6
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.0583,
+          "model_bid": 25.72,
+          "measured_window_price": 34.82
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.0583,
+          "model_bid": 27.58,
+          "measured_window_price": 34.82
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 38.94,
+          "measured_window_price": 34.82
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "Limestone",
+      "plant_code": 298,
+      "model_mid_capw": 20.35,
+      "measured_plant_level": 18.5129,
+      "delta_mid": 1.84,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.2,
+          "model_bid": 16.01,
+          "measured_window_price": 15.0
+        },
+        {
+          "tranche": "committed",
+          "share": 0.25,
+          "model_bid": 18.45,
+          "measured_window_price": 16.0
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.0833,
+          "model_bid": 18.53,
+          "measured_window_price": 22.74
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.0833,
+          "model_bid": 19.41,
+          "measured_window_price": 22.74
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.0833,
+          "model_bid": 20.29,
+          "measured_window_price": 22.74
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.0833,
+          "model_bid": 21.55,
+          "measured_window_price": 22.76
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.0833,
+          "model_bid": 23.2,
+          "measured_window_price": 22.8
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.0833,
+          "model_bid": 24.84,
+          "measured_window_price": 22.84
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 34.84,
+          "measured_window_price": 22.87
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "W A Parish",
+      "plant_code": 3470,
+      "model_mid_capw": 21.52,
+      "measured_plant_level": 18.9185,
+      "delta_mid": 2.6,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.15,
+          "model_bid": 16.02,
+          "measured_window_price": 13.0
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "model_bid": 19.26,
+          "measured_window_price": 13.36
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.1,
+          "model_bid": 19.34,
+          "measured_window_price": 18.19
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.1,
+          "model_bid": 20.27,
+          "measured_window_price": 21.46
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.1,
+          "model_bid": 21.21,
+          "measured_window_price": 21.48
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.1,
+          "model_bid": 22.54,
+          "measured_window_price": 22.01
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.1,
+          "model_bid": 24.28,
+          "measured_window_price": 22.59
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.1,
+          "model_bid": 26.02,
+          "measured_window_price": 23.26
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 34.84,
+          "measured_window_price": 23.84
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "Martin Lake",
+      "plant_code": 6146,
+      "model_mid_capw": 20.52,
+      "measured_plant_level": 21.7941,
+      "delta_mid": -1.27,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.2,
+          "model_bid": 16.01,
+          "measured_window_price": 20.91
+        },
+        {
+          "tranche": "committed",
+          "share": 0.25,
+          "model_bid": 18.6,
+          "measured_window_price": 20.92
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.0833,
+          "model_bid": 18.68,
+          "measured_window_price": 20.94
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.0833,
+          "model_bid": 19.57,
+          "measured_window_price": 20.94
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.0833,
+          "model_bid": 20.46,
+          "measured_window_price": 20.95
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.0833,
+          "model_bid": 21.74,
+          "measured_window_price": 20.96
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.0833,
+          "model_bid": 23.4,
+          "measured_window_price": 20.96
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.0833,
+          "model_bid": 25.06,
+          "measured_window_price": 20.97
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 34.84,
+          "measured_window_price": 20.97
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "Coleto Creek",
+      "plant_code": 6178,
+      "model_mid_capw": 21.01,
+      "measured_plant_level": 17.9574,
+      "delta_mid": 3.05,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.3,
+          "model_bid": 16.01,
+          "measured_window_price": 17.32
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "model_bid": 18.96,
+          "measured_window_price": 17.33
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.075,
+          "model_bid": 19.04,
+          "measured_window_price": 17.41
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.075,
+          "model_bid": 19.96,
+          "measured_window_price": 17.91
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.075,
+          "model_bid": 20.87,
+          "measured_window_price": 18.3
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.075,
+          "model_bid": 22.18,
+          "measured_window_price": 18.62
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.075,
+          "model_bid": 23.88,
+          "measured_window_price": 19.04
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.075,
+          "model_bid": 25.58,
+          "measured_window_price": 19.53
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 34.84,
+          "measured_window_price": 19.69
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "Fayette",
+      "plant_code": 6179,
+      "model_mid_capw": 21.33,
+      "measured_plant_level": 50.9409,
+      "delta_mid": -29.61,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.3,
+          "model_bid": 15.61,
+          "measured_window_price": 100.74
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "model_bid": 19.25,
+          "measured_window_price": 105.41
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.075,
+          "model_bid": 19.32,
+          "measured_window_price": 109.32
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.075,
+          "model_bid": 20.26,
+          "measured_window_price": 111.38
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.075,
+          "model_bid": 21.19,
+          "measured_window_price": 113.43
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.075,
+          "model_bid": 22.53,
+          "measured_window_price": 114.93
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.075,
+          "model_bid": 24.26,
+          "measured_window_price": 149.32
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.075,
+          "model_bid": 26.0,
+          "measured_window_price": 150.1
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 34.84,
+          "measured_window_price": 150.1
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "Oak Grove",
+      "plant_code": 6180,
+      "model_mid_capw": 15.68,
+      "measured_plant_level": 9.0707,
+      "delta_mid": 6.61,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.45,
+          "model_bid": 13.14,
+          "measured_window_price": 9.32
+        },
+        {
+          "tranche": "committed",
+          "share": 0.1,
+          "model_bid": 13.34,
+          "measured_window_price": 9.36
+        },
+        {
+          "tranche": "econhi",
+          "share": 0.1776,
+          "model_bid": 15.69,
+          "measured_window_price": 9.46
+        },
+        {
+          "tranche": "econlo",
+          "share": 0.2224,
+          "model_bid": 16.72,
+          "measured_window_price": 9.6
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 34.84,
+          "measured_window_price": 9.64
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "San Miguel",
+      "plant_code": 6183,
+      "model_mid_capw": 35.76,
+      "measured_plant_level": 42.9943,
+      "delta_mid": -7.23,
+      "tranche_grain": [
+        {
+          "tranche": "committed",
+          "share": 0.1,
+          "model_bid": 29.56,
+          "measured_window_price": -249.0
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 34.84,
+          "measured_window_price": -249.0
+        },
+        {
+          "tranche": "mustrun",
+          "share": 0.55,
+          "model_bid": 35.41,
+          "measured_window_price": -172.32
+        },
+        {
+          "tranche": "econhi",
+          "share": 0.1332,
+          "model_bid": 36.2,
+          "measured_window_price": 43.0
+        },
+        {
+          "tranche": "econlo",
+          "share": 0.1668,
+          "model_bid": 39.13,
+          "measured_window_price": 43.0
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "Major Oak",
+      "plant_code": 7030,
+      "model_mid_capw": 16.46,
+      "measured_plant_level": 14.7348,
+      "delta_mid": 1.73,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.45,
+          "model_bid": 12.95,
+          "measured_window_price": 14.73
+        },
+        {
+          "tranche": "committed",
+          "share": 0.1,
+          "model_bid": 13.97,
+          "measured_window_price": 14.73
+        },
+        {
+          "tranche": "econhi",
+          "share": 0.1776,
+          "model_bid": 16.47,
+          "measured_window_price": 14.74
+        },
+        {
+          "tranche": "econlo",
+          "share": 0.2224,
+          "model_bid": 17.58,
+          "measured_window_price": 14.74
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 34.84,
+          "measured_window_price": 14.74
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "JK Spruce",
+      "plant_code": 7097,
+      "model_mid_capw": 22.3,
+      "measured_plant_level": 17.7446,
+      "delta_mid": 4.55,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.12,
+          "model_bid": 16.46,
+          "measured_window_price": 15.72
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "model_bid": 19.91,
+          "measured_window_price": 15.72
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.105,
+          "model_bid": 19.99,
+          "measured_window_price": 16.16
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.105,
+          "model_bid": 20.96,
+          "measured_window_price": 16.82
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.105,
+          "model_bid": 21.94,
+          "measured_window_price": 17.92
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.105,
+          "model_bid": 23.33,
+          "measured_window_price": 18.41
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.105,
+          "model_bid": 25.15,
+          "measured_window_price": 19.55
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.105,
+          "model_bid": 26.96,
+          "measured_window_price": 19.82
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 34.84,
+          "measured_window_price": 19.82
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "plant": "Sandy Creek",
+      "plant_code": 56611,
+      "model_mid_capw": 19.66,
+      "measured_plant_level": 35.2813,
+      "delta_mid": -15.62,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.4,
+          "model_bid": 16.0,
+          "measured_window_price": 29.42
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "model_bid": 17.92,
+          "measured_window_price": 31.46
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.0583,
+          "model_bid": 17.99,
+          "measured_window_price": 32.92
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.0583,
+          "model_bid": 18.84,
+          "measured_window_price": 32.92
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.0583,
+          "model_bid": 19.69,
+          "measured_window_price": 32.92
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.0583,
+          "model_bid": 20.9,
+          "measured_window_price": 34.6
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.0583,
+          "model_bid": 22.48,
+          "measured_window_price": 34.82
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.0583,
+          "model_bid": 24.06,
+          "measured_window_price": 34.82
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 34.84,
+          "measured_window_price": 34.82
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "Limestone",
+      "plant_code": 298,
+      "model_mid_capw": 23.41,
+      "measured_plant_level": 18.5129,
+      "delta_mid": 4.89,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.2,
+          "model_bid": 14.61,
+          "measured_window_price": 15.0
+        },
+        {
+          "tranche": "committed",
+          "share": 0.25,
+          "model_bid": 21.14,
+          "measured_window_price": 16.0
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.0833,
+          "model_bid": 21.23,
+          "measured_window_price": 22.74
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.0833,
+          "model_bid": 22.28,
+          "measured_window_price": 22.74
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.0833,
+          "model_bid": 23.33,
+          "measured_window_price": 22.74
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.0833,
+          "model_bid": 24.84,
+          "measured_window_price": 22.76
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.0833,
+          "model_bid": 26.8,
+          "measured_window_price": 22.8
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.0833,
+          "model_bid": 28.75,
+          "measured_window_price": 22.84
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 45.43,
+          "measured_window_price": 22.87
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "W A Parish",
+      "plant_code": 3470,
+      "model_mid_capw": 24.8,
+      "measured_plant_level": 18.9185,
+      "delta_mid": 5.88,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.15,
+          "model_bid": 14.54,
+          "measured_window_price": 13.0
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "model_bid": 22.1,
+          "measured_window_price": 13.36
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.1,
+          "model_bid": 22.2,
+          "measured_window_price": 18.19
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.1,
+          "model_bid": 23.31,
+          "measured_window_price": 21.46
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.1,
+          "model_bid": 24.43,
+          "measured_window_price": 21.48
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.1,
+          "model_bid": 26.02,
+          "measured_window_price": 22.01
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.1,
+          "model_bid": 28.09,
+          "measured_window_price": 22.59
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.1,
+          "model_bid": 30.16,
+          "measured_window_price": 23.26
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 45.43,
+          "measured_window_price": 23.84
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "Martin Lake",
+      "plant_code": 6146,
+      "model_mid_capw": 23.61,
+      "measured_plant_level": 21.7941,
+      "delta_mid": 1.82,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.2,
+          "model_bid": 14.6,
+          "measured_window_price": 20.91
+        },
+        {
+          "tranche": "committed",
+          "share": 0.25,
+          "model_bid": 21.32,
+          "measured_window_price": 20.92
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.0833,
+          "model_bid": 21.41,
+          "measured_window_price": 20.94
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.0833,
+          "model_bid": 22.47,
+          "measured_window_price": 20.94
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.0833,
+          "model_bid": 23.54,
+          "measured_window_price": 20.95
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.0833,
+          "model_bid": 25.06,
+          "measured_window_price": 20.96
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.0833,
+          "model_bid": 27.04,
+          "measured_window_price": 20.96
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.0833,
+          "model_bid": 29.02,
+          "measured_window_price": 20.97
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 45.43,
+          "measured_window_price": 20.97
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "Coleto Creek",
+      "plant_code": 6178,
+      "model_mid_capw": 25.17,
+      "measured_plant_level": 17.9574,
+      "delta_mid": 7.21,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.3,
+          "model_bid": 14.6,
+          "measured_window_price": 17.32
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "model_bid": 22.61,
+          "measured_window_price": 17.33
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.075,
+          "model_bid": 22.7,
+          "measured_window_price": 17.41
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.075,
+          "model_bid": 23.85,
+          "measured_window_price": 17.91
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.075,
+          "model_bid": 24.99,
+          "measured_window_price": 18.3
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.075,
+          "model_bid": 26.63,
+          "measured_window_price": 18.62
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.075,
+          "model_bid": 28.76,
+          "measured_window_price": 19.04
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.075,
+          "model_bid": 30.89,
+          "measured_window_price": 19.53
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 45.43,
+          "measured_window_price": 19.69
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "Fayette",
+      "plant_code": 6179,
+      "model_mid_capw": 25.42,
+      "measured_plant_level": 50.9409,
+      "delta_mid": -25.52,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.3,
+          "model_bid": 14.05,
+          "measured_window_price": 100.74
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "model_bid": 22.83,
+          "measured_window_price": 105.41
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.075,
+          "model_bid": 22.93,
+          "measured_window_price": 109.32
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.075,
+          "model_bid": 24.09,
+          "measured_window_price": 111.38
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.075,
+          "model_bid": 25.25,
+          "measured_window_price": 113.43
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.075,
+          "model_bid": 26.91,
+          "measured_window_price": 114.93
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.075,
+          "model_bid": 29.06,
+          "measured_window_price": 149.32
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.075,
+          "model_bid": 31.22,
+          "measured_window_price": 150.1
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 45.43,
+          "measured_window_price": 150.1
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "Oak Grove",
+      "plant_code": 6180,
+      "model_mid_capw": 17.78,
+      "measured_plant_level": 9.0707,
+      "delta_mid": 8.71,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.45,
+          "model_bid": 13.14,
+          "measured_window_price": 9.32
+        },
+        {
+          "tranche": "committed",
+          "share": 0.1,
+          "model_bid": 15.01,
+          "measured_window_price": 9.36
+        },
+        {
+          "tranche": "econhi",
+          "share": 0.1776,
+          "model_bid": 17.79,
+          "measured_window_price": 9.46
+        },
+        {
+          "tranche": "econlo",
+          "share": 0.2224,
+          "model_bid": 19.02,
+          "measured_window_price": 9.6
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 45.43,
+          "measured_window_price": 9.64
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "San Miguel",
+      "plant_code": 6183,
+      "model_mid_capw": 41.04,
+      "measured_plant_level": 42.9943,
+      "delta_mid": -1.95,
+      "tranche_grain": [
+        {
+          "tranche": "committed",
+          "share": 0.1,
+          "model_bid": 33.79,
+          "measured_window_price": -249.0
+        },
+        {
+          "tranche": "mustrun",
+          "share": 0.55,
+          "model_bid": 35.08,
+          "measured_window_price": -198.86
+        },
+        {
+          "tranche": "econhi",
+          "share": 0.1332,
+          "model_bid": 41.55,
+          "measured_window_price": 43.0
+        },
+        {
+          "tranche": "econlo",
+          "share": 0.1668,
+          "model_bid": 44.98,
+          "measured_window_price": 43.0
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 45.43,
+          "measured_window_price": 43.0
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "Major Oak",
+      "plant_code": 7030,
+      "model_mid_capw": 18.72,
+      "measured_plant_level": 14.7348,
+      "delta_mid": 3.99,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.45,
+          "model_bid": 12.95,
+          "measured_window_price": 14.73
+        },
+        {
+          "tranche": "committed",
+          "share": 0.1,
+          "model_bid": 15.75,
+          "measured_window_price": 14.73
+        },
+        {
+          "tranche": "econhi",
+          "share": 0.1776,
+          "model_bid": 18.73,
+          "measured_window_price": 14.74
+        },
+        {
+          "tranche": "econlo",
+          "share": 0.2224,
+          "model_bid": 20.05,
+          "measured_window_price": 14.74
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 45.43,
+          "measured_window_price": 14.74
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "JK Spruce",
+      "plant_code": 7097,
+      "model_mid_capw": 26.04,
+      "measured_plant_level": 17.7446,
+      "delta_mid": 8.3,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.12,
+          "model_bid": 15.2,
+          "measured_window_price": 15.72
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "model_bid": 23.15,
+          "measured_window_price": 15.72
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.105,
+          "model_bid": 23.25,
+          "measured_window_price": 16.16
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.105,
+          "model_bid": 24.43,
+          "measured_window_price": 16.82
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.105,
+          "model_bid": 25.61,
+          "measured_window_price": 17.92
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.105,
+          "model_bid": 27.3,
+          "measured_window_price": 18.41
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.105,
+          "model_bid": 29.5,
+          "measured_window_price": 19.55
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.105,
+          "model_bid": 31.69,
+          "measured_window_price": 19.82
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 45.43,
+          "measured_window_price": 19.82
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "plant": "Sandy Creek",
+      "plant_code": 56611,
+      "model_mid_capw": 23.48,
+      "measured_plant_level": 35.2813,
+      "delta_mid": -11.8,
+      "tranche_grain": [
+        {
+          "tranche": "mustrun",
+          "share": 0.4,
+          "model_bid": 14.7,
+          "measured_window_price": 29.42
+        },
+        {
+          "tranche": "committed",
+          "share": 0.2,
+          "model_bid": 21.3,
+          "measured_window_price": 31.46
+        },
+        {
+          "tranche": "econc00",
+          "share": 0.0583,
+          "model_bid": 21.39,
+          "measured_window_price": 32.92
+        },
+        {
+          "tranche": "econc01",
+          "share": 0.0583,
+          "model_bid": 22.45,
+          "measured_window_price": 32.92
+        },
+        {
+          "tranche": "econc02",
+          "share": 0.0583,
+          "model_bid": 23.51,
+          "measured_window_price": 32.92
+        },
+        {
+          "tranche": "econc03",
+          "share": 0.0583,
+          "model_bid": 25.03,
+          "measured_window_price": 34.6
+        },
+        {
+          "tranche": "econc04",
+          "share": 0.0583,
+          "model_bid": 27.01,
+          "measured_window_price": 34.82
+        },
+        {
+          "tranche": "econc05",
+          "share": 0.0583,
+          "model_bid": 28.98,
+          "measured_window_price": 34.82
+        },
+        {
+          "tranche": "peak",
+          "share": 0.05,
+          "model_bid": 45.43,
+          "measured_window_price": 34.82
+        }
+      ]
+    }
+  ]
+}
