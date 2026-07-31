@@ -115,6 +115,7 @@ from market_sim.pipeline.flags import (  # noqa: E402
 from market_sim.pipeline.backcast_config import backcast_config  # noqa: E402
 from market_sim.pipeline.timing import log_year_phase_timing  # noqa: E402
 from market_sim.results.calibration import check_cf_band_occupancy  # noqa: E402
+from scripts.lib import holdout_policy  # noqa: E402
 from scripts.lib.bundle_io import (  # noqa: E402
     bundle_input_path,
     write_derived_solve_inputs,
@@ -7340,31 +7341,59 @@ def enforce_holdout_year_gate(
                 f"See {HOLDOUT_FREEZE_FILE} and CLAUDE.md rule 22."
             )
     marker_path = repo / HOLDOUT_MARKER_FILE
-    complete = {}
+    marker_doc = {}
     if marker_path.exists():
-        complete = json.loads(marker_path.read_text()).get("complete", {})
-    marked = iso in complete
-    if holdout_authorized and marked:
-        logger.warning(
-            "%s: solving designated holdout year(s) %s under "
-            "--holdout-authorized (calibration-complete marker present) — "
-            "the one-shot frozen-config holdout score (CLAUDE.md rule 22).",
-            iso,
-            breach,
-        )
+        marker_doc = json.loads(marker_path.read_text())
+    # Tier-aware since 2026-07-31: each breach year needs the marker for ITS
+    # tier — 'complete' for the iterable validation ladder, 'final' for the
+    # touch-once locked test. A --year spanning both needs both, and the
+    # strictest unmet tier is what the error names.
+    by_tier = holdout_policy.split_breach_by_tier(breach)
+    unauthorized = {
+        tier: yrs
+        for tier, yrs in by_tier.items()
+        if not holdout_policy.authorized(marker_doc, iso, tier)
+    }
+    if holdout_authorized and not unauthorized:
+        for tier, yrs in sorted(by_tier.items()):
+            # The two tiers carry DIFFERENT spend semantics, so say which one
+            # is being spent: validation is iterable model-selection evidence,
+            # the locked test is touch-once and unrepeatable.
+            spend = (
+                "the TOUCH-ONCE frozen-config locked-test score — it may be "
+                "scored exactly once and no calibration change may respond to it"
+                if tier == holdout_policy.TIER_LOCKED
+                else "an ITERABLE validation-tier score — model-SELECTION "
+                "evidence, never quotable as a certified out-of-sample number"
+            )
+            logger.warning(
+                "%s: solving designated %s-tier holdout year(s) %s under "
+                "--holdout-authorized ('%s' marker present) — %s "
+                "(CLAUDE.md rule 22).",
+                iso,
+                tier,
+                yrs,
+                holdout_policy.TIER_MARKER_BLOCK[tier],
+                spend,
+            )
         return
-    reason = (
-        "--holdout-authorized not passed"
-        if not holdout_authorized
-        else f"no calibration-complete marker for {iso} in {HOLDOUT_MARKER_FILE}"
-    )
+    if not holdout_authorized:
+        reason = "--holdout-authorized not passed"
+    else:
+        reason = "; ".join(
+            f"{yrs} are {tier}-tier and {iso} is not in the "
+            f"'{holdout_policy.TIER_MARKER_BLOCK[tier]}' block"
+            for tier, yrs in sorted(unauthorized.items())
+        )
     raise SystemExit(
         f"error: --year {breach} falls outside the calibration window "
         f"{sorted(HOLDOUT_CALIBRATION_YEARS)} for {iso} — {reason}. "
-        "2022 and H1-2026 are under full quarantine (CLAUDE.md rule 22): no "
-        "solves until the ISO's calibration-complete marker exists, and even "
-        "then only the one-shot frozen-config score, authorized with both "
-        "--holdout-authorized and the marker. See "
+        "Out-of-training years are quarantined per tier (CLAUDE.md rule 22): "
+        "the validation ladder needs the ISO's 'complete' marker, the "
+        "touch-once locked test (2019, H1-2026) needs its 'final' marker, and "
+        "either way only the one-shot frozen-config score, authorized with "
+        f"both --holdout-authorized and the tier's marker in "
+        f"{HOLDOUT_MARKER_FILE}. See "
         "docs/handoffs/holdout-policy-memo-2026-07.md."
     )
 

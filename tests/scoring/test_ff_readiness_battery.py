@@ -195,10 +195,16 @@ def test_guard_boundary_six_years_refused():
 # Registration & §2.1b gate scorecard (no LP)
 # --------------------------------------------------------------------------- #
 def test_marker_state_reflects_committed_markers():
-    # NEISO complete, NYISO withdrawn, the four frontier ISOs none — read from
-    # the committed calibration-complete.json (no re-derivation).
+    # NEISO + NYISO complete, the four frontier ISOs none — read from the
+    # committed calibration-complete.json (no re-derivation).
+    #
+    # NYISO was `withdrawn` (2026-07-19 phantom-outage re-audit) until nyiso-104b
+    # RE-DECLARED it 2026-07-31 on the post-correction keeper, alongside the
+    # CALIBRATED-WITH-CAVEATS determination. Both markers are VALIDATION-tier
+    # only: the two-tier split means `complete` no longer authorizes the
+    # touch-once locked test, which now needs the separate `final` block.
     assert B._marker_state("NEISO")["marker"] == "complete"
-    assert B._marker_state("NYISO")["marker"] == "withdrawn"
+    assert B._marker_state("NYISO")["marker"] == "complete"
     for iso in ("ERCOT", "CAISO", "PJM", "MISO"):
         assert B._marker_state(iso)["marker"] == "none", iso
 
@@ -223,6 +229,13 @@ def test_build_registration_scorecard_no_iso_gate_open():
         and s["gate_c_readiness"]["config_green"]
         for s in sc.values()
     )
-    # Only NEISO holds the backcast marker.
+    # NEISO and NYISO hold the backcast marker (NYISO re-declared 2026-07-31,
+    # nyiso-104b). Gate A is therefore GREEN for both — and the gate still does
+    # not open for either, because gate B (FF-2D T1-F) reads HOLD for every ISO.
+    # That is the invariant worth pinning: a backcast marker alone never opens
+    # the forecast gate.
     assert sc["NEISO"]["gate_a_backcast"]["marker"] == "complete"
-    assert sc["NYISO"]["gate_a_backcast"]["marker"] == "withdrawn"
+    assert sc["NYISO"]["gate_a_backcast"]["marker"] == "complete"
+    for iso in ("NEISO", "NYISO"):
+        assert sc[iso]["gate_b_t1f"]["determination"] == "HOLD", iso
+        assert not sc[iso]["gate_open"], iso

@@ -13,6 +13,18 @@ ledger entry of its own — so retiring it also closes a rule-24 ``[R-REGISTRY]`
 gap. ``n_entries`` goes 23 -> 24 (the new entry documents the removal) while
 ``n_residual`` stays 6.
 
+**C3c EXCEPTIONS LEDGER (added 2026-07-31, owner decision).** The same
+attestation now also carries the ``exceptions`` block that reclassifies C3c
+(``price_tail``) from an undocumented FAIL to a documented caveat, which is what
+moves NYISO's determination NOT-YET -> CALIBRATED-WITH-CAVEATS. The entries are
+NOT a claim that the benchmark is wrong: the measured RT tail is real and the
+model under-produces it. They record that the tail is a **structural
+representation-frontier limitation with the lever queue exhausted**, in the
+shape MISO's own ``price_tail`` entry established — the honest classification,
+not a borrowed measured-input excuse. Rule 1 ``[R-STRUCT]`` is why this is a
+ledger entry and not a mechanism: the remaining ways to lift the tail are
+fitted, and a fitted tail is worse than a missing one.
+
 Usage:
     python scripts/gen_nyiso100_attestation.py
 """
@@ -267,6 +279,70 @@ OPEN_ITEMS = [
 ]
 
 
+# C3c exceptions ledger (owner decision 2026-07-31). One entry per scored year —
+# scripts/calibration_verdict.py::_ledger_match keys on (criterion, year), and
+# the criterion is only lifted out of FAIL when EVERY failing year is covered.
+# Counted as ONE ledgered caveat against MAX_LEDGERED_CAVEATS = 3.
+_C3C_FRONTIER = (
+    "NYISO C3c is a DIAGNOSED, UNCLOSED STRUCTURAL LIMITATION of the five-zone "
+    "representation with an EXHAUSTED lever queue — not an untried gate. Every "
+    "candidate is adjudicated on the record (docs/mechanism-testing-matrix.md "
+    "§5.5): the J/K-commitment and reserve-tier routes closed in full "
+    "(nyiso-83/84, SRMC roof ~$258 mainland); DA virtual depth and the TSA "
+    "transfer derate REFUSED ex-ante on identification (nyiso-94/95 — NYISO "
+    "publishes no submitted-curve equivalent, and P-59 zonalBidLoad carries no "
+    "price axis, so net(λ) would need an assumed price distribution = a fitted "
+    "scalar, rule 21); unit_outage_short_windows INERT ex-ante (nyiso-93, "
+    "coal-only detector and NYISO has no coal); the CT start-frequency lane "
+    "closed and tranche_startup_amortization tested (nyiso-96); the LAST "
+    "surviving candidate — SCUC load-pocket security commitment + BPCG "
+    "(NYC/LI sub-zonal) — closed ex-ante on CONTENT, not merely access "
+    "(nyiso-97: the as-enforced AORR is MyNYISO-walled AND the public "
+    "2008-vintage Appendix B carries no derivable NYC parameter, every Con Ed "
+    "in-city commitment row being condition-triggered on TO contingency "
+    "analysis with parameters in unpublished SO procedures); the import hourly "
+    "shape REFUSED as an attributed C3c SYMPTOM with the seam exonerated "
+    "(nyiso-99); the G-J locality limit REFUSED ex-ante for want of a "
+    "representable boundary (nyiso-101 — Capital_Hudson straddles the "
+    "locality, and two of its four real boundary legs are not LP quantities). "
+    "The one nominally-open item, nyiso_iroquois_winter_spread (item 4), is "
+    "blocked on a JOINT summer scarcity lever and its construction conserves "
+    "the annual spread, so re-arming alone just moves the miss to summer — and "
+    "the summer lever queue is precisely what is exhausted: nyiso-92 dated the "
+    "actual RT tail as SUMMER (2025 Jun 23-25 alone = 18 of 42 h; the Jan-2024 "
+    "storm produced ZERO >$300 hours), capping the winter-fuel lane at ~4-5 "
+    "h/yr. RULE 1 [R-STRUCT] IS WHY THIS IS A LEDGER ENTRY AND NOT A "
+    "MECHANISM: every remaining way to lift the tail is fitted to the tail "
+    "residual, and a tail reached through a mechanism that isn't real is worse "
+    "than a missing tail. RE-OPEN CONDITION (satisfiable, unlike the gate "
+    "itself): a Capital_Hudson -> Zone-F/Zone-G TOPOLOGY SPLIT, which makes "
+    "the sub-zonal load pocket representable — it needs its own owner charter "
+    "(the ERCOT West/Panhandle class, CLOSED) and is NOT a mechanism-flag "
+    "lever. Evidence: docs/FINDING-nyiso97-load-pocket-identification-"
+    "2026-07-29.md §5, docs/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md."
+)
+EXCEPTIONS = [
+    {
+        "criterion": "price_tail",
+        "year": year,
+        "metric": "hours RT-expressible LMP > $300/MWh (C3c scarcity tail, actual RT hourly gate)",
+        "magnitude": magnitude,
+        "classification": (
+            "MODEL MISS (structural — five-zone representation cannot form the "
+            "sub-zonal NYC/LI load-pocket scarcity that sets NYISO's real RT "
+            "tail; representation-frontier caveat, every admissible mechanism "
+            "tried on record per rule 1 [R-STRUCT])"
+        ),
+        "reason": _C3C_FRONTIER,
+    }
+    for year, magnitude in (
+        (2023, "model 3h vs RT actual 10h (0.30x, >$300); DA actual 1h"),
+        (2024, "model 0h vs RT actual 12h (0.00x, >$300); DA actual 0h"),
+        (2025, "model 7h vs RT actual 42h (0.17x, >$300); DA actual 12h"),
+    )
+]
+
+
 def main() -> int:
     """Build nyiso-100's attestation from the nyiso-99 keeper's."""
     att = json.loads(PRIOR_KEEPER.read_text())
@@ -275,6 +351,7 @@ def main() -> int:
     gov["residuals_note"] = RESIDUALS_NOTE
     att["governance"] = gov
     att["_open_items"] = OPEN_ITEMS
+    att["exceptions"] = EXCEPTIONS
     fp = att["free_parameters"]
     names = {e["name"] for e in fp["entries"]}
     if NEW_ENTRY["name"] not in names:
