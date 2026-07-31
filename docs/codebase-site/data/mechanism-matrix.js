@@ -78,18 +78,6 @@
  *   C3c is open; the 4,350 MW NYISO_simultaneous_import estimate is filed as a
  *   separate rule-14 reconcile charter.
  * NYISO column re-stamped 2026-07-29 on the OWNER promotion of nyiso-99.
- * MISO column re-stamped 2026-07-31 on the OWNER promotion of miso-109b
- *   (2026-07-28-miso-101b-tempgrain -> 2026-07-31-miso-109b-hy-level).
- *   hydro_level_923_hy MISO O -> K: the EIA-930 NG:WAT hydro LEVEL pin is refused
- *   for MISO (PS folded into WAT, no NG:PS column) and the level stays on EIA-923
- *   HY, the same population as the LP units. Promoted on rule 1 structural fidelity
- *   with the gates UNCHANGED, not traded -- all nine criteria, the grade summary
- *   (6 target-grade / 2 ledgered / 1 fail) and the NOT-YET determination are
- *   IDENTICAL to the outgoing keeper's, blocked by the same C7 COAL_PRB shape
- *   issue. It REMOVES a mechanism (no level target), so the DOF ledger improves
- *   and hydro_budget_nameplate_aware is then provably INERT at MISO. Forecast half
- *   closed by miso-110 (mode B -> BF), no run. MISO's OPEN GATE is unchanged: C7
- *   COAL_PRB diurnal shape, which is data-blocked on coal contract tonnage.
  *   KEEPER -> 2026-07-29-nyiso-99-demandfix (bundle nyiso99_demandfix); gates
  *   -> C3c alone, UNCHANGED, and every other criterion PASS (C1 14/14 free
  *   10/10, C6 PASS on a UNION'd 23-entry DOF ledger with n_residual still 6).
@@ -506,16 +494,29 @@
  * honestly in the promotion note). Open gates unchanged {C3a,C3b,C3c,C7};
  * C6 attested and PASSES. gas_hh_monthly_shape still carries NO matrix row
  * (26c gap, surfaced to the owner at ERCOT-145b precommit §6).
+ *
+ * MISO column re-stamped 2026-07-31 on the OWNER promotion of miso-109b
+ *   (2026-07-28-miso-101b-tempgrain -> 2026-07-31-miso-109b-hy-level).
+ *   hydro_level_923_hy MISO O -> K: the EIA-930 NG:WAT hydro LEVEL pin is refused
+ *   for MISO (PS folded into WAT, no NG:PS column) and the level stays on EIA-923
+ *   HY, the same population as the LP units. Promoted on rule 1 structural fidelity
+ *   with the gates UNCHANGED, not traded -- all nine criteria, the grade summary
+ *   (6 target-grade / 2 ledgered / 1 fail) and the NOT-YET determination are
+ *   IDENTICAL to the outgoing keeper's, blocked by the same C7 COAL_PRB shape
+ *   issue. It REMOVES a mechanism (no level target), so the DOF ledger improves
+ *   and hydro_budget_nameplate_aware is then provably INERT at MISO. Forecast half
+ *   closed by miso-110 (mode B -> BF), no run. MISO's OPEN GATE is unchanged: C7
+ *   COAL_PRB diurnal shape, which is data-blocked on coal contract tonnage.
  */
 window.MECH_MATRIX = {
   version: 1,
-  updated: "2026-07-30",
+  updated: "2026-07-31",
   isos: ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"],
   keepers: {
     ERCOT: "2026-07-29-ercot137-coal-margin-measured",
     CAISO: "2026-07-29-caiso139-dump-guard-offer",
     PJM: "2026-07-30-pjm-140-rampenv",
-    MISO: "2026-07-28-miso-101b-tempgrain",
+    MISO: "2026-07-31-miso-109b-hy-level",
     NYISO: "2026-07-29-nyiso-98-nucavail",
     NEISO: "2026-07-23-neiso-61-netrev-margin"
   },
@@ -523,7 +524,7 @@ window.MECH_MATRIX = {
     ERCOT: "C3a/C3b 2023, C3c all years, C7 COAL_LIGNITE 2023 (v2.8)",
     CAISO: "NONE failing — CALIBRATED-WITH-CAVEATS since caiso-145 (owner disposition 2026-07-30, scorer-only). Both former blockers are now ACCEPTED MEASURED-INPUT LIMITATIONS, 2 of 3 non-protective ledger slots: C3a 2025 (+10.9 %) on the caiso-141 A2 wall (no public hourly PS↔conventional-hydro split; Helms+Eastwood = 60.3 % of the fleet uninstrumented), and C3c 2023-24 (0 h vs RT 47/35) on caiso-131 A4 with the caiso-144 evidence (in-LP co-opt provably inert with 1.6-10.5 GW slack in reality's own tail hours; LOLP overlay overlaps that tail ≤1/90 h; the tail is winter-morning fuel/cold-snap already priced to the armed daily-spot SRMC ceiling). Reopening either needs an owner-funded intake — SoCalGas OFO record (C3c) or non-public hourly PS data (C3a); neither is closable by an adder (rules 1/13)",
     PJM: "NONE — CALIBRATED since pjm-137, every criterion passing (C1 16/16 free 12/12). Thinnest margin: C3c passes by ~1 h (2024) / ~2.5 h (2025) against a 0.5x floor, closed at pjm-136 and unchanged since. Remaining defect is the Dominion CT leg, of which pjm-137 closed 52-55 % (intra-zonal congestion) and pjm-138 attributes a further 25-37 % to the reserve opportunity cost the no-MIP LP cannot price — 8/23/22 % is reachable",
-    MISO: "C3a/C3b/C3c ledger-saturated (3/3), C7 COAL_PRB all years",
+    MISO: "C7 COAL_PRB diurnal shape, all years — the SOLE failing criterion and the determination blocker (NOT-YET), data-blocked on ex-ante coal contract tonnage (miso-103 refuted the receipts-derived construction; miso-104 opened the standing data ask). Ledgered caveats 2/3, NOT 3/3: C3a mean LMP + C3c price tail — verified live from scripts/calibration_verdict.py on the keeper's own committed bundle at the 2026-07-31 miso-109b promotion. The former C3b-2025 entry was DELETED by miso-98 under rule 26 [R-DELETE] and this cell had carried the stale 3/3 saturation claim since; a slot is free, but rule 24 still requires the next load-bearing miss to be BUILT, not ledgered",
     NYISO: "C3c sole blocker, all years (C1 closed 2026-07-29 by owner promotion of nyiso-96, CT_PEAKER trade accepted)",
     NEISO: "C3c ledgered caveat (frontier declared; only calibration-complete ISO)"
   },
