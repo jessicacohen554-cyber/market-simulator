@@ -3429,3 +3429,79 @@ deletion stays the owner's call; (2) `ercot_offer_hrmult_ep_rebasis`/`_bands`
 still carry no matrix row (26c gap, eight lanes old); (3) Martin Lake
 lignite class-composition (ERCOT-143 §7.3) — its measured curve is in the
 registry either way.
+
+## 2026-07-31 — ERCOT-145 Phase 1 (no LP built, no year solved): the `tranche_startup_amortization` A/B is REFUSED EX ANTE — the tranche rows are already occupied by fitted CT band multipliers 3–60× the measured $2.9–4.0/MWh start component, and the quantified sub-$200 high-load target is a DISPERSION/FREQUENCY object (signed both ways), not a level object — matrix §5.1 item 5 CLOSED, cell stamped `G`, no solve spent, keeper UNCHANGED (ercot144-coal-perplant-offer)
+
+**Task (matrix §5.1 item 5, the chartered mid-merit/peak price-formation
+A/B).** Test the PJM/MISO/NEISO(/NYISO-by-owner) fast-start tranche startup
+amortization (`tranche_startup_amortization` + measured-run v3) on ERCOT,
+targeting the non-tail component of C3a-2024/25 and C3b. Phase 1 pre-committed
+as no-LP with an explicit no-solve-closure exit (ERCOT-143 pattern). Probe
+`scripts/probes/ercot145_tranche_startup_phase1.py`; diagnosis
+`docs/DIAGNOSIS-ercot145-tranche-startup-2026-07-31.md`. Preconditions
+verified: default `cache_key` byte-stable (`603c2498bf71d21d`),
+`audit_keepers.py` PASS 0/0.
+
+**Leg 1 — the current owner (rule 19).** On the `ercot144_perplant_arm`
+keeper's own config, startup price formation is owned by: the `_committed`
+tranches of every CAMPD bin (NREL start cost over P0 monthly run lengths at
+the P0→P1 seam); ST_GAS via the armed `gas_st_startup_cost` +
+`gas_st_startup_spread` (May–Sep season-spread) — row-disjoint from the
+tranche form, so the queue's "vs the season-spread ST form" fork was never
+the real question; and the gas-CC commitment-bridge economic leg (a STATE
+mechanism, not a bid). The tranche form's target rows — CT_PEAKER/CT_CHP
+econ+peak, CC peak — carry NO explicit startup term: their start recovery is
+implicitly priced by the FITTED `offer_curve_by_group` multipliers
+(residual-identified DOF, the gas-side ledger row).
+
+**Leg 3 — the incumbent dwarfs the candidate.** The frozen rule-23 derive
+was run on ERCOT's own CAMPD units (2023–2025 only, rule 22):
+`data/raw/_processed-legacy/campd_ct_run_lengths_ERCOT.csv` (37 plants,
+committed as a standing artifact). ERCOT CT plant-median runs are 5–7 h
+(class fallback 6 h; the >100 h rows are industrial cogens), so the v3
+fuel-invariant component is **$20/MW ÷ 5–7 h = $2.9–4.0/MWh**. Against it,
+the keeper's fitted CT_PEAKER margins over their own recorded physical basis
+(cap-wt base HR 10.91): econ_low **+$13.1** (@$2.2 2024 gas) / +$20.3
+(@$3.4 2025), econ_high **+$34.9** / +$53.9, peak **+$292** / +$451 per MWh
+— 3–60× the measured component. Arming as designed = stacking a second
+start-recovery mechanism onto over-covered rows (rule 19 forbids); the
+rule-19 replacement (strip fitted → physical + amortization) LOWERS the CT
+curve $10–50/MWh, the wrong direction for every underpriced hour. In the
+four keeper ISOs the same rows sit at/below physical (markup clips 0 — the
+`backcast_config` phys clips), which is exactly why the mechanism was real
+there and is not here (rule 25 in action, both directions).
+
+**Leg 2 — the target, quantified on the keeper's own sidecars** (hourly
+demand-weighted diagnostic; the official C3a weights zone annual means, so
+headlines differ from the rubric's −36.4/−14.8/−14.3): the sub-$200
+load-weighted gap is **−$0.21 / +$0.72 / −$1.64** per MWh (2023/24/25 —
+2024 is net POSITIVE) against tail contributions of −$20.99/−$3.30/−$1.18.
+Within the top load quintile the sub-$200 residual is **signed both ways**:
+act<$30 hours OVERPRICED (+$7.9/+$7.3/+$5.7) while act∈[$50,$200) hours are
+UNDERPRICED (−$11..−$66) — an under-dispersion / near-tail-frequency
+signature in the attributed RT scarcity-formation family, extending below
+the $200 threshold. CT_PEAKER is partially dispatched in 57–83 % of BOTH
+bands, so a near-uniform $2.9–4.0 adder shifts both signs together: no Δ
+closes the underpriced band without worsening the overpriced one (the
+generous all-CT-marginal bound at Δ=$2.5 buys ~$2 on a −$21..−$31 gap while
+adding +$1.4 to the overpricing). The 2024 "high-load sub-$200
+underpricing" the charter named does not exist below the near-tail band
+(q2/q3 already +$1.00/+$2.30 over). C3b's monthly residual (2024 shoulder
+negative Jan−3.0..May−5.9/Nov−7.9 with summer POSITIVE Jun+2.6/Jul+2.8;
+2025 worst Apr−5.1/May−8.2) is the outage-season/fuel-shape object of queue
+item 4, not the amortization signature.
+
+**Adjudication.** Cell `tranche_startup_amortization` ERCOT **U → G**
+(governance-refused ex ante, rules 19+1, no solve spent); matrix row note +
+header re-check + §5.1 item 5 struck, same session (rule 26b). Reopen
+condition recorded: only after a measured re-identification of the ERCOT CT
+band levels retires the fitted incumbent (item 6 / SCED TPO on the CT
+fleet) — the start component then enters as one term of that
+identification, never a stack. **No ScenarioConfig change, no solve, no
+dashboard registration** (nothing to register — rule 15 governs runs; the
+ERCOT-142/143/miso-105/nyiso-94 no-solve precedent). Keeper, DOF ledger
+(n_residual 6) and all gate verdicts unchanged. Holdouts untouched. The
+chartered successor is **item 4** (five-ISO fuel stack on ERCOT:
+`gas_daily_shape` / `gas_monthly_actuals` / `gas_plant_monthly_fuel_pricing`
+— cheap A/B, zero new DOF, the C3b-2023 winter-volatility candidate, now
+also carrying the 2024/25 shoulder residual measured here).
