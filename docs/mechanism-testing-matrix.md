@@ -424,7 +424,7 @@ rule-13-admissible mechanism available to carry it.
    crosswalk does not exist in-repo), then the under-curtailment gap
    (ERCOT-121).
 
-### 5.2 CAISO — **NO failing criterion** (keeper `2026-07-31-caiso146-ct-heat-rates`, CALIBRATED-WITH-CAVEATS)
+### 5.2 CAISO — **NO failing criterion** (keeper `2026-07-31-caiso147-chp-heat-rates`, CALIBRATED-WITH-CAVEATS)
 
 **BOTH former blockers were DISPOSITIONED BY THE OWNER at caiso-145
 (2026-07-30) and are now ACCEPTED MEASURED-INPUT LIMITATIONS** — ledgered in
@@ -451,7 +451,7 @@ target C5a and the standing structural/offer questions. Items 1, 5 and 6 are
 struck through — 1 and 5 were adjudicated and closed **without spending a solve**
 (caiso-144 and caiso-136), and **6 was spent and PROMOTED at caiso-146**. They
 are kept in place so the numbering stays stable and none is re-proposed.
-**Live queue as of 2026-07-31: items 2, 3, 4, 7, 8.**
+**Live queue as of 2026-07-31: items 2, 3, 4, 8.** (Item 7 was SPENT and PROMOTED at caiso-147.)
 
 **C3a-2025 IS DIAGNOSED-UNCLOSED WITH AN EMPTY IN-MODEL LEVER QUEUE (caiso-142);
 LEDGERED at caiso-145.**
@@ -565,11 +565,30 @@ sign argument to every basis and bound.
    mechanism with a cited D-4 window, never an offer markdown sized to the gap.
    The **CHP** half of this item is untouched and remains live — see item 7.
    (`FINDING-caiso146-measured-ct-heat-rates-2026-07-31.md`.)
-7. **`measured_chp_heat_rates`** — the remaining half of the old item 6.
-   `K` in MISO at miso-99; CAISO `U`. CAISO's `CC_CHP`/`CT_CHP` are pinned
-   classes and caiso-128 §3 measured CHP **over**-corrected +40 % in CAISO by
-   the hand factor this mechanism supersedes. Rule 25: CAISO derives its own
-   artifact.
+7. ~~**`measured_chp_heat_rates`**~~ — **SPENT AND PROMOTED at caiso-147
+   (2026-07-31); cell `U` → `K`, keeper `2026-07-31-caiso147-chp-heat-rates`.**
+   A rule-14 `[R-ACCURATE]` *and* rule-21/24 swap with zero fitted parameters:
+   CAISO is the **first hand-factor ISO** to take this lever, so the delta was
+   not eGRID-credited → measured (as in MISO) but **off-registry hand factor →
+   published measurement**. **A derive defect was found and fixed before any
+   solve:** the basis gate compared eGRID's credited rate against the *shipped*
+   rate, which in a hand-factor ISO **is** credited × 1.8 / × 1.15 — so **59 of
+   65 excluded rows (3,089 of 3,186 MW) were excluded by the hand factor alone**,
+   i.e. the gate was excluding precisely the population the mechanism exists to
+   fix. Fixed ISO-generically at the replacement seam; MISO re-derives identical
+   on every applied value (**this defect is latent in PJM too**). Artifact: 30
+   applied rows / 2,371.8 MW, CC_CHP at **100.0 %** of the class's metered CAMPD
+   energy, CEMS validation **13/13** at median 1.00000. The correction is
+   **two-sided and opposite** — CC_CHP +19.6 % dearer, CT_CHP −14.6 % cheaper.
+   CC_CHP falls **117→108 / 120→108 / 108→102 %** of actual, the energy landing
+   on CC_REGULAR (93→94 / 93→95 / 90→91 %); **no class moves away from actual**.
+   Every criterion verdict unchanged, C7 shape improves markedly on the repriced
+   classes (CT_CHP `profile_r` 0.393 → 0.852 in 2025), and the binding CT_PEAKER
+   gates are unchanged. **Protective framing corrected for all future CHP work:**
+   CC_CHP/CT_CHP are exempt from **both** C7 and C8 by *explicit class list*
+   (host-steam-pinned duty), **not** by the 2 % materiality floor — a CHP class
+   above 2 % of load is still ungated.
+   (`FINDING-caiso147-measured-chp-heat-rates-2026-07-31.md`.)
 8. **`nuclear_unit_availability`** — `K` in ERCOT and NYISO, CAISO `U`. Diablo
    Canyon is the 2,240 MW MSSC that sets CAISO's entire reserve requirement
    (caiso-144 §B).
