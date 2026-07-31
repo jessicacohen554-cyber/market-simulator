@@ -3646,3 +3646,64 @@ MISO/NEISO/CAISO/NYISO only). Open owner rulings carried unchanged
 Lake item. Pre-existing matched, not fixed: the `ercot_wtx_*` dual-channel
 warning, the eGRID-55641/CC-55098 reconcile notices (the fleet loader's own
 recorded behaviour).
+
+## 2026-07-31 — ERCOT-147 Phase 0 (no LP built, no year solved): the measured CT-band re-identification is REFUSED EX ANTE — the SCED TPO corpus has abundant CT rows (157 resources / 12.0 GW in all four extracts) but the CT conduct object is a DAILY-REPRICED curve, not a level: the ERCOT-144 modal-identity licence fails (11/160 resources full-key, 20/160 price-only, vs coal's ×1436 repeats), the daily level carries rel IQR 0.64 raw / 0.32–0.43 HH-normalized, and the 2024→2025 year pair refutes BOTH zero-parameter forms at once (fixed $ predicts ×1.0, fixed HR-multiple predicts ×1.97; measured cap-wtd IQR ×1.26–1.99) — fitted CT bands stay attributed DOF, keeper UNCHANGED (ercot145-gas-daily-shape), successor is a THREE-PART DATA INTAKE
+
+**Task (the ERCOT-145 §4 / ERCOT-146 §4 reopen-condition lane: retire the
+fitted CT_PEAKER `offer_curve_by_group` multipliers — econ 1.27/2.18, peak
+13.15, the +$13/+$35/+$292 margins — onto SCED TPO conduct + the committed
+physical-HR and run-length artifacts, zero swept parameters).** Phase 0
+pre-committed as no-LP corpus sufficiency with the ex-ante-refusal exit
+(ERCOT-143/145/146 pattern). Probe
+`scripts/probes/ercot147_ct_band_phase0.py` (+ committed record
+`results/calibration/ercot147_ct_band_phase0.json`); diagnosis
+`docs/DIAGNOSIS-ercot147-ct-band-reident-2026-07-31.md`. Preconditions
+verified: default `cache_key` byte-stable (`603c2498bf71d21d`),
+`audit_keepers.py` PASS 0/0.
+
+**Leg 1 — coverage PASSES and is recorded honestly.** 157 CT (SCLE90/SCGT90)
+resources / 12.03 GW max-HSL in ALL FOUR extracts; 52–72 % of online rows
+carry curves (78–86 % offline — standing conduct); modal-curve reach cap-wtd
+p50 = 1.00 of max HSL, so the band capacity windows are representable. If a
+stable object existed, this corpus would see it.
+
+**Leg 2 — the object fails every stability test the ERCOT-144 standard sets.**
+Modal identity across the four extracts: 11/160 resources (0.47/12.22 GW)
+full-key, 20/160 (1.13 GW) on the price-tuple-only key (ambient derating
+excluded as the cause); cap-wtd modal share 0.045. Daily-median p50 rel IQR
+0.64 (0.66 online-only); HH-daily normalization leaves 0.32–0.43 with gas
+corr p25 at 0.02. Year pair: extracts' own mean HH ×1.97 vs per-resource
+level ×1.26–1.99 IQR (Laredo ×2.6–3.1, HAYSEN ×1.6–1.9) — a fixed $ level
+and a fixed gas multiple both refuted, in opposite directions across
+resources. Intra-day variance share 0.14: the curve reprices DAILY, so the
+needed identification is a time-shape — categorically unlicensed on 82
+non-random probe days with no 2023 disclosure and h0–h8 in one extract of
+four (per-resource p50 spreads 0.71 relative across the extracts).
+
+**Leg 3 — two compounding in-repo gaps.** (a) 63–67 % of CT capacity's daily
+p50 sits below sheet-HR × HH burn in every extract — sub-cost conduct and
+sub-HH local gas (2024 Waha ≤ $0) are indistinguishable with NO Texas hub
+daily series on disk (the `winter_citygate_daily` gap, now a shared
+prerequisite of this lane's reopen). (b) No CT resource→plant crosswalk:
+6/165 CT sites accepted in `ercot-dam-plant-crosswalk.csv`; a ~150-site hand
+crosswalk is buildable (Morgan Creek's MGSES_CT1–6 confirmed present in the
+corpus) but pointless while leg 2 stands.
+
+**Adjudication.** REFUSED EX ANTE, no solve spent, nothing armed, nothing
+stamped — no mechanism was built, so no matrix cell exists to verdict; the
+§5.1 queue and the ERCOT-145/146 reopen notes are annotated instead. Keeper,
+DOF ledger (n_residual 6 — the fitted CT bands stay the attributed
+`offer_curve_by_group` gas-side row), all gate verdicts unchanged. Holdouts
+untouched (2024–25 probe days only, rule 22). ERCOT-scoped (rule 25).
+**Reopen = three-part data intake, each requiring owner authorization:**
+(1) CT-scoped full-span 60-Day SCED extension 2023–2025 (all days/hours,
+SCLE90/SCGT90); (2) Texas hub daily gas basis (Waha + HSC/Katy — licensing
+check first; pjm-139 W1 day-scale bound applies); (3) the CT resource→plant
+hand crosswalk. Only (1)+(2) can even TEST whether a stable conduct object
+(e.g. margin over local daily fuel) exists; if none does, the honest closure
+is the C6 ledger route. Expectation management stood: CT_PEAKER is
+1.36/1.21/0.92 % of ISO load — the lane's value was DOF retirement, not gate
+movement. Open owner rulings carried unchanged (ERCOT-146 list, with the
+Morgan Creek corpus-presence note added to the Martin Lake item).
+Pre-existing matched, not fixed: none encountered (no LP, no fleet loader
+run).
