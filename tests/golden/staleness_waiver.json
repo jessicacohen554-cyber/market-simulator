@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "waives": "ercot_2026_2040",
+  "seeded_cache_key": "0d6f2710f8dedf56",
+  "reason": "The golden fixture was seeded at git f0f7c67 and the DEFAULT ScenarioConfig identity has moved many times since (FF-1F/FF-2A/FF-2C default flips + several added fields), so a fresh solve of REFERENCE_SCENARIO_KWARGS no longer reproduces the seeded cache key. Recorded by the forecast-readiness audit 2026-07-30 as FR-26 (`the stale golden fixture causes no red anywhere ... and has no staleness expiry`). This waiver is what makes that staleness LOUD and time-bounded instead of invisible.",
+  "authorization_route": "Reseeding is a 15-solve-year invocation and is therefore owner-authorized work: docs/forecast-readiness-audit-2026-07.md §4 Phase 2, decision D-7 (`Golden-fixture reseed authorization ... and weather-year posture for eventual goldens`). No session may reseed on its own initiative (scripts/golden_forecast_bands.py REGEN_POLICY + §2.1b).",
+  "expires": "2026-10-31",
+  "on_expiry": "tests/regression/test_golden_forecast_bands.py::test_golden_fixture_config_identity_is_current FAILS. Resolve it by executing D-7 (reseed with `golden_forecast_bands.py seed --force --reason ... --full-solve-authorized`, delete this file) or by re-issuing the waiver with a new expiry and a recorded owner decision. Do NOT delete the test.",
+  "recorded_by": "FFR-1D (docs/handoffs/ffr-1d-enforcement-wave-2026-07-31.md)"
+}
