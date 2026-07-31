@@ -848,10 +848,15 @@ class TestPumpedStorageFoldedLevelGuard(unittest.TestCase):
 
         return [z.name for z in get_iso_config(iso).zones]
 
-    def test_miso_is_listed_and_neiso_is_not(self):
+    def test_miso_and_pjm_are_listed_and_neiso_is_not(self):
         from market_sim.config.constants import EIA930_PS_FOLDED_INTO_WAT
 
         self.assertIn("MISO", EIA930_PS_FOLDED_INTO_WAT)
+        # PJM listed at pjm-143: the largest fold of the six ISOs (+72.1 % /
+        # +78.5 % vs 923 HY in 2023/2024, a 5,046 MW PS fleet beside a
+        # 3,334 MW conventional nameplate the pinned series breaches
+        # 1,437-1,572 h/yr).
+        self.assertIn("PJM", EIA930_PS_FOLDED_INTO_WAT)
         # NEISO files NG: PS from Nov 2024 (a time split, not a standing fold)
         # and NYISO shows no fold signature at all — neither is switched here.
         self.assertNotIn("NEISO", EIA930_PS_FOLDED_INTO_WAT)
@@ -880,27 +885,56 @@ class TestPumpedStorageFoldedLevelGuard(unittest.TestCase):
     def test_nameplate_aware_is_inert_for_a_listed_iso(self):
         # With no level target there is nothing to re-allocate, so
         # hydro_budget_nameplate_aware cannot move a listed ISO's budget.
+        # PJM matters here: its keeper ARMS the mechanism (pjm-133), and under
+        # the pinned level it moved 1,703/1,147/2,085 GWh of plant-months a
+        # year — all of it the PS contamination being shuffled off plant-months
+        # pushed above their own nameplate ceilings (pjm-143, mirroring
+        # miso-109 §6).
         from market_sim.data.hydro import build_hydro_fleet
 
-        zones = self._zones("MISO")
-        for year in (2023, 2024, 2025):
-            _ua, off = build_hydro_fleet(
-                "MISO",
-                year,
-                zones,
-                backfill_year=2024,
-                eia930_monthly=True,
-                nameplate_aware_target=False,
+        for iso in ("MISO", "PJM"):
+            zones = self._zones(iso)
+            for year in (2023, 2024, 2025):
+                _ua, off = build_hydro_fleet(
+                    iso,
+                    year,
+                    zones,
+                    backfill_year=2024,
+                    eia930_monthly=True,
+                    nameplate_aware_target=False,
+                )
+                _ub, on = build_hydro_fleet(
+                    iso,
+                    year,
+                    zones,
+                    backfill_year=2024,
+                    eia930_monthly=True,
+                    nameplate_aware_target=True,
+                )
+                np.testing.assert_array_equal(off, on)
+
+    def test_pjm_level_is_the_923_hy_budget_not_the_930_pin(self):
+        # pjm-143: the largest PS fold of the six ISOs. Asking for the pin
+        # yields the un-pinned (EIA-923 HY) budget, which sits at 58 % of the
+        # PS-inclusive measured series (+72.1 % / +78.5 % gaps).
+        from market_sim.data.hydro import build_hydro_fleet
+
+        zones = self._zones("PJM")
+        for year, expected_twh in ((2023, 8.977), (2024, 8.864)):
+            pinned_request, monthly = build_hydro_fleet(
+                "PJM", year, zones, backfill_year=2024, eia930_monthly=True
             )
-            _ub, on = build_hydro_fleet(
-                "MISO",
-                year,
-                zones,
-                backfill_year=2024,
-                eia930_monthly=True,
-                nameplate_aware_target=True,
+            bare_units, bare = build_hydro_fleet(
+                "PJM", year, zones, backfill_year=2024, eia930_monthly=False
             )
-            np.testing.assert_array_equal(off, on)
+            np.testing.assert_array_equal(monthly, bare)
+            self.assertEqual(len(pinned_request), len(bare_units))
+            self.assertAlmostEqual(monthly.sum() / 1e6, expected_twh, delta=0.01)
+            wat = measured_monthly_hydro("PJM", year)
+            self.assertIsNotNone(wat)
+            # The fold is ~+72-79 %, so the corrected level is far BELOW the
+            # PS-inclusive series — a much wider margin than MISO's 0.90.
+            self.assertLess(monthly.sum(), 0.65 * wat.sum())
 
     def test_unlisted_iso_still_pins_to_the_measured_series(self):
         from market_sim.data.hydro import build_hydro_fleet
@@ -1013,7 +1047,7 @@ class TestPumpedStorageFoldedForecastLevel(unittest.TestCase):
         )
 
         unlisted = [i for i in self.ISOS if i not in EIA930_PS_FOLDED_INTO_WAT]
-        self.assertEqual(len(unlisted), 5)
+        self.assertEqual(len(unlisted), 4)  # MISO (miso-110) + PJM (pjm-143)
         for iso in unlisted:
             base = climatological_monthly_hydro(iso)
             self.assertIsNotNone(base, f"{iso} has no EIA-930 climatology")
@@ -1023,6 +1057,39 @@ class TestPumpedStorageFoldedForecastLevel(unittest.TestCase):
                     base * resolve_hydro_year_multiplier(hydro_year),
                     err_msg=f"{iso}/{hydro_year} forecast level moved",
                 )
+
+    def test_pjm_forecast_level_is_exactly_the_gated_923_mean(self):
+        # pjm-143, the forward half armed by the same registry line: PJM's
+        # forecast level moves 15.875 -> 9.254 TWh (the coverage-gated EIA-923
+        # HY climatology over the realised window 2021-2024; the 930 side's
+        # +71.5 % naive / +72.5 % window-matched delta was the fold).
+        from market_sim.data.eia923 import (
+            load_monthly_generation,
+            monthly_netgen_columns,
+        )
+        from market_sim.data.hydro import (
+            _load_hydro_generation,
+            climatological_monthly_hydro_923,
+            complete_923_hydro_years,
+            forecast_monthly_hydro,
+        )
+
+        window = complete_923_hydro_years("PJM")
+        self.assertEqual(window, (2021, 2022, 2023, 2024))
+        gen = load_monthly_generation()
+        mcols = monthly_netgen_columns()
+        expected = np.vstack(
+            [
+                _load_hydro_generation("PJM", y, gen=gen)[mcols]
+                .to_numpy(dtype=float)
+                .sum(axis=0)
+                for y in window
+            ]
+        ).mean(axis=0)
+
+        np.testing.assert_array_equal(climatological_monthly_hydro_923("PJM"), expected)
+        np.testing.assert_array_equal(forecast_monthly_hydro("PJM", "normal"), expected)
+        self.assertAlmostEqual(expected.sum() / 1e6, 9.2541, delta=0.001)
 
     def test_wet_dry_lever_still_multiplies_cleanly(self):
         from market_sim.data.hydro import (
