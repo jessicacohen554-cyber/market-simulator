@@ -181,7 +181,14 @@ def report_ct() -> None:
         print(
             unc.sort_values("pmax_mw", ascending=False)
             .head(15)[
-                ["plant_code", "name", "pmax_mw", "model_hr", "campd_gross_mwh", "cause"]
+                [
+                    "plant_code",
+                    "name",
+                    "pmax_mw",
+                    "model_hr",
+                    "campd_gross_mwh",
+                    "cause",
+                ]
             ]
             .to_string(index=False)
         )
@@ -292,7 +299,10 @@ def report_chp() -> None:
     print("\n3. ADVERSE SELECTION (eGRID CREDITED rate, cap-weighted)")
     for cls in CHP_CLASSES:
         s = art[art["plant_group"] == cls]
-        for lab, sub in (("covered ", s[s.flag == "ok"]), ("excluded", s[s.flag != "ok"])):
+        for lab, sub in (
+            ("covered ", s[s.flag == "ok"]),
+            ("excluded", s[s.flag != "ok"]),
+        ):
             sub = sub[np.isfinite(sub.heat_rate_credited) & (sub.class_capacity_mw > 0)]
             if sub.empty:
                 continue
