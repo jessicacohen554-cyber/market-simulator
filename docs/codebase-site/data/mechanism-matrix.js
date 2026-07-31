@@ -597,7 +597,7 @@ window.MECH_MATRIX = {
     CAISO: "2026-07-29-caiso139-dump-guard-offer",
     PJM: "2026-07-31-pjm-143b-hy-level",
     MISO: "2026-07-31-miso-109b-hy-level",
-    NYISO: "2026-07-29-nyiso-98-nucavail",
+    NYISO: "2026-07-31-nyiso105-chp-heat-rates",
     NEISO: "2026-07-31-neiso-70-ctheatrate"
   },
   gates: {
