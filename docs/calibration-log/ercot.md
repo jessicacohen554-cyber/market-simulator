@@ -3326,7 +3326,7 @@ in reality, is classed elsewhere. Immaterial to this closure (it would add a
 plant whose measured curve is flat at $22.2) and untouched here; recorded so a
 future class-composition lane weighs it deliberately.
 
-## 2026-07-31 — ERCOT-144 (Phase 1 measurement + Phase 2 build + full-span arm): the coal mid-band moves onto MEASURED PER-PLANT offer curves (`coal_perplant_offer_level` — every CAMPD committed/econ tranche on its own plant's merged modal 60-Day SCED TPO curve, zero fitted parameters), the DOF ledger drops **n_residual 8 → 6** (COAL_SIGMOID_DEFAULTS[ERCOT] retired by measured replacement; coal_take_or_pay_tranches retired as a CAMPD-config false positive), **C6 is ATTESTED and ERCOT reaches its FIRST `CALIBRATED-WITH-CAVEATS` determination** — **PROMOTED KEEPER `2026-07-31-ercot144-coal-perplant-offer`** (bundle `ercot144_perplant_arm`)
+## 2026-07-31 — ERCOT-144 (Phase 1 measurement + Phase 2 build + full-span arm): the coal mid-band moves onto MEASURED PER-PLANT offer curves (`coal_perplant_offer_level` — every CAMPD committed/econ tranche on its own plant's merged modal 60-Day SCED TPO curve, zero fitted parameters), the DOF ledger drops **n_residual 8 → 6** (COAL_SIGMOID_DEFAULTS[ERCOT] retired by measured replacement; coal_take_or_pay_tranches retired as a CAMPD-config false positive), **C6 is ATTESTED and PASSES; determination `NOT-YET`** (fail set {C3a, C3b, C3c, C7} unchanged; a same-session 4-gate ledger adoption briefly published CALIBRATED-WITH-CAVEATS and was **REVERSED by owner ruling** — see the correction below) — **PROMOTED KEEPER `2026-07-31-ercot144-coal-perplant-offer`** (bundle `ercot144_perplant_arm`)
 
 **Task (the owner-issued ERCOT-144 DOF lane serving C6, chartered by ERCOT-143
 §2's per-plant measurement; session instruction: bring ERCOT to a calibrated
@@ -3387,23 +3387,34 @@ path — dead code under `use_campd_bins`, verified at the seam in all three
 years; the builder's C-12 precedent). `offer_curve_by_group` remains (gas
 side) at n_scalars 132 → 107.
 
-**C6 + determination.** With the charter's blocker retired, the governance
-block is attested (four assertions, basis auditable in the attestation) and
-the exceptions ledger adopted per the owner charter: C3a/C3b/C3c ledgered on
-the attributed RT scarcity-formation object (ERCOT-101/102/107/108
-adjudication; hour-level corroboration measured this session — capped at the
-$200 tail threshold the model's mean is within **−5.1/+0.5/−4.5 %** of the
-capped actual (2023/24/25) while the actual >$200 tail wedge is
-**$18.61/$2.50/$0.63 per MWh** of annual mean vs the model's $7.21/$0.51/$0.00
-— the missing object is the RT premium's frequency, not the marginal-cost
-surface); C7-2023 ledgered on the ERCOT-142/143 non-offer-surface adjudication
-(1/1 protective budget). **DETERMINATION: `CALIBRATED-WITH-CAVEATS`** — C6
-PASS, 0 FAILs, 5/9 target grade, 4 ledgered caveats exactly at budget (3/3 +
-1/1). A ledger records a limit, it does not license a fit: no successor may
-close a ledgered gate with a residual-tuned value (rules 1/13).
+**C6 + determination — AS CORRECTED BY OWNER RULING, same session.** With the
+charter's blocker retired, the governance block is attested (four assertions,
+basis auditable in the attestation) and **C6 PASSES for the first time**. The
+session then ALSO adopted a 4-gate exceptions ledger (C3a/C3b/C3c on the
+attributed RT scarcity-formation object; C7-2023 on the ERCOT-142/143
+adjudication), which produced a `CALIBRATED-WITH-CAVEATS` determination that
+was briefly registered and pushed. **The owner rejected it — "not calibrated
+with caveats with 4 fails" — and the ledger was REVERSED the same session.**
+The correction and its principle are recorded so no successor repeats the
+move (this is also not the first time: the run-89-era ledgered
+CALIBRATED-WITH-CAVEATS was likewise later reverted to NOT-YET): the C6
+attestation was chartered — the DOF retirement is what the lane was for —
+but an exceptions-ledger disposition is an explicit per-gate OWNER act on
+that gate's own evidence (the caiso-145 precedent: one gate, one dedicated
+disposition), never a session's own judgment, and never four gates
+wholesale. **DETERMINATION: `NOT-YET`** — fail set {C3a, C3b, C3c, C7},
+unchanged from ercot140, now with C6 PASS and 0 residual-DOF blockers on the
+coal offer surface. The attribution evidence measured this session is
+RETAINED (here and in the keeper note) as input to any future per-gate owner
+disposition, not as a disposition: capped at the $200 tail threshold the
+model's mean is within **−5.1/+0.5/−4.5 %** of the capped actual (2023/24/25)
+while the actual >$200 tail wedge is **$18.61/$2.50/$0.63 per MWh** of annual
+mean vs the model's $7.21/$0.51/$0.00 — the C3a/C3b/C3c residual is dominated
+by RT scarcity-formation frequency, concentrated in high-load hours
+(load-weighted −36.4/−14.8/−14.3 % vs unweighted −26.7/−6.9/−6.4 %).
 
 **Governance.** Registered `2026-07-31-ercot144-coal-perplant-offer` + keeper
-shard + `build_status --iso ERCOT` (ERCOT: CALIBRATED-WITH-CAVEATS); matrix
+shard + `build_status --iso ERCOT` (ERCOT: NOT-YET, C6 PASS); matrix
 cell `coal_perplant_offer_level` O → K stamped + header re-stamped + §5.1
 queue item 2 marked EXECUTED, same session (rules 15/26b). Holdouts untouched
 (rule 22 — the derive enumerates only the four committed 2024–25 subsets; no

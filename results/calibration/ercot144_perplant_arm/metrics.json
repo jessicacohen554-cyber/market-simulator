@@ -14,10 +14,9 @@
   ],
   "data_blocked_years": [],
   "rubric_version": 2.9,
-  "determination": "CALIBRATED-WITH-CAVEATS",
+  "determination": "NOT-YET",
   "reasons": [
-    "3 ledgered measured-input caveat(s): C3a mean LMP, C3b price duration/shape, C3c price tail / scarcity (RT hourly)",
-    "1 protective-gate ledgered caveat(s): C7 diurnal shape (D-1)"
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape, price_tail, shape"
   ],
   "notes": [],
   "criteria": {
@@ -34,20 +33,17 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "CAVEAT",
-      "caveat_kind": "ledgered"
+      "status": "FAIL"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "CAVEAT",
-      "caveat_kind": "ledgered"
+      "status": "FAIL"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "CAVEAT",
-      "caveat_kind": "ledgered"
+      "status": "FAIL"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -62,8 +58,7 @@
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "CAVEAT",
-      "caveat_kind": "ledgered"
+      "status": "FAIL"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
@@ -72,14 +67,8 @@
     }
   },
   "caveats": {
-    "protective": [
-      "C7 diurnal shape (D-1)"
-    ],
-    "ledgered": [
-      "C3a mean LMP",
-      "C3b price duration/shape",
-      "C3c price tail / scarcity (RT hourly)"
-    ],
+    "protective": [],
+    "ledgered": [],
     "commercial_band": [],
     "budget": {
       "protective_max": 1,
@@ -90,8 +79,8 @@
     "scored": 9,
     "target_grade": 5,
     "commercial_grade": 0,
-    "ledgered": 4,
-    "fails": 0
+    "ledgered": 0,
+    "fails": 4
   },
   "free_class_score": {
     "iso": "ERCOT",
