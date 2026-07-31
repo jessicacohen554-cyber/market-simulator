@@ -6,7 +6,22 @@ EIA-930 BA-to-BA net interchange product (`TI` interchange family), long form
 per directly-interconnected balancing authority (DIBA): columns
 `diba, mw, local_time`. EIA sign convention: positive = the named BA exports
 to the DIBA. `local_time` is the hour-ending timestamp on the BA's local
-clock, spanning the covered local calendar years (2023-2025).
+clock, spanning the covered local calendar years — 2023-2025 for
+CISO/MISO/ISNE; **2019 - H1-2026 for PJM**, extended 2026-07-31 under the
+rule-22 intake authorization logged in `calibration-complete.json`.
+
+**PJM span and its two source-side limits.** The EIA API v2
+`interchange-data` route returns **no PJM rows for any month of 2018**
+(probed month-by-month 2026-07-31: `total: 0` for 2018-01/04/07/08/09/10/12;
+first rows 2019-01) — a publication floor for this product, not a fetch gap,
+so 2018 is absent rather than padded. 2026 is capped at hour-ending
+**2026-07-01 00:00**, the H1 authorization boundary, not the API's own
+horizon. Per-year DIBA-hour coverage: 2019 99.7% · 2020 99.4% · 2021
+**95.5%** · 2022 99.5% · 2023 99.4% · 2024 99.4% · 2025 97.0% · H1-2026
+95.1%. The 2021 dip is a hole in EIA's own submission — CPLE is complete
+(8,759 h) while the other six DIBAs are each cut to 8,303 h by the same
+~457-hour gap — the same class of incompleteness the committed 2025 block
+already carries, not a fetch artifact.
 
 ISNE's DIBAs are its three external seams: `HQT` (Hydro-Québec TransÉnergie —
 the Phase II + Highgate ties), `NBSO` (New Brunswick) and `NYIS` (New York).
@@ -29,12 +44,14 @@ its flow source and keeps this parquet as the printed cross-check.
 `electricity/rto/interchange-data` route, same pagination/key pattern as
 `scripts/fetch_eia930_long.py`):
 
-    EIA_API_KEY=... python scripts/fetch_eia930_interchange.py --ba ISNE \
+    EIA_API_KEY=... python scripts/data/fetch_eia930_interchange.py --ba ISNE \
         --years 2023 2024 2025
 
 The CISO/MISO files predate the script (manual pulls of the same product);
 the ISNE file was fetched with it (2026-07-06), the PJM file likewise
-(2026-07-10). Raw data is immutable — the script refuses to overwrite an
+(2026-07-10; extended to 2019 - H1-2026 on 2026-07-31, with the committed
+2023-01-01 01:00 .. 2026-01-01 00:00 block asserted content-identical across
+the merge). Raw data is immutable — the script refuses to overwrite an
 existing file without `--force`.
 
 **Consumers:**
