@@ -391,6 +391,174 @@ class TestConfirmedExits(unittest.TestCase):
         self.assertAlmostEqual(kept[0].pmax_mw, 900.0, places=4)
 
 
+class TestEvolveFleetLedgerReconciliation(unittest.TestCase):
+    """The evolve_fleet-seam capacity-accounting reconciliation (FFR-1A / FR-26).
+
+    Asserts, per fuel, the I4 identity ON THE EVENTS DICT itself::
+
+        fleet_by_fuel_after == fleet_by_fuel_before − retirements
+                               − confirmed_derates + thermal_additions
+                               (± ccs_retrofit fuel shifts)
+
+    This is the unit test the forecast-readiness audit says would have caught
+    FR-1 (the I4/A1 leak): a plant-binned confirmed exit derates a SURVIVING
+    ``unit_id``, so no set-diff retirement row exists and only the
+    ``confirmed_derates`` rows can close the balance.
+    """
+
+    def _exit(self, plant_id, gen_id, year, month=None, mw=None):
+        return ConfirmedExit(
+            plant_id=plant_id,
+            generator_id=gen_id,
+            exit_year=year,
+            exit_month=month,
+            mw=mw,
+        )
+
+    def _events(self):
+        from market_sim.results.evolution_ledger import new_events
+
+        return new_events()
+
+    def _assert_reconciles(self, events):
+        """Per fuel: after == before − retired − derated + added (± CCS)."""
+        expected = dict(events["fleet_by_fuel_before"])
+        for r in events["retirements"]:
+            expected[r["fuel"]] = expected.get(r["fuel"], 0.0) - r["mw"]
+        for d in events["confirmed_derates"]:
+            expected[d["fuel"]] = expected.get(d["fuel"], 0.0) - d["derate_mw"]
+        for a in events["thermal_additions"]:
+            expected[a["fuel"]] = expected.get(a["fuel"], 0.0) + a["mw"]
+        for c in events["ccs_retrofits"]:
+            expected[c["from_fuel"]] = expected.get(c["from_fuel"], 0.0) - c["mw"]
+            expected[c["to_fuel"]] = expected.get(c["to_fuel"], 0.0) + c["mw"]
+        after = events["fleet_by_fuel_after"]
+        for fuel in set(expected) | set(after):
+            self.assertAlmostEqual(
+                expected.get(fuel, 0.0),
+                after.get(fuel, 0.0),
+                places=4,
+                msg=f"I4 identity broken for {fuel}",
+            )
+
+    def test_two_unit_grain_drop_reconciles(self):
+        # Trivial 2-unit fixture: a coal unit confirmed out (unit-grain drop),
+        # a gas unit untouched. The drop lands as reason="confirmed" and the
+        # per-fuel balance closes.
+        fleet = [
+            _unit(100, "1", 300.0, fuel="coal"),
+            _unit(101, "1", 200.0, fuel="gas_cc"),
+        ]
+        events = self._events()
+        evolve_fleet(
+            fleet,
+            None,
+            2028,
+            ScenarioConfig(),
+            {},
+            events=events,
+            confirmed_exits=[self._exit(100, "1", 2028, mw=300.0)],
+        )
+        self.assertEqual(
+            [(r["unit_id"], r["reason"]) for r in events["retirements"]],
+            [("100_1", "confirmed")],
+        )
+        self.assertEqual(events["confirmed_derates"], [])
+        self.assertAlmostEqual(events["fleet_by_fuel_after"].get("coal", 0.0), 0.0)
+        self._assert_reconciles(events)
+
+    def test_binned_derate_writes_confirmed_derates_and_reconciles(self):
+        # FR-1 regression: a plant-binned exit shrinks surviving tranches.
+        # Without confirmed_derates rows the balance CANNOT close (no unit_id
+        # disappears), so this asserts both the rows and the closed identity.
+        fleet = [
+            _binned("B_CC1", 200, 600.0, pmin=120.0, nameplate=600.0),
+            _binned("B_CC2", 200, 400.0, pmin=80.0, nameplate=400.0),
+        ]
+        events = self._events()
+        evolve_fleet(
+            fleet,
+            None,
+            2028,
+            ScenarioConfig(),
+            {},
+            events=events,
+            confirmed_exits=[self._exit(200, "U1", 2028, mw=400.0)],
+        )
+        self.assertEqual(events["retirements"], [])
+        derates = {d["unit_id"]: d for d in events["confirmed_derates"]}
+        self.assertEqual(set(derates), {"B_CC1", "B_CC2"})
+        self.assertAlmostEqual(derates["B_CC1"]["derate_mw"], 240.0, places=4)
+        self.assertAlmostEqual(derates["B_CC2"]["derate_mw"], 160.0, places=4)
+        for d in derates.values():
+            self.assertAlmostEqual(
+                d["mw_before"] - d["mw_after"], d["derate_mw"], places=6
+            )
+        # The leak the rows repair is material: 400 MW left the fleet with no
+        # retirement row.
+        self.assertAlmostEqual(
+            sum(d["derate_mw"] for d in derates.values()), 400.0, places=4
+        )
+        self._assert_reconciles(events)
+
+    def test_reason_split_confirmed_vs_announced(self):
+        # A confirmed drop and an announced (EIA-860 date) non-fossil drop in
+        # the same year carry their own channel reasons — never one conflated
+        # "known" diff.
+        fleet = [
+            _unit(300, "1", 500.0, fuel="coal"),
+            _gen("N0", "nuclear", pmax=800.0, retirement_year=2028),
+        ]
+        events = self._events()
+        evolve_fleet(
+            fleet,
+            None,
+            2028,
+            ScenarioConfig(),
+            {},
+            events=events,
+            confirmed_exits=[self._exit(300, "1", 2028, mw=500.0)],
+        )
+        reasons = {r["unit_id"]: r["reason"] for r in events["retirements"]}
+        self.assertEqual(reasons, {"300_1": "confirmed", "N0": "announced"})
+        self._assert_reconciles(events)
+
+    def test_commissioned_pipeline_unit_gets_addition_row(self):
+        # FR-13: a step-4.5 commissioned pipeline unit must land in
+        # thermal_additions (the baseline snapshots BEFORE the insert), or its
+        # MW enters the fleet unledgered and I4 fails at every COD year once
+        # entry_commissioning_lag is armed.
+        fleet = [_unit(400, "1", 250.0, fuel="gas_cc")]
+        pipeline = [
+            {
+                "tech": "gas_ct",
+                "mw": 120.0,
+                "zone": "ERCOT-Houston",
+                "decision_year": 2027,
+                "cod_year": 2029,
+                "seq": 0,
+                "kind": "thermal",
+            }
+        ]
+        events = self._events()
+        evolve_fleet(
+            fleet,
+            None,
+            2029,
+            ScenarioConfig(iso="ERCOT", entry_commissioning_lag=True),
+            {},
+            events=events,
+            entry_pipeline=pipeline,
+        )
+        adds = {a["unit_id"]: a for a in events["thermal_additions"]}
+        self.assertEqual(len(adds), 1)
+        (row,) = adds.values()
+        self.assertEqual(row["fuel"], "gas_ct")
+        self.assertAlmostEqual(row["mw"], 120.0, places=4)
+        self.assertEqual(row["source"], "economic")
+        self._assert_reconciles(events)
+
+
 class TestEconomicRetirements(unittest.TestCase):
     """Revenue-driven retirement of persistently unprofitable thermal units.
 

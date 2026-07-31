@@ -107,11 +107,16 @@ _CLEAN_FUELS: frozenset[str] = frozenset({"wind", "solar", "nuclear", "hydro"})
 _RPS_ELIGIBLE_FUELS: frozenset[str] = frozenset({"wind", "solar"})
 
 # Firm clean (non-VRE) capacity fuels. The reliability floor no longer nets
-# these out at nameplate — its accreditation rebuild routes every resource
-# (hydro included) through accredited_firm_capacity_mw at its UCAP/capacity-
-# credit value (capacity-economics plan 2026-07 §3.2). The constant is retained
-# only as the evolution ledger's ``firm_clean_mw`` reporting basis
-# (runner.py); it no longer participates in any retirement/adequacy decision.
+# these out at nameplate — its accreditation rebuild routes the resources it
+# SEES through accredited_firm_capacity_mw at their UCAP/capacity-credit value
+# (capacity-economics plan 2026-07 §3.2). Hydro, however, never reaches that
+# ledger today: it is not part of the persistent evolved fleet (the runner
+# carries hydro only in the transient dispatch fleet), so no
+# accredited_firm_capacity_mw term exists for it and the evolution ledger's
+# ``firm_clean_mw`` over this constant is structurally 0 (forecast-readiness
+# audit 2026-07 FR-3; the hydro-accreditation fix is FFR-1C's). The constant is
+# retained only as that ledger reporting basis (runner.py); it no longer
+# participates in any retirement/adequacy decision.
 _FIRM_CLEAN_FUELS: tuple[str, ...] = ("hydro",)
 
 # Per-fuel ScenarioConfig field names for the consecutive-loss threshold

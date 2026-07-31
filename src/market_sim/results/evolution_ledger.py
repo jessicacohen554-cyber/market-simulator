@@ -36,13 +36,17 @@ The schema (one object per scenario-year)::
 
 ``thermal_additions`` sources are ``planned`` | ``economic`` |
 ``reserve_backstop``; ``retirements`` reasons are ``confirmed`` | ``announced``
-| ``economic`` (RC-1B — the channel-attributed split of the pre-RC-1B single
+| ``economic`` — the channel-attributed split of the pre-split single
 ``known`` reason, taken before step 0 and step 1 separately instead of once
-before both; ``confirmed_derates`` is new and records a confirmed-registry row
-that derates a plant-binned tranche without retiring its ``unit_id`` entirely,
-previously invisible). Additive: bundles committed before RC-1B still carry
-``known`` rows and no ``confirmed_derates`` key — both readers must treat an
-absent/legacy value as backward-compatible, not malformed.
+before both. ``confirmed_derates`` records a confirmed-registry row that
+derates a plant-binned tranche without retiring its ``unit_id`` entirely,
+previously invisible to the recorder's unit-id set-diff (the I4/A1 accounting
+leak, FR-1). RC-1B documented this schema but the writers landed only with
+FFR-1A (2026-07-31): :func:`new_events` creates the key and
+``evolve_fleet``'s step-0/step-1 recorder seam populates it. Additive:
+bundles committed before FFR-1A still carry ``known`` rows and no
+``confirmed_derates`` key — both readers must treat an absent/legacy value as
+backward-compatible, not malformed.
 """
 
 from __future__ import annotations
@@ -89,6 +93,7 @@ def new_events() -> dict:
     """Return an empty event dict for :func:`evolve_fleet` to populate."""
     return {
         "retirements": [],
+        "confirmed_derates": [],
         "floor_retained": [],
         "pipeline_events": [],
         "thermal_additions": [],
