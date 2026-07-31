@@ -593,10 +593,19 @@ def _year(bundle: Path, year: int, own, p138, p137) -> dict:
     anchored[:, 0] = day_ok[:, 0]
     anchored[:, 1:] = day_ok[:, :-1] & day_ok[:, 1:]
 
+    # MW already forced by an existing floor (rule 19 [R-ONE-MECH]: the keeper
+    # runs cc_mustrun_per_plant, 11.5 TWh forced CC_REGULAR in 2024 per its
+    # committed D-2) is NOT addable by a bridge — net it out of the pool.
+    mg = fa.min_gen
+    min_gen_arr = (
+        np.asarray(mg, dtype=float) if mg is not None else np.zeros_like(avail)
+    )
+
     night_hours = np.flatnonzero(np.isin(hod, OVERNIGHT))
     th_rows = np.flatnonzero(thermal)
     acc = {
         "F_committed": [], "F_plantcap": [], "M_inmerit": [],
+        "already_floored": [],
         "d0": [], "lw_h": [], "committed_in_merit": [],
         "dprime_at_Fpool": [], "F_for_1usd": [],
         "disp_CC_at_Fpool": [], "disp_CT_at_Fpool": [], "disp_ST_at_Fpool": [],
@@ -606,13 +615,19 @@ def _year(bundle: Path, year: int, own, p138, p137) -> dict:
         d = int(t // 24)
         live_t = avail[:, t] > 1.0
         pool = elig_committed & live_t & (mc[:, t] > dual[:, t]) & anchored[:, d]
-        f_comm = float(avail[pool, t].sum())
+        # Net out MW an existing floor already forces (a bridge cannot re-add it).
+        f_comm = float(
+            np.maximum(avail[pool, t] - min_gen_arr[pool, t], 0.0).sum()
+        )
+        acc["already_floored"].append(float(min_gen_arr[pool, t].sum()))
         # Plant-level available capacity (all tranches) of pooled plants.
         pk = set(plant_key[pool])
         plant_rows = np.isin(plant_key, list(pk)) & live_t & internal
         f_plant = float(avail[plant_rows, t].sum())
+        floored_plant = float(min_gen_arr[plant_rows, t].sum())
         acc["F_committed"].append(f_comm)
         acc["F_plantcap"].append(f_plant)
+        acc.setdefault("floored_plant", []).append(floored_plant)
         acc["committed_in_merit"].append(
             float(avail[elig_committed & live_t & (mc[:, t] < dual[:, t]), t].sum())
         )
@@ -637,7 +652,7 @@ def _year(bundle: Path, year: int, own, p138, p137) -> dict:
         d0 = _dual_at(m_h)
         acc["d0"].append(d0)
         acc["lw_h"].append(float(lw[t]))
-        f_pool = max(f_comm, MLF_SCAN[-1] * f_plant)
+        f_pool = max(f_comm, MLF_SCAN[-1] * f_plant - floored_plant, 0.0)
         dp = _dual_at(m_h - f_pool)
         acc["dprime_at_Fpool"].append(dp)
         # Smallest F achieving a $1.00 move: cumulative MW back to the first
@@ -660,7 +675,11 @@ def _year(bundle: Path, year: int, own, p138, p137) -> dict:
     def _gw(key: str) -> float:
         return float(np.mean(acc[key]) / 1e3)
 
-    f_pool_gw = max(_gw("F_committed"), MLF_SCAN[-1] * _gw("F_plantcap"))
+    f_pool_gw = max(
+        _gw("F_committed"),
+        MLF_SCAN[-1] * _gw("F_plantcap") - _gw("floored_plant"),
+        0.0,
+    )
     disp = {k: _gw(f"disp_{k}_at_Fpool") for k in ("CC", "CT", "ST")}
     from collections import Counter
 
@@ -671,8 +690,11 @@ def _year(bundle: Path, year: int, own, p138, p137) -> dict:
         "pool_committed_gw_mean": _gw("F_committed"),
         "pool_plant_availcap_gw_mean": _gw("F_plantcap"),
         "pool_at_mlf": {
-            str(m): float(m * _gw("F_plantcap")) for m in MLF_SCAN
+            str(m): float(max(m * _gw("F_plantcap") - _gw("floored_plant"), 0.0))
+            for m in MLF_SCAN
         },
+        "already_floored_pool_gw_mean": _gw("already_floored"),
+        "already_floored_plant_gw_mean": _gw("floored_plant"),
         "F_pool_gw": f_pool_gw,
         "eligible_committed_in_merit_gw_mean": _gw("committed_in_merit"),
         "in_merit_thermal_gw_mean": _gw("M_inmerit"),
