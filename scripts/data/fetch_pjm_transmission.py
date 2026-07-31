@@ -29,9 +29,21 @@ data back to at least 2019 with no ``API_1044`` restriction (only
 ``pnode_name`` filtering is blocked on >2yr-old archived rows; ``type`` is
 not).
 
+H1-2026 scope cap
+-----------------
+The rule-22 intake authorization for 2026 covers **Jan 1 - Jun 30 only**.
+``--h1-2026`` requests exactly that window and writes the result under a
+``_partial`` filename suffix (``PJM_2026_<feed>_partial.csv``), the same
+convention ``fetch_pjm_as.py`` uses and for the same reason: every consumer
+(``derive_interface_limits.py``, ``derive_pjm_seam_ladders.py``,
+``data/eia930/envelopes.py``, the probes) resolves the plain
+``PJM_<year>_<feed>.csv`` name and would silently treat a half-year file as a
+full year. The suffix makes a partial year invisible to those consumers rather
+than quietly wrong. ``--years 2026`` is refused — use ``--h1-2026``.
+
 Usage:
     python scripts/data/fetch_pjm_transmission.py --feed interchange --years 2018 2019 2020 2021 2022
-    python scripts/data/fetch_pjm_transmission.py --feed transfer --years 2026
+    python scripts/data/fetch_pjm_transmission.py --feed transfer --h1-2026
     python scripts/data/fetch_pjm_transmission.py --feed hublmp --years 2018 2019
 """
 
@@ -58,6 +70,11 @@ LMP_DIR = LMP_DATA_DIR
 # The API base / public subscription key / page size live in
 # scripts.lib.pjm_dataminer (shared across the fetch_pjm_* scripts).
 
+# The rule-22 intake authorization covers Jan 1 - Jun 30 2026 for the "H1-2026"
+# leg — a hard cap, not a default (same constant pair as fetch_pjm_as.py).
+H1_2026_YEAR = 2026
+H1_2026_LAST_MONTH = 6
+
 
 def _date_filter(year: int, month: int) -> str:
     last_day = calendar.monthrange(year, month)[1]
@@ -65,6 +82,16 @@ def _date_filter(year: int, month: int) -> str:
     start = f"{year:04d}-{month:02d}-01T00:00:00.0000000"
     end = f"{end_date:%Y-%m-%d}T23:59:59.0000000"
     return f"{start} to {end}"
+
+
+def _out_name(stem: str, year: int, h1_only: bool) -> str:
+    """Filename for one feed-year — ``_partial`` suffixed when the year is capped.
+
+    A partial year never takes the plain ``PJM_<year>_<stem>.csv`` name that
+    every consumer resolves directly (module docstring, "H1-2026 scope cap").
+    """
+    suffix = "_partial" if h1_only else ""
+    return f"PJM_{year}_{stem}{suffix}.csv"
 
 
 def _fetch_all_pages(
@@ -88,9 +115,16 @@ def _fetch_all_pages(
 
 
 def _fetch_year(
-    feed: str, year: int, extra_params: dict, sleep_s: float, retries: int
+    feed: str,
+    year: int,
+    extra_params: dict,
+    sleep_s: float,
+    retries: int,
+    h1_only: bool = False,
 ) -> pd.DataFrame:
     months_end = 13 if date.today().year > year else date.today().month + 1
+    if h1_only:
+        months_end = min(months_end, H1_2026_LAST_MONTH + 1)
     frames = []
     for month in range(1, months_end):
         if date(year, month, 1) > date.today():
@@ -107,11 +141,13 @@ def _fetch_year(
     return pd.concat(frames, ignore_index=True)
 
 
-def fetch_interchange(years: list[int], sleep_s: float, retries: int) -> None:
+def fetch_interchange(
+    years: list[int], sleep_s: float, retries: int, h1_only: bool = False
+) -> None:
     TRANS_DIR.mkdir(parents=True, exist_ok=True)
     for year in years:
-        out = TRANS_DIR / f"PJM_{year}_import_export_act_sch_interchange.csv"
-        df = _fetch_year("act_sch_interchange", year, {}, sleep_s, retries)
+        out = TRANS_DIR / _out_name("import_export_act_sch_interchange", year, h1_only)
+        df = _fetch_year("act_sch_interchange", year, {}, sleep_s, retries, h1_only)
         if df.empty:
             print(f"  {year}: no data returned — skipping")
             continue
@@ -119,11 +155,15 @@ def fetch_interchange(years: list[int], sleep_s: float, retries: int) -> None:
         print(f"wrote {out.relative_to(REPO)} ({len(df):,} rows)")
 
 
-def fetch_transfer(years: list[int], sleep_s: float, retries: int) -> None:
+def fetch_transfer(
+    years: list[int], sleep_s: float, retries: int, h1_only: bool = False
+) -> None:
     TRANS_DIR.mkdir(parents=True, exist_ok=True)
     for year in years:
-        out = TRANS_DIR / f"PJM_{year}_transfer_limits_and_flows.csv"
-        df = _fetch_year("transfer_limits_and_flows", year, {}, sleep_s, retries)
+        out = TRANS_DIR / _out_name("transfer_limits_and_flows", year, h1_only)
+        df = _fetch_year(
+            "transfer_limits_and_flows", year, {}, sleep_s, retries, h1_only
+        )
         if df.empty:
             print(f"  {year}: no data returned — skipping")
             continue
@@ -162,12 +202,18 @@ _OUT_COLS = _SHARED_COLS + [
 ]
 
 
-def fetch_hublmp(years: list[int], sleep_s: float, retries: int) -> None:
+def fetch_hublmp(
+    years: list[int], sleep_s: float, retries: int, h1_only: bool = False
+) -> None:
     LMP_DIR.mkdir(parents=True, exist_ok=True)
     for year in years:
-        out = LMP_DIR / f"PJM_{year}_rt_da_monthly_lmps.csv"
-        da = _fetch_year("da_hrl_lmps", year, {"type": "HUB"}, sleep_s, retries)
-        rt = _fetch_year("rt_hrl_lmps", year, {"type": "HUB"}, sleep_s, retries)
+        out = LMP_DIR / _out_name("rt_da_monthly_lmps", year, h1_only)
+        da = _fetch_year(
+            "da_hrl_lmps", year, {"type": "HUB"}, sleep_s, retries, h1_only
+        )
+        rt = _fetch_year(
+            "rt_hrl_lmps", year, {"type": "HUB"}, sleep_s, retries, h1_only
+        )
         if da.empty or rt.empty:
             print(f"  {year}: da={len(da)} rt={len(rt)} rows — skipping (need both)")
             continue
@@ -193,18 +239,37 @@ def main() -> None:
     ap.add_argument(
         "--feed", required=True, choices=["interchange", "transfer", "hublmp"]
     )
-    ap.add_argument("--years", nargs="+", type=int, required=True)
+    ap.add_argument("--years", nargs="+", type=int)
+    ap.add_argument(
+        "--h1-2026",
+        action="store_true",
+        help="fetch Jan 1 - Jun 30 2026 only, written under a _partial suffix "
+        "(the rule-22 intake authorization's hard cap for 2026)",
+    )
     ap.add_argument("--sleep", type=float, default=1.5)
     ap.add_argument("--retries", type=int, default=4)
     args = ap.parse_args()
 
-    years = sorted(args.years)
-    if args.feed == "interchange":
-        fetch_interchange(years, args.sleep, args.retries)
-    elif args.feed == "transfer":
-        fetch_transfer(years, args.sleep, args.retries)
+    if args.h1_2026:
+        if args.years:
+            ap.error("--h1-2026 is exclusive with --years")
+        years, h1_only = [H1_2026_YEAR], True
     else:
-        fetch_hublmp(years, args.sleep, args.retries)
+        if not args.years:
+            ap.error("one of --years / --h1-2026 is required")
+        if H1_2026_YEAR in args.years:
+            ap.error(
+                f"--years must not include {H1_2026_YEAR}: the intake "
+                "authorization caps 2026 at Jun 30 — use --h1-2026"
+            )
+        years, h1_only = sorted(args.years), False
+
+    if args.feed == "interchange":
+        fetch_interchange(years, args.sleep, args.retries, h1_only)
+    elif args.feed == "transfer":
+        fetch_transfer(years, args.sleep, args.retries, h1_only)
+    else:
+        fetch_hublmp(years, args.sleep, args.retries, h1_only)
 
 
 if __name__ == "__main__":

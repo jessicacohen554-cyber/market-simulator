@@ -60,8 +60,14 @@ DataMiner2 REST API notes (mirrors ``scripts/data/fetch_pjm_energy_offers.py``)
   ``subscription-key`` query parameter; an unauthenticated request gets a
   genuine HTTP 401, confirming the key is actually required and actually
   working (not merely ignored).
-- Date filter: ``datetime_beginning_utc=YYYY-MM-DDThh:mm:ss.0 to YYYY-MM-DDThh:mm:ss.0``
-  on all four feeds (confirmed filterable+sortable in each feed's metadata).
+- Date filter: ``<key>=YYYY-MM-DDThh:mm:ss.0 to YYYY-MM-DDThh:mm:ss.0``, where
+  ``<key>`` is PER FEED (:attr:`FeedSpec.filter_field`) — the two
+  ``reserve_market_results`` feeds take ``datetime_beginning_utc``; the two
+  ``*ancillary_services`` feeds reject it with HTTP 400 and take only
+  ``datetime_beginning_ept`` (probed live 2026-07-31 across 2018-2026).
+  Because :func:`scripts.lib.pjm_dataminer.fetch_page` maps 400 to "no data",
+  using one key for all four silently returned zero rows for the AS-price
+  feeds and reported them as "not yet published".
 - Pagination:  ``startRow`` (1-indexed) + ``rowCount`` (``PAGE_SIZE`` below,
   the API's max page size, same constant as the energy-offers fetcher).
 - Format:      ``format=csv`` returns UTF-8 CSV with a BOM.
@@ -124,6 +130,24 @@ class FeedSpec:
     float_cols: tuple[str, ...] = ()
     bool_cols: tuple[str, ...] = ()
     int_cols: tuple[str, ...] = ()
+    # Datetime field this feed accepts as its sort/filter key. The two
+    # reserve_market_results feeds filter on datetime_beginning_utc; the two
+    # *ancillary_services feeds REJECT it with HTTP 400 and accept only
+    # datetime_beginning_ept (probed live 2026-07-31, every year 2018-2026 —
+    # the UTC key 400s even for 2023, a year already on disk). Because
+    # fetch_page treats 400 as "no data for this window", the wrong key made
+    # every AS-price year return zero rows and report "not yet published",
+    # which is why data/raw/PJM-AS/ancillary_services_*.parquet were
+    # hand-pulled from the DataMiner UI rather than fetched. EPT filtering
+    # also matches the UI's own convention, so the year boundary of a
+    # machine-fetched file agrees with the hand-pulled 2023-2025 siblings.
+    filter_field: str = "datetime_beginning_utc"
+    # Emit the derived ``_dt_ept`` parsed-timestamp column that ALL FOUR
+    # feeds' committed 2023-2025 siblings carry. It is not cosmetic:
+    # scripts/report_pjm_posture_gate.py indexes reserve_market_results on
+    # ``_dt_ept`` and raises KeyError on a file without it, so a fetched year
+    # missing the column is unreadable by a committed consumer.
+    derived_dt_ept: bool = True
 
 
 # Column lists verified against each feed's live /metadata response and the
@@ -173,6 +197,7 @@ FEEDS: dict[str, FeedSpec] = {
         float_cols=("value",),
         bool_cols=("row_is_current",),
         int_cols=("version_nbr",),
+        filter_field="datetime_beginning_ept",
     ),
     "da_ancillary_services": FeedSpec(
         name="da_ancillary_services",
@@ -180,6 +205,7 @@ FEEDS: dict[str, FeedSpec] = {
         float_cols=("value",),
         bool_cols=("row_is_current",),
         int_cols=("version_nbr",),
+        filter_field="datetime_beginning_ept",
     ),
 }
 
@@ -207,16 +233,22 @@ def _fetch_window(
 ) -> pd.DataFrame:
     """Download every page for one ``[start, end)`` date window of one feed.
 
+    Sorts and filters on the feed's own accepted datetime key
+    (:attr:`FeedSpec.filter_field`) — the two ``*ancillary_services`` feeds
+    reject ``datetime_beginning_utc`` outright, so using one key for all four
+    silently returned zero rows for them.
+
     A genuine HTTP 404, an HTTP 400, or a 200 with an empty body all mean "no
     data for this window" (before a feed's retention floor, or not yet
     published — DataMiner2 signals it inconsistently across feeds) and yield an
     empty frame rather than raising; see :func:`scripts.lib.pjm_dataminer.fetch_page`.
     """
+    field = FEEDS[feed].filter_field
     params = {
-        "sort": "datetime_beginning_utc",
+        "sort": field,
         "order": "Asc",
         "format": "csv",
-        "datetime_beginning_utc": _date_filter(start, end_exclusive),
+        field: _date_filter(start, end_exclusive),
     }
     rows = pjm_dataminer.fetch_feed(
         feed,
@@ -230,19 +262,34 @@ def _fetch_window(
 
 
 def _coerce_dtypes(df: pd.DataFrame, spec: FeedSpec) -> pd.DataFrame:
-    """Coerce raw CSV strings to typed columns for efficient Parquet encoding."""
+    """Coerce raw CSV strings to typed columns for efficient Parquet encoding.
+
+    Matches the schema of the hand-pulled 2023-2025 siblings already in
+    ``data/raw/PJM-AS/`` exactly, so every year of a feed reads alike:
+    ``version_nbr`` lands as plain ``int64`` (not nullable ``Int64``) when the
+    feed returns it complete, and the ``*ancillary_services`` feeds carry the
+    derived ``_dt_ept`` parsed-timestamp column their consumer
+    (``scripts/report_pjm_posture_gate.py``) indexes on.
+    """
     df.columns = [c.strip().lower() for c in df.columns]
     for col in spec.float_cols:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
     for col in spec.int_cols:
         if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors="coerce").astype("Int64")
+            vals = pd.to_numeric(df[col], errors="coerce").astype("Int64")
+            # Plain int64 when complete — the committed siblings' dtype; the
+            # nullable form only survives if the feed actually returned gaps.
+            df[col] = vals.astype("int64") if not vals.isna().any() else vals
     for col in spec.bool_cols:
         if col in df.columns:
             df[col] = df[col].map(
                 {"True": True, "False": False, "true": True, "false": False}
             )
+    if spec.derived_dt_ept and "datetime_beginning_ept" in df.columns:
+        df["_dt_ept"] = pd.to_datetime(
+            df["datetime_beginning_ept"], format="%m/%d/%Y %I:%M:%S %p", errors="coerce"
+        )
     return df
 
 
@@ -320,6 +367,28 @@ def _plan_year(feed: FeedSpec, year: int, *, h1_only: bool) -> YearWindow:
 # ---------------------------------------------------------------------------
 
 
+def _to_sibling_arrow_types(table: pa.Table) -> pa.Table:
+    """Cast to the Arrow physical types the committed 2023-2025 siblings use.
+
+    Those files were written by an older pandas/pyarrow, which encodes text as
+    ``string`` and timestamps as ``timestamp[ns]``; this container's pandas
+    defaults to ``large_string`` and ``timestamp[us]``. Both round-trip
+    identically through pandas, but the register's parity bar is *same
+    schema*, and a mixed-encoding directory makes an
+    ``ds.dataset(...)``-style multi-year read fail on schema unification. Cast
+    so every year of a feed is byte-comparable at the schema level.
+    """
+    fields = []
+    for field in table.schema:
+        typ = field.type
+        if pa.types.is_large_string(typ):
+            typ = pa.string()
+        elif pa.types.is_timestamp(typ) and typ.unit != "ns":
+            typ = pa.timestamp("ns")
+        fields.append(field.with_type(typ))
+    return table.cast(pa.schema(fields))
+
+
 def fetch_feed_year(
     feed_key: str,
     year: int,
@@ -356,7 +425,7 @@ def fetch_feed_year(
         return None
 
     df = _coerce_dtypes(df, spec)
-    table = pa.Table.from_pandas(df, preserve_index=False)
+    table = _to_sibling_arrow_types(pa.Table.from_pandas(df, preserve_index=False))
     metadata = {
         "source": f"PJM DataMiner2 feed '{feed_key}', https://api.pjm.com/api/v1/{feed_key}",
         "coverage_start": plan.start.isoformat(),

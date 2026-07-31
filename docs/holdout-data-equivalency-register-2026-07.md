@@ -22,12 +22,17 @@ MISSING row carries materiality and a fix (or "accepted").
 > matrix's coverage claims for ERCOT/PJM/CAISO/MISO (keeper-flag-grounded 2022
 > parity matrix + 2018–2021 census, per-family row counts). The per-input
 > equivalency GRADING (source/grain/recipe parity + owner sign-off) for those
-> four lanes remains pending; the audit doc is the seed for it.
+> four lanes remains pending **except PJM, graded in §PJM below (2026-07-31)**;
+> the audit doc is the seed for the other three. Corrections that section makes
+> to the audit: the audit's PJM "AS reserve series 2022 (partial file only)"
+> row graded a file the keeper does not read (§PJM, N-P1 / the `as_up_mw` row),
+> and its §5.6 request to spot-check PJM's 2018–2022 LMP clock lineage is
+> answered CLEAN.
 
 | ISO | 2022 | H1-2026 | Register section |
 |---|---|---|---|
 | ERCOT | intaken 2026-07-04 (§1.1); **coverage-audited 2026-07-31: GAPPED** (DAM-availability family, HSL, v2 rates, LMP bench all missing 2022 — audit doc §3.1); equivalency grading pending | intaken, publication-blocked tail (CAMPD Q2+, gas May+) | pending (seed: audit doc §3.1) |
-| PJM | intaken 2026-07-04 (§1.1); **coverage-audited 2026-07-31: NEAR-READY** (interface limits, short windows, AS series, seam ladder — audit doc §3.3); equivalency grading pending | same | pending (seed: audit doc §3.3) |
+| PJM | **§PJM below** (2026-07-31 intake + grading) — 2022 READY on data: interface limits, tie interchange, AS series, short-window outages and the 930 interchange all landed at parity; LMP bench clock-lineage CLEAN (no re-derive owed); `actual_tail` 2022 emitted. Residual: 2 recipe-freeze adjudications + the freeze | **§PJM below** — raws landed (transfer/interchange/AS/hub-LMP, all `_partial`-suffixed); locked tier, not built or scored | **§PJM below** |
 | CAISO | **no longer zero-intake** (930 long-form 2026-07-08, CAMPD 2026-07-10, outage extracts 2026-07-24); **coverage-audited 2026-07-31: GAPPED, largest queue of the six** (audit doc §3.2) | blocked + partial intake | pending (seed: audit doc §3.2) |
 | MISO | **no longer zero-intake** (same waves + 2022 hub-LMP raws on disk); **coverage-audited 2026-07-31: GAPPED, LMP bench derivable from committed raws** (audit doc §3.4) | blocked + partial intake | pending (seed: audit doc §3.4) |
 | NYISO | **§NYISO — 2022** EQUIVALENT 24 / DEGRADED 4 / MISSING 5 (2026-07-12); **§NYISO — 2018/2019/2020/2021** below (this session) | **§NYISO — H1-2026** below (this session) — partial, CAMPD/gas/LMP sources publication-lag to ~Q1-2026 | **§NYISO below** |
@@ -384,7 +389,169 @@ scores it, so its one-shot eligibility is unaffected by this readiness work.
 
 ---
 
-## ERCOT / PJM / CAISO / MISO
+## PJM — 2022 validation-holdout + 2018-2021 ladder + H1-2026 (intake 2026-07-31, this session)
+
+Keeper: **`2026-07-30-pjm-140-rampenv`** (`frontend/data/backcast/keepers/PJM.json`;
+bundle `results/calibration/pjm140_rampenv_B`, flags from its `run_config.json`).
+Marker: `complete.PJM` declared 2026-07-31 — **validation tier only (2022)**;
+PJM is absent from `final`, so 2019 and H1-2026 stay locked, and the owner's
+authorization for THIS session states that 2018/2020/2021 are likewise outside
+the validation grant (the backward ladder rungs are separate owner decisions).
+The **holdout spend freeze is ACTIVE** and outranks the marker. Accordingly
+**nothing here was solved or scored** — this section grades DATA READINESS only
+(rule 22 channel 1: intake under session-logged owner authorization, validated
+no-LP).
+
+Data-consuming flags ON in the keeper: `pjm_measured_interface_limits`,
+`pjm_seam_measured_ladder`, `pjm_reserve_supply_cap`, `pjm_reserve_pergen`,
+`pjm_east_interface_cut`, `pjm_external_net_position_cut`, `pjm_seam_flow_limit`,
+`pjm_seam_export_limit`, `pjm_congestion`, `pjm_zonal_loss_surface`,
+`pjm_zonal_gas_basis`, `pjm_da_virtual_bids`, `pjm_offer_midcurve_conditional`,
+`unit_outage_short_windows`, `measured_ct_heat_rates`,
+`measured_ramp_capability`, `ramp_limits`, `use_campd_bins`,
+`plant_level_fleet`, `use_plant_emission_rates(+v2)`, `coal_plant_monthly_pricing`,
+`gas_plant_monthly_fuel_pricing`, `gas_monthly_actuals`, `gas_daily_shape`,
+`energy_reserve_coopt`, `reliability_floor`, `state_carbon_pricing`,
+`outage_source=historic`, `reference_price_interface`.
+OFF (files NOT consumed, census only): `pjm_dam_availability`,
+`unit_partial_outage_windows`, `unit_outage_maxgen_events`,
+`capacity_deliverability_limits`, `nuclear_unit_availability`,
+`historic_outage_overlay`.
+
+### Model inputs
+
+| input | keeper-years source + grain | 2022 | 2018-2021 | H1-2026 | materiality / fix |
+|---|---|---|---|---|---|
+| Measured interface transfer limits (`iso-specific-transmission/PJM_<y>_transfer_limits_and_flows.csv` → clean `transfer-interface-limits`) — `pjm_measured_interface_limits` | PJM DataMiner2 `transfer_limits_and_flows`, hourly per interface | **EQUIVALENT** (this session) | **EQUIVALENT** 2018-2021 (this session) | **EQUIVALENT-partial** (`PJM_2026_..._partial.csv`, Jan 1-Jun 30, 43,430 rows) | was the audit's §3.3 **HIGH** gap. Same feed, same public key, byte-schema identical to the committed 2023-2025 drops (7 columns, 87,600 rows/yr; 87,840 in leap 2020). Curated + loader-verified: `load_interface_hourly('PJM', y)` returns 87,600 rows / **10 interfaces / 8 mapped link series for EVERY year 2018-2025**, identical interface vocabulary 2022 vs 2023 |
+| Tie-line interchange (`PJM_<y>_import_export_act_sch_interchange.csv`) — seam ladder flow source, `pjm_seam_flow_limit`/`_export_limit`, `eia_loader.pjm_net_interchange` | DataMiner2 `act_sch_interchange`, hourly per tie | **EQUIVALENT** (this session, 192,718 rows) | **EQUIVALENT** (2018 200,730 / 2019 192,708 / 2020 193,222 / 2021 192,710) | **EQUIVALENT-partial** (`_partial.csv`, 91,201 rows) | 8-column schema identical to committed. 2018's higher row count is a wider tie roster, not duplication |
+| PJM-AS RT reserve market results (`PJM-AS/reserve_market_results_<y>.parquet`) — **the keeper's reserve requirement source** | DataMiner2 RT Reserve Market Results | **EQUIVALENT** | **EQUIVALENT** | **EQUIVALENT-partial** (312,764 rows) | see N-P1: full schema parity restored this session (`_dt_ept`) |
+| **Derived reserve-withholding / requirement series (`PJM-AS/pjm_<y>_as_up_mw.parquet`)** — what `pjm_reserve_pergen` + the MAD/sync families ACTUALLY read | `build_pjm_as_withholding.py` from the RT feed; 8760 rows × `pr_req_mw`, `mad_pr_req_mw`, `sr_req_mw`, `mad_sr_req_mw` | **EQUIVALENT — already on disk** | **EQUIVALENT — already on disk** | **MISSING, by design** | **The audit's "PJM-AS reserve series 2022 (partial file only)" row graded the wrong file.** The keeper never reads `da_reserve_market_results_*`; it reads this derived RT series, which is dense 8760 with all four requirement columns non-zero for **every year 2018-2025**. Re-derived from the re-fetched source this session and asserted **value-identical** (0 differing cells, all columns, all 5 years). 2026 is absent because the builder refuses a partial year (`_partial` suffix convention) — correct, not a gap to fill |
+| PJM-AS DA reserve market results (`da_reserve_market_results_*`) | DataMiner2 DA | **EQUIVALENT-partial** (Oct 1-Dec 31 only) | **structurally ABSENT 2018-2021** | **EQUIVALENT-partial** | **NOT keeper-consumed** (graded per the owner's request). The DA feed's `firstAvailable` is 2022-10-01 — PJM's Reserve Price Formation redesign, a genuine "does not exist", never padded. The 2022 file is right-sized at 11,025 rows for its 3-month window |
+| PJM-AS AS product prices (`ancillary_services_*`, `da_ancillary_services_*`) | DataMiner2 RT/DA AS product LMPs | **EQUIVALENT** (RT 68,267 rows; DA partial 11,050) | **EQUIVALENT** RT 2018-2021; DA structurally absent | **EQUIVALENT-partial** both | validation-side only (rule 13 — reserve prices are never an input). Landed this session by fixing a fetcher bug: see N-P1 |
+| Short-window unit outages (`campd-unit-outages-short-PJM.csv`) — `unit_outage_short_windows` | `derive_campd_unit_outages.py --short-windows`, per-unit coal windows < 5 d | **EQUIVALENT-derived** (134 windows) | **EQUIVALENT-derived** (2018 167 / 2019 113 / 2020 87 / 2021 125) | **EQUIVALENT-partial** (23 windows, CAMPD Q1-only) | derived this session from on-disk CAMPD; merged append-only with the 285 committed 2023-2025 rows asserted **byte-identical**. Overlay loader exercised (no LP) for every year 2018-2026 — resolves 14-34 (zone,class) derate keys per year. **Detector-vintage caveat: see N-P2** |
+| Partial-outage derates (`campd-partial-outages-PJM.csv`) | `derive_campd_unit_outages.py --partial-windows` | **NOT PRODUCED** | **NOT PRODUCED** | **NOT PRODUCED** | `unit_partial_outage_windows=False` in the keeper — census only. The producer is **inert at HEAD for PJM in EVERY year**: it emits 0 plateau windows for 2018-2022, 2026 *and for the committed 2023-2025 span* (which carries 76 rows). Not a year-specific gap — a producer/vintage non-reproduction, recorded in N-P2. The committed file was NOT overwritten |
+| `measured_ct_heat_rates` (`_processed-legacy/campd_ct_heat_rates_PJM.csv`) | CAMPD loaded heat rate, per plant | **n/a — no year dimension** | **n/a** | **n/a** | **VERIFIED NOT PER-YEAR** (the owner's step-4 question): one pooled row per `plant_code`, `years == "2023-2024-2025"`, loader keys on `plant_code` alone. Nothing to derive per year. Vintage exposure quantified: a 2018-2022-pooled re-derive finds 70 ok plants vs the artifact's 71, **69 shared**; exactly **1 plant** ran 2018-2022 and is absent from the artifact (falls back to its eGRID rate — the documented per-plant fallback). Shared-plant rates agree tightly: median \|Δ\| 0.183, mean 11.967 vs 11.986 MMBtu/MWh. **DEGRADED (accepted)** — see N-P3 |
+| `measured_ramp_capability` (clean `ramp-capability`) | EIA-860 fast-start + CAMPD 1-h envelope, per plant | **n/a — no year dimension** | **n/a** | **n/a** | **VERIFIED NOT PER-YEAR**: written with `year=None`, no `--years` CLI. `POOLED_VINTAGES = (2023, 2024, 2025)` is an explicit rule-22 quarantine constant ("2022 and H1-2026 are the designated holdouts … excluded by construction"). **DEGRADED (accepted)** + an owner adjudication — see N-P3. Separately: the clean partition is gitignored and absent from a fresh container; `load_measured_ramp_capability` RAISES rather than degrading (pjm-119), so it must be regenerated before ANY solve — an in-sample fact, not a holdout gap |
+| EIA-930 per-DIBA interchange (`eia-930-interchange/PJM interchange hourly.parquet`) | EIA-930 `TI` family, 7 DIBAs, hourly | **EQUIVALENT** (60,984 rows, 99.5 %) | **EQUIVALENT 2019-2021** (99.7 / 99.4 / **95.5 %**); **2018 MISSING (source floor)** | **EQUIVALENT-partial** (28,930 rows to hour-ending 2026-07-01, 95.1 %) | committed 2023-01-01 01:00 .. 2026-01-01 00:00 block asserted content-identical across the merge. **2018 is a publication floor, not a fetch gap**: the EIA API v2 `interchange-data` route returns `total: 0` for PJM in every 2018 month probed (01/04/07/08/09/10/12), first rows 2019-01 — recorded rather than padded. 2021's dip is a hole in EIA's own submission (CPLE complete at 8,759 h; the other six DIBAs each cut to 8,303 h) — same class as the committed 2025 block's 97.0 % |
+| Demand (`eia-930/eia_demand_profiles.parquet`, `hrl_load_metered`) | EIA-930 8760 + PJM metered | **EQUIVALENT** (pre-existing) | **MISSING 2018-2020** (cross-ISO F3 blocker, audit §4.1); 2021 ✓ | blocked (publication horizon) | the 2018-2020 demand-profile gap is a **hard blocker for every ISO** — no dispatch is possible without it. Untouched here |
+| CAMPD unit-level, unit-outage windows, F923, monthly gas basis, 8-zone gas hub, weather, EIA-860 vintage, eGRID | per audit §3.3 / §4.2 | **EQUIVALENT** (pre-existing) | **EQUIVALENT** (pre-existing) | CAMPD Q1-only; gas May+ unpublished | not touched this session |
+
+### Bench / scoring series
+
+| series | 2022 | 2018-2021 | H1-2026 | note |
+|---|---|---|---|---|
+| `actual_lmp_hourly_PJM.parquet` (scoring target) | **EQUIVALENT** | **EQUIVALENT** 2018-2021 | **raw landed, block not built** | **Clock lineage CLEAN — audit §5.6's spot-check request is answered definitively.** Every committed 2018-2025 row reproduces **bit-for-bit** from the current fixed-clock `derive_actual_lmp.py` (0 differing cells in rt and da, 0 NaNs, all 8 years), so no re-derive is owed and the in-sample rows are trivially frozen. Structural reason: PJM's DataMiner export carries a real `datetime_beginning_utc` column, so `_hub_mean_hourly` indexes the chronological calendar directly — PJM was never exposed to the prevailing-clock artifact that hit NYISO/NEISO. H1-2026: `lmp-data/PJM_2026_rt_da_monthly_lmps_partial.csv` (52,116 rows) landed this session; the parquet block is deliberately NOT built (locked tier, no `final` marker) |
+| `actual_lmp.json` PJM | **EQUIVALENT** (2018-2025 pre-existing) | **EQUIVALENT** | not built | — |
+| `actual_tail.json` PJM 2022 | **EMITTED this session** — DA 73 h / RT 92 h > $200, coverage 1.00 | not emitted (outside the grant) | not emitted (locked tier) | closes the audit's "(d) — marker now exists, auto-emits on next derive run". Required a tier fix first: see N-P4 |
+| Seam-import ladder neighbour price (`actual_lmp_hourly_MISO.parquet`) — `pjm_seam_measured_ladder` / `reference_price_interface` | **CLOSED mid-session** | n/a | n/a | the audit's cross-ISO blocker ("closes for free once the MISO lane lands its LMP bench") **resolved while this session ran**: PR #3182 landed MISO's 2022 hub block on main (2026-07-31). It is **PARTIAL — rt 86.3 % / da 94.0 % coverage** on 8,760 rows, so the ladder's 2022 neighbour leg is a lower-coverage input than its 2023-2025 counterpart; grade it explicitly at recipe freeze. The ladder's own two inputs (PJM tie flows, PJM DA LMP) are now complete 2018-2022 |
+| EIA-930 fuel-mix bench, CAMPD generation bench | **EQUIVALENT** | **EQUIVALENT** | partial | pre-existing |
+| `calibration_reference.json` + `PJM_<y>_renewable_capacity.csv` | **EQUIVALENT** (pre-existing) | 2021 ✓; **MISSING 2018-2020** | blocked | same F3 demand-profile root as the driver row |
+
+### Notes
+
+- **N-P1 (fetcher bug found and fixed — the AS-price feeds were never
+  machine-fetchable).** `fetch_pjm_as.py` sorted and filtered all four
+  DataMiner2 feeds on `datetime_beginning_utc`. The two `*ancillary_services`
+  feeds **reject that key with HTTP 400** — for every year probed including
+  2023, a year already on disk — and `pjm_dataminer.fetch_page` maps 400 to
+  "no data for this window", so the script reported five straight years as
+  "not yet published" and wrote nothing. That is why those parquets were
+  hand-pulled from the DataMiner UI. Fixed with a per-feed `filter_field`
+  (`datetime_beginning_ept` for the two AS-price feeds); all five years plus
+  both 2026 partials then landed. Two schema deltas surfaced in the same pass
+  and were also fixed: machine-fetched files lacked the derived `_dt_ept`
+  column that **all four** feeds' committed siblings carry — not cosmetic,
+  `scripts/report_pjm_posture_gate.py:70` indexes `reserve_market_results` on
+  it and would `KeyError` on the 2018-2022 files the 2026-07-10 session
+  landed — and this container's pandas writes `large_string`/`timestamp[us]`
+  where the committed files use `string`/`timestamp[ns]`, which breaks a
+  multi-year `ds.dataset` schema unification. After the fix **all four feeds ×
+  all years are at full column+dtype parity**. The re-fetch was verified
+  non-destructive: rebuilding `pjm_<y>_as_up_mw.parquet` from the re-fetched
+  source reproduced the baseline **value-identically**, and those derived
+  files were then restored to avoid pure-encoding churn.
+- **N-P2 (detector-vintage asymmetry in the CAMPD outage derives — reported,
+  not papered over).** The owner's precondition was "re-prove committed years
+  byte-identical first". It **fails**, in two different ways, and neither was
+  resolved by overwriting in-sample data:
+  (a) *Short windows.* Re-deriving 2023-2025 at HEAD gives **279 of the 285**
+  committed windows, every shared row numerically identical (capacity,
+  duration, unit-percent all exact) and **zero new** windows. The six that
+  drop are short marginal spans at three plants (John S. Cooper ×3, Mount
+  Storm, Mt. Carmel ×2), consistent with the in-merit (revealed-availability)
+  filter's net-load percentile boundary moving. The extension was therefore
+  merged **append-only**, with the committed rows byte-frozen, so the keeper's
+  in-sample input is untouched and the asymmetry is a documented lineage note
+  rather than a silent re-tune. Adjudication (re-derive all years at one
+  vintage, which changes keeper inputs) is a calibration-owner call — the same
+  disposition the register's NYISO §2022 outage row took.
+  (b) *Partial windows.* `--partial-windows` emits **0 rows for PJM in every
+  year**, in-sample included, against 76 committed rows. This is a whole-file
+  non-reproduction, not a holdout gap. Materiality is low — the keeper has
+  `unit_partial_outage_windows=False` — but it means the committed file has no
+  reproducible provenance at HEAD.
+- **N-P3 (year-agnostic measured artifacts — the step-4 answer, and one owner
+  decision).** Neither `measured_ct_heat_rates` nor `measured_ramp_capability`
+  is per-year, so "derive every missing year" is a no-op: there is nothing
+  missing. Both are pooled 2023-2025 plant-level constants. Grading them
+  **DEGRADED (accepted)** for an out-of-training solve rests on the same
+  rationale as the register's "fleet statics year-agnostic (accepted)" row —
+  a CT's loaded heat rate and a plant's demonstrated hourly ramp envelope are
+  physical constants of the machine, both derives are frozen against residuals
+  (rule 24 `[R-FROZEN-DERIVE]`), and the measured 2018-2022 vs 2023-2025 rate
+  agreement above (0.16 % on the shared mean) supports it. **Owner decision
+  deferred, deliberately:** `POOLED_VINTAGES` could now legally widen — the
+  authorization this session carries is exactly the one its comment names as
+  the blocker — but widening it would change the **in-sample** pooled envelope
+  and therefore silently re-tune the 2023-2025 keeper. That is a calibration
+  decision at recipe freeze, not a data-readiness action, so it was NOT taken
+  here. It is the direct analogue of CAISO's measured-offer-surface vintage
+  adjudication (§3.2).
+- **N-P4 (rule-22 tier leak found and closed in `derive_actual_tail.py`).**
+  The deriver was **tier-blind**: `_marker_isos()` read only the `complete`
+  block, so any ISO holding the validation marker also unlocked **H1-2026**,
+  a locked-test year whose `final` block is deliberately empty. This was not
+  hypothetical — the committed `actual_tail.json` carried a **NYISO 2026 row**
+  (DA 151 h / RT 86 h > $300 at 49.6 % coverage, i.e. the H1 window) emitted on
+  a validation-only declaration. The deriver now reads
+  `scripts/lib/holdout_policy` — the same tier map the other three rule-22
+  gates use — so a year is emitted only when the ISO holds **that year's**
+  tier marker. The run this session therefore **added PJM 2022** and
+  **withdrew NYISO 2026**; no other ISO-year row changed value, and MISO's
+  newly-landed 2022 bench is correctly not emitted (no marker). The
+  considered-holdout set is deliberately held at `{2022, 2026}` rather than
+  the full `VALIDATION_YEARS` ladder, so the fix closes a leak without opening
+  2018/2020/2021 — which the owner's authorization explicitly places outside
+  the current grant.
+- **N-P5 (H1-2026 naming).** `fetch_pjm_transmission.py` gained an
+  `--h1-2026` flag that hard-caps at Jun 30 and writes `_partial`-suffixed
+  filenames, mirroring `fetch_pjm_as.py`. Every consumer resolves the plain
+  `PJM_<year>_<feed>.csv` name directly, so the suffix makes a half-year file
+  invisible to them rather than quietly wrong; `--years 2026` is refused
+  outright. The interface-limits curator's glob (`PJM_*_transfer_limits_and_flows.csv`)
+  correctly does not match the partial file.
+
+### What still blocks a PJM 2022 one-shot
+
+1. **The holdout spend freeze** (`holdout-freeze.json`, 2026-07-25, HELD
+   2026-07-26) — outranks the marker; only the owner lifts it.
+2. **G-19 sign-off** on this section.
+3. **`data/clean` regeneration** before any solve: `ramp-capability` and
+   `transfer-interface-limits` are gitignored, and both loaders RAISE rather
+   than degrade (pjm-119). `transfer-interface-limits` was regenerated and
+   verified for 2018-2025 this session; `ramp-capability` was not built.
+4. **Two recipe-freeze adjudications** (neither a data gap): the N-P2 outage
+   detector vintage, and the N-P3 pooled-vintage question.
+5. **Not blocking, but grade it:** the MISO 2022 neighbour LMP that unblocks
+   the seam ladder is PARTIAL (rt 86.3 % / da 94.0 %).
+
+Nothing above applies to **2018-2021 or H1-2026**, which are outside the
+current grant entirely — their data is now largely READY (this section), but
+readiness is not authorization.
+
+---
+
+## ERCOT / CAISO / MISO
 
 Sections pending their own lanes. Seed material:
 `docs/iso-2022-holdout-data-availability-audit-2026-07.md` (2026-07-31

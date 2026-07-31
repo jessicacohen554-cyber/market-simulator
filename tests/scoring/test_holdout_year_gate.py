@@ -14,6 +14,7 @@ import json
 from pathlib import Path
 
 import pytest
+from scripts.lib import holdout_policy
 from tests.helpers import REPO_ROOT
 
 _SPEC = importlib.util.spec_from_file_location(
@@ -175,3 +176,59 @@ class TestHoldoutMarkerTiers:
         for year in (2022, 2019):
             with pytest.raises(SystemExit, match="ACTIVE HOLDOUT SPEND FREEZE"):
                 _RCF.enforce_holdout_year_gate([year], "NYISO", True, root)
+
+
+_TAIL_SPEC = importlib.util.spec_from_file_location(
+    "derive_actual_tail",
+    REPO_ROOT / "scripts" / "data" / "derive_actual_tail.py",
+)
+_TAIL = importlib.util.module_from_spec(_TAIL_SPEC)
+_TAIL_SPEC.loader.exec_module(_TAIL)
+
+
+class TestActualTailTierGate:
+    """The tail deriver is the FOURTH rule-22 gate and must be tier-aware too.
+
+    It read only the ``complete`` block, so a validation-tier marker also
+    unlocked H1-2026 — a LOCKED-tier year. That was not hypothetical: the
+    committed ``actual_tail.json`` carried a NYISO 2026 row (49.6 % coverage,
+    the H1 window) emitted on a validation-only declaration, withdrawn
+    2026-07-31. See the register's §PJM note N-P4.
+    """
+
+    _VALIDATION_ONLY = {"complete": {"PJM": {}}, "final": {}}
+
+    def test_train_years_always_emit(self):
+        for year in (2023, 2024, 2025):
+            assert _TAIL._year_emittable("ERCOT", year, {})
+
+    def test_validation_marker_unlocks_2022(self):
+        assert _TAIL._year_emittable("PJM", 2022, self._VALIDATION_ONLY)
+
+    def test_validation_marker_does_not_unlock_the_locked_tier(self):
+        """The leak this closes: `complete` must never reach 2026 or 2019."""
+        for year in (2019, 2026):
+            assert not _TAIL._year_emittable("PJM", year, self._VALIDATION_ONLY)
+
+    def test_final_marker_unlocks_h1_2026(self):
+        doc = {"complete": {}, "final": {"PJM": {}}}
+        assert _TAIL._year_emittable("PJM", 2026, doc)
+
+    def test_unmarked_iso_gets_no_out_of_training_year(self):
+        for year in (2018, 2019, 2020, 2021, 2022, 2026):
+            assert not _TAIL._year_emittable("MISO", year, self._VALIDATION_ONLY)
+
+    def test_ladder_rungs_stay_outside_the_considered_set(self):
+        """2018/2020/2021 are staged owner decisions, not part of this grant.
+
+        They are validation-TIER years, so the tier gate alone would pass them
+        for a `complete` ISO; ``CONSIDERED_HOLDOUT_YEARS`` is what holds them.
+        """
+        for year in (2018, 2020, 2021):
+            assert holdout_policy.tier_for_year(year) == holdout_policy.TIER_VALIDATION
+            assert year not in _TAIL.CONSIDERED_HOLDOUT_YEARS
+            assert not _TAIL._year_emittable("PJM", year, self._VALIDATION_ONLY)
+
+    def test_empty_marker_doc_fails_closed(self):
+        for year in (2018, 2019, 2022, 2026):
+            assert not _TAIL._year_emittable("PJM", year, {})
