@@ -194,7 +194,7 @@ order is a prior, not a mandate — a session with a better-identified lever
 goes off-queue and says so. Entries already adjudicated elsewhere are *not*
 repeated here; the matrix `R`/`G`/`I` cells are the DO-NOT-REDO list.
 
-### 5.1 ERCOT — NOT-YET (keeper `2026-07-31-ercot145-gas-daily-shape`, C6 PASSES); open gates C3a/C3b/C3c/C7; ~~C7 lignite, coal seasonal split~~ CLOSED; ~~items 4+5~~ EXECUTED at ERCOT-145; ~~item 6~~ CLOSED `I` at ERCOT-146; the items-5/6 reopen route (measured CT-band re-identification) REFUSED at Phase 0 by ERCOT-147 — data-intake first (item 8)
+### 5.1 ERCOT — NOT-YET (keeper `2026-07-31-ercot148-dam-event-cap`, C6 PASSES); open gates C3a/C3b/C3c/C7 (C3b now 2023-only); ~~C7 lignite, coal seasonal split~~ CLOSED; ~~items 4+5~~ EXECUTED at ERCOT-145; ~~item 6~~ CLOSED `I` at ERCOT-146; the items-5/6 reopen route REFUSED at Phase 0 by ERCOT-147 — data-intake first (item 8); ERCOT-148 (owner-directed availability audit) promoted the DAM coal event-window cap — the coal availability lane is now measured-precedence-correct, and the un-masked residual is the LOADING-CONDUCT under-run (ERCOT-126 object)
 
 **QUEUE ITEM 2 IS PARTIALLY EXECUTED (ERCOT-144, 2026-07-31).** The DOF half
 landed: the ERCOT-144 lane retired the residual-identified coal offer DOF onto
