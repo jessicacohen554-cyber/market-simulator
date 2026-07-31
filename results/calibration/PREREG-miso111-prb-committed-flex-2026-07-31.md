@@ -185,3 +185,65 @@ MISO holds neither tier marker; --year ∈ {2023, 2024, 2025} only); no
 re-derivation of any min-stable parameter against a residual (the §4
 measurement is source-data conduct, blind to the model's residual by
 construction of this document).
+
+## 8. Post-measurement design refinement (committed BEFORE any solve)
+
+Phase 2 ran after §1-§7 were committed (da5ab19). No kill rule fired:
+
+- K1: regulated-PRB ONLINE-conditioned off-peak CV = 0.159 / 0.126 / 0.076
+  (2023/24/25) — not flat; trough h2, peak h17-18, amplitude 18-25% of HSL.
+- K2: plant-basis `lsl_frac` cap-weighted p50 = 0.182 — ample headroom.
+- K3: merchant amplitude 1.1-1.6× regulated, not ≥2× — not a merchant
+  artifact.
+- Discriminating conduct test (beyond the PREREG, reported for completeness):
+  regulated-PRB overnight de-load vs day max is 0.488/0.452 on cheap nights
+  (hub overnight min < $22) vs 0.189/0.221 on dear nights (> $28), 2023/2025
+  — the within-day cycling is PRICE-RESPONSIVE conduct, not blind
+  load-following. Only the COMMITMENT (staying online) is self-determined.
+
+**Design refinement forced by the measurement.** The §3 floor half of the
+hypothesis is ALREADY REPRESENTED, more strongly than measured: the
+per-plant CAMPD `_mustrun` bands (thermal_tranches_MISO.csv: 30-52% of
+nameplate for the large regulated PRB plants) sit far ABOVE the measured
+plant LSL (p50 0.182), are always-on at sunk-contract fuel (share 1.0 →
+fuel-free bid), and are what carries the self-commitment once (rule 19). A
+new bridge floor at 0.182 × pmax would bind BELOW the existing mustrun band
+— provably inert. What is missing is the HEADROOM half only: the
+`_committed` band (a further ~22-52% of nameplate) is pinned inframarginal
+in all 8760 h by the regulated take-or-pay discount, so ~92% of the large
+regulated plants' capacity cannot respond to price while the meter shows
+that same band cycling nightly.
+
+**The Phase-3 arm is therefore a single offer-side delta, no new floor:**
+`coal_prb_committed_dispatchable` (new ScenarioConfig bool, default False) —
+when armed alongside `coal_committed_takeorpay_regulated`, a PRB-supplied
+plant's `_committed` tranche is EXCLUDED from the regulated sunk-contract
+discount and bids full delivered cost under its supply passthrough
+(identical to a merchant committed band). BIT/lignite keep the discount (the
+G3 protection is by construction — miso-102's COAL_BIT 2.6-2.8× overshoot
+came from repricing BIT). The `_mustrun` band is untouched in every arm.
+
+**Sharpened predictions, stated before the solve:**
+- P-A: 2023/2024 COAL_PRB cv_ratio rises to the neighbourhood of miso-102b's
+  0.727/0.931 (possibly somewhat less: BIT keeps its discount here, so the
+  overnight price feedback differs).
+- P-B: 2025 improves but clearing 0.5 is GENUINELY UNCERTAIN — miso-102b
+  reached only 0.364 with ALL coal repriced, and the model's overnight price
+  floor (~$29.7 p10 off-peak vs actual $17.95) leaves most of the PRB band
+  inframarginal at night. The live question is whether the expensive top of
+  the measured per-plant delivered-price spread (Michigan rail PRB, e.g.
+  Monroe ~3.3 GW) straddles the model's 2025 night prices and cycles. If
+  2025 stays < 0.5, G1 fails and the arm is registered REJECTED per §6 —
+  with the residual attributed to the overnight price-formation defect
+  (model night HE0-3 $27.8-35.3 vs actual $19.4-26.9, present in BOTH
+  miso-102 arms), which is a SEPARATE lane this session does not open.
+- P-C: C1 stays 16/16 (PRB has +2.02/+1.86 TWh of ±8 headroom and the
+  scoped repricing sheds far less than miso-102b's all-coal −18.5/−27.2
+  TWh; the displaced energy lands on CC_REGULAR, which is UNDER by 4-5 TWh,
+  so both move toward actuals). If PRB flips C1, the arm dies (G2).
+- P-D: COAL_BIT D-1 stays in its keeper band (G3) — its offers are
+  untouched; only second-order price feedback reaches it.
+- P-E: C3a improves or holds in all years (repricing raises inframarginal
+  bids; the model's mean LMP is under in all three years). Night-hour price
+  fit worsens (the miso-102 P5 result) — reported, not hidden; C3b verdict
+  must not flip (G4).
