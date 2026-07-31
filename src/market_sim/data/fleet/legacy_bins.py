@@ -505,7 +505,16 @@ def campd_tranche_fuel_frac(
         # >= 1.0 (markups > 1.0 pass through unchanged). The committed
         # band keeps the take-or-pay/stay-online discount.
         uid = gen.unit_id
-        if econ_srmc_bound and (uid.endswith("_peak") or "_econ" in uid):
+        # `_commitcyc` (ScenarioConfig.coal_prb_committed_split, miso-112):
+        # the cycling slice of a split regulated-PRB committed band. It is
+        # never matched by the `_committed` discount rules above (suffix
+        # scoping), so it reaches here and bids its full supply passthrough;
+        # under coal_econ_srmc_bound it takes the same >= 1.0 clamp as the
+        # econ/peak tranches — its marginal fuel is bought at market
+        # (PREREG-miso112-prb-committed-split-2026-07-31.md §3).
+        if econ_srmc_bound and (
+            uid.endswith("_peak") or "_econ" in uid or uid.endswith("_commitcyc")
+        ):
             if isinstance(pt, np.ndarray):
                 return np.maximum(pt, 1.0)
             return max(float(pt), 1.0)
@@ -527,6 +536,10 @@ def _coal_tranche_rank(unit_id: str) -> float:
         return 0.0
     if suffix == "committed":
         return 1.0
+    if suffix == "commitcyc":
+        # miso-112 cycling slice: the upper part of the committed band,
+        # physically between the hold-through slice and the econ ramp.
+        return 1.5
     if suffix == "econlo":
         return 2.0
     if suffix == "econhi":

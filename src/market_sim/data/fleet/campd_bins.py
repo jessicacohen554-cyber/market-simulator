@@ -1326,6 +1326,36 @@ def thermal_tranche_p25_level(iso: str) -> dict[tuple[int, str], float]:
     return out
 
 
+@lru_cache(maxsize=8)
+def coal_prb_committed_split_night(iso: str) -> dict[int, float]:
+    """Return ``{plant_code: night_p50}`` from the PRB committed-split artifact.
+
+    The measured within-run NIGHT loading level (p50 of plant load / HSL over
+    ONLINE hours h0-5, pooled 2023-2025, WP-3 loading-when-on construction)
+    from ``data/raw/_processed-legacy/coal_prb_committed_split_<ISO>.csv``,
+    written by the frozen ``scripts/data/derive_prb_committed_split.py``
+    (rule 23 [R-FROZEN-DERIVE]: re-derives only on CAMPD source updates).
+    Consumed by ``bins_to_fleet`` when ``config.coal_prb_committed_split`` is
+    armed (miso-112, PREREG-miso112-prb-committed-split-2026-07-31.md §3): a
+    regulated PRB plant's ``_committed`` band splits at this level into a
+    hold-through slice (keeps the take-or-pay discount) and a full-cost
+    cycling slice (``_commitcyc``). Both REG and MER legs are returned; the
+    consumer gates on the regulated scope set. Empty when the ISO has no
+    artifact — the artifact is per-ISO by construction, so the mechanism
+    self-scopes (rule 25 [R-ISO-SCOPE]).
+    """
+    path = PROCESSED_DIR / f"coal_prb_committed_split_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    out: dict[int, float] = {}
+    for r in df.itertuples(index=False):
+        night = float(getattr(r, "night_p50", float("nan")))
+        if night == night:  # NaN guard
+            out[int(r.plant_code)] = night
+    return out
+
+
 def thermal_tranche_chp_steam_level(iso: str) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, group): steam_level_cf_pct}`` for an ISO's CHP cogens.
 

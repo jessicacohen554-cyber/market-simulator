@@ -5610,6 +5610,33 @@ class ScenarioConfig:
     # every existing keeper byte-identical.
     coal_prb_committed_dispatchable: bool = False
 
+    # PRB committed-band SPLIT (miso-112, the measured successor to the
+    # REJECTED whole-band coal_prb_committed_dispatchable above): reality's
+    # regulated-PRB within-run night level is ~0.62 x HSL — BETWEEN the
+    # mustrun band (~0.46) and the full committed stack (~0.92) — so one
+    # band at one price cannot hold it (discounted it pins flat at 0.92,
+    # the C7 flatness; at SRMC it drops to 0.46 nightly, the miso-111 C1
+    # volume hole, -8.77/-14.97 TWh). When armed, each regulated
+    # PRB/subbituminous plant's `_committed` tranche splits at the plant's
+    # MEASURED within-run night loading level (p50 of ONLINE-hours plant
+    # load/HSL over h0-5, pooled 2023-25; artifact
+    # coal_prb_committed_split_<ISO>.csv, frozen deriver
+    # scripts/data/derive_prb_committed_split.py — rule 23): a hold-through
+    # slice `min(committed_cap, max(0, night_p50 - pct_mr/100) x nameplate)`
+    # keeps the `_committed` suffix and the 1 - contract_share discount
+    # (the stay-online self-commitment energy the discount really carries),
+    # and the remainder becomes `_commitcyc`, bidding full delivered cost
+    # under its supply passthrough (+ the coal_econ_srmc_bound clamp).
+    # `_mustrun` untouched; no floor of any kind; flat committed band only
+    # (a committed_ramp_spread ladder skips the split). Zero fitted
+    # parameters — one measured conduct input entering formulaically
+    # (rule 13: year-static plant conduct, same status as
+    # coal_takeorpay_share; not an outcome pin — the LP still prices every
+    # hour). Scope + kill rules + guards pre-registered BEFORE measurement:
+    # results/calibration/PREREG-miso112-prb-committed-split-2026-07-31.md.
+    # Default off — every existing keeper byte-identical.
+    coal_prb_committed_split: bool = False
+
     # Lignite (mine-mouth): take-or-pay fixed costs are sunk, so in
     # cheap-gas months lignite discounts its BID (not its cost) to hold
     # baseload against cheap gas CC instead of being priced out.
@@ -10028,6 +10055,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_committed_takeorpay_regulated": 3,
     "coal_committed_takeorpay_sunk_fixed": 3,
     "coal_prb_committed_dispatchable": 3,
+    "coal_prb_committed_split": 3,
     "coal_lignite_passthrough_sigmoid": 3,
     "coal_lignite_passthrough_floor": 3,
     "coal_lignite_passthrough_ceil": 3,
