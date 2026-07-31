@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-31-nyiso108-control-zerodelta",
+ "label": "nyiso108 control zerodelta",
+ "date": "2026-07-31",
+ "shorthand": "nyiso108-control-zerodelta",
+ "definition": "nyiso-108 CONTROL \u2014 a same-HEAD, zero-delta re-solve of the outgoing keeper 2026-07-31-nyiso105-chp-heat-rates (bundle nyiso105_chpheatrate_B), solved at frozen HEAD e1a4bc6 so that ONE control serves the arm and the A/B is never scored against a committed bundle from a different HEAD (the neiso-69 drift precedent). It carries the keeper recipe EXACTLY \u2014 hydro_backfill_year=None, hydro_eia930_monthly=false \u2014 and exists to establish that any delta in 2026-07-31-nyiso108-hydro-input-repair is the mechanism and not the base. IT SUCCEEDS ON THE STRICT BYTE BASIS: control minus committed keeper is EXACTLY 0.0 MW on every class in all three years, so unlike caiso-146 and neiso-69 there is NO same-HEAD drift at NYISO. Determination CALIBRATED-WITH-CAVEATS, 8 target-grade / 1 ledgered (C3c) / 0 FAILs \u2014 identical to the keeper on every criterion, which is the prereg K2 scorecard gate. Years 2023-2025 in one invocation (rule 16). PREREG-nyiso108-hydro-input-repair-2026-07-31.md.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-07-31-nyiso108-control-zerodelta.js",
+ "bundle": "results/calibration/nyiso108_control_A"
+}

@@ -1207,7 +1207,22 @@ criterion; the outage-grain data ask below remains its honest continuation.)*
    `results/calibration/FINDING-miso110-forecast-hydro-level-923hy-2026-07-31.md`,
    probe `scripts/probes/_miso110_forward_level_audit.py`.
 
-### 5.5 NYISO — target: C3c (sole blocker, roof-blocked); keeper `2026-07-31-nyiso105-chp-heat-rates`, CALIBRATED-WITH-CAVEATS; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107 (item 11b owner-DEFERRED, stays chartered)
+### 5.5 NYISO — target: **the 2023 fossil over-pricing (NEW, nyiso-108)**, with C3c ledgered behind it; keeper `2026-07-31-nyiso108-hydro-input-repair`, **NOT-YET**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108 (item 11b owner-DEFERRED, stays chartered)
+
+**STATUS CHANGE 2026-07-31 (nyiso-108).** NYISO regressed CALIBRATED-WITH-CAVEATS -> **NOT-YET** by an
+**explicit owner override** of that session's own prereg §6 (which pre-committed no-promotion-on-new-FAIL).
+The hydro input repair — a rule 14 [R-ACCURATE] correction with ZERO free parameters, arming the pair
+`--hydro-backfill-year 2024` + `--hydro-eia930-monthly` that four of the six keepers already carried —
+restored the 2025 LP hydro fleet from **3 plants / 21.0482 TWh to 147 / 24.0589**, and in doing so removed
+~1.55 TWh of **phantom zero-MC 2023 hydro** that was **suppressing a real 2023 fossil over-pricing**.
+C3a 2023 crosses **+8.6 % -> +10.2 %** against a ±10 % band. Rule 14 forbids reverting the accurate input
+to restore the PASS; the miss is the **named successor, nyiso-109** (offer-stack / fuel-basis root cause,
+NOT the hydro input). Same signature PJM promoted at pjm-143. **C3c is BIT-IDENTICAL** across arm and
+same-HEAD control (3/0/7 h vs 10/12/42), so the nyiso-104b **C3c frontier declaration stands on its own
+evidence** and no caveat slot is spent — what lapsed is its *premise* that C3c was the sole blocker.
+NYISO is no longer at a frontier in the sense of 'options exhausted'; it is back in active calibration
+with a concrete open item. C1 remains 14/14 all-class, 10/10 free-class.
+`results/calibration/FINDING-nyiso108-hydro-input-repair-2026-07-31.md`.
 
 The J/K-commitment and reserve-tier routes are closed IN FULL (nyiso-83/84);
 the tail is blocked by an SRMC roof (~$258 mainland). nyiso-92 dated the
