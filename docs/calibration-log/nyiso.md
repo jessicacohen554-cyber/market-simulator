@@ -3353,7 +3353,12 @@ Next shorthand: nyiso-107.
 ## nyiso-107 — the hydro miss is an INPUT truncation, not hydrology; `hydro_budget_nameplate_aware` provably inert; matrix keeper-stamp guard extended (2026-07-31)
 
 **Keeper UNCHANGED: `2026-07-31-nyiso105-chp-heat-rates`** (CALIBRATED-WITH-CAVEATS,
-0 FAILs, 1 ledgered caveat C3c — no slot spent). Frozen HEAD `3bfca72`.
+0 FAILs, 1 ledgered caveat C3c — no slot spent). Measurement HEAD `3bfca72`,
+rebased onto `b2192ef` before push; `data/hydro.py`, `config/constants.py`,
+`run_calibration_full.py` and the NYISO keeper shard are all byte-unchanged
+across that range, so no measured number moves. (`keepers/NEISO.json` did move —
+neiso-71 promoted `2026-07-31-neiso-71-nucavail` and re-stamped its own header
+correctly, so the new guard sees no additional drift.)
 **Zero solves.** Scope Item B closed on measurement alone — the
 nyiso-93/94/95/97/99/101/105/106 pattern. No pre-registration was needed because
 no arm was solved. Probe: `scripts/probes/_nyiso107_hydro_basis_audit.py`;

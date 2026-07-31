@@ -2,7 +2,15 @@
 
 **Session:** nyiso-107. **Keeper under test:** `2026-07-31-nyiso105-chp-heat-rates`
 (bundle `results/calibration/nyiso105_chpheatrate_B`, CALIBRATED-WITH-CAVEATS,
-0 FAILs, 1 ledgered caveat C3c). **Frozen HEAD:** `3bfca72`.
+0 FAILs, 1 ledgered caveat C3c). **Measurement HEAD:** `3bfca72`; the branch was
+later rebased onto `b2192ef` (11 commits: ercot148, caiso-150, miso-111,
+neiso-71/72). **Every input this finding measures was verified byte-unchanged
+across that range** — `src/market_sim/data/hydro.py`,
+`src/market_sim/config/constants.py`, `scripts/run_calibration_full.py` and the
+NYISO keeper shard all have an empty diff `3bfca72..b2192ef`, so no number below
+moves. (`keepers/NEISO.json` did move — neiso-71 promoted
+`2026-07-31-neiso-71-nucavail` and correctly re-stamped its own matrix header, so
+the §G guard sees no new drift.)
 **Solves run: ZERO.** Scope Item B closed on measurement alone — the
 nyiso-93/94/95/97/99/101/105/106 pattern. Owner decisions taken in-session are
 recorded in §F.
