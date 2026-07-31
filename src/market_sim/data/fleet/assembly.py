@@ -78,6 +78,7 @@ from market_sim.data.fleet.campd_bins import (
     campd_ct_run_lengths,
     cc_duct_burner_peak_mult,
     cc_duct_peaking_pct,
+    coal_prb_committed_split_night,
     load_plant_registry,
     load_plant_tranche_config,
     oil_primary_bin_plants,
@@ -200,6 +201,19 @@ def bins_to_fleet(
     _ov_path = getattr(config, "plant_tranche_config_path", None)
     if _ov_path:
         tranche_ov = load_plant_tranche_config(_ov_path)
+
+    # ScenarioConfig.coal_prb_committed_split (miso-112): per-plant measured
+    # within-run night loading levels for the regulated-PRB committed-band
+    # split. Per-ISO artifact ⇒ self-scoping (rule 25); the regulated set is
+    # the same one that scopes the committed-band take-or-pay discount.
+    _prb_split_night: dict[int, float] = (
+        coal_prb_committed_split_night(getattr(config, "iso", "ERCOT") or "ERCOT")
+        if getattr(config, "coal_prb_committed_split", False)
+        else {}
+    )
+    _prb_split_reg: frozenset[int] = (
+        eia860_selfcommit_scope_plants() if _prb_split_night else frozenset()
+    )
 
     def _commission_year(plant_code: int) -> int:
         """Return the EIA-860 commission year for ``plant_code``."""
@@ -819,6 +833,55 @@ def bins_to_fleet(
                     startup,
                 ),
             ]
+            # ScenarioConfig.coal_prb_committed_split (miso-112, PREREG
+            # §3): a regulated PRB plant's committed band splits at its
+            # MEASURED within-run night level. The hold-through slice
+            # (the part reality keeps loaded through cheap nights) keeps
+            # the `_committed` suffix — anchor tags and the regulated
+            # take-or-pay discount — while the cycling remainder becomes
+            # `_commitcyc`, bidding full delivered cost under its supply
+            # passthrough (campd_tranche_fuel_frac; startup 0 / min-run 0,
+            # the same already-started physical unit, mirroring the
+            # committed{i:02d} ramp-slice precedent). Flat-band branch
+            # only: a ramp-rendered band (committed_ramp_spread > 0) is
+            # already a rising price ladder and skips the split. A plant
+            # whose measured night level covers the whole band keeps the
+            # keeper form (cyc_cap ≤ 0.5 → no split); one whose night
+            # level sits below its mustrun band cycles the whole band
+            # (hold_cap 0 → the ≤0.5 MW anchor row is dropped by the
+            # capacity guard below — inert in the scored P1 path: the
+            # warm-boiler exemption already zeroes coal committed-band
+            # startup markups, and min-run coupling is the archived P2's).
+            _split_night = (
+                _prb_split_night.get(plant_code)
+                if (
+                    fuel == "coal"
+                    and coal_chp_sector is None
+                    and coal_supply in ("prb", "subbituminous")
+                    and plant_code in _prb_split_reg
+                    and committed_cap > 0.5
+                )
+                else None
+            )
+            if _split_night is not None:
+                _hold_cap = min(
+                    committed_cap,
+                    max(0.0, _split_night - pct_mr / 100.0) * nameplate,
+                )
+                _cyc_cap = committed_cap - _hold_cap
+                if _cyc_cap > 0.5:
+                    committed_tranches = [
+                        (
+                            "committed",
+                            _hold_cap,
+                            committed_hr,
+                            1.0,
+                            bin_min_run,
+                            bin_min_down,
+                            startup,
+                        ),
+                        ("commitcyc", _cyc_cap, committed_hr, 1.0, 0, 0, 0.0),
+                    ]
         # The _sync (synchronization) tranche bids full SRMC (fuel_frac=1.0 in
         # campd_tranche_fuel_frac), so it carries no fuel discount; it shares the
         # min-load heat rate with _mustrun. Only present in step-3a sync mode and
