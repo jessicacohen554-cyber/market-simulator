@@ -331,6 +331,14 @@ results/calibration/_diag_*
 results/calibration/caiso_diag_*/
 results/calibration/miso_diag_*
 results/calibration/*_repro_A/
+# Rule-12 per-year chain scaffolding. A multi-year per-plant solve is chained
+# one FRESH year per process (scripts/probes/_<session>_chain.sh: miso-109,
+# miso-111, pjm-143 …), where each intermediate link `<bundle>_y<NN>` byte-
+# copies the earlier years forward via --reuse-solved and the FINAL link is the
+# bundle. The intermediates are duplicate partial bundles that the chain script
+# deletes on completion — never a deliverable, and never to be committed if a
+# chain dies before its own cleanup.
+results/calibration/*_y2[0-9]/
 # caiso-122 attribution arms: the same-HEAD control (no delta), its single-year
 # leg, and the keeper-era counterfactual (outage extract hidden). All three are
 # repro/control arms under the FINDING-caiso92b protocol — never registered,
