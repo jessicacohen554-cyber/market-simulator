@@ -211,6 +211,32 @@ def resolve_hydro_year_multiplier(hydro_year: str) -> float:
         ) from exc
 
 
+def eia930_wat_level_folded(iso: str, year: int) -> bool:
+    """Return True when ``(iso, year)``'s EIA-930 ``NG: WAT`` folds pumped storage.
+
+    True for a BA in
+    :data:`~market_sim.config.constants.EIA930_PS_FOLDED_INTO_WAT` (no
+    ``NG: PS`` column at all, so every year is folded), and for a BA in
+    :data:`~market_sim.config.constants.EIA930_PS_SPLIT_COMPLETE_FROM` in any
+    year before its first wholly-split calendar year (the seam year itself
+    counts as folded: a year is admissible on one source basis only, never
+    spliced mid-year). A True year's ``NG: WAT`` is a conventional-hydro PLUS
+    pumped-storage-discharge series and is not an admissible LEVEL for the
+    conventional-only (EIA-923 ``HY``) unit population — rule 14
+    ``[R-ACCURATE]``; miso-109 (standing fold) / neiso-72 (time split).
+    """
+    from market_sim.config.constants import (
+        EIA930_PS_FOLDED_INTO_WAT,
+        EIA930_PS_SPLIT_COMPLETE_FROM,
+    )
+
+    iso_u = iso.upper()
+    if iso_u in EIA930_PS_FOLDED_INTO_WAT:
+        return True
+    first_clean = EIA930_PS_SPLIT_COMPLETE_FROM.get(iso_u)
+    return first_clean is not None and int(year) < int(first_clean)
+
+
 def forecast_monthly_hydro(
     iso: str,
     hydro_year: str = "normal",
@@ -243,20 +269,30 @@ def forecast_monthly_hydro(
         The ``(12,)`` forecast monthly hydro budget in MWh, or ``None`` when
         no climatology is available for ``iso``.
     """
-    from market_sim.config.constants import EIA930_PS_FOLDED_INTO_WAT
+    from market_sim.config.constants import HYDRO_CLIMATOLOGY_YEARS
     from market_sim.data.eia_loader import climatological_monthly_hydro
 
-    if iso.upper() in EIA930_PS_FOLDED_INTO_WAT:
-        # Rule 14 [R-ACCURATE], miso-110 — the FORWARD half of the miso-109 fix.
-        # This BA files no `NG: PS`, so every year of its `NG: WAT` series is
-        # conventional hydro PLUS pumped-storage gross discharge; averaging
-        # those years yields a climatology that is contaminated exactly as each
-        # year was. The forward level therefore comes from EIA-923 `HY` — the
-        # same series, and the same plant population, that the per-plant budget
-        # and the corrected backcast level already use. Same window constant,
-        # same 12-vector MWh contract, same wet/dry lever below; zero free
-        # parameters, and no reconciliation factor between the two series
-        # (miso-109 §2 measured that none is identifiable — rules 5/13/22).
+    window = (
+        tuple(int(y) for y in climatology_years)
+        if climatology_years is not None
+        else HYDRO_CLIMATOLOGY_YEARS
+    )
+    if any(eia930_wat_level_folded(iso, y) for y in window):
+        # Rule 14 [R-ACCURATE] — the FORWARD half of the level fix. A window
+        # year whose `NG: WAT` folds pumped-storage gross discharge (a
+        # flat-registry BA in every year, miso-110; a time-split BA in the
+        # years before its first wholly-split year, neiso-72) would
+        # contaminate the climatology mean exactly as it contaminated the
+        # backcast pin, so the whole climatology stays on ONE basis and the
+        # forward level comes from EIA-923 `HY` — the same series, and the
+        # same plant population, that the per-plant budget and the corrected
+        # backcast level already use. Same window constant, same 12-vector
+        # MWh contract, same wet/dry lever below; zero free parameters, and
+        # no reconciliation factor between the two series (miso-109 §2 /
+        # neiso-72 §4a measured that none is identifiable — rules 5/13/22).
+        # For a time-split BA this branch un-arms ITSELF once the window
+        # holds only wholly-split years — the guard regenerates from the
+        # data, no retuning (rule 13's forward story).
         base = climatological_monthly_hydro_923(iso, climatology_years)
     else:
         base = climatological_monthly_hydro(iso, climatology_years)
@@ -893,6 +929,15 @@ def build_hydro_fleet(
     ``nameplate_aware_target`` inert for those ISOs by construction — with no
     level target there is nothing to re-allocate.
 
+    The refusal is PER-YEAR for a BA in
+    :data:`~market_sim.config.constants.EIA930_PS_SPLIT_COMPLETE_FROM`, whose
+    ``NG: PS`` column starts mid-series (NEISO: first filed hour 2024-11-07):
+    a year before the first wholly-split calendar year is folded and refuses
+    the pin exactly as above, while the first wholly-split year onward keeps
+    it — that window is measured clean (zero nameplate-breach hours in 2025
+    against 63-276/yr before the split). One source basis per year, never a
+    mid-year splice (neiso-72; see :func:`eia930_wat_level_folded`).
+
     ``forecast_budget`` is the forward analogue of ``eia930_monthly``: instead
     of pinning the budget to a measured year, it sets the monthly *level* to a
     normal-water-year climatology (the multi-year mean of measured EIA-930
@@ -1032,17 +1077,41 @@ def build_hydro_fleet(
                 year,
             )
             target = None
+        elif eia930_wat_level_folded(iso, year):
+            # Rule 14 [R-ACCURATE], neiso-72 — the TIME-SPLIT case: this BA
+            # files `NG: PS` only from a mid-series first-filing hour (NEISO:
+            # 2024-11-07 00:00), so THIS year's `NG: WAT` still folds
+            # pumped-storage discharge and the pin is refused per-year — the
+            # level stays on EIA-923 `HY` exactly as in the flat-registry
+            # case above. Years at/after the first wholly-split year keep
+            # the pin: their `NG: WAT` is measured clean (0 nameplate-breach
+            # hours in 2025 against 63-276/yr before the split). One basis
+            # per year, never a mid-year splice — see the
+            # EIA930_PS_SPLIT_COMPLETE_FROM citation for the seam
+            # measurement and the design adjudication.
+            logger.info(
+                "%s %d: EIA-930 NG: WAT level pin REFUSED for this year — "
+                "the BA's NG: PS column starts mid-series (time split) and "
+                "this year predates its first wholly-split year, so its "
+                "NG: WAT still folds pumped-storage discharge; the monthly "
+                "hydro level stays on EIA-923 HY (rule 14, neiso-72)",
+                iso,
+                year,
+            )
+            target = None
         else:
             target = measured_monthly_hydro(iso, year)
     elif forecast_budget:
-        from market_sim.config.constants import EIA930_PS_FOLDED_INTO_WAT
+        from market_sim.config.constants import HYDRO_CLIMATOLOGY_YEARS
 
         target = forecast_monthly_hydro(iso, hydro_year)
-        if iso.upper() in EIA930_PS_FOLDED_INTO_WAT:
-            # miso-110: this BA's forward level comes from the EIA-923 `HY`
-            # climatology, not the PS-inflated `NG: WAT` one (see
-            # forecast_monthly_hydro). `climatological_monthly_hydro_923` logs
-            # the realised window; what is logged here is the level actually
+        if any(eia930_wat_level_folded(iso, y) for y in HYDRO_CLIMATOLOGY_YEARS):
+            # miso-110 (flat) / neiso-72 (time split): this BA's forward level
+            # comes from the EIA-923 `HY` climatology, not the PS-folded
+            # `NG: WAT` one (see forecast_monthly_hydro — the SAME window
+            # predicate selects there, so this logging branch mirrors the
+            # selection exactly). `climatological_monthly_hydro_923` logs the
+            # realised window; what is logged here is the level actually
             # applied, and — on the fallback — that the wet/dry lever went
             # inert with it.
             if target is None:

@@ -1263,7 +1263,8 @@ EIA923_COMPLETE_FILING_CENSUS_FRACTION: float = 0.50
 #           not a PS fold.
 #   NEISO — files `NG: PS` from Nov 2024 and has zero breach hours in 2025, so
 #           its exposure is a TIME SPLIT of the older vintages, not a standing
-#           fold, and needs a per-window treatment rather than this switch.
+#           fold, and needs a per-window treatment rather than this switch —
+#           handled by EIA930_PS_SPLIT_COMPLETE_FROM below (neiso-72).
 #
 # HAZARD for a future session: the hydro dispatch ENVELOPE
 # (HYDRO_ENVELOPE_PERCENTILE) and the MIN-FLOW FLOOR (HYDRO_MIN_FLOW_PERCENTILE)
@@ -1273,6 +1274,55 @@ EIA923_COMPLETE_FILING_CENSUS_FRACTION: float = 0.50
 # first — EIA-923 is monthly and offers no hourly substitute.
 # Source: EIA-930 hourly per-BA extracts; EIA-923 monthly generation; EIA-860.
 EIA930_PS_FOLDED_INTO_WAT: frozenset[str] = frozenset({"MISO", "PJM"})
+
+# --- BAs whose EIA-930 NG: PS column starts MID-SERIES (neiso-72) ------------
+# The TIME-SPLIT companion to EIA930_PS_FOLDED_INTO_WAT above: the BA DOES file
+# `NG: PS`, but only from a first-filing hour, so every earlier vintage of its
+# `NG: WAT` is a folded (conventional + pumped-storage-discharge) series and
+# every later one is clean. Maps ISO -> the first calendar year WHOLLY on the
+# split basis; a backcast year BEFORE it has its `NG: WAT` level pin REFUSED
+# (the level stays on EIA-923 `HY`, the same population as the LP units) and a
+# year AT/AFTER it keeps the pin. The seam year itself counts as FOLDED — a
+# year is admissible on ONE source basis only, never spliced mid-year
+# (design D, owner-adjudicated 2026-07-31 against the flat-refusal, mid-year-
+# splice and subtract-an-estimated-PS alternatives;
+# PREREG-neiso72-hydro-ps-window-2026-07-31.md §4-§4a).
+#
+# NEISO (neiso-72, every number from NEISO's own data — rule 25; probe
+# scripts/probes/_neiso72_ps_window_audit.py): first filed `NG: PS` hour is
+# 2024-11-07 00:00 (row 7440 of the 2024 extract) — ZERO filed hours in every
+# month 2019-01..2024-11-06, continuous filing after, discharge-only (2025:
+# +1.932 TWh, 0.000 pumping, min 0 MW). That the pre-split `NG: WAT` carries
+# the PS block is measured four independent ways: (i) it exceeds NEISO's OWN
+# 1,926.3 MW conventional (`HY`) EIA-860 nameplate 63-276 h/yr in 2019-2024
+# and 0 h in 2025, the first fully-split year; (ii) scale-free shape
+# fingerprints match the post-split WAT+PS reference (diurnal swing 2.89x,
+# 19/1000 h above nameplate), not the clean WAT reference (1.48x, 0/1000 h) —
+# pre-split windows run 2.20-2.70x and 13-38/1000 h; (iii) a two-component
+# diurnal decomposition (self-validated: recovers 0 / 218 MW on the windows
+# whose answers are known, true 0 / 219) fits 154-263 MW of PS in every
+# pre-split window, 1.35-2.30 TWh/yr against the 1.932 measured post-split;
+# (iv) the seam falls INSIDE November 2024 — Nov 1-6 vs Nov 7-30 collapses
+# max 1,873 -> 685 MW and swing 7.11x -> 1.79x six days apart on the same
+# water, while the SAME cut in the five no-seam years 2019-2023 moves only
+# 0.77-1.03x. The 930-vs-923 LEVEL gap (+2.7 % / +10.1 % in 2023/2024) is far
+# SMALLER than the fold because a second, opposite-signed discrepancy
+# coexists: 930's BA telemetry under-counts the 173-plant 923 census by
+# ~1.2-1.6 TWh/yr (Dec 2024, the one clean complete-census month, runs 8 %
+# BELOW 923). Refusing the pin removes BOTH errors at once — which is why
+# "930 minus an estimated PS" was refused: it recovers the telemetry subset
+# (16.6 % / 19.1 % below the units' own complete-census filings) and would
+# add an estimated 154-263 MW free parameter with no forward story (from 2025
+# the split is filed; rules 5/13/14). NEISO's pumped storage itself is
+# untouched by this guard: it is endogenous storage
+# (model/storage.py::load_eia860_pumped_storage, 1,865.0 MW), so the
+# pre-split pin was double-representing its discharge.
+# Membership is measured, never assumed. Re-derive only when the source data
+# changes (a 930 vintage that back-fills `NG: PS`, or another BA splitting
+# mid-series — re-run the probe pattern). Rule 23 [R-FROZEN-DERIVE].
+# Source: EIA-930 hourly per-BA extract (ISNE); EIA-923 monthly generation;
+# EIA-860.
+EIA930_PS_SPLIT_COMPLETE_FROM: dict[str, int] = {"NEISO": 2025}
 
 # --- Hydro hourly deliverability envelope (caiso-72 STEP-2) ------------------
 # Percentile of the measured EIA-930 NG:WAT hourly output, per (month x
