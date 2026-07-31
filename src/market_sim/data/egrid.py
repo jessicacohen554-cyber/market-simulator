@@ -16,11 +16,12 @@ which collapses that per-plant map to a net-generation-weighted CO2 intensity
 by its intensity gives metric tonnes of CO2, the calibration-page emissions
 metric.
 
-Vintages: eGRID 2023 anchors year 2023; eGRID 2024 (the latest released vintage)
-anchors 2024 and any later year (a plant's CO2 intensity is a stable physical
-property, so the prior vintage is a sound forward stand-in until the next eGRID
-lands). The admissibility test of Non-Negotiable Rule #11 holds: an emission
-rate is a reproducible physical input that would regenerate for a forward year.
+Vintages: every released workbook anchors its own year (2018-2024); eGRID 2024
+(the latest released vintage) anchors 2025 and any later year (a plant's CO2
+intensity is a stable physical property, so the prior vintage is a sound forward
+stand-in until the next eGRID lands). The admissibility test of Non-Negotiable
+Rule #11 holds: an emission rate is a reproducible physical input that would
+regenerate for a forward year.
 """
 
 from __future__ import annotations
@@ -54,6 +55,15 @@ _use_clean = use_clean
 # carries one row per plant; its first row holds long descriptive headers, so
 # ``skiprows=1`` promotes the short-code header row (ORISPL, PLCO2AN, ...).
 _EGRID_FILES: dict[int, str] = {
+    # eGRID2018-2021: epa.gov/egrid "historical eGRID data" archive, retrieved
+    # 2026-07-31 for the 2018-2021 holdout-ladder intake (before it, those years
+    # rode the latest vintage; rule 14 [R-ACCURATE] prefers the true vintage).
+    # v2 revisions are EPA's own corrected releases — the latest revision of each
+    # vintage, matching the egrid2023_data_rev2 precedent.
+    2018: "egrid2018_data_v2.xlsx",
+    2019: "egrid2019_data.xlsx",
+    2020: "eGRID2020_Data_v2.xlsx",
+    2021: "eGRID2021_data.xlsx",
     # eGRID2022: epa.gov/egrid published workbook, retrieved 2026-07-04 for
     # the 2022 holdout-year intake (before it, 2022 rode the latest vintage).
     2022: "egrid2022_data.xlsx",
@@ -90,8 +100,8 @@ _CAMPD_RATE_CACHE: dict[int, float] | None = None
 def egrid_vintage_for_year(year: int) -> int:
     """Return the eGRID vintage that anchors ``year``.
 
-    A year with its own released workbook (2022-2024) maps to itself; any
-    later year maps to the latest released vintage (currently 2024), whose
+    A year with its own released workbook (2018-2024) maps to itself; any
+    other year maps to the latest released vintage (currently 2024), whose
     intensities stand in until the next eGRID lands.
     """
     return int(year) if int(year) in _EGRID_FILES else _LATEST_EGRID_VINTAGE
@@ -123,7 +133,7 @@ def load_egrid_plant_co2(vintage: int) -> pd.DataFrame:
 
     Args:
         vintage: An eGRID vintage present in :data:`_EGRID_FILES`
-            (2022 / 2023 / 2024).
+            (2018 ... 2024).
 
     Returns:
         One row per fossil plant with positive net generation: ``plant_id``,
