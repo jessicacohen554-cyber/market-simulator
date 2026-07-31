@@ -1,0 +1,147 @@
+{
+ "session": "nyiso-106",
+ "iso": "NYISO",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "census_eia930_ng_sun": {
+  "2023": {
+   "nan": 0,
+   "zero_hours": 8760,
+   "zero_blocks": 1,
+   "longest_block": 8760,
+   "midday_zero_of": [
+    2190,
+    2190
+   ],
+   "max_mw": 0.0
+  },
+  "2024": {
+   "nan": 14,
+   "zero_hours": 8746,
+   "zero_blocks": 3,
+   "longest_block": 6351,
+   "midday_zero_of": [
+    2190,
+    2190
+   ],
+   "max_mw": 0.0
+  },
+  "2025": {
+   "nan": 14,
+   "zero_hours": 8746,
+   "zero_blocks": 3,
+   "longest_block": 8375,
+   "midday_zero_of": [
+    2190,
+    2190
+   ],
+   "max_mw": 0.0
+  }
+ },
+ "vintage_eia923": {
+  "by_year": {
+   "2022": {
+    "plants": 371,
+    "twh": 1.6295
+   },
+   "2023": {
+    "plants": 441,
+    "twh": 2.0479
+   },
+   "2024": {
+    "plants": 565,
+    "twh": 2.9008
+   },
+   "2025": {
+    "plants": 8,
+    "twh": 0.6617
+   }
+  },
+  "subset_test": {
+   "2025_plants_are_subset_of_2024": true,
+   "2024_twh_restricted_to_the_2025_reporters": 0.2527,
+   "2025_twh": 0.6617
+  },
+  "national_plant_counts": {
+   "2023": 12308,
+   "2024": 13210,
+   "2025": 3427,
+   "2026": 3528
+  }
+ },
+ "falsify_p63_bulge": {
+  "2023": {
+   "other_renewables_twh": 2.2259,
+   "night_baseline_mw": 231.2,
+   "solar_bulge_twh": 0.2123
+  },
+  "2024": {
+   "other_renewables_twh": 2.7454,
+   "night_baseline_mw": 248.1,
+   "solar_bulge_twh": 0.5774
+  },
+  "2025": {
+   "other_renewables_twh": 3.0221,
+   "night_baseline_mw": 233.0,
+   "solar_bulge_twh": 0.9939
+  }
+ },
+ "guards": {
+  "completeness_audited_classes": [
+   "CC_CHP",
+   "CC_REGULAR",
+   "COAL_BIT",
+   "COAL_PRB",
+   "CT_CHP",
+   "CT_PEAKER",
+   "ST_CHP",
+   "ST_GAS"
+  ],
+  "solar_in_completeness_audit": false,
+  "zero_eia930_authority_cells": {
+   "NYISO": [
+    "solar:2023",
+    "solar:2024",
+    "solar:2025"
+   ]
+  }
+ },
+ "repair": {
+  "2023": {
+   "vintage_completeness": 1.0495,
+   "solar_raw_twh": 2.0479,
+   "wind_raw_twh": 4.7724,
+   "hydro_raw_twh": 28.0312,
+   "biomass_raw_twh": 0.8395,
+   "solar_repaired_twh": 2.0479,
+   "wind_repaired_twh": 4.7724,
+   "hydro_repaired_twh": 28.0312,
+   "biomass_repaired_twh": 0.8395
+  },
+  "2024": {
+   "vintage_completeness": 1.037,
+   "solar_raw_twh": 2.9008,
+   "wind_raw_twh": 6.0313,
+   "hydro_raw_twh": 27.4654,
+   "biomass_raw_twh": 0.7597,
+   "solar_repaired_twh": 2.9008,
+   "wind_repaired_twh": 6.0313,
+   "hydro_repaired_twh": 27.4654,
+   "biomass_repaired_twh": 0.7597
+  },
+  "2025": {
+   "vintage_completeness": 0.885,
+   "solar_raw_twh": 0.6617,
+   "wind_raw_twh": 4.4606,
+   "hydro_raw_twh": 20.5582,
+   "biomass_raw_twh": 0.128,
+   "solar_repaired_twh": 2.5673,
+   "wind_repaired_twh": 7.0487,
+   "hydro_repaired_twh": 24.1039,
+   "biomass_repaired_twh": 0.6724
+  }
+ }
+}

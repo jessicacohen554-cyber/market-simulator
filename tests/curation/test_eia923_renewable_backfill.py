@@ -111,9 +111,24 @@ class TestRenewableBackfill(unittest.TestCase):
             frames.append(self._row(y, 2, "ST", "WDS", bio))
         return pd.DataFrame(frames)
 
+    def _gen_with_solar(self, year, iso_total, biomass, solar_cur, solar_prior):
+        """``generation`` for ``year`` and ``year-1`` carrying a solar plant too.
+
+        The zero-EIA-930 carry-forward needs a prior-year donor for the class, so
+        the solar row must exist in BOTH years (unlike :meth:`_gen`).
+        """
+        frames = []
+        for y, sol in ((year - 1, solar_prior), (year, solar_cur)):
+            frames.append(self._row(y, 1, "WT", "WND", iso_total - biomass - sol))
+            frames.append(self._row(y, 2, "ST", "WDS", biomass))
+            frames.append(self._row(y, 3, "PV", "SUN", sol))
+        return pd.DataFrame(frames)
+
     def setUp(self):
         self._orig_ids = rcf._iso_plant_ids
-        rcf._iso_plant_ids = lambda iso: frozenset({1, 2})
+        # Plant 3 (solar) is only present in the _gen_with_solar frames, so
+        # widening the set is a no-op for every other test here.
+        rcf._iso_plant_ids = lambda iso: frozenset({1, 2, 3})
 
     def tearDown(self):
         rcf._iso_plant_ids = self._orig_ids
@@ -161,6 +176,39 @@ class TestRenewableBackfill(unittest.TestCase):
             float(out[out["klass"] == "wind"]["annual_mwh"].sum()), 4.0e6
         )
 
+    def test_zero_eia930_series_falls_through_to_carry_forward(self):
+        """A class with NO EIA-930 authority is carried forward, not skipped.
+
+        The nyiso-106 defect: the swap keys on EIA-930, so a BA reporting the
+        class as identically zero (NYIS ``NG: SUN``) made the guard ``continue``
+        and left the truncated vintage scoring. Such a class is in biomass's
+        position and takes biomass's repair.
+        """
+        e923 = pd.DataFrame(
+            [
+                _e923_row(2025, 12, "solar", 1.0e6),  # truncated survey
+                _e923_row(2025, 13, "CC_REGULAR", 37.0e6),
+            ]
+        )
+        # No "solar" key -> the EIA-930 series is absent (annual 0.0).
+        e930 = _e930_long(2025, {"wind": 20.0e6, "net_gen": 200.0e6})
+        gen = self._gen_with_solar(2025, 140.0e6, 1.2e6, 1.0e6, 10.0e6)
+        out = rcf._backfill_renewables_eia930(e923, 2025, "NYISO", gen, e930)
+        by = out.groupby("klass")["annual_mwh"].sum()
+        # completeness 140/200 = 0.70; prior 10.0 x 0.70 = 7.0 TWh > the 1.0 read
+        self.assertAlmostEqual(by["solar"], 7.0e6, delta=1e3)
+        self.assertAlmostEqual(by["CC_REGULAR"], 37.0e6)  # thermal untouched
+
+    def test_zero_eia930_series_complete_vintage_unchanged(self):
+        """The carry-forward is gated on the vintage, so a complete year no-ops."""
+        e923 = pd.DataFrame([_e923_row(2024, 12, "solar", 9.0e6)])
+        e930 = _e930_long(2024, {"wind": 20.0e6, "net_gen": 200.0e6})
+        gen = self._gen_with_solar(2024, 196.0e6, 4.0e6, 9.0e6, 10.0e6)  # 98%
+        out = rcf._backfill_renewables_eia930(e923.copy(), 2024, "NYISO", gen, e930)
+        self.assertAlmostEqual(
+            float(out[out["klass"] == "solar"]["annual_mwh"].sum()), 9.0e6
+        )
+
 
 class TestLiveCaiso2025(unittest.TestCase):
     """Live committed-data check: every CAISO 2025 class gets a full-year value."""
@@ -190,6 +238,56 @@ class TestLiveCaiso2025(unittest.TestCase):
         # ~37-38 TWh in 2025 — confirmed by CEMS, not a truncation artifact).
         self.assertGreater(by.get("CC_REGULAR", 0.0), 35.0)
         self.assertLess(by.get("CC_REGULAR", 0.0), 42.0)
+
+
+class TestLiveNyiso2025Solar(unittest.TestCase):
+    """NYISO solar is the one cell with a zero EIA-930 authority (nyiso-106).
+
+    EIA-930 ``NYIS`` ``NG: SUN`` is identically 0.0 in every hour of every year,
+    so the EIA-930 swap can never fire and the 2025 vintage — 8 of 565 plants,
+    0.662 TWh against 2.901 in 2024 — used to reach the scorecard intact
+    (solar +437 %). The carry-forward must repair it.
+    """
+
+    def test_solar_carried_forward_not_left_truncated(self):
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.data.eia923 import load_monthly_generation
+
+        generation = load_monthly_generation()
+        if 2025 not in set(generation["year"].unique()):
+            self.skipTest("no 2025 EIA-923 vintage in this checkout")
+        e930 = rcf._eia930_frame(2025, "NYISO", get_iso_config("NYISO"))
+        raw = rcf._eia923_frame(2025, generation, "NYISO")
+        out = rcf._backfill_renewables_eia930(
+            raw.copy(), 2025, "NYISO", generation, e930
+        )
+        by = out.groupby("klass")["annual_mwh"].sum() / rcf._MWH_PER_TWH
+        # The truncated survey reads 0.66 TWh; 2024 was 2.90 and the vintage is
+        # ~88.5% complete, so the repair lands ~2.57 TWh.
+        self.assertGreater(by.get("solar", 0.0), 2.0)
+        self.assertLess(by.get("solar", 0.0), 3.0)
+
+    def test_complete_vintages_are_byte_identical(self):
+        """2023 / 2024 are complete NYISO vintages — the repair must not move."""
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.data.eia923 import load_monthly_generation
+
+        generation = load_monthly_generation()
+        ic = get_iso_config("NYISO")
+        for year in (2023, 2024):
+            if year not in set(generation["year"].unique()):
+                self.skipTest(f"no {year} EIA-923 vintage in this checkout")
+            raw = rcf._eia923_frame(year, generation, "NYISO")
+            out = rcf._backfill_renewables_eia930(
+                raw.copy(),
+                year,
+                "NYISO",
+                generation,
+                rcf._eia930_frame(year, "NYISO", ic),
+            )
+            before = float(raw[raw["klass"] == "solar"]["annual_mwh"].sum())
+            after = float(out[out["klass"] == "solar"]["annual_mwh"].sum())
+            self.assertAlmostEqual(before, after, places=6, msg=f"{year} moved")
 
 
 class TestPerYearChp(unittest.TestCase):

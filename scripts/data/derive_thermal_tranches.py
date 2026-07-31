@@ -365,6 +365,30 @@ _MIN_ONLINE_HOURS: int = 24
 # exceed its EIA nameplate, which would otherwise push the floor above 100%).
 _COMMITTED_CAP: float = 0.70
 _MUSTRUN_CAP: float = 0.60
+# `p25_cf` is a percentile of the SAME available-CF distribution as
+# `committed_pct` (P5-of-online) and is consumed as a per-plant FLOOR LEVEL by
+# `campd_bins.thermal_tranche_p25_level` -> the ST_GAS local-reliability
+# commitment floor, so it needs the same physical ceiling and had none. The
+# upstream `np.clip(acf, 0.0, 1.5)` CEMS-noise guard admits CF up to 150 %, and
+# every committed artifact carries rows above 100 % (MISO 17, NEISO 3, NYISO 2,
+# PJM 3) — a floor ABOVE nameplate, which the runtime's per-hour
+# `min(target, pmax x availability)` clip turns into "pinned flat at full
+# available capacity for the whole window" rather than an error.
+#
+# The ceiling is 1.0 (nameplate), not `_COMMITTED_CAP`: the defect is physical
+# impossibility, not a share being large. p25 >= p5 by construction, so capping
+# p25 at 0.70 would collapse it onto the committed level and destroy the
+# mechanism it exists to refine.
+#
+# Rule 23 [R-FROZEN-DERIVE]: this is a physical-admissibility bug fix, NOT a
+# residual-driven re-derivation — nothing here responds to a backcast miss.
+# Measured inert on every live keeper at the time it landed: the only consumer
+# is the ST_GAS floor, and the sole breaching ST_GAS row anywhere (NEISO
+# Merrimack 150.0) sits in an artifact with no `online_frac` column, so no plant
+# clears the runtime's `level>0 AND online_frac>0` gate; MISO — the one ISO that
+# arms the pair — tops out at 67.4 % across all 16 armable rows.
+# nyiso-106; results/calibration/FINDING-nyiso106-solar-benchmark-vintage-2026-07-31.md
+_P25_CAP: float = 1.0
 
 # Combined-cycle groups that derive a duct-firing peaking share.
 _PEAKING_GROUPS: frozenset[str] = frozenset({"CC_REGULAR", "CC_CHP"})
@@ -669,7 +693,7 @@ def main() -> None:
                 and sync_hours.get((code, group), [0, 0])[1] > 0
                 else ""
             ),
-            "p25_cf": round(100.0 * float(np.percentile(on_cat, 25)), 1),
+            "p25_cf": round(100.0 * min(float(np.percentile(on_cat, 25)), _P25_CAP), 1),
             "median_cf": round(100.0 * float(np.percentile(on_cat, 50)), 1),
         }
         # Duct-firing / scarcity peaking share (combined cycles): the share

@@ -53,6 +53,21 @@ from market_sim.data.eia923 import (  # noqa: E402
 # Fossil model classes the C1 gate scores (mirrors calibration_verdict
 # GAS_CLASSES + COAL_CLASSES). Non-fossil/renewable classes are scored on
 # EIA-930, so 923 completeness does not gate them.
+#
+# CAVEAT (nyiso-106) — that last sentence is true for every ISO EXCEPT the
+# `(iso, class)` pairs in `results.calibration._EIA923_OVERRIDE`, which route a
+# renewable class BACK to EIA-923 because its EIA-930 series is unusable. Today
+# that is exactly one pair, NYISO solar (EIA-930 `NYIS` `NG: SUN` is identically
+# zero — NY grid solar is overwhelmingly distribution-connected / net-metered).
+# Such a class IS exposed to 923 vintage incompleteness and is NOT audited here:
+# the 2025 vintage carries 8 of 565 NYIS solar plants and scored as solar +437 %.
+# It is covered instead where the number is actually built —
+# `run_calibration_full._backfill_renewables_eia930` now carries a class with no
+# EIA-930 authority forward from the prior complete year (the same repair
+# `biomass` takes), so the per-class actual is repaired rather than merely
+# skipped. If a future `_EIA923_OVERRIDE` pair needs a SKIP as well as a repair,
+# widen SCORED_CLASSES to include it — do not assume renewables are 930-scored.
+# results/calibration/FINDING-nyiso106-solar-benchmark-vintage-2026-07-31.md §A.5
 GAS_CLASSES = ("CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP")
 COAL_CLASSES = ("COAL_PRB", "COAL_LIGNITE", "COAL_BIT", "COAL_WC", "COAL")
 SCORED_CLASSES = tuple(c for c in (*GAS_CLASSES, *COAL_CLASSES))
