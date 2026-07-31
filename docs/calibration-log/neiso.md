@@ -712,3 +712,103 @@ and land it together with `measured_chp_heat_rates`** — one mechanism, not two
 charter; item 4 (NG:PS time split) and item 5 (STEP 3 seam) are unchanged.
 
 Next shorthand: **neiso-71.**
+
+---
+
+## neiso-71 — CHP host-steam floor CLOSED (no LP spent); `nuclear_unit_availability` PROMOTED
+
+**New keeper `2026-07-31-neiso-71-nucavail`** (bundle `neiso71_nucavail_B`),
+replacing `2026-07-31-neiso-70-ctheatrate`. Determination unchanged:
+**CALIBRATED-WITH-CAVEATS, 0 FAILs, 1 ledgered C3c caveat, C1 all 12/12 · free
+8/8, DOF `n_residual` unchanged at 5.** Pre-registered at `464817e` and pushed
+before either arm solved
+(`results/calibration/PREREG-neiso71-nuclear-availability-2026-07-31.md`);
+evidence `results/calibration/FINDING-neiso71-chp-floor-nuclear-2026-07-31.md`.
+Both bundles solved at the **identical frozen HEAD `464817e`**, `dirty: False`,
+on the requirements-pinned stack — **no environment drift this session**
+(contrast neiso-70).
+
+### Lever A — the CC_CHP host-steam floor: MEASUREMENT-BLOCKED, cell stays `O`
+
+The session's primary lever (matrix §5.6 item 6) asked whether NEISO's CC_CHP
+should carry a host-steam floor like CAISO's. **It should not**, and the
+screen cost no LP (`scripts/probes/_neiso71_lever_screen.py`).
+
+The floor already exists as the committed WP-3 statistic `steam_level_cf`;
+NEISO simply carries a **pre-WP-3 artifact vintage** (neither `steam_level_cf`
+nor `p25_allhr_cf`), so `chp_steam_floor_p25` is **inert for NEISO** and
+`chp_pmin_cf` is 0.0 on all three CAMPD-visible CC_CHP plants — the mechanical
+reason the class has no `chp_steam` D-2 row. Re-deriving on NEISO's own CAMPD
+returns **146.1 % of nameplate** for Kendall Square (EIA 1595, 42 % of the
+class): **saturated, not measured** — CAMPD facility 1595 unit "4" meters
+**278/299/283 MW median** against an EIA-860 CHP nameplate of **213.4 MW
+(206.0 summer)**, binding the derivation's 1.5 clip guard in **59.0 %** of
+online hours. Armed it would floor Kendall at **195.7 MW / 95.0 % of pmax
+year-round (~1.71 TWh/yr)** and **over-close** neiso-70's 0.34–0.68 TWh CC_CHP
+shortfall — a fitted parameter (rules 21/24), and one that would have bought a
+visibly "better" backcast.
+
+**The structural answer:** NEISO's merchant CC_CHP genuinely carries no
+host-steam obligation. The other two CAMPD-visible plants measure **2.2 %** and
+**3.6 %** — the statistic self-targeting real cyclers (online 5.5 % / 7.0 % of
+hours) — and the non-Kendall CC_CHP floor totals **15.0 MW**. A real fleet
+difference from CAISO's flat 43–47 % steam hosts, not a missing mechanism.
+**DO-NOT-REDO**: the successor is a **fleet/nameplate lane** (Kendall's capacity
+basis, inside the miso-95 provenance-orphaned `nameplate_mw` column), not a
+floor lane; every capacity-factor lens inherits the same broken denominator.
+
+### Lever B — `nuclear_unit_availability` → `K`, PROMOTED
+
+The whole code delta is a **three-row identifier crosswalk** (Millstone 2/3 →
+EIA 566, Seabrook 1 → EIA 6115; **3,355.4 MW ≈ 22 % of ISO energy**) — no
+`src/` change, the seam and loader were already ISO-generic. 3,288 rows,
+**365/366/365** coverage, **all 36 months reconcile** inside `WEDGE_TOL` (worst
+−0.70 %) so no month is dropped; `--check` byte-for-byte; **zero fitted
+scalars** (constants frozen from the ERCOT deriver, rule 23).
+
+What it fixes: in **2025 Millstone 2 never fell below 94 % and Seabrook below
+47 % while Millstone 3 took a full refuel**, yet the Apr/May anchor (0.75/0.77)
+derates all three alike. NEISO nuclear is `nuclear_mustrun`-pinned at 0.999+, so
+the overlay moves the **must-run floor itself** hour-by-hour.
+
+* **Every pre-registered gate PASSES** — G-1 fidelity (3 reactors, 1.000
+  coverage), G-2 control integrity (recipe diff `{}`), G-3 liveness
+  **1,129/1,842/1,265 MW** (20–37× the 50 MW floor), G-4 single delta
+  (`['nuclear_unit_availability']`, proven by construction), G-5 span, and the
+  P-1 energy-neutrality KILL check (**−0.0079/−0.0006/−0.0313 TWh** vs 0.05).
+* **ZERO criterion status changes** across all nine criteria. C3c
+  **bit-identical** (model 0 h vs RT 15/8/20), so the ledger entries carry
+  verbatim and no slot is spent.
+* **Fit improves:** scored C1 total |error| **2.602 → 2.521 TWh** (12 scored
+  rows, 2023+2024; the six 2025 rows are SKIPPED on preliminary EIA-923).
+  Mean λ −0.025/−0.024/−0.019. D-2/D-4 PASS both arms, shares moving ≤0.005.
+
+**Reported against interest.** (a) Pre-registered prediction P2's **zonal half
+did NOT materialize** — Millstone and Seabrook sit in different zones, but all
+four NEISO zones clear at an **identical mean λ** in both arms (no binding
+internal congestion at annual-mean grain); only the timing half is confirmed.
+(b) **D-1 fails in BOTH arms on the same class/year set** (COAL_BIT 2023–25,
+ST_GAS 2023) — pre-existing, not a regression, C7 `shape` SKIPPED for NEISO;
+2024 COAL_BIT `profile_r` improves 0.617 → 0.753 while 2023 slips 0.600 →
+0.588. (c) The C1 gain is a net: 7 rows improve, 6 worsen, 5 unchanged.
+
+**Process note.** The arm was killed mid-solve and relaunched on a misread:
+`bins_to_fleet` builds its own `FleetArrays` from the thermal-tranche list and
+logs `overlay: 0 reactor(s)` **before** the runner logs the real `3`. Reading
+only the first occurrence mimics the ERCOT-146 inert-flag signature — **read the
+LAST occurrence**. ~5 min of compute, no effect on correctness. Follow-up: that
+call site should not emit the line at all.
+
+**Governance.** Years 2023–2025 only; the holdout spend freeze is ACTIVE and
+NEISO's locked test is already SPENT (2026-07-07), never re-grantable. Both
+bundles registered (rule 15); matrix cells + `ev` citations updated and the
+NEISO header re-stamped (rule 28b); `audit_keepers --iso NEISO` **0 failures,
+0 warnings**.
+
+**Open / next.** (1) **NEISO CC_CHP capacity basis** — Kendall Square metering
+278–299 MW against a 206.0 MW model pmax; prerequisite for any future CC_CHP
+floor. (2) §5.6 items 1/2 (C3c DA-bid depth, import-side scarcity) still need
+their own owner charter. (3) Item 4 (NG:PS hydro time split) and item 5 (STEP 3
+seam) unchanged.
+
+Next shorthand: **neiso-72.**
