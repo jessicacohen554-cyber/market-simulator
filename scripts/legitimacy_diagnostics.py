@@ -598,11 +598,13 @@ D9_GENERIC_SHARE_GROUPS: tuple[str, ...] = (
     "CT_CHP",
 )
 
-# D-6 holdout quarantine (CLAUDE.md rule 22, amended 2026-07-04): the in-sample
-# calibration window. Any registered bundle carrying a solve year OUTSIDE this
-# window is a holdout breach unless its ISO has a calibration-complete marker
-# in frontend/data/backcast/calibration-complete.json (which authorizes the
-# one-shot frozen-config holdout score). Extend only when a new year is
+# D-6 holdout quarantine (CLAUDE.md rule 22, amended 2026-07-04; TIER-AWARE
+# 2026-07-31): the in-sample calibration window. Any registered bundle carrying
+# a solve year OUTSIDE this window is a holdout breach unless its ISO carries
+# the marker for THAT YEAR'S TIER in frontend/data/backcast/calibration-complete
+# .json — the 'complete' block for the iterable validation ladder, the 'final'
+# block for the touch-once locked test. Tier membership and the block mapping
+# live in scripts/lib/holdout_policy.py. Extend only when a new year is
 # formally promoted from holdout to in-sample with a new designated holdout.
 D6_CALIBRATION_YEARS: frozenset[int] = holdout_policy.CALIBRATION_YEARS
 D6_MARKER_FILE = holdout_policy.MARKER_FILE
@@ -1597,50 +1599,65 @@ def run_d10(
 
 
 def load_calibration_complete(repo_root: Path) -> dict[str, dict]:
-    """Return the per-ISO calibration-complete marker map (may be empty)."""
+    """Return the per-ISO VALIDATION-tier marker map (``complete``; may be empty).
+
+    Kept for the ``complete``-block consumers that predate the two-tier split;
+    :func:`load_marker_doc` is what the tier-aware D-6 gate reads.
+    """
+    return load_marker_doc(repo_root).get("complete", {})
+
+
+def load_marker_doc(repo_root: Path) -> dict:
+    """Return the whole parsed marker document (both tier blocks), or ``{}``."""
     path = repo_root / D6_MARKER_FILE
     if not path.exists():
         return {}
-    return json.loads(path.read_text()).get("complete", {})
+    return json.loads(path.read_text())
 
 
 def run_d6_quarantine(repo_root: Path) -> GateResult:
     """D-6 holdout quarantine across EVERY registered bundle (CI mode).
 
-    CLAUDE.md rule 22 (audit D-6, amended 2026-07-04): 2022 and H1-2026 are
-    fully quarantined — no solves, no scoring, no data intake — until an ISO's
-    calibration-complete marker exists in ``calibration-complete.json``. Any
-    registry sidecar declaring a solve year outside ``D6_CALIBRATION_YEARS``
-    for an unmarked ISO FAILs. Sweeps all registered runs (keepers AND
-    probes): a quarantine breach is a breach wherever it is registered.
+    CLAUDE.md rule 22 (audit D-6, amended 2026-07-04; TIER-AWARE 2026-07-31):
+    every year outside ``D6_CALIBRATION_YEARS`` is quarantined until the
+    target ISO carries **the marker for that year's tier** — ``complete`` for
+    the iterable validation ladder, ``final`` for the touch-once locked test
+    (``scripts.lib.holdout_policy``). A bundle mixing tiers needs both. Sweeps
+    all registered runs (keepers AND probes): a quarantine breach is a breach
+    wherever it is registered.
     """
     res = GateResult("D-6 holdout quarantine (all registered bundles)")
-    complete = load_calibration_complete(repo_root)
+    marker_doc = load_marker_doc(repo_root)
     reg_dir = repo_root / "frontend/data/backcast/registry"
     for path in sorted(reg_dir.glob("*.json")):
         side = json.loads(path.read_text())
         iso = side.get("iso", "?")
         years = [int(y) for y in side.get("years", [])]
-        breach = sorted(set(years) - D6_CALIBRATION_YEARS)
-        if not breach:
+        by_tier = holdout_policy.split_breach_by_tier(years)
+        if not by_tier:
             continue
-        marked = iso in complete
-        res.rows.append(
-            {
-                "run": path.stem,
-                "iso": iso,
-                "holdout_years": breach,
-                "calibration_complete": marked,
-                "verdict": "authorized one-shot" if marked else "FAIL",
-            }
-        )
-        if not marked:
-            res.failures.append(
-                f"{path.stem}: solve year(s) {breach} outside the calibration "
-                f"window {sorted(D6_CALIBRATION_YEARS)} with no {iso} "
-                f"calibration-complete marker in {D6_MARKER_FILE} — holdout "
-                "quarantine breach (CLAUDE.md rule 22)"
+        for tier, tier_years in sorted(by_tier.items()):
+            block = holdout_policy.TIER_MARKER_BLOCK[tier]
+            marked = holdout_policy.authorized(marker_doc, iso, tier)
+            res.rows.append(
+                {
+                    "run": path.stem,
+                    "iso": iso,
+                    "holdout_years": tier_years,
+                    "tier": tier,
+                    "marker_block": block,
+                    "authorized": marked,
+                    "verdict": "authorized one-shot" if marked else "FAIL",
+                }
             )
+            if not marked:
+                res.failures.append(
+                    f"{path.stem}: solve year(s) {tier_years} are {tier}-tier, "
+                    f"outside the calibration window "
+                    f"{sorted(D6_CALIBRATION_YEARS)}, with no {iso} entry in "
+                    f"the '{block}' block of {D6_MARKER_FILE} — holdout "
+                    "quarantine breach (CLAUDE.md rule 22)"
+                )
     if not res.rows:
         res.notes.append(
             "no registered bundle carries a year outside "
