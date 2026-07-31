@@ -118,5 +118,121 @@ class TestInjectCaisoFirmImportSelfschedule(unittest.TestCase):
             )
 
 
+class TestSelfschedClip(unittest.TestCase):
+    """caiso-151: the floor clipped at the measured price-insensitive ceiling.
+
+    The clip caps the FLOOR and never the CAPABILITY — above the measured
+    ceiling the import is still available, just price-elastic — and it composes
+    with the caiso-138 envelope clip as a SECOND pointwise min (rule 19).
+    """
+
+    def _clipped(self, ceiling_mw, year=2024):
+        """Run the injector with a patched ceiling of ``ceiling_mw`` every hour."""
+        import market_sim.data.caiso_intertie_bids as bids_mod
+
+        fleet, _ = _per_hub_fleet()
+        inject_caiso_firm_import_shape(fleet, "CAISO", year)
+        cap = {
+            uid: fleet.pmax[r] * fleet.availability[r, :].copy()
+            for r, uid in enumerate(fleet.unit_ids)
+        }
+        orig = bids_mod.measured_intertie_selfsched_ceiling
+        bids_mod.measured_intertie_selfsched_ceiling = lambda iso, yr, hours: (
+            None if ceiling_mw is None else np.full(hours, float(ceiling_mw))
+        )
+        try:
+            applied = inject_caiso_firm_import_selfschedule(
+                fleet, "CAISO", year, selfsched_clip=True
+            )
+        finally:
+            bids_mod.measured_intertie_selfsched_ceiling = orig
+        return fleet, cap, applied
+
+    def _firm_rows(self, fleet):
+        zones = set(CAISO_PER_HUB_IMPORT_ZONES.values())
+        out = []
+        for r, uid in enumerate(fleet.unit_ids):
+            zone = next((z for z in zones if uid.startswith(f"{z}_")), None)
+            if zone and uid[len(zone) + 1 :] in CAISO_FIRM_IMPORT_TRANCHES:
+                out.append(r)
+        return out
+
+    def test_clip_off_is_byte_identical_to_the_unclipped_floor(self):
+        """The default path must be bit-for-bit the caiso-77 floor."""
+        base, _ = _per_hub_fleet()
+        inject_caiso_firm_import_shape(base, "CAISO", 2024)
+        inject_caiso_firm_import_selfschedule(base, "CAISO", 2024)
+
+        armed, _ = _per_hub_fleet()
+        inject_caiso_firm_import_shape(armed, "CAISO", 2024)
+        inject_caiso_firm_import_selfschedule(
+            armed, "CAISO", 2024, selfsched_clip=False
+        )
+        np.testing.assert_array_equal(base.min_gen, armed.min_gen)
+
+    def test_generous_ceiling_leaves_the_floor_untouched(self):
+        """A ceiling above the block's own capability can never bind."""
+        fleet, cap, applied = self._clipped(1e6)
+        self.assertTrue(applied)
+        for r in self._firm_rows(fleet):
+            np.testing.assert_allclose(
+                fleet.min_gen[r, :], cap[fleet.unit_ids[r]], rtol=1e-12
+            )
+
+    def test_binding_ceiling_clips_the_floor_to_the_system_total(self):
+        """Summed across firm tranches the floor lands exactly on the ceiling."""
+        ceiling = 500.0
+        fleet, cap, _ = self._clipped(ceiling)
+        rows = self._firm_rows(fleet)
+        total_cap = np.sum([cap[fleet.unit_ids[r]] for r in rows], axis=0)
+        total_floor = np.sum([fleet.min_gen[r, :] for r in rows], axis=0)
+        binding = total_cap > ceiling
+        self.assertTrue(binding.any(), "test ceiling should bind somewhere")
+        np.testing.assert_allclose(total_floor[binding], ceiling, rtol=1e-9)
+        # Never raises the floor where the ceiling is slack.
+        self.assertTrue(np.all(total_floor <= total_cap + 1e-9))
+
+    def test_clip_never_touches_capability(self):
+        """pmax x availability is unchanged — only min_gen moves."""
+        fleet, cap, _ = self._clipped(500.0)
+        for r in self._firm_rows(fleet):
+            np.testing.assert_allclose(
+                fleet.pmax[r] * fleet.availability[r, :],
+                cap[fleet.unit_ids[r]],
+                rtol=1e-12,
+            )
+            self.assertTrue(
+                np.all(fleet.min_gen[r, :] <= fleet.pmax[r] * fleet.availability[r, :])
+            )
+
+    def test_missing_artifact_leaves_the_floor_unclipped(self):
+        """A year with no measured ceiling is left unclipped (byte-identical)."""
+        fleet, cap, applied = self._clipped(None)
+        self.assertTrue(applied)
+        for r in self._firm_rows(fleet):
+            np.testing.assert_allclose(
+                fleet.min_gen[r, :], cap[fleet.unit_ids[r]], rtol=1e-12
+            )
+
+    def test_mechanism_attribution_survives_the_clip(self):
+        fleet, _, _ = self._clipped(500.0)
+        for r in self._firm_rows(fleet):
+            floored = fleet.min_gen[r, :] > 0.0
+            self.assertTrue(floored.any())
+            self.assertTrue(
+                (fleet.min_gen_mechanism[r, floored] == MECH_FIRM_IMPORT).all()
+            )
+
+    def test_d4_window_declared_for_firm_import(self):
+        """caiso-151: the floor is finally visible to the D-4 check."""
+        import sys
+        from pathlib import Path
+
+        sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
+        from legitimacy_diagnostics import D4_WINDOWS
+
+        self.assertIn((MECH_FIRM_IMPORT, None), D4_WINDOWS)
+
+
 if __name__ == "__main__":
     unittest.main()

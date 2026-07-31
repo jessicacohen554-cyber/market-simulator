@@ -718,7 +718,9 @@ def inject_caiso_firm_import_shape(
     return applied
 
 
-def inject_caiso_firm_import_selfschedule(fleet_arrays, iso: str, year: int) -> bool:
+def inject_caiso_firm_import_selfschedule(
+    fleet_arrays, iso: str, year: int, selfsched_clip: bool = False
+) -> bool:
     """Floor the CAISO firm import blocks at their shaped capability (must-flow).
 
     caiso-77 (``config.caiso_firm_import_selfschedule``; gap register G-15
@@ -758,13 +760,53 @@ def inject_caiso_firm_import_selfschedule(fleet_arrays, iso: str, year: int) -> 
     0.2–1.3 GW); forward story = the DMM forward ladder level × pooled
     climatology shape regenerate in any forecast year.
 
+    With ``selfsched_clip`` (``config.caiso_firm_import_selfsched_clip``,
+    caiso-151) the FLOOR — not the capability — is additionally capped, hour by
+    hour, at CAISO's measured price-insensitive intertie ceiling
+    (:func:`~market_sim.data.caiso_intertie_bids.measured_intertie_selfsched_ceiling`,
+    from CAISO's own as-submitted DAM bids)::
+
+        min_gen[t] = min( pmax × availability[t] , ceiling[t] )
+
+    Rationale (FINDING-caiso150 §C/§F). The window declaration above rests on
+    "the measured (month × hod) median self-schedule", but the series it uses
+    (``measured_firm_import_shape``) is EIA-930 realised **net corridor
+    interchange** — a broadly flat price-insensitive core PLUS a large
+    price-elastic economic layer — and the floor attributes that whole diurnal
+    swing to the price-insensitive core. Measured against CAISO's own bid
+    record, the unclipped floor forces more price-insensitive import than
+    CAISO's ENTIRE measured price-insensitive intertie position (both directions
+    unsigned, plus every import bid at ≤ $0/MWh) in 23.9 / 47.2 / 48.9 % of
+    hours (2023/24/25) — 0.969 / 4.634 / 5.705 TWh, concentrated overnight
+    (h22–h05) and growing with the DMM RA level.
+
+    The clip is the **floor's** cap and never the capability's: above the
+    measured price-insensitive ceiling the import is still *available*, it is
+    simply price-ELASTIC, so it must be offered to the LP as economic capability
+    rather than forced. Clipping availability instead would delete real import
+    capability. The system-level ceiling is allocated across the firm tranches
+    pro rata by their own shaped capability in that hour, which is the pointwise
+    min at the system level and introduces no allocation parameter.
+
+    Zero new DOF — a pointwise min of two measured series, structurally the same
+    pattern as the accepted caiso-138 ``caiso_firm_import_envelope_clip``, with
+    which it COMPOSES as a second min rather than stacking on the same flag
+    (rule 19 ``[R-ONE-MECH]``): the envelope clip reconciles the block against
+    its corridor's deliverability, this one against measured bid conduct. It
+    RECONCILES the caiso-73 shape rather than adding a mechanism on top of it.
+    Rule-17 declaration for the clip: driver = measured price-insensitive bid
+    conduct; window = the hours the measured ceiling binds (overnight, h22–h05);
+    forward story = OASIS publishes continuously at a 90-day lag, and the pooled
+    climatological ceiling regenerates exactly as the caiso-73 shape does. A
+    year with no measured ceiling is left unclipped.
+
     Modifies ``fleet_arrays`` in place. Returns ``True`` when at least one
     firm tranche was floored, ``False`` (byte-identical) when the fleet has
     no firm rows.
     """
     hours = int(fleet_arrays.availability.shape[1])
     per_hub_zones = set(CAISO_PER_HUB_IMPORT_ZONES.values())
-    applied = False
+    rows: list[tuple[int, np.ndarray]] = []
     for r, uid in enumerate(fleet_arrays.unit_ids):
         zone = next((z for z in per_hub_zones if uid.startswith(f"{z}_")), None)
         if zone is None:
@@ -772,7 +814,24 @@ def inject_caiso_firm_import_selfschedule(fleet_arrays, iso: str, year: int) -> 
         name = uid[len(zone) + 1 :]
         if name not in CAISO_FIRM_IMPORT_TRANCHES or fleet_arrays.pmax[r] <= 0.0:
             continue
-        floor = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
+        rows.append((r, fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]))
+    if not rows:
+        return False
+
+    scale = np.ones(hours)
+    if selfsched_clip:
+        from market_sim.data.caiso_intertie_bids import (
+            measured_intertie_selfsched_ceiling,
+        )
+
+        ceiling = measured_intertie_selfsched_ceiling(iso, year, hours)
+        if ceiling is not None:
+            total = np.sum([f for _, f in rows], axis=0)
+            with np.errstate(divide="ignore", invalid="ignore"):
+                scale = np.where(total > 0.0, np.minimum(1.0, ceiling / total), 1.0)
+
+    for r, floor in rows:
+        floor = floor * scale
         if fleet_arrays.min_gen is None:
             fleet_arrays.min_gen = np.broadcast_to(
                 fleet_arrays.pmin[:, np.newaxis],
@@ -781,8 +840,7 @@ def inject_caiso_firm_import_selfschedule(fleet_arrays, iso: str, year: int) -> 
         raised = fleet_arrays.min_gen[r, :] < floor
         np.maximum(fleet_arrays.min_gen[r, :], floor, out=fleet_arrays.min_gen[r, :])
         ensure_mechanism(fleet_arrays)[r, raised] = MECH_FIRM_IMPORT
-        applied = True
-    return applied
+    return True
 
 
 def inject_caiso_dsw_surplus_clean(fleet_arrays, iso: str, year: int) -> bool:
@@ -2105,13 +2163,22 @@ def apply_caiso_seam_injections(
         # D.20-06-028), the Manitoba/HQ firm must-flow pattern. Requires the
         # shape above (the shaped capability IS the floor).
         if getattr(config, "caiso_firm_import_selfschedule", False):
-            if inject_caiso_firm_import_selfschedule(fleet_arrays, iso, year):
+            selfsched_clip = getattr(config, "caiso_firm_import_selfsched_clip", False)
+            if inject_caiso_firm_import_selfschedule(
+                fleet_arrays, iso, year, selfsched_clip=selfsched_clip
+            ):
                 _logger.info(
                     "%s %d: firm import blocks floored at their shaped "
                     "capability (self-scheduled must-flow contracted base; "
-                    "MECH_FIRM_IMPORT)",
+                    "MECH_FIRM_IMPORT)%s",
                     iso,
                     year,
+                    (
+                        " — floor clipped at the measured price-insensitive "
+                        "intertie ceiling from CAISO's own DAM bids (caiso-151)"
+                        if selfsched_clip
+                        else ""
+                    ),
                 )
     # CAISO south-corridor surplus-clean depth (caiso_dsw_surplus_clean,
     # caiso-87): the WEIM clean-transfer capability in surplus-West hours —

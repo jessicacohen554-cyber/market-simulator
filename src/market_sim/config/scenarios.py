@@ -315,6 +315,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # missing this one line; an armed run enters the key as a distinct
     # scenario.
     "caiso_p1_export_sink_seam",
+    # CAISO firm must-flow floor clipped at the measured price-insensitive
+    # intertie ceiling (caiso-151): GATED / default-off and byte-identical for
+    # every existing config (with the gate off the floor is the unchanged
+    # shaped capability — the clip's scale array is all-ones). Registered here
+    # at its default so every pre-existing cache key stays byte-stable — the
+    # caiso-138 field above was the SIXTH instance of missing this one line,
+    # and this comment exists so it is not the seventh; an armed run enters the
+    # key as a distinct scenario.
+    "caiso_firm_import_selfsched_clip",
     # DAM-first outage overlay gates for the four ISOs with a native
     # availability instrument (CAISO / MISO / NEISO / PJM), wired 2026-07-24
     # (infra/dam-outage-wiring-4iso). All default False and back a backcast-only,
@@ -3428,6 +3437,42 @@ class ScenarioConfig:
     # measured envelope) leaves the block unclipped — its forward analogue
     # is the forward ATC envelope, wired when the forecast lane adopts it.
     # Requires caiso_firm_import_shape (it clips that injector's output).
+    # Default off (byte-identical); CAISO-only.
+    caiso_firm_import_selfsched_clip: bool = False  # Clip the caiso-77 firm
+    # must-flow FLOOR (not the capability) at CAISO's measured price-insensitive
+    # intertie ceiling, hour by hour (caiso-151; specified FINDING-caiso150 §F).
+    # The caiso-77 floor's rule-17 window rests on "the measured (month x hod)
+    # median self-schedule", but the series it uses (measured_firm_import_shape)
+    # is EIA-930 realised NET CORRIDOR INTERCHANGE = a broadly flat
+    # price-insensitive core PLUS a large price-elastic economic layer, and the
+    # floor attributes that whole diurnal swing to the price-insensitive core.
+    # Measured against CAISO's OWN as-submitted DAM bids (OASIS PUB_DAM_GRP —
+    # independent of BOTH inputs the floor consumes), the unclipped floor forces
+    # more price-insensitive import than CAISO's ENTIRE measured
+    # price-insensitive intertie position (both directions unsigned, plus every
+    # import bid at <= $0/MWh, the floor's own definition of price-taking) in
+    # 23.9 / 47.2 / 48.9 % of hours (2023/24/25) = 0.969 / 4.634 / 5.705 TWh,
+    # concentrated overnight (h22-h05) and GROWING with the DMM RA level.
+    # min_gen[t] = min(pmax x availability[t], ceiling[t]), the system ceiling
+    # allocated across firm tranches pro rata by their own shaped capability so
+    # no allocation parameter is introduced. It caps the FLOOR and never the
+    # capability: above the measured ceiling the import is still available, just
+    # price-ELASTIC, so it is offered to the LP as economic capability instead
+    # of forced. Zero new free parameters (rule 24) — a pointwise min of two
+    # measured series, the accepted caiso-138 envelope-clip pattern, with which
+    # it COMPOSES as a second min rather than stacking on the same flag
+    # (rule 19 [R-ONE-MECH]); it reconciles the caiso-73 shape rather than
+    # adding a mechanism on top of it. Series:
+    # data.caiso_intertie_bids.measured_intertie_selfsched_ceiling over the
+    # frozen artifact caiso_intertie_selfsched_ceiling.csv
+    # (scripts/data/derive_caiso_intertie_selfsched.py, CV/LOYO honesty gates,
+    # rule 23 [R-FROZEN-DERIVE]). Forward story (rule 13): OASIS publishes
+    # continuously at a 90-day lag and the table is a pooled climatology, so it
+    # applies unchanged in a forecast year; a year with no artifact is left
+    # unclipped. E1-ADVERSE ex ante (stated before any solve, rule 1): it
+    # removes 4.6-5.7 TWh/yr of forced cheap overnight import, so overnight
+    # lambda RISES and C5a moves against the gas gap.
+    # Requires caiso_firm_import_selfschedule (it clips that injector's floor).
     # Default off (byte-identical); CAISO-only.
     caiso_p1_export_sink_seam: bool = False  # Exempt the pmin < 0 absorption
     # rows (the priced per-hub export sinks) from the P1-native RA bridge's
