@@ -2422,8 +2422,16 @@ def eia860_selfcommit_scope_plants() -> frozenset[int]:
 
 # Per-bin forced availability derates by year, for confirmed unit losses
 # that the age-based THERMAL_AVAILABILITY model cannot anticipate (turbine
-# fires, boiler explosions, etc.). Keyed by ``Bin_Label`` and run year, the
+# fires, boiler explosions, etc.). Keyed by ``Bin_Label`` and SOLVE year, the
 # value is a flat multiplier on the bin's availability for the whole year.
+#
+# BACKCAST-ONLY (FR-8, rule 13 [R-MEASURED]): every read site is gated on
+# ``mode == "backcast"`` (arrays.py ``_availability_matrix``; the DAM-overlay
+# ceiling reads sit inside the already-mode-gated
+# ``ercot_thermal_dam_availability`` block). A measured single-event derate
+# has no forward analogue, so it must never reach a forecast or crossover
+# year — pre-gate, the T1-X harness's pinned ``weather_year=2025`` re-applied
+# the Martin Lake fire to every crossover solve year.
 #
 # RULE 24 [R-REGISTRY] STATUS: this dict is an off-registry per-plant tuning
 # channel and is being retired entry by entry as each event finds its proper
