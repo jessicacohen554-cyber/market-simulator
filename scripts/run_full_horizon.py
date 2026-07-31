@@ -55,6 +55,10 @@ if str(_ROOT) not in sys.path:
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.results import cache as cachemod  # noqa: E402
 from scripts import check_forecast_invariants as C  # noqa: E402
+from market_sim.config.schedulable import (  # noqa: E402,F401  (re-export)
+    MAX_UNAUTHORIZED_SOLVE_YEARS,
+    assert_schedulable,
+)
 
 
 # --------------------------------------------------------------------------- #
@@ -107,52 +111,11 @@ class Sampler:
 # --------------------------------------------------------------------------- #
 # Reference forecast config
 # --------------------------------------------------------------------------- #
-# §2.1b window cap (the owner's "10-hour rule", 2026-07-19). A forecast/hindcast
-# invocation launched under the Forecast Finalization Program may span at most
-# this many solve-years unless --full-solve-authorized is passed (the FF-3E
-# schedulability guard, mirroring run_calibration_full.py's rule-22 gate).
-MAX_UNAUTHORIZED_SOLVE_YEARS = 5
-
-
-def assert_schedulable(
-    start_year: int, end_year: int, full_solve_authorized: bool
-) -> int:
-    """Enforce the §2.1b window cap; return the solve-year count.
-
-    A forecast run solves every year in the closed window, so the solve-year
-    count is ``end - start + 1``. A window wider than
-    :data:`MAX_UNAUTHORIZED_SOLVE_YEARS` is REFUSED (``SystemExit``) unless the
-    owner authorized the full-horizon campaign for this ISO
-    (``full_solve_authorized``) — the FF-3E schedulability guard mirroring
-    ``run_calibration_full.py``'s rule-22 ``--holdout-authorized`` gate (plan
-    §2.1b / §2.4-0 / §7.9). Extracted as a pure function so the guard is
-    unit-testable without a solve.
-
-    Args:
-        start_year: First solve year.
-        end_year: Last solve year (inclusive).
-        full_solve_authorized: Whether the owner authorized a > 5-year window.
-
-    Returns:
-        The number of solve-years in the window.
-
-    Raises:
-        SystemExit: When the window exceeds the cap and is unauthorized.
-    """
-    n_solve_years = end_year - start_year + 1
-    if n_solve_years > MAX_UNAUTHORIZED_SOLVE_YEARS and not full_solve_authorized:
-        raise SystemExit(
-            f"REFUSING full-horizon solve: {start_year}-{end_year} is "
-            f"{n_solve_years} solve-years, over the §2.1b cap of "
-            f"{MAX_UNAUTHORIZED_SOLVE_YEARS}. The schedulable instruments are T0, "
-            f"T1-F (2026-2030), T1-X (2023-2027), T1-H (2021-2025) — all ≤5 yr. "
-            f"T2/T3/golden/W4-campaign windows are DEFERRED until the owner opens "
-            f"the gate for this ISO (plan §2.1b: backcast keeper + calibration-"
-            f"complete marker, green T1 POC gates, crossover gap + FF-3E readiness "
-            f"+ projected cost, and explicit per-campaign owner authorization). "
-            f"Pass --full-solve-authorized ONLY when that authorization exists."
-        )
-    return n_solve_years
+# The §2.1b window cap now lives in market_sim/config/schedulable.py so EVERY
+# schedulable entry point shares one implementation (FFR-1D / audit FR-25 — it
+# used to be reachable from this runner and run_ces_leg.py only). Re-exported
+# here because run_ces_leg.py and tests/scoring/test_ff_readiness_battery.py
+# import it from this module.
 
 
 def reference_config(

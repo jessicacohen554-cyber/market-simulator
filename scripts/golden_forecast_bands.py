@@ -65,6 +65,10 @@ from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.pipeline.api import run_scenario  # noqa: E402
 from market_sim.results import cache as cachemod  # noqa: E402
 from scripts import check_forecast_invariants as C  # noqa: E402
+from market_sim.config.schedulable import (  # noqa: E402
+    add_authorization_flag,
+    assert_config_schedulable,
+)
 
 GOLDEN_DIR = REPO / "tests" / "golden"
 GOLDEN_PATH = GOLDEN_DIR / "ercot_2026_2040.json"
@@ -280,6 +284,16 @@ def cmd_seed(args: argparse.Namespace) -> int:
         )
         return 1
 
+    # §2.1b window cap (audit FR-25). The reference scenario is 2026-2040 =
+    # 15 solve-years, so a reseed is by construction an over-cap invocation the
+    # FF-3E close-out had to reason about by hand. It now refuses without the
+    # owner authorization the reseed itself needs (audit §4 Phase 2, D-7).
+    assert_config_schedulable(
+        ScenarioConfig(**REFERENCE_SCENARIO_KWARGS),
+        args.full_solve_authorized,
+        "golden_forecast_bands seed",
+    )
+
     sha = _git("rev-parse", "HEAD")
     commit_date = _git("show", "-s", "--format=%cI", "HEAD")
 
@@ -343,6 +357,14 @@ def cmd_check(args: argparse.Namespace) -> int:
         )
         return 1
 
+    # `check` re-solves the identical 15-solve-year reference scenario, so it
+    # carries the same §2.1b cap as `seed` (audit FR-25).
+    assert_config_schedulable(
+        ScenarioConfig(**REFERENCE_SCENARIO_KWARGS),
+        args.full_solve_authorized,
+        "golden_forecast_bands check",
+    )
+
     payload = json.loads(GOLDEN_PATH.read_text())
     with tempfile.TemporaryDirectory(prefix="golden-forecast-bands-check-") as tmp:
         run, _run_dir, _config = solve_reference(Path(tmp))
@@ -374,9 +396,18 @@ def main(argv: list[str] | None = None) -> int:
         "--reason", required=True, help="cite the seeding context or causal code change"
     )
     p_seed.add_argument("--allow-dirty", action="store_true")
+    add_authorization_flag(
+        p_seed,
+        "The reference scenario is 2026-2040 (15 solve-years), so a reseed "
+        "always needs it — the reseed authorization is owner-decision D-7.",
+    )
     p_seed.set_defaults(func=cmd_seed)
 
     p_check = sub.add_parser("check", help="solve fresh and compare to the golden")
+    add_authorization_flag(
+        p_check,
+        "`check` re-solves the same 15-solve-year reference scenario.",
+    )
     p_check.set_defaults(func=cmd_check)
 
     args = parser.parse_args(argv)
