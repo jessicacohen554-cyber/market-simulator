@@ -72,9 +72,11 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 
-from market_sim.config.paths import ERCOT_MIS_DIR, RAW_DATA_DIR  # noqa: E402
+from market_sim.config.paths import (  # noqa: E402
+    RAW_DATA_DIR,
+    ercot_dam_disclosure_files,
+)
 
-DAM_DIR = ERCOT_MIS_DIR
 DEFAULT_OUT = RAW_DATA_DIR / "ercot-storage-capability.csv"
 
 HOURS_PER_YEAR = 8760
@@ -97,13 +99,16 @@ def _load_storage_rows(year: int) -> pd.DataFrame:
     PWRSTR rows come from the ``Gen_Resource_Data`` files; ESR rows (the
     post-RTC+B storage model) from the ``ESR_Data`` files. The 60-day
     publication lag spills a year's Nov-Dec deliveries into the following
-    year's files, so ``<year>`` and ``<year+1>`` files are scanned and
-    filtered on the Delivery Date column.
+    year's files, so ``<year>`` and ``<year+1>`` LABEL years are scanned and
+    filtered on the Delivery Date column; :func:`paths.ercot_dam_disclosure_files`
+    resolves both registered disclosure directories (the MIS-fetcher lane
+    2023-2026 and the annual-archive lane 2018-2022), so pre-2023 delivery
+    years assemble from the archive lane with no per-file list here.
     """
     frames: list[pd.DataFrame] = []
     for family, rtype in (("Gen_Resource_Data", "PWRSTR"), ("ESR_Data", "ESR")):
         for y in (year, year + 1):
-            for path in sorted(DAM_DIR.glob(f"*60d_DAM_{family}_{y}_*.parquet")):
+            for path in ercot_dam_disclosure_files(family, y):
                 df = pd.read_parquet(path, columns=_COLS)
                 df = df[df["Resource Type"] == rtype]
                 if df.empty:

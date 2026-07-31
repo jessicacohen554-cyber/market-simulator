@@ -13,8 +13,11 @@ the 0.78 May smear spread that outage over the whole month; see
 This script reconciles the two measured sources at their native grain:
 
 * **Timing (daily, per reactor)** — the ERCOT 60-Day DAM Disclosure
-  ``Gen_Resource_Data`` NUC rows (``data/raw/ercot/60_DAY_DAM_DISCLOSURE_60d_
-  DAM_Gen_Resource_Data_*.parquet``): a reactor-day's raw availability is its
+  ``Gen_Resource_Data`` NUC rows (both registered disclosure lanes, resolved
+  by ``paths.ercot_dam_disclosure_files``: ``data/raw/ercot/60_DAY_DAM_
+  DISCLOSURE_60d_DAM_Gen_Resource_Data_*.parquet`` for 2023-2026 and
+  ``data/raw/ercot-AS/60d_DAM_Gen_Resource_Data_*.parquet`` for 2018-2022):
+  a reactor-day's raw availability is its
   hour-summed non-OUT HSL over the day divided by 24 x its healthy hourly
   reference (the MEDIAN positive operating day — nuclear runs flat at rating,
   so the median is rated operation), clipped to [0, 1]. A reactor with every
@@ -48,12 +51,12 @@ changed conditions. Rule 23: re-run only when new disclosure months land.
 Usage::
 
     python scripts/data/derive_ercot_nuclear_availability.py [--check]
+        [--years 2023 2024 2025] [--out data/raw/ercot-nuclear-availability.csv]
 """
 
 from __future__ import annotations
 
 import argparse
-import glob
 import sys
 from pathlib import Path
 
@@ -63,13 +66,13 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
-from market_sim.config.paths import RAW_DATA_DIR  # noqa: E402
+from market_sim.config.paths import (  # noqa: E402
+    RAW_DATA_DIR,
+    ercot_dam_disclosure_files,
+)
 
 from market_sim.config.constants import NUCLEAR_MONTHLY_CF_BY_YEAR  # noqa: E402
 
-DISCLOSURE_GLOB = (
-    "data/raw/ercot/60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_*.parquet"
-)
 OUT_CSV = RAW_DATA_DIR / "ercot-nuclear-availability.csv"
 
 # Disclosure resource -> (EIA plant code, model unit number). The model's four
@@ -82,6 +85,13 @@ REACTORS: dict[str, tuple[int, int]] = {
     "STP2": (6251, 2),
 }
 
+# Default delivery-year span. Overridable with ``--years`` so an out-of-training
+# span can be derived from the same recipe. NOTE the span is not decorative:
+# the per-reactor healthy reference (the median positive operating day, see
+# :func:`load_daily_raw`) is computed WITHIN the invocation's span, so a span
+# change re-bases every row it covers. Spans are therefore derived one at a
+# time and concatenated, never pooled — which is what keeps the committed
+# 2023-2025 block byte-identical when a pre-2023 block is added beside it.
 YEARS = (2023, 2024, 2025)
 
 # A unit-day BELOW this raw fraction is a measured event day (a full/partial
@@ -109,16 +119,23 @@ def _reactor(resource_name: str) -> str | None:
     return None
 
 
-def load_daily_raw() -> pd.DataFrame:
+def load_daily_raw(years: tuple[int, ...] = YEARS) -> pd.DataFrame:
     """Return per (reactor, date) raw daily availability from the disclosure.
 
     ``avail_raw = clip(sum over hours of non-OUT HSL / (24 x median positive
     operating day), 0, 1)`` — 0.0 for a full-OUT day, fractional for
     DAM-partial return-to-service days.
+
+    Every committed 60-Day DAM Disclosure file is read
+    (:func:`paths.ercot_dam_disclosure_files` resolves both registered
+    directories: the MIS-fetcher lane ``data/raw/ercot`` for 2023-2026 and the
+    annual-archive lane ``data/raw/ercot-AS`` for 2018-2022) and then filtered
+    to ``years``. The healthy reference is a per-reactor median over the
+    RETAINED rows, so it is scoped to ``years`` — see :data:`YEARS`.
     """
     cols = ["Delivery Date", "Resource Name", "Resource Type", "HSL", "Resource Status"]
     frames = []
-    for f in sorted(glob.glob(str(REPO / DISCLOSURE_GLOB))):
+    for f in ercot_dam_disclosure_files("Gen_Resource_Data"):
         df = pd.read_parquet(f, columns=cols)
         df = df[df["Resource Type"] == "NUC"].copy()
         if df.empty:
@@ -127,7 +144,7 @@ def load_daily_raw() -> pd.DataFrame:
         frames.append(df)
     nuc = pd.concat(frames, ignore_index=True)
     nuc = nuc[
-        (nuc.date >= f"{YEARS[0]}-01-01") & (nuc.date <= f"{YEARS[-1]}-12-31")
+        (nuc.date >= f"{years[0]}-01-01") & (nuc.date <= f"{years[-1]}-12-31")
     ].copy()
     nuc["reactor"] = nuc["Resource Name"].map(_reactor)
     if nuc["reactor"].isna().any():
@@ -158,7 +175,9 @@ def load_daily_raw() -> pd.DataFrame:
     return pd.concat(out, ignore_index=True).sort_values(["reactor", "date"])
 
 
-def reconcile_monthly(day: pd.DataFrame) -> pd.DataFrame:
+def reconcile_monthly(
+    day: pd.DataFrame, years: tuple[int, ...] = YEARS
+) -> pd.DataFrame:
     """Scale non-event unit-days so fully-covered months hit the EIA-923 anchor.
 
     Event days (raw < :data:`EVENT_RAW_MAX` — refuel windows, trips, ramps and
@@ -169,11 +188,26 @@ def reconcile_monthly(day: pd.DataFrame) -> pd.DataFrame:
     anchor — the 0.90-0.99 pool values are dominated by the disclosure HSL
     basis's ~1-2 % low-read noise, so the anchor owns the LEVEL while the
     disclosure owns the TIMING.
+
+    A year with NO anchor in :data:`NUCLEAR_MONTHLY_CF_BY_YEAR` (the constant
+    currently carries 2023-2025 only) keeps ``avail = avail_raw`` for all its
+    months and is reported as UNANCHORED: the disclosure still owns the
+    timing, but nothing re-levels the ~1-2 % HSL low-read. That is the honest
+    state — inventing an anchor for an unanchored year would be a fitted
+    parameter, and back-filling one is an EIA-923 re-derive, not this
+    function's job.
     """
     cf_by_year = NUCLEAR_MONTHLY_CF_BY_YEAR["ERCOT"]
     fleet_cap = sum(CAP_MW.values())
     day = day.assign(avail=day.avail_raw)
-    for yr in YEARS:
+    unanchored = [y for y in years if cf_by_year.get(y) is None]
+    if unanchored:
+        print(
+            f"  UNANCHORED years {unanchored}: no NUCLEAR_MONTHLY_CF_BY_YEAR"
+            "['ERCOT'] entry — avail = avail_raw (measured timing, unreconciled"
+            " level)"
+        )
+    for yr in years:
         for mo in range(1, 13):
             days_in_month = pd.Period(f"{yr}-{mo:02d}").days_in_month
             sel = (day.date.dt.year == yr) & (day.date.dt.month == mo)
@@ -237,15 +271,27 @@ def reconcile_monthly(day: pd.DataFrame) -> pd.DataFrame:
 
 
 def main() -> None:
+    """Derive and write (or --check) the per-reactor daily availability CSV."""
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument(
         "--check",
         action="store_true",
-        help="re-derive and diff against the committed CSV (exit 1 on drift)",
+        help="re-derive and diff against the committed CSV (exit 1 on drift); "
+        "compares only the rows for --years",
     )
+    ap.add_argument(
+        "--years",
+        type=int,
+        nargs="+",
+        default=list(YEARS),
+        help="delivery-year span to derive (see YEARS: the healthy reference "
+        "is scoped to this span, so spans are derived one at a time)",
+    )
+    ap.add_argument("--out", type=Path, default=OUT_CSV)
     args = ap.parse_args()
+    years = tuple(sorted(args.years))
 
-    day = reconcile_monthly(load_daily_raw())
+    day = reconcile_monthly(load_daily_raw(years), years)
     pc = day.reactor.map(lambda r: REACTORS[r][0])
     un = day.reactor.map(lambda r: REACTORS[r][1])
     out = pd.DataFrame(
@@ -259,7 +305,7 @@ def main() -> None:
         }
     ).sort_values(["date", "plant_code", "unit_no"])
 
-    for yr in YEARS:
+    for yr in years:
         sub = out[out.date.str.startswith(str(yr))]
         ndays = sub.date.nunique()
         full_out = int((sub.avail <= 0.0).sum())
@@ -269,16 +315,19 @@ def main() -> None:
         )
 
     if args.check:
-        prev = pd.read_csv(OUT_CSV, dtype=str)
+        prev = pd.read_csv(args.out, dtype=str)
+        prev = prev[prev.date.str[:4].astype(int).isin(years)]
         new = out.astype(str).reset_index(drop=True)
         if prev.reset_index(drop=True).equals(new):
-            print("check: committed CSV reproduces byte-identically")
+            print(f"check: committed CSV rows for {years} reproduce byte-identically")
             return
         raise SystemExit("check FAILED: derived output drifted from committed CSV")
 
-    OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
-    out.to_csv(OUT_CSV, index=False)
-    print(f"wrote {OUT_CSV} ({len(out)} rows, {OUT_CSV.stat().st_size / 1024:.0f} KB)")
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    out.to_csv(args.out, index=False)
+    print(
+        f"wrote {args.out} ({len(out)} rows, {args.out.stat().st_size / 1024:.0f} KB)"
+    )
 
 
 if __name__ == "__main__":
