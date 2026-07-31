@@ -85,7 +85,10 @@ DOC_LIST_URL = "https://www.ercot.com/misapp/servlets/IceDocListJsonWS"
 DOWNLOAD_URL = "https://www.ercot.com/misdownload/servlets/mirDownload"
 REPORT_TYPE_ID = 13231
 # The pre-RTC+B annual bundles carrying the ORDC adder + reserves columns.
-ARCHIVE_PREFIX = "RTM_ORDC_REL_DPLY_PRC_ADDR_RSRV"
+# Both names ERCOT has published this annual archive under: the original,
+# used for the 2014-2025 vintages, and the 2026-01-08 rename (2025 appears
+# under both). Ordered oldest-first; either resolves the same payload.
+ARCHIVE_PREFIXES = ("RTM_ORDC_REL_DPLY_PRC_ADDR_RSRV", "HIST_RT_SCED_PRC_ADDR")
 
 HOURS_PER_YEAR = 8760
 HEADER_ROW = 9  # 1-based Excel row holding the column names on each month sheet.
@@ -128,16 +131,22 @@ def _discover_docid(year: int) -> str:
     )
     resp.raise_for_status()
     docs = resp.json()["ListDocsByRptTypeRes"]["DocumentList"]
-    want = f"{ARCHIVE_PREFIX}_{year}"
-    matches = [d["Document"] for d in docs if d["Document"]["FriendlyName"] == want]
+    # ERCOT RENAMED this annual archive: postings through the 2025 vintage are
+    # ``RTM_ORDC_REL_DPLY_PRC_ADDR_RSRV_<year>``, and from the 2026-01-08
+    # posting onward the same annual bundle is published as
+    # ``HIST_RT_SCED_PRC_ADDR_<year>`` (2025 exists under BOTH names). Accept
+    # either prefix so the pre-rename back years and the current ones both
+    # resolve; the payload layout is unchanged.
+    wanted = [f"{p}_{year}" for p in ARCHIVE_PREFIXES]
+    matches = [d["Document"] for d in docs if d["Document"]["FriendlyName"] in wanted]
     if not matches:
         available = sorted(
             d["Document"]["FriendlyName"]
             for d in docs
-            if d["Document"]["FriendlyName"].startswith(ARCHIVE_PREFIX)
+            if d["Document"]["FriendlyName"].startswith(ARCHIVE_PREFIXES)
         )
         sys.exit(
-            f"{year}: no '{want}' in reportTypeId={REPORT_TYPE_ID}. "
+            f"{year}: no {' / '.join(wanted)} in reportTypeId={REPORT_TYPE_ID}. "
             f"Available archives: {available}"
         )
     # One per year; if ERCOT reposts, the most recent publish wins.
@@ -335,7 +344,7 @@ def build_year(year: int) -> bool:
             "source": (
                 "ERCOT MIS NP6-905-CD 'Historical Real-Time Price Adders by SCED "
                 f"Interval' (reportTypeId={REPORT_TYPE_ID}), annual archive "
-                f"{ARCHIVE_PREFIX}_{year}; SCED-interval (~5-min) averaged to hourly."
+                f"{ARCHIVE_PREFIXES[0]}_{year}; SCED-interval (~5-min) averaged to hourly."
             ),
             "description": (
                 f"ERCOT {year} measured Real-Time ORDC / Reliability-Deployment "
