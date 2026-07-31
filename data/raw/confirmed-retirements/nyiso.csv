@@ -41,4 +41,37 @@
 #
 # Revisit if/when NYISO posts a new completed deactivation notice that is NOT
 # followed by a return-to-service or withdrawal filing.
+# ===========================================================================
+# RE-QUERY PASS 2026-07-31 (FFR-PA). STILL AN HONEST ZERO — re-researched,
+# not merely carried forward. Every candidate below was checked against the
+# 2026 Gold Book deactivation pipeline (Table IV-5, which grew from 48 MW of
+# summer capability in the 2025 Gold Book to 1,307 MW in the 2026 edition) and
+# the NYISO planning status reports; none yields a still-binding forward exit.
+#
+#   - Danskammer (Zone G) — the one genuinely NEW candidate this pass, and the
+#     closest any NYISO unit has come to the bar. Danskammer submitted a
+#     deactivation notice in December 2025 requesting 2026-08-01. NYISO's
+#     determination is conditional in BOTH directions: it may deactivate on
+#     the requested date only if the identified Lower Hudson Valley solutions
+#     are in service and demonstrating their capability by then, and it may
+#     NOT deactivate before 2027-01-15 absent them — and if those projects
+#     slip, it "would need to remain in service" for LHV needs arising in 2029
+#     and 2030. So there is no date the instrument REQUIRES the unit offline,
+#     which is what confirmation_class means; a retention beyond 2027 is an
+#     explicitly contemplated outcome, not a tail risk. Danskammer HoldCo also
+#     filed Chapter 11 on 2026-06-10. HELD OUT — re-query once NYISO publishes
+#     a determination that fixes an unconditional date.
+#   - Gowanus 2-3 / Narrows 1-2 (Zone J): the 2026 Gold Book carries them at a
+#     2029-05-01 deactivation but marks them RETAINED following the
+#     reliability finding; the owner's withdrawal (2026-04-16) recorded in the
+#     previous pass stands. Still not a confirmed exit.
+#   - Far Rockaway GT1/GT2 (Zone K): withdrawal confirmed effective
+#     2026-05-01, the units retained under a LIPA capacity purchase agreement.
+#     Reversal unchanged.
+#   - Pinelawn (Zone K): still in the deferred/must-run pattern; unresolved,
+#     not a confirmed forward exit.
+#
+# The correct number of rows for this ISO remains ZERO. Revisit if/when NYISO
+# posts a completed deactivation notice with an unconditional date that is not
+# followed by a return-to-service, withdrawal, or retention determination.
 iso,plant_id,generator_id,unit_name,capacity_mw,exit_year,exit_month,confirmation_class,instrument_id,instrument,instrument_date,superseded,superseding_instrument,source_url,source_doc,accessed,notes
