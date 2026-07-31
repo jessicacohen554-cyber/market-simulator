@@ -592,3 +592,123 @@ carries no LP representation though it generated ~140–260 GWh/yr and ramped to
 is 0.1–0.2 % of load, so it cannot move a gate. No charter, nothing armed.
 
 Next shorthand: **neiso-70**.
+
+## 2026-07-31 — neiso-70: measured CT loaded heat rates PROMOTED (matrix `U`→`K`, new keeper); measured CHP heat rates tested and OPEN (`U`→`O`) — the CHP overshoot locates a missing CC_CHP host-steam floor
+
+**Lane:** rule 14 `[R-ACCURATE]` input-accuracy, two arms off ONE shared
+same-HEAD control. **C3c was not targeted and did not move** — bit-identical in
+every arm (model 0 h vs RT 15/8/20 h). The frontier declaration stands; neither
+§5.6 item 1 nor item 2 was opened.
+
+**New keeper: `2026-07-31-neiso-70-ctheatrate`** (bundle
+`neiso70_ctheatrate_B`), replacing `2026-07-23-neiso-61-netrev-margin`.
+Full record: `results/calibration/FINDING-neiso70-heat-rate-provenance-2026-07-31.md`;
+pre-registration `PREREG-neiso70-heat-rate-provenance-2026-07-31.md`, committed
+and pushed at `20ce479` **before either arm solved**.
+
+**Why a control was mandatory (and what it caught).** The outgoing keeper's
+`git_sha` `eede1c4` is **not in the repo** — squash-merged away — so no
+keeper-relative delta is attributable. Control vs committed keeper drifts by
+**912.9 / 963.9 / 1,029.0 MW** on CC_REGULAR (hydro 553–907, oil 528–747,
+CT_PEAKER 315–346), and CT_PEAKER's own annual energy drifts −0.048 / −0.090 /
+−0.190 TWh. The numerics stack also differs from the keeper's recorded
+environment (highspy 1.14.0 vs 1.15.1, pandas 3.0.3 vs 3.0.5, pyarrow 24.0.0 vs
+25.0.0 — the repo's committed `requirements.txt` pin is *older* than the stack
+the keeper was solved with), so the drift is **code + environment and cannot be
+decomposed** with `eede1c4` gone. Every number below is **arm − control**.
+
+**Flag fidelity, discharged BEFORE any solve (the ERCOT-146 hazard).** NEISO
+runs the same `use_campd_bins` / `plant_level_fleet` configuration that made the
+flag inert in ERCOT, but only `iso == "ERCOT"` reads the curated sheet in
+`assembly.load_or_synthesize_bins`; every other ISO **synthesizes** its bins from
+the flagged fleet. Verified empirically (`scripts/probes/_neiso70_flag_fidelity.py`):
+CT arm moves 31 generators / 910.4 MW, CHP arm 20 / 271.0 MW. Both live.
+
+**Named risk resolved before solving.** The `pinned_classes` label is
+**scorer-side D-10, not an LP pin**: CC_CHP carries **no** D-2 forced row in any
+year (100 % free) and CT_CHP is 94–97 % free, so a re-price acts directly on
+dispatch. What the label *does* cost is scoring reach — CC_CHP is
+`excluded_from_free` and CT_CHP is not a scored C1 row — so lever 2 could never
+improve the free-class score, and was pre-registered to be reported that way.
+
+### Arm 1 — `measured_ct_heat_rates` → **`K`, PROMOTED**
+
+Artifact: 8 plant rows, **8 applied, ZERO excluded by the physical band**;
+75.6 % of class capacity but **100.0 % of the class's own metered CAMPD CT
+energy**. Direction is **NEISO's own** and matches no precedent ISO: two-sided
+(6 plants / 817 MW cheaper, **2 / 94 MW dearer**), cap-wt **−0.579 MMBtu/MWh
+(−5.7 %)**. Adverse selection **present and stated** (covered cap-wt incumbent
+HR 10.208 vs uncovered 11.830), mitigated but not erased by every uncovered
+plant metering zero CT energy.
+
+* **Every pre-registered gate PASSES; ZERO status changes across all 70 scored
+  records.** C1 all 12/12 · free 8/8, C3c bit-identical, determination
+  CALIBRATED-WITH-CAVEATS with the same single ledgered caveat, **DOF residual
+  count unchanged at 5** (the new ledger entry is `measured`, not fitted).
+* CT_PEAKER 0.183 → 0.309 / 0.362 → 0.832 / 1.098 → 1.706 TWh, funded by
+  CC_REGULAR (−0.121 / −0.461 / −0.619); total generation moves ≈ 0.005 %.
+* **The structural deliverable:** D-2 CT_PEAKER `reliability_floor` forced share
+  **collapses 0.3958 → 0.2013, 0.2735 → 0.0736, 0.0680 → 0.0272** — correctly
+  priced, the class clears **economically** instead of leaning on its commitment
+  floor. **MISO-107 in reverse** (there the same mechanism made MISO's CT floor
+  *more* load-bearing, because its CTs had been carrying CC heat rates): same
+  mechanism, opposite structural consequence, each ISO on its own fleet.
+* C1 CT_PEAKER absolute error improves in **both scored years** (0.282 → 0.156,
+  0.292 → 0.177 TWh). 2025 moves further over, **disclosed in the prereg in
+  advance, against interest**; its C1 row is SKIPPED on a preliminary EIA-923
+  vintage (57 % plant reporting).
+* **Reported, not gated:** 2025 CT_PEAKER D-1 `cv_ratio` 0.521 → 0.288. **Not a
+  broken protective gate** — C7 `shape` is SKIPPED for NEISO in keeper, control
+  and arm alike, `profile_r` stays far above floor (0.930→0.965, 0.982→0.976,
+  0.976→0.976), C8 PASSES, and CT_PEAKER is 0.19–1.0 % of load, under rule 20's
+  2 % materiality line.
+
+### Arm 2 — `measured_chp_heat_rates` → **`O` (open), NOT promoted, flag stays default-off**
+
+Live (204.6 MW) and accurate (CEMS 4/4 within 1 %, median 1.00000); every gate
+passes with **zero criterion regressions**. But it **overshoots the class it
+reprices**: CC_CHP 1.334 → 0.703 / 1.254 → 0.910 / 1.216 → 0.539 TWh against
+actual 1.072 / 1.124 / 1.194 — over- to under-generating in every year
+(|error| 0.224 → 0.369, 0.130 → 0.214, 0.022 → 0.655). Counterweight reported in
+full: CC_REGULAR improves markedly (0.471 → 0.156, 0.340 → 0.030), so the
+*combined* CC_CHP + CC_REGULAR error actually falls in both scored years.
+
+**Root cause located — structural, not tuning: NEISO's CC_CHP carries NO
+`chp_steam` D-2 row at all**, control and arm, all three years (CT_CHP has one
+at 2.9/5.3/5.8 %; CAISO's CC_CHP runs 43–47 %). With no host-steam obligation
+floor, a **+27.96 %** dearer offer lets those cogens drop out far past what a
+real cogen must run to serve its host. The signature confirms it: CC_CHP D-1
+`cv_ratio` **explodes** 2.814 → 6.99 / 6.499 → 10.231 / 2.156 → 11.248 while
+`profile_r` barely moves — timing right, amplitude blown out.
+
+Stamped **`O`** deliberately: not `K` (the fit on the repriced class degrades,
+which blocks *promotion*, never the *input*), not `R` (nothing refuted on the
+merits — rule 14 forbids reverting to the eGRID estimate because it fits
+better), not `I` (demonstrably live). The mechanism is **structurally
+incomplete as armed** — the ERCOT-141 "half a mechanism" pattern.
+
+**DO-NOT-REDO.** Do not re-test the CHP re-price alone, and do not tune the CHP
+heat rates toward the CC_CHP residual (rules 1/14/23 — the artifact re-derives
+only on a new eGRID vintage). Do not cite lever 2's CT_CHP half as evidence in
+either direction: it covers 19.3 % of capacity and **0.0 % of metered energy**
+(every covered CT_CHP plant is below the Part-75 boundary), so it is not
+identified.
+
+**DOF ledger (rule 21):** zero fitted parameters added. The keeper's ledger
+gains one `measured` entry (`measured_ct_heat_rates[NEISO]`), 11 entries total,
+`n_residual` **unchanged at 5**.
+
+**Governance.** Years 2023–2025 only; the holdout spend freeze is ACTIVE and
+NEISO's locked test is already SPENT (2026-07-07), never re-grantable. All three
+bundles registered (rule 15) — control, keeper arm and open arm alike. Both
+matrix cells updated with evidence citations (rule 28b) and the NEISO header
+re-stamped.
+
+**Open / next.** (1) **neiso-71: derive a measured NEISO CC_CHP host-steam floor
+and land it together with `measured_chp_heat_rates`** — one mechanism, not two
+(rule 19). (2) `nuclear_unit_availability` needs Millstone 2/3 + Seabrook rows in
+`derive_nuclear_availability.NRC_TO_EIA`, which today covers **PJM (31), NYISO
+(4) and CAISO (2)** only. (3) §5.6 items 1/2 still require their own owner
+charter; item 4 (NG:PS time split) and item 5 (STEP 3 seam) are unchanged.
+
+Next shorthand: **neiso-71.**
