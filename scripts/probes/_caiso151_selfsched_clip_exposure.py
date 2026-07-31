@@ -136,7 +136,10 @@ def main() -> int:
         fa = st["fleet_arrays"] if isinstance(st, dict) else st.fleet_arrays
         total = firm_floor(fa, zones, CAISO_FIRM_IMPORT_TRANCHES)
 
-        scale = np.where(total > 0.0, np.minimum(1.0, ceiling / total), 1.0)
+        # Same guarded form as the injector: np.where evaluates both branches,
+        # so the zero-floor hours need the errstate suppression too.
+        with np.errstate(divide="ignore", invalid="ignore"):
+            scale = np.where(total > 0.0, np.minimum(1.0, ceiling / total), 1.0)
         clipped = total * scale
         binds = clipped < total - 1e-6
         removed = float((total - clipped).sum() / 1e6)
