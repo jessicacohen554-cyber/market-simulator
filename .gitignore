@@ -171,6 +171,12 @@ data/raw/_processed-legacy/*.parquet
 # emission rates, read at runtime by the dispatch LP and calibration report.
 !data/raw/_processed-legacy/parasitic_load_factors.parquet
 !data/raw/_processed-legacy/plant_emission_rates.parquet
+# fossil_co2_rates is likewise committed (fast-path fleet-wide CO2 rates read by
+# market_sim.data.egrid). It was tracked before this allowlist existed, so it
+# stayed tracked-but-ignored; naming it here keeps a fresh copy `git add`-able.
+# The un-negated case is what silently stranded the 2026-07-04 F5 rows of
+# plant_emission_rates.parquet — see docs/iso-2022-holdout-data-availability-audit-2026-07.md §5.2.
+!data/raw/_processed-legacy/fossil_co2_rates.parquet
 # Per-year EIA-860 plant-level CHP flag lookup (~0.5 MB), produced by
 # scripts/build_eia860_chp_by_year.py from the committed EIA-860 release zips.
 # The fleet loader reads it so a multi-year backcast buckets each year's gas
