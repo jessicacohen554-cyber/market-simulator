@@ -957,7 +957,15 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — targets C7 COAL_PRB (non-ledgerable), C3b spread compression (instrument-blocked), C3a-2024
+### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion
+
+*(Header refreshed 2026-07-31, miso-111: the former "C3b spread compression"
+target is RETIRED — C3b PASSES on the live scorer against the
+`2026-07-31-miso-109b-hy-level` keeper (miso-98 closed the 2025 breach and
+deleted its ledger entry under rule 26 [R-DELETE]); the ledgered caveats are
+C3a + C3c, 2/3. The diurnal-spread compression DEFECT the old target named is
+still real (miso-89's measurement stands) but it no longer breaches any
+criterion; the outage-grain data ask below remains its honest continuation.)*
 
 1. **Coal minimum-take tonnage data ask**
    (`miso-coal-contract-tonnage-data-ask-2026-07.md`) — **the LP constraint is
@@ -972,8 +980,10 @@ loss.
    §4; do NOT re-test any receipts variant. Bounded next step is the ask's §8
    Form 580 count, not a solve.
 2. **Outage-grain data ask** (`miso-outage-grain-data-ask-2026-07.md`) — the
-   C3b driver (~10 GW 2025 summer under-derate) is instrument-blocked; the
-   lever is data intake at unit/fuel grain, not a model change.
+   spread-compression driver (~10 GW 2025 summer under-derate) is
+   instrument-blocked; the lever is data intake at unit/fuel grain, not a
+   model change. (C3b itself now PASSES — see the header note — so this ask
+   is defect-motivated, not gate-motivated.)
 3. ~~**DA virtual depth** (`pjm_da_virtual_bids` form, own derivation).~~
    **CLOSED 2026-07-29 (miso-105): REFUSED ex-ante, no solve** — and refused on
    the *opposite* evidence from NYISO's. MISO **does** publish the submitted
