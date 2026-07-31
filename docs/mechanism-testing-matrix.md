@@ -1095,7 +1095,22 @@ C3a + C3c, 2/3. The diurnal-spread compression DEFECT the old target named is
 still real (miso-89's measurement stands) but it no longer breaches any
 criterion; the outage-grain data ask below remains its honest continuation.)*
 
-1. **Coal minimum-take tonnage data ask**
+0. **Committed-band SPLIT on the measured within-run loading distribution —
+   the miso-112 lane, the queue's live head.** miso-111 (2026-07-31) A/B'd the
+   whole-band form (`coal_prb_committed_dispatchable`, cell R): shape WORKS
+   (C7 PRB cv_ratio 0.466→0.828 / 0.475→1.028, FAIL→PASS, BIT untouched,
+   C3a improved) but C1 PRB flips −8.77/−14.97 TWh in the cheap-gas years —
+   the discount carries ~9-15 TWh/yr of real stay-online energy the mustrun
+   band alone does not. Measured target: reality's within-run night level is
+   0.62×HSL, BETWEEN mustrun (0.46) and the full stack (0.92); one band at
+   one price cannot hold it. Successor: split `_committed` into a
+   hold-through slice (keeps the contract discount) + a cycling slice (full
+   SRMC), both sizes from the CAMPD loading-when-on construction (night p50
+   vs day p50, per plant — `scripts/probes/_miso111_prb_conduct.py` extends
+   directly). 2025 will still be short of the 0.5 gate on the overnight
+   price-formation defect (model off-peak p10 $29.71 vs actual hub $17.95)
+   — data-blocked (miso-78/79), do not stack an offer lever on it. DO NOT
+   re-test the whole-band form (miso-111 R).
    (`miso-coal-contract-tonnage-data-ask-2026-07.md`) — **the LP constraint is
    NOT the lever any more; the RHS is.** The constraint itself (contract-period
    tonnage priced by its dual, the named miso-96 successor) stays the only

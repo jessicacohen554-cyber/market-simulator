@@ -2460,3 +2460,44 @@ negative `WAT` hours show pumping *is* netted; NYISO's 923 `HY` *exceeds*
   `results/calibration/FINDING-miso109-hydro-level-923hy-2026-07-30.md`;
   probe: `scripts/probes/_miso109_hydro_level_audit.py`.
 * Next number: **miso-110.**
+
+## 2026-07-31 — miso-111: PRB committed-band dispatchability — shape PASSES 2023/24, REJECTED on the C1 volume kill (G2); successor lane named
+
+* Target: C7 COAL_PRB (the sole determination blocker, non-ledgerable).
+  Three phases, the first two no-LP, kill rules pre-registered and COMMITTED
+  before measuring (`PREREG-miso111-prb-committed-flex-2026-07-31.md`).
+* Phase 1 (no-LP): the 2025 CV collapse (0.072→0.023) is per-plant MERIT
+  SATURATION on the 2025 fuel path (gas $3.52; model off-peak LMP p10 $29.71
+  sits above the whole PRB SRMC band, actual hub p10 $17.95 sits inside it) —
+  NOT census/mix (counterfactual +0.009 the other way), NOT take-or-pay share
+  (year-static), NOT outage windows (multi-day grain).
+* Phase 2 (measured, no kill rule fired): regulated PRB, conditioned on being
+  ONLINE, cycles within-run (off-peak CV 0.159/0.126/0.076, amplitude 18-25%
+  of HSL, trough h2→peak h18) and PRICE-RESPONSIVELY (de-load 0.45-0.49 of
+  day-max on cheap nights vs 0.19-0.22 on dear). Plant-basis lsl_frac p50
+  0.182 — BELOW the mustrun bands (0.30-0.52), so the bridge-floor half of
+  the original hypothesis is already represented and a new floor would be
+  inert; the arm became the headroom half only.
+* Phase 3: `coal_prb_committed_dispatchable` (new ScenarioConfig field,
+  default off) A/B'd against a same-HEAD control reproducing the 109b keeper
+  at 0.00000% (2023/24; 2025 0.030% L1 HEAD drift, gate stats identical).
+  Arm B: C7 cv_ratio 0.466→0.828 (2023 PASS), 0.475→1.028 (2024 PASS),
+  0.314→0.411 (2025 FAIL vs 0.5); COAL_BIT untouched; C3a improved
+  (−14.2→−13.5% in 2025); BUT C1 COAL_PRB −8.77 (2023) / −14.97 TWh (2024)
+  vs ±8 — the G2 kill fires; P-C falsified and reported. REJECTED; keeper
+  UNCHANGED (owner structural-fidelity grant weighed and declined — the arm
+  trades a flat band for a fleet that decommits energy reality kept burning).
+* The lane's sharpest statement: reality's within-run night level is
+  0.62×HSL, BETWEEN mustrun (0.46) and the full stack (0.92) — one band at
+  one price cannot hold it. Successor (miso-112): SPLIT the committed band
+  on the measured within-run loading distribution (hold-through slice keeps
+  the contract discount; cycling slice bids SRMC; both sizes from the CAMPD
+  loading-when-on construction). The 2025 residual additionally needs the
+  overnight price-formation lane (data-blocked, miso-78/79 — not reopened).
+* Also this session: §5.4 header refreshed (stale "C3b spread compression"
+  target retired — C3b passes on the live scorer); status/MISO.js verified
+  current on 109b (the reported 101b staleness was deploy lag).
+* Runs: `2026-07-31-miso-111a-control`, `2026-07-31-miso-111b-prb-dispatch`.
+  Evidence: `results/calibration/FINDING-miso111-prb-committed-dispatch-2026-07-31.md`;
+  probes `scripts/probes/_miso111_prb_conduct.py`, `_miso111_chain.sh`.
+* Next number: **miso-112.**
