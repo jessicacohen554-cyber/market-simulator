@@ -194,7 +194,7 @@ order is a prior, not a mandate — a session with a better-identified lever
 goes off-queue and says so. Entries already adjudicated elsewhere are *not*
 repeated here; the matrix `R`/`G`/`I` cells are the DO-NOT-REDO list.
 
-### 5.1 ERCOT — NOT-YET (keeper `2026-07-31-ercot144-coal-perplant-offer`, C6 now PASSES); open gates C3a/C3b/C3c/C7; ~~C7 lignite, coal seasonal split~~ CLOSED
+### 5.1 ERCOT — NOT-YET (keeper `2026-07-31-ercot145-gas-daily-shape`, C6 PASSES); open gates C3a/C3b/C3c/C7; ~~C7 lignite, coal seasonal split~~ CLOSED; ~~items 4+5~~ EXECUTED at ERCOT-145
 
 **QUEUE ITEM 2 IS PARTIALLY EXECUTED (ERCOT-144, 2026-07-31).** The DOF half
 landed: the ERCOT-144 lane retired the residual-identified coal offer DOF onto
@@ -217,11 +217,10 @@ model's $7.21/$0.51/$0.00; the load-weighted official C3a miss
 miss concentrates in high-load hours. **A ledger records a limit, it does not
 license a fit** (rules 1/13): no successor may close these gates with an
 adder, haircut or residual-tuned value. Remaining live in-model work: the
-un-chartered audit-grade items 4, 6 and 7 below (item 5, the ERCOT
-`tranche_startup_amortization` A/B, was CLOSED `G` at ERCOT-145 with no solve
-spent — see the struck item; item 4, the five-ISO fuel-stack consistency
-audit, is its chartered successor and carries the C3b shoulder/winter
-residual ERCOT-145 measured).
+un-chartered audit-grade items 6 and 7 below (item 5 CLOSED `G` and item 4
+EXECUTED-with-keeper, both at ERCOT-145 — see the struck items; the C3b
+shoulder/winter residual ERCOT-145 measured now points at the LOCAL daily
+gas basis, `winter_citygate_daily`, data-intake first).
 
 The lane is heavily enumerated; the honest top of the queue is closure work,
 not a new sweep:
@@ -372,9 +371,26 @@ rule-13-admissible mechanism available to carry it.
    network, and ERCOT-117 closed the topology family — or QSE self-schedule,
    which fails rule 13). **No successor is chartered**; C7's ERCOT cell is left
    failing at 0.769 with its cause attributed.
-4. **Five-ISO fuel stack on ERCOT** (`gas_daily_shape`,
+4. ~~**Five-ISO fuel stack on ERCOT** (`gas_daily_shape`,
    `gas_monthly_actuals`, `gas_plant_monthly_fuel_pricing`) — consistency
-   audit + candidate for 2023 winter-volatility C3b; cheap A/B, zero new DOF.
+   audit + candidate for 2023 winter-volatility C3b; cheap A/B, zero new DOF.~~
+   **▶ EXECUTED AT ERCOT-145b (2026-07-31) — audit + one A/B, PROMOTED
+   KEEPER `2026-07-31-ercot145-gas-daily-shape`.** Precommit
+   `docs/PRECOMMIT-ercot145-gas-daily-shape-2026-07-31.md` (pushed before
+   the solve). The audit stamped the two already-adjudicated cells from the
+   record (`gas_monthly_actuals` ERCOT `G` on the Run-77 +$1/MMBtu reporter
+   bias, with the MISO drift corrected K→n/a; `gas_plant_monthly_fuel_pricing`
+   ERCOT `G` on the documented ~12 %-coverage design refusal) and solved the
+   single live cell: `gas_daily_shape` armed as a single-delta A/B off
+   ercot144 and promoted under the owner's in-session standard (structural
+   improvement outranks gate regression; two ±1-hour threshold-straddle
+   guard trips recorded honestly in the promotion note; C3a-2024/25 and
+   C3b-2024 improved un-targeted; n_residual 6 unchanged). The 2023
+   winter-volatility premise was WEAK on the HH side (2023 factor std 0.076)
+   — the honest remaining winter lever is the LOCAL daily basis
+   (`winter_citygate_daily`, ERCOT cell untested, data-intake first:
+   Houston Ship Channel / Katy daily). `gas_hh_monthly_shape` still carries
+   no matrix row (26c gap, owner ruling open).
 5. ~~**`tranche_startup_amortization`** (PJM/MISO/NEISO form) vs ERCOT's
    season-spread ST startup — mid-merit/trough price formation candidate.~~
    **▶ CLOSED AT ERCOT-145 (2026-07-31) — REFUSED EX ANTE, NO SOLVE SPENT;
