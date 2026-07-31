@@ -139,7 +139,44 @@ near enough to close a −14.3 % price miss.
 
 ## 5. The A/B
 
-*(filled from the two registered runs — see §5 table below.)*
+Two runs, same HEAD, single delta — both registered (rule 15):
+
+* **control** `2026-07-30-miso-109a-control-930pin` (`miso109_control_A`) — the
+  keeper recipe with the pin still armed.
+* **candidate** `2026-07-31-miso-109b-hy-level` (`miso109_hy_level_B`) — the
+  same recipe with the corrected level.
+
+**The control's noise floor is exactly zero.** `git diff` from the keeper's
+registration commit to HEAD touches **21 files under `src/market_sim/`**, so a
+bit-equality control was *not* pre-registered (the miso-106 G3 lesson) — it was
+run and then measured. It reproduces the committed keeper at **0.00000 %** on
+every class in every year, and its scored prices are the keeper's to the cent
+(32.41 / 30.10 / 38.91). Every arm-B movement below is therefore attributable
+to the single data change.
+
+| | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| hydro (TWh) | 9.849 → **8.775** (−1.075) | 10.483 → **9.029** (−1.454) | 9.786 → **9.064** (−0.722) |
+| fossil total (TWh) | +0.869 | +1.168 | +0.575 |
+| imports (TWh) | +0.207 | +0.279 | +0.144 |
+| load-weighted LMP ($/MWh) | 32.408 → 32.480 (**+0.072**, +0.22 %) | 30.102 → 30.191 (**+0.089**, +0.30 %) | 38.915 → 38.965 (**+0.050**, +0.13 %) |
+| C3a vs actual | −1.4 % → **−1.2 %** | −6.7 % → **−6.4 %** | −14.3 % → **−14.2 %** |
+| C3c hours > $200 | 1 vs 30 (unchanged) | 6 vs 37 (unchanged) | 0 vs 88 (unchanged) |
+
+**Both halves of the §4 prediction hold.** Direction: hydro falls, fossil and
+imports pick it up, price rises, C3a improves in all three years. Magnitude: the
+predicted "small" — 5–9 ¢/MWh, ~0.2–0.3 %. 2023's net fossil deficit narrows
+**−14.387 → −13.563 TWh**, with **7 of 8** classes moving toward their actuals.
+
+**Scored outcome: identical to the outgoing keeper.** `NOT-YET`, ledgered
+**2/3** {C3a, C3c}, blocked by the same C7 `COAL_PRB` diurnal FAIL in all three
+years. No criterion flips in either direction. That is the expected shape of a
+rule-14 correction on a 0.5 %-of-energy input: it is here because the level and
+the units are now the same measured population, not because it moved a gate.
+
+**One class moves the wrong way, disclosed not patched.** `COAL_PRB` was the
+single fossil class already *over*-producing in 2023 (+1.794 TWh vs actual) and
+goes further over (**+2.018**). It is not to be closed by putting hydro back.
 
 ## 6. Step 2 — `hydro_budget_nameplate_aware` is INERT on the corrected level
 
