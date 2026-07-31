@@ -350,6 +350,7 @@ def run_year(
     coal_offer_margin: bool = False,
     cc_committed_offer_margin: bool = False,
     coal_peak_offer_margin: bool = False,
+    coal_perplant_offer_level: bool = False,
     nysdec_peaker_rule_availability: bool = False,
     oil_primary_bin_fuel: bool = False,
     plant_tranche_config: str | None = None,
@@ -1530,6 +1531,54 @@ def run_year(
         logger.info(
             "ERCOT DAM offer hr-mult EP rebasis: SCRUBBED by explicit False "
             "— offer curve unchanged"
+        )
+    # Per-plant measured coal offer curves (run_calibration_full
+    # --coal-perplant-offer-level; ScenarioConfig.coal_perplant_offer_level,
+    # ERCOT-144 — the DOF-retirement lane ERCOT-143 §2 chartered). Runs AFTER
+    # every offer-curve transformation above (backcast_config deltas,
+    # prb_overrides, the coal econ marginal-HR floor, the EP rebasis) because
+    # it is a rule-19 REPLACEMENT of the whole COAL band-multiplier × sigmoid
+    # composition on the CAMPD committed/econ rows: the COAL_* groups are
+    # STRIPPED from offer_curve_by_group, the PRB/lignite passthrough
+    # sigmoids and the coal econ marginal-HR floor are disarmed (all three
+    # price only the rows this mechanism now owns — nothing re-armable
+    # remains in the recorded config, rule 26 [R-DELETE] spirit), and the
+    # curve registry resolves HERE from constants so run_config.json records
+    # the values the solve used (rule 25). `_mustrun` (ERCOT-137) and
+    # `_peak` (ERCOT-140) keep their own measured owners. An ISO without a
+    # derived registry is a hard error, never a fallback (rule 24).
+    # Identification: scripts/data/derive_coal_perplant_offer.py.
+    if coal_perplant_offer_level:
+        from market_sim.config.constants import COAL_PERPLANT_OFFER_CURVE_BY_ISO
+
+        if iso not in COAL_PERPLANT_OFFER_CURVE_BY_ISO:
+            raise SystemExit(
+                f"--coal-perplant-offer-level: no derived per-plant coal "
+                f"offer curves for {iso} in "
+                "constants.COAL_PERPLANT_OFFER_CURVE_BY_ISO — run "
+                "scripts/data/derive_coal_perplant_offer.py and register the "
+                "curves (rule 24: curves never cross ISO boundaries)"
+            )
+        _stripped = {
+            g: v
+            for g, v in (config.offer_curve_by_group or {}).items()
+            if not g.startswith("COAL")
+        }
+        config = config.with_overrides(
+            coal_perplant_offer_level=True,
+            coal_perplant_offer_curves=COAL_PERPLANT_OFFER_CURVE_BY_ISO[iso],
+            offer_curve_by_group=_stripped,
+            coal_prb_passthrough_sigmoid=False,
+            coal_lignite_passthrough_sigmoid=False,
+            coal_econ_marginal_hr_bound=False,
+        )
+        logger.info(
+            "%s coal per-plant measured offer curves (ERCOT-144): %d plants; "
+            "COAL_* offer_curve_by_group groups stripped, PRB/lignite "
+            "sigmoids + coal econ marginal-HR floor disarmed (rule-19 "
+            "replacement)",
+            iso,
+            len(COAL_PERPLANT_OFFER_CURVE_BY_ISO[iso]),
         )
     # Per-plant tranche-config override sheet (run_calibration_full
     # --plant-tranche-config): each listed plant's tranche shares + band HR

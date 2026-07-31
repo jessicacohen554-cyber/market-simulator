@@ -260,6 +260,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "coal_peak_offer_margin",
     "coal_peak_offer_level",
     "coal_peak_offer_gas_hr",
+    # Per-plant measured coal offer curves (ERCOT-144): the gate plus its
+    # resolved curve registry. Both default-off (False / None) and
+    # byte-identical for every config that does not arm the mechanism;
+    # registered here at their defaults so every pre-existing cache key (and
+    # the pinned default 603c2498bf71d21d) stays byte-stable. An armed run
+    # (the flag True, or the registry set) enters the key as a distinct
+    # scenario.
+    "coal_perplant_offer_level",
+    "coal_perplant_offer_curves",
     # Conventional-hydro minimum-flow floor (caiso-124): default-off gate for
     # the lower half of the measured hydro capability envelope. Dropped from the
     # hash at its default so every pre-existing cache key (and the pinned
@@ -7433,6 +7442,37 @@ class ScenarioConfig:
     # heat rate and NOT fitted. Same resolution/freeze rules as the level
     # (constants.COAL_PEAK_OFFER_GAS_HR_BY_ISO).
     coal_peak_offer_gas_hr: float | None = None
+
+    # PER-PLANT measured coal offer curves (ERCOT-144, the DOF-retirement
+    # lane ERCOT-143 §2 chartered): every CAMPD coal `_committed`/`_econ*`
+    # tranche of a plant present in ``coal_perplant_offer_curves`` is
+    # repriced to its own plant's MEASURED submitted supply curve — the
+    # capacity-weighted price of the tranche's capacity window mapped onto
+    # the plant's merged modal 60-Day SCED ``Submitted TPO`` curve
+    # (constants.COAL_PERPLANT_OFFER_CURVE_BY_ISO, frozen derive
+    # scripts/data/derive_coal_perplant_offer.py). The measured finding is
+    # CROSS-PLANT LEVEL DISPERSION of near-flat per-plant curves; the model's
+    # residual-identified COAL_* band multipliers + gas-keyed supply sigmoids
+    # were standing in for exactly this object, so arming this gate is a
+    # rule-19 REPLACEMENT: the harness strips the COAL_* groups from
+    # ``offer_curve_by_group``, disarms the PRB/lignite passthrough sigmoids
+    # and the coal econ marginal-HR floor (all three price only these rows),
+    # and the branch exits before the fuel-frac discount. `_mustrun`
+    # (ERCOT-137 measured margin) and `_peak` (ERCOT-140 measured gas-parity
+    # margin) rows are UNTOUCHED — each end of the curve keeps its own
+    # measured owner. The levels are fuel-invariant BY MEASUREMENT (the
+    # mid-band did not co-move with gas +46 % or coal across the corpus
+    # years); emissions adders remain on top. Points at/below
+    # constants.COAL_PERPLANT_SELF_SCHED_FLOOR are excluded from window
+    # means (price-taker self-schedule signal, not a marginal cost).
+    coal_perplant_offer_level: bool = False
+    # The resolved per-plant curve registry (plant_code -> ((cum_MW, price),
+    # ...)). None + flag armed is a hard error (rule 25 — no silent fallback
+    # in the offer path); the harness resolves it from
+    # constants.COAL_PERPLANT_OFFER_CURVE_BY_ISO so run_config.json records
+    # the values the solve used. Rule-23 frozen — re-derives only when the
+    # source disclosure subsets change.
+    coal_perplant_offer_curves: dict[int, tuple[tuple[float, float], ...]] | None = None
 
     # N-slice smoothing of the economic offer curve. When
     # offer_curve_smoothing_n > 0, each plant's flat econ blocks (econ-low /

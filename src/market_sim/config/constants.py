@@ -669,6 +669,239 @@ COAL_PEAK_OFFER_GAS_HR_BY_ISO: dict[str, float] = {
     "ERCOT": 10.4100,
 }
 
+# PER-PLANT measured coal offer supply curves — the identification artifact of
+# the ``coal_perplant_offer_level`` mechanism (ERCOT-144, the DOF-retirement
+# lane ERCOT-143 §2 chartered; applied in
+# :func:`market_sim.data.fleet.legacy_bins.apply_coal_tranches`).
+#
+# Measured PER RESOURCE, every ERCOT coal plant submits a near-flat 60-Day
+# SCED ``Submitted TPO`` curve at a plant-specific level — the fleet's smooth
+# supply curve is CROSS-PLANT LEVEL DISPERSION, not within-plant slope
+# (``docs/DIAGNOSIS-ercot143-lignite-offer-slope-2026-07-30.md`` §2). Each
+# entry is the plant's MERGED price-sorted step supply curve of its resources'
+# **modal** submitted TPO curves, pooled over the four on-disk 2024–2025
+# disclosure subsets, as ``(cumulative_MW, price)`` breakpoints — verbatim
+# disclosure conduct, zero fitted parameters
+# (``scripts/data/derive_coal_perplant_offer.py``; provenance artifact
+# ``data/raw/_processed-legacy/coal_perplant_offer_curves_ERCOT.json``).
+# Jointly-owned plants (Fayette J01/J02, Sandy Creek J01–J04) merge genuinely
+# different per-owner curves — Fayette's top ~36 % really is offered at
+# $100–150 — so the merged curve is the plant's actual aggregate offer.
+#
+# Modal-curve time-stability is the identification license (Oak Grove's curve
+# repeats identically x1436 across subsets AND years); the corpus FORBIDS any
+# hourly/seasonal/diurnal identification (h0–h8 is 8.44 % of it — ERCOT-143
+# §3), so the mechanism reads a LEVEL at the tranche (capacity) grain only.
+# The 2023 application is a DECLARED EXTRAPOLATION (no 2023 SCED disclosure
+# exists), exactly as ERCOT-137/139/140 declared theirs, gated LOYO per year.
+# The curves are fuel-invariant BY MEASUREMENT: the mid-band levels did not
+# co-move with delivered gas (+46 % 2024→2025) or coal within the corpus —
+# the surface keeps its fuel response at the bottom (`_mustrun`, ERCOT-137
+# coal-anchored) and top (`_peak`, ERCOT-140 gas-anchored) only.
+#
+# Points at/below ``COAL_PERPLANT_SELF_SCHED_FLOOR`` (San Miguel's 220 MW
+# block at −$249) are KEPT verbatim but EXCLUDED from level statistics by the
+# consumer: an offer at the ~−$250 floor is a price-taker self-schedule /
+# commitment signal, not a marginal cost, and porting it into an LP energy
+# bid would pin the block always-on (the ERCOT-144 handoff's pre-registered
+# risk). Rule-23 frozen (re-derive only on new disclosure data); ISOs absent
+# from the registry hard-fail when the flag is armed (rule 24); ERCOT-
+# identified from ERCOT conduct and never transferred (rule 25).
+COAL_PERPLANT_SELF_SCHED_FLOOR: float = -200.0
+COAL_PERPLANT_OFFER_CURVE_BY_ISO: dict[
+    str, dict[int, tuple[tuple[float, float], ...]]
+] = {
+    "ERCOT": {
+        298: (
+            (518, 15),
+            (720, 16),
+            (721, 18.63),
+            (722, 18.65),
+            (817, 18.73),
+            (963, 19.02),
+            (1025, 19.18),
+            (1133, 19.47),
+            (1197, 19.75),
+            (1198, 22.71),
+            (1425, 22.74),
+            (1483, 22.76),
+            (1537, 22.79),
+            (1586, 22.82),
+            (1633, 22.85),
+            (1668, 22.87),
+        ),  # Limestone
+        3470: (
+            (159, 9),
+            (227, 10),
+            (386, 13),
+            (453, 14),
+            (611, 16.9),
+            (612, 17.64),
+            (732, 17.74),
+            (898, 18.36),
+            (980, 18.59),
+            (1032, 19.08),
+            (1099, 19.43),
+            (1145, 19.8),
+            (1301, 20.01),
+            (1358, 20.28),
+            (1401, 20.52),
+            (1519, 20.59),
+            (1520, 21),
+            (1572, 21.12),
+            (1653, 21.18),
+            (1692, 21.25),
+            (1835, 21.46),
+            (1900, 21.76),
+            (1948, 21.91),
+            (2033, 21.97),
+            (2090, 22.35),
+            (2133, 22.37),
+            (2176, 22.81),
+            (2216, 22.83),
+            (2266, 22.93),
+            (2302, 23.28),
+            (2348, 23.52),
+            (2381, 23.66),
+            (2418, 23.84),
+            (2461, 24.1),
+            (2512, 24.76),
+        ),  # W A Parish
+        6146: (
+            (194, 20.91),
+            (303, 20.92),
+            (408, 20.93),
+            (510, 20.94),
+            (613, 20.95),
+            (718, 20.96),
+            (835, 20.97),
+            (1181, 22.2),
+            (1404, 22.21),
+            (1619, 22.22),
+            (1828, 22.23),
+            (2037, 22.24),
+            (2251, 22.25),
+            (2485, 22.26),
+        ),  # Martin Lake
+        6178: (
+            (220, 17.32),
+            (299, 17.33),
+            (371, 17.34),
+            (442, 17.91),
+            (512, 18.49),
+            (585, 19.04),
+            (655, 19.69),
+        ),  # Coleto Creek
+        6179: (
+            (180, 13.83),
+            (258, 14.07),
+            (283, 14.2),
+            (304, 14.27),
+            (325, 14.48),
+            (403, 14.55),
+            (428, 14.57),
+            (449, 14.68),
+            (471, 14.84),
+            (492, 14.88),
+            (517, 14.94),
+            (538, 15.09),
+            (560, 15.12),
+            (581, 15.29),
+            (606, 15.3),
+            (628, 15.41),
+            (649, 15.49),
+            (674, 15.67),
+            (696, 15.69),
+            (717, 15.7),
+            (739, 15.98),
+            (764, 16.04),
+            (819, 16.13),
+            (841, 16.26),
+            (866, 16.41),
+            (888, 16.55),
+            (913, 16.78),
+            (935, 16.83),
+            (982, 17.39),
+            (1042, 17.52),
+            (1120, 98.86),
+            (1198, 100.42),
+            (1225, 100.85),
+            (1250, 102.69),
+            (1277, 102.94),
+            (1302, 104.53),
+            (1327, 105.28),
+            (1352, 106.38),
+            (1377, 107.61),
+            (1402, 108.22),
+            (1427, 109.95),
+            (1452, 110.07),
+            (1457.9, 110.5),
+            (1482.9, 112.28),
+            (1507.9, 114.61),
+            (1516.8, 115.45),
+            (1517, 150),
+            (1634, 150.1),
+        ),  # Fayette
+        6180: (
+            (317, 8.37),
+            (408, 8.42),
+            (493, 8.58),
+            (575, 8.77),
+            (658, 8.96),
+            (743, 9.14),
+            (1060, 9.32),
+            (1151, 9.33),
+            (1288, 9.35),
+            (1373, 9.36),
+            (1455, 9.43),
+            (1538, 9.5),
+            (1623, 9.57),
+            (1760, 9.64),
+        ),  # Oak Grove
+        6183: ((220, -249), (221, 42), (396, 43)),  # San Miguel
+        7030: ((160, 14.73), (310, 14.74)),  # Major Oak
+        7097: (
+            (290, 15.72),
+            (300, 15.83),
+            (425, 16.37),
+            (435, 16.46),
+            (515, 16.61),
+            (555, 16.81),
+            (595, 16.99),
+            (625, 17.08),
+            (645, 17.16),
+            (665, 17.34),
+            (735, 17.69),
+            (765, 17.95),
+            (895, 18.41),
+            (915, 18.56),
+            (985, 18.57),
+            (1015, 18.83),
+            (1205, 19.82),
+            (1365, 20.24),
+        ),  # JK Spruce
+        56611: (
+            (41, 21.53),
+            (47, 21.68),
+            (53, 21.83),
+            (59, 21.98),
+            (65, 22.13),
+            (71, 22.28),
+            (77, 22.43),
+            (83, 22.58),
+            (89, 22.73),
+            (106, 23.1),
+            (196, 27.55),
+            (196.1, 27.56),
+            (408.3, 29.36),
+            (535.9, 31.14),
+            (669.9, 32.92),
+            (791.9, 34.82),
+            (935, 65),
+        ),  # Sandy Creek
+    },
+}
+
 # CO2 emission rates (tCO2/MWh), derived from heat rate × fuel emission factor.
 # Keyed by fuel class and efficiency bin, mirroring HEAT_RATE_BINS.
 # Source: EPA eGRID 2022.

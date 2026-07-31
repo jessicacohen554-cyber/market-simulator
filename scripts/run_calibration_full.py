@@ -2852,6 +2852,7 @@ def solve_and_persist(
     coal_offer_margin: bool = False,
     cc_committed_offer_margin: bool = False,
     coal_peak_offer_margin: bool = False,
+    coal_perplant_offer_level: bool = False,
     nysdec_peaker_rule_availability: bool = False,
     oil_primary_bin_fuel: bool = False,
     st_gas_intermediate: bool = False,
@@ -4100,6 +4101,29 @@ def solve_and_persist(
                 coal_peak_offer_gas_hr=COAL_PEAK_OFFER_GAS_HR_BY_ISO[iso],
                 gas_offer_margin_anchor=GAS_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
             )
+        if coal_perplant_offer_level:
+            # Per-plant measured coal offer curves (ERCOT-144): record the
+            # gate, the resolved curve registry, AND the rule-19 replacement's
+            # disarms — the COAL_* offer_curve_by_group groups stripped, the
+            # PRB/lignite sigmoids and the coal econ marginal-HR floor off —
+            # exactly as scripts/run_calibration.py::run_year resolves them
+            # (rule 25: run_config records what the solve used).
+            from market_sim.config.constants import (
+                COAL_PERPLANT_OFFER_CURVE_BY_ISO,
+            )
+
+            recorded_cfg = recorded_cfg.with_overrides(
+                coal_perplant_offer_level=True,
+                coal_perplant_offer_curves=COAL_PERPLANT_OFFER_CURVE_BY_ISO[iso],
+                offer_curve_by_group={
+                    g: v
+                    for g, v in (recorded_cfg.offer_curve_by_group or {}).items()
+                    if not g.startswith("COAL")
+                },
+                coal_prb_passthrough_sigmoid=False,
+                coal_lignite_passthrough_sigmoid=False,
+                coal_econ_marginal_hr_bound=False,
+            )
         if nysdec_peaker_rule_availability:
             recorded_cfg = recorded_cfg.with_overrides(
                 nysdec_peaker_rule_availability=True
@@ -4355,6 +4379,7 @@ def solve_and_persist(
             coal_offer_margin=coal_offer_margin,
             cc_committed_offer_margin=cc_committed_offer_margin,
             coal_peak_offer_margin=coal_peak_offer_margin,
+            coal_perplant_offer_level=coal_perplant_offer_level,
             nysdec_peaker_rule_availability=nysdec_peaker_rule_availability,
             oil_primary_bin_fuel=oil_primary_bin_fuel,
             st_gas_intermediate=st_gas_intermediate,
@@ -5077,6 +5102,7 @@ def solve_and_persist(
         "coal_offer_margin": coal_offer_margin,
         "cc_committed_offer_margin": cc_committed_offer_margin,
         "coal_peak_offer_margin": coal_peak_offer_margin,
+        "coal_perplant_offer_level": coal_perplant_offer_level,
         "nysdec_peaker_rule_availability": nysdec_peaker_rule_availability,
         "oil_primary_bin_fuel": oil_primary_bin_fuel,
         "st_gas_intermediate": st_gas_intermediate,
@@ -7791,6 +7817,28 @@ def main() -> None:
         "row, every gas curve and the measured availability envelope are "
         "untouched (rules 14/19). Default OFF -> prior keepers "
         "byte-identical.",
+    )
+    parser.add_argument(
+        "--coal-perplant-offer-level",
+        dest="coal_perplant_offer_level",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="PER-PLANT measured coal offer curves (ERCOT-144, "
+        "ScenarioConfig.coal_perplant_offer_level — the DOF-retirement lane "
+        "ERCOT-143 section 2 chartered): every CAMPD coal _committed/_econ* "
+        "tranche is repriced to the capacity-weighted measured price of its "
+        "capacity window on its own plant's merged modal 60-Day SCED "
+        "Submitted TPO supply curve. The measured finding is CROSS-PLANT "
+        "LEVEL DISPERSION of near-flat per-plant curves — the object the "
+        "residual-identified COAL_* offer_curve_by_group multipliers and "
+        "the gas-keyed supply sigmoids were standing in for — so arming "
+        "this is a rule-19 REPLACEMENT: COAL_* groups are stripped from "
+        "offer_curve_by_group and the PRB/lignite sigmoids + coal econ "
+        "marginal-HR floor are disarmed. _mustrun (ERCOT-137) and _peak "
+        "(ERCOT-140) rows keep their own measured owners. Identification: "
+        "constants.COAL_PERPLANT_OFFER_CURVE_BY_ISO "
+        "(derive_coal_perplant_offer.py); ISOs without derived curves "
+        "hard-fail (rule 24). Default OFF -> prior keepers byte-identical.",
     )
     parser.add_argument(
         "--nysdec-peaker-rule",
@@ -10680,6 +10728,7 @@ def main() -> None:
         coal_offer_margin=args.coal_offer_margin,
         cc_committed_offer_margin=args.cc_committed_offer_margin,
         coal_peak_offer_margin=args.coal_peak_offer_margin,
+        coal_perplant_offer_level=args.coal_perplant_offer_level,
         nysdec_peaker_rule_availability=args.nysdec_peaker_rule_availability,
         oil_primary_bin_fuel=args.oil_primary_bin_fuel,
         cc_intermediate_cf_threshold=args.cc_intermediate_cf_threshold,
