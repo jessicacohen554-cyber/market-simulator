@@ -1306,7 +1306,21 @@ def thermal_tranche_p25_level(iso: str) -> dict[tuple[int, str], float]:
             continue
         if not (p25 == p25) or not (nameplate == nameplate):
             continue  # NaN guard (blank cell)
-        level = max(0.0, p25 / 100.0) * max(0.0, nameplate)
+        # Clamp to nameplate. `p25_cf` inherits the deriver's
+        # `np.clip(acf, 0.0, 1.5)` CEMS-noise guard, so a unit whose CEMS gross
+        # exceeds its EIA nameplate can carry p25_cf up to 150 % — and every
+        # committed artifact has such rows (MISO 17, NEISO 3, NYISO 2, PJM 3).
+        # Unclamped, that asks for a commitment floor ABOVE nameplate: the
+        # per-hour `min(target, pmax x availability)` clip stops it crashing but
+        # pins the plant flat at full available capacity across its whole
+        # window. `committed_pct` / `mustrun_pct` have carried a ceiling since
+        # they were derived (`_COMMITTED_CAP` 0.70 / `_MUSTRUN_CAP` 0.60); this
+        # is the same guard for the same statistic family, at the physical
+        # ceiling rather than a share cap. Clamped here as well as in the
+        # deriver (`_P25_CAP`) so a STALE artifact — every committed one today —
+        # cannot inject an impossible floor without a re-derivation.
+        # Measured inert on every live keeper when it landed (nyiso-106).
+        level = min(max(0.0, p25 / 100.0), 1.0) * max(0.0, nameplate)
         if level > 0.0:
             out[(int(r.plant_code), str(r.plant_group))] = level
     return out
