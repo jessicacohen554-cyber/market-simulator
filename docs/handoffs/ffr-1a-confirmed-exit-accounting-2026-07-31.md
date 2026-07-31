@@ -95,16 +95,16 @@ PJM Brandon Shores 1/2 + Wagner 3/4 (2029-05).
 
 **Over-subscription cap (`53a8f4d`).** The arm-1 probe detail showed both live
 completion cases are *over-subscribed* — the registry exit MW exceeds the plant's binned
-fleet MW (Merrimack 459.2 registry vs 108.0 binned; Brandon Shores 1370.2 vs 1273.0 —
-and Wagner (1554) has **no binned representation at all** in the PJM fleet, so its
-743.7 MW of registry rows act on nothing; the audit's "2,144 MW" of RMR registry rows
-reach the fleet as plant 602's 1,273 MW). Uncapped, the effective-year leg would have cut
-deeper than the annual-average (NEISO 2028: 108→0 instead of 108→54). The current/prior
-removal is now apportioned by `binned/raw` when `raw > binned`, reproducing the pre-fix
-effective-year factor exactly in every subscription regime; the uncapped completion leg
-floors the factor at 0 the following year, finishing the plant at `max(0, binned − mw)`.
-The first NEISO/ERCOT arm-2 probe pair was killed and re-run at `53a8f4d`; nothing from
-the uncapped build was registered.
+fleet MW (Merrimack 459.2 registry vs 108.0 binned; Brandon Shores 1370.2 vs 1273.0).
+(Wagner (1554) turns out to be two **oil units at unit grain** in the PJM fleet —
+`1554_3`/`1554_4`, 702.0 MW — dropped whole in 2029 by the unit-grain path, identically
+in every leg; only the plant-602 coal derate involves partial-year math.) Uncapped, the
+effective-year leg would have cut deeper than the annual-average (NEISO 2028: 108→0
+instead of 108→54). The current/prior removal is now apportioned by `binned/raw` when
+`raw > binned`, reproducing the pre-fix effective-year factor exactly in every
+subscription regime; the uncapped completion leg floors the factor at 0 the following
+year, finishing the plant at `max(0, binned − mw)`. The first NEISO/ERCOT arm-2 probe
+pair was killed and re-run at `53a8f4d`; nothing from the uncapped build was registered.
 
 ## 4. Acceptance evidence
 
@@ -140,9 +140,9 @@ only, floor-retention JSONs byte-identical. Arm 1 is dispatch-inert on both prob
 
 The PJM decomposition pins the audit's number: plant 602's binned fleet MW is 1,273.0
 (vs 1,370.2 registry — over-subscribed), so the month-5 annual-average leg removes
-(7/12) × 1,273.0 = 742.6 MW; Wagner's rows have no binned fleet counterpart and act on
-nothing. **Arm-1 acceptance met on both target ISOs: I4 FAIL→PASS with dispatch
-value-identical, no other invariant moved.**
+(7/12) × 1,273.0 = 742.6 MW; Wagner's rows drop their two unit-grain oil units whole
+(702.0 MW, ledgered — never part of the leak). **Arm-1 acceptance met on both target
+ISOs: I4 FAIL→PASS with dispatch value-identical, no other invariant moved.**
 
 NEISO ledger trace (identical dispatch both legs): coal 108.0 → 108.0 → **108.0→54.0
 (2028)** → 54.0 → 54.0; before-leg `retirements=[]` with no `confirmed_derates` key —
@@ -178,21 +178,62 @@ June 2028 no longer keeps half its capacity through 2050. I4 PASS all years. Dis
 value-identical to arm 1 for 2026–2028 and differs exactly from 2029 (n_gen 454 → 451)
 — the behavioral change touches precisely the completion years and nothing else.
 
-<!-- PJM-ARM2 -->
+**PJM T1-F 2026–2030 (the completion case, Brandon Shores, exit 2029-05).** Arm-2
+ledger trace: 2029 identical to arm 1 — coal 35,433.4 → 32,090.8 (Rockport 2,600.0
+full-drop rows + plant-602 derates 742.6, annual-average preserved by the cap; Wagner's
+702.0 MW oil units drop whole, identically in both arms) — then **2030 completion
+retires plant 602's remaining 530.4 MW** (coal 32,090.8 → 31,560.4; 3 `confirmed` rows:
+94.4 + 425.4 + 10.6), where arm 1 held that ghost through 2050. I4 PASS; **all 14
+invariants clean (0 FAIL, 0 WARN)** on the arm-2 leg. Dispatch is value-identical to
+arm 1 for 2026–2028; 2029 is bit-identical in objective and prices with a max dispatch
+delta of 2×10⁻¹¹ MW (solver noise from the algebraically-equivalent capped formula's
+float representation — fleet MW identical to 6 dp); the real behavioral divergence is
+exactly 2030 (n_gen 1,043 → 1,040).
+
+**Attribution summary (every MW accounted to a registry instrument, rule 13):**
+
+| ISO | year | delta vs arm 1 | attribution |
+|---|---|---|---|
+| ERCOT | 2026+ (base) | gas_ct −119.25 MW | Braunig 1/2 backlog completes: 3/12 × 477 (ercot-nso-braunig-1/2) |
+| NEISO | 2029+ | coal −54.0 MW (→ 0) | Merrimack completion leg (gsp-cwa-cd-merrimack-1/2) |
+| PJM | 2030+ | coal −530.4 MW | Brandon Shores completion leg (pjm-rmr-brandon-shores-1/2); Wagner oil unchanged (unit-grain, both arms) |
 
 ## 5. Registered runs
 
-<!-- REGISTERED -->
+All eight acceptance probes registered on the forecast-validation namespace
+(`scripts/register_forecast_run.py --summary … --label …`; sidecars committed under
+`frontend/data/hindcast/`, meta-stamped with `code_sha` + `ffr1a_leg`; NEVER the
+backcast registry):
+
+| run id | leg / code |
+|---|---|
+| `neiso-2026-2030-ffr1a-before` | `40ecb0a` (origin/main) |
+| `neiso-2026-2030-ffr1a-arm1` | `a47a949` |
+| `neiso-2026-2030-ffr1a-arm2` | `53a8f4d` |
+| `pjm-2026-2030-ffr1a-before` | `40ecb0a` |
+| `pjm-2026-2030-ffr1a-arm1` | `a47a949` |
+| `pjm-2026-2030-ffr1a-arm2` | `53a8f4d` |
+| `ercot-2026-2028-ffr1a-t0-arm1` | `a47a949` |
+| `ercot-2026-2028-ffr1a-t0-arm2` | `53a8f4d` |
 
 ## 6. Out of scope / follow-ups
 
 - **I12 (reserve-margin band) FAILs in the NEISO T1-F probes** (2027–2030 above the
   requirement-implied band) — pre-existing at `origin/main`, unrelated to the ledger seam
-  (no capacity decision changed in arm 1; arm 2 removes ghost MW, which cannot raise the
-  margin). Stays with its owning lane (the §2.1b gate re-score, FFR-3A).
+  (no capacity decision changed in arm 1; arm 2 removes ghost MW — the margin moved
+  16.9→16.7 / 17.4→17.2 in the right direction, still out of band). ERCOT's I3
+  scarcity-slack FAIL is FR-6 (structural, L-SCAR). Both stay with their owning lanes.
+- **Four test failures verified pre-existing at `origin/main` `40ecb0a`** (identical
+  before any FFR-1A commit): `test_generators_to_fleet_arrays_ercot_2023_golden`
+  (availability/min_gen drift vs the pre-split golden),
+  `test_default_scenario_config_cache_key_is_pinned` +
+  `test_default_cache_key_is_checkout_path_invariant`, and
+  `test_marker_state_reflects_committed_markers`. None is FFR-1A's; the cache-key pin
+  drift is FR-21's staleness family.
 - FR-3 (hydro in the accredited ledger) — FFR-1C.
 - FR-7/FR-8 (solve-year availability) — FFR-1B.
 - The cache-epoch bump for the fleet-affecting arm 2 — §W1-X at Wave-1 close (this
   session's probes are all isolated-cache by construction).
 - No `ScenarioConfig` field added → no mechanism-matrix row (checked; CI guard
-  `check_mechanism_matrix.py` agrees).
+  `check_mechanism_matrix.py` integrity OK — its two keeper-stamp-drift warnings
+  belong to today's ERCOT/CAISO keeper promotions, other sessions' rule-28 duty).
