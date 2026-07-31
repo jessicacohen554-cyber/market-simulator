@@ -156,6 +156,22 @@ Forecast uses `forecast_monthly_hydro` = climatological mean × wet/normal/dry
 multiplier; backcast uses measured EIA-930. Pumped storage (`PS`) is excluded here —
 it is modeled as storage.
 
+**Pumped-storage fold guard (both lanes).** EIA-930 gives PS its own `NG: PS`
+column; a BA that runs pumped storage but files no such column reports PS gross
+discharge *inside* `NG: WAT`, which is then not an admissible **level** for a
+`HY`-only unit population (rule 14 `[R-ACCURATE]`). For the BAs listed in
+`constants.EIA930_PS_FOLDED_INTO_WAT` (MISO today) both levels come from EIA-923
+`HY` instead — the backcast pin is refused (miso-109) and the forecast
+climatology comes from `climatological_monthly_hydro_923` (miso-110), so level
+and units are one population in either lane. The 923 climatology is
+coverage-gated by `complete_923_hydro_years` (year ≤ `EIA923_LATEST_FINAL_VINTAGE`
+**and** census ≥ `EIA923_COMPLETE_FILING_CENSUS_FRACTION` × the ISO's modal
+census) so a monthly early release cannot enter the mean, and it **logs its
+realised window** — the two sources supply different years, so a 930-vs-923
+climatology delta mixes the fold with a window mismatch and is never on its own
+evidence of a fold. No scale factor reconciles the two series; none is
+identifiable.
+
 ## 4.6 Supporting loaders
 
 | Module | Provides |
