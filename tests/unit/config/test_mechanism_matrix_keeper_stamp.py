@@ -1,0 +1,78 @@
+"""Rule 28 [R-MECH-MATRIX] keeper-stamp guard in ``check_mechanism_matrix.py``.
+
+The matrix header carries a ``keepers: {ISO: id}`` map that rule 28 requires the
+promoting session to re-stamp whenever an ISO's keeper changes. Nothing checked
+it against the authoritative per-ISO shard
+(``frontend/data/backcast/keepers/<ISO>.json``), so three ISOs drifted at once
+(nyiso-105 missed its stamp; ERCOT and CAISO sat on 2026-07-29 ids after
+2026-07-31 promotions) and every one passed CI. These cover the comparison and
+the deliberate warn/fail split: pre-existing drift belongs to the owning ISO's
+lane and only warns, while a PR that itself moves a keeper shard must re-stamp.
+"""
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(REPO / "scripts"))
+
+from check_mechanism_matrix import (  # noqa: E402
+    keeper_drift,
+    matrix_isos,
+    matrix_keepers,
+    shard_keeper,
+)
+
+MATRIX_PATH = REPO / "docs/codebase-site/data/mechanism-matrix.js"
+ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO")
+
+
+def _matrix_text() -> str:
+    return MATRIX_PATH.read_text(encoding="utf-8")
+
+
+def test_matrix_isos_parses_all_six() -> None:
+    """The `isos:` list is the cell order; every ISO must be present."""
+    assert matrix_isos(_matrix_text()) == list(ISOS)
+
+
+def test_matrix_keepers_parses_every_iso() -> None:
+    """The header `keepers:` map covers all six ISOs with non-empty ids."""
+    keepers = matrix_keepers(_matrix_text())
+    assert set(keepers) == set(ISOS)
+    assert all(keepers[iso] for iso in ISOS)
+
+
+def test_every_iso_has_a_readable_keeper_shard() -> None:
+    """Each ISO's keeper shard exists and names a keeper (the guard's authority)."""
+    for iso in ISOS:
+        assert shard_keeper(iso), f"{iso} keeper shard missing or has no `keeper`"
+
+
+def test_nyiso_header_stamp_matches_its_shard() -> None:
+    """NYISO specifically — the stamp nyiso-105 missed and nyiso-106 restored."""
+    assert matrix_keepers(_matrix_text())["NYISO"] == shard_keeper("NYISO")
+
+
+def test_keeper_drift_reports_iso_header_and_shard() -> None:
+    """A mismatched header yields that ISO's `(iso, header, shard)` triple.
+
+    Scoped to NYISO rather than asserting the whole list: other ISOs may carry
+    their own live drift (ERCOT and CAISO did when this landed), and that is
+    their lane's to clear, not this test's to encode.
+    """
+    text = _matrix_text()
+    real = shard_keeper("NYISO")
+    tampered = text.replace(
+        f'NYISO: "{real}"', 'NYISO: "2020-01-01-not-a-real-keeper"', 1
+    )
+    assert tampered != text, "NYISO header stamp not found in the expected form"
+    nyiso = [row for row in keeper_drift(tampered) if row[0] == "NYISO"]
+    assert nyiso == [("NYISO", "2020-01-01-not-a-real-keeper", real)]
+
+
+def test_keeper_drift_empty_when_all_stamps_agree() -> None:
+    """Drift is reported per ISO, so an ISO whose stamp agrees never appears."""
+    assert all(iso != "NYISO" for iso, _h, _s in keeper_drift(_matrix_text()))

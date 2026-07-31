@@ -1207,7 +1207,7 @@ criterion; the outage-grain data ask below remains its honest continuation.)*
    `results/calibration/FINDING-miso110-forecast-hydro-level-923hy-2026-07-31.md`,
    probe `scripts/probes/_miso110_forward_level_audit.py`.
 
-### 5.5 NYISO — target: C3c (sole blocker, roof-blocked); keeper `2026-07-31-nyiso105-chp-heat-rates`, CALIBRATED-WITH-CAVEATS; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106
+### 5.5 NYISO — target: C3c (sole blocker, roof-blocked); keeper `2026-07-31-nyiso105-chp-heat-rates`, CALIBRATED-WITH-CAVEATS; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107 (item 11b owner-DEFERRED, stays chartered)
 
 The J/K-commitment and reserve-tier routes are closed IN FULL (nyiso-83/84);
 the tail is blocked by an SRMC roof (~$258 mainland). nyiso-92 dated the
@@ -1563,6 +1563,65 @@ capability envelope/floor pair is now the keeper — cells K above):
     (`ST_CHP` 2025 +85.0 % needs nothing — already audited `incomplete`,
     retention 0.667, and C1-SKIPPED.)
     `results/calibration/FINDING-nyiso106-solar-benchmark-vintage-2026-07-31.md` §E.
+    **STATUS 2026-07-31 (nyiso-107): put to the owner and DEFERRED.** A NYISO
+    session asked for the cross-ISO scope and the owner declined it — the entry
+    stays chartered for a session that owns re-scoring CAISO and NEISO. The bar
+    on NYISO's `OTHER` 2025 statistic is unchanged.
+12. ~~**`hydro_budget_nameplate_aware` NYISO transfer** — the lever item 11's
+    tail re-framed before it was ever sized.~~ **CLOSED 2026-07-31 (nyiso-107):
+    PROVABLY INERT, no solve, cell `U → I` — and item 11's re-framing is itself
+    SUPERSEDED on its central claim.** Item B's stated kill condition was *"put
+    all three years on one basis; if little of the −12.7 % survives, the lever is
+    dead"*. **The miss survives every consistent basis**: all-EIA-930 gives
+    **+5.76 / +3.93 / −12.68 %** (2025 bit-unchanged — it was already there — and
+    2023/24 get *worse*), all-EIA-923-carry-corrected gives
+    **+1.26 / +1.33 / −13.41 %**. The benchmark-basis switch is real but is **not**
+    the cause, because the benchmark is the **repaired** side.
+    **The defect is the INPUT.** The keeper carries `hydro_backfill_year=None`
+    and `hydro_eia930_monthly=False`, so its **2025 LP hydro fleet is 3 units /
+    21.0482 TWh** — against 147 / 27.8750 in 2024, a **2.0 % plant retention**,
+    max MW 4,587 → 3,343 — read straight off the truncated early release, while
+    the benchmark IS repaired to EIA-930 **24.1039**. The model spends its budget
+    **exactly** (21.0482 dispatched = 21.0482 budgeted, 4 dp), so the scored
+    −12.68 % is arithmetically the truncation (`21.0482/24.1039 − 1`) with no
+    dispatch behaviour in it. **The benchmark is independently falsified as
+    CORRECT**: NYISO MIS **P-63 publishes `Hydro` as its own category** (unlike
+    solar, which forced nyiso-106's bulge decomposition) and reads
+    **27.1845 / 26.9763 / 24.2489 TWh**, agreeing with EIA-930 to
+    **+1.30 / +0.74 / +0.60 %** every year — NY hydro genuinely fell ~10 % in
+    2025, and the wrong number is the 923 raw **20.5582**.
+    **The kill:** the lever is inert *structurally* — `load_hydro_budget:724`
+    encloses the whole allocator in `if monthly_target_mwh is not None`, and
+    `build_hydro_fleet:1084` leaves `target=None` unless
+    `eia930_monthly`/`forecast_budget`, both `False` here, so the flag is never
+    read — and *empirically*: the hydro fleet built at the keeper's exact
+    settings is **BIT-IDENTICAL off vs on in all three years**. It is the third
+    ISO to reach `I` for the same structural reason (MISO miso-109, PJM
+    pjm-143): **any ISO with no level target gets `I` by construction**. It stays
+    trivial even after its prerequisite — under `--hydro-backfill-year 2024` the
+    allocator moves 3,683.8 MWh over 10 clipped plant-months, **0.015 %** of
+    budget, annual total unchanged.
+    **NEW CROSS-ISO FACT, chartered not armed.** Every ISO's 2025 EIA-923 hydro
+    vintage is truncated (retention ERCOT 8.3 / CAISO 16.2 / PJM 13.9 / MISO 8.8 /
+    **NYISO 2.0** / NEISO 3.0 %), but **four of six keepers arm the repair**
+    (CAISO/PJM/MISO/NEISO all `--hydro-backfill-year 2024`; PJM+MISO have the 930
+    pin internally refused for the PS fold) **and NYISO does not**. The only other
+    holdout is ERCOT, whose hydro is 0.017–0.463 TWh/yr (immaterial), so **NYISO
+    is the SOLE ISO running a MATERIAL hydro class (26.5 TWh/yr, ~18 % of generation)
+    on an unrepaired truncated input.** Arming the pair moves **all three years**
+    (−1.5668 / −1.1287 / +3.0143 TWh), and a 930 level pin would make the hydro
+    **volume** statistic near-tautological (−0.17 % by construction, budget and
+    benchmark becoming the same series) — admissible under rule 13 as an inflow
+    budget that regenerates forward, but it must be **declared, not banked as an
+    improvement**; dispatch **shape** stays the free output. Owner decision
+    2026-07-31: **report + charter, do not arm from this session.**
+    Related, re-confirmed independently: NYISO's absence from
+    `EIA930_PS_FOLDED_INTO_WAT` is correct — `NG: WAT`/923-`HY` = **0.9448 /
+    0.9606** (*below* 923 HY, the opposite of the MISO/PJM fold signature) and
+    NYIS `PS` is net **negative** (−0.372 / −0.410 / −0.490 TWh), so pumping is
+    netted, not folded in gross. The 2025 ratio inverts to 1.1452 purely by
+    truncation — the `hydro_level_923_hy` trap, re-verified, still not quotable.
+    `results/calibration/FINDING-nyiso107-hydro-input-truncation-2026-07-31.md`.
 
 ### 5.6 NEISO — target: C3c (ledgered; FRONTIER DECLARED — charter required first); ~~item 6~~ CLOSED and ~~item 7~~ EXECUTED-with-keeper at neiso-71
 
