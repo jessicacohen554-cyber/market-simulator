@@ -832,6 +832,87 @@ class TestForecastHydroBudget(unittest.TestCase):
         self.assertIsNone(energy)
 
 
+class TestPumpedStorageFoldedLevelGuard(unittest.TestCase):
+    """A BA that folds pumped storage into ``NG: WAT`` never pins its level to it.
+
+    miso-108/109: MISO files no ``NG: PS`` column, so its ``NG: WAT`` carries
+    pumped-storage gross discharge on top of conventional hydro — while the LP
+    units are EIA-923 prime mover ``HY`` alone. Pinning the units' monthly
+    energy to that series applies one population's energy to another's units
+    (rule 14 ``[R-ACCURATE]``), so the pin is refused for the listed ISOs and
+    the level stays on EIA-923 ``HY``.
+    """
+
+    def _zones(self, iso):
+        from market_sim.config.iso_configs import get_iso_config
+
+        return [z.name for z in get_iso_config(iso).zones]
+
+    def test_miso_is_listed_and_neiso_is_not(self):
+        from market_sim.config.constants import EIA930_PS_FOLDED_INTO_WAT
+
+        self.assertIn("MISO", EIA930_PS_FOLDED_INTO_WAT)
+        # NEISO files NG: PS from Nov 2024 (a time split, not a standing fold)
+        # and NYISO shows no fold signature at all — neither is switched here.
+        self.assertNotIn("NEISO", EIA930_PS_FOLDED_INTO_WAT)
+        self.assertNotIn("NYISO", EIA930_PS_FOLDED_INTO_WAT)
+
+    def test_miso_level_is_the_923_hy_budget_not_the_930_pin(self):
+        from market_sim.data.hydro import build_hydro_fleet
+
+        zones = self._zones("MISO")
+        for year, expected_twh in ((2023, 8.789), (2024, 9.042)):
+            pinned_request, monthly = build_hydro_fleet(
+                "MISO", year, zones, backfill_year=2024, eia930_monthly=True
+            )
+            bare_units, bare = build_hydro_fleet(
+                "MISO", year, zones, backfill_year=2024, eia930_monthly=False
+            )
+            # Asking for the pin yields the un-pinned (EIA-923 HY) budget...
+            np.testing.assert_array_equal(monthly, bare)
+            self.assertEqual(len(pinned_request), len(bare_units))
+            self.assertAlmostEqual(monthly.sum() / 1e6, expected_twh, delta=0.01)
+            # ...which is materially BELOW the PS-inclusive measured series.
+            wat = measured_monthly_hydro("MISO", year)
+            self.assertIsNotNone(wat)
+            self.assertLess(monthly.sum(), 0.90 * wat.sum())
+
+    def test_nameplate_aware_is_inert_for_a_listed_iso(self):
+        # With no level target there is nothing to re-allocate, so
+        # hydro_budget_nameplate_aware cannot move a listed ISO's budget.
+        from market_sim.data.hydro import build_hydro_fleet
+
+        zones = self._zones("MISO")
+        for year in (2023, 2024, 2025):
+            _ua, off = build_hydro_fleet(
+                "MISO",
+                year,
+                zones,
+                backfill_year=2024,
+                eia930_monthly=True,
+                nameplate_aware_target=False,
+            )
+            _ub, on = build_hydro_fleet(
+                "MISO",
+                year,
+                zones,
+                backfill_year=2024,
+                eia930_monthly=True,
+                nameplate_aware_target=True,
+            )
+            np.testing.assert_array_equal(off, on)
+
+    def test_unlisted_iso_still_pins_to_the_measured_series(self):
+        from market_sim.data.hydro import build_hydro_fleet
+
+        target = measured_monthly_hydro("NEISO", 2025)
+        self.assertIsNotNone(target)
+        _units, monthly = build_hydro_fleet(
+            "NEISO", 2025, self._zones("NEISO"), backfill_year=2024, eia930_monthly=True
+        )
+        self.assertAlmostEqual(monthly.sum() / 1e6, target.sum() / 1e6, delta=0.02)
+
+
 class TestOtherISOBudgetsUnchanged(unittest.TestCase):
     """PJM / ERCOT / CAISO hydro budgets are untouched by the NYISO/NEISO P4 stage."""
 
