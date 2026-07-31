@@ -474,13 +474,30 @@ def _ercot_hubavg(
         15-minute intervals average into their hour, and the fall-back hour's
         two instances occupy their own real slots — every real hour present.
     """
-    paths = sorted(LMP_DIR.glob(zip_glob))
+    # rglob, not glob: the 2023-2025 archives sit at the ``lmp-data/`` top
+    # level (hand-downloaded, pre-dating the per-ISO split) while the
+    # 2018-2022 + 2026 holdout intake landed under ``lmp-data/ERCOT/`` per the
+    # directory's per-ISO convention. Searching recursively resolves either
+    # layout without moving a committed byte.
+    paths = sorted(LMP_DIR.rglob(zip_glob))
     if not paths:
         return None
     with zipfile.ZipFile(paths[0]) as z:
         inner = next(n for n in z.namelist() if n.endswith(".xlsx"))
         data = z.read(inner)
     wb = openpyxl.load_workbook(io.BytesIO(data), read_only=True, data_only=True)
+    # ERCOT's 2018-2019 annual workbooks ship a bogus ``<dimension ref="A1:A1">``.
+    # openpyxl's read-only reader trusts that header and truncates every row to
+    # a single cell, so each sheet yields one 1-tuple and every HB_HUBAVG row
+    # silently vanishes — the year produces no record at all rather than an
+    # error. ``calculate_dimension(force=True)`` returns the cached A1:A1 too,
+    # so the only fix is to re-open unsized workbooks in normal (non-read-only)
+    # mode, where dimensions are computed from the cells themselves. 2020+
+    # workbooks declare correct dimensions and keep the streaming read-only
+    # path untouched, so the committed years re-derive bit-identically.
+    if wb[wb.sheetnames[0]].max_column <= price_col:
+        wb.close()
+        wb = openpyxl.load_workbook(io.BytesIO(data), data_only=True)
     shift = _PrevailingShift(year, "America/Chicago")
     msum, mcnt = [0.0] * 12, [0] * 12
     hsum = np.zeros(_HOURS_PER_YEAR)
