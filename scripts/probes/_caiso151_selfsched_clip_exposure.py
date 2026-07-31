@@ -55,8 +55,14 @@ _META_RENAME = {
 }
 
 
-def fleet_state(year: int) -> dict:
-    """Reconstruct the keeper's fleet for ``year`` (no LP, no solve)."""
+def fleet_state(year: int, arm: bool = False) -> dict:
+    """Reconstruct the keeper's fleet for ``year`` (no LP, no solve).
+
+    With ``arm`` the clip flag is added to the SAME generic override channel a
+    real ``replay_keeper --set`` writes to, so the returned fleet is the one the
+    armed solve builds — which is what makes the plumbing check below a check of
+    the plumbing and not of this probe's own arithmetic.
+    """
     import inspect
 
     from run_calibration import run_year
@@ -78,6 +84,10 @@ def fleet_state(year: int) -> dict:
         for k, v in meta.items()
         if _META_RENAME.get(k, k) in params and _META_RENAME.get(k, k) not in skip
     }
+    if arm:
+        kwargs.setdefault("prb_overrides", {})
+        kwargs["prb_overrides"] = dict(kwargs["prb_overrides"])
+        kwargs["prb_overrides"]["caiso_firm_import_selfsched_clip"] = True
     gp = meta["gas_prices"]
     gas = float(gp.get(str(year), gp.get(year, 0.0)))
     return run_year(
@@ -89,6 +99,20 @@ def fleet_state(year: int) -> dict:
         fleet_only=True,
         **kwargs,
     )
+
+
+def firm_floor(fa, zones, tranches) -> np.ndarray:
+    """System-total firm must-flow floor (MW per hour) on a built fleet."""
+    mg = fa.min_gen
+    if mg is None:
+        mg = np.broadcast_to(fa.pmin[:, None], (fa.pmin.size, HOURS))
+    total = np.zeros(HOURS)
+    for r, uid in enumerate(fa.unit_ids):
+        z = next((zz for zz in zones if str(uid).startswith(f"{zz}_")), None)
+        if z is None or str(uid)[len(z) + 1 :] not in tranches:
+            continue
+        total += np.clip(np.asarray(mg[r, :], dtype=float), 0.0, None)
+    return total
 
 
 def main() -> int:
@@ -106,18 +130,11 @@ def main() -> int:
         return 2
 
     zones = set(CAISO_PER_HUB_IMPORT_ZONES.values())
+    predicted: dict[int, np.ndarray] = {}
     for year in YEARS:
         st = fleet_state(year)
         fa = st["fleet_arrays"] if isinstance(st, dict) else st.fleet_arrays
-        mg = fa.min_gen
-        if mg is None:
-            mg = np.broadcast_to(fa.pmin[:, None], (fa.pmin.size, HOURS))
-        total = np.zeros(HOURS)
-        for r, uid in enumerate(fa.unit_ids):
-            z = next((zz for zz in zones if str(uid).startswith(f"{zz}_")), None)
-            if z is None or str(uid)[len(z) + 1 :] not in CAISO_FIRM_IMPORT_TRANCHES:
-                continue
-            total += np.clip(np.asarray(mg[r, :], dtype=float), 0.0, None)
+        total = firm_floor(fa, zones, CAISO_FIRM_IMPORT_TRANCHES)
 
         scale = np.where(total > 0.0, np.minimum(1.0, ceiling / total), 1.0)
         clipped = total * scale
@@ -148,7 +165,30 @@ def main() -> int:
             f"    overnight h22-h05 share of removed energy: "
             f"{100 * (total - clipped)[night].sum() / max(1e-9, (total - clipped).sum()):.1f} %"
         )
-    return 0
+        predicted[year] = clipped
+
+    # --- plumbing check ---------------------------------------------------- #
+    # Everything above is this probe's own arithmetic on an UNARMED fleet. This
+    # rebuilds 2024 with the flag armed through the SAME generic override
+    # channel `replay_keeper --set` writes to, and checks the built fleet's own
+    # floor equals the prediction. It is what proves the flag actually reaches
+    # the injector before ~80 minutes of solve time is spent on two arms.
+    print("\n  PLUMBING CHECK — 2024 fleet rebuilt with the flag armed via the")
+    print("  generic override channel (the path replay_keeper --set uses):")
+    st = fleet_state(2024, arm=True)
+    fa = st["fleet_arrays"] if isinstance(st, dict) else st.fleet_arrays
+    armed = firm_floor(fa, zones, CAISO_FIRM_IMPORT_TRANCHES)
+    exp = predicted[2024]
+    dev = float(np.abs(armed - exp).max())
+    print(
+        f"    armed fleet floor {armed.sum() / 1e6:7.3f} TWh vs predicted "
+        f"{exp.sum() / 1e6:7.3f} TWh   max|d| = {dev:.6f} MW"
+    )
+    ok = dev <= 1e-6
+    print(
+        f"    {'PASS — the flag reaches the injector' if ok else 'FAIL — flag NOT wired; do NOT solve'}"
+    )
+    return 0 if ok else 2
 
 
 if __name__ == "__main__":
