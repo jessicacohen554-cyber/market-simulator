@@ -478,17 +478,20 @@ C1 CC_REGULAR-2023 and C3a-2025 closed at pjm-135; **C3c-24/25 closed at
 pjm-136** and is UNCHANGED by pjm-137. The queue below is not gate-driven — it
 is ranked by *structural* defect, per rule 1 `[R-STRUCT]`.
 
-**READ ITEMS 12–13 FIRST (pjm-141, 2026-07-30).** PJM's remaining structural
-defect is now diagnosed and named: the model has **no hour-varying offer
-conduct** (every thermal LP row's within-day offer σ is **$0.000000**), so its
-whole intra-day price amplitude comes from merit-order traversal and it delivers
-only **31 / 33 / 32 %** of the measured overnight→evening-peak swing — too dear
-overnight, too cheap at peak, with the **annual level passing by cancellation**.
-The overnight bottom-of-distribution miss and the winter morning ramp are **one
-defect**. Its lever queue is **EMPTY** (every in-model route is `R`,
-owner-closed, spent, or barred by rule 23), with one non-adjudicated successor
-carrying a partial ex-ante refutation (item 13). **Judge any PJM price lever on
-the AMPLITUDE, never on the annual mean.**
+**READ ITEMS 12–13 FIRST (pjm-141, 2026-07-30; item 13 CLOSED at pjm-142,
+2026-07-31).** PJM's remaining structural defect is diagnosed and named: the
+model has **no hour-varying offer conduct** (every thermal LP row's within-day
+offer σ is **$0.000000**), so its whole intra-day price amplitude comes from
+merit-order traversal and it delivers only **31 / 33 / 32 %** of the measured
+overnight→evening-peak swing — too dear overnight, too cheap at peak, with the
+**annual level passing by cancellation**. The overnight
+bottom-of-distribution miss and the winter morning ramp are **one defect**.
+Its lever queue is **EMPTY WITH NO OPEN SUCCESSOR**: every in-model route is
+`R`, owner-closed, spent, or barred by rule 23, and the one non-adjudicated
+successor (the overnight gas commitment bridge) was **killed at pjm-142's
+pre-registered no-LP pre-check** (item 13). The limitation stands as a
+disclosed LP-representation boundary; it fails no gate. **Judge any PJM price
+lever on the AMPLITUDE, never on the annual mean.**
 
 **CLOSED AT pjm-137, binding on successors — do not re-open:**
 
@@ -728,18 +731,33 @@ the AMPLITUDE, never on the annual mean.**
     legitimate terminal state under rule 1 `[R-STRUCT]`: the alternative is an
     adder tuned to the residual, which rule 13 forbids. **It fails no gate** —
     the keeper is CALIBRATED on every criterion.
-    **The one non-adjudicated successor** (`FINDING-pjm141` §8 lead 1): a **PJM
-    overnight gas commitment bridge**. The keeper carries no bridge
-    (`commitment_enabled` / `pjm_commitment_posture` False) and the three
-    P1-native bridges are ISO-exclusive to CAISO/ERCOT/NYISO; a PJM form would
-    shift marginal ownership from `econ` (p05 $16.58–20.35) toward the cheaper
-    `committed` rung (p05 $14.50) — the right direction. **But pjm-141 partially
-    refutes its premise ex ante:** overnight thermal volume is already correct to
-    ±2.6 % and the LP already loads `committed` preferentially (28.79 of 36.24 GW
-    in merit, 79 %, vs `econ` 15.08 of 48.72, 31 %), so a bridge must move MW
-    *between tranches of the same plants* without adding volume. It needs a real
-    no-LP pre-check, a new `ScenarioConfig` field with its matrix row in the same
-    PR (rule 28 duty c), owner sign-off, and a PREREG committed before any arm.
+    ~~**The one non-adjudicated successor** (`FINDING-pjm141` §8 lead 1): a **PJM
+    overnight gas commitment bridge**.~~ **ADJUDICATED AND KILLED AT pjm-142
+    (2026-07-31) — `gas_commitment_bridge` PJM `U → R` at the pre-registered
+    no-LP pre-check** (`PRECHECK-pjm142`, thresholds committed before
+    measurement; `FINDING-pjm142`). pjm-141's partial ex-ante refutation
+    (volume already correct ±2.6 %; `committed` already loaded preferentially)
+    is completed with the other half measured on the keeper's own fleet: the
+    bridge-eligible idle pool — merchant gas-CC committed tranches, rule-18
+    physics via `CC_COMMITMENT_PARAMS`, day-anchored, **net of the 1.0–1.5 GW
+    the incumbent `cc_mustrun_per_plant` already floors** (rule 19) — is
+    **0.65–0.95 GW** (1.36–1.60 GW even at 0.574 × plant capacity, the largest
+    min-load fraction any ISO ever measured), against a measured
+    **2.57–3.37 GW-per-$1** merit-curve slope. Forcing the ENTIRE pool moves
+    the overnight dual **$0.52 / $0.41 / $0.64** vs the $1.00 K-A bar (FAIL all
+    three years; 7.6–18.7 % of the overnight error), and `CC_REGULAR:econ`
+    keeps plurality marginal ownership even at full forcing — the ownership
+    shift the lever was chartered for does not occur. K-B (volume) would have
+    passed; the kill is pure materiality. The restart screen confirms the
+    commitment *story* is real (94–100 % of the pool holds vs restart) — the
+    model already delivers it economically (19.5–22.2 GW of eligible committed
+    in merit overnight). Port prerequisite recorded and mooted: PJM's
+    CAMPD-bin tranches carry no commitment physics (`min_run`/`min_down` = 0),
+    so any future PJM commitment mechanism must wire the heat-rate table
+    first. **With this, the amplitude defect's queue is empty with NO open
+    successor** — do not re-open without new evidence that the pool itself was
+    mismeasured (a different min-load value or a different threshold is not
+    new evidence).
 
 **CLOSED AT pjm-138, binding on successors — do not re-open (no LP solved;
 `FINDING-pjm138-system-energy-is-reserve-opportunity-cost-2026-07-29.md`):**
