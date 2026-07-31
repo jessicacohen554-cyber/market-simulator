@@ -106,22 +106,28 @@ def holdout_quarantine_failures() -> list[str]:
     """Return H1 failure strings: registered bundles breaching the holdout.
 
     A registry sidecar (keeper OR probe) declaring a solve year outside
-    ``CALIBRATION_YEARS`` fails unless its ISO carries a calibration-complete
-    marker in ``calibration-complete.json`` (which authorizes the one-shot
-    frozen-config holdout score of 2022 / H1-2026).
+    ``CALIBRATION_YEARS`` fails unless its ISO carries **the marker for that
+    year's tier** (tier-aware since 2026-07-31): the ``complete`` block for the
+    iterable validation ladder, the ``final`` block for the touch-once locked
+    test. A bundle mixing tiers needs both, and reports one failure per
+    unauthorized tier.
     """
-    complete = (_load_json(MARKER_FILE) or {}).get("complete", {})
+    marker_doc = _load_json(MARKER_FILE) or {}
     fails = []
     for path in sorted(cv.REGISTRY_DIR.glob("*.json")):
         side = _load_json(path) or {}
         iso = side.get("iso", "?")
-        breach = sorted({int(y) for y in side.get("years", [])} - CALIBRATION_YEARS)
-        if breach and iso not in complete:
+        by_tier = holdout_policy.split_breach_by_tier(side.get("years", []))
+        for tier, tier_years in sorted(by_tier.items()):
+            if holdout_policy.authorized(marker_doc, iso, tier):
+                continue
+            block = holdout_policy.TIER_MARKER_BLOCK[tier]
             fails.append(
-                f"{path.stem}: solve year(s) {breach} outside the calibration "
-                f"window {sorted(CALIBRATION_YEARS)} with no {iso} "
-                f"calibration-complete marker in {MARKER_FILE.name} — holdout "
-                "quarantine breach (CLAUDE.md rule 22)"
+                f"{path.stem}: solve year(s) {tier_years} are {tier}-tier, "
+                f"outside the calibration window {sorted(CALIBRATION_YEARS)}, "
+                f"with no {iso} entry in the '{block}' block of "
+                f"{MARKER_FILE.name} — holdout quarantine breach "
+                "(CLAUDE.md rule 22)"
             )
     return fails
 
