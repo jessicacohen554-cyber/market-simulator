@@ -200,7 +200,9 @@ class TestPjmCtMeasuredMaxTarget(_SurfaceCase):
         )
 
     def _cfg(self, **over):
-        return ScenarioConfig(iso="PJM").with_overrides(
+        # mode="backcast": the surface reprices off a MEASURED CT max-offer
+        # corpus, a backcast-only overlay (FFR-1D rule-13 guard, audit FR-11).
+        return ScenarioConfig(iso="PJM", mode="backcast").with_overrides(
             pjm_ct_measured_max_reprice=True,
             pjm_offer_midcurve_path=str(self.jpath),
             **over,

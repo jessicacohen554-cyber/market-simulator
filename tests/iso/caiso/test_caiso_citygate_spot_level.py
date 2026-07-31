@@ -50,6 +50,9 @@ class TestCaisoCitygateSpotLevel(unittest.TestCase):
     def _cfg(self, spot_level: bool) -> ScenarioConfig:
         return ScenarioConfig(
             iso="CAISO",
+            # The measured CA daily citygate spot series is a backcast-only
+            # overlay (FFR-1D rule-13 guard, audit FR-11).
+            mode="backcast",
             hours=_HOURS,
             gas_hub_basis_overlay=True,
             caiso_citygate_spot_level=spot_level,
@@ -154,6 +157,7 @@ class TestCaisoCitygateSpotLevel(unittest.TestCase):
         """The routing guard keeps the flag inert for non-CAISO ISOs."""
         cfg = ScenarioConfig(
             iso="NEISO",
+            mode="backcast",
             hours=_HOURS,
             gas_hub_basis_overlay=True,
             caiso_citygate_spot_level=True,
