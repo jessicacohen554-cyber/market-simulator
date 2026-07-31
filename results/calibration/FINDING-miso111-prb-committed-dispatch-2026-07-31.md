@@ -106,11 +106,76 @@ Guards G1-G6 pre-registered in PREREG §6; predictions P-A..P-E in §8.
 
 ### 3.1 Results
 
-(TO BE FILLED FROM THE SOLVES)
+**Control integrity.** Arm A reproduces the committed 109b keeper at
+L1 0.00000 % in 2023 and 2024 (max class-hour |diff| 0.000 MW). 2025 carries
+0.030 % L1 HEAD drift (wind/CC/solar hour-level re-ties from the commits
+main took between the keeper solve, sha e1b7335, and this session's HEAD)
+with every gate statistic identical (COAL_PRB off-peak CV 0.0226 both arms,
+cv_ratio 0.314). Every arm-B movement is therefore attributable to the
+single flag. First arm-B chain attempt was OOM-killed by this session's own
+concurrent benchmark rebuild (recorded for rule-12 hygiene: nothing heavy
+runs beside a MISO year-solve on a 15 GB box); relaunched clean.
 
-## 4. Adjudication
+**D-1 COAL_PRB (the C7 gate), A → B:**
 
-(TO BE FILLED)
+| year | profile_r | model off-peak CV | actual | cv_ratio | verdict |
+|---|---|---|---|---|---|
+| 2023 | 0.988 → 0.990 | 0.072 → 0.128 | 0.155 | **0.466 → 0.828** | FAIL → **PASS** |
+| 2024 | 0.978 → 0.988 | 0.058 → 0.125 | 0.121 | **0.475 → 1.028** | FAIL → **PASS** |
+| 2025 | 0.971 → 0.967 | 0.023 → 0.030 | 0.074 | **0.314 → 0.411** | FAIL → FAIL |
+
+**C-series, arm B:** C1 **14/16 (free 10/12)** — the two flips are both
+COAL_PRB volume: **−8.77 TWh (2023)** and **−14.97 TWh (2024)** against a
+±8 TWh tolerance (control: +2.02/+1.86). The displaced energy lands on
+CC_REGULAR (+3.4/+4.2), imports (+2.8/+4.1), CT_PEAKER (+1.8/+4.4), CC_CHP
+and ST_GAS — all of which stay in band. C2 PASS; C3a improves in the caveat
+year (2025 −14.2 → −13.5 %) and 2023/24 stay in tolerance; C3b PASS; C3c
+unchanged (the ledgered tail); C4 PASS; C8 PASS with COAL_PRB carrying zero
+forced rows in both arms; COAL_BIT is untouched (off-peak CV
+0.036/0.029/0.032 vs control 0.036/0.026/0.033 — no overshoot).
+
+## 4. Adjudication — REJECTED on pre-registered guards G1 + G2
+
+- **G1 (C7 all three years): FAIL.** 2025 lands at 0.411 — the improvement
+  direction is real (+0.10 over control) but the pre-registered P-B risk
+  materialized: the model's overnight price floor keeps most of the PRB
+  band inframarginal at night in 2025, and interleaving with gas-CC econ
+  tranches buys only part of the gap. The PREREG said in advance that a
+  2023/2024-only improvement reproduces miso-102 and fails; it did.
+- **G2 (C1 16/16): FAIL — and prediction P-C is FALSIFIED, stated plainly.**
+  The scoped repricing shed far more volume than the miso-102-scaled
+  estimate: the committed-band discount is carrying **~9-15 TWh/yr of real
+  stay-online self-commitment energy** that the `_mustrun` band alone does
+  not carry. Removing the discount deletes it — the miso-102 objection
+  reproduced at PRB scale, now precisely sized per year.
+- G3 (COAL_BIT): PASS by construction. G4 (prices): PASS — C3a improved,
+  nothing regressed. G5: no floors added, D-2 clean. G6: both arms
+  registered, matrix cell stamped R.
+
+**Keeper decision: NOT promoted; `2026-07-31-miso-109b-hy-level` stays.**
+The owner's standing grant (2026-07-31, in-session: structural-integrity
+improvement may promote even with gate regression) was weighed and does NOT
+apply: arm B trades one structural infidelity (a byte-flat committed band)
+for another (a fleet that decommits 15 TWh of coal reality kept burning —
+the very conduct SOM Table 7 documents and rule 1 protects). It is not the
+most faithful run producible; it is half of one.
+
+**What the A/B establishes (the lane's sharpest statement yet):** reality's
+regulated PRB night level within committed runs is **0.62 × HSL** — BETWEEN
+the model's mustrun band (~0.46) and its full committed stack (~0.92). A
+single committed band at a single price cannot hold that level: discounted,
+it pins at 0.92 (the C7 flatness); at SRMC, it drops to 0.46 on every cheap
+night (the C1 volume hole). The committed band needs a **measured split**:
+a hold-through slice (the fraction of the band reality keeps loaded through
+cheap nights — keeps the contract discount) and a cycling slice (bids full
+SRMC). Both slice sizes are measurable from the same CAMPD within-run
+loading construction this session already built (night p50 vs day p50 of
+loading-when-on, per plant) — a source-data derivation, not a residual fit.
+That is the named successor lane (miso-112). The 2025 residual (0.411 vs
+0.5) additionally needs the overnight price-formation defect (model
+off-peak p10 $29.71 vs actual hub p10 $17.95; night HE0-3 model $27.8-35.3
+vs actual $19.4-26.9 in BOTH miso-102 arms) — a separate, data-blocked lane
+(miso-78/79 congestion; sub-hourly RT dispersion), not reopened here.
 
 ## 5. Rule-26 duties discharged
 
