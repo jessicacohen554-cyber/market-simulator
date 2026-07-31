@@ -29,7 +29,8 @@ datatype: nrel-atb
 schema_version: 1
 title: NREL Annual Technology Baseline generation/storage cost trajectories
 description: >-
-  NREL ATB 2024 (v3.0.0) CAPEX and Fixed O&M trajectories (2022-2050) for the
+  NREL ATB 2024 (v3.0.0 and v4.0.0) CAPEX and Fixed O&M trajectories
+  (2022-2050) for the
   technologies this model builds as new entry (wind, solar, gas CC/CT/CCS,
   nuclear SMR/large, utility battery storage at 5 durations) plus a few
   cross-reference technologies (existing coal, biomass, hydro, geothermal,
@@ -46,6 +47,7 @@ description: >-
 key_columns:
   [
     atb_edition_year,
+    atb_version,
     technology,
     techdetail,
     parameter,
@@ -65,6 +67,21 @@ columns:
       ATB report edition/vintage (e.g. 2024 for this intake) -- NOT the
       projection year. Lets a future ATB 2025/2026 edition land as new rows
       without a schema change.
+  - name: atb_version
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      NREL's point-release version of that edition, as published in the OEDI
+      object path (e.g. "v3.0.0", "v4.0.0"). An ATB edition is re-released
+      under a new version when NREL corrects or refreshes it, so
+      edition-year ALONE does not identify a vintage: ATB 2024 exists as
+      v2.0.0/v3.0.0/v4.0.0. Part of the key so successive versions of one
+      edition coexist in this partition instead of colliding, and so a
+      consumer pins the exact bytes it derived from (FFR-PB, 2026-07-31 --
+      v4.0.0 revised the Geothermal/DeepEGSFlash Moderate CAPEX and Fixed
+      O&M trajectories relative to v3.0.0; see
+      data/raw/nrel-atb/README.md).
   - name: technology
     dtype: string
     unit: none
@@ -146,16 +163,20 @@ columns:
       -- so this is an annotation applied during curation from ATB's public
       documentation/glossary convention, not extracted verbatim from the
       source file): CAPEX = "2022 $/kW", Fixed O&M = "2022 $/kW-yr".
-      ATB 2024's dollar year is 2022 (see README -- atb.nrel.gov's own
-      documentation confirms this, but that domain is proxy-blocked in this
-      environment, so the citation is via indexed/cached content, flagged
-      for verification with browser access).
+      ATB 2024's dollar year is 2022. VERIFIED 2026-07-31 (FFR-PB) by direct
+      fetch of the ATB site's own 2024 electricity page, which states
+      "Monetary values are in 2022$" -- this CLOSES the former "confirmed
+      only via indexed/cached content, flagged for verification with browser
+      access" caveat. The site moved to atb.nlr.gov on the lab's rename and
+      that domain IS reachable here, unlike the proxy-blocked atb.nrel.gov
+      the earlier intake tried (see data/raw/nrel-atb/README.md).
   - name: source_doc
     dtype: string
     unit: none
     nullable: false
     description: >-
-      Fixed citation string for this intake ("NREL ATB 2024 v3.0.0
+      Citation string for the row's own edition/version ("NREL ATB 2024
+      v3.0.0 electricity, OEDI data lake"; "NREL ATB 2024 v4.0.0
       electricity, OEDI data lake").
   - name: source_page
     dtype: string

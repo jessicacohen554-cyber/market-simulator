@@ -30,10 +30,14 @@ _CSV = _HEADER + (
 )
 
 
-def _write_fixture(raw_root: Path, csv: str = _CSV) -> None:
-    d = curate_mod.raw_csv_path(raw_root).parent
-    d.mkdir(parents=True, exist_ok=True)
-    curate_mod.raw_csv_path(raw_root).write_text(csv)
+def _write_fixture(
+    raw_root: Path,
+    csv: str = _CSV,
+    version: str = curate_mod.DERIVATION_PINNED_VERSION,
+) -> None:
+    path = curate_mod.raw_csv_path(raw_root, version)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(csv)
 
 
 class TestCurateNrelAtb(unittest.TestCase):
@@ -70,6 +74,74 @@ class TestCurateNrelAtb(unittest.TestCase):
 
     def test_skips_when_no_raw_csv(self) -> None:
         self.assertEqual(curate_mod.curate(raw_root=self.raw_root), [])
+
+    def test_versions_coexist_in_one_partition(self) -> None:
+        """Two ATB versions of one edition stack instead of colliding.
+
+        ``atb_version`` is part of the key, so a corrected re-release lands
+        alongside the vintage the committed constants were derived from.
+        """
+        newer = _CSV.replace("1407.953224", "1500.0")
+        _write_fixture(self.raw_root, _CSV, "v3.0.0")
+        _write_fixture(self.raw_root, newer, "v4.0.0")
+
+        self.assertEqual(
+            curate_mod.available_versions(self.raw_root), ["v3.0.0", "v4.0.0"]
+        )
+        path = curate_mod.curate(raw_root=self.raw_root)[0]
+        validate_clean(path)
+        df = pd.read_parquet(path)
+
+        self.assertEqual(len(df), 6)
+        self.assertEqual(sorted(df["atb_version"].unique()), ["v3.0.0", "v4.0.0"])
+        capex = df[(df["technology"] == "LandbasedWind") & (df["parameter"] == "CAPEX")]
+        by_version = dict(zip(capex["atb_version"], capex["value"]))
+        self.assertEqual(by_version, {"v3.0.0": 1407.953224, "v4.0.0": 1500.0})
+        # Provenance is per-version, not a single hardcoded string.
+        self.assertEqual(
+            sorted(df["source_page"].unique()),
+            [
+                "ATB/electricity/csv/2024/v3.0.0/ATBe.csv",
+                "ATB/electricity/csv/2024/v4.0.0/ATBe.csv",
+            ],
+        )
+
+    def test_parse_defaults_to_the_pinned_derivation_version(self) -> None:
+        """``parse`` reads only the pinned vintage unless asked otherwise.
+
+        This is what keeps the derive scripts (and their rule-23 constants
+        consistency tests) seeing exactly one row per key when a newer ATB
+        version lands beside the one they were built against.
+        """
+        newer = _CSV.replace("1407.953224", "1500.0")
+        _write_fixture(self.raw_root, _CSV, "v3.0.0")
+        _write_fixture(self.raw_root, newer, "v4.0.0")
+
+        pinned = curate_mod.parse(self.raw_root)
+        self.assertEqual(len(pinned), 3)
+        self.assertEqual(set(pinned["atb_version"]), {"v3.0.0"})
+        self.assertEqual(
+            float(
+                pinned[pinned["parameter"] == "CAPEX"]["value"].iloc[0],
+            ),
+            1407.953224,
+        )
+
+        explicit = curate_mod.parse(self.raw_root, "v4.0.0")
+        self.assertEqual(set(explicit["atb_version"]), {"v4.0.0"})
+        self.assertEqual(
+            float(explicit[explicit["parameter"] == "CAPEX"]["value"].iloc[0]), 1500.0
+        )
+
+    def test_unknown_version_rejected(self) -> None:
+        with self.assertRaises(ValueError):
+            curate_mod.raw_csv_path(self.raw_root, "v9.9.9")
+
+    def test_edition_year_mismatch_rejected(self) -> None:
+        """A file landed under the wrong version's stem is caught, not curated."""
+        _write_fixture(self.raw_root, _CSV.replace("2024,", "2025,"), "v4.0.0")
+        with self.assertRaises(ValueError):
+            curate_mod.parse(self.raw_root, "v4.0.0")
 
     def test_unmapped_parameter_rejected(self) -> None:
         bad = _HEADER
