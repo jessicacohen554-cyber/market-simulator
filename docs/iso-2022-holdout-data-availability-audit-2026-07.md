@@ -488,3 +488,37 @@ Root cause of the miss, both times: this audit's scanner truncated the
 json.zip bundles), and the ERCOT intake session graded reachability from the
 live MIS retention windows without checking what earlier AS-lane sessions had
 already landed locally. Register §ERCOT carries the matching correction block.
+
+### 8.1 CLOSED 2026-07-31 (follow-up derive session) — the family is derived
+
+The derive session this correction called for has run (owner-authorized rule-22
+Option-2 intake, no LP, no solve, no scoring, no registration). Outcome:
+
+* **Wiring is a registry change, not a per-file list.** `config/paths.py` gained
+  `ERCOT_DAM_DISCLOSURE_DIRS = (ERCOT_MIS_DIR, ERCOT_AS_DIR)` and
+  `ercot_dam_disclosure_files(family, label_year)`, which globs both lanes under
+  both filename conventions and sorts by (filename, directory). All four derives
+  (`derive_ercot_{thermal_dam_availability,noncampd_availability,
+  nuclear_availability,storage_capability}.py`) now resolve inputs through it.
+* **Label-vs-delivery offset confirmed empirically, not assumed.** A label-`y`
+  archive spans deliveries `y-1`-11-02 .. `y`-11-01, and the extract's
+  `_Oct-Dec` fragment is the *remainder* of that archive — the previous
+  November-December tail **plus** Oct 1 – Nov 1 of the label year (60 + 32 = the
+  observed 92 distinct days). Scanning label `y` and `y+1` and filtering on
+  Delivery Date therefore yields **365 / 365 / 366 / 365 / 365** days for
+  2018-2022, with 2022's Nov 2 – Dec 31 tail coming from the committed
+  `ercot/..._2023_Jan-Mar.parquet` fragment exactly as this block predicted.
+* **This section's "strict superset" claim was too strong** — it holds for 2022
+  only. The 2018-2021 files LACK `RRSFFR/RRSPFR/RRSUFR Awarded` (the RRS split
+  post-dates them) and 2018-2019 also lack `QSE`. Immaterial to the availability
+  derives, which consume only Delivery Date / Hour Ending / Resource Name /
+  Resource Type / HSL / Resource Status / Settlement Point Name — **verified
+  present in all 18 back-year files**, with identical arrow types and an
+  identical `Resource Type` vocabulary to the 2023+ lane.
+* **Recipes re-proved before any new year was derived**; four of five reproduce
+  their committed 2023-2025 slice byte-identically. The nuclear CSV does not,
+  and the cause is **pre-existing staleness, not the glob change** — proven by
+  the pre-change and post-change scripts emitting sha256-identical output.
+
+Graded caveats, coverage census, the Uri finding and the recovered DAM-AS
+content are in register §ERCOT.
