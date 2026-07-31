@@ -8,7 +8,18 @@ Two layers, both stdlib-only (no repo deps, runnable with bare python3):
    A malformed matrix silently breaks the explorer page AND the ledger, so it
    hard-fails.
 
-2. **Diff gate** (`--base <ref>`): enforces the mechanical half of rule 28(c) —
+2. **Keeper-stamp drift** (always advisory, escalating in the diff gate):
+   `MECH_MATRIX.keepers[ISO]` must equal the id in
+   `frontend/data/backcast/keepers/<ISO>.json`. Rule 28 requires the promoting
+   session to re-stamp the matrix header when a keeper changes, but nothing
+   checked it, so three ISOs drifted silently at once (nyiso-105 missed its
+   stamp; ERCOT and CAISO were still on 2026-07-29 ids after 2026-07-31
+   promotions). Pre-existing drift only WARNS — it belongs to the owning ISO's
+   lane, not to whichever PR happens to run next — but a PR that itself moves
+   an ISO's keeper shard without re-stamping the header FAILS, which is
+   exactly the duty rule 28 states.
+
+3. **Diff gate** (`--base <ref>`): enforces the mechanical half of rule 28(c) —
    a PR that adds a NEW `ScenarioConfig` field must mention that field in the
    matrix (its own row, or an existing row's `def`/`note` that covers it).
    Mention-anywhere is the deliberate escape hatch: not every new field is its
@@ -22,12 +33,14 @@ Usage:
     python3 scripts/check_mechanism_matrix.py                # validate only
     python3 scripts/check_mechanism_matrix.py --base <sha>   # validate + diff gate
 
-Exit codes: 0 clean, 1 gate failure (new unregistered field or malformed matrix).
+Exit codes: 0 clean, 1 gate failure (new unregistered field, un-restamped keeper
+promotion, or malformed matrix).
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import subprocess
 import sys
@@ -38,6 +51,7 @@ MATRIX_PATH = "docs/codebase-site/data/mechanism-matrix.js"
 SCENARIOS_PATH = "src/market_sim/config/scenarios.py"
 CALIB_CLI_PATH = "scripts/run_calibration_full.py"
 REGISTRY_PREFIX = "frontend/data/backcast/registry/"
+KEEPER_SHARD = "frontend/data/backcast/keepers/{iso}.json"
 
 CELL_CHARS = set("KRIGOU.")
 N_ISOS = 6
@@ -86,6 +100,42 @@ def validate_matrix(text: str) -> list[str]:
     return errors
 
 
+def matrix_isos(text: str) -> list[str]:
+    """Return the matrix's `isos:` list, in cell order."""
+    m = re.search(r"isos:\s*\[([^\]]*)\]", text)
+    return re.findall(r'"([A-Z]+)"', m.group(1)) if m else []
+
+
+def matrix_keepers(text: str) -> dict[str, str]:
+    """Return the matrix header's `keepers:` map, `{ISO: keeper_id}`."""
+    m = re.search(r"keepers:\s*\{([^}]*)\}", text)
+    if not m:
+        return {}
+    return dict(re.findall(r'([A-Z]+):\s*"([^"]*)"', m.group(1)))
+
+
+def shard_keeper(iso: str) -> str | None:
+    """Return the keeper id from an ISO's keeper shard, or None if unreadable."""
+    path = REPO / KEEPER_SHARD.format(iso=iso)
+    try:
+        return str(json.loads(path.read_text(encoding="utf-8")).get("keeper") or "")
+    except (OSError, ValueError):
+        return None
+
+
+def keeper_drift(text: str) -> list[tuple[str, str, str]]:
+    """Return `(iso, header_id, shard_id)` for every ISO whose stamp disagrees."""
+    header = matrix_keepers(text)
+    drift: list[tuple[str, str, str]] = []
+    for iso in matrix_isos(text):
+        shard = shard_keeper(iso)
+        if shard is None:
+            continue  # no shard on disk: not this guard's business
+        if header.get(iso, "") != shard:
+            drift.append((iso, header.get(iso, "<missing>"), shard))
+    return drift
+
+
 def scenarioconfig_fields(source: str) -> set[str]:
     """Extract ScenarioConfig dataclass field names from scenarios.py source."""
     m = re.search(r"^class ScenarioConfig\b", source, re.M)
@@ -119,7 +169,18 @@ def main() -> int:
     if errors:
         return 1
     print(f"mechanism-matrix: integrity OK ({MATRIX_PATH})")
+
+    # --- rule 28: header keeper stamp vs the per-ISO keeper shard -------------
+    drift = keeper_drift(matrix_text)
+    if not drift:
+        print("mechanism-matrix: keeper stamps match every keepers/<ISO>.json")
     if not args.base:
+        for iso, header, shard in drift:
+            print(
+                f"::warning file={MATRIX_PATH}::{iso} keeper stamp drift: header "
+                f"`{header}` != keepers/{iso}.json `{shard}` (rule 28). The "
+                f"promoting session re-stamps the header in the same session."
+            )
         return 0
 
     changed = _git("diff", "--name-only", args.base, "HEAD").splitlines()
@@ -127,6 +188,24 @@ def main() -> int:
 
     # --- rule 28(c): new ScenarioConfig fields must be registered ------------
     failed = False
+
+    # A PR that MOVES a keeper shard owns that ISO's header stamp: fail. Drift
+    # this PR did not create only warns — it belongs to the owning ISO's lane.
+    for iso, header, shard in drift:
+        if KEEPER_SHARD.format(iso=iso) in changed:
+            failed = True
+            print(
+                f"::error file={MATRIX_PATH}::{iso} keeper promoted to `{shard}` in "
+                f"this PR but the matrix header still reads `{header}`. Rule 28 "
+                f"[R-MECH-MATRIX]: the promoting session re-stamps the header (and "
+                f"re-checks that ISO's column) in the SAME session."
+            )
+        else:
+            print(
+                f"::warning file={MATRIX_PATH}::{iso} keeper stamp drift (pre-existing, "
+                f"not this PR): header `{header}` != keepers/{iso}.json `{shard}`. "
+                f"Belongs to the {iso} lane."
+            )
     if SCENARIOS_PATH in changed:
         base_src = _git("show", f"{args.base}:{SCENARIOS_PATH}")
         head_src = (REPO / SCENARIOS_PATH).read_text(encoding="utf-8")
