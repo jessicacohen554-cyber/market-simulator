@@ -1482,6 +1482,87 @@ def _apply_outage_overlays(
             )
         np.clip(availability, 0.0, 1.0, out=availability)
 
+        # ERCOT-148 measured-event precedence cap
+        # (config.ercot_dam_availability_coal_event_cap, default off): the
+        # measured CAMPD event-window family is a hard availability CAP the
+        # DAM COP restore cannot exceed on the COAL fleet. The plant-grain pin
+        # above is BIDIRECTIONAL by design (it replaces the statistical stack),
+        # but during a >= 5-day CAMPD full stop the two measured instruments
+        # conflict: the frozen window identification (outage_detect
+        # FULL_STOP_OVERRIDE — a weeks-long CF~0 dead stop of baseload coal is
+        # the mechanical-outage signature) says the unit is OUT while the COP
+        # files it OFF-at-full-HSL ("startable"), and the water-fill restores
+        # the windowed-out capacity (Coleto Creek dispatched at nameplate
+        # through its 2023 mothball block; Limestone at 1,653 MW plant peak
+        # through LIM1's Feb-2023 dead stop — 4.36/4.98/5.01 TWh of coal
+        # dispatch above the measured-window ceiling on the ercot145 keeper).
+        # Rule 14: on conflict the physical CEMS record outranks the QSE's
+        # paper declaration (misalignment documented on the ScenarioConfig
+        # field). Rule 19: min() over the two incumbent layers — no new
+        # mechanism, and the DAM overlay keeps its designed job everywhere
+        # else (the remove direction and all non-window hours are untouched;
+        # the window factors are 1.0 there). Gated additionally on the historic
+        # overlay so the cap only reconciles layers actually applied. The cap
+        # mirrors the apply block above: >= 5-day unit windows + the ERCOT
+        # plant-grain partial plateaus always; short / unit-grain-partial
+        # layers only when their gates armed them into availability.
+        if (
+            getattr(config, "ercot_dam_availability_coal_event_cap", False)
+            and getattr(config, "outage_source", "statistical") == "historic"
+        ):
+            _bins_path = getattr(config, "campd_bins_path", str(CAMPD_BINS_CSV))
+            _cap_layers: list[dict] = [
+                unit_outage_derate_factors(int(_yr), hours, _bins_path, iso="ERCOT"),
+            ]
+            if getattr(config, "unit_outage_short_windows", False):
+                _cap_layers.append(
+                    unit_outage_short_derate_factors(
+                        int(_yr), hours, _bins_path, iso="ERCOT"
+                    )
+                )
+            if getattr(config, "unit_partial_outage_windows", False):
+                _cap_layers.append(
+                    unit_partial_outage_derate_factors(
+                        int(_yr), hours, _bins_path, iso="ERCOT"
+                    )
+                )
+            _plant_partial = partial_outage_derate_factors(int(_yr), hours)
+            _n_capped = 0
+            for g_idx, gen in enumerate(generators):
+                if gen.plant_group != "COAL":
+                    continue
+                _ceil_w: np.ndarray | None = None
+                for _layer in _cap_layers:
+                    _f = _layer.get((int(gen.plant_code), "COAL"))
+                    if _f is not None:
+                        _ceil_w = (
+                            np.array(_f, dtype=float, copy=True)
+                            if _ceil_w is None
+                            else _ceil_w * _f
+                        )
+                _fp = _plant_partial.get(int(gen.plant_code))
+                if _fp is not None:
+                    _ceil_w = (
+                        np.array(_fp, dtype=float, copy=True)
+                        if _ceil_w is None
+                        else _ceil_w * _fp
+                    )
+                if _ceil_w is None:
+                    continue
+                np.minimum(
+                    availability[g_idx, :hours],
+                    _ceil_w[:hours],
+                    out=availability[g_idx, :hours],
+                )
+                _n_capped += 1
+            logger.info(
+                "ERCOT measured-event precedence cap (%d): %d COAL tranche(s) "
+                "capped at the CAMPD event-window ceiling (DAM COP restore "
+                "bounded by measured full-stop/partial windows)",
+                int(_yr),
+                _n_capped,
+            )
+
     # NEISO measured FLEET operable-capacity availability (backcast overlay,
     # config.neiso_operable_capacity_availability): the ISO-NE analogue of the
     # ERCOT class-day DAM block above. ISO-NE publishes availability only at
