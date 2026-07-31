@@ -518,6 +518,200 @@ def _year(bundle: Path, year: int, own, p138, p137) -> dict:
         }
     out["T6_offer_diurnal_variation"] = t6
 
+    # ---- T7 the pjm-142 bridge pre-check (PRECHECK-pjm142) ----------------
+    # Chartered by docs/mechanism-testing-matrix.md §5.3 item 13 /
+    # FINDING-pjm141 §8 lead 1. Kill thresholds fixed EX ANTE in
+    # results/calibration/PRECHECK-pjm142-overnight-gas-commitment-bridge-2026-07-30.md
+    # (committed before this block first ran). Measures, with NO LP, what a
+    # PJM overnight gas commitment bridge (the nyiso_gas_commitment_bridge
+    # form: min-gen floors over gaps between P0-detected runs) could actually
+    # move at the h01–h04 margin:
+    #   pool  — committed-tranche MW of bridge-eligible plants (gas_cc,
+    #           min_down ≥ 4 h per CC_COMMITMENT_PARAMS, CHP excluded — rule 18
+    #           [R-PHYSICS]) that is live, NOT in merit in the overnight hour,
+    #           and day-anchored (committed rung in merit ≥ 1 h in h07–h22 on
+    #           BOTH flanking calendar days — the no-LP proxy for "P0 runs on
+    #           both sides of the gap");
+    #   walk  — static merit-curve walk: new dual d′(F) at cumulative
+    #           in-merit MW − F (lever-favorable: demand, storage,
+    #           interchange and the DA virtual layer held fixed);
+    #   shift — the displaced band's CC/CT/ST mix → net class-volume change,
+    #           against T4's already-correct overnight match;
+    #   rung  — the tranche/class at the shifted clearing point.
+    fleet_list = state.get("fleet") or []
+    if len(fleet_list) != mc.shape[0] or any(
+        str(g.unit_id) != unit_ids[i] for i, g in enumerate(fleet_list)
+    ):
+        raise SystemExit("T7: fleet list does not align with fleet_arrays rows")
+
+    #: rule 18 [R-PHYSICS]: the CC_COMMITMENT_PARAMS table's own min-down floor
+    #: (4 h, "older" CC class) — fast-start units (min-down ≤ 2 h) are never
+    #: overnight-bridged. Physics gate, not a class tuple.
+    BRIDGE_MIN_DOWN_H = 4.0
+    #: mlf scan for the plant-level forced-MW upper bound. 0.574 is the largest
+    #: measured min-load fraction any ISO's derivation has produced (ERCOT
+    #: LSL/HSL p50) — an upper-bound scan only, never a PJM parameter (rule 25).
+    MLF_SCAN = (0.30, 0.45, 0.574)
+    OVERNIGHT_GAP_H = 8.0  # h23–h06, the gap a bridge would floor
+
+    chp_groups = ("CC_CHP", "CT_CHP", "ST_CHP")
+    elig_unit = np.array(
+        [
+            (g.fuel_type == "gas_cc")
+            and (float(g.min_down_hours) >= BRIDGE_MIN_DOWN_H)
+            and (str(gp) not in chp_groups)
+            for g, gp in zip(fleet_list, grp)
+        ]
+    )
+    elig_committed = elig_unit & (tranche == "committed") & internal
+    startup_per_mw = np.array(
+        [float(g.startup_cost_per_mw) for g in fleet_list], dtype=float
+    )
+    # Plant key: unit_id prefix before the tranche suffix (bins_to_fleet
+    # builds f"{bin_id}_{suffix}").
+    plant_key = np.array(
+        [str(u).rsplit("_", 1)[0] for u in unit_ids], dtype=object
+    )
+
+    fam_of = {
+        "CC_REGULAR": "CC", "CC_CHP": "CC",
+        "CT_PEAKER": "CT", "CT_CHP": "CT",
+        "COAL_BIT": "ST", "COAL_PRB": "ST", "COAL_WC": "ST", "COAL": "ST",
+        "ST_GAS": "ST", "ST_CHP": "ST",
+    }
+    fam_arr = np.array([fam_of.get(str(g), "?") for g in grp], dtype=object)
+
+    # Day-anchor: committed rung in merit ≥ 1 h in h07–h22, per (unit, day).
+    day_hours = (hod >= 7) & (hod <= 22)
+    in_merit_all = (mc < dual) & (avail > 1.0)
+    n_days = HOURS // 24
+    day_ok = np.zeros((mc.shape[0], n_days), dtype=bool)
+    for d in range(n_days):
+        sel_d = (doy == d) & day_hours
+        day_ok[:, d] = in_merit_all[:, sel_d].any(axis=1)
+    anchored = np.zeros_like(day_ok)
+    anchored[:, 0] = day_ok[:, 0]
+    anchored[:, 1:] = day_ok[:, :-1] & day_ok[:, 1:]
+
+    night_hours = np.flatnonzero(np.isin(hod, OVERNIGHT))
+    th_rows = np.flatnonzero(thermal)
+    acc = {
+        "F_committed": [], "F_plantcap": [], "M_inmerit": [],
+        "d0": [], "lw_h": [], "committed_in_merit": [],
+        "dprime_at_Fpool": [], "F_for_1usd": [],
+        "disp_CC_at_Fpool": [], "disp_CT_at_Fpool": [], "disp_ST_at_Fpool": [],
+        "rung_at_Fpool": [],
+    }
+    for t in night_hours:
+        d = int(t // 24)
+        live_t = avail[:, t] > 1.0
+        pool = elig_committed & live_t & (mc[:, t] > dual[:, t]) & anchored[:, d]
+        f_comm = float(avail[pool, t].sum())
+        # Plant-level available capacity (all tranches) of pooled plants.
+        pk = set(plant_key[pool])
+        plant_rows = np.isin(plant_key, list(pk)) & live_t & internal
+        f_plant = float(avail[plant_rows, t].sum())
+        acc["F_committed"].append(f_comm)
+        acc["F_plantcap"].append(f_plant)
+        acc["committed_in_merit"].append(
+            float(avail[elig_committed & live_t & (mc[:, t] < dual[:, t]), t].sum())
+        )
+
+        rows = th_rows[live_t[th_rows]]
+        mcv_t = mc[rows, t]
+        avv_t = avail[rows, t]
+        order_t = np.argsort(mcv_t, kind="stable")
+        mcs = mcv_t[order_t]
+        avs = avv_t[order_t]
+        cums = np.cumsum(avs)
+        m_h = float(avv_t[mcv_t < dual[rows, t]].sum())
+        acc["M_inmerit"].append(m_h)
+
+        def _dual_at(mw: float) -> float:
+            """Offer of the rung at cumulative available MW ``mw``."""
+            if cums.size == 0:
+                return float("nan")
+            i = int(np.searchsorted(cums, max(mw, 0.0)))
+            return float(mcs[min(i, mcs.size - 1)])
+
+        d0 = _dual_at(m_h)
+        acc["d0"].append(d0)
+        acc["lw_h"].append(float(lw[t]))
+        f_pool = max(f_comm, MLF_SCAN[-1] * f_plant)
+        dp = _dual_at(m_h - f_pool)
+        acc["dprime_at_Fpool"].append(dp)
+        # Smallest F achieving a $1.00 move: cumulative MW back to the first
+        # rung priced ≤ d0 − 1.0.
+        j = int(np.searchsorted(mcs, d0 - 1.0, side="right"))
+        cum_at_target = float(cums[j - 1]) if j > 0 else 0.0
+        acc["F_for_1usd"].append(max(m_h - cum_at_target, 0.0))
+        # Displaced band (m_h − f_pool, m_h]: class-family capacity mix.
+        i_lo = int(np.searchsorted(cums, max(m_h - f_pool, 0.0)))
+        i_hi = int(np.searchsorted(cums, m_h))
+        band = order_t[i_lo:i_hi]
+        for famk in ("CC", "CT", "ST"):
+            acc[f"disp_{famk}_at_Fpool"].append(
+                float(avs[i_lo:i_hi][fam_arr[rows[band]] == famk].sum())
+            )
+        i_rung = min(max(i_lo, 0), rows.size - 1)
+        r = rows[order_t[i_rung]]
+        acc["rung_at_Fpool"].append(f"{grp[r]}:{tranche[r]}")
+
+    def _gw(key: str) -> float:
+        return float(np.mean(acc[key]) / 1e3)
+
+    f_pool_gw = max(_gw("F_committed"), MLF_SCAN[-1] * _gw("F_plantcap"))
+    disp = {k: _gw(f"disp_{k}_at_Fpool") for k in ("CC", "CT", "ST")}
+    from collections import Counter
+
+    rung_counts = Counter(acc["rung_at_Fpool"])
+    piv_night_thermal = float(t4["THERMAL_TOTAL"]["model_gw_overnight"])
+    out["T7_bridge_precheck"] = {
+        "eligible_units": int(elig_committed.sum()),
+        "pool_committed_gw_mean": _gw("F_committed"),
+        "pool_plant_availcap_gw_mean": _gw("F_plantcap"),
+        "pool_at_mlf": {
+            str(m): float(m * _gw("F_plantcap")) for m in MLF_SCAN
+        },
+        "F_pool_gw": f_pool_gw,
+        "eligible_committed_in_merit_gw_mean": _gw("committed_in_merit"),
+        "in_merit_thermal_gw_mean": _gw("M_inmerit"),
+        "crosscheck_in_merit_vs_class_hourly": (
+            _gw("M_inmerit") / piv_night_thermal if piv_night_thermal else None
+        ),
+        "walk_d0_mean": float(np.mean(acc["d0"])),
+        "lw_dual_mean": float(np.mean(acc["lw_h"])),
+        "dprime_at_Fpool_mean": float(np.mean(acc["dprime_at_Fpool"])),
+        "delta_d_at_Fpool": float(
+            np.mean(np.array(acc["d0"]) - np.array(acc["dprime_at_Fpool"]))
+        ),
+        "F_for_1usd_gw_mean": _gw("F_for_1usd"),
+        "displaced_band_gw_at_Fpool": disp,
+        "net_family_shift_gw_at_Fpool": {
+            "CC": f_pool_gw - disp["CC"],
+            "CT": -disp["CT"],
+            "ST": -disp["ST"],
+        },
+        "new_marginal_rung_at_Fpool": dict(rung_counts.most_common(6)),
+        "restart_screen_hold_share_by_mlf": {},
+    }
+    # Restart-economics screen (secondary): capacity-weighted share of the
+    # pool whose 8-h overnight hold is cheaper than a restart:
+    #   startup_per_mw > (MC − LMP_gap) × mlf × gap_hours.
+    lw_night = float(np.mean(acc["lw_h"]))
+    pool_any = elig_committed & (avail[:, night_hours] > 1.0).any(axis=1)
+    if pool_any.any():
+        mc_night = mc[:, night_hours].mean(axis=1)
+        capw = np.asarray(fa.pmax, dtype=float)
+        for m in MLF_SCAN:
+            hold_cost = (mc_night[pool_any] - lw_night) * m * OVERNIGHT_GAP_H
+            holds = startup_per_mw[pool_any] > hold_cost
+            out["T7_bridge_precheck"]["restart_screen_hold_share_by_mlf"][
+                str(m)
+            ] = float(
+                capw[pool_any][holds].sum() / max(capw[pool_any].sum(), 1.0)
+            )
+
     del state, fa, mc, avail, dual
     gc.collect()
     return out
