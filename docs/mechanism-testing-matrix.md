@@ -194,7 +194,27 @@ order is a prior, not a mandate — a session with a better-identified lever
 goes off-queue and says so. Entries already adjudicated elsewhere are *not*
 repeated here; the matrix `R`/`G`/`I` cells are the DO-NOT-REDO list.
 
-### 5.1 ERCOT — targets C3a/C3b-2023, C3c (attributed); ~~C7 lignite, coal seasonal split~~ CLOSED
+### 5.1 ERCOT — **CALIBRATED-WITH-CAVEATS** (keeper `2026-07-31-ercot144-coal-perplant-offer`); ~~C3a/C3b/C3c~~ LEDGERED, ~~C7 lignite, coal seasonal split~~ CLOSED+LEDGERED
+
+**QUEUE ITEM 2 IS EXECUTED (ERCOT-144, 2026-07-31).** The C6 governance
+attestation landed exactly on the named closure route: the ERCOT-144 lane
+retired the residual-identified coal offer DOF onto measured PER-PLANT levels
+(`coal_perplant_offer_level` — every CAMPD coal committed/econ tranche on its
+own plant's merged modal SCED TPO curve; DOF ledger `n_residual` **8 → 6**,
+COAL_SIGMOID_DEFAULTS[ERCOT] + coal_take_or_pay_tranches retired), which
+unblocked C6; the C3c tail (and the C3a/C3b annual-mean/duration expressions
+of the same attributed RT scarcity-formation object, hour-level corroborated:
+capped at $200 the model's mean is within −5.1/+0.5/−4.5 % of the capped
+actual) is ledgered as the accepted measured-input limitation per the
+ERCOT-101/107/108 adjudication, and C7-2023 COAL_LIGNITE is ledgered on the
+ERCOT-142/143 non-offer-surface adjudication (profile-r leg now PASSES at
+0.868; the off-peak CV leg 0.323 is the ledgered residual). 0 FAILs, budgets
+exactly met (3/3 non-protective, 1/1 protective). **A ledger records a limit,
+it does not license a fit** (rules 1/13): no successor may close a ledgered
+gate with an adder, haircut or residual-tuned value — the re-open routes are
+new measured data (sub-hourly/probabilistic scarcity representation, or an
+intra-zonal North representation for C7) or an owner decision. Remaining live
+work is the un-chartered audit-grade items 4–7 below.
 
 The lane is heavily enumerated; the honest top of the queue is closure work,
 not a new sweep:
