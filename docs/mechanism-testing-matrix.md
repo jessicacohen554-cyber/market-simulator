@@ -472,7 +472,7 @@ rule-13-admissible mechanism available to carry it.
    Creek MGSES_CT1–6 confirmed in-corpus). DO NOT re-run Phase 0 on the
    existing four extracts.
 
-### 5.2 CAISO — **NO failing criterion** (keeper `2026-07-31-caiso147-chp-heat-rates`, CALIBRATED-WITH-CAVEATS)
+### 5.2 CAISO — **NO failing criterion** (keeper `2026-07-31-caiso148-nuclear-availability`, CALIBRATED-WITH-CAVEATS)
 
 **BOTH former blockers were DISPOSITIONED BY THE OWNER at caiso-145
 (2026-07-30) and are now ACCEPTED MEASURED-INPUT LIMITATIONS** — ledgered in
@@ -499,7 +499,8 @@ target C5a and the standing structural/offer questions. Items 1, 5 and 6 are
 struck through — 1 and 5 were adjudicated and closed **without spending a solve**
 (caiso-144 and caiso-136), and **6 was spent and PROMOTED at caiso-146**. They
 are kept in place so the numbering stays stable and none is re-proposed.
-**Live queue as of 2026-07-31: items 2, 3, 4, 8.** (Item 7 was SPENT and PROMOTED at caiso-147.)
+**Live queue as of 2026-07-31: items 2, 3, 4.** (Item 7 was SPENT and PROMOTED at
+caiso-147; **item 8 was SPENT and PROMOTED at caiso-148**.)
 
 **C3a-2025 IS DIAGNOSED-UNCLOSED WITH AN EMPTY IN-MODEL LEVER QUEUE (caiso-142);
 LEDGERED at caiso-145.**
@@ -637,9 +638,41 @@ sign argument to every basis and bound.
    (host-steam-pinned duty), **not** by the 2 % materiality floor — a CHP class
    above 2 % of load is still ungated.
    (`FINDING-caiso147-measured-chp-heat-rates-2026-07-31.md`.)
-8. **`nuclear_unit_availability`** — `K` in ERCOT and NYISO, CAISO `U`. Diablo
-   Canyon is the 2,240 MW MSSC that sets CAISO's entire reserve requirement
-   (caiso-144 §B).
+8. ~~**`nuclear_unit_availability`**~~ — **SPENT AND PROMOTED at caiso-148
+   (2026-07-31); cell `U` → `K`, keeper
+   `2026-07-31-caiso148-nuclear-availability`.** A rule-14 `[R-ACCURATE]`
+   measured-**timing** swap with zero fitted parameters: the EIA-923 anchor
+   keeps the monthly level, the NRC daily Power Reactor Status report replaces
+   the within-month timing the fleet-month smear destroys. **The ex-ante wall
+   check the handoff ordered cleared first** — this lever shares no input and no
+   detector with the coal-only `unit_outage_short_windows` adjudicated `I` at
+   caiso-136, because nuclear units carry no CO₂ and are **not CEMS reporters in
+   any ISO**. No source change was needed to arm CAISO (the `arrays.py` seam and
+   `outages.py` loader were already ISO-generic); the whole code delta is a
+   two-row identifier crosswalk, and both the PJM and NYISO extracts still
+   reproduce byte-for-byte (rule 25). Artifact: 1,886 rows / 2 reactors =
+   **Diablo Canyon 1+2, 100 % of CAISO nuclear capacity and unit count**, 18
+   windows including three refuels; coverage 100 % / 100 % / 58.1 % of days
+   (31 of 36 months). **The five dropped 2025 months are correct, not a wall**:
+   each holds a real event whose non-event pool is already saturated at 100 %,
+   so the capped fixed-point cannot scale up to an anchor EIA-923 clipped at
+   1.0 — cause *measured*, EIA-930 shows Diablo running up to **+3.1 % above its
+   EIA-860 nameplate**, so posting the NRC level there would delete real
+   capability. Unlike NYISO, the EIA-930 zero-block artifact does **not** occur
+   in CISO, so 930 served as a clean independent validator (r_day 0.9807 over
+   942 days). Build gates G1 +0.184/+0.145/+0.133, G2 ~100 % retention, G3
+   ≤ 0.0746 %. In-solve the overlay **binds** (4,368/3,672/2,232 h) while staying
+   **energy-neutral** (≤ 0.045 %), S2 closes in every year (nuclear r_day
+   0.7873/0.8473/0.8550 → 0.9709/0.9921/0.9878), **every criterion verdict is
+   unchanged**, and CT_PEAKER's most exposed C7 number (2025) *improves*
+   0.864 → 0.866. **NOT a reserve/MSSC test** — the handoff's framing that Diablo
+   "sets CAISO's entire reserve requirement" does not hold for this keeper, which
+   runs `energy_reserve_coopt` / `caiso_reserve_coopt` / `as_reserve_formula` all
+   `False` with a **static** 1,400 MW scarcity MCL; do not cite caiso-148 as
+   reserve-floor evidence. **Open item filed, not absorbed:** the Diablo
+   nameplate/uprate basis mismatch that costs 2025 its coverage is a
+   fleet-representation fix outside a calibration session's scope.
+   (`FINDING-caiso148-nuclear-availability-2026-07-31.md`.)
 
 ### 5.3 PJM — **NO failing criterion** (keeper `2026-07-30-pjm-140-rampenv`, CALIBRATED)
 

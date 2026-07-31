@@ -4216,3 +4216,90 @@ absorb the displaced energy.
    consequence of pricing a class correctly, inside the pre-registered trigger,
    and C3a-2025 remains the owner's ledgered caveat on the caiso-141 A2 wall.
 6. All prior CAISO DO-NOT-REDO sections remain binding and untouched.
+
+## 2026-07-31 — CAISO — caiso-148: `nuclear_unit_availability` PROMOTED (matrix §5.2 item 8, `U` → `K`) — measured per-reactor daily NRC availability replaces the fleet-month smear on 100 % of the nuclear fleet; S2 closes in every year, every criterion verdict unchanged
+
+**Runs:** `2026-07-31-caiso148-nuclear-availability` (KEEPER) +
+`2026-07-31-caiso148-control-zerodelta` (same-HEAD zero-delta control, no
+attestation). Prereg `PREREG-caiso148-nuclear-availability-2026-07-31.md`,
+committed and pushed **before either arm solved**. Evidence
+`FINDING-caiso148-nuclear-availability-2026-07-31.md`.
+
+**Ex-ante wall check first (the reason item 5 cost no solve).** The handoff
+required settling whether item 8 shares the coal-only CEMS detector that made
+`unit_outage_short_windows` INERT at caiso-136. **It does not, and they share no
+input:** this lever reads the NRC daily Power Reactor Status report, and nuclear
+units carry no CO₂ and are not CEMS reporters in **any** ISO, so CEMS visibility
+is structurally irrelevant to it everywhere.
+
+**Derive.** No source change was needed to arm CAISO — the `arrays.py` seam and
+`outages.py` loader were already ISO-generic; the entire code delta is a two-row
+identifier crosswalk (`Diablo Canyon 1/2 → (6099, 1/2)`). Deriver constants
+frozen from ERCOT and untouched (rule 23); PJM and NYISO extracts reproduce
+byte-for-byte (rule 25). Artifact: 1,886 rows / 2 reactors = Diablo Canyon 1+2
+(2,240 MW, NP15) = **100 % of CAISO nuclear capacity and unit count**; 18 windows
+including three refuels. Coverage 365/365, 366/366, 212/365 days (31 of 36
+months).
+
+**The five dropped 2025 months are correct, and the cause was measured rather
+than assumed.** Each holds a real event whose non-event pool is already saturated
+at 100 %, so the capped fixed-point cannot scale *up* to an anchor EIA-923
+clipped at 1.0. EIA-930 shows CISO nuclear peaking at 2,281/2,279/2,309 MW
+against the model's 2,240 MW EIA-860 nameplate — Diablo runs up to **+3.1 % above
+nameplate**, so NRC-%thermal × nameplate cannot express a full-power month and
+posting that level would delete real capability. Disclosed in the prereg before
+the solve; in 2025 only the October U2 refuel carries measured timing.
+
+**Independent validation.** EIA-930 CISO metered hourly, 942 covered days: r_day
+**0.9807**, bias −1.8/+13.7/+20.0 MW on a 2,240 MW fleet. The nyiso-98 EIA-930
+zero-block artifact was screened for and does **not** occur in CISO (23 exact-zero
+hours 2023, 0 in 2024/25, vs NYISO's 1,179/380/117) — a CAISO-specific finding.
+
+**Gates.** Build-time: G1 +0.184/+0.145/+0.133 (≥ +0.10), G2 retention
+100.1/100.2/100.1 % (≥ 70 %; PJM's was negative), G3 ≤ 0.0746 % (< 0.5 %).
+In-solve: R3 the overlay **binds** (4,368/3,672/2,232 h > 1 MW, max |Δ|
+1,075/893/963 MW); R4 **energy-neutral** (+0.0001/−0.0240/−0.0445 %) so it posts
+timing, not a level. **S2 closes in every year** — nuclear r_day vs metered
+0.7873/0.8473/0.8550 → **0.9709/0.9921/0.9878**, matching the extract prediction
+to four decimals.
+
+**Result.** Every criterion verdict identical to the control; determination
+**CALIBRATED-WITH-CAVEATS, 0 FAILs, C1 12/12 · free 8/8**, same **2 of 3**
+ledgered slots, protective **0/1**. Displacement small and on the marginal
+classes (CC_REGULAR −85.6/−35.8/−13.8 GWh, imports +36.0/+31.7/+16.4, CT_PEAKER
++46.1/+2.7/+6.0). Price +$0.015/−$0.036/+$0.018 per MWh. **Binding protective
+gates hold and the most exposed improves**: CT_PEAKER C7 profile_r
+0.881/0.934/0.864 → 0.881/0.933/**0.866**; C8 0.0016/0.0054/0.0007 →
+0.0015/0.0059/0.0007 vs a 0.15 cap. C3a max move **0.1 pp** (trigger 1.0 pp, did
+not fire); C3c bit-identical. Nuclear is exempt from **both** C7 and C8 by
+explicit class list, so no nuclear D-1/D-2 number is quoted as a passed gate.
+
+**Carried item RESOLVED for CAISO:** the keeper-reproducibility drift open since
+caiso-146 does **not** affect the caiso-147 keeper — the zero-delta control
+reproduces the committed bundle **bit-exactly** (max |class-hour| delta 0.000 MW
+all three years, CA λ identical to four decimals). caiso-147's re-basing onto
+HEAD closed it for CAISO; the program-wide charter is unaffected.
+
+**Not a reserve/MSSC test.** The handoff framed Diablo as the MSSC setting
+CAISO's entire reserve requirement. Checked and **it does not hold for this
+keeper**: `energy_reserve_coopt`, `caiso_reserve_coopt` and `as_reserve_formula`
+are all `False` and `caiso_scarcity_pricing`'s MCL is a static 1,400 MW tariff
+constant. No dynamic MSSC channel exists in this A/B; the live channels are
+within-month re-timing (primary) and the scarcity overlay's `reserve_headroom`
+(second-order). Do not cite caiso-148 as reserve-floor evidence.
+
+**Open item filed, not absorbed:** a Diablo nameplate/uprate basis
+reconciliation (EIA-860 net summer capacity vs licensed thermal power) would
+recover 2025 coverage and is the honest fix — but it is a fleet-representation
+change, outside a calibration session's scope, and likely touches other ISOs'
+uprated units.
+
+**DO-NOT-REDO** (full list `FINDING-caiso148` §G): do not re-derive the artifact
+against a residual; do **not** loosen `WEDGE_TOL` / raise `SCALE_CLIP` / lift the
+per-day cap to "fix" the dropped months (each would post a level the basis
+under-expresses); do not cite this session on reserve/MSSC; do not re-open the
+benign "0 reactor(s)" log line; do not attribute the pre-existing ST_GAS
+2024/2025 D-1 FAILs to this lever; do not treat the CISO EIA-930 screen as
+transferable. **CAISO still holds NO rule-22 calibration-complete marker** —
+2023/2024/2025 only were solved and no marker was written. Matrix §5.2 live queue
+is now items **2, 3, 4**.
