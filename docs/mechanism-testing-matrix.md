@@ -217,9 +217,11 @@ model's $7.21/$0.51/$0.00; the load-weighted official C3a miss
 miss concentrates in high-load hours. **A ledger records a limit, it does not
 license a fit** (rules 1/13): no successor may close these gates with an
 adder, haircut or residual-tuned value. Remaining live in-model work: the
-un-chartered audit-grade items 4–7 below (item 5, the ERCOT
-`tranche_startup_amortization` A/B, is the named mid-merit/trough price-
-formation candidate bearing on the non-tail component of C3a-2024/25 and C3b).
+un-chartered audit-grade items 4, 6 and 7 below (item 5, the ERCOT
+`tranche_startup_amortization` A/B, was CLOSED `G` at ERCOT-145 with no solve
+spent — see the struck item; item 4, the five-ISO fuel-stack consistency
+audit, is its chartered successor and carries the C3b shoulder/winter
+residual ERCOT-145 measured).
 
 The lane is heavily enumerated; the honest top of the queue is closure work,
 not a new sweep:
@@ -373,8 +375,32 @@ rule-13-admissible mechanism available to carry it.
 4. **Five-ISO fuel stack on ERCOT** (`gas_daily_shape`,
    `gas_monthly_actuals`, `gas_plant_monthly_fuel_pricing`) — consistency
    audit + candidate for 2023 winter-volatility C3b; cheap A/B, zero new DOF.
-5. **`tranche_startup_amortization`** (PJM/MISO/NEISO form) vs ERCOT's
-   season-spread ST startup — mid-merit/trough price formation candidate.
+5. ~~**`tranche_startup_amortization`** (PJM/MISO/NEISO form) vs ERCOT's
+   season-spread ST startup — mid-merit/trough price formation candidate.~~
+   **▶ CLOSED AT ERCOT-145 (2026-07-31) — REFUSED EX ANTE, NO SOLVE SPENT;
+   CELL STAMPED `G`. DO NOT RE-OPEN without first retiring the fitted CT
+   bands.** `docs/DIAGNOSIS-ercot145-tranche-startup-2026-07-31.md`, probe
+   `scripts/probes/ercot145_tranche_startup_phase1.py`. Three measured
+   grounds: (1) rule 19 — the target rows (CT_PEAKER econ/peak) are already
+   occupied by fitted `offer_curve_by_group` multipliers carrying
+   +$13.1/+$34.9/+$292 per MWh over their own recorded physical basis (2024
+   gas) — 3–60× the measured fuel-invariant component ($20/MW ÷ the
+   CAMPD-measured 5–7 h ERCOT plant-median run = **$2.9–4.0/MWh**;
+   `campd_ct_run_lengths_ERCOT.csv` derived and committed this session,
+   rule-23 frozen), so arming is stacking and the rule-19 replacement
+   (physical + amortization) LOWERS the curve $10–50/MWh — the wrong
+   direction everywhere; (2) the charter's target is not a level object —
+   the sub-$200 load-weighted gap is −0.21/**+0.72**/−1.64 $/MWh
+   (2024 POSITIVE) and within the top load quintile the residual is signed
+   BOTH ways (act<$30 overpriced +5.7..+7.9, act $50–200 underpriced
+   −11..−66): an under-dispersion/near-tail-frequency signature in the
+   attributed scarcity-formation family that a near-uniform CT adder cannot
+   re-disperse; (3) the C3b monthly residual (2024 shoulder −, summer +;
+   2025 worst Apr/May) is item 4's outage-season/fuel-shape object, not the
+   amortization signature. The season-spread ST form is row-disjoint (ST_GAS
+   committed row) and was never the incumbent; the fitted multipliers are.
+   Reopen only as one term of a measured CT-band re-identification (item 6 /
+   SCED TPO on the CT fleet), never a stack.
 6. **`measured_ct_heat_rates`** (NYISO form) on ERCOT's CT fleet — audit-grade.
    **Not** a candidate for the ERCOT-138 gas-dearness defect (see the closure
    note above); the CT fleet is its own question.
