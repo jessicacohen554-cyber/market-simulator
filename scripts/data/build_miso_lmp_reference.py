@@ -98,13 +98,32 @@ def _month_of_hour() -> np.ndarray:
     return np.searchsorted(bounds, np.arange(_HOURS_PER_YEAR), side="right") + 1
 
 
+def _coverage(values: np.ndarray, months: np.ndarray) -> dict:
+    """Return ``{"annual": f, "mon": [12 f]}`` — the priced share of each window.
+
+    A MISO year is staged day-by-day, so a year whose staging is short (or whose
+    daily files have aged off ``docs.misoenergy.org``) yields a dense 8760 frame
+    that is mostly NaN in the uncovered window. The means and percentiles beside
+    it are NaN-ignoring, so they silently describe only the covered hours — a
+    one-hour December reads as a December price. Recording coverage next to them
+    makes that visible to any consumer instead of inferable only by reloading
+    the parquet.
+    """
+    ok = ~np.isnan(values)
+    return {
+        "annual": round(float(ok.mean()), 4),
+        "mon": [round(float(ok[months == m].mean()), 4) for m in range(1, 13)],
+    }
+
+
 def _record(g: pd.DataFrame, months: np.ndarray) -> dict:
-    """Build one year's ``{da, rt, da_mon, rt_mon, da_pct, rt_pct, src}`` record.
+    """Build one year's ``{da, rt, da_mon, rt_mon, da_pct, rt_pct, *_cov, src}``.
 
     ``g`` is the year's dense hourly frame (``hour`` 0..8759, ``rt``/``da``
     columns, NaN where the local calendar has no value); ``months`` the matching
     per-hour month labels. Means/percentiles ignore NaN, exactly as the other
-    ISO builders do.
+    ISO builders do — and ``da_cov``/``rt_cov`` say how much of the year those
+    NaN-ignoring statistics actually saw (:func:`_coverage`).
     """
     g = g.sort_values("hour")
     rt = g["rt"].to_numpy(float)
@@ -116,6 +135,8 @@ def _record(g: pd.DataFrame, months: np.ndarray) -> dict:
         "rt_mon": _by_month(rt, months),
         "da_pct": _pct(da),
         "rt_pct": _pct(rt),
+        "da_cov": _coverage(da, months),
+        "rt_cov": _coverage(rt, months),
         "src": MISO_SRC,
     }
 
