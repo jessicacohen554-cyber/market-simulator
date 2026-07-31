@@ -261,6 +261,40 @@ class TestConfigGuards(unittest.TestCase):
                 ercot_multiproduct_as_coopt=True,
             )
 
+    def test_forecast_bare_multiproduct_requires_forward_requirement(self):
+        """FR-12: the guard fires with NEITHER endogenous variant armed.
+
+        Pre-guard, a bare multi-product co-opt in forecast fell through to the
+        measured AS plan (zero for forecast years) — demanding zero AS and
+        withholding nothing — because the two sibling guards fire only when
+        endogenous storage/thermal AS is also armed.
+        """
+        with self.assertRaisesRegex(ValueError, "ercot_as_forward_requirement"):
+            ScenarioConfig(
+                iso="ERCOT",
+                weather_year=2030,
+                mode="forecast",
+                energy_reserve_coopt=True,
+                ercot_multiproduct_as_coopt=True,
+            )
+        # The same bare arming stays legal in backcast (the measured plan is
+        # the correct source there) and in forecast with the forward formula.
+        ScenarioConfig(
+            iso="ERCOT",
+            weather_year=2024,
+            mode="backcast",
+            energy_reserve_coopt=True,
+            ercot_multiproduct_as_coopt=True,
+        )
+        ScenarioConfig(
+            iso="ERCOT",
+            weather_year=2030,
+            mode="forecast",
+            energy_reserve_coopt=True,
+            ercot_multiproduct_as_coopt=True,
+            ercot_as_forward_requirement=True,
+        )
+
     def test_valid_forecast_and_backcast_configs_construct(self):
         ScenarioConfig(
             iso="ERCOT",

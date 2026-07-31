@@ -9346,6 +9346,28 @@ class ScenarioConfig:
                 "so the AS requirement regenerates from forward load/VRE drivers; "
                 "the measured-plan fallback is zero for forecast years."
             )
+        # FR-12 (forecast-readiness audit §3.2): the SAME fallthrough exists
+        # with NEITHER endogenous variant armed — a bare multi-product co-opt
+        # in forecast still prices its AS requirement off the measured-plan
+        # fallback (zero for forecast years), demanding zero AS and
+        # withholding nothing. Guard the bare arming exactly like the two
+        # endogenous variants above (placed after them so their more-specific
+        # messages keep firing for their combinations). The reserve layer's
+        # read site additionally hard-errors if a forecast run ever reaches
+        # the measured-plan fallback (belt-and-braces for the
+        # armed-flag-but-unthreaded-drivers case this config-level check
+        # cannot see).
+        if (
+            self.mode == "forecast"
+            and self.ercot_multiproduct_as_coopt
+            and not self.ercot_as_forward_requirement
+        ):
+            raise ValueError(
+                "forecast ercot_multiproduct_as_coopt requires "
+                "ercot_as_forward_requirement so the AS requirement regenerates "
+                "from forward load/VRE drivers; the measured-plan fallback "
+                "(ASPLANNP433) is zero for forecast years."
+            )
 
     @property
     def real_discount_rate(self) -> float:
