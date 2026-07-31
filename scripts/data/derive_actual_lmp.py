@@ -161,6 +161,15 @@ _EASTERN_TZ = "America/New_York"
 # partial-but-substantial 2023 year scores (Jan-Feb stay NaN in the dense
 # series and simply don't contribute), while still rejecting a true stub.
 CAISO_MIN_HOURS = 6500
+# Years for which that guard is relaxed to ``CAISO_MIN_HOURS_PARTIAL``, because
+# the window is SHORT BY PUBLICATION, not by a failed fetch — the H1-2026
+# locked-test edge is a deliberate half-year (Jan 1 - Jun 30, 4,344 h), and
+# rejecting it would leave the forward-edge window with no bench at all. The
+# uncovered hours stay NaN in the dense series and contribute to nothing, so a
+# partial year still cannot masquerade as a full one; the set is explicit (and
+# not derived from today's date) so the deriver stays deterministic.
+CAISO_PARTIAL_YEARS: frozenset[int] = frozenset({2026})
+CAISO_MIN_HOURS_PARTIAL = 2000
 
 # Duration-curve percentile levels for the ``da_pct`` / ``rt_pct`` records.
 _PCT_LEVELS = (1, 5, 10, 25, 50, 75, 90, 95, 99)
@@ -290,7 +299,9 @@ def _caiso_system_series(name: str, year: int) -> pd.Series | None:
     column per hub, weighted by ``CAISO_HUB_WEIGHTS`` into a single system
     price, and reindexed onto the Pacific wall clock. Returns ``None`` when
     the aggregate is missing, lacks a hub, or carries fewer than
-    ``CAISO_MIN_HOURS`` complete hours — i.e. cannot stand for a year (the
+    ``CAISO_MIN_HOURS`` complete hours — ``CAISO_MIN_HOURS_PARTIAL`` for a
+    year in ``CAISO_PARTIAL_YEARS``, whose window is short by publication
+    rather than by a failed fetch — i.e. cannot stand for a year (the
     retention-aged 2023 DAM stub and the unfetched 2023 RTM).
     """
     path = LMP_DIR / "CAISO" / f"CAISO_{name}_hourly_{year}.csv"
@@ -303,7 +314,8 @@ def _caiso_system_series(name: str, year: int) -> pd.Series | None:
     if not set(CAISO_HUB_WEIGHTS) <= set(wide.columns):
         return None
     wide = wide[list(CAISO_HUB_WEIGHTS)].dropna()
-    if len(wide) < CAISO_MIN_HOURS:
+    floor = CAISO_MIN_HOURS_PARTIAL if year in CAISO_PARTIAL_YEARS else CAISO_MIN_HOURS
+    if len(wide) < floor:
         return None
     w = np.array(list(CAISO_HUB_WEIGHTS.values()))
     price = wide.to_numpy() @ (w / w.sum())
