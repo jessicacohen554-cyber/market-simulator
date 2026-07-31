@@ -243,15 +243,156 @@ def forecast_monthly_hydro(
         The ``(12,)`` forecast monthly hydro budget in MWh, or ``None`` when
         no climatology is available for ``iso``.
     """
+    from market_sim.config.constants import EIA930_PS_FOLDED_INTO_WAT
     from market_sim.data.eia_loader import climatological_monthly_hydro
 
-    base = climatological_monthly_hydro(iso, climatology_years)
+    if iso.upper() in EIA930_PS_FOLDED_INTO_WAT:
+        # Rule 14 [R-ACCURATE], miso-110 — the FORWARD half of the miso-109 fix.
+        # This BA files no `NG: PS`, so every year of its `NG: WAT` series is
+        # conventional hydro PLUS pumped-storage gross discharge; averaging
+        # those years yields a climatology that is contaminated exactly as each
+        # year was. The forward level therefore comes from EIA-923 `HY` — the
+        # same series, and the same plant population, that the per-plant budget
+        # and the corrected backcast level already use. Same window constant,
+        # same 12-vector MWh contract, same wet/dry lever below; zero free
+        # parameters, and no reconciliation factor between the two series
+        # (miso-109 §2 measured that none is identifiable — rules 5/13/22).
+        base = climatological_monthly_hydro_923(iso, climatology_years)
+    else:
+        base = climatological_monthly_hydro(iso, climatology_years)
     if base is None:
         return None
     return base * resolve_hydro_year_multiplier(hydro_year)
 
 
-def _load_hydro_generation(iso: str, year: int) -> pd.DataFrame:
+def complete_923_hydro_years(
+    iso: str,
+    years: "tuple[int, ...] | list[int] | None" = None,
+) -> tuple[int, ...]:
+    """Return the ``years`` whose EIA-923 ``HY`` filing is a COMPLETE census.
+
+    The coverage gate behind :func:`climatological_monthly_hydro_923`. A year
+    is admitted only when both hold:
+
+    * it is no newer than
+      :data:`market_sim.data.eia923.EIA923_LATEST_FINAL_VINTAGE` — vintages past
+      the latest final release are monthly early releases by construction; and
+    * its ``HY`` plant census is at least
+      :data:`~market_sim.config.constants.EIA923_COMPLETE_FILING_CENSUS_FRACTION`
+      of the ISO's modal census over ``years`` — a per-ISO check that also
+      catches a partial filing *inside* a nominally final vintage.
+
+    Averaging an early release into a climatology would measure source coverage
+    rather than hydrology (miso-109's "2025 trap"), so this is a data-quality
+    filter, never a tuned window: it can only ever *remove* an incomplete year.
+
+    Args:
+        iso: ISO identifier, e.g. ``"MISO"``.
+        years: Candidate years. ``None`` (default) uses
+            :data:`market_sim.config.constants.HYDRO_CLIMATOLOGY_YEARS`.
+
+    Returns:
+        The admitted years, ascending. Empty when the ISO has no complete
+        ``HY`` filing in the window.
+    """
+    from market_sim.config.constants import (
+        EIA923_COMPLETE_FILING_CENSUS_FRACTION,
+        HYDRO_CLIMATOLOGY_YEARS,
+    )
+    from market_sim.data.eia923 import EIA923_LATEST_FINAL_VINTAGE
+
+    if years is None:
+        years = HYDRO_CLIMATOLOGY_YEARS
+    candidates = sorted({int(y) for y in years})
+    gen = load_monthly_generation()
+    census = {y: _load_hydro_generation(iso, y, gen=gen).shape[0] for y in candidates}
+    present = [n for n in census.values() if n]
+    if not present:
+        return ()
+    modal = float(np.median(present))
+    floor = EIA923_COMPLETE_FILING_CENSUS_FRACTION * modal
+    return tuple(
+        y
+        for y in candidates
+        if y <= EIA923_LATEST_FINAL_VINTAGE and census[y] and census[y] >= floor
+    )
+
+
+def climatological_monthly_hydro_923(
+    iso: str,
+    years: "tuple[int, ...] | list[int] | None" = None,
+) -> np.ndarray | None:
+    """Return the normal-water-year monthly hydro climatology from EIA-923 (MWh).
+
+    The EIA-923 ``HY`` analogue of
+    :func:`market_sim.data.eia_loader.climatological_monthly_hydro`, and the
+    forward level for the BAs in
+    :data:`~market_sim.config.constants.EIA930_PS_FOLDED_INTO_WAT`, whose
+    EIA-930 ``NG: WAT`` series folds in pumped-storage discharge and so is not
+    an admissible level for a conventional-hydro-only unit population (rule 14
+    ``[R-ACCURATE]``; miso-109 for the backcast half, miso-110 for this one).
+
+    Same contract as the EIA-930 version — a ``(12,)`` MWh vector, index 0 =
+    January, built over the shared
+    :data:`~market_sim.config.constants.HYDRO_CLIMATOLOGY_YEARS` window and
+    scaled afterwards by the wet/dry lever in :func:`forecast_monthly_hydro`.
+    The plant population is exactly :func:`_load_hydro_generation`'s, i.e. the
+    one :func:`load_hydro_budget` builds the per-plant shares from, so the
+    level and the units are the same population.
+
+    Only years whose filing carries a complete plant census are averaged
+    (:func:`complete_923_hydro_years`), and the REALISED window is logged
+    because it will not in general equal the window constant — the two sources
+    supply different years (miso-110: MISO realises 2021-2024 here against
+    2021+2023-2025 on the EIA-930 side). A climatology delta between the two
+    therefore mixes the pumped-storage fold with a WINDOW MISMATCH and is never
+    on its own evidence of a fold.
+
+    Args:
+        iso: ISO identifier, e.g. ``"MISO"``.
+        years: Historical years to average. ``None`` (default) uses
+            :data:`market_sim.config.constants.HYDRO_CLIMATOLOGY_YEARS`.
+
+    Returns:
+        The ``(12,)`` mean monthly conventional-hydro net generation in MWh, or
+        ``None`` when no year in the window has a complete EIA-923 ``HY``
+        filing for ``iso``.
+    """
+    from market_sim.config.constants import HYDRO_CLIMATOLOGY_YEARS
+
+    window = complete_923_hydro_years(iso, years)
+    requested = (
+        HYDRO_CLIMATOLOGY_YEARS if years is None else tuple(int(y) for y in years)
+    )
+    if not window:
+        logger.warning(
+            "%s: no complete EIA-923 HY filing in the climatology window %s — "
+            "no EIA-923 hydro climatology available",
+            iso,
+            list(requested),
+        )
+        return None
+    gen = load_monthly_generation()
+    mcols = monthly_netgen_columns()
+    rows = [
+        _load_hydro_generation(iso, y, gen=gen)[mcols].to_numpy(dtype=float).sum(axis=0)
+        for y in window
+    ]
+    out = np.vstack(rows).mean(axis=0)
+    logger.info(
+        "%s: EIA-923 HY hydro climatology over REALISED window %s "
+        "(requested %s; incomplete filings gated out) — %.4f TWh/yr",
+        iso,
+        list(window),
+        list(requested),
+        out.sum() / 1e6,
+    )
+    return out
+
+
+def _load_hydro_generation(
+    iso: str, year: int, gen: pd.DataFrame | None = None
+) -> pd.DataFrame:
     """Return one row per hydro plant with its twelve monthly netgen columns.
 
     Filters the EIA-923 monthly-generation table to conventional hydro
@@ -259,9 +400,17 @@ def _load_hydro_generation(iso: str, year: int) -> pd.DataFrame:
     sums any multiple rows per plant. Negative monthly net generation
     (station-service draw on a low-inflow month) is clipped to zero so the
     budget is a non-negative energy cap.
+
+    Args:
+        iso: ISO identifier, e.g. ``"MISO"``.
+        year: Calendar year to filter to.
+        gen: Optional pre-loaded monthly-generation table, so a multi-year
+            caller (the EIA-923 climatology) reads the ~10 MB parquet once
+            instead of once per year. ``None`` (default) loads it.
     """
     ba_code = ISO_TO_BA_CODE.get(iso.upper())
-    gen = load_monthly_generation()
+    if gen is None:
+        gen = load_monthly_generation()
     subset = gen[(gen["prime_mover"] == HYDRO_PRIME_MOVER) & (gen["year"] == year)]
     if ba_code is not None and "ba_code" in subset.columns:
         subset = subset[subset["ba_code"] == ba_code]
@@ -888,20 +1037,36 @@ def build_hydro_fleet(
     elif forecast_budget:
         from market_sim.config.constants import EIA930_PS_FOLDED_INTO_WAT
 
-        if iso.upper() in EIA930_PS_FOLDED_INTO_WAT:
-            # Not fixed here — the forecast level is a multi-year `NG: WAT`
-            # climatology, and replacing it needs its own derivation and its
-            # own forecast-lane gates. Flagged loudly so a forecast session
-            # cannot inherit the contamination silently (miso-109 §7).
-            logger.warning(
-                "%s %d: forecast hydro climatology is built from EIA-930 "
-                "NG: WAT, which this BA folds pumped storage into — the "
-                "forecast hydro LEVEL is PS-inflated (backcast path is fixed; "
-                "the forward analogue is not)",
-                iso,
-                year,
-            )
         target = forecast_monthly_hydro(iso, hydro_year)
+        if iso.upper() in EIA930_PS_FOLDED_INTO_WAT:
+            # miso-110: this BA's forward level comes from the EIA-923 `HY`
+            # climatology, not the PS-inflated `NG: WAT` one (see
+            # forecast_monthly_hydro). `climatological_monthly_hydro_923` logs
+            # the realised window; what is logged here is the level actually
+            # applied, and — on the fallback — that the wet/dry lever went
+            # inert with it.
+            if target is None:
+                logger.warning(
+                    "%s %d: no complete EIA-923 HY filing in the climatology "
+                    "window — the forecast hydro LEVEL falls back to the "
+                    "shape year's own EIA-923 level (a single water year, not "
+                    "a climatology) and the hydro_year=%r wet/dry lever has "
+                    "nothing to scale",
+                    iso,
+                    year,
+                    hydro_year,
+                )
+            else:
+                logger.info(
+                    "%s %d: forecast hydro LEVEL from the EIA-923 HY "
+                    "climatology (hydro_year=%r) — %.4f TWh; the EIA-930 "
+                    "NG: WAT climatology is REFUSED for this BA, which folds "
+                    "pumped storage into it (rule 14)",
+                    iso,
+                    year,
+                    hydro_year,
+                    target.sum() / 1e6,
+                )
         # Forecast branch only: the budget *shape* (per-plant within-month
         # shares) must come from a complete plant census. EIA-923 vintages
         # after the latest final release are monthly early releases carrying
