@@ -3577,3 +3577,72 @@ delete-vs-inert; (4) `ercot_offer_hrmult_ep_*` matrix rows; (5) Martin Lake
 composition (ERCOT-143 §7.3). Successor pointer: the measured winter
 residual now names the LOCAL daily basis (`winter_citygate_daily` ERCOT,
 data-intake first — HSC/Katy daily).
+
+## 2026-07-31 — ERCOT-146 (matrix §5.1 item 6, no LP built, no year solved): `measured_ct_heat_rates` on ERCOT is INERT BY WIRING — the flag's consumer is the `load_fleet_from_csv` path and ERCOT's curated-bin thermal fleet never receives it (flag-on vs flag-off base fleet BYTE-IDENTICAL, 609 generators) — cell stamped `I`, no solve spent, keeper UNCHANGED (ercot145-gas-daily-shape); ERCOT's own measured artifact derived and committed anyway, and it CONFIRMS the curated sheet on its own basis
+
+**Task (matrix §5.1 item 6, the audit-grade NYISO/PJM/CAISO-form A/B).**
+Phase 1 pre-committed as no-LP with the no-solve closure exit
+(ERCOT-143/145 pattern). Probe
+`scripts/probes/ercot146_ct_heat_rates_phase1.py`; diagnosis
+`docs/DIAGNOSIS-ercot146-measured-ct-heat-rates-2026-07-31.md`. Preconditions
+verified: default `cache_key` byte-stable (`603c2498bf71d21d`),
+`audit_keepers.py` PASS 0/0.
+
+**Leg 1 — wiring (the adjudicating fact).** The mechanism's consumer is
+`eia860._rows_to_generators`; under `use_campd_bins=True` (keeper config and
+ERCOT default) `load_or_synthesize_bins` short-circuits to
+`load_campd_bins(config.campd_bins_path)` without the kwarg, and
+`build_base_fleet` keeps only non-aggregatable eia860 units. Probe builds the
+full base fleet both ways: **609 generators, byte-identical** on (name,
+plant, group, HR, pmax). An A/B replay would burn a ~50-min span for a
+bit-identical bundle. **Stamped `I`** — not `R` (nothing refuted on the
+merits), not `G` (no effect to refuse).
+
+**Leg 2 — the derive (committed, rule-23 frozen, 2023–2025 only).**
+`campd_ct_heat_rates_ERCOT.csv` (+ `_units.csv`): 34 plants, zero
+physical-band exclusions, 85.7 % of eia860 class capacity, 79.9 % of curated
+class capacity, **99.2 % of the class's own metered CAMPD CT energy**
+(17.711/17.860 TWh gross), no adverse selection (covered cap-wt sheet HR
+10.947 vs uncovered 10.751; uncovered = Denton/Red Gate/Pearsall
+reciprocating no-CEMS + Morgan Creek classed `oil` in eia860). **The
+substantive result: ERCOT does not have the defect the mechanism fixes** —
+the curated sheet is already CAMPD-derived per-plant, and the measured loaded
+GROSS rate confirms it at **−1.0 %** cap-weighted; the +6.5 % net delta
+(vs eGRID +8.2 %) is **entirely the gross→net parasitic conversion
+(+7.6 %)**, a fleet-wide basis convention shared by every class on the sheet
+— not the NYISO/PJM two-directional per-plant noise. 9 mixed-facility plants
+(1,708 MW eia860 CT — Wharton, Braunig, Miller, Decordova …) have no curated
+CT_PEAKER row to re-price at all (one-class-per-plant sheet); their measured
+CT rates are recorded as evidence for the Martin Lake-family
+class-composition ruling.
+
+**Leg 3 — reach, quantified on the keeper's own sidecars.** CT_PEAKER is
+**1.36 / 1.21 / 0.92 %** of ISO load (6.087/5.616/4.500 TWh) — below the 2 %
+gate line, never gated. Its rows still carry the FITTED multipliers
+(econ 1.27/2.18, peak 13.15 vs phys 0.723/0.727/1.0): a +6.5 % base-HR
+re-price under them shifts composite offers ~+$2–3 (econ) / ~+$21–32 (peak)
+per MWh while the offers **remain fitted objects** — modulating, not
+retiring, the incumbent, with the near-uniform-adder shape ERCOT-145 §2
+refuted against the signed-both-ways sub-$200 residual.
+
+**Adjudication.** Cell `measured_ct_heat_rates` ERCOT **U → I** (inert by
+wiring, proven byte-level, no solve spent); matrix row note + §5.1 item 6
+struck, same session (rule 26b). No ScenarioConfig change, no solve, no
+dashboard registration (nothing to register — rule 15 governs runs;
+ERCOT-142/143/145 precedent). Keeper, DOF ledger (n_residual 6), all gate
+verdicts unchanged. Holdouts untouched. ERCOT-scoped (rule 25, both
+directions). **Successor unchanged from ERCOT-145 §4, now with its
+physical-basis half ready:** the measured CT-band re-identification (SCED
+TPO CT levels + this artifact as the physical-HR term with an explicit
+gross/net basis decision + `campd_ct_run_lengths_ERCOT.csv` as the start
+term) retiring the fitted CT multipliers — a NEW mechanism with its own
+matrix row, never a stack (rule 19); ERCOT-138 still bars the CC
+gas-dearness route. Alternates assessed data-intake-first and NOT attempted:
+item 7 (WP-B nodal curtailment — station→area crosswalk not in-repo);
+`winter_citygate_daily` (no HSC/Katy daily series on disk;
+`data/raw/gas-prices/` carries daily citygate files for
+MISO/NEISO/CAISO/NYISO only). Open owner rulings carried unchanged
+(ERCOT-145b list) plus the §3 mixed-facility evidence appended to the Martin
+Lake item. Pre-existing matched, not fixed: the `ercot_wtx_*` dual-channel
+warning, the eGRID-55641/CC-55098 reconcile notices (the fleet loader's own
+recorded behaviour).
