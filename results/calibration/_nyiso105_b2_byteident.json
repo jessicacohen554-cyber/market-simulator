@@ -1,0 +1,32 @@
+{
+ "2023": {
+  "mc_base": true,
+  "fuel_prices": true,
+  "pmax": true,
+  "pmin": true,
+  "heat_rate": true,
+  "availability": true,
+  "min_gen": true,
+  "demand": true
+ },
+ "2024": {
+  "mc_base": true,
+  "fuel_prices": true,
+  "pmax": true,
+  "pmin": true,
+  "heat_rate": true,
+  "availability": true,
+  "min_gen": true,
+  "demand": true
+ },
+ "2025": {
+  "mc_base": true,
+  "fuel_prices": true,
+  "pmax": true,
+  "pmin": true,
+  "heat_rate": true,
+  "availability": true,
+  "min_gen": true,
+  "demand": true
+ }
+}

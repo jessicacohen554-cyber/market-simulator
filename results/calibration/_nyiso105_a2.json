@@ -1,0 +1,29 @@
+{
+ "2023": {
+  "sink": "NYISO_external_export_surplus",
+  "zone": "NYISO_external",
+  "pmin_mw": -600.0,
+  "itm_hours": 921,
+  "itm_share": 0.1051,
+  "max_gap": 164.8,
+  "bound_twh": 0.5526
+ },
+ "2024": {
+  "sink": "NYISO_external_export_surplus",
+  "zone": "NYISO_external",
+  "pmin_mw": -600.0,
+  "itm_hours": 1078,
+  "itm_share": 0.1231,
+  "max_gap": 148.2,
+  "bound_twh": 0.6468
+ },
+ "2025": {
+  "sink": "NYISO_external_export_surplus",
+  "zone": "NYISO_external",
+  "pmin_mw": -600.0,
+  "itm_hours": 679,
+  "itm_share": 0.0775,
+  "max_gap": 321.27,
+  "bound_twh": 0.4074
+ }
+}
