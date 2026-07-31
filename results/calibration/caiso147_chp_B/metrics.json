@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-26-caiso-122-minload-0570",
+  "run_id": "2026-07-31-caiso147-chp-heat-rates",
   "iso": "CAISO",
-  "label": "caiso 122 minload 0570",
+  "label": "caiso147 chp heat rates",
   "target_years": [
     2023,
     2024,
@@ -13,10 +13,10 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
-  "determination": "NOT-YET",
+  "rubric_version": 2.9,
+  "determination": "CALIBRATED-WITH-CAVEATS",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "2 ledgered measured-input caveat(s): C3a mean LMP, C3c price tail / scarcity (RT hourly)"
   ],
   "notes": [],
   "criteria": {
@@ -33,7 +33,8 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
@@ -43,37 +44,36 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
       "tier": "supporting",
       "status": "PASS"
     },
-    "co2": {
-      "label": "C5a CO2 vs eGRID",
-      "tier": "load-bearing",
-      "status": "FAIL"
-    },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C3a mean LMP",
+      "C3c price tail / scarcity (RT hourly)"
+    ],
     "commercial_band": [],
     "budget": {
       "protective_max": 1,
@@ -81,11 +81,11 @@
     }
   },
   "grade_summary": {
-    "scored": 7,
-    "target_grade": 4,
+    "scored": 9,
+    "target_grade": 7,
     "commercial_grade": 0,
-    "ledgered": 0,
-    "fails": 3
+    "ledgered": 2,
+    "fails": 0
   },
   "free_class_score": {
     "iso": "CAISO",

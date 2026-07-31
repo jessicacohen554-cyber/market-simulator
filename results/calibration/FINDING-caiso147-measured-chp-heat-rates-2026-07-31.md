@@ -202,3 +202,180 @@ peaker-capped at 0.15), ST_GAS and COAL.
 *(Noted for a future session, not acted on here: CT_CHP's 2025 `profile_r` is
 **0.393** in the incumbent keeper — far below the 0.80 threshold — and is
 ungated. A latent shape limitation this session inherits and does not create.)*
+
+---
+
+## §E — the A/B result
+
+Two arms, single flag, both replays of the caiso-146 keeper at the same HEAD,
+solved concurrently (rule 12), **2023 2024 2025 in one invocation each**
+(rule 16). The control is a **same-HEAD zero-delta replay**, not the keeper's
+committed bytes — caiso-146 measured the caiso-139 keeper drifting up to 3.2 GW
+on a class-hour at HEAD, so committed bytes are not a clean baseline.
+
+Mechanism verified **live first** (the nyiso-89 §4a check, prereg reject #4):
+arm B logs `measured power-only CHP heat rates applied to 57 generator(s) across
+30 (plant, class) pair(s)` — matching the artifact's 30 `ok` rows exactly — and
+arm A is silent. Max |Δ| on a CHP class-hour: **229.8 / 278.9 / 144.7 MW**
+(CC_CHP) and 111.5 / 104.0 / 94.1 MW (CT_CHP), all far above the 50 MW inertness
+floor. **Not inert.**
+
+**Class energy, TWh (control → armed), against the committed benchmark:**
+
+| class | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| **CC_CHP** | 9.025 → **8.353** (−0.673) · 117 → **108 %** | 8.126 → **7.337** (−0.789) · 120 → **108 %** | 7.754 → **7.317** (−0.438) · 108 → **102 %** |
+| CC_REGULAR | 48.429 → 48.933 (+0.504) · 93 → **94 %** | 42.905 → 43.554 (+0.649) · 93 → **95 %** | 36.376 → 36.763 (+0.387) · 90 → **91 %** |
+| CT_PEAKER | 1.726 → 1.786 (+0.059) · 42 → 43 % | 0.634 → 0.656 (+0.022) · 15 → 15 % | 0.455 → 0.465 (+0.010) · 19 → 20 % |
+| CT_CHP | 1.549 → 1.578 (+0.029) · 73 → 74 % | 1.535 → 1.546 (+0.012) · 76 → 77 % | 1.523 → 1.525 (+0.002) · 115 → 115 % |
+| import | 35.894 → 35.978 (+0.084) | 40.220 → 40.318 (+0.098) | 41.435 → 41.479 (+0.044) |
+| **TOTAL** | 208.592 → 208.596 | 214.088 → 214.093 | 208.141 → 208.145 |
+
+Total generation is identical to three decimals — **pure reallocation**, and
+**no material class moves away from actual.** (The only class that does is
+ST_GAS, 515 → 529 % in 2024 on a **0.3 %-of-load** class the rubric skips as
+immaterial; reported for completeness.)
+
+**All three pre-registered predictions confirmed:**
+
+- **P1 — CC_CHP falls.** Predicted down from 117/120/108 %, magnitude
+  0.3–1.5 TWh/yr. Delivered **−0.673 / −0.789 / −0.438 TWh**, to
+  **108 / 108 / 102 %**. Inside the predicted band in all three years.
+- **P2 — CT_CHP barely moves despite getting 14.6 % cheaper.** Predicted
+  |Δ| < 0.15 TWh/yr on the grounds that 95–97 % of the class is already pinned
+  at its `chp_steam` floor, leaving almost no economic headroom. Delivered
+  **+0.029 / +0.012 / +0.002 TWh.** This was flagged in advance as the
+  prediction most likely to be wrong; it held, which **independently
+  corroborates the D-2 floor attribution** — the class really is floor-bound,
+  not economically dispatched.
+- **P3 — the displaced energy goes to CC_REGULAR and/or `import`.** Delivered:
+  CC_REGULAR takes 75–82 % of it, `import` most of the rest, both moving toward
+  actual.
+
+**Rubric verdicts — every criterion identical, scored control vs armed on the
+same basis:**
+
+| criterion | control | armed |
+|---|---|---|
+| C1 fuel-mix | PASS | PASS |
+| C2 system volume | PASS | PASS |
+| C3a mean LMP | FAIL\* | FAIL\* |
+| C3b price duration/shape | PASS | PASS |
+| C3c price tail | FAIL\* | FAIL\* |
+| C4 dispatch correlation | PASS | PASS |
+| C7 diurnal shape (D-1) | PASS | PASS |
+| C8 forced share (D-2) | PASS | PASS |
+
+\* Both arms scored **unattested** for the comparison (the caiso-146 control was
+handled the same way), so the two ledgered gates show as raw FAILs. With the
+attestation carrying the owner's caiso-145 ledger, the armed arm scores
+**CALIBRATED-WITH-CAVEATS: 0 FAILs, C3a + C3c ledgered (the same 2 of 3
+non-protective slots, no new slot spent), protective 0/1, C6/C7/C8 PASS.**
+
+**The two ledgered caveats:**
+
+- **C3c — BIT-IDENTICAL** in both arms and to the caiso-146 keeper: model 0 h vs
+  RT actual 47 h / 35 h. The CHP re-price buys **zero** tail hours.
+- **C3a-2025 — +11.0 % → +11.2 %**, a **0.2 pp ADVERSE** move, **inside** the
+  1.0 pp materiality trigger fixed in prereg §7, so no leave-one-year-out
+  re-scoring was required. Measured directly on the bundles' own sidecars, CA
+  load-weighted λ moves **$54.88 → $55.02 / $36.99 → $37.14 / $38.27 → $38.37**
+  (+$0.134 / +$0.150 / +$0.098). The direction is expected and mechanical:
+  pricing a ~4 %-of-generation class at its true (dearer) rate makes the
+  marginal hour clear fractionally higher. **Reported, never tuned toward**, and
+  per rules 1 `[R-STRUCT]` / 14 `[R-ACCURATE]` not a reason to revert an
+  accurate published input.
+
+---
+
+## §F — protective gates, and one structural fact worth stating plainly
+
+**The binding gates — the classes that ABSORB the displaced energy — are
+unchanged:**
+
+| gate | control | armed | threshold |
+|---|---|---|---|
+| CT_PEAKER C7 `profile_r` | 0.885 / 0.936 / 0.864 | 0.881 / 0.934 / 0.864 | ≥ 0.80 |
+| CT_PEAKER C7 `cv_ratio` | 1.613 / 1.805 / 2.172 | 1.623 / 1.817 / 2.178 | ≥ 0.50 |
+| CT_PEAKER C8 forced share | 0.0016 / 0.0055 / 0.0007 | 0.0016 / 0.0054 / 0.0007 | ≤ 0.15 |
+
+ST_GAS's raw D-1 rows read FAIL in 2024/2025 — **in both arms, bit-identical**
+(0.229 → 0.229, −0.032 → −0.031). It is a pre-existing condition of the incoming
+keeper, it is immaterial-skipped by C7 (0.1–0.6 % of load), and this lever
+neither causes nor changes it.
+
+**C7 shape improves markedly on the classes actually repriced** (reported as
+diagnostics per §D, never as a passed gate):
+
+| | control | armed |
+|---|---|---|
+| CT_CHP `profile_r` | 0.817 / 0.801 / **0.393** | 0.959 / 0.937 / **0.852** |
+| CT_CHP `cv_ratio` | 0.006 / 0.000 / 0.000 | 0.193 / 0.103 / 0.076 |
+| CC_CHP `profile_r` | 0.968 / 0.969 / 0.988 | 0.983 / 0.982 / 0.989 |
+
+The CT_CHP-2025 `profile_r` of **0.393** flagged in §D as a latent ungated shape
+defect rises to **0.852**, and both CHP classes' near-zero off-peak variability
+moves toward measured. The mechanism did not merely move a level; it made the
+classes' *diurnal shape* more like the real ones.
+
+**The one structural fact that cuts the other way, stated rather than buried:**
+CC_CHP's `chp_steam` forced share **rises 0.435 / 0.470 / 0.461 → 0.557 / 0.629
+/ 0.592**. This is the arithmetic consequence of the correction working — the
+class contracts toward a *fixed, measured* steam floor as its economic tranche
+is correctly priced out of merit, so the floor becomes a larger share of a
+smaller class. No gate is engaged (CHP is C8-exempt by class, §D), and the floor
+itself is the measured WP-3 steam-following level, not a fitted number. But
+**more of CC_CHP's dispatch is now floor-determined than before**, and a future
+session revisiting CAISO CHP should know that.
+
+---
+
+## §G — determination and DO-NOT-REDO
+
+**PROMOTED. New keeper: `2026-07-31-caiso147-chp-heat-rates`**,
+CALIBRATED-WITH-CAVEATS, 0 FAILs, 2 of 3 non-protective ledgered slots
+(unchanged — the owner's caiso-145 act carried forward with magnitudes
+re-measured, **no new disposition created**), protective 0/1.
+Control: `2026-07-31-caiso147-control-zerodelta`.
+
+CAISO holds **no** rule-22 calibration-complete marker. This session solved
+2023/2024/2025 only and wrote **no** marker.
+
+**Binding on successors:**
+
+1. **DO NOT re-derive `chp_power_only_heat_rates_CAISO.csv` against a residual.**
+   Rule 23 `[R-FROZEN-DERIVE]`: it re-derives only when EPA publishes a new
+   eGRID vintage, and that commit must cite the data change.
+2. **DO NOT add a CAISO-scoped CHP heat-rate multiplier, band or exclusion.**
+   The `_MAX_THERMAL_SHARE` ceiling, the physical bands and `_BASIS_TOL` are
+   definitional and frozen; the hand factor that this lever retired is exactly
+   the kind of number not to reintroduce (rules 21/24/25).
+3. **DO NOT re-open the `not_unfired_topping` exclusion as a coverage lever.**
+   Those 44 rows / 1,914 MW are boiler-first cogens whose total-fuel-per-MWh
+   reaches 58.4 MMBtu/MWh — the gate is physics, not conservatism.
+4. **DO NOT quote CHP C7/C8 numbers as passed gates.** CC_CHP and CT_CHP are
+   exempt from both by explicit class list, *not* by materiality (§D). A CHP
+   class above the 2 % floor is still ungated.
+5. **DO NOT treat the C3a-2025 +0.2 pp as a defect to be closed.** It is the
+   mechanical consequence of pricing a class correctly, it is inside the
+   pre-registered trigger, and C3a-2025 remains the owner's ledgered caveat on
+   the caiso-141 A2 data wall — reopened only by non-public hourly PS data.
+6. Everything in `FINDING-caiso146` §G, `FINDING-caiso144` §G, caiso-143 §H,
+   caiso-142 §K, caiso-141, caiso-138 §G, caiso-137b §6, caiso-131 §10 remains
+   binding and untouched by this session.
+
+**Open leads this session created but did not act on (rule 25 — each needs its
+own ISO's session):**
+
+- **The basis-gate defect is latent in PJM**, the other hand-factor ISO, which
+  has never derived this artifact. A PJM session takes the fixed gate
+  automatically.
+- **CT_CHP's coverage in CAISO is thin and adversely selected** (35.4 % of
+  metered energy, covered plants systematically *less* steam-credited). The
+  class is 0.7 % of generation so it does not matter for the determination, but
+  it is not a clean identification and a future CAISO session should not treat
+  it as one.
+- **CC_CHP is a `pinned` class in the C1 free-class score** (`excluded_from_free`
+  alongside ST_CHP), so its 117 → 108 % improvement does **not** show up in the
+  free-class headline (8/8 both arms). The gain is real and is in the `all`
+  12/12 count; it is simply invisible to that particular summary statistic.
