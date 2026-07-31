@@ -3349,3 +3349,145 @@ Evidence: `results/calibration/FINDING-nyiso106-solar-benchmark-vintage-2026-07-
 `results/calibration/_nyiso106_solar_benchmark_audit.json`.
 
 Next shorthand: nyiso-107.
+
+## nyiso-107 — the hydro miss is an INPUT truncation, not hydrology; `hydro_budget_nameplate_aware` provably inert; matrix keeper-stamp guard extended (2026-07-31)
+
+**Keeper UNCHANGED: `2026-07-31-nyiso105-chp-heat-rates`** (CALIBRATED-WITH-CAVEATS,
+0 FAILs, 1 ledgered caveat C3c — no slot spent). Measurement HEAD `3bfca72`,
+rebased onto `b2192ef` before push; `data/hydro.py`, `config/constants.py`,
+`run_calibration_full.py` and the NYISO keeper shard are all byte-unchanged
+across that range, so no measured number moves. (`keepers/NEISO.json` did move —
+neiso-71 promoted `2026-07-31-neiso-71-nucavail` and re-stamped its own header
+correctly, so the new guard sees no additional drift.)
+**Zero solves.** Scope Item B closed on measurement alone — the
+nyiso-93/94/95/97/99/101/105/106 pattern. No pre-registration was needed because
+no arm was solved. Probe: `scripts/probes/_nyiso107_hydro_basis_audit.py`;
+evidence `results/calibration/_nyiso107_hydro_basis_audit.json`; finding
+`results/calibration/FINDING-nyiso107-hydro-input-truncation-2026-07-31.md`.
+
+The pending nyiso-106 header commit needed no action: `988dd47` had already
+merged as PR #3222, so the NYISO stamp was correct on arrival. The ERCOT and
+CAISO drifts were confirmed still open and **deliberately left to their lanes**.
+
+### 1. Item B — the scoped question is answered, and its kill condition is NOT met
+
+Item B's instruction was to put all three years on one basis and report what
+survives, with "if little does, the lever is dead ex-ante". **The miss survives
+every consistent benchmark basis:**
+
+| benchmark basis | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| as scored (mixed 923/923/930) | +1.26 % | +1.33 % | **-12.68 %** |
+| all EIA-930 | +5.76 % | +3.93 % | **-12.68 %** |
+| all EIA-923, carry-corrected | +1.26 % | +1.33 % | **-13.41 %** |
+
+The basis switch is real and reproduced exactly (2025 vintage completeness
+0.8850, 923/930 ratio 0.8529 < the 0.90 threshold, so only 2025 takes the swap).
+But it is **not** the cause, because the benchmark is the **repaired** side.
+
+### 2. The real defect: fed the truncated vintage, scored against the repaired one
+
+The keeper carries `hydro_backfill_year=None` and `hydro_eia930_monthly=False`,
+so **nothing repairs the input**:
+
+| year | EIA-923 `HY` plants | LP units | **LP budget TWh** | max MW | model dispatch |
+|---|---|---|---|---|---|
+| 2023 | 157 | 154 | 28.4033 | 4,647.5 | 28.3833 |
+| 2024 | 150 | 147 | 27.8750 | 4,587.1 | 27.8294 |
+| **2025** | **4** | **3** | **21.0482** | 3,343.0 | **21.0482** |
+
+The 2025 LP hydro fleet is **3 units** — 2.0 % plant retention — and the model
+spends its budget **exactly** (21.0482 = 21.0482, 4 dp). So the scored -12.68 %
+is arithmetically the truncation itself, `21.0482/24.1039 - 1`, with no dispatch
+behaviour in it. Same one-sided-repair family as nyiso-106's solar and `OTHER`
+findings, **inverted**: there the model was injected at the carried-forward level
+and scored against the raw vintage; here it is fed the raw vintage and scored
+against the repaired level.
+
+**The benchmark is independently falsified as CORRECT.** NYISO MIS **P-63
+publishes `Hydro` as its own category** — unlike solar, which forced nyiso-106
+into a night-baseline/daylight-bulge decomposition — giving a direct
+EIA-independent instrument: **27.1845 / 26.9763 / 24.2489 TWh**, agreeing with
+EIA-930 to **+1.30 / +0.74 / +0.60 %** in every year. **NY hydro genuinely fell
+~10 % in 2025**; the wrong number is the EIA-923 raw **20.5582**, 15 % below both
+instruments.
+
+### 3. The lever: `hydro_budget_nameplate_aware` NYISO `U -> I`, provably inert
+
+**Structurally** — `load_hydro_budget:724` encloses the entire nameplate-aware
+allocator in `if monthly_target_mwh is not None`, and `build_hydro_fleet:1084`
+leaves `target=None` unless `eia930_monthly`/`forecast_budget`; both are `False`
+on the keeper, so the flag is **never read** (its own docstring: *"Ignored when
+`monthly_target_mwh` is `None`"*). **Empirically** — the hydro fleet built at the
+keeper's exact settings is **BIT-IDENTICAL off vs on in all three years** (energy
+sha `939797e1d578cee7` / `0e15d6a2cde4e79d` / `860247dfee9bd600`). Arming the flag
+alone would have solved a bit-identical control.
+
+Third ISO to reach `I` for the same structural reason after MISO (miso-109) and
+PJM (pjm-143): **any ISO with no level target gets `I` by construction.** And it
+stays trivial even after its prerequisite — under `--hydro-backfill-year 2024` the
+allocator re-allocates 3,683.8 MWh over 10 clipped plant-months, **0.015 %** of a
+24.06 TWh budget, annual total unchanged. The nyiso-105 item-6 lesson repeats:
+**the arm is the pair, not the flag.**
+
+### 4. NEW cross-ISO fact — NYISO is the sole material-hydro ISO running unrepaired
+
+Every ISO's 2025 EIA-923 hydro vintage is truncated (2025 LP-unit retention:
+ERCOT 8.3 / CAISO 16.2 / PJM 13.9 / MISO 8.8 / **NYISO 2.0** / NEISO 3.0 %), but
+**four of six keepers arm the repair** — CAISO/PJM/MISO/NEISO all carry
+`--hydro-backfill-year 2024` (PJM and MISO have the 930 pin internally refused for
+the PS fold) — **and NYISO does not**. The only other holdout is ERCOT, whose
+hydro is 0.017-0.463 TWh/yr and immaterial. **NYISO is the sole ISO running a
+material hydro class (26.5 TWh/yr, ~18 % of generation) on an unrepaired truncated
+input.**
+
+Chartered, **not armed** (owner decision in-session). Two things a successor must
+pre-register: the pair moves **all three years** (-1.5668 / -1.1287 / +3.0143 TWh,
+since the flag is passed verbatim to every year), and a 930 level pin makes the
+hydro **volume** statistic near-tautological (-0.17 % by construction once budget
+and benchmark are the same series) — admissible under rule 13 as an inflow budget
+that regenerates forward via `forecast_monthly_hydro`, but it must be **declared,
+not banked as an improvement**; dispatch **shape** stays the free output. The
+PJM/MISO posture (backfill without the pin) is a third option: 147 plants, input
+and units on the same 923 `HY` population, at a +7.9 % 2025 overshoot.
+
+Re-confirmed independently while there: NYISO's absence from
+`EIA930_PS_FOLDED_INTO_WAT` is correct — `NG: WAT`/923-`HY` = **0.9448 / 0.9606**
+(*below* 923 HY, opposite the MISO/PJM fold signature) and NYIS `PS` is net
+**negative** (-0.372 / -0.410 / -0.490 TWh), so pumping is netted, not folded in
+gross. The 2025 ratio inverts to 1.1452 purely by truncation — the
+`hydro_level_923_hy` trap, re-verified and still not quotable.
+
+### 5. Item A — put to the owner and DEFERRED
+
+The cross-ISO `OTHER` basis asymmetry (matrix §5.5 item 11b) is fully measured
+and one line in shape, but moves **three** ISOs' 2025 benchmark (CAISO +0.4173,
+NYISO +0.1996, NEISO +0.1618 TWh). The owner declined the cross-ISO scope from a
+NYISO lane; it stays chartered for a session that owns re-scoring CAISO and
+NEISO. NYISO's `OTHER` 2025 +11.4 % remains barred from sizing or judging a
+mechanism.
+
+### 6. Found in passing and FIXED — the matrix keeper-stamp guard was blind
+
+Rule 28 requires the promoting session to re-stamp `MECH_MATRIX.keepers[ISO]`,
+but `check_mechanism_matrix.py` never compared that header against
+`frontend/data/backcast/keepers/<ISO>.json`. **Three ISOs had drifted at once and
+all three passed CI.** The guard now compares them, with a deliberate split:
+pre-existing drift **WARNS** (it belongs to the owning ISO's lane — verified
+`--base origin/main` reports ERCOT and CAISO and exits **0**, so main stays green),
+while a PR that itself moves a keeper shard without re-stamping **FAILS** —
+verified end-to-end on a throwaway commit touching `keepers/ERCOT.json`: ERCOT
+escalated to `::error`, CAISO stayed `::warning`, exit **1**. 6 tests added
+(`tests/unit/config/test_mechanism_matrix_keeper_stamp.py`), guard stays
+stdlib-only.
+
+### 7. What did NOT change
+
+No mechanism armed; no `ScenarioConfig` field added (rule 28 duty (c) does not
+bite); no keeper changed; no caveat slot spent; **zero fitted parameters**. C3c
+untouched — not targeted, not claimed, not moved; the closed C3c queue stays
+closed and the nyiso-104b frontier declaration stands. No run registered on the
+dashboard, because no bundle was produced. The ERCOT and CAISO keeper-stamp
+drifts were left open on purpose.
+
+Next shorthand: nyiso-108.
