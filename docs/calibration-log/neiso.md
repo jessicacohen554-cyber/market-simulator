@@ -870,3 +870,63 @@ CC_CHP capacity basis (Kendall Square ~90 MW) — the PRIMARY, untouched here.
 their own charter; item 5 still pending owner decision.
 
 Next shorthand: **neiso-73.**
+
+---
+
+## neiso-73 — 2026-07-31 — Kendall Square capacity basis ADJUDICATED: artifact, no missing capacity; NO LP spent
+
+**Lever:** handoff Lever A (PRIMARY) — the neiso-71 §1 fleet/nameplate
+successor. Keeper `2026-07-31-neiso-72-hy-window` **untouched**; no solve, no
+bundle, no registration.
+
+**The question:** is the ~90 MW gap between CAMPD facility-1595 unit "4"
+gross load (278/299/283 MW median, max 321) and the EIA-860 CC_CHP basis
+(213.4 nameplate / 206.0 summer = model pmax) an EIA-860 understatement or an
+attribution artifact?
+
+**Verdict — ARTIFACT** (`scripts/probes/_neiso73_kendall_capacity_screen.py`;
+`results/calibration/FINDING-neiso73-kendall-capacity-basis-2026-07-31.md`).
+CAMPD `grossLoad` on this CHP unit is not gross electrical MW. Five
+independent blocks: (E1) max gross 317–323 MW every year 2018–2025 exceeds
+the **294.9 MW summed nameplate of every generator ever installed** at 1595
+(incl. the retired 1949/1951 steam gens); (E2) implied gross HR
+6.36–6.59 mmBtu/MWh (53–54 % HHV) is thermodynamically impossible for a
+2002 7FA + 1958 ST, while the 923-net basis reads 9.31–10.07 — right for the
+vintage; (E3) 923-net/CAMPD-gross flat at 0.654–0.687 across 96 months × 8
+years spanning the 2018 unit-1/2 retirement — a fixed basis transformation,
+not station use; (E4) monthly 923 net saturates the 860 winter rating
+(209.3 vs 210.3 MW, Dec-2023, 99.5 %); (E5) EIA-860 vintages 2019–2024
+identical, no uprate ever filed. Closure: mean gross/net 1.483 ≈ neiso-71's
+saturated `steam_level_cf` 1.461 — the statistic was measuring the basis
+ratio, not a steam obligation. neiso-71's "broken denominator (nameplate)"
+diagnosis corrects to "contaminated numerator (CAMPD gross)". **The EIA-860
+basis is correct — no model change; running the chartered A/B (raising pmax)
+would have injected capacity two EIA sources refute** (rule 14 in reverse).
+The miso-95 `nameplate_mw` orphan is narrowed for this plant, not reopened;
+no tranche re-derivation touched.
+
+**Floor-lane consequence (successor, own prereg required):** the neiso-71
+DO-NOT-REDO is discharged. Kendall measures a genuine flat steam host on the
+NET basis (loading-when-on 184.1/197.4/186.5 MW = 89.4/95.8/90.5 % of pmax,
+on-frequency 94.5/91.3/94.0 %) — neiso-71's "no obligation" claim now stands
+only for the non-Kendall cogens. Any identification touching 1595 must
+de-base or avoid the CAMPD gross channel (contaminates both `steam_level_cf`
+and heat rates, ~32 % low); the over-closing hazard (~1.6–1.7 TWh floor
+effect vs 0.34–0.68 TWh shortfall) must be declared pre-solve.
+
+**Governance.** Zero parameters; no `ScenarioConfig` field (no matrix row
+owed). Matrix: `measured_chp_heat_rates` NEISO cell stays `O` — note + ev
+updated, NEISO header re-checked (stale `gates` keeper text refreshed to
+neiso-72), §5.6 item 6 stamped. Probe read 2018–2022 raw files no-LP
+(rule 22 posture); locked test SPENT, untouched. Levers B (PS cycling
+depth) and C (930-hourly 2022 extract rebuild) not taken — both queued.
+
+**Open / next.** (1) **Storage-side PS cycling depth** (measured 1.932 vs
+endogenous 0.497 TWh, 2025) — dispatch-adder/AS-value lane, never a hydro
+patch. (2) **CC_CHP host-steam floor, NET-basis identification** — now
+unblocked, own prereg with the over-closing hazard stated. (3) Lever C:
+rebuild `data/raw/eia-930-hourly/{MISO,CISO}` 2022 extracts (session-logged
+owner OK). (4) §5.6 items 1/2 still need their own charter; item 5 pending
+owner decision. (5) Bench hydro 2024 re-base (scorer-side, flag to owner).
+
+Next shorthand: **neiso-74.**
