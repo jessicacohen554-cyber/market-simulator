@@ -39,8 +39,10 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO))
 
 from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
+from scripts.lib import holdout_policy  # noqa: E402
 
 SRC_DIR = CALIBRATION_DIR
 OUT = REPO / "frontend" / "data" / "backcast" / "tail" / "actual_tail.json"
@@ -57,47 +59,72 @@ TAIL_THRESHOLD = {
     "NEISO": 300.0,
 }
 
-# Rule-22 holdout quarantine: 2022 and H1-2026 are untouchable until an ISO's
-# calibration-complete marker exists; this deriver never emits a holdout year
-# for an ISO without its marker in calibration-complete.json. In-sample years
-# are always allowed; a marker'd ISO additionally emits the holdout years its
-# one-shot validation scores (the marker is the authorization — CLAUDE.md
-# rule 22; first use: NEISO 2022, declared 2026-07-07).
-ALLOWED_YEARS = (2023, 2024, 2025)
-HOLDOUT_YEARS = (2022, 2026)
+# Rule-22 holdout quarantine, TIER-AWARE (owner decision 2026-07-31). An
+# out-of-training year is emitted only when the ISO carries the marker for
+# THAT YEAR'S TIER: ``complete`` authorizes the validation ladder
+# (2018/2020/2021/2022), ``final`` authorizes the locked test (2019, H1-2026).
+# The tier map is :mod:`scripts.lib.holdout_policy` — the same module the
+# other three gates read (run_calibration_full.enforce_holdout_year_gate,
+# legitimacy_diagnostics.run_d6_quarantine, audit_keepers) — so a new ladder
+# rung is one edit there, not a second constant here, and an unenumerated year
+# fails closed to the locked tier.
+#
+# Previously this deriver read the ``complete`` block alone, so an ISO holding
+# only the validation marker (PJM/NYISO today) would have had its H1-2026
+# locked-tier row emitted off a declaration that does not authorize it.
+ALLOWED_YEARS = tuple(sorted(holdout_policy.CALIBRATION_YEARS))
+
+# Out-of-training years this deriver will CONSIDER at all. Deliberately NOT
+# the full ``holdout_policy.VALIDATION_YEARS`` ladder: rule 22 makes the
+# backward rungs (2018/2020/2021) staged owner decisions taken one at a time,
+# and no ISO has been granted one — PJM's own marker reads "validation ONLY
+# (2022)". Widening this tuple is that separate owner decision; the tier gate
+# below then still requires the right marker block for whatever is added.
+CONSIDERED_HOLDOUT_YEARS: tuple[int, ...] = (2022, 2026)
+
 _MARKER_PATH = (
-    Path(__file__).resolve().parent.parent.parent
-    / "frontend"
-    / "data"
-    / "backcast"
-    / "calibration-complete.json"
+    Path(__file__).resolve().parent.parent.parent / holdout_policy.MARKER_FILE
 )
 
 
-def _marker_isos() -> set[str]:
-    """ISOs with a calibration-complete marker (holdout years unlocked)."""
+def _marker_doc() -> dict:
+    """Parsed ``calibration-complete.json``; ``{}`` when absent/unreadable.
+
+    An empty document authorizes nothing out-of-training — fail closed.
+    """
     try:
-        data = json.loads(_MARKER_PATH.read_text())
+        return json.loads(_MARKER_PATH.read_text())
     except (OSError, ValueError):
-        return set()
-    return {str(k).upper() for k in (data.get("complete") or {})}
+        return {}
+
+
+def _year_emittable(iso: str, year: int, marker_doc: dict) -> bool:
+    """Whether ``iso``'s ``year`` may be emitted under the rule-22 tier gates.
+
+    Two conditions, both required for an out-of-training year: it is one this
+    deriver considers at all (:data:`CONSIDERED_HOLDOUT_YEARS`), and the ISO
+    holds the marker block for that year's tier.
+    """
+    tier = holdout_policy.tier_for_year(year)
+    if tier == holdout_policy.TIER_TRAIN:
+        return True
+    if int(year) not in CONSIDERED_HOLDOUT_YEARS:
+        return False
+    return holdout_policy.authorized(marker_doc, iso.upper(), tier)
 
 
 def derive() -> dict:
     """Compute the per-(ISO, year) DA/RT tail counts from the hub series."""
     isos: dict[str, dict] = {}
-    marker_isos = _marker_isos()
+    marker_doc = _marker_doc()
     for iso, thr in sorted(TAIL_THRESHOLD.items()):
         p = SRC_DIR / f"actual_lmp_hourly_{iso}.parquet"
         if not p.exists():
             continue
         df = pd.read_parquet(p)
         for year, d in df.groupby(df["year"].astype(int)):
-            year_ok = int(year) in ALLOWED_YEARS or (
-                int(year) in HOLDOUT_YEARS and iso.upper() in marker_isos
-            )
-            if not year_ok:
-                continue  # holdout guard — marker-gated (rule 22)
+            if not _year_emittable(iso, int(year), marker_doc):
+                continue  # holdout guard — per-tier marker (rule 22)
             rt = d["rt"].to_numpy(float)
             da = (
                 d["da"].to_numpy(float)
@@ -125,8 +152,11 @@ def derive() -> dict:
             "data/raw/_validation-source/actual_lmp_hourly_<ISO>.parquet (hub "
             "series). Regenerate with scripts/data/derive_actual_tail.py when a "
             "source series updates (rule 23: re-derivation commits cite the "
-            "data change). Years restricted to 2023-2025 (rule-22 holdout "
-            "quarantine)."
+            "data change). Years restricted by the rule-22 TIER gates "
+            "(scripts/lib/holdout_policy): 2023-2025 always; a validation-"
+            "ladder year (2018/2020/2021/2022) only for an ISO in the marker "
+            "file's `complete` block; a locked-test year (2019, H1-2026) only "
+            "for an ISO in `final`."
         ),
         "thresholds": TAIL_THRESHOLD,
         "isos": isos,
