@@ -278,6 +278,41 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
                     "physical anchoring of floor/ceil, plus " + _HOLDOUT_ROOT_CAUSE,
                 )
             )
+    if sc.get("coal_perplant_offer_level"):
+        # ERCOT-144: the per-plant measured coal offer curves — the rule-19
+        # REPLACEMENT of the COAL_* band multipliers + supply sigmoids on the
+        # CAMPD committed/econ rows. The armed harness strips the COAL_*
+        # groups from offer_curve_by_group and disarms the sigmoids, so the
+        # residual entries those config keys generated drop out of this
+        # ledger by construction; this measured-physical row is their
+        # replacement (rule 21 — every retired entry replaced by a measured
+        # one, never a re-tuned one).
+        out.append(
+            _entry(
+                "coal_perplant_offer_curves (per-plant measured TPO curves)",
+                "constants.COAL_PERPLANT_OFFER_CURVE_BY_ISO via "
+                "run_config.scenario_config.coal_perplant_offer_curves; "
+                "applied in fleet.legacy_bins.apply_coal_tranches",
+                "measured-physical",
+                iso,
+                n_scalars=0,
+                source="each plant's merged modal 60-Day SCED Submitted TPO "
+                "supply curve, pooled over the four 2024-2025 disclosure "
+                "subsets — verbatim submitted conduct, zero fitted "
+                "parameters (frozen scripts/data/derive_coal_perplant_offer.py; "
+                "provenance data/raw/_processed-legacy/"
+                "coal_perplant_offer_curves_ERCOT.json; ERCOT-144, chartered "
+                "by ERCOT-143 §2's per-plant measurement)",
+                root_cause="re-derive trigger is a new SCED disclosure "
+                "subset only (rule 23), never a residual; representation "
+                "bounds declared in the ERCOT-144 precommit: the 2023 "
+                "application is an extrapolation (no 2023 SCED exists), "
+                "levels are fuel-invariant by measurement (mid-band only — "
+                "_mustrun/_peak keep their measured fuel/gas responses), and "
+                "within-tranche measured dispersion is capacity-weight "
+                "averaged at the CAMPD tranche grain",
+            )
+        )
     if sc.get("wefor_multiplier") not in (None, 1.0):
         out.append(
             _entry(
@@ -359,7 +394,17 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
     # a false positive for those ISOs, since their plant codes never matched
     # the deleted dict's four ERCOT-specific keys). No replacement entry
     # needed: no residual scalar remains.
-    if iso == "ERCOT":
+    # coal_take_or_pay_tranches: the ScenarioConfig.coal_tranche_{1,2,3}_*
+    # values are consumed ONLY by the legacy (non-CAMPD)
+    # offer_curves.split_coal_tranches path — under use_campd_bins (the ERCOT
+    # keeper default since the per-plant binning promotion) every coal row is
+    # a CAMPD tranche priced by campd_tranche_fuel_frac and the fields never
+    # touch the solve. Verified at ERCOT-144 (the armed-capture spy shows
+    # only CAMPD suffixes in all three years; the sole consumer is
+    # offer_curves.py:72). Enumerating them for a CAMPD config was the same
+    # false-positive pattern the C-12 closure note above records — so the
+    # entry is scoped to configs that actually run the legacy path.
+    if iso == "ERCOT" and not sc.get("use_campd_bins"):
         out.append(
             _entry(
                 "coal_take_or_pay_tranches",
@@ -378,6 +423,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 + _ISSUE_C8_CORE_STEPS,
             )
         )
+    if iso == "ERCOT":
         out.append(
             _entry(
                 "CHP_BTM_PCT_BY_SECTOR['merchant']",
