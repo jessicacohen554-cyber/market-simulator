@@ -111,3 +111,30 @@ more of 2026 posts):
   week to week; this is a point-in-time observation, not a hard boundary).
   `asm_rt_cleared_mw_2026.parquet` will therefore cover materially fewer
   months than the two MCP files for the same year — expected, not a bug.
+
+## 2018-2021 CONFIRMED ungettable (2026-07-31) — the spot-check is discharged
+
+The section above left 2018-2021 as a **spot-check** pending the
+`holdout-intake-miso-as.yml` CI run. That run never happened, and CI is now
+banned for this class of work (CLAUDE.md "GitHub Actions — never offload work
+to CI"). The 2026-07-31 MISO holdout-intake session ran the full sweep
+**in-session** instead:
+
+    python scripts/data/fetch_miso_asm.py --years 2018 2019 2020 2021 2022 --workers 8
+
+**5,481 requests** — every day of every year against all three report endpoints
+(`asm_exante_damcp`, `asm_rtmcp_final`, `asm_rt_co`) — returned **0 published
+days in every year**, the same rolling Azure retention purge already settled for
+2022. No file was written for any of them (the zero-row guard), so no misleading
+artifact exists. **Treat 2018-2022 as closed: do not re-attempt.** The only
+remaining route is the manual MISO Help Center / ITOC request already documented
+above.
+
+**H1-2026 refresh.** The MCP files were already dense through H1 (damcp 191 days
+to Jul 10, rtmcp 186 to Jul 5, zero missing H1 days). `asm_rt_cleared_mw_2026`
+was **extended Apr 10 → May 2** (+4,884 rows, 22,197 → 27,081): the ~3-month
+`asm_rt_co` publish lag had moved forward since the 2026-07-10 fetch, and
+2026-05-03 onward still 404s. Landed with `--merge-missing-days --through
+2026-06-30`, a new mode that fetches only the days a year file does not already
+carry and appends them — every staged row stayed byte-identical, and the
+`--through` bound keeps the staging inside the authorized H1 window.

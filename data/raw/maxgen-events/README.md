@@ -7,7 +7,23 @@ instruments** — the M-1 datatype of the MISO price-formation lane
 pre-2026 ladder is Capacity Advisory → Maximum Generation Alert → Maximum
 Generation Warning → Maximum Generation Event Steps 1–5 (2023 MISO SOM p.10
 enumerates each level's pricing/capacity effects; MISO's 3-step simplification
-takes effect 2026-06-01, KA-01551, outside this registry's 2023–2025 window).
+takes effect 2026-06-01, KA-01551, outside this registry's window).
+
+**Registry window: 2021–2025 for MISO.** The training years are 2023–2025; the
+2021 (Winter Storm Uri) and 2022 (Winter Storm Elliott) rows landed 2026-07-31
+under the rule-22 holdout DATA-INTAKE channel (owner-authorized, logged in
+`frontend/data/backcast/calibration-complete.json` `intake_log`). Landing the
+data is not spending the year: MISO holds no tier marker, so solving or scoring
+2021/2022 stays blocked by the CLI year gate and the CI quarantine-gates job.
+2018–2020 remain MISSING — the MISO SOM report bodies for those years are not at
+Potomac Economics' predictable upload URLs (the files that resolve there are
+ERCOT's SOM reports); the OASIS `Capacity_Emergency_Historical_Information.pdf`
+route below is the fix. Two adjudicated open items in the landed years: the 2021
+SOM cites *"several Hot Weather Alerts, Capacity Advisories, Conservative
+Operations, and Maximum Generation Alerts"* in summer 2021 without dating them,
+and the 2021-02-16 South declaration is given only as "EEA3" — a NERC alert
+level, outside the schema's closed ladder vocabulary, so it is recorded in the
+2021-02-15 row's `notes` rather than mapped to a Max Gen step by inference.
 
 Each ISO's rows live in `<iso>/<iso>.csv` in the canonical schema
 (`data/dictionary/schema/maxgen-events.schema.yaml`), with window endpoints in
