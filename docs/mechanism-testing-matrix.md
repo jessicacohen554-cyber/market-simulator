@@ -1185,8 +1185,40 @@ condition.
    dicts. A gas-CC scope extension is the only path to a binding window here
    and needs its own charter (layup confound).
    `docs/FINDING-nyiso93-unit-availability-windows-inert-2026-07-28.md`.
-6. **`st_gas_mustrun_p25_level`** — re-ground the in-city ST_GAS persistent
-   bases on measured levels (D-2 ST_GAS 31% forced in 2024).
+6. ~~**`st_gas_mustrun_p25_level`** — re-ground the in-city ST_GAS persistent
+   bases on measured levels (D-2 ST_GAS 31% forced in 2024).~~ **CLOSED
+   2026-07-31 (nyiso-105): INERT ex-ante, no solve, cell `U → I`.** Four
+   independent measured blockers, any one decisive. (a) The **single flag is a
+   no-op by construction** — `arrays.py:1750-1753` gates the p25 block on
+   `st_gas_mustrun_p25_level` **and** `st_gas_mustrun_per_plant`, and the keeper
+   carries the latter `False`, so the queue's own suggested arm would have
+   solved a bit-identical control. **The arm is the pair, not the flag.** (b) The
+   **pair is a no-op on today's artifact**: `thermal_tranche_online_frac("NYISO")`
+   returns **0 rows** because `thermal_tranches_NYISO.csv` has **no `online_frac`
+   column**, so 0 of 11 ST_GAS plants clear the runtime's `level>0 AND frac>0`
+   gate — the *level* is there (11 p25 rows), the *window* is not. Census: MISO
+   16/16 populated, CAISO 0/3, PJM 0/10, NYISO and NEISO no column. (c) Making it
+   fire is a **fleet-wide re-basing, not a mechanism arm** — re-deriving at HEAD
+   adds the column but also moves `p25_cf` on 32/78 rows (max 83.6 pts),
+   `committed_pct` 36/78 (max 27.2), `median_cf` 37/78, `online_hours` 46/78,
+   `peaking_pct` 8/78, i.e. the tranche shares the whole NYISO offer curve is
+   built from; it needs its own rule-23 charter and control arm. It also emits
+   **`p25_cf > 100 %`** on two ST_GAS plants (S A Carlson 142.2, Astoria 101.7)
+   against a `thermal_tranche_p25_level` accessor with **no upper clamp**
+   (`committed_pct`/`mustrun_pct` *are* capped at 0.70/0.60) — **a clamp is a
+   prerequisite** for any future refresh. (d) **The premise was wrong here.**
+   "measured levels instead of fitted fractions" describes MISO's incumbent
+   (`committed_pct` = P5-of-online LSL); NYISO's surviving NYC/LI limbs are
+   **already** measured p25 — *"persistent 24h base: base_24h (when-available
+   cool-day CF p25)"*, floor_pct 0.1750 / 0.2620. And rule 19 `[R-ONE-MECH]`
+   independently forbids the stack: ST_GAS already carries `reliability_floor`
+   (24.2/27.8/19.4 % of class) **plus** `nyiso_gas_commitment_bridge`
+   (1.8/2.8/2.5 %), with D-2 already recording 2024 ST_GAS **30.6 % > 30 %**; the
+   compliant replacement path is `nyiso_incity_commitment_obligation`
+   (`iso_configs._INCITY_OBLIGATION_OWNED_LIMBS`), a different mechanism under a
+   different charter. Successor is the chartered artifact refresh, **not** a
+   lever-queue entry.
+   `results/calibration/FINDING-nyiso105-stgas-inert-seam-live-2026-07-31.md` §A.
 
 Dispatch-matching lane (hourly r, opened by the nyiso-92 charter; the hydro
 capability envelope/floor pair is now the keeper — cells K above):
@@ -1304,9 +1336,32 @@ capability envelope/floor pair is now the keeper — cells K above):
    which needs its own owner charter (ERCOT West/Panhandle class, CLOSED) — not
    a lever-queue entry, and never as a mechanism flag.
    Evidence: `docs/FINDING-nyiso101-gj-locality-boundary-2026-07-30.md`.
-10. **Keeper-lineage cleanup:** drop `dual_fuel_oil_reattribution` from the
+10. ~~**Keeper-lineage cleanup:** drop `dual_fuel_oil_reattribution` from the
     NYISO recipe metas (CLI already pins it NEISO-only; zero dispatch delta,
-    removes a known recording-basis artifact from the sidecars).
+    removes a known recording-basis artifact from the sidecars).~~ **STRUCK AS
+    WRITTEN 2026-07-31 (nyiso-105) and RE-OPENED as a *scored* cleanup.** The
+    entry is half right, and the half it gets wrong is the half that mattered.
+    **The CLI pin does not make it inert here:** the CLI channel really does read
+    `None` (`run_calibration_full.py:10704`), but the keeper lineage carries the
+    flag through the generic `prb_overrides` dict, so the solved
+    `scenario_config.dual_fuel_oil_reattribution` is **`true`**. **The dispatch
+    delta IS zero, now proved rather than asserted** — two lines: structurally,
+    `dual_fuel_oil_mask` has exactly two consumers, `build_winter_fuel_budget`
+    (gated on `neiso_winter_fuel_inventory`, `False` on this keeper) and
+    `_dispatch_frame(oil_switch_mask=…)`, which only does
+    `klass_col[flat] = "oil"` *after* the solve; and empirically, every LP input
+    (`mc_base`, `fuel_prices`, `pmax`, `pmin`, `heat_rate`, `availability`,
+    `min_gen`, `demand`) is **byte-identical** with the flag flipped in all three
+    years. **But the RECORDING-BASIS delta is not zero and is material:** the
+    relabel moves **0.1119 / 0.3511 / 1.1508 TWh** (53 / 155 / 715 h) into a
+    recorded `oil` class — 1.6139 TWh over three years, the same order as an
+    entire scored class (`CT_PEAKER` = 0.341 / 0.257 / 1.067 TWh) — and C1/C7 are
+    scored from exactly those sidecars. Dropping it is still correct under rule
+    14 (nyiso-99 showed the basis is wrong for NYISO: Jan-2025 parity switching
+    relabels 0.80 TWh against a measured `NYIS` `NG: OIL` of 0.031 TWh), but it
+    is **dispatch-neutral and scoring-basis-changing**, so it must ride a re-solve
+    with its own control and be scored — not silently edited into the metas.
+    `results/calibration/FINDING-nyiso105-stgas-inert-seam-live-2026-07-31.md` §C.
 
 ### 5.6 NEISO — target: C3c (ledgered; FRONTIER DECLARED — charter required first)
 
