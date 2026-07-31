@@ -217,10 +217,12 @@ def _thermal_mw(fleet_by_fuel: dict[str, float]) -> float:
     return sum(mw for f, mw in fleet_by_fuel.items() if f in THERMAL_FUELS)
 
 
-def _sum_by_fuel(records: list[dict], key: str = "fuel") -> dict[str, float]:
+def _sum_by_fuel(
+    records: list[dict], key: str = "fuel", mw_key: str = "mw"
+) -> dict[str, float]:
     out: dict[str, float] = {}
     for r in records:
-        out[r[key]] = out.get(r[key], 0.0) + float(r.get("mw", 0.0))
+        out[r[key]] = out.get(r[key], 0.0) + float(r.get(mw_key, 0.0))
     return out
 
 
@@ -316,7 +318,15 @@ def check_i3_unserved_dump(run: Run) -> Result:
 
 
 def check_i4_capacity_accounting(run: Run) -> Result:
-    """I4: fleet(after) = fleet(before) − retirements + builds, per fuel."""
+    """I4: fleet(after) = fleet(before) − retirements − confirmed_derates + builds.
+
+    Per fuel. ``confirmed_derates`` (FFR-1A / FR-1) are confirmed-registry rows
+    that shrink a surviving plant-binned tranche in place — MW that leaves the
+    fleet without a ``retirements`` row. Ledgers written before the FFR-1A
+    recorder carry no such key; ``led.get`` keeps them scoreable (their derated
+    MW is then genuinely unexplained, which is exactly the A1 leak this
+    invariant exists to catch).
+    """
     problems: list[str] = []
     for year, led in run.ledgers.items():
         before = led.get("fleet_by_fuel_before", {})
@@ -324,9 +334,12 @@ def check_i4_capacity_accounting(run: Run) -> Result:
         if not before and not after:
             continue
         retired = _sum_by_fuel(led.get("retirements", []))
+        derated = _sum_by_fuel(led.get("confirmed_derates", []), mw_key="derate_mw")
         added = _sum_by_fuel(led.get("thermal_additions", []))
         expected = dict(before)
         for f, mw in retired.items():
+            expected[f] = expected.get(f, 0.0) - mw
+        for f, mw in derated.items():
             expected[f] = expected.get(f, 0.0) - mw
         for f, mw in added.items():
             expected[f] = expected.get(f, 0.0) + mw
