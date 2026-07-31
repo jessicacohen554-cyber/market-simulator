@@ -1564,9 +1564,9 @@ capability envelope/floor pair is now the keeper — cells K above):
     retention 0.667, and C1-SKIPPED.)
     `results/calibration/FINDING-nyiso106-solar-benchmark-vintage-2026-07-31.md` §E.
 
-### 5.6 NEISO — target: C3c (ledgered; FRONTIER DECLARED — charter required first)
+### 5.6 NEISO — target: C3c (ledgered; FRONTIER DECLARED — charter required first); ~~item 6~~ CLOSED and ~~item 7~~ EXECUTED-with-keeper at neiso-71
 
-Keeper `2026-07-31-neiso-70-ctheatrate` (neiso-70).
+Keeper `2026-07-31-neiso-71-nucavail` (neiso-71).
 
 Frontier discipline: every named admissible mechanism in the winter/summer
 scarcity family is already on record. Anything below needs its **own new
@@ -1591,26 +1591,49 @@ charter with a new measured identification** before a solve:
    treatment, not a switch. Its own lane.
 5. **STEP 3 seam disposition** (owner decision pending): carry the
    layup-vs-outage seam explicitly (recommendation (b) on record).
-6. **NEW — `measured_chp_heat_rates` companion floor (the neiso-71
-   successor).** neiso-70 tested the CHP re-price off the same control and
-   stamped it **`O` (open)**, flag default-off: it is live (204.6 MW) and
-   accurate (CEMS 4/4 within 1 %), passes every gate with zero criterion
-   regressions, but **overshoots** — CC_CHP crosses from over- to
-   under-generating in all three years. Root cause located: **NEISO's CC_CHP
-   carries no `chp_steam` D-2 row at all** (CT_CHP has one; CAISO's CC_CHP
-   runs 43–47 %), so nothing holds those cogens to their host-steam
-   obligation when the offer gets dearer — CC_CHP `cv_ratio` explodes
-   2.8 → 7.0 / 6.5 → 10.2 / 2.2 → 11.2 while `profile_r` holds. Derive a
-   measured NEISO CC_CHP host-steam floor and **land the two together**; an
-   accurate offer and its obligation floor are one mechanism (rule 19
-   `[R-ONE-MECH]`). Not `R` — rule 14 forbids reverting an accurate input
-   because the estimate fits better.
-7. **NEW — `nuclear_unit_availability` crosswalk (also neiso-71-class).**
-   A genuine candidate (NEISO cell `U`), but
-   `scripts/data/derive_nuclear_availability.py`'s `NRC_TO_EIA` covers
-   **PJM (31 units), NYISO (4) and CAISO (2)** only. NEISO needs measured
-   NRC-name → (EIA plant, unit) rows for **Millstone 2/3 + Seabrook** added
-   first; file it as the follow-on rather than rushing it.
+6. ~~**`measured_chp_heat_rates` companion floor (the neiso-71 successor).**~~
+    **CLOSED at neiso-71 (2026-07-31) with NO LP spent — the cell stays `O`,
+    and NO CC_CHP floor should be built.** Screened by
+    `scripts/probes/_neiso71_lever_screen.py`. Three findings, in order:
+    (a) the floor this item asked for **already exists** as the committed WP-3
+    statistic `steam_level_cf` (`derive_thermal_tranches.py` →
+    `chp_steam_floor_p25`); NEISO just carries a **pre-WP-3 artifact vintage**
+    with neither `steam_level_cf` nor `p25_allhr_cf`, so the flag is inert and
+    `chp_pmin_cf` is 0.0 on all three CAMPD-visible CC_CHP plants — the
+    mechanical reason the class has no `chp_steam` D-2 row. (b) Re-deriving it
+    on NEISO's own CAMPD returns an **unusable** number: Kendall Square
+    (EIA 1595, 42 % of the class) yields **146.1 % of nameplate**, saturating
+    the 1.5 available-CF clip in **59.0 %** of online hours, because CAMPD
+    facility 1595 unit "4" meters **278/299/283 MW median** against an EIA-860
+    CHP nameplate of **213.4 MW (206.0 summer)**. Armed it would floor Kendall
+    at **95.0 % of pmax year-round (~1.71 TWh/yr)** and MORE than close the
+    0.34–0.68 TWh shortfall — a fitted parameter (rules 21/24). (c) **The
+    structural answer:** NEISO's merchant CC_CHP genuinely carries **no**
+    host-steam obligation — the other two CAMPD-visible plants measure 2.2 %
+    and 3.6 % (real cyclers, online 5.5 %/7.0 % of hours) and the non-Kendall
+    CC_CHP floor totals **15.0 MW**. That is a real fleet difference from
+    CAISO's flat 43–47 % steam hosts, not a missing mechanism.
+    **DO-NOT-REDO** until the prerequisite lands: the successor is now a
+    **fleet/nameplate lane** (Kendall's capacity basis, inside the miso-95
+    provenance-orphaned `nameplate_mw` column), not a floor lane. Evidence:
+    `results/calibration/FINDING-neiso71-chp-floor-nuclear-2026-07-31.md` §1.
+
+7. ~~**`nuclear_unit_availability` crosswalk.**~~ **DONE at neiso-71 → `K`,
+    PROMOTED to keeper** (2026-07-31). The gap this item named (NEISO absent
+    from `NRC_TO_EIA`) was the whole of it: adding **Millstone 2/3 → EIA 566
+    and Seabrook 1 → EIA 6115** (3,355.4 MW, ~22 % of ISO energy) was the
+    entire code delta — no `src/` change, since the `arrays.py` seam and
+    `outages.py` loader were already ISO-generic. 3,288 rows, 365/366/365
+    coverage, **all 36 months reconcile** (worst −0.70 %) so no month is
+    dropped, `--check` byte-for-byte, **zero fitted scalars**. Same
+    determination as the outgoing keeper (CALIBRATED-WITH-CAVEATS, 0 FAILs,
+    C1 all 12/12 · free 8/8, C3c bit-identical, DOF `n_residual` unchanged at
+    5) with the scored C1 total |error| improving **2.602 → 2.521 TWh** and
+    liveness **1,129/1,842/1,265 MW** at energy neutrality (≤0.031 TWh/yr).
+    Reported against interest: the predicted Connecticut-vs-North zonal
+    separation did **not** appear (all four zones clear identically at
+    annual-mean grain). Evidence:
+    `results/calibration/FINDING-neiso71-chp-floor-nuclear-2026-07-31.md` §2.
 
 ### 5.7 Cross-cutting audits (not ISO levers)
 
