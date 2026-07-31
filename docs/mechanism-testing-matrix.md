@@ -1125,7 +1125,7 @@ criterion; the outage-grain data ask below remains its honest continuation.)*
    `results/calibration/FINDING-miso110-forecast-hydro-level-923hy-2026-07-31.md`,
    probe `scripts/probes/_miso110_forward_level_audit.py`.
 
-### 5.5 NYISO — target: C3c (sole blocker, roof-blocked)
+### 5.5 NYISO — target: C3c (sole blocker, roof-blocked); keeper `2026-07-31-nyiso105-chp-heat-rates`, CALIBRATED-WITH-CAVEATS; ~~items 6 + 10~~ CLOSED at nyiso-105
 
 The J/K-commitment and reserve-tier routes are closed IN FULL (nyiso-83/84);
 the tail is blocked by an SRMC roof (~$258 mainland). nyiso-92 dated the
