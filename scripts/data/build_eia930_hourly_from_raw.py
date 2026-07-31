@@ -131,7 +131,20 @@ def main() -> None:
         "extract, e.g. the 54-column Grid Monitor 'ERCO hourly', whose extra "
         "columns the long extracts don't carry — they stay NaN on new rows)",
     )
+    ap.add_argument(
+        "--fill-years",
+        nargs="+",
+        type=int,
+        default=None,
+        help="keep every existing row byte-identical and splice in only the "
+        "MISSING hours of these local years — for a hole in the MIDDLE of an "
+        "extract, which --append-only (last-hour-onward) cannot reach. Rows "
+        "for every other year, and any hour of these years already present, "
+        "are untouched.",
+    )
     args = ap.parse_args()
+    if args.append_only and args.fill_years:
+        ap.error("--append-only and --fill-years are mutually exclusive")
 
     frame = build(args.ba)
     out = args.out or OUT_DIR / f"{args.ba} hourly.parquet"
@@ -145,6 +158,21 @@ def main() -> None:
         )
         frame = pd.concat([existing, added], ignore_index=True)
         print(f"append-only: kept {len(existing):,} rows, added {len(added):,}")
+    elif args.fill_years and out.exists():
+        existing = pd.read_parquet(out)
+        have = set(existing["UTC time"])
+        want = pd.to_datetime(frame["Local date"]).dt.year.isin(args.fill_years)
+        new_rows = frame[want & ~frame["UTC time"].isin(have)]
+        added = new_rows.reindex(columns=existing.columns).astype(
+            existing.dtypes.to_dict()
+        )
+        frame = pd.concat([existing, added], ignore_index=True).sort_values(
+            "UTC time", ignore_index=True
+        )
+        print(
+            f"fill-years {args.fill_years}: kept {len(existing):,} rows "
+            f"byte-identical, spliced {len(added):,}"
+        )
     frame.to_parquet(out, index=False)
 
     span = f"{frame['Local date'].min().date()}..{frame['Local date'].max().date()}"
