@@ -38,6 +38,34 @@ So NEISO's `NG: WAT` folds pumped storage through **2024-11-06** and is split
 clean from **2024-11-07**. That is a *per-window* exposure, not the standing
 fold MISO and PJM have.
 
+### 1a. How much split data exists — and what it is and is not used for
+
+Asked directly by the owner before granting the charter, so it is on the record.
+**Total split (`NG: PS`-filed) data on disk: 10,032 hours = 1.15 years** —
+1,296 h in 2024 (Nov 7 → Dec 31) and 8,736 h in 2025. **2025 is the only
+complete calendar year of it.** That is thin, and it bounds what the split data
+may be asked to do:
+
+| what the split data IS used for | what it rests on |
+|---|---|
+| locating the seam (§1) | all seven years — *zero* filed hours 2019-01 → 2024-11-06 vs continuous filing after. Not thin. |
+| proving the pre-split column carries PS (test iv + its control) | November 2024 alone, **but** benchmarked against the same cut in five pre-split years. Not thin — the control carries it. |
+| the "clean `WAT`" reference fingerprint (§6, test ii) | Dec 2024 + 2025 ≈ 13 months, **one water year**. **This is the thin part** — see the caveat below. |
+| classifying 2025 as clean, so its pin is kept (design D) | 8,736 filed hours + 0 nameplate breaches + 1.48× swing. One year, but it is also the *status quo*: the keeper already pins 2025, so design D changes nothing there. |
+
+| what the split data is **NOT** used for | what that rests on instead |
+|---|---|
+| **the correction itself in 2023 and 2024** | **EIA-923 `HY`** — an independent source with a complete 173/169-plant census in every affected year. The corrected levels (8.5469 / 6.7136 TWh) do not touch the `NG: PS` column at all. |
+
+**The caveat this creates, stated plainly.** The §6 fingerprint's "clean"
+reference comes from a single, unusually **low-water** year (2025: 5.121 TWh
+against 8.775 in 2023). Low water flattens the conventional diurnal profile, so
+part of the 1.48× vs 2.89× contrast could be the water year rather than the
+split. That is why test (iv) and its control — which compare windows inside one
+month of one year, and are immune to the water year — are the load-bearing
+evidence, and §6 is corroboration. The same caveat applies to §8's
+decomposition, whose basis shapes come from that same window.
+
 ## 2. That the pre-split column really carries the PS block — four independent tests
 
 The registry membership test (miso-109's three signatures) does not apply
@@ -99,6 +127,24 @@ inside November 2024: same fleet, same water, same season.
 
 The peak collapses 63 % and the swing flattens 4× at the hour the PS column
 starts being filed. No inflow process does that in six days.
+
+**…and the control says it is the seam, not the season** (probe §9, added after
+the owner asked how much split data exists). The identical Nov 1–6 / Nov 7–30
+cut applied to the five fully pre-split years, where no seam exists:
+
+| year | seam | Nov 1–6 max | Nov 7–30 max | max ratio |
+|---|---|---:|---:|---:|
+| 2019 | no | 2,239 MW | 2,168 MW | 1.03 |
+| 2020 | no | 2,059 MW | 2,032 MW | 1.01 |
+| 2021 | no | 2,152 MW | 2,213 MW | 0.97 |
+| 2022 | no | 1,774 MW | 2,300 MW | 0.77 |
+| 2023 | no | 1,596 MW | 1,861 MW | 0.86 |
+| **2024** | **YES** | 1,873 MW | **685 MW** | **2.73** |
+
+Five control years show **no step in either direction** (0.77–1.03). The seam
+year shows 2.73×. This control is the reason test (iv) does not depend on the
+thin post-split window: it compares two windows inside one month of one year,
+against five years of the same comparison.
 
 **Where the PJM argument does NOT transfer (rule 25).** pjm-143 refused a
 930→923 reconciliation factor partly because PJM's monthly gap **never changes
