@@ -231,7 +231,7 @@ floor. **Not inert.**
 | import | 35.894 → 35.978 (+0.084) | 40.220 → 40.318 (+0.098) | 41.435 → 41.479 (+0.044) |
 | **TOTAL** | 208.592 → 208.596 | 214.088 → 214.093 | 208.141 → 208.145 |
 
-Total generation is identical to three decimals — **pure reallocation**, and
+Total generation moves only **+0.003 / +0.006 / +0.004 TWh** (~0.002 % of a ~210 TWh system) — **pure reallocation**, and
 **no material class moves away from actual.** (The only class that does is
 ST_GAS, 515 → 529 % in 2024 on a **0.3 %-of-load** class the rubric skips as
 immaterial; reported for completeness.)
@@ -375,6 +375,17 @@ own ISO's session):**
   class is 0.7 % of generation so it does not matter for the determination, but
   it is not a clean identification and a future CAISO session should not treat
   it as one.
+- **Latent D-2 vs dashboard basis inconsistency (found by the caiso-147 keeper
+  audit, NOT caused by this lever, not acted on).** `legitimacy_diagnostics.json`'s
+  D-2 `class_total_twh` for **CT_PEAKER** does not match the payload's
+  `gmModel` / C1-scored class total — keeper 2023 reads 1.7981 TWh in D-2 vs
+  1.7827 TWh in `gmModel`, a ~0.9 % gap — while CC_CHP, CC_REGULAR and CT_CHP
+  agree closely. Every number quoted in this finding and in the keeper note uses
+  the `gmModel` / C1-consistent basis, so no claim here is affected, and the C8
+  gate is nowhere near its cap either way. But the two bases should agree, and a
+  future session should find out why they don't. It is a scorer/pipeline
+  question, not a CAISO calibration one.
+
 - **CC_CHP is a `pinned` class in the C1 free-class score** (`excluded_from_free`
   alongside ST_CHP), so its 117 → 108 % improvement does **not** show up in the
   free-class headline (8/8 both arms). The gain is real and is in the `all`

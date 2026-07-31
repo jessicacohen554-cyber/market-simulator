@@ -4167,7 +4167,7 @@ median 14.52, max **58.4** MMBtu/MWh). **Two-sided and opposite:** CC_CHP cap-wt
 | CT_PEAKER | 42 → 43 % | 15 → 15 % | 19 → 20 % |
 | CT_CHP | +0.029 · 73 → 74 % | +0.012 · 76 → 77 % | +0.002 · 115 → 115 % |
 
-Total generation identical to three decimals — pure reallocation, **no material
+Total generation moves only +0.003 / +0.006 / +0.004 TWh (~0.002 % of a ~210 TWh system) — pure reallocation, **no material
 class moves away from actual**. All three pre-registered predictions confirmed,
 including **P2** (CT_CHP barely moves despite getting cheaper, because 95–97 % of
 it is already pinned at its `chp_steam` floor) — which independently corroborates
