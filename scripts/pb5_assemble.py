@@ -45,6 +45,10 @@ import pandas as pd
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.structural_prior import IsoResidual, StructuralPrior
 from market_sim.uncertainty import UncertaintySpec, draw_to_config, sample_draws
+from market_sim.config.schedulable import (
+    add_authorization_flag,
+    assert_config_schedulable,
+)
 
 logger = logging.getLogger("pb5_assemble")
 
@@ -150,6 +154,15 @@ def do_assemble(args) -> None:
     base = ScenarioConfig.from_yaml(args.config)
     spec = _load_spec(args)
     iso = (args.iso or base.iso).upper()
+
+    # §2.1b window cap (audit FR-25). `assemble` is nominally post-processing,
+    # but run_sampler_ensemble RE-SOLVES any member that is not fully cached
+    # (the warning below is the audit's "will silently re-solve uncached
+    # members"), so this mode is schedulable and carries the cap like any
+    # solving entry point.
+    assert_config_schedulable(
+        base, args.full_solve_authorized, "pb5_assemble --mode assemble"
+    )
 
     # Surface any member that is NOT fully cached before committing to the
     # assembly pass: a missing member would silently re-solve for ~an hour
@@ -307,6 +320,11 @@ def main() -> None:
     ap.add_argument("--rho06-dir", default=None, help="rho=0.6 out-dir (sensitivity).")
     ap.add_argument("--ensemble-id", default=None, help="Publish id (publish).")
     ap.add_argument("--matrix-dir", default=None, help="PB-0 matrix dir (publish).")
+    add_authorization_flag(
+        ap,
+        "Applies to --mode assemble, which re-solves any member that is not "
+        "fully cached.",
+    )
     args = ap.parse_args()
 
     logging.basicConfig(

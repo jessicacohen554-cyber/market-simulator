@@ -398,6 +398,13 @@ class TestMainCLI(RunnerTestBase):
     """The ``run`` subcommand parses its arguments correctly."""
 
     def _write_config(self, **overrides) -> Path:
+        # A schedulable T1-F window. Without explicit years the config inherits
+        # the 2026-2050 module default, which the §2.1b cap now refuses before
+        # the subcommand reaches run_scenario_iso (FFR-1D, audit FR-25) — that
+        # refusal has its own coverage in tests/scoring/test_schedulable_guard.py;
+        # these cases are about argument parsing.
+        overrides.setdefault("start_year", 2026)
+        overrides.setdefault("end_year", 2030)
         config = ScenarioConfig(**overrides)
         path = Path(self._tmp.name) / "scenario.yaml"
         config.to_yaml(path)
