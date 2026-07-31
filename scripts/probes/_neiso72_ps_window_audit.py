@@ -626,6 +626,40 @@ def section_9_within_month_seam() -> None:
         "   the PS column starts being filed. That is the block leaving NG: WAT."
     )
 
+    print(
+        "\n   -- CONTROL: the SAME Nov 1-6 / Nov 7-30 cut in years with NO seam --\n"
+        "   If the step were seasonal (autumn inflow, a November storm) it would\n"
+        "   appear in every year. It appears in exactly one: the seam year."
+    )
+    print(
+        f"   {'year':>6} {'seam':>5} | {'Nov1-6 max':>10} {'swing':>6} | "
+        f"{'Nov7-30 max':>11} {'swing':>6} | {'max ratio':>9}"
+    )
+    for year in range(2019, 2025):
+        f2 = _frame(year)
+        if f2 is None or "NG: WAT" not in f2.columns:
+            continue
+        w2 = _col(f2, "NG: WAT")
+        nov2 = np.where(f2["Local date"].dt.month.to_numpy() == 11)[0]
+        day = f2["Local date"].dt.day.to_numpy()[nov2]
+        a, b = nov2[day <= 6], nov2[day >= 7]
+
+        def _stat(rows: np.ndarray) -> tuple[float, float]:
+            v = w2[rows]
+            hod = np.array([np.nanmean(v[(rows % 24) == k]) for k in range(24)])
+            return float(np.nanmax(v)), float(hod.max() / hod.min())
+
+        ax, asw = _stat(a)
+        bx, bsw = _stat(b)
+        print(
+            f"   {year:>6} {'YES' if year == 2024 else 'no':>5} | {ax:10.0f} {asw:6.2f} | "
+            f"{bx:11.0f} {bsw:6.2f} | {ax / bx:9.2f}"
+        )
+    print(
+        "\n   2019-2023 max ratio 0.77-1.03 (no step, either direction); 2024 = 2.73.\n"
+        "   The step is the seam, not the season."
+    )
+
 
 def section_5_designs() -> None:
     """The monthly LEVEL each candidate treatment hands the LP, exactly."""
