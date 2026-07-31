@@ -194,7 +194,7 @@ order is a prior, not a mandate — a session with a better-identified lever
 goes off-queue and says so. Entries already adjudicated elsewhere are *not*
 repeated here; the matrix `R`/`G`/`I` cells are the DO-NOT-REDO list.
 
-### 5.1 ERCOT — NOT-YET (keeper `2026-07-31-ercot145-gas-daily-shape`, C6 PASSES); open gates C3a/C3b/C3c/C7; ~~C7 lignite, coal seasonal split~~ CLOSED; ~~items 4+5~~ EXECUTED at ERCOT-145; ~~item 6~~ CLOSED `I` at ERCOT-146
+### 5.1 ERCOT — NOT-YET (keeper `2026-07-31-ercot145-gas-daily-shape`, C6 PASSES); open gates C3a/C3b/C3c/C7; ~~C7 lignite, coal seasonal split~~ CLOSED; ~~items 4+5~~ EXECUTED at ERCOT-145; ~~item 6~~ CLOSED `I` at ERCOT-146; the items-5/6 reopen route (measured CT-band re-identification) REFUSED at Phase 0 by ERCOT-147 — data-intake first (item 8)
 
 **QUEUE ITEM 2 IS PARTIALLY EXECUTED (ERCOT-144, 2026-07-31).** The DOF half
 landed: the ERCOT-144 lane retired the residual-identified coal offer DOF onto
@@ -417,7 +417,12 @@ rule-13-admissible mechanism available to carry it.
    amortization signature. The season-spread ST form is row-disjoint (ST_GAS
    committed row) and was never the incumbent; the fitted multipliers are.
    Reopen only as one term of a measured CT-band re-identification (item 6 /
-   SCED TPO on the CT fleet), never a stack.
+   SCED TPO on the CT fleet), never a stack. **The reopen route was attempted
+   and REFUSED AT PHASE 0 by ERCOT-147 (2026-07-31, no solve;
+   `docs/DIAGNOSIS-ercot147-ct-band-reident-2026-07-31.md`): the on-disk SCED
+   TPO corpus cannot identify a CT band level (daily-repriced object, modal
+   identity 11/160, both zero-parameter forms refuted by the year pair) —
+   the reopen is now gated on item 8's three-part data intake.**
 6. ~~**`measured_ct_heat_rates`** (NYISO form) on ERCOT's CT fleet — audit-grade.
    **Not** a candidate for the ERCOT-138 gas-dearness defect (see the closure
    note above); the CT fleet is its own question.~~
@@ -439,10 +444,33 @@ rule-13-admissible mechanism available to carry it.
    (item 5's reopen condition — SCED TPO CT levels + this HR + the run-length
    start term) that retires the fitted CT multipliers. Mixed-facility CT
    rates at 9 uncurated-CT plants (1,708 MW) recorded as evidence for the
-   Martin Lake-family class-composition ruling.
+   Martin Lake-family class-composition ruling. **That successor was run and
+   REFUSED AT PHASE 0 by ERCOT-147 — see item 8; the two committed artifacts
+   stay ready for the post-intake lane.**
 7. **WP-B nodal curtailment layer** — *data-intake first* (station→area
    crosswalk does not exist in-repo), then the under-curtailment gap
    (ERCOT-121).
+8. **The CT-band re-identification reopen intake** (ERCOT-147, 2026-07-31 —
+   Phase 0 REFUSED ex ante, no solve spent, keeper unchanged;
+   `docs/DIAGNOSIS-ercot147-ct-band-reident-2026-07-31.md`, probe
+   `scripts/probes/ercot147_ct_band_phase0.py`). Coverage was NOT the
+   blocker (157 CT resources / 12.0 GW in all four extracts, reach 1.00 of
+   HSL); the object is: the CT fleet's submitted TPO curve is
+   **daily-repriced** (intra-day variance share 0.14), fails the ERCOT-144
+   modal-identity licence (11/160 full-key, 20/160 price-only vs coal's
+   ×1436), holds no stable $ level (daily rel IQR 0.64) and no stable gas
+   multiple (0.32–0.43 HH-normalized; year pair ×1.26–1.99 vs gas ×1.97 —
+   both forms refuted in opposite directions across resources), and 63–67 %
+   of capacity's daily p50 sits below sheet-HR × HH burn — conduct vs local
+   fuel basis unresolvable with no Texas hub daily series on disk.
+   *Data-intake first, three parts, each owner-authorized:* (a) CT-scoped
+   full-span 60-Day SCED extension 2023–2025 (all days/hours,
+   SCLE90/SCGT90); (b) Texas hub daily gas basis (Waha + HSC/Katy — the SAME
+   intake `winter_citygate_daily` needs; licensing check first, pjm-139 W1
+   day-scale bound applies); (c) a ~150-site CT resource→plant hand
+   crosswalk (6/165 accepted in `ercot-dam-plant-crosswalk.csv`; Morgan
+   Creek MGSES_CT1–6 confirmed in-corpus). DO NOT re-run Phase 0 on the
+   existing four extracts.
 
 ### 5.2 CAISO — **NO failing criterion** (keeper `2026-07-31-caiso147-chp-heat-rates`, CALIBRATED-WITH-CAVEATS)
 
