@@ -10,6 +10,7 @@ number was seen.
 | Session | neiso-70 |
 | Lane | rule 14 `[R-ACCURATE]` input accuracy — **not** C3c scarcity work |
 | Outgoing keeper | `2026-07-23-neiso-61-netrev-margin` (CALIBRATED-WITH-CAVEATS, 0 FAILs, 1 ledgered caveat) |
+| **Outcome** | **`measured_ct_heat_rates` PROMOTED** → new keeper `2026-07-31-neiso-70-ctheatrate` (`K`). **`measured_chp_heat_rates` NOT promoted, cell `O` (open)** — live and accurate, but it overshoots because NEISO's CC_CHP has no host-steam floor (§6). |
 | Bundles (one frozen sha `22cf8fb`) | `neiso70_control_A`, `neiso70_ctheatrate_B`, `neiso70_chpheatrate_B` |
 | Runs | `2026-07-31-neiso-70-control`, `-ctheatrate`, `-chpheatrate` |
 | Years | 2023 2024 2025, one invocation each (rule 16 `[R-ALLYEARS]`) |
@@ -251,10 +252,96 @@ comfortably inside the ±1.94 / ±2.08 TWh tolerance and PASSES.
 
 ---
 
-## §6 — LEVER 2 result: `measured_chp_heat_rates`
+## §6 — LEVER 2 result: `measured_chp_heat_rates` — verdict `O` (open)
 
-*(pending — the arm was still solving when this section was drafted; filled in
-before registration.)*
+### Pre-registered gates — all PASS
+
+| gate | result |
+|---|---|
+| G-1 flag fidelity | **PASS** |
+| G-2 control integrity | **PASS** (shared control, §4) |
+| G-3 liveness (> 50 MW) | **PASS** — max \|Δ CC_CHP/CT_CHP MW\| **204.6** |
+| G-4 single delta | **PASS** |
+| G-5 year span | **PASS** |
+
+**Nothing in the prereg's KILL list is triggered:** zero criterion regressions
+across all 70 scored records, C1 stays all 12/12 · free 8/8, C3c
+**bit-identical** (model 0 tail hours), C7 `shape` SKIPPED and C8
+`forced_share` PASS in both arms, no protective caveat opened.
+
+### Dispatch (P1, TWh)
+
+| year | CC_CHP | CC_REGULAR | CT_CHP | total gen |
+|---|---|---|---|---|
+| 2023 | 1.334 → **0.741** (−0.593) | 51.877 → 52.503 (+0.626) | 0.493 → 0.460 (−0.032) | +0.003 |
+| 2024 | 1.292 → **0.948** (−0.344) | 56.264 → 56.633 (+0.369) | 0.513 → 0.481 (−0.032) | +0.001 |
+| 2025 | 1.216 → **0.539** (−0.677) | 58.337 → 59.041 (+0.704) | 0.482 → 0.451 (−0.031) | +0.002 |
+
+**Prediction P2 is directionally CONFIRMED** — dearer CHP ⇒ CC_CHP falls, energy
+lands on CC_REGULAR, total generation ≈ 0. Mean λ rises +0.157 / +0.111 / +0.309
+$/MWh.
+
+### But it OVERSHOOTS the class it reprices — this is why it is not promoted
+
+| year | actual | control | arm | \|error\| control → arm |
+|---|---|---|---|---|
+| 2023 | 1.072 | 1.296 (1.21×) | 0.703 (0.66×) | 0.224 → **0.369** |
+| 2024 | 1.124 | 1.254 (1.12×) | 0.910 (0.81×) | 0.130 → **0.214** |
+| 2025 *(unscored)* | 1.194 | 1.216 (1.02×) | 0.539 (0.45×) | 0.022 → **0.655** |
+
+CC_CHP crosses from *over*-generating to *under*-generating in every year. Note
+the counterweight, reported in full: **CC_REGULAR improves markedly** —
+0.471 → 0.156 (2023) and 0.340 → 0.030 (2024) — so the *combined* CC_CHP +
+CC_REGULAR absolute error actually falls in both scored years (0.695 → 0.525 and
+0.470 → 0.244). The displaced energy lands almost exactly on actual.
+
+### Root cause, located: NEISO's CC_CHP carries NO host-steam floor
+
+This is the deliverable of lever 2, and it is a structural finding rather than a
+tuning one:
+
+* **CC_CHP has no `chp_steam` D-2 row at all** in NEISO — in the control *and*
+  the arm, all three years. CT_CHP has one (2.9 % → 3.3 %, 5.3 % → 5.9 %,
+  5.8 % → 6.3 %); CC_CHP has **zero**. CAISO's CC_CHP `chp_steam` forced share,
+  by contrast, runs **43–47 %**.
+* So when the CC_CHP offer becomes **+27.96 %** dearer at the LP seam, **nothing
+  holds those cogens to their host-steam obligation** and they drop out far
+  past what a real cogen — which must run to serve its host's steam — would.
+* The dispatch signature confirms it: CC_CHP's D-1 **`cv_ratio` explodes**
+  2.814 → 6.99, 6.499 → 10.231, 2.156 → 11.248, while **`profile_r` barely
+  moves** (0.919 → 0.908, 0.815 → 0.831, 0.852 → 0.860). The *timing* stays
+  right; the *amplitude* blows out. That is exactly an unconstrained unit
+  cycling on price instead of running to an obligation.
+
+**The mechanism is structurally INCOMPLETE as armed**, in the ERCOT-141 sense:
+it implements the accurate offer without the companion obligation floor. The
+input is not refuted — eGRID's own published CHP allocation is more accurate
+than the steam-credited rate, CEMS validates it 4/4 within 1 %, and **rule 14
+`[R-ACCURATE]` forbids reverting to the estimate because it fits better**. What
+is missing is NEISO's `chp_steam` floor.
+
+### Verdict and disposition
+
+Matrix cell **`O` (open)** — deliberately not `K`, `R` or `I`:
+
+* not **`K`**: the fit on the repriced class degrades, which per prereg §6
+  blocks *promotion* (never the *input*);
+* not **`R`**: nothing was refuted on the merits — the artifact is accurate and
+  CEMS-validated;
+* not **`I`**: it is demonstrably live (204.6 MW, −0.34 to −0.68 TWh).
+
+The flag stays **default-off**. The named successor is **neiso-71**: derive a
+measured NEISO CC_CHP host-steam floor (the `chp_steam` mechanism the ISO
+currently lacks for this class) and **land the two together** — an accurate
+offer and its obligation floor are one mechanism, and arming either alone is
+half of it (rule 19 `[R-ONE-MECH]`).
+
+**Reported, not gated:** CT_CHP's D-1 `profile_r` is 0.0 / −0.264 / 0.0 in
+control and arm alike — a pre-existing degenerate shape on a class that is
+0.4–0.5 % of load and ungated, untouched by this arm. Also carried forward from
+§1: the CT_CHP artifact leg covers 19.3 % of capacity and **0.0 % of metered
+energy**, so lever 2's CT_CHP half is not identified at all and must not be
+cited as evidence in either direction.
 
 ---
 

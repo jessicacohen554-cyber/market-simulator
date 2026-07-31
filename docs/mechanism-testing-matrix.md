@@ -1408,6 +1408,8 @@ capability envelope/floor pair is now the keeper — cells K above):
 
 ### 5.6 NEISO — target: C3c (ledgered; FRONTIER DECLARED — charter required first)
 
+Keeper `2026-07-31-neiso-70-ctheatrate` (neiso-70).
+
 Frontier discipline: every named admissible mechanism in the winter/summer
 scarcity family is already on record. Anything below needs its **own new
 charter with a new measured identification** before a solve:
@@ -1417,11 +1419,40 @@ charter with a new measured identification** before a solve:
    import / DA-bid); NEISO publishes DA cleared/bid data to derive from.
 2. **Import-side scarcity identification** (HQ/NB tie behavior in tight
    hours) — second named class.
-3. **`measured_ct_heat_rates`** — audit-grade, no charter needed (input
-   accuracy, not a scarcity mechanism).
+3. ~~**`measured_ct_heat_rates`** — audit-grade, no charter needed.~~
+   **DONE at neiso-70 → `K`, PROMOTED to keeper** (2026-07-31). Same
+   determination as the outgoing neiso-61 keeper (CALIBRATED-WITH-CAVEATS,
+   0 FAILs, C1 all 12/12 · free 8/8, C3c bit-identical, DOF residual count
+   unchanged at 5), with the CT_PEAKER `reliability_floor` forced share
+   collapsing 0.396 / 0.274 / 0.068 → 0.201 / 0.074 / 0.027 — the class clears
+   economically instead of leaning on its commitment floor. Evidence:
+   `results/calibration/FINDING-neiso70-heat-rate-provenance-2026-07-31.md`.
 4. **`hydro_budget_nameplate_aware`** + `NG: PS` pin audit — cheap, flagged.
+   NEISO is the **TIME SPLIT** case in the §5.7 table (the only ISO filing an
+   `NG: PS` column, and only from Nov 2024), so it needs a per-window
+   treatment, not a switch. Its own lane.
 5. **STEP 3 seam disposition** (owner decision pending): carry the
    layup-vs-outage seam explicitly (recommendation (b) on record).
+6. **NEW — `measured_chp_heat_rates` companion floor (the neiso-71
+   successor).** neiso-70 tested the CHP re-price off the same control and
+   stamped it **`O` (open)**, flag default-off: it is live (204.6 MW) and
+   accurate (CEMS 4/4 within 1 %), passes every gate with zero criterion
+   regressions, but **overshoots** — CC_CHP crosses from over- to
+   under-generating in all three years. Root cause located: **NEISO's CC_CHP
+   carries no `chp_steam` D-2 row at all** (CT_CHP has one; CAISO's CC_CHP
+   runs 43–47 %), so nothing holds those cogens to their host-steam
+   obligation when the offer gets dearer — CC_CHP `cv_ratio` explodes
+   2.8 → 7.0 / 6.5 → 10.2 / 2.2 → 11.2 while `profile_r` holds. Derive a
+   measured NEISO CC_CHP host-steam floor and **land the two together**; an
+   accurate offer and its obligation floor are one mechanism (rule 19
+   `[R-ONE-MECH]`). Not `R` — rule 14 forbids reverting an accurate input
+   because the estimate fits better.
+7. **NEW — `nuclear_unit_availability` crosswalk (also neiso-71-class).**
+   A genuine candidate (NEISO cell `U`), but
+   `scripts/data/derive_nuclear_availability.py`'s `NRC_TO_EIA` covers
+   **PJM (31 units), NYISO (4) and CAISO (2)** only. NEISO needs measured
+   NRC-name → (EIA plant, unit) rows for **Millstone 2/3 + Seabrook** added
+   first; file it as the follow-on rather than rushing it.
 
 ### 5.7 Cross-cutting audits (not ISO levers)
 
