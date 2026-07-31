@@ -252,6 +252,32 @@
  *   §C firm-block elasticity is prerequisite (a), not (c), and with F = 0 no new
  *   constraint is needed at all. Also corrects caiso-142 §I part 2: hub - eps
  *   over-prices PNW but UNDER-prices DSW by ~$4.4, so "both corridors" is wrong.
+ * CAISO column re-stamped 2026-07-31 on the caiso-146 keeper promotion
+ *   (keeper -> 2026-07-31-caiso146-ct-heat-rates; determination stays
+ *   CALIBRATED-WITH-CAVEATS, 0 FAILs, the SAME two owner-adopted caveats
+ *   carried forward from caiso-145 unchanged in substance — no new caveat, no
+ *   new slot, still 2 of 3 non-protective and 0 of 1 protective). ONE cell
+ *   moves: measured_ct_heat_rates CAISO U -> K, a rule-14 [R-ACCURATE]
+ *   measured-input swap with zero fitted parameters, single-flag A/B against a
+ *   same-HEAD zero-delta control. CT_PEAKER 26->42 / 10->15 / 11->19 % of
+ *   actual; every criterion verdict unchanged; C7 CT_PEAKER profile_r 2025
+ *   IMPROVES 0.837 -> 0.864 and C8 forced share falls. §5.2 queue item 6 is
+ *   spent; item 5 was already closed at caiso-136 and is struck in the doc.
+ *   TWO THINGS SUCCESSORS MUST READ. (1) The heat-rate route to caiso-119 R4
+ *   is now CLOSED by measurement — a mispriced offer was PART of the CT
+ *   priced-out defect but only part, and the residual 2.4-3.7 TWh is not a
+ *   heat-rate defect; R4's guardrail against offer markdowns sized to the gap
+ *   still binds. (2) OPEN ITEM, not caused by this lever: the OUTGOING
+ *   caiso-139 keeper's committed sidecars no longer reproduced at HEAD — the
+ *   zero-delta control diverged by up to 2.1/1.7/3.2 GW on a class-hour,
+ *   netting a CC_REGULAR <-> import swap of +0.45/+0.46/+0.85 TWh at identical
+ *   total generation, NOT touching CT_PEAKER. The promotion re-bases CAISO onto
+ *   HEAD; the cause is unidentified (15 commits touched src/market_sim between
+ *   fa9971b and db02071) and bisecting it needs full solves, so it is filed,
+ *   not guessed. Also filed cross-cutting, deliberately unacted: sub-6.0
+ *   MMBtu/MWh loaded METER hours bias the SHARED CT derive low in all four
+ *   measured ISOs, so an hour-grain screen would move three committed keepers'
+ *   inputs and needs its own charter.
  * ERCOT column re-checked 2026-07-28 on the ercot116-regate-base keeper promotion
  * (ERCOT-134: zero config delta vs ercot129 — re-solve on the corrected coal
  * forced-derate registry; no cell verdict moves except dam_availability_rebasis,
@@ -680,9 +706,9 @@ window.MECH_MATRIX = {
       ev: { M: "MISO-55", Q: "neiso-47", N: "nyiso-96 (docs/FINDING-nyiso96-ct-start-frequency-2026-07-29.md)" } },
     { id: "measured_ct_heat_rates", cat: "offer", name: "Measured loaded CT heat rates (CAMPD, per-plant)",
       def: "scenarios.py:1197", mode: "BF",
-      cells: "UUKUKU",
-      note: "NYISO keeper (nyiso-89: 91.6% of class capacity re-priced; eliminated the heat-rate hypothesis for the peaker gap). PJM KEEPER at pjm-137, per-ISO on PJM's own artifact (rule 25, no verdict transferred): 71 plants, ZERO excluded by the physical band, 29 moved >0.5 MMBtu/MWh, 35 cheaper / 36 dearer, ISO energy-weighted +0.229 MMBtu/MWh. Chartered under rule 14 [R-ACCURATE] because eGRID publishes ONE plant-average rate — Doswell Energy Center's 3 peaking turbines carried the 9.027 average of a site that is 6 CC blocks, against a measured 11.350. Determination CALIBRATED with every criterion passing and C3c UNCHANGED (tail hours identical 3/10/32); Dominion CT_PEAKER rises 0.724->0.721 / 1.380->1.448 / 2.923->3.162 TWh while the ISO-WIDE class FALLS 2.6-2.9 TWh — pure reallocation. The PREREG predicted the OPPOSITE direction (zone-average +0.634 MMBtu/MWh) and is recorded as refuted: the mechanism is per-PLANT. Still untested in ERCOT / CAISO (CT priced-out, caiso-119) / MISO.",
-      ev: { N: "nyiso-89; FINDING-nyiso89", P: "pjm-137; FINDING-pjm137-dominion-congestion-is-subzonal-2026-07-29" } },
+      cells: "UKKUKU",
+      note: "NYISO keeper (nyiso-89: 91.6% of class capacity re-priced; eliminated the heat-rate hypothesis for the peaker gap). PJM KEEPER at pjm-137, per-ISO on PJM's own artifact (rule 25, no verdict transferred): 71 plants, ZERO excluded by the physical band, 29 moved >0.5 MMBtu/MWh, 35 cheaper / 36 dearer, ISO energy-weighted +0.229 MMBtu/MWh. Chartered under rule 14 [R-ACCURATE] because eGRID publishes ONE plant-average rate — Doswell Energy Center's 3 peaking turbines carried the 9.027 average of a site that is 6 CC blocks, against a measured 11.350. Determination CALIBRATED with every criterion passing and C3c UNCHANGED (tail hours identical 3/10/32); Dominion CT_PEAKER rises 0.724->0.721 / 1.380->1.448 / 2.923->3.162 TWh while the ISO-WIDE class FALLS 2.6-2.9 TWh — pure reallocation. The PREREG predicted the OPPOSITE direction (zone-average +0.634 MMBtu/MWh) and is recorded as refuted: the mechanism is per-PLANT. CAISO KEEPER at caiso-146 (2026-07-31), per-ISO on CAISO's own artifact (rule 25, nothing transferred): 43 plant rows, ZERO excluded by the physical band, 40 of 43 moved >0.5 MMBtu/MWh. CAISO's result is ONE-SIDED, unlike BOTH precedents (NYISO found 2x errors in both directions; PJM came out net +0.229): 41 plants / 5,649 MW cheaper vs 2 / 198 MW dearer, cap-weighted -1.159 MMBtu/MWh (-10.7 %), gen-weighted -0.884. Coverage 76.8 % of class capacity but 99.9 % of the class's own metered CAMPD CT energy — the 90 uncovered plants are the Part-75 boundary (median 2.2 MW, ZERO metered CT energy, so nothing to swap in) and there is no adverse selection (covered cap-wt eGRID HR 10.819 vs uncovered 11.004). Glenarm (422) is the mixed-facility defect in the flesh: 4 CT_PEAKER + 2 CC_REGULAR units on ONE eGRID 10.3895, separated by CAMPD unitType, and it is one of only two DEARER rows. RESULT: CT_PEAKER moves 1.088->1.727 / 0.423->0.634 / 0.272->0.455 TWh vs actual 4.128/4.326/2.374 (26->42 %, 10->15 %, 11->19 %), costing CC_REGULAR ~1 pp; every criterion verdict UNCHANGED vs a same-HEAD zero-delta control, C3a improves in all three years (+3.6->+2.8, +8.2->+7.8, +11.3->+11.0 %) and C3c is BIT-UNCHANGED (0 h both arms). Protective gates IMPROVE: C7 CT_PEAKER profile_r 0.903/0.951/0.837 -> 0.885/0.936/0.864 (2025 — the outgoing keeper's most exposed number at 0.036 headroom — rises), cv_ratio 2.635/2.048/2.087 -> 1.613/1.805/2.172 toward measured, C8 forced share falls to 0.0016/0.0055/0.0007 vs a 0.15 cap. THIS ANSWERS caiso-119 R4 AND CLOSES THE HEAT-RATE ROUTE TO IT: a mispriced offer was PART of the CT priced-out defect but only part — fully re-priced on measured rates the class still reaches only 42/15/19 % of actual, so the remaining 2.4-3.7 TWh is NOT a heat-rate defect (the same conclusion nyiso-89 reached, derived independently on CAISO's data). R4's guardrail still binds: any successor lever must be a real obligation-keyed mechanism with a cited D-4 window, never an offer markdown sized to the gap. SIDE FINDING, cross-cutting and deliberately NOT acted on: sub-6.0 MMBtu/MWh loaded METER hours drag the shared derive low in EVERY ISO — CAISO 3.46 % of loaded hours / +0.114, NYISO 2.45 % / +0.122, PJM 1.55 % / +0.081, MISO 0.30 % / +0.014 energy-weighted — so an hour-grain screen would move THREE committed keepers' inputs and needs its own charter, not a CAISO session (rules 24/25). Still untested in ERCOT / MISO.",
+      ev: { N: "nyiso-89; FINDING-nyiso89", P: "pjm-137; FINDING-pjm137-dominion-congestion-is-subzonal-2026-07-29", C: "caiso-146 (results/calibration/FINDING-caiso146-measured-ct-heat-rates-2026-07-31.md)" } },
     { id: "measured_chp_heat_rates", cat: "offer", name: "Measured power-only CHP heat rates (eGRID CHPCHTI add-back, per-plant)",
       def: "scenarios.py:1224", mode: "BF",
       cells: "UUUKUU",

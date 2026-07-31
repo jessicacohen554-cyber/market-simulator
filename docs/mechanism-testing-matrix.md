@@ -377,7 +377,7 @@ rule-13-admissible mechanism available to carry it.
    crosswalk does not exist in-repo), then the under-curtailment gap
    (ERCOT-121).
 
-### 5.2 CAISO — **NO failing criterion** (keeper `2026-07-29-caiso139-dump-guard-offer`, CALIBRATED-WITH-CAVEATS)
+### 5.2 CAISO — **NO failing criterion** (keeper `2026-07-31-caiso146-ct-heat-rates`, CALIBRATED-WITH-CAVEATS)
 
 **BOTH former blockers were DISPOSITIONED BY THE OWNER at caiso-145
 (2026-07-30) and are now ACCEPTED MEASURED-INPUT LIMITATIONS** — ledgered in
@@ -399,11 +399,12 @@ CALIBRATED-WITH-CAVEATS is a rubric determination, **not** the rule-22
 calibration-complete marker — CAISO holds no marker, so every out-of-training
 year stays quarantined. (caiso-145; `docs/calibration-log/caiso.md`.)
 
-Items 2–6 below are the live lever queue and are **not** blocked-gate work: they
-target C5a and the standing structural/offer questions. Items 1 and 5 are struck
-through — both were adjudicated and closed **without spending a solve** (caiso-144
-and caiso-136 respectively); they are kept in place so the numbering stays stable
-and so neither is re-proposed.
+Items 2–8 below are the live lever queue and are **not** blocked-gate work: they
+target C5a and the standing structural/offer questions. Items 1, 5 and 6 are
+struck through — 1 and 5 were adjudicated and closed **without spending a solve**
+(caiso-144 and caiso-136), and **6 was spent and PROMOTED at caiso-146**. They
+are kept in place so the numbering stays stable and none is re-proposed.
+**Live queue as of 2026-07-31: items 2, 3, 4, 7, 8.**
 
 **C3a-2025 IS DIAGNOSED-UNCLOSED WITH AN EMPTY IN-MODEL LEVER QUEUE (caiso-142);
 LEDGERED at caiso-145.**
@@ -499,9 +500,32 @@ sign argument to every basis and bound.
    0 windows; no guard setting can change that, because there is no input
    series to measure. Re-open **only** if CAISO gains a CEMS-reporting coal
    unit. (`FINDING-caiso136-unit-availability-windows-2026-07-28.md`.)
-6. **`measured_ct_heat_rates`** — CT priced-out finding (caiso-119) and the
-   CHP miscosting (caiso-128) both point at offer-cost inputs; measured loaded
-   HRs are the audit-grade first step.
+6. ~~**`measured_ct_heat_rates`**~~ — **SPENT AND PROMOTED at caiso-146
+   (2026-07-31); cell `U` → `K`, keeper
+   `2026-07-31-caiso146-ct-heat-rates`.** A rule-14 `[R-ACCURATE]`
+   measured-input swap with zero fitted parameters, single-flag A/B against a
+   same-HEAD zero-delta control. CAISO's own artifact (rule 25): 43 plant rows,
+   all `flag=="ok"`, 76.8 % of class capacity but **99.9 % of the class's own
+   metered CAMPD CT energy**; **one-sided** unlike both precedents (41 plants /
+   5,649 MW cheaper vs 2 / 198 MW dearer, cap-wt −1.159 MMBtu/MWh = −10.7 %).
+   CT_PEAKER moves 26→42 / 10→15 / 11→19 % of actual; every criterion verdict
+   unchanged; C7 CT_PEAKER 2025 `profile_r` **improves** 0.837 → 0.864 and C8
+   forced share falls. **The heat-rate route to caiso-119 R4 is now CLOSED by
+   measurement** — a mispriced offer was *part* of the CT priced-out defect but
+   only part, and the residual 2.4–3.7 TWh is not a heat-rate defect (same
+   conclusion as nyiso-89, derived independently on CAISO's data). R4's
+   guardrail still binds: any successor lever must be a real obligation-keyed
+   mechanism with a cited D-4 window, never an offer markdown sized to the gap.
+   The **CHP** half of this item is untouched and remains live — see item 7.
+   (`FINDING-caiso146-measured-ct-heat-rates-2026-07-31.md`.)
+7. **`measured_chp_heat_rates`** — the remaining half of the old item 6.
+   `K` in MISO at miso-99; CAISO `U`. CAISO's `CC_CHP`/`CT_CHP` are pinned
+   classes and caiso-128 §3 measured CHP **over**-corrected +40 % in CAISO by
+   the hand factor this mechanism supersedes. Rule 25: CAISO derives its own
+   artifact.
+8. **`nuclear_unit_availability`** — `K` in ERCOT and NYISO, CAISO `U`. Diablo
+   Canyon is the 2,240 MW MSSC that sets CAISO's entire reserve requirement
+   (caiso-144 §B).
 
 ### 5.3 PJM — **NO failing criterion** (keeper `2026-07-30-pjm-140-rampenv`, CALIBRATED)
 
