@@ -1,0 +1,989 @@
+{
+  "lane": "ercot144-coal-perplant-offer",
+  "phase": 1,
+  "no_lp": true,
+  "S2_measured_perplant": {
+    "unmapped_resources": [],
+    "plants": [
+      {
+        "plant_code": 298,
+        "plant": "Limestone",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "LEG_LEG_G1",
+            "n_intervals": 2876,
+            "modal_count": 281,
+            "modal_mw": [
+              260.0,
+              360.0,
+              361.0,
+              588.0,
+              646.0,
+              700.0,
+              749.0,
+              796.0,
+              831.0
+            ],
+            "modal_price": [
+              15.0,
+              16.0,
+              22.71,
+              22.74,
+              22.76,
+              22.79,
+              22.82,
+              22.85,
+              22.87
+            ],
+            "priced_level": 19.5283,
+            "priced_lo": 15.0,
+            "priced_hi": 22.87,
+            "floor_block_mw": 0.0,
+            "priced_mw": 831.0,
+            "level_by_year": {
+              "2024": 23.34,
+              "2025": 19.53
+            }
+          },
+          {
+            "resource": "LEG_LEG_G2",
+            "n_intervals": 2591,
+            "modal_count": 260,
+            "modal_mw": [
+              258.0,
+              360.0,
+              361.0,
+              362.0,
+              457.0,
+              603.0,
+              665.0,
+              773.0,
+              837.0
+            ],
+            "modal_price": [
+              15.0,
+              16.0,
+              18.63,
+              18.65,
+              18.73,
+              19.02,
+              19.18,
+              19.47,
+              19.75
+            ],
+            "priced_level": 17.5047,
+            "priced_lo": 15.0,
+            "priced_hi": 19.75,
+            "floor_block_mw": 0.0,
+            "priced_mw": 837.0,
+            "level_by_year": {
+              "2024": 17.5,
+              "2025": 18.76
+            }
+          }
+        ],
+        "plant_level": 18.5129,
+        "within_plant_spread": 7.87
+      },
+      {
+        "plant_code": 3470,
+        "plant": "W A Parish",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "WAP_WAP_G5",
+            "n_intervals": 3792,
+            "modal_count": 284,
+            "modal_mw": [
+              156.0,
+              274.0,
+              355.0,
+              420.0,
+              477.0,
+              527.0,
+              573.0,
+              616.0,
+              667.0
+            ],
+            "modal_price": [
+              20.01,
+              20.59,
+              21.18,
+              21.76,
+              22.35,
+              22.93,
+              23.52,
+              24.1,
+              24.76
+            ],
+            "priced_level": 21.713,
+            "priced_lo": 20.01,
+            "priced_hi": 24.76,
+            "floor_block_mw": 0.0,
+            "priced_mw": 667.0,
+            "level_by_year": {
+              "2024": 21.66,
+              "2025": 21.71
+            }
+          },
+          {
+            "resource": "WAP_WAP_G6",
+            "n_intervals": 2976,
+            "modal_count": 276,
+            "modal_mw": [
+              158.0,
+              278.0,
+              360.0,
+              427.0,
+              484.0,
+              536.0,
+              583.0,
+              626.0,
+              659.0
+            ],
+            "modal_price": [
+              16.9,
+              17.74,
+              18.59,
+              19.43,
+              20.28,
+              21.12,
+              21.97,
+              22.81,
+              23.66
+            ],
+            "priced_level": 19.2315,
+            "priced_lo": 16.9,
+            "priced_hi": 23.66,
+            "floor_block_mw": 0.0,
+            "priced_mw": 659.0,
+            "level_by_year": {
+              "2024": 19.23,
+              "2025": 21.67
+            }
+          },
+          {
+            "resource": "WAP_WAP_G7",
+            "n_intervals": 3120,
+            "modal_count": 312,
+            "modal_mw": [
+              159.0,
+              226.0,
+              227.0,
+              370.0,
+              418.0,
+              461.0,
+              501.0,
+              537.0,
+              574.0
+            ],
+            "modal_price": [
+              13.0,
+              14.0,
+              21.0,
+              21.46,
+              21.91,
+              22.37,
+              22.83,
+              23.28,
+              23.84
+            ],
+            "priced_level": 18.7138,
+            "priced_lo": 13.0,
+            "priced_hi": 23.84,
+            "floor_block_mw": 0.0,
+            "priced_mw": 574.0,
+            "level_by_year": {
+              "2024": 17.09,
+              "2025": 18.71
+            }
+          },
+          {
+            "resource": "WAP_WAP_G8",
+            "n_intervals": 3727,
+            "modal_count": 288,
+            "modal_mw": [
+              159.0,
+              227.0,
+              228.0,
+              394.0,
+              446.0,
+              492.0,
+              535.0,
+              574.0,
+              612.0
+            ],
+            "modal_price": [
+              9.0,
+              10.0,
+              17.64,
+              18.36,
+              19.08,
+              19.8,
+              20.52,
+              21.25,
+              21.97
+            ],
+            "priced_level": 15.7277,
+            "priced_lo": 9.0,
+            "priced_hi": 21.97,
+            "floor_block_mw": 0.0,
+            "priced_mw": 612.0,
+            "level_by_year": {
+              "2024": 15.73,
+              "2025": 17.1
+            }
+          }
+        ],
+        "plant_level": 18.9185,
+        "within_plant_spread": 15.76
+      },
+      {
+        "plant_code": 6146,
+        "plant": "Martin Lake",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "MLSES_UNIT1",
+            "n_intervals": 1830,
+            "modal_count": 768,
+            "modal_mw": [
+              0.0,
+              146.0,
+              261.0,
+              371.0,
+              479.0,
+              587.0,
+              697.0,
+              825.0
+            ],
+            "modal_price": [
+              22.19,
+              22.2,
+              22.21,
+              22.22,
+              22.23,
+              22.24,
+              22.25,
+              22.26
+            ],
+            "priced_level": 22.2292,
+            "priced_lo": 22.19,
+            "priced_hi": 22.26,
+            "floor_block_mw": 0.0,
+            "priced_mw": 825.0,
+            "level_by_year": {
+              "2024": 22.23
+            }
+          },
+          {
+            "resource": "MLSES_UNIT2",
+            "n_intervals": 3030,
+            "modal_count": 618,
+            "modal_mw": [
+              0.0,
+              200.0,
+              308.0,
+              413.0,
+              514.0,
+              615.0,
+              719.0,
+              825.0
+            ],
+            "modal_price": [
+              22.18,
+              22.2,
+              22.21,
+              22.22,
+              22.23,
+              22.24,
+              22.25,
+              22.26
+            ],
+            "priced_level": 22.2264,
+            "priced_lo": 22.18,
+            "priced_hi": 22.26,
+            "floor_block_mw": 0.0,
+            "priced_mw": 825.0,
+            "level_by_year": {
+              "2024": 22.23,
+              "2025": 22.96
+            }
+          },
+          {
+            "resource": "MLSES_UNIT3",
+            "n_intervals": 3753,
+            "modal_count": 852,
+            "modal_mw": [
+              0.0,
+              194.0,
+              303.0,
+              408.0,
+              510.0,
+              613.0,
+              718.0,
+              835.0
+            ],
+            "modal_price": [
+              20.89,
+              20.91,
+              20.92,
+              20.93,
+              20.94,
+              20.95,
+              20.96,
+              20.97
+            ],
+            "priced_level": 20.9371,
+            "priced_lo": 20.89,
+            "priced_hi": 20.97,
+            "floor_block_mw": 0.0,
+            "priced_mw": 835.0,
+            "level_by_year": {
+              "2024": 20.94,
+              "2025": 21.72
+            }
+          }
+        ],
+        "plant_level": 21.7941,
+        "within_plant_spread": 1.37
+      },
+      {
+        "plant_code": 6178,
+        "plant": "Coleto Creek",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "COLETO_COLETOG1",
+            "n_intervals": 3350,
+            "modal_count": 840,
+            "modal_mw": [
+              0.0,
+              220.0,
+              299.0,
+              371.0,
+              442.0,
+              512.0,
+              585.0,
+              655.0
+            ],
+            "modal_price": [
+              17.29,
+              17.32,
+              17.33,
+              17.34,
+              17.91,
+              18.49,
+              19.04,
+              19.69
+            ],
+            "priced_level": 17.9574,
+            "priced_lo": 17.29,
+            "priced_hi": 19.69,
+            "floor_block_mw": 0.0,
+            "priced_mw": 655.0,
+            "level_by_year": {
+              "2024": 17.96,
+              "2025": 24.23
+            }
+          }
+        ],
+        "plant_level": 17.9574,
+        "within_plant_spread": 2.4
+      },
+      {
+        "plant_code": 6179,
+        "plant": "Fayette",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "FPPYD1_FPP_G1_J01",
+            "n_intervals": 3744,
+            "modal_count": 360,
+            "modal_mw": [
+              78.0,
+              100.0,
+              122.0,
+              144.0,
+              166.0,
+              188.0,
+              210.0,
+              232.0,
+              254.0,
+              301.0
+            ],
+            "modal_price": [
+              14.55,
+              14.84,
+              15.12,
+              15.41,
+              15.69,
+              15.98,
+              16.26,
+              16.55,
+              16.83,
+              17.39
+            ],
+            "priced_level": 15.7448,
+            "priced_lo": 14.55,
+            "priced_hi": 17.39,
+            "floor_block_mw": 0.0,
+            "priced_mw": 301.0,
+            "level_by_year": {
+              "2024": 17.22,
+              "2025": 15.74
+            }
+          },
+          {
+            "resource": "FPPYD1_FPP_G1_J02",
+            "n_intervals": 3744,
+            "modal_count": 392,
+            "modal_mw": [
+              78.0,
+              105.0,
+              130.0,
+              155.0,
+              180.0,
+              205.0,
+              230.0,
+              238.9,
+              239.0,
+              298.0
+            ],
+            "modal_price": [
+              100.42,
+              102.94,
+              105.28,
+              107.61,
+              109.95,
+              112.28,
+              114.61,
+              115.45,
+              150.0,
+              150.1
+            ],
+            "priced_level": 114.9456,
+            "priced_lo": 100.42,
+            "priced_hi": 150.1,
+            "floor_block_mw": 0.0,
+            "priced_mw": 298.0,
+            "level_by_year": {
+              "2024": 114.95,
+              "2025": 106.19
+            }
+          },
+          {
+            "resource": "FPPYD1_FPP_G2_J01",
+            "n_intervals": 3213,
+            "modal_count": 344,
+            "modal_mw": [
+              78.0,
+              99.0,
+              120.0,
+              141.0,
+              162.0,
+              183.0,
+              204.0,
+              225.0,
+              246.0,
+              301.0
+            ],
+            "modal_price": [
+              14.07,
+              14.27,
+              14.48,
+              14.68,
+              14.88,
+              15.09,
+              15.29,
+              15.49,
+              15.7,
+              16.13
+            ],
+            "priced_level": 14.9571,
+            "priced_lo": 14.07,
+            "priced_hi": 16.13,
+            "floor_block_mw": 0.0,
+            "priced_mw": 301.0,
+            "level_by_year": {
+              "2024": 16.93,
+              "2025": 14.96
+            }
+          },
+          {
+            "resource": "FPPYD1_FPP_G2_J02",
+            "n_intervals": 3205,
+            "modal_count": 332,
+            "modal_mw": [
+              78.0,
+              105.0,
+              130.0,
+              155.0,
+              180.0,
+              205.0,
+              230.0,
+              235.9,
+              236.0,
+              294.0
+            ],
+            "modal_price": [
+              98.86,
+              100.85,
+              102.69,
+              104.53,
+              106.38,
+              108.22,
+              110.07,
+              110.5,
+              150.0,
+              150.1
+            ],
+            "priced_level": 112.5987,
+            "priced_lo": 98.86,
+            "priced_hi": 150.1,
+            "floor_block_mw": 0.0,
+            "priced_mw": 294.0,
+            "level_by_year": {
+              "2024": 112.6,
+              "2025": 103.17
+            }
+          },
+          {
+            "resource": "FPPYD2_FPP_G3",
+            "n_intervals": 4043,
+            "modal_count": 344,
+            "modal_mw": [
+              180.0,
+              205.0,
+              230.0,
+              255.0,
+              280.0,
+              305.0,
+              330.0,
+              355.0,
+              380.0,
+              440.0
+            ],
+            "modal_price": [
+              13.83,
+              14.2,
+              14.57,
+              14.94,
+              15.3,
+              15.67,
+              16.04,
+              16.41,
+              16.78,
+              17.52
+            ],
+            "priced_level": 15.0872,
+            "priced_lo": 13.83,
+            "priced_hi": 17.52,
+            "floor_block_mw": 0.0,
+            "priced_mw": 440.0,
+            "level_by_year": {
+              "2024": 15.98,
+              "2025": 15.09
+            }
+          }
+        ],
+        "plant_level": 50.9409,
+        "within_plant_spread": 136.27
+      },
+      {
+        "plant_code": 6180,
+        "plant": "Oak Grove",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "OGSES_UNIT1A",
+            "n_intervals": 3452,
+            "modal_count": 1436,
+            "modal_mw": [
+              0.0,
+              317.0,
+              408.0,
+              493.0,
+              575.0,
+              658.0,
+              743.0,
+              880.0
+            ],
+            "modal_price": [
+              9.28,
+              9.32,
+              9.33,
+              9.36,
+              9.43,
+              9.5,
+              9.57,
+              9.64
+            ],
+            "priced_level": 9.4261,
+            "priced_lo": 9.28,
+            "priced_hi": 9.64,
+            "floor_block_mw": 0.0,
+            "priced_mw": 880.0,
+            "level_by_year": {
+              "2024": 9.43,
+              "2025": 9.43
+            }
+          },
+          {
+            "resource": "OGSES_UNIT2",
+            "n_intervals": 3429,
+            "modal_count": 1377,
+            "modal_mw": [
+              0.0,
+              317.0,
+              408.0,
+              493.0,
+              575.0,
+              658.0,
+              743.0,
+              880.0
+            ],
+            "modal_price": [
+              8.19,
+              8.37,
+              8.42,
+              8.58,
+              8.77,
+              8.96,
+              9.14,
+              9.35
+            ],
+            "priced_level": 8.7153,
+            "priced_lo": 8.19,
+            "priced_hi": 9.35,
+            "floor_block_mw": 0.0,
+            "priced_mw": 880.0,
+            "level_by_year": {
+              "2024": 8.72,
+              "2025": 8.72
+            }
+          }
+        ],
+        "plant_level": 9.0707,
+        "within_plant_spread": 1.45
+      },
+      {
+        "plant_code": 6183,
+        "plant": "San Miguel",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "SANMIGL_G1",
+            "n_intervals": 2725,
+            "modal_count": 853,
+            "modal_mw": [
+              0.0,
+              220.0,
+              221.0,
+              396.0
+            ],
+            "modal_price": [
+              -250.0,
+              -249.0,
+              42.0,
+              43.0
+            ],
+            "priced_level": 42.9943,
+            "priced_lo": 42.0,
+            "priced_hi": 43.0,
+            "floor_block_mw": 220.0,
+            "priced_mw": 176.0,
+            "level_by_year": {
+              "2024": 42.99,
+              "2025": 52.99
+            }
+          }
+        ],
+        "plant_level": 42.9943,
+        "within_plant_spread": 1.0
+      },
+      {
+        "plant_code": 7030,
+        "plant": "Major Oak",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "TNP_ONE_TNP_O_1",
+            "n_intervals": 3894,
+            "modal_count": 2730,
+            "modal_mw": [
+              80.0,
+              90.0,
+              101.0,
+              112.0,
+              122.0,
+              133.0,
+              144.0,
+              155.0
+            ],
+            "modal_price": [
+              14.73,
+              14.74,
+              14.74,
+              14.74,
+              14.74,
+              14.74,
+              14.74,
+              14.74
+            ],
+            "priced_level": 14.7348,
+            "priced_lo": 14.73,
+            "priced_hi": 14.74,
+            "floor_block_mw": 0.0,
+            "priced_mw": 155.0,
+            "level_by_year": {
+              "2024": 14.73,
+              "2025": 14.73
+            }
+          },
+          {
+            "resource": "TNP_ONE_TNP_O_2",
+            "n_intervals": 3888,
+            "modal_count": 2784,
+            "modal_mw": [
+              80.0,
+              90.0,
+              101.0,
+              112.0,
+              122.0,
+              133.0,
+              144.0,
+              155.0
+            ],
+            "modal_price": [
+              14.73,
+              14.74,
+              14.74,
+              14.74,
+              14.74,
+              14.74,
+              14.74,
+              14.74
+            ],
+            "priced_level": 14.7348,
+            "priced_lo": 14.73,
+            "priced_hi": 14.74,
+            "floor_block_mw": 0.0,
+            "priced_mw": 155.0,
+            "level_by_year": {
+              "2024": 14.73,
+              "2025": 14.73
+            }
+          }
+        ],
+        "plant_level": 14.7348,
+        "within_plant_spread": 0.01
+      },
+      {
+        "plant_code": 7097,
+        "plant": "JK Spruce",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "CALAVERS_JKS1",
+            "n_intervals": 3302,
+            "modal_count": 460,
+            "modal_mw": [
+              125.0,
+              135.0,
+              175.0,
+              205.0,
+              275.0,
+              305.0,
+              375.0,
+              405.0,
+              565.0
+            ],
+            "modal_price": [
+              16.37,
+              16.46,
+              16.81,
+              17.08,
+              17.69,
+              17.95,
+              18.57,
+              18.83,
+              20.24
+            ],
+            "priced_level": 18.187,
+            "priced_lo": 16.37,
+            "priced_hi": 20.24,
+            "floor_block_mw": 0.0,
+            "priced_mw": 565.0,
+            "level_by_year": {
+              "2024": 18.19,
+              "2025": 16.9
+            }
+          },
+          {
+            "resource": "CALAVERS_JKS2",
+            "n_intervals": 2880,
+            "modal_count": 476,
+            "modal_mw": [
+              290.0,
+              300.0,
+              380.0,
+              420.0,
+              440.0,
+              460.0,
+              590.0,
+              610.0,
+              800.0
+            ],
+            "modal_price": [
+              15.72,
+              15.83,
+              16.61,
+              16.99,
+              17.16,
+              17.34,
+              18.41,
+              18.56,
+              19.82
+            ],
+            "priced_level": 17.4322,
+            "priced_lo": 15.72,
+            "priced_hi": 19.82,
+            "floor_block_mw": 0.0,
+            "priced_mw": 800.0,
+            "level_by_year": {
+              "2024": 17.43,
+              "2025": 31.56
+            }
+          }
+        ],
+        "plant_level": 17.7446,
+        "within_plant_spread": 4.52
+      },
+      {
+        "plant_code": 56611,
+        "plant": "Sandy Creek",
+        "in_corpus": true,
+        "resources": [
+          {
+            "resource": "SCES_UNIT1_J01",
+            "n_intervals": 2160,
+            "modal_count": 1448,
+            "modal_mw": [
+              152.0,
+              252.0,
+              352.0,
+              440.0
+            ],
+            "modal_price": [
+              29.36,
+              31.14,
+              32.92,
+              34.82
+            ],
+            "priced_level": 31.6656,
+            "priced_lo": 29.36,
+            "priced_hi": 34.82,
+            "floor_block_mw": 0.0,
+            "priced_mw": 440.0,
+            "level_by_year": {
+              "2024": 31.67,
+              "2025": 31.67
+            }
+          },
+          {
+            "resource": "SCES_UNIT1_J02",
+            "n_intervals": 2160,
+            "modal_count": 624,
+            "modal_mw": [
+              90.0,
+              90.1,
+              233.2
+            ],
+            "modal_price": [
+              27.55,
+              27.56,
+              65.0
+            ],
+            "priced_level": 50.5307,
+            "priced_lo": 27.55,
+            "priced_hi": 65.0,
+            "floor_block_mw": 0.0,
+            "priced_mw": 233.2,
+            "level_by_year": {
+              "2024": 50.53,
+              "2025": 25.36
+            }
+          },
+          {
+            "resource": "SCES_UNIT1_J03",
+            "n_intervals": 2160,
+            "modal_count": 2160,
+            "modal_mw": [
+              60.2,
+              87.8,
+              121.8,
+              155.8
+            ],
+            "modal_price": [
+              29.36,
+              31.14,
+              32.92,
+              34.82
+            ],
+            "priced_level": 31.6437,
+            "priced_lo": 29.36,
+            "priced_hi": 34.82,
+            "floor_block_mw": 0.0,
+            "priced_mw": 155.8,
+            "level_by_year": {
+              "2024": 31.64,
+              "2025": 31.64
+            }
+          },
+          {
+            "resource": "SCES_UNIT1_J04",
+            "n_intervals": 2162,
+            "modal_count": 480,
+            "modal_mw": [
+              41.0,
+              47.0,
+              53.0,
+              59.0,
+              65.0,
+              71.0,
+              77.0,
+              83.0,
+              89.0,
+              106.0
+            ],
+            "modal_price": [
+              21.53,
+              21.68,
+              21.83,
+              21.98,
+              22.13,
+              22.28,
+              22.43,
+              22.58,
+              22.73,
+              23.1
+            ],
+            "priced_level": 22.0875,
+            "priced_lo": 21.53,
+            "priced_hi": 23.1,
+            "floor_block_mw": 0.0,
+            "priced_mw": 106.0,
+            "level_by_year": {
+              "2024": 21.84,
+              "2025": 22.09
+            }
+          }
+        ],
+        "plant_level": 35.2813,
+        "within_plant_spread": 43.47
+      }
+    ]
+  }
+}
