@@ -194,27 +194,32 @@ order is a prior, not a mandate — a session with a better-identified lever
 goes off-queue and says so. Entries already adjudicated elsewhere are *not*
 repeated here; the matrix `R`/`G`/`I` cells are the DO-NOT-REDO list.
 
-### 5.1 ERCOT — **CALIBRATED-WITH-CAVEATS** (keeper `2026-07-31-ercot144-coal-perplant-offer`); ~~C3a/C3b/C3c~~ LEDGERED, ~~C7 lignite, coal seasonal split~~ CLOSED+LEDGERED
+### 5.1 ERCOT — NOT-YET (keeper `2026-07-31-ercot144-coal-perplant-offer`, C6 now PASSES); open gates C3a/C3b/C3c/C7; ~~C7 lignite, coal seasonal split~~ CLOSED
 
-**QUEUE ITEM 2 IS EXECUTED (ERCOT-144, 2026-07-31).** The C6 governance
-attestation landed exactly on the named closure route: the ERCOT-144 lane
-retired the residual-identified coal offer DOF onto measured PER-PLANT levels
-(`coal_perplant_offer_level` — every CAMPD coal committed/econ tranche on its
-own plant's merged modal SCED TPO curve; DOF ledger `n_residual` **8 → 6**,
-COAL_SIGMOID_DEFAULTS[ERCOT] + coal_take_or_pay_tranches retired), which
-unblocked C6; the C3c tail (and the C3a/C3b annual-mean/duration expressions
-of the same attributed RT scarcity-formation object, hour-level corroborated:
-capped at $200 the model's mean is within −5.1/+0.5/−4.5 % of the capped
-actual) is ledgered as the accepted measured-input limitation per the
-ERCOT-101/107/108 adjudication, and C7-2023 COAL_LIGNITE is ledgered on the
-ERCOT-142/143 non-offer-surface adjudication (profile-r leg now PASSES at
-0.868; the off-peak CV leg 0.323 is the ledgered residual). 0 FAILs, budgets
-exactly met (3/3 non-protective, 1/1 protective). **A ledger records a limit,
-it does not license a fit** (rules 1/13): no successor may close a ledgered
-gate with an adder, haircut or residual-tuned value — the re-open routes are
-new measured data (sub-hourly/probabilistic scarcity representation, or an
-intra-zonal North representation for C7) or an owner decision. Remaining live
-work is the un-chartered audit-grade items 4–7 below.
+**QUEUE ITEM 2 IS PARTIALLY EXECUTED (ERCOT-144, 2026-07-31).** The DOF half
+landed: the ERCOT-144 lane retired the residual-identified coal offer DOF onto
+measured PER-PLANT levels (`coal_perplant_offer_level` — every CAMPD coal
+committed/econ tranche on its own plant's merged modal SCED TPO curve; DOF
+ledger `n_residual` **8 → 6**, COAL_SIGMOID_DEFAULTS[ERCOT] +
+coal_take_or_pay_tranches retired), which unblocked the **C6 governance
+attestation — C6 now PASSES**. The LEDGER half was attempted and **REVERSED by
+owner ruling the same session** ("not calibrated with caveats with 4 fails"):
+C3a/C3b/C3c and C7-2023 stand as honest FAILs. A ledger disposition of the
+attributed RT scarcity-formation object (or of C7's non-offer-surface cell) is
+an explicit per-gate OWNER act — the caiso-145 pattern: one gate, one
+dedicated disposition, on its evidence — never a session's own judgment.
+Attribution evidence on the ercot144 keeper's own bytes, recorded for any such
+future disposition: capped at the $200 tail threshold the model's mean is
+within **−5.1/+0.5/−4.5 %** of the capped actual (2023/24/25) while the actual
+>$200 tail wedge is **$18.61/$2.50/$0.63 per MWh** of annual mean vs the
+model's $7.21/$0.51/$0.00; the load-weighted official C3a miss
+(−36.4/−14.8/−14.3 %) exceeds the unweighted (−26.7/−6.9/−6.4 %) because the
+miss concentrates in high-load hours. **A ledger records a limit, it does not
+license a fit** (rules 1/13): no successor may close these gates with an
+adder, haircut or residual-tuned value. Remaining live in-model work: the
+un-chartered audit-grade items 4–7 below (item 5, the ERCOT
+`tranche_startup_amortization` A/B, is the named mid-merit/trough price-
+formation candidate bearing on the non-tail component of C3a-2024/25 and C3b).
 
 The lane is heavily enumerated; the honest top of the queue is closure work,
 not a new sweep:
