@@ -171,10 +171,71 @@ def _parse_co(raw: bytes, day: date) -> list[dict]:
     ]
 
 
-def _fetch_year_mcp(year: int, market: str, workers: int) -> None:
-    out = OUT_DIR / f"asm_{'damcp' if market == 'da' else 'rtmcp'}_zonal_{year}.parquet"
-    if out.exists():
+def _target_days(
+    year: int, out, merge: bool, through: date | None
+) -> tuple[list[date], pd.DataFrame | None]:
+    """Days still to fetch for ``year``, plus the existing frame under ``merge``.
+
+    Without ``merge`` an existing output is left alone (the historical
+    skip-if-exists behaviour) and an empty day list is returned. With ``merge``
+    the days already in the file are subtracted, so only the not-yet-staged
+    tail (or interior gap) is fetched and appended — the MERGE-never-replace
+    form a publication horizon that has moved forward since the last fetch
+    needs. ``through`` caps the day list at a mid-year boundary (e.g. the
+    H1-2026 holdout-intake window).
+    """
+    days = [d for d in _days(year) if through is None or d <= through]
+    if not out.exists():
+        return days, None
+    if not merge:
         log.info("%s exists, skipping", out.name)
+        return [], None
+    existing = pd.read_parquet(out)
+    have = set(pd.to_datetime(existing["date"]).dt.date)
+    todo = [d for d in days if d not in have]
+    log.info("%s: %d days on disk, %d to fetch", out.name, len(have), len(todo))
+    return todo, existing
+
+
+def _write(out, rows: list[dict], existing: pd.DataFrame | None, n_days: int) -> None:
+    """Write ``rows`` to ``out``, appending to ``existing`` when merging.
+
+    A year whose every day 404'd (a purged retention year like 2022, or a
+    not-yet-posted tail) writes NO file: a zero-row frame has no columns
+    (``pd.DataFrame([]).to_parquet()`` writes a 0-col file, confirmed by hand),
+    which is a schema-broken artifact worse than no file at all — a downstream
+    loader would silently misread it as "this year exists and is empty."
+    """
+    if not rows:
+        if existing is None:
+            log.warning(
+                "%s: 0/%d days published, not writing (year unavailable)",
+                out.name,
+                n_days,
+            )
+        else:
+            log.info("%s: no new days published, left byte-identical", out.name)
+        return
+    df = pd.DataFrame(rows)
+    if existing is not None:
+        df = pd.concat(
+            [existing, df.reindex(columns=existing.columns)], ignore_index=True
+        )
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    df.to_parquet(out, index=False)
+    log.info("wrote %s (%d rows, +%d new)", out, len(df), len(rows))
+
+
+def _fetch_year_mcp(
+    year: int,
+    market: str,
+    workers: int,
+    merge: bool = False,
+    through: date | None = None,
+) -> None:
+    out = OUT_DIR / f"asm_{'damcp' if market == 'da' else 'rtmcp'}_zonal_{year}.parquet"
+    days, existing = _target_days(year, out, merge, through)
+    if not days:
         return
     report = _MCP_REPORT[market]
 
@@ -187,32 +248,17 @@ def _fetch_year_mcp(year: int, market: str, workers: int) -> None:
 
     rows: list[dict] = []
     with ThreadPoolExecutor(max_workers=workers) as ex:
-        for chunk in ex.map(one, _days(year)):
+        for chunk in ex.map(one, days):
             rows.extend(chunk)
-    if not rows:
-        # Every day 404'd (e.g. a purged retention year like 2022, and by this
-        # session's 2026-07-10 spot-check evidence likely 2018-2021 too — see
-        # data/raw/MISO-AS/README.md). A zero-row frame has no columns
-        # (pd.DataFrame([]).to_parquet() writes a 0-col file, confirmed by
-        # hand), which is a schema-broken artifact worse than no file at all —
-        # skip writing rather than land something a downstream loader would
-        # silently misread as "this year exists and is empty."
-        log.warning(
-            "%s: 0/%d days published, not writing (year unavailable)",
-            out.name,
-            len(_days(year)),
-        )
-        return
-    df = pd.DataFrame(rows)
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    df.to_parquet(out, index=False)
-    log.info("wrote %s (%d rows)", out, len(df))
+    _write(out, rows, existing, len(days))
 
 
-def _fetch_year_co(year: int, workers: int) -> None:
+def _fetch_year_co(
+    year: int, workers: int, merge: bool = False, through: date | None = None
+) -> None:
     out = OUT_DIR / f"asm_rt_cleared_mw_{year}.parquet"
-    if out.exists():
-        log.info("%s exists, skipping", out.name)
+    days, existing = _target_days(year, out, merge, through)
+    if not days:
         return
 
     def one(day: date) -> list[dict]:
@@ -224,23 +270,11 @@ def _fetch_year_co(year: int, workers: int) -> None:
 
     rows: list[dict] = []
     with ThreadPoolExecutor(max_workers=workers) as ex:
-        for i, chunk in enumerate(ex.map(one, _days(year))):
+        for i, chunk in enumerate(ex.map(one, days)):
             rows.extend(chunk)
             if (i + 1) % 60 == 0:
-                log.info("asm_rt_co %d: %d/%d days", year, i + 1, len(_days(year)))
-    if not rows:
-        # See the matching guard in _fetch_year_mcp: a fully-purged or
-        # not-yet-published year must not land a 0-column parquet.
-        log.warning(
-            "%s: 0/%d days published, not writing (year unavailable)",
-            out.name,
-            len(_days(year)),
-        )
-        return
-    df = pd.DataFrame(rows)
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    df.to_parquet(out, index=False)
-    log.info("wrote %s (%d rows)", out, len(df))
+                log.info("asm_rt_co %d: %d/%d days", year, i + 1, len(days))
+    _write(out, rows, existing, len(days))
 
 
 def main() -> None:
@@ -255,13 +289,31 @@ def main() -> None:
         help="mcp = DA ex-ante + RT final zonal MCPs; co = RT cleared MW aggregate",
     )
     ap.add_argument("--workers", type=int, default=4)
+    ap.add_argument(
+        "--merge-missing-days",
+        action="store_true",
+        help="extend an existing year file instead of skipping it: fetch only "
+        "the days it does not already carry and append them, leaving every "
+        "staged row untouched (for a publication horizon that has moved "
+        "forward since the last fetch, e.g. the lagging asm_rt_co report)",
+    )
+    ap.add_argument(
+        "--through",
+        type=date.fromisoformat,
+        default=None,
+        help="last day to fetch (YYYY-MM-DD), for half-year windows like H1-2026",
+    )
     args = ap.parse_args()
     for year in args.years:
         if "mcp" in args.datasets:
-            _fetch_year_mcp(year, "da", args.workers)
-            _fetch_year_mcp(year, "rt", args.workers)
+            _fetch_year_mcp(
+                year, "da", args.workers, args.merge_missing_days, args.through
+            )
+            _fetch_year_mcp(
+                year, "rt", args.workers, args.merge_missing_days, args.through
+            )
         if "co" in args.datasets:
-            _fetch_year_co(year, args.workers)
+            _fetch_year_co(year, args.workers, args.merge_missing_days, args.through)
 
 
 if __name__ == "__main__":

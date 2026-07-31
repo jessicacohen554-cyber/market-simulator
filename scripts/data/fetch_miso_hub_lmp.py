@@ -271,8 +271,16 @@ def _hub_rows_or_none(
 _CHUNK_DAYS = 7  # ~25-29KB plain-text/chunk (module docstring) -- stays under a single push_files call
 
 
-def stage_year(year: int, market: str, api_key: str | None) -> list[Path]:
+def stage_year(
+    year: int, market: str, api_key: str | None, through: date | None = None
+) -> list[Path]:
     """Fetch every day of ``year`` for ``market`` and write ~7-day staged plain CSVs.
+
+    ``through`` (optional) stops the day list at that date instead of running to
+    Dec 31 -- the half-year staging the holdout intake channel needs (CLAUDE.md
+    rule 22 authorizes intake for a *named window*, e.g. "H1-2026", so staging
+    days past that window would land data nobody authorized even though the
+    source publishes them).
 
     A day that fails all its retries is dropped (logged loudly) rather than
     aborting the whole year -- the API path costs ~8 calls/day, so losing one
@@ -296,7 +304,7 @@ def stage_year(year: int, market: str, api_key: str | None) -> list[Path]:
     """
     days = []
     d = date(year, 1, 1)
-    while d.year == year:
+    while d.year == year and (through is None or d <= through):
         days.append(d)
         d += timedelta(days=1)
     with ThreadPoolExecutor(max_workers=_FETCH_WORKERS) as pool:
@@ -352,11 +360,17 @@ def main() -> None:
     ap.add_argument(
         "--markets", nargs="+", choices=sorted(_REPORT), default=sorted(_REPORT)
     )
+    ap.add_argument(
+        "--through",
+        type=date.fromisoformat,
+        default=None,
+        help="last day to stage (YYYY-MM-DD), for half-year windows like H1-2026",
+    )
     args = ap.parse_args()
     api_key = _pricing_api_key()
     for year in args.years:
         for market in args.markets:
-            stage_year(year, market, api_key)
+            stage_year(year, market, api_key, through=args.through)
 
 
 if __name__ == "__main__":
