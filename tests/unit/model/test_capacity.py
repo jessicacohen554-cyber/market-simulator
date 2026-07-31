@@ -452,6 +452,33 @@ class TestConfirmedExits(unittest.TestCase):
         # Completion: 4/12 * 300 = 100 MW -> 700 MW = 1000 - 300.
         self.assertAlmostEqual(y2027[0].pmax_mw, 700.0, places=4)
 
+    def test_oversubscribed_partial_exit_annual_average_then_drop(self):
+        # Over-subscribed registry (registry MW > the plant's binned fleet MW
+        # — the live NEISO Merrimack shape: 459.2 MW registry vs a 108 MW
+        # binned tranche). The effective year must land on the annual-average
+        # of the plant's true start/end states — factor m/12 for a
+        # whole-plant first-half exit, NOT a deeper cut apportioned off the
+        # raw registry MW — and the completion leg drops the remainder.
+        fleet = [_binned("M_COAL1", 2364, 108.0, pmin=20.0, nameplate=108.0)]
+        exits = [
+            self._exit(2364, "1", 2028, month=6, mw=113.6),
+            self._exit(2364, "2", 2028, month=6, mw=345.6),
+        ]
+        y2028 = apply_confirmed_exits(fleet, 2028, exits)
+        # Annual-average of full exit: 6/12 * 108 = 54 MW keeps running.
+        self.assertAlmostEqual(y2028[0].pmax_mw, 54.0, places=4)
+        # Completion: the plant is legally gone -> tranche dropped.
+        self.assertEqual(apply_confirmed_exits(y2028, 2029, exits), [])
+
+    def test_oversubscribed_backlog_prior_drops_whole_plant(self):
+        # Backlog variant of over-subscription: a pre-start whole-plant exit
+        # removes min(registry, binned) -> the tranche is gone at base build.
+        fleet = [_binned("M_COAL1", 903, 108.0, pmin=20.0, nameplate=108.0)]
+        exits = [self._exit(903, "1", 2025, month=6, mw=459.2)]
+        self.assertEqual(
+            apply_confirmed_exits(fleet, 2026, exits, apply_backlog=True), []
+        )
+
 
 class TestEvolveFleetLedgerReconciliation(unittest.TestCase):
     """The evolve_fleet-seam capacity-accounting reconciliation (FFR-1A / FR-26).

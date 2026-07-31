@@ -300,6 +300,13 @@ def apply_confirmed_exits(
       legally gone by May kept ~5/12 of its MW through the horizon).
     * ``exit_month > 6`` or no month: the effective year (``exit_year + 1``
       for late-month rows, majority-of-year rule) removes the full ``mw``.
+    * **Over-subscribed registry** (``Σ mw > binned_mw`` — the fleet
+      under-represents the plant): the effective-year removal is apportioned
+      by ``binned/Σmw`` so the year still lands on the annual-average of the
+      plant's true start/end states (factor ``m/12`` for a whole-plant
+      first-half exit — the pre-FFR-1A behaviour); the uncapped completion
+      leg then floors the factor at 0, finishing the plant at
+      ``max(0, binned − Σmw)``.
 
     Two call sites coordinate via ``apply_backlog``:
 
@@ -381,10 +388,13 @@ def apply_confirmed_exits(
         return list(fleet)
 
     # Per-plant MW due for removal THIS year (the derate branch's numerator),
-    # the registry MW behind it (warning basis, current/prior rows only), and
-    # the unit-grain generator IDs dropping this year.
+    # the registry MW behind it (warning + over-subscription basis,
+    # current/prior rows only), the completion dues (kept separate — they are
+    # never capped, see below), and the unit-grain generator IDs dropping this
+    # year.
     remove_mw_by_plant: dict[int, float] = {}
     raw_mw_by_plant: dict[int, float] = {}
+    completion_mw_by_plant: dict[int, float] = {}
     exit_gids_by_plant: dict[int, set[str]] = {}
     for e in current:
         mw = e.mw or 0.0
@@ -404,9 +414,13 @@ def apply_confirmed_exits(
     for e in completion:
         # No gid entry: the unit-grain drop happened at the effective year.
         due = (e.mw or 0.0) * e.exit_month / 12.0
-        remove_mw_by_plant[e.plant_id] = remove_mw_by_plant.get(e.plant_id, 0.0) + due
+        completion_mw_by_plant[e.plant_id] = (
+            completion_mw_by_plant.get(e.plant_id, 0.0) + due
+        )
 
-    exit_plants = set(remove_mw_by_plant) | set(exit_gids_by_plant)
+    exit_plants = (
+        set(remove_mw_by_plant) | set(completion_mw_by_plant) | set(exit_gids_by_plant)
+    )
 
     # Per exit-plant total binned MW (the derate denominator), computed once.
     binned_mw_by_plant: dict[int, float] = {}
@@ -414,6 +428,23 @@ def apply_confirmed_exits(
         pc = int(g.plant_code)
         if pc in exit_plants and _is_confirmed_binned(g):
             binned_mw_by_plant[pc] = binned_mw_by_plant.get(pc, 0.0) + g.pmax_mw
+
+    # Over-subscription cap: when the registry's exit MW exceeds the plant's
+    # binned fleet MW (the fleet under-represents the plant — NEISO Merrimack
+    # carries 108 MW against a 459.2 MW registry exit), apportion this year's
+    # current/prior removal by binned/raw so a partial-year row's effective
+    # year still lands on the annual-average of the plant's true start/end
+    # states (factor m/12 when the whole plant exits) instead of bleeding the
+    # over-subscription into the months the unit still ran. Completion legs
+    # are added AFTER the cap, uncapped: next year the raw m/12 × mw due
+    # meets the already-averaged remainder, the factor floors at 0, and the
+    # plant correctly finishes at max(0, binned − mw).
+    for pc, raw in raw_mw_by_plant.items():
+        binned = binned_mw_by_plant.get(pc, 0.0)
+        if raw > binned > 0.0:
+            remove_mw_by_plant[pc] *= binned / raw
+    for pc, due in completion_mw_by_plant.items():
+        remove_mw_by_plant[pc] = remove_mw_by_plant.get(pc, 0.0) + due
 
     kept: list[Generator] = []
     for g in fleet:
