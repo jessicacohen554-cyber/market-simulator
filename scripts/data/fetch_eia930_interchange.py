@@ -107,13 +107,51 @@ def main() -> None:
         help="Overwrite an existing output file (raw data is otherwise "
         "immutable — refuse to clobber).",
     )
+    ap.add_argument(
+        "--merge",
+        action="store_true",
+        help="Merge the fetched years into an existing output instead of "
+        "replacing it: every already-committed (local_time, diba) row is kept "
+        "byte-identical and only hours the file does not carry are added, so "
+        "a holdout back-fill cannot move an in-sample year.",
+    )
+    ap.add_argument(
+        "--end-date",
+        type=pd.Timestamp,
+        default=None,
+        help="Drop fetched rows at or after this naive local timestamp "
+        "(YYYY-MM-DD); pins a partial year to an exact window, e.g. "
+        "2026-07-01 for the H1-2026 holdout edge.",
+    )
     args = ap.parse_args()
 
     out = args.out or OUT_DIR / f"{args.ba} interchange hourly.parquet"
-    if out.exists() and not args.force:
-        sys.exit(f"{out} exists — pass --force to overwrite (data/raw is immutable).")
+    if out.exists() and not (args.force or args.merge):
+        sys.exit(
+            f"{out} exists — pass --merge to back-fill it, or --force to "
+            "overwrite (data/raw is otherwise immutable)."
+        )
 
     frame = fetch_interchange(args.ba, sorted(args.years), _api_key())
+    if args.end_date is not None:
+        frame = frame[frame["local_time"] < args.end_date].reset_index(drop=True)
+    if args.merge and out.exists():
+        existing = pd.read_parquet(out)
+        # Drop every fetched row whose (local_time, diba) the file ALREADY
+        # carries, then concatenate — the committed rows pass through
+        # untouched. A blanket drop_duplicates would be wrong: the DST
+        # fall-back hour legitimately repeats a (local_time, diba) key twice
+        # (naive local clock), and de-duplicating would silently delete one of
+        # the two committed rows for that hour.
+        have = set(map(tuple, existing[["local_time", "diba"]].to_numpy()))
+        keys = map(tuple, frame[["local_time", "diba"]].to_numpy())
+        fresh = frame[[k not in have for k in keys]]
+        combined = pd.concat([existing, fresh], ignore_index=True)
+        combined["diba"] = combined["diba"].astype("category")
+        frame = combined.sort_values(["local_time", "diba"], kind="stable").reset_index(
+            drop=True
+        )
+        print(f"merge: kept {len(existing):,} rows, file now {len(frame):,}")
     out.parent.mkdir(parents=True, exist_ok=True)
     frame.to_parquet(out, index=False)
     span = f"{frame['local_time'].min()}..{frame['local_time'].max()}"

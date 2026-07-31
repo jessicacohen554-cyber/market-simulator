@@ -90,7 +90,15 @@ CALIBRATION_ISOS: tuple[str, ...] = (
 # CEMS coverage of the new ISOs). ISOs not listed use the full
 # CALIBRATION_YEARS span.
 CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
-    "CAISO": (2023, 2024, 2025),
+    # CAISO gained 2021-2022 on 2026-07-31 under the owner-authorized rule-22
+    # Option-2 DATA intake (calibration-complete.json intake_log; CAISO holds
+    # NO marker, so no solve/score/registration of either year — reference and
+    # bench readiness only, never calibration years). 2018-2020 are NOT added:
+    # eia_demand_profiles.parquet has no CAISO rows before 2021, so
+    # _demand_totals hard-fails — the same F3/F4-class cross-ISO blocker
+    # already recorded for NEISO below
+    # (docs/holdout-data-equivalency-register-2026-07.md sec. CAISO).
+    "CAISO": (2021, 2022, 2023, 2024, 2025),
     # NYISO gained 2022 on 2026-07-12 under the owner-authorized rule-22 DATA
     # intake (calibration-complete.json intake_log; NO marker, NO solve — the
     # one-shot stays quarantined): 2022 is reference/bench data readiness
