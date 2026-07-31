@@ -33775,6 +33775,70 @@
         "auto-generated",
         "needs-citation"
       ]
+    },
+    {
+      "param_id": "hydro_accreditation_credit_by_iso.CAISO",
+      "display_name": "Hydro Accreditation Credit By Iso / Caiso",
+      "value": 0.7041,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "CPUC/CAISO published 'Non-dispatchable Hydro' Net Qualifying Capacity technology factor, Compliance Year 2025 (fraction of Pmax; the 3-year 2021-2023 average the report itself publishes). 0.7041 is the SEPTEMBER value = the minimum over CAISO's Jul/Aug/Sep peak-risk months (Jul 0.7252 / Aug 0.7084 / Sep 0.7041), so the credit holds in whichever month the annual peak falls (the model's own CAISO peak is Aug in 2023/2025, Sep in 2024). CPUC's adopted QC methodology counts DISPATCHABLE hydro at its most recent maximum-capability (Pmax) test = 1.00 and NON-DISPATCHABLE hydro at historical production (CPUC 2023 Resource Adequacy Report §5; adopted QC Methodology Manual, D.10-06-036 App. B §§7,10). The model carries no per-plant RA class assignment for its hydro fleet, so the registry deliberately takes the LOWER (non-dispatchable) published class factor — conservative, never a value tuned to clear the I7 adequacy invariant (rules 5/13/21). Rule 13: the factor is re-published every compliance year off a rolling 3-year production window and responds to water conditions.",
+      "source_date": "2025-02",
+      "page_or_table": "'2025 Tech Factors' tab, 'Non-dispatchable Hydro' table",
+      "url": "https://www.caiso.com/documents/final-net-qualifying-capacity-report-for-compliance-year-2025.xlsx",
+      "notes": "FFR-1C hydro-in-the-accredited-ledger intake (audit FR-3 / gap-register R5c). Consumed at model/capacity_evolution/adequacy.py::_hydro_firm_mw via resolve_hydro_capacity_credit; guarded by tests/unit/model/test_hydro_accreditation.py. ISOs absent from the registry (NEISO, ERCOT) take the generic published class derate RENEWABLE_CAPACITY_CREDIT['hydro'] = 0.50.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-31",
+      "flags": []
+    },
+    {
+      "param_id": "hydro_accreditation_credit_by_iso.MISO",
+      "display_name": "Hydro Accreditation Credit By Iso / Miso",
+      "value": 0.62,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "MISO Planning Year 2025-2026 Indicative Resource Class-level UCAP under the Direct Loss of Load (DLOL) accreditation methodology, expressed as a percentage of installed capacity (ICAP): 'Run-of-River Hydro' = 62% in the SUMMER column (Fall 52%, Winter 58%, Spring 63%) — the season that matches a summer-peak adequacy ledger. The same published table rates 'Reservoir Hydro' at 89% Summer; the model carries no per-plant reservoir/run-of-river assignment, so the registry takes the LOWER published class factor — conservative, never tuned to clear I7. Single-document arithmetic for the fleet blend is recorded for the routed refinement: the companion Indicative PRMR table publishes Summer class UCAP of 1,846 MW reservoir / 721 MW run-of-river, implying ICAP 2,074 / 1,163 MW and an MW-weighted fleet credit of 0.793. DLOL accreditation is re-run every planning year (rule 13).",
+      "source_date": "2025",
+      "page_or_table": "'Indicative Resource Class-level UCAP (DLOL) Results' table, Summer column",
+      "url": "https://cdn.misoenergy.org/Indicative%20DLOL%20Results%20PY%202025-2026667100.pdf",
+      "notes": "FFR-1C hydro-in-the-accredited-ledger intake (audit FR-3 / gap-register R5c). Consumed at model/capacity_evolution/adequacy.py::_hydro_firm_mw via resolve_hydro_capacity_credit; guarded by tests/unit/model/test_hydro_accreditation.py. ISOs absent from the registry (NEISO, ERCOT) take the generic published class derate RENEWABLE_CAPACITY_CREDIT['hydro'] = 0.50.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-31",
+      "flags": []
+    },
+    {
+      "param_id": "hydro_accreditation_credit_by_iso.NYISO",
+      "display_name": "Hydro Accreditation Credit By Iso / Nyiso",
+      "value": 0.3844,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "NYISO 2025-2026 FINAL Capacity Accreditation Factors (ICAPWG/MIWG, 2025-02-04), Capacity Accreditation Resource Class 'Limited Control Run of River', Rest-of-State column = 38.44% (G-J/GHI region 41.44%; the class does not exist in the NYC or Long Island localities). The SAME published table rates NYISO's controllable hydro classes at 100.00% ('Large Hydro' and 'Large Hydro with partial Pump Storage'), so 0.3844 is the conservative end of NYISO's own published hydro accreditation — not a blend, not a fitted value: the model carries no per-plant CARC assignment for its hydro fleet. CAFs are re-derived annually from the IRM/LCR final base case (rule 13). FF-2B measured the NYISO hydro exclusion at ~3.3 GW of dispatched-but-unaccredited nameplate, ≥ the ISO's whole base-year I7 gap.",
+      "source_date": "2025-02-04",
+      "page_or_table": "'2025 - 2026 Final CAFs' table (slide 5) + Set-2 comparison table (slide 7)",
+      "url": "https://www.nyiso.com/documents/20142/49572424/2025-2026%20Final%20CAF%20and%20PLW_%202.4.2025_Final.pdf",
+      "notes": "FFR-1C hydro-in-the-accredited-ledger intake (audit FR-3 / gap-register R5c). Consumed at model/capacity_evolution/adequacy.py::_hydro_firm_mw via resolve_hydro_capacity_credit; guarded by tests/unit/model/test_hydro_accreditation.py. ISOs absent from the registry (NEISO, ERCOT) take the generic published class derate RENEWABLE_CAPACITY_CREDIT['hydro'] = 0.50.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-31",
+      "flags": []
+    },
+    {
+      "param_id": "hydro_accreditation_credit_by_iso.PJM",
+      "display_name": "Hydro Accreditation Credit By Iso / Pjm",
+      "value": 0.38,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "PJM 2026/2027 Base Residual Auction official/final ELCC class ratings, class 'Hydro Intermittent' = 38% at 519 MW installed — the committed row in data/raw/capacity-market/elcc/pjm/pjm.csv, the same P-0B/N6 intake and the same 2026/27 vintage RENEWABLE_ELCC_CURVES_BY_ISO['PJM'] and THERMAL_ELCC_CLASS_RATING_BY_ISO are anchored to (P-2B Option A per-ISO published-basis consistency). PJM's controllable class 'Hydro with Non-Pumped Storage' rated 96% in the predecessor Dec-2021 ELCC report, and the 2027/28 final vintage moves Hydro Intermittent to 39%, so 38% is the conservative published anchor for the near-term delivery years, never a fitted value.",
+      "source_date": "2025",
+      "page_or_table": "Final ratings doc p.1; 2025 PJM ELCC/RRS Table 24 p.42 (rating), Table 5 p.16-17 (installed MW)",
+      "url": "https://www.pjm.com/-/media/DotCom/planning/res-adeq/elcc/2026-27-bra-elcc-class-ratings.pdf",
+      "notes": "FFR-1C hydro-in-the-accredited-ledger intake (audit FR-3 / gap-register R5c). Consumed at model/capacity_evolution/adequacy.py::_hydro_firm_mw via resolve_hydro_capacity_credit; guarded by tests/unit/model/test_hydro_accreditation.py. ISOs absent from the registry (NEISO, ERCOT) take the generic published class derate RENEWABLE_CAPACITY_CREDIT['hydro'] = 0.50.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-31",
+      "flags": []
     }
   ]
 }

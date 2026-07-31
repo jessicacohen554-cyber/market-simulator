@@ -38,6 +38,7 @@ from market_sim.model.capacity import (
     thermal_accreditation_fraction,
 )
 from market_sim.model.storage import estimate_capacity_value
+from tests.helpers.builders import no_hydro_accreditation
 
 # A hand-computed synthetic curve anchored at the requirement: cap 1.5 x
 # net-CONE at 90% of requirement, net-CONE (1.0) at the requirement, zero-cross
@@ -253,7 +254,10 @@ class TestReservePosition(unittest.TestCase):
         firm = 1000.0 * (1.0 - 0.05)  # UCAP
         ratio = PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO[iso]
         requirement = peak * (1.0 + PLANNING_RESERVE_MARGIN_BY_ISO[iso]) * ratio
-        pos = capacity_reserve_position([gen], 0.0, 0.0, 0.0, config, iso, peak)
+        # Hand-computed: zero the FFR-1C hydro pool so NYISO's real EIA hydro
+        # census stays out of a synthetic single-unit ledger.
+        with no_hydro_accreditation():
+            pos = capacity_reserve_position([gen], 0.0, 0.0, 0.0, config, iso, peak)
         self.assertAlmostEqual(pos, firm / requirement)
 
     def test_none_when_peak_nonpositive(self):
