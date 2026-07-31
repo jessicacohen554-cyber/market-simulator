@@ -156,7 +156,29 @@ scope (§6).
 
 ### 4.3 Arm-2 T0 probes (NEISO + ERCOT) and T1-F re-probes (PJM + NEISO) — MW deltas, attributed
 
-<!-- ARM2-DELTAS -->
+All arm-2 legs solved at `53a8f4d` (post-cap) against the arm-1 legs at `a47a949`,
+isolated caches. Every delta below is pure calendar arithmetic on a cited registry row —
+nothing was tuned in response (rule 1).
+
+**ERCOT T0 2026–2028 (the backlog case, V H Braunig, exit 2025-03).** Base-fleet
+`gas_ct` 10,971.42 → **10,852.17 MW (−119.25 = 3/12 × 477)**: the pre-start backlog now
+removes the full registry MW instead of freezing at the March annual-average, so a plant
+suspended in March 2025 is fully out of a 2026-start fleet. (The delta lands in `gas_ct`,
+not `gas_st`: the EIA-923 dominant-class override reclassifies plant 3612 `ST_GAS →
+CT_PEAKER` at fleet build, so Braunig's tranches carry `gas_ct` — verified directly:
+plant-3612 tranches 1,138.0 MW with no exits, 661.0 with exits under arm 2.) I4 PASS
+both legs; ERCOT's I3 scarcity-slack FAIL (FR-6, structural) persists both legs,
+untouched.
+
+**NEISO T1-F 2026–2030 (the completion case, Merrimack, exit 2028-06).** Ledger trace at
+arm 2: coal 108.0 (2026–2027, untouched) → **54.0 in 2028** (annual-average preserved by
+the cap; 3 derate rows summing 54.0) → **0.0 from 2029** (completion drops the tranches
+below ε; ledgered as 3 `confirmed` retirement rows summing 54.0) — a plant legally gone
+June 2028 no longer keeps half its capacity through 2050. I4 PASS all years. Dispatch is
+value-identical to arm 1 for 2026–2028 and differs exactly from 2029 (n_gen 454 → 451)
+— the behavioral change touches precisely the completion years and nothing else.
+
+<!-- PJM-ARM2 -->
 
 ## 5. Registered runs
 
