@@ -491,6 +491,101 @@ def campd_tranche_fuel_frac(
     return 1.0
 
 
+#: Tranche-suffix stacking rank for the per-plant capacity-window mapping
+#: (ERCOT-144). Physical (capacity) semantics, deliberately NOT the assembled
+#: bid order: `_mustrun` is the plant's LSL block at the bottom, `_committed`
+#: sits above it, the econ ramp ascends `econlo` -> `econhi` (or
+#: `econc00..econcNN` — the smoothing slices are an ascending ladder by
+#: construction), and `peak*` tops the stack. Bid-sorted ordering would let a
+#: residual-identified multiplier inversion (e.g. the keeper's lignite
+#: econ_low 1.216 > econ_high 1.113) reorder the physical stack.
+def _coal_tranche_rank(unit_id: str) -> float:
+    suffix = unit_id.rpartition("_")[2]
+    if suffix in ("mustrun", "sync"):
+        return 0.0
+    if suffix == "committed":
+        return 1.0
+    if suffix == "econlo":
+        return 2.0
+    if suffix == "econhi":
+        return 3.0
+    if suffix.startswith("econc"):
+        try:
+            return 2.0 + int(suffix[5:]) / 100.0
+        except ValueError:
+            return 2.5
+    if suffix.startswith("peak"):
+        return 99.0
+    return 50.0  # unknown suffixes stack below peak, above econ
+
+
+def _coal_perplant_levels(
+    generators: "list[Generator]",
+    fleet_arrays: FleetArrays,
+    curves: "dict[int, tuple[tuple[float, float], ...]]",
+    self_sched_floor: float,
+) -> dict[int, float]:
+    """Per-row measured offer levels for CAMPD coal committed/econ tranches.
+
+    For each coal plant present in ``curves`` (the measured merged modal
+    60-Day SCED ``Submitted TPO`` supply curve,
+    ``constants.COAL_PERPLANT_OFFER_CURVE_BY_ISO`` — ERCOT-144), the plant's
+    CAMPD tranches are stacked in physical capacity order
+    (:func:`_coal_tranche_rank`), each `_committed`/`_econ*` tranche's
+    capacity window ``[lo, hi]`` (fractions of plant capability) is mapped
+    onto the measured curve (scaled to its own top MW), and the tranche's
+    level is the capacity-weighted mean measured price over the window's
+    PRICED segments. Points at/below ``self_sched_floor`` (San Miguel's
+    −$249 LSL block) are excluded from the mean — they are a price-taker
+    self-schedule signal, not a marginal cost; a window falling entirely
+    inside the floor block takes the first priced price above it.
+
+    Returns ``{row_index: level}`` for exactly the rows to reprice.
+    """
+    by_plant: dict[int, list[int]] = {}
+    for g, gen in enumerate(generators):
+        if gen.fuel_type == "coal" and getattr(gen, "is_campd_bin", False):
+            code = int(getattr(gen, "plant_code", 0) or 0)
+            if code in curves:
+                by_plant.setdefault(code, []).append(g)
+    out: dict[int, float] = {}
+    for code, rows in by_plant.items():
+        pts = curves[code]
+        top = float(pts[-1][0])
+        edges = [0.0] + [float(mw) for mw, _p in pts]
+        prices = [float(p) for _mw, p in pts]
+        total = float(sum(fleet_arrays.pmax[g] for g in rows))
+        if total <= 0 or top <= 0:
+            continue
+        rows_ord = sorted(rows, key=lambda g: _coal_tranche_rank(generators[g].unit_id))
+        cum = 0.0
+        for g in rows_ord:
+            share = float(fleet_arrays.pmax[g]) / total
+            lo_f, hi_f = cum, cum + share
+            cum = hi_f
+            rank = _coal_tranche_rank(generators[g].unit_id)
+            if not (1.0 <= rank < 99.0):
+                continue  # mustrun/sync/peak keep their own measured owners
+            lo, hi = lo_f * top, hi_f * top
+            wsum = psum = 0.0
+            for k in range(len(prices)):
+                if prices[k] <= self_sched_floor:
+                    continue
+                w = max(0.0, min(edges[k + 1], hi) - max(edges[k], lo))
+                if w > 0:
+                    wsum += w
+                    psum += w * prices[k]
+            if wsum > 0:
+                out[g] = psum / wsum
+            else:
+                # window entirely inside the self-schedule floor block: the
+                # first priced price above it is the plant's marginal level
+                priced = [p for p in prices if p > self_sched_floor]
+                if priced:
+                    out[g] = priced[0]
+    return out
+
+
 def apply_coal_tranches(
     mc: np.ndarray,
     generators: list[Generator],
@@ -554,6 +649,27 @@ def apply_coal_tranches(
     exits before the fuel-frac discount, so the supply-sigmoid passthrough
     never composes with it (rule 19 replacement — the two prior owners of
     this row's price, the peak multiplier and the sigmoid, both stand down).
+
+    **Per-plant measured offer curves** (ERCOT-144,
+    ``config.coal_perplant_offer_level``): every CAMPD coal
+    ``_committed``/``_econ*`` tranche of a plant present in
+    ``config.coal_perplant_offer_curves`` is repriced to the
+    capacity-weighted measured price of its capacity window on the plant's
+    own merged modal SCED TPO supply curve
+    (:func:`_coal_perplant_levels`)::
+
+        mc[g, t] = level_{plant,window} + emis(t)
+
+    (implemented as ``mc[g, :] += level − heat_rate[g] × fuel_price[g, :] −
+    vom[g]`` on the assembled cost). The levels are fuel-invariant BY
+    MEASUREMENT — the measured mid-band did not co-move with delivered gas
+    (+46 %) or coal across the corpus years — while the curve's bottom
+    (``_mustrun``, coal-anchored ERCOT-137 form) and top (``_peak``,
+    gas-anchored ERCOT-140 form) keep their own measured fuel responses.
+    The branch exits before the fuel-frac discount: the COAL_* band
+    multipliers, the supply sigmoids and the econ marginal-HR floor all
+    stand down on these rows (rule 19 replacement — the harness also strips
+    them from the armed config so nothing re-armable remains, rule 26).
 
     Args:
         mc: The ``(n_gen, T)`` marginal-cost array, modified in place.
@@ -636,6 +752,38 @@ def apply_coal_tranches(
         gas_cc = (_w[:, None] * np.asarray(fuel_prices, dtype=float)[cc_rows, :]).sum(
             axis=0
         ) / _w.sum()
+    # Per-plant measured coal offer curves (ERCOT-144): resolve the gate and
+    # precompute each CAMPD committed/econ tranche's measured window level
+    # from its plant's own merged modal SCED TPO supply curve. Rule-19
+    # REPLACEMENT of the COAL_* band multipliers + supply sigmoids on these
+    # rows — the branch exits before the fuel-frac discount, and the full
+    # assembled fuel+VOM terms are folded into the measured all-in level
+    # (the levels are fuel-invariant BY MEASUREMENT; emissions adders stay).
+    perplant_on = config is not None and getattr(
+        config, "coal_perplant_offer_level", False
+    )
+    pp_levels: dict[int, float] = {}
+    if perplant_on:
+        _curves = getattr(config, "coal_perplant_offer_curves", None)
+        if not _curves:
+            raise ValueError(
+                "coal_perplant_offer_level is armed but "
+                "coal_perplant_offer_curves is unset; resolve it from "
+                "constants.COAL_PERPLANT_OFFER_CURVE_BY_ISO at config build "
+                "(rule 25 — no silent fallback in the offer path)"
+            )
+        from market_sim.config.constants import COAL_PERPLANT_SELF_SCHED_FLOOR
+
+        _curves = {int(k): v for k, v in _curves.items()}
+        pp_levels = _coal_perplant_levels(
+            generators, fleet_arrays, _curves, COAL_PERPLANT_SELF_SCHED_FLOOR
+        )
+        if not pp_levels:
+            raise ValueError(
+                "coal_perplant_offer_level is armed but no CAMPD coal "
+                "committed/econ tranche matched the per-plant curve registry "
+                "— the mechanism would silently do nothing (rule 24)"
+            )
     for g, gen in enumerate(generators):
         if (
             peak_margin_on
@@ -672,6 +820,19 @@ def apply_coal_tranches(
             )
             n_margin += 1
             continue
+        if perplant_on and g in pp_levels:
+            # Per-plant measured window level (ERCOT-144): remove the
+            # assembled fuel and VOM terms and post the plant's own measured
+            # all-in level for this tranche's capacity window (emissions
+            # adders stay on top). Exits before the fuel-frac discount —
+            # neither the band multipliers nor the sigmoid passthrough ever
+            # composes with the measured level (rule 19 replacement).
+            mc[g, :] += (
+                pp_levels[g]
+                - fleet_arrays.heat_rate[g] * fuel_prices[g, :]
+                - fleet_arrays.vom[g]
+            )
+            continue
         # Discount the fuel term for any generator with a take-or-pay
         # contract or host-steam obligation that sinks part of its fuel
         # cost (coal tranches; CAMPD must-run tranches across all fuels).
@@ -691,6 +852,23 @@ def apply_coal_tranches(
             n_margin,
             coal_level,
             coal_anchor,
+        )
+    if pp_levels:
+        _by_plant: dict[int, list[float]] = {}
+        for g, lev in pp_levels.items():
+            _by_plant.setdefault(
+                int(getattr(generators[g], "plant_code", 0) or 0), []
+            ).append(lev)
+        logger.info(
+            "coal per-plant measured offer levels (ERCOT-144): %d "
+            "committed/econ tranche(s) across %d plant(s) repriced onto their "
+            "own merged modal SCED TPO curves — %s",
+            len(pp_levels),
+            len(_by_plant),
+            "; ".join(
+                f"{code} [{min(v):.2f}..{max(v):.2f}]"
+                for code, v in sorted(_by_plant.items())
+            ),
         )
     if n_peak_margin:
         logger.info(
