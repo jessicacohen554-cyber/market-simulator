@@ -95,6 +95,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
     MECH_CHP_STEAM,
     MECH_COAL_MIN_CONFIG,
     MECH_CT_NETLOAD_DRAG,
+    MECH_FIRM_IMPORT,
     MECH_GAS_COMMITMENT_BRIDGE,
     MECH_NYISO_GAS_COMMITMENT_BRIDGE,
     MECH_HYDRO_MIN_FLOW,
@@ -261,6 +262,35 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # [R-FLOOR-WINDOW] forward story: the level re-derives from the next EIA-860
     # vintage with no model input (scripts/data/derive_eia860_coal_min_config.py).
     (MECH_COAL_MIN_CONFIG, None): (0, 24),
+    # firm_import (MECH_FIRM_IMPORT — the CAISO/MISO/NYISO firm must-flow
+    # import blocks: inject_caiso_firm_import_selfschedule,
+    # inject_miso_firm_imports, inject_nyiso_firm_imports): the
+    # driver-justified window is ALL 24 hours BY DRIVER. The driver is a
+    # standing CONTRACT — RA/LTC import must-offer (CPUC D.20-06-028) and the
+    # Manitoba / HQ firm delivery contracts — which obliges delivery around the
+    # clock and names no hour at which it lapses; the shaped capability the
+    # floor rides on already collapses the floor toward 0 in hours the measured
+    # base is small, so the mechanism binds nowhere off-window by construction
+    # rather than by measurement.
+    #
+    # ADDED at caiso-151. Until then MECH_FIRM_IMPORT carried NO row here and
+    # is in both NON_THERMAL_MECHS (D-2 exempt) and MECH_ABLATION_KEPT, so a
+    # 19-28 TWh/yr must-flow floor sat outside every legitimacy gate the repo
+    # runs and had never been window-tested by anything (FINDING-caiso150 §A).
+    # This row exists for VISIBILITY and the rule-12/17 declaration — with an
+    # all-hours window an off-window FAIL is structurally impossible, so it is
+    # not an escalation path; what it buys is that the floored TWh now appears
+    # in every bundle's D-4 table instead of nowhere.
+    #
+    # The defect caiso-150 found was in the floor's LEVEL, not its window: its
+    # shape basis (EIA-930 realised net corridor interchange) measures realised
+    # flow = a price-insensitive core PLUS a price-elastic economic layer, so
+    # the floor forced more price-insensitive import than CAISO's entire
+    # measured price-insensitive intertie position in 47-49 % of 2024/25 hours.
+    # That is reconciled by config.caiso_firm_import_selfsched_clip (caiso-151),
+    # which clips the floor at the measured ceiling — a level fix, which is why
+    # the window declared here is unchanged by it.
+    (MECH_FIRM_IMPORT, None): (0, 24),
     (MECH_RELIABILITY_FLOOR, "CT_PEAKER"): (14, 22),
     (MECH_RELIABILITY_FLOOR, "CT_CHP"): (14, 22),
     (MECH_CT_NETLOAD_DRAG, None): (15, 22),
