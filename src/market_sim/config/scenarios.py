@@ -738,6 +738,12 @@ class ScenarioConfig:
     # 1.0, the unscaled climatology. Backcast runs instead pin the budget to the
     # measured EIA-930 NG:WAT realization (--hydro-eia930-monthly) and ignore
     # this lever. Level input only; see docs G9 / methodology-gaps-2026-06.
+    # EXCEPT for the BAs in constants.EIA930_PS_FOLDED_INTO_WAT, whose NG:WAT
+    # folds in pumped-storage discharge: there the backcast pin is REFUSED
+    # (miso-109) and the forecast climatology is built from EIA-923 HY instead
+    # (miso-110), so both levels stay on the same population as the LP's units.
+    # This lever is unchanged by that — it still scales whichever climatology
+    # applies.
     hydro_dispatch_envelope: bool = False  # GATED default off (caiso-72
     # STEP-2). Cap the conventional-hydro fleet's hourly dispatch at the
     # measured per-(month x hour-of-day) percentile

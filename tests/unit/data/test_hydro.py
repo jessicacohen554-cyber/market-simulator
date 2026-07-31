@@ -913,6 +913,191 @@ class TestPumpedStorageFoldedLevelGuard(unittest.TestCase):
         self.assertAlmostEqual(monthly.sum() / 1e6, target.sum() / 1e6, delta=0.02)
 
 
+class TestPumpedStorageFoldedForecastLevel(unittest.TestCase):
+    """The FORWARD half of the fold fix: a listed BA's forecast level is EIA-923.
+
+    miso-109 corrected the backcast level for the BAs in
+    ``EIA930_PS_FOLDED_INTO_WAT`` but deliberately left the forward analogue —
+    ``forecast_monthly_hydro`` -> ``climatological_monthly_hydro``, the
+    multi-year mean of the SAME PS-inclusive ``NG: WAT`` series — merely
+    warned about. miso-110 replaces it with the coverage-gated EIA-923 ``HY``
+    climatology, the same population as the LP units. Verification is entirely
+    no-LP: the level is a 12-vector.
+    """
+
+    ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO")
+
+    def _zones(self, iso):
+        from market_sim.config.iso_configs import get_iso_config
+
+        return [z.name for z in get_iso_config(iso).zones]
+
+    def test_realised_window_gates_out_the_early_release(self):
+        # The 2025 EIA-923 filing carries 14 MISO `HY` plants against ~163 in
+        # 2021-2024; averaging it in would measure source COVERAGE, not
+        # hydrology (miso-109's "2025 trap"). The gate can only ever remove a
+        # year, so the realised window is a subset of the requested one.
+        from market_sim.config.constants import HYDRO_CLIMATOLOGY_YEARS
+        from market_sim.data.hydro import complete_923_hydro_years
+
+        window = complete_923_hydro_years("MISO")
+        self.assertEqual(window, (2021, 2022, 2023, 2024))
+        self.assertNotIn(2025, window)
+        self.assertTrue(set(window).issubset(set(HYDRO_CLIMATOLOGY_YEARS)))
+
+    def test_miso_forecast_level_is_exactly_the_gated_923_mean(self):
+        # Equality, not a tolerance: the forecast level IS the mean of the
+        # gated years' EIA-923 `HY` totals, with no reconciliation factor
+        # anywhere between the two series (miso-109 §2 — none is identifiable).
+        from market_sim.data.eia923 import (
+            load_monthly_generation,
+            monthly_netgen_columns,
+        )
+        from market_sim.data.hydro import (
+            _load_hydro_generation,
+            climatological_monthly_hydro_923,
+            complete_923_hydro_years,
+            forecast_monthly_hydro,
+        )
+
+        gen = load_monthly_generation()
+        mcols = monthly_netgen_columns()
+        expected = np.vstack(
+            [
+                _load_hydro_generation("MISO", y, gen=gen)[mcols]
+                .to_numpy(dtype=float)
+                .sum(axis=0)
+                for y in complete_923_hydro_years("MISO")
+            ]
+        ).mean(axis=0)
+
+        np.testing.assert_array_equal(
+            climatological_monthly_hydro_923("MISO"), expected
+        )
+        np.testing.assert_array_equal(
+            forecast_monthly_hydro("MISO", "normal"), expected
+        )
+        self.assertEqual(expected.shape, (12,))
+        self.assertAlmostEqual(expected.sum() / 1e6, 9.3116, delta=0.001)
+
+    def test_miso_forecast_level_is_below_the_ps_inclusive_climatology(self):
+        # The defect being removed. NOTE the WINDOW: the two sources realise
+        # DIFFERENT year sets (923 -> 2021-2024, 930 -> 2021+2023-2025, because
+        # the wide MISO hourly extract carries 7 rows for 2022), so this delta
+        # mixes the PS fold with a window mismatch and is NOT quotable as the
+        # fold. The defensible fold numbers are the coverage-gated per-year
+        # backcast ones, +13.5 % (2023) and +18.5 % (2024) — asserted below.
+        from market_sim.data.eia_loader import climatological_monthly_hydro
+        from market_sim.data.hydro import _load_hydro_generation, forecast_monthly_hydro
+        from market_sim.data.eia923 import monthly_netgen_columns
+
+        level = forecast_monthly_hydro("MISO", "normal")
+        self.assertLess(level.sum(), climatological_monthly_hydro("MISO").sum())
+
+        mcols = monthly_netgen_columns()
+        for year, expected_pct in ((2023, 13.5), (2024, 18.5)):
+            hy = _load_hydro_generation("MISO", year)[mcols].to_numpy(dtype=float).sum()
+            wat = measured_monthly_hydro("MISO", year).sum()
+            self.assertAlmostEqual((wat / hy - 1) * 100, expected_pct, delta=0.5)
+
+    def test_every_non_registry_iso_is_byte_unchanged(self):
+        # Asserted, not assumed: the registry is the ONLY thing that switches
+        # source, so a non-listed ISO's forecast level must still be exactly
+        # its EIA-930 climatology times the wet/dry lever (rule 25 — a verdict
+        # never crosses an ISO boundary).
+        from market_sim.config.constants import EIA930_PS_FOLDED_INTO_WAT
+        from market_sim.data.eia_loader import climatological_monthly_hydro
+        from market_sim.data.hydro import (
+            forecast_monthly_hydro,
+            resolve_hydro_year_multiplier,
+        )
+
+        unlisted = [i for i in self.ISOS if i not in EIA930_PS_FOLDED_INTO_WAT]
+        self.assertEqual(len(unlisted), 5)
+        for iso in unlisted:
+            base = climatological_monthly_hydro(iso)
+            self.assertIsNotNone(base, f"{iso} has no EIA-930 climatology")
+            for hydro_year in ("dry", "normal", "wet"):
+                np.testing.assert_array_equal(
+                    forecast_monthly_hydro(iso, hydro_year),
+                    base * resolve_hydro_year_multiplier(hydro_year),
+                    err_msg=f"{iso}/{hydro_year} forecast level moved",
+                )
+
+    def test_wet_dry_lever_still_multiplies_cleanly(self):
+        from market_sim.data.hydro import (
+            forecast_monthly_hydro,
+            resolve_hydro_year_multiplier,
+        )
+
+        base = forecast_monthly_hydro("MISO", "normal")
+        for hydro_year in ("dry", "normal", "wet"):
+            np.testing.assert_array_equal(
+                forecast_monthly_hydro("MISO", hydro_year),
+                base * resolve_hydro_year_multiplier(hydro_year),
+            )
+        self.assertLess(forecast_monthly_hydro("MISO", "dry").sum(), base.sum())
+        self.assertGreater(forecast_monthly_hydro("MISO", "wet").sum(), base.sum())
+
+    def test_no_complete_filing_falls_back_and_warns(self):
+        # Design decision 2: the documented fallback. With every candidate year
+        # gated out there is no climatology, so `forecast_monthly_hydro`
+        # returns None and `build_hydro_fleet` leaves the budget at the
+        # (clamped) shape year's own EIA-923 level — still the right
+        # population, but a single water year, with the wet/dry lever inert.
+        from market_sim.data.hydro import (
+            climatological_monthly_hydro_923,
+            complete_923_hydro_years,
+            forecast_monthly_hydro,
+        )
+
+        self.assertEqual(complete_923_hydro_years("MISO", (2025,)), ())
+        with self.assertLogs("market_sim.data.hydro", level="WARNING"):
+            self.assertIsNone(climatological_monthly_hydro_923("MISO", (2025,)))
+        with self.assertLogs("market_sim.data.hydro", level="WARNING"):
+            self.assertIsNone(forecast_monthly_hydro("MISO", "normal", (2025,)))
+
+    def test_forecast_fleet_past_the_vintage_horizon_keeps_a_full_census(self):
+        # REGRESSION GUARD. The `shape_year = min(year, EIA923_LATEST_FINAL_
+        # VINTAGE)` clamp exists because an unclamped forecast year silently
+        # EMPTIED the hydro fleet (nyiso-forecast-2035-2026-07-13.md finding 1).
+        # Re-asserted on the new source path at both a near and a far year.
+        from market_sim.data.hydro import build_hydro_fleet, forecast_monthly_hydro
+
+        expected = forecast_monthly_hydro("MISO", "normal")
+        for year in (2026, 2035):
+            units, monthly = build_hydro_fleet(
+                "MISO",
+                year,
+                self._zones("MISO"),
+                backfill_year=2024,
+                forecast_budget=True,
+            )
+            self.assertEqual(len(units), 160, f"MISO {year} hydro census collapsed")
+            self.assertIsNotNone(monthly)
+            self.assertAlmostEqual(
+                monthly.sum() / 1e6, expected.sum() / 1e6, delta=0.001
+            )
+
+    def test_forecast_and_backcast_levels_are_the_same_population(self):
+        # The point of the whole fix: the forward level and the corrected
+        # backcast level are now both EIA-923 `HY`, so a forecast year's level
+        # sits in the same range as the backcast years' rather than ~10 % above
+        # them the way the PS-inclusive climatology did.
+        from market_sim.data.hydro import build_hydro_fleet, forecast_monthly_hydro
+
+        zones = self._zones("MISO")
+        backcast = [
+            build_hydro_fleet(
+                "MISO", y, zones, backfill_year=2024, eia930_monthly=True
+            )[1].sum()
+            for y in (2023, 2024)
+        ]
+        level = forecast_monthly_hydro("MISO", "normal").sum()
+        self.assertGreater(level, min(backcast))
+        self.assertLess(level, max(backcast) * 1.05)
+
+
 class TestOtherISOBudgetsUnchanged(unittest.TestCase):
     """PJM / ERCOT / CAISO hydro budgets are untouched by the NYISO/NEISO P4 stage."""
 

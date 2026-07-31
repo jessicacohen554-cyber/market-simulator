@@ -1163,7 +1163,45 @@ NYISO_HYDRO_TREATY_MIN_FLOW: dict[int, float] = {
 # are simply skipped, so a short extract still yields a climatology). Built by
 # data.eia_loader.climatological_monthly_hydro. Source: EIA-930 hourly NG:WAT,
 # 2021-2025.
+#
+# ONE WINDOW, TWO SOURCES (miso-110). A BA in EIA930_PS_FOLDED_INTO_WAT below
+# cannot use the NG:WAT series as a LEVEL at all — the same defect miso-109 fixed
+# on the backcast path — so for those BAs data.hydro.forecast_monthly_hydro
+# averages EIA-923 `HY` over this SAME window instead
+# (data.hydro.climatological_monthly_hydro_923). The window constant is shared;
+# what differs is which years each source can actually supply, so the REALISED
+# window is logged at call time and is not assumed to equal this tuple.
+#
+# NOT EXTENDED for the 2022 hole, deliberately (rule 23 [R-FROZEN-DERIVE], which
+# requires a SOURCE-DATA justification for a window change and there is none).
+# MISO and CAISO realise only (2021, 2023, 2024, 2025) on the EIA-930 side
+# because the wide per-BA extracts `data/raw/eia-930-hourly/{MISO,CISO}
+# hourly.parquet` carry 7 and 9 rows for 2022 against 8760. That is an
+# EXTRACT-BUILD gap, not missing source data: the per-year long-form
+# `data/raw/eia-930/{MISO,CISO}_fueltype_2022.parquet` files are present and
+# complete (61,320 / 70,080 rows). The remedy is rebuilding those two extracts
+# in a data-intake session; moving this window would silently change the
+# forecast level of every ISO to work around two files.
 HYDRO_CLIMATOLOGY_YEARS: tuple[int, ...] = (2021, 2022, 2023, 2024, 2025)
+
+# --- EIA-923 complete-filing coverage gate (miso-110) -----------------------
+# Minimum share of an ISO's MODAL EIA-923 `HY` plant census that a year's filing
+# must carry to enter the EIA-923 hydro climatology mean. EIA-923 vintages after
+# the latest final release are monthly EARLY RELEASES covering only the
+# monthly-survey (large) reporters; averaging one into a climatology would
+# measure SOURCE COVERAGE, not hydrology (miso-109's "2025 trap": MISO files 14
+# `HY` plants for 2025 against 163 for 2021-2024, a naive read of +918%).
+#
+# Identification: measured, and the two populations are separated by a wide
+# EMPTY BAND, so the threshold is not a tuned edge (rule 5 [R-NO-MAGIC]).
+# Over all six ISOs x 2018-2026 (scripts/probes/_miso110_forward_level_audit.py
+# §A): the LARGEST early-release census ratio is 0.157 (CAISO 2025, 26/166) and
+# the SMALLEST final-vintage ratio is 0.800 (ERCOT 2024, 12/15 — genuine
+# attrition of very small hydro, not a coverage loss). 0.50 sits mid-band, 3.2x
+# above the largest early release and 1.6x below the smallest complete filing.
+# Re-derive only when the EIA-923 census data changes (rule 23). Source: on-disk
+# per-year plant-census counts of the F923 monthly-generation extract.
+EIA923_COMPLETE_FILING_CENSUS_FRACTION: float = 0.50
 
 # --- BAs that fold pumped storage into EIA-930 NG: WAT (miso-108/miso-109) ---
 # EIA-930's per-fuel split gives pumped storage its own `NG: PS` column. A BA
