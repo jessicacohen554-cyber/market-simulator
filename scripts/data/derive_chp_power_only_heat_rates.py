@@ -182,11 +182,14 @@ _HR_BAND: dict[str, tuple[float, float]] = {
     "CT_CHP": (6.0, 25.0),
 }
 
-#: Tolerance on "the plant's incumbent model heat rate IS eGRID's credited
-#: rate". A plant that fails it carries a boundary repair
+#: Tolerance on "the plant's incumbent heat rate AT THE REPLACEMENT SEAM IS
+#: eGRID's credited rate". A plant that fails it carries a boundary repair
 #: (``fleet.eia860._apply_egrid_boundary_hr_repairs``) or a ``HEAT_RATE_BINS``
 #: fallback instead, so replacing it would change more than the steam credit
-#: and the single-delta property would be lost.
+#: and the single-delta property would be lost. Compared against
+#: :func:`basis_heat_rates`, NOT the shipped rate — see that function for why
+#: (the hand factor is a known deterministic in-repo transform that sits after
+#: the seam, and comparing against it blinded the check in CAISO/PJM).
 _BASIS_TOL: float = 0.005
 
 _CC_PREFIX = "combined cycle"
@@ -220,6 +223,46 @@ def model_heat_rates(iso: str) -> dict[tuple[int, str], float]:
     compares like with like.
     """
     fleet = load_fleet_from_csv(iso, get_iso_config(iso))
+    num: dict[tuple[int, str], float] = {}
+    den: dict[tuple[int, str], float] = {}
+    for gen in fleet:
+        if gen.plant_group not in TARGET_CLASSES:
+            continue
+        code = int(gen.plant_code or 0)
+        if not code:
+            continue
+        key = (code, gen.plant_group)
+        num[key] = num.get(key, 0.0) + float(gen.pmax_mw) * float(gen.heat_rate)
+        den[key] = den.get(key, 0.0) + float(gen.pmax_mw)
+    return {k: num[k] / den[k] for k in num if den[k] > 0}
+
+
+def basis_heat_rates(iso: str) -> dict[tuple[int, str], float]:
+    """Return the incumbent heat rate AT THE SEAM the measured rate replaces.
+
+    Identical to :func:`model_heat_rates` except that the legacy hand-factor
+    CHP correction is skipped — i.e. the eGRID join and the boundary repairs
+    have run, but :func:`market_sim.data.chp._correct_chp_steam_credit_hr` has
+    not. This is what :func:`apply_measured_chp_heat_rates` actually overwrites
+    (it runs first and hands the hand factor a ``skip_ids`` set), so it is the
+    rate the basis check below must compare eGRID's credited rate against.
+
+    WHY THIS IS NOT ``model_heat_rates`` (caiso-147): in the two ISOs that
+    carry the hand factor (``CHP_STEAM_CREDIT_HR_CORRECTION_ISOS`` = CAISO,
+    PJM) the shipped rate is ``credited x 1.8`` for a sub-8.0 CT_CHP and
+    ``max(credited x 1.15, 6.3)`` for a sub-6.0 CC_CHP, so EVERY hand-corrected
+    plant fails ``_BASIS_TOL`` and the artifact excludes precisely the
+    population the mechanism exists to fix. Measured in CAISO: 59 of the 65
+    ``basis_mismatch`` rows — 3,089 of 3,186 MW — were excluded by the hand
+    factor alone, leaving only the 14 plants it never touched. Comparing at
+    the seam restores the check's actual discriminating power: the six genuine
+    boundary-repair / ``HEAT_RATE_BINS``-fallback rows still fail it. In an ISO
+    without the hand factor (MISO) the two functions are identical and this
+    changes nothing.
+    """
+    fleet = load_fleet_from_csv(
+        iso, get_iso_config(iso), apply_chp_steam_credit_correction=False
+    )
     num: dict[tuple[int, str], float] = {}
     den: dict[tuple[int, str], float] = {}
     for gen in fleet:
@@ -295,6 +338,7 @@ def plant_table(
     vintage: int,
     caps: dict[tuple[int, str], float],
     model_hr: dict[tuple[int, str], float],
+    basis_hr: dict[tuple[int, str], float],
     egrid: pd.DataFrame,
     cems_heat: dict[int, float],
 ) -> pd.DataFrame:
@@ -308,6 +352,7 @@ def plant_table(
     rows: list[dict] = []
     for (code, klass), cap in sorted(caps.items(), key=lambda kv: -kv[1]):
         model = model_hr.get((code, klass))
+        basis = basis_hr.get((code, klass))
         rec: dict = {
             "plant_code": code,
             "plant_group": klass,
@@ -320,6 +365,7 @@ def plant_table(
             "heat_rate_credited": float("nan"),
             "heat_rate": float("nan"),
             "model_heat_rate": round(float(model), 4) if model is not None else np.nan,
+            "basis_heat_rate": round(float(basis), 4) if basis is not None else np.nan,
             "model_over_measured": float("nan"),
             "cems_heat_mmbtu": round(cems_heat.get(code, float("nan")), 1),
             "cems_vs_egrid_total": float("nan"),
@@ -347,7 +393,7 @@ def plant_table(
                 cems = cems_heat.get(code)
                 if cems is not None and total > 0.0:
                     rec["cems_vs_egrid_total"] = round(cems / total, 5)
-                rec["flag"] = _flag(klass, credited, power_only, therm / total, model)
+                rec["flag"] = _flag(klass, credited, power_only, therm / total, basis)
         rows.append(rec)
 
     out = pd.DataFrame(rows)
@@ -365,7 +411,9 @@ def plant_table(
         f"classes {'/'.join(TARGET_CLASSES)}, thermal_share <= "
         f"{_MAX_THERMAL_SHARE} (EPA CHP Partnership unfired gas-turbine "
         "envelope), corrected rate inside the class physical band, and the "
-        "incumbent model rate equal to eGRID's credited rate."
+        "incumbent rate AT THE REPLACEMENT SEAM (basis_heat_rate — after the "
+        "eGRID join and boundary repairs, before the legacy hand factor) "
+        "equal to eGRID's credited rate."
     )
     return out
 
@@ -375,7 +423,7 @@ def _flag(
     credited: float,
     power_only: float,
     thermal_share: float,
-    model: float | None,
+    basis: float | None,
 ) -> str:
     """Return the applicability flag for one (plant, class) row."""
     if not np.isfinite(power_only) or power_only <= 0.0:
@@ -385,7 +433,7 @@ def _flag(
         # corrected rate IS the incumbent. Excluded so the applied map contains
         # only plants the mechanism actually changes (byte-identical no-op).
         return "no_chp_credit"
-    if model is None or abs(credited / model - 1.0) > _BASIS_TOL:
+    if basis is None or abs(credited / basis - 1.0) > _BASIS_TOL:
         # The incumbent is a boundary repair or a HEAT_RATE_BINS fallback, not
         # this eGRID row — replacing it would not be a single steam-credit delta.
         return "basis_mismatch"
@@ -432,6 +480,7 @@ def main(argv: list[str] | None = None) -> int:
         args.vintage,
         caps,
         model_heat_rates(iso),
+        basis_heat_rates(iso),
         egrid_chp_split(args.vintage),
         cems,
     )
