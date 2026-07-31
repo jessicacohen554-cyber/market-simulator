@@ -25,10 +25,38 @@ calendar year (2019-01-01 .. year-end); `miso_subba_demand_2026.csv` is
 partial-year, 2026-01-01T00 .. 2026-06-30T23 (the latest period available
 at fetch time).
 
-**2018 is unavailable at the source** — EIA's `region-sub-ba-data` product
-starts 2019-01-01; this is a genuine source-coverage limit, not a fetch
-failure, so no 2018 file exists or will be added for MISO under this
-product.
+**2018 is unavailable through the API** — EIA's `region-sub-ba-data` product
+starts 2019-01-01. That is a genuine limit of *that* product, not of the data:
+see the H2-2018 correction below.
+
+## H2-2018 (2026-07-31 rule-22 holdout intake) — the API's start date is not the data's
+
+`miso_subba_demand_2018.csv` — **26,454 rows**, 4,409 hours × the same six
+sub-BAs, `2018-07-01T06` .. `2018-12-31T23`. The claim above that 2018 "will
+never be added" was **half wrong**: EIA publishes the same sub-BA demand,
+without registration, in the Hourly Electric Grid Monitor's six-month bulk
+extracts, and those reach back to **2018-07-01** —
+
+    https://www.eia.gov/electricity/gridmonitor/sixMonthFiles/EIA930_SUBREGION_2018_Jul_Dec.csv
+
+H1-2018 genuinely does not exist (`EIA930_SUBREGION_2018_Jan_Jun.csv` serves an
+HTML "page not found" body with a 200 status): sub-BA reporting began mid-2018.
+
+**Clock, verified rather than assumed.** The API's `period` for this product is
+the **UTC hour-ending** stamp, not a local one. Joining the committed
+`miso_subba_demand_2019.csv` to the 2019-H1 Grid Monitor extract on `UTC Time at
+End of Hour` reproduces **4,343 / 4,343** values exactly; every other offset from
+−8 h to +8 h matches essentially nothing (the next best is 0.2 %). The Grid
+Monitor's own "Local Time" column is NOT used — for MISO it is stamped at a
+fixed UTC−5 year-round, which is neither the API's convention nor Central time.
+
+**Producer:** `scripts/data/fetch_eia930_subba_demand.py --iso MISO --years 2018`
+(key-free; MERGE-never-replace; partitioned by *period* year, so the handful of
+hours whose UTC stamp spills into the neighbouring year stay in the neighbour's
+file — this file has **zero** overlap with `miso_subba_demand_2019.csv`). Output
+matches the committed convention byte for byte: CRLF, period-descending with
+sub-BA ascending inside each hour, zero-padded 4-character codes, and the
+2019-2022-era `subba-name` vintage ("Zone 1 - MISO", which the 2026 file drops).
 
 **Transport note:** these five files were committed via a direct `git
 push` of the plain CSVs (not the gzip+base64 chunked convention described
