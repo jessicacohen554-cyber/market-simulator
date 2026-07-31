@@ -160,10 +160,14 @@ it is modeled as storage.
 column; a BA that runs pumped storage but files no such column reports PS gross
 discharge *inside* `NG: WAT`, which is then not an admissible **level** for a
 `HY`-only unit population (rule 14 `[R-ACCURATE]`). For the BAs listed in
-`constants.EIA930_PS_FOLDED_INTO_WAT` (MISO today) both levels come from EIA-923
+`constants.EIA930_PS_FOLDED_INTO_WAT` (MISO + PJM) both levels come from EIA-923
 `HY` instead — the backcast pin is refused (miso-109) and the forecast
 climatology comes from `climatological_monthly_hydro_923` (miso-110), so level
-and units are one population in either lane. The 923 climatology is
+and units are one population in either lane. The refusal is PER-YEAR for the
+time-split BAs in `constants.EIA930_PS_SPLIT_COMPLETE_FROM` (NEISO: `NG: PS`
+filed only from 2024-11-07, so pre-2025 pins are refused and wholly-split years
+keep theirs; the forecast climatology is 923-based while its window holds any
+folded year — neiso-72, `data.hydro.eia930_wat_level_folded`). The 923 climatology is
 coverage-gated by `complete_923_hydro_years` (year ≤ `EIA923_LATEST_FINAL_VINTAGE`
 **and** census ≥ `EIA923_COMPLETE_FILING_CENSUS_FRACTION` × the ISO's modal
 census) so a monthly early release cannot enter the mean, and it **logs its

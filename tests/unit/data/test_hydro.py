@@ -862,6 +862,60 @@ class TestPumpedStorageFoldedLevelGuard(unittest.TestCase):
         self.assertNotIn("NEISO", EIA930_PS_FOLDED_INTO_WAT)
         self.assertNotIn("NYISO", EIA930_PS_FOLDED_INTO_WAT)
 
+    def test_split_registry_is_neiso_only_and_disjoint_from_the_flat_one(self):
+        # neiso-72: the TIME-SPLIT companion registry. NEISO's first wholly-
+        # split calendar year is 2025 (first filed NG: PS hour 2024-11-07;
+        # the seam year counts as folded — one source basis per year).
+        from market_sim.config.constants import (
+            EIA930_PS_FOLDED_INTO_WAT,
+            EIA930_PS_SPLIT_COMPLETE_FROM,
+        )
+
+        self.assertEqual(EIA930_PS_SPLIT_COMPLETE_FROM, {"NEISO": 2025})
+        for iso in EIA930_PS_SPLIT_COMPLETE_FROM:
+            self.assertNotIn(iso, EIA930_PS_FOLDED_INTO_WAT)
+
+    def test_folded_predicate_is_per_year_for_neiso_and_flat_elsewhere(self):
+        from market_sim.data.hydro import eia930_wat_level_folded
+
+        for year in (2019, 2023, 2024):  # pre-split + the seam year
+            self.assertTrue(eia930_wat_level_folded("NEISO", year))
+        for year in (2025, 2026):  # wholly-split years keep the pin
+            self.assertFalse(eia930_wat_level_folded("NEISO", year))
+        # Flat-registry BAs are folded in EVERY year; clean ISOs in none.
+        self.assertTrue(eia930_wat_level_folded("MISO", 2025))
+        self.assertTrue(eia930_wat_level_folded("PJM", 2030))
+        self.assertFalse(eia930_wat_level_folded("NYISO", 2019))
+        self.assertFalse(eia930_wat_level_folded("ERCOT", 2023))
+
+    def test_neiso_presplit_years_refuse_the_pin(self):
+        # Design D (neiso-72): 2023/2024 predate the first wholly-split year,
+        # so asking for the pin yields the un-pinned EIA-923 HY budget — the
+        # units' own complete-census filings (173/169 plants) — which sits
+        # BELOW the PS-folded measured series.
+        from market_sim.data.hydro import build_hydro_fleet
+
+        zones = self._zones("NEISO")
+        # Expected totals are the BUILDER's (923 HY census + the backfill_year
+        # population construction every run already uses: 8.5762 = the raw
+        # 8.5469 census + 0.029 TWh of plants carried at their 2024 filing),
+        # NOT the raw-census probe numbers — the pin is the only thing removed.
+        for year, expected_twh in ((2023, 8.576), (2024, 6.714)):
+            pinned_request, monthly = build_hydro_fleet(
+                "NEISO", year, zones, backfill_year=2024, eia930_monthly=True
+            )
+            bare_units, bare = build_hydro_fleet(
+                "NEISO", year, zones, backfill_year=2024, eia930_monthly=False
+            )
+            np.testing.assert_array_equal(monthly, bare)
+            self.assertEqual(len(pinned_request), len(bare_units))
+            self.assertAlmostEqual(monthly.sum() / 1e6, expected_twh, delta=0.01)
+            wat = measured_monthly_hydro("NEISO", year)
+            self.assertIsNotNone(wat)
+            self.assertLess(monthly.sum(), wat.sum())
+        # 2025 — the first wholly-split year — KEEPS the pin: covered by
+        # test_unlisted_iso_still_pins_to_the_measured_series below.
+
     def test_miso_level_is_the_923_hy_budget_not_the_930_pin(self):
         from market_sim.data.hydro import build_hydro_fleet
 
@@ -1034,6 +1088,31 @@ class TestPumpedStorageFoldedForecastLevel(unittest.TestCase):
             wat = measured_monthly_hydro("MISO", year).sum()
             self.assertAlmostEqual((wat / hy - 1) * 100, expected_pct, delta=0.5)
 
+    def test_neiso_forecast_level_is_the_923_climatology_while_window_folded(self):
+        # neiso-72, the time-split forecast half: 2021-2024 of the climatology
+        # window predate NEISO's first wholly-split year, so averaging the 930
+        # series would fold pumped storage into the forward level; the whole
+        # climatology stays on the 923 basis instead. The guard un-arms
+        # itself once the window holds only wholly-split years — asserted on
+        # the predicate, since no such 930 window exists on disk yet.
+        from market_sim.config.constants import HYDRO_CLIMATOLOGY_YEARS
+        from market_sim.data.hydro import (
+            climatological_monthly_hydro_923,
+            eia930_wat_level_folded,
+            forecast_monthly_hydro,
+        )
+
+        self.assertTrue(
+            any(eia930_wat_level_folded("NEISO", y) for y in HYDRO_CLIMATOLOGY_YEARS)
+        )
+        np.testing.assert_array_equal(
+            forecast_monthly_hydro("NEISO", "normal"),
+            climatological_monthly_hydro_923("NEISO"),
+        )
+        self.assertFalse(
+            any(eia930_wat_level_folded("NEISO", y) for y in (2025, 2026, 2027))
+        )
+
     def test_every_non_registry_iso_is_byte_unchanged(self):
         # Asserted, not assumed: the registry is the ONLY thing that switches
         # source, so a non-listed ISO's forecast level must still be exactly
@@ -1046,8 +1125,16 @@ class TestPumpedStorageFoldedForecastLevel(unittest.TestCase):
             resolve_hydro_year_multiplier,
         )
 
-        unlisted = [i for i in self.ISOS if i not in EIA930_PS_FOLDED_INTO_WAT]
-        self.assertEqual(len(unlisted), 4)  # MISO (miso-110) + PJM (pjm-143)
+        from market_sim.config.constants import EIA930_PS_SPLIT_COMPLETE_FROM
+
+        unlisted = [
+            i
+            for i in self.ISOS
+            if i not in EIA930_PS_FOLDED_INTO_WAT
+            and i not in EIA930_PS_SPLIT_COMPLETE_FROM
+        ]
+        # MISO + PJM are flat-listed; NEISO is split-listed (neiso-72).
+        self.assertEqual(len(unlisted), 3)
         for iso in unlisted:
             base = climatological_monthly_hydro(iso)
             self.assertIsNotNone(base, f"{iso} has no EIA-930 climatology")

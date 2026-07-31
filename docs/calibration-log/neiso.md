@@ -812,3 +812,61 @@ their own owner charter. (3) Item 4 (NG:PS hydro time split) and item 5 (STEP 3
 seam) unchanged.
 
 Next shorthand: **neiso-72.**
+
+---
+
+## neiso-72 — 2026-07-31 — the PS time split: hydro level goes per-window; PROMOTED keeper `2026-07-31-neiso-72-hy-window`
+
+**Lever:** §5.6 item 4 (handoff Lever B) — the `NG: PS` hydro-pin audit's last
+open cell (`hydro_level_923_hy` NEISO `U` → **`K`**; the cross-ISO audit row is
+now CLOSED at all six ISOs).
+
+**The defect, measured** (`scripts/probes/_neiso72_ps_window_audit.py`;
+`PREREG-neiso72-hydro-ps-window-2026-07-31.md` committed pre-solve): NEISO is
+the only ISO filing `NG: PS` at all, from a single measured seam hour —
+**2024-11-07 00:00** (zero filed hours 2019-01→2024-11-06). Pre-split `NG: WAT`
+carries the full ~1.9 TWh/yr PS block on four independent tests; the decisive
+one is confound-free (the seam falls INSIDE November 2024: max 1,873→685 MW,
+swing 7.11×→1.79× six days apart, vs 0.77–1.03× for the same cut in the five
+no-seam years). The +2.7 %/+10.1 % level gap understates the fold ~8× — a
+~1.2–1.6 TWh/yr 930 telemetry under-count of the 923 census cancels against it
+(two errors landing near zero, the rule-14 silent-compensation signature).
+NEISO PS is endogenous storage (1,865.0 MW), so the pin double-represented its
+discharge.
+
+**The fix (design D, owner-adjudicated over flat/splice/subtract-estimated-PS;
+owner also asked and got the coverage answer — split data = 1.15 yr, used for
+diagnosis, never for the correction):**
+`constants.EIA930_PS_SPLIT_COMPLETE_FROM = {"NEISO": 2025}` +
+`data/hydro.py::eia930_wat_level_folded` — pin refused per-year before the
+first wholly-split year (2023/2024 → the units' own 923 `HY` filings, builder
+budgets 8.5762/6.7144 TWh), kept for wholly-split 2025. One source basis per
+year. Forecast lane: 923 climatology while the window holds any folded year,
+self-un-arming as it rolls past the seam. Zero free parameters.
+
+**A/B** (same-HEAD `10c624e`; control `neiso72_control_A` reproduces the
+neiso-71 keeper to 4 decimals): every pre-registered check passed — 2025
+bit-identical (`.equals=True`, the KILL check), liveness 632/713 MW, E1 sign
+exact (hydro −0.186/−0.654/0 TWh, CC_REGULAR +0.178/+0.583/0, LMP
++$0.050/+$0.159/$0.000). **Every criterion IDENTICAL to the keeper**:
+CALIBRATED-WITH-CAVEATS, C1 all 12/12 · free 8/8, same C3c ledger — scorecard
+unchanged, structural defect removed. Promoted on owner authorization (the
+gates-may-regress clause was not needed).
+
+**Bench-basis note:** the 2024 C1 hydro actual is itself the folded 930 series
+(7.3942 exactly); the candidate's paper ratio ≈0.91 sits inside the band, and
+≈0.99 against the honest 923 actual. Successor, scorer-side.
+
+**Governance.** Years 2023–2025 only (locked test SPENT, untouched; probe read
+2019–2022 raw source, no-LP). Both bundles registered (retention pruned
+neiso-60-phantom-outage + neiso-gasshape-interpfix); matrix cells + ev + header
+re-stamped; `check_mechanism_matrix.py` integrity OK.
+
+**Open / next.** (1) **Storage-side PS cycling depth** — first measured
+gross-cycling series shows ~4× under-cycling (1.932 vs 0.497 TWh, 2025);
+dispatch-adder/AS-value lane, never a hydro patch. (2) Handoff **Lever A**:
+CC_CHP capacity basis (Kendall Square ~90 MW) — the PRIMARY, untouched here.
+(3) Bench hydro 2024 re-base (scorer-side). (4) §5.6 items 1/2 still need
+their own charter; item 5 still pending owner decision.
+
+Next shorthand: **neiso-73.**
