@@ -1798,6 +1798,10 @@ def _backfill_renewables_eia930(
       grid-side authority the model's dispatch is scored against. Complete
       vintages, where the two agree, are unchanged; CAISO wind, under-reported in
       EIA-923 every year, is corrected in every year (matching the reference).
+      When a class has NO EIA-930 series at all (the BA reports it as identically
+      zero — NYIS ``NG: SUN``, the only such cell across 6 ISOs x {wind, solar,
+      hydro} x 2023-2025), that swap is unavailable and the class falls through
+      to the ``biomass`` carry-forward below instead of being left truncated.
     * ``biomass``: absent from both CAMPD and EIA-930. When the whole vintage is
       a partial release (:func:`_vintage_completeness`), the prior complete
       year's biomass class total is carried forward, scaled by the vintage
@@ -1809,6 +1813,47 @@ def _backfill_renewables_eia930(
     for klass in _EIA930_RENEWABLE_CLASSES:
         ann930, mon930 = _e930_series_annual_monthly(e930, klass, year)
         if ann930 <= 0.0:
+            # No EIA-930 authority for this class, so the grid-total swap above
+            # is unavailable -- but that is exactly when a partial 923 vintage
+            # is MOST dangerous, because nothing else repairs the class. This
+            # is not hypothetical: EIA-930 NYIS `NG: SUN` is identically 0.0 in
+            # every hour of every year (NY grid solar is overwhelmingly
+            # distribution-connected / net-metered, invisible to the BA
+            # telemetry) -- the very fact that makes
+            # `results.calibration._EIA923_OVERRIDE` route NYISO solar's
+            # SCORING to EIA-923. The repair kept keying on EIA-930 and so
+            # silently no-opped on the one cell the override exists for: the
+            # 2025 vintage carries 8 of 565 NYIS solar plants (0.662 TWh vs
+            # 2.901 in 2024), which scored as solar +437% against the model.
+            #
+            # Such a class is in exactly biomass's position -- absent from
+            # CAMPD, absent from EIA-930, truncated by a partial vintage -- so
+            # it takes exactly biomass's already-committed repair: the prior
+            # complete year's class total scaled by the vintage completeness,
+            # reusing that year's monthly shape. No new parameter, no new
+            # threshold, and a complete vintage is an exact no-op (2023/2024
+            # NYISO read completeness 1.05 / 1.04). Measured throughout, and
+            # conservative by construction: a carry-forward under-states a
+            # growing class rather than fitting it (rules 13 / 21).
+            #
+            # Blast radius, measured across 6 ISOs x {wind, solar, hydro} x
+            # 2023-2025: NYISO solar is the ONLY cell with a zero EIA-930
+            # authority, so this fires nowhere else.
+            # Evidence: results/calibration/FINDING-nyiso106-solar-benchmark-
+            # vintage-2026-07-31.md.
+            ann, mon = _reconciled_mustrun_class(klass, year, generation, iso, e930)
+            cur = float(cls_total.get(klass, 0.0))
+            if ann > cur:
+                logger.info(
+                    "EIA-923 %d %s %.2f TWh incomplete with no EIA-930 series; "
+                    "carrying %d forward x vintage completeness -> %.2f TWh",
+                    year,
+                    klass,
+                    cur / _MWH_PER_TWH,
+                    year - 1,
+                    ann / _MWH_PER_TWH,
+                )
+                e923 = _replace_class_total(e923, klass, year, ann, list(mon))
             continue
         cur = float(cls_total.get(klass, 0.0))
         if cur < _EIA923_RENEWABLE_COMPLETENESS_FRACTION * ann930:

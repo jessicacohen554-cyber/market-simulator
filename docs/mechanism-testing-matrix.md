@@ -1180,7 +1180,7 @@ criterion; the outage-grain data ask below remains its honest continuation.)*
    `results/calibration/FINDING-miso110-forecast-hydro-level-923hy-2026-07-31.md`,
    probe `scripts/probes/_miso110_forward_level_audit.py`.
 
-### 5.5 NYISO — target: C3c (sole blocker, roof-blocked); keeper `2026-07-31-nyiso105-chp-heat-rates`, CALIBRATED-WITH-CAVEATS; ~~items 6 + 10~~ CLOSED at nyiso-105
+### 5.5 NYISO — target: C3c (sole blocker, roof-blocked); keeper `2026-07-31-nyiso105-chp-heat-rates`, CALIBRATED-WITH-CAVEATS; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106
 
 The J/K-commitment and reserve-tier routes are closed IN FULL (nyiso-83/84);
 the tail is blocked by an SRMC roof (~$258 mainland). nyiso-92 dated the
@@ -1317,6 +1317,25 @@ condition.
    different charter. Successor is the chartered artifact refresh, **not** a
    lever-queue entry.
    `results/calibration/FINDING-nyiso105-stgas-inert-seam-live-2026-07-31.md` §A.
+   **Its clamp PREREQUISITE is DONE (2026-07-31, nyiso-106), and nyiso-105
+   understated the defect: the above-nameplate `p25_cf` is live in the
+   COMMITTED artifacts, not only the refreshed one** — MISO 17 rows, NEISO 3,
+   NYISO 2, PJM 3, max 150.0 (`derive_thermal_tranches.py:555` clips
+   available-CF at 1.5 and `p25_cf` inherited that ceiling while
+   `committed_pct`/`mustrun_pct` were capped at 0.70/0.60). Clamped at **1.0
+   (nameplate)** in BOTH the deriver (`_P25_CAP`) and the accessor
+   (`campd_bins.thermal_tranche_p25_level`, so a stale artifact — every
+   committed one — cannot inject an impossible floor). The ceiling is 1.0 and
+   NOT `_COMMITTED_CAP`: the defect is physical impossibility, and since
+   p25 >= p5 a 0.70 cap would collapse p25 onto the committed level. Rule 23
+   `[R-FROZEN-DERIVE]`: physical-admissibility bug fix, not a residual
+   re-derivation. **Measured inert on every live keeper** — the only consumer
+   is the ST_GAS floor, the sole breaching ST_GAS row anywhere (NEISO Merrimack
+   150.0) is in an artifact with no `online_frac` column, and MISO (the one ISO
+   arming the pair) tops out at 67.4 % over all 16 armable rows; after the clamp
+   0 levels exceed nameplate in any ISO, 149 tranche tests pass. **The refresh
+   itself is still NOT done and stays chartered** (control arm + solve).
+   `results/calibration/FINDING-nyiso106-solar-benchmark-vintage-2026-07-31.md` §C.
 
 Dispatch-matching lane (hourly r, opened by the nyiso-92 charter; the hydro
 capability envelope/floor pair is now the keeper — cells K above):
@@ -1460,6 +1479,63 @@ capability envelope/floor pair is now the keeper — cells K above):
     is **dispatch-neutral and scoring-basis-changing**, so it must ride a re-solve
     with its own control and be scored — not silently edited into the metas.
     `results/calibration/FINDING-nyiso105-stgas-inert-seam-live-2026-07-31.md` §C.
+11. ~~**2025 `solar` +437.2 % benchmark audit** — the standing benchmark caveat.~~
+    **CLOSED 2026-07-31 (nyiso-106): a SURVEY-COVERAGE ARTIFACT, falsified, root
+    cause fixed forward, no solve.** The scoped premise (gap-audit `NG: SUN` the
+    nyiso-98 way) is **moot**: EIA-930 `NYIS` `NG: SUN` is **identically zero**
+    in every hour of every year (8,760/8,760 in 2023; 2,190/2,190 midday zeros
+    every year) — structurally absent, not zero-coded-gappy, which is exactly why
+    `results.calibration._EIA923_OVERRIDE` routes NYISO solar's scoring to
+    **EIA-923**. The defect is in that vintage: **2025 carries 8 of 565 NYIS solar
+    plants** (0.6617 TWh vs 2.9008 in 2024; the national vintage is 3,427 plants
+    vs 13,210). The 8 are a **strict subset** of 2024's and on a like-for-like
+    basis they **GREW** (0.2527 -> 0.6617 TWh; Morris Ridge 20,861 -> 313,307 MWh).
+    **Independently falsified** against NYISO's own MIS P-63 — which publishes NO
+    separate solar category (verified live: seven categories, solar inside `Other
+    Renewables`), so the instrument is the per-day night-baseline/daylight-bulge
+    decomposition: **0.212 / 0.577 / 0.994 TWh**, monotonic growth against a 923
+    series claiming a 77 % collapse. **Two purpose-built guards both miss it:**
+    `audit_eia923_completeness` audits GAS+COAL only (*"renewables are scored on
+    EIA-930"* — true for every ISO except the one `_EIA923_OVERRIDE` pair, and
+    `solar` is absent from the committed NYISO completeness part), and
+    `_backfill_renewables_eia930` bails on `if ann930 <= 0.0: continue`, keying
+    its repair on the very series that is zero. Everything ELSE in NYISO 2025 was
+    repaired (wind 7.049 / hydro 24.104 via the 930 swap, biomass 0.672 via
+    carry-forward) — solar 0.662 was the single unrepaired cell. **Fixed** by
+    routing a class with no EIA-930 authority to the same prior-year
+    carry-forward biomass already uses: zero new parameters, gated on the
+    existing `_EIA923_VINTAGE_COMPLETENESS_FRACTION`, 2023/2024 exact no-ops
+    (completeness 1.05/1.04), 2025 solar **0.6617 -> 2.5673 TWh** (+437.1 % ->
+    +38.5 %). Blast radius measured across 6 ISOs x {wind,solar,hydro} x 2023-25:
+    **NYISO solar is the ONLY zero-930-authority cell.** Forward-acting (bench
+    parts are built from the bundle's solve-time `eia923` input), so no committed
+    keeper moves. **Consequence for the queue: the 2025 solar statistic is BARRED
+    from sizing or judging any mechanism**, and `hydro_budget_nameplate_aware` is
+    re-framed before it was ever sized — NYISO hydro's 2025 actual (24.104) is the
+    **EIA-930 swap** while 2023/2024 (28.031 / 27.465) are **EIA-923**, so the
+    "+1.3/+1.3/−12.7 %, miss ENTIRELY in 2025" shape is measured **across a
+    benchmark-basis switch**; any hydro lever must first put all three years on
+    one basis and re-measure what survives.
+    `results/calibration/FINDING-nyiso106-solar-benchmark-vintage-2026-07-31.md`.
+11b. **NEW (nyiso-106, REPORTED not fixed) — `OTHER` is injected on one basis and
+    scored on another; needs a CROSS-ISO charter.** Same family as item 11.
+    `_reconciled_mustrun_class`'s docstring makes it the single source of truth
+    for an injected residual class that "**both the benchmark and the must-run
+    injection**" consume — but `_backfill_renewables_eia930`'s carry-forward block
+    is hard-coded to `biomass`, so `OTHER` is injected at the carried-forward
+    level and scored against the raw truncated vintage. NYISO 2025 is decisive:
+    model OTHER **1.9483** TWh **is** the carry (2.2014 x 0.8850 = 1.9483, exact
+    to 4 dp) against a benchmark of **1.7487** (10 plants vs 76) — **on a
+    consistent basis the +11.4 % is exactly 0.0 %.** Fix is one line in shape
+    (route the block through `_reconciled_mustrun_class` over
+    `("biomass", "OTHER")`, which also gets the pumped-storage holdout right),
+    but it moves **three ISOs**: CAISO +0.4173, NYISO +0.1996, NEISO +0.1618 TWh
+    (ERCOT/PJM/MISO are above 0.90 completeness, so nothing fires). Left for its
+    own charter rather than re-scoring CAISO and NEISO from a NYISO session.
+    **Meanwhile NYISO `OTHER` 2025 is barred from sizing or judging a mechanism.**
+    (`ST_CHP` 2025 +85.0 % needs nothing — already audited `incomplete`,
+    retention 0.667, and C1-SKIPPED.)
+    `results/calibration/FINDING-nyiso106-solar-benchmark-vintage-2026-07-31.md` §E.
 
 ### 5.6 NEISO — target: C3c (ledgered; FRONTIER DECLARED — charter required first)
 
