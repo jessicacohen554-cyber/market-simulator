@@ -1,0 +1,429 @@
+{
+ "iso": "NYISO",
+ "p63_twh": {
+  "2023": 27.1845,
+  "2024": 26.9763,
+  "2025": 24.2489
+ },
+ "constructions": {
+  "bare": {
+   "2023": {
+    "units": 154,
+    "budget_twh": 28.4033,
+    "max_mw": 4647.5,
+    "largest_mw": 2429.1,
+    "fleet_cf": 0.6977,
+    "monthly_twh": [
+     2.6642,
+     2.2624,
+     2.4527,
+     2.3636,
+     2.4174,
+     2.0804,
+     2.3855,
+     2.4639,
+     2.1662,
+     2.2414,
+     2.3156,
+     2.59
+    ],
+    "minflow_floor_twh": 18.8423,
+    "minflow_floor_pct_of_budget": 66.3,
+    "minflow_infeasible_plant_months": 0,
+    "over_nameplate_plant_months": 34,
+    "treaty_plants": {
+     "2693": {
+      "treaty_frac": 0.25,
+      "pmax_mw": 2429.1,
+      "budget_twh": 15.7499,
+      "cf": 0.7402
+     },
+     "2694": {
+      "treaty_frac": 0.5,
+      "pmax_mw": 912.0,
+      "budget_twh": 7.1268,
+      "cf": 0.8921
+     }
+    }
+   },
+   "2024": {
+    "units": 147,
+    "budget_twh": 27.875,
+    "max_mw": 4587.1,
+    "largest_mw": 2429.1,
+    "fleet_cf": 0.6937,
+    "monthly_twh": [
+     2.6328,
+     2.5306,
+     2.7151,
+     2.5358,
+     2.3753,
+     2.1849,
+     2.3935,
+     2.2851,
+     1.9509,
+     1.9151,
+     2.0234,
+     2.3325
+    ],
+    "minflow_floor_twh": 18.9829,
+    "minflow_floor_pct_of_budget": 68.1,
+    "minflow_infeasible_plant_months": 0,
+    "over_nameplate_plant_months": 34,
+    "treaty_plants": {
+     "2693": {
+      "treaty_frac": 0.25,
+      "pmax_mw": 2429.1,
+      "budget_twh": 15.5566,
+      "cf": 0.7311
+     },
+     "2694": {
+      "treaty_frac": 0.5,
+      "pmax_mw": 912.0,
+      "budget_twh": 7.3688,
+      "cf": 0.9224
+     }
+    }
+   },
+   "2025": {
+    "units": 3,
+    "budget_twh": 21.0482,
+    "max_mw": 3343.0,
+    "largest_mw": 2429.1,
+    "fleet_cf": 0.7187,
+    "monthly_twh": [
+     1.8286,
+     1.5365,
+     1.8689,
+     1.7241,
+     1.9124,
+     1.8137,
+     1.8213,
+     1.7447,
+     1.6002,
+     1.6177,
+     1.7599,
+     1.8203
+    ],
+    "minflow_floor_twh": 15.1784,
+    "minflow_floor_pct_of_budget": 72.1,
+    "minflow_infeasible_plant_months": 0,
+    "over_nameplate_plant_months": 0,
+    "treaty_plants": {
+     "2693": {
+      "treaty_frac": 0.25,
+      "pmax_mw": 2429.1,
+      "budget_twh": 14.3184,
+      "cf": 0.6729
+     },
+     "2694": {
+      "treaty_frac": 0.5,
+      "pmax_mw": 912.0,
+      "budget_twh": 6.7269,
+      "cf": 0.842
+     }
+    }
+   }
+  },
+  "backfill": {
+   "2023": {
+    "units": 155,
+    "budget_twh": 28.406,
+    "max_mw": 4649.2,
+    "largest_mw": 2429.1,
+    "fleet_cf": 0.6975,
+    "monthly_twh": [
+     2.6647,
+     2.2629,
+     2.4532,
+     2.3641,
+     2.4179,
+     2.0806,
+     2.3855,
+     2.4639,
+     2.1662,
+     2.2414,
+     2.3156,
+     2.59
+    ],
+    "minflow_floor_twh": 18.8423,
+    "minflow_floor_pct_of_budget": 66.3,
+    "minflow_infeasible_plant_months": 0,
+    "over_nameplate_plant_months": 34,
+    "treaty_plants": {
+     "2693": {
+      "treaty_frac": 0.25,
+      "pmax_mw": 2429.1,
+      "budget_twh": 15.7499,
+      "cf": 0.7402
+     },
+     "2694": {
+      "treaty_frac": 0.5,
+      "pmax_mw": 912.0,
+      "budget_twh": 7.1268,
+      "cf": 0.8921
+     }
+    }
+   },
+   "2024": {
+    "units": 147,
+    "budget_twh": 27.875,
+    "max_mw": 4587.1,
+    "largest_mw": 2429.1,
+    "fleet_cf": 0.6937,
+    "monthly_twh": [
+     2.6328,
+     2.5306,
+     2.7151,
+     2.5358,
+     2.3753,
+     2.1849,
+     2.3935,
+     2.2851,
+     1.9509,
+     1.9151,
+     2.0234,
+     2.3325
+    ],
+    "minflow_floor_twh": 18.9829,
+    "minflow_floor_pct_of_budget": 68.1,
+    "minflow_infeasible_plant_months": 0,
+    "over_nameplate_plant_months": 34,
+    "treaty_plants": {
+     "2693": {
+      "treaty_frac": 0.25,
+      "pmax_mw": 2429.1,
+      "budget_twh": 15.5566,
+      "cf": 0.7311
+     },
+     "2694": {
+      "treaty_frac": 0.5,
+      "pmax_mw": 912.0,
+      "budget_twh": 7.3688,
+      "cf": 0.9224
+     }
+    }
+   },
+   "2025": {
+    "units": 147,
+    "budget_twh": 25.9944,
+    "max_mw": 4587.1,
+    "largest_mw": 2429.1,
+    "fleet_cf": 0.6469,
+    "monthly_twh": [
+     2.4195,
+     2.0939,
+     2.483,
+     2.346,
+     2.3349,
+     2.0987,
+     2.2227,
+     2.1613,
+     1.8229,
+     1.807,
+     1.9595,
+     2.2452
+    ],
+    "minflow_floor_twh": 15.1784,
+    "minflow_floor_pct_of_budget": 58.4,
+    "minflow_infeasible_plant_months": 0,
+    "over_nameplate_plant_months": 33,
+    "treaty_plants": {
+     "2693": {
+      "treaty_frac": 0.25,
+      "pmax_mw": 2429.1,
+      "budget_twh": 14.3184,
+      "cf": 0.6729
+     },
+     "2694": {
+      "treaty_frac": 0.5,
+      "pmax_mw": 912.0,
+      "budget_twh": 6.7269,
+      "cf": 0.842
+     }
+    }
+   }
+  },
+  "pinned": {
+   "2023": {
+    "units": 155,
+    "budget_twh": 26.8365,
+    "max_mw": 4649.2,
+    "largest_mw": 2429.1,
+    "fleet_cf": 0.6589,
+    "monthly_twh": [
+     2.4802,
+     2.1227,
+     2.3093,
+     2.1747,
+     2.2337,
+     2.0077,
+     2.3079,
+     2.3348,
+     2.1076,
+     2.1287,
+     2.1821,
+     2.4472
+    ],
+    "minflow_floor_twh": 18.8423,
+    "minflow_floor_pct_of_budget": 70.2,
+    "minflow_infeasible_plant_months": 0,
+    "over_nameplate_plant_months": 14,
+    "treaty_plants": {
+     "2693": {
+      "treaty_frac": 0.25,
+      "pmax_mw": 2429.1,
+      "budget_twh": 14.8804,
+      "cf": 0.6993
+     },
+     "2694": {
+      "treaty_frac": 0.5,
+      "pmax_mw": 912.0,
+      "budget_twh": 6.7449,
+      "cf": 0.8443
+     }
+    }
+   },
+   "2024": {
+    "units": 147,
+    "budget_twh": 26.7463,
+    "max_mw": 4587.1,
+    "largest_mw": 2429.1,
+    "fleet_cf": 0.6656,
+    "monthly_twh": [
+     2.5145,
+     2.3142,
+     2.5803,
+     2.3684,
+     2.2315,
+     2.1256,
+     2.3584,
+     2.2166,
+     1.9356,
+     1.8398,
+     1.979,
+     2.2823
+    ],
+    "minflow_floor_twh": 18.9829,
+    "minflow_floor_pct_of_budget": 71.0,
+    "minflow_infeasible_plant_months": 0,
+    "over_nameplate_plant_months": 20,
+    "treaty_plants": {
+     "2693": {
+      "treaty_frac": 0.25,
+      "pmax_mw": 2429.1,
+      "budget_twh": 14.937,
+      "cf": 0.702
+     },
+     "2694": {
+      "treaty_frac": 0.5,
+      "pmax_mw": 912.0,
+      "budget_twh": 7.08,
+      "cf": 0.8862
+     }
+    }
+   },
+   "2025": {
+    "units": 147,
+    "budget_twh": 24.0625,
+    "max_mw": 4587.1,
+    "largest_mw": 2429.1,
+    "fleet_cf": 0.5988,
+    "monthly_twh": [
+     2.1321,
+     1.7441,
+     2.2296,
+     2.0983,
+     2.312,
+     2.0657,
+     2.0438,
+     1.8797,
+     1.6913,
+     1.7046,
+     2.0241,
+     2.1373
+    ],
+    "minflow_floor_twh": 15.1784,
+    "minflow_floor_pct_of_budget": 63.1,
+    "minflow_infeasible_plant_months": 0,
+    "over_nameplate_plant_months": 10,
+    "treaty_plants": {
+     "2693": {
+      "treaty_frac": 0.25,
+      "pmax_mw": 2429.1,
+      "budget_twh": 13.2974,
+      "cf": 0.6249
+     },
+     "2694": {
+      "treaty_frac": 0.5,
+      "pmax_mw": 912.0,
+      "budget_twh": 6.2437,
+      "cf": 0.7815
+     }
+    }
+   }
+  }
+ },
+ "shape_vs_p63": {
+  "bare": {
+   "2023": {
+    "shape_r": 0.9931,
+    "share_mae": 0.00081,
+    "peak_month": 1,
+    "p63_peak_month": 1
+   },
+   "2024": {
+    "shape_r": 0.9938,
+    "share_mae": 0.00127,
+    "peak_month": 3,
+    "p63_peak_month": 3
+   },
+   "2025": {
+    "shape_r": 0.9251,
+    "share_mae": 0.00342,
+    "peak_month": 5,
+    "p63_peak_month": 5
+   }
+  },
+  "backfill": {
+   "2023": {
+    "shape_r": 0.993,
+    "share_mae": 0.00081,
+    "peak_month": 1,
+    "p63_peak_month": 1
+   },
+   "2024": {
+    "shape_r": 0.9938,
+    "share_mae": 0.00127,
+    "peak_month": 3,
+    "p63_peak_month": 3
+   },
+   "2025": {
+    "shape_r": 0.8265,
+    "share_mae": 0.00391,
+    "peak_month": 3,
+    "p63_peak_month": 5
+   }
+  },
+  "pinned": {
+   "2023": {
+    "shape_r": 0.9882,
+    "share_mae": 0.00065,
+    "peak_month": 1,
+    "p63_peak_month": 1
+   },
+   "2024": {
+    "shape_r": 0.9915,
+    "share_mae": 0.00082,
+    "peak_month": 3,
+    "p63_peak_month": 3
+   },
+   "2025": {
+    "shape_r": 0.9943,
+    "share_mae": 0.00079,
+    "peak_month": 5,
+    "p63_peak_month": 5
+   }
+  }
+ }
+}
