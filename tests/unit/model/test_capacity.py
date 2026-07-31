@@ -390,6 +390,68 @@ class TestConfirmedExits(unittest.TestCase):
         # factor = (1000 - 100) / 1000 = 0.9
         self.assertAlmostEqual(kept[0].pmax_mw, 900.0, places=4)
 
+    def test_partial_year_exit_completes_next_year(self):
+        # FFR-1A arm 2 (audit FR-2): a first-half exit removes its
+        # annual-average share in the effective year and the REMAINDER the
+        # following year — it must not freeze at the annual-average factor.
+        # Brandon Shores shape: month 5 -> effective year removes 7/12 of the
+        # MW, year+1 removes the remaining 5/12.
+        fleet = [_binned("BS_COAL1", 602, 1370.2, pmin=274.0, nameplate=1370.2)]
+        exits = [
+            self._exit(602, "1", 2029, month=5, mw=685.1),
+            self._exit(602, "2", 2029, month=5, mw=685.1),
+        ]
+        y2029 = apply_confirmed_exits(fleet, 2029, exits)
+        self.assertAlmostEqual(y2029[0].pmax_mw, 1370.2 - (7 / 12) * 1370.2, places=4)
+        # Year+1: the completion leg removes the remaining 5/12 -> the whole
+        # plant is out (both units exited), tranche dropped below epsilon.
+        y2030 = apply_confirmed_exits(y2029, 2030, exits)
+        self.assertEqual(y2030, [])
+
+    def test_partial_year_exit_completion_leaves_survivor_mw(self):
+        # Same schedule against a plant with a non-exiting remainder: after
+        # the completion leg exactly binned - mw survives, and later years
+        # are no-ops (each schedule leg fires exactly once).
+        fleet = [_binned("H_ST1", 900, 1000.0, pmin=200.0, nameplate=1000.0)]
+        exits = [self._exit(900, "1", 2028, month=6, mw=400.0)]
+        y2028 = apply_confirmed_exits(fleet, 2028, exits)
+        # month 6: (12-6)/12 * 400 = 200 MW removed in the effective year.
+        self.assertAlmostEqual(y2028[0].pmax_mw, 800.0, places=4)
+        y2029 = apply_confirmed_exits(y2028, 2029, exits)
+        # Completion: the remaining 6/12 * 400 = 200 MW.
+        self.assertAlmostEqual(y2029[0].pmax_mw, 600.0, places=4)
+        y2030 = apply_confirmed_exits(y2029, 2030, exits)
+        self.assertAlmostEqual(y2030[0].pmax_mw, 600.0, places=4)
+
+    def test_backlog_prior_partial_exit_fully_removed(self):
+        # FR-2's backlog variant: a first-half row effective BEFORE the first
+        # simulated year has both schedule legs due — the pre-start backlog
+        # removes the full registry MW, never the annual-average share.
+        # V H Braunig shape: units 1+2 (477 MW) out March 2025, 2026 start.
+        fleet = [_binned("SC_STGAS3", 3612, 1138.0, pmin=227.6, nameplate=1138.0)]
+        exits = [
+            self._exit(3612, "1", 2025, month=3, mw=225.0),
+            self._exit(3612, "2", 2025, month=3, mw=252.0),
+        ]
+        base = apply_confirmed_exits(fleet, 2026, exits, apply_backlog=True)
+        self.assertAlmostEqual(base[0].pmax_mw, 1138.0 - 477.0, places=4)
+        # And nothing fires later (no completion leg for a backlog-prior row).
+        y2027 = apply_confirmed_exits(base, 2027, exits)
+        self.assertAlmostEqual(y2027[0].pmax_mw, 661.0, places=4)
+
+    def test_backlog_current_year_partial_then_completion(self):
+        # A first-half row effective exactly AT the first simulated year keeps
+        # its normal schedule: annual-average in the backlog application,
+        # completion via the next evolve_fleet-style call.
+        fleet = [_binned("H_CC1", 901, 1000.0, pmin=200.0, nameplate=1000.0)]
+        exits = [self._exit(901, "1", 2026, month=4, mw=300.0)]
+        base = apply_confirmed_exits(fleet, 2026, exits, apply_backlog=True)
+        # (12-4)/12 * 300 = 200 MW removed in 2026.
+        self.assertAlmostEqual(base[0].pmax_mw, 800.0, places=4)
+        y2027 = apply_confirmed_exits(base, 2027, exits)
+        # Completion: 4/12 * 300 = 100 MW -> 700 MW = 1000 - 300.
+        self.assertAlmostEqual(y2027[0].pmax_mw, 700.0, places=4)
+
 
 class TestEvolveFleetLedgerReconciliation(unittest.TestCase):
     """The evolve_fleet-seam capacity-accounting reconciliation (FFR-1A / FR-26).
@@ -557,6 +619,40 @@ class TestEvolveFleetLedgerReconciliation(unittest.TestCase):
         self.assertAlmostEqual(row["mw"], 120.0, places=4)
         self.assertEqual(row["source"], "economic")
         self._assert_reconciles(events)
+
+    def test_partial_exit_completion_ledgered_in_both_years(self):
+        # FFR-1A arm 2 x arm 1: a first-half exit's annual-average leg AND its
+        # year+1 completion leg each land as confirmed_derates rows in their
+        # own year's events, and both years reconcile per fuel.
+        fleet = [_binned("M_COAL1", 2364, 500.0, pmin=100.0, nameplate=500.0)]
+        exits = [self._exit(2364, "1", 2028, month=6, mw=300.0)]
+        ev_2028 = self._events()
+        fleet_2028, _, _, _, _ = evolve_fleet(
+            fleet,
+            None,
+            2028,
+            ScenarioConfig(),
+            {},
+            events=ev_2028,
+            confirmed_exits=exits,
+        )
+        (d28,) = ev_2028["confirmed_derates"]
+        self.assertAlmostEqual(d28["derate_mw"], 150.0, places=4)  # (6/12)*300
+        self._assert_reconciles(ev_2028)
+        ev_2029 = self._events()
+        evolve_fleet(
+            fleet_2028,
+            None,
+            2029,
+            ScenarioConfig(),
+            {},
+            events=ev_2029,
+            confirmed_exits=exits,
+        )
+        (d29,) = ev_2029["confirmed_derates"]
+        self.assertAlmostEqual(d29["derate_mw"], 150.0, places=4)  # completion
+        self.assertAlmostEqual(d29["mw_after"], 200.0, places=4)  # 500 - 300
+        self._assert_reconciles(ev_2029)
 
 
 class TestEconomicRetirements(unittest.TestCase):
