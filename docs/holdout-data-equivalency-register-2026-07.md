@@ -750,14 +750,120 @@ behind, not ahead of, it.
 
 ---
 
-## ERCOT / MISO
+## MISO — 2022 + 2018-2021 + H1-2026 out-of-training data readiness (intake 2026-07-31, this session)
 
-Sections pending their own lanes (PJM's and CAISO's are above). Seed material:
+Keeper: **`2026-07-31-miso-109b-hy-level`** (`frontend/data/backcast/keepers/MISO.json`
+— promoted 2026-07-31 while this lane was in flight; the audit doc §3.4 that
+seeded it grades against the prior `2026-07-28-miso-101b-tempgrain`, and the
+data families the two keepers consume are the same, so no grade below moves).
+MISO carries **NO
+calibration-complete marker** (`frontend/data/backcast/calibration-complete.json`
+— neither `complete` nor `final`), and the **holdout spend freeze**
+(`holdout-freeze.json`) is ACTIVE, so every out-of-training year stays fully
+quarantined for solve/score/register. This lane is rule-22 **channel 1 only**
+— DATA INTAKE under the owner's verbatim 2026-07-31 authorization (logged in
+`intake_log`): *"this data can be collected for all years since we're not
+running anything on it; fetch it all at once per source rather than
+year-by-year."* **No LP was constructed, solved or scored for any year**;
+validation is byte-identity / loader-resolvability / row counts / schema-match
+against sibling years. 2019 data lands like any other year and stays
+locked-tier for solve/score forever-once.
+
+Worked one SOURCE at a time over the full year span, per
+`docs/iso-2022-holdout-data-availability-audit-2026-07.md` §3.4 + §4.2.
+Grades are per input × {2022, 2018-2021, H1-2026}.
+
+### Model inputs
+
+| input | keeper-years source + grain | 2022 | 2018-2021 | H1-2026 | materiality / fix |
+|---|---|---|---|---|---|
+| **ASM measured reserve** (`MISO-AS/asm_damcp_zonal_*`, `asm_rtmcp_zonal_*`) | MISO daily market reports, zone × product × HE01-24, 2023-2026 | **MISSING (confirmed ungettable)** | **MISSING (confirmed ungettable)** | **EQUIVALENT** — damcp 191 days (→ Jul 10), rtmcp 186 (→ Jul 5); H1 dense, 0 missing days | **HIGH** (keeper mechanism `miso_measured_reserve_requirements` / `miso_zonal_reserves`). This session ran the **authoritative full daily sweep** the 2026-07-10 README deferred to CI: `fetch_miso_asm.py --years 2018 2019 2020 2021 2022`, i.e. **5,481 requests** (every day × all three reports × five years) — **0 days published in any year**, the same Azure `BlobNotFound` retention purge already settled for 2022. The README's "spot-check, not exhaustive" caveat for 2018-2021 is now discharged and `.github/workflows/holdout-intake-miso-as.yml` has no remaining purpose (CI is also now banned for this by CLAUDE.md). No file is written for a fully-purged year (the script's zero-row guard), so no misleading artifact exists. Fix: none automatable — MISO Help Center / ITOC manual request only |
+| **ASM RT cleared MW** (`asm_rt_cleared_mw_<year>`) | hourly Region × product cleared reserve MW, ~3-month publish lag | **MISSING** (same purge) | **MISSING** (same purge) | **DEGRADED → EXTENDED** — Apr 10 → **May 2** this session (+4,884 rows, 22,197 → 27,081); 2026-05-03 onward still 404 | the publication horizon moved forward since the 2026-07-10 fetch. Landed with a new `--merge-missing-days` + `--through` mode on the committed producer, so the staged days stayed byte-identical and the H1 window was not overrun. Fix: re-run the same command as the lag rolls |
+| **Zonal gas hub** (`miso_zonal_gas_hub.csv`) | annual per-zone basis vs Henry Hub from EIA `N3045<ST>3` delivered-to-electric-power, 2023-2025 | **EQUIVALENT** (all 6 zones) | **EQUIVALENT** West/Plains (IA) + Illinois/Indiana/East (IL) 2018-2021; **MISSING** South (LA) 2018-2021 | **EQUIVALENT** 2026 (5 zones; South 3/12 months) | 18 → **50 rows**. Producer extended: `fetch_eia_delivered_gas.py` gained the MISO crosswalk (read straight off the committed file's own `hub`/`source` columns), an `--iso` selector, and a **key-free EIA dnav transport** (no `EIA_API_KEY` exists in this environment and the v2 API rejects unauthenticated calls). **Recipe proven**: with the dnav transport, `--iso PJM --validate` reproduces **every** committed PJM 2022-2025 row exactly, so both the transport and `mean over published months of (N3045<ST>3 / 1.036 − HH_monthly)` are confirmed. Partial years carry their exact published months in `source` (IL 2018 10/12, 2019 8/12, **2020 3/12 SPARSE**, 2021 11/12; 2026 5/12; LA 2026 3/12 SPARSE). **MISO-South 2018-2021 is skipped, not proxied**: `N3045LA3` published no month in those years (EIA-withheld) and MISO has no committed cross-state fallback (PJM's Appalachian proxy has no MISO analogue) — rule 14, an absent year stays absent rather than becoming a fabricated basis |
+| **Citygate daily** (`gas-prices/miso_citygate_daily.csv`) | Chicago Citygate daily spot scraped from EIA NGWU archive pages, 2023-2025 (232/224/224 prints) | **EQUIVALENT** — 238 prints | **EQUIVALENT** — 234/233/233/231 prints (2018/2019/2020/2021), on par with the in-sample years | **DEGRADED** — **12 prints, ending 2026-01-21** | 680 → **1,861** prints via the committed producer's own `--merge` mode (`--start-year 2018 --end-year 2026 --merge`); every committed 2023-2025 line asserted byte-identical. The 2026 shortfall is **the source's own publication horizon, not a fetch failure**: EIA's archive index lists only 3 pages for 2026 (Jan 8/15/22) and the un-indexed later Thursdays are genuinely absent (9/9 probed Feb→Jul all 404). Fix: re-run the same command once EIA archives the rest of 2026 |
+| **Wind zone shape** (`miso-wind-shape/miso_<year>_wind_zone_shape.parquet`) | NASA POWER `WS50M` (MERRA-2) at EIA-860 wind-plant locations → per-zone hourly CF shape, 2023-2025 | **EQUIVALENT** | **EQUIVALENT** — 2018, 2019, 2020, 2021 all built | **MISSING** | 3 → **8 year files**, committed 2023-2025 untouched. 2026 is a hard builder limit, not a data gap: the shape is placed on the model's full-8760 UTC clock via `_eia_hourly_frame_filled`, which returns `None` for a half year (4,344 h). Fix: rebuild after the 2026 EIA-930 extract completes |
+| **Short-window outages** (`campd-unit-outages-short-MISO.csv`) | CAMPD-derived 1-5 d baseload-coal full stops, 2023-2025 | **EQUIVALENT** | **EQUIVALENT** | **EQUIVALENT** (Q1 only by CAMPD posting) | closed on main by PR #3185 (290 → 987 windows, 2018-2026). This session **re-derived it independently** (`--iso MISO --short-windows --years 2018..2026`) and reproduced the same 987 windows with every committed 2023-2025 row byte-identical — an accidental but useful cross-check of that landing. No change carried |
+| **Maxgen events** (`maxgen-events/miso/miso.csv`) | IMM/SOM-transcribed capacity-emergency ladder windows, 2023-2025 (9 rows) | **DEGRADED** — 2 Elliott rows added | **DEGRADED** — 1 Uri row added (2021); **MISSING** 2018-2020 | n/a (no declaration found) | 9 → **12 rows**. Added: `2021-02-15 south maxgen_event_step2` (Winter Storm Uri — *"declared a Max Gen Event Step 2c in the South in the evening"*, 2021 SOM p.14), `2022-12-23 south maxgen_warning` and `2022-12-23 footprint maxgen_warning` (Winter Storm Elliott — 2022 SOM p.11 + Fig 8 legend p.12). All day-precision with the declared-hour language quoted in `notes`, per the F4 discipline. **EEA1/EEA2/EEA3 declarations are recorded in `notes`, never as rows** — NERC alert levels are outside the schema's closed Max-Gen ladder vocabulary, and mapping them would be inference. Local Transmission Emergencies likewise excluded (schema exclusion). **2018-2020 MISSING**: the MISO SOM report bodies for those years are not at Potomac Economics' predictable upload URLs — the files that *do* resolve at `uploads/2019/06/2018-State-of-the-Market-Report.pdf` and `uploads/2020/06/2019-...` are **ERCOT's** SOM reports (verified from page-1 text: "ERCOT" ×12, no MISO mention). Fix: MISO OASIS `Capacity_Emergency_Historical_Information.pdf` (README source-ladder rung 1) or the document-library paginated index. Open item: the 2021 SOM notes *"several Hot Weather Alerts, Capacity Advisories, Conservative Operations, and Maximum Generation Alerts"* in summer 2021 without dating them, and the 2021-02-16 South declaration is given only as "EEA3" — both need the OASIS ladder document to become rows |
+| **Sub-BA demand** (`zone-specific-demand/MISO/miso_subba_demand_<year>.csv`) | EIA API v2 `region-sub-ba-data` hourly, 6 MISO sub-BAs, 2023-2025 | **EQUIVALENT** (pre-existing) | **EQUIVALENT** 2019-2021 (pre-existing); **2018 DEGRADED — H2 landed this session** | **EQUIVALENT** (pre-existing, H1) | The committed `SOURCES.md` records 2018 as *"unavailable at the source — EIA's region-sub-ba-data product starts 2019-01-01"*. **That is only half right**: EIA's key-free Hourly Grid Monitor six-month extracts carry MISO sub-BA demand from **2018-07-01**, and this session landed **26,454 rows** (4,409 h × 6 sub-BAs, 2018-07-01T06 → 2018-12-31T23 UTC) in the committed schema. H1-2018 genuinely does not exist (`EIA930_SUBREGION_2018_Jan_Jun.csv` serves an HTML 404 page; sub-BA reporting began mid-2018). Clock **verified, not assumed**: the API's `period` is the **UTC hour-ending** stamp — joining the committed 2019 file to the Grid Monitor extract on `UTC Time at End of Hour` reproduces **4,343/4,343** values exactly, while every offset from −8 h to +8 h matches essentially nothing. New producer `scripts/data/fetch_eia930_subba_demand.py` (key-free, MERGE-never-replace, period-year partitioned so no hour is duplicated across two files) |
+| **EIA-930 wide hourly** (`eia-930-hourly/MISO hourly.parquet`) | the demand/renewables clock the loader filters, 2023-2025 | **EQUIVALENT** (2022 hole closed on main, PR #3185) | **EQUIVALENT** 2019-2021; **DEGRADED 2018** | **DEGRADED** (H1 only, 4,344 h) | This session closed the **remaining thin year**: 2025 was **8,754 → 8,760** local hours (6 spliced with the committed `--fill-years 2025`; all 74,465 pre-existing rows byte-identical). Loader resolvability now **8,760 for every year 2018-2025** (`_eia_hourly_frame_filled`), against 2022 = `None` before. 2026 stays `None` — a half year cannot make the full-8760 contract, by design. 2018 carries 4,345 NaN fuel-type hours (EIA-930 fuel-type reporting began mid-2018) and 8,759 local hours (year-boundary convention), both source limits |
+| Demand driver — model profile (`eia-930/eia_demand_profiles.parquet`) | full-8760 repaired series | **EQUIVALENT** | **EQUIVALENT 2021**; **MISSING 2018-2020** | **MISSING** | **HIGH** — the F3-class cross-ISO blocker (§4.1 of the audit): the artifact carries MISO 2021-2025 only, so 2018-2020 and 2026 cannot be dispatched *at all* regardless of everything above. Confirmed by direct call: `_demand_totals('MISO', 2018)` → `ValueError: No EIA-930 data for ISO 'MISO' in year 2018`. Not fixed in a data-only lane |
+| CAMPD unit-level / unit-outage windows / v2 emission rates / F923 / monthly gas basis / weather / capacity-deliverability | per the audit §3.4 "At parity" line | **EQUIVALENT** | **EQUIVALENT** | **EQUIVALENT** (CAMPD Q1-only) | pre-existing; untouched by this lane |
+
+### Bench / scoring series
+
+| series | keeper-years grain | 2022 | 2018-2021 | H1-2026 | note |
+|---|---|---|---|---|---|
+| `actual_lmp_hourly_MISO.parquet` + `actual_lmp_hourly_zonal_MISO.parquet` | INDIANA.HUB system series + 8 named trading hubs, dense 8760 chronological CST clock | **DEGRADED** (landed on main: DA 8,232 h / RT 7,560 h — the staged 2022 raws stop at Dec 9 DA / Nov 11 RT) | **MISSING** | **DEGRADED → LANDED this session** (4,343 h each, `da`/`rt` NaN outside H1) | 2026 built with the committed builder on the FIXED (post-2026-07-15) clock; main's 2022-2025 blocks asserted **byte-identical**. **2018-2021 is a hard source wall**: `docs.misoenergy.org` has aged those daily files off entirely (24/24 probes across 2018/2019/2020/2021 × Jan-1/Jul-1/Dec-31 × DA+RT → **404**; boundary re-verified 2022-12-31 → 404 vs 2023-01-01 → 200), and the documented fallback — the MISO Data Exchange Pricing API — needs `MISO_PRICING_API_KEY`, which is present in neither the environment nor the repo `.env` (unauthenticated calls return HTTP 401 *"missing subscription key"*). Fix: obtain the key, then `fetch_miso_hub_lmp.py --years 2018 2019 2020 2021` (also the only route left for 2022's missing tail) |
+| `actual_lmp.json` MISO block | annual/monthly/percentile + 6 zones | **DEGRADED** (main; `da_cov`/`rt_cov`) | **MISSING** | **LANDED** — DA $53.15 / RT $51.25, 6 zones, `da_cov`/`rt_cov` annual **0.4958** | half-year coverage is machine-readable in main's `*_cov` fields, so the H1 mean cannot be misread as an annual price; Jul-Dec months are `null` in `*_mon`. Every other ISO block and MISO 2022-2025 byte-identical |
+| H1-2026 hub LMP raws (`lmp-data/MISO/miso_hub_lmp_2026_{da,rt}_p??.csv`) | ~7-day plain-CSV chunks, 8 hubs × LMP/MCC/MLC | n/a | n/a | **EQUIVALENT** — **52 files, 181/181 days each market**, 4,344 rows/market | staged with the committed fetcher plus a new `--through` bound so the staging stops at the **authorized** H1 window (the source publishes past it — Jul 30 is HTTP 200 — and staging those days would land data nobody authorized) |
+| `calibration_reference.json` `isos.MISO.<year>` + `MISO_<year>_renewable_capacity.csv` | EIA-860/-923/-930/eGRID per-year block | **EQUIVALENT** (built this session: demand 652.9 TWh) | **EQUIVALENT 2021** (642.2 TWh); **MISSING 2018-2020** | **MISSING** | `CALIBRATION_YEARS_BY_ISO["MISO"]` extended to (2021…2025), same precedent as NEISO/NYISO. 2018-2020 + 2026 fail on the demand-profile blocker above. **Grafted, not rebuilt**: a full `build_calibration_reference.py` run also moves CAISO (48 leaves), ERCOT (134), PJM (273), MISO-2025 wind and NYISO-2025 wind — the committed artifact is stale against current EIA vintages. Only the two new MISO blocks were kept; every other ISO's block **and all 13 pre-existing renewable-capacity CSVs** were restored byte-identical. That staleness is a **separate in-sample finding**, logged below, not this lane's to spend |
+| `actual_tail.json` MISO | marker-aware deriver | **MISSING** | **MISSING** | **MISSING** | governance, not data: the deriver is marker-gated and MISO holds no marker |
+
+### Discrepancies found (repo vs its own records)
+
+1. **MISO EIA-930 wide-hourly mixes two stamping conventions.** The committed
+   2018-2021 and H1-2026 rows are stamped on a **fixed UTC-5 clock** (no DST)
+   while 2022-2025 are on **America/Chicago prevailing** — 13,248 of 65,712
+   overlapping rows carry a label exactly +1 h from what the current builder
+   produces for the same UTC instant (the split falls precisely on the CST
+   hours: 3,042 of 8,759 in 2018, 1,608 of 4,344 in H1-2026). Values agree; only
+   the local labels differ. NOT fixed here — the fix rewrites committed rows.
+   It is also **why `--fill-years` must be scoped**: an unrestricted merge lets a
+   fixed-offset year and a rebuilt neighbour each contribute their own "last hour
+   of year N", landing 8,761 local hours in an already-complete 2021 and making
+   `_eia_hourly_frame_filled` reject the year outright (observed, then avoided).
+2. **`miso_zonal_gas_hub.csv`'s committed IA and LA rows do not reproduce from
+   the canonical formula.** With the recipe proven exact on PJM (all committed
+   2022-2025 rows) and on MISO's own IL rows (2023/2024/2025 exact to the
+   third decimal), MISO-West/Plains is off by **0.002-0.003** every year and
+   MISO-South by 0.002 in 2023/2024 — a hand-curation difference in the
+   committed file, not a source revision. In-sample; reported, not touched.
+3. **`calibration_reference.json` is stale against current EIA vintages** for
+   CAISO / ERCOT / PJM (and one MISO + one NYISO 2025 wind figure) — see the
+   calref row above. In-sample defect, independent of holdouts.
+4. **The sub-BA "2018 is unavailable at the source" record was wrong** for
+   H2-2018 (see the sub-BA row); `SOURCES.md` is corrected in this commit.
+5. **The MISO-AS README's 2018-2021 "spot-check, not yet exhaustively
+   confirmed" caveat is now discharged** by this session's 5,481-request sweep;
+   the CI workflow it deferred to is obsolete (and CI for this is now banned).
+
+### Verdict tally (this section)
+
+**EQUIVALENT 9** (ASM MCP H1-2026, zonal gas hub 2022 + IA/IL back years + 2026,
+citygate 2018-2022, wind shape 2018-2022, short-window outages all years, sub-BA
+2019-2021 + 2022 + H1-2026, EIA-930 wide 2019-2022 + 2025, H1-2026 hub-LMP raws,
+calref 2021-2022) / **DEGRADED 7** (ASM RT-cleared H1-2026, citygate H1-2026,
+maxgen 2021 + 2022, sub-BA 2018 H2-only, EIA-930 wide 2018 + H1-2026, LMP bench
+2022, LMP bench/JSON H1-2026) / **MISSING 8** (ASM all three reports 2018-2022,
+zonal gas hub South 2018-2021, wind shape 2026, maxgen 2018-2020, LMP bench
+2018-2021, calref 2018-2020 + 2026, demand profile 2018-2020 + 2026, `actual_tail`
+all years). **Zero unresolved MISSING**: every MISSING row carries a materiality
+rating and either a concrete fix or an explicit source-wall/governance rationale.
+
+### What still blocks a MISO out-of-training one-shot
+
+Data-side, in order: **(1)** the demand-profile artifact for 2018-2020 (hard
+blocker — no dispatch is possible without it, cross-ISO F3 class); **(2)** the
+2018-2021 hub-LMP bench, which needs `MISO_PRICING_API_KEY` — without it those
+years are **un-scorable**, and 2022's Nov-Dec tail stays open too; **(3)** the
+ASM reserve series, which is **not obtainable at all** for 2018-2022 by any
+automatable route, so a keeper flagging `miso_measured_reserve_requirements`
+has no measured input for those years — an owner/methodology call on what the
+recipe even is, not a fetch. Governance-side, unchanged and outranking all of
+it: MISO holds **no marker of either tier**, and the **spend freeze is active**.
+
+---
+
+## ERCOT
+
+Section pending its own lane (PJM's, CAISO's and MISO's are above). Seed material:
 `docs/iso-2022-holdout-data-availability-audit-2026-07.md` (2026-07-31
 cross-ISO coverage audit — keeper-flag-grounded per-family 2022 parity matrix,
 per-ISO gap tables §3.1–§3.4, 2018–2021 census §4, and the repo-vs-record
 discrepancy list §5; its CAISO rows were re-graded on 2026-07-31 by the
 §CAISO lane above, which CLOSED the wide-hourly hole and REFUTED its stated
-CAISO LMP fix); plus `docs/out-of-sample-results-2026-07.md` §1.1 (ERCOT,
+CAISO LMP fix, and its MISO rows by the §MISO lane, which CLOSED the 2025
+wide-hourly shortfall and CONFIRMED the ASM 2018-2022 purge exhaustively);
+plus `docs/out-of-sample-results-2026-07.md` §1.1 (ERCOT,
 incl. the known Waha annual-basis DEGRADED candidate) and the register
 handoff's known-items list (§"Known DEGRADED/asymmetric items").

@@ -121,8 +121,16 @@ CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
     "NEISO": (2021, 2022, 2023, 2024, 2025),
     # MISO is the Stage-F addition: the EIA-923/930 by-fuel and demand
     # extracts all cover 2023-2025 (the 2025 EIA-923 release is the partial
-    # monthly survey, handled by the incomplete-vintage guard).
-    "MISO": (2023, 2024, 2025),
+    # monthly survey, handled by the incomplete-vintage guard). 2021-2022
+    # added 2026-07-31 under the owner-authorized rule-22 Option-2 DATA-INTAKE
+    # channel (calibration-complete.json intake_log; MISO holds NO marker, so
+    # the solve/score/register quarantine stands) — holdout reference/bench
+    # readiness only, never calibration years. 2018-2020 and 2026 are NOT
+    # added: eia_demand_profiles.parquet carries MISO rows for 2021-2025 only,
+    # so _demand_totals hard-fails ("No EIA-930 data for ISO 'MISO' in year
+    # 2018") — the same F3-class cross-ISO blocker recorded for NEISO above,
+    # fix = extend eia_demand_profiles{,_meta}.parquet first.
+    "MISO": (2021, 2022, 2023, 2024, 2025),
 }
 
 # Measured Henry Hub natural-gas spot price, annual average ($/MMBtu).

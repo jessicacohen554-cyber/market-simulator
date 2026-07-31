@@ -83,9 +83,16 @@ class TestCurateMaxgenEvents(CleanDirTestCase):
         # Every committed row cites a primary document (F4 discipline).
         self.assertFalse(df["source_url"].isna().any())
         self.assertFalse(df["source_doc"].isna().any())
-        # The registry window is 2023-2025 (rule 22: no out-of-training rows).
+        # Registry window. Training years are 2023-2025; out-of-training rows
+        # are permitted ONLY inside the rule-22 DATA-INTAKE window (2018-2026)
+        # and only under session-logged owner authorization — the channel that
+        # landed the MISO 2021 Uri / 2022 Elliott declarations on 2026-07-31
+        # (frontend/data/backcast/calibration-complete.json intake_log). Data
+        # presence is not a spend: solving or scoring those years stays blocked
+        # by the tier markers, the run_calibration_full year gate and the CI
+        # quarantine-gates job. A row outside 2018-2026 is still a hard fail.
         years = df["start_utc"].dt.year
-        self.assertTrue(years.between(2023, 2025).all())
+        self.assertTrue(years.between(2018, 2026).all())
 
 
 if __name__ == "__main__":

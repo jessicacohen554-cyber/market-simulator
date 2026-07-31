@@ -1,0 +1,51 @@
+zone,year,basis_vs_hh_usd_mmbtu,hub,source
+MISO-West,2018,-0.045,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-West,2019,0.316,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-West,2020,0.139,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-West,2021,0.461,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-West,2022,-0.426,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-West,2023,0.459,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-West,2024,0.357,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-West,2025,-0.585,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean; MN (N3045MN3) withheld 2025
+MISO-West,2026,0.262,MidCon / Northern Natural (IA),"IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean; PARTIAL YEAR: Jan-May 2026 published months only (5/12, remainder EIA-withheld); SPARSE — treat as indicative, not an annual basis"
+MISO-Plains,2018,-0.045,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-Plains,2019,0.316,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-Plains,2020,0.139,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-Plains,2021,0.461,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-Plains,2022,-0.426,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-Plains,2023,0.459,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-Plains,2024,0.357,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-Plains,2025,-0.585,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-Plains,2026,0.262,MidCon / Northern Natural (IA),"IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean; PARTIAL YEAR: Jan-May 2026 published months only (5/12, remainder EIA-withheld); SPARSE — treat as indicative, not an annual basis"
+MISO-Illinois,2018,0.281,Chicago Citygate (IL),"IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; PARTIAL YEAR: Jan Apr May Jun Jul Aug Sep Oct Nov Dec 2018 published months only (10/12, remainder EIA-withheld)"
+MISO-Illinois,2019,0.677,Chicago Citygate (IL),"IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; PARTIAL YEAR: Jan-Aug 2019 published months only (8/12, remainder EIA-withheld)"
+MISO-Illinois,2020,0.107,Chicago Citygate (IL),"IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; PARTIAL YEAR: Jun-Aug 2020 published months only (3/12, remainder EIA-withheld); SPARSE — treat as indicative, not an annual basis"
+MISO-Illinois,2021,0.206,Chicago Citygate (IL),"IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; PARTIAL YEAR: Jan Feb Mar Apr May Jun Jul Aug Sep Oct Dec 2021 published months only (11/12, remainder EIA-withheld)"
+MISO-Illinois,2022,-0.27,Chicago Citygate (IL),IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean
+MISO-Illinois,2023,-0.108,Chicago Citygate (IL),IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean
+MISO-Illinois,2024,0.120,Chicago Citygate (IL),IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean
+MISO-Illinois,2025,0.018,Chicago Citygate (IL),IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean
+MISO-Illinois,2026,1.706,Chicago Citygate (IL),"IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; PARTIAL YEAR: Jan-May 2026 published months only (5/12, remainder EIA-withheld); SPARSE — treat as indicative, not an annual basis"
+MISO-Indiana,2018,0.281,Chicago Citygate (IL),"IL; IN proxy pending N3045IN3 pull delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; PARTIAL YEAR: Jan Apr May Jun Jul Aug Sep Oct Nov Dec 2018 published months only (10/12, remainder EIA-withheld)"
+MISO-Indiana,2019,0.677,Chicago Citygate (IL),"IL; IN proxy pending N3045IN3 pull delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; PARTIAL YEAR: Jan-Aug 2019 published months only (8/12, remainder EIA-withheld)"
+MISO-Indiana,2020,0.107,Chicago Citygate (IL),"IL; IN proxy pending N3045IN3 pull delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; PARTIAL YEAR: Jun-Aug 2020 published months only (3/12, remainder EIA-withheld); SPARSE — treat as indicative, not an annual basis"
+MISO-Indiana,2021,0.206,Chicago Citygate (IL),"IL; IN proxy pending N3045IN3 pull delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; PARTIAL YEAR: Jan Feb Mar Apr May Jun Jul Aug Sep Oct Dec 2021 published months only (11/12, remainder EIA-withheld)"
+MISO-Indiana,2022,-0.27,Chicago Citygate (IL),IL; IN proxy pending N3045IN3 pull delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean
+MISO-Indiana,2023,-0.108,Chicago Citygate (IL),IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; IN proxy pending N3045IN3 pull
+MISO-Indiana,2024,0.120,Chicago Citygate (IL),IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; IN proxy pending N3045IN3 pull
+MISO-Indiana,2025,0.018,Chicago Citygate (IL),IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; IN proxy pending N3045IN3 pull
+MISO-Indiana,2026,1.706,Chicago Citygate (IL),"IL; IN proxy pending N3045IN3 pull delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; PARTIAL YEAR: Jan-May 2026 published months only (5/12, remainder EIA-withheld); SPARSE — treat as indicative, not an annual basis"
+MISO-East,2018,0.281,Chicago Citygate (IL),"IL; WI/MI (MichCon) proxy pending N3045MI3 pull delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; PARTIAL YEAR: Jan Apr May Jun Jul Aug Sep Oct Nov Dec 2018 published months only (10/12, remainder EIA-withheld)"
+MISO-East,2019,0.677,Chicago Citygate (IL),"IL; WI/MI (MichCon) proxy pending N3045MI3 pull delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; PARTIAL YEAR: Jan-Aug 2019 published months only (8/12, remainder EIA-withheld)"
+MISO-East,2020,0.107,Chicago Citygate (IL),"IL; WI/MI (MichCon) proxy pending N3045MI3 pull delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; PARTIAL YEAR: Jun-Aug 2020 published months only (3/12, remainder EIA-withheld); SPARSE — treat as indicative, not an annual basis"
+MISO-East,2021,0.206,Chicago Citygate (IL),"IL; WI/MI (MichCon) proxy pending N3045MI3 pull delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; PARTIAL YEAR: Jan Feb Mar Apr May Jun Jul Aug Sep Oct Dec 2021 published months only (11/12, remainder EIA-withheld)"
+MISO-East,2022,-0.27,Chicago Citygate (IL),IL; WI/MI (MichCon) proxy pending N3045MI3 pull delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean
+MISO-East,2023,-0.108,Chicago Citygate (IL),IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; WI/MI (MichCon) proxy pending N3045MI3 pull
+MISO-East,2024,0.120,Chicago Citygate (IL),IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; WI/MI (MichCon) proxy pending N3045MI3 pull
+MISO-East,2025,0.018,Chicago Citygate (IL),IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; WI/MI (MichCon) proxy pending N3045MI3 pull
+MISO-East,2026,1.706,Chicago Citygate (IL),"IL; WI/MI (MichCon) proxy pending N3045MI3 pull delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; PARTIAL YEAR: Jan-May 2026 published months only (5/12, remainder EIA-withheld); SPARSE — treat as indicative, not an annual basis"
+MISO-South,2022,0.303,Gulf Coast (LA),LA delivered-to-electric-power (EIA N3045LA3) minus Henry Hub monthly mean
+MISO-South,2023,0.295,Gulf Coast (LA),LA delivered-to-electric-power (EIA N3045LA3) minus Henry Hub monthly mean
+MISO-South,2024,0.388,Gulf Coast (LA),LA delivered-to-electric-power (EIA N3045LA3) minus Henry Hub monthly mean
+MISO-South,2025,0.343,Gulf Coast (LA),LA delivered-to-electric-power (EIA N3045LA3 partial 6/12 months: Feb May Jun Jul Sep Oct) minus Henry Hub SAME-MONTH mean — like-for-like per-month diffs matching every other row; prior 0.095 subtracted the full-year HH mean from the 6-month LA mean (mismatched-window construction bug; fixed 2026-07-12); MS (N3045MS3) withheld 2025
+MISO-South,2026,0.969,Gulf Coast (LA),"LA delivered-to-electric-power (EIA N3045LA3) minus Henry Hub monthly mean; PARTIAL YEAR: Jan Apr May 2026 published months only (3/12, remainder EIA-withheld); SPARSE — treat as indicative, not an annual basis"
