@@ -1370,6 +1370,7 @@ def load_fleet_from_csv(
     apply_cc_summer_guard: bool = True,
     measured_ct_heat_rates: bool = False,
     measured_chp_heat_rates: bool = False,
+    apply_chp_steam_credit_correction: bool = True,
 ) -> list[Generator]:
     """Load an ISO's thermal generation fleet.
 
@@ -1412,6 +1413,17 @@ def load_fleet_from_csv(
             take their measured POWER-ONLY heat rate instead of eGRID's
             steam-credited one, and are exempted from the legacy hand-factor
             correction. Default off and byte-identical off.
+        apply_chp_steam_credit_correction: When False, the legacy hand-factor
+            CHP correction (:func:`~market_sim.data.chp._correct_chp_steam_credit_hr`)
+            is skipped and the binned-fleet side cache is left untouched. The
+            model ALWAYS leaves this True; only
+            ``scripts/data/derive_chp_power_only_heat_rates.py`` passes False,
+            to read each plant's incumbent heat rate **at the seam where the
+            measured rate would replace it** — i.e. after the eGRID join and
+            the boundary repairs but before the hand factor. Its basis check
+            ("is the incumbent this eGRID row, or a repair/bin fallback?")
+            is otherwise blinded in the two hand-factor ISOs, where every
+            corrected plant reads as a mismatch (caiso-147).
 
     Returns:
         The ISO's thermal fleet as a list of :class:`Generator` objects.
@@ -1499,6 +1511,11 @@ def load_fleet_from_csv(
         if measured_chp_heat_rates
         else frozenset()
     )
+    if not apply_chp_steam_credit_correction:
+        # Basis-inspection read only (the CHP derive). Return before the hand
+        # factor AND before the cache write, so the committed side cache always
+        # reflects the fleet the model actually prices with.
+        return generators
     _correct_chp_steam_credit_hr(generators, iso, skip_ids=measured)
     _pkg_ns()._cache_binned_fleet(iso, generators, source)
     return generators
