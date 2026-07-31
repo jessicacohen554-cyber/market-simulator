@@ -3490,4 +3490,88 @@ closed and the nyiso-104b frontier declaration stands. No run registered on the
 dashboard, because no bundle was produced. The ERCOT and CAISO keeper-stamp
 drifts were left open on purpose.
 
-Next shorthand: nyiso-108.
+Next shorthand: nyiso-109.
+
+---
+
+## nyiso-108 — hydro input repair ARMED and PROMOTED; it exposed a real 2023 over-pricing (2026-07-31)
+
+**2 solves** (same-HEAD zero-delta control + single-delta arm, three years each).
+**Frozen HEAD `e1a4bc6`.** Keeper `2026-07-31-nyiso105-chp-heat-rates` ->
+**`2026-07-31-nyiso108-hydro-input-repair`** (bundle `nyiso108_hydrorepair_B`).
+Pre-registered and PUSHED (PR #3235) before either arm solved.
+
+### 1. Scope Item A executed — the last material-hydro holdout is repaired
+
+NYISO was the ONLY material-hydro ISO whose keeper ran on an unrepaired truncated
+EIA-923 vintage. Its 2025 LP hydro fleet was **3 plants / 21.0482 TWh** against
+147 / 27.8750 in 2024 on a 26.5 TWh class (~18 % of NYISO generation). Arming the
+pair `--hydro-backfill-year 2024` + `--hydro-eia930-monthly` — a rule 14
+[R-ACCURATE] input correction with **zero free parameters** (+1 DOF entry,
++0 residual), already armed on four of the six keepers — restores **147 plants /
+24.0589 TWh**.
+
+### 2. Construction adjudicated BEFORE the solve, against P-63
+
+Level, against NYISO MIS P-63 (neither input nor benchmark): pinned
+**-1.29/-0.88/-0.78 %** vs bare **+4.48/+3.33/-13.20 %** vs backfill-only
+**+4.49/+3.33/+7.20 %**. Backfill-only was refused on **shape** as well: it
+*degrades* the 2025 seasonal shape below the unrepaired keeper (P-63 shape r
+**0.9251 -> 0.8265**) and puts the annual peak in March against P-63's May. The
+PJM/MISO pin refusal does not transfer — it exists for a PS fold NYISO lacks.
+Physically-unattainable plant-months fall **34/34/33 -> 14/20/10**.
+
+### 3. Every construction gate passes; K2 on the STRICT BYTE basis
+
+Control minus committed keeper = **exactly 0.0 MW** on every class in all three
+years — no same-HEAD drift, so the A/B is unconfounded. K3: hydro moves
+**-1.5505/-1.0904/+3.0107 TWh**. Fossil displacement is exactly 1:1
+(2023 +1.5669, 2024 +1.1086, 2025 -3.2302 TWh). Slack and dump 0.0 in both arms.
+
+### 4. THE COST: C3a 2023 +8.6 % -> +10.2 %, and NYISO regresses to NOT-YET
+
+A **0.2 pp** breach of the ±10 % band. It is a **DISCOVERED** defect, not a created
+one: EIA-923 raw 2023 sits **+3.11 % above** P-63 while the armed level sits
+-1.29 % below it, so the keeper was carrying **~1.55 TWh of phantom zero-MC 2023
+hydro that was SUPPRESSING a real 2023 fossil over-pricing**. Rule 14 forbids
+reverting the accurate input to restore the PASS. Same signature PJM promoted at
+pjm-143. **Promotion is an EXPLICIT OWNER OVERRIDE of this session's prereg §6**,
+which pre-committed no-promotion-on-new-FAIL; recorded as an override, not as the
+prereg's verdict.
+
+Also explained and deliberately NOT corrected: the pinned level's consistent
+-1.29/-0.88/-0.78 % residual vs P-63 is NYIS's netted pumping inside `NG: WAT`
+(predicted -1.33/-1.49/-2.38 %, matching 2023 to 0.05 pt). A reconciliation factor
+would be a fitted adjustment (rules 5/21).
+
+### 5. The frontier: the C3c declaration STANDS, its PREMISE does not
+
+C3c is **BIT-IDENTICAL** across arm and control (model 3/0/7 h vs actual
+10/12/42 h >$300), so no C3c evidence moved, the exhausted-queue finding and its
+re-open condition carry forward unchanged, and **no caveat slot is spent**. What
+lapses is nyiso-104b's premise that *C3c was the SOLE blocker*. NYISO now has a
+second, non-C3c, tractable blocker. **NYISO is no longer at a frontier in the
+sense of "options exhausted" — it is back in active calibration.** Holdout
+unaffected: `complete` kept, absent from `final`, spend freeze ACTIVE.
+
+### 6. What did NOT change
+
+C1 stays **14/14 all-class, 10/10 free-class** in both arms. C2/C3b/C4/C6/C7/C8
+PASS in both. No ScenarioConfig field added. No out-of-training year touched.
+
+### 7. Named successor
+
+**nyiso-109: the NYISO 2023 fossil over-pricing, now visible at +10.2 %** — an
+offer-stack / fuel-basis root cause, NOT the hydro input, which is now correct
+and must not be re-tuned to bury the miss.
+
+Recorded honestly: two measurement bugs in this session's own REPORTED (non-gating)
+diagnostics — the A/B scorer's `hydro_lp_units` counts rows not distinct units, and
+its `_tail_hours` returns 0 for a control whose committed C3c is 3/0/7 h, so it does
+not reproduce the scorer's tail basis. The authoritative C3c comes from
+`calibration_verdict.py`. Environment: a fresh container also needs a full
+`scripts/regenerate_clean.py` (48 datatypes) beyond the two documented commands.
+
+`results/calibration/FINDING-nyiso108-hydro-input-repair-2026-07-31.md`.
+
+Next shorthand: nyiso-109.
