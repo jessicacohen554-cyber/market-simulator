@@ -69,3 +69,28 @@ to the MISO block of `actual_lmp.json`, and
 magnitude) against these actuals.
 
 Staged years: 2022 (validation holdout, ~7-day plain-text chunks), 2023, 2024, 2025 (RT + DA, gzip).
+
+## 2022 staging is INCOMPLETE (recorded 2026-07-31)
+
+The 2022 chunk set stops short of the year:
+
+    miso_hub_lmp_2022_da_p01..p49   -> 343/365 days   (missing 2022-12-10..12-31)
+    miso_hub_lmp_2022_rt_p01..p45   -> 315/365 days   (missing 2022-11-12..12-31)
+
+So the derived bench covers **94.0 % DA / 86.3 % RT** of 2022. January-October
+is complete and real; November is DA-complete and RT-partial (36.5 %);
+December is 29.0 % DA and effectively absent for RT (0.1 %, the single
+year-boundary hour).
+
+**It cannot be completed from `docs.misoenergy.org`** — the rolling retention
+window has aged 2022 off entirely (re-verified 2026-07-31: `20221215_da_expost_
+lmp.csv` -> **404**, `20231215_...` -> 200). Finishing it needs the documented
+fallback, the MISO Data Exchange Pricing API, which requires
+`MISO_PRICING_API_KEY` (`fetch_miso_hub_lmp.py --years 2022 --markets rt da`).
+The same retention clock is now running on 2023, whose daily files will age off
+in due course.
+
+Because the downstream means are NaN-ignoring, the MISO block of
+`actual_lmp.json` carries `da_cov` / `rt_cov` = `{annual, mon[12]}` so a
+partially-covered month cannot be mistaken for a priced one (without it, 2022's
+one December RT hour reads as a $22.82/MWh December RT price).

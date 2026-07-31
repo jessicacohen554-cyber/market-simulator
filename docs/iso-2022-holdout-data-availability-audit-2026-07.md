@@ -11,6 +11,11 @@ spans, NaN coverage — plus keeper `run_config.json` flag extraction to ground
 materiality. **No LP was constructed, solved, or scored for any year** (rule 22
 channel-1-style no-LP validation). Scanner:
 `scripts/archive/audit_holdout_data_availability_2026_07.py`.
+**Status:** §§1–6 are the 2026-07-31 read-only audit as first written. **§7 is
+the 2026-07-31 owner-authorized data-intake session** that worked §4.1 + §5 —
+read it for what has since closed, for the correction to §4.1's demand-profile
+blocker (it is **not** a hard blocker), and for the two items it hands back to
+the owner.
 **Governance context at audit time:** the HOLDOUT SPEND FREEZE
 (`frontend/data/backcast/holdout-freeze.json`, declared 2026-07-25, HELD
 2026-07-26) is **ACTIVE** — nothing in this doc is spendable until the owner
@@ -311,5 +316,129 @@ gap class found by this audit. 2019 solves additionally ride on the §4.1
 
 *Scan artifacts: per-family JSON census produced by
 `scripts/archive/audit_holdout_data_availability_2026_07.py` (re-runnable,
-read-only). All row counts and year spans in this doc are from the 2026-07-31
+read-only). All row counts and year spans in §§1–6 are from the 2026-07-31
 scan of the working tree at `ab4e910`.*
+
+---
+
+## 7. 2026-07-31 intake session — what closed, what moved, what is still MISSING
+
+Rule 22 Option-2 **DATA INTAKE ONLY**, owner-authorized 2026-07-31 for 2018–2022
++ H1-2026 across all six ISOs (verbatim authorization in
+`frontend/data/backcast/calibration-complete.json` → `intake_log`). **No LP was
+constructed, solved or scored; nothing was registered on any dashboard; the
+spend freeze is untouched.** All validation below is no-LP (loader
+resolvability, byte/value identity, row-count census). 2019 data landed like
+any other year — intake is marker-free — and remains locked-tier for
+solve/score forever-once.
+
+### 7.1 Closed
+
+| audit row | what landed | freeze verification |
+|---|---|---|
+| §4.1 / §5.3 **eGRID 2018–2021 vintages absent** | all four workbooks fetched from EPA's historical archive into `data/raw/fleet-egrid/` (2018 `_v2`, 2019, 2020 `_v2`, 2021 — latest revision, US units; URLs in that dir's README) and registered in `egrid.py::_EGRID_FILES` + `curate_egrid.EGRID_FILES`. 2018–2021 now anchor on their OWN release instead of the 2024 stand-in | — |
+| §4.1 **`fossil_co2_rates.parquet` 2018–2021** | one `derive_fossil_co2_rates.py --years 2018 2019 2020 2021` run on the true vintages: 2018 2,572 / 2019 2,547 / 2020 2,536 / 2021 2,619 fossil plants. Artifact spans 2018–2026, 22,958 rows | 2022–2026 rows value-identical (12,684 rows, sha256 `5802d577…`, `DataFrame.equals` True) |
+| §4.2 / §5.5 **NEISO 2018–2019 LMP bench** | built from the on-disk SMD workbooks — da/rt $44.13/$43.54 (2018), $31.22/$30.67 (2019) | see below |
+| §5.6 **NEISO scoring-clock re-derive (2020–2022)** | re-derived on the fixed clock in the same run; `--lw-retrofit` for all five years. Legacy equal-hour means are clock-invariant so 2020–2022 keep theirs; the hourly indexing and `*_pct` / `*_lw` moved (2020 `rt_lw` 25.09 → 25.14, 2022 91.00 → 91.16) | NEISO 2023–2025 parquet rows value-identical (26,280); `actual_lmp.json` diffed record-by-record — NEISO 2018–2022 the ONLY changed entries |
+| §5.1 **CISO/MISO EIA-930 wide-hourly 2022 hole** | `build_eia930_hourly_from_raw.py` gains `--fill-years` (splice missing hours of a named year — `--append-only` cannot reach a hole in the middle). CISO spliced 8,751 rows, MISO 8,753 → both now carry 8,760 local-2022 hours | every pre-existing row value-identical for both BAs |
+| §5.2 **v1 `plant_emission_rates.parquet` 2022/2026 drift** | explained and re-landed — see §7.3 | pooled `year==0` (131), 2023 (130), 2024 (129) value-identical; `master-plant-registry.csv` byte-identical |
+| §3.3 / §3.4 **short-window outages 2022 (PJM, MISO — both keeper-ON)** | extended to the full 2018–2026 span with the committed producer: MISO 290 → 987 windows, PJM 285 → 934 | MISO 2023–2025 **reproduced identically** by the full-span run; PJM's did not — see §7.4 |
+
+### 7.2 §4.1's "no ISO can dispatch 2018–2020 at all" is **WRONG** — correct it
+
+The row claims `eia_demand_profiles.parquet` (2021–2025 only) is a hard blocker
+because "without it `load_demand` hard-fails". It does not. Every one of the six
+ISOs has a dedicated per-BA loader in
+`market_sim.data.eia930.demand.DEMAND_LOADERS` that reads
+`eia-930-hourly/<BA> hourly.parquet` and **takes precedence over** the
+demand-profiles parquet; those extracts span 2018–2026. Measured directly (no
+LP, `load_demand(iso, year, get_iso_config(iso))`):
+
+| ISO | 2018 | 2019 | 2020 | 2021 | 2022 |
+|---|--:|--:|--:|--:|--:|
+| ERCOT | 376 | 383 | 379 | 391 | 429 |
+| CAISO | 226 | 214 | 217 | 219 | 224 |
+| PJM | 821 | 800 | 768 | 796 | 810 |
+| MISO | 668 | 650 | 623 | 642 | 653 |
+| NYISO | 133 | 131 | 128 | 124 | 124 |
+| NEISO | 102 | 96 | 92 | 99 | 100 |
+
+(TWh, zero NaN in every cell.) 2026 is the year that genuinely fails
+(`ValueError`) — the full-8760 contract, unchanged from F3.
+
+What the demand-profiles gap **does** still block is narrower and worth
+carrying forward as its own row: `build_calibration_reference.py` (hence the
+§4.1 calref / renewable-capacity 2018–2020 row, which stands), and — before
+this session — CAISO/MISO **2022**, the two ISOs whose per-BA extract had the
+§5.1 hole and therefore fell through to the demand-profiles path with the
+explicit "falling back to the corrupted legacy series" warning. Filling the
+hole moved both onto the real per-BA extract, so that fallback is gone.
+
+Owner decision still needed on the artifact itself — see §7.5.
+
+### 7.3 §5.2 resolved: the rows never reached `main`
+
+The artifact has **exactly one blob in all of git history**
+(`19ecb0f8…`), first *added* 2026-07-22 in the ercot-99 lineage (`66fd940`)
+carrying `{0, 2023, 2024}`, and unchanged at every commit since. No later
+rebuild dropped anything.
+
+The 2026-07-04 F5 rows were uncommittable when they were produced, on both
+sides of the W1 relocation. `docs/out-of-sample-results-2026-07.md` §F5 records
+that `derive_plant_emissions.py` "still wrote to the pre-W1 `inputs/processed`
+tree" — and `/inputs/` is gitignored and has **never** been a tracked path in
+this repo. The path fix pointed the script at
+`data/raw/_processed-legacy/`, but that directory's `*.parquet` were gitignored
+too: the `!…plant_emission_rates.parquet` negation only landed in `66fd940`,
+eighteen days later. The rows lived on the F5 container's disk and went away
+with it.
+
+Re-landed by re-deriving from the on-disk CAMPD TX extracts, reproducing the F5
+record exactly — **2022 → 130 TX plants** (full year), **2026 → 128** (`TX_2026`
+spans 2026-01-01..03-31, so **PARTIAL**, Q1-weighted starts/rates, the same
+caveat F5 recorded). Materiality is unchanged from the audit's grading: the
+model reads only the pooled `year == 0` block (both
+`fleet._plant_emission_rate_map` and `egrid._campd_rate_map` filter it), so no
+solve is affected.
+
+Two guards added so the failure class cannot repeat:
+`derive_plant_emissions.py` now merges by year and **preserves the pooled
+block** unless `--repool` is passed (the old script recomputed the pool from
+whatever `--years` it was handed — running it for a back year would have
+silently re-pooled every solve's CO2/NOx/SO2 basis), and `.gitignore` names
+`fossil_co2_rates.parquet` in the `_processed-legacy` allowlist, which was in
+the same tracked-but-ignored state.
+
+### 7.4 Still MISSING after this session, with fix notes
+
+| item | grade | fix |
+|---|---|---|
+| **MISO 2022 LMP bench — Nov/Dec tail** | **PARTIAL, 86.3% RT / 94.0% DA** | The bench builds from the committed raws with no fetch (audit §3.4 "(d)") — but the 2022 *staging* is short: chunks stop at `_da_p49` / `_rt_p45`, leaving DA missing 2022-12-10..12-31 and RT missing 2022-11-12..12-31. Not fetchable here: `docs.misoenergy.org` keeps a rolling ~3.5-yr window (re-verified — 2022-12-15 → **404**, 2023-12-15 → 200) and the documented fallback needs `MISO_PRICING_API_KEY`, absent from this environment. **Owner: supply the key (or re-fetch before more of 2023 ages off).** Jan–Oct is complete and real. The record now carries `da_cov`/`rt_cov` = `{annual, mon[12]}` so the partiality is machine-readable beside the statistic it qualifies — without it the one-hour December read as a $22.82/MWh December RT price |
+| **PJM short-window 2023–2025 boundary sensitivity** | open, in-sample | The full-span rebuild drops SIX committed in-sample windows and adds none (1384/1 2025-09-24 + 2025-10-01, 1384/2 2023-02-03, 3954/1 2023-09-07, 10343/SG-101 2023-01-14 + 2023-03-08). Cause: the in-merit filter's high-load percentile is measured over a **centered** window, so Jan-2023 and late-2025 spans now see real neighbouring-year load instead of a truncated window. PJM is committed as a MERGE (committed 2023–2025 preserved byte-identical); whether the boundary-corrected detection is the better input is a rule-14 question **for a PJM calibration session**, not a data-intake one |
+| everything else in §§3–4 | unchanged | The §3 per-ISO gap tables and the §4.2 per-ISO rows stand as written, minus the rows closed in §7.1. In particular ERCOT and CAISO still have **no LMP bench and no LMP raws** for any pre-2023 year — the single most disqualifying gap for both, and the one this session could not touch (ERCOT MIS SPP archives and CAISO OASIS `PRC_LMP` are separate fetch lanes) |
+
+### 7.5 Two decisions that are the owner's, not this session's
+
+1. **`eia_demand_profiles.parquet` 2018–2020 rebuild.** Downgraded from "hard
+   blocker" to a **scoped** one by §7.2 — dispatch demand resolves for every ISO
+   2018–2022 without it. It still gates `build_calibration_reference.py`
+   (calref + `<ISO>_<year>_renewable_capacity.csv` for 2018–2020, no ISO has
+   them). There is **no in-repo builder**; the artifact is hand-uploaded, and
+   the underlying raw wide extracts DO cover 2018–2020 for every BA. So the
+   choice is: **(a)** supply the rebuilt artifact, or **(b)** authorize writing
+   a builder from the per-BA extracts. This session did neither — writing one
+   would fix the ISO-total series' provenance for every downstream consumer at
+   once, and that is a methodology commitment, not an intake.
+2. **`derive_actual_tail.py::HOLDOUT_YEARS` widening.** It is `(2022, 2026)`
+   today, so the 2018–2021 blocks now on disk (NEISO 2018–2021, NYISO
+   2018–2021, PJM 2018–2021) emit no `actual_tail.json` entry. Widening it is
+   the obvious mechanical step — **but the deriver is TIER-BLIND**: it gates
+   every holdout year on the `complete` block alone
+   (`_marker_isos()` reads `data.get("complete")`), which predates the
+   2026-07-31 two-marker amendment. Widening it as-is would let a `complete`-only
+   ISO emit a **locked-test** year (2019, and 2026 already), which is exactly
+   the hole `scripts/lib/holdout_policy.py` was created to close. So the ask is
+   two-part: **(a)** which years to add — the validation ladder {2018, 2020,
+   2021} only, or the full 2018–2021 span; and **(b)** sign-off to route the
+   deriver through `holdout_policy.py` so `final` gates 2019/2026 and `complete`
+   gates the rest. Not changed here — it is a governance-gate edit, not data.
