@@ -477,6 +477,18 @@
  * moves the curve the wrong way. §5.1 queue item 5 CLOSED; item 4 (five-ISO
  * fuel stack on ERCOT) is the chartered successor. Keeper unchanged
  * (2026-07-31-ercot144-coal-perplant-offer).
+ *
+ * ERCOT column re-stamped 2026-07-31 by ERCOT-145b (item-4 execution, same
+ * session): the five-ISO fuel-stack audit stamped gas_monthly_actuals
+ * ERCOT U -> G (Run-77 record) with the MISO drift corrected K -> n/a,
+ * gas_plant_monthly_pricing ERCOT U -> G (documented ~12%-coverage design
+ * refusal), and solved the single live cell: gas_daily_shape ERCOT U -> K,
+ * registered A/B PROMOTED KEEPER -> 2026-07-31-ercot145-gas-daily-shape
+ * (owner in-session standard: structural-integrity improvement outranks
+ * gate regression; two ±1-hour threshold-straddle guard trips recorded
+ * honestly in the promotion note). Open gates unchanged {C3a,C3b,C3c,C7};
+ * C6 attested and PASSES. gas_hh_monthly_shape still carries NO matrix row
+ * (26c gap, surfaced to the owner at ERCOT-145b precommit §6).
  */
 window.MECH_MATRIX = {
   version: 1,
@@ -758,9 +770,9 @@ window.MECH_MATRIX = {
       ev: { E: "ERCOT-145b (docs/PRECOMMIT-ercot145-gas-daily-shape-2026-07-31.md §1b)" } },
     { id: "gas_daily_shape", cat: "fuel", name: "Measured daily gas shape (within-month HH)",
       def: "scenarios.py:7154", mode: "BF",
-      cells: "UKKKKK",
-      note: "Five keepers; ERCOT untested — candidate for the 2023 winter-volatility C3a/C3b residual (would need its own ERCOT evidence). PJM K CONFIRMED at pjm-139 against a handoff that mis-read the cell as U: armed at pjm-107 (leg A, all gates PASS, became the 2026-07-14-pjm-107-gas-daily keeper) and live in pjm137_ctheatrate_B (run_config scenario_config.gas_daily_shape=True, on the prb_overrides channel). pjm-139 W1 additionally BOUNDS what the mechanism can ever do in ANY ISO: the factors are one-per-calendar-day repeated over 24 h (hubs.py np.repeat(day_factor,24)), so within-day sigma <= 4e-16 and the hour-of-day mean profile is flat to 0.000 — it is a DAY-scale lever and can never move an intra-day (hour-of-day) differential. Do not charter it against a diurnal defect in any ISO. It is NOT inert on its own terms: the January peak calendar-day factor is 1.151/3.287/2.143 with 0/4/4 DJF days above 2x.",
-      ev: { P: "pjm-107 (adopted, leg A); pjm-139 W0/W1 (cell confirmed K; all-ISO day-scale resolution bound)" } },
+      cells: "KKKKKK",
+      note: "ALL SIX keepers. ERCOT K at ERCOT-145b (2026-07-31, registered single-delta A/B off ercot144_perplant_arm -> PROMOTED KEEPER 2026-07-31-ercot145-gas-daily-shape under the owner's in-session standard 'structural integrity improvement outranks gate regression'): ERCOT was the last ISO pricing gas flat-per-month while the measured HH daily series exists (rule 14). Precommit §1c recorded ex-ante that NO fit gain was predicted (resid-factor corr -0.011/-0.061/+0.127) — the un-targeted result was C3a improving 2024 AND 2025 (-14.8->-14.3, -14.3->-13.9 %) and C3b-2024 improving (0.208->0.205), with C1 16/16 free 12/12, C2/C4/C8 and C7-2024/25 lignite all HELD, n_residual 6 unchanged, zero fitted parameters. TWO precommit §4 guards tripped by ±1 threshold-straddling hour each and are recorded honestly (2023 C3c 47->46, a $203->$199.5 straddle on a real $2,110 hour; 2024 spurious 2->3, $207 on the real Heather day whose own hour actual is $141 — right day, wrong hour) — adjudicated threshold noise by the owner standard, NOT the ERCOT-119 drain / tail-invention patterns. 2023 C3b 0.637 unchanged as predicted (2023 HH factors tame, std 0.076): the queue's '2023 winter-volatility candidate' premise was WEAK on the HH side and the honest remaining winter lever is the local daily basis (winter_citygate_daily ERCOT cell, data-intake first — HSC/Katy daily). PJM K CONFIRMED at pjm-139 against a handoff that mis-read the cell as U: armed at pjm-107 (leg A, all gates PASS, became the 2026-07-14-pjm-107-gas-daily keeper) and live in pjm137_ctheatrate_B (run_config scenario_config.gas_daily_shape=True, on the prb_overrides channel). pjm-139 W1 additionally BOUNDS what the mechanism can ever do in ANY ISO: the factors are one-per-calendar-day repeated over 24 h (hubs.py np.repeat(day_factor,24)), so within-day sigma <= 4e-16 and the hour-of-day mean profile is flat to 0.000 — it is a DAY-scale lever and can never move an intra-day (hour-of-day) differential. Do not charter it against a diurnal defect in any ISO. It is NOT inert on its own terms: the January peak calendar-day factor is 1.151/3.287/2.143 with 0/4/4 DJF days above 2x.",
+      ev: { E: "ERCOT-145b (docs/PRECOMMIT-ercot145-gas-daily-shape-2026-07-31.md; keeper 2026-07-31-ercot145-gas-daily-shape)", P: "pjm-107 (adopted, leg A); pjm-139 W0/W1 (cell confirmed K; all-ISO day-scale resolution bound)" } },
     { id: "zonal_gas_basis", cat: "fuel", name: "Per-zone gas hub basis",
       def: "ercot :7466 / nyiso :7185 / pjm :7252 / miso :7261 / caiso :7296", mode: "B",
       cells: "KKKKK.",
