@@ -3266,8 +3266,8 @@ all reproduced bit-for-bit — **solar 0.662 was the single unrepaired cell**.
 
 **Blast radius.** Solar is not a C1-gated row (`score_fuelmix` scores only
 GAS+COAL), so it never fired a FAIL; but it enters `_gen_totals`' `a_gen`, so
-correcting it moves `a_gen` +1.67 % and every fossil `share_pp` (CC_REGULAR
-−0.43 pp, ST_GAS −0.20 pp, band ±3.0 pp). Material, not decisive.
+applying the repair moves `a_gen` +1.42 % and every fossil `share_pp` (CC_REGULAR
+−0.37 pp, ST_GAS −0.17 pp, band ±3.0 pp). Material, not decisive.
 
 **Fixed forward.** A class absent from CAMPD *and* EIA-930 *and* truncated by a
 partial vintage is in biomass's position, so it now takes biomass's repair: the
