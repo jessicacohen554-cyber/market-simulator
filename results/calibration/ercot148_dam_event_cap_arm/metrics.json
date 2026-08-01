@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-26-ercot116-coal-avail-probe",
+  "run_id": "2026-07-31-ercot148-dam-event-cap",
   "iso": "ERCOT",
-  "label": "ercot116 coal avail probe",
+  "label": "ercot148 dam event cap",
   "target_years": [
     2023,
     2024,
@@ -13,17 +13,17 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
+  "rubric_version": 2.9,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape, price_tail, shape"
   ],
   "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -48,27 +48,22 @@
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
       "tier": "supporting",
-      "status": "FAIL"
-    },
-    "co2": {
-      "label": "C5a CO2 vs eGRID",
-      "tier": "load-bearing",
       "status": "PASS"
     },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "FAIL"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -81,11 +76,11 @@
     }
   },
   "grade_summary": {
-    "scored": 7,
-    "target_grade": 2,
+    "scored": 9,
+    "target_grade": 5,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 5
+    "fails": 4
   },
   "free_class_score": {
     "iso": "ERCOT",
@@ -103,13 +98,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 15,
+      "pass": 16,
       "total": 16
     },
     "free": {
-      "pass": 11,
+      "pass": 12,
       "total": 12
     },
-    "headline": "C1 all 15/16 \u00b7 free 11/12"
+    "headline": "C1 all 16/16 \u00b7 free 12/12"
   }
 }
