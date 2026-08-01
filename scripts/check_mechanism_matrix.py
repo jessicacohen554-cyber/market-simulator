@@ -68,11 +68,56 @@ def _git(*args: str) -> str:
         return ""
 
 
+def unbalanced_strings(text: str) -> list[str]:
+    """Return errors for `key: "…"` literals holding a raw, unescaped `"`.
+
+    The whole file is one JS object literal, so a single stray double quote
+    inside a note truncates that string and cascades into a SyntaxError that
+    leaves `window.MECH_MATRIX` unassigned and the explorer page blank. That is
+    exactly what happened between nyiso-105 and xiso-1: a D-2 quotation written
+    with double quotes broke the file on main, and this checker's regexes did
+    not notice because they never parse — they scan.
+
+    Detection without a JS runtime: walk each `key: "` literal to its next
+    unescaped `"`, then require the following non-space character to be one of
+    `,` `}` `]`. A truncated string lands mid-prose instead, so the next
+    character is a letter, digit or punctuation that JS cannot accept there.
+
+    Scanning starts at the `window.MECH_MATRIX` assignment: everything above it
+    is the file's block-comment header, whose prose legitimately contains
+    `word: "quoted"` shapes that are not string literals at all.
+    """
+    errors: list[str] = []
+    start = text.index("window.MECH_MATRIX")
+    for m in re.finditer(r'\b([a-zA-Z_]\w*)\s*:\s*"', text[start:]):
+        key = m.group(1)
+        i, n = start + m.end(), len(text)
+        while i < n:
+            if text[i] == "\\":
+                i += 2
+                continue
+            if text[i] == '"':
+                break
+            i += 1
+        j = i + 1
+        while j < n and text[j] in " \t\r\n":
+            j += 1
+        if j < n and text[j] not in ",}]":
+            line = text.count("\n", 0, start + m.start()) + 1
+            errors.append(
+                f"line {line}: `{key}:` string is not closed cleanly — it ends "
+                f'before {text[j : j + 40]!r}. A raw `"` inside the text '
+                f"truncates it and breaks the whole file; use single quotes."
+            )
+    return errors
+
+
 def validate_matrix(text: str) -> list[str]:
     """Return a list of integrity-error strings for the matrix file text."""
     errors: list[str] = []
     if "window.MECH_MATRIX" not in text:
         return ["missing `window.MECH_MATRIX` assignment"]
+    errors += unbalanced_strings(text)
 
     cats = set(re.findall(r'\{\s*id:\s*"([a-z]+)",\s*name:', text))
     ids = re.findall(r'\{\s*id:\s*"([a-z0-9_]+)",\s*cat:\s*"([a-z]+)"', text)
