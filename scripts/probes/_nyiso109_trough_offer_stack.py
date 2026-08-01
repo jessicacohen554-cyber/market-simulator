@@ -314,6 +314,53 @@ def _interface_reality(year: int) -> dict | None:
     return out
 
 
+def _model_interface(bundle: Path, year: int) -> dict | None:
+    """The MODEL's own Central-East flow against its own monthly TTC envelope.
+
+    Needs the solve's ``flows.parquet``, which a slim committed bundle does not
+    carry — so this is ``None`` for a bundle read from git and populated when run
+    against a freshly-solved one. It exists to correct a reading this session's
+    own pre-registration got wrong: measured on the covered-actual-hours
+    subsample the model's link separates in 0.0 % of hours, but over the FULL
+    year it binds and separates, just far less often than the real market does.
+    """
+    path = bundle / "flows.parquet"
+    if not path.exists():
+        return None
+    from market_sim.config.constants import NYISO_INTERFACE_TTC_BY_MONTH
+
+    flows = pd.read_parquet(path)
+    flows = flows[
+        (flows["year"] == year)
+        & (flows["pass"] == "P1")
+        & (flows["from_zone"] == LINKS[0][0])
+        & (flows["to_zone"] == LINKS[0][1])
+    ].sort_values("hour")
+    if flows.empty:
+        return None
+    profile = NYISO_INTERFACE_TTC_BY_MONTH.get(year, {}).get(LINKS[0])
+    if profile is None:
+        return None
+    stamps = pd.date_range(f"{year}-01-01", periods=HOURS, freq="h")
+    limit = np.asarray(profile, dtype=float)[stamps[flows["hour"].to_numpy()].month - 1]
+    mw = flows["mw"].to_numpy(float)
+    at_limit = mw >= limit - 1.0
+    price, _dem = _model_zonal(bundle, year)
+    sep = (
+        (price[LINKS[0][1]] - price[LINKS[0][0]])
+        .reindex(stamps[flows["hour"].to_numpy()])
+        .to_numpy(float)
+    )
+    return {
+        "mean_flow_mw": round(float(mw.mean()), 1),
+        "share_at_ttc": round(float(at_limit.mean()), 4),
+        "share_sep_gt_0p01": round(float(np.nanmean(sep > 0.01)), 4),
+        "mean_sep_when_at_ttc": round(float(np.nanmean(sep[at_limit])), 4)
+        if at_limit.any()
+        else None,
+    }
+
+
 # ── fleet reconstruction (D / E / F) ────────────────────────────────────────
 
 
@@ -586,6 +633,7 @@ def main(argv: list[str] | None = None) -> int:
             "A_residual_deciles": _residual_deciles(bundle, year),
             "B_zonal_separation": _zonal_separation(bundle, year),
             "C_interface_reality": _interface_reality(year),
+            "C2_model_interface": _model_interface(bundle, year),
             "G_amplitude": _amplitude(bundle, year),
         }
         if not args.no_fleet:

@@ -1,0 +1,421 @@
+{
+ "probe": "nyiso-109 zone-resolved gas-offer margin anchor A/B",
+ "prereg": "results/calibration/PREREG-nyiso109-zonal-margin-anchor-2026-08-01.md",
+ "arms": {
+  "A_control": "nyiso109_control_A",
+  "B": "nyiso109_zonalanchor_B",
+  "keeper": "nyiso108_hydrorepair_B"
+ },
+ "construction_gates": {
+  "K1_flag_fidelity": {
+   "passed": true,
+   "A": {
+    "gas_offer_margin_zonal_anchor": false,
+    "gas_offer_margin_anchor_by_zone": null
+   },
+   "B": {
+    "gas_offer_margin_zonal_anchor": true,
+    "gas_offer_margin_anchor_by_zone": {
+     "Upstate_West": 2.0346,
+     "Capital_Hudson": 3.9046,
+     "Lower_Hudson": 3.9046,
+     "NYC": 2.7612,
+     "Long_Island": 3.9046
+    }
+   },
+   "registry": {
+    "Upstate_West": 2.0346,
+    "Capital_Hudson": 3.9046,
+    "Lower_Hudson": 3.9046,
+    "NYC": 2.7612,
+    "Long_Island": 3.9046
+   },
+   "iso_anchor_A": 3.9046,
+   "iso_anchor_B": 3.9046
+  },
+  "K2_control_integrity": {
+   "passed": true,
+   "basis": "scorecard (gate); byte basis reported below",
+   "keeper_criteria": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "FAIL",
+    "price_shape": "PASS",
+    "price_tail": "CAVEAT",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "PASS",
+    "forced_share": "PASS"
+   },
+   "control_criteria": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "FAIL",
+    "price_shape": "PASS",
+    "price_tail": "CAVEAT",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "PASS",
+    "forced_share": "PASS"
+   },
+   "keeper_determination": "NOT-YET",
+   "control_determination": "NOT-YET",
+   "byte_basis_identical": true,
+   "byte_basis_by_year": {
+    "2023": {
+     "max_abs_diff_mw": 0.0,
+     "max_by_class_mw": {
+      "CC_CHP": 0.0,
+      "CC_REGULAR": 0.0,
+      "CT_CHP": 0.0,
+      "CT_PEAKER": 0.0,
+      "OTHER": 0.0,
+      "ST_CHP": 0.0,
+      "ST_GAS": 0.0,
+      "biomass": 0.0,
+      "hydro": 0.0,
+      "import": 0.0,
+      "nuclear": 0.0,
+      "oil": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     }
+    },
+    "2024": {
+     "max_abs_diff_mw": 0.0,
+     "max_by_class_mw": {
+      "CC_CHP": 0.0,
+      "CC_REGULAR": 0.0,
+      "CT_CHP": 0.0,
+      "CT_PEAKER": 0.0,
+      "OTHER": 0.0,
+      "ST_CHP": 0.0,
+      "ST_GAS": 0.0,
+      "biomass": 0.0,
+      "hydro": 0.0,
+      "import": 0.0,
+      "nuclear": 0.0,
+      "oil": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     }
+    },
+    "2025": {
+     "max_abs_diff_mw": 0.0,
+     "max_by_class_mw": {
+      "CC_CHP": 0.0,
+      "CC_REGULAR": 0.0,
+      "CT_CHP": 0.0,
+      "CT_PEAKER": 0.0,
+      "OTHER": 0.0,
+      "ST_CHP": 0.0,
+      "ST_GAS": 0.0,
+      "biomass": 0.0,
+      "hydro": 0.0,
+      "import": 0.0,
+      "nuclear": 0.0,
+      "oil": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     }
+    }
+   }
+  },
+  "K3_liveness": {
+   "passed": true,
+   "by_year": {
+    "2023": {
+     "max_abs_class_hour_mw": 1459.03125,
+     "A_lw_price": 35.5964,
+     "B_lw_price": 34.725,
+     "delta_lw_price": -0.8714,
+     "passed": true
+    },
+    "2024": {
+     "max_abs_class_hour_mw": 1631.625,
+     "A_lw_price": 38.6002,
+     "B_lw_price": 37.9911,
+     "delta_lw_price": -0.6091,
+     "passed": true
+    },
+    "2025": {
+     "max_abs_class_hour_mw": 1624.153931,
+     "A_lw_price": 60.7189,
+     "B_lw_price": 60.1166,
+     "delta_lw_price": -0.6023,
+     "passed": true
+    }
+   },
+   "thresholds": {
+    "mw": 50.0,
+    "price": 0.1
+   }
+  },
+  "K4_single_delta": {
+   "passed": true,
+   "differing_keys": [
+    "gas_offer_margin_anchor_by_zone",
+    "gas_offer_margin_zonal_anchor"
+   ]
+  },
+  "K5_year_span": {
+   "passed": true,
+   "spans": {
+    "A": [
+     2023,
+     2024,
+     2025
+    ],
+    "B": [
+     2023,
+     2024,
+     2025
+    ]
+   }
+  },
+  "K6_direction_integrity": {
+   "passed": true,
+   "by_year": {
+    "2023": {
+     "delta_by_zone": {
+      "Capital_Hudson": -0.855127,
+      "Long_Island": -0.58317,
+      "Lower_Hudson": -0.854804,
+      "NYC": -0.86536,
+      "Upstate_West": -0.898662
+     },
+     "reference_zone_max_abs": 0.855127,
+     "shifted_zone_mean": -0.882011,
+     "zones_that_rose": {}
+    },
+    "2024": {
+     "delta_by_zone": {
+      "Capital_Hudson": -0.556971,
+      "Long_Island": -0.401848,
+      "Lower_Hudson": -0.563019,
+      "NYC": -0.633231,
+      "Upstate_West": -0.562041
+     },
+     "reference_zone_max_abs": 0.563019,
+     "shifted_zone_mean": -0.597636,
+     "zones_that_rose": {}
+    },
+    "2025": {
+     "delta_by_zone": {
+      "Capital_Hudson": -0.541507,
+      "Long_Island": -0.433892,
+      "Lower_Hudson": -0.545163,
+      "NYC": -0.621689,
+      "Upstate_West": -0.544703
+     },
+     "reference_zone_max_abs": 0.545163,
+     "shifted_zone_mean": -0.583196,
+     "zones_that_rose": {}
+    }
+   }
+  }
+ },
+ "kill_gates": {
+  "available": true,
+  "P1_free_class": {
+   "passed": true,
+   "A_free": {
+    "pass": 10,
+    "total": 10
+   },
+   "B_free": {
+    "pass": 10,
+    "total": 10
+   },
+   "A_all": {
+    "pass": 14,
+    "total": 14
+   },
+   "B_all": {
+    "pass": 14,
+    "total": 14
+   }
+  },
+  "P2_no_new_fail": {
+   "passed": true,
+   "A_fails": [
+    "price_mean"
+   ],
+   "B_fails": []
+  },
+  "P3_protective": {
+   "passed": true,
+   "B": {
+    "governance": "PASS",
+    "shape": "PASS",
+    "forced_share": "PASS"
+   }
+  },
+  "P4_slack_dump_zero": {
+   "passed": true,
+   "by_year": {
+    "2023": {
+     "A": [
+      0.0,
+      0.0
+     ],
+     "B": [
+      0.0,
+      0.0
+     ]
+    },
+    "2024": {
+     "A": [
+      0.0,
+      0.0
+     ],
+     "B": [
+      0.0,
+      0.0
+     ]
+    },
+    "2025": {
+     "A": [
+      0.0,
+      0.0
+     ],
+     "B": [
+      0.0,
+      0.0
+     ]
+    }
+   }
+  },
+  "P5_no_fitted_followup": {
+   "passed": true,
+   "note": "declarative: the zone anchors are the derive script's own output and were never swept (rule 23)"
+  }
+ },
+ "reported_never_a_kill": {
+  "2023": {
+   "class_twh_delta_top": {
+    "ST_GAS": 0.9496999979019165,
+    "CC_REGULAR": -0.5523999929428101,
+    "CC_CHP": -0.35670000314712524,
+    "CT_PEAKER": 0.06589999794960022,
+    "ST_CHP": -0.060100000351667404,
+    "CT_CHP": -0.04230000078678131,
+    "oil": 9.999999747378752e-05,
+    "OTHER": 0.0
+   },
+   "zone_price_delta": {
+    "Capital_Hudson": -0.855127,
+    "Long_Island": -0.58317,
+    "Lower_Hudson": -0.854804,
+    "NYC": -0.86536,
+    "Upstate_West": -0.898662
+   }
+  },
+  "2024": {
+   "class_twh_delta_top": {
+    "ST_GAS": 0.5722000002861023,
+    "CC_REGULAR": -0.3357999920845032,
+    "CC_CHP": -0.2303999960422516,
+    "CT_PEAKER": 0.055799998342990875,
+    "ST_CHP": -0.04670000076293945,
+    "CT_CHP": -0.01979999989271164,
+    "oil": 0.00139999995008111,
+    "OTHER": 0.0
+   },
+   "zone_price_delta": {
+    "Capital_Hudson": -0.556971,
+    "Long_Island": -0.401848,
+    "Lower_Hudson": -0.563019,
+    "NYC": -0.633231,
+    "Upstate_West": -0.562041
+   }
+  },
+  "2025": {
+   "class_twh_delta_top": {
+    "ST_GAS": 0.3156000077724457,
+    "CC_REGULAR": -0.29820001125335693,
+    "CT_PEAKER": 0.14429999887943268,
+    "CC_CHP": -0.11429999768733978,
+    "ST_CHP": -0.0215000007301569,
+    "CT_CHP": -0.01140000019222498,
+    "import": -0.01119999960064888,
+    "oil": -0.0010999999940395355
+   },
+   "zone_price_delta": {
+    "Capital_Hudson": -0.541507,
+    "Long_Island": -0.433892,
+    "Lower_Hudson": -0.545163,
+    "NYC": -0.621689,
+    "Upstate_West": -0.544703
+   }
+  },
+  "criteria_from_calibration_verdict": {
+   "keeper": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "FAIL",
+    "price_shape": "PASS",
+    "price_tail": "CAVEAT",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "PASS",
+    "forced_share": "PASS"
+   },
+   "A_control": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "FAIL",
+    "price_shape": "PASS",
+    "price_tail": "CAVEAT",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "PASS",
+    "forced_share": "PASS"
+   },
+   "B_arm": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "PASS",
+    "price_shape": "PASS",
+    "price_tail": "CAVEAT",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "PASS",
+    "forced_share": "PASS"
+   }
+  },
+  "determination": {
+   "keeper": "NOT-YET",
+   "A_control": "NOT-YET",
+   "B_arm": "CALIBRATED-WITH-CAVEATS"
+  },
+  "grade_summary": {
+   "keeper": {
+    "scored": 9,
+    "target_grade": 7,
+    "commercial_grade": 0,
+    "ledgered": 1,
+    "fails": 1
+   },
+   "A_control": {
+    "scored": 9,
+    "target_grade": 7,
+    "commercial_grade": 0,
+    "ledgered": 1,
+    "fails": 1
+   },
+   "B_arm": {
+    "scored": 9,
+    "target_grade": 8,
+    "commercial_grade": 0,
+    "ledgered": 1,
+    "fails": 0
+   }
+  },
+  "free_class_headline": {
+   "keeper": "C1 all 14/14 \u00b7 free 10/10",
+   "A_control": "C1 all 14/14 \u00b7 free 10/10",
+   "B_arm": "C1 all 14/14 \u00b7 free 10/10"
+  }
+ }
+}
