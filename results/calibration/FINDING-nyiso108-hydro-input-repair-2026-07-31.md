@@ -219,3 +219,17 @@ reproduce the scorer's tail basis — the authoritative C3c above comes from
 (48 datatypes, ~35 min) — the two commands in the standing prompt are not
 sufficient; `fleet`, `reference`, `emissions`, `outages`, `renewables`,
 `fuel-prices` and the NYISO-specific tables are all required by the solve.
+
+**Test baseline measured at this HEAD** (`tests/{curation,scoring,unit}`, after a
+full `regenerate_clean`): **13 failed / 4346 passed / 14 skipped** in 14m29s. This
+session changed **no `src/` code** — only `scripts/probes/`,
+`scripts/gen_nyiso108_attestation.py`, docs, `frontend/data/backcast/` and
+`results/calibration/` — so none of the 13 are attributable to it. Composition:
+`test_measured_chp_heat_rates.py` 7 (the standing deriver cluster),
+`test_consume_lmp.py` 1 (NEW at this HEAD), `test_ff_readiness_battery.py` 1,
+`test_outages.py` 1, and three cache-key byte-stability tests
+(`test_cc_committed_offer_margin.py`, `test_ramp_envelope_basis.py`,
+`test_forecast_xyear_warmstart_flag.py`). This is **down from the 20** quoted into
+nyiso-108: the `test_export.py` cluster (4) and four of the five
+`ff_readiness_battery` failures were fixed on main during this session. Re-measure
+rather than inherit — the set moves several PRs per session.
