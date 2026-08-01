@@ -169,11 +169,28 @@ the recorded-ages test now excludes. The T0 solve evidence is §5.
 ## 5. T0 forecast probe (NEISO 2026–2028, 3 solve-years ≤ 5-year cap)
 
 `scripts/run_full_horizon.py --iso NEISO --start-year 2026 --end-year 2028` at the FFR-1B
-HEAD (defaults; the P-3A probe posture). Registered on the forecast-validation namespace
-in this session via `scripts/register_forecast_run.py` (never the backcast registry) —
-run id and invariants summary below.
+HEAD (defaults; the P-3A probe posture). **Registered on the forecast-validation namespace
+in this session as `neiso-2026-2028-ffr1b-t0-aging`** (kind t1f, via
+`scripts/register_forecast_run.py --summary`; committed canonical sidecar
+`frontend/data/hindcast/neiso-2026-2028-ffr1b-t0-aging.json` — never the backcast
+registry).
 
-<!-- T0-RESULTS -->
+* **3/3 years solved** end-to-end on the fixed availability path; total wall 6.8 min,
+  median year 87 s, peak RSS 3.38 GB. Load-weighted price 52.1 / 49.4 / 50.7 $/MWh;
+  CO2 16.3 / 16.6 / 14.1 Mt; no slack, no scarcity hours.
+* **Invariants: 12 PASS, 1 WARN, 1 FAIL.** The one FAIL is **I4 "2028: coal off by
+  54.0 MW" — the audit's exact pre-existing NEISO FR-1 signature** (the confirmed-exit
+  I4/A1 accounting leak; see FF-1F §6.2's identical row), owned by the parallel FFR-1A
+  session whose acceptance is precisely "I4 PASS on re-probed T1-F for NEISO+PJM". Not
+  produced by this diff — FR-7/FR-8/FR-12 touch no capacity accounting. I12 WARN
+  (reserve margin 16.0/16.4 % vs the 15.2 % requirement-implied ceiling) is the standing
+  band note, also availability-independent in direction (an *aging* fleet lowers RM;
+  the WARN is on the high side).
+* **Monotone aging inside the T0's own posture** (the run's `config.yaml` replayed
+  through `generators_to_fleet_arrays` at each solve year; capacity-weighted mean
+  thermal availability): 2026 `0.79527` → 2027 `0.78997` → 2028 `0.78466`, against the
+  legacy frozen weather-2024 age `0.80449` (flat for every year, the `year=None`
+  fallback ≡ pre-FR-7 behavior).
 
 ## 6. Pre-existing red / environment notes (rule 11 findings, none caused here)
 
