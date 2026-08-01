@@ -659,6 +659,33 @@
  *   stays O with the DO-NOT-REDO discharged into a NET-basis floor lane.
  *   FINDING-neiso73-kendall-capacity-basis-2026-07-31.md; probe
  *   scripts/probes/_neiso73_kendall_capacity_screen.py.
+ *
+ * NEISO column re-checked 2026-08-01 (neiso-74, NO LP SPENT; keeper unchanged
+ *   at 2026-07-31-neiso-72-hy-window). The neiso-72 storage-side successor
+ *   (PS cycling depth: measured 1.932 TWh vs endogenous 0.497 TWh, 2025) is
+ *   REFUSED AT THE SCREEN and its premise INVERTED. New row
+ *   pumped_storage_cycling_depth -> G at NEISO and PJM. A perfect-foresight
+ *   price-taker LP carrying the model's OWN storage physics (1,865.0 MW,
+ *   10.0 h, RTE 0.80) discharges 4.301/4.691 TWh on measured DA/RT prices --
+ *   2.2x the 1.932 TWh ACTUAL, not 4x below it -- while on the model's own
+ *   duals it returns 0.370/0.339/0.612 TWh, bracketing the keeper's
+ *   0.400/0.363/0.497. The storage block is already optimal for the price
+ *   signal it is shown; the constrained object is the PRICE SHAPE. Sized:
+ *   level RIGHT (+2.8 % 2025) and phase RIGHT (peak h17 in model and DA
+ *   alike), amplitude 24-30 % of measured -- daily MAX -26.2/-25.3/-26.2 %,
+ *   daily MIN +40.8/+40.0/+32.6 %, 86 vs 365 of 365 days clearing the 1.25x
+ *   RTE hurdle. Attribution: CC_REGULAR absorbs 2,045 MW of the 4,117 MW
+ *   diurnal demand swing while CT_PEAKER and oil are ALREADY ONLINE at the
+ *   overnight trough, so the same offer band is marginal at h02 and h17.
+ *   CAVEAT FOR THE SUCCESSOR: the real fleet realizes only 45 % of the
+ *   DA perfect-foresight optimum, so a price-shape fix graded on "does PS
+ *   reach 1.932 TWh" would be a fitted answer. RUBRIC NOTE (owner call, not
+ *   acted on): no load-bearing criterion sees this -- C3b is a MONTHLY
+ *   load-weighted NRMSE (calibration_verdict.py::score_price_shape), blind to
+ *   hour-of-day, and C7/D-1 is SKIPPED for NEISO. DO-NOT-REDO any storage-side
+ *   PS lever (adder / RTE / duration / AS value) until the diurnal amplitude
+ *   defect closes. FINDING-neiso74-ps-cycling-price-shape-2026-08-01.md; probe
+ *   scripts/probes/_neiso74_ps_cycling_screen.py.
  */
 window.MECH_MATRIX = {
   version: 1,
@@ -1083,6 +1110,11 @@ window.MECH_MATRIX = {
     { id: "storage_daily_cycling", cat: "storage", name: "Daily SOC cycling constraint",
       def: "scenarios.py:816", mode: "BF",
       cells: "K.....", note: "ERCOT keeper; untested elsewhere (CAISO uses the shape anchor instead — one-mech)." },
+    { id: "pumped_storage_cycling_depth", cat: "storage", name: "Pumped-storage cycling-depth lever (dispatch adder / RTE / duration / AS value)",
+      def: "pumped_storage_dispatch_adder :8070 + PUMPED_STORAGE_{RTE,DURATION_HOURS} :1101-1130 (adder map EMPTY at every ISO)", mode: "BF",
+      cells: ".UGUUG",
+      note: "REFUSED AT BOTH ADJUDICATED ENDS, and at NEISO the premise INVERTS. PJM: the $10 adder was RETIRED (constants.py) — it had been fitted 2026-06-10 to a target that was a measurement error (the EIA-923 PS series is NET, i.e. round-trip loss, not gross discharge), suppressing legitimate arbitrage; rule 13. NEISO (neiso-74, no LP): a perfect-foresight price-taker LP carrying the model's OWN physics (1,865.0 MW / 10.0 h / RTE 0.80) discharges 4.301 TWh on measured DA and 4.691 TWh on RT — 2.2× the 1.932 TWh actual — while on the model's own duals it returns 0.370/0.339/0.612 TWh, bracketing the keeper's 0.400/0.363/0.497. So the storage block is already optimal for the price signal it sees and the binding object is the model's DIURNAL PRICE AMPLITUDE (24–30 % of measured; level +2.8 % and phase h17 both correct). Every storage-side knob is either wrong-signed (adder, AS reservation raise the hurdle ⇒ less cycling) or a cross-ISO constant that cannot be fitted on one ISO's residual (RTE, duration — rule 25). ERCOT n/a (no PS fleet). CAISO/MISO/NYISO untested — do not transfer either verdict (rule 25).",
+      ev: { P: "constants.py PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO retirement note; docs/multi-iso/pjm-ps-cycling-diagnosis-2026-06.md", Q: "neiso-74 — FINDING-neiso74-ps-cycling-price-shape-2026-08-01.md; probe scripts/probes/_neiso74_ps_cycling_screen.py" } },
 
     /* ============ network ============ */
     { id: "measured_interface_limits", cat: "network", name: "Measured interface/GTC limits (hourly/export-direction)",

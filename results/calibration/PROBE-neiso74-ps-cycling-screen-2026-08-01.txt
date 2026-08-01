@@ -1,0 +1,87 @@
+
+==============================================================================
+neiso-74 PS cycling screen — measured NG:PS vs keeper vs price-taker LP
+==============================================================================
+model physics: 1865.0 MW, duration 10.0 h (18.65 GWh), RTE 0.80 (one-way 0.8944); arbitrage hurdle = 1.250x
+
+==============================================================================
+1. measured EIA-930 NG:PS (sign convention + coverage + duty cycle)
+==============================================================================
+  2023: no NG:PS rows
+  2024: coverage 0.148  +0.300 TWh in 911 h  /  0.000 TWh in 0 h   range [0, 1629] MW
+        MW when discharging: mean 329  p50 215  p95 1031  (nameplate 1865)
+  2025: coverage 0.997  +1.932 TWh in 5682 h  /  0.000 TWh in 0 h   range [0, 1528] MW
+        MW when discharging: mean 340  p50 223  p95 1017  (nameplate 1865)
+
+==============================================================================
+2. keeper (neiso72_hy_window_B) endogenous PS dispatch
+==============================================================================
+  2023: discharge 0.4000 TWh in 550 h   charge 0.5000 TWh in 783 h
+  2024: discharge 0.3626 TWh in 514 h   charge 0.4533 TWh in 772 h
+  2025: discharge 0.4972 TWh in 636 h   charge 0.6215 TWh in 964 h
+
+==============================================================================
+3. price-taker arbitrage on MEASURED prices (the H1/H2 discriminator)
+==============================================================================
+  2023 DA: 4.3314 TWh discharged in 2372 h (charge 5.4142 TWh / 2996 h), gross margin $77.7M
+  2023 RT: 4.5792 TWh discharged in 2519 h (charge 5.7241 TWh / 3175 h), gross margin $118.3M
+  2024 DA: 4.4113 TWh discharged in 2424 h (charge 5.5141 TWh / 3037 h), gross margin $83.7M
+  2024 RT: 4.7987 TWh discharged in 2626 h (charge 5.9983 TWh / 3319 h), gross margin $117.1M
+  2025 DA: 4.3009 TWh discharged in 2355 h (charge 5.3761 TWh / 2977 h), gross margin $129.7M
+  2025 RT: 4.6912 TWh discharged in 2565 h (charge 5.8640 TWh / 3250 h), gross margin $180.3M
+
+==============================================================================
+4. price-taker arbitrage on MODEL prices (control for the same LP)
+==============================================================================
+  2023 MODEL: 0.3696 TWh discharged in 201 h (keeper LP: 0.4000 TWh / 550 h)
+  2024 MODEL: 0.3392 TWh discharged in 187 h (keeper LP: 0.3626 TWh / 514 h)
+  2025 MODEL: 0.6122 TWh discharged in 341 h (keeper LP: 0.4972 TWh / 636 h)
+
+==============================================================================
+5. diurnal price spread — model vs measured
+==============================================================================
+  2023 model P1       mean $  38.26  daily spread $   8.11  ratio p50 1.18  days>hurdle 45/365
+  2023 measured DA    mean $  36.82  daily spread $  33.85  ratio p50 2.13  days>hurdle 364/365
+  2023 measured RT    mean $  35.70  daily spread $  55.38  ratio p50 2.76  days>hurdle 363/365
+  2024 model P1       mean $  43.60  daily spread $   7.41  ratio p50 1.18  days>hurdle 43/365
+  2024 measured DA    mean $  41.52  daily spread $  35.29  ratio p50 1.99  days>hurdle 365/365
+  2024 measured RT    mean $  39.55  daily spread $  57.49  ratio p50 2.55  days>hurdle 365/365
+  2025 model P1       mean $  69.75  daily spread $  14.62  ratio p50 1.19  days>hurdle 86/365
+  2025 measured DA    mean $  67.86  daily spread $  58.27  ratio p50 2.07  days>hurdle 365/365
+  2025 measured RT    mean $  65.88  daily spread $  83.26  ratio p50 2.56  days>hurdle 365/365
+
+==============================================================================
+6. measured diurnal duty shape (2025, the wholly-split year)
+==============================================================================
+  hour-of-day mean NG:PS MW (positive = discharge; local clock):
+   00:   14  01:   13  02:   11  03:   11  04:   12  05:   48  06:  174  07:  258  08:  162  09:  140  10:  132  11:  128
+   12:  128  13:  131  14:  141  15:  191  16:  402  17:  636  18:  728  19:  678  20:  489  21:  277  22:  206  23:  197
+  hour-of-day fraction of hours online (>1 MW):
+   00: 0.11  01: 0.11  02: 0.11  03: 0.11  04: 0.13  05: 0.29  06: 0.53  07: 0.61  08: 0.64  09: 0.66  10: 0.66  11: 0.67
+   12: 0.71  13: 0.72  14: 0.77  15: 0.86  16: 0.95  17: 0.99  18: 1.00  19: 1.00  20: 1.00  21: 1.00  22: 1.00  23: 1.00
+
+==============================================================================
+7. price-shape decomposition — where the model's spread is lost
+==============================================================================
+  2023: level  model $ 38.26  vs DA $ 36.82  (+3.9%)
+        daily MAX   model $  43.60  vs DA $  59.05  (-26.2%)
+        daily MIN   model $  35.49  vs DA $  25.21  (+40.8%)
+        hour-of-day range  model $  7.03  vs DA $ 24.55   (peak DA h17 / model h17; trough DA h3 / model h2)
+  2024: level  model $ 43.60  vs DA $ 41.52  (+5.0%)
+        daily MAX   model $  48.06  vs DA $  64.32  (-25.3%)
+        daily MIN   model $  40.65  vs DA $  29.03  (+40.0%)
+        hour-of-day range  model $  6.82  vs DA $ 28.96   (peak DA h17 / model h17; trough DA h2 / model h2)
+  2025: level  model $ 69.75  vs DA $ 67.86  (+2.8%)
+        daily MAX   model $  78.57  vs DA $ 106.51  (-26.2%)
+        daily MIN   model $  63.95  vs DA $  48.24  (+32.6%)
+        hour-of-day range  model $ 13.30  vs DA $ 44.47   (peak DA h17 / model h17; trough DA h2 / model h2)
+
+==============================================================================
+8. who absorbs the model's diurnal swing (2025 P1) — the flat-margin read
+==============================================================================
+  demand hour-of-day: trough h2 10,504 MW -> peak h17 14,621 MW  (swing 4,117 MW)
+    CC_REGULAR  h2    5,752 MW -> h17    7,797 MW  (+  2,045 MW,  49.7% of the swing; online at the trough: YES)
+    CT_PEAKER   h2      114 MW -> h17      323 MW  (+    209 MW,   5.1% of the swing; online at the trough: YES)
+    oil         h2      159 MW -> h17      259 MW  (+     99 MW,   2.4% of the swing; online at the trough: YES)
+    ST_GAS      h2        3 MW -> h17       15 MW  (+     13 MW,   0.3% of the swing; online at the trough: YES)
+    hydro       h2      282 MW -> h17    1,091 MW  (+    809 MW,  19.6% of the swing; online at the trough: YES)

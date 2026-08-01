@@ -930,3 +930,82 @@ owner OK). (4) §5.6 items 1/2 still need their own charter; item 5 pending
 owner decision. (5) Bench hydro 2024 re-base (scorer-side, flag to owner).
 
 Next shorthand: **neiso-74.**
+
+---
+
+## neiso-74 — 2026-08-01 — PS under-cycling is a PRICE-SHAPE defect: the storage lever is REFUSED at the screen, no LP spent; keeper unchanged
+
+**Lever:** handoff Lever A / §5.6 item 8 (the neiso-72 named successor) —
+storage-side PS cycling depth. New matrix row `pumped_storage_cycling_depth`,
+NEISO `G` (PJM `G` on its own prior record; the other four stay `U`/`.`, rule 25).
+Keeper unchanged at `2026-07-31-neiso-72-hy-window`.
+
+**The premise inverts.** The handoff read the post-split `NG: PS` column as ~4×
+under-cycling (measured **1.932 TWh** in 2025 vs the keeper's endogenous
+**0.497**) and asked for a storage-side identification. A perfect-foresight
+price-taker LP carrying the model's **OWN** physics (1,865.0 MW,
+`PUMPED_STORAGE_DURATION_HOURS` 10.0 h → 18.65 GWh, `PUMPED_STORAGE_RTE` 0.80,
+cyclic SOC, the rule-9 ε; CSC → HiGHS) discharges **4.301 TWh on measured DA**
+and **4.691 TWh on RT** — **2.2× the actual**, not 4× below it. The same LP on
+the model's own duals returns **0.370 / 0.339 / 0.612 TWh**, bracketing the
+keeper's **0.400 / 0.363 / 0.497**. So the storage block is already optimal for
+the price signal it is shown, and **the constrained object is the price shape**
+(rule 1 `[R-STRUCT]`: a storage knob here would size a parameter to an upstream
+residual).
+
+**The real defect, sized.** Level RIGHT (**+3.9 / +5.0 / +2.8 %** vs DA) and
+phase RIGHT (hour-of-day peak **h17** in the model and in DA alike; trough h2).
+Amplitude **24–30 % of measured**: mean daily spread **$8.11 / $7.41 / $14.62**
+vs DA **$33.85 / $35.29 / $58.27**; daily MAX **−26.2 / −25.3 / −26.2 %**; daily
+MIN **+40.8 / +40.0 / +32.6 %**; days clearing the 1.25× RTE hurdle **45 / 43 /
+86** of 365 against DA's **364 / 365 / 365**. Attribution: `CC_REGULAR` absorbs
+**2,045 MW** (49.7 %) of the **4,117 MW** diurnal demand swing while
+`CT_PEAKER` (+209 MW) and `oil` (+99 MW) are **already online at the overnight
+trough** — the same offer band is marginal at h02 and h17.
+
+**Measured-input notes.** `NG: PS` is strictly non-negative (5,682 h > +1 MW,
+**0 h** < −1 MW), i.e. gross discharge with pumping booked to Demand —
+confirming neiso-72's read. The real duty is a wide price-following
+afternoon–evening block (online 0.11 of h00–04 rising to 1.00 of h18–23; mean
+11 MW at h02 → 728 MW at h18), phase-aligned with the DA curve — not the flat
+reserve block an AS story would need. 2024 coverage is 0.148 (post-seam only)
+and is not a full-year observation.
+
+**Reported against interest.** (a) The handoff's own premise is inverted, above.
+(b) A price-shape fix must **not** be graded on "does PS reach 1.932 TWh": the
+real fleet realizes only **45 %** (1.932 / 4.301) of the DA perfect-foresight
+optimum, so correcting the amplitude without also representing imperfect
+foresight / min-run / head and reservoir limits would push model PS *past* the
+actual. (c) **No load-bearing criterion sees this defect** — C3a is a level test
+(PASS) and **C3b is a MONTHLY load-weighted price NRMSE**
+(`calibration_verdict.py::score_price_shape`), structurally blind to
+hour-of-day, while C7/D-1 is SKIPPED for NEISO. Whether the rubric should carry
+a diurnal-amplitude criterion is an **owner call** — flagged, not acted on.
+(d) **Handoff Lever C is already done**: `data/raw/eia-930-hourly/{MISO,CISO}
+hourly.parquet` carry **8,760 rows for 2022 at 100 % column coverage** at this
+HEAD (commit `5cd9374`, 2026-07-31), so the miso-110 §4.3 window mismatch is
+closed and there was nothing to intake.
+
+**Governance.** Years 2023–2025 only; **no LP solved, no bundle, no dashboard
+registration** (rule 15 governs bundles and there is none — the neiso-71 /
+neiso-73 disposition). Holdout spend freeze ACTIVE, NEISO locked test SPENT and
+untouched; the 2022 row-count census in (d) is an on-disk loader-resolvability
+check, permitted no-LP validation under rule 20 `[R-HOLDOUT]`. Matrix row +
+`ev` added and the NEISO header re-stamped (rule 28b/c);
+`check_mechanism_matrix.py --base origin/main` integrity **OK** (the one warning
+is pre-existing CAISO keeper-stamp drift, another lane's).
+
+**DO-NOT-REDO.** No storage-side PS lever at NEISO — dispatch adder, RTE,
+duration, or AS value — until the diurnal amplitude defect closes. Evidence:
+`results/calibration/FINDING-neiso74-ps-cycling-price-shape-2026-08-01.md`;
+probe `scripts/probes/_neiso74_ps_cycling_screen.py`.
+
+**Open / next.** (1) **The diurnal price-amplitude lane** — now NEISO's sized,
+measured frontier; the identification class is §5.6 item 1 (DA-bid offer
+formation / DA depth; `data/raw/NEISO-AS/da-energy-offers/` currently holds only
+a README), which still needs its own owner charter. (2) §5.6 item 2
+(import-side scarcity) unchanged, charter required. (3) Item 5 (STEP 3
+layup-vs-outage seam) still pending owner decision. (4) Bench hydro 2024 re-base
+(scorer-side) unchanged. (5) Rubric question in (c) above, for the owner.
+
+Next shorthand: **neiso-75.**
