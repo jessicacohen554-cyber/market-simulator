@@ -25,7 +25,56 @@ transcription of the current statute). §45Y/§48E's OBBBA amendments are
 newer (enacted 2025-07-04) and less settled in publicly-indexed secondary
 commentary — see the confidence note below.
 
-## CONFIDENCE NOTE: 45Y/48E non-wind/solar phase-down schedule
+## RESOLVED 2026-07-31 (FFR-PB): 45Y/48E phase-down verified against PRIMARY text
+
+**The confidence note below is superseded and kept only as the provenance
+record.** The FFR-PB session (FR-20 item M2) read the codified statute
+directly from the **Office of the Law Revision Counsel** US Code
+(`uscode.house.gov`, prelim edition — reachable in this environment, unlike
+`federalregister.gov`) and confirmed **every landed value unchanged**:
+
+- **26 U.S.C. §45Y(d)(2)** — phase-out percentage by the calendar year
+  construction *begins*, relative to the "applicable year": **(A) first
+  following year 100%, (B) second 75%, (C) third 50%, (D) any subsequent
+  calendar year 0%.** This paragraph is original IRA text (Pub. L. 117-169
+  §13701(a)); OBBBA did not amend it.
+- **26 U.S.C. §45Y(d)(3)**, as amended by **OBBBA Pub. L. 119-21
+  §70512(a)(2)**, now reads *in its entirety*: *"For purposes of this
+  subsection, the term 'applicable year' means calendar year 2032."*
+  OBBBA **struck** the prior (d)(3), which had read *"the later of— (A) the
+  calendar year in which the Secretary determines that the annual greenhouse
+  gas emissions from the production of electricity in the United States are
+  equal to or less than 25 percent of [that] for calendar year 2022, or
+  (B) 2032."*
+- **26 U.S.C. §48E(e)(2)** — the parallel investment-credit table, naming
+  **"energy storage technology"** expressly (this is what puts storage in the
+  bucket). **§48E(e)(3)** takes "applicable year" from §45Y(d)(3) by
+  cross-reference. Both are original IRA text (§13702(a)); OBBBA §70513(a)
+  amended only (e)(1) and added (e)(4), the wind/solar termination.
+
+**Applicable year 2032 ⇒ 100% BOC-2033 / 75% BOC-2034 / 50% BOC-2035 /
+0% BOC-2036+** — exactly the landed
+`phase_down_full_credit_through_boc_year=2033`, `75pct=2034`, `50pct=2035`,
+`0pct=2036` and the `ira_other_clean_*` ScenarioConfig defaults. **No value
+changed; this is a provenance upgrade only** (CLAUDE.md rule 23).
+
+Two substantive corrections the primary read forced, beyond confidence:
+
+1. The old note's reconstruction guessed the mechanism turned on a
+   *"Treasury/IRS-determined applicable year."* Post-OBBBA it does **not** —
+   the year is **flat statutory**, with no Secretarial determination at all.
+   The `45Y,applicable_year_treasury_determination` parameter **name** is
+   therefore a misnomer; it is kept for key stability, with the correction
+   recorded in that row's `notes`. Practically this **removes a contingency**:
+   pre-OBBBA the steps could have slid later if electricity emissions fell
+   fast enough, and they no longer can.
+2. Every `source_doc` on the phase-down rows moved from the secondary Sidley
+   Austin client alert to the codified sections above; no secondary citation
+   remains on any 45Y/48E phase-down row.
+
+Session record: `docs/handoffs/ffr-pb-atb-statute-intake-2026-07-31.md`.
+
+## CONFIDENCE NOTE (SUPERSEDED — historical record only)
 
 Three sources were checked for the exact construction-begin-year phase-down
 percentages that apply to non-wind/solar §45Y/§48E facilities (nuclear,
@@ -68,13 +117,18 @@ citation/derivation is not documented in-repo; P-1C should reconcile against
 whichever the primary statute text actually says, not assume either existing
 number is correct by default.
 
-### MANUAL DOWNLOAD NEEDED
+### MANUAL DOWNLOAD NEEDED — CLOSED 2026-07-31
 
-- [ ] Confirm the exact §45Y/§48E "applicable year" and phase-down
-      percentage table against the Treasury/IRS final regulation text
-      directly (`federalregister.gov/documents/2025/01/15/2025-00196/...`
-      redirects to `unblock.federalregister.gov`, a bot-check wall, in this
-      environment — needs a browser session or a different network path).
+- [x] Confirm the exact §45Y/§48E "applicable year" and phase-down
+      percentage table against primary text. **DONE (FFR-PB), and it did not
+      need the Federal Register at all.** `federalregister.gov` still
+      redirects to the `unblock.federalregister.gov` bot-wall here, but the
+      *codified statute* is the controlling authority for these four step
+      years, and the Office of the Law Revision Counsel publishes it at
+      `uscode.house.gov` — reachable in this environment. See the RESOLVED
+      section at the top. A Treasury/IRS *regulation* pull would add nothing:
+      §45Y(d)(2)-(3) and §48E(e)(2)-(3) set the years on their face and leave
+      the Secretary no determination to make post-OBBBA.
 
 ## Expected file
 

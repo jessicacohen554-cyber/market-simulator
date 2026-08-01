@@ -1694,12 +1694,13 @@ the IRA credit machinery in `policy/ira.py`. Schema:
 
 ## nrel-atb
 
-NREL Annual Technology Baseline CAPEX / Fixed-O&M trajectories (ATB 2024
-v3.0.0, 2022-2050) — the new-entry cost surface for the capacity-evolution
-screens. Schema: [`schema/nrel-atb.schema.yaml`](schema/nrel-atb.schema.yaml).
+NREL Annual Technology Baseline CAPEX / Fixed-O&M trajectories (ATB 2024,
+versions v3.0.0 and v4.0.0, 2022-2050) — the new-entry cost surface for the
+capacity-evolution screens. Schema:
+[`schema/nrel-atb.schema.yaml`](schema/nrel-atb.schema.yaml).
 
-- **Keys:** `atb_edition_year`, `technology`, `techdetail`, `parameter`,
-  `financial_case`, `tax_credit_case`, `cost_case`, `year`
+- **Keys:** `atb_edition_year`, `atb_version`, `technology`, `techdetail`,
+  `parameter`, `financial_case`, `tax_credit_case`, `cost_case`, `year`
 - **Reconciles:** ATB 2024 trajectories for the technologies the model builds
   as new entry (wind, solar, gas CC/CT/CCS, nuclear SMR/large, utility battery
   storage at 5 durations) plus cross-reference technologies, from the published
@@ -1708,6 +1709,7 @@ screens. Schema: [`schema/nrel-atb.schema.yaml`](schema/nrel-atb.schema.yaml).
 | column | dtype | unit | nullable | description |
 |---|---|---|---|---|
 | `atb_edition_year` | `int64` | `year` | no | ATB report edition/vintage (e.g. 2024 for this intake) -- NOT the projection year. Lets a future ATB 2025/2026 edition land as new rows without a schema change. |
+| `atb_version` | `string` | `none` | no | NREL's point-release version of that edition, as published in the OEDI object path (e.g. "v3.0.0", "v4.0.0"). An ATB edition is re-released under a new version when NREL corrects or refreshes it, so edition-year ALONE does not identify a vintage: ATB 2024 exists as v2.0.0/v3.0.0/v4.0.0. Part of the key so successive versions of one edition coexist in this partition instead of colliding, and so a consumer pins the exact bytes it derived from (FFR-PB, 2026-07-31 -- v4.0.0 revised the Geothermal/DeepEGSFlash Moderate CAPEX and Fixed O&M trajectories relative to v3.0.0; see data/raw/nrel-atb/README.md). |
 | `technology` | `string` | `none` | no | ATB's technology field (e.g. LandbasedWind, UtilityPV, Nuclear). |
 | `techdetail` | `string` | `none` | no | ATB's resource-class / configuration detail within technology (e.g. Class4, "Nuclear - Large", "NG 2-on-1 Combined Cycle (F-Frame)", "4Hr Battery Storage"). |
 | `display_name` | `string` | `none` | no | ATB's human-readable technology + techdetail label. |
@@ -1718,8 +1720,8 @@ screens. Schema: [`schema/nrel-atb.schema.yaml`](schema/nrel-atb.schema.yaml).
 | `is_default_class` | `bool` | `none` | no | Whether ATB flags this techdetail as the technology's own representative/ default resource class (its `default` column). Informational -- lets a consumer that only wants one row per technology filter on this. |
 | `year` | `int64` | `year` | no | Calendar (projection) year, ATB's core_metric_variable (2022-2050). |
 | `value` | `float64` | `mixed` | no | The metric's value, in the unit given by the `unit` column. |
-| `unit` | `string` | `none` | no | Unit for `value`, by parameter (the raw ATBe.csv's own `units` column ships empty for every row -- confirmed during intake, not a fetch bug -- so this is an annotation applied during curation from ATB's public documentation/glossary convention, not extracted verbatim from the source file): CAPEX = "2022 $/kW", Fixed O&M = "2022 $/kW-yr". ATB 2024's dollar year is 2022 (see README -- atb.nrel.gov's own documentation confirms this, but that domain is proxy-blocked in this environment, so the citation is via indexed/cached content, flagged for verification with browser access). |
-| `source_doc` | `string` | `none` | no | Fixed citation string for this intake ("NREL ATB 2024 v3.0.0 electricity, OEDI data lake"). |
+| `unit` | `string` | `none` | no | Unit for `value`, by parameter (the raw ATBe.csv's own `units` column ships empty for every row -- confirmed during intake, not a fetch bug -- so this is an annotation applied during curation from ATB's public documentation/glossary convention, not extracted verbatim from the source file): CAPEX = "2022 $/kW", Fixed O&M = "2022 $/kW-yr". ATB 2024's dollar year is 2022. VERIFIED 2026-07-31 (FFR-PB) by direct fetch of the ATB site's own 2024 electricity page, which states "Monetary values are in 2022$" -- this CLOSES the former "confirmed only via indexed/cached content, flagged for verification with browser access" caveat. The site moved to atb.nlr.gov on the lab's rename and that domain IS reachable here, unlike the proxy-blocked atb.nrel.gov the earlier intake tried (see data/raw/nrel-atb/README.md). |
+| `source_doc` | `string` | `none` | no | Citation string for the row's own edition/version ("NREL ATB 2024 v3.0.0 electricity, OEDI data lake"; "NREL ATB 2024 v4.0.0 electricity, OEDI data lake"). |
 | `source_page` | `string` | `none` | yes | The originating S3 object key (full traceability to the source file). |
 
 ## storage-as-awards

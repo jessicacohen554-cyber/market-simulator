@@ -247,6 +247,14 @@ audit.
 
 ### 3.4 Refresh channel — ATB 2025 needs a MANUAL DOWNLOAD
 
+> **SUPERSEDED 2026-07-31 (FFR-PB).** There is no ATB 2025 to download. 2024 is
+> the current edition; the OEDI listing below was read correctly, it simply
+> does not mean what this section concluded. What DID land since is a new
+> point-version of the 2024 edition (**v4.0.0**, mirrored 2026-07-28), fetched
+> in-session over this very OEDI channel — no manual download. Step 2 below
+> should read "intake ATB 2024 v4.0.0", and it is done. See
+> `docs/handoffs/ffr-pb-atb-statute-intake-2026-07-31.md`.
+
 The fetch script pulls from the **OEDI S3 data lake** (`atb.nrel.gov` is blocked).
 Direct probe of the bucket this session:
 
@@ -311,6 +319,14 @@ implemented (ira.py:89). The `_POLICY_BUNDLES` `tight`/`rollback` bundles shift 
 `ira_*_last_year` fields uniformly via `ira_year_offset` (scenarios.py:6478).
 
 ### 4.2 45Y/48E phase-down — CURRENT with one open MANUAL DOWNLOAD
+
+> **CLOSED 2026-07-31 (FFR-PB).** Verified against primary codified text via
+> the Office of the Law Revision Counsel (`uscode.house.gov`), not the
+> bot-walled Federal Register: 26 U.S.C. §45Y(d)(2) sets 100/75/50/0 % by
+> BOC year relative to the "applicable year", and §45Y(d)(3) — as replaced by
+> OBBBA §70512(a)(2) — fixes that year flatly at **2032**, so 2033/34/35/36
+> is confirmed **unchanged**. §48E(e)(3) inherits the same year by
+> cross-reference. The triangulation below was right; it is now primary.
 
 The 2033/34/35/36 step years are **triangulated from two agreeing secondary OBBBA
 alerts** (not primary text): `data/raw/policy/ira-credit-parameters/README.md`
@@ -495,8 +511,8 @@ is a bug; **P1** = material currency; **P2** = precision / optional.
 
 | # | Document | Needed for | Why manual |
 |---|---|---|---|
-| M1 | **NREL ATB 2025** full electricity CSV/parquet | §3.4 vintage bump | `atb.nrel.gov` blocked; OEDI S3 mirror has ≤2024 only (probed this session) |
-| M2 | **Treasury/IRS §45Y/§48E final rule** (Fed. Reg. 2025) | §4.2 primary confirmation of 2033/34/35/36 steps | `federalregister.gov` → `unblock.federalregister.gov` bot-wall |
+| ~~M1~~ | ~~**NREL ATB 2025** full electricity CSV/parquet~~ **CLOSED 2026-07-31 (FFR-PB) — NOT a manual download, and not ATB 2025** | §3.4 vintage bump | **There is no ATB 2025/2026 edition** (verified against the publisher's site `atb.nlr.gov` — the lab renamed, and that domain IS reachable here even though `atb.nrel.gov` stays 502 — plus the OEDI listing, which ends at `csv/2024/`). The actual gap was a point-VERSION: OEDI published ATB 2024 **v4.0.0** on 2026-07-28 and the repo held v3.0.0. Fetched in-session over the existing OEDI channel and landed as `data/raw/nrel-atb/atb_2024v4_*`. |
+| ~~M2~~ | ~~**Treasury/IRS §45Y/§48E final rule** (Fed. Reg. 2025)~~ **CLOSED 2026-07-31 (FFR-PB) — the Federal Register was never needed** | §4.2 primary confirmation of 2033/34/35/36 steps | `federalregister.gov` still bot-walls, but the **codified statute** is the controlling authority and the Office of the Law Revision Counsel publishes it at `uscode.house.gov`, which IS reachable. 26 U.S.C. §45Y(d)(2)-(3) + §48E(e)(2)-(3) confirm all four step years **unchanged**; OBBBA §70512(a)(2) fixed the applicable year flatly at 2032. |
 | M3 | **MISO Sept-2025 LTLF** MW-by-year + DC-futures tables | §1.2/§1.4 MISO demand + DC blocks | headline via press; exact per-year table in the LTLF workbook/PDF |
 | M4 | **NYISO 2025 Gold Book** baseline forecast tables (XLSX) | §1.1 NYISO demand + §1.3 DC anchor precision | per-zone MW-by-year inside the XLSX |
 | M5 | **ERCOT 2025 LTLF3 / 2026 preliminary LTLF** MW-by-year | §1.1 ERCOT demand + §1.3 anchor precision | PUCT filing PDF |
