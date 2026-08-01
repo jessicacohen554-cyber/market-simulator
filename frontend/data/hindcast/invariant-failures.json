@@ -2,7 +2,8 @@
   "schema_version": 1,
   "purpose": "Declared-failure ledger for `python scripts/check_forecast_invariants.py --sidecar-dir` (CI job `forecast-invariant-artifacts`, added by FFR-1D for audit finding FR-24). Every FAIL recorded in a committed run sidecar under frontend/data/hindcast/ must appear here, so a NEWLY registered run that fails an invariant is a reviewed line in this file rather than a number that lands on the forecast dashboard unremarked. Adding a line is not absolution: an invariant FAIL is a root-cause finding (rules 1/11), and the open ones are tracked in docs/forecast-readiness-audit-2026-07.md.",
   "how_to_update": "Registering a run whose sidecar carries a FAIL: add `\"<run_id>\": [\"I4\", ...]` below in the same commit as the registration, and name the finding it belongs to in your findings doc. Removing a run's sidecar, or fixing the defect so the invariant passes, means DELETING its line here \u2014 the checker fails on a stale declaration too.",
-  "seeded": "2026-07-31 (FFR-1D) from the invariant blocks committed at that date; no verdict was changed.",
+  "seeded": "2026-07-31 (FFR-1D) from the invariant blocks committed at that date; re-seeded 2026-08-01 on the rebase onto the merged Wave-1 lanes (FFR-1A/1B/1C registrations). No verdict was changed at either point.",
+  "wave1_note": "The FFR-1A arms are visible here as the fix they are: pjm-2026-2030-ffr1a-before and neiso-2026-2030-ffr1a-before carry I4, and neither of their arm1/arm2 successors does \u2014 the confirmed-exit derate ledgering (FR-1) closed I4 on both ISOs. The FFR-1C i7-before/after pairs still carry I7 on CAISO/MISO/NYISO: hydro accreditation narrowed the gap without closing it (that run's own findings doc records the residual). ercot-2026-2028-ffr1a-t0-* carry I3, the standing ERCOT energy-only scarcity-slack finding (FR-6), not anything those arms introduced.",
   "dominant_open_causes": {
     "I4": "FR-1 confirmed-exit capacity-accounting leak (derates never ledgered) \u2014 FFR-1A.",
     "I7": "FR-3 hydro absent from the accredited firm-capacity ledger \u2014 FFR-1C.",
@@ -21,6 +22,12 @@
   },
   "declared_failures": {
     "caiso-2026-2026-ff-2b-adequacy": [
+      "I7"
+    ],
+    "caiso-2026-2026-ffr1c-i7-after": [
+      "I7"
+    ],
+    "caiso-2026-2026-ffr1c-i7-before": [
       "I7"
     ],
     "caiso-2026-2030-ff-t1-gate": [
@@ -104,6 +111,12 @@
       "I9",
       "I12"
     ],
+    "ercot-2026-2028-ffr1a-t0-arm1": [
+      "I3"
+    ],
+    "ercot-2026-2028-ffr1a-t0-arm2": [
+      "I3"
+    ],
     "ercot-2026-2030-ces-poc-bau": [
       "I3"
     ],
@@ -147,6 +160,12 @@
     "miso-2021-2025-realized-cmc-rnew": [
       "I9"
     ],
+    "miso-2026-2026-ffr1c-i7-after": [
+      "I7"
+    ],
+    "miso-2026-2026-ffr1c-i7-before": [
+      "I7"
+    ],
     "miso-2026-2030-ff-t1-gate": [
       "I4",
       "I7"
@@ -161,12 +180,25 @@
     "neiso-2021-2025-fixed": [
       "I12"
     ],
+    "neiso-2026-2028-ffr1b-t0-aging": [
+      "I4"
+    ],
     "neiso-2026-2030-ff-t1-gate": [
       "I4"
     ],
     "neiso-2026-2030-ff-t1f-baseline": [
       "I4",
       "I7"
+    ],
+    "neiso-2026-2030-ffr1a-arm1": [
+      "I12"
+    ],
+    "neiso-2026-2030-ffr1a-arm2": [
+      "I12"
+    ],
+    "neiso-2026-2030-ffr1a-before": [
+      "I4",
+      "I12"
     ],
     "nyiso-2021-2025-curve": [
       "I7"
@@ -178,6 +210,12 @@
       "I7"
     ],
     "nyiso-2026-2026-ff-2b-adequacy": [
+      "I7"
+    ],
+    "nyiso-2026-2026-ffr1c-i7-after": [
+      "I7"
+    ],
+    "nyiso-2026-2026-ffr1c-i7-before": [
       "I7"
     ],
     "nyiso-2026-2030-ff-t1-gate": [
@@ -247,6 +285,9 @@
       "I4"
     ],
     "pjm-2026-2030-ff-t1f-baseline": [
+      "I4"
+    ],
+    "pjm-2026-2030-ffr1a-before": [
       "I4"
     ]
   }
