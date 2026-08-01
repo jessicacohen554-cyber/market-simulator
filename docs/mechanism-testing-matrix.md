@@ -1658,7 +1658,7 @@ capability envelope/floor pair is now the keeper — cells K above):
     truncation — the `hydro_level_923_hy` trap, re-verified, still not quotable.
     `results/calibration/FINDING-nyiso107-hydro-input-truncation-2026-07-31.md`.
 
-### 5.6 NEISO — target: C3c (ledgered; FRONTIER DECLARED — charter required first); ~~item 6~~ CLOSED at neiso-71 and its capacity prerequisite ADJUDICATED-ARTIFACT at neiso-73; ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72
+### 5.6 NEISO — target: C3c (ledgered; FRONTIER DECLARED — charter required first); ~~item 6~~ CLOSED at neiso-71 and its capacity prerequisite ADJUDICATED-ARTIFACT at neiso-73; ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72; ~~item 8~~ REFUSED-at-screen at neiso-74 (premise inverted — the defect is diurnal price amplitude, not storage)
 
 Keeper `2026-07-31-neiso-72-hy-window` (neiso-72).
 
@@ -1669,6 +1669,10 @@ charter with a new measured identification** before a solve:
 1. **DA-bid offer formation / DA depth charter** (`pjm_da_virtual_bids` form)
    — the named "new identification" class in the frontier note (oil-parity /
    import / DA-bid); NEISO publishes DA cleared/bid data to derive from.
+   **neiso-74 gave this item a measured target** (item 8 below): the model's
+   diurnal price amplitude is 24–30 % of measured with the level and the phase
+   both correct, split ≈ −26 % on the daily peak and ≈ +33–41 % on the daily
+   trough, stable 2023–2025. Charter still required.
 2. **Import-side scarcity identification** (HQ/NB tie behavior in tight
    hours) — second named class.
 3. ~~**`measured_ct_heat_rates`** — audit-grade, no charter needed.~~
@@ -1696,6 +1700,7 @@ charter with a new measured identification** before a solve:
    armed, nothing to adjudicate.)
 5. **STEP 3 seam disposition** (owner decision pending): carry the
    layup-vs-outage seam explicitly (recommendation (b) on record).
+
 6. ~~**`measured_chp_heat_rates` companion floor (the neiso-71 successor).**~~
     **CLOSED at neiso-71 (2026-07-31) with NO LP spent — the cell stays `O`,
     and NO CC_CHP floor should be built.** Screened by
@@ -1759,6 +1764,41 @@ charter with a new measured identification** before a solve:
     separation did **not** appear (all four zones clear identically at
     annual-mean grain). Evidence:
     `results/calibration/FINDING-neiso71-chp-floor-nuclear-2026-07-31.md` §2.
+
+8. ~~**Storage-side PS cycling depth** (the neiso-72 named successor).~~
+   **REFUSED AT THE SCREEN at neiso-74 (2026-08-01) with NO LP SPENT —
+   new row `pumped_storage_cycling_depth` → `G` at NEISO, and the item's
+   PREMISE IS INVERTED.** Screened by
+   `scripts/probes/_neiso74_ps_cycling_screen.py`. A perfect-foresight
+   price-taker LP carrying the model's OWN storage physics (1,865.0 MW,
+   `PUMPED_STORAGE_DURATION_HOURS` 10.0 h, `PUMPED_STORAGE_RTE` 0.80, cyclic
+   SOC, the rule-9 ε) discharges **4.301 TWh on measured DA** and **4.691 TWh
+   on RT** — **2.2× the 1.932 TWh actual**, not 4× below it — while the same LP
+   on the model's own duals returns **0.370 / 0.339 / 0.612 TWh**, bracketing
+   the keeper's endogenous **0.400 / 0.363 / 0.497**. The storage block is
+   already optimal for the price signal it is shown; the constrained object is
+   the model's **diurnal price amplitude**: level RIGHT (+2.8 % in 2025) and
+   phase RIGHT (peak h17 in model and DA alike), amplitude **24–30 % of
+   measured** — daily MAX −26.2 / −25.3 / −26.2 %, daily MIN +40.8 / +40.0 /
+   +32.6 %, and **86 vs 365 of 365 days** clearing the 1.25× RTE hurdle. Every
+   storage-side knob is inadmissible: the dispatch adder and an AS reservation
+   are **wrong-signed** (they raise the hurdle ⇒ *less* cycling, and the adder
+   map is empty everywhere precisely because PJM's $10 was retired for this
+   failure mode), while `PUMPED_STORAGE_RTE` / `_DURATION_HOURS` are shared
+   cross-ISO constants that cannot be fitted on one ISO's residual (rule 25).
+   **DO-NOT-REDO** any storage-side PS lever at NEISO until the diurnal
+   amplitude defect closes. Successor: the amplitude lane itself — attribution
+   points at a constant marginal band (`CC_REGULAR` absorbs 2,045 MW of the
+   4,117 MW diurnal demand swing while `CT_PEAKER` and `oil` are *already
+   online at the overnight trough*), i.e. **item 1's DA-bid offer-formation
+   charter**, unchanged and still owner-gated. Two carried caveats: (a) the
+   real fleet realizes only **45 %** of the DA perfect-foresight optimum, so a
+   successor graded on "does PS reach 1.932 TWh" is a fitted answer; (b) **no
+   load-bearing criterion sees this** — C3b is a MONTHLY load-weighted NRMSE
+   (`calibration_verdict.py::score_price_shape`), blind to hour-of-day, and
+   C7/D-1 is SKIPPED for NEISO; whether the rubric gains a diurnal-amplitude
+   criterion is an owner call. Evidence:
+   `results/calibration/FINDING-neiso74-ps-cycling-price-shape-2026-08-01.md`.
 
 ### 5.7 Cross-cutting audits (not ISO levers)
 
