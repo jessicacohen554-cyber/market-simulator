@@ -50,6 +50,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # key -- the arm must be byte-identical off; an armed run carries a real
     # min-gen floor and so gets a distinct key.
     "ercot_coal_min_config_floor",
+    # MISO regulated-coal within-run night floor (miso-113, default off): the
+    # same one-line remedy as ercot_coal_min_config_floor directly above --
+    # dropped from the hash at its default so every pre-existing cached run
+    # keeps its key (the pinned default 603c2498bf71d21d stays byte-stable);
+    # an armed run carries a real min-gen floor and so gets a distinct key.
+    "miso_coal_night_floor",
     # pjm-134 measured AP-South interface cut (default off): dropped from the
     # hash at its default so every pre-existing cached run keeps its key -- the
     # field's own docstring promises "byte-identical off" and without this
@@ -5670,6 +5676,71 @@ class ScenarioConfig:
     # Default off — every existing keeper byte-identical.
     coal_prb_committed_split: bool = False
 
+    # MISO regulated-coal WITHIN-RUN NIGHT FLOOR (miso-113, MISO-gated,
+    # default off) — the named successor to the two REJECTED offer-side arms
+    # above, and NOT a variant of either. miso-112 §4's structural test is
+    # what licenses it: per plant, over online hours, cap-weighted across the
+    # 26 regulated PRB plants, the keeper's night level is already RIGHT
+    # (model 0.437 vs measured 0.434 in 2024) while the split arm drives it
+    # BELOW the meter (0.374). What the keeper misses is within-day
+    # VARIABILITY, not level — and a discount-only hold slice has no floor,
+    # so it backs out in cheap hours and nothing holds the fleet at its
+    # measured level. The missing object is a FLOOR, not a second price.
+    #
+    # Mechanism: the repo's existing P1-native P0-detected-run -> min_gen
+    # construction — the SAME ISO-neutral detector as the CAISO RA must-offer
+    # / ERCOT / NYISO gas bridges (model.commitment.caiso_ra_mustoffer_min_gen
+    # via pipeline.commitment.build_miso_coal_night_floor_p1_prep, injected at
+    # the P0->P1 seam in pipeline.solve.run_energy_solve). No P2 pass. Armed
+    # with the ercot141 online-hours leg (floor_online_hours), so the floor
+    # covers every hour of the detected committed run rather than only the
+    # idle gaps: a synchronized self-committed unit's night block is
+    # must-take in the hours it is ONLINE, which is precisely the state the
+    # gap legs interpolate between. The economic (>=min-down) startup leg is
+    # deliberately NOT armed — a next-day decommit/re-offer is outside the
+    # declared window.
+    #
+    # LEVEL, per plant, MEASURED, zero fitted parameters:
+    #     frac_p = max(0, night_p50_p - mustrun_pct_p / 100)
+    # where night_p50 is the plant's own within-run night loading level (p50
+    # of load/HSL over ONLINE hours h0-5, pooled 2023-25, WP-3
+    # loading-when-on) from data/raw/_processed-legacy/
+    # coal_prb_committed_split_MISO.csv (frozen deriver
+    # scripts/data/derive_prb_committed_split.py, rule 23
+    # [R-FROZEN-DERIVE]) and mustrun_pct is that plant's own _mustrun band.
+    # Subtracting the band is the rule 19 [R-ONE-MECH] RECONCILIATION: the
+    # plant's TOTAL floor is then exactly night_p50 x plant capacity, never
+    # mustrun + night. Merit order inside a plant (mustrun fuel-free <
+    # committed discounted < econ < peak) makes that exact. Against the other
+    # floor on this class, reliability_floor (0.31 % of COAL energy in the
+    # keeper), reconciliation is by MAXIMUM-composition in
+    # pipeline.commitment._bridge_floored_fleet — the two can never sum.
+    #
+    # SCOPE. Population = the regulated self-commitment set
+    # (eia860_selfcommit_scope_plants) x PRB/subbituminous supply — who
+    # self-commits, a market-design fact, expressed as a per-unit LEVEL
+    # vector (min_load_frac_by_gen) rather than a class-name tuple. The
+    # ELIGIBILITY gate stays on unit PHYSICS (rule 18 [R-PHYSICS]): the
+    # detector's own _ra_bridge_unit_params requires min_down_hours > 0 and
+    # rejects binned incremental tranches, so only the `_committed` band is
+    # ever floored — `_mustrun`, `_econ` and `_peak` carry min_run_hours = 0
+    # and are rejected BY PARAMETER.
+    #
+    # Rule 17 [R-FLOOR-WINDOW]: driver = regulated SELF-COMMITMENT (MISO SOM
+    # Table 7 — 53-56 % of coal starts are self-committed, not
+    # market-committed); window = the plant's own P0-detected committed run,
+    # plus any idle gap shorter than the unit's min-down (a physical restart
+    # bar) — no clock-hour rule, so a plant the model has offline is never
+    # floored; forward story = regenerates in any forecast year from that
+    # year's own P0 run pattern plus the frozen measured night level, and
+    # responds to changed conditions through the run pattern (rule 13
+    # [R-MEASURED], same footing as the ERCOT 0.574 and NYISO 0.523/0.239
+    # min-loads). D-2 id MECH_MISO_COAL_NIGHT_FLOOR; D-4 window declared in
+    # scripts/legitimacy_diagnostics.py. Guards + the K1 inertness kill rule
+    # pre-registered BEFORE the binding measurement and before any solve:
+    # results/calibration/PREREG-miso113-prb-night-floor-2026-08-01.md.
+    miso_coal_night_floor: bool = False
+
     # Lignite (mine-mouth): take-or-pay fixed costs are sunk, so in
     # cheap-gas months lignite discounts its BID (not its cost) to hold
     # baseload against cheap gas CC instead of being priced out.
@@ -10140,6 +10211,9 @@ TIER_TAGS: dict[str, int] = {
     "coal_committed_takeorpay_sunk_fixed": 3,
     "coal_prb_committed_dispatchable": 3,
     "coal_prb_committed_split": 3,
+    # Structural gate (1), not a parameter: the LEVEL it applies is measured
+    # per plant from a frozen artifact, so the flag carries no free number.
+    "miso_coal_night_floor": 1,
     "coal_lignite_passthrough_sigmoid": 3,
     "coal_lignite_passthrough_floor": 3,
     "coal_lignite_passthrough_ceil": 3,
