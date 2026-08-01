@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-01-miso-113b-prb-night",
+  "label": "miso 113b prb night",
+  "date": "2026-08-01",
+  "shorthand": "miso-113b-prb-night",
+  "definition": "miso-113 arm B: regulated-PRB committed-run night-level floor (coal_prb_night_floor)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-08-01-miso-113b-prb-night.js",
+  "bundle": "results/calibration/miso113_nightfloor_B"
+}

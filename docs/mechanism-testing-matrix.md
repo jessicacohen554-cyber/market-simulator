@@ -1136,42 +1136,44 @@ C3a + C3c, 2/3. The diurnal-spread compression DEFECT the old target named is
 still real (miso-89's measurement stands) but it no longer breaches any
 criterion; the outage-grain data ask below remains its honest continuation.)*
 
-0. **Night-level min-gen FLOOR on the P0-detected committed run — the
-   miso-113 lane, the queue's live head. The two OFFER-side forms above it
-   are both spent and both R; do not re-test either.** miso-111 rejected the
-   whole-band repricing (`coal_prb_committed_dispatchable`) and miso-112
-   rejected the measured per-plant SPLIT (`coal_prb_committed_split`) on its
-   pre-registered G2: the split fixes shape better than miso-111 and
-   recovers 2023 volume (C7 PRB cv_ratio 0.466→0.738 / 0.475→0.872 FAIL→PASS,
-   2025 0.314→0.393, BIT untouched, C3a improved, zero D-2 forced rows) but
-   C1 2024 PRB still lands −10.23 TWh vs ±8. **The structural test that
-   closes the offer-side family** (miso-112 §4, per plant, online hours,
-   cap-weighted over the 26 regulated PRB plants, model vs each plant's own
-   measured `night_p50`): the KEEPER's night level is already right — 0.437
-   against a measured 0.434 in 2024 — while the split arm drives it *below*
-   the meter to 0.374 (0.483→0.407 in 2023). What the keeper gets wrong is
-   within-day VARIABILITY, not level; a discount-only hold slice has no
-   floor, so it backs out in cheap hours and nothing holds the fleet at its
-   measured level. **The missing object is a floor, not a second price.**
-   The lever: the repo's existing P0-detected-run → `min_gen` construction
-   (CAISO RA must-offer / ERCOT / NYISO bridges), sized at the measured
-   within-run NIGHT level. miso-111 PREREG §8 retired the bridge as
-   "provably inert", but that verdict was reached on the **LSL** statistic
-   (plant-basis loading-when-on p5 = 0.182, below the 0.30-0.52 mustrun
-   bands) and **does not extend to the night level** (0.434 plant-basis /
-   0.62×HSL class-basis), which sits ABOVE the mustrun band at most plants
-   and is exactly the level neither arm holds — re-read that inertness
-   argument before quoting it. Rule 17 shape is available off the shelf:
-   driver = regulated self-commitment (SOM Table 7, 53-56 % of coal starts),
-   window = the detected committed run, forward story = regenerates from any
-   year's P0 pattern plus the frozen measured level. Measured input already
-   committed: `data/raw/_processed-legacy/coal_prb_committed_split_MISO.csv`
-   (`night_p50` per plant, frozen deriver
-   `scripts/data/derive_prb_committed_split.py`). 2025 will still be short of
-   the 0.5 gate on the overnight price-formation defect (model off-peak p10
-   $29.71 vs actual hub $17.95) — data-blocked (miso-78/79), do not stack a
-   lever on it. Pre-register G2 (C1 16/16) again: it is what killed both
-   predecessors.
+0. ~~**Night-level min-gen FLOOR on the P0-detected committed run.**~~
+   **RETIRED 2026-08-01 (miso-113, `coal_prb_night_floor`, cell R) — and with
+   it THE WHOLE REGULATED-PRB SELF-COMMITMENT FAMILY. All three admissible
+   forms are now spent and R; do not re-test any of them:** whole-band
+   repricing (`coal_prb_committed_dispatchable`, miso-111), the measured
+   per-plant SPLIT (`coal_prb_committed_split`, miso-112), and the night-level
+   FLOOR (miso-113). The floor was built exactly as this queue item specified,
+   the miso-111 "provably inert" argument was re-run rather than quoted and
+   genuinely does not transfer (18 of 26 plants floored, 69.2 % of
+   regulated-PRB nameplate, 20-22 TWh floored per year), and **the structural
+   gate PASSED while the shape gate moved BACKWARDS**: G6 (miso-112 §4's
+   per-plant night-level test, promoted to a first-class gate) improves in all
+   three years, C1 stays 16/16 — and C7 cv_ratio goes 0.466→0.460 and
+   0.475→0.420, worse than the control in the two years it had to clear.
+   **Why, and this retires the lane rather than iterating it:** the keeper
+   already sits ABOVE the measured night level (0.488/0.444/0.563 vs
+   0.437/0.438/0.438), so a floor there is slack in most hours — only
+   3.46/6.53/1.72 of 20.12/19.78/21.93 TWh actually binds — and the only hours
+   it reaches are the model's cheapest, which are the entire source of its
+   already-too-small off-peak variability. **C7's failure is that the overnight
+   distribution is too NARROW, and a lower bound can only narrow it further**,
+   so no floor fixes it in principle, not by tuning. miso-112 §5's inference
+   was right that the level needed holding and wrong that holding it addresses
+   the amplitude: the two structural statistics are DECOUPLED.
+   **What the three sessions jointly establish:** COAL_PRB's C7 failure is not
+   a coal-conduct defect at all — the class's night level is right, its volume
+   is right, its phase is right (profile_r 0.97-0.99). What is missing is the
+   **dispersion of the overnight price signal** (model off-peak p10 $29.71 vs
+   actual hub p10 $17.95), i.e. the data-blocked miso-78/79 congestion +
+   sub-hourly-RT lane, which now carries the C7 COAL_PRB residual in ALL THREE
+   years rather than just 2025. Any successor must WIDEN the model's overnight
+   dispatch distribution; none of the three forms does (two are prices that
+   move the whole band together, one is a lower bound). No successor is
+   chartered — rule 19 forbids stacking a fourth coal mechanism on a
+   price-formation residual.
+   (`results/calibration/FINDING-miso113-prb-night-floor-2026-08-01.md`; runs
+   `2026-08-01-miso-113a-control` / `2026-08-01-miso-113b-prb-night`.)
+1. **Contract-period tonnage constraint — data-blocked**
    (`miso-coal-contract-tonnage-data-ask-2026-07.md`) — **the LP constraint is
    NOT the lever any more; the RHS is.** The constraint itself (contract-period
    tonnage priced by its dual, the named miso-96 successor) stays the only
