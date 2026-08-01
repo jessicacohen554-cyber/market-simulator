@@ -478,6 +478,12 @@ def resolve_lolp_params(
 # years from 2026 are RTC+B; 2023-2025 are the ORDC + RTORDPA design.
 _RTCB_FIRST_FULL_YEAR: int = 2026
 
+# The go-live CALENDAR year (2025) — the one year split between the two
+# regimes, cut at RTCB_GOLIVE_HOUR below. Public so regime-gated consumers
+# (the reserve layer's non-releasable-withholding windows, FR-12) share this
+# single definition with ercot_market_regime instead of hard-coding 2025.
+RTCB_GOLIVE_YEAR: int = _RTCB_FIRST_FULL_YEAR - 1
+
 # Non-leap hour-of-year index of 2025-12-05 00:00 (RTC+B go-live), the end of
 # the ORDC/RTORPA/RTORDPA regime. Jan-Nov = 334 days, so Dec 5 00:00 = 338*24
 # = 8112 — exactly where the measured 2025 reserves series stops (its tail is

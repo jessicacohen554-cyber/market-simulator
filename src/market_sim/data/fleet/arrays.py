@@ -386,10 +386,21 @@ def _availability_matrix(
     #   * The weather/performance derate stays flat year-round.
     # The annual-average availability of each unit is unchanged — only the
     # seasonal shape moves. Non-thermal units (nuclear, hydro, ...) keep the
-    # 1 - EFORD derate. Age is the run year minus the unit's commission year.
+    # 1 - EFORD derate. Age is the SOLVE year minus the unit's commission year.
     #
     if config is not None and shoulder_hours > 0:
-        run_year = config.weather_year
+        # FR-7 (forecast-readiness audit §3.2): two year meanings, separated
+        # explicitly. ``fleet_year`` is the SOLVE year — the fleet clock that
+        # drives the age-based WEFOR/derate escalation, so the fleet keeps
+        # aging through a forecast horizon and a model-built entrant
+        # (online_year > weather_year) never gets a negative age. It falls
+        # back to ``config.weather_year`` only when no solve year is threaded
+        # (legacy/test callers); in backcast the harness pins
+        # weather_year == solve year, so the fallback is value-identical
+        # there. ``config.weather_year`` itself remains the WEATHER-SHAPE key
+        # (the pinned 8760) for the measured-temperature lookups below
+        # (_td_year / _amb_year) — never the fleet clock.
+        fleet_year = year if year is not None else config.weather_year
         summer_to_shoulder = summer_hours / shoulder_hours
         drop_coal_pof = getattr(config, "coal_drop_pof", False)
         # Historic-backcast WEFOR residual: the CAMPD overlay + unit-level
@@ -463,6 +474,15 @@ def _availability_matrix(
         # (slope per deg C, reference/onset temp deg C) by plant group
         _TD_PARAMS: dict[str, tuple[float, float]] = {}
         _td_tmax: dict[str, np.ndarray] = {}
+        # FR-7 meaning note: _td_year keys MEASURED-WEATHER series (zone
+        # dry-bulb), i.e. "the weather 8760 this solve rides" — the solve
+        # year while the solve is on realized/bridged weather (backcast, and
+        # the hindcast's realized years, where it must stay aligned with the
+        # realized demand of the same year), weather_year as the legacy
+        # fallback. A pure-forward year has no measured file and falls back
+        # gracefully to the flat class derate below (the single-pinned-
+        # weather limitation is FR-17's workstream, not this seam). It is
+        # NOT the fleet clock — never use it for the age model.
         _td_year = (
             year
             if year is not None
@@ -565,7 +585,7 @@ def _availability_matrix(
                 continue
             is_cc_np = cc_np_derate and gen.plant_group in ("CC_REGULAR", "CC_CHP")
             pof, wefor, derate = _thermal_outage(
-                gen.plant_group, run_year - gen.online_year
+                gen.plant_group, fleet_year - gen.online_year
             )
             # ISO-gated gas-steam forced-outage base override. The global ST_GAS
             # WEFOR base (0.21) is fitted to ERCOT's once-through steamers and is
@@ -578,7 +598,7 @@ def _availability_matrix(
                 _, _w_base, _w_rate, _w_onset, *_ = THERMAL_AVAILABILITY[
                     gen.plant_group
                 ]
-                _age = run_year - gen.online_year
+                _age = fleet_year - gen.online_year
                 wefor = _st_wefor_base + max(0.0, _age - _w_onset) * _w_rate
             # Lighten (or raise) the forced-outage magnitude while keeping the
             # seasonal shape — applied before the summer/shoulder/winter split.
@@ -685,9 +705,21 @@ def _availability_matrix(
             # Per-bin forced derates for confirmed unit losses (e.g. a
             # multi-unit plant losing one boiler to a fire). Applied as a
             # flat multiplier on top of the age-based availability.
-            forced = BIN_FORCED_DERATE_BY_YEAR.get(gen.bin_label, {}).get(run_year)
-            if forced is not None:
-                availability[g_idx, :] *= forced
+            # BACKCAST-ONLY (FR-8, rule 13 [R-MEASURED]): a measured
+            # single-event derate has no forward analogue, so it must never
+            # reach a forecast or crossover year — before this gate the
+            # weather_year-keyed lookup re-applied the Martin Lake 2025 fire
+            # to every crossover solve year under the pinned
+            # weather_year=2025. Same explicit mode gate as the
+            # dormant-nuclear sibling in _nuclear_monthly; keyed by the
+            # solve year (== weather_year in backcast). The table's own
+            # header (eia860.py) carries each entry's retirement path.
+            if getattr(config, "mode", "forecast") == "backcast":
+                forced = BIN_FORCED_DERATE_BY_YEAR.get(gen.bin_label, {}).get(
+                    fleet_year
+                )
+                if forced is not None:
+                    availability[g_idx, :] *= forced
             # Summer ambient-temperature derate. CC plants under
             # cc_nameplate_summer_derate use their per-plant MEASURED summer
             # derate (net_summer / nameplate) — the capacity was raised to
@@ -745,6 +777,8 @@ def _availability_matrix(
         # both backcast and forecast (never fitted to the price residual). Only
         # reduces capacity, only on hot hours. Vectorized per affected zone (no
         # per-hour Python loop, rule 2).
+        # Same measured-weather keying as _td_year above (FR-7 meaning note):
+        # the year of the zone-TMAX series, not the fleet clock.
         _amb_year = year if year is not None else getattr(config, "weather_year", None)
         if (
             getattr(config, "gt_ambient_derate", False)
