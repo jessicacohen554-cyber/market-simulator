@@ -3707,3 +3707,122 @@ movement. Open owner rulings carried unchanged (ERCOT-146 list, with the
 Morgan Creek corpus-presence note added to the Martin Lake item).
 Pre-existing matched, not fixed: none encountered (no LP, no fleet loader
 run).
+
+## 2026-07-31 — ERCOT-148 (owner-directed coal outage-window audit → Phase 2 single-delta arm): the windows are CORRECT — the over-run was the DAM COP pin RESTORING availability over them; `ercot_dam_availability_coal_event_cap` armed (measured event windows cap the COP restore, zero fitted parameters), every pre-registered guard HELD, C3a improves all three years and C3b-2024 flips PASS un-targeted — **PROMOTED KEEPER `2026-07-31-ercot148-dam-event-cap`** (bundle `ercot148_dam_event_cap_arm`)
+
+**Task (owner directive 2026-07-31: "the keeper runs coal plants through
+months-long CAMPD zero-op windows and the coal over-run must come down";
+Phase 0/1 first, no solve until they adjudicate).** Precommit
+`docs/PRECOMMIT-ercot148-dam-coal-event-cap-2026-07-31.md` pushed BEFORE the
+solve (merged to main as PR #3224 mid-session); diagnosis
+`docs/DIAGNOSIS-ercot148-coal-outage-windows-2026-07-31.md`; probes
+`scripts/probes/ercot148_coal_outage_phase0.py` +
+`ercot148_availability_capture.py`; committed record
+`results/calibration/ercot148_coal_outage_phase0.json`. Preconditions:
+`audit_keepers` PASS 0/0; the directive's `cache_key 603c2498bf71d21d`
+drifted benignly (post-ERCOT-147 default-off fields, miso-111 et al.;
+default now `8161b094a391de90`) — name-only drift, recorded.
+
+**Phase 0 (no LP).** The presumed defect — missing/clipped windows — is NOT
+what the audit found. (1) `campd-unit-outages.csv` is CURRENT (guard-derived;
+655 standard + 415 layup 2025 rows reproduce the frozen re-run's 1,070) and
+COMPLETE: 59/62 unit zero-op spells ≥ 5 d are 100 % windowed, including
+Coleto's 2023 mothball and Limestone LIM2's 141-day 2024 block. (2) The
+keeper armed the DAM COP rescale at plant grain INCLUDING coal
+(ERCOT-97/110), and the bidirectional water-fill RESTORES availability over
+the measured windows wherever the QSE files the resource OFF-at-full-HSL
+through a certified dead stop: Coleto COP OFF@655 for 514/576 h of its Jan
+2023 block (seam availability 0.892 inside a windowed full stop — capture-
+verified), LIM1 OFF@793 through a 21.6-day dead stop the keeper dispatched
+at 1,653 MW plant peak vs a 957 MW windowed ceiling, WAP5 OFF 1,677/1,798 h
+through a 74-day dead stop. Sandy Creek (−1.2 %/−0.7 %) is the control
+because its COP honestly reads OUT (2025: 5,953/6,049 h) — the failure
+tracks QSE COP filing behaviour, plant-specific exactly as the directive's
+evidence suggested. Keeper dispatch above the measured-window ceiling:
+**4.36 / 4.98 / 5.01 TWh** (2023/24/25). Side findings, no action: Martin
+Lake 1's 2025 destruction already carried by
+`BIN_FORCED_DERATE_BY_YEAR["N_COAL4"]` (all-8760h COP OUT gives the DAM
+deriver's same-year p98 rating basis nothing to normalize by — recorded as
+the reason the pin cannot yet retire that entry); two ≤ 6-day micro-spells
+(0.15 TWh) are frozen-identification exclusions, reproduced on current
+source — recorded, not re-tuned (rule 23).
+
+**Phase 1 adjudication.** A wiring/precedence DEFECT between two incumbent
+measured layers, not an admissibility question: the ≥ 5-day windows are the
+canonical rule-13 overlay whose frozen identification (FULL_STOP_OVERRIDE:
+a weeks-long CF≈0 dead stop of baseload coal is the mechanical-outage
+signature) certifies these blocks; the COP OFF@HSL rows are a paper
+declaration of startable capability. Rule 14 (prefer the physical record on
+instrument conflict, document the misalignment) + rule 19 (reconcile the
+incumbents, never stack): `ercot_dam_availability_coal_event_cap` — after
+the DAM rescale, COAL bins are min()-capped at the product of their ARMED
+event-window factors. Zero fitted parameters. Coal-scoped (the coal
+averaged-rule identification is what certifies dead stops; gas
+OFF-is-available is genuinely correct for load-following units). NOT CEMS
+pinning: an availability ceiling from the already-admissible overlay;
+dispatch below it stays free. Seam-verified no-LP before the precommit
+push: flag-ON capture caps every COAL bin at its ceiling, non-COAL
+byte-identical, no change outside windows (Coleto Jan 0.892 → 0.000).
+
+**Result (single-delta replay off ercot145_gas_daily_arm, full span, ONE
+invocation, bundle `ercot148_dam_event_cap_arm`).** Coal
+65.64/59.97/69.40 → **61.20/54.90/63.98 TWh** vs actual 62.73/60.29/64.45:
+2023 +2.9 over → −1.5 under (|dev| improves), 2025 +7.7 % → **−0.7 %**
+(essentially exact), 2024 −0.5 % → −8.9 % under — PRE-REGISTERED in the
+precommit as the rule-14 compensating-error unwind (the phantom masked the
+real loading-conduct under-run at Parish/JKS/Fayette/Martin Lake —
+ERCOT-126's 90–93 % LOADING attribution, its own open lane; inside the
+C1/C2 bands, worst cell PRB-2024 −3.8 TWh / −0.85 pp vs 8 TWh / 3 pp).
+Named plants toward CAMPD: Limestone +43.9/+40.3/+32.3 → +25.4/+18.5/+11.6 %,
+Coleto +31.5/+32.3/+41.0 → +17.2/+19.0/+35.5 %, J K Spruce-2023 +19.8 →
+−2.9 %, Oak Grove +14.0/+12.4/+10.8 → +13.7/+4.7/+3.7 %; Sandy −1.1 → −8.9 %
+and Parish +1.1 → −7.9 % are the pre-registered unwinds of their own
+COP-dishonest spells. **GUARDS all HELD, zero trips** (cleaner than the
+ercot145b promotion itself): C3c 46→54 / 7→7 / 0→0 (NO drain; 2023 +8
+toward the actual 181), spurious 2/3/0 → 2/3/0 EXACT, C1 16/16 free 12/12,
+C2 HELD, C7-2024/25 COAL_LIGNITE both legs PASS (2024 r 0.975/cv 0.795;
+2025 r 0.961/cv 1.112), C4/C8 PASS, n_residual 6 UNCHANGED, C6 ATTESTED+
+PASS. Un-targeted improvements (rule 1 — reported, never the basis): C3a
+−36.4/−14.3/−13.9 → **−34.3/−10.4/−11.6 %** (all three years), C3b 2023
+0.637→0.618 and **2024 0.205→PASS**, C7-2023 lignite r 0.866→0.879 (cv leg
+0.338→0.333 stays the one failing leg, attributed — ERCOT-143).
+**DETERMINATION NOT-YET**, fail set {C3a, C3b, C3c, C7} identical in kind
+to ercot145 with C3b's failing years SHRINKING. LOYO: zero fitted
+parameters — structurally LOYO-exempt, per-year guard table standing in
+(stated per the directive).
+
+**Session incident, recorded honestly.** The first Phase-2 attempt chained
+three per-year `replay_keeper` invocations into one out-dir; each overwrote
+the bundle-level singletons (`meta.json` years, `btm.parquet`, root
+`system/flows/storage.parquet`) with its own year scope, and the bench
+render then subtracted a 2025-only BTM frame from 2023/2024 —
+manufacturing ±20 TWh CC_CHP↔CC_REGULAR "reclassifications" and a phantom
+C1 breach that briefly implicated main-drift (retracted). Scrapped and
+re-solved as ONE full-span invocation; the regenerated bench is
+byte-identical to committed, and per-year solves reproduced to 0.01 TWh.
+Lesson for successors: per-year replay chaining corrupts bundle singletons —
+use one invocation for a multi-year bundle (rule 12's sequential-years
+requirement is inside the invocation anyway).
+
+**Governance.** Registered `2026-07-31-ercot148-dam-event-cap` (top-15
+prune retired `2026-07-26-ercot116-coal-avail-probe`), keeper shard +
+`build_status --iso ERCOT` + keeper-auditor pass, matrix: new row
+`ercot_dam_availability_coal_event_cap` (26c, added in the mechanism PR)
+stamped `O → K`, ERCOT column header re-stamped, §5.1 header re-stamped,
+calibration log — same session (rules 15/26b). Holdouts untouched (2023–25
+only). ERCOT-scoped (rule 25). Pre-existing matched, not fixed:
+hydro-plant-modes / gtc-limits clean-partition warnings, `ercot_wtx_*`
+dual-channel warning, D-4 CT_PEAKER h14-21 rows and D-1 2023-lignite cv leg
+(byte-comparable in keeper and arm). Open owner rulings carried: (1)
+`gas_hh_monthly_shape` matrix row (26c); (2) per-gate dispositions of the
+attributed gates; (3) `split_coal_tranches` delete-vs-inert; (4)
+`ercot_offer_hrmult_ep_*` matrix rows (26c); (5) Martin Lake lignite class
+composition (ercot143 §7.3 + ERCOT-146/147 evidence); (6) authorization for
+the ERCOT-147 three-part CT reopen intake (matrix §5.1 item 8). NEW from
+this lane: (7) the gas-side symmetric COP-vs-window collision (unmeasured —
+size it before any arm); (8) the DAM deriver rating basis for all-year-OUT
+sites (would retire the `N_COAL4` registry entry per its own TO-RETIRE
+note). Successor pointer: the coal residual is now the LOADING-CONDUCT
+under-run the phantom had masked (ERCOT-126 object) plus the standing
+RT-scarcity-formation attribution (C3a/C3c) and `winter_citygate_daily`
+data-intake (C3b-2023).

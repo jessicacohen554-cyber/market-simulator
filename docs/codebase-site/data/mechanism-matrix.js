@@ -563,6 +563,23 @@
  * C6 attested and PASSES. gas_hh_monthly_shape still carries NO matrix row
  * (26c gap, surfaced to the owner at ERCOT-145b precommit §6).
  *
+ * ERCOT column re-stamped 2026-07-31 by ERCOT-148 (owner-directed coal
+ * outage-window audit): ercot_dam_availability_coal_event_cap ERCOT O -> K,
+ * registered single-delta A/B off ercot145_gas_daily_arm -> PROMOTED KEEPER
+ * 2026-07-31-ercot148-dam-event-cap (zero pre-registered guard trips; the
+ * owner standard was not strained). The measured CAMPD event windows now CAP
+ * the DAM COP restore on coal — the audit found the windows CSV correct and
+ * the over-run caused by the plant-grain COP pin restoring availability over
+ * certified dead stops where QSEs file OFF-at-full-HSL (Sandy Creek the
+ * honest-COP control). Coal 65.64/59.97/69.40 -> 61.20/54.90/63.98 TWh vs
+ * actual 62.73/60.29/64.45. Open gates unchanged in kind {C3a,C3b,C3c,C7}
+ * with C3b's failing years SHRINKING (2024 flips PASS) and C3a improving all
+ * three years un-targeted; C6 attested and PASSES; n_residual 6. NEW open
+ * successors: the gas-side symmetric COP-vs-window collision (unmeasured),
+ * the DAM deriver rating basis for all-year-OUT sites (would retire the
+ * N_COAL4 forced-derate entry), and the un-masked coal loading-conduct
+ * under-run (the ERCOT-126 object, Parish/JKS/Fayette/Martin Lake).
+ *
  * MISO column re-stamped 2026-07-31 on the OWNER promotion of miso-109b
  *   (2026-07-28-miso-101b-tempgrain -> 2026-07-31-miso-109b-hy-level).
  *   hydro_level_923_hy MISO O -> K: the EIA-930 NG:WAT hydro LEVEL pin is refused
@@ -634,7 +651,7 @@ window.MECH_MATRIX = {
   updated: "2026-07-31",
   isos: ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"],
   keepers: {
-    ERCOT: "2026-07-29-ercot137-coal-margin-measured",
+    ERCOT: "2026-07-31-ercot148-dam-event-cap",
     CAISO: "2026-07-29-caiso139-dump-guard-offer",
     PJM: "2026-07-31-pjm-143b-hy-level",
     MISO: "2026-07-31-miso-109b-hy-level",
@@ -642,7 +659,7 @@ window.MECH_MATRIX = {
     NEISO: "2026-07-31-neiso-72-hy-window"
   },
   gates: {
-    ERCOT: "C3a/C3b 2023, C3c all years, C7 COAL_LIGNITE 2023 (v2.8)",
+    ERCOT: "C3a all years (improving: -34.3/-10.4/-11.6%), C3b 2023 only (2024 flipped PASS at ercot148), C3c all years (54/7/0 vs 181/53/31 — no drain), C7 COAL_LIGNITE 2023 cv-leg only (r passes at 0.879)",
     CAISO: "NONE failing — CALIBRATED-WITH-CAVEATS since caiso-145 (owner disposition 2026-07-30, scorer-only). Both former blockers are now ACCEPTED MEASURED-INPUT LIMITATIONS, 2 of 3 non-protective ledger slots: C3a 2025 (+10.9 %) on the caiso-141 A2 wall (no public hourly PS↔conventional-hydro split; Helms+Eastwood = 60.3 % of the fleet uninstrumented), and C3c 2023-24 (0 h vs RT 47/35) on caiso-131 A4 with the caiso-144 evidence (in-LP co-opt provably inert with 1.6-10.5 GW slack in reality's own tail hours; LOLP overlay overlaps that tail ≤1/90 h; the tail is winter-morning fuel/cold-snap already priced to the armed daily-spot SRMC ceiling). Reopening either needs an owner-funded intake — SoCalGas OFO record (C3c) or non-public hourly PS data (C3a); neither is closable by an adder (rules 1/13)",
     PJM: "NONE — CALIBRATED since pjm-137, every criterion passing (C1 16/16 free 12/12), re-verified 9/9 at the pjm-143 promotion (both A/B arms). Thinnest margin: C3c passes by ~1 h (2024) / ~2.5 h (2025) against a 0.5x floor, closed at pjm-136 and BYTE-IDENTICAL through pjm-143 (tail counts 3/10/32 in both arms). The pjm-133 hydro-pin defect (keeper note 11) is CLOSED at pjm-143 — the level is EIA-923 HY, ~7 TWh/yr of phantom zero-MC hydro removed, C3a 2023 now +2.99 % (was +2.05: the phantom energy was suppressing a real over-pricing). Remaining defect is the Dominion CT leg, of which pjm-137 closed 52-55 % (intra-zonal congestion) and pjm-138 attributes a further 25-37 % to the reserve opportunity cost the no-MIP LP cannot price — 8/23/22 % is reachable",
     MISO: "C7 COAL_PRB diurnal shape, all years — the SOLE failing criterion and the determination blocker (NOT-YET), data-blocked on ex-ante coal contract tonnage (miso-103 refuted the receipts-derived construction; miso-104 opened the standing data ask). Ledgered caveats 2/3, NOT 3/3: C3a mean LMP + C3c price tail — verified live from scripts/calibration_verdict.py on the keeper's own committed bundle at the 2026-07-31 miso-109b promotion. The former C3b-2025 entry was DELETED by miso-98 under rule 26 [R-DELETE] and this cell had carried the stale 3/3 saturation claim since; a slot is free, but rule 24 still requires the next load-bearing miss to be BUILT, not ledgered",
@@ -961,8 +978,8 @@ window.MECH_MATRIX = {
       ev: { E: "ERCOT-96/97 + ERCOT-134 + ERCOT-137 (coal scope ADOPTED, run 2026-07-29-ercot137-coal-margin-measured; water-fill ceiling fix)", Q: "neiso-62", M: "miso-85/86" } },
     { id: "ercot_dam_availability_coal_event_cap", cat: "outage", name: "Measured event windows cap the DAM COP restore (coal)",
       def: "scenarios.py ercot_dam_availability_coal_event_cap (default off) / fleet/arrays.py cap after the DAM rescale", mode: "B",
-      cells: "O.....",
-      note: "ERCOT-148 (2026-07-31): precedence reconciliation of the two incumbent measured availability layers, zero fitted parameters. The plant-grain DAM COP pin (bidirectional water-fill) RESTORES capacity over the >=5-day CAMPD full-stop windows wherever the QSE files the resource OFF-at-full-HSL through a certified dead stop (Coleto Creek COP OFF@655 through its 2023/2024 mothball blocks; Limestone LIM1 OFF@793 through a 21.6-day dead stop the keeper dispatches at 1,653 MW plant peak vs a 957 MW windowed ceiling; Sandy Creek is the honest-COP control at -1.2%/-0.7%). Keeper dispatch above the measured-window ceiling: 4.36/4.98/5.01 TWh (2023/24/25). With the gate on, COAL bins are min()-capped at the product of their ARMED event-window factors after the DAM rescale — the physical CEMS record outranks the paper declaration (rule 14), the DAM overlay keeps its designed job everywhere else (remove direction + non-window hours untouched, gas classes byte-identical; rule 19). Coal-scoped: the coal averaged-rule identification is what certifies dead stops; the gas-side symmetric collision is explicitly open and unmeasured. Diagnosis DIAGNOSIS-ercot148-coal-outage-windows-2026-07-31.md; record results/calibration/ercot148_coal_outage_phase0.json; precommit PRECOMMIT-ercot148-dam-coal-event-cap-2026-07-31.md.",
+      cells: "K.....",
+      note: "ERCOT KEEPER at ERCOT-148 (2026-07-31, registered single-delta A/B off ercot145_gas_daily_arm -> PROMOTED KEEPER 2026-07-31-ercot148-dam-event-cap; every pre-registered guard HELD — C3c 46->54/7/0 no drain, spurious 2/3/0 exact, C1 16/16 free 12/12, C2, C7-2024/25 lignite both legs, n_residual 6 — with C3a improving all three years and C3b-2024 flipping PASS un-targeted; coal 65.64/59.97/69.40 -> 61.20/54.90/63.98 TWh vs actual 62.73/60.29/64.45; the 2024 -8.9% under-swing is the precommit-pre-registered rule-14 compensating-error unwind, inside the C1/C2 bands). Precedence reconciliation of the two incumbent measured availability layers, zero fitted parameters. The plant-grain DAM COP pin (bidirectional water-fill) RESTORES capacity over the >=5-day CAMPD full-stop windows wherever the QSE files the resource OFF-at-full-HSL through a certified dead stop (Coleto Creek COP OFF@655 through its 2023/2024 mothball blocks; Limestone LIM1 OFF@793 through a 21.6-day dead stop the keeper dispatches at 1,653 MW plant peak vs a 957 MW windowed ceiling; Sandy Creek is the honest-COP control at -1.2%/-0.7%). Keeper dispatch above the measured-window ceiling: 4.36/4.98/5.01 TWh (2023/24/25). With the gate on, COAL bins are min()-capped at the product of their ARMED event-window factors after the DAM rescale — the physical CEMS record outranks the paper declaration (rule 14), the DAM overlay keeps its designed job everywhere else (remove direction + non-window hours untouched, gas classes byte-identical; rule 19). Coal-scoped: the coal averaged-rule identification is what certifies dead stops; the gas-side symmetric collision is explicitly open and unmeasured. Diagnosis DIAGNOSIS-ercot148-coal-outage-windows-2026-07-31.md; record results/calibration/ercot148_coal_outage_phase0.json; precommit PRECOMMIT-ercot148-dam-coal-event-cap-2026-07-31.md.",
       ev: { E: "ERCOT-148 Phase 0/1 (no-LP seam proof: flag-ON capture caps every COAL bin at its window ceiling, non-COAL byte-identical)" } },
     { id: "unit_outage_short_windows", cat: "outage", name: "Short (1-5 day) unit outage windows, baseload coal",
       def: "scenarios.py:7771 (+partial windows :7796)", mode: "B",
