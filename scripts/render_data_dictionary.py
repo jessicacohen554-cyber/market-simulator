@@ -965,8 +965,10 @@ NARRATIVE: dict[str, dict[str, str]] = {
         "reconciles": (
             "CAISO OASIS Public Bid Data GroupZip archives (one zip per DAM "
             "trade date, 90-day publication lag) onto one tidy row per "
-            "(resource, trade date, bid segment); first (and so far only) "
-            "registered ISO: CAISO."
+            "(resource, OPERATING HOUR, product, bid segment) — the raw "
+            "disclosure is run-length-encoded over hours and every parser "
+            "expands its ranges before assigning step_idx (caiso-152); first "
+            "(and so far only) registered ISO: CAISO."
         ),
     },
     "wecc-west-supply": {

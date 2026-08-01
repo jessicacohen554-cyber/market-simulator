@@ -249,12 +249,34 @@ def _netload_pct(years: list[int]) -> pd.DataFrame:
     return out.groupby(["day", "he"], as_index=False).agg(q=("q", "mean"))
 
 
+#: Clean columns this derive actually reads. ``trade_date`` is deliberately
+#: absent: the derive keys everything off the LOCAL day recomputed from
+#: ``interval_start_utc``, so carrying the trade date costs ~8 bytes/row for a
+#: column nothing downstream touches. Reading only these columns is what keeps
+#: the RLE-expanded corpus (caiso-152: ~72 M GENERATOR EN curve-hours over the
+#: full 2023-25 span, ~2.4x the pre-expansion row count) inside a 16 GB box.
+_BID_COLS = [
+    "resource_type",
+    "product",
+    "row_kind",
+    "interval_start_utc",
+    "resource_seq",
+    "segment_mw",
+    "segment_price_usd_per_mwh",
+]
+
+
 def _load_bids(years: list[int]) -> pd.DataFrame:
     """GENERATOR EN curve segments from the clean dam-public-bids tree."""
     frames = []
     for year in years:
         df = clean_io.read_clean(
-            "dam-public-bids", iso="CAISO", year=year, market="DAM", validate=False
+            "dam-public-bids",
+            iso="CAISO",
+            year=year,
+            market="DAM",
+            validate=False,
+            columns=_BID_COLS,
         )
         df = df[
             (df.resource_type == "GENERATOR")
@@ -264,15 +286,16 @@ def _load_bids(years: list[int]) -> pd.DataFrame:
         frames.append(
             df[
                 [
-                    "trade_date",
                     "interval_start_utc",
                     "resource_seq",
                     "segment_mw",
                     "segment_price_usd_per_mwh",
                 ]
-            ].assign(year=year)
+            ].assign(year=np.int16(year))
         )
-    out = pd.concat(frames, ignore_index=True)
+        del df
+    out = pd.concat(frames, ignore_index=True, copy=False)
+    frames.clear()
     out = out.rename(columns={"segment_price_usd_per_mwh": "price"})
     return out.sort_values(["resource_seq", "interval_start_utc", "segment_mw"])
 

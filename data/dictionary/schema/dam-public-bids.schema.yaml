@@ -22,14 +22,27 @@
 #
 # Raw (per-day CSV) -> clean (long) transform
 # -------------------------------------------
+# The raw disclosure is RUN-LENGTH-ENCODED on the hour axis: each raw row
+# carries a [start, stop) stamp pair over whole hours, and a bid held
+# unchanged across several operating hours is published as ONE row (a
+# whole-day hold appears as a single 24-hour row). This schema's grain is
+# one row per operating HOUR, so every parser expands its ranges through
+# scripts/lib/dam_public_bids.expand_rle before assigning step_idx. Keying
+# on the start stamp alone drops every hour of every multi-hour range and
+# biases the survivors toward frequently-rebidding resource-hours: on CAISO
+# GENERATOR EN curves, 2023-01-02, 18,520 raw rows carry 50,972 real
+# curve-hours (caiso-152; defect filed caiso-150 §E1).
+#
 # The raw daily CSV carries two row shapes that this schema unifies:
 #   * curve rows  — one MW/price breakpoint of a piecewise bid curve
 #     (SCH_BID_XAXISDATA / SCH_BID_Y1AXISDATA / SCH_BID_CURVETYPE, with the
-#     operating hour in SCH_BID_TIMEINTERVALSTART_GMT) -> row_kind="segment";
+#     hour range in SCH_BID_TIMEINTERVALSTART_GMT ..
+#     SCH_BID_TIMEINTERVALSTOP_GMT) -> row_kind="segment";
 #     ``step_idx`` is assigned 1-based in ascending segment_mw order within
 #     each (resource_seq, product, interval_start_utc) curve.
-#   * self-schedule rows — price-taker MW with no curve
-#     (SELFSCHEDMW, hour in TIMEINTERVALSTART_GMT) -> row_kind="self_sched";
+#   * self-schedule rows — price-taker MW with no curve (SELFSCHEDMW, hour
+#     range in TIMEINTERVALSTART_GMT .. TIMEINTERVALEND_GMT)
+#     -> row_kind="self_sched";
 #     ``step_idx`` numbers multiple self-schedule rows for the same
 #     resource-product-hour 1-based in file order.
 #
@@ -72,9 +85,11 @@ columns:
     unit: utc_timestamp
     nullable: false
     description: >-
-      tz-aware UTC start of the operating hour the bid row applies to.
+      tz-aware UTC start of the ONE operating hour the bid row applies to.
       Curve rows: SCH_BID_TIMEINTERVALSTART_GMT; self-schedule rows:
-      TIMEINTERVALSTART_GMT.
+      TIMEINTERVALSTART_GMT — in both cases the raw range is expanded to
+      one row per hour up to its matching STOP/END stamp (see the header),
+      so this is an hour, never a multi-hour range start.
 
   - name: resource_type
     dtype: string
