@@ -1,0 +1,15 @@
+{
+ "id": "2026-08-01-nyiso109-zonal-margin-anchor",
+ "label": "nyiso109 zonal margin anchor",
+ "date": "2026-08-01",
+ "shorthand": "nyiso109-zonal-margin-anchor",
+ "definition": "KEEPER (nyiso-109, 2026-08-01). The nyiso-108 hydro-input-repair recipe with the gas-offer net-revenue margin's identification anchor RESOLVED PER ZONE (gas_offer_margin_zonal_anchor=true; constants.GAS_OFFER_MARGIN_ANCHOR_BY_ZONE). apply_gas_offer_margin adds markup_hr x (anchor - fuel) and states that at fuel == anchor the reformed offer reduces EXACTLY to the registered band multiplier - a statement about a unit's OWN delivered fuel. But the ISO anchor (3.9046 $/MMBtu) is derived from _gas_series, which is ISO-level: it carries the hub overlay but NOT the per-zone basis the solve applies afterwards on the (n_gen, T) array, and that basis leaves the REFERENCE zone (Capital_Hudson / Iroquois Z2) unchanged while shifting every other zone strictly DOWN to its own measured pipeline hub. So a NYC (Transco Z6 NY) or Upstate_West (Tenn Z4 200L) tranche was pricing its markup at a fuel level it never pays and collecting an uplift its band multiplier never contained. The zone anchors - Upstate_West 2.0346, NYC 2.7612, reference zones 3.9046 - are the SAME measurement as the ISO anchor evaluated per zone by the same derive script (derive_gas_offer_margin_anchor.py --by-zone) applying the RUNTIME zonal-basis transform to the same delivered series over the same 2023-2025 window: ZERO free parameters, rule-23 frozen. 234 of 404 marked-up tranches move onto a zone anchor and the median fixed margin falls 6.04 -> 5.39 $/MWh. Every pre-registered gate passes (PREREG-nyiso109-zonal-margin-anchor-2026-08-01.md): K2 control integrity on the STRICT BYTE basis (control minus committed keeper = 0.0 MW on every class-hour, all three years), K6 direction integrity (no zone's lambda rises anywhere), and every kill gate P1-P5. C3a 2023 +10.21 % -> +7.51 % clears the +/-10 % band, so NYISO moves NOT-YET -> CALIBRATED-WITH-CAVEATS with C3c the sole remaining (ledgered) caveat; C1 stays 14/14 all-class, 10/10 free-class. Reported cost, not hidden: C3a 2025 -8.73 % -> -9.64 %, closer to the band edge - the trough-side half of a sign-symmetric amplitude defect the session diagnosed as ALL-YEARS (model reproduces 69/49/45 % of the measured trough->peak swing), so the peak half stays open. Control: 2026-07-31-nyiso109-control-zerodelta.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-08-01-nyiso109-zonal-margin-anchor.js",
+ "bundle": "results/calibration/nyiso109_zonalanchor_B"
+}

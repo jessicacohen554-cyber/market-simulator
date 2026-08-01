@@ -149,6 +149,28 @@ def bins_to_fleet(
     valid_zones = set(zone_names)
     fleet: list[Generator] = []
 
+    # nyiso-109 zone-resolved gas-offer margin anchors. Empty (and byte-
+    # identical) unless the gate is armed; armed without the resolved map is a
+    # hard error, never a silent fallback to the ISO window anchor (rule 24).
+    _zonal_margin_anchors: dict[str, float] = {}
+    if getattr(config, "gas_offer_margin_zonal_anchor", False):
+        if not getattr(config, "gas_offer_net_revenue_margin", False):
+            raise ValueError(
+                "gas_offer_margin_zonal_anchor is armed without "
+                "gas_offer_net_revenue_margin: the zonal anchor resolves the "
+                "SAME mechanism's identification point, it is not a mechanism "
+                "of its own (rule 19 [R-ONE-MECH])"
+            )
+        _by_zone = getattr(config, "gas_offer_margin_anchor_by_zone", None)
+        if not _by_zone:
+            raise ValueError(
+                "gas_offer_margin_zonal_anchor is armed but "
+                "gas_offer_margin_anchor_by_zone is unset; resolve it from "
+                "constants.GAS_OFFER_MARGIN_ANCHOR_BY_ZONE at config build "
+                "(rule 24 — no silent fallback in the offer path)"
+            )
+        _zonal_margin_anchors = {str(z): float(a) for z, a in _by_zone.items()}
+
     # Per-plant commission years drive the age-based thermal availability
     # model. Coal uses the curated COAL_PLANT_COMMISSION_YEAR (accurate
     # coal-unit years); every other plant takes its EIA-860 ``year_built``
@@ -1069,6 +1091,16 @@ def bins_to_fleet(
                 # both forms. Absent keys -> None -> the ISO window anchor.
                 if _margin_markup_hr > 0.0:
                     _margin_anchor = band_margin_anchor(suffix, offer)
+                    # nyiso-109 zone-resolved anchor: on an ISO whose fuel
+                    # carries a per-zone basis, the ISO window anchor is the
+                    # REFERENCE zone's level, so a tranche outside that zone
+                    # would price its markup at a fuel level it never pays.
+                    # Resolve it at THIS tranche's zone instead. A band-scoped
+                    # rebasis anchor keeps precedence (rule 19 [R-ONE-MECH] —
+                    # the two identification channels never stack); a zone
+                    # absent from the map keeps the window anchor.
+                    if _margin_anchor is None and _zonal_margin_anchors:
+                        _margin_anchor = _zonal_margin_anchors.get(zone)
             # Step-3a synchronization forcing: the _mustrun (contracted, fuel-
             # free) and _sync (spot, SRMC) coal min-load tranches are held on at
             # their full capacity via min_gen, so the unit stays synchronized at

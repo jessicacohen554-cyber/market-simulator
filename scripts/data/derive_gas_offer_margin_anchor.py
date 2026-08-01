@@ -137,6 +137,92 @@ def derive_anchor(iso: str) -> tuple[dict[int, float], float]:
     return year_means, anchor
 
 
+#: ISOs whose keeper applies a PER-ZONE delivered-gas basis, so the ISO-level
+#: series :func:`derive_anchor` reads is NOT the price their units actually pay.
+#: Only these ISOs have a zone-resolved anchor to derive; every other ISO's
+#: unit fuel IS the ISO series, so its single anchor is already identified at
+#: the grain the mechanism's own definition requires. Rule 25 — an entry here is
+#: that ISO's own measured basis table and never transfers.
+ZONAL_BASIS_ISOS: frozenset[str] = frozenset({"NYISO"})
+
+
+def derive_zonal_anchors(
+    iso: str,
+) -> tuple[dict[str, dict[int, float]], dict[str, float]]:
+    """Return ({zone: {year: delivered mean}}, {zone: anchor}) for ``iso``.
+
+    The zone-resolved identification point of ``gas_offer_net_revenue_margin``.
+    :func:`derive_anchor` reads ``_gas_series``, which is ISO-level: it carries
+    the hub overlay but NOT the per-zone basis, which the solve applies later on
+    the ``(n_gen, T)`` array (``data.fuel.basis.nyiso.apply_nyiso_zonal_gas_basis``,
+    anchored so the REFERENCE zone is unchanged and every other zone shifts
+    down). So on an ISO with a zonal basis the single anchor is the reference
+    zone's level, while a unit outside that zone pays persistently less — and
+    ``apply_gas_offer_margin``'s ``markup_hr × (anchor − fuel)`` then hands that
+    unit a margin uplift the band multipliers were never calibrated to carry.
+    The mechanism's own identity — *at ``fuel == anchor`` the reformed offer
+    reduces EXACTLY to the registered band multiplier* — is a statement about a
+    unit's OWN delivered fuel, so the anchor has to be measured on the same
+    series that unit's fuel comes from.
+
+    This applies the RUNTIME transform (never a re-derivation of it) to a
+    synthetic one-gas-row-per-zone fleet, so the zonal levels here are by
+    construction the levels the solve prices those units at.
+
+    Rule-23 frozen derive, exactly like :func:`derive_anchor`: re-run ONLY when
+    the underlying gas source data changes (``data/raw/gas-prices/`` workbooks,
+    the ISO hub-basis series, or the per-zone hub table), and cite that data
+    change in the re-derivation commit. NEVER because a price residual moved.
+    """
+    if iso not in ZONAL_BASIS_ISOS:
+        raise SystemExit(
+            f"{iso}: no per-zone delivered-gas basis is armed on this ISO's "
+            "keeper, so its single anchor is already identified at the grain "
+            "its units' fuel is drawn at — there is no zonal anchor to derive "
+            "(rule 25: never transfer another ISO's zonal table)"
+        )
+    from market_sim.config.iso_configs import get_iso_config
+    from market_sim.data.fleet import FleetArrays
+    from market_sim.data.fuel._shared import _GAS_FUEL_IDX
+    from market_sim.data.fuel.basis import ZONAL_BASIS_APPLIERS
+
+    zone_names = list(get_iso_config(iso).zone_names)
+    n = len(zone_names)
+    gas_idx = int(sorted(_GAS_FUEL_IDX)[0])
+    base = ScenarioConfig(
+        iso=iso, mode="backcast", hours=HOURS_PER_YEAR, **GAS_SERIES_FLAGS[iso]
+    )
+    apply_basis = ZONAL_BASIS_APPLIERS[iso]
+    by_zone: dict[str, dict[int, float]] = {z: {} for z in zone_names}
+    for year, hh in sorted(TRAIN_WINDOW_HH.items()):
+        cfg = base.with_overrides(gas_price_override=hh)
+        series = _gas_series(cfg, year, HOURS_PER_YEAR)
+        prices = np.repeat(series[None, :], n, axis=0)
+        # One synthetic gas row per zone: the applier keys only on
+        # ``fuel_type_idx`` and ``zone_idx``, so this measures its transform
+        # exactly as the solve applies it.
+        fleet = FleetArrays(
+            pmax=np.ones(n),
+            pmin=np.zeros(n),
+            heat_rate=np.full(n, 7.0),
+            vom=np.zeros(n),
+            emission_rate=np.zeros(n),
+            nox_rate=np.zeros(n),
+            so2_rate=np.zeros(n),
+            zone_idx=np.arange(n),
+            fuel_type_idx=np.full(n, gas_idx),
+            availability=np.ones((n, HOURS_PER_YEAR)),
+            unit_ids=[f"probe_{z}" for z in zone_names],
+            efficiency_bin=np.zeros(n, dtype=int),
+            plant_code=np.zeros(n, dtype=int),
+        )
+        apply_basis(prices, fleet, cfg, year)
+        for i, zone in enumerate(zone_names):
+            by_zone[zone][year] = float(np.nanmean(prices[i]))
+    anchors = {z: float(np.mean(list(v.values()))) for z, v in by_zone.items()}
+    return by_zone, anchors
+
+
 def _net_revenue_check(iso: str, anchor: float) -> None:
     """Print the fixed margins the anchor implies + the SOM-style cross-check."""
     from market_sim.data.offer_curves import gas_offer_margin_markup_mult
@@ -215,6 +301,13 @@ def main() -> None:
         help="Also print the per-band fixed margins the anchor implies and "
         "the SOM-style peaker cost-recovery cross-check (documentation only).",
     )
+    parser.add_argument(
+        "--by-zone",
+        action="store_true",
+        help="Also derive the ZONE-resolved anchors (ISOs whose keeper arms a "
+        "per-zone delivered-gas basis; register in constants."
+        "GAS_OFFER_MARGIN_ANCHOR_BY_ZONE, cite this script).",
+    )
     args = parser.parse_args()
     year_means, anchor = derive_anchor(args.iso)
     print(f"{args.iso} delivered-gas anchor derivation (train window):")
@@ -224,6 +317,22 @@ def main() -> None:
         f"ANCHOR = {anchor:.4f} $/MMBtu  (register in constants."
         "GAS_OFFER_MARGIN_ANCHOR_BY_ISO, cite this script)"
     )
+    if args.by_zone:
+        by_zone, anchors = derive_zonal_anchors(args.iso)
+        print(
+            f"\n{args.iso} ZONE-resolved anchors (the same series with each "
+            "zone's own measured basis applied — what its gas units pay):"
+        )
+        for zone in sorted(anchors, key=lambda z: -anchors[z]):
+            years = "  ".join(f"{y}: {v:.4f}" for y, v in sorted(by_zone[zone].items()))
+            print(
+                f"  {zone:<16} {years}   ANCHOR = {anchors[zone]:.4f} "
+                f"(ISO anchor {anchor:+.4f} -> {anchors[zone] - anchor:+.4f})"
+            )
+        print(
+            "  (register in constants.GAS_OFFER_MARGIN_ANCHOR_BY_ZONE, cite "
+            "this script)"
+        )
     if args.net_revenue_check:
         _net_revenue_check(args.iso, anchor)
 
