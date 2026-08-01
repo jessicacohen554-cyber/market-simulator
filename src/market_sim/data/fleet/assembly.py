@@ -237,6 +237,20 @@ def bins_to_fleet(
         eia860_selfcommit_scope_plants() if _prb_split_night else frozenset()
     )
 
+    # ScenarioConfig.coal_prb_night_floor (miso-113): the SAME measured
+    # per-plant within-run night levels, consumed by the FLOOR successor
+    # instead of the offer-side split (rule 19 makes the two mutually
+    # exclusive — enforced in ScenarioConfig.__post_init__). Rule 23
+    # [R-FROZEN-DERIVE]: the artifact is not re-derived for this lane.
+    _prb_night_level: dict[int, float] = (
+        coal_prb_committed_split_night(getattr(config, "iso", "ERCOT") or "ERCOT")
+        if getattr(config, "coal_prb_night_floor", False)
+        else {}
+    )
+    _prb_night_reg: frozenset[int] = (
+        eia860_selfcommit_scope_plants() if _prb_night_level else frozenset()
+    )
+
     def _commission_year(plant_code: int) -> int:
         """Return the EIA-860 commission year for ``plant_code``."""
         year = _reg_year.get(plant_code)
@@ -1057,6 +1071,52 @@ def bins_to_fleet(
                 _take = min(_mc_rem, _cap)
                 min_config_by_suffix[_suffix] = _take
                 _mc_rem -= _take
+        # Regulated-PRB committed-run NIGHT-LEVEL floor (miso-113,
+        # config.coal_prb_night_floor). The plant is held at its MEASURED
+        # within-run night level `night_p50 x nameplate` through the hours its
+        # own P0 pattern has it online. The `_mustrun` band is the contracted
+        # take-or-pay capacity the stack already loads first, so it is counted
+        # at its FULL capacity and this mechanism writes only the remainder —
+        # the incremental floor `max(0, night_p50 - pct_mr/100) x nameplate`,
+        # filled cheapest-first across the tranches ABOVE it (sync -> committed
+        # -> econ -> peak). Two consequences worth stating: a plant whose
+        # measured night level sits BELOW its own contracted band gets no floor
+        # at all (the model already holds more than the meter says, so there is
+        # nothing to add and nothing to tag), and `mustrun + floor` equals the
+        # measured night level exactly wherever the floor is positive.
+        #
+        # Fill order for the same reason the min-config floor above is spread:
+        # `min_gen` is clipped to the TRANCHE's own pmax x availability in
+        # generators_to_fleet_arrays, so a plant-level floor pinned on one slice
+        # would silently collapse. Not cosmetic here — 911 MW on 12 of the 18
+        # clearing MISO plants lands past `_committed`
+        # (results/calibration/miso113_floor_inertness.txt).
+        #
+        # Scope mirrors the miso-111/112 offer-side lane exactly (rule 19: same
+        # phenomenon, one scope): CAMPD-binned coal, PRB/subbituminous supply,
+        # regulated (`eia860_selfcommit_scope_plants`), non-CHP. The per-ISO
+        # artifact self-scopes the mechanism (rule 25 [R-ISO-SCOPE]).
+        night_floor_by_suffix: dict[str, float] = {}
+        _nf_level = (
+            _prb_night_level.get(plant_code)
+            if (
+                fuel == "coal"
+                and coal_chp_sector is None
+                and coal_supply in ("prb", "subbituminous")
+                and plant_code in _prb_night_reg
+            )
+            else None
+        )
+        if _nf_level is not None:
+            _nf_rem = max(0.0, _nf_level - pct_mr / 100.0) * nameplate
+            for _suffix, _cap, *_rest in tranches:
+                if _nf_rem <= 0.5:
+                    break
+                if _suffix == "mustrun" or _cap <= 0.5:
+                    continue  # the contracted band is counted at full capacity
+                _take = min(_nf_rem, _cap)
+                night_floor_by_suffix[_suffix] = _take
+                _nf_rem -= _take
         for suffix, cap, tr_hr, vom_mult, min_run, min_down, tr_startup in tranches:
             if cap <= 0.5:
                 continue
@@ -1157,6 +1217,7 @@ def bins_to_fleet(
                         sync_online_frac if sync_floor > 0.0 else 1.0
                     ),
                     coal_min_config_pmin_mw=min_config_by_suffix.get(suffix, 0.0),
+                    coal_night_floor_pmin_mw=night_floor_by_suffix.get(suffix, 0.0),
                     cc_mustrun_pmin_mw=cc_floor,
                     cc_mustrun_online_frac=(cc_mustrun_frac if cc_floor > 0.0 else 0.0),
                     # Measured amortization horizon only on the fast-start CT

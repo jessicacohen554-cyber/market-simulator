@@ -140,6 +140,25 @@ MECH_NYISO_GAS_COMMITMENT_BRIDGE: int = 20
 # commitment floor — subject to the D-2 forced-share gate.
 MECH_COAL_MIN_CONFIG: int = 21
 
+# Regulated-PRB committed-run NIGHT-LEVEL floor (miso-113,
+# config.coal_prb_night_floor): a cost-of-service PRB plant is held at its
+# CAMPD-MEASURED within-run night level (night_p50, the frozen artifact
+# coal_prb_committed_split_<ISO>.csv) through the hours its OWN base-cost P0
+# pattern has it online. Driver: regulated SELF-COMMITMENT — MISO SOM Table 7
+# puts 53-56 % of coal starts on self-commitment rather than the market's
+# economics, and a rate-based plant recovers fuel through the rate base and
+# stays loaded overnight. Window: the P0-detected committed run and nothing
+# else, so the floor cannot bind in an hour the model itself has the plant
+# offline (rule 17 [R-FLOOR-WINDOW]).
+#
+# Distinct from MECH_COAL_MUSTRUN (id 3, the step-3a synchronization floor on
+# _mustrun/_sync) and MECH_COAL_MIN_CONFIG (id 21, the EIA-860 unit-grain
+# lower envelope): different driver, different level, separate id so D-2/D-4
+# attribution stays per-mechanism (rule 19 [R-ONE-MECH]). NOT exempt — this is
+# a commitment floor on a merchant-scored class, so it is subject to the D-2
+# forced-share gate, which COAL_PRB has never carried before.
+MECH_COAL_SELFCOMMIT_NIGHT: int = 22
+
 MECH_NAMES: dict[int, str] = {
     MECH_NONE: "none",
     MECH_NUCLEAR: "nuclear_mustrun",
@@ -163,6 +182,7 @@ MECH_NAMES: dict[int, str] = {
     MECH_HYDRO_ROR_FLAT: "hydro_ror_flat",
     MECH_NYISO_GAS_COMMITMENT_BRIDGE: "nyiso_gas_commitment_bridge",
     MECH_COAL_MIN_CONFIG: "coal_min_config",
+    MECH_COAL_SELFCOMMIT_NIGHT: "coal_selfcommit_night",
 }
 
 # Mechanisms whose forced energy is exempt from the D-2 merchant-class gates
@@ -218,6 +238,7 @@ MECH_ABLATION_FIELDS: dict[int, dict[str, object]] = {
     MECH_GAS_COMMITMENT_BRIDGE: {"ercot_gas_commitment_bridge": False},
     MECH_NYISO_GAS_COMMITMENT_BRIDGE: {"nyiso_gas_commitment_bridge": False},
     MECH_COAL_MIN_CONFIG: {"ercot_coal_min_config_floor": False},
+    MECH_COAL_SELFCOMMIT_NIGHT: {"coal_prb_night_floor": False},
     # Classified ABLATED, not kept: the min-flow floor is a real physical
     # obligation, but it is a NEW mechanism whose forcing must stay visible and
     # switchable rather than joining the protected structural must-run set.

@@ -50,6 +50,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # key -- the arm must be byte-identical off; an armed run carries a real
     # min-gen floor and so gets a distinct key.
     "ercot_coal_min_config_floor",
+    # miso-113 regulated-PRB committed-run night-level floor (default off):
+    # same one-line remedy as ercot_coal_min_config_floor directly above --
+    # dropped from the hash at its default so every pre-existing cached run
+    # keeps its key, honouring the field's own "byte-identical off" promise.
+    # An armed run carries a real min-gen floor and so gets a distinct key.
+    "coal_prb_night_floor",
     # pjm-134 measured AP-South interface cut (default off): dropped from the
     # hash at its default so every pre-existing cached run keeps its key -- the
     # field's own docstring promises "byte-identical off" and without this
@@ -5670,6 +5676,56 @@ class ScenarioConfig:
     # Default off — every existing keeper byte-identical.
     coal_prb_committed_split: bool = False
 
+    # Regulated-PRB committed-run NIGHT-LEVEL floor (miso-113, the measured
+    # successor to BOTH offer-side forms above — each adjudicated R). The
+    # structural test that closed that family (FINDING-miso112 §4: per plant,
+    # ONLINE hours, cap-weighted over the 26 regulated PRB plants, model vs
+    # each plant's own measured night_p50) found the keeper's night LEVEL
+    # already right (0.437 model vs 0.434 measured in 2024) and its within-day
+    # VARIABILITY wrong; a discount-only hold slice has no floor, so in
+    # genuinely cheap hours it backs out and drives the level BELOW the meter
+    # (0.374). The missing object is a FLOOR, not a second price.
+    #
+    # When armed, each regulated (eia860_selfcommit_scope_plants)
+    # PRB/subbituminous CAMPD-binned plant is held at its MEASURED within-run
+    # night level through the hours its OWN base-cost P0 pattern says it is
+    # online: incremental floor `max(0, night_p50 - pct_mr/100) x nameplate`,
+    # spread across the plant's tranches in FILL order (`_mustrun` counted at
+    # its full capacity — the contracted take-or-pay band the stack already
+    # loads first — then `_sync` -> `_committed` -> `_econ` -> `_peak`), so
+    # `mustrun + floor == night_p50 x nameplate` wherever the floor is
+    # positive. The spread is not cosmetic: 911 MW on 12 of the 18 clearing
+    # plants lands past `_committed` (results/calibration/
+    # miso113_floor_inertness.txt), and min_gen is clipped to the TRANCHE's
+    # own pmax x availability, so pinning a plant floor on one slice would
+    # silently collapse it (the ercot_coal_min_config_floor precedent).
+    #
+    # Level artifact: coal_prb_committed_split_<ISO>.csv, frozen deriver
+    # scripts/data/derive_prb_committed_split.py — the SAME measured input
+    # miso-112 consumed, not re-derived (rule 23 [R-FROZEN-DERIVE]).
+    # Self-scoping per ISO by construction (rule 25 [R-ISO-SCOPE]).
+    #
+    # Rule 17 [R-FLOOR-WINDOW]: driver = regulated SELF-COMMITMENT (MISO SOM
+    # Table 7 — 53-56% of coal starts are self-committed rather than market-
+    # economic; a cost-of-service plant recovers fuel through the rate base
+    # and stays loaded at its overnight level through cheap nights). Window =
+    # the plant's own P0-detected committed run and nothing else, so a floor
+    # can never bind in an hour the model itself has the plant offline.
+    # Forward story = regenerates for any year from that year's P0 run pattern
+    # plus the frozen measured level, and responds to changed conditions
+    # through the P0 pattern (a plant the forecast retires is never floored).
+    #
+    # Rule 19 [R-ONE-MECH]: this is the FLOOR half of the one PRB
+    # self-commitment phenomenon, and it is mutually exclusive with both
+    # offer-side forms (validator below) — never stacked on them.
+    # Zero fitted parameters. D-2 id MECH_COAL_SELFCOMMIT_NIGHT; the P0->P1
+    # seam hook is pipeline.commitment.build_coal_night_floor_p1_prep, the
+    # same P1-native injection point as the CAISO/ERCOT/NYISO gas bridges (no
+    # P2 pass). Guards + kill rule pre-registered BEFORE measurement:
+    # results/calibration/PREREG-miso113-prb-night-floor-2026-08-01.md.
+    # Default off — every existing keeper byte-identical.
+    coal_prb_night_floor: bool = False
+
     # Lignite (mine-mouth): take-or-pay fixed costs are sunk, so in
     # cheap-gas months lignite discounts its BID (not its cost) to hold
     # baseload against cheap gas CC instead of being priced out.
@@ -9359,6 +9415,22 @@ class ScenarioConfig:
         # The duration gate bounds the ENDOGENOUS storage split by SOC; it is
         # meaningless (and silently no-ops) without the endogenous split, and
         # must NEVER combine with the measured award reservation (docking the cap
+        # Rule 19 [R-ONE-MECH]: the regulated-PRB self-commitment phenomenon
+        # gets ONE mechanism. The night-level FLOOR (miso-113) is the measured
+        # successor to both offer-side forms — the whole-band repricing
+        # (miso-111) and the per-plant committed SPLIT (miso-112), each
+        # adjudicated R on the mechanism matrix — and must replace whichever it
+        # is compared against, never stack on it.
+        if self.coal_prb_night_floor and (
+            self.coal_prb_committed_dispatchable or self.coal_prb_committed_split
+        ):
+            raise ValueError(
+                "coal_prb_night_floor is mutually exclusive with "
+                "coal_prb_committed_dispatchable / coal_prb_committed_split "
+                "(rule 19 — one mechanism per phenomenon): the floor is the "
+                "measured SUCCESSOR to both offer-side forms of regulated-PRB "
+                "self-commitment, not a third layer on top of them."
+            )
         # AND netting the requirement, then gating, would triple-treat storage).
         if self.ercot_storage_as_duration_gate and not self.ercot_storage_as_endogenous:
             raise ValueError(
@@ -10140,6 +10212,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_committed_takeorpay_sunk_fixed": 3,
     "coal_prb_committed_dispatchable": 3,
     "coal_prb_committed_split": 3,
+    "coal_prb_night_floor": 3,
     "coal_lignite_passthrough_sigmoid": 3,
     "coal_lignite_passthrough_floor": 3,
     "coal_lignite_passthrough_ceil": 3,

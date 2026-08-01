@@ -514,6 +514,10 @@ def _derate_generator(gen: Generator, factor: float) -> Generator:
             # unscaled floor would force the shrunken unit above its own
             # capacity.
             "coal_min_config_pmin_mw": gen.coal_min_config_pmin_mw * factor,
+            # Same reasoning for the regulated-PRB night-level floor: it is a
+            # share of `night_p50 x nameplate`, so a plant that loses half its
+            # iron holds half the overnight level.
+            "coal_night_floor_pmin_mw": gen.coal_night_floor_pmin_mw * factor,
         }
     )
 

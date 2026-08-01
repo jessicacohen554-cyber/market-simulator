@@ -892,6 +892,78 @@ def build_nyiso_gas_bridge_p1_prep(
     return _fleet_prep
 
 
+def build_coal_night_floor_p1_prep(config, fleet: list, fleet_arrays):
+    """Return a ``p1_fleet_prep`` hook for the regulated-coal night-level floor.
+
+    The P1-native successor to BOTH offer-side forms of regulated-PRB
+    self-commitment (``coal_prb_committed_dispatchable``, miso-111;
+    ``coal_prb_committed_split``, miso-112 — each adjudicated **R** on the
+    mechanism matrix, and mutually exclusive with this flag by
+    ``ScenarioConfig.__post_init__``). Instead of asking an offer price to hold
+    the fleet at its overnight level — which a discount does in all 8760 hours
+    and full-cost pricing does in none — the plant is FLOORED at its own
+    CAMPD-measured within-run night level through the hours its own base-cost
+    P0 pattern has it committed. Detector:
+    :func:`model.commitment.coal_selfcommit_night_min_gen`; D-2 attribution:
+    ``MECH_COAL_SELFCOMMIT_NIGHT``.
+
+    Self-scoping rather than ISO-gated (rule 25 [R-ISO-SCOPE]): the per-tranche
+    floor shares are populated at fleet assembly only for plants carrying a row
+    in that ISO's measured artifact, so an ISO without one produces an all-zero
+    floor and this hook returns ``None``. Returns ``None`` whenever the
+    mechanism is off or no plant is floored, so every other path is
+    byte-identical.
+    """
+    if not getattr(config, "coal_prb_night_floor", False):
+        return None
+
+    from market_sim.data.floor_mechanisms import MECH_COAL_SELFCOMMIT_NIGHT
+    from market_sim.model.commitment import coal_selfcommit_night_min_gen, find_runs
+
+    def _fleet_prep(r0):
+        night_floor = coal_selfcommit_night_min_gen(r0.dispatch, fleet_arrays, fleet)
+        if not np.any(night_floor > 0.0):
+            # An armed mechanism that floors nothing is the "provably inert"
+            # failure mode miso-111 hit on the LSL statistic — never let it pass
+            # silently as a structural finding (the nyiso-89 §4a discipline).
+            logger.info(
+                "Coal self-commitment night floor: ARMED but floored ZERO "
+                "unit-hours — inert on this fleet."
+            )
+            return None
+        # D-4 window evidence: every floored segment IS one P0-detected
+        # committed run, so the segment-length distribution is the direct
+        # measurement of the declared window (rule 17). Overnight-only or
+        # clock-hour banding here would mean the detector is not doing what the
+        # declaration says.
+        seg_lengths = [
+            e - s
+            for g in np.flatnonzero((night_floor > 0.0).any(axis=1))
+            for s, e in find_runs(night_floor[g] > 0.0)
+        ]
+        seg = np.array(seg_lengths) if seg_lengths else np.zeros(0)
+        logger.info(
+            "Coal self-commitment night floor: %d unit-hours floored "
+            "(%.2f TWh floor volume) across %d plant-tranches, %d committed "
+            "blocks by length %s",
+            int((night_floor > 0.0).sum()),
+            float(night_floor.sum()) / 1e6,
+            int((night_floor > 0.0).any(axis=1).sum()),
+            len(seg_lengths),
+            {
+                "<12h": int((seg < 12).sum()),
+                "12-24h": int(((seg >= 12) & (seg < 24)).sum()),
+                "24-72h": int(((seg >= 24) & (seg < 72)).sum()),
+                ">72h": int((seg >= 72).sum()),
+            },
+        )
+        return _bridge_floored_fleet(
+            fleet_arrays, night_floor, MECH_COAL_SELFCOMMIT_NIGHT
+        )
+
+    return _fleet_prep
+
+
 def _pjm_unit_commitment_physics(fleet_arrays) -> tuple[np.ndarray, np.ndarray]:
     """Per-unit ``(min_down_hours, startup $/MW)`` from the published class tables.
 

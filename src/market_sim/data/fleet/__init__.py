@@ -228,6 +228,21 @@ class Generator(BaseModel):
     #                                 (step-3a synchronization): different
     #                                 driver, different level, separate
     #                                 mechanism id (rule 19).
+    coal_night_floor_pmin_mw: float = 0.0  # regulated-PRB committed-run NIGHT
+    #                                 LEVEL floor (MW) under
+    #                                 config.coal_prb_night_floor (miso-113):
+    #                                 this tranche's share of the plant's
+    #                                 incremental floor
+    #                                 max(0, night_p50 - pct_mr/100) x
+    #                                 nameplate, spread in fill order by
+    #                                 assembly. Unlike every other *_pmin_mw
+    #                                 field here it is NOT applied flat: the
+    #                                 P0->P1 seam hook
+    #                                 (pipeline.commitment.
+    #                                 build_coal_night_floor_p1_prep) masks it
+    #                                 to the hours the plant's OWN base-cost P0
+    #                                 pattern has it online, which is the whole
+    #                                 rule-17 window claim.
     cc_mustrun_pmin_mw: float = 0.0  # gas local-reliability commitment floor
     #                                 (MW) forced on via FleetArrays.min_gen for
     #                                 a CC_REGULAR / CT_PEAKER committed tranche

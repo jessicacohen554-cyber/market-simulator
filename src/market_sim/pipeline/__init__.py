@@ -51,6 +51,7 @@ from market_sim.pipeline.backcast_config import backcast_config
 from market_sim.pipeline.commitment import (
     build_caiso_ra_p1_prep,
     build_caiso_reserve_p1_prep,
+    build_coal_night_floor_p1_prep,
     build_ercot_gas_bridge_p1_prep,
     build_ercot_gas_bridge_p1_preps,
     build_nyiso_gas_bridge_p1_prep,
@@ -100,6 +101,7 @@ __all__ = [
     "run_commitment_pass",
     "build_caiso_ra_p1_prep",
     "build_caiso_reserve_p1_prep",
+    "build_coal_night_floor_p1_prep",
     "build_ercot_gas_bridge_p1_prep",
     "build_ercot_gas_bridge_p1_preps",
     "build_nyiso_gas_bridge_p1_prep",

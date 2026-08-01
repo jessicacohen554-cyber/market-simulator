@@ -46,6 +46,7 @@ from market_sim.model.dispatch import DispatchResult  # noqa: F401  (typing/docs
 from market_sim.pipeline.commitment import (
     build_caiso_ra_p1_prep,
     build_caiso_reserve_p1_prep,
+    build_coal_night_floor_p1_prep,
     build_ercot_gas_bridge_p1_preps,
     build_nyiso_gas_bridge_p1_prep,
     build_pjm_reserve_p1_prep,
@@ -339,6 +340,23 @@ def run_year_solve(
     pjm_fleet_prep, pjm_kwargs_prep = build_pjm_reserve_p1_prep(
         config, iso, fleet_arrays
     )
+    # P1-native regulated-coal committed-run NIGHT-LEVEL floor (miso-113): the
+    # plant is held at its CAMPD-measured within-run night level through the
+    # hours its own P0 pattern has it committed — the FLOOR successor to the two
+    # rejected offer-side forms of regulated-PRB self-commitment. Self-scoping
+    # (rule 25): None unless the mechanism is armed AND the ISO's measured
+    # artifact populated per-tranche floor shares at assembly, so every other
+    # run is byte-identical.
+    coal_night_prep = build_coal_night_floor_p1_prep(config, fleet, fleet_arrays)
+    if coal_night_prep is not None and (
+        ra_p1_prep or ercot_bridge_prep or nyiso_bridge_prep or pjm_fleet_prep
+    ):
+        raise ValueError(
+            "coal_prb_night_floor cannot be composed with the CAISO RA / ERCOT "
+            "/ NYISO gas bridge or the PJM reserve fleet prep: run_energy_solve "
+            "takes ONE p1_fleet_prep, so arming both would silently drop a "
+            "floor. Disarm one (rule 19 [R-ONE-MECH])."
+        )
     # P1-native CAISO online-scoped reserve split (caiso_reserve_online_scoped):
     # the kwargs hook recomputes the (2*n_r, T) spin/non-spin product-split
     # ramp caps from the P0 run pattern — SPIN scoped to online iron, NONSPIN
@@ -357,7 +375,11 @@ def run_year_solve(
         config,
         xyear_cache=xyear_cache,
         p1_fleet_prep=(
-            ra_p1_prep or ercot_bridge_prep or nyiso_bridge_prep or pjm_fleet_prep
+            ra_p1_prep
+            or ercot_bridge_prep
+            or nyiso_bridge_prep
+            or pjm_fleet_prep
+            or coal_night_prep
         ),
         p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
         mc_bid_adjust=mc_bid_adjust,

@@ -1154,6 +1154,108 @@ def caiso_ra_mustoffer_min_gen(
     return floor
 
 
+def coal_selfcommit_night_min_gen(
+    p0_dispatch: np.ndarray,  # (n_gen, T) — the base-cost P0 dispatch
+    fleet_arrays: FleetArrays,
+    generators: list[Generator],  # fleet list aligned with p0_dispatch rows
+    run_threshold_frac: float = 0.05,
+) -> np.ndarray:
+    """Return the ``(n_gen, T)`` regulated-coal committed-run NIGHT-LEVEL floor.
+
+    Models a cost-of-service coal plant's **self-commitment** as a real
+    commitment rather than a price: through the hours the plant is committed it
+    is held at its CAMPD-**measured** within-run night level, and above that
+    level the LP still dispatches it economically hour by hour.
+
+    The driver is regulated self-commitment — MISO's SOM Table 7 attributes
+    53-56 % of coal starts to self-commitment rather than the market's
+    economics, and a rate-based plant that recovers fuel through the rate base
+    stays loaded at its overnight level through cheap nights instead of
+    price-following toward its minimum. An energy-only LP has no commitment
+    state at all, so it de-loads the whole band whenever the margin turns, and
+    no *offer price* can repair that: a discount pins the band flat in all 8760
+    hours (the C7 flatness), while full-cost pricing drops it to the must-run
+    band on every cheap night (the C1 volume hole). Both were measured and
+    rejected on MISO — ``coal_prb_committed_dispatchable`` (miso-111) and
+    ``coal_prb_committed_split`` (miso-112) — and the structural test that
+    closed that family found the keeper's night LEVEL already correct and its
+    within-day VARIABILITY wrong. What is missing is a floor, not a price.
+
+    **Level.** Each plant's own measured ``night_p50`` (p50 of plant load / HSL
+    over ONLINE night hours, pooled 2023-25, the WP-3 loading-when-on
+    construction), already spread across the plant's tranches in FILL order at
+    fleet assembly and carried on ``Generator.coal_night_floor_pmin_mw`` — the
+    incremental MW above the contracted ``_mustrun`` band, so
+    ``mustrun + floor == night_p50 x nameplate``. Nothing here can force a
+    plant above its own measured night level.
+
+    **Window** (rule 17 [R-FLOOR-WINDOW]). The hours the plant is online in the
+    model's OWN base-cost P0 pattern — a PLANT is committed in hour ``t`` when
+    its tranches together dispatch above ``run_threshold_frac`` of plant pmax
+    (the plant-online convention shared with ``_pjm_plant_online_pattern`` and
+    the RA-bridge detector: tranches are the same physical iron). There is no
+    clock-hour rule and no seasonal rule, so the floor is structurally incapable
+    of binding in an hour the model itself has the plant offline, and it can
+    never force a start. **Forward story**: regenerates for any year from that
+    year's P0 run pattern plus the frozen measured level, and responds to
+    changed conditions through the pattern — a plant a forecast retires, or
+    leaves offline, is simply never floored.
+
+    Nothing measured about the *outcome* enters (rule 13 [R-MEASURED]): the
+    window is the model's own solve and the level is year-static plant conduct,
+    the same admissibility class as ``coal_takeorpay_share``.
+
+    Args:
+        p0_dispatch: The base-cost P0 dispatch, ``(n_gen, T)``.
+        fleet_arrays: The vectorized fleet, for ``pmax`` / ``availability``.
+        generators: The dispatch fleet, aligned with ``p0_dispatch`` rows.
+        run_threshold_frac: A plant counts as committed when its tranches
+            together dispatch above this fraction of plant pmax (the RA-bridge
+            run detector's own default).
+
+    Returns:
+        The ``(n_gen, T)`` floor; all-zero (a no-op) when no generator carries a
+        night-floor share — which is the case for every ISO whose measured
+        artifact is absent and for every run with the mechanism disarmed.
+    """
+    n_gen, T = p0_dispatch.shape
+    floor = np.zeros((n_gen, T), dtype=float)
+    pmin_mw = np.array(
+        [float(getattr(gen, "coal_night_floor_pmin_mw", 0.0)) for gen in generators],
+        dtype=float,
+    )
+    if not np.any(pmin_mw > 0.0):
+        return floor
+    pmax = np.asarray(fleet_arrays.pmax, dtype=float)
+    avail = np.asarray(fleet_arrays.availability, dtype=float)
+    # Plant grouping: a CAMPD plant's tranches share the bin-id prefix of their
+    # unit_id (``<bin_id>_<suffix>``) — the same key ``caiso_ra_mustoffer_min_gen``
+    # builds ``plant_pmax`` from and the same "one plant, one iron" convention.
+    rows_by_plant: dict[str, list[int]] = {}
+    for g, gen in enumerate(generators):
+        if not getattr(gen, "is_campd_bin", False):
+            continue
+        rows_by_plant.setdefault(gen.unit_id.rpartition("_")[0], []).append(g)
+    for rows in rows_by_plant.values():
+        idx = np.array(rows, dtype=int)
+        floored = idx[pmin_mw[idx] > 0.0]
+        if floored.size == 0:
+            continue
+        plant_pmax = float(pmax[idx].sum())
+        if plant_pmax <= 0.0:
+            continue
+        # The plant's OWN P0 commitment window: online when its tranches
+        # together clear the run threshold. Availability-scaled like every other
+        # P1-native bridge floor, which also keeps the bound feasible by
+        # construction (min_gen = pmin x avail <= pmax x avail).
+        online = p0_dispatch[idx, :].sum(axis=0) > run_threshold_frac * plant_pmax
+        if not online.any():
+            continue
+        for g in floored:
+            floor[g, online] = pmin_mw[g] * avail[g, online]
+    return floor
+
+
 def apply_ra_mustoffer_quantity_gate(
     floor: np.ndarray,  # (n_gen, T) — the RA bridge floor, mutated in place
     generators: list[Generator],

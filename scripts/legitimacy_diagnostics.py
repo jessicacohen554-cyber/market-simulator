@@ -94,6 +94,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
     MECH_CC_MUSTRUN_PER_PLANT,
     MECH_CHP_STEAM,
     MECH_COAL_MIN_CONFIG,
+    MECH_COAL_SELFCOMMIT_NIGHT,
     MECH_CT_NETLOAD_DRAG,
     MECH_FIRM_IMPORT,
     MECH_GAS_COMMITMENT_BRIDGE,
@@ -262,6 +263,35 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # [R-FLOOR-WINDOW] forward story: the level re-derives from the next EIA-860
     # vintage with no model input (scripts/data/derive_eia860_coal_min_config.py).
     (MECH_COAL_MIN_CONFIG, None): (0, 24),
+    # coal_selfcommit_night (MECH_COAL_SELFCOMMIT_NIGHT — the regulated-PRB
+    # committed-run NIGHT-LEVEL floor, config.coal_prb_night_floor, miso-113):
+    # the driver-justified window is ALL 24 hours BY CONSTRUCTION, and this row
+    # is the rule-12/17 declaration required before the mechanism's forced
+    # energy can be scored (CLAUDE.md rule 20 [R-FORCED-BUDGET] — COAL_PRB
+    # carried ZERO forced rows before this mechanism, so C8 and D-4 go live on
+    # the class with it).
+    #
+    # The driver is regulated SELF-COMMITMENT: MISO's State of the Market
+    # Table 7 attributes 53-56 % of coal starts to self-commitment rather than
+    # market economics, and a cost-of-service plant recovering fuel through the
+    # rate base stays loaded at its overnight level through cheap nights. That
+    # is a property of the plant's COMMITMENT STATE, not of a clock hour — a
+    # self-committed plant is self-committed at 03:00 and at 15:00 alike — so
+    # there is no hour at which the driver says the floor should lapse, exactly
+    # as for MECH_ST_NETLOAD_DRAG above (the gas-steam fleet "committed every
+    # day and every night") and unlike a CT peak-window limb (overnight CF ~ 0).
+    #
+    # What bounds the mechanism is not a clock window but the model's OWN P0
+    # run pattern: model.commitment.coal_selfcommit_night_min_gen writes the
+    # floor ONLY in hours the plant's own tranches dispatch above the run
+    # threshold in the base-cost P0 solve, and min_gen is clipped to
+    # pmax x availability, so the floor is zero in every hour the model has the
+    # plant offline or on outage. Off-window binding is therefore structurally
+    # impossible rather than merely unobserved, which is the property D-4
+    # exists to check. The forward story is the same object: the pattern
+    # regenerates from any year's P0 solve and the level is frozen measured
+    # conduct (scripts/data/derive_prb_committed_split.py, rule 23).
+    (MECH_COAL_SELFCOMMIT_NIGHT, None): (0, 24),
     # firm_import (MECH_FIRM_IMPORT — the CAISO/MISO/NYISO firm must-flow
     # import blocks: inject_caiso_firm_import_selfschedule,
     # inject_miso_firm_imports, inject_nyiso_firm_imports): the
