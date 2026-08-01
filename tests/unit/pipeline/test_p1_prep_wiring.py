@@ -34,6 +34,7 @@ _BRIDGE_BUILDERS: dict[str, str] = {
     "build_caiso_ra_p1_prep": "ra_p1_prep",
     "build_ercot_gas_bridge_p1_preps": "ercot_bridge_prep",
     "build_nyiso_gas_bridge_p1_prep": "nyiso_bridge_prep",
+    "build_coal_night_floor_p1_prep": "coal_night_prep",
 }
 
 _ORCHESTRATORS: tuple[str, ...] = (
