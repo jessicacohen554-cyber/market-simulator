@@ -1227,7 +1227,40 @@ criterion; the outage-grain data ask below remains its honest continuation.)*
    `results/calibration/FINDING-miso110-forecast-hydro-level-923hy-2026-07-31.md`,
    probe `scripts/probes/_miso110_forward_level_audit.py`.
 
-### 5.5 NYISO — target: **the 2023 fossil over-pricing (NEW, nyiso-108)**, with C3c ledgered behind it; keeper `2026-07-31-nyiso108-hydro-input-repair`, **NOT-YET**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108 (item 11b owner-DEFERRED, stays chartered)
+### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), open but not a blocker**, with C3c ledgered ahead of it; keeper `2026-08-01-nyiso109-zonal-margin-anchor`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered)
+
+**STATUS CHANGE 2026-08-01 (nyiso-109).** NYISO recovers **NOT-YET -> CALIBRATED-WITH-CAVEATS**,
+and unlike nyiso-108 this promotion is the pre-registration's **OWN verdict** — every construction
+gate (K1-K6) and every kill gate (P1-P5) passed, no owner override was needed or used. The lever is
+**`gas_offer_margin_zonal_anchor`**: the gas-offer net-revenue margin's identification anchor
+resolved PER ZONE, with **zero free parameters**. `apply_gas_offer_margin`'s own identity — at
+`fuel == anchor` the reformed offer reduces EXACTLY to the registered band multiplier — is a
+statement about a unit's OWN delivered fuel, but the ISO anchor is derived from
+`data.fuel.trajectories._gas_series`, which is ISO-LEVEL and does not carry the per-zone basis the
+solve applies afterwards. NYISO's zonal basis leaves the REFERENCE zone (Capital_Hudson / Iroquois
+Z2) unchanged and shifts NYC (Transco Z6 NY) and Upstate_West (Tenn Z4 200L) strictly DOWN, so two
+zones carrying **67.6 % of NYISO load** were pricing their markup at a fuel level they never pay.
+Zone anchors (Upstate_West 2.0346, NYC 2.7612, reference 3.9046 unchanged) are the SAME measurement
+as the ISO anchor evaluated per zone by the same derive script. **C3a 2023 +10.21 % -> +7.51 %**
+clears the +/-10 % band; C3a PASSES in all three years; C3c is bit-unchanged and stays the SOLE
+ledgered caveat; C1 stays 14/14 all-class, 10/10 free-class.
+
+**TWO handoff premises are CORRECTED by measurement, and both are worth carrying forward.**
+(1) The defect is **NOT 2023-specific**. The residual is a COMPRESSED price distribution present in
+all three years — the model reproduces only **69/49/45 %** of the measured trough->peak swing, with
+the trough over-priced by **+7.3/+5.5/+8.7 $/MWh** and the peak under-priced in 2024/2025. 2023
+failed alone only because it is the mild year whose peak error is ALSO positive, so nothing
+cancelled the trough excess. This is the same defect PJM diagnosed at pjm-141, measured
+independently on NYISO's own data (rule 25). nyiso-109 corrects the TROUGH half; **the PEAK half is
+open and is the named successor** (C3a 2025 moves -8.73 % -> -9.64 %, reported not hidden).
+(2) The congestion route is **REFUSED ex-ante on NYISO's own measurement**, not on analogy:
+`measured_interface_limits` NYISO `U -> G`. The premise is real (the model's link separates in
+12.0/1.3/1.1 % of hours against a real 60.3/54.8/38.2 %), but the REAL `CENTRAL EAST - VC` sits
+within 50 MW of its posted limit in only **0.8/0.1/0.2 %** of hours (TOTAL EAST / UPNY CONED /
+SPR-DUN-SOUTH: 0.0 %), and the model's monthly TTC already tracks the measured monthly mean limit —
+so the posted limit is not what produces the real separation (marginal losses + sub-interface nodal
+constraints, neither representable at five-zone grain; rule 14's misalignment clause).
+`results/calibration/FINDING-nyiso109-zonal-margin-anchor-2026-08-01.md`.
 
 **STATUS CHANGE 2026-07-31 (nyiso-108).** NYISO regressed CALIBRATED-WITH-CAVEATS -> **NOT-YET** by an
 **explicit owner override** of that session's own prereg §6 (which pre-committed no-promotion-on-new-FAIL).
